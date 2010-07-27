@@ -1,3 +1,26 @@
+2010-07-27  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Adam Barth.
+
+        AX: replace m_renderer->document->axObjectCache() with just axObjectCache()
+        https://bugs.webkit.org/show_bug.cgi?id=42979
+
+        No new tests. Code cleanup only.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::firstChild):
+        (WebCore::AccessibilityRenderObject::lastChild):
+        (WebCore::AccessibilityRenderObject::previousSibling):
+        (WebCore::AccessibilityRenderObject::nextSibling):
+        (WebCore::AccessibilityRenderObject::parentObjectIfExists):
+        (WebCore::AccessibilityRenderObject::parentObject):
+        (WebCore::AccessibilityRenderObject::menuForMenuButton):
+        (WebCore::AccessibilityRenderObject::menuButtonForMenu):
+        (WebCore::AccessibilityRenderObject::addRadioButtonGroupMembers):
+        (WebCore::AccessibilityRenderObject::axObjectCache):
+        (WebCore::AccessibilityRenderObject::contentChanged):
+        (WebCore::AccessibilityRenderObject::addChildren):
+
 2010-07-27  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.
