@@ -167,9 +167,9 @@ middlebottom
           (childrenTransform identity)
           (children 1
             (GraphicsLayer
-              (position 0.00 -100.00)
+              (position 0.00 0.00)
               (anchor 0.50 0.50)
-              (bounds 110.00 2200.00)
+              (bounds 110.00 200.00)
               (opacity 1.00)
               (usingTiledLayer 0)
               (preserves3D 0)
@@ -225,7 +225,7 @@ middlebottom
             (GraphicsLayer
               (position 5.00 2058.00)
               (anchor 0.50 0.50)
-              (bounds 69.00 28.00)
+              (bounds 0.00 0.00)
               (opacity 1.00)
               (usingTiledLayer 0)
               (preserves3D 0)

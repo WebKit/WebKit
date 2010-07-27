@@ -78,9 +78,9 @@ middle
               (childrenTransform identity)
               (children 2
                 (GraphicsLayer
-                  (position -1.00 20.00)
+                  (position -980.00 20.00)
                   (anchor 0.50 0.50)
-                  (bounds 1070.00 100.00)
+                  (bounds 2050.00 100.00)
                   (opacity 1.00)
                   (usingTiledLayer 0)
                   (preserves3D 0)

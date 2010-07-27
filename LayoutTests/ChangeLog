@@ -1,3 +1,10 @@
+2010-07-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix a couple of test results after r64095.
+        
+        * compositing/geometry/limit-layer-bounds-clipping-ancestor-expected.txt:
+        * compositing/geometry/limit-layer-bounds-transformed-overflow-expected.txt:
+
 2010-07-26  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.
