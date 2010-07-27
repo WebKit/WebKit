@@ -1,3 +1,46 @@
+2010-07-27  Victor Wang  <victorw@chromium.org>
+
+        Unreviewed, rolling out r64104.
+        http://trac.webkit.org/changeset/64104
+        https://bugs.webkit.org/show_bug.cgi?id=40768
+
+        The patch causes chromium webkit socket laytest crashes on
+        windows randomly
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::addResource):
+        (WebCore::InspectorController::removeResource):
+        * inspector/InspectorController.h:
+        * inspector/InspectorResource.cpp:
+        (WebCore::InspectorResource::InspectorResource):
+        (WebCore::InspectorResource::updateScriptObject):
+        (WebCore::InspectorResource::cachedResource):
+        (WebCore::InspectorResource::type):
+        (WebCore::InspectorResource::resourceData):
+        * inspector/InspectorResource.h:
+        (WebCore::InspectorResource::):
+        (WebCore::InspectorResource::create):
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource.Type.toString):
+        (WebInspector.Resource.prototype.set type):
+        (WebInspector.Resource.prototype._mimeTypeIsConsistentWithType):
+        * inspector/front-end/ResourceView.js:
+        (WebInspector.ResourceView.prototype._refreshRequestHeaders):
+        (WebInspector.ResourceView.prototype._refreshResponseHeaders):
+        (WebInspector.ResourceView.prototype._refreshHeaders):
+        * inspector/front-end/inspector.css:
+        (.resources-category-scripts, .resources-category-xhr, .resources-category-fonts, .resources-category-other):
+        * inspector/front-end/inspector.js:
+        (WebInspector.loaded):
+        (WebInspector.updateResource):
+        * websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::WebSocketChannel):
+        (WebCore::WebSocketChannel::disconnect):
+        (WebCore::WebSocketChannel::didOpen):
+        (WebCore::WebSocketChannel::didClose):
+        (WebCore::WebSocketChannel::processBuffer):
+        * websockets/WebSocketChannel.h:
+
 2010-07-27  Andrei Popescu  <andreip@google.com>
 
         Reviewed by Jeremy Orlow.

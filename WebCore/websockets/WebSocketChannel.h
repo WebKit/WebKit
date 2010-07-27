@@ -84,10 +84,6 @@ namespace WebCore {
         bool processBuffer();
         void resumeTimerFired(Timer<WebSocketChannel>* timer);
 
-#if ENABLE(INSPECTOR)
-        unsigned long identifier();
-#endif
-
         ScriptExecutionContext* m_context;
         WebSocketChannelClient* m_client;
         WebSocketHandshake m_handshake;
@@ -99,10 +95,6 @@ namespace WebCore {
         bool m_suspended;
         bool m_closed;
         unsigned long m_unhandledBufferedAmount;
-
-#if ENABLE(INSPECTOR)
-        unsigned long m_identifier;
-#endif
     };
 
 } // namespace WebCore
