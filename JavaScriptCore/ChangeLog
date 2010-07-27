@@ -1,3 +1,15 @@
+2010-07-27  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] Make PLATFORM(CHROMIUM) and not OS(MAC) turn USE(GLES2_RENDERING) on
+        https://bugs.webkit.org/show_bug.cgi?id=43084
+
+        This turns USE(GLES2_RENDERING) on for chromium on windows/linux.  This causes no
+        change in behavior, that's all controlled by ENABLE() macros that are currently off.
+
+        * wtf/Platform.h:
+
 2010-07-23  Helder Correia  <heldercorreia@codeaurora.org>
 
         Reviewed by Darin Adler.
