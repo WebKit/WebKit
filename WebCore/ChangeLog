@@ -1,3 +1,21 @@
+2010-07-27  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Joseph Pecoraro.
+
+        Web Inspector: render network timing as gant chart in popover.
+
+        https://bugs.webkit.org/show_bug.cgi?id=43051
+
+        * inspector/InspectorResource.cpp:
+        (WebCore::InspectorResource::buildObjectForTiming):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype._showPopover):
+        * inspector/front-end/inspector.css:
+        (.resource-timing-row):
+        (.resource-timing-bar):
+        (.resource-timing-bar-title):
+        * inspector/front-end/utilities.js:
+
 2010-07-27  Victor Wang  <victorw@chromium.org>
 
         Unreviewed, rolling out r64104.

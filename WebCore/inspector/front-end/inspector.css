@@ -977,6 +977,22 @@ body.platform-linux .monospace, body.platform-linux .source-code {
     content: "\A";
 }
 
+.resource-timing-row {
+    position: relative;
+    height: 12px;
+}
+
+.resource-timing-bar {
+    position: absolute;
+    background-color: red;
+    border-left: 1px solid red;
+    opacity: 0.4;
+}
+
+.resource-timing-bar-title {
+    position: absolute;
+}
+
 #elements-content {
     display: block;
     overflow: auto;

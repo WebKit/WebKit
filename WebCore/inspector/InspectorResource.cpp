@@ -394,12 +394,17 @@ ScriptObject InspectorResource::buildObjectForTiming(InspectorFrontend* frontend
 {
     ScriptObject jsonObject = frontend->newScriptObject();
     jsonObject.set("requestTime", timing->requestTime);
-    jsonObject.set("proxyDuration", timing->proxyStart == -1 ? -1 : (timing->proxyEnd - timing->proxyStart) / 1000.0);
-    jsonObject.set("dnsDuration", timing->dnsStart == -1 ? -1 : (timing->dnsEnd - timing->dnsStart) / 1000.0);
-    jsonObject.set("connectDuration", timing->connectStart == -1 ? -1 : (timing->connectEnd - timing->connectStart) / 1000.0);
-    jsonObject.set("sslDuration", timing->sslStart == -1 ? -1 : (timing->sslEnd - timing->sslStart) / 1000.0);
-    jsonObject.set("sendDuration", (timing->sendEnd - timing->sendStart) / 1000.0);
-    jsonObject.set("waitDuration", (timing->receiveHeadersEnd - timing->sendEnd)  / 1000.0);
+    jsonObject.set("proxyStart", timing->proxyStart);
+    jsonObject.set("proxyEnd", timing->proxyEnd);
+    jsonObject.set("dnsStart", timing->dnsStart);
+    jsonObject.set("dnsEnd", timing->dnsEnd);
+    jsonObject.set("connectStart", timing->connectStart);
+    jsonObject.set("connectEnd", timing->connectEnd);
+    jsonObject.set("sslStart", timing->sslStart);
+    jsonObject.set("sslEnd", timing->sslEnd);
+    jsonObject.set("sendStart", timing->sendStart);
+    jsonObject.set("sendEnd", timing->sendEnd);
+    jsonObject.set("receiveHeadersEnd", timing->receiveHeadersEnd);
     return jsonObject;
 }
 

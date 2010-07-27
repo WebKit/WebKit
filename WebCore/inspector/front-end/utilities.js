@@ -639,6 +639,11 @@ function parentNode(node)
     return node.parentNode;
 }
 
+Number.millisToString = function(ms, formatterFunction, higherResolution)
+{
+    return Number.secondsToString(ms / 1000, formatterFunction, higherResolution);
+}
+
 Number.secondsToString = function(seconds, formatterFunction, higherResolution)
 {
     if (!formatterFunction)
