@@ -31,6 +31,8 @@
 #include "config.h"
 #include "SQLTransactionClient.h"
 
+#if ENABLE(DATABASE)
+
 #include "AbstractDatabase.h"
 #include "DatabaseObserver.h"
 #include "ScriptExecutionContext.h"
@@ -83,3 +85,5 @@ bool SQLTransactionClient::didExceedQuota(AbstractDatabase* database)
 }
 
 }
+
+#endif // ENABLE(DATABASE)

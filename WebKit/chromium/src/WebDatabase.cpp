@@ -40,6 +40,18 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
+#if !ENABLE(DATABASE)
+namespace WebCore {
+class AbstractDatabase {
+public:
+    String stringIdentifier() const { return String(); }
+    String displayName() const { return String(); }
+    unsigned long long estimatedSize() const { return 0; }
+    SecurityOrigin* securityOrigin() const { return 0; }
+};
+}
+#endif // !ENABLE(DATABASE)
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -84,17 +96,21 @@ void WebDatabase::updateDatabaseSize(
     const WebString& originIdentifier, const WebString& databaseName,
     unsigned long long databaseSize, unsigned long long spaceAvailable)
 {
+#if ENABLE(DATABASE)
     WebCore::QuotaTracker::instance().updateDatabaseSizeAndSpaceAvailableToOrigin(
         originIdentifier, databaseName, databaseSize, spaceAvailable);
+#endif // ENABLE(DATABASE)
 }
 
 void WebDatabase::closeDatabaseImmediately(const WebString& originIdentifier, const WebString& databaseName)
 {
+#if ENABLE(DATABASE)
     HashSet<RefPtr<AbstractDatabase> > databaseHandles;
     RefPtr<SecurityOrigin> origin = SecurityOrigin::createFromDatabaseIdentifier(originIdentifier);
     DatabaseTracker::tracker().getOpenDatabases(origin.get(), databaseName, &databaseHandles);
     for (HashSet<RefPtr<AbstractDatabase> >::iterator it = databaseHandles.begin(); it != databaseHandles.end(); ++it)
         it->get()->closeImmediately();
+#endif // ENABLE(DATABASE)
 }
 
 WebDatabase::WebDatabase(const AbstractDatabase* database)

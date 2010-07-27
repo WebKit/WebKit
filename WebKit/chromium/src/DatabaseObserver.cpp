@@ -31,6 +31,8 @@
 #include "config.h"
 #include "DatabaseObserver.h"
 
+#if ENABLE(DATABASE)
+
 #include "AbstractDatabase.h"
 #include "Document.h"
 #include "ScriptExecutionContext.h"
@@ -84,3 +86,5 @@ void DatabaseObserver::databaseClosed(AbstractDatabase* database)
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(DATABASE)

@@ -741,9 +741,7 @@ module window {
 #endif
 #endif
 
-#if defined(ENABLE_DATABASE)
-        attribute SQLExceptionConstructor SQLException;
-#endif
+        attribute [Conditional=DATABASE] SQLExceptionConstructor SQLException;
 
         attribute [Conditional=TOUCH_EVENTS] TouchEventConstructor TouchEvent;
 

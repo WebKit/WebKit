@@ -31,8 +31,9 @@
 #include "config.h"
 #include "QuotaTracker.h"
 
+#if ENABLE(DATABASE)
+
 #include <wtf/StdLibExtras.h>
-#include <wtf/text/CString.h>
 
 namespace WebCore {
 
@@ -67,3 +68,5 @@ void QuotaTracker::updateDatabaseSizeAndSpaceAvailableToOrigin(
 }
 
 }
+
+#endif // ENABLE(DATABASE)

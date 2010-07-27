@@ -155,8 +155,7 @@ namespace WebCore {
         // Geolocation --------------------------------------------------------
         static GeolocationServiceBridge* createGeolocationServiceBridge(GeolocationServiceChromium*);
 
-        // HTML5 DB -----------------------------------------------------------
-#if ENABLE(DATABASE)
+        // Databases ----------------------------------------------------------
         // Returns a handle to the DB file and ooptionally a handle to its containing directory
         static PlatformFileHandle databaseOpenFile(const String& vfsFleName, int desiredFlags);
         // Returns a SQLite code (SQLITE_OK = 0, on success)
@@ -165,7 +164,6 @@ namespace WebCore {
         static long databaseGetFileAttributes(const String& vfsFileName);
         // Returns the size of the DB file
         static long long databaseGetFileSize(const String& vfsFileName);
-#endif
 
         // IndexedDB ----------------------------------------------------------
         static PassRefPtr<IndexedDatabase> indexedDatabase();

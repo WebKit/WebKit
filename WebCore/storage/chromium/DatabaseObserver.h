@@ -31,6 +31,8 @@
 #ifndef DatabaseObserver_h
 #define DatabaseObserver_h
 
+#if ENABLE(DATABASE)
+
 namespace WebCore {
 
 class AbstractDatabase;
@@ -48,5 +50,7 @@ public:
 };
 
 }
+
+#endif // ENABLE(DATABASE)
 
 #endif // DatabaseObserver_h

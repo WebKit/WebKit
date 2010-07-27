@@ -1,3 +1,26 @@
+2010-07-27  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by David Levin.
+
+        Move all WebSQLDatabases-specific code behind #if ENABLE(DATABASE).
+        https://bugs.webkit.org/show_bug.cgi?id=43035
+
+        Make Chromium compile with ENABLE_DATABASE=0. The #ifdefs in
+        DatabaseAuthorizer and ChromiumBridge are removed, because they're
+        used by non-HTML5 DBs too (the classes in WebCore/platform/sql/),
+        which are used by other features too. So they need to be compiled
+        in even if HTML5 DBs are disabled.
+
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        * page/DOMWindow.idl:
+        * platform/chromium/ChromiumBridge.h:
+        * storage/DatabaseAuthorizer.cpp:
+        * storage/chromium/DatabaseObserver.h:
+        * storage/chromium/DatabaseTrackerChromium.cpp:
+        * storage/chromium/QuotaTracker.cpp:
+        * storage/chromium/QuotaTracker.h:
+        * storage/chromium/SQLTransactionClientChromium.cpp:
+
 2010-07-27  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by David Kilzer.

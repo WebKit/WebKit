@@ -31,6 +31,8 @@
 #include "config.h"
 #include "DatabaseTracker.h"
 
+#if ENABLE(DATABASE)
+
 #include "AbstractDatabase.h"
 #include "DatabaseObserver.h"
 #include "QuotaTracker.h"
@@ -173,3 +175,5 @@ unsigned long long DatabaseTracker::getMaxSizeForDatabase(const AbstractDatabase
 }
 
 }
+
+#endif // ENABLE(DATABASE)

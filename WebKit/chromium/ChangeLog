@@ -1,3 +1,23 @@
+2010-07-27  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by David Levin.
+
+        Move all WebSQLDatabases-specific code behind #if ENABLE(DATABASE).
+        https://bugs.webkit.org/show_bug.cgi?id=43035
+
+        Make Chromium compile with ENABLE_DATABASE=0.
+
+        * src/ChromiumBridge.cpp:
+        (WebCore::ChromiumBridge::databaseGetFileSize):
+        * src/DatabaseObserver.cpp:
+        * src/WebDatabase.cpp:
+        (WebCore::AbstractDatabase::stringIdentifier):
+        (WebCore::AbstractDatabase::displayName):
+        (WebCore::AbstractDatabase::estimatedSize):
+        (WebCore::AbstractDatabase::securityOrigin):
+        (WebKit::WebDatabase::updateDatabaseSize):
+        (WebKit::WebDatabase::closeDatabaseImmediately):
+
 2010-07-27  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.
