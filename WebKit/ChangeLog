@@ -1,3 +1,16 @@
+2010-07-26  Rafael Antognolli  <antognolli@profusion.mobi>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Move CMakeListsEfl.txt to WebKit/efl/
+        https://bugs.webkit.org/show_bug.cgi?id=43002
+
+        This should reduce the noise in WebKit/ChangeLog that comes from EFL
+        port. Most of the changes on EFL port should be logged in
+        WebKit/efl/ChangeLog.
+
+        * CMakeLists.txt: Just change the path from where to include the file.
+
 2010-07-23  Rafael Antognolli  <antognolli@profusion.mobi>
 
         Reviewed by Antonio Gomes.
