@@ -1,3 +1,26 @@
+2010-07-26  Dominic Mazzoni  <dmazzoni@google.com>
+
+        Reviewed by Chris Fleizach.
+
+        Add accessor to get the doctype of a WebDocument, needed to
+        implement Windows accessibility.
+
+        https://bugs.webkit.org/show_bug.cgi?id=43003
+        
+        * WebKit.gyp:
+        * public/WebDocument.h:
+        * public/WebDocumentType.h: Added.
+        (WebKit::WebDocumentType::WebDocumentType):
+        (WebKit::WebDocumentType::operator=):
+        (WebKit::WebDocumentType::assign):
+        * src/WebDocument.cpp:
+        (WebKit::WebDocument::doctype):
+        * src/WebDocumentType.cpp: Added.
+        (WebKit::WebDocumentType::name):
+        (WebKit::WebDocumentType::WebDocumentType):
+        (WebKit::WebDocumentType::operator=):
+        (WebKit::WebDocumentType::operator PassRefPtr<DocumentType>):
+
 2010-07-26  Satish Sampath  <satish@chromium.org>
 
         Reviewed by Steve Block.
