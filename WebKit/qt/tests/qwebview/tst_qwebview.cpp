@@ -267,23 +267,36 @@ void tst_QWebView::focusInputTypes()
 
     // 'password' field
     webView->fireMouseClick(QPoint(20, 60));
-    QVERIFY(webView->inputMethodHints() & Qt::ImhHiddenText);
+    QVERIFY(webView->inputMethodHints() == Qt::ImhHiddenText);
 
     // 'tel' field
     webView->fireMouseClick(QPoint(20, 110));
-    QVERIFY(webView->inputMethodHints() & Qt::ImhDialableCharactersOnly);
+    QVERIFY(webView->inputMethodHints() == Qt::ImhDialableCharactersOnly);
 
     // 'number' field
     webView->fireMouseClick(QPoint(20, 160));
-    QVERIFY(webView->inputMethodHints() & Qt::ImhDigitsOnly);
+    QVERIFY(webView->inputMethodHints() == Qt::ImhDigitsOnly);
 
     // 'email' field
     webView->fireMouseClick(QPoint(20, 210));
-    QVERIFY(webView->inputMethodHints() & Qt::ImhEmailCharactersOnly);
+    QVERIFY(webView->inputMethodHints() == Qt::ImhEmailCharactersOnly);
 
     // 'url' field
     webView->fireMouseClick(QPoint(20, 260));
-    QVERIFY(webView->inputMethodHints() & Qt::ImhUrlCharactersOnly);
+    QVERIFY(webView->inputMethodHints() == Qt::ImhUrlCharactersOnly);
+
+    // 'password' field
+    webView->fireMouseClick(QPoint(20, 60));
+    QVERIFY(webView->inputMethodHints() == Qt::ImhHiddenText);
+
+    // 'text' type
+    webView->fireMouseClick(QPoint(20, 10));
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6) || defined(Q_OS_SYMBIAN)
+    QVERIFY(webView->inputMethodHints() & Qt::ImhNoAutoUppercase);
+    QVERIFY(webView->inputMethodHints() & Qt::ImhNoPredictiveText);
+#else
+    QVERIFY(webView->inputMethodHints() == Qt::ImhNone);
+#endif
 
     delete webView;
 

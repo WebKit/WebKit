@@ -603,20 +603,18 @@ void EditorClientQt::setInputMethodState(bool active)
                 inputElement = static_cast<HTMLInputElement*>(frame->document()->focusedNode());
 
         if (inputElement) {
-            if (!active) {
-                // Setting the Qt::WA_InputMethodEnabled attribute true and Qt::ImhHiddenText flag
-                // for password fields. The Qt platform is responsible for determining which widget
-                // will receive input method events for password fields.
-                active = inputElement->isPasswordField();
-                webPageClient->setInputMethodHint(Qt::ImhHiddenText, active);
-            } else {
-                // Set input method hints for "number", "tel", "email", and "url" input elements.
-                webPageClient->setInputMethodHint(Qt::ImhDialableCharactersOnly, inputElement->isTelephoneField());
-                webPageClient->setInputMethodHint(Qt::ImhDigitsOnly, inputElement->isNumberField());
-                webPageClient->setInputMethodHint(Qt::ImhEmailCharactersOnly, inputElement->isEmailField());
-                webPageClient->setInputMethodHint(Qt::ImhUrlCharactersOnly, inputElement->isUrlField());
-                webPageClient->setInputMethodHint(Qt::ImhHiddenText, inputElement->isPasswordField());
-            }
+            // Set input method hints for "number", "tel", "email", "url" and "password" input elements.
+            webPageClient->setInputMethodHint(Qt::ImhDialableCharactersOnly, inputElement->isTelephoneField());
+            webPageClient->setInputMethodHint(Qt::ImhDigitsOnly, inputElement->isNumberField());
+            webPageClient->setInputMethodHint(Qt::ImhEmailCharactersOnly, inputElement->isEmailField());
+            webPageClient->setInputMethodHint(Qt::ImhUrlCharactersOnly, inputElement->isUrlField());
+            // Setting the Qt::WA_InputMethodEnabled attribute true and Qt::ImhHiddenText flag
+            // for password fields. The Qt platform is responsible for determining which widget
+            // will receive input method events for password fields.
+            bool isPasswordField = inputElement->isPasswordField();
+            webPageClient->setInputMethodHint(Qt::ImhHiddenText, isPasswordField);
+            if (isPasswordField)
+                active = true;
         }
 
 #if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6) || defined(Q_OS_SYMBIAN)
