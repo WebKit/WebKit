@@ -44,7 +44,15 @@
 #include "SkShader.h"
 #include "SkDashPathEffect.h"
 
+#if USE(GLES2_RENDERING)
+#include "GLES2Canvas.h"
+#include "GLES2Context.h"
+#include "GLES2Texture.h"
+#include <GLES2/gl2.h>
+#endif
+
 #include <wtf/MathExtras.h>
+#include <wtf/OwnArrayPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore 
@@ -198,6 +206,11 @@ PlatformContextSkia::PlatformContextSkia(skia::PlatformCanvas* canvas)
     : m_canvas(canvas)
 #if OS(WINDOWS)
     , m_drawingToImageBuffer(false)
+#endif
+#if USE(GLES2_RENDERING)
+    , m_useGPU(false)
+    , m_gpuCanvas(0)
+    , m_backingStoreState(None)
 #endif
 {
     m_stateStack.append(State());
@@ -661,3 +674,117 @@ void PlatformContextSkia::applyAntiAliasedClipPaths(WTF::Vector<SkPath>& paths)
 
     m_canvas->restore();
 }
+
+#if USE(GLES2_RENDERING)
+void PlatformContextSkia::setGLES2Context(WebCore::GLES2Context* context, const WebCore::IntSize& size)
+{
+    m_useGPU = true;
+    m_gpuCanvas = new WebCore::GLES2Canvas(context, size);
+}
+
+void PlatformContextSkia::preSoftwareDraw() const
+{
+    if (!m_useGPU)
+        return;
+
+    if (m_backingStoreState == Hardware) {
+        // Depending on the blend mode we need to do one of a few things:
+
+        // * For associative blend modes, we can draw into an initially empty
+        // canvas and then composite the results on top of the hardware drawn
+        // results before the next hardware draw or swapBuffers().
+
+        // * For non-associative blend modes we have to do a readback and then
+        // software draw.  When we re-upload in this mode we have to blow
+        // away whatever is in the hardware backing store (do a copy instead
+        // of a compositing operation).
+
+        if (m_state->m_xferMode == SkXfermode::kSrcOver_Mode) {
+            // Last drawn on hardware; clear out the canvas.
+            m_canvas->save();
+            SkRect bounds = {0, 0, m_canvas->getDevice()->width(), m_canvas->getDevice()->height()};
+            m_canvas->clipRect(bounds, SkRegion::kReplace_Op);
+            m_canvas->drawARGB(0, 0, 0, 0, SkXfermode::kClear_Mode);
+            m_canvas->restore();
+            // Start compositing into the empty canvas.
+            m_backingStoreState = Mixed;
+        } else {
+            readbackHardwareToSoftware();
+            // When we switch back to hardware copy the results, don't composite.
+            m_backingStoreState = Software;
+        }
+    } else if (m_backingStoreState == Mixed) {
+        if (m_state->m_xferMode != SkXfermode::kSrcOver_Mode) {
+            // Have to composite our currently software drawn data...
+            uploadSoftwareToHardware(WebCore::CompositeSourceOver);
+            // then do a readback so we can hardware draw stuff.
+            readbackHardwareToSoftware();
+            m_backingStoreState = Software;
+        }
+    }
+}
+
+void PlatformContextSkia::preHardwareDraw() const
+{
+    if (!m_useGPU)
+        return;
+
+    if (m_backingStoreState == Software) {
+        // Last drawn in software; upload everything we've drawn.
+        uploadSoftwareToHardware(WebCore::CompositeCopy);
+    } else if (m_backingStoreState == Mixed) {
+        // Stuff in software/hardware, composite the software stuff on top of
+        // the hardware stuff.
+        uploadSoftwareToHardware(WebCore::CompositeSourceOver);
+    }
+    m_backingStoreState = Hardware;
+}
+
+void PlatformContextSkia::syncSoftwareCanvas() const
+{
+    if (!m_useGPU)
+        return;
+
+    if (m_backingStoreState == Hardware)
+        readbackHardwareToSoftware();
+    else if (m_backingStoreState == Mixed) {
+        // Have to composite our currently software drawn data..
+        uploadSoftwareToHardware(WebCore::CompositeSourceOver);
+        // then do a readback.
+        readbackHardwareToSoftware();
+        m_backingStoreState = Software;
+    }
+    m_backingStoreState = Software;
+}
+
+void PlatformContextSkia::uploadSoftwareToHardware(WebCore::CompositeOperator op) const
+{
+    const SkBitmap& bitmap = m_canvas->getDevice()->accessBitmap(false);
+    SkAutoLockPixels lock(bitmap);
+    m_gpuCanvas->gles2Context()->makeCurrent();
+    // FIXME: Keep a texture around for this rather than constantly creating/destroying one.
+    RefPtr<WebCore::GLES2Texture> texture = WebCore::GLES2Texture::create(WebCore::GLES2Texture::BGRA8, bitmap.width(), bitmap.height());
+    texture->load(bitmap.getPixels());
+    WebCore::IntRect rect(0, 0, bitmap.width(), bitmap.height());
+    gpuCanvas()->drawTexturedRect(texture.get(), rect, rect, WebCore::DeviceColorSpace, op);
+}
+
+void PlatformContextSkia::readbackHardwareToSoftware() const
+{
+    const SkBitmap& bitmap = m_canvas->getDevice()->accessBitmap(true);
+    SkAutoLockPixels lock(bitmap);
+    m_gpuCanvas->gles2Context()->makeCurrent();
+    int width = bitmap.width(), height = bitmap.height();
+    OwnArrayPtr<uint32_t> buf(new uint32_t[width]);
+    // Flips the image vertically.
+    for (int y = 0; y < height; ++y) {
+        uint32_t* pixels = bitmap.getAddr32(0, y);
+        glReadPixels(0, height - 1 - y, width, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+        for (int i = 0; i < width; ++i) {
+            uint32_t pixel = pixels[i];
+            // Swizzles from RGBA -> BGRA.
+            pixels[i] = pixel & 0xFF00FF00 | ((pixel & 0x00FF0000) >> 16) | ((pixel & 0x000000FF) << 16);
+        }
+    }
+}
+#endif

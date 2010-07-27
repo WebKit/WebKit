@@ -73,7 +73,7 @@ struct GLES2Canvas::State {
     AffineTransform m_ctm;
 };
 
-GLES2Canvas::GLES2Canvas(GLES2Context* context, int width, int height)
+GLES2Canvas::GLES2Canvas(GLES2Context* context, const IntSize& size)
     : m_gles2Context(context)
     , m_quadVertices(0)
     , m_quadIndices(0)
@@ -87,17 +87,15 @@ GLES2Canvas::GLES2Canvas(GLES2Context* context, int width, int height)
     , m_texSamplerLocation(-1)
     , m_texAlphaLocation(-1)
     , m_texPositionLocation(-1)
-    , m_width(width)
-    , m_height(height)
     , m_state(0)
 {
     m_flipMatrix.translate(-1.0f, 1.0f);
-    m_flipMatrix.scale(2.0f / width, -2.0f / height);
+    m_flipMatrix.scale(2.0f / size.width(), -2.0f / size.height());
 
     m_gles2Context->makeCurrent();
-    m_gles2Context->resizeOffscreenContent(IntSize(width, height));
+    m_gles2Context->resizeOffscreenContent(size);
     m_gles2Context->swapBuffers();
-    glViewport(0, 0, width, height);
+    glViewport(0, 0, size.width(), size.height());
 
     m_stateStack.append(State());
     m_state = &m_stateStack.last();

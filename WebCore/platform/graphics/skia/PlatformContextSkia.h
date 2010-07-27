@@ -41,6 +41,14 @@
 #include "SkPaint.h"
 #include "SkPath.h"
 
+#if USE(GLES2_RENDERING)
+namespace WebCore {
+enum CompositeOperator;
+class GLES2Canvas;
+class GLES2Context;
+}
+#endif
+
 #include <wtf/Vector.h>
 
 // This class holds the platform-specific state for GraphicsContext. We put
@@ -174,6 +182,24 @@ public:
     void setImageResamplingHint(const WebCore::IntSize& srcSize, const WebCore::FloatSize& dstSize);
     void clearImageResamplingHint();
     bool hasImageResamplingHint() const;
+#if USE(GLES2_RENDERING)
+    bool useGPU() { return m_useGPU; }
+    void setGLES2Context(WebCore::GLES2Context*, const WebCore::IntSize&);
+    WebCore::GLES2Canvas* gpuCanvas() const { return m_gpuCanvas.get(); }
+#endif
+
+#if USE(GLES2_RENDERING)
+    // Call these before making a call that manipulates the underlying
+    // skia::PlatformCanvas or WebCore::GLES2Canvas
+    void preSoftwareDraw() const;
+    void preHardwareDraw() const;
+    // Call to force the skia::PlatformCanvas to contain all rendering results.
+    void syncSoftwareCanvas() const;
+#else
+    void preSoftwareDraw() const {}
+    void preHardwareDraw() const {}
+    void syncSoftwareCanvas() const {}
+#endif
 
 private:
 #if OS(LINUX) || OS(WINDOWS)
@@ -182,6 +208,11 @@ private:
     void applyClipFromImage(const WebCore::FloatRect&, const SkBitmap&);
 #endif
     void applyAntiAliasedClipPaths(WTF::Vector<SkPath>& paths);
+
+#if USE(GLES2_RENDERING)
+    void uploadSoftwareToHardware(WebCore::CompositeOperator) const;
+    void readbackHardwareToSoftware() const;
+#endif
 
     // Defines drawing style.
     struct State;
@@ -206,6 +237,11 @@ private:
 #if OS(WINDOWS)
     bool m_drawingToImageBuffer;
 #endif
+#if USE(GLES2_RENDERING)
+    bool m_useGPU;
+    OwnPtr<WebCore::GLES2Canvas> m_gpuCanvas;
+    mutable enum { None, Software, Mixed, Hardware } m_backingStoreState;
+#endif
 };
 
-#endif  // PlatformContextSkia_h
+#endif // PlatformContextSkia_h

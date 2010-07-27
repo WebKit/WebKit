@@ -53,7 +53,7 @@ typedef HashMap<NativeImagePtr, RefPtr<GLES2Texture> > TextureHashMap;
 
 class GLES2Canvas : public Noncopyable {
 public:
-    GLES2Canvas(GLES2Context* context, int width, int height);
+    GLES2Canvas(GLES2Context*, const IntSize&);
     ~GLES2Canvas();
 
     void fillRect(const FloatRect&, const Color&, ColorSpace);
@@ -103,8 +103,6 @@ private:
     int m_texSamplerLocation;
     int m_texAlphaLocation;
     int m_texPositionLocation;
-    int m_width;
-    int m_height;
     AffineTransform m_flipMatrix;
     TextureHashMap m_textures;
     CompositeOperator m_lastCompositeOp; // This is the one last set, not necessarily the one in the state stack.

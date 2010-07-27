@@ -1,3 +1,36 @@
+2010-07-27  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] Let PlatformContextSkia draw to a GLES2Canvas in addition to an SkCanvas
+        https://bugs.webkit.org/show_bug.cgi?id=43070
+
+        This adds a GLES2Canvas as drawing surface to PlatformContextSkia and lets callers
+        issue draw commands to either.  The PlatformContextSkia keeps track of where
+        rendering results are being accumulated and can blend the hardware and software
+        backing stores into each other when necessary.
+
+        Still just plumbing, no functionality change.
+
+        * platform/graphics/chromium/GLES2Canvas.cpp:
+        (WebCore::GLES2Canvas::GLES2Canvas):
+        * platform/graphics/chromium/GLES2Canvas.h:
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (PlatformContextSkia::PlatformContextSkia):
+        (PlatformContextSkia::setGLES2Context):
+        (PlatformContextSkia::preSoftwareDraw):
+        (PlatformContextSkia::preHardwareDraw):
+        (PlatformContextSkia::forceToSoftware):
+        (PlatformContextSkia::uploadSoftwareToHardware):
+        (PlatformContextSkia::readbackHardwareToSoftware):
+        * platform/graphics/skia/PlatformContextSkia.h:
+        (PlatformContextSkia::useGPU):
+        (PlatformContextSkia::gpuCanvas):
+        (PlatformContextSkia::preSoftwareDraw):
+        (PlatformContextSkia::preHardwareDraw):
+        (PlatformContextSkia::forceToSoftware):
+        (PlatformContextSkia::):
+
 2010-07-27  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler.
