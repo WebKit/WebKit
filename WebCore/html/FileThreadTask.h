@@ -57,10 +57,11 @@ template<typename T> struct FileThreadTaskTraits<PassOwnPtr<T> > {
     typedef PassOwnPtr<T> ParamType;
 };
 
+template<typename R>
 class FileThreadTask0 : public FileThread::Task {
 public:
-    typedef void (FileStream::*Method)();
-    typedef FileThreadTask0 FileThreadTask;
+    typedef R (FileStream::*Method)();
+    typedef FileThreadTask0<R> FileThreadTask;
 
     static PassOwnPtr<FileThreadTask> create(FileStream* stream, Method method)
     {
@@ -83,11 +84,11 @@ private:
     Method m_method;
 };
 
-template<typename P1, typename MP1>
+template<typename R, typename P1, typename MP1>
 class FileThreadTask1 : public FileThread::Task {
 public:
-    typedef void (FileStream::*Method)(MP1);
-    typedef FileThreadTask1<P1, MP1> FileThreadTask;
+    typedef R (FileStream::*Method)(MP1);
+    typedef FileThreadTask1<R, P1, MP1> FileThreadTask;
     typedef typename FileThreadTaskTraits<P1>::ParamType Param1;
 
     static PassOwnPtr<FileThreadTask> create(FileStream* stream, Method method, Param1 parameter1)
@@ -113,11 +114,11 @@ private:
     P1 m_parameter1;
 };
 
-template<typename P1, typename MP1, typename P2, typename MP2>
+template<typename R, typename P1, typename MP1, typename P2, typename MP2>
 class FileThreadTask2 : public FileThread::Task {
 public:
-    typedef void (FileStream::*Method)(MP1, MP2);
-    typedef FileThreadTask2<P1, MP1, P2, MP2> FileThreadTask;
+    typedef R (FileStream::*Method)(MP1, MP2);
+    typedef FileThreadTask2<R, P1, MP1, P2, MP2> FileThreadTask;
     typedef typename FileThreadTaskTraits<P1>::ParamType Param1;
     typedef typename FileThreadTaskTraits<P2>::ParamType Param2;
 
@@ -146,11 +147,11 @@ private:
     P2 m_parameter2;
 };
 
-template<typename P1, typename MP1, typename P2, typename MP2, typename P3, typename MP3>
+template<typename R, typename P1, typename MP1, typename P2, typename MP2, typename P3, typename MP3>
 class FileThreadTask3 : public FileThread::Task {
 public:
-    typedef void (FileStream::*Method)(MP1, MP2, MP3);
-    typedef FileThreadTask3<P1, MP1, P2, MP2, P3, MP3> FileThreadTask;
+    typedef R (FileStream::*Method)(MP1, MP2, MP3);
+    typedef FileThreadTask3<R, P1, MP1, P2, MP2, P3, MP3> FileThreadTask;
     typedef typename FileThreadTaskTraits<P1>::ParamType Param1;
     typedef typename FileThreadTaskTraits<P2>::ParamType Param2;
     typedef typename FileThreadTaskTraits<P3>::ParamType Param3;
@@ -182,54 +183,56 @@ private:
     P3 m_parameter3;
 };
 
+template<typename R>
 PassOwnPtr<FileThread::Task> createFileThreadTask(
     FileStream* const callee,
-    void (FileStream::*method)());
+    R (FileStream::*method)());
 
+template<typename R>
 PassOwnPtr<FileThread::Task> createFileThreadTask(
     FileStream* const callee,
-    void (FileStream::*method)())
+    R (FileStream::*method)())
 {
-    return FileThreadTask0::create(
+    return FileThreadTask0<R>::create(
         callee,
         method);
 }
 
-template<typename P1, typename MP1>
+template<typename R, typename P1, typename MP1>
 PassOwnPtr<FileThread::Task> createFileThreadTask(
     FileStream* const callee,
-    void (FileStream::*method)(MP1),
+    R (FileStream::*method)(MP1),
     const P1& parameter1)
 {
-    return FileThreadTask1<typename CrossThreadCopier<P1>::Type, MP1>::create(
+    return FileThreadTask1<R, typename CrossThreadCopier<P1>::Type, MP1>::create(
         callee,
         method,
         CrossThreadCopier<P1>::copy(parameter1));
 }
 
-template<typename P1, typename MP1, typename P2, typename MP2>
+template<typename R, typename P1, typename MP1, typename P2, typename MP2>
 PassOwnPtr<FileThread::Task> createFileThreadTask(
     FileStream* const callee,
-    void (FileStream::*method)(MP1, MP2),
+    R (FileStream::*method)(MP1, MP2),
     const P1& parameter1,
     const P2& parameter2)
 {
-    return FileThreadTask2<typename CrossThreadCopier<P1>::Type, MP1, typename CrossThreadCopier<P2>::Type, MP2>::create(
+    return FileThreadTask2<R, typename CrossThreadCopier<P1>::Type, MP1, typename CrossThreadCopier<P2>::Type, MP2>::create(
         callee,
         method,
         CrossThreadCopier<P1>::copy(parameter1),
         CrossThreadCopier<P2>::copy(parameter2));
 }
 
-template<typename P1, typename MP1, typename P2, typename MP2, typename P3, typename MP3>
+template<typename R, typename P1, typename MP1, typename P2, typename MP2, typename P3, typename MP3>
 PassOwnPtr<FileThread::Task> createFileThreadTask(
     FileStream* const callee,
-    void (FileStream::*method)(MP1, MP2, MP3),
+    R (FileStream::*method)(MP1, MP2, MP3),
     const P1& parameter1,
     const P2& parameter2,
     const P3& parameter3)
 {
-    return FileThreadTask3<typename CrossThreadCopier<P1>::Type, MP1, typename CrossThreadCopier<P2>::Type, MP2, typename CrossThreadCopier<P3>::Type, MP3>::create(
+    return FileThreadTask3<R, typename CrossThreadCopier<P1>::Type, MP1, typename CrossThreadCopier<P2>::Type, MP2, typename CrossThreadCopier<P3>::Type, MP3>::create(
         callee,
         method,
         CrossThreadCopier<P1>::copy(parameter1),

@@ -1,3 +1,16 @@
+2010-07-27  Jian Li  <jianli@chromium.org>
+
+        Reviewed by David Levin.
+
+        Enhance FileThreadTask to support return type.
+        https://bugs.webkit.org/show_bug.cgi?id=43078
+
+        This is needed to support synchronous calls of FileStream methods in
+        addition to asynchronous calls via FileThreadTask.
+
+        * html/FileThreadTask.h:
+        (WebCore::createFileThreadTask):
+
 2010-07-27  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Darin Fisher.
