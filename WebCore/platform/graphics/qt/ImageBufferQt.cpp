@@ -237,6 +237,20 @@ PassRefPtr<ImageData> ImageBuffer::getPremultipliedImageData(const IntRect& rect
     return getImageData<Premultiplied>(rect, m_data, m_size);
 }
 
+static inline unsigned int premultiply(unsigned int x)
+{
+    unsigned int a = x >> 24;
+    unsigned int t = (x & 0xff00ff) * a;
+    t = (t + ((t >> 8) & 0xff00ff) + 0x800080) >> 8;
+    t &= 0xff00ff;
+
+    x = ((x >> 8) & 0xff) * a;
+    x = (x + ((x >> 8) & 0xff) + 0x80);
+    x &= 0xff00;
+    x |= t | (a << 24);
+    return x;
+}
+
 template <Multiply multiplied>
 void putImageData(ImageData*& source, const IntRect& sourceRect, const IntPoint& destPoint, ImageBufferData& data, const IntSize& size)
 {
@@ -268,22 +282,33 @@ void putImageData(ImageData*& source, const IntRect& sourceRect, const IntPoint&
 
     unsigned srcBytesPerRow = 4 * source->width();
 
-    QRect destRect(destx, desty, endx - destx, endy - desty);
+    // NOTE: For unmultiplied input data, we do the premultiplication below.
+    QImage image(numColumns, numRows, QImage::Format_ARGB32_Premultiplied);
+    uchar* bits = image.bits();
+    const int bytesPerLine = image.bytesPerLine();
 
-    QImage::Format format = multiplied == Unmultiplied ? QImage::Format_ARGB32 : QImage::Format_ARGB32_Premultiplied;
-    QImage image(destRect.size(), format);
+    const quint32* srcScanLine = reinterpret_cast<const quint32*>(source->data()->data()->data() + originy * srcBytesPerRow + originx * 4);
 
-    unsigned char* srcRows = source->data()->data()->data() + originy * srcBytesPerRow + originx * 4;
-    for (int y = 0; y < numRows; ++y) {
-        quint32* scanLine = reinterpret_cast<quint32*>(image.scanLine(y));
-        for (int x = 0; x < numColumns; x++) {
-            // ImageData stores the pixels in RGBA while QImage is ARGB
-            quint32 pixel = reinterpret_cast<quint32*>(srcRows + 4 * x)[0];
-            pixel = ((pixel << 16) & 0xff0000) | ((pixel >> 16) & 0xff) | (pixel & 0xff00ff00);
-            scanLine[x] = pixel;
+    if (multiplied == Unmultiplied) {
+        for (int y = 0; y < numRows; ++y) {
+            quint32* destScanLine = reinterpret_cast<quint32*>(bits + y * bytesPerLine);
+            for (int x = 0; x < numColumns; x++) {
+                // Premultiply and convert BGR to RGB.
+                quint32 pixel = srcScanLine[x];
+                destScanLine[x] = premultiply(((pixel << 16) & 0xff0000) | ((pixel >> 16) & 0xff) | (pixel & 0xff00ff00));
+            }
+            srcScanLine += source->width();
         }
-
-        srcRows += srcBytesPerRow;
+    } else {
+        for (int y = 0; y < numRows; ++y) {
+            quint32* destScanLine = reinterpret_cast<quint32*>(bits + y * bytesPerLine);
+            for (int x = 0; x < numColumns; x++) {
+                // Convert BGR to RGB.
+                quint32 pixel = srcScanLine[x];
+                destScanLine[x] = ((pixel << 16) & 0xff0000) | ((pixel >> 16) & 0xff) | (pixel & 0xff00ff00);
+            }
+            srcScanLine += source->width();
+        }
     }
 
     bool isPainting = data.m_painter->isActive();
@@ -299,7 +324,7 @@ void putImageData(ImageData*& source, const IntRect& sourceRect, const IntPoint&
     }
 
     data.m_painter->setCompositionMode(QPainter::CompositionMode_Source);
-    data.m_painter->drawImage(destRect, image);
+    data.m_painter->drawImage(destx, desty, image);
 
     if (!isPainting)
         data.m_painter->end();
