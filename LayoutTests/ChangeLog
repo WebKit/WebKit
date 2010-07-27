@@ -1,3 +1,14 @@
+2010-07-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Justin Garcia.
+
+        REGRESSION: editing/style/remove-underline-from-stylesheet.html fails on Qt platform after r64083
+        https://bugs.webkit.org/show_bug.cgi?id=43061
+
+        Added a qt-specific test result because the final range and the generated DOM is same.
+
+        * platform/qt/editing/style/remove-underline-from-stylesheet-expected.txt: Added.
+
 2010-07-27  Victor Wang  <victorw@chromium.org>
 
         Unreviewed. Update chromium test expectations for failed test on mac:
