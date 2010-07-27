@@ -1073,7 +1073,6 @@ fast/canvas/canvas-bg-zoom.html
 fast/canvas/canvas-empty-image-pattern.html
 fast/canvas/canvas-getImageData.html
 fast/canvas/canvas-gradient-addStop-error.html
-fast/canvas/canvas-shadow.html
 fast/canvas/canvas-transform-identity.html
 fast/canvas/canvas-transform-infinity.html
 fast/canvas/canvas-transform-multiply.html
@@ -1082,7 +1081,6 @@ fast/canvas/canvas-transform-non-invertible.html
 fast/canvas/canvas-transform-skewed.html
 fast/canvas/canvas-zoom.html
 fast/canvas/pointInPath.html
-fast/canvas/set-colors.html
 fast/canvas/toDataURL-supportedTypes.html
 fast/css/css1_forward_compatible_parsing.html
 fast/css/invalid-percentage-property.html
