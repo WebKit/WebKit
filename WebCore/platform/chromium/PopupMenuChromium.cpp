@@ -71,6 +71,7 @@ static const int kMaxVisibleRows = 20;
 static const int kMaxHeight = 500;
 static const int kBorderSize = 1;
 static const int kTextToLabelPadding = 10;
+static const int kLabelToIconPadding = 5;
 static const TimeStamp kTypeAheadTimeoutMs = 1000;
 
 // The settings used for the drop down menu.
@@ -959,18 +960,30 @@ void PopupListBox::paintRow(GraphicsContext* gc, const IntRect& rect, int rowInd
     int textY = rowRect.y() + itemFont.ascent() + (rowRect.height() - itemFont.height()) / 2;
     gc->drawBidiText(itemFont, textRun, IntPoint(textX, textY));
 
+    // We are using the left padding as the right padding includes room for the scroll-bar which
+    // does not show in this case.
+    int rightPadding = max(0, m_popupClient->clientPaddingLeft() - m_popupClient->clientInsetLeft());
+    int remainingWidth = rowRect.width() - rightPadding;
+
+    // Draw the icon if applicable.
+    String itemIcon = m_popupClient->itemIcon(rowIndex);
+    RefPtr<Image> image(Image::loadPlatformResource(itemIcon.utf8().data()));
+    if (image && !image->isNull()) {
+        IntRect imageRect = image->rect();
+        remainingWidth -= (imageRect.width() + kLabelToIconPadding);
+        imageRect.setX(rowRect.width() - rightPadding - imageRect.width());
+        imageRect.setY(rowRect.y() + (rowRect.height() - imageRect.height()) / 2);
+        gc->drawImage(image.get(), DeviceColorSpace, imageRect);
+    }
+
     // Draw the the label if applicable.
     if (itemLabel.isEmpty())
         return;
     TextRun labelTextRun(itemLabel.characters(), itemLabel.length(), false, 0, 0, rtl);
     if (rightAligned)
         textX = max(0, m_popupClient->clientPaddingLeft() - m_popupClient->clientInsetLeft());
-    else {
-        // We are using the left padding as the right padding includes room for the scroll-bar which
-        // does not show in this case.
-        int rightPadding = max(0, m_popupClient->clientPaddingLeft() - m_popupClient->clientInsetLeft());
-        textX = rowRect.width() - rightPadding - itemFont.width(labelTextRun);
-    }
+    else
+        textX = remainingWidth - itemFont.width(labelTextRun);
 
     gc->setFillColor(labelColor, DeviceColorSpace);
     gc->drawBidiText(itemFont, labelTextRun, IntPoint(textX, textY));

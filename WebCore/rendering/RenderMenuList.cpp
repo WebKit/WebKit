@@ -354,6 +354,11 @@ String RenderMenuList::itemLabel(unsigned) const
     return String();
 }
 
+String RenderMenuList::itemIcon(unsigned) const
+{
+    return String();
+}
+
 String RenderMenuList::itemAccessibilityText(unsigned listIndex) const
 {
     // Allow the accessible name be changed if necessary.

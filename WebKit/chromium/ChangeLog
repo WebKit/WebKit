@@ -1,3 +1,23 @@
+2010-07-27  James Hawkins  <jhawkins@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Add the ability to show right-aligned icons in the AutoFill popup.
+        https://bugs.webkit.org/show_bug.cgi?id=43076
+
+        * public/WebView.h:
+        * src/AutoFillPopupMenuClient.cpp:
+        (WebKit::AutoFillPopupMenuClient::getIcon):
+        (WebKit::AutoFillPopupMenuClient::removeSuggestionAtIndex):
+        (WebKit::AutoFillPopupMenuClient::itemIcon):
+        (WebKit::AutoFillPopupMenuClient::initialize):
+        (WebKit::AutoFillPopupMenuClient::setSuggestions):
+        * src/AutoFillPopupMenuClient.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::applyAutoFillSuggestions):
+        (WebKit::WebViewImpl::applyAutocompleteSuggestions):
+        * src/WebViewImpl.h:
+
 2010-07-27  Brett Wilson  <brettw@chromium.org>
 
         Reviewed by Darin Fisher.

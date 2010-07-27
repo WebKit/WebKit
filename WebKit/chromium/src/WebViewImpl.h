@@ -171,11 +171,13 @@ public:
         const WebNode&,
         const WebVector<WebString>& names,
         const WebVector<WebString>& labels,
+        const WebVector<int>& uniqueIDs,
         int separatorIndex);
     virtual void applyAutoFillSuggestions(
         const WebNode&,
         const WebVector<WebString>& names,
         const WebVector<WebString>& labels,
+        const WebVector<WebString>& icons,
         const WebVector<int>& uniqueIDs,
         int separatorIndex);
     // DEPRECATED: replacing with applyAutoFillSuggestions.

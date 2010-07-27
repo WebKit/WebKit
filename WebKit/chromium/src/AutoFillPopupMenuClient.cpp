@@ -84,6 +84,16 @@ WebString AutoFillPopupMenuClient::getLabel(unsigned listIndex) const
     return m_labels[index];
 }
 
+WebString AutoFillPopupMenuClient::getIcon(unsigned listIndex) const
+{
+    int index = convertListIndexToInternalIndex(listIndex);
+    if (index == -1)
+        return WebString();
+
+    ASSERT(index >= 0 && static_cast<size_t>(index) < m_icons.size());
+    return m_icons[index];
+}
+
 void AutoFillPopupMenuClient::removeSuggestionAtIndex(unsigned listIndex)
 {
     if (!canRemoveSuggestionAtIndex(listIndex))
@@ -95,6 +105,8 @@ void AutoFillPopupMenuClient::removeSuggestionAtIndex(unsigned listIndex)
 
     m_names.remove(index);
     m_labels.remove(index);
+    m_icons.remove(index);
+    m_uniqueIDs.remove(index);
 
     // Shift the separator index if necessary.
     if (m_separatorIndex != -1)
@@ -177,6 +189,11 @@ String AutoFillPopupMenuClient::itemLabel(unsigned listIndex) const
     return getLabel(listIndex);
 }
 
+String AutoFillPopupMenuClient::itemIcon(unsigned listIndex) const
+{
+    return getIcon(listIndex);
+}
+
 PopupMenuStyle AutoFillPopupMenuClient::itemStyle(unsigned listIndex) const
 {
     return *m_style;
@@ -249,10 +266,12 @@ void AutoFillPopupMenuClient::initialize(
     HTMLInputElement* textField,
     const WebVector<WebString>& names,
     const WebVector<WebString>& labels,
+    const WebVector<WebString>& icons,
     const WebVector<int>& uniqueIDs,
     int separatorIndex)
 {
     ASSERT(names.size() == labels.size());
+    ASSERT(names.size() == icons.size());
     ASSERT(names.size() == uniqueIDs.size());
     ASSERT(separatorIndex < static_cast<int>(names.size()));
 
@@ -261,7 +280,7 @@ void AutoFillPopupMenuClient::initialize(
 
     // The suggestions must be set before initializing the
     // AutoFillPopupMenuClient.
-    setSuggestions(names, labels, uniqueIDs, separatorIndex);
+    setSuggestions(names, labels, icons, uniqueIDs, separatorIndex);
 
     FontDescription fontDescription;
     RenderTheme::defaultTheme()->systemFont(CSSValueWebkitControl,
@@ -280,19 +299,23 @@ void AutoFillPopupMenuClient::initialize(
 
 void AutoFillPopupMenuClient::setSuggestions(const WebVector<WebString>& names,
                                              const WebVector<WebString>& labels,
+                                             const WebVector<WebString>& icons,
                                              const WebVector<int>& uniqueIDs,
                                              int separatorIndex)
 {
     ASSERT(names.size() == labels.size());
+    ASSERT(names.size() == icons.size());
     ASSERT(names.size() == uniqueIDs.size());
     ASSERT(separatorIndex < static_cast<int>(names.size()));
 
     m_names.clear();
     m_labels.clear();
+    m_icons.clear();
     m_uniqueIDs.clear();
     for (size_t i = 0; i < names.size(); ++i) {
         m_names.append(names[i]);
         m_labels.append(labels[i]);
+        m_icons.append(icons[i]);
         m_uniqueIDs.append(uniqueIDs[i]);
     }
 

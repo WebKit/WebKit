@@ -60,6 +60,9 @@ public:
     // Returns the label at |listIndex|.
     virtual WebString getLabel(unsigned listIndex) const;
 
+    // Returns the icon at |listIndex|.
+    virtual WebString getIcon(unsigned listIndex) const;
+
     // Removes the suggestion at |listIndex| from the list of suggestions.
     virtual void removeSuggestionAtIndex(unsigned listIndex);
 
@@ -72,6 +75,7 @@ public:
     virtual void selectionCleared();
     virtual WebCore::String itemText(unsigned listIndex) const;
     virtual WebCore::String itemLabel(unsigned listIndex) const;
+    virtual WebCore::String itemIcon(unsigned listIndex) const;
     virtual WebCore::String itemToolTip(unsigned lastIndex) const { return WebCore::String(); }
     virtual WebCore::String itemAccessibilityText(unsigned lastIndex) const { return WebCore::String(); }
     virtual bool itemIsEnabled(unsigned listIndex) const { return true; }
@@ -100,11 +104,13 @@ public:
     void initialize(WebCore::HTMLInputElement*,
                     const WebVector<WebString>& names,
                     const WebVector<WebString>& labels,
+                    const WebVector<WebString>& icons,
                     const WebVector<int>& uniqueIDs,
                     int separatorIndex);
 
     void setSuggestions(const WebVector<WebString>& names,
                         const WebVector<WebString>& labels,
+                        const WebVector<WebString>& icons,
                         const WebVector<int>& uniqueIDs,
                         int separatorIndex);
 
@@ -124,9 +130,10 @@ private:
     int getSelectedIndex() const { return m_selectedIndex; }
     void setSelectedIndex(int index) { m_selectedIndex = index; }
 
-    // The names and labels that make up the text of the menu items.
+    // The names, labels and icons that make up the contents of the menu items.
     Vector<WebCore::String> m_names;
     Vector<WebCore::String> m_labels;
+    Vector<WebCore::String> m_icons;
     Vector<int> m_uniqueIDs;
 
     // The index of the separator.  -1 if there is no separator.

@@ -1737,16 +1737,18 @@ void WebViewImpl::applyAutoFillSuggestions(
     const WebNode& node,
     const WebVector<WebString>& names,
     const WebVector<WebString>& labels,
+    const WebVector<int>& uniqueIDs,
     int separatorIndex)
 {
-    WebVector<int> uniqueIDs(names.size());
-    applyAutoFillSuggestions(node, names, labels, uniqueIDs, separatorIndex);
+    WebVector<WebString> icons(names.size());
+    applyAutoFillSuggestions(node, names, labels, icons, uniqueIDs, separatorIndex);
 }
 
 void WebViewImpl::applyAutoFillSuggestions(
     const WebNode& node,
     const WebVector<WebString>& names,
     const WebVector<WebString>& labels,
+    const WebVector<WebString>& icons,
     const WebVector<int>& uniqueIDs,
     int separatorIndex)
 {
@@ -1777,7 +1779,7 @@ void WebViewImpl::applyAutoFillSuggestions(
         m_autoFillPopupClient.set(new AutoFillPopupMenuClient);
 
     m_autoFillPopupClient->initialize(
-        inputElem, names, labels, uniqueIDs, separatorIndex);
+        inputElem, names, labels, icons, uniqueIDs, separatorIndex);
 
     if (!m_autoFillPopup.get()) {
         m_autoFillPopup = PopupContainer::create(m_autoFillPopupClient.get(),
@@ -1787,7 +1789,7 @@ void WebViewImpl::applyAutoFillSuggestions(
 
     if (m_autoFillPopupShowing) {
         m_autoFillPopupClient->setSuggestions(
-            names, labels, uniqueIDs, separatorIndex);
+            names, labels, icons, uniqueIDs, separatorIndex);
         refreshAutoFillPopup();
     } else {
         m_autoFillPopup->show(focusedNode->getRect(),
@@ -1809,12 +1811,13 @@ void WebViewImpl::applyAutocompleteSuggestions(
 {
     WebVector<WebString> names(suggestions.size());
     WebVector<WebString> labels(suggestions.size());
+    WebVector<WebString> icons(suggestions.size());
     WebVector<int> uniqueIDs(suggestions.size());
 
     for (size_t i = 0; i < suggestions.size(); ++i)
         names[i] = suggestions[i];
 
-    applyAutoFillSuggestions(node, names, labels, uniqueIDs, -1);
+    applyAutoFillSuggestions(node, names, labels, icons, uniqueIDs, -1);
     if (m_autoFillPopupClient)
         m_autoFillPopupClient->setAutocompleteMode(true);
 }
