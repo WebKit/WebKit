@@ -826,8 +826,7 @@ bool QWebView::event(QEvent *e)
                    || e->type() == QEvent::TouchEnd 
                    || e->type() == QEvent::TouchUpdate) {
             d->page->event(e);
-            if (e->isAccepted())
-                return true;
+            return true;
 #endif
         } else if (e->type() == QEvent::Leave)
             d->page->event(e);

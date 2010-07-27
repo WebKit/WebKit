@@ -1391,14 +1391,14 @@ bool QWebPagePrivate::handleScrolling(QKeyEvent *ev, Frame *frame)
 }
 
 #if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
-void QWebPagePrivate::touchEvent(QTouchEvent* event)
+bool QWebPagePrivate::touchEvent(QTouchEvent* event)
 {
     WebCore::Frame* frame = QWebFramePrivate::core(mainFrame);
     if (!frame->view())
-        return;
+        return false;
 
-    bool accepted = frame->eventHandler()->handleTouchEvent(PlatformTouchEvent(event));
-    event->setAccepted(accepted);
+    event->setAccepted(true);
+    return frame->eventHandler()->handleTouchEvent(PlatformTouchEvent(event));
 }
 #endif
 
@@ -2842,8 +2842,7 @@ bool QWebPage::event(QEvent *ev)
     case QEvent::TouchBegin:
     case QEvent::TouchUpdate:
     case QEvent::TouchEnd:
-        d->touchEvent(static_cast<QTouchEvent*>(ev));
-        break;
+        return d->touchEvent(static_cast<QTouchEvent*>(ev));
 #endif
 #ifndef QT_NO_PROPERTIES
     case QEvent::DynamicPropertyChange:
