@@ -1,3 +1,20 @@
+2010-07-27  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: do not activate all breakpoints on page reload
+        https://bugs.webkit.org/show_bug.cgi?id=41461
+
+        * http/tests/inspector/debugger-test.js:
+        (frontend_scriptsAreParsed):
+        (frontend_waitUntilScriptsAreParsed.waitForAllScripts):
+        (frontend_waitUntilScriptsAreParsed):
+        (frontend_ensureSourceFrameLoaded):
+        (frontend_showScriptSource):
+        * inspector/debugger-breakpoints-not-activated-on-reload-expected.txt: Added.
+        * inspector/debugger-breakpoints-not-activated-on-reload.html: Added.
+        * platform/gtk/Skipped: skip the test on GTK due to JSC debugger issue
+
 2010-07-27  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.

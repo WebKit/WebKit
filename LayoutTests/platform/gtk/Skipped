@@ -5873,3 +5873,7 @@ editing/selection/drag-start-event-client-x-y.html
 editing/pasteboard/drop-link.html
 media
 http/tests/media
+
+# Flaky due to JSC debugger issue.
+# https://bugs.webkit.org/show_bug.cgi?id=43034
+inspector/debugger-breakpoints-not-activated-on-reload.html

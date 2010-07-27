@@ -1,0 +1,7 @@
+Tests that breakpoints are not activated on page reload.Bug 41461
+
+Debugger was enabled.
+Scripts were parsed.
+Breakpoints deactivated.
+Disabled debugger.
+

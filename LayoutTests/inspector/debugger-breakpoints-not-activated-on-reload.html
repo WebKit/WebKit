@@ -1,0 +1,67 @@
+<html>
+<head>
+<script src="../http/tests/inspector/inspector-test.js"></script>
+<script src="../http/tests/inspector/debugger-test.js"></script>
+<script>
+
+function testFunction()
+{
+    return 0;
+}
+
+function doit()
+{
+    evaluateInWebInspector("frontend_testBreakpointsNotActivatedOnReload", completeTest);
+}
+
+function frontend_testBreakpointsNotActivatedOnReload(testController)
+{
+    var testName = WebInspector.mainResource.url;
+    testName = testName.substring(testName.lastIndexOf('/') + 1);
+
+    testController.waitUntilDone();
+
+    WebInspector.showScriptsPanel();
+    frontend_ensureDebuggerEnabled(debuggerWasEnabledCallback);
+
+    function debuggerWasEnabledCallback()
+    {
+        testController.results.push("Debugger was enabled.");
+        frontend_waitUntilScriptsAreParsed([testName], waitUntilScriptsAreParsedCallback);
+    }
+
+    function waitUntilScriptsAreParsedCallback()
+    {
+        testController.results.push("Scripts were parsed.");
+        frontend_showScriptSource(testName, showScriptSourceCallback);
+    }
+
+    function showScriptSourceCallback(view)
+    {
+        if (!WebInspector.testBreakpointsNotActivatedOnReloadFlag) {
+            view._addBreakpoint(8);
+            WebInspector.panels.scripts.toggleBreakpointsButton.element.click();
+            InspectorBackend.reloadPage();
+            WebInspector.testBreakpointsNotActivatedOnReloadFlag = true;
+        } else {
+            if (!WebInspector.panels.scripts.breakpointsActivated)
+                testController.results.push("Breakpoints deactivated.");
+            else
+                testController.results.push("Error: breakpoints activated.");
+            frontend_completeDebuggerTest(testController);
+        }
+    }
+}
+
+</script>
+</head>
+
+<body onload="onload()">
+<p>
+Tests that breakpoints are not activated on page reload.<a href="https://bugs.webkit.org/show_bug.cgi?id=41461">Bug 41461</a>
+</p>
+
+</body>
+</html>
+
+

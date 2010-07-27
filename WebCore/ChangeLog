@@ -1,3 +1,21 @@
+2010-07-27  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: do not activate all breakpoints on page reload
+        https://bugs.webkit.org/show_bug.cgi?id=41461
+
+        Test: inspector/debugger-breakpoints-not-activated-on-reload.html
+
+        * inspector/front-end/ScriptView.js:
+        (WebInspector.ScriptView.prototype._addBreakpoint):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel):
+        (WebInspector.ScriptsPanel.prototype._breakpointAdded):
+        (WebInspector.ScriptsPanel.prototype.toggleBreakpointsClicked):
+        * inspector/front-end/SourceView.js:
+        (WebInspector.SourceView.prototype._addBreakpoint):
+
 2010-07-27  Pranav Kedia  <pranavk@chromium.org>
 
         Reviewed by Adam Barth.
