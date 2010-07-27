@@ -1,3 +1,52 @@
+2010-07-27  Brett Wilson  <brettw@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Add the ability to select fonts and do basic text drawing to the
+        Chromium WebKit API.
+        https://bugs.webkit.org/show_bug.cgi?id=42999
+
+        * WebKit.gyp:
+        * public/WebFloatPoint.h: Added.
+        (WebKit::WebFloatPoint::WebFloatPoint):
+        (WebKit::WebFloatPoint::operator=):
+        (WebKit::WebFloatPoint::operator WebCore::FloatPoint):
+        (WebKit::operator==):
+        (WebKit::operator!=):
+        * public/WebFloatRect.h: Added.
+        (WebKit::WebFloatRect::isEmpty):
+        (WebKit::WebFloatRect::WebFloatRect):
+        (WebKit::WebFloatRect::operator=):
+        (WebKit::WebFloatRect::operator WebCore::FloatRect):
+        (WebKit::operator==):
+        (WebKit::operator!=):
+        * public/WebFont.h: Added.
+        * public/WebFontDescription.h: Added.
+        (WebKit::WebFontDescription::):
+        (WebKit::WebFontDescription::WebFontDescription):
+        * public/WebTextRun.h: Added.
+        (WebKit::WebTextRun::WebTextRun):
+        * src/AssertMatchingEnums.cpp:
+        * src/WebFontDescription.cpp: Added.
+        (WebKit::WebFontDescription::WebFontDescription):
+        (WebKit::WebFontDescription::operator WebCore::FontDescription):
+        * src/WebFontImpl.cpp: Added.
+        (WebKit::WebFont::Create):
+        (WebKit::WebFontImpl::WebFontImpl):
+        (WebKit::WebFontImpl::fontDescription):
+        (WebKit::WebFontImpl::ascent):
+        (WebKit::WebFontImpl::descent):
+        (WebKit::WebFontImpl::height):
+        (WebKit::WebFontImpl::lineSpacing):
+        (WebKit::WebFontImpl::xHeight):
+        (WebKit::WebFontImpl::drawText):
+        (WebKit::WebFontImpl::width):
+        (WebKit::WebFontImpl::offsetForPosition):
+        (WebKit::WebFontImpl::selectionRectForText):
+        * src/WebFontImpl.h: Added.
+        * src/WebTextRun.cpp: Added.
+        (WebKit::WebTextRun::operator WebCore::TextRun):
+
 2010-07-27  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by David Levin.

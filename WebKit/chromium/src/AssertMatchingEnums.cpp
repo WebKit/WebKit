@@ -36,6 +36,8 @@
 #include "AccessibilityObject.h"
 #include "ApplicationCacheHost.h"
 #include "EditorInsertAction.h"
+#include "FontDescription.h"
+#include "FontSmoothingMode.h"
 #include "HTMLInputElement.h"
 #include "IDBKey.h"
 #include "MediaPlayer.h"
@@ -52,6 +54,7 @@
 #include "WebClipboard.h"
 #include "WebCursorInfo.h"
 #include "WebEditingAction.h"
+#include "WebFontDescription.h"
 #include "WebIDBKey.h"
 #include "WebInputElement.h"
 #include "WebMediaPlayer.h"
@@ -235,6 +238,31 @@ COMPILE_ASSERT_MATCHING_ENUM(WebEditingActionTyped, EditorInsertActionTyped);
 COMPILE_ASSERT_MATCHING_ENUM(WebEditingActionPasted, EditorInsertActionPasted);
 COMPILE_ASSERT_MATCHING_ENUM(WebEditingActionDropped, EditorInsertActionDropped);
 
+COMPILE_ASSERT_MATCHING_ENUM(WebFontDescription::GenericFamilyNone, FontDescription::NoFamily);
+COMPILE_ASSERT_MATCHING_ENUM(WebFontDescription::GenericFamilyStandard, FontDescription::StandardFamily);
+COMPILE_ASSERT_MATCHING_ENUM(WebFontDescription::GenericFamilySerif, FontDescription::SerifFamily);
+COMPILE_ASSERT_MATCHING_ENUM(WebFontDescription::GenericFamilySansSerif, FontDescription::SansSerifFamily);
+COMPILE_ASSERT_MATCHING_ENUM(WebFontDescription::GenericFamilyMonospace, FontDescription::MonospaceFamily);
+COMPILE_ASSERT_MATCHING_ENUM(WebFontDescription::GenericFamilyCursive, FontDescription::CursiveFamily);
+COMPILE_ASSERT_MATCHING_ENUM(WebFontDescription::GenericFamilyFantasy, FontDescription::FantasyFamily);
+
+COMPILE_ASSERT_MATCHING_ENUM(WebFontDescription::SmoothingAuto, AutoSmoothing);
+COMPILE_ASSERT_MATCHING_ENUM(WebFontDescription::SmoothingNone, NoSmoothing);
+COMPILE_ASSERT_MATCHING_ENUM(WebFontDescription::SmoothingGrayscale, Antialiased);
+COMPILE_ASSERT_MATCHING_ENUM(WebFontDescription::SmoothingSubpixel, SubpixelAntialiased);
+
+COMPILE_ASSERT_MATCHING_ENUM(WebFontDescription::Weight100, FontWeight100);
+COMPILE_ASSERT_MATCHING_ENUM(WebFontDescription::Weight200, FontWeight200);
+COMPILE_ASSERT_MATCHING_ENUM(WebFontDescription::Weight300, FontWeight300);
+COMPILE_ASSERT_MATCHING_ENUM(WebFontDescription::Weight400, FontWeight400);
+COMPILE_ASSERT_MATCHING_ENUM(WebFontDescription::Weight500, FontWeight500);
+COMPILE_ASSERT_MATCHING_ENUM(WebFontDescription::Weight600, FontWeight600);
+COMPILE_ASSERT_MATCHING_ENUM(WebFontDescription::Weight700, FontWeight700);
+COMPILE_ASSERT_MATCHING_ENUM(WebFontDescription::Weight800, FontWeight800);
+COMPILE_ASSERT_MATCHING_ENUM(WebFontDescription::Weight900, FontWeight900);
+COMPILE_ASSERT_MATCHING_ENUM(WebFontDescription::WeightNormal, FontWeightNormal);
+COMPILE_ASSERT_MATCHING_ENUM(WebFontDescription::WeightBold, FontWeightBold);
+
 COMPILE_ASSERT_MATCHING_ENUM(WebInputElement::Text, HTMLInputElement::TEXT);
 COMPILE_ASSERT_MATCHING_ENUM(WebInputElement::Password, HTMLInputElement::PASSWORD);
 COMPILE_ASSERT_MATCHING_ENUM(WebInputElement::IsIndex, HTMLInputElement::ISINDEX);
@@ -326,3 +354,5 @@ COMPILE_ASSERT_MATCHING_ENUM(WebView::UserContentInjectInTopFrameOnly, InjectInT
 COMPILE_ASSERT_MATCHING_ENUM(WebIDBKey::NullType, IDBKey::NullType);
 COMPILE_ASSERT_MATCHING_ENUM(WebIDBKey::StringType, IDBKey::StringType);
 COMPILE_ASSERT_MATCHING_ENUM(WebIDBKey::NumberType, IDBKey::NumberType);
+
+
