@@ -34,6 +34,7 @@ from __future__ import with_statement
 import codecs
 import logging
 import os
+import re
 import shutil
 import signal
 import subprocess
@@ -382,9 +383,12 @@ class ChromiumDriver(base.Driver):
             if line.startswith("#URL:"):
                 actual_uri = line.rstrip()[5:]
                 if uri != actual_uri:
-                    _log.fatal("Test got out of sync:\n|%s|\n|%s|" %
-                               (uri, actual_uri))
-                    raise AssertionError("test out of sync")
+                    # GURL capitalizes the drive letter of a file URL.
+                    if (not re.search("^file:///[a-z]:", uri) or
+                        uri.tolower() != actual_uri.tolower()):
+                        _log.fatal("Test got out of sync:\n|%s|\n|%s|" %
+                                   (uri, actual_uri))
+                        raise AssertionError("test out of sync")
             elif line.startswith("#MD5:"):
                 actual_checksum = line.rstrip()[5:]
             elif line.startswith("#TEST_TIMED_OUT"):
