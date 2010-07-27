@@ -1,3 +1,24 @@
+2010-07-27  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        Client-based Geolocation does not pass enableHighAccuracy option to controller and client
+        https://bugs.webkit.org/show_bug.cgi?id=40374
+
+        This change passes the enableHighAccuracy request option to the GeolocationController.
+        The GeolocationController tracks whether this should be used by the client.
+
+        No new tests possible as the mock provider doesn't support this feature.
+
+        * page/Geolocation.cpp:
+        (WebCore::Geolocation::setIsAllowed):
+        (WebCore::Geolocation::startUpdating):
+        * page/GeolocationController.cpp:
+        (WebCore::GeolocationController::addObserver):
+        (WebCore::GeolocationController::removeObserver):
+        * page/GeolocationController.h:
+        * page/GeolocationControllerClient.h:
+
 2010-07-27  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.

@@ -42,6 +42,7 @@ public:
     virtual void geolocationDestroyed();
     virtual void startUpdating();
     virtual void stopUpdating();
+    virtual void setEnableHighAccuracy(bool) { }
     virtual WebCore::GeolocationPosition* lastPosition();
 
 private:

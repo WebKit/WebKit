@@ -45,7 +45,7 @@ public:
     GeolocationController(Page*, GeolocationControllerClient*);
     ~GeolocationController();
 
-    void addObserver(Geolocation*);
+    void addObserver(Geolocation*, bool enableHighAccuracy);
     void removeObserver(Geolocation*);
 
     void positionChanged(GeolocationPosition*);
@@ -58,7 +58,10 @@ private:
     GeolocationControllerClient* m_client;
 
     RefPtr<GeolocationPosition> m_lastPosition;
-    HashSet<RefPtr<Geolocation> > m_observers;
+    typedef HashSet<RefPtr<Geolocation> > ObserversSet;
+    // All observers; both those requesting high accuracy and those not.
+    ObserversSet m_observers;
+    ObserversSet m_highAccuracyObservers;
 };
 
 } // namespace WebCore

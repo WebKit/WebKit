@@ -45,17 +45,21 @@ GeolocationController::~GeolocationController()
         m_client->geolocationDestroyed();
 }
 
-void GeolocationController::addObserver(Geolocation* observer)
+void GeolocationController::addObserver(Geolocation* observer, bool enableHighAccuracy)
 {
     // This may be called multiple times with the same observer, though removeObserver()
     // is called only once with each.
-    if (m_observers.contains(observer))
-        return;
-
     bool wasEmpty = m_observers.isEmpty();
     m_observers.add(observer);
-    if (wasEmpty && m_client)
-        m_client->startUpdating();
+    if (enableHighAccuracy)
+        m_highAccuracyObservers.add(observer);
+
+    if (m_client) {        
+        if (enableHighAccuracy)
+            m_client->setEnableHighAccuracy(true);
+        if (wasEmpty)
+            m_client->startUpdating();
+    }
 }
 
 void GeolocationController::removeObserver(Geolocation* observer)
@@ -64,8 +68,14 @@ void GeolocationController::removeObserver(Geolocation* observer)
         return;
 
     m_observers.remove(observer);
-    if (m_observers.isEmpty() && m_client)
-        m_client->stopUpdating();
+    m_highAccuracyObservers.remove(observer);
+
+    if (m_client) {
+        if (m_observers.isEmpty())
+            m_client->stopUpdating();
+        else if (m_highAccuracyObservers.isEmpty())
+            m_client->setEnableHighAccuracy(false);
+    }
 }
 
 void GeolocationController::positionChanged(GeolocationPosition* position)
