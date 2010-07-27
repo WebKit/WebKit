@@ -2,6 +2,14 @@
 
         Reviewed by NOBODY.
 
+        Update expected result as well to match r64115.
+
+        * fast/events/spatial-navigation/snav-clipped-overflowed-content-expected.txt:
+
+2010-07-27  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by NOBODY.
+
         Fix GTK layout-test break after r64114
 
         Skipping the test for Qt until we can find a non-fragile way to write
