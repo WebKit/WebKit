@@ -33,8 +33,8 @@
 		1A10475A110A5AD500A43ECD /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1C7DE100E846E0078DEBC /* JavaScriptCore.framework */; };
 		1A1C4EC810D06099005E67E7 /* WebCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1C79A100E7FC50078DEBC /* WebCore.framework */; };
 		1A1C649B11F4174200553C19 /* WebContextMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A1C648611F415B700553C19 /* WebContextMac.mm */; };
-		1A2161B011F37664008AD0F5 /* NPJSObjectMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2161AE11F37664008AD0F5 /* NPJSObjectMap.h */; };
-		1A2161B111F37664008AD0F5 /* NPJSObjectMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2161AF11F37664008AD0F5 /* NPJSObjectMap.cpp */; };
+		1A2161B011F37664008AD0F5 /* NPRuntimeObjectMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2161AE11F37664008AD0F5 /* NPRuntimeObjectMap.h */; };
+		1A2161B111F37664008AD0F5 /* NPRuntimeObjectMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2161AF11F37664008AD0F5 /* NPRuntimeObjectMap.cpp */; };
 		1A2162B011F38971008AD0F5 /* NPRuntimeUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2162AE11F38971008AD0F5 /* NPRuntimeUtilities.cpp */; };
 		1A2162B111F38971008AD0F5 /* NPRuntimeUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2162AF11F38971008AD0F5 /* NPRuntimeUtilities.h */; };
 		1A24B5F211F531E800C38269 /* MachUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A24B5F011F531E800C38269 /* MachUtilities.cpp */; };
@@ -312,8 +312,8 @@
 		0F52667311DD4A490006D33C /* WebProcessProxyMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebProcessProxyMac.mm; sourceTree = "<group>"; };
 		1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		1A1C648611F415B700553C19 /* WebContextMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebContextMac.mm; sourceTree = "<group>"; };
-		1A2161AE11F37664008AD0F5 /* NPJSObjectMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NPJSObjectMap.h; sourceTree = "<group>"; };
-		1A2161AF11F37664008AD0F5 /* NPJSObjectMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NPJSObjectMap.cpp; sourceTree = "<group>"; };
+		1A2161AE11F37664008AD0F5 /* NPRuntimeObjectMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NPRuntimeObjectMap.h; sourceTree = "<group>"; };
+		1A2161AF11F37664008AD0F5 /* NPRuntimeObjectMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NPRuntimeObjectMap.cpp; sourceTree = "<group>"; };
 		1A2162AE11F38971008AD0F5 /* NPRuntimeUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NPRuntimeUtilities.cpp; sourceTree = "<group>"; };
 		1A2162AF11F38971008AD0F5 /* NPRuntimeUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NPRuntimeUtilities.h; sourceTree = "<group>"; };
 		1A24B5F011F531E800C38269 /* MachUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MachUtilities.cpp; sourceTree = "<group>"; };
@@ -673,8 +673,8 @@
 			isa = PBXGroup;
 			children = (
 				1A6FB90811E66FB100DB1371 /* Netscape */,
-				1A2161AF11F37664008AD0F5 /* NPJSObjectMap.cpp */,
-				1A2161AE11F37664008AD0F5 /* NPJSObjectMap.h */,
+				1A2161AF11F37664008AD0F5 /* NPRuntimeObjectMap.cpp */,
+				1A2161AE11F37664008AD0F5 /* NPRuntimeObjectMap.h */,
 				1A2162AE11F38971008AD0F5 /* NPRuntimeUtilities.cpp */,
 				1A2162AF11F38971008AD0F5 /* NPRuntimeUtilities.h */,
 				1A6FB7D011E651E200DB1371 /* Plugin.cpp */,
@@ -1273,7 +1273,7 @@
 				BC8699B7116AADAA002A925B /* WKViewInternal.h in Headers */,
 				BC2E6E8C1141971500A63B1E /* WorkItem.h in Headers */,
 				BC2E6E8E1141971500A63B1E /* WorkQueue.h in Headers */,
-				1A2161B011F37664008AD0F5 /* NPJSObjectMap.h in Headers */,
+				1A2161B011F37664008AD0F5 /* NPRuntimeObjectMap.h in Headers */,
 				1A2162B111F38971008AD0F5 /* NPRuntimeUtilities.h in Headers */,
 				1A24B5F311F531E800C38269 /* MachUtilities.h in Headers */,
 				E1EE53E311F8CFC000CCBEE4 /* InjectedBundlePageEditorClient.h in Headers */,
@@ -1471,7 +1471,7 @@
 				BC8699B6116AADAA002A925B /* WKView.mm in Sources */,
 				BC2E6E8D1141971500A63B1E /* WorkQueue.cpp in Sources */,
 				BC0092F8115837A300E0AE2A /* WorkQueueMac.cpp in Sources */,
-				1A2161B111F37664008AD0F5 /* NPJSObjectMap.cpp in Sources */,
+				1A2161B111F37664008AD0F5 /* NPRuntimeObjectMap.cpp in Sources */,
 				1A2162B011F38971008AD0F5 /* NPRuntimeUtilities.cpp in Sources */,
 				1A1C649B11F4174200553C19 /* WebContextMac.mm in Sources */,
 				1A24B5F211F531E800C38269 /* MachUtilities.cpp in Sources */,

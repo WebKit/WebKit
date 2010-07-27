@@ -752,11 +752,11 @@
 				Name="Plugins"
 				>
 				<File
-					RelativePath="..\WebProcess\Plugins\NPJSObjectMap.cpp"
+					RelativePath="..\WebProcess\Plugins\NPRuntimeObjectMap.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\WebProcess\Plugins\NPJSObjectMap.h"
+					RelativePath="..\WebProcess\Plugins\NPRuntimeObjectMap.h"
 					>
 				</File>
 				<File

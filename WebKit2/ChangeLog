@@ -1,3 +1,40 @@
+2010-07-27  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Rename NPJSObjectMap to NPRuntimeObjectMap
+        https://bugs.webkit.org/show_bug.cgi?id=43066
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/Plugins/NPJSObjectMap.cpp: Removed.
+        * WebProcess/Plugins/NPJSObjectMap.h: Removed.
+        * WebProcess/Plugins/NPRuntimeObjectMap.cpp: Added.
+        (WebKit::NPJSObject::NPJSObject):
+        (WebKit::NPJSObject::~NPJSObject):
+        (WebKit::NPJSObject::toNPJSObject):
+        (WebKit::NPJSObject::create):
+        (WebKit::NPJSObject::isNPJSObject):
+        (WebKit::NPJSObject::initialize):
+        (WebKit::identifierFromIdentifierRep):
+        (WebKit::NPJSObject::hasProperty):
+        (WebKit::NPJSObject::getProperty):
+        (WebKit::NPJSObject::npClass):
+        (WebKit::NPJSObject::NP_Allocate):
+        (WebKit::NPJSObject::NP_Deallocate):
+        (WebKit::NPJSObject::NP_HasProperty):
+        (WebKit::NPJSObject::NP_GetProperty):
+        (WebKit::NPRuntimeObjectMap::NPRuntimeObjectMap):
+        (WebKit::NPRuntimeObjectMap::getOrCreateNPObject):
+        (WebKit::NPRuntimeObjectMap::invalidate):
+        * WebProcess/Plugins/NPRuntimeObjectMap.h: Added.
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::PluginView):
+        (WebKit::PluginView::~PluginView):
+        (WebKit::PluginView::windowScriptNPObject):
+        (WebKit::PluginView::pluginElementNPObject):
+        * WebProcess/Plugins/PluginView.h:
+        * win/WebKit2.vcproj:
+
 2010-07-27  Adam Roben  <aroben@apple.com>
 
         Make preferences APIs robust against web process crashes

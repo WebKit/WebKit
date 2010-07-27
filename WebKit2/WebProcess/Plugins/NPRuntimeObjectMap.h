@@ -41,13 +41,13 @@ class PluginView;
 
 // A per plug-in map of NPObjects that wrap JavaScript objects.
 
-class NPJSObjectMap {
+class NPRuntimeObjectMap {
 public:
-    explicit NPJSObjectMap(PluginView*);
+    explicit NPRuntimeObjectMap(PluginView*);
 
     // Returns an NPObject that wraps the given JavaScript object. If there is already an NPObject that wraps this JSObject, it will
     // retain it and return it.
-    NPObject* getOrCreateObject(JSC::JSObject*);
+    NPObject* getOrCreateNPObject(JSC::JSObject*);
 
     void invalidate();
 
