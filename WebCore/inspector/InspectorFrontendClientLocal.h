@@ -59,6 +59,8 @@ public:
     virtual void detachWindow() = 0;
     bool canAttachWindow();
 
+    virtual void sendMessageToBackend(const String& message);
+
 protected:
     virtual void setAttachedWindowHeight(unsigned) = 0;
     void setAttachedWindow(bool);

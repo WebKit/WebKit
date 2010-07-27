@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2009, 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -32,263 +32,99 @@ if (!window.InspectorBackend) {
 
 WebInspector.InspectorBackendStub = function()
 {
-    this._attachedWindowHeight = 0;
-    this._timelineEnabled = false;
+    this._registerDelegate("addInspectedNode");
+    this._registerDelegate("addScriptToEvaluateOnLoad");
+    this._registerDelegate("changeTagName");
+    this._registerDelegate("clearConsoleMessages");
+    this._registerDelegate("copyNode");
+    this._registerDelegate("deleteCookie");
+    this._registerDelegate("didEvaluateForTestInFrontend");
+    this._registerDelegate("disableMonitoringXHR");
+    this._registerDelegate("disableResourceTracking");
+    this._registerDelegate("disableSearchingForNode");
+    this._registerDelegate("disableTimeline");
+    this._registerDelegate("dispatchOnInjectedScript");
+    this._registerDelegate("enableMonitoringXHR");
+    this._registerDelegate("enableResourceTracking");
+    this._registerDelegate("enableSearchingForNode");
+    this._registerDelegate("enableTimeline");
+    this._registerDelegate("getChildNodes");
+    this._registerDelegate("getCookies");
+    this._registerDelegate("getDatabaseTableNames");
+    this._registerDelegate("getDOMStorageEntries");
+    this._registerDelegate("getEventListenersForNode");
+    this._registerDelegate("getOuterHTML");
+    this._registerDelegate("getProfile");
+    this._registerDelegate("getProfileHeaders");
+    this._registerDelegate("removeProfile");
+    this._registerDelegate("clearProfiles");
+    this._registerDelegate("getResourceContent");
+    this._registerDelegate("highlightDOMNode");
+    this._registerDelegate("hideDOMNodeHighlight");
+    this._registerDelegate("performSearch");
+    this._registerDelegate("pushNodeByPathToFrontend");
+    this._registerDelegate("releaseWrapperObjectGroup");
+    this._registerDelegate("removeAllScriptsToEvaluateOnLoad");
+    this._registerDelegate("reloadPage");
+    this._registerDelegate("removeAttribute");
+    this._registerDelegate("removeDOMStorageItem");
+    this._registerDelegate("removeNode");
+    this._registerDelegate("saveApplicationSettings");
+    this._registerDelegate("saveSessionSettings");
+    this._registerDelegate("searchCanceled");
+    this._registerDelegate("setAttribute");
+    this._registerDelegate("setDOMStorageItem");
+    this._registerDelegate("setInjectedScriptSource");
+    this._registerDelegate("setOuterHTML");
+    this._registerDelegate("setTextNodeValue");
+    this._registerDelegate("startProfiling");
+    this._registerDelegate("startTimelineProfiler");
+    this._registerDelegate("stopProfiling");
+    this._registerDelegate("stopTimelineProfiler");
+    this._registerDelegate("storeLastActivePanel");
+    this._registerDelegate("takeHeapSnapshot");
+
+    this._registerDelegate("getAllStyles");
+    this._registerDelegate("getStyles");
+    this._registerDelegate("getComputedStyle");
+    this._registerDelegate("getInlineStyle");
+    this._registerDelegate("getStyleSheet");
+    this._registerDelegate("getRuleRanges");
+    this._registerDelegate("applyStyleText");
+    this._registerDelegate("setStyleText");
+    this._registerDelegate("setStyleProperty");
+    this._registerDelegate("toggleStyleEnabled");
+    this._registerDelegate("setRuleSelector");
+    this._registerDelegate("addRule");
+
+    this._registerDelegate("disableDebugger");
+    this._registerDelegate("editScriptSource");
+    this._registerDelegate("getScriptSource");
+    this._registerDelegate("enableDebugger");
+    this._registerDelegate("setBreakpoint");
+    this._registerDelegate("removeBreakpoint");
+    this._registerDelegate("activateBreakpoints");
+    this._registerDelegate("deactivateBreakpoints");
+    this._registerDelegate("resume");
+    this._registerDelegate("stepIntoStatement");
+    this._registerDelegate("stepOutOfFunction");
+    this._registerDelegate("stepOverStatement");
+    this._registerDelegate("setPauseOnExceptionsState");
 }
 
 WebInspector.InspectorBackendStub.prototype = {
-    wrapCallback: function(func)
+    _registerDelegate: function(methodName)
     {
-        return func;
+        this[methodName] = this.sendMessageToBackend.bind(this, methodName);
     },
 
-    closeWindow: function()
+    sendMessageToBackend: function()
     {
-        this._windowVisible = false;
-    },
-
-    attach: function()
-    {
-    },
-
-    detach: function()
-    {
-    },
-
-    storeLastActivePanel: function(panel)
-    {
-    },
-
-    clearConsoleMessages: function()
-    {
-    },
-
-    getOuterHTML: function()
-    {
-    },
-
-    setOuterHTML: function()
-    {
-    },
-
-    addInspectedNode: function()
-    {
-    },
-
-    search: function(sourceRow, query)
-    {
-    },
-
-    moveByUnrestricted: function(x, y)
-    {
-    },
-
-    getResourceContent: function(callId, identifier)
-    {
-        WebInspector.didGetResourceContent(callId, "");
-    },
-
-    highlightDOMNode: function(node)
-    {
-    },
-
-    hideDOMNodeHighlight: function()
-    {
-    },
-
-    inspectedWindow: function()
-    {
-        return window;
-    },
-
-    loaded: function()
-    {
-    },
-
-    localizedStringsURL: function()
-    {
-        return undefined;
-    },
-
-    windowUnloading: function()
-    {
-        return false;
-    },
-
-    hiddenPanels: function()
-    {
-        return "";
-    },
-
-    enableResourceTracking: function()
-    {
-        WebInspector.resourceTrackingWasEnabled();
-    },
-
-    disableResourceTracking: function()
-    {
-        WebInspector.resourceTrackingWasDisabled();
-    },
-
-
-    enableSearchingForNode: function()
-    {
-        WebInspector.searchingForNodeWasEnabled();
-    },
-
-    disableSearchingForNode: function()
-    {
-        WebInspector.searchingForNodeWasDisabled();
-    },
-
-    enableMonitoringXHR: function()
-    {
-        WebInspector.monitoringXHRWasEnabled();
-    },
-
-    disableMonitoringXHR: function()
-    {
-        WebInspector.monitoringXHRWasDisabled();
-    },
-
-    reloadPage: function()
-    {
-    },
-
-    enableDebugger: function()
-    {
-        WebInspector.debuggerWasEnabled();
-    },
-
-    disableDebugger: function()
-    {
-        WebInspector.debuggerWasDisabled();
-    },
-
-    setBreakpoint: function(callId, sourceID, line, enabled, condition)
-    {
-        WebInspector.didSetBreakpoint(callId, true, line);
-    },
-
-    removeBreakpoint: function(sourceID, line)
-    {
-    },
-
-    activateBreakpoints: function()
-    {
-        this._breakpointsActivated = true;
-    },
-
-    deactivateBreakpoints: function()
-    {
-        this._breakpointsActivated = false;
-    },
-
-    pause: function()
-    {
-    },
-
-    setPauseOnExceptionsState: function(value)
-    {
-        WebInspector.updatePauseOnExceptionsState(value);
-    },
-
-    editScriptSource: function()
-    {
-        WebInspector.didEditScriptSource(callId, false);
-    },
-
-    getScriptSource: function(callId, sourceID)
-    {
-        WebInspector.didGetScriptSource(callId, null);
-    },
-
-    resume: function()
-    {
-    },
-
-    enableProfiler: function()
-    {
-        WebInspector.profilerWasEnabled();
-    },
-
-    disableProfiler: function()
-    {
-        WebInspector.profilerWasDisabled();
-    },
-
-    startProfiling: function()
-    {
-    },
-
-    stopProfiling: function()
-    {
-    },
-
-    getProfileHeaders: function(callId)
-    {
-        WebInspector.didGetProfileHeaders(callId, []);
-    },
-
-    getProfile: function(callId, uid)
-    {
-    },
-
-    takeHeapSnapshot: function()
-    {
-    },
-
-    databaseTableNames: function(database)
-    {
-        return [];
-    },
-
-    stepIntoStatement: function()
-    {
-    },
-
-    stepOutOfFunction: function()
-    {
-    },
-
-    stepOverStatement: function()
-    {
-    },
-
-    saveApplicationSettings: function()
-    {
-    },
-
-    saveSessionSettings: function()
-    {
-    },
-
-    dispatchOnInjectedScript: function()
-    {
-    },
-
-    releaseWrapperObjectGroup: function()
-    {
-    },
-
-    setInjectedScriptSource: function()
-    {
-    },
-    
-    addScriptToEvaluateOnLoad: function()
-    {
-    },
-
-    removeAllScriptsToEvaluateOnLoad: function()
-    {
-    },
-
-    performSearch: function()
-    {
-    },
-
-    searchCanceled: function()
-    {
+        var message = JSON.stringify(Array.prototype.slice.call(arguments));
+        if (WebInspector._paramsObject && "page" in WebInspector._paramsObject)
+            WebInspector.socket.send(message);
+        else
+            InspectorFrontendHost.sendMessageToBackend(message);
     }
 }
 

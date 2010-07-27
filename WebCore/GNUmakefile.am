@@ -392,8 +392,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSImageData.h \
 	DerivedSources/WebCore/JSInjectedScriptHost.cpp \
 	DerivedSources/WebCore/JSInjectedScriptHost.h \
-	DerivedSources/WebCore/JSInspectorBackend.cpp \
-	DerivedSources/WebCore/JSInspectorBackend.h \
 	DerivedSources/WebCore/JSInspectorFrontendHost.cpp \
 	DerivedSources/WebCore/JSInspectorFrontendHost.h \
 	DerivedSources/WebCore/JSInt16Array.cpp \

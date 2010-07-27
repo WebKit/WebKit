@@ -39,7 +39,6 @@
 
 namespace WebCore {
     class InjectedScriptHost;
-    class InspectorBackend;
     class InspectorFrontendHost;
 
     class ScriptObject : public ScriptValue {
@@ -70,7 +69,6 @@ namespace WebCore {
     public:
         static bool set(ScriptState*, const char* name, const ScriptObject&);
 #if ENABLE(INSPECTOR)
-        static bool set(ScriptState*, const char* name, InspectorBackend*);
         static bool set(ScriptState*, const char* name, InspectorFrontendHost*);
         static bool set(ScriptState*, const char* name, InjectedScriptHost*);
 #endif

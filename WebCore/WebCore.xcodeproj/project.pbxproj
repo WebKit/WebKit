@@ -832,8 +832,6 @@
 		41E1B1D10FF5986900576B3B /* AbstractWorker.h in Headers */ = {isa = PBXBuildFile; fileRef = 41E1B1CB0FF5986900576B3B /* AbstractWorker.h */; };
 		41E1B1D30FF5986900576B3B /* SharedWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41E1B1CD0FF5986900576B3B /* SharedWorker.cpp */; };
 		41E1B1D40FF5986900576B3B /* SharedWorker.h in Headers */ = {isa = PBXBuildFile; fileRef = 41E1B1CE0FF5986900576B3B /* SharedWorker.h */; };
-		41F060CD0F5EEB2B00A07EAC /* JSInspectorBackend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41F060CB0F5EEB2B00A07EAC /* JSInspectorBackend.cpp */; };
-		41F060CE0F5EEB2B00A07EAC /* JSInspectorBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = 41F060CC0F5EEB2B00A07EAC /* JSInspectorBackend.h */; };
 		41F061740F5F00AC00A07EAC /* InspectorDOMStorageResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 41F061720F5F00AC00A07EAC /* InspectorDOMStorageResource.h */; };
 		41F061750F5F00AC00A07EAC /* InspectorDOMStorageResource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41F061730F5F00AC00A07EAC /* InspectorDOMStorageResource.cpp */; };
 		41F0618E0F5F069800A07EAC /* ConsoleMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 41F0618C0F5F069800A07EAC /* ConsoleMessage.h */; };
@@ -6540,8 +6538,6 @@
 		41E1B1CD0FF5986900576B3B /* SharedWorker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SharedWorker.cpp; path = workers/SharedWorker.cpp; sourceTree = "<group>"; };
 		41E1B1CE0FF5986900576B3B /* SharedWorker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SharedWorker.h; path = workers/SharedWorker.h; sourceTree = "<group>"; };
 		41E1B1CF0FF5986900576B3B /* SharedWorker.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = SharedWorker.idl; path = workers/SharedWorker.idl; sourceTree = "<group>"; };
-		41F060CB0F5EEB2B00A07EAC /* JSInspectorBackend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSInspectorBackend.cpp; sourceTree = "<group>"; };
-		41F060CC0F5EEB2B00A07EAC /* JSInspectorBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSInspectorBackend.h; sourceTree = "<group>"; };
 		41F061720F5F00AC00A07EAC /* InspectorDOMStorageResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorDOMStorageResource.h; sourceTree = "<group>"; };
 		41F061730F5F00AC00A07EAC /* InspectorDOMStorageResource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorDOMStorageResource.cpp; sourceTree = "<group>"; };
 		41F0618C0F5F069800A07EAC /* ConsoleMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConsoleMessage.h; sourceTree = "<group>"; };
@@ -7171,7 +7167,6 @@
 		7A24587A1021EAF4000A00AA /* InspectorDOMAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorDOMAgent.h; sourceTree = "<group>"; };
 		7A674BD90F9EBF4E006CF099 /* PageGroupLoadDeferrer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageGroupLoadDeferrer.cpp; sourceTree = "<group>"; };
 		7A674BDA0F9EBF4E006CF099 /* PageGroupLoadDeferrer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageGroupLoadDeferrer.h; sourceTree = "<group>"; };
-		7A74ECB61018399A00BF939E /* InspectorBackend.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = InspectorBackend.idl; sourceTree = "<group>"; };
 		7A74ECB8101839A500BF939E /* InspectorBackend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorBackend.cpp; sourceTree = "<group>"; };
 		7A74ECB9101839A600BF939E /* InspectorBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorBackend.h; sourceTree = "<group>"; };
 		7A74ECBC101839DA00BF939E /* JSInspectorFrontendHostCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSInspectorFrontendHostCustom.cpp; sourceTree = "<group>"; };
@@ -11435,8 +11430,6 @@
 				4F707A9811EF679400ACDA69 /* InspectorBackendDispatcher.h */,
 				7A0E76D810BF059800A0276E /* JSInjectedScriptHost.cpp */,
 				7A0E76D910BF059800A0276E /* JSInjectedScriptHost.h */,
-				41F060CB0F5EEB2B00A07EAC /* JSInspectorBackend.cpp */,
-				41F060CC0F5EEB2B00A07EAC /* JSInspectorBackend.h */,
 				7A0E771C10C00DB100A0276E /* JSInspectorFrontendHost.cpp */,
 				7A0E771D10C00DB100A0276E /* JSInspectorFrontendHost.h */,
 				1C5FAECF0DCFD90100D58F78 /* JSJavaScriptCallFrame.cpp */,
@@ -11466,7 +11459,6 @@
 				B885E8D311E06DD2009FFBF4 /* InspectorApplicationCacheAgent.h */,
 				7A74ECB8101839A500BF939E /* InspectorBackend.cpp */,
 				7A74ECB9101839A600BF939E /* InspectorBackend.h */,
-				7A74ECB61018399A00BF939E /* InspectorBackend.idl */,
 				1C81B9580E97330800266E07 /* InspectorClient.h */,
 				1C81B9570E97330800266E07 /* InspectorController.cpp */,
 				1C81B9560E97330800266E07 /* InspectorController.h */,
@@ -18738,7 +18730,6 @@
 				A77979290D6B9E64003851B9 /* JSImageData.h in Headers */,
 				C585A69711D4FB13004C3E4B /* JSIndexedDatabaseRequest.h in Headers */,
 				7A0E76DB10BF059800A0276E /* JSInjectedScriptHost.h in Headers */,
-				41F060CE0F5EEB2B00A07EAC /* JSInspectorBackend.h in Headers */,
 				7A0E771F10C00DB100A0276E /* JSInspectorFrontendHost.h in Headers */,
 				49EECF07105070C400099FAB /* JSInt16Array.h in Headers */,
 				49EECF05105070C400099FAB /* JSInt32Array.h in Headers */,
@@ -21202,7 +21193,6 @@
 				C585A69611D4FB13004C3E4B /* JSIndexedDatabaseRequest.cpp in Sources */,
 				7A0E76DA10BF059800A0276E /* JSInjectedScriptHost.cpp in Sources */,
 				7A0E76D510BF050700A0276E /* JSInjectedScriptHostCustom.cpp in Sources */,
-				41F060CD0F5EEB2B00A07EAC /* JSInspectorBackend.cpp in Sources */,
 				7A0E771E10C00DB100A0276E /* JSInspectorFrontendHost.cpp in Sources */,
 				7A74ECBD101839DA00BF939E /* JSInspectorFrontendHostCustom.cpp in Sources */,
 				49EECF06105070C400099FAB /* JSInt16Array.cpp in Sources */,

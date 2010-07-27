@@ -75,6 +75,7 @@ public:
 
     // Called from [Custom] implementations.
     void showContextMenu(Event*, const Vector<ContextMenuItem*>& items);
+    void sendMessageToBackend(const String& message);
 
 private:
 #if ENABLE(CONTEXT_MENUS)

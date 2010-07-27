@@ -33,7 +33,6 @@
         # List of DevTools source files, ordered by dependencies. It is used both
         # for copying them to resource dir, and for generating 'devtools.html' file.
         'devtools_js_files': [
-            'src/js/InspectorControllerImpl.js',
             'src/js/ProfilerAgent.js',
             'src/js/ProfilerProcessor.js',
             'src/js/HeapProfilerPanel.js',

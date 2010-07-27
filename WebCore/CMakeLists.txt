@@ -293,7 +293,6 @@ SET(WebCore_IDL_FILES
     html/canvas/Uint8Array.idl
 
     inspector/InjectedScriptHost.idl
-    inspector/InspectorBackend.idl
     inspector/InspectorFrontendHost.idl
     inspector/JavaScriptCallFrame.idl
     inspector/ScriptProfile.idl

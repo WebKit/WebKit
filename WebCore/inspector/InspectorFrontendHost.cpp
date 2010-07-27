@@ -207,6 +207,11 @@ void InspectorFrontendHost::copyText(const String& text)
     Pasteboard::generalPasteboard()->writePlainText(text);
 }
 
+void InspectorFrontendHost::sendMessageToBackend(const String& message)
+{
+    m_client->sendMessageToBackend(message);
+}
+
 #if ENABLE(CONTEXT_MENUS)
 void InspectorFrontendHost::showContextMenu(Event* event, const Vector<ContextMenuItem*>& items)
 {

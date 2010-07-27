@@ -8781,62 +8781,6 @@
 				>
 			</File>
 			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSInspectorBackend.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Internal|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Cairo|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_Cairo|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_All|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSInspectorBackend.h"
-				>
-			</File>
-			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSInspectorFrontendHost.cpp"
 				>
 				<FileConfiguration
@@ -20741,7 +20685,7 @@
 				>
 			</File>
 			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\InspectorBackendDispatcher.h"
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\InspectorBackendDispatcher.cpp"
 				>
 			</File>
 			<File

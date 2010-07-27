@@ -72,7 +72,7 @@ public:
     virtual ~WebDevToolsAgentImpl();
 
     // ToolsAgent implementation.
-    virtual void dispatchOnInspectorController(int callId, const WebCore::String& message);
+    virtual void dispatchOnInspectorController(const WebCore::String& message);
 
     // WebDevToolsAgentPrivate implementation.
     virtual void didClearWindowObject(WebFrameImpl* frame);
@@ -126,12 +126,6 @@ private:
     void setApuAgentEnabled(bool enabled);
 
     WebCore::InspectorController* inspectorController();
-
-    // Creates InspectorBackend v8 wrapper in the utility context so that it's
-    // methods prototype is Function.protoype object from the utility context.
-    // Otherwise some useful methods  defined on Function.prototype(such as bind)
-    // are missing for InspectorController native methods.
-    v8::Local<v8::Object> createInspectorBackendV8Wrapper();
 
     int m_hostId;
     WebDevToolsAgentClient* m_client;

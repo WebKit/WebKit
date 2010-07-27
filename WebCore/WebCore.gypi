@@ -196,7 +196,6 @@
             'html/ValidityState.idl',
             'html/VoidCallback.idl',
             'inspector/InjectedScriptHost.idl',
-            'inspector/InspectorBackend.idl',
             'inspector/InspectorFrontendHost.idl',
             'inspector/JavaScriptCallFrame.idl',
             'inspector/ScriptProfile.idl',

@@ -571,7 +571,6 @@ $(patsubst %.h,%.cpp,$(GEN)): $(intermediates)/bindings/%.cpp : $(intermediates)
 # These headers are required by the V8 bindings even when Inspector is disabled
 GEN := \
     $(intermediates)/bindings/V8InjectedScriptHost.h \
-    $(intermediates)/bindings/V8InspectorBackend.h \
     $(intermediates)/bindings/V8InspectorFrontendHost.h
 
 $(GEN): PRIVATE_PATH := $(LOCAL_PATH)

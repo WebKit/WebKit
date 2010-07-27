@@ -190,7 +190,6 @@
 #include "JSImageData.cpp"
 #include "JSIndexedDatabaseRequest.cpp"
 #include "JSInjectedScriptHost.cpp"
-#include "JSInspectorBackend.cpp"
 #include "JSInspectorFrontendHost.cpp"
 #include "JSJavaScriptCallFrame.cpp"
 #include "JSKeyboardEvent.cpp"

@@ -59,6 +59,8 @@ public:
     virtual void changeAttachedWindowHeight(unsigned) = 0;
 
     virtual void inspectedURLChanged(const String&) = 0;
+
+    virtual void sendMessageToBackend(const String&) = 0;
 };
 
 } // namespace WebCore

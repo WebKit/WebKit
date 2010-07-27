@@ -233,7 +233,6 @@ DOM_CLASSES = \
     ImageData \
     IndexedDatabaseRequest \
     InjectedScriptHost \
-    InspectorBackend \
     InspectorFrontendHost \
     KeyboardEvent \
     Location \
