@@ -3132,3 +3132,6 @@ BUGWK42964 WIN LINUX : tables/mozilla_expected_failures/bugs/bug89315.html = PAS
 
 // Fails since WebKit r64141
 BUGWK43067 : fast/dom/prototype-inheritance.html = TEXT
+
+// Fails since WebKit r64156
+BUGWK43086 : fast/canvas/canvas-ImageData-behaviour.html = TEXT
