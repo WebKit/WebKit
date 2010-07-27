@@ -41,7 +41,7 @@ void TestController::initializeInjectedBundlePath()
 {
     CFStringRef exeContainerPath = CFURLCopyFileSystemPath(CFURLCreateCopyDeletingLastPathComponent(0, CFBundleCopyExecutableURL(CFBundleGetMainBundle())), kCFURLWindowsPathStyle);
     CFMutableStringRef bundlePath = CFStringCreateMutableCopy(0, 0, exeContainerPath);
-#ifndef NDEBUG
+#ifdef DEBUG_ALL
     CFStringAppendCString(bundlePath, "\\InjectedBundle_debug.dll", kCFStringEncodingWindowsLatin1);
 #else
     CFStringAppendCString(bundlePath, "\\InjectedBundle.dll", kCFStringEncodingWindowsLatin1);

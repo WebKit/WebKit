@@ -1,3 +1,16 @@
+2010-07-26  Adam Roben  <aroben@apple.com>
+
+        Fix the path to InjectedBundle.dll in Debug_Internal builds
+
+        Fixes <http://webkit.org/b/42994> WebKitTestRunner fails to load
+        InjectedBundle.dll in the Debug_Internal configuration
+
+        Reviewed by Anders Carlsson.
+
+        * WebKitTestRunner/win/TestControllerWin.cpp:
+        (WTR::TestController::initializeInjectedBundlePath): Add the _debug
+        suffix only in Debug_All builds.
+
 2010-07-25  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
 
         Reviewed by Darin Adler.
