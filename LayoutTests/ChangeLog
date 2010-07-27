@@ -1,3 +1,21 @@
+2010-07-27  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        LayoutTests/fast/dom/DeviceOrientation/window-property.html assumes use of V8
+        https://bugs.webkit.org/show_bug.cgi?id=43025
+
+        This change modifies window-property.html and its expected result to work with JSC.
+        A V8-specific expected result is added for Android.
+
+        * fast/dom/DeviceOrientation/script-tests/window-property.js:
+        * fast/dom/DeviceOrientation/window-property-expected.txt:
+        * platform/android-v8: Added.
+        * platform/android-v8/fast: Added.
+        * platform/android-v8/fast/dom: Added.
+        * platform/android-v8/fast/dom/DeviceOrientation: Added.
+        * platform/android-v8/fast/dom/DeviceOrientation/window-property-expected.txt: Added.
+
 2010-07-27  Anton Muhin  <antonm@chromium.org>
 
         Reviewed by Darin Adler.

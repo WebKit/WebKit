@@ -9,7 +9,8 @@ function hasDeviceOrientationEventProperty()
     return false;
 }
 
-shouldBeTrue("typeof window.DeviceOrientationEvent == 'function'");
+shouldBeTrue("typeof window.DeviceOrientationEvent == 'object'");
+shouldBeFalse("typeof window.DeviceOrientationEvent == 'function'");
 shouldBeTrue("hasDeviceOrientationEventProperty()");
 shouldBeTrue("'DeviceOrientationEvent' in window");
 shouldBeTrue("window.hasOwnProperty('DeviceOrientationEvent')");
@@ -26,6 +27,6 @@ function hasOnDeviceOrientationProperty()
 shouldBeTrue("typeof window.ondeviceorientation == 'object'");
 shouldBeTrue("hasOnDeviceOrientationProperty()");
 shouldBeTrue("'ondeviceorientation' in window");
-shouldBeFalse("window.hasOwnProperty('ondeviceorientation')");
+shouldBeTrue("window.hasOwnProperty('ondeviceorientation')");
 
 window.successfullyParsed = true;
