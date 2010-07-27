@@ -64,13 +64,15 @@ public:
     void invalidatePolicyListener();
     void didReceivePolicyDecision(uint64_t listenerID, WebCore::PolicyAction);
 
-    // WKBundleFrame API functions
+    // WKBundleFrame API and SPI functions
     bool isMainFrame() const;
     WebCore::String name() const;
     WebCore::String url() const;
     PassRefPtr<ImmutableArray> childFrames();
     JSValueRef computedStyleIncludingVisitedInfo(JSObjectRef element);
     JSGlobalContextRef jsContext();
+    static WebCore::String counterValue(JSObjectRef element);
+    static WebCore::String markerText(JSObjectRef element);
 
     unsigned numberOfActiveAnimations();
     bool pauseAnimationOnElementWithId(const WebCore::String& animationName, const WebCore::String& elementID, double time);

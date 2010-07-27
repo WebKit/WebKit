@@ -1,3 +1,15 @@
+2010-07-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WebKitTestRunner needs to support layoutTestController.counterValueForElementById
+        https://bugs.webkit.org/show_bug.cgi?id=42537
+
+        WebKitTestRunner needs layoutTestController.markerTextForListItem
+        https://bugs.webkit.org/show_bug.cgi?id=42549
+
+        * platform/mac-wk2/Skipped: Removed tests that were failing due to one of the above.
+
 2010-07-26  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

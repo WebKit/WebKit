@@ -1,3 +1,33 @@
+2010-07-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WebKitTestRunner needs to support layoutTestController.counterValueForElementById
+        https://bugs.webkit.org/show_bug.cgi?id=42537
+
+        WebKitTestRunner needs layoutTestController.markerTextForListItem
+        https://bugs.webkit.org/show_bug.cgi?id=42549
+
+        * UIProcess/API/C/WKString.cpp:
+        (WKStringIsEmpty): Added.
+        * UIProcess/API/C/WKString.h: Added WKStringIsEmpty.
+
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp:
+        (copiedString): Added. Helper for functions that return a
+        WKStringRef that follows the copy rule.
+        (WKBundleFrameCopyName): Use copiedString.
+        (WKBundleFrameCopyCounterValue): Added. Calls counterValue.
+        (WKBundleFrameCopyMarkerText): Added. Calls markerText.
+        * WebProcess/InjectedBundle/API/c/WKBundleFramePrivate.h:
+        Added WKBundleFrameCopyCounterValue and WKBundleFrameCopyMarkerText.
+
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::computedStyleIncludingVisitedInfo):
+        Renamed argument to streamline function a bit.
+        (WebKit::WebFrame::counterValue): Added.
+        (WebKit::WebFrame::markerText): Added.
+        * WebProcess/WebPage/WebFrame.h: Added counterValue and markerText.
+
 2010-07-26  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

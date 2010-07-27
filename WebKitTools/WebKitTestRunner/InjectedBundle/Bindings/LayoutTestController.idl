@@ -44,6 +44,8 @@ module WTR {
 
         // Special DOM functions.
         object computedStyleIncludingVisitedInfo(in object element);
+        DOMString counterValueForElementById(in DOMString elementId);
+        DOMString markerTextForListItem(in object element);
 
         // Repaint testing.
         void testRepaint();

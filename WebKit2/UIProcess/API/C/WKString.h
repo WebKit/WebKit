@@ -28,12 +28,18 @@
 
 #include <WebKit2/WKBase.h>
 
+#ifndef __cplusplus
+#include <stdbool.h>
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 WK_EXPORT WKStringRef WKStringRetain(WKStringRef string);
 WK_EXPORT void WKStringRelease(WKStringRef string);
+
+WK_EXPORT bool WKStringIsEmpty(WKStringRef string);
 
 #ifdef __cplusplus
 }

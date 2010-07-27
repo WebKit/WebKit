@@ -34,7 +34,7 @@
 #include <WebCore/HTMLFrameOwnerElement.h>
 #include <WebCore/JSCSSStyleDeclaration.h>
 #include <WebCore/JSElement.h>
-#include <WebCore/PlatformString.h>
+#include <WebCore/RenderTreeAsText.h>
 
 #ifndef NDEBUG
 #include <wtf/RefCountedLeakCounter.h>
@@ -257,7 +257,7 @@ JSGlobalContextRef WebFrame::jsContext()
     return const_cast<JSGlobalContextRef>(toRef(m_coreFrame->script()->globalObject(mainThreadNormalWorld())->globalExec()));
 }
 
-JSValueRef WebFrame::computedStyleIncludingVisitedInfo(JSObjectRef elementJSObject)
+JSValueRef WebFrame::computedStyleIncludingVisitedInfo(JSObjectRef element)
 {
     if (!m_coreFrame)
         return 0;
@@ -265,13 +265,29 @@ JSValueRef WebFrame::computedStyleIncludingVisitedInfo(JSObjectRef elementJSObje
     JSDOMWindow* globalObject = m_coreFrame->script()->globalObject(mainThreadNormalWorld());
     ExecState* exec = globalObject->globalExec();
 
-    if (!toJS(elementJSObject)->inherits(&JSElement::s_info))
+    if (!toJS(element)->inherits(&JSElement::s_info))
         return JSValueMakeUndefined(toRef(exec));
 
-    RefPtr<CSSComputedStyleDeclaration> style = computedStyle(static_cast<JSElement*>(toJS(elementJSObject))->impl(), true);
+    RefPtr<CSSComputedStyleDeclaration> style = computedStyle(static_cast<JSElement*>(toJS(element))->impl(), true);
 
     JSLock lock(SilenceAssertionsOnly);
     return toRef(exec, toJS(exec, globalObject, style.get()));
+}
+
+String WebFrame::counterValue(JSObjectRef element)
+{
+    if (!toJS(element)->inherits(&JSElement::s_info))
+        return String();
+
+    return counterValueForElement(static_cast<JSElement*>(toJS(element))->impl());
+}
+
+String WebFrame::markerText(JSObjectRef element)
+{
+    if (!toJS(element)->inherits(&JSElement::s_info))
+        return String();
+
+    return markerTextForListItem(static_cast<JSElement*>(toJS(element))->impl());
 }
 
 } // namespace WebKit

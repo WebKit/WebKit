@@ -1,3 +1,48 @@
+2010-07-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WebKitTestRunner needs to support layoutTestController.counterValueForElementById
+        https://bugs.webkit.org/show_bug.cgi?id=42537
+
+        WebKitTestRunner needs layoutTestController.markerTextForListItem
+        https://bugs.webkit.org/show_bug.cgi?id=42549
+
+        * WebKitTestRunner/InjectedBundle/Bindings/CodeGeneratorTestRunner.pm:
+        Fixed _paramterExpression typo. Improved support for string type as a
+        return value, so we don't try to include DOMString.h and we can convert
+        the string to a JSValue by calling JSValueMakeStringOrNull.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/JSWrappable.h:
+        Added JSValueMakeStringOrNull, used by the code generator.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/LayoutTestController.idl:
+        Added counterValueForElementById and markerTextForListItem.
+
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        Moved constant to the top of the file.
+        (WTR::toCF): Added. Converts strings to CFStringRef.
+        (WTR::toWK): Added. Converts strings to WKStringRef.
+        (WTR::toJS): Added. Converts strings to JSStringRef.
+        (WTR::setProperty): Moved this function to the top of the file
+        rather than having it down where it's used inside the class. Also
+        renamed it so it's a separate function rather than an overload of
+        JSObjectSetProperty.
+        (WTR::propertyValue): Copied this here from InjectedBundlePage.cpp.
+        Should move it somewhere we can share it.
+        (WTR::propertyObject): Ditto.
+        (WTR::getElementById): Added. Calls getElementById through the magic
+        of JavaScript.
+        (WTR::LayoutTestController::pauseAnimationAtTimeOnElementWithId):
+        Chagned to use toWK instead of four local variables.
+        (WTR::LayoutTestController::counterValueForElementById): Added.
+        Calls WKBundleFrameCopyCounterValue.
+        (WTR::LayoutTestController::markerTextForListItem): Added.
+        Calls WKBundleFrameCopyMarkerText.
+
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h:
+        Added counterValueForElementById and markerTextForListItem.
+
 2010-07-26  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.

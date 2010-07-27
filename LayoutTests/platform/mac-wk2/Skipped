@@ -1968,19 +1968,6 @@ fast/frames/flattening/iframe-flattening-fixed-width.html
 fast/frames/flattening/iframe-flattening-offscreen.html
 fast/frames/flattening/iframe-flattening-simple.html
 
-# WebKitTestRunner needs to support layoutTestController.counterValueForElementById
-# <https://bugs.webkit.org/show_bug.cgi?id=42537>
-fast/css/counters/adding-nodes.html
-fast/css/counters/counter-reset-001.html
-fast/css/counters/counter-increment-000.html
-fast/css/counters/counter-reset-002.html
-fast/css/counters/counter-increment-001.html
-fast/css/counters/counterValueForElementById.html
-fast/css/counters/counter-increment-002.html
-fast/css/counters/invalidate-cached-counter-node.html
-fast/css/counters/counter-reset-000.html
-fast/css/counters/nesting.html
-
 # WebKitTestRunner needs to support layoutTestController.execCommand
 # <https://bugs.webkit.org/show_bug.cgi?id=42538>
 editing/deleting/5300379.html
@@ -2094,15 +2081,6 @@ svg/custom/embedded-svg-disallowed-in-dashboard.xml
 svg/custom/manually-parsed-embedded-svg-disallowed-in-dashboard.html
 svg/custom/manually-parsed-svg-disallowed-in-dashboard.html
 svg/custom/svg-disallowed-in-dashboard-object.html
-
-# WebKitTestRunner needs layoutTestController.markerTextForListItem
-# <https://bugs.webkit.org/show_bug.cgi?id=42549>
-fast/lists/ol-nested-items.html
-fast/lists/ol-nested-items-dynamic-insert.html
-fast/lists/ol-nested-items-dynamic-remove.html
-fast/lists/ol-nested-list.html
-fast/lists/ol-nested-list-dynamic-insert.html
-fast/lists/ol-nested-list-dynamic-remove.html
 
 # WebKitTestRunner needs layoutTestController.pauseTransitionAtTimeOnElementWithId
 # <https://bugs.webkit.org/show_bug.cgi?id=42550>

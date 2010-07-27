@@ -38,3 +38,8 @@ void WKStringRelease(WKStringRef stringRef)
 {
     toWK(stringRef)->deref();
 }
+
+bool WKStringIsEmpty(WKStringRef stringRef)
+{
+    return !toWK(stringRef)->length();
+}
