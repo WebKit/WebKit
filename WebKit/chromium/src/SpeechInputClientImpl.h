@@ -37,7 +37,7 @@
 #include "page/SpeechInputClient.h"
 
 namespace WebCore {
-class SpeechInputClientListener;
+class SpeechInputListener;
 }
 
 namespace WebKit {
@@ -53,8 +53,9 @@ public:
     virtual ~SpeechInputClientImpl();
 
     // SpeechInputClient methods.
-    bool startRecognition(WebCore::SpeechInputClientListener*);
+    bool startRecognition(WebCore::SpeechInputListener*);
     void stopRecording();
+    void cancelRecognition();
 
     // WebSpeechInputListener methods.
     void didCompleteRecording();
@@ -63,7 +64,7 @@ public:
 
 private:
     WebSpeechInputController* m_controller; // To call into the embedder.
-    WebCore::SpeechInputClientListener* m_listener; // Valid when recognition is in progress.
+    WebCore::SpeechInputListener* m_listener; // Valid when recognition is in progress.
 };
 
 } // namespace WebKit

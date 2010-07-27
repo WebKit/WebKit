@@ -35,16 +35,20 @@
 
 namespace WebCore {
 
-class SpeechInputClientListener;
+class SpeechInputListener;
 
 // Provides an interface for SpeechInput to call into the embedder.
 class SpeechInputClient {
 public:
-    virtual bool startRecognition(SpeechInputClientListener* listener) = 0;
+    virtual bool startRecognition(SpeechInputListener* listener) = 0;
 
     // Stops audio recording and performs recognition with the audio recorded until now
     // (does not discard audio).
     virtual void stopRecording() = 0;
+
+    // Cancels an ongoing recognition and discards any audio recorded so far. No partial
+    // recognition results are returned to the listener.
+    virtual void cancelRecognition() = 0;
 
 protected:
     virtual ~SpeechInputClient() { }

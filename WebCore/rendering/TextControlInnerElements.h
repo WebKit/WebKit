@@ -125,6 +125,7 @@ public:
 
     // SpeechInputListener methods.
     void didCompleteRecording();
+    void didCompleteRecognition();
     void setRecognitionResult(const String& result);
 
 private:
@@ -133,7 +134,6 @@ private:
     SpeechInput* speechInput();
 
     bool m_capturing;
-    OwnPtr<SpeechInput> m_speechInput;
 };
 
 #endif // ENABLE(INPUT_SPEECH)

@@ -380,7 +380,7 @@ void InputFieldSpeechButtonElement::defaultEventHandler(Event* event)
                 m_capturing = false;
             }
             if (hovered()) {
-                speechInput()->startRecognition();
+                speechInput()->startRecognition(this);
                 event->setDefaultHandled();
             }
         }
@@ -392,15 +392,18 @@ void InputFieldSpeechButtonElement::defaultEventHandler(Event* event)
 
 SpeechInput* InputFieldSpeechButtonElement::speechInput()
 {
-    if (!m_speechInput)
-        m_speechInput.set(new SpeechInput(document()->page()->speechInputClient(), this));
-    return m_speechInput.get();
+    return document()->page()->speechInput();
 }
 
 void InputFieldSpeechButtonElement::didCompleteRecording()
 {
     // FIXME: Add UI feedback here to indicate that audio recording stopped and recognition is
     // in progress.
+}
+
+void InputFieldSpeechButtonElement::didCompleteRecognition()
+{
+    // FIXME: Add UI feedback here to indicate that audio recognition has ended.
 }
 
 void InputFieldSpeechButtonElement::setRecognitionResult(const String& result)

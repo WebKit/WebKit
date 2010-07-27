@@ -33,7 +33,7 @@
 
 #if ENABLE(INPUT_SPEECH)
 
-#include "SpeechInputClientListener.h"
+#include "SpeechInputListener.h"
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
@@ -45,20 +45,19 @@ class String;
 // This class connects the input elements requiring speech input with the platform specific
 // speech recognition engine. It provides methods for the input elements to activate speech
 // recognition and methods for the speech recognition engine to return back the results.
-class SpeechInput : public Noncopyable, public SpeechInputClientListener {
+class SpeechInput : public Noncopyable, public SpeechInputListener {
 public:
-    SpeechInput(SpeechInputClient*, SpeechInputListener*);
+    SpeechInput(SpeechInputClient*);
     virtual ~SpeechInput() { }
 
     // Methods invoked by the input elements.
-    virtual bool startRecognition();
+    bool startRecognition(SpeechInputListener* listener);
+    void stopRecording();
 
-    // SpeechInputClient::Listener methods.
+    // SpeechInputListener methods.
     virtual void didCompleteRecording();
+    virtual void didCompleteRecognition();
     virtual void setRecognitionResult(const String&);
-
-protected:
-    SpeechInputClient* client() const { return m_client; }
 
 private:
     SpeechInputClient* m_client;

@@ -22501,10 +22501,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\page\SpeechInputClientListener.h"
-				>
-			</File>
-			<File
 				RelativePath="..\page\SpeechInputListener.h"
 				>
 			</File>

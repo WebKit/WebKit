@@ -2952,7 +2952,6 @@ webcore_sources += \
 	WebCore/page/SpeechInput.cpp \
 	WebCore/page/SpeechInput.h \
 	WebCore/page/SpeechInputClient.h \
-	WebCore/page/SpeechInputClientListener.h \
 	WebCore/page/SpeechInputListener.h
 
 else

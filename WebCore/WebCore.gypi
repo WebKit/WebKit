@@ -2040,7 +2040,6 @@
             'page/SpeechInput.cpp',
             'page/SpeechInput.h',
             'page/SpeechInputClient.h',
-            'page/SpeechInputClientListener.h',
             'page/SpeechInputListener.h',
             'page/SuspendableTimer.cpp',
             'page/SuspendableTimer.h',

@@ -1,3 +1,37 @@
+2010-07-27  Satish Sampath  <satish@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Simplify speech input plumbing in webcore and webkit
+        https://bugs.webkit.org/show_bug.cgi?id=43008
+
+        No new tests as functionality is not changed.
+
+        * GNUmakefile.am: Removed a header file.
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/Page.cpp:
+        (WebCore::Page::speechInput): Creates and returns SpeechInput when needed.
+        * page/Page.h:
+        * page/SpeechInput.cpp: Added methods to proxy and callbacks between input elements and WebKit
+        (WebCore::SpeechInput::SpeechInput):
+        (WebCore::SpeechInput::didCompleteRecording):
+        (WebCore::SpeechInput::didCompleteRecognition):
+        (WebCore::SpeechInput::setRecognitionResult):
+        (WebCore::SpeechInput::startRecognition):
+        (WebCore::SpeechInput::stopRecording):
+        * page/SpeechInput.h:
+        * page/SpeechInputClient.h:
+        * page/SpeechInputClientListener.h: Removed.
+        * page/SpeechInputListener.h:
+        * rendering/TextControlInnerElements.cpp: Added one more callback.
+        (WebCore::InputFieldSpeechButtonElement::defaultEventHandler):
+        (WebCore::InputFieldSpeechButtonElement::speechInput):
+        (WebCore::InputFieldSpeechButtonElement::didCompleteRecognition):
+        * rendering/TextControlInnerElements.h:
+
 2010-07-27  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Ojan Vafai.

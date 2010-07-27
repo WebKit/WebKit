@@ -1,3 +1,18 @@
+2010-07-27  Satish Sampath  <satish@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Simplify speech input plumbing in webcore and webkit
+        https://bugs.webkit.org/show_bug.cgi?id=43008
+
+        * src/SpeechInputClientImpl.cpp: Move functionality to WebCore::SpeechInput and make this a dummy proxy.
+        (WebKit::SpeechInputClientImpl::startRecognition):
+        (WebKit::SpeechInputClientImpl::cancelRecognition):
+        (WebKit::SpeechInputClientImpl::didCompleteRecording):
+        (WebKit::SpeechInputClientImpl::didCompleteRecognition):
+        (WebKit::SpeechInputClientImpl::setRecognitionResult):
+        * src/SpeechInputClientImpl.h:
+
 2010-07-26  Dominic Mazzoni  <dmazzoni@google.com>
 
         Reviewed by Chris Fleizach.

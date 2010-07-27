@@ -1612,7 +1612,6 @@ HEADERS += \
     page/SpatialNavigation.h \
     page/SpeechInput.h \
     page/SpeechInputClient.h \
-    page/SpeechInputClientListener.h \
     page/SpeechInputListener.h \
     page/WindowFeatures.h \
     page/WorkerNavigator.h \
