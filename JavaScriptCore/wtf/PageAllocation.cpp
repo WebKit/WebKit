@@ -26,7 +26,6 @@
 
 #include "config.h"
 #include "PageAllocation.h"
-#include "UnusedParam.h"
 
 #if HAVE(ERRNO_H)
 #include <errno.h>
