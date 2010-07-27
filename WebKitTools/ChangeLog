@@ -1,3 +1,12 @@
+2010-07-27  Adam Roben  <aroben@apple.com>
+
+        Mac build fix
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (processDidExit):
+        (-[BrowserWindowController awakeFromNib]):
+        Added processDidExit support.
+
 2010-07-26  Antonio Gomes  <tonikitoo@webkit.org>
 
         Rubber-stamped by Simon Hausmann.

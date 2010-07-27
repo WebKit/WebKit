@@ -224,6 +224,11 @@ static void didBecomeResponsive(WKPageRef page, const void *clientInfo)
     LOG(@"didBecomeResponsive");
 }
 
+static void processDidExit(WKPageRef page, const void *clientInfo)
+{
+    LOG(@"processDidExit");
+}
+
 static void didChangeBackForwardList(WKPageRef page, const void *clientInfo)
 {
     [(BrowserWindowController *)clientInfo validateToolbar];
@@ -413,6 +418,7 @@ static void didUpdateHistoryTitle(WKPageRef page, WKStringRef title, WKURLRef UR
         didFinishProgress,
         didBecomeUnresponsive,
         didBecomeResponsive,
+        processDidExit,
         didChangeBackForwardList
     };
     WKPageSetPageLoaderClient(_webView.pageRef, &loadClient);
