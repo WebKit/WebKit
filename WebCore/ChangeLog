@@ -1,3 +1,30 @@
+2010-07-27  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        [IndexedDB] Key range methods belong to the IDBKeyRange interface
+        https://bugs.webkit.org/show_bug.cgi?id=43052
+
+        Move the key range methods from the IndexedDatabaseRequest interface
+        to the IDBKeyRange interface. Also add a global IDBKeyRange object
+        that can be used to access the IDBKeyRange constants and factory methods. 
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::clear):
+        (WebCore::DOMWindow::iDBKeyRange):
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+        * storage/IDBKeyRange.cpp:
+        (WebCore::IDBKeyRange::only):
+        (WebCore::IDBKeyRange::leftBound):
+        (WebCore::IDBKeyRange::rightBound):
+        (WebCore::IDBKeyRange::bound):
+        * storage/IDBKeyRange.h:
+        * storage/IDBKeyRange.idl:
+        * storage/IndexedDatabaseRequest.cpp:
+        * storage/IndexedDatabaseRequest.h:
+        * storage/IndexedDatabaseRequest.idl:
+
 2010-07-27  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

@@ -39,6 +39,29 @@ IDBKeyRange::IDBKeyRange(PassRefPtr<IDBKey> left, PassRefPtr<IDBKey> right, unsi
 {
 }
 
+PassRefPtr<IDBKeyRange> IDBKeyRange::only(PassRefPtr<IDBKey> prpValue)
+{
+    RefPtr<IDBKey> value = prpValue;
+    return IDBKeyRange::create(value, value, IDBKeyRange::SINGLE);
+}
+
+PassRefPtr<IDBKeyRange> IDBKeyRange::leftBound(PassRefPtr<IDBKey> bound, bool open)
+{
+    return IDBKeyRange::create(bound, IDBKey::create(), open ? IDBKeyRange::LEFT_OPEN : IDBKeyRange::LEFT_BOUND);
+}
+
+PassRefPtr<IDBKeyRange> IDBKeyRange::rightBound(PassRefPtr<IDBKey> bound, bool open)
+{
+    return IDBKeyRange::create(IDBKey::create(), bound, open ? IDBKeyRange::RIGHT_OPEN : IDBKeyRange::RIGHT_BOUND);
+}
+
+PassRefPtr<IDBKeyRange> IDBKeyRange::bound(PassRefPtr<IDBKey> left, PassRefPtr<IDBKey> right, bool openLeft, bool openRight)
+{
+    unsigned short flags = openLeft ? IDBKeyRange::LEFT_OPEN : IDBKeyRange::LEFT_BOUND;
+    flags |= openRight ? IDBKeyRange::RIGHT_OPEN : IDBKeyRange::RIGHT_BOUND;
+    return IDBKeyRange::create(left, right, flags);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)

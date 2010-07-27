@@ -4,7 +4,7 @@ if (window.layoutTestController)
 
 function checkSingleKeyRange(value)
 {
-    keyRange = evalAndLog("indexedDB.makeSingleKeyRange(" + value + ")");
+    keyRange = evalAndLog("IDBKeyRange.only(" + value + ")");
     shouldBe("keyRange.left", "" + value);
     shouldBe("keyRange.right", "" + value);
     shouldBe("keyRange.flags", "keyRange.SINGLE");
@@ -12,7 +12,7 @@ function checkSingleKeyRange(value)
 
 function checkLeftBoundKeyRange(value, open)
 {
-    keyRange = evalAndLog("indexedDB.makeLeftBoundKeyRange(" + value + "," + open + ")");
+    keyRange = evalAndLog("IDBKeyRange.leftBound(" + value + "," + open + ")");
     shouldBe("keyRange.left", "" + value);
     shouldBeNull("keyRange.right");
     shouldBe("keyRange.flags", open ? "keyRange.LEFT_OPEN" : "keyRange.LEFT_BOUND");
@@ -20,7 +20,7 @@ function checkLeftBoundKeyRange(value, open)
 
 function checkRightBoundKeyRange(value, open)
 {
-    keyRange = evalAndLog("indexedDB.makeRightBoundKeyRange(" + value + "," + open + ")");
+    keyRange = evalAndLog("IDBKeyRange.rightBound(" + value + "," + open + ")");
     shouldBe("keyRange.right", "" + value);
     shouldBeNull("keyRange.left");
     shouldBe("keyRange.flags", open ? "keyRange.RIGHT_OPEN" : "keyRange.RIGHT_BOUND");
@@ -28,7 +28,7 @@ function checkRightBoundKeyRange(value, open)
 
 function checkBoundKeyRange(left, right, openLeft, openRight)
 {
-    keyRange = evalAndLog("indexedDB.makeBoundKeyRange(" + left + "," + right + "," + openLeft + "," + openRight + ")");
+    keyRange = evalAndLog("IDBKeyRange.bound(" + left + "," + right + "," + openLeft + "," + openRight + ")");
     shouldBe("keyRange.left", "" + left);
     shouldBe("keyRange.right", "" + right);
     leftFlags = keyRange.flags & (keyRange.LEFT_OPEN | keyRange.LEFT_BOUND);

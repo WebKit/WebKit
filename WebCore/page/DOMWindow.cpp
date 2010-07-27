@@ -56,6 +56,7 @@
 #include "FrameView.h"
 #include "HTMLFrameOwnerElement.h"
 #include "History.h"
+#include "IDBKeyRange.h"
 #include "IndexedDatabase.h"
 #include "IndexedDatabaseRequest.h"
 #include "InspectorController.h"
@@ -483,6 +484,7 @@ void DOMWindow::clear()
 #endif
 
 #if ENABLE(INDEXED_DATABASE)
+    m_idb_key_range = 0;
     m_indexedDatabaseRequest = 0;
 #endif
 }
@@ -704,6 +706,14 @@ IndexedDatabaseRequest* DOMWindow::indexedDB() const
 
     m_indexedDatabaseRequest = IndexedDatabaseRequest::create(page->group().indexedDatabase());
     return m_indexedDatabaseRequest.get();
+}
+
+IDBKeyRange* DOMWindow::iDBKeyRange() const
+{
+    if (!m_idb_key_range)
+        m_idb_key_range = IDBKeyRange::create(0, 0, 0);
+
+    return m_idb_key_range.get();
 }
 #endif
 

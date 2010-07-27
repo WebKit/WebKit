@@ -54,10 +54,6 @@ public:
     ~IndexedDatabaseRequest();
 
     PassRefPtr<IDBRequest> open(ScriptExecutionContext*, const String& name, const String& description);
-    PassRefPtr<IDBKeyRange> makeSingleKeyRange(PassRefPtr<IDBKey> value);
-    PassRefPtr<IDBKeyRange> makeLeftBoundKeyRange(PassRefPtr<IDBKey> bound, bool open = false);
-    PassRefPtr<IDBKeyRange> makeRightBoundKeyRange(PassRefPtr<IDBKey> bound, bool open = false);
-    PassRefPtr<IDBKeyRange> makeBoundKeyRange(PassRefPtr<IDBKey> left, PassRefPtr<IDBKey> right, bool openLeft = false, bool openRight = false);
 
 private:
     IndexedDatabaseRequest(IndexedDatabase*);

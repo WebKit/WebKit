@@ -29,10 +29,6 @@ module storage {
         Conditional=INDEXED_DATABASE
     ] IndexedDatabaseRequest {
         [CallWith=ScriptExecutionContext] IDBRequest open(in DOMString name, in DOMString description);
-        IDBKeyRange makeSingleKeyRange(in IDBKey value);
-        IDBKeyRange makeLeftBoundKeyRange(in IDBKey bound, in [Optional] boolean open);
-        IDBKeyRange makeRightBoundKeyRange(in IDBKey bound, in [Optional] boolean open);
-        IDBKeyRange makeBoundKeyRange(in IDBKey left, in IDBKey right, in [Optional] boolean openLeft, in [Optional] boolean openRight);
     };
 
 }
