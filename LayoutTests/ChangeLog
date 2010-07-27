@@ -1,3 +1,12 @@
+2010-07-27  Martin Robinson  <mrobinson@igalia.com>
+
+        Unreviewed.
+
+        Remove some mistakenly skipped tests from the skipped list as well as
+        a couple tests that no longer exist.
+
+        * platform/gtk/Skipped: Fix some errors in the skipped list.
+
 2010-07-27  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

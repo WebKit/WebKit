@@ -1962,7 +1962,6 @@ fast/dynamic/anonymous-block-layer-lost.html
 fast/dynamic/anonymous-block-orphaned-lines.html
 fast/dynamic/containing-block-change.html
 fast/dynamic/create-renderer-for-whitespace-only-text.html
-fast/dynamic/flash-replacement-test.html
 fast/dynamic/float-in-trailing-whitespace-after-last-line-break.html
 fast/dynamic/float-no-longer-overhanging.html
 fast/dynamic/float-withdrawal-2.html
@@ -5506,9 +5505,6 @@ http/tests/security/xss-DENIED-mime-type-execute-as-html.html
 # https://bugs.webkit.org/show_bug.cgi?id=37544
 svg/custom/use-instanceRoot-as-event-target.xhtml
 
-# https://bugs.webkit.org/show_bug.cgi?id=37545
-plugins/npruntime/setProperty.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=37546
 media/audio-delete-while-slider-thumb-clicked.html
 
@@ -5871,8 +5867,6 @@ editing/selection/drag-start-event-client-x-y.html
 
 # Tests that require editing delegate dumps.
 editing/pasteboard/drop-link.html
-media
-http/tests/media
 
 # Flaky due to JSC debugger issue.
 # https://bugs.webkit.org/show_bug.cgi?id=43034
