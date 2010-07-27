@@ -1,3 +1,10 @@
+2010-07-27  Victor Wang  <victorw@chromium.org>
+
+        Unreviewed. Update chromium test expectations.
+
+        * platform/chromium/test_expectations.txt:
+        * storage/indexeddb/keyrange-expected.txt:
+
 2010-07-27  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.
