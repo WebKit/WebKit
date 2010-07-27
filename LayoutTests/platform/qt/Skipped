@@ -5474,3 +5474,7 @@ http/tests/xmlhttprequest/null-auth.php
 # Fragile spatial-navigation-test
 # https://bugs.webkit.org/show_bug.cgi?id=43030
 fast/events/spatial-navigation/snav-clipped-overflowed-content.html
+
+# Assumes spesific metrics
+# See http://code.google.com/p/chromium/issues/detail?id=19897
+svg/custom/getscreenctm-in-mixed-content2.xhtml
