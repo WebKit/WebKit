@@ -1,3 +1,13 @@
+2010-07-25  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=42947
+        Check for WEBKIT_TESTFONTS for qt, gtk and windows port and throw 
+        error. Without which dumpRenderTree crashes.
+
+        * Scripts/old-run-webkit-tests:
+
 2010-07-27  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.

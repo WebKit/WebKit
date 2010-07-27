@@ -214,12 +214,6 @@ if (isAppleMacWebKit()) {
     }
 } elsif (isGtk()) {
     $platform = "gtk";
-    if (!$ENV{"WEBKIT_TESTFONTS"}) {
-        print "The WEBKIT_TESTFONTS environment variable is not defined.\n";
-        print "You must set it before running the tests.\n";
-        print "Use git to grab the actual fonts from http://gitorious.org/qtwebkit/testfonts\n";
-        exit 1;
-    }
 } elsif (isWx()) {
     $platform = "wx";
 } elsif (isCygwin()) {
@@ -231,6 +225,16 @@ if (isAppleMacWebKit()) {
         $platform = "win-7";
     } else {
         $platform = "win";
+    }
+}
+
+if (isQt() || isGtk() || isCygwin()) {
+    my $testfontPath = $ENV{"WEBKIT_TESTFONTS"};
+    if (!$testfontPath || !-d "$testfontPath") {
+        print "The WEBKIT_TESTFONTS environment variable is not defined or not set properly\n";
+        print "You must set it before running the tests.\n";
+        print "Use git to grab the actual fonts from http://gitorious.org/qtwebkit/testfonts\n";
+        exit 1;
     }
 }
 
