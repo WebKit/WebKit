@@ -1,3 +1,37 @@
+2010-07-27  Dominic Mazzoni  <dmazzoni@google.com>
+
+        Reviewed by Chris Fleizach.
+
+        For Windows accessibility, have WebElement provide access
+        to its attributes.
+
+        https://bugs.webkit.org/show_bug.cgi?id=43004
+
+        * WebKit.gyp:
+        * public/WebAttribute.h: Added.
+        (WebKit::WebAttribute::~WebAttribute):
+        (WebKit::WebAttribute::WebAttribute):
+        (WebKit::WebAttribute::operator=):
+        * public/WebElement.h:
+        * public/WebNamedNodeMap.h: Added.
+        (WebKit::WebNamedNodeMap::~WebNamedNodeMap):
+        (WebKit::WebNamedNodeMap::WebNamedNodeMap):
+        (WebKit::WebNamedNodeMap::operator=):
+        * src/WebAttribute.cpp: Added.
+        (WebKit::WebAttribute::reset):
+        (WebKit::WebAttribute::assign):
+        (WebKit::WebAttribute::WebAttribute):
+        (WebKit::WebAttribute::localName):
+        (WebKit::WebAttribute::value):
+        * src/WebElement.cpp:
+        (WebKit::WebElement::attributes):
+        * src/WebNamedNodeMap.cpp: Added.
+        (WebKit::WebNamedNodeMap::reset):
+        (WebKit::WebNamedNodeMap::assign):
+        (WebKit::WebNamedNodeMap::WebNamedNodeMap):
+        (WebKit::WebNamedNodeMap::length):
+        (WebKit::WebNamedNodeMap::attributeItem):
+
 2010-07-27  Satish Sampath  <satish@chromium.org>
 
         Reviewed by Kent Tamura.
