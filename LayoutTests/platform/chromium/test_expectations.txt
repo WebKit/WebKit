@@ -762,6 +762,9 @@ BUG13907 : media/event-attributes.html = PASS FAIL TIMEOUT
 // The media time display isn't appearing.
 BUG13907 : media/video-zoom-controls.html = PASS FAIL TIMEOUT
 
+// Flaky because of our new seeking algorithm.
+BUG50438 : media/controls-drag-timebar.html = PASS FAIL
+
 // The media time display is getting styled when it shouldn't be.
 BUG13907 : media/controls-styling.html = FAIL
 
