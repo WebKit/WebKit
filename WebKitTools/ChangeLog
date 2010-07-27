@@ -1,3 +1,9 @@
+2010-07-27  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fix after introduction of EXECUTABLE_ALLOCATOR_DEMAND.
+
+        * wx/build/settings.py:
+
 2010-07-27  Adam Roben  <aroben@apple.com>
 
         Mac build fix
