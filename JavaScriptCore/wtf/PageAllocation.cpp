@@ -27,14 +27,13 @@
 #include "config.h"
 #include "PageAllocation.h"
 
-#include <unistd.h>
-
 #if HAVE(ERRNO_H)
 #include <errno.h>
 #endif
 
 #if HAVE(MMAP)
 #include <sys/mman.h>
+#include <unistd.h>
 #endif
 
 #if OS(WINDOWS)
