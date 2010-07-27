@@ -1,5 +1,20 @@
 2010-07-27  Adam Roben  <aroben@apple.com>
 
+        Make preferences APIs robust against web process crashes
+
+        Fixes <http://webkit.org/b/43049> Crash in
+        WebPageNamespace::preferencesDidChange if preferences are changed
+        after the web process crashes
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::preferencesDidChange): Bail out if we don't have
+        a web process. The new preference values will get propogated to the
+        web process if and when it launches.
+
+2010-07-27  Adam Roben  <aroben@apple.com>
+
         Add a ProcessDidExit callback to the WKPageLoaderClient
 
         Fixes <http://webkit.org/b/43048> UI process needs a way to find out
