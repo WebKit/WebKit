@@ -98,7 +98,7 @@ PassRefPtr<Clipboard> EventHandler::createDraggingClipboard() const
 #else
     COMPtr<WCDataObject> dataObject;
     WCDataObject::createInstance(&dataObject);
-    return ClipboardWin::create(true, dataObject.get(), ClipboardWritable);
+    return ClipboardWin::create(true, dataObject.get(), ClipboardWritable, m_frame);
 #endif
 }
 

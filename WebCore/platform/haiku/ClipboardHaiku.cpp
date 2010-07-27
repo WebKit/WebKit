@@ -42,6 +42,11 @@
 
 namespace WebCore {
 
+PassRefPtr<Clipboard> Clipboard::create(ClipboardAccessPolicy policy, DragData*, Frame*)
+{
+    return ClipboardHaiku::create(policy, true);
+}
+
 ClipboardHaiku::ClipboardHaiku(ClipboardAccessPolicy policy, bool forDragging)
     : Clipboard(policy, forDragging)
 {

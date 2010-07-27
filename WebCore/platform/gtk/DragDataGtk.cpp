@@ -62,11 +62,6 @@ Color DragData::asColor() const
     return Color();
 }
 
-PassRefPtr<Clipboard> DragData::createClipboard(ClipboardAccessPolicy policy) const
-{
-    return ClipboardGtk::create(policy, m_platformDragData, true);
-}
-
 bool DragData::containsCompatibleContent() const
 {
     return containsPlainText() || containsURL() || m_platformDragData->hasMarkup() || containsColor() || containsFiles();

@@ -33,11 +33,15 @@
 
 namespace WebCore {
 
+    class DragData;
     class FileList;
+    class Frame;
 
     // State available during IE's events for drag and drop and copy/paste
     class Clipboard : public RefCounted<Clipboard> {
     public:
+        static PassRefPtr<Clipboard> create(ClipboardAccessPolicy, DragData*, Frame*);
+
         virtual ~Clipboard() { }
 
         // Is this operation a drag-drop or a copy-paste?

@@ -18,6 +18,7 @@
 #include "ClipboardGtk.h"
 
 #include "CachedImage.h"
+#include "DragData.h"
 #include "Editor.h"
 #include "Element.h"
 #include "FileList.h"
@@ -27,6 +28,7 @@
 #include "Pasteboard.h"
 #include "PasteboardHelper.h"
 #include "RenderImage.h"
+#include "ScriptExecutionContext.h"
 #include "StringHash.h"
 #include "markup.h"
 #include <wtf/text/CString.h>
@@ -43,24 +45,31 @@ enum ClipboardType {
     ClipboardTypeUnknown
 };
 
-PassRefPtr<Clipboard> Editor::newGeneralClipboard(ClipboardAccessPolicy policy)
+PassRefPtr<Clipboard> Editor::newGeneralClipboard(ClipboardAccessPolicy policy, Frame* frame)
 {
-    return ClipboardGtk::create(policy, gtk_clipboard_get_for_display(gdk_display_get_default(), GDK_SELECTION_CLIPBOARD), false);
+    return ClipboardGtk::create(policy, gtk_clipboard_get_for_display(gdk_display_get_default(), GDK_SELECTION_CLIPBOARD), false, frame);
 }
 
-ClipboardGtk::ClipboardGtk(ClipboardAccessPolicy policy, GtkClipboard* clipboard)
+PassRefPtr<Clipboard> Clipboard::create(ClipboardAccessPolicy policy, DragData* dragData, Frame* frame)
+{
+    return ClipboardGtk::create(policy, dragData->platformData(), true, frame);
+}
+
+ClipboardGtk::ClipboardGtk(ClipboardAccessPolicy policy, GtkClipboard* clipboard, Frame* frame)
     : Clipboard(policy, false)
     , m_dataObject(DataObjectGtk::forClipboard(clipboard))
     , m_clipboard(clipboard)
     , m_helper(Pasteboard::generalPasteboard()->helper())
+    , m_frame(frame)
 {
 }
 
-ClipboardGtk::ClipboardGtk(ClipboardAccessPolicy policy, PassRefPtr<DataObjectGtk> dataObject, bool forDragging)
+ClipboardGtk::ClipboardGtk(ClipboardAccessPolicy policy, PassRefPtr<DataObjectGtk> dataObject, bool forDragging, Frame* frame)
     : Clipboard(policy, forDragging)
     , m_dataObject(dataObject)
     , m_clipboard(0)
     , m_helper(Pasteboard::generalPasteboard()->helper())
+    , m_frame(frame)
 {
 }
 
@@ -255,8 +264,9 @@ PassRefPtr<FileList> ClipboardGtk::files() const
     RefPtr<FileList> fileList = FileList::create();
     Vector<String> fileVector(m_dataObject->files());
 
+    ScriptExecutionContext* scriptExecutionContext = m_frame->document()->scriptExecutionContext();
     for (size_t i = 0; i < fileVector.size(); i++)
-        fileList->append(File::create(fileVector[i]));
+        fileList->append(File::create(scriptExecutionContext, fileVector[i]));
 
     return fileList.release();
 }

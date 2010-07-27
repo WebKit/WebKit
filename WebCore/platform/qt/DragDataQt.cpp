@@ -26,7 +26,6 @@
 #include "config.h"
 #include "DragData.h"
 
-#include "ClipboardQt.h"
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "markup.h"
@@ -98,11 +97,6 @@ Color DragData::asColor() const
     if (!m_platformDragData)
         return Color();
     return qvariant_cast<QColor>(m_platformDragData->colorData());
-}
-
-PassRefPtr<Clipboard> DragData::createClipboard(ClipboardAccessPolicy policy) const
-{
-    return ClipboardQt::create(policy, m_platformDragData);
 }
 
 bool DragData::containsCompatibleContent() const

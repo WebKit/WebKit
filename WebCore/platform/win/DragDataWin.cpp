@@ -26,9 +26,7 @@
 #include "config.h"
 #include "DragData.h"
 
-#include "ClipboardWin.h"
 #include "ClipboardUtilitiesWin.h"
-#include "ClipboardAccessPolicy.h"
 #include "DocumentFragment.h"
 #include "PlatformString.h"
 #include "Markup.h"
@@ -38,11 +36,6 @@
 #include <wininet.h>
 
 namespace WebCore {
-
-PassRefPtr<Clipboard> DragData::createClipboard(ClipboardAccessPolicy policy) const
-{
-    return ClipboardWin::create(true, m_platformDragData, policy);
-}
 
 bool DragData::containsURL(FilenameConversionPolicy filenamePolicy) const
 {

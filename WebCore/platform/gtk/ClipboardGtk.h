@@ -34,20 +34,21 @@ typedef struct _GtkClipboard GtkClipboard;
 
 namespace WebCore {
     class CachedImage;
+    class Frame;
     class PasteboardHelper;
 
     // State available during IE's events for drag and drop and copy/paste
     // Created from the EventHandlerGtk to be used by the dom
     class ClipboardGtk : public Clipboard {
     public:
-        static PassRefPtr<ClipboardGtk> create(ClipboardAccessPolicy policy, GtkClipboard* clipboard, bool isForDragging)
+        static PassRefPtr<ClipboardGtk> create(ClipboardAccessPolicy policy, GtkClipboard* clipboard, bool isForDragging, Frame* frame)
         {
-            return adoptRef(new ClipboardGtk(policy, clipboard));
+            return adoptRef(new ClipboardGtk(policy, clipboard, frame));
         }
 
-        static PassRefPtr<ClipboardGtk> create(ClipboardAccessPolicy policy, PassRefPtr<DataObjectGtk> dataObject, bool isForDragging)
+        static PassRefPtr<ClipboardGtk> create(ClipboardAccessPolicy policy, PassRefPtr<DataObjectGtk> dataObject, bool isForDragging, Frame* frame)
         {
-            return adoptRef(new ClipboardGtk(policy, dataObject, isForDragging));
+            return adoptRef(new ClipboardGtk(policy, dataObject, isForDragging, frame));
         }
         virtual ~ClipboardGtk();
 
@@ -77,12 +78,13 @@ namespace WebCore {
         PassRefPtr<DataObjectGtk> dataObject() { return m_dataObject; }
 
     private:
-        ClipboardGtk(ClipboardAccessPolicy, GtkClipboard*);
-        ClipboardGtk(ClipboardAccessPolicy, PassRefPtr<DataObjectGtk>, bool);
+        ClipboardGtk(ClipboardAccessPolicy, GtkClipboard*, Frame*);
+        ClipboardGtk(ClipboardAccessPolicy, PassRefPtr<DataObjectGtk>, bool, Frame*);
 
         RefPtr<DataObjectGtk> m_dataObject;
         GtkClipboard* m_clipboard;
         PasteboardHelper* m_helper;
+        Frame* m_frame;
     };
 }
 

@@ -36,19 +36,19 @@
 
 namespace WebCore {
 
-Blob::Blob(const String& type, const BlobItemList& items)
+Blob::Blob(ScriptExecutionContext*, const String& type, const BlobItemList& items)
     : m_type(type)
 {
     for (size_t i = 0; i < items.size(); ++i)
         m_items.append(items[i]);
 }
 
-Blob::Blob(const PassRefPtr<BlobItem>& item)
+Blob::Blob(ScriptExecutionContext*, const PassRefPtr<BlobItem>& item)
 {
     m_items.append(item);
 }
 
-Blob::Blob(const String& path)
+Blob::Blob(ScriptExecutionContext*, const String& path)
 {
     // Note: this doesn't initialize the type unlike File(path).
     m_items.append(FileBlobItem::create(path));
@@ -71,7 +71,7 @@ const String& Blob::path() const
 }
 
 #if ENABLE(BLOB_SLICE)
-PassRefPtr<Blob> Blob::slice(long long start, long long length, const String& contentType) const
+PassRefPtr<Blob> Blob::slice(ScriptExecutionContext* scriptExecutionContext, long long start, long long length, const String& contentType) const
 {
     if (start < 0)
         start = 0;
@@ -95,7 +95,7 @@ PassRefPtr<Blob> Blob::slice(long long start, long long length, const String& co
         length -= items.last()->size();
         start = 0;
     }
-    return Blob::create(contentType, items);
+    return Blob::create(scriptExecutionContext, contentType, items);
 }
 #endif // ENABLE(BLOB_SLICE)
 

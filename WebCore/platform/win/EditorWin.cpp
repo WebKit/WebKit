@@ -30,6 +30,7 @@
 #include "ClipboardWin.h"
 #include "Document.h"
 #include "Element.h"
+#include "Frame.h"
 #include "htmlediting.h"
 #include "TextIterator.h"
 #include "visible_units.h"
@@ -38,13 +39,13 @@
 
 namespace WebCore {
 
-PassRefPtr<Clipboard> Editor::newGeneralClipboard(ClipboardAccessPolicy policy)
+PassRefPtr<Clipboard> Editor::newGeneralClipboard(ClipboardAccessPolicy policy, Frame* frame)
 {
     COMPtr<IDataObject> clipboardData;
     if (!SUCCEEDED(OleGetClipboard(&clipboardData)))
         clipboardData = 0;
 
-    return ClipboardWin::create(false, clipboardData.get(), policy);
+    return ClipboardWin::create(false, clipboardData.get(), policy, frame);
 }
 
 } // namespace WebCore

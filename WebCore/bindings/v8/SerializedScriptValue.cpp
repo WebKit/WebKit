@@ -45,6 +45,7 @@
 #include "V8FileList.h"
 #include "V8ImageData.h"
 #include "V8Proxy.h"
+#include "V8Utilities.h"
 
 #include <wtf/Assertions.h>
 #include <wtf/RefCounted.h>
@@ -854,7 +855,7 @@ private:
         String path;
         if (!readWebCoreString(&path))
             return false;
-        PassRefPtr<Blob> blob = Blob::create(path);
+        PassRefPtr<Blob> blob = Blob::create(getScriptExecutionContext(), path);
         *value = toV8(blob);
         return true;
     }
@@ -864,7 +865,7 @@ private:
         String path;
         if (!readWebCoreString(&path))
             return false;
-        PassRefPtr<File> file = File::create(path);
+        PassRefPtr<File> file = File::create(getScriptExecutionContext(), path);
         *value = toV8(file);
         return true;
     }
@@ -879,7 +880,7 @@ private:
             String path;
             if (!readWebCoreString(&path))
                 return false;
-            fileList->append(File::create(path));
+            fileList->append(File::create(getScriptExecutionContext(), path));
         }
         *value = toV8(fileList);
         return true;

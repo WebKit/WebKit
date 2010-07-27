@@ -27,9 +27,14 @@
 #include "StringHash.h"
 
 namespace WebCore {
-PassRefPtr<Clipboard> Editor::newGeneralClipboard(ClipboardAccessPolicy policy)
+PassRefPtr<Clipboard> Editor::newGeneralClipboard(ClipboardAccessPolicy policy, Frame*)
 {
     return new ClipboardEfl(policy, false);
+}
+
+PassRefPtr<Clipboard> Clipboard::create(ClipboardAccessPolicy, DragData*, Frame*)
+{
+    return 0;
 }
 
 ClipboardEfl::ClipboardEfl(ClipboardAccessPolicy policy, bool forDragging)

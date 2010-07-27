@@ -35,6 +35,11 @@
 
 namespace WebCore {
 
+PassRefPtr<Clipboard> Clipboard::create(ClipboardAccessPolicy, DragData*, Frame*)
+{
+    return 0;
+}
+
 ClipboardAndroid::ClipboardAndroid(ClipboardAccessPolicy policy, bool isForDragging)
     : Clipboard(policy, isForDragging)
 {

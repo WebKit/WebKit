@@ -37,6 +37,11 @@
 
 namespace WebCore {
     
+PassRefPtr<Clipboard> Clipboard::create(ClipboardAccessPolicy, DragData*, Frame*)
+{
+    return 0;
+}
+
 ClipboardWx::ClipboardWx(ClipboardAccessPolicy policy, bool forDragging) 
     : Clipboard(policy, forDragging)
 {

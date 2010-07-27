@@ -34,15 +34,15 @@ namespace WebCore {
 
 class File : public Blob {
 public:
-    static PassRefPtr<File> create(const String& path)
+    static PassRefPtr<File> create(ScriptExecutionContext* scriptExecutionContext, const String& path)
     {
-        return adoptRef(new File(path));
+        return adoptRef(new File(scriptExecutionContext, path));
     }
 
 #if ENABLE(DIRECTORY_UPLOAD)
-    static PassRefPtr<File> create(const String& relativePath, const String& path)
+    static PassRefPtr<File> create(ScriptExecutionContext* scriptExecutionContext, const String& relativePath, const String& path)
     {
-        return adoptRef(new File(relativePath, path));
+        return adoptRef(new File(scriptExecutionContext, relativePath, path));
     }
 #endif
 
@@ -59,11 +59,11 @@ public:
     unsigned long long fileSize() const { return size(); }
 
 private:
-    File(const String& path);
+    File(ScriptExecutionContext*, const String& path);
     void Init();
 
 #if ENABLE(DIRECTORY_UPLOAD)
-    File(const String& relativePath, const String& path);
+    File(ScriptExecutionContext*, const String& relativePath, const String& path);
 #endif
 };
 

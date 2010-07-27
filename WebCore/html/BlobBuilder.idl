@@ -34,7 +34,9 @@ module html {
         GenerateNativeConverter,
         NoStaticTables
     ] BlobBuilder {
-        Blob getBlob(in [Optional, ConvertUndefinedOrNullToNullString] DOMString contentType);
+#if !defined(LANGUAGE_OBJECTIVE_C)
+        [CallWith=ScriptExecutionContext] Blob getBlob(in [Optional, ConvertUndefinedOrNullToNullString] DOMString contentType);
+#endif
         void append(in Blob blob);
         void append(in DOMString value, in [Optional, ConvertUndefinedOrNullToNullString] DOMString endings) raises (DOMException);
     };

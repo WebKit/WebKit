@@ -32,8 +32,6 @@
 
 #include "ChromiumBridge.h"
 #include "ChromiumDataObject.h"
-#include "Clipboard.h"
-#include "ClipboardChromium.h"
 #include "DocumentFragment.h"
 #include "FileSystem.h"
 #include "KURL.h"
@@ -46,14 +44,6 @@ namespace WebCore {
 static bool containsHTML(const ChromiumDataObject* dropData)
 {
     return dropData->textHtml.length() > 0;
-}
-
-PassRefPtr<Clipboard> DragData::createClipboard(ClipboardAccessPolicy policy) const
-{
-    RefPtr<ClipboardChromium> clipboard = ClipboardChromium::create(true,
-        m_platformDragData, policy);
-
-    return clipboard.release();
 }
 
 bool DragData::containsURL(FilenameConversionPolicy filenamePolicy) const

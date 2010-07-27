@@ -35,19 +35,20 @@ struct IDataObject;
 namespace WebCore {
 
 class CachedImage;
+class Frame;
 class IntPoint;
 class WCDataObject;
 
 // State available during IE's events for drag and drop and copy/paste
 class ClipboardWin : public Clipboard, public CachedResourceClient {
 public:
-    static PassRefPtr<ClipboardWin> create(bool isForDragging, IDataObject* dataObject, ClipboardAccessPolicy policy)
+    static PassRefPtr<ClipboardWin> create(bool isForDragging, IDataObject* dataObject, ClipboardAccessPolicy policy, Frame* frame)
     {
-        return adoptRef(new ClipboardWin(isForDragging, dataObject, policy));
+        return adoptRef(new ClipboardWin(isForDragging, dataObject, policy, frame));
     }
-    static PassRefPtr<ClipboardWin> create(bool isForDragging, WCDataObject* dataObject, ClipboardAccessPolicy policy)
+    static PassRefPtr<ClipboardWin> create(bool isForDragging, WCDataObject* dataObject, ClipboardAccessPolicy policy, Frame* frame)
     {
-        return adoptRef(new ClipboardWin(isForDragging, dataObject, policy));
+        return adoptRef(new ClipboardWin(isForDragging, dataObject, policy, frame));
     }
     ~ClipboardWin();
 
@@ -76,8 +77,8 @@ public:
     void setExternalDataObject(IDataObject *dataObject);
 
 private:
-    ClipboardWin(bool isForDragging, IDataObject*, ClipboardAccessPolicy);
-    ClipboardWin(bool isForDragging, WCDataObject*, ClipboardAccessPolicy);
+    ClipboardWin(bool isForDragging, IDataObject*, ClipboardAccessPolicy, Frame*);
+    ClipboardWin(bool isForDragging, WCDataObject*, ClipboardAccessPolicy, Frame*);
 
     void resetFromClipboard();
     void setDragImage(CachedImage*, Node*, const IntPoint&);

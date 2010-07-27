@@ -1,3 +1,118 @@
+2010-07-27  Jian Li  <jianli@chromium.org>
+
+        Reviewed by David Levin.
+
+        Add ScriptExecutionContext argument to File/Blob constructors.
+        https://bugs.webkit.org/show_bug.cgi?id=40587
+
+        Remove DragData::createClipboard and add Clipboard::create for it to be
+        called directly in DragController. This is because we need to pass
+        Frame pointer to Clipboard class and use it to get ScriptExecutionContext
+        in order to construct File objects in Clipboard::files().
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::DeserializingTreeWalker::convertIfTerminal):
+        * bindings/v8/SerializedScriptValue.cpp:
+        (WebCore::ZigZag::Reader::readBlob):
+        (WebCore::ZigZag::Reader::readFile):
+        (WebCore::ZigZag::Reader::readFileList):
+        * dom/Clipboard.h:
+        * editing/Editor.cpp:
+        (WebCore::Editor::dispatchCPPEvent):
+        * editing/Editor.h:
+        * editing/android/EditorAndroid.cpp:
+        (WebCore::Editor::newGeneralClipboard):
+        * editing/brew/EditorBrew.cpp:
+        (WebCore::Editor::newGeneralClipboard):
+        * editing/chromium/EditorChromium.cpp:
+        (WebCore::Editor::newGeneralClipboard):
+        * editing/haiku/EditorHaiku.cpp:
+        (WebCore::Editor::newGeneralClipboard):
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::newGeneralClipboard):
+        * editing/qt/EditorQt.cpp:
+        (WebCore::Editor::newGeneralClipboard):
+        * editing/wx/EditorWx.cpp:
+        (WebCore::Editor::newGeneralClipboard):
+        * html/Blob.cpp:
+        (WebCore::Blob::Blob):
+        (WebCore::Blob::slice):
+        * html/Blob.h:
+        (WebCore::Blob::create):
+        * html/Blob.idl:
+        * html/BlobBuilder.cpp:
+        (WebCore::BlobBuilder::getBlob):
+        * html/BlobBuilder.h:
+        * html/BlobBuilder.idl:
+        * html/File.cpp:
+        (WebCore::File::File):
+        * html/File.h:
+        (WebCore::File::create):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::appendFormData):
+        (WebCore::HTMLInputElement::setFileListFromRenderer):
+        * page/DragController.cpp:
+        (WebCore::DragController::dragExited):
+        (WebCore::DragController::performDrag):
+        (WebCore::DragController::tryDHTMLDrag):
+        * page/chromium/EventHandlerChromium.cpp:
+        (WebCore::EventHandler::createDraggingClipboard):
+        * page/gtk/EventHandlerGtk.cpp:
+        (WebCore::EventHandler::createDraggingClipboard):
+        * page/win/EventHandlerWin.cpp:
+        (WebCore::EventHandler::createDraggingClipboard):
+        * platform/DragData.h:
+        * platform/android/ClipboardAndroid.cpp:
+        (WebCore::Clipboard::create):
+        * platform/android/DragDataAndroid.cpp:
+        * platform/brew/ClipboardBrew.cpp:
+        (WebCore::Clipboard::create):
+        * platform/brew/DragDataBrew.cpp:
+        * platform/chromium/ClipboardChromium.cpp:
+        (WebCore::Clipboard::create):
+        (WebCore::ClipboardChromium::ClipboardChromium):
+        (WebCore::ClipboardChromium::create):
+        (WebCore::ClipboardChromium::files):
+        * platform/chromium/ClipboardChromium.h:
+        * platform/chromium/DragDataChromium.cpp:
+        * platform/efl/ClipboardEfl.cpp:
+        (WebCore::Editor::newGeneralClipboard):
+        (WebCore::Clipboard::create):
+        * platform/efl/DragDataEfl.cpp:
+        * platform/gtk/ClipboardGtk.cpp:
+        (WebCore::Editor::newGeneralClipboard):
+        (WebCore::Clipboard::create):
+        (WebCore::ClipboardGtk::ClipboardGtk):
+        (WebCore::ClipboardGtk::files):
+        * platform/gtk/ClipboardGtk.h:
+        (WebCore::ClipboardGtk::create):
+        * platform/gtk/DragDataGtk.cpp:
+        * platform/haiku/ClipboardHaiku.cpp:
+        (WebCore::Clipboard::create):
+        * platform/haiku/DragDataHaiku.cpp:
+        * platform/mac/ClipboardMac.mm:
+        (WebCore::Clipboard::create):
+        (WebCore::ClipboardMac::files):
+        * platform/mac/DragDataMac.mm:
+        * platform/qt/ClipboardQt.cpp:
+        (WebCore::Clipboard::create):
+        * platform/qt/DragDataQt.cpp:
+        * platform/win/ClipboardWin.cpp:
+        (WebCore::Clipboard::create):
+        (WebCore::ClipboardWin::ClipboardWin):
+        (WebCore::ClipboardWin::files):
+        * platform/win/ClipboardWin.h:
+        (WebCore::ClipboardWin::create):
+        * platform/win/DragDataWin.cpp:
+        * platform/win/EditorWin.cpp:
+        (WebCore::Editor::newGeneralClipboard):
+        * platform/wince/DragDataWince.cpp:
+        * platform/wince/EditorWince.cpp:
+        (WebCore::Editor::newGeneralClipboard):
+        * platform/wx/ClipboardWx.cpp:
+        (WebCore::Clipboard::create):
+        * platform/wx/DragDataWx.cpp:
+
 2010-07-27  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by David Levin.

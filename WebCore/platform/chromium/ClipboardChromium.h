@@ -38,6 +38,7 @@ namespace WebCore {
 
     class CachedImage;
     class ChromiumDataObject;
+    class Frame;
     class IntPoint;
 
     class ClipboardChromium : public Clipboard, public CachedResourceClient {
@@ -45,7 +46,7 @@ namespace WebCore {
         ~ClipboardChromium() {}
 
         static PassRefPtr<ClipboardChromium> create(
-            bool isForDragging, PassRefPtr<ChromiumDataObject>, ClipboardAccessPolicy);
+            bool isForDragging, PassRefPtr<ChromiumDataObject>, ClipboardAccessPolicy, Frame*);
 
         // Returns the file name (not including the extension). This removes any
         // invalid file system characters as well as making sure the
@@ -79,11 +80,12 @@ namespace WebCore {
         virtual bool hasData();
 
     private:
-        ClipboardChromium(bool, PassRefPtr<ChromiumDataObject>, ClipboardAccessPolicy);
+        ClipboardChromium(bool, PassRefPtr<ChromiumDataObject>, ClipboardAccessPolicy, Frame*);
 
         void resetFromClipboard();
         void setDragImage(CachedImage*, Node*, const IntPoint&);
         RefPtr<ChromiumDataObject> m_dataObject;
+        Frame* m_frame;
     };
 
 } // namespace WebCore

@@ -31,15 +31,15 @@
 
 namespace WebCore {
 
-File::File(const String& path)
-    : Blob(path)
+File::File(ScriptExecutionContext* scriptExecutionContext, const String& path)
+    : Blob(scriptExecutionContext, path)
 {
     Init();
 }
 
 #if ENABLE(DIRECTORY_UPLOAD)
-File::File(const String& relativePath, const String& filePath)
-    : Blob(FileBlobItem::create(filePath, relativePath))
+File::File(ScriptExecutionContext* scriptExecutionContext, const String& relativePath, const String& filePath)
+    : Blob(scriptExecutionContext, FileBlobItem::create(filePath, relativePath))
 {
     Init();
 }

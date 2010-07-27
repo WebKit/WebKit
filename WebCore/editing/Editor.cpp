@@ -713,7 +713,7 @@ bool Editor::dispatchCPPEvent(const AtomicString &eventType, ClipboardAccessPoli
         return true;
     target = target->shadowAncestorNode();
     
-    RefPtr<Clipboard> clipboard = newGeneralClipboard(policy);
+    RefPtr<Clipboard> clipboard = newGeneralClipboard(policy, m_frame);
 
     ExceptionCode ec = 0;
     RefPtr<Event> evt = ClipboardEvent::create(eventType, true, true, clipboard);

@@ -81,9 +81,9 @@ bool BlobBuilder::append(PassRefPtr<Blob> blob)
     return false;
 }
 
-PassRefPtr<Blob> BlobBuilder::getBlob(const String& contentType) const
+PassRefPtr<Blob> BlobBuilder::getBlob(ScriptExecutionContext* scriptExecutionContext, const String& contentType) const
 {
-    return Blob::create(contentType, m_items);
+    return Blob::create(scriptExecutionContext, contentType, m_items);
 }
 
 } // namespace WebCore

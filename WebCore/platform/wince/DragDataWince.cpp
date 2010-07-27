@@ -21,16 +21,10 @@
 #include "config.h"
 #include "DragData.h"
 
-#include "Clipboard.h"
 #include "DocumentFragment.h"
 #include "PlatformString.h"
 
 namespace WebCore {
-
-PassRefPtr<Clipboard> DragData::createClipboard(ClipboardAccessPolicy policy) const
-{
-    return 0;
-}
 
 bool DragData::containsURL(FilenameConversionPolicy filenamePolicy) const
 {

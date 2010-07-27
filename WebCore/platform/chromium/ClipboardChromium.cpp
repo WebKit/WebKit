@@ -32,6 +32,7 @@
 #include "ChromiumDataObject.h"
 #include "ClipboardUtilitiesChromium.h"
 #include "Document.h"
+#include "DragData.h"
 #include "Element.h"
 #include "FileList.h"
 #include "Frame.h"
@@ -43,6 +44,7 @@
 #include "PlatformString.h"
 #include "Range.h"
 #include "RenderImage.h"
+#include "ScriptExecutionContext.h"
 #include "StringBuilder.h"
 #include "markup.h"
 
@@ -89,18 +91,25 @@ static ClipboardDataType clipboardTypeFromMIMEType(const String& type)
     return ClipboardDataTypeOther;
 }
 
+PassRefPtr<Clipboard> Clipboard::create(ClipboardAccessPolicy policy, DragData* dragData, Frame* frame)
+{
+    return ClipboardChromium::create(true, dragData->platformData(), policy, frame);
+}
+
 ClipboardChromium::ClipboardChromium(bool isForDragging,
                                      PassRefPtr<ChromiumDataObject> dataObject,
-                                     ClipboardAccessPolicy policy)
+                                     ClipboardAccessPolicy policy,
+                                     Frame* frame)
     : Clipboard(policy, isForDragging)
     , m_dataObject(dataObject)
+    , m_frame(frame)
 {
 }
 
 PassRefPtr<ClipboardChromium> ClipboardChromium::create(bool isForDragging,
-    PassRefPtr<ChromiumDataObject> dataObject, ClipboardAccessPolicy policy)
+    PassRefPtr<ChromiumDataObject> dataObject, ClipboardAccessPolicy policy, Frame* frame)
 {
-    return adoptRef(new ClipboardChromium(isForDragging, dataObject, policy));
+    return adoptRef(new ClipboardChromium(isForDragging, dataObject, policy, frame));
 }
 
 void ClipboardChromium::clearData(const String& type)
@@ -355,9 +364,10 @@ PassRefPtr<FileList> ClipboardChromium::files() const
     if (!m_dataObject || m_dataObject->filenames.isEmpty())
         return FileList::create();
 
+    ScriptExecutionContext* scriptExecutionContext = m_frame->document()->scriptExecutionContext();
     RefPtr<FileList> fileList = FileList::create();
     for (size_t i = 0; i < m_dataObject->filenames.size(); ++i)
-        fileList->append(File::create(m_dataObject->filenames.at(i)));
+        fileList->append(File::create(scriptExecutionContext, m_dataObject->filenames.at(i)));
 
     return fileList.release();
 }

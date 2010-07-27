@@ -27,8 +27,6 @@
 #import "DragData.h"
 
 #if ENABLE(DRAG_SUPPORT)
-#import "ClipboardMac.h"
-#import "ClipboardAccessPolicy.h"
 #import "Document.h"
 #import "DocumentFragment.h"
 #import "DOMDocumentFragment.h"
@@ -98,11 +96,6 @@ Color DragData::asColor() const
     NSColor *color = [NSColor colorFromPasteboard:[m_platformDragData draggingPasteboard]];
     return makeRGBA((int)([color redComponent] * 255.0 + 0.5), (int)([color greenComponent] * 255.0 + 0.5), 
                     (int)([color blueComponent] * 255.0 + 0.5), (int)([color alphaComponent] * 255.0 + 0.5));
-}
-
-PassRefPtr<Clipboard> DragData::createClipboard(ClipboardAccessPolicy policy) const
-{
-    return ClipboardMac::create(true, [m_platformDragData draggingPasteboard], policy, 0);
 }
 
 bool DragData::containsCompatibleContent() const
