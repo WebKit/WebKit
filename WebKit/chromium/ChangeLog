@@ -1,5 +1,14 @@
 2010-07-27  James Hawkins  <jhawkins@chromium.org>
 
+        Unreviewed Build Fix. 
+
+        Add a missing itemIcon() method to TestPopupMenuClient.
+
+        * tests/PopupMenuTest.cpp:
+        (WebKit::TestPopupMenuClient::itemIcon):
+
+2010-07-27  James Hawkins  <jhawkins@chromium.org>
+
         Reviewed by Darin Fisher.
 
         [Chromium] Add the ability to show right-aligned icons in the AutoFill popup.

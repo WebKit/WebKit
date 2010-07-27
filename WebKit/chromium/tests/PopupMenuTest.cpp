@@ -69,6 +69,7 @@ public:
         return str;
     }
     virtual String itemLabel(unsigned) const { return String(); }
+    virtual String itemIcon(unsigned) const { return String(); }
     virtual String itemToolTip(unsigned listIndex) const { return itemText(listIndex); }
     virtual String itemAccessibilityText(unsigned listIndex) const { return itemText(listIndex); }
     virtual bool itemIsEnabled(unsigned listIndex) const { return true; }
