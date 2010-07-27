@@ -45,8 +45,10 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "MIMETypeRegistry.h"
+#include "Page.h"
 #include "RenderTextControl.h"
 #include "ScriptEventListener.h"
+#include "Settings.h"
 #include "ValidityState.h"
 #include <limits>
 
@@ -196,7 +198,7 @@ static inline HTMLFormControlElement* submitElementFromEvent(const Event* event)
 bool HTMLFormElement::validateInteractively(Event* event)
 {
     ASSERT(event);
-    if (!document()->inStrictMode() || noValidate())
+    if (!document()->page() || !document()->page()->settings()->interactiveFormValidationEnabled() || noValidate())
         return true;
 
     HTMLFormControlElement* submitElement = submitElementFromEvent(event);

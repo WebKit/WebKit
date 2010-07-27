@@ -5453,6 +5453,11 @@ http/tests/xmlhttprequest/remember-bad-password.html
 # different DOM to be created.
 html5lib/runner.html
 
+# The feature was disabled due to a compatibility issue.
+# https://bugs.webkit.org/show_bug.cgi?id=40520
+fast/forms/interactive-validation-lost-focusable.html
+fast/forms/interactive-validation-prevented.html
+
 # [Qt] REGRESSION(63862): animations/play-state.html fails intermittently
 # https://bugs.webkit.org/show_bug.cgi?id=42821
 animations/play-state.html

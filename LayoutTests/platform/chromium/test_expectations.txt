@@ -718,6 +718,10 @@ BUG20226 DEFER : fast/forms/input-selectedoption.html = FAIL
 BUGWK38570 : fast/forms/input-appearance-spinbutton-disabled-readonly.html = FAIL
 BUGWK38570 : fast/forms/input-number-events.html = FAIL
 
+// The feature was disabled due to a compatibility issue.
+BUGWK40520 DEFER : fast/forms/interactive-validation-lost-focusable.html = TEXT
+BUGWK40520 DEFER : fast/forms/interactive-validation-prevented.html = TEXT
+
 // Add support for inspector layout tests.
 BUG26734 LINUX MAC SKIP : inspector = PASS
 BUG26734 LINUX MAC SKIP : http/tests/inspector = PASS
