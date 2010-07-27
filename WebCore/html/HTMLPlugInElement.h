@@ -33,12 +33,15 @@ struct NPObject;
 namespace WebCore {
 
 class RenderWidget;
+class Widget;
 
 class HTMLPlugInElement : public HTMLFrameOwnerElement {
 public:
     virtual ~HTMLPlugInElement();
 
     PassScriptInstance getInstance() const;
+
+    Widget* pluginWidget() const;
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
     NPObject* getNPObject();

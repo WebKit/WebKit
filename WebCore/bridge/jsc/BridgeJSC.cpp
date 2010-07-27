@@ -83,7 +83,7 @@ void Instance::end()
     virtualEnd();
 }
 
-RuntimeObject* Instance::createRuntimeObject(ExecState* exec)
+JSObject* Instance::createRuntimeObject(ExecState* exec)
 {
     ASSERT(m_rootObject);
     ASSERT(m_rootObject->isValid());

@@ -28,6 +28,12 @@
 #include "Widget.h"
 #include "GraphicsLayer.h"
 
+namespace JSC {
+    class ExecState;
+    class JSGlobalObject;
+    class JSObject;
+}
+
 namespace WebCore {
 
 // PluginViewBase is a widget that all plug-in views inherit from, both in Webkit and WebKit2.
@@ -37,6 +43,8 @@ public:
 #if USE(ACCELERATED_COMPOSITING)
     virtual PlatformLayer* platformLayer() const { return 0; }
 #endif
+
+    JSC::JSObject* scriptObject(JSC::ExecState*, JSC::JSGlobalObject*) { return 0; }
 
 protected:
     PluginViewBase(PlatformWidget widget) : Widget(widget) { }

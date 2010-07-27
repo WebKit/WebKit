@@ -24,7 +24,7 @@
 #include "HTMLNames.h"
 #include "HTMLPlugInElement.h"
 #include "JSHTMLElement.h"
-#include "runtime_object.h"
+#include "PluginViewBase.h"
 
 using namespace JSC;
 
@@ -49,30 +49,50 @@ Instance* pluginInstance(Node* node)
     return instance;
 }
 
-static RuntimeObject* getRuntimeObject(ExecState* exec, Node* node)
+static JSObject* pluginScriptObject(ExecState* exec, JSHTMLElement* jsHTMLElement)
 {
-    Instance* instance = pluginInstance(node);
-    if (!instance)
+    HTMLElement* element = jsHTMLElement->impl();
+    if (!(element->hasTagName(objectTag) || element->hasTagName(embedTag) || element->hasTagName(appletTag)))
         return 0;
+
+    HTMLPlugInElement* pluginElement = static_cast<HTMLPlugInElement*>(element);
+
+    // First, see if we can ask the plug-in view for its script object.
+    if (Widget* pluginWidget = pluginElement->pluginWidget()) {
+        if (pluginWidget->isPluginViewBase()) {
+            PluginViewBase* pluginViewBase = static_cast<PluginViewBase*>(pluginWidget);
+            if (JSObject* scriptObject = pluginViewBase->scriptObject(exec, jsHTMLElement->globalObject()))
+                return scriptObject;
+        }
+    }
+
+    // Otherwise, fall back to getting the object from the instance.
+
+    // The plugin element holds an owning reference, so we don't have to.
+    Instance* instance = pluginElement->getInstance().get();
+    if (!instance || !instance->rootObject())
+        return 0;
+
     return instance->createRuntimeObject(exec);
 }
-
+    
 JSValue runtimeObjectPropertyGetter(ExecState* exec, JSValue slotBase, const Identifier& propertyName)
 {
-    JSHTMLElement* thisObj = static_cast<JSHTMLElement*>(asObject(slotBase));
-    HTMLElement* element = static_cast<HTMLElement*>(thisObj->impl());
-    RuntimeObject* runtimeObject = getRuntimeObject(exec, element);
-    if (!runtimeObject)
+    JSHTMLElement* element = static_cast<JSHTMLElement*>(asObject(slotBase));
+    JSObject* scriptObject = pluginScriptObject(exec, element);
+    if (!scriptObject)
         return jsUndefined();
-    return runtimeObject->get(exec, propertyName);
+    
+    return scriptObject->get(exec, propertyName);
 }
 
 bool runtimeObjectCustomGetOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot, JSHTMLElement* element)
 {
-    RuntimeObject* runtimeObject = getRuntimeObject(exec, element->impl());
-    if (!runtimeObject)
+    JSObject* scriptObject = pluginScriptObject(exec, element);
+    if (!scriptObject)
         return false;
-    if (!runtimeObject->hasProperty(exec, propertyName))
+
+    if (!scriptObject->hasProperty(exec, propertyName))
         return false;
     slot.setCustom(element, runtimeObjectPropertyGetter);
     return true;
@@ -80,10 +100,10 @@ bool runtimeObjectCustomGetOwnPropertySlot(ExecState* exec, const Identifier& pr
 
 bool runtimeObjectCustomGetOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor, JSHTMLElement* element)
 {
-    RuntimeObject* runtimeObject = getRuntimeObject(exec, element->impl());
-    if (!runtimeObject)
+    JSObject* scriptObject = pluginScriptObject(exec, element);
+    if (!scriptObject)
         return false;
-    if (!runtimeObject->hasProperty(exec, propertyName))
+    if (!scriptObject->hasProperty(exec, propertyName))
         return false;
     PropertySlot slot;
     slot.setCustom(element, runtimeObjectPropertyGetter);
@@ -94,14 +114,14 @@ bool runtimeObjectCustomGetOwnPropertyDescriptor(ExecState* exec, const Identifi
     return true;
 }
 
-bool runtimeObjectCustomPut(ExecState* exec, const Identifier& propertyName, JSValue value, HTMLElement* element, PutPropertySlot& slot)
+bool runtimeObjectCustomPut(ExecState* exec, const Identifier& propertyName, JSValue value, JSHTMLElement* element, PutPropertySlot& slot)
 {
-    RuntimeObject* runtimeObject = getRuntimeObject(exec, element);
-    if (!runtimeObject)
+    JSObject* scriptObject = pluginScriptObject(exec, element);
+    if (!scriptObject)
         return 0;
-    if (!runtimeObject->hasProperty(exec, propertyName))
+    if (!scriptObject->hasProperty(exec, propertyName))
         return false;
-    runtimeObject->put(exec, propertyName, value, slot);
+    scriptObject->put(exec, propertyName, value, slot);
     return true;
 }
 
@@ -114,9 +134,9 @@ static EncodedJSValue JSC_HOST_CALL callPlugin(ExecState* exec)
     return JSValue::encode(result);
 }
 
-CallType runtimeObjectGetCallData(HTMLElement* element, CallData& callData)
+CallType runtimeObjectGetCallData(JSHTMLElement* element, CallData& callData)
 {
-    Instance* instance = pluginInstance(element);
+    Instance* instance = pluginInstance(element->impl());
     if (!instance || !instance->supportsInvokeDefaultMethod())
         return CallTypeNone;
     callData.native.function = callPlugin;

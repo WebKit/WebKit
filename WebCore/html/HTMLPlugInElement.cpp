@@ -92,11 +92,19 @@ PassScriptInstance HTMLPlugInElement::getInstance() const
     if (m_instance)
         return m_instance;
 
-    RenderWidget* renderWidget = renderWidgetForJSBindings();
-    if (renderWidget && renderWidget->widget())
-        m_instance = frame->script()->createScriptInstanceForWidget(renderWidget->widget());
+    if (Widget* widget = pluginWidget())
+        m_instance = frame->script()->createScriptInstanceForWidget(widget);
 
     return m_instance;
+}
+
+Widget* HTMLPlugInElement::pluginWidget() const
+{
+    RenderWidget* renderWidget = renderWidgetForJSBindings();
+    if (!renderWidget)
+        return 0;
+
+    return renderWidget->widget();
 }
 
 bool HTMLPlugInElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const

@@ -1,3 +1,53 @@
+2010-07-26  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Plug-in views should be able to return JSObjects directly
+        https://bugs.webkit.org/show_bug.cgi?id=43019
+
+        * bindings/js/JSHTMLAppletElementCustom.cpp:
+        (WebCore::JSHTMLAppletElement::putDelegate):
+        (WebCore::JSHTMLAppletElement::getCallData):
+        * bindings/js/JSHTMLEmbedElementCustom.cpp:
+        (WebCore::JSHTMLEmbedElement::putDelegate):
+        (WebCore::JSHTMLEmbedElement::getCallData):
+        * bindings/js/JSHTMLObjectElementCustom.cpp:
+        (WebCore::JSHTMLObjectElement::putDelegate):
+        (WebCore::JSHTMLObjectElement::getCallData):
+        runtimeObjectCustomPut and runtimeObjectGetCallData now take a JSHTMLElement instead of a HTMLElement.
+
+        * bindings/js/JSPluginElementFunctions.cpp:
+        (WebCore::pluginScriptObject):
+        First, ask the PluginViewBase for a JSObject and fall back to getting the JSObject from the instance.
+
+        (WebCore::runtimeObjectPropertyGetter):
+        (WebCore::runtimeObjectCustomGetOwnPropertySlot):
+        (WebCore::runtimeObjectCustomGetOwnPropertyDescriptor):
+        Call pluginScriptObject.
+        
+        (WebCore::runtimeObjectCustomPut):
+        Change to take a JSHTMLElement. Call pluginScriptObject.
+        
+        (WebCore::runtimeObjectGetCallData):
+        Change to take a JSHTMLElement.
+
+        * bridge/jsc/BridgeJSC.cpp:
+        * bridge/jsc/BridgeJSC.h:
+        (JSC::Bindings::Instance::createRuntimeObject):
+        Change this to return a JSObject.
+        
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::getInstance):
+        Call pluginWidget.
+
+        (WebCore::HTMLPlugInElement::pluginWidget):
+        Return the plug-in widget for this element.
+
+        * html/HTMLPlugInElement.h:
+        * plugins/PluginViewBase.h:
+        (WebCore::PluginViewBase::scriptObject):
+        Add default implementation of scriptObject.
+
 2010-07-26  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
