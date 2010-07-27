@@ -58,7 +58,5 @@ WKBundleFrameRef WKBundlePageGetMainFrame(WKBundlePageRef pageRef)
 
 WKStringRef WKBundlePageCopyRenderTreeExternalRepresentation(WKBundlePageRef pageRef)
 {
-    WebCore::String string = toWK(pageRef)->renderTreeExternalRepresentation();
-    string.impl()->ref();
-    return toRef(string.impl());
+    return toCopiedRef(toWK(pageRef)->renderTreeExternalRepresentation());
 }

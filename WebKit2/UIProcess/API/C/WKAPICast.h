@@ -29,14 +29,11 @@
 #include "WKBase.h"
 #include "WKPage.h"
 #include <WebCore/FrameLoaderTypes.h>
+#include <WebCore/PlatformString.h>
 
 #if defined(WIN32) || defined(_WIN32)
 #include "WKAPICastWin.h"
 #endif
-
-namespace WebCore {
-    class StringImpl;
-}
 
 namespace WebKit {
 
@@ -94,11 +91,32 @@ inline typename WebKit::ImplTypeInfo<T>::APIType toRef(T t)
     return reinterpret_cast<typename WebKit::ImplTypeInfo<T>::APIType>(t);
 }
 
-/* Special case for WKURLRef which also uses StringImpl as an implementation. */
+/* Special cases. */
 
-inline WKURLRef toURLRef(WebCore::StringImpl* s)
+inline WKStringRef toRef(WebCore::StringImpl* string)
 {
-    return reinterpret_cast<WKURLRef>(s);
+    WebCore::StringImpl* impl = string ? string : WebCore::StringImpl::empty();
+    return reinterpret_cast<WKStringRef>(impl);
+}
+
+inline WKURLRef toURLRef(WebCore::StringImpl* string)
+{
+    WebCore::StringImpl* impl = string ? string : WebCore::StringImpl::empty();
+    return reinterpret_cast<WKURLRef>(impl);
+}
+
+inline WKStringRef toCopiedRef(const WebCore::String& string)
+{
+    WebCore::StringImpl* impl = string.impl() ? string.impl() : WebCore::StringImpl::empty();
+    impl->ref();
+    return reinterpret_cast<WKStringRef>(impl);
+}
+
+inline WKURLRef toCopiedURLRef(const WebCore::String& string)
+{
+    WebCore::StringImpl* impl = string.impl() ? string.impl() : WebCore::StringImpl::empty();
+    impl->ref();
+    return reinterpret_cast<WKURLRef>(impl);
 }
 
 inline WKFrameNavigationType toWK(WebCore::NavigationType type)

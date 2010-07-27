@@ -30,14 +30,14 @@
 
 using namespace WebKit;
 
-WKStringRef WKNavigationDataGetTitle(WKNavigationDataRef navigationDataRef)
+WKStringRef WKNavigationDataCopyTitle(WKNavigationDataRef navigationDataRef)
 {
-    return toRef(toWK(navigationDataRef)->title().impl());
+    return toCopiedRef(toWK(navigationDataRef)->title());
 }
 
-WKURLRef WKNavigationDataGetURL(WKNavigationDataRef navigationDataRef)
+WKURLRef WKNavigationDataCopyURL(WKNavigationDataRef navigationDataRef)
 {
-    return toURLRef(toWK(navigationDataRef)->url().impl());
+    return toCopiedURLRef(toWK(navigationDataRef)->url());
 }
 
 WKNavigationDataRef WKNavigationDataRetain(WKNavigationDataRef navigationDataRef)

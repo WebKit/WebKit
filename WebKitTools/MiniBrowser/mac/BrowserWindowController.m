@@ -282,7 +282,10 @@ static void runJavaScriptAlert(WKPageRef page, WKStringRef message, WKFrameRef f
 {
     NSAlert* alert = [[NSAlert alloc] init];
 
-    CFURLRef cfURL = WKURLCopyCFURL(0, WKFrameGetURL(frame));
+    WKURLRef wkURL = WKFrameCopyURL(frame);
+    CFURLRef cfURL = WKURLCopyCFURL(0, wkURL);
+    WKURLRelease(wkURL);
+
     [alert setMessageText:[NSString stringWithFormat:@"JavaScript alert dialog from %@.", [(NSURL *)cfURL absoluteString]]];
     CFRelease(cfURL);
 
@@ -300,7 +303,10 @@ static bool runJavaScriptConfirm(WKPageRef page, WKStringRef message, WKFrameRef
 {
     NSAlert* alert = [[NSAlert alloc] init];
 
-    CFURLRef cfURL = WKURLCopyCFURL(0, WKFrameGetURL(frame));
+    WKURLRef wkURL = WKFrameCopyURL(frame);
+    CFURLRef cfURL = WKURLCopyCFURL(0, wkURL);
+    WKURLRelease(wkURL);
+
     [alert setMessageText:[NSString stringWithFormat:@"JavaScript confirm dialog from %@.", [(NSURL *)cfURL absoluteString]]];
     CFRelease(cfURL);
 
@@ -321,7 +327,10 @@ static WKStringRef runJavaScriptPrompt(WKPageRef page, WKStringRef message, WKSt
 {
     NSAlert* alert = [[NSAlert alloc] init];
 
-    CFURLRef cfURL = WKURLCopyCFURL(0, WKFrameGetURL(frame));
+    WKURLRef wkURL = WKFrameCopyURL(frame);
+    CFURLRef cfURL = WKURLCopyCFURL(0, wkURL);
+    WKURLRelease(wkURL);
+
     [alert setMessageText:[NSString stringWithFormat:@"JavaScript prompt dialog from %@.", [(NSURL *)cfURL absoluteString]]];
     CFRelease(cfURL);
 
@@ -358,8 +367,14 @@ static WKStringRef runJavaScriptPrompt(WKPageRef page, WKStringRef message, WKSt
 
 static void didNavigateWithNavigationData(WKPageRef page, WKNavigationDataRef navigationData, WKFrameRef frame, const void *clientInfo)
 {
-    CFStringRef title = WKStringCopyCFString(0, WKNavigationDataGetTitle(navigationData));
-    CFURLRef url = WKURLCopyCFURL(0, WKNavigationDataGetURL(navigationData));
+    WKStringRef wkTitle = WKNavigationDataCopyTitle(navigationData);
+    CFStringRef title = WKStringCopyCFString(0, wkTitle);
+    WKStringRelease(wkTitle);
+
+    WKURLRef wkURL = WKNavigationDataCopyURL(navigationData);
+    CFURLRef url = WKURLCopyCFURL(0, wkURL);
+    WKURLRelease(wkURL);
+
     LOG(@"HistoryClient - didNavigateWithNavigationData - title: %@ - url: %@", title, url);
     CFRelease(title);
     CFRelease(url);
@@ -475,11 +490,13 @@ static void didUpdateHistoryTitle(WKPageRef page, WKStringRef title, WKURLRef UR
 
 - (void)updateProvisionalURLForFrame:(WKFrameRef)frame
 {
-    WKURLRef url = WKFrameGetProvisionalURL(frame);
+    WKURLRef url = WKFrameCopyProvisionalURL(frame);
     if (!url)
         return;
 
     CFURLRef cfSourceURL = WKURLCopyCFURL(0, url);
+    WKURLRelease(url);
+
     [urlText setStringValue:(NSString*)CFURLGetString(cfSourceURL)];
     CFRelease(cfSourceURL);
 }

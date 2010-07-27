@@ -1,3 +1,19 @@
+2010-07-27  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=43087
+        Clean up handling of strings at the WebKit2 API layer.
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (runJavaScriptAlert):
+        (runJavaScriptConfirm):
+        (runJavaScriptPrompt):
+        (didNavigateWithNavigationData):
+        (-[BrowserWindowController updateProvisionalURLForFrame:]):
+        * MiniBrowser/mac/WebBundle/WebBundleMain.m:
+        (_didClearWindowForFrame):
+
 2010-07-27  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Eric Seidel.

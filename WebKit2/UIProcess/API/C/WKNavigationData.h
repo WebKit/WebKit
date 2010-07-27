@@ -32,8 +32,8 @@
 extern "C" {
 #endif
 
-WK_EXPORT WKStringRef WKNavigationDataGetTitle(WKNavigationDataRef navigationData);
-WK_EXPORT WKURLRef WKNavigationDataGetURL(WKNavigationDataRef navigationData);
+WK_EXPORT WKStringRef WKNavigationDataCopyTitle(WKNavigationDataRef navigationData);
+WK_EXPORT WKURLRef WKNavigationDataCopyURL(WKNavigationDataRef navigationData);
 
 WK_EXPORT WKNavigationDataRef WKNavigationDataRetain(WKNavigationDataRef navigationData);
 WK_EXPORT void WKNavigationDataRelease(WKNavigationDataRef navigationData);

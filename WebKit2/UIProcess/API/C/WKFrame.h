@@ -45,8 +45,8 @@ typedef enum WKFrameLoadState WKFrameLoadState;
 
 WK_EXPORT bool WKFrameIsMainFrame(WKFrameRef frame);
 WK_EXPORT WKFrameLoadState WKFrameGetFrameLoadState(WKFrameRef frame);
-WK_EXPORT WKURLRef WKFrameGetProvisionalURL(WKFrameRef frame);
-WK_EXPORT WKURLRef WKFrameGetURL(WKFrameRef frame);
+WK_EXPORT WKURLRef WKFrameCopyProvisionalURL(WKFrameRef frame);
+WK_EXPORT WKURLRef WKFrameCopyURL(WKFrameRef frame);
 
 WK_EXPORT WKPageRef WKFrameGetPage(WKFrameRef frame);
 

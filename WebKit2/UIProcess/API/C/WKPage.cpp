@@ -106,9 +106,9 @@ WKBackForwardListRef WKPageGetBackForwardList(WKPageRef pageRef)
     return toRef(toWK(pageRef)->backForwardList());
 }
 
-WKStringRef WKPageGetTitle(WKPageRef pageRef)
+WKStringRef WKPageCopyTitle(WKPageRef pageRef)
 {
-    return toRef(toWK(pageRef)->pageTitle().impl());
+    return toCopiedRef(toWK(pageRef)->pageTitle());
 }
 
 WKFrameRef WKPageGetMainFrame(WKPageRef pageRef)

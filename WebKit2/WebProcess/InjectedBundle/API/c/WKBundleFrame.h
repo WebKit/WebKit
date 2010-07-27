@@ -38,7 +38,7 @@ WK_EXPORT bool WKBundleFrameIsMainFrame(WKBundleFrameRef frame);
 WK_EXPORT WKArrayRef WKBundleFrameCopyChildFrames(WKBundleFrameRef frame);
 
 WK_EXPORT WKStringRef WKBundleFrameCopyName(WKBundleFrameRef frame);
-WK_EXPORT WKURLRef WKBundleFrameGetURL(WKBundleFrameRef frame);
+WK_EXPORT WKURLRef WKBundleFrameCopyURL(WKBundleFrameRef frame);
 
 WK_EXPORT JSGlobalContextRef WKBundleFrameGetJavaScriptContext(WKBundleFrameRef frame);
 

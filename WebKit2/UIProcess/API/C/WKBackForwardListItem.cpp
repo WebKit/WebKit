@@ -30,19 +30,19 @@
 
 using namespace WebKit;
 
-WKURLRef WKBackForwardListItemGetOriginalURL(WKBackForwardListItemRef itemRef)
+WKURLRef WKBackForwardListItemCopyOriginalURL(WKBackForwardListItemRef itemRef)
 {
-    return toURLRef(toWK(itemRef)->originalURL().impl());
+    return toCopiedURLRef(toWK(itemRef)->originalURL());
 }
 
-WKURLRef WKBackForwardListItemGetURL(WKBackForwardListItemRef itemRef)
+WKURLRef WKBackForwardListItemCopyURL(WKBackForwardListItemRef itemRef)
 {
-    return toURLRef(toWK(itemRef)->url().impl());
+    return toCopiedURLRef(toWK(itemRef)->url());
 }
 
-WKStringRef WKBackForwardListItemGetTitle(WKBackForwardListItemRef itemRef)
+WKStringRef WKBackForwardListItemCopyTitle(WKBackForwardListItemRef itemRef)
 {
-    return toRef(toWK(itemRef)->title().impl());
+    return toCopiedRef(toWK(itemRef)->title());
 }
 
 WKBackForwardListItemRef WKBackForwardListItemRetain(WKBackForwardListItemRef itemRef)
