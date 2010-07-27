@@ -18,7 +18,7 @@ if (window.eventSender) {
 
     debug('Click the upper button');
     // Move the cursor on the upper button.
-    eventSender.mouseMoveTo(numberInput.offsetLeft + numberInput.offsetWidth - 4, numberInput.offsetTop + 4);
+    eventSender.mouseMoveTo(numberInput.offsetLeft + numberInput.offsetWidth - 10, numberInput.offsetTop + numberInput.offsetHeight / 4);
     eventSender.mouseDown();
     eventSender.mouseUp();
     shouldBe('numberInput.value', '"1"');

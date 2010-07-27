@@ -1,3 +1,10 @@
+2010-07-27  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed. Trivial test fix.
+
+        * fast/forms/script-tests/input-number-events.js:
+         Adjust pixel values in order to work on Windows.
+
 2010-07-27  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by NOBODY.
