@@ -28,6 +28,7 @@
 #include <stddef.h> // for ptrdiff_t
 #include <limits>
 #include <wtf/Assertions.h>
+#include <wtf/PageAllocation.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/UnusedParam.h>
@@ -58,9 +59,9 @@ extern "C" __declspec(dllimport) void CacheRangeFlush(LPVOID pAddr, DWORD dwLeng
 #if ENABLE(ASSEMBLER_WX_EXCLUSIVE)
 #define PROTECTION_FLAGS_RW (PROT_READ | PROT_WRITE)
 #define PROTECTION_FLAGS_RX (PROT_READ | PROT_EXEC)
-#define INITIAL_PROTECTION_FLAGS PROTECTION_FLAGS_RX
+#define EXECUTABLE_POOL_WRITABLE false
 #else
-#define INITIAL_PROTECTION_FLAGS (PROT_READ | PROT_WRITE | PROT_EXEC)
+#define EXECUTABLE_POOL_WRITABLE true
 #endif
 
 namespace JSC {
@@ -85,13 +86,7 @@ namespace JSC {
 
 class ExecutablePool : public RefCounted<ExecutablePool> {
 private:
-    struct Allocation {
-        char* pages;
-        size_t size;
-#if OS(SYMBIAN)
-        RChunk* chunk;
-#endif
-    };
+    typedef PageAllocation Allocation;
     typedef Vector<Allocation, 2> AllocationList;
 
 public:
@@ -121,8 +116,8 @@ public:
     
     ~ExecutablePool()
     {
-        AllocationList::const_iterator end = m_pools.end();
-        for (AllocationList::const_iterator ptr = m_pools.begin(); ptr != end; ++ptr)
+        AllocationList::iterator end = m_pools.end();
+        for (AllocationList::iterator ptr = m_pools.begin(); ptr != end; ++ptr)
             ExecutablePool::systemRelease(*ptr);
     }
 
@@ -130,7 +125,7 @@ public:
 
 private:
     static Allocation systemAlloc(size_t n);
-    static void systemRelease(const Allocation& alloc);
+    static void systemRelease(Allocation& alloc);
 
     ExecutablePool(size_t n);
 
@@ -296,7 +291,7 @@ inline ExecutablePool::ExecutablePool(size_t n)
     size_t allocSize = roundUpAllocationSize(n, JIT_ALLOCATOR_PAGE_SIZE);
     Allocation mem = systemAlloc(allocSize);
     m_pools.append(mem);
-    m_freePtr = mem.pages;
+    m_freePtr = static_cast<char*>(mem.base());
     if (!m_freePtr)
         CRASH(); // Failed to allocate
     m_end = m_freePtr + allocSize;
@@ -307,18 +302,18 @@ inline void* ExecutablePool::poolAllocate(size_t n)
     size_t allocSize = roundUpAllocationSize(n, JIT_ALLOCATOR_PAGE_SIZE);
     
     Allocation result = systemAlloc(allocSize);
-    if (!result.pages)
+    if (!result.base())
         CRASH(); // Failed to allocate
     
     ASSERT(m_end >= m_freePtr);
     if ((allocSize - n) > static_cast<size_t>(m_end - m_freePtr)) {
         // Replace allocation pool
-        m_freePtr = result.pages + n;
-        m_end = result.pages + allocSize;
+        m_freePtr = static_cast<char*>(result.base()) + n;
+        m_end = static_cast<char*>(result.base()) + allocSize;
     }
 
     m_pools.append(result);
-    return result.pages;
+    return result.base();
 }
 
 }

@@ -1,5 +1,61 @@
 2010-07-26  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        Bug 43009 - Abstract out page allocation from executable allocators
+
+        It would be great to have a single platform abstraction for block allocation, rather than copy/paste code.
+
+        In this initial implementation I've made Symbian fall back to use malloc/free for non-executable memory.
+        I think this will match current behaviour for the next client we will want to port across (RegisterFile &
+        Collector).
+
+        * CMakeListsEfl.txt:
+        * GNUmakefile.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.pro:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * jit/ExecutableAllocator.cpp:
+        (JSC::ExecutableAllocator::intializePageSize):
+        (JSC::ExecutablePool::systemAlloc):
+        (JSC::ExecutablePool::systemRelease):
+        (JSC::ExecutableAllocator::isValid):
+        * jit/ExecutableAllocator.h:
+        (JSC::ExecutablePool::ExecutablePool):
+        (JSC::ExecutablePool::poolAllocate):
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+        (JSC::FixedVMPoolAllocator::release):
+        (JSC::FixedVMPoolAllocator::reuse):
+        (JSC::FixedVMPoolAllocator::FixedVMPoolAllocator):
+        (JSC::FixedVMPoolAllocator::alloc):
+        (JSC::FixedVMPoolAllocator::free):
+        (JSC::FixedVMPoolAllocator::isValid):
+        (JSC::FixedVMPoolAllocator::isWithinVMPool):
+        (JSC::ExecutablePool::systemAlloc):
+        (JSC::ExecutablePool::systemRelease):
+        * jit/ExecutableAllocatorPosix.cpp: Removed.
+        * jit/ExecutableAllocatorSymbian.cpp: Removed.
+        * jit/ExecutableAllocatorWin.cpp: Removed.
+        * wscript:
+        * wtf/PageAllocator.cpp: Added.
+        (WTF::protection):
+        (WTF::PageAllocation::commit):
+        (WTF::PageAllocation::decommit):
+        (WTF::PageAllocator::allocate):
+        (WTF::PageAllocator::reserve):
+        (WTF::PageAllocator::deallocate):
+        (WTF::PageAllocator::pagesize):
+        * wtf/PageAllocator.h: Added.
+        (WTF::PageAllocation::PageAllocation):
+        (WTF::PageAllocation::base):
+        (WTF::PageAllocation::size):
+        (WTF::PageAllocation::chunk):
+        (WTF::PageAllocation::operator!):
+        (WTF::PageAllocator::):
+
+2010-07-26  Gavin Barraclough  <barraclough@apple.com>
+
         Rolling out r64097:64100, oops, more b0rked than I relized by my last changes, sorry!
 
         * CMakeListsEfl.txt:

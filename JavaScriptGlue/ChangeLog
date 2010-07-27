@@ -1,3 +1,11 @@
+2010-07-26  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 43009 - Abstract out page allocation from executable allocators
+
+        * ForwardingHeaders/wtf/PageAllocation.h: Added.
+
 2010-07-01  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.
