@@ -1196,7 +1196,7 @@ void JIT::emit_op_mod(Instruction* currentInstruction)
     unsigned op1 = currentInstruction[2].u.operand;
     unsigned op2 = currentInstruction[3].u.operand;
 
-#if ENABLE(JIT_OPTIMIZE_MOD)
+#if ENABLE(JIT_USE_SOFT_MODULO)
     emitGetVirtualRegisters(op1, regT0, op2, regT2);
     emitJumpSlowCaseIfNotImmediateInteger(regT0);
     emitJumpSlowCaseIfNotImmediateInteger(regT2);
@@ -1216,7 +1216,7 @@ void JIT::emit_op_mod(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_mod(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-#if ENABLE(JIT_OPTIMIZE_MOD)
+#if ENABLE(JIT_USE_SOFT_MODULO)
     unsigned result = currentInstruction[1].u.operand;
     unsigned op1 = currentInstruction[2].u.operand;
     unsigned op2 = currentInstruction[3].u.operand;

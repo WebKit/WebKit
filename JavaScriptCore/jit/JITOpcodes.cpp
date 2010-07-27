@@ -45,7 +45,7 @@ namespace JSC {
 
 void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executablePool, JSGlobalData* globalData, TrampolineStructure *trampolines)
 {
-#if ENABLE(JIT_OPTIMIZE_MOD)
+#if ENABLE(JIT_USE_SOFT_MODULO)
     Label softModBegin = align();
     softModulo();
 #endif
@@ -184,7 +184,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     trampolines->ctiVirtualConstruct = trampolineAt(finalCode, virtualConstructBegin);
     trampolines->ctiNativeCall = trampolineAt(finalCode, nativeCallThunk);
     trampolines->ctiNativeConstruct = trampolineAt(finalCode, nativeConstructThunk);
-#if ENABLE(JIT_OPTIMIZE_MOD)
+#if ENABLE(JIT_USE_SOFT_MODULO)
     trampolines->ctiSoftModulo = trampolineAt(finalCode, softModBegin);
 #endif
 #if ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
@@ -1531,7 +1531,7 @@ void JIT::emit_op_new_regexp(Instruction* currentInstruction)
 }
 
 // For both JSValue32_64 and JSValue32
-#if ENABLE(JIT_OPTIMIZE_MOD)
+#if ENABLE(JIT_USE_SOFT_MODULO)
 #if CPU(ARM_TRADITIONAL)
 void JIT::softModulo()
 {

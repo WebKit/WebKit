@@ -783,7 +783,7 @@ namespace JSC {
         void emit_op_to_primitive(Instruction*);
         void emit_op_unexpected_load(Instruction*);
         void emit_op_urshift(Instruction*);
-#if ENABLE(JIT_OPTIMIZE_MOD)
+#if ENABLE(JIT_USE_SOFT_MODULO)
         void softModulo();
 #endif
 

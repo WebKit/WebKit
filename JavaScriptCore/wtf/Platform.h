@@ -80,6 +80,7 @@
 #if defined(__GNUC__) && !COMPILER(RVCT)
 #define WTF_COMPILER_GCC 1
 #define GCC_VERSION (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
+#define GCC_VERSION_AT_LEAST(major, minor, patch) (GCC_VERSION >= (major * 10000 + minor * 100 + patch))
 #endif
 
 /* COMPILER(MINGW) - MinGW GCC */
@@ -641,6 +642,9 @@
    This prevents unnecessary invals. */
 #define ENABLE_TEXT_CARET 1
 #define ENABLE_JAVASCRIPT_DEBUGGER 0
+#if !defined(ENABLE_JIT) && !ENABLE(ANDROID_JSC_JIT)
+#define ENABLE_JIT 0
+#endif
 #endif
 
 #if PLATFORM(WIN)
@@ -915,86 +919,50 @@ on MinGW. See https://bugs.webkit.org/show_bug.cgi?id=29268 */
 #define ENABLE_REPAINT_THROTTLING 0
 #endif
 
-#if !defined(ENABLE_JIT)
-
-/* The JIT is tested & working on x86_64 Mac */
-#if CPU(X86_64) && PLATFORM(MAC)
-    #define ENABLE_JIT 1
-/* The JIT is tested & working on x86 Mac */
-#elif CPU(X86) && PLATFORM(MAC)
-    #define ENABLE_JIT 1
-#elif CPU(ARM_THUMB2) && PLATFORM(IPHONE)
-    #define ENABLE_JIT 1
-/* The JIT is tested & working on Android */
-#elif CPU(ARM_THUMB2) && PLATFORM(ANDROID) && ENABLE(ANDROID_JSC_JIT)
-    #define ENABLE_JIT 1
-/* The JIT is tested & working on x86 Windows */
-#elif CPU(X86) && PLATFORM(WIN)
-    #define ENABLE_JIT 1
+// Disable the JIT on versiond of GCC prior to 4.1.
+#if !defined(ENABLE_JIT) && COMPILER(GCC) && !GCC_VERSION_AT_LEAST(4,1,0)
+#define ENABLE_JIT 0
 #endif
 
-#if PLATFORM(QT) || PLATFORM(WX)
-#if CPU(X86_64) && OS(DARWIN)
-    #define ENABLE_JIT 1
-#elif CPU(X86) && OS(DARWIN)
-    #define ENABLE_JIT 1
-#elif CPU(X86) && OS(WINDOWS) && COMPILER(MINGW) && GCC_VERSION >= 40100
-    #define ENABLE_JIT 1
-#elif CPU(X86) && OS(WINDOWS) && COMPILER(MSVC)
-    #define ENABLE_JIT 1
-#elif CPU(X86) && OS(LINUX) && GCC_VERSION >= 40100
-    #define ENABLE_JIT 1
-#elif CPU(X86_64) && OS(LINUX) && GCC_VERSION >= 40100
-    #define ENABLE_JIT 1
-#elif CPU(ARM_TRADITIONAL) && OS(LINUX)
-    #define ENABLE_JIT 1
-#elif CPU(ARM_TRADITIONAL) && OS(SYMBIAN) && COMPILER(RVCT)
-    #define ENABLE_JIT 1
-#elif CPU(MIPS) && OS(LINUX)
-    #define ENABLE_JIT 1
+// The JIT is enabled by default on all x86, x64-64, ARM & MIPS platforms.
+#if !defined(ENABLE_JIT) \
+    && (CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(MIPS)) \
+    && (OS(DARWIN) || !COMPILER(GCC) || GCC_VERSION_AT_LEAST(4,1,0))
+#define ENABLE_JIT 1
 #endif
-#endif /* PLATFORM(QT) */
 
-#endif /* !defined(ENABLE_JIT) */
-
-#if !ENABLE(JIT)
+// Ensure that either the JIT or the interpreter has been enabled.
+#if !defined(ENABLE_INTERPRETER) && !ENABLE(JIT)
 #define ENABLE_INTERPRETER 1
 #endif
-
 #if !(ENABLE(JIT) || ENABLE(INTERPRETER))
 #error You have to have at least one execution model enabled to build JSC
 #endif
 
-/* CPU architecture specific optimizations */
-#if CPU(ARM_TRADITIONAL)
-#if ENABLE(JIT) && !defined(ENABLE_JIT_OPTIMIZE_MOD) && WTF_ARM_ARCH_AT_LEAST(5)
-#define ENABLE_JIT_OPTIMIZE_MOD 1
-#endif
-#endif
-#if (CPU(X86) && USE(JSVALUE32_64)) || (CPU(X86_64) && USE(JSVALUE64)) \
-     || CPU(ARM) \
-     || CPU(MIPS)
-#if ENABLE(JIT) && !defined(ENABLE_JIT_OPTIMIZE_NATIVE_CALL)
-#define ENABLE_JIT_OPTIMIZE_NATIVE_CALL 1
-#endif
-#endif
-
+// Configure the JIT
 #if ENABLE(JIT)
-#ifndef ENABLE_JIT_OPTIMIZE_CALL
-#define ENABLE_JIT_OPTIMIZE_CALL 1
-#endif
-#ifndef ENABLE_JIT_OPTIMIZE_NATIVE_CALL
-#define ENABLE_JIT_OPTIMIZE_NATIVE_CALL 0
-#endif
-#ifndef ENABLE_JIT_OPTIMIZE_PROPERTY_ACCESS
-#define ENABLE_JIT_OPTIMIZE_PROPERTY_ACCESS 1
-#endif
-#ifndef ENABLE_JIT_OPTIMIZE_METHOD_CALLS
-#define ENABLE_JIT_OPTIMIZE_METHOD_CALLS 1
-#endif
-#ifndef ENABLE_JIT_OPTIMIZE_MOD
-#define ENABLE_JIT_OPTIMIZE_MOD 0
-#endif
+    #if CPU(ARM_TRADITIONAL)
+    #if !defined(ENABLE_JIT_USE_SOFT_MODULO) && WTF_ARM_ARCH_AT_LEAST(5)
+    #define ENABLE_JIT_USE_SOFT_MODULO 1
+    #endif
+    #endif
+
+    #if !defined(ENABLE_JIT_OPTIMIZE_NATIVE_CALL) && CPU(X86) && USE(JSVALUE32)
+    #define ENABLE_JIT_OPTIMIZE_NATIVE_CALL 0
+    #endif
+
+    #ifndef ENABLE_JIT_OPTIMIZE_CALL
+    #define ENABLE_JIT_OPTIMIZE_CALL 1
+    #endif
+    #ifndef ENABLE_JIT_OPTIMIZE_NATIVE_CALL
+    #define ENABLE_JIT_OPTIMIZE_NATIVE_CALL 1
+    #endif
+    #ifndef ENABLE_JIT_OPTIMIZE_PROPERTY_ACCESS
+    #define ENABLE_JIT_OPTIMIZE_PROPERTY_ACCESS 1
+    #endif
+    #ifndef ENABLE_JIT_OPTIMIZE_METHOD_CALLS
+    #define ENABLE_JIT_OPTIMIZE_METHOD_CALLS 1
+    #endif
 #endif
 
 #if CPU(X86) && COMPILER(MSVC)
@@ -1005,24 +973,19 @@ on MinGW. See https://bugs.webkit.org/show_bug.cgi?id=29268 */
 #define JSC_HOST_CALL
 #endif
 
+// Configure the interpreter
 #if COMPILER(GCC)
 #define HAVE_COMPUTED_GOTO 1
 #endif
-
 #if HAVE(COMPUTED_GOTO) && ENABLE(INTERPRETER)
 #define ENABLE_COMPUTED_GOTO_INTERPRETER 1
 #endif
 
-/* Yet Another Regex Runtime. */
-#if !defined(ENABLE_YARR_JIT)
-
-/* YARR and YARR_JIT is usually turned on for JIT enabled ports */
-#if ENABLE(JIT)
+/* Yet Another Regex Runtime - turned on by default for JIT enabled ports. */
+#if ENABLE(JIT) && !defined(ENABLE_YARR) && !defined(ENABLE_YARR_JIT)
 #define ENABLE_YARR 1
 #define ENABLE_YARR_JIT 1
 #endif
-
-#endif /* !defined(ENABLE_YARR_JIT) */
 
 /* Sanity Check */
 #if ENABLE(YARR_JIT) && !ENABLE(YARR)

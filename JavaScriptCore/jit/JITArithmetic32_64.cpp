@@ -1363,7 +1363,7 @@ void JIT::emit_op_mod(Instruction* currentInstruction)
     unsigned op1 = currentInstruction[2].u.operand;
     unsigned op2 = currentInstruction[3].u.operand;
 
-#if ENABLE(JIT_OPTIMIZE_MOD)
+#if ENABLE(JIT_USE_SOFT_MODULO)
     emitLoad2(op1, regT1, regT0, op2, regT3, regT2);
     addSlowCase(branch32(NotEqual, regT1, Imm32(JSValue::Int32Tag)));
     addSlowCase(branch32(NotEqual, regT3, Imm32(JSValue::Int32Tag)));
@@ -1383,7 +1383,7 @@ void JIT::emit_op_mod(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_mod(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-#if ENABLE(JIT_OPTIMIZE_MOD)
+#if ENABLE(JIT_USE_SOFT_MODULO)
     unsigned result = currentInstruction[1].u.operand;
     unsigned op1 = currentInstruction[2].u.operand;
     unsigned op2 = currentInstruction[3].u.operand;

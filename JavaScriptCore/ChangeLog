@@ -1,3 +1,35 @@
+2010-07-27  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 43089 - Cleanup JIT related switched in Platform.h
+
+        The code the enable to JIT checks every permutation of platform & OS individually, but
+        now the JIT is enabled on the majority much all x86/x86-64/ARM/MIPS systems.  It should
+        be cleaner to just enable by default on these platforms, and explicitly disable on configs
+        that don't aren't supported.
+
+        Also, rename ENABLE_JIT_OPTIMIZE_MOD to ENABLE_JIT_USE_SOFT_MODULO.  I always find this
+        confusing since enabling this "optimization" would be possible, but would be a regression
+        on x86/x86-64 systems!  I think it's clearer to reserve "JIT_OPTIMIZE" for compiler
+        technologies applicable to all platforms, and make a more optional behaviour like this a
+        "USE".
+
+        * jit/ExecutableAllocator.h:
+        (JSC::ExecutableAllocator::cacheFlush):
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_mod):
+        (JSC::JIT::emitSlow_op_mod):
+        * jit/JITArithmetic32_64.cpp:
+        (JSC::JIT::emit_op_mod):
+        (JSC::JIT::emitSlow_op_mod):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        * wtf/Platform.h:
+
 2010-07-27  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Darin Fisher.

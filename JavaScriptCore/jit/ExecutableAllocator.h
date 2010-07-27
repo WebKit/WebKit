@@ -199,8 +199,8 @@ public:
 #elif CPU(MIPS)
     static void cacheFlush(void* code, size_t size)
     {
-#if COMPILER(GCC) && (GCC_VERSION >= 40300)
-#if WTF_MIPS_ISA_REV(2) && (GCC_VERSION < 40403)
+#if COMPILER(GCC) && GCC_VERSION_AT_LEAST(4,3,0)
+#if WTF_MIPS_ISA_REV(2) && GCC_VERSION_AT_LEAST(4,4,3)
         int lineSize;
         asm("rdhwr %0, $1" : "=r" (lineSize));
         //
