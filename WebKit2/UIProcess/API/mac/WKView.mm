@@ -49,6 +49,7 @@ using namespace WebCore;
 
 @interface WKViewData : NSObject {
 @public
+    OwnPtr<PageClientImpl> _pageClient;
     RefPtr<WebPageProxy> _page;
 
     // For ToolTips.
@@ -84,8 +85,9 @@ using namespace WebCore;
 
     _data = [[WKViewData alloc] init];
 
+    _data->_pageClient.set(new PageClientImpl(self));
     _data->_page = toWK(pageNamespaceRef)->createWebPage();
-    _data->_page->setPageClient(new PageClientImpl(self));
+    _data->_page->setPageClient(_data->_pageClient.get());
     _data->_page->initializeWebPage(IntSize(frame.size), new ChunkedUpdateDrawingAreaProxy(self));
     _data->_page->setIsInWindow([self window]);
 

@@ -97,11 +97,7 @@ bool WebPageProxy::isValid()
 
 void WebPageProxy::setPageClient(PageClient* pageClient)
 {
-#if PLATFORM(WIN)
     m_pageClient = pageClient;
-#else
-    m_pageClient.set(pageClient);
-#endif
 }
 
 void WebPageProxy::setDrawingArea(PassOwnPtr<DrawingAreaProxy> drawingArea)

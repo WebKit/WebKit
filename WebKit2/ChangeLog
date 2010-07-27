@@ -1,3 +1,25 @@
+2010-07-27  Adam Roben  <aroben@apple.com>
+
+        Fix PageClient ownership in WebPageProxy
+
+        WKView now owns the PageClient, similar to how things work on Windows
+        (where the WebView is the PageClient).
+
+        Fixes <http://webkit.org/b/40185> WebPageProxy should keep a weak
+        reference to the PageClient
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView initWithFrame:pageNamespaceRef:]): Store the PageClientImpl
+        on our WKViewData object and pass it to the WebPageProxy.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setPageClient):
+        * UIProcess/WebPageProxy.h:
+        Removed Mac-specific code that put the PageClient in an OwnPtr. We now
+        store it in a bare pointer just like on Windows.
+
 2010-07-27  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

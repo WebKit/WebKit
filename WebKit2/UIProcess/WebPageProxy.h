@@ -210,13 +210,7 @@ private:
     void didChangeAcceleratedCompositing(bool compositing);
 #endif    
 
-#if PLATFORM(WIN)
     PageClient* m_pageClient;
-#else
-    // FIXME: This should not be an OwnPtr to the PageClient.  We need to find a better way to clean up m_pageClient on mac.
-    // http://bugs.webkit.org/show_bug.cgi?id=40185
-    OwnPtr<PageClient> m_pageClient;
-#endif
     WebLoaderClient m_loaderClient;
     WebPolicyClient m_policyClient;
     WebUIClient m_uiClient;
