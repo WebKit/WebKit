@@ -860,16 +860,6 @@ void LauncherWindow::createChrome()
     toggleFullScreen->connect(this, SIGNAL(enteredFullScreenMode(bool)), SLOT(setChecked(bool)));
 
     QMenu* toolsMenu = menuBar()->addMenu("&Develop");
-    toolsMenu->addAction("Select Elements...", this, SLOT(selectElements()));
-    QAction* showInspectorAction = toolsMenu->addAction("Show Web Inspector", m_inspector, SLOT(setVisible(bool)), QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_I));
-    showInspectorAction->setCheckable(true);
-    showInspectorAction->connect(m_inspector, SIGNAL(visibleChanged(bool)), SLOT(setChecked(bool)));
-
-#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
-    QAction* touchMockAction = toolsMenu->addAction("Toggle multitouch mocking", this, SLOT(setTouchMocking(bool)));
-    touchMockAction->setCheckable(true);
-    touchMockAction->setShortcut(QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_T));
-#endif
 
     QWebSettings* settings = page()->settings();
 
@@ -1000,6 +990,18 @@ void LauncherWindow::createChrome()
     viewportUpdateModeActions->addAction(smartUpdate);
     viewportUpdateModeActions->addAction(boundingRectUpdate);
     viewportUpdateModeActions->addAction(noUpdate);
+
+    toolsMenu->addAction("Select Elements...", this, SLOT(selectElements()));
+
+#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
+    QAction* touchMockAction = toolsMenu->addAction("Toggle multitouch mocking", this, SLOT(setTouchMocking(bool)));
+    touchMockAction->setCheckable(true);
+    touchMockAction->setShortcut(QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_T));
+#endif
+
+    QAction* showInspectorAction = toolsMenu->addAction("Show Web Inspector", m_inspector, SLOT(setVisible(bool)), QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_I));
+    showInspectorAction->setCheckable(true);
+    showInspectorAction->connect(m_inspector, SIGNAL(visibleChanged(bool)), SLOT(setChecked(bool)));
 }
 
 QWebPage* WebPage::createWindow(QWebPage::WebWindowType type)

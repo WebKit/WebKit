@@ -1,3 +1,15 @@
+2010-07-26  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Rubber-stamped by Simon Hausmann.
+
+        [Qt] Reorder some items in Developers' menu so QGraphicsView one is easier accessible.
+
+        Move some less useful menu items on Developers menu from the top to the bottom, so
+        QGraphicsView menu goes to the top, and becomes more quickly accessible.
+
+        * QtTestBrowser/main.cpp:
+        (LauncherWindow::createChrome):
+
 2010-07-26  Adam Roben  <aroben@apple.com>
 
         Fix the path to InjectedBundle.dll in Debug_Internal builds
