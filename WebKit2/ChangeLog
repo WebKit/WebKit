@@ -2,6 +2,23 @@
 
         Reviewed by Anders Carlsson.
 
+        Part 2 of https://bugs.webkit.org/show_bug.cgi?id=43013
+        <rdar://problem/8152434>
+        Add support for scrolling using the keyboard in WebKit2
+
+        Add support for scrolling with the space bar and ensure that we don't scroll
+        if WebCore is handling the event in another way.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::keyEvent):
+        (WebKit::getScrollMapping):
+        (WebKit::WebPage::performDefaultBehaviorForKeyEvent):
+        * WebProcess/WebPage/WebPage.h:
+
+2010-07-26  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
         Patch for https://bugs.webkit.org/show_bug.cgi?id=43013
         Part of <rdar://problem/8152434>
         Add support for scrolling using the keyboard in WebKit2
