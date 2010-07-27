@@ -71,6 +71,7 @@ if (window.layoutTestController)
 <embed name="embed5" width="0" height="0"></embed>
 <embed name="embed5" width="0" height="0"></embed>
 <embed id="embed5" width="0" height="0"></embed>
+<object name="embed6"><embed name="embed6"></embed></object>
 
 <object name="object1" width="0" height="0"></object>
 <object name="object2" width="0" height="0"></object>
@@ -233,6 +234,7 @@ testProperty("Embed by name (multiple)", "embed2");
 testProperty("Embed by id (unique)", "embed3");
 testProperty("Embed by id (multiple)", "embed4");
 testProperty("Embed by id/name mixed", "embed5");
+testProperty("Embed by name nested in object with the same name", "embed6");
 print("<br>");
 
 testProperty("Nonexistent iframe name", "iframe0");

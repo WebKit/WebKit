@@ -42,6 +42,7 @@ Embed by name (multiple): collection(2) EMBED(name) EMBED(name)
 Embed by id (unique): undefined
 Embed by id (multiple): undefined
 Embed by id/name mixed: collection(2) EMBED(name) EMBED(name)
+Embed by name nested in object with the same name: single EMBED(name)
 
 Nonexistent iframe name: undefined
 Iframe by name (unique): single WINDOW
