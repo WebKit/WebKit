@@ -2,6 +2,37 @@
 
         Reviewed by Adam Roben.
 
+        Move NPJSObject out into separate files
+        https://bugs.webkit.org/show_bug.cgi?id=43068
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/Plugins/NPJSObject.cpp: Added.
+        (WebKit::NPJSObject::create):
+        (WebKit::NPJSObject::NPJSObject):
+        (WebKit::NPJSObject::~NPJSObject):
+        (WebKit::NPJSObject::isNPJSObject):
+        (WebKit::NPJSObject::initialize):
+        (WebKit::identifierFromIdentifierRep):
+        (WebKit::NPJSObject::hasProperty):
+        (WebKit::NPJSObject::getProperty):
+        (WebKit::NPJSObject::npClass):
+        (WebKit::NPJSObject::NP_Allocate):
+        (WebKit::NPJSObject::NP_Deallocate):
+        (WebKit::NPJSObject::NP_HasProperty):
+        (WebKit::NPJSObject::NP_GetProperty):
+        * WebProcess/Plugins/NPJSObject.h: Added.
+        (WebKit::NPJSObject::jsObject):
+        (WebKit::NPJSObject::toNPJSObject):
+        * WebProcess/Plugins/NPRuntimeObjectMap.cpp:
+        (WebKit::NPRuntimeObjectMap::npJSObjectDestroyed):
+        (WebKit::NPRuntimeObjectMap::globalExec):
+        * WebProcess/Plugins/NPRuntimeObjectMap.h:
+        * win/WebKit2.vcproj:
+
+2010-07-27  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
         Rename NPJSObjectMap to NPRuntimeObjectMap
         https://bugs.webkit.org/show_bug.cgi?id=43066
 

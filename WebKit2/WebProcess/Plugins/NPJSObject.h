@@ -23,45 +23,55 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NPJSObjectWrapperMap_h
-#define NPJSObjectWrapperMap_h
+#ifndef NPJSObject_h
+#define NPJSObject_h
 
-#include <wtf/HashMap.h>
-
-struct NPObject;
+#include <JavaScriptCore/Protect.h>
+#include <WebCore/npruntime.h>
+#include <wtf/Noncopyable.h>
 
 namespace JSC {
-    class ExecState;
     class JSObject;
 }
 
 namespace WebKit {
 
-class NPJSObject;
-class PluginView;
-
-// A per plug-in map of NPObjects that wrap JavaScript objects.
-class NPRuntimeObjectMap {
+class NPRuntimeObjectMap;
+    
+// NPJSObject is an NPObject that wrappes a JavaScript object.
+class NPJSObject : public NPObject, Noncopyable {
 public:
-    explicit NPRuntimeObjectMap(PluginView*);
+    static NPJSObject* create(NPRuntimeObjectMap* objectMap, JSC::JSObject* jsObject);
 
-    // Returns an NPObject that wraps the given JavaScript object. If there is already an NPObject that wraps this JSObject, it will
-    // retain it and return it.
-    NPObject* getOrCreateNPObject(JSC::JSObject*);
-
-    void npJSObjectDestroyed(NPJSObject*);
-
-    // Called when the plug-in is destroyed. Will invalidate all the NPObjects.
-    void invalidate();
-
-    JSC::ExecState* globalExec() const;
+    JSC::JSObject* jsObject() const { return m_jsObject.get(); }
 
 private:
-    PluginView* m_pluginView;
+    NPJSObject();
+    ~NPJSObject();
 
-    HashMap<JSC::JSObject*, NPJSObject*> m_objects;
+    static bool isNPJSObject(NPObject*);
+
+    static NPJSObject* toNPJSObject(NPObject* npObject)
+    {
+        ASSERT(isNPJSObject(npObject));
+        return static_cast<NPJSObject*>(npObject);
+    }
+
+    void initialize(NPRuntimeObjectMap*, JSC::JSObject* jsObject);
+
+    bool hasProperty(NPIdentifier);
+    bool getProperty(NPIdentifier, NPVariant* result);
+
+    static NPClass* npClass();
+    static NPObject* NP_Allocate(NPP, NPClass*);
+    static void NP_Deallocate(NPObject*);
+    static bool NP_HasProperty(NPObject* npobj, NPIdentifier name);
+    static bool NP_GetProperty(NPObject* npobj, NPIdentifier name, NPVariant* result);
+    
+    NPRuntimeObjectMap* m_objectMap;
+    JSC::ProtectedPtr<JSC::JSObject> m_jsObject;
 };
 
 } // namespace WebKit
 
-#endif // NPJSObjectWrapperMap_h
+#endif // NPJSObject_h
