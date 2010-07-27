@@ -33,7 +33,48 @@ namespace JSC {
 
 size_t ExecutableAllocator::pageSize = 0;
 
+#if ENABLE(EXECUTABLE_ALLOCATOR_DEMAND)
+
+void ExecutableAllocator::intializePageSize()
+{
+#if CPU(ARMV5_OR_LOWER)
+    // The moving memory model (as used in ARMv5 and earlier platforms)
+    // on Symbian OS limits the number of chunks for each process to 16. 
+    // To mitigate this limitation increase the pagesize to allocate
+    // fewer, larger chunks. Set the page size to 256 Kb to compensate
+    // for moving memory model limitation
+    ExecutableAllocator::pageSize = 256 * 1024;
+#else
+    ExecutableAllocator::pageSize = PageAllocation::pagesize();
+#endif
+}
+
+ExecutablePool::Allocation ExecutablePool::systemAlloc(size_t size)
+{
+    PageAllocation allocation = PageAllocation::allocate(size, PageAllocation::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true);
+    if (!allocation)
+        CRASH();
+    return allocation;
+}
+
+void ExecutablePool::systemRelease(const ExecutablePool::Allocation& allocation)
+{
+    allocation.deallocate();
+}
+
+bool ExecutableAllocator::isValid() const
+{
+    return true;
+}
+
+#endif
+
 #if ENABLE(ASSEMBLER_WX_EXCLUSIVE)
+
+#if OS(WINDOWS) || OS(SYMBIAN)
+#error "ASSEMBLER_WX_EXCLUSIVE not yet suported on this platform."
+#endif
+
 void ExecutableAllocator::reprotectRegion(void* start, size_t size, ProtectionSeting setting)
 {
     if (!pageSize)
@@ -52,9 +93,11 @@ void ExecutableAllocator::reprotectRegion(void* start, size_t size, ProtectionSe
 
     mprotect(pageStart, size, (setting == Writable) ? PROTECTION_FLAGS_RW : PROTECTION_FLAGS_RX);
 }
+
 #endif
 
 #if CPU(ARM_TRADITIONAL) && OS(LINUX) && COMPILER(RVCT)
+
 __asm void ExecutableAllocator::cacheFlush(void* code, size_t size)
 {
     ARM
@@ -67,6 +110,7 @@ __asm void ExecutableAllocator::cacheFlush(void* code, size_t size)
     pop {r7}
     bx lr
 }
+
 #endif
 
 }

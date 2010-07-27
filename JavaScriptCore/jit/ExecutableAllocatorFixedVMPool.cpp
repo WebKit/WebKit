@@ -124,29 +124,16 @@ class FixedVMPoolAllocator
     // The free list is stored in a sorted tree.
     typedef AVLTree<AVLTreeAbstractorForFreeList, 40> SizeSortedFreeTree;
 
-    // Use madvise as apropriate to prevent freed pages from being spilled,
-    // and to attempt to ensure that used memory is reported correctly.
-#if HAVE(MADV_FREE_REUSE)
     void release(void* position, size_t size)
     {
-        while (madvise(position, size, MADV_FREE_REUSABLE) == -1 && errno == EAGAIN) { }
+        m_allocation.decommit(position, size);
     }
 
     void reuse(void* position, size_t size)
     {
-        while (madvise(position, size, MADV_FREE_REUSE) == -1 && errno == EAGAIN) { }
+        bool okay = m_allocation.commit(position, size, EXECUTABLE_POOL_WRITABLE, true);
+        ASSERT_UNUSED(okay, okay);
     }
-#elif HAVE(MADV_DONTNEED)
-    void release(void* position, size_t size)
-    {
-        while (madvise(position, size, MADV_DONTNEED) == -1 && errno == EAGAIN) { }
-    }
-
-    void reuse(void*, size_t) {}
-#else
-    void release(void*, size_t) {}
-    void reuse(void*, size_t) {}
-#endif
 
     // All addition to the free list should go through this method, rather than
     // calling insert directly, to avoid multiple entries beging added with the
@@ -288,7 +275,6 @@ public:
     FixedVMPoolAllocator(size_t commonSize, size_t totalHeapSize)
         : m_commonSize(commonSize)
         , m_countFreedSinceLastCoalesce(0)
-        , m_totalHeapSize(totalHeapSize)
     {
         // Cook up an address to allocate at, using the following recipe:
         //   17 bits of zero, stay in userspace kids.
@@ -299,36 +285,67 @@ public:
         // for now instead of 2^26 bits of ASLR lets stick with 25 bits of randomization plus
         // 2^24, which should put up somewhere in the middle of usespace (in the address range
         // 0x200000000000 .. 0x5fffffffffff).
-        intptr_t randomLocation = 0;
 #if VM_POOL_ASLR
+        intptr_t randomLocation = 0;
         randomLocation = arc4random() & ((1 << 25) - 1);
         randomLocation += (1 << 24);
         randomLocation <<= 21;
+        m_allocation = PageAllocation::reserveAt(reinterpret_cast<void*>(randomLocation), false, totalHeapSize, PageAllocation::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true);
+#else
+        m_allocation = PageAllocation::reserve(totalHeapSize, PageAllocation::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true);
 #endif
-        m_base = mmap(reinterpret_cast<void*>(randomLocation), m_totalHeapSize, INITIAL_PROTECTION_FLAGS, MAP_PRIVATE | MAP_ANON, VM_TAG_FOR_EXECUTABLEALLOCATOR_MEMORY, 0);
 
-        if (m_base) {
-            // For simplicity, we keep all memory in m_freeList in a 'released' state.
-            // This means that we can simply reuse all memory when allocating, without
-            // worrying about it's previous state, and also makes coalescing m_freeList
-            // simpler since we need not worry about the possibility of coalescing released
-            // chunks with non-released ones.
-            release(m_base, m_totalHeapSize);
-            m_freeList.insert(new FreeListEntry(m_base, m_totalHeapSize));
-        }
+        if (!!m_allocation)
+            m_freeList.insert(new FreeListEntry(m_allocation.base(), m_allocation.size()));
 #if !ENABLE(INTERPRETER)
         else
             CRASH();
 #endif
     }
 
-    void* alloc(size_t size)
+    PageAllocation alloc(size_t size)
+    {
+        return PageAllocation(allocInternal(size), size, m_allocation);
+    }
+
+    void free(PageAllocation allocation)
+    {
+        void* pointer = allocation.base();
+        size_t size = allocation.size();
+
+        ASSERT(!!m_allocation);
+        // Call release to report to the operating system that this
+        // memory is no longer in use, and need not be paged out.
+        ASSERT(isWithinVMPool(pointer, size));
+        release(pointer, size);
+
+        // Common-sized allocations are stored in the m_commonSizedAllocations
+        // vector; all other freed chunks are added to m_freeList.
+        if (size == m_commonSize)
+            m_commonSizedAllocations.append(pointer);
+        else
+            addToFreeList(new FreeListEntry(pointer, size));
+
+        // Do some housekeeping.  Every time we reach a point that
+        // 16MB of allocations have been freed, sweep m_freeList
+        // coalescing any neighboring fragments.
+        m_countFreedSinceLastCoalesce += size;
+        if (m_countFreedSinceLastCoalesce >= COALESCE_LIMIT) {
+            m_countFreedSinceLastCoalesce = 0;
+            coalesceFreeSpace();
+        }
+    }
+
+    bool isValid() const { return !!m_allocation; }
+
+private:
+    void* allocInternal(size_t size)
     {
 #if ENABLE(INTERPRETER)
-        if (!m_base)
+        if (!m_allocation)
             return 0;
 #else
-        ASSERT(m_base);
+        ASSERT(!!m_allocation);
 #endif
         void* result;
 
@@ -390,39 +407,10 @@ public:
         return result;
     }
 
-    void free(void* pointer, size_t size)
-    {
-        ASSERT(m_base);
-        // Call release to report to the operating system that this
-        // memory is no longer in use, and need not be paged out.
-        ASSERT(isWithinVMPool(pointer, size));
-        release(pointer, size);
-
-        // Common-sized allocations are stored in the m_commonSizedAllocations
-        // vector; all other freed chunks are added to m_freeList.
-        if (size == m_commonSize)
-            m_commonSizedAllocations.append(pointer);
-        else
-            addToFreeList(new FreeListEntry(pointer, size));
-
-        // Do some housekeeping.  Every time we reach a point that
-        // 16MB of allocations have been freed, sweep m_freeList
-        // coalescing any neighboring fragments.
-        m_countFreedSinceLastCoalesce += size;
-        if (m_countFreedSinceLastCoalesce >= COALESCE_LIMIT) {
-            m_countFreedSinceLastCoalesce = 0;
-            coalesceFreeSpace();
-        }
-    }
-
-    bool isValid() const { return !!m_base; }
-
-private:
-
 #ifndef NDEBUG
     bool isWithinVMPool(void* pointer, size_t size)
     {
-        return pointer >= m_base && (reinterpret_cast<char*>(pointer) + size <= reinterpret_cast<char*>(m_base) + m_totalHeapSize);
+        return pointer >= m_allocation.base() && (reinterpret_cast<char*>(pointer) + size <= reinterpret_cast<char*>(m_allocation.base()) + m_allocation.size());
     }
 #endif
 
@@ -436,8 +424,7 @@ private:
     // This is used for housekeeping, to trigger defragmentation of the freed lists.
     size_t m_countFreedSinceLastCoalesce;
 
-    void* m_base;
-    size_t m_totalHeapSize;
+    PageAllocation m_allocation;
 };
 
 void ExecutableAllocator::intializePageSize()
@@ -459,18 +446,15 @@ bool ExecutableAllocator::isValid() const
 ExecutablePool::Allocation ExecutablePool::systemAlloc(size_t size)
 {
     SpinLockHolder lock_holder(&spinlock);
-    
     ASSERT(allocator);
-    ExecutablePool::Allocation alloc = {reinterpret_cast<char*>(allocator->alloc(size)), size};
-    return alloc;
+    return allocator->alloc(size);
 }
 
 void ExecutablePool::systemRelease(const ExecutablePool::Allocation& allocation) 
 {
     SpinLockHolder lock_holder(&spinlock);
-
     ASSERT(allocator);
-    allocator->free(allocation.pages, allocation.size);
+    allocator->free(allocation);
 }
 
 }
