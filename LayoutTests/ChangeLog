@@ -1,3 +1,10 @@
+2010-07-27  Victor Wang  <victorw@chromium.org>
+
+        Unreviewed. Update chromium test expectations for failed test on mac:
+        fast/dom/prototype-inheritance.html  
+
+        * platform/chromium/test_expectations.txt:
+
 2010-07-23  Helder Correia  <heldercorreia@codeaurora.org>
 
         Reviewed by Darin Adler.

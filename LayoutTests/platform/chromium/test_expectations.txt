@@ -3131,4 +3131,4 @@ BUGWK42964 SLOW : tables/mozilla/other/slashlogo.html = FAIL
 BUGWK42964 WIN LINUX : tables/mozilla_expected_failures/bugs/bug89315.html = PASS FAIL
 
 // Fails since WebKit r64141
-BUGWK43067 WIN LINUX : fast/dom/prototype-inheritance.html = TEXT
+BUGWK43067 : fast/dom/prototype-inheritance.html = TEXT
