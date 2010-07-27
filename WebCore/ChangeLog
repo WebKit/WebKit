@@ -1,3 +1,19 @@
+2010-07-27  Pranav Kedia  <pranavk@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Chrome browser Bug: Pause button stays when <audio> hits end
+        https://bugs.webkit.org/show_bug.cgi?id=42677
+
+        The change is just in chromium media. Tested using media part of
+        WebKit layout tests. The following test that was failing is passing.
+        media/video-duration-known-after-eos.html -> unexpected pass
+
+        * rendering/RenderMediaControlsChromium.cpp:
+        (WebCore::paintMediaPlayButton):
+        Using mediaElement->canPlay() instead of mediaElement->paused() to
+        paint the play/pause button.
+
 2010-07-27  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.
