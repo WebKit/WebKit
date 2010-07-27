@@ -1,5 +1,11 @@
 2010-07-26  Gavin Barraclough  <barraclough@apple.com>
 
+        Chromium/GTK build fix
+
+        * wtf/PageAllocation.cpp:
+
+2010-07-26  Gavin Barraclough  <barraclough@apple.com>
+
         Build fix for !Mac platforms.
 
         * Android.mk:

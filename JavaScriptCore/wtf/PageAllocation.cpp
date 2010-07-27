@@ -27,6 +27,8 @@
 #include "config.h"
 #include "PageAllocation.h"
 
+#include <unistd.h>
+
 #if HAVE(ERRNO_H)
 #include <errno.h>
 #endif
