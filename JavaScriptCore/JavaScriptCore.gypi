@@ -110,6 +110,8 @@
             'jit/ExecutableAllocator.cpp',
             'jit/ExecutableAllocator.h',
             'jit/ExecutableAllocatorFixedVMPool.cpp',
+            'jit/ExecutableAllocatorPosix.cpp',
+            'jit/ExecutableAllocatorWin.cpp',
             'jit/JIT.cpp',
             'jit/JIT.h',
             'jit/JITArithmetic.cpp',

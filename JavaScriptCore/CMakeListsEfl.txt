@@ -1,6 +1,6 @@
 LIST(APPEND JavaScriptCore_SOURCES
     jit/ExecutableAllocatorFixedVMPool.cpp
-    jit/ExecutableAllocator.cpp
+    jit/ExecutableAllocatorPosix.cpp
     runtime/MarkStackPosix.cpp
 )
 

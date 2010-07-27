@@ -1641,6 +1641,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\jit\ExecutableAllocatorWin.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\jit\JIT.cpp"
 				>
 			</File>

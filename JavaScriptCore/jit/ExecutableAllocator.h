@@ -28,7 +28,6 @@
 #include <stddef.h> // for ptrdiff_t
 #include <limits>
 #include <wtf/Assertions.h>
-#include <wtf/PageAllocation.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/UnusedParam.h>
@@ -59,9 +58,9 @@ extern "C" __declspec(dllimport) void CacheRangeFlush(LPVOID pAddr, DWORD dwLeng
 #if ENABLE(ASSEMBLER_WX_EXCLUSIVE)
 #define PROTECTION_FLAGS_RW (PROT_READ | PROT_WRITE)
 #define PROTECTION_FLAGS_RX (PROT_READ | PROT_EXEC)
-#define EXECUTABLE_POOL_WRITABLE false
+#define INITIAL_PROTECTION_FLAGS PROTECTION_FLAGS_RX
 #else
-#define EXECUTABLE_POOL_WRITABLE true
+#define INITIAL_PROTECTION_FLAGS (PROT_READ | PROT_WRITE | PROT_EXEC)
 #endif
 
 namespace JSC {
@@ -86,7 +85,13 @@ namespace JSC {
 
 class ExecutablePool : public RefCounted<ExecutablePool> {
 private:
-    typedef PageAllocation Allocation;
+    struct Allocation {
+        char* pages;
+        size_t size;
+#if OS(SYMBIAN)
+        RChunk* chunk;
+#endif
+    };
     typedef Vector<Allocation, 2> AllocationList;
 
 public:
@@ -291,7 +296,7 @@ inline ExecutablePool::ExecutablePool(size_t n)
     size_t allocSize = roundUpAllocationSize(n, JIT_ALLOCATOR_PAGE_SIZE);
     Allocation mem = systemAlloc(allocSize);
     m_pools.append(mem);
-    m_freePtr = static_cast<char*>(mem.base());
+    m_freePtr = mem.pages;
     if (!m_freePtr)
         CRASH(); // Failed to allocate
     m_end = m_freePtr + allocSize;
@@ -302,18 +307,18 @@ inline void* ExecutablePool::poolAllocate(size_t n)
     size_t allocSize = roundUpAllocationSize(n, JIT_ALLOCATOR_PAGE_SIZE);
     
     Allocation result = systemAlloc(allocSize);
-    if (!result.base())
+    if (!result.pages)
         CRASH(); // Failed to allocate
     
     ASSERT(m_end >= m_freePtr);
     if ((allocSize - n) > static_cast<size_t>(m_end - m_freePtr)) {
         // Replace allocation pool
-        m_freePtr = static_cast<char*>(result.base()) + n;
-        m_end = static_cast<char*>(result.base()) + allocSize;
+        m_freePtr = result.pages + n;
+        m_end = result.pages + allocSize;
     }
 
     m_pools.append(result);
-    return result.base();
+    return result.pages;
 }
 
 }
