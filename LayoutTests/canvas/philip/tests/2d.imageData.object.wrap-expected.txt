@@ -4,7 +4,3 @@ ImageData.data wraps numbers modulo 256
 References: 2d.pixelarray.modify
 Actual output:
 Passed
-
-
-
-

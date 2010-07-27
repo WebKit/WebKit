@@ -1,3 +1,17 @@
+2010-07-23  Helder Correia  <heldercorreia@codeaurora.org>
+
+        Reviewed by Darin Adler.
+
+        Canvas tests 2d.imageData.object.round and 2d.imageData.object.wrap are
+        failing. For canvas image data manipulation, the values passed should
+        be truncated and wrapped. Also fix the canvas-ImageData-behaviour test
+        to expect wrapping rather than clamping, and add some new checkings.
+        https://bugs.webkit.org/show_bug.cgi?id=40272
+
+        * runtime/JSByteArray.h:
+        (JSC::JSByteArray::setIndex):
+        (JSC::JSByteArray::JSByteArray):
+
 2010-07-27  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.

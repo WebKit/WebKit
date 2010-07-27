@@ -45,25 +45,18 @@ namespace JSC {
         void setIndex(unsigned i, int value)
         {
             ASSERT(canAccessIndex(i));
-            if (value & ~0xFF) {
-                if (value < 0)
-                    value = 0;
-                else
-                    value = 255;
-            }
             m_storage->data()[i] = static_cast<unsigned char>(value);
         }
-        
+
         void setIndex(unsigned i, double value)
         {
             ASSERT(canAccessIndex(i));
-            if (!(value > 0)) // Clamp NaN to 0
-                value = 0;
-            else if (value > 255)
-                value = 255;
-            m_storage->data()[i] = static_cast<unsigned char>(value + 0.5);
+            // The largest integer value that a double can represent without loss of precision
+            // is 2^53.  long long is the smallest integral type that gives correct results
+            // when casting numbers larger than 2^31 from a value of type double.
+            m_storage->data()[i] = static_cast<unsigned char>(static_cast<long long>(value));
         }
-        
+
         void setIndex(ExecState* exec, unsigned i, JSValue value)
         {
             double byteValue = value.toNumber(exec);
@@ -75,7 +68,7 @@ namespace JSC {
 
         JSByteArray(ExecState* exec, NonNullPassRefPtr<Structure>, WTF::ByteArray* storage, const JSC::ClassInfo* = &s_defaultInfo);
         static PassRefPtr<Structure> createStructure(JSValue prototype);
-        
+
         virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertySlot&);
         virtual bool getOwnPropertySlot(JSC::ExecState*, unsigned propertyName, JSC::PropertySlot&);
         virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
@@ -86,7 +79,7 @@ namespace JSC {
 
         virtual const ClassInfo* classInfo() const { return m_classInfo; }
         static const ClassInfo s_defaultInfo;
-        
+
         size_t length() const { return m_storage->length(); }
 
         WTF::ByteArray* storage() const { return m_storage.get(); }
@@ -100,7 +93,7 @@ namespace JSC {
 
     private:
         enum VPtrStealingHackType { VPtrStealingHack };
-        JSByteArray(VPtrStealingHackType) 
+        JSByteArray(VPtrStealingHackType)
             : JSObject(createStructure(jsNull()))
             , m_classInfo(0)
         {
@@ -109,7 +102,7 @@ namespace JSC {
         RefPtr<WTF::ByteArray> m_storage;
         const ClassInfo* m_classInfo;
     };
-    
+
     JSByteArray* asByteArray(JSValue value);
     inline JSByteArray* asByteArray(JSValue value)
     {

@@ -202,8 +202,6 @@ canvas/philip/tests/2d.imageData.create2.type.html
 canvas/philip/tests/2d.imageData.get.source.negative.html
 canvas/philip/tests/2d.imageData.get.source.outside.html
 canvas/philip/tests/2d.imageData.get.type.html
-canvas/philip/tests/2d.imageData.object.round.html
-canvas/philip/tests/2d.imageData.object.wrap.html
 canvas/philip/tests/2d.line.cap.closed.html
 canvas/philip/tests/2d.line.join.parallel.html
 canvas/philip/tests/2d.line.miter.lineedge.html
