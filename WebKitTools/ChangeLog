@@ -1,3 +1,16 @@
+2010-07-27  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        webkit-patch post-commits is broken: AttributeError: Values instance has no attribute 'no_squash'
+        https://bugs.webkit.org/show_bug.cgi?id=42984
+
+        squash and no_squash have been intentionally erroring for a couple weeks now.
+        But post-commits was just broken. Just remove squash/no_squash.
+
+        * Scripts/webkitpy/tool/steps/abstractstep.py:
+        * Scripts/webkitpy/tool/steps/options.py:
+
 2010-07-27  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix after introduction of EXECUTABLE_ALLOCATOR_DEMAND.

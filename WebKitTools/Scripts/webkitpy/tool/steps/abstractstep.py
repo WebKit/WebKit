@@ -35,10 +35,6 @@ from webkitpy.tool.steps.options import Options
 class AbstractStep(object):
     def __init__(self, tool, options):
         self._tool = tool
-        if options.no_squash:
-            raise ScriptError('--no-squash has been removed. Use "--git-commit=HEAD.." or "-g HEAD.." to operate on the working copy.')
-        if options.squash:
-            raise ScriptError('--squash has been removed. It is now the default behavior if --git-commit is omitted.')
         self._options = options
         self._port = None
 
@@ -76,9 +72,6 @@ class AbstractStep(object):
         return [
             # We need this option here because cached_lookup uses it.  :(
             Options.git_commit,
-            # FIXME: Get rid of these.
-            Options.no_squash,
-            Options.squash,
         ]
 
     def run(self, state):
