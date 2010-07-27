@@ -1,3 +1,23 @@
+2010-07-27  Balazs Kelemen  <kb@inf.u-szeged.hu>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] WebKit::PageClient implementation needs a dedicated class
+
+        https://bugs.webkit.org/show_bug.cgi?id=42974
+
+        * UIProcess/API/qt/qwkpage.cpp:
+        (PageClientImpl::PageClientImpl): Added.
+        (PageClientImpl::pageDidEnterAcceleratedCompositing): Moved from QWKPagePrivate.
+        (PageClientImpl::pageDidLeaveAcceleratedCompositing): Ditto.
+        (PageClientImpl::processDidExit): Ditto.
+        (PageClientImpl::processDidRevive): Ditto.
+        (PageClientImpl::setCursor): Ditto.
+        (PageClientImpl::takeFocus): Ditto.
+        (PageClientImpl::toolTipChanged): Ditto.
+        (QWKPagePrivate::QWKPagePrivate): Set a new instance of the PageClientImpl as PageClient rather than 'this'.
+        * UIProcess/API/qt/qwkpage_p.h: Removed PageClient implementation methods from QWKPagePrivate.
+
 2010-07-26  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

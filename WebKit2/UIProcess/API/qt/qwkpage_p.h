@@ -31,7 +31,7 @@
 #include <QGraphicsView>
 #include <QKeyEvent>
 
-class QWKPagePrivate : public WebKit::PageClient {
+class QWKPagePrivate {
 public:
     QWKPagePrivate(QWKPage*, WKPageNamespaceRef);
     ~QWKPagePrivate();
@@ -39,16 +39,6 @@ public:
     static QWKPagePrivate* get(QWKPage* page) { return page->d; }
 
     void init(const QSize& viewportSize, WebKit::DrawingAreaProxy*);
-
-#if USE(ACCELERATED_COMPOSITING)
-    void pageDidEnterAcceleratedCompositing() {}
-    void pageDidLeaveAcceleratedCompositing() {}
-#endif // USE(ACCELERATED_COMPOSITING)
-    virtual void processDidExit() {}
-    virtual void processDidRevive() {}
-    virtual void setCursor(const WebCore::Cursor&) {}
-    virtual void takeFocus(bool direction) {}
-    virtual void toolTipChanged(const WebCore::String&, const WebCore::String&);
 
     void paint(QPainter* painter, QRect);
 

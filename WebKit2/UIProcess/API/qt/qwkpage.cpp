@@ -37,13 +37,40 @@
 using namespace WebKit;
 using namespace WebCore;
 
+class PageClientImpl : public WebKit::PageClient {
+public:
+    PageClientImpl(QWKPage* page)
+        : m_page(page)
+    {
+    }
+
+#if USE(ACCELERATED_COMPOSITING)
+    void pageDidEnterAcceleratedCompositing() { }
+    void pageDidLeaveAcceleratedCompositing() { }
+#endif // USE(ACCELERATED_COMPOSITING)
+    virtual void processDidExit() { }
+    virtual void processDidRevive() { }
+    virtual void setCursor(const WebCore::Cursor&) { }
+    virtual void takeFocus(bool direction) { }
+
+    virtual void toolTipChanged(const WebCore::String&, const WebCore::String&);
+
+private:
+    QWKPage* m_page;
+};
+
+void PageClientImpl::toolTipChanged(const String&, const String& newTooltip)
+{
+    emit m_page->statusBarMessage(QString(newTooltip));
+}
+
 QWKPagePrivate::QWKPagePrivate(QWKPage* qq, WKPageNamespaceRef namespaceRef)
     : q(qq)
     , createNewPageFn(0)
 {
     memset(actions, 0, sizeof(actions));
     page = toWK(namespaceRef)->createWebPage();
-    page->setPageClient(this);
+    page->setPageClient(new PageClientImpl(qq)); // Ownership is passed to the page.
 }
 
 QWKPagePrivate::~QWKPagePrivate()
@@ -54,11 +81,6 @@ QWKPagePrivate::~QWKPagePrivate()
 void QWKPagePrivate::init(const QSize& viewportSize, DrawingAreaProxy* proxy)
 {
     page->initializeWebPage(IntSize(viewportSize), proxy);
-}
-
-void QWKPagePrivate::toolTipChanged(const String&, const String& newTooltip)
-{
-    emit q->statusBarMessage(QString(newTooltip));
 }
 
 void QWKPagePrivate::paint(QPainter* painter, QRect area)
