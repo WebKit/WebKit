@@ -23,50 +23,41 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NPJSObjectWrapperMap_h
-#define NPJSObjectWrapperMap_h
+#ifndef JSNPObject_h
+#define JSNPObject_h
 
-#include <wtf/HashMap.h>
+#include <JavaScriptCore/JSObjectWithGlobalObject.h>
 
 struct NPObject;
 
-namespace JSC {
-    class ExecState;
-    class JSGlobalObject;
-    class JSObject;
-}
-
 namespace WebKit {
 
-class NPJSObject;
-class PluginView;
+class NPRuntimeObjectMap;
+    
+// JSNPObject is a JSObject that wraps an NPObject.
 
-// A per plug-in map of NPObjects that wrap JavaScript objects.
-class NPRuntimeObjectMap {
+class JSNPObject : public JSC::JSObjectWithGlobalObject {
 public:
-    explicit NPRuntimeObjectMap(PluginView*);
-
-    // Returns an NPObject that wraps the given JSObject object. If there is already an NPObject that wraps this JSObject, it will
-    // retain it and return it.
-    NPObject* getOrCreateNPObject(JSC::JSObject*);
-
-    void npJSObjectDestroyed(NPJSObject*);
-
-    // Returns a JSObject object that wraps the given NPObject.
-    JSC::JSObject* getOrCreateJSObject(JSC::ExecState*, JSC::JSGlobalObject*, NPObject*);
-
-
-    // Called when the plug-in is destroyed. Will invalidate all the NPObjects.
-    void invalidate();
-
-    JSC::ExecState* globalExec() const;
+    JSNPObject(JSC::ExecState*, JSC::JSGlobalObject*, NPRuntimeObjectMap* objectMap, NPObject* npObject);
+    ~JSNPObject();
 
 private:
-    PluginView* m_pluginView;
+    static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | JSObject::StructureFlags;
+    
+    static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue prototype)
+    {
+        return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount);
+    }
 
-    HashMap<JSC::JSObject*, NPJSObject*> m_objects;
+    virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertySlot&);
+
+    static JSC::JSValue propertyGetter(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
+    static JSC::JSObject* throwInvalidAccessError(JSC::ExecState*);
+
+    NPRuntimeObjectMap* m_objectMap;
+    NPObject* m_npObject;
 };
 
 } // namespace WebKit
 
-#endif // NPJSObjectWrapperMap_h
+#endif // JSNPObject_h

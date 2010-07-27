@@ -24,6 +24,32 @@
 
         Reviewed by Sam Weinig.
 
+        Add JSNPObject, a JSObject that wraps an NPObject
+        https://bugs.webkit.org/show_bug.cgi?id=43079
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add JSNPObject.cpp and JSNPObject.h
+        
+        * WebProcess/Plugins/JSNPObject.cpp: Added.
+        (WebKit::npIdentifierFromIdentifier):
+        (WebKit::JSNPObject::JSNPObject):
+        (WebKit::JSNPObject::~JSNPObject):
+        (WebKit::JSNPObject::getOwnPropertySlot):
+        Check if the NPObject has the given property.
+
+        (WebKit::JSNPObject::propertyGetter):
+        (WebKit::JSNPObject::throwInvalidAccessError):
+        * WebProcess/Plugins/JSNPObject.h: Added.
+        (WebKit::JSNPObject::createStructure):
+        * WebProcess/Plugins/NPJSObject.h:
+        
+        * win/WebKit2.vcproj:
+        Add JSNPObject.cpp and JSNPObject.h
+
+2010-07-27  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Expose interface for returning the plug-in script JSObject
         https://bugs.webkit.org/show_bug.cgi?id=43074
 

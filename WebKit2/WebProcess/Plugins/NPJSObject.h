@@ -38,7 +38,7 @@ namespace WebKit {
 
 class NPRuntimeObjectMap;
     
-// NPJSObject is an NPObject that wrappes a JavaScript object.
+// NPJSObject is an NPObject that wraps a JSObject.
 class NPJSObject : public NPObject, Noncopyable {
 public:
     static NPJSObject* create(NPRuntimeObjectMap* objectMap, JSC::JSObject* jsObject);

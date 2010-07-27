@@ -25,6 +25,7 @@
 
 #include "NPRuntimeObjectMap.h"
 
+#include "JSNPObject.h"
 #include "NPJSObject.h"
 #include "NPRuntimeUtilities.h"
 #include "PluginView.h"
@@ -62,10 +63,10 @@ void NPRuntimeObjectMap::npJSObjectDestroyed(NPJSObject* npJSObject)
     m_objects.remove(npJSObject->jsObject());
 }
 
-JSObject* NPRuntimeObjectMap::getOrCreateJSObject(NPObject*, ExecState*, JSGlobalObject*)
+JSObject* NPRuntimeObjectMap::getOrCreateJSObject(ExecState* exec, JSGlobalObject* globalObject, NPObject* npObject)
 {
-    // FIXME: Implement.
-    return 0;
+    // FIXME: Check if we already have a wrapper for this NPObject!
+    return new (exec) JSNPObject(exec, globalObject, this, npObject);
 }
 
 void NPRuntimeObjectMap::invalidate()
@@ -89,6 +90,5 @@ ExecState* NPRuntimeObjectMap::globalExec() const
     
     return frame->script()->globalObject(pluginWorld())->globalExec();
 }
-
 
 } // namespace WebKit
