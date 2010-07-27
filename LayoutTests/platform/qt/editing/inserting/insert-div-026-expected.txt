@@ -25,36 +25,36 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x227 [border: (2px solid #0000FF)]
-        RenderBlock {DIV} at (14,14) size 756x121
-          RenderText {#text} at (0,0) size 77x31
-            text run at (0,0) width 77: "Tests: "
+      RenderBlock {DIV} at (0,0) size 784x230 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x124
+          RenderText {#text} at (0,0) size 67x32
+            text run at (0,0) width 67: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,31) size 746x59
-            text run at (0,31) width 746: "Inserting blocks for paragraphs should do a better job of finding a block"
-            text run at (0,61) width 154: "to insert after. "
-          RenderInline {A} at (0,0) size 274x29 [color=#0000EE]
-            RenderText {#text} at (154,61) size 274x29
-              text run at (154,61) width 274: "<rdar://problem/3996605>"
-          RenderText {#text} at (428,61) size 720x59
-            text run at (428,61) width 292: " Insert paragraph command"
-            text run at (0,91) width 673: "puts new block in wrong place, creating difficult-to-handle HTML"
-        RenderBlock {DIV} at (14,151) size 756x62
-          RenderText {#text} at (0,0) size 214x31
-            text run at (0,0) width 214: "Expected Results: "
-          RenderBR {BR} at (214,24) size 0x0
-          RenderText {#text} at (0,32) size 480x29
-            text run at (0,32) width 480: "Should see this content in the red box below: "
-          RenderInline {B} at (0,0) size 23x31
-            RenderText {#text} at (480,31) size 23x31
-              text run at (480,31) width 23: "fo"
-          RenderText {#text} at (503,32) size 12x29
-            text run at (503,32) width 12: "x"
-      RenderBlock {DIV} at (0,251) size 784x35
+          RenderText {#text} at (0,31) size 739x63
+            text run at (0,31) width 739: "Inserting blocks for paragraphs should do a better job of finding a block"
+            text run at (0,62) width 153: "to insert after. "
+          RenderInline {A} at (0,0) size 275x32 [color=#0000EE]
+            RenderText {#text} at (153,62) size 275x32
+              text run at (153,62) width 275: "<rdar://problem/3996605>"
+          RenderText {#text} at (428,62) size 717x63
+            text run at (428,62) width 289: " Insert paragraph command"
+            text run at (0,93) width 679: "puts new block in wrong place, creating difficult-to-handle HTML"
+        RenderBlock {DIV} at (14,154) size 756x62
+          RenderText {#text} at (0,0) size 189x32
+            text run at (0,0) width 189: "Expected Results: "
+          RenderBR {BR} at (189,24) size 0x0
+          RenderText {#text} at (0,31) size 461x32
+            text run at (0,31) width 461: "Should see this content in the red box below: "
+          RenderInline {B} at (0,0) size 20x32
+            RenderText {#text} at (461,31) size 20x32
+              text run at (461,31) width 20: "fo"
+          RenderText {#text} at (481,31) size 12x32
+            text run at (481,31) width 12: "x"
+      RenderBlock {DIV} at (0,254) size 784x35
         RenderBlock {DIV} at (0,0) size 784x35 [border: (2px solid #FF0000)]
-          RenderInline {B} at (0,0) size 23x31
-            RenderText {#text} at (2,2) size 23x31
-              text run at (2,2) width 23: "fo"
-          RenderText {#text} at (25,3) size 12x29
-            text run at (25,3) width 12: "x"
+          RenderInline {B} at (0,0) size 20x32
+            RenderText {#text} at (2,2) size 20x32
+              text run at (2,2) width 20: "fo"
+          RenderText {#text} at (22,2) size 12x32
+            text run at (22,2) width 12: "x"
 caret: position 3 of child 0 {#text} of child 0 {B} of child 1 {DIV} of child 3 {DIV} of body

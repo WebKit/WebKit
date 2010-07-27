@@ -3,19 +3,19 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x40
-        RenderText {#text} at (0,0) size 761x40
-          text run at (0,0) width 337: "This test for a bug copy/pasting underlined text. "
-          text run at (337,0) width 424: "The color of the underline should be the color of the element"
-          text run at (0,20) width 257: "that has the text-decoration property."
-      RenderBlock {DIV} at (0,56) size 784x20
-        RenderInline {SPAN} at (0,0) size 189x20 [color=#0000FF]
-          RenderInline {SPAN} at (0,0) size 189x20 [color=#FF0000]
-            RenderText {#text} at (0,0) size 189x20
-              text run at (0,0) width 189: "This should be underlined."
-      RenderBlock {DIV} at (0,76) size 784x20
-        RenderInline {SPAN} at (0,0) size 189x20 [color=#0000FF]
-          RenderInline {SPAN} at (0,0) size 189x20 [color=#FF0000]
-            RenderText {#text} at (0,0) size 189x20
-              text run at (0,0) width 189: "This should be underlined."
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 764x42
+          text run at (0,0) width 327: "This test for a bug copy/pasting underlined text. "
+          text run at (327,0) width 437: "The color of the underline should be the color of the element that"
+          text run at (0,21) width 222: "has the text-decoration property."
+      RenderBlock {DIV} at (0,58) size 784x21
+        RenderInline {SPAN} at (0,0) size 181x21 [color=#0000FF]
+          RenderInline {SPAN} at (0,0) size 181x21 [color=#FF0000]
+            RenderText {#text} at (0,0) size 181x21
+              text run at (0,0) width 181: "This should be underlined."
+      RenderBlock {DIV} at (0,79) size 784x21
+        RenderInline {SPAN} at (0,0) size 181x21 [color=#0000FF]
+          RenderInline {SPAN} at (0,0) size 181x21 [color=#FF0000]
+            RenderText {#text} at (0,0) size 181x21
+              text run at (0,0) width 181: "This should be underlined."
 caret: position 26 of child 0 {#text} of child 0 {SPAN} of child 0 {SPAN} of child 4 {DIV} of body

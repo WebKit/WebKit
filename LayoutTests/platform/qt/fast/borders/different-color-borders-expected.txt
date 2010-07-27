@@ -3,12 +3,11 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x572
-      RenderBlock {P} at (0,0) size 784x60
-        RenderText {#text} at (0,0) size 761x60
-          text run at (0,0) width 761: "When two border sides have different colors, the edge joining them should be anti-aliased. When two border"
-          text run at (0,20) width 751: "sides have the same color, the edge joining them should not be anti-aliased and no corner joints should be"
-          text run at (0,40) width 50: "visible."
-      RenderBlock {DIV} at (20,80) size 240x80 [border: (20px solid #FF0000) (20px solid #000000)]
-      RenderBlock {DIV} at (20,180) size 240x80 [border: (20px solid #FF0000) (20px solid #000000) (20px solid #FF0000)]
-      RenderBlock {DIV} at (20,280) size 240x80 [border: (20px solid #FF0000) (20px solid #000000)]
-      RenderBlock {DIV} at (20,380) size 240x80 [border: (20px solid #FF0000) (20px solid #000000) (20px solid #FF0000)]
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 767x42
+          text run at (0,0) width 767: "When two border sides have different colors, the edge joining them should be anti-aliased. When two border sides"
+          text run at (0,21) width 722: "have the same color, the edge joining them should not be anti-aliased and no corner joints should be visible."
+      RenderBlock {DIV} at (20,62) size 240x80 [border: (20px solid #FF0000) (20px solid #000000)]
+      RenderBlock {DIV} at (20,162) size 240x80 [border: (20px solid #FF0000) (20px solid #000000) (20px solid #FF0000)]
+      RenderBlock {DIV} at (20,262) size 240x80 [border: (20px solid #FF0000) (20px solid #000000)]
+      RenderBlock {DIV} at (20,362) size 240x80 [border: (20px solid #FF0000) (20px solid #000000) (20px solid #FF0000)]

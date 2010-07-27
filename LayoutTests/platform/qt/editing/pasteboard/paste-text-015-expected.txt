@@ -32,22 +32,22 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x148
-        RenderBlock {DIV} at (0,0) size 784x148 [border: (2px solid #FF0000)]
-          RenderBlock {P} at (14,14) size 756x120
-            RenderBlock {P} at (0,0) size 756x30
-              RenderText {#text} at (0,0) size 33x29
-                text run at (0,0) width 33: "foo"
-            RenderBlock {P} at (0,30) size 756x30
-              RenderText {#text} at (0,0) size 34x29
-                text run at (0,0) width 34: "bar"
-            RenderBlock (anonymous) at (0,60) size 756x0
-            RenderBlock {P} at (0,60) size 756x60
-              RenderBlock {P} at (0,0) size 756x30
-                RenderText {#text} at (0,0) size 33x29
-                  text run at (0,0) width 33: "foo"
-              RenderBlock {P} at (0,30) size 756x30
-                RenderText {#text} at (0,0) size 34x29
-                  text run at (0,0) width 34: "bar"
-              RenderBlock (anonymous) at (0,60) size 756x0
+      RenderBlock {DIV} at (0,0) size 784x152
+        RenderBlock {DIV} at (0,0) size 784x152 [border: (2px solid #FF0000)]
+          RenderBlock {P} at (14,14) size 756x124
+            RenderBlock {P} at (0,0) size 756x31
+              RenderText {#text} at (0,0) size 32x32
+                text run at (0,0) width 32: "foo"
+            RenderBlock {P} at (0,31) size 756x31
+              RenderText {#text} at (0,0) size 36x32
+                text run at (0,0) width 36: "bar"
+            RenderBlock (anonymous) at (0,62) size 756x0
+            RenderBlock {P} at (0,62) size 756x62
+              RenderBlock {P} at (0,0) size 756x31
+                RenderText {#text} at (0,0) size 32x32
+                  text run at (0,0) width 32: "foo"
+              RenderBlock {P} at (0,31) size 756x31
+                RenderText {#text} at (0,0) size 36x32
+                  text run at (0,0) width 36: "bar"
+              RenderBlock (anonymous) at (0,62) size 756x0
 caret: position 3 of child 0 {#text} of child 1 {P} of child 2 {P} of child 0 {P} of child 1 {DIV} of child 1 {DIV} of body

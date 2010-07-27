@@ -10,17 +10,17 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x40
-        RenderText {#text} at (0,0) size 770x40
-          text run at (0,0) width 349: "This tests for a bug in InsertLineBreakCommand. "
-          text run at (349,0) width 421: "Only one line break should be inserted and the caret should"
-          text run at (0,20) width 310: "end up at the end of the bordered div below."
-      RenderBlock {DIV} at (0,56) size 784x62 [border: (1px solid #000000)]
-        RenderText {#text} at (1,1) size 85x20
-          text run at (1,1) width 85: "Hello world."
-          text run at (86,1) width 0: " "
-        RenderText {#text} at (1,21) size 0x20
-          text run at (1,21) width 0: " "
-        RenderText {#text} at (1,41) size 0x20
-          text run at (1,41) width 0: " "
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 774x42
+          text run at (0,0) width 343: "This tests for a bug in InsertLineBreakCommand. "
+          text run at (343,0) width 431: "Only one line break should be inserted and the caret should end"
+          text run at (0,21) width 271: "up at the end of the bordered div below."
+      RenderBlock {DIV} at (0,58) size 784x65 [border: (1px solid #000000)]
+        RenderText {#text} at (1,1) size 83x21
+          text run at (1,1) width 83: "Hello world."
+          text run at (84,1) width 0: " "
+        RenderText {#text} at (1,22) size 0x21
+          text run at (1,22) width 0: " "
+        RenderText {#text} at (1,43) size 0x21
+          text run at (1,43) width 0: " "
 caret: position 0 of child 2 {#text} of child 1 {DIV} of body

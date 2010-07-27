@@ -1,3 +1,17 @@
+2010-07-26  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Change default font from sans-serif to serif
+
+        This matches what other ports and browser engines do.
+
+        We now also use QFont's defaultFontFamily() to resolve the
+        correct fonts for each platform. For Qt >= 4.7 we can take
+        advantage of the new enums for generic font families.
+
+        * Api/qwebsettings.cpp:
+
 2009-10-30  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

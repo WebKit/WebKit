@@ -1,261 +1,258 @@
-layer at (0,0) size 784x3010
+layer at (0,0) size 784x3011
   RenderView at (0,0) size 784x600
-layer at (0,0) size 784x3010
-  RenderBlock {HTML} at (0,0) size 784x3010
-    RenderBody {BODY} at (8,8) size 768x2994 [bgcolor=#CCCCCC]
-      RenderBlock {P} at (0,0) size 768x20
-        RenderText {#text} at (0,0) size 395x20
-          text run at (0,0) width 395: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,36) size 768x320
-        RenderText {#text} at (0,0) size 149x320
-          text run at (0,0) width 145: ".one {font-size: medium;}"
-          text run at (145,0) width 0: " "
-          text run at (0,16) width 130: ".two {font-size: larger;}"
-          text run at (130,16) width 0: " "
-          text run at (0,32) width 149: ".three {font-size: smaller;}"
-          text run at (149,32) width 0: " "
-          text run at (0,48) width 149: ".four {font-size: xx-small;}"
-          text run at (149,48) width 0: " "
-          text run at (0,64) width 141: ".five {font-size: x-small;}"
-          text run at (141,64) width 0: " "
-          text run at (0,80) width 126: ".six {font-size: small;}"
-          text run at (126,80) width 0: " "
-          text run at (0,96) width 141: ".seven {font-size: large;}"
-          text run at (141,96) width 0: " "
-          text run at (0,112) width 145: ".eight {font-size: x-large;}"
-          text run at (145,112) width 0: " "
-          text run at (0,128) width 148: ".nine {font-size: xx-large;}"
-          text run at (148,128) width 0: " "
-          text run at (0,144) width 113: ".a {font-size: 0.5in;}"
-          text run at (113,144) width 0: " "
-          text run at (0,160) width 110: ".b {font-size: 1cm;}"
-          text run at (110,160) width 0: " "
-          text run at (0,176) width 121: ".c {font-size: 10mm;}"
-          text run at (121,176) width 0: " "
-          text run at (0,192) width 110: ".d {font-size: 18pt;}"
-          text run at (110,192) width 0: " "
-          text run at (0,208) width 117: ".e {font-size: 1.5pc;}"
-          text run at (117,208) width 0: " "
-          text run at (0,224) width 107: ".f {font-size: 2em;}"
-          text run at (107,224) width 0: " "
-          text run at (0,240) width 106: ".g {font-size: 3ex;}"
-          text run at (106,240) width 0: " "
-          text run at (0,256) width 113: ".h {font-size: 25px;}"
-          text run at (113,256) width 0: " "
-          text run at (0,272) width 114: ".i {font-size: 200%;}"
-          text run at (114,272) width 0: " "
-          text run at (0,288) width 113: ".j {font-size: -0.5in;}"
-          text run at (113,288) width 0: " "
-          text run at (0,304) width 0: " "
-      RenderBlock {HR} at (0,369) size 768x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,387) size 768x40
-        RenderText {#text} at (0,0) size 726x40
-          text run at (0,0) width 726: "This paragraph element is unstyled, so the size of the font in this element is the default size for this user"
-          text run at (0,20) width 44: "agent."
-      RenderBlock {P} at (0,443) size 768x20
-        RenderText {#text} at (0,0) size 216x20
-          text run at (0,0) width 216: "This sentence has been set to "
-        RenderInline {CODE} at (0,0) size 46x16
-          RenderText {#text} at (216,3) size 46x16
-            text run at (216,3) width 46: "medium"
-        RenderText {#text} at (262,0) size 404x20
-          text run at (262,0) width 404: ", which may or may not be the same size as unstyled text."
-      RenderBlock {P} at (0,482) size 768x24
-        RenderText {#text} at (0,0) size 428x24
-          text run at (0,0) width 428: "This sentence should be larger than unstyled text."
-      RenderBlock {P} at (0,525) size 768x16
-        RenderText {#text} at (0,0) size 300x16
-          text run at (0,0) width 300: "This sentence should be smaller than unstyled text."
-      RenderBlock {P} at (0,554) size 768x20
-        RenderText {#text} at (0,7) size 337x11
-          text run at (0,7) width 337: "This sentence should be very small, but the last word in the sentence should be "
-        RenderInline {SPAN} at (0,0) size 57x20
-          RenderText {#text} at (337,0) size 57x20
-            text run at (337,0) width 57: "medium"
-        RenderText {#text} at (394,7) size 3x11
-          text run at (394,7) width 3: "."
-      RenderBlock {P} at (0,584) size 768x20
-        RenderText {#text} at (0,6) size 380x12
-          text run at (0,6) width 380: "This sentence should be rather small, but the last word in the sentence should be "
-        RenderInline {SPAN} at (0,0) size 57x20
-          RenderText {#text} at (380,0) size 57x20
-            text run at (380,0) width 57: "medium"
-        RenderText {#text} at (437,6) size 3x12
-          text run at (437,6) width 3: "."
-      RenderBlock {P} at (0,617) size 768x20
-        RenderText {#text} at (0,3) size 438x16
-          text run at (0,3) width 438: "This sentence should be small, but the last word in the sentence should be "
-        RenderInline {SPAN} at (0,0) size 57x20
-          RenderText {#text} at (438,0) size 57x20
-            text run at (438,0) width 57: "medium"
-        RenderText {#text} at (495,3) size 4x16
-          text run at (495,3) width 4: "."
-      RenderBlock {P} at (0,655) size 768x22
-        RenderText {#text} at (0,0) size 597x23
-          text run at (0,0) width 597: "This sentence should be large, but the last word in the sentence should be "
-        RenderInline {SPAN} at (0,0) size 57x20
-          RenderText {#text} at (597,2) size 57x20
-            text run at (597,2) width 57: "medium"
-        RenderText {#text} at (654,0) size 5x23
-          text run at (654,0) width 5: "."
-      RenderBlock {P} at (0,701) size 768x60
-        RenderText {#text} at (0,0) size 742x59
-          text run at (0,0) width 742: "This sentence should be rather large, but the last word in the sentence"
-          text run at (0,30) width 109: "should be "
-        RenderInline {SPAN} at (0,0) size 57x20
-          RenderText {#text} at (109,37) size 57x20
-            text run at (109,37) width 57: "medium"
-        RenderText {#text} at (166,30) size 7x29
-          text run at (166,30) width 7: "."
-      RenderBlock {P} at (0,793) size 768x80
-        RenderText {#text} at (0,0) size 756x80
-          text run at (0,0) width 756: "This sentence should be very large, but the last word"
-          text run at (0,40) width 377: "in the sentence should be "
-        RenderInline {SPAN} at (0,0) size 57x20
-          RenderText {#text} at (377,55) size 57x20
-            text run at (377,55) width 57: "medium"
-        RenderText {#text} at (434,40) size 9x40
-          text run at (434,40) width 9: "."
-      RenderBlock {P} at (0,921) size 768x118
-        RenderText {#text} at (0,0) size 681x118
-          text run at (0,0) width 681: "This sentence should be half an"
-          text run at (0,59) width 177: "inch tall."
-      RenderBlock {P} at (0,1087) size 768x47
-        RenderText {#text} at (0,0) size 744x47
-          text run at (0,0) width 744: "This sentence should be one centimeter tall."
-      RenderBlock {P} at (0,1171) size 768x47
-        RenderText {#text} at (0,0) size 737x47
-          text run at (0,0) width 737: "This sentence should be ten millimeters tall."
-      RenderBlock {P} at (0,1255) size 768x30
-        RenderText {#text} at (0,0) size 468x29
-          text run at (0,0) width 468: "This sentence should be eighteen points tall."
-      RenderBlock {P} at (0,1309) size 768x30
-        RenderText {#text} at (0,0) size 546x29
-          text run at (0,0) width 546: "This sentence should be one and one half picas tall."
-      RenderBlock {P} at (0,1371) size 768x40
-        RenderText {#text} at (0,0) size 522x40
-          text run at (0,0) width 522: "This sentence should be two em tall."
-      RenderBlock {P} at (0,1443) size 768x30
-        RenderText {#text} at (0,0) size 394x29
-          text run at (0,0) width 394: "This sentence should be three ex tall."
-      RenderBlock {P} at (0,1498) size 768x31
-        RenderText {#text} at (0,0) size 523x31
-          text run at (0,0) width 523: "This sentence should be twenty-five pixels tall."
-      RenderBlock {P} at (0,1561) size 768x40
-        RenderText {#text} at (0,0) size 615x40
-          text run at (0,0) width 615: "This sentence should be twice normal size."
-      RenderBlock {P} at (0,1633) size 768x20
-        RenderText {#text} at (0,0) size 765x20
-          text run at (0,0) width 765: "This sentence should be normal size, since no negative values are allowed and therefore should be ignored."
-      RenderTable {TABLE} at (0,1669) size 768x1325 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 766x1323
+layer at (0,0) size 784x3011
+  RenderBlock {HTML} at (0,0) size 784x3011
+    RenderBody {BODY} at (8,8) size 768x2995 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 768x21
+        RenderText {#text} at (0,0) size 380x21
+          text run at (0,0) width 380: "The style declarations which apply to the text below are:"
+      RenderBlock {PRE} at (0,37) size 768x320
+        RenderText {#text} at (0,1) size 224x318
+          text run at (0,1) width 200: ".one {font-size: medium;}"
+          text run at (200,1) width 0: " "
+          text run at (0,17) width 200: ".two {font-size: larger;}"
+          text run at (200,17) width 0: " "
+          text run at (0,33) width 224: ".three {font-size: smaller;}"
+          text run at (224,33) width 0: " "
+          text run at (0,49) width 224: ".four {font-size: xx-small;}"
+          text run at (224,49) width 0: " "
+          text run at (0,65) width 216: ".five {font-size: x-small;}"
+          text run at (216,65) width 0: " "
+          text run at (0,81) width 192: ".six {font-size: small;}"
+          text run at (192,81) width 0: " "
+          text run at (0,97) width 208: ".seven {font-size: large;}"
+          text run at (208,97) width 0: " "
+          text run at (0,113) width 224: ".eight {font-size: x-large;}"
+          text run at (224,113) width 0: " "
+          text run at (0,129) width 224: ".nine {font-size: xx-large;}"
+          text run at (224,129) width 0: " "
+          text run at (0,145) width 176: ".a {font-size: 0.5in;}"
+          text run at (176,145) width 0: " "
+          text run at (0,161) width 160: ".b {font-size: 1cm;}"
+          text run at (160,161) width 0: " "
+          text run at (0,177) width 168: ".c {font-size: 10mm;}"
+          text run at (168,177) width 0: " "
+          text run at (0,193) width 168: ".d {font-size: 18pt;}"
+          text run at (168,193) width 0: " "
+          text run at (0,209) width 176: ".e {font-size: 1.5pc;}"
+          text run at (176,209) width 0: " "
+          text run at (0,225) width 160: ".f {font-size: 2em;}"
+          text run at (160,225) width 0: " "
+          text run at (0,241) width 160: ".g {font-size: 3ex;}"
+          text run at (160,241) width 0: " "
+          text run at (0,257) width 168: ".h {font-size: 25px;}"
+          text run at (168,257) width 0: " "
+          text run at (0,273) width 168: ".i {font-size: 200%;}"
+          text run at (168,273) width 0: " "
+          text run at (0,289) width 184: ".j {font-size: -0.5in;}"
+          text run at (184,289) width 0: " "
+          text run at (0,305) width 0: " "
+      RenderBlock {HR} at (0,370) size 768x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,388) size 768x21
+        RenderText {#text} at (0,0) size 735x21
+          text run at (0,0) width 735: "This paragraph element is unstyled, so the size of the font in this element is the default size for this user agent."
+      RenderBlock {P} at (0,425) size 768x21
+        RenderText {#text} at (0,0) size 197x21
+          text run at (0,0) width 197: "This sentence has been set to "
+        RenderInline {CODE} at (0,0) size 48x14
+          RenderText {#text} at (197,5) size 48x14
+            text run at (197,5) width 48: "medium"
+        RenderText {#text} at (245,0) size 383x21
+          text run at (245,0) width 383: ", which may or may not be the same size as unstyled text."
+      RenderBlock {P} at (0,465) size 768x25
+        RenderText {#text} at (0,0) size 403x25
+          text run at (0,0) width 403: "This sentence should be larger than unstyled text."
+      RenderBlock {P} at (0,509) size 768x17
+        RenderText {#text} at (0,0) size 282x17
+          text run at (0,0) width 282: "This sentence should be smaller than unstyled text."
+      RenderBlock {P} at (0,539) size 768x21
+        RenderText {#text} at (0,7) size 310x12
+          text run at (0,7) width 310: "This sentence should be very small, but the last word in the sentence should be "
+        RenderInline {SPAN} at (0,0) size 55x21
+          RenderText {#text} at (310,0) size 55x21
+            text run at (310,0) width 55: "medium"
+        RenderText {#text} at (365,7) size 2x12
+          text run at (365,7) width 2: "."
+      RenderBlock {P} at (0,570) size 768x21
+        RenderText {#text} at (0,6) size 354x13
+          text run at (0,6) width 354: "This sentence should be rather small, but the last word in the sentence should be "
+        RenderInline {SPAN} at (0,0) size 55x21
+          RenderText {#text} at (354,0) size 55x21
+            text run at (354,0) width 55: "medium"
+        RenderText {#text} at (409,6) size 3x13
+          text run at (409,6) width 3: "."
+      RenderBlock {P} at (0,604) size 768x21
+        RenderText {#text} at (0,3) size 407x17
+          text run at (0,3) width 407: "This sentence should be small, but the last word in the sentence should be "
+        RenderInline {SPAN} at (0,0) size 55x21
+          RenderText {#text} at (407,0) size 55x21
+            text run at (407,0) width 55: "medium"
+        RenderText {#text} at (462,3) size 3x17
+          text run at (462,3) width 3: "."
+      RenderBlock {P} at (0,643) size 768x23
+        RenderText {#text} at (0,0) size 572x24
+          text run at (0,0) width 572: "This sentence should be large, but the last word in the sentence should be "
+        RenderInline {SPAN} at (0,0) size 55x21
+          RenderText {#text} at (572,2) size 55x21
+            text run at (572,2) width 55: "medium"
+        RenderText {#text} at (627,0) size 5x24
+          text run at (627,0) width 5: "."
+      RenderBlock {P} at (0,690) size 768x62
+        RenderText {#text} at (0,0) size 714x63
+          text run at (0,0) width 714: "This sentence should be rather large, but the last word in the sentence"
+          text run at (0,31) width 103: "should be "
+        RenderInline {SPAN} at (0,0) size 55x21
+          RenderText {#text} at (103,39) size 55x21
+            text run at (103,39) width 55: "medium"
+        RenderText {#text} at (158,31) size 6x32
+          text run at (158,31) width 6: "."
+      RenderBlock {P} at (0,784) size 768x84
+        RenderText {#text} at (0,0) size 751x83
+          text run at (0,0) width 751: "This sentence should be very large, but the last word in"
+          text run at (0,42) width 313: "the sentence should be "
+        RenderInline {SPAN} at (0,0) size 55x21
+          RenderText {#text} at (313,57) size 55x21
+            text run at (313,57) width 55: "medium"
+        RenderText {#text} at (368,42) size 8x41
+          text run at (368,42) width 8: "."
+      RenderBlock {P} at (0,916) size 768x124
+        RenderText {#text} at (0,0) size 740x125
+          text run at (0,0) width 740: "This sentence should be half an inch"
+          text run at (0,62) width 78: "tall."
+      RenderBlock {P} at (0,1088) size 768x49
+        RenderText {#text} at (0,0) size 712x49
+          text run at (0,0) width 712: "This sentence should be one centimeter tall."
+      RenderBlock {P} at (0,1174) size 768x49
+        RenderText {#text} at (0,0) size 718x49
+          text run at (0,0) width 718: "This sentence should be ten millimeters tall."
+      RenderBlock {P} at (0,1260) size 768x31
+        RenderText {#text} at (0,0) size 447x32
+          text run at (0,0) width 447: "This sentence should be eighteen points tall."
+      RenderBlock {P} at (0,1315) size 768x31
+        RenderText {#text} at (0,0) size 519x32
+          text run at (0,0) width 519: "This sentence should be one and one half picas tall."
+      RenderBlock {P} at (0,1378) size 768x42
+        RenderText {#text} at (0,0) size 490x41
+          text run at (0,0) width 490: "This sentence should be two em tall."
+      RenderBlock {P} at (0,1452) size 768x27
+        RenderText {#text} at (0,0) size 328x28
+          text run at (0,0) width 328: "This sentence should be three ex tall."
+      RenderBlock {P} at (0,1504) size 768x33
+        RenderText {#text} at (0,0) size 493x32
+          text run at (0,0) width 493: "This sentence should be twenty-five pixels tall."
+      RenderBlock {P} at (0,1569) size 768x42
+        RenderText {#text} at (0,0) size 574x41
+          text run at (0,0) width 574: "This sentence should be twice normal size."
+      RenderBlock {P} at (0,1643) size 768x21
+        RenderText {#text} at (0,0) size 716x21
+          text run at (0,0) width 716: "This sentence should be normal size, since no negative values are allowed and therefore should be ignored."
+      RenderTable {TABLE} at (0,1680) size 768x1315 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 766x1313
           RenderTableRow {TR} at (0,0) size 766x29
             RenderTableCell {TD} at (0,0) size 766x29 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 178x20
-                RenderText {#text} at (4,4) size 178x20
-                  text run at (4,4) width 178: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,29) size 766x1294
-            RenderTableCell {TD} at (0,662) size 12x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 4x20
+              RenderInline {STRONG} at (0,0) size 163x21
+                RenderText {#text} at (4,4) size 163x21
+                  text run at (4,4) width 163: "TABLE Testing Section"
+          RenderTableRow {TR} at (0,29) size 766x1284
+            RenderTableCell {TD} at (0,656) size 12x29 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x21
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,29) size 754x1294 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock {P} at (4,4) size 746x40
-                RenderText {#text} at (0,0) size 726x40
-                  text run at (0,0) width 726: "This paragraph element is unstyled, so the size of the font in this element is the default size for this user"
-                  text run at (0,20) width 44: "agent."
-              RenderBlock {P} at (4,60) size 746x20
-                RenderText {#text} at (0,0) size 216x20
-                  text run at (0,0) width 216: "This sentence has been set to "
-                RenderInline {CODE} at (0,0) size 46x16
-                  RenderText {#text} at (216,3) size 46x16
-                    text run at (216,3) width 46: "medium"
-                RenderText {#text} at (262,0) size 404x20
-                  text run at (262,0) width 404: ", which may or may not be the same size as unstyled text."
-              RenderBlock {P} at (4,99) size 746x24
-                RenderText {#text} at (0,0) size 428x24
-                  text run at (0,0) width 428: "This sentence should be larger than unstyled text."
-              RenderBlock {P} at (4,142) size 746x16
-                RenderText {#text} at (0,0) size 300x16
-                  text run at (0,0) width 300: "This sentence should be smaller than unstyled text."
-              RenderBlock {P} at (4,171) size 746x20
-                RenderText {#text} at (0,7) size 337x11
-                  text run at (0,7) width 337: "This sentence should be very small, but the last word in the sentence should be "
-                RenderInline {SPAN} at (0,0) size 57x20
-                  RenderText {#text} at (337,0) size 57x20
-                    text run at (337,0) width 57: "medium"
-                RenderText {#text} at (394,7) size 3x11
-                  text run at (394,7) width 3: "."
-              RenderBlock {P} at (4,201) size 746x20
-                RenderText {#text} at (0,6) size 380x12
-                  text run at (0,6) width 380: "This sentence should be rather small, but the last word in the sentence should be "
-                RenderInline {SPAN} at (0,0) size 57x20
-                  RenderText {#text} at (380,0) size 57x20
-                    text run at (380,0) width 57: "medium"
-                RenderText {#text} at (437,6) size 3x12
-                  text run at (437,6) width 3: "."
-              RenderBlock {P} at (4,234) size 746x20
-                RenderText {#text} at (0,3) size 438x16
-                  text run at (0,3) width 438: "This sentence should be small, but the last word in the sentence should be "
-                RenderInline {SPAN} at (0,0) size 57x20
-                  RenderText {#text} at (438,0) size 57x20
-                    text run at (438,0) width 57: "medium"
-                RenderText {#text} at (495,3) size 4x16
-                  text run at (495,3) width 4: "."
-              RenderBlock {P} at (4,272) size 746x22
-                RenderText {#text} at (0,0) size 597x23
-                  text run at (0,0) width 597: "This sentence should be large, but the last word in the sentence should be "
-                RenderInline {SPAN} at (0,0) size 57x20
-                  RenderText {#text} at (597,2) size 57x20
-                    text run at (597,2) width 57: "medium"
-                RenderText {#text} at (654,0) size 5x23
-                  text run at (654,0) width 5: "."
-              RenderBlock {P} at (4,318) size 746x60
-                RenderText {#text} at (0,0) size 742x59
-                  text run at (0,0) width 742: "This sentence should be rather large, but the last word in the sentence"
-                  text run at (0,30) width 109: "should be "
-                RenderInline {SPAN} at (0,0) size 57x20
-                  RenderText {#text} at (109,37) size 57x20
-                    text run at (109,37) width 57: "medium"
-                RenderText {#text} at (166,30) size 7x29
-                  text run at (166,30) width 7: "."
-              RenderBlock {P} at (4,410) size 746x80
-                RenderText {#text} at (0,0) size 677x80
-                  text run at (0,0) width 677: "This sentence should be very large, but the last"
-                  text run at (0,40) width 456: "word in the sentence should be "
-                RenderInline {SPAN} at (0,0) size 57x20
-                  RenderText {#text} at (456,55) size 57x20
-                    text run at (456,55) width 57: "medium"
-                RenderText {#text} at (513,40) size 9x40
-                  text run at (513,40) width 9: "."
-              RenderBlock {P} at (4,538) size 746x118
-                RenderText {#text} at (0,0) size 681x118
-                  text run at (0,0) width 681: "This sentence should be half an"
-                  text run at (0,59) width 177: "inch tall."
-              RenderBlock {P} at (4,704) size 746x47
-                RenderText {#text} at (0,0) size 744x47
-                  text run at (0,0) width 744: "This sentence should be one centimeter tall."
-              RenderBlock {P} at (4,788) size 746x47
-                RenderText {#text} at (0,0) size 737x47
-                  text run at (0,0) width 737: "This sentence should be ten millimeters tall."
-              RenderBlock {P} at (4,872) size 746x30
-                RenderText {#text} at (0,0) size 468x29
-                  text run at (0,0) width 468: "This sentence should be eighteen points tall."
-              RenderBlock {P} at (4,926) size 746x30
-                RenderText {#text} at (0,0) size 546x29
-                  text run at (0,0) width 546: "This sentence should be one and one half picas tall."
-              RenderBlock {P} at (4,988) size 746x40
-                RenderText {#text} at (0,0) size 522x40
-                  text run at (0,0) width 522: "This sentence should be two em tall."
-              RenderBlock {P} at (4,1060) size 746x30
-                RenderText {#text} at (0,0) size 394x29
-                  text run at (0,0) width 394: "This sentence should be three ex tall."
-              RenderBlock {P} at (4,1115) size 746x31
-                RenderText {#text} at (0,0) size 523x31
-                  text run at (0,0) width 523: "This sentence should be twenty-five pixels tall."
-              RenderBlock {P} at (4,1178) size 746x40
-                RenderText {#text} at (0,0) size 615x40
-                  text run at (0,0) width 615: "This sentence should be twice normal size."
-              RenderBlock {P} at (4,1250) size 746x40
-                RenderText {#text} at (0,0) size 703x40
-                  text run at (0,0) width 703: "This sentence should be normal size, since no negative values are allowed and therefore should be"
-                  text run at (0,20) width 58: "ignored."
+            RenderTableCell {TD} at (12,29) size 754x1284 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 746x21
+                RenderText {#text} at (0,0) size 735x21
+                  text run at (0,0) width 735: "This paragraph element is unstyled, so the size of the font in this element is the default size for this user agent."
+              RenderBlock {P} at (4,41) size 746x21
+                RenderText {#text} at (0,0) size 197x21
+                  text run at (0,0) width 197: "This sentence has been set to "
+                RenderInline {CODE} at (0,0) size 48x14
+                  RenderText {#text} at (197,5) size 48x14
+                    text run at (197,5) width 48: "medium"
+                RenderText {#text} at (245,0) size 383x21
+                  text run at (245,0) width 383: ", which may or may not be the same size as unstyled text."
+              RenderBlock {P} at (4,81) size 746x25
+                RenderText {#text} at (0,0) size 403x25
+                  text run at (0,0) width 403: "This sentence should be larger than unstyled text."
+              RenderBlock {P} at (4,125) size 746x17
+                RenderText {#text} at (0,0) size 282x17
+                  text run at (0,0) width 282: "This sentence should be smaller than unstyled text."
+              RenderBlock {P} at (4,155) size 746x21
+                RenderText {#text} at (0,7) size 310x12
+                  text run at (0,7) width 310: "This sentence should be very small, but the last word in the sentence should be "
+                RenderInline {SPAN} at (0,0) size 55x21
+                  RenderText {#text} at (310,0) size 55x21
+                    text run at (310,0) width 55: "medium"
+                RenderText {#text} at (365,7) size 2x12
+                  text run at (365,7) width 2: "."
+              RenderBlock {P} at (4,186) size 746x21
+                RenderText {#text} at (0,6) size 354x13
+                  text run at (0,6) width 354: "This sentence should be rather small, but the last word in the sentence should be "
+                RenderInline {SPAN} at (0,0) size 55x21
+                  RenderText {#text} at (354,0) size 55x21
+                    text run at (354,0) width 55: "medium"
+                RenderText {#text} at (409,6) size 3x13
+                  text run at (409,6) width 3: "."
+              RenderBlock {P} at (4,220) size 746x21
+                RenderText {#text} at (0,3) size 407x17
+                  text run at (0,3) width 407: "This sentence should be small, but the last word in the sentence should be "
+                RenderInline {SPAN} at (0,0) size 55x21
+                  RenderText {#text} at (407,0) size 55x21
+                    text run at (407,0) width 55: "medium"
+                RenderText {#text} at (462,3) size 3x17
+                  text run at (462,3) width 3: "."
+              RenderBlock {P} at (4,259) size 746x23
+                RenderText {#text} at (0,0) size 572x24
+                  text run at (0,0) width 572: "This sentence should be large, but the last word in the sentence should be "
+                RenderInline {SPAN} at (0,0) size 55x21
+                  RenderText {#text} at (572,2) size 55x21
+                    text run at (572,2) width 55: "medium"
+                RenderText {#text} at (627,0) size 5x24
+                  text run at (627,0) width 5: "."
+              RenderBlock {P} at (4,306) size 746x62
+                RenderText {#text} at (0,0) size 714x63
+                  text run at (0,0) width 714: "This sentence should be rather large, but the last word in the sentence"
+                  text run at (0,31) width 103: "should be "
+                RenderInline {SPAN} at (0,0) size 55x21
+                  RenderText {#text} at (103,39) size 55x21
+                    text run at (103,39) width 55: "medium"
+                RenderText {#text} at (158,31) size 6x32
+                  text run at (158,31) width 6: "."
+              RenderBlock {P} at (4,400) size 746x84
+                RenderText {#text} at (0,0) size 716x83
+                  text run at (0,0) width 716: "This sentence should be very large, but the last word"
+                  text run at (0,42) width 348: "in the sentence should be "
+                RenderInline {SPAN} at (0,0) size 55x21
+                  RenderText {#text} at (348,57) size 55x21
+                    text run at (348,57) width 55: "medium"
+                RenderText {#text} at (403,42) size 8x41
+                  text run at (403,42) width 8: "."
+              RenderBlock {P} at (4,532) size 746x124
+                RenderText {#text} at (0,0) size 740x125
+                  text run at (0,0) width 740: "This sentence should be half an inch"
+                  text run at (0,62) width 78: "tall."
+              RenderBlock {P} at (4,704) size 746x49
+                RenderText {#text} at (0,0) size 712x49
+                  text run at (0,0) width 712: "This sentence should be one centimeter tall."
+              RenderBlock {P} at (4,790) size 746x49
+                RenderText {#text} at (0,0) size 718x49
+                  text run at (0,0) width 718: "This sentence should be ten millimeters tall."
+              RenderBlock {P} at (4,876) size 746x31
+                RenderText {#text} at (0,0) size 447x32
+                  text run at (0,0) width 447: "This sentence should be eighteen points tall."
+              RenderBlock {P} at (4,931) size 746x31
+                RenderText {#text} at (0,0) size 519x32
+                  text run at (0,0) width 519: "This sentence should be one and one half picas tall."
+              RenderBlock {P} at (4,994) size 746x42
+                RenderText {#text} at (0,0) size 490x41
+                  text run at (0,0) width 490: "This sentence should be two em tall."
+              RenderBlock {P} at (4,1068) size 746x27
+                RenderText {#text} at (0,0) size 328x28
+                  text run at (0,0) width 328: "This sentence should be three ex tall."
+              RenderBlock {P} at (4,1120) size 746x33
+                RenderText {#text} at (0,0) size 493x32
+                  text run at (0,0) width 493: "This sentence should be twenty-five pixels tall."
+              RenderBlock {P} at (4,1185) size 746x42
+                RenderText {#text} at (0,0) size 574x41
+                  text run at (0,0) width 574: "This sentence should be twice normal size."
+              RenderBlock {P} at (4,1259) size 746x21
+                RenderText {#text} at (0,0) size 716x21
+                  text run at (0,0) width 716: "This sentence should be normal size, since no negative values are allowed and therefore should be ignored."

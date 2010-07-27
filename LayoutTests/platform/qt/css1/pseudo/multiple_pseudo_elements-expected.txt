@@ -1,107 +1,108 @@
-layer at (0,0) size 784x1170
+layer at (0,0) size 784x1194
   RenderView at (0,0) size 784x600
-layer at (0,0) size 784x1170
-  RenderBlock {HTML} at (0,0) size 784x1170
-    RenderBody {BODY} at (8,8) size 768x1154 [bgcolor=#CCCCCC]
-      RenderBlock {P} at (0,0) size 768x20
-        RenderInline (generated) at (0,0) size 10x20 [color=#800000]
-          RenderText {#text} at (0,0) size 10x20
-            text run at (0,0) width 10: "T"
-        RenderText {#text} at (10,0) size 385x20
-          text run at (10,0) width 385: "he style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,36) size 768x112
-        RenderText {#text} at (0,0) size 244x112
-          text run at (0,0) width 143: "P:first-line {color: green;}"
-          text run at (143,0) width 0: " "
-          text run at (0,16) width 163: "P:first-letter {color: maroon;}"
-          text run at (163,16) width 0: " "
-          text run at (0,32) width 181: ".two:first-line {font-size: 200%;}"
-          text run at (181,32) width 0: " "
-          text run at (0,48) width 190: ".two:first-letter {font-size: 350%;}"
-          text run at (190,48) width 0: " "
-          text run at (0,64) width 208: "P.three:first-letter {font-size: 350%;}"
-          text run at (208,64) width 0: " "
-          text run at (0,80) width 244: "P.three:first-line {font-variant: small-caps;}"
-          text run at (244,80) width 0: " "
-          text run at (0,96) width 0: " "
-      RenderBlock {HR} at (0,161) size 768x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,179) size 768x60
-        RenderInline (generated) at (0,0) size 10x20 [color=#800000]
-          RenderText {#text} at (0,0) size 10x20
-            text run at (0,0) width 10: "T"
-        RenderText {#text} at (10,0) size 750x60
-          text run at (10,0) width 722: "he first letter of this paragraph, and only that one, should be maroon (dark red), while the entire first line"
-          text run at (0,20) width 123: "should be green. "
-          text run at (123,20) width 571: "If this precise combination does not occur, then the user agent has failed this test."
-          text run at (0,40) width 750: "Remember that in order to ensure a complete test, the paragraph must be displayed on more than one line."
-      RenderBlock {P} at (0,255) size 768x219
-        RenderInline (generated) at (0,0) size 68x138 [color=#800000]
-          RenderText {#text} at (0,0) size 68x138
-            text run at (0,0) width 68: "T"
-        RenderText {#text} at (68,76) size 768x143
-          text run at (68,76) width 633: "he first letter of this paragraph, and only that"
-          text run at (0,139) width 748: "one, should be 350% bigger than the rest of the first line of this paragraph and maroon (dark red), while the"
-          text run at (0,159) width 439: "entire first line should be 200% bigger than normal and green. "
-          text run at (439,159) width 296: "If this precise combination does not occur,"
-          text run at (0,179) width 275: "then the user agent has failed this test. "
-          text run at (275,179) width 493: "Remember that in order to ensure a complete test, the paragraph must"
-          text run at (0,199) width 253: "be displayed on more than one line."
-      RenderBlock {P} at (0,490) size 768x129
-        RenderInline (generated) at (0,0) size 73x69 [color=#800000]
-          RenderText {#text} at (0,0) size 73x69
-            text run at (0,0) width 73: "\"W"
-        RenderText {#text} at (73,38) size 762x91
-          text run at (73,38) width 353: "e should check for quotation support,\" it was said. "
-          text run at (426,38) width 310: "The first two characters in this paragraph-- a"
-          text run at (0,69) width 735: "double-quote mark and a capital 'W'-- should be 350% bigger than the rest of the paragraph, and maroon"
-          text run at (0,89) width 76: "(dark red). "
-          text run at (76,89) width 681: "Note that the inclusion of both the quotation mark and the 'W' in the first-letter style is not required"
-          text run at (0,109) width 260: "under CSS1, but it is recommended. "
-          text run at (260,109) width 502: "In addition, the entire first line should be in a small-caps font and green."
-      RenderTable {TABLE} at (0,635) size 768x519 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 766x517
+layer at (0,0) size 784x1194
+  RenderBlock {HTML} at (0,0) size 784x1194
+    RenderBody {BODY} at (8,8) size 768x1178 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 768x21
+        RenderInline (generated) at (0,0) size 11x21 [color=#800000]
+          RenderText {#text} at (0,0) size 11x21
+            text run at (0,0) width 11: "T"
+        RenderText {#text} at (11,0) size 369x21
+          text run at (11,0) width 369: "he style declarations which apply to the text below are:"
+      RenderBlock {PRE} at (0,37) size 768x112
+        RenderText {#text} at (0,1) size 368x110
+          text run at (0,1) width 224: "P:first-line {color: green;}"
+          text run at (224,1) width 0: " "
+          text run at (0,17) width 248: "P:first-letter {color: maroon;}"
+          text run at (248,17) width 0: " "
+          text run at (0,33) width 272: ".two:first-line {font-size: 200%;}"
+          text run at (272,33) width 0: " "
+          text run at (0,49) width 288: ".two:first-letter {font-size: 350%;}"
+          text run at (288,49) width 0: " "
+          text run at (0,65) width 312: "P.three:first-letter {font-size: 350%;}"
+          text run at (312,65) width 0: " "
+          text run at (0,81) width 368: "P.three:first-line {font-variant: small-caps;}"
+          text run at (368,81) width 0: " "
+          text run at (0,97) width 0: " "
+      RenderBlock {HR} at (0,162) size 768x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,180) size 768x63
+        RenderInline (generated) at (0,0) size 11x21 [color=#800000]
+          RenderText {#text} at (0,0) size 11x21
+            text run at (0,0) width 11: "T"
+        RenderText {#text} at (11,0) size 738x63
+          text run at (11,0) width 709: "he first letter of this paragraph, and only that one, should be maroon (dark red), while the entire first line"
+          text run at (0,21) width 115: "should be green. "
+          text run at (115,21) width 548: "If this precise combination does not occur, then the user agent has failed this test. "
+          text run at (663,21) width 75: "Remember"
+          text run at (0,42) width 641: "that in order to ensure a complete test, the paragraph must be displayed on more than one line."
+      RenderBlock {P} at (0,259) size 768x230
+        RenderInline (generated) at (0,0) size 75x146 [color=#800000]
+          RenderText {#text} at (0,0) size 75x146
+            text run at (0,0) width 75: "T"
+        RenderText {#text} at (75,77) size 763x153
+          text run at (75,77) width 688: "he first letter of this paragraph, and only that one,"
+          text run at (0,146) width 741: "should be 350% bigger than the rest of the first line of this paragraph and maroon (dark red), while the entire"
+          text run at (0,167) width 383: "first line should be 200% bigger than normal and green. "
+          text run at (383,167) width 376: "If this precise combination does not occur, then the user"
+          text run at (0,188) width 168: "agent has failed this test. "
+          text run at (168,188) width 586: "Remember that in order to ensure a complete test, the paragraph must be displayed on"
+          text run at (0,209) width 130: "more than one line."
+      RenderBlock {P} at (0,505) size 768x136
+        RenderInline (generated) at (0,0) size 87x73 [color=#800000]
+          RenderText {#text} at (0,0) size 87x73
+            text run at (0,0) width 87: "\"W"
+        RenderText {#text} at (87,38) size 760x98
+          text run at (87,38) width 344: "e should check for quotation support,\" it was said. "
+          text run at (431,38) width 306: "The first two characters in this paragraph-- a"
+          text run at (0,73) width 760: "double-quote mark and a capital 'W'-- should be 350% bigger than the rest of the paragraph, and maroon (dark"
+          text run at (0,94) width 36: "red). "
+          text run at (36,94) width 717: "Note that the inclusion of both the quotation mark and the 'W' in the first-letter style is not required under"
+          text run at (0,115) width 204: "CSS1, but it is recommended. "
+          text run at (204,115) width 485: "In addition, the entire first line should be in a small-caps font and green."
+      RenderTable {TABLE} at (0,657) size 768x521 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 766x519
           RenderTableRow {TR} at (0,0) size 766x29
             RenderTableCell {TD} at (0,0) size 766x29 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 178x20
-                RenderText {#text} at (4,4) size 178x20
-                  text run at (4,4) width 178: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,29) size 766x488
-            RenderTableCell {TD} at (0,259) size 12x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 4x20
+              RenderInline {STRONG} at (0,0) size 163x21
+                RenderText {#text} at (4,4) size 163x21
+                  text run at (4,4) width 163: "TABLE Testing Section"
+          RenderTableRow {TR} at (0,29) size 766x490
+            RenderTableCell {TD} at (0,259) size 12x29 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x21
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,29) size 754x488 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock {P} at (4,4) size 746x80
-                RenderInline (generated) at (0,0) size 10x20 [color=#800000]
-                  RenderText {#text} at (0,0) size 10x20
-                    text run at (0,0) width 10: "T"
-                RenderText {#text} at (10,0) size 732x80
-                  text run at (10,0) width 722: "he first letter of this paragraph, and only that one, should be maroon (dark red), while the entire first line"
-                  text run at (0,20) width 123: "should be green. "
-                  text run at (123,20) width 571: "If this precise combination does not occur, then the user agent has failed this test."
-                  text run at (0,40) width 716: "Remember that in order to ensure a complete test, the paragraph must be displayed on more than one"
-                  text run at (0,60) width 30: "line."
-              RenderBlock {P} at (4,100) size 746x219
-                RenderInline (generated) at (0,0) size 68x138 [color=#800000]
-                  RenderText {#text} at (0,0) size 68x138
-                    text run at (0,0) width 68: "T"
-                RenderText {#text} at (68,76) size 722x143
-                  text run at (68,76) width 633: "he first letter of this paragraph, and only that"
-                  text run at (0,139) width 722: "one, should be 350% bigger than the rest of the first line of this paragraph and maroon (dark red), while"
-                  text run at (0,159) width 465: "the entire first line should be 200% bigger than normal and green. "
-                  text run at (465,159) width 249: "If this precise combination does not"
-                  text run at (0,179) width 322: "occur, then the user agent has failed this test. "
-                  text run at (322,179) width 378: "Remember that in order to ensure a complete test, the"
-                  text run at (0,199) width 368: "paragraph must be displayed on more than one line."
-              RenderBlock {P} at (4,335) size 746x149
-                RenderInline (generated) at (0,0) size 73x69 [color=#800000]
-                  RenderText {#text} at (0,0) size 73x69
-                    text run at (0,0) width 73: "\"W"
-                RenderText {#text} at (73,38) size 745x111
-                  text run at (73,38) width 353: "e should check for quotation support,\" it was said. "
-                  text run at (426,38) width 310: "The first two characters in this paragraph-- a"
-                  text run at (0,69) width 735: "double-quote mark and a capital 'W'-- should be 350% bigger than the rest of the paragraph, and maroon"
-                  text run at (0,89) width 76: "(dark red). "
-                  text run at (76,89) width 618: "Note that the inclusion of both the quotation mark and the 'W' in the first-letter style is not"
-                  text run at (0,109) width 323: "required under CSS1, but it is recommended. "
-                  text run at (323,109) width 422: "In addition, the entire first line should be in a small-caps font"
-                  text run at (0,129) width 76: "and green."
+            RenderTableCell {TD} at (12,29) size 754x490 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 746x63
+                RenderInline (generated) at (0,0) size 11x21 [color=#800000]
+                  RenderText {#text} at (0,0) size 11x21
+                    text run at (0,0) width 11: "T"
+                RenderText {#text} at (11,0) size 738x63
+                  text run at (11,0) width 709: "he first letter of this paragraph, and only that one, should be maroon (dark red), while the entire first line"
+                  text run at (0,21) width 115: "should be green. "
+                  text run at (115,21) width 548: "If this precise combination does not occur, then the user agent has failed this test. "
+                  text run at (663,21) width 75: "Remember"
+                  text run at (0,42) width 641: "that in order to ensure a complete test, the paragraph must be displayed on more than one line."
+              RenderBlock {P} at (4,83) size 746x230
+                RenderInline (generated) at (0,0) size 75x146 [color=#800000]
+                  RenderText {#text} at (0,0) size 75x146
+                    text run at (0,0) width 75: "T"
+                RenderText {#text} at (75,77) size 744x153
+                  text run at (75,77) width 624: "he first letter of this paragraph, and only that"
+                  text run at (0,146) width 730: "one, should be 350% bigger than the rest of the first line of this paragraph and maroon (dark red), while the"
+                  text run at (0,167) width 426: "entire first line should be 200% bigger than normal and green. "
+                  text run at (426,167) width 318: "If this precise combination does not occur, then"
+                  text run at (0,188) width 226: "the user agent has failed this test. "
+                  text run at (226,188) width 497: "Remember that in order to ensure a complete test, the paragraph must be"
+                  text run at (0,209) width 219: "displayed on more than one line."
+              RenderBlock {P} at (4,329) size 746x157
+                RenderInline (generated) at (0,0) size 87x73 [color=#800000]
+                  RenderText {#text} at (0,0) size 87x73
+                    text run at (0,0) width 87: "\"W"
+                RenderText {#text} at (87,38) size 737x119
+                  text run at (87,38) width 344: "e should check for quotation support,\" it was said. "
+                  text run at (431,38) width 306: "The first two characters in this paragraph-- a"
+                  text run at (0,73) width 718: "double-quote mark and a capital 'W'-- should be 350% bigger than the rest of the paragraph, and maroon"
+                  text run at (0,94) width 78: "(dark red). "
+                  text run at (78,94) width 609: "Note that the inclusion of both the quotation mark and the 'W' in the first-letter style is not"
+                  text run at (0,115) width 312: "required under CSS1, but it is recommended. "
+                  text run at (312,115) width 409: "In addition, the entire first line should be in a small-caps font"
+                  text run at (0,136) width 72: "and green."

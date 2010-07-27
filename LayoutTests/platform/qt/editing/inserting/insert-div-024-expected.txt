@@ -46,30 +46,30 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x568
-      RenderBlock (anonymous) at (0,0) size 784x120
-        RenderText {#text} at (0,0) size 770x59
-          text run at (0,0) width 763: "Test inserting paragraphs and managing typing style correctly: Only \"line"
-          text run at (763,0) width 7: " "
-          text run at (0,30) width 696: "1\" should be bold. Other lines should be non-bold. Fix for this bug:"
-          text run at (696,30) width 7: " "
-        RenderInline {A} at (0,0) size 274x29 [color=#0000EE]
-          RenderText {#text} at (0,60) size 274x29
-            text run at (0,60) width 274: "<rdar://problem/3944492>"
-        RenderText {#text} at (274,60) size 772x59
-          text run at (274,60) width 491: " after pressing return twice, text is bold when it"
-          text run at (765,60) width 7: " "
-          text run at (0,90) width 127: "shouldn't be"
-      RenderBlock {DIV} at (0,120) size 784x12
-      RenderBlock {P} at (0,156) size 784x59 [border: (2px solid #0000FF)]
-        RenderInline {B} at (0,0) size 62x31
-          RenderText {#text} at (14,14) size 62x31
-            text run at (14,14) width 62: "line 1"
-      RenderBlock {P} at (0,239) size 784x58 [border: (2px solid #0000FF)]
-        RenderText {#text} at (14,14) size 36x29
+      RenderBlock (anonymous) at (0,0) size 784x124
+        RenderText {#text} at (0,0) size 768x63
+          text run at (0,0) width 762: "Test inserting paragraphs and managing typing style correctly: Only \"line"
+          text run at (762,0) width 6: " "
+          text run at (0,31) width 684: "1\" should be bold. Other lines should be non-bold. Fix for this bug:"
+          text run at (684,31) width 6: " "
+        RenderInline {A} at (0,0) size 275x32 [color=#0000EE]
+          RenderText {#text} at (0,62) size 275x32
+            text run at (0,62) width 275: "<rdar://problem/3944492>"
+        RenderText {#text} at (275,62) size 766x63
+          text run at (275,62) width 485: " after pressing return twice, text is bold when it"
+          text run at (760,62) width 6: " "
+          text run at (0,93) width 125: "shouldn't be"
+      RenderBlock {DIV} at (0,124) size 784x12
+      RenderBlock {P} at (0,160) size 784x59 [border: (2px solid #0000FF)]
+        RenderInline {B} at (0,0) size 56x32
+          RenderText {#text} at (14,14) size 56x32
+            text run at (14,14) width 56: "line 1"
+      RenderBlock {P} at (0,243) size 784x59 [border: (2px solid #0000FF)]
+        RenderText {#text} at (14,14) size 36x32
           text run at (14,14) width 36: "xxx"
-      RenderBlock {P} at (0,321) size 784x58 [border: (2px solid #0000FF)]
-        RenderBR {BR} at (14,14) size 0x29 [bgcolor=#008000]
-      RenderBlock {P} at (0,403) size 784x58 [border: (2px solid #0000FF)]
-        RenderText {#text} at (14,14) size 36x29
+      RenderBlock {P} at (0,326) size 784x59 [border: (2px solid #0000FF)]
+        RenderBR {BR} at (14,14) size 0x32 [bgcolor=#008000]
+      RenderBlock {P} at (0,409) size 784x59 [border: (2px solid #0000FF)]
+        RenderText {#text} at (14,14) size 36x32
           text run at (14,14) width 36: "xxx"
 caret: position 3 of child 0 {#text} of child 8 {P} of body

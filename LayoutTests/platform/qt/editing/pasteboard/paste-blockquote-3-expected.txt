@@ -3,22 +3,22 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 438x20
-          text run at (0,0) width 438: "This tests pasting a blockquote into the middle of a paragraph."
-      RenderBlock {DIV} at (0,36) size 784x60
-        RenderBlock (anonymous) at (0,0) size 784x20
-          RenderText {#text} at (0,0) size 226x20
-            text run at (0,0) width 226: "This should not be blockquoted."
-          RenderText {#text} at (226,0) size 230x20
-            text run at (226,0) width 230: " This should not be blockquoted."
-        RenderBlock {BLOCKQUOTE} at (0,20) size 784x20 [color=#0000FF] [border: (2px solid #0000FF)]
-          RenderText {#text} at (22,0) size 200x20
-            text run at (22,0) width 200: "This should be blockquoted."
-          RenderBR {BR} at (222,16) size 0x0
-        RenderBlock (anonymous) at (0,40) size 784x20
-          RenderText {#text} at (0,0) size 226x20
-            text run at (0,0) width 226: "This should not be blockquoted."
-          RenderText {#text} at (226,0) size 230x20
-            text run at (226,0) width 230: " This should not be blockquoted."
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 422x21
+          text run at (0,0) width 422: "This tests pasting a blockquote into the middle of a paragraph."
+      RenderBlock {DIV} at (0,37) size 784x63
+        RenderBlock (anonymous) at (0,0) size 784x21
+          RenderText {#text} at (0,0) size 217x21
+            text run at (0,0) width 217: "This should not be blockquoted."
+          RenderText {#text} at (217,0) size 221x21
+            text run at (217,0) width 221: " This should not be blockquoted."
+        RenderBlock {BLOCKQUOTE} at (0,21) size 784x21 [color=#0000FF] [border: (2px solid #0000FF)]
+          RenderText {#text} at (22,0) size 191x21
+            text run at (22,0) width 191: "This should be blockquoted."
+          RenderBR {BR} at (213,16) size 0x0
+        RenderBlock (anonymous) at (0,42) size 784x21
+          RenderText {#text} at (0,0) size 217x21
+            text run at (0,0) width 217: "This should not be blockquoted."
+          RenderText {#text} at (217,0) size 221x21
+            text run at (217,0) width 221: " This should not be blockquoted."
 caret: position 31 of child 3 {#text} of child 2 {DIV} of body

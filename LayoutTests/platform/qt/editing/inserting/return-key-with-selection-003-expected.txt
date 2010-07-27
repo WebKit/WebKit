@@ -14,48 +14,48 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x406 [border: (2px solid #0000FF)]
-        RenderBlock {DIV} at (14,14) size 756x121
-          RenderText {#text} at (0,0) size 77x31
-            text run at (0,0) width 77: "Tests: "
+      RenderBlock {DIV} at (0,0) size 784x416 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x124
+          RenderText {#text} at (0,0) size 67x32
+            text run at (0,0) width 67: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,31) size 662x29
-            text run at (0,31) width 662: "A scenario I thought of based on my experiences with this bug:"
-          RenderInline {A} at (0,0) size 274x29 [color=#0000EE]
-            RenderText {#text} at (0,61) size 274x29
-              text run at (0,61) width 274: "<rdar://problem/4045521>"
-          RenderText {#text} at (274,61) size 743x59
-            text run at (274,61) width 469: " Hitting return key with full line selected does"
-            text run at (0,91) width 312: "not add blank line as it should"
-        RenderBlock {DIV} at (14,151) size 756x241
-          RenderBlock (anonymous) at (0,0) size 756x121
-            RenderText {#text} at (0,0) size 214x31
-              text run at (0,0) width 214: "Expected Results: "
-            RenderBR {BR} at (214,24) size 0x0
-            RenderText {#text} at (0,31) size 744x89
-              text run at (0,31) width 744: "Should see this content in the red box below (note that there should be"
-              text run at (0,61) width 711: "two blank lines between \"foo\" and \"baz\"; also note that the insertion"
-              text run at (0,91) width 592: "point should be at the start of the third line, a blank line):"
-          RenderBlock {DIV} at (0,121) size 756x30
-            RenderText {#text} at (0,0) size 33x29
-              text run at (0,0) width 33: "foo"
-          RenderBlock {DIV} at (0,151) size 756x30
-            RenderBR {BR} at (0,0) size 0x29
-          RenderBlock {DIV} at (0,181) size 756x30
-            RenderBR {BR} at (0,0) size 0x29
-          RenderBlock {DIV} at (0,211) size 756x30
-            RenderText {#text} at (0,0) size 38x29
-              text run at (0,0) width 38: "baz"
-      RenderBlock {DIV} at (0,430) size 784x124
-        RenderBlock {DIV} at (0,0) size 784x124 [border: (2px solid #FF0000)]
-          RenderBlock {DIV} at (2,2) size 780x30
-            RenderText {#text} at (0,0) size 33x29
-              text run at (0,0) width 33: "foo"
-          RenderBlock {DIV} at (2,32) size 780x30
-            RenderBR {BR} at (0,0) size 0x29
-          RenderBlock {DIV} at (2,62) size 780x30
-            RenderBR {BR} at (0,0) size 0x29
-          RenderBlock {DIV} at (2,92) size 780x30
-            RenderText {#text} at (0,0) size 38x29
-              text run at (0,0) width 38: "baz"
+          RenderText {#text} at (0,31) size 640x32
+            text run at (0,31) width 640: "A scenario I thought of based on my experiences with this bug:"
+          RenderInline {A} at (0,0) size 275x32 [color=#0000EE]
+            RenderText {#text} at (0,62) size 275x32
+              text run at (0,62) width 275: "<rdar://problem/4045521>"
+          RenderText {#text} at (275,62) size 744x63
+            text run at (275,62) width 469: " Hitting return key with full line selected does"
+            text run at (0,93) width 306: "not add blank line as it should"
+        RenderBlock {DIV} at (14,154) size 756x248
+          RenderBlock (anonymous) at (0,0) size 756x124
+            RenderText {#text} at (0,0) size 189x32
+              text run at (0,0) width 189: "Expected Results: "
+            RenderBR {BR} at (189,24) size 0x0
+            RenderText {#text} at (0,31) size 715x94
+              text run at (0,31) width 715: "Should see this content in the red box below (note that there should be"
+              text run at (0,62) width 706: "two blank lines between \"foo\" and \"baz\"; also note that the insertion"
+              text run at (0,93) width 588: "point should be at the start of the third line, a blank line):"
+          RenderBlock {DIV} at (0,124) size 756x31
+            RenderText {#text} at (0,0) size 32x32
+              text run at (0,0) width 32: "foo"
+          RenderBlock {DIV} at (0,155) size 756x31
+            RenderBR {BR} at (0,0) size 0x32
+          RenderBlock {DIV} at (0,186) size 756x31
+            RenderBR {BR} at (0,0) size 0x32
+          RenderBlock {DIV} at (0,217) size 756x31
+            RenderText {#text} at (0,0) size 36x32
+              text run at (0,0) width 36: "baz"
+      RenderBlock {DIV} at (0,440) size 784x128
+        RenderBlock {DIV} at (0,0) size 784x128 [border: (2px solid #FF0000)]
+          RenderBlock {DIV} at (2,2) size 780x31
+            RenderText {#text} at (0,0) size 32x32
+              text run at (0,0) width 32: "foo"
+          RenderBlock {DIV} at (2,33) size 780x31
+            RenderBR {BR} at (0,0) size 0x32
+          RenderBlock {DIV} at (2,64) size 780x31
+            RenderBR {BR} at (0,0) size 0x32
+          RenderBlock {DIV} at (2,95) size 780x31
+            RenderText {#text} at (0,0) size 36x32
+              text run at (0,0) width 36: "baz"
 caret: position 0 of child 0 {BR} of child 3 {DIV} of child 1 {DIV} of child 3 {DIV} of body

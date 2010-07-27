@@ -1,19 +1,19 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x434
-  RenderBlock {html} at (0,0) size 800x434
-    RenderBody {body} at (11,14) size 778x406
-      RenderBlock {p} at (0,0) size 778x28 [color=#000080]
-        RenderText {#text} at (0,0) size 730x28
-          text run at (0,0) width 730: "The word \"TEST \" should appear twice below, the same size each time."
-      RenderBlock (anonymous) at (0,42) size 778x178
-        RenderSVGRoot {svg} at (11,56) size 576x172
-          RenderPath {rect} at (11,56) size 576x172 [transform={m=((10.00,0.00)(0.00,10.00)) t=(0.00,0.00)}] [fill={[type=SOLID] [color=#EEEEEE]}] [data="M0.00,0.00 L60.00,0.00 L60.00,12.00 L0.00,12.00 L0.00,0.00"]
+layer at (0,0) size 800x439
+  RenderBlock {html} at (0,0) size 800x437
+    RenderBody {body} at (11,14) size 778x409
+      RenderBlock {p} at (0,0) size 778x30 [color=#000080]
+        RenderText {#text} at (0,0) size 707x30
+          text run at (0,0) width 707: "The word \"TEST \" should appear twice below, the same size each time."
+      RenderBlock (anonymous) at (0,44) size 778x179
+        RenderSVGRoot {svg} at (11,58) size 576x172
+          RenderPath {rect} at (11,58) size 576x172 [transform={m=((10.00,0.00)(0.00,10.00)) t=(0.00,0.00)}] [fill={[type=SOLID] [color=#EEEEEE]}] [data="M0.00,0.00 L60.00,0.00 L60.00,12.00 L0.00,12.00 L0.00,0.00"]
           RenderForeignObject {foreignObject} at (0,0) size 60x10
-            RenderBlock {div} at (0,0) size 60x12 [color=#000080]
-              RenderText {#text} at (0,0) size 26x12
-                text run at (0,0) width 26: "TEST"
+            RenderBlock {div} at (0,0) size 60x13 [color=#000080]
+              RenderText {#text} at (0,0) size 27x13
+                text run at (0,0) width 27: "TEST"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {div} at (0,234) size 576x172 [color=#000080] [bgcolor=#EEEEEE]
-        RenderText {#text} at (0,0) size 368x179
+      RenderBlock {div} at (0,237) size 576x172 [color=#000080] [bgcolor=#EEEEEE]
+        RenderText {#text} at (0,0) size 368x188
           text run at (0,0) width 368: "TEST"

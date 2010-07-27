@@ -1,77 +1,77 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x120
-  RenderBlock {HTML} at (0,0) size 800x120
-    RenderBody {BODY} at (8,16) size 784x96 [color=#0000FF]
-      RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 729x20
-          text run at (0,0) width 729: "There should be three solid bars of colour below, each longer than the last, each of the colour specified."
-      RenderBlock {DIV} at (0,36) size 784x20
-        RenderText {#text} at (0,0) size 41x20
-          text run at (0,0) width 41: "Blue: "
+layer at (0,0) size 800x124
+  RenderBlock {HTML} at (0,0) size 800x124
+    RenderBody {BODY} at (8,16) size 784x100 [color=#0000FF]
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 693x21
+          text run at (0,0) width 693: "There should be three solid bars of colour below, each longer than the last, each of the colour specified."
+      RenderBlock {DIV} at (0,37) size 784x21
+        RenderText {#text} at (0,0) size 40x21
+          text run at (0,0) width 40: "Blue: "
         RenderInline {SPAN} at (0,0) size 15x14
-          RenderText {#text} at (41,5) size 15x14
-            text run at (41,5) width 15: "X"
+          RenderText {#text} at (40,6) size 15x14
+            text run at (40,6) width 15: "X"
         RenderInline {SPAN} at (0,0) size 15x14
-          RenderText {#text} at (56,5) size 15x14
-            text run at (56,5) width 15: "X"
-        RenderImage {IMG} at (71,5) size 15x15 [color=#FF0000]
+          RenderText {#text} at (55,6) size 15x14
+            text run at (55,6) width 15: "X"
+        RenderImage {IMG} at (70,6) size 15x15 [color=#FF0000]
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,56) size 784x20
-        RenderText {#text} at (0,0) size 61x20
-          text run at (0,0) width 61: "Orange: "
+      RenderBlock {DIV} at (0,58) size 784x21
+        RenderText {#text} at (0,0) size 60x21
+          text run at (0,0) width 60: "Orange: "
         RenderInline {SPAN} at (0,0) size 15x14 [color=#FFA500]
-          RenderText {#text} at (61,5) size 15x14
-            text run at (61,5) width 15: "X"
+          RenderText {#text} at (60,6) size 15x14
+            text run at (60,6) width 15: "X"
         RenderInline {SPAN} at (0,0) size 15x14 [color=#FFA500]
-          RenderText {#text} at (76,5) size 15x14
-            text run at (76,5) width 15: "X"
+          RenderText {#text} at (75,6) size 15x14
+            text run at (75,6) width 15: "X"
         RenderInline {SPAN} at (0,0) size 15x14 [color=#FFA500]
-          RenderText {#text} at (91,5) size 15x14
-            text run at (91,5) width 15: "X"
+          RenderText {#text} at (90,6) size 15x14
+            text run at (90,6) width 15: "X"
         RenderInline {SPAN} at (0,0) size 15x14 [color=#FFA500]
-          RenderText {#text} at (106,5) size 15x14
-            text run at (106,5) width 15: "X"
-        RenderImage {IMG} at (121,5) size 15x15 [color=#FF0000]
+          RenderText {#text} at (105,6) size 15x14
+            text run at (105,6) width 15: "X"
+        RenderImage {IMG} at (120,6) size 15x15 [color=#FF0000]
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,76) size 784x20
-        RenderText {#text} at (0,0) size 43x20
-          text run at (0,0) width 43: "Lime: "
+      RenderBlock {DIV} at (0,79) size 784x21
+        RenderText {#text} at (0,0) size 44x21
+          text run at (0,0) width 44: "Lime: "
         RenderInline {SPAN} at (0,0) size 15x14 [color=#00FF00]
-          RenderText {#text} at (43,5) size 15x14
-            text run at (43,5) width 15: "X"
+          RenderText {#text} at (44,6) size 15x14
+            text run at (44,6) width 15: "X"
         RenderInline {SPAN} at (0,0) size 15x14 [color=#00FF00]
-          RenderText {#text} at (58,5) size 15x14
-            text run at (58,5) width 15: "X"
+          RenderText {#text} at (59,6) size 15x14
+            text run at (59,6) width 15: "X"
         RenderInline {SPAN} at (0,0) size 15x14 [color=#00FF00]
-          RenderText {#text} at (73,5) size 15x14
-            text run at (73,5) width 15: "X"
+          RenderText {#text} at (74,6) size 15x14
+            text run at (74,6) width 15: "X"
         RenderInline {SPAN} at (0,0) size 15x14 [color=#00FF00]
-          RenderText {#text} at (88,5) size 15x14
-            text run at (88,5) width 15: "X"
+          RenderText {#text} at (89,6) size 15x14
+            text run at (89,6) width 15: "X"
         RenderInline {SPAN} at (0,0) size 15x14 [color=#00FF00]
-          RenderText {#text} at (103,5) size 15x14
-            text run at (103,5) width 15: "X"
+          RenderText {#text} at (104,6) size 15x14
+            text run at (104,6) width 15: "X"
         RenderInline {SPAN} at (0,0) size 15x14 [color=#00FF00]
-          RenderText {#text} at (118,5) size 15x14
-            text run at (118,5) width 15: "X"
+          RenderText {#text} at (119,6) size 15x14
+            text run at (119,6) width 15: "X"
         RenderInline {SPAN} at (0,0) size 15x14 [color=#00FF00]
-          RenderText {#text} at (133,5) size 15x14
-            text run at (133,5) width 15: "X"
+          RenderText {#text} at (134,6) size 15x14
+            text run at (134,6) width 15: "X"
         RenderInline {SPAN} at (0,0) size 15x14 [color=#00FF00]
-          RenderText {#text} at (148,5) size 15x14
-            text run at (148,5) width 15: "X"
+          RenderText {#text} at (149,6) size 15x14
+            text run at (149,6) width 15: "X"
         RenderInline {SPAN} at (0,0) size 15x14 [color=#00FF00]
-          RenderText {#text} at (163,5) size 15x14
-            text run at (163,5) width 15: "X"
+          RenderText {#text} at (164,6) size 15x14
+            text run at (164,6) width 15: "X"
         RenderInline {SPAN} at (0,0) size 15x14 [color=#00FF00]
-          RenderText {#text} at (178,5) size 15x14
-            text run at (178,5) width 15: "X"
+          RenderText {#text} at (179,6) size 15x14
+            text run at (179,6) width 15: "X"
         RenderInline {SPAN} at (0,0) size 15x14 [color=#00FF00]
-          RenderText {#text} at (193,5) size 15x14
-            text run at (193,5) width 15: "X"
+          RenderText {#text} at (194,6) size 15x14
+            text run at (194,6) width 15: "X"
         RenderInline {SPAN} at (0,0) size 15x14 [color=#00FF00]
-          RenderText {#text} at (208,5) size 15x14
-            text run at (208,5) width 15: "X"
-        RenderImage {IMG} at (223,5) size 15x15 [color=#FF0000]
+          RenderText {#text} at (209,6) size 15x14
+            text run at (209,6) width 15: "X"
+        RenderImage {IMG} at (224,6) size 15x15 [color=#FF0000]
         RenderText {#text} at (0,0) size 0x0

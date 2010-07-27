@@ -3,26 +3,26 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x60
-        RenderText {#text} at (0,0) size 779x60
-          text run at (0,0) width 493: "We copy and paste a blockquoted paragraph plus a paragraph break. "
-          text run at (493,0) width 286: "The paragraph break shouldn't be inside"
-          text run at (0,20) width 177: "the blockquote on paste. "
-          text run at (177,20) width 523: "You should see 'hello' (blockquoted), 'world' (not quoted, black text), 'hello'"
-          text run at (0,40) width 229: "(blockquoted), empty paragraph."
-      RenderBlock {DIV} at (0,76) size 784x80
-        RenderBlock {BLOCKQUOTE} at (0,0) size 784x20 [color=#0000FF] [border: (2px solid #0000FF)]
-          RenderText {#text} at (7,0) size 35x20
-            text run at (7,0) width 35: "hello"
-          RenderBR {BR} at (42,16) size 0x0
-        RenderBlock (anonymous) at (0,20) size 784x0
-        RenderBlock {DIV} at (0,20) size 784x20
-          RenderText {#text} at (0,0) size 39x20
-            text run at (0,0) width 39: "world"
-        RenderBlock {BLOCKQUOTE} at (0,40) size 784x20 [color=#0000FF] [border: (2px solid #0000FF)]
-          RenderText {#text} at (7,0) size 35x20
-            text run at (7,0) width 35: "hello"
-          RenderBR {BR} at (42,16) size 0x0
-        RenderBlock (anonymous) at (0,60) size 784x20
-          RenderBR {BR} at (0,0) size 0x20
+      RenderBlock {P} at (0,0) size 784x63
+        RenderText {#text} at (0,0) size 781x63
+          text run at (0,0) width 478: "We copy and paste a blockquoted paragraph plus a paragraph break. "
+          text run at (478,0) width 303: "The paragraph break shouldn't be inside the"
+          text run at (0,21) width 143: "blockquote on paste. "
+          text run at (143,21) width 611: "You should see 'hello' (blockquoted), 'world' (not quoted, black text), 'hello' (blockquoted),"
+          text run at (0,42) width 123: "empty paragraph."
+      RenderBlock {DIV} at (0,79) size 784x84
+        RenderBlock {BLOCKQUOTE} at (0,0) size 784x21 [color=#0000FF] [border: (2px solid #0000FF)]
+          RenderText {#text} at (7,0) size 32x21
+            text run at (7,0) width 32: "hello"
+          RenderBR {BR} at (39,16) size 0x0
+        RenderBlock (anonymous) at (0,21) size 784x0
+        RenderBlock {DIV} at (0,21) size 784x21
+          RenderText {#text} at (0,0) size 40x21
+            text run at (0,0) width 40: "world"
+        RenderBlock {BLOCKQUOTE} at (0,42) size 784x21 [color=#0000FF] [border: (2px solid #0000FF)]
+          RenderText {#text} at (7,0) size 32x21
+            text run at (7,0) width 32: "hello"
+          RenderBR {BR} at (39,16) size 0x0
+        RenderBlock (anonymous) at (0,63) size 784x21
+          RenderBR {BR} at (0,0) size 0x21
 caret: position 5 of child 0 {#text} of child 1 {DIV} of child 2 {DIV} of body

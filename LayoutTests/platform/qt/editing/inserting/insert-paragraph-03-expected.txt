@@ -10,19 +10,19 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x40
-        RenderText {#text} at (0,0) size 744x40
-          text run at (0,0) width 469: "This tests inserting a paragraph separator before a horizontal rule. "
-          text run at (469,0) width 275: "You should see 'foo', empty paragraph,"
-          text run at (0,20) width 525: "horizontal rule, 'bar', and the caret should be just before the horizontal rule."
-      RenderBlock {DIV} at (0,56) size 784x78
-        RenderBlock (anonymous) at (0,0) size 784x40
-          RenderText {#text} at (0,0) size 22x20
-            text run at (0,0) width 22: "foo"
-          RenderBR {BR} at (22,16) size 0x0
-          RenderBR {BR} at (0,20) size 0x20
-        RenderBlock {HR} at (0,48) size 784x2 [border: (1px inset #000000)]
-        RenderBlock (anonymous) at (0,58) size 784x20
-          RenderText {#text} at (0,0) size 23x20
-            text run at (0,0) width 23: "bar"
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 721x42
+          text run at (0,0) width 455: "This tests inserting a paragraph separator before a horizontal rule. "
+          text run at (455,0) width 266: "You should see 'foo', empty paragraph,"
+          text run at (0,21) width 515: "horizontal rule, 'bar', and the caret should be just before the horizontal rule."
+      RenderBlock {DIV} at (0,58) size 784x81
+        RenderBlock (anonymous) at (0,0) size 784x42
+          RenderText {#text} at (0,0) size 21x21
+            text run at (0,0) width 21: "foo"
+          RenderBR {BR} at (21,16) size 0x0
+          RenderBR {BR} at (0,21) size 0x21
+        RenderBlock {HR} at (0,50) size 784x2 [border: (1px inset #000000)]
+        RenderBlock (anonymous) at (0,60) size 784x21
+          RenderText {#text} at (0,0) size 24x21
+            text run at (0,0) width 24: "bar"
 caret: position 0 of child 3 {HR} of child 2 {DIV} of body

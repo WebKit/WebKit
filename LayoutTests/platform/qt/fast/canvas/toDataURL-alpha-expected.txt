@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x264
-  RenderBlock {HTML} at (0,0) size 800x264
-    RenderBody {BODY} at (8,16) size 784x240
-      RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 404x20
-          text run at (0,0) width 404: "The test passes if both boxes below have the same color."
-      RenderBlock (anonymous) at (0,36) size 784x104
+layer at (0,0) size 800x266
+  RenderBlock {HTML} at (0,0) size 800x266
+    RenderBody {BODY} at (8,16) size 784x242
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 375x21
+          text run at (0,0) width 375: "The test passes if both boxes below have the same color."
+      RenderBlock (anonymous) at (0,37) size 784x105
         RenderHTMLCanvas {CANVAS} at (0,0) size 200x100
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,140) size 200x100
+      RenderBlock {DIV} at (0,142) size 200x100

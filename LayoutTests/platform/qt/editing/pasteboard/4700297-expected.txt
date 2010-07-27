@@ -12,11 +12,11 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 46x20
-          text run at (0,0) width 46: "There "
-        RenderText {#text} at (46,0) size 48x20
-          text run at (46,0) width 48: "should"
-        RenderText {#text} at (94,0) size 245x20
-          text run at (94,0) width 245: " be no line breaks in this sentence."
+      RenderBlock {DIV} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 45x21
+          text run at (0,0) width 45: "There "
+        RenderText {#text} at (45,0) size 45x21
+          text run at (45,0) width 45: "should"
+        RenderText {#text} at (90,0) size 229x21
+          text run at (90,0) width 229: " be no line breaks in this sentence."
 caret: position 6 of child 1 {#text} of child 0 {DIV} of body

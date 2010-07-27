@@ -3,60 +3,60 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#CCCCCC]
-      RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 395x20
-          text run at (0,0) width 395: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,36) size 784x64
-        RenderText {#text} at (0,0) size 162x64
-          text run at (0,0) width 130: ".one {font-style: italic;}"
-          text run at (130,0) width 0: " "
-          text run at (0,16) width 143: ".two {font-style: oblique;}"
-          text run at (143,16) width 0: " "
-          text run at (0,32) width 162: ".three, I {font-style: normal;}"
-          text run at (162,32) width 0: " "
-          text run at (0,48) width 0: " "
-      RenderBlock {HR} at (0,113) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,131) size 784x20
-        RenderText {#text} at (0,0) size 558x20
-          text run at (0,0) width 558: "This paragraph should be in italics, but the last word of the sentence should be "
-        RenderInline {SPAN} at (0,0) size 49x20
-          RenderText {#text} at (558,0) size 49x20
-            text run at (558,0) width 49: "normal"
-        RenderText {#text} at (607,0) size 4x20
-          text run at (607,0) width 4: "."
-      RenderBlock {P} at (0,167) size 784x20
-        RenderText {#text} at (0,0) size 243x20
-          text run at (0,0) width 243: "This paragraph should be oblique."
-      RenderBlock {P} at (0,203) size 784x20
-        RenderInline {I} at (0,0) size 239x20
-          RenderText {#text} at (0,0) size 239x20
-            text run at (0,0) width 239: "This paragraph should be normal."
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 380x21
+          text run at (0,0) width 380: "The style declarations which apply to the text below are:"
+      RenderBlock {PRE} at (0,37) size 784x64
+        RenderText {#text} at (0,1) size 248x62
+          text run at (0,1) width 208: ".one {font-style: italic;}"
+          text run at (208,1) width 0: " "
+          text run at (0,17) width 216: ".two {font-style: oblique;}"
+          text run at (216,17) width 0: " "
+          text run at (0,33) width 248: ".three, I {font-style: normal;}"
+          text run at (248,33) width 0: " "
+          text run at (0,49) width 0: " "
+      RenderBlock {HR} at (0,114) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,132) size 784x21
+        RenderText {#text} at (0,0) size 515x21
+          text run at (0,0) width 515: "This paragraph should be in italics, but the last word of the sentence should be "
+        RenderInline {SPAN} at (0,0) size 49x21
+          RenderText {#text} at (515,0) size 49x21
+            text run at (515,0) width 49: "normal"
+        RenderText {#text} at (564,0) size 4x21
+          text run at (564,0) width 4: "."
+      RenderBlock {P} at (0,169) size 784x21
+        RenderText {#text} at (0,0) size 225x21
+          text run at (0,0) width 225: "This paragraph should be oblique."
+      RenderBlock {P} at (0,206) size 784x21
+        RenderInline {I} at (0,0) size 233x21
+          RenderText {#text} at (0,0) size 233x21
+            text run at (0,0) width 233: "This paragraph should be normal."
         RenderText {#text} at (0,0) size 0x0
-      RenderTable {TABLE} at (0,239) size 633x131 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 631x129
-          RenderTableRow {TR} at (0,0) size 631x29
-            RenderTableCell {TD} at (0,0) size 631x29 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 178x20
-                RenderText {#text} at (4,4) size 178x20
-                  text run at (4,4) width 178: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,29) size 631x100
-            RenderTableCell {TD} at (0,65) size 12x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 4x20
+      RenderTable {TABLE} at (0,243) size 590x134 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 588x132
+          RenderTableRow {TR} at (0,0) size 588x29
+            RenderTableCell {TD} at (0,0) size 588x29 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 163x21
+                RenderText {#text} at (4,4) size 163x21
+                  text run at (4,4) width 163: "TABLE Testing Section"
+          RenderTableRow {TR} at (0,29) size 588x103
+            RenderTableCell {TD} at (0,66) size 12x29 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x21
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,29) size 619x100 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock {P} at (4,4) size 611x20
-                RenderText {#text} at (0,0) size 558x20
-                  text run at (0,0) width 558: "This paragraph should be in italics, but the last word of the sentence should be "
-                RenderInline {SPAN} at (0,0) size 49x20
-                  RenderText {#text} at (558,0) size 49x20
-                    text run at (558,0) width 49: "normal"
-                RenderText {#text} at (607,0) size 4x20
-                  text run at (607,0) width 4: "."
-              RenderBlock {P} at (4,40) size 611x20
-                RenderText {#text} at (0,0) size 243x20
-                  text run at (0,0) width 243: "This paragraph should be oblique."
-              RenderBlock {P} at (4,76) size 611x20
-                RenderInline {I} at (0,0) size 239x20
-                  RenderText {#text} at (0,0) size 239x20
-                    text run at (0,0) width 239: "This paragraph should be normal."
+            RenderTableCell {TD} at (12,29) size 576x103 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 568x21
+                RenderText {#text} at (0,0) size 515x21
+                  text run at (0,0) width 515: "This paragraph should be in italics, but the last word of the sentence should be "
+                RenderInline {SPAN} at (0,0) size 49x21
+                  RenderText {#text} at (515,0) size 49x21
+                    text run at (515,0) width 49: "normal"
+                RenderText {#text} at (564,0) size 4x21
+                  text run at (564,0) width 4: "."
+              RenderBlock {P} at (4,41) size 568x21
+                RenderText {#text} at (0,0) size 225x21
+                  text run at (0,0) width 225: "This paragraph should be oblique."
+              RenderBlock {P} at (4,78) size 568x21
+                RenderInline {I} at (0,0) size 233x21
+                  RenderText {#text} at (0,0) size 233x21
+                    text run at (0,0) width 233: "This paragraph should be normal."
                 RenderText {#text} at (0,0) size 0x0

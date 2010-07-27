@@ -20,37 +20,37 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x256 [border: (2px solid #0000FF)]
-        RenderBlock {DIV} at (14,14) size 756x91
-          RenderText {#text} at (0,0) size 77x31
-            text run at (0,0) width 77: "Tests: "
+      RenderBlock {DIV} at (0,0) size 784x261 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x93
+          RenderText {#text} at (0,0) size 67x32
+            text run at (0,0) width 67: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,31) size 171x29
-            text run at (0,31) width 171: "Fix for this bug: "
-          RenderInline {A} at (0,0) size 274x29 [color=#0000EE]
-            RenderText {#text} at (171,31) size 274x29
-              text run at (171,31) width 274: "<rdar://problem/4045513>"
-          RenderText {#text} at (445,31) size 747x59
-            text run at (445,31) width 222: " Copying and pasting"
-            text run at (0,61) width 747: "selection starting at end of paragraph can incorrectly remove line break"
-        RenderBlock {DIV} at (14,121) size 756x121
-          RenderText {#text} at (0,0) size 214x31
-            text run at (0,0) width 214: "Expected Results: "
-          RenderBR {BR} at (214,24) size 0x0
-          RenderText {#text} at (0,31) size 711x89
-            text run at (0,31) width 711: "Should see two lines of text below, self-documenting themselves as"
-            text run at (0,61) width 693: "\"line one\" and \"line two\". The insertion point must be after the first"
-            text run at (0,91) width 284: "character (\"l\") of \"line two\"."
-      RenderBlock {DIV} at (0,280) size 784x64
-        RenderBlock {DIV} at (0,0) size 784x64 [border: (2px solid #FF0000)]
-          RenderBlock {DIV} at (2,2) size 780x60
-            RenderBlock (anonymous) at (0,0) size 780x30
-              RenderText {#text} at (0,0) size 82x29
-                text run at (0,0) width 82: "line one"
-              RenderBR {BR} at (82,23) size 0x0
-            RenderBlock {DIV} at (0,30) size 780x30
-              RenderText {#text} at (0,0) size 5x29
-                text run at (0,0) width 5: "l"
-              RenderText {#text} at (5,0) size 75x29
-                text run at (5,0) width 75: "ine two"
+          RenderText {#text} at (0,31) size 172x32
+            text run at (0,31) width 172: "Fix for this bug: "
+          RenderInline {A} at (0,0) size 275x32 [color=#0000EE]
+            RenderText {#text} at (172,31) size 275x32
+              text run at (172,31) width 275: "<rdar://problem/4045513>"
+          RenderText {#text} at (447,31) size 740x63
+            text run at (447,31) width 216: " Copying and pasting"
+            text run at (0,62) width 740: "selection starting at end of paragraph can incorrectly remove line break"
+        RenderBlock {DIV} at (14,123) size 756x124
+          RenderText {#text} at (0,0) size 189x32
+            text run at (0,0) width 189: "Expected Results: "
+          RenderBR {BR} at (189,24) size 0x0
+          RenderText {#text} at (0,31) size 749x94
+            text run at (0,31) width 730: "Should see two lines of text below, self-documenting themselves as \"line"
+            text run at (0,62) width 749: "one\" and \"line two\". The insertion point must be after the first character"
+            text run at (0,93) width 194: "(\"l\") of \"line two\"."
+      RenderBlock {DIV} at (0,285) size 784x66
+        RenderBlock {DIV} at (0,0) size 784x66 [border: (2px solid #FF0000)]
+          RenderBlock {DIV} at (2,2) size 780x62
+            RenderBlock (anonymous) at (0,0) size 780x31
+              RenderText {#text} at (0,0) size 80x32
+                text run at (0,0) width 80: "line one"
+              RenderBR {BR} at (80,24) size 0x0
+            RenderBlock {DIV} at (0,31) size 780x31
+              RenderText {#text} at (0,0) size 7x32
+                text run at (0,0) width 7: "l"
+              RenderText {#text} at (7,0) size 74x32
+                text run at (7,0) width 74: "ine two"
 caret: position 1 of child 0 {#text} of child 2 {DIV} of child 1 {DIV} of child 1 {DIV} of child 3 {DIV} of body

@@ -11,9 +11,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x58 [border: (2px solid #FF0000)]
-        RenderBR {BR} at (14,14) size 0x29
-      RenderBlock {DIV} at (0,58) size 784x58 [border: (2px solid #FF0000)]
-        RenderText {#text} at (14,14) size 51x29
-          text run at (14,14) width 51: "xtest"
+      RenderBlock {DIV} at (0,0) size 784x59 [border: (2px solid #FF0000)]
+        RenderBR {BR} at (14,14) size 0x32
+      RenderBlock {DIV} at (0,59) size 784x59 [border: (2px solid #FF0000)]
+        RenderText {#text} at (14,14) size 48x32
+          text run at (14,14) width 48: "xtest"
 caret: position 1 of child 0 {#text} of child 2 {DIV} of body

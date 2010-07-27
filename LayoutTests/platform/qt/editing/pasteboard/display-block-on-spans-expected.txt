@@ -13,31 +13,31 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x80
-        RenderText {#text} at (0,0) size 217x20
-          text run at (0,0) width 217: "This is a testcase for the fix for "
-        RenderInline {A} at (0,0) size 379x20 [color=#0000EE]
-          RenderText {#text} at (217,0) size 379x20
-            text run at (217,0) width 379: "http://bugzilla.opendarwin.org/show_bug.cgi?id=7904"
-        RenderText {#text} at (596,0) size 762x80
-          text run at (596,0) width 4: "."
-          text run at (0,20) width 754: "ReplaceSelectionCommand used to guess whether or not nodes in the fragment to be pasted were blocks. "
-          text run at (754,20) width 8: "It"
-          text run at (0,40) width 145: "now knows for sure. "
-          text run at (145,40) width 588: "Before the fix, ReplaceSelectionCommand blew away content of the div below after"
-          text run at (0,60) width 178: "copy/pasting it over itself."
-      RenderBlock {HR} at (0,88) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {DIV} at (0,98) size 784x42
+      RenderBlock (anonymous) at (0,0) size 784x63
+        RenderText {#text} at (0,0) size 209x21
+          text run at (0,0) width 209: "This is a testcase for the fix for "
+        RenderInline {A} at (0,0) size 365x21 [color=#0000EE]
+          RenderText {#text} at (209,0) size 365x21
+            text run at (209,0) width 365: "http://bugzilla.opendarwin.org/show_bug.cgi?id=7904"
+        RenderText {#text} at (574,0) size 773x63
+          text run at (574,0) width 8: ". "
+          text run at (582,0) width 186: "ReplaceSelectionCommand"
+          text run at (0,21) width 521: "used to guess whether or not nodes in the fragment to be pasted were blocks. "
+          text run at (521,21) width 157: "It now knows for sure. "
+          text run at (678,21) width 95: "Before the fix,"
+          text run at (0,42) width 638: "ReplaceSelectionCommand blew away content of the div below after copy/pasting it over itself."
+      RenderBlock {HR} at (0,71) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {DIV} at (0,81) size 784x42
         RenderBlock {SPAN} at (0,0) size 784x21
-          RenderInline {B} at (0,0) size 150x20
-            RenderText {#text} at (0,0) size 150x20
-              text run at (0,0) width 150: "This is a paragraph."
+          RenderInline {B} at (0,0) size 137x21
+            RenderText {#text} at (0,0) size 137x21
+              text run at (0,0) width 137: "This is a paragraph."
         RenderBlock {SPAN} at (0,21) size 784x21
-          RenderInline {B} at (0,0) size 200x20
-            RenderInline {SPAN} at (0,0) size 33x20
-              RenderInline {B} at (0,0) size 33x20
-                RenderText {#text} at (0,0) size 33x20
-                  text run at (0,0) width 33: "This"
-            RenderText {#text} at (33,0) size 167x20
-              text run at (33,0) width 167: " is another paragraph."
+          RenderInline {B} at (0,0) size 182x21
+            RenderInline {SPAN} at (0,0) size 30x21
+              RenderInline {B} at (0,0) size 30x21
+                RenderText {#text} at (0,0) size 30x21
+                  text run at (0,0) width 30: "This"
+            RenderText {#text} at (30,0) size 152x21
+              text run at (30,0) width 152: " is another paragraph."
 caret: position 4 of child 0 {#text} of child 0 {B} of child 0 {SPAN} of child 0 {B} of child 2 {SPAN} of child 5 {DIV} of body

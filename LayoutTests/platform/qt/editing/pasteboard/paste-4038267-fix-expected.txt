@@ -14,39 +14,39 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x286 [border: (2px solid #0000FF)]
-        RenderBlock {DIV} at (14,14) size 756x91
-          RenderText {#text} at (0,0) size 77x31
-            text run at (0,0) width 77: "Tests: "
+      RenderBlock {DIV} at (0,0) size 784x292 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x93
+          RenderText {#text} at (0,0) size 67x32
+            text run at (0,0) width 67: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,31) size 115x29
-            text run at (0,31) width 115: "Bug fix for "
-          RenderInline {A} at (0,0) size 274x29 [color=#0000EE]
-            RenderText {#text} at (115,31) size 274x29
-              text run at (115,31) width 274: "<rdar://problem/4038267>"
-          RenderText {#text} at (389,31) size 699x59
-            text run at (389,31) width 310: " REGRESSION (Mail): Crash"
-            text run at (0,61) width 404: "copying and pasting end of paragraph."
-        RenderBlock {DIV} at (14,121) size 756x151
-          RenderBlock (anonymous) at (0,0) size 756x91
-            RenderText {#text} at (0,0) size 214x31
-              text run at (0,0) width 214: "Expected Results: "
-            RenderBR {BR} at (214,24) size 0x0
-            RenderText {#text} at (0,31) size 753x59
-              text run at (0,31) width 753: "Should see this content in the red box below (insertion point must be on"
-              text run at (0,61) width 367: "the second line, right before \"bar\"):"
-          RenderBlock {DIV} at (0,91) size 756x30
-            RenderText {#text} at (0,0) size 33x29
-              text run at (0,0) width 33: "foo"
-          RenderBlock {DIV} at (0,121) size 756x30
-            RenderText {#text} at (0,0) size 34x29
-              text run at (0,0) width 34: "bar"
-      RenderBlock {DIV} at (0,310) size 784x64
-        RenderBlock {DIV} at (0,0) size 784x64 [border: (2px solid #FF0000)]
-          RenderBlock {DIV} at (2,2) size 780x30
-            RenderText {#text} at (0,0) size 33x29
-              text run at (0,0) width 33: "foo"
-          RenderBlock {DIV} at (2,32) size 780x30
-            RenderText {#text} at (0,0) size 34x29
-              text run at (0,0) width 34: "bar"
+          RenderText {#text} at (0,31) size 117x32
+            text run at (0,31) width 117: "Bug fix for "
+          RenderInline {A} at (0,0) size 275x32 [color=#0000EE]
+            RenderText {#text} at (117,31) size 275x32
+              text run at (117,31) width 275: "<rdar://problem/4038267>"
+          RenderText {#text} at (392,31) size 701x63
+            text run at (392,31) width 309: " REGRESSION (Mail): Crash"
+            text run at (0,62) width 394: "copying and pasting end of paragraph."
+        RenderBlock {DIV} at (14,123) size 756x155
+          RenderBlock (anonymous) at (0,0) size 756x93
+            RenderText {#text} at (0,0) size 189x32
+              text run at (0,0) width 189: "Expected Results: "
+            RenderBR {BR} at (189,24) size 0x0
+            RenderText {#text} at (0,31) size 728x63
+              text run at (0,31) width 728: "Should see this content in the red box below (insertion point must be on"
+              text run at (0,62) width 370: "the second line, right before \"bar\"):"
+          RenderBlock {DIV} at (0,93) size 756x31
+            RenderText {#text} at (0,0) size 32x32
+              text run at (0,0) width 32: "foo"
+          RenderBlock {DIV} at (0,124) size 756x31
+            RenderText {#text} at (0,0) size 36x32
+              text run at (0,0) width 36: "bar"
+      RenderBlock {DIV} at (0,316) size 784x66
+        RenderBlock {DIV} at (0,0) size 784x66 [border: (2px solid #FF0000)]
+          RenderBlock {DIV} at (2,2) size 780x31
+            RenderText {#text} at (0,0) size 32x32
+              text run at (0,0) width 32: "foo"
+          RenderBlock {DIV} at (2,33) size 780x31
+            RenderText {#text} at (0,0) size 36x32
+              text run at (0,0) width 36: "bar"
 caret: position 0 of child 0 {#text} of child 2 {DIV} of child 1 {DIV} of child 3 {DIV} of body

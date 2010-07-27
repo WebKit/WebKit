@@ -10,15 +10,15 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x40
-        RenderText {#text} at (0,0) size 761x40
-          text run at (0,0) width 761: "This tests for a bug where attachments dragged into Mail documents blew all content after the position being"
-          text run at (0,20) width 86: "pasted into. "
-          text run at (86,20) width 342: "You should see \"Hello[black box] World!\" below."
-      RenderBlock {DIV} at (0,56) size 784x156
-        RenderText {#text} at (0,136) size 38x20
-          text run at (0,136) width 38: "Hello"
-        RenderEmbeddedObject {OBJECT} at (38,0) size 302x152 [border: (1px solid #AAAAAA)]
-        RenderText {#text} at (340,136) size 50x20
-          text run at (340,136) width 50: " World!"
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 780x42
+          text run at (0,0) width 780: "This tests for a bug where attachments dragged into Mail documents blew all content after the position being pasted"
+          text run at (0,21) width 34: "into. "
+          text run at (34,21) width 336: "You should see \"Hello[black box] World!\" below."
+      RenderBlock {DIV} at (0,58) size 784x157
+        RenderText {#text} at (0,136) size 35x21
+          text run at (0,136) width 35: "Hello"
+        RenderEmbeddedObject {OBJECT} at (35,0) size 302x152 [border: (1px solid #AAAAAA)]
+        RenderText {#text} at (337,136) size 53x21
+          text run at (337,136) width 53: " World!"
 caret: position 1 of child 1 {OBJECT} of child 3 {DIV} of body

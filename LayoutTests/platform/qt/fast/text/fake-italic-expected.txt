@@ -3,11 +3,11 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x60
-        RenderText {#text} at (0,0) size 757x60
-          text run at (0,0) width 757: "This layout test is designed to test that our fake italic mode is working correctly. The Ahem font, used below,"
-          text run at (0,20) width 754: "does not include an italic variant. Thus, when we ask for italic Ahem, we should skew the glyphs ourselves,"
-          text run at (0,40) width 332: "resulting in a series of italic black boxes below."
-      RenderBlock {P} at (0,76) size 784x16
+      RenderBlock {P} at (0,0) size 784x63
+        RenderText {#text} at (0,0) size 777x63
+          text run at (0,0) width 764: "This layout test is designed to test that our fake italic mode is working correctly. The Ahem font, used below, does"
+          text run at (0,21) width 777: "not include an italic variant. Thus, when we ask for italic Ahem, we should skew the glyphs ourselves, resulting in a"
+          text run at (0,42) width 221: "series of italic black boxes below."
+      RenderBlock {P} at (0,79) size 784x16
         RenderText {#text} at (0,0) size 112x16
           text run at (0,0) width 112: "A A A A"

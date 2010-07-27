@@ -457,12 +457,32 @@ QWebSettings::QWebSettings()
     d->fontSizes.insert(QWebSettings::MinimumLogicalFontSize, 0);
     d->fontSizes.insert(QWebSettings::DefaultFontSize, 16);
     d->fontSizes.insert(QWebSettings::DefaultFixedFontSize, 13);
-    d->fontFamilies.insert(QWebSettings::StandardFont, QLatin1String("Arial"));
-    d->fontFamilies.insert(QWebSettings::FixedFont, QLatin1String("Courier New"));
-    d->fontFamilies.insert(QWebSettings::SerifFont, QLatin1String("Times New Roman"));
-    d->fontFamilies.insert(QWebSettings::SansSerifFont, QLatin1String("Arial"));
-    d->fontFamilies.insert(QWebSettings::CursiveFont, QLatin1String("Arial"));
-    d->fontFamilies.insert(QWebSettings::FantasyFont, QLatin1String("Arial"));
+
+    QFont defaultFont;
+    defaultFont.setStyleHint(QFont::Serif);
+    d->fontFamilies.insert(QWebSettings::StandardFont, defaultFont.defaultFamily());
+    d->fontFamilies.insert(QWebSettings::SerifFont, defaultFont.defaultFamily());
+
+#if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
+    defaultFont.setStyleHint(QFont::Fantasy);
+    d->fontFamilies.insert(QWebSettings::FantasyFont, defaultFont.defaultFamily());
+
+    defaultFont.setStyleHint(QFont::Cursive);
+    d->fontFamilies.insert(QWebSettings::CursiveFont, defaultFont.defaultFamily());
+#else
+    d->fontFamilies.insert(QWebSettings::FantasyFont, defaultFont.defaultFamily());
+    d->fontFamilies.insert(QWebSettings::CursiveFont, defaultFont.defaultFamily());
+#endif
+
+    defaultFont.setStyleHint(QFont::SansSerif);
+    d->fontFamilies.insert(QWebSettings::SansSerifFont, defaultFont.defaultFamily());
+
+#if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
+    defaultFont.setStyleHint(QFont::Monospace);
+#else
+    defaultFont.setStyleHint(QFont::TypeWriter);
+#endif
+    d->fontFamilies.insert(QWebSettings::FixedFont, defaultFont.defaultFamily());
 
     d->attributes.insert(QWebSettings::AutoLoadImages, true);
     d->attributes.insert(QWebSettings::DnsPrefetchEnabled, false);

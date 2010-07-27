@@ -10,22 +10,22 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 614x20
-          text run at (0,0) width 382: "Tests for a case where paste's end merge was failing. "
-          text run at (382,0) width 232: "You should see xfoo\\nbar\\nbazx."
-      RenderBlock {DIV} at (0,36) size 784x60
-        RenderBlock (anonymous) at (0,0) size 784x20
-          RenderText {#text} at (0,0) size 8x20
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 578x21
+          text run at (0,0) width 357: "Tests for a case where paste's end merge was failing. "
+          text run at (357,0) width 221: "You should see xfoo\\nbar\\nbazx."
+      RenderBlock {DIV} at (0,37) size 784x63
+        RenderBlock (anonymous) at (0,0) size 784x21
+          RenderText {#text} at (0,0) size 8x21
             text run at (0,0) width 8: "x"
-          RenderText {#text} at (8,0) size 22x20
-            text run at (8,0) width 22: "foo"
-        RenderBlock {DIV} at (0,20) size 784x20
-          RenderText {#text} at (0,0) size 23x20
-            text run at (0,0) width 23: "bar"
-        RenderBlock (anonymous) at (0,40) size 784x20
-          RenderText {#text} at (0,0) size 26x20
-            text run at (0,0) width 26: "baz"
-          RenderText {#text} at (26,0) size 8x20
-            text run at (26,0) width 8: "x"
+          RenderText {#text} at (8,0) size 21x21
+            text run at (8,0) width 21: "foo"
+        RenderBlock {DIV} at (0,21) size 784x21
+          RenderText {#text} at (0,0) size 24x21
+            text run at (0,0) width 24: "bar"
+        RenderBlock (anonymous) at (0,42) size 784x21
+          RenderText {#text} at (0,0) size 24x21
+            text run at (0,0) width 24: "baz"
+          RenderText {#text} at (24,0) size 8x21
+            text run at (24,0) width 8: "x"
 caret: position 3 of child 3 {#text} of child 2 {DIV} of body

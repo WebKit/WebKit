@@ -1,23 +1,23 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x294
-  RenderBlock {html} at (0,0) size 800x294
-    RenderBody {body} at (8,10) size 784x274
-      RenderBlock {p} at (0,0) size 784x20 [color=#000080]
-        RenderText {#text} at (0,0) size 506x20
-          text run at (0,0) width 506: "The word \"TEST \" should appear twice below, the same size each time."
-      RenderBlock (anonymous) at (0,30) size 784x124
-        RenderSVGRoot {svg} at (18,50) size 390x110
-          RenderPath {rect} at (18,50) size 390x110 [transform={m=((10.00,0.00)(0.00,10.00)) t=(0.00,0.00)}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M1.00,1.00 L61.00,1.00 L61.00,13.00 L1.00,13.00 L1.00,1.00"]
+layer at (0,0) size 800x296
+  RenderBlock {html} at (0,0) size 800x296
+    RenderBody {body} at (8,10) size 784x276
+      RenderBlock {p} at (0,0) size 784x21 [color=#000080]
+        RenderText {#text} at (0,0) size 486x21
+          text run at (0,0) width 486: "The word \"TEST \" should appear twice below, the same size each time."
+      RenderBlock (anonymous) at (0,31) size 784x125
+        RenderSVGRoot {svg} at (18,51) size 390x110
+          RenderPath {rect} at (18,51) size 390x110 [transform={m=((10.00,0.00)(0.00,10.00)) t=(0.00,0.00)}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M1.00,1.00 L61.00,1.00 L61.00,13.00 L1.00,13.00 L1.00,1.00"]
           RenderForeignObject {foreignObject} at (1,1) size 60x10
-            RenderBlock {div} at (0,0) size 60x12 [color=#000080]
-              RenderText {#text} at (0,0) size 26x12
-                text run at (0,0) width 26: "TEST"
+            RenderBlock {div} at (0,0) size 60x13 [color=#000080]
+              RenderText {#text} at (0,0) size 27x13
+                text run at (0,0) width 27: "TEST"
         RenderText {#text} at (0,0) size 0x0
-layer at (18,184) size 390x124
-  RenderBlock (relative positioned) {div} at (0,164) size 390x110 [color=#000080] [bgcolor=#D3D3D3]
-    RenderBlock {div} at (0,0) size 390x124
-      RenderText {#text} at (0,0) size 256x124
-        text run at (0,0) width 256: "TEST"
+layer at (18,186) size 390x130
+  RenderBlock (relative positioned) {div} at (0,166) size 390x110 [color=#000080] [bgcolor=#D3D3D3]
+    RenderBlock {div} at (0,0) size 390x130
+      RenderText {#text} at (0,0) size 257x130
+        text run at (0,0) width 257: "TEST"
 selection start: position 0 of child 0 {#text} of child 1 {p} of body
 selection end:   position 4 of child 0 {#text} of child 1 {div} of child 5 {div} of body

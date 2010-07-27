@@ -22,25 +22,25 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x92
-        RenderBlock (anonymous) at (0,0) size 784x20
-          RenderText {#text} at (0,0) size 22x20
-            text run at (0,0) width 22: "foo"
-        RenderBlock {BLOCKQUOTE} at (40,36) size 704x20
-          RenderText {#text} at (0,0) size 23x20
-            text run at (0,0) width 23: "bar"
-        RenderBlock (anonymous) at (0,72) size 784x20
-          RenderText {#text} at (0,0) size 26x20
-            text run at (0,0) width 26: "baz"
-          RenderText {#text} at (26,0) size 22x20
-            text run at (26,0) width 22: "foo"
-      RenderBlock (anonymous) at (0,92) size 784x0
-      RenderBlock {BLOCKQUOTE} at (40,108) size 704x20
-        RenderText {#text} at (0,0) size 23x20
-          text run at (0,0) width 23: "bar"
-      RenderBlock (anonymous) at (0,144) size 784x20
-        RenderText {#text} at (0,0) size 26x20
-          text run at (0,0) width 26: "baz"
+      RenderBlock {DIV} at (0,0) size 784x95
+        RenderBlock (anonymous) at (0,0) size 784x21
+          RenderText {#text} at (0,0) size 21x21
+            text run at (0,0) width 21: "foo"
+        RenderBlock {BLOCKQUOTE} at (40,37) size 704x21
+          RenderText {#text} at (0,0) size 24x21
+            text run at (0,0) width 24: "bar"
+        RenderBlock (anonymous) at (0,74) size 784x21
+          RenderText {#text} at (0,0) size 24x21
+            text run at (0,0) width 24: "baz"
+          RenderText {#text} at (24,0) size 21x21
+            text run at (24,0) width 21: "foo"
+      RenderBlock (anonymous) at (0,95) size 784x0
+      RenderBlock {BLOCKQUOTE} at (40,111) size 704x21
+        RenderText {#text} at (0,0) size 24x21
+          text run at (0,0) width 24: "bar"
+      RenderBlock (anonymous) at (0,148) size 784x21
+        RenderText {#text} at (0,0) size 24x21
+          text run at (0,0) width 24: "baz"
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0

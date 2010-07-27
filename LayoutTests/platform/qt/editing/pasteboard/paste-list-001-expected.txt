@@ -15,35 +15,35 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x286 [border: (2px solid #FF0000)]
-        RenderBlock (anonymous) at (14,14) size 756x30
-          RenderInline {SPAN} at (0,0) size 156x29
-            RenderText {#text} at (0,0) size 156x29
-              text run at (0,0) width 156: "Empty list item"
+      RenderBlock {DIV} at (0,0) size 784x293 [border: (2px solid #FF0000)]
+        RenderBlock (anonymous) at (14,14) size 756x31
+          RenderInline {SPAN} at (0,0) size 158x32
+            RenderText {#text} at (0,0) size 158x32
+              text run at (0,0) width 158: "Empty list item"
           RenderText {#text} at (0,0) size 0x0
-        RenderBlock {P} at (14,68) size 756x0
-        RenderBlock {OL} at (14,68) size 756x180
-          RenderListItem {LI} at (40,0) size 716x30
-            RenderListMarker at (-34,0) size 27x29: "1"
-            RenderText {#text} at (0,0) size 230x29
-              text run at (0,0) width 230: "I should be number 1."
-          RenderListItem {LI} at (40,30) size 716x30
-            RenderListMarker at (-34,0) size 27x29: "2"
-          RenderListItem {LI} at (40,60) size 716x120
-            RenderBlock (anonymous) at (0,0) size 716x30
-              RenderListMarker at (-34,0) size 27x29: "3"
-              RenderText {#text} at (0,0) size 230x29
-                text run at (0,0) width 230: "I should be number 3."
-            RenderBlock {OL} at (0,30) size 716x90
-              RenderListItem {LI} at (40,0) size 676x30
-                RenderListMarker at (-34,0) size 27x29: "1"
-                RenderText {#text} at (0,0) size 230x29
-                  text run at (0,0) width 230: "I should be number 1."
-              RenderListItem {LI} at (40,30) size 676x30
-                RenderListMarker at (-34,0) size 27x29: "2"
-              RenderListItem {LI} at (40,60) size 676x30
-                RenderListMarker at (-34,0) size 27x29: "3"
-                RenderText {#text} at (0,0) size 230x29
-                  text run at (0,0) width 230: "I should be number 3."
-            RenderBlock (anonymous) at (0,120) size 716x0
+        RenderBlock {P} at (14,69) size 756x0
+        RenderBlock {OL} at (14,69) size 756x186
+          RenderListItem {LI} at (40,0) size 716x31
+            RenderListMarker at (-32,0) size 24x32: "1"
+            RenderText {#text} at (0,0) size 223x32
+              text run at (0,0) width 223: "I should be number 1."
+          RenderListItem {LI} at (40,31) size 716x31
+            RenderListMarker at (-32,0) size 24x32: "2"
+          RenderListItem {LI} at (40,62) size 716x124
+            RenderBlock (anonymous) at (0,0) size 716x31
+              RenderListMarker at (-32,0) size 24x32: "3"
+              RenderText {#text} at (0,0) size 223x32
+                text run at (0,0) width 223: "I should be number 3."
+            RenderBlock {OL} at (0,31) size 716x93
+              RenderListItem {LI} at (40,0) size 676x31
+                RenderListMarker at (-32,0) size 24x32: "1"
+                RenderText {#text} at (0,0) size 223x32
+                  text run at (0,0) width 223: "I should be number 1."
+              RenderListItem {LI} at (40,31) size 676x31
+                RenderListMarker at (-32,0) size 24x32: "2"
+              RenderListItem {LI} at (40,62) size 676x31
+                RenderListMarker at (-32,0) size 24x32: "3"
+                RenderText {#text} at (0,0) size 223x32
+                  text run at (0,0) width 223: "I should be number 3."
+            RenderBlock (anonymous) at (0,124) size 716x0
 caret: position 21 of child 0 {#text} of child 2 {LI} of child 1 {OL} of child 5 {LI} of child 4 {OL} of child 1 {DIV} of body

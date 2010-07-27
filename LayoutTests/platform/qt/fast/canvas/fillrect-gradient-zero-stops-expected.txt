@@ -3,15 +3,15 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x60
-        RenderText {#text} at (0,0) size 756x40
-          text run at (0,0) width 756: "The canvas below should show a gradient with zero stops, which according to the specification is filled with"
-          text run at (0,20) width 303: "transparant black, ie. not visible. This tests "
-        RenderInline {A} at (0,0) size 742x40 [color=#0000EE]
-          RenderText {#text} at (303,20) size 742x40
-            text run at (303,20) width 439: "Bug 13784, REGRESSION (r13744-13750): Crash with empty"
-            text run at (0,40) width 234: "gradient when drawing to canvas"
-      RenderBlock (anonymous) at (0,76) size 784x150
+      RenderBlock {P} at (0,0) size 784x63
+        RenderText {#text} at (0,0) size 721x42
+          text run at (0,0) width 721: "The canvas below should show a gradient with zero stops, which according to the specification is filled with"
+          text run at (0,21) width 292: "transparant black, ie. not visible. This tests "
+        RenderInline {A} at (0,0) size 776x42 [color=#0000EE]
+          RenderText {#text} at (292,21) size 776x42
+            text run at (292,21) width 484: "Bug 13784, REGRESSION (r13744-13750): Crash with empty gradient"
+            text run at (0,42) width 165: "when drawing to canvas"
+      RenderBlock (anonymous) at (0,79) size 784x150
         RenderHTMLCanvas {CANVAS} at (0,0) size 300x150
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
