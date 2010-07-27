@@ -88,6 +88,7 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(QGraphicsSceneMouseEvent* eve
 {
     IntPoint position(event->pos().toPoint());
     IntPoint globalPosition(event->screenPos());
+    FloatPoint delta(event->pos().x() - event->lastPos().x(), event->pos().y() - event->lastPos().y());
 
     WebEvent::Type type             = webEventTypeForEvent(event);
     WebMouseEvent::Button button    = mouseButtonForEvent(event);
@@ -95,11 +96,13 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(QGraphicsSceneMouseEvent* eve
     int positionY                   = position.y();
     int globalPositionX             = globalPosition.x();
     int globalPositionY             = globalPosition.y();
+    float deltaX                    = delta.x();
+    float deltaY                    = delta.y();
     int clickCount                  = eventClickCount;
     WebEvent::Modifiers modifiers   = modifiersForEvent(event->modifiers());
     double timestamp                = WTF::currentTime();
 
-    return WebMouseEvent(type, button, positionX, positionY, globalPositionX, globalPositionY, clickCount, modifiers, timestamp);
+    return WebMouseEvent(type, button, positionX, positionY, globalPositionX, globalPositionY, deltaX, deltaY, 0.0f, clickCount, modifiers, timestamp);
 }
 
 WebWheelEvent WebEventFactory::createWebWheelEvent(QGraphicsSceneWheelEvent* e)
