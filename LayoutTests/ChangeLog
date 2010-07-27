@@ -1,3 +1,11 @@
+2010-07-27  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Explicitly list all skipped tests in plugins/ so we can start removing passing tests.
+
+        * platform/mac-wk2/Skipped:
+
 2010-07-27  Victor Wang  <victorw@chromium.org>
 
         Unreviewed. Update chromium test expectations for failed test:
