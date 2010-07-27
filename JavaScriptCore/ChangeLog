@@ -1,5 +1,12 @@
 2010-07-26  Gavin Barraclough  <barraclough@apple.com>
 
+        Speculative !debug build fix.
+
+        * wtf/PageAllocation.h:
+        (WTF::PageAllocation::PageAllocation):
+
+2010-07-26  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Oliver Hunt.
 
         Bug 43009 - Abstract out page allocation from executable allocators
