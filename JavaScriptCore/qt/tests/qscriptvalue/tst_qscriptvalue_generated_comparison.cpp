@@ -23,14 +23,7 @@
 
 #include "tst_qscriptvalue.h"
 
-void tst_QScriptValue::equals_initData()
-{
-    QTest::addColumn<QScriptValue>("other");
-    QTest::addColumn<bool>("expected");
-    initScriptValues();
-}
-
-static QString equals_array[] = {
+static const QString equals_array[] = {
     "QScriptValue() <=> QScriptValue()",
     "QScriptValue(QScriptValue::UndefinedValue) <=> QScriptValue(QScriptValue::UndefinedValue)",
     "QScriptValue(QScriptValue::UndefinedValue) <=> QScriptValue(QScriptValue::NullValue)",
@@ -84,6 +77,7 @@ static QString equals_array[] = {
     "QScriptValue(false) <=> engine->evaluate(\"0.0\")",
     "QScriptValue(false) <=> engine->evaluate(\"''\")",
     "QScriptValue(false) <=> engine->evaluate(\"'0'\")",
+    "QScriptValue(false) <=> engine->newArray()",
     "QScriptValue(int(122)) <=> QScriptValue(int(122))",
     "QScriptValue(int(122)) <=> QScriptValue(0, int(122))",
     "QScriptValue(int(122)) <=> QScriptValue(engine, int(122))",
@@ -118,6 +112,7 @@ static QString equals_array[] = {
     "QScriptValue(0) <=> engine->evaluate(\"0.0\")",
     "QScriptValue(0) <=> engine->evaluate(\"''\")",
     "QScriptValue(0) <=> engine->evaluate(\"'0'\")",
+    "QScriptValue(0) <=> engine->newArray()",
     "QScriptValue(0.0) <=> QScriptValue(false)",
     "QScriptValue(0.0) <=> QScriptValue(0)",
     "QScriptValue(0.0) <=> QScriptValue(0.0)",
@@ -144,6 +139,7 @@ static QString equals_array[] = {
     "QScriptValue(0.0) <=> engine->evaluate(\"0.0\")",
     "QScriptValue(0.0) <=> engine->evaluate(\"''\")",
     "QScriptValue(0.0) <=> engine->evaluate(\"'0'\")",
+    "QScriptValue(0.0) <=> engine->newArray()",
     "QScriptValue(123.0) <=> QScriptValue(123.0)",
     "QScriptValue(123.0) <=> QScriptValue(QString(\"123\"))",
     "QScriptValue(123.0) <=> QScriptValue(0, 123.0)",
@@ -239,6 +235,7 @@ static QString equals_array[] = {
     "QScriptValue(QString(\"\")) <=> engine->evaluate(\"0\")",
     "QScriptValue(QString(\"\")) <=> engine->evaluate(\"0.0\")",
     "QScriptValue(QString(\"\")) <=> engine->evaluate(\"''\")",
+    "QScriptValue(QString(\"\")) <=> engine->newArray()",
     "QScriptValue(QString()) <=> QScriptValue(false)",
     "QScriptValue(QString()) <=> QScriptValue(0)",
     "QScriptValue(QString()) <=> QScriptValue(0.0)",
@@ -261,6 +258,7 @@ static QString equals_array[] = {
     "QScriptValue(QString()) <=> engine->evaluate(\"0\")",
     "QScriptValue(QString()) <=> engine->evaluate(\"0.0\")",
     "QScriptValue(QString()) <=> engine->evaluate(\"''\")",
+    "QScriptValue(QString()) <=> engine->newArray()",
     "QScriptValue(QString(\"0\")) <=> QScriptValue(false)",
     "QScriptValue(QString(\"0\")) <=> QScriptValue(0)",
     "QScriptValue(QString(\"0\")) <=> QScriptValue(0.0)",
@@ -339,6 +337,7 @@ static QString equals_array[] = {
     "QScriptValue(0, false) <=> engine->evaluate(\"0.0\")",
     "QScriptValue(0, false) <=> engine->evaluate(\"''\")",
     "QScriptValue(0, false) <=> engine->evaluate(\"'0'\")",
+    "QScriptValue(0, false) <=> engine->newArray()",
     "QScriptValue(0, int(122)) <=> QScriptValue(int(122))",
     "QScriptValue(0, int(122)) <=> QScriptValue(0, int(122))",
     "QScriptValue(0, int(122)) <=> QScriptValue(engine, int(122))",
@@ -373,6 +372,7 @@ static QString equals_array[] = {
     "QScriptValue(0, 0) <=> engine->evaluate(\"0.0\")",
     "QScriptValue(0, 0) <=> engine->evaluate(\"''\")",
     "QScriptValue(0, 0) <=> engine->evaluate(\"'0'\")",
+    "QScriptValue(0, 0) <=> engine->newArray()",
     "QScriptValue(0, 0.0) <=> QScriptValue(false)",
     "QScriptValue(0, 0.0) <=> QScriptValue(0)",
     "QScriptValue(0, 0.0) <=> QScriptValue(0.0)",
@@ -399,6 +399,7 @@ static QString equals_array[] = {
     "QScriptValue(0, 0.0) <=> engine->evaluate(\"0.0\")",
     "QScriptValue(0, 0.0) <=> engine->evaluate(\"''\")",
     "QScriptValue(0, 0.0) <=> engine->evaluate(\"'0'\")",
+    "QScriptValue(0, 0.0) <=> engine->newArray()",
     "QScriptValue(0, 123.0) <=> QScriptValue(123.0)",
     "QScriptValue(0, 123.0) <=> QScriptValue(QString(\"123\"))",
     "QScriptValue(0, 123.0) <=> QScriptValue(0, 123.0)",
@@ -494,6 +495,7 @@ static QString equals_array[] = {
     "QScriptValue(0, QString(\"\")) <=> engine->evaluate(\"0\")",
     "QScriptValue(0, QString(\"\")) <=> engine->evaluate(\"0.0\")",
     "QScriptValue(0, QString(\"\")) <=> engine->evaluate(\"''\")",
+    "QScriptValue(0, QString(\"\")) <=> engine->newArray()",
     "QScriptValue(0, QString()) <=> QScriptValue(false)",
     "QScriptValue(0, QString()) <=> QScriptValue(0)",
     "QScriptValue(0, QString()) <=> QScriptValue(0.0)",
@@ -516,6 +518,7 @@ static QString equals_array[] = {
     "QScriptValue(0, QString()) <=> engine->evaluate(\"0\")",
     "QScriptValue(0, QString()) <=> engine->evaluate(\"0.0\")",
     "QScriptValue(0, QString()) <=> engine->evaluate(\"''\")",
+    "QScriptValue(0, QString()) <=> engine->newArray()",
     "QScriptValue(0, QString(\"0\")) <=> QScriptValue(false)",
     "QScriptValue(0, QString(\"0\")) <=> QScriptValue(0)",
     "QScriptValue(0, QString(\"0\")) <=> QScriptValue(0.0)",
@@ -593,6 +596,7 @@ static QString equals_array[] = {
     "QScriptValue(engine, false) <=> engine->evaluate(\"0.0\")",
     "QScriptValue(engine, false) <=> engine->evaluate(\"''\")",
     "QScriptValue(engine, false) <=> engine->evaluate(\"'0'\")",
+    "QScriptValue(engine, false) <=> engine->newArray()",
     "QScriptValue(engine, int(122)) <=> QScriptValue(int(122))",
     "QScriptValue(engine, int(122)) <=> QScriptValue(0, int(122))",
     "QScriptValue(engine, int(122)) <=> QScriptValue(engine, int(122))",
@@ -627,6 +631,7 @@ static QString equals_array[] = {
     "QScriptValue(engine, 0) <=> engine->evaluate(\"0.0\")",
     "QScriptValue(engine, 0) <=> engine->evaluate(\"''\")",
     "QScriptValue(engine, 0) <=> engine->evaluate(\"'0'\")",
+    "QScriptValue(engine, 0) <=> engine->newArray()",
     "QScriptValue(engine, 0.0) <=> QScriptValue(false)",
     "QScriptValue(engine, 0.0) <=> QScriptValue(0)",
     "QScriptValue(engine, 0.0) <=> QScriptValue(0.0)",
@@ -653,6 +658,7 @@ static QString equals_array[] = {
     "QScriptValue(engine, 0.0) <=> engine->evaluate(\"0.0\")",
     "QScriptValue(engine, 0.0) <=> engine->evaluate(\"''\")",
     "QScriptValue(engine, 0.0) <=> engine->evaluate(\"'0'\")",
+    "QScriptValue(engine, 0.0) <=> engine->newArray()",
     "QScriptValue(engine, 123.0) <=> QScriptValue(123.0)",
     "QScriptValue(engine, 123.0) <=> QScriptValue(QString(\"123\"))",
     "QScriptValue(engine, 123.0) <=> QScriptValue(0, 123.0)",
@@ -748,6 +754,7 @@ static QString equals_array[] = {
     "QScriptValue(engine, QString(\"\")) <=> engine->evaluate(\"0\")",
     "QScriptValue(engine, QString(\"\")) <=> engine->evaluate(\"0.0\")",
     "QScriptValue(engine, QString(\"\")) <=> engine->evaluate(\"''\")",
+    "QScriptValue(engine, QString(\"\")) <=> engine->newArray()",
     "QScriptValue(engine, QString()) <=> QScriptValue(false)",
     "QScriptValue(engine, QString()) <=> QScriptValue(0)",
     "QScriptValue(engine, QString()) <=> QScriptValue(0.0)",
@@ -770,6 +777,7 @@ static QString equals_array[] = {
     "QScriptValue(engine, QString()) <=> engine->evaluate(\"0\")",
     "QScriptValue(engine, QString()) <=> engine->evaluate(\"0.0\")",
     "QScriptValue(engine, QString()) <=> engine->evaluate(\"''\")",
+    "QScriptValue(engine, QString()) <=> engine->newArray()",
     "QScriptValue(engine, QString(\"0\")) <=> QScriptValue(false)",
     "QScriptValue(engine, QString(\"0\")) <=> QScriptValue(0)",
     "QScriptValue(engine, QString(\"0\")) <=> QScriptValue(0.0)",
@@ -810,7 +818,6 @@ static QString equals_array[] = {
     "engine->evaluate(\"[]\") <=> QScriptValue(engine, 0.0)",
     "engine->evaluate(\"[]\") <=> QScriptValue(engine, QString(\"\"))",
     "engine->evaluate(\"[]\") <=> QScriptValue(engine, QString())",
-    "engine->evaluate(\"[]\") <=> engine->evaluate(\"[]\")",
     "engine->evaluate(\"[]\") <=> engine->evaluate(\"false\")",
     "engine->evaluate(\"[]\") <=> engine->evaluate(\"0\")",
     "engine->evaluate(\"[]\") <=> engine->evaluate(\"0.0\")",
@@ -854,11 +861,6 @@ static QString equals_array[] = {
     "engine->evaluate(\"Array\") <=> engine->evaluate(\"Array\")",
     "engine->evaluate(\"Number\") <=> engine->evaluate(\"Number\")",
     "engine->evaluate(\"Function\") <=> engine->evaluate(\"Function\")",
-    "engine->evaluate(\"(function() { return 1; })\") <=> engine->evaluate(\"(function() { return 1; })\")",
-    "engine->evaluate(\"(function() { return 'ciao'; })\") <=> engine->evaluate(\"(function() { return 'ciao'; })\")",
-    "engine->evaluate(\"(function() { throw new Error('foo' })\") <=> engine->evaluate(\"(function() { throw new Error('foo' })\")",
-    "engine->evaluate(\"/foo/\") <=> engine->evaluate(\"/foo/\")",
-    "engine->evaluate(\"new Object()\") <=> engine->evaluate(\"new Object()\")",
     "engine->evaluate(\"new Array()\") <=> QScriptValue(false)",
     "engine->evaluate(\"new Array()\") <=> QScriptValue(0)",
     "engine->evaluate(\"new Array()\") <=> QScriptValue(0.0)",
@@ -874,17 +876,11 @@ static QString equals_array[] = {
     "engine->evaluate(\"new Array()\") <=> QScriptValue(engine, 0.0)",
     "engine->evaluate(\"new Array()\") <=> QScriptValue(engine, QString(\"\"))",
     "engine->evaluate(\"new Array()\") <=> QScriptValue(engine, QString())",
-    "engine->evaluate(\"new Array()\") <=> engine->evaluate(\"new Array()\")",
     "engine->evaluate(\"new Array()\") <=> engine->evaluate(\"false\")",
     "engine->evaluate(\"new Array()\") <=> engine->evaluate(\"0\")",
     "engine->evaluate(\"new Array()\") <=> engine->evaluate(\"0.0\")",
     "engine->evaluate(\"new Array()\") <=> engine->evaluate(\"''\")",
-    "engine->evaluate(\"new Error()\") <=> engine->evaluate(\"new Error()\")",
-    "engine->evaluate(\"a = new Object( a.foo = 22; a.foo\") <=> engine->evaluate(\"a = new Object( a.foo = 22; a.foo\")",
-    "engine->evaluate(\"Undefined\") <=> engine->evaluate(\"Undefined\")",
-    "engine->evaluate(\"Null\") <=> engine->evaluate(\"Null\")",
-    "engine->evaluate(\"True\") <=> engine->evaluate(\"True\")",
-    "engine->evaluate(\"False\") <=> engine->evaluate(\"False\")",
+    "engine->evaluate(\"a = new Object(); a.foo = 22; a.foo\") <=> engine->evaluate(\"a = new Object(); a.foo = 22; a.foo\")",
     "engine->evaluate(\"undefined\") <=> QScriptValue(QScriptValue::UndefinedValue)",
     "engine->evaluate(\"undefined\") <=> QScriptValue(QScriptValue::NullValue)",
     "engine->evaluate(\"undefined\") <=> QScriptValue(0, QScriptValue::UndefinedValue)",
@@ -937,6 +933,7 @@ static QString equals_array[] = {
     "engine->evaluate(\"false\") <=> engine->evaluate(\"0.0\")",
     "engine->evaluate(\"false\") <=> engine->evaluate(\"''\")",
     "engine->evaluate(\"false\") <=> engine->evaluate(\"'0'\")",
+    "engine->evaluate(\"false\") <=> engine->newArray()",
     "engine->evaluate(\"122\") <=> QScriptValue(int(122))",
     "engine->evaluate(\"122\") <=> QScriptValue(0, int(122))",
     "engine->evaluate(\"122\") <=> QScriptValue(engine, int(122))",
@@ -971,6 +968,7 @@ static QString equals_array[] = {
     "engine->evaluate(\"0\") <=> engine->evaluate(\"0.0\")",
     "engine->evaluate(\"0\") <=> engine->evaluate(\"''\")",
     "engine->evaluate(\"0\") <=> engine->evaluate(\"'0'\")",
+    "engine->evaluate(\"0\") <=> engine->newArray()",
     "engine->evaluate(\"0.0\") <=> QScriptValue(false)",
     "engine->evaluate(\"0.0\") <=> QScriptValue(0)",
     "engine->evaluate(\"0.0\") <=> QScriptValue(0.0)",
@@ -997,6 +995,7 @@ static QString equals_array[] = {
     "engine->evaluate(\"0.0\") <=> engine->evaluate(\"0.0\")",
     "engine->evaluate(\"0.0\") <=> engine->evaluate(\"''\")",
     "engine->evaluate(\"0.0\") <=> engine->evaluate(\"'0'\")",
+    "engine->evaluate(\"0.0\") <=> engine->newArray()",
     "engine->evaluate(\"123.0\") <=> QScriptValue(123.0)",
     "engine->evaluate(\"123.0\") <=> QScriptValue(QString(\"123\"))",
     "engine->evaluate(\"123.0\") <=> QScriptValue(0, 123.0)",
@@ -1068,6 +1067,7 @@ static QString equals_array[] = {
     "engine->evaluate(\"''\") <=> engine->evaluate(\"0\")",
     "engine->evaluate(\"''\") <=> engine->evaluate(\"0.0\")",
     "engine->evaluate(\"''\") <=> engine->evaluate(\"''\")",
+    "engine->evaluate(\"''\") <=> engine->newArray()",
     "engine->evaluate(\"'0'\") <=> QScriptValue(false)",
     "engine->evaluate(\"'0'\") <=> QScriptValue(0)",
     "engine->evaluate(\"'0'\") <=> QScriptValue(0.0)",
@@ -1115,41 +1115,73 @@ static QString equals_array[] = {
     "engine->undefinedValue() <=> engine->evaluate(\"undefined\")",
     "engine->undefinedValue() <=> engine->evaluate(\"null\")",
     "engine->undefinedValue() <=> engine->nullValue()",
-    "engine->undefinedValue() <=> engine->undefinedValue()"};
+    "engine->undefinedValue() <=> engine->undefinedValue()",
+    "engine->newArray() <=> QScriptValue(false)",
+    "engine->newArray() <=> QScriptValue(0)",
+    "engine->newArray() <=> QScriptValue(0.0)",
+    "engine->newArray() <=> QScriptValue(QString(\"\"))",
+    "engine->newArray() <=> QScriptValue(QString())",
+    "engine->newArray() <=> QScriptValue(0, false)",
+    "engine->newArray() <=> QScriptValue(0, 0)",
+    "engine->newArray() <=> QScriptValue(0, 0.0)",
+    "engine->newArray() <=> QScriptValue(0, QString(\"\"))",
+    "engine->newArray() <=> QScriptValue(0, QString())",
+    "engine->newArray() <=> QScriptValue(engine, false)",
+    "engine->newArray() <=> QScriptValue(engine, 0)",
+    "engine->newArray() <=> QScriptValue(engine, 0.0)",
+    "engine->newArray() <=> QScriptValue(engine, QString(\"\"))",
+    "engine->newArray() <=> QScriptValue(engine, QString())",
+    "engine->newArray() <=> engine->evaluate(\"false\")",
+    "engine->newArray() <=> engine->evaluate(\"0\")",
+    "engine->newArray() <=> engine->evaluate(\"0.0\")",
+    "engine->newArray() <=> engine->evaluate(\"''\")"};
 
-void tst_QScriptValue::equals_makeData(const char *expr)
+void tst_QScriptValue::equals_data()
 {
-    static QSet<QString> equals;
-    if (equals.isEmpty()) {
-        equals.reserve(1085);
-        for (unsigned i = 0; i < 1085; ++i)
-            equals.insert(equals_array[i]);
-    }
-    QHash<QString, QScriptValue>::const_iterator it;
-    for (it = m_values.constBegin(); it != m_values.constEnd(); ++it) {
-        QString tag = QString::fromLatin1("%20 <=> %21").arg(expr).arg(it.key());
-        newRow(tag.toLatin1()) << it.value() << equals.contains(tag);
+    QTest::addColumn<QScriptValue>("value");
+    QTest::addColumn<QScriptValue>("other");
+    QTest::addColumn<bool>("expected");
+    if (m_engine)
+        delete m_engine;
+    m_engine = new QScriptEngine();
+    QSet<QString> equals;
+    equals.reserve(1111);
+    for (unsigned i = 0; i < 1111; ++i)
+        equals.insert(equals_array[i]);
+    for (unsigned i = 0; i < 135; ++i) {
+        QPair<QString, QScriptValue> value1 = initScriptValues(i);
+        for (unsigned j = 0; j < 135; ++j) {
+            QPair<QString, QScriptValue> value2 = initScriptValues(j);
+            QString tag = QString::fromLatin1("%20 <=> %21").arg(value1.first, value2.first);
+            QTest::newRow(tag.toAscii().constData()) << value1.second << value2.second << equals.contains(tag);        }
     }
 }
 
-void tst_QScriptValue::equals_test(const char *, const QScriptValue& value)
+void tst_QScriptValue::equals()
 {
+    QFETCH(QScriptValue, value);
     QFETCH(QScriptValue, other);
     QFETCH(bool, expected);
+    QEXPECT_FAIL("QScriptValue(qInf()) <=> QScriptValue(\"-Infinity\")", "FIXME: WebKit bug 43038", Continue);
+    QEXPECT_FAIL("QScriptValue(qInf()) <=> QScriptValue(0, \"-Infinity\")", "FIXME: WebKit bug 43038", Continue);
+    QEXPECT_FAIL("QScriptValue(-qInf()) <=> QScriptValue(\"-Infinity\")", "FIXME: WebKit bug 43038", Continue);
+    QEXPECT_FAIL("QScriptValue(-qInf()) <=> QScriptValue(0, \"-Infinity\")", "FIXME: WebKit bug 43038", Continue);
+    QEXPECT_FAIL("QScriptValue(\"-Infinity\") <=> QScriptValue(qInf())", "FIXME: WebKit bug 43038", Continue);
+    QEXPECT_FAIL("QScriptValue(\"-Infinity\") <=> QScriptValue(-qInf())", "FIXME: WebKit bug 43038", Continue);
+    QEXPECT_FAIL("QScriptValue(\"-Infinity\") <=> QScriptValue(0, qInf())", "FIXME: WebKit bug 43038", Continue);
+    QEXPECT_FAIL("QScriptValue(\"-Infinity\") <=> QScriptValue(0, -qInf())", "FIXME: WebKit bug 43038", Continue);
+    QEXPECT_FAIL("QScriptValue(0, qInf()) <=> QScriptValue(\"-Infinity\")", "FIXME: WebKit bug 43038", Continue);
+    QEXPECT_FAIL("QScriptValue(0, qInf()) <=> QScriptValue(0, \"-Infinity\")", "FIXME: WebKit bug 43038", Continue);
+    QEXPECT_FAIL("QScriptValue(0, -qInf()) <=> QScriptValue(\"-Infinity\")", "FIXME: WebKit bug 43038", Continue);
+    QEXPECT_FAIL("QScriptValue(0, -qInf()) <=> QScriptValue(0, \"-Infinity\")", "FIXME: WebKit bug 43038", Continue);
+    QEXPECT_FAIL("QScriptValue(0, \"-Infinity\") <=> QScriptValue(qInf())", "FIXME: WebKit bug 43038", Continue);
+    QEXPECT_FAIL("QScriptValue(0, \"-Infinity\") <=> QScriptValue(-qInf())", "FIXME: WebKit bug 43038", Continue);
+    QEXPECT_FAIL("QScriptValue(0, \"-Infinity\") <=> QScriptValue(0, qInf())", "FIXME: WebKit bug 43038", Continue);
+    QEXPECT_FAIL("QScriptValue(0, \"-Infinity\") <=> QScriptValue(0, -qInf())", "FIXME: WebKit bug 43038", Continue);
     QCOMPARE(value.equals(other), expected);
 }
 
-DEFINE_TEST_FUNCTION(equals)
-
-
-void tst_QScriptValue::strictlyEquals_initData()
-{
-    QTest::addColumn<QScriptValue>("other");
-    QTest::addColumn<bool>("expected");
-    initScriptValues();
-}
-
-static QString strictlyEquals_array[] = {
+static const QString strictlyEquals_array[] = {
     "QScriptValue() <=> QScriptValue()",
     "QScriptValue(QScriptValue::UndefinedValue) <=> QScriptValue(QScriptValue::UndefinedValue)",
     "QScriptValue(QScriptValue::UndefinedValue) <=> QScriptValue(0, QScriptValue::UndefinedValue)",
@@ -1515,7 +1547,6 @@ static QString strictlyEquals_array[] = {
     "QScriptValue(engine, QString(\"123\")) <=> QScriptValue(engine, QString(\"123\"))",
     "QScriptValue(engine, QString(\"123\")) <=> engine->evaluate(\"'123'\")",
     "QScriptValue(engine, QString(\"1.23\")) <=> QScriptValue(engine, QString(\"1.23\"))",
-    "engine->evaluate(\"[]\") <=> engine->evaluate(\"[]\")",
     "engine->evaluate(\"{}\") <=> QScriptValue(QScriptValue::UndefinedValue)",
     "engine->evaluate(\"{}\") <=> QScriptValue(0, QScriptValue::UndefinedValue)",
     "engine->evaluate(\"{}\") <=> QScriptValue(engine, QScriptValue::UndefinedValue)",
@@ -1531,18 +1562,7 @@ static QString strictlyEquals_array[] = {
     "engine->evaluate(\"Array\") <=> engine->evaluate(\"Array\")",
     "engine->evaluate(\"Number\") <=> engine->evaluate(\"Number\")",
     "engine->evaluate(\"Function\") <=> engine->evaluate(\"Function\")",
-    "engine->evaluate(\"(function() { return 1; })\") <=> engine->evaluate(\"(function() { return 1; })\")",
-    "engine->evaluate(\"(function() { return 'ciao'; })\") <=> engine->evaluate(\"(function() { return 'ciao'; })\")",
-    "engine->evaluate(\"(function() { throw new Error('foo' })\") <=> engine->evaluate(\"(function() { throw new Error('foo' })\")",
-    "engine->evaluate(\"/foo/\") <=> engine->evaluate(\"/foo/\")",
-    "engine->evaluate(\"new Object()\") <=> engine->evaluate(\"new Object()\")",
-    "engine->evaluate(\"new Array()\") <=> engine->evaluate(\"new Array()\")",
-    "engine->evaluate(\"new Error()\") <=> engine->evaluate(\"new Error()\")",
-    "engine->evaluate(\"a = new Object( a.foo = 22; a.foo\") <=> engine->evaluate(\"a = new Object( a.foo = 22; a.foo\")",
-    "engine->evaluate(\"Undefined\") <=> engine->evaluate(\"Undefined\")",
-    "engine->evaluate(\"Null\") <=> engine->evaluate(\"Null\")",
-    "engine->evaluate(\"True\") <=> engine->evaluate(\"True\")",
-    "engine->evaluate(\"False\") <=> engine->evaluate(\"False\")",
+    "engine->evaluate(\"a = new Object(); a.foo = 22; a.foo\") <=> engine->evaluate(\"a = new Object(); a.foo = 22; a.foo\")",
     "engine->evaluate(\"undefined\") <=> QScriptValue(QScriptValue::UndefinedValue)",
     "engine->evaluate(\"undefined\") <=> QScriptValue(0, QScriptValue::UndefinedValue)",
     "engine->evaluate(\"undefined\") <=> QScriptValue(engine, QScriptValue::UndefinedValue)",
@@ -1654,39 +1674,66 @@ static QString strictlyEquals_array[] = {
     "engine->undefinedValue() <=> engine->evaluate(\"undefined\")",
     "engine->undefinedValue() <=> engine->undefinedValue()"};
 
-void tst_QScriptValue::strictlyEquals_makeData(const char* expr)
+void tst_QScriptValue::strictlyEquals_data()
 {
-    static QSet<QString> equals;
-    if (equals.isEmpty()) {
-        equals.reserve(503);
-        for (unsigned i = 0; i < 503; ++i)
-            equals.insert(strictlyEquals_array[i]);
-    }
-    QHash<QString, QScriptValue>::const_iterator it;
-    for (it = m_values.constBegin(); it != m_values.constEnd(); ++it) {
-        QString tag = QString::fromLatin1("%20 <=> %21").arg(expr).arg(it.key());
-        newRow(tag.toLatin1()) << it.value() << equals.contains(tag);
+    QTest::addColumn<QScriptValue>("value");
+    QTest::addColumn<QScriptValue>("other");
+    QTest::addColumn<bool>("expected");
+    if (m_engine)
+        delete m_engine;
+    m_engine = new QScriptEngine();
+    QSet<QString> equals;
+    equals.reserve(491);
+    for (unsigned i = 0; i < 491; ++i)
+        equals.insert(strictlyEquals_array[i]);
+    for (unsigned i = 0; i < 135; ++i) {
+        QPair<QString, QScriptValue> value1 = initScriptValues(i);
+        for (unsigned j = 0; j < 135; ++j) {
+            QPair<QString, QScriptValue> value2 = initScriptValues(j);
+            QString tag = QString::fromLatin1("%20 <=> %21").arg(value1.first, value2.first);
+            QTest::newRow(tag.toAscii().constData()) << value1.second << value2.second << equals.contains(tag);        }
     }
 }
 
-void tst_QScriptValue::strictlyEquals_test(const char*, const QScriptValue& value)
+void tst_QScriptValue::strictlyEquals()
 {
+    QFETCH(QScriptValue, value);
     QFETCH(QScriptValue, other);
     QFETCH(bool, expected);
+    QEXPECT_FAIL("QScriptValue(QScriptValue::UndefinedValue) <=> QScriptValue(QScriptValue::UndefinedValue)", "FIXME: WebKit bug 43038", Continue);
+    QEXPECT_FAIL("QScriptValue(QScriptValue::UndefinedValue) <=> QScriptValue(0, QScriptValue::UndefinedValue)", "FIXME: WebKit bug 43038", Continue);
+    QEXPECT_FAIL("QScriptValue(QScriptValue::UndefinedValue) <=> QScriptValue(engine, QScriptValue::UndefinedValue)", "FIXME: WebKit bug 43038", Continue);
+    QEXPECT_FAIL("QScriptValue(QScriptValue::UndefinedValue) <=> engine->evaluate(\"{}\")", "FIXME: WebKit bug 43038", Continue);
+    QEXPECT_FAIL("QScriptValue(QScriptValue::UndefinedValue) <=> engine->evaluate(\"undefined\")", "FIXME: WebKit bug 43038", Continue);
+    QEXPECT_FAIL("QScriptValue(QScriptValue::UndefinedValue) <=> engine->undefinedValue()", "FIXME: WebKit bug 43038", Continue);
+    QEXPECT_FAIL("QScriptValue(QScriptValue::NullValue) <=> QScriptValue(QScriptValue::NullValue)", "FIXME: WebKit bug 43038", Continue);
+    QEXPECT_FAIL("QScriptValue(QScriptValue::NullValue) <=> QScriptValue(0, QScriptValue::NullValue)", "FIXME: WebKit bug 43038", Continue);
+    QEXPECT_FAIL("QScriptValue(QScriptValue::NullValue) <=> QScriptValue(engine, QScriptValue::NullValue)", "FIXME: WebKit bug 43038", Continue);
+    QEXPECT_FAIL("QScriptValue(QScriptValue::NullValue) <=> engine->evaluate(\"null\")", "FIXME: WebKit bug 43038", Continue);
+    QEXPECT_FAIL("QScriptValue(QScriptValue::NullValue) <=> engine->nullValue()", "FIXME: WebKit bug 43038", Continue);
+    QEXPECT_FAIL("QScriptValue(true) <=> QScriptValue(true)", "FIXME: WebKit bug 43038", Continue);
+    QEXPECT_FAIL("QScriptValue(true) <=> QScriptValue(0, true)", "FIXME: WebKit bug 43038", Continue);
+    QEXPECT_FAIL("QScriptValue(false) <=> QScriptValue(false)", "FIXME: WebKit bug 43038", Continue);
+    QEXPECT_FAIL("QScriptValue(false) <=> QScriptValue(0, false)", "FIXME: WebKit bug 43038", Continue);
+    QEXPECT_FAIL("QScriptValue(0, QScriptValue::UndefinedValue) <=> QScriptValue(QScriptValue::UndefinedValue)", "FIXME: WebKit bug 43038", Continue);
+    QEXPECT_FAIL("QScriptValue(0, QScriptValue::UndefinedValue) <=> QScriptValue(0, QScriptValue::UndefinedValue)", "FIXME: WebKit bug 43038", Continue);
+    QEXPECT_FAIL("QScriptValue(0, QScriptValue::UndefinedValue) <=> QScriptValue(engine, QScriptValue::UndefinedValue)", "FIXME: WebKit bug 43038", Continue);
+    QEXPECT_FAIL("QScriptValue(0, QScriptValue::UndefinedValue) <=> engine->evaluate(\"{}\")", "FIXME: WebKit bug 43038", Continue);
+    QEXPECT_FAIL("QScriptValue(0, QScriptValue::UndefinedValue) <=> engine->evaluate(\"undefined\")", "FIXME: WebKit bug 43038", Continue);
+    QEXPECT_FAIL("QScriptValue(0, QScriptValue::UndefinedValue) <=> engine->undefinedValue()", "FIXME: WebKit bug 43038", Continue);
+    QEXPECT_FAIL("QScriptValue(0, QScriptValue::NullValue) <=> QScriptValue(QScriptValue::NullValue)", "FIXME: WebKit bug 43038", Continue);
+    QEXPECT_FAIL("QScriptValue(0, QScriptValue::NullValue) <=> QScriptValue(0, QScriptValue::NullValue)", "FIXME: WebKit bug 43038", Continue);
+    QEXPECT_FAIL("QScriptValue(0, QScriptValue::NullValue) <=> QScriptValue(engine, QScriptValue::NullValue)", "FIXME: WebKit bug 43038", Continue);
+    QEXPECT_FAIL("QScriptValue(0, QScriptValue::NullValue) <=> engine->evaluate(\"null\")", "FIXME: WebKit bug 43038", Continue);
+    QEXPECT_FAIL("QScriptValue(0, QScriptValue::NullValue) <=> engine->nullValue()", "FIXME: WebKit bug 43038", Continue);
+    QEXPECT_FAIL("QScriptValue(0, true) <=> QScriptValue(true)", "FIXME: WebKit bug 43038", Continue);
+    QEXPECT_FAIL("QScriptValue(0, true) <=> QScriptValue(0, true)", "FIXME: WebKit bug 43038", Continue);
+    QEXPECT_FAIL("QScriptValue(0, false) <=> QScriptValue(false)", "FIXME: WebKit bug 43038", Continue);
+    QEXPECT_FAIL("QScriptValue(0, false) <=> QScriptValue(0, false)", "FIXME: WebKit bug 43038", Continue);
     QCOMPARE(value.strictlyEquals(other), expected);
 }
 
-DEFINE_TEST_FUNCTION(strictlyEquals)
-
-
-void tst_QScriptValue::instanceOf_initData()
-{
-    QTest::addColumn<QScriptValue>("other");
-    QTest::addColumn<bool>("expected");
-    initScriptValues();
-}
-
-static QString instanceOf_array[] = {
+static const QString instanceOf_array[] = {
     "engine->evaluate(\"[]\") <=> engine->evaluate(\"Object\")",
     "engine->evaluate(\"[]\") <=> engine->evaluate(\"Array\")",
     "engine->evaluate(\"Date.prototype\") <=> engine->evaluate(\"Object\")",
@@ -1705,38 +1752,48 @@ static QString instanceOf_array[] = {
     "engine->evaluate(\"(function() { return 1; })\") <=> engine->evaluate(\"Function\")",
     "engine->evaluate(\"(function() { return 'ciao'; })\") <=> engine->evaluate(\"Object\")",
     "engine->evaluate(\"(function() { return 'ciao'; })\") <=> engine->evaluate(\"Function\")",
-    "engine->evaluate(\"(function() { throw new Error('foo' })\") <=> engine->evaluate(\"Object\")",
+    "engine->evaluate(\"(function() { throw new Error('foo'); })\") <=> engine->evaluate(\"Object\")",
+    "engine->evaluate(\"(function() { throw new Error('foo'); })\") <=> engine->evaluate(\"Function\")",
     "engine->evaluate(\"/foo/\") <=> engine->evaluate(\"Object\")",
     "engine->evaluate(\"new Object()\") <=> engine->evaluate(\"Object\")",
     "engine->evaluate(\"new Array()\") <=> engine->evaluate(\"Object\")",
     "engine->evaluate(\"new Array()\") <=> engine->evaluate(\"Array\")",
     "engine->evaluate(\"new Error()\") <=> engine->evaluate(\"Object\")",
-    "engine->evaluate(\"a = new Object( a.foo = 22; a.foo\") <=> engine->evaluate(\"Object\")",
     "engine->evaluate(\"Undefined\") <=> engine->evaluate(\"Object\")",
     "engine->evaluate(\"Null\") <=> engine->evaluate(\"Object\")",
     "engine->evaluate(\"True\") <=> engine->evaluate(\"Object\")",
-    "engine->evaluate(\"False\") <=> engine->evaluate(\"Object\")"};
+    "engine->evaluate(\"False\") <=> engine->evaluate(\"Object\")",
+    "engine->newObject() <=> engine->evaluate(\"Object\")",
+    "engine->newArray() <=> engine->evaluate(\"Object\")",
+    "engine->newArray() <=> engine->evaluate(\"Array\")",
+    "engine->newArray(10) <=> engine->evaluate(\"Object\")",
+    "engine->newArray(10) <=> engine->evaluate(\"Array\")"};
 
-void tst_QScriptValue::instanceOf_makeData(const char *expr)
+void tst_QScriptValue::instanceOf_data()
 {
-    static QSet<QString> equals;
-    if (equals.isEmpty()) {
-        equals.reserve(29);
-        for (unsigned i = 0; i < 29; ++i)
-            equals.insert(instanceOf_array[i]);
-    }
-    QHash<QString, QScriptValue>::const_iterator it;
-    for (it = m_values.constBegin(); it != m_values.constEnd(); ++it) {
-        QString tag = QString::fromLatin1("%20 <=> %21").arg(expr).arg(it.key());
-        newRow(tag.toLatin1()) << it.value() << equals.contains(tag);
+    QTest::addColumn<QScriptValue>("value");
+    QTest::addColumn<QScriptValue>("other");
+    QTest::addColumn<bool>("expected");
+    if (m_engine)
+        delete m_engine;
+    m_engine = new QScriptEngine();
+    QSet<QString> equals;
+    equals.reserve(34);
+    for (unsigned i = 0; i < 34; ++i)
+        equals.insert(instanceOf_array[i]);
+    for (unsigned i = 0; i < 135; ++i) {
+        QPair<QString, QScriptValue> value1 = initScriptValues(i);
+        for (unsigned j = 0; j < 135; ++j) {
+            QPair<QString, QScriptValue> value2 = initScriptValues(j);
+            QString tag = QString::fromLatin1("%20 <=> %21").arg(value1.first, value2.first);
+            QTest::newRow(tag.toAscii().constData()) << value1.second << value2.second << equals.contains(tag);        }
     }
 }
 
-void tst_QScriptValue::instanceOf_test(const char *, const QScriptValue& value)
+void tst_QScriptValue::instanceOf()
 {
+    QFETCH(QScriptValue, value);
     QFETCH(QScriptValue, other);
     QFETCH(bool, expected);
     QCOMPARE(value.instanceOf(other), expected);
 }
-
-DEFINE_TEST_FUNCTION(instanceOf)

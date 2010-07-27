@@ -1,3 +1,75 @@
+2010-07-27  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Update the QScriptValue autotests suite.
+
+        QScriptValue generated files were updated, changes are:
+         - More tested values (for example QSE::newObject() and QSE::newArray())
+         - Tested values are recreated before each test and are not reused.
+         The change implies better code coverage and some expected result changes.
+         - A new test to check copy and assign functions.
+         - Tests are using standard QTestLib interface, without any custom macros.
+
+        [Qt] Improve test coverage for the QScriptValue
+        https://bugs.webkit.org/show_bug.cgi?id=42366
+
+        * tests/qscriptvalue/tst_qscriptvalue.cpp:
+        (tst_QScriptValue::tst_QScriptValue):
+        (tst_QScriptValue::~tst_QScriptValue):
+        (tst_QScriptValue::assignAndCopyConstruct_data):
+        (tst_QScriptValue::assignAndCopyConstruct):
+        * tests/qscriptvalue/tst_qscriptvalue.h:
+        * tests/qscriptvalue/tst_qscriptvalue_generated_comparison.cpp:
+        (tst_QScriptValue::equals_data):
+        (tst_QScriptValue::equals):
+        (tst_QScriptValue::strictlyEquals_data):
+        (tst_QScriptValue::strictlyEquals):
+        (tst_QScriptValue::instanceOf_data):
+        (tst_QScriptValue::instanceOf):
+        * tests/qscriptvalue/tst_qscriptvalue_generated_init.cpp:
+        (tst_QScriptValue::initScriptValues):
+        * tests/qscriptvalue/tst_qscriptvalue_generated_istype.cpp:
+        (tst_QScriptValue::isValid_data):
+        (tst_QScriptValue::isValid):
+        (tst_QScriptValue::isBool_data):
+        (tst_QScriptValue::isBool):
+        (tst_QScriptValue::isBoolean_data):
+        (tst_QScriptValue::isBoolean):
+        (tst_QScriptValue::isNumber_data):
+        (tst_QScriptValue::isNumber):
+        (tst_QScriptValue::isFunction_data):
+        (tst_QScriptValue::isFunction):
+        (tst_QScriptValue::isNull_data):
+        (tst_QScriptValue::isNull):
+        (tst_QScriptValue::isString_data):
+        (tst_QScriptValue::isString):
+        (tst_QScriptValue::isUndefined_data):
+        (tst_QScriptValue::isUndefined):
+        (tst_QScriptValue::isObject_data):
+        (tst_QScriptValue::isObject):
+        (tst_QScriptValue::isArray_data):
+        (tst_QScriptValue::isArray):
+        (tst_QScriptValue::isError_data):
+        (tst_QScriptValue::isError):
+        * tests/qscriptvalue/tst_qscriptvalue_generated_totype.cpp:
+        (tst_QScriptValue::toString_data):
+        (tst_QScriptValue::toString):
+        (tst_QScriptValue::toNumber_data):
+        (tst_QScriptValue::toNumber):
+        (tst_QScriptValue::toBool_data):
+        (tst_QScriptValue::toBool):
+        (tst_QScriptValue::toBoolean_data):
+        (tst_QScriptValue::toBoolean):
+        (tst_QScriptValue::toInteger_data):
+        (tst_QScriptValue::toInteger):
+        (tst_QScriptValue::toInt32_data):
+        (tst_QScriptValue::toInt32):
+        (tst_QScriptValue::toUInt32_data):
+        (tst_QScriptValue::toUInt32):
+        (tst_QScriptValue::toUInt16_data):
+        (tst_QScriptValue::toUInt16):
+
 2010-07-27  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

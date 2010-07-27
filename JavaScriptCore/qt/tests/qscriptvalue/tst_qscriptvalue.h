@@ -29,6 +29,8 @@
 
 Q_DECLARE_METATYPE(QScriptValue*);
 Q_DECLARE_METATYPE(QScriptValue);
+typedef QPair<QString, QScriptValue> QPairQStringAndQScriptValue;
+Q_DECLARE_METATYPE(QPairQStringAndQScriptValue);
 
 class tst_QScriptValue : public QObject {
     Q_OBJECT
@@ -61,13 +63,21 @@ private slots:
     void propertyFlag_data();
     void propertyFlag();
     void globalObjectChanges();
+    void assignAndCopyConstruct_data();
+    void assignAndCopyConstruct();
 
     // Generated test functions.
+    void isArray_data();
+    void isArray();
+
     void isBool_data();
     void isBool();
 
     void isBoolean_data();
     void isBoolean();
+
+    void isError_data();
+    void isError();
 
     void isNumber_data();
     void isNumber();
@@ -124,108 +134,10 @@ private slots:
     void instanceOf();
 
 private:
-    typedef void (tst_QScriptValue::*InitDataFunction)();
-    typedef void (tst_QScriptValue::*DefineDataFunction)(const char*);
-    void dataHelper(InitDataFunction init, DefineDataFunction define);
-    QTestData& newRow(const char* tag);
+    // Generated function
+    QPair<QString, QScriptValue> initScriptValues(uint idx);
 
-    typedef void (tst_QScriptValue::*TestFunction)(const char*, const QScriptValue&);
-    void testHelper(TestFunction fun);
-
-    // Generated functions
-
-    void initScriptValues();
-
-    void isBool_initData();
-    void isBool_makeData(const char* expr);
-    void isBool_test(const char* expr, const QScriptValue& value);
-
-    void isBoolean_initData();
-    void isBoolean_makeData(const char* expr);
-    void isBoolean_test(const char* expr, const QScriptValue& value);
-
-    void isNumber_initData();
-    void isNumber_makeData(const char* expr);
-    void isNumber_test(const char* expr, const QScriptValue&);
-
-    void isFunction_initData();
-    void isFunction_makeData(const char* expr);
-    void isFunction_test(const char* expr, const QScriptValue& value);
-
-    void isNull_initData();
-    void isNull_makeData(const char* expr);
-    void isNull_test(const char* expr, const QScriptValue& value);
-
-    void isObject_initData();
-    void isObject_makeData(const char* expr);
-    void isObject_test(const char* expr, const QScriptValue& value);
-
-    void isString_initData();
-    void isString_makeData(const char* expr);
-    void isString_test(const char* expr, const QScriptValue& value);
-
-    void isUndefined_initData();
-    void isUndefined_makeData(const char* expr);
-    void isUndefined_test(const char* expr, const QScriptValue& value);
-
-    void isValid_initData();
-    void isValid_makeData(const char* expr);
-    void isValid_test(const char* expr, const QScriptValue& value);
-
-    void toString_initData();
-    void toString_makeData(const char*);
-    void toString_test(const char*, const QScriptValue&);
-
-    void toNumber_initData();
-    void toNumber_makeData(const char*);
-    void toNumber_test(const char*, const QScriptValue&);
-
-    void toBool_initData();
-    void toBool_makeData(const char*);
-    void toBool_test(const char*, const QScriptValue&);
-
-    void toBoolean_initData();
-    void toBoolean_makeData(const char*);
-    void toBoolean_test(const char*, const QScriptValue&);
-
-    void toInteger_initData();
-    void toInteger_makeData(const char*);
-    void toInteger_test(const char*, const QScriptValue&);
-
-    void toInt32_initData();
-    void toInt32_makeData(const char*);
-    void toInt32_test(const char*, const QScriptValue&);
-
-    void toUInt32_initData();
-    void toUInt32_makeData(const char*);
-    void toUInt32_test(const char*, const QScriptValue&);
-
-    void toUInt16_initData();
-    void toUInt16_makeData(const char*);
-    void toUInt16_test(const char*, const QScriptValue&);
-
-    void equals_initData();
-    void equals_makeData(const char*);
-    void equals_test(const char*, const QScriptValue&);
-
-    void strictlyEquals_initData();
-    void strictlyEquals_makeData(const char*);
-    void strictlyEquals_test(const char*, const QScriptValue&);
-
-    void instanceOf_initData();
-    void instanceOf_makeData(const char*);
-    void instanceOf_test(const char*, const QScriptValue&);
-
-private:
-    QScriptEngine* engine;
-    QHash<QString, QScriptValue> m_values;
-    QString m_currentExpression;
+    QScriptEngine* m_engine;
 };
-
-#define DEFINE_TEST_FUNCTION(name) \
-void tst_QScriptValue::name##_data() { dataHelper(&tst_QScriptValue::name##_initData, &tst_QScriptValue::name##_makeData); } \
-void tst_QScriptValue::name() { testHelper(&tst_QScriptValue::name##_test); }
-
-
 
 #endif // tst_qscriptvalue_h

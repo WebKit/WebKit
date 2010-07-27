@@ -21,39 +21,14 @@
 #include <QtCore/qnumeric.h>
 
 tst_QScriptValue::tst_QScriptValue()
-    : engine(0)
+    : m_engine(0)
 {
 }
 
 tst_QScriptValue::~tst_QScriptValue()
 {
-    delete engine;
+    delete m_engine;
 }
-
-void tst_QScriptValue::dataHelper(InitDataFunction init, DefineDataFunction define)
-{
-    QTest::addColumn<QString>("__expression__");
-    (this->*init)();
-    QHash<QString, QScriptValue>::const_iterator it;
-    for (it = m_values.constBegin(); it != m_values.constEnd(); ++it) {
-        m_currentExpression = it.key();
-        (this->*define)(it.key().toLatin1());
-    }
-    m_currentExpression = QString();
-}
-
-QTestData& tst_QScriptValue::newRow(const char* tag)
-{
-    return QTest::newRow(tag) << m_currentExpression;
-}
-
-void tst_QScriptValue::testHelper(TestFunction fun)
-{
-    QFETCH(QString, __expression__);
-    QScriptValue value = m_values.value(__expression__);
-    (this->*fun)(__expression__.toLatin1(), value);
-}
-
 
 void tst_QScriptValue::ctor()
 {
@@ -1283,6 +1258,39 @@ void tst_QScriptValue::globalObjectChanges()
     object.setProperty("foo", QScriptValue());
     QVERIFY(!object.property("foo").isValid());
     QVERIFY(!object.property("foo", QScriptValue::ResolveLocal).isValid());
+}
+
+void tst_QScriptValue::assignAndCopyConstruct_data()
+{
+    QTest::addColumn<QScriptValue>("value");
+    if (m_engine)
+        delete m_engine;
+    m_engine = new QScriptEngine;
+    // Copy & assign code is the same for all types, so it is enough to check only a few value.
+    for (unsigned i = 0; i < 10; ++i) {
+        QPair<QString, QScriptValue> testcase = initScriptValues(i);
+        QTest::newRow(testcase.first.toAscii().constData()) << testcase.second;
+    }
+}
+
+void tst_QScriptValue::assignAndCopyConstruct()
+{
+    QFETCH(QScriptValue, value);
+    QScriptValue copy(value);
+    QEXPECT_FAIL("QScriptValue(QScriptValue::NullValue)", "FIXME: WebKit bug 43038", Abort);
+    QEXPECT_FAIL("QScriptValue(QScriptValue::UndefinedValue)", "FIXME: WebKit bug 43038", Abort);
+    QCOMPARE(copy.strictlyEquals(value), !value.isNumber() || !qIsNaN(value.toNumber()));
+    QCOMPARE(copy.engine(), value.engine());
+
+    QScriptValue assigned = copy;
+    QCOMPARE(assigned.strictlyEquals(value), !copy.isNumber() || !qIsNaN(copy.toNumber()));
+    QCOMPARE(assigned.engine(), assigned.engine());
+
+    QScriptValue other(!value.toBool());
+    assigned = other;
+    QVERIFY(!assigned.strictlyEquals(copy));
+    QVERIFY(assigned.strictlyEquals(other));
+    QCOMPARE(assigned.engine(), other.engine());
 }
 
 QTEST_MAIN(tst_QScriptValue)

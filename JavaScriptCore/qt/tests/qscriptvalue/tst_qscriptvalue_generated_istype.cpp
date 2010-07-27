@@ -25,13 +25,7 @@
 #include "tst_qscriptvalue.h"
 
 
-void tst_QScriptValue::isValid_initData()
-{
-    QTest::addColumn<bool>("expected");
-    initScriptValues();
-}
-
-static QString isValid_array[] = {
+static const QString isValid_array[] = {
     "QScriptValue(QScriptValue::UndefinedValue)",
     "QScriptValue(QScriptValue::NullValue)",
     "QScriptValue(true)",
@@ -129,12 +123,12 @@ static QString isValid_array[] = {
     "engine->evaluate(\"Function\")",
     "engine->evaluate(\"(function() { return 1; })\")",
     "engine->evaluate(\"(function() { return 'ciao'; })\")",
-    "engine->evaluate(\"(function() { throw new Error('foo' })\")",
+    "engine->evaluate(\"(function() { throw new Error('foo'); })\")",
     "engine->evaluate(\"/foo/\")",
     "engine->evaluate(\"new Object()\")",
     "engine->evaluate(\"new Array()\")",
     "engine->evaluate(\"new Error()\")",
-    "engine->evaluate(\"a = new Object( a.foo = 22; a.foo\")",
+    "engine->evaluate(\"a = new Object(); a.foo = 22; a.foo\")",
     "engine->evaluate(\"Undefined\")",
     "engine->evaluate(\"Null\")",
     "engine->evaluate(\"True\")",
@@ -162,36 +156,37 @@ static QString isValid_array[] = {
     "engine->evaluate(\"'123'\")",
     "engine->evaluate(\"'12.4'\")",
     "engine->nullValue()",
-    "engine->undefinedValue()"};
+    "engine->undefinedValue()",
+    "engine->newObject()",
+    "engine->newArray()",
+    "engine->newArray(10)"};
 
-void tst_QScriptValue::isValid_makeData(const char* expr)
+void tst_QScriptValue::isValid_data()
 {
-    static QSet<QString> isValid;
-    if (isValid.isEmpty()) {
-        isValid.reserve(131);
-        for (unsigned i = 0; i < 131; ++i)
-            isValid.insert(isValid_array[i]);
+    QTest::addColumn<QScriptValue>("value");
+    QTest::addColumn<bool>("expected");
+    if (m_engine)
+        delete m_engine;
+    m_engine = new QScriptEngine();
+    QSet<QString> expectedValue;
+    expectedValue.reserve(134);
+    for (uint i = 0; i < 134; ++i)
+        expectedValue.insert(isValid_array[i]);
+    for (uint i = 0; i < 135; ++i) {
+        QPair<QString, QScriptValue> testcase = initScriptValues(i);
+        QTest::newRow(testcase.first.toAscii().constData()) << testcase.second << expectedValue.contains(testcase.first);
     }
-    newRow(expr) << isValid.contains(expr);
 }
 
-void tst_QScriptValue::isValid_test(const char*, const QScriptValue& value)
+void tst_QScriptValue::isValid()
 {
+    QFETCH(QScriptValue, value);
     QFETCH(bool, expected);
     QCOMPARE(value.isValid(), expected);
     QCOMPARE(value.isValid(), expected);
 }
 
-DEFINE_TEST_FUNCTION(isValid)
-
-
-void tst_QScriptValue::isBool_initData()
-{
-    QTest::addColumn<bool>("expected");
-    initScriptValues();
-}
-
-static QString isBool_array[] = {
+static const QString isBool_array[] = {
     "QScriptValue(true)",
     "QScriptValue(false)",
     "QScriptValue(0, true)",
@@ -201,34 +196,32 @@ static QString isBool_array[] = {
     "engine->evaluate(\"true\")",
     "engine->evaluate(\"false\")"};
 
-void tst_QScriptValue::isBool_makeData(const char* expr)
+void tst_QScriptValue::isBool_data()
 {
-    static QSet<QString> isBool;
-    if (isBool.isEmpty()) {
-        isBool.reserve(8);
-        for (unsigned i = 0; i < 8; ++i)
-            isBool.insert(isBool_array[i]);
+    QTest::addColumn<QScriptValue>("value");
+    QTest::addColumn<bool>("expected");
+    if (m_engine)
+        delete m_engine;
+    m_engine = new QScriptEngine();
+    QSet<QString> expectedValue;
+    expectedValue.reserve(8);
+    for (uint i = 0; i < 8; ++i)
+        expectedValue.insert(isBool_array[i]);
+    for (uint i = 0; i < 135; ++i) {
+        QPair<QString, QScriptValue> testcase = initScriptValues(i);
+        QTest::newRow(testcase.first.toAscii().constData()) << testcase.second << expectedValue.contains(testcase.first);
     }
-    newRow(expr) << isBool.contains(expr);
 }
 
-void tst_QScriptValue::isBool_test(const char*, const QScriptValue& value)
+void tst_QScriptValue::isBool()
 {
+    QFETCH(QScriptValue, value);
     QFETCH(bool, expected);
     QCOMPARE(value.isBool(), expected);
     QCOMPARE(value.isBool(), expected);
 }
 
-DEFINE_TEST_FUNCTION(isBool)
-
-
-void tst_QScriptValue::isBoolean_initData()
-{
-    QTest::addColumn<bool>("expected");
-    initScriptValues();
-}
-
-static QString isBoolean_array[] = {
+static const QString isBoolean_array[] = {
     "QScriptValue(true)",
     "QScriptValue(false)",
     "QScriptValue(0, true)",
@@ -238,34 +231,32 @@ static QString isBoolean_array[] = {
     "engine->evaluate(\"true\")",
     "engine->evaluate(\"false\")"};
 
-void tst_QScriptValue::isBoolean_makeData(const char* expr)
+void tst_QScriptValue::isBoolean_data()
 {
-    static QSet<QString> isBoolean;
-    if (isBoolean.isEmpty()) {
-        isBoolean.reserve(8);
-        for (unsigned i = 0; i < 8; ++i)
-            isBoolean.insert(isBoolean_array[i]);
+    QTest::addColumn<QScriptValue>("value");
+    QTest::addColumn<bool>("expected");
+    if (m_engine)
+        delete m_engine;
+    m_engine = new QScriptEngine();
+    QSet<QString> expectedValue;
+    expectedValue.reserve(8);
+    for (uint i = 0; i < 8; ++i)
+        expectedValue.insert(isBoolean_array[i]);
+    for (uint i = 0; i < 135; ++i) {
+        QPair<QString, QScriptValue> testcase = initScriptValues(i);
+        QTest::newRow(testcase.first.toAscii().constData()) << testcase.second << expectedValue.contains(testcase.first);
     }
-    newRow(expr) << isBoolean.contains(expr);
 }
 
-void tst_QScriptValue::isBoolean_test(const char*, const QScriptValue& value)
+void tst_QScriptValue::isBoolean()
 {
+    QFETCH(QScriptValue, value);
     QFETCH(bool, expected);
     QCOMPARE(value.isBoolean(), expected);
     QCOMPARE(value.isBoolean(), expected);
 }
 
-DEFINE_TEST_FUNCTION(isBoolean)
-
-
-void tst_QScriptValue::isNumber_initData()
-{
-    QTest::addColumn<bool>("expected");
-    initScriptValues();
-}
-
-static QString isNumber_array[] = {
+static const QString isNumber_array[] = {
     "QScriptValue(int(122))",
     "QScriptValue(uint(124))",
     "QScriptValue(0)",
@@ -308,6 +299,7 @@ static QString isNumber_array[] = {
     "QScriptValue(engine, qQNaN())",
     "QScriptValue(engine, qInf())",
     "QScriptValue(engine, -qInf())",
+    "engine->evaluate(\"a = new Object(); a.foo = 22; a.foo\")",
     "engine->evaluate(\"122\")",
     "engine->evaluate(\"124\")",
     "engine->evaluate(\"0\")",
@@ -322,34 +314,32 @@ static QString isNumber_array[] = {
     "engine->evaluate(\"Infinity\")",
     "engine->evaluate(\"-Infinity\")"};
 
-void tst_QScriptValue::isNumber_makeData(const char* expr)
+void tst_QScriptValue::isNumber_data()
 {
-    static QSet<QString> isNumber;
-    if (isNumber.isEmpty()) {
-        isNumber.reserve(55);
-        for (unsigned i = 0; i < 55; ++i)
-            isNumber.insert(isNumber_array[i]);
+    QTest::addColumn<QScriptValue>("value");
+    QTest::addColumn<bool>("expected");
+    if (m_engine)
+        delete m_engine;
+    m_engine = new QScriptEngine();
+    QSet<QString> expectedValue;
+    expectedValue.reserve(56);
+    for (uint i = 0; i < 56; ++i)
+        expectedValue.insert(isNumber_array[i]);
+    for (uint i = 0; i < 135; ++i) {
+        QPair<QString, QScriptValue> testcase = initScriptValues(i);
+        QTest::newRow(testcase.first.toAscii().constData()) << testcase.second << expectedValue.contains(testcase.first);
     }
-    newRow(expr) << isNumber.contains(expr);
 }
 
-void tst_QScriptValue::isNumber_test(const char*, const QScriptValue& value)
+void tst_QScriptValue::isNumber()
 {
+    QFETCH(QScriptValue, value);
     QFETCH(bool, expected);
     QCOMPARE(value.isNumber(), expected);
     QCOMPARE(value.isNumber(), expected);
 }
 
-DEFINE_TEST_FUNCTION(isNumber)
-
-
-void tst_QScriptValue::isFunction_initData()
-{
-    QTest::addColumn<bool>("expected");
-    initScriptValues();
-}
-
-static QString isFunction_array[] = {
+static const QString isFunction_array[] = {
     "engine->evaluate(\"Function.prototype\")",
     "engine->evaluate(\"Object\")",
     "engine->evaluate(\"Array\")",
@@ -357,70 +347,67 @@ static QString isFunction_array[] = {
     "engine->evaluate(\"Function\")",
     "engine->evaluate(\"(function() { return 1; })\")",
     "engine->evaluate(\"(function() { return 'ciao'; })\")",
+    "engine->evaluate(\"(function() { throw new Error('foo'); })\")",
     "engine->evaluate(\"/foo/\")"};
 
-void tst_QScriptValue::isFunction_makeData(const char* expr)
+void tst_QScriptValue::isFunction_data()
 {
-    static QSet<QString> isFunction;
-    if (isFunction.isEmpty()) {
-        isFunction.reserve(8);
-        for (unsigned i = 0; i < 8; ++i)
-            isFunction.insert(isFunction_array[i]);
+    QTest::addColumn<QScriptValue>("value");
+    QTest::addColumn<bool>("expected");
+    if (m_engine)
+        delete m_engine;
+    m_engine = new QScriptEngine();
+    QSet<QString> expectedValue;
+    expectedValue.reserve(9);
+    for (uint i = 0; i < 9; ++i)
+        expectedValue.insert(isFunction_array[i]);
+    for (uint i = 0; i < 135; ++i) {
+        QPair<QString, QScriptValue> testcase = initScriptValues(i);
+        QTest::newRow(testcase.first.toAscii().constData()) << testcase.second << expectedValue.contains(testcase.first);
     }
-    newRow(expr) << isFunction.contains(expr);
 }
 
-void tst_QScriptValue::isFunction_test(const char*, const QScriptValue& value)
+void tst_QScriptValue::isFunction()
 {
+    QFETCH(QScriptValue, value);
     QFETCH(bool, expected);
     QCOMPARE(value.isFunction(), expected);
     QCOMPARE(value.isFunction(), expected);
 }
 
-DEFINE_TEST_FUNCTION(isFunction)
-
-
-void tst_QScriptValue::isNull_initData()
-{
-    QTest::addColumn<bool>("expected");
-    initScriptValues();
-}
-
-static QString isNull_array[] = {
+static const QString isNull_array[] = {
     "QScriptValue(QScriptValue::NullValue)",
     "QScriptValue(0, QScriptValue::NullValue)",
     "QScriptValue(engine, QScriptValue::NullValue)",
     "engine->evaluate(\"null\")",
     "engine->nullValue()"};
 
-void tst_QScriptValue::isNull_makeData(const char* expr)
+void tst_QScriptValue::isNull_data()
 {
-    static QSet<QString> isNull;
-    if (isNull.isEmpty()) {
-        isNull.reserve(5);
-        for (unsigned i = 0; i < 5; ++i)
-            isNull.insert(isNull_array[i]);
+    QTest::addColumn<QScriptValue>("value");
+    QTest::addColumn<bool>("expected");
+    if (m_engine)
+        delete m_engine;
+    m_engine = new QScriptEngine();
+    QSet<QString> expectedValue;
+    expectedValue.reserve(5);
+    for (uint i = 0; i < 5; ++i)
+        expectedValue.insert(isNull_array[i]);
+    for (uint i = 0; i < 135; ++i) {
+        QPair<QString, QScriptValue> testcase = initScriptValues(i);
+        QTest::newRow(testcase.first.toAscii().constData()) << testcase.second << expectedValue.contains(testcase.first);
     }
-    newRow(expr) << isNull.contains(expr);
 }
 
-void tst_QScriptValue::isNull_test(const char*, const QScriptValue& value)
+void tst_QScriptValue::isNull()
 {
+    QFETCH(QScriptValue, value);
     QFETCH(bool, expected);
     QCOMPARE(value.isNull(), expected);
     QCOMPARE(value.isNull(), expected);
 }
 
-DEFINE_TEST_FUNCTION(isNull)
-
-
-void tst_QScriptValue::isString_initData()
-{
-    QTest::addColumn<bool>("expected");
-    initScriptValues();
-}
-
-static QString isString_array[] = {
+static const QString isString_array[] = {
     "QScriptValue(\"NaN\")",
     "QScriptValue(\"Infinity\")",
     "QScriptValue(\"-Infinity\")",
@@ -457,34 +444,32 @@ static QString isString_array[] = {
     "engine->evaluate(\"'123'\")",
     "engine->evaluate(\"'12.4'\")"};
 
-void tst_QScriptValue::isString_makeData(const char* expr)
+void tst_QScriptValue::isString_data()
 {
-    static QSet<QString> isString;
-    if (isString.isEmpty()) {
-        isString.reserve(35);
-        for (unsigned i = 0; i < 35; ++i)
-            isString.insert(isString_array[i]);
+    QTest::addColumn<QScriptValue>("value");
+    QTest::addColumn<bool>("expected");
+    if (m_engine)
+        delete m_engine;
+    m_engine = new QScriptEngine();
+    QSet<QString> expectedValue;
+    expectedValue.reserve(35);
+    for (uint i = 0; i < 35; ++i)
+        expectedValue.insert(isString_array[i]);
+    for (uint i = 0; i < 135; ++i) {
+        QPair<QString, QScriptValue> testcase = initScriptValues(i);
+        QTest::newRow(testcase.first.toAscii().constData()) << testcase.second << expectedValue.contains(testcase.first);
     }
-    newRow(expr) << isString.contains(expr);
 }
 
-void tst_QScriptValue::isString_test(const char*, const QScriptValue& value)
+void tst_QScriptValue::isString()
 {
+    QFETCH(QScriptValue, value);
     QFETCH(bool, expected);
     QCOMPARE(value.isString(), expected);
     QCOMPARE(value.isString(), expected);
 }
 
-DEFINE_TEST_FUNCTION(isString)
-
-
-void tst_QScriptValue::isUndefined_initData()
-{
-    QTest::addColumn<bool>("expected");
-    initScriptValues();
-}
-
-static QString isUndefined_array[] = {
+static const QString isUndefined_array[] = {
     "QScriptValue(QScriptValue::UndefinedValue)",
     "QScriptValue(0, QScriptValue::UndefinedValue)",
     "QScriptValue(engine, QScriptValue::UndefinedValue)",
@@ -492,37 +477,35 @@ static QString isUndefined_array[] = {
     "engine->evaluate(\"undefined\")",
     "engine->undefinedValue()"};
 
-void tst_QScriptValue::isUndefined_makeData(const char* expr)
+void tst_QScriptValue::isUndefined_data()
 {
-    static QSet<QString> isUndefined;
-    if (isUndefined.isEmpty()) {
-        isUndefined.reserve(6);
-        for (unsigned i = 0; i < 6; ++i)
-            isUndefined.insert(isUndefined_array[i]);
+    QTest::addColumn<QScriptValue>("value");
+    QTest::addColumn<bool>("expected");
+    if (m_engine)
+        delete m_engine;
+    m_engine = new QScriptEngine();
+    QSet<QString> expectedValue;
+    expectedValue.reserve(6);
+    for (uint i = 0; i < 6; ++i)
+        expectedValue.insert(isUndefined_array[i]);
+    for (uint i = 0; i < 135; ++i) {
+        QPair<QString, QScriptValue> testcase = initScriptValues(i);
+        QTest::newRow(testcase.first.toAscii().constData()) << testcase.second << expectedValue.contains(testcase.first);
     }
-    newRow(expr) << isUndefined.contains(expr);
 }
 
-void tst_QScriptValue::isUndefined_test(const char*, const QScriptValue& value)
+void tst_QScriptValue::isUndefined()
 {
+    QFETCH(QScriptValue, value);
     QFETCH(bool, expected);
     QCOMPARE(value.isUndefined(), expected);
     QCOMPARE(value.isUndefined(), expected);
 }
 
-DEFINE_TEST_FUNCTION(isUndefined)
 
 
 
-
-
-void tst_QScriptValue::isObject_initData()
-{
-    QTest::addColumn<bool>("expected");
-    initScriptValues();
-}
-
-static QString isObject_array[] = {
+static const QString isObject_array[] = {
     "engine->evaluate(\"[]\")",
     "engine->evaluate(\"Object.prototype\")",
     "engine->evaluate(\"Date.prototype\")",
@@ -535,33 +518,105 @@ static QString isObject_array[] = {
     "engine->evaluate(\"Function\")",
     "engine->evaluate(\"(function() { return 1; })\")",
     "engine->evaluate(\"(function() { return 'ciao'; })\")",
-    "engine->evaluate(\"(function() { throw new Error('foo' })\")",
+    "engine->evaluate(\"(function() { throw new Error('foo'); })\")",
     "engine->evaluate(\"/foo/\")",
     "engine->evaluate(\"new Object()\")",
     "engine->evaluate(\"new Array()\")",
     "engine->evaluate(\"new Error()\")",
-    "engine->evaluate(\"a = new Object( a.foo = 22; a.foo\")",
     "engine->evaluate(\"Undefined\")",
     "engine->evaluate(\"Null\")",
     "engine->evaluate(\"True\")",
-    "engine->evaluate(\"False\")"};
+    "engine->evaluate(\"False\")",
+    "engine->newObject()",
+    "engine->newArray()",
+    "engine->newArray(10)"};
 
-void tst_QScriptValue::isObject_makeData(const char* expr)
+void tst_QScriptValue::isObject_data()
 {
-    static QSet<QString> isObject;
-    if (isObject.isEmpty()) {
-        isObject.reserve(22);
-        for (unsigned i = 0; i < 22; ++i)
-            isObject.insert(isObject_array[i]);
+    QTest::addColumn<QScriptValue>("value");
+    QTest::addColumn<bool>("expected");
+    if (m_engine)
+        delete m_engine;
+    m_engine = new QScriptEngine();
+    QSet<QString> expectedValue;
+    expectedValue.reserve(24);
+    for (uint i = 0; i < 24; ++i)
+        expectedValue.insert(isObject_array[i]);
+    for (uint i = 0; i < 135; ++i) {
+        QPair<QString, QScriptValue> testcase = initScriptValues(i);
+        QTest::newRow(testcase.first.toAscii().constData()) << testcase.second << expectedValue.contains(testcase.first);
     }
-    newRow(expr) << isObject.contains(expr);
 }
 
-void tst_QScriptValue::isObject_test(const char*, const QScriptValue& value)
+void tst_QScriptValue::isObject()
 {
+    QFETCH(QScriptValue, value);
     QFETCH(bool, expected);
     QCOMPARE(value.isObject(), expected);
     QCOMPARE(value.isObject(), expected);
 }
 
-DEFINE_TEST_FUNCTION(isObject)
+static const QString isArray_array[] = {
+    "engine->evaluate(\"[]\")",
+    "engine->evaluate(\"Array.prototype\")",
+    "engine->evaluate(\"new Array()\")",
+    "engine->newArray()",
+    "engine->newArray(10)"};
+
+void tst_QScriptValue::isArray_data()
+{
+    QTest::addColumn<QScriptValue>("value");
+    QTest::addColumn<bool>("expected");
+    if (m_engine)
+        delete m_engine;
+    m_engine = new QScriptEngine();
+    QSet<QString> expectedValue;
+    expectedValue.reserve(5);
+    for (uint i = 0; i < 5; ++i)
+        expectedValue.insert(isArray_array[i]);
+    for (uint i = 0; i < 135; ++i) {
+        QPair<QString, QScriptValue> testcase = initScriptValues(i);
+        QTest::newRow(testcase.first.toAscii().constData()) << testcase.second << expectedValue.contains(testcase.first);
+    }
+}
+
+void tst_QScriptValue::isArray()
+{
+    QFETCH(QScriptValue, value);
+    QFETCH(bool, expected);
+    QCOMPARE(value.isArray(), expected);
+    QCOMPARE(value.isArray(), expected);
+}
+
+static const QString isError_array[] = {
+    "engine->evaluate(\"Error.prototype\")",
+    "engine->evaluate(\"new Error()\")",
+    "engine->evaluate(\"Undefined\")",
+    "engine->evaluate(\"Null\")",
+    "engine->evaluate(\"True\")",
+    "engine->evaluate(\"False\")"};
+
+void tst_QScriptValue::isError_data()
+{
+    QTest::addColumn<QScriptValue>("value");
+    QTest::addColumn<bool>("expected");
+    if (m_engine)
+        delete m_engine;
+    m_engine = new QScriptEngine();
+    QSet<QString> expectedValue;
+    expectedValue.reserve(6);
+    for (uint i = 0; i < 6; ++i)
+        expectedValue.insert(isError_array[i]);
+    for (uint i = 0; i < 135; ++i) {
+        QPair<QString, QScriptValue> testcase = initScriptValues(i);
+        QTest::newRow(testcase.first.toAscii().constData()) << testcase.second << expectedValue.contains(testcase.first);
+    }
+}
+
+void tst_QScriptValue::isError()
+{
+    QFETCH(QScriptValue, value);
+    QFETCH(bool, expected);
+    QCOMPARE(value.isError(), expected);
+    QCOMPARE(value.isError(), expected);
+}
