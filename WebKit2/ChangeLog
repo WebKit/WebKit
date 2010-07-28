@@ -1,5 +1,87 @@
 2010-07-28  Adam Roben  <aroben@apple.com>
 
+        Teach CoreIPC the right way to send large messages on Windows
+
+        r63776 added support for ::WriteFile failing with ERROR_IO_PENDING,
+        but it had a major flaw: we didn't ensure that the data being sent
+        (which is owned by the ArgumentEncoder) stayed around until the write
+        finished. We'd destroy the data immediately, leading to ::WriteFile
+        accessing that freed memory later. This seemed to always manifest
+        itself as a crash in ::WaitForMultipleObjects.
+
+        The correct solution (as hinted above) is to make sure that the data
+        being written is not destroyed until the write completes. When
+        ::WriteFile fails with ERROR_IO_PENDING, we store the data being sent
+        in Connection::m_pendingWriteArguments, and don't send any more
+        messages until that write completes. We use an event in the OVERLAPPED
+        structure passed to ::WriteFile to detect when the write has completed
+        (similar to what we do for reads).
+
+        Fixes <http://webkit.org/b/42785> <rdar://problem/8218522> Crash in
+        WebKit2WebProcess in WaitForMultipleObjects beneath
+        WorkQueue::workQueueThreadBody when running tests that produce a lot
+        of output
+
+        Reviewed by Anders Carlsson.
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::canSendOutgoingMessages): Added. This calls out
+        to a platform-specific function to allow each platform to have its own
+        policy for when messages can and can't be sent.
+        (CoreIPC::Connection::sendOutgoingMessages): Use the new
+        canSendOutgoingMessages to determine whether we can send any messages
+        right now. We now remove one message at a time from m_outgoingMessages
+        and send it. We stop sending messages when sendOutgoingMessage returns
+        false.
+
+        * Platform/CoreIPC/Connection.h: Added m_pendingWriteArguments and
+        m_writeState on Windows.
+        (CoreIPC::Connection::Message::Message): Added this default
+        constructor.
+
+        * Platform/CoreIPC/MessageID.h:
+        (CoreIPC::MessageID::MessageID): Made the default constructor public
+        for Message's benefit.
+
+        * Platform/CoreIPC/mac/ConnectionMac.cpp:
+        (CoreIPC::Connection::platformCanSendOutgoingMessages): Added. Always
+        returns true.
+        (CoreIPC::Connection::sendOutgoingMessage): Changed to return a
+        boolean indicating whether more messages can be sent at this time.
+
+        * Platform/CoreIPC/qt/ConnectionQt.cpp:
+        (CoreIPC::Connection::platformCanSendOutgoingMessages): Added. Returns
+        true if we have a socket.
+        (CoreIPC::Connection::sendOutgoingMessage): Changed a null-check of
+        m_socket to an assertion since it should be checked for null in
+        platformCanSendOutgoingMessages. Changed to return a boolean
+        indicating whether more messages can be sent at this time.
+
+        * Platform/CoreIPC/win/ConnectionWin.cpp:
+        (CoreIPC::Connection::platformInitialize): Added initialization of
+        m_writeState.
+        (CoreIPC::Connection::platformInvalidate): Close m_writeState's event
+        handle.
+        (CoreIPC::Connection::writeEventHandler): Added. Checks if the pending
+        write has completed, cleans up our pending write state, and sends any
+        remaining messages.
+        (CoreIPC::Connection::open): Register our write event with the
+        WorkQueue so that writeEventHandler will be called when the event is
+        signaled.
+        (CoreIPC::Connection::platformCanSendOutgoingMessages): Added. We can
+        only send messages if there isn't a write pending.
+        (CoreIPC::Connection::sendOutgoingMessage): Changed to return a
+        boolean indicating whether more messages can be sent at this time. We
+        now pass m_writeState to ::WriteFile instead of an empty OVERLAPPED
+        struct so that our write event will be signaled when the write
+        completes. We also no longer pass a pointer to receive how many bytes
+        were written, as recommended by MSDN. If ::WriteFile fails with
+        ERROR_IO_PENDING, we save the ArgumentEncoder for this message and
+        return false to indicate that no more messages can be sent at this
+        time.
+
+2010-07-28  Adam Roben  <aroben@apple.com>
+
         Stop leaking Connection::m_readState.hEvent on Windows
 
         Fixes <http://webkit.org/b/43129> CoreIPC::Connection leaks its read

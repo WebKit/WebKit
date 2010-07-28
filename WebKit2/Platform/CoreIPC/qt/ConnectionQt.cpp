@@ -104,10 +104,14 @@ bool Connection::open()
     return m_isConnected;
 }
 
-void Connection::sendOutgoingMessage(MessageID messageID, PassOwnPtr<ArgumentEncoder> arguments)
+bool Connection::platformCanSendOutgoingMessages() const
 {
-    if (!m_socket)
-        return;
+    return m_socket;
+}
+
+bool Connection::sendOutgoingMessage(MessageID messageID, PassOwnPtr<ArgumentEncoder> arguments)
+{
+    ASSERT(m_socket);
 
     // We put the message ID last.
     arguments->encodeUInt32(messageID.toInt());
@@ -121,6 +125,7 @@ void Connection::sendOutgoingMessage(MessageID messageID, PassOwnPtr<ArgumentEnc
     qint64 bytesWritten = m_socket->write(reinterpret_cast<char*>(arguments->buffer()), arguments->bufferSize());
 
     ASSERT(bytesWritten == arguments->bufferSize());
+    return true;
 }
 
 } // namespace CoreIPC

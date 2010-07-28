@@ -207,21 +207,28 @@ void Connection::dispatchConnectionDidClose()
     m_client = 0;
 }
 
+bool Connection::canSendOutgoingMessages() const
+{
+    return m_isConnected && platformCanSendOutgoingMessages();
+}
+
 void Connection::sendOutgoingMessages()
 {
-    if (!m_isConnected)
+    if (!canSendOutgoingMessages())
         return;
 
-    Vector<OutgoingMessage> outgoingMessages;
+    while (true) {
+        OutgoingMessage message;
+        {
+            MutexLocker locker(m_outgoingMessagesLock);
+            if (m_outgoingMessages.isEmpty())
+                break;
+            message = m_outgoingMessages.takeFirst();
+        }
 
-    {
-        MutexLocker locker(m_outgoingMessagesLock);
-        m_outgoingMessages.swap(outgoingMessages);
+        if (!sendOutgoingMessage(message.messageID(), adoptPtr(message.arguments())))
+            break;
     }
-
-    // Send messages.
-    for (size_t i = 0; i < outgoingMessages.size(); ++i)
-        sendOutgoingMessage(outgoingMessages[i].messageID(), adoptPtr(outgoingMessages[i].arguments()));
 }
 
 void Connection::dispatchMessages()

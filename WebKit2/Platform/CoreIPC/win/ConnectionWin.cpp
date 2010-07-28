@@ -82,7 +82,10 @@ bool Connection::createServerAndClientIdentifiers(HANDLE& serverIdentifier, HAND
 void Connection::platformInitialize(Identifier identifier)
 {
     memset(&m_readState, 0, sizeof(m_readState));
-    m_readState.hEvent = ::CreateEventW(0, false, false, 0);
+    m_readState.hEvent = ::CreateEventW(0, FALSE, FALSE, 0);
+
+    memset(&m_writeState, 0, sizeof(m_writeState));
+    m_writeState.hEvent = ::CreateEventW(0, FALSE, FALSE, 0);
 
     m_connectionPipe = identifier;
 }
@@ -96,6 +99,9 @@ void Connection::platformInvalidate()
 
     ::CloseHandle(m_readState.hEvent);
     m_readState.hEvent = 0;
+
+    ::CloseHandle(m_writeState.hEvent);
+    m_writeState.hEvent = 0;
 
     ::CloseHandle(m_connectionPipe);
     m_connectionPipe = INVALID_HANDLE_VALUE;
@@ -227,10 +233,27 @@ void Connection::readEventHandler()
     }
 }
 
+void Connection::writeEventHandler()
+{
+    DWORD numberOfBytesWritten = 0;
+    if (!::GetOverlappedResult(m_connectionPipe, &m_writeState, &numberOfBytesWritten, FALSE)) {
+        DWORD error = ::GetLastError();
+        ASSERT_NOT_REACHED();
+    }
+
+    // The pending write has finished, so we are now done with its arguments. Clearing this member
+    // will allow us to send messages again.
+    m_pendingWriteArguments = 0;
+
+    // Now that the pending write has finished, we can try to send a new message.
+    sendOutgoingMessages();
+}
+
 bool Connection::open()
 {
-    // Start listening for read state events.
+    // Start listening for read and write state events.
     m_connectionQueue.registerHandle(m_readState.hEvent, WorkItem::create(this, &Connection::readEventHandler));
+    m_connectionQueue.registerHandle(m_writeState.hEvent, WorkItem::create(this, &Connection::writeEventHandler));
 
     if (m_isServer) {
         // Wait for a connection.
@@ -261,31 +284,44 @@ bool Connection::open()
     return true;
 }
 
-void Connection::sendOutgoingMessage(MessageID messageID, PassOwnPtr<ArgumentEncoder> arguments)
+bool Connection::platformCanSendOutgoingMessages() const
 {
+    // We only allow sending one asynchronous message at a time. If we wanted to send more than one
+    // at once, we'd have to use multiple OVERLAPPED structures and hold onto multiple pending
+    // ArgumentEncoders (one of each for each simultaneous asynchronous message).
+    return !m_pendingWriteArguments;
+}
+
+bool Connection::sendOutgoingMessage(MessageID messageID, PassOwnPtr<ArgumentEncoder> arguments)
+{
+    ASSERT(!m_pendingWriteArguments);
+
     // Just bail if the handle has been closed.
     if (m_connectionPipe == INVALID_HANDLE_VALUE)
-        return;
+        return false;
 
     // We put the message ID last.
     arguments->encodeUInt32(messageID.toInt());
 
     // Write the outgoing message.
-    OVERLAPPED overlapped = { 0 };
 
-    DWORD bytesWritten;
-    if (::WriteFile(m_connectionPipe, arguments->buffer(), arguments->bufferSize(), &bytesWritten, &overlapped)) {
+    if (::WriteFile(m_connectionPipe, arguments->buffer(), arguments->bufferSize(), 0, &m_writeState)) {
         // We successfully sent this message.
-        return;
+        return true;
     }
 
     DWORD error = ::GetLastError();
-    if (error == ERROR_IO_PENDING) {
-        // The message will be sent soon.
-        return;
+    if (error != ERROR_IO_PENDING) {
+        ASSERT_NOT_REACHED();
+        return false;
     }
 
-    ASSERT_NOT_REACHED();
+    // The message will be sent soon. Hold onto the arguments so that they won't be destroyed
+    // before the write completes.
+    m_pendingWriteArguments = arguments;
+
+    // We can only send one asynchronous message at a time (see comment in platformCanSendOutgoingMessages).
+    return false;
 }
 
 } // namespace CoreIPC

@@ -67,6 +67,11 @@ public:
         SyncMessage = 1 << 0,
     };
 
+    MessageID()
+        : m_messageID(0)
+    {
+    }
+
     template <typename EnumType>
     explicit MessageID(EnumType messageKind, unsigned char flags = 0)
         : m_messageID(stripMostSignificantBit(flags << 24 | (MessageKindTraits<EnumType>::messageClass) << 16 | messageKind))
@@ -112,11 +117,6 @@ private:
 
     unsigned char getFlags() const { return (m_messageID & 0xff000000) >> 24; }
     unsigned char getClass() const { return (m_messageID & 0x00ff0000) >> 16; }
-
-    MessageID()
-        : m_messageID(0)
-    {
-    }
 
     unsigned m_messageID;
 };
