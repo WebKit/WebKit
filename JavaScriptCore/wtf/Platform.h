@@ -81,6 +81,9 @@
 #define WTF_COMPILER_GCC 1
 #define GCC_VERSION (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
 #define GCC_VERSION_AT_LEAST(major, minor, patch) (GCC_VERSION >= (major * 10000 + minor * 100 + patch))
+#else
+/* define this for !GCC compilers, just so we can write things like COMPILER(GCC) && GCC_VERSION_AT_LEAST(4,1,0) */
+#define GCC_VERSION_AT_LEAST(major, minor, patch) 0
 #endif
 
 /* COMPILER(MINGW) - MinGW GCC */

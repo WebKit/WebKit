@@ -1,5 +1,11 @@
 2010-07-27  Gavin Barraclough  <barraclough@apple.com>
 
+        Speculative build fix for Chromium/Win
+
+        * wtf/Platform.h:
+
+2010-07-27  Gavin Barraclough  <barraclough@apple.com>
+
         Oh! that makes more sense!  Maybe C++-style comments are bringing teh bad mojo.
 
         * wtf/Platform.h:
