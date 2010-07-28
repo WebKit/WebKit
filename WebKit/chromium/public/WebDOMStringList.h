@@ -46,7 +46,7 @@ class WebDOMStringList {
 public:
     ~WebDOMStringList() { reset(); }
 
-    WebDOMStringList() { }
+    WebDOMStringList();
     WebDOMStringList(const WebDOMStringList& l) { assign(l); }
     WebDOMStringList& operator=(const WebDOMStringList& l)
     {

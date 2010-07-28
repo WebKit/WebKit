@@ -14,7 +14,7 @@ function openSuccess()
 {
     debug("openSuccess():");
     verifySuccessEvent(event);
-    var db = evalAndLog("db = event.result");
+    db = evalAndLog("db = event.result");
 
     // FIXME: remove any previously created object stores.
     // This requires IDBDatabaseRequest::removeObjectStore to be implemented.
@@ -30,9 +30,12 @@ function createSuccess()
     debug("createSuccess():");
     verifySuccessEvent(event);
     var store = evalAndLog("store = event.result");
+    var storeNames = evalAndLog("storeNames = db.objectStores");
 
     shouldBeEqualToString("store.name", "storeName");
     shouldBeNull("store.keyPath");
+    shouldBe("storeNames.contains('storeName')", "true");
+    shouldBe("storeNames.length", "1");
     // FIXME: test store.indexNames, as well as all object store's methods.
 
     result = evalAndLog("store.add('value', 'key')");

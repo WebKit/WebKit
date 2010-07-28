@@ -1,3 +1,18 @@
+2010-07-28  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        [IndexedDB] WebDOMStringList default ctor does not initialize its m_private member
+        variable so any attempt to append strings to a WebDOMStringList instance results in a crash.
+        https://bugs.webkit.org/show_bug.cgi?id=43120
+
+        Makes the default WebKit::WebDOMStringList ctor actually create its wrapped
+        WebCore::DOMStringList instance.
+
+        * public/WebDOMStringList.h:
+        * src/WebDOMStringList.cpp:
+        (WebKit::WebDOMStringList::WebDOMStringList):
+
 2010-07-26  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.
