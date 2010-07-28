@@ -1,3 +1,11 @@
+2010-07-28  Victor Wang  <victorw@chromium.org>
+
+        Unreviewed. Fix chromium test expectations:
+        Remove duplicate expectation for test:
+        tables/mozilla/other/slashlogo.html
+
+        * platform/chromium/test_expectations.txt:
+
 2010-07-28  fsamuel@chromium.org  <fsamuel@chromium.org>
 
         Reviewed by David Hyatt.
