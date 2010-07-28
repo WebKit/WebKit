@@ -1413,7 +1413,6 @@ plugins/netscape-plugin-setwindow-size-2.html
 plugins/netscape-plugin-setwindow-size.html
 plugins/npruntime/bindings-test.html
 plugins/npruntime/enumerate.html
-plugins/npruntime/get-int-identifier-special-values.html
 plugins/npruntime/get-property-return-value.html
 plugins/npruntime/identifier-conversion.html
 plugins/npruntime/invoke-browserfuncs.html

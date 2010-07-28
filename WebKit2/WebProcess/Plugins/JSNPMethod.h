@@ -23,49 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSNPObject_h
-#define JSNPObject_h
+#ifndef JSNPMethod_h
+#define JSNPMethod_h
 
-#include <JavaScriptCore/JSObjectWithGlobalObject.h>
+#include <JavaScriptCore/InternalFunction.h>
 
 typedef void* NPIdentifier;
-struct NPObject;
 
 namespace WebKit {
 
-class NPRuntimeObjectMap;
-    
-// JSNPObject is a JSObject that wraps an NPObject.
-
-class JSNPObject : public JSC::JSObjectWithGlobalObject {
+// A JSObject that wraps an NPMethod.
+class JSNPMethod : public JSC::InternalFunction {
 public:
-    JSNPObject(JSC::ExecState*, JSC::JSGlobalObject*, NPRuntimeObjectMap* objectMap, NPObject* npObject);
-    ~JSNPObject();
-
-    JSC::JSValue callMethod(JSC::ExecState*, NPIdentifier methodName);
+    JSNPMethod(JSC::ExecState*, JSC::JSGlobalObject*, const JSC::Identifier&, NPIdentifier);
 
     static const JSC::ClassInfo s_info;
 
-private:
-    static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | JSObject::StructureFlags;
-    
+    NPIdentifier npIdentifier() const { return m_npIdentifier; }
+
+private:    
     static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue prototype)
     {
         return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount);
     }
 
-    virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertySlot&);
-
-    static JSC::JSValue propertyGetter(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
-    static JSC::JSValue methodGetter(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
-    static JSC::JSObject* throwInvalidAccessError(JSC::ExecState*);
-
+    virtual JSC::CallType getCallData(JSC::CallData&);
     virtual const JSC::ClassInfo* classInfo() const { return &s_info; }
-
-    NPRuntimeObjectMap* m_objectMap;
-    NPObject* m_npObject;
+    
+    NPIdentifier m_npIdentifier;
 };
+
 
 } // namespace WebKit
 
-#endif // JSNPObject_h
+#endif // JSNPMethod_h

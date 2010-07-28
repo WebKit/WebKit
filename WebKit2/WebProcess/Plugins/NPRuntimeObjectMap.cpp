@@ -25,6 +25,8 @@
 
 #include "NPRuntimeObjectMap.h"
 
+#include <JavaScriptCore/JSLock.h>
+
 #include "JSNPObject.h"
 #include "NPJSObject.h"
 #include "NPRuntimeUtilities.h"
@@ -75,7 +77,7 @@ void NPRuntimeObjectMap::jsNPObjectDestroyed(JSNPObject* jsNPObject)
     // FIXME: Implement.
 }
 
-JSValue NPRuntimeObjectMap::convertNPVariantToValue(JSC::ExecState* exec, const NPVariant& variant)
+JSValue NPRuntimeObjectMap::convertNPVariantToJSValue(JSC::ExecState* exec, const NPVariant& variant)
 {
     switch (variant.type) {
     case NPVariantType_Void:
@@ -103,6 +105,59 @@ JSValue NPRuntimeObjectMap::convertNPVariantToValue(JSC::ExecState* exec, const 
     }
     
     return jsUndefined();
+}
+
+void NPRuntimeObjectMap::convertJSValueToNPVariant(ExecState* exec, JSValue value, NPVariant& variant)
+{
+    JSLock lock(SilenceAssertionsOnly);
+
+    VOID_TO_NPVARIANT(variant);
+    
+    if (value.isNull()) {
+        NULL_TO_NPVARIANT(variant);
+        return;
+    }
+
+    if (value.isUndefined()) {
+        VOID_TO_NPVARIANT(variant);
+        return;
+    }
+
+    if (value.isBoolean()) {
+        BOOLEAN_TO_NPVARIANT(value.toBoolean(exec), variant);
+        return;
+    }
+
+    if (value.isNumber()) {
+        DOUBLE_TO_NPVARIANT(value.toNumber(exec), variant);
+        return;
+    }
+
+    if (value.isString()) {
+        CString utf8String = value.toString(exec).UTF8String();
+
+        // This should use NPN_MemAlloc, but we know that it uses malloc under the hood.
+        char* utf8Characters = static_cast<char*>(malloc(utf8String.length()));
+        memcpy(utf8Characters, utf8String.data(), utf8String.length());
+        
+        STRINGN_TO_NPVARIANT(utf8Characters, utf8String.length(), variant);
+        return;
+    }
+
+    if (value.isObject()) {
+        JSObject* jsObject = asObject(value);
+
+        if (jsObject->classInfo() == &JSNPObject::s_info) {
+            notImplemented();
+            return;
+        }
+
+        NPObject* npObject = getOrCreateNPObject(jsObject);
+        OBJECT_TO_NPVARIANT(npObject, variant);
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 void NPRuntimeObjectMap::invalidate()

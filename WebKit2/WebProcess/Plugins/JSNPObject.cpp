@@ -25,12 +25,13 @@
 
 #include "JSNPObject.h"
 
+#include "JSNPMethod.h"
 #include "NPRuntimeObjectMap.h"
 #include "NPRuntimeUtilities.h"
 #include <JavaScriptCore/Error.h>
 #include <JavaScriptCore/JSGlobalObject.h>
-#include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/ObjectPrototype.h>
+#include <JavaScriptCore/JSLock.h>
 #include <WebCore/IdentifierRep.h>
 
 using namespace WebCore;
@@ -42,7 +43,9 @@ static NPIdentifier npIdentifierFromIdentifier(const Identifier& identifier)
 {
     return static_cast<NPIdentifier>(IdentifierRep::get(identifier.ascii()));
 }
-    
+
+const ClassInfo JSNPObject::s_info = { "NPObject", 0, 0, 0 };
+
 JSNPObject::JSNPObject(ExecState*, JSGlobalObject* globalObject, NPRuntimeObjectMap* objectMap, NPObject* npObject)
     : JSObjectWithGlobalObject(globalObject, createStructure(globalObject->objectPrototype()))
     , m_objectMap(objectMap)
@@ -56,6 +59,42 @@ JSNPObject::~JSNPObject()
     // FIXME: Implement.
 }
 
+JSValue JSNPObject::callMethod(ExecState* exec, NPIdentifier methodName)
+{
+    if (!m_npObject->_class->hasMethod(m_npObject, methodName))
+        return jsUndefined();
+
+    size_t argumentCount = exec->argumentCount();
+    Vector<NPVariant, 8> arguments(argumentCount);
+
+    // Convert all arguments to NPVariants.
+    for (size_t i = 0; i < argumentCount; ++i)
+        m_objectMap->convertJSValueToNPVariant(exec, exec->argument(i), arguments[i]);
+
+    bool returnValue;
+    NPVariant result;
+    VOID_TO_NPVARIANT(result);
+    
+    {
+        JSLock::DropAllLocks dropAllLocks(SilenceAssertionsOnly);
+        returnValue = m_npObject->_class->invoke(m_npObject, methodName, arguments.data(), argumentCount, &result);
+
+        // FIXME: Handle invoke setting an exception.
+        // FIXME: Find out what happens if calling invoke causes the plug-in to go away.
+    }
+
+    // Release all arguments;
+    for (size_t i = 0; i < argumentCount; ++i)
+        releaseNPVariantValue(&arguments[i]);
+
+    if (!returnValue)
+        throwError(exec, createError(exec, "Error calling method on NPObject."));
+
+    JSValue propertyValue = m_objectMap->convertNPVariantToJSValue(exec, result);
+    releaseNPVariantValue(&result);
+    return propertyValue;
+}
+
 bool JSNPObject::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     if (!m_npObject) {
@@ -64,12 +103,19 @@ bool JSNPObject::getOwnPropertySlot(ExecState* exec, const Identifier& propertyN
     }
     
     NPIdentifier npIdentifier = npIdentifierFromIdentifier(propertyName);
+
+    // First, check if the NPObject has a property with this name.
     if (m_npObject->_class->hasProperty && m_npObject->_class->hasProperty(m_npObject, npIdentifier)) {
         slot.setCustom(this, propertyGetter);
         return true;
     }
 
-    // FIXME: Check methods.
+    // Second, check is the NPObject has a method with this name.
+    if (m_npObject->_class->hasMethod && m_npObject->_class->hasMethod(m_npObject, npIdentifier)) {
+        slot.setCustom(this, methodGetter);
+        return true;
+    }
+    
     return false;
 }
 
@@ -83,23 +129,36 @@ JSValue JSNPObject::propertyGetter(ExecState* exec, JSValue slotBase, const Iden
     if (!thisObj->m_npObject->_class->getProperty)
         return jsUndefined();
 
-    NPVariant property;
-    VOID_TO_NPVARIANT(property);
+    NPVariant result;
+    VOID_TO_NPVARIANT(result);
 
-    bool result;
+    bool returnValue;
     {
         JSLock::DropAllLocks dropAllLocks(SilenceAssertionsOnly);
         NPIdentifier npIdentifier = npIdentifierFromIdentifier(propertyName);
-        result = thisObj->m_npObject->_class->getProperty(thisObj->m_npObject, npIdentifier, &property);
+        returnValue = thisObj->m_npObject->_class->getProperty(thisObj->m_npObject, npIdentifier, &result);
         
         // FIXME: Handle getProperty setting an exception.
         // FIXME: Find out what happens if calling getProperty causes the plug-in to go away.
     }
 
-    if (!result)
+    if (!returnValue)
         return jsUndefined();
 
-    return thisObj->m_objectMap->convertNPVariantToValue(exec, property);
+    JSValue propertyValue = thisObj->m_objectMap->convertNPVariantToJSValue(exec, result);
+    releaseNPVariantValue(&result);
+    return propertyValue;
+}
+
+JSValue JSNPObject::methodGetter(ExecState* exec, JSValue slotBase, const Identifier& methodName)
+{
+    JSNPObject* thisObj = static_cast<JSNPObject*>(asObject(slotBase));
+    
+    if (!thisObj->m_npObject)
+        return throwInvalidAccessError(exec);
+
+    NPIdentifier npIdentifier = npIdentifierFromIdentifier(methodName);
+    return new (exec) JSNPMethod(exec, thisObj->globalObject(), methodName, npIdentifier);
 }
 
 JSObject* JSNPObject::throwInvalidAccessError(ExecState* exec)

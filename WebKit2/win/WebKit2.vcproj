@@ -752,6 +752,14 @@
 				Name="Plugins"
 				>
 				<File
+					RelativePath="..\WebProcess\Plugins\JSNPMethod.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\Plugins\JSNPMethod.h"
+					>
+				</File>
+				<File
 					RelativePath="..\WebProcess\Plugins\JSNPObject.cpp"
 					>
 				</File>

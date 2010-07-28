@@ -49,7 +49,7 @@ Instance* pluginInstance(Node* node)
     return instance;
 }
 
-static JSObject* pluginScriptObject(ExecState* exec, JSHTMLElement* jsHTMLElement)
+JSObject* pluginScriptObject(ExecState* exec, JSHTMLElement* jsHTMLElement)
 {
     HTMLElement* element = jsHTMLElement->impl();
     if (!(element->hasTagName(objectTag) || element->hasTagName(embedTag) || element->hasTagName(appletTag)))

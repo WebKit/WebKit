@@ -1,3 +1,13 @@
+2010-07-28  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add support for calling NPObject methods
+        https://bugs.webkit.org/show_bug.cgi?id=43145
+
+        * platform/mac-wk2/Skipped:
+        Remove plugins/npruntime/get-int-identifier-special-values.html since it passes now.
+
 2010-07-28  Victor Wang  <victorw@chromium.org>
 
         Unreviewed. Fix chromium test expectations:
