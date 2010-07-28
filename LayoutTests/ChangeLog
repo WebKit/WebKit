@@ -1,3 +1,10 @@
+2010-07-28  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Fix layout test failure on Leopard Intel Debug slave. Remove leopard specific result after the r64186 change.
+
+        * platform/mac-leopard/fast/lists: Removed.
+        * platform/mac-leopard/fast/lists/w3-css3-list-styles-numeric-expected.txt: Removed.
+
 2010-07-28  Jeremy Orlow  <jorlow@chromium.org>
 
         Updating Chromium test expectations to expect 8 tests to fail since
