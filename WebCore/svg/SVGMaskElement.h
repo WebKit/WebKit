@@ -26,20 +26,19 @@
 #include "SVGLangSpace.h"
 #include "SVGStyledLocatableElement.h"
 #include "SVGTests.h"
-#include "SVGURIReference.h"
 
 namespace WebCore {
 
     class SVGLength;
 
     class SVGMaskElement : public SVGStyledLocatableElement,
-                           public SVGURIReference,
                            public SVGTests,
                            public SVGLangSpace,
                            public SVGExternalResourcesRequired {
     public:
         SVGMaskElement(const QualifiedName&, Document*);
         virtual ~SVGMaskElement();
+
         virtual bool isValid() const { return SVGTests::isValid(); }
 
         FloatRect maskBoundingBox(const FloatRect&) const;
@@ -59,9 +58,6 @@ namespace WebCore {
         DECLARE_ANIMATED_PROPERTY(SVGMaskElement, SVGNames::yAttr, SVGLength, Y, y)
         DECLARE_ANIMATED_PROPERTY(SVGMaskElement, SVGNames::widthAttr, SVGLength, Width, width)
         DECLARE_ANIMATED_PROPERTY(SVGMaskElement, SVGNames::heightAttr, SVGLength, Height, height)
-
-        // SVGURIReference
-        DECLARE_ANIMATED_PROPERTY(SVGMaskElement, XLinkNames::hrefAttr, String, Href, href)
 
         // SVGExternalResourcesRequired
         DECLARE_ANIMATED_PROPERTY(SVGMaskElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)

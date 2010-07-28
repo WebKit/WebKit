@@ -126,8 +126,6 @@ void SVGForeignObjectElement::synchronizeProperty(const QualifiedName& attrName)
         synchronizeHeight();
     else if (SVGExternalResourcesRequired::isKnownAttribute(attrName))
         synchronizeExternalResourcesRequired();
-    else if (SVGURIReference::isKnownAttribute(attrName))
-        synchronizeHref();
 }
 
 RenderObject* SVGForeignObjectElement::createRenderer(RenderArena* arena, RenderStyle*)

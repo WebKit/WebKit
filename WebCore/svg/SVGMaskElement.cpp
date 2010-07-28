@@ -40,7 +40,6 @@ namespace WebCore {
 
 SVGMaskElement::SVGMaskElement(const QualifiedName& tagName, Document* doc)
     : SVGStyledLocatableElement(tagName, doc)
-    , SVGURIReference()
     , SVGTests()
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
@@ -80,8 +79,6 @@ void SVGMaskElement::parseMappedAttribute(Attribute* attr)
     else if (attr->name() == SVGNames::heightAttr)
         setHeightBaseValue(SVGLength(LengthModeHeight, attr->value()));
     else {
-        if (SVGURIReference::parseMappedAttribute(attr))
-            return;
         if (SVGTests::parseMappedAttribute(attr))
             return;
         if (SVGLangSpace::parseMappedAttribute(attr))
@@ -108,7 +105,6 @@ void SVGMaskElement::svgAttributeChanged(const QualifiedName& attrName)
     if (invalidateClients
         || attrName == SVGNames::maskUnitsAttr
         || attrName == SVGNames::maskContentUnitsAttr
-        || SVGURIReference::isKnownAttribute(attrName)
         || SVGTests::isKnownAttribute(attrName)
         || SVGLangSpace::isKnownAttribute(attrName)
         || SVGExternalResourcesRequired::isKnownAttribute(attrName)
@@ -126,7 +122,6 @@ void SVGMaskElement::synchronizeProperty(const QualifiedName& attrName)
         synchronizeX();
         synchronizeY();
         synchronizeExternalResourcesRequired();
-        synchronizeHref();
         return;
     }
 
@@ -140,8 +135,6 @@ void SVGMaskElement::synchronizeProperty(const QualifiedName& attrName)
         synchronizeY();
     else if (SVGExternalResourcesRequired::isKnownAttribute(attrName))
         synchronizeExternalResourcesRequired();
-    else if (SVGURIReference::isKnownAttribute(attrName))
-        synchronizeHref();
 }
 
 void SVGMaskElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)

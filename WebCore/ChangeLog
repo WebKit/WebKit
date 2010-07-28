@@ -2,6 +2,25 @@
 
         Reviewed by Dirk Schulze.
 
+        SVGMaskElement/SVGForeignObjectElement should not inherit from SVGURIReference
+        https://bugs.webkit.org/show_bug.cgi?id=43113
+
+        Remove wrong SVGURIReference inheritance for SVGMaskElement/SVGForeignObjectElement. Old copy/paste bug.
+
+        * svg/SVGForeignObjectElement.cpp:
+        (WebCore::SVGForeignObjectElement::synchronizeProperty):
+        * svg/SVGForeignObjectElement.h:
+        * svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::SVGMaskElement):
+        (WebCore::SVGMaskElement::parseMappedAttribute):
+        (WebCore::SVGMaskElement::svgAttributeChanged):
+        (WebCore::SVGMaskElement::synchronizeProperty):
+        * svg/SVGMaskElement.h:
+
+2010-07-28  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
         WebKit shouldn't ignore resource cycles, but break them as Opera does
         https://bugs.webkit.org/show_bug.cgi?id=43031
 
