@@ -534,6 +534,7 @@ SET(WebCore_SOURCES
     ${DERIVED_SOURCES_DIR}/XMLNames.cpp
     ${DERIVED_SOURCES_DIR}/XMLNSNames.cpp
     ${DERIVED_SOURCES_DIR}/XPathGrammar.cpp
+    ${DERIVED_SOURCES_DIR}/InspectorBackendDispatcher.cpp
 
     accessibility/AXObjectCache.cpp
     accessibility/AccessibilityARIAGrid.cpp

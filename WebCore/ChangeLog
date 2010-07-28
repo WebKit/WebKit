@@ -1,3 +1,11 @@
+2010-07-28  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Unreviewed build fix.
+
+        Fix EFL build with SHARED_CORE=ON after r64124.
+
+        * CMakeLists.txt:
+
 2010-07-28  Jay Civelli  <jcivelli@chromium.org>
 
         Reviewed by Kent Tamura.
