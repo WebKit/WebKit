@@ -1,5 +1,13 @@
 2010-07-28  Victor Wang  <victorw@chromium.org>
 
+        Unreviewed. Update chromium test expectations for tesst that
+        may crash on mac or linux:
+        fast/dom/prototype-inheritance-2.html
+
+        * platform/chromium/test_expectations.txt:
+
+2010-07-28  Victor Wang  <victorw@chromium.org>
+
         Unreviewed. Update chromium test expectations for test:
         storage/indexeddb/objectstore-basics.html
 

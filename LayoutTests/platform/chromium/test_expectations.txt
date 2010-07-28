@@ -2078,7 +2078,7 @@ BUG14752 LINUX SLOW : http/tests/cache/subresource-expiration.html = PASS
 BUG18116 : fast/dom/constructed-objects-prototypes.html = TEXT
 BUG18116 WIN RELEASE : fast/dom/prototype-inheritance-2.html = TEXT
 BUG18116 WIN DEBUG : fast/dom/prototype-inheritance-2.html = CRASH
-BUG18116 MAC LINUX : fast/dom/prototype-inheritance-2.html = TEXT
+BUG18116 MAC LINUX : fast/dom/prototype-inheritance-2.html = TEXT CRASH
 // New in WebKit r52559
 BUG18116 : svg/custom/global-constructors.html = TEXT
 
