@@ -3099,7 +3099,7 @@ BUGWK42371 : ietestcenter/Javascript/15.2.3.8-1.html = FAIL
 BUGWK42403 LINUX WIN : svg/W3C-SVG-1.1/masking-intro-01-f.svg = IMAGE
 BUGWK42403 LINUX WIN : svg/css/circle-in-mask-with-shadow.svg = IMAGE
 BUGWK42403 LINUX WIN : svg/custom/grayscale-gradient-mask.svg = IMAGE
-BUGWK42403 : svg/custom/mask-colorspace.svg = IMAGE
+BUGWK42403 WIN MAC : svg/custom/mask-colorspace.svg = IMAGE
 
 BUGWK42428 : svg/custom/convolution-crash.svg = IMAGE
 BUGWK42428 LINUX WIN : svg/W3C-SVG-1.1/filters-conv-01-f.svg = IMAGE+TEXT

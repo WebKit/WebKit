@@ -1,3 +1,25 @@
+2010-07-28  Alex Nicolaou  <anicolao@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        mask-colorspace.svg result for chromium-linux
+        https://bugs.webkit.org/show_bug.cgi?id=43100
+
+        blocking: 
+          [chromium] r63450 caused some svg mask tests to fail pixel tests
+          https://bugs.webkit.org/show_bug.cgi?id=42403
+
+        New expectations and baseline for mask-colorspace on Linux that
+        reflect my idea of what should be the passing output as of when
+        I wrote the original patch. In fact the inner circle should be
+        78,78,78 instead of 76,76,76 but while I sort out the broken
+        baselines I'm going to consider this an improvement; at least
+        the two images match each other as intended in the original test.
+
+        * platform/chromium-linux/svg/custom/mask-colorspace-expected.checksum: Added.
+        * platform/chromium-linux/svg/custom/mask-colorspace-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-07-28  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
