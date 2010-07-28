@@ -1,3 +1,14 @@
+2010-07-28  Jay Civelli  <jcivelli@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        [Chromium] The popup now layouts properly its rows by
+        taking into account the label width.
+        https://bugs.webkit.org/show_bug.cgi?id=42910
+
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupListBox::layout):
+
 2010-07-28  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: chromium tests fix.

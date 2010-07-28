@@ -1256,10 +1256,16 @@ void PopupListBox::layout()
 
         // Ensure the popup is wide enough to fit this item.
         String text = m_popupClient->itemText(i);
-        if (!text.isEmpty()) {
-            int width = itemFont.width(TextRun(text));
-            baseWidth = max(baseWidth, width);
+        String label = m_popupClient->itemLabel(i);
+        int width = 0;
+        if (!text.isEmpty())
+            width = itemFont.width(TextRun(text));
+        if (!label.isEmpty()) {
+            if (width > 0)
+                width += kTextToLabelPadding;
+            width += itemFont.width(TextRun(label));
         }
+        baseWidth = max(baseWidth, width);
         // FIXME: http://b/1210481 We should get the padding of individual option elements.
         paddingWidth = max(paddingWidth,
             m_popupClient->clientPaddingLeft() + m_popupClient->clientPaddingRight());
