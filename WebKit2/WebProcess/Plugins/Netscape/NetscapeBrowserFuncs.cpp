@@ -530,9 +530,11 @@ static void NPN_ReleaseObject(NPObject *npObject)
     releaseNPObject(npObject);
 }
 
-static bool NPN_Invoke(NPP npp, NPObject *npobj, NPIdentifier methodName, const NPVariant *args, uint32_t argCount, NPVariant *result)
+static bool NPN_Invoke(NPP, NPObject *npObject, NPIdentifier methodName, const NPVariant *arguments, uint32_t argumentCount, NPVariant *result)
 {
-    notImplemented();
+    if (npObject->_class->invoke)
+        return npObject->_class->invoke(npObject, methodName, arguments, argumentCount, result);
+
     return false;
 }
 
@@ -548,7 +550,7 @@ static bool NPN_Evaluate(NPP npp, NPObject *npobj, NPString *script, NPVariant *
     return false;
 }
 
-static bool NPN_GetProperty(NPP npp, NPObject *npObject, NPIdentifier propertyName, NPVariant *result)
+static bool NPN_GetProperty(NPP npp, NPObject* npObject, NPIdentifier propertyName, NPVariant* result)
 {
     if (npObject->_class->hasProperty && npObject->_class->getProperty) {
         if (npObject->_class->hasProperty(npObject, propertyName))
@@ -559,19 +561,19 @@ static bool NPN_GetProperty(NPP npp, NPObject *npObject, NPIdentifier propertyNa
     return false;
 }
 
-static bool NPN_SetProperty(NPP npp, NPObject *npobj, NPIdentifier propertyName, const NPVariant *value)
+static bool NPN_SetProperty(NPP npp, NPObject* npobj, NPIdentifier propertyName, const NPVariant* value)
 {
     notImplemented();
     return false;
 }
 
-static bool NPN_RemoveProperty(NPP npp, NPObject *npobj, NPIdentifier propertyName)
+static bool NPN_RemoveProperty(NPP npp, NPObject* npobj, NPIdentifier propertyName)
 {
     notImplemented();
     return false;
 }
 
-static bool NPN_HasProperty(NPP, NPObject *npObject, NPIdentifier propertyName)
+static bool NPN_HasProperty(NPP, NPObject* npObject, NPIdentifier propertyName)
 {
     if (npObject->_class->hasProperty)
         return npObject->_class->hasProperty(npObject, propertyName);
@@ -579,7 +581,7 @@ static bool NPN_HasProperty(NPP, NPObject *npObject, NPIdentifier propertyName)
     return false;
 }
 
-static bool NPN_HasMethod(NPP, NPObject *npObject, NPIdentifier methodName)
+static bool NPN_HasMethod(NPP, NPObject* npObject, NPIdentifier methodName)
 {
     if (npObject->_class->hasMethod)
         return npObject->_class->hasMethod(npObject, methodName);
@@ -587,12 +589,12 @@ static bool NPN_HasMethod(NPP, NPObject *npObject, NPIdentifier methodName)
     return false;
 }
 
-static void NPN_ReleaseVariantValue(NPVariant *variant)
+static void NPN_ReleaseVariantValue(NPVariant* variant)
 {
     releaseNPVariantValue(variant);
 }
 
-static void NPN_SetException(NPObject *npobj, const NPUTF8 *message)
+static void NPN_SetException(NPObject* npobj, const NPUTF8* message)
 {
     notImplemented();
 }
@@ -607,37 +609,37 @@ static void NPN_PopPopupsEnabledState(NPP instance)
     notImplemented();
 }
     
-static bool NPN_Enumerate(NPP npp, NPObject *npobj, NPIdentifier **identifier, uint32_t *count)
+static bool NPN_Enumerate(NPP npp, NPObject* npobj, NPIdentifier** identifier, uint32_t* count)
 {
     notImplemented();
     return false;
 }
 
-static void NPN_PluginThreadAsyncCall(NPP instance, void (*func) (void *), void *userData)
+static void NPN_PluginThreadAsyncCall(NPP instance, void (*func) (void*), void* userData)
 {
     notImplemented();
 }
 
-static bool NPN_Construct(NPP npp, NPObject *npobj, const NPVariant *args, uint32_t argCount, NPVariant *result)
+static bool NPN_Construct(NPP npp, NPObject* npobj, const NPVariant* args, uint32_t argCount, NPVariant* result)
 {
     notImplemented();
     return false;
 }
 
-static NPError NPN_GetValueForURL(NPP instance, NPNURLVariable variable, const char *url, char **value, uint32_t *len)
+static NPError NPN_GetValueForURL(NPP instance, NPNURLVariable variable, const char* url, char** value, uint32_t* len)
 {
     notImplemented();
     return NPERR_GENERIC_ERROR;
 }
 
-static NPError NPN_SetValueForURL(NPP instance, NPNURLVariable variable, const char *url, const char *value, uint32_t len)
+static NPError NPN_SetValueForURL(NPP instance, NPNURLVariable variable, const char* url, const char* value, uint32_t len)
 {
     notImplemented();
     return NPERR_GENERIC_ERROR;
 }
 
-static NPError NPN_GetAuthenticationInfo(NPP instance, const char *protocol, const char *host, int32_t port, const char *scheme, 
-                                         const char *realm, char **username, uint32_t *ulen, char **password, uint32_t *plen)
+static NPError NPN_GetAuthenticationInfo(NPP instance, const char* protocol, const char* host, int32_t port, const char* scheme, 
+                                         const char* realm, char** username, uint32_t* ulen, char** password, uint32_t* plen)
 {
     notImplemented();
     return NPERR_GENERIC_ERROR;
@@ -660,7 +662,7 @@ static NPError NPN_PopUpContextMenu(NPP instance, NPMenu* menu)
     return NPERR_GENERIC_ERROR;
 }
 
-static NPBool NPN_ConvertPoint(NPP instance, double sourceX, double sourceY, NPCoordinateSpace sourceSpace, double *destX, double *destY, NPCoordinateSpace destSpace)
+static NPBool NPN_ConvertPoint(NPP instance, double sourceX, double sourceY, NPCoordinateSpace sourceSpace, double* destX, double* destY, NPCoordinateSpace destSpace)
 {
     notImplemented();
     return false;

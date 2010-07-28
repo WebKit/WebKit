@@ -1415,7 +1415,6 @@ plugins/npruntime/bindings-test.html
 plugins/npruntime/enumerate.html
 plugins/npruntime/get-property-return-value.html
 plugins/npruntime/invoke-default.html
-plugins/npruntime/invoke.html
 plugins/npruntime/npruntime.html
 plugins/npruntime/round-trip-npobject.html
 plugins/override-node-method.html

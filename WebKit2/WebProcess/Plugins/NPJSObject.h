@@ -60,6 +60,7 @@ private:
     void initialize(NPRuntimeObjectMap*, JSC::JSObject* jsObject);
 
     bool hasMethod(NPIdentifier methodName);
+    bool invoke(NPIdentifier methodName, const NPVariant *arguments, uint32_t argumentCount, NPVariant *result);
     bool hasProperty(NPIdentifier propertyName);
     bool getProperty(NPIdentifier propertyName, NPVariant* result);
 
