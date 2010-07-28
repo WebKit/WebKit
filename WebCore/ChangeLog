@@ -1,3 +1,54 @@
+2010-07-28  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Hook the GLES2 rendering path up to GraphicsContextSkia.
+        https://bugs.webkit.org/show_bug.cgi?id=43119
+        
+        This connects the state-setting and drawing calls implemented in
+        so far in GLES2Canvas, and calls PlatformContextSkia's
+        prepareForSoftwareDraw() for all the non-accelerated paths.
+
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::addInnerRoundedRectClip):
+        (WebCore::GraphicsContext::addPath):
+        (WebCore::GraphicsContext::beginPath):
+        (WebCore::GraphicsContext::clip):
+        (WebCore::GraphicsContext::drawConvexPolygon):
+        (WebCore::GraphicsContext::drawEllipse):
+        (WebCore::GraphicsContext::drawFocusRing):
+        (WebCore::GraphicsContext::drawLine):
+        (WebCore::GraphicsContext::drawLineForMisspellingOrBadGrammar):
+        (WebCore::GraphicsContext::drawLineForText):
+        (WebCore::GraphicsContext::drawRect):
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::fillRoundedRect):
+        (WebCore::GraphicsContext::strokeArc):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::strokeRect):
+        These calls are software-only; call preSoftwareDraw() for these.
+        (WebCore::GraphicsContext::savePlatformState):
+        (WebCore::GraphicsContext::restorePlatformState):
+        (WebCore::GraphicsContext::setAlpha):
+        (WebCore::GraphicsContext::setCompositeOperation):
+        (WebCore::GraphicsContext::setPlatformFillColor):
+        (WebCore::GraphicsContext::scale):
+        (WebCore::GraphicsContext::rotate):
+        (WebCore::GraphicsContext::translate):
+        (WebCore::GraphicsContext::concatCTM):
+        These ones set state on both Skia and GLES2Canvas.
+        (WebCore::GraphicsContext::clearRect):
+        (WebCore::GraphicsContext::fillRect):
+        These ones have a GLES2 implementation; call through to it if PlatformContextSkia's useGPU() flag is set and the state permits.
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (PlatformContextSkia::prepareForSoftwareDraw):
+        (PlatformContextSkia::prepareForHardwareDraw):
+        Rename preXXXDraw() -> prepareForXXXDraw().
+        * platform/graphics/skia/PlatformContextSkia.h:
+        (PlatformContextSkia::prepareForSoftwareDraw):
+        (PlatformContextSkia::prepareForHardwareDraw):
+        Rename preXXXDraw() -> prepareForXXXDraw().
+
 2010-07-28  fsamuel@chromium.org  <fsamuel@chromium.org>
 
         Reviewed by David Hyatt.

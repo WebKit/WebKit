@@ -682,7 +682,7 @@ void PlatformContextSkia::setGLES2Context(WebCore::GLES2Context* context, const 
     m_gpuCanvas = new WebCore::GLES2Canvas(context, size);
 }
 
-void PlatformContextSkia::preSoftwareDraw() const
+void PlatformContextSkia::prepareForSoftwareDraw() const
 {
     if (!m_useGPU)
         return;
@@ -724,7 +724,7 @@ void PlatformContextSkia::preSoftwareDraw() const
     }
 }
 
-void PlatformContextSkia::preHardwareDraw() const
+void PlatformContextSkia::prepareForHardwareDraw() const
 {
     if (!m_useGPU)
         return;

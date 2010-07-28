@@ -191,13 +191,13 @@ public:
 #if USE(GLES2_RENDERING)
     // Call these before making a call that manipulates the underlying
     // skia::PlatformCanvas or WebCore::GLES2Canvas
-    void preSoftwareDraw() const;
-    void preHardwareDraw() const;
+    void prepareForSoftwareDraw() const;
+    void prepareForHardwareDraw() const;
     // Call to force the skia::PlatformCanvas to contain all rendering results.
     void syncSoftwareCanvas() const;
 #else
-    void preSoftwareDraw() const {}
-    void preHardwareDraw() const {}
+    void prepareForSoftwareDraw() const {}
+    void prepareForHardwareDraw() const {}
     void syncSoftwareCanvas() const {}
 #endif
 
