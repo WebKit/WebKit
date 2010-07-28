@@ -83,7 +83,7 @@ DebuggerScript._formatScript = function(script)
         scriptWorldType = DebuggerScript.ScriptWorldType.ExtensionsWorld;
     return {
         id: script.id,
-        name: script.name,
+        name: script.nameOrSourceURL(),
         source: script.source,
         lineOffset: DebuggerScript._v8ToWebkitLineNumber(script.line_offset),
         lineCount: script.lineCount(),
