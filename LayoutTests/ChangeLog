@@ -1,3 +1,59 @@
+2010-07-28  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVGFilterElement & SVGFE*Element don't support dynamic invalidation, when attributes change
+        https://bugs.webkit.org/show_bug.cgi?id=42244
+
+        * platform/mac/svg/dynamic-updates/SVGFEDiffuseLightingElement-dom-diffuseConstant-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEDiffuseLightingElement-dom-diffuseConstant-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEDiffuseLightingElement-dom-in-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEDiffuseLightingElement-dom-in-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEDiffuseLightingElement-dom-lighting-color-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEDiffuseLightingElement-dom-lighting-color-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEDiffuseLightingElement-dom-surfaceScale-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEDiffuseLightingElement-dom-surfaceScale-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEDiffuseLightingElement-lighting-color-css-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEDiffuseLightingElement-lighting-color-css-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEDiffuseLightingElement-svgdom-diffuseConstant-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEDiffuseLightingElement-svgdom-diffuseConstant-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEDiffuseLightingElement-svgdom-in-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEDiffuseLightingElement-svgdom-in-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEDiffuseLightingElement-svgdom-surfaceScale-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEDiffuseLightingElement-svgdom-surfaceScale-prop-expected.png: Added.
+        * svg/dynamic-updates/SVGFEDiffuseLightingElement-dom-diffuseConstant-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFEDiffuseLightingElement-dom-diffuseConstant-attr.html: Added.
+        * svg/dynamic-updates/SVGFEDiffuseLightingElement-dom-in-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFEDiffuseLightingElement-dom-in-attr.html: Added.
+        * svg/dynamic-updates/SVGFEDiffuseLightingElement-dom-lighting-color-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFEDiffuseLightingElement-dom-lighting-color-attr.html: Added.
+        * svg/dynamic-updates/SVGFEDiffuseLightingElement-dom-surfaceScale-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFEDiffuseLightingElement-dom-surfaceScale-attr.html: Added.
+        * svg/dynamic-updates/SVGFEDiffuseLightingElement-lighting-color-css-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFEDiffuseLightingElement-lighting-color-css-prop.html: Added.
+        * svg/dynamic-updates/SVGFEDiffuseLightingElement-svgdom-diffuseConstant-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFEDiffuseLightingElement-svgdom-diffuseConstant-prop.html: Added.
+        * svg/dynamic-updates/SVGFEDiffuseLightingElement-svgdom-in-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFEDiffuseLightingElement-svgdom-in-prop.html: Added.
+        * svg/dynamic-updates/SVGFEDiffuseLightingElement-svgdom-surfaceScale-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFEDiffuseLightingElement-svgdom-surfaceScale-prop.html: Added.
+        * svg/dynamic-updates/script-tests/SVGFEDiffuseLightingElement-dom-diffuseConstant-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFEDiffuseLightingElement-dom-in-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFEDiffuseLightingElement-dom-lighting-color-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFEDiffuseLightingElement-dom-surfaceScale-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFEDiffuseLightingElement-lighting-color-css-prop.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFEDiffuseLightingElement-svgdom-diffuseConstant-prop.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFEDiffuseLightingElement-svgdom-in-prop.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFEDiffuseLightingElement-svgdom-surfaceScale-prop.js: Added.
+        (executeTest):
+
 2010-07-27  Daniel Bates  <dbates@rim.com>
 
         Unreviewed; remove platform-specific expected results.

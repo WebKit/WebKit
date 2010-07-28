@@ -1,3 +1,25 @@
+2010-07-28  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVGFilterElement & SVGFE*Element don't support dynamic invalidation, when attributes change
+        https://bugs.webkit.org/show_bug.cgi?id=42244
+
+        Implementing svgAttributeChanged for SVGFEDiffuseLightingElement object.
+
+        Tests: svg/dynamic-updates/SVGFEDiffuseLightingElement-dom-diffuseConstant-attr.html
+               svg/dynamic-updates/SVGFEDiffuseLightingElement-dom-in-attr.html
+               svg/dynamic-updates/SVGFEDiffuseLightingElement-dom-lighting-color-attr.html
+               svg/dynamic-updates/SVGFEDiffuseLightingElement-dom-surfaceScale-attr.html
+               svg/dynamic-updates/SVGFEDiffuseLightingElement-lighting-color-css-prop.html
+               svg/dynamic-updates/SVGFEDiffuseLightingElement-svgdom-diffuseConstant-prop.html
+               svg/dynamic-updates/SVGFEDiffuseLightingElement-svgdom-in-prop.html
+               svg/dynamic-updates/SVGFEDiffuseLightingElement-svgdom-surfaceScale-prop.html
+
+        * svg/SVGFEDiffuseLightingElement.cpp:
+        (WebCore::SVGFEDiffuseLightingElement::svgAttributeChanged):
+        * svg/SVGFEDiffuseLightingElement.h:
+
 2010-07-27  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by Ojan Vafai.

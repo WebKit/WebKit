@@ -66,6 +66,18 @@ void SVGFEDiffuseLightingElement::parseMappedAttribute(Attribute* attr)
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
 
+void SVGFEDiffuseLightingElement::svgAttributeChanged(const QualifiedName& attrName)
+{
+    SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
+
+    if (attrName == SVGNames::inAttr
+        || attrName == SVGNames::surfaceScaleAttr
+        || attrName == SVGNames::diffuseConstantAttr
+        || attrName == SVGNames::kernelUnitLengthAttr
+        || attrName == SVGNames::lighting_colorAttr)
+        invalidateFilter();
+}
+
 void SVGFEDiffuseLightingElement::synchronizeProperty(const QualifiedName& attrName)
 {
     SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
