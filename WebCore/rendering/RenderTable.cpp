@@ -1019,12 +1019,7 @@ RenderTableCell* RenderTable::cellAbove(const RenderTableCell* cell) const
     // Look up the cell in the section's grid, which requires effective col index
     if (section) {
         int effCol = colToEffCol(cell->col());
-        RenderTableSection::CellStruct aboveCell;
-        // If we hit a span back up to a real cell.
-        do {
-            aboveCell = section->cellAt(rAbove, effCol);
-            effCol--;
-        } while (!aboveCell.hasCells() && aboveCell.inColSpan && effCol >= 0);
+        RenderTableSection::CellStruct& aboveCell = section->cellAt(rAbove, effCol);
         return aboveCell.primaryCell();
     } else
         return 0;
@@ -1051,12 +1046,7 @@ RenderTableCell* RenderTable::cellBelow(const RenderTableCell* cell) const
     // Look up the cell in the section's grid, which requires effective col index
     if (section) {
         int effCol = colToEffCol(cell->col());
-        RenderTableSection::CellStruct belowCell;
-        // If we hit a colspan back up to a real cell.
-        do {
-            belowCell = section->cellAt(rBelow, effCol);
-            effCol--;
-        } while (!belowCell.hasCells() && belowCell.inColSpan && effCol >= 0);
+        RenderTableSection::CellStruct& belowCell = section->cellAt(rBelow, effCol);
         return belowCell.primaryCell();
     } else
         return 0;
@@ -1072,11 +1062,7 @@ RenderTableCell* RenderTable::cellBefore(const RenderTableCell* cell) const
         return 0;
     
     // If we hit a colspan back up to a real cell.
-    RenderTableSection::CellStruct prevCell;
-    do {
-        prevCell = section->cellAt(cell->row(), effCol - 1);
-        effCol--;
-    } while (!prevCell.hasCells() && prevCell.inColSpan && effCol >= 0);
+    RenderTableSection::CellStruct& prevCell = section->cellAt(cell->row(), effCol - 1);
     return prevCell.primaryCell();
 }
 

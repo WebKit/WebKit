@@ -161,12 +161,8 @@ bool RenderTableSection::ensureRows(int numRows)
         }
         m_gridRows = numRows;
         int nCols = max(1, table()->numEffCols());
-        CellStruct emptyCellStruct;
-        emptyCellStruct.inColSpan = false;
-        emptyCellStruct.empty = false;
         for (int r = nRows; r < numRows; r++) {
             m_grid[r].row = new Row(nCols);
-            m_grid[r].row->fill(emptyCellStruct);
             m_grid[r].rowRenderer = 0;
             m_grid[r].baseline = 0;
             m_grid[r].height = Length();
@@ -191,6 +187,7 @@ void RenderTableSection::addCell(RenderTableCell* cell, RenderTableRow* row)
     // </TABLE>
     while (m_cCol < nCols && (cellAt(m_cRow, m_cCol).hasCells() || cellAt(m_cRow, m_cCol).inColSpan))
         m_cCol++;
+
     if (rSpan == 1) {
         // we ignore height settings on rowspan cells
         Length height = cell->style()->height();
@@ -224,28 +221,28 @@ void RenderTableSection::addCell(RenderTableCell* cell, RenderTableRow* row)
     // tell the cell where it is
     bool inColSpan = false;
     while (cSpan) {
-      int currentSpan;
-      if (m_cCol >= nCols) {
-          table()->appendColumn(cSpan);
-          currentSpan = cSpan;
-      } else {
-          if (cSpan < (int)columns[m_cCol].span)
-              table()->splitColumn(m_cCol, cSpan);
-          currentSpan = columns[m_cCol].span;
-      }
-      for (int r = 0; r < rSpan; r++) {
-          CellStruct& c = cellAt(m_cRow + r, m_cCol);
-          ASSERT(cell);
-          c.cells.append(cell);
-          // If cells overlap then we take the slow path for painting.
-          if (c.cells.size() > 1)
-              m_hasMultipleCellLevels = true;
-          if (inColSpan)
-              c.inColSpan = true;
-      }
-      m_cCol++;
-      cSpan -= currentSpan;
-      inColSpan = true;
+        int currentSpan;
+        if (m_cCol >= nCols) {
+            table()->appendColumn(cSpan);
+            currentSpan = cSpan;
+        } else {
+            if (cSpan < (int)columns[m_cCol].span)
+                table()->splitColumn(m_cCol, cSpan);
+            currentSpan = columns[m_cCol].span;
+        }
+        for (int r = 0; r < rSpan; r++) {
+            CellStruct& c = cellAt(m_cRow + r, m_cCol);
+            ASSERT(cell);
+            c.cells.append(cell);
+            // If cells overlap then we take the slow path for painting.
+            if (c.cells.size() > 1)
+                m_hasMultipleCellLevels = true;
+            if (inColSpan)
+                c.inColSpan = true;
+        }
+        m_cCol++;
+        cSpan -= currentSpan;
+        inColSpan = true;
     }
     cell->setRow(m_cRow);
     cell->setCol(table()->effColToCol(col));
@@ -260,21 +257,11 @@ void RenderTableSection::setCellWidths()
     for (int i = 0; i < m_gridRows; i++) {
         Row& row = *m_grid[i].row;
         int cols = row.size();
-        RenderTableCell* lastCell = 0;
         for (int j = 0; j < cols; j++) {
             CellStruct& current = row[j];
             RenderTableCell* cell = current.primaryCell();
-            if (!cell) {
-              ASSERT(lastCell || !current.inColSpan);
-              if (lastCell)
-                current.cells.append(lastCell);
-              if (!current.inColSpan)
-                current.empty = true;
+            if (!cell || current.inColSpan)
               continue;
-            }
-            if (current.inColSpan || current.empty)
-              continue;
-            lastCell = cell;
             int endCol = j;
             int cspan = cell->colSpan();
             while (cspan && endCol < cols) {
@@ -335,8 +322,8 @@ int RenderTableSection::calcRowHeight()
         for (int c = 0; c < totalCols; c++) {
             CellStruct& current = cellAt(r, c);
             cell = current.primaryCell();
-            ASSERT(cell || current.empty);
-            if (!cell || current.empty || current.inColSpan)
+
+            if (!cell || current.inColSpan)
                 continue;
 
             if ((cell->row() + cell->rowSpan() - 1) > r)
@@ -511,7 +498,7 @@ int RenderTableSection::layoutRows(int toAdd)
             CellStruct& cs = cellAt(r, c);
             RenderTableCell* cell = cs.primaryCell();
 
-            if (!cell || cs.empty || cs.inColSpan)
+            if (!cell || cs.inColSpan)
                 continue;
 
             rindx = cell->row();
@@ -651,7 +638,7 @@ int RenderTableSection::layoutRows(int toAdd)
         for (int c = 0; c < nEffCols; c++) {
             CellStruct& cs = cellAt(r, c);
             RenderTableCell* cell = cs.primaryCell();
-            if (!cell || cs.empty || cs.inColSpan)
+            if (!cell || cs.inColSpan)
                 continue;
             if (r < totalRows - 1 && cell == primaryCellAt(r + 1, c))
                 continue;
@@ -1064,7 +1051,7 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, int tx, int ty)
                 for (unsigned c = startcol; c < endcol; c++) {
                     CellStruct& current = cellAt(r, c);
                     RenderTableCell* cell = current.primaryCell();
-                    if (current.empty || (r > startrow && primaryCellAt(r - 1, c) == cell) || (c > startcol && primaryCellAt(r, c - 1) == cell))
+                    if (!cell || (r > startrow && primaryCellAt(r - 1, c) == cell) || (c > startcol && primaryCellAt(r, c - 1) == cell))
                         continue;
                     paintCell(cell, paintInfo, tx, ty);
                 }
@@ -1076,7 +1063,7 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, int tx, int ty)
             for (unsigned r = startrow; r < endrow; r++) {
                 for (unsigned c = startcol; c < endcol; c++) {
                     CellStruct& current = cellAt(r, c);
-                    if (current.empty)
+                    if (!current.hasCells())
                         continue;
                     for (unsigned i = 0; i < current.cells.size(); ++i) {
                         if (current.cells[i]->rowSpan() > 1 || current.cells[i]->colSpan() > 1) {
@@ -1156,12 +1143,8 @@ int RenderTableSection::numColumns() const
 
 void RenderTableSection::appendColumn(int pos)
 {
-    for (int row = 0; row < m_gridRows; ++row) {
+    for (int row = 0; row < m_gridRows; ++row)
         m_grid[row].row->resize(pos + 1);
-        CellStruct& c = cellAt(row, pos);
-        c.inColSpan = false;
-        c.empty = false;
-    }
 }
 
 void RenderTableSection::splitColumn(int pos, int first)
@@ -1183,7 +1166,6 @@ void RenderTableSection::splitColumn(int pos, int first)
         } else {
             r[pos + 1].inColSpan = 0;
         }
-        r[pos + 1].empty = false;
     }
 }
 

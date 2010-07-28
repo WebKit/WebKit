@@ -125,7 +125,7 @@ void AutoTableLayout::recalcColumn(int effCol)
                         break;
                     }
                 } else {
-                    if (cell && (!effCol || cell->section()->primaryCellAt(i, effCol-1) != cell)) {
+                    if (cell && (!effCol || section->primaryCellAt(i, effCol-1) != cell)) {
                         // This spanning cell originates in this column.  Ensure we have
                         // a min/max width of at least 1px for this column now.
                         l.minWidth = max(l.minWidth, cellHasContent ? 1 : 0);

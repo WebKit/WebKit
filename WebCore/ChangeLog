@@ -1,3 +1,35 @@
+2010-07-28  fsamuel@chromium.org  <fsamuel@chromium.org>
+
+        Reviewed by David Hyatt.
+
+        REGRESSION (r63994): Bank of America's home page is horribly mis-rendered
+        https://bugs.webkit.org/show_bug.cgi?id=42993
+
+        Fixed bug introduced by patch for bug 40775.
+
+        The new table rendering code did not take into account table layouts starting
+        during a partial construction of the table render tree. As such,
+        multiple layouts on the same table resulted in more columns being generated.
+        This patch solves this issue.
+
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::AutoTableLayout::recalcColumn):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::cellAbove):
+        (WebCore::RenderTable::cellBelow):
+        (WebCore::RenderTable::cellBefore):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::ensureRows):
+        (WebCore::RenderTableSection::addCell):
+        (WebCore::RenderTableSection::setCellWidths):
+        (WebCore::RenderTableSection::calcRowHeight):
+        (WebCore::RenderTableSection::layoutRows):
+        (WebCore::RenderTableSection::paintObject):
+        (WebCore::RenderTableSection::appendColumn):
+        (WebCore::RenderTableSection::splitColumn):
+        * rendering/RenderTableSection.h:
+        (WebCore::RenderTableSection::CellStruct::CellStruct):
+
 2010-07-28  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Pavel Feldman.
