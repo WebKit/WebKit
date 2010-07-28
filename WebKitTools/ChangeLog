@@ -1,3 +1,14 @@
+2010-07-28  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        [chromium] cleanup temp files left by Linux DRT
+        https://bugs.webkit.org/show_bug.cgi?id=43062
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json: Rename the chromium bots to include the OS
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg: add a step on chromium-linux to delete temp files left
+            by crashed DRTs
+
 2010-07-28  Antonio Gomes  <tonikitoo@webkit.org>
 
         Rubber-stamped by Kenneth Christiansen.

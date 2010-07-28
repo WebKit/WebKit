@@ -35,12 +35,12 @@
                     { "name": "szeged-windows-1", "platform": "qt"},
                     { "name": "szeged-windows-2", "platform": "qt"},
 
-                    { "name": "google-windows-1", "platform": "chromium" },
-                    { "name": "google-mac-1", "platform": "chromium" },
-                    { "name": "google-linux-1", "platform": "chromium" },
-                    { "name": "google-windows-2", "platform": "chromium" },
-                    { "name": "google-mac-2", "platform": "chromium" },
-                    { "name": "google-linux-2", "platform": "chromium" },
+                    { "name": "google-windows-1", "platform": "chromium-win" },
+                    { "name": "google-mac-1", "platform": "chromium-mac" },
+                    { "name": "google-linux-1", "platform": "chromium-linux" },
+                    { "name": "google-windows-2", "platform": "chromium-win" },
+                    { "name": "google-mac-2", "platform": "chromium-mac" },
+                    { "name": "google-linux-2", "platform": "chromium-linux" },
                     { "name": "google-new-tests", "platform": "mac-leopard" }
                   ],
 
@@ -150,32 +150,32 @@
                     },
                     {
                       "name": "Chromium Win Release", "type": "Build", "builddir": "chromium-win-release",
-                      "platform": "chromium", "configuration": "release", "architectures": ["i386"],
+                      "platform": "chromium-win", "configuration": "release", "architectures": ["i386"],
                       "slavenames": ["google-windows-1"]
                     },
                     {
                       "name": "Chromium Mac Release", "type": "Build", "builddir": "chromium-mac-release",
-                      "platform": "chromium", "configuration": "release", "architectures": ["i386"],
+                      "platform": "chromium-mac", "configuration": "release", "architectures": ["i386"],
                       "slavenames": ["google-mac-1"]
                     },
                     {
                       "name": "Chromium Linux Release", "type": "Build", "builddir": "chromium-linux-release",
-                      "platform": "chromium", "configuration": "release", "architectures": ["i386"],
+                      "platform": "chromium-linux", "configuration": "release", "architectures": ["i386"],
                       "slavenames": ["google-linux-1"]
                     },
                     {
                       "name": "Chromium Win Release (Tests)", "type": "NewBuildAndTest", "builddir": "chromium-win-release-tests",
-                      "platform": "chromium", "configuration": "release", "architectures": ["i386"],
+                      "platform": "chromium-win", "configuration": "release", "architectures": ["i386"],
                       "slavenames": ["google-windows-2"]
                     },
                     {
                       "name": "Chromium Mac Release (Tests)", "type": "NewBuildAndTest", "builddir": "chromium-mac-release-tests",
-                      "platform": "chromium", "configuration": "release", "architectures": ["i386"],
+                      "platform": "chromium-mac", "configuration": "release", "architectures": ["i386"],
                       "slavenames": ["google-mac-2"]
                     },
                     {
                       "name": "Chromium Linux Release (Tests)", "type": "NewBuildAndTest", "builddir": "chromium-linux-release-tests",
-                      "platform": "chromium", "configuration": "release", "architectures": ["i386"],
+                      "platform": "chromium-linux", "configuration": "release", "architectures": ["i386"],
                       "slavenames": ["google-linux-2"]
                     },
                     {
