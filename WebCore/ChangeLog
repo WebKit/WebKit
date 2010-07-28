@@ -1,5 +1,11 @@
 2010-07-28  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Forgot to land GNUmakefile.am changes, broke build in r64196.
+
+        * GNUmakefile.am: Add SVGResources.* / SVGResourcesCache.* / SVGResourcesCycleSolver.* to build.
+
+2010-07-28  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Reviewed by Dirk Schulze.
 
         SVGMaskElement/SVGForeignObjectElement should not inherit from SVGURIReference

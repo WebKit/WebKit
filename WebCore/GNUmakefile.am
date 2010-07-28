@@ -2276,6 +2276,7 @@ webcore_sources += \
 	WebCore/rendering/RenderScrollbarPart.h \
 	WebCore/rendering/RenderScrollbarTheme.cpp \
 	WebCore/rendering/RenderScrollbarTheme.h \
+	WebCore/rendering/RenderSVGResourceContainer.cpp \
 	WebCore/rendering/RenderSVGResourceContainer.h \
 	WebCore/rendering/RenderSelectionInfo.h \
 	WebCore/rendering/RenderSlider.cpp \
@@ -3837,6 +3838,12 @@ webcore_sources += \
 	WebCore/rendering/SVGRenderSupport.h \
 	WebCore/rendering/SVGRenderTreeAsText.cpp \
 	WebCore/rendering/SVGRenderTreeAsText.h \
+	WebCore/rendering/SVGResources.cpp \
+	WebCore/rendering/SVGResources.h \
+	WebCore/rendering/SVGResourcesCache.cpp \
+	WebCore/rendering/SVGResourcesCache.h \
+	WebCore/rendering/SVGResourcesCycleSolver.cpp \
+	WebCore/rendering/SVGResourcesCycleSolver.h \
 	WebCore/rendering/SVGRootInlineBox.cpp \
 	WebCore/rendering/SVGRootInlineBox.h \
 	WebCore/rendering/SVGShadowTreeElements.cpp \
