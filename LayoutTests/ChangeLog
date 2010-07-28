@@ -1,5 +1,13 @@
 2010-07-28  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Fix two layout test failure on the windows slave. Remove win-xp specific results after the r64186 change.
+
+        * platform/win-xp/fast/lists: Removed.
+        * platform/win-xp/fast/lists/w3-css3-list-styles-alphabetic-expected.txt: Removed.
+        * platform/win-xp/fast/lists/w3-css3-list-styles-numeric-expected.txt: Removed.
+
+2010-07-28  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Not reviewed. Fix layout test failure on Leopard Intel Debug slave. Remove leopard specific result after the r64186 change.
 
         * platform/mac-leopard/fast/lists: Removed.
