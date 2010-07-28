@@ -872,6 +872,42 @@ void LauncherWindow::createChrome()
     toggleWebGL->setCheckable(true);
     toggleWebGL->setChecked(settings->testAttribute(QWebSettings::WebGLEnabled));
 
+    QAction* spatialNavigationAction = toolsMenu->addAction("Toggle Spatial Navigation", this, SLOT(toggleSpatialNavigation(bool)));
+    spatialNavigationAction->setCheckable(true);
+    spatialNavigationAction->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_S));
+
+    QAction* toggleFrameFlattening = toolsMenu->addAction("Toggle Frame Flattening", this, SLOT(toggleFrameFlattening(bool)));
+    toggleFrameFlattening->setCheckable(true);
+    toggleFrameFlattening->setChecked(settings->testAttribute(QWebSettings::FrameFlatteningEnabled));
+
+#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
+    QAction* touchMockAction = toolsMenu->addAction("Toggle multitouch mocking", this, SLOT(setTouchMocking(bool)));
+    touchMockAction->setCheckable(true);
+    touchMockAction->setShortcut(QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_T));
+#endif
+
+    toolsMenu->addSeparator();
+
+    QAction* toggleInterruptingJavaScripteEnabled = toolsMenu->addAction("Enable interrupting js scripts", this, SLOT(toggleInterruptingJavaScriptEnabled(bool)));
+    toggleInterruptingJavaScripteEnabled->setCheckable(true);
+    toggleInterruptingJavaScripteEnabled->setChecked(false);
+
+    QAction* toggleJavascriptCanOpenWindows = toolsMenu->addAction("Enable js popup windows", this, SLOT(toggleJavascriptCanOpenWindows(bool)));
+    toggleJavascriptCanOpenWindows->setCheckable(true);
+    toggleJavascriptCanOpenWindows->setChecked(false);
+
+    toolsMenu->addSeparator();
+
+    QAction* userAgentAction = toolsMenu->addAction("Change User Agent", this, SLOT(showUserAgentDialog()));
+    userAgentAction->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_U));
+
+    toolsMenu->addAction("Select Elements...", this, SLOT(selectElements()));
+
+    QAction* showInspectorAction = toolsMenu->addAction("Show Web Inspector", m_inspector, SLOT(setVisible(bool)), QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_I));
+    showInspectorAction->setCheckable(true);
+    showInspectorAction->connect(m_inspector, SIGNAL(visibleChanged(bool)), SLOT(setChecked(bool)));
+
+    // GraphicsView sub menu.
     QAction* toggleAcceleratedCompositing = graphicsViewMenu->addAction("Toggle Accelerated Compositing", this, SLOT(toggleAcceleratedCompositing(bool)));
     toggleAcceleratedCompositing->setCheckable(true);
     toggleAcceleratedCompositing->setChecked(settings->testAttribute(QWebSettings::AcceleratedCompositingEnabled));
@@ -890,22 +926,6 @@ void LauncherWindow::createChrome()
     toggleTiledBackingStore->setEnabled(isGraphicsBased());
     toggleTiledBackingStore->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
 
-    QAction* spatialNavigationAction = toolsMenu->addAction("Toggle Spatial Navigation", this, SLOT(toggleSpatialNavigation(bool)));
-    spatialNavigationAction->setCheckable(true);
-    spatialNavigationAction->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_S));
-
-    QAction* toggleFrameFlattening = toolsMenu->addAction("Toggle Frame Flattening", this, SLOT(toggleFrameFlattening(bool)));
-    toggleFrameFlattening->setCheckable(true);
-    toggleFrameFlattening->setChecked(settings->testAttribute(QWebSettings::FrameFlatteningEnabled));
-
-    QAction* toggleInterruptingJavaScripteEnabled = toolsMenu->addAction("Enable interrupting js scripts", this, SLOT(toggleInterruptingJavaScriptEnabled(bool)));
-    toggleInterruptingJavaScripteEnabled->setCheckable(true);
-    toggleInterruptingJavaScripteEnabled->setChecked(false);
-
-    QAction* toggleJavascriptCanOpenWindows = toolsMenu->addAction("Enable js popup windows", this, SLOT(toggleJavascriptCanOpenWindows(bool)));
-    toggleJavascriptCanOpenWindows->setCheckable(true);
-    toggleJavascriptCanOpenWindows->setChecked(false);
-
 #if defined(QT_CONFIGURED_WITH_OPENGL)
     QAction* toggleQGLWidgetViewport = graphicsViewMenu->addAction("Toggle use of QGLWidget Viewport", this, SLOT(toggleQGLWidgetViewport(bool)));
     toggleQGLWidgetViewport->setCheckable(true);
@@ -913,37 +933,6 @@ void LauncherWindow::createChrome()
     toggleQGLWidgetViewport->setEnabled(isGraphicsBased());
     toggleQGLWidgetViewport->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
 #endif
-
-    QAction* userAgentAction = toolsMenu->addAction("Change User Agent", this, SLOT(showUserAgentDialog()));
-    userAgentAction->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_U));
-
-    graphicsViewMenu->addSeparator();
-
-    m_flipAnimated = graphicsViewMenu->addAction("Animated Flip");
-    m_flipAnimated->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
-    m_flipAnimated->setEnabled(isGraphicsBased());
-
-    m_flipYAnimated = graphicsViewMenu->addAction("Animated Y-Flip");
-    m_flipYAnimated->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
-    m_flipYAnimated->setEnabled(isGraphicsBased());
-
-    if (isGraphicsBased()) {
-        WebViewGraphicsBased* view = static_cast<WebViewGraphicsBased*>(m_view);
-        connect(m_flipAnimated, SIGNAL(triggered()), view, SLOT(animatedFlip()));
-        connect(m_flipYAnimated, SIGNAL(triggered()), view, SLOT(animatedYFlip()));
-    }
-
-    graphicsViewMenu->addSeparator();
-
-    QAction* cloneWindow = graphicsViewMenu->addAction("Clone Window", this, SLOT(cloneWindow()));
-    cloneWindow->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
-    cloneWindow->setEnabled(isGraphicsBased());
-
-    QAction* showFPS = graphicsViewMenu->addAction("Show FPS", this, SLOT(showFPS(bool)));
-    showFPS->setCheckable(true);
-    showFPS->setEnabled(isGraphicsBased());
-    showFPS->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
-    showFPS->setChecked(gShowFrameRate);
 
     QMenu* viewportUpdateMenu = graphicsViewMenu->addMenu("Change Viewport Update Mode");
     viewportUpdateMenu->setEnabled(isGraphicsBased());
@@ -991,17 +980,33 @@ void LauncherWindow::createChrome()
     viewportUpdateModeActions->addAction(boundingRectUpdate);
     viewportUpdateModeActions->addAction(noUpdate);
 
-    toolsMenu->addAction("Select Elements...", this, SLOT(selectElements()));
+    graphicsViewMenu->addSeparator();
 
-#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
-    QAction* touchMockAction = toolsMenu->addAction("Toggle multitouch mocking", this, SLOT(setTouchMocking(bool)));
-    touchMockAction->setCheckable(true);
-    touchMockAction->setShortcut(QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_T));
-#endif
+    m_flipAnimated = graphicsViewMenu->addAction("Animated Flip");
+    m_flipAnimated->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
+    m_flipAnimated->setEnabled(isGraphicsBased());
 
-    QAction* showInspectorAction = toolsMenu->addAction("Show Web Inspector", m_inspector, SLOT(setVisible(bool)), QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_I));
-    showInspectorAction->setCheckable(true);
-    showInspectorAction->connect(m_inspector, SIGNAL(visibleChanged(bool)), SLOT(setChecked(bool)));
+    m_flipYAnimated = graphicsViewMenu->addAction("Animated Y-Flip");
+    m_flipYAnimated->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
+    m_flipYAnimated->setEnabled(isGraphicsBased());
+
+    if (isGraphicsBased()) {
+        WebViewGraphicsBased* view = static_cast<WebViewGraphicsBased*>(m_view);
+        connect(m_flipAnimated, SIGNAL(triggered()), view, SLOT(animatedFlip()));
+        connect(m_flipYAnimated, SIGNAL(triggered()), view, SLOT(animatedYFlip()));
+    }
+
+    QAction* cloneWindow = graphicsViewMenu->addAction("Clone Window", this, SLOT(cloneWindow()));
+    cloneWindow->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
+    cloneWindow->setEnabled(isGraphicsBased());
+
+    graphicsViewMenu->addSeparator();
+
+    QAction* showFPS = graphicsViewMenu->addAction("Show FPS", this, SLOT(showFPS(bool)));
+    showFPS->setCheckable(true);
+    showFPS->setEnabled(isGraphicsBased());
+    showFPS->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
+    showFPS->setChecked(gShowFrameRate);
 }
 
 QWebPage* WebPage::createWindow(QWebPage::WebWindowType type)

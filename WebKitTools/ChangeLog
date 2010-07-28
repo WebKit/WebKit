@@ -1,3 +1,16 @@
+2010-07-28  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Rubber-stamped by Kenneth Christiansen.
+
+        More Developer menu items reordering.
+
+        Grouping related menu items together, visually and logically (in the code).
+
+        No behavior change.
+
+        * QtTestBrowser/main.cpp:
+        (LauncherWindow::createChrome):
+
 2010-07-27  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by Ojan Vafai.
