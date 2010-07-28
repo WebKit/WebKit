@@ -1427,11 +1427,9 @@ BUG23498 MAC : fast/inline-block/inline-block-vertical-align.html = IMAGE
 BUG23498 MAC : fast/layers/scroll-rect-to-visible.html = IMAGE
 BUG23498 MAC : fast/lists/001.html = IMAGE
 BUG23498 MAC : fast/lists/008.html = IMAGE
-BUG23498 MAC : fast/lists/alpha-list-wrap.html = IMAGE
 BUG23498 MAC : fast/lists/li-br.html = IMAGE
 // BUG23498 MAC : fast/lists/ol-start-parsing.html = IMAGE
 BUG23498 MAC : fast/lists/olstart.html = IMAGE
-BUG23498 MAC : fast/lists/w3-list-styles.html = IMAGE
 BUG23498 MAC : fast/multicol/column-rules-stacking.html = IMAGE
 BUG23498 MAC : fast/multicol/columns-shorthand-parsing.html = IMAGE
 BUG23498 MAC : fast/multicol/float-multicol.html = IMAGE
@@ -3138,3 +3136,14 @@ BUGWK43067 : fast/dom/prototype-inheritance.html = TEXT
 
 // Fails since WebKit r64156
 BUGWK43086 : fast/canvas/canvas-ImageData-behaviour.html = TEXT
+
+// Fails because of http://trac.webkit.org/changeset/64186/
+BUG42691 : fast/lists/alpha-boundary-values.html = TEXT
+BUG42691 : fast/lists/alpha-list-wrap.html = TEXT
+BUG42691 : fast/lists/decimal-leading-zero.html = TEXT
+BUG42691 : fast/lists/list-style-type-dynamic-change.html = TEXT
+BUG42691 : fast/lists/w3-css3-list-styles-alphabetic.html = TEXT
+BUG42691 : fast/lists/w3-css3-list-styles-numeric.html = TEXT
+BUG42691 : fast/lists/w3-list-styles.html = TEXT
+BUG42691 : fast/lists/li-values.html = TIMEOUT
+

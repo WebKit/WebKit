@@ -1,3 +1,13 @@
+2010-07-28  Jeremy Orlow  <jorlow@chromium.org>
+
+        Updating Chromium test expectations to expect 8 tests to fail since
+        our "test shell" doesn't implement a method required by Daniel Bates'
+        http://trac.webkit.org/changeset/64186/ change.
+
+        Not reviewed.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-07-28  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Rebaseline mac-leopard specific pixel test result after the path cleanup patch.
