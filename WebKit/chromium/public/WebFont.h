@@ -37,11 +37,11 @@
 
 namespace WebKit {
 
-class WebFontDescription;
-class WebFloatPoint;
-class WebFloatRect;
-class WebPoint;
-class WebRect;
+struct WebFontDescription;
+struct WebFloatPoint;
+struct WebFloatRect;
+struct WebPoint;
+struct WebRect;
 struct WebTextRun;
 
 class WebFont {
