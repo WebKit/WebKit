@@ -2,6 +2,24 @@
 
         Reviewed by Jeremy Orlow.
 
+        Skip IDBKeyRange from the prototype-inheritance layout test.
+        IDBKeyRange is a DOM object and, with V8, it seems that such objects
+        do not respect the prototype inheritance.
+
+        Once IndexedDatabase is done, we should remove indexedDB and IDBKeyRange
+        from the list of skipped window properties and we should update the
+        Chromium and Android test expectations.
+
+        fast/dom/prototype-inheritance.html fails from r64141
+        https://bugs.webkit.org/show_bug.cgi?id=43067
+
+        * fast/dom/script-tests/prototype-inheritance.js:
+        * platform/chromium/test_expectations.txt:
+
+2010-07-28  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Jeremy Orlow.
+
         [IndexedDB] WebDOMStringList default ctor does not initialize its m_private member
         variable so any attempt to append strings to a WebDOMStringList instance results in a crash.
         https://bugs.webkit.org/show_bug.cgi?id=43120
