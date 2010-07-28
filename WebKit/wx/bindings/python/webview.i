@@ -32,7 +32,6 @@
 #include "WebDOMSelection.h"
 #include "WebEdit.h"
 #include "WebFrame.h"
-#include "WebDOMDefines.h"
 #include "WebSettings.h"
 #include "WebView.h"
 
