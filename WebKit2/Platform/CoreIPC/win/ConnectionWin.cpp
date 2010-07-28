@@ -311,6 +311,13 @@ bool Connection::sendOutgoingMessage(MessageID messageID, PassOwnPtr<ArgumentEnc
     }
 
     DWORD error = ::GetLastError();
+
+    if (error == ERROR_NO_DATA) {
+        // The pipe is being closed.
+        connectionDidClose();
+        return false;
+    }
+
     if (error != ERROR_IO_PENDING) {
         ASSERT_NOT_REACHED();
         return false;

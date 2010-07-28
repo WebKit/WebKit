@@ -1,5 +1,19 @@
 2010-07-28  Adam Roben  <aroben@apple.com>
 
+        Teach CoreIPC how to handle with a pipe closing during a write
+
+        Fixes <http://webkit.org/b/43131> Assertion failure in
+        Connection::sendOutgoingMessage if the other process exits at just the
+        wrong time
+
+        Reviewed by Darin Adler.
+
+        * Platform/CoreIPC/win/ConnectionWin.cpp:
+        (CoreIPC::Connection::sendOutgoingMessage): If ::WriteFile fails with
+        ERROR_NO_DATA, the pipe (and thus the connection) has closed.
+
+2010-07-28  Adam Roben  <aroben@apple.com>
+
         Teach CoreIPC the right way to send large messages on Windows
 
         r63776 added support for ::WriteFile failing with ERROR_IO_PENDING,
