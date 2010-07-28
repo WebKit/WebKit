@@ -291,12 +291,12 @@ QUrl QWKPage::url() const
     WKRetainPtr<WKFrameRef> frame = WKPageGetMainFrame(pageRef());
     if (!frame)
         return QUrl();
-    return WKURLCopyQUrl(WKFrameGetURL(frame.get()));
+    return WKURLCopyQUrl(WKFrameCopyURL(frame.get()));
 }
 
 QString QWKPage::title() const
 {
-    return WKStringCopyQString(WKPageGetTitle(pageRef()));
+    return WKStringCopyQString(WKPageCopyTitle(pageRef()));
 }
 
 void QWKPage::setViewportSize(const QSize& size)

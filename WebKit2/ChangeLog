@@ -1,3 +1,13 @@
+2010-07-28  Andras Becsi  <abecsi@webkit.org>
+
+        Unreviewed trivial build fix.
+
+        [Qt] Follow the API changes after r64172.
+
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPage::url):
+        (QWKPage::title):
+
 2010-07-27  Anders Carlsson  <andersca@apple.com>
 
         Fix Windows build.
