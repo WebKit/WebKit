@@ -1,5 +1,55 @@
 2010-07-27  Gavin Barraclough  <barraclough@apple.com>
 
+        Temporarily rolling out http://trac.webkit.org/changeset/64177,
+        this seems to give QT ARM/Win a headache (specifically, looks
+        like structure layour differs, objects get too large - 
+        "..\..\..\JavaScriptCore\runtime\ArrayPrototype.cpp:41:"
+        "error: size of array 'dummyclass_fits_in_cell' is negative").
+
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncShift):
+        (JSC::arrayProtoFuncSplice):
+        (JSC::arrayProtoFuncUnShift):
+        * runtime/JSArray.cpp:
+        (JSC::increasedVectorLength):
+        (JSC::JSArray::JSArray):
+        (JSC::JSArray::~JSArray):
+        (JSC::JSArray::getOwnPropertySlot):
+        (JSC::JSArray::getOwnPropertyDescriptor):
+        (JSC::JSArray::put):
+        (JSC::JSArray::putSlowCase):
+        (JSC::JSArray::deleteProperty):
+        (JSC::JSArray::getOwnPropertyNames):
+        (JSC::JSArray::increaseVectorLength):
+        (JSC::JSArray::setLength):
+        (JSC::JSArray::pop):
+        (JSC::JSArray::push):
+        (JSC::JSArray::sortNumeric):
+        (JSC::JSArray::sort):
+        (JSC::JSArray::fillArgList):
+        (JSC::JSArray::copyToRegisters):
+        (JSC::JSArray::compactForSorting):
+        (JSC::JSArray::subclassData):
+        (JSC::JSArray::setSubclassData):
+        (JSC::JSArray::checkConsistency):
+        * runtime/JSArray.h:
+        (JSC::JSArray::length):
+        (JSC::JSArray::canGetIndex):
+        (JSC::JSArray::getIndex):
+        (JSC::JSArray::setIndex):
+        (JSC::JSArray::uncheckedSetIndex):
+        (JSC::JSArray::markChildrenDirect):
+
+2010-07-27  Gavin Barraclough  <barraclough@apple.com>
+
         Speculative build fix for Chromium/Win
 
         * wtf/Platform.h:

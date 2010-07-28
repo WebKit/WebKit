@@ -424,17 +424,13 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncShift(ExecState* exec)
         result = jsUndefined();
     } else {
         result = thisObj->get(exec, 0);
-        if (isJSArray(&exec->globalData(), thisObj))
-            ((JSArray *)thisObj)->shiftCount(exec, 1);
-        else {
-            for (unsigned k = 1; k < length; k++) {
-                if (JSValue obj = getProperty(exec, thisObj, k))
-                    thisObj->put(exec, k - 1, obj);
-                else
-                    thisObj->deleteProperty(exec, k - 1);
-            }
-            thisObj->deleteProperty(exec, length - 1);
+        for (unsigned k = 1; k < length; k++) {
+            if (JSValue obj = getProperty(exec, thisObj, k))
+                thisObj->put(exec, k - 1, obj);
+            else
+                thisObj->deleteProperty(exec, k - 1);
         }
+        thisObj->deleteProperty(exec, length - 1);
         putProperty(exec, thisObj, exec->propertyNames().length, jsNumber(exec, length - 1));
     }
     return JSValue::encode(result);
@@ -582,28 +578,20 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
     unsigned additionalArgs = std::max<int>(exec->argumentCount() - 2, 0);
     if (additionalArgs != deleteCount) {
         if (additionalArgs < deleteCount) {
-            if ((!begin) && (isJSArray(&exec->globalData(), thisObj)))
-                ((JSArray *)thisObj)->shiftCount(exec, deleteCount - additionalArgs);
-            else {
-                for (unsigned k = begin; k < length - deleteCount; ++k) {
-                    if (JSValue v = getProperty(exec, thisObj, k + deleteCount))
-                        thisObj->put(exec, k + additionalArgs, v);
-                    else
-                        thisObj->deleteProperty(exec, k + additionalArgs);
-                }
-                for (unsigned k = length; k > length - deleteCount + additionalArgs; --k)
-                    thisObj->deleteProperty(exec, k - 1);
+            for (unsigned k = begin; k < length - deleteCount; ++k) {
+                if (JSValue v = getProperty(exec, thisObj, k + deleteCount))
+                    thisObj->put(exec, k + additionalArgs, v);
+                else
+                    thisObj->deleteProperty(exec, k + additionalArgs);
             }
+            for (unsigned k = length; k > length - deleteCount + additionalArgs; --k)
+                thisObj->deleteProperty(exec, k - 1);
         } else {
-            if ((!begin) && (isJSArray(&exec->globalData(), thisObj)))
-                ((JSArray *)thisObj)->unshiftCount(exec, additionalArgs - deleteCount);
-            else {
-                for (unsigned k = length - deleteCount; k > begin; --k) {
-                    if (JSValue obj = getProperty(exec, thisObj, k + deleteCount - 1))
-                        thisObj->put(exec, k + additionalArgs - 1, obj);
-                    else
-                        thisObj->deleteProperty(exec, k + additionalArgs - 1);
-                }
+            for (unsigned k = length - deleteCount; k > begin; --k) {
+                if (JSValue obj = getProperty(exec, thisObj, k + deleteCount - 1))
+                    thisObj->put(exec, k + additionalArgs - 1, obj);
+                else
+                    thisObj->deleteProperty(exec, k + additionalArgs - 1);
             }
         }
     }
@@ -622,16 +610,12 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncUnShift(ExecState* exec)
     // 15.4.4.13
     unsigned length = thisObj->get(exec, exec->propertyNames().length).toUInt32(exec);
     unsigned nrArgs = exec->argumentCount();
-    if ((nrArgs) && (length)) {
-        if (isJSArray(&exec->globalData(), thisObj))
-            ((JSArray *)thisObj)->unshiftCount(exec, nrArgs);
-        else {
-            for (unsigned k = length; k > 0; --k) {
-                if (JSValue v = getProperty(exec, thisObj, k - 1))
-                    thisObj->put(exec, k + nrArgs - 1, v);
-                else
-                    thisObj->deleteProperty(exec, k + nrArgs - 1);
-            }
+    if (nrArgs) {
+        for (unsigned k = length; k > 0; --k) {
+            if (JSValue v = getProperty(exec, thisObj, k - 1))
+                thisObj->put(exec, k + nrArgs - 1, v);
+            else
+                thisObj->deleteProperty(exec, k + nrArgs - 1);
         }
     }
     for (unsigned k = 0; k < nrArgs; ++k)
