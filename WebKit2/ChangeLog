@@ -1,3 +1,32 @@
+2010-07-28  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Implement NPN_HasMethod
+        https://bugs.webkit.org/show_bug.cgi?id=43155
+
+        * WebProcess/Plugins/NPJSObject.cpp:
+        (WebKit::NPJSObject::hasMethod):
+        Check if the JSObject has a property with the given name. If it does, check that the value is a function.
+    
+        (WebKit::NPJSObject::hasProperty):
+        Add a JSLock.
+
+        (WebKit::NPJSObject::npClass):
+        Add some stubbed out functions.
+
+        (WebKit::NPJSObject::NP_HasMethod):
+        Call NPJSObject::hasMethod.
+
+        (WebKit::NPJSObject::NP_Invoke):
+        (WebKit::NPJSObject::NP_InvokeDefault):
+        (WebKit::NPJSObject::NP_SetProperty):
+        Stub out functions.
+
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::NPN_HasMethod):
+        Call the NPClass::hasMethod function.
+
 2010-07-28  Brady Eidson  <beidson@apple.com>
 
         Rubberstamped by Sam Weinig.

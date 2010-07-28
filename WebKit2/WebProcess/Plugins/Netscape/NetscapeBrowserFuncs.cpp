@@ -571,7 +571,7 @@ static bool NPN_RemoveProperty(NPP npp, NPObject *npobj, NPIdentifier propertyNa
     return false;
 }
 
-static bool NPN_HasProperty(NPP npp, NPObject *npObject, NPIdentifier propertyName)
+static bool NPN_HasProperty(NPP, NPObject *npObject, NPIdentifier propertyName)
 {
     if (npObject->_class->hasProperty)
         return npObject->_class->hasProperty(npObject, propertyName);
@@ -579,9 +579,11 @@ static bool NPN_HasProperty(NPP npp, NPObject *npObject, NPIdentifier propertyNa
     return false;
 }
 
-static bool NPN_HasMethod(NPP npp, NPObject *npobj, NPIdentifier methodName)
+static bool NPN_HasMethod(NPP, NPObject *npObject, NPIdentifier methodName)
 {
-    notImplemented();
+    if (npObject->_class->hasMethod)
+        return npObject->_class->hasMethod(npObject, methodName);
+
     return false;
 }
 

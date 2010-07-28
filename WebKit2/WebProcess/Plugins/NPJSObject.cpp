@@ -82,6 +82,28 @@ static Identifier identifierFromIdentifierRep(ExecState* exec, IdentifierRep* id
     return Identifier(exec, String::fromUTF8WithLatin1Fallback(string, length).impl());
 }
 
+bool NPJSObject::hasMethod(NPIdentifier methodName)
+{
+    IdentifierRep* identifierRep = static_cast<IdentifierRep*>(methodName);
+
+    if (!identifierRep->isString())
+        return false;
+
+    ExecState* exec = m_objectMap->globalExec();
+    if (!exec)
+        return false;
+
+    JSLock lock(SilenceAssertionsOnly);
+
+    JSValue value = m_jsObject->get(exec, identifierFromIdentifierRep(exec, identifierRep));    
+    exec->clearException();
+    if (!value.isObject())
+        return false;
+
+    CallData callData;
+    return value.toObject(exec)->getCallData(callData) != CallTypeNone;
+}
+
 bool NPJSObject::hasProperty(NPIdentifier identifier)
 {
     IdentifierRep* identifierRep = static_cast<IdentifierRep*>(identifier);
@@ -90,6 +112,8 @@ bool NPJSObject::hasProperty(NPIdentifier identifier)
     if (!exec)
         return false;
     
+    JSLock lock(SilenceAssertionsOnly);
+
     bool result;
     if (identifierRep->isString())
         result = m_jsObject->hasProperty(exec, identifierFromIdentifierRep(exec, identifierRep));
@@ -126,13 +150,13 @@ NPClass* NPJSObject::npClass()
         NP_CLASS_STRUCT_VERSION,
         NP_Allocate,
         NP_Deallocate,
-        0, 
         0,
-        0,
-        0,
+        NP_HasMethod,
+        NP_Invoke,
+        NP_InvokeDefault,
         NP_HasProperty,
         NP_GetProperty,
-        0,
+        NP_SetProperty,
         0,
         0,
         0
@@ -154,14 +178,37 @@ void NPJSObject::NP_Deallocate(NPObject* npObject)
     delete npJSObject;
 }
 
+bool NPJSObject::NP_HasMethod(NPObject* npObject, NPIdentifier methodName)
+{
+    return toNPJSObject(npObject)->hasMethod(methodName);
+}
+    
+bool NPJSObject::NP_Invoke(NPObject*, NPIdentifier methodName, const NPVariant *arguments, uint32_t argumentCount, NPVariant *result)
+{
+    notImplemented();
+    return false;
+}
+    
+bool NPJSObject::NP_InvokeDefault(NPObject*, const NPVariant *arguments, uint32_t argumentCount, NPVariant *result)
+{
+    notImplemented();
+    return false;
+}
+    
 bool NPJSObject::NP_HasProperty(NPObject* npObject, NPIdentifier propertyName)
 {
     return toNPJSObject(npObject)->hasProperty(propertyName);
 }
-    
+
 bool NPJSObject::NP_GetProperty(NPObject* npObject, NPIdentifier propertyName, NPVariant* result)
 {
     return toNPJSObject(npObject)->getProperty(propertyName, result);
+}
+
+bool NPJSObject::NP_SetProperty(NPObject*, NPIdentifier propertyName, const NPVariant* value)
+{
+    notImplemented();
+    return false;
 }
 
 } // namespace WebKit

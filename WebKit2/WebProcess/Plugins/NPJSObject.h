@@ -59,14 +59,19 @@ private:
 
     void initialize(NPRuntimeObjectMap*, JSC::JSObject* jsObject);
 
-    bool hasProperty(NPIdentifier);
-    bool getProperty(NPIdentifier, NPVariant* result);
+    bool hasMethod(NPIdentifier methodName);
+    bool hasProperty(NPIdentifier propertyName);
+    bool getProperty(NPIdentifier propertyName, NPVariant* result);
 
     static NPClass* npClass();
     static NPObject* NP_Allocate(NPP, NPClass*);
     static void NP_Deallocate(NPObject*);
-    static bool NP_HasProperty(NPObject* npobj, NPIdentifier name);
-    static bool NP_GetProperty(NPObject* npobj, NPIdentifier name, NPVariant* result);
+    static bool NP_HasMethod(NPObject*, NPIdentifier methodName);
+    static bool NP_Invoke(NPObject*, NPIdentifier methodName, const NPVariant *arguments, uint32_t argumentCount, NPVariant *result);
+    static bool NP_InvokeDefault(NPObject*, const NPVariant *arguments, uint32_t argumentCount, NPVariant *result);
+    static bool NP_HasProperty(NPObject*, NPIdentifier propertyName);
+    static bool NP_GetProperty(NPObject*, NPIdentifier propertyName, NPVariant* result);
+    static bool NP_SetProperty(NPObject*, NPIdentifier propertyName, const NPVariant* value);
     
     NPRuntimeObjectMap* m_objectMap;
     JSC::ProtectedPtr<JSC::JSObject> m_jsObject;
