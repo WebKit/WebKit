@@ -846,10 +846,6 @@ fast/repaint/overflow-scroll-body-appear.html
 # Need to add functionality to DumpRenderTree to handle scrollbar police changes
 fast/overflow/scrollbar-restored-and-then-locked.html
 
-# Need to handle getting text/html in ClipboardWin::getData.
-editing/pasteboard/onpaste-text-html.html
-fast/events/ondrop-text-html.html
-
 # <http://webkit.org/b/37096> http/tests/security/xss-DENIED-iframe-src-alias.html sometimes times out on Windows
 http/tests/security/xss-DENIED-iframe-src-alias.html
 

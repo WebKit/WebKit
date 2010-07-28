@@ -70,7 +70,7 @@ static const char szShellDotUrlTemplate[] = "[InternetShortcut]\r\nURL=%s\r\n";
 // We provide the IE clipboard types (URL and Text), and the clipboard types specified in the WHATWG Web Applications 1.0 draft
 // see http://www.whatwg.org/specs/web-apps/current-work/ Section 6.3.5.3
 
-enum ClipboardDataType { ClipboardDataTypeNone, ClipboardDataTypeURL, ClipboardDataTypeText };
+enum ClipboardDataType { ClipboardDataTypeNone, ClipboardDataTypeURL, ClipboardDataTypeText, ClipboardDataTypeTextHTML };
 
 static ClipboardDataType clipboardTypeFromMIMEType(const String& type)
 {
@@ -81,6 +81,8 @@ static ClipboardDataType clipboardTypeFromMIMEType(const String& type)
         return ClipboardDataTypeText;
     if (qType == "url" || qType == "text/uri-list")
         return ClipboardDataTypeURL;
+    if (qType == "text/html")
+        return ClipboardDataTypeTextHTML;
 
     return ClipboardDataTypeNone;
 }
@@ -505,6 +507,12 @@ String ClipboardWin::getData(const String& type, bool& success) const
         return getPlainText(m_dataObject.get(), success);
     if (dataType == ClipboardDataTypeURL)
         return getURL(m_dataObject.get(), DragData::DoNotConvertFilenames, success);
+    else if (dataType == ClipboardDataTypeTextHTML) {
+        String data = getTextHTML(m_dataObject.get(), success);
+        if (success)
+            return data;
+        return getCFHTML(m_dataObject.get(), success);
+    }
     
     return "";
 }

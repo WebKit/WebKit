@@ -1,3 +1,12 @@
+2010-07-28  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        implement getData('text/html') for webkit win
+        https://bugs.webkit.org/show_bug.cgi?id=37981
+
+        * platform/win/Skipped: 2 tests now pass
+
 2010-07-28  Alex Nicolaou  <anicolao@chromium.org>
 
         Reviewed by Darin Adler.
