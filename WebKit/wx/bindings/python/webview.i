@@ -100,7 +100,6 @@ MustHaveApp(wxWebBrowserShell);
 MustHaveApp(wxWebFrame);
 MustHaveApp(wxWebView);
 
-%include WebDOMDefines.h
 %include WebKitDefines.h
 
 %include WebDOMObject.h

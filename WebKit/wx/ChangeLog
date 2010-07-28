@@ -1,5 +1,11 @@
 2010-07-28  Kevin Ollivier  <kevino@theolliviers.com>
 
+        [wx] wxPython build fix that was missed in last commit.
+
+        * bindings/python/webview.i:
+
+2010-07-28  Kevin Ollivier  <kevino@theolliviers.com>
+
         [wx] Build fix after recent changes.
 
         * WebEdit.h: Added.
