@@ -28,8 +28,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-if (!window.InspectorBackend) {
-
 WebInspector.InspectorBackendStub = function()
 {
     this._registerDelegate("addInspectedNode");
@@ -129,5 +127,3 @@ WebInspector.InspectorBackendStub.prototype = {
 }
 
 InspectorBackend = new WebInspector.InspectorBackendStub();
-
-}
