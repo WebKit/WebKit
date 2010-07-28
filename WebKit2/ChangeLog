@@ -1,5 +1,13 @@
 2010-07-27  Anders Carlsson  <andersca@apple.com>
 
+        Fix Windows build.
+
+        * WebProcess/Plugins/JSNPObject.cpp:
+        (WebKit::JSNPObject::propertyGetter):
+        Remove unreachable code.
+
+2010-07-27  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Implement JSNPObject::propertyGetter
