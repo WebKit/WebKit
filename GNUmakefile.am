@@ -452,6 +452,7 @@ webkitgtk_built_h_api += \
 	DerivedSources/webkit/WebKitDOMXPathNSResolver.h \
 	DerivedSources/webkit/WebKitDOMXPathResult.h \
 	DerivedSources/webkit/webkitdom.h \
+	DerivedSources/webkit/webkitdomdefines.h \
 	WebKit/gtk/webkit/webkitversion.h
 
 webkitgtk_h_api += \

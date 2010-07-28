@@ -1,3 +1,11 @@
+2010-07-27  Martin Robinson  <mrobinson@igalia.com>
+
+        Unreviewed build fix.
+
+        Add missing webkitdomdefines.h header to the sources list.
+
+        * GNUmakefile.am: Add missing header to the sources list.
+
 2010-07-27  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by Ojan Vafai.
