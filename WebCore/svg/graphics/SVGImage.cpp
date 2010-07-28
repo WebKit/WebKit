@@ -237,25 +237,27 @@ bool SVGImage::dataChanged(bool allDataReceived)
 
     if (allDataReceived) {
         static FrameLoaderClient* dummyFrameLoaderClient =  new EmptyFrameLoaderClient;
-        static EditorClient* dummyEditorClient = new EmptyEditorClient;
+
+        Page::PageClients pageClients;
+        m_chromeClient.set(new SVGImageChromeClient(this));
+        pageClients.chromeClient = m_chromeClient.get();
 #if ENABLE(CONTEXT_MENUS)
         static ContextMenuClient* dummyContextMenuClient = new EmptyContextMenuClient;
-#else
-        static ContextMenuClient* dummyContextMenuClient = 0;
+        pageClients.contextMenuClient = dummyContextMenuClient;
 #endif
+        static EditorClient* dummyEditorClient = new EmptyEditorClient;
+        pageClients.editorClient = dummyEditorClient;
 #if ENABLE(DRAG_SUPPORT)
         static DragClient* dummyDragClient = new EmptyDragClient;
-#else
-        static DragClient* dummyDragClient = 0;
+        pageClients.dragClient = dummyDragClient;
 #endif
         static InspectorClient* dummyInspectorClient = new EmptyInspectorClient;
-
-        m_chromeClient.set(new SVGImageChromeClient(this));
+        pageClients.inspectorClient = dummyInspectorClient;
         
         // FIXME: If this SVG ends up loading itself, we might leak the world.
         // The comment said that the Cache code does not know about CachedImages
         // holding Frames and won't know to break the cycle. But 
-        m_page.set(new Page(m_chromeClient.get(), dummyContextMenuClient, dummyEditorClient, dummyDragClient, dummyInspectorClient, 0, 0, 0, 0));
+        m_page.set(new Page(pageClients));
         m_page->settings()->setMediaEnabled(false);
         m_page->settings()->setJavaScriptEnabled(false);
         m_page->settings()->setPluginsEnabled(false);

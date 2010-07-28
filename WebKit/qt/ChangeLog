@@ -1,3 +1,13 @@
+2010-07-26  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        Page clients should be passed to Page constructor via structure of pointers
+        https://bugs.webkit.org/show_bug.cgi?id=42834
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+
 2010-07-27  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Tor Arne Vestbø.

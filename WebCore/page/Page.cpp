@@ -124,33 +124,33 @@ static void networkStateChanged()
         frames[i]->document()->dispatchWindowEvent(Event::create(eventName, false, false));
 }
 
-Page::Page(ChromeClient* chromeClient, ContextMenuClient* contextMenuClient, EditorClient* editorClient, DragClient* dragClient, InspectorClient* inspectorClient, PluginHalterClient* pluginHalterClient, GeolocationControllerClient* geolocationControllerClient, DeviceOrientationClient* deviceOrientationClient, BackForwardControllerClient* backForwardControllerClient)
-    : m_chrome(new Chrome(this, chromeClient))
+Page::Page(const PageClients& pageClients)
+    : m_chrome(new Chrome(this, pageClients.chromeClient))
     , m_dragCaretController(new SelectionController(0, true))
 #if ENABLE(DRAG_SUPPORT)
-    , m_dragController(new DragController(this, dragClient))
+    , m_dragController(new DragController(this, pageClients.dragClient))
 #endif
     , m_focusController(new FocusController(this))
 #if ENABLE(CONTEXT_MENUS)
-    , m_contextMenuController(new ContextMenuController(this, contextMenuClient))
+    , m_contextMenuController(new ContextMenuController(this, pageClients.contextMenuClient))
 #endif
 #if ENABLE(INSPECTOR)
-    , m_inspectorController(new InspectorController(this, inspectorClient))
+    , m_inspectorController(new InspectorController(this, pageClients.inspectorClient))
 #endif
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
-    , m_geolocationController(new GeolocationController(this, geolocationControllerClient))
+    , m_geolocationController(new GeolocationController(this, pageClients.geolocationControllerClient))
 #endif
 #if ENABLE(DEVICE_ORIENTATION)
-    , m_deviceOrientationController(RuntimeEnabledFeatures::deviceOrientationEnabled() ? new DeviceOrientationController(this, deviceOrientationClient) : 0)
+    , m_deviceOrientationController(RuntimeEnabledFeatures::deviceOrientationEnabled() ? new DeviceOrientationController(this, pageClients.deviceOrientationClient) : 0)
 #endif
 #if ENABLE(INPUT_SPEECH)
-    , m_speechInputClient(0)
+    , m_speechInputClient(pageClients.speechInputClient)
 #endif
     , m_settings(new Settings(this))
     , m_progress(new ProgressTracker)
-    , m_backForwardController(new BackForwardController(this, backForwardControllerClient))
+    , m_backForwardController(new BackForwardController(this, pageClients.backForwardControllerClient))
     , m_theme(RenderTheme::themeForPage(this))
-    , m_editorClient(editorClient)
+    , m_editorClient(pageClients.editorClient)
     , m_frameCount(0)
     , m_openedByDOM(false)
     , m_tabKeyCyclesThroughElements(true)
@@ -168,22 +168,6 @@ Page::Page(ChromeClient* chromeClient, ContextMenuClient* contextMenuClient, Edi
     , m_customHTMLTokenizerChunkSize(-1)
     , m_canStartMedia(true)
 {
-#if !ENABLE(CONTEXT_MENUS)
-    UNUSED_PARAM(contextMenuClient);
-#endif
-#if !ENABLE(DRAG_SUPPORT)
-    UNUSED_PARAM(dragClient);
-#endif
-#if !ENABLE(INSPECTOR)
-    UNUSED_PARAM(inspectorClient);
-#endif
-#if !ENABLE(CLIENT_BASED_GEOLOCATION)
-    UNUSED_PARAM(geolocationControllerClient);
-#endif
-#if !ENABLE(CLIENT_DEVICE_ORIENTATION)
-    UNUSED_PARAM(deviceOrientationClient);
-#endif
-
     if (!allPages) {
         allPages = new HashSet<Page*>;
         
@@ -193,8 +177,8 @@ Page::Page(ChromeClient* chromeClient, ContextMenuClient* contextMenuClient, Edi
     ASSERT(!allPages->contains(this));
     allPages->add(this);
 
-    if (pluginHalterClient) {
-        m_pluginHalter.set(new PluginHalter(pluginHalterClient));
+    if (pageClients.pluginHalterClient) {
+        m_pluginHalter.set(new PluginHalter(pageClients.pluginHalterClient));
         m_pluginHalter->setPluginAllowedRunTime(m_settings->pluginAllowedRunTime());
     }
 

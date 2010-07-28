@@ -1,3 +1,13 @@
+2010-07-26  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        Page clients should be passed to Page constructor via structure of pointers
+        https://bugs.webkit.org/show_bug.cgi?id=42834
+
+        * WebView.cpp:
+        (wxWebView::Create):
+
 2010-07-16  Zhe Su  <suzhe@chromium.org>
 
         Reviewed by Darin Adler.

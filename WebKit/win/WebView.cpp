@@ -2563,17 +2563,21 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
         Settings::setShouldPaintNativeControls(shouldPaintNativeControls);
 #endif
 
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
-    WebGeolocationControllerClient* geolocationControllerClient = new WebGeolocationControllerClient(this);
-#else
-    WebGeolocationControllerClient* geolocationControllerClient = 0;
-#endif
-
     BOOL useHighResolutionTimer;
     if (SUCCEEDED(m_preferences->shouldUseHighResolutionTimers(&useHighResolutionTimer)))
         Settings::setShouldUseHighResolutionTimers(useHighResolutionTimer);
 
-    m_page = new Page(new WebChromeClient(this), new WebContextMenuClient(this), new WebEditorClient(this), new WebDragClient(this), new WebInspectorClient(this), new WebPluginHalterClient(this), geolocationControllerClient, 0, 0);
+    Page::PageClients pageClients;
+    pageClients.chromeClient = new WebChromeClient(this);
+    pageClients.contextMenuClient = new WebContextMenuClient(this);
+    pageClients.editorClient = new WebEditorClient(this);
+    pageClients.dragClient = new WebDragClient(this);
+    pageClients.inspectorClient = new WebInspectorClient(this);
+    pageClients.pluginHalterClient = new WebPluginHalterClient(this);
+#if ENABLE(CLIENT_BASED_GEOLOCATION)
+    pageClients.geolocationControllerClient = new WebGeolocationControllerClient(this);
+#endif
+    m_page = new Page(pageClients);
 
     BSTR localStoragePath;
     if (SUCCEEDED(m_preferences->localStorageDatabasePath(&localStoragePath))) {

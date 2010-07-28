@@ -529,16 +529,14 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* sd)
         CRITICAL("could not allocate Ewk_View_Private_Data");
         return 0;
     }
-    priv->page = new WebCore::Page(
-        static_cast<WebCore::ChromeClient*>(new WebCore::ChromeClientEfl(sd->self)),
-        static_cast<WebCore::ContextMenuClient*>(new WebCore::ContextMenuClientEfl(sd->self)),
-        static_cast<WebCore::EditorClient*>(new WebCore::EditorClientEfl(sd->self)),
-        static_cast<WebCore::DragClient*>(new WebCore::DragClientEfl),
-        static_cast<WebCore::InspectorClient*>(new WebCore::InspectorClientEfl),
-        0,
-        0,
-        0,
-        0);
+
+    WebCore::Page::PageClients pageClients;
+    pageClients.chromeClient = static_cast<WebCore::ChromeClient*>(new WebCore::ChromeClientEfl(sd->self));
+    pageClients.contextMenuClient = static_cast<WebCore::ContextMenuClient*>(new WebCore::ContextMenuClientEfl(sd->self));
+    pageClients.editorClient = static_cast<WebCore::EditorClient*>(new WebCore::EditorClientEfl(sd->self));
+    pageClients.dragClient = static_cast<WebCore::DragClient*>(new WebCore::DragClientEfl);
+    pageClients.inspectorClient = static_cast<WebCore::InspectorClient*>(new WebCore::InspectorClientEfl);
+    priv->page = new WebCore::Page(pageClients);
     if (!priv->page) {
         CRITICAL("Could not create WebKit Page");
         goto error_page;

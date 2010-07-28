@@ -91,7 +91,34 @@ namespace WebCore {
     public:
         static void setNeedsReapplyStyles();
 
-        Page(ChromeClient*, ContextMenuClient*, EditorClient*, DragClient*, InspectorClient*, PluginHalterClient*, GeolocationControllerClient*, DeviceOrientationClient*, BackForwardControllerClient*);
+        // It is up to the platform to ensure that non-null clients are provided where required.
+        struct PageClients {
+            PageClients()
+                : chromeClient(0)
+                , contextMenuClient(0)
+                , editorClient(0)
+                , dragClient(0)
+                , inspectorClient(0)
+                , pluginHalterClient(0)
+                , geolocationControllerClient(0)
+                , deviceOrientationClient(0)
+                , backForwardControllerClient(0)
+                , speechInputClient(0)
+            { }
+
+            ChromeClient* chromeClient;
+            ContextMenuClient* contextMenuClient;
+            EditorClient* editorClient;
+            DragClient* dragClient;
+            InspectorClient* inspectorClient;
+            PluginHalterClient* pluginHalterClient;
+            GeolocationControllerClient* geolocationControllerClient;
+            DeviceOrientationClient* deviceOrientationClient;
+            BackForwardControllerClient* backForwardControllerClient;
+            SpeechInputClient* speechInputClient;
+        };
+
+        Page(const PageClients&);
         ~Page();
 
         RenderTheme* theme() const { return m_theme.get(); };
@@ -155,7 +182,6 @@ namespace WebCore {
         DeviceOrientationController* deviceOrientationController() const { return m_deviceOrientationController.get(); }
 #endif
 #if ENABLE(INPUT_SPEECH)
-        void setSpeechInputClient(SpeechInputClient* client) { m_speechInputClient = client; }
         SpeechInput* speechInput();
 #endif
         Settings* settings() const { return m_settings.get(); }

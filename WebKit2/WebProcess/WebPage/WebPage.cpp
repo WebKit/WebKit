@@ -80,12 +80,20 @@ PassRefPtr<WebPage> WebPage::create(uint64_t pageID, const IntSize& viewSize, co
 }
 
 WebPage::WebPage(uint64_t pageID, const IntSize& viewSize, const WebPreferencesStore& store, DrawingArea::Type drawingAreaType)
-    : m_page(new Page(new WebChromeClient(this), new WebContextMenuClient(this), new WebEditorClient(this), new WebDragClient(this), new WebInspectorClient(this), 0, 0, 0, new WebBackForwardControllerClient(this)))
-    , m_viewSize(viewSize)
+    : m_viewSize(viewSize)
     , m_drawingArea(DrawingArea::create(drawingAreaType, this))
     , m_pageID(pageID)
 {
     ASSERT(m_pageID);
+
+    Page::PageClients pageClients;
+    pageClients.chromeClient = new WebChromeClient(this);
+    pageClients.contextMenuClient = new WebContextMenuClient(this);
+    pageClients.editorClient = new WebEditorClient(this);
+    pageClients.dragClient = new WebDragClient(this);
+    pageClients.inspectorClient = new WebInspectorClient(this);
+    pageClients.backForwardControllerClient = new WebBackForwardControllerClient(this);
+    m_page = new Page(pageClients);
 
     m_page->settings()->setJavaScriptEnabled(store.javaScriptEnabled);
     m_page->settings()->setLoadsImagesAutomatically(store.loadsImagesAutomatically);

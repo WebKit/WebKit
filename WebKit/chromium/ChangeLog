@@ -1,3 +1,13 @@
+2010-07-26  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        Page clients should be passed to Page constructor via structure of pointers
+        https://bugs.webkit.org/show_bug.cgi?id=42834
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+
 2010-07-28  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: chromium tests fix.

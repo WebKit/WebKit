@@ -269,11 +269,13 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     WebCore::Font::setCodePath(WebCore::Font::Complex);
 #endif
 
-    chromeClient = new ChromeClientQt(q);
-    contextMenuClient = new ContextMenuClientQt();
-    editorClient = new EditorClientQt(q);
-    page = new Page(chromeClient, contextMenuClient, editorClient,
-                    new DragClientQt(q), new InspectorClientQt(q), 0, 0, 0, 0);
+    Page::PageClients pageClients;
+    pageClients.chromeClient = new ChromeClientQt(q);
+    pageClients.contextMenuClient = new ContextMenuClientQt();
+    pageClients.editorClient = new EditorClientQt(q);
+    pageClients.dragClient = new DragClientQt(q);
+    pageClients.inspectorClient = new InspectorClientQt(q);
+    page = new Page(pageClients);
 
     settings = new QWebSettings(page->settings());
 

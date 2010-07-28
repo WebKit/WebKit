@@ -275,15 +275,21 @@ WebViewImpl::WebViewImpl(WebViewClient* client, WebDevToolsAgentClient* devTools
     if (devToolsClient)
         m_devToolsAgent = new WebDevToolsAgentImpl(this, devToolsClient);
 
-    m_page.set(new Page(&m_chromeClientImpl, &m_contextMenuClientImpl, &m_editorClientImpl, &m_dragClientImpl, &m_inspectorClientImpl, 0, 0, 0, 0));
+    Page::PageClients pageClients;
+    pageClients.chromeClient = &m_chromeClientImpl;
+    pageClients.contextMenuClient = &m_contextMenuClientImpl;
+    pageClients.editorClient = &m_editorClientImpl;
+    pageClients.dragClient = &m_dragClientImpl;
+    pageClients.inspectorClient = &m_inspectorClientImpl;
+#if ENABLE(INPUT_SPEECH)
+    pageClients.speechInputClient = &m_speechInputClient;
+#endif
+    m_page.set(new Page(pageClients));
 
     // the page will take ownership of the various clients
 
     m_page->backForwardList()->setClient(&m_backForwardListClientImpl);
     m_page->setGroupName(pageGroupName);
-#if ENABLE(INPUT_SPEECH)
-    m_page->setSpeechInputClient(&m_speechInputClient);
-#endif
 
     m_inspectorSettingsMap.set(new SettingsMap);
 }

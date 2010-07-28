@@ -332,11 +332,14 @@ bool wxWebView::Create(wxWindow* parent, int id, const wxPoint& position,
     WebCore::HTMLFrameOwnerElement* parentFrame = 0;
 
     WebCore::EditorClientWx* editorClient = new WebCore::EditorClientWx();
-    m_impl->page = new WebCore::Page(new WebCore::ChromeClientWx(this), 
-                        new WebCore::ContextMenuClientWx(), 
-                        editorClient, 
-                        new WebCore::DragClientWx(), 
-                        new WebCore::InspectorClientWx(), 0, 0, 0, 0);
+
+    WebCore::Page::PageClients pageClients;
+    pageClients.chromeClient = new WebCore::ChromeClientWx(this);
+    pageClients.contextMenuClient = new WebCore::ContextMenuClientWx();
+    pageClients.editorClient = editorClient;
+    pageClients.dragClient = new WebCore::DragClientWx();
+    pageClients.inspectorClient = new WebCore::InspectorClientWx();
+    m_impl->page = new WebCore::Page(pageClients);
     editorClient->setPage(m_impl->page);
     
     m_mainFrame = new wxWebFrame(this);
