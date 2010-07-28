@@ -1,3 +1,20 @@
+2010-07-28  Xianzhu Wang  <phnixwxz@gmail.com>
+
+        Reviewed by Dan Bernstein.
+
+        Line not wrapped at certain punctuations
+        https://bugs.webkit.org/show_bug.cgi?id=37698
+        Added a line breaking table for all printable ASCII chars to replace
+        the original line breaking table for only '?'.
+
+        Test: fast/text/line-breaks-after-closing-punctuations.html
+
+        * rendering/break_lines.cpp:
+        (WebCore::isBreakableSpace):
+        (WebCore::):
+        (WebCore::shouldBreakAfter):
+        (WebCore::needsLineBreakIterator):
+
 2010-07-28  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
         Unreviewed build fix.

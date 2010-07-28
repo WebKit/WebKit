@@ -1,3 +1,13 @@
+2010-07-28  Xianzhu Wang  <phnixwxz@gmail.com>
+
+        Reviewed by Dan Bernstein.
+
+        Line not wrapped at certain punctuations
+        https://bugs.webkit.org/show_bug.cgi?id=37698
+
+        * fast/text/line-breaks-after-closing-punctuations-expected.txt: Added.
+        * fast/text/line-breaks-after-closing-punctuations.html: Added.
+
 2010-07-28  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Fix two layout test failure on the windows slave. Remove win-xp specific results after the r64186 change.
