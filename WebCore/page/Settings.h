@@ -291,6 +291,9 @@ namespace WebCore {
         void setWebGLEnabled(bool);
         bool webGLEnabled() const { return m_webGLEnabled; }
 
+        void setAccelerated2dCanvasEnabled(bool);
+        bool accelerated2dCanvasEnabled() const { return m_acceleratedCanvas2dEnabled; }
+
         void setLoadDeferringEnabled(bool);
         bool loadDeferringEnabled() const { return m_loadDeferringEnabled; }
         
@@ -397,6 +400,7 @@ namespace WebCore {
         bool m_showRepaintCounter : 1;
         bool m_experimentalNotificationsEnabled : 1;
         bool m_webGLEnabled : 1;
+        bool m_acceleratedCanvas2dEnabled : 1;
         bool m_loadDeferringEnabled : 1;
         bool m_tiledBackingStoreEnabled : 1;
         bool m_html5ParserEnabled: 1;

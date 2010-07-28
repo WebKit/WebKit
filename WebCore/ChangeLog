@@ -1,3 +1,18 @@
+2010-07-28  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] Add a bool to Settings to control accelerated 2d canvas
+        https://bugs.webkit.org/show_bug.cgi?id=43094
+
+        Currently this doesn't control anything, but it will soon.
+
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::setAccelerated2dCanvasEnabled):
+        * page/Settings.h:
+        (WebCore::Settings::accelerated2dCanvasEnabled):
+
 2010-07-28  Robin Dunn  <robin@alldunn.com>
 
         Reviewed by Kevin Ollivier.
