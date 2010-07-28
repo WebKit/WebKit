@@ -1,3 +1,10 @@
+2010-07-28  Victor Wang  <victorw@chromium.org>
+
+        Unreviewed. Update chromium test expectations for test:
+        storage/indexeddb/objectstore-basics.html
+
+        * storage/indexeddb/objectstore-basics-expected.txt:
+
 2010-07-28  Andrei Popescu  <andreip@google.com>
 
         Reviewed by Jeremy Orlow.

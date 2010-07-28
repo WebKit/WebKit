@@ -45,6 +45,7 @@ PASS 'readyState' in event.target is true
 PASS event.target.readyState is event.target.DONE
 
 store = event.result
+storeNames = db.objectStores
 PASS store.name is "storeName"
 PASS store.keyPath is null
 PASS storeNames.contains('storeName') is true
@@ -117,4 +118,3 @@ PASS event.result is null
 PASS successfullyParsed is true
 
 TEST COMPLETE
-
