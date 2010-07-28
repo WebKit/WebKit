@@ -34,16 +34,17 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "Page.h"
+#include "SMILTimeContainer.h"
 #include "SVGSMILElement.h"
 #include "SVGSVGElement.h"
-#include "SMILTimeContainer.h"
-#include "ScriptableDocumentParser.h"
 #include "ScriptController.h"
+#include "ScriptableDocumentParser.h"
 
 namespace WebCore {
 
 SVGDocumentExtensions::SVGDocumentExtensions(Document* doc)
     : m_doc(doc)
+    , m_resourcesCache(new SVGResourcesCache)
 {
 }
 

@@ -33,50 +33,10 @@ namespace WebCore {
 class RenderSVGResourceContainer : public RenderSVGHiddenContainer,
                                    public RenderSVGResource {
 public:
-    RenderSVGResourceContainer(SVGStyledElement* node)
-        : RenderSVGHiddenContainer(node)
-        , RenderSVGResource()
-        , m_id(node->hasID() ? node->getIdAttribute() : nullAtom)
-    {
-        ASSERT(node->document());
-        node->document()->accessSVGExtensions()->addResource(m_id, this);
-    }
+    RenderSVGResourceContainer(SVGStyledElement*);
+    virtual ~RenderSVGResourceContainer();
 
-    virtual ~RenderSVGResourceContainer()
-    {
-        ASSERT(node());
-        ASSERT(node()->document());
-        node()->document()->accessSVGExtensions()->removeResource(m_id);
-    }
-
-    void idChanged()
-    {
-        ASSERT(node());
-        ASSERT(node()->document());
-        SVGDocumentExtensions* extensions = node()->document()->accessSVGExtensions();
-
-        // Remove old id, that is guaranteed to be present in cache
-        extensions->removeResource(m_id);
-        m_id = static_cast<Element*>(node())->getIdAttribute();
-
-        // It's possible that an element is referencing us with the new id, and has to be notified that we're existing now
-        if (extensions->isPendingResource(m_id)) {
-            OwnPtr<HashSet<SVGStyledElement*> > clients(extensions->removePendingResource(m_id));
-            if (clients->isEmpty())
-                return;
-
-            HashSet<SVGStyledElement*>::const_iterator it = clients->begin();
-            const HashSet<SVGStyledElement*>::const_iterator end = clients->end();
-
-            for (; it != end; ++it) {
-                if (RenderObject* renderer = (*it)->renderer())
-                    renderer->setNeedsLayout(true);
-            }
-        }
-
-        // Recache us with the new id
-        extensions->addResource(m_id, this);
-    }
+    void idChanged();
 
     virtual bool isSVGResourceContainer() const { return true; }
     virtual bool drawsContents() { return false; }
@@ -84,58 +44,16 @@ public:
     virtual RenderSVGResourceContainer* toRenderSVGResourceContainer() { return this; }
     virtual bool childElementReferencesResource(const SVGRenderStyle*, const String&) const { return false; }
 
-    static AffineTransform transformOnNonScalingStroke(RenderObject* object, const AffineTransform resourceTransform)
-    {
-        if (!object->isRenderPath())
-            return resourceTransform;
+    static AffineTransform transformOnNonScalingStroke(RenderObject*, const AffineTransform& resourceTransform);
 
-        SVGStyledTransformableElement* element = static_cast<SVGStyledTransformableElement*>(object->node());
-        AffineTransform transform = resourceTransform;
-        transform.multiply(element->getScreenCTM());
-        return transform;
-    }
+    bool containsCyclicReference(const Node* startNode) const;
 
-    bool containsCyclicReference(const Node* startNode) const
-    {
-        ASSERT(startNode->document());
-    
-        for (Node* node = startNode->firstChild(); node; node = node->nextSibling()) {
-            if (!node->isSVGElement())
-                continue;
-    
-            RenderObject* renderer = node->renderer();
-            if (!renderer)
-                continue;
-    
-            RenderStyle* style = renderer->style();
-            if (!style)
-                continue;
-    
-            const SVGRenderStyle* svgStyle = style->svgStyle();
-            ASSERT(svgStyle);
-    
-            // Let the class inheriting from us decide whether the child element references ourselves.
-            if (childElementReferencesResource(svgStyle, m_id))
-                return true;
+private:
+    friend class SVGResourcesCache;
 
-            // Dive into shadow tree to check for cycles there.
-            if (node->hasTagName(SVGNames::useTag)) {
-                ASSERT(renderer->isSVGShadowTreeRootContainer());
-                if (Node* shadowRoot = static_cast<RenderSVGShadowTreeRootContainer*>(renderer)->rootElement()) {
-                    if (containsCyclicReference(shadowRoot))
-                        return true;
-                }
-
-            }
-
-            if (node->hasChildNodes()) {
-                if (containsCyclicReference(node))
-                    return true;
-            }
-        }
-    
-        return false;
-    }
+    // FIXME: No-ops for now, until follow-up patch on bug 43031 lands.
+    void addClient(RenderObject*) { }
+    void removeClient(RenderObject*) { }
 
 private:
     AtomicString m_id;

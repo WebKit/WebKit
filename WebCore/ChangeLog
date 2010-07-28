@@ -1,3 +1,98 @@
+2010-07-28  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        WebKit shouldn't ignore resource cycles, but break them as Opera does
+        https://bugs.webkit.org/show_bug.cgi?id=43031
+
+        Don't ignore resources containing cyclic references, but break them, as discussed on SVG WG mailing lists - to be compatible with Opera which already does that.
+
+        We used to lookup RenderSVGResourceContainers objects, by extracting the URI reference from the SVGRenderStyle, then utilizing getElementById() to lookup the
+        node, and access its renderer. Opera ignores such references, if they point to resources that contain cyclic references. Ignoring them would mean we have
+        to mutate the render style to empty the resource strings. That obviously doesn't work, as it would break expectations (getComputedStyle, etc.).
+
+        Introduce a SVGResources class that stores pointers to all resources, that can be applied to a RenderObject (clipper/filter/markers/masker).
+        Add a SVGResourcesCache class, which is basically a HashMap<RenderObject*, SVGResources*>. Whenever a RenderObject receives style, we extract the URI references
+        from the SVGRenderStyle, look up the RenderSVGResourceContainer* objects, and store them in a SVGResources* class. Then we execute a cycle detection logic,
+        which detects cyclic references and breaks them. Breaking them means just nulling the pointer to the resource in the SVGResources object. Those SVGResources
+        objects are cached, and used throughout the render tree to access resources. This way it's guaranteed that all cyclic references are resolved until layout/paint
+        phase begins.
+
+        This is the first chunk, which just adds the new SVGResources/SVGResourcesCache/SVGResourcesCycleSolver files, and does minor cleanups.
+        It's not yet glued in and doesn't affect any tests.
+
+        * Android.mk: Add SVGResources.* / SVGResourcesCache.* / SVGResourcesCycleSolver.* to build.
+        * CMakeLists.txt: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto. 
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * rendering/RenderInline.h: Make styleDidChange protected, RenderSVGInline wants to override it.
+        * rendering/RenderSVGAllInOne.cpp: Add SVGResources.* / SVGResourcesCache.* / SVGResourcesCycleSolver.* to build.
+        * rendering/RenderSVGHiddenContainer.h:
+        (WebCore::RenderSVGHiddenContainer::isSVGHiddenContainer): Make isSVGHiddenContainer() private and renderName() public.
+        * rendering/RenderSVGResourceContainer.cpp: Added. Moved most methods from the header in the implementation file.
+        (WebCore::RenderSVGResourceContainer::RenderSVGResourceContainer):
+        (WebCore::RenderSVGResourceContainer::~RenderSVGResourceContainer):
+        (WebCore::RenderSVGResourceContainer::idChanged):
+        (WebCore::RenderSVGResourceContainer::transformOnNonScalingStroke):
+        (WebCore::RenderSVGResourceContainer::containsCyclicReference):
+        * rendering/RenderSVGResourceContainer.h: Add stubs, that SVGResourcesCache uses - a follow-up patch will add the logic.
+        (WebCore::RenderSVGResourceContainer::addClient):
+        (WebCore::RenderSVGResourceContainer::removeClient):
+        * rendering/SVGResources.cpp: Added. Holds a list of resources applyable to a RenderObject (fill/stroke, mask/markers/clipper/filter)
+        (WebCore::paintingResourceFromSVGPaint): Helper function looking up a RenderSVGResource for a SVGPaint object.
+        (WebCore::registerPendingResource): Helper function that register a RenderSVGResource as pending in the SVGDocumentExtensions. 
+        (WebCore::SVGResources::buildCachedResources): Build a list of resources for a RenderObject/RenderStyle pair, handles pending resources, if needed.
+        (WebCore::SVGResources::invalidateClient): Helper function that calls invalidateClient() on all resources.
+        (WebCore::SVGResources::resourceDestroyed): Helper function that calls invalidateClients() on a certain resource, and nulls it.
+        (WebCore::SVGResources::buildSetOfResources): Helper function that stashes all resources present in the SVGResources members in a HashSet, used in SVGResourcesCycleSolver.
+        (WebCore::SVGResources::resetClipper): Helper methods nulling a resource.
+        (WebCore::SVGResources::resetFilter): Ditto.
+        (WebCore::SVGResources::resetMarkerStart): Ditto.
+        (WebCore::SVGResources::resetMarkerMid): Ditto.
+        (WebCore::SVGResources::resetMarkerEnd): Ditto.
+        (WebCore::SVGResources::resetMasker): Ditto.
+        (WebCore::SVGResources::resetFill): Ditto.
+        (WebCore::SVGResources::resetStroke): Ditto.
+        (WebCore::SVGResources::dump):
+        * rendering/SVGResources.h: Added.
+        (WebCore::SVGResources::clipper): Accesor of the cached m_foo variable.
+        (WebCore::SVGResources::filter): Ditto.
+        (WebCore::SVGResources::markerStart): Ditto.
+        (WebCore::SVGResources::markerMid): Ditto.
+        (WebCore::SVGResources::markerEnd): Ditto.
+        (WebCore::SVGResources::masker): Ditto.
+        (WebCore::SVGResources::fill): Ditto.
+        (WebCore::SVGResources::stroke): Ditto.
+        * rendering/SVGResourcesCache.cpp: Added. Holds a HashMap<RenderObject*, SVGResources*> and utility functions that update/invalidate the cache.
+        (WebCore::SVGResourcesCache::SVGResourcesCache):
+        (WebCore::SVGResourcesCache::~SVGResourcesCache):
+        (WebCore::SVGResourcesCache::addResourcesFromRenderObject): Build a SVGResources object for a RenderObject and adds it to the cache, then detects & breaks cycles using SVGResourcesCycleSolver.
+        (WebCore::SVGResourcesCache::removeResourcesFromRenderObject): Remove a SVGResources object from the cache.
+        (WebCore::resourcesCacheFromRenderObject): Helper function, retrieving a SVGResourcesCache method from a RenderObject.
+        (WebCore::SVGResourcesCache::cachedResourcesForRenderObject): Returns a SVGResources object from the cache.
+        (WebCore::SVGResourcesCache::clientLayoutChanged): (static) Calls invalidateClient() on all resources that are used by the passed RenderObject.
+        (WebCore::SVGResourcesCache::clientStyleChanged): (static) Updates the cache (calling removeResourceFromRenderObject/addResourcesFrom...) and invalidates resources in the ancestor chain.
+        (WebCore::SVGResourcesCache::clientUpdatedFromElement): (static) Does the same, without invalidating the ancestor chain.
+        (WebCore::SVGResourcesCache::clientDestroyed): (static) Calls removeResourcesFromRenderObject() on the SVGResourcesCache, for the given renderer.
+        (WebCore::SVGResourcesCache::resourceDestroyed): (static) Updates all SVGResources objects in the cache, that refer to the given resource.
+        * rendering/SVGResourcesCache.h: Added.
+        * rendering/SVGResourcesCycleSolver.cpp: Added. Detects and breaks cyclic references, just the way Opera handles it. Break cycles as they are detected.
+        (WebCore::SVGResourcesCycleSolver::SVGResourcesCycleSolver):
+        (WebCore::SVGResourcesCycleSolver::~SVGResourcesCycleSolver):
+        (WebCore::SVGResourcesCycleSolver::resourceContainsCycles): Operates only on the render tree
+        (WebCore::targetReferenceFromResource): Helper method for chainableResourceContainsCycles().
+        (WebCore::setFollowLinkForChainableResource): Ditto.
+        (WebCore::SVGResourcesCycleSolver::chainableResourceContainsCycles): Handles cycles for resources that are chainable through xlink:href (filter/gradient/pattern).
+        (WebCore::SVGResourcesCycleSolver::resolveCycles): Main method executing the cycle breaking logic, utilizing (chainableResource)resourceContainsCycles.
+        (WebCore::SVGResourcesCycleSolver::breakCycle): Nulls a resource in the given SVGResources* object, to avoid using an invalid resource while rendering/layouting.
+        * rendering/SVGResourcesCycleSolver.h: Added.
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::SVGDocumentExtensions): Create SVGResourcesCache object once per SVGDocumentExtensions.
+        * svg/SVGDocumentExtensions.h:
+        (WebCore::SVGDocumentExtensions::resourcesCache): Expose accesor method for the SVGResourcesCache.
+
 2010-07-28  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

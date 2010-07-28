@@ -74,6 +74,9 @@ public:
     int verticalPositionFromCache(bool firstLine) const;
     void invalidateVerticalPosition() { m_verticalPosition = PositionUndefined; }
 
+protected:
+    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
+
 private:
     virtual RenderObjectChildList* virtualChildren() { return children(); }
     virtual const RenderObjectChildList* virtualChildren() const { return children(); }
@@ -139,7 +142,6 @@ private:
     virtual void addDashboardRegions(Vector<DashboardRegionValue>&);
 #endif
     
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
     virtual void updateBoxModelInfoFromStyle();
     
     static RenderInline* cloneInline(RenderInline* src);

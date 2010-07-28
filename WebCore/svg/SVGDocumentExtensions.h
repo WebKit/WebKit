@@ -25,6 +25,7 @@
 
 #if ENABLE(SVG)
 #include "AtomicStringHash.h"
+#include "SVGResourcesCache.h"
 #include "StringImpl.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -59,11 +60,14 @@ public:
     void reportWarning(const String&);
     void reportError(const String&);
 
+    SVGResourcesCache* resourcesCache() const { return m_resourcesCache.get(); }
+
 private:
     Document* m_doc; // weak reference
     HashSet<SVGSVGElement*> m_timeContainers; // For SVG 1.2 support this will need to be made more general.
     HashMap<AtomicString, RenderSVGResourceContainer*> m_resources;
     HashMap<AtomicString, HashSet<SVGStyledElement*>*> m_pendingResources;
+    OwnPtr<SVGResourcesCache> m_resourcesCache;
 
     SVGDocumentExtensions(const SVGDocumentExtensions&);
     SVGDocumentExtensions& operator=(const SVGDocumentExtensions&);

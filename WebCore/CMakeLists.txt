@@ -1544,6 +1544,7 @@ IF (ENABLE_SVG)
         rendering/RenderSVGModelObject.cpp
         rendering/RenderSVGResource.cpp
         rendering/RenderSVGResourceClipper.cpp
+        rendering/RenderSVGResourceContainer.cpp
         rendering/RenderSVGResourceFilter.cpp
         rendering/RenderSVGResourceGradient.cpp
         rendering/RenderSVGResourceLinearGradient.cpp
@@ -1566,6 +1567,9 @@ IF (ENABLE_SVG)
         rendering/SVGMarkerLayoutInfo.cpp
         rendering/SVGRenderSupport.cpp
         rendering/SVGRenderTreeAsText.cpp
+        rendering/SVGResources.cpp
+        rendering/SVGResourcesCache.cpp
+        rendering/SVGResourcesCycleSolver.cpp
         rendering/SVGRootInlineBox.cpp
         rendering/SVGShadowTreeElements.cpp
         rendering/SVGTextChunkLayoutInfo.cpp
