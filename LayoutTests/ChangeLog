@@ -2,6 +2,19 @@
 
         Reviewed by Jeremy Orlow.
 
+        The text expectations for storage/objectore-basics.html are out of date
+        https://bugs.webkit.org/show_bug.cgi?id=43126
+
+        Following http://trac.webkit.org/changeset/64209
+        the objectstore-basics-expected.txt file should be updated to reflect
+        the new tests.
+
+        * storage/indexeddb/objectstore-basics-expected.txt:
+
+2010-07-28  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Jeremy Orlow.
+
         Skip IDBKeyRange from the prototype-inheritance layout test.
         IDBKeyRange is a DOM object and, with V8, it seems that such objects
         do not respect the prototype inheritance.
