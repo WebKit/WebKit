@@ -919,19 +919,19 @@ on MinGW. See https://bugs.webkit.org/show_bug.cgi?id=29268 */
 #define ENABLE_REPAINT_THROTTLING 0
 #endif
 
-// Disable the JIT on versiond of GCC prior to 4.1
+/* Disable the JIT on versiond of GCC prior to 4.1 */
 #if !defined(ENABLE_JIT) && COMPILER(GCC) && !GCC_VERSION_AT_LEAST(4,1,0)
 #define ENABLE_JIT 0
 #endif
 
-// The JIT is enabled by default on all x86, x64-64, ARM & MIPS platforms.
+/* The JIT is enabled by default on all x86, x64-64, ARM & MIPS platforms. */
 #if !defined(ENABLE_JIT) \
     && (CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(MIPS)) \
     && (OS(DARWIN) || !COMPILER(GCC) || GCC_VERSION_AT_LEAST(4,1,0))
 #define ENABLE_JIT 1
 #endif
 
-// Ensure that either the JIT or the interpreter has been enabled.
+/* Ensure that either the JIT or the interpreter has been enabled. */
 #if !defined(ENABLE_INTERPRETER) && !ENABLE(JIT)
 #define ENABLE_INTERPRETER 1
 #endif
@@ -939,7 +939,7 @@ on MinGW. See https://bugs.webkit.org/show_bug.cgi?id=29268 */
 #error You have to have at least one execution model enabled to build JSC
 #endif
 
-// Configure the JIT
+/* Configure the JIT */
 #if ENABLE(JIT)
     #if CPU(ARM_TRADITIONAL)
     #if !defined(ENABLE_JIT_USE_SOFT_MODULO) && WTF_ARM_ARCH_AT_LEAST(5)
@@ -973,7 +973,7 @@ on MinGW. See https://bugs.webkit.org/show_bug.cgi?id=29268 */
 #define JSC_HOST_CALL
 #endif
 
-// Configure the interpreter
+/* Configure the interpreter */
 #if COMPILER(GCC)
 #define HAVE_COMPUTED_GOTO 1
 #endif
