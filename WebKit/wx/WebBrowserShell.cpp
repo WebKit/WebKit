@@ -35,8 +35,9 @@
 
 #include "wx/artprov.h"
 
-#include "WebView.h"
 #include "WebBrowserShell.h"
+#include "WebFrame.h"
+#include "WebView.h"
 #include "WebViewPrivate.h"
 
 wxPageSourceViewFrame::wxPageSourceViewFrame(const wxString& source)
@@ -63,7 +64,9 @@ enum {
     ID_BROWSE = wxID_HIGHEST + 15,
     ID_EDIT = wxID_HIGHEST + 16,
     ID_RUN_SCRIPT = wxID_HIGHEST + 17,
-    ID_WEBVIEW = wxID_HIGHEST + 18
+    ID_WEBVIEW = wxID_HIGHEST + 18,
+    ID_EDIT_COMMAND = wxID_HIGHEST + 19,
+    ID_GET_EDIT_COMMAND_STATE = wxID_HIGHEST + 20
 };
 
 BEGIN_EVENT_TABLE(wxWebBrowserShell, wxFrame)
@@ -88,6 +91,8 @@ BEGIN_EVENT_TABLE(wxWebBrowserShell, wxFrame)
     EVT_MENU(ID_BROWSE, wxWebBrowserShell::OnBrowse)
     EVT_MENU(ID_EDIT, wxWebBrowserShell::OnEdit)
     EVT_MENU(ID_RUN_SCRIPT, wxWebBrowserShell::OnRunScript)
+    EVT_MENU(ID_EDIT_COMMAND, wxWebBrowserShell::OnEditCommand)
+    EVT_MENU(ID_GET_EDIT_COMMAND_STATE, wxWebBrowserShell::OnGetEditCommandState)
 END_EVENT_TABLE()
 
 
@@ -123,6 +128,8 @@ wxWebBrowserShell::wxWebBrowserShell(const wxString& title) :
     m_debugMenu = new wxMenu;
     m_debugMenu->Append(ID_SET_SOURCE, _("Test SetPageSource"));
     m_debugMenu->Append(ID_RUN_SCRIPT, _("Test RunScript"));
+    m_debugMenu->Append(ID_EDIT_COMMAND, _("Test EditCommand::Execute"));
+    m_debugMenu->Append(ID_GET_EDIT_COMMAND_STATE, _("Test EditCommand::GetState"));
 
     // the "About" item should be in the help menu
     wxMenu *helpMenu = new wxMenu;
@@ -339,12 +346,53 @@ void wxWebBrowserShell::OnEdit(wxCommandEvent& event)
         webview->MakeEditable(event.IsChecked());
 }
 
-void wxWebBrowserShell::OnRunScript(wxCommandEvent& myEvent){
+void wxWebBrowserShell::OnRunScript(wxCommandEvent& myEvent)
+{
     if (webview) {
         wxTextEntryDialog* dialog = new wxTextEntryDialog(this, _("Type in a JavaScript to exectute."));
         if (dialog->ShowModal() == wxID_OK)
             wxMessageBox(wxT("Result is: ") + webview->RunScript(dialog->GetValue()));
     
+        dialog->Destroy();
+    }
+}
+
+void wxWebBrowserShell::OnEditCommand(wxCommandEvent& myEvent)
+{
+    if (webview) {
+        if (!webview->IsEditable()) {
+            wxMessageBox(wxT("Please enable editing before running editing commands."));
+            return;
+        }
+        
+        wxTextEntryDialog* dialog = new wxTextEntryDialog(this, _("Type in a editing command to exectute."));
+        if (dialog->ShowModal() == wxID_OK) {
+            bool result = webview->ExecuteEditCommand(dialog->GetValue());
+            if (!result)
+                wxMessageBox(wxT("Editing command failed."));
+        }
+        dialog->Destroy();
+    }
+}
+
+void wxWebBrowserShell::OnGetEditCommandState(wxCommandEvent& myEvent)
+{
+    if (webview) {
+        if (!webview->IsEditable()) {
+            wxMessageBox(wxT("Please enable editing before running editing commands."));
+            return;
+        }
+        
+        wxTextEntryDialog* dialog = new wxTextEntryDialog(this, _("Type in a editing command whose state you want to get."));
+        if (dialog->ShowModal() == wxID_OK) {
+            EditState result = webview->GetEditCommandState(dialog->GetValue());
+            if (result == EditStateTrue)
+                wxMessageBox(wxT("State is true."));
+            else if (result == EditStateFalse)
+                wxMessageBox(wxT("State is false."));
+            else if (result == EditStateMixed)
+                wxMessageBox(wxT("State is mixed."));
+        }
         dialog->Destroy();
     }
 }

@@ -83,6 +83,9 @@
     #include "wx/wx.h"
 #endif
 
+#include "WebDOMElement.h"
+#include "WebDOMNode.h"
+
 #include "WebFrame.h"
 #include "WebView.h"
 #include "WebViewPrivate.h"
@@ -229,7 +232,6 @@ wxWebViewWindowObjectClearedEvent::wxWebViewWindowObjectClearedEvent(wxWindow* w
 //---------------------------------------------------------
 
 wxWebViewDOMElementInfo::wxWebViewDOMElementInfo() :
-    m_domElement(NULL),
     m_isSelected(false),
     m_text(wxEmptyString),
     m_imageSrc(wxEmptyString),
@@ -255,6 +257,25 @@ void wxWebView::SetCachePolicy(const wxWebViewCachePolicy& cachePolicy)
 wxWebViewCachePolicy wxWebView::GetCachePolicy()
 {
     return gs_cachePolicy;
+}
+
+wxWebViewDOMElementInfo::wxWebViewDOMElementInfo(const wxWebViewDOMElementInfo& other)
+{
+    m_isSelected = other.m_isSelected;
+    m_text = other.m_text;
+    m_imageSrc = other.m_imageSrc;
+    m_link = other.m_link;
+    m_innerNode = other.m_innerNode;
+    m_urlElement = other.m_urlElement;
+}
+
+wxWebViewDOMElementInfo::~wxWebViewDOMElementInfo() 
+{
+    if (m_innerNode)
+        delete m_innerNode;
+        
+    if (m_urlElement)
+        delete m_urlElement;
 }
 
 #if OS(DARWIN)
@@ -364,9 +385,6 @@ bool wxWebView::Create(wxWindow* parent, int id, const wxPoint& position,
     // initialized so that the activate handler is run properly.
     LoadURL(wxT("about:blank"));
     
-    wxWindow* tlw = wxGetTopLevelParent(this);
-    tlw->Connect(-1, wxEVT_ACTIVATE, wxActivateEventHandler(wxWebView::OnTLWActivated));
-
     m_isInitialized = true;
 
     return true;
@@ -386,6 +404,9 @@ wxWebView::~wxWebView()
     m_impl->page = 0;   
 }
 
+// NOTE: binding to this event in the wxWebView constructor is too early in 
+// some cases, but leave the event handler here so that users can bind to it
+// at a later time if they have activation state problems.
 void wxWebView::OnTLWActivated(wxActivateEvent& event)
 {        
     if (m_impl && m_impl->page && m_impl->page->focusController())
@@ -445,6 +466,30 @@ wxString wxWebView::GetExternalRepresentation()
     return wxEmptyString;
 }
 
+wxWebKitSelection wxWebView::GetSelection()
+{
+    if (m_mainFrame)
+        return m_mainFrame->GetSelection();
+        
+    return 0;
+}
+
+wxString wxWebView::GetSelectionAsHTML()
+{
+    if (m_mainFrame)
+        return m_mainFrame->GetSelectionAsHTML();
+        
+    return wxEmptyString;
+}
+
+wxString wxWebView::GetSelectionAsText()
+{
+    if (m_mainFrame)
+        return m_mainFrame->GetSelectionAsText();
+        
+    return wxEmptyString;
+}
+
 void wxWebView::SetTransparent(bool transparent)
 {
     WebCore::Frame* frame = 0;
@@ -474,6 +519,26 @@ wxString wxWebView::RunScript(const wxString& javascript)
     if (m_mainFrame)
         return m_mainFrame->RunScript(javascript);
     
+    return wxEmptyString;
+}
+
+bool wxWebView::ExecuteEditCommand(const wxString& command, const wxString& parameter)
+{
+    if (m_mainFrame)
+        return m_mainFrame->ExecuteEditCommand(command, parameter);
+}
+
+EditState wxWebView::GetEditCommandState(const wxString& command) const
+{
+    if (m_mainFrame)
+        return m_mainFrame->GetEditCommandState(command);
+}
+
+wxString wxWebView::GetEditCommandValue(const wxString& command) const
+{
+    if (m_mainFrame)
+        return m_mainFrame->GetEditCommandValue(command);
+ 
     return wxEmptyString;
 }
 
@@ -551,8 +616,18 @@ void wxWebView::ResetTextSize()
 
 void wxWebView::MakeEditable(bool enable)
 {
-    m_isEditable = enable;
+    if (m_mainFrame)
+        m_mainFrame->MakeEditable(enable);
 }
+
+bool wxWebView::IsEditable() const
+{
+    if (m_mainFrame)
+        return m_mainFrame->IsEditable();
+    
+    return false;
+}
+
 
 
 /* 

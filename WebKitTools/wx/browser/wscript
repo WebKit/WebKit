@@ -29,7 +29,8 @@ import sys
 
 from settings import *
 
-include_paths = [os.path.join(wk_root, 'WebKit', 'wx')]
+include_paths = [os.path.join(wk_root, 'WebCore', 'bindings', 'wx'),
+                os.path.join(wk_root, 'WebKit', 'wx')]
 
 def set_options(opt):
     common_set_options(opt)

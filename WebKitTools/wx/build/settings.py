@@ -99,6 +99,7 @@ jscore_dirs = [
 webcore_dirs = [
     'accessibility',
     'bindings',
+    'bindings/cpp',
     'bindings/generic',
     'bindings/js',
     'bridge', 
@@ -168,7 +169,7 @@ def get_config():
             waf_configname = waf_configname + ' CRT_MULTITHREADED_DLL'
         else:
             waf_configname = waf_configname + ' CRT_MULTITHREADED_DLL_DBG'
-            
+
     return waf_configname
 
 create_hash_table = wk_root + "/JavaScriptCore/create_hash_table"
@@ -176,7 +177,10 @@ if building_on_win32:
     create_hash_table = get_output('cygpath --unix "%s"' % create_hash_table)
 os.environ['CREATE_HASH_TABLE'] = create_hash_table
 
-feature_defines = ['ENABLE_DATABASE', 'ENABLE_XSLT', 'ENABLE_JAVASCRIPT_DEBUGGER', 'ENABLE_SVG', 'ENABLE_SVG_USE', 'ENABLE_FILTERS', 'ENABLE_SVG_FONTS', 'ENABLE_SVG_ANIMATION', 'ENABLE_SVG_AS_IMAGE', 'ENABLE_SVG_FOREIGN_OBJECT', 'EXECUTABLE_ALLOCATOR_DEMAND']
+feature_defines = ['ENABLE_DATABASE', 'ENABLE_XSLT', 'ENABLE_JAVASCRIPT_DEBUGGER',
+                    'ENABLE_SVG', 'ENABLE_SVG_USE', 'ENABLE_FILTERS', 'ENABLE_SVG_FONTS',
+                    'ENABLE_SVG_ANIMATION', 'ENABLE_SVG_AS_IMAGE', 'ENABLE_SVG_FOREIGN_OBJECT',
+                    'ENABLE_JIT', 'ENABLE_EXECUTABLE_ALLOCATOR_DEMAND', 'BUILDING_%s' % build_port.upper()]
 
 msvc_version = 'msvc2008'
 

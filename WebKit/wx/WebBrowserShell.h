@@ -80,6 +80,8 @@ protected:
     // debug menu items
     void OnSetSource(wxCommandEvent& event);
     void OnRunScript(wxCommandEvent& myEvent);
+    void OnEditCommand(wxCommandEvent& myEvent);
+    void OnGetEditCommandState(wxCommandEvent& myEvent);
 
 private:
     wxTextCtrl* addressBar;

@@ -430,9 +430,15 @@ void FrameLoaderClientWx::didChangeTitle(DocumentLoader *l)
 }
 
 
-void FrameLoaderClientWx::finishedLoading(DocumentLoader*)
+void FrameLoaderClientWx::finishedLoading(DocumentLoader* loader)
 {
-    if (m_pluginView) {
+    if (!m_pluginView) {
+        if (m_firstData) {
+            FrameLoader* fl = loader->frameLoader();
+            fl->writer()->setEncoding(m_response.textEncodingName(), false);
+            m_firstData = false;
+        }
+    } else {
         m_pluginView->didFinishLoading();
         m_pluginView = 0;
         m_hasSentResponseToPlugin = false;
@@ -598,9 +604,12 @@ bool FrameLoaderClientWx::canCachePage() const
     return false;
 }
 
-void FrameLoaderClientWx::setMainDocumentError(WebCore::DocumentLoader*, const WebCore::ResourceError&)
+void FrameLoaderClientWx::setMainDocumentError(WebCore::DocumentLoader* loader, const WebCore::ResourceError&)
 {
-    notImplemented();
+    if (m_firstData) {
+        loader->frameLoader()->writer()->setEncoding(m_response.textEncodingName(), false);
+        m_firstData = false;
+    }
 }
 
 void FrameLoaderClientWx::committedLoad(WebCore::DocumentLoader* loader, const char* data, int length)
@@ -722,8 +731,13 @@ void FrameLoaderClientWx::dispatchDidFinishLoading(DocumentLoader*, unsigned lon
     notImplemented();
 }
 
-void FrameLoaderClientWx::dispatchDidFailLoading(DocumentLoader*, unsigned long, const ResourceError&)
+void FrameLoaderClientWx::dispatchDidFailLoading(DocumentLoader* loader, unsigned long, const ResourceError&)
 {
+    if (m_firstData) {
+        FrameLoader* fl = loader->frameLoader();
+        fl->writer()->setEncoding(m_response.textEncodingName(), false);
+        m_firstData = false;
+    }
     if (m_webView) {
         wxWebViewLoadEvent wkEvent(m_webView);
         wkEvent.SetState(wxWEBVIEW_LOAD_FAILED);

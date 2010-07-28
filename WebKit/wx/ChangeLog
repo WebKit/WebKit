@@ -1,3 +1,53 @@
+2010-07-28  Robin Dunn  <robin@alldunn.com>
+
+        Reviewed by Kevin Ollivier.
+
+        Add DOM bindings support for wx port.
+
+        * WebBrowserShell.cpp:
+        (wxWebBrowserShell::wxWebBrowserShell):
+        (wxWebBrowserShell::OnEditCommand):
+        (wxWebBrowserShell::OnGetEditCommandState):
+        * WebBrowserShell.h:
+        * WebDOMSelection.cpp: Added.
+        (wxWebKitSelection::wxWebKitSelection):
+        (wxWebKitSelection::GetRootEditableElement):
+        (wxWebKitSelection::GetAsRange):
+        * WebDOMSelection.h: Added.
+        * WebFrame.cpp:
+        (wxWebFrame::GetSelectionAsHTML):
+        (wxWebFrame::GetSelectionAsText):
+        (wxWebFrame::GetSelection):
+        (wxWebFrame::ExecuteEditCommand):
+        (wxWebFrame::GetEditCommandState):
+        (wxWebFrame::GetEditCommandValue):
+        (wxWebFrame::HitTest):
+        * WebFrame.h:
+        * WebKitDefines.h:
+        * WebKitSupport/EditorClientWx.cpp:
+        (WebCore::):
+        (WebCore::EditorClientWx::redo):
+        * WebKitSupport/FrameLoaderClientWx.cpp:
+        (WebCore::FrameLoaderClientWx::finishedLoading):
+        (WebCore::FrameLoaderClientWx::setMainDocumentError):
+        (WebCore::FrameLoaderClientWx::dispatchDidFailLoading):
+        * WebView.cpp:
+        (wxWebViewDOMElementInfo::wxWebViewDOMElementInfo):
+        (wxWebViewDOMElementInfo::~wxWebViewDOMElementInfo):
+        (wxWebView::Create):
+        (wxWebView::GetSelection):
+        (wxWebView::GetSelectionAsHTML):
+        (wxWebView::GetSelectionAsText):
+        (wxWebView::ExecuteEditCommand):
+        (wxWebView::GetEditCommandState):
+        (wxWebView::GetEditCommandValue):
+        (wxWebView::MakeEditable):
+        (wxWebView::IsEditable):
+        * WebView.h:
+        * bindings/python/webview.i:
+        * bindings/python/wscript:
+        * wscript:
+
 2010-07-26  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.

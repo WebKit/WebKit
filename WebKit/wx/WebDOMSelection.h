@@ -25,24 +25,45 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
  
-#ifndef WebKitDefines_h
-#define WebKitDefines_h
+#ifndef WebDOMSelection_h
+#define WebDOMSelection_h
 
-#ifndef SWIG
-
-#if !wxCHECK_VERSION(2, 9, 0) && wxCHECK_GCC_VERSION(4, 0)
-#define WXDLLIMPEXP_WEBKIT __attribute__ ((visibility("default")))
-#elif defined(WXMAKINGDLL_WEBKIT)
-#define WXDLLIMPEXP_WEBKIT WXEXPORT
-#elif defined(WXUSINGDLL_WEBKIT)
-#define WXDLLIMPEXP_WEBKIT WXIMPORT
+#include "wx/wxprec.h"
+#ifndef WX_PRECOMP
+    #include "wx/wx.h"
 #endif
 
-#else
-#define WXDLLIMPEXP_WEBKIT
-#endif // SWIG
+#include "WebKitDefines.h"
 
-// enums
-enum EditState { EditStateTrue, EditStateFalse, EditStateMixed };
+class WebDOMElement;
+class WebDOMRange;
 
-#endif // WebKitDefines_h
+namespace WebCore {
+
+class SelectionController;
+
+}
+
+class WXDLLIMPEXP_WEBKIT wxWebKitSelection : public wxObject {
+#ifndef SWIG
+DECLARE_DYNAMIC_CLASS(wxWebKitDOMSelection)
+#endif
+
+public:
+    wxWebKitSelection() {}
+    wxWebKitSelection(WebCore::SelectionController* selection)
+        : m_selection(selection) 
+        { }
+        
+    wxWebKitSelection(const wxWebKitSelection&);
+    ~wxWebKitSelection() { m_selection = 0; }
+
+    WebDOMElement* GetRootEditableElement() const;
+    WebDOMRange* GetAsRange();
+
+private:
+    WebCore::SelectionController* m_selection;
+
+};
+
+#endif

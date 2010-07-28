@@ -30,7 +30,8 @@ from settings import *
 webcore_sources = {}
 
 if build_port == "wx":
-    webcore_sources['wx'] = ['platform/KillRingNone.cpp']
+    webcore_sources['wx'] = ['platform/KillRingNone.cpp']  
+
     if building_on_win32:
         # make sure platform/wx comes after this so we get the right
         # FontPlatformData.h
@@ -125,7 +126,9 @@ def build(bld):
     wk_includes = ['.', '..', 'DerivedSources',
                 wk_root, 
                 os.path.join(wk_root, 'JavaScriptCore'),
+                os.path.join(wk_root, 'JavaScriptCore', 'wtf', 'text'),
                 os.path.join(wk_root, 'WebCore'),
+                os.path.join(wk_root, 'WebKit/wx'),
                 'platform/image-decoders',
                 'platform/win',
                 'platform/wx/wxcode',
@@ -135,7 +138,7 @@ def build(bld):
     features = [build_port]
     exclude_patterns = ['*AllInOne.cpp', '*Brew.cpp', '*CFNet.cpp', '*Chromium*.cpp', 
             '*Gtk.cpp', '*Mac.cpp', '*None.cpp', '*Qt.cpp', '*Safari.cpp',
-            'test*bindings.*', '*Wince.cpp']
+            'test*bindings.*', '*Wince.cpp', "WebDOMSVG*.cpp"]
     if build_port == 'wx':
         features.append('curl')
         if not building_on_win32:
@@ -172,6 +175,7 @@ def build(bld):
         includes = ' '.join(wk_includes),
         source = ' '.join(flattenSources(webcore_sources.values())),
         cxxflags = cxxflags,
+        defines = ['WXMAKINGDLL_WEBKIT'],
         target = 'webcore',
         uselib = 'WX ICU XML XSLT CURL SQLITE3 ' + get_config(),
         uselib_local = '',
@@ -217,6 +221,15 @@ def build(bld):
         excludes.append('JSSVGLangSpace.cpp')
         excludes.append('JSSVGTransformable.cpp')
         excludes.append('JSSVGURIReference.cpp')
+        
+        excludes.append('WebDOMAbstractView.cpp')
+        excludes.append('WebDOMBlobBuilder.cpp')
+        excludes.append('WebDOMEventListenerCustom.cpp')
+        excludes.append('WebDOMElementTimeControl.cpp')
+        excludes.append('WebDOMImageData.cpp')
+        excludes.append('WebDOMScriptProfile.cpp')
+        excludes.append('WebDOMScriptProfileNode.cpp')
+        excludes.append('WebNativeEventListener.cpp')
         
         if building_on_win32:
             excludes.append('SharedTimerWx.cpp')

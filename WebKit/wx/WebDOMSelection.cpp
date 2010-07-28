@@ -25,24 +25,47 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
  
-#ifndef WebKitDefines_h
-#define WebKitDefines_h
+#include "config.h"
+#include "WebDOMSelection.h"
 
-#ifndef SWIG
+#include "Element.h"
+#include "SelectionController.h"
+#include "WebDOMElement.h"
+#include "WebDOMRange.h"
 
-#if !wxCHECK_VERSION(2, 9, 0) && wxCHECK_GCC_VERSION(4, 0)
-#define WXDLLIMPEXP_WEBKIT __attribute__ ((visibility("default")))
-#elif defined(WXMAKINGDLL_WEBKIT)
-#define WXDLLIMPEXP_WEBKIT WXEXPORT
-#elif defined(WXUSINGDLL_WEBKIT)
-#define WXDLLIMPEXP_WEBKIT WXIMPORT
+#include <wtf/RefPtr.h>
+
+#include "wx/wxprec.h"
+#ifndef WX_PRECOMP
+    #include "wx/wx.h"
 #endif
 
-#else
-#define WXDLLIMPEXP_WEBKIT
-#endif // SWIG
+IMPLEMENT_DYNAMIC_CLASS(wxWebKitSelection, wxObject)
 
-// enums
-enum EditState { EditStateTrue, EditStateFalse, EditStateMixed };
+wxWebKitSelection::wxWebKitSelection(const wxWebKitSelection& other)
+{
+    m_selection = other.m_selection;
+}
 
-#endif // WebKitDefines_h
+WebDOMElement* wxWebKitSelection::GetRootEditableElement() const
+{
+    if (m_selection)
+        return new WebDOMElement(m_selection->rootEditableElement());
+        
+    return 0;
+}
+
+WebDOMRange* wxWebKitSelection::GetAsRange()
+{
+    if (m_selection) {
+        WTF::RefPtr<WebCore::Range> range = m_selection->toNormalizedRange();
+        // keep it alive until it reaches wxWebKitDOMRange, which takes ownership
+        
+        if (range) {
+            range->ref();
+            return new WebDOMRange(range.get());
+        }
+    }
+        
+    return 0;
+}

@@ -33,6 +33,7 @@ include_paths = [
                 os.path.join(output_dir),
                 os.path.join(wk_root, 'JavaScriptCore'),
                 os.path.join(wk_root, 'WebCore'),
+                os.path.join(wk_root, 'WebCore', 'bindings', 'wx'),
                 os.path.join(wk_root, 'WebKit', 'wx'), 
                 '.', 
                 'wx'

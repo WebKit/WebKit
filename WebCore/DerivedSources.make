@@ -476,10 +476,16 @@ INSPECTOR_CLASSES = Inspector
 
 JS_DOM_HEADERS=$(filter-out JSEventListener.h JSEventTarget.h,$(DOM_CLASSES:%=JS%.h) $(INSPECTOR_CLASSES:%=Remote%Frontend.h))
 
+WEB_DOM_HEADERS :=
+ifeq ($(findstring BUILDING_WX,$(FEATURE_DEFINES)), BUILDING_WX)
+WEB_DOM_HEADERS := $(filter-out WebDOMXSLTProcessor.h,$(DOM_CLASSES:%=WebDOM%.h))
+endif # BUILDING_WX
+
 all : \
     remove-stray-plugin-and-mime-type-files \
     \
     $(JS_DOM_HEADERS) \
+    $(WEB_DOM_HEADERS) \
     \
     JSJavaScriptCallFrame.h \
     \
@@ -811,6 +817,13 @@ Remote%Frontend.h : %.idl $(INSPECTOR_GENERATOR_SCRIPTS)
 	$(call generator_script, $(INSPECTOR_GENERATOR_SCRIPTS)) --outputDir .  --defines "$(FEATURE_DEFINES) LANGUAGE_JAVASCRIPT" --generator Inspector $<
 
 -include $(JS_DOM_HEADERS:.h=.dep)
+
+ifeq ($(findstring BUILDING_WX,$(FEATURE_DEFINES)), BUILDING_WX)
+CPP_BINDINGS_SCRIPTS = $(GENERATE_SCRIPTS) bindings/scripts/CodeGeneratorCPP.pm
+
+WebDOM%.h : %.idl $(CPP_BINDINGS_SCRIPTS)
+	$(call generator_script, $(CPP_BINDINGS_SCRIPTS)) $(IDL_COMMON_ARGS) --defines "$(FEATURE_DEFINES) $(ADDITIONAL_IDL_DEFINES) LANGUAGE_CPP" --generator CPP $<
+endif # BUILDING_WX
 
 # ------------------------
 

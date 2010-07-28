@@ -281,7 +281,7 @@ sub AddIncludesForType
     my $type = $codeGenerator->StripModule(shift);
 
     return if $codeGenerator->IsNonPointerType($type);
-    return if $type =~ /cconstructor/;
+    return if $type =~ /Constructor/;
 
     if ($codeGenerator->IsStringType($type)) {
         $implIncludes{"AtomicString.h"} = 1;

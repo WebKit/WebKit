@@ -22,23 +22,78 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-
+ 
 %module webview
 
 %{
 #include "wx/wxPython/wxPython.h"
 #include "wx/wxPython/pyclasses.h"
-
 #include "WebBrowserShell.h"
+#include "WebDOMSelection.h"
+#include "WebEdit.h"
 #include "WebFrame.h"
-#include "WebKitDefines.h"
+#include "WebDOMDefines.h"
 #include "WebSettings.h"
 #include "WebView.h"
+
+#include "WebDOMAttr.h"
+#include "WebDOMCSSStyleDeclaration.h"
+#include "WebDOMDocument.h"
+#include "WebDOMDocumentFragment.h"
+#include "WebDOMDOMSelection.h"
+#include "WebDOMElement.h"
+#include "WebDOMEventListener.h"
+#include "WebDOMNamedNodeMap.h"
+#include "WebDOMNode.h"
+#include "WebDOMNodeList.h"
+#include "WebDOMObject.h"
+#include "WebDOMRange.h"
+
+PyObject* createDOMNodeSubtype(WebDOMNode* ptr, bool setThisOwn)
+{
+    //static wxPyTypeInfoHashMap* typeInfoCache = NULL;
+
+    //if (typeInfoCache == NULL)
+    //    typeInfoCache = new wxPyTypeInfoHashMap;
+
+    swig_type_info* swigType = 0; //(*typeInfoCache)[name];
+    char* name = 0;
+    if (ptr) {
+        // it wasn't in the cache, so look it up from SWIG
+        switch (ptr->nodeType()) {
+            case WebDOMNode::WEBDOM_ELEMENT_NODE:
+                name = "WebDOMElement*";
+                break;
+            case WebDOMNode::WEBDOM_ATTRIBUTE_NODE:
+                name = "WebDOMAttr*";
+                break;
+            default:
+                name = "WebDOMNode*";
+        }
+        swigType = SWIG_TypeQuery(name);
+        if (swigType)
+            return SWIG_Python_NewPointerObj(ptr, swigType, setThisOwn);
+        
+        // if it still wasn't found, try looking for a mapped name
+        //if (swigType) {
+            // and add it to the map if found
+        //    (*typeInfoCache)[className] = swigType;
+        //}
+    }
+    
+    Py_INCREF(Py_None);
+    
+    return Py_None;
+}
+
 %}
 //---------------------------------------------------------------------------
 
 %import core.i
 %import windows.i
+
+%typemap(out) WebDOMNode*             { $result = createDOMNodeSubtype($1, (bool)$owner); }
+%typemap(out) WebDOMElement*             { $result = createDOMNodeSubtype($1, (bool)$owner); }
 
 MAKE_CONST_WXSTRING(WebViewNameStr);
 
@@ -46,9 +101,21 @@ MustHaveApp(wxWebBrowserShell);
 MustHaveApp(wxWebFrame);
 MustHaveApp(wxWebView);
 
+%include WebDOMDefines.h
 %include WebKitDefines.h
 
+%include WebDOMObject.h
+%include WebDOMNode.h
+
+%include WebDOMAttr.h
+%include WebDOMDOMSelection.h
+%include WebDOMElement.h
+%include WebDOMNodeList.h
+%include WebDOMRange.h
+
 %include WebBrowserShell.h
+%include WebDOMSelection.h
+%include WebEdit.h
 %include WebFrame.h
 %include WebSettings.h
 %include WebView.h
