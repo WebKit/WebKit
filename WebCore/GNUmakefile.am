@@ -2939,6 +2939,14 @@ webcore_sources += \
 endif # END ENABLE_DOM_STORAGE
 
 # ----
+# HTML5 FileSystem API support
+# ----
+if ENABLE_FILE_SYSTEM
+FEATURE_DEFINES += ENABLE_FILE_SYSTEM=1
+webcore_cppflags += -DENABLE_FILE_SYSTEM=1
+endif # END ENABLE_FILE_SYSTEM
+
+# ----
 # Speech Input API support
 # ----
 if ENABLE_INPUT_SPEECH

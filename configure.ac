@@ -536,6 +536,14 @@ AC_ARG_ENABLE(directory_upload,
               [], [enable_directory_upload="no"])
 AC_MSG_RESULT([$enable_directory_upload])
 
+# check whether to enable HTML5 FileSystem API support
+AC_MSG_CHECKING([whether to enable HTML5 FileSystem API support])
+AC_ARG_ENABLE(file_system,
+              AC_HELP_STRING([--enable-file-system],
+                             [enable support for HTML5 FileSystem API [default=no]]),
+              [], [enable_file_system="no"])
+AC_MSG_RESULT([$enable_file_system])
+
 # turn off svg features if --disable-svg is requested
 if test "$enable_svg" = "no"; then
    enable_svg_animation=no
@@ -887,6 +895,7 @@ AM_CONDITIONAL([ENABLE_DATABASE],[test "$enable_database" = "yes"])
 AM_CONDITIONAL([ENABLE_DATALIST],[test "$enable_datalist" = "yes"])
 AM_CONDITIONAL([ENABLE_EVENTSOURCE],[test "$enable_eventsource" = "yes"])
 AM_CONDITIONAL([ENABLE_FAST_MOBILE_SCROLLING],[test "$enable_fast_mobile_scrolling" = "yes"])
+AM_CONDITIONAL([ENABLE_FILE_SYSTEM],[test "$enable_file_system" = "yes"])
 AM_CONDITIONAL([ENABLE_ICONDATABASE],[test "$enable_icon_database" = "yes"])
 AM_CONDITIONAL([ENABLE_IMAGE_RESIZER],[test "$enable_image_resizer" = "yes"])
 AM_CONDITIONAL([ENABLE_INDEXED_DATABASE],[test "$enable_indexed_database" = "yes"])
@@ -966,6 +975,7 @@ Features:
  HTML5 channel messaging support                          : $enable_channel_messaging
  HTML5 client-side session and persistent storage support : $enable_dom_storage
  HTML5 client-side database storage support               : $enable_database
+ HTML5 FileSystem API support                             : $enable_file_system
  HTML5 ruby support                                       : $enable_ruby
  HTML5 sandboxed iframe support                           : $enable_sandbox
  HTML5 server-sent events support                         : $enable_eventsource

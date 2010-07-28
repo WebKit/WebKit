@@ -61,7 +61,7 @@ my ($linkPrefetchSupport, $threeDCanvasSupport, $threeDRenderingSupport, $channe
     $svgSupport, $svgAnimationSupport, $svgAsImageSupport, $svgDOMObjCBindingsSupport, $svgFontsSupport,
     $svgForeignObjectSupport, $svgUseSupport, $videoSupport, $webSocketsSupport, $webTimingSupport, $wmlSupport, $wcssSupport, $xhtmlmpSupport, $workersSupport,
     $xpathSupport, $xsltSupport, $coverageSupport, $notificationsSupport, $blobSliceSupport, $tiledBackingStoreSupport,
-    $fileReaderSupport, $fileWriterSupport, $directoryUploadSupport);
+    $fileReaderSupport, $fileWriterSupport, $fileSystemSupport, $directoryUploadSupport);
 
 my @features = (
     { option => "link-prefetch", desc => "Toggle pre fetching support",
@@ -201,6 +201,9 @@ my @features = (
 
     { option => "file-writer", desc => "Toggle FileWriter support",
       define => "ENABLE_FILE_WRITER", default => 0, value => \$fileWriterSupport },
+
+    { option => "file-system", desc => "Toggle FileSystem support",
+      define => "ENABLE_FILE_SYSTEM", default => 0, value => \$fileSystemSupport },
 );
 
 # Update defaults from Qt's project file
