@@ -237,14 +237,14 @@ PassRefPtr<ImageData> ImageBuffer::getPremultipliedImageData(const IntRect& rect
     return getImageData<Premultiplied>(rect, m_data, m_size);
 }
 
-static inline unsigned int premultiply(unsigned int x)
+static inline unsigned int premultiplyABGRtoARGB(unsigned int x)
 {
     unsigned int a = x >> 24;
     if (a == 255)
-        return x;
+        return (x << 16) | ((x >> 16) & 0xff) | (x & 0xff00ff00);
     unsigned int t = (x & 0xff00ff) * a;
     t = (t + ((t >> 8) & 0xff00ff) + 0x800080) >> 8;
-    t &= 0xff00ff;
+    t = ((t << 16) | (t >> 16)) & 0xff00ff;
 
     x = ((x >> 8) & 0xff) * a;
     x = (x + ((x >> 8) & 0xff) + 0x80);
@@ -297,7 +297,7 @@ void putImageData(ImageData*& source, const IntRect& sourceRect, const IntPoint&
             for (int x = 0; x < numColumns; x++) {
                 // Premultiply and convert BGR to RGB.
                 quint32 pixel = srcScanLine[x];
-                destScanLine[x] = premultiply(((pixel << 16) & 0xff0000) | ((pixel >> 16) & 0xff) | (pixel & 0xff00ff00));
+                destScanLine[x] = premultiplyABGRtoARGB(pixel);
             }
             srcScanLine += source->width();
         }

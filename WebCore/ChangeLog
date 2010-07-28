@@ -1,3 +1,17 @@
+2010-07-28  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] putImageData(): Combine premultiplication and BGR->RGB
+        https://bugs.webkit.org/show_bug.cgi?id=43114
+
+        Further optimized putImageData() by doing BGR->RGB inside the
+        premultiplication routine.
+
+        * platform/graphics/qt/ImageBufferQt.cpp:
+        (WebCore::premultiplyABGRtoARGB): Renamed from premultiply.
+        (WebCore::putImageData):
+
 2010-07-28  Andrei Popescu  <andreip@google.com>
 
         Reviewed by Jeremy Orlow.
