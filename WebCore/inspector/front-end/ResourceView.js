@@ -176,7 +176,8 @@ WebInspector.ResourceView.prototype = {
         this.tabbedPane.selectTabById("content");
         if ("resize" in this)
             this.resize();
-        this.contentTabSelected();
+        if (this.hasContentTab())
+            this.contentTabSelected();
     },
 
     _refreshURL: function()

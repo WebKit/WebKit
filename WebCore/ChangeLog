@@ -1,3 +1,17 @@
+2010-07-28  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        WebInspector: Navigating to anchor prior to opening WebInspector
+        makes resource have 'other' type.
+        https://bugs.webkit.org/show_bug.cgi?id=43110
+
+        * inspector/InspectorResource.cpp:
+        (WebCore::InspectorResource::type):
+        (WebCore::InspectorResource::resourceData):
+        * inspector/front-end/ResourceView.js:
+        (WebInspector.ResourceView.prototype._innerSelectContentTab):
+
 2010-07-28  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
