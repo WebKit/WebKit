@@ -1,3 +1,15 @@
+2010-07-28  Adam Roben  <aroben@apple.com>
+
+        Stop leaking Connection::m_readState.hEvent on Windows
+
+        Fixes <http://webkit.org/b/43129> CoreIPC::Connection leaks its read
+        event on Windows
+
+        Reviewed by Darin Adler.
+
+        * Platform/CoreIPC/win/ConnectionWin.cpp:
+        (CoreIPC::Connection::platformInvalidate): Close the event handle.
+
 2010-07-26  Steve Block  <steveblock@google.com>
 
        Reviewed by Jeremy Orlow.

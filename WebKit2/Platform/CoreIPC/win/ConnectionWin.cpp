@@ -92,7 +92,10 @@ void Connection::platformInvalidate()
     if (m_connectionPipe == INVALID_HANDLE_VALUE)
         return;
 
-    // FIXME: Unregister the handle.
+    // FIXME: Unregister the handles.
+
+    ::CloseHandle(m_readState.hEvent);
+    m_readState.hEvent = 0;
 
     ::CloseHandle(m_connectionPipe);
     m_connectionPipe = INVALID_HANDLE_VALUE;
