@@ -1,3 +1,19 @@
+2010-07-27  Daniel Bates  <dbates@rim.com>
+
+        Unreviewed; remove platform-specific expected results.
+        https://bugs.webkit.org/show_bug.cgi?id=42803
+
+        We no longer need the Qt an GTK platform-specific render tree dumps
+        as we now dump text.
+
+        * platform/gtk/fast/lists/alpha-boundary-values-expected.txt: Removed.
+        * platform/gtk/fast/lists/w3-css3-list-styles-alphabetic-expected.txt: Removed.
+        * platform/qt/fast/lists/alpha-boundary-values-expected.checksum: Removed.
+        * platform/qt/fast/lists/alpha-boundary-values-expected.png: Removed.
+        * platform/qt/fast/lists/alpha-boundary-values-expected.txt: Removed.
+        * platform/qt/fast/lists/w3-css3-list-styles-numeric-expected.txt: Removed.
+        * platform/qt/fast/lists/w3-list-styles-expected.txt: Removed.
+
 2010-07-26  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by Shinichiro Hamaji.
