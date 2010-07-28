@@ -1,3 +1,19 @@
+2010-07-28  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        [IndexedDB] IDBKeyRange should be a runtime-enabled feature.
+        https://bugs.webkit.org/show_bug.cgi?id=43116
+
+        IDBKeyRange should be enabled at runtime only when IndexedDB is also
+        enabled.
+
+        No new tests needed, functionality not changed.
+
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::iDBKeyRangeEnabled):
+        * page/DOMWindow.idl:
+
 2010-07-28  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Forgot to land GNUmakefile.am changes, broke build in r64196.
