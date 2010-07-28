@@ -1,3 +1,17 @@
+2010-07-28  Victor Wang  <victorw@chromium.org>
+
+       Unreviewed. Add chromium baselines for test:
+       fast/table/early-table-layout
+
+        * platform/chromium-linux/fast/table/early-table-layout-expected.checksum: Added.
+        * platform/chromium-linux/fast/table/early-table-layout-expected.png: Added.
+        * platform/chromium-mac/fast/table/early-table-layout-expected.checksum: Added.
+        * platform/chromium-mac/fast/table/early-table-layout-expected.png: Added.
+        * platform/chromium-mac/fast/table/early-table-layout-expected.txt: Added.
+        * platform/chromium-win/fast/table/early-table-layout-expected.checksum: Added.
+        * platform/chromium-win/fast/table/early-table-layout-expected.png: Added.
+        * platform/chromium-win/fast/table/early-table-layout-expected.txt: Added.
+
 2010-07-28  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
