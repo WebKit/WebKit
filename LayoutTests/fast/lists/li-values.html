@@ -1,16 +1,20 @@
+<script src="resources/dump-list.js"></script>
 <script>
 
 function finishTest()
 {
     document.getElementById("removeMyValue").removeAttribute("value");
+    filterListsWithReplacement(document.querySelectorAll("ol"));
     if (window.layoutTestController)
         layoutTestController.notifyDone();
 }
 
 function init()
 {
-    if (window.layoutTestController)
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
         layoutTestController.waitUntilDone();
+    }
     setTimeout(finishTest, 0);
 }
 

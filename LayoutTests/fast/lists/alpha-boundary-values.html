@@ -16,3 +16,11 @@
 <li value=18279 type=A>
 <li value=18280 type=A>
 <li value=18281 type=A>
+</ol>
+<script src="resources/dump-list.js"></script>
+<script>
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        filterListsWithReplacement(document.querySelectorAll("ol"));
+    }
+</script>

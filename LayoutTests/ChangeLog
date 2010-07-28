@@ -1,3 +1,66 @@
+2010-07-27  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Darin Adler.
+
+        Convert DRT list tests from pixel-tests/render tree dumps to text
+        https://bugs.webkit.org/show_bug.cgi?id=42803
+
+        With the passing of Bug #37929 and Bug #37930, convert a subset of the
+        DRT tests for lists from pixel-tests to text-based tests now that we
+        can retrieve the list item marker text in both the Mac and Windows ports.
+
+        * fast/lists/alpha-boundary-values-expected.txt: Added.
+        * fast/lists/alpha-boundary-values.html: Modified to dump as text.
+        * fast/lists/alpha-list-wrap-expected.txt: Added.
+        * fast/lists/alpha-list-wrap.html: Modified to dump as text.
+        * fast/lists/decimal-leading-zero-expected.txt: Added.
+        * fast/lists/decimal-leading-zero.html: Modified to dump as text.
+        * fast/lists/li-values-expected.txt: Added.
+        * fast/lists/li-values.html: Modified to dump as text.
+        * fast/lists/list-style-type-dynamic-change-expected.txt: Added.
+        * fast/lists/list-style-type-dynamic-change.html: Modified to dump as text.
+        * fast/lists/resources/dump-list.js:
+        (dumpList): Modified to call processList.
+        (filterListsWithReplacement): Added.
+        (processList): Added.
+        (dumpListItemAsHTML): Added.
+        (printPassedIfEmptyString): Added.
+        (printFailedIfListItemMarkerNotEqualListItemText): Added.
+        * fast/lists/w3-css3-list-styles-alphabetic-expected.txt: Added.
+        * fast/lists/w3-css3-list-styles-alphabetic.html: Modified to dump as text.
+        * fast/lists/w3-css3-list-styles-numeric-expected.txt: Added.
+        * fast/lists/w3-css3-list-styles-numeric.html: Modified to dump as text.
+          Also, fix typos in the binary list-style-type results.
+        * fast/lists/w3-list-styles-expected.txt: Added.
+        * fast/lists/w3-list-styles.html: Modified to dump as text.
+        * platform/mac/fast/lists/alpha-boundary-values-expected.checksum: Removed.
+        * platform/mac/fast/lists/alpha-boundary-values-expected.png: Removed.
+        * platform/mac/fast/lists/alpha-boundary-values-expected.txt: Removed.
+        * platform/mac/fast/lists/alpha-list-wrap-expected.checksum: Removed.
+        * platform/mac/fast/lists/alpha-list-wrap-expected.png: Removed.
+        * platform/mac/fast/lists/alpha-list-wrap-expected.txt: Removed.
+        * platform/mac/fast/lists/decimal-leading-zero-expected.checksum: Removed.
+        * platform/mac/fast/lists/decimal-leading-zero-expected.png: Removed.
+        * platform/mac/fast/lists/decimal-leading-zero-expected.txt: Removed.
+        * platform/mac/fast/lists/li-values-expected.checksum: Removed.
+        * platform/mac/fast/lists/li-values-expected.png: Removed.
+        * platform/mac/fast/lists/li-values-expected.txt: Removed.
+        * platform/mac/fast/lists/list-style-type-dynamic-change-expected.checksum: Removed.
+        * platform/mac/fast/lists/list-style-type-dynamic-change-expected.png: Removed.
+        * platform/mac/fast/lists/list-style-type-dynamic-change-expected.txt: Removed.
+        * platform/mac/fast/lists/w3-css3-list-styles-alphabetic-expected.checksum: Removed.
+        * platform/mac/fast/lists/w3-css3-list-styles-alphabetic-expected.png: Removed.
+        * platform/mac/fast/lists/w3-css3-list-styles-alphabetic-expected.txt: Removed.
+        * platform/mac/fast/lists/w3-css3-list-styles-numeric-expected.checksum: Removed.
+        * platform/mac/fast/lists/w3-css3-list-styles-numeric-expected.png: Removed.
+        * platform/mac/fast/lists/w3-css3-list-styles-numeric-expected.txt: Removed.
+        * platform/mac/fast/lists/w3-list-styles-expected.checksum: Removed.
+        * platform/mac/fast/lists/w3-list-styles-expected.png: Removed.
+        * platform/mac/fast/lists/w3-list-styles-expected.txt: Removed.
+        * platform/win/fast/lists: Removed.
+        * platform/win/fast/lists/w3-css3-list-styles-alphabetic-expected.txt: Removed.
+        * platform/win/fast/lists/w3-css3-list-styles-numeric-expected.txt: Removed.
+
 2010-07-27  Andrew Scherkus  <scherkus@chromium.org>
 
         Unreviewed.

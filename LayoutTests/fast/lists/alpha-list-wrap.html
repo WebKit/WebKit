@@ -7,3 +7,10 @@ for (var n = 1; n < 60; n++) {
     list.appendChild(li);
 }
 </script>
+<script src="resources/dump-list.js"></script>
+<script>
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        filterListsWithReplacement([document.getElementById("test")]);
+    }
+</script>

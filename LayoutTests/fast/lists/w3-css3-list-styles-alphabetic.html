@@ -79,11 +79,26 @@
         
         ol.upper-norwegian { list-style-type: upper-norwegian; }
     </style>
+    <script src="resources/dump-list.js"></script>
+    <script>
+        function runTest()
+        {
+            if (!window.layoutTestController)
+                return;
+                
+            layoutTestController.dumpAsText();
+            filterListsWithReplacement(document.querySelectorAll(".test ol"), printFailedIfListItemMarkerNotEqualListItemText, printPassedIfEmptyString);
+            document.body.removeChild(document.getElementById("description")); // Remove description when running in DRT.
+        }
+        window.onload = runTest;
+    </script>
 </head>
 <body>
     <h1>CSS3 Alphabetic list-style-types</h1>
+    <div id="description">
     <p>This tests that all of the alphabetic CSS3 list-style-types are supported as per <a href="http://www.w3.org/TR/css3-lists/#alphabetic">section 4.4 of the spec. CSS3 Lists module</a> (Draft 7 November 2002). This test PASSED if the list item matches its bullet for every list item (below). For example, for the upper-greek alphabet the third &lt;li&gt; (which corresponds to Gamma in the lexicographic ordering of the upper greek alphabet) should be rendered as: &#x0393;&#x0002E; &#x0393;.</p>
     <p>Note, some list-style-types may use a suffix other than a  dot ('.').</p>
+    </div>
     <div class="test">
         <h2>afar</h2>
         <ol class="afar">

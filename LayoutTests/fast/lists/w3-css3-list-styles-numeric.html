@@ -58,10 +58,34 @@
         
         ol.upper-hexadecimal { list-style-type: upper-hexadecimal; }
     </style>
+    <script src="resources/dump-list.js"></script>
+    <script>
+        function printFailedIfListItemMarkerNotEqualListItemText(listItemElement, depth)
+        {
+            var marker = layoutTestController.markerTextForListItem(listItemElement);
+            var isNegativeNumber = listItemElement.parentNode.className && listItemElement.parentNode.className.split(" ").indexOf("negative-number") > -1;
+            var expectedMarkerText = isNegativeNumber ? "-" : "";
+            expectedMarkerText += listItemElement.innerText;
+            if (marker === expectedMarkerText)
+                return '';
+            return '<span><span class="fail">FAIL</span> list marker should be ' + expectedMarkerText + '. Was ' + marker + '.</span><br/>';
+        }
+
+        function runTest()
+        {
+            if (!window.layoutTestController)
+                return;
+            
+            layoutTestController.dumpAsText();
+            filterListsWithReplacement(document.querySelectorAll(".test ol"), printFailedIfListItemMarkerNotEqualListItemText, printPassedIfEmptyString);
+            document.body.removeChild(document.getElementById("description")); // Remove description when running in DRT.
+        }
+        window.onload = runTest;
+    </script>
 </head>
 <body>
     <h1>CSS3 Numeric list-style-type</h1>
-    <p>This tests that all of the numeric CSS3 list-style-types are supported as per <a href="http://www.w3.org/TR/css3-lists/#numeric">section 4.3 of the spec. CSS3 Lists module</a> (Draft 7 November 2002). This test PASSED if the list item matches its bullet for every list item (below). For example, for the decimal numeric system the second &lt;li&gt; (which corresponds to 2 in the standard ordering of the positive integers) should be rendered as: 2. 2</p>
+    <p id="description">This tests that all of the numeric CSS3 list-style-types are supported as per <a href="http://www.w3.org/TR/css3-lists/#numeric">section 4.3 of the spec. CSS3 Lists module</a> (Draft 7 November 2002). This test PASSED if the list item matches its bullet for every list item (below). For example, for the decimal numeric system the second &lt;li&gt; (which corresponds to 2 in the standard ordering of the positive integers) should be rendered as: 2. 2</p>
     <div class="test">
         <h2>arabic-indic</h2>
         <ol class="arabic-indic">
@@ -95,8 +119,8 @@
             <li>1</li>
         </ol>
         <ol class="binary negative-number" start="-2147483648">
-            <li>1000000000000000000000000000000</li>
-            <li>111111111111111111111111111111</li>
+            <li>10000000000000000000000000000000</li>
+            <li>1111111111111111111111111111111</li>
         </ol>
     </div>
     

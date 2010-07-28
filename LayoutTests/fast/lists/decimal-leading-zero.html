@@ -22,3 +22,10 @@
 <li>this list item should be labeled 10</li>
 <li value="100">this list item should be labeled 100</li>
 </ol>
+<script src="resources/dump-list.js"></script>
+<script>
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        filterListsWithReplacement(document.querySelectorAll("ol"));
+    }
+</script>

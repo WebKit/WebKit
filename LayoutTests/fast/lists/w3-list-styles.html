@@ -19,6 +19,16 @@ ol.lower-greek { list-style-type: lower-greek; }
 ol { margin-bottom: 2em; }
 ol ol { margin-bottom: 0em; margin-top: 0.5em; }
 </style> 
+<script src="resources/dump-list.js"></script>
+<script>
+    window.onload = function()
+    {
+        if (window.layoutTestController) {
+            layoutTestController.dumpAsText();
+            filterListsWithReplacement(document.querySelectorAll(".test ol"));
+        }
+    }
+</script>
   </head> 
   <body> 
      <div id="navigation"> 

@@ -19,5 +19,12 @@
         document.body.offsetTop;
         document.getElementById("list").style.listStyleType = "decimal";
     </script>
+    <script src="resources/dump-list.js"></script>
+    <script>
+        if (window.layoutTestController) {
+            layoutTestController.dumpAsText();
+            filterListsWithReplacement([document.getElementById("list")]);
+        }
+    </script>
 </body>
 </html>
