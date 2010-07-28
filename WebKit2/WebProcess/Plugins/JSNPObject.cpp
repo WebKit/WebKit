@@ -110,13 +110,72 @@ bool JSNPObject::getOwnPropertySlot(ExecState* exec, const Identifier& propertyN
         return true;
     }
 
-    // Second, check is the NPObject has a method with this name.
+    // Second, check if the NPObject has a method with this name.
     if (m_npObject->_class->hasMethod && m_npObject->_class->hasMethod(m_npObject, npIdentifier)) {
         slot.setCustom(this, methodGetter);
         return true;
     }
     
     return false;
+}
+
+bool JSNPObject::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+{
+    if (!m_npObject) {
+        throwInvalidAccessError(exec);
+        return false;
+    }
+
+    NPIdentifier npIdentifier = npIdentifierFromIdentifier(propertyName);
+
+    // First, check if the NPObject has a property with this name.
+    if (m_npObject->_class->hasProperty && m_npObject->_class->hasProperty(m_npObject, npIdentifier)) {
+        PropertySlot slot;
+        slot.setCustom(this, propertyGetter);
+        descriptor.setDescriptor(slot.getValue(exec, propertyName), DontDelete);
+        return true;
+    }
+
+    // Second, check if the NPObject has a method with this name.
+    if (m_npObject->_class->hasMethod && m_npObject->_class->hasMethod(m_npObject, npIdentifier)) {
+        PropertySlot slot;
+        slot.setCustom(this, methodGetter);
+        descriptor.setDescriptor(slot.getValue(exec, propertyName), DontDelete | ReadOnly);
+        return true;
+    }
+
+    return false;
+}
+
+void JSNPObject::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot&)
+{
+    if (!m_npObject) {
+        throwInvalidAccessError(exec);
+        return;
+    }
+
+    NPIdentifier npIdentifier = npIdentifierFromIdentifier(propertyName);
+    
+    if (!m_npObject->_class->hasProperty || !m_npObject->_class->hasProperty(m_npObject, npIdentifier)) {
+        // FIXME: Should we throw an exception here?
+        return;
+    }
+
+    if (!m_npObject->_class->setProperty)
+        return;
+
+    NPVariant variant;
+    m_objectMap->convertJSValueToNPVariant(exec, value, variant);
+    {
+        JSLock::DropAllLocks dropAllLocks(SilenceAssertionsOnly);
+        m_npObject->_class->setProperty(m_npObject, npIdentifier, &variant);
+
+        // FIXME: Handle setProperty setting an exception.
+        // FIXME: Find out what happens if calling setProperty causes the plug-in to go away.
+        // FIXME: Should we throw an exception if setProperty returns false?
+    }
+
+    releaseNPVariantValue(&variant);
 }
 
 JSValue JSNPObject::propertyGetter(ExecState* exec, JSValue slotBase, const Identifier& propertyName)

@@ -129,6 +129,25 @@
 
         Reviewed by Sam Weinig.
 
+        Implement JSNPObject::put
+        https://bugs.webkit.org/show_bug.cgi?id=43149
+
+        * WebProcess/Plugins/JSNPObject.cpp:
+        (WebKit::JSNPObject::getOwnPropertySlot):
+        Fix a typo.
+
+        (WebKit::JSNPObject::getOwnPropertyDescriptor):
+        Implement this in the same way as it's implemented in RuntimeObject.
+
+        (WebKit::JSNPObject::put):
+        Implement this, call NPClass::setProperty.
+
+        * WebProcess/Plugins/JSNPObject.h:
+
+2010-07-28  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Add support for calling NPObject methods
         https://bugs.webkit.org/show_bug.cgi?id=43145
 
