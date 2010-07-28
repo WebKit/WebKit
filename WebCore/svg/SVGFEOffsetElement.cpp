@@ -49,6 +49,16 @@ void SVGFEOffsetElement::parseMappedAttribute(Attribute* attr)
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
 
+void SVGFEOffsetElement::svgAttributeChanged(const QualifiedName& attrName)
+{
+    SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
+
+    if (attrName == SVGNames::inAttr
+        || attrName == SVGNames::dxAttr
+        || attrName == SVGNames::dyAttr)
+        invalidateFilter();
+}
+
 void SVGFEOffsetElement::synchronizeProperty(const QualifiedName& attrName)
 {
     SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);

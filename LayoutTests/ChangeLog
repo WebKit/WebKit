@@ -5,6 +5,50 @@
         SVGFilterElement & SVGFE*Element don't support dynamic invalidation, when attributes change
         https://bugs.webkit.org/show_bug.cgi?id=42244
 
+        * platform/mac/svg/dynamic-updates/SVGFEOffsetElement-dom-dx-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEOffsetElement-dom-dx-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEOffsetElement-dom-dy-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEOffsetElement-dom-dy-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEOffsetElement-dom-in-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEOffsetElement-dom-in-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEOffsetElement-svgdom-dx-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEOffsetElement-svgdom-dx-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEOffsetElement-svgdom-dy-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEOffsetElement-svgdom-dy-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEOffsetElement-svgdom-in-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEOffsetElement-svgdom-in-prop-expected.png: Added.
+        * svg/dynamic-updates/SVGFEOffsetElement-dom-dx-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFEOffsetElement-dom-dx-attr.html: Added.
+        * svg/dynamic-updates/SVGFEOffsetElement-dom-dy-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFEOffsetElement-dom-dy-attr.html: Added.
+        * svg/dynamic-updates/SVGFEOffsetElement-dom-in-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFEOffsetElement-dom-in-attr.html: Added.
+        * svg/dynamic-updates/SVGFEOffsetElement-svgdom-dx-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFEOffsetElement-svgdom-dx-prop.html: Added.
+        * svg/dynamic-updates/SVGFEOffsetElement-svgdom-dy-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFEOffsetElement-svgdom-dy-prop.html: Added.
+        * svg/dynamic-updates/SVGFEOffsetElement-svgdom-in-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFEOffsetElement-svgdom-in-prop.html: Added.
+        * svg/dynamic-updates/script-tests/SVGFEOffsetElement-dom-dx-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFEOffsetElement-dom-dy-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFEOffsetElement-dom-in-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFEOffsetElement-svgdom-dx-prop.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFEOffsetElement-svgdom-dy-prop.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFEOffsetElement-svgdom-in-prop.js: Added.
+        (executeTest):
+
+2010-07-28  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVGFilterElement & SVGFE*Element don't support dynamic invalidation, when attributes change
+        https://bugs.webkit.org/show_bug.cgi?id=42244
+
         * platform/mac/svg/dynamic-updates/SVGFEDiffuseLightingElement-dom-diffuseConstant-attr-expected.checksum: Added.
         * platform/mac/svg/dynamic-updates/SVGFEDiffuseLightingElement-dom-diffuseConstant-attr-expected.png: Added.
         * platform/mac/svg/dynamic-updates/SVGFEDiffuseLightingElement-dom-in-attr-expected.checksum: Added.

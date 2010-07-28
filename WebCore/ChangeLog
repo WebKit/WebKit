@@ -5,6 +5,26 @@
         SVGFilterElement & SVGFE*Element don't support dynamic invalidation, when attributes change
         https://bugs.webkit.org/show_bug.cgi?id=42244
 
+        Implementing svgAttributeChanged for SVGFEOffsetElement object.
+
+        Tests: svg/dynamic-updates/SVGFEOffsetElement-dom-dx-attr.html
+               svg/dynamic-updates/SVGFEOffsetElement-dom-dy-attr.html
+               svg/dynamic-updates/SVGFEOffsetElement-dom-in-attr.html
+               svg/dynamic-updates/SVGFEOffsetElement-svgdom-dx-prop.html
+               svg/dynamic-updates/SVGFEOffsetElement-svgdom-dy-prop.html
+               svg/dynamic-updates/SVGFEOffsetElement-svgdom-in-prop.html
+
+        * svg/SVGFEOffsetElement.cpp:
+        (WebCore::SVGFEOffsetElement::svgAttributeChanged):
+        * svg/SVGFEOffsetElement.h:
+
+2010-07-28  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVGFilterElement & SVGFE*Element don't support dynamic invalidation, when attributes change
+        https://bugs.webkit.org/show_bug.cgi?id=42244
+
         Implementing svgAttributeChanged for SVGFEDiffuseLightingElement object.
 
         Tests: svg/dynamic-updates/SVGFEDiffuseLightingElement-dom-diffuseConstant-attr.html

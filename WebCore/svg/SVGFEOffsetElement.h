@@ -33,6 +33,7 @@ public:
     virtual ~SVGFEOffsetElement();
 
     virtual void parseMappedAttribute(Attribute*);
+    virtual void svgAttributeChanged(const QualifiedName&);
     virtual void synchronizeProperty(const QualifiedName&);
     virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*);
 
