@@ -1,3 +1,12 @@
+2010-07-28  Brady Eidson  <beidson@apple.com>
+
+        Rubberstamped by Sam Weinig.
+
+        Make sure new pages are always added to the same PageGroup (for now).
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+
 2010-07-28  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
