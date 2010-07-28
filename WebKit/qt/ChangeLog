@@ -1,3 +1,21 @@
+2010-07-28  Kim Grönholm  <kim.1.gronholm@nokia.com>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] Decouple QTouchEvent's accepted flag from JS prevent default
+        https://bugs.webkit.org/show_bug.cgi?id=42892
+
+        Added comments to the touch event handling code.
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebView::sceneEvent):
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::touchEvent):
+        (QWebPage::event):
+        * Api/qwebpage_p.h:
+        * Api/qwebview.cpp:
+        (QWebView::event):
+
 2010-07-26  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.

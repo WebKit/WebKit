@@ -319,6 +319,8 @@ bool QGraphicsWebView::sceneEvent(QEvent* event)
                 || event->type() == QEvent::TouchEnd
                 || event->type() == QEvent::TouchUpdate)) {
         d->page->event(event);
+
+        // Always return true so that we'll receive also TouchUpdate and TouchEnd events
         return true;
     }
 #endif
