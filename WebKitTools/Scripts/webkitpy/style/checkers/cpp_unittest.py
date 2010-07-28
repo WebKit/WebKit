@@ -3472,6 +3472,15 @@ class WebKitStyleTest(CppStyleTestBase):
         self.assert_lint(
             'gchar* result = g_strjoin(",", "part1", NULL);',
             '')
+        self.assert_lint(
+            'gchar* result = gdk_pixbuf_save_to_callback(pixbuf, function, data, type, error, NULL);',
+            '')
+        self.assert_lint(
+            'gchar* result = gdk_pixbuf_save_to_buffer(pixbuf, function, data, type, error, NULL);',
+            '')
+        self.assert_lint(
+            'gchar* result = gdk_pixbuf_save_to_stream(pixbuf, function, data, type, error, NULL);',
+            '')
 
         # 2. C++ and C bool values should be written as true and
         #    false. Objective-C BOOL values should be written as YES and NO.

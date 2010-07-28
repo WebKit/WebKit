@@ -1884,6 +1884,10 @@ def check_for_null(file_extension, clean_lines, line_number, error):
     if search(r'\bg_str(join|concat)\b', line):
         return
 
+    # Don't warn about NULL usage in gdk_pixbuf_save_to_*{join,concat}(). See Bug 43090.
+    if search(r'\bgdk_pixbuf_save_to\w+\b', line):
+        return
+
     if search(r'\bNULL\b', line):
         error(line_number, 'readability/null', 5, 'Use 0 instead of NULL.')
         return
