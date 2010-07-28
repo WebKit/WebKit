@@ -26,15 +26,15 @@
 #ifndef WebBackForwardListItem_h
 #define WebBackForwardListItem_h
 
+#include "APIObject.h"
 #include <WebCore/PlatformString.h>
 #include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
 
 namespace WebKit {
 
 class WebPageProxy;
 
-class WebBackForwardListItem : public RefCounted<WebBackForwardListItem> {
+class WebBackForwardListItem : public APIObject {
 public:
     static PassRefPtr<WebBackForwardListItem> create(const WebCore::String& originalURL, const WebCore::String& url, const WebCore::String& title, uint64_t itemID)
     {

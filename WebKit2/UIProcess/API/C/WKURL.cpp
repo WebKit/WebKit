@@ -26,7 +26,6 @@
 #include "WKURL.h"
 
 #include "WKAPICast.h"
-#include <WebCore/StringImpl.h>
 
 WKURLRef WKURLRetain(WKURLRef URLRef)
 {

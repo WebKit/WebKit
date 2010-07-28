@@ -43,7 +43,7 @@ WKContextRef WKContextCreate()
 
 WKContextRef WKContextCreateWithInjectedBundlePath(WKStringRef pathRef)
 {
-    RefPtr<WebContext> context = WebContext::create(toWK(pathRef));
+    RefPtr<WebContext> context = WebContext::create(toWK(pathRef)->string());
     return toRef(context.release().releaseRef());
 }
 
@@ -75,7 +75,7 @@ void WKContextSetInjectedBundleClient(WKContextRef contextRef, WKContextInjected
 
 void WKContextPostMessageToInjectedBundle(WKContextRef contextRef, WKStringRef messageRef)
 {
-    toWK(contextRef)->postMessageToInjectedBundle(toWK(messageRef));
+    toWK(contextRef)->postMessageToInjectedBundle(toWK(messageRef)->string());
 }
 
 void WKContextGetStatistics(WKContextRef contextRef, WKContextStatistics* statistics)
@@ -96,10 +96,10 @@ void WKContextRelease(WKContextRef contextRef)
 
 void _WKContextSetAdditionalPluginPath(WKContextRef contextRef, WKStringRef pluginPath)
 {
-    toWK(contextRef)->setAdditionalPluginPath(toWK(pluginPath));
+    toWK(contextRef)->setAdditionalPluginPath(toWK(pluginPath)->string());
 }
 
 void _WKContextRegisterURLSchemeAsEmptyDocument(WKContextRef contextRef, WKStringRef urlScheme)
 {
-    toWK(contextRef)->registerURLSchemeAsEmptyDocument(toWK(urlScheme));
+    toWK(contextRef)->registerURLSchemeAsEmptyDocument(toWK(urlScheme)->string());
 }

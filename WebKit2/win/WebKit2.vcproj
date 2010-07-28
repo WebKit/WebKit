@@ -393,6 +393,10 @@
 			Name="Shared"
 			>
 			<File
+				RelativePath="..\Shared\APIObject.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\ImmutableArray.cpp"
 				>
 			</File>
@@ -430,6 +434,10 @@
 			</File>
 			<File
 				RelativePath="..\Shared\WebPreferencesStore.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Shared\WebString.h"
 				>
 			</File>
 			<Filter

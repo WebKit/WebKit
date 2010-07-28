@@ -23,60 +23,38 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebPreferences_h
-#define WebPreferences_h
+#ifndef WebString_h
+#define WebString_h
 
 #include "APIObject.h"
-#include "WebPreferencesStore.h"
-#include <wtf/HashSet.h>
+#include <WebCore/PlatformString.h>
 #include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
 
 namespace WebKit {
 
-class WebContext;
+// WebString - An string array type suitable for vending to an API.
 
-class WebPreferences : public APIObject {
+class WebString : public APIObject {
 public:
-    static WebPreferences* shared();
-
-    static PassRefPtr<WebPreferences> create()
+    static PassRefPtr<WebString> create(const WebCore::String& string)
     {
-        return adoptRef(new WebPreferences);
+        return adoptRef(new WebString(string));
     }
-    static PassRefPtr<WebPreferences> copy(WebPreferences* preferences)
-    {
-        return adoptRef(new WebPreferences(preferences));
-    }
-    ~WebPreferences();
 
-    void addContext(WebContext*);
-    void removeContext(WebContext*);
+    bool isNull() const { return m_string.isNull(); }
+    bool isEmpty() const { return m_string.isEmpty(); }
 
-    const WebPreferencesStore& store() const { return m_store; }
-
-    void setJavaScriptEnabled(bool);
-    bool javaScriptEnabled() const;
-
-    void setLoadsImagesAutomatically(bool);
-    bool loadsImagesAutomatically() const;
-
-    void setOfflineWebApplicationCacheEnabled(bool);
-    bool offlineWebApplicationCacheEnabled() const;
-
-    void setLocalStorageEnabled(bool);
-    bool localStorageEnabled() const;
+    const WebCore::String& string() const { return m_string; }
 
 private:
-    WebPreferences();
-    WebPreferences(WebPreferences*);
+    WebString(const WebCore::String& string)
+        : m_string(string)
+    {
+    }
 
-    void update();
-
-    HashSet<WebContext*> m_contexts;
-    WebPreferencesStore m_store;
+    WebCore::String m_string;
 };
 
 } // namespace WebKit
 
-#endif // WebPreferences_h
+#endif // WebString_h

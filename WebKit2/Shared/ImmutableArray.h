@@ -26,14 +26,14 @@
 #ifndef ImmutableArray_h
 #define ImmutableArray_h
 
+#include "APIObject.h"
 #include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
 
 namespace WebKit {
 
 // ImmutableArray - An immutable array type suitable for vending to an API.
 
-class ImmutableArray : public RefCounted<ImmutableArray> {
+class ImmutableArray : public APIObject {
 public:
     struct ImmutableArrayCallbacks {
         typedef void (*ImmutableArrayCallback)(const void*);

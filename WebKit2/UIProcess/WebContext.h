@@ -26,6 +26,7 @@
 #ifndef WebContext_h
 #define WebContext_h
 
+#include "APIObject.h"
 #include "PluginInfoStore.h"
 #include "ProcessModel.h"
 #include "WebContextInjectedBundleClient.h"
@@ -33,7 +34,6 @@
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 #include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
 struct WKContextStatistics;
@@ -45,7 +45,7 @@ class WebPageProxy;
 class WebPreferences;
 class WebProcessProxy;
 
-class WebContext : public RefCounted<WebContext> {
+class WebContext : public APIObject {
 public:
     static WebContext* sharedProcessContext();
     static WebContext* sharedThreadContext();
@@ -78,7 +78,7 @@ public:
     // InjectedBundle client
     void didReceiveMessageFromInjectedBundle(const WebCore::String&);
 
-    void postMessageToInjectedBundle(WebCore::StringImpl*);
+    void postMessageToInjectedBundle(const WebCore::String&);
 
     void getStatistics(WKContextStatistics* statistics);
     void setAdditionalPluginPath(const WebCore::String&);
@@ -86,7 +86,7 @@ public:
     PluginInfoStore* pluginInfoStore() { return &m_pluginInfoStore; }
     WebCore::String applicationCacheDirectory();
     
-    void registerURLSchemeAsEmptyDocument(WebCore::StringImpl*);
+    void registerURLSchemeAsEmptyDocument(const WebCore::String&);
 
 private:
     WebContext(ProcessModel, const WebCore::String& injectedBundlePath);

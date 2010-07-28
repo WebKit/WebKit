@@ -26,12 +26,12 @@
 #ifndef WebBackForwardList_h
 #define WebBackForwardList_h
 
+#include "APIObject.h"
 #include "ImmutableArray.h"
 #include "WebBackForwardListItem.h"
-#include <wtf/Vector.h>
-#include <wtf/RefPtr.h>
 #include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 
 namespace WebKit {
 
@@ -45,7 +45,7 @@ typedef Vector<RefPtr<WebBackForwardListItem> > BackForwardListItemVector;
  *      Back        Forward
  */
 
-class WebBackForwardList : public RefCounted<WebBackForwardList> {
+class WebBackForwardList : public APIObject {
 public:
     static PassRefPtr<WebBackForwardList> create(WebPageProxy* page)
     {

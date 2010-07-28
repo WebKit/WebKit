@@ -43,7 +43,7 @@ WKPageNamespaceRef WKPageGetPageNamespace(WKPageRef pageRef)
 
 void WKPageLoadURL(WKPageRef pageRef, WKURLRef URLRef)
 {
-    toWK(pageRef)->loadURL(toWK(URLRef));
+    toWK(pageRef)->loadURL(toWK(URLRef)->string());
 }
 
 void WKPageStopLoading(WKPageRef pageRef)
@@ -152,7 +152,7 @@ void WKPageSetPageHistoryClient(WKPageRef pageRef, WKPageHistoryClient * wkClien
 
 void WKPageRunJavaScriptInMainFrame(WKPageRef pageRef, WKStringRef scriptRef, void* context, WKPageRunJavaScriptFunction callback, WKPageRunJavaScriptDisposeFunction disposeFunction)
 {
-    toWK(pageRef)->runJavaScriptInMainFrame(toWK(scriptRef), ScriptReturnValueCallback::create(context, callback, disposeFunction));
+    toWK(pageRef)->runJavaScriptInMainFrame(toWK(scriptRef)->string(), ScriptReturnValueCallback::create(context, callback, disposeFunction));
 }
 
 #ifdef __BLOCKS__
@@ -175,7 +175,7 @@ void WKPageRunJavaScriptInMainFrame_b(WKPageRef pageRef, WKStringRef scriptRef, 
 }
 #endif
 
-void WKPageRenderTreeExternalRepresentation(WKPageRef pageRef, void *context, WKPageRenderTreeExternalRepresentationFunction callback, WKPageRenderTreeExternalRepresentationDisposeFunction disposeFunction)
+void WKPageRenderTreeExternalRepresentation(WKPageRef pageRef, void* context, WKPageRenderTreeExternalRepresentationFunction callback, WKPageRenderTreeExternalRepresentationDisposeFunction disposeFunction)
 {
     toWK(pageRef)->getRenderTreeExternalRepresentation(RenderTreeExternalRepresentationCallback::create(context, callback, disposeFunction));
 }

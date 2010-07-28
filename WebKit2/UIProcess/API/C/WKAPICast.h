@@ -28,8 +28,8 @@
 
 #include "WKBase.h"
 #include "WKPage.h"
+#include "WebString.h"
 #include <WebCore/FrameLoaderTypes.h>
-#include <WebCore/PlatformString.h>
 
 #if defined(WIN32) || defined(_WIN32)
 #include "WKAPICastWin.h"
@@ -47,6 +47,7 @@ class WebNavigationData;
 class WebPageNamespace;
 class WebPageProxy;
 class WebPreferences;
+class WebString;
 
 template<typename APIType> struct APITypeInfo { };
 template<> struct APITypeInfo<WKFrameRef>                       { typedef WebFrameProxy* ImplType; };
@@ -55,8 +56,8 @@ template<> struct APITypeInfo<WKContextRef>                     { typedef WebCon
 template<> struct APITypeInfo<WKPageNamespaceRef>               { typedef WebPageNamespace* ImplType; };
 template<> struct APITypeInfo<WKFramePolicyListenerRef>         { typedef WebFramePolicyListenerProxy* ImplType; };
 template<> struct APITypeInfo<WKPreferencesRef>                 { typedef WebPreferences* ImplType; };
-template<> struct APITypeInfo<WKStringRef>                      { typedef WebCore::StringImpl* ImplType; };
-template<> struct APITypeInfo<WKURLRef>                         { typedef WebCore::StringImpl* ImplType; };
+template<> struct APITypeInfo<WKStringRef>                      { typedef WebKit::WebString* ImplType; };
+template<> struct APITypeInfo<WKURLRef>                         { typedef WebKit::WebString* ImplType; };
 template<> struct APITypeInfo<WKNavigationDataRef>              { typedef WebNavigationData* ImplType; };
 template<> struct APITypeInfo<WKArrayRef>                       { typedef ImmutableArray* ImplType; };
 template<> struct APITypeInfo<WKBackForwardListItemRef>         { typedef WebBackForwardListItem* ImplType; };
@@ -69,11 +70,25 @@ template<> struct ImplTypeInfo<WebContext*>                     { typedef WKCont
 template<> struct ImplTypeInfo<WebPageNamespace*>               { typedef WKPageNamespaceRef APIType; };
 template<> struct ImplTypeInfo<WebFramePolicyListenerProxy*>    { typedef WKFramePolicyListenerRef APIType; };
 template<> struct ImplTypeInfo<WebPreferences*>                 { typedef WKPreferencesRef APIType; };
-template<> struct ImplTypeInfo<WebCore::StringImpl*>            { typedef WKStringRef APIType; };
+template<> struct ImplTypeInfo<WebString*>                      { typedef WKStringRef APIType; };
 template<> struct ImplTypeInfo<WebNavigationData*>              { typedef WKNavigationDataRef APIType; };
 template<> struct ImplTypeInfo<ImmutableArray*>                 { typedef WKArrayRef APIType; };
 template<> struct ImplTypeInfo<WebBackForwardListItem*>         { typedef WKBackForwardListItemRef APIType; };
 template<> struct ImplTypeInfo<WebBackForwardList*>             { typedef WKBackForwardListRef APIType; };
+
+class WebStringAdaptor {
+public:
+    WebStringAdaptor(PassRefPtr<WebString> impl)
+        : m_impl(impl)
+    {
+    }
+
+    operator WKStringRef() { return reinterpret_cast<WKStringRef>(m_impl.get()); }
+    operator WKURLRef() { return reinterpret_cast<WKURLRef>(m_impl.get()); }
+
+private:
+    RefPtr<WebString> m_impl;
+};
 
 } // namespace WebKit
 
@@ -93,30 +108,30 @@ inline typename WebKit::ImplTypeInfo<T>::APIType toRef(T t)
 
 /* Special cases. */
 
-inline WKStringRef toRef(WebCore::StringImpl* string)
+inline WebKit::WebStringAdaptor toRef(WebCore::StringImpl* string)
 {
     WebCore::StringImpl* impl = string ? string : WebCore::StringImpl::empty();
-    return reinterpret_cast<WKStringRef>(impl);
+    return WebKit::WebStringAdaptor(WebKit::WebString::create(WebCore::String(impl)));
 }
 
-inline WKURLRef toURLRef(WebCore::StringImpl* string)
+inline WebKit::WebStringAdaptor toURLRef(WebCore::StringImpl* string)
 {
     WebCore::StringImpl* impl = string ? string : WebCore::StringImpl::empty();
-    return reinterpret_cast<WKURLRef>(impl);
+    return WebKit::WebStringAdaptor(WebKit::WebString::create(WebCore::String(impl)))   ;
 }
 
 inline WKStringRef toCopiedRef(const WebCore::String& string)
 {
     WebCore::StringImpl* impl = string.impl() ? string.impl() : WebCore::StringImpl::empty();
-    impl->ref();
-    return reinterpret_cast<WKStringRef>(impl);
+    RefPtr<WebKit::WebString> webString = WebKit::WebString::create(WebCore::String(impl));
+    return reinterpret_cast<WKStringRef>(webString.release().releaseRef());
 }
 
 inline WKURLRef toCopiedURLRef(const WebCore::String& string)
 {
     WebCore::StringImpl* impl = string.impl() ? string.impl() : WebCore::StringImpl::empty();
-    impl->ref();
-    return reinterpret_cast<WKURLRef>(impl);
+    RefPtr<WebKit::WebString> webString = WebKit::WebString::create(WebCore::String(impl));
+    return reinterpret_cast<WKURLRef>(webString.release().releaseRef());
 }
 
 inline WKFrameNavigationType toWK(WebCore::NavigationType type)

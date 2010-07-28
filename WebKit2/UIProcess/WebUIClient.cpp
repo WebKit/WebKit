@@ -91,12 +91,12 @@ String WebUIClient::runJavaScriptPrompt(WebPageProxy* page, const String& messag
     if (!m_pageUIClient.runJavaScriptPrompt)
         return String();
 
-    StringImpl* impl = toWK(m_pageUIClient.runJavaScriptPrompt(toRef(page), toRef(message.impl()), toRef(defaultValue.impl()), toRef(frame), m_pageUIClient.clientInfo));
-    if (!impl)
+    WebString* string = toWK(m_pageUIClient.runJavaScriptPrompt(toRef(page), toRef(message.impl()), toRef(defaultValue.impl()), toRef(frame), m_pageUIClient.clientInfo));
+    if (!string)
         return String();
 
-    String result = impl;
-    impl->deref();
+    String result = string->string();
+    string->deref();
 
     return result;
 }

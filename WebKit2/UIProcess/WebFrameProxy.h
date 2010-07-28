@@ -26,11 +26,11 @@
 #ifndef WebFrameProxy_h
 #define WebFrameProxy_h
 
+#include "APIObject.h"
 #include "WebFramePolicyListenerProxy.h"
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/PlatformString.h>
 #include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
 
 namespace CoreIPC {
     class ArgumentDecoder;
@@ -46,7 +46,7 @@ namespace WebKit {
 
 class WebPageProxy;
 
-class WebFrameProxy : public RefCounted<WebFrameProxy> {
+class WebFrameProxy : public APIObject {
 public:
     static PassRefPtr<WebFrameProxy> create(WebPageProxy* page, uint64_t frameID)
     {

@@ -55,9 +55,9 @@ void InjectedBundle::initializeClient(WKBundleClient* client)
         memset(&m_client, 0, sizeof(m_client));
 }
 
-void InjectedBundle::postMessage(StringImpl* message)
+void InjectedBundle::postMessage(const String& message)
 {
-    WebProcess::shared().connection()->send(WebProcessProxyMessage::PostMessage, 0, CoreIPC::In(String(message)));
+    WebProcess::shared().connection()->send(WebProcessProxyMessage::PostMessage, 0, CoreIPC::In(message));
 }
 
 void InjectedBundle::setShouldTrackVisitedLinks(bool shouldTrackVisitedLinks)

@@ -26,6 +26,7 @@
 #ifndef WebFrame_h
 #define WebFrame_h
 
+#include "APIObject.h"
 #include "ImmutableArray.h"
 #include "WebFrameLoaderClient.h"
 #include <JavaScriptCore/JSBase.h>
@@ -33,7 +34,6 @@
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/PolicyChecker.h>
 #include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -46,7 +46,7 @@ namespace WebKit {
 
 class WebPage;
 
-class WebFrame : public RefCounted<WebFrame> {
+class WebFrame : public APIObject {
 public:
     static PassRefPtr<WebFrame> createMainFrame(WebPage*);
     static PassRefPtr<WebFrame> createSubframe(WebPage*, const WebCore::String& frameName, WebCore::HTMLFrameOwnerElement*);

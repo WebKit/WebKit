@@ -26,13 +26,13 @@
 #ifndef WebNavigationData_h
 #define WebNavigationData_h
 
+#include "APIObject.h"
 #include "WebNavigationDataStore.h"
 #include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
 
 namespace WebKit {
 
-class WebNavigationData : public RefCounted<WebNavigationData> {
+class WebNavigationData : public APIObject {
 public:
     static PassRefPtr<WebNavigationData> create(const WebNavigationDataStore& store)
     {

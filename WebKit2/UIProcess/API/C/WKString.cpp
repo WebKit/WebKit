@@ -26,7 +26,6 @@
 #include "WKString.h"
 
 #include "WKAPICast.h"
-#include <WebCore/StringImpl.h>
 
 WKStringRef WKStringRetain(WKStringRef stringRef)
 {
@@ -41,5 +40,5 @@ void WKStringRelease(WKStringRef stringRef)
 
 bool WKStringIsEmpty(WKStringRef stringRef)
 {
-    return !toWK(stringRef)->length();
+    return toWK(stringRef)->isEmpty();
 }

@@ -26,16 +26,16 @@
 #ifndef WebFramePolicyListenerProxy_h
 #define WebFramePolicyListenerProxy_h
 
+#include "APIObject.h"
 #include <WebCore/FrameLoaderTypes.h>
 #include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
 namespace WebKit {
 
 class WebFrameProxy;
 
-class WebFramePolicyListenerProxy : public RefCounted<WebFramePolicyListenerProxy> {
+class WebFramePolicyListenerProxy : public APIObject {
 public:
     static PassRefPtr<WebFramePolicyListenerProxy> create(WebFrameProxy* frame, uint64_t listenerID)
     {

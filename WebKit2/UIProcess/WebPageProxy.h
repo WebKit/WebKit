@@ -26,6 +26,7 @@
 #ifndef WebPageProxy_h
 #define WebPageProxy_h
 
+#include "APIObject.h"
 #include "DrawingAreaProxy.h"
 #include "GenericCallback.h"
 #include "WKBase.h"
@@ -41,7 +42,6 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
 namespace CoreIPC {
@@ -70,10 +70,10 @@ class WebProcessProxy;
 class WebWheelEvent;
 struct WebNavigationDataStore;
 
-typedef GenericCallback<WKStringRef> RenderTreeExternalRepresentationCallback;
-typedef GenericCallback<WKStringRef> ScriptReturnValueCallback;
+typedef GenericCallback<WKStringRef, WebCore::StringImpl*> RenderTreeExternalRepresentationCallback;
+typedef GenericCallback<WKStringRef, WebCore::StringImpl*> ScriptReturnValueCallback;
 
-class WebPageProxy : public RefCounted<WebPageProxy> {
+class WebPageProxy : public APIObject {
 public:
     static PassRefPtr<WebPageProxy> create(WebPageNamespace*, uint64_t pageID);
     ~WebPageProxy();

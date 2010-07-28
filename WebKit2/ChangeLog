@@ -1,3 +1,130 @@
+2010-07-28  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=43097
+        Make all objects in the WebKit2 API inherit from a single base class
+
+        - Adds an APIObject base class for all objects which can get vender through
+          the C API to inherit from.
+        - Adds a WebString class which wraps WebCore::String for now. I am not too fond of
+          this solution, so we continue should iterate on it.
+        - This is a first step toward make a CF-style base type (eg. CFTypeRef) for the C-API.
+
+        * Shared/APIObject.h: Added.
+        (WebKit::APIObject::APIObject):
+        Base class for API objects.
+
+        * Shared/ImmutableArray.h:
+        Make inherit from APIObject.
+
+        * Shared/WebString.h: Added.
+        (WebKit::WebString::create):
+        (WebKit::WebString::isNull):
+        (WebKit::WebString::isEmpty):
+        (WebKit::WebString::string):
+        (WebKit::WebString::WebString):
+        Wraps a WebCore::String so that it can be passed out to the API
+        and still inherit from APIObject.
+
+        * UIProcess/API/C/WKAPICast.h:
+        (WebKit::WebStringAdaptor::WebStringAdaptor):
+        (WebKit::WebStringAdaptor::operator WKStringRef):
+        (WebKit::WebStringAdaptor::operator WKURLRef):
+        Update conversion methods to deal in terms of WebStrings. Added WebStringAdaptor
+        to ease passing strings to client functions.
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextCreateWithInjectedBundlePath):
+        (WKContextPostMessageToInjectedBundle):
+        (_WKContextSetAdditionalPluginPath):
+        (_WKContextRegisterURLSchemeAsEmptyDocument): 
+        Get the WebCore::String from the WebString.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageLoadURL):
+        Ditto.
+
+        * UIProcess/API/C/WKString.cpp:
+        (WKStringIsEmpty):
+        Implement in terms of WebString.
+
+        * UIProcess/API/C/WKURL.cpp:
+        * UIProcess/API/C/cf/WKStringCF.cpp:
+        (WKStringCreateWithCFString):
+        (WKStringCopyCFString):
+        Ditto.
+    
+        * UIProcess/API/C/cf/WKURLCF.cpp:
+        (WKURLCreateWithCFURL):
+        (WKURLCopyCFURL):
+        Ditto.
+
+        * UIProcess/WebBackForwardList.h:
+        Make inherit from APIObject.
+
+        * UIProcess/WebBackForwardListItem.h:
+        Ditto.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::didReceiveMessageFromInjectedBundle):
+        (WebKit::WebContext::postMessageToInjectedBundle):
+        (WebKit::WebContext::registerURLSchemeAsEmptyDocument):
+        Use String instead of StringImpl to be consistent.
+
+        * UIProcess/WebContext.h:
+        Make inherit from APIObject.
+
+        * UIProcess/WebFramePolicyListenerProxy.h:
+        Ditto.
+
+        * UIProcess/WebFrameProxy.h:
+        Ditto.
+
+        * UIProcess/WebNavigationData.h:
+        Ditto.
+
+        * UIProcess/WebPageNamespace.h:
+        Ditto.
+
+        * UIProcess/WebPageProxy.h:
+        Ditto.
+
+        * UIProcess/WebPreferences.h:
+        Ditto.
+
+        * UIProcess/WebUIClient.cpp:
+        (WebKit::WebUIClient::runJavaScriptPrompt):
+        Implement in terms of WebString.
+
+        * UIProcess/win/WebView.h:
+        Make inherit from APIObject.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundlePostMessage):
+        Get the WebCore::String from the WebString.
+
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp:
+        (WKBundleFramePauseAnimationOnElementWithId):
+        Ditto.
+
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::postMessage):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        Use String instead of StringImpl to be consistent.
+
+        * WebProcess/WebPage/WebFrame.h:
+        Make inherit from APIObject.
+
+        * WebProcess/WebPage/WebPage.h:
+        Make inherit from APIObject.
+
+        * win/WebKit2.vcproj:
+        Add new files.
+
 2010-07-28  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

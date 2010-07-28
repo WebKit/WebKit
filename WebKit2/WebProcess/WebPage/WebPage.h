@@ -26,6 +26,7 @@
 #ifndef WebPage_h
 #define WebPage_h
 
+#include "APIObject.h"
 #include "DrawingArea.h"
 #include "InjectedBundlePageEditorClient.h"
 #include "InjectedBundlePageLoaderClient.h"
@@ -35,7 +36,6 @@
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
 namespace CoreIPC {
@@ -61,7 +61,7 @@ class WebMouseEvent;
 class WebWheelEvent;
 struct WebPreferencesStore;
 
-class WebPage : public RefCounted<WebPage> {
+class WebPage : public APIObject {
 public:
     static PassRefPtr<WebPage> create(uint64_t pageID, const WebCore::IntSize& viewSize, const WebPreferencesStore&, DrawingArea::Type);
     ~WebPage();

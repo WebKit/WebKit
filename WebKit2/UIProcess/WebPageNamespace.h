@@ -26,9 +26,9 @@
 #ifndef WebPageNamespace_h
 #define WebPageNamespace_h
 
+#include "APIObject.h"
 #include "WebContext.h"
 #include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
 struct WKContextStatistics;
@@ -37,7 +37,7 @@ namespace WebKit {
 
 class WebContext;
 
-class WebPageNamespace : public RefCounted<WebPageNamespace> {
+class WebPageNamespace : public APIObject {
 public:
     static PassRefPtr<WebPageNamespace> create(WebContext* context)
     {

@@ -37,16 +37,17 @@ using namespace WebKit;
 WKURLRef WKURLCreateWithCFURL(CFURLRef cfURL)
 {
     String urlString(CFURLGetString(cfURL));
-    RefPtr<StringImpl> urlStringImpl = urlString.impl();
-    return toURLRef(urlStringImpl.release().releaseRef());
+    return toCopiedURLRef(urlString);
 }
 
 CFURLRef WKURLCopyCFURL(CFAllocatorRef allocatorRef, WKURLRef URLRef)
 {
+    ASSERT(!toWK(URLRef)->string().isNull());
+
     // We first create a CFString and then create the CFURL from it. This will ensure that the CFURL is stored in 
     // UTF-8 which uses less memory and is what WebKit clients might expect.
-    RetainPtr<CFStringRef> urlString(AdoptCF, CFStringCreateWithCharactersNoCopy(kCFAllocatorDefault, reinterpret_cast<const UniChar*>(toWK(URLRef)->characters()), 
-                                                                                toWK(URLRef)->length(), kCFAllocatorNull));
+    RetainPtr<CFStringRef> urlString(AdoptCF, CFStringCreateWithCharactersNoCopy(kCFAllocatorDefault, reinterpret_cast<const UniChar*>(toWK(URLRef)->string().characters()), 
+                                                                                toWK(URLRef)->string().length(), kCFAllocatorNull));
 
     return CFURLCreateWithString(allocatorRef, urlString.get(), 0);
 }

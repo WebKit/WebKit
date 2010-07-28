@@ -56,7 +56,7 @@ unsigned WKBundleFrameGetNumberOfActiveAnimations(WKBundleFrameRef frameRef)
 
 bool WKBundleFramePauseAnimationOnElementWithId(WKBundleFrameRef frameRef, WKStringRef name, WKStringRef elementID, double time)
 {
-    return toWK(frameRef)->pauseAnimationOnElementWithId(toWK(name), toWK(elementID), time);
+    return toWK(frameRef)->pauseAnimationOnElementWithId(toWK(name)->string(), toWK(elementID)->string(), time);
 }
 
 JSGlobalContextRef WKBundleFrameGetJavaScriptContext(WKBundleFrameRef frameRef)

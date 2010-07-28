@@ -152,17 +152,17 @@ void WebContext::preferencesDidChange()
 
 // InjectedBundle client
 
-void WebContext::didReceiveMessageFromInjectedBundle(const WebCore::String& message)
+void WebContext::didReceiveMessageFromInjectedBundle(const String& message)
 {
     m_injectedBundleClient.didReceiveMessageFromInjectedBundle(this, message);
 }
 
-void WebContext::postMessageToInjectedBundle(WebCore::StringImpl* message)
+void WebContext::postMessageToInjectedBundle(const String& message)
 {
     if (!m_process)
         return;
 
-    m_process->send(WebProcessMessage::PostMessage, 0, CoreIPC::In(String(message)));
+    m_process->send(WebProcessMessage::PostMessage, 0, CoreIPC::In(message));
 }
 
 void WebContext::getStatistics(WKContextStatistics* statistics)
@@ -183,11 +183,11 @@ void WebContext::setAdditionalPluginPath(const WebCore::String& pluginPath)
     m_pluginInfoStore.setAdditionalPluginPaths(pluginPaths);
 }
 
-void WebContext::registerURLSchemeAsEmptyDocument(WebCore::StringImpl* urlScheme)
+void WebContext::registerURLSchemeAsEmptyDocument(const String& urlScheme)
 {
     ensureWebProcess();
 
-    m_process->send(WebProcessMessage::RegisterURLSchemeAsEmptyDocument, 0, CoreIPC::In(String(urlScheme)));
+    m_process->send(WebProcessMessage::RegisterURLSchemeAsEmptyDocument, 0, CoreIPC::In(urlScheme));
 }
 
 } // namespace WebKit
