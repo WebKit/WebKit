@@ -241,7 +241,7 @@ static int getWebInputModifiers(const UIEventWithKeyState& event)
     return modifiers;
 }
 
-WebMouseEventBuilder::WebMouseEventBuilder(const ScrollView* view, const MouseEvent& event)
+WebMouseEventBuilder::WebMouseEventBuilder(const Widget* widget, const MouseEvent& event)
 {
     if (event.type() == eventNames().mousemoveEvent)
         type = WebInputEvent::MouseMove;
@@ -283,30 +283,34 @@ WebMouseEventBuilder::WebMouseEventBuilder(const ScrollView* view, const MouseEv
             break;
         }
     }
-    IntPoint p = view->contentsToWindow(IntPoint(event.pageX(), event.pageY()));
+    ScrollView* view = widget->parent();
+    IntPoint p = view->contentsToWindow(
+        IntPoint(event.absoluteLocation().x(), event.absoluteLocation().y()));
     globalX = event.screenX();
     globalY = event.screenY();
     windowX = p.x();
     windowY = p.y();
-    x = event.offsetX();
-    y = event.offsetY();
+    x = event.absoluteLocation().x() - widget->pos().x();
+    y = event.absoluteLocation().y() - widget->pos().y();
     clickCount = event.detail();
 }
 
-WebMouseWheelEventBuilder::WebMouseWheelEventBuilder(const ScrollView* view, const WheelEvent& event)
+WebMouseWheelEventBuilder::WebMouseWheelEventBuilder(const Widget* widget, const WheelEvent& event)
 {
     if (event.type() != eventNames().mousewheelEvent)
         return;
     type = WebInputEvent::MouseWheel;
     timeStampSeconds = event.timeStamp() * 1.0e-3;
     modifiers = getWebInputModifiers(event);
-    IntPoint p = view->contentsToWindow(IntPoint(event.pageX(), event.pageY()));
+    ScrollView* view = widget->parent();
+    IntPoint p = view->contentsToWindow(
+        IntPoint(event.absoluteLocation().x(), event.absoluteLocation().y()));
     globalX = event.screenX();
     globalY = event.screenY();
     windowX = p.x();
     windowY = p.y();
-    x = event.offsetX();
-    y = event.offsetY();
+    x = event.absoluteLocation().x() - widget->pos().x();
+    y = event.absoluteLocation().y() - widget->pos().y();
     deltaX = static_cast<float>(event.rawDeltaX());
     deltaY = static_cast<float>(event.rawDeltaY());
     // The 120 is from WheelEvent::initWheelEvent().

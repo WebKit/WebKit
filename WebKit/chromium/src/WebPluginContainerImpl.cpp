@@ -403,7 +403,7 @@ void WebPluginContainerImpl::handleMouseEvent(MouseEvent* event)
     // in the call to HandleEvent. See http://b/issue?id=1362948
     FrameView* parentView = static_cast<FrameView*>(parent());
 
-    WebMouseEventBuilder webEvent(parentView, *event);
+    WebMouseEventBuilder webEvent(this, *event);
     if (webEvent.type == WebInputEvent::Undefined)
         return;
 
@@ -433,8 +433,7 @@ void WebPluginContainerImpl::handleMouseEvent(MouseEvent* event)
 
 void WebPluginContainerImpl::handleWheelEvent(WheelEvent* event)
 {
-    FrameView* parentView = static_cast<FrameView*>(parent());
-    WebMouseWheelEventBuilder webEvent(parentView, *event);
+    WebMouseWheelEventBuilder webEvent(this, *event);
     if (webEvent.type == WebInputEvent::Undefined)
         return;
 

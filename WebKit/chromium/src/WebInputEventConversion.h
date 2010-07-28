@@ -91,14 +91,14 @@ public:
 // be set to Undefined.
 class WebMouseEventBuilder : public WebMouseEvent {
 public:
-    WebMouseEventBuilder(const WebCore::ScrollView*, const WebCore::MouseEvent&);
+    WebMouseEventBuilder(const WebCore::Widget*, const WebCore::MouseEvent&);
 };
 
 // Converts a WebCore::WheelEvent to a corresponding WebMouseWheelEvent.
 // If the event mapping fails, the event type will be set to Undefined.
 class WebMouseWheelEventBuilder : public WebMouseWheelEvent {
 public:
-    WebMouseWheelEventBuilder(const WebCore::ScrollView*, const WebCore::WheelEvent&);
+    WebMouseWheelEventBuilder(const WebCore::Widget*, const WebCore::WheelEvent&);
 };
 
 // Converts a WebCore::KeyboardEvent to a corresponding WebKeyboardEvent.
