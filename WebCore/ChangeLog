@@ -1,3 +1,22 @@
+2010-07-28  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Update numbered header element closing to match recent spec change
+        https://bugs.webkit.org/show_bug.cgi?id=43072
+
+        Pretty straightforward transcription of the spec change.
+
+        * html/HTMLElementStack.cpp:
+        (WebCore::HTMLNames::isNumberedHeaderElement):
+        (WebCore::HTMLElementStack::popUntilNumberedHeaderElementPopped):
+        (WebCore::HTMLElementStack::hasOnlyHTMLElementsInScope):
+        (WebCore::HTMLElementStack::hasNumberedHeaderElementInScope):
+        * html/HTMLElementStack.h:
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::HTMLTreeBuilder):
+        (WebCore::HTMLTreeBuilder::processEndTagForInBody):
+
 2010-07-28  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

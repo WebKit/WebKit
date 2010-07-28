@@ -2008,14 +2008,14 @@ void HTMLTreeBuilder::processEndTagForInBody(AtomicHTMLToken& token)
         return;
     }
     if (isNumberedHeaderTag(token.name())) {
-        if (!m_tree.openElements()->inScope(token.name())) {
+        if (!m_tree.openElements()->hasNumberedHeaderElementInScope()) {
             parseError(token);
             return;
         }
         m_tree.generateImpliedEndTags();
         if (!m_tree.currentElement()->hasLocalName(token.name()))
             parseError(token);
-        m_tree.openElements()->popUntilPopped(token.name());
+        m_tree.openElements()->popUntilNumberedHeaderElementPopped();
         return;
     }
     if (token.name() == "sarcasm") {
