@@ -1,3 +1,21 @@
+2010-07-28  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Exclude DNS and SSL time from connect time
+        https://bugs.webkit.org/show_bug.cgi?id=43083
+
+        The ResourceLoadTiming API's definition of the connect phase includes
+        DNS and SSL time. However, the Web Timing spec wants just the TCP time.
+        So this patch subtracts those phases out.
+
+        No new tests because ResourceLoadTiming fields are not populated by
+        TestShell yet.
+
+        * page/Timing.cpp:
+        (WebCore::Timing::connectStart):
+        (WebCore::Timing::connectEnd):
+
 2010-07-26  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.

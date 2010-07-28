@@ -160,30 +160,48 @@ unsigned long long Timing::domainLookupEnd() const
 
 unsigned long long Timing::connectStart() const
 {
-    ResourceLoadTiming* timing = resourceLoadTiming();
+    DocumentLoader* loader = documentLoader();
+    if (!loader)
+        return 0;
+
+    ResourceLoadTiming* timing = loader->response().resourceLoadTiming();
     if (!timing)
         return 0;
 
-    // This will be -1 when a new connection is not established.
+    // connectStart will be -1 when a network request is not made.
     // Rather than exposing a special value that indicates no new connection, we "backfill" with domainLookupEnd.
     int connectStart = timing->connectStart;
-    if (connectStart < 0)
+    if (connectStart < 0 || loader->response().connectionReused())
         return domainLookupEnd();
+
+    // ResourceLoadTiming's connect phase includes DNS and SSL, however Web Timing's
+    // connect phase should not. So if there is DNS time, trim it from the start.
+    if (timing->dnsEnd >= 0 && timing->dnsEnd > connectStart)
+        connectStart = timing->dnsEnd;
 
     return resourceLoadTimeRelativeToAbsolute(connectStart);
 }
 
 unsigned long long Timing::connectEnd() const
 {
-    ResourceLoadTiming* timing = resourceLoadTiming();
+    DocumentLoader* loader = documentLoader();
+    if (!loader)
+        return 0;
+
+    ResourceLoadTiming* timing = loader->response().resourceLoadTiming();
     if (!timing)
         return 0;
 
-    // This will be -1 when a new connection is not established.
+    // connectEnd will be -1 when a network request is not made.
     // Rather than exposing a special value that indicates no new connection, we "backfill" with connectStart.
     int connectEnd = timing->connectEnd;
-    if (connectEnd < 0)
+    if (connectEnd < 0 || loader->response().connectionReused())
         return connectStart();
+
+    // ResourceLoadTiming's connect phase includes DNS and SSL, however Web Timing's
+    // connect phase should not. So if there is SSL time, trim it from the end.
+    if (timing->sslStart >= 0 && timing->sslStart < connectEnd)
+        connectEnd = timing->sslStart;
 
     return resourceLoadTimeRelativeToAbsolute(connectEnd);
 }
