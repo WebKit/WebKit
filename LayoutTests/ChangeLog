@@ -1,3 +1,14 @@
+2010-07-26  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Shinichiro Hamaji.
+
+        @page rules in media queries should be tested.
+        Added tests for such rules.
+        https://bugs.webkit.org/show_bug.cgi?id=42971
+
+        * printing/page-rule-selection-expected.txt:
+        * printing/page-rule-selection.html:
+
 2010-07-27  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Darin Adler.

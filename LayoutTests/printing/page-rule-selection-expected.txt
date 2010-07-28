@@ -49,6 +49,10 @@ Check font update and line height override.
 PASS layoutTestController.pageProperty('line-height', 0) is "180"
 PASS layoutTestController.pageProperty('font-family', 0) is "Arial"
 PASS layoutTestController.pageProperty('font-size', 0) is "30"
+Check @media rules.
+PASS layoutTestController.pageProperty('size', 0) is "100 200"
+PASS layoutTestController.pageProperty('size', 0) is "150 250"
+PASS layoutTestController.pageProperty('size', 0) is "150 250"
 PASS successfullyParsed is true
 
 TEST COMPLETE

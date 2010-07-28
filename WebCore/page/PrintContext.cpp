@@ -202,6 +202,8 @@ int PrintContext::pageNumberForElement(Element* element, const FloatSize& pageSi
 String PrintContext::pageProperty(Frame* frame, const char* propertyName, int pageNumber)
 {
     Document* document = frame->document();
+    PrintContext printContext(frame);
+    printContext.begin(800); // Any width is OK here.
     document->updateLayout();
     RefPtr<RenderStyle> style = document->styleForPage(pageNumber);
 
@@ -217,6 +219,8 @@ String PrintContext::pageProperty(Frame* frame, const char* propertyName, int pa
         return String::format("%d", style->fontDescription().computedPixelSize());
     if (!strcmp(propertyName, "font-family"))
         return String::format("%s", style->fontDescription().family().family().string().utf8().data());
+    if (!strcmp(propertyName, "size"))
+        return String::format("%d %d", style->pageSize().width().rawValue(), style->pageSize().height().rawValue());
 
     return String::format("pageProperty() unimplemented for: %s", propertyName);
 }

@@ -84,6 +84,15 @@
         shouldBeEqualToString("layoutTestController.pageProperty('font-family', 0)", "Arial");
         shouldBeEqualToString("layoutTestController.pageProperty('font-size', 0)", "30");
         appendStyle("@page { zoom:100%; }");
+
+        debug("Check @media rules.");
+        appendStyle("@page { size:100px 200px; }");
+        shouldBeEqualToString("layoutTestController.pageProperty('size', 0)", "100 200");
+        appendStyle("@media print { @page { size:150px 250px; } }");
+        shouldBeEqualToString("layoutTestController.pageProperty('size', 0)", "150 250");
+        appendStyle("@media screen { @page { size:300px 500px; } }");
+        shouldBeEqualToString("layoutTestController.pageProperty('size', 0)", "150 250");
+
     } else {
         testFailed("This test can be run only with window.layoutTestController");
     }
