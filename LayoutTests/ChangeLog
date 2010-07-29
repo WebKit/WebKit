@@ -1,5 +1,13 @@
 2010-07-29  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Update Qt specific baselines for three svg/custom tests.
+
+        * platform/qt/svg/custom/recursive-gradient-expected.txt:
+        * platform/qt/svg/custom/recursive-mask-expected.txt:
+        * platform/qt/svg/custom/recursive-pattern-expected.txt:
+
+2010-07-29  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Reviewed by Dirk Schulze.
 
         WebKit shouldn't ignore resource cycles, but break them as Opera does
