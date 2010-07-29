@@ -1,3 +1,13 @@
+2010-07-28  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Bug 43162 - Add support for MADV_FREE to PageAllocation.
+
+        * wtf/PageAllocation.cpp:
+        (WTF::PageAllocation::commit):
+        (WTF::PageAllocation::decommit):
+
 2010-07-27  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by Ojan Vafai.
