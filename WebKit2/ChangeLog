@@ -1,3 +1,16 @@
+2010-07-29  John Sullivan  <sullivan@apple.com>
+
+        <https://bugs.webkit.org/show_bug.cgi?id=43203>
+        WebBackForwardList::back/ForwardListWithLimit() crashes if passed a limit larger than max int
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::backListAsImmutableArrayWithLimit):
+        Fixed casting so that a large unsigned won't become a negative int.
+        (WebKit::WebBackForwardList::forwardListAsImmutableArrayWithLimit):
+        Ditto.
+
 2010-07-29  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
