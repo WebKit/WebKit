@@ -1,3 +1,19 @@
+2010-07-28  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [DRT/Chromium] Introduce drt_expectations.txt for NRWT
+        https://bugs.webkit.org/show_bug.cgi?id=43123
+
+        Introduce LayoutTests/platform/chromium/drt_expectations.txt,
+        which overrides test expectations only for DumpRenderTree, in
+        order to manage what problems are investigated.
+        This change will be reverted when we switch to DRT completely.
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+         Add drt_expectations.txt content to the result of
+         test_expectations_overrides() if --use-drt is specified.
+
 2010-07-28  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler.

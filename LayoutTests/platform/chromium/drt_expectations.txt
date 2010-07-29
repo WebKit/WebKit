@@ -1,0 +1,94 @@
+//
+// BUG_DRT: We don't have a dedicated bug yet.
+//
+
+// Painting timing issue?
+BUG_DRT : fast/backgrounds/animated-gif-as-background.html = IMAGE
+
+// Missing image resource
+BUG_DRT : fast/forms/input-appearance-searchandspeech.html = IMAGE
+BUG_DRT : fast/forms/input-appearance-speechbutton.html = IMAGE
+
+BUG48431 : plugins/geturlnotify-during-document-teardown.html = TEXT
+BUG48431 : plugins/open-and-close-window-with-plugin.html = TEXT
+
+// Just need rebaseline.
+BUG50197 : svg/dynamic-updates/SVGFEDiffuseLightingElement-dom-diffuseConstant-attr.html = IMAGE
+BUG50197 : svg/dynamic-updates/SVGFEDiffuseLightingElement-dom-in-attr.html = IMAGE
+BUG50197 : svg/dynamic-updates/SVGFEDiffuseLightingElement-dom-lighting-color-attr.html = IMAGE
+BUG50197 : svg/dynamic-updates/SVGFEDiffuseLightingElement-dom-surfaceScale-attr.html = IMAGE
+BUG50197 : svg/dynamic-updates/SVGFEDiffuseLightingElement-lighting-color-css-prop.html = IMAGE
+BUG50197 : svg/dynamic-updates/SVGFEDiffuseLightingElement-svgdom-diffuseConstant-prop.html = IMAGE
+BUG50197 : svg/dynamic-updates/SVGFEDiffuseLightingElement-svgdom-in-prop.html = IMAGE
+BUG50197 : svg/dynamic-updates/SVGFEDiffuseLightingElement-svgdom-surfaceScale-prop.html = IMAGE
+BUG50197 : svg/dynamic-updates/SVGFEOffsetElement-dom-dx-attr.html = IMAGE
+BUG50197 : svg/dynamic-updates/SVGFEOffsetElement-dom-dy-attr.html = IMAGE
+BUG50197 : svg/dynamic-updates/SVGFEOffsetElement-dom-in-attr.html = IMAGE
+BUG50197 : svg/dynamic-updates/SVGFEOffsetElement-svgdom-dx-prop.html = IMAGE
+BUG50197 : svg/dynamic-updates/SVGFEOffsetElement-svgdom-dy-prop.html = IMAGE
+BUG50197 : svg/dynamic-updates/SVGFEOffsetElement-svgdom-in-prop.html = IMAGE
+BUG50197 : svg/dynamic-updates/SVGFilterElement-dom-filterRes-attr.html = IMAGE
+BUG50197 : svg/dynamic-updates/SVGFilterElement-dom-filterUnits-attr.html = IMAGE
+BUG50197 : svg/dynamic-updates/SVGFilterElement-dom-height-attr.html = IMAGE
+BUG50197 : svg/dynamic-updates/SVGFilterElement-dom-primitiveUnits-attr.html = IMAGE
+BUG50197 : svg/dynamic-updates/SVGFilterElement-dom-width-attr.html = IMAGE
+BUG50197 : svg/dynamic-updates/SVGFilterElement-dom-x-attr.html = IMAGE
+BUG50197 : svg/dynamic-updates/SVGFilterElement-dom-y-attr.html = IMAGE
+BUG50197 : svg/dynamic-updates/SVGFilterElement-svgdom-filterRes-call.html = IMAGE
+BUG50197 : svg/dynamic-updates/SVGFilterElement-svgdom-filterResX-prop.html = IMAGE
+BUG50197 : svg/dynamic-updates/SVGFilterElement-svgdom-filterResY-prop.html = IMAGE
+BUG50197 : svg/dynamic-updates/SVGFilterElement-svgdom-filterUnits-prop.html = IMAGE
+BUG50197 : svg/dynamic-updates/SVGFilterElement-svgdom-height-prop.html = IMAGE
+BUG50197 : svg/dynamic-updates/SVGFilterElement-svgdom-primitiveUnits-prop.html = IMAGE
+BUG50197 : svg/dynamic-updates/SVGFilterElement-svgdom-width-prop.html = IMAGE
+BUG50197 : svg/dynamic-updates/SVGFilterElement-svgdom-x-prop.html = IMAGE
+BUG50197 : svg/dynamic-updates/SVGFilterElement-svgdom-y-prop.html = IMAGE
+BUG50197 : svg/dynamic-updates/SVGFilterPrimitiveStandardAttributes-dom-height-attr.html = IMAGE
+BUG50197 : svg/dynamic-updates/SVGFilterPrimitiveStandardAttributes-dom-result-attr.html = IMAGE
+BUG50197 : svg/dynamic-updates/SVGFilterPrimitiveStandardAttributes-dom-width-attr.html = IMAGE
+BUG50197 : svg/dynamic-updates/SVGFilterPrimitiveStandardAttributes-dom-x-attr.html = IMAGE
+BUG50197 : svg/dynamic-updates/SVGFilterPrimitiveStandardAttributes-dom-y-attr.html = IMAGE
+BUG50197 : svg/dynamic-updates/SVGFilterPrimitiveStandardAttributes-svgdom-height-prop.html = IMAGE
+BUG50197 : svg/dynamic-updates/SVGFilterPrimitiveStandardAttributes-svgdom-result-prop.html = IMAGE
+BUG50197 : svg/dynamic-updates/SVGFilterPrimitiveStandardAttributes-svgdom-width-prop.html = IMAGE
+BUG50197 : svg/dynamic-updates/SVGFilterPrimitiveStandardAttributes-svgdom-x-prop.html = IMAGE
+BUG50197 : svg/dynamic-updates/SVGFilterPrimitiveStandardAttributes-svgdom-y-prop.html = IMAGE
+BUG50197 : svg/dynamic-updates/SVGImageElement-svgdom-preserveAspectRatio-prop.html = IMAGE
+BUG50197 : svg/dynamic-updates/SVGLinearGradientElement-svgdom-gradientTransform-prop.html = IMAGE
+BUG50197 : svg/dynamic-updates/SVGPatternElement-svgdom-patternTransform-prop.html = IMAGE
+BUG50197 : svg/dynamic-updates/SVGRadialGradientElement-svgdom-gradientTransform-prop.html = IMAGE
+
+BUG_DRT RELEASE : storage/indexeddb/basics.html = TIMEOUT
+BUG_DRT RELEASE : storage/indexeddb/database-basics.html = TIMEOUT
+BUG_DRT RELEASE : storage/indexeddb/keyrange.html = TIMEOUT
+BUG_DRT RELEASE : storage/indexeddb/objectstore-basics.html = TIMEOUT
+BUG_DRT DEBUG : storage/indexeddb/basics.html = CRASH
+BUG_DRT DEBUG : storage/indexeddb/database-basics.html = CRASH
+BUG_DRT DEBUG : storage/indexeddb/keyrange.html = CRASH
+BUG_DRT DEBUG : storage/indexeddb/objectstore-basics.html = CRASH
+
+// Need to implement something?
+BUG_DRT WIN : inspector/console-clear.html = CRASH
+BUG_DRT WIN : inspector/console-log-before-inspector-open.html = CRASH
+BUG_DRT WIN : inspector/console-tests.html = CRASH
+BUG_DRT WIN : inspector/cookie-resource-match.html = CRASH
+BUG_DRT WIN : inspector/debugger-eval-while-paused.html = CRASH
+BUG_DRT WIN : inspector/debugger-no-nested-pause.html = CRASH
+BUG_DRT WIN : inspector/debugger-pause-in-eval-script.html = CRASH
+BUG_DRT WIN : inspector/debugger-pause-on-debugger-statement.html = CRASH
+BUG_DRT WIN : inspector/debugger-proto-property.html = CRASH
+BUG_DRT WIN : inspector/elements-panel-limited-children.html = CRASH
+BUG_DRT WIN : inspector/elements-panel-search.html = CRASH
+BUG_DRT WIN : inspector/elements-panel-structure.html = CRASH
+BUG_DRT WIN : inspector/elements-panel-xhtml-structure.xhtml = CRASH
+BUG_DRT WIN : inspector/inspected-objects-not-overriden.html = CRASH
+BUG_DRT WIN : inspector/styles-disable-then-delete.html = CRASH
+BUG_DRT WIN : inspector/styles-iframe.html = CRASH
+BUG_DRT WIN : inspector/styles-source-lines.html = CRASH
+BUG_DRT WIN : inspector/syntax-highlight-css.html = CRASH
+BUG_DRT WIN : inspector/syntax-highlight-javascript.html = CRASH
+BUG_DRT WIN : inspector/timeline-event-dispatch.html = CRASH
+BUG_DRT WIN : inspector/timeline-mark-timeline.html = CRASH
+BUG_DRT WIN : inspector/timeline-paint.html = CRASH
+BUG_DRT WIN : inspector/timeline-recalculate-styles.html = CRASH
+BUG_DRT WIN : inspector/timeline-script-tag-2.html = CRASH
