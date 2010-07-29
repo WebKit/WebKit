@@ -1,3 +1,33 @@
+2010-07-29  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        Add LayoutTestController methods to test DeviceOrientation
+        https://bugs.webkit.org/show_bug.cgi?id=39589
+
+        This patch does not hook up the new LayoutTestController method to WebKit
+        for any platform. This will be done in later patches.
+        https://bugs.webkit.org/show_bug.cgi?id=43181 tracks this for Mac.
+
+        Test: fast/dom/DeviceOrientation/basic-operation.html
+
+        * WebCore/WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DeviceOrientationClient.h:
+        (WebCore::DeviceOrientationClient::~DeviceOrientationClient):
+        * dom/DeviceOrientationController.cpp:
+        (WebCore::DeviceOrientationController::DeviceOrientationController):
+        * dom/DeviceOrientationEvent.cpp:
+        * platform/mock/DeviceOrientationClientMock.cpp: Added.
+        (WebCore::DeviceOrientationClientMock::DeviceOrientationClientMock):
+        (WebCore::DeviceOrientationClientMock::setController):
+        (WebCore::DeviceOrientationClientMock::startUpdating):
+        (WebCore::DeviceOrientationClientMock::stopUpdating):
+        (WebCore::DeviceOrientationClientMock::setOrientation):
+        (WebCore::DeviceOrientationClientMock::timerFired):
+        * platform/mock/DeviceOrientationClientMock.h: Added.
+        (WebCore::DeviceOrientationClientMock::lastOrientation):
+
 2010-07-29  Satish Sampath  <satish@chromium.org>
 
         Reviewed by Steve Block.

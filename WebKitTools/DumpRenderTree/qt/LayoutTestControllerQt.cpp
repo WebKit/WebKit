@@ -683,6 +683,12 @@ void LayoutTestController::setEditingBehavior(const QString& editingBehavior)
     DumpRenderTreeSupportQt::setEditingBehavior(m_drt->webPage(), editingBehavior);
 }
 
+void LayoutTestController::setMockDeviceOrientation(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma)
+{
+    // FIXME: Implement for DeviceOrientation layout tests.
+    // See https://bugs.webkit.org/show_bug.cgi?id=30335.
+}
+
 void LayoutTestController::setGeolocationPermission(bool allow)
 {
      m_isGeolocationPermissionSet = true;
