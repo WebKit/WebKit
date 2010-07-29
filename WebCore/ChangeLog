@@ -1,3 +1,14 @@
+2010-07-29  Adam Roben  <aroben@apple.com>
+
+        Remove some unused WKCACFLayer members
+
+        Fixes <http://webkit.org/b/43200> WKCACFLayer has some unused members
+
+        Reviewed by John Sullivan.
+
+        * platform/graphics/win/WKCACFLayer.h: Removed [set]ClearsContext,
+        [set]Filters, and [set]SortsSublayers.
+
 2010-07-28  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Nate Chapin.

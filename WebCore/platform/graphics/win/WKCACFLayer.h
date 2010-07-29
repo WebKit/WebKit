@@ -162,9 +162,6 @@ public:
     virtual void setBounds(const CGRect&);
     CGRect bounds() const { return CACFLayerGetBounds(layer()); }
 
-    void setClearsContext(bool clears) { CACFLayerSetClearsContext(layer(), clears); setNeedsCommit(); }
-    bool clearsContext() const { return CACFLayerGetClearsContext(layer()); }
-
     void setContents(CFTypeRef contents) { CACFLayerSetContents(layer(), contents); setNeedsCommit(); }
     CFTypeRef contents() const { return CACFLayerGetContents(layer()); }
 
@@ -179,9 +176,6 @@ public:
 
     void setEdgeAntialiasingMask(uint32_t mask) { CACFLayerSetEdgeAntialiasingMask(layer(), mask); setNeedsCommit(); }
     uint32_t edgeAntialiasingMask() const { return CACFLayerGetEdgeAntialiasingMask(layer()); }
-
-    void setFilters(CFArrayRef filters) { CACFLayerSetFilters(layer(), filters); setNeedsCommit(); }
-    CFArrayRef filters() const { return CACFLayerGetFilters(layer()); }
 
     virtual void setFrame(const CGRect&);
     CGRect frame() const { return CACFLayerGetFrame(layer()); }
@@ -225,9 +219,6 @@ public:
     CFTimeInterval timeOffset() const { return CACFLayerGetTimeOffset(layer()); }
 
     WKCACFLayer* rootLayer() const;
-
-    void setSortsSublayers(bool sorts) { CACFLayerSetSortsSublayers(layer(), sorts); setNeedsCommit(); }
-    bool sortsSublayers() const { return CACFLayerGetSortsSublayers(layer()); }
 
     void setSublayerTransform(const CATransform3D& transform) { CACFLayerSetSublayerTransform(layer(), transform); setNeedsCommit(); }
     CATransform3D sublayerTransform() const { return CACFLayerGetSublayerTransform(layer()); }
