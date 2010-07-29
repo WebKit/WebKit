@@ -2,6 +2,46 @@
 
         Reviewed by Dirk Schulze.
 
+        [Cairo] Bring behavior of paths on the Cairo GraphicsContext into line with the CoreGraphics port
+        https://bugs.webkit.org/show_bug.cgi?id=41732
+
+        Do not apply paths added to the Cairo GraphicsContext, until they are used.
+        This prevents drawing routines such as fillRect from interacting with any
+        path which callers are constructing on the GraphicsContext.
+
+         This behavior is necessary to close bug https://bugs.webkit.org/show_bug.cgi?id=41308
+         so tests for that issue will test this fix.
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::appendPathToCairoContext): Added. A helper method which adds a path
+        to a native Cairo context.
+        (WebCore::setPathOnCairoContext): Added. Like appendPathToCairoContext, but clears the
+        existing path first.
+        (WebCore::appendWebCorePathToCairoContext): Added. Like appendPathToCairoContext, but
+        operates on a WebCore path.
+        (WebCore::GraphicsContext::drawEllipse): Only clear the Cairo path if cairo_stroke
+        was not called, because cairo_stroke implicitly clears the path.
+        (WebCore::GraphicsContext::drawConvexPolygon): Ditto.
+        (WebCore::GraphicsContext::fillPath): Copy the path from m_pendingPath to the context
+        and clear m_pendingPath, instead of relying on the pre-existing context path.
+        (WebCore::GraphicsContext::strokePath): Ditto.
+        (WebCore::GraphicsContext::drawPath): Ditto.
+        (WebCore::GraphicsContext::drawFocusRing): Use the new appendWebCorePathToCairoContext helper instead
+        of addPath (which will blow away any path callers are building).
+        (WebCore::GraphicsContext::addInnerRoundedRectClip): Use the new appendWebCorePathToCairoContext helper instead
+        of addPath (which will blow away any path callers are building).
+        (WebCore::GraphicsContext::beginPath): Clear out m_pendingPath here instead of the main native context.
+        (WebCore::GraphicsContext::addPath): Add the path to m_pendingPath instead of the main native context.
+        Also ensure that the transformation matrix of the m_pendingPath is equal to that of the main
+        cairo context.
+        (WebCore::GraphicsContext::clipOut): Use the appendWebCorePathToCairoContext helper here.
+        (WebCore::GraphicsContext::fillRoundedRect): Ditto and remove an unnecessary beginPath call.
+        * platform/graphics/cairo/GraphicsContextPlatformPrivateCairo.h: Add a new m_pendingPath member.
+
+2010-07-29  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Dirk Schulze.
+
         [Cairo] Remove setStrokeStyle workaround for InlineTextBoxes
         https://bugs.webkit.org/show_bug.cgi?id=43136
 
