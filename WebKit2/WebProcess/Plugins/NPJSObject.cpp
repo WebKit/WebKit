@@ -116,7 +116,7 @@ bool NPJSObject::invoke(NPIdentifier methodName, const NPVariant* arguments, uin
     JSLock lock(SilenceAssertionsOnly);
 
     JSValue function = m_jsObject->get(exec, identifierFromIdentifierRep(exec, identifierRep));
-    return invoke(exec, function, arguments, argumentCount, result);
+    return invoke(exec, m_objectMap->globalObject(), function, arguments, argumentCount, result);
 }
 
 bool NPJSObject::invokeDefault(const NPVariant *arguments, uint32_t argumentCount, NPVariant *result)
@@ -128,7 +128,7 @@ bool NPJSObject::invokeDefault(const NPVariant *arguments, uint32_t argumentCoun
     JSLock lock(SilenceAssertionsOnly);
 
     JSValue function = m_jsObject;
-    return invoke(exec, function, arguments, argumentCount, result);
+    return invoke(exec, m_objectMap->globalObject(), function, arguments, argumentCount, result);
 }
 
 bool NPJSObject::hasProperty(NPIdentifier identifier)
@@ -187,7 +187,7 @@ bool NPJSObject::construct(const NPVariant *arguments, uint32_t argumentCount, N
     // Convert the passed in arguments.
     MarkedArgumentBuffer argumentList;
     for (uint32_t i = 0; i < argumentCount; ++i)
-        argumentList.append(m_objectMap->convertNPVariantToJSValue(exec, arguments[i]));
+        argumentList.append(m_objectMap->convertNPVariantToJSValue(exec, m_objectMap->globalObject(), arguments[i]));
 
     exec->globalData().timeoutChecker.start();
     JSValue value = JSC::construct(exec, m_jsObject, constructType, constructData, argumentList);
@@ -200,7 +200,7 @@ bool NPJSObject::construct(const NPVariant *arguments, uint32_t argumentCount, N
     return true;
 }
 
-bool NPJSObject::invoke(ExecState* exec, JSValue function, const NPVariant* arguments, uint32_t argumentCount, NPVariant* result)
+bool NPJSObject::invoke(ExecState* exec, JSGlobalObject* globalObject, JSValue function, const NPVariant* arguments, uint32_t argumentCount, NPVariant* result)
 {
     CallData callData;
     CallType callType = getCallData(function, callData);
@@ -210,7 +210,7 @@ bool NPJSObject::invoke(ExecState* exec, JSValue function, const NPVariant* argu
     // Convert the passed in arguments.
     MarkedArgumentBuffer argumentList;
     for (uint32_t i = 0; i < argumentCount; ++i)
-        argumentList.append(m_objectMap->convertNPVariantToJSValue(exec, arguments[i]));
+        argumentList.append(m_objectMap->convertNPVariantToJSValue(exec, globalObject, arguments[i]));
 
     exec->globalData().timeoutChecker.start();
     JSValue value = JSC::call(exec, function, callType, callData, m_jsObject, argumentList);

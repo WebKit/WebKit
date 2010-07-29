@@ -31,6 +31,7 @@
 #include <wtf/Noncopyable.h>
 
 namespace JSC {
+    class JSGlobalObject;
     class JSObject;
 }
 
@@ -45,10 +46,6 @@ public:
 
     JSC::JSObject* jsObject() const { return m_jsObject.get(); }
 
-private:
-    NPJSObject();
-    ~NPJSObject();
-
     static bool isNPJSObject(NPObject*);
 
     static NPJSObject* toNPJSObject(NPObject* npObject)
@@ -56,6 +53,10 @@ private:
         ASSERT(isNPJSObject(npObject));
         return static_cast<NPJSObject*>(npObject);
     }
+
+private:
+    NPJSObject();
+    ~NPJSObject();
 
     void initialize(NPRuntimeObjectMap*, JSC::JSObject* jsObject);
 
@@ -66,7 +67,7 @@ private:
     bool getProperty(NPIdentifier propertyName, NPVariant* result);
     bool construct(const NPVariant* arguments, uint32_t argumentCount, NPVariant* result);
 
-    bool invoke(JSC::ExecState*, JSC::JSValue function, const NPVariant* arguments, uint32_t argumentCount, NPVariant* result);
+    bool invoke(JSC::ExecState*, JSC::JSGlobalObject*, JSC::JSValue function, const NPVariant* arguments, uint32_t argumentCount, NPVariant* result);
 
     static NPClass* npClass();
     static NPObject* NP_Allocate(NPP, NPClass*);

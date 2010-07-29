@@ -43,6 +43,7 @@ public:
     ~JSNPObject();
 
     JSC::JSValue callMethod(JSC::ExecState*, NPIdentifier methodName);
+    JSC::JSValue callConstructor(JSC::ExecState*);
 
     static const JSC::ClassInfo s_info;
 
@@ -53,6 +54,8 @@ private:
     {
         return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount);
     }
+
+    virtual JSC::ConstructType getConstructData(JSC::ConstructData&);
 
     virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertySlot&);
     virtual bool getOwnPropertyDescriptor(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertyDescriptor&);

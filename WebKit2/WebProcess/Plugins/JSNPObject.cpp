@@ -61,8 +61,8 @@ JSNPObject::~JSNPObject()
 
 JSValue JSNPObject::callMethod(ExecState* exec, NPIdentifier methodName)
 {
-    if (!m_npObject->_class->hasMethod(m_npObject, methodName))
-        return jsUndefined();
+    if (!m_npObject)
+        return throwInvalidAccessError(exec);
 
     size_t argumentCount = exec->argumentCount();
     Vector<NPVariant, 8> arguments(argumentCount);
@@ -90,9 +90,58 @@ JSValue JSNPObject::callMethod(ExecState* exec, NPIdentifier methodName)
     if (!returnValue)
         throwError(exec, createError(exec, "Error calling method on NPObject."));
 
-    JSValue propertyValue = m_objectMap->convertNPVariantToJSValue(exec, result);
+    JSValue propertyValue = m_objectMap->convertNPVariantToJSValue(exec, globalObject(), result);
     releaseNPVariantValue(&result);
     return propertyValue;
+}
+
+JSValue JSNPObject::callConstructor(ExecState* exec)
+{
+    if (!m_npObject)
+        return throwInvalidAccessError(exec);
+
+    size_t argumentCount = exec->argumentCount();
+    Vector<NPVariant, 8> arguments(argumentCount);
+
+    // Convert all arguments to NPVariants.
+    for (size_t i = 0; i < argumentCount; ++i)
+        m_objectMap->convertJSValueToNPVariant(exec, exec->argument(i), arguments[i]);
+
+    bool returnValue;
+    NPVariant result;
+    VOID_TO_NPVARIANT(result);
+    
+    {
+        JSLock::DropAllLocks dropAllLocks(SilenceAssertionsOnly);
+        returnValue = m_npObject->_class->construct(m_npObject, arguments.data(), argumentCount, &result);
+
+        // FIXME: Handle construct setting an exception.
+        // FIXME: Find out what happens if calling construct causes the plug-in to go away.
+    }
+
+    if (!returnValue)
+        throwError(exec, createError(exec, "Error calling method on NPObject."));
+    
+    JSValue value = m_objectMap->convertNPVariantToJSValue(exec, globalObject(), result);
+    releaseNPVariantValue(&result);
+    return value;
+}
+
+static EncodedJSValue JSC_HOST_CALL constructWithConstructor(ExecState* exec)
+{
+    JSObject* constructor = exec->callee();
+    ASSERT(constructor->inherits(&JSNPObject::s_info));
+
+    return JSValue::encode(static_cast<JSNPObject*>(constructor)->callConstructor(exec));
+}
+
+ConstructType JSNPObject::getConstructData(ConstructData& constructData)
+{
+    if (!m_npObject || !m_npObject->_class->construct)
+        return ConstructTypeNone;
+
+    constructData.native.function = constructWithConstructor;
+    return ConstructTypeHost;
 }
 
 bool JSNPObject::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
@@ -204,7 +253,7 @@ JSValue JSNPObject::propertyGetter(ExecState* exec, JSValue slotBase, const Iden
     if (!returnValue)
         return jsUndefined();
 
-    JSValue propertyValue = thisObj->m_objectMap->convertNPVariantToJSValue(exec, result);
+    JSValue propertyValue = thisObj->m_objectMap->convertNPVariantToJSValue(exec, thisObj->globalObject(), result);
     releaseNPVariantValue(&result);
     return propertyValue;
 }

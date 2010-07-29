@@ -61,11 +61,12 @@ public:
     void jsNPObjectDestroyed(JSNPObject*);
 
     void convertJSValueToNPVariant(JSC::ExecState*, JSC::JSValue, NPVariant&);
-    JSC::JSValue convertNPVariantToJSValue(JSC::ExecState*, const NPVariant&);
+    JSC::JSValue convertNPVariantToJSValue(JSC::ExecState*, JSC::JSGlobalObject*, const NPVariant&);
 
     // Called when the plug-in is destroyed. Will invalidate all the NPObjects.
     void invalidate();
 
+    JSC::JSGlobalObject* globalObject() const;
     JSC::ExecState* globalExec() const;
 
 private:
