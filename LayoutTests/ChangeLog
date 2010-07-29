@@ -1,3 +1,13 @@
+2010-07-29  Jeremy Orlow  <jorlow@chromium.org>
+
+        http://trac.webkit.org/changeset/64266 and its parents missed one
+        baseline.  Add it.
+
+        Not reviewed.
+
+        * platform/chromium-win/svg/custom/convolution-crash-expected.checksum: Added.
+        * platform/chromium-win/svg/custom/convolution-crash-expected.png: Added.
+
 2010-07-27  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.
