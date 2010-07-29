@@ -146,7 +146,7 @@ bool SubframeLoader::requestObject(RenderEmbeddedObject* renderer, const String&
 
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-PassRefPtr<Widget> FrameLoader::loadMediaPlayerProxyPlugin(Node* node, const KURL& url, 
+PassRefPtr<Widget> SubframeLoader::loadMediaPlayerProxyPlugin(Node* node, const KURL& url,
     const Vector<String>& paramNames, const Vector<String>& paramValues)
 {
     ASSERT(node->hasTagName(videoTag) || node->hasTagName(audioTag));
@@ -158,7 +158,7 @@ PassRefPtr<Widget> FrameLoader::loadMediaPlayerProxyPlugin(Node* node, const KUR
     if (!url.isEmpty())
         completedURL = completeURL(url);
 
-    if (!SecurityOrigin::canLoad(completedURL, String(), frame()->document())) {
+    if (!SecurityOrigin::canLoad(completedURL, String(), m_frame->document())) {
         FrameLoader::reportLocalLoadFailed(m_frame, completedURL.string());
         return 0;
     }
@@ -181,7 +181,7 @@ PassRefPtr<Widget> FrameLoader::loadMediaPlayerProxyPlugin(Node* node, const KUR
         renderer->setWidget(widget);
         renderer->node()->setNeedsStyleRecalc(SyntheticStyleChange);
     }
-    m_containsPlugIns = true;
+    m_containsPlugins = true;
 
     return widget ? widget.release() : 0;
 }
