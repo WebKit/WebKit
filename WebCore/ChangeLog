@@ -37,6 +37,23 @@
 
 2010-07-29  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Darin Adler.
+
+        SHOULD NEVER BE REACHED assertion when switching tabs with composited content
+        https://bugs.webkit.org/show_bug.cgi?id=43167
+
+        When the root layer becomes unattached (e.g. when switching tabs), don't return
+        'false' from paintingGoesToWindow() because that will cause a -setNeedsDispay, which
+        both allocates wasteful backing store, and causes an assertion when we try to
+        paint the layer.
+        
+        Test: manual-tests/compositing/assert-on-tab-switch.html: Added.
+        
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintingGoesToWindow):
+
+2010-07-29  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Pavel Feldman.
 
         Crash when computing pseudo-style of a vanished scrollbar in inspector
