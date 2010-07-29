@@ -1,5 +1,27 @@
 2010-07-29  Martin Robinson  <mrobinson@igalia.com>
 
+        Unreviewed, rolling out r64318.
+        http://trac.webkit.org/changeset/64318
+        https://bugs.webkit.org/show_bug.cgi?id=41732
+
+        This change broke many tests.
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::drawEllipse):
+        (WebCore::GraphicsContext::drawConvexPolygon):
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::drawPath):
+        (WebCore::GraphicsContext::drawFocusRing):
+        (WebCore::GraphicsContext::addInnerRoundedRectClip):
+        (WebCore::GraphicsContext::beginPath):
+        (WebCore::GraphicsContext::addPath):
+        (WebCore::GraphicsContext::clipOut):
+        (WebCore::GraphicsContext::fillRoundedRect):
+        * platform/graphics/cairo/GraphicsContextPlatformPrivateCairo.h:
+
+2010-07-29  Martin Robinson  <mrobinson@igalia.com>
+
         Reviewed by Dirk Schulze.
 
         [Cairo] Bring behavior of paths on the Cairo GraphicsContext into line with the CoreGraphics port
