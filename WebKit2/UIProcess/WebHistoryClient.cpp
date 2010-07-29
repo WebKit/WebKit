@@ -38,45 +38,53 @@ WebHistoryClient::WebHistoryClient()
     initialize(0);
 }
 
-void WebHistoryClient::initialize(WKPageHistoryClient* client)
+void WebHistoryClient::initialize(WKContextHistoryClient* client)
 {
     if (client && !client->version)
-        m_pageHistoryClient = *client;
+        m_contextHistoryClient = *client;
     else 
-        memset(&m_pageHistoryClient, 0, sizeof(m_pageHistoryClient));
+        memset(&m_contextHistoryClient, 0, sizeof(m_contextHistoryClient));
 }
 
-void WebHistoryClient::didNavigateWithNavigationData(WebPageProxy* page, const WebNavigationDataStore& navigationDataStore, WebFrameProxy* frame)
+void WebHistoryClient::didNavigateWithNavigationData(WebContext* context, WebPageProxy* page, const WebNavigationDataStore& navigationDataStore, WebFrameProxy* frame)
 {
-    if (!m_pageHistoryClient.didNavigateWithNavigationData)
+    if (!m_contextHistoryClient.didNavigateWithNavigationData)
         return;
 
     RefPtr<WebNavigationData> navigationData = WebNavigationData::create(navigationDataStore); 
-    m_pageHistoryClient.didNavigateWithNavigationData(toRef(page), toRef(navigationData.get()), toRef(frame), m_pageHistoryClient.clientInfo);
+    m_contextHistoryClient.didNavigateWithNavigationData(toRef(context), toRef(page), toRef(navigationData.get()), toRef(frame), m_contextHistoryClient.clientInfo);
 }
 
-void WebHistoryClient::didPerformClientRedirect(WebPageProxy* page, const String& sourceURL, const String& destinationURL, WebFrameProxy* frame)
+void WebHistoryClient::didPerformClientRedirect(WebContext* context, WebPageProxy* page, const String& sourceURL, const String& destinationURL, WebFrameProxy* frame)
 {
-    if (!m_pageHistoryClient.didPerformClientRedirect)
+    if (!m_contextHistoryClient.didPerformClientRedirect)
         return;
 
-    m_pageHistoryClient.didPerformClientRedirect(toRef(page), toURLRef(sourceURL.impl()), toURLRef(destinationURL.impl()), toRef(frame), m_pageHistoryClient.clientInfo);
+    m_contextHistoryClient.didPerformClientRedirect(toRef(context), toRef(page), toURLRef(sourceURL.impl()), toURLRef(destinationURL.impl()), toRef(frame), m_contextHistoryClient.clientInfo);
 }
 
-void WebHistoryClient::didPerformServerRedirect(WebPageProxy* page, const String& sourceURL, const String& destinationURL, WebFrameProxy* frame)
+void WebHistoryClient::didPerformServerRedirect(WebContext* context, WebPageProxy* page, const String& sourceURL, const String& destinationURL, WebFrameProxy* frame)
 {
-    if (!m_pageHistoryClient.didPerformServerRedirect)
+    if (!m_contextHistoryClient.didPerformServerRedirect)
         return;
 
-    m_pageHistoryClient.didPerformServerRedirect(toRef(page), toURLRef(sourceURL.impl()), toURLRef(destinationURL.impl()), toRef(frame), m_pageHistoryClient.clientInfo);
+    m_contextHistoryClient.didPerformServerRedirect(toRef(context), toRef(page), toURLRef(sourceURL.impl()), toURLRef(destinationURL.impl()), toRef(frame), m_contextHistoryClient.clientInfo);
 }
 
-void WebHistoryClient::didUpdateHistoryTitle(WebPageProxy* page, const String& title, const String& url, WebFrameProxy* frame)
+void WebHistoryClient::didUpdateHistoryTitle(WebContext* context, WebPageProxy* page, const String& title, const String& url, WebFrameProxy* frame)
 {
-    if (!m_pageHistoryClient.didUpdateHistoryTitle)
+    if (!m_contextHistoryClient.didUpdateHistoryTitle)
         return;
 
-    m_pageHistoryClient.didUpdateHistoryTitle(toRef(page), toRef(title.impl()), toURLRef(url.impl()), toRef(frame), m_pageHistoryClient.clientInfo);
+    m_contextHistoryClient.didUpdateHistoryTitle(toRef(context), toRef(page), toRef(title.impl()), toURLRef(url.impl()), toRef(frame), m_contextHistoryClient.clientInfo);
+}
+
+void WebHistoryClient::populateVisitedLinks(WebContext* context)
+{
+    if (!m_contextHistoryClient.populateVisitedLinks)
+        return;
+
+    m_contextHistoryClient.populateVisitedLinks(toRef(context), m_contextHistoryClient.clientInfo);
 }
 
 } // namespace WebKit

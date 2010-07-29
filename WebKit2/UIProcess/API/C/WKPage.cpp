@@ -144,12 +144,6 @@ void WKPageSetPageUIClient(WKPageRef pageRef, WKPageUIClient * wkClient)
         toWK(pageRef)->initializeUIClient(wkClient);
 }
 
-void WKPageSetPageHistoryClient(WKPageRef pageRef, WKPageHistoryClient * wkClient)
-{
-    if (wkClient && !wkClient->version)
-        toWK(pageRef)->initializeHistoryClient(wkClient);
-}
-
 void WKPageRunJavaScriptInMainFrame(WKPageRef pageRef, WKStringRef scriptRef, void* context, WKPageRunJavaScriptFunction callback, WKPageRunJavaScriptDisposeFunction disposeFunction)
 {
     toWK(pageRef)->runJavaScriptInMainFrame(toWK(scriptRef)->string(), ScriptReturnValueCallback::create(context, callback, disposeFunction));

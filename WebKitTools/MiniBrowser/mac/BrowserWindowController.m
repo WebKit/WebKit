@@ -363,50 +363,6 @@ static WKStringRef runJavaScriptPrompt(WKPageRef page, WKStringRef message, WKSt
     return WKStringCreateWithCFString((CFStringRef)result);
 }
 
-#pragma mark History Client Callbacks
-
-static void didNavigateWithNavigationData(WKPageRef page, WKNavigationDataRef navigationData, WKFrameRef frame, const void *clientInfo)
-{
-    WKStringRef wkTitle = WKNavigationDataCopyTitle(navigationData);
-    CFStringRef title = WKStringCopyCFString(0, wkTitle);
-    WKStringRelease(wkTitle);
-
-    WKURLRef wkURL = WKNavigationDataCopyURL(navigationData);
-    CFURLRef url = WKURLCopyCFURL(0, wkURL);
-    WKURLRelease(wkURL);
-
-    LOG(@"HistoryClient - didNavigateWithNavigationData - title: %@ - url: %@", title, url);
-    CFRelease(title);
-    CFRelease(url);
-}
-
-static void didPerformClientRedirect(WKPageRef page, WKURLRef sourceURL, WKURLRef destinationURL, WKFrameRef frame, const void *clientInfo)
-{
-    CFURLRef cfSourceURL = WKURLCopyCFURL(0, sourceURL);
-    CFURLRef cfDestinationURL = WKURLCopyCFURL(0, destinationURL);
-    LOG(@"HistoryClient - didPerformClientRedirect - sourceURL: %@ - destinationURL: %@", cfSourceURL, cfDestinationURL);
-    CFRelease(cfSourceURL);
-    CFRelease(cfDestinationURL);
-}
-
-static void didPerformServerRedirect(WKPageRef page, WKURLRef sourceURL, WKURLRef destinationURL, WKFrameRef frame, const void *clientInfo)
-{
-    CFURLRef cfSourceURL = WKURLCopyCFURL(0, sourceURL);
-    CFURLRef cfDestinationURL = WKURLCopyCFURL(0, destinationURL);
-    LOG(@"HistoryClient - didPerformServerRedirect - sourceURL: %@ - destinationURL: %@", cfSourceURL, cfDestinationURL);
-    CFRelease(cfSourceURL);
-    CFRelease(cfDestinationURL);
-}
-
-static void didUpdateHistoryTitle(WKPageRef page, WKStringRef title, WKURLRef URL, WKFrameRef frame, const void *clientInfo)
-{
-    CFStringRef cfTitle = WKStringCopyCFString(0, title);
-    CFURLRef cfURL = WKURLCopyCFURL(0, URL);
-    LOG(@"HistoryClient - didUpdateHistoryTitle - title: %@ - URL: %@", cfTitle, cfURL);
-    CFRelease(cfTitle);
-    CFRelease(cfURL);
-}
-
 - (void)awakeFromNib
 {
     _webView = [[WKView alloc] initWithFrame:[containerView frame] pageNamespaceRef:_pageNamespace];
@@ -458,17 +414,6 @@ static void didUpdateHistoryTitle(WKPageRef page, WKStringRef title, WKURLRef UR
         runJavaScriptPrompt
     };
     WKPageSetPageUIClient(_webView.pageRef, &uiClient);
-
-    WKPageHistoryClient historyClient = {
-        0,
-        self,
-        didNavigateWithNavigationData,
-        didPerformClientRedirect,
-        didPerformServerRedirect,
-        didUpdateHistoryTitle,
-    };
-
-    WKPageSetPageHistoryClient(_webView.pageRef, &historyClient);
 }
 
 - (void)didStartProgress

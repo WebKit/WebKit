@@ -88,12 +88,24 @@ void WebContext::initializeInjectedBundleClient(WKContextInjectedBundleClient* c
     m_injectedBundleClient.initialize(client);
 }
 
+void WebContext::initializeHistoryClient(WKContextHistoryClient* client)
+{
+    m_historyClient.initialize(client);
+    
+    if (!hasValidProcess())
+        return;
+        
+    m_process->send(WebProcessMessage::SetShouldTrackVisitedLinks, 0, CoreIPC::In(m_historyClient.shouldTrackVisitedLinks()));
+}
+
 void WebContext::ensureWebProcess()
 {
-    if (m_process && m_process->isValid())
+    if (hasValidProcess())
         return;
 
     m_process = WebProcessManager::shared().getWebProcess(this);
+
+    m_process->send(WebProcessMessage::SetShouldTrackVisitedLinks, 0, CoreIPC::In(m_historyClient.shouldTrackVisitedLinks()));
 }
 
 WebPageProxy* WebContext::createWebPage(WebPageNamespace* pageNamespace)
@@ -163,6 +175,37 @@ void WebContext::postMessageToInjectedBundle(const String& message)
         return;
 
     m_process->send(WebProcessMessage::PostMessage, 0, CoreIPC::In(message));
+}
+
+// HistoryClient
+
+void WebContext::didNavigateWithNavigationData(WebFrameProxy* frame, const WebNavigationDataStore& store) 
+{
+    ASSERT(frame->page());
+    m_historyClient.didNavigateWithNavigationData(this, frame->page(), store, frame);
+}
+
+void WebContext::didPerformClientRedirect(WebFrameProxy* frame, const String& sourceURLString, const String& destinationURLString)
+{
+    ASSERT(frame->page());
+    m_historyClient.didPerformClientRedirect(this, frame->page(), sourceURLString, destinationURLString, frame);
+}
+
+void WebContext::didPerformServerRedirect(WebFrameProxy* frame, const String& sourceURLString, const String& destinationURLString)
+{
+    ASSERT(frame->page());
+    m_historyClient.didPerformServerRedirect(this, frame->page(), sourceURLString, destinationURLString, frame);
+}
+
+void WebContext::didUpdateHistoryTitle(WebFrameProxy* frame, const String& title, const String& url)
+{
+    ASSERT(frame->page());
+    m_historyClient.didUpdateHistoryTitle(this, frame->page(), title, url, frame);
+}
+
+void WebContext::populateVisitedLinks()
+{
+    m_historyClient.populateVisitedLinks(this);
 }
 
 void WebContext::getStatistics(WKContextStatistics* statistics)

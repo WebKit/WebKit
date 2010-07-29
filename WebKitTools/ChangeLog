@@ -1,3 +1,21 @@
+2010-07-28  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        First pass at visited link support for WK2
+        https://bugs.webkit.org/show_bug.cgi?id=43157
+
+        * MiniBrowser/mac/AppDelegate.m:
+        (didNavigateWithNavigationData):
+        (didPerformClientRedirect):
+        (didPerformServerRedirect):
+        (didUpdateHistoryTitle):
+        (populateVisitedLinks): Added for the new version of the HistoryClient.
+        (-[BrowserAppDelegate init]): Set the HistoryClient right after creating the context(s)
+        
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController awakeFromNib]):
+
 2010-07-28  Robin Dunn  <robin@alldunn.com>
 
         Reviewed by Kevin Ollivier.

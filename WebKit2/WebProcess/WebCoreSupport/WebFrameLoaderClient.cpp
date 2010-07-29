@@ -546,9 +546,9 @@ void WebFrameLoaderClient::updateGlobalHistory()
     data.url = loader->urlForHistory().string();
     data.title = loader->title();
 
-    WebProcess::shared().connection()->send(WebPageProxyMessage::DidNavigateWithNavigationData,
-                                            webPage->pageID(),
-                                            CoreIPC::In(data, m_frame->frameID()));
+    WebProcess::shared().connection()->send(WebProcessProxyMessage::DidNavigateWithNavigationData,
+                                            0,
+                                            CoreIPC::In(webPage->pageID(), data, m_frame->frameID()));
 }
 
 void WebFrameLoaderClient::updateGlobalHistoryRedirectLinks()
@@ -562,18 +562,20 @@ void WebFrameLoaderClient::updateGlobalHistoryRedirectLinks()
 
     // Client redirect
     if (!loader->clientRedirectSourceForHistory().isNull()) {
-        WebProcess::shared().connection()->send(WebPageProxyMessage::DidPerformClientRedirect,
-                                                webPage->pageID(),
-                                                CoreIPC::In(loader->clientRedirectSourceForHistory(), 
+        WebProcess::shared().connection()->send(WebProcessProxyMessage::DidPerformClientRedirect,
+                                                0,
+                                                CoreIPC::In(webPage->pageID(),
+                                                            loader->clientRedirectSourceForHistory(), 
                                                             loader->clientRedirectDestinationForHistory(),
                                                             m_frame->frameID()));
     }
 
     // Server redirect
     if (!loader->serverRedirectSourceForHistory().isNull()) {
-        WebProcess::shared().connection()->send(WebPageProxyMessage::DidPerformServerRedirect,
-                                                webPage->pageID(),
-                                                CoreIPC::In(loader->serverRedirectSourceForHistory(),
+        WebProcess::shared().connection()->send(WebProcessProxyMessage::DidPerformServerRedirect,
+                                                0,
+                                                CoreIPC::In(webPage->pageID(),
+                                                            loader->serverRedirectSourceForHistory(),
                                                             loader->serverRedirectDestinationForHistory(),
                                                             m_frame->frameID()));
     }
@@ -719,7 +721,7 @@ void WebFrameLoaderClient::setTitle(const String& title, const KURL& url)
     if (!webPage)
         return;
 
-    WebProcess::shared().connection()->send(WebPageProxyMessage::DidUpdateHistoryTitle, webPage->pageID(), CoreIPC::In(title, url.string(), m_frame->frameID()));
+    WebProcess::shared().connection()->send(WebProcessProxyMessage::DidUpdateHistoryTitle, 0, CoreIPC::In(webPage->pageID(), title, url.string(), m_frame->frameID()));
 }
 
 String WebFrameLoaderClient::userAgent(const KURL&)

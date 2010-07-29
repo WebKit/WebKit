@@ -73,6 +73,12 @@ void WKContextSetInjectedBundleClient(WKContextRef contextRef, WKContextInjected
         toWK(contextRef)->initializeInjectedBundleClient(wkClient);
 }
 
+void WKContextSetHistoryClient(WKContextRef contextRef, WKContextHistoryClient * wkClient)
+{
+    if (wkClient && !wkClient->version)
+        toWK(contextRef)->initializeHistoryClient(wkClient);
+}
+
 void WKContextPostMessageToInjectedBundle(WKContextRef contextRef, WKStringRef messageRef)
 {
     toWK(contextRef)->postMessageToInjectedBundle(toWK(messageRef)->string());

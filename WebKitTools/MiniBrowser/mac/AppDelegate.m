@@ -28,8 +28,9 @@
 #import "BrowserWindowController.h"
 #import "BrowserStatisticsWindowController.h"
 
-#import <WebKit2/WKStringCF.h>
 #import <WebKit2/WKContextPrivate.h>
+#import <WebKit2/WKStringCF.h>
+#import <WebKit2/WKURLCF.h>
 
 static NSString *defaultURL = @"http://www.webkit.org/";
 
@@ -46,6 +47,55 @@ void _didRecieveMessageFromInjectedBundle(WKContextRef context, WKStringRef mess
     WKStringRelease(newMessage);
 }
 
+#pragma mark History Client Callbacks
+
+static void didNavigateWithNavigationData(WKContextRef context, WKPageRef page, WKNavigationDataRef navigationData, WKFrameRef frame, const void *clientInfo)
+{
+    WKStringRef wkTitle = WKNavigationDataCopyTitle(navigationData);
+    CFStringRef title = WKStringCopyCFString(0, wkTitle);
+    WKStringRelease(wkTitle);
+
+    WKURLRef wkURL = WKNavigationDataCopyURL(navigationData);
+    CFURLRef url = WKURLCopyCFURL(0, wkURL);
+    WKURLRelease(wkURL);
+
+    LOG(@"HistoryClient - didNavigateWithNavigationData - title: %@ - url: %@", title, url);
+    CFRelease(title);
+    CFRelease(url);
+}
+
+static void didPerformClientRedirect(WKContextRef context, WKPageRef page, WKURLRef sourceURL, WKURLRef destinationURL, WKFrameRef frame, const void *clientInfo)
+{
+    CFURLRef cfSourceURL = WKURLCopyCFURL(0, sourceURL);
+    CFURLRef cfDestinationURL = WKURLCopyCFURL(0, destinationURL);
+    LOG(@"HistoryClient - didPerformClientRedirect - sourceURL: %@ - destinationURL: %@", cfSourceURL, cfDestinationURL);
+    CFRelease(cfSourceURL);
+    CFRelease(cfDestinationURL);
+}
+
+static void didPerformServerRedirect(WKContextRef context, WKPageRef page, WKURLRef sourceURL, WKURLRef destinationURL, WKFrameRef frame, const void *clientInfo)
+{
+    CFURLRef cfSourceURL = WKURLCopyCFURL(0, sourceURL);
+    CFURLRef cfDestinationURL = WKURLCopyCFURL(0, destinationURL);
+    LOG(@"HistoryClient - didPerformServerRedirect - sourceURL: %@ - destinationURL: %@", cfSourceURL, cfDestinationURL);
+    CFRelease(cfSourceURL);
+    CFRelease(cfDestinationURL);
+}
+
+static void didUpdateHistoryTitle(WKContextRef context, WKPageRef page, WKStringRef title, WKURLRef URL, WKFrameRef frame, const void *clientInfo)
+{
+    CFStringRef cfTitle = WKStringCopyCFString(0, title);
+    CFURLRef cfURL = WKURLCopyCFURL(0, URL);
+    LOG(@"HistoryClient - didUpdateHistoryTitle - title: %@ - URL: %@", cfTitle, cfURL);
+    CFRelease(cfTitle);
+    CFRelease(cfURL);
+}
+
+static void populateVisitedLinks(WKContextRef context, const void *clientInfo)
+{
+    LOG(@"HistoryClient - populateVisitedLinks");
+}
+
 - (id)init
 {
     self = [super init];
@@ -56,6 +106,17 @@ void _didRecieveMessageFromInjectedBundle(WKContextRef context, WKStringRef mess
             currentProcessModel = kProcessModelSharedSecondaryProcess;
 
         WKContextRef threadContext = WKContextGetSharedThreadContext();
+        WKContextHistoryClient historyClient = {
+            0,
+            self,
+            didNavigateWithNavigationData,
+            didPerformClientRedirect,
+            didPerformServerRedirect,
+            didUpdateHistoryTitle,
+            populateVisitedLinks
+        };
+        WKContextSetHistoryClient(threadContext, &historyClient);
+    
         threadPageNamespace = WKPageNamespaceCreate(threadContext);
         WKContextRelease(threadContext);
 
@@ -70,6 +131,7 @@ void _didRecieveMessageFromInjectedBundle(WKContextRef context, WKStringRef mess
             _didRecieveMessageFromInjectedBundle
         };
         WKContextSetInjectedBundleClient(processContext, &bundleClient);
+        WKContextSetHistoryClient(processContext, &historyClient);
         
         processPageNamespace = WKPageNamespaceCreate(processContext);
         WKContextRelease(processContext);

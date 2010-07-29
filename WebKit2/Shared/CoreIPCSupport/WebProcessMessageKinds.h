@@ -35,6 +35,7 @@ namespace WebProcessMessage {
 enum Kind {
     LoadInjectedBundle,
     SetApplicationCacheDirectory,
+    SetShouldTrackVisitedLinks,
     Create,
     PostMessage,
     RegisterURLSchemeAsEmptyDocument,

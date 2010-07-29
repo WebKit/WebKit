@@ -36,6 +36,7 @@
 #include "WebPageProxyMessageKinds.h"
 #include "WebPreferencesStore.h"
 #include "WebProcess.h"
+#include "WebProcessProxyMessageKinds.h"
 #include <WebCore/FileChooser.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
@@ -385,7 +386,7 @@ void WebChromeClient::dashboardRegionsChanged()
 
 void WebChromeClient::populateVisitedLinks()
 {
-    notImplemented();
+    WebProcess::shared().connection()->send(WebProcessProxyMessage::PopulateVisitedLinks, 0, CoreIPC::In());
 }
 
 FloatRect WebChromeClient::customHighlightRect(Node*, const AtomicString& type, const FloatRect& lineRect)

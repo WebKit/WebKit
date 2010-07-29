@@ -34,8 +34,13 @@ namespace WebProcessProxyMessage {
 
 enum Kind {
     AddBackForwardItem,
+    DidNavigateWithNavigationData,
+    DidPerformClientRedirect,
+    DidPerformServerRedirect,
+    DidUpdateHistoryTitle,
     GetPluginHostConnection,
     GetPlugins,
+    PopulateVisitedLinks,
     PostMessage,
 };
 

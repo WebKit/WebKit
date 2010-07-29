@@ -92,7 +92,6 @@ public:
     void initializeLoaderClient(WKPageLoaderClient*);
     void initializePolicyClient(WKPagePolicyClient*);
     void initializeUIClient(WKPageUIClient*);
-    void initializeHistoryClient(WKPageHistoryClient*);
 
     void revive();
 
@@ -190,11 +189,6 @@ private:
     bool runJavaScriptConfirm(WebFrameProxy* frame, const WebCore::String&);
     WebCore::String runJavaScriptPrompt(WebFrameProxy* frame, const WebCore::String&, const WebCore::String&);
 
-    void didNavigateWithNavigationData(WebFrameProxy*, const WebNavigationDataStore&); 
-    void didPerformClientRedirect(WebFrameProxy*, const WebCore::String& sourceURLString, const WebCore::String& destinationURLString);
-    void didPerformServerRedirect(WebFrameProxy*, const WebCore::String& sourceURLString, const WebCore::String& destinationURLString);
-    void didUpdateHistoryTitle(WebFrameProxy*, const WebCore::String& title, const WebCore::String& url);
-
     void addItemToBackForwardList(WebBackForwardListItem*);
     void goToItemInBackForwardList(WebBackForwardListItem*);
 
@@ -214,7 +208,6 @@ private:
     WebLoaderClient m_loaderClient;
     WebPolicyClient m_policyClient;
     WebUIClient m_uiClient;
-    WebHistoryClient m_historyClient;
 
     OwnPtr<DrawingAreaProxy> m_drawingArea;
     RefPtr<WebPageNamespace> m_pageNamespace;

@@ -26,7 +26,7 @@
 #ifndef WebHistoryClient_h
 #define WebHistoryClient_h
 
-#include "WKPage.h"
+#include "WKContext.h"
 
 namespace WebCore {
     class String;
@@ -34,6 +34,7 @@ namespace WebCore {
 
 namespace WebKit {
 
+class WebContext;
 class WebFrameProxy;
 struct WebNavigationDataStore;
 class WebPageProxy;
@@ -41,15 +42,18 @@ class WebPageProxy;
 class WebHistoryClient {
 public:
     WebHistoryClient();
-    void initialize(WKPageHistoryClient*);
+    void initialize(WKContextHistoryClient*);
 
-    void didNavigateWithNavigationData(WebPageProxy*, const WebNavigationDataStore&, WebFrameProxy*);
-    void didPerformClientRedirect(WebPageProxy*, const WebCore::String& sourceURL, const WebCore::String& destinationURL, WebFrameProxy*);
-    void didPerformServerRedirect(WebPageProxy*, const WebCore::String& sourceURL, const WebCore::String& destinationURL, WebFrameProxy*);
-    void didUpdateHistoryTitle(WebPageProxy*, const WebCore::String& title, const WebCore::String& url, WebFrameProxy*);
+    void didNavigateWithNavigationData(WebContext*, WebPageProxy*, const WebNavigationDataStore&, WebFrameProxy*);
+    void didPerformClientRedirect(WebContext*, WebPageProxy*, const WebCore::String& sourceURL, const WebCore::String& destinationURL, WebFrameProxy*);
+    void didPerformServerRedirect(WebContext*, WebPageProxy*, const WebCore::String& sourceURL, const WebCore::String& destinationURL, WebFrameProxy*);
+    void didUpdateHistoryTitle(WebContext*, WebPageProxy*, const WebCore::String& title, const WebCore::String& url, WebFrameProxy*);
+    void populateVisitedLinks(WebContext*);
 
+    bool shouldTrackVisitedLinks() const { return m_contextHistoryClient.populateVisitedLinks; }
+    
 private:
-    WKPageHistoryClient m_pageHistoryClient;
+    WKContextHistoryClient m_contextHistoryClient;
 };
 
 } // namespace WebKit

@@ -42,6 +42,24 @@ struct WKContextInjectedBundleClient {
 };
 typedef struct WKContextInjectedBundleClient WKContextInjectedBundleClient;
 
+// History Client
+typedef void (*WKContextDidNavigateWithNavigationDataCallback)(WKContextRef context, WKPageRef page, WKNavigationDataRef navigationData, WKFrameRef frame, const void *clientInfo);
+typedef void (*WKContextDidPerformClientRedirectCallback)(WKContextRef context, WKPageRef page, WKURLRef sourceURL, WKURLRef destinationURL, WKFrameRef frame, const void *clientInfo);
+typedef void (*WKContextDidPerformServerRedirectCallback)(WKContextRef context, WKPageRef page, WKURLRef sourceURL, WKURLRef destinationURL, WKFrameRef frame, const void *clientInfo);
+typedef void (*WKContextDidUpdateHistoryTitleCallback)(WKContextRef context, WKPageRef page, WKStringRef title, WKURLRef URL, WKFrameRef frame, const void *clientInfo);
+typedef void (*WKContextPopulateVisitedLinksCallback)(WKContextRef context, const void *clientInfo);
+
+struct WKContextHistoryClient {
+    int                                                                 version;
+    const void *                                                        clientInfo;
+    WKContextDidNavigateWithNavigationDataCallback                      didNavigateWithNavigationData;
+    WKContextDidPerformClientRedirectCallback                           didPerformClientRedirect;
+    WKContextDidPerformServerRedirectCallback                           didPerformServerRedirect;
+    WKContextDidUpdateHistoryTitleCallback                              didUpdateHistoryTitle;
+    WKContextPopulateVisitedLinksCallback                               populateVisitedLinks;
+};
+typedef struct WKContextHistoryClient WKContextHistoryClient;
+
 WK_EXPORT WKContextRef WKContextCreate();
 WK_EXPORT WKContextRef WKContextCreateWithInjectedBundlePath(WKStringRef path);
 WK_EXPORT WKContextRef WKContextGetSharedProcessContext();
@@ -49,6 +67,7 @@ WK_EXPORT WKContextRef WKContextGetSharedProcessContext();
 WK_EXPORT void WKContextSetPreferences(WKContextRef context, WKPreferencesRef preferences);
 WK_EXPORT WKPreferencesRef WKContextGetPreferences(WKContextRef context);
 
+WK_EXPORT void WKContextSetHistoryClient(WKContextRef context, WKContextHistoryClient * client);
 WK_EXPORT void WKContextSetInjectedBundleClient(WKContextRef context, WKContextInjectedBundleClient * client);
 
 WK_EXPORT void WKContextPostMessageToInjectedBundle(WKContextRef context, WKStringRef message);

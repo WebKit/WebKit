@@ -37,6 +37,7 @@
 #include "WebPreferencesStore.h"
 #include "WebProcessMessageKinds.h"
 #include <WebCore/ApplicationCacheStorage.h>
+#include <WebCore/PageGroup.h>
 #include <WebCore/SchemeRegistry.h>
 #include <wtf/PassRefPtr.h>
 
@@ -197,6 +198,15 @@ void WebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
                 setApplicationCacheDirectory(directory);
                 return;
             }
+            case WebProcessMessage::SetShouldTrackVisitedLinks: {
+                bool shouldTrackVisitedLinks;
+                if (!arguments->decode(CoreIPC::Out(shouldTrackVisitedLinks)))
+                    return;
+                
+                PageGroup::setShouldTrackVisitedLinks(shouldTrackVisitedLinks);
+                return;
+            }
+            
             case WebProcessMessage::Create: {
                 uint64_t pageID = arguments->destinationID();
                 IntSize viewSize;

@@ -29,6 +29,7 @@
 #include "ProcessLauncher.h"
 #include "WebBackForwardListItem.h"
 #include "WebContext.h"
+#include "WebNavigationDataStore.h"
 #include "WebPageNamespace.h"
 #include "WebPageProxy.h"
 #include "WebProcessManager.h"
@@ -243,6 +244,70 @@ void WebProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC
                 return;
             }
 
+            case WebProcessProxyMessage::DidNavigateWithNavigationData: {
+                uint64_t pageID;
+                WebNavigationDataStore store;
+                uint64_t frameID;
+                if (!arguments->decode(CoreIPC::Out(pageID, store, frameID)))
+                    return;
+
+                WebPageProxy* page = webPage(pageID);
+                if (!page)
+                    return;
+                
+                m_context->didNavigateWithNavigationData(page->webFrame(frameID), store);
+                break;
+            }
+            case WebProcessProxyMessage::DidPerformClientRedirect: {
+                uint64_t pageID;
+                String sourceURLString;
+                String destinationURLString;
+                uint64_t frameID;
+                if (!arguments->decode(CoreIPC::Out(pageID, sourceURLString, destinationURLString, frameID)))
+                    return;
+
+                WebPageProxy* page = webPage(pageID);
+                if (!page)
+                    return;
+
+                m_context->didPerformClientRedirect(page->webFrame(frameID), sourceURLString, destinationURLString);
+                break;
+            }
+            case WebProcessProxyMessage::DidPerformServerRedirect: {
+                uint64_t pageID;
+                String sourceURLString;
+                String destinationURLString;
+                uint64_t frameID;
+                if (!arguments->decode(CoreIPC::Out(pageID, sourceURLString, destinationURLString, frameID)))
+                    return;
+
+                WebPageProxy* page = webPage(pageID);
+                if (!page)
+                    return;
+
+                m_context->didPerformServerRedirect(page->webFrame(frameID), sourceURLString, destinationURLString);
+                break;
+            }
+            case WebProcessProxyMessage::DidUpdateHistoryTitle: {
+                uint64_t pageID;
+                String title;
+                String url;
+                uint64_t frameID;
+                if (!arguments->decode(CoreIPC::Out(pageID, title, url, frameID)))
+                    return;
+
+                WebPageProxy* page = webPage(pageID);
+                if (!page)
+                    return;
+
+                m_context->didUpdateHistoryTitle(page->webFrame(frameID), title, url);
+                break;
+            }
+            case WebProcessProxyMessage::PopulateVisitedLinks: {
+                m_context->populateVisitedLinks();
+                break;
+            }
+
             // These are synchronous messages and should never be handled here.
             case WebProcessProxyMessage::GetPlugins:
             case WebProcessProxyMessage::GetPluginHostConnection:
@@ -295,6 +360,11 @@ void WebProcessProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, Cor
             }
 
             // These are asynchronous messages and should never be handled here.
+            case WebProcessProxyMessage::DidNavigateWithNavigationData:
+            case WebProcessProxyMessage::DidPerformClientRedirect:
+            case WebProcessProxyMessage::DidPerformServerRedirect:
+            case WebProcessProxyMessage::DidUpdateHistoryTitle:
+            case WebProcessProxyMessage::PopulateVisitedLinks:
             case WebProcessProxyMessage::PostMessage:
             case WebProcessProxyMessage::AddBackForwardItem:
                 ASSERT_NOT_REACHED();
