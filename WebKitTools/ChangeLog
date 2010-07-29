@@ -1,3 +1,25 @@
+2010-07-29  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Kenneth Christiansen.
+
+        [Qt] Factor out LauncherWindow class out of main.cpp (QtTestBrowser)
+        https://bugs.webkit.org/show_bug.cgi?id=43170
+
+        Moving LauncherWindow class out of main.cpp to its own .cpp and .h files:
+        launcherwindow.{cpp|h}
+
+        No behavior change.
+
+        Also changed all global static variables (named "gXXX") from main.cpp to
+        static public variables of the LauncherWindow class.
+
+        * QtTestBrowser/QtTestBrowser.pro:
+        * QtTestBrowser/launcherwindow.cpp: Added.
+        * QtTestBrowser/launcherwindow.h: Added.
+        * QtTestBrowser/main.cpp:
+        (LauncherApplication::handleUserOptions):
+        (main):
+
 2010-07-29  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
