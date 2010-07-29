@@ -1,5 +1,14 @@
 2010-07-29  Csaba Osztrogonác  <ossy@webkit.org>
 
+         Reviewed by Antonio Gomes.
+
+         Initialize all members of NPClass struct.
+         https://bugs.webkit.org/show_bug.cgi?id=43193
+
+         * DumpRenderTree/TestNetscapePlugIn/PluginObject.cpp:
+
+2010-07-29  Csaba Osztrogonác  <ossy@webkit.org>
+
         Reviewed by Antonio Gomes.
 
         Warning fix on platforms where XP_MACOSX is undefined.

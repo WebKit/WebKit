@@ -116,6 +116,9 @@ static NPClass pluginClass = {
     pluginHasProperty,
     pluginGetProperty,
     pluginSetProperty,
+    0, // NPClass::removeProperty
+    0, // NPClass::enumerate
+    0  // NPClass::construct
 };
 
 NPClass *getPluginClass(void)
