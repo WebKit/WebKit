@@ -1,5 +1,12 @@
 2010-07-28  Sam Weinig  <sam@webkit.org>
 
+        Another Windows build fix.
+
+        * UIProcess/API/C/WKBase.h:
+        * win/WebKit2Generated.make:
+
+2010-07-28  Sam Weinig  <sam@webkit.org>
+
         Fix builds.
 
         * UIProcess/API/C/WKAPICast.h:
