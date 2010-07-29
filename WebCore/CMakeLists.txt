@@ -49,6 +49,7 @@ SET(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/svg/graphics"
     "${WEBCORE_DIR}/svg/graphics/filters"
     "${WEBCORE_DIR}/websockets"
+    "${WEBCORE_DIR}/wml"
     "${WEBCORE_DIR}/workers"
     "${WEBCORE_DIR}/xml"
     "${JAVASCRIPTCORE_DIR}"
@@ -1736,6 +1737,49 @@ IF (ENABLE_SVG)
     )
 ENDIF()
 
+IF (ENABLE_WML)
+    LIST(APPEND WebCore_SOURCES
+        ${DERIVED_SOURCES_DIR}/WMLElementFactory.cpp
+        ${DERIVED_SOURCES_DIR}/WMLNames.cpp
+        wml/WMLAElement.cpp
+        wml/WMLAccessElement.cpp
+        wml/WMLAnchorElement.cpp
+        wml/WMLBRElement.cpp
+        wml/WMLCardElement.cpp
+        wml/WMLDoElement.cpp
+        wml/WMLDocument.cpp
+        wml/WMLElement.cpp
+        wml/WMLErrorHandling.cpp
+        wml/WMLEventHandlingElement.cpp
+        wml/WMLFieldSetElement.cpp
+        wml/WMLFormControlElement.cpp
+        wml/WMLGoElement.cpp
+        wml/WMLImageElement.cpp
+        wml/WMLImageLoader.cpp
+        wml/WMLInputElement.cpp
+        wml/WMLInsertedLegendElement.cpp
+        wml/WMLIntrinsicEvent.cpp
+        wml/WMLIntrinsicEventHandler.cpp
+        wml/WMLMetaElement.cpp
+        wml/WMLNoopElement.cpp
+        wml/WMLOnEventElement.cpp
+        wml/WMLPElement.cpp
+        wml/WMLOptGroupElement.cpp
+        wml/WMLOptionElement.cpp
+        wml/WMLPageState.cpp
+        wml/WMLPostfieldElement.cpp
+        wml/WMLPrevElement.cpp
+        wml/WMLRefreshElement.cpp
+        wml/WMLSelectElement.cpp
+        wml/WMLSetvarElement.cpp
+        wml/WMLTableElement.cpp
+        wml/WMLTaskElement.cpp
+        wml/WMLTemplateElement.cpp
+        wml/WMLTimerElement.cpp
+        wml/WMLVariables.cpp
+    )
+ENDIF()
+
 SET(IDL_INCLUDES "")
 FOREACH (_include ${WebCore_IDL_INCLUDES})
     LIST(APPEND IDL_INCLUDES --include=${WEBCORE_DIR}/${_include})
@@ -1780,6 +1824,7 @@ ADD_SOURCE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/css/CSSStyleSelector.cpp UserAgen
 GENERATE_DOM_NAMES_FACTORY(HTML ${WEBCORE_DIR}/html/HTMLTagNames.in ${WEBCORE_DIR}/html/HTMLAttributeNames.in "${HTML_FEATURES}")
 GENERATE_DOM_NAMES_FACTORY(MathML ${WEBCORE_DIR}/mathml/mathtags.in ${WEBCORE_DIR}/mathml/mathattrs.in "${MATHML_FEATURES}")
 GENERATE_DOM_NAMES_FACTORY(SVG ${WEBCORE_DIR}/svg/svgtags.in ${WEBCORE_DIR}/svg/svgattrs.in "${SVG_FEATURES}")
+GENERATE_DOM_NAMES_FACTORY(WML ${WEBCORE_DIR}/wml/WMLTagNames.in ${WEBCORE_DIR}/wml/WMLAttributeNames.in "${WML_FEATURES}")
 GENERATE_DOM_NAMES_ONLY(XLink ${WEBCORE_DIR}/svg/xlinkattrs.in)
 GENERATE_DOM_NAMES_ONLY(XMLNS ${WEBCORE_DIR}/xml/xmlnsattrs.in)
 GENERATE_DOM_NAMES_ONLY(XML ${WEBCORE_DIR}/xml/xmlattrs.in)

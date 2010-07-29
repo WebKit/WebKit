@@ -1,3 +1,15 @@
+2010-07-29  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Support to enable WML in WebKit EFL
+        https://bugs.webkit.org/show_bug.cgi?id=43178
+
+        WebKit EFL cannot enable WML. WML files are added to CMakeLists.txt
+        to enable WML in WebKit EFL.
+
+        * CMakeLists.txt: Support to enable WML.
+
 2010-07-21 Grace Kloba  <klobag@gmail.com> , Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by David Hyatt.
