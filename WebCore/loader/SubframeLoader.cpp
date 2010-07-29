@@ -226,7 +226,9 @@ PassRefPtr<Widget> SubframeLoader::createJavaAppletWidget(const IntSize& size, H
         baseURLString = m_frame->document()->baseURL().string();
     KURL baseURL = completeURL(baseURLString);
 
-    RefPtr<Widget> widget = m_frame->loader()->client()->createJavaAppletWidget(size, element, baseURL, paramNames, paramValues);
+    RefPtr<Widget> widget;
+    if (allowPlugins(AboutToInstantiatePlugin))
+        widget = m_frame->loader()->client()->createJavaAppletWidget(size, element, baseURL, paramNames, paramValues);
     if (!widget)
         return 0;
 

@@ -1,3 +1,13 @@
+2010-07-29  Bernhard Bauer  <bauerb@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Check if plugins are allowed before creating a Java applet.
+        https://bugs.webkit.org/show_bug.cgi?id=43196
+
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::createJavaAppletWidget):
+
 2010-07-29  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Simon Fraser.
