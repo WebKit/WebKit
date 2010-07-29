@@ -2,6 +2,27 @@
 
         Reviewed by Sam Weinig.
 
+        Implement NPN_SetProperty
+        https://bugs.webkit.org/show_bug.cgi?id=43217
+
+        * WebProcess/Plugins/NPJSObject.cpp:
+        (WebKit::NPJSObject::setProperty):
+        Convert the NPVariant to a JSValue and set it on the underlying JSObject.
+
+        (WebKit::NPJSObject::NP_SetProperty):
+        Call NPJSObject::setProperty.
+
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::NPN_GetProperty):
+        Remove unused parameter name.
+
+        (WebKit::NPN_SetProperty):
+        Call the NPClass::setProperty function.
+
+2010-07-29  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Implement NPN_Enumerate
         https://bugs.webkit.org/show_bug.cgi?id=43215
 

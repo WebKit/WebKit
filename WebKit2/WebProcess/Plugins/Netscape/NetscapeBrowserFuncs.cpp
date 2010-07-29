@@ -572,7 +572,7 @@ static bool NPN_Evaluate(NPP npp, NPObject *npobj, NPString *script, NPVariant *
     return false;
 }
 
-static bool NPN_GetProperty(NPP npp, NPObject* npObject, NPIdentifier propertyName, NPVariant* result)
+static bool NPN_GetProperty(NPP, NPObject* npObject, NPIdentifier propertyName, NPVariant* result)
 {
     if (npObject->_class->hasProperty && npObject->_class->getProperty) {
         if (npObject->_class->hasProperty(npObject, propertyName))
@@ -583,9 +583,11 @@ static bool NPN_GetProperty(NPP npp, NPObject* npObject, NPIdentifier propertyNa
     return false;
 }
 
-static bool NPN_SetProperty(NPP npp, NPObject* npobj, NPIdentifier propertyName, const NPVariant* value)
+static bool NPN_SetProperty(NPP, NPObject* npObject, NPIdentifier propertyName, const NPVariant* value)
 {
-    notImplemented();
+    if (npObject->_class->setProperty)
+        return npObject->_class->setProperty(npObject, propertyName, value);
+
     return false;
 }
 

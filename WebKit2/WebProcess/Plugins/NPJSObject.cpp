@@ -171,6 +171,27 @@ bool NPJSObject::getProperty(NPIdentifier propertyName, NPVariant* result)
     return true;
 }
 
+bool NPJSObject::setProperty(NPIdentifier propertyName, const NPVariant* value)
+{
+    IdentifierRep* identifierRep = static_cast<IdentifierRep*>(propertyName);
+    
+    ExecState* exec = m_objectMap->globalExec();
+    if (!exec)
+        return false;
+    
+    JSLock lock(SilenceAssertionsOnly);
+
+    JSValue jsValue = m_objectMap->convertNPVariantToJSValue(exec, m_objectMap->globalObject(), *value);
+    if (identifierRep->isString()) {
+        PutPropertySlot slot;
+        m_jsObject->put(exec, identifierFromIdentifierRep(exec, identifierRep), jsValue, slot);
+    } else
+        m_jsObject->put(exec, identifierRep->number(), jsValue);
+    exec->clearException();
+    
+    return true;
+}
+
 bool NPJSObject::enumerate(NPIdentifier** identifiers, uint32_t* identifierCount)
 {
     ExecState* exec = m_objectMap->globalExec();
@@ -305,10 +326,9 @@ bool NPJSObject::NP_GetProperty(NPObject* npObject, NPIdentifier propertyName, N
     return toNPJSObject(npObject)->getProperty(propertyName, result);
 }
 
-bool NPJSObject::NP_SetProperty(NPObject*, NPIdentifier propertyName, const NPVariant* value)
+bool NPJSObject::NP_SetProperty(NPObject* npObject, NPIdentifier propertyName, const NPVariant* value)
 {
-    notImplemented();
-    return false;
+    return toNPJSObject(npObject)->setProperty(propertyName, value);
 }
 
 bool NPJSObject::NP_Enumerate(NPObject* npObject, NPIdentifier** identifiers, uint32_t* identifierCount)
