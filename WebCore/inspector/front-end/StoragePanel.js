@@ -49,12 +49,11 @@ WebInspector.StoragePanel = function(database)
     this.sidebarTree.appendChild(this.cookieListTreeElement);
     this.cookieListTreeElement.expand();
 
-    if (Preferences.appCacheEnabled) {
-        this.applicationCacheListTreeElement = new WebInspector.SidebarSectionTreeElement(WebInspector.UIString("APPLICATION CACHE"), {}, true);
-        this.sidebarTree.appendChild(this.applicationCacheListTreeElement);
-        this.applicationCacheListTreeElement.expand();
-    }
-
+    
+    this.applicationCacheListTreeElement = new WebInspector.SidebarSectionTreeElement(WebInspector.UIString("APPLICATION CACHE"), {}, true);
+    this.sidebarTree.appendChild(this.applicationCacheListTreeElement);
+    this.applicationCacheListTreeElement.expand();
+    
     this.storageViews = document.createElement("div");
     this.storageViews.id = "storage-views";
     this.element.appendChild(this.storageViews);
@@ -111,8 +110,7 @@ WebInspector.StoragePanel.prototype = {
         this.sessionStorageListTreeElement.removeChildren();
         this.cookieListTreeElement.removeChildren();
 
-        if (Preferences.appCacheEnabled)
-            this.applicationCacheListTreeElement.removeChildren();
+        this.applicationCacheListTreeElement.removeChildren();
 
         this.storageViews.removeChildren();
 
@@ -150,8 +148,6 @@ WebInspector.StoragePanel.prototype = {
 
     addApplicationCache: function(domain)
     {
-        if (!Preferences.appCacheEnabled)
-            return;
         var applicationCacheTreeElement = new WebInspector.ApplicationCacheSidebarTreeElement(domain);
         this.applicationCacheListTreeElement.appendChild(applicationCacheTreeElement);
     },

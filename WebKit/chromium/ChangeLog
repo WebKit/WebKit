@@ -1,3 +1,13 @@
+2010-07-28  Kavita Kanetkar  <kkanetkar@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Enable UI for chromium's appcache inspection.
+        https://bugs.webkit.org/show_bug.cgi?id=43098
+
+        * src/js/DevTools.js:
+        (WebInspector.loaded):
+
 2010-07-28  Dominic Mazzoni  <dmazzoni@google.com>
 
         Reviewed by Dimitri Glazkov.

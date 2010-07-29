@@ -165,8 +165,7 @@ WebInspector.loaded = function()
     Preferences.debuggerAlwaysEnabled = true;
     Preferences.profilerAlwaysEnabled = true;
     Preferences.canEditScriptSource = true;
-    Preferences.appCacheEnabled = false;
-
+    
     if ("page" in WebInspector._paramsObject) {
         WebInspector.loadedDone = true;
         if (WebInspector.socketOpened)
