@@ -1,5 +1,13 @@
 2010-07-29  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Fix release builds, by removing unused variables, that only served for ASSERTs that are no longer needed.
+
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::prepareToRenderSVGContent):
+        (WebCore::SVGRenderSupport::pointInClippingArea):
+
+2010-07-29  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Not reviewed. Fix build warning about unreachable code, seen on the windows slave.
 
         * rendering/RenderSVGContainer.cpp:

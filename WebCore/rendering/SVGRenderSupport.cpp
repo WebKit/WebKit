@@ -80,8 +80,6 @@ void SVGRenderSupport::mapLocalToContainer(const RenderObject* object, RenderBox
 bool SVGRenderSupport::prepareToRenderSVGContent(RenderObject* object, PaintInfo& paintInfo)
 {
     ASSERT(object);
-    SVGElement* svgElement = static_cast<SVGElement*>(object->node());
-    ASSERT(svgElement && svgElement->document() && svgElement->isStyled());
 
     RenderStyle* style = object->style();
     ASSERT(style);
@@ -309,12 +307,6 @@ void SVGRenderSupport::intersectRepaintRectWithResources(const RenderObject* obj
 bool SVGRenderSupport::pointInClippingArea(RenderObject* object, const FloatPoint& point)
 {
     ASSERT(object);
-
-    RenderStyle* style = object->style();
-    ASSERT(style);
-
-    const SVGRenderStyle* svgStyle = style->svgStyle();
-    ASSERT(svgStyle);
 
     // We just take clippers into account to determine if a point is on the node. The Specification may
     // change later and we also need to check maskers.
