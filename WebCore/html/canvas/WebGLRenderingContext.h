@@ -58,6 +58,7 @@ class WebKitCSSMatrix;
         virtual ~WebGLRenderingContext();
 
         virtual bool is3d() const { return true; }
+        virtual bool isAccelerated() const { return true; }
 
         // Helper to return the size in bytes of OpenGL data types
         // like GL_FLOAT, GL_INT, etc.

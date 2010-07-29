@@ -1,3 +1,25 @@
+2010-07-29  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        Ask a canvas' rendering context if it is accelerated instead tying it directly to webgl
+        https://bugs.webkit.org/show_bug.cgi?id=43206
+
+        This unifies the logic for whether a canvas is accelerated or not into one place
+        and makes it easier to expand the logic in the future to, for example, cover some
+        2d canvases.
+
+        Just a refactoring, no change in behavior so no new tests.
+
+        * html/canvas/CanvasRenderingContext.h:
+        (WebCore::CanvasRenderingContext::isAccelerated):
+        * html/canvas/WebGLRenderingContext.h:
+        (WebCore::WebGLRenderingContext::isAccelerated):
+        * rendering/RenderHTMLCanvas.cpp:
+        (WebCore::RenderHTMLCanvas::requiresLayer):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::requiresCompositingForCanvas):
+
 2010-07-29  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
