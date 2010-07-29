@@ -1425,7 +1425,6 @@ plugins/resize-from-plugin.html
 plugins/return-error-from-new-stream-callback-in-full-frame-plugin.html
 plugins/return-error-from-new-stream-doesnt-invoke-destroy-stream.html
 plugins/return-negative-one-from-write.html
-plugins/set-status.html
 plugins/update-widgets-crash.html
 plugins/window-open.html
 
@@ -1644,6 +1643,7 @@ fast/loader/stateobjects/replacestate-in-iframe.html
 fast/loader/stateobjects/replacestate-then-pushstate.html
 fast/loader/stateobjects/replacestate-updates-location.html
 fast/parser/xhtml-close-while-parsing.xhtml
+plugins/access-after-page-destroyed.html
 http/tests/appcache/crash-when-navigating-away-then-back.html
 http/tests/media/video-cancel-load.html
 http/tests/misc/set-window-opener-to-null.html

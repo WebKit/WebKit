@@ -29,6 +29,7 @@
 #include "Plugin.h"
 #include "WebEvent.h"
 #include "WebPage.h"
+#include <WebCore/Chrome.h>
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/Event.h>
 #include <WebCore/FocusController.h>
@@ -633,6 +634,18 @@ NPObject* PluginView::pluginElementNPObject()
     ASSERT(object);
 
     return m_npRuntimeObjectMap.getOrCreateNPObject(object);
+}
+
+void PluginView::setStatusbarText(const String& statusbarText)
+{
+    if (!frame())
+        return;
+    
+    Page* page = frame()->page();
+    if (!page)
+        return;
+
+    page->chrome()->setStatusbarText(frame(), statusbarText);
 }
 
 void PluginView::didFinishLoad(WebFrame* webFrame)

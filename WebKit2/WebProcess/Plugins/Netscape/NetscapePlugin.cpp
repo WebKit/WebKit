@@ -143,6 +143,11 @@ NPError NetscapePlugin::destroyStream(NPStream* stream, NPReason reason)
     return pluginStream->destroy(reason);
 }
 
+void NetscapePlugin::setStatusbarText(const String& statusbarText)
+{
+    m_pluginController->setStatusbarText(statusbarText);
+}
+
 NPObject* NetscapePlugin::windowScriptNPObject()
 {
     return m_pluginController->windowScriptNPObject();

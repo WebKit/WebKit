@@ -1,3 +1,25 @@
+2010-07-29  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Implement NPN_Status
+        https://bugs.webkit.org/show_bug.cgi?id=43205
+
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::NPN_Status):
+        Convert the message char* to a String and call NetscapePlugin::setStatusbarText.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::setStatusbarText):
+        Call PluginController::setStatusbarText.
+    
+        * WebProcess/Plugins/PluginController.h:
+        Add setStatusbarText.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::setStatusbarText):
+        Call the Chrome member function.
+
 2010-07-29  Adam Roben  <aroben@apple.com>
 
         Always say "plugins directory" when referring to a directory

@@ -103,6 +103,7 @@ private:
     virtual void cancelStreamLoad(uint64_t streamID);
     virtual NPObject* windowScriptNPObject();
     virtual NPObject* pluginElementNPObject();
+    virtual void setStatusbarText(const WebCore::String&);
 
     // WebFrame::LoadListener
     virtual void didFinishLoad(WebFrame*);

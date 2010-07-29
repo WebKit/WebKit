@@ -1,3 +1,13 @@
+2010-07-29  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Implement NPN_Status
+        https://bugs.webkit.org/show_bug.cgi?id=43205
+
+        * WebCore.exp.in:
+        Export Chrome::setStatusText.
+
 2010-07-29  Victor Wang  <victorw@chromium.org>
 
         Unreviewed, rolling out r64270.

@@ -313,9 +313,16 @@ static NPError NPN_DestroyStream(NPP npp, NPStream* stream, NPReason reason)
     return plugin->destroyStream(stream, reason);
 }
 
-static void NPN_Status(NPP instance, const char* message)
+static void NPN_Status(NPP npp, const char* message)
 {
-    notImplemented();
+    String statusbarText;
+    if (!message)
+        statusbarText = "";
+    else
+        statusbarText = String::fromUTF8WithLatin1Fallback(message, strlen(message));
+
+    RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
+    plugin->setStatusbarText(statusbarText);
 }
     
 static const char* NPN_UserAgent(NPP npp)

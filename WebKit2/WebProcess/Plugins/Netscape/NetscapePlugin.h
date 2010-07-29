@@ -59,6 +59,7 @@ public:
     void loadURL(const WebCore::String& method, const WebCore::String& urlString, const WebCore::String& target, const WebCore::HTTPHeaderMap& headerFields,
                  const Vector<char>& httpBody, bool sendNotification, void* notificationData);
     NPError destroyStream(NPStream*, NPReason);
+    void setStatusbarText(const WebCore::String&);
 
     // These return retained objects.
     NPObject* windowScriptNPObject();
