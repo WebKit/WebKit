@@ -1,3 +1,13 @@
+2010-07-28  Kenichi Ishibashi  <bashi@google.com>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Fixed <https://bugs.webkit.org/show_bug.cgi?id=33814>
+        check-webkit-style gives false positives in single-line functions.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+
 2010-07-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

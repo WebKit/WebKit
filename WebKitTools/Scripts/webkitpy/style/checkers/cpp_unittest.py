@@ -164,7 +164,7 @@ class CppStyleTestBase(unittest.TestCase):
         class_state = cpp_style._ClassState()
         file_state = cpp_style._FileState()
         for i in xrange(lines.num_lines()):
-            cpp_style.check_style(lines, i, file_extension, file_state, error_collector)
+            cpp_style.check_style(lines, i, file_extension, class_state, file_state, error_collector)
             cpp_style.check_for_non_standard_constructs(lines, i, class_state,
                                                         error_collector)
         class_state.check_finished(error_collector)
@@ -2593,6 +2593,19 @@ class NoNonVirtualDestructorsTest(CppStyleTestBase):
             '')
         self.assert_multi_line_lint(
             'class Foo { void foo(); };',
+            'More than one command on the same line  [whitespace/newline] [4]')
+        self.assert_multi_line_lint(
+            'class MyClass {\n'
+            '    int getIntValue() { ASSERT(m_ptr); return *m_ptr; }\n'
+            '};\n',
+            '')
+        self.assert_multi_line_lint(
+            'class MyClass {\n'
+            '    int getIntValue()\n'
+            '    {\n'
+            '        ASSERT(m_ptr); return *m_ptr;\n'
+            '    }\n'
+            '};\n',
             'More than one command on the same line  [whitespace/newline] [4]')
 
         self.assert_multi_line_lint(

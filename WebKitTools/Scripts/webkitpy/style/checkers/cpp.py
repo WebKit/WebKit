@@ -1920,7 +1920,7 @@ def get_line_width(line):
     return len(line)
 
 
-def check_style(clean_lines, line_number, file_extension, file_state, error):
+def check_style(clean_lines, line_number, file_extension, class_state, file_state, error):
     """Checks rules from the 'C++ style rules' section of cppguide.html.
 
     Most of these rules are hard to test (naming, comment style), but we
@@ -1931,6 +1931,8 @@ def check_style(clean_lines, line_number, file_extension, file_state, error):
       clean_lines: A CleansedLines instance containing the file.
       line_number: The number of the line to check.
       file_extension: The extension (without the dot) of the filename.
+      class_state: A _ClassState instance which maintains information about
+                   the current stack of nested class declarations being parsed.
       file_state: A _FileState instance which maintains information about
                   the state of things in the file.
       error: The function to call with any errors found.
@@ -1991,6 +1993,10 @@ def check_style(clean_lines, line_number, file_extension, file_state, error):
         and not ((cleansed_line.find('case ') != -1
                   or cleansed_line.find('default:') != -1)
                  and cleansed_line.find('break;') != -1)
+        # Also it's ok to have many commands in trivial single-line accessors in class definitions.
+        and not (match(r'.*\(.*\).*{.*.}', line)
+                 and class_state.classinfo_stack
+                 and line.count('{') == line.count('}'))
         and not cleansed_line.startswith('#define ')):
         error(line_number, 'whitespace/newline', 4,
               'More than one command on the same line')
@@ -2845,7 +2851,7 @@ def process_line(filename, file_extension,
     if search(r'\bNOLINT\b', raw_lines[line]):  # ignore nolint lines
         return
     check_for_multiline_comments_and_strings(clean_lines, line, error)
-    check_style(clean_lines, line, file_extension, file_state, error)
+    check_style(clean_lines, line, file_extension, class_state, file_state, error)
     check_language(filename, clean_lines, line, file_extension, include_state,
                    error)
     check_for_non_standard_constructs(clean_lines, line, class_state, error)
