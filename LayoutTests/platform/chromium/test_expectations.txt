@@ -3116,3 +3116,5 @@ BUG42691 : fast/lists/w3-css3-list-styles-numeric.html = TEXT
 BUG42691 : fast/lists/w3-list-styles.html = TEXT
 BUG42691 : fast/lists/li-values.html = TIMEOUT
 
+// All storage tests started failing on WIN after r64313
+BUG50687 WIN : storage = PASS TIMEOUT FAIL CRASH

@@ -1,3 +1,13 @@
+2010-07-29  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Unreviewed, updating Chromium expectations.
+
+        All storage tests started failing on the Windows canary bot after
+        r64313. Disabling these tests on that bot until we figure out
+        what's wrong.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-07-28  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by David Levin.
