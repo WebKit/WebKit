@@ -1,3 +1,25 @@
+2010-07-29  Adam Roben  <aroben@apple.com>
+
+        Remove PluginInfoStore::mimeTypeFromExtension
+
+        WebCore::MIMETypeRegistry already provides a cross-platform interface
+        for this.
+
+        Fixes <http://webkit.org/b/43188>
+        PluginInfoStore::mimeTypeFromExtension is unnecessary
+
+        Reviewed by Nikolas Zimmermann.
+
+        * UIProcess/Plugins/PluginInfoStore.cpp:
+        (WebKit::PluginInfoStore::findPlugin): Changed to use
+        MIMETypeRegistry.
+
+        * UIProcess/Plugins/PluginInfoStore.h:
+        * UIProcess/Plugins/mac/PluginInfoStoreMac.mm:
+        * UIProcess/Plugins/qt/PluginInfoStoreQt.cpp:
+        * UIProcess/Plugins/win/PluginInfoStoreWin.cpp:
+        Removed mimeTypeFromExtension.
+
 2010-07-28  Sam Weinig  <sam@webkit.org>
 
         Another Windows build fix.

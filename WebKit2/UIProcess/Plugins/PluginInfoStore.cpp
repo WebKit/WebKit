@@ -25,8 +25,9 @@
 
 #include "PluginInfoStore.h"
 
-#include <algorithm>
 #include <WebCore/KURL.h>
+#include <WebCore/MIMETypeRegistry.h>
+#include <algorithm>
 #include <wtf/StdLibExtras.h>
 
 using namespace std;
@@ -169,7 +170,7 @@ PluginInfoStore::Plugin PluginInfoStore::findPlugin(String& mimeType, const KURL
             return plugin;
         
         // Finally, try to get the MIME type from the extension in a platform specific manner and use that.
-        String extensionMimeType = mimeTypeFromExtension(extension);
+        String extensionMimeType = MIMETypeRegistry::getMIMETypeForExtension(extension);
         if (!extensionMimeType.isNull()) {
             Plugin plugin = findPluginForMIMEType(extensionMimeType);
             if (!plugin.path.isNull()) {
