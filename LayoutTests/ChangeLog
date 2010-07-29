@@ -1,3 +1,16 @@
+2010-07-29  Victor Wang  <victorw@chromium.org>
+
+        Unreviewed, rolling out r64270.
+        http://trac.webkit.org/changeset/64270
+        https://bugs.webkit.org/show_bug.cgi?id=39589
+
+        The patch breaks chromium webkit unittest
+
+        * fast/dom/DeviceOrientation/basic-operation-expected.txt: Removed.
+        * fast/dom/DeviceOrientation/basic-operation.html: Removed.
+        * fast/dom/DeviceOrientation/script-tests/basic-operation.js: Removed.
+        * platform/gtk/Skipped:
+
 2010-07-29  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler.

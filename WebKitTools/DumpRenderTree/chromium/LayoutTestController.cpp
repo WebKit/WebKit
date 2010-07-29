@@ -164,8 +164,6 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("forceRedSelectionColors", &LayoutTestController::forceRedSelectionColors);
     bindMethod("setEditingBehavior", &LayoutTestController::setEditingBehavior);
 
-    bindMethod("setMockDeviceOrientation", &LayoutTestController::setMockDeviceOrientation);
-
     bindMethod("setGeolocationPermission", &LayoutTestController::setGeolocationPermission);
     bindMethod("setMockGeolocationPosition", &LayoutTestController::setMockGeolocationPosition);
     bindMethod("setMockGeolocationError", &LayoutTestController::setMockGeolocationError);
@@ -1310,12 +1308,6 @@ void LayoutTestController::setEditingBehavior(const CppArgumentList& arguments, 
         settings->setEditingBehavior(WebSettings::EditingBehaviorWin);
     else
         logErrorToConsole("Passed invalid editing behavior. Should be 'mac' or 'win'.");
-}
-
-void LayoutTestController::setMockDeviceOrientation(const CppArgumentList& arguments, CppVariant* result)
-{
-    // FIXME: Implement for DeviceOrientation layout tests.
-    // See https://bugs.webkit.org/show_bug.cgi?id=30335.
 }
 
 void LayoutTestController::setGeolocationPermission(const CppArgumentList& arguments, CppVariant* result)

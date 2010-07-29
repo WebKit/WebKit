@@ -197,8 +197,6 @@ public slots:
     // which is a Mac-specific test.
     void addDisallowedURL(const QString&) {}
 
-    void setMockDeviceOrientation(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma);
-
     void setMockGeolocationError(int code, const QString& message);
     void setMockGeolocationPosition(double latitude, double longitude, double accuracy);
     void setGeolocationPermission(bool allow);

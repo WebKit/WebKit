@@ -970,27 +970,6 @@ static JSValueRef setDomainRelaxationForbiddenForURLSchemeCallback(JSContextRef 
     return JSValueMakeUndefined(context);
 }
 
-static JSValueRef setMockDeviceOrientationCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-{
-    if (argumentCount < 6)
-        return JSValueMakeUndefined(context);
-
-    bool canProvideAlpha = JSValueToBoolean(context, arguments[0]);
-    double alpha = JSValueToNumber(context, arguments[1], exception);
-    ASSERT(!*exception);
-    bool canProvideBeta = JSValueToBoolean(context, arguments[2]);
-    double beta = JSValueToNumber(context, arguments[3], exception);
-    ASSERT(!*exception);
-    bool canProvideGamma = JSValueToBoolean(context, arguments[4]);
-    double gamma = JSValueToNumber(context, arguments[5], exception);
-    ASSERT(!*exception);
-
-    LayoutTestController* controller = reinterpret_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
-    controller->setMockDeviceOrientation(canProvideAlpha, alpha, canProvideBeta, beta, canProvideGamma, gamma);
-
-    return JSValueMakeUndefined(context);
-}
-
 static JSValueRef setMockGeolocationPositionCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     if (argumentCount < 3)
@@ -1845,7 +1824,6 @@ JSStaticFunction* LayoutTestController::staticFunctions()
         { "setIconDatabaseEnabled", setIconDatabaseEnabledCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setJavaScriptProfilingEnabled", setJavaScriptProfilingEnabledCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setMainFrameIsFirstResponder", setMainFrameIsFirstResponderCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "setMockDeviceOrientation", setMockDeviceOrientationCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setMockGeolocationError", setMockGeolocationErrorCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setMockGeolocationPosition", setMockGeolocationPositionCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setNewWindowsCopyBackForwardList", setNewWindowsCopyBackForwardListCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

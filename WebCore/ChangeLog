@@ -1,3 +1,21 @@
+2010-07-29  Victor Wang  <victorw@chromium.org>
+
+        Unreviewed, rolling out r64270.
+        http://trac.webkit.org/changeset/64270
+        https://bugs.webkit.org/show_bug.cgi?id=39589
+
+        The patch breaks chromium webkit unittest
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DeviceOrientationClient.h:
+        (WebCore::DeviceOrientationClient::~DeviceOrientationClient):
+        * dom/DeviceOrientationController.cpp:
+        (WebCore::DeviceOrientationController::DeviceOrientationController):
+        * dom/DeviceOrientationEvent.cpp:
+        * platform/mock/DeviceOrientationClientMock.cpp: Removed.
+        * platform/mock/DeviceOrientationClientMock.h: Removed.
+
 2010-07-29  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler.
