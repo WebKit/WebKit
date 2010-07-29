@@ -82,6 +82,7 @@
 #if ENABLE(JSC_MULTIPLE_THREADS)
 #include <pthread.h>
 #endif
+#include <wtf/StdLibExtras.h>
 
 #ifndef NO_TCMALLOC_SAMPLES
 #ifdef WTF_CHANGES
@@ -1015,7 +1016,7 @@ class PageHeapAllocator {
         if (!new_allocation)
           CRASH();
 
-        *(void**)new_allocation = allocated_regions_;
+        *reinterpret_cast_ptr<void**>(new_allocation) = allocated_regions_;
         allocated_regions_ = new_allocation;
         free_area_ = new_allocation + kAlignedSize;
         free_avail_ = kAllocIncrement - kAlignedSize;
@@ -2710,7 +2711,7 @@ ALWAYS_INLINE void TCMalloc_Central_FreeList::Populate() {
   char* nptr;
   while ((nptr = ptr + size) <= limit) {
     *tail = ptr;
-    tail = reinterpret_cast<void**>(ptr);
+    tail = reinterpret_cast_ptr<void**>(ptr);
     ptr = nptr;
     num++;
   }

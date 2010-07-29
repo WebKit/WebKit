@@ -25,6 +25,7 @@
 
 #include "config.h"
 
+#include <wtf/StdLibExtras.h>
 #include <wtf/text/WTFString.h>
 
 #include <QString>
@@ -36,14 +37,14 @@ String::String(const QString& qstr)
 {
     if (qstr.isNull())
         return;
-    m_impl = StringImpl::create(reinterpret_cast<const UChar*>(qstr.constData()), qstr.length());
+    m_impl = StringImpl::create(reinterpret_cast_ptr<const UChar*>(qstr.constData()), qstr.length());
 }
 
 String::String(const QStringRef& ref)
 {
     if (!ref.string())
         return;
-    m_impl = StringImpl::create(reinterpret_cast<const UChar*>(ref.unicode()), ref.length());
+    m_impl = StringImpl::create(reinterpret_cast_ptr<const UChar*>(ref.unicode()), ref.length());
 }
 
 String::operator QString() const
