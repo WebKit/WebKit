@@ -1,3 +1,18 @@
+2010-07-29  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Dirk Schulze.
+
+        [Cairo] Remove setStrokeStyle workaround for InlineTextBoxes
+        https://bugs.webkit.org/show_bug.cgi?id=43136
+
+        Remove workaround added in https://bugs.webkit.org/show_bug.cgi?id=15659
+        to fix stroke style for InlineTextBox underlines.
+
+        No new tests as this should not change functionality.
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::drawLineForText): Remove old workaround.
+
 2010-07-28  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by David Levin.
