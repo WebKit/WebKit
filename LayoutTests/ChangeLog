@@ -1,3 +1,10 @@
+2010-07-29  Victor Wang  <victorw@chromium.org>
+
+        Unreviewed. Update chromium expectation for test:
+        fast/js/regexp-look-ahead-empty.html
+
+        * platform/chromium/fast/js/regexp-look-ahead-empty-expected.txt: Added.
+
 2010-07-29  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Oliver Hunt.
