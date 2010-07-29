@@ -165,13 +165,14 @@ StyleDifference SVGRenderStyle::diff(const SVGRenderStyle* other) const
     // Some stroke properties, requires relayouts, as the cached stroke boundaries need to be recalculated.
     if (stroke != other->stroke) {
         if (stroke->width != other->stroke->width
+            || stroke->paint != other->stroke->paint
             || stroke->miterLimit != other->stroke->miterLimit
             || stroke->dashArray != other->stroke->dashArray
             || stroke->dashOffset != other->stroke->dashOffset)
             return StyleDifferenceLayout;
 
-        // Only these two cases remain, where we only need a repaint.
-        ASSERT(stroke->paint != other->stroke->paint || stroke->opacity != other->stroke->opacity);
+        // Only the stroke-opacity case remains, where we only need a repaint.
+        ASSERT(stroke->opacity != other->stroke->opacity);
         return StyleDifferenceRepaint;
     }
 

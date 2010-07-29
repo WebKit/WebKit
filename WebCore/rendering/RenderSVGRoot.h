@@ -58,6 +58,8 @@ private:
     virtual void paint(PaintInfo&, int parentX, int parentY);
 
     virtual void destroy();
+    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
+    virtual void updateFromElement();
 
     virtual const AffineTransform& localToParentTransform() const;
 
@@ -77,7 +79,7 @@ private:
 
     void calcViewport();
 
-    bool selfWillPaint() const;
+    bool selfWillPaint();
 
     IntSize parentOriginToBorderBox() const;
     IntSize borderOriginToContentBox() const;

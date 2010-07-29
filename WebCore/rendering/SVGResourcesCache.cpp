@@ -131,17 +131,7 @@ void SVGResourcesCache::clientStyleChanged(RenderObject* renderer, StyleDifferen
         return;
 
     clientUpdatedFromElement(renderer, newStyle);
-
-    // Invalidate resources in ancestor chain, if needed.
-    RenderObject* parent = renderer->parent();
-    while (parent) {
-        if (parent->isSVGResourceContainer()) {
-            parent->toRenderSVGResourceContainer()->invalidateClients();
-            break;
-        }
-
-        parent = parent->parent();
-    }
+    RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer, false);
 }
  
 void SVGResourcesCache::clientUpdatedFromElement(RenderObject* renderer, const RenderStyle* newStyle)

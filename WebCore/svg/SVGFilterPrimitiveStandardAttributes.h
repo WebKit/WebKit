@@ -55,7 +55,8 @@ protected:
     {
         if (!inDocument() || !parentNode()->hasTagName(SVGNames::filterTag))
             return;
-        static_cast<SVGFilterElement*>(parentNode())->invalidateResourceClients();
+        if (RenderObject* object = parentNode()->renderer())
+            object->setNeedsLayout(true);
     }
 
 private:

@@ -47,6 +47,7 @@ namespace WebCore {
         virtual ~SVGPatternElement();
         
         virtual bool isValid() const { return SVGTests::isValid(); }
+        virtual bool needsPendingResourceHandling() const { return false; }
 
         virtual void parseMappedAttribute(Attribute*);
         virtual void svgAttributeChanged(const QualifiedName&);
@@ -56,9 +57,12 @@ namespace WebCore {
         virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
         PatternAttributes collectPatternProperties() const;
+        void setFollowLink(bool followLink) { m_followLink = followLink; }
 
     private:
         virtual bool selfHasRelativeLengths() const;
+
+        bool m_followLink;
 
         DECLARE_ANIMATED_PROPERTY(SVGPatternElement, SVGNames::xAttr, SVGLength, X, x)
         DECLARE_ANIMATED_PROPERTY(SVGPatternElement, SVGNames::yAttr, SVGLength, Y, y)

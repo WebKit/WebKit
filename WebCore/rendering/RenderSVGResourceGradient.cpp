@@ -43,28 +43,32 @@ RenderSVGResourceGradient::RenderSVGResourceGradient(SVGGradientElement* node)
 
 RenderSVGResourceGradient::~RenderSVGResourceGradient()
 {
+    if (m_gradient.isEmpty())
+        return;
+
     deleteAllValues(m_gradient);
     m_gradient.clear();
 }
 
 void RenderSVGResourceGradient::invalidateClients()
 {
-    const HashMap<RenderObject*, GradientData*>::const_iterator end = m_gradient.end();
-    for (HashMap<RenderObject*, GradientData*>::const_iterator it = m_gradient.begin(); it != end; ++it)
-        markForLayoutAndResourceInvalidation(it->first, false);
+    if (!m_gradient.isEmpty()) {
+        deleteAllValues(m_gradient);
+        m_gradient.clear();
+    }
 
-    deleteAllValues(m_gradient);
-    m_gradient.clear();
+    markAllClientsForInvalidation(RepaintInvalidation);
 }
 
-void RenderSVGResourceGradient::invalidateClient(RenderObject* object)
+void RenderSVGResourceGradient::invalidateClient(RenderObject* client)
 {
-    ASSERT(object);
-    if (!m_gradient.contains(object))
-        return;
+    ASSERT(client);
+    ASSERT(client->selfNeedsLayout());
 
-    delete m_gradient.take(object);
-    markForLayoutAndResourceInvalidation(object, false);
+    if (m_gradient.contains(client))
+        delete m_gradient.take(client);
+
+    markClientForInvalidation(client, RepaintInvalidation);
 }
 
 #if PLATFORM(CG)

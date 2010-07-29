@@ -51,8 +51,6 @@ private:
     virtual bool requiresLayer() const { return false; }
     virtual void layout();
 
-    virtual void destroy();
-
     virtual void absoluteQuads(Vector<FloatQuad>&);
 
     virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer);

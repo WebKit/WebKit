@@ -107,7 +107,7 @@ void SVGFilterPrimitiveStandardAttributes::childrenChanged(bool changedByParser,
     SVGStyledElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
 
     if (!changedByParser)
-        invalidateResourceClients();
+        invalidateFilter();
 }
 
 void SVGFilterPrimitiveStandardAttributes::setStandardAttributes(bool primitiveBoundingBoxMode, FilterEffect* filterEffect) const

@@ -1,3 +1,84 @@
+2010-07-29  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        WebKit shouldn't ignore resource cycles, but break them as Opera does
+        https://bugs.webkit.org/show_bug.cgi?id=43031
+
+        Rebaseline results now that cycles are broken, instead of ignored.
+
+        * platform/mac/svg/clip-path/clip-path-recursive-call-by-child-expected.txt:
+        * platform/mac/svg/clip-path/clip-path-recursive-call-expected.checksum:
+        * platform/mac/svg/clip-path/clip-path-recursive-call-expected.png:
+        * platform/mac/svg/custom/circular-marker-reference-4-expected.txt:
+        * platform/mac/svg/custom/gradient-cycle-detection-expected.checksum:
+        * platform/mac/svg/custom/gradient-cycle-detection-expected.png:
+        * platform/mac/svg/custom/recursive-clippath-expected.checksum:
+        * platform/mac/svg/custom/recursive-clippath-expected.png:
+        * platform/mac/svg/custom/recursive-clippath-expected.txt:
+        * platform/mac/svg/custom/recursive-filter-expected.checksum:
+        * platform/mac/svg/custom/recursive-filter-expected.png:
+        * platform/mac/svg/custom/recursive-filter-expected.txt:
+        * platform/mac/svg/custom/recursive-gradient-expected.checksum:
+        * platform/mac/svg/custom/recursive-gradient-expected.png:
+        * platform/mac/svg/custom/recursive-gradient-expected.txt:
+        * platform/mac/svg/custom/recursive-mask-expected.checksum:
+        * platform/mac/svg/custom/recursive-mask-expected.png:
+        * platform/mac/svg/custom/recursive-mask-expected.txt:
+        * platform/mac/svg/custom/recursive-pattern-expected.checksum:
+        * platform/mac/svg/custom/recursive-pattern-expected.png:
+        * platform/mac/svg/custom/recursive-pattern-expected.txt:
+        * platform/mac/svg/custom/use-events-crash-expected.txt:
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-dom-markerHeight-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-dom-markerHeight-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-dom-markerWidth-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-dom-markerWidth-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-svgdom-markerHeight-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-svgdom-markerHeight-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-svgdom-markerWidth-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-svgdom-markerWidth-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-dom-height-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-dom-height-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-dom-maskContentUnits-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-dom-maskContentUnits-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-dom-maskUnits-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-dom-maskUnits-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-dom-width-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-dom-width-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-dom-x-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-dom-x-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-dom-y-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-dom-y-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-svgdom-height-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-svgdom-height-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-svgdom-maskContentUnits-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-svgdom-maskContentUnits-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-svgdom-maskUnits-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-svgdom-maskUnits-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-svgdom-width-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-svgdom-width-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-svgdom-x-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-svgdom-x-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-svgdom-y-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-svgdom-y-prop-expected.png:
+        * platform/mac/svg/hixie/error/017-expected.txt:
+        * svg/clip-path/clip-path-recursive-call-by-child.svg: Rewrite test to match expectations, now that cycles are broken, not ignored. Looks like in Opera.
+        * svg/custom/js-late-clipPath-and-object-creation.svg: Don't update from within the onload event, instead use zero-ms timeouts, to test updating reliable. It failed before this patch.
+        * svg/custom/js-late-clipPath-creation.svg: Ditto.
+        * svg/custom/js-late-gradient-and-object-creation.svg: Ditto.
+        * svg/custom/js-late-gradient-creation.svg: Ditto.
+        * svg/custom/js-late-marker-and-object-creation.svg: Ditto.
+        * svg/custom/js-late-marker-creation.svg: Ditto.
+        * svg/custom/js-late-mask-and-object-creation.svg: Ditto.
+        * svg/custom/js-late-mask-creation.svg: Ditto.
+        * svg/custom/js-late-pattern-and-object-creation.svg: Ditto.
+        * svg/custom/js-late-pattern-creation.svg: Ditto.
+        * svg/custom/recursive-clippath.svg: Add a reference rendering, side by side to the test, for the ease of comparision. Passes in WebKit + Opera.
+        * svg/custom/recursive-filter.svg: Ditto.
+        * svg/custom/recursive-gradient.svg: Ditto.
+        * svg/custom/recursive-mask.svg: Ditto.
+        * svg/custom/recursive-pattern.svg: Ditto.
+
 2010-07-21 Antonio Gomes  <tonikitoo@webkit.org> , Grace Kloba  <klobag@gmail.com>
 
         Reviewed by David Hyatt.

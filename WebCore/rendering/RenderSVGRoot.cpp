@@ -32,6 +32,7 @@
 #include "RenderView.h"
 #include "SVGLength.h"
 #include "SVGRenderSupport.h"
+#include "SVGResources.h"
 #include "SVGSVGElement.h"
 #include "SVGStyledElement.h"
 #include "TransformState.h"
@@ -129,13 +130,11 @@ void RenderSVGRoot::layout()
     setNeedsLayout(false);
 }
 
-bool RenderSVGRoot::selfWillPaint() const
+bool RenderSVGRoot::selfWillPaint()
 {
 #if ENABLE(FILTERS)
-    const SVGRenderStyle* svgStyle = style()->svgStyle();
-    RenderSVGResourceFilter* filter = getRenderSVGResourceById<RenderSVGResourceFilter>(document(), svgStyle->filterResource());
-    if (filter)
-        return true;
+    SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(this);
+    return resources && resources->filter();
 #endif
     return false;
 }
@@ -192,8 +191,20 @@ void RenderSVGRoot::paint(PaintInfo& paintInfo, int parentX, int parentY)
 
 void RenderSVGRoot::destroy()
 {
-    RenderSVGResource::invalidateAllResourcesOfRenderer(this);
+    SVGResourcesCache::clientDestroyed(this);
     RenderBox::destroy();
+}
+
+void RenderSVGRoot::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+{
+    RenderBox::styleDidChange(diff, oldStyle);
+    SVGResourcesCache::clientStyleChanged(this, diff, style());
+}
+
+void RenderSVGRoot::updateFromElement()
+{
+    RenderBox::updateFromElement();
+    SVGResourcesCache::clientUpdatedFromElement(this, style());
 }
 
 void RenderSVGRoot::calcViewport()

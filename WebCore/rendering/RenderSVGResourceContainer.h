@@ -23,10 +23,7 @@
 
 #if ENABLE(SVG)
 #include "RenderSVGHiddenContainer.h"
-
-#include "SVGStyledTransformableElement.h"
 #include "RenderSVGResource.h"
-#include "RenderSVGShadowTreeRootContainer.h"
 
 namespace WebCore {
 
@@ -36,27 +33,40 @@ public:
     RenderSVGResourceContainer(SVGStyledElement*);
     virtual ~RenderSVGResourceContainer();
 
-    void idChanged();
+    virtual void layout();
+    virtual void destroy();
+    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
     virtual bool isSVGResourceContainer() const { return true; }
     virtual bool drawsContents() { return false; }
-
     virtual RenderSVGResourceContainer* toRenderSVGResourceContainer() { return this; }
-    virtual bool childElementReferencesResource(const SVGRenderStyle*, const String&) const { return false; }
 
     static AffineTransform transformOnNonScalingStroke(RenderObject*, const AffineTransform& resourceTransform);
 
-    bool containsCyclicReference(const Node* startNode) const;
+    void idChanged();
+
+protected:
+    enum InvalidationMode {
+        LayoutAndBoundariesInvalidation,
+        BoundariesInvalidation,
+        RepaintInvalidation
+    };
+
+    // Used from the invalidateClient/invalidateClients methods from classes, inheriting from us.
+    void markAllClientsForInvalidation(InvalidationMode);
+    void markClientForInvalidation(RenderObject*, InvalidationMode);
 
 private:
     friend class SVGResourcesCache;
-
-    // FIXME: No-ops for now, until follow-up patch on bug 43031 lands.
-    void addClient(RenderObject*) { }
-    void removeClient(RenderObject*) { }
+    void addClient(RenderObject*);
+    void removeClient(RenderObject*);
 
 private:
+    void registerResource();
+
     AtomicString m_id;
+    bool m_registered;
+    HashSet<RenderObject*> m_clients;
 };
 
 inline RenderSVGResourceContainer* getRenderSVGResourceContainerById(Document* document, const AtomicString& id)

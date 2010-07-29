@@ -56,6 +56,8 @@ public:
     SVGMarkerElement(const QualifiedName&, Document*);
     virtual ~SVGMarkerElement();
 
+    virtual bool needsPendingResourceHandling() const { return false; }
+
     AffineTransform viewBoxToViewTransform(float viewWidth, float viewHeight) const;
 
     void setOrientToAuto();

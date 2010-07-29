@@ -47,8 +47,8 @@ public:
 
 private:
     // Hit-detection seperated for the fill and the stroke
-    bool fillContains(const FloatPoint&, bool requiresFill = true, WindRule fillRule = RULE_NONZERO) const;
-    bool strokeContains(const FloatPoint&, bool requiresStroke = true) const;
+    bool fillContains(const FloatPoint&, bool requiresFill = true, WindRule fillRule = RULE_NONZERO);
+    bool strokeContains(const FloatPoint&, bool requiresStroke = true);
 
     virtual FloatRect objectBoundingBox() const { return m_fillBoundingBox; }
     virtual FloatRect strokeBoundingBox() const { return m_strokeAndMarkerBoundingBox; }

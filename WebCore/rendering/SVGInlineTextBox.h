@@ -75,7 +75,7 @@ private:
     TextRun constructTextRun(RenderStyle*) const;
     AffineTransform buildChunkTransformation(SVGChar& firstCharacter) const;
 
-    bool acquirePaintingResource(GraphicsContext*&, RenderStyle*);
+    bool acquirePaintingResource(GraphicsContext*&, RenderObject*, RenderStyle*);
     void releasePaintingResource(GraphicsContext*&);
 
     bool prepareGraphicsContextForTextPainting(GraphicsContext*&, TextRun&, RenderStyle*);
@@ -83,7 +83,7 @@ private:
 
     void computeTextMatchMarkerRect(RenderStyle*);
     void paintDecoration(GraphicsContext*, const FloatPoint& textOrigin, ETextDecoration, bool hasSelection);
-    void paintDecorationWithStyle(GraphicsContext*, const FloatPoint& textOrigin, RenderStyle*, ETextDecoration);
+    void paintDecorationWithStyle(GraphicsContext*, const FloatPoint& textOrigin, RenderObject*, ETextDecoration);
     void paintSelection(GraphicsContext*, const FloatPoint& textOrigin, RenderStyle*);
     void paintText(GraphicsContext*, const FloatPoint& textOrigin, RenderStyle*, RenderStyle* selectionStyle, bool hasSelection, bool paintSelectedTextOnly);
     void paintTextWithShadows(GraphicsContext*, const FloatPoint& textOrigin, RenderStyle*, TextRun&, int startPos, int endPos);

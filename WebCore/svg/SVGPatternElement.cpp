@@ -56,6 +56,7 @@ SVGPatternElement::SVGPatternElement(const QualifiedName& tagName, Document* doc
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
     , SVGFitToViewBox()
+    , m_followLink(true)
     , m_x(LengthModeWidth)
     , m_y(LengthModeHeight)
     , m_width(LengthModeWidth)
@@ -129,6 +130,10 @@ void SVGPatternElement::svgAttributeChanged(const QualifiedName& attrName)
         updateRelativeLengthsInformation();
     }
 
+    RenderObject* object = renderer();
+    if (!object)
+        return;
+
     if (invalidateClients
         || attrName == SVGNames::patternUnitsAttr
         || attrName == SVGNames::patternContentUnitsAttr
@@ -139,7 +144,7 @@ void SVGPatternElement::svgAttributeChanged(const QualifiedName& attrName)
         || SVGExternalResourcesRequired::isKnownAttribute(attrName)
         || SVGFitToViewBox::isKnownAttribute(attrName)
         || SVGStyledElement::isKnownAttribute(attrName))
-        invalidateResourceClients();
+        object->setNeedsLayout(true);
 }
 
 void SVGPatternElement::synchronizeProperty(const QualifiedName& attrName)
@@ -188,8 +193,11 @@ void SVGPatternElement::childrenChanged(bool changedByParser, Node* beforeChange
 {
     SVGStyledElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
 
-    if (!changedByParser)
-        invalidateResourceClients();
+    if (changedByParser)
+        return;
+
+    if (RenderObject* object = renderer())
+        object->setNeedsLayout(true);
 }
 
 RenderObject* SVGPatternElement::createRenderer(RenderArena* arena, RenderStyle*)
@@ -231,13 +239,15 @@ PatternAttributes SVGPatternElement::collectPatternProperties() const
         processedPatterns.add(current);
 
         // Respect xlink:href, take attributes from referenced element
-        Node* refNode = ownerDocument()->getElementById(SVGURIReference::getTarget(current->href()));
+        Node* refNode = m_followLink ? ownerDocument()->getElementById(SVGURIReference::getTarget(current->href())) : 0;
         if (refNode && refNode->hasTagName(SVGNames::patternTag)) {
             current = static_cast<const SVGPatternElement*>(const_cast<const Node*>(refNode));
 
             // Cycle detection
-            if (processedPatterns.contains(current))
-                return PatternAttributes();
+            if (processedPatterns.contains(current)) {
+                current = 0;
+                break;
+            }
         } else
             current = 0;
     }

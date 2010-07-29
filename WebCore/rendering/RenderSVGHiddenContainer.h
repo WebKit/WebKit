@@ -24,7 +24,6 @@
 #define RenderSVGHiddenContainer_h
 
 #if ENABLE(SVG)
-
 #include "RenderSVGContainer.h"
 
 namespace WebCore {
@@ -39,11 +38,13 @@ namespace WebCore {
 
         virtual const char* renderName() const { return "RenderSVGHiddenContainer"; }
 
+    protected:
+        virtual void layout();
+
     private:
         virtual bool isSVGHiddenContainer() const { return true; }
         virtual bool requiresLayer() const { return false; }
 
-        virtual void layout();
         virtual void paint(PaintInfo&, int parentX, int parentY);
         
         virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer);

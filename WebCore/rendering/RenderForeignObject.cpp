@@ -117,14 +117,16 @@ void RenderForeignObject::layout()
 
     // FIXME: Investigate in location rounding issues - only affects RenderForeignObject & RenderSVGText
     setLocation(roundedIntPoint(viewportLocation));
-    RenderBlock::layout();
 
-    // Invalidate all resources of this client, if we changed something.
-    if (m_everHadLayout && selfNeedsLayout())
-        RenderSVGResource::invalidateAllResourcesOfRenderer(this);
+    bool layoutChanged = m_everHadLayout && selfNeedsLayout();
+    RenderBlock::layout();
+    ASSERT(!needsLayout());
+
+    // Invalidate all resources of this client if our layout changed.
+    if (layoutChanged)
+        SVGResourcesCache::clientLayoutChanged(this);
 
     repainter.repaintAfterLayout();
-    setNeedsLayout(false);
 }
 
 bool RenderForeignObject::nodeAtFloatPoint(const HitTestRequest& request, HitTestResult& result, const FloatPoint& pointInParent, HitTestAction hitTestAction)

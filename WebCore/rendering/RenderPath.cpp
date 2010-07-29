@@ -35,11 +35,12 @@
 #include "PointerEventsHitRules.h"
 #include "RenderSVGContainer.h"
 #include "RenderSVGResourceMarker.h"
-#include "StrokeStyleApplier.h"
 #include "SVGRenderSupport.h"
+#include "SVGResources.h"
 #include "SVGStyledTransformableElement.h"
 #include "SVGTransformList.h"
 #include "SVGURIReference.h"
+#include "StrokeStyleApplier.h"
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
@@ -72,7 +73,7 @@ RenderPath::RenderPath(SVGStyledTransformableElement* node)
 {
 }
 
-bool RenderPath::fillContains(const FloatPoint& point, bool requiresFill, WindRule fillRule) const
+bool RenderPath::fillContains(const FloatPoint& point, bool requiresFill, WindRule fillRule)
 {
     if (!m_fillBoundingBox.contains(point))
         return false;
@@ -83,7 +84,7 @@ bool RenderPath::fillContains(const FloatPoint& point, bool requiresFill, WindRu
     return m_path.contains(point, fillRule);
 }
 
-bool RenderPath::strokeContains(const FloatPoint& point, bool requiresStroke) const
+bool RenderPath::strokeContains(const FloatPoint& point, bool requiresStroke)
 {
     if (!m_strokeAndMarkerBoundingBox.contains(point))
         return false;
@@ -111,9 +112,9 @@ void RenderPath::layout()
         m_needsTransformUpdate = false;
     }
 
-    // Invalidate all resources of this client, if we changed something.
+    // Invalidate all resources of this client if our layout changed.
     if (m_everHadLayout && selfNeedsLayout())
-        RenderSVGResource::invalidateAllResourcesOfRenderer(this);
+        SVGResourcesCache::clientLayoutChanged(this);
 
     // At this point LayoutRepainter already grabbed the old bounds,
     // recalculate them now so repaintAfterLayout() uses the new bounds
@@ -234,8 +235,6 @@ bool RenderPath::nodeAtFloatPoint(const HitTestRequest& request, HitTestResult& 
 
 FloatRect RenderPath::calculateMarkerBoundsIfNeeded()
 {
-    Document* doc = document();
-
     SVGElement* svgElement = static_cast<SVGElement*>(node());
     ASSERT(svgElement && svgElement->document());
     if (!svgElement->isStyled())
@@ -248,39 +247,24 @@ FloatRect RenderPath::calculateMarkerBoundsIfNeeded()
     const SVGRenderStyle* svgStyle = style()->svgStyle();
     ASSERT(svgStyle->hasMarkers());
 
-    AtomicString startMarkerId(svgStyle->markerStartResource());
-    AtomicString midMarkerId(svgStyle->markerMidResource());
-    AtomicString endMarkerId(svgStyle->markerEndResource());
+    SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(this);
+    if (!resources)
+        return FloatRect();
 
-    RenderSVGResourceMarker* startMarker = getRenderSVGResourceById<RenderSVGResourceMarker>(doc, startMarkerId);
-    RenderSVGResourceMarker* midMarker = getRenderSVGResourceById<RenderSVGResourceMarker>(doc, midMarkerId);
-    RenderSVGResourceMarker* endMarker = getRenderSVGResourceById<RenderSVGResourceMarker>(doc, endMarkerId);
-
-    if (!startMarker && !startMarkerId.isEmpty())
-        svgElement->document()->accessSVGExtensions()->addPendingResource(startMarkerId, styledElement);
-    else if (startMarker)
-        startMarker->addClient(this);
-
-    if (!midMarker && !midMarkerId.isEmpty())
-        svgElement->document()->accessSVGExtensions()->addPendingResource(midMarkerId, styledElement);
-    else if (midMarker)
-        midMarker->addClient(this);
-
-    if (!endMarker && !endMarkerId.isEmpty())
-        svgElement->document()->accessSVGExtensions()->addPendingResource(endMarkerId, styledElement);
-    else if (endMarker)
-        endMarker->addClient(this);
-
-    if (!startMarker && !midMarker && !endMarker)
+    RenderSVGResourceMarker* markerStart = resources->markerStart();
+    RenderSVGResourceMarker* markerMid = resources->markerMid();
+    RenderSVGResourceMarker* markerEnd = resources->markerEnd();
+    if (!markerStart && !markerMid && !markerEnd)
         return FloatRect();
 
     float strokeWidth = SVGRenderStyle::cssPrimitiveToLength(this, svgStyle->strokeWidth(), 1.0f);
-    return m_markerLayoutInfo.calculateBoundaries(startMarker, midMarker, endMarker, strokeWidth, m_path);
+    return m_markerLayoutInfo.calculateBoundaries(markerStart, markerMid, markerEnd, strokeWidth, m_path);
 }
 
 void RenderPath::styleWillChange(StyleDifference diff, const RenderStyle* newStyle)
 {
-    setNeedsBoundariesUpdate();
+    if (diff == StyleDifferenceLayout)
+        setNeedsBoundariesUpdate();
     RenderSVGModelObject::styleWillChange(diff, newStyle);
 }
 

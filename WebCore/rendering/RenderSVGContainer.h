@@ -69,7 +69,7 @@ protected:
     virtual void applyViewportClip(PaintInfo&) { }
     virtual bool pointIsInsideViewportClip(const FloatPoint& /*pointInParent*/) { return true; }
 
-    bool selfWillPaint() const;
+    bool selfWillPaint();
 
 private:
     RenderObjectChildList m_children;

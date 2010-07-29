@@ -60,28 +60,32 @@ RenderSVGResourceFilter::RenderSVGResourceFilter(SVGFilterElement* node)
 
 RenderSVGResourceFilter::~RenderSVGResourceFilter()
 {
+    if (m_filter.isEmpty())
+        return;
+
     deleteAllValues(m_filter);
     m_filter.clear();
 }
 
 void RenderSVGResourceFilter::invalidateClients()
 {
-    HashMap<RenderObject*, FilterData*>::const_iterator end = m_filter.end();
-    for (HashMap<RenderObject*, FilterData*>::const_iterator it = m_filter.begin(); it != end; ++it)
-        markForLayoutAndResourceInvalidation(it->first);
+    if (!m_filter.isEmpty()) {
+        deleteAllValues(m_filter);
+        m_filter.clear();
+    }
 
-    deleteAllValues(m_filter);
-    m_filter.clear();
+    markAllClientsForInvalidation(LayoutAndBoundariesInvalidation);
 }
 
-void RenderSVGResourceFilter::invalidateClient(RenderObject* object)
+void RenderSVGResourceFilter::invalidateClient(RenderObject* client)
 {
-    ASSERT(object);
-    if (!m_filter.contains(object))
-        return;
+    ASSERT(client);
+    ASSERT(client->selfNeedsLayout());
 
-    delete m_filter.take(object);
-    markForLayoutAndResourceInvalidation(object);
+    if (m_filter.contains(client))
+        delete m_filter.take(client);
+
+    markClientForInvalidation(client, BoundariesInvalidation);
 }
 
 PassRefPtr<SVGFilterBuilder> RenderSVGResourceFilter::buildPrimitives()

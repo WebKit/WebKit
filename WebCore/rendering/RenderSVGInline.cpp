@@ -26,6 +26,7 @@
 #if ENABLE(SVG)
 #include "RenderSVGInline.h"
 
+#include "RenderSVGResource.h"
 #include "SVGInlineFlowBox.h"
 
 namespace WebCore {
@@ -90,6 +91,24 @@ void RenderSVGInline::absoluteQuads(Vector<FloatQuad>& quads)
     FloatRect textBoundingBox = object->strokeBoundingBox();
     for (InlineFlowBox* box = firstLineBox(); box; box = box->nextLineBox())
         quads.append(localToAbsoluteQuad(FloatRect(textBoundingBox.x() + box->x(), textBoundingBox.y() + box->y(), box->width(), box->height())));
+}
+
+void RenderSVGInline::destroy()
+{
+    SVGResourcesCache::clientDestroyed(this);
+    RenderInline::destroy();
+}
+
+void RenderSVGInline::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+{
+    RenderInline::styleDidChange(diff, oldStyle);
+    SVGResourcesCache::clientStyleChanged(this, diff, style());
+}
+
+void RenderSVGInline::updateFromElement()
+{
+    RenderInline::updateFromElement();
+    SVGResourcesCache::clientUpdatedFromElement(this, style());
 }
 
 

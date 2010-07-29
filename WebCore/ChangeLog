@@ -1,3 +1,224 @@
+2010-07-29  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        WebKit shouldn't ignore resource cycles, but break them as Opera does
+        https://bugs.webkit.org/show_bug.cgi?id=43031
+
+        mask images are not updated when render objects' bounds change
+        https://bugs.webkit.org/show_bug.cgi?id=15124
+
+        SVG Gradients do not resize correctly
+        https://bugs.webkit.org/show_bug.cgi?id=41902
+
+        svg/dynamic-updates: SVGMarkerElement markerHeight/Width tests are broken
+        https://bugs.webkit.org/show_bug.cgi?id=42616
+
+        svg/dynamic-updates: SVGMaskElement tests are all broken
+        https://bugs.webkit.org/show_bug.cgi?id=42617
+
+        Don't ignore resources containing cyclic references, but break them, as discussed on SVG WG mailing lists - to be compatible with Opera which already does that.
+
+        We used to lookup RenderSVGResourceContainers objects, by extracting the URI reference from the SVGRenderStyle, then utilizing getElementById() to lookup the
+        node, and access its renderer. Opera ignores such references, if they point to resources that contain cyclic references. Ignoring them would mean we have
+        to mutate the render style to empty the resource strings. That obviously doesn't work, as it would break expectations (getComputedStyle, etc.).
+
+        Introduce a SVGResources class that stores pointers to all resources, that can be applied to a RenderObject (clipper/filter/markers/masker).
+        Add a SVGResourcesCache class, which is basically a HashMap<RenderObject*, SVGResources*>. Whenever a RenderObject receives style, we extract the URI references
+        from the SVGRenderStyle, look up the RenderSVGResourceContainer* objects, and store them in a SVGResources* class. Then we execute a cycle detection logic,
+        which detects cyclic references and breaks them. Breaking them means just nulling the pointer to the resource in the SVGResources object. Those SVGResources
+        objects are cached, and used throughout the render tree to access resources. This way it's guaranteed that all cyclic references are resolved until layout/paint
+        phase begins.
+
+        Add destroy/styleDidChange/updateFromElement methods to all SVG renderers, in order to keep track of resource/client changes in the SVGResourcesCache.
+        As side-effect the SVGResourcesCache now knows which RenderObject references which resource, and thus can handle client registration for a RenderSVGResourceContainer.
+        The RenderSVGResourceContainer now holds a HashSet of RenderObjects, that's always up2date, and not related to the fact wheter a resources has already been used
+        for painting. The old logic missed to register clients for a resource, when the resource was in an invalid state. Fixing that fixes the svg/dynamic-updates/SVGMaskElement* tests.
+
+        Rewrite all svg/custom/recursive-(filter|gradient|mask|pattern).svg tests to contain a reference image how it should be renderered. All 1:1 compatible with Opera now.
+
+        * rendering/RenderForeignObject.cpp:
+        (WebCore::RenderForeignObject::layout): Grab selfNeedsLayout() before calling RenderBlock::layout(), otherwhise it's always false.
+        * rendering/RenderPath.cpp: Don't look up resources manually, use SVGResourcesCache.
+        (WebCore::RenderPath::fillContains): Remove constness, to avoid the need to pass around const RenderObjects* to the SVGResourcesCache.
+        (WebCore::RenderPath::strokeContains): Ditto.
+        (WebCore::RenderPath::layout): s/RenderSVGResource::invalidateAllResourcesOfRenderer/SVGResourcesCache::clientLayoutChanged/.
+        (WebCore::RenderPath::calculateMarkerBoundsIfNeeded): Remove special client handling for markers, it's all unified now.
+        (WebCore::RenderPath::styleWillChange): Only call setNeedsBoundariesUpdate when handling StyleDifferenceRepaint/Layout.
+        * rendering/RenderPath.h:
+        * rendering/RenderSVGBlock.cpp:
+        (WebCore::RenderSVGBlock::destroy): Forward to SVGResourcesCache::clientDestroyed.
+        (WebCore::RenderSVGBlock::styleDidChange): Forward to SVGResourcesCache::clientStyleChanged.
+        (WebCore::RenderSVGBlock::updateFromElement): Forward to SVGResourcesCache::clientUpdatedFromElement.
+        * rendering/RenderSVGBlock.h:
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::layout): s/RenderSVGResource::invalidateAllResourcesOfRenderer/SVGResourcesCache::clientLayoutChanged/.
+        (WebCore::RenderSVGContainer::selfWillPaint): Don't look up resources manually, use SVGResourcesCache.
+        * rendering/RenderSVGContainer.h:
+        * rendering/RenderSVGGradientStop.cpp:
+        (WebCore::RenderSVGGradientStop::styleDidChange): Rewrite, as invalidateResourceClients() is gone.
+        * rendering/RenderSVGHiddenContainer.h: Make layout() protected, as RenderSVGResourceContainer overrides it.
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::layout): s/RenderSVGResource::invalidateAllResourcesOfRenderer/SVGResourcesCache::clientLayoutChanged/.
+        (WebCore::RenderSVGImage::destroy): Forward to SVGResourcesCache::clientDestroyed.
+        (WebCore::RenderSVGImage::styleDidChange): Forward to SVGResourcesCache::clientStyleChanged.
+        (WebCore::RenderSVGImage::updateFromElement): Forward to SVGResourcesCache::clientUpdatedFromElement.
+        (WebCore::RenderSVGImage::imageChanged): Don't look up resources manually, use SVGResourcesCache.
+        * rendering/RenderSVGImage.h:
+        * rendering/RenderSVGInline.cpp:
+        (WebCore::RenderSVGInline::destroy): Forward to SVGResourcesCache::clientDestroyed.
+        (WebCore::RenderSVGInline::styleDidChange): Forward to SVGResourcesCache::clientStyleChanged.
+        (WebCore::RenderSVGInline::updateFromElement): Forward to SVGResourcesCache::clientUpdatedFromElement.
+        * rendering/RenderSVGInline.h:
+        * rendering/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::destroy): Forward to SVGResourcesCache::clientDestroyed.
+        (WebCore::RenderSVGModelObject::styleDidChange): Forward to SVGResourcesCache::clientStyleChanged.
+        (WebCore::RenderSVGModelObject::updateFromElement): Forward to SVGResourcesCache::clientUpdatedFromElement.
+        * rendering/RenderSVGModelObject.h:
+        * rendering/RenderSVGResource.cpp:
+        (WebCore::RenderSVGResource::fillPaintingResource): Remove const from RenderObject parameter.
+        (WebCore::RenderSVGResource::strokePaintingResource): Ditto.
+        (WebCore::RenderSVGResource::markForLayoutAndParentResourceInvalidation): Early exit if we found the first parent resource.
+        * rendering/RenderSVGResource.h:
+        * rendering/RenderSVGResourceClipper.cpp:
+        (WebCore::RenderSVGResourceClipper::~RenderSVGResourceClipper): Early exit if m_clipper is empty.
+        (WebCore::RenderSVGResourceClipper::invalidateClients): Use new helper functions to invalidate clients, shared between all resources in RenderSVGResourceContainer.
+        (WebCore::RenderSVGResourceClipper::invalidateClient): Ditto.
+        (WebCore::RenderSVGResourceClipper::applyResource): Remove containsCyclicReference() check, SVGResourcesCycleSolver breaks cyclic references, resources do not need to take care anymore.
+        (WebCore::RenderSVGResourceClipper::createClipData): Don't look up resources manually, use SVGResourcesCache.
+        (WebCore::RenderSVGResourceClipper::hitTestClipContent): Remove containsCyclicReference() check, SVGResourcesCycleSolver breaks cyclic references, resources do not need to take care anymore.
+        * rendering/RenderSVGResourceClipper.h:
+        * rendering/RenderSVGResourceContainer.cpp:
+        (WebCore::svgExtensionsFromNode):
+        (WebCore::RenderSVGResourceContainer::RenderSVGResourceContainer): Stop registering resource from the constructor, delegate to styleDidChange.
+        (WebCore::RenderSVGResourceContainer::~RenderSVGResourceContainer): Only deregister resource if it was ever registered.
+        (WebCore::RenderSVGResourceContainer::layout): invalidateClients() here, to avoid the need for invalidateResourceClients() in the SVG DOM. Just call setNeedsLayout() from the SVG DOM.
+        (WebCore::RenderSVGResourceContainer::destroy): Forward to SVGResourcesCache::resourceDestroyed.
+        (WebCore::RenderSVGResourceContainer::styleDidChange): Register resource not in the constructor but when it first receives style.
+        (WebCore::RenderSVGResourceContainer::idChanged): Don't duplicate code, use existing methods from SVGResourcesCache.
+        (WebCore::RenderSVGResourceContainer::markAllClientsForInvalidation): Add new helper function, to share code between all resources.
+        (WebCore::RenderSVGResourceContainer::markClientForInvalidation): Ditto.
+        (WebCore::RenderSVGResourceContainer::addClient): SVGResourcesCache now manages the list of clients. It calls addClient() for each RenderObject that uses this resource.
+        (WebCore::RenderSVGResourceContainer::removeClient): SVGResourcesCache now manages the list of clients.
+        (WebCore::RenderSVGResourceContainer::registerResource): New helper function sharing code between idChanged / styleDidChange.
+        (WebCore::RenderSVGResourceContainer::transformOnNonScalingStroke): Add FIXME that the function is misplaced.
+        * rendering/RenderSVGResourceContainer.h: Move most functions to the new RenderSVGResourceContainer.cpp file.
+        * rendering/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::~RenderSVGResourceFilter): Early exit if m_filter is empty.
+        (WebCore::RenderSVGResourceFilter::invalidateClients): Use new helper functions to invalidate clients, shared between all resources in RenderSVGResourceContainer.
+        (WebCore::RenderSVGResourceFilter::invalidateClient): Ditto.
+        * rendering/RenderSVGResourceGradient.cpp:
+        (WebCore::RenderSVGResourceGradient::~RenderSVGResourceGradient): Early exit if m_gradient is empty.
+        (WebCore::RenderSVGResourceGradient::invalidateClients): Use new helper functions to invalidate clients, shared between all resources in RenderSVGResourceContainer.
+        (WebCore::RenderSVGResourceGradient::invalidateClient): Ditto.
+        * rendering/RenderSVGResourceMarker.cpp:
+        (WebCore::RenderSVGResourceMarker::~RenderSVGResourceMarker): Now a no-op, markers are unified within the new client handling concept, no more special code needed.
+        (WebCore::RenderSVGResourceMarker::layout): As RenderSVGResourceMarker skips the RenderSVGResourceContainer::layout() method, we also need to call invalidateClients() here.
+        (WebCore::RenderSVGResourceMarker::invalidateClients): Use new helper functions to invalidate clients, shared between all resources in RenderSVGResourceContainer.
+        (WebCore::RenderSVGResourceMarker::invalidateClient): Ditto.
+        (WebCore::RenderSVGResourceMarker::draw): Remove marker specific logic to catch circular references.
+        * rendering/RenderSVGResourceMarker.h:
+        * rendering/RenderSVGResourceMasker.cpp:
+        (WebCore::RenderSVGResourceMasker::~RenderSVGResourceMasker): Early exit if m_masker is empty.
+        (WebCore::RenderSVGResourceMasker::invalidateClients): Use new helper functions to invalidate clients, shared between all resources in RenderSVGResourceContainer.
+        (WebCore::RenderSVGResourceMasker::invalidateClient): Ditto.
+        (WebCore::RenderSVGResourceMasker::applyResource): Remove containsCyclicReference() check, SVGResourcesCycleSolver breaks cyclic references, resources do not need to take care anymore.
+        * rendering/RenderSVGResourceMasker.h:
+        * rendering/RenderSVGResourcePattern.cpp:
+        (WebCore::RenderSVGResourcePattern::~RenderSVGResourcePattern): Early exit if m_pattern is empty.
+        (WebCore::RenderSVGResourcePattern::invalidateClients): Use new helper functions to invalidate clients, shared between all resources in RenderSVGResourceContainer.
+        (WebCore::RenderSVGResourcePattern::invalidateClient): Ditto.
+        (WebCore::RenderSVGResourcePattern::createTileImage): Remove containsCyclicReference() check, SVGResourcesCycleSolver breaks cyclic references, resources do not need to take care anymore.
+        * rendering/RenderSVGResourcePattern.h:
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::selfWillPaint): Don't look up resources manually, use SVGResourcesCache.
+        (WebCore::RenderSVGRoot::destroy): Forward to SVGResourcesCache::clientDestroyed.
+        (WebCore::RenderSVGRoot::styleDidChange): Forward to SVGResourcesCache::clientStyleChanged.
+        (WebCore::RenderSVGRoot::updateFromElement): Forward to SVGResourcesCache::clientUpdatedFromElement.
+        * rendering/RenderSVGRoot.h:
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::layout): s/RenderSVGResource::invalidateAllResourcesOfRenderer/SVGResourcesCache::clientLayoutChanged/.
+        * rendering/RenderSVGText.h:
+        * rendering/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::acquirePaintingResource): Add RenderObject* parameter, don't assume the style comes from the InlineTextBox parent renderer.
+        (WebCore::SVGInlineTextBox::prepareGraphicsContextForTextPainting): Pass the parent()->renderer() to acquirePaintingResource.
+        (WebCore::SVGInlineTextBox::paintDecoration): Pass the decoration renderer to acquirePaintingResource.
+        (WebCore::SVGInlineTextBox::paintDecorationWithStyle): Ditto.
+        (WebCore::SVGInlineTextBox::paintText): When a selection pseudo style is used to paint the selection, swap styles in the SVGResourcesCache, to take the right resources when painting.
+        * rendering/SVGInlineTextBox.h:
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::prepareToRenderSVGContent): Don't look up resources manually, use SVGResourcesCache.
+        (WebCore::SVGRenderSupport::finishRenderSVGContent): Ditto.
+        (WebCore::SVGRenderSupport::intersectRepaintRectWithResources): Ditto.
+        (WebCore::SVGRenderSupport::pointInClippingArea): Remove const from RenderObject parameter. 
+        * rendering/SVGRenderSupport.h:
+        * rendering/SVGRenderTreeAsText.cpp:
+        (WebCore::writeStyle): Add two const_cast now that fill/strokePaintingResource take RenderObject* parameters. This was the less intrusive approach, otherwhise more const_casts would be needed.
+        (WebCore::writeResources): Add FIXME that we should dump the resources present in the SVGResourcesCache instead of manually looking them up from the SVGRenderStyle, to avoid dumping cycles.
+        * rendering/SVGResourcesCache.cpp:
+        (WebCore::SVGResourcesCache::clientStyleChanged): Use markForLayoutAndParentResourceInvalidation() instead of duplicating code.
+        * rendering/SVGResourcesCycleSolver.cpp:
+        (WebCore::setFollowLinkForChainableResource): Implemented stub method.
+        * rendering/style/SVGRenderStyle.cpp:
+        (WebCore::SVGRenderStyle::diff): Return StyleDifferenceLayout, not Repaint for stroke paint changes, otherwhise the cached boundaries are not correctly updated.
+        * svg/SVGClipPathElement.cpp:
+        (WebCore::SVGClipPathElement::svgAttributeChanged): Don't use invalidateResourceClients(), it's not needed anymore, only call setNeedsLayout() on the renderer.
+        (WebCore::SVGClipPathElement::childrenChanged): Ditto.
+        * svg/SVGClipPathElement.h:
+        (WebCore::SVGClipPathElement::needsPendingResourceHandling): Return false, buildPendingResource() logic not needed anymore for resources, handled by RenderSVGResourceContainer.
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::insertedIntoDocument): Only execute buildPendingResource() logic, if needsPendingResourceHandling() returns true. Cleaned up code a bit, to deploy early returns.
+        * svg/SVGElement.h:
+        (WebCore::SVGElement::needsPendingResourceHandling): Return true (default). Only needed by SVGTextPathElement/SVGUseElement, and should be removed in future.
+        * svg/SVGFilterElement.cpp:
+        (WebCore::SVGFilterElement::SVGFilterElement): Initialize m_followLink=true.
+        (WebCore::SVGFilterElement::setFilterRes): Don't use invalidateResourceClients(), it's not needed anymore, only call setNeedsLayout() on the renderer.
+        (WebCore::SVGFilterElement::svgAttributeChanged): Ditto.
+        (WebCore::SVGFilterElement::childrenChanged): Ditto.
+        * svg/SVGFilterElement.h:
+        (WebCore::SVGFilterElement::needsPendingResourceHandling): Return false, buildPendingResource() logic not needed anymore for resources, handled by RenderSVGResourceContainer.
+        (WebCore::SVGFilterElement::setFollowLink): Used by SVGResourcesCycleSolver, to stop following xlink:href links, if that leads to cyclic references.
+        * svg/SVGFilterPrimitiveStandardAttributes.cpp:
+        (WebCore::SVGFilterPrimitiveStandardAttributes::childrenChanged): Don't use invalidateResourceClients(), it's a no-op as effects don't have a renderer -> use invalidateFilter().
+        * svg/SVGFilterPrimitiveStandardAttributes.h:
+        (WebCore::SVGFilterPrimitiveStandardAttributes::invalidateFilter): Don't use invalidateResourceClients(), it's not needed anymore, only call setNeedsLayout() on the renderer.
+        * svg/SVGGradientElement.cpp:
+        (WebCore::SVGGradientElement::SVGGradientElement): Initialize m_followLink=true.
+        (WebCore::SVGGradientElement::svgAttributeChanged): Don't use invalidateResourceClients(), it's not needed anymore, only call setNeedsLayout() on the renderer.
+        (WebCore::SVGGradientElement::childrenChanged): Ditto.
+        * svg/SVGGradientElement.h:
+        (WebCore::SVGGradientElement::needsPendingResourceHandling): Return false, buildPendingResource() logic not needed anymore for resources, handled by RenderSVGResourceContainer.
+        (WebCore::SVGGradientElement::setFollowLink): Used by SVGResourcesCycleSolver, to stop following xlink:href links, if that leads to cyclic references.
+        * svg/SVGLinearGradientElement.cpp:
+        (WebCore::SVGLinearGradientElement::svgAttributeChanged): Don't use invalidateResourceClients(), it's not needed anymore, only call setNeedsLayout() on the renderer.
+        (WebCore::SVGLinearGradientElement::collectGradientProperties): Only follow xlink:href links if m_followLinks == true.
+        * svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::svgAttributeChanged): Don't use invalidateResourceClients(), it's not needed anymore, only call setNeedsLayout() on the renderer.
+        (WebCore::SVGMarkerElement::childrenChanged): Ditto.
+        (WebCore::SVGMarkerElement::setOrientToAuto): Ditto.
+        (WebCore::SVGMarkerElement::setOrientToAngle): Ditto.
+        * svg/SVGMarkerElement.h:
+        (WebCore::SVGMarkerElement::needsPendingResourceHandling): Return false, buildPendingResource() logic not needed anymore for resources, handled by RenderSVGResourceContainer.
+        * svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::svgAttributeChanged): Don't use invalidateResourceClients(), it's not needed anymore, only call setNeedsLayout() on the renderer.
+        (WebCore::SVGMaskElement::childrenChanged): Ditto.
+        * svg/SVGMaskElement.h:
+        (WebCore::SVGMaskElement::needsPendingResourceHandling): Return false, buildPendingResource() logic not needed anymore for resources, handled by RenderSVGResourceContainer.
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::SVGPatternElement): Initialize m_followLink=true.
+        (WebCore::SVGPatternElement::svgAttributeChanged): Don't use invalidateResourceClients(), it's not needed anymore, only call setNeedsLayout() on the renderer.
+        (WebCore::SVGPatternElement::childrenChanged): Ditto.
+        (WebCore::SVGPatternElement::collectPatternProperties): Only follow xlink:href links if m_followLinks == true.
+        * svg/SVGPatternElement.h:
+        (WebCore::SVGPatternElement::needsPendingResourceHandling): Return false, buildPendingResource() logic not needed anymore for resources, handled by RenderSVGResourceContainer.
+        (WebCore::SVGPatternElement::setFollowLink): Used by SVGResourcesCycleSolver, to stop following xlink:href links, if that leads to cyclic references.
+        * svg/SVGRadialGradientElement.cpp:
+        (WebCore::SVGRadialGradientElement::svgAttributeChanged): Don't use invalidateResourceClients(), it's not needed anymore, only call setNeedsLayout() on the renderer.
+        (WebCore::SVGRadialGradientElement::collectGradientProperties): Only follow xlink:href links if m_followLinks == true.
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::attach): Call updateFromElement upon attach(), needed by all resource renderers. Defaults to a no-op in RenderObject.h
+        * svg/SVGStyledElement.h: Remove invalidateResourceClients(), it's not needed anymore.
+
 2010-07-29  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Reviewed by Kenneth Rohde Christiansen.

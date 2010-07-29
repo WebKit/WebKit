@@ -57,14 +57,13 @@ namespace WebCore {
         virtual void svgAttributeChanged(const QualifiedName&);
         virtual void synchronizeProperty(const QualifiedName&);
 
+        virtual void attach();
         virtual void insertedIntoDocument();
         virtual void removedFromDocument();
         virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
 
         // Centralized place to force a manual style resolution. Hacky but needed for now.
         PassRefPtr<RenderStyle> resolveStyle(RenderStyle* parentStyle);
-
-        void invalidateResourceClients();
 
         bool instanceUpdatesBlocked() const;
         void setInstanceUpdatesBlocked(bool);

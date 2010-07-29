@@ -21,6 +21,7 @@
  */
 
 #include "config.h"
+
 #if ENABLE(SVG)
 #include "RenderSVGResourceClipper.h"
 
@@ -32,11 +33,12 @@
 #include "ImageBuffer.h"
 #include "IntRect.h"
 #include "RenderObject.h"
-#include "RenderStyle.h"
 #include "RenderSVGResource.h"
+#include "RenderStyle.h"
 #include "SVGClipPathElement.h"
 #include "SVGElement.h"
 #include "SVGRenderSupport.h"
+#include "SVGResources.h"
 #include "SVGStyledElement.h"
 #include "SVGStyledTransformableElement.h"
 #include "SVGUnitTypes.h"
@@ -55,6 +57,9 @@ RenderSVGResourceClipper::RenderSVGResourceClipper(SVGClipPathElement* node)
 
 RenderSVGResourceClipper::~RenderSVGResourceClipper()
 {
+    if (m_clipper.isEmpty())
+        return;
+
     deleteAllValues(m_clipper);
     m_clipper.clear();
 }
@@ -64,26 +69,26 @@ void RenderSVGResourceClipper::invalidateClients()
     if (m_invalidationBlocked)
         return;
 
-    HashMap<RenderObject*, ClipperData*>::const_iterator end = m_clipper.end();
-    for (HashMap<RenderObject*, ClipperData*>::const_iterator it = m_clipper.begin(); it != end; ++it)
-        markForLayoutAndResourceInvalidation(it->first);
-
-    deleteAllValues(m_clipper);
-    m_clipper.clear();
     m_clipBoundaries = FloatRect();
+    if (!m_clipper.isEmpty()) {
+        deleteAllValues(m_clipper);
+        m_clipper.clear();
+    }
+
+    markAllClientsForInvalidation(LayoutAndBoundariesInvalidation);
 }
 
-void RenderSVGResourceClipper::invalidateClient(RenderObject* object)
+void RenderSVGResourceClipper::invalidateClient(RenderObject* client)
 {
+    ASSERT(client);
     if (m_invalidationBlocked)
         return;
 
-    ASSERT(object);
-    if (!m_clipper.contains(object))
-        return;
+    ASSERT(client->selfNeedsLayout());
+    if (m_clipper.contains(client))
+        delete m_clipper.take(client);
 
-    delete m_clipper.take(object);
-    markForLayoutAndResourceInvalidation(object);
+    markClientForInvalidation(client, BoundariesInvalidation);
 }
 
 bool RenderSVGResourceClipper::applyResource(RenderObject* object, RenderStyle*, GraphicsContext*& context, unsigned short resourceMode)
@@ -95,10 +100,6 @@ bool RenderSVGResourceClipper::applyResource(RenderObject* object, RenderStyle*,
 #else
     UNUSED_PARAM(resourceMode);
 #endif
-
-    // Early exit, if this resource contains a child which references ourselves.
-    if (containsCyclicReference(node()))
-        return false;
 
     applyClippingToContext(object, object->objectBoundingBox(), object->repaintRectInLocalCoordinates(), context);
     return true;
@@ -191,11 +192,13 @@ bool RenderSVGResourceClipper::createClipData(ClipperData* clipperData, const Fl
     maskContext->translate(-repaintRect.x(), -repaintRect.y());
 
     // clipPath can also be clipped by another clipPath.
-    if (RenderSVGResourceClipper* clipper = getRenderSVGResourceById<RenderSVGResourceClipper>(this->document(), style()->svgStyle()->clipperResource())) {
-        if (!clipper->applyClippingToContext(this, objectBoundingBox, repaintRect, maskContext)) {
-            maskContext->restore();
-            return false;
-        }            
+    if (SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(this)) {
+        if (RenderSVGResourceClipper* clipper = resources->clipper()) {
+            if (!clipper->applyClippingToContext(this, objectBoundingBox, repaintRect, maskContext)) {
+                maskContext->restore();
+                return false;
+            }
+        }
     }
 
     SVGClipPathElement* clipPath = static_cast<SVGClipPathElement*>(node());
@@ -280,12 +283,6 @@ void RenderSVGResourceClipper::calculateClipContentRepaintRect()
 
 bool RenderSVGResourceClipper::hitTestClipContent(const FloatRect& objectBoundingBox, const FloatPoint& nodeAtPoint)
 {
-    // FIXME: We should be able to check whether m_clipper.contains(object) - this doesn't work at the moment
-    // as resourceBoundingBox() has already created ClipperData, even if applyResource() returned false.
-    // Early exit, if this resource contains a child which references ourselves.
-    if (containsCyclicReference(node()))
-        return false;
-
     FloatPoint point = nodeAtPoint;
     if (!SVGRenderSupport::pointInClippingArea(this, point))
         return false;
@@ -310,14 +307,6 @@ bool RenderSVGResourceClipper::hitTestClipContent(const FloatRect& objectBoundin
     }
 
     return false;
-}
-
-bool RenderSVGResourceClipper::childElementReferencesResource(const SVGRenderStyle* style, const String& referenceId) const
-{
-    if (!style->hasClipper())
-        return false;
-
-    return style->clipperResource() == referenceId;
 }
 
 FloatRect RenderSVGResourceClipper::resourceBoundingBox(RenderObject* object)

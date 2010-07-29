@@ -83,16 +83,20 @@ void RenderSVGModelObject::absoluteQuads(Vector<FloatQuad>& quads)
 
 void RenderSVGModelObject::destroy()
 {
-    RenderSVGResource::invalidateAllResourcesOfRenderer(this);
+    SVGResourcesCache::clientDestroyed(this);
     RenderObject::destroy();
 }
 
 void RenderSVGModelObject::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderObject::styleDidChange(diff, oldStyle);
+    SVGResourcesCache::clientStyleChanged(this, diff, style());
+}
 
-    if (style() && (diff == StyleDifferenceLayout || diff == StyleDifferenceRepaint))
-        RenderSVGResource::markForLayoutAndParentResourceInvalidation(this, false);
+void RenderSVGModelObject::updateFromElement()
+{
+    RenderObject::updateFromElement();
+    SVGResourcesCache::clientUpdatedFromElement(this, style());
 }
 
 bool RenderSVGModelObject::nodeAtPoint(const HitTestRequest&, HitTestResult&, int, int, int, int, HitTestAction)

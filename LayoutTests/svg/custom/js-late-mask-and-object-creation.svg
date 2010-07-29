@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1 Basic//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11-basic.dtd">  
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"  id="svg-root" width="100%" height="100%" viewBox="0 0 800 600" onload="createMask()">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"  id="svg-root" width="100%" height="100%" viewBox="0 0 800 600">
 
 <g id="content"/>
 
 <script>
     var content = document.getElementById("content");
+
+    if (window.layoutTestController)
+        layoutTestController.waitUntilDone();
+
+    setTimeout(createObject, 0);
 
     function createObject()
     {
@@ -17,12 +22,11 @@
         rect.setAttribute("mask", "url(#dynMask)");
 
         content.appendChild(rect);
+        setTimeout(createMask, 0);
     }
 
     function createMask()
     {
-        createObject();
-
         var mask = document.createElementNS("http://www.w3.org/2000/svg", "mask");
         mask.setAttribute("id", "dynMask");
         mask.setAttribute("maskUnits", "userSpaceOnUse");
@@ -38,6 +42,9 @@
 
         mask.appendChild(rect);
         content.appendChild(mask);
+
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
     }
 </script>
 

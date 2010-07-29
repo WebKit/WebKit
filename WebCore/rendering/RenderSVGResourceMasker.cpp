@@ -19,6 +19,7 @@
  */
 
 #include "config.h"
+
 #if ENABLE(SVG)
 #include "RenderSVGResourceMasker.h"
 
@@ -51,37 +52,33 @@ RenderSVGResourceMasker::RenderSVGResourceMasker(SVGMaskElement* node)
 
 RenderSVGResourceMasker::~RenderSVGResourceMasker()
 {
+    if (m_masker.isEmpty())
+        return;
+
     deleteAllValues(m_masker);
     m_masker.clear();
 }
 
 void RenderSVGResourceMasker::invalidateClients()
 {
-    HashMap<RenderObject*, MaskerData*>::const_iterator end = m_masker.end();
-    for (HashMap<RenderObject*, MaskerData*>::const_iterator it = m_masker.begin(); it != end; ++it)
-        markForLayoutAndResourceInvalidation(it->first);
-
-    deleteAllValues(m_masker);
-    m_masker.clear();
     m_maskBoundaries = FloatRect();
+    if (!m_masker.isEmpty()) {
+        deleteAllValues(m_masker);
+        m_masker.clear();
+    }
+
+    markAllClientsForInvalidation(LayoutAndBoundariesInvalidation);
 }
 
-void RenderSVGResourceMasker::invalidateClient(RenderObject* object)
+void RenderSVGResourceMasker::invalidateClient(RenderObject* client)
 {
-    ASSERT(object);
-    if (!m_masker.contains(object))
-        return;
+    ASSERT(client);
+    ASSERT(client->selfNeedsLayout());
 
-    delete m_masker.take(object);
-    markForLayoutAndResourceInvalidation(object);
-}
+    if (m_masker.contains(client))
+        delete m_masker.take(client);
 
-bool RenderSVGResourceMasker::childElementReferencesResource(const SVGRenderStyle* style, const String& referenceId) const
-{
-    if (!style->hasMasker())
-        return false;
-
-    return style->maskerResource() == referenceId;
+    markClientForInvalidation(client, BoundariesInvalidation);
 }
 
 bool RenderSVGResourceMasker::applyResource(RenderObject* object, RenderStyle*, GraphicsContext*& context, unsigned short resourceMode)
@@ -102,11 +99,6 @@ bool RenderSVGResourceMasker::applyResource(RenderObject* object, RenderStyle*, 
         SVGMaskElement* maskElement = static_cast<SVGMaskElement*>(node());
         if (!maskElement)
             return false;
-
-        // Early exit, if this resource contains a child which references ourselves.
-        if (containsCyclicReference(node()))
-            return false;
-
         createMaskImage(maskerData, maskElement, object);
     }
 

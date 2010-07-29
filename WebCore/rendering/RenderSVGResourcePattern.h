@@ -67,8 +67,6 @@ private:
     FloatRect calculatePatternBoundariesIncludingOverflow(PatternAttributes&, const FloatRect& objectBoundingBox,
                                                           const AffineTransform& viewBoxCTM, const FloatRect& patternBoundaries) const;
 
-    virtual bool childElementReferencesResource(const SVGRenderStyle*, const String&) const;
-
     HashMap<RenderObject*, PatternData*> m_pattern;
 };
 

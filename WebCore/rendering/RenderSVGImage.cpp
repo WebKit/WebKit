@@ -39,6 +39,7 @@
 #include "SVGLength.h"
 #include "SVGPreserveAspectRatio.h"
 #include "SVGRenderSupport.h"
+#include "SVGResources.h"
 
 namespace WebCore {
 
@@ -70,9 +71,9 @@ void RenderSVGImage::layout()
     m_localBounds = FloatRect(image->x().value(image), image->y().value(image), image->width().value(image), image->height().value(image));
     m_cachedLocalRepaintRect = FloatRect();
 
-    // Invalidate all resources of this client, if we changed something.
+    // Invalidate all resources of this client if our layout changed.
     if (m_everHadLayout && selfNeedsLayout())
-        RenderSVGResource::invalidateAllResourcesOfRenderer(this);
+        SVGResourcesCache::clientLayoutChanged(this);
 
     repainter.repaintAfterLayout();
     setNeedsLayout(false);
@@ -110,8 +111,20 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int, int)
 
 void RenderSVGImage::destroy()
 {
-    RenderSVGResource::invalidateAllResourcesOfRenderer(this);
+    SVGResourcesCache::clientDestroyed(this);
     RenderImage::destroy();
+}
+
+void RenderSVGImage::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+{
+    RenderImage::styleDidChange(diff, oldStyle);
+    SVGResourcesCache::clientStyleChanged(this, diff, style());
+}
+
+void RenderSVGImage::updateFromElement()
+{
+    RenderImage::updateFromElement();
+    SVGResourcesCache::clientUpdatedFromElement(this, style());
 }
 
 bool RenderSVGImage::nodeAtFloatPoint(const HitTestRequest& request, HitTestResult& result, const FloatPoint& pointInParent, HitTestAction hitTestAction)
@@ -160,12 +173,12 @@ FloatRect RenderSVGImage::repaintRectInLocalCoordinates() const
 void RenderSVGImage::imageChanged(WrappedImagePtr image, const IntRect* rect)
 {
     RenderImage::imageChanged(image, rect);
-#if ENABLE(FILTERS)
+
     // The image resource defaults to nullImage until the resource arrives.
-    // This empty image may be cached by SVG filter effects which must be invalidated.
-    if (RenderSVGResourceFilter* filter = getRenderSVGResourceById<RenderSVGResourceFilter>(document(), style()->svgStyle()->filterResource()))
-        filter->invalidateClient(this);
-#endif
+    // This empty image may be cached by SVG resources which must be invalidated.
+    if (SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(this))
+        resources->invalidateClient(this);
+
     repaint();
 }
 

@@ -40,43 +40,32 @@ RenderSVGResourcePattern::RenderSVGResourcePattern(SVGPatternElement* node)
 
 RenderSVGResourcePattern::~RenderSVGResourcePattern()
 {
+    if (m_pattern.isEmpty())
+        return;
+
     deleteAllValues(m_pattern);
     m_pattern.clear();
 }
 
 void RenderSVGResourcePattern::invalidateClients()
 {
-    const HashMap<RenderObject*, PatternData*>::const_iterator end = m_pattern.end();
-    for (HashMap<RenderObject*, PatternData*>::const_iterator it = m_pattern.begin(); it != end; ++it)
-        markForLayoutAndResourceInvalidation(it->first, false);
-
-    deleteAllValues(m_pattern);
-    m_pattern.clear();
-}
-
-void RenderSVGResourcePattern::invalidateClient(RenderObject* object)
-{
-    ASSERT(object);
-    if (!m_pattern.contains(object))
-        return;
-
-    delete m_pattern.take(object);
-    markForLayoutAndResourceInvalidation(object, false);
-}
-
-bool RenderSVGResourcePattern::childElementReferencesResource(const SVGRenderStyle* style, const String& referenceId) const
-{
-    if (style->hasFill()) {
-        if (style->fillPaint()->matchesTargetURI(referenceId))
-            return true;
+    if (!m_pattern.isEmpty()) {
+        deleteAllValues(m_pattern);
+        m_pattern.clear();
     }
 
-    if (style->hasStroke()) {
-        if (style->strokePaint()->matchesTargetURI(referenceId))
-            return true;
-    }
+    markAllClientsForInvalidation(RepaintInvalidation);
+}
 
-    return false;
+void RenderSVGResourcePattern::invalidateClient(RenderObject* client)
+{
+    ASSERT(client);
+    ASSERT(client->selfNeedsLayout());
+
+    if (m_pattern.contains(client))
+        delete m_pattern.take(client);
+
+    markClientForInvalidation(client, RepaintInvalidation);
 }
 
 bool RenderSVGResourcePattern::applyResource(RenderObject* object, RenderStyle* style, GraphicsContext*& context, unsigned short resourceMode)
@@ -242,10 +231,6 @@ PassOwnPtr<ImageBuffer> RenderSVGResourcePattern::createTileImage(PatternData* p
 
     // If we couldn't determine the pattern content element root, stop here.
     if (!attributes.patternContentElement())
-        return 0;
-
-    // Early exit, if this resource contains a child which references ourselves.
-    if (containsCyclicReference(attributes.patternContentElement()))
         return 0;
 
     FloatRect objectBoundingBox = object->objectBoundingBox();    

@@ -21,6 +21,7 @@
  */
 
 #include "config.h"
+
 #if ENABLE(SVG)
 #include "RenderSVGResourceMarker.h"
 
@@ -43,39 +44,30 @@ RenderSVGResourceMarker::RenderSVGResourceMarker(SVGMarkerElement* node)
 
 RenderSVGResourceMarker::~RenderSVGResourceMarker()
 {
-    m_marker.clear();
 }
 
 void RenderSVGResourceMarker::layout()
 {
+    // Invalidate all resources if our layout changed.
+    if (m_everHadLayout && selfNeedsLayout())
+        invalidateClients();
+
     // RenderSVGHiddenContainer overwrites layout(). We need the
     // layouting of RenderSVGContainer for calculating  local
     // transformations and repaint.
     RenderSVGContainer::layout();
 }
 
-void RenderSVGResourceMarker::addClient(const RenderObject* object)
-{
-    m_marker.add(object);
-}
-
 void RenderSVGResourceMarker::invalidateClients()
 {
-    const HashSet<const RenderObject*>::const_iterator end = m_marker.end();
-    for (HashSet<const RenderObject*>::const_iterator it = m_marker.begin(); it != end; ++it)
-        markForLayoutAndResourceInvalidation(const_cast<RenderObject*>(*it));
-
-    m_marker.clear();
+    markAllClientsForInvalidation(LayoutAndBoundariesInvalidation);
 }
 
-void RenderSVGResourceMarker::invalidateClient(RenderObject* object)
+void RenderSVGResourceMarker::invalidateClient(RenderObject* client)
 {
-    ASSERT(object);
-    if (!m_marker.contains(object))
-        return;
-
-    m_marker.remove(object);
-    markForLayoutAndResourceInvalidation(object);
+    ASSERT(client);
+    ASSERT(client->selfNeedsLayout());
+    markClientForInvalidation(client, BoundariesInvalidation);
 }
 
 void RenderSVGResourceMarker::applyViewportClip(PaintInfo& paintInfo)
@@ -140,20 +132,11 @@ AffineTransform RenderSVGResourceMarker::markerTransformation(const FloatPoint& 
 
 void RenderSVGResourceMarker::draw(PaintInfo& paintInfo, const AffineTransform& transform)
 {
-    DEFINE_STATIC_LOCAL(HashSet<RenderSVGResourceMarker*>, currentlyDrawingMarkers, ());
-
-    // avoid drawing circular marker references
-    if (currentlyDrawingMarkers.contains(this))
-        return;
-
-    currentlyDrawingMarkers.add(this);
     PaintInfo info(paintInfo);
     info.context->save();
     info.applyTransform(transform);
     RenderSVGContainer::paint(info, 0, 0);
     info.context->restore();
-
-    currentlyDrawingMarkers.remove(this);
 }
 
 AffineTransform RenderSVGResourceMarker::markerContentTransformation(const AffineTransform& contentTransformation, const FloatPoint& origin, float strokeWidth) const

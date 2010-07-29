@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1 Basic//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11-basic.dtd">  
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"  id="svg-root" width="100%" height="100%" viewBox="0 0 480 360" onload="createMarker()">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"  id="svg-root" width="100%" height="100%" viewBox="0 0 480 360">
 <defs id="defs">
     <marker id="markerStart" viewBox="0 0 10 10" markerWidth="2" markerHeight="2" refX="5" refY="5" markerUnits="strokeWidth">
         <rect width="10" height="10" fill="red" stroke="none"/>
@@ -16,6 +16,11 @@
     var defs = document.getElementById("defs");
     var content = document.getElementById("content");
 
+    if (window.layoutTestController)
+        layoutTestController.waitUntilDone();
+
+    setTimeout(createObject, 0);
+
     function createObject()
     {
         var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
@@ -28,12 +33,11 @@
         path.setAttribute("d", "M 130 135 L 180 135 L 180 185");
 
         content.appendChild(path);
+        setTimeout(createMarker, 0);
     }
 
     function createMarker()
     {
-        createObject();
-
         var marker = document.createElementNS("http://www.w3.org/2000/svg", "marker");
         marker.setAttribute("id", "markerMiddle");
         marker.setAttribute("viewBox", "0 0 10 10");
@@ -52,6 +56,9 @@
 
         marker.appendChild(circle);
         defs.appendChild(marker);
+
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
     }
 </script>
 

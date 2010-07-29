@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1 Basic//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11-basic.dtd">  
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"  id="svg-root" width="100%" height="100%" viewBox="0 0 480 360" onload="createClipPath()">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"  id="svg-root" width="100%" height="100%" viewBox="0 0 480 360">
 <g id="content" transform="scale(1, 1.5)">
      <text font-size="60" fill="navy" clip-path="url(#dynClip)" x="10" y="70">Clipped. INVISIBLE.</text>
 </g>
 <script>
     var content = document.getElementById("content");
+
+    if (window.layoutTestController)
+        layoutTestController.waitUntilDone();
+
+    setTimeout(createClipPath, 0);
 
     function createClipPath()
     {
@@ -18,6 +23,9 @@
 
         clipPath.appendChild(path);
         content.appendChild(clipPath);
+
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
     }
 </script>
 

@@ -83,7 +83,12 @@ void SVGRadialGradientElement::svgAttributeChanged(const QualifiedName& attrName
         || attrName == SVGNames::fyAttr
         || attrName == SVGNames::rAttr) {
         updateRelativeLengthsInformation();
-        invalidateResourceClients();
+        
+        RenderObject* object = renderer();
+        if (!object)
+            return;
+
+        object->setNeedsLayout(true);
     }
 }
 
@@ -163,13 +168,15 @@ RadialGradientAttributes SVGRadialGradientElement::collectGradientProperties()
         processedGradients.add(current);
 
         // Respect xlink:href, take attributes from referenced element
-        Node* refNode = ownerDocument()->getElementById(SVGURIReference::getTarget(current->href()));
+        Node* refNode = m_followLink ? ownerDocument()->getElementById(SVGURIReference::getTarget(current->href())) : 0;
         if (refNode && (refNode->hasTagName(SVGNames::radialGradientTag) || refNode->hasTagName(SVGNames::linearGradientTag))) {
             current = static_cast<SVGGradientElement*>(refNode);
 
             // Cycle detection
-            if (processedGradients.contains(current))
-                return RadialGradientAttributes();
+            if (processedGradients.contains(current)) {
+                current = 0;
+                break;
+            }
 
             isRadial = current->hasTagName(SVGNames::radialGradientTag);
         } else

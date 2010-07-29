@@ -31,6 +31,7 @@
 #include "RenderSVGResourceFilter.h"
 #include "RenderView.h"
 #include "SVGRenderSupport.h"
+#include "SVGResources.h"
 #include "SVGStyledElement.h"
 
 namespace WebCore {
@@ -58,21 +59,19 @@ void RenderSVGContainer::layout()
 
     SVGRenderSupport::layoutChildren(this, selfNeedsLayout());
 
-    // Invalidate all resources of this client, if we changed something.
+    // Invalidate all resources of this client if our layout changed.
     if (m_everHadLayout && selfNeedsLayout())
-        RenderSVGResource::invalidateAllResourcesOfRenderer(this);
+        SVGResourcesCache::clientLayoutChanged(this);
 
     repainter.repaintAfterLayout();
     setNeedsLayout(false);
 }
 
-bool RenderSVGContainer::selfWillPaint() const
+bool RenderSVGContainer::selfWillPaint()
 {
 #if ENABLE(FILTERS)
-    const SVGRenderStyle* svgStyle = style()->svgStyle();
-    RenderSVGResourceFilter* filter = getRenderSVGResourceById<RenderSVGResourceFilter>(document(), svgStyle->filterResource());
-    if (filter)
-        return true;
+    SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(this);
+    return resources && resources->filter();
 #endif
     return false;
 }

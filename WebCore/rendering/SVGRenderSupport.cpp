@@ -40,6 +40,7 @@
 #include "RenderSVGResourceMarker.h"
 #include "RenderSVGResourceMasker.h"
 #include "RenderSVGRoot.h"
+#include "SVGResources.h"
 #include "SVGStyledElement.h"
 #include "TransformState.h"
 #include <wtf/UnusedParam.h>
@@ -82,7 +83,6 @@ bool SVGRenderSupport::prepareToRenderSVGContent(RenderObject* object, PaintInfo
     SVGElement* svgElement = static_cast<SVGElement*>(object->node());
     ASSERT(svgElement && svgElement->document() && svgElement->isStyled());
 
-    SVGStyledElement* styledElement = static_cast<SVGStyledElement*>(svgElement);
     RenderStyle* style = object->style();
     ASSERT(style);
 
@@ -109,33 +109,22 @@ bool SVGRenderSupport::prepareToRenderSVGContent(RenderObject* object, PaintInfo
         paintInfo.context->beginTransparencyLayer(1);
     }
 
-    Document* document = object->document();
+    SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(object);
+    if (!resources)
+        return true;
 
-    if (svgStyle->hasMasker()) {
-        AtomicString maskerId(svgStyle->maskerResource());
-        if (RenderSVGResourceMasker* masker = getRenderSVGResourceById<RenderSVGResourceMasker>(document, maskerId)) {
-            if (!masker->applyResource(object, style, paintInfo.context, ApplyToDefaultMode))
-                return false;
-        } else
-            document->accessSVGExtensions()->addPendingResource(maskerId, styledElement);
+    if (RenderSVGResourceMasker* masker = resources->masker()) {
+        if (!masker->applyResource(object, style, paintInfo.context, ApplyToDefaultMode))
+            return false;
     }
 
-    if (svgStyle->hasClipper()) {
-        AtomicString clipperId(svgStyle->clipperResource());
-        if (RenderSVGResourceClipper* clipper = getRenderSVGResourceById<RenderSVGResourceClipper>(document, clipperId))
-            clipper->applyResource(object, style, paintInfo.context, ApplyToDefaultMode);
-        else
-            document->accessSVGExtensions()->addPendingResource(clipperId, styledElement);
-    }
+    if (RenderSVGResourceClipper* clipper = resources->clipper())
+        clipper->applyResource(object, style, paintInfo.context, ApplyToDefaultMode);
 
 #if ENABLE(FILTERS)
-    if (svgStyle->hasFilter()) {
-        AtomicString filterId(svgStyle->filterResource());
-        if (RenderSVGResourceFilter* filter = getRenderSVGResourceById<RenderSVGResourceFilter>(document, filterId)) { 
-            if (!filter->applyResource(object, style, paintInfo.context, ApplyToDefaultMode))
-                return false;
-        } else
-            document->accessSVGExtensions()->addPendingResource(filterId, styledElement);
+    if (RenderSVGResourceFilter* filter = resources->filter()) {
+        if (!filter->applyResource(object, style, paintInfo.context, ApplyToDefaultMode))
+            return false;
     }
 #endif
 
@@ -157,9 +146,9 @@ void SVGRenderSupport::finishRenderSVGContent(RenderObject* object, PaintInfo& p
     ASSERT(svgStyle);
 
 #if ENABLE(FILTERS)
-    if (svgStyle->hasFilter()) {
-        AtomicString filterId(svgStyle->filterResource());
-        if (RenderSVGResourceFilter* filter = getRenderSVGResourceById<RenderSVGResourceFilter>(object->document(), filterId)) { 
+    SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(object);
+    if (resources) {
+        if (RenderSVGResourceFilter* filter = resources->filter()) {
             filter->postApplyResource(object, paintInfo.context, ApplyToDefaultMode);
             paintInfo.context = savedContext;
         }
@@ -289,49 +278,52 @@ bool SVGRenderSupport::isOverflowHidden(const RenderObject* object)
 void SVGRenderSupport::intersectRepaintRectWithResources(const RenderObject* object, FloatRect& repaintRect)
 {
     ASSERT(object);
-    ASSERT(object->style());
-    const SVGRenderStyle* svgStyle = object->style()->svgStyle();
-    if (!svgStyle)
-        return;
-        
+
+    RenderStyle* style = object->style();
+    ASSERT(style);
+
+    const SVGRenderStyle* svgStyle = style->svgStyle();
+    ASSERT(svgStyle);
+
     RenderObject* renderer = const_cast<RenderObject*>(object);
-#if ENABLE(FILTERS)
-    if (svgStyle->hasFilter()) {
-        if (RenderSVGResourceFilter* filter = getRenderSVGResourceById<RenderSVGResourceFilter>(object->document(), svgStyle->filterResource()))
-            repaintRect = filter->resourceBoundingBox(renderer);
+    SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(renderer);
+    if (!resources) {
+        svgStyle->inflateForShadow(repaintRect);
+        return;
     }
+
+#if ENABLE(FILTERS)
+    if (RenderSVGResourceFilter* filter = resources->filter())
+        repaintRect = filter->resourceBoundingBox(renderer);
 #endif
 
-    if (svgStyle->hasClipper()) {
-        if (RenderSVGResourceClipper* clipper = getRenderSVGResourceById<RenderSVGResourceClipper>(object->document(), svgStyle->clipperResource()))
-            repaintRect.intersect(clipper->resourceBoundingBox(renderer));
-    }
-    
-    if (svgStyle->hasMasker()) {
-        if (RenderSVGResourceMasker* masker = getRenderSVGResourceById<RenderSVGResourceMasker>(object->document(), svgStyle->maskerResource()))
-            repaintRect.intersect(masker->resourceBoundingBox(renderer));
-    }
-    
+    if (RenderSVGResourceClipper* clipper = resources->clipper())
+        repaintRect.intersect(clipper->resourceBoundingBox(renderer));
+
+    if (RenderSVGResourceMasker* masker = resources->masker())
+        repaintRect.intersect(masker->resourceBoundingBox(renderer));
+
     svgStyle->inflateForShadow(repaintRect);
 }
 
-bool SVGRenderSupport::pointInClippingArea(const RenderObject* object, const FloatPoint& point)
+bool SVGRenderSupport::pointInClippingArea(RenderObject* object, const FloatPoint& point)
 {
     ASSERT(object);
-    ASSERT(object->style());
 
-    Document* document = object->document();
-    ASSERT(document);
+    RenderStyle* style = object->style();
+    ASSERT(style);
 
-    const SVGRenderStyle* svgStyle = object->style()->svgStyle();
+    const SVGRenderStyle* svgStyle = style->svgStyle();
     ASSERT(svgStyle);
 
     // We just take clippers into account to determine if a point is on the node. The Specification may
     // change later and we also need to check maskers.
-    if (svgStyle->hasClipper()) {
-        if (RenderSVGResourceClipper* clipper = getRenderSVGResourceById<RenderSVGResourceClipper>(document, svgStyle->clipperResource()))
-            return clipper->hitTestClipContent(object->objectBoundingBox(), point);
-    }
+    SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(object);
+    if (!resources)
+        return true;
+
+    if (RenderSVGResourceClipper* clipper = resources->clipper())
+        return clipper->hitTestClipContent(object->objectBoundingBox(), point);
 
     return true;
 }

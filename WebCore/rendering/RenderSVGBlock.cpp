@@ -25,6 +25,7 @@
 #if ENABLE(SVG)
 #include "RenderSVGBlock.h"
 
+#include "RenderSVGResource.h"
 #include "SVGElement.h"
 
 namespace WebCore {
@@ -73,6 +74,25 @@ void RenderSVGBlock::absoluteRects(Vector<IntRect>&, int, int)
     // This code path should never be taken for SVG, as we're assuming useTransforms=true everywhere, absoluteQuads should be used.
     ASSERT_NOT_REACHED();
 }
+
+void RenderSVGBlock::destroy()
+{
+    SVGResourcesCache::clientDestroyed(this);
+    RenderBlock::destroy();
+}
+
+void RenderSVGBlock::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+{
+    RenderBlock::styleDidChange(diff, oldStyle);
+    SVGResourcesCache::clientStyleChanged(this, diff, style());
+}
+
+void RenderSVGBlock::updateFromElement()
+{
+    RenderBlock::updateFromElement();
+    SVGResourcesCache::clientUpdatedFromElement(this, style());
+}
+
 }
 
 #endif

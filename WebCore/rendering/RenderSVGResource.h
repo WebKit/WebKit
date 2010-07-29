@@ -22,6 +22,7 @@
 #define RenderSVGResource_h
 
 #if ENABLE(SVG)
+#include "RenderStyleConstants.h"
 #include "SVGDocumentExtensions.h"
 
 namespace WebCore {
@@ -75,18 +76,14 @@ public:
     }
 
     // Helper utilities used in the render tree to access resources used for painting shapes/text (gradients & patterns only)
-    static RenderSVGResource* fillPaintingResource(const RenderObject*, const RenderStyle*);
-    static RenderSVGResource* strokePaintingResource(const RenderObject*, const RenderStyle*);
+    static RenderSVGResource* fillPaintingResource(RenderObject*, const RenderStyle*);
+    static RenderSVGResource* strokePaintingResource(RenderObject*, const RenderStyle*);
     static RenderSVGResourceSolidColor* sharedSolidPaintingResource();
 
-    static void invalidateAllResourcesOfRenderer(RenderObject*);
     static void markForLayoutAndParentResourceInvalidation(RenderObject*, bool needsLayout = true);
 
 private:
     static void adjustColorForPseudoRules(const RenderStyle*, bool useFillPaint, Color&);
-    
-protected:
-    void markForLayoutAndResourceInvalidation(RenderObject*, bool needsBoundariesUpdate = true);
 };
 
 }

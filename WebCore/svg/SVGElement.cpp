@@ -278,20 +278,22 @@ bool SVGElement::childShouldCreateRenderer(Node* child) const
 void SVGElement::insertedIntoDocument()
 {
     StyledElement::insertedIntoDocument();
+
+    if (!needsPendingResourceHandling())
+        return;
+
     SVGDocumentExtensions* extensions = document()->accessSVGExtensions();
-
     String resourceId = getIdAttribute();
-    if (extensions->isPendingResource(resourceId)) {
-        OwnPtr<HashSet<SVGStyledElement*> > clients(extensions->removePendingResource(resourceId));
-        if (clients->isEmpty())
-            return;
+    if (!extensions->isPendingResource(resourceId))
+        return;
+    
+    OwnPtr<HashSet<SVGStyledElement*> > clients(extensions->removePendingResource(resourceId));
+    if (clients->isEmpty())
+        return;
 
-        HashSet<SVGStyledElement*>::const_iterator it = clients->begin();
-        const HashSet<SVGStyledElement*>::const_iterator end = clients->end();
-
-        for (; it != end; ++it)
-            (*it)->buildPendingResource();
-    }
+    const HashSet<SVGStyledElement*>::const_iterator end = clients->end();
+    for (HashSet<SVGStyledElement*>::const_iterator it = clients->begin(); it != end; ++it)
+        (*it)->buildPendingResource();
 }
 
 void SVGElement::attributeChanged(Attribute* attr, bool preserveDecls)

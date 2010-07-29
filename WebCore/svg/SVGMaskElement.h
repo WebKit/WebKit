@@ -40,6 +40,7 @@ namespace WebCore {
         virtual ~SVGMaskElement();
 
         virtual bool isValid() const { return SVGTests::isValid(); }
+        virtual bool needsPendingResourceHandling() const { return false; }
 
         FloatRect maskBoundingBox(const FloatRect&) const;
         virtual void parseMappedAttribute(Attribute*);

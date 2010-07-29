@@ -258,17 +258,12 @@ void SVGStyledElement::synchronizeProperty(const QualifiedName& attrName)
         synchronizeClassName();
 }
 
-void SVGStyledElement::invalidateResourceClients()
+void SVGStyledElement::attach()
 {
-    if (document()->parsing())
-        return;
+    SVGElement::attach();
 
-    RenderObject* object = renderer();
-    if (!object)
-        return;
-
-    if (object->isSVGResourceContainer())
-        object->toRenderSVGResourceContainer()->invalidateClients();
+    if (RenderObject* object = renderer())
+        object->updateFromElement();
 }
 
 void SVGStyledElement::insertedIntoDocument()
