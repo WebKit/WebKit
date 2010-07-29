@@ -715,9 +715,9 @@ BUG20226 DEFER : fast/forms/datalist.html = TEXT
 BUG20226 DEFER : fast/forms/input-list.html = FAIL
 BUG20226 DEFER : fast/forms/input-selectedoption.html = FAIL
 
-// Need to implement inner-spin-button or outer-spin-button
-BUGWK38570 : fast/forms/input-appearance-spinbutton-disabled-readonly.html = FAIL
-BUGWK38570 : fast/forms/input-number-events.html = FAIL
+// Generic theme in test_shell doesn't have inner-spin-button support.
+// We need to do rebaseline when we switch to DRT.
+BUGWK38570 WIN : fast/forms/input-appearance-spinbutton-disabled-readonly.html = IMAGE+TEXT
 
 // The feature was disabled due to a compatibility issue.
 BUGWK40520 DEFER : fast/forms/interactive-validation-lost-focusable.html = TEXT

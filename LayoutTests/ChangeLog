@@ -1,3 +1,18 @@
+2010-07-28  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, test expectation update.
+
+        - Rebaseline input-appearance-spinbutton-disabled-readonly.html
+          for Chromium-mac and Chromium-linux.
+        - Remove input-number-events.html.  It passes on Chromium now.
+
+        * platform/chromium-linux/fast/forms/input-appearance-spinbutton-disabled-readonly-expected.checksum: Added.
+        * platform/chromium-linux/fast/forms/input-appearance-spinbutton-disabled-readonly-expected.png: Added.
+        * platform/chromium-linux/fast/forms/input-appearance-spinbutton-disabled-readonly-expected.txt: Added.
+        * platform/chromium-mac/fast/forms/input-appearance-spinbutton-disabled-readonly-expected.checksum: Added.
+        * platform/chromium-mac/fast/forms/input-appearance-spinbutton-disabled-readonly-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-07-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.
