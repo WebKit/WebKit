@@ -1,3 +1,14 @@
+2010-07-29  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fix, add file missing from DOM bindings commit.
+        
+        * WebEdit.cpp: Added.
+        (WebCore::):
+        (wxWebEditCommand::wxWebEditCommand):
+        (wxWebEditCommand::~wxWebEditCommand):
+        (wxWebEditCommand::SetNodeAttribute):
+        (wxWebEditCommand::Apply):
+
 2010-07-28  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] wxPython build fix that was missed in last commit.
