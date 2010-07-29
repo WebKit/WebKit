@@ -1,3 +1,10 @@
+2010-07-28  Anders Carlsson  <andersca@apple.com>
+
+        Fix 64-bit build.
+
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::NPN_GetValue):
+
 2010-07-28  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler.
