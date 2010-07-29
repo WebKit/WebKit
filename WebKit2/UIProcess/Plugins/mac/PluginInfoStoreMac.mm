@@ -33,14 +33,14 @@ using namespace WebCore;
 
 namespace WebKit {
 
-Vector<String> PluginInfoStore::pluginDirectories()
+Vector<String> PluginInfoStore::pluginsDirectories()
 {
-    Vector<String> pluginDirectories;
+    Vector<String> pluginsDirectories;
 
-    pluginDirectories.append([NSHomeDirectory() stringByAppendingPathComponent:@"Library/Internet Plug-Ins"]);
-    pluginDirectories.append("/Library/Internet Plug-Ins");
+    pluginsDirectories.append([NSHomeDirectory() stringByAppendingPathComponent:@"Library/Internet Plug-Ins"]);
+    pluginsDirectories.append("/Library/Internet Plug-Ins");
     
-    return pluginDirectories;
+    return pluginsDirectories;
 }
 
 // FIXME: Once the UI process knows the difference between the main thread and the web thread we can drop this and just use

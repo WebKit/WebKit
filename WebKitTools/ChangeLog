@@ -1,5 +1,18 @@
 2010-07-29  Adam Roben  <aroben@apple.com>
 
+        Always say "plugins directory" when referring to a directory
+        containing one or more plugins
+
+        Fixes <http://webkit.org/b/43197> WebKit2 often says "plugin
+        directory" when it means "plugins directory"
+
+        Reviewed by John Sullivan.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize): Updated for rename.
+
+2010-07-29  Adam Roben  <aroben@apple.com>
+
         Always say "directory" when referring to a plugin directory
 
         Fixes <http://webkit.org/b/43195> WebKit2 often says "plugin path"

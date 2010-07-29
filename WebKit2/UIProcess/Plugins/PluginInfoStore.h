@@ -38,7 +38,7 @@ class PluginInfoStore {
 public:
     PluginInfoStore();
 
-    void setAdditionalPluginDirectories(const Vector<WebCore::String>&);
+    void setAdditionalPluginsDirectories(const Vector<WebCore::String>&);
 
     void refresh();
     void getPlugins(Vector<WebCore::PluginInfo>& plugins);
@@ -69,12 +69,12 @@ private:
     void loadPlugin(const WebCore::String& pluginPath);
     
     // Platform specific member functions.
-    static Vector<WebCore::String> pluginDirectories();
+    static Vector<WebCore::String> pluginsDirectories();
     static Vector<WebCore::String> pluginPathsInDirectory(const WebCore::String& directory);
     static bool getPluginInfo(const WebCore::String& pluginPath, Plugin& plugin);
     static bool shouldUsePlugin(const Plugin& plugin, const Vector<Plugin>& loadedPlugins);
     
-    Vector<WebCore::String> m_additionalPluginDirectories;
+    Vector<WebCore::String> m_additionalPluginsDirectories;
     Vector<Plugin> m_plugins;
     bool m_pluginListIsUpToDate;
 };

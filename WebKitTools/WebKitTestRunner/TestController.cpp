@@ -86,7 +86,7 @@ void TestController::initialize(int argc, const char* argv[])
     };
     WKContextSetInjectedBundleClient(m_context.get(), &injectedBundlePathClient);
 
-    _WKContextSetAdditionalPluginDirectory(m_context.get(), testPluginDirectory());
+    _WKContextSetAdditionalPluginsDirectory(m_context.get(), testPluginDirectory());
     
     m_pageNamespace.adopt(WKPageNamespaceCreate(m_context.get()));
     m_mainWebView = new PlatformWebView(m_pageNamespace.get());

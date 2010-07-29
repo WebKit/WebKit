@@ -44,7 +44,7 @@ WK_EXPORT void WKContextGetStatistics(WKContextRef context, WKContextStatistics*
 
 WK_EXPORT WKContextRef WKContextGetSharedThreadContext();
 
-WK_EXPORT void _WKContextSetAdditionalPluginDirectory(WKContextRef context, WKStringRef pluginDirectory);
+WK_EXPORT void _WKContextSetAdditionalPluginsDirectory(WKContextRef context, WKStringRef pluginsDirectory);
 
 WK_EXPORT void _WKContextRegisterURLSchemeAsEmptyDocument(WKContextRef context, WKStringRef urlScheme);
 

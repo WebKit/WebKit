@@ -31,7 +31,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-Vector<String> PluginInfoStore::pluginDirectories()
+Vector<String> PluginInfoStore::pluginsDirectories()
 {
     notImplemented();
     return Vector<String>();

@@ -89,7 +89,7 @@ public:
     void populateVisitedLinks();
     
     void getStatistics(WKContextStatistics* statistics);
-    void setAdditionalPluginDirectory(const WebCore::String&);
+    void setAdditionalPluginsDirectory(const WebCore::String&);
 
     PluginInfoStore* pluginInfoStore() { return &m_pluginInfoStore; }
     WebCore::String applicationCacheDirectory();

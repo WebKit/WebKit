@@ -105,9 +105,9 @@ void WKContextRelease(WKContextRef contextRef)
     toWK(contextRef)->deref();
 }
 
-void _WKContextSetAdditionalPluginDirectory(WKContextRef contextRef, WKStringRef pluginDirectory)
+void _WKContextSetAdditionalPluginsDirectory(WKContextRef contextRef, WKStringRef pluginsDirectory)
 {
-    toWK(contextRef)->setAdditionalPluginDirectory(toWK(pluginDirectory)->string());
+    toWK(contextRef)->setAdditionalPluginsDirectory(toWK(pluginsDirectory)->string());
 }
 
 void _WKContextRegisterURLSchemeAsEmptyDocument(WKContextRef contextRef, WKStringRef urlScheme)
