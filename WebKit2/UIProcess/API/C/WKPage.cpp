@@ -131,19 +131,19 @@ void WKPageTerminate(WKPageRef pageRef)
     toWK(pageRef)->terminateProcess();
 }
 
-void WKPageSetPageLoaderClient(WKPageRef pageRef, WKPageLoaderClient* wkClient)
+void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClient* wkClient)
 {
     if (wkClient && !wkClient->version)
         toWK(pageRef)->initializeLoaderClient(wkClient);
 }
 
-void WKPageSetPagePolicyClient(WKPageRef pageRef, WKPagePolicyClient * wkClient)
+void WKPageSetPagePolicyClient(WKPageRef pageRef, const WKPagePolicyClient* wkClient)
 {
     if (wkClient && !wkClient->version)
         toWK(pageRef)->initializePolicyClient(wkClient);
 }
 
-void WKPageSetPageUIClient(WKPageRef pageRef, WKPageUIClient * wkClient)
+void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClient * wkClient)
 {
     if (wkClient && !wkClient->version)
         toWK(pageRef)->initializeUIClient(wkClient);

@@ -37,7 +37,7 @@ WebPolicyClient::WebPolicyClient()
     initialize(0);
 }
 
-void WebPolicyClient::initialize(WKPagePolicyClient* client)
+void WebPolicyClient::initialize(const WKPagePolicyClient* client)
 {
     if (client && !client->version)
         m_pagePolicyClient = *client;

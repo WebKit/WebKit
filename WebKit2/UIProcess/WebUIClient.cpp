@@ -38,7 +38,7 @@ WebUIClient::WebUIClient()
     initialize(0);
 }
 
-void WebUIClient::initialize(WKPageUIClient* client)
+void WebUIClient::initialize(const WKPageUIClient* client)
 {
     if (client && !client->version)
         m_pageUIClient = *client;

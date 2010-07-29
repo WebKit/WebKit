@@ -160,9 +160,9 @@ WK_EXPORT double WKPageGetEstimatedProgress(WKPageRef page);
     
 WK_EXPORT void WKPageTerminate(WKPageRef page);
 
-WK_EXPORT void WKPageSetPageLoaderClient(WKPageRef page, WKPageLoaderClient * client);
-WK_EXPORT void WKPageSetPagePolicyClient(WKPageRef page, WKPagePolicyClient * client);
-WK_EXPORT void WKPageSetPageUIClient(WKPageRef page, WKPageUIClient * client);
+WK_EXPORT void WKPageSetPageLoaderClient(WKPageRef page, const WKPageLoaderClient* client);
+WK_EXPORT void WKPageSetPagePolicyClient(WKPageRef page, const WKPagePolicyClient* client);
+WK_EXPORT void WKPageSetPageUIClient(WKPageRef page, const WKPageUIClient* client);
 
 typedef void (*WKPageRunJavaScriptFunction)(WKStringRef, void*);
 typedef void (*WKPageRunJavaScriptDisposeFunction)(void*);

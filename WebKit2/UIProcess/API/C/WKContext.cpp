@@ -72,13 +72,13 @@ WKPreferencesRef WKContextGetPreferences(WKContextRef contextRef)
     return toRef(toWK(contextRef)->preferences());
 }
 
-void WKContextSetInjectedBundleClient(WKContextRef contextRef, WKContextInjectedBundleClient* wkClient)
+void WKContextSetInjectedBundleClient(WKContextRef contextRef, const WKContextInjectedBundleClient* wkClient)
 {
     if (wkClient && !wkClient->version)
         toWK(contextRef)->initializeInjectedBundleClient(wkClient);
 }
 
-void WKContextSetHistoryClient(WKContextRef contextRef, WKContextHistoryClient * wkClient)
+void WKContextSetHistoryClient(WKContextRef contextRef, const WKContextHistoryClient* wkClient)
 {
     if (wkClient && !wkClient->version)
         toWK(contextRef)->initializeHistoryClient(wkClient);

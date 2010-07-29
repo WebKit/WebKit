@@ -89,9 +89,9 @@ public:
     WebBackForwardList* backForwardList() { return m_backForwardList.get(); }
 
     void setPageClient(PageClient*);
-    void initializeLoaderClient(WKPageLoaderClient*);
-    void initializePolicyClient(WKPagePolicyClient*);
-    void initializeUIClient(WKPageUIClient*);
+    void initializeLoaderClient(const WKPageLoaderClient*);
+    void initializePolicyClient(const WKPagePolicyClient*);
+    void initializeUIClient(const WKPageUIClient*);
 
     void revive();
 

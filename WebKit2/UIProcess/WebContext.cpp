@@ -83,12 +83,12 @@ WebContext::~WebContext()
 #endif
 }
 
-void WebContext::initializeInjectedBundleClient(WKContextInjectedBundleClient* client)
+void WebContext::initializeInjectedBundleClient(const WKContextInjectedBundleClient* client)
 {
     m_injectedBundleClient.initialize(client);
 }
 
-void WebContext::initializeHistoryClient(WKContextHistoryClient* client)
+void WebContext::initializeHistoryClient(const WKContextHistoryClient* client)
 {
     m_historyClient.initialize(client);
     

@@ -40,7 +40,7 @@ class WebPageProxy;
 class WebUIClient {
 public:
     WebUIClient();
-    void initialize(WKPageUIClient*);
+    void initialize(const WKPageUIClient*);
 
     WebPageProxy* createNewPage(WebPageProxy*);
     void showPage(WebPageProxy*);

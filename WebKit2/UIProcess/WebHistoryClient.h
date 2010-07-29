@@ -42,7 +42,7 @@ class WebPageProxy;
 class WebHistoryClient {
 public:
     WebHistoryClient();
-    void initialize(WKContextHistoryClient*);
+    void initialize(const WKContextHistoryClient*);
 
     void didNavigateWithNavigationData(WebContext*, WebPageProxy*, const WebNavigationDataStore&, WebFrameProxy*);
     void didPerformClientRedirect(WebContext*, WebPageProxy*, const WebCore::String& sourceURL, const WebCore::String& destinationURL, WebFrameProxy*);

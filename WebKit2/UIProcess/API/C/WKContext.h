@@ -69,8 +69,8 @@ WK_EXPORT WKContextRef WKContextGetSharedProcessContext();
 WK_EXPORT void WKContextSetPreferences(WKContextRef context, WKPreferencesRef preferences);
 WK_EXPORT WKPreferencesRef WKContextGetPreferences(WKContextRef context);
 
-WK_EXPORT void WKContextSetHistoryClient(WKContextRef context, WKContextHistoryClient * client);
-WK_EXPORT void WKContextSetInjectedBundleClient(WKContextRef context, WKContextInjectedBundleClient * client);
+WK_EXPORT void WKContextSetHistoryClient(WKContextRef context, const WKContextHistoryClient* client);
+WK_EXPORT void WKContextSetInjectedBundleClient(WKContextRef context, const WKContextInjectedBundleClient* client);
 
 WK_EXPORT void WKContextPostMessageToInjectedBundle(WKContextRef context, WKStringRef message);
 

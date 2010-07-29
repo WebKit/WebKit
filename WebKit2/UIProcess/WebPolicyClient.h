@@ -42,7 +42,7 @@ class WebFramePolicyListenerProxy;
 class WebPolicyClient {
 public:
     WebPolicyClient();
-    void initialize(WKPagePolicyClient*);
+    void initialize(const WKPagePolicyClient*);
 
     bool decidePolicyForNavigationAction(WebPageProxy*, WebCore::NavigationType, const WebCore::String& url, WebFrameProxy*, WebFramePolicyListenerProxy*);
     bool decidePolicyForNewWindowAction(WebPageProxy*, WebCore::NavigationType, const WebCore::String& url, WebFrameProxy*, WebFramePolicyListenerProxy*);

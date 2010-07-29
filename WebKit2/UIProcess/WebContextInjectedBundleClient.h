@@ -39,7 +39,7 @@ class WebContext;
 class WebContextInjectedBundleClient {
 public:
     WebContextInjectedBundleClient();
-    void initialize(WKContextInjectedBundleClient*);
+    void initialize(const WKContextInjectedBundleClient*);
 
     void didReceiveMessageFromInjectedBundle(WebContext*, const WebCore::String&);
 

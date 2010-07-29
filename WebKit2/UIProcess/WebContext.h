@@ -58,8 +58,8 @@ public:
 
     ~WebContext();
 
-    void initializeInjectedBundleClient(WKContextInjectedBundleClient*);
-    void initializeHistoryClient(WKContextHistoryClient*);
+    void initializeInjectedBundleClient(const WKContextInjectedBundleClient*);
+    void initializeHistoryClient(const WKContextHistoryClient*);
 
     ProcessModel processModel() const { return m_processModel; }
     WebProcessProxy* process() const { return m_process.get(); }

@@ -38,7 +38,7 @@ WebHistoryClient::WebHistoryClient()
     initialize(0);
 }
 
-void WebHistoryClient::initialize(WKContextHistoryClient* client)
+void WebHistoryClient::initialize(const WKContextHistoryClient* client)
 {
     if (client && !client->version)
         m_contextHistoryClient = *client;

@@ -40,7 +40,7 @@ class WebFrameProxy;
 class WebLoaderClient {
 public:
     WebLoaderClient();
-    void initialize(WKPageLoaderClient*);
+    void initialize(const WKPageLoaderClient*);
 
     void didStartProvisionalLoadForFrame(WebPageProxy*, WebFrameProxy*);
     void didReceiveServerRedirectForProvisionalLoadForFrame(WebPageProxy*, WebFrameProxy*);

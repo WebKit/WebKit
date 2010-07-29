@@ -107,17 +107,17 @@ void WebPageProxy::setDrawingArea(PassOwnPtr<DrawingAreaProxy> drawingArea)
     m_drawingArea = drawingArea;
 }
 
-void WebPageProxy::initializeLoaderClient(WKPageLoaderClient* loadClient)
+void WebPageProxy::initializeLoaderClient(const WKPageLoaderClient* loadClient)
 {
     m_loaderClient.initialize(loadClient);
 }
 
-void WebPageProxy::initializePolicyClient(WKPagePolicyClient* policyClient)
+void WebPageProxy::initializePolicyClient(const WKPagePolicyClient* policyClient)
 {
     m_policyClient.initialize(policyClient);
 }
 
-void WebPageProxy::initializeUIClient(WKPageUIClient* client)
+void WebPageProxy::initializeUIClient(const WKPageUIClient* client)
 {
     m_uiClient.initialize(client);
 }

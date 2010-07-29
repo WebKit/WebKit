@@ -35,7 +35,7 @@ WebLoaderClient::WebLoaderClient()
     initialize(0);
 }
 
-void WebLoaderClient::initialize(WKPageLoaderClient* client)
+void WebLoaderClient::initialize(const WKPageLoaderClient* client)
 {
     if (client && !client->version)
         m_pageLoaderClient = *client;
