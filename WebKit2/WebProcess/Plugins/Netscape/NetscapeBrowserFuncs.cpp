@@ -407,12 +407,22 @@ static NPError NPN_GetValue(NPP npp, NPNVariable variable, void *value)
 #if PLATFORM(MAC)
         case NPNVsupportsCoreGraphicsBool:
             // Always claim to support the Core Graphics drawing model.
-            *(NPBool *)value = true;
+            *(NPBool*)value = true;
+            break;
+
+        case NPNVsupportsCoreAnimationBool:
+            // FIXME: We should support the Core Animation drawing model.
+            *(NPBool*)value = false;
             break;
 
         case NPNVsupportsCocoaBool:
             // Always claim to support the Cocoa event model.
-            *(NPBool *)value = true;
+            *(NPBool*)value = true;
+            break;
+
+       case NPNVsupportsCarbonBool:
+            // FIXME: We should support the Carbon event model.
+            *(NPBool*)value = false;
             break;
 #endif
         default:
@@ -538,9 +548,11 @@ static bool NPN_Invoke(NPP, NPObject *npObject, NPIdentifier methodName, const N
     return false;
 }
 
-static bool NPN_InvokeDefault(NPP npp, NPObject *npobj, const NPVariant *args, uint32_t argCount, NPVariant *result)
+static bool NPN_InvokeDefault(NPP, NPObject *npObject, const NPVariant *arguments, uint32_t argumentCount, NPVariant *result)
 {
-    notImplemented();
+    if (npObject->_class->invokeDefault)
+        return npObject->_class->invokeDefault(npObject, arguments, argumentCount, result);
+
     return false;
 }
 
@@ -620,9 +632,11 @@ static void NPN_PluginThreadAsyncCall(NPP instance, void (*func) (void*), void* 
     notImplemented();
 }
 
-static bool NPN_Construct(NPP npp, NPObject* npobj, const NPVariant* args, uint32_t argCount, NPVariant* result)
+static bool NPN_Construct(NPP, NPObject* npObject, const NPVariant* arguments, uint32_t argumentCount, NPVariant* result)
 {
-    notImplemented();
+    if (NP_CLASS_STRUCT_VERSION_HAS_CTOR(npObject->_class) && npObject->_class->construct)
+        return npObject->_class->construct(npObject, arguments, argumentCount, result);
+
     return false;
 }
 

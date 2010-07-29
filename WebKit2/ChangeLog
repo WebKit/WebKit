@@ -2,6 +2,46 @@
 
         Reviewed by Sam Weinig.
 
+        Implement NPN_InvokeDefault and NPN_Construct
+        https://bugs.webkit.org/show_bug.cgi?id=43160
+
+        * WebProcess/Plugins/NPJSObject.cpp:
+        (WebKit::NPJSObject::invoke):
+        Just call invoke directly.
+
+        (WebKit::NPJSObject::invokeDefault):
+        Call invoke.
+
+        (WebKit::NPJSObject::construct):
+        Implement this.
+
+        (WebKit::NPJSObject::invoke):
+        Add new invoke overload that takes the function as a JSValue.
+
+        (WebKit::NPJSObject::npClass):
+        Add NP_Construct.
+
+        (WebKit::NPJSObject::NP_InvokeDefault):
+        Call NPJSObject::invokeDefault.
+
+        (WebKit::NPJSObject::NP_Construct):
+        Call NPJSObject::construct.
+
+        * WebProcess/Plugins/NPJSObject.h:
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::NPN_GetValue):
+        Handle the Core Animation drawing model and the Carbon event model.
+
+        (WebKit::NPN_InvokeDefault):
+        Call the NPClass::invokeDefault function.
+
+        (WebKit::NPN_Construct):
+        Call the NPClass::construct function.
+
+2010-07-28  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Implement NPN_Invoke
         https://bugs.webkit.org/show_bug.cgi?id=43158
 

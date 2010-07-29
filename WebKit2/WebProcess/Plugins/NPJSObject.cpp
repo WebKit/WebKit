@@ -116,25 +116,19 @@ bool NPJSObject::invoke(NPIdentifier methodName, const NPVariant* arguments, uin
     JSLock lock(SilenceAssertionsOnly);
 
     JSValue function = m_jsObject->get(exec, identifierFromIdentifierRep(exec, identifierRep));
-    CallData callData;
-    CallType callType = getCallData(function, callData);
-    if (callType == CallTypeNone)
+    return invoke(exec, function, arguments, argumentCount, result);
+}
+
+bool NPJSObject::invokeDefault(const NPVariant *arguments, uint32_t argumentCount, NPVariant *result)
+{
+    ExecState* exec = m_objectMap->globalExec();
+    if (!exec)
         return false;
 
-    // Convert the passed in arguments.
-    MarkedArgumentBuffer argumentList;
-    for (uint32_t i = 0; i < argumentCount; ++i)
-        argumentList.append(m_objectMap->convertNPVariantToJSValue(exec, arguments[i]));
+    JSLock lock(SilenceAssertionsOnly);
 
-    exec->globalData().timeoutChecker.start();
-    JSValue value = JSC::call(exec, function, callType, callData, m_jsObject, argumentList);
-    exec->globalData().timeoutChecker.stop();
-
-    // Convert and return the result of the function call.
-    m_objectMap->convertJSValueToNPVariant(exec, value, *result);
-    exec->clearException();
-    
-    return true;
+    JSValue function = m_jsObject;
+    return invoke(exec, function, arguments, argumentCount, result);
 }
 
 bool NPJSObject::hasProperty(NPIdentifier identifier)
@@ -177,6 +171,58 @@ bool NPJSObject::getProperty(NPIdentifier propertyName, NPVariant* result)
     return true;
 }
 
+bool NPJSObject::construct(const NPVariant *arguments, uint32_t argumentCount, NPVariant *result)
+{
+    ExecState* exec = m_objectMap->globalExec();
+    if (!exec)
+        return false;
+
+    JSLock lock(SilenceAssertionsOnly);
+
+    ConstructData constructData;
+    ConstructType constructType = getConstructData(m_jsObject, constructData);
+    if (constructType == ConstructTypeNone)
+        return false;
+
+    // Convert the passed in arguments.
+    MarkedArgumentBuffer argumentList;
+    for (uint32_t i = 0; i < argumentCount; ++i)
+        argumentList.append(m_objectMap->convertNPVariantToJSValue(exec, arguments[i]));
+
+    exec->globalData().timeoutChecker.start();
+    JSValue value = JSC::construct(exec, m_jsObject, constructType, constructData, argumentList);
+    exec->globalData().timeoutChecker.stop();
+    
+    // Convert and return the new object.
+    m_objectMap->convertJSValueToNPVariant(exec, value, *result);
+    exec->clearException();
+
+    return true;
+}
+
+bool NPJSObject::invoke(ExecState* exec, JSValue function, const NPVariant* arguments, uint32_t argumentCount, NPVariant* result)
+{
+    CallData callData;
+    CallType callType = getCallData(function, callData);
+    if (callType == CallTypeNone)
+        return false;
+
+    // Convert the passed in arguments.
+    MarkedArgumentBuffer argumentList;
+    for (uint32_t i = 0; i < argumentCount; ++i)
+        argumentList.append(m_objectMap->convertNPVariantToJSValue(exec, arguments[i]));
+
+    exec->globalData().timeoutChecker.start();
+    JSValue value = JSC::call(exec, function, callType, callData, m_jsObject, argumentList);
+    exec->globalData().timeoutChecker.stop();
+
+    // Convert and return the result of the function call.
+    m_objectMap->convertJSValueToNPVariant(exec, value, *result);
+    exec->clearException();
+    
+    return true;
+}
+
 NPClass* NPJSObject::npClass()
 {
     static NPClass npClass = {
@@ -192,7 +238,7 @@ NPClass* NPJSObject::npClass()
         NP_SetProperty,
         0,
         0,
-        0
+        NP_Construct
     };
 
     return &npClass;
@@ -221,10 +267,9 @@ bool NPJSObject::NP_Invoke(NPObject* npObject, NPIdentifier methodName, const NP
     return toNPJSObject(npObject)->invoke(methodName, arguments, argumentCount, result);
 }
     
-bool NPJSObject::NP_InvokeDefault(NPObject*, const NPVariant* arguments, uint32_t argumentCount, NPVariant* result)
+bool NPJSObject::NP_InvokeDefault(NPObject* npObject, const NPVariant* arguments, uint32_t argumentCount, NPVariant* result)
 {
-    notImplemented();
-    return false;
+    return toNPJSObject(npObject)->invokeDefault(arguments, argumentCount, result);
 }
     
 bool NPJSObject::NP_HasProperty(NPObject* npObject, NPIdentifier propertyName)
@@ -243,4 +288,9 @@ bool NPJSObject::NP_SetProperty(NPObject*, NPIdentifier propertyName, const NPVa
     return false;
 }
 
+bool NPJSObject::NP_Construct(NPObject* npObject, const NPVariant* arguments, uint32_t argumentCount, NPVariant* result)
+{
+    return toNPJSObject(npObject)->construct(arguments, argumentCount, result);
+}
+    
 } // namespace WebKit
