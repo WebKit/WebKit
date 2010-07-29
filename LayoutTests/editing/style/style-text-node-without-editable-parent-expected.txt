@@ -1,289 +1,201 @@
 This tests applying inline style to a text node, which is a child of the editable root. Style should be applied properly and the test should not crash. (See the bug 39989).
 
 bold first:
-<SPAN contentEditable="">
-<B>
-<#text><selection-anchor>hello, <selection-focus></#text>
-</B>
-<#text>world WebKit</#text>
-</SPAN>
+| <b>
+|   "<#selection-anchor>hello, <#selection-focus>"
+| "world WebKit"
 
 bold middle:
-<SPAN contentEditable="">
-<#text>hello, </#text>
-<B>
-<#text><selection-anchor>world<selection-focus></#text>
-</B>
-<#text> WebKit</#text>
-</SPAN>
+| "hello, "
+| <b>
+|   "<#selection-anchor>world<#selection-focus>"
+| " WebKit"
 
 bold last:
-<SPAN contentEditable="">
-<#text>hello, world</#text>
-<B>
-<#text><selection-anchor> WebKit<selection-focus></#text>
-</B>
-</SPAN>
+| "hello, world"
+| <b>
+|   "<#selection-anchor> WebKit<#selection-focus>"
 
 bold all:
-<SPAN contentEditable="">
-<B>
-<#text><selection-anchor>hello, world WebKit<selection-focus></#text>
-</B>
-</SPAN>
+| <b>
+|   "<#selection-anchor>hello, world WebKit<#selection-focus>"
 
 italic first:
-<SPAN contentEditable="">
-<I>
-<#text><selection-anchor>hello, <selection-focus></#text>
-</I>
-<#text>world WebKit</#text>
-</SPAN>
+| <i>
+|   "<#selection-anchor>hello, <#selection-focus>"
+| "world WebKit"
 
 italic middle:
-<SPAN contentEditable="">
-<#text>hello, </#text>
-<I>
-<#text><selection-anchor>world<selection-focus></#text>
-</I>
-<#text> WebKit</#text>
-</SPAN>
+| "hello, "
+| <i>
+|   "<#selection-anchor>world<#selection-focus>"
+| " WebKit"
 
 italic last:
-<SPAN contentEditable="">
-<#text>hello, world</#text>
-<I>
-<#text><selection-anchor> WebKit<selection-focus></#text>
-</I>
-</SPAN>
+| "hello, world"
+| <i>
+|   "<#selection-anchor> WebKit<#selection-focus>"
 
 italic all:
-<SPAN contentEditable="">
-<I>
-<#text><selection-anchor>hello, world WebKit<selection-focus></#text>
-</I>
-</SPAN>
+| <i>
+|   "<#selection-anchor>hello, world WebKit<#selection-focus>"
 
 underline first:
-<SPAN contentEditable="">
-<U>
-<#text><selection-anchor>hello, <selection-focus></#text>
-</U>
-<#text>world WebKit</#text>
-</SPAN>
+| <u>
+|   "<#selection-anchor>hello, <#selection-focus>"
+| "world WebKit"
 
 underline middle:
-<SPAN contentEditable="">
-<#text>hello, </#text>
-<U>
-<#text><selection-anchor>world<selection-focus></#text>
-</U>
-<#text> WebKit</#text>
-</SPAN>
+| "hello, "
+| <u>
+|   "<#selection-anchor>world<#selection-focus>"
+| " WebKit"
 
 underline last:
-<SPAN contentEditable="">
-<#text>hello, world</#text>
-<U>
-<#text><selection-anchor> WebKit<selection-focus></#text>
-</U>
-</SPAN>
+| "hello, world"
+| <u>
+|   "<#selection-anchor> WebKit<#selection-focus>"
 
 underline all:
-<SPAN contentEditable="">
-<U>
-<#text><selection-anchor>hello, world WebKit<selection-focus></#text>
-</U>
-</SPAN>
+| <u>
+|   "<#selection-anchor>hello, world WebKit<#selection-focus>"
 
 strikeThrough first:
-<SPAN contentEditable="">
-<S>
-<#text><selection-anchor>hello, <selection-focus></#text>
-</S>
-<#text>world WebKit</#text>
-</SPAN>
+| <s>
+|   "<#selection-anchor>hello, <#selection-focus>"
+| "world WebKit"
 
 strikeThrough middle:
-<SPAN contentEditable="">
-<#text>hello, </#text>
-<S>
-<#text><selection-anchor>world<selection-focus></#text>
-</S>
-<#text> WebKit</#text>
-</SPAN>
+| "hello, "
+| <s>
+|   "<#selection-anchor>world<#selection-focus>"
+| " WebKit"
 
 strikeThrough last:
-<SPAN contentEditable="">
-<#text>hello, world</#text>
-<S>
-<#text><selection-anchor> WebKit<selection-focus></#text>
-</S>
-</SPAN>
+| "hello, world"
+| <s>
+|   "<#selection-anchor> WebKit<#selection-focus>"
 
 strikeThrough all:
-<SPAN contentEditable="">
-<S>
-<#text><selection-anchor>hello, world WebKit<selection-focus></#text>
-</S>
-</SPAN>
+| <s>
+|   "<#selection-anchor>hello, world WebKit<#selection-focus>"
 
 foreColor first:
-<SPAN contentEditable="">
-<FONT class="Apple-style-span" color="#0000FF">
-<#text><selection-anchor>hello, <selection-focus></#text>
-</FONT>
-<#text>world WebKit</#text>
-</SPAN>
+| <font>
+|   class="Apple-style-span"
+|   color="#0000FF"
+|   "<#selection-anchor>hello, <#selection-focus>"
+| "world WebKit"
 
 foreColor middle:
-<SPAN contentEditable="">
-<#text>hello, </#text>
-<FONT class="Apple-style-span" color="#0000FF">
-<#text><selection-anchor>world<selection-focus></#text>
-</FONT>
-<#text> WebKit</#text>
-</SPAN>
+| "hello, "
+| <font>
+|   class="Apple-style-span"
+|   color="#0000FF"
+|   "<#selection-anchor>world<#selection-focus>"
+| " WebKit"
 
 foreColor last:
-<SPAN contentEditable="">
-<#text>hello, world</#text>
-<FONT class="Apple-style-span" color="#0000FF">
-<#text><selection-anchor> WebKit<selection-focus></#text>
-</FONT>
-</SPAN>
+| "hello, world"
+| <font>
+|   class="Apple-style-span"
+|   color="#0000FF"
+|   "<#selection-anchor> WebKit<#selection-focus>"
 
 foreColor all:
-<SPAN contentEditable="">
-<FONT class="Apple-style-span" color="#0000FF">
-<#text><selection-anchor>hello, world WebKit<selection-focus></#text>
-</FONT>
-</SPAN>
+| <font>
+|   class="Apple-style-span"
+|   color="#0000FF"
+|   "<#selection-anchor>hello, world WebKit<#selection-focus>"
 
 hiliteColor first:
-<SPAN contentEditable="">
-<SPAN style="background-color: blue;" class="Apple-style-span">
-<#text><selection-anchor>hello, <selection-focus></#text>
-</SPAN>
-<#text>world WebKit</#text>
-</SPAN>
+| <span>
+|   class="Apple-style-span"
+|   style="background-color: blue;"
+|   "<#selection-anchor>hello, <#selection-focus>"
+| "world WebKit"
 
 hiliteColor middle:
-<SPAN contentEditable="">
-<#text>hello, </#text>
-<SPAN style="background-color: blue;" class="Apple-style-span">
-<#text><selection-anchor>world<selection-focus></#text>
-</SPAN>
-<#text> WebKit</#text>
-</SPAN>
+| "hello, "
+| <span>
+|   class="Apple-style-span"
+|   style="background-color: blue;"
+|   "<#selection-anchor>world<#selection-focus>"
+| " WebKit"
 
 hiliteColor last:
-<SPAN contentEditable="">
-<#text>hello, world</#text>
-<SPAN style="background-color: blue;" class="Apple-style-span">
-<#text><selection-anchor> WebKit<selection-focus></#text>
-</SPAN>
-</SPAN>
+| "hello, world"
+| <span>
+|   class="Apple-style-span"
+|   style="background-color: blue;"
+|   "<#selection-anchor> WebKit<#selection-focus>"
 
 hiliteColor all:
-<SPAN contentEditable="">
-<SPAN style="background-color: blue;" class="Apple-style-span">
-<#text><selection-anchor>hello, world WebKit<selection-focus></#text>
-</SPAN>
-</SPAN>
+| <span>
+|   class="Apple-style-span"
+|   style="background-color: blue;"
+|   "<#selection-anchor>hello, world WebKit<#selection-focus>"
 
 subscript first:
-<SPAN contentEditable="">
-<SUB>
-<#text><selection-anchor>hello, <selection-focus></#text>
-</SUB>
-<#text>world WebKit</#text>
-</SPAN>
+| <sub>
+|   "<#selection-anchor>hello, <#selection-focus>"
+| "world WebKit"
 
 subscript middle:
-<SPAN contentEditable="">
-<#text>hello, </#text>
-<SUB>
-<#text><selection-anchor>world<selection-focus></#text>
-</SUB>
-<#text> WebKit</#text>
-</SPAN>
+| "hello, "
+| <sub>
+|   "<#selection-anchor>world<#selection-focus>"
+| " WebKit"
 
 subscript last:
-<SPAN contentEditable="">
-<#text>hello, world</#text>
-<SUB>
-<#text><selection-anchor> WebKit<selection-focus></#text>
-</SUB>
-</SPAN>
+| "hello, world"
+| <sub>
+|   "<#selection-anchor> WebKit<#selection-focus>"
 
 subscript all:
-<SPAN contentEditable="">
-<SUB>
-<#text><selection-anchor>hello, world WebKit<selection-focus></#text>
-</SUB>
-</SPAN>
+| <sub>
+|   "<#selection-anchor>hello, world WebKit<#selection-focus>"
 
 superscript first:
-<SPAN contentEditable="">
-<SUP>
-<#text><selection-anchor>hello, <selection-focus></#text>
-</SUP>
-<#text>world WebKit</#text>
-</SPAN>
+| <sup>
+|   "<#selection-anchor>hello, <#selection-focus>"
+| "world WebKit"
 
 superscript middle:
-<SPAN contentEditable="">
-<#text>hello, </#text>
-<SUP>
-<#text><selection-anchor>world<selection-focus></#text>
-</SUP>
-<#text> WebKit</#text>
-</SPAN>
+| "hello, "
+| <sup>
+|   "<#selection-anchor>world<#selection-focus>"
+| " WebKit"
 
 superscript last:
-<SPAN contentEditable="">
-<#text>hello, world</#text>
-<SUP>
-<#text><selection-anchor> WebKit<selection-focus></#text>
-</SUP>
-</SPAN>
+| "hello, world"
+| <sup>
+|   "<#selection-anchor> WebKit<#selection-focus>"
 
 superscript all:
-<SPAN contentEditable="">
-<SUP>
-<#text><selection-anchor>hello, world WebKit<selection-focus></#text>
-</SUP>
-</SPAN>
+| <sup>
+|   "<#selection-anchor>hello, world WebKit<#selection-focus>"
 
 createLink first:
-<SPAN contentEditable="">
-<A href="http://webkit.org/">
-<#text><selection-anchor>hello, <selection-focus></#text>
-</A>
-<#text>world WebKit</#text>
-</SPAN>
+| <a>
+|   href="http://webkit.org/"
+|   "<#selection-anchor>hello, <#selection-focus>"
+| "world WebKit"
 
 createLink middle:
-<SPAN contentEditable="">
-<#text>hello, </#text>
-<A href="http://webkit.org/">
-<#text><selection-anchor>world<selection-focus></#text>
-</A>
-<#text> WebKit</#text>
-</SPAN>
+| "hello, "
+| <a>
+|   href="http://webkit.org/"
+|   "<#selection-anchor>world<#selection-focus>"
+| " WebKit"
 
 createLink last:
-<SPAN contentEditable="">
-<#text>hello, world</#text>
-<A href="http://webkit.org/">
-<#text><selection-anchor> WebKit<selection-focus></#text>
-</A>
-</SPAN>
+| "hello, world"
+| <a>
+|   href="http://webkit.org/"
+|   "<#selection-anchor> WebKit<#selection-focus>"
 
 createLink all:
-<SPAN contentEditable="">
-<A href="http://webkit.org/">
-<#text><selection-anchor>hello, world WebKit<selection-focus></#text>
-</A>
-</SPAN>
+| <a>
+|   href="http://webkit.org/"
+|   "<#selection-anchor>hello, world WebKit<#selection-focus>"

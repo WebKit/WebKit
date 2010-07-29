@@ -14,12 +14,11 @@
  *    Optionally specify the node to dump and the description for each call of dump.
  */
 
-if (window.layoutTestController) {
+if (window.layoutTestController)
     layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
-}
 
 // Namespace
+// FIXME: Rename dump-as-markup.js to dump-dom.js and Markup to DOM.
 var Markup = {};
 
 // The description of what this test is testing. Gets prepended to the dumped markup.
@@ -36,7 +35,7 @@ Markup.dump = function(opt_node, opt_description)
     if (typeof opt_node == 'string')
         opt_node = document.getElementById(opt_node);
 
-    var node = opt_node || Markup._node || document.body.parentElement
+    var node = opt_node || Markup._node || document
     var markup = "";
 
     if (Markup._test_description && !Markup._dumpCalls)
@@ -51,7 +50,7 @@ Markup.dump = function(opt_node, opt_description)
             opt_description = "Dump of markup " + Markup._dumpCalls
         if (Markup._dumpCalls > 1)
             markup += '\n';
-        markup += '\n' + opt_description + ':';
+        markup += '\n' + opt_description + ':\n';
     }
 
     markup += Markup.get(node);
@@ -59,7 +58,6 @@ Markup.dump = function(opt_node, opt_description)
     if (!Markup._container) {
         Markup._container = document.createElement('pre');
         Markup._container.style.width = '100%';
-        document.body.appendChild(Markup._container);
     }
 
     // FIXME: Have this respect layoutTestController.dumpChildFramesAsText?
@@ -74,16 +72,24 @@ Markup.dump = function(opt_node, opt_description)
         }
     }
 
-    Markup._container.innerText += markup;
+    Markup._container.appendChild(document.createTextNode(markup));
 }
 
-Markup.waitUntilDone = function()
+Markup.noAutoDump = function()
 {
     window.removeEventListener('load', Markup.notifyDone, false);
 }
 
+Markup.waitUntilDone = function()
+{
+    layoutTestController.waitUntilDone();
+    Markup.noAutoDump();
+}
+
 Markup.notifyDone = function()
 {
+    // Need to waitUntilDone or some tests won't finish appending the markup before the text is dumped.
+    layoutTestController.waitUntilDone();
     Markup._done = true;
 
     // If dump has already been called, don't bother to dump again
@@ -93,8 +99,10 @@ Markup.notifyDone = function()
     // In non-layout test mode, append the results in a pre so that we don't
     // clobber the test itself. But when in layout test mode, we don't want
     // side effects from the test to be included in the results.
-    if (window.layoutTestController)
-        document.body.innerText = Markup._container.innerText;
+    if (window.layoutTestController) {
+        document.body.innerHTML = '';
+        document.body.appendChild(Markup._container);
+    }
 
     if (window.layoutTestController)
         layoutTestController.notifyDone();
@@ -107,104 +115,144 @@ Markup.setNodeToDump = function(node)
     Markup._node = node
 }
 
+Markup.get = function(node)
+{
+    if (!node.firstChild)
+        return '| ';
+
+    // Don't print any markup for the root node.
+    var markup = '';
+    for (var i = 0, len = node.childNodes.length; i < len; i++) {
+        markup += Markup._get(node.childNodes[i], 0);
+    }
+    return markup.substring(1);
+}
+
 // Returns the markup for the given node. To be used for cases where a test needs
 // to get the markup but not clobber the whole page.
-Markup.get = function(node, opt_depth)
+Markup._get = function(node, depth)
 {
-    var depth = opt_depth || 0;
+    var str = Markup._indent(depth);
 
-    var attrs = Markup._getAttributes(node);
-    var attrsString = attrs.length ? ' ' + attrs.join(' ') : '';
+    switch (node.nodeType) {
+    case 10:
+        str += '<!DOCTYPE ' + node.nodeName;
+        if (node.publicId || node.systemId) {
+            str += ' "' + node.publicId + '"';
+            str += ' "' + node.systemId + '"';
+        }
+        str += '>';
+        break;
 
-    var nodeName = node.nodeName;
-    var markup = '<' + nodeName + attrsString + '>';
+    case 8:
+        try {
+            str += '<!-- ' + node.nodeValue + ' -->';
+        } catch (e) {
+            str += '<!--  -->';
+        }
+        break;
 
-    var isSpecialNode = Markup._FORBIDS_END_TAG[nodeName];
-    var innerMarkup = '';
-    switch (nodeName) {
-        case '#text':
-        case 'STYLE':
-        case 'SCRIPT':
-        case 'IFRAME':
-        case 'TEXTAREA':
-        case 'XMP':
-            innerMarkup = nodeName == '#text' ? Markup._getMarkupForTextNode(node) : node.innerText;
-            innerMarkup = innerMarkup.replace(/\n/g, '\n' + Markup._spaces(depth))
-            isSpecialNode = true;
-            break;
-        
-        default:
-            for (var i = 0, len = node.childNodes.length; i < len; i++) {
-                innerMarkup += Markup._getSelectionMarker(node, i);
-                innerMarkup += Markup.get(node.childNodes[i], depth + 1);
+    case 7:
+        str += '<?' + node.nodeName + node.nodeValue + '>';
+        break;
+
+    case 4:
+        str += '<![CDATA[ ' + node.nodeValue + ' ]]>';
+        break;
+
+    case 3:
+        str += '"' + Markup._getMarkupForTextNode(node) + '"';
+        break;
+
+    case 1:
+        str += "<";
+        str += Markup._namespace(node)
+
+        if (node.localName && node.namespaceURI && node.namespaceURI != null)
+            str += node.localName;
+        else
+            str += Markup._toAsciiLowerCase(node.nodeName);
+
+        str += '>';
+
+        if (node.attributes) {
+            var attrNames = [];
+            var attrPos = {};
+            for (var j = 0; j < node.attributes.length; j += 1) {
+                if (node.attributes[j].specified) {
+                    var name = Markup._namespace(node.attributes[j])
+                    name += node.attributes[j].localName || node.attributes[j].nodeName;
+                    attrNames.push(name);
+                    attrPos[name] = j;
+                }
             }
-            innerMarkup += Markup._getSelectionMarker(node, i);
+            if (attrNames.length > 0) {
+              attrNames.sort();
+              for (var j = 0; j < attrNames.length; j += 1) {
+                str += Markup._indent(depth + 1) + attrNames[j];
+                str += '="' + node.attributes[attrPos[attrNames[j]]].nodeValue + '"';
+              }
+            }
+        }
+        break;
     }
 
-    markup = '\n' + Markup._spaces(depth) + markup 
-    if (!isSpecialNode)
-        innerMarkup += '\n' + Markup._spaces(depth);
+    for (var i = 0, len = node.childNodes.length; i < len; i++) {
+        var selection = Markup._getSelectionMarker(node, i);
+        if (selection)
+            str += Markup._indent(depth + 1) + selection;
 
-    markup += innerMarkup;
+        str += Markup._get(node.childNodes[i], depth + 1);
+    }
     
-    if (!Markup._FORBIDS_END_TAG[nodeName])
-        markup += '</' + nodeName + '>';
+    var selection = Markup._getSelectionMarker(node, i);
+    if (selection)
+        str += Markup._indent(depth + 1) + selection;
 
-    return markup;
+    return str;
+}
+
+Markup._namespace = function(node)
+{
+    if (Markup._NAMESPACE_URI_MAP[node.namespaceURI])
+        return Markup._NAMESPACE_URI_MAP[node.namespaceURI] + ' ';
+    return '';
 }
 
 Markup._dumpCalls = 0
 
-Markup._spaces = function(multiplier)
+Markup._indent = function(depth)
 {
-    return new Array(multiplier * 4 + 1).join(' ');
+    return "\n| " + new Array(depth * 2 + 1).join(' ');
 }
 
-// FIXME: Is there a better way to do this than a hard coded list?
-Markup._DUMP_AS_MARKUP_PROPERTIES = ['src', 'type', 'href', 'style', 'class', 'id', 'color', 'bgcolor', 'contentEditable'];
-
-Markup._getAttributes = function(node)
-{
-    var props = [];
-    if (!node.hasAttribute)
-        return props;
-
-    for (var i = 0; i < Markup._DUMP_AS_MARKUP_PROPERTIES.length; i++) {
-        var attr = Markup._DUMP_AS_MARKUP_PROPERTIES[i];
-        if (node.hasAttribute(attr)) {
-            props.push(attr + '="' + node.getAttribute(attr) + '"');
-        }
-    }
-    return props;
+Markup._toAsciiLowerCase = function (str) {
+  var output = "";
+  for (var i = 0, len = this.length; i < len; ++i) {
+    if (str.charCodeAt(i) >= 0x41 && str.charCodeAt(i) <= 0x5A)
+      output += String.fromCharCode(str.charCodeAt(i) + 0x20)
+    else
+      output += str.charAt(i);
+  }
+  return output;
 }
 
-// This list should match all HTML elements that return TagStatusForbidden for endTagRequirement().
-Markup._FORBIDS_END_TAG = {
-    'META': 1,
-    'HR': 1,
-    'AREA': 1,
-    'LINK': 1,
-    'WBR': 1,
-    'BR': 1,
-    'BASE': 1,
-    'TABLECOL': 1,
-    'SOURCE': 1,
-    'INPUT': 1,
-    'PARAM': 1,
-    'EMBED': 1,
-    'FRAME': 1,
-    'CANVAS': 1,
-    'IMG': 1,
-    'ISINDEX': 1,
-    'BASEFONT': 1,
-    'DATAGRIDCELL': 1,
-    'DATAGRIDCOL': 1
+Markup._NAMESPACE_URI_MAP = {
+    "http://www.w3.org/2000/svg": "svg",
+    "http://www.w3.org/1998/Math/MathML": "math",
+    "http://www.w3.org/XML/1998/namespace": "xml",
+    "http://www.w3.org/2000/xmlns/": "xmlns",
+    "http://www.w3.org/1999/xlink": "xlink"
 }
 
 Markup._getSelectionFromNode = function(node)
 {
     return node.ownerDocument.defaultView.getSelection();
 }
+
+Markup._SELECTION_FOCUS = '<#selection-focus>';
+Markup._SELECTION_ANCHOR = '<#selection-anchor>';
+Markup._SELECTION_CARET = '<#selection-caret>';
 
 Markup._getMarkupForTextNode = function(node)
 {
@@ -215,26 +263,26 @@ Markup._getMarkupForTextNode = function(node)
     if (node == sel.anchorNode && node == sel.focusNode) {
         if (sel.isCollapsed) {
             startOffset = sel.anchorOffset;
-            startText = '<selection-caret>';
+            startText = Markup._SELECTION_CARET;
         } else {
             if (sel.focusOffset > sel.anchorOffset) {
                 startOffset = sel.anchorOffset;
                 endOffset = sel.focusOffset;
-                startText = '<selection-anchor>';
-                endText = '<selection-focus>';
+                startText = Markup._SELECTION_ANCHOR;
+                endText = Markup._SELECTION_FOCUS;
             } else {
                 startOffset = sel.focusOffset;
                 endOffset = sel.anchorOffset;
-                startText = '<selection-focus>';
-                endText = '<selection-anchor>';                        
+                startText = Markup._SELECTION_FOCUS;
+                endText = Markup._SELECTION_ANCHOR;
             }
         }
     } else if (node == sel.focusNode) {
         startOffset = sel.focusOffset;
-        startText = '<selection-focus>';
+        startText = Markup._SELECTION_FOCUS;
     } else if (node == sel.anchorNode) {
         startOffset = sel.anchorOffset;
-        startText = '<selection-anchor>';
+        startText = Markup._SELECTION_ANCHOR;
     }
     
     if (startText && endText)
@@ -247,14 +295,17 @@ Markup._getMarkupForTextNode = function(node)
 
 Markup._getSelectionMarker = function(node, index)
 {
+    if (node.nodeType != 1)
+        return '';
+
     var sel = Markup._getSelectionFromNode(node);;
     if (index == sel.anchorOffset && node == sel.anchorNode) {
         if (sel.isCollapsed)
-            return '<selection-caret>';
+            return Markup._SELECTION_CARET;
         else
-            return '<selection-anchor>';
+            return Markup._SELECTION_ANCHOR;
     } else if (index == sel.focusOffset && node == sel.focusNode)
-        return '<selection-focus>';
+        return Markup._SELECTION_FOCUS;
 
     return '';
 }

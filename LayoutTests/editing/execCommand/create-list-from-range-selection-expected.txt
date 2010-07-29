@@ -1,26 +1,16 @@
-
-<DIV id="test" contentEditable="true">
-<OL>
-<LI>
-<#text>asd</#text>
-<SPAN id="start">
-<#text>fo<selection-anchor>o</#text>
-</SPAN>
-</LI>
-<LI>
-<#text>bar</#text>
-</LI>
-<LI>
-<#text>baz</#text>
-</LI>
-<LI>
-<#text>foo</#text>
-</LI>
-<LI>
-<#text>bar</#text>
-</LI>
-<LI>
-<#text>ba<selection-focus>z</#text>
-</LI>
-</OL>
-</DIV>
+| <ol>
+|   <li>
+|     "asd"
+|     <span>
+|       id="start"
+|       "fo<#selection-anchor>o"
+|   <li>
+|     "bar"
+|   <li>
+|     "baz"
+|   <li>
+|     "foo"
+|   <li>
+|     "bar"
+|   <li>
+|     "ba<#selection-focus>z"

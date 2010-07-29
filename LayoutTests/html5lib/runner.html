@@ -21,11 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 -->
 <title>html5lib test runner</title>
-<script src=resources/dom2string.js></script>
-<script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
-</script>
+<script src=../resources/dump-as-markup.js></script>
 <style>
 .overview:hover {
 background: #ccc;
@@ -37,6 +33,8 @@ display: none;
 <p>Script did not run</p>
 <iframe></iframe>
 <script>
+Markup.noAutoDump();
+
 var test_files = [
         'resources/tests1.dat',
         'resources/tests2.dat',
@@ -228,7 +226,7 @@ function run_test(input, contextElement, expected)
 
 function process_result(input, result, expected)
 {
-    result = dom2string(result);
+    result = Markup.get(result);
     if (result !== expected)
     {
         fail_list.push(test_number);

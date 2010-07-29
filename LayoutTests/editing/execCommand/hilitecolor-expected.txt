@@ -10,11 +10,9 @@ EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
-
-<DIV id="test" contentEditable="true">
-<#text><selection-caret>The </#text>
-<SPAN style="background-color: red;" class="Apple-style-span">
-<#text>second</#text>
-</SPAN>
-<#text> word, and only the second word of this sentence should have a red background color.</#text>
-</DIV>
+| "<#selection-caret>The "
+| <span>
+|   class="Apple-style-span"
+|   style="background-color: red;"
+|   "second"
+| " word, and only the second word of this sentence should have a red background color."

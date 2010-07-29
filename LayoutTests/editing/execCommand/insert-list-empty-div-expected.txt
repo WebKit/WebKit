@@ -1,8 +1,4 @@
-
-<DIV id="div" contentEditable="true">
-<UL>
-<LI><selection-caret>
-<BR>
-</LI>
-</UL>
-</DIV>
+| <ul>
+|   <li>
+|     <#selection-caret>
+|     <br>

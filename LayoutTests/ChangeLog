@@ -1,3 +1,42 @@
+2010-07-27  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        dump-as-markup should have better output
+        https://bugs.webkit.org/show_bug.cgi?id=43015
+
+        -Merge dom2string into dump-as-markup and pull over all dom2string features (e.g. indent).
+        -#-prefix selection markers
+
+        * editing/deleting/delete-br-in-last-table-cell-expected.txt:
+        * editing/execCommand/crash-indenting-list-item-expected.txt:
+        * editing/execCommand/crash-on-enter-in-contentEditable-list-expected.txt:
+        * editing/execCommand/create-list-from-range-selection-expected.txt:
+        * editing/execCommand/hilitecolor-expected.txt:
+        * editing/execCommand/indent-pre-expected.txt:
+        * editing/execCommand/insert-list-empty-div-expected.txt:
+        * editing/selection/dump-as-markup-expected.txt:
+        * editing/selection/dump-as-markup.html:
+        * editing/selection/home-inside-noneditable-table-expected.txt:
+        * editing/style/remove-underline-from-stylesheet-expected.txt:
+        * editing/style/style-text-node-without-editable-parent-expected.txt:
+        * editing/undo/redo-split-text-node-expected.txt:
+        * editing/undo/redo-split-text-with-removal-expected.txt:
+        * html5lib/resources/dom2string.js: Removed.
+        * html5lib/resources/tests4.dat:
+        * html5lib/resources/tests6.dat:
+        * html5lib/runner-expected.txt:
+        * html5lib/runner.html:
+        * html5lib/webkit-resumer.html:
+        * resources/dump-as-markup.js:
+        (Markup.notifyDone):
+        (Markup._get):
+        (Markup._namespace):
+        (Markup._dumpCalls.0.Markup._indent):
+        (Markup._toAsciiLowerCase):
+        (Markup._getMarkupForTextNode):
+        (Markup._getSelectionMarker):
+
 2010-07-29  Victor Wang  <victorw@chromium.org>
 
         Reviewed by Jeremy Orlow.

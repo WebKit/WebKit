@@ -1,83 +1,79 @@
-
-<HTML>
-<HEAD>
-<#text>
-</#text>
-<SCRIPT src="../../resources/dump-as-markup.js" type="text/JavaScript"></SCRIPT>
-<#text>
-</#text>
-<SCRIPT src="../editing.js" type="text/JavaScript"></SCRIPT>
-<#text>
-</#text>
-<SCRIPT>
+| <html>
+|   <head>
+|     "
+"
+|     <script>
+|       language="JavaScript"
+|       src="../../resources/dump-as-markup.js"
+|       type="text/JavaScript"
+|     "
+"
+|     <script>
+|       language="JavaScript"
+|       src="../editing.js"
+|       type="text/JavaScript"
+|     "
+"
+|     <script>
+|       "
 function runTest()
 {
-br = document.getElementById("lastBR");
-sel = window.getSelection();
-sel.setBaseAndExtent(br, 0, br, 0);
-deleteCommand();
+    br = document.getElementById("lastBR");
+    sel = window.getSelection();
+    sel.setBaseAndExtent(br, 0, br, 0);
+    deleteCommand();
 }
-</SCRIPT>
-<#text>
-</#text>
-</HEAD>
-<#text>
+"
+|     "
+"
+|   "
 
-</#text>
-<BODY>
-<#text>
-</#text>
-<P>
-<A href="https://bugs.webkit.org/show_bug.cgi?id=35369">
-<#text>Bug 35369</#text>
-</A>
-<#text> and </#text>
-<A href="https://bugs.webkit.org/show_bug.cgi?id=35632">
-<#text>Bug 35632</#text>
-</A>
-</P>
-<#text>
-</#text>
-<P>
-<#text>Executing a delete command when positioned before a BR in a table cell (esp. the last)</#text>
-</P>
-<#text>
-</#text>
-<DIV contentEditable="">
-<#text>
-</#text>
-<TABLE id="table">
-<TBODY>
-<TR>
-<TD>
-<#text>1</#text>
-</TD>
-<TD>
-<#text>2</#text>
-</TD>
-</TR>
-<TR>
-<TD>
-<#text>3</#text>
-</TD>
-<TD>
-<#text>4<selection-caret></#text>
-<BR id="lastBR">
-</TD>
-</TR>
-</TBODY>
-</TABLE>
-<#text>
-</#text>
-</DIV>
-<#text>
-</#text>
-<SCRIPT>
+"
+|   <body>
+|     "
+"
+|     <p>
+|       <a>
+|         href="https://bugs.webkit.org/show_bug.cgi?id=35369"
+|         "Bug 35369"
+|       " and "
+|       <a>
+|         href="https://bugs.webkit.org/show_bug.cgi?id=35632"
+|         "Bug 35632"
+|     "
+"
+|     <p>
+|       "Executing a delete command when positioned before a BR in a table cell (esp. the last)"
+|     "
+"
+|     <div>
+|       contenteditable=""
+|       "
+"
+|       <table>
+|         id="table"
+|         <tbody>
+|           <tr>
+|             <td>
+|               "1"
+|             <td>
+|               "2"
+|           <tr>
+|             <td>
+|               "3"
+|             <td>
+|               "4<#selection-caret>"
+|               <br>
+|                 id="lastBR"
+|       "
+"
+|     "
+"
+|     <script>
+|       "
 runTest();
-</SCRIPT>
-<#text>
+"
+|     "
 
 
-</#text>
-</BODY>
-</HTML>
+"
