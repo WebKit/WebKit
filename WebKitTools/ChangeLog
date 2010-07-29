@@ -1,3 +1,11 @@
+2010-07-29  Martin Robinson  <mrobinson@igalia.com>
+
+        Unreviewed build fix.
+
+        Add missing second argument to assert_lint in new style checker tests.
+
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+
 2010-07-29  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.
