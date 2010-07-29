@@ -56,7 +56,7 @@ protected:
 class WKCACFLayer : public RefCounted<WKCACFLayer> {
 public:
     enum LayerType { Layer, TransformLayer };
-    enum FilterType { Linear, Nearest, Trilinear, Lanczos };
+    enum FilterType { Linear, Nearest, Trilinear };
     enum ContentsGravityType { Center, Top, Bottom, Left, Right, TopLeft, TopRight, 
                                BottomLeft, BottomRight, Resize, ResizeAspect, ResizeAspectFill };
 

@@ -123,7 +123,6 @@ static CFStringRef toCACFFilterType(WKCACFLayer::FilterType type)
     case WKCACFLayer::Linear: return kCACFFilterLinear;
     case WKCACFLayer::Nearest: return kCACFFilterNearest;
     case WKCACFLayer::Trilinear: return kCACFFilterTrilinear;
-    case WKCACFLayer::Lanczos: return kCACFFilterLanczos;
     default: return 0;
     }
 }
@@ -135,9 +134,6 @@ static WKCACFLayer::FilterType fromCACFFilterType(CFStringRef string)
 
     if (CFEqual(string, kCACFFilterTrilinear))
         return WKCACFLayer::Trilinear;
-
-    if (CFEqual(string, kCACFFilterLanczos))
-        return WKCACFLayer::Lanczos;
 
     return WKCACFLayer::Linear;
 }

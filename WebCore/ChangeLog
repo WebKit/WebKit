@@ -1,5 +1,19 @@
 2010-07-29  Adam Roben  <aroben@apple.com>
 
+        Remove WKCACFLayer::Lanczos
+
+        This member is also unused.
+
+        Rubber-stamped in advance by John Sullivan.
+
+        * platform/graphics/win/WKCACFLayer.cpp:
+        (WebCore::toCACFFilterType):
+        (WebCore::fromCACFFilterType):
+        * platform/graphics/win/WKCACFLayer.h:
+        (WebCore::WKCACFLayer::):
+
+2010-07-29  Adam Roben  <aroben@apple.com>
+
         Remove some unused WKCACFLayer members
 
         Fixes <http://webkit.org/b/43200> WKCACFLayer has some unused members
