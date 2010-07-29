@@ -31,6 +31,7 @@
 #include "Document.h"
 #include "FixedTableLayout.h"
 #include "FrameView.h"
+#include "HitTestResult.h"
 #include "HTMLNames.h"
 #include "RenderLayer.h"
 #include "RenderTableCell.h"
@@ -1121,7 +1122,7 @@ bool RenderTable::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     ty += y();
 
     // Check kids first.
-    if (!hasOverflowClip() || overflowClipRect(tx, ty).contains(xPos, yPos)) {
+    if (!hasOverflowClip() || overflowClipRect(tx, ty).intersects(result.rectFromPoint(xPos, yPos))) {
         for (RenderObject* child = lastChild(); child; child = child->previousSibling()) {
             if (child->isBox() && !toRenderBox(child)->hasSelfPaintingLayer() && (child->isTableSection() || child == m_caption) &&
                 child->nodeAtPoint(request, result, xPos, yPos, tx, ty, action)) {
@@ -1132,9 +1133,11 @@ bool RenderTable::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     }
 
     // Check our bounds next.
-    if (visibleToHitTesting() && (action == HitTestBlockBackground || action == HitTestChildBlockBackground) && IntRect(tx, ty, width(), height()).contains(xPos, yPos)) {
+    IntRect boundsRect = IntRect(tx, ty, width(), height());
+    if (visibleToHitTesting() && (action == HitTestBlockBackground || action == HitTestChildBlockBackground) && boundsRect.intersects(result.rectFromPoint(xPos, yPos))) {
         updateHitTestResult(result, IntPoint(xPos - tx, yPos - ty));
-        return true;
+        if (!result.addNodeToRectBasedTestResult(node(), xPos, yPos, boundsRect))
+            return true;
     }
 
     return false;

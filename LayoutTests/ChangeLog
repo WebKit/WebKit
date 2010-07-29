@@ -1,3 +1,13 @@
+2010-07-21 Antonio Gomes  <tonikitoo@webkit.org> , Grace Kloba  <klobag@gmail.com>
+
+        Reviewed by David Hyatt.
+
+        Enhance the hit testing to take a rectangle instead of a point
+        https://bugs.webkit.org/show_bug.cgi?id=40197
+
+        * fast/dom/nodesFromRect-basic-expected.txt: Added.
+        * fast/dom/nodesFromRect-basic.html: Added.
+
 2010-07-29  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.

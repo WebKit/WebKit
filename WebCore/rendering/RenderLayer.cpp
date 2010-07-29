@@ -2739,14 +2739,16 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
 #if USE(ACCELERATED_COMPOSITING)
     useTemporaryClipRects = compositor()->inCompositingMode();
 #endif
-    
+
+    IntRect hitTestArea = result.rectFromPoint(hitTestPoint);
+
     // Apply a transform if we have one.
     if (transform() && !appliedTransform) {
         // Make sure the parent's clip rects have been calculated.
         if (parent()) {
             IntRect clipRect = backgroundClipRect(rootLayer, useTemporaryClipRects);
             // Go ahead and test the enclosing clip now.
-            if (!clipRect.contains(hitTestPoint))
+            if (!clipRect.intersects(hitTestArea))
                 return 0;
         }
 
@@ -2859,17 +2861,21 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
     }
 
     // Next we want to see if the mouse pos is inside the child RenderObjects of the layer.
-    if (fgRect.contains(hitTestPoint) && isSelfPaintingLayer()) {
+    if (fgRect.intersects(hitTestArea) && isSelfPaintingLayer()) {
         // Hit test with a temporary HitTestResult, because we only want to commit to 'result' if we know we're frontmost.
-        HitTestResult tempResult(result.point());
+        HitTestResult tempResult(result.point(), result.padding());
         if (hitTestContents(request, tempResult, layerBounds, hitTestPoint, HitTestDescendants) &&
             isHitCandidate(this, false, zOffsetForContentsPtr, unflattenedTransformState.get())) {
-            result = tempResult;
+            if (result.isRectBasedTest())
+                result.append(tempResult);
+            else
+                result = tempResult;
             if (!depthSortDescendants)
                 return this;
             // Foreground can depth-sort with descendant layers, so keep this as a candidate.
             candidateLayer = this;
-        }
+        } else if (result.isRectBasedTest())
+            result.append(tempResult);
     }
 
     // Now check our negative z-index children.
@@ -2885,13 +2891,17 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
     if (candidateLayer)
         return candidateLayer;
 
-    if (bgRect.contains(hitTestPoint) && isSelfPaintingLayer()) {
-        HitTestResult tempResult(result.point());
+    if (bgRect.intersects(hitTestArea) && isSelfPaintingLayer()) {
+        HitTestResult tempResult(result.point(), result.padding());
         if (hitTestContents(request, tempResult, layerBounds, hitTestPoint, HitTestSelf) &&
             isHitCandidate(this, false, zOffsetForContentsPtr, unflattenedTransformState.get())) {
-            result = tempResult;
+            if (result.isRectBasedTest())
+                result.append(tempResult);
+            else
+                result = tempResult;
             return this;
-        }
+        } else if (result.isRectBasedTest())
+            result.append(tempResult);
     }
     
     return 0;
@@ -2903,8 +2913,9 @@ bool RenderLayer::hitTestContents(const HitTestRequest& request, HitTestResult& 
                             layerBounds.x() - renderBoxX(),
                             layerBounds.y() - renderBoxY(), 
                             hitTestFilter)) {
-        // It's wrong to set innerNode, but then claim that you didn't hit anything.
-        ASSERT(!result.innerNode());
+        // It's wrong to set innerNode, but then claim that you didn't hit anything, unless it is
+        // a rect-based test.
+        ASSERT(!result.innerNode() || (result.isRectBasedTest() && result.rectBasedTestResult().size()));
         return false;
     }
 
@@ -2938,14 +2949,21 @@ RenderLayer* RenderLayer::hitTestList(Vector<RenderLayer*>* list, RenderLayer* r
     for (int i = list->size() - 1; i >= 0; --i) {
         RenderLayer* childLayer = list->at(i);
         RenderLayer* hitLayer = 0;
-        HitTestResult tempResult(result.point());
+        HitTestResult tempResult(result.point(), result.padding());
         if (childLayer->isPaginated())
             hitLayer = hitTestPaginatedChildLayer(childLayer, rootLayer, request, tempResult, hitTestRect, hitTestPoint, transformState, zOffsetForDescendants);
         else
             hitLayer = childLayer->hitTestLayer(rootLayer, this, request, tempResult, hitTestRect, hitTestPoint, false, transformState, zOffsetForDescendants);
+
+        // If it a rect-based test, we can safely append the temporary result since it might had hit
+        // nodes but not necesserily had hitLayer set.
+        if (result.isRectBasedTest())
+            result.append(tempResult);
+
         if (isHitCandidate(hitLayer, depthSortDescendants, zOffset, unflattenedTransformState)) {
             resultLayer = hitLayer;
-            result = tempResult;
+            if (!result.isRectBasedTest())
+                result = tempResult;
             if (!depthSortDescendants)
                 break;
         }
@@ -3005,7 +3023,7 @@ RenderLayer* RenderLayer::hitTestChildLayerColumns(RenderLayer* childLayer, Rend
         IntRect localClipRect(hitTestRect);
         localClipRect.intersect(colRect);
         
-        if (!localClipRect.isEmpty() && localClipRect.contains(hitTestPoint)) {
+        if (!localClipRect.isEmpty() && localClipRect.intersects(result.rectFromPoint(hitTestPoint))) {
             RenderLayer* hitLayer = 0;
             if (!columnIndex) {
                 // Apply a translation transform to change where the layer paints.

@@ -28,6 +28,7 @@
 
 #include "CachedImage.h"
 #include "Document.h"
+#include "HitTestResult.h"
 #include "HTMLNames.h"
 #include "RenderTableCell.h"
 #include "RenderTableCol.h"
@@ -1177,7 +1178,7 @@ bool RenderTableSection::nodeAtPoint(const HitTestRequest& request, HitTestResul
     tx += x();
     ty += y();
 
-    if (hasOverflowClip() && !overflowClipRect(tx, ty).contains(xPos, yPos))
+    if (hasOverflowClip() && !overflowClipRect(tx, ty).intersects(result.rectFromPoint(xPos, yPos)))
         return false;
 
     for (RenderObject* child = lastChild(); child; child = child->previousSibling()) {

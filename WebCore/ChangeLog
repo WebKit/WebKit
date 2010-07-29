@@ -1,3 +1,97 @@
+2010-07-21 Grace Kloba  <klobag@gmail.com> , Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by David Hyatt.
+
+        Enhance the hit testing to take a rectangle instead of a point
+        https://bugs.webkit.org/show_bug.cgi?id=40197
+
+        The primary goal of this change is to provide mechanisms for more precise tap
+        actions by the users on mobile devices.
+
+        Patch extends the hit testing system to work considering a rectangular area
+        as input instead of a point, when applicable. For that, the HitTestResult class
+        was modified to take a padding (IntSize). The padding specifies a fuzzy range for
+        accepting input events in pixels coordinates for both vertical and horizontal
+        orientations. In other words, it tells how much to expand the search rect
+        around a supposed touch point.
+
+        If it is non-positive padding (e.g. (-1, -1), (5, -1), (0, 0)), hit testing will behavior
+        as the current point based hit testing: methods are no-op'ed to not regress it performance-wise
+        since it is the common behavior. When positive padding is provided, the HitTestResult class will
+        keep record of all nodes that intersect the built up test area. The logic will continue searching
+        when it finds a candidate until the hit test area is fully enclosed by the boundaries of a candidate.
+        The result will be a list of nodes in the z-order they are hit-tested. Caller will decide how
+        to process them.
+
+        In order to expose the functionality, the patch:
+
+        - Adds a nodesFromRect method to the Document class, exposing the funcionality
+        to the DOM. Method returns a NodeList with all nodes that intersect the given
+        hit-tested area.
+        - Extends hitTestResultAtPoint method of the EventHandler with an extra 'padding'
+        parameter, defaulting to IntSize(-1, -1). The rect-based hit test is performed when a
+        non-negative padding is passed in.
+
+        Test: fast/dom/nodesFromRect-basic.html
+
+        * WebCore.base.exp:
+        * dom/Document.cpp:
+        (WebCore::Document::nodesFromRect): This method exposes the rect based funcionality to
+        the DOM. It works similarly to elementFromPoint, however receiving a rectangular area
+        as input instead of a point, and returning a z-index ordered list of nodes (not elements)
+        whose area intersect the hit test rect.
+        * dom/Document.h: Ditto.
+        * dom/Document.idl: Ditto.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::hitTestResultAtPoint): The funcionality is also exposed through this
+        method. Patch adds a additional IntSize parameter to work as the padding area, building up
+        the hit test rect.
+        * page/EventHandler.h: Ditto.
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::HitTestResult): Rect based hit test constructor. Receives a
+        padding IntSize as parameter. It can be (0,0).
+        (WebCore::HitTestResult::operator=): Modified to assign the m_rectBasedTestResult as well.
+        (WebCore::HitTestResult::append): Merge to HitTestResult objects in a way that the
+        list node's of both objects get amended.
+        (WebCore::HitTestResult::addNodeToRectBasedTestResult): Adds a given Node to the list of
+        hit nodes.
+        * rendering/HitTestResult.h:
+        (WebCore::HitTestResult::padding): Returns the padding as an IntSize.
+        (WebCore::HitTestResult::isRectBasedTest): Returns if the HitTestResult is rect based or not.
+        (WebCore::HitTestResult::.rectBasedTestResult): Returns the list nodes hit.
+        (WebCore::HitTestResult::rectFromPoint): Returns the hit test rect given the hit test point
+        and padding.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::hitTestLayer):
+        (WebCore::RenderLayer::hitTestList):
+        (WebCore::RenderLayer::hitTestChildLayerColumns):
+        * rendering/EllipsisBox.cpp:
+        (WebCore::EllipsisBox::nodeAtPoint): Method is modified to support rect based hit test extension.
+        Now it not just checks if the boundary of the node being hit-tested contains a hit test point, but
+        instead it checks if the boundary of the node intersects a hit test rect. It is implemented so
+        that the common case (point based hit test) works as previously.
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::nodeAtPoint): Ditto.
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::nodeAtPoint): Ditto.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::nodeAtPoint): Ditto.
+        (WebCore::RenderBlock::hitTestColumns): Ditto.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::nodeAtPoint): Ditto.
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::nodeAtPoint): Ditto.
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::hitTest):
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::nodeAtPoint): Ditto.
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::nodeAtPoint): Ditto.
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::nodeAtPoint): Ditto.
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::nodeAtPoint): Ditto.
+
 2010-07-29  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.

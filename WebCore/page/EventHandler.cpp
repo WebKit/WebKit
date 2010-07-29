@@ -863,9 +863,9 @@ void EventHandler::allowDHTMLDrag(bool& flagDHTML, bool& flagUA) const
 }
 #endif // ENABLE(DRAG_SUPPORT)
     
-HitTestResult EventHandler::hitTestResultAtPoint(const IntPoint& point, bool allowShadowContent, bool ignoreClipping, HitTestScrollbars testScrollbars, HitTestRequest::HitTestRequestType hitType)
+HitTestResult EventHandler::hitTestResultAtPoint(const IntPoint& point, bool allowShadowContent, bool ignoreClipping, HitTestScrollbars testScrollbars, HitTestRequest::HitTestRequestType hitType, const IntSize& padding)
 {
-    HitTestResult result(point);
+    HitTestResult result(point, padding);
     if (!m_frame->contentRenderer())
         return result;
     if (ignoreClipping)
@@ -886,7 +886,7 @@ HitTestResult EventHandler::hitTestResultAtPoint(const IntPoint& point, bool all
         FrameView* view = static_cast<FrameView*>(widget);
         IntPoint widgetPoint(result.localPoint().x() + view->scrollX() - renderWidget->borderLeft() - renderWidget->paddingLeft(), 
             result.localPoint().y() + view->scrollY() - renderWidget->borderTop() - renderWidget->paddingTop());
-        HitTestResult widgetHitTestResult(widgetPoint);
+        HitTestResult widgetHitTestResult(widgetPoint, padding);
         frame->contentRenderer()->layer()->hitTest(HitTestRequest(hitType), widgetHitTestResult);
         result = widgetHitTestResult;
 
@@ -908,7 +908,7 @@ HitTestResult EventHandler::hitTestResultAtPoint(const IntPoint& point, bool all
             if (resultView && mainView) {
                 IntPoint windowPoint = resultView->contentsToWindow(result.point());
                 IntPoint mainFramePoint = mainView->windowToContents(windowPoint);
-                result = mainFrame->eventHandler()->hitTestResultAtPoint(mainFramePoint, allowShadowContent, ignoreClipping);
+                result = mainFrame->eventHandler()->hitTestResultAtPoint(mainFramePoint, allowShadowContent, ignoreClipping, testScrollbars, hitType, padding);
             }
         }
     }

@@ -29,6 +29,7 @@
 #include "config.h"
 #include "RenderLineBoxList.h"
 
+#include "HitTestResult.h"
 #include "InlineTextBox.h"
 #include "RenderArena.h"
 #include "RenderInline.h"
@@ -245,14 +246,16 @@ bool RenderLineBoxList::hitTest(RenderBoxModelObject* renderer, const HitTestReq
     // contain the point.  This is a quick short-circuit that we can take to avoid walking any lines.
     // FIXME: This check is flawed in the following extremely obscure way:
     // if some line in the middle has a huge overflow, it might actually extend below the last line.
-    if ((y >= ty + lastLineBox()->root()->bottomVisibleOverflow()) || (y < ty + firstLineBox()->root()->topVisibleOverflow()))
+    if (y - result.paddingHeight() >= ty + lastLineBox()->root()->bottomVisibleOverflow()
+     || y + result.paddingHeight() < ty + firstLineBox()->root()->topVisibleOverflow())
         return false;
 
     // See if our root lines contain the point.  If so, then we hit test
     // them further.  Note that boxes can easily overlap, so we can't make any assumptions
     // based off positions of our first line box or our last line box.
     for (InlineFlowBox* curr = lastLineBox(); curr; curr = curr->prevLineBox()) {
-        if (y >= ty + curr->root()->topVisibleOverflow() && y < ty + curr->root()->bottomVisibleOverflow()) {
+        if (y + result.paddingHeight() >= ty + curr->root()->topVisibleOverflow()
+         && y - result.paddingHeight() < ty + curr->root()->bottomVisibleOverflow()) {
             bool inside = curr->nodeAtPoint(request, result, x, y, tx, ty);
             if (inside) {
                 renderer->updateHitTestResult(result, IntPoint(x - tx, y - ty));

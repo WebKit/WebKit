@@ -49,7 +49,18 @@ using namespace HTMLNames;
 HitTestResult::HitTestResult(const IntPoint& point)
     : m_point(point)
     , m_isOverWidget(false)
+    , m_isRectBased(false)
 {
+}
+
+HitTestResult::HitTestResult(const IntPoint& centerPoint, const IntSize& padding)
+    : m_point(centerPoint)
+    , m_isOverWidget(false)
+{
+    // If a zero padding is passed in or either width or height is negative, then it
+    // is not a valid padding and hence not a rect based hit test.
+    m_isRectBased = !(padding.isZero() || (padding.width() < 0 || padding.height() < 0));
+    m_padding = m_isRectBased ? padding : IntSize();
 }
 
 HitTestResult::HitTestResult(const HitTestResult& other)
@@ -61,6 +72,12 @@ HitTestResult::HitTestResult(const HitTestResult& other)
     , m_scrollbar(other.scrollbar())
     , m_isOverWidget(other.isOverWidget())
 {
+    // Only copy the padding and ListHashSet in case of rect hit test.
+    // Copying the later is rather expensive.
+    if ((m_isRectBased = other.isRectBasedTest())) {
+        m_padding = other.padding();
+        m_rectBasedTestResult = other.rectBasedTestResult();
+    }
 }
 
 HitTestResult::~HitTestResult()
@@ -76,6 +93,12 @@ HitTestResult& HitTestResult::operator=(const HitTestResult& other)
     m_innerURLElement = other.URLElement();
     m_scrollbar = other.scrollbar();
     m_isOverWidget = other.isOverWidget();
+    // Only copy the padding and ListHashSet in case of rect hit test.
+    // Copying the later is rather expensive.
+    if ((m_isRectBased = other.isRectBasedTest())) {
+        m_padding = other.padding();
+        m_rectBasedTestResult = other.rectBasedTestResult();
+    }
     return *this;
 }
 
@@ -360,6 +383,42 @@ bool HitTestResult::isContentEditable() const
         return static_cast<HTMLInputElement*>(m_innerNonSharedNode.get())->isTextField();
 
     return m_innerNonSharedNode->isContentEditable();
+}
+
+bool HitTestResult::addNodeToRectBasedTestResult(Node* node, int x, int y, const IntRect& rect)
+{
+    // If it is not a rect-based hit test, this method has to be no-op.
+    // Return false, so the hit test stops.
+    if (!isRectBasedTest())
+        return false;
+
+    // If node is null, return true so the hit test can continue.
+    if (!node)
+        return true;
+
+    node = node->shadowAncestorNode();
+    m_rectBasedTestResult.add(node);
+
+    return !rect.contains(rectFromPoint(x, y));
+}
+
+void HitTestResult::append(const HitTestResult& other)
+{
+    ASSERT(isRectBasedTest() && other.isRectBasedTest());
+
+    if (!m_innerNode && other.innerNode()) {
+        m_innerNode = other.innerNode();
+        m_innerNonSharedNode = other.innerNonSharedNode();
+        m_localPoint = other.localPoint();
+        m_innerURLElement = other.URLElement();
+        m_scrollbar = other.scrollbar();
+        m_isOverWidget = other.isOverWidget();
+    }
+
+    const ListHashSet<RefPtr<Node> >& list = other.rectBasedTestResult();
+    ListHashSet<RefPtr<Node> >::const_iterator last = list.end();
+    for (ListHashSet<RefPtr<Node> >::const_iterator it = list.begin(); it != last; ++it)
+        m_rectBasedTestResult.add(it->get());
 }
 
 } // namespace WebCore

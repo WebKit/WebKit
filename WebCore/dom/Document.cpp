@@ -119,6 +119,7 @@
 #include "SegmentedString.h"
 #include "SelectionController.h"
 #include "Settings.h"
+#include "StaticHashSetNodeList.h"
 #include "StringBuffer.h"
 #include "StyleSheetList.h"
 #include "TextEvent.h"
@@ -1002,6 +1003,63 @@ void Document::setDocumentURI(const String& uri)
 KURL Document::baseURI() const
 {
     return m_baseURL;
+}
+
+// FIXME: We need to discuss the DOM API here at some point. Ideas:
+// * making it receive a rect as parameter, i.e. nodesFromRect(x, y, w, h);
+// * making it receive the expading size of each direction separately,
+//   i.e. nodesFromRect(x, y, topSize, rightSize, bottomSize, leftSize);
+PassRefPtr<NodeList> Document::nodesFromRect(int centerX, int centerY, unsigned hPadding, unsigned vPadding, bool ignoreClipping) const
+{
+    // FIXME: Share code between this, elementFromPoint and caretRangeFromPoint.
+    if (!renderer())
+        return 0;
+    Frame* frame = this->frame();
+    if (!frame)
+        return 0;
+    FrameView* frameView = frame->view();
+    if (!frameView)
+        return 0;
+
+    float zoomFactor = frameView->pageZoomFactor();
+    IntPoint point = roundedIntPoint(FloatPoint(centerX * zoomFactor + view()->scrollX(), centerY * zoomFactor + view()->scrollY()));
+    IntSize padding(hPadding, vPadding);
+
+    int type = HitTestRequest::ReadOnly | HitTestRequest::Active;
+
+    // When ignoreClipping is false, this method returns null for coordinates outside of the viewport.
+    if (ignoreClipping)
+        type |= HitTestRequest::IgnoreClipping;
+    else if (!frameView->visibleContentRect().intersects(IntRect(point, padding)))
+        return 0;
+
+    HitTestRequest request(type);
+
+    // Passing a zero padding will trigger a rect hit test, however for the purposes of nodesFromRect,
+    // we special handle this case in order to return a valid NodeList.
+    if (padding.isZero()) {
+        HitTestResult result(point);
+        return handleZeroPadding(request, result);
+    }
+
+    HitTestResult result(point, padding);
+    renderView()->layer()->hitTest(request, result);
+
+    return StaticHashSetNodeList::adopt(result.rectBasedTestResult());
+}
+
+PassRefPtr<NodeList> Document::handleZeroPadding(const HitTestRequest& request, HitTestResult& result) const
+{
+    renderView()->layer()->hitTest(request, result);
+
+    Node* node = result.innerNode();
+    if (!node)
+        return 0;
+
+    node = node->shadowAncestorNode();
+    ListHashSet<RefPtr<Node> > list;
+    list.add(node);
+    return StaticHashSetNodeList::adopt(list);
 }
 
 Element* Document::elementFromPoint(int x, int y) const

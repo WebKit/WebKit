@@ -21,7 +21,10 @@
 #define HitTestResult_h
 
 #include "IntPoint.h"
+#include "IntRect.h"
+#include "IntSize.h"
 #include "TextDirection.h"
+#include <wtf/ListHashSet.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -38,6 +41,8 @@ class String;
 class HitTestResult {
 public:
     HitTestResult(const IntPoint&);
+    // Pass a non-negative IntSize value as padding to perform a rect-based hit test.
+    HitTestResult(const IntPoint& centerPoint, const IntSize& padding);
     HitTestResult(const HitTestResult&);
     ~HitTestResult();
     HitTestResult& operator=(const HitTestResult&);
@@ -76,7 +81,21 @@ public:
     bool isLiveLink() const;
     bool isContentEditable() const;
 
+    // Rect-based hit test related methods.
+    bool isRectBasedTest() const { return m_isRectBased; }
+    IntRect rectFromPoint(int x, int y) const;
+    IntRect rectFromPoint(const IntPoint&) const;
+    IntSize padding() const { return m_padding; }
+    int paddingWidth() const { return m_padding.width() >= 0 ? m_padding.width() : 0; }
+    int paddingHeight() const { return m_padding.height() >= 0 ? m_padding.height() : 0; }
+    // Returns true if it is rect-based hit test and needs to continue until the rect is fully
+    // enclosed by the boundaries of a node.
+    bool addNodeToRectBasedTestResult(Node*, int x, int y, const IntRect& rect = IntRect());
+    const ListHashSet<RefPtr<Node> >& rectBasedTestResult() const { return m_rectBasedTestResult; }
+    void append(const HitTestResult&);
+
 private:
+
     RefPtr<Node> m_innerNode;
     RefPtr<Node> m_innerNonSharedNode;
     IntPoint m_point;
@@ -85,7 +104,36 @@ private:
     RefPtr<Element> m_innerURLElement;
     RefPtr<Scrollbar> m_scrollbar;
     bool m_isOverWidget; // Returns true if we are over a widget (and not in the border/padding area of a RenderWidget for example).
+    bool m_isRectBased;
+    IntSize m_padding;
+    ListHashSet<RefPtr<Node> > m_rectBasedTestResult;
 };
+
+inline IntRect HitTestResult::rectFromPoint(int x, int y) const
+{
+    return rectFromPoint(IntPoint(x, y));
+}
+
+// Formula:
+// x = p.x() - padding.width()
+// y = p.y() - padding.height()
+// width = 2 * padding.width() + 1
+// height = 2 * m_padding.height() + 1
+inline IntRect HitTestResult::rectFromPoint(const IntPoint& point) const
+{
+    IntPoint realPoint(point);
+    IntSize realPadding(m_padding);
+
+    // Real IntPoint for the rect.
+    realPadding.clampNegativeToZero();
+    realPoint -= realPadding;
+
+    // Real IntSize for the rect.
+    realPadding.scale(2);
+    realPadding += IntSize(1, 1);
+
+    return IntRect(realPoint, realPadding);
+}
 
 String displayString(const String&, const Node*);
 

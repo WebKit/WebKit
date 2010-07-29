@@ -394,7 +394,7 @@ bool RenderWidget::nodeAtPoint(const HitTestRequest& request, HitTestResult& res
     bool inside = RenderReplaced::nodeAtPoint(request, result, x, y, tx, ty, action);
     
     // Check to see if we are really over the widget itself (and not just in the border/padding area).
-    if (inside && !hadResult && result.innerNode() == node())
+    if ((inside || result.isRectBasedTest()) && !hadResult && result.innerNode() == node())
         result.setIsOverWidget(contentBoxRect().contains(result.localPoint()));
     return inside;
 }
