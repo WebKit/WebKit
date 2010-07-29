@@ -33,32 +33,6 @@
 #include "launcherwindow.h"
 #include "urlloader.h"
 
-QWebPage* WebPage::createWindow(QWebPage::WebWindowType type)
-{
-    LauncherWindow* mw = new LauncherWindow;
-    if (type == WebModalDialog)
-        mw->setWindowModality(Qt::ApplicationModal);
-    mw->show();
-    return mw->page();
-}
-
-QObject* WebPage::createPlugin(const QString &classId, const QUrl&, const QStringList&, const QStringList&)
-{
-    if (classId == "alien_QLabel") {
-        QLabel* l = new QLabel;
-        l->winId();
-        return l;
-    }
-
-#ifndef QT_NO_UITOOLS
-    QUiLoader loader;
-    return loader.createWidget(classId, view());
-#else
-    Q_UNUSED(classId);
-    return 0;
-#endif
-}
-
 int launcherMain(const QApplication& app)
 {
 #ifndef NDEBUG

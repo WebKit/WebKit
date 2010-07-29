@@ -32,6 +32,8 @@
 
 #include "webpage.h"
 
+#include "launcherwindow.h"
+
 #include <QAuthenticator>
 #include <QDesktopServices>
 #include <QtGui>
@@ -185,3 +187,30 @@ void WebPage::checkPermission(QWebFrame* frame, QWebPage::PermissionDomain domai
 void WebPage::cancelRequestsForPermission(QWebFrame*, QWebPage::PermissionDomain)
 {
 }
+
+QWebPage* WebPage::createWindow(QWebPage::WebWindowType type)
+{
+    LauncherWindow* mw = new LauncherWindow;
+    if (type == WebModalDialog)
+        mw->setWindowModality(Qt::ApplicationModal);
+    mw->show();
+    return mw->page();
+}
+
+QObject* WebPage::createPlugin(const QString &classId, const QUrl&, const QStringList&, const QStringList&)
+{
+    if (classId == "alien_QLabel") {
+        QLabel* l = new QLabel;
+        l->winId();
+        return l;
+    }
+
+#ifndef QT_NO_UITOOLS
+    QUiLoader loader;
+    return loader.createWidget(classId, view());
+#else
+    Q_UNUSED(classId);
+    return 0;
+#endif
+}
+
