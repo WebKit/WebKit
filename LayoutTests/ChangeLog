@@ -1,3 +1,45 @@
+2010-07-28  Victor Wang  <victorw@chromium.org>
+
+        Unreviewed. Update chromium test expectations for svg test.
+        After Alex Nicolaou's patch http://trac.webkit.org/changeset/64254,
+        Chromium should have same results with platform/mac or platform/mac-leopard.
+        Also rebaselin leopard result for the new test added by r64254.
+
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-composite-02-b-expected.checksum: Removed.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-composite-02-b-expected.png: Removed.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-conv-01-f-expected.checksum: Removed.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-conv-01-f-expected.png: Removed.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-diffuse-01-f-expected.checksum: Removed.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-diffuse-01-f-expected.png: Removed.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-displace-01-f-expected.checksum: Removed.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-displace-01-f-expected.png: Removed.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-example-01-b-expected.checksum: Removed.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-example-01-b-expected.png: Removed.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-image-01-b-expected.checksum: Removed.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-image-01-b-expected.png: Removed.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-light-01-f-expected.checksum: Removed.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-light-01-f-expected.png: Removed.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-light-04-f-expected.checksum: Removed.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-light-04-f-expected.png: Removed.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-specular-01-f-expected.checksum: Removed.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-specular-01-f-expected.png: Removed.
+        * platform/chromium-mac/svg/custom/feDisplacementMap-01-expected.checksum: Removed.
+        * platform/chromium-mac/svg/custom/feDisplacementMap-01-expected.png: Removed.
+        * platform/chromium-mac/svg/custom/image-with-transform-clip-filter-expected.checksum: Removed.
+        * platform/chromium-mac/svg/custom/image-with-transform-clip-filter-expected.png: Removed.
+        * platform/chromium-mac/svg/custom/recursive-filter-expected.checksum: Removed.
+        * platform/chromium-mac/svg/custom/recursive-filter-expected.png: Removed.
+        * platform/chromium-mac/svg/filters/feLighting-crash-expected.checksum: Removed.
+        * platform/chromium-mac/svg/filters/feLighting-crash-expected.png: Removed.
+        * platform/chromium-mac/svg/filters/filter-on-tspan-expected.checksum: Removed.
+        * platform/chromium-mac/svg/filters/filter-on-tspan-expected.png: Removed.
+        * platform/chromium-mac/svg/filters/filter-width-update-expected.checksum: Removed.
+        * platform/chromium-mac/svg/filters/filteredImage-expected.checksum: Removed.
+        * platform/chromium-mac/svg/filters/parent-children-with-same-filter-expected.checksum: Removed.
+        * platform/chromium-mac/svg/filters/parent-children-with-same-filter-expected.png: Removed.
+        * platform/mac-leopard/svg/custom/mask-colorspace-expected.checksum: Added.
+        * platform/mac-leopard/svg/custom/mask-colorspace-expected.png: Added.
+
 2010-07-28  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Darin Adler.
