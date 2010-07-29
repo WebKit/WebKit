@@ -25,7 +25,7 @@
 
 #include <WebKit/npfunctions.h>
 
-#if XP_MACOSX
+#if defined(XP_MACOSX)
 #if !defined(MAC_OS_X_VERSION_10_5) || MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_5
 #define BUILDING_ON_TIGER 1
 #elif !defined(MAC_OS_X_VERSION_10_6) || MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_6
@@ -66,7 +66,7 @@ typedef struct {
 #ifdef XP_MACOSX
     NPEventModel eventModel;
 #endif
-#if XP_MACOSX && !defined(BUILDING_ON_TIGER)
+#if defined(XP_MACOSX) && !defined(BUILDING_ON_TIGER)
     void* coreAnimationLayer;
 #endif
     NPWindow lastWindow;
@@ -80,7 +80,7 @@ extern void pluginLog(NPP instance, const char* format, ...);
 extern bool testDocumentOpen(NPP npp);
 extern bool testWindowOpen(NPP npp);
 
-#if XP_MACOSX && !defined(BUILDING_ON_TIGER)
+#if defined(XP_MACOSX) && !defined(BUILDING_ON_TIGER)
 extern void* createCoreAnimationLayer();
 #endif
 
