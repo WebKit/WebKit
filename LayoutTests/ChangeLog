@@ -1,3 +1,18 @@
+2010-07-29  Alex Nicolaou  <anicolao@chromium.org>
+
+        Reviewed by Dirk Schulze.
+
+        [chromium] new svg failures after r63485
+        https://bugs.webkit.org/show_bug.cgi?id=42428
+
+        Now that my fix for https://bugs.webkit.org/show_bug.cgi?id=43102
+        is checked in, 42428 is fixed also as well as a bunch of other tests
+        that were previously failing because of the wrong colourspace for the
+        SVG mask. This change resets expectations to pass for the appropriate
+        tests.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-07-28  Victor Wang  <victorw@chromium.org>
 
         Unreviewed. Update chromium test expectations for svg test.

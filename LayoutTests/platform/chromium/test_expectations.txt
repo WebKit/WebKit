@@ -986,12 +986,6 @@ BUG10306 LINUX : svg/carto.net/combobox.svg = FAIL
 // alpha in bottom group.
 BUG10310 LINUX : svg/W3C-SVG-1.1/masking-opacity-01-b.svg = FAIL
 
-// Image mismatch since WebKit r49757.
-// The difference is hard to tell, but our gradation is slightly different
-// (blue is too strong on the gradation).
-// Pixel dump was updated on upstream but our rendering did not change.
-BUG25175 MAC : svg/custom/grayscale-gradient-mask.svg = IMAGE
-
 // -----------------------------------------------------------------
 // Accessibility layout tests
 //
@@ -2383,23 +2377,7 @@ BUG29748 WIN DEBUG : fast/forms/input-align-image.html = IMAGE+TEXT PASS
 
 // More Webkit Roll to r51875
 // Some of these went from IMAGE+TEXT to just IMAGE at r57886
-BUG29737 MAC : svg/W3C-SVG-1.1/filters-blend-01-b.svg = IMAGE
-BUG29737 MAC : svg/W3C-SVG-1.1/filters-color-01-b.svg = IMAGE
-BUG29737 MAC : svg/W3C-SVG-1.1/filters-comptran-01-b.svg = IMAGE
-BUG29737 MAC : svg/W3C-SVG-1.1/filters-gauss-01-b.svg = IMAGE
-BUG29737 MAC : svg/W3C-SVG-1.1/filters-morph-01-f.svg = IMAGE
-BUG29737 MAC : svg/W3C-SVG-1.1/filters-offset-01-b.svg = IMAGE
-BUG29737 MAC : svg/batik/filters/feTile.svg = IMAGE
-BUG29737 MAC : svg/custom/feComponentTransfer-Discrete.svg = IMAGE
-BUG29737 MAC : svg/custom/feComponentTransfer-Gamma.svg = IMAGE
-BUG29737 MAC : svg/custom/feComponentTransfer-Linear.svg = IMAGE
-BUG29737 MAC : svg/custom/feComponentTransfer-Table.svg = IMAGE
-BUG29737 MAC : svg/custom/text-filter.svg = IMAGE
-BUG29737 MAC : svg/filters/feComposite.svg = IMAGE
-BUG29737 MAC : svg/filters/feDisplacementMap.svg = IMAGE
-BUG29737 MAC : svg/filters/feTile.svg = IMAGE
 BUG29737 MAC : svg/custom/use-elementInstance-event-target.svg = IMAGE
-BUG29737 SLOW MAC : svg/filters/big-sized-filter.svg = IMAGE
 BUG29737 MAC : svg/W3C-SVG-1.1/struct-image-02-b.svg = IMAGE
 BUG29737 MAC : svg/filters/sourceAlpha.svg = IMAGE
 
@@ -2644,7 +2622,6 @@ BUG38706 : svg/custom/deep-dynamic-updates.svg = IMAGE+TEXT IMAGE PASS
 
 // Caused by http://trac.webkit.org/changeset/56288/
 BUG_JSCHUH WIN LINUX : svg/filters/filterRes.svg = IMAGE+TEXT TEXT
-BUG_JSCHUH MAC : svg/filters/filterRes.svg = IMAGE
 
 // Caused by http://trac.webkit.org/changeset/56394.
 BUG_JAPHET WIN : http/tests/xmlhttprequest/xmlhttprequest-50ms-download-dispatch.html = TEXT
@@ -2694,7 +2671,7 @@ BUG42044 WIN : http/tests/security/xss-DENIED-mime-type-execute-as-html.html = P
 // might have been flaky
 BUGJAMESR MAC : svg/custom/resource-invalidate-on-target-update.svg = IMAGE PASS
 BUGJAMESR LINUX : svg/custom/resource-invalidate-on-target-update.svg = IMAGE
-BUGJAMESR : svg/filters/filter-clip.svg = IMAGE
+BUGJAMESR WIN LINUX : svg/filters/filter-clip.svg = IMAGE
 BUGJAMESR : svg/filters/filter-source-position.svg = IMAGE
 BUGJAMESR BUG30048 BUG29737 WIN LINUX : svg/filters/shadow-on-rect-with-filter.svg = IMAGE
 
@@ -3098,7 +3075,6 @@ BUGWK42403 LINUX WIN : svg/css/circle-in-mask-with-shadow.svg = IMAGE
 BUGWK42403 LINUX WIN : svg/custom/grayscale-gradient-mask.svg = IMAGE
 BUGWK42403 WIN : svg/custom/mask-colorspace.svg = IMAGE
 
-BUGWK42428 : svg/custom/convolution-crash.svg = IMAGE
 BUGWK42428 LINUX WIN : svg/W3C-SVG-1.1/filters-conv-01-f.svg = IMAGE+TEXT
 
 // Need setPrinting.
