@@ -1,3 +1,11 @@
+2010-07-29  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Changed MINIMUM_CELL_SIZE to be fixed at 64 bytes.
+
+        * runtime/Collector.h:
+
 2010-07-28  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by David Levin.
