@@ -1,3 +1,16 @@
+2010-07-29  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        Build fix for building against GTK+ 3.x. GSEAL requires that we
+        access internals of the GdkDragContext via methods. For older versions
+        of GTK+, define those methods.
+
+        * DumpRenderTree/gtk/EventSender.cpp:
+        (gdk_drag_context_get_selected_action): Added.
+        (gdk_drag_context_get_actions): Added.
+        (dispatchEvent): Use the two new accessor methods.
+
 2010-07-29  Adam Roben  <aroben@apple.com>
 
         Always say "plugins directory" when referring to a directory

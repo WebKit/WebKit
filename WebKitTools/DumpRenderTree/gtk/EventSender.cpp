@@ -103,6 +103,20 @@ static GdkWindow* gtk_widget_get_window(GtkWidget* widget)
 }
 #endif
 
+#if !GTK_CHECK_VERSION(2, 22, 0)
+static GdkDragAction gdk_drag_context_get_selected_action(GdkDragContext* context)
+{
+    g_return_val_if_fail(GDK_IS_DRAG_CONTEXT(context), static_cast<GdkDragAction>(0));
+    return context->action;
+}
+
+static GdkDragAction gdk_drag_context_get_actions(GdkDragContext* context)
+{
+    g_return_val_if_fail(GDK_IS_DRAG_CONTEXT(context), GDK_ACTION_DEFAULT);
+    return context->actions;
+}
+#endif
+
 static JSValueRef getDragModeCallback(JSContextRef context, JSObjectRef object, JSStringRef propertyName, JSValueRef* exception)
 {
     return JSValueMakeBoolean(context, dragMode);
@@ -371,10 +385,12 @@ static void dispatchEvent(GdkEvent event)
 
         // Simulate a drag motion on the top-level GDK window.
         GtkWidget* parentWidget = gtk_widget_get_parent(GTK_WIDGET(view));
-        GdkWindow* parentWidgetWindow = parentWidget->window;
+        GdkWindow* parentWidgetWindow = gtk_widget_get_window(parentWidget);
         gdk_drag_motion(currentDragSourceContext, parentWidgetWindow, GDK_DRAG_PROTO_XDND,
             event.motion.x_root, event.motion.y_root,
-            currentDragSourceContext->action, currentDragSourceContext->actions, GDK_CURRENT_TIME);
+            gdk_drag_context_get_selected_action(currentDragSourceContext),
+            gdk_drag_context_get_actions(currentDragSourceContext),
+            GDK_CURRENT_TIME);
 
     } else if (currentDragSourceContext && event.type == GDK_BUTTON_RELEASE) {
         // We've released the mouse button, we should just be able to spin the
