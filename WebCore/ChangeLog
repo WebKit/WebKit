@@ -1,3 +1,15 @@
+2010-07-28  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        Clear PluginData's page pointer on Page destruction
+        https://bugs.webkit.org/show_bug.cgi?id=43147
+
+        Test: plugins/access-after-page-destroyed.html
+
+        * page/Page.cpp:
+        (WebCore::Page::~Page):
+
 2010-07-29  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Pavel Feldman.
