@@ -2007,14 +2007,6 @@ fast/frames/flattening/iframe-flattening-fixed-width.html
 fast/frames/flattening/iframe-flattening-offscreen.html
 fast/frames/flattening/iframe-flattening-simple.html
 
-# WebKitTestRunner needs to support layoutTestController.execCommand
-# <https://bugs.webkit.org/show_bug.cgi?id=42538>
-editing/deleting/5300379.html
-editing/deleting/smart-editing-disabled.html
-editing/execCommand/delete-image-in-anchor.html
-editing/selection/extend-forward-after-set-base-and-extent.html
-editing/selection/select-line.html
-
 # WebKitTestRunner needs layoutTestController.clearAllDatabases
 # <https://bugs.webkit.org/show_bug.cgi?id=42540>
 storage/change-version.html
@@ -2132,10 +2124,6 @@ transitions/transition-shorthand-delay.html
 # WebKitTestRunner needs layoutTestController.setJavaScriptCanAccessClipboard
 # <https://bugs.webkit.org/show_bug.cgi?id=42669>
 editing/execCommand/clipboard-access.html
-
-# WebKitTestRunner needs layoutTestController.isCommandEnabled
-# <https://bugs.webkit.org/show_bug.cgi?id=42671>
-editing/execCommand/enabling-and-selection-2.html
 
 # WebKitTestRunner needs layoutTestController.queueReload
 # <https://bugs.webkit.org/show_bug.cgi?id=42672>
@@ -2350,6 +2338,9 @@ fast/events/onbeforeunload-focused-iframe.html
 http/tests/loading/basic-auth-resend-wrong-credentials.html
 http/tests/loading/basic-credentials-sent-automatically.html
 http/tests/security/401-logout/401-logout.php
+
+# WebKitTestRunner needs layoutTestController.setSmartInsertDeleteEnabled
+editing/deleting/smart-editing-disabled.html
 
 # Unexplained failures that were formerly in the dumpChildFramesAsText list.
 fast/frames/sandboxed-iframe-noscript.html

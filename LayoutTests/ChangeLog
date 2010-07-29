@@ -1,3 +1,15 @@
+2010-07-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WebKitTestRunner needs to support layoutTestController.execCommand
+        <https://bugs.webkit.org/show_bug.cgi?id=42538>
+
+        WebKitTestRunner needs layoutTestController.isCommandEnabled
+        <https://bugs.webkit.org/show_bug.cgi?id=42671>
+
+        * platform/mac-wk2/Skipped: Don't skip the now-functioning tests.
+
 2010-07-28  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.

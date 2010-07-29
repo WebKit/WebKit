@@ -31,6 +31,7 @@
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <WebKit2/WKBundleFrame.h>
 #include <WebKit2/WKBundleFramePrivate.h>
+#include <WebKit2/WKBundlePagePrivate.h>
 #include <WebKit2/WKRetainPtr.h>
 #include <WebKit2/WKStringCF.h>
 #include <WebKit2/WebKit2.h>
@@ -229,6 +230,16 @@ JSRetainPtr<JSStringRef> LayoutTestController::markerTextForListItem(JSValueRef 
     if (WKStringIsEmpty(text.get()))
         return 0;
     return toJS(text);
+}
+
+void LayoutTestController::execCommand(JSStringRef name, JSStringRef argument)
+{
+    WKBundlePageExecuteEditingCommand(InjectedBundle::shared().page()->page(), toWK(name).get(), toWK(argument).get());
+}
+
+bool LayoutTestController::isCommandEnabled(JSStringRef name)
+{
+    return WKBundlePageIsEditingCommandEnabled(InjectedBundle::shared().page()->page(), toWK(name).get());
 }
 
 // Object Creation

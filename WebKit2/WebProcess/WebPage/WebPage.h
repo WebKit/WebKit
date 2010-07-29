@@ -102,7 +102,10 @@ public:
     InjectedBundlePageUIClient& injectedBundleUIClient() { return m_uiClient; }
 
     WebFrame* mainFrame() const { return m_mainFrame.get(); }
+
     WebCore::String renderTreeExternalRepresentation() const;
+    void executeEditingCommand(const WebCore::String& commandName, const WebCore::String& argument);
+    bool isEditingCommandEnabled(const WebCore::String& commandName);
 
 #if USE(ACCELERATED_COMPOSITING)
     void changeAcceleratedCompositingMode(WebCore::GraphicsLayer*);

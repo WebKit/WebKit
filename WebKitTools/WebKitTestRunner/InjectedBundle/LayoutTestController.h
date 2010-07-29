@@ -65,6 +65,8 @@ public:
     JSValueRef computedStyleIncludingVisitedInfo(JSValueRef element);
     JSRetainPtr<JSStringRef> counterValueForElementById(JSStringRef elementId);
     JSRetainPtr<JSStringRef> markerTextForListItem(JSValueRef element);
+    void execCommand(JSStringRef name, JSStringRef argument);
+    bool isCommandEnabled(JSStringRef name);
 
     // Repaint testing.
     void testRepaint() { m_testRepaint = true; }

@@ -46,6 +46,8 @@ module WTR {
         object computedStyleIncludingVisitedInfo(in object element);
         DOMString counterValueForElementById(in DOMString elementId);
         DOMString markerTextForListItem(in object element);
+        void execCommand(in DOMString name, in DOMString argument);
+        boolean isCommandEnabled(in DOMString name);
 
         // Repaint testing.
         void testRepaint();
