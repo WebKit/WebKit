@@ -1,3 +1,14 @@
+2010-07-29  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        [IndexedDB] WebDOMStringList ctor is not exported and causes link errors for the multi-dll chromium build
+        https://bugs.webkit.org/show_bug.cgi?id=43186
+
+        Add WEBKIT_API to WebDOMStringList default ctor.
+
+        * public/WebDOMStringList.h:
+
 2010-07-29  Satish Sampath  <satish@chromium.org>
 
         Reviewed by Steve Block.
