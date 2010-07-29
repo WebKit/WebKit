@@ -65,6 +65,8 @@ private:
     enum AdoptTag { Adopt };
     ImmutableArray(void** entries, size_t size, const ImmutableArrayCallbacks*, AdoptTag);
 
+    virtual Type type() const { return TypeArray; }
+
     void** m_entries;
     size_t m_size;
     ImmutableArrayCallbacks m_callbacks;

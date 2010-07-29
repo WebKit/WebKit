@@ -36,6 +36,8 @@
 extern "C" {
 #endif
 
+WK_EXPORT WKTypeID WKStringGetTypeID();
+
 WK_EXPORT WKStringRef WKStringRetain(WKStringRef string);
 WK_EXPORT void WKStringRelease(WKStringRef string);
 

@@ -92,6 +92,8 @@ private:
     static PassRefPtr<WebFrame> create(WebPage*, const WebCore::String& frameName, WebCore::HTMLFrameOwnerElement*);
     WebFrame(WebPage*, const WebCore::String& frameName, WebCore::HTMLFrameOwnerElement*);
 
+    virtual Type type() const { return TypeBundleFrame; }
+
     WebPage* m_page;
     WebCore::Frame* m_coreFrame;
 

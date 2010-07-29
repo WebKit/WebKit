@@ -26,10 +26,10 @@
 #ifndef InjectedBundle_h
 #define InjectedBundle_h
 
+#include "APIObject.h"
 #include "WKBundle.h"
 #include <WebCore/PlatformString.h>
 #include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
 
 namespace WebKit {
 
@@ -43,7 +43,7 @@ typedef void* PlatformBundle;
 
 class WebPage;
 
-class InjectedBundle : public RefCounted<InjectedBundle> {
+class InjectedBundle : public APIObject {
 public:
     static PassRefPtr<InjectedBundle> create(const WebCore::String& path)
     {
@@ -70,6 +70,8 @@ public:
 
 private:
     InjectedBundle(const WebCore::String&);
+
+    virtual Type type() const { return TypeBundle; }
 
     WebCore::String m_path;
     PlatformBundle m_platformBundle; // This is leaked right now, since we never unload the bundle/module.

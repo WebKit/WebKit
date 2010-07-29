@@ -35,6 +35,11 @@
 
 using namespace WebKit;
 
+WKTypeID WKContextGetTypeID()
+{
+    return toRef(APIObject::TypeContext);
+}
+
 WKContextRef WKContextCreate()
 {
     RefPtr<WebContext> context = WebContext::create(WebCore::String());

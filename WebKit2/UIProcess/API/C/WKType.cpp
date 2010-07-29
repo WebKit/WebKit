@@ -23,37 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WKPageNamespace.h"
+#include "WKType.h"
 
+#include "APIObject.h"
 #include "WKAPICast.h"
-#include "WebPageNamespace.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
 
 using namespace WebKit;
 
-WKTypeID WKPageNamespaceGetTypeID()
+WKTypeID WKGetTypeID(WKTypeRef typeRef)
 {
-    return toRef(APIObject::TypePageNamespace);
-}
-
-WKPageNamespaceRef WKPageNamespaceCreate(WKContextRef ownerContextRef)
-{
-    return toRef(toWK(ownerContextRef)->createPageNamespace());
-}
-
-WKContextRef WKPageNamespaceGetContext(WKPageNamespaceRef pageNamespaceRef)
-{
-    return toRef(toWK(pageNamespaceRef)->context());
-}
-
-WKPageNamespaceRef WKPageNamespaceRetain(WKPageNamespaceRef pageNamespaceRef)
-{
-    toWK(pageNamespaceRef)->ref();
-    return pageNamespaceRef;
-}
-
-void WKPageNamespaceRelease(WKPageNamespaceRef pageNamespaceRef)
-{
-    toWK(pageNamespaceRef)->deref();
+    return toRef(toWK(typeRef)->type());
 }

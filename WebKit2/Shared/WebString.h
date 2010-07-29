@@ -52,6 +52,8 @@ private:
     {
     }
 
+    virtual Type type() const { return TypeString; }
+
     WebCore::String m_string;
 };
 

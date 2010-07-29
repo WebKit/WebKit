@@ -27,6 +27,13 @@
 
 #include "WKAPICast.h"
 
+using namespace WebKit;
+
+WKTypeID WKStringGetTypeID()
+{
+    return toRef(APIObject::TypeString);
+}
+
 WKStringRef WKStringRetain(WKStringRef stringRef)
 {
     toWK(stringRef)->ref();

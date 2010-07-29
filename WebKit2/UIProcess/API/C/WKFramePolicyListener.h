@@ -32,6 +32,8 @@
 extern "C" {
 #endif
 
+WK_EXPORT WKTypeID WKFramePolicyListenerGetTypeID();
+
 WK_EXPORT void WKFramePolicyListenerUse(WKFramePolicyListenerRef policyListener);
 WK_EXPORT void WKFramePolicyListenerDownload(WKFramePolicyListenerRef policyListener);
 WK_EXPORT void WKFramePolicyListenerIgnore(WKFramePolicyListenerRef policyListener);

@@ -99,6 +99,8 @@ public:
 private:
     WebContext(ProcessModel, const WebCore::String& injectedBundlePath);
 
+    virtual Type type() const { return TypeContext; }
+
     void ensureWebProcess();
     bool hasValidProcess() const { return m_process && m_process->isValid(); }
 

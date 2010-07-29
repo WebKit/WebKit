@@ -30,6 +30,11 @@
 
 using namespace WebKit;
 
+WKTypeID WKNavigationDataGetTypeID()
+{
+    return toRef(APIObject::TypeNavigationData);
+}
+
 WKStringRef WKNavigationDataCopyTitle(WKNavigationDataRef navigationDataRef)
 {
     return toCopiedRef(toWK(navigationDataRef)->title());

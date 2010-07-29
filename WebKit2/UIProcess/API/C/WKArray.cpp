@@ -30,6 +30,11 @@
 
 using namespace WebKit;
 
+WKTypeID WKArrayGetTypeID()
+{
+    return toRef(APIObject::TypeArray);
+}
+
 const void* WKArrayGetItemAtIndex(WKArrayRef arrayRef, size_t index)
 {
     return toWK(arrayRef)->at(index);

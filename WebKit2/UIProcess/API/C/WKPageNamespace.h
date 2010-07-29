@@ -32,6 +32,8 @@
 extern "C" {
 #endif
 
+WK_EXPORT WKTypeID WKPageNamespaceGetTypeID();
+
 WK_EXPORT WKPageNamespaceRef WKPageNamespaceCreate(WKContextRef ownerContext);
 
 WK_EXPORT WKContextRef WKPageNamespaceGetContext(WKPageNamespaceRef pageNamespace);

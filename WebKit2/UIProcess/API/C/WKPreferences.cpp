@@ -32,6 +32,11 @@
 
 using namespace WebKit;
 
+WKTypeID WKPreferencesGetTypeID()
+{
+    return toRef(APIObject::TypePreferences);
+}
+
 WKPreferencesRef WKPreferencesCreate()
 {
     RefPtr<WebPreferences> preferences = WebPreferences::create();

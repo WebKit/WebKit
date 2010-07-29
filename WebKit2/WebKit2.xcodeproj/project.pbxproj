@@ -244,6 +244,9 @@
 		BCD59800112B57BE00EC8C23 /* WebPreferences.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD597FE112B57BE00EC8C23 /* WebPreferences.cpp */; };
 		BCD598AC112B7FDF00EC8C23 /* WebPreferencesStore.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD598AA112B7FDF00EC8C23 /* WebPreferencesStore.h */; };
 		BCD598AD112B7FDF00EC8C23 /* WebPreferencesStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD598AB112B7FDF00EC8C23 /* WebPreferencesStore.cpp */; };
+		BCDB85821200EC57007254BE /* WKType.h in Headers */ = {isa = PBXBuildFile; fileRef = BCDB85801200EC57007254BE /* WKType.h */; };
+		BCDB85831200EC57007254BE /* WKType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCDB85811200EC57007254BE /* WKType.cpp */; };
+		BCDB86C11200FB97007254BE /* WebURL.h in Headers */ = {isa = PBXBuildFile; fileRef = BCDB86C01200FB97007254BE /* WebURL.h */; };
 		BCDE059B11CDA8AE00E41AF1 /* WebContextInjectedBundleClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BCDE059911CDA8AE00E41AF1 /* WebContextInjectedBundleClient.h */; };
 		BCDE059C11CDA8AE00E41AF1 /* WebContextInjectedBundleClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCDE059A11CDA8AE00E41AF1 /* WebContextInjectedBundleClient.cpp */; };
 		BCEE966C112FAF57006BCC24 /* Attachment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEE966A112FAF57006BCC24 /* Attachment.cpp */; };
@@ -537,6 +540,9 @@
 		BCD597FE112B57BE00EC8C23 /* WebPreferences.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPreferences.cpp; sourceTree = "<group>"; };
 		BCD598AA112B7FDF00EC8C23 /* WebPreferencesStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPreferencesStore.h; sourceTree = "<group>"; };
 		BCD598AB112B7FDF00EC8C23 /* WebPreferencesStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPreferencesStore.cpp; sourceTree = "<group>"; };
+		BCDB85801200EC57007254BE /* WKType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKType.h; sourceTree = "<group>"; };
+		BCDB85811200EC57007254BE /* WKType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKType.cpp; sourceTree = "<group>"; };
+		BCDB86C01200FB97007254BE /* WebURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebURL.h; sourceTree = "<group>"; };
 		BCDE059911CDA8AE00E41AF1 /* WebContextInjectedBundleClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebContextInjectedBundleClient.h; sourceTree = "<group>"; };
 		BCDE059A11CDA8AE00E41AF1 /* WebContextInjectedBundleClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebContextInjectedBundleClient.cpp; sourceTree = "<group>"; };
 		BCEE966A112FAF57006BCC24 /* Attachment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Attachment.cpp; sourceTree = "<group>"; };
@@ -749,6 +755,7 @@
 				BC111B5A112F628200337BAB /* mac */,
 				BCF04C8C11FF9B7D00F86A58 /* APIObject.h */,
 				BCF04C8E11FF9F6E00F86A58 /* WebString.h */,
+				BCDB86C01200FB97007254BE /* WebURL.h */,
 				1A6F9F8E11E13EFC00DB1371 /* CommandLine.h */,
 				BC64696D11DBE603006455B0 /* ImmutableArray.cpp */,
 				BC64696E11DBE603006455B0 /* ImmutableArray.h */,
@@ -968,6 +975,8 @@
 				BCD597CE112B56AC00EC8C23 /* WKPreferences.h */,
 				BC20EBAF116EEB0800094A50 /* WKString.cpp */,
 				BC20EBAE116EEB0800094A50 /* WKString.h */,
+				BCDB85811200EC57007254BE /* WKType.cpp */,
+				BCDB85801200EC57007254BE /* WKType.h */,
 				BC20EBB3116EEF7A00094A50 /* WKURL.cpp */,
 				BC20EBB2116EEF7A00094A50 /* WKURL.h */,
 			);
@@ -1306,6 +1315,8 @@
 				1AE4976811FF658E0048B464 /* NPJSObject.h in Headers */,
 				1AE4987811FF7FAA0048B464 /* JSNPObject.h in Headers */,
 				1AE49A4911FFA8CE0048B464 /* JSNPMethod.h in Headers */,
+				BCDB85821200EC57007254BE /* WKType.h in Headers */,
+				BCDB86C11200FB97007254BE /* WebURL.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1506,6 +1517,7 @@
 				1AE4976911FF658E0048B464 /* NPJSObject.cpp in Sources */,
 				1AE4987911FF7FAA0048B464 /* JSNPObject.cpp in Sources */,
 				1AE49A4A11FFA8CE0048B464 /* JSNPMethod.cpp in Sources */,
+				BCDB85831200EC57007254BE /* WKType.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

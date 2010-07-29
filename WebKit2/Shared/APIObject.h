@@ -31,6 +31,39 @@
 namespace WebKit {
 
 class APIObject : public RefCounted<APIObject> {
+public:
+    enum Type {
+        // Base types
+        TypeArray,
+        TypeString,
+        TypeURL,
+        
+        // UIProcess types
+        TypeBackForwardList,
+        TypeBackForwardListItem,
+        TypeContext,
+        TypeFrame,
+        TypeFramePolicyListener,
+        TypeNavigationData,
+        TypePage,
+        TypePageNamespace,
+        TypePreferences,
+
+        // Bundle types
+        TypeBundle,
+        TypeBundleFrame,
+        TypeBundlePage,
+        
+        // Platform specific
+        TypeView
+    };
+
+    virtual ~APIObject()
+    {
+    }
+
+    virtual Type type() const = 0;
+
 protected:
     APIObject()
     {

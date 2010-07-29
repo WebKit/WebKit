@@ -73,6 +73,8 @@ public:
 private:
     WebBackForwardList(WebPageProxy*);
 
+    virtual Type type() const { return TypeBackForwardList; }
+
     WebPageProxy* m_page;
     BackForwardListItemVector m_entries;
     unsigned m_current;

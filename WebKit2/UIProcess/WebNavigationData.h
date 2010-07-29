@@ -46,6 +46,8 @@ public:
 private:
     WebNavigationData(const WebNavigationDataStore&);
 
+    virtual Type type() const { return TypeNavigationData; }
+
     WebNavigationDataStore m_store;
 };
 

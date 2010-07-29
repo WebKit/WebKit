@@ -23,37 +23,40 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WKPageNamespace.h"
+#ifndef WebURL_h
+#define WebURL_h
 
-#include "WKAPICast.h"
-#include "WebPageNamespace.h"
+#include "APIObject.h"
+#include <WebCore/PlatformString.h>
 #include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
 
-using namespace WebKit;
+namespace WebKit {
 
-WKTypeID WKPageNamespaceGetTypeID()
-{
-    return toRef(APIObject::TypePageNamespace);
-}
+// WebURL - An string array type suitable for vending to an API.
 
-WKPageNamespaceRef WKPageNamespaceCreate(WKContextRef ownerContextRef)
-{
-    return toRef(toWK(ownerContextRef)->createPageNamespace());
-}
+class WebURL : public APIObject {
+public:
+    static PassRefPtr<WebURL> create(const WebCore::String& string)
+    {
+        return adoptRef(new WebURL(string));
+    }
 
-WKContextRef WKPageNamespaceGetContext(WKPageNamespaceRef pageNamespaceRef)
-{
-    return toRef(toWK(pageNamespaceRef)->context());
-}
+    bool isNull() const { return m_string.isNull(); }
+    bool isEmpty() const { return m_string.isEmpty(); }
 
-WKPageNamespaceRef WKPageNamespaceRetain(WKPageNamespaceRef pageNamespaceRef)
-{
-    toWK(pageNamespaceRef)->ref();
-    return pageNamespaceRef;
-}
+    const WebCore::String& string() const { return m_string; }
 
-void WKPageNamespaceRelease(WKPageNamespaceRef pageNamespaceRef)
-{
-    toWK(pageNamespaceRef)->deref();
-}
+private:
+    WebURL(const WebCore::String& string)
+        : m_string(string)
+    {
+    }
+
+    virtual Type type() const { return TypeURL; }
+
+    WebCore::String m_string;
+};
+
+} // namespace WebKit
+
+#endif // WebURL_h

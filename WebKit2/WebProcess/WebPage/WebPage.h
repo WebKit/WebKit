@@ -118,6 +118,8 @@ public:
 private:
     WebPage(uint64_t pageID, const WebCore::IntSize& viewSize, const WebPreferencesStore&, DrawingArea::Type);
 
+    virtual Type type() const { return TypeBundlePage; }
+
     void platformInitialize();
     static const char* interpretKeyEvent(const WebCore::KeyboardEvent*);
     void performDefaultBehaviorForKeyEvent(const WebKeyboardEvent&);

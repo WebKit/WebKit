@@ -1,3 +1,114 @@
+2010-07-28  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=43163
+        Add a CF-style base type (WKTypeRef) as a base for polymorphic functions.
+
+        - Add first polymorphic function, WKGetTypeID.
+        - Add functions to each WK type to get their respective TypeIDs.
+        - Adds WebURL to complement WebString.
+
+        * Shared/APIObject.h:
+        (WebKit::APIObject::):
+        (WebKit::APIObject::~APIObject):
+        * Shared/ImmutableArray.h:
+        (WebKit::ImmutableArray::type):
+        * Shared/WebString.h:
+        (WebKit::WebString::type):
+        * Shared/WebURL.h: Added.
+        (WebKit::WebURL::create):
+        (WebKit::WebURL::type):
+        (WebKit::WebURL::isNull):
+        (WebKit::WebURL::isEmpty):
+        (WebKit::WebURL::string):
+        (WebKit::WebURL::WebURL):
+        * UIProcess/API/C/WKAPICast.h:
+        (WebKit::ProxyingRefPtr::ProxyingRefPtr):
+        (WebKit::ProxyingRefPtr::operator APIType):
+        (toRef):
+        (toURLRef):
+        (toCopiedURLRef):
+        * UIProcess/API/C/WKArray.cpp:
+        (WKArrayGetTypeID):
+        * UIProcess/API/C/WKArray.h:
+        * UIProcess/API/C/WKBackForwardList.cpp:
+        (WKBackForwardListGetTypeID):
+        * UIProcess/API/C/WKBackForwardList.h:
+        * UIProcess/API/C/WKBackForwardListItem.cpp:
+        (WKBackForwardListItemGetTypeID):
+        * UIProcess/API/C/WKBackForwardListItem.h:
+        * UIProcess/API/C/WKBase.h:
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextGetTypeID):
+        * UIProcess/API/C/WKContext.h:
+        * UIProcess/API/C/WKFrame.cpp:
+        (WKFrameGetTypeID):
+        * UIProcess/API/C/WKFrame.h:
+        * UIProcess/API/C/WKFramePolicyListener.cpp:
+        (WKFramePolicyListenerGetTypeID):
+        * UIProcess/API/C/WKFramePolicyListener.h:
+        * UIProcess/API/C/WKNavigationData.cpp:
+        (WKNavigationDataGetTypeID):
+        * UIProcess/API/C/WKNavigationData.h:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageGetTypeID):
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/API/C/WKPageNamespace.cpp:
+        (WKPageNamespaceGetTypeID):
+        * UIProcess/API/C/WKPageNamespace.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesGetTypeID):
+        * UIProcess/API/C/WKPreferences.h:
+        * UIProcess/API/C/WKString.cpp:
+        (WKStringGetTypeID):
+        * UIProcess/API/C/WKString.h:
+        * UIProcess/API/C/WKType.cpp: Added.
+        (WKGetTypeID):
+        * UIProcess/API/C/WKType.h: Added.
+        * UIProcess/API/C/WKURL.cpp:
+        (WKURLGetTypeID):
+        * UIProcess/API/C/WKURL.h:
+        * UIProcess/API/win/WKView.cpp:
+        (WKViewGetTypeID):
+        * UIProcess/API/win/WKView.h:
+        * UIProcess/WebBackForwardList.h:
+        (WebKit::WebBackForwardList::type):
+        * UIProcess/WebBackForwardListItem.h:
+        (WebKit::WebBackForwardListItem::type):
+        * UIProcess/WebContext.h:
+        (WebKit::WebContext::type):
+        * UIProcess/WebFramePolicyListenerProxy.h:
+        (WebKit::WebFramePolicyListenerProxy::type):
+        * UIProcess/WebFrameProxy.h:
+        (WebKit::WebFrameProxy::type):
+        * UIProcess/WebNavigationData.h:
+        (WebKit::WebNavigationData::type):
+        * UIProcess/WebPageNamespace.h:
+        (WebKit::WebPageNamespace::type):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::type):
+        * UIProcess/WebPreferences.h:
+        (WebKit::WebPreferences::type):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleGetTypeID):
+        * WebProcess/InjectedBundle/API/c/WKBundle.h:
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp:
+        (WKBundleFrameGetTypeID):
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageGetTypeID):
+        (WKBundlePageSetEditorClient):
+        (WKBundlePageSetLoaderClient):
+        (WKBundlePageSetUIClient):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/WebPage/WebFrame.h:
+        (WebKit::WebFrame::type):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::type):
+        * win/WebKit2.vcproj:
+
 2010-07-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.
@@ -194,10 +305,10 @@
         Patch for https://bugs.webkit.org/show_bug.cgi?id=43097
         Make all objects in the WebKit2 API inherit from a single base class
 
-        - Adds an APIObject base class for all objects which can get vender through
+        - Adds an APIObject base class for all objects which one can get through
           the C API to inherit from.
         - Adds a WebString class which wraps WebCore::String for now. I am not too fond of
-          this solution, so we continue should iterate on it.
+          this solution, so we should continue to iterate on it.
         - This is a first step toward make a CF-style base type (eg. CFTypeRef) for the C-API.
 
         * Shared/APIObject.h: Added.

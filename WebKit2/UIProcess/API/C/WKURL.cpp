@@ -27,6 +27,13 @@
 
 #include "WKAPICast.h"
 
+using namespace WebKit;
+
+WKTypeID WKURLGetTypeID()
+{
+    return toRef(APIObject::TypeURL);
+}
+
 WKURLRef WKURLRetain(WKURLRef URLRef)
 {
     toWK(URLRef)->ref();

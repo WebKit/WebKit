@@ -32,6 +32,8 @@
 extern "C" {
 #endif
 
+WK_EXPORT WKTypeID WKArrayGetTypeID();
+
 WK_EXPORT const void* WKArrayGetItemAtIndex(WKArrayRef array, size_t index);
 WK_EXPORT size_t WKArrayGetSize(WKArrayRef array);
 

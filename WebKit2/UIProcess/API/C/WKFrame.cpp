@@ -30,6 +30,11 @@
 
 using namespace WebKit;
 
+WKTypeID WKFrameGetTypeID()
+{
+    return toRef(APIObject::TypeFrame);
+}
+
 bool WKFrameIsMainFrame(WKFrameRef frameRef)
 {
     return toWK(frameRef)->isMainFrame();

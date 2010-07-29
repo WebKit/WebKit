@@ -32,7 +32,7 @@
 extern "C" {
 #endif
 
-// Policy Client.
+// Injected Bundle Client
 typedef void (*WKContextDidReceiveMessageFromInjectedBundleCallback)(WKContextRef page, WKStringRef message, const void *clientInfo);
 
 struct WKContextInjectedBundleClient {
@@ -59,6 +59,8 @@ struct WKContextHistoryClient {
     WKContextPopulateVisitedLinksCallback                               populateVisitedLinks;
 };
 typedef struct WKContextHistoryClient WKContextHistoryClient;
+
+WK_EXPORT WKTypeID WKContextGetTypeID();
 
 WK_EXPORT WKContextRef WKContextCreate();
 WK_EXPORT WKContextRef WKContextCreateWithInjectedBundlePath(WKStringRef path);

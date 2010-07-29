@@ -54,6 +54,8 @@ public:
 private:
     WebFramePolicyListenerProxy(WebFrameProxy*, uint64_t listenerID);
 
+    virtual Type type() const { return TypeFramePolicyListener; }
+
     void receivedPolicyDecision(WebCore::PolicyAction);
 
     RefPtr<WebFrameProxy> m_frame;

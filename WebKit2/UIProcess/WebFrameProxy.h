@@ -82,6 +82,8 @@ public:
 private:
     WebFrameProxy(WebPageProxy* page, uint64_t frameID);
 
+    virtual Type type() const { return TypeFrame; }
+
     WebPageProxy* m_page;
     LoadState m_loadState;
     WebCore::String m_url;

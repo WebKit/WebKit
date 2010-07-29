@@ -36,6 +36,8 @@
 extern "C" {
 #endif
 
+WK_EXPORT WKTypeID WKPreferencesGetTypeID();
+
 WK_EXPORT WKPreferencesRef WKPreferencesCreate();
 WK_EXPORT WKPreferencesRef WKPreferencesCreateCopy(WKPreferencesRef);
 

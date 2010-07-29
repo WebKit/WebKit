@@ -30,6 +30,11 @@
 
 using namespace WebKit;
 
+WKTypeID WKBackForwardListItemGetTypeID()
+{
+    return toRef(APIObject::TypeBackForwardListItem);
+}
+
 WKURLRef WKBackForwardListItemCopyOriginalURL(WKBackForwardListItemRef itemRef)
 {
     return toCopiedURLRef(toWK(itemRef)->originalURL());

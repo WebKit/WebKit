@@ -32,6 +32,8 @@
 extern "C" {
 #endif
 
+WK_EXPORT WKTypeID WKBackForwardListGetTypeID();
+
 WK_EXPORT WKBackForwardListItemRef WKBackForwardListGetCurrentItem(WKBackForwardListRef list);
 WK_EXPORT WKBackForwardListItemRef WKBackForwardListGetBackItem(WKBackForwardListRef list);
 WK_EXPORT WKBackForwardListItemRef WKBackForwardListGetForwardItem(WKBackForwardListRef list);

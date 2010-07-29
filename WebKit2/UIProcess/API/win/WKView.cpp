@@ -30,6 +30,11 @@
 
 using namespace WebKit;
 
+WKTypeID WKViewGetTypeID()
+{
+    return toRef(APIObject::TypeView);
+}
+
 WKViewRef WKViewCreate(RECT rect, WKPageNamespaceRef pageNamespaceRef, HWND hostWindow)
 {
     RefPtr<WebView> view = WebView::create(rect, toWK(pageNamespaceRef), hostWindow);

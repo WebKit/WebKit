@@ -34,6 +34,8 @@
 extern "C" {
 #endif
 
+WK_EXPORT WKTypeID WKBundleFrameGetTypeID();
+
 WK_EXPORT bool WKBundleFrameIsMainFrame(WKBundleFrameRef frame);
 WK_EXPORT WKArrayRef WKBundleFrameCopyChildFrames(WKBundleFrameRef frame);
 

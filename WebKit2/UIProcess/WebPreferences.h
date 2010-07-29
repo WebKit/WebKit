@@ -71,6 +71,8 @@ private:
     WebPreferences();
     WebPreferences(WebPreferences*);
 
+    virtual Type type() const { return TypePreferences; }
+
     void update();
 
     HashSet<WebContext*> m_contexts;

@@ -33,6 +33,8 @@
 extern "C" {
 #endif
 
+WK_EXPORT WKTypeID WKViewGetTypeID();
+
 WK_EXPORT WKViewRef WKViewCreate(RECT rect, WKPageNamespaceRef pageNamespace, HWND hostWindow);
 
 WK_EXPORT HWND WKViewGetWindow(WKViewRef view);

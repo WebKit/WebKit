@@ -32,6 +32,8 @@
 extern "C" {
 #endif
 
+WK_EXPORT WKTypeID WKBackForwardListItemGetTypeID();
+
 WK_EXPORT WKURLRef WKBackForwardListItemCopyOriginalURL(WKBackForwardListItemRef item);
 WK_EXPORT WKURLRef WKBackForwardListItemCopyURL(WKBackForwardListItemRef item);
 WK_EXPORT WKStringRef WKBackForwardListItemCopyTitle(WKBackForwardListItemRef item);

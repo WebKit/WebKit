@@ -440,6 +440,10 @@
 				RelativePath="..\Shared\WebString.h"
 				>
 			</File>
+			<File
+				RelativePath="..\Shared\WebURL.h"
+				>
+			</File>
 			<Filter
 				Name="CoreIPCSupport"
 				>
@@ -1132,6 +1136,14 @@
 					</File>
 					<File
 						RelativePath="..\UIProcess\API\C\WKString.h"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKType.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKType.h"
 						>
 					</File>
 					<File
