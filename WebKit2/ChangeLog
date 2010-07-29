@@ -1,5 +1,33 @@
 2010-07-29  Adam Roben  <aroben@apple.com>
 
+        Always say "directory" when referring to a plugin directory
+
+        Fixes <http://webkit.org/b/43195> WebKit2 often says "plugin path"
+        when it means "plugin directory"
+
+        Reviewed by John Sullivan.
+
+        * UIProcess/API/C/WKContext.cpp:
+        (_WKContextSetAdditionalPluginDirectory):
+        * UIProcess/API/C/WKContextPrivate.h:
+        Renamed from _WKContextSetAdditionalPluginPath.
+
+        * UIProcess/Plugins/PluginInfoStore.cpp:
+        (WebKit::PluginInfoStore::setAdditionalPluginDirectories): Renamed
+        from setAdditionalPluginPaths.
+        (WebKit::PluginInfoStore::loadPluginsIfNecessary): Updated for rename.
+
+        * UIProcess/Plugins/PluginInfoStore.h: Renamed m_additionalPluginPaths
+        to m_additionalPluginDirectories.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::setAdditionalPluginDirectory):
+        * UIProcess/WebContext.h:
+        Renamed from setAdditionalPluginPath, and updated for PluginInfoStore
+        rename.
+
+2010-07-29  Adam Roben  <aroben@apple.com>
+
         Remove PluginInfoStore::mimeTypeFromExtension
 
         WebCore::MIMETypeRegistry already provides a cross-platform interface

@@ -40,9 +40,9 @@ void TestController::initializeInjectedBundlePath()
     m_injectedBundlePath.adopt(WKStringCreateWithCFString((CFStringRef)nsBundlePath));
 }
 
-void TestController::initializeTestPluginPath()
+void TestController::initializeTestPluginDirectory()
 {
-    m_testPluginPath.adopt(WKStringCreateWithCFString((CFStringRef)[[NSBundle mainBundle] bundlePath]));
+    m_testPluginDirectory.adopt(WKStringCreateWithCFString((CFStringRef)[[NSBundle mainBundle] bundlePath]));
 }
 
 } // namespace WTR

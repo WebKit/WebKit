@@ -40,9 +40,9 @@ PluginInfoStore::PluginInfoStore()
 {
 }
 
-void PluginInfoStore::setAdditionalPluginPaths(const Vector<WebCore::String>& paths)
+void PluginInfoStore::setAdditionalPluginDirectories(const Vector<WebCore::String>& directories)
 {
-    m_additionalPluginPaths = paths;
+    m_additionalPluginDirectories = directories;
     refresh();
 }
 
@@ -58,9 +58,9 @@ void PluginInfoStore::loadPluginsIfNecessary()
 
     m_plugins.clear();
 
-    // First, load plug-ins from the additional plug-in paths specified.
-    for (size_t i = 0; i < m_additionalPluginPaths.size(); ++i)
-        loadPluginsInDirectory(m_additionalPluginPaths[i]);
+    // First, load plug-ins from the additional plug-in directories specified.
+    for (size_t i = 0; i < m_additionalPluginDirectories.size(); ++i)
+        loadPluginsInDirectory(m_additionalPluginDirectories[i]);
 
     Vector<String> directories = pluginDirectories();
     for (size_t i = 0; i < directories.size(); ++i)

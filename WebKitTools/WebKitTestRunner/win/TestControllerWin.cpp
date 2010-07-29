@@ -50,11 +50,11 @@ void TestController::initializeInjectedBundlePath()
     m_injectedBundlePath.adopt(WKStringCreateWithCFString(bundlePath));
 }
 
-void TestController::initializeTestPluginPath()
+void TestController::initializeTestPluginDirectory()
 {
     CFStringRef exeContainerPath = CFURLCopyFileSystemPath(CFURLCreateCopyDeletingLastPathComponent(0, CFBundleCopyExecutableURL(CFBundleGetMainBundle())), kCFURLWindowsPathStyle);
     CFMutableStringRef bundlePath = CFStringCreateMutableCopy(0, 0, exeContainerPath);
-    m_testPluginPath.adopt(WKStringCreateWithCFString(bundlePath));
+    m_testPluginDirectory.adopt(WKStringCreateWithCFString(bundlePath));
 }
 
 } // namespace WTR

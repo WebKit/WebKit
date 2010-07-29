@@ -49,7 +49,7 @@ public:
     bool verbose() const { return m_verbose; }
 
     WKStringRef injectedBundlePath() { return m_injectedBundlePath.get(); }
-    WKStringRef testPluginPath() { return m_testPluginPath.get(); }
+    WKStringRef testPluginDirectory() { return m_testPluginDirectory.get(); }
 
     PlatformWebView* mainWebView() { return m_mainWebView; }
     WKPageNamespaceRef pageNamespace() { return m_pageNamespace.get(); }
@@ -64,7 +64,7 @@ private:
 
     void platformInitialize();
     void initializeInjectedBundlePath();
-    void initializeTestPluginPath();
+    void initializeTestPluginDirectory();
 
     // WKContextInjectedBundleClient
     static void _didReceiveMessageFromInjectedBundle(WKContextRef context, WKStringRef message, const void*);
@@ -78,7 +78,7 @@ private:
     bool m_usingServerMode;
     std::vector<std::string> m_paths;
     WKRetainPtr<WKStringRef> m_injectedBundlePath;
-    WKRetainPtr<WKStringRef> m_testPluginPath;
+    WKRetainPtr<WKStringRef> m_testPluginDirectory;
 
     PlatformWebView* m_mainWebView;
     WKRetainPtr<WKContextRef> m_context;

@@ -75,7 +75,7 @@ void TestController::initialize(int argc, const char* argv[])
         m_printSeparators = m_paths.size() > 1;
 
     initializeInjectedBundlePath();
-    initializeTestPluginPath();
+    initializeTestPluginDirectory();
 
     m_context.adopt(WKContextCreateWithInjectedBundlePath(injectedBundlePath()));
 
@@ -86,7 +86,7 @@ void TestController::initialize(int argc, const char* argv[])
     };
     WKContextSetInjectedBundleClient(m_context.get(), &injectedBundlePathClient);
 
-    _WKContextSetAdditionalPluginPath(m_context.get(), testPluginPath());
+    _WKContextSetAdditionalPluginDirectory(m_context.get(), testPluginDirectory());
     
     m_pageNamespace.adopt(WKPageNamespaceCreate(m_context.get()));
     m_mainWebView = new PlatformWebView(m_pageNamespace.get());
