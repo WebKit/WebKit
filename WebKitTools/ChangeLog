@@ -1,5 +1,12 @@
 2010-07-29  Adam Roben  <aroben@apple.com>
 
+        Give find-included-framework-headers our standard license
+
+        * Scripts/find-included-framework-headers: Used the license from
+        WebCore/LICENSE-APPLE.
+
+2010-07-29  Adam Roben  <aroben@apple.com>
+
         Speed up find-included-framework-headers
 
         We only do one invocation of find now, no longer pipe to grep, and
