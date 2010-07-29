@@ -1,3 +1,23 @@
+2010-07-28  Alex Nicolaou  <anicolao@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Set incorrect but close expectations for mask-colorspace.svg on mac
+        https://bugs.webkit.org/show_bug.cgi?id=43102
+
+        Blocks:
+          [chromium] r63450 caused some svg mask tests to fail pixel tests
+          https://bugs.webkit.org/show_bug.cgi?id=42403
+
+        ImageBufferCG.cpp uses CoreGraphics to do the transform of SVG masks
+        into LinearRGB, but only for MAC which means not for CHROMIUM, so I
+        have changed the #if to account for both platforms. I am assuming this
+        isn't in for windows because it's missing in CG itself, but I didn't
+        verify that.
+
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::ImageBuffer):
+
 2010-07-28  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Fisher.

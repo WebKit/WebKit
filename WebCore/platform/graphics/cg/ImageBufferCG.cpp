@@ -80,7 +80,7 @@ ImageBuffer::ImageBuffer(const IntSize& size, ImageColorSpace imageColorSpace, b
         case GrayScale:
             colorSpace.adoptCF(CGColorSpaceCreateDeviceGray());
             break;
-#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER)
+#if ((PLATFORM(MAC) || PLATFORM(CHROMIUM)) && !defined(BUILDING_ON_TIGER))
         case LinearRGB:
             colorSpace.adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceGenericRGBLinear));
             break;
