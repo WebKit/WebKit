@@ -45,7 +45,11 @@ SpeechInputClientImpl::SpeechInputClientImpl(WebViewClient* web_view_client)
     : m_controller(web_view_client->speechInputController(this))
     , m_listener(0)
 {
-    ASSERT(m_controller);
+    // FIXME: Right now WebViewClient gives a null pointer, and with the
+    // runtime flag for speech input feature set to true by default this will
+    // always assert. Enable this assert once the WebViewClient starts to
+    // give a valid pointer.
+    // ASSERT(m_controller);
 }
 
 SpeechInputClientImpl::~SpeechInputClientImpl()

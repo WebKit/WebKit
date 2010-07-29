@@ -236,4 +236,14 @@ bool WebRuntimeFeatures::isDeviceOrientationEnabled()
     return RuntimeEnabledFeatures::deviceOrientationEnabled();
 }
 
+void WebRuntimeFeatures::enableSpeechInput(bool enable)
+{
+    RuntimeEnabledFeatures::setSpeechInputEnabled(enable);
+}
+
+bool WebRuntimeFeatures::isSpeechInputEnabled()
+{
+    return RuntimeEnabledFeatures::speechInputEnabled();
+}
+
 } // namespace WebKit
