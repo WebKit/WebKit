@@ -1,3 +1,11 @@
+2010-07-29  Martin Robinson  <mrobinson@igalia.com>
+
+        Unreviewed build fix.
+
+        Include a missing header in the source list to fix 'make dist.'
+
+        * GNUmakefile.am: Include missing header.
+
 2010-07-28  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Darin Adler.

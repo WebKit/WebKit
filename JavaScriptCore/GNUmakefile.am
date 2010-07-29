@@ -409,6 +409,7 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/Assertions.h \
 	JavaScriptCore/wtf/Atomics.h \
 	JavaScriptCore/wtf/AVLTree.h \
+	JavaScriptCore/wtf/BumpPointerAllocator.h \
 	JavaScriptCore/wtf/ByteArray.cpp \
 	JavaScriptCore/wtf/ByteArray.h \
 	JavaScriptCore/wtf/CrossThreadRefCounted.h \
