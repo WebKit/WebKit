@@ -1,3 +1,22 @@
+2010-07-28  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by David Levin.
+
+        Added a yield() function.
+        https://bugs.webkit.org/show_bug.cgi?id=42843
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * wtf/Threading.h:
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::yield):
+        * wtf/ThreadingWin.cpp:
+        (WTF::yield):
+        * wtf/gtk/ThreadingGtk.cpp:
+        (WTF::yield):
+        * wtf/qt/ThreadingQt.cpp:
+        (WTF::yield):
+
 2010-07-29  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Oliver Hunt.

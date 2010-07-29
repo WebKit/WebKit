@@ -31,8 +31,8 @@
 #include "Logging.h"
 #include "SQLiteFileSystem.h"
 #include "SQLiteStatement.h"
-
 #include <sqlite3.h>
+#include <wtf/Threading.h>
 
 namespace WebCore {
 
@@ -42,7 +42,7 @@ const int SQLResultOk = SQLITE_OK;
 const int SQLResultRow = SQLITE_ROW;
 const int SQLResultSchema = SQLITE_SCHEMA;
 const int SQLResultFull = SQLITE_FULL;
-
+const int SQLResultInterrupt = SQLITE_INTERRUPT;
 
 SQLiteDatabase::SQLiteDatabase()
     : m_db(0)
@@ -50,6 +50,7 @@ SQLiteDatabase::SQLiteDatabase()
     , m_transactionInProgress(false)
     , m_sharable(false)
     , m_openingThread(0)
+    , m_interrupted(false)
 {
 }
 
@@ -83,13 +84,36 @@ bool SQLiteDatabase::open(const String& filename, bool forWebSQLDatabase)
 void SQLiteDatabase::close()
 {
     if (m_db) {
-        // FIXME: This is being called on themain thread during JS GC. <rdar://problem/5739818>
-        // ASSERT(currentThread() == m_openingThread);
-        sqlite3_close(m_db);
-        m_db = 0;
+        ASSERT(currentThread() == m_openingThread);
+        sqlite3* db = m_db;
+        {
+            MutexLocker locker(m_databaseClosingMutex);
+            m_db = 0;
+        }
+        sqlite3_close(db);
     }
 
     m_openingThread = 0;
+}
+
+void SQLiteDatabase::interrupt()
+{
+    m_interrupted = true;
+    while (!m_lockingMutex.tryLock()) {
+        MutexLocker locker(m_databaseClosingMutex);
+        if (!m_db)
+            return;
+        sqlite3_interrupt(m_db);
+        yield();
+    }
+
+    m_lockingMutex.unlock();
+}
+
+bool SQLiteDatabase::isInterrupted()
+{
+    ASSERT(!m_lockingMutex.tryLock());
+    return m_interrupted;
 }
 
 void SQLiteDatabase::setFullsync(bool fsync) 
@@ -395,16 +419,6 @@ void SQLiteDatabase::enableAuthorizer(bool enable)
         sqlite3_set_authorizer(m_db, SQLiteDatabase::authorizerFunction, m_authorizer.get());
     else
         sqlite3_set_authorizer(m_db, NULL, 0);
-}
-
-void SQLiteDatabase::lock()
-{
-    m_lockingMutex.lock();
-}
-
-void SQLiteDatabase::unlock()
-{
-    m_lockingMutex.unlock();
 }
 
 bool SQLiteDatabase::isAutoCommitOn() const

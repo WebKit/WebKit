@@ -61,6 +61,11 @@ SQLiteStatement::~SQLiteStatement()
 int SQLiteStatement::prepare()
 {
     ASSERT(!m_isPrepared);
+
+    MutexLocker databaseLock(m_database.databaseMutex());
+    if (m_database.isInterrupted())
+        return SQLITE_INTERRUPT;
+
     const void* tail = 0;
     LOG(SQLDatabase, "SQL - prepare - %s", m_query.ascii().data());
     String strippedQuery = m_query.stripWhiteSpace();
@@ -88,6 +93,11 @@ int SQLiteStatement::prepare()
 int SQLiteStatement::step()
 {
     ASSERT(m_isPrepared);
+
+    MutexLocker databaseLock(m_database.databaseMutex());
+    if (m_database.isInterrupted())
+        return SQLITE_INTERRUPT;
+
     if (!m_statement)
         return SQLITE_OK;
     LOG(SQLDatabase, "SQL - step - %s", m_query.ascii().data());

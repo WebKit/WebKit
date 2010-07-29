@@ -78,6 +78,8 @@ public:
     unsigned long long getMaxSizeForDatabase(const AbstractDatabase*);
     void databaseChanged(AbstractDatabase*);
 
+    void interruptAllDatabasesForContext(const ScriptExecutionContext*);
+
 private:
     DatabaseTracker(const String& databasePath);
 

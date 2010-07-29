@@ -474,6 +474,17 @@ void AbstractDatabase::incrementalVacuumIfNeeded()
         m_sqliteDatabase.runIncrementalVacuumCommand();
 }
 
+void AbstractDatabase::interrupt()
+{
+    m_sqliteDatabase.interrupt();
+}
+
+bool AbstractDatabase::isInterrupted()
+{
+    MutexLocker locker(m_sqliteDatabase.databaseMutex());
+    return m_sqliteDatabase.isInterrupted();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(DATABASE)

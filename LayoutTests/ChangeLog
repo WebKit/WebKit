@@ -1,3 +1,18 @@
+2010-07-28  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by David Levin.
+
+        Test that terminating a worker interrupts all DB operations in that worker.
+        https://bugs.webkit.org/show_bug.cgi?id=42843
+
+        * fast/workers/storage/interrupt-database-expected.txt: Added.
+        * fast/workers/storage/interrupt-database-sync-expected.txt: Added.
+        * fast/workers/storage/interrupt-database-sync.html: Added.
+        * fast/workers/storage/interrupt-database.html: Added.
+        * fast/workers/storage/resources/interrupt-database-sync.js: Added.
+        * fast/workers/storage/resources/interrupt-database.js: Added.
+        (runTransaction):
+
 2010-07-29  Victor Wang  <victorw@chromium.org>
 
         Unreviewed. Update chromium expectation for test:

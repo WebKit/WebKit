@@ -1,3 +1,89 @@
+2010-07-28  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by David Levin.
+
+        Interrupt all DB operations when the worker is terminating.
+        https://bugs.webkit.org/show_bug.cgi?id=42843
+
+        Tests: fast/workers/storage/interrupt-database-sync.html
+               fast/workers/storage/interrupt-database.html
+
+        * bindings/js/JSCustomVoidCallback.cpp:
+        (WebCore::JSCustomVoidCallback::~JSCustomVoidCallback): If the
+        destructor is called on the context thread, delete m_data directly
+        instead of posting a task to do that. We need to do that to make
+        sure that all JS objects are destroyed before
+        WorkerThreadShutdownFinishTask (in WorkerThread.cpp) calls
+        WorkerContext::clearScript().
+
+        * bindings/scripts/CodeGeneratorJS.pm: Same change as above, for
+        all auto-generated callbacks.
+
+        * bindings/scripts/test/JS/JSTestCallback.cpp:
+        (WebCore::JSTestCallback::~JSTestCallback): Updated the
+        expectations for run-bindings-tests.
+
+        * platform/sql/SQLiteDatabase.cpp: Added the ability to interrupt
+        all DB operations in progress, unless the database was closed or
+        is being closed. Unlike sqlite3_interrupt(),
+        SQLiteDatabase::interrupt() is sticky: once it's called, trying to
+        run any statement on that database will fail with a
+        SQLITE_INTERRUPT error code.
+        (WebCore::SQLiteDatabase::SQLiteDatabase):
+        (WebCore::SQLiteDatabase::close):
+        (WebCore::SQLiteDatabase::interrupt):
+        (WebCore::SQLiteDatabase::isInterrupted):
+
+        * platform/sql/SQLiteDatabase.h: Added a mutex that can used by
+        SQLiteStatement to check if the database was interrupted.
+        (WebCore::SQLiteDatabase::databaseMutex):
+
+        * platform/sql/SQLiteStatement.cpp: Changed prepare() and step()
+        to check if the database was interrupted, before trying to prepare
+        or run the statement. The other methods don't need to hold on to
+        the DB lock while running, because they're fast, so we don't need
+        to interrupt them.
+        (WebCore::SQLiteStatement::prepare):
+        (WebCore::SQLiteStatement::step):
+
+        * storage/AbstractDatabase.cpp: Made SQLiteDatabase::interrupt()
+        and isInterrupted() visible to WebSQLDatabases classes.
+        (WebCore::AbstractDatabase::interrupt):
+        (WebCore::AbstractDatabase::isInterrupted):
+        * storage/AbstractDatabase.h:
+
+        * storage/DatabaseTracker.cpp: Added a method to interrupt all
+        databases in a given context.
+        (WebCore::DatabaseTracker::interruptAllDatabasesForContext):
+        * storage/DatabaseTracker.h:
+
+        * storage/SQLStatement.cpp: Changed the exception/error reported
+        when a statement is interrupted.
+        (WebCore::SQLStatement::execute):
+        * storage/SQLStatementSync.cpp:
+        (WebCore::SQLStatementSync::execute):
+
+        * storage/SQLTransaction.cpp: Changed the code to release the
+        callback objects as soon as they're not needed.
+        (WebCore::SQLTransaction::checkAndHandleClosedOrInterruptedDatabase):
+        Changed this method to not schedule the next transaction step when
+        the database is interrupted.
+        (WebCore::SQLTransaction::performNextStep):
+        (WebCore::SQLTransaction::performPendingCallback):
+        (WebCore::SQLTransaction::deliverTransactionCallback):
+        (WebCore::SQLTransaction::postflightAndCommit):
+        (WebCore::SQLTransaction::deliverTransactionErrorCallback):
+        (WebCore::SQLTransaction::cleanupAfterTransactionErrorCallback):
+        * storage/SQLTransaction.h:
+
+        * storage/chromium/DatabaseTrackerChromium.cpp: Added a method to
+        interrupt all databases in a given context.
+        (WebCore::DatabaseTracker::interruptAllDatabasesForContext):
+
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThread::stop): Added a call to
+        DatabaseTracker::interruptAllDatabasesForContext().
+
 2010-07-29  Bernhard Bauer  <bauerb@chromium.org>
 
         Reviewed by Darin Fisher.
