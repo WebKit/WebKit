@@ -1,3 +1,12 @@
+2010-07-29  Jeremy Orlow  <jorlow@chromium.org>
+
+        Rebaseline 2 tests that are actually a bit distinct from mac (because of fonts).
+
+        Not reviewed.
+
+        * platform/chromium-win/svg/custom/use-events-crash-expected.txt: Added.
+        * platform/chromium-win/svg/hixie/error/017-expected.txt: Added.
+
 2010-07-29  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Pavel Feldman.
