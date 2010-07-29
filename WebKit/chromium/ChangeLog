@@ -1,3 +1,19 @@
+2010-07-28  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Set ENABLE_DEVICE_ORIENTATION=1 in features.gypi for chromium
+        https://bugs.webkit.org/show_bug.cgi?id=43122
+
+        Enable the compile-time switch for device orientation.
+        The switch was already enabled in features_override.gypi in the Chromium
+        repository (in revision 53317), and should be set here as well.
+
+        The feature is being implemented behind a run-time flag which
+        defaults to off in Chromium.
+
+        * features.gypi: Set ENABLE_DEVICE_ORIENTATION=1.
+
 2010-07-28  Gene Gutnik  <gene@google.com>
 
         Reviewed by Darin Fisher.
