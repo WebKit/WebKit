@@ -1,3 +1,15 @@
+2010-07-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Pavel Feldman.
+
+        Crash when computing pseudo-style of a vanished scrollbar in inspector
+        https://bugs.webkit.org/show_bug.cgi?id=42561
+        
+        Test that destroys a styled overflow:scroll scrollbar inside an event handler.
+
+        * scrollbars/overflow-custom-scrollbar-crash-expected.txt: Added.
+        * scrollbars/overflow-custom-scrollbar-crash.html: Added.
+
 2010-07-29  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Dimitri Glazkov.

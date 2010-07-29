@@ -49,6 +49,7 @@ public:
     static RenderScrollbar* scrollbarForStyleResolve();
 
     RenderBox* owningRenderer() const { return m_owner; }
+    void clearOwningRenderer() { m_owner = 0; }
 
     void paintPart(GraphicsContext*, ScrollbarPart, const IntRect&);
 

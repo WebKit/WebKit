@@ -1,3 +1,23 @@
+2010-07-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Pavel Feldman.
+
+        Crash when computing pseudo-style of a vanished scrollbar in inspector
+        https://bugs.webkit.org/show_bug.cgi?id=42561
+        
+        When a styled overflow:scroll scrollbar gets destroyed, we need to clear out the m_owner pointer,
+        otherwise the event handling code (which keeps the Scrollbar alive) later causes the scrollbar
+        to try to use m_owner to get pseudo style.
+
+        Test: scrollbars/overflow-custom-scrollbar-crash.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::destroyScrollbar): If this is a custom scrollbar, clear the owning renderer.
+        * rendering/RenderScrollbar.cpp:
+        (WebCore::RenderScrollbar::getScrollbarPseudoStyle): Bail if m_owner is 0.
+        * rendering/RenderScrollbar.h:
+        (WebCore::RenderScrollbar::clearOwningRenderer): New method.
+
 2010-07-29  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Fix release builds, by removing unused variables, that only served for ASSERTs that are no longer needed.

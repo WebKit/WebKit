@@ -1790,6 +1790,9 @@ void RenderLayer::destroyScrollbar(ScrollbarOrientation orientation)
 {
     RefPtr<Scrollbar>& scrollbar = orientation == HorizontalScrollbar ? m_hBar : m_vBar;
     if (scrollbar) {
+        if (scrollbar->isCustomScrollbar())
+            static_cast<RenderScrollbar*>(scrollbar.get())->clearOwningRenderer();
+
         scrollbar->removeFromParent();
         scrollbar->setClient(0);
         scrollbar = 0;

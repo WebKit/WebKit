@@ -130,6 +130,9 @@ ScrollbarPart RenderScrollbar::partForStyleResolve()
 
 PassRefPtr<RenderStyle> RenderScrollbar::getScrollbarPseudoStyle(ScrollbarPart partType, PseudoId pseudoId)
 {
+    if (!m_owner)
+        return 0;
+
     s_styleResolvePart = partType;
     s_styleResolveScrollbar = this;
     RefPtr<RenderStyle> result = m_owner->getUncachedPseudoStyle(pseudoId, m_owner->style());
