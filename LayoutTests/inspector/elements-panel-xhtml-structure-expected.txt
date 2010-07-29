@@ -3,7 +3,7 @@ Tests that elements panel shows XML dom tree structure with closing tags for all
 Paragraph BR test
 Next line
 
-
+ 
 application/xhtml+xml 
 <HTML xmlns="http://www.w3.org/1999/xhtml">
 <Head>…
@@ -17,6 +17,7 @@ application/xhtml+xml
 <br>
 </br>"Next line"
 </p>
+<![CDATA[ CData Content ]]>
 <img alt="Random Image">
 </img>
 <pre id="outputPre">

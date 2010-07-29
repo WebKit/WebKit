@@ -1320,6 +1320,10 @@ WebInspector.ElementsTreeElement.prototype = {
                     info.title += " [" + node.internalSubset + "]";
                 info.title += "&gt;</span>";
                 break;
+
+            case Node.CDATA_SECTION_NODE:
+                info.title = "<span class=\"webkit-html-text-node\">&lt;![CDATA[" + node.nodeValue.escapeHTML() + "]]&gt;</span>";
+                break;
             default:
                 info.title = this.treeOutline.nodeNameToCorrectCase(node.nodeName).collapseWhitespace().escapeHTML();
         }
