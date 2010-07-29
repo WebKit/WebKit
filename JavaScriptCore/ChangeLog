@@ -1,5 +1,69 @@
 2010-07-29  Michael Saboff  <msaboff@apple.com>
 
+        Reviewed by Gavin Barraclough.
+
+        Changed the handling for removing and adding elements at the front
+        of an array.  The code now keeps a bias that indicates the amount of
+        JSValue sized holes are prior to the ArrayStorage block.  This means
+        that shift operations are now memmove's of the header part of
+        the ArrayStorage and unshift operations are similar, but may require a
+        realloc first to create the space.  Similar operations are performed
+        for special cases of splice and slice.
+        Also optimized the new Array(size) case so that we don't allocate and
+        initialize array elements until the JS code starts using elements.
+        The array growth code is slightly more aggressive for initial growth
+        based on size growth of any previous array.
+
+        * Configurations/JavaScriptCore.xcconfig:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncShift):
+        (JSC::arrayProtoFuncSplice):
+        (JSC::arrayProtoFuncUnShift):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::JSArray):
+        (JSC::JSArray::~JSArray):
+        (JSC::JSArray::getOwnPropertySlot):
+        (JSC::JSArray::getOwnPropertyDescriptor):
+        (JSC::JSArray::put):
+        (JSC::JSArray::putSlowCase):
+        (JSC::JSArray::deleteProperty):
+        (JSC::JSArray::getOwnPropertyNames):
+        (JSC::JSArray::getNewVectorLength):
+        (JSC::JSArray::increaseVectorLength):
+        (JSC::JSArray::increaseVectorPrefixLength):
+        (JSC::JSArray::setLength):
+        (JSC::JSArray::pop):
+        (JSC::JSArray::push):
+        (JSC::JSArray::shiftCount):
+        (JSC::JSArray::unshiftCount):
+        (JSC::JSArray::sortNumeric):
+        (JSC::JSArray::sort):
+        (JSC::JSArray::fillArgList):
+        (JSC::JSArray::copyToRegisters):
+        (JSC::JSArray::compactForSorting):
+        (JSC::JSArray::subclassData):
+        (JSC::JSArray::setSubclassData):
+        (JSC::JSArray::checkConsistency):
+        * runtime/JSArray.h:
+        (JSC::JSArray::length):
+        (JSC::JSArray::canGetIndex):
+        (JSC::JSArray::getIndex):
+        (JSC::JSArray::setIndex):
+        (JSC::JSArray::uncheckedSetIndex):
+        (JSC::JSArray::arrayStorage):
+        (JSC::JSArray::setArrayStorage):
+        (JSC::JSArray::markChildrenDirect):
+
+2010-07-29  Michael Saboff  <msaboff@apple.com>
+
         Reviewed by Darin Adler.
 
         Changed MINIMUM_CELL_SIZE to be fixed at 64 bytes.

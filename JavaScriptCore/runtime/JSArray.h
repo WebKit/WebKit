@@ -29,8 +29,13 @@ namespace JSC {
 
     typedef HashMap<unsigned, JSValue> SparseArrayValueMap;
 
+    // This struct holds the actual data values of an array.  A JSArray object points to it's contained ArrayStorage
+    // struct by pointing to m_vector.  To access the contained ArrayStorage struct, use the getStorage() and 
+    // setStorage() methods.  It is important to note that there may be space before the ArrayStorage that 
+    // is used to quick unshift / shift operation.  The actual allocated pointer is available by using:
+    //     getStorage() - m_indexBias * sizeof(JSValue)
     struct ArrayStorage {
-        unsigned m_length;
+        unsigned m_length; // The "length" property on the array
         unsigned m_numValuesInVector;
         SparseArrayValueMap* m_sparseValueMap;
         void* subclassData; // A JSArray subclass can use this to fill the vector lazily.
@@ -67,8 +72,8 @@ namespace JSC {
         virtual void put(ExecState*, unsigned propertyName, JSValue); // FIXME: Make protected and add setItem.
 
         static JS_EXPORTDATA const ClassInfo info;
-
-        unsigned length() const { return m_storage->m_length; }
+        
+        unsigned length() const { return arrayStorage()->m_length; }
         void setLength(unsigned); // OK to use on new arrays, but not if it might be a RegExpMatchArray.
 
         void sort(ExecState*);
@@ -78,33 +83,39 @@ namespace JSC {
         void push(ExecState*, JSValue);
         JSValue pop();
 
-        bool canGetIndex(unsigned i) { return i < m_vectorLength && m_storage->m_vector[i]; }
+        void shiftCount(ExecState*, int count);
+        void unshiftCount(ExecState*, int count);
+
+        bool canGetIndex(unsigned i) { return i < m_vectorLength && m_vector[i]; }
         JSValue getIndex(unsigned i)
         {
             ASSERT(canGetIndex(i));
-            return m_storage->m_vector[i];
+            return m_vector[i];
         }
 
         bool canSetIndex(unsigned i) { return i < m_vectorLength; }
         void setIndex(unsigned i, JSValue v)
         {
             ASSERT(canSetIndex(i));
-            JSValue& x = m_storage->m_vector[i];
+            
+            JSValue& x = m_vector[i];
             if (!x) {
-                ++m_storage->m_numValuesInVector;
-                if (i >= m_storage->m_length)
-                    m_storage->m_length = i + 1;
+                ArrayStorage *storage = arrayStorage();
+                ++storage->m_numValuesInVector;
+                if (i >= storage->m_length)
+                    storage->m_length = i + 1;
             }
             x = v;
         }
-
+        
         void uncheckedSetIndex(unsigned i, JSValue v)
         {
             ASSERT(canSetIndex(i));
+            ArrayStorage *storage = arrayStorage();
 #if CHECK_ARRAY_CONSISTENCY
-            ASSERT(m_storage->m_inCompactInitialization);
+            ASSERT(storage->m_inCompactInitialization);
 #endif
-            m_storage->m_vector[i] = v;
+            storage->m_vector[i] = v;
         }
 
         void fillArgList(ExecState*, MarkedArgumentBuffer&);
@@ -127,6 +138,16 @@ namespace JSC {
 
         void* subclassData() const;
         void setSubclassData(void*);
+        
+        inline ArrayStorage *arrayStorage() const
+        {
+            return reinterpret_cast<ArrayStorage*>(reinterpret_cast<char*>(m_vector) - (sizeof(ArrayStorage) - sizeof(JSValue)));
+        }
+
+        inline void setArrayStorage(ArrayStorage *storage)
+        {
+            m_vector = &storage->m_vector[0];
+        }
 
     private:
         virtual const ClassInfo* classInfo() const { return &info; }
@@ -134,15 +155,18 @@ namespace JSC {
         bool getOwnPropertySlotSlowCase(ExecState*, unsigned propertyName, PropertySlot&);
         void putSlowCase(ExecState*, unsigned propertyName, JSValue);
 
+        unsigned getNewVectorLength(unsigned desiredLength);
         bool increaseVectorLength(unsigned newLength);
+        bool increaseVectorPrefixLength(unsigned newLength);
         
         unsigned compactForSorting();
 
         enum ConsistencyCheckType { NormalConsistencyCheck, DestructorConsistencyCheck, SortConsistencyCheck };
         void checkConsistency(ConsistencyCheckType = NormalConsistencyCheck);
 
-        unsigned m_vectorLength;
-        ArrayStorage* m_storage;
+        unsigned m_vectorLength; // The valid length of m_vector
+        int m_indexBias; // The number of JSValue sized blocks before ArrayStorage.
+        JSValue* m_vector; // Copy of ArrayStorage.m_vector.  Used for quick vector access and to materialize ArrayStorage ptr.
     };
 
     JSArray* asArray(JSValue);
@@ -168,7 +192,7 @@ namespace JSC {
     {
         JSObject::markChildrenDirect(markStack);
         
-        ArrayStorage* storage = m_storage;
+        ArrayStorage* storage = arrayStorage();
 
         unsigned usedVectorLength = std::min(storage->m_length, m_vectorLength);
         markStack.appendValues(storage->m_vector, usedVectorLength, MayContainNullValues);
