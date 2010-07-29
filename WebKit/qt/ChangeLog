@@ -1,3 +1,20 @@
+2010-07-29  Alexis Menard  <alexis.menard@nokia.com>
+
+        Reviewed by Antonio Gomes.
+
+        QWebFrame and QWebView documentation fix.
+
+        The QWebFrame and the QWebView setHtml() methods are a bit confusing.
+        There are a few registered bugs in Webkit's bugzilla that source is
+        in a bad usage of the function.
+        Additional information were added.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31115
+
+        * Api/qgraphicswebview.cpp:
+        * Api/qwebframe.cpp:
+        * Api/qwebview.cpp:
+
 2010-07-28  Kim Grönholm  <kim.1.gronholm@nokia.com>
 
         Reviewed by Antonio Gomes.

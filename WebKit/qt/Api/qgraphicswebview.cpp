@@ -711,7 +711,12 @@ void QGraphicsWebView::load(const QNetworkRequest& request,
     through the charset attribute of the HTML script tag. Alternatively, the
     encoding can also be specified by the web server.
 
-    \sa load(), setContent(), QWebFrame::toHtml()
+    This is a convenience function equivalent to setContent(html, "text/html", baseUrl).
+
+    \warning This function works only for HTML, for other mime types (i.e. XHTML, SVG)
+    setContent() should be used instead.
+
+    \sa load(), setContent(), QWebFrame::toHtml(), QWebFrame::setContent()
 */
 void QGraphicsWebView::setHtml(const QString& html, const QUrl& baseUrl)
 {
