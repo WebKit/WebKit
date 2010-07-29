@@ -35,8 +35,7 @@ NPObject* createNPObject(NPP npp, NPClass* npClass)
     if (npClass->allocate)
         npObject = npClass->allocate(npp, npClass);
     else {
-        // This should really call NPN_MemAlloc, but we know that it uses malloc
-        // under the hood so it's fine.
+        // This should use NPN_MemAlloc, but we know that it uses malloc under the hood.
         npObject = static_cast<NPObject*>(malloc(sizeof(NPObject)));
     }
 

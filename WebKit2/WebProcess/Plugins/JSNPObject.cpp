@@ -33,6 +33,7 @@
 #include <JavaScriptCore/ObjectPrototype.h>
 #include <JavaScriptCore/JSLock.h>
 #include <WebCore/IdentifierRep.h>
+#include <WebCore/PlatformString.h>
 
 using namespace WebCore;
 using namespace JSC;
@@ -41,7 +42,7 @@ namespace WebKit {
 
 static NPIdentifier npIdentifierFromIdentifier(const Identifier& identifier)
 {
-    return static_cast<NPIdentifier>(IdentifierRep::get(identifier.ascii()));
+    return static_cast<NPIdentifier>(IdentifierRep::get(identifier.ustring().UTF8String().data()));
 }
 
 const ClassInfo JSNPObject::s_info = { "NPObject", 0, 0, 0 };
@@ -225,6 +226,48 @@ void JSNPObject::put(ExecState* exec, const Identifier& propertyName, JSValue va
     }
 
     releaseNPVariantValue(&variant);
+}
+
+void JSNPObject::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propertyNameArray, EnumerationMode mode)
+{
+    if (!m_npObject) {
+        throwInvalidAccessError(exec);
+        return;
+    }
+
+    if (!NP_CLASS_STRUCT_VERSION_HAS_ENUM(m_npObject->_class) || !m_npObject->_class->enumerate)
+        return;
+
+    NPIdentifier* identifiers = 0;
+    uint32_t identifierCount = 0;
+    
+    {
+        JSLock::DropAllLocks dropAllLocks(SilenceAssertionsOnly);
+
+        // FIXME: Handle enumerate setting an exception.
+        // FIXME: Find out what happens if calling enumerate causes the plug-in to go away.
+        // FIXME: Should we throw an exception if enumerate returns false?
+        if (!m_npObject->_class->enumerate(m_npObject, &identifiers, &identifierCount))
+            return;
+    }
+
+    for (uint32_t i = 0; i < identifierCount; ++i) {
+        IdentifierRep* identifierRep = static_cast<IdentifierRep*>(identifiers[i]);
+        
+        Identifier identifier;
+        if (identifierRep->isString()) {
+            const char* string = identifierRep->string();
+            int length = strlen(string);
+            
+            identifier = Identifier(exec, String::fromUTF8WithLatin1Fallback(string, length).impl());
+        } else
+            identifier = Identifier::from(exec, identifierRep->number());
+
+        propertyNameArray.add(identifier);
+    }
+
+    // This should use NPN_MemFree, but we know that it uses free under the hood.
+    free(identifiers);
 }
 
 JSValue JSNPObject::propertyGetter(ExecState* exec, JSValue slotBase, const Identifier& propertyName)

@@ -61,6 +61,8 @@ private:
     virtual bool getOwnPropertyDescriptor(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertyDescriptor&);
     virtual void put(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSValue, JSC::PutPropertySlot&);
 
+    virtual void getOwnPropertyNames(JSC::ExecState*, JSC::PropertyNameArray&, JSC::EnumerationMode mode = JSC::ExcludeDontEnumProperties);
+
     static JSC::JSValue propertyGetter(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
     static JSC::JSValue methodGetter(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
     static JSC::JSObject* throwInvalidAccessError(JSC::ExecState*);

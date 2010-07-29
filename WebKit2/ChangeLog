@@ -1,3 +1,35 @@
+2010-07-29  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Implement NPN_Enumerate
+        https://bugs.webkit.org/show_bug.cgi?id=43215
+
+        * WebProcess/Plugins/JSNPObject.cpp:
+        (WebKit::npIdentifierFromIdentifier):
+        Get the UTF-8 string representation instead of the lossy ASCII representation.
+        
+        (WebKit::JSNPObject::getOwnPropertyNames):
+        Implement by calling the NPClass::enumerate function.
+
+        * WebProcess/Plugins/JSNPObject.h:
+        * WebProcess/Plugins/NPJSObject.cpp:
+        (WebKit::NPJSObject::enumerate):
+        Implement by calling JSObject::getPropertyNames.
+
+        (WebKit::NPJSObject::npClass):
+        (WebKit::NPJSObject::NP_Enumerate):
+        Call NPJSObject::enumerate.
+
+        * WebProcess/Plugins/NPJSObject.h:
+        * WebProcess/Plugins/NPRuntimeUtilities.cpp:
+        (WebKit::createNPObject):
+        Fix a comment.
+
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::NPN_Enumerate):
+        Call the NPClass::enumerate function.
+
 2010-07-29  John Sullivan  <sullivan@apple.com>
 
         <https://bugs.webkit.org/show_bug.cgi?id=43203>

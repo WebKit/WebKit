@@ -171,6 +171,29 @@ bool NPJSObject::getProperty(NPIdentifier propertyName, NPVariant* result)
     return true;
 }
 
+bool NPJSObject::enumerate(NPIdentifier** identifiers, uint32_t* identifierCount)
+{
+    ExecState* exec = m_objectMap->globalExec();
+    if (!exec)
+        return false;
+    
+    JSLock lock(SilenceAssertionsOnly);
+
+    PropertyNameArray propertyNames(exec);
+    m_jsObject->getPropertyNames(exec, propertyNames);
+
+    // This should use NPN_MemAlloc, but we know that it uses malloc under the hood.
+    NPIdentifier* nameIdentifiers = static_cast<NPIdentifier*>(malloc(sizeof(NPIdentifier) * propertyNames.size()));
+
+    for (size_t i = 0; i < propertyNames.size(); ++i)
+        nameIdentifiers[i] = static_cast<NPIdentifier>(IdentifierRep::get(propertyNames[i].ustring().UTF8String().data()));
+
+    *identifiers = nameIdentifiers;
+    *identifierCount = propertyNames.size();
+
+    return true;
+}
+
 bool NPJSObject::construct(const NPVariant *arguments, uint32_t argumentCount, NPVariant *result)
 {
     ExecState* exec = m_objectMap->globalExec();
@@ -237,7 +260,7 @@ NPClass* NPJSObject::npClass()
         NP_GetProperty,
         NP_SetProperty,
         0,
-        0,
+        NP_Enumerate,
         NP_Construct
     };
 
@@ -286,6 +309,11 @@ bool NPJSObject::NP_SetProperty(NPObject*, NPIdentifier propertyName, const NPVa
 {
     notImplemented();
     return false;
+}
+
+bool NPJSObject::NP_Enumerate(NPObject* npObject, NPIdentifier** identifiers, uint32_t* identifierCount)
+{
+    return toNPJSObject(npObject)->enumerate(identifiers, identifierCount);
 }
 
 bool NPJSObject::NP_Construct(NPObject* npObject, const NPVariant* arguments, uint32_t argumentCount, NPVariant* result)
