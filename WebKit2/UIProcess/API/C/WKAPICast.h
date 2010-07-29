@@ -88,7 +88,7 @@ public:
     {
     }
 
-    operator APIType() { return reinterpret_cast<APIType>(m_impl.get()); }
+    operator APIType() { return toRef(m_impl.get()); }
 
 private:
     RefPtr<ImplType> m_impl;
@@ -121,21 +121,21 @@ inline WebKit::ProxyingRefPtr<WebKit::WebString> toRef(WebCore::StringImpl* stri
 inline WebKit::ProxyingRefPtr<WebKit::WebURL> toURLRef(WebCore::StringImpl* string)
 {
     WebCore::StringImpl* impl = string ? string : WebCore::StringImpl::empty();
-    return WebKit::ProxyingRefPtr<WebKit::WebURL>(WebKit::WebURL::create(WebCore::String(impl)))   ;
+    return WebKit::ProxyingRefPtr<WebKit::WebURL>(WebKit::WebURL::create(WebCore::String(impl)));
 }
 
 inline WKStringRef toCopiedRef(const WebCore::String& string)
 {
     WebCore::StringImpl* impl = string.impl() ? string.impl() : WebCore::StringImpl::empty();
     RefPtr<WebKit::WebString> webString = WebKit::WebString::create(WebCore::String(impl));
-    return reinterpret_cast<WKStringRef>(webString.release().releaseRef());
+    return toRef(webString.release().releaseRef());
 }
 
 inline WKURLRef toCopiedURLRef(const WebCore::String& string)
 {
     WebCore::StringImpl* impl = string.impl() ? string.impl() : WebCore::StringImpl::empty();
     RefPtr<WebKit::WebURL> webURL = WebKit::WebURL::create(WebCore::String(impl));
-    return reinterpret_cast<WKURLRef>(webURL.release().releaseRef());
+    return toRef(webURL.release().releaseRef());
 }
 
 inline WKTypeID toRef(WebKit::APIObject::Type type)
