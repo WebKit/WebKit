@@ -135,8 +135,9 @@ bool RenderSVGRoot::selfWillPaint()
 #if ENABLE(FILTERS)
     SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(this);
     return resources && resources->filter();
-#endif
+#else
     return false;
+#endif
 }
 
 void RenderSVGRoot::paint(PaintInfo& paintInfo, int parentX, int parentY)

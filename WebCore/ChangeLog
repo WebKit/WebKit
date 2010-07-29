@@ -1,5 +1,14 @@
 2010-07-29  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Fix build warning about unreachable code, seen on the windows slave.
+
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::selfWillPaint):
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::selfWillPaint):
+
+2010-07-29  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Reviewed by Dirk Schulze.
 
         WebKit shouldn't ignore resource cycles, but break them as Opera does
