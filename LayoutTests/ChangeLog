@@ -1,3 +1,15 @@
+2010-07-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Resizer control does not paint in otherwise empty compositing layer
+        https://bugs.webkit.org/show_bug.cgi?id=42306
+        
+        Layer dumping test with an empty div having "resize: both".
+
+        * compositing/overflow/resize-painting-expected.txt: Added.
+        * compositing/overflow/resize-painting.html: Added.
+
 2010-07-28  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Nate Chapin.

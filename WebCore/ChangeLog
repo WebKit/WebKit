@@ -1,3 +1,22 @@
+2010-07-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Resizer control does not paint in otherwise empty compositing layer
+        https://bugs.webkit.org/show_bug.cgi?id=42306
+        
+        Ensure that we create backing store for an empty element with resize: both,
+        in order to render the resizer control.
+
+        Test: compositing/overflow/resize-painting.html
+
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::isSimpleContainerCompositingLayer): Check for hasOverflowControls()
+        earlier, before any child checks.
+        (WebCore::RenderLayerBacking::hasNonCompositingDescendants): Renamed from hasNonCompositingContent()
+        to clarify its purpose.
+
 2010-07-29  Adam Roben  <aroben@apple.com>
 
         Remove WKCACFLayer::Lanczos

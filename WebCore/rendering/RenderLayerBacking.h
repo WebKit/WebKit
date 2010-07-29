@@ -173,7 +173,7 @@ private:
     bool rendererHasBackground() const;
     const Color rendererBackgroundColor() const;
 
-    bool hasNonCompositingContent() const;
+    bool hasNonCompositingDescendants() const;
     
     void paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*, const IntRect& paintDirtyRect,
                     PaintBehavior paintBehavior, GraphicsLayerPaintingPhase, RenderObject* paintingRoot);
