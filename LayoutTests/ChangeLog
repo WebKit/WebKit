@@ -1,3 +1,19 @@
+2010-07-29  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Added tests to correspond to the changes made in 
+        JavaScriptCore/yarr/RegexJIT.cpp to fix
+        https://bugs.webkit.org/show_bug.cgi?id=42664.
+        Note that some of the new test cases fail due to one or more 
+        unrelated bugs in the pcre interpreter.  The expected results 
+        for these tests will need to be updated when the implementation
+        conforms to the JS standard.
+
+        * fast/js/regexp-look-ahead-empty-expected.txt: Added.
+        * fast/js/regexp-look-ahead-empty.html: Added.
+        * fast/js/script-tests/regexp-look-ahead-empty.js: Added.
+
 2010-07-29  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Tor Arne Vestbø.

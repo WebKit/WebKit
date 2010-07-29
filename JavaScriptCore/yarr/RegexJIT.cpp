@@ -1032,6 +1032,9 @@ class RegexGenerator : private MacroAssembler {
         TermGenerationState parenthesesState(disjunction, state.checkedTotal);
 
         Label matchAgain(this);
+
+        storeToFrame(index, parenthesesTerm.frameLocation); // Save the current index to check for zero len matches later.
+
         for (parenthesesState.resetAlternative(); parenthesesState.alternativeValid(); parenthesesState.nextAlternative()) {
 
             PatternAlternative* alternative = parenthesesState.alternative();
@@ -1046,9 +1049,9 @@ class RegexGenerator : private MacroAssembler {
             for (parenthesesState.resetTerm(); parenthesesState.termValid(); parenthesesState.nextTerm())
                 generateTerm(parenthesesState);
 
-            // If we get here, we matched! Limit not yet supported, so just try to match more!
-            jump(matchAgain);
-            
+            // If we get here, we matched! If the index advanced then try to match more since limit isn't supported yet.
+            branch32(GreaterThan, index, Address(stackPointerRegister, (parenthesesTerm.frameLocation * sizeof(void*))), matchAgain);
+
             parenthesesState.linkAlternativeBacktracks(this);
             // We get here if the alternative fails to match - fall through to the next iteration, or out of the loop.
 
