@@ -60,15 +60,11 @@
     </style>
     <script src="resources/dump-list.js"></script>
     <script>
-        function printFailedIfListItemMarkerNotEqualListItemText(listItemElement, depth)
+        function testListItemMarkerEqualsListItemText(listItemElement, depth)
         {
-            var marker = layoutTestController.markerTextForListItem(listItemElement);
             var isNegativeNumber = listItemElement.parentNode.className && listItemElement.parentNode.className.split(" ").indexOf("negative-number") > -1;
-            var expectedMarkerText = isNegativeNumber ? "-" : "";
-            expectedMarkerText += listItemElement.innerText;
-            if (marker === expectedMarkerText)
-                return '';
-            return '<span><span class="fail">FAIL</span> list marker should be ' + expectedMarkerText + '. Was ' + marker + '.</span><br/>';
+            var expectedMarkerText = (isNegativeNumber ? "-" : "") + listItemElement.innerText;
+            return testListItemMarkerEquals(layoutTestController.markerTextForListItem(listItemElement), expectedMarkerText);
         }
 
         function runTest()
@@ -77,7 +73,7 @@
                 return;
             
             layoutTestController.dumpAsText();
-            filterListsWithReplacement(document.querySelectorAll(".test ol"), printFailedIfListItemMarkerNotEqualListItemText, printPassedIfEmptyString);
+            filterListsWithReplacement(document.querySelectorAll(".test ol"), testListItemMarkerEqualsListItemText);
             document.body.removeChild(document.getElementById("description")); // Remove description when running in DRT.
         }
         window.onload = runTest;

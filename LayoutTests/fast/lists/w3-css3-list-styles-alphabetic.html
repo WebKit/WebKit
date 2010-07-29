@@ -87,7 +87,7 @@
                 return;
                 
             layoutTestController.dumpAsText();
-            filterListsWithReplacement(document.querySelectorAll(".test ol"), printFailedIfListItemMarkerNotEqualListItemText, printPassedIfEmptyString);
+            filterListsWithReplacement(document.querySelectorAll(".test ol"), testListItemMarkerEqualsListItemText);
             document.body.removeChild(document.getElementById("description")); // Remove description when running in DRT.
         }
         window.onload = runTest;

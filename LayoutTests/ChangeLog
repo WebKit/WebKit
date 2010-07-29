@@ -1,3 +1,32 @@
+2010-07-28  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Darin Adler.
+
+        Output more descriptive PASS messages for list layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=42938
+
+        Output a more descriptive PASS message so that it is clear
+        what we are testing in the test cases: fast/lists/w3-css3-list-styles-alphabetic.html
+        and fast/lists/w3-css3-list-styles-numeric.html.
+
+        Currently, we only output "PASS" if the list marker equals
+        its list item text for every <li> in the list. Instead, we
+        should output a PASS message for each <li> so that we can
+        ensure that we are comparing the list marker and list
+        item text.
+
+        * fast/lists/resources/dump-list.js: Removed printPassedIfEmptyString()
+        instead merged pass message into testListItemMarkerEqualsListItemText().
+        (filterListsWithReplacement): Removed support for a post filter
+        function as this is not needed anymore.
+        (testListItemMarkerEquals): Added.
+        (testListItemMarkerEqualsListItemText): Added.
+        * fast/lists/w3-css3-list-styles-alphabetic-expected.txt: Rebased result.
+        * fast/lists/w3-css3-list-styles-alphabetic.html: Updated to call testListItemMarkerEqualsListItemText().
+        * fast/lists/w3-css3-list-styles-numeric-expected.txt: Rebased result.
+        * fast/lists/w3-css3-list-styles-numeric.html: Modified JavaScript to call
+        testListItemMarkerEquals() so that we can remove the redundant code.
+
 2010-07-28  Alex Nicolaou  <anicolao@chromium.org>
 
         Reviewed by Ojan Vafai.
