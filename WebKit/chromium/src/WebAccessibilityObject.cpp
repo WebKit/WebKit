@@ -32,11 +32,13 @@
 #include "WebAccessibilityObject.h"
 
 #include "AccessibilityObject.h"
+#include "CSSPrimitiveValueMappings.h"
 #include "Document.h"
 #include "EventHandler.h"
 #include "FrameView.h"
 #include "Node.h"
 #include "PlatformKeyboardEvent.h"
+#include "RenderStyle.h"
 #include "WebDocument.h"
 #include "WebNode.h"
 #include "WebPoint.h"
@@ -432,6 +434,36 @@ WebDocument WebAccessibilityObject::document() const
         return WebDocument();
 
     return WebDocument(document);
+}
+
+bool WebAccessibilityObject::hasComputedStyle() const
+{
+    Document* document = m_private->document();
+    if (document)
+        document->updateStyleIfNeeded();
+
+    Node* node = m_private->node();
+    if (!node)
+        return false;
+
+    return node->computedStyle();
+}
+
+WebString WebAccessibilityObject::computedStyleDisplay() const
+{
+    Document* document = m_private->document();
+    if (document)
+        document->updateStyleIfNeeded();
+
+    Node* node = m_private->node();
+    if (!node)
+        return WebString();
+
+    RenderStyle* renderStyle = node->computedStyle();
+    if (!renderStyle)
+        return WebString();
+
+    return WebString(CSSPrimitiveValue::create(renderStyle->display())->getStringValue());
 }
 
 WebAccessibilityObject::WebAccessibilityObject(const WTF::PassRefPtr<WebCore::AccessibilityObject>& object)
