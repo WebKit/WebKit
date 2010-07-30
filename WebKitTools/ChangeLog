@@ -1,5 +1,11 @@
 2010-07-29  Anders Carlsson  <andersca@apple.com>
 
+        Fix typo.
+
+        * DumpRenderTree/qt/TestNetscapePlugin/TestNetscapePlugin.pro:
+
+2010-07-29  Anders Carlsson  <andersca@apple.com>
+
         Another attempt at fixing the Qt and GTK+ build.
 
         * DumpRenderTree/unix/TestNetscapePlugin/TestNetscapePlugin.cpp:
