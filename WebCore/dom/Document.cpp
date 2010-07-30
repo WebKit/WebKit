@@ -1451,7 +1451,7 @@ void Document::recalcStyle(StyleChange change)
 #endif
 
 bail_out:
-    setNeedsStyleRecalc(NoStyleChange);
+    clearNeedsStyleRecalc();
     clearChildNeedsStyleRecalc();
     unscheduleStyleRecalc();
 

@@ -1,3 +1,45 @@
+2010-07-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+
+        connect-compositing-iframe2.html test sometimes shows blank iframe content
+        https://bugs.webkit.org/show_bug.cgi?id=42046
+
+        Hooking up compositing iframes requires setNeedsStyleRecalc(SyntheticStyleChange) to
+        always result in a call to RenderLayer::styleChanged(). However, the semantics of 
+        setNeedsStyleRecalc() was that each call would overwrite the existing styleChangeType,
+        allowing a "lesser" style change to override a "greater" one. In the test content,
+        SyntheticStyleChange was being replaced by FullStyleChange when the classname changed.
+        This resulted in RenderLayer::styleChanged() not being called.
+        
+        Fix by changing the behavior of setNeedsStyleRecalc() to only touch the style change
+        type if a "lesser" change is being replaced with a "greater" one. This required adding
+        a new clearNeedsStyleRecalc() method to reset the style change type to NoStyleChange.
+        
+        In addition, in Node::setNeedsStyleRecalc(), only propagate the childNeedsStyleRecalc
+        up the parent change if the node was not already needing recalc. In order to fix issues
+        with attaching, this required new call to clearNeedsStyleRecalc() at the end of attach().
+
+        * manual-tests/compositing/missing-iframe-contents.html: Added.
+        * manual-tests/compositing/resources/composited-subframe.html: Copied from LayoutTests/compositing/iframes/resources/composited-subframe.html.
+
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyle): Call clearNeedsStyleRecalc().
+        * dom/Element.cpp:
+        (WebCore::Element::recalcStyle): Call clearNeedsStyleRecalc().
+
+        * dom/Node.h:
+        (WebCore::Node::clearNeedsStyleRecalc): New method.
+        * dom/Node.cpp:
+        (WebCore::Node::setNeedsStyleRecalc): Only call setStyleChange() if the change type
+        is greater than the current change type.
+        (WebCore::Node::attach): After attaching, we can call clearNeedsStyleRecalc().
+
+        * dom/Text.cpp:
+        (WebCore::Text::recalcStyle): Call clearNeedsStyleRecalc().
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::recalcStyle): Call clearNeedsStyleRecalc().
+
 2010-07-30  W. James MacLean  <wjmaclean@google.com>
 
         Reviewed by Nikolas Zimmermann.

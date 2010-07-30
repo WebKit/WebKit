@@ -726,15 +726,18 @@ inline void Node::setStyleChange(StyleChangeType changeType)
 
 void Node::setNeedsStyleRecalc(StyleChangeType changeType)
 {
-    if ((changeType != NoStyleChange) && !attached()) // changed compared to what?
+    ASSERT(changeType != NoStyleChange);
+    if (!attached()) // changed compared to what?
         return;
 
-    if (!(changeType == InlineStyleChange && (styleChangeType() == FullStyleChange || styleChangeType() == SyntheticStyleChange)))
+    StyleChangeType existingChangeType = styleChangeType();
+    if (changeType > existingChangeType)
         setStyleChange(changeType);
 
-    if (styleChangeType() != NoStyleChange) {
+    if (existingChangeType == NoStyleChange) {
         for (Node* p = parentNode(); p && !p->childNeedsStyleRecalc(); p = p->parentNode())
             p->setChildNeedsStyleRecalc();
+
         if (document()->childNeedsStyleRecalc())
             document()->scheduleStyleRecalc();
     }
@@ -1256,6 +1259,7 @@ void Node::attach()
     }
 
     setAttached();
+    clearNeedsStyleRecalc();
 }
 
 void Node::willRemove()
