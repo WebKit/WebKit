@@ -119,7 +119,7 @@ bool NPJSObject::invoke(NPIdentifier methodName, const NPVariant* arguments, uin
     return invoke(exec, m_objectMap->globalObject(), function, arguments, argumentCount, result);
 }
 
-bool NPJSObject::invokeDefault(const NPVariant *arguments, uint32_t argumentCount, NPVariant *result)
+bool NPJSObject::invokeDefault(const NPVariant* arguments, uint32_t argumentCount, NPVariant* result)
 {
     ExecState* exec = m_objectMap->globalExec();
     if (!exec)
@@ -215,7 +215,7 @@ bool NPJSObject::enumerate(NPIdentifier** identifiers, uint32_t* identifierCount
     return true;
 }
 
-bool NPJSObject::construct(const NPVariant *arguments, uint32_t argumentCount, NPVariant *result)
+bool NPJSObject::construct(const NPVariant* arguments, uint32_t argumentCount, NPVariant* result)
 {
     ExecState* exec = m_objectMap->globalExec();
     if (!exec)

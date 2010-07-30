@@ -636,6 +636,22 @@ NPObject* PluginView::pluginElementNPObject()
     return m_npRuntimeObjectMap.getOrCreateNPObject(object);
 }
 
+bool PluginView::evaluate(NPObject* npObject, const String&scriptString, NPVariant* result, bool allowPopups)
+{
+    if (!frame())
+        return false;
+
+    bool oldAllowPopups = frame()->script()->allowPopupsFromPlugin();
+    frame()->script()->setAllowPopupsFromPlugin(allowPopups);
+
+    // FIXME: What happens if calling evaluate will cause the plug-in view to go away.
+    bool returnValue = m_npRuntimeObjectMap.evaluate(npObject, scriptString, result);
+
+    frame()->script()->setAllowPopupsFromPlugin(oldAllowPopups);
+
+    return returnValue;
+}
+
 void PluginView::setStatusbarText(const String& statusbarText)
 {
     if (!frame())

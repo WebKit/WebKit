@@ -38,6 +38,10 @@ namespace JSC {
     class JSValue;
 }
 
+namespace WebCore {
+    class String;
+}
+
 namespace WebKit {
 
 class JSNPObject;
@@ -52,16 +56,16 @@ public:
     // Returns an NPObject that wraps the given JSObject object. If there is already an NPObject that wraps this JSObject, it will
     // retain it and return it.
     NPObject* getOrCreateNPObject(JSC::JSObject*);
-
     void npJSObjectDestroyed(NPJSObject*);
 
     // Returns a JSObject object that wraps the given NPObject.
     JSC::JSObject* getOrCreateJSObject(JSC::JSGlobalObject*, NPObject*);
-
     void jsNPObjectDestroyed(JSNPObject*);
 
     void convertJSValueToNPVariant(JSC::ExecState*, JSC::JSValue, NPVariant&);
     JSC::JSValue convertNPVariantToJSValue(JSC::ExecState*, JSC::JSGlobalObject*, const NPVariant&);
+
+    bool evaluate(NPObject*, const WebCore::String&scriptString, NPVariant* result);
 
     // Called when the plug-in is destroyed. Will invalidate all the NPObjects.
     void invalidate();

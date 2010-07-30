@@ -25,13 +25,13 @@
 
 #include "NPRuntimeObjectMap.h"
 
-#include <JavaScriptCore/JSLock.h>
-
 #include "JSNPObject.h"
 #include "NPJSObject.h"
 #include "NPRuntimeUtilities.h"
 #include "NotImplemented.h"
 #include "PluginView.h"
+#include <JavaScriptCore/JSLock.h>
+#include <JavaScriptCore/SourceCode.h>
 #include <WebCore/Frame.h>
 
 using namespace JSC;
@@ -166,6 +166,37 @@ void NPRuntimeObjectMap::convertJSValueToNPVariant(ExecState* exec, JSValue valu
     }
 
     ASSERT_NOT_REACHED();
+}
+
+bool NPRuntimeObjectMap::evaluate(NPObject* npObject, const String&scriptString, NPVariant* result)
+{
+    ProtectedPtr<JSGlobalObject> globalObject = this->globalObject();
+    if (!globalObject)
+        return false;
+
+    ExecState* exec = globalObject->globalExec();
+    
+    JSLock lock(SilenceAssertionsOnly);
+    JSValue thisValue = getOrCreateJSObject(globalObject, npObject);
+
+    globalObject->globalData()->timeoutChecker.start();
+    Completion completion = JSC::evaluate(exec, globalObject->globalScopeChain(), makeSource(UString(scriptString.impl())), thisValue);
+    globalObject->globalData()->timeoutChecker.stop();
+
+    ComplType completionType = completion.complType();
+
+    JSValue resultValue;
+    if (completionType == Normal) {
+        resultValue = completion.value();
+        if (!resultValue)
+            resultValue = jsUndefined();
+    } else
+        resultValue = jsUndefined();
+
+    exec->clearException();
+    
+    convertJSValueToNPVariant(exec, resultValue, *result);
+    return true;
 }
 
 void NPRuntimeObjectMap::invalidate()

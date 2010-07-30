@@ -1,3 +1,15 @@
+2010-07-30  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Implement NPN_Evaluate
+        https://bugs.webkit.org/show_bug.cgi?id=43268
+
+        Add test.
+
+        * plugins/npruntime/evaluate-expected.txt: Added.
+        * plugins/npruntime/evaluate.html: Added.
+
 2010-07-30  Satish Sampath  <satish@chromium.org>
 
         Reviewed by David Levin.

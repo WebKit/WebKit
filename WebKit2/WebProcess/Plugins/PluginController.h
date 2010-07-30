@@ -27,6 +27,7 @@
 #define PluginController_h
 
 struct NPObject;
+typedef struct _NPVariant NPVariant;
 
 namespace WebCore {
     class HTTPHeaderMap;
@@ -63,6 +64,9 @@ public:
 
     // Get the NPObject that corresponds to the plug-in's element. Returns a retained object.
     virtual NPObject* pluginElementNPObject() = 0;
+
+    // Evaluates the given script string in the context of the given NPObject.
+    virtual bool evaluate(NPObject*, const WebCore::String&scriptString, NPVariant* result, bool allowPopups) = 0;
 
     // Set the statusbar text.
     virtual void setStatusbarText(const WebCore::String&) = 0;

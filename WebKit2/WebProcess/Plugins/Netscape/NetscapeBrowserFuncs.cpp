@@ -550,7 +550,7 @@ static void NPN_ReleaseObject(NPObject *npObject)
     releaseNPObject(npObject);
 }
 
-static bool NPN_Invoke(NPP, NPObject *npObject, NPIdentifier methodName, const NPVariant *arguments, uint32_t argumentCount, NPVariant *result)
+static bool NPN_Invoke(NPP, NPObject *npObject, NPIdentifier methodName, const NPVariant* arguments, uint32_t argumentCount, NPVariant* result)
 {
     if (npObject->_class->invoke)
         return npObject->_class->invoke(npObject, methodName, arguments, argumentCount, result);
@@ -558,7 +558,7 @@ static bool NPN_Invoke(NPP, NPObject *npObject, NPIdentifier methodName, const N
     return false;
 }
 
-static bool NPN_InvokeDefault(NPP, NPObject *npObject, const NPVariant *arguments, uint32_t argumentCount, NPVariant *result)
+static bool NPN_InvokeDefault(NPP, NPObject *npObject, const NPVariant* arguments, uint32_t argumentCount, NPVariant* result)
 {
     if (npObject->_class->invokeDefault)
         return npObject->_class->invokeDefault(npObject, arguments, argumentCount, result);
@@ -566,10 +566,12 @@ static bool NPN_InvokeDefault(NPP, NPObject *npObject, const NPVariant *argument
     return false;
 }
 
-static bool NPN_Evaluate(NPP npp, NPObject *npobj, NPString *script, NPVariant *result)
+static bool NPN_Evaluate(NPP npp, NPObject *npObject, NPString *script, NPVariant* result)
 {
-    notImplemented();
-    return false;
+    RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
+    String scriptString = String::fromUTF8WithLatin1Fallback(script->UTF8Characters, script->UTF8Length);
+    
+    return plugin->evaluate(npObject, scriptString, result);
 }
 
 static bool NPN_GetProperty(NPP, NPObject* npObject, NPIdentifier propertyName, NPVariant* result)

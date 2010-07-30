@@ -60,6 +60,7 @@ public:
                  const Vector<char>& httpBody, bool sendNotification, void* notificationData);
     NPError destroyStream(NPStream*, NPReason);
     void setStatusbarText(const WebCore::String&);
+    bool evaluate(NPObject*, const WebCore::String&scriptString, NPVariant* result);
 
     // These return retained objects.
     NPObject* windowScriptNPObject();

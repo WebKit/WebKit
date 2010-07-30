@@ -148,6 +148,11 @@ void NetscapePlugin::setStatusbarText(const String& statusbarText)
     m_pluginController->setStatusbarText(statusbarText);
 }
 
+bool NetscapePlugin::evaluate(NPObject* npObject, const String& scriptString, NPVariant* result)
+{
+    return m_pluginController->evaluate(npObject, scriptString, result, allowPopups());
+}
+
 NPObject* NetscapePlugin::windowScriptNPObject()
 {
     return m_pluginController->windowScriptNPObject();
