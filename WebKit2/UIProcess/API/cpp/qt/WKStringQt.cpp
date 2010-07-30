@@ -36,5 +36,6 @@ QString WKStringCopyQString(WKStringRef stringRef)
 {
     if (!stringRef)
         return QString();
-    return QString(reinterpret_cast<const QChar*>(toWK(stringRef)->characters()), toWK(stringRef)->length());
+    const WebCore::String& string = toWK(stringRef)->string();
+    return QString(reinterpret_cast<const QChar*>(string.characters()), string.length());
 }

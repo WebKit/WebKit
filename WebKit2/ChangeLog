@@ -1,3 +1,16 @@
+2010-07-30  Balazs Kelemen  <kb@inf.u-szeged.hu>
+
+        Unreviewed build fix.
+
+        [Qt] Build fix for recent API changes in WebKit2.
+
+        * UIProcess/API/cpp/qt/WKStringQt.cpp:
+        (WKStringCopyQString):
+        * UIProcess/API/cpp/qt/WKURLQt.cpp:
+        (WKURLCopyQUrl):
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPage::QWKPage):
+
 2010-07-29  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.

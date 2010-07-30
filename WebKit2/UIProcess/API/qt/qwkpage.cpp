@@ -235,7 +235,9 @@ QWKPage::QWKPage(WKPageNamespaceRef namespaceRef)
         qt_wk_didChangeProgress,
         qt_wk_didFinishProgress,
         qt_wk_didBecomeUnresponsive,
-        qt_wk_didBecomeResponsive
+        qt_wk_didBecomeResponsive,
+        0,  /* processDidExit */
+        0   /* didChangeBackForwardList */
     };
     WKPageSetPageLoaderClient(pageRef(), &loadClient);
 
@@ -246,6 +248,8 @@ QWKPage::QWKPage(WKPageNamespaceRef namespaceRef)
         qt_wk_showPage,
         qt_wk_close,
         qt_wk_runJavaScriptAlert,
+        0,  /* runJavaScriptConfirm */
+        0   /* runJavaScriptPrompt */
     };
     WKPageSetPageUIClient(pageRef(), &uiClient);
 }

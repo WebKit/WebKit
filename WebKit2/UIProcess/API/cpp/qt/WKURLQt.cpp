@@ -36,5 +36,6 @@ QUrl WKURLCopyQUrl(WKURLRef urlRef)
 {
     if (!urlRef)
         return QUrl();
-    return QUrl(QString(reinterpret_cast<const QChar*>(toWK(urlRef)->characters()), toWK(urlRef)->length()));
+    const WebCore::String& string = toWK(urlRef)->string();
+    return QUrl(QString(reinterpret_cast<const QChar*>(string.characters()), string.length()));
 }
