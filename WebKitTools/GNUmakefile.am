@@ -158,6 +158,9 @@ TestNetscapePlugin_libtestnetscapeplugin_la_SOURCES = \
 	WebKitTools/DumpRenderTree/unix/TestNetscapePlugin/ForwardingHeaders/WebKit/npfunctions.h \
 	WebKitTools/DumpRenderTree/unix/TestNetscapePlugin/ForwardingHeaders/WebKit/npruntime.h \
 	WebKitTools/DumpRenderTree/unix/TestNetscapePlugin/TestNetscapePlugin.cpp \
+	WebKitTools/DumpRenderTree/TestNetscapePlugIn/Tests/DocumentOpenInDestroyStream.cpp \
+	WebKitTools/DumpRenderTree/TestNetscapePlugIn/PluginTest.cpp \
+	WebKitTools/DumpRenderTree/TestNetscapePlugIn/PluginTest.h \
 	WebKitTools/DumpRenderTree/TestNetscapePlugIn/PluginObject.cpp \
 	WebKitTools/DumpRenderTree/TestNetscapePlugIn/PluginObject.h \
 	WebKitTools/DumpRenderTree/TestNetscapePlugIn/TestObject.cpp \

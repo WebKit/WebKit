@@ -25,6 +25,7 @@
 
 #include "PluginTest.h"
 
+#include <assert.h>
 
 using namespace std;
 extern NPNetscapeFuncs *browser;

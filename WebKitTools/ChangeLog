@@ -1,5 +1,15 @@
 2010-07-29  Anders Carlsson  <andersca@apple.com>
 
+        Another build fix attempt.
+
+        * DumpRenderTree/TestNetscapePlugIn/PluginTest.cpp:
+        * DumpRenderTree/qt/TestNetscapePlugin/TestNetscapePlugin.pro:
+        * DumpRenderTree/unix/TestNetscapePlugin/TestNetscapePlugin.cpp:
+        (webkit_test_plugin_new_instance):
+        * GNUmakefile.am:
+
+2010-07-29  Anders Carlsson  <andersca@apple.com>
+
         Try to fix Windows and Unix builds.
 
         * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugin.vcproj:

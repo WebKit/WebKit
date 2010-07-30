@@ -64,6 +64,8 @@ webkit_test_plugin_new_instance(NPMIMEType /*mimetype*/,
         PluginObject* obj = (PluginObject*)browser->createobject(instance, getPluginClass());
         instance->pdata = obj;
 
+        string testIdentifier;
+
         for (int i = 0; i < argc; i++) {
             if (strcasecmp(argn[i], "test") == 0)
                 testIdentifier = argv[i];
