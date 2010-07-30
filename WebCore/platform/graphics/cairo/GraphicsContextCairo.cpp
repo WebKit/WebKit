@@ -4,6 +4,7 @@
  * Copyright (C) 2008, 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) 2008 Nuanti Ltd.
  * Copyright (C) 2009 Brent Fulgham <bfulgham@webkit.org>
+ * Copyright (C) 2010 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -143,6 +144,27 @@ static inline void copyContextProperties(cairo_t* srcCr, cairo_t* dstCr)
     cairo_set_fill_rule(dstCr, cairo_get_fill_rule(srcCr));
 }
 
+static void appendPathToCairoContext(cairo_t* to, cairo_t* from)
+{
+    cairo_path_t* cairoPath = cairo_copy_path(from);
+    cairo_append_path(to, cairoPath);
+    cairo_path_destroy(cairoPath);
+}
+
+// We apply the pending path built via addPath to the Cairo context
+// lazily. This prevents interaction between the path and other routines
+// such as fillRect.
+static void setPathOnCairoContext(cairo_t* to, cairo_t* from)
+{
+    cairo_new_path(to);
+    appendPathToCairoContext(to, from);
+}
+
+static void appendWebCorePathToCairoContext(cairo_t* context, const Path& path)
+{
+    appendPathToCairoContext(context, path.platformPath()->m_cr);
+}
+
 void GraphicsContext::calculateShadowBufferDimensions(IntSize& shadowBufferSize, FloatRect& shadowRect, float& kernelSize, const FloatRect& sourceRect, const FloatSize& shadowSize, float shadowBlur)
 {
 #if ENABLE(FILTERS)
@@ -199,6 +221,22 @@ static inline void drawPathShadow(GraphicsContext* context, GraphicsContextPriva
 
     context->createPlatformShadow(shadowBuffer.release(), shadowColor, shadowRect, kernelSize);
 #endif
+}
+
+static void fillCurrentCairoPath(GraphicsContext* context, GraphicsContextPrivate* gcp, cairo_t* cairoContext)
+{
+    cairo_set_fill_rule(cairoContext, context->fillRule() == RULE_EVENODD ? CAIRO_FILL_RULE_EVEN_ODD : CAIRO_FILL_RULE_WINDING);
+    drawPathShadow(context, gcp, true, false);
+
+    setPlatformFill(context, cairoContext, gcp);
+    cairo_new_path(cairoContext);
+}
+
+static void strokeCurrentCairoPath(GraphicsContext* context, GraphicsContextPrivate* gcp, cairo_t* cairoContext)
+{
+    drawPathShadow(context, gcp, false, true);
+    setPlatformStroke(context, cairoContext, gcp);
+    cairo_new_path(cairoContext);
 }
 
 GraphicsContext::GraphicsContext(PlatformGraphicsContext* cr)
@@ -380,9 +418,8 @@ void GraphicsContext::drawEllipse(const IntRect& rect)
         setColor(cr, strokeColor());
         cairo_set_line_width(cr, strokeThickness());
         cairo_stroke(cr);
-    }
-
-    cairo_new_path(cr);
+    } else
+        cairo_new_path(cr);
 }
 
 void GraphicsContext::strokeArc(const IntRect& rect, int startAngle, int angleSpan)
@@ -498,9 +535,9 @@ void GraphicsContext::drawConvexPolygon(size_t npoints, const FloatPoint* points
         setColor(cr, strokeColor());
         cairo_set_line_width(cr, strokeThickness());
         cairo_stroke(cr);
-    }
+    } else
+        cairo_new_path(cr);
 
-    cairo_new_path(cr);
     cairo_restore(cr);
 }
 
@@ -522,11 +559,8 @@ void GraphicsContext::fillPath()
 
     cairo_t* cr = m_data->cr;
 
-    cairo_set_fill_rule(cr, fillRule() == RULE_EVENODD ? CAIRO_FILL_RULE_EVEN_ODD : CAIRO_FILL_RULE_WINDING);
-    drawPathShadow(this, m_common, true, false);
-
-    setPlatformFill(this, cr, m_common);
-    cairo_new_path(cr);
+    setPathOnCairoContext(cr, m_data->m_pendingPath.m_cr);
+    fillCurrentCairoPath(this, m_common, cr);
 }
 
 void GraphicsContext::strokePath()
@@ -535,11 +569,8 @@ void GraphicsContext::strokePath()
         return;
 
     cairo_t* cr = m_data->cr;
-    drawPathShadow(this, m_common, false, true);
-
-    setPlatformStroke(this, cr, m_common);
-    cairo_new_path(cr);
-
+    setPathOnCairoContext(cr, m_data->m_pendingPath.m_cr);
+    strokeCurrentCairoPath(this, m_common, cr);
 }
 
 void GraphicsContext::drawPath()
@@ -548,6 +579,8 @@ void GraphicsContext::drawPath()
         return;
 
     cairo_t* cr = m_data->cr;
+
+    setPathOnCairoContext(cr, m_data->m_pendingPath.m_cr);
 
     cairo_set_fill_rule(cr, fillRule() == RULE_EVENODD ? CAIRO_FILL_RULE_EVEN_ODD : CAIRO_FILL_RULE_WINDING);
     drawPathShadow(this, m_common, true, true);
@@ -565,7 +598,7 @@ void GraphicsContext::fillRect(const FloatRect& rect)
     cairo_t* cr = m_data->cr;
     cairo_save(cr);
     cairo_rectangle(cr, rect.x(), rect.y(), rect.width(), rect.height());
-    fillPath();
+    fillCurrentCairoPath(this, m_common, cr);
     cairo_restore(cr);
 }
 
@@ -673,7 +706,7 @@ void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int width, int
 #else
     int radius = (width - 1) / 2;
     for (unsigned i = 0; i < rectCount; i++)
-        addPath(Path::createRoundedRectangle(rects[i], FloatSize(radius, radius)));
+        appendWebCorePathToCairoContext(cr, Path::createRoundedRectangle(rects[i], FloatSize(radius, radius)));
 
     // Force the alpha to 50%.  This matches what the Mac does with outline rings.
     Color ringColor(color.red(), color.green(), color.blue(), 127);
@@ -840,6 +873,7 @@ void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect, int thickness
     if (paintingDisabled())
         return;
 
+    cairo_t* cr = m_data->cr;
     clip(rect);
 
     Path p;
@@ -849,9 +883,8 @@ void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect, int thickness
     // Add inner ellipse
     r.inflate(-thickness);
     p.addEllipse(r);
-    addPath(p);
+    appendWebCorePathToCairoContext(cr, p);
 
-    cairo_t* cr = m_data->cr;
     cairo_fill_rule_t savedFillRule = cairo_get_fill_rule(cr);
     cairo_set_fill_rule(cr, CAIRO_FILL_RULE_EVEN_ODD);
     cairo_clip(cr);
@@ -962,7 +995,7 @@ void GraphicsContext::strokeRect(const FloatRect& rect, float width)
     cairo_save(cr);
     cairo_rectangle(cr, rect.x(), rect.y(), rect.width(), rect.height());
     cairo_set_line_width(cr, width);
-    strokePath();
+    strokeCurrentCairoPath(this, m_common, cr);
     cairo_restore(cr);
 }
 
@@ -1079,8 +1112,7 @@ void GraphicsContext::beginPath()
     if (paintingDisabled())
         return;
 
-    cairo_t* cr = m_data->cr;
-    cairo_new_path(cr);
+    cairo_new_path(m_data->m_pendingPath.m_cr);
 }
 
 void GraphicsContext::addPath(const Path& path)
@@ -1088,10 +1120,10 @@ void GraphicsContext::addPath(const Path& path)
     if (paintingDisabled())
         return;
 
-    cairo_t* cr = m_data->cr;
-    cairo_path_t* p = cairo_copy_path(path.platformPath()->m_cr);
-    cairo_append_path(cr, p);
-    cairo_path_destroy(p);
+    cairo_matrix_t currentMatrix;
+    cairo_get_matrix(m_data->cr, &currentMatrix);
+    cairo_set_matrix(m_data->m_pendingPath.m_cr, &currentMatrix);
+    appendWebCorePathToCairoContext(m_data->m_pendingPath.m_cr, path);
 }
 
 void GraphicsContext::clip(const Path& path)
@@ -1124,7 +1156,7 @@ void GraphicsContext::clipOut(const Path& path)
     double x1, y1, x2, y2;
     cairo_clip_extents(cr, &x1, &y1, &x2, &y2);
     cairo_rectangle(cr, x1, y1, x2 - x1, y2 - y1);
-    addPath(path);
+    appendWebCorePathToCairoContext(cr, path);
 
     cairo_fill_rule_t savedFillRule = cairo_get_fill_rule(cr);
     cairo_set_fill_rule(cr, CAIRO_FILL_RULE_EVEN_ODD);
@@ -1183,8 +1215,7 @@ void GraphicsContext::fillRoundedRect(const IntRect& r, const IntSize& topLeft, 
 
     cairo_t* cr = m_data->cr;
     cairo_save(cr);
-    beginPath();
-    addPath(Path::createRoundedRectangle(r, topLeft, topRight, bottomLeft, bottomRight));
+    appendWebCorePathToCairoContext(cr, Path::createRoundedRectangle(r, topLeft, topRight, bottomLeft, bottomRight));
     setColor(cr, color);
     drawPathShadow(this, m_common, true, false);
     cairo_fill(cr);

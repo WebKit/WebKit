@@ -95,6 +95,7 @@ public:
 
     cairo_t* cr;
     Vector<float> layers;
+    CairoPath m_pendingPath;
 
 #if PLATFORM(GTK)
     GdkEventExpose* expose;
