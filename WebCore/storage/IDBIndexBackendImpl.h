@@ -23,24 +23,38 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "IDBIndexImpl.h"
+#ifndef IDBIndexBackendImpl_h
+#define IDBIndexBackendImpl_h
+
+#include "IDBIndexBackendInterface.h"
 
 #if ENABLE(INDEXED_DATABASE)
 
 namespace WebCore {
 
-IDBIndexImpl::IDBIndexImpl(const String& name, const String& keyPath, bool unique)
-    : m_name(name)
-    , m_keyPath(keyPath)
-    , m_unique(unique)
-{
-}
+class IDBIndexBackendImpl : public IDBIndexBackendInterface {
+public:
+    static PassRefPtr<IDBIndexBackendImpl> create(const String& name, const String& keyPath, bool unique)
+    {
+        return adoptRef(new IDBIndexBackendImpl(name, keyPath, unique));
+    }
+    virtual ~IDBIndexBackendImpl();
 
-IDBIndexImpl::~IDBIndexImpl()
-{
-}
+    // Implements IDBIndexBackendInterface.
+    virtual String name() { return m_name; }
+    virtual String keyPath() { return m_keyPath; }
+    virtual bool unique() { return m_unique; }
+
+private:
+    IDBIndexBackendImpl(const String& name, const String& keyPath, bool unique);
+
+    String m_name;
+    String m_keyPath;
+    bool m_unique;
+};
 
 } // namespace WebCore
 
-#endif // ENABLE(INDEXED_DATABASE)
+#endif
+
+#endif // IDBIndexBackendImpl_h

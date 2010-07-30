@@ -35,7 +35,7 @@ namespace WebCore {
 
 class DOMStringList;
 class IDBCallbacks;
-class IDBIndex;
+class IDBIndexBackendInterface;
 class IDBKey;
 class SerializedScriptValue;
 
@@ -52,7 +52,7 @@ public:
     virtual void remove(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks>) = 0;
 
     virtual void createIndex(const String& name, const String& keyPath, bool unique, PassRefPtr<IDBCallbacks>) = 0;
-    virtual PassRefPtr<IDBIndex> index(const String& name) = 0;
+    virtual PassRefPtr<IDBIndexBackendInterface> index(const String& name) = 0;
     virtual void removeIndex(const String& name, PassRefPtr<IDBCallbacks>) = 0;
 };
 

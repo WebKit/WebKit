@@ -1,3 +1,81 @@
+2010-07-29  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Rename all the IDBIndex classses to match the latest conventions
+        https://bugs.webkit.org/show_bug.cgi?id=43190
+
+        No functionality has changed.
+
+        IDBIndexRequest -> IDBIndex in the spec.  So that's the first change.
+        IDBIndex was the name of our interface class though, so we need to rename
+        it to get it out of the way.  While we're at it, we might as well clean
+        up the naming in general to make things more clear.  In the future, we're
+        going to need another layer (yes, yuck) which will be shared by the async
+        and sync classes which will do caching and other optimizations.  That will
+        then connect to the backend.  We also added "Interface" to make it more
+        clear that's what the file/class is.
+
+        Existing layout tests are enough since nothing should change as far as JavaScript can see.
+
+        * Android.derived.jscbindings.mk:
+        * Android.derived.v8bindings.mk:
+        * Android.mk:
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSIDBAnyCustom.cpp:
+        (WebCore::toJS):
+        * bindings/v8/custom/V8IDBAnyCustom.cpp:
+        (WebCore::toV8):
+        * storage/IDBAny.cpp:
+        (WebCore::IDBAny::idbIndex):
+        (WebCore::IDBAny::set):
+        * storage/IDBAny.h:
+        (WebCore::IDBAny::):
+        * storage/IDBCallbacks.h:
+        * storage/IDBIndex.cpp: Added.
+        (WebCore::IDBIndex::IDBIndex):
+        (WebCore::IDBIndex::~IDBIndex):
+        * storage/IDBIndex.h:
+        (WebCore::IDBIndex::create):
+        (WebCore::IDBIndex::name):
+        (WebCore::IDBIndex::keyPath):
+        (WebCore::IDBIndex::unique):
+        * storage/IDBIndex.idl: Added.
+        * storage/IDBIndexBackendImpl.cpp: Added.
+        (WebCore::IDBIndexBackendImpl::IDBIndexBackendImpl):
+        (WebCore::IDBIndexBackendImpl::~IDBIndexBackendImpl):
+        * storage/IDBIndexBackendImpl.h: Added.
+        (WebCore::IDBIndexBackendImpl::create):
+        (WebCore::IDBIndexBackendImpl::name):
+        (WebCore::IDBIndexBackendImpl::keyPath):
+        (WebCore::IDBIndexBackendImpl::unique):
+        * storage/IDBIndexBackendInterface.h: Added.
+        (WebCore::IDBIndexBackendInterface::~IDBIndexBackendInterface):
+        * storage/IDBIndexImpl.cpp: Removed.
+        * storage/IDBIndexImpl.h: Removed.
+        * storage/IDBIndexRequest.cpp: Removed.
+        * storage/IDBIndexRequest.h: Removed.
+        * storage/IDBIndexRequest.idl: Removed.
+        * storage/IDBObjectStore.h:
+        * storage/IDBObjectStoreImpl.cpp:
+        (WebCore::IDBObjectStoreImpl::createIndex):
+        (WebCore::IDBObjectStoreImpl::index):
+        * storage/IDBObjectStoreImpl.h:
+        * storage/IDBObjectStoreRequest.cpp:
+        (WebCore::IDBObjectStoreRequest::index):
+        * storage/IDBObjectStoreRequest.h:
+        * storage/IDBObjectStoreRequest.idl:
+        * storage/IDBRequest.cpp:
+        (WebCore::IDBRequest::onSuccess):
+        * storage/IDBRequest.h:
+
 2010-07-30  Rafael Antognolli  <antognolli@profusion.mobi>
 
         Reviewed by Antonio Gomes.

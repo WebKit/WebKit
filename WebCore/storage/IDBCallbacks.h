@@ -31,7 +31,7 @@
 
 #include "IDBDatabase.h"
 #include "IDBDatabaseError.h"
-#include "IDBIndex.h"
+#include "IDBIndexBackendInterface.h"
 #include "IDBKey.h"
 #include "IDBObjectStore.h"
 #include "SerializedScriptValue.h"
@@ -48,7 +48,7 @@ public:
     virtual void onError(PassRefPtr<IDBDatabaseError>) = 0;
     virtual void onSuccess() = 0; // For "null".
     virtual void onSuccess(PassRefPtr<IDBDatabase>) = 0;
-    virtual void onSuccess(PassRefPtr<IDBIndex>) = 0;
+    virtual void onSuccess(PassRefPtr<IDBIndexBackendInterface>) = 0;
     virtual void onSuccess(PassRefPtr<IDBKey>) = 0;
     virtual void onSuccess(PassRefPtr<IDBObjectStore>) = 0;
     virtual void onSuccess(PassRefPtr<SerializedScriptValue>) = 0;

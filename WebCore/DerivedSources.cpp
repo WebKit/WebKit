@@ -182,7 +182,7 @@
 #include "JSIDBErrorEvent.cpp"
 #include "JSIDBEvent.cpp"
 #include "JSIDBFactory.cpp"
-#include "JSIDBIndexRequest.cpp"
+#include "JSIDBIndex.cpp"
 #include "JSIDBKey.cpp"
 #include "JSIDBKeyRange.cpp"
 #include "JSIDBObjectStoreRequest.cpp"

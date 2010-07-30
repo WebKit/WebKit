@@ -23,22 +23,27 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "IDBIndexRequest.h"
+#ifndef IDBIndexBackendInterface_h
+#define IDBIndexBackendInterface_h
+
+#include "PlatformString.h"
+#include <wtf/Forward.h>
 
 #if ENABLE(INDEXED_DATABASE)
 
 namespace WebCore {
 
-IDBIndexRequest::IDBIndexRequest(PassRefPtr<IDBIndex> idbIndex)
-    : m_idbIndex(idbIndex)
-{
-}
+class IDBIndexBackendInterface : public ThreadSafeShared<IDBIndexBackendInterface> {
+public:
+    virtual ~IDBIndexBackendInterface() { }
 
-IDBIndexRequest::~IDBIndexRequest()
-{
-}
+    virtual String name() = 0;
+    virtual String keyPath() = 0;
+    virtual bool unique() = 0;
+};
 
 } // namespace WebCore
 
-#endif // ENABLE(INDEXED_DATABASE)
+#endif
+
+#endif // IDBIndexBackendInterface_h

@@ -65,7 +65,7 @@ public:
     virtual void onError(PassRefPtr<IDBDatabaseError>);
     virtual void onSuccess(); // For "null".
     virtual void onSuccess(PassRefPtr<IDBDatabase>);
-    virtual void onSuccess(PassRefPtr<IDBIndex>);
+    virtual void onSuccess(PassRefPtr<IDBIndexBackendInterface>);
     virtual void onSuccess(PassRefPtr<IDBKey>);
     virtual void onSuccess(PassRefPtr<IDBObjectStore>);
     virtual void onSuccess(PassRefPtr<SerializedScriptValue>);

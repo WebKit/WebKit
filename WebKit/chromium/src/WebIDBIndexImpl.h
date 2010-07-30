@@ -31,14 +31,14 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
-namespace WebCore { class IDBIndex; }
+namespace WebCore { class IDBIndexBackendInterface; }
 
 namespace WebKit {
 
 // See comment in WebIndexedDatabase for a high level overview these classes.
 class WebIDBIndexImpl : public WebIDBIndex {
 public:
-    WebIDBIndexImpl(WTF::PassRefPtr<WebCore::IDBIndex> idbIndex);
+    WebIDBIndexImpl(WTF::PassRefPtr<WebCore::IDBIndexBackendInterface>);
     virtual ~WebIDBIndexImpl();
 
     virtual WebString name() const;
@@ -46,7 +46,7 @@ public:
     virtual bool unique() const;
 
 private:
-    WTF::RefPtr<WebCore::IDBIndex> m_idbIndex;
+    WTF::RefPtr<WebCore::IDBIndexBackendInterface> m_backend;
 };
 
 } // namespace WebKit

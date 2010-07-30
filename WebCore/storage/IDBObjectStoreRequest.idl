@@ -38,7 +38,7 @@ module storage {
         // FIXME: write openCursor
         [CallWith=ScriptExecutionContext] IDBRequest createIndex(in DOMString name, in [ConvertNullToNullString] DOMString keyPath, in [Optional] boolean unique);
         // FIXME: This needs to raise an IDBDatabaseException on errors.
-        IDBIndexRequest index(in DOMString name);
+        IDBIndex index(in DOMString name);
         [CallWith=ScriptExecutionContext] IDBRequest removeIndex(in DOMString name);
 
         readonly attribute DOMString name;

@@ -44764,7 +44764,7 @@
 					>
 				</File>
 				<File
-					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSIDBIndexRequest.cpp"
+					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSIDBIndex.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -44816,7 +44816,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSIDBIndexRequest.h"
+					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSIDBIndex.h"
 					>
 				</File>
 				<File
@@ -50153,23 +50153,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\storage\IDBIndex.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\storage\IDBIndex.h"
 				>
 			</File>
 			<File
-				RelativePath="..\storage\IDBIndexImpl.cpp"
+				RelativePath="..\storage\IDBIndexBackendInterface.h"
 				>
 			</File>
 			<File
-				RelativePath="..\storage\IDBIndexImpl.h"
+				RelativePath="..\storage\IDBIndexBackendImpl.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\storage\IDBIndexRequest.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\storage\IDBIndexRequest.h"
+				RelativePath="..\storage\IDBIndexBackendImpl.h"
 				>
 			</File>
 			<File

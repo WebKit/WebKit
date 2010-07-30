@@ -85,7 +85,7 @@ void WebIDBObjectStoreImpl::createIndex(const WebString& name, const WebString& 
 
 WebIDBIndex* WebIDBObjectStoreImpl::index(const WebString& name)
 {
-    RefPtr<IDBIndex> index = m_objectStore->index(name);
+    RefPtr<IDBIndexBackendInterface> index = m_objectStore->index(name);
     if (!index)
         return 0;
     return new WebIDBIndexImpl(index);

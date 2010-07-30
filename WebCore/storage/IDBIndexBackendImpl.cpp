@@ -23,16 +23,24 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module storage {
+#include "config.h"
+#include "IDBIndexBackendImpl.h"
 
-    interface [
-        Conditional=INDEXED_DATABASE
-    ] IDBIndexRequest {
-        // FIXME: Complete this file.
+#if ENABLE(INDEXED_DATABASE)
 
-        readonly attribute DOMString name;
-        readonly attribute DOMString keyPath;
-        readonly attribute boolean unique;
-    };
+namespace WebCore {
 
+IDBIndexBackendImpl::IDBIndexBackendImpl(const String& name, const String& keyPath, bool unique)
+    : m_name(name)
+    , m_keyPath(keyPath)
+    , m_unique(unique)
+{
 }
+
+IDBIndexBackendImpl::~IDBIndexBackendImpl()
+{
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(INDEXED_DATABASE)

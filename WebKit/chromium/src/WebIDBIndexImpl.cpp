@@ -34,8 +34,8 @@ using namespace WebCore;
 
 namespace WebKit {
 
-WebIDBIndexImpl::WebIDBIndexImpl(PassRefPtr<IDBIndex> idbIndex)
-    : m_idbIndex(idbIndex)
+WebIDBIndexImpl::WebIDBIndexImpl(PassRefPtr<IDBIndexBackendInterface> backend)
+    : m_backend(backend)
 {
 }
 
@@ -45,17 +45,17 @@ WebIDBIndexImpl::~WebIDBIndexImpl()
 
 WebString WebIDBIndexImpl::name() const
 {
-    return m_idbIndex->name();
+    return m_backend->name();
 }
 
 WebString WebIDBIndexImpl::keyPath() const
 {
-    return m_idbIndex->keyPath();
+    return m_backend->keyPath();
 }
 
 bool WebIDBIndexImpl::unique() const
 {
-    return m_idbIndex->unique();
+    return m_backend->unique();
 }
 
 } // namespace WebCore

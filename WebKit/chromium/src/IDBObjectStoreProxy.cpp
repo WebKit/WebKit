@@ -28,7 +28,7 @@
 
 #include "DOMStringList.h"
 #include "IDBCallbacks.h"
-#include "IDBIndexProxy.h"
+#include "IDBIndexBackendProxy.h"
 #include "WebIDBCallbacksImpl.h"
 #include "WebIDBIndex.h"
 #include "WebIDBKey.h"
@@ -88,12 +88,12 @@ void IDBObjectStoreProxy::createIndex(const String& name, const String& keyPath,
     m_webIDBObjectStore->createIndex(name, keyPath, unique, new WebIDBCallbacksImpl(callbacks));
 }
 
-PassRefPtr<IDBIndex> IDBObjectStoreProxy::index(const String& name)
+PassRefPtr<IDBIndexBackendInterface> IDBObjectStoreProxy::index(const String& name)
 {
     WebKit::WebIDBIndex* index = m_webIDBObjectStore->index(name);
     if (!index)
         return 0;
-    return IDBIndexProxy::create(index);
+    return IDBIndexBackendProxy::create(index);
 }
 
 void IDBObjectStoreProxy::removeIndex(const String& name, PassRefPtr<IDBCallbacks> callbacks)

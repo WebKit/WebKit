@@ -367,7 +367,7 @@ GEN := \
     $(intermediates)/storage/JSIDBErrorEvent.h \
     $(intermediates)/storage/JSIDBEvent.h \
     $(intermediates)/storage/JSIDBFactory.h \
-    $(intermediates)/storage/JSIDBIndexRequest.h \
+    $(intermediates)/storage/JSIDBIndex.h \
     $(intermediates)/storage/JSIDBKey.h \
     $(intermediates)/storage/JSIDBKeyRange.h \
     $(intermediates)/storage/JSIDBRequest.h \

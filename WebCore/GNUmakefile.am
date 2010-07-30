@@ -2838,8 +2838,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSIDBEvent.h \
 	DerivedSources/WebCore/JSIDBFactory.cpp \
 	DerivedSources/WebCore/JSIDBFactory.h \
-	DerivedSources/WebCore/JSIDBIndexRequest.cpp \
-	DerivedSources/WebCore/JSIDBIndexRequest.h \
+	DerivedSources/WebCore/JSIDBIndex.cpp \
+	DerivedSources/WebCore/JSIDBIndex.h \
 	DerivedSources/WebCore/JSIDBKeyRange.cpp \
 	DerivedSources/WebCore/JSIDBKeyRange.h \
 	DerivedSources/WebCore/JSIDBObjectStoreRequest.cpp \
@@ -2864,11 +2864,11 @@ webcore_sources += \
 	WebCore/storage/IDBErrorEvent.h \
 	WebCore/storage/IDBEvent.cpp \
 	WebCore/storage/IDBEvent.h \
+	WebCore/storage/IDBIndex.cpp \
 	WebCore/storage/IDBIndex.h \
-	WebCore/storage/IDBIndexImpl.cpp \
-	WebCore/storage/IDBIndexImpl.h \
-	WebCore/storage/IDBIndexRequest.cpp \
-	WebCore/storage/IDBIndexRequest.h \
+	WebCore/storage/IDBIndexBackendInterface.h \
+	WebCore/storage/IDBIndexBackendImpl.cpp \
+	WebCore/storage/IDBIndexBackendImpl.h \
 	WebCore/storage/IDBKeyRange.cpp \
 	WebCore/storage/IDBKeyRange.h \
 	WebCore/storage/IDBObjectStore.h \

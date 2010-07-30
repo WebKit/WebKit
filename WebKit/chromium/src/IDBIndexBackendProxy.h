@@ -23,13 +23,12 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBIndexProxy_h
-#define IDBIndexProxy_h
+#ifndef IDBIndexBackendProxy_h
+#define IDBIndexBackendProxy_h
 
-#include "IDBIndex.h"
+#include "IDBIndexBackendInterface.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
-#include <wtf/PassRefPtr.h>
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -37,10 +36,10 @@ namespace WebKit { class WebIDBIndex; }
 
 namespace WebCore {
 
-class IDBIndexProxy : public IDBIndex {
+class IDBIndexBackendProxy : public IDBIndexBackendInterface {
 public:
-    static PassRefPtr<IDBIndex> create(PassOwnPtr<WebKit::WebIDBIndex>);
-    virtual ~IDBIndexProxy();
+    static PassRefPtr<IDBIndexBackendInterface> create(PassOwnPtr<WebKit::WebIDBIndex>);
+    virtual ~IDBIndexBackendProxy();
 
     virtual String name();
     virtual String keyPath();
@@ -49,7 +48,7 @@ public:
     // FIXME: Add other methods.
 
 private:
-    IDBIndexProxy(PassOwnPtr<WebKit::WebIDBIndex>);
+    IDBIndexBackendProxy(PassOwnPtr<WebKit::WebIDBIndex>);
 
     OwnPtr<WebKit::WebIDBIndex> m_webIDBIndex;
 };
@@ -58,4 +57,4 @@ private:
 
 #endif
 
-#endif // IDBIndexProxy_h
+#endif // IDBIndexBackendProxy_h

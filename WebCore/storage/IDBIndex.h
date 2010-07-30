@@ -26,21 +26,31 @@
 #ifndef IDBIndex_h
 #define IDBIndex_h
 
+#include "IDBIndexBackendInterface.h"
 #include "PlatformString.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/Threading.h>
+#include <wtf/Forward.h>
 
 #if ENABLE(INDEXED_DATABASE)
 
 namespace WebCore {
 
-class IDBIndex : public ThreadSafeShared<IDBIndex> {
+class IDBIndex : public RefCounted<IDBIndex> {
 public:
-    virtual ~IDBIndex() { }
+    static PassRefPtr<IDBIndex> create(PassRefPtr<IDBIndexBackendInterface> backend)
+    {
+        return adoptRef(new IDBIndex(backend));
+    }
+    ~IDBIndex();
 
-    virtual String name() = 0;
-    virtual String keyPath() = 0;
-    virtual bool unique() = 0;
+    // Implement the IDL
+    String name() const { return m_backend->name(); }
+    String keyPath() const { return m_backend->keyPath(); }
+    bool unique() const { return m_backend->unique(); }
+
+private:
+    IDBIndex(PassRefPtr<IDBIndexBackendInterface>);
+
+    RefPtr<IDBIndexBackendInterface> m_backend;
 };
 
 } // namespace WebCore

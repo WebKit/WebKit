@@ -2433,8 +2433,8 @@ contains(DEFINES, ENABLE_INDEXED_DATABASE=1) {
         storage/IDBFactoryBackendInterface.h \
         storage/IDBFactoryBackendImpl.h \
         storage/IDBIndex.h \
-        storage/IDBIndexImpl.h \
-        storage/IDBIndexRequest.h \
+        storage/IDBIndexBackendInterface.h \
+        storage/IDBIndexBackendImpl.h \
         storage/IDBKey.h \
         storage/IDBKeyRange.h \
         storage/IDBObjectStore.h \
@@ -2455,8 +2455,8 @@ contains(DEFINES, ENABLE_INDEXED_DATABASE=1) {
         storage/IDBFactory.cpp \
         storage/IDBFactoryBackendInterface.cpp \
         storage/IDBFactoryBackendImpl.cpp \
-        storage/IDBIndexImpl.cpp \
-        storage/IDBIndexRequest.cpp \
+        storage/IDBIndex.cpp \
+        storage/IDBIndexBackendImpl.cpp \
         storage/IDBKey.cpp \
         storage/IDBKeyRange.cpp \
         storage/IDBObjectStoreImpl.cpp \

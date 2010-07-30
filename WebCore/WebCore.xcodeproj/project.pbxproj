@@ -4917,6 +4917,13 @@
 		C55610F111A704EB00B82D27 /* DOMStringList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C55610F011A704EB00B82D27 /* DOMStringList.cpp */; };
 		C55E38BF10040D5D00A56BDB /* StorageNamespaceImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = C55E38BB10040D5D00A56BDB /* StorageNamespaceImpl.h */; };
 		C55E38C010040D5D00A56BDB /* StorageNamespaceImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C55E38BC10040D5D00A56BDB /* StorageNamespaceImpl.cpp */; };
+		C572EE0A1201C736007D8F82 /* IDBIndex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C572EE041201C736007D8F82 /* IDBIndex.cpp */; };
+		C572EE0B1201C736007D8F82 /* IDBIndex.h in Headers */ = {isa = PBXBuildFile; fileRef = C572EE051201C736007D8F82 /* IDBIndex.h */; };
+		C572EE0D1201C736007D8F82 /* IDBIndexBackendImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C572EE071201C736007D8F82 /* IDBIndexBackendImpl.cpp */; };
+		C572EE0E1201C736007D8F82 /* IDBIndexBackendImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = C572EE081201C736007D8F82 /* IDBIndexBackendImpl.h */; };
+		C572EE0F1201C736007D8F82 /* IDBIndexBackendInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = C572EE091201C736007D8F82 /* IDBIndexBackendInterface.h */; };
+		C572EE1E1201C9BC007D8F82 /* JSIDBIndex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C572EE1C1201C9BC007D8F82 /* JSIDBIndex.cpp */; };
+		C572EE1F1201C9BC007D8F82 /* JSIDBIndex.h in Headers */ = {isa = PBXBuildFile; fileRef = C572EE1D1201C9BC007D8F82 /* JSIDBIndex.h */; };
 		C585A65E11D4FAB2004C3E4B /* JSIDBAnyCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A65C11D4FAB2004C3E4B /* JSIDBAnyCustom.cpp */; };
 		C585A65F11D4FAB2004C3E4B /* JSIDBKeyCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A65D11D4FAB2004C3E4B /* JSIDBKeyCustom.cpp */; };
 		C585A66211D4FAC5004C3E4B /* IDBBindingUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A66011D4FAC5004C3E4B /* IDBBindingUtilities.cpp */; };
@@ -4933,8 +4940,6 @@
 		C585A68511D4FB08004C3E4B /* JSIDBErrorEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A66D11D4FB07004C3E4B /* JSIDBErrorEvent.h */; };
 		C585A68611D4FB08004C3E4B /* JSIDBEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A66E11D4FB07004C3E4B /* JSIDBEvent.cpp */; };
 		C585A68711D4FB08004C3E4B /* JSIDBEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A66F11D4FB07004C3E4B /* JSIDBEvent.h */; };
-		C585A68811D4FB08004C3E4B /* JSIDBIndexRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A67011D4FB07004C3E4B /* JSIDBIndexRequest.cpp */; };
-		C585A68911D4FB08004C3E4B /* JSIDBIndexRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A67111D4FB07004C3E4B /* JSIDBIndexRequest.h */; };
 		C585A68A11D4FB08004C3E4B /* JSIDBKey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A67211D4FB07004C3E4B /* JSIDBKey.cpp */; };
 		C585A68B11D4FB08004C3E4B /* JSIDBKey.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A67311D4FB07004C3E4B /* JSIDBKey.h */; };
 		C585A68C11D4FB08004C3E4B /* JSIDBKeyRange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A67411D4FB07004C3E4B /* JSIDBKeyRange.cpp */; };
@@ -4961,11 +4966,6 @@
 		C585A6DB11D4FB3D004C3E4B /* IDBErrorEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A6A711D4FB3D004C3E4B /* IDBErrorEvent.h */; };
 		C585A6DD11D4FB3D004C3E4B /* IDBEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A6A911D4FB3D004C3E4B /* IDBEvent.cpp */; };
 		C585A6DE11D4FB3D004C3E4B /* IDBEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A6AA11D4FB3D004C3E4B /* IDBEvent.h */; };
-		C585A6E011D4FB3D004C3E4B /* IDBIndex.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A6AC11D4FB3D004C3E4B /* IDBIndex.h */; };
-		C585A6E111D4FB3D004C3E4B /* IDBIndexImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A6AD11D4FB3D004C3E4B /* IDBIndexImpl.cpp */; };
-		C585A6E211D4FB3D004C3E4B /* IDBIndexImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A6AE11D4FB3D004C3E4B /* IDBIndexImpl.h */; };
-		C585A6E311D4FB3D004C3E4B /* IDBIndexRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A6AF11D4FB3D004C3E4B /* IDBIndexRequest.cpp */; };
-		C585A6E411D4FB3D004C3E4B /* IDBIndexRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A6B011D4FB3D004C3E4B /* IDBIndexRequest.h */; };
 		C585A6E611D4FB3D004C3E4B /* IDBKey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A6B211D4FB3D004C3E4B /* IDBKey.cpp */; };
 		C585A6E711D4FB3D004C3E4B /* IDBKey.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A6B311D4FB3D004C3E4B /* IDBKey.h */; };
 		C585A6E911D4FB3D004C3E4B /* IDBKeyRange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A6B511D4FB3D004C3E4B /* IDBKeyRange.cpp */; };
@@ -10582,6 +10582,14 @@
 		C55610F011A704EB00B82D27 /* DOMStringList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMStringList.cpp; sourceTree = "<group>"; };
 		C55E38BB10040D5D00A56BDB /* StorageNamespaceImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageNamespaceImpl.h; sourceTree = "<group>"; };
 		C55E38BC10040D5D00A56BDB /* StorageNamespaceImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageNamespaceImpl.cpp; sourceTree = "<group>"; };
+		C572EE041201C736007D8F82 /* IDBIndex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBIndex.cpp; sourceTree = "<group>"; };
+		C572EE051201C736007D8F82 /* IDBIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBIndex.h; sourceTree = "<group>"; };
+		C572EE061201C736007D8F82 /* IDBIndex.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBIndex.idl; sourceTree = "<group>"; };
+		C572EE071201C736007D8F82 /* IDBIndexBackendImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBIndexBackendImpl.cpp; sourceTree = "<group>"; };
+		C572EE081201C736007D8F82 /* IDBIndexBackendImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBIndexBackendImpl.h; sourceTree = "<group>"; };
+		C572EE091201C736007D8F82 /* IDBIndexBackendInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBIndexBackendInterface.h; sourceTree = "<group>"; };
+		C572EE1C1201C9BC007D8F82 /* JSIDBIndex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBIndex.cpp; sourceTree = "<group>"; };
+		C572EE1D1201C9BC007D8F82 /* JSIDBIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIDBIndex.h; sourceTree = "<group>"; };
 		C585A65C11D4FAB2004C3E4B /* JSIDBAnyCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBAnyCustom.cpp; sourceTree = "<group>"; };
 		C585A65D11D4FAB2004C3E4B /* JSIDBKeyCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBKeyCustom.cpp; sourceTree = "<group>"; };
 		C585A66011D4FAC5004C3E4B /* IDBBindingUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBBindingUtilities.cpp; sourceTree = "<group>"; };
@@ -10598,8 +10606,6 @@
 		C585A66D11D4FB07004C3E4B /* JSIDBErrorEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIDBErrorEvent.h; sourceTree = "<group>"; };
 		C585A66E11D4FB07004C3E4B /* JSIDBEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBEvent.cpp; sourceTree = "<group>"; };
 		C585A66F11D4FB07004C3E4B /* JSIDBEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIDBEvent.h; sourceTree = "<group>"; };
-		C585A67011D4FB07004C3E4B /* JSIDBIndexRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBIndexRequest.cpp; sourceTree = "<group>"; };
-		C585A67111D4FB07004C3E4B /* JSIDBIndexRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIDBIndexRequest.h; sourceTree = "<group>"; };
 		C585A67211D4FB07004C3E4B /* JSIDBKey.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBKey.cpp; sourceTree = "<group>"; };
 		C585A67311D4FB07004C3E4B /* JSIDBKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIDBKey.h; sourceTree = "<group>"; };
 		C585A67411D4FB07004C3E4B /* JSIDBKeyRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBKeyRange.cpp; sourceTree = "<group>"; };
@@ -10632,12 +10638,6 @@
 		C585A6A911D4FB3D004C3E4B /* IDBEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBEvent.cpp; sourceTree = "<group>"; };
 		C585A6AA11D4FB3D004C3E4B /* IDBEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBEvent.h; sourceTree = "<group>"; };
 		C585A6AB11D4FB3D004C3E4B /* IDBEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBEvent.idl; sourceTree = "<group>"; };
-		C585A6AC11D4FB3D004C3E4B /* IDBIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBIndex.h; sourceTree = "<group>"; };
-		C585A6AD11D4FB3D004C3E4B /* IDBIndexImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBIndexImpl.cpp; sourceTree = "<group>"; };
-		C585A6AE11D4FB3D004C3E4B /* IDBIndexImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBIndexImpl.h; sourceTree = "<group>"; };
-		C585A6AF11D4FB3D004C3E4B /* IDBIndexRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBIndexRequest.cpp; sourceTree = "<group>"; };
-		C585A6B011D4FB3D004C3E4B /* IDBIndexRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBIndexRequest.h; sourceTree = "<group>"; };
-		C585A6B111D4FB3D004C3E4B /* IDBIndexRequest.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBIndexRequest.idl; sourceTree = "<group>"; };
 		C585A6B211D4FB3D004C3E4B /* IDBKey.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBKey.cpp; sourceTree = "<group>"; };
 		C585A6B311D4FB3D004C3E4B /* IDBKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBKey.h; sourceTree = "<group>"; };
 		C585A6B411D4FB3D004C3E4B /* IDBKey.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBKey.idl; sourceTree = "<group>"; };
@@ -11343,12 +11343,12 @@
 				C585A6A911D4FB3D004C3E4B /* IDBEvent.cpp */,
 				C585A6AA11D4FB3D004C3E4B /* IDBEvent.h */,
 				C585A6AB11D4FB3D004C3E4B /* IDBEvent.idl */,
-				C585A6AC11D4FB3D004C3E4B /* IDBIndex.h */,
-				C585A6AD11D4FB3D004C3E4B /* IDBIndexImpl.cpp */,
-				C585A6AE11D4FB3D004C3E4B /* IDBIndexImpl.h */,
-				C585A6AF11D4FB3D004C3E4B /* IDBIndexRequest.cpp */,
-				C585A6B011D4FB3D004C3E4B /* IDBIndexRequest.h */,
-				C585A6B111D4FB3D004C3E4B /* IDBIndexRequest.idl */,
+				C572EE041201C736007D8F82 /* IDBIndex.cpp */,
+				C572EE051201C736007D8F82 /* IDBIndex.h */,
+				C572EE061201C736007D8F82 /* IDBIndex.idl */,
+				C572EE071201C736007D8F82 /* IDBIndexBackendImpl.cpp */,
+				C572EE081201C736007D8F82 /* IDBIndexBackendImpl.h */,
+				C572EE091201C736007D8F82 /* IDBIndexBackendInterface.h */,
 				C585A6B211D4FB3D004C3E4B /* IDBKey.cpp */,
 				C585A6B311D4FB3D004C3E4B /* IDBKey.h */,
 				C585A6B411D4FB3D004C3E4B /* IDBKey.idl */,
@@ -14781,8 +14781,8 @@
 				C585A66D11D4FB07004C3E4B /* JSIDBErrorEvent.h */,
 				C585A66E11D4FB07004C3E4B /* JSIDBEvent.cpp */,
 				C585A66F11D4FB07004C3E4B /* JSIDBEvent.h */,
-				C585A67011D4FB07004C3E4B /* JSIDBIndexRequest.cpp */,
-				C585A67111D4FB07004C3E4B /* JSIDBIndexRequest.h */,
+				C572EE1C1201C9BC007D8F82 /* JSIDBIndex.cpp */,
+				C572EE1D1201C9BC007D8F82 /* JSIDBIndex.h */,
 				C585A67211D4FB07004C3E4B /* JSIDBKey.cpp */,
 				C585A67311D4FB07004C3E4B /* JSIDBKey.h */,
 				C585A67411D4FB07004C3E4B /* JSIDBKeyRange.cpp */,
@@ -18500,9 +18500,6 @@
 				C585A6D811D4FB3D004C3E4B /* IDBDatabaseRequest.h in Headers */,
 				C585A6DB11D4FB3D004C3E4B /* IDBErrorEvent.h in Headers */,
 				C585A6DE11D4FB3D004C3E4B /* IDBEvent.h in Headers */,
-				C585A6E011D4FB3D004C3E4B /* IDBIndex.h in Headers */,
-				C585A6E211D4FB3D004C3E4B /* IDBIndexImpl.h in Headers */,
-				C585A6E411D4FB3D004C3E4B /* IDBIndexRequest.h in Headers */,
 				C585A6E711D4FB3D004C3E4B /* IDBKey.h in Headers */,
 				C585A6EA11D4FB3D004C3E4B /* IDBKeyRange.h in Headers */,
 				C585A6EC11D4FB3D004C3E4B /* IDBKeyTree.h in Headers */,
@@ -18753,7 +18750,6 @@
 				C585A68311D4FB08004C3E4B /* JSIDBDatabaseRequest.h in Headers */,
 				C585A68511D4FB08004C3E4B /* JSIDBErrorEvent.h in Headers */,
 				C585A68711D4FB08004C3E4B /* JSIDBEvent.h in Headers */,
-				C585A68911D4FB08004C3E4B /* JSIDBIndexRequest.h in Headers */,
 				C585A68B11D4FB08004C3E4B /* JSIDBKey.h in Headers */,
 				C585A68D11D4FB08004C3E4B /* JSIDBKeyRange.h in Headers */,
 				C585A68F11D4FB08004C3E4B /* JSIDBObjectStoreRequest.h in Headers */,
@@ -19885,6 +19881,10 @@
 				084D0E3F11F5816100081E1A /* SVGResourcesCache.h in Headers */,
 				085B05C311FAE16C004D65F6 /* SVGResourcesCycleSolver.h in Headers */,
 				7535BC9512020CFF0037EC45 /* SpeechInputClientMock.h in Headers */,
+				C572EE0B1201C736007D8F82 /* IDBIndex.h in Headers */,
+				C572EE0E1201C736007D8F82 /* IDBIndexBackendImpl.h in Headers */,
+				C572EE0F1201C736007D8F82 /* IDBIndexBackendInterface.h in Headers */,
+				C572EE1F1201C9BC007D8F82 /* JSIDBIndex.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -20925,8 +20925,6 @@
 				C585A6D711D4FB3D004C3E4B /* IDBDatabaseRequest.cpp in Sources */,
 				C585A6DA11D4FB3D004C3E4B /* IDBErrorEvent.cpp in Sources */,
 				C585A6DD11D4FB3D004C3E4B /* IDBEvent.cpp in Sources */,
-				C585A6E111D4FB3D004C3E4B /* IDBIndexImpl.cpp in Sources */,
-				C585A6E311D4FB3D004C3E4B /* IDBIndexRequest.cpp in Sources */,
 				C585A6E611D4FB3D004C3E4B /* IDBKey.cpp in Sources */,
 				C585A6E911D4FB3D004C3E4B /* IDBKeyRange.cpp in Sources */,
 				C585A6EE11D4FB3D004C3E4B /* IDBObjectStoreImpl.cpp in Sources */,
@@ -21218,7 +21216,6 @@
 				C585A68211D4FB08004C3E4B /* JSIDBDatabaseRequest.cpp in Sources */,
 				C585A68411D4FB08004C3E4B /* JSIDBErrorEvent.cpp in Sources */,
 				C585A68611D4FB08004C3E4B /* JSIDBEvent.cpp in Sources */,
-				C585A68811D4FB08004C3E4B /* JSIDBIndexRequest.cpp in Sources */,
 				C585A68A11D4FB08004C3E4B /* JSIDBKey.cpp in Sources */,
 				C585A65F11D4FAB2004C3E4B /* JSIDBKeyCustom.cpp in Sources */,
 				C585A68C11D4FB08004C3E4B /* JSIDBKeyRange.cpp in Sources */,
@@ -22286,6 +22283,9 @@
 				086A400611F6D6B7002CEC53 /* RenderSVGResourceContainer.cpp in Sources */,
 				085B05C211FAE16C004D65F6 /* SVGResourcesCycleSolver.cpp in Sources */,
 				7535BC9412020CFF0037EC45 /* SpeechInputClientMock.cpp in Sources */,
+				C572EE0A1201C736007D8F82 /* IDBIndex.cpp in Sources */,
+				C572EE0D1201C736007D8F82 /* IDBIndexBackendImpl.cpp in Sources */,
+				C572EE1E1201C9BC007D8F82 /* JSIDBIndex.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

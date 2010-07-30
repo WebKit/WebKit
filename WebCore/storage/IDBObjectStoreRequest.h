@@ -61,7 +61,7 @@ public:
     PassRefPtr<IDBRequest> remove(ScriptExecutionContext*, PassRefPtr<IDBKey> key);
 
     PassRefPtr<IDBRequest> createIndex(ScriptExecutionContext*, const String& name, const String& keyPath, bool unique = false);
-    PassRefPtr<IDBIndexRequest> index(const String& name);
+    PassRefPtr<IDBIndex> index(const String& name);
     PassRefPtr<IDBRequest> removeIndex(ScriptExecutionContext*, const String& name);
 
 private:

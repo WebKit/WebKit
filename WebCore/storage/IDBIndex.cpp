@@ -23,40 +23,22 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBIndexRequest_h
-#define IDBIndexRequest_h
-
+#include "config.h"
 #include "IDBIndex.h"
-#include "PlatformString.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 
 #if ENABLE(INDEXED_DATABASE)
 
 namespace WebCore {
 
-class IDBIndexRequest : public RefCounted<IDBIndexRequest> {
-public:
-    static PassRefPtr<IDBIndexRequest> create(PassRefPtr<IDBIndex> idbIndex)
-    {
-        return adoptRef(new IDBIndexRequest(idbIndex));
-    }
-    ~IDBIndexRequest();
+IDBIndex::IDBIndex(PassRefPtr<IDBIndexBackendInterface> backend)
+    : m_backend(backend)
+{
+}
 
-    // Implement the IDL
-    String name() const { return m_idbIndex->name(); }
-    String keyPath() const { return m_idbIndex->keyPath(); }
-    bool unique() const { return m_idbIndex->unique(); }
-
-private:
-    IDBIndexRequest(PassRefPtr<IDBIndex>);
-
-    RefPtr<IDBIndex> m_idbIndex;
-};
+IDBIndex::~IDBIndex()
+{
+}
 
 } // namespace WebCore
 
-#endif
-
-#endif // IDBIndexRequest_h
+#endif // ENABLE(INDEXED_DATABASE)

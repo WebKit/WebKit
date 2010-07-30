@@ -28,7 +28,7 @@
 
 #include "DOMStringList.h"
 #include "IDBAny.h"
-#include "IDBIndexRequest.h"
+#include "IDBIndex.h"
 #include "IDBKey.h"
 #include "SerializedScriptValue.h"
 #include <wtf/UnusedParam.h>
@@ -94,11 +94,11 @@ PassRefPtr<IDBRequest> IDBObjectStoreRequest::createIndex(ScriptExecutionContext
     return request;
 }
 
-PassRefPtr<IDBIndexRequest> IDBObjectStoreRequest::index(const String& name)
+PassRefPtr<IDBIndex> IDBObjectStoreRequest::index(const String& name)
 {
-    RefPtr<IDBIndex> index = m_objectStore->index(name);
+    RefPtr<IDBIndexBackendInterface> index = m_objectStore->index(name);
     ASSERT(index); // FIXME: If this is null, we should raise a NOT_FOUND_ERR.
-    return IDBIndexRequest::create(index.release());
+    return IDBIndex::create(index.release());
 }
 
 PassRefPtr<IDBRequest> IDBObjectStoreRequest::removeIndex(ScriptExecutionContext* context, const String& name)

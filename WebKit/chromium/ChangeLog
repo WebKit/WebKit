@@ -1,3 +1,40 @@
+2010-07-29  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Rename all the IDBIndex classses to match the latest conventions
+        https://bugs.webkit.org/show_bug.cgi?id=43190
+
+        Fix up stuff in WebKit layer to handle the renamings in WebCore.
+
+        * WebKit.gyp:
+        * src/IDBCallbacksProxy.cpp:
+        (WebCore::IDBCallbacksProxy::onSuccess):
+        * src/IDBCallbacksProxy.h:
+        * src/IDBIndexBackendProxy.cpp: Added.
+        (WebCore::IDBIndexBackendProxy::create):
+        (WebCore::IDBIndexBackendProxy::IDBIndexBackendProxy):
+        (WebCore::IDBIndexBackendProxy::~IDBIndexBackendProxy):
+        (WebCore::IDBIndexBackendProxy::name):
+        (WebCore::IDBIndexBackendProxy::keyPath):
+        (WebCore::IDBIndexBackendProxy::unique):
+        * src/IDBIndexBackendProxy.h: Added.
+        * src/IDBIndexProxy.cpp: Removed.
+        * src/IDBIndexProxy.h: Removed.
+        * src/IDBObjectStoreProxy.cpp:
+        (WebCore::IDBObjectStoreProxy::index):
+        * src/IDBObjectStoreProxy.h:
+        * src/WebIDBCallbacksImpl.cpp:
+        (WebCore::WebIDBCallbacksImpl::onSuccess):
+        * src/WebIDBIndexImpl.cpp:
+        (WebKit::WebIDBIndexImpl::WebIDBIndexImpl):
+        (WebKit::WebIDBIndexImpl::name):
+        (WebKit::WebIDBIndexImpl::keyPath):
+        (WebKit::WebIDBIndexImpl::unique):
+        * src/WebIDBIndexImpl.h:
+        * src/WebIDBObjectStoreImpl.cpp:
+        (WebKit::WebIDBObjectStoreImpl::index):
+
 2010-07-30  Satish Sampath  <satish@chromium.org>
 
         Reviewed by Jeremy Orlow.

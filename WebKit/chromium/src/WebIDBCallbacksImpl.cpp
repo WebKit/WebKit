@@ -29,7 +29,7 @@
 #include "IDBCallbacks.h"
 #include "IDBDatabaseError.h"
 #include "IDBDatabaseProxy.h"
-#include "IDBIndexProxy.h"
+#include "IDBIndexBackendProxy.h"
 #include "IDBKey.h"
 #include "IDBObjectStoreProxy.h"
 #include "WebIDBCallbacks.h"
@@ -79,7 +79,7 @@ void WebIDBCallbacksImpl::onSuccess(const WebKit::WebIDBKey& key)
 
 void WebIDBCallbacksImpl::onSuccess(WebKit::WebIDBIndex* webKitInstance)
 {
-    m_callbacks->onSuccess(IDBIndexProxy::create(webKitInstance));
+    m_callbacks->onSuccess(IDBIndexBackendProxy::create(webKitInstance));
     m_callbacks.clear();
 }
 

@@ -53,7 +53,7 @@ public:
     void remove(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks>);
 
     void createIndex(const String& name, const String& keyPath, bool unique, PassRefPtr<IDBCallbacks>);
-    PassRefPtr<IDBIndex> index(const String& name);
+    PassRefPtr<IDBIndexBackendInterface> index(const String& name);
     void removeIndex(const String& name, PassRefPtr<IDBCallbacks>);
 
 private:
@@ -63,7 +63,7 @@ private:
     String m_keyPath;
     bool m_autoIncrement;
 
-    typedef HashMap<String, RefPtr<IDBIndex> > IndexMap;
+    typedef HashMap<String, RefPtr<IDBIndexBackendInterface> > IndexMap;
     IndexMap m_indexes;
 
     typedef IDBKeyTree<SerializedScriptValue> Tree;
