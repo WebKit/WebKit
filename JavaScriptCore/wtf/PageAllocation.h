@@ -67,7 +67,7 @@ public:
         : m_base(base)
         , m_size(size)
 #if OS(SYMBIAN)
-        , m_chunk(parent.chunk)
+        , m_chunk(parent.m_chunk)
 #endif
     {
 #if defined(NDEBUG) && !OS(SYMBIAN)
