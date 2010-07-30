@@ -70,6 +70,7 @@ public:
     void setRootContents(CGImageRef);
     void setRootContentsAndDisplay(CGImageRef);
     void setRootChildLayer(WKCACFLayer* layer);
+    void layerTreeDidChange();
     void setNeedsDisplay();
     void setHostWindow(HWND window) { m_hostWindow = window; }
     void setBackingStoreDirty(bool dirty) { m_backingStoreDirty = dirty; }

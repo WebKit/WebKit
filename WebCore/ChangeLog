@@ -1,3 +1,26 @@
+2010-07-30  Adam Roben  <aroben@apple.com>
+
+        Remove knowledge of WKCACFContextFlusher from WKCACFLayer
+
+        Fixes <http://webkit.org/b/43248> WKCACFLayer shouldn't know about
+        WKCACFContextFlusher
+
+        Reviewed by Sam Weinig.
+
+        * platform/graphics/win/WKCACFLayer.cpp:
+        (WebCore::WKCACFLayer::setNeedsCommit): Don't bother calling to
+        WKCACFContextFlusher. Our root layer will do this for us.
+
+        * platform/graphics/win/WKCACFLayerRenderer.cpp:
+        (WebCore::WKCACFRootLayer::setNeedsRender): Changed to call the new
+        layerTreeDidChange function.
+        (WebCore::WKCACFLayerRenderer::layerTreeDidChange): Added. Tells
+        WKCACFContextFlusher that the context has changed, and schedules a
+        render.
+
+        * platform/graphics/win/WKCACFLayerRenderer.h: Added
+        layerTreeDidChange.
+
 2010-07-29  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Steve Block.
