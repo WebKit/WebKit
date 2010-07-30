@@ -88,10 +88,8 @@ installer.install(url="http://webkit-rietveld.googlecode.com/svn/trunk/static/up
 # organization purposes.
 irc_dir = os.path.join(autoinstalled_dir, "irc")
 installer = AutoInstaller(target_dir=irc_dir)
-installer.install(url="http://surfnet.dl.sourceforge.net/project/python-irclib/python-irclib/0.4.8/python-irclib-0.4.8.zip",
-                  url_subpath="irclib.py")
-installer.install(url="http://surfnet.dl.sourceforge.net/project/python-irclib/python-irclib/0.4.8/python-irclib-0.4.8.zip",
-                  url_subpath="ircbot.py")
+installer.install(url="http://downloads.sourceforge.net/project/python-irclib/python-irclib/0.4.8/python-irclib-0.4.8.zip", url_subpath="irclib.py")
+installer.install(url="http://downloads.sourceforge.net/project/python-irclib/python-irclib/0.4.8/python-irclib-0.4.8.zip", url_subpath="ircbot.py")
 
 pywebsocket_dir = os.path.join(autoinstalled_dir, "pywebsocket")
 installer = AutoInstaller(target_dir=pywebsocket_dir)
