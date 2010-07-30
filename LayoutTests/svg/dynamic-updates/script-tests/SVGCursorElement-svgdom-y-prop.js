@@ -1,13 +1,13 @@
-// [Name] SVGCursorElement-sgdom-y-prop.js
-// [Expected rendering result] verify manually that the cursor is visible when hovering the rect - and a series of PASS messages
+// [Name] SVGCursorElement-svgdom-y-prop.js
+// [Expected rendering result] cursor image should hang from the upper-left corner of the cursor after clicking - and a series of PASS mesasges
 
 description("Tests dynamic updates of the 'y' property of the SVGCursorElement object")
 createSVGTestCase();
 
 var cursorElement = createSVGElement("cursor");
 cursorElement.setAttribute("id", "cursor");
-cursorElement.setAttribute("y", "500");
-cursorElement.setAttributeNS(xlinkNS, "xlink:href", "../W3C-SVG-1.1/resources/magnify.png");
+cursorElement.setAttribute("y", "100");
+cursorElement.setAttributeNS(xlinkNS, "xlink:href", "../W3C-SVG-1.1/resources/sphere.png");
 rootSVGElement.appendChild(cursorElement);
 
 var rectElement = createSVGElement("rect");
@@ -17,7 +17,7 @@ rectElement.setAttribute("height", "200");
 rectElement.setAttribute("fill", "green");
 rootSVGElement.appendChild(rectElement);
 
-shouldBe("cursorElement.y.baseVal.value", "500");
+shouldBe("cursorElement.y.baseVal.value", "100");
 
 function executeTest() {
     cursorElement.y.baseVal.value = 0;

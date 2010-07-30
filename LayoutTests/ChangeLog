@@ -1,3 +1,32 @@
+2010-07-30  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        svg/dynamic-updates: cursor attribute changes not respected
+        https://bugs.webkit.org/show_bug.cgi?id=42615
+
+        Turns out the tests were wrong, specifying a hot spot which is too large.
+        Switched to a larger cursor image to make the changes easier to detect, when using the browser.
+
+        All svg/dynamic-updates tests work again, without regressions.
+
+        * platform/mac/svg/dynamic-updates/SVGCursorElement-dom-x-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGCursorElement-dom-x-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGCursorElement-dom-y-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGCursorElement-dom-y-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGCursorElement-svgdom-x-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGCursorElement-svgdom-x-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGCursorElement-svgdom-y-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGCursorElement-svgdom-y-prop-expected.png:
+        * svg/dynamic-updates/SVGCursorElement-dom-x-attr-expected.txt:
+        * svg/dynamic-updates/SVGCursorElement-dom-y-attr-expected.txt:
+        * svg/dynamic-updates/SVGCursorElement-svgdom-x-prop-expected.txt:
+        * svg/dynamic-updates/SVGCursorElement-svgdom-y-prop-expected.txt:
+        * svg/dynamic-updates/script-tests/SVGCursorElement-dom-x-attr.js:
+        * svg/dynamic-updates/script-tests/SVGCursorElement-dom-y-attr.js:
+        * svg/dynamic-updates/script-tests/SVGCursorElement-svgdom-x-prop.js:
+        * svg/dynamic-updates/script-tests/SVGCursorElement-svgdom-y-prop.js:
+
 2010-07-30  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, test expectation update.
