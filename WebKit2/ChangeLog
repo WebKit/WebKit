@@ -1,5 +1,12 @@
 2010-07-30  Adam Roben  <aroben@apple.com>
 
+        Roll our r64361 and r64363
+
+        We can't make these changes until QuartzCore.lib is included in
+        WebKitSupportLibrary.
+
+2010-07-30  Adam Roben  <aroben@apple.com>
+
         Windows build fix
 
         * win/WebKit2Apple.vsprops: Always link against QuartzCore, since

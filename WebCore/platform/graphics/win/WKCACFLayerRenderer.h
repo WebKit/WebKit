@@ -41,7 +41,9 @@
 #include <CoreGraphics/CGGeometry.h>
 
 interface IDirect3DDevice9;
-struct WKCACFContext;
+typedef struct _CACFContext* CACFContextRef;
+typedef struct _CARenderContext CARenderContext;
+typedef struct _CARenderOGLContext CARenderOGLContext;
 
 namespace WebCore {
 
@@ -62,7 +64,7 @@ public:
     ~WKCACFLayerRenderer();
 
     static bool acceleratedCompositingAvailable();
-    static void didFlushContext(WKCACFContext*);
+    static void didFlushContext(CACFContextRef);
 
     void setScrollFrame(const IntPoint&, const IntSize&);
     void setRootContents(CGImageRef);
@@ -106,7 +108,9 @@ private:
     RefPtr<WKCACFLayer> m_scrollLayer;
     RefPtr<WKCACFLayer> m_rootChildLayer;
     RefPtr<WKCACFLayer> m_clipLayer;
-    WKCACFContext* m_context;
+    RetainPtr<CACFContextRef> m_context;
+    CARenderContext* m_renderContext;
+    CARenderOGLContext* m_renderer;
     HWND m_hostWindow;
     Timer<WKCACFLayerRenderer> m_renderTimer;
     IntPoint m_scrollPosition;

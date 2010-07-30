@@ -32,7 +32,7 @@
 
 #include <wtf/HashSet.h>
 
-struct WKCACFContext;
+typedef struct _CACFContext* CACFContextRef;
 
 namespace WebCore {
 
@@ -40,8 +40,8 @@ class WKCACFContextFlusher : public Noncopyable {
 public:
     static WKCACFContextFlusher& shared();
 
-    void addContext(WKCACFContext*);
-    void removeContext(WKCACFContext*);
+    void addContext(CACFContextRef);
+    void removeContext(CACFContextRef);
 
     void flushAllContexts();
 
@@ -49,7 +49,7 @@ private:
     WKCACFContextFlusher();
     ~WKCACFContextFlusher();
 
-    typedef HashSet<WKCACFContext*> ContextSet;
+    typedef HashSet<CACFContextRef> ContextSet;
     ContextSet m_contexts;
 };
 

@@ -1,5 +1,12 @@
 2010-07-30  Adam Roben  <aroben@apple.com>
 
+        Roll our r64361 and r64363
+
+        We can't make these changes until QuartzCore.lib is included in
+        WebKitSupportLibrary.
+
+2010-07-30  Adam Roben  <aroben@apple.com>
+
         Remove uses of CACFContextRef and CARender* from WebCore
 
         These types are now wrapped in a WKCACFContext type exported by
