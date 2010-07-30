@@ -1,3 +1,11 @@
+2010-07-30  Darin Fisher  <darin@chromium.org>
+
+        Temporarily disable this test.  For some reason, the test is reporting
+        'PASS' but notifyDone() is not running.
+
+        * fast/loader/stateobjects/pushstate-in-iframe.html: Removed.
+        * fast/loader/stateobjects/pushstate-in-iframe.html-disabled: Copied from fast/loader/stateobjects/pushstate-in-iframe.html.
+
 2010-07-30  Drew Wilson  <atwilson@chromium.org>
 
         Unreviewed test expectations fix.
