@@ -27,46 +27,46 @@
 
 namespace WebCore {
 
-    class DOMMimeTypeArray;
-    class DOMPluginArray;
-    class Frame;
-    class Geolocation;
-    class PluginData;
-    class String;
+class DOMMimeTypeArray;
+class DOMPluginArray;
+class Frame;
+class Geolocation;
+class PluginData;
+class String;
 
-    class Navigator : public NavigatorBase, public RefCounted<Navigator> {
-    public:
-        static PassRefPtr<Navigator> create(Frame* frame) { return adoptRef(new Navigator(frame)); }
-        ~Navigator();
+class Navigator : public NavigatorBase, public RefCounted<Navigator> {
+public:
+    static PassRefPtr<Navigator> create(Frame* frame) { return adoptRef(new Navigator(frame)); }
+    virtual ~Navigator();
 
-        void disconnectFrame();
-        Frame* frame() const { return m_frame; }
+    void disconnectFrame();
+    Frame* frame() const { return m_frame; }
 
-        String appVersion() const;
-        String language() const;
-        DOMPluginArray* plugins() const;
-        DOMMimeTypeArray* mimeTypes() const;
-        bool cookieEnabled() const;
-        bool javaEnabled() const;
+    String appVersion() const;
+    String language() const;
+    DOMPluginArray* plugins() const;
+    DOMMimeTypeArray* mimeTypes() const;
+    bool cookieEnabled() const;
+    bool javaEnabled() const;
 
-        virtual String userAgent() const;
+    virtual String userAgent() const;
 
-        Geolocation* geolocation() const;
-        // This is used for GC marking.
-        Geolocation* optionalGeolocation() const { return m_geolocation.get(); }
+    Geolocation* geolocation() const;
+    // This is used for GC marking.
+    Geolocation* optionalGeolocation() const { return m_geolocation.get(); }
 
 #if ENABLE(DOM_STORAGE)
-        // Relinquishes the storage lock, if one exists.
-        void getStorageUpdates();
+    // Relinquishes the storage lock, if one exists.
+    void getStorageUpdates();
 #endif
 
-    private:
-        Navigator(Frame*);
-        Frame* m_frame;
-        mutable RefPtr<DOMPluginArray> m_plugins;
-        mutable RefPtr<DOMMimeTypeArray> m_mimeTypes;
-        mutable RefPtr<Geolocation> m_geolocation;
-    };
+private:
+    Navigator(Frame*);
+    Frame* m_frame;
+    mutable RefPtr<DOMPluginArray> m_plugins;
+    mutable RefPtr<DOMMimeTypeArray> m_mimeTypes;
+    mutable RefPtr<Geolocation> m_geolocation;
+};
 
 }
 
