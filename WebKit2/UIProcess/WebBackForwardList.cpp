@@ -168,12 +168,14 @@ BackForwardListItemVector WebBackForwardList::forwardListWithLimit(unsigned limi
 
 PassRefPtr<ImmutableArray> WebBackForwardList::backListAsImmutableArrayWithLimit(unsigned limit)
 {
-    unsigned size = std::min(static_cast<unsigned>(backListCount()), limit);
+    unsigned backListSize = static_cast<unsigned>(backListCount());
+    unsigned size = std::min(backListSize, limit);
     if (!size)
         return ImmutableArray::create();
 
     APIObject** array = new APIObject*[size];
-    for (unsigned i = std::max<int>(m_current - limit, 0), j = 0; i < m_current; ++i, ++j) {
+    ASSERT(backListSize >= size);
+    for (unsigned i = backListSize - size, j = 0; i < backListSize; ++i, ++j) {
         APIObject* item = m_entries[i].get();
         item->ref();
         array[j] = item;

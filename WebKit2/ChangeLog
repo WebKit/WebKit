@@ -1,3 +1,13 @@
+2010-07-30  Ada Chan  <adachan@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Fix issue with populating the back list when limit is a huge number.
+        https://bugs.webkit.org/show_bug.cgi?id=43270
+
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::backListAsImmutableArrayWithLimit):
+
 2010-07-29  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
