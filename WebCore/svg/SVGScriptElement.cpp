@@ -242,6 +242,11 @@ void SVGScriptElement::dispatchErrorEvent()
     dispatchEvent(Event::create(eventNames().errorEvent, true, false));
 }
 
+bool SVGScriptElement::shouldExecuteAsJavaScript() const
+{
+    return m_data.shouldExecuteAsJavaScript();
+}
+
 }
 
 #endif // ENABLE(SVG)

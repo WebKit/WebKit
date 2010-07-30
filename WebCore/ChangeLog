@@ -1,3 +1,17 @@
+2010-07-30  Yong Li  <yoli@rim.com>
+
+        Reviewed by Darin Adler.
+
+        Implement SVGScriptElement::shouldExecuteAsJavaScript() otherwise
+        SVGScriptElement cannot run when XHTMLMP is enabled.
+        https://bugs.webkit.org/show_bug.cgi?id=43267
+
+        No test needed, because it fails all SVG <script> tests when XHTMLMP is on.
+
+        * svg/SVGScriptElement.cpp:
+        (WebCore::SVGScriptElement::shouldExecuteAsJavaScript):
+        * svg/SVGScriptElement.h:
+
 2010-07-30  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
