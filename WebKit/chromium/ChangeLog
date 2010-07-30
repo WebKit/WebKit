@@ -1,3 +1,16 @@
+2010-07-27  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Brady Eidson.
+
+        History.pushState() + navigation operates on top frame when called from
+        nested context
+        https://bugs.webkit.org/show_bug.cgi?id=43080
+
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::pluginLoadObserver): The WebDataSource
+        can be null if the Frame has already been detached from the Page.  This
+        happens if a popstate event handler removes the frame.
+
 2010-07-29  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Steve Block.
