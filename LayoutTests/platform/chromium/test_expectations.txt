@@ -2884,9 +2884,7 @@ BUGWK41311 WIN LINUX : fast/borders/borderRadiusDouble08.html = IMAGE
 BUGWK41311 WIN LINUX : fast/borders/borderRadiusDouble09.html = IMAGE
 
 // Speech input is not yet enabled.
-BUG44844: fast/forms/input-appearance-numberandspeech.html = IMAGE+TEXT
-BUG44844: fast/forms/input-appearance-searchandspeech.html = IMAGE+TEXT
-BUG44844: fast/forms/input-appearance-speechbutton.html = IMAGE+TEXT
+BUG44844: fast/speech = IMAGE+TEXT
 
 // v8 bindings for dataset need to be implemented.
 BUG48133 :  fast/dom/dataset-xhtml.xhtml = TEXT
