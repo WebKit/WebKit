@@ -106,6 +106,7 @@
 #include "WebPoint.h"
 #include "WebPopupMenuImpl.h"
 #include "WebRect.h"
+#include "WebRuntimeFeatures.h"
 #include "WebSettingsImpl.h"
 #include "WebString.h"
 #include "WebVector.h"
@@ -176,6 +177,9 @@ static const PopupContainerSettings autoFillPopupSettings = {
 
 WebView* WebView::create(WebViewClient* client, WebDevToolsAgentClient* devToolsClient)
 {
+    // Keep runtime flag for device orientation turned off until it's implemented.
+    WebRuntimeFeatures::enableDeviceOrientation(false);
+
     // Pass the WebViewImpl's self-reference to the caller.
     return adoptRef(new WebViewImpl(client, devToolsClient)).leakRef();
 }
