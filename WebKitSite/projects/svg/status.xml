@@ -174,10 +174,7 @@
             <element>
                 <name>altGlyph</name>
                 <url>http://www.w3.org/TR/SVG11/text.html#AltGlyphElement</url>
-                <status>Unimplemented</status>
-                <issues>
-                    <issue>&lt;altGlyph&gt; element not implemented <bug>6426</bug></issue>
-                </issues>
+                <status>Partial</status>
             </element>
             <element>
                 <name>altGlpyhDef</name>
@@ -292,12 +289,6 @@
                 <status>Partial: Requires build-webkit --filters to enable</status>
                 <issues>
                     <issue>Tracking Bug <bug>26389</bug>.</issue>
-                    <issue>Filters look grainy when scaled <bug>5526</bug></issue>
-                    <issue>Need support sources other than SourceGraphic <bug>6022</bug></issue>
-                    <issue>Support 'color-interpolation-filters' and draw in correct colorspace <bug>6033</bug></issue>
-                    <issue>Positional light problems <bug>10115</bug></issue>
-                    <issue>Handle missing filter elements correctly <bug>12569</bug></issue>
-                    <issue>Filter Effects being cleared and reloaded multiple times <bug>19388</bug></issue>
                 </issues>
             </element>
             <element>
@@ -323,15 +314,12 @@
             <element>
                 <name>feConvolveMatrix</name>
                 <url>http://www.w3.org/TR/SVG11/filters.html#feConvolveMatrixElement</url>
-                <status>Unimplemented</status>
-                <issues>
-                    <issue>Not implemented <bug>5861</bug></issue>
-                </issues>
+                <status>Implemented</status>
             </element>
             <element>
                 <name>feDiffuseLighting</name>
                 <url>http://www.w3.org/TR/SVG11/filters.html#feDiffuseLightingElement</url>
-                <status>Unimplemented</status>
+                <status>Implemented</status>
             </element>
             <element>
                 <name>feDisplacementMap</name>
@@ -376,7 +364,7 @@
             <element>
                 <name>feSpecularLighting</name>
                 <url>http://www.w3.org/TR/SVG11/filters.html#feSpecularLightingElement</url>
-                <status>Unimplemented</status>
+                <status>Implemented</status>
             </element>
             <element>
                 <name>feTile</name>
@@ -384,27 +372,24 @@
                 <status>Implemented</status>
             </element>
             <element>
-                <name>feTurbulance</name>
+                <name>feTurbulence</name>
                 <url>http://www.w3.org/TR/SVG11/filters.html#feTurbulenceElement</url>
-                <status>Unimplemented</status>
-                <issues>
-                    <issue>Not implemented <bug>5864</bug></issue>
-                </issues>
+                <status>Implemented</status>
             </element>
              <element>
                 <name>feDistantLight</name>
                 <url>http://www.w3.org/TR/SVG11/filters.html#feDistantLightElement</url>
-                <status>Unimplemented</status>
+                <status>Implemented</status>
             </element>
             <element>
                 <name>fePointLight</name>
                 <url>http://www.w3.org/TR/SVG11/filters.html#fePointLightElement</url>
-                <status>Unimplemented</status>
+                <status>Implemented</status>
             </element>
             <element>
                 <name>feSpotLight</name>
                 <url>http://www.w3.org/TR/SVG11/filters.html#feSpotLightElement</url>
-                <status>Unimplemented</status>
+                <status>Implemented</status>
             </element>
             <element>
                 <name>feFuncR</name>
@@ -481,7 +466,7 @@
             <element>
                 <name>animate</name>
                 <url>http://www.w3.org/TR/SVG11/animate.html#AnimateElement</url>
-                <status>Unimplemented</status>
+                <status>Partial</status>
             </element>
             <element>
                 <name>set</name>
