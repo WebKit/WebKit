@@ -1,3 +1,13 @@
+2010-07-30  Renata Hodovan  <reni@inf.u-szeged.hu>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Update expectation for turbulence filter:
+        svg/W3C-SVG-1.1/filters-turb-01-f.svg
+
+        * platform/mac/svg/W3C-SVG-1.1/filters-turb-01-f-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/filters-turb-01-f-expected.png:
+
 2010-07-29  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Dirk Schulze.

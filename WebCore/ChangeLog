@@ -1,3 +1,34 @@
+2010-07-30  Renata Hodovan  <reni@inf.u-szeged.hu>
+
+        Reviewed by Nikolas Zimmermann.
+
+        feTurbulence is not implemented.
+        https://bugs.webkit.org/show_bug.cgi?id=5864
+
+        This code is based on the previous implementation of
+        Dirk Schulze, extended with some modification and optimization.
+
+        LayoutTests: Updating expected values for turbulence filter.
+        svg/W3C-SVG-1.1/filters-turb-01-f.svg
+
+        * svg/SVGFETurbulenceElement.cpp:
+        (WebCore::SVGFETurbulenceElement::build):
+        * svg/graphics/filters/SVGFETurbulence.cpp:
+        (WebCore::FETurbulence::FETurbulence):
+        (WebCore::FETurbulence::create):
+        (WebCore::FETurbulence::PaintingData::PaintingData):
+        (WebCore::FETurbulence::PaintingData::random):
+        (WebCore::smoothCurve):
+        (WebCore::linearInterpolation):
+        (WebCore::FETurbulence::initPaint):
+        (WebCore::checkNoise):
+        (WebCore::FETurbulence::noise2D):
+        (WebCore::Noise::if):
+        (WebCore::FETurbulence::calculateTurbulenceValueForPoint):
+        (WebCore::FETurbulence::apply):
+        * svg/graphics/filters/SVGFETurbulence.h:
+        (WebCore::):
+
 2010-07-29  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Dirk Schulze.
