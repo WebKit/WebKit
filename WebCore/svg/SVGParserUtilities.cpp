@@ -40,8 +40,8 @@ namespace WebCore {
  */    
 template <typename FloatType> static bool _parseNumber(const UChar*& ptr, const UChar* end, FloatType& number, bool skip)
 {
-    int integer, exponent;
-    FloatType decimal, frac;
+    int exponent;
+    FloatType integer, decimal, frac;
     int sign, expsign;
     const UChar* start = ptr;
 
@@ -64,9 +64,19 @@ template <typename FloatType> static bool _parseNumber(const UChar*& ptr, const 
         // The first character of a number must be one of [0-9+-.]
         return false;
 
-    // read the integer part
+    // read the integer part, build right-to-left
+    const UChar* ptrStartIntPart = ptr;
     while (ptr < end && *ptr >= '0' && *ptr <= '9')
-        integer = (integer * 10) + *(ptr++) - '0';
+        ++ptr; // Advance to first non-digit.
+
+    if (ptr != ptrStartIntPart) {
+        const UChar* ptrScanIntPart = ptr - 1;
+        FloatType multiplier = 1;
+        while (ptrScanIntPart >= ptrStartIntPart) {
+            integer += multiplier * static_cast<FloatType>(*(ptrScanIntPart--) - '0');
+            multiplier *= 10;
+        }
+    }
 
     if (ptr < end && *ptr == '.') { // read the decimals
         ptr++;

@@ -30,6 +30,7 @@
 #include "FloatConversion.h"
 #include "IntRect.h"
 #include <algorithm>
+#include <limits>
 #include <math.h>
 
 using std::max;
@@ -110,13 +111,26 @@ void FloatRect::scale(float sx, float sy)
     m_size.setHeight(height() * sy);
 }
 
+static inline int safeFloatToInt(float x)
+{
+    static const int s_intMax = std::numeric_limits<int>::max();
+    static const int s_intMin = std::numeric_limits<int>::min();
+
+    if (x >= static_cast<float>(s_intMax))
+        return s_intMax;
+    if (x < static_cast<float>(s_intMin))
+        return s_intMin;
+    return static_cast<int>(x);
+}
+
 IntRect enclosingIntRect(const FloatRect& rect)
 {
-    int l = static_cast<int>(floorf(rect.x()));
-    int t = static_cast<int>(floorf(rect.y()));
-    int r = static_cast<int>(ceilf(rect.right()));
-    int b = static_cast<int>(ceilf(rect.bottom()));
-    return IntRect(l, t, r - l, b - t);
+    float left = floorf(rect.x());
+    float top = floorf(rect.y());
+    float width = ceilf(rect.right()) - left;
+    float height = ceilf(rect.bottom()) - top;
+    return IntRect(safeFloatToInt(left), safeFloatToInt(top), 
+                   safeFloatToInt(width), safeFloatToInt(height));
 }
 
 FloatRect mapRect(const FloatRect& r, const FloatRect& srcRect, const FloatRect& destRect)
