@@ -1,3 +1,17 @@
+2010-07-30  fsamuel@chromium.org  <fsamuel@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Expand SVG Attribute Macros
+        https://bugs.webkit.org/show_bug.cgi?id=43254
+
+        Expanded SVG Attribute Macros to reduce debugging headache.
+
+        No change in behavior, so no new tests.
+
+        * rendering/style/SVGRenderStyle.h: Expanded and removed references to SVG_RS_DEFINE_ATTRIBUTE* macros.
+        * rendering/style/SVGRenderStyleDefs.h: Removed definitons for expanded macros.
+
 2010-07-30  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by Dumitru Daniliuc.
