@@ -48,7 +48,10 @@ JSCustomVoidCallback::JSCustomVoidCallback(JSObject* callback, JSDOMGlobalObject
 
 JSCustomVoidCallback::~JSCustomVoidCallback()
 {
-    m_scriptExecutionContext->postTask(DeleteCallbackDataTask::create(m_data));
+    if (m_scriptExecutionContext->isContextThread())
+        delete m_data;
+    else
+        m_scriptExecutionContext->postTask(DeleteCallbackDataTask::create(m_data));
 #ifndef NDEBUG
     m_data = 0;
 #endif

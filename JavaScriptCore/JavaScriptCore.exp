@@ -367,6 +367,7 @@ __ZN3WTF5Mutex6unlockEv
 __ZN3WTF5Mutex7tryLockEv
 __ZN3WTF5MutexC1Ev
 __ZN3WTF5MutexD1Ev
+__ZN3WTF5yieldEv
 __ZN3WTF6strtodEPKcPPc
 __ZN3WTF7CString11mutableDataEv
 __ZN3WTF7CString16newUninitializedEmRPc

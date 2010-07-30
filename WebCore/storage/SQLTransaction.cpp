@@ -146,16 +146,21 @@ const char* SQLTransaction::debugStepName(SQLTransaction::TransactionStepMethod 
 }
 #endif
 
-void SQLTransaction::checkAndHandleClosedDatabase()
+void SQLTransaction::checkAndHandleClosedOrInterruptedDatabase()
 {
-    if (m_database->opened())
+    if (m_database->opened() && !m_database->isInterrupted())
         return;
 
     // If the database was stopped, don't do anything and cancel queued work
-    LOG(StorageAPI, "Database was stopped - cancelling work for this transaction");
+    LOG(StorageAPI, "Database was stopped or interrupted - cancelling work for this transaction");
     MutexLocker locker(m_statementMutex);
     m_statementQueue.clear();
     m_nextStep = 0;
+
+    // Release the unneeded callbacks, to break reference cycles.
+    m_callback = 0;
+    m_successCallback = 0;
+    m_errorCallback = 0;
 
     // The next steps should be executed only if we're on the DB thread.
     if (currentThread() != database()->scriptExecutionContext()->databaseThread()->getThreadID())
@@ -183,7 +188,7 @@ bool SQLTransaction::performNextStep()
            m_nextStep == &SQLTransaction::cleanupAfterSuccessCallback ||
            m_nextStep == &SQLTransaction::cleanupAfterTransactionErrorCallback);
 
-    checkAndHandleClosedDatabase();
+    checkAndHandleClosedOrInterruptedDatabase();
 
     if (m_nextStep)
         (this->*m_nextStep)();
@@ -202,7 +207,7 @@ void SQLTransaction::performPendingCallback()
            m_nextStep == &SQLTransaction::deliverQuotaIncreaseCallback ||
            m_nextStep == &SQLTransaction::deliverSuccessCallback);
 
-    checkAndHandleClosedDatabase();
+    checkAndHandleClosedOrInterruptedDatabase();
 
     if (m_nextStep)
         (this->*m_nextStep)();
@@ -292,6 +297,7 @@ void SQLTransaction::deliverTransactionCallback()
         m_executeSqlAllowed = true;
         shouldDeliverErrorCallback = !m_callback->handleEvent(m_database->scriptExecutionContext(), this);
         m_executeSqlAllowed = false;
+        m_callback = 0;
     }
 
     // Transaction Step 5 - If the transaction callback was null or raised an exception, jump to the error callback
@@ -459,6 +465,7 @@ void SQLTransaction::postflightAndCommit()
 
     // If the commit failed, the transaction will still be marked as "in progress"
     if (m_sqliteTransaction->inProgress()) {
+        m_successCallback = 0;
         m_transactionError = SQLError::create(SQLError::DATABASE_ERR, "failed to commit the transaction");
         handleTransactionError(false);
         return;
@@ -473,7 +480,6 @@ void SQLTransaction::postflightAndCommit()
         m_database->transactionClient()->didCommitWriteTransaction(database());
 
     // Now release our unneeded callbacks, to break reference cycles.
-    m_callback = 0;
     m_errorCallback = 0;
 
     // Transaction Step 10 - Deliver success callback, if there is one
@@ -546,8 +552,10 @@ void SQLTransaction::deliverTransactionErrorCallback()
 
     // Transaction Step 12 - If exists, invoke error callback with the last
     // error to have occurred in this transaction.
-    if (m_errorCallback)
+    if (m_errorCallback) {
         m_errorCallback->handleEvent(m_database->scriptExecutionContext(), m_transactionError.get());
+        m_errorCallback = 0;
+    }
 
     m_nextStep = &SQLTransaction::cleanupAfterTransactionErrorCallback;
     LOG(StorageAPI, "Scheduling cleanupAfterTransactionErrorCallback for transaction %p\n", this);
@@ -578,10 +586,6 @@ void SQLTransaction::cleanupAfterTransactionErrorCallback()
     LOG(StorageAPI, "Transaction %p is complete with an error\n", this);
     ASSERT(!m_database->sqliteDatabase().transactionInProgress());
     m_nextStep = 0;
-
-    // Now release our callbacks, to break reference cycles.
-    m_callback = 0;
-    m_errorCallback = 0;
 
     // Now release the lock on this database
     m_database->transactionCoordinator()->releaseLock(this);
