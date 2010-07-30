@@ -127,19 +127,15 @@ protected slots:
     /* void dumpPlugins() */
     void dumpHtml();
 
-    void selectElements();
+    void initializeView(bool useGraphicsView = false);
 
     void setTouchMocking(bool on);
     void toggleAcceleratedCompositing(bool toggle);
     void toggleTiledBackingStore(bool toggle);
     void toggleResizesToContents(bool toggle);
-
     void toggleWebGL(bool toggle);
-    void initializeView(bool useGraphicsView = false);
     void toggleSpatialNavigation(bool b);
     void toggleFullScreenMode(bool enable);
-    void showFPS(bool enable);
-    void changeViewportUpdateMode(int mode);
     void toggleFrameFlattening(bool toggle);
     void toggleInterruptingJavaScriptEnabled(bool enable);
     void toggleJavascriptCanOpenWindows(bool enable);
@@ -148,6 +144,9 @@ protected slots:
     void toggleQGLWidgetViewport(bool enable);
 #endif
 
+    void changeViewportUpdateMode(int mode);
+    void selectElements();
+    void showFPS(bool enable);
     void showUserAgentDialog();
 
 public slots:
@@ -159,7 +158,10 @@ signals:
     void enteredFullScreenMode(bool on);
 
 private:
+    void init(bool useGraphicsView = false);
+    bool isGraphicsBased() const;
     void createChrome();
+    void applyPrefs(LauncherWindow* other = 0);
     void applyZoom();
 
 private:
@@ -178,10 +180,6 @@ private:
     QList<QTouchEvent::TouchPoint> m_touchPoints;
     bool m_touchMocking;
 #endif
-
-    void init(bool useGraphicsView = false);
-    bool isGraphicsBased() const;
-    void applyPrefs(LauncherWindow* other = 0);
 };
 
 #endif

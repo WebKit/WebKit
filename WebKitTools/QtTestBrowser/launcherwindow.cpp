@@ -120,6 +120,256 @@ void LauncherWindow::init(bool useGraphicsView)
     grabZoomKeys(true);
 }
 
+void LauncherWindow::initializeView(bool useGraphicsView)
+{
+    delete m_view;
+
+    QSplitter* splitter = static_cast<QSplitter*>(centralWidget());
+
+    if (!useGraphicsView) {
+        WebViewTraditional* view = new WebViewTraditional(splitter);
+        view->setPage(page());
+
+        view->installEventFilter(this);
+
+        m_view = view;
+    } else {
+        WebViewGraphicsBased* view = new WebViewGraphicsBased(splitter);
+        view->setPage(page());
+
+        if (m_flipAnimated)
+            connect(m_flipAnimated, SIGNAL(triggered()), view, SLOT(animatedFlip()));
+
+        if (m_flipYAnimated)
+            connect(m_flipYAnimated, SIGNAL(triggered()), view, SLOT(animatedYFlip()));
+
+        connect(view, SIGNAL(currentFPSUpdated(int)), this, SLOT(updateFPS(int)));
+
+        view->installEventFilter(this);
+        // The implementation of QAbstractScrollArea::eventFilter makes us need
+        // to install the event filter also on the viewport of a QGraphicsView.
+        view->viewport()->installEventFilter(this);
+
+        m_view = view;
+    }
+
+#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
+    m_touchMocking = false;
+#endif
+}
+
+void LauncherWindow::createChrome()
+{
+    QMenu* fileMenu = menuBar()->addMenu("&File");
+    fileMenu->addAction("New Window", this, SLOT(newWindow()), QKeySequence::New);
+    fileMenu->addAction(tr("Open File..."), this, SLOT(openFile()), QKeySequence::Open);
+    fileMenu->addAction(tr("Open Location..."), this, SLOT(openLocation()), QKeySequence(Qt::CTRL | Qt::Key_L));
+    fileMenu->addAction("Close Window", this, SLOT(close()), QKeySequence::Close);
+    fileMenu->addSeparator();
+    fileMenu->addAction("Take Screen Shot...", this, SLOT(screenshot()));
+    fileMenu->addAction(tr("Print..."), this, SLOT(print()), QKeySequence::Print);
+    fileMenu->addSeparator();
+    fileMenu->addAction("Quit", QApplication::instance(), SLOT(closeAllWindows()), QKeySequence(Qt::CTRL | Qt::Key_Q));
+
+    QMenu* editMenu = menuBar()->addMenu("&Edit");
+    editMenu->addAction(page()->action(QWebPage::Undo));
+    editMenu->addAction(page()->action(QWebPage::Redo));
+    editMenu->addSeparator();
+    editMenu->addAction(page()->action(QWebPage::Cut));
+    editMenu->addAction(page()->action(QWebPage::Copy));
+    editMenu->addAction(page()->action(QWebPage::Paste));
+    editMenu->addSeparator();
+    QAction* setEditable = editMenu->addAction("Set Editable", this, SLOT(setEditable(bool)));
+    setEditable->setCheckable(true);
+
+    QMenu* viewMenu = menuBar()->addMenu("&View");
+    viewMenu->addAction(page()->action(QWebPage::Stop));
+    viewMenu->addAction(page()->action(QWebPage::Reload));
+    viewMenu->addSeparator();
+    QAction* zoomIn = viewMenu->addAction("Zoom &In", this, SLOT(zoomIn()));
+    QAction* zoomOut = viewMenu->addAction("Zoom &Out", this, SLOT(zoomOut()));
+    QAction* resetZoom = viewMenu->addAction("Reset Zoom", this, SLOT(resetZoom()));
+    QAction* zoomTextOnly = viewMenu->addAction("Zoom Text Only", this, SLOT(toggleZoomTextOnly(bool)));
+    zoomTextOnly->setCheckable(true);
+    zoomTextOnly->setChecked(false);
+    viewMenu->addSeparator();
+    viewMenu->addAction("Dump HTML", this, SLOT(dumpHtml()));
+    // viewMenu->addAction("Dump plugins", this, SLOT(dumpPlugins()));
+
+    QMenu* formatMenu = new QMenu("F&ormat", this);
+    m_formatMenuAction = menuBar()->addMenu(formatMenu);
+    m_formatMenuAction->setVisible(false);
+    formatMenu->addAction(page()->action(QWebPage::ToggleBold));
+    formatMenu->addAction(page()->action(QWebPage::ToggleItalic));
+    formatMenu->addAction(page()->action(QWebPage::ToggleUnderline));
+    QMenu* writingMenu = formatMenu->addMenu(tr("Writing Direction"));
+    writingMenu->addAction(page()->action(QWebPage::SetTextDirectionDefault));
+    writingMenu->addAction(page()->action(QWebPage::SetTextDirectionLeftToRight));
+    writingMenu->addAction(page()->action(QWebPage::SetTextDirectionRightToLeft));
+
+    zoomIn->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Plus));
+    zoomOut->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Minus));
+    resetZoom->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_0));
+
+    QMenu* windowMenu = menuBar()->addMenu("&Window");
+    QAction* toggleFullScreen = windowMenu->addAction("Toggle FullScreen", this, SIGNAL(enteredFullScreenMode(bool)));
+    toggleFullScreen->setCheckable(true);
+    toggleFullScreen->setChecked(false);
+
+    // when exit fullscreen mode by clicking on the exit area (bottom right corner) we must
+    // uncheck the Toggle FullScreen action
+    toggleFullScreen->connect(this, SIGNAL(enteredFullScreenMode(bool)), SLOT(setChecked(bool)));
+
+    QMenu* toolsMenu = menuBar()->addMenu("&Develop");
+
+    QWebSettings* settings = page()->settings();
+
+    QMenu* graphicsViewMenu = toolsMenu->addMenu("QGraphicsView");
+    QAction* toggleGraphicsView = graphicsViewMenu->addAction("Toggle use of QGraphicsView", this, SLOT(initializeView(bool)));
+    toggleGraphicsView->setCheckable(true);
+    toggleGraphicsView->setChecked(isGraphicsBased());
+
+    QAction* toggleWebGL = toolsMenu->addAction("Toggle WebGL", this, SLOT(toggleWebGL(bool)));
+    toggleWebGL->setCheckable(true);
+    toggleWebGL->setChecked(settings->testAttribute(QWebSettings::WebGLEnabled));
+
+    QAction* spatialNavigationAction = toolsMenu->addAction("Toggle Spatial Navigation", this, SLOT(toggleSpatialNavigation(bool)));
+    spatialNavigationAction->setCheckable(true);
+    spatialNavigationAction->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_S));
+
+    QAction* toggleFrameFlattening = toolsMenu->addAction("Toggle Frame Flattening", this, SLOT(toggleFrameFlattening(bool)));
+    toggleFrameFlattening->setCheckable(true);
+    toggleFrameFlattening->setChecked(settings->testAttribute(QWebSettings::FrameFlatteningEnabled));
+
+#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
+    QAction* touchMockAction = toolsMenu->addAction("Toggle multitouch mocking", this, SLOT(setTouchMocking(bool)));
+    touchMockAction->setCheckable(true);
+    touchMockAction->setShortcut(QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_T));
+#endif
+
+    toolsMenu->addSeparator();
+
+    QAction* toggleInterruptingJavaScripteEnabled = toolsMenu->addAction("Enable interrupting js scripts", this, SLOT(toggleInterruptingJavaScriptEnabled(bool)));
+    toggleInterruptingJavaScripteEnabled->setCheckable(true);
+    toggleInterruptingJavaScripteEnabled->setChecked(false);
+
+    QAction* toggleJavascriptCanOpenWindows = toolsMenu->addAction("Enable js popup windows", this, SLOT(toggleJavascriptCanOpenWindows(bool)));
+    toggleJavascriptCanOpenWindows->setCheckable(true);
+    toggleJavascriptCanOpenWindows->setChecked(false);
+
+    toolsMenu->addSeparator();
+
+    QAction* userAgentAction = toolsMenu->addAction("Change User Agent", this, SLOT(showUserAgentDialog()));
+    userAgentAction->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_U));
+
+    toolsMenu->addAction("Select Elements...", this, SLOT(selectElements()));
+
+    QAction* showInspectorAction = toolsMenu->addAction("Show Web Inspector", m_inspector, SLOT(setVisible(bool)), QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_I));
+    showInspectorAction->setCheckable(true);
+    showInspectorAction->connect(m_inspector, SIGNAL(visibleChanged(bool)), SLOT(setChecked(bool)));
+
+    // GraphicsView sub menu.
+    QAction* toggleAcceleratedCompositing = graphicsViewMenu->addAction("Toggle Accelerated Compositing", this, SLOT(toggleAcceleratedCompositing(bool)));
+    toggleAcceleratedCompositing->setCheckable(true);
+    toggleAcceleratedCompositing->setChecked(settings->testAttribute(QWebSettings::AcceleratedCompositingEnabled));
+    toggleAcceleratedCompositing->setEnabled(isGraphicsBased());
+    toggleAcceleratedCompositing->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
+
+    QAction* toggleResizesToContents = graphicsViewMenu->addAction("Toggle Resizes To Contents Mode", this, SLOT(toggleResizesToContents(bool)));
+    toggleResizesToContents->setCheckable(true);
+    toggleResizesToContents->setChecked(false);
+    toggleResizesToContents->setEnabled(isGraphicsBased());
+    toggleResizesToContents->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
+
+    QAction* toggleTiledBackingStore = graphicsViewMenu->addAction("Toggle Tiled Backing Store", this, SLOT(toggleTiledBackingStore(bool)));
+    toggleTiledBackingStore->setCheckable(true);
+    toggleTiledBackingStore->setChecked(false);
+    toggleTiledBackingStore->setEnabled(isGraphicsBased());
+    toggleTiledBackingStore->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
+
+#if defined(QT_CONFIGURED_WITH_OPENGL)
+    QAction* toggleQGLWidgetViewport = graphicsViewMenu->addAction("Toggle use of QGLWidget Viewport", this, SLOT(toggleQGLWidgetViewport(bool)));
+    toggleQGLWidgetViewport->setCheckable(true);
+    toggleQGLWidgetViewport->setChecked(gUseQGLWidgetViewport);
+    toggleQGLWidgetViewport->setEnabled(isGraphicsBased());
+    toggleQGLWidgetViewport->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
+#endif
+
+    QMenu* viewportUpdateMenu = graphicsViewMenu->addMenu("Change Viewport Update Mode");
+    viewportUpdateMenu->setEnabled(isGraphicsBased());
+    viewportUpdateMenu->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
+
+    QAction* fullUpdate = viewportUpdateMenu->addAction("FullViewportUpdate");
+    fullUpdate->setCheckable(true);
+    fullUpdate->setChecked((gViewportUpdateMode == QGraphicsView::FullViewportUpdate) ? true : false);
+
+    QAction* minimalUpdate = viewportUpdateMenu->addAction("MinimalViewportUpdate");
+    minimalUpdate->setCheckable(true);
+    minimalUpdate->setChecked((gViewportUpdateMode == QGraphicsView::MinimalViewportUpdate) ? true : false);
+
+    QAction* smartUpdate = viewportUpdateMenu->addAction("SmartViewportUpdate");
+    smartUpdate->setCheckable(true);
+    smartUpdate->setChecked((gViewportUpdateMode == QGraphicsView::SmartViewportUpdate) ? true : false);
+
+    QAction* boundingRectUpdate = viewportUpdateMenu->addAction("BoundingRectViewportUpdate");
+    boundingRectUpdate->setCheckable(true);
+    boundingRectUpdate->setChecked((gViewportUpdateMode == QGraphicsView::BoundingRectViewportUpdate) ? true : false);
+
+    QAction* noUpdate = viewportUpdateMenu->addAction("NoViewportUpdate");
+    noUpdate->setCheckable(true);
+    noUpdate->setChecked((gViewportUpdateMode == QGraphicsView::NoViewportUpdate) ? true : false);
+
+    QSignalMapper* signalMapper = new QSignalMapper(viewportUpdateMenu);
+    signalMapper->setMapping(fullUpdate, QGraphicsView::FullViewportUpdate);
+    signalMapper->setMapping(minimalUpdate, QGraphicsView::MinimalViewportUpdate);
+    signalMapper->setMapping(smartUpdate, QGraphicsView::SmartViewportUpdate);
+    signalMapper->setMapping(boundingRectUpdate, QGraphicsView::BoundingRectViewportUpdate);
+    signalMapper->setMapping(noUpdate, QGraphicsView::NoViewportUpdate);
+
+    connect(fullUpdate, SIGNAL(triggered()), signalMapper, SLOT(map()));
+    connect(minimalUpdate, SIGNAL(triggered()), signalMapper, SLOT(map()));
+    connect(smartUpdate, SIGNAL(triggered()), signalMapper, SLOT(map()));
+    connect(boundingRectUpdate, SIGNAL(triggered()), signalMapper, SLOT(map()));
+    connect(noUpdate, SIGNAL(triggered()), signalMapper, SLOT(map()));
+
+    connect(signalMapper, SIGNAL(mapped(int)), this, SLOT(changeViewportUpdateMode(int)));
+
+    QActionGroup* viewportUpdateModeActions = new QActionGroup(viewportUpdateMenu);
+    viewportUpdateModeActions->addAction(fullUpdate);
+    viewportUpdateModeActions->addAction(minimalUpdate);
+    viewportUpdateModeActions->addAction(smartUpdate);
+    viewportUpdateModeActions->addAction(boundingRectUpdate);
+    viewportUpdateModeActions->addAction(noUpdate);
+
+    graphicsViewMenu->addSeparator();
+
+    m_flipAnimated = graphicsViewMenu->addAction("Animated Flip");
+    m_flipAnimated->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
+    m_flipAnimated->setEnabled(isGraphicsBased());
+
+    m_flipYAnimated = graphicsViewMenu->addAction("Animated Y-Flip");
+    m_flipYAnimated->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
+    m_flipYAnimated->setEnabled(isGraphicsBased());
+
+    if (isGraphicsBased()) {
+        WebViewGraphicsBased* view = static_cast<WebViewGraphicsBased*>(m_view);
+        connect(m_flipAnimated, SIGNAL(triggered()), view, SLOT(animatedFlip()));
+        connect(m_flipYAnimated, SIGNAL(triggered()), view, SLOT(animatedYFlip()));
+    }
+
+    QAction* cloneWindow = graphicsViewMenu->addAction("Clone Window", this, SLOT(cloneWindow()));
+    cloneWindow->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
+    cloneWindow->setEnabled(isGraphicsBased());
+
+    graphicsViewMenu->addSeparator();
+
+    QAction* showFPS = graphicsViewMenu->addAction("Show FPS", this, SLOT(showFPS(bool)));
+    showFPS->setCheckable(true);
+    showFPS->setEnabled(isGraphicsBased());
+    showFPS->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
+    showFPS->setChecked(gShowFrameRate);
+}
+
 bool LauncherWindow::isGraphicsBased() const
 {
     return bool(qobject_cast<QGraphicsView*>(m_view));
@@ -477,44 +727,6 @@ void LauncherWindow::toggleWebGL(bool toggle)
     page()->settings()->setAttribute(QWebSettings::WebGLEnabled, toggle);
 }
 
-void LauncherWindow::initializeView(bool useGraphicsView)
-{
-    delete m_view;
-
-    QSplitter* splitter = static_cast<QSplitter*>(centralWidget());
-
-    if (!useGraphicsView) {
-        WebViewTraditional* view = new WebViewTraditional(splitter);
-        view->setPage(page());
-
-        view->installEventFilter(this);
-
-        m_view = view;
-    } else {
-        WebViewGraphicsBased* view = new WebViewGraphicsBased(splitter);
-        view->setPage(page());
-
-        if (m_flipAnimated)
-            connect(m_flipAnimated, SIGNAL(triggered()), view, SLOT(animatedFlip()));
-
-        if (m_flipYAnimated)
-            connect(m_flipYAnimated, SIGNAL(triggered()), view, SLOT(animatedYFlip()));
-
-        connect(view, SIGNAL(currentFPSUpdated(int)), this, SLOT(updateFPS(int)));
-
-        view->installEventFilter(this);
-        // The implementation of QAbstractScrollArea::eventFilter makes us need
-        // to install the event filter also on the viewport of a QGraphicsView.
-        view->viewport()->installEventFilter(this);
-
-        m_view = view;
-    }
-
-#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
-    m_touchMocking = false;
-#endif
-}
-
 void LauncherWindow::toggleSpatialNavigation(bool b)
 {
     page()->settings()->setAttribute(QWebSettings::SpatialNavigationEnabled, b);
@@ -531,35 +743,6 @@ void LauncherWindow::toggleFullScreenMode(bool enable)
         setWindowState(Qt::WindowNoState);
 #endif
     }
-}
-
-void LauncherWindow::showFPS(bool enable)
-{
-    if (!isGraphicsBased())
-        return;
-
-    gShowFrameRate = enable;
-    WebViewGraphicsBased* view = static_cast<WebViewGraphicsBased*>(m_view);
-    view->setFrameRateMeasurementEnabled(enable);
-
-    if (!enable) {
-#if defined(Q_WS_MAEMO_5) && defined(Q_WS_S60)
-        setWindowTitle("");
-#else
-        statusBar()->clearMessage();
-#endif
-    }
-}
-
-void LauncherWindow::changeViewportUpdateMode(int mode)
-{
-    gViewportUpdateMode = QGraphicsView::ViewportUpdateMode(mode);
-
-    if (!isGraphicsBased())
-        return;
-
-    WebViewGraphicsBased* view = static_cast<WebViewGraphicsBased*>(m_view);
-    view->setViewportUpdateMode(gViewportUpdateMode);
 }
 
 void LauncherWindow::toggleFrameFlattening(bool toggle)
@@ -590,6 +773,35 @@ void LauncherWindow::toggleQGLWidgetViewport(bool enable)
     view->setViewport(enable ? new QGLWidget() : 0);
 }
 #endif
+
+void LauncherWindow::changeViewportUpdateMode(int mode)
+{
+    gViewportUpdateMode = QGraphicsView::ViewportUpdateMode(mode);
+
+    if (!isGraphicsBased())
+        return;
+
+    WebViewGraphicsBased* view = static_cast<WebViewGraphicsBased*>(m_view);
+    view->setViewportUpdateMode(gViewportUpdateMode);
+}
+
+void LauncherWindow::showFPS(bool enable)
+{
+    if (!isGraphicsBased())
+        return;
+
+    gShowFrameRate = enable;
+    WebViewGraphicsBased* view = static_cast<WebViewGraphicsBased*>(m_view);
+    view->setFrameRateMeasurementEnabled(enable);
+
+    if (!enable) {
+#if defined(Q_WS_MAEMO_5) && defined(Q_WS_S60)
+        setWindowTitle("");
+#else
+        statusBar()->clearMessage();
+#endif
+    }
+}
 
 void LauncherWindow::showUserAgentDialog()
 {
@@ -638,6 +850,17 @@ void LauncherWindow::showUserAgentDialog()
     delete dialog;
 }
 
+void LauncherWindow::updateFPS(int fps)
+{
+    QString fpsStatusText = QString("Current FPS: %1").arg(fps);
+
+#if defined(Q_WS_MAEMO_5) && defined(Q_WS_S60)
+    setWindowTitle(fpsStatusText);
+#else
+    statusBar()->showMessage(fpsStatusText);
+#endif
+}
+
 LauncherWindow* LauncherWindow::newWindow()
 {
     LauncherWindow* mw = new LauncherWindow(this, false);
@@ -651,228 +874,4 @@ LauncherWindow* LauncherWindow::cloneWindow()
     mw->show();
     return mw;
 }
-
-void LauncherWindow::updateFPS(int fps)
-{
-    QString fpsStatusText = QString("Current FPS: %1").arg(fps);
-
-#if defined(Q_WS_MAEMO_5) && defined(Q_WS_S60)
-    setWindowTitle(fpsStatusText);
-#else
-    statusBar()->showMessage(fpsStatusText);
-#endif
-}
-
-void LauncherWindow::createChrome()
-{
-    QMenu* fileMenu = menuBar()->addMenu("&File");
-    fileMenu->addAction("New Window", this, SLOT(newWindow()), QKeySequence::New);
-    fileMenu->addAction(tr("Open File..."), this, SLOT(openFile()), QKeySequence::Open);
-    fileMenu->addAction(tr("Open Location..."), this, SLOT(openLocation()), QKeySequence(Qt::CTRL | Qt::Key_L));
-    fileMenu->addAction("Close Window", this, SLOT(close()), QKeySequence::Close);
-    fileMenu->addSeparator();
-    fileMenu->addAction("Take Screen Shot...", this, SLOT(screenshot()));
-    fileMenu->addAction(tr("Print..."), this, SLOT(print()), QKeySequence::Print);
-    fileMenu->addSeparator();
-    fileMenu->addAction("Quit", QApplication::instance(), SLOT(closeAllWindows()), QKeySequence(Qt::CTRL | Qt::Key_Q));
-
-    QMenu* editMenu = menuBar()->addMenu("&Edit");
-    editMenu->addAction(page()->action(QWebPage::Undo));
-    editMenu->addAction(page()->action(QWebPage::Redo));
-    editMenu->addSeparator();
-    editMenu->addAction(page()->action(QWebPage::Cut));
-    editMenu->addAction(page()->action(QWebPage::Copy));
-    editMenu->addAction(page()->action(QWebPage::Paste));
-    editMenu->addSeparator();
-    QAction* setEditable = editMenu->addAction("Set Editable", this, SLOT(setEditable(bool)));
-    setEditable->setCheckable(true);
-
-    QMenu* viewMenu = menuBar()->addMenu("&View");
-    viewMenu->addAction(page()->action(QWebPage::Stop));
-    viewMenu->addAction(page()->action(QWebPage::Reload));
-    viewMenu->addSeparator();
-    QAction* zoomIn = viewMenu->addAction("Zoom &In", this, SLOT(zoomIn()));
-    QAction* zoomOut = viewMenu->addAction("Zoom &Out", this, SLOT(zoomOut()));
-    QAction* resetZoom = viewMenu->addAction("Reset Zoom", this, SLOT(resetZoom()));
-    QAction* zoomTextOnly = viewMenu->addAction("Zoom Text Only", this, SLOT(toggleZoomTextOnly(bool)));
-    zoomTextOnly->setCheckable(true);
-    zoomTextOnly->setChecked(false);
-    viewMenu->addSeparator();
-    viewMenu->addAction("Dump HTML", this, SLOT(dumpHtml()));
-    // viewMenu->addAction("Dump plugins", this, SLOT(dumpPlugins()));
-
-    QMenu* formatMenu = new QMenu("F&ormat", this);
-    m_formatMenuAction = menuBar()->addMenu(formatMenu);
-    m_formatMenuAction->setVisible(false);
-    formatMenu->addAction(page()->action(QWebPage::ToggleBold));
-    formatMenu->addAction(page()->action(QWebPage::ToggleItalic));
-    formatMenu->addAction(page()->action(QWebPage::ToggleUnderline));
-    QMenu* writingMenu = formatMenu->addMenu(tr("Writing Direction"));
-    writingMenu->addAction(page()->action(QWebPage::SetTextDirectionDefault));
-    writingMenu->addAction(page()->action(QWebPage::SetTextDirectionLeftToRight));
-    writingMenu->addAction(page()->action(QWebPage::SetTextDirectionRightToLeft));
-
-    zoomIn->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Plus));
-    zoomOut->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Minus));
-    resetZoom->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_0));
-
-    QMenu* windowMenu = menuBar()->addMenu("&Window");
-    QAction* toggleFullScreen = windowMenu->addAction("Toggle FullScreen", this, SIGNAL(enteredFullScreenMode(bool)));
-    toggleFullScreen->setCheckable(true);
-    toggleFullScreen->setChecked(false);
-
-    // when exit fullscreen mode by clicking on the exit area (bottom right corner) we must
-    // uncheck the Toggle FullScreen action
-    toggleFullScreen->connect(this, SIGNAL(enteredFullScreenMode(bool)), SLOT(setChecked(bool)));
-
-    QMenu* toolsMenu = menuBar()->addMenu("&Develop");
-
-    QWebSettings* settings = page()->settings();
-
-    QMenu* graphicsViewMenu = toolsMenu->addMenu("QGraphicsView");
-    QAction* toggleGraphicsView = graphicsViewMenu->addAction("Toggle use of QGraphicsView", this, SLOT(initializeView(bool)));
-    toggleGraphicsView->setCheckable(true);
-    toggleGraphicsView->setChecked(isGraphicsBased());
-
-    QAction* toggleWebGL = toolsMenu->addAction("Toggle WebGL", this, SLOT(toggleWebGL(bool)));
-    toggleWebGL->setCheckable(true);
-    toggleWebGL->setChecked(settings->testAttribute(QWebSettings::WebGLEnabled));
-
-    QAction* spatialNavigationAction = toolsMenu->addAction("Toggle Spatial Navigation", this, SLOT(toggleSpatialNavigation(bool)));
-    spatialNavigationAction->setCheckable(true);
-    spatialNavigationAction->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_S));
-
-    QAction* toggleFrameFlattening = toolsMenu->addAction("Toggle Frame Flattening", this, SLOT(toggleFrameFlattening(bool)));
-    toggleFrameFlattening->setCheckable(true);
-    toggleFrameFlattening->setChecked(settings->testAttribute(QWebSettings::FrameFlatteningEnabled));
-
-#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
-    QAction* touchMockAction = toolsMenu->addAction("Toggle multitouch mocking", this, SLOT(setTouchMocking(bool)));
-    touchMockAction->setCheckable(true);
-    touchMockAction->setShortcut(QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_T));
-#endif
-
-    toolsMenu->addSeparator();
-
-    QAction* toggleInterruptingJavaScripteEnabled = toolsMenu->addAction("Enable interrupting js scripts", this, SLOT(toggleInterruptingJavaScriptEnabled(bool)));
-    toggleInterruptingJavaScripteEnabled->setCheckable(true);
-    toggleInterruptingJavaScripteEnabled->setChecked(false);
-
-    QAction* toggleJavascriptCanOpenWindows = toolsMenu->addAction("Enable js popup windows", this, SLOT(toggleJavascriptCanOpenWindows(bool)));
-    toggleJavascriptCanOpenWindows->setCheckable(true);
-    toggleJavascriptCanOpenWindows->setChecked(false);
-
-    toolsMenu->addSeparator();
-
-    QAction* userAgentAction = toolsMenu->addAction("Change User Agent", this, SLOT(showUserAgentDialog()));
-    userAgentAction->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_U));
-
-    toolsMenu->addAction("Select Elements...", this, SLOT(selectElements()));
-
-    QAction* showInspectorAction = toolsMenu->addAction("Show Web Inspector", m_inspector, SLOT(setVisible(bool)), QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_I));
-    showInspectorAction->setCheckable(true);
-    showInspectorAction->connect(m_inspector, SIGNAL(visibleChanged(bool)), SLOT(setChecked(bool)));
-
-    // GraphicsView sub menu.
-    QAction* toggleAcceleratedCompositing = graphicsViewMenu->addAction("Toggle Accelerated Compositing", this, SLOT(toggleAcceleratedCompositing(bool)));
-    toggleAcceleratedCompositing->setCheckable(true);
-    toggleAcceleratedCompositing->setChecked(settings->testAttribute(QWebSettings::AcceleratedCompositingEnabled));
-    toggleAcceleratedCompositing->setEnabled(isGraphicsBased());
-    toggleAcceleratedCompositing->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
-
-    QAction* toggleResizesToContents = graphicsViewMenu->addAction("Toggle Resizes To Contents Mode", this, SLOT(toggleResizesToContents(bool)));
-    toggleResizesToContents->setCheckable(true);
-    toggleResizesToContents->setChecked(false);
-    toggleResizesToContents->setEnabled(isGraphicsBased());
-    toggleResizesToContents->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
-
-    QAction* toggleTiledBackingStore = graphicsViewMenu->addAction("Toggle Tiled Backing Store", this, SLOT(toggleTiledBackingStore(bool)));
-    toggleTiledBackingStore->setCheckable(true);
-    toggleTiledBackingStore->setChecked(false);
-    toggleTiledBackingStore->setEnabled(isGraphicsBased());
-    toggleTiledBackingStore->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
-
-#if defined(QT_CONFIGURED_WITH_OPENGL)
-    QAction* toggleQGLWidgetViewport = graphicsViewMenu->addAction("Toggle use of QGLWidget Viewport", this, SLOT(toggleQGLWidgetViewport(bool)));
-    toggleQGLWidgetViewport->setCheckable(true);
-    toggleQGLWidgetViewport->setChecked(gUseQGLWidgetViewport);
-    toggleQGLWidgetViewport->setEnabled(isGraphicsBased());
-    toggleQGLWidgetViewport->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
-#endif
-
-    QMenu* viewportUpdateMenu = graphicsViewMenu->addMenu("Change Viewport Update Mode");
-    viewportUpdateMenu->setEnabled(isGraphicsBased());
-    viewportUpdateMenu->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
-
-    QAction* fullUpdate = viewportUpdateMenu->addAction("FullViewportUpdate");
-    fullUpdate->setCheckable(true);
-    fullUpdate->setChecked((gViewportUpdateMode == QGraphicsView::FullViewportUpdate) ? true : false);
-
-    QAction* minimalUpdate = viewportUpdateMenu->addAction("MinimalViewportUpdate");
-    minimalUpdate->setCheckable(true);
-    minimalUpdate->setChecked((gViewportUpdateMode == QGraphicsView::MinimalViewportUpdate) ? true : false);
-
-    QAction* smartUpdate = viewportUpdateMenu->addAction("SmartViewportUpdate");
-    smartUpdate->setCheckable(true);
-    smartUpdate->setChecked((gViewportUpdateMode == QGraphicsView::SmartViewportUpdate) ? true : false);
-
-    QAction* boundingRectUpdate = viewportUpdateMenu->addAction("BoundingRectViewportUpdate");
-    boundingRectUpdate->setCheckable(true);
-    boundingRectUpdate->setChecked((gViewportUpdateMode == QGraphicsView::BoundingRectViewportUpdate) ? true : false);
-
-    QAction* noUpdate = viewportUpdateMenu->addAction("NoViewportUpdate");
-    noUpdate->setCheckable(true);
-    noUpdate->setChecked((gViewportUpdateMode == QGraphicsView::NoViewportUpdate) ? true : false);
-
-    QSignalMapper* signalMapper = new QSignalMapper(viewportUpdateMenu);
-    signalMapper->setMapping(fullUpdate, QGraphicsView::FullViewportUpdate);
-    signalMapper->setMapping(minimalUpdate, QGraphicsView::MinimalViewportUpdate);
-    signalMapper->setMapping(smartUpdate, QGraphicsView::SmartViewportUpdate);
-    signalMapper->setMapping(boundingRectUpdate, QGraphicsView::BoundingRectViewportUpdate);
-    signalMapper->setMapping(noUpdate, QGraphicsView::NoViewportUpdate);
-
-    connect(fullUpdate, SIGNAL(triggered()), signalMapper, SLOT(map()));
-    connect(minimalUpdate, SIGNAL(triggered()), signalMapper, SLOT(map()));
-    connect(smartUpdate, SIGNAL(triggered()), signalMapper, SLOT(map()));
-    connect(boundingRectUpdate, SIGNAL(triggered()), signalMapper, SLOT(map()));
-    connect(noUpdate, SIGNAL(triggered()), signalMapper, SLOT(map()));
-
-    connect(signalMapper, SIGNAL(mapped(int)), this, SLOT(changeViewportUpdateMode(int)));
-
-    QActionGroup* viewportUpdateModeActions = new QActionGroup(viewportUpdateMenu);
-    viewportUpdateModeActions->addAction(fullUpdate);
-    viewportUpdateModeActions->addAction(minimalUpdate);
-    viewportUpdateModeActions->addAction(smartUpdate);
-    viewportUpdateModeActions->addAction(boundingRectUpdate);
-    viewportUpdateModeActions->addAction(noUpdate);
-
-    graphicsViewMenu->addSeparator();
-
-    m_flipAnimated = graphicsViewMenu->addAction("Animated Flip");
-    m_flipAnimated->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
-    m_flipAnimated->setEnabled(isGraphicsBased());
-
-    m_flipYAnimated = graphicsViewMenu->addAction("Animated Y-Flip");
-    m_flipYAnimated->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
-    m_flipYAnimated->setEnabled(isGraphicsBased());
-
-    if (isGraphicsBased()) {
-        WebViewGraphicsBased* view = static_cast<WebViewGraphicsBased*>(m_view);
-        connect(m_flipAnimated, SIGNAL(triggered()), view, SLOT(animatedFlip()));
-        connect(m_flipYAnimated, SIGNAL(triggered()), view, SLOT(animatedYFlip()));
-    }
-
-    QAction* cloneWindow = graphicsViewMenu->addAction("Clone Window", this, SLOT(cloneWindow()));
-    cloneWindow->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
-    cloneWindow->setEnabled(isGraphicsBased());
-
-    graphicsViewMenu->addSeparator();
-
-    QAction* showFPS = graphicsViewMenu->addAction("Show FPS", this, SLOT(showFPS(bool)));
-    showFPS->setCheckable(true);
-    showFPS->setEnabled(isGraphicsBased());
-    showFPS->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
-    showFPS->setChecked(gShowFrameRate);
-}
-
 

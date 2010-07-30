@@ -1,3 +1,20 @@
+2010-07-29  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Rubber-stamped by Simon Fraser.
+
+        [Qt] QtTestBrowser: more method grouping and clean ups.
+
+        Moving blocks of code around. Basically grouping related methods close to each.
+
+        * QtTestBrowser/launcherwindow.cpp:
+        (LauncherWindow::initializeView):
+        (LauncherWindow::createChrome):
+        (LauncherWindow::changeViewportUpdateMode):
+        (LauncherWindow::showFPS):
+        (LauncherWindow::newWindow):
+        (LauncherWindow::cloneWindow):
+        * QtTestBrowser/launcherwindow.h:
+
 2010-07-30  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
 
         Reviewed by Tor Arne Vestbø.
