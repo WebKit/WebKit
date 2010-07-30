@@ -219,6 +219,14 @@ sub GetVisibleClassName
     return $className;
 }
 
+sub GetCallbackClassName
+{
+    my $className = shift;
+
+    return "JSCustomVoidCallback" if $className eq "VoidCallback";
+    return "JS$className";
+}
+
 sub AvoidInclusionOfType
 {
     my $type = shift;
@@ -1913,7 +1921,7 @@ sub GenerateImplementation
                         }
 
                         my $name = $parameter->name;
-                    
+
                         if ($parameter->type eq "XPathNSResolver") {
                             push(@implContent, "    RefPtr<XPathNSResolver> customResolver;\n");
                             push(@implContent, "    XPathNSResolver* resolver = toXPathNSResolver(exec->argument($argsIndex));\n");
@@ -1923,6 +1931,15 @@ sub GenerateImplementation
                             push(@implContent, "            return JSValue::encode(jsUndefined());\n");
                             push(@implContent, "        resolver = customResolver.get();\n");
                             push(@implContent, "    }\n");
+                        } elsif ($parameter->extendedAttributes->{"Callback"}) {
+                            my $callbackClassName = GetCallbackClassName($parameter->type);
+                            $implIncludes{"$callbackClassName.h"} = 1;
+                            $implIncludes{"ExceptionCode.h"} = 1;
+                            push(@implContent, "    if (exec->argumentCount() <= $argsIndex || !exec->argument($argsIndex).isObject()) {\n");
+                            push(@implContent, "        setDOMException(exec, TYPE_MISMATCH_ERR);\n");
+                            push(@implContent, "        return jsUndefined();\n");
+                            push(@implContent, "    }\n");
+                            push(@implContent, "    RefPtr<" . $parameter->type . "> $name = " . $callbackClassName . "::create(asObject(exec->argument($argsIndex)), castedThis->globalObject());\n");
                         } else {
                             push(@implContent, "    " . GetNativeTypeFromSignature($parameter) . " $name = " . JSValueToNative($parameter, "exec->argument($argsIndex)") . ";\n");
 

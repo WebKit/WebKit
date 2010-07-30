@@ -1,3 +1,27 @@
+2010-07-30  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by Dumitru Daniliuc.
+
+        Add callback arguments support to binding code generator scripts
+        https://bugs.webkit.org/show_bug.cgi?id=43130
+
+        Tests: bindings/scripts/test/TestObj.idl
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/scripts/CodeGeneratorV8.pm:
+
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionMethodWithCallbackArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithNonCallbackArgAndCallbackArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithCallbackAndOptionalArg):
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/TestObj.idl:
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjInternal::methodWithCallbackArgCallback):
+        (WebCore::TestObjInternal::methodWithNonCallbackArgAndCallbackArgCallback):
+        (WebCore::TestObjInternal::methodWithCallbackAndOptionalArgCallback):
+        (WebCore::ConfigureV8TestObjTemplate):
+
 2010-07-30  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

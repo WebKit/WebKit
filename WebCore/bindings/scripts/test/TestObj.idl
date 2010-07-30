@@ -109,6 +109,13 @@ module test {
         void    methodWithNonOptionalArgAndOptionalArg(in long nonOpt, in [Optional] long opt);
         void    methodWithNonOptionalArgAndTwoOptionalArgs(in long nonOpt, in [Optional] long opt1, in long opt2);
 
+#if defined(TESTING_V8) || defined(TESTING_JS)
+        // 'Callback' extended attribute
+        void    methodWithCallbackArg(in [Callback] TestCallback callback);
+        void    methodWithNonCallbackArgAndCallbackArg(in long nonCallback, in [Callback] TestCallback callback);
+        void    methodWithCallbackAndOptionalArg(in [Callback, Optional] TestCallback callback);
+#endif
+
         // 'ConvertScriptString' extended attribute
         readonly attribute [ConvertScriptString] DOMString scriptStringAttr;
 
