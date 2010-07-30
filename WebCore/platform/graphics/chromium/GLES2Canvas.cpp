@@ -99,6 +99,10 @@ GLES2Canvas::GLES2Canvas(GLES2Context* context, const IntSize& size)
 
     m_stateStack.append(State());
     m_state = &m_stateStack.last();
+
+    // Force the source over composite mode to be applied.
+    m_lastCompositeOp = CompositeClear;
+    applyCompositeOperator(CompositeSourceOver);
 }
 
 GLES2Canvas::~GLES2Canvas()

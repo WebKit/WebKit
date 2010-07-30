@@ -198,11 +198,13 @@ PassRefPtr<ImageData> getImageData(const IntRect& rect, const SkBitmap& bitmap,
 
 PassRefPtr<ImageData> ImageBuffer::getUnmultipliedImageData(const IntRect& rect) const
 {
+    context()->platformContext()->syncSoftwareCanvas();
     return getImageData<Unmultiplied>(rect, *context()->platformContext()->bitmap(), m_size);
 }
 
 PassRefPtr<ImageData> ImageBuffer::getPremultipliedImageData(const IntRect& rect) const
 {
+    context()->platformContext()->syncSoftwareCanvas();
     return getImageData<Premultiplied>(rect, *context()->platformContext()->bitmap(), m_size);
 }
 

@@ -47,6 +47,11 @@
 
 #include "skia/ext/image_operations.h"
 #include "skia/ext/platform_canvas.h"
+#if USE(GLES2_RENDERING)
+#include "GLES2Canvas.h"
+#include "GLES2Context.h"
+#include "SkPixelRef.h"
+#endif
 
 namespace WebCore {
 
@@ -404,6 +409,24 @@ void Image::drawPattern(GraphicsContext* context,
     context->platformContext()->paintSkPaint(destRect, paint);
 }
 
+#if USE(GLES2_RENDERING)
+static void drawBitmapGLES2(GraphicsContext* ctxt, NativeImageSkia* bitmap, const FloatRect& srcRect, const FloatRect& dstRect, ColorSpace styleColorSpace, CompositeOperator compositeOp)
+{
+    ctxt->platformContext()->prepareForHardwareDraw();
+    GLES2Canvas* gpuCanvas = ctxt->platformContext()->gpuCanvas();
+    gpuCanvas->gles2Context()->makeCurrent();
+    GLES2Texture* texture = gpuCanvas->getTexture(bitmap);
+    if (!texture) {
+        ASSERT(bitmap->config() == SkBitmap::kARGB_8888_Config);
+        ASSERT(bitmap->rowBytes() == bitmap->width() * 4);
+        texture = gpuCanvas->createTexture(bitmap, GLES2Texture::BGRA8, bitmap->width(), bitmap->height());
+        ASSERT(bitmap->pixelRef());
+        texture->load(bitmap->pixelRef()->pixels());
+    }
+    gpuCanvas->drawTexturedRect(texture, srcRect, dstRect, styleColorSpace, compositeOp);
+}
+#endif
+
 // ================================================
 // BitmapImage Class
 // ================================================
@@ -429,7 +452,7 @@ void BitmapImage::checkForSolidColor()
 }
 
 void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dstRect,
-                       const FloatRect& srcRect, ColorSpace, CompositeOperator compositeOp)
+                       const FloatRect& srcRect, ColorSpace colorSpace, CompositeOperator compositeOp)
 {
     if (!m_source.initialized())
         return;
@@ -439,15 +462,23 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dstRect,
     // causing flicker and wasting CPU.
     startAnimation();
 
-    const NativeImageSkia* bm = nativeImageForCurrentFrame();
+    NativeImageSkia* bm = nativeImageForCurrentFrame();
     if (!bm)
         return;  // It's too early and we don't have an image yet.
 
+#if  USE(GLES2_RENDERING)
+    if (ctxt->platformContext()->useGPU()) {
+        drawBitmapGLES2(ctxt, bm, srcRect, dstRect, colorSpace, compositeOp);
+        return;
+    }
+#endif
     FloatRect normDstRect = normalizeRect(dstRect);
     FloatRect normSrcRect = normalizeRect(srcRect);
 
     if (normSrcRect.isEmpty() || normDstRect.isEmpty())
         return;  // Nothing to draw.
+
+    ctxt->platformContext()->prepareForSoftwareDraw();
 
     paintSkBitmap(ctxt->platformContext(),
                   *bm,
@@ -469,6 +500,15 @@ void BitmapImageSingleFrameSkia::draw(GraphicsContext* ctxt,
 
     if (normSrcRect.isEmpty() || normDstRect.isEmpty())
         return;  // Nothing to draw.
+
+#if  USE(GLES2_RENDERING)
+    if (ctxt->platformContext()->useGPU()) {
+        drawBitmapGLES2(ctxt, &m_nativeImage, srcRect, dstRect, styleColorSpace, compositeOp);
+        return;
+    }
+#endif
+
+    ctxt->platformContext()->prepareForSoftwareDraw();
 
     paintSkBitmap(ctxt->platformContext(),
                   m_nativeImage,

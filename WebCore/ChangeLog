@@ -1,3 +1,29 @@
+2010-07-30  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] Make the GLES2 texture map generic and teach ImageSkia and ImageBufferSkia about GLES2
+        https://bugs.webkit.org/show_bug.cgi?id=43218
+
+        This makes the GLES2Canvas' TextureHashMap key on void* instead of NativeImagePtr
+        to make it easier to use with other backends.  It also teaches ImageSkia how
+        to draw to a GLES2Canvas instead of a skia buffer.
+
+        No change in functionality (yet), no new tests.
+
+        * platform/graphics/chromium/GLES2Canvas.cpp:
+        (WebCore::GLES2Canvas::GLES2Canvas):
+        (WebCore::GLES2Canvas::createTexture):
+        (WebCore::GLES2Canvas::getTexture):
+        * platform/graphics/chromium/GLES2Canvas.h:
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::ImageBuffer::getUnmultipliedImageData):
+        (WebCore::ImageBuffer::getPremultipliedImageData):
+        * platform/graphics/skia/ImageSkia.cpp:
+        (WebCore::drawBitmapGLES2):
+        (WebCore::BitmapImage::draw):
+        (WebCore::BitmapImageSingleFrameSkia::draw):
+
 2010-07-30  Yong Li  <yoli@rim.com>
 
         Reviewed by Darin Adler.
