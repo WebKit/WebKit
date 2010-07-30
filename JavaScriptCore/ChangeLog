@@ -1,3 +1,17 @@
+2010-07-30  Rafael Antognolli  <antognolli@profusion.mobi>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Add library version and soname to EFL generated libraries and binary.
+        https://bugs.webkit.org/show_bug.cgi?id=43212
+
+        Add version and soname to libjavascriptcore.so and libwtf.so in case of
+        linking as shared libraries, and version to jsc executable.
+
+        * CMakeLists.txt:
+        * jsc/CMakeLists.txt:
+        * wtf/CMakeLists.txt:
+
 2010-07-30  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
 
         Reviewed by Simon Hausmann.

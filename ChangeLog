@@ -1,3 +1,14 @@
+2010-07-30  Rafael Antognolli  <antognolli@profusion.mobi>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Add library version and soname to EFL generated libraries and binary.
+        https://bugs.webkit.org/show_bug.cgi?id=43212
+
+        Make WebKit-EFL follow libtool soname versioning scheme.
+
+        * cmake/OptionsEfl.cmake: Added PROJECT_VERSION_PATCH to PROJECT_VERSION.
+
 2010-07-29  Martin Robinson  <mrobinson@igalia.com>
 
         Unreviewed build fix.

@@ -1,3 +1,17 @@
+2010-07-30  Rafael Antognolli  <antognolli@profusion.mobi>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Add library version and soname to EFL generated libraries and binary.
+        https://bugs.webkit.org/show_bug.cgi?id=43212
+
+        Add version and soname to libwebcore.so in case of linking as shared
+        library.
+
+        No new feature, so no new tests.
+
+        * CMakeLists.txt:
+
 2010-07-30  Steve Block  <steveblock@google.com>
 
         Reviewed by Steve Block.

@@ -1,3 +1,14 @@
+2010-07-30  Rafael Antognolli  <antognolli@profusion.mobi>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Add library version and soname to EFL generated libraries and binary.
+        https://bugs.webkit.org/show_bug.cgi?id=43212
+
+        Add version and soname to libewebkit.so.
+
+        * CMakeLists.txt:
+
 2010-07-26  Rafael Antognolli  <antognolli@profusion.mobi>
 
         Reviewed by Antonio Gomes.
