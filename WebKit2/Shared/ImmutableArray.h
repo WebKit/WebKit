@@ -35,41 +35,33 @@ namespace WebKit {
 
 class ImmutableArray : public APIObject {
 public:
-    struct ImmutableArrayCallbacks {
-        typedef void (*ImmutableArrayCallback)(const void*);
-        ImmutableArrayCallback ref;
-        ImmutableArrayCallback deref;
-    };
-
     static PassRefPtr<ImmutableArray> create()
     {
         return adoptRef(new ImmutableArray);
     }
-
-    static PassRefPtr<ImmutableArray> create(const void** entries, size_t size, const ImmutableArrayCallbacks* callbacks)
+    static PassRefPtr<ImmutableArray> create(APIObject** entries, size_t size)
     {
-        return adoptRef(new ImmutableArray(entries, size, callbacks));
+        return adoptRef(new ImmutableArray(entries, size));
     }
-    static PassRefPtr<ImmutableArray> adopt(void** entries, size_t size, const ImmutableArrayCallbacks* callbacks)
+    static PassRefPtr<ImmutableArray> adopt(APIObject** entries, size_t size)
     {
-        return adoptRef(new ImmutableArray(entries, size, callbacks, Adopt));
+        return adoptRef(new ImmutableArray(entries, size, Adopt));
     }
     ~ImmutableArray();
 
-    const void* at(size_t i) { ASSERT(i < m_size); return m_entries[i]; }
+    APIObject* at(size_t i) { ASSERT(i < m_size); return m_entries[i]; }
     size_t size() { return m_size; }
 
 private:
     ImmutableArray();
-    ImmutableArray(const void** entries, size_t size, const ImmutableArrayCallbacks*);
+    ImmutableArray(APIObject** entries, size_t size);
     enum AdoptTag { Adopt };
-    ImmutableArray(void** entries, size_t size, const ImmutableArrayCallbacks*, AdoptTag);
+    ImmutableArray(APIObject** entries, size_t size, AdoptTag);
 
     virtual Type type() const { return TypeArray; }
 
-    void** m_entries;
+    APIObject** m_entries;
     size_t m_size;
-    ImmutableArrayCallbacks m_callbacks;
 };
 
 } // namespace WebKit

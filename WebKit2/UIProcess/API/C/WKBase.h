@@ -33,8 +33,8 @@
 #endif
 
 typedef uint32_t WKTypeID;
+typedef void* WKTypeRef;
 
-typedef struct OpaqueWKTypeRef* WKTypeRef;
 typedef struct OpaqueWKArrayRef* WKArrayRef;
 typedef struct OpaqueWKBackForwardListItemRef* WKBackForwardListItemRef;
 typedef struct OpaqueWKBackForwardListRef* WKBackForwardListRef;

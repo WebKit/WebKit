@@ -37,41 +37,41 @@ static WKBundleRef globalBundle;
 
 // WKBundlePageClient
 
-void _didStartProvisionalLoadForFrame(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo)
+void didStartProvisionalLoadForFrame(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo)
 {
 }
 
-void _didReceiveServerRedirectForProvisionalLoadForFrame(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo)
+void didReceiveServerRedirectForProvisionalLoadForFrame(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo)
 {
 }
 
-void _didFailProvisionalLoadWithErrorForFrame(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo)
+void didFailProvisionalLoadWithErrorForFrame(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo)
 {
 }
 
-void _didCommitLoadForFrame(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo)
+void didCommitLoadForFrame(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo)
 {
 }
 
-void _didFinishLoadForFrame(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo)
+void didFinishLoadForFrame(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo)
 {
 }
 
-void _didFailLoadWithErrorForFrame(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo)
+void didFailLoadWithErrorForFrame(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo)
 {
 }
 
-void _didReceiveTitleForFrame(WKBundlePageRef page, WKStringRef title, WKBundleFrameRef frame, const void *clientInfo)
+void didReceiveTitleForFrame(WKBundlePageRef page, WKStringRef title, WKBundleFrameRef frame, const void *clientInfo)
 {
 }
 
-void _didClearWindowForFrame(WKBundlePageRef page, WKBundleFrameRef frame, JSGlobalContextRef context, JSObjectRef window, const void *clientInfo)
+void didClearWindowForFrame(WKBundlePageRef page, WKBundleFrameRef frame, JSGlobalContextRef context, JSObjectRef window, const void *clientInfo)
 {
     WKURLRef wkURL = WKBundleFrameCopyURL(WKBundlePageGetMainFrame(page));
     CFURLRef cfURL = WKURLCopyCFURL(0, wkURL);
     WKURLRelease(wkURL);
 
-    LOG(@"WKBundlePageClient - _didClearWindowForFrame %@", [(NSURL *)cfURL absoluteString]);
+    LOG(@"WKBundlePageClient - didClearWindowForFrame %@", [(NSURL *)cfURL absoluteString]);
     CFRelease(cfURL);
 
     WKStringRef message = WKStringCreateWithCFString(CFSTR("Window was cleared"));
@@ -82,35 +82,44 @@ void _didClearWindowForFrame(WKBundlePageRef page, WKBundleFrameRef frame, JSGlo
 
 // WKBundleClient
 
-void _didCreatePage(WKBundleRef bundle, WKBundlePageRef page, const void* clientInfo)
+void didCreatePage(WKBundleRef bundle, WKBundlePageRef page, const void* clientInfo)
 {
     LOG(@"WKBundleClient - didCreatePage\n");
 
     WKBundlePageLoaderClient client = {
         0,
         0,
-        _didStartProvisionalLoadForFrame,
-        _didReceiveServerRedirectForProvisionalLoadForFrame,
-        _didFailProvisionalLoadWithErrorForFrame,
-        _didCommitLoadForFrame,
-        _didFinishLoadForFrame,
-        _didFailLoadWithErrorForFrame,
-        _didReceiveTitleForFrame,
-        _didClearWindowForFrame
+        didStartProvisionalLoadForFrame,
+        didReceiveServerRedirectForProvisionalLoadForFrame,
+        didFailProvisionalLoadWithErrorForFrame,
+        didCommitLoadForFrame,
+        didFinishLoadForFrame,
+        didFailLoadWithErrorForFrame,
+        didReceiveTitleForFrame,
+        didClearWindowForFrame
     };
     WKBundlePageSetLoaderClient(page, &client);
 }
 
-void _willDestroyPage(WKBundleRef bundle, WKBundlePageRef page, const void* clientInfo)
+void willDestroyPage(WKBundleRef bundle, WKBundlePageRef page, const void* clientInfo)
 {
     LOG(@"WKBundleClient - willDestroyPage\n");
 }
 
-void _didRecieveMessage(WKBundleRef bundle, WKStringRef message, const void *clientInfo)
+void didRecieveMessage(WKBundleRef bundle, WKStringRef messageName, WKTypeRef messageBody, const void *clientInfo)
 {
-    CFStringRef cfMessage = WKStringCopyCFString(0, message);
-    LOG(@"WKBundleClient - didRecieveMessage %@\n", cfMessage);
-    CFRelease(cfMessage);
+    CFStringRef cfMessageName = WKStringCopyCFString(0, messageName);
+
+    WKTypeID typeID = WKGetTypeID(messageBody);
+    if (typeID == WKStringGetTypeID()) {
+        CFStringRef cfMessageBody = WKStringCopyCFString(0, (WKStringRef)messageBody);
+        LOG(@"WKBundleClient - didRecieveMessage %@ (Type=String) %@\n", cfMessageName, cfMessageBody);
+        CFRelease(cfMessageBody);
+    } else {
+        LOG(@"WKBundleClient - didRecieveMessage %@ (Type=Unhandeled)\n", cfMessageName);
+    }
+    
+    CFRelease(cfMessageName);
 }
 
 void WKBundleInitialize(WKBundleRef bundle)
@@ -120,9 +129,9 @@ void WKBundleInitialize(WKBundleRef bundle)
     WKBundleClient client = {
         0,
         0,
-        _didCreatePage,
-        _willDestroyPage,
-        _didRecieveMessage
+        didCreatePage,
+        willDestroyPage,
+        didRecieveMessage
     };
     WKBundleSetClient(bundle, &client);
 }

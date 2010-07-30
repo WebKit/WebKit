@@ -26,9 +26,7 @@
 #include "WebProcess.h"
 
 #include "InjectedBundle.h"
-#if PLATFORM(MAC)
-#include "MachPort.h"
-#endif
+#include "InjectedBundleMessageKinds.h"
 #include "RunLoop.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebFrame.h"
@@ -40,6 +38,10 @@
 #include <WebCore/PageGroup.h>
 #include <WebCore/SchemeRegistry.h>
 #include <wtf/PassRefPtr.h>
+
+#if PLATFORM(MAC)
+#include "MachPort.h"
+#endif
 
 #ifndef NDEBUG
 #include <WebCore/Cache.h>
@@ -101,14 +103,6 @@ void WebProcess::loadInjectedBundle(const String& path)
 void WebProcess::setApplicationCacheDirectory(const String& directory)
 {
     cacheStorage().setCacheDirectory(directory);
-}
-
-void WebProcess::forwardMessageToInjectedBundle(const String& message)
-{
-    if (!m_injectedBundle)
-        return;
-
-    m_injectedBundle->didReceiveMessage(message);
 }
 
 void WebProcess::registerURLSchemeAsEmptyDocument(const WebCore::String& urlScheme)
@@ -218,14 +212,6 @@ void WebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
                 createWebPage(pageID, viewSize, store, static_cast<DrawingArea::Type>(drawingAreaType));
                 return;
             }
-            case WebProcessMessage::PostMessage: {
-                String message;
-                if (!arguments->decode(CoreIPC::Out(message)))
-                    return;
-
-                forwardMessageToInjectedBundle(message);
-                return;
-            }
             case WebProcessMessage::RegisterURLSchemeAsEmptyDocument: {
                 String message;
                 if (!arguments->decode(CoreIPC::Out(message)))
@@ -245,6 +231,13 @@ void WebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
             }
 #endif
         }
+    }
+
+    if (messageID.is<CoreIPC::MessageClassInjectedBundle>()) {
+        if (!m_injectedBundle)
+            return;
+        m_injectedBundle->didReceiveMessage(connection, messageID, *arguments);    
+        return;
     }
 
     uint64_t pageID = arguments->destinationID();

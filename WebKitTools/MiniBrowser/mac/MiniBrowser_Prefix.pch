@@ -29,6 +29,8 @@
 
 #import <WebKit2/WebKit2.h>
 
+#define ENABLE_LOGGING 1
+
 #if ENABLE_LOGGING
 #define LOG NSLog
 #else

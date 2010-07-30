@@ -72,7 +72,7 @@ WK_EXPORT WKPreferencesRef WKContextGetPreferences(WKContextRef context);
 WK_EXPORT void WKContextSetHistoryClient(WKContextRef context, const WKContextHistoryClient* client);
 WK_EXPORT void WKContextSetInjectedBundleClient(WKContextRef context, const WKContextInjectedBundleClient* client);
 
-WK_EXPORT void WKContextPostMessageToInjectedBundle(WKContextRef context, WKStringRef message);
+WK_EXPORT void WKContextPostMessageToInjectedBundle(WKContextRef context, WKStringRef messageName, WKTypeRef messageBody);
 
 WK_EXPORT WKContextRef WKContextRetain(WKContextRef context);
 WK_EXPORT void WKContextRelease(WKContextRef context);

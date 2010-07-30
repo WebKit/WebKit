@@ -25,12 +25,17 @@
 
 #include "InjectedBundle.h"
 
+#include "Arguments.h"
+#include "ImmutableArray.h"
+#include "InjectedBundleMessageKinds.h"
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
 #include "WebCoreArgumentCoders.h"
+#include "WebPage.h"
 #include "WebProcess.h"
 #include "WebProcessProxyMessageKinds.h"
 #include <WebCore/PageGroup.h>
+#include <wtf/OwnArrayPtr.h>
 
 using namespace WebCore;
 
@@ -82,10 +87,100 @@ void InjectedBundle::willDestroyPage(WebPage* page)
         m_client.willDestroyPage(toRef(this), toRef(page), m_client.clientInfo);
 }
 
-void InjectedBundle::didReceiveMessage(const WebCore::String& message)
+void InjectedBundle::didReceiveMessage(const WebCore::String& messageName, APIObject* messageBody)
 {
     if (m_client.didReceiveMessage)
-        m_client.didReceiveMessage(toRef(this), toRef(message.impl()), m_client.clientInfo);
+        m_client.didReceiveMessage(toRef(this), toRef(messageName.impl()), toRef(messageBody), m_client.clientInfo);
+}
+
+namespace {
+
+// Decodes postMessage messages going from the UIProcess -> InjectedBundle
+
+//   - Array -> Array
+//   - String -> String
+//   - Page -> BundlePage
+
+class PostMessageDecoder {
+public:
+    PostMessageDecoder(APIObject** root)
+        : m_root(root)
+    {
+    }
+
+    static bool decode(CoreIPC::ArgumentDecoder& decoder, PostMessageDecoder& coder)
+    {
+        uint32_t type;
+        if (!decoder.decode(type))
+            return false;
+
+        switch (type) {
+            case APIObject::TypeArray: {
+                uint64_t size;
+                if (!decoder.decode(size))
+                    return false;
+                
+                OwnArrayPtr<APIObject*> array;
+                array.set(new APIObject*[size]);
+                
+                for (size_t i = 0; i < size; ++i) {
+                    APIObject* element;
+                    PostMessageDecoder messageCoder(&element);
+                    if (!decoder.decode(messageCoder))
+                        return false;
+                    array[i] = element;
+                }
+
+                *(coder.m_root) = ImmutableArray::create(array.release(), size).leakRef();
+                break;
+            }
+            case APIObject::TypeString: {
+                String string;
+                if (!decoder.decode(string))
+                    return false;
+                *(coder.m_root) = WebString::create(string).leakRef();
+                break;
+            }
+            case APIObject::TypePage: {
+                uint64_t pageID;
+                if (!decoder.decode(pageID))
+                    return false;
+                *(coder.m_root) = WebProcess::shared().webPage(pageID);
+                break;
+            }
+            default:
+                return false;
+        }
+
+        return true;
+    }
+
+private:
+    APIObject** m_root;
+};
+
+}
+
+void InjectedBundle::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder& arguments)
+{
+    switch (messageID.get<InjectedBundleMessage::Kind>()) {
+        case InjectedBundleMessage::PostMessage: {
+            String messageName;
+            // FIXME: This should be a RefPtr<APIObject>
+            APIObject* messageBody = 0;
+            PostMessageDecoder messageCoder(&messageBody);
+            if (!arguments.decode(CoreIPC::Out(messageName, messageCoder)))
+                return;
+
+            didReceiveMessage(messageName, messageBody);
+
+            messageBody->deref();
+
+            return;
+        }
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 } // namespace WebKit

@@ -31,6 +31,12 @@
 #include <WebCore/PlatformString.h>
 #include <wtf/PassRefPtr.h>
 
+namespace CoreIPC {
+    class ArgumentDecoder;
+    class Connection;
+    class MessageID;
+}
+
 namespace WebKit {
 
 #if PLATFORM(MAC)
@@ -66,7 +72,9 @@ public:
     // Callback hooks
     void didCreatePage(WebPage*);
     void willDestroyPage(WebPage*);
-    void didReceiveMessage(const WebCore::String&);
+    void didReceiveMessage(const WebCore::String&, APIObject*);
+
+    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder&);
 
 private:
     InjectedBundle(const WebCore::String&);

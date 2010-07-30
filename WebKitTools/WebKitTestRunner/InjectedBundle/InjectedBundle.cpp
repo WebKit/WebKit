@@ -58,9 +58,9 @@ void InjectedBundle::_willDestroyPage(WKBundleRef bundle, WKBundlePageRef page, 
     static_cast<InjectedBundle*>(const_cast<void*>(clientInfo))->willDestroyPage(page);
 }
 
-void InjectedBundle::_didReceiveMessage(WKBundleRef bundle, WKStringRef message, const void *clientInfo)
+void InjectedBundle::_didReceiveMessage(WKBundleRef bundle, WKStringRef messageName, WKTypeRef messageBody, const void *clientInfo)
 {
-    static_cast<InjectedBundle*>(const_cast<void*>(clientInfo))->didReceiveMessage(message);
+    static_cast<InjectedBundle*>(const_cast<void*>(clientInfo))->didReceiveMessage(messageName, messageBody);
 }
 
 void InjectedBundle::initialize(WKBundleRef bundle)
@@ -99,9 +99,9 @@ void InjectedBundle::willDestroyPage(WKBundlePageRef page)
     delete m_pages.take(page);
 }
 
-void InjectedBundle::didReceiveMessage(WKStringRef message)
+void InjectedBundle::didReceiveMessage(WKStringRef messageName, WKTypeRef messageBody)
 {
-    CFStringRef cfMessage = WKStringCopyCFString(0, message);
+    CFStringRef cfMessage = WKStringCopyCFString(0, messageName);
     if (CFEqual(cfMessage, CFSTR("BeginTest"))) {
         WKRetainPtr<WKStringRef> ackMessage(AdoptWK, WKStringCreateWithCFString(CFSTR("BeginTestAck")));
         WKBundlePostMessage(m_bundle, ackMessage.get());

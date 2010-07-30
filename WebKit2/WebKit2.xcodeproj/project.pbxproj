@@ -213,6 +213,7 @@
 		BCA8C6B011E3C08700812FB7 /* InjectedBundlePageUIClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA8C6AE11E3C08700812FB7 /* InjectedBundlePageUIClient.h */; };
 		BCA8C9DC11E4086500812FB7 /* WebBackForwardControllerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA8C9DA11E4086500812FB7 /* WebBackForwardControllerClient.h */; };
 		BCA8C9DD11E4086500812FB7 /* WebBackForwardControllerClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCA8C9DB11E4086500812FB7 /* WebBackForwardControllerClient.cpp */; };
+		BCB28CC0120233D9007D99BC /* InjectedBundleMessageKinds.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB28CBF120233D9007D99BC /* InjectedBundleMessageKinds.h */; };
 		BCB63478116BF10600603215 /* WebKit2.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB63477116BF10600603215 /* WebKit2.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BCB7346E11CEE3FF00EC5002 /* WebProcessProxyMessageKinds.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB7346D11CEE3FF00EC5002 /* WebProcessProxyMessageKinds.h */; };
 		BCB9E2431120DACA00A137E0 /* WebContext.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB9E2411120DACA00A137E0 /* WebContext.h */; };
@@ -244,7 +245,7 @@
 		BCD59800112B57BE00EC8C23 /* WebPreferences.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD597FE112B57BE00EC8C23 /* WebPreferences.cpp */; };
 		BCD598AC112B7FDF00EC8C23 /* WebPreferencesStore.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD598AA112B7FDF00EC8C23 /* WebPreferencesStore.h */; };
 		BCD598AD112B7FDF00EC8C23 /* WebPreferencesStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD598AB112B7FDF00EC8C23 /* WebPreferencesStore.cpp */; };
-		BCDB85821200EC57007254BE /* WKType.h in Headers */ = {isa = PBXBuildFile; fileRef = BCDB85801200EC57007254BE /* WKType.h */; };
+		BCDB85821200EC57007254BE /* WKType.h in Headers */ = {isa = PBXBuildFile; fileRef = BCDB85801200EC57007254BE /* WKType.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BCDB85831200EC57007254BE /* WKType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCDB85811200EC57007254BE /* WKType.cpp */; };
 		BCDB86C11200FB97007254BE /* WebURL.h in Headers */ = {isa = PBXBuildFile; fileRef = BCDB86C01200FB97007254BE /* WebURL.h */; };
 		BCDE059B11CDA8AE00E41AF1 /* WebContextInjectedBundleClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BCDE059911CDA8AE00E41AF1 /* WebContextInjectedBundleClient.h */; };
@@ -508,6 +509,7 @@
 		BCA8C6AE11E3C08700812FB7 /* InjectedBundlePageUIClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundlePageUIClient.h; sourceTree = "<group>"; };
 		BCA8C9DA11E4086500812FB7 /* WebBackForwardControllerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebBackForwardControllerClient.h; sourceTree = "<group>"; };
 		BCA8C9DB11E4086500812FB7 /* WebBackForwardControllerClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebBackForwardControllerClient.cpp; sourceTree = "<group>"; };
+		BCB28CBF120233D9007D99BC /* InjectedBundleMessageKinds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundleMessageKinds.h; sourceTree = "<group>"; };
 		BCB63477116BF10600603215 /* WebKit2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKit2.h; sourceTree = "<group>"; };
 		BCB7346D11CEE3FF00EC5002 /* WebProcessProxyMessageKinds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebProcessProxyMessageKinds.h; sourceTree = "<group>"; };
 		BCB86F4B116AAACD00CE20B7 /* WebKit2.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = WebKit2.xcconfig; sourceTree = "<group>"; };
@@ -1040,6 +1042,7 @@
 			children = (
 				BC9E969B11457F3F00870E71 /* DrawingAreaMessageKinds.h */,
 				BC9E969911457EDE00870E71 /* DrawingAreaProxyMessageKinds.h */,
+				BCB28CBF120233D9007D99BC /* InjectedBundleMessageKinds.h */,
 				BC111B60112F638300337BAB /* WebPageMessageKinds.h */,
 				BC111B61112F638300337BAB /* WebPageProxyMessageKinds.h */,
 				BC111B62112F638300337BAB /* WebProcessMessageKinds.h */,
@@ -1317,6 +1320,7 @@
 				1AE49A4911FFA8CE0048B464 /* JSNPMethod.h in Headers */,
 				BCDB85821200EC57007254BE /* WKType.h in Headers */,
 				BCDB86C11200FB97007254BE /* WebURL.h in Headers */,
+				BCB28CC0120233D9007D99BC /* InjectedBundleMessageKinds.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

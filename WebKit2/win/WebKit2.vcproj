@@ -448,6 +448,18 @@
 				Name="CoreIPCSupport"
 				>
 				<File
+					RelativePath="..\Shared\CoreIPCSupport\DrawingAreaMessageKinds.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\CoreIPCSupport\DrawingAreaProxyMessageKinds.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\CoreIPCSupport\InjectedBundleMessageKinds.h"
+					>
+				</File>
+				<File
 					RelativePath="..\Shared\CoreIPCSupport\WebPageMessageKinds.h"
 					>
 				</File>

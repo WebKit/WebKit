@@ -1,3 +1,38 @@
+2010-07-30  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=43274
+        Add first pass of structured message passing.
+
+        Update Minibrowser and WebKitTestRunner to work with the new post message
+        function.
+
+        * MiniBrowser/mac/AppDelegate.m:
+        (didRecieveMessageFromInjectedBundle):
+        (-[BrowserAppDelegate init]):
+        * MiniBrowser/mac/MiniBrowser_Prefix.pch:
+        * MiniBrowser/mac/WebBundle/WebBundleMain.m:
+        (didStartProvisionalLoadForFrame):
+        (didReceiveServerRedirectForProvisionalLoadForFrame):
+        (didFailProvisionalLoadWithErrorForFrame):
+        (didCommitLoadForFrame):
+        (didFinishLoadForFrame):
+        (didFailLoadWithErrorForFrame):
+        (didReceiveTitleForFrame):
+        (didClearWindowForFrame):
+        (didCreatePage):
+        (willDestroyPage):
+        (didRecieveMessage):
+        (WKBundleInitialize):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::_didReceiveMessage):
+        (WTR::InjectedBundle::didReceiveMessage):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::invoke):
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+
 2010-07-30  Anders Carlsson  <andersca@apple.com>
 
         Try to fix the layout test failures.

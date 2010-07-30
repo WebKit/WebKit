@@ -23,39 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "ImmutableArray.h"
+#ifndef InjectedBundleMessageKinds_h
+#define InjectedBundleMessageKinds_h
 
-namespace WebKit {
+// Messages sent from WebKit to the injected bundle.
 
-ImmutableArray::ImmutableArray()
-    : m_entries(0)
-    , m_size(0)
-{
+#include "MessageID.h"
+
+namespace InjectedBundleMessage {
+
+enum Kind {
+    PostMessage
+};
+
 }
 
-ImmutableArray::ImmutableArray(APIObject** entries, size_t size)
-    : m_entries(new APIObject*[size])
-    , m_size(size)
-{
-    memcpy(m_entries, entries, m_size);
-    for (size_t i = 0; i < m_size; ++i)
-        m_entries[i]->ref();
+namespace CoreIPC {
+
+template<> struct MessageKindTraits<InjectedBundleMessage::Kind> {
+    static const MessageClass messageClass = MessageClassInjectedBundle;
+};
+
 }
 
-ImmutableArray::ImmutableArray(APIObject** entries, size_t size, AdoptTag)
-    : m_entries(entries)
-    , m_size(size)
-{
-}
-
-ImmutableArray::~ImmutableArray()
-{
-    if (!m_entries)
-        return;
-
-    for (size_t i = 0; i < m_size; ++i)
-        m_entries[i]->deref();
-    delete [] m_entries;
-}
-
-} // namespace WebKit
+#endif // InjectedBundleMessageKinds_h

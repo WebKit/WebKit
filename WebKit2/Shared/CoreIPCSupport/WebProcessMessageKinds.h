@@ -37,7 +37,6 @@ enum Kind {
     SetApplicationCacheDirectory,
     SetShouldTrackVisitedLinks,
     Create,
-    PostMessage,
     RegisterURLSchemeAsEmptyDocument,
 #if PLATFORM(MAC)
     SetupAcceleratedCompositingPort

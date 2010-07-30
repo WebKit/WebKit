@@ -108,8 +108,9 @@ void TestInvocation::invoke()
     sizeWebViewForCurrentTest(m_pathOrURL);
     resetPreferencesToConsistentValues();
 
-    WKRetainPtr<WKStringRef> message(AdoptWK, WKStringCreateWithCFString(CFSTR("BeginTest")));
-    WKContextPostMessageToInjectedBundle(TestController::shared().context(), message.get());
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithCFString(CFSTR("BeginTest")));
+    WKRetainPtr<WKStringRef> messageBody(AdoptWK, WKStringCreateWithCFString(CFSTR("")));
+    WKContextPostMessageToInjectedBundle(TestController::shared().context(), messageName.get(), messageBody.get());
 
     runUntil(m_gotInitialResponse);
     if (m_error) {

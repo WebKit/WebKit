@@ -78,9 +78,10 @@ public:
 
     const WebCore::String& injectedBundlePath() const { return m_injectedBundlePath; }
 
+    void postMessageToInjectedBundle(const WebCore::String&, APIObject*);
+
     // InjectedBundle client
     void didReceiveMessageFromInjectedBundle(const WebCore::String&);
-    void postMessageToInjectedBundle(const WebCore::String&);
 
     // History client
     void didNavigateWithNavigationData(WebFrameProxy*, const WebNavigationDataStore&); 

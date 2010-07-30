@@ -36,15 +36,20 @@ static NSString *defaultURL = @"http://www.webkit.org/";
 
 @implementation BrowserAppDelegate
 
-void _didRecieveMessageFromInjectedBundle(WKContextRef context, WKStringRef message, const void *clientInfo)
+void didRecieveMessageFromInjectedBundle(WKContextRef context, WKStringRef message, const void *clientInfo)
 {
     CFStringRef cfMessage = WKStringCopyCFString(0, message);
     LOG(@"ContextInjectedBundleClient - didRecieveMessage - message: %@", cfMessage);
     CFRelease(cfMessage);
 
-    WKStringRef newMessage = WKStringCreateWithCFString(CFSTR("Roger that!"));
-    WKContextPostMessageToInjectedBundle(context, newMessage);
-    WKStringRelease(newMessage);
+    WKStringRef newMessageName = WKStringCreateWithCFString(CFSTR("Response"));
+    WKStringRef newMessageBody = WKStringCreateWithCFString(CFSTR("Roger that!"));
+
+    LOG(@"my info: %d", (int)WKGetTypeID(newMessageBody));
+
+    WKContextPostMessageToInjectedBundle(context, newMessageName, newMessageBody);
+    
+    WKStringRelease(newMessageName);
 }
 
 #pragma mark History Client Callbacks
@@ -128,7 +133,7 @@ static void populateVisitedLinks(WKContextRef context, const void *clientInfo)
         WKContextInjectedBundleClient bundleClient = {
             0,      /* version */
             0,      /* clientInfo */
-            _didRecieveMessageFromInjectedBundle
+            didRecieveMessageFromInjectedBundle
         };
         WKContextSetInjectedBundleClient(processContext, &bundleClient);
         WKContextSetHistoryClient(processContext, &historyClient);

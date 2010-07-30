@@ -1,3 +1,56 @@
+2010-07-29  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=43274
+        Add first pass of structured message passing.
+
+        - Only supports passing messages from the UIProcess -> InjectedBundle
+        - Only supports passing Strings, Arrays, and WebPage references (NOTE: There
+          currently isn't a way to make an array).
+        - Changed ImmutableArray to operate on APIObjects instead of void*'s and 
+          removed the retain/release abstraction.
+
+        * Platform/CoreIPC/MessageID.h:
+        (CoreIPC::):
+        * Shared/CoreIPCSupport/InjectedBundleMessageKinds.h: Added.
+        (InjectedBundleMessage::):
+        (CoreIPC::):
+        * Shared/CoreIPCSupport/WebProcessMessageKinds.h:
+        (WebProcessMessage::):
+        * Shared/ImmutableArray.cpp:
+        (WebKit::ImmutableArray::ImmutableArray):
+        (WebKit::ImmutableArray::~ImmutableArray):
+        * Shared/ImmutableArray.h:
+        (WebKit::ImmutableArray::create):
+        (WebKit::ImmutableArray::adopt):
+        (WebKit::ImmutableArray::at):
+        * UIProcess/API/C/WKBase.h:
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextPostMessageToInjectedBundle):
+        * UIProcess/API/C/WKContext.h:
+        * UIProcess/API/C/WKType.cpp:
+        (WKGetTypeID):
+        * UIProcess/API/C/WebKit2.h:
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::backListAsImmutableArrayWithLimit):
+        (WebKit::WebBackForwardList::forwardListAsImmutableArrayWithLimit):
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::postMessageToInjectedBundle):
+        (WebKit::WebContext::didReceiveMessageFromInjectedBundle):
+        * UIProcess/WebContext.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/c/WKBundle.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::didReceiveMessage):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::childFrames):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::didReceiveMessage):
+        * WebProcess/WebProcess.h:
+        * win/WebKit2.vcproj:
+
 2010-07-30  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

@@ -60,11 +60,11 @@ private:
 
     static void _didCreatePage(WKBundleRef bundle, WKBundlePageRef page, const void* clientInfo);
     static void _willDestroyPage(WKBundleRef bundle, WKBundlePageRef page, const void* clientInfo);
-    static void _didReceiveMessage(WKBundleRef bundle, WKStringRef message, const void *clientInfo);
+    static void _didReceiveMessage(WKBundleRef bundle, WKStringRef messageName, WKTypeRef messageBody, const void *clientInfo);
 
     void didCreatePage(WKBundlePageRef page);
     void willDestroyPage(WKBundlePageRef page);
-    void didReceiveMessage(WKStringRef message);
+    void didReceiveMessage(WKStringRef messageName, WKTypeRef messageBody);
 
     void reset();
 

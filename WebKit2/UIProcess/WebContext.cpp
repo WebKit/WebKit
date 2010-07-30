@@ -25,6 +25,8 @@
 
 #include "WebContext.h"
 
+#include "ImmutableArray.h"
+#include "InjectedBundleMessageKinds.h"
 #include "RunLoop.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPageNamespace.h"
@@ -165,19 +167,70 @@ void WebContext::preferencesDidChange()
     }
 }
 
+namespace {
+
+// Encodes postMessage messages from the UIProcess -> InjectedBundle
+
+//   - Array -> Array
+//   - String -> String
+//   - Page -> BundlePage
+
+class PostMessageEncoder {
+public:
+    PostMessageEncoder(APIObject* root) 
+        : m_root(root)
+    {
+    }
+
+    void encode(CoreIPC::ArgumentEncoder& encoder) const 
+    {
+        APIObject::Type type = m_root->type();
+        encoder.encode(static_cast<uint32_t>(type));
+        switch (type) {
+            case APIObject::TypeArray: {
+                ImmutableArray* array = static_cast<ImmutableArray*>(m_root);
+                encoder.encode(static_cast<uint64_t>(array->size()));
+                for (size_t i = 0; i < array->size(); ++i)
+                    encoder.encode(PostMessageEncoder(array->at(i)));
+                break;
+            }
+            case APIObject::TypeString: {
+                WebString* string = static_cast<WebString*>(m_root);
+                encoder.encode(string->string());
+                break;
+            }
+            case APIObject::TypePage: {
+                WebPageProxy* page = static_cast<WebPageProxy*>(m_root);
+                encoder.encode(page->pageID());
+                break;
+            }
+            default:
+                ASSERT_NOT_REACHED();
+                break;
+        }
+    }
+
+private:
+    APIObject* m_root;
+};
+
+}
+
+void WebContext::postMessageToInjectedBundle(const String& messageName, APIObject* messageBody)
+{
+    if (!m_process)
+        return;
+
+    // FIXME: We should consider returning false from this function if the messageBody cannot
+    // be encoded.
+    m_process->send(InjectedBundleMessage::PostMessage, 0, CoreIPC::In(messageName, PostMessageEncoder(messageBody)));
+}
+
 // InjectedBundle client
 
 void WebContext::didReceiveMessageFromInjectedBundle(const String& message)
 {
     m_injectedBundleClient.didReceiveMessageFromInjectedBundle(this, message);
-}
-
-void WebContext::postMessageToInjectedBundle(const String& message)
-{
-    if (!m_process)
-        return;
-
-    m_process->send(WebProcessMessage::PostMessage, 0, CoreIPC::In(message));
 }
 
 // HistoryClient

@@ -166,36 +166,20 @@ BackForwardListItemVector WebBackForwardList::forwardListWithLimit(unsigned limi
     return list;
 }
 
-// ImmutableArray::ImmutableArrayCallback [for WebBackForwardListItem] callbacks
-
-static void webBackForwardListItemRef(const void* item)
-{
-    static_cast<WebBackForwardListItem*>(const_cast<void*>(item))->ref();
-}
-
-static void webBackForwardListItemDeref(const void* item)
-{
-    static_cast<WebBackForwardListItem*>(const_cast<void*>(item))->deref();
-}
-
 PassRefPtr<ImmutableArray> WebBackForwardList::backListAsImmutableArrayWithLimit(unsigned limit)
 {
     unsigned size = std::min(static_cast<unsigned>(backListCount()), limit);
     if (!size)
         return ImmutableArray::create();
 
-    void** array = new void*[size];
+    APIObject** array = new APIObject*[size];
     for (unsigned i = std::max<int>(m_current - limit, 0), j = 0; i < m_current; ++i, ++j) {
-        WebBackForwardListItem* item = m_entries[i].get();
+        APIObject* item = m_entries[i].get();
         item->ref();
         array[j] = item;
     }
 
-    ImmutableArray::ImmutableArrayCallbacks callbacks = {
-        webBackForwardListItemRef,
-        webBackForwardListItemDeref
-    };
-    return ImmutableArray::adopt(array, size, &callbacks);
+    return ImmutableArray::adopt(array, size);
 }
 
 PassRefPtr<ImmutableArray> WebBackForwardList::forwardListAsImmutableArrayWithLimit(unsigned limit)
@@ -204,19 +188,15 @@ PassRefPtr<ImmutableArray> WebBackForwardList::forwardListAsImmutableArrayWithLi
     if (!size)
         return ImmutableArray::create();
 
-    void** array = new void*[size];
+    APIObject** array = new APIObject*[size];
     unsigned last = std::min(m_current + limit, static_cast<unsigned>(m_entries.size() - 1));
     for (unsigned i = m_current + 1, j = 0; i <= last; ++i, ++j) {
-        WebBackForwardListItem* item = m_entries[i].get();
+        APIObject* item = m_entries[i].get();
         item->ref();
         array[j] = item;
     }
 
-    ImmutableArray::ImmutableArrayCallbacks callbacks = {
-        webBackForwardListItemRef,
-        webBackForwardListItemDeref
-    };
-    return ImmutableArray::adopt(array, size, &callbacks);
+    return ImmutableArray::adopt(array, size);
 }
 
 } // namespace WebKit
