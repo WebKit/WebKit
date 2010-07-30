@@ -1560,6 +1560,8 @@ Node* InspectorDOMAgent::nodeForPath(const String& path)
 
     Vector<String> pathTokens;
     path.split(",", false, pathTokens);
+    if (!pathTokens.size())
+        return 0;
     for (size_t i = 0; i < pathTokens.size() - 1; i += 2) {
         bool success = true;
         unsigned childNumber = pathTokens[i].toUInt(&success);

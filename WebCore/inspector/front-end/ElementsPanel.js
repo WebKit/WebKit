@@ -161,7 +161,7 @@ WebInspector.ElementsPanel.prototype = {
         if (this.focusedDOMNode) {
             this._selectedPathOnReset = [];
             var node = this.focusedDOMNode;
-            while ("index" in node) {
+            while ("index" in node && node.nodeName && node.nodeName.length) {
                 this._selectedPathOnReset.push(node.nodeName);
                 this._selectedPathOnReset.push(node.index);
                 node = node.parentNode;
