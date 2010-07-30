@@ -3012,6 +3012,8 @@
             'platform/Logging.h',
             'platform/MIMETypeRegistry.cpp',
             'platform/MIMETypeRegistry.h',
+            'platform/mock/DeviceOrientationClientMock.cpp',
+            'platform/mock/DeviceOrientationClientMock.h',
             'platform/mock/GeolocationServiceMock.cpp',
             'platform/mock/GeolocationServiceMock.h',
             'platform/mock/SpeechInputClientMock.cpp',

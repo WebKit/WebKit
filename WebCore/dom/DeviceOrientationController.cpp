@@ -26,8 +26,6 @@
 #include "config.h"
 #include "DeviceOrientationController.h"
 
-#if ENABLE(DEVICE_ORIENTATION)
-
 #include "DeviceOrientation.h"
 #include "DeviceOrientationClient.h"
 #include "DeviceOrientationEvent.h"
@@ -39,6 +37,8 @@ DeviceOrientationController::DeviceOrientationController(Page* page, DeviceOrien
     , m_client(client)
     , m_timer(this, &DeviceOrientationController::timerFired)
 {
+    ASSERT(m_client);
+    m_client->setController(this);
 }
 
 void DeviceOrientationController::timerFired(Timer<DeviceOrientationController>* timer)
@@ -105,5 +105,3 @@ void DeviceOrientationController::didChangeDeviceOrientation(DeviceOrientation* 
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(DEVICE_ORIENTATION)

@@ -28172,6 +28172,14 @@
 				Name="mock"
 				>
 				<File
+					RelativePath="..\platform\mock\DeviceOrientationClientMock.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\mock\DeviceOrientationClientMock.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\mock\GeolocationServiceMock.cpp"
 					>
 				</File>

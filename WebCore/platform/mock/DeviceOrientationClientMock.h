@@ -1,5 +1,5 @@
 /*
- * Copyright 2010, The Android Open Source Project
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,35 +23,44 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "DeviceOrientationEvent.h"
+#ifndef DeviceOrientationClientMock_h
+#define DeviceOrientationClientMock_h
 
 #include "DeviceOrientation.h"
+#include "DeviceOrientationClient.h"
+#include "Timer.h"
+
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-DeviceOrientationEvent::~DeviceOrientationEvent()
-{
-}
+class DeviceOrientationController;
 
-DeviceOrientationEvent::DeviceOrientationEvent()
-    : m_orientation(DeviceOrientation::create())
-{
-}
+// A mock implementation of DeviceOrientationClient used to test the feature in
+// DumpRenderTree. Embedders should should configure the Page object to use this
+// client when running DumpRenderTree.
+class DeviceOrientationClientMock : public DeviceOrientationClient {
+public:
+    DeviceOrientationClientMock();
 
-DeviceOrientationEvent::DeviceOrientationEvent(const AtomicString& eventType, DeviceOrientation* orientation)
-    : Event(eventType, false, false) // Can't bubble, not cancelable
-    , m_orientation(orientation)
-{
-}
+    // DeviceOrientationClient
+    virtual void setController(DeviceOrientationController*);
+    virtual void startUpdating();
+    virtual void stopUpdating();
+    virtual DeviceOrientation* lastOrientation() const { return m_orientation.get(); }
 
-void DeviceOrientationEvent::initDeviceOrientationEvent(const AtomicString& type, bool bubbles, bool cancelable, DeviceOrientation* orientation)
-{
-    if (dispatched())
-        return;
+    void setOrientation(PassRefPtr<DeviceOrientation>);
 
-    initEvent(type, bubbles, cancelable);
-    m_orientation = orientation;
-}
+private:
+    void timerFired(Timer<DeviceOrientationClientMock>*);
+
+    RefPtr<DeviceOrientation> m_orientation;
+    DeviceOrientationController* m_controller;
+    Timer<DeviceOrientationClientMock> m_timer;
+    bool m_isUpdating;
+};
 
 } // namespace WebCore
+
+#endif // DeviceOrientationClientMock_h

@@ -61,7 +61,7 @@ my ($linkPrefetchSupport, $threeDCanvasSupport, $threeDRenderingSupport, $channe
     $svgSupport, $svgAnimationSupport, $svgAsImageSupport, $svgDOMObjCBindingsSupport, $svgFontsSupport,
     $svgForeignObjectSupport, $svgUseSupport, $videoSupport, $webSocketsSupport, $webTimingSupport, $wmlSupport, $wcssSupport, $xhtmlmpSupport, $workersSupport,
     $xpathSupport, $xsltSupport, $coverageSupport, $notificationsSupport, $blobSliceSupport, $tiledBackingStoreSupport,
-    $fileReaderSupport, $fileWriterSupport, $fileSystemSupport, $directoryUploadSupport);
+    $fileReaderSupport, $fileWriterSupport, $fileSystemSupport, $directoryUploadSupport, $deviceOrientationSupport);
 
 my @features = (
     { option => "link-prefetch", desc => "Toggle pre fetching support",
@@ -204,6 +204,9 @@ my @features = (
 
     { option => "file-system", desc => "Toggle FileSystem support",
       define => "ENABLE_FILE_SYSTEM", default => 0, value => \$fileSystemSupport },
+
+    { option => "device-orientation", desc => "Toggle DeviceOrientation support",
+      define => "ENABLE_DEVICE_ORIENTATION", default => 0, value => \$deviceOrientationSupport },
 );
 
 # Update defaults from Qt's project file

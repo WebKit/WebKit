@@ -1,3 +1,15 @@
+2010-07-30  Steve Block  <steveblock@google.com>
+
+        Reviewed by Steve Block.
+
+        Add LayoutTestController methods to test DeviceOrientation
+        https://bugs.webkit.org/show_bug.cgi?id=39589
+
+        * fast/dom/DeviceOrientation/basic-operation-expected.txt: Added.
+        * fast/dom/DeviceOrientation/basic-operation.html: Added.
+        * fast/dom/DeviceOrientation/script-tests/basic-operation.js: Added.
+        * platform/gtk/Skipped:
+
 2010-07-30  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.

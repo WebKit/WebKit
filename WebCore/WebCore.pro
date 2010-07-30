@@ -912,6 +912,7 @@ SOURCES += \
     platform/LinkHash.cpp \
     platform/Logging.cpp \
     platform/MIMETypeRegistry.cpp \
+    platform/mock/DeviceOrientationClientMock.cpp \
     platform/mock/GeolocationServiceMock.cpp \
     platform/mock/SpeechInputClientMock.cpp \
     platform/network/AuthenticationChallengeBase.cpp \
@@ -1631,6 +1632,7 @@ HEADERS += \
     platform/FileChooser.h \
     platform/GeolocationService.h \
     platform/image-decoders/ImageDecoder.h \
+    platform/mock/DeviceOrientationClientMock.h \
     platform/mock/GeolocationServiceMock.h \
     platform/mock/SpeechInputClientMock.h \
     platform/graphics/BitmapImage.h \

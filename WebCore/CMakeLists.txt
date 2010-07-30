@@ -1275,6 +1275,7 @@ SET(WebCore_SOURCES
     platform/image-decoders/jpeg/JPEGImageDecoder.cpp
     platform/image-decoders/png/PNGImageDecoder.cpp
 
+    platform/mock/DeviceOrientationClientMock.cpp
     platform/mock/GeolocationServiceMock.cpp
 
     platform/network/AuthenticationChallengeBase.cpp

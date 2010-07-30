@@ -1,5 +1,5 @@
 /*
- * Copyright 2010, The Android Open Source Project
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,34 +24,48 @@
  */
 
 #include "config.h"
-#include "DeviceOrientationEvent.h"
+#include "DeviceOrientationClientMock.h"
 
-#include "DeviceOrientation.h"
+#include "DeviceOrientationController.h"
 
 namespace WebCore {
 
-DeviceOrientationEvent::~DeviceOrientationEvent()
+DeviceOrientationClientMock::DeviceOrientationClientMock()
+    : m_controller(0)
+    , m_timer(this, &DeviceOrientationClientMock::timerFired)
+    , m_isUpdating(false)
 {
 }
 
-DeviceOrientationEvent::DeviceOrientationEvent()
-    : m_orientation(DeviceOrientation::create())
+void DeviceOrientationClientMock::setController(DeviceOrientationController* controller)
 {
+    m_controller = controller;
+    ASSERT(m_controller);
 }
 
-DeviceOrientationEvent::DeviceOrientationEvent(const AtomicString& eventType, DeviceOrientation* orientation)
-    : Event(eventType, false, false) // Can't bubble, not cancelable
-    , m_orientation(orientation)
+void DeviceOrientationClientMock::startUpdating()
 {
+    m_isUpdating = true;
 }
 
-void DeviceOrientationEvent::initDeviceOrientationEvent(const AtomicString& type, bool bubbles, bool cancelable, DeviceOrientation* orientation)
+void DeviceOrientationClientMock::stopUpdating()
 {
-    if (dispatched())
-        return;
+    m_isUpdating = false;
+    m_timer.stop();
+}
 
-    initEvent(type, bubbles, cancelable);
+void DeviceOrientationClientMock::setOrientation(PassRefPtr<DeviceOrientation> orientation)
+{
     m_orientation = orientation;
+    if (m_isUpdating && !m_timer.isActive())
+        m_timer.startOneShot(0);
+}
+
+void DeviceOrientationClientMock::timerFired(Timer<DeviceOrientationClientMock>* timer)
+{
+    ASSERT_UNUSED(timer, timer == &m_timer);
+    m_timer.stop();
+    m_controller->didChangeDeviceOrientation(m_orientation.get());
 }
 
 } // namespace WebCore

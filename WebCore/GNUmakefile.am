@@ -1897,6 +1897,8 @@ webcore_sources += \
 	WebCore/platform/Logging.h \
 	WebCore/platform/MIMETypeRegistry.cpp \
 	WebCore/platform/MIMETypeRegistry.h \
+	WebCore/platform/mock/DeviceOrientationClientMock.cpp \
+	WebCore/platform/mock/DeviceOrientationClientMock.h \
 	WebCore/platform/mock/GeolocationServiceMock.cpp \
 	WebCore/platform/mock/GeolocationServiceMock.h \
 	WebCore/platform/mock/SpeechInputClientMock.cpp \
