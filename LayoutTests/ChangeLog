@@ -1,3 +1,13 @@
+2010-07-30  Jeremy Orlow  <jorlow@chromium.org>
+
+        Another svg baseline that was wrong and now visually matches mac (minus
+        font issues, of course).  Unreviewed.
+
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-turb-01-f-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-turb-01-f-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-turb-01-f-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-turb-01-f-expected.png:
+
 2010-07-30  Renata Hodovan  <reni@inf.u-szeged.hu>
 
         Reviewed by Nikolas Zimmermann.
