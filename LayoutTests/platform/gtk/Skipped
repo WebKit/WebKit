@@ -5103,9 +5103,6 @@ svg/filters/subRegion-in-userSpace.svg
 # See Bug #33936 - https://bugs.webkit.org/show_bug.cgi?id=33936
 fast/css/button-height.html
 
-# See Bug #27637 - https://bugs.webkit.org/show_bug.cgi?id=27637
-fast/history/saves-state-after-fragment-nav.html
-
 # See Bug #27638 - https://bugs.webkit.org/show_bug.cgi?id=27638
 fast/dom/Window/window-screen-properties.html
 fast/forms/textarea-metrics.html

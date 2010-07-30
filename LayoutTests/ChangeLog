@@ -1,3 +1,14 @@
+2010-07-30  Martin Robinson  <mrobinson@igalia.com>
+
+        Unreviewed.
+
+        [Gtk] Needs a signal for didFinishDocumentLoadForFrame - fails fast/history/saves-state-after-fragment-nav.html
+        https://bugs.webkit.org/show_bug.cgi?id=27637
+
+        This feature was added in a different bug, so we can unskip this test.
+
+        * platform/gtk/Skipped:
+
 2010-07-29  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.
