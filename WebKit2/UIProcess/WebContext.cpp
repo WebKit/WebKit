@@ -106,6 +106,9 @@ void WebContext::ensureWebProcess()
     m_process = WebProcessManager::shared().getWebProcess(this);
 
     m_process->send(WebProcessMessage::SetShouldTrackVisitedLinks, 0, CoreIPC::In(m_historyClient.shouldTrackVisitedLinks()));
+
+    for (HashSet<String>::iterator it = m_schemesToRegisterAsEmptyDocument.begin(), end = m_schemesToRegisterAsEmptyDocument.end(); it != end; ++it)
+        m_process->send(WebProcessMessage::RegisterURLSchemeAsEmptyDocument, 0, CoreIPC::In(*it));
 }
 
 WebPageProxy* WebContext::createWebPage(WebPageNamespace* pageNamespace)
@@ -228,7 +231,10 @@ void WebContext::setAdditionalPluginsDirectory(const WebCore::String& directory)
 
 void WebContext::registerURLSchemeAsEmptyDocument(const String& urlScheme)
 {
-    ensureWebProcess();
+    m_schemesToRegisterAsEmptyDocument.add(urlScheme);
+
+    if (!hasValidProcess())
+        return;
 
     m_process->send(WebProcessMessage::RegisterURLSchemeAsEmptyDocument, 0, CoreIPC::In(urlScheme));
 }

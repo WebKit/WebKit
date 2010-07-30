@@ -33,6 +33,7 @@
 #include "WebHistoryClient.h"
 #include "WebProcessProxy.h"
 #include <WebCore/PlatformString.h>
+#include <WebCore/StringHash.h>
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 #include <wtf/PassRefPtr.h>
@@ -118,6 +119,8 @@ private:
     WebHistoryClient m_historyClient;
 
     PluginInfoStore m_pluginInfoStore;
+    
+    HashSet<WebCore::String> m_schemesToRegisterAsEmptyDocument;
 };
 
 } // namespace WebKit
