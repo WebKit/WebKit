@@ -27,6 +27,7 @@
 
 #include "config.h"
 #include "PluginObject.h"
+#include "PluginTest.h"
 
 #include "npapi.h"
 #include "npruntime.h"
@@ -37,7 +38,10 @@
 #include <string.h>
 #include <stdlib.h>
 #include <X11/Xlib.h>
+#include <string>
 
+using namespace std;
+ 
 extern "C" {
     NPError NP_Initialize (NPNetscapeFuncs *aMozillaVTable, NPPluginFuncs *aPluginVTable);
     NPError NP_Shutdown(void);
@@ -61,7 +65,9 @@ webkit_test_plugin_new_instance(NPMIMEType /*mimetype*/,
         instance->pdata = obj;
 
         for (int i = 0; i < argc; i++) {
-            if (strcasecmp(argn[i], "onstreamload") == 0 && !obj->onStreamLoad)
+            if (strcasecmp(argn[i], "test") == 0)
+                testIdentifier = argv[i];
+            else if (strcasecmp(argn[i], "onstreamload") == 0 && !obj->onStreamLoad)
                 obj->onStreamLoad = strdup(argv[i]);
             else if (strcasecmp(argn[i], "onStreamDestroy") == 0 && !obj->onStreamDestroy)
                 obj->onStreamDestroy = strdup(argv[i]);
@@ -82,8 +88,6 @@ webkit_test_plugin_new_instance(NPMIMEType /*mimetype*/,
                 executeScript(obj, "document.body.innerHTML = ''");
             else if (!strcasecmp(argn[i], "ondestroy"))
                 obj->onDestroy = strdup(argv[i]);
-            else if (strcasecmp(argn[i], "testdocumentopenindestroystream") == 0)
-                obj->testDocumentOpenInDestroyStream = TRUE;
             else if (strcasecmp(argn[i], "testwindowopen") == 0)
                 obj->testWindowOpen = TRUE;
             else if (strcasecmp(argn[i], "onSetWindow") == 0 && !obj->onSetWindow)
@@ -92,6 +96,8 @@ webkit_test_plugin_new_instance(NPMIMEType /*mimetype*/,
 
         browser->getvalue(instance, NPNVprivateModeBool, (void *)&obj->cachedPrivateBrowsingMode);
     }
+
+    obj->pluginTest = PluginTest::create(instance, testIdentifier);
 
     return NPERR_NO_ERROR;
 }
@@ -217,12 +223,7 @@ webkit_test_plugin_destroy_stream(NPP instance, NPStream* /*stream*/, NPError re
         }
     }
 
-    if (obj->testDocumentOpenInDestroyStream) {
-        testDocumentOpen(instance);
-        obj->testDocumentOpenInDestroyStream = FALSE;
-    }
-
-    return NPERR_NO_ERROR;
+    return obj->pluginTest->NPP_DestroyStream(stream, reason);
 }
 
 static void

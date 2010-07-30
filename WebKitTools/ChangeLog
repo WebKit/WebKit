@@ -1,5 +1,14 @@
 2010-07-29  Anders Carlsson  <andersca@apple.com>
 
+        Try to fix Windows and Unix builds.
+
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugin.vcproj:
+        * DumpRenderTree/unix/TestNetscapePlugin/TestNetscapePlugin.cpp:
+        (webkit_test_plugin_new_instance):
+        (webkit_test_plugin_destroy_stream):
+
+2010-07-29  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Refactor TestNetscapePlugin so tests can be split in separate files
