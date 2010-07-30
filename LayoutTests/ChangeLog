@@ -1,3 +1,23 @@
+2010-07-30  Andrew Wilson  <atwilson@chromium.org>
+
+        Unreviewed rollback for r64375 because it broke chromium tests
+        downstream due to expectation files that were not moved.
+
+        https://bugs.webkit.org/show_bug.cgi?id=43261
+
+        * fast/forms/input-appearance-numberandspeech-expected.txt: Renamed from LayoutTests/fast/speech/input-appearance-numberandspeech-expected.txt.
+        * fast/forms/input-appearance-numberandspeech.html: Renamed from LayoutTests/fast/speech/input-appearance-numberandspeech.html.
+        * fast/forms/input-appearance-searchandspeech-expected.txt: Renamed from LayoutTests/fast/speech/input-appearance-searchandspeech-expected.txt.
+        * fast/forms/input-appearance-searchandspeech.html: Renamed from LayoutTests/fast/speech/input-appearance-searchandspeech.html.
+        * fast/forms/input-appearance-speechbutton-expected.txt: Renamed from LayoutTests/fast/speech/input-appearance-speechbutton-expected.txt.
+        * fast/forms/input-appearance-speechbutton.html: Renamed from LayoutTests/fast/speech/input-appearance-speechbutton.html.
+        * platform/chromium/drt_expectations.txt:
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2010-07-30  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Davin Levin.

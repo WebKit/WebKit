@@ -5726,7 +5726,9 @@ fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Con
 editing/pasteboard/5761530-1.html
 
 # Speech input is not yet enabled.
-fast/speech
+fast/forms/input-appearance-numberandspeech.html
+fast/forms/input-appearance-searchandspeech.html
+fast/forms/input-appearance-speechbutton.html
 
 # Tests failing because we lack execCommand support.
 # https://bugs.webkit.org/show_bug.cgi?id=35351

@@ -5414,7 +5414,9 @@ fast/forms/input-appearance-spinbutton-disabled-readonly.html
 fast/forms/input-number-events.html
 
 # Speech input is not yet enabled.
-fast/speech
+fast/forms/input-appearance-numberandspeech.html
+fast/forms/input-appearance-searchandspeech.html
+fast/forms/input-appearance-speechbutton.html
 
 # [Qt] fast/dom/beforeload/script-before-load-dynamic.html is crashy-flakey
 # https://bugs.webkit.org/show_bug.cgi?id=41452

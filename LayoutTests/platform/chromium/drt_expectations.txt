@@ -6,10 +6,10 @@
 BUG_DRT : fast/backgrounds/animated-gif-as-background.html = IMAGE
 
 // Missing image resource
-BUG_DRT MAC : fast/speech/input-appearance-searchandspeech.html = IMAGE
-BUG_DRT MAC : fast/speech/input-appearance-speechbutton.html = IMAGE
-BUG_DRT WIN LINUX : fast/speech/input-appearance-searchandspeech.html = IMAGE+TEXT
-BUG_DRT WIN LINUX : fast/speech/input-appearance-speechbutton.html = IMAGE+TEXT
+BUG_DRT MAC : fast/forms/input-appearance-searchandspeech.html = IMAGE
+BUG_DRT MAC : fast/forms/input-appearance-speechbutton.html = IMAGE
+BUG_DRT WIN LINUX : fast/forms/input-appearance-searchandspeech.html = IMAGE+TEXT
+BUG_DRT WIN LINUX : fast/forms/input-appearance-speechbutton.html = IMAGE+TEXT
 
 BUG48431 : plugins/geturlnotify-during-document-teardown.html = TEXT
 BUG48431 : plugins/open-and-close-window-with-plugin.html = TEXT
