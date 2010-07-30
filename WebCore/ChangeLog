@@ -1,3 +1,60 @@
+2010-07-30  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Optimize SVGResources memory usage
+        https://bugs.webkit.org/show_bug.cgi?id=43236
+
+        Instead of storing pointers to all possible resources that could be applied to an element, group them in three categories:
+        clipper/filter/masker, marker-start/marker-mid/marker-end, and fill/stroke.
+
+        Only build the cached resources data for elements where the properties can be applied to. Maintain a static list of tagnames
+        for each of the three categories, to avoid doing unncessary work.
+
+        Doesn't affect any tests.
+
+        * rendering/SVGResources.cpp:
+        (WebCore::SVGResources::SVGResources):
+        (WebCore::clipperFilterMaskerTags):
+        (WebCore::markerTags):
+        (WebCore::fillAndStrokeTags):
+        (WebCore::SVGResources::buildCachedResources):
+        (WebCore::SVGResources::invalidateClient):
+        (WebCore::SVGResources::resourceDestroyed):
+        (WebCore::SVGResources::buildSetOfResources):
+        (WebCore::SVGResources::setClipper):
+        (WebCore::SVGResources::resetClipper):
+        (WebCore::SVGResources::setFilter):
+        (WebCore::SVGResources::resetFilter):
+        (WebCore::SVGResources::setMarkerStart):
+        (WebCore::SVGResources::resetMarkerStart):
+        (WebCore::SVGResources::setMarkerMid):
+        (WebCore::SVGResources::resetMarkerMid):
+        (WebCore::SVGResources::setMarkerEnd):
+        (WebCore::SVGResources::resetMarkerEnd):
+        (WebCore::SVGResources::setMasker):
+        (WebCore::SVGResources::resetMasker):
+        (WebCore::SVGResources::setFill):
+        (WebCore::SVGResources::resetFill):
+        (WebCore::SVGResources::setStroke):
+        (WebCore::SVGResources::resetStroke):
+        (WebCore::SVGResources::dump):
+        * rendering/SVGResources.h:
+        (WebCore::SVGResources::clipper):
+        (WebCore::SVGResources::filter):
+        (WebCore::SVGResources::markerStart):
+        (WebCore::SVGResources::markerMid):
+        (WebCore::SVGResources::markerEnd):
+        (WebCore::SVGResources::masker):
+        (WebCore::SVGResources::fill):
+        (WebCore::SVGResources::stroke):
+        (WebCore::SVGResources::ClipperFilterMaskerData::ClipperFilterMaskerData):
+        (WebCore::SVGResources::ClipperFilterMaskerData::create):
+        (WebCore::SVGResources::MarkerData::MarkerData):
+        (WebCore::SVGResources::MarkerData::create):
+        (WebCore::SVGResources::FillStrokeData::FillStrokeData):
+        (WebCore::SVGResources::FillStrokeData::create):
+
 2010-07-26  Andrei Popescu  <andreip@google.com>
 
         Reviewed by Jeremy Orlow.
