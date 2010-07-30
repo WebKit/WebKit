@@ -30,15 +30,10 @@
 #include "WKCACFLayer.h"
 
 #include "WKCACFLayerRenderer.h"
-#include <wtf/text/CString.h>
-
+#include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <stdio.h>
-#include <QuartzCore/CACFContext.h>
-#include <QuartzCore/CARender.h>
-
-#ifndef NDEBUG
 #include <wtf/CurrentTime.h>
-#endif
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 
@@ -165,9 +160,9 @@ WKCACFLayer::~WKCACFLayer()
     CACFLayerSetDisplayCallback(layer(), 0);
 }
 
-void WKCACFLayer::becomeRootLayerForContext(CACFContextRef context)
+void WKCACFLayer::becomeRootLayerForContext(WKCACFContext* context)
 {
-    CACFContextSetLayer(context, layer());
+    wkCACFContextSetLayer(context, layer());
     setNeedsCommit();
 }
 

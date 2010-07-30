@@ -1,5 +1,47 @@
 2010-07-30  Adam Roben  <aroben@apple.com>
 
+        Remove uses of CACFContextRef and CARender* from WebCore
+
+        These types are now wrapped in a WKCACFContext type exported by
+        WebKitSystemInterface.
+
+        Fixes <http://webkit.org/b/43244>.
+
+        Reviewed by Sam Weinig.
+
+        * platform/graphics/win/WKCACFContextFlusher.cpp:
+        (WebCore::WKCACFContextFlusher::addContext):
+        (WebCore::WKCACFContextFlusher::removeContext):
+        (WebCore::WKCACFContextFlusher::flushAllContexts):
+        * platform/graphics/win/WKCACFContextFlusher.h:
+        Changed to use WKCACFContext. We don't retain/release the context when
+        putting it into/taking it out of the set. WKCACFContext is not a
+        ref-counted type, so we can't retain/release it, but the
+        retain/release was also unnecessary as WKCACFLayerRenderer calls
+        removeContext before the context is destroyed.
+
+        * platform/graphics/win/WKCACFLayer.cpp:
+        (WebCore::WKCACFLayer::becomeRootLayerForContext):
+        * platform/graphics/win/WKCACFLayer.h:
+        Changed to use WKCACFContext.
+
+        * platform/graphics/win/WKCACFLayerRenderer.cpp:
+        (WebCore::WKCACFLayerRenderer::didFlushContext):
+        (WebCore::WKCACFLayerRenderer::WKCACFLayerRenderer):
+        (WebCore::WKCACFLayerRenderer::~WKCACFLayerRenderer):
+        (WebCore::WKCACFLayerRenderer::layerTreeDidChange):
+        (WebCore::WKCACFLayerRenderer::createRenderer):
+        (WebCore::WKCACFLayerRenderer::destroyRenderer):
+        (WebCore::WKCACFLayerRenderer::render): Also replaced uses of
+        CGSRegion with WebKitSystemInterface functions/types.
+        (WebCore::WKCACFLayerRenderer::resetDevice):
+        * platform/graphics/win/WKCACFLayerRenderer.h:
+        Replaced our CACFContextRef, CARenderContext, and CARenderOGLContext
+        with a single WKCACFContext, which wraps all three. We hold a bare
+        pointer to it and destroy it in our destructor.
+
+2010-07-30  Adam Roben  <aroben@apple.com>
+
         Remove knowledge of WKCACFContextFlusher from WKCACFLayer
 
         Fixes <http://webkit.org/b/43248> WKCACFLayer shouldn't know about
