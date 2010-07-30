@@ -25,45 +25,46 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef IndexedDatabaseRequest_h
-#define IndexedDatabaseRequest_h
 
-#include "ExceptionCode.h"
-#include "IndexedDatabase.h"
-#include "PlatformString.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
+#ifndef WebIDBFactory_h
+#define WebIDBFactory_h
 
-#if ENABLE(INDEXED_DATABASE)
+#include "WebCommon.h"
+#include "WebDOMStringList.h"
+#include "WebIDBCallbacks.h"
+#include "WebSecurityOrigin.h"
+#include "WebString.h"
 
-namespace WebCore {
+namespace WebKit {
 
-class IDBKey;
-class IDBKeyRange;
-class IDBRequest;
-class IndexedDatabase;
-class ScriptExecutionContext;
+class WebFrame;
+class WebIDBDatabase;
+class WebString;
+class WebSecurityOrigin;
 
-class IndexedDatabaseRequest : public RefCounted<IndexedDatabaseRequest> {
+// The entry point into the IndexedDatabase API.  These classes match their Foo and
+// FooSync counterparts in the spec, but operate only in an async manner.
+// http://dev.w3.org/2006/webapi/WebSimpleDB/
+class WebIDBFactory {
 public:
-    static PassRefPtr<IndexedDatabaseRequest> create(IndexedDatabase* indexedDatabase)
+    WEBKIT_API static WebIDBFactory* create();
+
+    virtual ~WebIDBFactory() { }
+
+    // The WebKit implementation of open ignores the WebFrame* parameter.
+    virtual void open(const WebString& name, const WebString& description, WebIDBCallbacks* callbacks, const WebSecurityOrigin& origin, WebFrame* webFrame)
     {
-        return adoptRef(new IndexedDatabaseRequest(indexedDatabase));
+        int exceptionCode;
+        open(name, description, callbacks, origin, webFrame, exceptionCode);
     }
-    ~IndexedDatabaseRequest();
-
-    PassRefPtr<IDBRequest> open(ScriptExecutionContext*, const String& name, const String& description);
-
-private:
-    IndexedDatabaseRequest(IndexedDatabase*);
-
-    RefPtr<IndexedDatabase> m_indexedDatabase;
+    // FIXME: Delete soon.  Compatability hack.
+    virtual void open(const WebString& name, const WebString& description,
+                      WebIDBCallbacks* callbacks, const WebSecurityOrigin& origin, WebFrame* webFrame, int& exceptionCode)
+    {
+        open(name, description, callbacks, origin, webFrame);
+    }
 };
 
-} // namespace WebCore
+} // namespace WebKit
 
-#endif
-
-#endif // IndexedDatabaseRequest_h
-
+#endif // WebIDBFactory_h

@@ -2832,6 +2832,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSIDBErrorEvent.h \
 	DerivedSources/WebCore/JSIDBEvent.cpp \
 	DerivedSources/WebCore/JSIDBEvent.h \
+	DerivedSources/WebCore/JSIDBFactory.cpp \
+	DerivedSources/WebCore/JSIDBFactory.h \
 	DerivedSources/WebCore/JSIDBIndexRequest.cpp \
 	DerivedSources/WebCore/JSIDBIndexRequest.h \
 	DerivedSources/WebCore/JSIDBKeyRange.cpp \
@@ -2841,9 +2843,7 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSIDBRequest.cpp \
 	DerivedSources/WebCore/JSIDBRequest.h \
 	DerivedSources/WebCore/JSIDBSuccessEvent.cpp \
-	DerivedSources/WebCore/JSIDBSuccessEvent.h \
-	DerivedSources/WebCore/JSIndexedDatabaseRequest.cpp \
-	DerivedSources/WebCore/JSIndexedDatabaseRequest.h
+	DerivedSources/WebCore/JSIDBSuccessEvent.h
 
 webcore_sources += \
 	WebCore/storage/IDBAny.cpp \
@@ -2876,12 +2876,12 @@ webcore_sources += \
 	WebCore/storage/IDBRequest.h \
 	WebCore/storage/IDBSuccessEvent.cpp \
 	WebCore/storage/IDBSuccessEvent.h \
-	WebCore/storage/IndexedDatabase.cpp \
-	WebCore/storage/IndexedDatabase.h \
-	WebCore/storage/IndexedDatabaseImpl.cpp \
-	WebCore/storage/IndexedDatabaseImpl.h \
-	WebCore/storage/IndexedDatabaseRequest.cpp \
-	WebCore/storage/IndexedDatabaseRequest.h
+	WebCore/storage/IDBFactory.cpp \
+	WebCore/storage/IDBFactory.h \
+	WebCore/storage/IDBFactoryBackendInterface.cpp \
+	WebCore/storage/IDBFactoryBackendInterface.h \
+	WebCore/storage/IDBFactoryBackendImpl.cpp \
+	WebCore/storage/IDBFactoryBackendImpl.h
 endif # END ENABLE_INDEXED_DATABASE
 
 # ----

@@ -25,21 +25,46 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include "config.h"
-#include "IndexedDatabase.h"
+#ifndef IDBFactory_h
+#define IDBFactory_h
 
-#include "ChromiumBridge.h"
+#include "DOMStringList.h"
+#include "ExceptionCode.h"
+#include "IDBFactoryBackendInterface.h"
+#include "PlatformString.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 #if ENABLE(INDEXED_DATABASE)
 
 namespace WebCore {
 
-PassRefPtr<IndexedDatabase> IndexedDatabase::create()
-{
-    return ChromiumBridge::indexedDatabase();
-}
+class IDBKey;
+class IDBKeyRange;
+class IDBRequest;
+class IDBFactoryBackendInterface;
+class ScriptExecutionContext;
+
+class IDBFactory : public RefCounted<IDBFactory> {
+public:
+    static PassRefPtr<IDBFactory> create(IDBFactoryBackendInterface* factory)
+    {
+        return adoptRef(new IDBFactory(factory));
+    }
+    ~IDBFactory();
+
+    PassRefPtr<IDBRequest> open(ScriptExecutionContext*, const String& name, const String& description);
+
+private:
+    IDBFactory(IDBFactoryBackendInterface*);
+
+    RefPtr<IDBFactoryBackendInterface> m_factoryBackend;
+};
 
 } // namespace WebCore
 
-#endif // ENABLE(INDEXED_DATABASE)
+#endif
+
+#endif // IDBFactory_h
 

@@ -29,10 +29,11 @@
  */
 
 #include "config.h"
-#include "WebIndexedDatabaseImpl.h"
+#include "WebIDBFactoryImpl.h"
 
+#include "DOMStringList.h"
 #include "IDBCallbacksProxy.h"
-#include "IndexedDatabaseImpl.h"
+#include "IDBFactoryBackendImpl.h"
 #include "SecurityOrigin.h"
 #include "WebIDBDatabaseError.h"
 #include <wtf/OwnPtr.h>
@@ -43,23 +44,23 @@ using namespace WebCore;
 
 namespace WebKit {
 
-WebIndexedDatabase* WebIndexedDatabase::create()
+WebIDBFactory* WebIDBFactory::create()
 {
-    return new WebIndexedDatabaseImpl();
+    return new WebIDBFactoryImpl();
 }
 
-WebIndexedDatabaseImpl::WebIndexedDatabaseImpl()
-    : m_indexedDatabase(WebCore::IndexedDatabaseImpl::create())
-{
-}
-
-WebIndexedDatabaseImpl::~WebIndexedDatabaseImpl()
+WebIDBFactoryImpl::WebIDBFactoryImpl()
+    : m_idbFactoryBackend(WebCore::IDBFactoryBackendImpl::create())
 {
 }
 
-void WebIndexedDatabaseImpl::open(const WebString& name, const WebString& description, WebIDBCallbacks* callbacks, const WebSecurityOrigin& origin, WebFrame*)
+WebIDBFactoryImpl::~WebIDBFactoryImpl()
 {
-    m_indexedDatabase->open(name, description, IDBCallbacksProxy::create(callbacks), origin, 0);
+}
+
+void WebIDBFactoryImpl::open(const WebString& name, const WebString& description, WebIDBCallbacks* callbacks, const WebSecurityOrigin& origin, WebFrame*)
+{
+    m_idbFactoryBackend->open(name, description, IDBCallbacksProxy::create(callbacks), origin, 0);
 }
 
 } // namespace WebKit

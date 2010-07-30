@@ -224,6 +224,7 @@ DOM_CLASSES = \
     IDBDatabaseRequest \
     IDBErrorEvent \
     IDBEvent \
+    IDBFactory \
     IDBIndexRequest \
     IDBKey \
     IDBKeyRange \
@@ -231,7 +232,6 @@ DOM_CLASSES = \
     IDBRequest \
     IDBSuccessEvent \
     ImageData \
-    IndexedDatabaseRequest \
     InjectedScriptHost \
     InspectorFrontendHost \
     KeyboardEvent \

@@ -29,9 +29,9 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBDatabaseRequest.h"
+#include "IDBFactory.h"
 #include "IDBIndexRequest.h"
 #include "IDBObjectStoreRequest.h"
-#include "IndexedDatabaseRequest.h"
 #include "SerializedScriptValue.h"
 
 namespace WebCore {
@@ -74,10 +74,10 @@ PassRefPtr<IDBObjectStoreRequest> IDBAny::idbObjectStoreRequest()
     return m_idbObjectStoreRequest;
 }
 
-PassRefPtr<IndexedDatabaseRequest> IDBAny::indexedDatabaseRequest()
+PassRefPtr<IDBFactory> IDBAny::idbFactory()
 {
-    ASSERT(m_type == IndexedDatabaseRequestType);
-    return m_indexedDatabaseRequest;
+    ASSERT(m_type == IDBFactoryType);
+    return m_idbFactory;
 }
 
 PassRefPtr<SerializedScriptValue> IDBAny::serializedScriptValue()
@@ -120,11 +120,11 @@ void IDBAny::set(PassRefPtr<IDBObjectStoreRequest> value)
     m_idbObjectStoreRequest = value;
 }
 
-void IDBAny::set(PassRefPtr<IndexedDatabaseRequest> value)
+void IDBAny::set(PassRefPtr<IDBFactory> value)
 {
     ASSERT(m_type == UndefinedType);
-    m_type = IndexedDatabaseRequestType;
-    m_indexedDatabaseRequest = value;
+    m_type = IDBFactoryType;
+    m_idbFactory = value;
 }
 
 void IDBAny::set(PassRefPtr<SerializedScriptValue> value)

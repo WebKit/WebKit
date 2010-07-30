@@ -841,8 +841,8 @@
         # Don't build StorageEventDispatcher.  We have our own implementation.
         '../storage/StorageEventDispatcher.cpp',
 
-        # Don't build IndexedDatabase.  We have our own implementation.
-        '../storage/IndexedDatabase.cpp',
+        # Don't build IDBFactoryBackendInterface.  We have our own implementation.
+        '../storage/IDBFactoryBackendInterface.cpp',
 
         # Use history/BackForwardListChromium.cpp instead.
         '../history/BackForwardListImpl.cpp',

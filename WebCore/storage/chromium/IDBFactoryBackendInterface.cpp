@@ -25,35 +25,21 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+#include "config.h"
+#include "IDBFactoryBackendInterface.h"
 
-#ifndef IndexedDatabaseProxy_h
-#define IndexedDatabaseProxy_h
-
-#include "IndexedDatabase.h"
+#include "ChromiumBridge.h"
 
 #if ENABLE(INDEXED_DATABASE)
 
-namespace WebKit { class WebIndexedDatabase; }
-
 namespace WebCore {
 
-class IndexedDatabaseProxy : public IndexedDatabase {
-public:
-    static PassRefPtr<IndexedDatabase> create();
-    virtual ~IndexedDatabaseProxy();
-
-    virtual void open(const String& name, const String& description, PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, Frame*);
-
-private:
-    IndexedDatabaseProxy();
-
-    // We don't own this pointer (unlike all the other proxy classes which do).
-    WebKit::WebIndexedDatabase* m_webIndexedDatabase;
-};
+PassRefPtr<IDBFactoryBackendInterface> IDBFactoryBackendInterface::create()
+{
+    return ChromiumBridge::idbFactory();
+}
 
 } // namespace WebCore
 
-#endif
-
-#endif // IndexedDatabaseProxy_h
+#endif // ENABLE(INDEXED_DATABASE)
 

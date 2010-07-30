@@ -10,6 +10,9 @@
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
  *     documentation and/or other materials provided with the distribution.
+ * 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
+ *     its contributors may be used to endorse or promote products derived
+ *     from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -22,13 +25,25 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+#include "config.h"
+#include "IDBFactoryBackendInterface.h"
 
-module storage {
+#include "IDBFactoryBackendImpl.h"
 
-    interface [
-        Conditional=INDEXED_DATABASE
-    ] IndexedDatabaseRequest {
-        [CallWith=ScriptExecutionContext] IDBRequest open(in DOMString name, in DOMString description);
-    };
+#if PLATFORM(CHROMIUM)
+#error "Chromium should not compile this file and instead define its own version of this factory that navigates the multi-process boundry."
+#endif
 
+#if ENABLE(INDEXED_DATABASE)
+
+namespace WebCore {
+
+PassRefPtr<IDBFactoryBackendInterface> IDBFactoryBackendInterface::create()
+{
+    return IDBFactoryBackendImpl::create();
 }
+
+} // namespace WebCore
+
+#endif // ENABLE(INDEXED_DATABASE)
+

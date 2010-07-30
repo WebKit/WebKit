@@ -26,27 +26,37 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebIndexedDatabaseImpl_h
-#define WebIndexedDatabaseImpl_h
+#ifndef IDBFactoryBackendProxy_h
+#define IDBFactoryBackendProxy_h
 
-#include "WebIndexedDatabase.h"
-#include <wtf/RefPtr.h>
+#include "IDBFactoryBackendInterface.h"
 
-namespace WebCore { class IndexedDatabase; }
+#if ENABLE(INDEXED_DATABASE)
 
-namespace WebKit {
+namespace WebKit { class WebIDBFactory; }
 
-class WebIndexedDatabaseImpl : public WebIndexedDatabase {
+namespace WebCore {
+
+class DOMStringList;
+
+class IDBFactoryBackendProxy : public IDBFactoryBackendInterface {
 public:
-    WebIndexedDatabaseImpl();
-    virtual ~WebIndexedDatabaseImpl();
+    static PassRefPtr<IDBFactoryBackendInterface> create();
+    virtual ~IDBFactoryBackendProxy();
 
-    virtual void open(const WebString& name, const WebString& description, WebIDBCallbacks*, const WebSecurityOrigin&, WebFrame*);
+    PassRefPtr<DOMStringList> databases(void) const;
+    virtual void open(const String& name, const String& description, PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, Frame*);
 
 private:
-    WTF::RefPtr<WebCore::IndexedDatabase> m_indexedDatabase;
+    IDBFactoryBackendProxy();
+
+    // We don't own this pointer (unlike all the other proxy classes which do).
+    WebKit::WebIDBFactory* m_webIDBFactory;
 };
 
-} // namespace WebKit
+} // namespace WebCore
 
-#endif // WebIndexedDatabaseImpl_h
+#endif
+
+#endif // IDBFactoryBackendProxy_h
+

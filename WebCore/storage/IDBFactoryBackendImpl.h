@@ -25,10 +25,10 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef IndexedDatabaseImpl_h
-#define IndexedDatabaseImpl_h
+#ifndef IDBFactoryBackendImpl_h
+#define IDBFactoryBackendImpl_h
 
-#include "IndexedDatabase.h"
+#include "IDBFactoryBackendInterface.h"
 #include "StringHash.h"
 #include <wtf/HashMap.h>
 
@@ -36,26 +36,28 @@
 
 namespace WebCore {
 
-class IndexedDatabaseImpl : public IndexedDatabase {
+class DOMStringList;
+
+class IDBFactoryBackendImpl : public IDBFactoryBackendInterface {
 public:
-    static PassRefPtr<IndexedDatabaseImpl> create();
-    virtual ~IndexedDatabaseImpl();
+    static PassRefPtr<IDBFactoryBackendImpl> create();
+    virtual ~IDBFactoryBackendImpl();
 
     virtual void open(const String& name, const String& description, PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, Frame*);
 
 private:
-    IndexedDatabaseImpl();
+    IDBFactoryBackendImpl();
 
     typedef HashMap<String, RefPtr<IDBDatabase> > IDBDatabaseMap;
     IDBDatabaseMap m_databaseMap;
 
     // We only create one instance of this class at a time.
-    static IndexedDatabaseImpl* indexedDatabaseImpl;
+    static IDBFactoryBackendImpl* idbFactoryBackendImpl;
 };
 
 } // namespace WebCore
 
 #endif
 
-#endif // IndexedDatabaseImpl_h
+#endif // IDBFactoryBackendImpl_h
 

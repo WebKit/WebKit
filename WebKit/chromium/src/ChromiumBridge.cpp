@@ -77,7 +77,7 @@
 #include "Cookie.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
-#include "IndexedDatabaseProxy.h"
+#include "IDBFactoryBackendProxy.h"
 #include "KURL.h"
 #include "NotImplemented.h"
 #include "PlatformContextSkia.h"
@@ -493,11 +493,11 @@ long long ChromiumBridge::databaseGetFileSize(const String& vfsFileName)
 
 // Indexed Database -----------------------------------------------------------
 
-PassRefPtr<IndexedDatabase> ChromiumBridge::indexedDatabase()
+PassRefPtr<IDBFactoryBackendInterface> ChromiumBridge::idbFactory()
 {
     // There's no reason why we need to allocate a new proxy each time, but
     // there's also no strong reason not to.
-    return IndexedDatabaseProxy::create();
+    return IDBFactoryBackendProxy::create();
 }
 
 // Keygen ---------------------------------------------------------------------

@@ -45296,7 +45296,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSIndexedDatabaserequest.cpp"
+					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSIDBFactory.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -45348,7 +45348,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSIndexedDatabaseRequest.h"
+					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSIDBFactory.h"
 					>
 				</File>
 				<File
@@ -50208,28 +50208,28 @@
 				RelativePath="..\storage\IDBSuccessEvent.h"
 				>
 			</File>
+            <File
+                RelativePath="..\storage\IDBFactory.cpp"
+                >
+            </File>
+            <File
+                RelativePath="..\storage\IDBFactory.h"
+                >
+            </File>
 			<File
-				RelativePath="..\storage\IndexedDatabase.cpp"
+				RelativePath="..\storage\IDBFactoryBackendInterface.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\storage\IndexedDatabase.h"
+				RelativePath="..\storage\IDBFactoryBackendInterface.h"
 				>
 			</File>
 			<File
-				RelativePath="..\storage\IndexedDatabaseImpl.cpp"
+				RelativePath="..\storage\IDBFactoryBackendImpl.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\storage\IndexedDatabaseImpl.h"
-				>
-			</File>
-			<File
-				RelativePath="..\storage\IndexedDatabaseRequest.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\storage\IndexedDatabaseRequest.h"
+				RelativePath="..\storage\IDBFactoryBackendImpl.h"
 				>
 			</File>
 			<File

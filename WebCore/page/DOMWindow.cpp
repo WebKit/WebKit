@@ -38,6 +38,7 @@
 #include "DocumentLoader.h"
 #include "DOMApplicationCache.h"
 #include "DOMSelection.h"
+#include "DOMStringList.h"
 #include "DOMTimer.h"
 #include "Database.h"
 #include "DatabaseCallback.h"
@@ -56,9 +57,9 @@
 #include "FrameView.h"
 #include "HTMLFrameOwnerElement.h"
 #include "History.h"
+#include "IDBFactory.h"
+#include "IDBFactoryBackendInterface.h"
 #include "IDBKeyRange.h"
-#include "IndexedDatabase.h"
-#include "IndexedDatabaseRequest.h"
 #include "InspectorController.h"
 #include "InspectorTimelineAgent.h"
 #include "Location.h"
@@ -484,8 +485,8 @@ void DOMWindow::clear()
 #endif
 
 #if ENABLE(INDEXED_DATABASE)
-    m_idb_key_range = 0;
-    m_indexedDatabaseRequest = 0;
+    m_idbFactory = 0;
+    m_idbKeyRange = 0;
 #endif
 }
 
@@ -687,10 +688,10 @@ void DOMWindow::pageDestroyed()
 }
 
 #if ENABLE(INDEXED_DATABASE)
-IndexedDatabaseRequest* DOMWindow::indexedDB() const
+IDBFactory* DOMWindow::indexedDB() const
 {
-    if (m_indexedDatabaseRequest)
-        return m_indexedDatabaseRequest.get();
+    if (m_idbFactory)
+        return m_idbFactory.get();
 
     Document* document = this->document();
     if (!document)
@@ -704,16 +705,16 @@ IndexedDatabaseRequest* DOMWindow::indexedDB() const
 
     // FIXME: See if indexedDatabase access is allowed.
 
-    m_indexedDatabaseRequest = IndexedDatabaseRequest::create(page->group().indexedDatabase());
-    return m_indexedDatabaseRequest.get();
+    m_idbFactory = IDBFactory::create(page->group().idbFactory());
+    return m_idbFactory.get();
 }
 
 IDBKeyRange* DOMWindow::iDBKeyRange() const
 {
-    if (!m_idb_key_range)
-        m_idb_key_range = IDBKeyRange::create(0, 0, 0);
+    if (!m_idbKeyRange)
+        m_idbKeyRange = IDBKeyRange::create(0, 0, 0);
 
-    return m_idb_key_range.get();
+    return m_idbKeyRange.get();
 }
 #endif
 

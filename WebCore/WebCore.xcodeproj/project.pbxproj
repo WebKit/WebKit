@@ -4941,8 +4941,8 @@
 		C585A69111D4FB08004C3E4B /* JSIDBRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A67911D4FB07004C3E4B /* JSIDBRequest.h */; };
 		C585A69211D4FB08004C3E4B /* JSIDBSuccessEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A67A11D4FB07004C3E4B /* JSIDBSuccessEvent.cpp */; };
 		C585A69311D4FB08004C3E4B /* JSIDBSuccessEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A67B11D4FB07004C3E4B /* JSIDBSuccessEvent.h */; };
-		C585A69611D4FB13004C3E4B /* JSIndexedDatabaseRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A69411D4FB13004C3E4B /* JSIndexedDatabaseRequest.cpp */; };
-		C585A69711D4FB13004C3E4B /* JSIndexedDatabaseRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A69511D4FB13004C3E4B /* JSIndexedDatabaseRequest.h */; };
+		C585A69611D4FB13004C3E4B /* JSIDBFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A69411D4FB13004C3E4B /* JSIDBFactory.cpp */; };
+		C585A69711D4FB13004C3E4B /* JSIDBFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A69511D4FB13004C3E4B /* JSIDBFactory.h */; };
 		C585A6CC11D4FB3D004C3E4B /* IDBAny.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A69811D4FB3D004C3E4B /* IDBAny.cpp */; };
 		C585A6CD11D4FB3D004C3E4B /* IDBAny.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A69911D4FB3D004C3E4B /* IDBAny.h */; };
 		C585A6CF11D4FB3D004C3E4B /* IDBCallbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A69B11D4FB3D004C3E4B /* IDBCallbacks.h */; };
@@ -4976,12 +4976,12 @@
 		C585A6F411D4FB3D004C3E4B /* IDBRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A6C011D4FB3D004C3E4B /* IDBRequest.h */; };
 		C585A6F611D4FB3D004C3E4B /* IDBSuccessEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A6C211D4FB3D004C3E4B /* IDBSuccessEvent.cpp */; };
 		C585A6F711D4FB3D004C3E4B /* IDBSuccessEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A6C311D4FB3D004C3E4B /* IDBSuccessEvent.h */; };
-		C585A6F911D4FB3D004C3E4B /* IndexedDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A6C511D4FB3D004C3E4B /* IndexedDatabase.cpp */; };
-		C585A6FA11D4FB3D004C3E4B /* IndexedDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A6C611D4FB3D004C3E4B /* IndexedDatabase.h */; };
-		C585A6FB11D4FB3D004C3E4B /* IndexedDatabaseImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A6C711D4FB3D004C3E4B /* IndexedDatabaseImpl.cpp */; };
-		C585A6FC11D4FB3D004C3E4B /* IndexedDatabaseImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A6C811D4FB3D004C3E4B /* IndexedDatabaseImpl.h */; };
-		C585A6FD11D4FB3D004C3E4B /* IndexedDatabaseRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A6C911D4FB3D004C3E4B /* IndexedDatabaseRequest.cpp */; };
-		C585A6FE11D4FB3D004C3E4B /* IndexedDatabaseRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A6CA11D4FB3D004C3E4B /* IndexedDatabaseRequest.h */; };
+		C585A6F911D4FB3D004C3E4B /* IDBFactoryBackendInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A6C511D4FB3D004C3E4B /* IDBFactoryBackendInterface.cpp */; };
+		C585A6FA11D4FB3D004C3E4B /* IDBFactoryBackendInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A6C611D4FB3D004C3E4B /* IDBFactoryBackendInterface.h */; };
+		C585A6FB11D4FB3D004C3E4B /* IDBFactoryBackendImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A6C711D4FB3D004C3E4B /* IDBFactoryBackendImpl.cpp */; };
+		C585A6FC11D4FB3D004C3E4B /* IDBFactoryBackendImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A6C811D4FB3D004C3E4B /* IDBFactoryBackendImpl.h */; };
+		C585A6FD11D4FB3D004C3E4B /* IDBFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A6C911D4FB3D004C3E4B /* IDBFactory.cpp */; };
+		C585A6FE11D4FB3D004C3E4B /* IDBFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A6CA11D4FB3D004C3E4B /* IDBFactory.h */; };
 		C5D4AA7A116BAFB60069CA93 /* GlyphMetricsMap.h in Headers */ = {isa = PBXBuildFile; fileRef = C5D4AA78116BAFB60069CA93 /* GlyphMetricsMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C5E9B67710697E1300C7BB1A /* StorageEventDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C5E9B67610697E1300C7BB1A /* StorageEventDispatcher.cpp */; };
 		C5EBDD84105EDDEC0056816F /* StorageEventDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = C5EBDD81105EDDEC0056816F /* StorageEventDispatcher.h */; };
@@ -10602,8 +10602,8 @@
 		C585A67911D4FB07004C3E4B /* JSIDBRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIDBRequest.h; sourceTree = "<group>"; };
 		C585A67A11D4FB07004C3E4B /* JSIDBSuccessEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBSuccessEvent.cpp; sourceTree = "<group>"; };
 		C585A67B11D4FB07004C3E4B /* JSIDBSuccessEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIDBSuccessEvent.h; sourceTree = "<group>"; };
-		C585A69411D4FB13004C3E4B /* JSIndexedDatabaseRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIndexedDatabaseRequest.cpp; sourceTree = "<group>"; };
-		C585A69511D4FB13004C3E4B /* JSIndexedDatabaseRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIndexedDatabaseRequest.h; sourceTree = "<group>"; };
+		C585A69411D4FB13004C3E4B /* JSIDBFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBFactory.cpp; sourceTree = "<group>"; };
+		C585A69511D4FB13004C3E4B /* JSIDBFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIDBFactory.h; sourceTree = "<group>"; };
 		C585A69811D4FB3D004C3E4B /* IDBAny.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBAny.cpp; sourceTree = "<group>"; };
 		C585A69911D4FB3D004C3E4B /* IDBAny.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBAny.h; sourceTree = "<group>"; };
 		C585A69A11D4FB3D004C3E4B /* IDBAny.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBAny.idl; sourceTree = "<group>"; };
@@ -10649,13 +10649,13 @@
 		C585A6C211D4FB3D004C3E4B /* IDBSuccessEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBSuccessEvent.cpp; sourceTree = "<group>"; };
 		C585A6C311D4FB3D004C3E4B /* IDBSuccessEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBSuccessEvent.h; sourceTree = "<group>"; };
 		C585A6C411D4FB3D004C3E4B /* IDBSuccessEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBSuccessEvent.idl; sourceTree = "<group>"; };
-		C585A6C511D4FB3D004C3E4B /* IndexedDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IndexedDatabase.cpp; sourceTree = "<group>"; };
-		C585A6C611D4FB3D004C3E4B /* IndexedDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexedDatabase.h; sourceTree = "<group>"; };
-		C585A6C711D4FB3D004C3E4B /* IndexedDatabaseImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IndexedDatabaseImpl.cpp; sourceTree = "<group>"; };
-		C585A6C811D4FB3D004C3E4B /* IndexedDatabaseImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexedDatabaseImpl.h; sourceTree = "<group>"; };
-		C585A6C911D4FB3D004C3E4B /* IndexedDatabaseRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IndexedDatabaseRequest.cpp; sourceTree = "<group>"; };
-		C585A6CA11D4FB3D004C3E4B /* IndexedDatabaseRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexedDatabaseRequest.h; sourceTree = "<group>"; };
-		C585A6CB11D4FB3D004C3E4B /* IndexedDatabaseRequest.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IndexedDatabaseRequest.idl; sourceTree = "<group>"; };
+		C585A6C511D4FB3D004C3E4B /* IDBFactoryBackendInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBFactoryBackendInterface.cpp; sourceTree = "<group>"; };
+		C585A6C611D4FB3D004C3E4B /* IDBFactoryBackendInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBFactoryBackendInterface.h; sourceTree = "<group>"; };
+		C585A6C711D4FB3D004C3E4B /* IDBFactoryBackendImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBFactoryBackendImpl.cpp; sourceTree = "<group>"; };
+		C585A6C811D4FB3D004C3E4B /* IDBFactoryBackendImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBFactoryBackendImpl.h; sourceTree = "<group>"; };
+		C585A6C911D4FB3D004C3E4B /* IDBFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBFactory.cpp; sourceTree = "<group>"; };
+		C585A6CA11D4FB3D004C3E4B /* IDBFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBFactory.h; sourceTree = "<group>"; };
+		C585A6CB11D4FB3D004C3E4B /* IDBFactory.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBFactory.idl; sourceTree = "<group>"; };
 		C5D4AA78116BAFB60069CA93 /* GlyphMetricsMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlyphMetricsMap.h; sourceTree = "<group>"; };
 		C5E9B67610697E1300C7BB1A /* StorageEventDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageEventDispatcher.cpp; sourceTree = "<group>"; };
 		C5EBDD81105EDDEC0056816F /* StorageEventDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageEventDispatcher.h; sourceTree = "<group>"; };
@@ -11360,13 +11360,13 @@
 				C585A6C211D4FB3D004C3E4B /* IDBSuccessEvent.cpp */,
 				C585A6C311D4FB3D004C3E4B /* IDBSuccessEvent.h */,
 				C585A6C411D4FB3D004C3E4B /* IDBSuccessEvent.idl */,
-				C585A6C511D4FB3D004C3E4B /* IndexedDatabase.cpp */,
-				C585A6C611D4FB3D004C3E4B /* IndexedDatabase.h */,
-				C585A6C711D4FB3D004C3E4B /* IndexedDatabaseImpl.cpp */,
-				C585A6C811D4FB3D004C3E4B /* IndexedDatabaseImpl.h */,
-				C585A6C911D4FB3D004C3E4B /* IndexedDatabaseRequest.cpp */,
-				C585A6CA11D4FB3D004C3E4B /* IndexedDatabaseRequest.h */,
-				C585A6CB11D4FB3D004C3E4B /* IndexedDatabaseRequest.idl */,
+				C585A6C511D4FB3D004C3E4B /* IDBFactoryBackendInterface.cpp */,
+				C585A6C611D4FB3D004C3E4B /* IDBFactoryBackendInterface.h */,
+				C585A6C711D4FB3D004C3E4B /* IDBFactoryBackendImpl.cpp */,
+				C585A6C811D4FB3D004C3E4B /* IDBFactoryBackendImpl.h */,
+				C585A6C911D4FB3D004C3E4B /* IDBFactory.cpp */,
+				C585A6CA11D4FB3D004C3E4B /* IDBFactory.h */,
+				C585A6CB11D4FB3D004C3E4B /* IDBFactory.idl */,
 				511F23130DC160DA004F0032 /* LocalStorageTask.cpp */,
 				511F23140DC160DA004F0032 /* LocalStorageTask.h */,
 				511F23150DC160DA004F0032 /* LocalStorageThread.cpp */,
@@ -14781,8 +14781,8 @@
 				C585A67911D4FB07004C3E4B /* JSIDBRequest.h */,
 				C585A67A11D4FB07004C3E4B /* JSIDBSuccessEvent.cpp */,
 				C585A67B11D4FB07004C3E4B /* JSIDBSuccessEvent.h */,
-				C585A69411D4FB13004C3E4B /* JSIndexedDatabaseRequest.cpp */,
-				C585A69511D4FB13004C3E4B /* JSIndexedDatabaseRequest.h */,
+				C585A69411D4FB13004C3E4B /* JSIDBFactory.cpp */,
+				C585A69511D4FB13004C3E4B /* JSIDBFactory.h */,
 				514C76350CE9225E007EF3CD /* JSSQLError.cpp */,
 				BC8243250D0CE8A200460C8F /* JSSQLError.h */,
 				B525A96411CA2340003A23A8 /* JSSQLException.cpp */,
@@ -18514,9 +18514,9 @@
 				4B3480940EEF50D400AC1B41 /* ImageSourceCG.h in Headers */,
 				316FE1180E6E1DA700BF6088 /* ImplicitAnimation.h in Headers */,
 				DB23C2CC0A508D29002489EB /* IndentOutdentCommand.h in Headers */,
-				C585A6FA11D4FB3D004C3E4B /* IndexedDatabase.h in Headers */,
-				C585A6FC11D4FB3D004C3E4B /* IndexedDatabaseImpl.h in Headers */,
-				C585A6FE11D4FB3D004C3E4B /* IndexedDatabaseRequest.h in Headers */,
+				C585A6FA11D4FB3D004C3E4B /* IDBFactoryBackendInterface.h in Headers */,
+				C585A6FC11D4FB3D004C3E4B /* IDBFactoryBackendImpl.h in Headers */,
+				C585A6FE11D4FB3D004C3E4B /* IDBFactory.h in Headers */,
 				F3644B001119805900E0D537 /* InjectedScript.h in Headers */,
 				7A0E76FA10BF08ED00A0276E /* InjectedScriptHost.h in Headers */,
 				A8CFF5E50A155A05000A4234 /* InlineBox.h in Headers */,
@@ -18749,7 +18749,7 @@
 				C585A69311D4FB08004C3E4B /* JSIDBSuccessEvent.h in Headers */,
 				BC6C49F40D7DBA0500FFA558 /* JSImageConstructor.h in Headers */,
 				A77979290D6B9E64003851B9 /* JSImageData.h in Headers */,
-				C585A69711D4FB13004C3E4B /* JSIndexedDatabaseRequest.h in Headers */,
+				C585A69711D4FB13004C3E4B /* JSIDBFactory.h in Headers */,
 				7A0E76DB10BF059800A0276E /* JSInjectedScriptHost.h in Headers */,
 				7A0E771F10C00DB100A0276E /* JSInspectorFrontendHost.h in Headers */,
 				49EECF07105070C400099FAB /* JSInt16Array.h in Headers */,
@@ -20932,9 +20932,9 @@
 				4B3480930EEF50D400AC1B41 /* ImageSourceCGMac.mm in Sources */,
 				316FE1170E6E1DA700BF6088 /* ImplicitAnimation.cpp in Sources */,
 				DB23C2CB0A508D29002489EB /* IndentOutdentCommand.cpp in Sources */,
-				C585A6F911D4FB3D004C3E4B /* IndexedDatabase.cpp in Sources */,
-				C585A6FB11D4FB3D004C3E4B /* IndexedDatabaseImpl.cpp in Sources */,
-				C585A6FD11D4FB3D004C3E4B /* IndexedDatabaseRequest.cpp in Sources */,
+				C585A6F911D4FB3D004C3E4B /* IDBFactoryBackendInterface.cpp in Sources */,
+				C585A6FB11D4FB3D004C3E4B /* IDBFactoryBackendImpl.cpp in Sources */,
+				C585A6FD11D4FB3D004C3E4B /* IDBFactory.cpp in Sources */,
 				F3644AFF1119805900E0D537 /* InjectedScript.cpp in Sources */,
 				7A0E76F910BF08ED00A0276E /* InjectedScriptHost.cpp in Sources */,
 				A8CFF5E60A155A05000A4234 /* InlineBox.cpp in Sources */,
@@ -21214,7 +21214,7 @@
 				BC6C49F30D7DBA0500FFA558 /* JSImageConstructor.cpp in Sources */,
 				A77979280D6B9E64003851B9 /* JSImageData.cpp in Sources */,
 				A7D0318E0E93540300E24ACD /* JSImageDataCustom.cpp in Sources */,
-				C585A69611D4FB13004C3E4B /* JSIndexedDatabaseRequest.cpp in Sources */,
+				C585A69611D4FB13004C3E4B /* JSIDBFactory.cpp in Sources */,
 				7A0E76DA10BF059800A0276E /* JSInjectedScriptHost.cpp in Sources */,
 				7A0E76D510BF050700A0276E /* JSInjectedScriptHostCustom.cpp in Sources */,
 				7A0E771E10C00DB100A0276E /* JSInspectorFrontendHost.cpp in Sources */,

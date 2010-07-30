@@ -753,9 +753,9 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	storage/IDBObjectStoreRequest.cpp \
 	storage/IDBRequest.cpp \
 	storage/IDBSuccessEvent.cpp \
-	storage/IndexedDatabase.cpp \
-	storage/IndexedDatabaseImpl.cpp \
-	storage/IndexedDatabaseRequest.cpp
+	storage/IDBFactory.cpp \
+	storage/IDBFactoryBackendInterface.cpp \
+	storage/IDBFactoryBackendImpl.cpp \
 	storage/LocalStorageTask.cpp \
 	storage/LocalStorageThread.cpp \
 	storage/OriginQuotaManager.cpp \

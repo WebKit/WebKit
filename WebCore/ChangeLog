@@ -1,3 +1,86 @@
+2010-07-26  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        [IndexedDB] IndexedDatabase should be called IDBFactory.
+        https://bugs.webkit.org/show_bug.cgi?id=42967
+
+        Rename IndexedDatabase to IDBFactory to match the specification.
+
+        Also implement the following new naming convention:
+        IDBFoo IDL interfaces are implemented using IDBFoo C++ classes.
+        IDBFoo objects have pointers to IDBFooBackendInterface objects.
+        IDBFooBackendInterface is implemented by IDBFooBackendImpl and
+        IDBFooBackendProxy (for Chromium).
+
+        No new tests needed, just renaming.
+
+        * Android.derived.jscbindings.mk:
+        * Android.derived.v8bindings.mk:
+        * Android.mk:
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSIDBAnyCustom.cpp:
+        (WebCore::toJS):
+        * bindings/v8/custom/V8IDBAnyCustom.cpp:
+        (WebCore::toV8):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::clear):
+        (WebCore::DOMWindow::indexedDB):
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::idbFactory):
+        * page/PageGroup.h:
+        * platform/chromium/ChromiumBridge.h:
+        * storage/IDBAny.cpp:
+        (WebCore::IDBAny::idbFactory):
+        (WebCore::IDBAny::set):
+        * storage/IDBAny.h:
+        (WebCore::IDBAny::):
+        * storage/IDBDatabaseRequest.cpp:
+        * storage/IDBFactory.cpp: Added.
+        (WebCore::IDBFactory::IDBFactory):
+        (WebCore::IDBFactory::~IDBFactory):
+        (WebCore::IDBFactory::open):
+        * storage/IDBFactory.h: Added.
+        (WebCore::IDBFactory::create):
+        * storage/IDBFactory.idl: Added.
+        * storage/IDBFactoryBackendInterface.cpp: Added.
+        (WebCore::IDBFactoryBackendInterface::create):
+        * storage/IDBFactoryBackendInterface.h: Added.
+        (WebCore::IDBFactoryBackendInterface::~IDBFactoryBackendInterface):
+        * storage/IDBFactoryBackendImpl.cpp: Added.
+        (WebCore::IDBFactoryBackendImpl::create):
+        (WebCore::IDBFactoryBackendImpl::IDBFactoryBackendImpl):
+        (WebCore::IDBFactoryBackendImpl::~IDBFactoryBackendImpl):
+        (WebCore::IDBFactoryBackendImpl::open):
+        * storage/IDBFactoryBackendImpl.h: Added.
+        * storage/IDBKeyRange.cpp:
+        (WebCore::IDBKeyRange::only):
+        (WebCore::IDBKeyRange::leftBound):
+        (WebCore::IDBKeyRange::rightBound):
+        (WebCore::IDBKeyRange::bound):
+        * storage/IDBKeyRange.h:
+        * storage/IDBKeyRange.idl:
+        * storage/IndexedDatabase.cpp: Removed.
+        * storage/IndexedDatabase.h: Removed.
+        * storage/IndexedDatabaseImpl.cpp: Removed.
+        * storage/IndexedDatabaseImpl.h: Removed.
+        * storage/IndexedDatabaseRequest.cpp: Removed.
+        * storage/IndexedDatabaseRequest.h: Removed.
+        * storage/IndexedDatabaseRequest.idl: Removed.
+        * storage/chromium/IDBFactoryBackendInterface.cpp: Added.
+        (WebCore::IDBFactoryBackendInterface::create):
+        * storage/chromium/IndexedDatabase.cpp: Removed.
+
 2010-07-29  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.

@@ -70,7 +70,7 @@ namespace WebCore {
     class GeolocationServiceChromium;
     class GraphicsContext;
     class Image;
-    class IndexedDatabase;
+    class IDBFactoryBackendInterface;
     class IntRect;
     class KURL;
     class String;
@@ -166,7 +166,7 @@ namespace WebCore {
         static long long databaseGetFileSize(const String& vfsFileName);
 
         // IndexedDB ----------------------------------------------------------
-        static PassRefPtr<IndexedDatabase> indexedDatabase();
+        static PassRefPtr<IDBFactoryBackendInterface> idbFactory();
 
         // JavaScript ---------------------------------------------------------
         static void notifyJSOutOfMemory(Frame*);

@@ -1,3 +1,37 @@
+2010-07-26  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        [IndexedDB] IndexedDatabase should be called IDBFactory.
+        https://bugs.webkit.org/show_bug.cgi?id=42967
+
+        * WebKit.gyp:
+        * public/WebIDBFactory.h: Added.
+        (WebKit::WebIDBFactory::~WebIDBFactory):
+        (WebKit::WebIDBFactory::databases):
+        (WebKit::WebIDBFactory::open):
+        * public/WebIndexedDatabase.h: Removed.
+        * public/WebKitClient.h:
+        (WebKit::WebKitClient::idbFactory):
+        * src/ChromiumBridge.cpp:
+        (WebCore::ChromiumBridge::idbFactory):
+        * src/IDBFactoryBackendProxy.cpp: Added.
+        (WebCore::IDBFactoryBackendProxy::create):
+        (WebCore::IDBFactoryBackendProxy::IDBFactoryBackendProxy):
+        (WebCore::IDBFactoryBackendProxy::~IDBFactoryBackendProxy):
+        (WebCore::IDBFactoryBackendProxy::open):
+        * src/IDBFactoryBackendProxy.h: Added.
+        * src/IndexedDatabaseProxy.cpp: Removed.
+        * src/IndexedDatabaseProxy.h: Removed.
+        * src/WebIDBFactoryImpl.cpp: Added.
+        (WebKit::WebIDBFactory::create):
+        (WebKit::WebIDBFactoryImpl::WebIDBFactoryImpl):
+        (WebKit::WebIDBFactoryImpl::~WebIDBFactoryImpl):
+        (WebKit::WebIDBFactoryImpl::open):
+        * src/WebIDBFactoryImpl.h: Added.
+        * src/WebIndexedDatabaseImpl.cpp: Removed.
+        * src/WebIndexedDatabaseImpl.h: Removed.
+
 2010-07-29  Andrei Popescu  <andreip@google.com>
 
         Reviewed by Jeremy Orlow.

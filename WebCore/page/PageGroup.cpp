@@ -30,7 +30,7 @@
 #include "ChromeClient.h"
 #include "Document.h"
 #include "Frame.h"
-#include "IndexedDatabase.h"
+#include "IDBFactoryBackendInterface.h"
 #include "Page.h"
 #include "Settings.h"
 #include "StorageNamespace.h"
@@ -203,13 +203,13 @@ StorageNamespace* PageGroup::localStorage()
 #endif
 
 #if ENABLE(INDEXED_DATABASE)
-IndexedDatabase* PageGroup::indexedDatabase()
+IDBFactoryBackendInterface* PageGroup::idbFactory()
 {
     // Do not add page setting based access control here since this object is shared by all pages in
     // the group and having per-page controls is misleading.
-    if (!m_indexedDatabase)
-        m_indexedDatabase = IndexedDatabase::create();
-    return m_indexedDatabase.get();
+    if (!m_factoryBackend)
+        m_factoryBackend = IDBFactoryBackendInterface::create();
+    return m_factoryBackend.get();
 }
 #endif
 

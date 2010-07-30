@@ -49,6 +49,7 @@ public:
     {
         return adoptRef(new IDBKeyRange(left, right, flags));
     }
+
     ~IDBKeyRange() { }
 
 
@@ -60,6 +61,7 @@ public:
     static PassRefPtr<IDBKeyRange> leftBound(PassRefPtr<IDBKey> bound, bool open = false);
     static PassRefPtr<IDBKeyRange> rightBound(PassRefPtr<IDBKey> bound, bool open = false);
     static PassRefPtr<IDBKeyRange> bound(PassRefPtr<IDBKey> left, PassRefPtr<IDBKey> right, bool openLeft = false, bool openRight = false);
+
 private:
     IDBKeyRange(PassRefPtr<IDBKey> left, PassRefPtr<IDBKey> right, unsigned short flags);
 

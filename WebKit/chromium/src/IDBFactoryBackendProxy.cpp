@@ -26,44 +26,45 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebIndexedDatabase_h
-#define WebIndexedDatabase_h
+#include "config.h"
+#include "IDBFactoryBackendProxy.h"
 
-#include "WebCommon.h"
-#include "WebIDBCallbacks.h"
-#include "WebSecurityOrigin.h"
-#include "WebString.h"
+#include "DOMStringList.h"
+#include "IDBDatabaseError.h"
+#include "IDBDatabaseProxy.h"
+#include "WebFrameImpl.h"
+#include "WebIDBCallbacksImpl.h"
+#include "WebIDBDatabase.h"
+#include "WebIDBDatabaseError.h"
+#include "WebIDBFactory.h"
+#include "WebKit.h"
+#include "WebKitClient.h"
 
-namespace WebKit {
+#if ENABLE(INDEXED_DATABASE)
 
-class WebFrame;
-class WebIDBDatabase;
-class WebString;
-class WebSecurityOrigin;
+namespace WebCore {
 
-// The entry point into the IndexedDatabase API.  These classes match their _____Request and
-// _____Sync counterparts in the spec, but operate only in an async manner.
-// http://dev.w3.org/2006/webapi/WebSimpleDB/
-class WebIndexedDatabase {
-public:
-    WEBKIT_API static WebIndexedDatabase* create();
+PassRefPtr<IDBFactoryBackendInterface> IDBFactoryBackendProxy::create()
+{
+    return adoptRef(new IDBFactoryBackendProxy());
+}
 
-    virtual ~WebIndexedDatabase() { }
+IDBFactoryBackendProxy::IDBFactoryBackendProxy()
+    : m_webIDBFactory(WebKit::webKitClient()->idbFactory())
+{
+}
 
-    // The WebKit implementation of open ignores the WebFrame* parameter.
-    virtual void open(const WebString& name, const WebString& description, WebIDBCallbacks* callbacks, const WebSecurityOrigin& origin, WebFrame* webFrame)
-    {
-        int exceptionCode;
-        open(name, description, callbacks, origin, webFrame, exceptionCode);
-    }
-    // FIXME: Delete soon.  Compatability hack.
-    virtual void open(const WebString& name, const WebString& description,
-                      WebIDBCallbacks* callbacks, const WebSecurityOrigin& origin, WebFrame* webFrame, int& exceptionCode)
-    {
-        open(name, description, callbacks, origin, webFrame);
-    }
-};
+IDBFactoryBackendProxy::~IDBFactoryBackendProxy()
+{
+}
 
-} // namespace WebKit
+void IDBFactoryBackendProxy::open(const String& name, const String& description, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> origin, Frame* frame)
+{
+    WebKit::WebFrame* webFrame = WebKit::WebFrameImpl::fromFrame(frame);
+    m_webIDBFactory->open(name, description, new WebIDBCallbacksImpl(callbacks), origin, webFrame);
+}
 
-#endif // WebIndexedDatabase_h
+} // namespace WebCore
+
+#endif // ENABLE(INDEXED_DATABASE)
+

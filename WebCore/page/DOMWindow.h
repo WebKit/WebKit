@@ -53,8 +53,8 @@ namespace WebCore {
     class FloatRect;
     class Frame;
     class History;
+    class IDBFactory;
     class IDBKeyRange;
-    class IndexedDatabaseRequest;
     class InspectorTimelineAgent;
     class Location;
     class StyleMedia;
@@ -232,8 +232,8 @@ namespace WebCore {
         void pageDestroyed();
 
 #if ENABLE(INDEXED_DATABASE)
+        IDBFactory* indexedDB() const;
         IDBKeyRange* iDBKeyRange() const;
-        IndexedDatabaseRequest* indexedDB() const;
 #endif
 
         void postMessage(PassRefPtr<SerializedScriptValue> message, const MessagePortArray*, const String& targetOrigin, DOMWindow* source, ExceptionCode&);
@@ -424,8 +424,8 @@ namespace WebCore {
         mutable RefPtr<NotificationCenter> m_notifications;
 #endif
 #if ENABLE(INDEXED_DATABASE)
-        mutable RefPtr<IDBKeyRange> m_idb_key_range;
-        mutable RefPtr<IndexedDatabaseRequest> m_indexedDatabaseRequest;
+        mutable RefPtr<IDBFactory> m_idbFactory;
+        mutable RefPtr<IDBKeyRange> m_idbKeyRange;
 #endif
 
         EventTargetData m_eventTargetData;

@@ -27,8 +27,9 @@
  */
 
 #include "config.h"
-#include "IndexedDatabaseImpl.h"
+#include "IDBFactoryBackendImpl.h"
 
+#include "DOMStringList.h"
 #include "IDBDatabaseImpl.h"
 #include "SecurityOrigin.h"
 #include <wtf/Threading.h>
@@ -38,20 +39,20 @@
 
 namespace WebCore {
 
-PassRefPtr<IndexedDatabaseImpl> IndexedDatabaseImpl::create()
+PassRefPtr<IDBFactoryBackendImpl> IDBFactoryBackendImpl::create()
 {
-    return adoptRef(new IndexedDatabaseImpl);
+    return adoptRef(new IDBFactoryBackendImpl);
 }
 
-IndexedDatabaseImpl::IndexedDatabaseImpl()
-{
-}
-
-IndexedDatabaseImpl::~IndexedDatabaseImpl()
+IDBFactoryBackendImpl::IDBFactoryBackendImpl()
 {
 }
 
-void IndexedDatabaseImpl::open(const String& name, const String& description, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin>, Frame*)
+IDBFactoryBackendImpl::~IDBFactoryBackendImpl()
+{
+}
+
+void IDBFactoryBackendImpl::open(const String& name, const String& description, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin>, Frame*)
 {
     RefPtr<IDBDatabase> database;
     IDBDatabaseMap::iterator it = m_databaseMap.find(name);

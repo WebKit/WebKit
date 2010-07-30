@@ -25,25 +25,37 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include "config.h"
-#include "IndexedDatabase.h"
+#ifndef IDBFactoryBackendInterface_h
+#define IDBFactoryBackendInterface_h
 
-#include "IndexedDatabaseImpl.h"
-
-#if PLATFORM(CHROMIUM)
-#error "Chromium should not compile this file and instead define its own version of this factory that navigates the multi-process boundry."
-#endif
+#include "ExceptionCode.h"
+#include "IDBCallbacks.h"
+#include "PlatformString.h"
+#include <wtf/Threading.h>
 
 #if ENABLE(INDEXED_DATABASE)
 
 namespace WebCore {
 
-PassRefPtr<IndexedDatabase> IndexedDatabase::create()
-{
-    return IndexedDatabaseImpl::create();
-}
+class Frame;
+class IDBDatabase;
+class SecurityOrigin;
+
+// This class is shared by IDBFactory (async) and IDBFactorySync (sync).
+// This is implemented by IDBFactoryBackendImpl and optionally others (in order to proxy
+// calls across process barriers). All calls to these classes should be non-blocking and
+// trigger work on a background thread if necessary.
+class IDBFactoryBackendInterface : public ThreadSafeShared<IDBFactoryBackendInterface> {
+public:
+    static PassRefPtr<IDBFactoryBackendInterface> create();
+    virtual ~IDBFactoryBackendInterface() { }
+
+    virtual void open(const String& name, const String& description, PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, Frame*) = 0;
+};
 
 } // namespace WebCore
 
-#endif // ENABLE(INDEXED_DATABASE)
+#endif
+
+#endif // IDBFactoryBackendInterface_h
 

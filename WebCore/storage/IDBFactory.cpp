@@ -27,32 +27,33 @@
  */
 
 #include "config.h"
-#include "IndexedDatabaseRequest.h"
+#include "IDBFactory.h"
 
+#include "DOMStringList.h"
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "IDBDatabase.h"
+#include "IDBFactoryBackendInterface.h"
 #include "IDBKeyRange.h"
 #include "IDBRequest.h"
-#include "IndexedDatabase.h"
 
 #if ENABLE(INDEXED_DATABASE)
 
 namespace WebCore {
 
-IndexedDatabaseRequest::IndexedDatabaseRequest(IndexedDatabase* indexedDatabase)
-    : m_indexedDatabase(indexedDatabase)
+IDBFactory::IDBFactory(IDBFactoryBackendInterface* factory)
+    : m_factoryBackend(factory)
 {
     // We pass a reference to this object before it can be adopted.
     relaxAdoptionRequirement();
 }
 
-IndexedDatabaseRequest::~IndexedDatabaseRequest()
+IDBFactory::~IDBFactory()
 {
 }
 
-PassRefPtr<IDBRequest> IndexedDatabaseRequest::open(ScriptExecutionContext* context, const String& name, const String& description)
+PassRefPtr<IDBRequest> IDBFactory::open(ScriptExecutionContext* context, const String& name, const String& description)
 {
     if (!context->isDocument()) {
         // FIXME: make this work with workers.
@@ -64,7 +65,7 @@ PassRefPtr<IDBRequest> IndexedDatabaseRequest::open(ScriptExecutionContext* cont
         return 0;
 
     RefPtr<IDBRequest> request = IDBRequest::create(document, IDBAny::create(this));
-    m_indexedDatabase->open(name, description, request, document->securityOrigin(), document->frame());
+    m_factoryBackend->open(name, description, request, document->securityOrigin(), document->frame());
     return request;
 }
 

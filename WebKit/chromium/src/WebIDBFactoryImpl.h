@@ -26,44 +26,28 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "IndexedDatabaseProxy.h"
+#ifndef WebIDBFactoryImpl_h
+#define WebIDBFactoryImpl_h
 
-#include "IDBDatabaseError.h"
-#include "IDBDatabaseProxy.h"
-#include "WebFrameImpl.h"
-#include "WebIDBCallbacksImpl.h"
-#include "WebIDBDatabase.h"
-#include "WebIDBDatabaseError.h"
-#include "WebIndexedDatabase.h"
-#include "WebKit.h"
-#include "WebKitClient.h"
+#include "WebDOMStringList.h"
+#include "WebIDBFactory.h"
+#include <wtf/RefPtr.h>
 
-#if ENABLE(INDEXED_DATABASE)
+namespace WebCore { class IDBFactoryBackendInterface; }
 
-namespace WebCore {
+namespace WebKit {
 
-PassRefPtr<IndexedDatabase> IndexedDatabaseProxy::create()
-{
-    return adoptRef(new IndexedDatabaseProxy());
-}
+class WebIDBFactoryImpl : public WebIDBFactory {
+public:
+    WebIDBFactoryImpl();
+    virtual ~WebIDBFactoryImpl();
 
-IndexedDatabaseProxy::IndexedDatabaseProxy()
-    : m_webIndexedDatabase(WebKit::webKitClient()->indexedDatabase())
-{
-}
+    virtual void open(const WebString& name, const WebString& description, WebIDBCallbacks*, const WebSecurityOrigin&, WebFrame*);
 
-IndexedDatabaseProxy::~IndexedDatabaseProxy()
-{
-}
+private:
+    WTF::RefPtr<WebCore::IDBFactoryBackendInterface> m_idbFactoryBackend;
+};
 
-void IndexedDatabaseProxy::open(const String& name, const String& description, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> origin, Frame* frame)
-{
-    WebKit::WebFrame* webFrame = WebKit::WebFrameImpl::fromFrame(frame);
-    m_webIndexedDatabase->open(name, description, new WebIDBCallbacksImpl(callbacks), origin, webFrame);
-}
+} // namespace WebKit
 
-} // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)
-
+#endif // WebIDBFactoryImpl_h

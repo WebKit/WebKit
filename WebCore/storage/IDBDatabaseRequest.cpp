@@ -27,9 +27,9 @@
 #include "IDBDatabaseRequest.h"
 
 #include "IDBAny.h"
+#include "IDBFactoryBackendInterface.h"
 #include "IDBObjectStoreRequest.h"
 #include "IDBRequest.h"
-#include "IndexedDatabase.h"
 #include "ScriptExecutionContext.h"
 
 #if ENABLE(INDEXED_DATABASE)

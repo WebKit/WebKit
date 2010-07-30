@@ -494,7 +494,7 @@ IDL_BINDINGS += \
     storage/IDBObjectStoreRequest.idl \
     storage/IDBRequest.idl \
     storage/IDBSuccessEvent.idl \
-    storage/IndexedDatabaseRequest.idl \
+    storage/IDBFactory.idl \
     storage/Storage.idl \
     storage/StorageEvent.idl \
     storage/SQLError.idl \
