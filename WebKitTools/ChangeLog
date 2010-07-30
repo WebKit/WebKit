@@ -1,3 +1,9 @@
+2010-07-29  Anders Carlsson  <andersca@apple.com>
+
+        Add PluginTest.cpp
+
+        * DumpRenderTree/qt/TestNetscapePlugin/TestNetscapePlugin.pro:
+
 2010-07-29  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Eric Seidel.

@@ -26,6 +26,7 @@ INCLUDEPATH += ../../../../JavaScriptCore \
                ../../TestNetscapePlugIn
 
 SOURCES = PluginObject.cpp \
+          PluginTest.cpp \
           TestObject.cpp \
           Tests/DocumentOpenInDestroyStream.cpp
 
