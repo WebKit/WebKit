@@ -1,3 +1,33 @@
+2010-07-29  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r64302.
+        http://trac.webkit.org/changeset/64302
+        https://bugs.webkit.org/show_bug.cgi?id=43223
+
+        Assertion is bogus (Requested by olliej on #webkit).
+
+        * assembler/ARMAssembler.cpp:
+        (JSC::ARMAssembler::executableCopy):
+        * assembler/AssemblerBuffer.h:
+        (JSC::AssemblerBuffer::putShortUnchecked):
+        (JSC::AssemblerBuffer::putIntUnchecked):
+        (JSC::AssemblerBuffer::putInt64Unchecked):
+        * jit/JITStubs.cpp:
+        * pcre/pcre_compile.cpp:
+        (jsRegExpCompile):
+        * wtf/FastMalloc.cpp:
+        (WTF::PageHeapAllocator::New):
+        (WTF::TCMalloc_Central_FreeList::Populate):
+        * wtf/MD5.cpp:
+        (WTF::reverseBytes):
+        (WTF::MD5::addBytes):
+        (WTF::MD5::checksum):
+        * wtf/StdLibExtras.h:
+        * wtf/Vector.h:
+        (WTF::VectorBuffer::inlineBuffer):
+        * wtf/qt/StringQt.cpp:
+        (WebCore::String::String):
+
 2010-07-29  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Gavin Barraclough.

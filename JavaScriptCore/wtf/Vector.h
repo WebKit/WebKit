@@ -24,7 +24,6 @@
 #include "FastAllocBase.h"
 #include "Noncopyable.h"
 #include "NotFound.h"
-#include "StdLibExtras.h"
 #include "ValueCheck.h"
 #include "VectorTraits.h"
 #include <limits>
@@ -482,7 +481,7 @@ namespace WTF {
         using Base::m_capacity;
 
         static const size_t m_inlineBufferSize = inlineCapacity * sizeof(T);
-        T* inlineBuffer() { return reinterpret_cast_ptr<T*>(m_inlineBuffer.buffer); }
+        T* inlineBuffer() { return reinterpret_cast<T*>(m_inlineBuffer.buffer); }
 
         AlignedBuffer<m_inlineBufferSize, WTF_ALIGN_OF(T)> m_inlineBuffer;
     };

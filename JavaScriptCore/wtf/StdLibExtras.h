@@ -51,33 +51,6 @@
 #define STRINGIZE(exp) #exp
 #define STRINGIZE_VALUE_OF(exp) STRINGIZE(exp)
 
-/*
- * The reinterpret_cast<Type1*>([pointer to Type2]) expressions - where
- * sizeof(Type1) > sizeof(Type2) - cause the following warning on ARM with GCC:
- * increases required alignment of target type.
- *
- * An implicit or an extra static_cast<void*> bypasses the warning.
- * For more info see the following bugzilla entries:
- * - https://bugs.webkit.org/show_bug.cgi?id=38045
- * - http://gcc.gnu.org/bugzilla/show_bug.cgi?id=43976
- */
-#if CPU(ARM) && COMPILER(GCC)
-template<typename T>
-T reinterpret_cast_ptr(void* ptr)
-{
-    ASSERT(!(reinterpret_cast<unsigned int>(ptr) % __alignof__(T)));
-    return reinterpret_cast<T>(ptr);
-}
-template<typename T>
-T reinterpret_cast_ptr(const void* ptr)
-{
-    ASSERT(!(reinterpret_cast<unsigned int>(ptr) % __alignof__(T)));
-    return reinterpret_cast<T>(ptr);
-}
-#else
-#define reinterpret_cast_ptr reinterpret_cast
-#endif
-
 namespace WTF {
 
     /*

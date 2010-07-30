@@ -33,7 +33,6 @@
 #include <jit/ExecutableAllocator.h>
 #include <wtf/Assertions.h>
 #include <wtf/FastMalloc.h>
-#include <wtf/StdLibExtras.h>
 
 namespace JSC {
 
@@ -82,7 +81,7 @@ namespace JSC {
         void putShortUnchecked(int value)
         {
             ASSERT(!(m_size > m_capacity - 4));
-            *reinterpret_cast_ptr<short*>(&m_buffer[m_size]) = value;
+            *reinterpret_cast<short*>(&m_buffer[m_size]) = value;
             m_size += 2;
         }
 
@@ -96,14 +95,14 @@ namespace JSC {
         void putIntUnchecked(int value)
         {
             ASSERT(!(m_size > m_capacity - 4));
-            *reinterpret_cast_ptr<int*>(&m_buffer[m_size]) = value;
+            *reinterpret_cast<int*>(&m_buffer[m_size]) = value;
             m_size += 4;
         }
 
         void putInt64Unchecked(int64_t value)
         {
             ASSERT(!(m_size > m_capacity - 8));
-            *reinterpret_cast_ptr<int64_t*>(&m_buffer[m_size]) = value;
+            *reinterpret_cast<int64_t*>(&m_buffer[m_size]) = value;
             m_size += 8;
         }
 
