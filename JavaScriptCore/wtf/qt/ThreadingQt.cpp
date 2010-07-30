@@ -208,11 +208,6 @@ ThreadIdentifier currentThread()
     return establishIdentifierForThread(currentThread);
 }
 
-void yield()
-{
-    QThread::yieldCurrentThread();
-}
-
 Mutex::Mutex()
     : m_mutex(new QMutex())
 {

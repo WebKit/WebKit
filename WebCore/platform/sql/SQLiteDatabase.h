@@ -48,7 +48,6 @@ extern const int SQLResultOk;
 extern const int SQLResultRow;
 extern const int SQLResultSchema;
 extern const int SQLResultFull;
-extern const int SQLResultInterrupt;
 
 class SQLiteDatabase : public Noncopyable {
     friend class SQLiteTransaction;
@@ -59,8 +58,6 @@ public:
     bool open(const String& filename, bool forWebSQLDatabase = false);
     bool isOpen() const { return m_db; }
     void close();
-    void interrupt();
-    bool isInterrupted();
 
     bool executeCommand(const String&);
     bool returnsAtLeastOneResult(const String&);
@@ -108,7 +105,9 @@ public:
     
     void setAuthorizer(PassRefPtr<DatabaseAuthorizer>);
 
-    Mutex& databaseMutex() { return m_lockingMutex; }
+    // (un)locks the database like a mutex
+    void lock();
+    void unlock();
     bool isAutoCommitOn() const;
 
     // The SQLite AUTO_VACUUM pragma can be either NONE, FULL, or INCREMENTAL.
@@ -150,9 +149,7 @@ private:
 
     Mutex m_lockingMutex;
     ThreadIdentifier m_openingThread;
-
-    Mutex m_databaseClosingMutex;
-    bool m_interrupted;
+    
 }; // class SQLiteDatabase
 
 } // namespace WebCore

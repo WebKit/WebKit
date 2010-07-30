@@ -44,7 +44,6 @@
 
 #if !COMPILER(MSVC)
 #include <limits.h>
-#include <sched.h>
 #include <sys/time.h>
 #endif
 
@@ -220,11 +219,6 @@ void detachThread(ThreadIdentifier threadID)
         return;
 
     pthread_detach(pthreadHandle);
-}
-
-void yield()
-{
-    sched_yield();
 }
 
 ThreadIdentifier currentThread()

@@ -330,7 +330,6 @@ EXPORTS
     ?wait@ThreadCondition@WTF@@QAEXAAVMutex@2@@Z
     ?waitForThreadCompletion@WTF@@YAHIPAPAX@Z
     ?writable@PropertyDescriptor@JSC@@QBE_NXZ
-    ?yield@WTF@@YAXXZ
     WTFLog
     WTFLogVerbose
     WTFReportArgumentAssertionFailure

@@ -61,12 +61,12 @@ PassRefPtr<SQLResultSet> SQLStatementSync::execute(DatabaseSync* db, ExceptionCo
     SQLiteStatement statement(*database, m_statement);
     int result = statement.prepare();
     if (result != SQLResultOk) {
-        ec = (result == SQLResultInterrupt ? SQLException::DATABASE_ERR : SQLException::SYNTAX_ERR);
+        ec = SQLException::SYNTAX_ERR;
         return 0;
     }
 
     if (statement.bindParameterCount() != m_arguments.size()) {
-        ec = (db->isInterrupted()? SQLException::DATABASE_ERR : SQLException::SYNTAX_ERR);
+        ec = SQLException::SYNTAX_ERR;
         return 0;
     }
 

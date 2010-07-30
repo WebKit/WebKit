@@ -87,7 +87,7 @@ private:
 
     void enqueueStatement(PassRefPtr<SQLStatement>);
 
-    void checkAndHandleClosedOrInterruptedDatabase();
+    void checkAndHandleClosedDatabase();
 
     void acquireLock();
     void openTransactionAndPreflight();

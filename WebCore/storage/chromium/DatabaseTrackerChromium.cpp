@@ -174,35 +174,6 @@ unsigned long long DatabaseTracker::getMaxSizeForDatabase(const AbstractDatabase
     return databaseSize + spaceAvailable;
 }
 
-void DatabaseTracker::interruptAllDatabasesForContext(const ScriptExecutionContext* context)
-{
-    Vector<RefPtr<AbstractDatabase> > openDatabases;
-    {
-        MutexLocker openDatabaseMapLock(m_openDatabaseMapGuard);
-
-        if (!m_openDatabaseMap)
-            return;
-
-        DatabaseNameMap* nameMap = m_openDatabaseMap->get(context->securityOrigin());
-        if (!nameMap)
-            return;
-
-        DatabaseNameMap::const_iterator dbNameMapEndIt = nameMap->end();
-        for (DatabaseNameMap::const_iterator dbNameMapIt = nameMap->begin(); dbNameMapIt != dbNameMapEndIt; ++dbNameMapIt) {
-            DatabaseSet* databaseSet = dbNameMapIt->second;
-            DatabaseSet::const_iterator dbSetEndIt = databaseSet->end();
-            for (DatabaseSet::const_iterator dbSetIt = databaseSet->begin(); dbSetIt != dbSetEndIt; ++dbSetIt) {
-                if ((*dbSetIt)->scriptExecutionContext() == context)
-                    openDatabases.append(*dbSetIt);
-            }
-        }
-    }
-
-    Vector<RefPtr<AbstractDatabase> >::const_iterator openDatabasesEndIt = openDatabases.end();
-    for (Vector<RefPtr<AbstractDatabase> >::const_iterator openDatabasesIt = openDatabases.begin(); openDatabasesIt != openDatabasesEndIt; ++openDatabasesIt)
-        (*openDatabasesIt)->interrupt();
-}
-
 }
 
 #endif // ENABLE(DATABASE)

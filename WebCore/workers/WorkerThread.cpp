@@ -30,6 +30,7 @@
 
 #include "WorkerThread.h"
 
+#include "DatabaseTask.h"
 #include "DedicatedWorkerContext.h"
 #include "KURL.h"
 #include "PlatformString.h"
@@ -39,11 +40,6 @@
 
 #include <utility>
 #include <wtf/Noncopyable.h>
-
-#if ENABLE(DATABASE)
-#include "DatabaseTask.h"
-#include "DatabaseTracker.h"
-#endif
 
 namespace WebCore {
 
@@ -228,10 +224,6 @@ void WorkerThread::stop()
     // Ensure that tasks are being handled by thread event loop. If script execution weren't forbidden, a while(1) loop in JS could keep the thread alive forever.
     if (m_workerContext) {
         m_workerContext->script()->forbidExecution(WorkerScriptController::TerminateRunningScript);
-
-#if ENABLE(DATABASE)
-        DatabaseTracker::tracker().interruptAllDatabasesForContext(m_workerContext.get());
-#endif
 
     // FIXME: Rudely killing the thread won't work when we allow nested workers, because they will try to post notifications of their destruction.
     // This can likely use the same mechanism as used for databases above.
