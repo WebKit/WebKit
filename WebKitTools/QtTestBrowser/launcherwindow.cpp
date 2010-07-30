@@ -277,7 +277,7 @@ void LauncherWindow::createChrome()
 
     QAction* toggleResizesToContents = graphicsViewMenu->addAction("Toggle Resizes To Contents Mode", this, SLOT(toggleResizesToContents(bool)));
     toggleResizesToContents->setCheckable(true);
-    toggleResizesToContents->setChecked(false);
+    toggleResizesToContents->setChecked(gResizesToContents);
     toggleResizesToContents->setEnabled(isGraphicsBased());
     toggleResizesToContents->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
 
@@ -399,10 +399,13 @@ void LauncherWindow::applyPrefs(LauncherWindow* source)
     view->setViewportUpdateMode(otherView ? otherView->viewportUpdateMode() : gViewportUpdateMode);
     view->setFrameRateMeasurementEnabled(otherView ? otherView->frameRateMeasurementEnabled() : gShowFrameRate);
 
-    if (otherView)
+    if (otherView) {
         view->setItemCacheMode(otherView->itemCacheMode());
-    else
+        view->setResizesToContents(otherView->resizesToContents());
+    } else {
         view->setItemCacheMode(gCacheWebView ? QGraphicsItem::DeviceCoordinateCache : QGraphicsItem::NoCache);
+        view->setResizesToContents(gResizesToContents);
+    }
 }
 
 void LauncherWindow::keyPressEvent(QKeyEvent* event)
@@ -719,6 +722,7 @@ void LauncherWindow::toggleTiledBackingStore(bool toggle)
 
 void LauncherWindow::toggleResizesToContents(bool toggle)
 {
+    gResizesToContents = toggle;
     static_cast<WebViewGraphicsBased*>(m_view)->setResizesToContents(toggle);
 }
 

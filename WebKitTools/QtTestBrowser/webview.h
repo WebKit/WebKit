@@ -82,6 +82,7 @@ public:
     virtual void paintEvent(QPaintEvent* event);
 
     void setResizesToContents(bool b);
+    bool resizesToContents() const { return m_resizesToContents; }
 
     void setYRotation(qreal angle)
     {

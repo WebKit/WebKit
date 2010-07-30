@@ -1,5 +1,26 @@
 2010-07-29  Antonio Gomes  <tonikitoo@webkit.org>
 
+        Reviewed by Kenneth Christiansen.
+
+        [Qt] QtTestBrowser: -resizes-to-contents command line parameter is broken
+        https://bugs.webkit.org/show_bug.cgi?id=43209
+
+        When -resizes-to-content was being passed as a command line parameter it was simply
+        not being set (although the corresponding menu item was marked as ON).
+        User had to toggle the menu OFF and then ON again for it to take place.
+
+        Reason: LauncherWindow::applyPrefs method sets many user options passed in from
+        the command line, but not resizesToContents. Patch addresses that.
+
+        * QtTestBrowser/launcherwindow.cpp:
+        (LauncherWindow::createChrome):
+        (LauncherWindow::applyPrefs):
+        (LauncherWindow::toggleResizesToContents):
+        * QtTestBrowser/webview.h:
+        (WebViewGraphicsBased::resizesToContents):
+
+2010-07-29  Antonio Gomes  <tonikitoo@webkit.org>
+
         Rubber-stamped by Simon Fraser.
 
         [Qt] QtTestBrowser: more method grouping and clean ups.
