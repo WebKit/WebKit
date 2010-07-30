@@ -2,6 +2,78 @@
 
         Reviewed by Anders Carlsson.
 
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=43283
+        Add APIObject template introspection support.
+
+        Add a way to get the type the APIObject::Type from the APIObject subclass typenames
+        for template fun. Use this to make a type checking version of ImmutableArray::at.
+
+        * Shared/ImmutableArray.h:
+        (WebKit::ImmutableArray::at):
+        (WebKit::ImmutableArray::type):
+        * Shared/WebString.h:
+        (WebKit::WebString::type):
+        * Shared/WebURL.h:
+        (WebKit::WebURL::type):
+        * UIProcess/API/C/WKArray.cpp:
+        (WKArrayGetTypeID):
+        * UIProcess/API/C/WKBackForwardList.cpp:
+        (WKBackForwardListGetTypeID):
+        * UIProcess/API/C/WKBackForwardListItem.cpp:
+        (WKBackForwardListItemGetTypeID):
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextGetTypeID):
+        * UIProcess/API/C/WKFrame.cpp:
+        (WKFrameGetTypeID):
+        * UIProcess/API/C/WKFramePolicyListener.cpp:
+        (WKFramePolicyListenerGetTypeID):
+        * UIProcess/API/C/WKNavigationData.cpp:
+        (WKNavigationDataGetTypeID):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageGetTypeID):
+        * UIProcess/API/C/WKPageNamespace.cpp:
+        (WKPageNamespaceGetTypeID):
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesGetTypeID):
+        * UIProcess/API/C/WKString.cpp:
+        (WKStringGetTypeID):
+        * UIProcess/API/C/WKURL.cpp:
+        (WKURLGetTypeID):
+        * UIProcess/WebBackForwardList.h:
+        (WebKit::WebBackForwardList::type):
+        * UIProcess/WebBackForwardListItem.h:
+        (WebKit::WebBackForwardListItem::type):
+        * UIProcess/WebContext.h:
+        (WebKit::WebContext::type):
+        * UIProcess/WebFramePolicyListenerProxy.h:
+        (WebKit::WebFramePolicyListenerProxy::type):
+        * UIProcess/WebFrameProxy.h:
+        (WebKit::WebFrameProxy::type):
+        * UIProcess/WebNavigationData.h:
+        (WebKit::WebNavigationData::type):
+        * UIProcess/WebPageNamespace.h:
+        (WebKit::WebPageNamespace::type):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::type):
+        * UIProcess/WebPreferences.h:
+        (WebKit::WebPreferences::type):
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleGetTypeID):
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp:
+        (WKBundleFrameGetTypeID):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageGetTypeID):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        (WebKit::InjectedBundle::type):
+        * WebProcess/WebPage/WebFrame.h:
+        (WebKit::WebFrame::type):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::type):
+
+2010-07-30  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
         Patch for https://bugs.webkit.org/show_bug.cgi?id=43275
         Make WKArrayRef more usable.
 

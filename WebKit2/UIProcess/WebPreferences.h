@@ -38,6 +38,8 @@ class WebContext;
 
 class WebPreferences : public APIObject {
 public:
+    static const Type APIType = TypePreferences;
+
     static WebPreferences* shared();
 
     static PassRefPtr<WebPreferences> create()
@@ -71,7 +73,7 @@ private:
     WebPreferences();
     WebPreferences(WebPreferences*);
 
-    virtual Type type() const { return TypePreferences; }
+    virtual Type type() const { return APIType; }
 
     void update();
 

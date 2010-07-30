@@ -32,7 +32,7 @@ using namespace WebKit;
 
 WKTypeID WKBackForwardListItemGetTypeID()
 {
-    return toRef(APIObject::TypeBackForwardListItem);
+    return toRef(WebBackForwardListItem::APIType);
 }
 
 WKURLRef WKBackForwardListItemCopyOriginalURL(WKBackForwardListItemRef itemRef)

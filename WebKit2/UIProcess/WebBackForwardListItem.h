@@ -36,6 +36,8 @@ class WebPageProxy;
 
 class WebBackForwardListItem : public APIObject {
 public:
+    static const Type APIType = TypeBackForwardListItem;
+
     static PassRefPtr<WebBackForwardListItem> create(const WebCore::String& originalURL, const WebCore::String& url, const WebCore::String& title, uint64_t itemID)
     {
         return adoptRef(new WebBackForwardListItem(originalURL, url, title, itemID));
@@ -56,7 +58,7 @@ public:
 private:
     WebBackForwardListItem(const WebCore::String& originalURL, const WebCore::String& url, const WebCore::String& title, uint64_t itemID);
 
-    virtual Type type() const { return TypeBackForwardListItem; }
+    virtual Type type() const { return APIType; }
 
     WebCore::String m_originalURL;
     WebCore::String m_url;

@@ -32,7 +32,7 @@ using namespace WebKit;
 
 WKTypeID WKFrameGetTypeID()
 {
-    return toRef(APIObject::TypeFrame);
+    return toRef(WebFrameProxy::APIType);
 }
 
 bool WKFrameIsMainFrame(WKFrameRef frameRef)

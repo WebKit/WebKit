@@ -37,7 +37,7 @@ using namespace WebKit;
 
 WKTypeID WKContextGetTypeID()
 {
-    return toRef(APIObject::TypeContext);
+    return toRef(WebContext::APIType);
 }
 
 WKContextRef WKContextCreate()

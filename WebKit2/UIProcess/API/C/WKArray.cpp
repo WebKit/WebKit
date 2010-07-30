@@ -32,7 +32,7 @@ using namespace WebKit;
 
 WKTypeID WKArrayGetTypeID()
 {
-    return toRef(APIObject::TypeArray);
+    return toRef(ImmutableArray::APIType);
 }
 
 WKArrayRef WKArrayCreate(WKTypeRef* values, size_t numberOfValues)

@@ -31,7 +31,7 @@ using namespace WebKit;
 
 WKTypeID WKStringGetTypeID()
 {
-    return toRef(APIObject::TypeString);
+    return toRef(WebString::APIType);
 }
 
 WKStringRef WKStringRetain(WKStringRef stringRef)

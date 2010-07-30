@@ -37,6 +37,8 @@ class WebFrameProxy;
 
 class WebFramePolicyListenerProxy : public APIObject {
 public:
+    static const Type APIType = TypeFramePolicyListener;
+
     static PassRefPtr<WebFramePolicyListenerProxy> create(WebFrameProxy* frame, uint64_t listenerID)
     {
         return adoptRef(new WebFramePolicyListenerProxy(frame, listenerID));
@@ -54,7 +56,7 @@ public:
 private:
     WebFramePolicyListenerProxy(WebFrameProxy*, uint64_t listenerID);
 
-    virtual Type type() const { return TypeFramePolicyListener; }
+    virtual Type type() const { return APIType; }
 
     void receivedPolicyDecision(WebCore::PolicyAction);
 

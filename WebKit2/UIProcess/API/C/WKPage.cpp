@@ -38,7 +38,7 @@ using namespace WebKit;
 
 WKTypeID WKPageGetTypeID()
 {
-    return toRef(APIObject::TypePage);
+    return toRef(WebPageProxy::APIType);
 }
 
 WKPageNamespaceRef WKPageGetPageNamespace(WKPageRef pageRef)

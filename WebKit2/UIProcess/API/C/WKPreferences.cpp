@@ -34,7 +34,7 @@ using namespace WebKit;
 
 WKTypeID WKPreferencesGetTypeID()
 {
-    return toRef(APIObject::TypePreferences);
+    return toRef(WebPreferences::APIType);
 }
 
 WKPreferencesRef WKPreferencesCreate()

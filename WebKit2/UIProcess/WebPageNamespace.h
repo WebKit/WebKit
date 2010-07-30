@@ -39,6 +39,8 @@ class WebContext;
 
 class WebPageNamespace : public APIObject {
 public:
+    static const Type APIType = TypePageNamespace;
+
     static PassRefPtr<WebPageNamespace> create(WebContext* context)
     {
         return adoptRef(new WebPageNamespace(context));
@@ -59,7 +61,7 @@ public:
 private:
     WebPageNamespace(WebContext*);
 
-    virtual Type type() const { return TypePageNamespace; }
+    virtual Type type() const { return APIType; }
 
     RefPtr<WebContext> m_context;
 };

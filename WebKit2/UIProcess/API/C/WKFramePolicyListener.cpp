@@ -33,7 +33,7 @@ using namespace WebKit;
 
 WKTypeID WKFramePolicyListenerGetTypeID()
 {
-    return toRef(APIObject::TypeFramePolicyListener);
+    return toRef(WebFramePolicyListenerProxy::APIType);
 }
 
 void WKFramePolicyListenerUse(WKFramePolicyListenerRef policyListenerRef)

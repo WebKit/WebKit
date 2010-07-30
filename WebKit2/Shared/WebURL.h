@@ -36,6 +36,8 @@ namespace WebKit {
 
 class WebURL : public APIObject {
 public:
+    static const Type APIType = TypeURL;
+
     static PassRefPtr<WebURL> create(const WebCore::String& string)
     {
         return adoptRef(new WebURL(string));
@@ -52,7 +54,7 @@ private:
     {
     }
 
-    virtual Type type() const { return TypeURL; }
+    virtual Type type() const { return APIType; }
 
     WebCore::String m_string;
 };

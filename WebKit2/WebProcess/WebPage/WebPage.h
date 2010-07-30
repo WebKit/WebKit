@@ -63,6 +63,8 @@ struct WebPreferencesStore;
 
 class WebPage : public APIObject {
 public:
+    static const Type APIType = TypeBundlePage;
+
     static PassRefPtr<WebPage> create(uint64_t pageID, const WebCore::IntSize& viewSize, const WebPreferencesStore&, DrawingArea::Type);
     ~WebPage();
 
@@ -118,7 +120,7 @@ public:
 private:
     WebPage(uint64_t pageID, const WebCore::IntSize& viewSize, const WebPreferencesStore&, DrawingArea::Type);
 
-    virtual Type type() const { return TypeBundlePage; }
+    virtual Type type() const { return APIType; }
 
     void platformInitialize();
     static const char* interpretKeyEvent(const WebCore::KeyboardEvent*);
