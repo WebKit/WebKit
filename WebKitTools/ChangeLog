@@ -1,3 +1,10 @@
+2010-07-30  Anders Carlsson  <andersca@apple.com>
+
+        Try to fix the layout test failures.
+
+        * DumpRenderTree/unix/TestNetscapePlugin/TestNetscapePlugin.cpp:
+        (webkit_test_plugin_get_value):
+
 2010-07-29  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.
