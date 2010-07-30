@@ -1,3 +1,10 @@
+2010-07-29  Victor Wang  <victorw@chromium.org>
+
+        Unreviewed. Update chromium test expectations for test:
+        plugins/document-open.html
+
+        * platform/chromium/test_expectations.txt:
+
 2010-07-29  Dumitru Daniliuc  <dumi@chromium.org>
 
         Unreviewed, re-enabling all storage tests on Windows in Chromium.
