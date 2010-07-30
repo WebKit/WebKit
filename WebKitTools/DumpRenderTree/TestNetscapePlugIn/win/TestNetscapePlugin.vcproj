@@ -425,6 +425,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\PluginTest.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\PluginTest.h"
+			>
+		</File>
+		<File
 			RelativePath=".\resource.h"
 			>
 		</File>
@@ -448,6 +456,14 @@
 			RelativePath="..\TestObject.h"
 			>
 		</File>
+		<Filter
+			Name="Tests"
+			>
+		  <File
+    		  RelativePath="..\Tests\DocumentOpenInDestroyStream.cpp"
+    		>
+    	  </File>
+		</Filter>
 	</Files>
 	<Globals>
 	</Globals>

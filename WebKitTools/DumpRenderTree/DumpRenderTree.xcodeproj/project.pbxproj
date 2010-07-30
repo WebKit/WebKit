@@ -32,6 +32,9 @@
 		141BF439096A455900E0753C /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AE8257EF08D22389000507AB /* Carbon.framework */; };
 		141BF453096A45EB00E0753C /* PluginObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 141BF447096A45C800E0753C /* PluginObject.h */; };
 		14770FE20A22ADF7009342EE /* GCController.h in Headers */ = {isa = PBXBuildFile; fileRef = 14770FE00A22ADF7009342EE /* GCController.h */; };
+		1A215A8111F2609C008AD0F5 /* PluginTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A215A7F11F2609C008AD0F5 /* PluginTest.cpp */; };
+		1A215A8211F2609C008AD0F5 /* PluginTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A215A8011F2609C008AD0F5 /* PluginTest.h */; };
+		1A215BE711F27658008AD0F5 /* DocumentOpenInDestroyStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A215A7511F26072008AD0F5 /* DocumentOpenInDestroyStream.cpp */; };
 		1A8F02E80BB9B4EC008CFA34 /* TestObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8F024C0BB9B056008CFA34 /* TestObject.h */; };
 		1AC6C8490D07638600CD3161 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC6C77F0D07589B00CD3161 /* main.cpp */; };
 		1AC6C84A0D07638600CD3161 /* PluginObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC6C7800D07589B00CD3161 /* PluginObject.cpp */; };
@@ -185,6 +188,9 @@
 		141BF447096A45C800E0753C /* PluginObject.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PluginObject.h; sourceTree = "<group>"; };
 		141BF448096A45C800E0753C /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist.xml; name = Info.plist; path = mac/Info.plist; sourceTree = "<group>"; };
 		14770FE00A22ADF7009342EE /* GCController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCController.h; sourceTree = "<group>"; };
+		1A215A7511F26072008AD0F5 /* DocumentOpenInDestroyStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentOpenInDestroyStream.cpp; sourceTree = "<group>"; };
+		1A215A7F11F2609C008AD0F5 /* PluginTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginTest.cpp; sourceTree = "<group>"; };
+		1A215A8011F2609C008AD0F5 /* PluginTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginTest.h; sourceTree = "<group>"; };
 		1A8F024C0BB9B056008CFA34 /* TestObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestObject.h; sourceTree = "<group>"; };
 		1AC6C77F0D07589B00CD3161 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		1AC6C7800D07589B00CD3161 /* PluginObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginObject.cpp; sourceTree = "<group>"; };
@@ -357,11 +363,14 @@
 		141BF1F5096A439800E0753C /* TestNetscapePlugIn */ = {
 			isa = PBXGroup;
 			children = (
+				1A215A6E11F25FF1008AD0F5 /* Tests */,
 				141BF448096A45C800E0753C /* Info.plist */,
 				1AC6C77F0D07589B00CD3161 /* main.cpp */,
 				1AC6C7800D07589B00CD3161 /* PluginObject.cpp */,
 				0F37A4A611E6628700275F54 /* PluginObjectMac.mm */,
 				141BF447096A45C800E0753C /* PluginObject.h */,
+				1A215A7F11F2609C008AD0F5 /* PluginTest.cpp */,
+				1A215A8011F2609C008AD0F5 /* PluginTest.h */,
 				1AC6C7810D07589B00CD3161 /* TestObject.cpp */,
 				1A8F024C0BB9B056008CFA34 /* TestObject.h */,
 			);
@@ -419,6 +428,14 @@
 				BCA18B600C9B08C200114369 /* UIDelegate.mm */,
 			);
 			name = Delegates;
+			sourceTree = "<group>";
+		};
+		1A215A6E11F25FF1008AD0F5 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				1A215A7511F26072008AD0F5 /* DocumentOpenInDestroyStream.cpp */,
+			);
+			path = Tests;
 			sourceTree = "<group>";
 		};
 		9340995508540CAF007F3BC8 /* Products */ = {
@@ -521,6 +538,7 @@
 			files = (
 				141BF453096A45EB00E0753C /* PluginObject.h in Headers */,
 				1A8F02E80BB9B4EC008CFA34 /* TestObject.h in Headers */,
+				1A215A8211F2609C008AD0F5 /* PluginTest.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -684,6 +702,8 @@
 				1AC6C84A0D07638600CD3161 /* PluginObject.cpp in Sources */,
 				1AC6C84B0D07638600CD3161 /* TestObject.cpp in Sources */,
 				0F37A4A711E6628700275F54 /* PluginObjectMac.mm in Sources */,
+				1A215A8111F2609C008AD0F5 /* PluginTest.cpp in Sources */,
+				1A215BE711F27658008AD0F5 /* DocumentOpenInDestroyStream.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

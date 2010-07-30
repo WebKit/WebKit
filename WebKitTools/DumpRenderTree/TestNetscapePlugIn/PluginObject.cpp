@@ -966,6 +966,7 @@ static NPObject *pluginAllocate(NPP npp, NPClass *theClass)
         initializeIdentifiers();
     }
 
+    newInstance->pluginTest = 0;
     newInstance->npp = npp;
     newInstance->testObject = browser->createobject(npp, getTestClass());
     newInstance->rememberedObject = 0;
@@ -987,7 +988,6 @@ static NPObject *pluginAllocate(NPP npp, NPClass *theClass)
     newInstance->lastHeaders = NULL;
 
     newInstance->testGetURLOnDestroy = FALSE;
-    newInstance->testDocumentOpenInDestroyStream = FALSE;
     newInstance->testWindowOpen = FALSE;
     newInstance->testKeyboardFocusForPlugins = FALSE;
 

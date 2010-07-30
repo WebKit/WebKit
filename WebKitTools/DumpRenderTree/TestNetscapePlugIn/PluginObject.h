@@ -35,10 +35,14 @@
 #endif
 #endif // XP_MACOSX
 
+class PluginTest;
+
 extern NPNetscapeFuncs *browser;
 
 typedef struct {
     NPObject header;
+
+    PluginTest* pluginTest;
 
     NPP npp;
     NPBool eventLogging;
@@ -50,7 +54,6 @@ typedef struct {
     NPObject* testObject;
     NPObject* rememberedObject;
     NPStream* stream;
-    NPBool testDocumentOpenInDestroyStream;
     NPBool testGetURLOnDestroy;
     NPBool testWindowOpen;
     NPBool testKeyboardFocusForPlugins;

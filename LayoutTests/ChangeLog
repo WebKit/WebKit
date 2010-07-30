@@ -1,3 +1,13 @@
+2010-07-29  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Refactor TestNetscapePlugin so tests can be split in separate files
+        https://bugs.webkit.org/show_bug.cgi?id=43220
+
+        * plugins/document-open.html:
+        Pass the test identifier as an attribute of the embed tag.
+
 2010-07-29  Dumitru Daniliuc  <dumi@chromium.org>
 
         Unreviewed, updating Chromium expectations.

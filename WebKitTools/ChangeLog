@@ -1,3 +1,52 @@
+2010-07-29  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Refactor TestNetscapePlugin so tests can be split in separate files
+        https://bugs.webkit.org/show_bug.cgi?id=43220
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        Add PluginTest.cpp, PluginTest.h and Tests/DocumentOpenInDestroyStream.cpp.
+
+        * DumpRenderTree/TestNetscapePlugIn/PluginObject.cpp:
+        (pluginAllocate):
+        Initialize pluginTest to 0. Remove testDocumentOpenInDestroyStream.
+
+        * DumpRenderTree/TestNetscapePlugIn/PluginObject.h:
+        * DumpRenderTree/TestNetscapePlugIn/PluginTest.cpp: Added.
+        (PluginTest::PluginTest):
+        Initialize m_npp and the test identifier.
+        
+        (PluginTest::createTestFunctions):
+        Return the map from identifiers to createTest functions.
+
+        (PluginTest::registerCreateTestFunction):
+        Insert the identifier and create function pair in the map.
+
+        (PluginTest::create):
+        Look for a createTest function. If one is found, call it. Otherwise create a vanilla PluginTest object.
+
+        * DumpRenderTree/TestNetscapePlugIn/PluginTest.h: Added.
+        (PluginTest::Register::Register):
+        Helper class template for registering plug-in tests.
+        
+        (PluginTest::Register::create):
+        Create a new test of the given type.
+
+        * DumpRenderTree/TestNetscapePlugIn/Tests/DocumentOpenInDestroyStream.cpp: Added.
+        (DocumentOpenInDestroyStream::DocumentOpenInDestroyStream):
+        Add a test that calls testDocumentOpen from its NPP_DestroyStream callback.
+
+        * DumpRenderTree/TestNetscapePlugIn/main.cpp:
+        (NPP_New):
+        Create a PluginTest given the identifier. Remove the check for "testdocumentopenindestroystream".
+
+        (NPP_DestroyStream):
+        Call the plug-in test NPP_DestroyStream member function.
+
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugin.vcproj:
+        Add PluginTest.cpp, PluginTest.h and Tests/DocumentOpenInDestroyStream.cpp.
+
 2010-07-29  Martin Robinson  <mrobinson@igalia.com>
 
         Unreviewed build fix.
