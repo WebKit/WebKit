@@ -3014,6 +3014,8 @@
             'platform/MIMETypeRegistry.h',
             'platform/mock/GeolocationServiceMock.cpp',
             'platform/mock/GeolocationServiceMock.h',
+            'platform/mock/SpeechInputClientMock.cpp',
+            'platform/mock/SpeechInputClientMock.h',
             'platform/NotImplemented.h',
             'platform/Pasteboard.h',
             'platform/PlatformKeyboardEvent.h',

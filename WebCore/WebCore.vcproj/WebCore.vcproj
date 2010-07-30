@@ -28179,6 +28179,14 @@
 					RelativePath="..\platform\mock\GeolocationServiceMock.h"
 					>
 				</File>
+				<File
+					RelativePath="..\platform\mock\SpeechInputClientMock.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\mock\SpeechInputClientMock.h"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<Filter

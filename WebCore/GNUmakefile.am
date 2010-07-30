@@ -1899,6 +1899,8 @@ webcore_sources += \
 	WebCore/platform/MIMETypeRegistry.h \
 	WebCore/platform/mock/GeolocationServiceMock.cpp \
 	WebCore/platform/mock/GeolocationServiceMock.h \
+	WebCore/platform/mock/SpeechInputClientMock.cpp \
+	WebCore/platform/mock/SpeechInputClientMock.h \
 	WebCore/platform/NotImplemented.h \
 	WebCore/platform/Pasteboard.h \
 	WebCore/platform/PlatformKeyboardEvent.h \

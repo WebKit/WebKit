@@ -1,3 +1,27 @@
+2010-07-30  Satish Sampath  <satish@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Add a mock in WebCore for testing speech input
+        https://bugs.webkit.org/show_bug.cgi?id=42603
+
+        Layout tests will be added in a subsequent patch using this mock.
+
+        * Android.mk:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mock/SpeechInputClientMock.cpp: Added.
+        (WebCore::SpeechInputClientMock::SpeechInputClientMock):
+        (WebCore::SpeechInputClientMock::startRecognition):
+        (WebCore::SpeechInputClientMock::stopRecording):
+        (WebCore::SpeechInputClientMock::cancelRecognition):
+        (WebCore::SpeechInputClientMock::setRecognitionResult):
+        (WebCore::SpeechInputClientMock::timerFired):
+        * platform/mock/SpeechInputClientMock.h: Added.
+
 2010-07-30  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.

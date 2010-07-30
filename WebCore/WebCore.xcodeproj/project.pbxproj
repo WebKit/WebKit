@@ -1349,6 +1349,8 @@
 		750D029311D0E7F300BD1B27 /* RenderInputSpeech.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 750D029111D0E7F300BD1B27 /* RenderInputSpeech.cpp */; };
 		750D029411D0E7F300BD1B27 /* RenderInputSpeech.h in Headers */ = {isa = PBXBuildFile; fileRef = 750D029211D0E7F300BD1B27 /* RenderInputSpeech.h */; };
 		750D02C111D0EE7D00BD1B27 /* inputSpeech.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 750D02C011D0EE7D00BD1B27 /* inputSpeech.tiff */; };
+		7535BC9412020CFF0037EC45 /* SpeechInputClientMock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7535BC9212020CFF0037EC45 /* SpeechInputClientMock.cpp */; };
+		7535BC9512020CFF0037EC45 /* SpeechInputClientMock.h in Headers */ = {isa = PBXBuildFile; fileRef = 7535BC9312020CFF0037EC45 /* SpeechInputClientMock.h */; };
 		754133A8102E00E800075D00 /* InspectorTimelineAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 754133A7102E00E800075D00 /* InspectorTimelineAgent.h */; };
 		754133AA102E00F400075D00 /* InspectorTimelineAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 754133A9102E00F400075D00 /* InspectorTimelineAgent.cpp */; };
 		7553CFE8108F473F00EA281E /* TimelineRecordFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 7553CFE6108F473F00EA281E /* TimelineRecordFactory.h */; };
@@ -7128,6 +7130,8 @@
 		750D029111D0E7F300BD1B27 /* RenderInputSpeech.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderInputSpeech.cpp; sourceTree = "<group>"; };
 		750D029211D0E7F300BD1B27 /* RenderInputSpeech.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderInputSpeech.h; sourceTree = "<group>"; };
 		750D02C011D0EE7D00BD1B27 /* inputSpeech.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = inputSpeech.tiff; sourceTree = "<group>"; };
+		7535BC9212020CFF0037EC45 /* SpeechInputClientMock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SpeechInputClientMock.cpp; path = mock/SpeechInputClientMock.cpp; sourceTree = "<group>"; };
+		7535BC9312020CFF0037EC45 /* SpeechInputClientMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpeechInputClientMock.h; path = mock/SpeechInputClientMock.h; sourceTree = "<group>"; };
 		754133A7102E00E800075D00 /* InspectorTimelineAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorTimelineAgent.h; sourceTree = "<group>"; };
 		754133A9102E00F400075D00 /* InspectorTimelineAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorTimelineAgent.cpp; sourceTree = "<group>"; };
 		7553CFE6108F473F00EA281E /* TimelineRecordFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimelineRecordFactory.h; sourceTree = "<group>"; };
@@ -12044,6 +12048,8 @@
 		59C77F101054591C00506104 /* mock */ = {
 			isa = PBXGroup;
 			children = (
+				7535BC9212020CFF0037EC45 /* SpeechInputClientMock.cpp */,
+				7535BC9312020CFF0037EC45 /* SpeechInputClientMock.h */,
 			);
 			name = mock;
 			sourceTree = "<group>";
@@ -19871,6 +19877,7 @@
 				084D0E3D11F5816100081E1A /* SVGResources.h in Headers */,
 				084D0E3F11F5816100081E1A /* SVGResourcesCache.h in Headers */,
 				085B05C311FAE16C004D65F6 /* SVGResourcesCycleSolver.h in Headers */,
+				7535BC9512020CFF0037EC45 /* SpeechInputClientMock.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -22270,6 +22277,7 @@
 				084D0E3E11F5816100081E1A /* SVGResourcesCache.cpp in Sources */,
 				086A400611F6D6B7002CEC53 /* RenderSVGResourceContainer.cpp in Sources */,
 				085B05C211FAE16C004D65F6 /* SVGResourcesCycleSolver.cpp in Sources */,
+				7535BC9412020CFF0037EC45 /* SpeechInputClientMock.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

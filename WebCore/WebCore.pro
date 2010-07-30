@@ -913,6 +913,7 @@ SOURCES += \
     platform/Logging.cpp \
     platform/MIMETypeRegistry.cpp \
     platform/mock/GeolocationServiceMock.cpp \
+    platform/mock/SpeechInputClientMock.cpp \
     platform/network/AuthenticationChallengeBase.cpp \
     platform/network/Credential.cpp \
     platform/network/FormData.cpp \
@@ -1631,6 +1632,7 @@ HEADERS += \
     platform/GeolocationService.h \
     platform/image-decoders/ImageDecoder.h \
     platform/mock/GeolocationServiceMock.h \
+    platform/mock/SpeechInputClientMock.h \
     platform/graphics/BitmapImage.h \
     platform/graphics/Color.h \
     platform/graphics/filters/FEBlend.h \
