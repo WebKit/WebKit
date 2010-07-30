@@ -1,3 +1,31 @@
+2010-07-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        InsertOrderedList does not switch the list type properly when it has an inner list.
+        https://bugs.webkit.org/show_bug.cgi?id=43166
+
+        The bug was caused by forcedCreateList was not set to true when the start and the end
+        of the selection lies in the same list. Added selectionHasListOfType to fix this problem.
+
+        WebKit used not to convert the outer lists even when the list is fully selected.
+        Corrected this behavior by converting the entire list at once when the list is fully selected.
+        To decide whether or not a list is fully selected, added currentSelection argument to doApplyForSingleParagraph.
+
+        Tests: editing/execCommand/switch-list-type-with-inner-list.html
+               editing/execCommand/switch-list-type-with-orphaned-li.html
+
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::mergeWithNeighboringLists): Extracted the code to merge lists.
+        (WebCore::InsertListCommand::selectionHasListOfType): attachment.cgi
+        (WebCore::InsertListCommand::doApply): Calls selectionHasListOfType.
+        (WebCore::InsertListCommand::doApplyForSingleParagraph): See above.
+        (WebCore::InsertListCommand::listifyParagraph): Calls mergeWithNeighboringLists.
+        * editing/InsertListCommand.h:
+        * editing/htmlediting.cpp:
+        (WebCore::canMergeLists): Ensures lists being merged are instances of HTMLElement.
+        (WebCore::isNodeVisiblyContainedWithin): Works properly when one end is inside the range.
+
 2010-07-29  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Dirk Schulze.

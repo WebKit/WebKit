@@ -1,4 +1,4 @@
-<p>This tests for a crash when trying to flatten a list containing a sub-list at the end. You shouldn't get a crash and there should be a single level list below.</p>
+<p>This tests for a crash when trying to switch the list type of an inner list at the end. You shouldn't get a crash. This test used to flatten the list but this behavior was correct to match Firefox and MSIE in the bug 43166.</p>
 <div id="div" contenteditable="true"><ol><li>One</li><li>Two</li><ul><li>Three</li><li>Four</li></div>
 <p id="console"></p>
 

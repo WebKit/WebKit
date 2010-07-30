@@ -829,7 +829,7 @@ HTMLElement* outermostEnclosingList(Node* node, Node* rootList)
 
 bool canMergeLists(Element* firstList, Element* secondList)
 {
-    if (!firstList || !secondList)
+    if (!firstList || !secondList || !firstList->isHTMLElement() || !secondList->isHTMLElement())
         return false;
 
     return firstList->hasTagName(secondList->tagQName())// make sure the list types match (ol vs. ul)
@@ -1133,9 +1133,15 @@ bool isNodeVisiblyContainedWithin(Node* node, const Range* selectedRange)
     if (selectedRange->compareNode(node, ec) == Range::NODE_INSIDE)
         return true;
 
-    // If the node starts and ends at where selectedRange starts and ends, the node is contained within
-    return visiblePositionBeforeNode(node) == selectedRange->startPosition()
-        && visiblePositionAfterNode(node) == selectedRange->endPosition();
+    bool startIsVisuallySame = visiblePositionBeforeNode(node) == selectedRange->startPosition();
+    if (startIsVisuallySame && comparePositions(Position(node->parentNode(), node->nodeIndex()+1), selectedRange->endPosition()) < 0)
+        return true;
+
+    bool endIsVisuallySame = visiblePositionAfterNode(node) == selectedRange->endPosition();
+    if (endIsVisuallySame && comparePositions(selectedRange->startPosition(), Position(node->parentNode(), node->nodeIndex())) < 0)
+        return true;
+
+    return startIsVisuallySame && endIsVisuallySame;
 }
 
 bool isRenderedAsNonInlineTableImageOrHR(const Node* node)

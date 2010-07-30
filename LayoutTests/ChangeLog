@@ -1,3 +1,23 @@
+2010-07-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        InsertOrderedList does not switch the list type properly when it has an inner list.
+        https://bugs.webkit.org/show_bug.cgi?id=43166
+
+        Added a test to convert an unordered list with a nested list to an ordered list.
+        Also added a test to convert multiple lists with an orphaned list to an ordered list.
+        The behavior of WebKit is changed not to flatten the lists when inserting ordered/unordered
+        lists on nested lists.
+
+        * editing/execCommand/5207369-expected.txt: No longer flattens the list to match Firefox and MSIE.
+        * editing/execCommand/5207369.html: Updated.
+        * editing/execCommand/remove-list-items-expected.txt: Removed one whitespace.
+        * editing/execCommand/switch-list-type-with-inner-list-expected.txt: Added.
+        * editing/execCommand/switch-list-type-with-inner-list.html: Added.
+        * editing/execCommand/switch-list-type-with-orphaned-li-expected.txt: Added.
+        * editing/execCommand/switch-list-type-with-orphaned-li.html: Added.
+
 2010-07-29  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r64313.

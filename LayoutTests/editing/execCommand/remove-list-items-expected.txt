@@ -38,4 +38,4 @@ This should not be in a list.
 bar
 This should not be in a list.
 This should not be in a list.
-<ol style="border: 1px solid red;"> <li>foo</li> </ol><span id="item1">This should not be a list.</span>&nbsp;<br><ol style="border: 1px solid red;"><br> bar <li>baz</li> </ol>This should not be in a list.<br><ol style="border: 1px solid red;"><li>foo</li> </ol>This should not be in a list.<br><ol style="border: 1px solid red;"> <li>bar</li> </ol> This should not be in a list.<br> This should not be in a list.
+<ol style="border: 1px solid red;"> <li>foo</li> </ol><span id="item1">This should not be a list.</span>&nbsp;<br><ol style="border: 1px solid red;"><br> bar <li>baz</li> </ol>This should not be in a list.<br><ol style="border: 1px solid red;"><li>foo</li> </ol>This should not be in a list.<br><ol style="border: 1px solid red;"> <li>bar</li> </ol> This should not be in a list.<br>This should not be in a list.
