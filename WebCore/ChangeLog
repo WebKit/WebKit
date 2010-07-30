@@ -1,3 +1,17 @@
+2010-07-30  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Move GLES2 context manipulation to ChromeClient.h and put it behind the right #if guard
+        https://bugs.webkit.org/show_bug.cgi?id=43281
+
+        These calls were initially put in ChromeClientChromium, but they aren't chromium specific.
+        In theory any port that could create the proper OpenGL ES 2 contexts could implement
+        these functions.  Also moves the calls to be behind the correct #if guard.
+
+        * page/ChromeClient.h:
+        * page/chromium/ChromeClientChromium.h:
+
 2010-07-30  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by David Levin.

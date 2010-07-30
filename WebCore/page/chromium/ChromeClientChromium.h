@@ -39,10 +39,6 @@ class AccessibilityObject;
 class IntRect;
 class PopupContainer;
 
-#if USE(ACCELERATED_COMPOSITING)
-class GLES2Context;
-#endif
-
 // Contains Chromium-specific extensions to the ChromeClient.  Only put
 // things here that don't make sense for other ports.
 class ChromeClientChromium : public ChromeClient {
@@ -59,12 +55,6 @@ public:
 
     // Notifies embedder that the state of an accessibility object has changed.
     virtual void didChangeAccessibilityObjectState(AccessibilityObject*) = 0;
-
-#if USE(ACCELERATED_COMPOSITING)
-    // Request a GL ES 2 context to use for compositing this page's content.
-    virtual PassOwnPtr<GLES2Context> getOnscreenGLES2Context() = 0;
-    virtual PassOwnPtr<GLES2Context> getOffscreenGLES2Context() = 0;
-#endif
 };
 
 } // namespace WebCore
