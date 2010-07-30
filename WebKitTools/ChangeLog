@@ -1,3 +1,47 @@
+2010-07-29  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Replace plugins/npruntime/bindings-test.html with a more sophisticated test
+        https://bugs.webkit.org/show_bug.cgi?id=43232
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        Add PluginScriptableNPObjectInvokeDefault.cpp.
+
+        * DumpRenderTree/TestNetscapePlugIn/PluginObject.cpp:
+        Remove invokeDefault callback function.
+
+        * DumpRenderTree/TestNetscapePlugIn/PluginTest.cpp:
+        (PluginTest::create):
+        Move this to the top of the file.
+
+        (PluginTest::NPP_GetValue):
+        Add default implementation.
+
+        (PluginTest::NPN_CreateObject):
+        Add NPN_ wrapper.
+
+        * DumpRenderTree/TestNetscapePlugIn/PluginTest.h:
+        (PluginTest::identifier):
+        Add identifier getter.
+
+        * DumpRenderTree/TestNetscapePlugIn/Tests/DocumentOpenInDestroyStream.cpp:
+        (DocumentOpenInDestroyStream::DocumentOpenInDestroyStream):
+        Add "using namespace std".
+
+        * DumpRenderTree/TestNetscapePlugIn/main.cpp:
+        (NPP_GetValue):
+        Give PluginTest a chance to return a value.
+
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugin.vcproj:
+        * DumpRenderTree/qt/TestNetscapePlugin/TestNetscapePlugin.pro:
+        * GNUmakefile.am:
+        Add PluginScriptableNPObjectInvokeDefault.cpp.
+        
+        * DumpRenderTree/unix/TestNetscapePlugin/TestNetscapePlugin.cpp:
+        (webkit_test_plugin_get_value):
+        Give PluginTest a chance to return a value.
+
 2010-07-30  Steve Block  <steveblock@google.com>
 
         Reviewed by Steve Block.

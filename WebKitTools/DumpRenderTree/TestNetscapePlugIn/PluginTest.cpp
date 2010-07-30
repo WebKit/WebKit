@@ -30,6 +30,15 @@
 using namespace std;
 extern NPNetscapeFuncs *browser;
 
+PluginTest* PluginTest::create(NPP npp, const string& identifier)
+{
+    CreateTestFunction createTestFunction = createTestFunctions()[identifier];
+    if (createTestFunction)
+        return createTestFunction(npp, identifier);
+
+    return new PluginTest(npp, identifier);
+}
+
 PluginTest::PluginTest(NPP npp, const string& identifier)
     : m_npp(npp)
     , m_identifier(identifier)
@@ -45,12 +54,16 @@ NPError PluginTest::NPP_DestroyStream(NPStream *stream, NPReason reason)
     return NPERR_NO_ERROR;
 }
 
-std::map<std::string, PluginTest::CreateTestFunction>& PluginTest::createTestFunctions()
+NPError PluginTest::NPP_GetValue(NPPVariable variable, void *value)
 {
-    static std::map<std::string, CreateTestFunction> testFunctions;
-    
-    return testFunctions;
+    // We don't know anything about plug-in values so just return NPERR_GENERIC_ERROR.
+    return NPERR_GENERIC_ERROR;
 }
+
+NPObject* PluginTest::NPN_CreateObject(NPClass* npClass)
+{
+    return browser->createobject(m_npp, npClass);
+}                                 
 
 void PluginTest::registerCreateTestFunction(const string& identifier, CreateTestFunction createTestFunction)
 {
@@ -59,11 +72,9 @@ void PluginTest::registerCreateTestFunction(const string& identifier, CreateTest
     createTestFunctions()[identifier] = createTestFunction;
 }
 
-PluginTest* PluginTest::create(NPP npp, const string& identifier)
+std::map<std::string, PluginTest::CreateTestFunction>& PluginTest::createTestFunctions()
 {
-    CreateTestFunction createTestFunction = createTestFunctions()[identifier];
-    if (createTestFunction)
-        return createTestFunction(npp, identifier);
-
-    return new PluginTest(npp, identifier);
+    static std::map<std::string, CreateTestFunction> testFunctions;
+    
+    return testFunctions;
 }

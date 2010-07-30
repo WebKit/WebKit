@@ -25,11 +25,15 @@
 
 #include "PluginTest.h"
 
+using namespace std;
+
 extern bool testDocumentOpen(NPP npp);
+
+// Call document.open from NPP_DestroyStream.
 
 class DocumentOpenInDestroyStream : public PluginTest {
 public:
-    DocumentOpenInDestroyStream(NPP npp, const std::string& identifier)
+    DocumentOpenInDestroyStream(NPP npp, const string& identifier)
         : PluginTest(npp, identifier)
         , m_shouldOpen(true)
     {

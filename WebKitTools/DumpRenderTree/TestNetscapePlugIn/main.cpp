@@ -529,6 +529,10 @@ NPError NPP_GetValue(NPP instance, NPPVariable variable, void *value)
 {
     PluginObject* obj = static_cast<PluginObject*>(instance->pdata);
 
+    // First, check if the PluginTest object supports getting this value.
+    if (obj->pluginTest->NPP_GetValue(variable, value) == NPERR_NO_ERROR)
+        return NPERR_NO_ERROR;
+
     if (variable == NPPVpluginScriptableNPObject) {
         void **v = (void **)value;
         // Return value is expected to be retained

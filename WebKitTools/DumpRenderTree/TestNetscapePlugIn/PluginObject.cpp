@@ -99,7 +99,6 @@ static bool pluginHasMethod(NPObject*, NPIdentifier name);
 static bool pluginGetProperty(NPObject*, NPIdentifier name, NPVariant*);
 static bool pluginSetProperty(NPObject*, NPIdentifier name, const NPVariant*);
 static bool pluginInvoke(NPObject*, NPIdentifier name, const NPVariant* args, uint32_t argCount, NPVariant* result);
-static bool pluginInvokeDefault(NPObject*, const NPVariant* args, uint32_t argCount, NPVariant* result);
 static NPObject* pluginAllocate(NPP npp, NPClass*);
 static void pluginDeallocate(NPObject*);
 
@@ -112,7 +111,7 @@ static NPClass pluginClass = {
     pluginInvalidate,
     pluginHasMethod,
     pluginInvoke,
-    pluginInvokeDefault,
+    0, // NPClass::invokeDefault,
     pluginHasProperty,
     pluginGetProperty,
     pluginSetProperty,
@@ -161,7 +160,6 @@ static const NPUTF8 *pluginPropertyIdentifierNames[NUM_PROPERTY_IDENTIFIERS] = {
 enum {
     ID_TEST_CALLBACK_METHOD = 0,
     ID_TEST_GETURL,
-    ID_REMOVE_DEFAULT_METHOD,
     ID_TEST_DOM_ACCESS,
     ID_TEST_GET_URL_NOTIFY,
     ID_TEST_INVOKE_DEFAULT,
@@ -198,7 +196,6 @@ static NPIdentifier pluginMethodIdentifiers[NUM_METHOD_IDENTIFIERS];
 static const NPUTF8 *pluginMethodIdentifierNames[NUM_METHOD_IDENTIFIERS] = {
     "testCallback",
     "getURL",
-    "removeDefaultMethod",
     "testDOMAccess",
     "getURLNotify",
     "testInvokeDefault",
@@ -463,13 +460,6 @@ static bool getURL(PluginObject* obj, const NPVariant* args, uint32_t argCount, 
         return true;
     }
     return false;
-}
-
-static bool removeDefaultMethod(PluginObject*, const NPVariant* args, uint32_t argCount, NPVariant* result)
-{
-    pluginClass.invokeDefault = 0;
-    VOID_TO_NPVARIANT(*result);
-    return true;
 }
 
 static bool getURLNotify(PluginObject* obj, const NPVariant* args, uint32_t argCount, NPVariant* result)
@@ -860,8 +850,6 @@ static bool pluginInvoke(NPObject* header, NPIdentifier name, const NPVariant* a
         return testCallback(plugin, args, argCount, result);
     else if (name == pluginMethodIdentifiers[ID_TEST_GETURL])
         return getURL(plugin, args, argCount, result);
-    else if (name == pluginMethodIdentifiers[ID_REMOVE_DEFAULT_METHOD])
-        return removeDefaultMethod(plugin, args, argCount, result);
     else if (name == pluginMethodIdentifiers[ID_TEST_DOM_ACCESS])
         return testDOMAccess(plugin, args, argCount, result);
     else if (name == pluginMethodIdentifiers[ID_TEST_GET_URL_NOTIFY])
@@ -942,12 +930,6 @@ static bool pluginInvoke(NPObject* header, NPIdentifier name, const NPVariant* a
         return normalizeOverride(plugin, args, argCount, result);
     
     return false;
-}
-
-static bool pluginInvokeDefault(NPObject* obj, const NPVariant* args, uint32_t argCount, NPVariant* result)
-{
-    INT32_TO_NPVARIANT(1, *result);
-    return true;
 }
 
 static void pluginInvalidate(NPObject* header)

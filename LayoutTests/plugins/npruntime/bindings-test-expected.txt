@@ -1,7 +1,0 @@
-ALERT: typeof(cPlugin)=function
-ALERT: cPlugin()=1
-ALERT: typeof(cPlugin)=object
-ALERT: cPlugin()=TypeError
-This page tests invoking as functions JavaScript objects that are provided by plugins.
-
-
