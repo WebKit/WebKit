@@ -1,3 +1,14 @@
+2010-07-30  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [QT][Symbian] QtTestBrowser missing location capabilities
+        https://bugs.webkit.org/show_bug.cgi?id=43235
+
+        QtTestBrowser missing capabilities to use QtMobility::QLocation. 
+
+        * QtTestBrowser/QtTestBrowser.pro:
+
 2010-07-29  Anders Carlsson  <andersca@apple.com>
 
         Add PluginTest.cpp
