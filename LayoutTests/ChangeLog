@@ -1,3 +1,76 @@
+2010-07-29  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Dirk Schulze.
+
+        Cairo: Need to implement GraphicsContext::clipConvexPolygon()
+        https://bugs.webkit.org/show_bug.cgi?id=41308
+
+        Enable tests for path based borders.
+
+        * platform/gtk/fast/borders/border-radius-circle-expected.checksum: Added.
+        * platform/gtk/fast/borders/border-radius-circle-expected.png: Added.
+        * platform/gtk/fast/borders/border-radius-circle-expected.txt: Copied from LayoutTests/platform/mac/fast/borders/border-radius-circle-expected.txt.
+        * platform/gtk/fast/borders/border-radius-groove-01-expected.checksum: Added.
+        * platform/gtk/fast/borders/border-radius-groove-01-expected.png: Added.
+        * platform/gtk/fast/borders/border-radius-groove-01-expected.txt: Copied from LayoutTests/platform/mac/fast/borders/border-radius-groove-01-expected.txt.
+        * platform/gtk/fast/borders/border-radius-groove-02-expected.checksum: Added.
+        * platform/gtk/fast/borders/border-radius-groove-02-expected.png: Added.
+        * platform/gtk/fast/borders/border-radius-groove-02-expected.txt: Copied from LayoutTests/platform/mac/fast/borders/border-radius-groove-02-expected.txt.
+        * platform/gtk/fast/borders/border-radius-groove-03-expected.checksum: Added.
+        * platform/gtk/fast/borders/border-radius-groove-03-expected.png: Added.
+        * platform/gtk/fast/borders/border-radius-groove-03-expected.txt: Copied from LayoutTests/platform/mac/fast/borders/border-radius-groove-03-expected.txt.
+        * platform/gtk/fast/borders/border-radius-wide-border-01-expected.checksum: Added.
+        * platform/gtk/fast/borders/border-radius-wide-border-01-expected.png: Added.
+        * platform/gtk/fast/borders/border-radius-wide-border-01-expected.txt: Copied from LayoutTests/platform/mac/fast/borders/border-radius-wide-border-01-expected.txt.
+        * platform/gtk/fast/borders/border-radius-wide-border-02-expected.checksum: Added.
+        * platform/gtk/fast/borders/border-radius-wide-border-02-expected.png: Added.
+        * platform/gtk/fast/borders/border-radius-wide-border-02-expected.txt: Copied from LayoutTests/platform/mac/fast/borders/border-radius-wide-border-02-expected.txt.
+        * platform/gtk/fast/borders/border-radius-wide-border-03-expected.checksum: Added.
+        * platform/gtk/fast/borders/border-radius-wide-border-03-expected.png: Added.
+        * platform/gtk/fast/borders/border-radius-wide-border-03-expected.txt: Copied from LayoutTests/platform/mac/fast/borders/border-radius-wide-border-03-expected.txt.
+        * platform/gtk/fast/borders/border-radius-wide-border-04-expected.checksum: Added.
+        * platform/gtk/fast/borders/border-radius-wide-border-04-expected.png: Added.
+        * platform/gtk/fast/borders/border-radius-wide-border-04-expected.txt: Copied from LayoutTests/platform/mac/fast/borders/border-radius-wide-border-04-expected.txt.
+        * platform/gtk/fast/borders/borderRadiusDashed04-expected.checksum: Added.
+        * platform/gtk/fast/borders/borderRadiusDashed04-expected.png: Added.
+        * platform/gtk/fast/borders/borderRadiusDashed04-expected.txt: Copied from LayoutTests/platform/mac/fast/borders/borderRadiusDashed04-expected.txt.
+        * platform/gtk/fast/borders/borderRadiusDashed05-expected.checksum: Added.
+        * platform/gtk/fast/borders/borderRadiusDashed05-expected.png: Added.
+        * platform/gtk/fast/borders/borderRadiusDashed05-expected.txt: Copied from LayoutTests/platform/mac/fast/borders/borderRadiusDashed05-expected.txt.
+        * platform/gtk/fast/borders/borderRadiusDashed06-expected.checksum: Added.
+        * platform/gtk/fast/borders/borderRadiusDashed06-expected.png: Added.
+        * platform/gtk/fast/borders/borderRadiusDashed06-expected.txt: Copied from LayoutTests/platform/mac/fast/borders/borderRadiusDashed06-expected.txt.
+        * platform/gtk/fast/borders/borderRadiusDotted04-expected.checksum: Added.
+        * platform/gtk/fast/borders/borderRadiusDotted04-expected.png: Added.
+        * platform/gtk/fast/borders/borderRadiusDotted04-expected.txt: Copied from LayoutTests/platform/mac/fast/borders/borderRadiusDotted04-expected.txt.
+        * platform/gtk/fast/borders/borderRadiusDotted05-expected.checksum: Added.
+        * platform/gtk/fast/borders/borderRadiusDotted05-expected.png: Added.
+        * platform/gtk/fast/borders/borderRadiusDotted05-expected.txt: Copied from LayoutTests/platform/mac/fast/borders/borderRadiusDotted05-expected.txt.
+        * platform/gtk/fast/borders/borderRadiusDotted06-expected.checksum: Added.
+        * platform/gtk/fast/borders/borderRadiusDotted06-expected.png: Added.
+        * platform/gtk/fast/borders/borderRadiusDotted06-expected.txt: Copied from LayoutTests/platform/mac/fast/borders/borderRadiusDotted06-expected.txt.
+        * platform/gtk/fast/borders/borderRadiusDouble04-expected.checksum: Added.
+        * platform/gtk/fast/borders/borderRadiusDouble04-expected.png: Added.
+        * platform/gtk/fast/borders/borderRadiusDouble04-expected.txt: Copied from LayoutTests/platform/mac/fast/borders/borderRadiusDouble04-expected.txt.
+        * platform/gtk/fast/borders/borderRadiusDouble05-expected.checksum: Added.
+        * platform/gtk/fast/borders/borderRadiusDouble05-expected.png: Added.
+        * platform/gtk/fast/borders/borderRadiusDouble05-expected.txt: Copied from LayoutTests/platform/mac/fast/borders/borderRadiusDouble05-expected.txt.
+        * platform/gtk/fast/borders/borderRadiusDouble06-expected.checksum: Added.
+        * platform/gtk/fast/borders/borderRadiusDouble06-expected.png: Added.
+        * platform/gtk/fast/borders/borderRadiusDouble06-expected.txt: Copied from LayoutTests/platform/mac/fast/borders/borderRadiusDouble06-expected.txt.
+        * platform/gtk/fast/borders/borderRadiusDouble07-expected.checksum: Added.
+        * platform/gtk/fast/borders/borderRadiusDouble07-expected.png: Added.
+        * platform/gtk/fast/borders/borderRadiusDouble07-expected.txt: Copied from LayoutTests/platform/mac/fast/borders/borderRadiusDouble07-expected.txt.
+        * platform/gtk/fast/borders/borderRadiusDouble08-expected.checksum: Added.
+        * platform/gtk/fast/borders/borderRadiusDouble08-expected.png: Added.
+        * platform/gtk/fast/borders/borderRadiusDouble08-expected.txt: Copied from LayoutTests/platform/mac/fast/borders/borderRadiusDouble08-expected.txt.
+        * platform/gtk/fast/borders/borderRadiusDouble09-expected.checksum: Added.
+        * platform/gtk/fast/borders/borderRadiusDouble09-expected.png: Added.
+        * platform/gtk/fast/borders/borderRadiusDouble09-expected.txt: Copied from LayoutTests/platform/mac/fast/borders/borderRadiusDouble09-expected.txt.
+        * platform/gtk/fast/borders/different-color-borders-expected.checksum: Added.
+        * platform/gtk/fast/borders/different-color-borders-expected.png: Added.
+        * platform/gtk/fast/borders/different-color-borders-expected.txt: Added.
+
 2010-07-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.

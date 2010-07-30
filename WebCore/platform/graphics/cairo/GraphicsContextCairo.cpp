@@ -165,6 +165,14 @@ static void appendWebCorePathToCairoContext(cairo_t* context, const Path& path)
     appendPathToCairoContext(context, path.platformPath()->m_cr);
 }
 
+static void addConvexPolygonToContext(cairo_t* context, size_t numPoints, const FloatPoint* points)
+{
+    cairo_move_to(context, points[0].x(), points[0].y());
+    for (size_t i = 1; i < numPoints; i++)
+        cairo_line_to(context, points[i].x(), points[i].y());
+    cairo_close_path(context);
+}
+
 void GraphicsContext::calculateShadowBufferDimensions(IntSize& shadowBufferSize, FloatRect& shadowRect, float& kernelSize, const FloatRect& sourceRect, const FloatSize& shadowSize, float shadowBlur)
 {
 #if ENABLE(FILTERS)
@@ -520,10 +528,7 @@ void GraphicsContext::drawConvexPolygon(size_t npoints, const FloatPoint* points
 
     cairo_save(cr);
     cairo_set_antialias(cr, shouldAntialias ? CAIRO_ANTIALIAS_DEFAULT : CAIRO_ANTIALIAS_NONE);
-    cairo_move_to(cr, points[0].x(), points[0].y());
-    for (size_t i = 1; i < npoints; i++)
-        cairo_line_to(cr, points[i].x(), points[i].y());
-    cairo_close_path(cr);
+    addConvexPolygonToContext(cr, npoints, points);
 
     if (fillColor().alpha()) {
         setColor(cr, fillColor());
@@ -548,8 +553,20 @@ void GraphicsContext::clipConvexPolygon(size_t numPoints, const FloatPoint* poin
 
     if (numPoints <= 1)
         return;
-    
-    // FIXME: IMPLEMENT!
+
+    cairo_t* cr = m_data->cr;
+
+    cairo_new_path(cr);
+    cairo_fill_rule_t savedFillRule = cairo_get_fill_rule(cr);
+    cairo_antialias_t savedAntialiasRule = cairo_get_antialias(cr);
+
+    cairo_set_antialias(cr, CAIRO_ANTIALIAS_DEFAULT);
+    cairo_set_fill_rule(cr, CAIRO_FILL_RULE_WINDING);
+    addConvexPolygonToContext(cr, numPoints, points);
+    cairo_clip(cr);
+
+    cairo_set_antialias(cr, savedAntialiasRule);
+    cairo_set_fill_rule(cr, savedFillRule);
 }
 
 void GraphicsContext::fillPath()

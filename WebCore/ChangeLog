@@ -30,6 +30,22 @@
 
         Reviewed by Dirk Schulze.
 
+        Cairo: Need to implement GraphicsContext::clipConvexPolygon()
+        https://bugs.webkit.org/show_bug.cgi?id=41308
+
+        Implement clipConvexPolygon for Cairo ports and enable new path based
+        borders for that port as well.
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::addConvexPolygonToContext): Add this helper method.
+        (WebCore::GraphicsContext::drawConvexPolygon): Use the new addConvexPolygonToContext helper.
+        (WebCore::GraphicsContext::clipConvexPolygon): Implement this method.
+        * rendering/RenderObject.h: Enable path based borders for Cairo.
+
+2010-07-29  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Dirk Schulze.
+
         [Cairo] Bring behavior of paths on the Cairo GraphicsContext into line with the CoreGraphics port
         https://bugs.webkit.org/show_bug.cgi?id=41732
 
