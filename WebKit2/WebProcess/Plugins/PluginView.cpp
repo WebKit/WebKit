@@ -282,13 +282,13 @@ void PluginView::initializePlugin()
     m_isInitialized = true;
 }
 
-JSObject* PluginView::scriptObject(ExecState* exec, JSGlobalObject* globalObject)
+JSObject* PluginView::scriptObject(JSGlobalObject* globalObject)
 {
     NPObject* scriptableNPObject = m_plugin->pluginScriptableNPObject();
     if (!scriptableNPObject)
         return 0;
 
-    JSObject* jsObject = m_npRuntimeObjectMap.getOrCreateJSObject(exec, globalObject, scriptableNPObject);
+    JSObject* jsObject = m_npRuntimeObjectMap.getOrCreateJSObject(globalObject, scriptableNPObject);
     releaseNPObject(scriptableNPObject);
 
     return jsObject;

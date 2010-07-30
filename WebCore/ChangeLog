@@ -1,3 +1,33 @@
+2010-07-30  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Implement NPN_InvokeDefault
+        https://bugs.webkit.org/show_bug.cgi?id=43266
+
+        * bindings/js/JSPluginElementFunctions.cpp:
+        (WebCore::isPluginElement):
+        Add convenience function.
+
+        (WebCore::pluginInstance):
+        Call isPluginElement.
+
+        (WebCore::pluginScriptObjectFromPluginViewBase):
+        Given an JSHTMLElement, ask the PluginViewBase for the scriptable object.
+
+        (WebCore::pluginScriptObject):
+        Call isPluginElement. Call pluginScriptObjectFromPluginViewBase.
+
+        (WebCore::callPlugin):
+        Get the script object, assemble the arguments and call "call" directly.
+
+        (WebCore::runtimeObjectGetCallData):
+        Try to get the script object from the PluginViewBase first.
+
+        * plugins/PluginViewBase.h:
+        (WebCore::PluginViewBase::scriptObject):
+        Remove ExecState parameter.
+
 2010-07-30  Adam Roben  <aroben@apple.com>
 
         Roll our r64361 and r64363

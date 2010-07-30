@@ -56,7 +56,7 @@ public:
     void npJSObjectDestroyed(NPJSObject*);
 
     // Returns a JSObject object that wraps the given NPObject.
-    JSC::JSObject* getOrCreateJSObject(JSC::ExecState*, JSC::JSGlobalObject*, NPObject*);
+    JSC::JSObject* getOrCreateJSObject(JSC::JSGlobalObject*, NPObject*);
 
     void jsNPObjectDestroyed(JSNPObject*);
 

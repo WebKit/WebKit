@@ -47,7 +47,7 @@ static NPIdentifier npIdentifierFromIdentifier(const Identifier& identifier)
 
 const ClassInfo JSNPObject::s_info = { "NPObject", 0, 0, 0 };
 
-JSNPObject::JSNPObject(ExecState*, JSGlobalObject* globalObject, NPRuntimeObjectMap* objectMap, NPObject* npObject)
+JSNPObject::JSNPObject(JSGlobalObject* globalObject, NPRuntimeObjectMap* objectMap, NPObject* npObject)
     : JSObjectWithGlobalObject(globalObject, createStructure(globalObject->objectPrototype()))
     , m_objectMap(objectMap)
     , m_npObject(npObject)
@@ -96,6 +96,42 @@ JSValue JSNPObject::callMethod(ExecState* exec, NPIdentifier methodName)
     return propertyValue;
 }
 
+JSC::JSValue JSNPObject::callObject(JSC::ExecState* exec)
+{
+    if (!m_npObject)
+        return throwInvalidAccessError(exec);
+
+    size_t argumentCount = exec->argumentCount();
+    Vector<NPVariant, 8> arguments(argumentCount);
+    
+    // Convert all arguments to NPVariants.
+    for (size_t i = 0; i < argumentCount; ++i)
+        m_objectMap->convertJSValueToNPVariant(exec, exec->argument(i), arguments[i]);
+    
+    bool returnValue;
+    NPVariant result;
+    VOID_TO_NPVARIANT(result);
+
+    {
+        JSLock::DropAllLocks dropAllLocks(SilenceAssertionsOnly);
+        returnValue = m_npObject->_class->invokeDefault(m_npObject, arguments.data(), argumentCount, &result);
+        
+        // FIXME: Handle invokeDefault setting an exception.
+        // FIXME: Find out what happens if calling invokeDefault causes the plug-in to go away.
+    }
+
+    // Release all arguments;
+    for (size_t i = 0; i < argumentCount; ++i)
+        releaseNPVariantValue(&arguments[i]);
+
+    if (!returnValue)
+        throwError(exec, createError(exec, "Error calling method on NPObject."));
+
+    JSValue propertyValue = m_objectMap->convertNPVariantToJSValue(exec, globalObject(), result);
+    releaseNPVariantValue(&result);
+    return propertyValue;
+}
+
 JSValue JSNPObject::callConstructor(ExecState* exec)
 {
     if (!m_npObject)
@@ -126,6 +162,23 @@ JSValue JSNPObject::callConstructor(ExecState* exec)
     JSValue value = m_objectMap->convertNPVariantToJSValue(exec, globalObject(), result);
     releaseNPVariantValue(&result);
     return value;
+}
+
+static EncodedJSValue JSC_HOST_CALL callNPJSObject(ExecState* exec)
+{
+    JSObject* object = exec->callee();
+    ASSERT(object->inherits(&JSNPObject::s_info));
+
+    return JSValue::encode(static_cast<JSNPObject*>(object)->callObject(exec));
+}
+
+JSC::CallType JSNPObject::getCallData(JSC::CallData& callData)
+{
+    if (!m_npObject || !m_npObject->_class->invokeDefault)
+        return CallTypeNone;
+
+    callData.native.function = callNPJSObject;
+    return CallTypeHost;
 }
 
 static EncodedJSValue JSC_HOST_CALL constructWithConstructor(ExecState* exec)

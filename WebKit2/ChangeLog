@@ -1,3 +1,35 @@
+2010-07-30  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Implement NPN_InvokeDefault
+        https://bugs.webkit.org/show_bug.cgi?id=43266
+
+        * WebProcess/Plugins/JSNPObject.cpp:
+        (WebKit::JSNPObject::JSNPObject):
+        Remove ExecState parameter.
+
+        (WebKit::JSNPObject::callObject):
+        Call the NPClass::invokeDefault function.
+
+        (WebKit::callNPJSObject):
+        Call JSNPObject::callObject.
+
+        (WebKit::JSNPObject::getCallData):
+        Check if the NPClass has an invokeDefault function.
+
+        * WebProcess/Plugins/JSNPObject.h:
+        * WebProcess/Plugins/NPRuntimeObjectMap.cpp:
+        (WebKit::NPRuntimeObjectMap::getOrCreateJSObject):
+        Remove ExecState parameter.
+
+        (WebKit::NPRuntimeObjectMap::convertNPVariantToJSValue):
+        Remove ExecState parameter.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::scriptObject):
+        Remove ExecState parameter.
+
 2010-07-30  Adam Roben  <aroben@apple.com>
 
         Roll our r64361 and r64363

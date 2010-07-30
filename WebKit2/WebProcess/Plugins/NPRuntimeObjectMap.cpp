@@ -66,10 +66,10 @@ void NPRuntimeObjectMap::npJSObjectDestroyed(NPJSObject* npJSObject)
     m_objects.remove(npJSObject->jsObject());
 }
 
-JSObject* NPRuntimeObjectMap::getOrCreateJSObject(ExecState* exec, JSGlobalObject* globalObject, NPObject* npObject)
+JSObject* NPRuntimeObjectMap::getOrCreateJSObject(JSGlobalObject* globalObject, NPObject* npObject)
 {
     // FIXME: Check if we already have a wrapper for this NPObject!
-    return new (exec) JSNPObject(exec, globalObject, this, npObject);
+    return new (globalObject->globalData()) JSNPObject(globalObject, this, npObject);
 }
 
 void NPRuntimeObjectMap::jsNPObjectDestroyed(JSNPObject* jsNPObject)
@@ -107,7 +107,7 @@ JSValue NPRuntimeObjectMap::convertNPVariantToJSValue(JSC::ExecState* exec, JSC:
 
         ASSERT(globalObject);
 
-        return getOrCreateJSObject(exec, globalObject, npObject);
+        return getOrCreateJSObject(globalObject, npObject);
     }
     }
 
