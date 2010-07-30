@@ -1,3 +1,19 @@
+2010-07-30  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=43275
+        Make WKArrayRef more usable.
+
+        - Add Create functions.
+        - Make WKArrayGetItemAtIndex return a WKTypeRef.
+
+        * UIProcess/API/C/WKArray.cpp:
+        (WKArrayCreate):
+        (WKArrayCreateAdoptingValues):
+        (WKArrayGetItemAtIndex):
+        * UIProcess/API/C/WKArray.h:
+
 2010-07-30  Ada Chan  <adachan@apple.com>
 
         Reviewed by John Sullivan.

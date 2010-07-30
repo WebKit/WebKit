@@ -2,6 +2,19 @@
 
         Reviewed by Anders Carlsson.
 
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=43275
+        Make WKArrayRef more usable.
+
+        Remove now unnecessary const_casts.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::dumpDescendantFrameScrollPositions):
+        (WTR::dumpDescendantFramesText):
+
+2010-07-30  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
         Patch for https://bugs.webkit.org/show_bug.cgi?id=43274
         Add first pass of structured message passing.
 
