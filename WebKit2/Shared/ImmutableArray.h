@@ -52,7 +52,7 @@ public:
     ~ImmutableArray();
 
     template<typename T>
-    T* at(size_t i) { ASSERT(i < m_size); if (m_entries[i]->type() != T::APIType) return 0; return m_entries[i]; }
+    T* at(size_t i) { ASSERT(i < m_size); if (m_entries[i]->type() != T::APIType) return 0; return static_cast<T*>(m_entries[i]); }
 
     APIObject* at(size_t i) { ASSERT(i < m_size); return m_entries[i]; }
     size_t size() { return m_size; }
