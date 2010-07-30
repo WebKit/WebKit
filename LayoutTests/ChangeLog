@@ -1,3 +1,9 @@
+2010-07-29  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Unreviewed, re-enabling all storage tests on Windows in Chromium.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-07-29  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
