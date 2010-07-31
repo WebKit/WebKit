@@ -42,6 +42,7 @@
 #include "MainResourceLoader.h"
 #include "ManifestParser.h"
 #include "Page.h"
+#include "SecurityOrigin.h"
 #include "Settings.h"
 #include <wtf/HashMap.h>
 
@@ -57,6 +58,7 @@ namespace WebCore {
 
 ApplicationCacheGroup::ApplicationCacheGroup(const KURL& manifestURL, bool isCopy)
     : m_manifestURL(manifestURL)
+    , m_origin(SecurityOrigin::create(manifestURL))
     , m_updateStatus(Idle)
     , m_downloadingPendingMasterResourceLoadersCount(0)
     , m_progressTotal(0)
@@ -67,6 +69,8 @@ ApplicationCacheGroup::ApplicationCacheGroup(const KURL& manifestURL, bool isCop
     , m_completionType(None)
     , m_isCopy(isCopy)
     , m_calledReachedMaxAppCacheSize(false)
+    , m_loadedSize(0)
+    , m_availableSpaceInQuota(ApplicationCacheStorage::unknownQuota())
 {
 }
 
@@ -592,6 +596,8 @@ void ApplicationCacheGroup::didReceiveData(ResourceHandle* handle, const char* d
     
     ASSERT(m_currentResource);
     m_currentResource->data()->append(data, length);
+
+    m_loadedSize += length;
 }
 
 void ApplicationCacheGroup::didFinishLoading(ResourceHandle* handle)
@@ -605,7 +611,23 @@ void ApplicationCacheGroup::didFinishLoading(ResourceHandle* handle)
         didFinishLoadingManifest();
         return;
     }
- 
+
+    // After finishing the loading of any resource, we check if it will
+    // fit in our last known quota limit.
+    if (m_availableSpaceInQuota == ApplicationCacheStorage::unknownQuota()) {
+        // Failed to determine what is left in the quota. Fallback to allowing anything.
+        if (!cacheStorage().remainingSizeForOriginExcludingCache(m_origin.get(), m_newestCache.get(), m_availableSpaceInQuota))
+            m_availableSpaceInQuota = ApplicationCacheStorage::noQuota();
+    }
+
+    // Check each resource, as it loads, to see if it would fit in our
+    // idea of the available quota space.
+    if (m_availableSpaceInQuota < m_loadedSize) {
+        m_currentResource = 0;
+        cacheUpdateFailed();
+        return;
+    }
+
     ASSERT(m_currentHandle == handle);
     ASSERT(m_pendingEntries.contains(handle->firstRequest().url()));
     
@@ -860,6 +882,15 @@ void ApplicationCacheGroup::checkIfLoadIsComplete()
 
         RefPtr<ApplicationCache> oldNewestCache = (m_newestCache == m_cacheBeingUpdated) ? 0 : m_newestCache;
 
+        // Check one more time, before committing to the new cache, if the cache will fit in the quota.
+        int64_t remainingSpaceInOrigin;
+        if (cacheStorage().remainingSizeForOriginExcludingCache(m_origin.get(), oldNewestCache.get(), remainingSpaceInOrigin)) {
+            if (m_cacheBeingUpdated->estimatedSizeInStorage() > remainingSpaceInOrigin) {
+                cacheUpdateFailed();
+                break;
+            }
+        }
+
         setNewestCache(m_cacheBeingUpdated.release());
         if (cacheStorage().storeNewestCache(this)) {
             // New cache stored, now remove the old cache.
@@ -922,6 +953,8 @@ void ApplicationCacheGroup::checkIfLoadIsComplete()
     m_completionType = None;
     setUpdateStatus(Idle);
     m_frame = 0;
+    m_loadedSize = 0;
+    m_availableSpaceInQuota = ApplicationCacheStorage::unknownQuota();
     m_calledReachedMaxAppCacheSize = false;
 }
 

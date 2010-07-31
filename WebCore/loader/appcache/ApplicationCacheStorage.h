@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2010 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,12 +37,13 @@
 namespace WebCore {
 
 class ApplicationCache;
-class ApplicationCacheHost;
 class ApplicationCacheGroup;
+class ApplicationCacheHost;
 class ApplicationCacheResource;
 class KURL;
 template <class T>
 class StorageIDJournal;
+class SecurityOrigin;
 
 class ApplicationCacheStorage : public Noncopyable {
 public:
@@ -56,6 +57,9 @@ public:
 
     int64_t defaultOriginQuota() const { return m_defaultOriginQuota; }
     void setDefaultOriginQuota(int64_t quota);
+    bool quotaForOrigin(const SecurityOrigin*, int64_t& quota);
+    bool remainingSizeForOriginExcludingCache(const SecurityOrigin*, ApplicationCache*, int64_t& remainingSize);
+    bool storeUpdatedQuotaForOrigin(const SecurityOrigin*, int64_t quota);
 
     ApplicationCacheGroup* cacheGroupForURL(const KURL&); // Cache to load a main resource from.
     ApplicationCacheGroup* fallbackCacheGroupForURL(const KURL&); // Cache that has a fallback entry to load a main resource from if normal loading fails.
@@ -80,6 +84,7 @@ public:
     bool deleteCacheGroup(const String& manifestURL);
     void vacuumDatabaseFile();
 
+    static int64_t unknownQuota() { return -1; }
     static int64_t noQuota() { return std::numeric_limits<int64_t>::max(); }
 private:
     ApplicationCacheStorage();

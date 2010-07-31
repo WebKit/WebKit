@@ -5,6 +5,54 @@
         Limit ApplicationCache Total and Per-Origin Storage Capacity (Quotas)
         https://bugs.webkit.org/show_bug.cgi?id=40627
 
+        Part 2 - Update Schema and enforce Per-Origin Quotas
+
+        Added an "Origins" table to the application cache databases.
+        This, like the Database's Origins table, is a list of origin
+        and quota pairs. Origins records are added as soon as they are
+        needed, and deleted only when the ApplicationCacheStorage is
+        emptied. This means Origins records persist even after all
+        caches for that origin may be deleted. The "CacheGroups" table
+        now has a foreign key column "origin" which relates to the
+        "Origins" table.
+
+        To enforce the quotas, remaining quota space is checked at
+        the start of update as an estimate and at the end before
+        inserting. Currently, reaching the quota limit will simply
+        cause an update error. A later part will provide a
+        notification to the client to allow an action, and refactor
+        the final quota limit check into a transaction.
+
+          Respect the quota during the update process. And cause
+          the update process to fail when the quota is reached.
+
+        * loader/appcache/ApplicationCacheGroup.cpp: added loading counter, counts bytes as they load
+        (WebCore::ApplicationCacheGroup::ApplicationCacheGroup):
+        (WebCore::ApplicationCacheGroup::didReceiveData):
+        (WebCore::ApplicationCacheGroup::didFinishLoading):
+        (WebCore::ApplicationCacheGroup::checkIfLoadIsComplete):
+        * loader/appcache/ApplicationCacheGroup.h: added security origin, based on the manifest URL
+        (WebCore::ApplicationCacheGroup::origin): accessor
+
+          Updates the schema of the database tables as described
+          above. Handle other SQL operations such as checking the
+          remaining space and inserting and deleting Origins records.
+
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::quotaForOrigin): query for the quota of an origin, may return the default origin quota if it didn't exist.
+        (WebCore::ApplicationCacheStorage::remainingSizeForOriginExcludingCache): calculate the remaining size in a quota for an origin, possibly excluding a cache.
+        (WebCore::ApplicationCacheStorage::storeUpdatedQuotaForOrigin): persistent update.
+        (WebCore::ApplicationCacheStorage::openDatabase): updated schema for CachesGroups, added new table Origins.
+        (WebCore::ApplicationCacheStorage::empty): wipe Origins table as well.
+        (WebCore::ApplicationCacheStorage::unknownQuota): constant to mean unknown quota
+
+2010-07-30  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by David Kilzer.
+
+        Limit ApplicationCache Total and Per-Origin Storage Capacity (Quotas)
+        https://bugs.webkit.org/show_bug.cgi?id=40627
+
         Part 1 - Add Total and Per-Origin Quota Preferences.
 
         Allow the application cache total size to be a preference, and

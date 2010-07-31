@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2009, 2010 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,16 +28,16 @@
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
 
-#include <wtf/Noncopyable.h>
-#include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
-
 #include "DOMApplicationCache.h"
 #include "KURL.h"
 #include "PlatformString.h"
 #include "ResourceHandle.h"
 #include "ResourceHandleClient.h"
 #include "SharedBuffer.h"
+
+#include <wtf/Noncopyable.h>
+#include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 
 namespace WebCore {
 
@@ -46,6 +46,7 @@ class ApplicationCacheResource;
 class Document;
 class DocumentLoader;
 class Frame;
+class SecurityOrigin;
 
 enum ApplicationCacheUpdateOption {
     ApplicationCacheUpdateWithBrowsingContext,
@@ -66,6 +67,7 @@ public:
     static void selectCacheWithoutManifestURL(Frame*);
     
     const KURL& manifestURL() const { return m_manifestURL; }
+    const SecurityOrigin* origin() const { return m_origin.get(); }
     UpdateStatus updateStatus() const { return m_updateStatus; }
     void setUpdateStatus(UpdateStatus status);
 
@@ -131,6 +133,7 @@ private:
     void stopLoading();
     
     KURL m_manifestURL;
+    RefPtr<SecurityOrigin> m_origin;
     UpdateStatus m_updateStatus;
     
     // This is the newest complete cache in the group.
@@ -193,6 +196,9 @@ private:
 
     RefPtr<ApplicationCacheResource> m_manifestResource;
     RefPtr<ResourceHandle> m_manifestHandle;
+
+    int64_t m_loadedSize;
+    int64_t m_availableSpaceInQuota;
 
     friend class ChromeClientCallbackTimer;
 };
