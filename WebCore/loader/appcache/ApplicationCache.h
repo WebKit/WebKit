@@ -41,7 +41,6 @@ class ApplicationCacheGroup;
 class ApplicationCacheResource;
 class DocumentLoader;
 class KURL;
-
 class ResourceRequest;
 
 typedef Vector<std::pair<KURL, KURL> > FallbackURLVector;

@@ -858,7 +858,7 @@ bool ApplicationCacheStorage::store(ApplicationCacheResource* resource, Applicat
     return true;
 }
 
-bool ApplicationCacheStorage::storeNewestCache(ApplicationCacheGroup* group)
+bool ApplicationCacheStorage::storeNewestCache(ApplicationCacheGroup* group, ApplicationCache* oldCache, FailureReason& failureReason)
 {
     openDatabase(true);
 
@@ -872,11 +872,21 @@ bool ApplicationCacheStorage::storeNewestCache(ApplicationCacheGroup* group)
     
     storeCacheTransaction.begin();
 
+    // Check if this would reach the per-origin quota.
+    int64_t remainingSpaceInOrigin;
+    if (remainingSizeForOriginExcludingCache(group->origin(), oldCache, remainingSpaceInOrigin)) {
+        if (remainingSpaceInOrigin < group->newestCache()->estimatedSizeInStorage()) {
+            failureReason = OriginQuotaReached;
+            return false;
+        }
+    }
+
     GroupStorageIDJournal groupStorageIDJournal;
     if (!group->storageID()) {
         // Store the group
         if (!store(group, &groupStorageIDJournal)) {
             checkForMaxSizeReached();
+            failureReason = isMaximumSizeReached() ? TotalQuotaReached : DiskOrOperationFailure;
             return false;
         }
     }
@@ -893,25 +903,37 @@ bool ApplicationCacheStorage::storeNewestCache(ApplicationCacheGroup* group)
     // Store the newest cache
     if (!store(group->newestCache(), &resourceStorageIDJournal)) {
         checkForMaxSizeReached();
+        failureReason = isMaximumSizeReached() ? TotalQuotaReached : DiskOrOperationFailure;
         return false;
     }
     
     // Update the newest cache in the group.
     
     SQLiteStatement statement(m_database, "UPDATE CacheGroups SET newestCache=? WHERE id=?");
-    if (statement.prepare() != SQLResultOk)
+    if (statement.prepare() != SQLResultOk) {
+        failureReason = DiskOrOperationFailure;
         return false;
+    }
     
     statement.bindInt64(1, group->newestCache()->storageID());
     statement.bindInt64(2, group->storageID());
     
-    if (!executeStatement(statement))
+    if (!executeStatement(statement)) {
+        failureReason = DiskOrOperationFailure;
         return false;
+    }
     
     groupStorageIDJournal.commit();
     resourceStorageIDJournal.commit();
     storeCacheTransaction.commit();
     return true;
+}
+
+bool ApplicationCacheStorage::storeNewestCache(ApplicationCacheGroup* group)
+{
+    // Ignore the reason for failing, just attempt the store.
+    FailureReason ignoredFailureReason;
+    return storeNewestCache(group, 0, ignoredFailureReason);
 }
 
 static inline void parseHeader(const UChar* header, size_t headerLength, ResourceResponse& response)

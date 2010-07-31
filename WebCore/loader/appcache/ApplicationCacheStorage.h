@@ -47,6 +47,12 @@ class SecurityOrigin;
 
 class ApplicationCacheStorage : public Noncopyable {
 public:
+    enum FailureReason {
+        OriginQuotaReached,
+        TotalQuotaReached,
+        DiskOrOperationFailure
+    };
+
     void setCacheDirectory(const String&);
     const String& cacheDirectory() const;
     
@@ -68,6 +74,7 @@ public:
     void cacheGroupDestroyed(ApplicationCacheGroup*);
     void cacheGroupMadeObsolete(ApplicationCacheGroup*);
         
+    bool storeNewestCache(ApplicationCacheGroup*, ApplicationCache* oldCache, FailureReason& failureReason);
     bool storeNewestCache(ApplicationCacheGroup*); // Updates the cache group, but doesn't remove old cache.
     bool store(ApplicationCacheResource*, ApplicationCache*);
     bool storeUpdatedType(ApplicationCacheResource*, ApplicationCache*);

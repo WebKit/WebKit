@@ -5,6 +5,38 @@
         Limit ApplicationCache Total and Per-Origin Storage Capacity (Quotas)
         https://bugs.webkit.org/show_bug.cgi?id=40627
 
+        Part 3 - Refactor storeNewestCache to allow Failure Reason Output
+
+        Storing can result in an error in a number of reasons. Previously
+        the reasons were global and binary and could be determined by
+        checking ApplicationCacheStorage state. Now, with per-origin quotas
+        a per-origin quota can cause a failure that is not in global state.
+        Current failure reasons are:
+
+          OriginQuotaReached = per-origin quota reached, no storage is allowed.
+          TotalQuotaReached  = database quota reached, no storage is allowed.
+          DiskOrOperationFailure = SQL error such as failed prepare or query. Not expected to happen.
+
+        This part provides an implementation of storeNewestCache for those
+        that care about the failure reason, and not just if it succeeded
+        or not. This moves the final origin quota check into the transaction.
+
+        * loader/appcache/ApplicationCache.h: style fix for forwarding headers.
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::checkIfLoadIsComplete): move origin quota check into storeNewestCache's SQL transaction.
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::storeNewestCache): old implementation calls the new implementation ignoring failure reason.
+        (WebCore::ApplicationCacheStorage::storeNewestCache): new implementation provides a failure reason in case of failure.
+        * loader/appcache/ApplicationCacheStorage.h:
+        (WebCore::ApplicationCacheStorage::): added FailureReason enum and storeNewestCache allowing it.
+
+2010-07-30  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by David Kilzer.
+
+        Limit ApplicationCache Total and Per-Origin Storage Capacity (Quotas)
+        https://bugs.webkit.org/show_bug.cgi?id=40627
+
         Part 2 - Update Schema and enforce Per-Origin Quotas
 
         Added an "Origins" table to the application cache databases.
