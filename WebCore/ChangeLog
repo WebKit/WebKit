@@ -1,3 +1,38 @@
+2010-07-30  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/8257783> Short documents may print a second blank page
+        https://bugs.webkit.org/show_bug.cgi?id=43271
+
+        Test: printing/stretch-to-view-height.html
+
+        * WebCore.exp.in: Export Frame::forceLayoutForPagination(), replacing forceLayoutWithPageWidthRange().
+        * page/Frame.cpp:
+        (WebCore::Frame::setPrinting): Now takes a page width and height and a maximum shrink factor and passes
+        them down to forceLayoutForPagination().
+        * page/Frame.h:
+        (WebCore::Frame::):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::reset): Initialize m_pageHeight.
+        (WebCore::FrameView::forceLayoutForPagination): Renamed forceLayoutWithPageWidthRange() to this and
+        changed it to take a page width and height and a maximum shrink factor. Sets m_pageHeight, which is
+        queried by RenderBox::calcHeight() during layout. If the given pageHeight is 0, m_pageHeight is set
+        to the visible height, retaining the behavior before this change.
+        * page/FrameView.h:
+        (WebCore::FrameView::pageHeight): Added this accessor.
+        * page/PrintContext.cpp:
+        (WebCore::PrintContext::begin): Added a height parameter, used when calling setPrinting().
+        (WebCore::PrintContext::end): Updated for setPrinting() changes.
+        (WebCore::PrintContext::pageNumberForElement): Account for shrink-to-fit.
+        (WebCore::PrintContext::pageProperty): Pass 0 for the height, retaining current behavior.
+        (WebCore::PrintContext::numberOfPages): Account for shrink-to-fit.
+        (WebCore::PrintContext::spoolAllPagesWithBoundaries): Pass the page width to begin().
+        * page/PrintContext.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::calcHeight): When printing, use FrameView::pageHeight() as the basis for
+        viewport-relative heights.
+
 2010-07-30  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Darin Fisher.

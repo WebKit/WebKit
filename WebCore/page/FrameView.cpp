@@ -212,6 +212,7 @@ void FrameView::reset()
     m_wasScrolledByUser = false;
     m_lastLayoutSize = IntSize();
     m_lastZoomFactor = 1.0f;
+    m_pageHeight = 0;
     m_deferringRepaints = 0;
     m_repaintCount = 0;
     m_repaintRects.clear();
@@ -2042,33 +2043,36 @@ void FrameView::forceLayout(bool allowSubtree)
     //unscheduleRelayout();
 }
 
-void FrameView::forceLayoutWithPageWidthRange(float minPageWidth, float maxPageWidth, bool _adjustViewSize)
+void FrameView::forceLayoutForPagination(const FloatSize& pageSize, float maximumShrinkFactor, Frame::AdjustViewSizeOrNot shouldAdjustViewSize)
 {
     // Dumping externalRepresentation(m_frame->renderer()).ascii() is a good trick to see
     // the state of things before and after the layout
     RenderView *root = toRenderView(m_frame->document()->renderer());
     if (root) {
-        // This magic is basically copied from khtmlview::print
-        int pageW = (int)ceilf(minPageWidth);
+        int pageW = ceilf(pageSize.width());
+        m_pageHeight = pageSize.height() ? pageSize.height() : visibleHeight();
         root->setWidth(pageW);
         root->setNeedsLayoutAndPrefWidthsRecalc();
         forceLayout();
 
-        // If we don't fit in the minimum page width, we'll lay out again. If we don't fit in the
-        // maximum page width, we will lay out to the maximum page width and clip extra content.
+        // If we don't fit in the given page width, we'll lay out again. If we don't fit in the
+        // page width when shrunk, we will lay out at maximum shrink and clip extra content.
         // FIXME: We are assuming a shrink-to-fit printing implementation.  A cropping
         // implementation should not do this!
         int rightmostPos = root->rightmostPosition();
-        if (rightmostPos > minPageWidth) {
-            pageW = std::min(rightmostPos, (int)ceilf(maxPageWidth));
+        if (rightmostPos > pageSize.width()) {
+            pageW = std::min<int>(rightmostPos, ceilf(pageSize.width() * maximumShrinkFactor));
+            if (pageSize.height())
+                m_pageHeight = pageW / pageSize.width() * pageSize.height();
             root->setWidth(pageW);
             root->setNeedsLayoutAndPrefWidthsRecalc();
             forceLayout();
         }
     }
 
-    if (_adjustViewSize)
+    if (shouldAdjustViewSize)
         adjustViewSize();
+    m_pageHeight = 0;
 }
 
 void FrameView::adjustPageHeight(float *newBottom, float oldTop, float oldBottom, float /*bottomLimit*/)

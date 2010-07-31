@@ -1939,7 +1939,7 @@ void WebFrame::setPrinting(bool printing, float minPageWidth, float maxPageWidth
 {
     Frame* coreFrame = core(this);
     ASSERT(coreFrame);
-    coreFrame->setPrinting(printing, minPageWidth, maxPageWidth, adjustViewSize);
+    coreFrame->setPrinting(printing, FloatSize(minPageWidth, 0), maxPageWidth / minPageWidth, adjustViewSize ? Frame::AdjustViewSize : Frame:DoNotAdjustViewSize);
 }
 
 HRESULT STDMETHODCALLTYPE WebFrame::setInPrintingMode( 

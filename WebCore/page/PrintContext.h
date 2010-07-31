@@ -46,7 +46,7 @@ public:
     void computePageRectsWithPageSize(const FloatSize& pageSizeInPixels, bool allowHorizontalMultiPages);
 
     // TODO: eliminate width param
-    void begin(float width);
+    void begin(float width, float height = 0);
 
     // TODO: eliminate width param
     void spoolPage(GraphicsContext& ctx, int pageNumber, float width);

@@ -1513,7 +1513,7 @@ void RenderBox::calcHeight()
         && (isRoot() || (isBody() && document()->documentElement()->renderer()->style()->height().isPercent()));
     if (stretchesToViewHeight() || printingNeedsBaseHeight) {
         int margins = collapsedMarginTop() + collapsedMarginBottom();
-        int visHeight = document()->printing() ? view()->frameView()->visibleHeight() : view()->viewHeight();
+        int visHeight = document()->printing() ? view()->frameView()->pageHeight() : view()->viewHeight();
         if (isRoot())
             setHeight(max(height(), visHeight - margins));
         else {

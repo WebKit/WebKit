@@ -62,7 +62,7 @@ function runPrintingTest(testFunction)
 
 function ratioToPageHeightToPixels(heightInRatioToPageHeight)
 {
-  var pageHeightInPixels = 600;
+  var pageHeightInPixels = 600 * 1.25;
   return Math.floor(pageHeightInPixels * heightInRatioToPageHeight);
 }
 

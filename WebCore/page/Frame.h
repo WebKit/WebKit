@@ -140,7 +140,8 @@ namespace WebCore {
 
         Settings* settings() const; // can be NULL
 
-        void setPrinting(bool printing, float minPageWidth, float maxPageWidth, bool adjustViewSize);
+        enum AdjustViewSizeOrNot { DoNotAdjustViewSize, AdjustViewSize };
+        void setPrinting(bool printing, const FloatSize& pageSize, float maximumShrinkRatio, AdjustViewSizeOrNot);
 
         bool inViewSourceMode() const;
         void setInViewSourceMode(bool = true);

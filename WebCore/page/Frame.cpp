@@ -617,16 +617,16 @@ void Frame::paintDragCaret(GraphicsContext* p, int tx, int ty, const IntRect& cl
 #endif
 }
 
-void Frame::setPrinting(bool printing, float minPageWidth, float maxPageWidth, bool adjustViewSize)
+void Frame::setPrinting(bool printing, const FloatSize& pageSize, float maximumShrinkRatio, AdjustViewSizeOrNot shouldAdjustViewSize)
 {
     m_doc->setPrinting(printing);
     view()->adjustMediaTypeForPrinting(printing);
 
     m_doc->updateStyleSelector();
-    view()->forceLayoutWithPageWidthRange(minPageWidth, maxPageWidth, adjustViewSize);
+    view()->forceLayoutForPagination(pageSize, maximumShrinkRatio, shouldAdjustViewSize);
 
     for (Frame* child = tree()->firstChild(); child; child = child->tree()->nextSibling())
-        child->setPrinting(printing, minPageWidth, maxPageWidth, adjustViewSize);
+        child->setPrinting(printing, pageSize, maximumShrinkRatio, shouldAdjustViewSize);
 }
 
 void Frame::setNeedsReapplyStyles()

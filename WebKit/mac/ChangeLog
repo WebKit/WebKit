@@ -1,3 +1,31 @@
+2010-07-30  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/8257783> Short documents may print a second blank page
+        https://bugs.webkit.org/show_bug.cgi?id=43271
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _web_setPrintingModeRecursive]): Updated for additional height parameter
+        to _setPrinting:minimumPageWidth:height:maximumPageWidth:adjustViewSize:.
+        (-[WebHTMLView _web_clearPrintingModeRecursive]): Ditto.
+        (-[WebHTMLView _web_setPrintingModeRecursiveAndAdjustViewSize]): Ditto.
+        (-[WebHTMLView _beginPrintModeWithPageWidth:height:shrinkToFit:]): Added height parameter,
+        which is scaled and passed on to _setPrinting:minimumPageWidth:height:maximumPageWidth:adjustViewSize:.
+        (-[WebHTMLView _endPrintMode]): Updated for additional height parameter to
+        _setPrinting:minimumPageWidth:height:maximumPageWidth:adjustViewSize:.
+        (-[WebHTMLView layoutToMinimumPageWidth:height:maximumPageWidth:adjustingViewSize:]): Added
+        height parameter, which is passed on to FrameView::forceLayoutForPagination().
+        (-[WebHTMLView layout]): Updated for additional height parameter.
+        (-[WebHTMLView _setPrinting:minimumPageWidth:height:maximumPageWidth:adjustViewSize:]): Added height
+        parameter, which is passed on to -layoutToMinimumPageWidth:height:maximumPageWidth:adjustViewSize:.
+        (-[WebHTMLView adjustPageHeightNew:top:bottom:limit:]): Updated for additional height
+        parameter.
+        (-[WebHTMLView setPageWidthForPrinting:]): Ditto.
+        (-[WebHTMLView knowsPageRange:]): Pass the available height on the page on to
+        _setPrinting:minimumPageWidth:height:maximumPageWidth:adjustViewSize.
+        * WebView/WebHTMLViewPrivate.h: 
+
 2010-07-30  Joseph Pecoraro  <joepeck@webkit.org>
 
         Fix for tests that broke after r64400. Tracking a more
