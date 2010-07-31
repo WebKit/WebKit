@@ -2615,7 +2615,7 @@ BUG38653 MAC : editing/selection/find-yensign-and-backslash.html = TEXT
 BUG38656 : fast/media/print-restores-previous-mediatype.html = TEXT
 
 // Needs layoutTestController.setViewModeMediaFeature() (implemented on Qt only)
-BUG40680 SKIP : fast/media/media-feature-wgt-view-mode.html = FAIL
+BUG40680 SKIP : fast/media/view-mode-media-feature.html = FAIL
 
 // Unknown flakiness.
 BUG38706 : svg/custom/deep-dynamic-updates.svg = IMAGE+TEXT IMAGE PASS
