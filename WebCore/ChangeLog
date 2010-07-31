@@ -1,3 +1,19 @@
+2010-07-30  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r64408.
+        http://trac.webkit.org/changeset/64408
+        https://bugs.webkit.org/show_bug.cgi?id=43292
+
+        Causing failed tests on Chromium canaries due to wrong history
+        item counts (Requested by atwilson on #webkit).
+
+        * loader/RedirectScheduler.cpp:
+        (WebCore::RedirectScheduler::scheduleRedirect):
+        (WebCore::RedirectScheduler::mustLockBackForwardList):
+        (WebCore::RedirectScheduler::scheduleLocationChange):
+        (WebCore::RedirectScheduler::scheduleFormSubmission):
+        * loader/RedirectScheduler.h:
+
 2010-07-30  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

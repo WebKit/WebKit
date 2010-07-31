@@ -70,7 +70,7 @@ private:
     void timerFired(Timer<RedirectScheduler>*);
     void schedule(PassOwnPtr<ScheduledNavigation>);
 
-    static bool mustLockBackForwardList(Frame* targetFrame, bool mustLockIfDuringLoad);
+    static bool mustLockBackForwardList(Frame* targetFrame);
 
     Frame* m_frame;
     Timer<RedirectScheduler> m_timer;
@@ -79,4 +79,4 @@ private:
 
 } // namespace WebCore
 
-#endif // RedirectScheduler_h
+#endif // FrameLoader_h

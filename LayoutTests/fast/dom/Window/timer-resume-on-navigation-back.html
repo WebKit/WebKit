@@ -18,12 +18,9 @@ function runTest() {
       layoutTestController.waitUntilDone();
       layoutTestController.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
     }
-    // Location changes need to happen outside the onload handler to generate history entries.
-    setTimeout(function() {
-      window.setTimeout(verify, timeoutValue);
-      timestamp = new Date().getTime();
-      window.location.href = "data:text/html,<body onload='history.back()'></body>";
-    }, 0);
+    window.setTimeout("verify()", timeoutValue);
+    timestamp = new Date().getTime();
+    window.location.href = "data:text/html,<body onload='history.back()'></body>";
 }
 
 </script>

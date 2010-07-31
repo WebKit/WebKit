@@ -1,3 +1,40 @@
+2010-07-30  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r64408.
+        http://trac.webkit.org/changeset/64408
+        https://bugs.webkit.org/show_bug.cgi?id=43292
+
+        Causing failed tests on Chromium canaries due to wrong history
+        item counts (Requested by atwilson on #webkit).
+
+        * fast/css/target-fragment-match.html:
+        * fast/dom/Window/timer-resume-on-navigation-back.html:
+        * fast/dom/location-hash.html:
+        * fast/events/pageshow-pagehide-on-back-cached-with-frames-expected.txt:
+        * fast/events/pageshow-pagehide-on-back-cached-with-frames.html:
+        * fast/frames/resources/cached-page-1.html:
+        * fast/frames/resources/cached-page-2.html:
+        * fast/harness/resources/cached-page-1.html:
+        * fast/harness/resources/cached-page-with-data-urls.html:
+        * fast/history/gesture-before-onload-expected.txt: Removed.
+        * fast/history/gesture-before-onload.html: Removed.
+        * fast/history/history-length.html:
+        * fast/history/resources/gesture-before-onload-target.html: Removed.
+        * fast/history/saves-state-after-fragment-nav.html:
+        * fast/loader/input-element-page-cache-crash.html:
+        * fast/loader/stateobjects/document-destroyed-navigate-back.html:
+        * fast/loader/stateobjects/pushstate-clears-forward-history.html:
+        * fast/loader/subframe-navigate-during-main-frame-load.html:
+        * http/tests/history/redirect-js-document-location-before-load-expected.txt:
+        * http/tests/history/redirect-js-location-assign-before-load-expected.txt:
+        * http/tests/history/redirect-js-location-before-load-expected.txt:
+        * http/tests/history/redirect-js-location-href-before-load-expected.txt:
+        * http/tests/navigation/resources/document-location.js:
+        (start):
+        * security/autocomplete-cleared-on-back.html:
+        * storage/hash-change-with-xhr.js:
+        (runTest):
+
 2010-07-30  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

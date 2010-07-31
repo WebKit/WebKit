@@ -240,21 +240,17 @@ void RedirectScheduler::scheduleRedirect(double delay, const String& url)
     if (url.isEmpty())
         return;
 
-    // We want a new back forward list item if the refresh timeout is > 1 second.
+    // We want a new history item if the refresh timeout is > 1 second.
     if (!m_redirect || delay <= m_redirect->delay())
         schedule(new ScheduledRedirect(delay, url, true, delay <= 1, false));
 }
 
-bool RedirectScheduler::mustLockBackForwardList(Frame* targetFrame, bool mustLockIfDuringLoad)
+bool RedirectScheduler::mustLockBackForwardList(Frame* targetFrame)
 {
-    // Non-user navigation before the page has loaded should not create a new back/forward item.
-    // See https://webkit.org/b/42861 for the original motivation for this.    
-    if (mustLockIfDuringLoad && targetFrame->loader()->documentLoader() && targetFrame->loader()->documentLoader()->isLoadingInAPISense())
-        return true;
-    
     // Navigation of a subframe during loading of an ancestor frame does not create a new back/forward item.
     // The definition of "during load" is any time before all handlers for the load event have been run.
     // See https://bugs.webkit.org/show_bug.cgi?id=14957 for the original motivation for this.
+
     for (Frame* ancestor = targetFrame->tree()->parent(); ancestor; ancestor = ancestor->tree()->parent()) {
         Document* document = ancestor->document();
         if (!ancestor->loader()->isComplete() || (document && document->processingLoadEvent()))
@@ -270,7 +266,7 @@ void RedirectScheduler::scheduleLocationChange(const String& url, const String& 
     if (url.isEmpty())
         return;
 
-    lockBackForwardList = lockBackForwardList || mustLockBackForwardList(m_frame, !wasUserGesture);
+    lockBackForwardList = lockBackForwardList || mustLockBackForwardList(m_frame);
 
     FrameLoader* loader = m_frame->loader();
     
@@ -304,7 +300,7 @@ void RedirectScheduler::scheduleFormSubmission(PassRefPtr<FormSubmission> submis
     // to match IE and Opera.
     // See https://bugs.webkit.org/show_bug.cgi?id=32383 for the original motivation for this.
 
-    bool lockBackForwardList = mustLockBackForwardList(m_frame, false) || (submission->state()->formSubmissionTrigger() == SubmittedByJavaScript && m_frame->tree()->parent());
+    bool lockBackForwardList = mustLockBackForwardList(m_frame) || (submission->state()->formSubmissionTrigger() == SubmittedByJavaScript && m_frame->tree()->parent());
 
     schedule(new ScheduledFormSubmission(submission, lockBackForwardList, duringLoad));
 }

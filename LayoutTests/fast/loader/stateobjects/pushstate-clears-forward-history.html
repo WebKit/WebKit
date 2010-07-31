@@ -8,26 +8,22 @@ onload = function() {
       layoutTestController.waitUntilDone();
     }
   }
-
-  // Location changes need to happen outside the onload handler to generate history entries.
-  setTimeout(function() {
-      switch (sessionStorage.testStage++) {
-      case 0:
-        location = "?a";
-        break;
-      case 1:
-        location = "?b";
-        break;
-      case 2:
-        history.back();
-        break;
-      case 3:
-        history.pushState(null, null);
-        if (window.layoutTestController)
-          layoutTestController.notifyDone();
-        break;
-      }
-    }, 0);
+  switch (sessionStorage.testStage++) {
+  case 0:
+    location = "?a";
+    break;
+  case 1:
+    location = "?b";
+    break;
+  case 2:
+    history.back();
+    break;
+  case 3:
+    history.pushState(null, null);
+    if (window.layoutTestController)
+      layoutTestController.notifyDone();
+    break;
+  }
 }
 onunload = function() {
   // disable page cache
