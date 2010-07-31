@@ -1,3 +1,12 @@
+2010-07-30  James Robinson  <jamesr@chromium.org>
+
+        Compile fix. Put GLES2 functions behind USE(GLES2_RENDERING) instead of
+        USE(ACCELERATED_COMPOSITING) to match WebCore.  Fixes the compile when
+        USE(GLES2_RENDERING) is true and USE(ACCELERATED_COMPOSITING) is false.
+
+        * src/ChromeClientImpl.cpp:
+        * src/ChromeClientImpl.h:
+
 2010-07-27  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Brady Eidson.
