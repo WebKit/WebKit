@@ -30,6 +30,7 @@
 #import "WebPreferencesPrivate.h"
 #import "WebPreferenceKeysPrivate.h"
 
+#import "WebApplicationCache.h"
 #import "WebKitLogging.h"
 #import "WebKitNSStringExtras.h"
 #import "WebKitSystemBits.h"
@@ -37,6 +38,7 @@
 #import "WebKitVersionChecks.h"
 #import "WebNSDictionaryExtras.h"
 #import "WebNSURLExtras.h"
+#import <WebCore/ApplicationCacheStorage.h>
 
 NSString *WebPreferencesChangedNotification = @"WebPreferencesChangedNotification";
 NSString *WebPreferencesRemovedNotification = @"WebPreferencesRemovedNotification";
@@ -170,6 +172,8 @@ static WebCacheModel cacheModelForMainBundle(void)
 - (void)_setIntegerValue:(int)value forKey:(NSString *)key;
 - (float)_floatValueForKey:(NSString *)key;
 - (void)_setFloatValue:(float)value forKey:(NSString *)key;
+- (void)_setLongLongValue:(long long)value forKey:(NSString *)key;
+- (long long)_longLongValueForKey:(NSString *)key;
 - (void)_setUnsignedLongLongValue:(unsigned long long)value forKey:(NSString *)key;
 - (unsigned long long)_unsignedLongLongValueForKey:(NSString *)key;
 @end
@@ -364,6 +368,8 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithBool:NO],   WebKitHTML5TreeBuilderEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitDNSPrefetchingEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitMemoryInfoEnabledPreferenceKey,
+        [NSNumber numberWithLongLong:WebCore::ApplicationCacheStorage::noQuota()], WebKitApplicationCacheTotalQuota,
+        [NSNumber numberWithLongLong:WebCore::ApplicationCacheStorage::noQuota()], WebKitApplicationCacheDefaultOriginQuota,
         nil];
 
     // This value shouldn't ever change, which is assumed in the initialization of WebKitPDFDisplayModePreferenceKey above
@@ -458,6 +464,23 @@ static WebCacheModel cacheModelForMainBundle(void)
     [_private->values _webkit_setBool:value forKey:_key];
     if (_private->autosaves)
         [[NSUserDefaults standardUserDefaults] setBool:value forKey:_key];
+    [self _postPreferencesChangesNotification];
+}
+
+- (long long)_longLongValueForKey:(NSString *)key
+{
+    id o = [self _valueForKey:key];
+    return [o respondsToSelector:@selector(longLongValue)] ? [o longLongValue] : 0;
+}
+
+- (void)_setLongLongValue:(long long)value forKey:(NSString *)key
+{
+    if ([self _longLongValueForKey:key] == value)
+        return;
+    NSString *_key = KEY(key);
+    [_private->values _webkit_setLongLong:value forKey:_key];
+    if (_private->autosaves)
+        [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithLongLong:value] forKey:_key];
     [self _postPreferencesChangesNotification];
 }
 
@@ -971,6 +994,31 @@ static WebCacheModel cacheModelForMainBundle(void)
 - (void)setPDFScaleFactor:(float)factor
 {
     [self _setFloatValue:factor forKey:WebKitPDFScaleFactorPreferenceKey];
+}
+
+- (int64_t)applicationCacheTotalQuota
+{
+    ASSERT([self _longLongValueForKey:WebKitApplicationCacheTotalQuota] == [WebApplicationCache maximumSize]);
+    return [self _longLongValueForKey:WebKitApplicationCacheTotalQuota];
+}
+
+- (void)setApplicationCacheTotalQuota:(int64_t)quota
+{
+    [self _setLongLongValue:quota forKey:WebKitApplicationCacheTotalQuota];
+
+    // Application Cache Preferences are stored on the global cache storage manager, not in Settings.
+    [WebApplicationCache setMaximumSize:quota];
+}
+
+- (int64_t)applicationCacheDefaultOriginQuota
+{
+    ASSERT([self _longLongValueForKey:WebKitApplicationCacheDefaultOriginQuota] == [WebApplicationCache defaultOriginQuota]);
+    return [self _longLongValueForKey:WebKitApplicationCacheDefaultOriginQuota];
+}
+
+- (void)setApplicationCacheDefaultOriginQuota:(int64_t)quota
+{
+    [self _setLongLongValue:quota forKey:WebKitApplicationCacheDefaultOriginQuota];
 }
 
 - (PDFDisplayMode)PDFDisplayMode

@@ -1,3 +1,40 @@
+2010-07-30  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by David Kilzer.
+
+        Limit ApplicationCache Total and Per-Origin Storage Capacity (Quotas)
+        https://bugs.webkit.org/show_bug.cgi?id=40627
+
+        Part 1 - Add Total and Per-Origin Quota Preferences.
+
+        Allow the application cache total size to be a preference, and
+        add a new preference for the default per-origin quota.
+
+          Storage quotas were int64_t (long long). Boilerplate for
+          these types added for consistency.
+
+        * Misc/WebNSDictionaryExtras.h:
+        * Misc/WebNSDictionaryExtras.m:
+        (-[NSMutableDictionary _webkit_setLongLong:forKey:]):
+        * WebCoreSupport/WebApplicationCache.h: setters and accessors for WebCore's cacheStorage.
+        * WebCoreSupport/WebApplicationCache.mm:
+        (+[WebApplicationCache maximumSize:]):
+        (+[WebApplicationCache setMaximumSize:]):
+        (+[WebApplicationCache defaultOriginQuota]):
+        (+[WebApplicationCache setDefaultOriginQuota:]):
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]): defaults to noQuota for both preferences.
+        (-[WebPreferences _longLongValueForKey:]):
+        (-[WebPreferences _setLongLongValue:forKey:]):
+        (-[WebPreferences applicationCacheTotalQuota]):
+        (-[WebPreferences setApplicationCacheTotalQuota:]):
+        (-[WebPreferences applicationCacheDefaultOriginQuota]):
+        (-[WebPreferences setApplicationCacheDefaultOriginQuota:]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChangedNotification:]): respect updates to the preferences.
+
 2010-07-30  Andy Estes  <aestes@apple.com>
 
         Reviewed by David Kilzer.

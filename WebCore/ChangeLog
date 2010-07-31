@@ -1,3 +1,30 @@
+2010-07-30  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by David Kilzer.
+
+        Limit ApplicationCache Total and Per-Origin Storage Capacity (Quotas)
+        https://bugs.webkit.org/show_bug.cgi?id=40627
+
+        Part 1 - Add Total and Per-Origin Quota Preferences.
+
+        Allow the application cache total size to be a preference, and
+        add a new preference for the default per-origin quota.
+
+          Handle the per-origin quota in the global cacheStorage() object.
+          The per-origin quota will be used in a later part, this just
+          handles interaction with it from a client.
+
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::setDefaultOriginQuota): setter
+        (WebCore::ApplicationCacheStorage::ApplicationCacheStorage): default to "noQuota" on construction
+        * loader/appcache/ApplicationCacheStorage.h: 
+        (WebCore::ApplicationCacheStorage::noQuota): constant to mean unlimited storage
+        (WebCore::ApplicationCacheStorage::defaultOriginQuota): accessor
+
+          Move around some exports around for Offline Web Applications.
+
+        * WebCore.exp.in: Added OFFLINE_WEB_APPLICATIONS exports.
+
 2010-07-30  Andy Estes  <aestes@apple.com>
 
         Reviewed by David Kilzer.

@@ -34,6 +34,7 @@
 #import "DOMCSSStyleDeclarationInternal.h"
 #import "DOMNodeInternal.h"
 #import "DOMRangeInternal.h"
+#import "WebApplicationCache.h"
 #import "WebBackForwardListInternal.h"
 #import "WebBaseNetscapePluginView.h"
 #import "WebCache.h"
@@ -1440,6 +1441,9 @@ static bool fastDocumentTeardownEnabled()
     settings->setHTML5TreeBuilderEnabled_DO_NOT_USE([preferences html5TreeBuilderEnabled]);
     settings->setPaginateDuringLayoutEnabled([preferences paginateDuringLayoutEnabled]);
     settings->setMemoryInfoEnabled([preferences memoryInfoEnabled]);
+
+    // Application Cache Preferences are stored on the global cache storage manager, not in Settings.
+    [WebApplicationCache setDefaultOriginQuota:[preferences applicationCacheDefaultOriginQuota]];
 }
 
 static inline IMP getMethod(id o, SEL s)

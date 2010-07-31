@@ -414,6 +414,11 @@ int64_t ApplicationCacheStorage::spaceNeeded(int64_t cacheToSave)
     return spaceNeeded;
 }
 
+void ApplicationCacheStorage::setDefaultOriginQuota(int64_t quota)
+{
+    m_defaultOriginQuota = quota;
+}
+
 bool ApplicationCacheStorage::executeSQLCommand(const String& sql)
 {
     ASSERT(m_database.isOpen());
@@ -1120,8 +1125,9 @@ void ApplicationCacheStorage::checkForMaxSizeReached()
 }
 
 ApplicationCacheStorage::ApplicationCacheStorage() 
-    : m_maximumSize(INT_MAX)
+    : m_maximumSize(ApplicationCacheStorage::noQuota())
     , m_isMaximumSizeReached(false)
+    , m_defaultOriginQuota(ApplicationCacheStorage::noQuota())
 {
 }
 

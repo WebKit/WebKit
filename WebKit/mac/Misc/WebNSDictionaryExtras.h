@@ -43,5 +43,6 @@
 - (void)_webkit_setInt:(int)value forKey:(id)key;
 - (void)_webkit_setFloat:(float)value forKey:(id)key;
 - (void)_webkit_setBool:(BOOL)value forKey:(id)key;
+- (void)_webkit_setLongLong:(long long)value forKey:(id)key;
 - (void)_webkit_setUnsignedLongLong:(unsigned long long)value forKey:(id)key;
 @end

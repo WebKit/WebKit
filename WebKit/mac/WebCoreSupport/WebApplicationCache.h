@@ -28,5 +28,10 @@
 @interface WebApplicationCache: NSObject {
 }
 
-+ (void)setMaximumSize:(unsigned long long)size;
++ (long long)maximumSize;
++ (void)setMaximumSize:(long long)size;
+
++ (long long)defaultOriginQuota;
++ (void)setDefaultOriginQuota:(long long)size;
+
 @end

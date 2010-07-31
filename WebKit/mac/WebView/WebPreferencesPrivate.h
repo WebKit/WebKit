@@ -134,6 +134,12 @@ extern NSString *WebPreferencesRemovedNotification;
 - (float)PDFScaleFactor;
 - (void)setPDFScaleFactor:(float)scale;
 
+- (int64_t)applicationCacheTotalQuota;
+- (void)setApplicationCacheTotalQuota:(int64_t)quota;
+
+- (int64_t)applicationCacheDefaultOriginQuota;
+- (void)setApplicationCacheDefaultOriginQuota:(int64_t)quota;
+
 - (WebKitEditableLinkBehavior)editableLinkBehavior;
 - (void)setEditableLinkBehavior:(WebKitEditableLinkBehavior)behavior;
 
