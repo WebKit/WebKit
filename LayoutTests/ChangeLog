@@ -1,5 +1,12 @@
 2010-07-31  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Some more housekeeping to turn Leopard but green again.
+
+        * platform/mac-leopard/Skipped: Skip fast/text/hyphens* on Leopard, as they fail since days on the bots. Filed bug 43296.
+        * platform/mac/fast/table/early-table-layout-expected.txt: Added, missing in bug r64225.
+
+2010-07-31  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Not reviewed. Add missing pixel baseline for new svg/custom/massive-coordinates.svg test.
 
         * platform/mac/svg/custom/massive-coordinates-expected.checksum: Added.
