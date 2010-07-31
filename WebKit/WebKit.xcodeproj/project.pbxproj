@@ -152,7 +152,7 @@
 		9398101D0824BF01008DF038 /* WebKitLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = 93AEB17D032C1735008635CE /* WebKitLogging.h */; settings = {ATTRIBUTES = (); }; };
 		9398101E0824BF01008DF038 /* WebKitNSStringExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 7082F56F038EADAA00A80180 /* WebKitNSStringExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9398101F0824BF01008DF038 /* WebKitStatistics.h in Headers */ = {isa = PBXBuildFile; fileRef = F53444CE02E87CBA018635CA /* WebKitStatistics.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		939810200824BF01008DF038 /* WebKitStatisticsPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = F53444D202E87D4B018635CA /* WebKitStatisticsPrivate.h */; };
+		939810200824BF01008DF038 /* WebKitStatisticsPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = F53444D202E87D4B018635CA /* WebKitStatisticsPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		939810210824BF01008DF038 /* WebNSControlExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 9345DDB20365FFD0008635CE /* WebNSControlExtras.h */; };
 		939810220824BF01008DF038 /* WebNSImageExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 8398847A03426FB000BC5F5E /* WebNSImageExtras.h */; };
 		939810230824BF01008DF038 /* WebNSPasteboardExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = ED2B2474033A2DA800C1A526 /* WebNSPasteboardExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -193,7 +193,7 @@
 		9398105F0824BF01008DF038 /* WebRenderNode.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F81C3902B67C26018635CA /* WebRenderNode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		939810600824BF01008DF038 /* WebResourceLoadDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 513D422E034CF55A00CA2ACD /* WebResourceLoadDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		939810630824BF01008DF038 /* WebHistoryItemInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 516F296F03A6C45A00CA2D3A /* WebHistoryItemInternal.h */; };
-		939810640824BF01008DF038 /* WebFormDelegatePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D36FD5E03F78F9E00A80166 /* WebFormDelegatePrivate.h */; };
+		939810640824BF01008DF038 /* WebFormDelegatePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D36FD5E03F78F9E00A80166 /* WebFormDelegatePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		939810650824BF01008DF038 /* CarbonWindowAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = F7EBEE9003F9DBA103CA0DE6 /* CarbonWindowAdapter.h */; };
 		939810660824BF01008DF038 /* CarbonWindowContentView.h in Headers */ = {isa = PBXBuildFile; fileRef = F7EBEE9203F9DBA103CA0DE6 /* CarbonWindowContentView.h */; };
 		939810670824BF01008DF038 /* CarbonWindowFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = F7EBEE9403F9DBA103CA0DE6 /* CarbonWindowFrame.h */; };
@@ -315,7 +315,7 @@
 		93FDE9330D79CAF30074F029 /* WebHistoryInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 93FDE9320D79CAF30074F029 /* WebHistoryInternal.h */; };
 		A5DEFC0A11D5331C00885273 /* WebSecurityOrigin.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5DEFC0711D5331C00885273 /* WebSecurityOrigin.mm */; };
 		A5DEFC0B11D5331C00885273 /* WebSecurityOriginInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = A5DEFC0811D5331C00885273 /* WebSecurityOriginInternal.h */; };
-		A5DEFC0C11D5331C00885273 /* WebSecurityOriginPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = A5DEFC0911D5331C00885273 /* WebSecurityOriginPrivate.h */; };
+		A5DEFC0C11D5331C00885273 /* WebSecurityOriginPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = A5DEFC0911D5331C00885273 /* WebSecurityOriginPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5DEFC0F11D5343E00885273 /* WebDatabaseSecurityOrigin.h in Headers */ = {isa = PBXBuildFile; fileRef = A5DEFC0D11D5343E00885273 /* WebDatabaseSecurityOrigin.h */; };
 		A5DEFC1011D5343E00885273 /* WebDatabaseSecurityOrigin.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5DEFC0E11D5343E00885273 /* WebDatabaseSecurityOrigin.mm */; };
 		A5DEFC1311D5344B00885273 /* WebApplicationCacheSecurityOrigin.h in Headers */ = {isa = PBXBuildFile; fileRef = A5DEFC1111D5344B00885273 /* WebApplicationCacheSecurityOrigin.h */; };
