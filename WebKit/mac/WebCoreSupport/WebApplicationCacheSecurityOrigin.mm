@@ -31,7 +31,7 @@ using namespace WebCore;
 
 @implementation WebApplicationCacheSecurityOrigin
 
-- (long long)usage
+- (unsigned long long)usage
 {
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     long long usage;
@@ -43,7 +43,7 @@ using namespace WebCore;
 #endif
 }
 
-- (long long)quota
+- (unsigned long long)quota
 {
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     long long quota;
@@ -55,7 +55,7 @@ using namespace WebCore;
 #endif
 }
 
-- (void)setQuota:(long long)quota
+- (void)setQuota:(unsigned long long)quota
 {
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     cacheStorage().storeUpdatedQuotaForOrigin(reinterpret_cast<SecurityOrigin*>(_private), quota);

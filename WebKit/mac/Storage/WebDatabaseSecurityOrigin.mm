@@ -24,40 +24,14 @@
  */
 
 #import "WebDatabaseSecurityOrigin.h"
-
-#import <WebCore/DatabaseTracker.h>
 #import <WebCore/SecurityOrigin.h>
 
 using namespace WebCore;
 
 @implementation WebDatabaseSecurityOrigin
 
-- (long long)usage
-{
-#if ENABLE(DATABASE)
-    return DatabaseTracker::tracker().usageForOrigin(reinterpret_cast<SecurityOrigin*>(_private));
-#else
-    return 0;
-#endif
-}
-
-- (long long)quota
-{
-#if ENABLE(DATABASE)
-    return DatabaseTracker::tracker().quotaForOrigin(reinterpret_cast<SecurityOrigin*>(_private));
-#else
-    return 0;
-#endif
-}
-
-// If the quota is set to a value lower than the current usage, that quota will
-// "stick" but no data will be purged to meet the new quota. This will simply
-// prevent new data from being added to databases in that origin
-- (void)setQuota:(long long)quota
-{
-#if ENABLE(DATABASE)
-    DatabaseTracker::tracker().setQuota(reinterpret_cast<SecurityOrigin*>(_private), quota);
-#endif
-}
+// FIXME: https://bugs.webkit.org/show_bug.cgi?id=40627
+// Proper steps should be taken to have subclass implementations of SecurityOrigin's
+// origin, quota, and setQuota methods.
 
 @end

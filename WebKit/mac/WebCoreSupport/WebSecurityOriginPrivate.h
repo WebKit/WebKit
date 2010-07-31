@@ -42,14 +42,14 @@
 
 // Meant to be implemented in a subclass.
 // Returns the current total usage of all relevant items in this security origin in bytes.
-- (long long)usage;
+- (unsigned long long)usage;
 
 // Meant to be implemented in a subclass.
 // Returns the quota of this security origin in bytes.
-- (long long)quota;
+- (unsigned long long)quota;
 
 // Meant to be implemented in a subclass.
 // Sets the storage quota in bytes.
-- (void)setQuota:(long long)quota;
+- (void)setQuota:(unsigned long long)quota;
 
 @end
