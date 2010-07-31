@@ -1,3 +1,14 @@
+2010-07-31  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=43305
+        Add back WKBundleFrameCopyInnerText to fix ~50 test failures
+        due to SVGElements not having the innerText function.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::dumpFrameText):
+
 2010-07-30  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Maciej Stachowiak.

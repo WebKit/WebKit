@@ -29,6 +29,7 @@
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <WebKit2/WKArray.h>
 #include <WebKit2/WKBundleFrame.h>
+#include <WebKit2/WKBundleFramePrivate.h>
 #include <WebKit2/WKBundleNode.h>
 #include <WebKit2/WKBundlePagePrivate.h>
 #include <WebKit2/WKRetainPtr.h>
@@ -68,21 +69,6 @@ static ostream& operator<<(ostream& out, WKStringRef stringRef)
 }
 
 static ostream& operator<<(ostream& out, const WKRetainPtr<WKStringRef>& stringRef)
-{
-    return out << stringRef.get();
-}
-
-static ostream& operator<<(ostream& out, JSStringRef stringRef)
-{
-    if (!stringRef)
-        return out;
-    CFIndex bufferLength = JSStringGetMaximumUTF8CStringSize(stringRef) + 1;
-    Vector<char> buffer(bufferLength);
-    JSStringGetUTF8CString(stringRef, buffer.data(), bufferLength);
-    return out << buffer.data();
-}
-
-static ostream& operator<<(ostream& out, const JSRetainPtr<JSStringRef>& stringRef)
 {
     return out << stringRef.get();
 }
@@ -238,23 +224,6 @@ static JSValueRef propertyValue(JSContextRef context, JSObjectRef object, const 
     return JSObjectGetProperty(context, object, propertyNameString.get(), &exception);
 }
 
-static JSObjectRef propertyObject(JSContextRef context, JSObjectRef object, const char* propertyName)
-{
-    JSValueRef value = propertyValue(context, object, propertyName);
-    if (!value || !JSValueIsObject(context, value))
-        return 0;
-    return const_cast<JSObjectRef>(value);
-}
-
-static JSRetainPtr<JSStringRef> propertyString(JSContextRef context, JSObjectRef object, const char* propertyName)
-{
-    JSValueRef value = propertyValue(context, object, propertyName);
-    if (!value)
-        return 0;
-    JSValueRef exception;
-    return JSRetainPtr<JSStringRef>(Adopt, JSValueToStringCopy(context, value, &exception));
-}
-
 static double numericWindowPropertyValue(WKBundleFrameRef frame, const char* propertyName)
 {
     JSGlobalContextRef context = WKBundleFrameGetJavaScriptContext(frame);
@@ -300,10 +269,8 @@ void InjectedBundlePage::dumpAllFrameScrollPositions()
 
 static void dumpFrameText(WKBundleFrameRef frame)
 {
-    JSGlobalContextRef context = WKBundleFrameGetJavaScriptContext(frame);
-    JSObjectRef document = propertyObject(context, JSContextGetGlobalObject(context), "document");
-    JSObjectRef documentElement = propertyObject(context, document, "documentElement");
-    InjectedBundle::shared().os() << propertyString(context, documentElement, "innerText") << "\n";
+    WKRetainPtr<WKStringRef> text(AdoptWK, WKBundleFrameCopyInnerText(frame));
+    InjectedBundle::shared().os() << text << "\n";
 }
 
 static void dumpDescendantFramesText(WKBundleFrameRef frame)

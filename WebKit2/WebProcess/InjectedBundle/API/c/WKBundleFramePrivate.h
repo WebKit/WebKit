@@ -38,6 +38,7 @@
 extern "C" {
 #endif
 
+WK_EXPORT WKStringRef WKBundleFrameCopyInnerText(WKBundleFrameRef frame);
 WK_EXPORT WKStringRef WKBundleFrameCopyCounterValue(WKBundleFrameRef frame, JSObjectRef element);
 WK_EXPORT WKStringRef WKBundleFrameCopyMarkerText(WKBundleFrameRef frame, JSObjectRef element);
 WK_EXPORT JSValueRef WKBundleFrameGetComputedStyleIncludingVisitedInfo(WKBundleFrameRef frame, JSObjectRef element);
