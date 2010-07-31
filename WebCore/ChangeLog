@@ -1,5 +1,14 @@
 2010-07-31  Kinuko Yasuda  <kinuko@chromium.org>
 
+        Unreviewed.  Attempt to fix release build failure.
+
+        Having 'fail:' label without goto statement generates a compiler
+        warning that causes a build failure in release build.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+
+2010-07-31  Kinuko Yasuda  <kinuko@chromium.org>
+
         Reviewed by Nikolas Zimmermann.
 
         Fix 'bool' in bindings/scripts/test/TestObj.
