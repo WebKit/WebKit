@@ -27,13 +27,13 @@
 
 #include "Arguments.h"
 #include "ImmutableArray.h"
+#include "WebContextMessageKinds.h"
 #include "InjectedBundleMessageKinds.h"
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
 #include "WebProcess.h"
-#include "WebProcessProxyMessageKinds.h"
 #include <WebCore/PageGroup.h>
 #include <wtf/OwnArrayPtr.h>
 
@@ -41,7 +41,125 @@ using namespace WebCore;
 
 namespace WebKit {
 
-InjectedBundle::InjectedBundle(const WebCore::String& path)
+namespace {
+
+// FIXME: We should try to abstract out the shared logic from these and
+// and the PostMessageEncoder/PostMessageDecoders in WebContext.cpp into
+// a shared baseclass.
+
+// Encodes postMessage messages from the InjectedBundle -> UIProcess
+
+//   - Array -> Array
+//   - String -> String
+//   - BundlePage -> Page
+
+class PostMessageEncoder {
+public:
+    PostMessageEncoder(APIObject* root) 
+        : m_root(root)
+    {
+    }
+
+    void encode(CoreIPC::ArgumentEncoder& encoder) const 
+    {
+        APIObject::Type type = m_root->type();
+        encoder.encode(static_cast<uint32_t>(type));
+        switch (type) {
+        case APIObject::TypeArray: {
+            ImmutableArray* array = static_cast<ImmutableArray*>(m_root);
+            encoder.encode(static_cast<uint64_t>(array->size()));
+            for (size_t i = 0; i < array->size(); ++i)
+                encoder.encode(PostMessageEncoder(array->at(i)));
+            break;
+        }
+        case APIObject::TypeString: {
+            WebString* string = static_cast<WebString*>(m_root);
+            encoder.encode(string->string());
+            break;
+        }
+        case APIObject::TypeBundlePage: {
+            WebPage* page = static_cast<WebPage*>(m_root);
+            encoder.encode(page->pageID());
+            break;
+        }
+        default:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+    }
+
+private:
+    APIObject* m_root;
+};
+
+
+// Decodes postMessage messages going from the UIProcess -> InjectedBundle
+
+//   - Array -> Array
+//   - String -> String
+//   - Page -> BundlePage
+
+class PostMessageDecoder {
+public:
+    PostMessageDecoder(APIObject** root)
+        : m_root(root)
+    {
+    }
+
+    static bool decode(CoreIPC::ArgumentDecoder& decoder, PostMessageDecoder& coder)
+    {
+        uint32_t type;
+        if (!decoder.decode(type))
+            return false;
+
+        switch (type) {
+        case APIObject::TypeArray: {
+            uint64_t size;
+            if (!decoder.decode(size))
+                return false;
+            
+            OwnArrayPtr<APIObject*> array;
+            array.set(new APIObject*[size]);
+            
+            for (size_t i = 0; i < size; ++i) {
+                APIObject* element;
+                PostMessageDecoder messageCoder(&element);
+                if (!decoder.decode(messageCoder))
+                    return false;
+                array[i] = element;
+            }
+
+            *(coder.m_root) = ImmutableArray::create(array.release(), size).leakRef();
+            break;
+        }
+        case APIObject::TypeString: {
+            String string;
+            if (!decoder.decode(string))
+                return false;
+            *(coder.m_root) = WebString::create(string).leakRef();
+            break;
+        }
+        case APIObject::TypePage: {
+            uint64_t pageID;
+            if (!decoder.decode(pageID))
+                return false;
+            *(coder.m_root) = WebProcess::shared().webPage(pageID);
+            break;
+        }
+        default:
+            return false;
+        }
+
+        return true;
+    }
+
+private:
+    APIObject** m_root;
+};
+
+}
+
+InjectedBundle::InjectedBundle(const String& path)
     : m_path(path)
     , m_platformBundle(0)
 {
@@ -60,9 +178,9 @@ void InjectedBundle::initializeClient(WKBundleClient* client)
         memset(&m_client, 0, sizeof(m_client));
 }
 
-void InjectedBundle::postMessage(const String& message)
+void InjectedBundle::postMessage(const String& messageName, APIObject* messageBody)
 {
-    WebProcess::shared().connection()->send(WebProcessProxyMessage::PostMessage, 0, CoreIPC::In(message));
+    WebProcess::shared().connection()->send(WebContextMessage::PostMessage, 0, CoreIPC::In(messageName, PostMessageEncoder(messageBody)));
 }
 
 void InjectedBundle::setShouldTrackVisitedLinks(bool shouldTrackVisitedLinks)
@@ -87,78 +205,10 @@ void InjectedBundle::willDestroyPage(WebPage* page)
         m_client.willDestroyPage(toRef(this), toRef(page), m_client.clientInfo);
 }
 
-void InjectedBundle::didReceiveMessage(const WebCore::String& messageName, APIObject* messageBody)
+void InjectedBundle::didReceiveMessage(const String& messageName, APIObject* messageBody)
 {
     if (m_client.didReceiveMessage)
         m_client.didReceiveMessage(toRef(this), toRef(messageName.impl()), toRef(messageBody), m_client.clientInfo);
-}
-
-namespace {
-
-// Decodes postMessage messages going from the UIProcess -> InjectedBundle
-
-//   - Array -> Array
-//   - String -> String
-//   - Page -> BundlePage
-
-class PostMessageDecoder {
-public:
-    PostMessageDecoder(APIObject** root)
-        : m_root(root)
-    {
-    }
-
-    static bool decode(CoreIPC::ArgumentDecoder& decoder, PostMessageDecoder& coder)
-    {
-        uint32_t type;
-        if (!decoder.decode(type))
-            return false;
-
-        switch (type) {
-            case APIObject::TypeArray: {
-                uint64_t size;
-                if (!decoder.decode(size))
-                    return false;
-                
-                OwnArrayPtr<APIObject*> array;
-                array.set(new APIObject*[size]);
-                
-                for (size_t i = 0; i < size; ++i) {
-                    APIObject* element;
-                    PostMessageDecoder messageCoder(&element);
-                    if (!decoder.decode(messageCoder))
-                        return false;
-                    array[i] = element;
-                }
-
-                *(coder.m_root) = ImmutableArray::create(array.release(), size).leakRef();
-                break;
-            }
-            case APIObject::TypeString: {
-                String string;
-                if (!decoder.decode(string))
-                    return false;
-                *(coder.m_root) = WebString::create(string).leakRef();
-                break;
-            }
-            case APIObject::TypePage: {
-                uint64_t pageID;
-                if (!decoder.decode(pageID))
-                    return false;
-                *(coder.m_root) = WebProcess::shared().webPage(pageID);
-                break;
-            }
-            default:
-                return false;
-        }
-
-        return true;
-    }
-
-private:
-    APIObject** m_root;
-};
-
 }
 
 void InjectedBundle::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder& arguments)

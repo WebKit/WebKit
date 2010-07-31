@@ -33,7 +33,7 @@ extern "C" {
 #endif
 
 // Injected Bundle Client
-typedef void (*WKContextDidReceiveMessageFromInjectedBundleCallback)(WKContextRef page, WKStringRef message, const void *clientInfo);
+typedef void (*WKContextDidReceiveMessageFromInjectedBundleCallback)(WKContextRef page, WKStringRef messageName, WKTypeRef messageBody, const void *clientInfo);
 
 struct WKContextInjectedBundleClient {
     int                                                                 version;

@@ -1,3 +1,46 @@
+2010-07-30  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=43290
+        Add structured message passing from the injected bundle to UIProcess
+
+        * Platform/CoreIPC/MessageID.h:
+        * Shared/CoreIPCSupport/WebContextMessageKinds.h: Added.
+        * Shared/CoreIPCSupport/WebProcessProxyMessageKinds.h:
+        (WebProcessProxyMessage::):
+        * UIProcess/API/C/WKContext.h:
+        * UIProcess/WebContext.cpp:
+        (WebKit::):
+        (WebKit::PostMessageEncoder::PostMessageDecoder::PostMessageDecoder):
+        (WebKit::PostMessageEncoder::PostMessageDecoder::decode):
+        (WebKit::WebContext::didReceiveMessageFromInjectedBundle):
+        (WebKit::WebContext::didReceiveMessage):
+        * UIProcess/WebContext.h:
+        * UIProcess/WebContextInjectedBundleClient.cpp:
+        (WebKit::WebContextInjectedBundleClient::didReceiveMessageFromInjectedBundle):
+        * UIProcess/WebContextInjectedBundleClient.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didReceiveMessage):
+        (WebKit::WebProcessProxy::didReceiveSyncMessage):
+        * UIProcess/WebProcessProxy.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundlePostMessage):
+        * WebProcess/InjectedBundle/API/c/WKBundle.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::):
+        (WebKit::InjectedBundle::InjectedBundle):
+        (WebKit::InjectedBundle::~InjectedBundle):
+        (WebKit::InjectedBundle::initializeClient):
+        (WebKit::InjectedBundle::postMessage):
+        (WebKit::InjectedBundle::setShouldTrackVisitedLinks):
+        (WebKit::InjectedBundle::removeAllVisitedLinks):
+        (WebKit::InjectedBundle::didCreatePage):
+        (WebKit::InjectedBundle::willDestroyPage):
+        (WebKit::InjectedBundle::didReceiveMessage):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+
 2010-07-30  Andy Estes  <aestes@apple.com>
 
         Reviewed by David Kilzer.

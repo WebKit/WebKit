@@ -41,7 +41,6 @@ enum Kind {
     GetPluginHostConnection,
     GetPlugins,
     PopulateVisitedLinks,
-    PostMessage,
 };
 
 }

@@ -23,39 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TestInvocation_h
-#define TestInvocation_h
+#ifndef WebContextMessageKinds_h
+#define WebContextMessageKinds_h
 
-#include <WebKit2/WKRetainPtr.h>
-#include <wtf/Noncopyable.h>
+// Messages sent from the injected bundle to the WebContext.
 
-namespace WTR {
+#include "MessageID.h"
 
-class TestInvocation : public Noncopyable {
-public:
-    TestInvocation(const char*);
-    ~TestInvocation();
+namespace WebContextMessage {
 
-    void invoke();
-    void didReceiveMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody);
-
-private:
-    void dump(const char*);
-
-    void resetPreferencesToConsistentValues();
-
-    // Helper
-    static void runUntil(bool& done);
-
-    WKRetainPtr<WKURLRef> m_url;
-    char* m_pathOrURL;
-
-    // Invocation state
-    bool m_gotInitialResponse;
-    bool m_gotFinalMessage;
-    bool m_error;
+enum Kind {
+    PostMessage
 };
 
-} // namespace WTR
+}
 
-#endif // TestInvocation_h
+namespace CoreIPC {
+
+template<> struct MessageKindTraits<WebContextMessage::Kind> {
+    static const MessageClass messageClass = MessageClassWebContext;
+};
+
+}
+
+#endif // InjectedBundleMessageKinds_h

@@ -96,7 +96,6 @@ private:
 
     bool sendMessage(CoreIPC::MessageID, PassOwnPtr<CoreIPC::ArgumentEncoder>);
 
-    void forwardMessageToWebContext(const WebCore::String&);
     void getPlugins(bool refresh, Vector<WebCore::PluginInfo>&);
     void getPluginHostConnection(const WebCore::String& mimeType, const WebCore::KURL& url, WebCore::String& pluginPath);
 

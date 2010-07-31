@@ -140,11 +140,10 @@ void TestInvocation::dump(const char* stringToDump)
     fflush(stderr);
 }
 
-void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef message)
+void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody)
 {
-    RetainPtr<CFStringRef> cfMessage(AdoptCF, WKStringCopyCFString(0, message));
-    
-    if (CFEqual(cfMessage.get(), CFSTR("Error"))) {
+    RetainPtr<CFStringRef> cfMessageName(AdoptCF, WKStringCopyCFString(0, messageName));
+    if (CFEqual(cfMessageName.get(), CFSTR("Error"))) {
         // Set all states to true to stop spinning the runloop.
         m_gotInitialResponse = true;
         m_gotFinalMessage = true;
@@ -152,15 +151,27 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef message)
         return;
     }
 
-    if (CFEqual(cfMessage.get(), CFSTR("BeginTestAck"))) {
-        m_gotInitialResponse = true;
+    if (CFEqual(cfMessageName.get(), CFSTR("Ack"))) {
+        ASSERT(WKGetTypeID(messageBody) == WKStringGetTypeID());
+        RetainPtr<CFStringRef> cfMessageBody(AdoptCF, WKStringCopyCFString(0, static_cast<WKStringRef>(messageBody)));
+
+        if (CFEqual(cfMessageBody.get(), CFSTR("BeginTest"))) {
+            m_gotInitialResponse = true;
+            return;
+        }
+
+        ASSERT_NOT_REACHED();
+    }
+
+    if (CFEqual(cfMessageName.get(), CFSTR("Done"))) {
+        ASSERT(WKGetTypeID(messageBody) == WKStringGetTypeID());
+        OwnPtr<Vector<char> > utf8Message = WKStringToUTF8(static_cast<WKStringRef>(messageBody));
+        dump(utf8Message->data());
+        m_gotFinalMessage = true;
         return;
     }
 
-    OwnPtr<Vector<char> > utf8Message = WKStringToUTF8(message);
-
-    dump(utf8Message->data());
-    m_gotFinalMessage = true;
+    ASSERT_NOT_REACHED();
 }
 
 } // namespace WTR

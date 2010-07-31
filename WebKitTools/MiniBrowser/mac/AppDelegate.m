@@ -36,20 +36,28 @@ static NSString *defaultURL = @"http://www.webkit.org/";
 
 @implementation BrowserAppDelegate
 
-void didRecieveMessageFromInjectedBundle(WKContextRef context, WKStringRef message, const void *clientInfo)
+void didRecieveMessageFromInjectedBundle(WKContextRef context, WKStringRef messageName, WKTypeRef messageBody, const void *clientInfo)
 {
-    CFStringRef cfMessage = WKStringCopyCFString(0, message);
-    LOG(@"ContextInjectedBundleClient - didRecieveMessage - message: %@", cfMessage);
-    CFRelease(cfMessage);
+    CFStringRef cfMessageName = WKStringCopyCFString(0, messageName);
+
+    WKTypeID typeID = WKGetTypeID(messageBody);
+    if (typeID == WKStringGetTypeID()) {
+        CFStringRef cfMessageBody = WKStringCopyCFString(0, (WKStringRef)messageBody);
+        LOG(@"ContextInjectedBundleClient - didRecieveMessage - MessageName: %@ MessageBody %@", cfMessageName, cfMessageBody);
+        CFRelease(cfMessageBody);
+    } else {
+        LOG(@"ContextInjectedBundleClient - didRecieveMessage - MessageName: %@ (MessageBody Unhandeled)\n", cfMessageName);
+    }
+    
+    CFRelease(cfMessageName);
 
     WKStringRef newMessageName = WKStringCreateWithCFString(CFSTR("Response"));
     WKStringRef newMessageBody = WKStringCreateWithCFString(CFSTR("Roger that!"));
 
-    LOG(@"my info: %d", (int)WKGetTypeID(newMessageBody));
-
     WKContextPostMessageToInjectedBundle(context, newMessageName, newMessageBody);
     
     WKStringRelease(newMessageName);
+    WKStringRelease(newMessageBody);
 }
 
 #pragma mark History Client Callbacks

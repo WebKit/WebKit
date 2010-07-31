@@ -41,6 +41,7 @@ enum MessageClass {
     MessageClassDrawingArea,
 
     // Messages sent by the web process to the UI process.
+    MessageClassWebContext,
     MessageClassWebProcessProxy,
     MessageClassWebPageProxy,
     MessageClassDrawingAreaProxy

@@ -74,9 +74,11 @@ void didClearWindowForFrame(WKBundlePageRef page, WKBundleFrameRef frame, JSGlob
     LOG(@"WKBundlePageClient - didClearWindowForFrame %@", [(NSURL *)cfURL absoluteString]);
     CFRelease(cfURL);
 
-    WKStringRef message = WKStringCreateWithCFString(CFSTR("Window was cleared"));
-    WKBundlePostMessage(globalBundle, message);
-    WKStringRelease(message);
+    WKStringRef messageName = WKStringCreateWithCFString(CFSTR("Callback"));
+    WKStringRef messageBody = WKStringCreateWithCFString(CFSTR("Window was cleared"));
+    WKBundlePostMessage(globalBundle, messageName, messageBody);
+    WKStringRelease(messageName);
+    WKStringRelease(messageBody);
 }
 
 
@@ -113,12 +115,12 @@ void didRecieveMessage(WKBundleRef bundle, WKStringRef messageName, WKTypeRef me
     WKTypeID typeID = WKGetTypeID(messageBody);
     if (typeID == WKStringGetTypeID()) {
         CFStringRef cfMessageBody = WKStringCopyCFString(0, (WKStringRef)messageBody);
-        LOG(@"WKBundleClient - didRecieveMessage %@ (Type=String) %@\n", cfMessageName, cfMessageBody);
+        LOG(@"WKBundleClient - didRecieveMessage - MessageName: %@ MessageBody %@", cfMessageName, cfMessageBody);
         CFRelease(cfMessageBody);
     } else {
-        LOG(@"WKBundleClient - didRecieveMessage %@ (Type=Unhandeled)\n", cfMessageName);
+        LOG(@"WKBundleClient - didRecieveMessage - MessageName: %@ (MessageBody Unhandeled)\n", cfMessageName);
     }
-    
+
     CFRelease(cfMessageName);
 }
 

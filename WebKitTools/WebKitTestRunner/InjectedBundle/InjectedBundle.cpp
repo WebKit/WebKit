@@ -81,10 +81,13 @@ void InjectedBundle::initialize(WKBundleRef bundle)
 
 void InjectedBundle::done()
 {
+    WKRetainPtr<WKStringRef> doneMessageName(AdoptWK, WKStringCreateWithCFString(CFSTR("Done")));
+
     std::string output = m_outputStream.str();
     RetainPtr<CFStringRef> outputCFString(AdoptCF, CFStringCreateWithCString(0, output.c_str(), kCFStringEncodingUTF8));
-    WKRetainPtr<WKStringRef> doneMessage(AdoptWK, WKStringCreateWithCFString(outputCFString.get()));
-    WKBundlePostMessage(m_bundle, doneMessage.get());
+    WKRetainPtr<WKStringRef> doneMessageBody(AdoptWK, WKStringCreateWithCFString(outputCFString.get()));
+
+    WKBundlePostMessage(m_bundle, doneMessageName.get(), doneMessageBody.get());
 }
 
 void InjectedBundle::didCreatePage(WKBundlePageRef page)
@@ -103,15 +106,17 @@ void InjectedBundle::didReceiveMessage(WKStringRef messageName, WKTypeRef messag
 {
     CFStringRef cfMessage = WKStringCopyCFString(0, messageName);
     if (CFEqual(cfMessage, CFSTR("BeginTest"))) {
-        WKRetainPtr<WKStringRef> ackMessage(AdoptWK, WKStringCreateWithCFString(CFSTR("BeginTestAck")));
-        WKBundlePostMessage(m_bundle, ackMessage.get());
+        WKRetainPtr<WKStringRef> ackMessageName(AdoptWK, WKStringCreateWithCFString(CFSTR("Ack")));
+        WKRetainPtr<WKStringRef> ackMessageBody(AdoptWK, WKStringCreateWithCFString(CFSTR("BeginTest")));
+        WKBundlePostMessage(m_bundle, ackMessageName.get(), ackMessageBody.get());
 
         reset();
         return;
     }
 
-    WKRetainPtr<WKStringRef> errorMessage(AdoptWK, WKStringCreateWithCFString(CFSTR("Error: Unknown.")));
-    WKBundlePostMessage(m_bundle, errorMessage.get());
+    WKRetainPtr<WKStringRef> errorMessageName(AdoptWK, WKStringCreateWithCFString(CFSTR("Error")));
+    WKRetainPtr<WKStringRef> errorMessageBody(AdoptWK, WKStringCreateWithCFString(CFSTR("Unknown")));
+    WKBundlePostMessage(m_bundle, errorMessageName.get(), errorMessageBody.get());
 }
 
 void InjectedBundle::reset()

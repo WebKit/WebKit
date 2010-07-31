@@ -232,6 +232,7 @@
 		BCC5715C115ADAEF001CCAF9 /* WebSystemInterface.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCC5715A115ADAEF001CCAF9 /* WebSystemInterface.mm */; };
 		BCC57162115ADB42001CCAF9 /* NotImplemented.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC57161115ADB42001CCAF9 /* NotImplemented.h */; };
 		BCC938E11180DE440085E5FE /* WKContextPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC938E01180DE440085E5FE /* WKContextPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BCCB75C61203A1CE00222D1B /* WebContextMessageKinds.h in Headers */ = {isa = PBXBuildFile; fileRef = BCCB75C51203A1CE00222D1B /* WebContextMessageKinds.h */; };
 		BCD0042D110C1E27003B8A67 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCD0042C110C1E27003B8A67 /* CoreServices.framework */; };
 		BCD0139B110FA420003B8A67 /* WKFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD01397110FA420003B8A67 /* WKFrame.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BCD0139C110FA420003B8A67 /* WKFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD01398110FA420003B8A67 /* WKFrame.cpp */; };
@@ -529,6 +530,7 @@
 		BCC5715A115ADAEF001CCAF9 /* WebSystemInterface.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebSystemInterface.mm; sourceTree = "<group>"; };
 		BCC57161115ADB42001CCAF9 /* NotImplemented.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotImplemented.h; sourceTree = "<group>"; };
 		BCC938E01180DE440085E5FE /* WKContextPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKContextPrivate.h; sourceTree = "<group>"; };
+		BCCB75C51203A1CE00222D1B /* WebContextMessageKinds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebContextMessageKinds.h; sourceTree = "<group>"; };
 		BCD0042C110C1E27003B8A67 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = /System/Library/Frameworks/CoreServices.framework; sourceTree = "<absolute>"; };
 		BCD01397110FA420003B8A67 /* WKFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKFrame.h; sourceTree = "<group>"; };
 		BCD01398110FA420003B8A67 /* WKFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKFrame.cpp; sourceTree = "<group>"; };
@@ -1043,6 +1045,7 @@
 				BC9E969B11457F3F00870E71 /* DrawingAreaMessageKinds.h */,
 				BC9E969911457EDE00870E71 /* DrawingAreaProxyMessageKinds.h */,
 				BCB28CBF120233D9007D99BC /* InjectedBundleMessageKinds.h */,
+				BCCB75C51203A1CE00222D1B /* WebContextMessageKinds.h */,
 				BC111B60112F638300337BAB /* WebPageMessageKinds.h */,
 				BC111B61112F638300337BAB /* WebPageProxyMessageKinds.h */,
 				BC111B62112F638300337BAB /* WebProcessMessageKinds.h */,
@@ -1321,6 +1324,7 @@
 				BCDB85821200EC57007254BE /* WKType.h in Headers */,
 				BCDB86C11200FB97007254BE /* WebURL.h in Headers */,
 				BCB28CC0120233D9007D99BC /* InjectedBundleMessageKinds.h in Headers */,
+				BCCB75C61203A1CE00222D1B /* WebContextMessageKinds.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

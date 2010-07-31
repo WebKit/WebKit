@@ -67,7 +67,7 @@ public:
 
     // API
     void initializeClient(WKBundleClient*);
-    void postMessage(const WebCore::String&);
+    void postMessage(const WebCore::String&, APIObject*);
     void setShouldTrackVisitedLinks(bool);
     void removeAllVisitedLinks();
 

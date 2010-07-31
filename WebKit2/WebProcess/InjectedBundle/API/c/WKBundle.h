@@ -51,7 +51,7 @@ WK_EXPORT WKTypeID WKBundleGetTypeID();
 
 WK_EXPORT void WKBundleSetClient(WKBundleRef bundle, WKBundleClient * client);
 
-WK_EXPORT void WKBundlePostMessage(WKBundleRef bundle, WKStringRef message);
+WK_EXPORT void WKBundlePostMessage(WKBundleRef bundle, WKStringRef messageName, WKTypeRef messageBody);
 
 #ifdef __cplusplus
 }
