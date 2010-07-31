@@ -164,6 +164,23 @@ void CanvasRenderingContext2D::restore()
     c->restore();
 }
 
+void CanvasRenderingContext2D::setAllAttributesToDefault() 
+{
+    state().m_globalAlpha = 1;
+    state().m_shadowOffset = FloatSize();
+    state().m_shadowBlur = 0;
+    state().m_shadowColor = Color::transparent;
+    state().m_globalComposite = CompositeSourceOver;
+
+    GraphicsContext* context = drawingContext();
+    if (!context)
+        return;
+
+    context->setShadow(FloatSize(), 0, Color::transparent, DeviceColorSpace);
+    context->setAlpha(1);
+    context->setCompositeOperation(CompositeSourceOver);
+}
+
 CanvasStyle* CanvasRenderingContext2D::strokeStyle() const
 {
     return state().m_strokeStyle.get();
@@ -790,14 +807,18 @@ void CanvasRenderingContext2D::clearRect(float x, float y, float width, float he
 {
     if (!validateRectForCanvas(x, y, width, height))
         return;
-    GraphicsContext* c = drawingContext();
-    if (!c)
+    GraphicsContext* context = drawingContext();
+    if (!context)
         return;
     if (!state().m_invertibleCTM)
         return;
     FloatRect rect(x, y, width, height);
+
+    save();
+    setAllAttributesToDefault();
     willDraw(rect);
-    c->clearRect(rect);
+    context->clearRect(rect);
+    restore();
 }
 
 void CanvasRenderingContext2D::fillRect(float x, float y, float width, float height)

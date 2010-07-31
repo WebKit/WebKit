@@ -1,3 +1,22 @@
+2010-07-30  Matthew Delaney  <mdelaney@apple.com>
+
+        Reviewed by Darin Adler.
+
+        ctx.clearRect improperly clears shadow
+        https://bugs.webkit.org/show_bug.cgi?id=43213
+
+        Tests: canvas/philip/tests/2d.clearRect+fillRect.alpha0.5.html
+               canvas/philip/tests/2d.clearRect+fillRect.alpha0.html
+               canvas/philip/tests/2d.clearRect+fillRect.basic.html
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::setAllAttributesToDefault):
+        Added a new method to wipe out all context attributes to their defaults.
+        (WebCore::CanvasRenderingContext2D::clearRect):
+        Updated clearRect to ignore shadow, alpha, and global composite attributes
+        when clearing the input rect to match the canvas spec.
+        * html/canvas/CanvasRenderingContext2D.h:
+
 2010-07-30  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by Jian Li.

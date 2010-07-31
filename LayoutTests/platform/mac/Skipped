@@ -165,7 +165,6 @@ scrollbars/scrollbar-click-does-not-blur-content.html
 # Failing canvas test cases from http://philip.html5.org/tests/canvas/suite/tests/
 canvas/philip/tests/2d.drawImage.broken.html
 canvas/philip/tests/2d.path.clip.empty.html
-canvas/philip/tests/2d.clearRect.shadow.html
 canvas/philip/tests/2d.composite.operation.clear.html
 canvas/philip/tests/2d.composite.operation.darker.html
 canvas/philip/tests/2d.composite.operation.highlight.html

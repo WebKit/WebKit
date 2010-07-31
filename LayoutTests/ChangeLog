@@ -1,3 +1,23 @@
+2010-07-30  Matthew Delaney  <mdelaney@apple.com>
+
+        Reviewed by Darin Adler.
+
+        ctx.clearRect improperly clears shadow
+        https://bugs.webkit.org/show_bug.cgi?id=43213
+
+        * canvas/philip/tests/2d.clearRect+fillRect.alpha0-expected.txt: Added.
+        * canvas/philip/tests/2d.clearRect+fillRect.alpha0.5-expected.txt: Added.
+        * canvas/philip/tests/2d.clearRect+fillRect.alpha0.5.html: Added.
+        Same as above but with alpha of one half.
+        * canvas/philip/tests/2d.clearRect+fillRect.alpha0.html: Added.
+        Tests that clearing rect with alpha or 0 has no unwanted side-effects
+        * canvas/philip/tests/2d.clearRect+fillRect.basic-expected.txt: Added.
+        * canvas/philip/tests/2d.clearRect+fillRect.basic.html: Added.
+        Tests clearing a rect and then filling back over doesn't show any
+        side effects (such as caused by not ignoring/restoring appropriate
+        context attributes).
+        * platform/mac/Skipped: unskipping now passing test
+
 2010-07-30  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Fix chromium test expectations.

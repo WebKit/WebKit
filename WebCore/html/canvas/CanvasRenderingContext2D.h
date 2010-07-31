@@ -104,6 +104,7 @@ public:
 
     void save();
     void restore();
+    void setAllAttributesToDefault();
 
     void scale(float sx, float sy);
     void rotate(float angleInRadians);
