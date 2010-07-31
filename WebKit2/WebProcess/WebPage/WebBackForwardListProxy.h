@@ -66,8 +66,6 @@ public:
     void removeItem(WebCore::HistoryItem*);
     WebCore::HistoryItemVector& entries();
     
-    void pushStateItem(PassRefPtr<WebCore::HistoryItem>);
-
 #if ENABLE(WML)
     void clearWMLPageHistory();
 #endif

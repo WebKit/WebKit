@@ -121,16 +121,6 @@ HistoryItem* BackForwardListImpl::itemAtIndex(int index)
     return m_client->itemAtIndex(index);
 }
 
-void BackForwardListImpl::pushStateItem(PassRefPtr<HistoryItem> newItem)
-{
-    RefPtr<HistoryItem> current = m_client->currentItem();
-
-    addItem(newItem);
-
-    if (!current->stateObject())
-        current->setStateObject(SerializedScriptValue::create());
-}
-
 HistoryItemVector& BackForwardListImpl::entries()
 {
     static HistoryItemVector noEntries;

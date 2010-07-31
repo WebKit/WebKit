@@ -80,8 +80,6 @@ public:
     void removeItem(HistoryItem*);
     HistoryItemVector& entries();
     
-    void pushStateItem(PassRefPtr<HistoryItem>);
-
 #if ENABLE(WML)
     void clearWMLPageHistory();
 #endif

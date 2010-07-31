@@ -619,9 +619,9 @@ void HistoryController::updateBackForwardListClippedAtTarget(bool doClip)
 
     frameLoader->checkDidPerformFirstNavigation();
 
-    RefPtr<HistoryItem> item = frameLoader->history()->createItemTree(m_frame, doClip);
-    LOG(BackForward, "WebCoreBackForward - Adding backforward item %p for frame %s", item.get(), m_frame->loader()->documentLoader()->url().string().ascii().data());
-    page->backForwardList()->addItem(item);
+    RefPtr<HistoryItem> topItem = frameLoader->history()->createItemTree(m_frame, doClip);
+    LOG(BackForward, "WebCoreBackForward - Adding backforward item %p for frame %s", topItem.get(), m_frame->loader()->documentLoader()->url().string().ascii().data());
+    page->backForwardList()->addItem(topItem.release());
 }
 
 void HistoryController::pushState(PassRefPtr<SerializedScriptValue> stateObject, const String& title, const String& urlString)
@@ -635,13 +635,19 @@ void HistoryController::pushState(PassRefPtr<SerializedScriptValue> stateObject,
     // Get a HistoryItem tree for the current frame tree.
     RefPtr<HistoryItem> topItem = page->mainFrame()->loader()->history()->createItemTree(m_frame, false);
     
-    // Override data in the target item to reflect the pushState() arguments.
-    HistoryItem* targetItem = m_frame->loader()->history()->currentItem();
-    targetItem->setTitle(title);
-    targetItem->setStateObject(stateObject);
-    targetItem->setURLString(urlString);
+    // Override data in the current item (created by createItemTree) to reflect
+    // the pushState() arguments.
+    m_currentItem->setTitle(title);
+    m_currentItem->setStateObject(stateObject);
+    m_currentItem->setURLString(urlString);
 
-    page->backForwardList()->pushStateItem(topItem.release());
+    // Create a null state object for the previous HistoryItem so that we will
+    // generate a popstate event when navigating back to it.
+    // FIXME: http://webkit.org/b/41372 implies that we shouldn't need this.
+    if (!m_previousItem->stateObject())
+        m_previousItem->setStateObject(SerializedScriptValue::create());
+
+    page->backForwardList()->addItem(topItem.release());
 }
 
 void HistoryController::replaceState(PassRefPtr<SerializedScriptValue> stateObject, const String& title, const String& urlString)

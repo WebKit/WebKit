@@ -242,20 +242,6 @@ HistoryItemVector& BackForwardListImpl::entries()
     return m_entries;
 }
 
-void BackForwardListImpl::pushStateItem(PassRefPtr<HistoryItem> newItem)
-{
-    ASSERT(newItem);
-    ASSERT(newItem->stateObject());
-    
-    RefPtr<HistoryItem> current = currentItem();
-    ASSERT(current);
-
-    addItem(newItem);
-    
-    if (!current->stateObject())
-        current->setStateObject(SerializedScriptValue::create());
-}
-
 void BackForwardListImpl::close()
 {
     int size = m_entries.size();
