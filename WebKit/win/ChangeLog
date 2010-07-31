@@ -1,3 +1,10 @@
+2010-07-31  Daniel Bates  <dbates@rim.com>
+
+        Attempt to fix the Windows build after changeset 64409 <http://trac.webkit.org/changeset/64409>.
+
+        * WebFrame.cpp:
+        (WebFrame::setPrinting):
+
 2010-07-30  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
