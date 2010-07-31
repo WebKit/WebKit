@@ -23720,10 +23720,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\platform\win\PopupMenuWin.h"
-					>
-				</File>
-				<File
 					RelativePath="..\platform\win\ScrollbarThemeSafari.cpp"
 					>
 				</File>
@@ -23741,10 +23737,6 @@
 				</File>
 				<File
 					RelativePath="..\platform\win\SearchPopupMenuWin.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\platform\win\SearchPopupMenuWin.h"
 					>
 				</File>
 				<File

@@ -4,7 +4,6 @@
  * Copyright (C) 2008 Nuanti Ltd.
  * Copyright (C) 2008 Alp Toker <alp@atoker.com>
  * Copyright (C) 2008 Gustavo Noronha Silva <gns@gnome.org>
- * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -35,9 +34,6 @@
 #include "Icon.h"
 #include "KURL.h"
 #include "PlatformString.h"
-#include "PopupMenuClient.h"
-#include "PopupMenuGtk.h"
-#include "SearchPopupMenuGtk.h"
 #include "SecurityOrigin.h"
 #include "webkitgeolocationpolicydecision.h"
 #include "webkitwebview.h"
@@ -624,21 +620,6 @@ void ChromeClient::cancelGeolocationPermissionRequestForFrame(WebCore::Frame* fr
     WebKitWebFrame* webFrame = kit(frame);
     WebKitWebView* webView = getViewFromFrame(webFrame);
     g_signal_emit_by_name(webView, "geolocation-policy-decision-cancelled", webFrame);
-}
-
-bool ChromeClient::selectItemWritingDirectionIsNatural()
-{
-    return true;
-}
-
-PassRefPtr<WebCore::PopupMenu> ChromeClient::createPopupMenu(WebCore::PopupMenuClient* client) const
-{
-    return adoptRef(new PopupMenuGtk(client));
-}
-
-PassRefPtr<WebCore::SearchPopupMenu> ChromeClient::createSearchPopupMenu(WebCore::PopupMenuClient* client) const
-{
-    return adoptRef(new SearchPopupMenuGtk(client));
 }
 
 }

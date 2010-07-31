@@ -1,6 +1,4 @@
 /*
- * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
- *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
  *  License as published by the Free Software Foundation; either
@@ -17,34 +15,29 @@
  */
 
 #include "config.h"
-#include "SearchPopupMenuGtk.h"
+#include "SearchPopupMenu.h"
 
 #include "NotImplemented.h"
 
 namespace WebCore {
 
-SearchPopupMenuGtk::SearchPopupMenuGtk(PopupMenuClient* client)
-    : m_popup(client)
+SearchPopupMenu::SearchPopupMenu(PopupMenuClient* client)
+    : PopupMenu(client)
 {
     notImplemented();
 }
 
-PopupMenu* SearchPopupMenuGtk::popupMenu()
-{
-    return &m_popup;
-}
-
-void SearchPopupMenuGtk::saveRecentSearches(const AtomicString&, const Vector<String>&)
+void SearchPopupMenu::saveRecentSearches(const AtomicString&, const Vector<String>&)
 {
     notImplemented();
 }
 
-void SearchPopupMenuGtk::loadRecentSearches(const AtomicString&, Vector<String>&)
+void SearchPopupMenu::loadRecentSearches(const AtomicString&, Vector<String>&)
 {
     notImplemented();
 }
 
-bool SearchPopupMenuGtk::enabled()
+bool SearchPopupMenu::enabled()
 {
     notImplemented();
     return false;

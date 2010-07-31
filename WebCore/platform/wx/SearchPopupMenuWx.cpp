@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2009 Apple Inc. All Rights Reserved.
- * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,36 +24,31 @@
  */
 
 #include "config.h"
-#include "SearchPopupMenuWx.h"
+#include "SearchPopupMenu.h"
 
 #include "NotImplemented.h"
 
 namespace WebCore {
 
-SearchPopupMenuWx::SearchPopupMenuWx(PopupMenuClient* client)
-    : m_popup(client)
+SearchPopupMenu::SearchPopupMenu(PopupMenuClient* client)
+    : PopupMenu(client)
 {
     notImplemented();
 }
 
-void SearchPopupMenuWx::saveRecentSearches(const AtomicString& name, const Vector<String>& searchItems)
+void SearchPopupMenu::saveRecentSearches(const AtomicString& name, const Vector<String>& searchItems)
 {
     notImplemented();
 }
 
-void SearchPopupMenuWx::loadRecentSearches(const AtomicString& name, Vector<String>& searchItems)
+void SearchPopupMenu::loadRecentSearches(const AtomicString& name, Vector<String>& searchItems)
 {
     notImplemented();
 }
 
-bool SearchPopupMenuWx::enabled()
+bool SearchPopupMenu::enabled()
 {
     return true;
-}
-
-PopupMenu* SearchPopupMenuWx::popupMenu()
-{
-    return &m_popup;
 }
 
 }

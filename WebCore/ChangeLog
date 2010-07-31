@@ -1,3 +1,211 @@
+2010-07-31  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r64422.
+        http://trac.webkit.org/changeset/64422
+        https://bugs.webkit.org/show_bug.cgi?id=43304
+
+        Build fixes are needed for Snow Leopard and Windows.
+        (Requested by lca on #webkit).
+
+        * GNUmakefile.am:
+        * WebCore.exp.in:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/EmptyClients.h:
+        * page/Chrome.cpp:
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        * platform/PopupMenu.h:
+        (WebCore::PopupMenu::create):
+        (WebCore::PopupMenu::disconnectClient):
+        (WebCore::PopupMenu::client):
+        (WebCore::PopupMenu::scrollbar):
+        (WebCore::PopupMenu::itemHeight):
+        (WebCore::PopupMenu::windowRect):
+        (WebCore::PopupMenu::popupHandle):
+        (WebCore::PopupMenu::setWasClicked):
+        (WebCore::PopupMenu::wasClicked):
+        (WebCore::PopupMenu::setScrollOffset):
+        (WebCore::PopupMenu::scrollOffset):
+        (WebCore::PopupMenu::wheelDelta):
+        (WebCore::PopupMenu::scrollbarCapturingMouse):
+        (WebCore::PopupMenu::setScrollbarCapturingMouse):
+        (WebCore::PopupMenu::isActive):
+        (WebCore::PopupMenu::scrollbarCornerPresent):
+        * platform/SearchPopupMenu.h:
+        (WebCore::SearchPopupMenu::create):
+        * platform/brew/PopupMenuBrew.cpp:
+        (WebCore::PopupMenu::PopupMenu):
+        (WebCore::PopupMenu::~PopupMenu):
+        (WebCore::PopupMenu::show):
+        (WebCore::PopupMenu::hide):
+        (WebCore::PopupMenu::updateFromElement):
+        (WebCore::PopupMenu::itemWritingDirectionIsNatural):
+        * platform/brew/PopupMenuBrew.h: Removed.
+        * platform/brew/SearchPopupMenuBrew.cpp:
+        (WebCore::SearchPopupMenu::saveRecentSearches):
+        (WebCore::SearchPopupMenu::loadRecentSearches):
+        (WebCore::SearchPopupMenu::SearchPopupMenu):
+        (WebCore::SearchPopupMenu::enabled):
+        * platform/brew/SearchPopupMenuBrew.h: Removed.
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupMenu::PopupMenu):
+        (WebCore::PopupMenu::~PopupMenu):
+        (WebCore::PopupMenu::show):
+        (WebCore::PopupMenu::hide):
+        (WebCore::PopupMenu::updateFromElement):
+        (WebCore::PopupMenu::itemWritingDirectionIsNatural):
+        * platform/chromium/PopupMenuChromium.h:
+        * platform/chromium/SearchPopupMenuChromium.cpp:
+        (WebCore::SearchPopupMenu::SearchPopupMenu):
+        (WebCore::SearchPopupMenu::enabled):
+        (WebCore::SearchPopupMenu::saveRecentSearches):
+        (WebCore::SearchPopupMenu::loadRecentSearches):
+        * platform/chromium/SearchPopupMenuChromium.h: Removed.
+        * platform/efl/PopupMenuEfl.cpp:
+        (WebCore::PopupMenu::PopupMenu):
+        (WebCore::PopupMenu::~PopupMenu):
+        (WebCore::PopupMenu::show):
+        (WebCore::PopupMenu::hide):
+        (WebCore::PopupMenu::updateFromElement):
+        (WebCore::PopupMenu::itemWritingDirectionIsNatural):
+        * platform/efl/PopupMenuEfl.h: Removed.
+        * platform/efl/SearchPopupMenuEfl.cpp:
+        (WebCore::SearchPopupMenu::SearchPopupMenu):
+        (WebCore::SearchPopupMenu::saveRecentSearches):
+        (WebCore::SearchPopupMenu::loadRecentSearches):
+        (WebCore::SearchPopupMenu::enabled):
+        * platform/efl/SearchPopupMenuEfl.h: Removed.
+        * platform/gtk/PopupMenuGtk.cpp:
+        (WebCore::PopupMenu::PopupMenu):
+        (WebCore::PopupMenu::~PopupMenu):
+        (WebCore::PopupMenu::show):
+        (WebCore::PopupMenu::hide):
+        (WebCore::PopupMenu::updateFromElement):
+        (WebCore::PopupMenu::itemWritingDirectionIsNatural):
+        (WebCore::PopupMenu::menuItemActivated):
+        (WebCore::PopupMenu::menuUnmapped):
+        (WebCore::PopupMenu::menuPositionFunction):
+        (WebCore::PopupMenu::menuRemoveItem):
+        * platform/gtk/PopupMenuGtk.h: Removed.
+        * platform/gtk/SearchPopupMenuGtk.cpp:
+        (WebCore::SearchPopupMenu::SearchPopupMenu):
+        (WebCore::SearchPopupMenu::saveRecentSearches):
+        (WebCore::SearchPopupMenu::loadRecentSearches):
+        (WebCore::SearchPopupMenu::enabled):
+        * platform/gtk/SearchPopupMenuGtk.h: Removed.
+        * platform/haiku/PopupMenuHaiku.cpp:
+        (WebCore::PopupMenuHaiku::PopupMenuHaiku):
+        (WebCore::PopupMenuHaiku::~PopupMenuHaiku):
+        (WebCore::PopupMenu::PopupMenu):
+        (WebCore::PopupMenu::~PopupMenu):
+        (WebCore::PopupMenu::show):
+        (WebCore::PopupMenu::hide):
+        (WebCore::PopupMenu::updateFromElement):
+        (WebCore::PopupMenu::itemWritingDirectionIsNatural):
+        * platform/haiku/PopupMenuHaiku.h: Removed.
+        * platform/haiku/SearchPopupMenuHaiku.cpp:
+        (WebCore::SearchPopupMenu::SearchPopupMenu):
+        (WebCore::SearchPopupMenu::saveRecentSearches):
+        (WebCore::SearchPopupMenu::loadRecentSearches):
+        (WebCore::SearchPopupMenu::enabled):
+        * platform/haiku/SearchPopupMenuHaiku.h: Removed.
+        * platform/mac/PopupMenuMac.h: Removed.
+        * platform/mac/PopupMenuMac.mm:
+        (WebCore::PopupMenu::PopupMenu):
+        (WebCore::PopupMenu::~PopupMenu):
+        (WebCore::PopupMenu::clear):
+        (WebCore::PopupMenu::populate):
+        (WebCore::PopupMenu::show):
+        (WebCore::PopupMenu::hide):
+        (WebCore::PopupMenu::updateFromElement):
+        (WebCore::PopupMenu::itemWritingDirectionIsNatural):
+        * platform/mac/SearchPopupMenuMac.h: Removed.
+        * platform/mac/SearchPopupMenuMac.mm:
+        (WebCore::SearchPopupMenu::SearchPopupMenu):
+        (WebCore::SearchPopupMenu::enabled):
+        (WebCore::SearchPopupMenu::saveRecentSearches):
+        (WebCore::SearchPopupMenu::loadRecentSearches):
+        * platform/qt/PopupMenuQt.cpp:
+        (WebCore::PopupMenu::PopupMenu):
+        (WebCore::PopupMenu::~PopupMenu):
+        (WebCore::PopupMenu::show):
+        (WebCore::PopupMenu::hide):
+        (WebCore::PopupMenu::updateFromElement):
+        (WebCore::PopupMenu::itemWritingDirectionIsNatural):
+        * platform/qt/PopupMenuQt.h: Removed.
+        * platform/qt/QtAbstractWebPopup.h:
+        * platform/qt/SearchPopupMenuQt.cpp:
+        (WebCore::SearchPopupMenu::SearchPopupMenu):
+        (WebCore::SearchPopupMenu::saveRecentSearches):
+        (WebCore::SearchPopupMenu::loadRecentSearches):
+        (WebCore::SearchPopupMenu::enabled):
+        * platform/qt/SearchPopupMenuQt.h: Removed.
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenu::PopupMenu):
+        (WebCore::PopupMenu::~PopupMenu):
+        (WebCore::PopupMenu::popupClassName):
+        (WebCore::PopupMenu::show):
+        (WebCore::PopupMenu::hide):
+        (WebCore::PopupMenu::calculatePositionAndSize):
+        (WebCore::PopupMenu::setFocusedIndex):
+        (WebCore::PopupMenu::visibleItems):
+        (WebCore::PopupMenu::listIndexAtPoint):
+        (WebCore::PopupMenu::focusedIndex):
+        (WebCore::PopupMenu::focusFirst):
+        (WebCore::PopupMenu::focusLast):
+        (WebCore::PopupMenu::down):
+        (WebCore::PopupMenu::up):
+        (WebCore::PopupMenu::invalidateItem):
+        (WebCore::PopupMenu::clientRect):
+        (WebCore::PopupMenu::incrementWheelDelta):
+        (WebCore::PopupMenu::reduceWheelDelta):
+        (WebCore::PopupMenu::scrollToRevealSelection):
+        (WebCore::PopupMenu::updateFromElement):
+        (WebCore::PopupMenu::itemWritingDirectionIsNatural):
+        (WebCore::PopupMenu::paint):
+        (WebCore::PopupMenu::valueChanged):
+        (WebCore::PopupMenu::invalidateScrollbarRect):
+        (WebCore::PopupMenu::registerClass):
+        (WebCore::PopupMenu::PopupMenuWndProc):
+        (WebCore::PopupMenu::wndProc):
+        * platform/win/PopupMenuWin.h: Removed.
+        * platform/win/SearchPopupMenuWin.cpp:
+        (WebCore::SearchPopupMenu::SearchPopupMenu):
+        (WebCore::SearchPopupMenu::enabled):
+        (WebCore::SearchPopupMenu::saveRecentSearches):
+        (WebCore::SearchPopupMenu::loadRecentSearches):
+        * platform/win/SearchPopupMenuWin.h: Removed.
+        * platform/wx/PopupMenuWx.cpp:
+        (WebCore::PopupMenu::PopupMenu):
+        (WebCore::PopupMenu::~PopupMenu):
+        (WebCore::PopupMenu::show):
+        (WebCore::PopupMenu::OnMenuItemSelected):
+        (WebCore::PopupMenu::hide):
+        (WebCore::PopupMenu::updateFromElement):
+        (WebCore::PopupMenu::itemWritingDirectionIsNatural):
+        * platform/wx/PopupMenuWx.h: Removed.
+        * platform/wx/SearchPopupMenuWx.cpp:
+        (WebCore::SearchPopupMenu::SearchPopupMenu):
+        (WebCore::SearchPopupMenu::saveRecentSearches):
+        (WebCore::SearchPopupMenu::loadRecentSearches):
+        (WebCore::SearchPopupMenu::enabled):
+        * platform/wx/SearchPopupMenuWx.h: Removed.
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::adjustInnerStyle):
+        (WebCore::RenderMenuList::showPopup):
+        * rendering/RenderMenuList.h:
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::~RenderTextControlSingleLine):
+        (WebCore::RenderTextControlSingleLine::addSearchResult):
+        (WebCore::RenderTextControlSingleLine::showPopup):
+        (WebCore::RenderTextControlSingleLine::hidePopup):
+        (WebCore::RenderTextControlSingleLine::updateFromElement):
+        (WebCore::RenderTextControlSingleLine::valueChanged):
+        * rendering/RenderTextControlSingleLine.h:
+
 2010-07-27  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Darin Fisher.

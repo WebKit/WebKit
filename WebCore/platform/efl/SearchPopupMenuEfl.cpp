@@ -2,7 +2,6 @@
  *  Copyright (C) 2008 INdT - Instituto Nokia de Tecnologia
  *  Copyright (C) 2009-2010 ProFUSION embedded systems
  *  Copyright (C) 2009-2010 Samsung Electronics
- * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -20,34 +19,29 @@
  */
 
 #include "config.h"
-#include "SearchPopupMenuEfl.h"
+#include "SearchPopupMenu.h"
 
 #include "NotImplemented.h"
 
 namespace WebCore {
 
-SearchPopupMenuEfl::SearchPopupMenuEfl(PopupMenuClient* client)
-    : m_popup(client)
+SearchPopupMenu::SearchPopupMenu(PopupMenuClient* client)
+    : PopupMenu(client)
 {
     notImplemented();
 }
 
-PopupMenu* SearchPopupMenuEfl::popupMenu()
-{
-    return &m_popup;
-}
-
-void SearchPopupMenuEfl::saveRecentSearches(const AtomicString&, const Vector<String>&)
+void SearchPopupMenu::saveRecentSearches(const AtomicString&, const Vector<String>&)
 {
     notImplemented();
 }
 
-void SearchPopupMenuEfl::loadRecentSearches(const AtomicString&, Vector<String>&)
+void SearchPopupMenu::loadRecentSearches(const AtomicString&, Vector<String>&)
 {
     notImplemented();
 }
 
-bool SearchPopupMenuEfl::enabled()
+bool SearchPopupMenu::enabled()
 {
     notImplemented();
     return true;

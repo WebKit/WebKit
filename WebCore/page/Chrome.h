@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
- * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,8 +24,6 @@
 #include "FileChooser.h"
 #include "FocusDirection.h"
 #include "HostWindow.h"
-#include "PopupMenu.h"
-#include "SearchPopupMenu.h"
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 
@@ -47,7 +44,6 @@ namespace WebCore {
     class IntRect;
     class Node;
     class Page;
-    class PopupMenuClient;
     class String;
 #if ENABLE(NOTIFICATIONS)
     class NotificationPresenter;
@@ -147,10 +143,6 @@ namespace WebCore {
 #if ENABLE(NOTIFICATIONS)
         NotificationPresenter* notificationPresenter() const; 
 #endif
-
-        bool selectItemWritingDirectionIsNatural();
-        PassRefPtr<PopupMenu> createPopupMenu(PopupMenuClient*) const;
-        PassRefPtr<SearchPopupMenu> createSearchPopupMenu(PopupMenuClient*) const;
 
     private:
         Page* m_page;

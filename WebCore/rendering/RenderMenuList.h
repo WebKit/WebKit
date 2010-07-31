@@ -24,7 +24,6 @@
 #ifndef RenderMenuList_h
 #define RenderMenuList_h
 
-#include "PopupMenu.h"
 #include "PopupMenuClient.h"
 #include "RenderFlexibleBox.h"
 
@@ -36,6 +35,7 @@
 
 namespace WebCore {
 
+class PopupMenu;
 class RenderText;
 
 #if ENABLE(NO_LISTBOX_RENDERING)

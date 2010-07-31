@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
- * Copyright (C) 2008, 2010 Nokia Corporation and/or its subsidiary(-ies)
+ * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -64,15 +64,11 @@
 #import <WebCore/Page.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/PlatformString.h>
-#import <WebCore/PopupMenuMac.h>
 #import <WebCore/ResourceRequest.h>
-#import <WebCore/SearchPopupMenuMac.h>
 #import <WebCore/Widget.h>
 #import <WebCore/WindowFeatures.h>
 #import <wtf/PassRefPtr.h>
 #import <wtf/Vector.h>
-
-
 
 #if USE(ACCELERATED_COMPOSITING)
 #import <WebCore/GraphicsLayer.h>
@@ -739,21 +735,6 @@ void WebChromeClient::formDidFocus(const WebCore::Node* node)
 void WebChromeClient::formDidBlur(const WebCore::Node* node)
 {
     CallUIDelegate(m_webView, @selector(webView:formDidBlurNode:), kit(const_cast<WebCore::Node*>(node)));
-}
-
-bool WebChromeClient::selectItemWritingDirectionIsNatural()
-{
-    return false;
-}
-
-PassRefPtr<WebCore::PopupMenu> WebChromeClient::createPopupMenu(WebCore::PopupMenuClient* client) const
-{
-    return adoptRef(new PopupMenuMac(client));
-}
-
-PassRefPtr<WebCore::SearchPopupMenu> WebChromeClient::createSearchPopupMenu(WebCore::PopupMenuClient* client) const
-{
-    return adoptRef(new SearchPopupMenuMac(client));
 }
 
 #if USE(ACCELERATED_COMPOSITING)
