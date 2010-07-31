@@ -1,5 +1,18 @@
 2010-07-30  Andrew Wilson  <atwilson@chromium.org>
 
+        Unreviewed expectations changes.
+
+        * platform/chromium-mac/svg/custom/massive-coordinates-expected.checksum: Added.
+        * platform/chromium-mac/svg/custom/massive-coordinates-expected.png: Added.
+        * platform/chromium-win/svg/custom/massive-coordinates-expected.checksum: Copied from LayoutTests/platform/chromium-mac/fast/js/missing-title-end-tag-js-expected.checksum.
+        * platform/chromium-win/svg/custom/massive-coordinates-expected.png: Copied from LayoutTests/platform/chromium-mac/webarchive/test-link-rel-icon-expected.png.
+        * platform/chromium-win/svg/custom/massive-coordinates-expected.txt: Added.
+        * platform/chromium-win/svg/custom/pattern-excessive-malloc-expected.checksum: Copied from LayoutTests/platform/chromium-mac/fast/js/missing-title-end-tag-js-expected.checksum.
+        * platform/chromium-win/svg/custom/pattern-excessive-malloc-expected.png: Copied from LayoutTests/platform/chromium-mac/webarchive/test-link-rel-icon-expected.png.
+        * platform/chromium/test_expectations.txt:
+
+2010-07-30  Andrew Wilson  <atwilson@chromium.org>
+
         Unreviewed rollback for r64375 because it broke chromium tests
         downstream due to expectation files that were not moved.
 

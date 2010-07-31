@@ -3122,3 +3122,5 @@ BUG50704 : plugins/document-open.html = TIMEOUT
 
 // New test added in r64359 which fails in Chromium.
 BUG50787 : plugins/npruntime/plugin-scriptable-object-invoke-default.html = TEXT
+
+BUG_ATWILSON REBASELINE MAC : svg/custom/pattern-excessive-malloc.svg = IMAGE
