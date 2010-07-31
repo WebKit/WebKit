@@ -752,7 +752,7 @@ LRESULT CALLBACK PopupMenuWin::PopupMenuWndProc(HWND hWnd, UINT message, WPARAM 
     LONG_PTR longPtr = GetWindowLongPtr(hWnd, 0);
 #endif
     
-    if (PopupMenu* popup = reinterpret_cast<PopupMenu*>(longPtr))
+    if (PopupMenuWin* popup = reinterpret_cast<PopupMenuWin*>(longPtr))
         return popup->wndProc(hWnd, message, wParam, lParam);
     
     if (message == WM_CREATE) {

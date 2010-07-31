@@ -1,3 +1,10 @@
+2010-07-31  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Windows build fix.
+
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenuWin::PopupMenuWndProc):
+
 2010-07-27  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Darin Fisher.
