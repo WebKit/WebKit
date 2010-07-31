@@ -1,3 +1,24 @@
+2010-07-30  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by Jian Li.
+
+        Decouple FileThread from FileStream to support generic file-related async tasks
+        https://bugs.webkit.org/show_bug.cgi?id=43135
+
+        No new tests as this doesn't change any functionality.
+
+        * html/FileThread.cpp:
+        (WebCore::FileThread::stop):
+        (WebCore::SameInstancePredicate::SameFilePredicate):
+        (WebCore::SameInstancePredicate::operator()):
+        (WebCore::FileThread::unscheduleTasksInternal):
+        * html/FileThread.h:
+        (WebCore::FileThread::create):
+        (WebCore::FileThread::Task::instance):
+        (WebCore::FileThread::Task::Task):
+        * html/FileThreadTask.h: Changed all templates to take any type as a callee instance.
+        (WebCore::createFileThreadTask):
+
 2010-07-30  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Darin Adler.
