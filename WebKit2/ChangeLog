@@ -1,3 +1,44 @@
+2010-07-27  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Darin Fisher.
+
+        PopupMenu refactoring in preparation to WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=42592
+
+        Classes WebPopupMenu and WebSearchPopupMenu inherit from PopupMenu and
+        SearchPopupMenu respectively. At this point they are just empty implementations.
+
+        * WebProcess/WebCoreSupport/WebPopupMenu.cpp: Added.
+        (WebKit::WebPopupMenu::WebPopupMenu):
+        (WebKit::WebPopupMenu::~WebPopupMenu):
+        (WebKit::WebPopupMenu::disconnectClient):
+        (WebKit::WebPopupMenu::show):
+        (WebKit::WebPopupMenu::hide):
+        (WebKit::WebPopupMenu::updateFromElement):
+        * WebProcess/WebCoreSupport/WebPopupMenu.h: Added.
+        * WebProcess/WebCoreSupport/WebSearchPopupMenu.cpp: Added.
+        (WebKit::WebSearchPopupMenu::WebSearchPopupMenu):
+        (WebKit::WebSearchPopupMenu::popupMenu):
+        (WebKit::WebSearchPopupMenu::saveRecentSearches):
+        (WebKit::WebSearchPopupMenu::loadRecentSearches):
+        (WebKit::WebSearchPopupMenu::enabled):
+        * WebProcess/WebCoreSupport/WebSearchPopupMenu.h: Added.
+
+        As ChromeClient was made responsible for providing PopupMenu and SearchPopupMenu
+        instances, concrete classes that inherit from ChromeClient needed to be changed to
+        implement the new methods.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::selectItemWritingDirectionIsNatural):
+        (WebKit::WebChromeClient::createPopupMenu):
+        (WebKit::WebChromeClient::createSearchPopupMenu):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
+        build issues:
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+
 2010-07-30  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Darin Adler.

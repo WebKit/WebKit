@@ -1709,6 +1709,7 @@ HEADERS += \
     platform/network/ResourceResponseBase.h \
     platform/PlatformTouchEvent.h \
     platform/PlatformTouchPoint.h \
+    platform/PopupMenu.h \
     platform/qt/ClipboardQt.h \
     platform/qt/QWebPageClient.h \
     platform/qt/QtAbstractWebPopup.h \
@@ -1718,6 +1719,7 @@ HEADERS += \
     platform/Scrollbar.h \
     platform/ScrollbarThemeComposite.h \
     platform/ScrollView.h \
+    platform/SearchPopupMenu.h \
     platform/SharedBuffer.h \
     platform/sql/SQLiteDatabase.h \
     platform/sql/SQLiteFileSystem.h \
@@ -3297,6 +3299,8 @@ HEADERS += \
     ../WebKit2/WebProcess/WebCoreSupport/WebErrors.h \
     ../WebKit2/WebProcess/WebCoreSupport/WebFrameLoaderClient.h \
     ../WebKit2/WebProcess/WebCoreSupport/WebInspectorClient.h \
+    ../WebKit2/WebProcess/WebCoreSupport/WebPopupMenu.h \
+    ../WebKit2/WebProcess/WebCoreSupport/WebSearchPopupMenu.h \
     ../WebKit2/WebProcess/WebPage/ChunkedUpdateDrawingArea.h \
     ../WebKit2/WebProcess/WebPage/DrawingArea.h \
     ../WebKit2/WebProcess/WebPage/WebFrame.h \
@@ -3369,6 +3373,8 @@ SOURCES += \
     ../WebKit2/WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp \
     ../WebKit2/WebProcess/WebCoreSupport/WebInspectorClient.cpp \
     ../WebKit2/WebProcess/WebCoreSupport/WebBackForwardControllerClient.cpp \
+    ../WebKit2/WebProcess/WebCoreSupport/WebPopupMenu.cpp \
+    ../WebKit2/WebProcess/WebCoreSupport/WebSearchPopupMenu.cpp \
     ../WebKit2/WebProcess/WebCoreSupport/qt/WebErrorsQt.cpp \
     ../WebKit2/WebProcess/WebPage/ChunkedUpdateDrawingArea.cpp \
     ../WebKit2/WebProcess/WebPage/DrawingArea.cpp \

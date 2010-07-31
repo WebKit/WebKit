@@ -3,6 +3,7 @@
  * Copyright (C) 2008 INdT - Instituto Nokia de Tecnologia
  * Copyright (C) 2009-2010 ProFUSION embedded systems
  * Copyright (C) 2009-2010 Samsung Electronics
+ * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,29 +23,30 @@
  */
 
 #include "config.h"
-#include "PopupMenu.h"
+#include "PopupMenuEfl.h"
 
 #include "Chrome.h"
 #include "ChromeClientEfl.h"
 #include "FrameView.h"
 #include "NotImplemented.h"
+#include "PopupMenuClient.h"
 
 namespace WebCore {
 
-PopupMenu::PopupMenu(PopupMenuClient* client)
+PopupMenuEfl::PopupMenuEfl(PopupMenuClient* client)
     : m_popupClient(client)
     , m_view(0)
 {
 }
 
-PopupMenu::~PopupMenu()
+PopupMenuEfl::~PopupMenuEfl()
 {
     // Tell client to destroy data related to this popup since this object is
     // going away.
     hide();
 }
 
-void PopupMenu::show(const IntRect& rect, FrameView* view, int index)
+void PopupMenuEfl::show(const IntRect& rect, FrameView* view, int index)
 {
     ASSERT(m_popupClient);
     ChromeClientEfl* chromeClient = static_cast<ChromeClientEfl*>(view->frame()->page()->chrome()->client());
@@ -54,7 +56,7 @@ void PopupMenu::show(const IntRect& rect, FrameView* view, int index)
     chromeClient->createSelectPopup(m_popupClient, index, rect);
 }
 
-void PopupMenu::hide()
+void PopupMenuEfl::hide()
 {
     ASSERT(m_view);
     ChromeClientEfl* chromeClient = static_cast<ChromeClientEfl*>(m_view->frame()->page()->chrome()->client());
@@ -63,14 +65,14 @@ void PopupMenu::hide()
     chromeClient->destroySelectPopup();
 }
 
-void PopupMenu::updateFromElement()
+void PopupMenuEfl::updateFromElement()
 {
     client()->setTextFromItem(client()->selectedIndex());
 }
 
-bool PopupMenu::itemWritingDirectionIsNatural()
+void PopupMenuEfl::disconnectClient()
 {
-    return true;
+    m_popupClient = 0;
 }
 
 }

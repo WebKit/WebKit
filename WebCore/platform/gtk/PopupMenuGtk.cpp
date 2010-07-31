@@ -4,6 +4,7 @@
  * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com
  * Copyright (C) 2008 Collabora Ltd.
+ * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,7 +24,7 @@
  */
 
 #include "config.h"
-#include "PopupMenu.h"
+#include "PopupMenuGtk.h"
 
 #include "FrameView.h"
 #include "GtkVersioning.h"
@@ -34,12 +35,12 @@
 
 namespace WebCore {
 
-PopupMenu::PopupMenu(PopupMenuClient* client)
+PopupMenuGtk::PopupMenuGtk(PopupMenuClient* client)
     : m_popupClient(client)
 {
 }
 
-PopupMenu::~PopupMenu()
+PopupMenuGtk::~PopupMenuGtk()
 {
     if (m_popup) {
         g_signal_handlers_disconnect_matched(m_popup.get(), G_SIGNAL_MATCH_DATA, 0, 0, 0, 0, this);
@@ -47,7 +48,7 @@ PopupMenu::~PopupMenu()
     }
 }
 
-void PopupMenu::show(const IntRect& rect, FrameView* view, int index)
+void PopupMenuGtk::show(const IntRect& rect, FrameView* view, int index)
 {
     ASSERT(client());
 
@@ -110,43 +111,43 @@ void PopupMenu::show(const IntRect& rect, FrameView* view, int index)
     gtk_menu_popup(m_popup.get(), 0, 0, reinterpret_cast<GtkMenuPositionFunc>(menuPositionFunction), this, 0, gtk_get_current_event_time());
 }
 
-void PopupMenu::hide()
+void PopupMenuGtk::hide()
 {
     ASSERT(m_popup);
     gtk_menu_popdown(m_popup.get());
 }
 
-void PopupMenu::updateFromElement()
+void PopupMenuGtk::updateFromElement()
 {
     client()->setTextFromItem(client()->selectedIndex());
 }
 
-bool PopupMenu::itemWritingDirectionIsNatural()
+void PopupMenuGtk::disconnectClient()
 {
-    return true;
+    m_popupClient = 0;
 }
 
-void PopupMenu::menuItemActivated(GtkMenuItem* item, PopupMenu* that)
+void PopupMenuGtk::menuItemActivated(GtkMenuItem* item, PopupMenuGtk* that)
 {
     ASSERT(that->client());
     ASSERT(that->m_indexMap.contains(GTK_WIDGET(item)));
     that->client()->valueChanged(that->m_indexMap.get(GTK_WIDGET(item)));
 }
 
-void PopupMenu::menuUnmapped(GtkWidget*, PopupMenu* that)
+void PopupMenuGtk::menuUnmapped(GtkWidget*, PopupMenuGtk* that)
 {
     ASSERT(that->client());
     that->client()->popupDidHide();
 }
 
-void PopupMenu::menuPositionFunction(GtkMenu*, gint* x, gint* y, gboolean* pushIn, PopupMenu* that)
+void PopupMenuGtk::menuPositionFunction(GtkMenu*, gint* x, gint* y, gboolean* pushIn, PopupMenuGtk* that)
 {
     *x = that->m_menuPosition.x();
     *y = that->m_menuPosition.y();
     *pushIn = true;
 }
 
-void PopupMenu::menuRemoveItem(GtkWidget* widget, PopupMenu* that)
+void PopupMenuGtk::menuRemoveItem(GtkWidget* widget, PopupMenuGtk* that)
 {
     ASSERT(that->m_popup);
     gtk_container_remove(GTK_CONTAINER(that->m_popup.get()), widget);

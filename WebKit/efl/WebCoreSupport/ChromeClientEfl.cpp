@@ -5,6 +5,7 @@
  * Copyright (C) 2008 Diego Gonzalez
  * Copyright (C) 2009-2010 ProFUSION embedded systems
  * Copyright (C) 2009-2010 Samsung Electronics
+ * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  *
  * All rights reserved.
  *
@@ -48,6 +49,8 @@
 #include "NotImplemented.h"
 #include "PlatformString.h"
 #include "SecurityOrigin.h"
+#include "PopupMenuEfl.h"
+#include "SearchPopupMenuEfl.h"
 #include "ViewportArguments.h"
 #include "WindowFeatures.h"
 #include "ewk_private.h"
@@ -517,6 +520,21 @@ void ChromeClientEfl::didReceiveViewportArguments(Frame* frame, const ViewportAr
         return;
 
     ewk_view_viewport_set(m_view, arguments.width, arguments.height, arguments.initialScale, arguments.minimumScale, arguments.maximumScale, arguments.userScalable);
+}
+
+bool ChromeClientEfl::selectItemWritingDirectionIsNatural()
+{
+    return true;
+}
+
+PassRefPtr<PopupMenu> ChromeClientEfl::createPopupMenu(PopupMenuClient* client) const
+{
+    return adoptRef(new PopupMenuEfl(client));
+}
+
+PassRefPtr<SearchPopupMenu> ChromeClientEfl::createSearchPopupMenu(PopupMenuClient* client) const
+{
+    return adoptRef(new SearchPopupMenuEfl(client));
 }
 
 }

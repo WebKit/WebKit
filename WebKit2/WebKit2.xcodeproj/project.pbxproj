@@ -266,6 +266,10 @@
 		BCF69FA31176D01400471A52 /* WebNavigationData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCF69FA11176D01400471A52 /* WebNavigationData.cpp */; };
 		BCF69FA91176D1CB00471A52 /* WKNavigationData.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF69FA71176D1CB00471A52 /* WKNavigationData.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BCF69FAA1176D1CB00471A52 /* WKNavigationData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCF69FA81176D1CB00471A52 /* WKNavigationData.cpp */; };
+		D3B9484611FF4B6500032B39 /* WebPopupMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D3B9484211FF4B6500032B39 /* WebPopupMenu.cpp */; };
+		D3B9484711FF4B6500032B39 /* WebPopupMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = D3B9484311FF4B6500032B39 /* WebPopupMenu.h */; };
+		D3B9484811FF4B6500032B39 /* WebSearchPopupMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D3B9484411FF4B6500032B39 /* WebSearchPopupMenu.cpp */; };
+		D3B9484911FF4B6500032B39 /* WebSearchPopupMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = D3B9484511FF4B6500032B39 /* WebSearchPopupMenu.h */; };
 		E1EE53E311F8CFC000CCBEE4 /* InjectedBundlePageEditorClient.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE53DC11F8CF9F00CCBEE4 /* InjectedBundlePageEditorClient.h */; };
 		E1EE53E711F8CFFB00CCBEE4 /* InjectedBundlePageEditorClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1EE53E611F8CFFB00CCBEE4 /* InjectedBundlePageEditorClient.cpp */; };
 		E1EE55F411F8F18900CCBEE4 /* WKBundleRange.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE55F311F8F18900CCBEE4 /* WKBundleRange.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -566,6 +570,10 @@
 		BCF69FA11176D01400471A52 /* WebNavigationData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebNavigationData.cpp; sourceTree = "<group>"; };
 		BCF69FA71176D1CB00471A52 /* WKNavigationData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNavigationData.h; sourceTree = "<group>"; };
 		BCF69FA81176D1CB00471A52 /* WKNavigationData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKNavigationData.cpp; sourceTree = "<group>"; };
+		D3B9484211FF4B6500032B39 /* WebPopupMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPopupMenu.cpp; sourceTree = "<group>"; };
+		D3B9484311FF4B6500032B39 /* WebPopupMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPopupMenu.h; sourceTree = "<group>"; };
+		D3B9484411FF4B6500032B39 /* WebSearchPopupMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSearchPopupMenu.cpp; sourceTree = "<group>"; };
+		D3B9484511FF4B6500032B39 /* WebSearchPopupMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSearchPopupMenu.h; sourceTree = "<group>"; };
 		E1EE53DC11F8CF9F00CCBEE4 /* InjectedBundlePageEditorClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundlePageEditorClient.h; sourceTree = "<group>"; };
 		E1EE53E611F8CFFB00CCBEE4 /* InjectedBundlePageEditorClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundlePageEditorClient.cpp; sourceTree = "<group>"; };
 		E1EE55F311F8F18900CCBEE4 /* WKBundleRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundleRange.h; sourceTree = "<group>"; };
@@ -860,6 +868,10 @@
 				BC032D6D10F4378D0058C15A /* WebInspectorClient.h */,
 				1A3E736011CC2659007BD539 /* WebPlatformStrategies.cpp */,
 				1A3E735F11CC2659007BD539 /* WebPlatformStrategies.h */,
+				D3B9484211FF4B6500032B39 /* WebPopupMenu.cpp */,
+				D3B9484311FF4B6500032B39 /* WebPopupMenu.h */,
+				D3B9484411FF4B6500032B39 /* WebSearchPopupMenu.cpp */,
+				D3B9484511FF4B6500032B39 /* WebSearchPopupMenu.h */,
 			);
 			path = WebCoreSupport;
 			sourceTree = "<group>";
@@ -1325,6 +1337,8 @@
 				BCDB86C11200FB97007254BE /* WebURL.h in Headers */,
 				BCB28CC0120233D9007D99BC /* InjectedBundleMessageKinds.h in Headers */,
 				BCCB75C61203A1CE00222D1B /* WebContextMessageKinds.h in Headers */,
+				D3B9484711FF4B6500032B39 /* WebPopupMenu.h in Headers */,
+				D3B9484911FF4B6500032B39 /* WebSearchPopupMenu.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1526,6 +1540,8 @@
 				1AE4987911FF7FAA0048B464 /* JSNPObject.cpp in Sources */,
 				1AE49A4A11FFA8CE0048B464 /* JSNPMethod.cpp in Sources */,
 				BCDB85831200EC57007254BE /* WKType.cpp in Sources */,
+				D3B9484611FF4B6500032B39 /* WebPopupMenu.cpp in Sources */,
+				D3B9484811FF4B6500032B39 /* WebSearchPopupMenu.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

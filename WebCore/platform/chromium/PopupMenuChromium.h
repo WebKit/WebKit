@@ -36,6 +36,8 @@
 
 #include "FramelessScrollView.h"
 #include "IntRect.h"
+#include "PopupMenu.h"
+#include "PopupMenuPrivate.h"
 
 namespace WebCore {
 
@@ -199,6 +201,23 @@ private:
     PopupType m_popupType;
     // Whether the popup is currently open.
     bool m_popupOpen;
+};
+
+class PopupMenuChromium : public PopupMenu {
+public:
+    PopupMenuChromium(PopupMenuClient*);
+    ~PopupMenuChromium();
+
+    virtual void show(const IntRect&, FrameView*, int index);
+    virtual void hide();
+    virtual void updateFromElement();
+    virtual void disconnectClient();
+
+private:
+    PopupMenuClient* client() const { return m_popupClient; }
+
+    PopupMenuClient* m_popupClient;
+    PopupMenuPrivate p;
 };
 
 } // namespace WebCore

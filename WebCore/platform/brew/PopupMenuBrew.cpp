@@ -4,6 +4,7 @@
  * Copyright (C) 2009-2010 ProFUSION embedded systems
  * Copyright (C) 2009-2010 Samsung Electronics
  * Copyright (C) 2010 Company 100, Inc.
+ * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,7 +24,7 @@
  */
 
 #include "config.h"
-#include "PopupMenu.h"
+#include "PopupMenuBrew.h"
 
 #include "Chrome.h"
 #include "ChromeClientBrew.h"
@@ -32,20 +33,25 @@
 
 namespace WebCore {
 
-PopupMenu::PopupMenu(PopupMenuClient* menuList)
+PopupMenuBrew::PopupMenuBrew(PopupMenuClient* menuList)
     : m_popupClient(menuList)
     , m_view(0)
 {
 }
 
-PopupMenu::~PopupMenu()
+PopupMenuBrew::~PopupMenuBrew()
 {
     // Tell client to destroy data related to this popup since this object is
     // going away.
     hide();
 }
 
-void PopupMenu::show(const IntRect& rect, FrameView* view, int index)
+void PopupMenuBrew::disconnectClient()
+{
+    m_popupClient = 0;
+}
+
+void PopupMenuBrew::show(const IntRect& rect, FrameView* view, int index)
 {
     ASSERT(m_popupClient);
     ChromeClientBrew* chromeClient = static_cast<ChromeClientBrew*>(view->frame()->page()->chrome()->client());
@@ -55,7 +61,7 @@ void PopupMenu::show(const IntRect& rect, FrameView* view, int index)
     chromeClient->createSelectPopup(m_popupClient, index, rect);
 }
 
-void PopupMenu::hide()
+void PopupMenuBrew::hide()
 {
     ASSERT(m_view);
     ChromeClientBrew* chromeClient = static_cast<ChromeClientBrew*>(m_view->frame()->page()->chrome()->client());
@@ -64,14 +70,18 @@ void PopupMenu::hide()
     chromeClient->destroySelectPopup();
 }
 
-void PopupMenu::updateFromElement()
+void PopupMenuBrew::updateFromElement()
 {
     client()->setTextFromItem(client()->selectedIndex());
 }
 
-bool PopupMenu::itemWritingDirectionIsNatural()
-{
-    return true;
-}
+// This code must be moved to the concrete brew ChromeClient that is not in repository.
+// I kept this code commented out here to prevent loosing the information of what
+// must be the return value for brew.
+
+// bool PopupMenuBrew::itemWritingDirectionIsNatural()
+// {
+//     return true;
+// }
 
 } // namespace WebCore

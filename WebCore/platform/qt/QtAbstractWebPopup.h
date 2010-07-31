@@ -63,7 +63,7 @@ public:
     QFont font() { return m_popupClient->menuStyle().font().font(); }
 
 private:
-    friend class PopupMenu;
+    friend class PopupMenuQt;
     PopupMenuClient* m_popupClient;
     QWebPageClient* m_pageClient;
     int m_currentIndex;

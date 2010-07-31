@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006, 2007, 2008, 2009 Apple, Inc. All rights reserved.
+ * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,7 +27,10 @@
 #include "GraphicsContext.h"
 #include "HTMLParserQuirks.h"
 #include "HostWindow.h"
+#include "PopupMenu.h"
+#include "PopupMenuClient.h"
 #include "ScrollTypes.h"
+#include "SearchPopupMenu.h"
 #include <wtf/Forward.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
@@ -54,6 +58,7 @@ namespace WebCore {
     class Node;
     class Page;
     class SecurityOrigin;
+    class PopupMenuClient;
     class String;
     class Widget;
 
@@ -261,6 +266,10 @@ namespace WebCore {
 #if ENABLE(TOUCH_EVENTS)
         virtual void needTouchEvents(bool) = 0;
 #endif
+
+        virtual bool selectItemWritingDirectionIsNatural() = 0;
+        virtual PassRefPtr<PopupMenu> createPopupMenu(PopupMenuClient*) const = 0;
+        virtual PassRefPtr<SearchPopupMenu> createSearchPopupMenu(PopupMenuClient*) const = 0;
 
     protected:
         virtual ~ChromeClient() { }

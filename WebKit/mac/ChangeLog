@@ -1,3 +1,20 @@
+2010-07-27  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Darin Fisher.
+
+        PopupMenu refactoring in preparation to WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=42592
+
+        As ChromeClient was made responsible for providing PopupMenu and SearchPopupMenu
+        instances, concrete classes that inherit from ChromeClient needed to be changed to
+        implement the new methods.
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::selectItemWritingDirectionIsNatural):
+        (WebChromeClient::createPopupMenu):
+        (WebChromeClient::createSearchPopupMenu):
+
 2010-07-31  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/43300> Simplify variables in *.xcconfig files after adding iOS support

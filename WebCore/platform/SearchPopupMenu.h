@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,24 +23,21 @@
 
 #include "PopupMenu.h"
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class AtomicString;
 
-class SearchPopupMenu : public PopupMenu {
+class SearchPopupMenu : public RefCounted<SearchPopupMenu> {
 public:
-    static PassRefPtr<SearchPopupMenu> create(PopupMenuClient* client) { return adoptRef(new SearchPopupMenu(client)); }
-
-    void saveRecentSearches(const AtomicString& name, const Vector<String>& searchItems);
-    void loadRecentSearches(const AtomicString& name, Vector<String>& searchItems);
-
-    bool enabled();
-    
-private:
-    SearchPopupMenu(PopupMenuClient*);
+    virtual ~SearchPopupMenu() {}
+    virtual PopupMenu* popupMenu() = 0;
+    virtual void saveRecentSearches(const AtomicString& name, const Vector<String>& searchItems) = 0;
+    virtual void loadRecentSearches(const AtomicString& name, Vector<String>& searchItems) = 0;
+    virtual bool enabled() = 0;
 };
 
 }
 
-#endif
+#endif // SearchPopupMenu_h

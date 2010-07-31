@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -55,6 +56,7 @@
 #include "NotificationPresenterImpl.h"
 #include "Page.h"
 #include "PopupMenuChromium.h"
+#include "SearchPopupMenuChromium.h"
 #include "ScriptController.h"
 #include "SecurityOrigin.h"
 #include "WebGeolocationService.h"
@@ -771,6 +773,21 @@ void ChromeClientImpl::exitFullscreenForNode(WebCore::Node* node)
 {
     if (m_webView->client())
         m_webView->client()->exitFullscreenForNode(WebNode(node));
+}
+
+bool ChromeClientImpl::selectItemWritingDirectionIsNatural()
+{
+    return false;
+}
+
+PassRefPtr<PopupMenu> ChromeClientImpl::createPopupMenu(PopupMenuClient* client) const
+{
+    return adoptRef(new PopupMenuChromium(client));
+}
+
+PassRefPtr<SearchPopupMenu> ChromeClientImpl::createSearchPopupMenu(PopupMenuClient* client) const
+{
+    return adoptRef(new SearchPopupMenuChromium(client));
 }
 
 } // namespace WebKit

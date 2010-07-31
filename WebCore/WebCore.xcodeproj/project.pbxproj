@@ -42,7 +42,7 @@
 		065AD4F50B0C2EDA005A2B1D /* ContextMenuClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 065AD4F20B0C2EDA005A2B1D /* ContextMenuClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		065AD4F60B0C2EDA005A2B1D /* ContextMenuController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 065AD4F30B0C2EDA005A2B1D /* ContextMenuController.cpp */; };
 		065AD4F70B0C2EDA005A2B1D /* ContextMenuController.h in Headers */ = {isa = PBXBuildFile; fileRef = 065AD4F40B0C2EDA005A2B1D /* ContextMenuController.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0668E18B0ADD9624004128E0 /* PopupMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = 0668E1890ADD9624004128E0 /* PopupMenu.h */; };
+		0668E18B0ADD9624004128E0 /* PopupMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = 0668E1890ADD9624004128E0 /* PopupMenu.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0668E1900ADD9640004128E0 /* PopupMenuMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0668E18E0ADD9640004128E0 /* PopupMenuMac.mm */; };
 		066C772B0AB603B700238CC4 /* FileChooser.h in Headers */ = {isa = PBXBuildFile; fileRef = 066C772A0AB603B700238CC4 /* FileChooser.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		066C772D0AB603D200238CC4 /* FileChooserMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 066C772C0AB603D200238CC4 /* FileChooserMac.mm */; };
@@ -3619,12 +3619,12 @@
 		AB4CB4EB0B8BDA3D009F40B0 /* JSHTMLSelectElementCustom.h in Headers */ = {isa = PBXBuildFile; fileRef = AB4CB4EA0B8BDA3D009F40B0 /* JSHTMLSelectElementCustom.h */; };
 		AB67D1A8097F3AE300F9392E /* RenderTextControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AB67D1A6097F3AE300F9392E /* RenderTextControl.cpp */; };
 		AB67D1A9097F3AE300F9392E /* RenderTextControl.h in Headers */ = {isa = PBXBuildFile; fileRef = AB67D1A7097F3AE300F9392E /* RenderTextControl.h */; };
-		AB7170890B3118080017123E /* SearchPopupMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = AB7170880B3118080017123E /* SearchPopupMenu.h */; };
+		AB7170890B3118080017123E /* SearchPopupMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = AB7170880B3118080017123E /* SearchPopupMenu.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AB7170A00B31193B0017123E /* SearchPopupMenuMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = AB71709F0B31193B0017123E /* SearchPopupMenuMac.mm */; };
 		ABAF22080C03B1C700B0BCF0 /* ChromeMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = ABAF22070C03B1C700B0BCF0 /* ChromeMac.mm */; };
 		ABB5419E0ACDDFE4002820EB /* RenderListBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ABB5419C0ACDDFE4002820EB /* RenderListBox.cpp */; };
 		ABB5419F0ACDDFE4002820EB /* RenderListBox.h in Headers */ = {isa = PBXBuildFile; fileRef = ABB5419D0ACDDFE4002820EB /* RenderListBox.h */; };
-		ABC128770B33AA6D00C693D5 /* PopupMenuClient.h in Headers */ = {isa = PBXBuildFile; fileRef = ABC128760B33AA6D00C693D5 /* PopupMenuClient.h */; };
+		ABC128770B33AA6D00C693D5 /* PopupMenuClient.h in Headers */ = {isa = PBXBuildFile; fileRef = ABC128760B33AA6D00C693D5 /* PopupMenuClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		ABDDFE790A5C6E7000A3E11D /* RenderMenuList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ABDDFE730A5C6E6F00A3E11D /* RenderMenuList.cpp */; };
 		ABDDFE7A0A5C6E7000A3E11D /* RenderMenuList.h in Headers */ = {isa = PBXBuildFile; fileRef = ABDDFE740A5C6E7000A3E11D /* RenderMenuList.h */; };
 		ABFE7E120D32FAF60066F4D2 /* MediaControlElements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ABFE7E100D32FAF50066F4D2 /* MediaControlElements.cpp */; };
@@ -5045,6 +5045,8 @@
 		D23CA55D0AB0EAAE005108A5 /* JSRangeException.h in Headers */ = {isa = PBXBuildFile; fileRef = D23CA55C0AB0EAAE005108A5 /* JSRangeException.h */; };
 		D23CA55F0AB0EAB6005108A5 /* JSRangeException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D23CA55E0AB0EAB6005108A5 /* JSRangeException.cpp */; };
 		D23CA56C0AB0EB8D005108A5 /* RangeException.h in Headers */ = {isa = PBXBuildFile; fileRef = D23CA56B0AB0EB8D005108A5 /* RangeException.h */; };
+		D39D006D11F8E308006041F2 /* PopupMenuMac.h in Headers */ = {isa = PBXBuildFile; fileRef = D39D006C11F8E308006041F2 /* PopupMenuMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		D39D009D11F907E6006041F2 /* SearchPopupMenuMac.h in Headers */ = {isa = PBXBuildFile; fileRef = D39D009C11F907E6006041F2 /* SearchPopupMenuMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		D8B6152F1032495100C8554A /* Cookie.h in Headers */ = {isa = PBXBuildFile; fileRef = D8B6152E1032495100C8554A /* Cookie.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DB23C2CB0A508D29002489EB /* IndentOutdentCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DB23C2C90A508D29002489EB /* IndentOutdentCommand.cpp */; };
 		DB23C2CC0A508D29002489EB /* IndentOutdentCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = DB23C2CA0A508D29002489EB /* IndentOutdentCommand.h */; };
@@ -10758,6 +10760,8 @@
 		D23CA55C0AB0EAAE005108A5 /* JSRangeException.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSRangeException.h; sourceTree = "<group>"; };
 		D23CA55E0AB0EAB6005108A5 /* JSRangeException.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSRangeException.cpp; sourceTree = "<group>"; };
 		D23CA56B0AB0EB8D005108A5 /* RangeException.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RangeException.h; sourceTree = "<group>"; };
+		D39D006C11F8E308006041F2 /* PopupMenuMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PopupMenuMac.h; sourceTree = "<group>"; };
+		D39D009C11F907E6006041F2 /* SearchPopupMenuMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchPopupMenuMac.h; sourceTree = "<group>"; };
 		D8B6152E1032495100C8554A /* Cookie.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cookie.h; sourceTree = "<group>"; };
 		DB23C2C90A508D29002489EB /* IndentOutdentCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = IndentOutdentCommand.cpp; sourceTree = "<group>"; };
 		DB23C2CA0A508D29002489EB /* IndentOutdentCommand.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = IndentOutdentCommand.h; sourceTree = "<group>"; };
@@ -12326,10 +12330,12 @@
 				4B2709810AF2E5E00065127F /* PasteboardMac.mm */,
 				935C476F09AC4D7300A6AAB4 /* PlatformMouseEventMac.mm */,
 				BC94D1070C274F88006BC617 /* PlatformScreenMac.mm */,
+				D39D006C11F8E308006041F2 /* PopupMenuMac.h */,
 				0668E18E0ADD9640004128E0 /* PopupMenuMac.mm */,
 				E4D687760ED7AE3D006EA978 /* PurgeableBufferMac.cpp */,
 				447D69010FA626810015CCB1 /* RuntimeApplicationChecks.h */,
 				447D69020FA626810015CCB1 /* RuntimeApplicationChecks.mm */,
+				D39D009C11F907E6006041F2 /* SearchPopupMenuMac.h */,
 				1CE24F960D7CAF0E007E04C2 /* SchedulePairMac.mm */,
 				BCAA90C20A7EBA60008B1229 /* Scrollbar.cpp */,
 				BC8B853C0E7C7F1100AB6984 /* ScrollbarThemeMac.h */,
@@ -19975,6 +19981,8 @@
 				C572EE0E1201C736007D8F82 /* IDBIndexBackendImpl.h in Headers */,
 				C572EE0F1201C736007D8F82 /* IDBIndexBackendInterface.h in Headers */,
 				C572EE1F1201C9BC007D8F82 /* JSIDBIndex.h in Headers */,
+				D39D006D11F8E308006041F2 /* PopupMenuMac.h in Headers */,
+				D39D009D11F907E6006041F2 /* SearchPopupMenuMac.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
