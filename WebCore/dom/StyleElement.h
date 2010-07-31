@@ -17,6 +17,7 @@
  * Boston, MA 02110-1301, USA.
  *
  */
+
 #ifndef StyleElement_h
 #define StyleElement_h
 
@@ -29,27 +30,34 @@ class Element;
 
 class StyleElement {
 public:
-    StyleElement();
+    StyleElement(Document*, bool createdByParser);
     virtual ~StyleElement() {}
 
 protected:
-    StyleSheet* sheet(Element*);
-
-    virtual void setLoading(bool) {}
-
     virtual const AtomicString& type() const = 0;
     virtual const AtomicString& media() const = 0;
 
+    StyleSheet* sheet(Element*);
+
+    bool isLoading() const;
+    bool sheetLoaded(Document*);
+
     void insertedIntoDocument(Document*, Element*);
-    void removedFromDocument(Document*);
-    void process(Element*, int startLineNumber);
+    void removedFromDocument(Document*, Element*);
+    void childrenChanged(Element*);
+    void finishParsingChildren(Element*);
 
-    void createSheet(Element* e, int startLineNumber, const String& text = String());
-
-protected:
     RefPtr<CSSStyleSheet> m_sheet;
+
+private:
+    void createSheet(Element*, int startLineNumber, const String& text = String());
+    void process(Element*);
+
+    bool m_createdByParser;
+    bool m_loading;
+    int m_startLineNumber;
 };
 
-} //namespace
+}
 
 #endif

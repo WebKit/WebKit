@@ -36,13 +36,9 @@ using namespace HTMLNames;
 
 inline HTMLStyleElement::HTMLStyleElement(const QualifiedName& tagName, Document* document, bool createdByParser)
     : HTMLElement(tagName, document)
-    , m_loading(false)
-    , m_createdByParser(createdByParser)
-    , m_startLineNumber(0)
+    , StyleElement(document, createdByParser)
 {
     ASSERT(hasTagName(styleTag));
-    if (createdByParser && document && document->scriptableDocumentParser())
-        m_startLineNumber = document->scriptableDocumentParser()->lineNumber();
 }
 
 PassRefPtr<HTMLStyleElement> HTMLStyleElement::create(const QualifiedName& tagName, Document* document, bool createdByParser)
@@ -62,56 +58,31 @@ void HTMLStyleElement::parseMappedAttribute(Attribute* attr)
 
 void HTMLStyleElement::finishParsingChildren()
 {
-    StyleElement::process(this, m_startLineNumber);
-    StyleElement::sheet(this);
-    m_createdByParser = false;
+    StyleElement::finishParsingChildren(this);
     HTMLElement::finishParsingChildren();
 }
 
 void HTMLStyleElement::insertedIntoDocument()
 {
     HTMLElement::insertedIntoDocument();
-
-    document()->addStyleSheetCandidateNode(this, m_createdByParser);
-    if (!m_createdByParser)
-        StyleElement::insertedIntoDocument(document(), this);
+    StyleElement::insertedIntoDocument(document(), this);
 }
 
 void HTMLStyleElement::removedFromDocument()
 {
     HTMLElement::removedFromDocument();
-    document()->removeStyleSheetCandidateNode(this);
-    StyleElement::removedFromDocument(document());
+    StyleElement::removedFromDocument(document(), this);
 }
 
 void HTMLStyleElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
-    if (!changedByParser)
-        StyleElement::process(this, 0);
+    StyleElement::childrenChanged(this);
     HTMLElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
 }
 
 StyleSheet* HTMLStyleElement::sheet()
 {
     return StyleElement::sheet(this);
-}
-
-bool HTMLStyleElement::isLoading() const
-{
-    if (m_loading)
-        return true;
-    if (!m_sheet)
-        return false;
-    return static_cast<CSSStyleSheet *>(m_sheet.get())->isLoading();
-}
-
-bool HTMLStyleElement::sheetLoaded()
-{
-    if (!isLoading()) {
-        document()->removePendingSheet();
-        return true;
-    }
-    return false;
 }
 
 const AtomicString& HTMLStyleElement::media() const

@@ -1,3 +1,43 @@
+2010-07-31  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        HTMLStyleElement/SVGStyleElement need to share more code
+        https://bugs.webkit.org/show_bug.cgi?id=43293
+
+        Simplify HTMLStyleElement/SVGStyleElement. They look identically now, as all code is shared in StyleElement.
+        Doesn't affect any tests.
+
+        * dom/StyleElement.cpp:
+        (WebCore::StyleElement::StyleElement): Take createdByParser & Document arguments, to share the line number extraction logic. Store it in m_lineNumber.
+        (WebCore::StyleElement::insertedIntoDocument): Moved addStyleSheetCandidateNode here, to share code between HTML/SVGStyleElement.
+        (WebCore::StyleElement::removedFromDocument): Same for removeStyleSheetCandidateNode.
+        (WebCore::StyleElement::childrenChanged): Introduced new helper function.
+        (WebCore::StyleElement::finishParsingChildren): Ditto.
+        (WebCore::StyleElement::process): Use stored m_lineNumber, avoids a parameter.
+        (WebCore::StyleElement::createSheet): No need to call the virtual setLoading() function, just store m_loading in StyleElement, and set it from here.
+        (WebCore::StyleElement::isLoading): Introduced new helper function.
+        (WebCore::StyleElement::sheetLoaded): Ditto.
+        * dom/StyleElement.h:
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::HTMLStyleElement): Pass Document & createdByParser arguments to StyleElement.
+        (WebCore::HTMLStyleElement::finishParsingChildren): Delegate work to StyleElement.
+        (WebCore::HTMLStyleElement::insertedIntoDocument): Ditto.
+        (WebCore::HTMLStyleElement::removedFromDocument): Ditto.
+        (WebCore::HTMLStyleElement::childrenChanged): Ditto.
+        * html/HTMLStyleElement.h:
+        (WebCore::HTMLStyleElement::isLoading): Ditto.
+        (WebCore::HTMLStyleElement::sheetLoaded): Ditto.
+        * svg/SVGStyleElement.cpp:
+        (WebCore::SVGStyleElement::SVGStyleElement): Pass Document & createdByParser arguments to StyleElement.
+        (WebCore::SVGStyleElement::finishParsingChildren): Delegate work to StyleElement.
+        (WebCore::SVGStyleElement::insertedIntoDocument): Ditto.
+        (WebCore::SVGStyleElement::removedFromDocument): Ditto.
+        (WebCore::SVGStyleElement::childrenChanged): Ditto.
+        * svg/SVGStyleElement.h:
+        (WebCore::SVGStyleElement::isLoading): Ditto.
+        (WebCore::SVGStyleElement::sheetLoaded): Ditto.
+
 2010-07-31  Kinuko Yasuda  <kinuko@chromium.org>
 
         Unreviewed.  Attempt to fix release build failure.

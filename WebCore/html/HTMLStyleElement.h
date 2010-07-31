@@ -53,19 +53,13 @@ private:
 
     virtual void finishParsingChildren();
 
-    virtual bool isLoading() const;
-    virtual bool sheetLoaded();
-
-    virtual void setLoading(bool loading) { m_loading = loading; }
+    virtual bool isLoading() const { return StyleElement::isLoading(); }
+    virtual bool sheetLoaded() { return StyleElement::sheetLoaded(document()); }
 
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 
     virtual const AtomicString& media() const;
     virtual const AtomicString& type() const;
-
-    bool m_loading;
-    bool m_createdByParser;
-    int m_startLineNumber;
 };
 
 } //namespace

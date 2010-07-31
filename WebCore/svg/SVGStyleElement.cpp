@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
     Copyright (C) 2006 Apple Computer, Inc.
     Copyright (C) 2009 Cameron McCormack <cam@mcc.id.au>
@@ -34,12 +34,10 @@
 
 namespace WebCore {
 
-using namespace SVGNames;
-
-SVGStyleElement::SVGStyleElement(const QualifiedName& tagName, Document* doc, bool createdByParser)
-     : SVGElement(tagName, doc)
-     , SVGLangSpace()
-     , m_createdByParser(createdByParser)
+SVGStyleElement::SVGStyleElement(const QualifiedName& tagName, Document* document, bool createdByParser)
+    : SVGElement(tagName, document)
+    , SVGLangSpace()
+    , StyleElement(document, createdByParser)
 {
 }
 
@@ -90,31 +88,26 @@ void SVGStyleElement::parseMappedAttribute(Attribute* attr)
 
 void SVGStyleElement::finishParsingChildren()
 {
-    StyleElement::sheet(this);
-    m_createdByParser = false;
+    StyleElement::finishParsingChildren(this);
     SVGElement::finishParsingChildren();
 }
 
 void SVGStyleElement::insertedIntoDocument()
 {
     SVGElement::insertedIntoDocument();
-    document()->addStyleSheetCandidateNode(this, m_createdByParser);
-    if (!m_createdByParser)
-        StyleElement::insertedIntoDocument(document(), this);
+    StyleElement::insertedIntoDocument(document(), this);
 }
 
 void SVGStyleElement::removedFromDocument()
 {
     SVGElement::removedFromDocument();
-    if (document()->renderer())
-        document()->removeStyleSheetCandidateNode(this);
-    StyleElement::removedFromDocument(document());
+    StyleElement::removedFromDocument(document(), this);
 }
 
 void SVGStyleElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
+    StyleElement::childrenChanged(this);
     SVGElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
-    StyleElement::process(this, 0);
 }
 
 StyleSheet* SVGStyleElement::sheet()
@@ -122,13 +115,6 @@ StyleSheet* SVGStyleElement::sheet()
     return StyleElement::sheet(this);
 }
 
-bool SVGStyleElement::sheetLoaded()
-{
-    document()->removePendingSheet();
-    return true;
 }
 
-}
-
-// vim:ts=4:noet
 #endif // ENABLE(SVG)
