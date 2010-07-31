@@ -1,5 +1,11 @@
 2010-07-30  Andrew Wilson  <atwilson@chromium.org>
 
+        Unreviewed fix to expectations.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-07-30  Andrew Wilson  <atwilson@chromium.org>
+
         Unreviewed expectations changes.
 
         * platform/chromium-mac/svg/custom/massive-coordinates-expected.checksum: Added.
