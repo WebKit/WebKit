@@ -1,5 +1,11 @@
 2010-07-31  Luiz Agostini  <luiz.agostini@openbossa.org>
 
+        Build fix: Windows.
+
+        * platform/win/PopupMenuWin.h:
+
+2010-07-31  Luiz Agostini  <luiz.agostini@openbossa.org>
+
         Windows build fix.
 
         * platform/win/PopupMenuWin.cpp:

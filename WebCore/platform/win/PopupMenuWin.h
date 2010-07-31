@@ -48,12 +48,12 @@ public:
     virtual void updateFromElement();
     virtual void disconnectClient();
 
+    static LPCTSTR popupClassName();
+
 private:
     PopupMenuClient* client() const { return m_popupClient; }
 
     Scrollbar* scrollbar() const { return m_scrollbar.get(); }
-
-    static LPCTSTR popupClassName();
 
     bool up(unsigned lines = 1);
     bool down(unsigned lines = 1);
