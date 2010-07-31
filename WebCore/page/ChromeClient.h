@@ -65,7 +65,7 @@ namespace WebCore {
 #endif
 
 #if USE(GLES2_RENDERING)
-    class GLES2Contxt;
+    class GLES2Context;
 #endif
 
 #if ENABLE(NOTIFICATIONS)

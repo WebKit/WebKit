@@ -1,5 +1,14 @@
 2010-07-30  James Robinson  <jamesr@chromium.org>
 
+        Compile fix: fix a typo in forward declaration, add EmptyClients impl.
+
+        * loader/EmptyClients.h:
+        (WebCore::EmptyChromeClient::getOnscreenGLES2Context):
+        (WebCore::EmptyChromeClient::getOffscreenGLES2Context):
+        * page/ChromeClient.h:
+
+2010-07-30  James Robinson  <jamesr@chromium.org>
+
         Reviewed by Darin Fisher.
 
         Move GLES2 context manipulation to ChromeClient.h and put it behind the right #if guard
