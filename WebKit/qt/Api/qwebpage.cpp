@@ -1218,14 +1218,7 @@ typedef struct {
 void QWebPagePrivate::dynamicPropertyChangeEvent(QDynamicPropertyChangeEvent* event)
 {
     if (event->propertyName() == "_q_viewMode") {
-        QString mode = q->property("_q_viewMode").toString();
-        if (mode != viewMode) {
-            viewMode = mode;
-            WebCore::Frame* frame = QWebFramePrivate::core(q->mainFrame());
-            WebCore::FrameView* view = frame->view();
-            frame->document()->updateStyleSelector();
-            view->layout();
-        }
+        page->setViewMode(Page::stringToViewMode(q->property("_q_viewMode").toString()));
     } else if (event->propertyName() == "_q_HTMLTokenizerChunkSize") {
         int chunkSize = q->property("_q_HTMLTokenizerChunkSize").toInt();
         q->handle()->page->setCustomHTMLTokenizerChunkSize(chunkSize);

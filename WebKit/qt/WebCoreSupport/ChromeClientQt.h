@@ -169,14 +169,6 @@ namespace WebCore {
         virtual void requestGeolocationPermissionForFrame(Frame*, Geolocation*);
         virtual void cancelGeolocationPermissionRequestForFrame(Frame*, Geolocation*) { }
 
-#if ENABLE(WIDGETS_10_SUPPORT)
-        virtual bool isWindowed();
-        virtual bool isFloating();
-        virtual bool isFullscreen();
-        virtual bool isMaximized();
-        virtual bool isMinimized();
-#endif
-
         QtAbstractWebPopup* createSelectPopup();
 
         virtual void didReceiveViewportArguments(Frame*, const ViewportArguments&) const;

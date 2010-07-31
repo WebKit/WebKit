@@ -1,3 +1,28 @@
+2010-07-30  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Simon Fraser.
+
+        Enabling view modes to all platforms
+        https://bugs.webkit.org/show_bug.cgi?id=37505
+
+        View mode media feature implementation as specified in http://www.w3.org/TR/view-mode.
+
+        The view mode media feature layout tests are stil skipped for all platforms except Qt
+        because of the lack of support of LayoutTestController in those platforms.
+
+        Test: fast/media/view-mode-media-feature.html
+
+        * css/MediaFeatureNames.h:
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::view_modeMediaFeatureEval):
+        * page/ChromeClient.h:
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::createViewModesSet):
+        (WebCore::Page::setViewMode):
+        * page/Page.h:
+        (WebCore::Page::viewMode):
+
 2010-07-30  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by David Kilzer.

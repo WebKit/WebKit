@@ -1,3 +1,22 @@
+2010-07-30  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Simon Fraser.
+
+        Enabling view modes to all platforms
+        https://bugs.webkit.org/show_bug.cgi?id=37505
+
+        Removing 'widget' reference from the layout tests because the view mode media feature
+        is not part of widget 1.0 specification any more.
+
+        The layout tests are stil skipped for all platforms except Qt because of the lack
+        of support of LayoutTestController in those platforms.
+
+        * fast/media/view-mode-media-feature-expected.txt: Renamed from LayoutTests/fast/media/media-feature-wgt-view-mode-expected.txt.
+        * fast/media/view-mode-media-feature.html: Renamed from LayoutTests/fast/media/media-feature-wgt-view-mode.html.
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/win/Skipped:
+
 2010-07-30  Andrew Wilson  <atwilson@chromium.org>
 
         Unreviewed expectations change for chromium.

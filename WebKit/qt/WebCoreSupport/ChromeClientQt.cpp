@@ -603,33 +603,6 @@ QtAbstractWebPopup* ChromeClientQt::createSelectPopup()
 #endif
 }
 
-#if ENABLE(WIDGETS_10_SUPPORT)
-bool ChromeClientQt::isWindowed()
-{
-    return m_webPage->d->viewMode == "windowed";
-}
-
-bool ChromeClientQt::isFloating()
-{
-    return m_webPage->d->viewMode == "floating";
-}
-
-bool ChromeClientQt::isFullscreen()
-{
-    return m_webPage->d->viewMode == "fullscreen";
-}
-
-bool ChromeClientQt::isMaximized()
-{
-    return m_webPage->d->viewMode == "maximized";
-}
-
-bool ChromeClientQt::isMinimized()
-{
-    return m_webPage->d->viewMode == "minimized";
-}
-#endif
-
 void ChromeClientQt::didReceiveViewportArguments(Frame* frame, const ViewportArguments& arguments) const
 {
     if (m_webPage->mainFrame()->d->initialLayoutComplete)

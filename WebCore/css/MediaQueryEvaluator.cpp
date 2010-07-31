@@ -498,28 +498,13 @@ static bool transform_3dMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* f
     return returnValueIfNoParameter;
 }
 
-#if ENABLE(WIDGETS_10_SUPPORT)
 static bool view_modeMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* frame, MediaFeaturePrefix op)
 {
-    if (value) {
-        String mode = static_cast<CSSPrimitiveValue*>(value)->getStringValue();
-        if (ChromeClient* client = frame->page()->chrome()->client()) {
-            if (mode == "windowed" && client->isWindowed())
-                return true;
-            if (mode == "floating" && client->isFloating())
-                return true;
-            if (mode == "fullscreen" && client->isFullscreen())
-                return true;
-            if (mode == "maximized" && client->isMaximized())
-                return true;
-            if (mode == "minimized" && client->isMinimized())
-                return true;
-            return false;
-        }
-    }
-    return true;
+    UNUSED_PARAM(op);
+    if (!value)
+        return true;
+    return Page::stringToViewMode(static_cast<CSSPrimitiveValue*>(value)->getStringValue()) == frame->page()->viewMode();
 }
-#endif
 
 static void createFunctionMap()
 {

@@ -837,8 +837,8 @@ fast/dom/HTMLMeterElement/meter-optimums.html
 fast/dom/HTMLMeterElement/meter-styles.html
 fast/dom/HTMLMeterElement/meter-styles-changing-pseudo.html
 
-# No Widgets 1.0 support
-fast/media/media-feature-wgt-view-mode.html
+# view mode media feature
+fast/media/view-mode-media-feature.html
 
 # Need expectations. See https://bugs.webkit.org/show_bug.cgi?id=36461
 fast/repaint/overflow-scroll-body-appear.html

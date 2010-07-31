@@ -262,14 +262,6 @@ namespace WebCore {
         virtual void needTouchEvents(bool) = 0;
 #endif
 
-#if ENABLE(WIDGETS_10_SUPPORT)
-        virtual bool isWindowed() { return false; }
-        virtual bool isFloating() { return false; }
-        virtual bool isFullscreen() { return false; }
-        virtual bool isMaximized() { return false; }
-        virtual bool isMinimized() { return false; }
-#endif
-
     protected:
         virtual ~ChromeClient() { }
     };

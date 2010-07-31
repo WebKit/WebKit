@@ -167,6 +167,7 @@ Page::Page(const PageClients& pageClients)
     , m_customHTMLTokenizerTimeDelay(-1)
     , m_customHTMLTokenizerChunkSize(-1)
     , m_canStartMedia(true)
+    , m_viewMode(ViewModeWindowed)
 {
     if (!allPages) {
         allPages = new HashSet<Page*>;
@@ -218,6 +219,45 @@ Page::~Page()
     // is executing.
     Frame::cancelAllKeepAlive();
 #endif
+}
+
+struct ViewModeInfo {
+    const char* name;
+    Page::ViewMode type;
+};
+static const int viewModeMapSize = 5;
+static ViewModeInfo viewModeMap[viewModeMapSize] = {
+    {"windowed", Page::ViewModeWindowed},
+    {"floating", Page::ViewModeFloating},
+    {"fullscreen", Page::ViewModeFullscreen},
+    {"maximized", Page::ViewModeMaximized},
+    {"minimized", Page::ViewModeMinimized}
+};
+
+Page::ViewMode Page::stringToViewMode(const String& text)
+{
+    for (int i = 0; i < viewModeMapSize; ++i) {
+        if (text == viewModeMap[i].name)
+            return viewModeMap[i].type;
+    }
+    return Page::ViewModeInvalid;
+}
+
+void Page::setViewMode(ViewMode viewMode)
+{
+    if (viewMode == m_viewMode || viewMode == ViewModeInvalid)
+        return;
+
+    m_viewMode = viewMode;
+
+    if (!m_mainFrame)
+        return;
+
+    if (m_mainFrame->view())
+        m_mainFrame->view()->forceLayout();
+
+    if (m_mainFrame->document())
+        m_mainFrame->document()->updateStyleSelector();
 }
 
 void Page::setMainFrame(PassRefPtr<Frame> mainFrame)

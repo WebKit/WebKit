@@ -1,3 +1,18 @@
+2010-07-30  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Simon Fraser.
+
+        Enabling view modes to all platforms
+        https://bugs.webkit.org/show_bug.cgi?id=37505
+
+        Removing ENABLE_WIDGETS_10_SUPPORT flag.
+
+        As view mode media feature is not part of widget 1.0 specification
+        any more the ENABLE_WIDGETS_10_SUPPORT flag may be removed. The only use
+        of this flag was related to view mode media feature implementation in Qt. 
+
+        * wtf/Platform.h:
+
 2010-07-30  Andy Estes  <aestes@apple.com>
 
         Reviewed by David Kilzer.
