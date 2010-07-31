@@ -1,3 +1,10 @@
+2010-07-31  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Add missing pixel baseline for new svg/custom/massive-coordinates.svg test.
+
+        * platform/mac/svg/custom/massive-coordinates-expected.checksum: Added.
+        * platform/mac/svg/custom/massive-coordinates-expected.png: Added.
+
 2010-07-31  Andrew Wilson  <atwilson@chromium.org>
 
         Unreviewed expectations to mark stretch-to-view-height.html failing on
