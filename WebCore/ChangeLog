@@ -1,3 +1,820 @@
+2010-07-30  Andy Estes  <aestes@apple.com>
+
+        Reviewed by David Kilzer.
+
+        Add Xcode support for compiling WebKit against iOS SDKs.
+        https://bugs.webkit.org/show_bug.cgi?id=42796
+        
+        * Configurations/Base.xcconfig:
+        * Configurations/DebugRelease.xcconfig:
+        * Configurations/FeatureDefines.xcconfig:
+        * Configurations/Version.xcconfig:
+        * Configurations/WebCore.xcconfig:
+
+2010-07-30  James Robinson  <jamesr@chromium.org>
+
+        Compile fix: fix a typo in forward declaration, add EmptyClients impl.
+
+        * loader/EmptyClients.h:
+        (WebCore::EmptyChromeClient::getOnscreenGLES2Context):
+        (WebCore::EmptyChromeClient::getOffscreenGLES2Context):
+        * page/ChromeClient.h:
+
+2010-07-30  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Move GLES2 context manipulation to ChromeClient.h and put it behind the right #if guard
+        https://bugs.webkit.org/show_bug.cgi?id=43281
+
+        These calls were initially put in ChromeClientChromium, but they aren't chromium specific.
+        In theory any port that could create the proper OpenGL ES 2 contexts could implement
+        these functions.  Also moves the calls to be behind the correct #if guard.
+
+        * page/ChromeClient.h:
+        * page/chromium/ChromeClientChromium.h:
+
+2010-07-30  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by David Levin.
+
+        Interrupt all DB operations when the worker is terminating.
+        https://bugs.webkit.org/show_bug.cgi?id=42843
+
+        Tests: fast/workers/storage/interrupt-database-sync.html
+               fast/workers/storage/interrupt-database.html
+
+        * bindings/js/JSCustomVoidCallback.cpp:
+        (WebCore::JSCustomVoidCallback::~JSCustomVoidCallback): If the
+        destructor is called on the context thread, delete m_data directly
+        instead of posting a task to do that. We need to do that to make
+        sure that all JS objects are destroyed before
+        WorkerThreadShutdownFinishTask (in WorkerThread.cpp) calls
+        WorkerContext::clearScript().
+
+        * bindings/scripts/CodeGeneratorJS.pm: Same change as above, for
+        all auto-generated callbacks.
+
+        * bindings/scripts/test/JS/JSTestCallback.cpp:
+        (WebCore::JSTestCallback::~JSTestCallback): Updated the
+        expectations for run-bindings-tests.
+
+        * platform/sql/SQLiteDatabase.cpp: Added the ability to interrupt
+        all DB operations in progress, unless the database was closed or
+        is being closed. Unlike sqlite3_interrupt(),
+        SQLiteDatabase::interrupt() is sticky: once it's called, trying to
+        run any statement on that database will fail with a
+        SQLITE_INTERRUPT error code.
+        (WebCore::SQLiteDatabase::SQLiteDatabase):
+        (WebCore::SQLiteDatabase::close):
+        (WebCore::SQLiteDatabase::interrupt):
+        (WebCore::SQLiteDatabase::isInterrupted):
+
+        * platform/sql/SQLiteDatabase.h: Added a mutex that can used by
+        SQLiteStatement to check if the database was interrupted.
+        (WebCore::SQLiteDatabase::databaseMutex):
+
+        * platform/sql/SQLiteStatement.cpp: Changed prepare() and step()
+        to check if the database was interrupted, before trying to prepare
+        or run the statement. The other methods don't need to hold on to
+        the DB lock while running, because they're fast, so we don't need
+        to interrupt them.
+        (WebCore::SQLiteStatement::prepare):
+        (WebCore::SQLiteStatement::step):
+
+        * storage/AbstractDatabase.cpp: Made SQLiteDatabase::interrupt()
+        and isInterrupted() visible to WebSQLDatabases classes.
+        (WebCore::AbstractDatabase::interrupt):
+        (WebCore::AbstractDatabase::isInterrupted):
+        * storage/AbstractDatabase.h:
+
+        * storage/DatabaseTracker.cpp: Added a method to interrupt all
+        databases in a given context.
+        (WebCore::DatabaseTracker::interruptAllDatabasesForContext):
+        * storage/DatabaseTracker.h:
+
+        * storage/SQLStatement.cpp: Changed the exception/error reported
+        when a statement is interrupted.
+        (WebCore::SQLStatement::execute):
+        * storage/SQLStatementSync.cpp:
+        (WebCore::SQLStatementSync::execute):
+
+        * storage/SQLTransaction.cpp: Changed the code to release the
+        callback objects as soon as they're not needed.
+        (WebCore::SQLTransaction::checkAndHandleClosedOrInterruptedDatabase):
+        Changed this method to not schedule the next transaction step when
+        the database is interrupted.
+        (WebCore::SQLTransaction::performNextStep):
+        (WebCore::SQLTransaction::performPendingCallback):
+        (WebCore::SQLTransaction::deliverTransactionCallback):
+        (WebCore::SQLTransaction::postflightAndCommit):
+        (WebCore::SQLTransaction::deliverTransactionErrorCallback):
+        (WebCore::SQLTransaction::cleanupAfterTransactionErrorCallback):
+        * storage/SQLTransaction.h:
+
+        * storage/chromium/DatabaseTrackerChromium.cpp: Added a method to
+        interrupt all databases in a given context.
+        (WebCore::DatabaseTracker::interruptAllDatabasesForContext):
+
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThread::stop): Added a call to
+        DatabaseTracker::interruptAllDatabasesForContext().
+
+2010-07-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+
+        connect-compositing-iframe2.html test sometimes shows blank iframe content
+        https://bugs.webkit.org/show_bug.cgi?id=42046
+
+        Hooking up compositing iframes requires setNeedsStyleRecalc(SyntheticStyleChange) to
+        always result in a call to RenderLayer::styleChanged(). However, the semantics of 
+        setNeedsStyleRecalc() was that each call would overwrite the existing styleChangeType,
+        allowing a "lesser" style change to override a "greater" one. In the test content,
+        SyntheticStyleChange was being replaced by FullStyleChange when the classname changed.
+        This resulted in RenderLayer::styleChanged() not being called.
+        
+        Fix by changing the behavior of setNeedsStyleRecalc() to only touch the style change
+        type if a "lesser" change is being replaced with a "greater" one. This required adding
+        a new clearNeedsStyleRecalc() method to reset the style change type to NoStyleChange.
+        
+        In addition, in Node::setNeedsStyleRecalc(), only propagate the childNeedsStyleRecalc
+        up the parent change if the node was not already needing recalc. In order to fix issues
+        with attaching, this required new call to clearNeedsStyleRecalc() at the end of attach().
+
+        * manual-tests/compositing/missing-iframe-contents.html: Added.
+        * manual-tests/compositing/resources/composited-subframe.html: Copied from LayoutTests/compositing/iframes/resources/composited-subframe.html.
+
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyle): Call clearNeedsStyleRecalc().
+        * dom/Element.cpp:
+        (WebCore::Element::recalcStyle): Call clearNeedsStyleRecalc().
+
+        * dom/Node.h:
+        (WebCore::Node::clearNeedsStyleRecalc): New method.
+        * dom/Node.cpp:
+        (WebCore::Node::setNeedsStyleRecalc): Only call setStyleChange() if the change type
+        is greater than the current change type.
+        (WebCore::Node::attach): After attaching, we can call clearNeedsStyleRecalc().
+
+        * dom/Text.cpp:
+        (WebCore::Text::recalcStyle): Call clearNeedsStyleRecalc().
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::recalcStyle): Call clearNeedsStyleRecalc().
+
+2010-07-30  W. James MacLean  <wjmaclean@google.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG - numeric overflow for very large elements
+        https://bugs.webkit.org/show_bug.cgi?id=25645
+
+        Two of the expected test outputs were incorrect now that parsing of large values
+        is handled correctly.
+        - Revised FloatRect to remove bad float-to-int conversions in enclosingIntRect()
+        - Revised _parseNumber to do right-to-left float-based parsing of input value
+
+        Test: svg/custom/massive-coordinates.svg
+
+        * platform/graphics/FloatRect.cpp:
+        (WebCore::safeFloatToInt):
+        (WebCore::enclosingIntRect):
+        * svg/SVGParserUtilities.cpp:
+        (WebCore::_parseNumber):
+
+2010-07-30  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] Make the GLES2 texture map generic and teach ImageSkia and ImageBufferSkia about GLES2
+        https://bugs.webkit.org/show_bug.cgi?id=43218
+
+        This makes the GLES2Canvas' TextureHashMap key on void* instead of NativeImagePtr
+        to make it easier to use with other backends.  It also teaches ImageSkia how
+        to draw to a GLES2Canvas instead of a skia buffer.
+
+        No change in functionality (yet), no new tests.
+
+        * platform/graphics/chromium/GLES2Canvas.cpp:
+        (WebCore::GLES2Canvas::GLES2Canvas):
+        (WebCore::GLES2Canvas::createTexture):
+        (WebCore::GLES2Canvas::getTexture):
+        * platform/graphics/chromium/GLES2Canvas.h:
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::ImageBuffer::getUnmultipliedImageData):
+        (WebCore::ImageBuffer::getPremultipliedImageData):
+        * platform/graphics/skia/ImageSkia.cpp:
+        (WebCore::drawBitmapGLES2):
+        (WebCore::BitmapImage::draw):
+        (WebCore::BitmapImageSingleFrameSkia::draw):
+
+2010-07-30  Yong Li  <yoli@rim.com>
+
+        Reviewed by Darin Adler.
+
+        Implement SVGScriptElement::shouldExecuteAsJavaScript() otherwise
+        SVGScriptElement cannot run when XHTMLMP is enabled.
+        https://bugs.webkit.org/show_bug.cgi?id=43267
+
+        No test needed, because it fails all SVG <script> tests when XHTMLMP is on.
+
+        * svg/SVGScriptElement.cpp:
+        (WebCore::SVGScriptElement::shouldExecuteAsJavaScript):
+        * svg/SVGScriptElement.h:
+
+2010-07-30  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Style errors in Navigator.h
+        https://bugs.webkit.org/show_bug.cgi?id=43262
+
+        Fixing style changes. No new tests.
+
+        * page/Navigator.h:
+        (WebCore::Navigator::create):
+        (WebCore::Navigator::frame):
+        (WebCore::Navigator::optionalGeolocation):
+
+2010-07-27  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Brady Eidson.
+
+        History.pushState() + navigation operates on top frame when called from
+        nested context
+        https://bugs.webkit.org/show_bug.cgi?id=43080
+
+        Test: fast/loader/stateobjects/pushstate-in-iframe.html
+
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::pushState): createTreeItem should be
+        called on the top-most HistoryController so that we properly clone
+        the HistoryItem tree starting at the root node.
+
+2010-07-30  fsamuel@chromium.org  <fsamuel@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Expand SVG Attribute Macros
+        https://bugs.webkit.org/show_bug.cgi?id=43254
+
+        Expanded SVG Attribute Macros to reduce debugging headache.
+
+        No change in behavior, so no new tests.
+
+        * rendering/style/SVGRenderStyle.h: Expanded and removed references to SVG_RS_DEFINE_ATTRIBUTE* macros.
+        * rendering/style/SVGRenderStyleDefs.h: Removed definitons for expanded macros.
+
+2010-07-30  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by Dumitru Daniliuc.
+
+        Add callback arguments support to binding code generator scripts
+        https://bugs.webkit.org/show_bug.cgi?id=43130
+
+        Tests: bindings/scripts/test/TestObj.idl
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/scripts/CodeGeneratorV8.pm:
+
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionMethodWithCallbackArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithNonCallbackArgAndCallbackArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithCallbackAndOptionalArg):
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/TestObj.idl:
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjInternal::methodWithCallbackArgCallback):
+        (WebCore::TestObjInternal::methodWithNonCallbackArgAndCallbackArgCallback):
+        (WebCore::TestObjInternal::methodWithCallbackAndOptionalArgCallback):
+        (WebCore::ConfigureV8TestObjTemplate):
+
+2010-07-30  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Implement NPN_InvokeDefault
+        https://bugs.webkit.org/show_bug.cgi?id=43266
+
+        * bindings/js/JSPluginElementFunctions.cpp:
+        (WebCore::isPluginElement):
+        Add convenience function.
+
+        (WebCore::pluginInstance):
+        Call isPluginElement.
+
+        (WebCore::pluginScriptObjectFromPluginViewBase):
+        Given an JSHTMLElement, ask the PluginViewBase for the scriptable object.
+
+        (WebCore::pluginScriptObject):
+        Call isPluginElement. Call pluginScriptObjectFromPluginViewBase.
+
+        (WebCore::callPlugin):
+        Get the script object, assemble the arguments and call "call" directly.
+
+        (WebCore::runtimeObjectGetCallData):
+        Try to get the script object from the PluginViewBase first.
+
+        * plugins/PluginViewBase.h:
+        (WebCore::PluginViewBase::scriptObject):
+        Remove ExecState parameter.
+
+2010-07-30  Adam Roben  <aroben@apple.com>
+
+        Roll our r64361 and r64363
+
+        We can't make these changes until QuartzCore.lib is included in
+        WebKitSupportLibrary.
+
+2010-07-30  Adam Roben  <aroben@apple.com>
+
+        Remove uses of CACFContextRef and CARender* from WebCore
+
+        These types are now wrapped in a WKCACFContext type exported by
+        WebKitSystemInterface.
+
+        Fixes <http://webkit.org/b/43244>.
+
+        Reviewed by Sam Weinig.
+
+        * platform/graphics/win/WKCACFContextFlusher.cpp:
+        (WebCore::WKCACFContextFlusher::addContext):
+        (WebCore::WKCACFContextFlusher::removeContext):
+        (WebCore::WKCACFContextFlusher::flushAllContexts):
+        * platform/graphics/win/WKCACFContextFlusher.h:
+        Changed to use WKCACFContext. We don't retain/release the context when
+        putting it into/taking it out of the set. WKCACFContext is not a
+        ref-counted type, so we can't retain/release it, but the
+        retain/release was also unnecessary as WKCACFLayerRenderer calls
+        removeContext before the context is destroyed.
+
+        * platform/graphics/win/WKCACFLayer.cpp:
+        (WebCore::WKCACFLayer::becomeRootLayerForContext):
+        * platform/graphics/win/WKCACFLayer.h:
+        Changed to use WKCACFContext.
+
+        * platform/graphics/win/WKCACFLayerRenderer.cpp:
+        (WebCore::WKCACFLayerRenderer::didFlushContext):
+        (WebCore::WKCACFLayerRenderer::WKCACFLayerRenderer):
+        (WebCore::WKCACFLayerRenderer::~WKCACFLayerRenderer):
+        (WebCore::WKCACFLayerRenderer::layerTreeDidChange):
+        (WebCore::WKCACFLayerRenderer::createRenderer):
+        (WebCore::WKCACFLayerRenderer::destroyRenderer):
+        (WebCore::WKCACFLayerRenderer::render): Also replaced uses of
+        CGSRegion with WebKitSystemInterface functions/types.
+        (WebCore::WKCACFLayerRenderer::resetDevice):
+        * platform/graphics/win/WKCACFLayerRenderer.h:
+        Replaced our CACFContextRef, CARenderContext, and CARenderOGLContext
+        with a single WKCACFContext, which wraps all three. We hold a bare
+        pointer to it and destroy it in our destructor.
+
+2010-07-30  Adam Roben  <aroben@apple.com>
+
+        Remove knowledge of WKCACFContextFlusher from WKCACFLayer
+
+        Fixes <http://webkit.org/b/43248> WKCACFLayer shouldn't know about
+        WKCACFContextFlusher
+
+        Reviewed by Sam Weinig.
+
+        * platform/graphics/win/WKCACFLayer.cpp:
+        (WebCore::WKCACFLayer::setNeedsCommit): Don't bother calling to
+        WKCACFContextFlusher. Our root layer will do this for us.
+
+        * platform/graphics/win/WKCACFLayerRenderer.cpp:
+        (WebCore::WKCACFRootLayer::setNeedsRender): Changed to call the new
+        layerTreeDidChange function.
+        (WebCore::WKCACFLayerRenderer::layerTreeDidChange): Added. Tells
+        WKCACFContextFlusher that the context has changed, and schedules a
+        render.
+
+        * platform/graphics/win/WKCACFLayerRenderer.h: Added
+        layerTreeDidChange.
+
+2010-07-29  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Rename all the IDBIndex classses to match the latest conventions
+        https://bugs.webkit.org/show_bug.cgi?id=43190
+
+        No functionality has changed.
+
+        IDBIndexRequest -> IDBIndex in the spec.  So that's the first change.
+        IDBIndex was the name of our interface class though, so we need to rename
+        it to get it out of the way.  While we're at it, we might as well clean
+        up the naming in general to make things more clear.  In the future, we're
+        going to need another layer (yes, yuck) which will be shared by the async
+        and sync classes which will do caching and other optimizations.  That will
+        then connect to the backend.  We also added "Interface" to make it more
+        clear that's what the file/class is.
+
+        Existing layout tests are enough since nothing should change as far as JavaScript can see.
+
+        * Android.derived.jscbindings.mk:
+        * Android.derived.v8bindings.mk:
+        * Android.mk:
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSIDBAnyCustom.cpp:
+        (WebCore::toJS):
+        * bindings/v8/custom/V8IDBAnyCustom.cpp:
+        (WebCore::toV8):
+        * storage/IDBAny.cpp:
+        (WebCore::IDBAny::idbIndex):
+        (WebCore::IDBAny::set):
+        * storage/IDBAny.h:
+        (WebCore::IDBAny::):
+        * storage/IDBCallbacks.h:
+        * storage/IDBIndex.cpp: Added.
+        (WebCore::IDBIndex::IDBIndex):
+        (WebCore::IDBIndex::~IDBIndex):
+        * storage/IDBIndex.h:
+        (WebCore::IDBIndex::create):
+        (WebCore::IDBIndex::name):
+        (WebCore::IDBIndex::keyPath):
+        (WebCore::IDBIndex::unique):
+        * storage/IDBIndex.idl: Added.
+        * storage/IDBIndexBackendImpl.cpp: Added.
+        (WebCore::IDBIndexBackendImpl::IDBIndexBackendImpl):
+        (WebCore::IDBIndexBackendImpl::~IDBIndexBackendImpl):
+        * storage/IDBIndexBackendImpl.h: Added.
+        (WebCore::IDBIndexBackendImpl::create):
+        (WebCore::IDBIndexBackendImpl::name):
+        (WebCore::IDBIndexBackendImpl::keyPath):
+        (WebCore::IDBIndexBackendImpl::unique):
+        * storage/IDBIndexBackendInterface.h: Added.
+        (WebCore::IDBIndexBackendInterface::~IDBIndexBackendInterface):
+        * storage/IDBIndexImpl.cpp: Removed.
+        * storage/IDBIndexImpl.h: Removed.
+        * storage/IDBIndexRequest.cpp: Removed.
+        * storage/IDBIndexRequest.h: Removed.
+        * storage/IDBIndexRequest.idl: Removed.
+        * storage/IDBObjectStore.h:
+        * storage/IDBObjectStoreImpl.cpp:
+        (WebCore::IDBObjectStoreImpl::createIndex):
+        (WebCore::IDBObjectStoreImpl::index):
+        * storage/IDBObjectStoreImpl.h:
+        * storage/IDBObjectStoreRequest.cpp:
+        (WebCore::IDBObjectStoreRequest::index):
+        * storage/IDBObjectStoreRequest.h:
+        * storage/IDBObjectStoreRequest.idl:
+        * storage/IDBRequest.cpp:
+        (WebCore::IDBRequest::onSuccess):
+        * storage/IDBRequest.h:
+
+2010-07-30  Rafael Antognolli  <antognolli@profusion.mobi>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Add library version and soname to EFL generated libraries and binary.
+        https://bugs.webkit.org/show_bug.cgi?id=43212
+
+        Add version and soname to libwebcore.so in case of linking as shared
+        library.
+
+        No new feature, so no new tests.
+
+        * CMakeLists.txt:
+
+2010-07-30  Steve Block  <steveblock@google.com>
+
+        Reviewed by Steve Block.
+
+        Add LayoutTestController methods to test DeviceOrientation
+        https://bugs.webkit.org/show_bug.cgi?id=39589
+
+        This patch does not hook up the new LayoutTestController method to WebKit
+        for any platform. This will be done in later patches.
+        https://bugs.webkit.org/show_bug.cgi?id=43181 tracks this for Mac.
+
+        Test: fast/dom/DeviceOrientation/basic-operation.html
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.exp.in:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DeviceOrientationClient.h:
+        (WebCore::DeviceOrientationClient::~DeviceOrientationClient):
+        * dom/DeviceOrientationController.cpp:
+        (WebCore::DeviceOrientationController::DeviceOrientationController):
+        * dom/DeviceOrientationEvent.cpp:
+        * platform/mock/DeviceOrientationClientMock.cpp: Added.
+        (WebCore::DeviceOrientationClientMock::DeviceOrientationClientMock):
+        (WebCore::DeviceOrientationClientMock::setController):
+        (WebCore::DeviceOrientationClientMock::startUpdating):
+        (WebCore::DeviceOrientationClientMock::stopUpdating):
+        (WebCore::DeviceOrientationClientMock::setOrientation):
+        (WebCore::DeviceOrientationClientMock::timerFired):
+        * platform/mock/DeviceOrientationClientMock.h: Added.
+        (WebCore::DeviceOrientationClientMock::lastOrientation):
+
+2010-07-30  Satish Sampath  <satish@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Add a mock in WebCore for testing speech input
+        https://bugs.webkit.org/show_bug.cgi?id=42603
+
+        Layout tests will be added in a subsequent patch using this mock.
+
+        * Android.mk:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mock/SpeechInputClientMock.cpp: Added.
+        (WebCore::SpeechInputClientMock::SpeechInputClientMock):
+        (WebCore::SpeechInputClientMock::startRecognition):
+        (WebCore::SpeechInputClientMock::stopRecording):
+        (WebCore::SpeechInputClientMock::cancelRecognition):
+        (WebCore::SpeechInputClientMock::setRecognitionResult):
+        (WebCore::SpeechInputClientMock::timerFired):
+        * platform/mock/SpeechInputClientMock.h: Added.
+
+2010-07-30  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Optimize SVGResources memory usage
+        https://bugs.webkit.org/show_bug.cgi?id=43236
+
+        Instead of storing pointers to all possible resources that could be applied to an element, group them in three categories:
+        clipper/filter/masker, marker-start/marker-mid/marker-end, and fill/stroke.
+
+        Only build the cached resources data for elements where the properties can be applied to. Maintain a static list of tagnames
+        for each of the three categories, to avoid doing unncessary work.
+
+        Doesn't affect any tests.
+
+        * rendering/SVGResources.cpp:
+        (WebCore::SVGResources::SVGResources):
+        (WebCore::clipperFilterMaskerTags):
+        (WebCore::markerTags):
+        (WebCore::fillAndStrokeTags):
+        (WebCore::SVGResources::buildCachedResources):
+        (WebCore::SVGResources::invalidateClient):
+        (WebCore::SVGResources::resourceDestroyed):
+        (WebCore::SVGResources::buildSetOfResources):
+        (WebCore::SVGResources::setClipper):
+        (WebCore::SVGResources::resetClipper):
+        (WebCore::SVGResources::setFilter):
+        (WebCore::SVGResources::resetFilter):
+        (WebCore::SVGResources::setMarkerStart):
+        (WebCore::SVGResources::resetMarkerStart):
+        (WebCore::SVGResources::setMarkerMid):
+        (WebCore::SVGResources::resetMarkerMid):
+        (WebCore::SVGResources::setMarkerEnd):
+        (WebCore::SVGResources::resetMarkerEnd):
+        (WebCore::SVGResources::setMasker):
+        (WebCore::SVGResources::resetMasker):
+        (WebCore::SVGResources::setFill):
+        (WebCore::SVGResources::resetFill):
+        (WebCore::SVGResources::setStroke):
+        (WebCore::SVGResources::resetStroke):
+        (WebCore::SVGResources::dump):
+        * rendering/SVGResources.h:
+        (WebCore::SVGResources::clipper):
+        (WebCore::SVGResources::filter):
+        (WebCore::SVGResources::markerStart):
+        (WebCore::SVGResources::markerMid):
+        (WebCore::SVGResources::markerEnd):
+        (WebCore::SVGResources::masker):
+        (WebCore::SVGResources::fill):
+        (WebCore::SVGResources::stroke):
+        (WebCore::SVGResources::ClipperFilterMaskerData::ClipperFilterMaskerData):
+        (WebCore::SVGResources::ClipperFilterMaskerData::create):
+        (WebCore::SVGResources::MarkerData::MarkerData):
+        (WebCore::SVGResources::MarkerData::create):
+        (WebCore::SVGResources::FillStrokeData::FillStrokeData):
+        (WebCore::SVGResources::FillStrokeData::create):
+
+2010-07-26  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        [IndexedDB] IndexedDatabase should be called IDBFactory.
+        https://bugs.webkit.org/show_bug.cgi?id=42967
+
+        Rename IndexedDatabase to IDBFactory to match the specification.
+
+        Also implement the following new naming convention:
+        IDBFoo IDL interfaces are implemented using IDBFoo C++ classes.
+        IDBFoo objects have pointers to IDBFooBackendInterface objects.
+        IDBFooBackendInterface is implemented by IDBFooBackendImpl and
+        IDBFooBackendProxy (for Chromium).
+
+        No new tests needed, just renaming.
+
+        * Android.derived.jscbindings.mk:
+        * Android.derived.v8bindings.mk:
+        * Android.mk:
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSIDBAnyCustom.cpp:
+        (WebCore::toJS):
+        * bindings/v8/custom/V8IDBAnyCustom.cpp:
+        (WebCore::toV8):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::clear):
+        (WebCore::DOMWindow::indexedDB):
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::idbFactory):
+        * page/PageGroup.h:
+        * platform/chromium/ChromiumBridge.h:
+        * storage/IDBAny.cpp:
+        (WebCore::IDBAny::idbFactory):
+        (WebCore::IDBAny::set):
+        * storage/IDBAny.h:
+        (WebCore::IDBAny::):
+        * storage/IDBDatabaseRequest.cpp:
+        * storage/IDBFactory.cpp: Added.
+        (WebCore::IDBFactory::IDBFactory):
+        (WebCore::IDBFactory::~IDBFactory):
+        (WebCore::IDBFactory::open):
+        * storage/IDBFactory.h: Added.
+        (WebCore::IDBFactory::create):
+        * storage/IDBFactory.idl: Added.
+        * storage/IDBFactoryBackendInterface.cpp: Added.
+        (WebCore::IDBFactoryBackendInterface::create):
+        * storage/IDBFactoryBackendInterface.h: Added.
+        (WebCore::IDBFactoryBackendInterface::~IDBFactoryBackendInterface):
+        * storage/IDBFactoryBackendImpl.cpp: Added.
+        (WebCore::IDBFactoryBackendImpl::create):
+        (WebCore::IDBFactoryBackendImpl::IDBFactoryBackendImpl):
+        (WebCore::IDBFactoryBackendImpl::~IDBFactoryBackendImpl):
+        (WebCore::IDBFactoryBackendImpl::open):
+        * storage/IDBFactoryBackendImpl.h: Added.
+        * storage/IDBKeyRange.cpp:
+        (WebCore::IDBKeyRange::only):
+        (WebCore::IDBKeyRange::leftBound):
+        (WebCore::IDBKeyRange::rightBound):
+        (WebCore::IDBKeyRange::bound):
+        * storage/IDBKeyRange.h:
+        * storage/IDBKeyRange.idl:
+        * storage/IndexedDatabase.cpp: Removed.
+        * storage/IndexedDatabase.h: Removed.
+        * storage/IndexedDatabaseImpl.cpp: Removed.
+        * storage/IndexedDatabaseImpl.h: Removed.
+        * storage/IndexedDatabaseRequest.cpp: Removed.
+        * storage/IndexedDatabaseRequest.h: Removed.
+        * storage/IndexedDatabaseRequest.idl: Removed.
+        * storage/chromium/IDBFactoryBackendInterface.cpp: Added.
+        (WebCore::IDBFactoryBackendInterface::create):
+        * storage/chromium/IndexedDatabase.cpp: Removed.
+
+2010-07-29  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Crash on refresh with a comment selected in the Elements panel
+        https://bugs.webkit.org/show_bug.cgi?id=43183
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::nodeForPath):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.reset):
+
+2010-07-30  Renata Hodovan  <reni@inf.u-szeged.hu>
+
+        Reviewed by Nikolas Zimmermann.
+
+        feTurbulence is not implemented.
+        https://bugs.webkit.org/show_bug.cgi?id=5864
+
+        This code is based on the previous implementation of
+        Dirk Schulze, extended with some modification and optimization.
+
+        LayoutTests: Updating expected values for turbulence filter.
+        svg/W3C-SVG-1.1/filters-turb-01-f.svg
+
+        * svg/SVGFETurbulenceElement.cpp:
+        (WebCore::SVGFETurbulenceElement::build):
+        * svg/graphics/filters/SVGFETurbulence.cpp:
+        (WebCore::FETurbulence::FETurbulence):
+        (WebCore::FETurbulence::create):
+        (WebCore::FETurbulence::PaintingData::PaintingData):
+        (WebCore::FETurbulence::PaintingData::random):
+        (WebCore::smoothCurve):
+        (WebCore::linearInterpolation):
+        (WebCore::FETurbulence::initPaint):
+        (WebCore::checkNoise):
+        (WebCore::FETurbulence::noise2D):
+        (WebCore::Noise::if):
+        (WebCore::FETurbulence::calculateTurbulenceValueForPoint):
+        (WebCore::FETurbulence::apply):
+        * svg/graphics/filters/SVGFETurbulence.h:
+        (WebCore::):
+
+2010-07-29  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Dirk Schulze.
+
+        Cairo: Need to implement GraphicsContext::clipConvexPolygon()
+        https://bugs.webkit.org/show_bug.cgi?id=41308
+
+        Implement clipConvexPolygon for Cairo ports and enable new path based
+        borders for that port as well.
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::addConvexPolygonToContext): Add this helper method.
+        (WebCore::GraphicsContext::drawConvexPolygon): Use the new addConvexPolygonToContext helper.
+        (WebCore::GraphicsContext::clipConvexPolygon): Implement this method.
+        * rendering/RenderObject.h: Enable path based borders for Cairo.
+
+2010-07-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        InsertOrderedList does not switch the list type properly when it has an inner list.
+        https://bugs.webkit.org/show_bug.cgi?id=43166
+
+        The bug was caused by forcedCreateList was not set to true when the start and the end
+        of the selection lies in the same list. Added selectionHasListOfType to fix this problem.
+
+        WebKit used not to convert the outer lists even when the list is fully selected.
+        Corrected this behavior by converting the entire list at once when the list is fully selected.
+        To decide whether or not a list is fully selected, added currentSelection argument to doApplyForSingleParagraph.
+
+        Tests: editing/execCommand/switch-list-type-with-inner-list.html
+               editing/execCommand/switch-list-type-with-orphaned-li.html
+
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::mergeWithNeighboringLists): Extracted the code to merge lists.
+        (WebCore::InsertListCommand::selectionHasListOfType): attachment.cgi
+        (WebCore::InsertListCommand::doApply): Calls selectionHasListOfType.
+        (WebCore::InsertListCommand::doApplyForSingleParagraph): See above.
+        (WebCore::InsertListCommand::listifyParagraph): Calls mergeWithNeighboringLists.
+        * editing/InsertListCommand.h:
+        * editing/htmlediting.cpp:
+        (WebCore::canMergeLists): Ensures lists being merged are instances of HTMLElement.
+        (WebCore::isNodeVisiblyContainedWithin): Works properly when one end is inside the range.
+
+2010-07-29  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Dirk Schulze.
+
+        [Cairo] Bring behavior of paths on the Cairo GraphicsContext into line with the CoreGraphics port
+        https://bugs.webkit.org/show_bug.cgi?id=41732
+
+        Do not apply paths added to the Cairo GraphicsContext, until they are used.
+        This prevents drawing routines such as fillRect from interacting with any
+        path which callers are constructing on the GraphicsContext.
+
+         This behavior is necessary to close bug https://bugs.webkit.org/show_bug.cgi?id=41308
+         so tests for that issue will test this fix.
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::appendPathToCairoContext): Added. A helper method which adds a path
+        to a native Cairo context.
+        (WebCore::setPathOnCairoContext): Added. Like appendPathToCairoContext, but clears the
+        existing path first.
+        (WebCore::appendWebCorePathToCairoContext): Added. Like appendPathToCairoContext, but
+        operates on a WebCore path.
+        (WebCore::fillCurrentCairoPath): Added. Helper which fills the current cairo context path.
+        (WebCore::strokeCurrentCairoPath): Added. Helper which strokes the current cairo context path.
+        (WebCore::GraphicsContext::drawEllipse): Only clear the Cairo path if cairo_stroke
+        was not called, because cairo_stroke implicitly clears the path.
+        (WebCore::GraphicsContext::drawConvexPolygon): Ditto.
+        (WebCore::GraphicsContext::fillPath): Copy the path from m_pendingPath to the context
+        and clear m_pendingPath, instead of relying on the pre-existing context path. Do the
+        actual fill via the new helper.
+        (WebCore::GraphicsContext::strokePath): Ditto.
+        (WebCore::GraphicsContext::drawPath): Ditto.
+        (WebCore::GraphicsContext::fillRect): Use the new fillCurrentCairoPath helper.
+        (WebCore::GraphicsContext::drawFocusRing): Use the new appendWebCorePathToCairoContext helper instead
+        of addPath (which will blow away any path callers are building).
+        (WebCore::GraphicsContext::addInnerRoundedRectClip): Use the new appendWebCorePathToCairoContext helper instead
+        of addPath (which will blow away any path callers are building).
+        (WebCore::GraphicsContext::strokeRect): Use the new strokeCurrentCairoPath helper.
+        (WebCore::GraphicsContext::beginPath): Clear out m_pendingPath here instead of the main native context.
+        (WebCore::GraphicsContext::addPath): Add the path to m_pendingPath instead of the main native context.
+        Also ensure that the transformation matrix of the m_pendingPath is equal to that of the main
+        cairo context.
+        (WebCore::GraphicsContext::clipOut): Use the appendWebCorePathToCairoContext helper here.
+        (WebCore::GraphicsContext::fillRoundedRect): Ditto and remove an unnecessary beginPath call.
+        * platform/graphics/cairo/GraphicsContextPlatformPrivateCairo.h: Add a new m_pendingPath member.
+
 2010-07-30  James Robinson  <jamesr@chromium.org>
 
         Compile fix: fix a typo in forward declaration, add EmptyClients impl.

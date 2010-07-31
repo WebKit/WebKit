@@ -1,3 +1,16 @@
+2010-07-30  Andy Estes  <aestes@apple.com>
+
+        Reviewed by David Kilzer.
+
+        Add Xcode support for compiling WebKit against iOS SDKs.
+        https://bugs.webkit.org/show_bug.cgi?id=42796
+
+        * Configurations/Base.xcconfig:
+        * Configurations/DebugRelease.xcconfig:
+        * Configurations/FeatureDefines.xcconfig:
+        * Configurations/Version.xcconfig:
+        * Configurations/WebKit.xcconfig:
+
 2010-07-26  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.

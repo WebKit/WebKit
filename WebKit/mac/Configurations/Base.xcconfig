@@ -1,4 +1,4 @@
-// Copyright (C) 2009 Apple Inc. All rights reserved.
+// Copyright (C) 2009, 2010 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -28,11 +28,15 @@ GCC_DYNAMIC_NO_PIC = NO;
 GCC_ENABLE_CPP_EXCEPTIONS = NO;
 GCC_ENABLE_CPP_RTTI = NO;
 GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-GCC_ENABLE_OBJC_GC = supported;
+GCC_ENABLE_OBJC_GC = $(GCC_ENABLE_OBJC_GC_$(REAL_PLATFORM_NAME));
+GCC_ENABLE_OBJC_GC_iphoneos = NO;
+GCC_ENABLE_OBJC_GC_iphonesimulator = NO;
+GCC_ENABLE_OBJC_GC_macosx = supported;
 GCC_ENABLE_SYMBOL_SEPARATION = NO;
 GCC_FAST_OBJC_DISPATCH = YES;
 GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-GCC_MODEL_TUNING = G5;
+GCC_MODEL_TUNING = $(GCC_MODEL_TUNING_$(REAL_PLATFORM_NAME));
+GCC_MODEL_TUNING_macosx = G5;
 GCC_OBJC_CALL_CXX_CDTORS = YES;
 GCC_PRECOMPILE_PREFIX_HEADER = YES;
 GCC_THREADSAFE_STATICS = NO;
@@ -44,13 +48,22 @@ GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 LINKER_DISPLAYS_MANGLED_NAMES = YES;
 OTHER_MIGFLAGS = -F$(BUILT_PRODUCTS_DIR);
 PREBINDING = NO;
-VALID_ARCHS = i386 ppc x86_64 ppc64;
+VALID_ARCHS = $(VALID_ARCHS_$(REAL_PLATFORM_NAME));
+VALID_ARCHS_iphoneos = $(ARCHS_STANDARD_32_BIT);
+VALID_ARCHS_iphonesimulator = $(ARCHS_STANDARD_32_BIT);
+VALID_ARCHS_macosx = i386 ppc x86_64 ppc64;
 // FIXME: <rdar://problem/5070292> WebKit should build with -Wshorten-64-to-32
-WARNING_CFLAGS = -Wall -Wextra -Wcast-align -Wchar-subscripts -Wextra-tokens -Wformat-security -Winit-self -Wmissing-format-attribute -Wmissing-noreturn -Wno-unused-parameter -Wpacked -Wpointer-arith -Wredundant-decls -Wundef -Wwrite-strings;
+WARNING_CFLAGS_BASE = -Wall -Wextra -Wchar-subscripts -Wextra-tokens -Wformat-security -Winit-self -Wmissing-format-attribute -Wmissing-noreturn -Wno-unused-parameter -Wpacked -Wpointer-arith -Wredundant-decls -Wundef -Wwrite-strings;
+WARNING_CFLAGS = $(WARNING_CFLAGS_$(REAL_PLATFORM_NAME));
+WARNING_CFLAGS_iphoneos = $(WARNING_CFLAGS_BASE);
+WARNING_CFLAGS_iphonesimulator = $(WARNING_CFLAGS_BASE) -Wcast-align;
+WARNING_CFLAGS_macosx = $(WARNING_CFLAGS_BASE) -Wcast-align;
 
 
 REAL_PLATFORM_NAME = $(REAL_PLATFORM_NAME_$(PLATFORM_NAME));
 REAL_PLATFORM_NAME_ = $(REAL_PLATFORM_NAME_macosx);
+REAL_PLATFORM_NAME_iphoneos = iphoneos;
+REAL_PLATFORM_NAME_iphonesimulator = iphonesimulator;
 REAL_PLATFORM_NAME_macosx = macosx;
 
 TARGET_MAC_OS_X_VERSION_MAJOR = $(MAC_OS_X_VERSION_MAJOR);
@@ -80,15 +93,18 @@ SECTORDER_FLAGS = -sectorder __TEXT __text mac/WebKit.order;
 // Note that Xcode versions as new as 3.1.2 use XCODE_VERSION_ACTUAL for the minor version
 // number.  Newer versions of Xcode use XCODE_VERSION_MINOR for the minor version, and
 // XCODE_VERSION_ACTUAL for the full version number.
-TARGET_GCC_VERSION = $(TARGET_GCC_VERSION_$(TARGET_MAC_OS_X_VERSION_MAJOR));
-TARGET_GCC_VERSION_ = $(TARGET_GCC_VERSION_1040);
-TARGET_GCC_VERSION_1040 = GCC_40;
-TARGET_GCC_VERSION_1050 = $(TARGET_GCC_VERSION_1050_$(XCODE_VERSION_MINOR));
-TARGET_GCC_VERSION_1050_ = $(TARGET_GCC_VERSION_1050_$(XCODE_VERSION_ACTUAL));
-TARGET_GCC_VERSION_1050_0310 = GCC_42;
-TARGET_GCC_VERSION_1050_0320 = GCC_42;
-TARGET_GCC_VERSION_1060 = GCC_42;
-TARGET_GCC_VERSION_1070 = LLVM_GCC_42;
+TARGET_GCC_VERSION = $(TARGET_GCC_VERSION_$(REAL_PLATFORM_NAME));
+TARGET_GCC_VERSION_iphoneos = LLVM_GCC_42;
+TARGET_GCC_VERSION_iphonesimulator = GCC_42;
+TARGET_GCC_VERSION_macosx = $(TARGET_GCC_VERSION_macosx_$(TARGET_MAC_OS_X_VERSION_MAJOR));
+TARGET_GCC_VERSION_macosx_ = $(TARGET_GCC_VERSION_macosx_1040);
+TARGET_GCC_VERSION_macosx_1040 = GCC_40;
+TARGET_GCC_VERSION_macosx_1050 = $(TARGET_GCC_VERSION_macosx_1050_$(XCODE_VERSION_MINOR));
+TARGET_GCC_VERSION_macosx_1050_ = $(TARGET_GCC_VERSION_macosx_1050_$(XCODE_VERSION_ACTUAL));
+TARGET_GCC_VERSION_macosx_1050_0310 = GCC_42;
+TARGET_GCC_VERSION_macosx_1050_0320 = GCC_42;
+TARGET_GCC_VERSION_macosx_1060 = GCC_42;
+TARGET_GCC_VERSION_macosx_1070 = LLVM_GCC_42;
 
 GCC_VERSION = $(GCC_VERSION_$(TARGET_GCC_VERSION));
 GCC_VERSION_GCC_40 = 4.0;

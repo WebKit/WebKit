@@ -1,4 +1,4 @@
-// Copyright (C) 2009 Apple Inc. All rights reserved.
+// Copyright (C) 2009, 2010 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -31,12 +31,15 @@ BUNDLE_VERSION = $(BUNDLE_VERSION_$(CONFIGURATION));
 SHORT_VERSION_STRING = $(SHORT_VERSION_STRING_$(CONFIGURATION))
 
 // The system version prefix is based on the current system version.
-SYSTEM_VERSION_PREFIX = $(SYSTEM_VERSION_PREFIX_$(TARGET_MAC_OS_X_VERSION_MAJOR));
-SYSTEM_VERSION_PREFIX_ = 4; // Some Tiger versions of Xcode don't set MAC_OS_X_VERSION_MAJOR.
-SYSTEM_VERSION_PREFIX_1040 = 4;
-SYSTEM_VERSION_PREFIX_1050 = 5;
-SYSTEM_VERSION_PREFIX_1060 = 6;
-SYSTEM_VERSION_PREFIX_1070 = 7;
+SYSTEM_VERSION_PREFIX = $(SYSTEM_VERSION_PREFIX_$(REAL_PLATFORM_NAME));
+SYSTEM_VERSION_PREFIX_iphoneos = 6; // iPhone OS is most like SnowLeopard currently.
+SYSTEM_VERSION_PREFIX_iphonesimulator = $(SYSTEM_VERSION_PREFIX_iphoneos);
+SYSTEM_VERSION_PREFIX_macosx = $(SYSTEM_VERSION_PREFIX_macosx_$(TARGET_MAC_OS_X_VERSION_MAJOR));
+SYSTEM_VERSION_PREFIX_macosx_ = 4; // Some Tiger versions of Xcode don't set MAC_OS_X_VERSION_MAJOR.
+SYSTEM_VERSION_PREFIX_macosx_1040 = 4;
+SYSTEM_VERSION_PREFIX_macosx_1050 = 5;
+SYSTEM_VERSION_PREFIX_macosx_1060 = 6;
+SYSTEM_VERSION_PREFIX_macosx_1070 = 7;
 
 // The production build always uses the full version with a system version prefix.
 BUNDLE_VERSION_Production = $(SYSTEM_VERSION_PREFIX)$(FULL_VERSION);
