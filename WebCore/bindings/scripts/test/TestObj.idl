@@ -41,6 +41,11 @@ module test {
         attribute DOMString                stringAttr;
         attribute TestObj                  testObjAttr;
 
+        JS, V8
+        // WK_ucfirst, WK_lcfirst exceptional cases.
+        attribute TestObj                  XMLObjAttr;
+        attribute bool                     CREATE;
+
         // Reflected DOM attributes
         attribute [Reflect] DOMString reflectedStringAttr;
         attribute [Reflect] long reflectedIntegralAttr;

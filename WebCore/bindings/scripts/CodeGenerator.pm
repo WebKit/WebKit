@@ -343,6 +343,11 @@ sub WK_ucfirst
     my ($object, $param) = @_;
     my $ret = ucfirst($param);
     $ret =~ s/Xml/XML/ if $ret =~ /^Xml[^a-z]/;
+
+    # For HTML5 FileSystem API Flags attributes.
+    $ret =~ s/^CREATE/Create/ if $ret =~ /^CREATE$/;
+    $ret =~ s/^EXCLUSIVE/Exclusive/ if $ret =~ /^EXCLUSIVE$/;
+
     return $ret;
 }
 
@@ -357,6 +362,11 @@ sub WK_lcfirst
     $ret =~ s/jS/js/ if $ret =~ /^jS/;
     $ret =~ s/xML/xml/ if $ret =~ /^xML/;
     $ret =~ s/xSLT/xslt/ if $ret =~ /^xSLT/;
+
+    # For HTML5 FileSystem API Flags attributes.
+    $ret =~ s/^cREATE/isCreate/ if $ret =~ /^cREATE$/;
+    $ret =~ s/^eXCLUSIVE/isExclusive/ if $ret =~ /^eXCLUSIVE$/;
+
     return $ret;
 }
 

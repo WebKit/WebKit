@@ -111,6 +111,7 @@ DOM_CLASSES = \
     DedicatedWorkerContext \
     DOMApplicationCache \
     DOMCoreException \
+    DOMFileSystem \
     DOMFormData \
     DOMImplementation \
     DOMMimeType \
@@ -133,6 +134,9 @@ DOM_CLASSES = \
     ElementTimeControl \
     Entity \
     EntityReference \
+    Entry \
+    EntryCallback \
+    ErrorCallback \
     ErrorEvent \
     Event \
     EventException \
@@ -143,6 +147,8 @@ DOM_CLASSES = \
     FileError \
     FileList \
     FileReader \
+    FileSystemCallback \
+    Flags \
     Geolocation \
     Geoposition \
     HTMLAllCollection \
@@ -242,6 +248,8 @@ DOM_CLASSES = \
     MessageChannel \
     MessageEvent \
     MessagePort \
+    Metadata \
+    MetadataCallback \
     MouseEvent \
     MutationEvent \
     NamedNodeMap \

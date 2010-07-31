@@ -29,8 +29,10 @@
 #include "TestObj.h"
 #include "WebDOMIDBKey.h"
 #include "WebDOMString.h"
+#include "WebDOMbool.h"
 #include "WebExceptionHandler.h"
 #include "WebNativeEventListener.h"
+#include "bool.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -174,6 +176,38 @@ void WebDOMTestObj::setTestObjAttr(const WebDOMTestObj& newTestObjAttr)
         return;
 
     impl()->setTestObjAttr(toWebCore(newTestObjAttr));
+}
+
+WebDOMTestObj WebDOMTestObj::XMLObjAttr() const
+{
+    if (!impl())
+        return WebDOMTestObj();
+
+    return toWebKit(WTF::getPtr(impl()->xmlObjAttr()));
+}
+
+void WebDOMTestObj::setXMLObjAttr(const WebDOMTestObj& newXMLObjAttr)
+{
+    if (!impl())
+        return;
+
+    impl()->setXMLObjAttr(toWebCore(newXMLObjAttr));
+}
+
+WebDOMbool WebDOMTestObj::CREATE() const
+{
+    if (!impl())
+        return WebDOMbool();
+
+    return toWebKit(WTF::getPtr(impl()->isCreate()));
+}
+
+void WebDOMTestObj::setCREATE(const WebDOMbool& newCREATE)
+{
+    if (!impl())
+        return;
+
+    impl()->setCreate(toWebCore(newCREATE));
 }
 
 WebDOMString WebDOMTestObj::reflectedStringAttr() const

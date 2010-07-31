@@ -1,3 +1,54 @@
+2010-07-30  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by Dumitru Daniliuc.
+
+        Add idl and mock implementation for HTML5 FileSystem API
+        https://bugs.webkit.org/show_bug.cgi?id=43134
+
+        Add idl for: FileSystem (as DOMFileSystem), Entry, Flags, Metadata,
+        FileSystemCallback, EntryCallback and ErrorCallback.
+        http://dev.w3.org/2009/dap/file-system/file-dir-sys.html
+
+        They are added only for Mac and chromium.
+
+        Tests will be added when we expose the entry point and add implementation.
+
+        * DerivedSources.make:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * storage/DOMFileSystem.cpp: Added.
+        * storage/DOMFileSystem.h: Added.
+        * storage/DOMFileSystem.idl: Added.
+        * storage/Entry.cpp: Added.
+        * storage/Entry.h: Added.
+        * storage/Entry.idl: Added.
+        * storage/EntryCallback.h: Added.
+        * storage/EntryCallback.idl: Added.
+        * storage/ErrorCallback.h: Added.
+        * storage/ErrorCallback.idl: Added.
+        * storage/FileSystemCallback.h: Added.
+        * storage/FileSystemCallback.idl: Added.
+        * storage/Flags.h: Added.
+        * storage/Flags.idl: Added.
+        * storage/Metadata.h: Added.
+        * storage/Metadata.idl: Added.
+        * storage/MetadataCallback.h: Added.
+        * storage/MetadataCallback.idl: Added.
+
+        * bindings/scripts/CodeGenerator.pm: Added special case handlings for generating setter/getter names for CREATE/EXCLUSIVE attributes in Flags.idl.
+
+        * bindings/scripts/test/TestObj.idl: Updated.
+        * bindings/scripts/test/CPP/WebDOMTestObj.cpp: Updated.
+        * bindings/scripts/test/CPP/WebDOMTestObj.cpp: Updated.
+        * bindings/scripts/test/CPP/WebDOMTestObj.h: Updated.
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp: Updated.
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.h: Updated.
+        * bindings/scripts/test/JS/JSTestObj.cpp: Updated.
+        * bindings/scripts/test/JS/JSTestObj.h: Updated.
+        * bindings/scripts/test/ObjC/DOMTestObj.h: Updated.
+        * bindings/scripts/test/ObjC/DOMTestObj.mm: Updated.
+
 2010-07-30  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r64408.
