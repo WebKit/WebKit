@@ -3122,3 +3122,6 @@ BUG50704 : plugins/document-open.html = TIMEOUT
 
 // New test added in r64359 which fails in Chromium.
 BUG50787 : plugins/npruntime/plugin-scriptable-object-invoke-default.html = TEXT
+
+// New test added in r64409 fails in Chromium.
+BUG50832 : printing/stretch-to-view-height.html = TEXT

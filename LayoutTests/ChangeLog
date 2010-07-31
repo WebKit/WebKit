@@ -1,3 +1,10 @@
+2010-07-31  Andrew Wilson  <atwilson@chromium.org>
+
+        Unreviewed expectations to mark stretch-to-view-height.html failing on
+        Chromium.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-07-30  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r64408.
