@@ -4,14 +4,15 @@ onunload = function() {
 }
 
 onpopstate = function() {
+  var topWin = top;
   // Verify that we are still in an iframe
-  if (top == window) {
-    top.document.body.innerHTML = "FAIL";
+  if (topWin == window) {
+    topWin.document.body.innerHTML = "FAIL";
   } else {
-    top.document.body.innerHTML = "PASS";
+    topWin.document.body.innerHTML = "PASS";
   }
-  if (window.layoutTestController)
-    layoutTestController.notifyDone();
+  if (topWin.layoutTestController)
+    topWin.layoutTestController.notifyDone();
 }
 
 onload = function() {
