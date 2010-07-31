@@ -34,7 +34,6 @@
 #include "V8IsolatedContext.h"
 #include "V8Proxy.h"
 #include "V8TestCallback.h"
-#include "V8bool.h"
 #include "V8log.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefCounted.h>
@@ -176,15 +175,15 @@ static v8::Handle<v8::Value> CREATEAttrGetter(v8::Local<v8::String> name, const 
 {
     INC_STATS("DOM.TestObj.CREATE._get");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    return toV8(imp->isCreate());
+    return v8Boolean(imp->isCreate());
 }
 
 static void CREATEAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.TestObj.CREATE._set");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    bool* v = V8bool::HasInstance(value) ? V8bool::toNative(v8::Handle<v8::Object>::Cast(value)) : 0;
-    imp->setCreate(WTF::getPtr(v));
+    bool v = value->BooleanValue();
+    imp->setCreate(v);
     return;
 }
 

@@ -28,13 +28,11 @@
 #include "JSEventListener.h"
 #include "JSTestCallback.h"
 #include "JSTestObj.h"
-#include "JSbool.h"
 #include "JSlog.h"
 #include "KURL.h"
 #include "ScriptCallStack.h"
 #include "SerializedScriptValue.h"
 #include "TestObj.h"
-#include "bool.h"
 #include <runtime/Error.h>
 #include <runtime/JSNumberCell.h>
 #include <runtime/JSString.h>
@@ -360,7 +358,7 @@ JSValue jsTestObjCreate(ExecState* exec, JSValue slotBase, const Identifier&)
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(slotBase));
     UNUSED_PARAM(exec);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(imp->isCreate()));
+    JSValue result = jsBoolean(imp->isCreate());
     return result;
 }
 
@@ -623,7 +621,7 @@ void setJSTestObjCreate(ExecState* exec, JSObject* thisObject, JSValue value)
 {
     JSTestObj* castedThis = static_cast<JSTestObj*>(thisObject);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-    imp->setCreate(tobool(value));
+    imp->setCreate(value.toBoolean(exec));
 }
 
 void setJSTestObjReflectedStringAttr(ExecState* exec, JSObject* thisObject, JSValue value)

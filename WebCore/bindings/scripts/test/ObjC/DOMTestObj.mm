@@ -37,7 +37,6 @@
 #import "DOMNodeInternal.h"
 #import "DOMStyleSheetInternal.h"
 #import "DOMTestObjInternal.h"
-#import "DOMboolInternal.h"
 #import "DOMlogInternal.h"
 #import "EventListener.h"
 #import "ExceptionHandlers.h"
@@ -51,7 +50,6 @@
 #import "ThreadCheck.h"
 #import "WebCoreObjCExtras.h"
 #import "WebScriptObjectPrivate.h"
-#import "bool.h"
 #import "log.h"
 #import <wtf/GetPtr.h>
 
@@ -170,18 +168,16 @@
     IMPL->setXMLObjAttr(core(newXMLObjAttr));
 }
 
-- (DOMbool *)CREATE
+- (BOOL)CREATE
 {
     WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->isCreate()));
+    return IMPL->isCreate();
 }
 
-- (void)setCREATE:(DOMbool *)newCREATE
+- (void)setCREATE:(BOOL)newCREATE
 {
     WebCore::JSMainThreadNullState state;
-    ASSERT(newCREATE);
-
-    IMPL->setCreate(core(newCREATE));
+    IMPL->setCreate(newCREATE);
 }
 
 - (NSString *)reflectedStringAttr

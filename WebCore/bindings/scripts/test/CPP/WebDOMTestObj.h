@@ -34,7 +34,6 @@ class WebDOMEventListener;
 class WebDOMIDBKey;
 class WebDOMString;
 class WebDOMTestObj;
-class WebDOMbool;
 
 class WebDOMTestObj : public WebDOMObject {
 public:
@@ -72,8 +71,8 @@ public:
     void setTestObjAttr(const WebDOMTestObj&);
     WebDOMTestObj XMLObjAttr() const;
     void setXMLObjAttr(const WebDOMTestObj&);
-    WebDOMbool CREATE() const;
-    void setCREATE(const WebDOMbool&);
+    bool CREATE() const;
+    void setCREATE(bool);
     WebDOMString reflectedStringAttr() const;
     void setReflectedStringAttr(const WebDOMString&);
     int reflectedIntegralAttr() const;

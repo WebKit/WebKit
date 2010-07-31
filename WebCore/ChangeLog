@@ -1,3 +1,32 @@
+2010-07-31  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Fix 'bool' in bindings/scripts/test/TestObj.
+
+        * bindings/scripts/test/CPP/WebDOMTestObj.cpp:
+        (WebDOMTestObj::CREATE):
+        (WebDOMTestObj::setCREATE):
+        * bindings/scripts/test/CPP/WebDOMTestObj.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        (webkit_dom_test_obj_get_create):
+        (webkit_dom_test_obj_set_create):
+        (webkit_dom_test_obj_set_property):
+        (webkit_dom_test_obj_get_property):
+        (webkit_dom_test_obj_class_init):
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjCreate):
+        (WebCore::setJSTestObjCreate):
+        * bindings/scripts/test/ObjC/DOMTestObj.h:
+        * bindings/scripts/test/ObjC/DOMTestObj.mm:
+        (-[DOMTestObj CREATE]):
+        (-[DOMTestObj setCREATE:]):
+        * bindings/scripts/test/TestObj.idl:
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjInternal::CREATEAttrGetter):
+        (WebCore::TestObjInternal::CREATEAttrSetter):
+
 2010-07-30  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by Dumitru Daniliuc.

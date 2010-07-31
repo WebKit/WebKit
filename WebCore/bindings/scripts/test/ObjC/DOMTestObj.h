@@ -30,7 +30,6 @@
 
 @class DOMIDBKey;
 @class DOMTestObj;
-@class DOMbool;
 @class DOMlog;
 @class NSString;
 @protocol DOMEventListener;
@@ -65,8 +64,8 @@ enum {
 - (void)setTestObjAttr:(DOMTestObj *)newTestObjAttr;
 - (DOMTestObj *)XMLObjAttr;
 - (void)setXMLObjAttr:(DOMTestObj *)newXMLObjAttr;
-- (DOMbool *)CREATE;
-- (void)setCREATE:(DOMbool *)newCREATE;
+- (BOOL)CREATE;
+- (void)setCREATE:(BOOL)newCREATE;
 - (NSString *)reflectedStringAttr;
 - (void)setReflectedStringAttr:(NSString *)newReflectedStringAttr;
 - (int)reflectedIntegralAttr;
