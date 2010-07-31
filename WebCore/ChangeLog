@@ -1,3 +1,12 @@
+2010-07-31  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/43300> Simplify variables in *.xcconfig files after adding iOS support
+
+        Reviewed by Darin Adler.
+
+        * Configurations/WebCore.xcconfig: Extracted
+        PRODUCTION_FRAMEWORKS_DIR variable.
+
 2010-07-31  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.
