@@ -14,6 +14,12 @@
 
 2010-07-31  Andrew Wilson  <atwilson@chromium.org>
 
+        Unreviewed expectations change for Chromium.
+
+        * platform/chromium-linux/svg/custom/massive-coordinates-expected.txt: Added.
+
+2010-07-31  Andrew Wilson  <atwilson@chromium.org>
+
         Unreviewed expectations to mark stretch-to-view-height.html failing on
         Chromium.
 
