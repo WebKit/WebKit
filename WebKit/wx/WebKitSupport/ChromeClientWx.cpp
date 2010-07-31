@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 Kevin Ollivier <kevino@theolliviers.com>
+ * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  *
  * All rights reserved.
  *
@@ -39,6 +40,8 @@
 #include "NotImplemented.h"
 #include "PlatformString.h"
 #include "SecurityOrigin.h"
+#include "PopupMenuWx.h"
+#include "SearchPopupMenuWx.h"
 #include "WindowFeatures.h"
 
 #include <stdio.h>
@@ -462,6 +465,21 @@ void ChromeClientWx::requestGeolocationPermissionForFrame(Frame*, Geolocation*)
 {
     // See the comment in WebCore/page/ChromeClient.h
     notImplemented();
+}
+
+bool ChromeClientWx::selectItemWritingDirectionIsNatural()
+{
+    return false;
+}
+
+PassRefPtr<PopupMenu> ChromeClientWx::createPopupMenu(PopupMenuClient* client) const
+{
+    return adoptRef(new PopupMenuWx(client));
+}
+
+PassRefPtr<SearchPopupMenu> ChromeClientWx::createSearchPopupMenu(PopupMenuClient* client) const
+{
+    return adoptRef(new SearchPopupMenuWx(client));
 }
 
 }

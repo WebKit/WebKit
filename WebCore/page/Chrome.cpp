@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006, 2007, 2009 Apple Inc. All rights reserved.
- * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
+ * Copyright (C) 2008, 2010 Nokia Corporation and/or its subsidiary(-ies)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -482,5 +482,19 @@ bool ChromeClient::paintCustomScrollCorner(GraphicsContext*, const FloatRect&)
     return false;
 }
 
+bool Chrome::selectItemWritingDirectionIsNatural()
+{
+    return m_client->selectItemWritingDirectionIsNatural();
+}
+
+PassRefPtr<PopupMenu> Chrome::createPopupMenu(PopupMenuClient* client) const
+{
+    return m_client->createPopupMenu(client);
+}
+
+PassRefPtr<SearchPopupMenu> Chrome::createSearchPopupMenu(PopupMenuClient* client) const
+{
+    return m_client->createSearchPopupMenu(client);
+}
 
 } // namespace WebCore

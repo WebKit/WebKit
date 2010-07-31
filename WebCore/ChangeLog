@@ -1,3 +1,282 @@
+2010-07-27  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Darin Fisher.
+
+        PopupMenu refactoring in preparation to WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=42592
+
+        Classes PopupMenu and SearchPopupMenu have been made pure virtual.
+
+        * platform/PopupMenu.h:
+        (WebCore::PopupMenu::~PopupMenu):
+        * platform/SearchPopupMenu.h:
+        (WebCore::SearchPopupMenu::~SearchPopupMenu):
+
+        Classes RenderMenuList and RenderTexyControlSingleLine have been changed to use
+        the new pure virtual PopupMenu and SearchPopupMenu.
+
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::adjustInnerStyle):
+        (WebCore::RenderMenuList::showPopup):
+        * rendering/RenderMenuList.h:
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::~RenderTextControlSingleLine):
+        (WebCore::RenderTextControlSingleLine::addSearchResult):
+        (WebCore::RenderTextControlSingleLine::showPopup):
+        (WebCore::RenderTextControlSingleLine::hidePopup):
+        (WebCore::RenderTextControlSingleLine::updateFromElement):
+        (WebCore::RenderTextControlSingleLine::valueChanged):
+        * rendering/RenderTextControlSingleLine.h:
+
+        Chrome and ChromeClient were made responsible for providing instances of classes
+        PopupMenu and SearchPopupMenu to its users.
+
+        * loader/EmptyClients.h:
+        (WebCore::EmptyPopupMenu::show):
+        (WebCore::EmptyPopupMenu::hide):
+        (WebCore::EmptyPopupMenu::updateFromElement):
+        (WebCore::EmptyPopupMenu::disconnectClient):
+        (WebCore::EmptySearchPopupMenu::popupMenu):
+        (WebCore::EmptySearchPopupMenu::saveRecentSearches):
+        (WebCore::EmptySearchPopupMenu::loadRecentSearches):
+        (WebCore::EmptySearchPopupMenu::enabled):
+        (WebCore::EmptyChromeClient::selectItemWritingDirectionIsNatural):
+        (WebCore::EmptyChromeClient::createPopupMenu):
+        (WebCore::EmptyChromeClient::createSearchPopupMenu):
+        * page/Chrome.cpp:
+        (WebCore::Chrome::selectItemWritingDirectionIsNatural):
+        (WebCore::Chrome::createPopupMenu):
+        (WebCore::Chrome::createSearchPopupMenu):
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+
+        Original contents of files PopupMenu.h and SearchPopupMenu.h have been splited
+        in several files, two for each platform (PopupMenuXXX.h and SearchPopupMenuXXX.h).
+        Each of new the files contain the concrete classes that inherit form PopupMenu or
+        SearchPopupMenu and are specific for the corresponding platform.
+
+        brew:
+
+        * platform/brew/PopupMenuBrew.cpp:
+        (WebCore::PopupMenuBrew::PopupMenuBrew):
+        (WebCore::PopupMenuBrew::~PopupMenuBrew):
+        (WebCore::PopupMenuBrew::disconnectClient):
+        (WebCore::PopupMenuBrew::show):
+        (WebCore::PopupMenuBrew::hide):
+        (WebCore::PopupMenuBrew::updateFromElement):
+        * platform/brew/PopupMenuBrew.h: Added.
+        (WebCore::PopupMenuBrew::client):
+        * platform/brew/SearchPopupMenuBrew.cpp:
+        (WebCore::SearchPopupMenuBrew::saveRecentSearches):
+        (WebCore::SearchPopupMenuBrew::loadRecentSearches):
+        (WebCore::SearchPopupMenuBrew::SearchPopupMenuBrew):
+        (WebCore::SearchPopupMenuBrew::enabled):
+        (WebCore::SearchPopupMenuBrew::popupMenu):
+        * platform/brew/SearchPopupMenuBrew.h: Added.
+
+        chromium:
+
+        * WebCore.gypi:
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupMenuChromium::PopupMenuChromium):
+        (WebCore::PopupMenuChromium::~PopupMenuChromium):
+        (WebCore::PopupMenuChromium::show):
+        (WebCore::PopupMenuChromium::hide):
+        (WebCore::PopupMenuChromium::updateFromElement):
+        (WebCore::PopupMenuChromium::disconnectClient):
+        * platform/chromium/PopupMenuChromium.h:
+        (WebCore::PopupMenuChromium::client):
+        * platform/chromium/SearchPopupMenuChromium.cpp:
+        (WebCore::SearchPopupMenuChromium::SearchPopupMenuChromium):
+        (WebCore::SearchPopupMenuChromium::popupMenu):
+        (WebCore::SearchPopupMenuChromium::enabled):
+        (WebCore::SearchPopupMenuChromium::saveRecentSearches):
+        (WebCore::SearchPopupMenuChromium::loadRecentSearches):
+        * platform/chromium/SearchPopupMenuChromium.h: Added.
+
+        efl:
+
+        * platform/efl/PopupMenuEfl.cpp:
+        (WebCore::PopupMenuEfl::PopupMenuEfl):
+        (WebCore::PopupMenuEfl::~PopupMenuEfl):
+        (WebCore::PopupMenuEfl::show):
+        (WebCore::PopupMenuEfl::hide):
+        (WebCore::PopupMenuEfl::updateFromElement):
+        (WebCore::PopupMenuEfl::disconnectClient):
+        * platform/efl/PopupMenuEfl.h: Added.
+        (WebCore::PopupMenuEfl::client):
+        * platform/efl/SearchPopupMenuEfl.cpp:
+        (WebCore::SearchPopupMenuEfl::SearchPopupMenuEfl):
+        (WebCore::SearchPopupMenuEfl::popupMenu):
+        (WebCore::SearchPopupMenuEfl::saveRecentSearches):
+        (WebCore::SearchPopupMenuEfl::loadRecentSearches):
+        (WebCore::SearchPopupMenuEfl::enabled):
+        * platform/efl/SearchPopupMenuEfl.h: Added.
+
+        gtk:
+
+        * GNUmakefile.am:
+        * platform/gtk/PopupMenuGtk.cpp:
+        (WebCore::PopupMenuGtk::PopupMenuGtk):
+        (WebCore::PopupMenuGtk::~PopupMenuGtk):
+        (WebCore::PopupMenuGtk::show):
+        (WebCore::PopupMenuGtk::hide):
+        (WebCore::PopupMenuGtk::updateFromElement):
+        (WebCore::PopupMenuGtk::disconnectClient):
+        (WebCore::PopupMenuGtk::menuItemActivated):
+        (WebCore::PopupMenuGtk::menuUnmapped):
+        (WebCore::PopupMenuGtk::menuPositionFunction):
+        (WebCore::PopupMenuGtk::menuRemoveItem):
+        * platform/gtk/PopupMenuGtk.h: Added.
+        (WebCore::PopupMenuGtk::client):
+        * platform/gtk/SearchPopupMenuGtk.cpp:
+        (WebCore::SearchPopupMenuGtk::SearchPopupMenuGtk):
+        (WebCore::SearchPopupMenuGtk::popupMenu):
+        (WebCore::SearchPopupMenuGtk::saveRecentSearches):
+        (WebCore::SearchPopupMenuGtk::loadRecentSearches):
+        (WebCore::SearchPopupMenuGtk::enabled):
+        * platform/gtk/SearchPopupMenuGtk.h: Added.
+
+        haiku:
+
+        * platform/haiku/PopupMenuHaiku.cpp:
+        (WebCore::HaikuPopup::HaikuPopup):
+        (WebCore::HaikuPopup::~HaikuPopup):
+        (WebCore::PopupMenuHaiku::PopupMenuHaiku):
+        (WebCore::PopupMenuHaiku::~PopupMenuHaiku):
+        (WebCore::PopupMenuHaiku::disconnectClient):
+        (WebCore::PopupMenuHaiku::show):
+        (WebCore::PopupMenuHaiku::hide):
+        (WebCore::PopupMenuHaiku::updateFromElement):
+        * platform/haiku/PopupMenuHaiku.h: Added.
+        (WebCore::PopupMenuHaiku::disconnectClient):
+        (WebCore::PopupMenuHaiku::client):
+        * platform/haiku/SearchPopupMenuHaiku.cpp:
+        (WebCore::SearchPopupMenuHaiku::SearchPopupMenuHaiku):
+        (WebCore::SearchPopupMenuHaiku::saveRecentSearches):
+        (WebCore::SearchPopupMenuHaiku::loadRecentSearches):
+        (WebCore::SearchPopupMenuHaiku::enabled):
+        (WebCore::SearchPopupMenuHaiku::popupMenu):
+        * platform/haiku/SearchPopupMenuHaiku.h: Added.
+
+        mac:
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mac/PopupMenuMac.h: Added.
+        (WebCore::PopupMenuMac::disconnectClient):
+        (WebCore::PopupMenuMac::client):
+        * platform/mac/PopupMenuMac.mm:
+        (WebCore::PopupMenuMac::PopupMenuMac):
+        (WebCore::PopupMenuMac::~PopupMenuMac):
+        (WebCore::PopupMenuMac::clear):
+        (WebCore::PopupMenuMac::populate):
+        (WebCore::PopupMenuMac::show):
+        (WebCore::PopupMenuMac::hide):
+        (WebCore::PopupMenuMac::updateFromElement):
+        (WebCore::PopupMenuMac::itemWritingDirectionIsNatural):
+        * platform/mac/SearchPopupMenuMac.h: Added.
+        * platform/mac/SearchPopupMenuMac.mm:
+        (WebCore::SearchPopupMenuMac::SearchPopupMenuMac):
+        (WebCore::SearchPopupMenuMac::popupMenu):
+        (WebCore::SearchPopupMenuMac::enabled):
+        (WebCore::SearchPopupMenuMac::saveRecentSearches):
+        (WebCore::SearchPopupMenuMac::loadRecentSearches):
+
+        qt:
+
+        * WebCore.pro:
+        * platform/qt/PopupMenuQt.cpp:
+        (WebCore::PopupMenuQt::PopupMenuQt):
+        (WebCore::PopupMenuQt::~PopupMenuQt):
+        (WebCore::PopupMenuQt::disconnectClient):
+        (WebCore::PopupMenuQt::show):
+        (WebCore::PopupMenuQt::hide):
+        (WebCore::PopupMenuQt::updateFromElement):
+        * platform/qt/PopupMenuQt.h: Added.
+        * platform/qt/QtAbstractWebPopup.h:
+        * platform/qt/SearchPopupMenuQt.cpp:
+        (WebCore::SearchPopupMenuQt::SearchPopupMenuQt):
+        (WebCore::SearchPopupMenuQt::popupMenu):
+        (WebCore::SearchPopupMenuQt::saveRecentSearches):
+        (WebCore::SearchPopupMenuQt::loadRecentSearches):
+        (WebCore::SearchPopupMenuQt::enabled):
+        * platform/qt/SearchPopupMenuQt.h: Added.
+
+        win:
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenuWin::PopupMenuWin):
+        (WebCore::PopupMenuWin::~PopupMenuWin):
+        (WebCore::PopupMenuWin::disconnectClient):
+        (WebCore::PopupMenuWin::popupClassName):
+        (WebCore::PopupMenuWin::show):
+        (WebCore::PopupMenuWin::hide):
+        (WebCore::PopupMenuWin::calculatePositionAndSize):
+        (WebCore::PopupMenuWin::setFocusedIndex):
+        (WebCore::PopupMenuWin::visibleItems):
+        (WebCore::PopupMenuWin::listIndexAtPoint):
+        (WebCore::PopupMenuWin::focusedIndex):
+        (WebCore::PopupMenuWin::focusFirst):
+        (WebCore::PopupMenuWin::focusLast):
+        (WebCore::PopupMenuWin::down):
+        (WebCore::PopupMenuWin::up):
+        (WebCore::PopupMenuWin::invalidateItem):
+        (WebCore::PopupMenuWin::clientRect):
+        (WebCore::PopupMenuWin::incrementWheelDelta):
+        (WebCore::PopupMenuWin::reduceWheelDelta):
+        (WebCore::PopupMenuWin::scrollToRevealSelection):
+        (WebCore::PopupMenuWin::updateFromElement):
+        (WebCore::PopupMenuWin::paint):
+        (WebCore::PopupMenuWin::valueChanged):
+        (WebCore::PopupMenuWin::invalidateScrollbarRect):
+        (WebCore::PopupMenuWin::registerClass):
+        (WebCore::PopupMenuWin::PopupMenuWndProc):
+        (WebCore::PopupMenuWin::wndProc):
+        * platform/win/PopupMenuWin.h: Added.
+        (WebCore::PopupMenuWin::client):
+        (WebCore::PopupMenuWin::scrollbar):
+        (WebCore::PopupMenuWin::itemHeight):
+        (WebCore::PopupMenuWin::windowRect):
+        (WebCore::PopupMenuWin::popupHandle):
+        (WebCore::PopupMenuWin::setWasClicked):
+        (WebCore::PopupMenuWin::wasClicked):
+        (WebCore::PopupMenuWin::setScrollOffset):
+        (WebCore::PopupMenuWin::scrollOffset):
+        (WebCore::PopupMenuWin::wheelDelta):
+        (WebCore::PopupMenuWin::scrollbarCapturingMouse):
+        (WebCore::PopupMenuWin::setScrollbarCapturingMouse):
+        * platform/win/SearchPopupMenuWin.cpp:
+        (WebCore::SearchPopupMenuWin::SearchPopupMenuWin):
+        (WebCore::SearchPopupMenuWin::popupMenu):
+        (WebCore::SearchPopupMenuWin::enabled):
+        (WebCore::SearchPopupMenuWin::saveRecentSearches):
+        (WebCore::SearchPopupMenuWin::loadRecentSearches):
+        * platform/win/SearchPopupMenuWin.h: Added.
+
+        wx:
+
+        * platform/wx/PopupMenuWx.cpp:
+        (WebCore::PopupMenuWx::PopupMenuWx):
+        (WebCore::PopupMenuWx::~PopupMenuWx):
+        (WebCore::PopupMenuWx::disconnectClient):
+        (WebCore::PopupMenuWx::show):
+        (WebCore::PopupMenuWx::OnMenuItemSelected):
+        (WebCore::PopupMenuWx::hide):
+        (WebCore::PopupMenuWx::updateFromElement):
+        * platform/wx/PopupMenuWx.h: Added.
+        (WebCore::PopupMenuWx::client):
+        * platform/wx/SearchPopupMenuWx.cpp:
+        (WebCore::SearchPopupMenuWx::SearchPopupMenuWx):
+        (WebCore::SearchPopupMenuWx::saveRecentSearches):
+        (WebCore::SearchPopupMenuWx::loadRecentSearches):
+        (WebCore::SearchPopupMenuWx::enabled):
+        (WebCore::SearchPopupMenuWx::popupMenu):
+        * platform/wx/SearchPopupMenuWx.h: Added.
+
+
+
 2010-07-31  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r64422.
