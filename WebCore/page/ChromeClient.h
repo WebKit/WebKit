@@ -53,6 +53,7 @@ namespace WebCore {
     class IntRect;
     class Node;
     class Page;
+    class SecurityOrigin;
     class String;
     class Widget;
 
@@ -167,6 +168,13 @@ namespace WebCore {
         // The chrome client would need to take some action such as evicting some
         // old caches.
         virtual void reachedMaxAppCacheSize(int64_t spaceNeeded) = 0;
+
+        // Callback invoked when the application cache origin quota is reached. This
+        // means that the resources attempting to be cached via the manifest are
+        // more than allowed on this origin. This callback allows the chrome client
+        // to take action, such as prompting the user to ask to increase the quota
+        // for this origin.
+        virtual void reachedApplicationCacheOriginQuota(SecurityOrigin* origin) = 0;
 #endif
 
 #if ENABLE(DASHBOARD_SUPPORT)

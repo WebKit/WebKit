@@ -30,10 +30,11 @@
 #include "FrameLoadRequest.h"
 #include "GtkVersioning.h"
 #include "IntRect.h"
-#include "PlatformString.h"
 #include "HitTestResult.h"
 #include "Icon.h"
 #include "KURL.h"
+#include "PlatformString.h"
+#include "SecurityOrigin.h"
 #include "webkitgeolocationpolicydecision.h"
 #include "webkitwebview.h"
 #include "webkitnetworkrequest.h"
@@ -547,6 +548,11 @@ void ChromeClient::exceededDatabaseQuota(Frame* frame, const String& databaseNam
 void ChromeClient::reachedMaxAppCacheSize(int64_t spaceNeeded)
 {
     // FIXME: Free some space.
+    notImplemented();
+}
+
+void ChromeClient::reachedApplicationCacheOriginQuota(SecurityOrigin*)
+{
     notImplemented();
 }
 #endif

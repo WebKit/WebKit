@@ -63,6 +63,7 @@ public:
 
     int64_t defaultOriginQuota() const { return m_defaultOriginQuota; }
     void setDefaultOriginQuota(int64_t quota);
+    bool usageForOrigin(const SecurityOrigin*, int64_t& usage);
     bool quotaForOrigin(const SecurityOrigin*, int64_t& quota);
     bool remainingSizeForOriginExcludingCache(const SecurityOrigin*, ApplicationCache*, int64_t& remainingSize);
     bool storeUpdatedQuotaForOrigin(const SecurityOrigin*, int64_t quota);
@@ -104,6 +105,8 @@ private:
     bool store(ApplicationCacheGroup*, GroupStorageIDJournal*);
     bool store(ApplicationCache*, ResourceStorageIDJournal*);
     bool store(ApplicationCacheResource*, unsigned cacheStorageID);
+
+    bool ensureOriginRecord(const SecurityOrigin*);
 
     void loadManifestHostHashes();
     

@@ -38,6 +38,7 @@
 #include "Icon.h"
 #include "NotImplemented.h"
 #include "PlatformString.h"
+#include "SecurityOrigin.h"
 #include "WindowFeatures.h"
 
 #include <stdio.h>
@@ -426,6 +427,11 @@ void ChromeClientWx::exceededDatabaseQuota(Frame*, const String&)
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
 void ChromeClientWx::reachedMaxAppCacheSize(int64_t spaceNeeded)
+{
+    notImplemented();
+}
+
+void ChromeClientWx::reachedApplicationCacheOriginQuota(SecurityOrigin*)
 {
     notImplemented();
 }

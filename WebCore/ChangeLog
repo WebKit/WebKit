@@ -5,6 +5,47 @@
         Limit ApplicationCache Total and Per-Origin Storage Capacity (Quotas)
         https://bugs.webkit.org/show_bug.cgi?id=40627
 
+        Part 4 - Client Notification when the Quota is Reached
+
+        Notify the WebKit client when the per-origin quota is reached
+        via a delegate method reachedApplicationCacheOriginQuota.
+
+          Call the delegate method when the quota is reached.
+
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::ApplicationCacheGroup):
+        (WebCore::ApplicationCacheGroup::didFinishLoading):
+        (WebCore::ApplicationCacheGroup::didReachOriginQuota):
+        (WebCore::ApplicationCacheGroup::cacheUpdateFailedDueToOriginQuota):
+        (WebCore::ApplicationCacheGroup::checkIfLoadIsComplete):
+        (WebCore::ApplicationCacheGroup::scheduleReachedOriginQuotaCallback):
+        * loader/appcache/ApplicationCacheGroup.h:
+
+          Some minor refactoring to access more quota information
+          without repeating code. Such as origin usage, and creating
+          an origin record.
+
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::usageForOrigin):
+        (WebCore::ApplicationCacheStorage::storeUpdatedQuotaForOrigin):
+        (WebCore::ApplicationCacheStorage::store):
+        (WebCore::ApplicationCacheStorage::ensureOriginRecord):
+        * loader/appcache/ApplicationCacheStorage.h:
+
+          Boilerplate. Exports and definition of the delegate method.
+
+        * WebCore.OfflineWebApplications.exp:
+        * loader/EmptyClients.h:
+        (WebCore::EmptyChromeClient::reachedApplicationCacheOriginQuota):
+        * page/ChromeClient.h:
+
+2010-07-30  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by David Kilzer.
+
+        Limit ApplicationCache Total and Per-Origin Storage Capacity (Quotas)
+        https://bugs.webkit.org/show_bug.cgi?id=40627
+
         Part 3 - Refactor storeNewestCache to allow Failure Reason Output
 
         Storing can result in an error in a number of reasons. Previously

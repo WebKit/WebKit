@@ -40,6 +40,7 @@
 #include <WebCore/FileChooser.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
+#include <WebCore/SecurityOrigin.h>
 
 using namespace WebCore;
 
@@ -372,6 +373,11 @@ void WebChromeClient::exceededDatabaseQuota(Frame*, const String& databaseName)
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
 void WebChromeClient::reachedMaxAppCacheSize(int64_t)
+{
+    notImplemented();
+}
+
+void WebChromeClient::reachedApplicationCacheOriginQuota(SecurityOrigin*)
 {
     notImplemented();
 }

@@ -1,3 +1,14 @@
+2010-07-30  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by David Kilzer.
+
+        Limit ApplicationCache Total and Per-Origin Storage Capacity (Quotas)
+        https://bugs.webkit.org/show_bug.cgi?id=40627
+
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::reachedApplicationCacheOriginQuota):
+        * src/ChromeClientImpl.h:
+
 2010-07-30  James Robinson  <jamesr@chromium.org>
 
         Compile fix. Put GLES2 functions behind USE(GLES2_RENDERING) instead of

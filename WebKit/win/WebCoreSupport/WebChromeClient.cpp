@@ -55,6 +55,7 @@
 #include <WebCore/LocalizedStrings.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
+#include <WebCore/SecurityOrigin.h>
 #include <WebCore/WindowFeatures.h>
 #pragma warning(pop)
 
@@ -615,6 +616,11 @@ void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& database
 void WebChromeClient::reachedMaxAppCacheSize(int64_t spaceNeeded)
 {
     // FIXME: Free some space.
+    notImplemented();
+}
+
+void WebChromeClient::reachedApplicationCacheOriginQuota(SecurityOrigin*)
+{
     notImplemented();
 }
 #endif

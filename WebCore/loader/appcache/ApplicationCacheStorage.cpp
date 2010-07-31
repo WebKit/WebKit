@@ -443,6 +443,30 @@ bool ApplicationCacheStorage::quotaForOrigin(const SecurityOrigin* origin, int64
     return false;
 }
 
+bool ApplicationCacheStorage::usageForOrigin(const SecurityOrigin* origin, int64_t& usage)
+{
+    // If an Origins record doesn't exist, then the SUM will be null,
+    // which will become 0, as expected, when converting to a number.
+    SQLiteStatement statement(m_database, "SELECT SUM(Caches.size)"
+                                          "  FROM CacheGroups"
+                                          " INNER JOIN Origins ON CacheGroups.origin = Origins.origin"
+                                          " INNER JOIN Caches ON CacheGroups.id = Caches.cacheGroup"
+                                          " WHERE Origins.origin=?");
+    if (statement.prepare() != SQLResultOk)
+        return false;
+
+    statement.bindText(1, origin->databaseIdentifier());
+    int result = statement.step();
+
+    if (result == SQLResultRow) {
+        usage = statement.getColumnInt64(0);
+        return true;
+    }
+
+    LOG_ERROR("Could not get the quota of an origin, error \"%s\"", m_database.lastErrorMsg());
+    return false;
+}
+
 bool ApplicationCacheStorage::remainingSizeForOriginExcludingCache(const SecurityOrigin* origin, ApplicationCache* cache, int64_t& remainingSize)
 {
     openDatabase(false);
@@ -496,6 +520,9 @@ bool ApplicationCacheStorage::storeUpdatedQuotaForOrigin(const SecurityOrigin* o
 {
     openDatabase(false);
     if (!m_database.isOpen())
+        return false;
+
+    if (!ensureOriginRecord(origin))
         return false;
 
     SQLiteStatement updateStatement(m_database, "UPDATE Origins SET quota=? WHERE origin=?");
@@ -625,26 +652,15 @@ bool ApplicationCacheStorage::store(ApplicationCacheGroup* group, GroupStorageID
     if (statement.prepare() != SQLResultOk)
         return false;
 
-    String originIdentifier = group->origin()->databaseIdentifier();
-
     statement.bindInt64(1, urlHostHash(group->manifestURL()));
     statement.bindText(2, group->manifestURL());
-    statement.bindText(3, originIdentifier);
+    statement.bindText(3, group->origin()->databaseIdentifier());
 
     if (!executeStatement(statement))
         return false;
 
-    // Create Origin if needed.
-    {
-        SQLiteStatement insertOriginStatement(m_database, "INSERT INTO Origins (origin, quota) VALUES (?, ?)");
-        if (insertOriginStatement.prepare() != SQLResultOk)
-            return false;
-
-        insertOriginStatement.bindText(1, originIdentifier);
-        insertOriginStatement.bindInt64(2, m_defaultOriginQuota);
-        if (!executeStatement(insertOriginStatement))
-            return false;
-    }
+    if (!ensureOriginRecord(group->origin()))
+        return false;
 
     group->setStorageID(static_cast<unsigned>(m_database.lastInsertRowID()));
     journal->add(group, 0);
@@ -855,6 +871,20 @@ bool ApplicationCacheStorage::store(ApplicationCacheResource* resource, Applicat
         return false;
     
     storeResourceTransaction.commit();
+    return true;
+}
+
+bool ApplicationCacheStorage::ensureOriginRecord(const SecurityOrigin* origin)
+{
+    SQLiteStatement insertOriginStatement(m_database, "INSERT INTO Origins (origin, quota) VALUES (?, ?)");
+    if (insertOriginStatement.prepare() != SQLResultOk)
+        return false;
+
+    insertOriginStatement.bindText(1, origin->databaseIdentifier());
+    insertOriginStatement.bindInt64(2, m_defaultOriginQuota);
+    if (!executeStatement(insertOriginStatement))
+        return false;
+
     return true;
 }
 

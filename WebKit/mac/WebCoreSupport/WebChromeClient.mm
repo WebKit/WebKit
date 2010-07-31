@@ -30,6 +30,8 @@
 #import "WebChromeClient.h"
 
 #import "DOMNodeInternal.h"
+#import "WebApplicationCacheSecurityOrigin.h"
+#import "WebDatabaseSecurityOrigin.h"
 #import "WebDefaultUIDelegate.h"
 #import "WebDelegateImplementationCaching.h"
 #import "WebElementDictionary.h"
@@ -553,7 +555,7 @@ void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& database
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    WebSecurityOrigin *webOrigin = [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:frame->document()->securityOrigin()];
+    WebDatabaseSecurityOrigin *webOrigin = [[WebDatabaseSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:frame->document()->securityOrigin()];
     // FIXME: remove this workaround once shipping Safari has the necessary delegate implemented.
     if (WKAppVersionCheckLessThan(@"com.apple.Safari", -1, 3.1)) {
         const unsigned long long defaultQuota = 5 * 1024 * 1024; // 5 megabytes should hopefully be enough to test storage support.
@@ -570,6 +572,17 @@ void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& database
 void WebChromeClient::reachedMaxAppCacheSize(int64_t spaceNeeded)
 {
     // FIXME: Free some space.
+}
+
+void WebChromeClient::reachedApplicationCacheOriginQuota(SecurityOrigin* origin)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+
+    WebApplicationCacheSecurityOrigin *webOrigin = [[WebApplicationCacheSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:origin];
+    CallUIDelegate(m_webView, @selector(webView:exceededApplicationCacheOriginQuotaForSecurityOrigin:), webOrigin);
+    [webOrigin release];
+
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 #endif
     

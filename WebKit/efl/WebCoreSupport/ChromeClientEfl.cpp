@@ -47,6 +47,7 @@
 #include "KURL.h"
 #include "NotImplemented.h"
 #include "PlatformString.h"
+#include "SecurityOrigin.h"
 #include "ViewportArguments.h"
 #include "WindowFeatures.h"
 #include "ewk_private.h"
@@ -374,6 +375,11 @@ void ChromeClientEfl::print(Frame* frame)
 void ChromeClientEfl::reachedMaxAppCacheSize(int64_t spaceNeeded)
 {
     // FIXME: Free some space.
+    notImplemented();
+}
+
+void ChromeClientEfl::reachedApplicationCacheOriginQuota(SecurityOrigin*)
+{
     notImplemented();
 }
 #endif

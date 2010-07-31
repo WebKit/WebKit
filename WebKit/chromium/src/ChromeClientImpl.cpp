@@ -56,6 +56,7 @@
 #include "Page.h"
 #include "PopupMenuChromium.h"
 #include "ScriptController.h"
+#include "SecurityOrigin.h"
 #include "WebGeolocationService.h"
 #if USE(V8)
 #include "V8Proxy.h"
@@ -576,6 +577,11 @@ void ChromeClientImpl::exceededDatabaseQuota(Frame* frame, const String& databas
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
 void ChromeClientImpl::reachedMaxAppCacheSize(int64_t spaceNeeded)
+{
+    ASSERT_NOT_REACHED();
+}
+
+void ChromeClientImpl::reachedApplicationCacheOriginQuota(SecurityOrigin*)
 {
     ASSERT_NOT_REACHED();
 }

@@ -25,8 +25,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface WebApplicationCache: NSObject {
-}
+@interface WebApplicationCache: NSObject
 
 + (long long)maximumSize;
 + (void)setMaximumSize:(long long)size;

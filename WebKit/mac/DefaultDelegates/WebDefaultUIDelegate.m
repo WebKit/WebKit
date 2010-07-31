@@ -227,6 +227,10 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
 {
 }
 
+- (void)webView:(WebView *)sender exceededApplicationCacheOriginQuotaForSecurityOrigin:(WebSecurityOrigin *)origin
+{
+}
+
 - (BOOL)webView:(WebView *)sender shouldReplaceUploadFile:(NSString *)path usingGeneratedFilename:(NSString **)filename
 {
     return NO;

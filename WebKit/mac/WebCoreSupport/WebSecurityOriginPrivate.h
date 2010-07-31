@@ -37,17 +37,19 @@
 - (NSString*)protocol;
 - (NSString*)host;
 
-// Returns zero if the port is the default port for the protocol, non-zero otherwise
+// Returns zero if the port is the default port for the protocol, non-zero otherwise.
 - (unsigned short)port;
 
-// Returns the current total usage of all databases in this security origin in bytes
-- (unsigned long long)usage;
+// Meant to be implemented in a subclass.
+// Returns the current total usage of all relevant items in this security origin in bytes.
+- (long long)usage;
 
-- (unsigned long long)quota;
-// Sets the storage quota (in bytes)
-// If the quota is set to a value lower than the current usage, that quota will "stick" but no data will be purged to meet the new quota.  
-// This will simply prevent new data from being added to databases in that origin
-- (void)setQuota:(unsigned long long)quota;
+// Meant to be implemented in a subclass.
+// Returns the quota of this security origin in bytes.
+- (long long)quota;
 
+// Meant to be implemented in a subclass.
+// Sets the storage quota in bytes.
+- (void)setQuota:(long long)quota;
 
 @end

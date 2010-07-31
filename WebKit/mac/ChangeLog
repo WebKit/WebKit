@@ -5,6 +5,50 @@
         Limit ApplicationCache Total and Per-Origin Storage Capacity (Quotas)
         https://bugs.webkit.org/show_bug.cgi?id=40627
 
+        Part 4 - Client Notification when the Quota is Reached
+
+        Notify the WebKit client when the per-origin quota is reached
+        via a delegate method reachedApplicationCacheOriginQuota.
+
+          Refactor the WebSecurityOrigin class to be generic enough to
+          allow quota management of both Databases or Application Caches
+          via subclasses.
+
+        * Storage/WebDatabaseSecurityOrigin.h: Added.
+        * Storage/WebDatabaseSecurityOrigin.mm: Added.
+        (-[WebDatabaseSecurityOrigin quota]):
+        (-[WebDatabaseSecurityOrigin setQuota:]):
+        * WebCoreSupport/WebApplicationCacheSecurityOrigin.h: Added.
+        * WebCoreSupport/WebApplicationCacheSecurityOrigin.mm: Added.
+        (-[WebApplicationCacheSecurityOrigin quota]):
+        (-[WebApplicationCacheSecurityOrigin setQuota:]):
+        * Storage/WebSecurityOrigin.mm: Removed. (Moved to WebCoreSupport)
+        * Storage/WebSecurityOriginPrivate.h: Removed. (Moved to WebCoreSupport)
+        * WebCoreSupport/WebSecurityOrigin.mm: Added.
+        (-[WebSecurityOrigin usage]): to be implemented by subclasses.
+        (-[WebSecurityOrigin quota]): to be implemented by subclasses.
+        (-[WebSecurityOrigin setQuota:]): to be implemented by subclasses.
+        * WebCoreSupport/WebSecurityOriginInternal.h: Renamed from WebKit/mac/Storage/WebSecurityOriginInternal.h.
+        * WebCoreSupport/WebSecurityOriginPrivate.h: Added.
+
+          Turn the notification into a WebUI Delegate to call. Following
+          the example of Databases.
+
+        * DefaultDelegates/WebDefaultUIDelegate.m:
+        (-[WebDefaultUIDelegate webView:exceededApplicationCacheOriginQuotaForSecurityOrigin:]):
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::exceededDatabaseQuota): use the Databases Security Origin subclass.
+        (WebChromeClient::reachedApplicationCacheOriginQuota): use the Application Cache Security Origin subclass.
+        * WebView/WebUIDelegatePrivate.h:
+
+2010-07-30  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by David Kilzer.
+
+        Limit ApplicationCache Total and Per-Origin Storage Capacity (Quotas)
+        https://bugs.webkit.org/show_bug.cgi?id=40627
+
         Part 1 - Add Total and Per-Origin Quota Preferences.
 
         Allow the application cache total size to be a preference, and
