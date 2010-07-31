@@ -1,0 +1,25 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../../fast/js/resources/js-test-style.css">
+<style>
+</style>
+</head>
+<body>
+<p>Test appearances of input-speech-button in &lt;input type='search'&gt;.</p>
+<div id="console"></div>
+
+<script>
+var parent = document.createElement('div');
+document.body.appendChild(parent);
+parent.innerHTML = '<table><tr><td id=p1><td id=p2><td id=p3></tr></table>';
+for (var size = 8; size < 24; size++) {
+    var div = document.createElement('div');
+    document.getElementById('p' + (Math.floor((size - 8) / 6) + 1)).appendChild(div);
+    div.innerHTML = '<input type="search" style="font-size:' + size + 'px" speech> <br>'
+        + '<input type="search" style="font-size:' + size + 'px" value="012345678901234567890123456789"> <br>'
+        + '<input type="search" style="font-size:' + size + 'px" value="012345678901234567890123456789" speech>';
+}
+</script>
+</body>
+</html>

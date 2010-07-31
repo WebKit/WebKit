@@ -920,9 +920,7 @@ fast/forms/input-appearance-spinbutton-disabled-readonly.html
 fast/forms/input-number-events.html
 
 # Speech input is not yet enabled.
-fast/forms/input-appearance-numberandspeech.html
-fast/forms/input-appearance-searchandspeech.html
-fast/forms/input-appearance-speechbutton.html
+fast/speech
 
 # Needs to be fixed at image decoder layer for Safari.
 fast/images/large-size-image-crash.html
