@@ -19,7 +19,8 @@ function runTest()
     if (!sessionStorage.secondPageReached) {
         document.getElementById("firstInput").value = "SuperSeekritValue";
         document.getElementById("secondInput").value = "SuperSeekritValue";
-        window.location = "resources/autocomplete-cleared-on-back2.html";
+        // Location changes need to happen outside the onload handler to generate history entries.
+        setTimeout(function() {window.location = "resources/autocomplete-cleared-on-back2.html";}, 0);
         return;
     }
     

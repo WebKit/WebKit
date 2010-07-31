@@ -1,3 +1,49 @@
+2010-07-30  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Session history should skip over JS redirects
+        https://bugs.webkit.org/show_bug.cgi?id=42861
+        
+        Lock the back/forward list for location changes that happen before the 
+        onload event fires that are not the result of user gestures.
+        
+        http/tests/history tests now pass, their expectatiosn were updated 
+        accordingly. Other tests needed a setTimeout wrapper around location
+        changes during onload, otherwise they would not generate history 
+        entries as expected anymore.
+        
+        * fast/css/target-fragment-match.html:
+        * fast/dom/Window/timer-resume-on-navigation-back.html:
+        * fast/dom/location-hash.html:
+        * fast/events/pageshow-pagehide-on-back-cached-with-frames-expected.txt:
+        * fast/events/pageshow-pagehide-on-back-cached-with-frames.html:
+        * fast/frames/resources/cached-page-1.html:
+        * fast/frames/resources/cached-page-2.html:
+        * fast/harness/resources/cached-page-1.html:
+        * fast/harness/resources/cached-page-with-data-urls.html:
+        * fast/history/gesture-before-onload-expected.txt: Added.
+        * fast/history/gesture-before-onload.html: Added.
+        * fast/history/history-length.html:
+        * fast/history/resources/gesture-before-onload-target.html: Added.
+        * fast/history/saves-state-after-fragment-nav.html:
+        * fast/loader/input-element-page-cache-crash.html:
+        * fast/loader/stateobjects/document-destroyed-navigate-back.html:
+        * fast/loader/stateobjects/pushstate-clears-forward-history.html:
+        * fast/loader/subframe-navigate-during-main-frame-load.html:
+        * http/tests/history/redirect-js-document-location-before-load-expected.txt:
+        * http/tests/history/redirect-js-location-assign-before-load-expected.txt:
+        * http/tests/history/redirect-js-location-before-load-expected.txt:
+        * http/tests/history/redirect-js-location-href-before-load-expected.txt:
+        * http/tests/navigation/resources/document-location.js:
+        (start):
+        * security/autocomplete-cleared-on-back.html:
+        * storage/hash-change-with-xhr.js:
+        (updateDatabase):
+        (invokeBack):
+        (runTest):
+        (runTestsInner):
+
 2010-07-30  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by Darin Adler.

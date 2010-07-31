@@ -33,9 +33,10 @@ function runThirdStageOfTest()
 
 function loaded()
 {
-    if (!sessionStorage.stage)
-        runFirstStageOfTest();
-    else if (sessionStorage.stage == 2)
+    if (!sessionStorage.stage) {
+        // Location changes need to happen outside the onload handler to generate history entries.
+        setTimeout(runFirstStageOfTest, 0);
+    } else if (sessionStorage.stage == 2)
         runSecondStageOfTest();
     else if (sessionStorage.stage == 3)
         runThirdStageOfTest();

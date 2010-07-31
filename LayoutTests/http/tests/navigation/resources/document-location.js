@@ -7,7 +7,8 @@ function start() {
       layoutTestController.dumpAsText();
       layoutTestController.waitUntilDone();
 
-      runTest();
+      // Location changes need to happen outside the onload handler to generate history entries.
+      setTimeout(runTest, 0);
     } else {
       // loaded the ?1 navigation
       layoutTestController.notifyDone();
