@@ -156,9 +156,6 @@ fast/events/ondrop-text-html.html
 # https://bugs.webkit.org/show_bug.cgi?id=33812
 fast/dom/icon-url-property.html
 
-# Doesn't support WOFF yet.
-fast/css/font-face-woff.html
-
 # EventSendingController does not send events on areas outside the WebView.
 scrollbars/scrollbar-click-does-not-blur-content.html
 

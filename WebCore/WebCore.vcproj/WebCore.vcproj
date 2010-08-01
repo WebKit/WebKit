@@ -24360,6 +24360,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\graphics\WOFFFileFormat.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\graphics\WOFFFileFormat.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\graphics\UnitBezier.h"
 					>
 				</File>

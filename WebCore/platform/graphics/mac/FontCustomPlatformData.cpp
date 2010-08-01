@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Computer, Inc.
+ * Copyright (C) 2007, 2008, 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,10 +21,11 @@
 #include "config.h"
 #include "FontCustomPlatformData.h"
 
-#include <ApplicationServices/ApplicationServices.h>
-#include "SharedBuffer.h"
 #include "FontPlatformData.h"
 #include "OpenTypeSanitizer.h"
+#include "SharedBuffer.h"
+#include "WOFFFileFormat.h"
+#include <ApplicationServices/ApplicationServices.h>
 
 namespace WebCore {
 
@@ -50,6 +51,16 @@ FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer)
     if (!transcodeBuffer)
         return 0; // validation failed.
     buffer = transcodeBuffer.get();
+#else
+    RefPtr<SharedBuffer> sfntBuffer;
+    if (isWOFF(buffer)) {
+        Vector<char> sfnt;
+        if (!convertWOFFToSfnt(buffer, sfnt))
+            return 0;
+
+        sfntBuffer = SharedBuffer::adoptVector(sfnt);
+        buffer = sfntBuffer.get();
+    }
 #endif
 
     ATSFontContainerRef containerRef = 0;
@@ -60,7 +71,7 @@ FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer)
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
     RetainPtr<CFDataRef> bufferData(AdoptCF, buffer->createCFData());
     RetainPtr<CGDataProviderRef> dataProvider(AdoptCF, CGDataProviderCreateWithCFData(bufferData.get()));
-    
+
     cgFontRef.adoptCF(CGFontCreateWithDataProvider(dataProvider.get()));
     if (!cgFontRef)
         return 0;
@@ -99,6 +110,11 @@ FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer)
 #endif // !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
 
     return new FontCustomPlatformData(containerRef, fontRef, cgFontRef.releaseRef());
+}
+
+bool FontCustomPlatformData::supportsFormat(const String& format)
+{
+    return equalIgnoringCase(format, "truetype") || equalIgnoringCase(format, "opentype") || equalIgnoringCase(format, "woff");
 }
 
 }

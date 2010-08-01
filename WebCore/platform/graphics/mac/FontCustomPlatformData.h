@@ -33,6 +33,7 @@ namespace WebCore {
 
 class FontPlatformData;
 class SharedBuffer;
+class String;
 
 struct FontCustomPlatformData : Noncopyable {
     FontCustomPlatformData(ATSFontContainerRef container, ATSFontRef atsFont, CGFontRef cgFont)
@@ -41,6 +42,8 @@ struct FontCustomPlatformData : Noncopyable {
     ~FontCustomPlatformData();
 
     FontPlatformData fontPlatformData(int size, bool bold, bool italic, FontRenderingMode = NormalRenderingMode);
+
+    static bool supportsFormat(const String&);
 
     ATSFontContainerRef m_atsContainer;
     ATSFontRef m_atsFont;

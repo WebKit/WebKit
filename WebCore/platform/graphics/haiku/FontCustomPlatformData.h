@@ -28,11 +28,14 @@ namespace WebCore {
 
     class FontPlatformData;
     class SharedBuffer;
+    class String;
 
     struct FontCustomPlatformData : Noncopyable {
     public:
         FontCustomPlatformData() { }
         ~FontCustomPlatformData();
+
+        static bool supportsFormat(const String&);
 
         FontPlatformData fontPlatformData(int size, bool bold, bool italic, FontRenderingMode = NormalRenderingMode);
     };

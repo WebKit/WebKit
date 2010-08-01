@@ -42,4 +42,9 @@ FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer)
     return 0;
 }
 
+bool FontCustomPlatformData::supportsFormat(const String& /* format */)
+{
+    return false;
+}
+
 }

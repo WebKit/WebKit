@@ -45,6 +45,9 @@ namespace WebCore {
         ~FontCustomPlatformData();
 
         FontPlatformData fontPlatformData(int size, bool bold, bool italic, FontRenderingMode = NormalRenderingMode);
+
+        static bool supportsFormat(const String&);
+
         String m_name;
     };
 

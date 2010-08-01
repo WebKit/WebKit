@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CSSFontFaceSrcValue.h"
 #include "CSSStyleSheet.h"
+#include "FontCustomPlatformData.h"
 #include "Node.h"
 
 namespace WebCore {
@@ -48,10 +49,7 @@ bool CSSFontFaceSrcValue::isSupportedFormat() const
         return true;
     }
 
-    return equalIgnoringCase(m_format, "truetype") || equalIgnoringCase(m_format, "opentype")
-#if ENABLE(OPENTYPE_SANITIZER)
-           || equalIgnoringCase(m_format, "woff")
-#endif
+    return FontCustomPlatformData::supportsFormat(m_format)
 #if ENABLE(SVG_FONTS)
            || isSVGFontFaceSrc()
 #endif

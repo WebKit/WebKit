@@ -29,6 +29,7 @@ namespace WebCore {
 
 class FontPlatformData;
 class SharedBuffer;
+class String;
 
 struct FontCustomPlatformDataCairo : Noncopyable {
     FontCustomPlatformDataCairo(cairo_font_face_t* fontFace)
@@ -38,6 +39,8 @@ struct FontCustomPlatformDataCairo : Noncopyable {
     ~FontCustomPlatformDataCairo();
 
     FontPlatformData fontPlatformData(int size, bool bold, bool italic);
+
+    static bool supportsFormat(const String&);
 
     cairo_font_face_t* m_fontFace;
 };

@@ -83,4 +83,9 @@ FontCustomPlatformData* createFontCustomPlatformData(const SharedBuffer* buffer)
     return 0;
 }
 
+bool FontCustomPlatformData::supportsFormat(const String& format)
+{
+    return equalIgnoringCase(format, "truetype") || equalIgnoringCase(format, "opentype");
+}
+
 }

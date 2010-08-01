@@ -1,3 +1,51 @@
+2010-07-31  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/8234766> Add WOFF support for @font-face
+        https://bugs.webkit.org/show_bug.cgi?id=31302
+
+        * WebCore.vcproj/WebCore.vcproj: Added WOFFFileFormat.{cpp,h}.
+        * WebCore.vcproj/WebCoreCommon.vsprops: Added $(WebKitLibraries)\include\zlib to the header search path.
+        * WebCore.xcodeproj/project.pbxproj: Added WOFFFileFormat.{cpp,h} and linking against libz.
+        * css/CSSFontFaceSrcValue.cpp:
+        (WebCore::CSSFontFaceSrcValue::isSupportedFormat): Replaced hard-coded list of supported formats with
+        call to FontCustomPlatformData::supportsFormat().
+        * platform/graphics/WOFFFileFormat.cpp: Added.
+        (WebCore::isWOFF): Checks if the buffer has the WOFF signature.
+        (WebCore::convertWOFFToSfnt): Extracts the sfnt payload of a WOFF package.
+        * platform/graphics/WOFFFileFormat.h: Added.
+        * platform/graphics/cairo/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::supportsFormat): Added. Returns true for truetype and opentype.
+        * platform/graphics/cairo/FontCustomPlatformData.h:
+        * platform/graphics/chromium/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::supportsFormat): Added. Returns true for truetype and opentype,
+        and also for woff if the OpenType sanitizer is enabled.
+        * platform/graphics/chromium/FontCustomPlatformData.h:
+        * platform/graphics/gtk/FontCustomPlatformDataPango.cpp:
+        (WebCore::FontCustomPlatformData::supportsFormat): Added. Returns false.
+        * platform/graphics/haiku/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::supportsFormat): Ditto.
+        * platform/graphics/haiku/FontCustomPlatformData.h:
+        * platform/graphics/mac/FontCustomPlatformData.cpp:
+        (WebCore::freeSfntData):
+        (WebCore::createFontCustomPlatformData): If the OpenType font sanitizer is not enabled, use convertWOFFToSfnt().
+        (WebCore::FontCustomPlatformData::supportsFormat): Added. Returns true for truetype, opentype and woff.
+        * platform/graphics/mac/FontCustomPlatformData.h:
+        * platform/graphics/qt/FontCustomPlatformData.h:
+        * platform/graphics/qt/FontCustomPlatformDataQt.cpp:
+        (WebCore::FontCustomPlatformData::supportsFormat): Added. Returns true for truetype and opentype.
+        * platform/graphics/win/FontCustomPlatformData.cpp:
+        (WebCore::createFontCustomPlatformData): If the OpenType font sanitizer is not enabled, use convertWOFFToSfnt().
+        (WebCore::FontCustomPlatformData::supportsFormat): Added. Returns true for truetype, opentype and woff.
+        * platform/graphics/win/FontCustomPlatformData.h:
+        * platform/graphics/win/FontCustomPlatformDataCairo.cpp:
+        (WebCore::FontCustomPlatformData::supportsFormat): Added. Returns true for truetype and opentype.
+        * platform/graphics/win/FontCustomPlatformDataCairo.h:
+        * platform/graphics/wince/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::supportsFormat): Ditto.
+        * platform/graphics/wince/FontCustomPlatformData.h:
+
 2010-07-31  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Ojan Vafai.

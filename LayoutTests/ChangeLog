@@ -1,3 +1,15 @@
+2010-07-31  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/8234766> Add WOFF support for @font-face
+        https://bugs.webkit.org/show_bug.cgi?id=31302
+
+        * platform/mac/Skipped: Enabled fast/css/font-face-woff.html.
+        * platform/mac/fast/css/font-face-woff-expected.checksum: Added.
+        * platform/mac/fast/css/font-face-woff-expected.png: Added.
+        * platform/mac/fast/css/font-face-woff-expected.txt: Added.
+
 2010-07-31  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Dan Bernstein.
