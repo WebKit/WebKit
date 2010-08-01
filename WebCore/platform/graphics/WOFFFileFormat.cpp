@@ -38,6 +38,7 @@
 typedef unsigned char Bytef;
 typedef unsigned long uLong;
 typedef unsigned long uLongf;
+#define Z_OK 0
 
 SOFT_LINK_LIBRARY(zlib1);
 SOFT_LINK(zlib1, uncompress, int, __cdecl, (Bytef *dest, uLongf *destLen, const Bytef *source, uLong sourceLen), (dest, destLen, source, sourceLen));

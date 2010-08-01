@@ -12,6 +12,12 @@
 
 2010-07-31  Dan Bernstein  <mitz@apple.com>
 
+        Try to fix the Windows build when zlib is not available.
+
+        * platform/graphics/WOFFFileFormat.cpp:
+
+2010-07-31  Dan Bernstein  <mitz@apple.com>
+
         Fix typo in attempted build fix.
 
         * platform/graphics/WOFFFileFormat.cpp:
