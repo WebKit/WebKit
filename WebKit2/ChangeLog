@@ -1,5 +1,23 @@
 2010-07-31  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Darin Adler.
+
+        Crash due to calling StringImpl::createCFString() from non-main thread in plug-in code
+        https://bugs.webkit.org/show_bug.cgi?id=43306
+        <rdar://problem/8259687>
+
+        * UIProcess/Plugins/PluginInfoStore.cpp:
+        (WebKit::PluginInfoStore::getMIMETypeForExtension):
+        (WebKit::PluginInfoStore::findPlugin):
+        * UIProcess/Plugins/PluginInfoStore.h:
+        * UIProcess/Plugins/mac/PluginInfoStoreMac.mm:
+        (WebKit::safeCreateCFString):
+        (WebKit::PluginInfoStore::getMIMETypeForExtension):
+        Bypass MIMETypeRegistry in the UIProcess until we can safely convert Strings
+        to CFStringRefs.
+
+2010-07-31  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Dan Bernstein.
 
         Patch for https://bugs.webkit.org/show_bug.cgi?id=43305

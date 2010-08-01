@@ -151,6 +151,13 @@ static inline String pathExtension(const KURL& url)
     return extension;
 }
 
+#if !PLATFORM(MAC)
+String PluginInfoStore::getMIMETypeForExtension(const String& extension)
+{
+    return MIMETypeRegistry::getMIMETypeForExtension(extension);
+}
+#endif
+
 PluginInfoStore::Plugin PluginInfoStore::findPlugin(String& mimeType, const KURL& url)
 {
     loadPluginsIfNecessary();
@@ -170,7 +177,7 @@ PluginInfoStore::Plugin PluginInfoStore::findPlugin(String& mimeType, const KURL
             return plugin;
         
         // Finally, try to get the MIME type from the extension in a platform specific manner and use that.
-        String extensionMimeType = MIMETypeRegistry::getMIMETypeForExtension(extension);
+        String extensionMimeType = getMIMETypeForExtension(extension);
         if (!extensionMimeType.isNull()) {
             Plugin plugin = findPluginForMIMEType(extensionMimeType);
             if (!plugin.path.isNull()) {

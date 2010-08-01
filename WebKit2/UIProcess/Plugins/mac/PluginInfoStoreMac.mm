@@ -25,6 +25,7 @@
 
 #include "PluginInfoStore.h"
 
+#include "WebKitSystemInterface.h"
 #include <WebCore/WebCoreNSStringExtras.h>
 #include <wtf/HashSet.h>
 #include <wtf/RetainPtr.h>
@@ -45,9 +46,9 @@ Vector<String> PluginInfoStore::pluginsDirectories()
 
 // FIXME: Once the UI process knows the difference between the main thread and the web thread we can drop this and just use
 // String::createCFString.
-static CFStringRef safeCreateCFString(const String& directory)
+static CFStringRef safeCreateCFString(const String& string)
 {
-    return CFStringCreateWithCharacters(0, reinterpret_cast<const UniChar*>(directory.characters()), directory.length());
+    return CFStringCreateWithCharacters(0, reinterpret_cast<const UniChar*>(string.characters()), string.length());
 }
     
 Vector<String> PluginInfoStore::pluginPathsInDirectory(const String& directory)
@@ -365,6 +366,16 @@ bool PluginInfoStore::shouldUsePlugin(const Plugin& plugin, const Vector<Plugin>
     }
 
     return true;
+}
+
+String PluginInfoStore::getMIMETypeForExtension(const String& extension)
+{
+    // FIXME: This should just call MIMETypeRegistry::getMIMETypeForExtension and be
+    // strength reduced into the callsite once we can safely convert WebCore::String
+    // to CFStringRef off the main thread.
+
+    RetainPtr<CFStringRef> extensionCFString(AdoptCF, safeCreateCFString(extension));
+    return WKGetMIMETypeForExtension((NSString *)extensionCFString.get());
 }
 
 } // namespace WebKit
