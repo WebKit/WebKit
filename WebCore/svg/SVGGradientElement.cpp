@@ -42,7 +42,6 @@ SVGGradientElement::SVGGradientElement(const QualifiedName& tagName, Document* d
     : SVGStyledElement(tagName, doc)
     , SVGURIReference()
     , SVGExternalResourcesRequired()
-    , m_followLink(true)
     , m_gradientUnits(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
     , m_gradientTransform(SVGTransformList::create(SVGNames::gradientTransformAttr))
 {

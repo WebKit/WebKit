@@ -55,13 +55,8 @@ public:
 
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
-    // FIXME: Add xlink:href support for filters, and use this property
-    void setFollowLink(bool followLink) { m_followLink = followLink; }
-
 private:
     virtual bool selfHasRelativeLengths() const;
-
-    bool m_followLink;
 
     DECLARE_ANIMATED_PROPERTY(SVGFilterElement, SVGNames::filterUnitsAttr, int, FilterUnits, filterUnits)
     DECLARE_ANIMATED_PROPERTY(SVGFilterElement, SVGNames::primitiveUnitsAttr, int, PrimitiveUnits, primitiveUnits)

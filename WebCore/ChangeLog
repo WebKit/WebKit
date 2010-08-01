@@ -1,3 +1,60 @@
+2010-08-01  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        SVG gradients do not update when scripted via xlink
+        https://bugs.webkit.org/show_bug.cgi?id=42953
+
+        Unify cycle detection logic for chainable (through xlink:href) and ordinary resources.
+        All operate on the render tree now, instead of falling back to the DOM tree for xlink:href queries.
+
+        When linking resources, register as regular client, so the regular update mechanisms work as expected.
+        <linearGradient id="foo"><stop../> </linearGradient>
+        <linearGradient id="bar" xlink:href="#foo"/>
+        <rect fill="url(#bar)"/>
+
+        Without that the rect won't receive invalidation notifications, as foo <-> bar had no connection.
+        Fixes the last outstanding class of invalidations. Also speeds up the cycle detetion, when using chained resources,
+        as no SVG DOM queries have to be executed anymore.
+
+        Test: svg/custom/js-update-stop-linked-gradient.svg
+
+        * rendering/RenderSVGResourceContainer.cpp:
+        (WebCore::RenderSVGResourceContainer::markAllClientsForInvalidation):
+        (WebCore::linkedResourceForContainer):
+        * rendering/SVGResources.cpp:
+        (WebCore::SVGResources::SVGResources):
+        (WebCore::chainableResourceTags):
+        (WebCore::targetReferenceFromResource):
+        (WebCore::registerPendingResource):
+        (WebCore::SVGResources::buildCachedResources):
+        (WebCore::SVGResources::invalidateClient):
+        (WebCore::SVGResources::resourceDestroyed):
+        (WebCore::SVGResources::buildSetOfResources):
+        (WebCore::SVGResources::setLinkedResource):
+        (WebCore::SVGResources::resetLinkedResource):
+        (WebCore::SVGResources::dump):
+        * rendering/SVGResources.h:
+        (WebCore::SVGResources::linkedResource):
+        * rendering/SVGResourcesCycleSolver.cpp:
+        (WebCore::SVGResourcesCycleSolver::resolveCycles):
+        (WebCore::SVGResourcesCycleSolver::breakCycle):
+        * rendering/SVGResourcesCycleSolver.h:
+        * svg/SVGFilterElement.cpp:
+        (WebCore::SVGFilterElement::SVGFilterElement):
+        * svg/SVGFilterElement.h:
+        * svg/SVGGradientElement.cpp:
+        (WebCore::SVGGradientElement::SVGGradientElement):
+        * svg/SVGGradientElement.h:
+        * svg/SVGLinearGradientElement.cpp:
+        (WebCore::SVGLinearGradientElement::collectGradientProperties):
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::SVGPatternElement):
+        (WebCore::SVGPatternElement::collectPatternProperties):
+        * svg/SVGPatternElement.h:
+        * svg/SVGRadialGradientElement.cpp:
+        (WebCore::SVGRadialGradientElement::collectGradientProperties):
+
 2010-07-31  Dan Bernstein  <mitz@apple.com>
 
         Try to fix the Windows build when zlib is not available.

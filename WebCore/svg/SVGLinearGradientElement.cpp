@@ -155,7 +155,7 @@ LinearGradientAttributes SVGLinearGradientElement::collectGradientProperties()
         processedGradients.add(current);
 
         // Respect xlink:href, take attributes from referenced element
-        Node* refNode = m_followLink ? ownerDocument()->getElementById(SVGURIReference::getTarget(current->href())) : 0;
+        Node* refNode = ownerDocument()->getElementById(SVGURIReference::getTarget(current->href()));
         if (refNode && (refNode->hasTagName(SVGNames::linearGradientTag) || refNode->hasTagName(SVGNames::radialGradientTag))) {
             current = static_cast<SVGGradientElement*>(refNode);
 

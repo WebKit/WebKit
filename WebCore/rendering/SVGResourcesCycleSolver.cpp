@@ -94,89 +94,6 @@ bool SVGResourcesCycleSolver::resourceContainsCycles(RenderObject* renderer) con
     return false;
 }
 
-static inline String targetReferenceFromResource(SVGElement* element, bool& isValid)
-{
-    String target;
-    if (element->hasTagName(SVGNames::patternTag))
-        target = static_cast<SVGPatternElement*>(element)->href();
-    else if (element->hasTagName(SVGNames::linearGradientTag) || element->hasTagName(SVGNames::radialGradientTag))
-        target = static_cast<SVGGradientElement*>(element)->href();
-    else if (element->hasTagName(SVGNames::filterTag))
-        target = static_cast<SVGFilterElement*>(element)->href();
-    else {
-        isValid = false;
-        return target;
-    }
-
-    return SVGURIReference::getTarget(target);
-}
-
-static inline void setFollowLinkForChainableResource(SVGElement* element, bool followLink)
-{
-    if (element->hasTagName(SVGNames::patternTag))
-        static_cast<SVGPatternElement*>(element)->setFollowLink(followLink);
-    else if (element->hasTagName(SVGNames::linearGradientTag) || element->hasTagName(SVGNames::radialGradientTag))
-        static_cast<SVGGradientElement*>(element)->setFollowLink(followLink);
-    else if (element->hasTagName(SVGNames::filterTag))
-        static_cast<SVGFilterElement*>(element)->setFollowLink(followLink);
-}
-
-bool SVGResourcesCycleSolver::chainableResourceContainsCycles(RenderSVGResourceContainer* container) const
-{
-    ASSERT(container);
-    ASSERT(container->node());
-    ASSERT(container->node()->isSVGElement());
-
-    // Chainable resources cycle detection is performed in the DOM tree.
-    SVGElement* element = static_cast<SVGElement*>(container->node());
-    ASSERT(element);
-
-    HashSet<SVGElement*> processedObjects;
-
-    bool isValid = true;
-    String target = targetReferenceFromResource(element, isValid);
-    ASSERT(isValid);
-
-    SVGElement* previousElement = element;
-    while (!target.isEmpty()) {
-        Node* targetNode = element->document()->getElementById(target);
-        if (!targetNode || !targetNode->isSVGElement())
-            break;
-
-        // Catch cylic chaining, otherwhise we'll run into an infinite loop here.
-        // <pattern id="foo" xlink:href="#bar"/> <pattern id="bar xlink:href="#foo"/>
-        SVGElement* targetElement = static_cast<SVGElement*>(targetNode);
-
-        bool followLink = true;
-        if (processedObjects.contains(targetElement) || targetElement == element)
-            followLink = false;
-
-        setFollowLinkForChainableResource(previousElement, followLink);
-        if (!followLink)
-            return false;
-
-        previousElement = targetElement;
-        processedObjects.add(targetElement);
-        target = targetReferenceFromResource(targetElement, isValid);
-        if (!isValid)
-            break;
-    }
-
-    // Couldn't find any direct cycle in the xlink:href chain, maybe there's an indirect one.
-    // <pattern id="foo" xlink:href="#bar"/> <pattern id="bar"> <rect fill="url(#foo)"...
-    HashSet<SVGElement*>::iterator end = processedObjects.end();
-    for (HashSet<SVGElement*>::iterator it = processedObjects.begin(); it != end; ++it) {
-        RenderObject* renderer = (*it)->renderer();
-        if (!renderer)
-            continue;
-        ASSERT(renderer->isSVGResourceContainer());
-        if (m_allResources.contains(renderer->toRenderSVGResourceContainer()))
-            return true;
-    }
-
-    return false;
-}
-
 void SVGResourcesCycleSolver::resolveCycles()
 {
     ASSERT(m_allResources.isEmpty());
@@ -221,6 +138,10 @@ void SVGResourcesCycleSolver::resolveCycles()
     for (HashSet<RenderSVGResourceContainer*>::iterator it = parentResources.begin(); it != end; ++it)
         m_allResources.add(*it);
 
+    // If we're a resource, add ourselves to the HashSet.
+    if (m_renderer->isSVGResourceContainer())
+        m_allResources.add(m_renderer->toRenderSVGResourceContainer());
+
     ASSERT(!m_allResources.isEmpty());
 
     // The job of this function is to determine wheter any of the 'resources' associated with the given 'renderer'
@@ -228,22 +149,6 @@ void SVGResourcesCycleSolver::resolveCycles()
     end = localResources.end();
     for (HashSet<RenderSVGResourceContainer*>::iterator it = localResources.begin(); it != end; ++it) {
         RenderSVGResourceContainer* resource = *it;
-
-        // Special handling for resources that can be chained using xlink:href - need to detect cycles as well!
-        switch (resource->resourceType()) {
-        case PatternResourceType:
-        case LinearGradientResourceType:
-        case RadialGradientResourceType:
-        case FilterResourceType:
-            if (chainableResourceContainsCycles(resource)) {
-                breakCycle(resource);
-                continue;
-            }
-            break;
-        default:
-            break;
-        }
-
         if (parentResources.contains(resource) || resourceContainsCycles(resource))
             breakCycle(resource);
     }
@@ -259,6 +164,11 @@ void SVGResourcesCycleSolver::resolveCycles()
 void SVGResourcesCycleSolver::breakCycle(RenderSVGResourceContainer* resourceLeadingToCycle)
 {
     ASSERT(resourceLeadingToCycle);
+    if (resourceLeadingToCycle == m_resources->linkedResource()) {
+        m_resources->resetLinkedResource();
+        return;
+    }
+
     switch (resourceLeadingToCycle->resourceType()) {
     case MaskerResourceType:
         ASSERT(resourceLeadingToCycle == m_resources->masker());
