@@ -1,3 +1,46 @@
+2010-07-30  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add an NPObject class template helper to TestNetscapePlugin
+        https://bugs.webkit.org/show_bug.cgi?id=43288
+
+        * DumpRenderTree/TestNetscapePlugIn/PluginTest.h:
+        Add some template magic to be able to figure out if a class has a member function of a given type.
+
+        (PluginTest::Object::create):
+        Create an object.
+
+        (PluginTest::Object::invokeDefault):
+        Add dummy function, this should never be called.
+
+        (PluginTest::Object::Object):
+        Initialize m_pluginTest to 0.
+
+        (PluginTest::Object::~Object):
+        Add virtual destructor.
+
+        (PluginTest::Object::NP_Allocate):
+        Create a new object.
+
+        (PluginTest::Object::NP_Deallocate):
+        Delete the object.
+
+        (PluginTest::Object::NP_InvokeDefault):
+        Call invokeDefault.
+
+        (PluginTest::Object::npClass):
+        Initialize the NPClass struct.
+
+        * DumpRenderTree/TestNetscapePlugIn/Tests/DocumentOpenInDestroyStream.cpp:
+        (DocumentOpenInDestroyStream::NPP_DestroyStream):
+        Move this inline.
+
+        * DumpRenderTree/TestNetscapePlugIn/Tests/PluginScriptableNPObjectInvokeDefault.cpp:
+        (PluginScriptableNPObjectInvokeDefault::NPObjectWithInvokeDefault::invokeDefault):
+        (PluginScriptableNPObjectInvokeDefault::NPP_GetValue):
+        Use the PluginTest::Object class template.
+
 2010-07-31  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.

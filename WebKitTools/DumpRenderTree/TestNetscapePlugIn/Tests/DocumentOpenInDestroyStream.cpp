@@ -40,19 +40,17 @@ public:
     }
 
 private:
-    virtual NPError NPP_DestroyStream(NPStream*, NPReason);
+    virtual NPError NPP_DestroyStream(NPStream*, NPReason)
+    {
+        if (m_shouldOpen) {
+            testDocumentOpen(m_npp);
+            m_shouldOpen = false;
+        }
+        
+        return NPERR_NO_ERROR;
+    }        
 
     bool m_shouldOpen;
 };
-
-NPError DocumentOpenInDestroyStream::NPP_DestroyStream(NPStream*, NPReason)
-{
-    if (m_shouldOpen) {
-        testDocumentOpen(m_npp);
-        m_shouldOpen = false;
-    }
-    
-    return NPERR_NO_ERROR;
-}
 
 static PluginTest::Register<DocumentOpenInDestroyStream> documentOpenInDestroyStream("document-open-in-destroy-stream");

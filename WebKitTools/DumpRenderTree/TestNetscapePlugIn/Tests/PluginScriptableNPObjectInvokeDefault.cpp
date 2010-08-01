@@ -27,44 +27,6 @@
 
 using namespace std;
 
-static bool invokeDefault(NPObject*, const NPVariant*, uint32_t, NPVariant* result)
-{
-    INT32_TO_NPVARIANT(1, *result);
-    return true;
-}
-
-static NPClass npClassWithInvokeDefault = { 
-    NP_CLASS_STRUCT_VERSION, 
-    0, // NPClass::allocate
-    0, // NPClass::deallocate
-    0, // NPClass::invalidate
-    0, // NPClass::hasMethod
-    0, // NPClass::invoke
-    invokeDefault,
-    0, // NPClass::hasProperty
-    0, // NPClass::getProperty
-    0, // NPClass::setProperty
-    0, // NPClass::removeProperty
-    0, // NPClass::enumerate
-    0  // NPClass::construct
-};
-
-static NPClass npClassWithoutInvokeDefault = { 
-    NP_CLASS_STRUCT_VERSION, 
-    0, // NPClass::allocate
-    0, // NPClass::deallocate
-    0, // NPClass::invalidate
-    0, // NPClass::hasMethod
-    0, // NPClass::invoke
-    0, // NPClass::invokeDefault,
-    0, // NPClass::hasProperty
-    0, // NPClass::getProperty
-    0, // NPClass::setProperty
-    0, // NPClass::removeProperty
-    0, // NPClass::enumerate
-    0  // NPClass::construct
-};
-
 // A test where the plug-ins scriptable object either has or doesn't have an invokeDefault function.
 class PluginScriptableNPObjectInvokeDefault : public PluginTest {
 public:
@@ -74,23 +36,32 @@ public:
     }
 
 private:
+    struct NPObjectWithoutInvokeDefault : Object<NPObjectWithoutInvokeDefault> { };
+
+    struct NPObjectWithInvokeDefault : Object<NPObjectWithInvokeDefault> { 
+    public:
+        bool invokeDefault(const NPVariant*, uint32_t, NPVariant* result)
+        {
+            INT32_TO_NPVARIANT(1, *result);
+            return true;
+        }
+    };
+
     virtual NPError NPP_GetValue(NPPVariable variable, void *value)
     {
         if (variable != NPPVpluginScriptableNPObject)
             return NPERR_GENERIC_ERROR;
 
-        NPClass* npClass;
+        NPObject* object;
         if (identifier() == "plugin-scriptable-npobject-invoke-default")
-            npClass = &npClassWithInvokeDefault;
+            object = NPObjectWithInvokeDefault::create(this);
         else
-            npClass = &npClassWithoutInvokeDefault;
+            object = NPObjectWithoutInvokeDefault::create(this);
         
-        *(NPObject**)value = NPN_CreateObject(npClass);
+        *(NPObject**)value = object;
         
         return NPERR_NO_ERROR;
     }
-
-    NPObject* m_scriptableObject;
 };
 
 static PluginTest::Register<PluginScriptableNPObjectInvokeDefault> pluginScriptableNPObjectInvokeDefault("plugin-scriptable-npobject-invoke-default");

@@ -27,8 +27,23 @@
 #define PluginTest_h
 
 #include <WebKit/npfunctions.h>
+#include <assert.h>
 #include <map>
 #include <string>
+
+// Helper classes for implementing has_member
+typedef char (&no_tag)[1];
+typedef char (&yes_tag)[2];
+
+#define DEFINE_HAS_MEMBER_CHECK(member, returnType, argumentTypes) \
+template<typename T, returnType (T::*member) argumentTypes> struct pmf_helper {}; \
+template<typename T> no_tag has_member_##member##_helper(...); \
+template<typename T> yes_tag has_member_##member##_helper(pmf_helper<T, &T::member > *); \
+template<typename T> struct has_member_##member { \
+static const bool value = sizeof(has_member_##member##_helper<T>(0)) == sizeof(yes_tag); \
+};
+
+DEFINE_HAS_MEMBER_CHECK(invokeDefault, bool, (const NPVariant*, uint32_t, NPVariant* result))
 
 class PluginTest {
 public:
@@ -64,6 +79,74 @@ protected:
 
     const std::string& identifier() const { return m_identifier; }
 
+    // NPObject helper template.
+    template<typename T> struct Object : NPObject {
+    public:
+        static NPObject* create(PluginTest* pluginTest)
+        {
+            Object* object = static_cast<Object*>(pluginTest->NPN_CreateObject(npClass()));
+
+            object->m_pluginTest = pluginTest;
+            return object;
+        }
+    
+        // These should never be called.
+        bool invokeDefault(const NPVariant*, uint32_t, NPVariant* result)
+        {
+            assert(false);
+            return false;
+        }
+
+    protected:
+        Object()
+            : m_pluginTest(0)
+        {
+        }
+        
+        virtual ~Object() 
+        { 
+        }
+
+    private:
+        static NPObject* NP_Allocate(NPP npp, NPClass* aClass)
+        {
+            return new T;
+        }
+
+        static void NP_Deallocate(NPObject* npObject)
+        {
+            delete static_cast<T*>(npObject);
+        }
+
+        static bool NP_InvokeDefault(NPObject* npObject, const NPVariant* arguments, uint32_t argumentCount, NPVariant* result)
+        {
+            return static_cast<T*>(npObject)->invokeDefault(arguments, argumentCount, result);
+        }
+
+        static NPClass* npClass()
+        {
+            static NPClass npClass = {
+                NP_CLASS_STRUCT_VERSION, 
+                NP_Allocate,
+                NP_Deallocate,
+                0, // NPClass::invalidate
+                0, // NPClass::hasMethod
+                0, // NPClass::invoke
+                has_member_invokeDefault<T>::value ? NP_InvokeDefault : 0,
+                0, // NPClass::hasProperty
+                0, // NPClass::getProperty
+                0, // NPClass::setProperty
+                0, // NPClass::removeProperty
+                0, // NPClass::enumerate
+                0  // NPClass::construct
+            };
+            
+            return &npClass;
+        };
+
+        PluginTest* m_pluginTest;
+    };
+    
 private:
     typedef PluginTest* (*CreateTestFunction)(NPP, const std::string&);
     
