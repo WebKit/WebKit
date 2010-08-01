@@ -156,7 +156,11 @@ void NPRuntimeObjectMap::convertJSValueToNPVariant(ExecState* exec, JSValue valu
         JSObject* jsObject = asObject(value);
 
         if (jsObject->classInfo() == &JSNPObject::s_info) {
-            notImplemented();
+            JSNPObject* jsNPObject = static_cast<JSNPObject*>(jsObject);
+            NPObject* npObject = jsNPObject->npObject();
+
+            retainNPObject(npObject);
+            OBJECT_TO_NPVARIANT(npObject, variant);
             return;
         }
 

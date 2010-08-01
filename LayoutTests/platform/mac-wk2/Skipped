@@ -1488,12 +1488,6 @@ plugins/missing-plugin.html
 plugins/netscape-plugin-map-data-to-src.html
 plugins/netscape-plugin-setwindow-size-2.html
 plugins/netscape-plugin-setwindow-size.html
-plugins/npruntime/enumerate.html
-plugins/npruntime/get-property-return-value.html
-plugins/npruntime/npruntime.html
-plugins/npruntime/round-trip-npobject.html
-plugins/override-node-method.html
-plugins/plugin-javascript-access.html
 plugins/plugin-remove-subframe.html
 plugins/reentrant-update-widget-positions.html
 plugins/reloadplugins-no-pages.html

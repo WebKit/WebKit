@@ -26,6 +26,23 @@
 
         Reviewed by Sam Weinig.
 
+        Minor NPRuntime fixes
+        https://bugs.webkit.org/show_bug.cgi?id=43318
+
+        * WebProcess/Plugins/JSNPObject.h:
+        (WebKit::JSNPObject::npObject):
+        * WebProcess/Plugins/NPRuntimeObjectMap.cpp:
+        (WebKit::NPRuntimeObjectMap::convertJSValueToNPVariant):
+        If we see an JSNPObject, extract the NPObject.
+
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::NPN_GetProperty):
+        Don't check for whether the property exists before getting it.
+
+2010-08-01  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Implement NPN_RemoveProperty
         https://bugs.webkit.org/show_bug.cgi?id=43315
 
