@@ -36,7 +36,7 @@
 #include "SoftLinking.h"
 
 SOFT_LINK_LIBRARY(zlib1);
-SOFT_LINK(zlib1, uncompress, int, __cdecl, (Bytef *dest, uLongf *destLen, const Bytef *source, uLong sourceLen), (dest, destLen, source, sourceLen));
+SOFT_LINK(zlib1, uncompress, int, __cdecl, (unsigned char* dest, unsigned long* destLen, const unsigned char* source, unsigned long sourceLen), (dest, destLen, source, sourceLen));
 
 #if CPU(BIG_ENDIAN)
 #define ntohs(x) ((uint16_t)(x))
