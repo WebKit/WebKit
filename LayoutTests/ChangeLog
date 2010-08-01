@@ -1,3 +1,11 @@
+2010-07-31  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Dan Bernstein.
+
+        Update skipped list to get us to ~100 failures for Mac WebKit2.
+
+        * platform/mac-wk2/Skipped:
+
 2010-07-31  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Ojan Vafai.
