@@ -125,6 +125,7 @@ void InjectedBundle::reset()
     m_layoutTestController = LayoutTestController::create();
     WKBundleSetShouldTrackVisitedLinks(m_bundle, false);
     WKBundleRemoveAllVisitedLinks(m_bundle);
+    m_mainPage->reset();
 }
 
 void InjectedBundle::setShouldTrackVisitedLinks()

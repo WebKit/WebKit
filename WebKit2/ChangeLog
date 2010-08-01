@@ -1,3 +1,17 @@
+2010-08-01  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Add ability to reset frame names for WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=43316
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageClearMainFrameName):
+        * WebProcess/InjectedBundle/API/c/WKBundlePagePrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::clearMainFrameName):
+        * WebProcess/WebPage/WebPage.h:
+
 2010-08-01  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

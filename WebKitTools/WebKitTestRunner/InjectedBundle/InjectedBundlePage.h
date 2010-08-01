@@ -40,6 +40,8 @@ public:
 
     bool isLoading() { return m_isLoading; }
 
+    void reset();
+
 private:
     // Loader Client
     static void _didStartProvisionalLoadForFrame(WKBundlePageRef, WKBundleFrameRef, const void* clientInfo);

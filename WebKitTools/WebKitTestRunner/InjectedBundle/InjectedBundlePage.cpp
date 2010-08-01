@@ -155,6 +155,11 @@ InjectedBundlePage::~InjectedBundlePage()
 {
 }
 
+void InjectedBundlePage::reset()
+{
+    WKBundlePageClearMainFrameName(m_page);
+}
+
 // Loader Client Callbacks
 
 void InjectedBundlePage::_didStartProvisionalLoadForFrame(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo)

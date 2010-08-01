@@ -108,6 +108,7 @@ public:
     WebCore::String renderTreeExternalRepresentation() const;
     void executeEditingCommand(const WebCore::String& commandName, const WebCore::String& argument);
     bool isEditingCommandEnabled(const WebCore::String& commandName);
+    void clearMainFrameName();
 
 #if USE(ACCELERATED_COMPOSITING)
     void changeAcceleratedCompositingMode(WebCore::GraphicsLayer*);
