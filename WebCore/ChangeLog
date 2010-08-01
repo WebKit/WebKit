@@ -1,3 +1,37 @@
+2010-07-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Ojan Vafai.
+
+        SplitElementCommand shouldn't be duplicating id attribute
+        https://bugs.webkit.org/show_bug.cgi?id=27156
+
+        Modified SplitElementCommand to delete the id attribute from the second element when splitting an element.
+        Since this causes WebKit not to merge split elements, added shouldSplitElement to ApplyStyleCommand which
+        determines the necessity of splitting the element.
+
+        To share code between shouldSplitElement and removeInlineStyleFromElement (extracted from applyInlineStyle)
+        dontRemove was added as the 3rd argument to removeHTMLFontStyle, removeHTMLBidiEmbeddingStyle, and removeCSSStyle.
+
+        Test: editing/style/split-element-id-duplication.html
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyBlockStyle): Added 3rd argument for removeCSSStyle.
+        (WebCore::ApplyStyleCommand::applyInlineStyle): Calls shouldSplitElement.
+        (WebCore::ApplyStyleCommand::removeInlineStyleFromElement): Extracted from removeInlineStyle.
+        (WebCore::ApplyStyleCommand::shouldRemoveInlineStyleFromElement): Inline helper for removeInlineStyleFromElement.
+        (WebCore::ApplyStyleCommand::removeHTMLFontStyle): Added dontRemove.
+        (WebCore::ApplyStyleCommand::removeHTMLBidiEmbeddingStyle): Added dontRemove.
+        (WebCore::ApplyStyleCommand::removeCSSStyle): Added dontRemove.
+        (WebCore::ApplyStyleCommand::removeInlineStyle): Calls removeInlineStyleFromElement.
+        (WebCore::ApplyStyleCommand::splitTextElementAtStart): Removed the call to splitTextAtStart.
+        Branching is now done in applyInlineStyle.
+        (WebCore::ApplyStyleCommand::splitTextElementAtEnd): Ditto for splitTextAtEnd.
+        (WebCore::ApplyStyleCommand::shouldSplitElement): Added.
+        * editing/ApplyStyleCommand.h:
+        * editing/SplitElementCommand.cpp:
+        (WebCore::SplitElementCommand::executeApply): Deletes the id attribute from the second element.
+        (WebCore::SplitElementCommand::doUnapply): Recovers the id attribute of the second element.
+
 2010-07-31  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Build fix: Windows.

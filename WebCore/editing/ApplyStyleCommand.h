@@ -42,6 +42,7 @@ enum ShouldIncludeTypingStyle {
 class ApplyStyleCommand : public CompositeEditCommand {
 public:
     enum EPropertyLevel { PropertyDefault, ForceBlockProperties };
+    enum InlineStyleRemovalMode { RemoveAttributesAndElements, RemoveNone };
 
     static PassRefPtr<ApplyStyleCommand> create(Document* document, CSSStyleDeclaration* style, EditAction action = EditActionChangeAttributes, EPropertyLevel level = PropertyDefault)
     {
@@ -71,10 +72,12 @@ private:
     // style-removal helpers
     bool shouldRemoveTextDecorationTag(CSSStyleDeclaration* styleToApply, int textDecorationAddedByTag) const;
     bool implicitlyStyledElementShouldBeRemovedWhenApplyingStyle(HTMLElement*, CSSMutableStyleDeclaration*);
+    bool removeInlineStyleFromElement(CSSMutableStyleDeclaration*, HTMLElement*, InlineStyleRemovalMode = RemoveAttributesAndElements);
+    inline bool shouldRemoveInlineStyleFromElement(CSSMutableStyleDeclaration* style, HTMLElement* element) {return removeInlineStyleFromElement(style, element, RemoveNone);}
     void replaceWithSpanOrRemoveIfWithoutAttributes(HTMLElement*&);
-    void removeHTMLFontStyle(CSSMutableStyleDeclaration*, HTMLElement*);
-    void removeHTMLBidiEmbeddingStyle(CSSMutableStyleDeclaration*, HTMLElement*);
-    void removeCSSStyle(CSSMutableStyleDeclaration*, HTMLElement*);
+    bool removeHTMLFontStyle(CSSMutableStyleDeclaration*, HTMLElement*, InlineStyleRemovalMode = RemoveAttributesAndElements);
+    bool removeHTMLBidiEmbeddingStyle(CSSMutableStyleDeclaration*, HTMLElement*, InlineStyleRemovalMode = RemoveAttributesAndElements);
+    bool removeCSSStyle(CSSMutableStyleDeclaration*, HTMLElement*, InlineStyleRemovalMode = RemoveAttributesAndElements);
     void removeInlineStyle(PassRefPtr<CSSMutableStyleDeclaration>, const Position& start, const Position& end);
     bool nodeFullySelected(Node*, const Position& start, const Position& end) const;
     bool nodeFullyUnselected(Node*, const Position& start, const Position& end) const;
@@ -95,6 +98,7 @@ private:
     void splitTextAtEnd(const Position& start, const Position& end);
     void splitTextElementAtStart(const Position& start, const Position& end);
     void splitTextElementAtEnd(const Position& start, const Position& end);
+    bool shouldSplitTextElement(Element* elem, CSSMutableStyleDeclaration*);
     bool isValidCaretPositionInTextNode(const Position& position);
     bool mergeStartWithPreviousIfIdentical(const Position& start, const Position& end);
     bool mergeEndWithNextIfIdentical(const Position& start, const Position& end);

@@ -27,6 +27,7 @@
 #include "SplitElementCommand.h"
 
 #include "Element.h"
+#include "HTMLNames.h"
 #include <wtf/Assertions.h>
 
 namespace WebCore {
@@ -58,7 +59,11 @@ void SplitElementCommand::executeApply()
     parent->insertBefore(m_element1.get(), m_element2.get(), ec);
     if (ec)
         return;
-    
+
+    // Delete id attribute from the second element because the same id cannot be used for more than one element
+    m_element2->removeAttribute(HTMLNames::idAttr, ec);
+    ASSERT(!ec);
+
     size_t size = children.size();
     for (size_t i = 0; i < size; ++i)
         m_element1->appendChild(children[i], ec);
@@ -87,6 +92,10 @@ void SplitElementCommand::doUnapply()
     size_t size = children.size();
     for (size_t i = 0; i < size; ++i)
         m_element2->insertBefore(children[i].get(), refChild.get(), ec);
+
+    // Recover the id attribute of the original element.
+    if (m_element1->hasAttribute(HTMLNames::idAttr))
+        m_element2->setAttribute(HTMLNames::idAttr, m_element1->getAttribute(HTMLNames::idAttr));
 
     m_element1->remove(ec);
 }

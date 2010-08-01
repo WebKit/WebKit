@@ -27,11 +27,9 @@ does not crash."
 |         class="webkit-indent-blockquote"
 |         style="margin: 0 0 0 40px; border: none; padding: 0px;"
 |         <pre>
-|           id="pre-basic"
 |           "line three
 "
 |         <pre>
-|           id="pre-basic"
 |           "line four"
 |       "
 
@@ -68,11 +66,9 @@ does not crash."
 |                 class="webkit-indent-blockquote"
 |                 style="margin: 0 0 0 40px; border: none; padding: 0px;"
 |                 <pre>
-|                   id="pre-table"
 |                   "table two
 "
 |                 <pre>
-|                   id="pre-table"
 |                   "table three<#selection-focus>"
 |             <td>
 |               "right cell"
