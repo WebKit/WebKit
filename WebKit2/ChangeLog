@@ -1,5 +1,12 @@
 2010-08-01  Sam Weinig  <sam@webkit.org>
 
+        Roll r64446 out. It broke the test runner.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::postMessageToInjectedBundle):
+
+2010-08-01  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Anders Carlsson.
 
         Don't send user messages to the injected bundle if the process is not active
