@@ -30,6 +30,7 @@
 #include "NPRuntimeUtilities.h"
 #include "NotImplemented.h"
 #include "PluginView.h"
+#include <JavaScriptCore/Error.h>
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/SourceCode.h>
 #include <WebCore/Frame.h>
@@ -232,6 +233,30 @@ ExecState* NPRuntimeObjectMap::globalExec() const
         return 0;
     
     return globalObject->globalExec();
+}
+
+static String& globalExceptionString()
+{
+    DEFINE_STATIC_LOCAL(String, exceptionString, ());
+    return exceptionString;
+}
+
+void NPRuntimeObjectMap::setGlobalException(const String& exceptionString)
+{
+    globalExceptionString() = exceptionString;
+}
+    
+void NPRuntimeObjectMap::moveGlobalExceptionToExecState(ExecState* exec)
+{
+    if (globalExceptionString().isNull())
+        return;
+
+    {
+        JSLock lock(SilenceAssertionsOnly);
+        throwError(exec, createError(exec, stringToUString(globalExceptionString())));
+    }
+    
+    globalExceptionString() = String();
 }
 
 } // namespace WebKit

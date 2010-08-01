@@ -619,9 +619,9 @@ static void NPN_ReleaseVariantValue(NPVariant* variant)
     releaseNPVariantValue(variant);
 }
 
-static void NPN_SetException(NPObject* npobj, const NPUTF8* message)
+static void NPN_SetException(NPObject*, const NPUTF8* message)
 {
-    notImplemented();
+    NetscapePlugin::setException(message);
 }
 
 static void NPN_PushPopupsEnabledState(NPP instance, NPBool enabled)

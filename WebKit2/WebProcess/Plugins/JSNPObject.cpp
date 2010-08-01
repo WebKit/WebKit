@@ -151,8 +151,8 @@ JSValue JSNPObject::callConstructor(ExecState* exec)
     {
         JSLock::DropAllLocks dropAllLocks(SilenceAssertionsOnly);
         returnValue = m_npObject->_class->construct(m_npObject, arguments.data(), argumentCount, &result);
-
-        // FIXME: Handle construct setting an exception.
+        NPRuntimeObjectMap::moveGlobalExceptionToExecState(exec);
+        
         // FIXME: Find out what happens if calling construct causes the plug-in to go away.
     }
 
@@ -273,7 +273,8 @@ void JSNPObject::put(ExecState* exec, const Identifier& propertyName, JSValue va
         JSLock::DropAllLocks dropAllLocks(SilenceAssertionsOnly);
         m_npObject->_class->setProperty(m_npObject, npIdentifier, &variant);
 
-        // FIXME: Handle setProperty setting an exception.
+        NPRuntimeObjectMap::moveGlobalExceptionToExecState(exec);
+
         // FIXME: Find out what happens if calling setProperty causes the plug-in to go away.
         // FIXME: Should we throw an exception if setProperty returns false?
     }
@@ -297,11 +298,12 @@ void JSNPObject::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propert
     {
         JSLock::DropAllLocks dropAllLocks(SilenceAssertionsOnly);
 
-        // FIXME: Handle enumerate setting an exception.
         // FIXME: Find out what happens if calling enumerate causes the plug-in to go away.
         // FIXME: Should we throw an exception if enumerate returns false?
         if (!m_npObject->_class->enumerate(m_npObject, &identifiers, &identifierCount))
             return;
+
+        NPRuntimeObjectMap::moveGlobalExceptionToExecState(exec);
     }
 
     for (uint32_t i = 0; i < identifierCount; ++i) {
@@ -342,7 +344,8 @@ JSValue JSNPObject::propertyGetter(ExecState* exec, JSValue slotBase, const Iden
         NPIdentifier npIdentifier = npIdentifierFromIdentifier(propertyName);
         returnValue = thisObj->m_npObject->_class->getProperty(thisObj->m_npObject, npIdentifier, &result);
         
-        // FIXME: Handle getProperty setting an exception.
+        NPRuntimeObjectMap::moveGlobalExceptionToExecState(exec);
+
         // FIXME: Find out what happens if calling getProperty causes the plug-in to go away.
     }
 

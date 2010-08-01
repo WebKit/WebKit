@@ -65,13 +65,16 @@ public:
     void convertJSValueToNPVariant(JSC::ExecState*, JSC::JSValue, NPVariant&);
     JSC::JSValue convertNPVariantToJSValue(JSC::ExecState*, JSC::JSGlobalObject*, const NPVariant&);
 
-    bool evaluate(NPObject*, const WebCore::String&scriptString, NPVariant* result);
+    bool evaluate(NPObject*, const WebCore::String& scriptString, NPVariant* result);
 
     // Called when the plug-in is destroyed. Will invalidate all the NPObjects.
     void invalidate();
 
     JSC::JSGlobalObject* globalObject() const;
     JSC::ExecState* globalExec() const;
+
+    static void setGlobalException(const WebCore::String& exceptionString);
+    static void moveGlobalExceptionToExecState(JSC::ExecState*);
 
 private:
     PluginView* m_pluginView;

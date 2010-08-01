@@ -1,3 +1,36 @@
+2010-08-01  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Implement NPN_SetException
+        https://bugs.webkit.org/show_bug.cgi?id=43320
+
+        * WebProcess/Plugins/JSNPObject.cpp:
+        (WebKit::JSNPObject::callConstructor):
+        (WebKit::JSNPObject::put):
+        (WebKit::JSNPObject::getOwnPropertyNames):
+        (WebKit::JSNPObject::propertyGetter):
+        Call NPRuntimeObjectMap::moveGlobalExceptionToExecState.
+
+        * WebProcess/Plugins/NPRuntimeObjectMap.cpp:
+        (WebKit::globalExceptionString):
+        Add static global.
+
+        (WebKit::NPRuntimeObjectMap::setGlobalException):
+        Set the global exception string.
+
+        (WebKit::NPRuntimeObjectMap::moveGlobalExceptionToExecState):
+        Create an error from the exception string.
+
+        * WebProcess/Plugins/NPRuntimeObjectMap.h:
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::NPN_SetException):
+        Call NetscapePlugin::setException.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::setException):
+        Call NPRuntimeObjectMap::setGlobalException.
+
 2010-08-01  Sam Weinig  <sam@webkit.org>
 
         Roll r64446 out. It broke the test runner.

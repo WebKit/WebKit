@@ -25,6 +25,7 @@
 
 #include "NetscapePlugin.h"
 
+#include "NPRuntimeObjectMap.h"
 #include "NetscapePluginStream.h"
 #include "PluginController.h"
 #include <WebCore/GraphicsContext.h>
@@ -146,6 +147,13 @@ NPError NetscapePlugin::destroyStream(NPStream* stream, NPReason reason)
 void NetscapePlugin::setStatusbarText(const String& statusbarText)
 {
     m_pluginController->setStatusbarText(statusbarText);
+}
+
+void NetscapePlugin::setException(const String& exceptionString)
+{
+    // FIXME: If the plug-in is running in its own process, this needs to send a CoreIPC message instead of
+    // calling the runtime object map directly.
+    NPRuntimeObjectMap::setGlobalException(exceptionString);
 }
 
 bool NetscapePlugin::evaluate(NPObject* npObject, const String& scriptString, NPVariant* result)
