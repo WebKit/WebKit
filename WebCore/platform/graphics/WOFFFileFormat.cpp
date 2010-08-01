@@ -29,13 +29,14 @@
 #if !ENABLE(OPENTYPE_SANITIZER)
 
 #include "SharedBuffer.h"
-#include "SoftLinking.h"
-#include <zlib.h>
 
-#if PLATFORM(WIN)
+#if !PLATFORM(WIN)
+#include <zlib.h>
+#else
+#include "SoftLinking.h"
 
 SOFT_LINK_LIBRARY(zlib1);
-SOFT_LINK(zlib1, uncompress, int, __cdecl, (Bytef *dest, uLongf *destLen, const Bytef *source, uLong sourceLen), (dest, destLen, source, sourceLen));
+ (zlib1, uncompress, int, __cdecl, (Bytef *dest, uLongf *destLen, const Bytef *source, uLong sourceLen), (dest, destLen, source, sourceLen));
 
 #if CPU(BIG_ENDIAN)
 #define ntohs(x) ((uint16_t)(x))

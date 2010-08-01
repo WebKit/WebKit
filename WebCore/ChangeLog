@@ -1,5 +1,11 @@
 2010-07-31  Dan Bernstein  <mitz@apple.com>
 
+        Try to fix the Windows build when zlib is not available.
+
+        * platform/graphics/WOFFFileFormat.cpp:
+
+2010-07-31  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Darin Adler.
 
         <rdar://problem/8234766> Add WOFF support for @font-face
