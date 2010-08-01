@@ -60,10 +60,25 @@ NPError PluginTest::NPP_GetValue(NPPVariable variable, void *value)
     return NPERR_GENERIC_ERROR;
 }
 
+NPIdentifier PluginTest::NPN_GetStringIdentifier(const NPUTF8 *name)
+{
+    return browser->getstringidentifier(name);
+}
+
+NPIdentifier PluginTest::NPN_GetIntIdentifier(int32_t intid)
+{
+    return browser->getintidentifier(intid);
+}
+
 NPObject* PluginTest::NPN_CreateObject(NPClass* npClass)
 {
     return browser->createobject(m_npp, npClass);
 }                                 
+
+bool PluginTest::NPN_RemoveProperty(NPObject* npObject, NPIdentifier propertyName)
+{
+    return browser->removeproperty(m_npp, npObject, propertyName);
+}
 
 void PluginTest::registerCreateTestFunction(const string& identifier, CreateTestFunction createTestFunction)
 {

@@ -39,6 +39,7 @@
 		1AC6C8490D07638600CD3161 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC6C77F0D07589B00CD3161 /* main.cpp */; };
 		1AC6C84A0D07638600CD3161 /* PluginObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC6C7800D07589B00CD3161 /* PluginObject.cpp */; };
 		1AC6C84B0D07638600CD3161 /* TestObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC6C7810D07589B00CD3161 /* TestObject.cpp */; };
+		1AC77DCF120605B6005C19EF /* NPRuntimeRemoveProperty.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC77DCE120605B6005C19EF /* NPRuntimeRemoveProperty.cpp */; };
 		1AD9D2FE12028409001A70D1 /* PluginScriptableNPObjectInvokeDefault.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AD9D2FD12028409001A70D1 /* PluginScriptableNPObjectInvokeDefault.cpp */; };
 		23BCB8900EA57623003C6289 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 23BCB88F0EA57623003C6289 /* OpenGL.framework */; };
 		3713EDE2115BE19300705720 /* ColorBits-A.png in Copy Font Files */ = {isa = PBXBuildFile; fileRef = 3713EDDF115BE16F00705720 /* ColorBits-A.png */; };
@@ -196,6 +197,7 @@
 		1AC6C77F0D07589B00CD3161 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		1AC6C7800D07589B00CD3161 /* PluginObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginObject.cpp; sourceTree = "<group>"; };
 		1AC6C7810D07589B00CD3161 /* TestObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestObject.cpp; sourceTree = "<group>"; };
+		1AC77DCE120605B6005C19EF /* NPRuntimeRemoveProperty.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NPRuntimeRemoveProperty.cpp; sourceTree = "<group>"; };
 		1AD9D2FD12028409001A70D1 /* PluginScriptableNPObjectInvokeDefault.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginScriptableNPObjectInvokeDefault.cpp; sourceTree = "<group>"; };
 		23BCB88F0EA57623003C6289 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
 		32A70AAB03705E1F00C91783 /* DumpRenderTreePrefix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DumpRenderTreePrefix.h; sourceTree = "<group>"; };
@@ -436,6 +438,7 @@
 			isa = PBXGroup;
 			children = (
 				1A215A7511F26072008AD0F5 /* DocumentOpenInDestroyStream.cpp */,
+				1AC77DCE120605B6005C19EF /* NPRuntimeRemoveProperty.cpp */,
 				1AD9D2FD12028409001A70D1 /* PluginScriptableNPObjectInvokeDefault.cpp */,
 			);
 			path = Tests;
@@ -708,6 +711,7 @@
 				1A215A8111F2609C008AD0F5 /* PluginTest.cpp in Sources */,
 				1A215BE711F27658008AD0F5 /* DocumentOpenInDestroyStream.cpp in Sources */,
 				1AD9D2FE12028409001A70D1 /* PluginScriptableNPObjectInvokeDefault.cpp in Sources */,
+				1AC77DCF120605B6005C19EF /* NPRuntimeRemoveProperty.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

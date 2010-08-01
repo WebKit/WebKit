@@ -464,6 +464,10 @@
     		>
     	  </File>
 		  <File
+    		  RelativePath="..\Tests\NPRuntimeRemoveProperty.cpp"
+    		>
+    	  </File>
+		  <File
     		  RelativePath="..\Tests\PluginScriptableNPObjectInvokeDefault.cpp"
     		>
     	  </File>

@@ -1,3 +1,38 @@
+2010-08-01  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Implement NPN_RemoveProperty
+        https://bugs.webkit.org/show_bug.cgi?id=43315
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        Add NPRuntimeRemoveProperty.cpp
+        
+        * DumpRenderTree/TestNetscapePlugIn/PluginTest.cpp:
+        (PluginTest::NPN_GetStringIdentifier):
+        (PluginTest::NPN_GetIntIdentifier):
+        (PluginTest::NPN_RemoveProperty):
+        Add NPN_ helpers.
+
+        * DumpRenderTree/TestNetscapePlugIn/PluginTest.h:
+        Support more NPClass functions.
+
+        * DumpRenderTree/TestNetscapePlugIn/Tests/NPRuntimeRemoveProperty.cpp: Added.
+        (NPRuntimeRemoveProperty::NPRuntimeRemoveProperty):
+        Test for NPN_RemoveProperty.
+
+        (NPRuntimeRemoveProperty::TestObject::hasMethod):        
+        (NPRuntimeRemoveProperty::TestObject::invoke):
+        Add a testRemoveProperty method.
+
+        (NPRuntimeRemoveProperty::NPP_GetValue):
+        Return the test object.
+
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugin.vcproj:
+        * DumpRenderTree/qt/TestNetscapePlugin/TestNetscapePlugin.pro:
+        * GNUmakefile.am:
+        Add NPRuntimeRemoveProperty.cpp
+
 2010-07-30  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

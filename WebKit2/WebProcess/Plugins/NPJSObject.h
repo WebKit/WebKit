@@ -66,6 +66,7 @@ private:
     bool hasProperty(NPIdentifier propertyName);
     bool getProperty(NPIdentifier propertyName, NPVariant* result);
     bool setProperty(NPIdentifier propertyName, const NPVariant* value);
+    bool removeProperty(NPIdentifier propertyName);
     bool enumerate(NPIdentifier** identifiers, uint32_t* identifierCount);
     bool construct(const NPVariant* arguments, uint32_t argumentCount, NPVariant* result);
 
@@ -80,6 +81,7 @@ private:
     static bool NP_HasProperty(NPObject*, NPIdentifier propertyName);
     static bool NP_GetProperty(NPObject*, NPIdentifier propertyName, NPVariant* result);
     static bool NP_SetProperty(NPObject*, NPIdentifier propertyName, const NPVariant* value);
+    static bool NP_RemoveProperty(NPObject*, NPIdentifier propertyName);
     static bool NP_Enumerate(NPObject*, NPIdentifier** identifiers, uint32_t* identifierCount);
     static bool NP_Construct(NPObject*, const NPVariant* arguments, uint32_t argumentCount, NPVariant* result);
     

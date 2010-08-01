@@ -1,3 +1,15 @@
+2010-08-01  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Implement NPN_RemoveProperty
+        https://bugs.webkit.org/show_bug.cgi?id=43315
+
+        Add a test for NPN_RemoveProperty.
+
+        * plugins/npruntime/remove-property-expected.txt: Added.
+        * plugins/npruntime/remove-property.html: Added.
+
 2010-08-01  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, test expectation update.

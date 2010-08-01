@@ -192,6 +192,37 @@ bool NPJSObject::setProperty(NPIdentifier propertyName, const NPVariant* value)
     return true;
 }
 
+bool NPJSObject::removeProperty(NPIdentifier propertyName)
+{
+    IdentifierRep* identifierRep = static_cast<IdentifierRep*>(propertyName);
+    
+    ExecState* exec = m_objectMap->globalExec();
+    if (!exec)
+        return false;
+
+    JSLock lock(SilenceAssertionsOnly);
+    if (identifierRep->isString()) {
+        Identifier identifier = identifierFromIdentifierRep(exec, identifierRep);
+        
+        if (!m_jsObject->hasProperty(exec, identifier)) {
+            exec->clearException();
+            return false;
+        }
+        
+        m_jsObject->deleteProperty(exec, identifier);
+    } else {
+        if (!m_jsObject->hasProperty(exec, identifierRep->number())) {
+            exec->clearException();
+            return false;
+        }
+
+        m_jsObject->deleteProperty(exec, identifierRep->number());
+    }
+
+    exec->clearException();
+    return true;
+}
+
 bool NPJSObject::enumerate(NPIdentifier** identifiers, uint32_t* identifierCount)
 {
     ExecState* exec = m_objectMap->globalExec();
@@ -280,7 +311,7 @@ NPClass* NPJSObject::npClass()
         NP_HasProperty,
         NP_GetProperty,
         NP_SetProperty,
-        0,
+        NP_RemoveProperty,
         NP_Enumerate,
         NP_Construct
     };
@@ -329,6 +360,11 @@ bool NPJSObject::NP_GetProperty(NPObject* npObject, NPIdentifier propertyName, N
 bool NPJSObject::NP_SetProperty(NPObject* npObject, NPIdentifier propertyName, const NPVariant* value)
 {
     return toNPJSObject(npObject)->setProperty(propertyName, value);
+}
+
+bool NPJSObject::NP_RemoveProperty(NPObject* npObject, NPIdentifier propertyName)
+{
+    return toNPJSObject(npObject)->removeProperty(propertyName);
 }
 
 bool NPJSObject::NP_Enumerate(NPObject* npObject, NPIdentifier** identifiers, uint32_t* identifierCount)
