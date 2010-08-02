@@ -1,3 +1,13 @@
+2010-08-02  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed. Update Qt specific expected result after r64471.
+
+        AX: Support methods for web apps to interact with the native accessibility APIs
+        https://bugs.webkit.org/show_bug.cgi?id=43005
+
+
+        * platform/qt/fast/dom/Window/window-properties-expected.txt: Updated.
+
 2010-08-02  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.
