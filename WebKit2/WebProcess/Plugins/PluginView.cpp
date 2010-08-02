@@ -664,6 +664,18 @@ void PluginView::cancelStreamLoad(uint64_t streamID)
     ASSERT(!m_streams.contains(streamID));
 }
 
+void PluginView::cancelManualStreamLoad()
+{
+    if (!frame())
+        return;
+
+    DocumentLoader* documentLoader = frame()->loader()->activeDocumentLoader();
+    ASSERT(documentLoader);
+    
+    if (documentLoader->isLoadingMainResource())
+        documentLoader->cancelMainResourceLoad(frame()->loader()->cancelledError(m_parameters.url));
+}
+
 NPObject* PluginView::windowScriptNPObject()
 {
     if (!frame())

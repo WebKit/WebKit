@@ -174,6 +174,11 @@ NPObject* NetscapePlugin::pluginElementNPObject()
 
 void NetscapePlugin::cancelStreamLoad(NetscapePluginStream* pluginStream)
 {
+    if (pluginStream == m_manualStream) {
+        m_pluginController->cancelManualStreamLoad();
+        return;
+    }
+
     // Ask the plug-in controller to cancel this stream load.
     m_pluginController->cancelStreamLoad(pluginStream->streamID());
 }

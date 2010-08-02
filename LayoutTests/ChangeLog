@@ -1,3 +1,13 @@
+2010-08-02  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix plug-in test failures and remove tests from the Skipped list
+        https://bugs.webkit.org/show_bug.cgi?id=43389
+
+        * platform/mac-wk2/Skipped:
+        Move plug-in tests that now fail due to lack of functionality out into appropriate sections.
+
 2010-08-02  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Skip Windows-only accessibility tests on WebKit2.

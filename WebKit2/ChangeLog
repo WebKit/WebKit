@@ -2,6 +2,35 @@
 
         Reviewed by Sam Weinig.
 
+        Fix plug-in test failures and remove tests from the Skipped list
+        https://bugs.webkit.org/show_bug.cgi?id=43389
+
+        * WebProcess/Plugins/JSNPMethod.cpp:
+        JSNPMethod::s_info should specify InternalFunction::info as its parent.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::cancelStreamLoad):
+        Special-case the manual stream and call PluginController::cancelManualStreamLoad.
+
+        * WebProcess/Plugins/Netscape/NetscapePluginStream.cpp:
+        (WebKit::NetscapePluginStream::stop):
+        It's OK to call stop on a stream that hasn't been started. Remove assertion and return early.
+        
+        * WebProcess/Plugins/PluginController.h:
+        Add cancelManualStreamLoad.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::cancelManualStreamLoad):
+        Tell the document loader to cancel the main resource load.
+
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::innerText):
+        Check for a null document element.
+
+2010-08-02  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Add support for loading manual streams
         https://bugs.webkit.org/show_bug.cgi?id=43380
 

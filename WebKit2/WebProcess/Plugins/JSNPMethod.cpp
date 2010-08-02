@@ -38,7 +38,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-const ClassInfo JSNPMethod::s_info = { "NPMethod", 0, 0, 0 };
+const ClassInfo JSNPMethod::s_info = { "NPMethod", &InternalFunction::info, 0, 0 };
 
 JSNPMethod::JSNPMethod(ExecState* exec, JSGlobalObject* globalObject, const Identifier& name, NPIdentifier npIdentifier)
     : InternalFunction(&exec->globalData(), globalObject, createStructure(globalObject->functionPrototype()), name)

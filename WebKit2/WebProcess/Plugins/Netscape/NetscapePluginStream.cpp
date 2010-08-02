@@ -275,7 +275,10 @@ void NetscapePluginStream::deliverDataToFile(const char* bytes, int length)
 
 void NetscapePluginStream::stop(NPReason reason)
 {
-    ASSERT(m_isStarted);
+    // The stream was stopped before it got a chance to start. This can happen if a stream is cancelled by
+    // WebKit before it received a response.
+    if (!m_isStarted)
+        return;
 
     if (reason == NPRES_DONE && m_deliveryData && !m_deliveryData->isEmpty()) {
         // There is still data left that the plug-in hasn't been able to consume yet.

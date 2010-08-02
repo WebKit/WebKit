@@ -59,6 +59,9 @@ public:
     /// Cancels the load of a stream that was requested by loadURL.
     virtual void cancelStreamLoad(uint64_t streamID) = 0;
 
+    // Cancels the load of the manual stream.
+    virtual void cancelManualStreamLoad() = 0;
+
     // Get the NPObject that corresponds to the window JavaScript object. Returns a retained object.
     virtual NPObject* windowScriptNPObject() = 0;
 

@@ -1062,6 +1062,8 @@ platform/mac/fast/forms/input-number-click.html
 platform/mac/fast/forms/listbox-scrollbar-hit-test.html
 platform/mac/fast/overflow/overflow-scrollbar-hit-test.html
 plugins/createScriptableObject-before-start.html
+plugins/destroy-during-npp-new.html
+plugins/resize-from-plugin.html
 scrollbars/scrollbar-iframe-click-does-not-blur-content.html
 scrollbars/scrollbar-middleclick-nopaste.html
 scrollbars/scrollbar-miss-mousemove-disabled.html
@@ -1456,6 +1458,7 @@ http/tests/security/xssAuditor/script-tag-with-source-same-host.html
 http/tests/security/xssAuditor/script-tag-with-source.html
 http/tests/security/xssAuditor/script-tag.html
 http/tests/security/xssAuditor/xss-protection-parsing-01.html
+plugins/js-from-destroy.html
 
 # WebKit2 needs plugins support
 # <https://bugs.webkit.org/show_bug.cgi?id=42196>
@@ -1466,41 +1469,7 @@ fast/events/tabindex-focus-blur-all.html
 fast/loader/loadInProgress.html
 http/tests/misc/acid2-pixel.html
 http/tests/misc/acid2.html
-http/tests/plugins
 java
-platform/mac/plugins
-plugins/attach-during-destroy.html
-plugins/clicking-missing-plugin-fires-delegate.html
-plugins/destroy-during-npp-new.html
-plugins/destroy-reentry.html
-plugins/destroy-stream-twice.html
-plugins/embed-attributes-setting.html
-plugins/embed-attributes-style.html
-plugins/embed-inside-object.html
-plugins/get-empty-url.html
-plugins/get-file-url.html
-plugins/get-url-that-the-resource-load-delegate-will-disallow.html
-plugins/get-url-with-blank-target.html
-plugins/get-url-with-iframe-target.html
-plugins/geturl-replace-query.html
-plugins/iframe-shims.html
-plugins/inner-html-display-none.html
-plugins/instance-available-before-stylesheets-loaded-object.html
-plugins/instance-available-before-stylesheets-loaded.html
-plugins/js-from-destroy.html
-plugins/missing-plugin.html
-plugins/netscape-plugin-map-data-to-src.html
-plugins/netscape-plugin-setwindow-size-2.html
-plugins/netscape-plugin-setwindow-size.html
-plugins/plugin-remove-subframe.html
-plugins/reentrant-update-widget-positions.html
-plugins/reloadplugins-no-pages.html
-plugins/resize-from-plugin.html
-plugins/return-error-from-new-stream-callback-in-full-frame-plugin.html
-plugins/return-error-from-new-stream-doesnt-invoke-destroy-stream.html
-plugins/return-negative-one-from-write.html
-plugins/update-widgets-crash.html
-plugins/window-open.html
 
 # WebKit2 needs layoutTestController.overridePreference
 # <https://bugs.webkit.org/show_bug.cgi?id=42197>
@@ -2055,14 +2024,15 @@ storage/transaction-success-callback-isolated-world.html
 # WebKitTestRunner needs layoutTestController.pathToLocalResource
 # <https://bugs.webkit.org/show_bug.cgi?id=42541>
 fast/loader/local-CSS-from-local.html
-fast/loader/local-JavaScript-from-local.html
 fast/loader/local-iFrame-source-from-local.html
 fast/loader/local-image-from-local.html
+fast/loader/local-JavaScript-from-local.html
+http/tests/plugins/post-url-file.html
 http/tests/security/frame-loading-via-document-write.html
 http/tests/security/local-CSS-from-remote.html
-http/tests/security/local-JavaScript-from-remote.html
 http/tests/security/local-iFrame-from-remote.html
 http/tests/security/local-image-from-remote.html
+http/tests/security/local-JavaScript-from-remote.html
 http/tests/security/local-video-poster-from-remote.html
 http/tests/security/local-video-source-from-remote.html
 http/tests/security/local-video-src-from-remote.html
@@ -2227,6 +2197,7 @@ fast/events/keypress-insert-tab.html
 # <https://bugs.webkit.org/show_bug.cgi?id=42688>
 editing/selection/4975120.html
 fast/events/show-modal-dialog-onblur-onfocus.html
+plugins/netscape-plugin-setwindow-size-2.html
 
 # WebKitTestRunner needs layoutTestController.setEditingBehavior
 # <https://bugs.webkit.org/show_bug.cgi?id=42689>
@@ -2292,6 +2263,7 @@ fast/loader/non-deferred-substitute-load.html
 # WebKit2 needs layoutTestController.setAlwaysAcceptCookies
 # <https://bugs.webkit.org/show_bug.cgi?id=42778>
 http/tests/cookies/third-party-cookie-relaxing.html
+http/tests/plugins/third-party-cookie-accept-policy.html
 
 # WebKitTestRunner needs GCController
 # <https://bugs.webkit.org/show_bug.cgi?id=42701>
@@ -2361,6 +2333,9 @@ http/tests/loading/text-content-type-with-binary-extension.html
 # WebKitTestRunner needs layoutTestController.callShouldCloseOnWebView
 fast/events/onbeforeunload-focused-iframe.html
 
+# WebKitTestRunner needs layoutTestController.setPluginsEnabled
+platform/mac/plugins/disable-plugins.html
+
 # WebKitTestRunner needs layoutTestController.setHandlesAuthenticationChallenges
 http/tests/loading/basic-auth-resend-wrong-credentials.html
 http/tests/loading/basic-credentials-sent-automatically.html
@@ -2388,6 +2363,13 @@ fast/events/popup-blocked-from-fake-button-click.html
 fast/events/popup-blocked-from-fake-focus.html
 fast/events/popup-blocked-from-fake-user-gesture.html
 fast/events/popup-blocked-to-post-blank.html
+
+# WebKitTestRunner needs layoutTestController.addDisallowedURL
+plugins/get-url-that-the-resource-load-delegate-will-disallow.html
+
+# WebKitTestRunner gets confused by location.href redirects.
+plugins/attach-during-destroy.html
+plugins/destroy-reentry.html
 
 # WebKit2 needs support for moving/resizing and querying the location/size the window
 fast/dom/Window/window-lookup-precedence.html
@@ -2455,6 +2437,17 @@ storage/domstorage/events/basic-setattribute.html
 storage/domstorage/events/basic.html
 storage/domstorage/events/case-sensitive.html
 storage/domstorage/events/documentURI.html
+
+# WebKit2 doesn't have a missing plug-in delegate
+plugins/clicking-missing-plugin-fires-delegate.html
+
+# These are plug-in tests that use Flash or QuickTime. We should convert these to use the test plug-in.
+plugins/embed-attributes-setting.html
+plugins/iframe-shims.html
+
+# This test checks that NPN_GetURL with a blank target will return an error if the window isn't opened. This behavior doesn't
+# match Firefox or Chrome. We should either fix the test, or get rid of it.
+plugins/get-url-with-blank-target.html
 
 # Unexplained failures that were formerly in the dumpChildFramesAsText list.
 fast/frames/sandboxed-iframe-noscript.html
@@ -2622,10 +2615,18 @@ platform/mac/fast/dom/wrapper-classes-objc.html
 platform/mac/fast/dom/wrapper-round-tripping.html
 platform/mac/fast/objc/longlongTest.html
 platform/mac/fast/objc/webScriptObject-hasWebScriptKey.html
+platform/mac/plugins/bindings-array-apply-crash.html
 platform/mac/plugins/bindings-test-objc.html
+platform/mac/plugins/call-as-function-test.html
+platform/mac/plugins/root-object-premature-delete-crash.html
+platform/mac/plugins/undefined-property-crash.html
+platform/mac/plugins/webScriptObject-exception-deadlock.html
 
 # WebKitTestRunner doesn't have objCPlugin
 platform/mac/editing/pasteboard/5583362.html
+platform/mac/plugins/jsobjc-dom-wrappers.html
+platform/mac/plugins/jsobjc-simple.html
+platform/mac/plugins/throw-on-dealloc.html
 
 # WebKitTestRunner doesn't have eventSender.enableDOMUIEventLogging
 platform/mac/fast/events/objc-event-api.html

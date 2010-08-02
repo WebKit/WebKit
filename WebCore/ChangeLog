@@ -1,3 +1,13 @@
+2010-08-02  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix plug-in test failures and remove tests from the Skipped list
+        https://bugs.webkit.org/show_bug.cgi?id=43389
+
+        * WebCore.exp.in:
+        Export FrameLoader::cancelledError.
+
 2010-08-02  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders Carlsson.
