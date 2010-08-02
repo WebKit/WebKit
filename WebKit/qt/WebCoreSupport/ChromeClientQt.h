@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2006 Zack Rusin <zack@kde.org>
- * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  *
  * All rights reserved.
  *
@@ -169,10 +168,6 @@ namespace WebCore {
 
         virtual void requestGeolocationPermissionForFrame(Frame*, Geolocation*);
         virtual void cancelGeolocationPermissionRequestForFrame(Frame*, Geolocation*) { }
-
-        virtual bool selectItemWritingDirectionIsNatural();
-        virtual PassRefPtr<PopupMenu> createPopupMenu(PopupMenuClient*) const;
-        virtual PassRefPtr<SearchPopupMenu> createSearchPopupMenu(PopupMenuClient*) const;
 
         QtAbstractWebPopup* createSelectPopup();
 

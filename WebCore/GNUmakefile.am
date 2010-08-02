@@ -2465,7 +2465,6 @@ webcoregtk_sources += \
 	WebCore/platform/gtk/PasteboardHelper.h \
 	WebCore/platform/gtk/PlatformScreenGtk.cpp \
 	WebCore/platform/gtk/PopupMenuGtk.cpp \
-	WebCore/platform/gtk/PopupMenuGtk.h \
 	WebCore/platform/gtk/RenderThemeGtk.cpp \
 	WebCore/platform/gtk/RenderThemeGtk.h \
 	WebCore/platform/gtk/ScrollbarGtk.cpp \
@@ -2474,7 +2473,6 @@ webcoregtk_sources += \
 	WebCore/platform/gtk/ScrollbarThemeGtk.h \
 	WebCore/platform/gtk/ScrollViewGtk.cpp \
 	WebCore/platform/gtk/SearchPopupMenuGtk.cpp \
-	WebCore/platform/gtk/SearchPopupMenuGtk.h \
 	WebCore/platform/gtk/SharedBufferGtk.cpp \
 	WebCore/platform/gtk/SharedTimerGtk.cpp \
 	WebCore/platform/gtk/SoundGtk.cpp \

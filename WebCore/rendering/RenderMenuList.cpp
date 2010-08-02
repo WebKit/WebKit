@@ -26,7 +26,6 @@
 #include "RenderMenuList.h"
 
 #include "AXObjectCache.h"
-#include "Chrome.h"
 #include "CSSStyleSelector.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -89,8 +88,8 @@ void RenderMenuList::adjustInnerStyle()
     m_innerBlock->style()->setPaddingRight(Length(theme()->popupInternalPaddingRight(style()), Fixed));
     m_innerBlock->style()->setPaddingTop(Length(theme()->popupInternalPaddingTop(style()), Fixed));
     m_innerBlock->style()->setPaddingBottom(Length(theme()->popupInternalPaddingBottom(style()), Fixed));
-
-    if (document()->page()->chrome()->selectItemWritingDirectionIsNatural()) {
+        
+    if (PopupMenu::itemWritingDirectionIsNatural()) {
         // Items in the popup will not respect the CSS text-align and direction properties,
         // so we must adjust our own style to match.
         m_innerBlock->style()->setTextAlign(LEFT);
@@ -279,7 +278,7 @@ void RenderMenuList::showPopup()
     // inside the showPopup call and it would fail.
     createInnerBlock();
     if (!m_popup)
-        m_popup = document()->page()->chrome()->createPopupMenu(this);
+        m_popup = PopupMenu::create(this);
     SelectElement* select = toSelectElement(static_cast<Element*>(node()));
     m_popupIsVisible = true;
 

@@ -1,6 +1,5 @@
 /*
  * Copyright (c) 2008, 2009, Google Inc. All rights reserved.
- * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -30,34 +29,29 @@
  */
 
 #include "config.h"
-#include "SearchPopupMenuChromium.h"
+#include "SearchPopupMenu.h"
 
 #include "AtomicString.h"
 #include "NotImplemented.h"
 
 namespace WebCore {
 
-SearchPopupMenuChromium::SearchPopupMenuChromium(PopupMenuClient* client)
-    : m_popup(client)
+SearchPopupMenu::SearchPopupMenu(PopupMenuClient* client)
+    : PopupMenu(client)
 {
 }
 
-PopupMenu* SearchPopupMenuChromium::popupMenu()
-{
-    return &m_popup;
-}
-
-bool SearchPopupMenuChromium::enabled()
+bool SearchPopupMenu::enabled()
 {
     return false;
 }
 
-void SearchPopupMenuChromium::saveRecentSearches(const AtomicString& name, const Vector<String>& searchItems)
+void SearchPopupMenu::saveRecentSearches(const AtomicString& name, const Vector<String>& searchItems)
 {
     notImplemented();
 }
 
-void SearchPopupMenuChromium::loadRecentSearches(const AtomicString& name, Vector<String>& searchItems)
+void SearchPopupMenu::loadRecentSearches(const AtomicString& name, Vector<String>& searchItems)
 {
     notImplemented();
 }

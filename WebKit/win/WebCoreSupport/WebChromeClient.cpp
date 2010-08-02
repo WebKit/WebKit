@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
- * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,8 +56,6 @@
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
 #include <WebCore/SecurityOrigin.h>
-#include <WebCore/PopupMenuWin.h>
-#include <WebCore/SearchPopupMenuWin.h>
 #include <WebCore/WindowFeatures.h>
 #pragma warning(pop)
 
@@ -876,19 +873,4 @@ void WebChromeClient::exitFullscreenForNode(Node*)
 }
 
 #endif
-
-bool WebChromeClient::selectItemWritingDirectionIsNatural()
-{
-    return true;
-}
-
-PassRefPtr<PopupMenu> WebChromeClient::createPopupMenu(PopupMenuClient* client) const
-{
-    return adoptRef(new PopupMenuWin(client));
-}
-
-PassRefPtr<SearchPopupMenu> WebChromeClient::createSearchPopupMenu(PopupMenuClient* client) const
-{
-    return adoptRef(new SearchPopupMenuWin(client));
-}
 

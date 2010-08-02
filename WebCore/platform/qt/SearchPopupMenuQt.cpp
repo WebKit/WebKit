@@ -1,6 +1,5 @@
 /*
  * Copyright C 2006 Zack Rusin <zack@kde.org>
- * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,29 +18,26 @@
  */
 
 #include "config.h"
-#include "SearchPopupMenuQt.h"
+#include "SearchPopupMenu.h"
+
+#include "AtomicString.h"
 
 namespace WebCore {
 
-SearchPopupMenuQt::SearchPopupMenuQt(PopupMenuClient* client)
-    : m_popup(client)
+SearchPopupMenu::SearchPopupMenu(PopupMenuClient* client)
+    : PopupMenu(client)
 {
 }
 
-PopupMenu* SearchPopupMenuQt::popupMenu()
-{
-    return &m_popup;
-}
-
-void SearchPopupMenuQt::saveRecentSearches(const AtomicString&, const Vector<String>&)
+void SearchPopupMenu::saveRecentSearches(const AtomicString&, const Vector<String>&)
 {
 }
 
-void SearchPopupMenuQt::loadRecentSearches(const AtomicString&, Vector<String>&)
+void SearchPopupMenu::loadRecentSearches(const AtomicString&, Vector<String>&)
 {
 }
 
-bool SearchPopupMenuQt::enabled()
+bool SearchPopupMenu::enabled()
 {
     return true;
 }

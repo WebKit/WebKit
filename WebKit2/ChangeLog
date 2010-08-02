@@ -1,3 +1,17 @@
+2010-08-02  Jeremy Orlow  <jorlow@chromium.org>
+
+        Speculative revert of 64425 due to Chromium instability
+        https://bugs.webkit.org/show_bug.cgi?id=43347
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebCoreSupport/WebPopupMenu.cpp: Removed.
+        * WebProcess/WebCoreSupport/WebPopupMenu.h: Removed.
+        * WebProcess/WebCoreSupport/WebSearchPopupMenu.cpp: Removed.
+        * WebProcess/WebCoreSupport/WebSearchPopupMenu.h: Removed.
+        * win/WebKit2.vcproj:
+
 2010-08-02  Balazs Kelemen  <kb@inf.u-szeged.hu>
 
         Reviewed by Simon Hausmann.
