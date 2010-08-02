@@ -1,3 +1,18 @@
+2010-07-29  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Add a Skipped list on Windows, and have run-webkit-tests respect it.
+
+        Part of <rdar://problem/8233237> Fill WebKit2 Windows skipped list so
+        there are zero tests failing
+        https://bugs.webkit.org/show_bug.cgi?id=43374
+
+        Reviewed by Adam Roben.
+
+        * Scripts/old-run-webkit-tests:
+        If using WebKitTestRunner and Apple Windows WebKit, set the platform to
+        win-wk2. When building the result hierarchy, if the platform is win-wk2,
+        add it first to the list of platforms.
+
 2010-08-02  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

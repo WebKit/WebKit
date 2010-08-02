@@ -354,6 +354,9 @@ if ($useWebKitTestRunner) {
     if (isAppleMacWebKit()) {
         $realPlatform = $platform;
         $platform = "mac-wk2";
+    } elsif (isAppleWinWebKit()) {
+        $realPlatform = $platform;
+        $platform = "win-wk2";
     }
 }
 
@@ -1895,8 +1898,8 @@ sub buildPlatformResultHierarchy()
     my $isWin = $platform =~ /^win/;
     if ($isMac || $isWin) {
         my $effectivePlatform = $platform;
-        if ($platform eq "mac-wk2") {
-            push @platforms, "mac-wk2";
+        if ($platform eq "mac-wk2" || $platform eq "win-wk2") {
+            push @platforms, $platform;
             $effectivePlatform = $realPlatform;
         }
 

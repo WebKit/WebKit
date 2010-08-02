@@ -1,3 +1,16 @@
+2010-07-29  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Add a Skipped list on Windows, and have run-webkit-tests respect it.
+
+        Part of <rdar://problem/8233237> Fill WebKit2 Windows skipped list so
+        there are zero tests failing
+        https://bugs.webkit.org/show_bug.cgi?id=43374
+
+        Reviewed by Adam Roben.
+
+        * platform/win-wk2/Skipped: Copied from LayoutTests/platform/mac-wk2/Skipped.
+        All platform/mac tests removed.
+
 2010-07-20  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Eric Seidel.
