@@ -37,6 +37,7 @@
 #include "HTMLAnchorElement.h"
 #include "HTMLAppletElement.h"
 #include "HTMLAreaElement.h"
+#include "HTMLAudioElement.h"
 #include "HTMLBRElement.h"
 #include "HTMLBaseElement.h"
 #include "HTMLBaseFontElement.h"
@@ -95,6 +96,7 @@
 #include "webkit/WebKitDOMHTMLAnchorElementPrivate.h"
 #include "webkit/WebKitDOMHTMLAppletElementPrivate.h"
 #include "webkit/WebKitDOMHTMLAreaElementPrivate.h"
+#include "webkit/WebKitDOMHTMLAudioElementPrivate.h"
 #include "webkit/WebKitDOMHTMLBRElementPrivate.h"
 #include "webkit/WebKitDOMHTMLBaseElementPrivate.h"
 #include "webkit/WebKitDOMHTMLBaseFontElementPrivate.h"
@@ -173,6 +175,11 @@ static gpointer createAppletWrapper(PassRefPtr<HTMLElement> element)
 static gpointer createAreaWrapper(PassRefPtr<HTMLElement> element)
 {
     return wrapHTMLAreaElement(static_cast<HTMLAreaElement*>(element.get()));
+}
+
+static gpointer createAudioWrapper(PassRefPtr<HTMLElement> element)
+{
+    return wrapHTMLAudioElement(static_cast<HTMLAudioElement*>(element.get()));
 }
 
 static gpointer createBaseWrapper(PassRefPtr<HTMLElement> element)
@@ -446,6 +453,7 @@ gpointer createHTMLElementWrapper(PassRefPtr<WebCore::HTMLElement> element)
     if (map.isEmpty()) {
        map.set(aTag.localName().impl(), createAnchorWrapper);
        map.set(appletTag.localName().impl(), createAppletWrapper);
+       map.set(audioTag.localName().impl(), createAudioWrapper);
        map.set(areaTag.localName().impl(), createAreaWrapper);
        map.set(baseTag.localName().impl(), createBaseWrapper);
        map.set(basefontTag.localName().impl(), createBaseFontWrapper);

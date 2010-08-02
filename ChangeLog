@@ -1,3 +1,14 @@
+2010-08-02  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] Add support for the Audio element in the DOM bindings
+        https://bugs.webkit.org/show_bug.cgi?id=43313
+
+        Add new files to the build.
+
+        * GNUmakefile.am:
+
 2010-08-02  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by David Kilzer.

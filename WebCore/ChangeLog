@@ -1,3 +1,19 @@
+2010-08-02  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] Add support for the Audio element in the DOM bindings
+        https://bugs.webkit.org/show_bug.cgi?id=43313
+
+        The IDL definition of some HTMLMediaElement methods does not match
+        the C++ implementation API, take this fact into account when
+        generating the bindings.
+
+        * bindings/gobject/WebKitHTMLElementWrapperFactory.cpp:
+        (WebKit::createAudioWrapper):
+        (WebKit::createHTMLElementWrapper):
+        * bindings/scripts/CodeGeneratorGObject.pm:
+
 2010-08-02  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

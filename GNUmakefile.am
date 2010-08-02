@@ -375,6 +375,7 @@ webkitgtk_built_h_api += \
 	DerivedSources/webkit/WebKitDOMHTMLAnchorElement.h \
 	DerivedSources/webkit/WebKitDOMHTMLAppletElement.h \
 	DerivedSources/webkit/WebKitDOMHTMLAreaElement.h \
+	DerivedSources/webkit/WebKitDOMHTMLAudioElement.h \
 	DerivedSources/webkit/WebKitDOMHTMLBaseElement.h \
 	DerivedSources/webkit/WebKitDOMHTMLBaseFontElement.h \
 	DerivedSources/webkit/WebKitDOMHTMLBlockquoteElement.h \
@@ -408,6 +409,7 @@ webkitgtk_built_h_api += \
 	DerivedSources/webkit/WebKitDOMHTMLLinkElement.h \
 	DerivedSources/webkit/WebKitDOMHTMLMapElement.h \
 	DerivedSources/webkit/WebKitDOMHTMLMarqueeElement.h \
+	DerivedSources/webkit/WebKitDOMHTMLMediaElement.h \
 	DerivedSources/webkit/WebKitDOMHTMLMenuElement.h \
 	DerivedSources/webkit/WebKitDOMHTMLMetaElement.h \
 	DerivedSources/webkit/WebKitDOMHTMLModElement.h \
@@ -432,6 +434,8 @@ webkitgtk_built_h_api += \
 	DerivedSources/webkit/WebKitDOMHTMLTitleElement.h \
 	DerivedSources/webkit/WebKitDOMHTMLTableRowElement.h \
 	DerivedSources/webkit/WebKitDOMHTMLUListElement.h \
+	DerivedSources/webkit/WebKitDOMMediaError.h \
+	DerivedSources/webkit/WebKitDOMTimeRanges.h \
 	DerivedSources/webkit/WebKitDOMValidityState.h \
 	DerivedSources/webkit/WebKitDOMDOMApplicationCache.h \
 	DerivedSources/webkit/WebKitDOMBarInfo.h \
@@ -536,6 +540,8 @@ webkitgtk_gdom_built_sources += \
 	DerivedSources/webkit/WebKitDOMHTMLAppletElementPrivate.h \
 	DerivedSources/webkit/WebKitDOMHTMLAreaElement.cpp \
 	DerivedSources/webkit/WebKitDOMHTMLAreaElementPrivate.h \
+	DerivedSources/webkit/WebKitDOMHTMLAudioElement.cpp \
+	DerivedSources/webkit/WebKitDOMHTMLAudioElementPrivate.h \
 	DerivedSources/webkit/WebKitDOMHTMLBaseElement.cpp \
 	DerivedSources/webkit/WebKitDOMHTMLBaseElementPrivate.h \
 	DerivedSources/webkit/WebKitDOMHTMLBaseFontElement.cpp \
@@ -602,6 +608,8 @@ webkitgtk_gdom_built_sources += \
 	DerivedSources/webkit/WebKitDOMHTMLMapElementPrivate.h \
 	DerivedSources/webkit/WebKitDOMHTMLMarqueeElement.cpp \
 	DerivedSources/webkit/WebKitDOMHTMLMarqueeElementPrivate.h \
+	DerivedSources/webkit/WebKitDOMHTMLMediaElement.cpp \
+	DerivedSources/webkit/WebKitDOMHTMLMediaElementPrivate.h \
 	DerivedSources/webkit/WebKitDOMHTMLMenuElement.cpp \
 	DerivedSources/webkit/WebKitDOMHTMLMenuElementPrivate.h \
 	DerivedSources/webkit/WebKitDOMHTMLMetaElement.cpp \
@@ -652,6 +660,8 @@ webkitgtk_gdom_built_sources += \
 	DerivedSources/webkit/WebKitDOMHTMLUListElementPrivate.h \
 	DerivedSources/webkit/WebKitDOMLocation.cpp \
 	DerivedSources/webkit/WebKitDOMLocationPrivate.h \
+	DerivedSources/webkit/WebKitDOMMediaError.cpp \
+	DerivedSources/webkit/WebKitDOMMediaErrorPrivate.h \
 	DerivedSources/webkit/WebKitDOMMediaList.cpp \
 	DerivedSources/webkit/WebKitDOMMediaListPrivate.h \
 	DerivedSources/webkit/WebKitDOMMemoryInfo.cpp \
@@ -687,6 +697,8 @@ webkitgtk_gdom_built_sources += \
 	DerivedSources/webkit/WebKitDOMStyleSheetPrivate.h \
 	DerivedSources/webkit/WebKitDOMText.cpp \
 	DerivedSources/webkit/WebKitDOMTextPrivate.h \
+	DerivedSources/webkit/WebKitDOMTimeRanges.cpp \
+	DerivedSources/webkit/WebKitDOMTimeRangesPrivate.h \
 	DerivedSources/webkit/WebKitDOMTreeWalker.cpp \
 	DerivedSources/webkit/WebKitDOMTreeWalkerPrivate.h \
 	DerivedSources/webkit/WebKitDOMValidityState.cpp \
