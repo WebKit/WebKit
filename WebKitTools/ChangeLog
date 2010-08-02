@@ -1,3 +1,11 @@
+2010-08-02  Martin Robinson  <mrobinson@igalia.com>
+
+        Build fix for building against development versions of GTK+. GTK 2.22
+        has not yet been released, so these function definitions must be conditionalized
+        on the development version.
+
+        * DumpRenderTree/gtk/EventSender.cpp: Fix GTK+ 2.21 build.
+
 2010-08-02  Tony Chang  <tony@chromium.org>
 
         Reviewed by Kent Tamura.

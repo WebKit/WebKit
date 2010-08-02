@@ -103,7 +103,7 @@ static GdkWindow* gtk_widget_get_window(GtkWidget* widget)
 }
 #endif
 
-#if !GTK_CHECK_VERSION(2, 22, 0)
+#if !GTK_CHECK_VERSION(2, 21, 2)
 static GdkDragAction gdk_drag_context_get_selected_action(GdkDragContext* context)
 {
     g_return_val_if_fail(GDK_IS_DRAG_CONTEXT(context), static_cast<GdkDragAction>(0));
