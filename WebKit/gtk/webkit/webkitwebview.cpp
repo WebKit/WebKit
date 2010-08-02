@@ -172,6 +172,7 @@ enum {
     GEOLOCATION_POLICY_DECISION_REQUESTED,
     GEOLOCATION_POLICY_DECISION_CANCELLED,
     ONLOAD_EVENT,
+    FRAME_CREATED,
     LAST_SIGNAL
 };
 
@@ -2447,6 +2448,26 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             G_TYPE_NONE, 1,
             WEBKIT_TYPE_WEB_FRAME);
 
+    /*
+     * WebKitWebView::frame-created
+     * @web_view: the object which received the signal
+     * @web_frame: the #WebKitWebFrame which was just created.
+     *
+     * Emitted when a WebKitWebView has created a new frame. This signal will
+     * be emitted for all sub-frames created during page load. It will not be
+     * emitted for the main frame, which originates in the WebKitWebView constructor
+     * and may be accessed at any time using webkit_web_view_get_main_frame.
+     *
+     * Since: 1.3.4
+     */
+    webkit_web_view_signals[FRAME_CREATED] = g_signal_new("frame-created",
+            G_TYPE_FROM_CLASS(webViewClass),
+            (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
+            0,
+            NULL, NULL,
+            g_cclosure_marshal_VOID__OBJECT,
+            G_TYPE_NONE, 1,
+            WEBKIT_TYPE_WEB_FRAME);
 
     /*
      * implementations of virtual methods

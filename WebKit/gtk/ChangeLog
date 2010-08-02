@@ -1,3 +1,28 @@
+2010-08-02  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Create a frame-created signal
+        https://bugs.webkit.org/show_bug.cgi?id=43284
+
+        Add a frame-created signal, which will allow developers to track
+        the beginning of a frame lifecycle and attach signal handlers to
+        all new frames.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::createFrame): Emit the frame-created signal.
+        * tests/testwebframe.c: Add a test which verifies that the correct number of
+        frame-created signals is fired when a page with iframes loads.
+        (createFrameSignalTestFrameCreatedCallback): Added.
+        (createFrameSignalTestTimeout): Added.
+        (test_webkit_web_frame_created_signal): Added.
+        (main): Add a reference to the new test.
+        * webkit/webkitprivate.h: De-normalize webkit_web_frame_init_with_web_view into
+        the one place that it is used, so that the frame-created signal may be fired there.
+        * webkit/webkitwebframe.cpp: Remove webkit_web_frame_init_with_web_view.
+        * webkit/webkitwebview.cpp: 
+        (webkit_web_view_class_init): Add the frame-created signal declaration.
+
 2010-08-02  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Chris Fleizach.

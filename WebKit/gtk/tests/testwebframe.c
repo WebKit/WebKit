@@ -27,6 +27,50 @@
 
 #if GLIB_CHECK_VERSION(2, 16, 0) && GTK_CHECK_VERSION(2, 14, 0)
 
+static int numberOfFramesCreated = 0;
+
+static void createFrameSignalTestFrameCreatedCallback(WebKitWebView* webView, WebKitWebFrame* frame, gpointer data)
+{
+    numberOfFramesCreated++;
+}
+
+static gboolean createFrameSignalTestTimeout(gpointer data)
+{
+    g_assert_cmpint(numberOfFramesCreated, ==, 2);
+    g_main_loop_quit((GMainLoop*) data);
+    return FALSE;
+}
+
+static void test_webkit_web_frame_created_signal(void)
+{
+    GtkWidget* webView;
+    GtkWidget* window;
+    GMainLoop* loop = g_main_loop_new(NULL, TRUE);
+
+    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+
+    webView = webkit_web_view_new();
+    g_signal_connect(webView, "frame-created", G_CALLBACK(createFrameSignalTestFrameCreatedCallback), loop);
+
+    // We want to ensure that exactly two create-frame signals are
+    // fired and no more, so we set a timeout here. There does not appear
+    // to be a simple way via the API to figure out when all frames have
+    // loaded.
+    g_timeout_add(500, createFrameSignalTestTimeout, loop);
+
+    gtk_container_add(GTK_CONTAINER(window), webView);
+    gtk_widget_show(window);
+    gtk_widget_show(webView);
+
+    webkit_web_view_load_string(WEBKIT_WEB_VIEW(webView),
+        "<html><body>Frames!"
+        "<iframe></iframe>"
+        "<iframe></iframe>"
+        "</body></html>",
+        "text/html", "utf-8", "file://");
+    g_main_loop_run(loop);
+}
+
 static void test_webkit_web_frame_create_destroy(void)
 {
     GtkWidget *webView;
@@ -170,6 +214,7 @@ int main(int argc, char** argv)
 
     g_test_bug_base("https://bugs.webkit.org/");
     g_test_add_func("/webkit/webview/create_destroy", test_webkit_web_frame_create_destroy);
+    g_test_add_func("/webkit/webview/frame-created_signal", test_webkit_web_frame_created_signal);
     g_test_add_func("/webkit/webframe/lifetime", test_webkit_web_frame_lifetime);
     g_test_add_func("/webkit/webview/printing", test_webkit_web_frame_printing);
     g_test_add_func("/webkit/webview/response", test_webkit_web_frame_response);
