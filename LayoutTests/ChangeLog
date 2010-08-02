@@ -1,3 +1,9 @@
+2010-08-02  Andrew Wilson  <atwilson@chromium.org>
+
+        Unreviewed fix for typo in chromium test_expectations.txt.
+
+        * platform/chromium/test_expectations.txt: Fixed typo in entry.
+
 2010-08-02  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
