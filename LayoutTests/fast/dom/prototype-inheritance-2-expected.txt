@@ -3,6 +3,8 @@ Make sure prototypes are set up using the window a property came from, instead o
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+PASS Accessibility from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.accessibility
+PASS AccessibilityPrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.accessibility.__proto__
 FAIL Array from inner.document.forms.testForm.0.ownerDocument.defaultView.console.profiles
 PASS Attr from inner.document.forms.testForm.0.attributes.0
 PASS AttrConstructor from inner.document.forms.testForm.0.attributes.0.constructor
@@ -186,6 +188,8 @@ PASS SVGPaintConstructor from inner.getComputedStyle(inner.document.body).getPro
 PASS SVGPaintPrototype from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(fill).__proto__
 PASS Screen from inner.document.forms.testForm.0.ownerDocument.defaultView.screen
 PASS ScreenPrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.screen.__proto__
+PASS ScreenReader from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.accessibility.screenReader
+PASS ScreenReaderPrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.accessibility.screenReader.__proto__
 PASS Storage from inner.document.forms.testForm.0.ownerDocument.defaultView.localStorage
 PASS StorageConstructor from inner.document.forms.testForm.0.ownerDocument.defaultView.localStorage.constructor
 PASS StoragePrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.localStorage.__proto__

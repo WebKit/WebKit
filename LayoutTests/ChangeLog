@@ -1,3 +1,14 @@
+2010-08-02  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Support methods for web apps to interact with the native accessibility APIs
+        https://bugs.webkit.org/show_bug.cgi?id=43005
+
+        Updating expectations for layout tests.
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/dom/navigator-detached-no-crash-expected.txt:
+        * fast/dom/prototype-inheritance-2-expected.txt:
+
 2010-08-02  Andrew Wilson  <atwilson@chromium.org>
 
         Unreviewed test expectations change to mark test as failing on Chromium Linux.
