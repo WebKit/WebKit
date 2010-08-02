@@ -3125,4 +3125,3 @@ BUG50910 : plugins/npruntime/remove-property.html = TEXT
 
 // New test added in r64409 fails in Chromium.
 BUG50832 : printing/stretch-to-view-height.html = TEXT
-

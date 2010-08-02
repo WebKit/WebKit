@@ -1,3 +1,15 @@
+2010-08-02  Jeremy Orlow  <jorlow@chromium.org>
+
+        Another SVG rebaseline for Win/Linux because of different fonts.
+        Not reviewed.
+
+        * platform/chromium-linux/svg/custom/js-update-stop-linked-gradient-expected.checksum: Added.
+        * platform/chromium-linux/svg/custom/js-update-stop-linked-gradient-expected.png: Added.
+        * platform/chromium-win/svg/custom/js-update-stop-linked-gradient-expected.checksum: Added.
+        * platform/chromium-win/svg/custom/js-update-stop-linked-gradient-expected.png: Added.
+        * platform/chromium-win/svg/custom/js-update-stop-linked-gradient-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-08-01  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, test expectation update.
