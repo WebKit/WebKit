@@ -1,3 +1,25 @@
+2010-08-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Kent Tamura.
+
+        Group functions used in createMarkup (range version) into a class so they are easier to understand
+        https://bugs.webkit.org/show_bug.cgi?id=43227
+
+        Added MarkupAccumulatorWrapper to group getStartMarkup, getEndMarkup, joinMarkups, and addStyleMarkup.
+        MarkupAccumulatorWrapper is intended to be merged with MarkupAccumulator in the future.
+
+        No new tests added since this is a clean up.
+
+        * editing/markup.cpp:
+        (WebCore::MarkupAccumulatorWrapper::MarkupAccumulatorWrapper): Added.
+        (WebCore::MarkupAccumulatorWrapper::insertString): Added.
+        (WebCore::MarkupAccumulatorWrapper::insertOpenTag): Added.
+        (WebCore::MarkupAccumulatorWrapper::insertEndTag): Added.
+        (WebCore::MarkupAccumulatorWrapper::wrapWithNode): Added.
+        (WebCore::MarkupAccumulatorWrapper::wrapWithStyleNode): Added.
+        (WebCore::MarkupAccumulatorWrapper::takeResults): Added.
+        (WebCore::createMarkup): Uses MarkupAccumulatorWrapper.
+
 2010-08-02  Brian Weinstein  <bweinstein@apple.com>
 
         Add a missing </File> tag to WebCore.vcproj.
