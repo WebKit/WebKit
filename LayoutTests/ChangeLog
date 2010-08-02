@@ -1,3 +1,14 @@
+2010-08-02  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        [Qt] Add platform specific expected files for tests introduced in r64379.
+
+        * platform/qt/svg/custom/massive-coordinates-expected.checksum: Added.
+        * platform/qt/svg/custom/massive-coordinates-expected.png: Added.
+        * platform/qt/svg/custom/massive-coordinates-expected.txt: Copied from LayoutTests/svg/custom/massive-coordinates-expected.txt.
+        * platform/qt/svg/custom/pattern-excessive-malloc-expected.txt: Added.
+
 2010-08-02  Jeremy Orlow  <jorlow@chromium.org>
 
         Another SVG rebaseline for Win/Linux because of different fonts.
