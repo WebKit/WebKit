@@ -47,8 +47,8 @@ import http_server
 
 from webkitpy.common.system.executive import Executive
 
-# Chromium DRT on non-Windows uses WebKitDriver.
-if sys.platform not in ('win32', 'cygwin'):
+# Chromium DRT on OSX uses WebKitDriver.
+if sys.platform == 'darwin':
     import webkit
 
 import websocket_server
@@ -172,7 +172,7 @@ class ChromiumPort(base.Port):
 
     def create_driver(self, image_path, options):
         """Starts a new Driver and returns a handle to it."""
-        if self._options.use_drt and sys.platform not in ('win32', 'cygwin'):
+        if self._options.use_drt and sys.platform == 'darwin':
             return webkit.WebKitDriver(self, image_path, options, executive=self._executive)
         if self._options.use_drt:
             options += ['--test-shell']
