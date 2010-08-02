@@ -53,6 +53,15 @@ class NPRuntimeObjectMap {
 public:
     explicit NPRuntimeObjectMap(PluginView*);
 
+    class PluginProtector {
+    public:
+        explicit PluginProtector(NPRuntimeObjectMap* npRuntimeObjectMap);
+        ~PluginProtector();
+        
+    private:
+        RefPtr<PluginView> m_pluginView;
+    };
+
     // Returns an NPObject that wraps the given JSObject object. If there is already an NPObject that wraps this JSObject, it will
     // retain it and return it.
     NPObject* getOrCreateNPObject(JSC::JSObject*);

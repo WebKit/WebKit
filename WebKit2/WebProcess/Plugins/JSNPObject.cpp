@@ -88,6 +88,11 @@ JSValue JSNPObject::callMethod(ExecState* exec, NPIdentifier methodName)
     for (size_t i = 0; i < argumentCount; ++i)
         m_objectMap->convertJSValueToNPVariant(exec, exec->argument(i), arguments[i]);
 
+    // Calling NPClass::invoke will call into plug-in code, and there's no telling what the plug-in can do.
+    // (including destroying the plug-in). Because of this, we make sure to keep the plug-in alive until 
+    // the call has finished.
+    NPRuntimeObjectMap::PluginProtector protector(m_objectMap);
+
     bool returnValue;
     NPVariant result;
     VOID_TO_NPVARIANT(result);
@@ -95,9 +100,7 @@ JSValue JSNPObject::callMethod(ExecState* exec, NPIdentifier methodName)
     {
         JSLock::DropAllLocks dropAllLocks(SilenceAssertionsOnly);
         returnValue = m_npObject->_class->invoke(m_npObject, methodName, arguments.data(), argumentCount, &result);
-
-        // FIXME: Handle invoke setting an exception.
-        // FIXME: Find out what happens if calling invoke causes the plug-in to go away.
+        NPRuntimeObjectMap::moveGlobalExceptionToExecState(exec);
     }
 
     // Release all arguments;
@@ -123,6 +126,11 @@ JSC::JSValue JSNPObject::callObject(JSC::ExecState* exec)
     // Convert all arguments to NPVariants.
     for (size_t i = 0; i < argumentCount; ++i)
         m_objectMap->convertJSValueToNPVariant(exec, exec->argument(i), arguments[i]);
+
+    // Calling NPClass::invokeDefault will call into plug-in code, and there's no telling what the plug-in can do.
+    // (including destroying the plug-in). Because of this, we make sure to keep the plug-in alive until 
+    // the call has finished.
+    NPRuntimeObjectMap::PluginProtector protector(m_objectMap);
     
     bool returnValue;
     NPVariant result;
@@ -131,9 +139,7 @@ JSC::JSValue JSNPObject::callObject(JSC::ExecState* exec)
     {
         JSLock::DropAllLocks dropAllLocks(SilenceAssertionsOnly);
         returnValue = m_npObject->_class->invokeDefault(m_npObject, arguments.data(), argumentCount, &result);
-        
-        // FIXME: Handle invokeDefault setting an exception.
-        // FIXME: Find out what happens if calling invokeDefault causes the plug-in to go away.
+        NPRuntimeObjectMap::moveGlobalExceptionToExecState(exec);
     }
 
     // Release all arguments;
@@ -160,6 +166,11 @@ JSValue JSNPObject::callConstructor(ExecState* exec)
     for (size_t i = 0; i < argumentCount; ++i)
         m_objectMap->convertJSValueToNPVariant(exec, exec->argument(i), arguments[i]);
 
+    // Calling NPClass::construct will call into plug-in code, and there's no telling what the plug-in can do.
+    // (including destroying the plug-in). Because of this, we make sure to keep the plug-in alive until 
+    // the call has finished.
+    NPRuntimeObjectMap::PluginProtector protector(m_objectMap);
+    
     bool returnValue;
     NPVariant result;
     VOID_TO_NPVARIANT(result);
@@ -168,8 +179,6 @@ JSValue JSNPObject::callConstructor(ExecState* exec)
         JSLock::DropAllLocks dropAllLocks(SilenceAssertionsOnly);
         returnValue = m_npObject->_class->construct(m_npObject, arguments.data(), argumentCount, &result);
         NPRuntimeObjectMap::moveGlobalExceptionToExecState(exec);
-        
-        // FIXME: Find out what happens if calling construct causes the plug-in to go away.
     }
 
     if (!returnValue)
@@ -285,13 +294,18 @@ void JSNPObject::put(ExecState* exec, const Identifier& propertyName, JSValue va
 
     NPVariant variant;
     m_objectMap->convertJSValueToNPVariant(exec, value, variant);
+
+    // Calling NPClass::setProperty will call into plug-in code, and there's no telling what the plug-in can do.
+    // (including destroying the plug-in). Because of this, we make sure to keep the plug-in alive until 
+    // the call has finished.
+    NPRuntimeObjectMap::PluginProtector protector(m_objectMap);
+
     {
         JSLock::DropAllLocks dropAllLocks(SilenceAssertionsOnly);
         m_npObject->_class->setProperty(m_npObject, npIdentifier, &variant);
 
         NPRuntimeObjectMap::moveGlobalExceptionToExecState(exec);
 
-        // FIXME: Find out what happens if calling setProperty causes the plug-in to go away.
         // FIXME: Should we throw an exception if setProperty returns false?
     }
 
@@ -311,10 +325,14 @@ void JSNPObject::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propert
     NPIdentifier* identifiers = 0;
     uint32_t identifierCount = 0;
     
+    // Calling NPClass::enumerate will call into plug-in code, and there's no telling what the plug-in can do.
+    // (including destroying the plug-in). Because of this, we make sure to keep the plug-in alive until 
+    // the call has finished.
+    NPRuntimeObjectMap::PluginProtector protector(m_objectMap);
+    
     {
         JSLock::DropAllLocks dropAllLocks(SilenceAssertionsOnly);
 
-        // FIXME: Find out what happens if calling enumerate causes the plug-in to go away.
         // FIXME: Should we throw an exception if enumerate returns false?
         if (!m_npObject->_class->enumerate(m_npObject, &identifiers, &identifierCount))
             return;
@@ -354,6 +372,11 @@ JSValue JSNPObject::propertyGetter(ExecState* exec, JSValue slotBase, const Iden
     NPVariant result;
     VOID_TO_NPVARIANT(result);
 
+    // Calling NPClass::getProperty will call into plug-in code, and there's no telling what the plug-in can do.
+    // (including destroying the plug-in). Because of this, we make sure to keep the plug-in alive until 
+    // the call has finished.
+    NPRuntimeObjectMap::PluginProtector protector(thisObj->m_objectMap);
+    
     bool returnValue;
     {
         JSLock::DropAllLocks dropAllLocks(SilenceAssertionsOnly);
@@ -361,8 +384,6 @@ JSValue JSNPObject::propertyGetter(ExecState* exec, JSValue slotBase, const Iden
         returnValue = thisObj->m_npObject->_class->getProperty(thisObj->m_npObject, npIdentifier, &result);
         
         NPRuntimeObjectMap::moveGlobalExceptionToExecState(exec);
-
-        // FIXME: Find out what happens if calling getProperty causes the plug-in to go away.
     }
 
     if (!returnValue)

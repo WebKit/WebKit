@@ -62,6 +62,47 @@
 
         Reviewed by Sam Weinig.
 
+        Protect the plug-in from being destroyed while in plug-in code
+        https://bugs.webkit.org/show_bug.cgi?id=43370
+
+        Add a PluginProtector to NPRuntimeObjectMap and use it in JSNPObject.
+        
+        * WebProcess/Plugins/JSNPObject.cpp:
+        (WebKit::JSNPObject::callMethod):
+        (WebKit::JSNPObject::callObject):
+        (WebKit::JSNPObject::callConstructor):
+        (WebKit::JSNPObject::put):
+        (WebKit::JSNPObject::getOwnPropertyNames):
+        (WebKit::JSNPObject::propertyGetter):
+        Add PluginProtector declarations.
+
+        * WebProcess/Plugins/NPRuntimeObjectMap.cpp:
+        (WebKit::NPRuntimeObjectMap::PluginProtector::PluginProtector):
+        Ref the plug-in view (unless it's being destroyed).
+
+        (WebKit::NPRuntimeObjectMap::PluginProtector::~PluginProtector):
+        * WebProcess/Plugins/NPRuntimeObjectMap.h:
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::PluginView):
+        Initialize m_isBeingDestroyed.
+
+        (WebKit::PluginView::~PluginView):
+        Set m_isBeingDestroyed to true.
+
+        (WebKit::PluginView::scriptObject):
+        Don't crash if the plug-in failed to initialize.
+
+        (WebKit::PluginView::evaluate):
+        Remove comment.
+
+        * WebProcess/Plugins/PluginView.h:
+        (WebKit::PluginView::isBeingDestroyed):
+
+2010-08-02  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Cache JSNPObjects and fix bugs in the object map
         https://bugs.webkit.org/show_bug.cgi?id=43368
 
