@@ -73,10 +73,13 @@ private
         SunSpider
         WebCore
         WebKit
+        WebKit2
         WebKitExamplePlugins
         WebKitLibraries
         WebKitSite
         WebKitTools
+        autotools
+        cmake
     ]
 
     def self.find_url_and_path(file_path)

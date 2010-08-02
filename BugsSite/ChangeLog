@@ -1,3 +1,10 @@
+2010-08-02  Adam Roben  <aroben@apple.com>
+
+        Tell the patch prettifier about some (not so) new directories
+
+        * PrettyPatch/PrettyPatch.rb: Added WebKit2, autotools, and cmake
+        directories.
+
 2010-07-27  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by David Kilzer.
