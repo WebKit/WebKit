@@ -23,6 +23,7 @@
 #include "config.h"
 #include "Navigator.h"
 
+#include "Accessibility.h"
 #include "Chrome.h"
 #include "CookieJar.h"
 #include "DOMMimeTypeArray.h"
@@ -65,6 +66,10 @@ void Navigator::disconnectFrame()
     if (m_geolocation) {
         m_geolocation->disconnectFrame();
         m_geolocation = 0;
+    }
+    if (m_accessibility) {
+        m_accessibility->disconnectFrame();
+        m_accessibility = 0;
     }
     m_frame = 0;
 }
@@ -126,6 +131,13 @@ DOMMimeTypeArray* Navigator::mimeTypes() const
     if (!m_mimeTypes)
         m_mimeTypes = DOMMimeTypeArray::create(m_frame);
     return m_mimeTypes.get();
+}
+    
+Accessibility* Navigator::accessibility() const
+{
+    if (!m_accessibility)
+        m_accessibility = Accessibility::create(m_frame);
+    return m_accessibility.get();
 }
 
 bool Navigator::cookieEnabled() const

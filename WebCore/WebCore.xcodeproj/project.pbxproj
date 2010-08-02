@@ -624,6 +624,14 @@
 		24F54EAD101FE914000AE741 /* ApplicationCacheHost.h in Headers */ = {isa = PBXBuildFile; fileRef = 24F54EAB101FE914000AE741 /* ApplicationCacheHost.h */; settings = {ATTRIBUTES = (); }; };
 		2542F4DA1166C25A00E89A86 /* UserGestureIndicator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2542F4D81166C25A00E89A86 /* UserGestureIndicator.cpp */; };
 		2542F4DB1166C25A00E89A86 /* UserGestureIndicator.h in Headers */ = {isa = PBXBuildFile; fileRef = 2542F4D91166C25A00E89A86 /* UserGestureIndicator.h */; };
+		2974463D11FE257A004523F8 /* Accessibility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2974463711FE257A004523F8 /* Accessibility.cpp */; };
+		2974463E11FE257A004523F8 /* Accessibility.h in Headers */ = {isa = PBXBuildFile; fileRef = 2974463811FE257A004523F8 /* Accessibility.h */; };
+		2974464011FE257A004523F8 /* ScreenReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2974463A11FE257A004523F8 /* ScreenReader.cpp */; };
+		2974464111FE257A004523F8 /* ScreenReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 2974463B11FE257A004523F8 /* ScreenReader.h */; };
+		2974466F11FE2B32004523F8 /* JSAccessibility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2974466D11FE2B32004523F8 /* JSAccessibility.cpp */; };
+		2974467011FE2B32004523F8 /* JSAccessibility.h in Headers */ = {isa = PBXBuildFile; fileRef = 2974466E11FE2B32004523F8 /* JSAccessibility.h */; };
+		2974468E11FE2BE1004523F8 /* JSScreenReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2974468C11FE2BE1004523F8 /* JSScreenReader.cpp */; };
+		2974468F11FE2BE1004523F8 /* JSScreenReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 2974468D11FE2BE1004523F8 /* JSScreenReader.h */; };
 		29A812260FBB9C1D00510293 /* AccessibilityRenderObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29A812080FBB9C1D00510293 /* AccessibilityRenderObject.cpp */; };
 		29A812270FBB9C1D00510293 /* AccessibilityTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29A812090FBB9C1D00510293 /* AccessibilityTable.cpp */; };
 		29A812280FBB9C1D00510293 /* AccessibilityARIAGrid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29A8120A0FBB9C1D00510293 /* AccessibilityARIAGrid.cpp */; };
@@ -6322,6 +6330,16 @@
 		24F54EAB101FE914000AE741 /* ApplicationCacheHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplicationCacheHost.h; sourceTree = "<group>"; };
 		2542F4D81166C25A00E89A86 /* UserGestureIndicator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserGestureIndicator.cpp; sourceTree = "<group>"; };
 		2542F4D91166C25A00E89A86 /* UserGestureIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserGestureIndicator.h; sourceTree = "<group>"; };
+		2974463711FE257A004523F8 /* Accessibility.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Accessibility.cpp; sourceTree = "<group>"; };
+		2974463811FE257A004523F8 /* Accessibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Accessibility.h; sourceTree = "<group>"; };
+		2974463911FE257A004523F8 /* Accessibility.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Accessibility.idl; sourceTree = "<group>"; };
+		2974463A11FE257A004523F8 /* ScreenReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScreenReader.cpp; sourceTree = "<group>"; };
+		2974463B11FE257A004523F8 /* ScreenReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScreenReader.h; sourceTree = "<group>"; };
+		2974463C11FE257A004523F8 /* ScreenReader.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ScreenReader.idl; sourceTree = "<group>"; };
+		2974466D11FE2B32004523F8 /* JSAccessibility.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAccessibility.cpp; sourceTree = "<group>"; };
+		2974466E11FE2B32004523F8 /* JSAccessibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAccessibility.h; sourceTree = "<group>"; };
+		2974468C11FE2BE1004523F8 /* JSScreenReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSScreenReader.cpp; sourceTree = "<group>"; };
+		2974468D11FE2BE1004523F8 /* JSScreenReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSScreenReader.h; sourceTree = "<group>"; };
 		29A812080FBB9C1D00510293 /* AccessibilityRenderObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityRenderObject.cpp; sourceTree = "<group>"; };
 		29A812090FBB9C1D00510293 /* AccessibilityTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityTable.cpp; sourceTree = "<group>"; };
 		29A8120A0FBB9C1D00510293 /* AccessibilityARIAGrid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityARIAGrid.cpp; sourceTree = "<group>"; };
@@ -11596,6 +11614,9 @@
 			isa = PBXGroup;
 			children = (
 				29A812050FBB9B5200510293 /* mac */,
+				2974463711FE257A004523F8 /* Accessibility.cpp */,
+				2974463811FE257A004523F8 /* Accessibility.h */,
+				2974463911FE257A004523F8 /* Accessibility.idl */,
 				29A8120A0FBB9C1D00510293 /* AccessibilityARIAGrid.cpp */,
 				29A812160FBB9C1D00510293 /* AccessibilityARIAGrid.h */,
 				29A812120FBB9C1D00510293 /* AccessibilityARIAGridCell.cpp */,
@@ -11640,6 +11661,9 @@
 				29A812130FBB9C1D00510293 /* AccessibilityTableRow.h */,
 				29A812190FBB9C1D00510293 /* AXObjectCache.cpp */,
 				29A8121A0FBB9C1D00510293 /* AXObjectCache.h */,
+				2974463A11FE257A004523F8 /* ScreenReader.cpp */,
+				2974463B11FE257A004523F8 /* ScreenReader.h */,
+				2974463C11FE257A004523F8 /* ScreenReader.idl */,
 			);
 			path = accessibility;
 			sourceTree = "<group>";
@@ -14709,6 +14733,8 @@
 		A83B79100CCB001B000B0825 /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				2974466D11FE2B32004523F8 /* JSAccessibility.cpp */,
+				2974466E11FE2B32004523F8 /* JSAccessibility.h */,
 				65DF31D809D1C122000BE325 /* JSAttr.cpp */,
 				65DF31D909D1C123000BE325 /* JSAttr.h */,
 				93F9B79E0BA6032600854064 /* JSCDATASection.cpp */,
@@ -14761,6 +14787,8 @@
 				65DF31EC09D1CC60000BE325 /* JSProcessingInstruction.h */,
 				E4B423850CBFB73C00AF2ECE /* JSProgressEvent.cpp */,
 				E4B423860CBFB73C00AF2ECE /* JSProgressEvent.h */,
+				2974468C11FE2BE1004523F8 /* JSScreenReader.cpp */,
+				2974468D11FE2BE1004523F8 /* JSScreenReader.h */,
 				65DF31EF09D1CC60000BE325 /* JSText.cpp */,
 				65DF31F009D1CC60000BE325 /* JSText.h */,
 			);
@@ -17300,6 +17328,7 @@
 			files = (
 				B5B5DC6A119BB3D5002A8790 /* AbstractDatabase.h in Headers */,
 				41E1B1D10FF5986900576B3B /* AbstractWorker.h in Headers */,
+				2974463E11FE257A004523F8 /* Accessibility.h in Headers */,
 				29A8122E0FBB9C1D00510293 /* AccessibilityARIAGridCell.h in Headers */,
 				29A812330FBB9C1D00510293 /* AccessibilityARIAGridRow.h in Headers */,
 				29A8123B0FBB9C1D00510293 /* AccessibilityImageMapLink.h in Headers */,
@@ -18651,6 +18680,7 @@
 				59EE122E1106080F00885116 /* JNIUtilityPrivate.h in Headers */,
 				93309DF4099E64920056E581 /* JoinTextNodesCommand.h in Headers */,
 				418F88050FF957AF0080F045 /* JSAbstractWorker.h in Headers */,
+				2974467011FE2B32004523F8 /* JSAccessibility.h in Headers */,
 				49EECF01105070C400099FAB /* JSArrayBuffer.h in Headers */,
 				49EECF1C105072F300099FAB /* JSArrayBufferView.h in Headers */,
 				86243D0111BC31F700CC006A /* JSArrayBufferViewHelper.h in Headers */,
@@ -18876,6 +18906,7 @@
 				BCFE2F120C1B58380020235F /* JSRect.h in Headers */,
 				BC74DA491013F468007987AD /* JSRGBColor.h in Headers */,
 				BCEC01C30C274DDD009F4EC9 /* JSScreen.h in Headers */,
+				2974468F11FE2BE1004523F8 /* JSScreenReader.h in Headers */,
 				9FA37EFB1172FDA600C4CD55 /* JSScriptProfile.h in Headers */,
 				9FA37EFD1172FDA600C4CD55 /* JSScriptProfileNode.h in Headers */,
 				41D07A7F0FF935CA0095EDCE /* JSSharedWorker.h in Headers */,
@@ -19400,6 +19431,7 @@
 				1CEFC9B90D78DC8C007D2579 /* SchedulePair.h in Headers */,
 				5162C7F511F77EFB00612EFE /* SchemeRegistry.h in Headers */,
 				BCEC01BE0C274DAC009F4EC9 /* Screen.h in Headers */,
+				2974464111FE257A004523F8 /* ScreenReader.h in Headers */,
 				A84D82C111D3474800972990 /* ScriptableDocumentParser.h in Headers */,
 				7A1E88F6101CC384000C4DF5 /* ScriptArray.h in Headers */,
 				7AFD4A8B1131C2760035B883 /* ScriptBreakpoint.h in Headers */,
@@ -20254,6 +20286,7 @@
 			files = (
 				B5B5DC69119BB3D5002A8790 /* AbstractDatabase.cpp in Sources */,
 				41E1B1D00FF5986900576B3B /* AbstractWorker.cpp in Sources */,
+				2974463D11FE257A004523F8 /* Accessibility.cpp in Sources */,
 				29A812280FBB9C1D00510293 /* AccessibilityARIAGrid.cpp in Sources */,
 				29A812300FBB9C1D00510293 /* AccessibilityARIAGridCell.cpp in Sources */,
 				29A8122D0FBB9C1D00510293 /* AccessibilityARIAGridRow.cpp in Sources */,
@@ -21069,6 +21102,7 @@
 				59EE122C1106080500885116 /* JNIUtilityPrivate.cpp in Sources */,
 				93309DF3099E64920056E581 /* JoinTextNodesCommand.cpp in Sources */,
 				418F88040FF957AE0080F045 /* JSAbstractWorker.cpp in Sources */,
+				2974466F11FE2B32004523F8 /* JSAccessibility.cpp in Sources */,
 				49EECF00105070C400099FAB /* JSArrayBuffer.cpp in Sources */,
 				BC275CB311C5E85C00C9206C /* JSArrayBufferCustom.cpp in Sources */,
 				49EECF1B105072F300099FAB /* JSArrayBufferView.cpp in Sources */,
@@ -21361,6 +21395,7 @@
 				BCFE2F110C1B58370020235F /* JSRect.cpp in Sources */,
 				BC74DA481013F468007987AD /* JSRGBColor.cpp in Sources */,
 				BCEC01C20C274DDD009F4EC9 /* JSScreen.cpp in Sources */,
+				2974468E11FE2BE1004523F8 /* JSScreenReader.cpp in Sources */,
 				9FA37EFA1172FDA600C4CD55 /* JSScriptProfile.cpp in Sources */,
 				9FA37EFC1172FDA600C4CD55 /* JSScriptProfileNode.cpp in Sources */,
 				9FA37EE71172FCF000C4CD55 /* JSScriptProfileNodeCustom.cpp in Sources */,
@@ -21873,6 +21908,7 @@
 				1CE24F970D7CAF0E007E04C2 /* SchedulePairMac.mm in Sources */,
 				5162C7F411F77EFB00612EFE /* SchemeRegistry.cpp in Sources */,
 				BCEC01BD0C274DAC009F4EC9 /* Screen.cpp in Sources */,
+				2974464011FE257A004523F8 /* ScreenReader.cpp in Sources */,
 				A84D82C211D3474800972990 /* ScriptableDocumentParser.cpp in Sources */,
 				7A1E88F5101CC384000C4DF5 /* ScriptArray.cpp in Sources */,
 				200B190911C277D900DCCD3A /* ScriptBreakpoint.cpp in Sources */,

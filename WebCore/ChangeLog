@@ -1,3 +1,64 @@
+2010-08-02  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by David Kilzer.
+
+        AX: Support methods for web apps to interact with the native accessibility APIs
+        https://bugs.webkit.org/show_bug.cgi?id=43005
+
+        Adds a new "accessibility" object that hangs off of "window.navigator".
+        This accessibility object will allow web apps to interact with native accessibility APIs
+        to provide a richer experience (for screen reader users primarily).
+
+        Test: platform/mac/accessibility/js-accessibility.html
+
+        * Android.derived.v8bindings.mk:
+        * Android.jscbindings.mk:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * accessibility/AXObjectCache.h:
+        (WebCore::AXObjectCache::):
+        * accessibility/Accessibility.cpp: Added.
+        (WebCore::Accessibility::Accessibility):
+        (WebCore::Accessibility::~Accessibility):
+        (WebCore::Accessibility::disconnectFrame):
+        (WebCore::Accessibility::screenChanged):
+        (WebCore::Accessibility::elementsChanged):
+        (WebCore::Accessibility::screenReader):
+        * accessibility/Accessibility.h: Added.
+        (WebCore::Accessibility::create):
+        * accessibility/Accessibility.idl: Added.
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::isScreenReaderRunning):
+        (WebCore::AccessibilityObject::screenReaderFocusedElement):
+        (WebCore::AccessibilityObject::screenReaderVersion):
+        * accessibility/ScreenReader.cpp: Added.
+        (WebCore::ScreenReader::ScreenReader):
+        (WebCore::ScreenReader::~ScreenReader):
+        (WebCore::ScreenReader::disconnectFrame):
+        (WebCore::ScreenReader::active):
+        (WebCore::ScreenReader::activeElement):
+        (WebCore::ScreenReader::version):
+        * accessibility/ScreenReader.h: Added.
+        (WebCore::ScreenReader::create):
+        * accessibility/ScreenReader.idl: Added.
+        * accessibility/mac/AXObjectCacheMac.mm:
+        (WebCore::AXObjectCache::postPlatformNotification):
+        * accessibility/mac/AccessibilityObjectMac.mm:
+        (WebCore::AccessibilityObject::isScreenReaderRunning):
+        (WebCore::AccessibilityObject::screenReaderFocusedElement):
+        (WebCore::AccessibilityObject::screenReaderVersion):
+        * page/Navigator.cpp:
+        (WebCore::Navigator::disconnectFrame):
+        (WebCore::Navigator::accessibility):
+        * page/Navigator.h:
+        * page/Navigator.idl:
+
 2010-08-02  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

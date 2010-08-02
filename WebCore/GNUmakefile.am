@@ -99,6 +99,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/InspectorBackendDispatcher.h \
 	DerivedSources/WebCore/JSAbstractWorker.cpp \
 	DerivedSources/WebCore/JSAbstractWorker.h \
+	DerivedSources/WebCore/JSAccessibility.cpp \
+	DerivedSources/WebCore/JSAccessibility.h \
 	DerivedSources/WebCore/JSArrayBuffer.cpp \
 	DerivedSources/WebCore/JSArrayBuffer.h \
 	DerivedSources/WebCore/JSArrayBufferView.cpp \
@@ -466,6 +468,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSRGBColor.h \
 	DerivedSources/WebCore/JSScreen.cpp \
 	DerivedSources/WebCore/JSScreen.h \
+	DerivedSources/WebCore/JSScreenReader.cpp \
+	DerivedSources/WebCore/JSScreenReader.h \
 	DerivedSources/WebCore/JSScriptProfile.cpp \
 	DerivedSources/WebCore/JSScriptProfile.h \
 	DerivedSources/WebCore/JSScriptProfileNode.cpp \
@@ -575,6 +579,8 @@ webcore_sources += \
 	WebCore/WebCorePrefix.h \
 	WebCore/accessibility/AXObjectCache.cpp \
 	WebCore/accessibility/AXObjectCache.h \
+	WebCore/accessibility/Accessibility.cpp \
+	WebCore/accessibility/Accessibility.h \
 	WebCore/accessibility/AccessibilityARIAGrid.cpp \
 	WebCore/accessibility/AccessibilityARIAGrid.h \
 	WebCore/accessibility/AccessibilityARIAGridCell.cpp \
@@ -617,6 +623,8 @@ webcore_sources += \
 	WebCore/accessibility/AccessibilityTableHeaderContainer.h \
 	WebCore/accessibility/AccessibilityTableRow.cpp \
 	WebCore/accessibility/AccessibilityTableRow.h \
+	WebCore/accessibility/ScreenReader.cpp \
+	WebCore/accessibility/ScreenReader.h \
 	WebCore/bindings/generic/RuntimeEnabledFeatures.cpp \
 	WebCore/bindings/generic/RuntimeEnabledFeatures.h \
 	WebCore/bindings/js/CachedScriptSourceProvider.h \
@@ -4416,6 +4424,7 @@ DerivedSources/WebCore/RemoteInspectorFrontend.cpp DerivedSources/WebCore/Remote
 	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts -I$(WebCore)/inspector $(WebCore)/bindings/scripts/generate-bindings.pl $(IDL_PATH:%=--include "%") --outputDir "$(GENSOURCES_WEBCORE)" --defines "LANGUAGE_JAVASCRIPT=1 $(FEATURE_DEFINES)" --generator Inspector $<
 
 IDL_PATH := \
+    $(WebCore)/accessibility \
     $(WebCore)/bindings/js \
     $(WebCore)/css \
     $(WebCore)/dom \

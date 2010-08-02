@@ -336,6 +336,7 @@ webkitgtk_static_h_api += \
 	$(srcdir)/WebKit/gtk/webkit/webkitsecurityorigin.h
 
 webkitgtk_built_h_api += \
+	DerivedSources/webkit/WebKitDOMAccessibility.h \
 	DerivedSources/webkit/WebKitDOMCSSRule.h \
 	DerivedSources/webkit/WebKitDOMCSSRuleList.h \
 	DerivedSources/webkit/WebKitDOMCSSStyleDeclaration.h \
@@ -444,6 +445,7 @@ webkitgtk_built_h_api += \
 	DerivedSources/webkit/WebKitDOMObject.h \
 	DerivedSources/webkit/WebKitDOMNavigator.h \
 	DerivedSources/webkit/WebKitDOMScreen.h \
+	DerivedSources/webkit/WebKitDOMScreenReader.h \
 	DerivedSources/webkit/WebKitDOMWebKitPoint.h \
 	DerivedSources/webkit/WebKitDOMDOMMimeType.h \
 	DerivedSources/webkit/WebKitDOMDOMMimeTypeArray.h \
@@ -463,6 +465,7 @@ webkitgtk_h_api += \
 	$(webkitgtk_static_h_api)
 
 webkitgtk_gdom_built_sources += \
+	DerivedSources/webkit/WebKitDOMAccessibility.cpp \
 	DerivedSources/webkit/WebKitDOMAttr.cpp \
 	DerivedSources/webkit/WebKitDOMAttrPrivate.h \
 	DerivedSources/webkit/WebKitDOMBarInfo.cpp \
@@ -673,6 +676,7 @@ webkitgtk_gdom_built_sources += \
 	DerivedSources/webkit/WebKitDOMRangePrivate.h \
 	DerivedSources/webkit/WebKitDOMScreen.cpp \
 	DerivedSources/webkit/WebKitDOMScreenPrivate.h \
+	DerivedSources/webkit/WebKitDOMScreenReader.cpp \
 	DerivedSources/webkit/WebKitDOMStorage.cpp \
 	DerivedSources/webkit/WebKitDOMStoragePrivate.h \
 	DerivedSources/webkit/WebKitDOMStyleMedia.cpp \

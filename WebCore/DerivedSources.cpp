@@ -27,6 +27,7 @@
 
 #include "HTMLElementFactory.cpp"
 #include "JSAbstractWorker.cpp"
+#include "JSAccessibility.cpp"
 #include "JSAttr.cpp"
 #include "JSBarInfo.cpp"
 #include "JSBeforeLoadEvent.cpp"
@@ -224,6 +225,7 @@
 #include "JSRect.cpp"
 #include "JSRGBColor.cpp"
 #include "JSScreen.cpp"
+#include "JSScreenReader.cpp"
 #include "JSScriptProfile.cpp"
 #include "JSScriptProfileNode.cpp"
 #include "JSSharedWorker.cpp"

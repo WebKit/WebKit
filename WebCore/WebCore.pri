@@ -256,6 +256,8 @@ STYLESHEETS_EMBED = \
     $$PWD/css/themeQtMaemo5.css
 
 IDL_BINDINGS += \
+    accessibility/Accessibility.idl \
+    accessibility/ScreenReader.idl \
     css/Counter.idl \
     css/CSSCharsetRule.idl \
     css/CSSFontFaceRule.idl \

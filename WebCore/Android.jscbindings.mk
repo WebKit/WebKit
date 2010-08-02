@@ -45,6 +45,7 @@ BINDING_C_INCLUDES := \
 	$(JAVASCRIPTCORE_PATH)/wrec \
 	$(JAVASCRIPTCORE_PATH)/ForwardingHeaders \
 	\
+	$(base_intermediates)/WebCore/accessibility \
 	$(base_intermediates)/WebCore/bindings/js \
 	$(base_intermediates)/WebCore/dom \
 	$(base_intermediates)/WebCore/html/canvas \
