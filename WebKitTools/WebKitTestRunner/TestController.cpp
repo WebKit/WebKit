@@ -28,21 +28,62 @@
 #include "PlatformWebView.h"
 #include "TestInvocation.h"
 #include <WebKit2/WKContextPrivate.h>
+#include <wtf/PassOwnPtr.h>
 
 namespace WTR {
 
+static TestController* controller;
+
 TestController& TestController::shared()
 {
-    static TestController& shared = *new TestController;
-    return shared;
+    ASSERT(controller);
+    return *controller;
 }
 
-TestController::TestController()
+TestController::TestController(int argc, const char* argv[])
     : m_dumpPixels(false)
     , m_verbose(false)
     , m_printSeparators(false)
     , m_usingServerMode(false)
 {
+    initialize(argc, argv);
+    controller = this;
+    run();
+    controller = 0;
+}
+
+TestController::~TestController()
+{
+}
+
+static void closeOtherPage(WKPageRef page, const void* clientInfo)
+{
+    WKPageClose(page);
+    const PlatformWebView* view = static_cast<const PlatformWebView*>(clientInfo);
+    delete view;
+}
+
+static WKPageRef createOtherPage(WKPageRef oldPage, const void*)
+{
+    PlatformWebView* view = new PlatformWebView(WKPageGetPageNamespace(oldPage));
+    WKPageRef newPage = view->page();
+
+    view->resizeTo(800, 600);
+
+    WKPageUIClient otherPageUIClient = {
+        0,
+        view,
+        createOtherPage,
+        0,
+        closeOtherPage,
+        0,
+        0,
+        0
+    };
+    WKPageSetPageUIClient(newPage, &otherPageUIClient);
+
+    WKRetain(newPage);
+    return newPage;
 }
 
 void TestController::initialize(int argc, const char* argv[])
@@ -79,17 +120,29 @@ void TestController::initialize(int argc, const char* argv[])
 
     m_context.adopt(WKContextCreateWithInjectedBundlePath(injectedBundlePath()));
 
-    WKContextInjectedBundleClient injectedBundlePathClient = {
+    WKContextInjectedBundleClient injectedBundleClient = {
         0,
         this,
         didReceiveMessageFromInjectedBundle
     };
-    WKContextSetInjectedBundleClient(m_context.get(), &injectedBundlePathClient);
+    WKContextSetInjectedBundleClient(m_context.get(), &injectedBundleClient);
 
     _WKContextSetAdditionalPluginsDirectory(m_context.get(), testPluginDirectory());
     
     m_pageNamespace.adopt(WKPageNamespaceCreate(m_context.get()));
-    m_mainWebView = new PlatformWebView(m_pageNamespace.get());
+    m_mainWebView = adoptPtr(new PlatformWebView(m_pageNamespace.get()));
+
+    WKPageUIClient pageUIClient = {
+        0,
+        this,
+        createOtherPage,
+        0,
+        0,
+        0,
+        0,
+        0
+    };
+    WKPageSetPageUIClient(m_mainWebView->page(), &pageUIClient);
 }
 
 void TestController::runTest(const char* test)
@@ -114,7 +167,7 @@ void TestController::runTestingServerLoop()
     }
 }
 
-bool TestController::run()
+void TestController::run()
 {
     if (m_usingServerMode)
         runTestingServerLoop();
@@ -122,8 +175,6 @@ bool TestController::run()
         for (size_t i = 0; i < m_paths.size(); ++i)
             runTest(m_paths[i].c_str());
     }
-
-    return true;
 }
 
 void TestController::didReceiveMessageFromInjectedBundle(WKContextRef context, WKStringRef messageName, WKTypeRef messageBody, const void *clientInfo)

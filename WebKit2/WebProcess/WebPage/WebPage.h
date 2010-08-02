@@ -109,6 +109,7 @@ public:
     void executeEditingCommand(const WebCore::String& commandName, const WebCore::String& argument);
     bool isEditingCommandEnabled(const WebCore::String& commandName);
     void clearMainFrameName();
+    void sendClose();
 
 #if USE(ACCELERATED_COMPOSITING)
     void changeAcceleratedCompositingMode(WebCore::GraphicsLayer*);

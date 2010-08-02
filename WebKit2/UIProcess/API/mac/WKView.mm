@@ -236,7 +236,8 @@ static bool isViewVisible(NSView *view)
 - (void)_updateVisibility
 {
     _data->_page->setIsInWindow([self window]);
-    _data->_page->drawingArea()->setPageIsVisible(isViewVisible(self));
+    if (DrawingAreaProxy* area = _data->_page->drawingArea())
+        area->setPageIsVisible(isViewVisible(self));
 }
 
 - (void)viewWillMoveToWindow:(NSWindow *)window

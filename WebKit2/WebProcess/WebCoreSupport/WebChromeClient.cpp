@@ -40,6 +40,7 @@
 #include <WebCore/FileChooser.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
+#include <WebCore/Page.h>
 #include <WebCore/SecurityOrigin.h>
 
 using namespace WebCore;
@@ -208,7 +209,21 @@ bool WebChromeClient::runBeforeUnloadConfirmPanel(const String& message, Frame* 
 
 void WebChromeClient::closeWindowSoon()
 {
-    notImplemented();
+    // FIXME: This code assumes that the client will respond to a close page
+    // message by actually closing the page. Safari does this, but there is
+    // no guarantee that other applications will, which will leave this page
+    // half detached. This approach is an inherent limitation making parts of
+    // a close execute synchronously as part of window.close, but other parts
+    // later on.
+
+    m_page->corePage()->setGroupName(String());
+
+    if (WebFrame* frame = m_page->mainFrame()) {
+        if (Frame* coreFrame = frame->coreFrame())
+            coreFrame->loader()->stopForUserCancel();
+    }
+
+    m_page->sendClose();
 }
 
 void WebChromeClient::runJavaScriptAlert(Frame* frame, const String& alertText)

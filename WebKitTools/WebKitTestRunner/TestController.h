@@ -36,28 +36,26 @@ namespace WTR {
 class TestInvocation;
 class PlatformWebView;
 
+// FIXME: Rename this TestRunner?
 class TestController {
 public:
     static TestController& shared();
 
-    // Initialize the TestController.
-    void initialize(int argc, const char *argv[]);
-
-    // Returns true if all the tests passed, false otherwise.
-    bool run();
+    TestController(int argc, const char* argv[]);
+    ~TestController();
 
     bool verbose() const { return m_verbose; }
 
     WKStringRef injectedBundlePath() { return m_injectedBundlePath.get(); }
     WKStringRef testPluginDirectory() { return m_testPluginDirectory.get(); }
 
-    PlatformWebView* mainWebView() { return m_mainWebView; }
+    PlatformWebView* mainWebView() { return m_mainWebView.get(); }
     WKPageNamespaceRef pageNamespace() { return m_pageNamespace.get(); }
     WKContextRef context() { return m_context.get(); }
 
 private:
-    TestController();
-    ~TestController();
+    void initialize(int argc, const char* argv[]);
+    void run();
 
     void runTestingServerLoop();
     void runTest(const char* pathOrURL);
@@ -80,7 +78,7 @@ private:
     WKRetainPtr<WKStringRef> m_injectedBundlePath;
     WKRetainPtr<WKStringRef> m_testPluginDirectory;
 
-    PlatformWebView* m_mainWebView;
+    OwnPtr<PlatformWebView> m_mainWebView;
     WKRetainPtr<WKContextRef> m_context;
     WKRetainPtr<WKPageNamespaceRef> m_pageNamespace;
 };

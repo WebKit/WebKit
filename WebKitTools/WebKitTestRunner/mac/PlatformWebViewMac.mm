@@ -38,6 +38,7 @@ PlatformWebView::PlatformWebView(WKPageNamespaceRef namespaceRef)
     [[m_window contentView] addSubview:m_view];
     [m_window orderBack:nil];
     [m_window setAutodisplay:NO];
+    [m_window setReleasedWhenClosed:NO];
 }
 
 void PlatformWebView::resizeTo(unsigned width, unsigned height)

@@ -32,8 +32,7 @@ namespace WebKit {
 
 enum WKAdoptTag { AdoptWK };
 
-template <typename T>
-class WKRetainPtr {
+template<typename T> class WKRetainPtr {
 public:
     typedef T PtrType;
 
@@ -54,8 +53,7 @@ public:
     {
     }
     
-    template <typename U>
-    WKRetainPtr(const WKRetainPtr<U>& o)
+    template<typename U> WKRetainPtr(const WKRetainPtr<U>& o)
         : m_ptr(o.get())
     {
         if (PtrType ptr = m_ptr)
@@ -76,7 +74,20 @@ public:
     }
 
     PtrType get() const { return m_ptr; }
-    PtrType releaseRef() { PtrType tmp = m_ptr; m_ptr = 0; return tmp; }
+
+    void clear()
+    {
+        PtrType ptr = m_ptr;
+        m_ptr = 0;
+        if (ptr)
+            WKRelease(ptr);
+    }
+    PtrType leakRef()
+    {
+        PtrType ptr = m_ptr;
+        m_ptr = 0;
+        return ptr;
+    }
     
     PtrType operator->() const { return m_ptr; }
     bool operator!() const { return !m_ptr; }
@@ -92,6 +103,9 @@ public:
 
     void adopt(PtrType);
     void swap(WKRetainPtr&);
+
+    // FIXME: Remove once all callers are calling leakRef.
+    PtrType releaseRef() { leakRef(); }
 
 private:
     PtrType m_ptr;

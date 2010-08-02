@@ -186,7 +186,7 @@ private:
     void decidePolicyForNewWindowAction(WebFrameProxy*, WebCore::NavigationType navigationType, const WebCore::String& url, uint64_t listenerID);
     void decidePolicyForMIMEType(WebFrameProxy*, const WebCore::String& MIMEType, const WebCore::String& url, uint64_t listenerID);
 
-    WebPageProxy* createNewPage();
+    PassRefPtr<WebPageProxy> createNewPage();
     void showPage();
     void closePage();
     void runJavaScriptAlert(WebFrameProxy*, const WebCore::String&);

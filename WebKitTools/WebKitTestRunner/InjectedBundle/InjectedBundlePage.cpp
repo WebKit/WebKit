@@ -331,6 +331,9 @@ void InjectedBundlePage::didFinishLoadForFrame(WKBundleFrameRef frame)
 
     m_isLoading = false;
 
+    if (this != InjectedBundle::shared().page())
+        return;
+
     if (InjectedBundle::shared().layoutTestController()->waitToDump())
         return;
 
@@ -343,6 +346,9 @@ void InjectedBundlePage::didFailLoadWithErrorForFrame(WKBundleFrameRef frame)
         return;
 
     m_isLoading = false;
+
+    if (this != InjectedBundle::shared().page())
+        return;
 
     InjectedBundle::shared().done();
 }

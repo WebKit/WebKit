@@ -27,6 +27,7 @@
 #define WebUIClient_h
 
 #include "WKPage.h"
+#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
     class String;
@@ -42,7 +43,7 @@ public:
     WebUIClient();
     void initialize(const WKPageUIClient*);
 
-    WebPageProxy* createNewPage(WebPageProxy*);
+    PassRefPtr<WebPageProxy> createNewPage(WebPageProxy*);
     void showPage(WebPageProxy*);
     void close(WebPageProxy*);
     void runJavaScriptAlert(WebPageProxy*, const WebCore::String&, WebFrameProxy*);

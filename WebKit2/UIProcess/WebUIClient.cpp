@@ -26,6 +26,7 @@
 #include "WebUIClient.h"
 
 #include "WKAPICast.h"
+#include "WebPageProxy.h"
 #include <WebCore/PlatformString.h>
 #include <string.h>
 
@@ -46,12 +47,12 @@ void WebUIClient::initialize(const WKPageUIClient* client)
         memset(&m_pageUIClient, 0, sizeof(m_pageUIClient));
 }
 
-WebPageProxy* WebUIClient::createNewPage(WebPageProxy* page)
+PassRefPtr<WebPageProxy> WebUIClient::createNewPage(WebPageProxy* page)
 {
     if (!m_pageUIClient.createNewPage)
         return 0;
     
-    return toWK(m_pageUIClient.createNewPage(toRef(page), m_pageUIClient.clientInfo));
+    return adoptRef(toWK(m_pageUIClient.createNewPage(toRef(page), m_pageUIClient.clientInfo)));
 } 
 
 void WebUIClient::showPage(WebPageProxy* page)

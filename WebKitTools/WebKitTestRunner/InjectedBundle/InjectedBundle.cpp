@@ -27,13 +27,16 @@
 
 #include "ActivateFonts.h"
 #include "InjectedBundlePage.h"
-#include <WebKit2/WebKit2.h>
 #include <WebKit2/WKBundle.h>
 #include <WebKit2/WKBundlePage.h>
+#include <WebKit2/WKBundlePagePrivate.h>
 #include <WebKit2/WKBundlePrivate.h>
 #include <WebKit2/WKRetainPtr.h>
 #include <WebKit2/WKStringCF.h>
+#include <WebKit2/WebKit2.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/Vector.h>
 
 namespace WTR {
 
@@ -45,6 +48,7 @@ InjectedBundle& InjectedBundle::shared()
 
 InjectedBundle::InjectedBundle()
     : m_bundle(0)
+    , m_mainPage(0)
 {
 }
 
@@ -93,13 +97,19 @@ void InjectedBundle::done()
 void InjectedBundle::didCreatePage(WKBundlePageRef page)
 {
     // FIXME: we really need the main page ref to be sent over from the ui process
-    m_mainPage = new InjectedBundlePage(page);
-    m_pages.add(page, m_mainPage);
+    OwnPtr<InjectedBundlePage> pageWrapper = adoptPtr(new InjectedBundlePage(page));
+    if (!m_mainPage)
+        m_mainPage = pageWrapper.release();
+    else
+        m_otherPages.add(page, pageWrapper.leakPtr());
 }
 
 void InjectedBundle::willDestroyPage(WKBundlePageRef page)
 {
-    delete m_pages.take(page);
+    if (m_mainPage && m_mainPage->page() == page)
+        m_mainPage.clear();
+    else
+        delete m_otherPages.take(page);
 }
 
 void InjectedBundle::didReceiveMessage(WKStringRef messageName, WKTypeRef messageBody)
@@ -131,6 +141,14 @@ void InjectedBundle::reset()
 void InjectedBundle::setShouldTrackVisitedLinks()
 {
     WKBundleSetShouldTrackVisitedLinks(m_bundle, true);
+}
+
+void InjectedBundle::closeOtherPages()
+{
+    Vector<WKBundlePageRef> pages;
+    copyKeysToVector(m_otherPages, pages);
+    for (size_t i = 0; i < pages.size(); ++i)
+        WKBundlePageClose(pages[i]);
 }
 
 } // namespace WTR

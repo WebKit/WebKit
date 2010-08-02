@@ -1,3 +1,68 @@
+2010-08-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WebKitTestRunner needs layoutTestController.setCanOpenWindows
+        https://bugs.webkit.org/show_bug.cgi?id=42321
+
+        WebKitTestRunner needs layoutTestController.setCloseRemainingWindowsWhenComplete
+        https://bugs.webkit.org/show_bug.cgi?id=42779
+
+        * WebKitTestRunner/InjectedBundle/Bindings/LayoutTestController.idl: Added
+        setCanOpenWindows, setCloseRemainingWindowsWhenComplete, and windowCount
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::InjectedBundle): Initialize m_mainPage to 0 instead of
+        waiting for the first call to didCreatePage.
+        (WTR::InjectedBundle::didCreatePage): Set m_mainPage only when the first page
+        is created. Put other pages into a map.
+        (WTR::InjectedBundle::willDestroyPage): Added code to handle the destruction
+        of the main page.
+        (WTR::InjectedBundle::closeOtherPages): Added. Closes all the pages other than
+        the main page.
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h: Added pageCount and
+        closeOtherPages functions.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::didFinishLoadForFrame): Don't let pages other than
+        the main page affect dumping.
+        (WTR::InjectedBundlePage::didFailLoadWithErrorForFrame): Ditto.
+
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::LayoutTestController::LayoutTestController): Initialize the new
+        m_shouldCloseExtraWindows member.
+        (WTR::LayoutTestController::setCanOpenWindows): Added. Empty for now.
+        (WTR::LayoutTestController::windowCount): Added.
+
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h:
+        Added setCanOpenWindows, setCloseRemainingWindowsWhenComplete,
+        windowCount, shouldCloseExtraWindowsAfterRunningTest, and
+        m_shouldCloseExtraWindows.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::shared): Return a pointer to the shared copy, but
+        don't allocate and leak it. This seemed cleaner than adding an explicit
+        finalize call to go along with the explicit initialize call.
+        (WTR::TestController::TestController): Added calls to the initialize and
+        run function, which are now done automatically.
+        (WTR::TestController::~TestController): Added, since it's called now.
+        (WTR::closeOtherPage): Added. Used to close pages other than the main page.
+        (WTR::createOtherPage): Added. Used to create pages other than the main page.
+        (WTR::TestController::initialize): Added code to set up createOtherPage.
+        (WTR::TestController::run): Removed unused return value.
+        * WebKitTestRunner/TestController.h: Made constructor and destructor public,
+        and initialize and run private. Changed m_mainWebView to be an OwnPtr.
+
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (WTR::PlatformWebView::PlatformWebView): Added a call to setReleasedWhenClosed
+        to avoid releasing the window twice. Another way to handle it would be to
+        remove the release, but this approach is slightly more robust because it works
+        even if some other code calls the close method an extra time.
+
+        * WebKitTestRunner/mac/main.mm:
+        (main): Use a stack-allocated TestController object instead of calling
+        initalize and run on a globally allocated one.
+
 2010-08-02  Tony Chang  <tony@chromium.org>
 
         Reviewed by David Levin.

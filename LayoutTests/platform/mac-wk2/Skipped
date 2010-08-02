@@ -808,13 +808,13 @@ fast/css/user-drag-none.html
 fast/css/zoom-body-scroll.html
 fast/dom/Document/CaretRangeFromPoint/caretRangeFromPoint-in-zoom-and-scroll.html
 fast/dom/Document/CaretRangeFromPoint/hittest-relative-to-viewport.html
-fast/dom/elementFromPoint-relative-to-viewport.html
 fast/dom/HTMLTableColElement/resize-table-using-col-width.html
 fast/dom/Node/mutation-blur.html
-fast/dom/replaced-image-map.html
 fast/dom/Window/window-postmessage-clone-frames.html
 fast/dom/Window/window-postmessage-clone.html
 fast/dom/Window/window-xy-properties.html
+fast/dom/elementFromPoint-relative-to-viewport.html
+fast/dom/replaced-image-map.html
 fast/dynamic/hover-style-recalc-crash.html
 fast/dynamic/hovered-detach.html
 fast/dynamic/layer-hit-test-crash.html
@@ -1000,6 +1000,8 @@ fast/frames/frame-deep-nested-resize.html
 fast/frames/hover-timer-crash.html
 fast/frames/iframe-window-focus.html
 fast/frames/take-focus-from-iframe.html
+fast/history/history_reload.html
+fast/history/window-open.html
 fast/images/drag-pdf-as-image.html
 fast/images/drag-svg-as-image.html
 fast/images/image-map-zoom.html
@@ -1040,8 +1042,10 @@ http/tests/local/send-sliced-dragged-file.html
 http/tests/misc/bubble-drag-events.html
 http/tests/misc/drag-over-iframe-invalid-source-crash.html
 http/tests/misc/isindex-with-no-form.html
+http/tests/navigation/no-referrer-reset.html
 http/tests/navigation/no-referrer-same-window.html
 http/tests/navigation/no-referrer-subframe.html
+http/tests/navigation/no-referrer-target-blank.html
 http/tests/navigation/redirect-preserves-referrer.html
 http/tests/security/clipboard/clipboard-file-access.html
 http/tests/security/dataTransfer-set-data-file-url.html
@@ -1062,10 +1066,10 @@ scrollbars/scrollbar-iframe-click-does-not-blur-content.html
 scrollbars/scrollbar-middleclick-nopaste.html
 scrollbars/scrollbar-miss-mousemove-disabled.html
 scrollbars/scrollbar-miss-mousemove.html
+svg/animations/animVal-basics.html
 svg/animations/animate-gradient-transform.html
 svg/animations/animate-keySplines.html
 svg/animations/animate-points.html
-svg/animations/animVal-basics.html
 svg/custom/circle-move-invalidation.svg
 svg/custom/clip-path-child-changes.svg
 svg/custom/clip-path-href-changes.svg
@@ -1211,6 +1215,14 @@ svg/dynamic-updates/SVGImageElement-svgdom-preserveAspectRatio-prop.html
 svg/dynamic-updates/SVGImageElement-svgdom-width-prop.html
 svg/dynamic-updates/SVGImageElement-svgdom-x-prop.html
 svg/dynamic-updates/SVGImageElement-svgdom-y-prop.html
+svg/dynamic-updates/SVGLineElement-dom-x1-attr.html
+svg/dynamic-updates/SVGLineElement-dom-x2-attr.html
+svg/dynamic-updates/SVGLineElement-dom-y1-attr.html
+svg/dynamic-updates/SVGLineElement-dom-y2-attr.html
+svg/dynamic-updates/SVGLineElement-svgdom-x1-prop.html
+svg/dynamic-updates/SVGLineElement-svgdom-x2-prop.html
+svg/dynamic-updates/SVGLineElement-svgdom-y1-prop.html
+svg/dynamic-updates/SVGLineElement-svgdom-y2-prop.html
 svg/dynamic-updates/SVGLinearGradientElement-dom-gradientTransform-attr.html
 svg/dynamic-updates/SVGLinearGradientElement-dom-gradientUnits-attr.html
 svg/dynamic-updates/SVGLinearGradientElement-dom-x1-attr.html
@@ -1223,14 +1235,6 @@ svg/dynamic-updates/SVGLinearGradientElement-svgdom-x1-prop.html
 svg/dynamic-updates/SVGLinearGradientElement-svgdom-x2-prop.html
 svg/dynamic-updates/SVGLinearGradientElement-svgdom-y1-prop.html
 svg/dynamic-updates/SVGLinearGradientElement-svgdom-y2-prop.html
-svg/dynamic-updates/SVGLineElement-dom-x1-attr.html
-svg/dynamic-updates/SVGLineElement-dom-x2-attr.html
-svg/dynamic-updates/SVGLineElement-dom-y1-attr.html
-svg/dynamic-updates/SVGLineElement-dom-y2-attr.html
-svg/dynamic-updates/SVGLineElement-svgdom-x1-prop.html
-svg/dynamic-updates/SVGLineElement-svgdom-x2-prop.html
-svg/dynamic-updates/SVGLineElement-svgdom-y1-prop.html
-svg/dynamic-updates/SVGLineElement-svgdom-y2-prop.html
 svg/dynamic-updates/SVGMarkerElement-dom-markerHeight-attr.html
 svg/dynamic-updates/SVGMarkerElement-dom-markerUnits-attr.html
 svg/dynamic-updates/SVGMarkerElement-dom-markerWidth-attr.html
@@ -1294,10 +1298,10 @@ svg/dynamic-updates/SVGRectElement-svgdom-height-prop.html
 svg/dynamic-updates/SVGRectElement-svgdom-width-prop.html
 svg/dynamic-updates/SVGRectElement-svgdom-x-prop.html
 svg/dynamic-updates/SVGRectElement-svgdom-y-prop.html
+svg/dynamic-updates/SVGTRefElement-dom-href-attr.html
 svg/dynamic-updates/SVGTextElement-dom-transform-attr.html
 svg/dynamic-updates/SVGTextElement-svgdom-rotate-prop.html
 svg/dynamic-updates/SVGTextElement-svgdom-transform-prop.html
-svg/dynamic-updates/SVGTRefElement-dom-href-attr.html
 svg/filters/filter-width-update.svg
 svg/text/select-textLength-spacing-squeeze-1.svg
 svg/text/select-textLength-spacing-squeeze-2.svg
@@ -1504,6 +1508,7 @@ plugins/window-open.html
 # <https://bugs.webkit.org/show_bug.cgi?id=41084>
 compositing/webgl/webgl-background-color.html
 compositing/webgl/webgl-reflection.html
+fast/canvas/webgl/array-buffer-crash.html
 fast/canvas/webgl/array-buffer-view-crash.html
 fast/canvas/webgl/array-get-and-set-method-removal.html
 fast/canvas/webgl/array-get-out-of-bounds.html
@@ -1511,6 +1516,8 @@ fast/canvas/webgl/array-set-out-of-bounds.html
 fast/canvas/webgl/array-setters.html
 fast/canvas/webgl/array-unit-tests.html
 fast/canvas/webgl/buffer-bind-test.html
+fast/canvas/webgl/buffer-data-array-buffer.html
+fast/canvas/webgl/canvas-test.html
 fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias.html
 fast/canvas/webgl/context-attributes.html
 fast/canvas/webgl/copy-tex-image-and-sub-image-2d.html
@@ -1524,60 +1531,59 @@ fast/canvas/webgl/gl-enable-enum-test.html
 fast/canvas/webgl/gl-enum-tests.html
 fast/canvas/webgl/gl-get-calls.html
 fast/canvas/webgl/gl-object-get-calls.html
+fast/canvas/webgl/gl-pixelstorei.html
 fast/canvas/webgl/gl-uniform-arrays.html
 fast/canvas/webgl/gl-uniformmatrix4fv.html
 fast/canvas/webgl/gl-vertex-attrib.html
 fast/canvas/webgl/incorrect-context-object-behaviour.html
 fast/canvas/webgl/index-validation-copies-indices.html
 fast/canvas/webgl/index-validation-crash-with-buffer-sub-data.html
-fast/canvas/webgl/index-validation.html
+fast/canvas/webgl/index-validation-verifies-too-many-indices.html
 fast/canvas/webgl/index-validation-with-resized-buffer.html
+fast/canvas/webgl/index-validation.html
 fast/canvas/webgl/invalid-UTF-16.html
+fast/canvas/webgl/invalid-passed-params.html
 fast/canvas/webgl/null-object-behaviour.html
 fast/canvas/webgl/null-uniform-location.html
 fast/canvas/webgl/point-size.html
 fast/canvas/webgl/program-test.html
+fast/canvas/webgl/read-pixels-pack-alignment.html
 fast/canvas/webgl/renderbuffer-initialization.html
 fast/canvas/webgl/tex-image-and-sub-image-2d-with-array-buffer-view.html
 fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data.html
 fast/canvas/webgl/tex-image-and-sub-image-2d-with-image.html
+fast/canvas/webgl/tex-image-and-uniform-binding-bugs.html
 fast/canvas/webgl/tex-image-with-format-and-type.html
 fast/canvas/webgl/tex-input-validation.html
 fast/canvas/webgl/tex-sub-image-2d.html
 fast/canvas/webgl/texImage2DImageDataTest.html
 fast/canvas/webgl/texImageTest.html
 fast/canvas/webgl/texture-active-bind.html
+fast/canvas/webgl/texture-complete.html
 fast/canvas/webgl/texture-npot.html
+fast/canvas/webgl/texture-transparent-pixels-initialized.html
 fast/canvas/webgl/triangle.html
 fast/canvas/webgl/uniform-location.html
 fast/canvas/webgl/viewport-unchanged-upon-resize.html
 fast/canvas/webgl/webgl-array-invalid-ranges.html
 fast/dom/Window/timer-resume-on-navigation-back.html
-fast/events/pageshow-pagehide-on-back-cached.html
 fast/events/pageshow-pagehide-on-back-cached-with-frames.html
+fast/events/pageshow-pagehide-on-back-cached.html
 fast/events/tab-focus-anchor.html
+fast/frames/frame-crash-with-page-cache.html
 fast/harness/override-preferences-2.html
 fast/harness/override-preferences.html
+fast/harness/page-cache-crash-on-data-urls.html
 fast/harness/use-page-cache.html
 fast/history/timed-refresh-in-cached-frame.html
 fast/loader/frames-with-unload-handlers-in-page-cache.html
 fast/loader/input-element-page-cache-crash.html
 fast/parser/noscript-with-javascript-disabled.html
 fast/parser/noscript-with-javascript-enabled.html
-loader/go-back-to-different-window-size.html
-fast/canvas/webgl/array-buffer-crash.html
-fast/canvas/webgl/buffer-data-array-buffer.html
-fast/canvas/webgl/index-validation-verifies-too-many-indices.html
-fast/canvas/webgl/tex-image-and-uniform-binding-bugs.html
-fast/canvas/webgl/texture-complete.html
-fast/canvas/webgl/texture-transparent-pixels-initialized.html
 fast/repaint/no-caret-repaint-in-non-content-editable-element.html
 http/tests/appcache/disabled.html
+loader/go-back-to-different-window-size.html
 media/restore-from-page-cache.html
-fast/canvas/webgl/canvas-test.html
-fast/canvas/webgl/gl-pixelstorei.html
-fast/canvas/webgl/invalid-passed-params.html
-fast/canvas/webgl/read-pixels-pack-alignment.html
 
 # Pasteboard doesn't work in WebKit2
 # <https://bugs.webkit.org/show_bug.cgi?id=42317>
@@ -1691,81 +1697,6 @@ inspector/timeline-script-tag-1.html
 inspector/timeline-script-tag-2.html
 inspector/timeline-trivial.html
 
-# WebKitTestRunner needs to support layoutTestController.setCanOpenWindows
-# <https://bugs.webkit.org/show_bug.cgi?id=42321>
-fast/dom/Document/early-document-access.html
-fast/dom/Window/closure-access-after-navigation-window.html
-fast/dom/Window/dom-access-from-closure-window.html
-fast/dom/Window/new-window-opener.html
-fast/dom/Window/setting-properties-on-closed-window.html
-fast/dom/Window/window-early-properties.html
-fast/dom/Window/window-open-pending-url.html
-fast/dom/Window/window-open-self-from-other-frame.html
-fast/dom/location-new-window-no-crash.html
-fast/dom/open-and-close-by-DOM.html
-fast/events/popup-allowed-from-gesture-initiated-event.html
-fast/events/popup-allowed-from-gesture-initiated-form-submit.html
-fast/events/popup-blocked-from-fake-button-click.html
-fast/events/popup-blocked-from-fake-focus.html
-fast/events/popup-blocked-from-fake-user-gesture.html
-fast/events/popup-blocked-to-post-blank.html
-fast/events/show-modal-dialog-onblur-onfocus.html
-fast/frames/frame-crash-with-page-cache.html
-fast/frames/iframe-reparenting-new-page.html
-fast/frames/sandboxed-iframe-navigation-windowopen.html
-fast/harness/page-cache-crash-on-data-urls.html
-fast/harness/show-modal-dialog.html
-fast/history/history_reload.html
-fast/history/window-open.html
-fast/loader/cancel-load-during-port-block-timer.html
-fast/loader/crash-copying-backforwardlist.html
-fast/loader/stateobjects/pushstate-without-history.html
-fast/loader/stateobjects/replacestate-in-iframe.html
-fast/loader/stateobjects/replacestate-then-pushstate.html
-fast/loader/stateobjects/replacestate-updates-location.html
-fast/parser/xhtml-close-while-parsing.xhtml
-plugins/access-after-page-destroyed.html
-http/tests/appcache/crash-when-navigating-away-then-back.html
-http/tests/media/video-cancel-load.html
-http/tests/misc/set-window-opener-to-null.html
-http/tests/misc/slow-preload-cancel.html
-http/tests/misc/window-open-then-write.html
-http/tests/navigation/new-window-redirect-history.html
-http/tests/navigation/no-referrer-reset.html
-http/tests/navigation/no-referrer-target-blank.html
-http/tests/navigation/target-frame-from-window.html
-http/tests/security/aboutBlank/security-context-window-open.html
-http/tests/security/aboutBlank/window-open-self-about-blank.html
-http/tests/security/aboutBlank/xss-DENIED-navigate-opener-document-write.html
-http/tests/security/aboutBlank/xss-DENIED-navigate-opener-javascript-url.html
-http/tests/security/aboutBlank/xss-DENIED-set-opener.html
-http/tests/security/cross-frame-access-call.html
-http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-window-open.html
-http/tests/security/dataURL/xss-DENIED-from-javascript-url-window-open.html
-http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-window-open.html
-http/tests/security/dataURL/xss-DENIED-to-data-url-window-open.html
-http/tests/security/frameNavigation/cross-origin-opener.html
-http/tests/security/frameNavigation/not-opener.html
-http/tests/security/frameNavigation/opener.html
-http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html
-http/tests/security/frameNavigation/xss-DENIED-targeted-link-navigation.html
-http/tests/security/isolatedWorld/userGestureEvents.html
-http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-window-open.html
-http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-url-window-open.html
-http/tests/security/javascriptURL/xss-DENIED-from-javascript-url-in-foreign-domain-window-open.html
-http/tests/security/javascriptURL/xss-DENIED-to-javascript-url-in-foreign-domain-window-open.html
-http/tests/security/originHeader/origin-header-for-empty.html
-http/tests/security/window-events-clear-domain.html
-http/tests/security/window-events-clear-port.html
-http/tests/security/window-events-pass.html
-http/tests/xmlhttprequest/close-window.html
-http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.html
-http/tests/xmlhttprequest/cross-origin-authorization.html
-http/tests/xmlhttprequest/cross-origin-no-authorization.html
-http/tests/xmlhttprequest/request-from-popup.html
-storage/domstorage/localstorage/window-open.html
-storage/domstorage/sessionstorage/window-open.html
-
 # WebKitTestRunner needs to support layoutTestController.dumpBackForwardList
 # <https://bugs.webkit.org/show_bug.cgi?id=42322>
 fast/loader/fragment-after-redirect-gets-back-entry.html
@@ -1829,6 +1760,7 @@ http/tests/navigation/metaredirect-frames.html
 http/tests/navigation/metaredirect-goback.html
 http/tests/navigation/metaredirect-subframeload.html
 http/tests/navigation/multiple-back-forward-entries.html
+http/tests/navigation/new-window-redirect-history.html
 http/tests/navigation/onload-navigation-iframe-2.html
 http/tests/navigation/onload-navigation-iframe-timeout.html
 http/tests/navigation/onload-navigation-iframe.html
@@ -1919,14 +1851,15 @@ http/tests/security/isolatedWorld/location-properties.html
 http/tests/security/isolatedWorld/location-prototype.html
 http/tests/security/isolatedWorld/number-prototype.html
 http/tests/security/isolatedWorld/object-prototype.html
+http/tests/security/isolatedWorld/storage-properties.html
+http/tests/security/isolatedWorld/storage-prototype.html
 http/tests/security/isolatedWorld/string-prototype.html
 http/tests/security/isolatedWorld/top-properties.html
+http/tests/security/isolatedWorld/userGestureEvents.html
 http/tests/security/isolatedWorld/window-properties.html
 http/tests/security/isolatedWorld/window-setTimeout-function.html
 http/tests/security/isolatedWorld/window-setTimeout-string.html
 http/tests/security/isolatedWorld/world-reuse.html
-http/tests/security/isolatedWorld/storage-properties.html
-http/tests/security/isolatedWorld/storage-prototype.html
 
 # WebKitTestRunner needs to support layoutTestController.setJavaScriptProfilingEnabled
 # <https://bugs.webkit.org/show_bug.cgi?id=42328>
@@ -2032,16 +1965,18 @@ fast/dom/location-hash.html
 fast/history/history-length.html
 fast/loader/location-port.html
 fast/loader/stateobjects/document-destroyed-navigate-back-with-fragment-scroll.html
+fast/loader/stateobjects/document-destroyed-navigate-back.html
 fast/loader/stateobjects/popstate-after-load-complete-addeventlistener.html
 fast/loader/stateobjects/popstate-after-load-complete-body-attribute.html
 fast/loader/stateobjects/popstate-after-load-complete-body-inline-attribute.html
 fast/loader/stateobjects/popstate-after-load-complete-window-attribute.html
 fast/loader/stateobjects/pushstate-clears-forward-history.html
+fast/loader/stateobjects/pushstate-then-replacestate.html
 fast/loader/stateobjects/pushstate-updates-location.html
 fast/loader/stateobjects/pushstate-with-fragment-urls-and-hashchange.html
 fast/loader/stateobjects/pushstate-within-popstate-handler-assert.html
-fast/loader/stateobjects/pushstate-then-replacestate.html
-fast/loader/stateobjects/document-destroyed-navigate-back.html
+fast/loader/stateobjects/pushstate-without-history.html
+fast/loader/stateobjects/replacestate-then-pushstate.html
 http/tests/loading/state-object-security-exception.html
 
 # WebKitTestRunner needs textInputController
@@ -2289,6 +2224,7 @@ fast/events/keypress-insert-tab.html
 # WebKitTestRunner needs layoutTestController.setWindowIsKey
 # <https://bugs.webkit.org/show_bug.cgi?id=42688>
 editing/selection/4975120.html
+fast/events/show-modal-dialog-onblur-onfocus.html
 
 # WebKitTestRunner needs layoutTestController.setEditingBehavior
 # <https://bugs.webkit.org/show_bug.cgi?id=42689>
@@ -2355,11 +2291,6 @@ fast/loader/non-deferred-substitute-load.html
 # <https://bugs.webkit.org/show_bug.cgi?id=42778>
 http/tests/cookies/third-party-cookie-relaxing.html
 
-# WebKit2 needs layoutTestController.setCloseRemainingWindowsWhenComplete
-# <https://bugs.webkit.org/show_bug.cgi?id=42779>
-http/tests/security/popup-blocked-from-fake-event.html
-http/tests/security/popup-blocked-from-window-open.html
-
 # WebKitTestRunner needs GCController
 # <https://bugs.webkit.org/show_bug.cgi?id=42701>
 fast/dom/gc-10.html
@@ -2369,6 +2300,9 @@ fast/frames/removal-before-attach-crash.html
 # WebKitTestRunner needs to print onunload handler information
 # <https://bugs.webkit.org/show_bug.cgi?id=42703>
 fast/events/onunload-clears-onbeforeunload.html
+fast/events/onunload-not-on-body.html
+fast/events/onunload.html
+fast/events/pageshow-pagehide-on-back-uncached.html
 fast/events/pageshow-pagehide.html
 fast/events/stop-load-in-unload-handler-using-document-write.html
 fast/events/stop-load-in-unload-handler-using-window-stop.html
@@ -2377,6 +2311,8 @@ fast/frames/frame-unload-crash.html
 fast/loader/onunload-form-submit-crash-2.html
 fast/loader/onunload-form-submit-crash.html
 fast/loader/start-load-in-unload.html
+fast/loader/stateobjects/pushstate-in-iframe.html
+fast/loader/stateobjects/replacestate-in-iframe.html
 fast/loader/unload-form-about-blank.html
 fast/loader/unload-form-post-about-blank.html
 fast/loader/unload-form-post.html
@@ -2386,15 +2322,12 @@ fast/loader/unload-hyperlink.html
 fast/loader/unload-javascript-url.html
 fast/loader/unload-reload.html
 fast/loader/unload-window-location.html
+http/tests/navigation/history-back-across-form-submission-to-fragment.html
+http/tests/security/window-events-pass.html
 http/tests/xmlhttprequest/frame-load-cancelled-abort.html
 http/tests/xmlhttprequest/frame-unload-abort-crash.html
 http/tests/xmlhttprequest/send-undefined-and-null.html
 http/tests/xmlhttprequest/xhr-onunload.html
-fast/events/onunload.html
-fast/events/onunload-not-on-body.html
-fast/events/pageshow-pagehide-on-back-uncached.html
-http/tests/navigation/history-back-across-form-submission-to-fragment.html
-fast/loader/stateobjects/pushstate-in-iframe.html
 
 # WebKitTestRunner needs to print history delegate information
 # <https://bugs.webkit.org/show_bug.cgi?id=42704>
@@ -2440,6 +2373,20 @@ editing/deleting/smart-editing-disabled.html
 # WebKitTestRunner needs plainText.plainText
 editing/text-iterator/basic-iteration.html
 
+# WebKitTestRunner needs layoutTestController.setNewWindowsCopyBackForwardList
+fast/loader/crash-copying-backforwardlist.html
+
+# WebKitTestRunner needs layoutTestController.authenticateSession
+http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.html
+
+# WebKitTestRunner needs layoutTestController.setPopupBlockingEnabled
+fast/events/popup-allowed-from-gesture-initiated-event.html
+fast/events/popup-allowed-from-gesture-initiated-form-submit.html
+fast/events/popup-blocked-from-fake-button-click.html
+fast/events/popup-blocked-from-fake-focus.html
+fast/events/popup-blocked-from-fake-user-gesture.html
+fast/events/popup-blocked-to-post-blank.html
+
 # WebKit2 needs support for moving/resizing and querying the location/size the window
 fast/dom/Window/window-lookup-precedence.html
 fast/dom/Window/window-resize-and-move-arguments.html
@@ -2476,6 +2423,9 @@ http/tests/xmlhttprequest/basic-auth-default.html
 http/tests/xmlhttprequest/logout.html
 http/tests/xmlhttprequest/re-login-async.html
 http/tests/xmlhttprequest/re-login.html
+
+# WebKit2 needs showModalDialog
+fast/harness/show-modal-dialog.html
 
 # WebKit2 needs to support synchronous creation of about:blank/data:url frames'
 editing/selection/DOMSelection-crossing-document.html
@@ -2537,6 +2487,40 @@ http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-sub-frame-2-le
 http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-sub-frame.html
 http/tests/security/javascriptURL/xss-DENIED-to-javascript-url-in-foreign-domain-subframe.html
 http/tests/security/protocol-compare-case-insensitive.html
+
+# Unexplained failures that were formerly in the setCanOpenWindows or setCloseRemainingWindowsWhenComplete lists.
+fast/dom/Window/new-window-opener.html
+fast/dom/open-and-close-by-DOM.html
+fast/frames/iframe-reparenting-new-page.html
+fast/parser/xhtml-close-while-parsing.xhtml
+http/tests/media/video-cancel-load.html
+http/tests/misc/set-window-opener-to-null.html
+http/tests/misc/window-open-then-write.html
+http/tests/navigation/target-frame-from-window.html
+http/tests/security/aboutBlank/xss-DENIED-navigate-opener-document-write.html
+http/tests/security/aboutBlank/xss-DENIED-navigate-opener-javascript-url.html
+http/tests/security/aboutBlank/xss-DENIED-set-opener.html
+http/tests/security/cross-frame-access-call.html
+http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-window-open.html
+http/tests/security/dataURL/xss-DENIED-from-javascript-url-window-open.html
+http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-window-open.html
+http/tests/security/dataURL/xss-DENIED-to-data-url-window-open.html
+http/tests/security/frameNavigation/opener.html
+http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html
+http/tests/security/frameNavigation/xss-DENIED-targeted-link-navigation.html
+http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-url-window-open.html
+http/tests/security/javascriptURL/xss-DENIED-from-javascript-url-in-foreign-domain-window-open.html
+http/tests/security/javascriptURL/xss-DENIED-to-javascript-url-in-foreign-domain-window-open.html
+http/tests/security/window-events-clear-port.html
+http/tests/xmlhttprequest/close-window.html
+http/tests/xmlhttprequest/cross-origin-authorization.html
+http/tests/xmlhttprequest/cross-origin-no-authorization.html
+http/tests/xmlhttprequest/request-from-popup.html
+plugins/access-after-page-destroyed.html
+storage/domstorage/localstorage/window-open.html
+storage/domstorage/sessionstorage/window-open.html
+http/tests/security/popup-blocked-from-fake-event.html
+http/tests/security/popup-blocked-from-window-open.html
 
 # Unexplained failures that were formerly in the "unsafe access" list.
 http/tests/security/cross-frame-access-child-explicit-domain.html

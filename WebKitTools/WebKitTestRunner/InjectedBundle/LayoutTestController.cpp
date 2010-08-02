@@ -116,6 +116,7 @@ LayoutTestController::LayoutTestController()
     : m_whatToDump(RenderTree)
     , m_shouldDumpAllFrameScrollPositions(false)
     , m_shouldAllowEditing(true)
+    , m_shouldCloseExtraWindows(false)
     , m_dumpEditingCallbacks(false)
     , m_dumpStatusCallbacks(false)
     , m_waitToDump(false)
@@ -240,6 +241,17 @@ void LayoutTestController::execCommand(JSStringRef name, JSStringRef argument)
 bool LayoutTestController::isCommandEnabled(JSStringRef name)
 {
     return WKBundlePageIsEditingCommandEnabled(InjectedBundle::shared().page()->page(), toWK(name).get());
+}
+
+void LayoutTestController::setCanOpenWindows(bool)
+{
+    // It's not clear if or why any tests require opening windows be forbidden.
+    // For now, just ignore this setting, and if we find later it's needed we can add it.
+}
+
+unsigned LayoutTestController::windowCount()
+{
+    return InjectedBundle::shared().pageCount();
 }
 
 // Object Creation
