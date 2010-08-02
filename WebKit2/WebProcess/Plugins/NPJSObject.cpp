@@ -25,6 +25,7 @@
 
 #include "NPJSObject.h"
 
+#include "JSNPObject.h"
 #include "NPRuntimeObjectMap.h"
 #include "NPRuntimeUtilities.h"
 #include "NotImplemented.h"
@@ -42,6 +43,9 @@ namespace WebKit {
 
 NPJSObject* NPJSObject::create(NPRuntimeObjectMap* objectMap, JSObject* jsObject)
 {
+    // We should never have a JSNPObject inside an NPJSObject.
+    ASSERT(!jsObject->inherits(&JSNPObject::s_info));
+
     NPJSObject* npJSObject = toNPJSObject(createNPObject(0, npClass()));
     npJSObject->initialize(objectMap, jsObject);
 

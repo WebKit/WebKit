@@ -26,6 +26,7 @@
 #include "JSNPObject.h"
 
 #include "JSNPMethod.h"
+#include "NPJSObject.h"
 #include "NPRuntimeObjectMap.h"
 #include "NPRuntimeUtilities.h"
 #include <JavaScriptCore/Error.h>
@@ -35,8 +36,8 @@
 #include <WebCore/IdentifierRep.h>
 #include <WebCore/PlatformString.h>
 
-using namespace WebCore;
 using namespace JSC;
+using namespace WebCore;
 
 namespace WebKit {
 
@@ -52,12 +53,27 @@ JSNPObject::JSNPObject(JSGlobalObject* globalObject, NPRuntimeObjectMap* objectM
     , m_objectMap(objectMap)
     , m_npObject(npObject)
 {
+    // We should never have an NPJSObject inside a JSNPObject.
+    ASSERT(!NPJSObject::isNPJSObject(m_npObject));
+
     retainNPObject(m_npObject);
 }
 
 JSNPObject::~JSNPObject()
 {
-    // FIXME: Implement.
+    if (!m_npObject)
+        return;
+
+    m_objectMap->jsNPObjectDestroyed(this);
+    releaseNPObject(m_npObject);
+}
+
+void JSNPObject::invalidate()
+{
+    ASSERT(m_npObject);
+
+    releaseNPObject(m_npObject);
+    m_npObject = 0;
 }
 
 JSValue JSNPObject::callMethod(ExecState* exec, NPIdentifier methodName)

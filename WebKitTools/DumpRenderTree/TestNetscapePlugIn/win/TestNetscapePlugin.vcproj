@@ -463,6 +463,10 @@
     		  RelativePath="..\Tests\DocumentOpenInDestroyStream.cpp"
     		>
     	  </File>
+    	  <File
+    		  RelativePath="..\Tests\NPRuntimeObjectFromDestroyedPlugin.cpp"
+    		>
+    	  </File>
 		  <File
     		  RelativePath="..\Tests\NPRuntimeRemoveProperty.cpp"
     		>

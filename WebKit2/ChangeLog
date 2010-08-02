@@ -1,3 +1,44 @@
+2010-08-02  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Cache JSNPObjects and fix bugs in the object map
+        https://bugs.webkit.org/show_bug.cgi?id=43368
+
+        * WebProcess/Plugins/JSNPObject.cpp:
+        (WebKit::JSNPObject::JSNPObject):
+        Assert that we're not trying to wrap an NPJSObject.
+
+        (WebKit::JSNPObject::~JSNPObject):
+        Tell the object map that we're gone.
+
+        (WebKit::JSNPObject::invalidate):
+        Release the NPObject and null out the pointer.
+
+        * WebProcess/Plugins/NPJSObject.cpp:
+        (WebKit::NPJSObject::create):
+        Assert that we're not trying to wrap a JSNPObject.
+
+        * WebProcess/Plugins/NPRuntimeObjectMap.cpp:
+        (WebKit::NPRuntimeObjectMap::getOrCreateNPObject):
+        If we're passed a JSNPObject, just extract its NPObject.
+
+        (WebKit::NPRuntimeObjectMap::getOrCreateJSObject):
+        If we're passed an NPJSObject, just extract its JSObject. Otherwise, check if we already have
+        a JSObject for this NPObject and return it.
+
+        (WebKit::NPRuntimeObjectMap::jsNPObjectDestroyed):
+        Remove the object from the map.
+
+        (WebKit::NPRuntimeObjectMap::convertNPVariantToJSValue):
+        getOrCreateJSObject now checks for wrapped objects.
+
+        (WebKit::NPRuntimeObjectMap::convertJSValueToNPVariant):
+        getOrCreateNPObject now checks for wrapped objects.
+
+        (WebKit::NPRuntimeObjectMap::invalidate):
+        Invalidate JSNPObjects as well.
+
 2010-08-02  Jeremy Orlow  <jorlow@chromium.org>
 
         Speculative revert of 64425 due to Chromium instability

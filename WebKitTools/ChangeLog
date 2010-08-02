@@ -1,3 +1,27 @@
+2010-08-02  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Cache JSNPObjects and fix bugs in the object map
+        https://bugs.webkit.org/show_bug.cgi?id=43368
+
+        Test that we correctly throw exceptions when trying to do things to a JSObject that used to
+        wrap an NPObject that came from a plug-in that is now destroyed.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/TestNetscapePlugIn/PluginTest.h:
+        (PluginTest::Object::getProperty):
+        (PluginTest::Object::NP_GetProperty):
+        (PluginTest::Object::npClass):
+        * DumpRenderTree/TestNetscapePlugIn/Tests/NPRuntimeObjectFromDestroyedPlugin.cpp: Added.
+        (NPRuntimeObjectFromDestroyedPlugin::NPRuntimeObjectFromDestroyedPlugin):
+        (NPRuntimeObjectFromDestroyedPlugin::ScriptableObject::hasProperty):
+        (NPRuntimeObjectFromDestroyedPlugin::ScriptableObject::getProperty):
+        (NPRuntimeObjectFromDestroyedPlugin::NPP_GetValue):
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugin.vcproj:
+        * DumpRenderTree/qt/TestNetscapePlugin/TestNetscapePlugin.pro:
+        * GNUmakefile.am:
+
 2010-08-02  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

@@ -47,6 +47,7 @@ DEFINE_HAS_MEMBER_CHECK(hasMethod, bool, (NPIdentifier methodName));
 DEFINE_HAS_MEMBER_CHECK(invoke, bool, (NPIdentifier methodName, const NPVariant*, uint32_t, NPVariant* result));
 DEFINE_HAS_MEMBER_CHECK(invokeDefault, bool, (const NPVariant*, uint32_t, NPVariant* result));
 DEFINE_HAS_MEMBER_CHECK(hasProperty, bool, (NPIdentifier propertyName));
+DEFINE_HAS_MEMBER_CHECK(getProperty, bool, (NPIdentifier propertyName, NPVariant* result));
 
 class PluginTest {
 public:
@@ -121,6 +122,12 @@ protected:
             return false;
         }
 
+        bool getProperty(NPIdentifier propertyName, NPVariant* result)
+        {
+            assert(false);
+            return false;
+        }
+
     protected:
         Object()
             : m_pluginTest(0)
@@ -163,7 +170,12 @@ protected:
         {
             return static_cast<T*>(npObject)->hasProperty(propertyName);
         }
-        
+
+        static bool NP_GetProperty(NPObject* npObject, NPIdentifier propertyName, NPVariant* result)
+        {
+            return static_cast<T*>(npObject)->getProperty(propertyName, result);
+        }
+
         static NPClass* npClass()
         {
             static NPClass npClass = {
@@ -175,7 +187,7 @@ protected:
                 has_member_invoke<T>::value ? NP_Invoke : 0,
                 has_member_invokeDefault<T>::value ? NP_InvokeDefault : 0,
                 has_member_hasProperty<T>::value ? NP_HasProperty : 0,
-                0, // NPClass::getProperty
+                has_member_getProperty<T>::value ? NP_GetProperty : 0,
                 0, // NPClass::setProperty
                 0, // NPClass::removeProperty
                 0, // NPClass::enumerate
