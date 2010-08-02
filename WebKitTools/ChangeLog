@@ -1,3 +1,16 @@
+2010-08-01  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [DRT/Chromium] Remove string_util.h dependency
+        https://bugs.webkit.org/show_bug.cgi?id=43312
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::pathToLocalResource):
+         Use string::find() instead of StartsWithASCII().
+        (LayoutTestController::cppVariantToInt32):
+         Use strtol() instead of StringToNumber().
+
 2010-08-01  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

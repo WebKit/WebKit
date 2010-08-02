@@ -35,7 +35,6 @@
 #include "DRTDevToolsAgent.h"
 #include "TestShell.h"
 #include "WebViewHost.h"
-#include "base/string_util.h"
 #include "public/WebAnimationController.h"
 #include "public/WebConsoleMessage.h"
 #include "public/WebDocument.h"
@@ -51,6 +50,9 @@
 #include "public/WebURL.h"
 #include "public/WebView.h"
 #include "webkit/support/webkit_support.h"
+#include <algorithm>
+#include <cstdlib>
+#include <limits>
 #include <wtf/text/WTFString.h>
 
 #if OS(WINDOWS)
@@ -704,7 +706,7 @@ void LayoutTestController::pathToLocalResource(const CppArgumentList& arguments,
 
     string url = arguments[0].toString();
 #if OS(WINDOWS)
-    if (StartsWithASCII(url, "/tmp/", true)) {
+    if (!url.find("/tmp/")) {
         // We want a temp file.
         const unsigned tempPrefixLength = 5;
         size_t bufferSize = MAX_PATH;
@@ -716,7 +718,7 @@ void LayoutTestController::pathToLocalResource(const CppArgumentList& arguments,
             tempLength = GetTempPathW(bufferSize, tempPath.get());
             ASSERT(tempLength < bufferSize);
         }
-        std::string resultPath(WebString(tempPath.get(), tempLength).utf8());
+        string resultPath(WebString(tempPath.get(), tempLength).utf8());
         resultPath.append(url.substr(tempPrefixLength));
         result->set(resultPath);
         return;
@@ -725,8 +727,12 @@ void LayoutTestController::pathToLocalResource(const CppArgumentList& arguments,
 
     // Some layout tests use file://// which we resolve as a UNC path.  Normalize
     // them to just file:///.
-    while (StartsWithASCII(url, "file:////", false))
+    string lowerUrl = url;
+    transform(lowerUrl.begin(), lowerUrl.end(), lowerUrl.begin(), ::tolower);
+    while (!lowerUrl.find("file:////")) {
         url = url.substr(0, 8) + url.substr(9);
+        lowerUrl = lowerUrl.substr(0, 8) + lowerUrl.substr(9);
+    }
     result->set(webkit_support::RewriteLayoutTestsURL(url).spec());
 }
 
@@ -1024,9 +1030,12 @@ int32_t LayoutTestController::cppVariantToInt32(const CppVariant& value)
     if (value.isInt32())
         return value.toInt32();
     if (value.isString()) {
-        int number;
-        if (StringToInt(value.toString(), &number))
-            return number;
+        string stringSource = value.toString();
+        const char* source = stringSource.data();
+        char* end;
+        long number = strtol(source, &end, 10);
+        if (end == source + stringSource.length() && number >= numeric_limits<int32_t>::min() && number <= numeric_limits<int32_t>::max())
+            return static_cast<int32_t>(number);
     }
     logErrorToConsole("Invalid value for preference. Expected integer value.");
     return 0;
