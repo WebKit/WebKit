@@ -67,6 +67,7 @@ String ScriptValue::toString(ScriptState*) const
     return toWebCoreString(m_value);
 }
 
+#if ENABLE(INSPECTOR)
 static PassRefPtr<InspectorValue> v8ToInspectorValue(v8::Handle<v8::Value> value)
 {
     if (value.IsEmpty()) {
@@ -122,5 +123,6 @@ PassRefPtr<InspectorValue> ScriptValue::toInspectorValue(ScriptState* scriptStat
     v8::Context::Scope contextScope(scriptState->context());
     return v8ToInspectorValue(m_value);
 }
+#endif
 
 } // namespace WebCore

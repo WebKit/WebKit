@@ -1,3 +1,16 @@
+2010-08-02  Kristian Monsen  <kristianm@google.com>
+
+        Reviewed by Steve Block.
+
+        Compile fix for Android, guard inspector code with ENABLE(INSPECTOR).
+        https://bugs.webkit.org/show_bug.cgi?id=43345
+        Code introduced in this CL:
+        http://trac.webkit.org/changeset/63891
+
+        No new tests, just a compile fix.
+
+        * bindings/v8/ScriptValue.cpp:
+
 2010-08-02  Jeremy Orlow  <jorlow@chromium.org>
 
         Speculative revert of 64425 due to Chromium instability
