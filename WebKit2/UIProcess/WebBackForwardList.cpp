@@ -191,7 +191,8 @@ PassRefPtr<ImmutableArray> WebBackForwardList::forwardListAsImmutableArrayWithLi
         return ImmutableArray::create();
 
     APIObject** array = new APIObject*[size];
-    unsigned last = std::min(m_current + limit, static_cast<unsigned>(m_entries.size() - 1));
+    unsigned last = m_current + size;
+    ASSERT(last < m_entries.size());
     for (unsigned i = m_current + 1, j = 0; i <= last; ++i, ++j) {
         APIObject* item = m_entries[i].get();
         item->ref();

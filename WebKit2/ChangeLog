@@ -1,3 +1,14 @@
+2010-08-02  John Sullivan  <sullivan@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=43369
+        WebBackForwardList::forwardListAsImmutableArrayWithLimit can return partly-uninitialized array
+        
+        Reviewed by Ada Chan.
+
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::forwardListAsImmutableArrayWithLimit):
+        Use a simpler and correct expression to determine "last".
+
 2010-08-02  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
