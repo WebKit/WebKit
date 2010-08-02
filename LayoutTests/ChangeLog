@@ -1,3 +1,11 @@
+2010-08-02  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by John Honeycutt.
+
+        Update skipped list to get us to ~75 failures for Mac WebKit2.
+
+        * platform/mac-wk2/Skipped:
+
 2010-08-02  Ojan Vafai  <ojan@chromium.org>
 
         Fix failing test on QT/GTK bots.

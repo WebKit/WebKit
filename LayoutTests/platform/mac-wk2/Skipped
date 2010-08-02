@@ -1674,6 +1674,8 @@ inspector/elements-panel-structure.html
 inspector/elements-panel-styles.html
 inspector/elements-panel-xhtml-structure.xhtml
 inspector/evaluate-in-frontend.html
+inspector/extensions-api.html
+inspector/extensions.html
 inspector/inspected-objects-not-overriden.html
 inspector/styles-disable-inherited.html
 inspector/styles-disable-then-delete.html
@@ -2416,6 +2418,7 @@ svg/W3C-SVG-1.1/struct-cond-02-t.svg
 # WebKitTestRunner needs to sanitize file urls in the output
 http/tests/misc/image-blocked-src-change.html
 http/tests/misc/image-blocked-src-no-change.html
+http/tests/appcache/local-content.html
 
 # WebKit2 needs to support authentication
 http/tests/xmlhttprequest/basic-auth.html
@@ -2430,25 +2433,28 @@ fast/harness/show-modal-dialog.html
 # WebKit2 needs to support synchronous creation of about:blank/data:url frames'
 editing/selection/DOMSelection-crossing-document.html
 fast/dom/Document/document-write-doctype.html
+fast/dom/prototype-inheritance-2.html
 fast/encoding/char-encoding-mac.html
 fast/encoding/char-encoding.html
 fast/encoding/invalid-xml.html
 fast/events/blur-focus-window-should-blur-focus-element.html
 fast/forms/focus2.html
 fast/frames/frame-limit.html
+fast/frames/sandboxed-iframe-navigation-targetlink.html
 fast/loader/about-blank-hash-kept.html
 fast/loader/iframe-recursive-synchronous-load.html
 fast/loader/meta-refresh-vs-open.html
-storage/domstorage/events/basic-body-attribute.html
-storage/domstorage/events/basic-setattribute.html
-storage/domstorage/events/basic.html
-storage/domstorage/events/case-sensitive.html
-storage/domstorage/events/documentURI.html
 http/tests/security/cross-frame-access-get-override.html
 http/tests/security/cross-frame-access-history-get-override.html
 http/tests/security/cross-frame-access-location-get-override.html
 http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-url-sub-frame-2-level.html
 http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-url-sub-frame.html
+storage/domstorage/events/basic-body-attribute.html
+media/adopt-node-crash.html
+storage/domstorage/events/basic-setattribute.html
+storage/domstorage/events/basic.html
+storage/domstorage/events/case-sensitive.html
+storage/domstorage/events/documentURI.html
 
 # Unexplained failures that were formerly in the dumpChildFramesAsText list.
 fast/frames/sandboxed-iframe-noscript.html
@@ -2561,19 +2567,45 @@ fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Con
 fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T11.html
 
 # Unexplained failures that are causing additional failures
+animations/transition-and-animation-1.html
+compositing/images/direct-image-background-color.html
+compositing/masks/direct-image-mask.html
+compositing/repaint/layer-repaint-rects.html
+dom/html/level2/html/HTMLBaseElement02.html
 dom/xhtml/level2/html/HTMLBaseElement02.xhtml
 dom/xhtml/level2/html/HTMLFormElement10.xhtml
 fast/css/target-fragment-match.html
+fast/dom/beforeload/remove-frame-in-beforeload-listener.html
 fast/dom/Window/window-appendages-cleared.html
 fast/dynamic/anchor-lock.html
+fast/frames/iframe-onload-remove-self-no-crash.html
 fast/history/saves-state-after-fragment-nav.html
 fast/html/empty-fragment-id-goto-top.html
 fast/images/move-image-to-new-document.html
+fast/loader/empty-embed-src-attribute.html
 fast/loader/empty-ref-versus-no-ref.html
+fast/loader/frame-creation-removal.html
 fast/overflow/scroll-vertical-not-horizontal.html
 http/tests/history/back-to-post.php
+http/tests/media/video-load-twice.html
 http/tests/misc/slow-loading-mask.html
+http/tests/multipart/invalid-image-data-standalone.html
+http/tests/multipart/multipart-wait-before-boundary.html
 http/tests/navigation/fallback-anchor-reload.html
+http/tests/ssl/referer-301.html
+http/tests/ssl/referer-303.html
+http/tests/ssl/verify-ssl-enabled.php
+media/controls-after-reload.html
+media/event-attributes.html
+media/media-captions.html
+media/media-document-audio-size.html
+media/video-click-dblckick-standalone.html
+media/video-document-types.html
+media/video-played-reset.html
+media/video-preload.html
+media/video-src-change.html
+platform/mac/fast/loader/non-html-load-event.html
+
 
 ########################################
 
