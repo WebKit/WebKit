@@ -1,0 +1,87 @@
+<html>
+<head>
+<script src="../http/tests/inspector/inspector-test.js"></script>
+<script src="extensions-test.js"></script>
+<script type="text/javascript">
+
+window.inspectedValue = { str: "foo", num: 42 };
+
+function extension_testEvalOk(nextTest)
+{
+    webInspector.inspectedWindow.evaluate("inspectedValue", callbackAndNextTest(extension_onEvaluate, nextTest));
+}
+
+function extension_testEvalFailed(nextTest)
+{
+    webInspector.inspectedWindow.evaluate("document.body", callbackAndNextTest(extension_onEvaluate, nextTest));
+}
+
+function extension_testGetAllResources(nextTest)
+{
+    function compareResources(a, b)
+    {
+        return a.har.request.url.localeCompare(b.har.request.url);
+    }
+
+    function onResource(result)
+    {
+        var resources = result.sort(compareResources);
+
+        for (var i = 0; i < resources.length; ++i)
+            log("resource: " + resources[i].har.request.url.replace(/.*((\/[^/]*){3}$)/,"...$1"));
+    }
+    webInspector.resources.getAll(callbackAndNextTest(onResource, nextTest));
+}
+
+function extension_testGetInvalidResource(nextTest)
+{
+    function onResource(result)
+    {
+        log("Attempted to retrieve invalid resource: " + JSON.stringify(result));
+    }
+    webInspector.resources.get(2128506, callbackAndNextTest(onResource, nextTest));
+}
+
+function extension_testCreatePanel(nextTest)
+{
+    function onPanelCreated(panel)
+    {
+        log("Panel created");
+        dumpObject(panel);
+    }
+    webInspector.panels.create("Test Panel", "extension-panel.html", "extension-panel.png", callbackAndNextTest(onPanelCreated, nextTest));
+    log("done createPanel");
+}
+
+function extension_testCreateSidebar(nextTest)
+{
+    function onSidebarCreated(sidebar)
+    {
+        log("Sidebar created");
+        dumpObject(sidebar);
+    }
+    webInspector.panels.scripts.createSidebarPane("Test Sidebar", "extension-sidebar.html", callbackAndNextTest(onSidebarCreated, nextTest));
+}
+
+function extension_testResourceNotification(nextTest)
+{
+    function onResourceFinished(resource)
+    {
+        log("Resource finished: " + resource.har.request.url.replace(/.*((\/[^/]*){3}$)/,"...$1"));
+    }
+
+    webInspector.resources.onFinished.addListener(callbackAndNextTest(onResourceFinished, nextTest));
+    webInspector.inspectedWindow.evaluate("var xhr = new XMLHttpRequest(); xhr.open('GET', '" + location.href + "', false); xhr.send(null);");
+}
+
+function extension_onEvaluate(result)
+{
+    log("Evaluate: " + result.value + "(exception: " + result.isException + ")");
+}
+
+</script>
+</head>
+<body onload="onload()">
+<p>Tests WebInspector extension API</p>
+</body>
+</html>

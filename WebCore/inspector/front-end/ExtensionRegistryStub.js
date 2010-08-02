@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
- * Copyright (C) 2008 Matt Lilek <webkit@mattlilek.com>
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -30,27 +28,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module core {
-    interface [Conditional=INSPECTOR] InspectorFrontendHost {
-        void loaded();
-        void closeWindow();
-        void bringToFront();
-        void inspectedURLChanged(in DOMString newURL);
+if (!window.InspectorExtensionRegistry) {
 
-        void requestAttachWindow();
-        void requestDetachWindow();
-        void setAttachedWindowHeight(in unsigned long height);
-        void moveWindowBy(in float x, in float y);
-        void setExtensionAPI(in DOMString script);
+WebInspector.InspectorExtensionRegistryStub = function()
+{
+}
 
-        DOMString localizedStringsURL();
-        DOMString hiddenPanels();
+WebInspector.InspectorExtensionRegistryStub.prototype = {
+    getExtensionsAsync: function()
+    {
+    }
+};
 
-        void copyText(in DOMString text);
+InspectorExtensionRegistry = new WebInspector.InspectorExtensionRegistryStub();
 
-        [Custom] DOMString platform();
-        [Custom] DOMString port();
-        [Custom] void showContextMenu(in MouseEvent event, in DOMObject items);
-        void sendMessageToBackend(in DOMString message);
-    };
 }

@@ -1,3 +1,37 @@
+2010-08-02  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: adding tests for WebInspector extensions API.
+        https://bugs.webkit.org/show_bug.cgi?id=40425
+
+        * http/tests/inspector/inspector-test.js:
+        (dumpObject):
+        * inspector/extensions-api-expected.txt: Added.
+        * inspector/extensions-api.html: Added.
+        * inspector/extensions-expected.txt: Added.
+        * inspector/extensions-test.js: Added.
+        (log):
+        (frontend_initializeExtension):
+        (doit):
+        (done.callback):
+        (done):
+        (extensionFunctions):
+        * inspector/extensions.html: Added.
+        * inspector/resources/extension-main.html: Added.
+        * inspector/resources/extension-main.js: Added.
+        (fetchTests.callback):
+        (fetchTests):
+        (runTests):
+        (onTestsDone):
+        (runTest):
+        (callbackAndNextTest.callbackWrapper):
+        (callbackAndNextTest):
+        (output):
+        * inspector/resources/extension-panel.html: Added.
+        * inspector/resources/extension-sidebar.html: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-08-02  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.

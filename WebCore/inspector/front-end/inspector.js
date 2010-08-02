@@ -526,6 +526,9 @@ WebInspector.loaded = function()
     document.getElementById("close-button-left").addEventListener("click", this.close, true);
     document.getElementById("close-button-right").addEventListener("click", this.close, true);
 
+    this.extensionServer = new WebInspector.ExtensionServer();
+    this.extensionServer.initExtensions();
+
     InspectorFrontendHost.loaded();
 }
 
@@ -1202,6 +1205,7 @@ WebInspector.updateResource = function(identifier, payload)
         resource.finished = payload.finished;
         if (this.panels.audits)
             this.panels.audits.resourceFinished(resource);
+        this.extensionServer.notifyResourceFinished(resource);
     }
 
     if (payload.didTimingChange) {
@@ -1426,6 +1430,7 @@ WebInspector.reset = function()
     delete this.mainResource;
 
     this.console.clearMessages();
+    this.extensionServer.notifyInspectorReset();
 }
 
 WebInspector.resetProfilesPanel = function()
@@ -1442,6 +1447,7 @@ WebInspector.bringToFront = function()
 WebInspector.inspectedURLChanged = function(url)
 {
     InspectorFrontendHost.inspectedURLChanged(url);
+    this.extensionServer.notifyInspectedURLChanged();
 }
 
 WebInspector.resourceURLChanged = function(resource, oldURL)
@@ -1454,6 +1460,7 @@ WebInspector.didCommitLoad = function()
 {
     // Cleanup elements panel early on inspected page refresh.
     WebInspector.setDocument(null);
+    this.extensionServer.notifyInspectedPageLoaded();
 }
 
 WebInspector.updateConsoleMessageExpiredCount = function(count)

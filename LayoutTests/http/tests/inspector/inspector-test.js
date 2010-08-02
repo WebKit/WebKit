@@ -54,6 +54,8 @@ function dumpObject(object, nondeterministicProps, prefix, firstLinePrefix)
             dumpObject(propValue, nondeterministicProps, prefix + "    ", prefixWithName);
         else if (typeof propValue === "string")
             output(prefixWithName + "\"" + propValue + "\"");
+        else if (typeof propValue === "function")
+            output(prefixWithName + "<function>");
         else
             output(prefixWithName + propValue);
     }

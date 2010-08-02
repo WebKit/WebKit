@@ -84,6 +84,10 @@ WebInspector.InspectorFrontendHostStub.prototype = {
     {
     },
 
+    setExtensionAPI: function(script)
+    {
+    },
+
     loaded: function()
     {
     },

@@ -458,9 +458,18 @@ void InspectorController::inspectedWindowScriptObjectCleared(Frame* frame)
     if (m_inspectorFrontendClient && frame == m_inspectedPage->mainFrame())
         m_inspectorFrontendClient->windowObjectCleared();
 
-    if (!enabled() || !m_frontend || frame != m_inspectedPage->mainFrame())
+    if (!enabled())
         return;
-    m_injectedScriptHost->discardInjectedScripts();
+
+    if (m_frontend && frame != m_inspectedPage->mainFrame())
+        m_injectedScriptHost->discardInjectedScripts();
+    if (m_scriptsToEvaluateOnLoad.size()) {
+        ScriptState* scriptState = mainWorldScriptState(frame);
+        for (Vector<String>::iterator it = m_scriptsToEvaluateOnLoad.begin();
+             it != m_scriptsToEvaluateOnLoad.end(); ++it) {
+            m_injectedScriptHost->injectScript(*it, scriptState);
+        }
+    }
 }
 
 void InspectorController::setSearchingForNode(bool enabled)
@@ -802,14 +811,6 @@ void InspectorController::didCommitLoad(DocumentLoader* loader)
     for (Frame* frame = loader->frame(); frame; frame = frame->tree()->traverseNext(loader->frame()))
         if (ResourcesMap* resourceMap = m_frameResources.get(frame))
             pruneResources(resourceMap, loader);
-
-    if (m_scriptsToEvaluateOnLoad.size()) {
-        ScriptState* scriptState = mainWorldScriptState(loader->frame());
-        for (Vector<String>::iterator it = m_scriptsToEvaluateOnLoad.begin();
-             it != m_scriptsToEvaluateOnLoad.end(); ++it) {
-            m_injectedScriptHost->injectScript(*it, scriptState);
-        }
-    }
 }
 
 void InspectorController::frameDetachedFromParent(Frame* frame)

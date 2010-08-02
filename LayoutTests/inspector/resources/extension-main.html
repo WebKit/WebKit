@@ -1,0 +1,15 @@
+<html>
+<head>
+<script type="text/javascript">
+function log(message)
+{
+    webInspector.inspectedWindow.evaluate("log(unescape('" + escape(message) + "'));");
+}
+
+log("Started extension.");
+</script>
+
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="extension-main.js"></script>
+</head>
+</html>

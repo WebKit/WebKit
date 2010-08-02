@@ -56,8 +56,10 @@ WebInspector.ElementsPanel = function()
         this.panel.updateProperties();
         this.panel.updateEventListeners();
 
-        if (this._focusedDOMNode)
+        if (this._focusedDOMNode) {
             InspectorBackend.addInspectedNode(this._focusedDOMNode.id);
+            WebInspector.extensionServer.notifyObjectSelected(this.name, "DOMNode");
+        }
     };
 
     this.contentElement.appendChild(this.treeOutline.element);

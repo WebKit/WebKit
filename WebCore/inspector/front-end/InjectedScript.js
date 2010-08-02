@@ -238,6 +238,19 @@ InjectedScript.getCompletions = function(expression, includeInspectorCommandLine
     return props;
 }
 
+InjectedScript.evaluateAndStringify = function(expression)
+{
+    var result = {};
+    try {
+        var value = InjectedScript._evaluateOn(inspectedWindow.eval, inspectedWindow, expression, false);
+        result.value = JSON.stringify(value);
+    } catch (e) {
+        result.value = e.toString();
+        result.isException = true;
+    }
+    return result;
+}
+
 InjectedScript.evaluate = function(expression, objectGroup)
 {
     return InjectedScript._evaluateAndWrap(inspectedWindow.eval, inspectedWindow, expression, objectGroup);

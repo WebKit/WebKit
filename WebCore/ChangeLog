@@ -1,3 +1,115 @@
+2010-08-02  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: adding experimental support for WebInspector extensions API.
+        https://bugs.webkit.org/show_bug.cgi?id=40425
+
+        Tests: inspector/extensions-api.html
+               inspector/extensions.html
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::inspectedWindowScriptObjectCleared):
+        (WebCore::InspectorController::didCommitLoad):
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::setExtensionAPI):
+        * inspector/InspectorFrontendHost.h:
+        * inspector/InspectorFrontendHost.idl:
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.this.treeOutline.focusedNodeChanged):
+        (WebInspector.ElementsPanel):
+        * inspector/front-end/ExtensionAPI.js: Added. An API implementation that gets injected into the extension context.
+        (injectedExtensionAPI):
+        (injectedExtensionAPI.EventSinkImpl.prototype.addListener):
+        (injectedExtensionAPI.EventSinkImpl.prototype.removeListener):
+        (injectedExtensionAPI.EventSinkImpl.prototype._fire):
+        (injectedExtensionAPI.EventSink):
+        (injectedExtensionAPI.InspectorExtensionAPI):
+        (injectedExtensionAPI.InspectorExtensionAPI.prototype.log):
+        (injectedExtensionAPI.Resources.prototype.getAll):
+        (injectedExtensionAPI.Resources.prototype.get return):
+        (injectedExtensionAPI.Resources.prototype):
+        (injectedExtensionAPI.Panels):
+        (injectedExtensionAPI.Panels.prototype.create.callbackWrapper):
+        (injectedExtensionAPI.Panels.prototype.create):
+        (injectedExtensionAPI.PanelImpl):
+        (injectedExtensionAPI.PanelImpl.prototype.createSidebarPane.callbackWrapper):
+        (injectedExtensionAPI.PanelImpl.prototype.createSidebarPane):
+        (injectedExtensionAPI.ExtensionPanel):
+        (injectedExtensionAPI.ExtensionSidebarPaneImpl):
+        (injectedExtensionAPI.ExtensionSidebarPaneImpl.prototype.setHeight):
+        (injectedExtensionAPI.ExtensionSidebarPaneImpl.prototype.setExpanded):
+        (injectedExtensionAPI.InspectedWindow):
+        (injectedExtensionAPI.InspectedWindow.prototype.reload):
+        (injectedExtensionAPI.InspectedWindow.prototype.evaluate):
+        (injectedExtensionAPI.ExtensionServerClient.prototype.sendRequest):
+        (injectedExtensionAPI.ExtensionServerClient.prototype.registerHandler):
+        (injectedExtensionAPI.ExtensionServerClient.prototype.nextObjectId):
+        (injectedExtensionAPI.ExtensionServerClient.prototype._registerCallback):
+        (injectedExtensionAPI.ExtensionServerClient.prototype._onCallback):
+        (injectedExtensionAPI.ExtensionServerClient.prototype._onMessage):
+        (injectedExtensionAPI.expandURL):
+        (injectedExtensionAPI.):
+        * inspector/front-end/ExtensionPanel.js: Added. A class that provides WebInspector's Panel interface to the inspector, hosts extension panel within an IFrame and proxies Panel callbacks to the extension.
+        (WebInspector.ExtensionPanel):
+        (WebInspector.ExtensionPanel.prototype.get defaultFocusedElement):
+        (WebInspector.ExtensionPanel.prototype.updateMainViewWidth):
+        (WebInspector.ExtensionPanel.prototype.searchCanceled):
+        (WebInspector.ExtensionPanel.prototype.performSearch):
+        (WebInspector.ExtensionPanel.prototype.jumpToNextSearchResult):
+        (WebInspector.ExtensionPanel.prototype.jumpToPreviousSearchResult):
+        (WebInspector.ExtensionPanel.prototype._addStyleRule):
+        * inspector/front-end/ExtensionRegistryStub.js: Added. A stub for ExtensionRegistry class that is meant to provide a list of extensions. Actual implementations may be browser-specfic.
+        (.WebInspector.InspectorExtensionRegistryStub):
+        (.WebInspector.InspectorExtensionRegistryStub.prototype.getExtensionsAsync):
+        * inspector/front-end/ExtensionServer.js: Added. Communicates with ExtensionAPI via DOM messaging and proxies requests to WebInspector classes.
+        (WebInspector.ExtensionServer):
+        (WebInspector.ExtensionServer.prototype.notifyPanelShown):
+        (WebInspector.ExtensionServer.prototype.notifyObjectSelected):
+        (WebInspector.ExtensionServer.prototype.notifyResourceFinished):
+        (WebInspector.ExtensionServer.prototype.notifySearchAction):
+        (WebInspector.ExtensionServer.prototype.notifyInspectedPageLoaded):
+        (WebInspector.ExtensionServer.prototype.notifyInspectedURLChanged):
+        (WebInspector.ExtensionServer.prototype.notifyInspectorReset):
+        (WebInspector.ExtensionServer.prototype._convertResource):
+        (WebInspector.ExtensionServer.prototype._postNotification):
+        (WebInspector.ExtensionServer.prototype._onSubscribe):
+        (WebInspector.ExtensionServer.prototype._onUnsubscribe):
+        (WebInspector.ExtensionServer.prototype._onCreatePanel):
+        (WebInspector.ExtensionServer.prototype._onCreateSidebar):
+        (WebInspector.ExtensionServer.prototype._createClientIframe):
+        (WebInspector.ExtensionServer.prototype._onSetSidebarHeight):
+        (WebInspector.ExtensionServer.prototype._onSetSidebarExpansion):
+        (WebInspector.ExtensionServer.prototype._onLog):
+        (WebInspector.ExtensionServer.prototype._onEvaluateOnInspectedPage):
+        (WebInspector.ExtensionServer.prototype._onRevealAndSelect):
+        (WebInspector.ExtensionServer.prototype._onRevealAndSelectResource):
+        (WebInspector.ExtensionServer.prototype._dispatchCallback):
+        (WebInspector.ExtensionServer.prototype._onGetResources):
+        (WebInspector.ExtensionServer.prototype.initExtensions):
+        (WebInspector.ExtensionServer.prototype._addExtensions):
+        (WebInspector.ExtensionServer.prototype._onWindowMessage):
+        (WebInspector.ExtensionServer.prototype._onmessage):
+        (WebInspector.ExtensionServer.prototype._registerHandler):
+        (WebInspector.ExtensionStatus):
+        (WebInspector.addExtensions):
+        * inspector/front-end/InjectedScript.js:
+        (injectedScriptConstructor):
+        * inspector/front-end/InjectedScriptAccess.js:
+        * inspector/front-end/InspectorFrontendHostStub.js:
+        (.WebInspector.InspectorFrontendHostStub.prototype.setExtensionAPI):
+        (.WebInspector.InspectorFrontendHostStub.prototype.canAttachWindow):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+        (WebInspector.loaded):
+        (WebInspector.updateResource):
+        (WebInspector.reset):
+        (WebInspector.inspectedURLChanged):
+        (WebInspector.didCommitLoad):
+
 2010-08-02  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.

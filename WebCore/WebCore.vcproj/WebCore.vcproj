@@ -50912,6 +50912,22 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\ExtensionAPI.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\ExtensionPanel.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\ExtensionRegistryStub.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\ExtensionServer.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\FontView.js"
 					>
 				</File>
