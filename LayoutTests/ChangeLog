@@ -1,3 +1,12 @@
+2010-08-02  Ojan Vafai  <ojan@chromium.org>
+
+        Fix chromium-mac test results that fail because the chromium-mac bots run Leopard.
+        I'd update platform/mac-leopard, but the mac-leopard bot doesn't run pixel-tests.
+        In either case, I think the difference falls within that bot's tolerance.
+
+        * platform/chromium-mac/fast/overflow/overflow-focus-ring-expected.checksum: Added.
+        * platform/chromium-mac/fast/overflow/overflow-focus-ring-expected.png: Added.
+
 2010-08-02  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by John Honeycutt.
