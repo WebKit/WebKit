@@ -1,3 +1,11 @@
+2010-08-02  Martin Robinson  <mrobinson@igalia.com>
+
+        [Qt] DOM listeners get wrong keycodes for some keys
+        https://bugs.webkit.org/show_bug.cgi?id=43365
+
+        * platform/qt/Skipped: Skip these two tests which are failing on Qt, until
+        a fix can be made.
+
 2010-08-02  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by David Kilzer.
