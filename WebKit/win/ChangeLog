@@ -1,3 +1,11 @@
+2010-08-02  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Move InjectedBundle.vcproj to where the other WebKitTestRunner vcprojs live.
+
+        Reviewed by Sam Weinig.
+
+        * WebKit.vcproj/WebKit.sln:
+
 2010-08-02  Jeremy Orlow  <jorlow@chromium.org>
 
         Speculative revert of 64425 due to Chromium instability

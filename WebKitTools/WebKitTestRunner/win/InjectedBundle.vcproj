@@ -18,7 +18,7 @@
 		<Configuration
 			Name="Debug|Win32"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug.vsprops;..\..\Configurations\InjectedBundleCommon.vsprops"
+			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug.vsprops;..\Configurations\InjectedBundleCommon.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -79,7 +79,7 @@
 		<Configuration
 			Name="Release|Win32"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\release.vsprops;..\..\Configurations\InjectedBundleCommon.vsprops"
+			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\release.vsprops;..\Configurations\InjectedBundleCommon.vsprops"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
@@ -141,7 +141,7 @@
 		<Configuration
 			Name="Debug_All|Win32"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug_internal.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug_all.vsprops;..\..\Configurations\InjectedBundleCommon.vsprops"
+			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug_internal.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug_all.vsprops;..\Configurations\InjectedBundleCommon.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -202,7 +202,7 @@
 		<Configuration
 			Name="Debug_Internal|Win32"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug_internal.vsprops;..\..\Configurations\InjectedBundleCommon.vsprops"
+			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug_internal.vsprops;..\Configurations\InjectedBundleCommon.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -268,19 +268,19 @@
 			Name="Bindings"
 			>
 			<File
-				RelativePath="..\Bindings\CodeGeneratorTestRunner.pm"
+				RelativePath="..\InjectedBundle\Bindings\CodeGeneratorTestRunner.pm"
 				>
 			</File>
 			<File
-				RelativePath="..\Bindings\JSWrappable.h"
+				RelativePath="..\InjectedBundle\Bindings\JSWrappable.h"
 				>
 			</File>
 			<File
-				RelativePath="..\Bindings\JSWrapper.cpp"
+				RelativePath="..\InjectedBundle\Bindings\JSWrapper.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\Bindings\JSWrapper.h"
+				RelativePath="..\InjectedBundle\Bindings\JSWrapper.h"
 				>
 			</File>
 		</Filter>
@@ -297,35 +297,35 @@
 			</File>
 		</Filter>
 		<File
-			RelativePath="ActivateFonts.cpp"
+			RelativePath="..\InjectedBundle\win\ActivateFonts.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\InjectedBundle.cpp"
+			RelativePath="..\InjectedBundle\InjectedBundle.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\InjectedBundle.h"
+			RelativePath="..\InjectedBundle\InjectedBundle.h"
 			>
 		</File>
 		<File
-			RelativePath="..\InjectedBundleMain.cpp"
+			RelativePath="..\InjectedBundle\InjectedBundleMain.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\InjectedBundlePage.cpp"
+			RelativePath="..\InjectedBundle\InjectedBundlePage.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\InjectedBundlePage.h"
+			RelativePath="..\InjectedBundle\InjectedBundlePage.h"
 			>
 		</File>
 		<File
-			RelativePath="..\LayoutTestController.cpp"
+			RelativePath="..\InjectedBundle\LayoutTestController.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\LayoutTestController.h"
+			RelativePath="..\InjectedBundle\LayoutTestController.h"
 			>
 		</File>
 	</Files>

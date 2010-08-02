@@ -1,3 +1,17 @@
+2010-08-02  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Move InjectedBundle.vcproj to where the other WebKitTestRunner vcprojs live.
+
+        Remove the unused WebKitTestRunner.sln.
+
+        Reviewed by Sam Weinig.
+
+        * WebKitTestRunner/Configurations/InjectedBundleCommon.vsprops:
+        * WebKitTestRunner/InjectedBundle/win/InjectedBundle.vcproj: Removed.
+        * WebKitTestRunner/WebKitTestRunner.sln: Removed.
+        * WebKitTestRunner/win/InjectedBundle.vcproj: Added.
+        * WebKitTestRunner/win/WebKitTestRunner.sln:
+
 2010-08-02  Sam Weinig  <sam@webkit.org>
 
         Fix the windows build.

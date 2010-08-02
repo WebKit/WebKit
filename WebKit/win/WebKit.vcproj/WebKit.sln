@@ -118,7 +118,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WinLauncher", "..\..\..\Web
 		{C59E5129-B453-49B7-A52B-1E104715F76E} = {C59E5129-B453-49B7-A52B-1E104715F76E}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "InjectedBundle", "..\..\..\WebKitTools\WebKitTestRunner\InjectedBundle\win\InjectedBundle.vcproj", "{CBC3391C-F060-4BF5-A66E-81404168816B}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "InjectedBundle", "..\..\..\WebKitTools\WebKitTestRunner\win\InjectedBundle.vcproj", "{CBC3391C-F060-4BF5-A66E-81404168816B}"
 	ProjectSection(ProjectDependencies) = postProject
 		{4343BC0B-A2E0-4B48-8277-F33CFBFA83CD} = {4343BC0B-A2E0-4B48-8277-F33CFBFA83CD}
 	EndProjectSection
