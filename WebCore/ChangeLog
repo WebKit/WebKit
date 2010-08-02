@@ -2,6 +2,20 @@
 
         Reviewed by Steve Block.
 
+        Compile fix for Android, adding guards around filter specific code.
+        https://bugs.webkit.org/show_bug.cgi?id=43338
+        This CL introduced the code:
+        http://trac.webkit.org/changeset/64196
+
+        Compile fix only, no new tests.
+
+        * rendering/SVGResourcesCycleSolver.cpp:
+        (WebCore::SVGResourcesCycleSolver::breakCycle):
+
+2010-08-02  Kristian Monsen  <kristianm@google.com>
+
+        Reviewed by Steve Block.
+
         Compile fix for Android, guard inspector code with ENABLE(INSPECTOR).
         https://bugs.webkit.org/show_bug.cgi?id=43345
         Code introduced in this CL:
