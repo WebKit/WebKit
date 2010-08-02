@@ -2,6 +2,17 @@
 
         Unreviewed.
 
+        [Qt] Add platform specific expected files after r64432.
+        https://bugs.webkit.org/show_bug.cgi?id=43061
+
+        * platform/qt/editing/undo/redo-style-expected.checksum: Added.
+        * platform/qt/editing/undo/redo-style-expected.png: Added.
+        * platform/qt/editing/undo/redo-style-expected.txt: Copied from LayoutTests/editing/undo/redo-style-expected.txt.
+
+2010-08-02  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
         [Qt] Add platform specific expected files for tests introduced in r64379.
 
         * platform/qt/svg/custom/massive-coordinates-expected.checksum: Added.
