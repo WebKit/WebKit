@@ -1,3 +1,39 @@
+2010-08-02  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Chris Fleizach.
+
+        [GTK] Implement support for get_character_extents and get_range_extents
+        https://bugs.webkit.org/show_bug.cgi?id=25677
+
+        Implement get_range_extents() and modify get_character_extents()
+        to properly work after "The Great Flattening" occurred in the ATK
+        objects hierarchy, some months ago.
+
+        In the case of the GTK port, not just the text controls should be
+        considered when it comes to these functions but also those
+        composite objects that would also allow to work with text ranges,
+        such as headings and links. To take care of this, a new function
+        AccessibilityObject::allowsTextRanges() was defined with a default
+        implementation in the header file and an specific one for GTK in
+        AccessibilityObjectAtk.cpp.
+
+        Based on a previous patch by Joanmarie Diggs.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::visiblePositionRangeForRange):
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::allowsTextRanges): New
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::visiblePositionForIndex):
+        (WebCore::AccessibilityRenderObject::doAXBoundsForRange):
+        * accessibility/gtk/AccessibilityObjectAtk.cpp:
+        (WebCore::AccessibilityObject::allowsTextRanges): New
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (textExtents):
+        (webkit_accessible_text_get_character_extents):
+        (webkit_accessible_text_get_range_extents):
+        (atk_text_interface_init):
+
 2010-08-02  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Support methods for web apps to interact with the native accessibility APIs

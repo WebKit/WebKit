@@ -1259,27 +1259,46 @@ static AtkAttributeSet* webkit_accessible_text_get_default_attributes(AtkText* t
     return getAttributeSetForAccessibilityObject(coreObject);
 }
 
-static void webkit_accessible_text_get_character_extents(AtkText* text, gint offset, gint* x, gint* y, gint* width, gint* height, AtkCoordType coords)
+static IntRect textExtents(AtkText* text, gint startOffset, gint length, AtkCoordType coords)
 {
-    IntRect extents = core(text)->doAXBoundsForRange(PlainTextRange(offset, 1));
-    // FIXME: Use the AtkCoordType
-    // Requires WebCore::ScrollView::contentsToScreen() to be implemented
+    gchar* textContent = webkit_accessible_text_get_text(text, startOffset, -1);
+    gint textLength = g_utf8_strlen(textContent, -1);
 
-#if 0
+    // The first case (endOffset of -1) should work, but seems broken for all Gtk+ apps.
+    gint rangeLength = length;
+    if (rangeLength < 0 || rangeLength > textLength)
+        rangeLength = textLength;
+    AccessibilityObject* coreObject = core(text);
+
+    IntRect extents = coreObject->doAXBoundsForRange(PlainTextRange(startOffset, rangeLength));
     switch(coords) {
     case ATK_XY_SCREEN:
-        extents = core(text)->document()->view()->contentsToScreen(extents);
+        extents = coreObject->document()->view()->contentsToScreen(extents);
         break;
     case ATK_XY_WINDOW:
         // No-op
         break;
     }
-#endif
 
+    return extents;
+}
+
+static void webkit_accessible_text_get_character_extents(AtkText* text, gint offset, gint* x, gint* y, gint* width, gint* height, AtkCoordType coords)
+{
+    IntRect extents = textExtents(text, offset, 1, coords);
     *x = extents.x();
     *y = extents.y();
     *width = extents.width();
     *height = extents.height();
+}
+
+static void webkit_accessible_text_get_range_extents(AtkText* text, gint startOffset, gint endOffset, AtkCoordType coords, AtkTextRectangle* rect)
+{
+    IntRect extents = textExtents(text, startOffset, endOffset - startOffset + 1, coords);
+    rect->x = extents.x();
+    rect->y = extents.y();
+    rect->width = extents.width();
+    rect->height = extents.height();
 }
 
 static gint webkit_accessible_text_get_character_count(AtkText* text)
@@ -1391,6 +1410,7 @@ static void atk_text_interface_init(AtkTextIface* iface)
     iface->get_run_attributes = webkit_accessible_text_get_run_attributes;
     iface->get_default_attributes = webkit_accessible_text_get_default_attributes;
     iface->get_character_extents = webkit_accessible_text_get_character_extents;
+    iface->get_range_extents = webkit_accessible_text_get_range_extents;
     iface->get_character_count = webkit_accessible_text_get_character_count;
     iface->get_offset_at_point = webkit_accessible_text_get_offset_at_point;
     iface->get_n_selections = webkit_accessible_text_get_n_selections;

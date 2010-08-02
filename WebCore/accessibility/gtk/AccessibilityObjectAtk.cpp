@@ -93,6 +93,11 @@ void AccessibilityObject::setWrapper(AccessibilityObjectWrapper* wrapper)
         g_object_ref(m_wrapper);
 }
 
+bool AccessibilityObject::allowsTextRanges() const
+{
+    return isTextControl() || isWebArea() || isGroup() || isLink() || isHeading();
+}
+
 } // namespace WebCore
 
 #endif // HAVE(ACCESSIBILITY)

@@ -587,6 +587,12 @@ protected:
     virtual void clearChildren();
     virtual bool isDetached() const { return true; }
     
+#if PLATFORM(GTK)
+    bool allowsTextRanges() const;
+#else
+    bool allowsTextRanges() const { return isTextControl(); }
+#endif
+
 #if PLATFORM(MAC)
     RetainPtr<AccessibilityObjectWrapper> m_wrapper;
 #elif PLATFORM(WIN) && !OS(WINCE)

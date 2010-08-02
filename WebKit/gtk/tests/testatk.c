@@ -26,6 +26,8 @@
 
 #if GLIB_CHECK_VERSION(2, 16, 0) && GTK_CHECK_VERSION(2, 14, 0)
 
+static const char* centeredContents = "<html><body><p style='text-align: center;'>Short line</p><p style='text-align: center;'>Long-size line with some foo bar baz content</p><p style='text-align: center;'>Short line</p><p style='text-align: center;'>This is a multi-line paragraph<br />where the first line<br />is the biggest one</p></body></html>";
+
 static const char* contents = "<html><body><p>This is a test. This is the second sentence. And this the third.</p></body></html>";
 
 static const char* contentsWithNewlines = "<html><body><p>This is a test. \n\nThis\n is the second sentence. And this the third.</p></body></html>";
@@ -738,6 +740,109 @@ static void testWebkitAtkTextAttributes(void)
     atk_attribute_set_free(set3);
 }
 
+static void test_webkit_atk_get_extents(void)
+{
+    WebKitWebView* webView;
+    AtkObject* obj;
+    GMainLoop* loop;
+
+    webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
+    g_object_ref_sink(webView);
+    GtkAllocation alloc = { 0, 0, 800, 600 };
+    gtk_widget_size_allocate(GTK_WIDGET(webView), &alloc);
+    webkit_web_view_load_string(webView, centeredContents, NULL, NULL, NULL);
+    loop = g_main_loop_new(NULL, TRUE);
+
+    g_timeout_add(100, (GSourceFunc)bail_out, loop);
+    g_main_loop_run(loop);
+
+    obj = gtk_widget_get_accessible(GTK_WIDGET(webView));
+    g_assert(obj);
+
+    AtkText* short_text1 = ATK_TEXT(atk_object_ref_accessible_child(obj, 0));
+    g_assert(ATK_IS_TEXT(short_text1));
+    AtkText* long_text = ATK_TEXT(atk_object_ref_accessible_child(obj, 1));
+    g_assert(ATK_IS_TEXT(long_text));
+    AtkText* short_text2 = ATK_TEXT(atk_object_ref_accessible_child(obj, 2));
+    g_assert(ATK_IS_TEXT(short_text2));
+    AtkText* multiline_text = ATK_TEXT(atk_object_ref_accessible_child(obj, 3));
+    g_assert(ATK_IS_TEXT(multiline_text));
+
+    // Start with window extents.
+    AtkTextRectangle sline_window1, sline_window2, lline_window, mline_window;
+    atk_text_get_range_extents(short_text1, 0, 10, ATK_XY_WINDOW, &sline_window1);
+    atk_text_get_range_extents(long_text, 0, 44, ATK_XY_WINDOW, &lline_window);
+    atk_text_get_range_extents(short_text2, 0, 10, ATK_XY_WINDOW, &sline_window2);
+    atk_text_get_range_extents(multiline_text, 0, 60, ATK_XY_WINDOW, &mline_window);
+
+    // Check vertical line position.
+    g_assert_cmpint(sline_window1.y + sline_window1.height, <=, lline_window.y);
+    g_assert_cmpint(lline_window.y + lline_window.height + sline_window2.height, <=, mline_window.y);
+
+    // Paragraphs 1 and 3 have identical text and alignment.
+    g_assert_cmpint(sline_window1.x, ==, sline_window2.x);
+    g_assert_cmpint(sline_window1.width, ==, sline_window2.width);
+    g_assert_cmpint(sline_window1.height, ==, sline_window2.height);
+
+    // All lines should be the same height; line 2 is the widest line.
+    g_assert_cmpint(sline_window1.height, ==, lline_window.height);
+    g_assert_cmpint(sline_window1.width, <, lline_window.width);
+
+    // Make sure the character extents jive with the range extents.
+    gint x, y, width, height;
+
+    // First paragraph (short text)
+    atk_text_get_character_extents(short_text1, 0, &x, &y, &width, &height, ATK_XY_WINDOW);
+    g_assert_cmpint(x, ==, sline_window1.x);
+    g_assert_cmpint(y, ==, sline_window1.y);
+    g_assert_cmpint(height, ==, sline_window1.height);
+
+    atk_text_get_character_extents(short_text1, 9, &x, &y, &width, &height, ATK_XY_WINDOW);
+    g_assert_cmpint(x, ==, sline_window1.x + sline_window1.width - width);
+    g_assert_cmpint(y, ==, sline_window1.y);
+    g_assert_cmpint(height, ==, sline_window1.height);
+
+    // Second paragraph (long text)
+    atk_text_get_character_extents(long_text, 0, &x, &y, &width, &height, ATK_XY_WINDOW);
+    g_assert_cmpint(x, ==, lline_window.x);
+    g_assert_cmpint(y, ==, lline_window.y);
+    g_assert_cmpint(height, ==, lline_window.height);
+
+    atk_text_get_character_extents(long_text, 43, &x, &y, &width, &height, ATK_XY_WINDOW);
+    g_assert_cmpint(x, ==, lline_window.x + lline_window.width - width);
+    g_assert_cmpint(y, ==, lline_window.y);
+    g_assert_cmpint(height, ==, lline_window.height);
+
+    // Third paragraph (short text)
+    atk_text_get_character_extents(short_text2, 0, &x, &y, &width, &height, ATK_XY_WINDOW);
+    g_assert_cmpint(x, ==, sline_window2.x);
+    g_assert_cmpint(y, ==, sline_window2.y);
+    g_assert_cmpint(height, ==, sline_window2.height);
+
+    atk_text_get_character_extents(short_text2, 9, &x, &y, &width, &height, ATK_XY_WINDOW);
+    g_assert_cmpint(x, ==, sline_window2.x + sline_window2.width - width);
+    g_assert_cmpint(y, ==, sline_window2.y);
+    g_assert_cmpint(height, ==, sline_window2.height);
+
+    // Four paragraph (3 lines multi-line text)
+    atk_text_get_character_extents(multiline_text, 0, &x, &y, &width, &height, ATK_XY_WINDOW);
+    g_assert_cmpint(x, ==, mline_window.x);
+    g_assert_cmpint(y, ==, mline_window.y);
+    g_assert_cmpint(3 * height, ==, mline_window.height);
+
+    atk_text_get_character_extents(multiline_text, 59, &x, &y, &width, &height, ATK_XY_WINDOW);
+    // Last line won't fill the whole width of the rectangle
+    g_assert_cmpint(x, <=, mline_window.x + mline_window.width - width);
+    g_assert_cmpint(y, ==, mline_window.y + mline_window.height - height);
+    g_assert_cmpint(height, <=, mline_window.height);
+
+    g_object_unref(short_text1);
+    g_object_unref(short_text2);
+    g_object_unref(long_text);
+    g_object_unref(multiline_text);
+    g_object_unref(webView);
+}
+
 int main(int argc, char** argv)
 {
     g_thread_init(NULL);
@@ -754,6 +859,7 @@ int main(int argc, char** argv)
     g_test_add_func("/webkit/atk/getTextInTable", testWebkitAtkGetTextInTable);
     g_test_add_func("/webkit/atk/getHeadersInTable", testWebkitAtkGetHeadersInTable);
     g_test_add_func("/webkit/atk/textAttributes", testWebkitAtkTextAttributes);
+    g_test_add_func("/webkit/atk/get_extents", test_webkit_atk_get_extents);
     return g_test_run ();
 }
 

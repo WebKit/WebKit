@@ -1,3 +1,19 @@
+2010-08-02  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Chris Fleizach.
+
+        [GTK] Implement support for get_character_extents and get_range_extents
+        https://bugs.webkit.org/show_bug.cgi?id=25677
+
+        Added new unit tests to check get_character_extents and
+        get_range_extents functions for the ATK_TEXT interface
+
+        Based on a previous patch by Joanmarie Diggs.
+
+        * tests/testatk.c:
+        (test_webkit_atk_get_extents):
+        (main):
+
 2010-08-02  Jeremy Orlow  <jorlow@chromium.org>
 
         Speculative revert of 64425 due to Chromium instability
