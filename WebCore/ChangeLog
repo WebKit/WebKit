@@ -1,3 +1,14 @@
+2010-08-02  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        WebInspector: Inspector is not working when it is loaded as html page.
+        https://bugs.webkit.org/show_bug.cgi?id=43334
+
+        * inspector/front-end/InspectorFrontendHostStub.js:
+        (.WebInspector.InspectorFrontendHostStub.prototype.canAttachWindow):
+        (.WebInspector.InspectorFrontendHostStub.prototype.sendMessageToBackend):
+
 2010-08-01  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.

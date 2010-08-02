@@ -109,6 +109,10 @@ WebInspector.InspectorFrontendHostStub.prototype = {
     canAttachWindow: function()
     {
         return false;
+    },
+
+    sendMessageToBackend: function(message)
+    {
     }
 }
 
