@@ -1,3 +1,29 @@
+2010-08-02  Ojan Vafai  <ojan@chromium.org>
+
+        platform specific expectations after r64488
+        https://bugs.webkit.org/show_bug.cgi?id=43384
+
+        Followup updates after r64488 for tests that had platform-specific expecations.
+
+        * platform/chromium-linux/editing/pasteboard/select-element-1-expected.txt:
+        * platform/chromium-linux/fast/dom/focus-contenteditable-expected.checksum:
+        * platform/chromium-linux/fast/dom/focus-contenteditable-expected.png:
+        * platform/chromium-linux/fast/overflow/overflow-focus-ring-expected.checksum:
+        * platform/chromium-linux/fast/overflow/overflow-focus-ring-expected.png:
+        * platform/chromium-win/editing/pasteboard/input-field-1-expected.txt:
+        * platform/chromium-win/editing/pasteboard/merge-end-1-expected.txt:
+        * platform/chromium-win/editing/pasteboard/merge-end-2-expected.txt:
+        * platform/chromium-win/editing/pasteboard/select-element-1-expected.txt:
+        * platform/chromium-win/fast/dom/focus-contenteditable-expected.checksum:
+        * platform/chromium-win/fast/dom/focus-contenteditable-expected.png:
+        * platform/chromium-win/fast/dom/focus-contenteditable-expected.txt:
+        * platform/chromium-win/fast/overflow/overflow-focus-ring-expected.checksum:
+        * platform/chromium-win/fast/overflow/overflow-focus-ring-expected.png:
+        * platform/chromium-win/fast/overflow/overflow-focus-ring-expected.txt:
+        * platform/qt/editing/pasteboard/merge-end-1-expected.txt:
+        * platform/qt/editing/pasteboard/merge-end-2-expected.txt:
+        * platform/qt/editing/pasteboard/select-element-1-expected.txt:
+
 2010-08-02  Andrew Wilson  <atwilson@chromium.org>
 
         Unreviewed test expectations fixups for chromium.
