@@ -1,3 +1,10 @@
+2010-08-01  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, test expectation update.
+
+        * platform/chromium/drt_expectations.txt:
+        * platform/chromium/test_expectations.txt:
+
 2010-08-01  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

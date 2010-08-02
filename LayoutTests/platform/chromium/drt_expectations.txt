@@ -6,9 +6,9 @@
 BUG_DRT : fast/backgrounds/animated-gif-as-background.html = IMAGE
 
 // Missing image resource
-BUG_DRT MAC : fast/speech/input-appearance-searchandspeech.html = MISSING
+BUG_DRT WIN MAC : fast/speech/input-appearance-searchandspeech.html = MISSING
 BUG_DRT WIN MAC LINUX : fast/speech/input-appearance-speechbutton.html = MISSING
-BUG_DRT WIN LINUX : fast/speech/input-appearance-searchandspeech.html = IMAGE+TEXT
+BUG_DRT LINUX : fast/speech/input-appearance-searchandspeech.html = IMAGE+TEXT
 
 BUG48431 WIN MAC : plugins/geturlnotify-during-document-teardown.html = TEXT
 BUG48431 WIN MAC : plugins/open-and-close-window-with-plugin.html = TEXT
