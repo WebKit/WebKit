@@ -1,3 +1,9 @@
+2010-08-02  Brian Weinstein  <bweinstein@apple.com>
+
+        Add a missing </File> tag to WebCore.vcproj.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
 2010-08-02  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Chris Fleizach.
