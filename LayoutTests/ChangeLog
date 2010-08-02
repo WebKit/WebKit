@@ -1,5 +1,14 @@
 2010-08-02  Ojan Vafai  <ojan@chromium.org>
 
+        Fix failing test on QT/GTK bots.
+
+        r64488 removed the SelectAll on focus behavior. Put in a SelectAll call to match the
+        old test behavior.
+
+        * editing/pasteboard/crash-accessing-clipboardData-types.html:
+
+2010-08-02  Ojan Vafai  <ojan@chromium.org>
+
         platform specific expectations after r64488
         https://bugs.webkit.org/show_bug.cgi?id=43384
 

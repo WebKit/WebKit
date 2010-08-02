@@ -12,6 +12,7 @@ if (window.layoutTestController)
 document.body.addEventListener("paste", function(e){ e.clipboardData.types }, true);
 
 document.getElementById("d").focus();
+document.execCommand("SelectAll");
 document.execCommand("Cut");
 document.execCommand("Paste");
 
