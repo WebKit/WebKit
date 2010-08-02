@@ -264,15 +264,14 @@ static int windowsKeyCodeForKeyEvent(unsigned int keycode)
         case GDK_Select:
             return VK_SELECT; // (29) SELECT key
         case GDK_Print:
-            return VK_PRINT; // (2A) PRINT key
+            return VK_SNAPSHOT; // (2C) PRINT SCREEN key
         case GDK_Execute:
             return VK_EXECUTE;// (2B) EXECUTE key
-            //dunno on this
-            //case GDK_PrintScreen:
-            //      return VK_SNAPSHOT; // (2C) PRINT SCREEN key
         case GDK_Insert:
+        case GDK_KP_Insert:
             return VK_INSERT; // (2D) INS key
         case GDK_Delete:
+        case GDK_KP_Delete:
             return VK_DELETE; // (2E) DEL key
         case GDK_Help:
             return VK_HELP; // (2F) HELP key

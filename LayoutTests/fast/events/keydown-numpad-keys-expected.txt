@@ -29,6 +29,12 @@ PASS lastKeyboardEvent.type is "keydown"
 PASS lastKeyboardEvent.keyCode is 40
 PASS lastKeyboardEvent.keyLocation is 0
 PASS lastKeyboardEvent.type is "keydown"
+PASS lastKeyboardEvent.keyCode is 45
+PASS lastKeyboardEvent.keyLocation is 0
+PASS lastKeyboardEvent.type is "keydown"
+PASS lastKeyboardEvent.keyCode is 46
+PASS lastKeyboardEvent.keyLocation is 0
+PASS lastKeyboardEvent.type is "keydown"
 PASS lastKeyboardEvent.keyCode is 33
 PASS lastKeyboardEvent.keyLocation is 3
 PASS lastKeyboardEvent.type is "keydown"
@@ -51,6 +57,12 @@ PASS lastKeyboardEvent.keyCode is 38
 PASS lastKeyboardEvent.keyLocation is 3
 PASS lastKeyboardEvent.type is "keydown"
 PASS lastKeyboardEvent.keyCode is 40
+PASS lastKeyboardEvent.keyLocation is 3
+PASS lastKeyboardEvent.type is "keydown"
+PASS lastKeyboardEvent.keyCode is 45
+PASS lastKeyboardEvent.keyLocation is 3
+PASS lastKeyboardEvent.type is "keydown"
+PASS lastKeyboardEvent.keyCode is 46
 PASS lastKeyboardEvent.keyLocation is 3
 PASS successfullyParsed is true
 

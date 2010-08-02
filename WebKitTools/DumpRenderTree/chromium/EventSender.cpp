@@ -541,6 +541,8 @@ void EventSender::keyDown(const CppArgumentList& arguments, CppVariant* result)
         code = base::VKEY_LEFT;
     else if ("upArrow" == codeStr)
         code = base::VKEY_UP;
+    else if ("insert" == codeStr)
+        code = base::VKEY_INSERT;
     else if ("delete" == codeStr)
         code = base::VKEY_DELETE;
     else if ("pageUp" == codeStr)
@@ -551,6 +553,8 @@ void EventSender::keyDown(const CppArgumentList& arguments, CppVariant* result)
         code = base::VKEY_HOME;
     else if ("end" == codeStr)
         code = base::VKEY_END;
+    else if ("printScreen" == codeStr)
+        code = base::VKEY_SNAPSHOT;
     else {
         // Compare the input string with the function-key names defined by the
         // DOM spec (i.e. "F1",...,"F24"). If the input string is a function-key

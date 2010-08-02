@@ -1,3 +1,17 @@
+2010-08-02  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [Gtk] DOM listeners get wrong keycodes for some keys
+        https://bugs.webkit.org/show_bug.cgi?id=35170
+
+        Emit the proper DOM keyCode for the print screen, keypad insert,
+        and keypad delete keys.
+
+        * platform/gtk/KeyEventGtk.cpp:
+        (WebCore::windowsKeyCodeForKeyEvent): Fix mapping between GDK key codes
+        and Windows key codes.
+
 2010-08-02  Dirk Schulze  <krit@webkit.org>
 
         Unreviewed sort of XCode project file.

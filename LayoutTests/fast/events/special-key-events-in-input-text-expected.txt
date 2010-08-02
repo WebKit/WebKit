@@ -43,3 +43,7 @@ Backspace:
 INPUT - keydown - false,false,false,false - U+0008 - 8 - 0. Value: "0".
 INPUT - keyup - false,false,false,false - U+0008 - 8 - 0. Value: "".
 
+Print screen:
+INPUT - keydown - false,false,false,false - U+0000 - 44 - 0. Value: "".
+INPUT - keyup - false,false,false,false - U+0000 - 44 - 0. Value: "".
+

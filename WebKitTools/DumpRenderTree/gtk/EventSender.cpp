@@ -472,9 +472,13 @@ static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JS
             gdkKeySym = GDK_KP_Home;
         else if (JSStringIsEqualToUTF8CString(character, "end"))
             gdkKeySym = GDK_KP_End;
+        else if (JSStringIsEqualToUTF8CString(character, "insert"))
+            gdkKeySym = GDK_KP_Insert;
+        else if (JSStringIsEqualToUTF8CString(character, "delete"))
+            gdkKeySym = GDK_KP_Delete;
         else
-            // Assume we only get arrow/pgUp/pgDn/home/end keys with
-            // location=NUMPAD for now.
+            // If we get some other key specified with the numpad location,
+            // crash here, so we add it sooner rather than later.
             g_assert_not_reached();
     } else {
         if (JSStringIsEqualToUTF8CString(character, "leftArrow"))
@@ -493,8 +497,12 @@ static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JS
             gdkKeySym = GDK_Home;
         else if (JSStringIsEqualToUTF8CString(character, "end"))
             gdkKeySym = GDK_End;
+        else if (JSStringIsEqualToUTF8CString(character, "insert"))
+            gdkKeySym = GDK_Insert;
         else if (JSStringIsEqualToUTF8CString(character, "delete"))
             gdkKeySym = GDK_Delete;
+        else if (JSStringIsEqualToUTF8CString(character, "printScreen"))
+            gdkKeySym = GDK_Print;
         else if (JSStringIsEqualToUTF8CString(character, "F1"))
             gdkKeySym = GDK_F1;
         else if (JSStringIsEqualToUTF8CString(character, "F2"))

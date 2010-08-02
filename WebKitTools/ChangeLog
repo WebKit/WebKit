@@ -1,5 +1,26 @@
 2010-08-02  Martin Robinson  <mrobinson@igalia.com>
 
+        Reviewed by Xan Lopez.
+
+        [Gtk] DOM listeners get wrong keycodes for some keys
+        https://bugs.webkit.org/show_bug.cgi?id=35170
+
+        Add support to all event senders for simulating keypad insert
+        and print screen keys.
+
+        * DumpRenderTree/chromium/EventSender.cpp:
+        (EventSender::keyDown): Add support for generating keypad insert and print screen.
+        * DumpRenderTree/gtk/EventSender.cpp:
+        (keyDownCallback): Ditto.
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (-[EventSendingController keyDown:withModifiers:withLocation:]): Ditto.
+        * DumpRenderTree/qt/EventSenderQt.cpp:
+        (EventSender::keyDown): Ditto.
+        * DumpRenderTree/win/EventSender.cpp:
+        (keyDownCallback): Ditto.
+
+2010-08-02  Martin Robinson  <mrobinson@igalia.com>
+
         Build fix for building against development versions of GTK+. GTK 2.22
         has not yet been released, so these function definitions must be conditionalized
         on the development version.

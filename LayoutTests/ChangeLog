@@ -1,5 +1,20 @@
 2010-08-02  Martin Robinson  <mrobinson@igalia.com>
 
+        Reviewed by Xan Lopez.
+
+        [Gtk] DOM listeners get wrong keycodes for some keys
+        https://bugs.webkit.org/show_bug.cgi?id=35170
+
+        Modify some existing tests to test the generate key code of
+        the keypad insert and delete keys as well as the print screen key.
+
+        * fast/events/keydown-numpad-keys-expected.txt: Update expectations.
+        * fast/events/script-tests/keydown-numpad-keys.js: Add test for keypad insert and delete.
+        * fast/events/special-key-events-in-input-text-expected.txt: Update expectations.
+        * fast/events/special-key-events-in-input-text.html: Add test for print screen.
+
+2010-08-02  Martin Robinson  <mrobinson@igalia.com>
+
         [GTK] r64379 broke two tests
         https://bugs.webkit.org/show_bug.cgi?id=43361
 

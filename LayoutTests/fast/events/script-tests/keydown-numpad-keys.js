@@ -40,6 +40,8 @@ if (window.eventSender) {
     testKeyEventWithLocation("rightArrow", 0, 39);
     testKeyEventWithLocation("upArrow", 0, 38);
     testKeyEventWithLocation("downArrow", 0, 40);
+    testKeyEventWithLocation("insert", 0, 45);
+    testKeyEventWithLocation("delete", 0, 46);
 
     // location=3 indicates that we send events as numeric-pad keys.
     testKeyEventWithLocation("pageUp", 3, 33);
@@ -50,6 +52,8 @@ if (window.eventSender) {
     testKeyEventWithLocation("rightArrow", 3, 39);
     testKeyEventWithLocation("upArrow", 3, 38);
     testKeyEventWithLocation("downArrow", 3, 40);
+    testKeyEventWithLocation("insert", 3, 45);
+    testKeyEventWithLocation("delete", 3, 46);
 } else {
     debug("This test requires DumpRenderTree.  To manually test, 1) focus on the textarea above and push numpad keys without locking NumLock and 2) see if the location= value is 3 (DOM_KEY_LOCATION_NUMPAD specified in DOM level 3).");
 }
