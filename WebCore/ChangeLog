@@ -1,3 +1,46 @@
+2010-08-02  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Style cleanup for CairoPath.h
+        https://bugs.webkit.org/show_bug.cgi?id=43133
+
+        Turn CairoPath into a class, as it has a constructor and destructor.
+        Change raw member access to use the new accessor.
+
+        No new tests as functionality has not changed.
+
+        * platform/graphics/cairo/CairoPath.h: Cleanup and indentation fix.
+        (WebCore::CairoPath::CairoPath):
+        (WebCore::CairoPath::~CairoPath):
+        (WebCore::CairoPath::context):
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::addPath): Convert raw member access to accessor access.
+        (WebCore::GraphicsContext::clip): Ditto.
+        * platform/graphics/cairo/PathCairo.cpp:
+        (WebCore::Path::Path): Ditto.
+        (WebCore::Path::operator=): Ditto.
+        (WebCore::Path::clear): Ditto.
+        (WebCore::Path::isEmpty): Ditto.
+        (WebCore::Path::currentPoint): Ditto.
+        (WebCore::Path::translate): Ditto.
+        (WebCore::Path::moveTo): Ditto.
+        (WebCore::Path::addLineTo): Ditto.
+        (WebCore::Path::addRect): Ditto.
+        (WebCore::Path::addQuadCurveTo): Ditto.
+        (WebCore::Path::addBezierCurveTo): Ditto.
+        (WebCore::Path::addArc): Ditto.
+        (WebCore::Path::addArcTo): Ditto.
+        (WebCore::Path::addEllipse): Ditto.
+        (WebCore::Path::closeSubpath): Ditto.
+        (WebCore::Path::boundingRect): Ditto.
+        (WebCore::Path::strokeBoundingRect): Ditto.
+        (WebCore::Path::contains): Ditto.
+        (WebCore::Path::strokeContains): Ditto.
+        (WebCore::Path::apply): Ditto.
+        (WebCore::Path::transform): Ditto.
+        (WebCore::Path::debugString): Ditto.
+
 2010-07-20  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Eric Seidel.

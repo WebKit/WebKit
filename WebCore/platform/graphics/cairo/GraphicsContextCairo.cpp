@@ -162,7 +162,7 @@ static void setPathOnCairoContext(cairo_t* to, cairo_t* from)
 
 static void appendWebCorePathToCairoContext(cairo_t* context, const Path& path)
 {
-    appendPathToCairoContext(context, path.platformPath()->m_cr);
+    appendPathToCairoContext(context, path.platformPath()->context());
 }
 
 static void addConvexPolygonToContext(cairo_t* context, size_t numPoints, const FloatPoint* points)
@@ -576,7 +576,7 @@ void GraphicsContext::fillPath()
 
     cairo_t* cr = m_data->cr;
 
-    setPathOnCairoContext(cr, m_data->m_pendingPath.m_cr);
+    setPathOnCairoContext(cr, m_data->m_pendingPath.context());
     fillCurrentCairoPath(this, m_common, cr);
 }
 
@@ -586,7 +586,7 @@ void GraphicsContext::strokePath()
         return;
 
     cairo_t* cr = m_data->cr;
-    setPathOnCairoContext(cr, m_data->m_pendingPath.m_cr);
+    setPathOnCairoContext(cr, m_data->m_pendingPath.context());
     strokeCurrentCairoPath(this, m_common, cr);
 }
 
@@ -597,7 +597,7 @@ void GraphicsContext::drawPath()
 
     cairo_t* cr = m_data->cr;
 
-    setPathOnCairoContext(cr, m_data->m_pendingPath.m_cr);
+    setPathOnCairoContext(cr, m_data->m_pendingPath.context());
 
     cairo_set_fill_rule(cr, fillRule() == RULE_EVENODD ? CAIRO_FILL_RULE_EVEN_ODD : CAIRO_FILL_RULE_WINDING);
     drawPathShadow(this, m_common, true, true);
@@ -1129,7 +1129,7 @@ void GraphicsContext::beginPath()
     if (paintingDisabled())
         return;
 
-    cairo_new_path(m_data->m_pendingPath.m_cr);
+    cairo_new_path(m_data->m_pendingPath.context());
 }
 
 void GraphicsContext::addPath(const Path& path)
@@ -1139,8 +1139,8 @@ void GraphicsContext::addPath(const Path& path)
 
     cairo_matrix_t currentMatrix;
     cairo_get_matrix(m_data->cr, &currentMatrix);
-    cairo_set_matrix(m_data->m_pendingPath.m_cr, &currentMatrix);
-    appendWebCorePathToCairoContext(m_data->m_pendingPath.m_cr, path);
+    cairo_set_matrix(m_data->m_pendingPath.context(), &currentMatrix);
+    appendWebCorePathToCairoContext(m_data->m_pendingPath.context(), path);
 }
 
 void GraphicsContext::clip(const Path& path)
@@ -1149,7 +1149,7 @@ void GraphicsContext::clip(const Path& path)
         return;
 
     cairo_t* cr = m_data->cr;
-    cairo_path_t* p = cairo_copy_path(path.platformPath()->m_cr);
+    cairo_path_t* p = cairo_copy_path(path.platformPath()->context());
     cairo_append_path(cr, p);
     cairo_path_destroy(p);
     cairo_fill_rule_t savedFillRule = cairo_get_fill_rule(cr);

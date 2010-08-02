@@ -51,8 +51,8 @@ Path::~Path()
 Path::Path(const Path& other)
     : m_path(new CairoPath())
 {
-    cairo_t* cr = platformPath()->m_cr;
-    cairo_path_t* p = cairo_copy_path(other.platformPath()->m_cr);
+    cairo_t* cr = platformPath()->context();
+    cairo_path_t* p = cairo_copy_path(other.platformPath()->context());
     cairo_append_path(cr, p);
     cairo_path_destroy(p);
 }
@@ -63,8 +63,8 @@ Path& Path::operator=(const Path& other)
         return *this;
 
     clear();
-    cairo_t* cr = platformPath()->m_cr;
-    cairo_path_t* p = cairo_copy_path(other.platformPath()->m_cr);
+    cairo_t* cr = platformPath()->context();
+    cairo_path_t* p = cairo_copy_path(other.platformPath()->context());
     cairo_append_path(cr, p);
     cairo_path_destroy(p);
     return *this;
@@ -72,13 +72,13 @@ Path& Path::operator=(const Path& other)
 
 void Path::clear()
 {
-    cairo_t* cr = platformPath()->m_cr;
+    cairo_t* cr = platformPath()->context();
     cairo_new_path(cr);
 }
 
 bool Path::isEmpty() const
 {
-    return !cairo_has_current_point(platformPath()->m_cr);
+    return !cairo_has_current_point(platformPath()->context());
 }
 
 bool Path::hasCurrentPoint() const
@@ -91,31 +91,31 @@ FloatPoint Path::currentPoint() const
     // FIXME: Is this the correct way?
     double x;
     double y;
-    cairo_get_current_point(platformPath()->m_cr, &x, &y);
+    cairo_get_current_point(platformPath()->context(), &x, &y);
     return FloatPoint(x, y);
 }
 
 void Path::translate(const FloatSize& p)
 {
-    cairo_t* cr = platformPath()->m_cr;
+    cairo_t* cr = platformPath()->context();
     cairo_translate(cr, -p.width(), -p.height());
 }
 
 void Path::moveTo(const FloatPoint& p)
 {
-    cairo_t* cr = platformPath()->m_cr;
+    cairo_t* cr = platformPath()->context();
     cairo_move_to(cr, p.x(), p.y());
 }
 
 void Path::addLineTo(const FloatPoint& p)
 {
-    cairo_t* cr = platformPath()->m_cr;
+    cairo_t* cr = platformPath()->context();
     cairo_line_to(cr, p.x(), p.y());
 }
 
 void Path::addRect(const FloatRect& rect)
 {
-    cairo_t* cr = platformPath()->m_cr;
+    cairo_t* cr = platformPath()->context();
     cairo_rectangle(cr, rect.x(), rect.y(), rect.width(), rect.height());
 }
 
@@ -124,7 +124,7 @@ void Path::addRect(const FloatRect& rect)
  */
 void Path::addQuadCurveTo(const FloatPoint& controlPoint, const FloatPoint& point)
 {
-    cairo_t* cr = platformPath()->m_cr;
+    cairo_t* cr = platformPath()->context();
     double x, y;
     double x1 = controlPoint.x();
     double y1 = controlPoint.y();
@@ -139,7 +139,7 @@ void Path::addQuadCurveTo(const FloatPoint& controlPoint, const FloatPoint& poin
 
 void Path::addBezierCurveTo(const FloatPoint& controlPoint1, const FloatPoint& controlPoint2, const FloatPoint& controlPoint3)
 {
-    cairo_t* cr = platformPath()->m_cr;
+    cairo_t* cr = platformPath()->context();
     cairo_curve_to(cr, controlPoint1.x(), controlPoint1.y(),
                    controlPoint2.x(), controlPoint2.y(),
                    controlPoint3.x(), controlPoint3.y());
@@ -152,7 +152,7 @@ void Path::addArc(const FloatPoint& p, float r, float sa, float ea, bool anticlo
     if (!isfinite(r) || !isfinite(sa) || !isfinite(ea))
         return;
 
-    cairo_t* cr = platformPath()->m_cr;
+    cairo_t* cr = platformPath()->context();
     if (anticlockwise)
         cairo_arc_negative(cr, p.x(), p.y(), r, sa, ea);
     else
@@ -164,7 +164,7 @@ void Path::addArcTo(const FloatPoint& p1, const FloatPoint& p2, float radius)
     if (isEmpty())
         return;
 
-    cairo_t* cr = platformPath()->m_cr;
+    cairo_t* cr = platformPath()->context();
 
     double x0, y0;
     cairo_get_current_point(cr, &x0, &y0);
@@ -237,7 +237,7 @@ void Path::addArcTo(const FloatPoint& p1, const FloatPoint& p2, float radius)
 
 void Path::addEllipse(const FloatRect& rect)
 {
-    cairo_t* cr = platformPath()->m_cr;
+    cairo_t* cr = platformPath()->context();
     cairo_save(cr);
     float yRadius = .5 * rect.height();
     float xRadius = .5 * rect.width();
@@ -249,13 +249,13 @@ void Path::addEllipse(const FloatRect& rect)
 
 void Path::closeSubpath()
 {
-    cairo_t* cr = platformPath()->m_cr;
+    cairo_t* cr = platformPath()->context();
     cairo_close_path(cr);
 }
 
 FloatRect Path::boundingRect() const
 {
-    cairo_t* cr = platformPath()->m_cr;
+    cairo_t* cr = platformPath()->context();
     double x0, x1, y0, y1;
     cairo_path_extents(cr, &x0, &y0, &x1, &y1);
     return FloatRect(x0, y0, x1 - x0, y1 - y0);
@@ -263,7 +263,7 @@ FloatRect Path::boundingRect() const
 
 FloatRect Path::strokeBoundingRect(StrokeStyleApplier* applier)
 {
-    cairo_t* cr = platformPath()->m_cr;
+    cairo_t* cr = platformPath()->context();
     if (applier) {
         GraphicsContext gc(cr);
         applier->strokeStyle(&gc);
@@ -276,7 +276,7 @@ FloatRect Path::strokeBoundingRect(StrokeStyleApplier* applier)
 
 bool Path::contains(const FloatPoint& point, WindRule rule) const
 {
-    cairo_t* cr = platformPath()->m_cr;
+    cairo_t* cr = platformPath()->context();
     cairo_fill_rule_t cur = cairo_get_fill_rule(cr);
     cairo_set_fill_rule(cr, rule == RULE_EVENODD ? CAIRO_FILL_RULE_EVEN_ODD : CAIRO_FILL_RULE_WINDING);
     bool contains = cairo_in_fill(cr, point.x(), point.y());
@@ -287,7 +287,7 @@ bool Path::contains(const FloatPoint& point, WindRule rule) const
 bool Path::strokeContains(StrokeStyleApplier* applier, const FloatPoint& point) const
 {
     ASSERT(applier);
-    cairo_t* cr = platformPath()->m_cr;
+    cairo_t* cr = platformPath()->context();
     GraphicsContext gc(cr);
     applier->strokeStyle(&gc);
 
@@ -296,7 +296,7 @@ bool Path::strokeContains(StrokeStyleApplier* applier, const FloatPoint& point) 
 
 void Path::apply(void* info, PathApplierFunction function) const
 {
-    cairo_t* cr = platformPath()->m_cr;
+    cairo_t* cr = platformPath()->context();
     cairo_path_t* path = cairo_copy_path(cr);
     cairo_path_data_t* data;
     PathElement pelement;
@@ -334,10 +334,10 @@ void Path::apply(void* info, PathApplierFunction function) const
 
 void Path::transform(const AffineTransform& trans)
 {
-    cairo_t* m_cr = platformPath()->m_cr;
+    cairo_t* cr = platformPath()->context();
     cairo_matrix_t c_matrix = cairo_matrix_t(trans);
     cairo_matrix_invert(&c_matrix);
-    cairo_transform(m_cr, &c_matrix);
+    cairo_transform(cr, &c_matrix);
 }
 
 String Path::debugString() const
@@ -346,7 +346,7 @@ String Path::debugString() const
         return String();
 
     String pathString;
-    cairo_path_t* path = cairo_copy_path(platformPath()->m_cr);
+    cairo_path_t* path = cairo_copy_path(platformPath()->context());
     cairo_path_data_t* data;
 
     for (int i = 0; i < path->num_data; i += path->data[i].header.length) {

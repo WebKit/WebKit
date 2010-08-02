@@ -1,5 +1,6 @@
 /*
     Copyright (C) 2007 Alp Toker <alp.toker@collabora.co.uk>
+    Copyright (C) 2010 Igalia S.L.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -24,21 +25,25 @@
 
 namespace WebCore {
 
-    // This is necessary since cairo_path_fixed_t isn't exposed in Cairo's public API.
-    struct CairoPath {
-        cairo_t* m_cr;
+// This is necessary since cairo_path_fixed_t isn't exposed in Cairo's public API.
+class CairoPath {
+public:
+    CairoPath()
+    {
+        static cairo_surface_t* pathSurface = cairo_image_surface_create(CAIRO_FORMAT_A8, 1, 1);
+        m_cr = cairo_create(pathSurface);
+    }
 
-        CairoPath()
-        {
-            static cairo_surface_t* pathSurface = cairo_image_surface_create(CAIRO_FORMAT_A8, 1, 1);
-            m_cr = cairo_create(pathSurface);
-        }
+    ~CairoPath()
+    {
+        cairo_destroy(m_cr);
+    }
 
-        ~CairoPath()
-        {
-            cairo_destroy(m_cr);
-        }
-    };
+    cairo_t* context() { return m_cr; }
+
+private:
+    cairo_t* m_cr;
+};
 
 } // namespace WebCore
 
