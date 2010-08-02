@@ -1,3 +1,13 @@
+2010-08-02  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] r64379 broke two tests
+        https://bugs.webkit.org/show_bug.cgi?id=43361
+
+        Re-baseline these tests after r64379.
+
+        * platform/gtk/svg/custom/massive-coordinates-expected.txt: Added.
+        * platform/gtk/svg/custom/pattern-excessive-malloc-expected.txt: Added.
+
 2010-08-02  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Not reviewed. Build fix.
