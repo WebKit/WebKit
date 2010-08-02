@@ -13,6 +13,7 @@
     var root = document.getElementById("editable-root");
     var square = document.getElementById("square");
     root.focus();
+    document.execCommand("SelectAll");
     document.execCommand("delete", "backward");
     if (!square.parentNode)
         document.getElementById("result").innerText = "FAIL: first delete removed the container";

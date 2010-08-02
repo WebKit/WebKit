@@ -1,3 +1,16 @@
+2010-07-20  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        focusing an unfocused contentEditable element should place the cursor at the beginning
+        https://bugs.webkit.org/show_bug.cgi?id=42646
+
+        r14666 made this change for the body and html elements, but not for all contentEditable 
+        elements. Doing this for all contentEditable elements matches all other browsers.
+
+        * dom/Element.cpp:
+        (WebCore::Element::updateFocusAppearance):
+
 2010-08-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Kent Tamura.

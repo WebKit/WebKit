@@ -1,3 +1,39 @@
+2010-07-20  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        focusing an unfocused contentEditable element should place the cursor at the beginning
+        https://bugs.webkit.org/show_bug.cgi?id=42646
+
+        r14666 made this change for the body and html elements, but not for all contentEditable
+        elements. Doing this for all contentEditable elements matches all other browsers.
+
+        * editing/deleting/5546763-expected.txt:
+        * editing/deleting/in-visibly-empty-root.html:
+        * editing/execCommand/4786404-1.html:
+        * editing/execCommand/4786404-2.html:
+        * editing/execCommand/remove-list-1-expected.txt:
+        * editing/pasteboard/5601583-1.html:
+        * editing/pasteboard/merge-end-1.html:
+        * editing/pasteboard/merge-end-2.html:
+        * editing/selection/move-begin-end-expected.txt:
+        * editing/selection/move-begin-end.html:
+        * editing/style/5279521.html:
+        * platform/mac/accessibility/selection-value-changes-for-aria-textbox-expected.txt:
+        * platform/mac/editing/input/text-input-controller-expected.txt:
+        * platform/mac/editing/pasteboard/input-field-1-expected.checksum:
+        * platform/mac/editing/pasteboard/input-field-1-expected.png:
+        * platform/mac/editing/pasteboard/input-field-1-expected.txt:
+        * platform/mac/editing/pasteboard/merge-end-1-expected.txt:
+        * platform/mac/editing/pasteboard/merge-end-2-expected.txt:
+        * platform/mac/editing/pasteboard/select-element-1-expected.txt:
+        * platform/mac/fast/dom/focus-contenteditable-expected.checksum:
+        * platform/mac/fast/dom/focus-contenteditable-expected.png:
+        * platform/mac/fast/dom/focus-contenteditable-expected.txt:
+        * platform/mac/fast/overflow/overflow-focus-ring-expected.checksum:
+        * platform/mac/fast/overflow/overflow-focus-ring-expected.png:
+        * platform/mac/fast/overflow/overflow-focus-ring-expected.txt:
+
 2010-08-02  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed. Update Qt specific expected result after r64471.
