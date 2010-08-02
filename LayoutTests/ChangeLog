@@ -1,3 +1,15 @@
+2010-08-02  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Not reviewed. Build fix.
+
+        WebInspector: 2 Inspector extensions tests are failing at Qt/GTK/Chromium.
+        The tests were temporary disabled. Bug was created.
+        https://bugs.webkit.org/show_bug.cgi?id=43344
+
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+
 2010-08-02  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.
