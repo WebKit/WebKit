@@ -156,6 +156,12 @@ static void initializeSupportedImageMIMETypesForEncoding()
     }
 
     supportedImageMIMETypesForEncoding->remove("application/octet-stream");
+#elif PLATFORM(GTK)
+    supportedImageMIMETypesForEncoding->add("image/png");
+    supportedImageMIMETypesForEncoding->add("image/jpeg");
+    supportedImageMIMETypesForEncoding->add("image/tiff");
+    supportedImageMIMETypesForEncoding->add("image/bmp");
+    supportedImageMIMETypesForEncoding->add("image/ico");
 #elif PLATFORM(CAIRO)
     supportedImageMIMETypesForEncoding->add("image/png");
 #endif

@@ -1,3 +1,28 @@
+2010-08-02  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Use GdkPixbuf for ImageBuffer::toDataURL
+        https://bugs.webkit.org/show_bug.cgi?id=43088
+
+        Implement ImageBuffer::toDataURL with GdkPixbuf instead of Cairo. This
+        allows the method to support a larger variety of image types.
+
+        * GNUmakefile.am: Add new files to the source list.
+        * platform/MIMETypeRegistry.cpp: 
+        (WebCore::initializeSupportedImageMIMETypesForEncoding):
+        Add the list of image types supported by GTK.
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        * platform/graphics/gtk/CairoUtilities.cpp: Added.
+        (getCairoSurfacePixel): Move this method from ImageGtk.cpp.
+        (getGdkPixbufPixel): Move this method from ImageGtk.cpp.
+        (cairoImageSurfaceToGdkPixbuf): Move this method from ImageGtk.cpp.
+        * platform/graphics/gtk/CairoUtilities.h: Added.
+        * platform/graphics/gtk/ImageBufferGtk.cpp: Added.
+        (WebCore::ImageBuffer::toDataURL): Use GdkPixbuf to do the conversion to a data url.
+        * platform/graphics/gtk/ImageGtk.cpp:
+        (WebCore::BitmapImage::getGdkPixbuf): Use the new helper method in CairoUtilities.h.
+
 2010-08-02  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.

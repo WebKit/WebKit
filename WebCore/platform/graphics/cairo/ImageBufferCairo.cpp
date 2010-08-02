@@ -277,6 +277,7 @@ void ImageBuffer::putPremultipliedImageData(ImageData* source, const IntRect& so
     putImageData<Premultiplied>(source, sourceRect, destPoint, m_data, m_size);
 }
 
+#if !PLATFORM(GTK)
 static cairo_status_t writeFunction(void* closure, const unsigned char* data, unsigned int length)
 {
     Vector<char>* in = reinterpret_cast<Vector<char>*>(closure);
@@ -303,5 +304,6 @@ String ImageBuffer::toDataURL(const String& mimeType, const double*) const
 
     return "data:" + actualMimeType + ";base64," + String(out.data(), out.size());
 }
+#endif
 
 } // namespace WebCore

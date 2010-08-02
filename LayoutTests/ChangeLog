@@ -1,3 +1,12 @@
+2010-08-02  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Use GdkPixbuf for ImageBuffer::toDataURL
+        https://bugs.webkit.org/show_bug.cgi?id=43088
+
+        * platform/gtk/Skipped: Generate results for a toDataURL test and unskip it.
+
 2010-08-02  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

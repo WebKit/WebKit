@@ -2432,8 +2432,11 @@ webcoregtk_sources += \
 	WebCore/platform/graphics/cairo/PatternCairo.cpp \
 	WebCore/platform/graphics/cairo/TransformationMatrixCairo.cpp \
 	WebCore/platform/graphics/gtk/ColorGtk.cpp \
+	WebCore/platform/graphics/gtk/CairoUtilities.cpp \
+	WebCore/platform/graphics/gtk/CairoUtilities.h \
 	WebCore/platform/graphics/gtk/FontGtk.cpp \
 	WebCore/platform/graphics/gtk/IconGtk.cpp \
+	WebCore/platform/graphics/gtk/ImageBufferGtk.cpp \
 	WebCore/platform/graphics/gtk/ImageGtk.cpp \
 	WebCore/platform/graphics/gtk/IntPointGtk.cpp \
 	WebCore/platform/graphics/gtk/IntRectGtk.cpp \

@@ -1081,7 +1081,6 @@ fast/canvas/canvas-transform-non-invertible.html
 fast/canvas/canvas-transform-skewed.html
 fast/canvas/canvas-zoom.html
 fast/canvas/pointInPath.html
-fast/canvas/toDataURL-supportedTypes.html
 fast/css/css1_forward_compatible_parsing.html
 fast/css/invalid-percentage-property.html
 fast/css/text-align.html
