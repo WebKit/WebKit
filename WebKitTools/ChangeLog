@@ -1,3 +1,16 @@
+2010-08-02  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        WebSocket server should start with SO_REUSEADDR
+        https://bugs.webkit.org/show_bug.cgi?id=43329
+
+        Pulls in pywebsocket-0.5.2.
+        pywebsocket-0.5.2 includes a small fix to start server with SO_REUSE_ADDR.
+        http://code.google.com/p/pywebsocket/source/detail?r=273
+
+        * Scripts/webkitpy/thirdparty/__init__.py: Bump pywebsocket version
+
 2010-08-01  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.

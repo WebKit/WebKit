@@ -93,8 +93,8 @@ installer.install(url="http://downloads.sourceforge.net/project/python-irclib/py
 
 pywebsocket_dir = os.path.join(autoinstalled_dir, "pywebsocket")
 installer = AutoInstaller(target_dir=pywebsocket_dir)
-installer.install(url="http://pywebsocket.googlecode.com/files/mod_pywebsocket-0.5.1.tar.gz",
-                  url_subpath="pywebsocket-0.5.1/src/mod_pywebsocket")
+installer.install(url="http://pywebsocket.googlecode.com/files/mod_pywebsocket-0.5.2.tar.gz",
+                  url_subpath="pywebsocket-0.5.2/src/mod_pywebsocket")
 
 readme_path = os.path.join(autoinstalled_dir, "README")
 if not os.path.exists(readme_path):
