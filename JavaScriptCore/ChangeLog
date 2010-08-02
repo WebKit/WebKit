@@ -1,3 +1,20 @@
+2010-08-02  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [QT] build fix for symbian
+        https://bugs.webkit.org/show_bug.cgi?id=43234
+
+        1) wrong order of passing param's
+        2) static_cast complains on symbian so using reinterpret_cast
+
+        No new tests added. Just a build fix for qt symbian
+
+        * wtf/PageAllocation.cpp:
+        (WTF::PageAllocation::commit):
+        (WTF::PageAllocation::decommit):
+        (WTF::PageAllocation::reserve):
+
 2010-07-30  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Simon Fraser.

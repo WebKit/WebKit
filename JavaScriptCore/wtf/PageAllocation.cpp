@@ -176,7 +176,7 @@ size_t PageAllocation::pagesize()
 bool PageAllocation::commit(void* start, size_t size, bool writable, bool executable) const
 {
     if (m_chunk) {
-        intptr_t offset = static_cast<intptr_t>(base()) - static_cast<intptr_t>(start);
+        intptr_t offset = reinterpret_cast<intptr_t>(base()) - reinterpret_cast<intptr_t>(start);
         m_chunk->Commit(offset, size);
     }
     return true;
@@ -185,7 +185,7 @@ bool PageAllocation::commit(void* start, size_t size, bool writable, bool execut
 void PageAllocation::decommit(void* start, size_t size) const
 {
     if (m_chunk) {
-        intptr_t offset = static_cast<intptr_t>(base()) - static_cast<intptr_t>(start);
+        intptr_t offset = reinterpret_cast<intptr_t>(base()) - reinterpret_cast<intptr_t>(start);
         m_chunk->Decommit(offset, size);
     }
 }
@@ -205,7 +205,7 @@ PageAllocation PageAllocation::reserve(size_t size, Usage usage, bool writable, 
         return PageAllocation(fastMalloc(size), size, 0);
     RChunk* rchunk = new RChunk();
     TInt errorCode = rchunk->CreateLocalCode(0, size);
-    return PageAllocation(rchunk, rchunk->Base(), size);
+    return PageAllocation(rchunk->Base(), size, rchunk);
 }
 
 void PageAllocation::deallocate()
