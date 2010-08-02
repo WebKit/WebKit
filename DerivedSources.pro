@@ -6,6 +6,10 @@ SUBDIRS += \
         WebCore/DerivedSources.pro \
         WebKit/qt/Api/DerivedSources.pro
 
+webkit2 {
+    SUBDIRS += WebKit2/DerivedSources.pro
+}
+
 for(subpro, SUBDIRS) {
     subdir = $${dirname(subpro)}
     subtarget = $$replace(subpro, [^a-zA-Z0-9_], -)

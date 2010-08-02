@@ -3386,6 +3386,11 @@ SOURCES += \
     ../WebKit2/WebProcess/WebProcess.cpp \
     ../WebKit2/WebProcess/qt/WebProcessMainQt.cpp
 
+INCLUDEPATH = \
+    $$OUTPUT_DIR/WebCore/generated \
+    $$INCLUDEPATH \
+    $$OUPUT_DIR/include
+
 }
 
 symbian {

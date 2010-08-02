@@ -1418,6 +1418,8 @@ sub buildQMakeProject($@)
 
     print "Generating derived sources\n\n";
 
+    push @buildArgs, "OUTPUT_DIR=" . baseProductDir() . "/$config";
+
     my @dsQmakeArgs = @buildArgs;
     push @dsQmakeArgs, "-r";
     push @dsQmakeArgs, sourceDir() . "/DerivedSources.pro";
@@ -1431,7 +1433,12 @@ sub buildQMakeProject($@)
     my $dsMakefile = "Makefile.DerivedSources";
 
     # Iterate over different source directories manually to workaround a problem with qmake+extraTargets+s60
-    for my $subdir ("JavaScriptCore", "WebCore", "WebKit/qt/Api") {
+    my @subdirs = ("JavaScriptCore", "WebCore", "WebKit/qt/Api");
+    if (grep { $_ eq "CONFIG+=webkit2"} @buildArgs) {
+        push @subdirs, "WebKit2";
+    }
+
+    for my $subdir (@subdirs) {
         print "Calling '$make $makeargs -f $dsMakefile generated_files' in " . $dir . "/$subdir\n\n";
         if ($make eq "nmake") {
             my $subdirWindows = $subdir;
@@ -1445,7 +1452,6 @@ sub buildQMakeProject($@)
         }
     }
 
-    push @buildArgs, "OUTPUT_DIR=" . baseProductDir() . "/$config";
     push @buildArgs, sourceDir() . "/WebKit.pro";
     if ($config =~ m/debug/i) {
         push @buildArgs, "CONFIG-=release";

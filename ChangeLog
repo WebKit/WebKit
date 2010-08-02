@@ -1,3 +1,13 @@
+2010-08-02  Balazs Kelemen  <kb@inf.u-szeged.hu>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Generate forwarding headers for WebKit2
+
+        https://bugs.webkit.org/show_bug.cgi?id=43336
+
+        * DerivedSources.pro: Added WebKit2/DerivedSources.pro to SUBDIRS if webkit2 is on.
+
 2010-07-30  Patrick Gansterer  <paroga@paroga.com>
 
         Reviewed by Nikolas Zimmermann.
