@@ -2,6 +2,21 @@
 
         Reviewed by Eric Seidel.
 
+        focusing the body of a contentEditable iframe resets the selection
+        https://bugs.webkit.org/show_bug.cgi?id=42645
+        
+        The selection shouldn't be reset to the beginning of the rootEditableElement
+        if it is already inside the rootEditableElement.
+
+        Test: editing/selection/focus-contenteditable-iframe.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::updateFocusAppearance):
+
+2010-07-20  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
         focusing an unfocused contentEditable element should place the cursor at the beginning
         https://bugs.webkit.org/show_bug.cgi?id=42646
 
