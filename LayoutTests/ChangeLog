@@ -1,3 +1,9 @@
+2010-08-02  Andrew Wilson  <atwilson@chromium.org>
+
+        Unreviewed test expectations change to mark test as failing on Chromium Linux.
+
+        * platform/chromium/test_expectations.txt: Mark fast/events/keydown-numpad-keys.html as failing on Linux.
+
 2010-08-02  Martin Robinson  <mrobinson@igalia.com>
 
         [Qt] DOM listeners get wrong keycodes for some keys
