@@ -153,6 +153,7 @@ committers_unable_to_review = [
     Committer("Mikhail Naganov", "mnaganov@chromium.org"),
     Committer("MORITA Hajime", "morrita@google.com", "morrita"),
     Committer("Nico Weber", ["thakis@chromium.org", "thakis@google.com"], "thakis"),
+    Committer("Noam Rosenthal", "noam.rosenthal@nokia.com", "noamr"),
     Committer("Pam Greene", "pam@chromium.org", "pamg"),
     Committer("Peter Kasting", ["pkasting@google.com", "pkasting@chromium.org"], "pkasting"),
     Committer("Philippe Normand", ["pnormand@igalia.com", "philn@webkit.org"], "philn-tp"),
