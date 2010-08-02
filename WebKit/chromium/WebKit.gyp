@@ -854,6 +854,13 @@
                     ]
                 }],
                 ['OS=="linux" or OS=="freebsd" or OS=="openbsd" or OS=="solaris"', {
+                    'dependencies': [
+                        '<(chromium_src_dir)/build/linux/system.gyp:fontconfig',
+                        '<(chromium_src_dir)/build/linux/system.gyp:gtk',
+                    ],
+                    'include_dirs': [
+                        'public/gtk',
+                    ],
                     'copies': [{
                         'destination': '<(PRODUCT_DIR)',
                         'files': [

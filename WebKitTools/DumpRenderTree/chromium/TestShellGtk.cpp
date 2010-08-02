@@ -33,6 +33,7 @@
 
 #include "webkit/support/webkit_support.h"
 #include <fontconfig/fontconfig.h>
+#include <gtk/gtk.h>
 #include <signal.h>
 
 static void AlarmHandler(int signatl)
@@ -185,7 +186,11 @@ void TestShell::waitTestFinished()
     signal(SIGALRM, SIG_DFL);
 }
 
-void platformInit()
+void platformInit(int* argc, char*** argv)
 {
+    // FIXME: It's better call gtk_init() only when we run plugin tests.
+    // See http://groups.google.com/a/chromium.org/group/chromium-dev/browse_thread/thread/633ea167cde196ca#
+    gtk_init(argc, argv);
+
     setupFontconfig();
 }

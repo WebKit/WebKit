@@ -1,3 +1,12 @@
+2010-08-02  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [DRT/Chromium] Always initialize GTK
+        https://bugs.webkit.org/show_bug.cgi?id=43327
+
+        * WebKit.gyp: Add GTK dependency for DRT.
+
 2010-08-02  Jeremy Orlow  <jorlow@chromium.org>
 
         Speculative revert of 64425 due to Chromium instability

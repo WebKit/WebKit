@@ -124,6 +124,6 @@ void TestShell::waitTestFinished()
     [thread release];
 }
 
-void platformInit()
+void platformInit(int*, char***)
 {
 }
