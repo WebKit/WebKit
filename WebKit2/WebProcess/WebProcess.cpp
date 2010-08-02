@@ -110,6 +110,17 @@ void WebProcess::registerURLSchemeAsEmptyDocument(const WebCore::String& urlSche
     SchemeRegistry::registerURLSchemeAsEmptyDocument(urlScheme);
 }
 
+void WebProcess::addVisitedLinkHash(WebCore::LinkHash hash)
+{
+    PageGroup* group = PageGroup::pageGroup("WebKit2Group");
+    ASSERT(group);
+    if (!group) {
+        printf("Cannot find PageGroup named 'WebKit2Group'\n");
+        return;
+    }
+    group->addVisitedLinkHash(hash);
+}
+
 WebPage* WebProcess::webPage(uint64_t pageID) const
 {
     return m_pageMap.get(pageID).get();
@@ -166,6 +177,14 @@ void WebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
 {
     if (messageID.is<CoreIPC::MessageClassWebProcess>()) {
         switch (messageID.get<WebProcessMessage::Kind>()) {
+            case WebProcessMessage::AddVisitedLink: {
+                WebCore::LinkHash hash;
+                if (!arguments->decode(CoreIPC::Out(hash)))
+                    return;
+
+                addVisitedLinkHash(hash);
+                return;
+            }
             case WebProcessMessage::LoadInjectedBundle: {
                 String path;
 

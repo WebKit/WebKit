@@ -33,6 +33,7 @@
 namespace WebProcessMessage {
 
 enum Kind {
+    AddVisitedLink,
     LoadInjectedBundle,
     SetApplicationCacheDirectory,
     SetShouldTrackVisitedLinks,

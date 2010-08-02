@@ -94,6 +94,11 @@ void WKContextGetStatistics(WKContextRef contextRef, WKContextStatistics* statis
     toWK(contextRef)->getStatistics(statistics);
 }
 
+void WKContextAddVisitedLink(WKContextRef contextRef, WKStringRef visitedURL)
+{
+    toWK(contextRef)->addVisitedLink(toWK(visitedURL)->string());
+}
+
 WKContextRef WKContextRetain(WKContextRef contextRef)
 {
     toWK(contextRef)->ref();

@@ -1,3 +1,29 @@
+2010-08-02  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Basic WK2 visited link coloring
+        https://bugs.webkit.org/show_bug.cgi?id=43377
+
+        Add simple API that allows the WK2 app to add 1 visited link at a time.
+        For now, this just pipes each individual LinkHash down to WebCore.
+        
+        * Shared/CoreIPCSupport/WebProcessMessageKinds.h:
+        (WebProcessMessage::):
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextAddVisitedLink):
+        * UIProcess/API/C/WKContext.h:
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::addVisitedLink):
+        * UIProcess/WebContext.h:
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::addVisitedLinkHash):
+        (WebKit::WebProcess::didReceiveMessage):
+        * WebProcess/WebProcess.h:
+
 2010-08-02  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

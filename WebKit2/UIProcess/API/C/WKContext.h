@@ -74,6 +74,8 @@ WK_EXPORT void WKContextSetInjectedBundleClient(WKContextRef context, const WKCo
 
 WK_EXPORT void WKContextPostMessageToInjectedBundle(WKContextRef context, WKStringRef messageName, WKTypeRef messageBody);
 
+WK_EXPORT void WKContextAddVisitedLink(WKContextRef context, WKStringRef visitedURL);
+
 WK_EXPORT WKContextRef WKContextRetain(WKContextRef context);
 WK_EXPORT void WKContextRelease(WKContextRef context);
 
