@@ -1,3 +1,15 @@
+2010-08-02  Andrew Wilson  <atwilson@chromium.org>
+
+        Unreviewed test expectations fixups for chromium.
+
+        * platform/chromium-linux/editing/pasteboard/select-element-1-expected.txt:
+        * platform/chromium-mac/fast/dom/navigator-detached-no-crash-expected.txt: Removed.
+        * platform/chromium-win/editing/pasteboard/input-field-1-expected.txt:
+        * platform/chromium-win/editing/pasteboard/merge-end-1-expected.txt:
+        * platform/chromium-win/editing/pasteboard/merge-end-2-expected.txt:
+        * platform/chromium-win/editing/pasteboard/select-element-1-expected.txt:
+        * platform/chromium-win/fast/dom/navigator-detached-no-crash-expected.txt: Removed.
+
 2010-08-02  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Eric Seidel.
