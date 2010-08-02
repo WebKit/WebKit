@@ -1,3 +1,9 @@
+2010-08-02  Sam Weinig  <sam@webkit.org>
+
+        Fix the windows build.
+
+        * WebKitTestRunner/win/main.cpp:
+
 2010-07-29  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Add a Skipped list on Windows, and have run-webkit-tests respect it.
