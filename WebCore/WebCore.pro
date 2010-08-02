@@ -2274,8 +2274,7 @@ maemo5 {
     mac {
         SOURCES += \
             platform/text/cf/StringCF.cpp \
-            platform/text/cf/StringImplCF.cpp \
-            platform/cf/SharedBufferCF.cpp
+            platform/text/cf/StringImplCF.cpp
         LIBS_PRIVATE += -framework Carbon -framework AppKit
     }
 
