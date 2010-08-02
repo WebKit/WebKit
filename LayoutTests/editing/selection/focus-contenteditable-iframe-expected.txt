@@ -5,4 +5,4 @@ Dump of markup 1:
 |   <head>
 |   <body>
 |     contenteditable="true"
-|     "<#selection-caret>asdf"
+|     "<#selection-anchor>asdf<#selection-focus>"

@@ -1,3 +1,15 @@
+2010-08-02  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        fix editing/selection/focus-contenteditable-iframe.html after r64489
+        https://bugs.webkit.org/show_bug.cgi?id=43383
+
+        I had just messed up the expected results before committing r64489.
+        This new output is correct and matches the test description.
+
+        * editing/selection/focus-contenteditable-iframe-expected.txt:
+
 2010-07-29  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Add a Skipped list on Windows, and have run-webkit-tests respect it.
