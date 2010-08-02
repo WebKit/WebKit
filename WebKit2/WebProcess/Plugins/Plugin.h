@@ -91,6 +91,19 @@ public:
     // Tells the plug-in that a stream has failed to load, either because of network errors or because the load was cancelled.
     virtual void streamDidFail(uint64_t streamID, bool wasCancelled) = 0;
 
+    // Tells the plug-in that the manual stream has received its HTTP response.
+    virtual void manualStreamDidReceiveResponse(const WebCore::KURL& responseURL, uint32_t streamLength, 
+                                                uint32_t lastModifiedTime, const WebCore::String& mimeType, const WebCore::String& headers) = 0;
+
+    // Tells the plug-in that the manual stream did receive data.
+    virtual void manualStreamDidReceiveData(const char* bytes, int length) = 0;
+
+    // Tells the plug-in that a stream has finished loading.
+    virtual void manualStreamDidFinishLoading() = 0;
+    
+    // Tells the plug-in that a stream has failed to load, either because of network errors or because the load was cancelled.
+    virtual void manualStreamDidFail(bool wasCancelled) = 0;
+    
     // Tells the plug-in to handle the passed in mouse event. The plug-in should return true if it processed the event.
     virtual bool handleMouseEvent(const WebMouseEvent&) = 0;
 

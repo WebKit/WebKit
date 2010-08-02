@@ -56,6 +56,11 @@ public:
 
     bool isBeingDestroyed() const { return m_isBeingDestroyed; }
 
+    void manualLoadDidReceiveResponse(const WebCore::ResourceResponse&);
+    void manualLoadDidReceiveData(const char* bytes, int length);
+    void manualLoadDidFinishLoading();
+    void manualLoadDidFail(const WebCore::ResourceError&);
+    
 private:
     PluginView(WebCore::HTMLPlugInElement*, PassRefPtr<Plugin>, const Plugin::Parameters& parameters);
     virtual ~PluginView();

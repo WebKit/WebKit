@@ -1,3 +1,74 @@
+2010-08-02  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add support for loading manual streams
+        https://bugs.webkit.org/show_bug.cgi?id=43380
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::NetscapePlugin):
+        Initialize m_loadManually to false.
+
+        (WebKit::NetscapePlugin::removePluginStream):
+        Special case the manual stream.
+
+        (WebKit::NetscapePlugin::initialize):
+        Don't request the stream if we're already loading.
+
+        (WebKit::NetscapePlugin::manualStreamDidReceiveResponse):
+        Create the manual stream and pass the response to it.
+
+        (WebKit::NetscapePlugin::manualStreamDidReceiveData):
+        Pass the data to the manual stream.
+
+        (WebKit::NetscapePlugin::manualStreamDidFinishLoading):
+        Call the manual stream.
+
+        (WebKit::NetscapePlugin::manualStreamDidFail):
+        Ditto.
+
+        * WebProcess/Plugins/Plugin.h:
+        Add pure virtual member functions for manual stream loading.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::buildHTTPHeaders):
+        Put code in a function so both PluginView::Stream::didReceiveResponse and 
+        manualLoadDidReceiveResponse can call it.
+
+        (WebKit::PluginView::Stream::didReceiveResponse):
+        Call buildHTTPHeaders.
+
+        (WebKit::PluginView::Stream::didFinishLoading):
+        Protect the plug-in when calling destroyStream.
+
+        (WebKit::PluginView::manualLoadDidReceiveResponse):
+        Call Plugin::manualStreamDidReceiveResponse.
+
+        (WebKit::PluginView::manualLoadDidReceiveData):
+        Call Plugin::manualStreamDidReceiveData.
+
+        (WebKit::PluginView::manualLoadDidFinishLoading):
+        Call Plugin::manualStreamDidFinishLoading.
+
+        (WebKit::PluginView::manualLoadDidFail):
+        Call Plugin::manualStreamDidFail.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::WebFrameLoaderClient):
+        Initialize m_hasSentResponseToPluginView to false.
+
+        (WebKit::WebFrameLoaderClient::setMainDocumentError):
+        Call PluginView::manualLoadDidFail.
+
+        (WebKit::WebFrameLoaderClient::committedLoad):
+        Call PluginView::manualLoadDidReceiveResponse.
+
+        (WebKit::WebFrameLoaderClient::finishedLoading):
+        Call PluginView::manualLoadDidFinishLoading.
+
+        (WebKit::WebFrameLoaderClient::redirectDataToPlugin):
+        Keep track of the plug-in view.
+
 2010-08-02  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders Carlsson.

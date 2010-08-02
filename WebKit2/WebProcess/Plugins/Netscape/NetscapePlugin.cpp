@@ -47,6 +47,7 @@ NetscapePlugin::NetscapePlugin(PassRefPtr<NetscapePluginModule> pluginModule)
     , m_npWindow()
     , m_isStarted(false)
     , m_inNPPNew(false)
+    , m_loadManually(false)
 #if PLATFORM(MAC)
     , m_drawingModel(static_cast<NPDrawingModel>(-1))
     , m_eventModel(static_cast<NPEventModel>(-1))
@@ -179,6 +180,11 @@ void NetscapePlugin::cancelStreamLoad(NetscapePluginStream* pluginStream)
 
 void NetscapePlugin::removePluginStream(NetscapePluginStream* pluginStream)
 {
+    if (pluginStream == m_manualStream) {
+        m_manualStream = 0;
+        return;
+    }
+
     ASSERT(m_streams.get(pluginStream->streamID()) == pluginStream);
     m_streams.remove(pluginStream->streamID());
 }
@@ -292,6 +298,7 @@ bool NetscapePlugin::initialize(PluginController* pluginController, const Parame
     
     uint16_t mode = parameters.loadManually ? NP_FULL : NP_EMBED;
     
+    m_loadManually = parameters.loadManually;
     m_inNPPNew = true;
 
     CString mimeTypeCString = parameters.mimeType.utf8();
@@ -331,7 +338,7 @@ bool NetscapePlugin::initialize(PluginController* pluginController, const Parame
     }
 
     // Load the src URL if needed.
-    if (!parameters.url.isEmpty() && shouldLoadSrcURL())
+    if (!parameters.loadManually && !parameters.url.isEmpty() && shouldLoadSrcURL())
         loadURL("GET", parameters.url.string(), String(), HTTPHeaderMap(), Vector<char>(), false, 0);
     
     return true;
@@ -429,6 +436,40 @@ void NetscapePlugin::streamDidFail(uint64_t streamID, bool wasCancelled)
 {
     if (NetscapePluginStream* pluginStream = streamFromID(streamID))
         pluginStream->didFail(wasCancelled);
+}
+
+void NetscapePlugin::manualStreamDidReceiveResponse(const KURL& responseURL, uint32_t streamLength, uint32_t lastModifiedTime, 
+                                                    const String& mimeType, const String& headers)
+{
+    ASSERT(m_loadManually);
+    ASSERT(!m_manualStream);
+    
+    m_manualStream = NetscapePluginStream::create(this, 0, false, 0);
+    m_manualStream->didReceiveResponse(responseURL, streamLength, lastModifiedTime, mimeType, headers);
+}
+
+void NetscapePlugin::manualStreamDidReceiveData(const char* bytes, int length)
+{
+    ASSERT(m_loadManually);
+    ASSERT(m_manualStream);
+
+    m_manualStream->didReceiveData(bytes, length);
+}
+
+void NetscapePlugin::manualStreamDidFinishLoading()
+{
+    ASSERT(m_loadManually);
+    ASSERT(m_manualStream);
+
+    m_manualStream->didFinishLoading();
+}
+
+void NetscapePlugin::manualStreamDidFail(bool wasCancelled)
+{
+    ASSERT(m_loadManually);
+    ASSERT(m_manualStream);
+
+    m_manualStream->didFail(wasCancelled);
 }
 
 bool NetscapePlugin::handleMouseEvent(const WebMouseEvent& mouseEvent)

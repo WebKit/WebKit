@@ -140,6 +140,39 @@ void PluginView::Stream::cancel()
     m_loader = 0;
 }
 
+static String buildHTTPHeaders(const ResourceResponse& response, long long& expectedContentLength)
+{
+    if (!response.isHTTP())
+        return String();
+
+    Vector<UChar> stringBuilder;
+    String separator(": ");
+    
+    String statusLine = String::format("HTTP %d ", response.httpStatusCode());
+    stringBuilder.append(statusLine.characters(), statusLine.length());
+    stringBuilder.append(response.httpStatusText().characters(), response.httpStatusText().length());
+    stringBuilder.append('\n');
+    
+    HTTPHeaderMap::const_iterator end = response.httpHeaderFields().end();
+    for (HTTPHeaderMap::const_iterator it = response.httpHeaderFields().begin(); it != end; ++it) {
+        stringBuilder.append(it->first.characters(), it->first.length());
+        stringBuilder.append(separator.characters(), separator.length());
+        stringBuilder.append(it->second.characters(), it->second.length());
+        stringBuilder.append('\n');
+    }
+    
+    String headers = String::adopt(stringBuilder);
+    
+    // If the content is encoded (most likely compressed), then don't send its length to the plugin,
+    // which is only interested in the decoded length, not yet known at the moment.
+    // <rdar://problem/4470599> tracks a request for -[NSURLResponse expectedContentLength] to incorporate this logic.
+    String contentEncoding = response.httpHeaderField("Content-Encoding");
+    if (!contentEncoding.isNull() && contentEncoding != "identity")
+        expectedContentLength = -1;
+
+    return headers;
+}
+
 void PluginView::Stream::didReceiveResponse(NetscapePlugInStreamLoader*, const ResourceResponse& response)
 {
     // Compute the stream related data from the resource response.
@@ -147,33 +180,7 @@ void PluginView::Stream::didReceiveResponse(NetscapePlugInStreamLoader*, const R
     const String& mimeType = response.mimeType();
     long long expectedContentLength = response.expectedContentLength();
     
-    String headers;
-    if (response.isHTTP()) {
-        Vector<UChar> stringBuilder;
-        String separator(": ");
-
-        String statusLine = String::format("HTTP %d ", response.httpStatusCode());
-        stringBuilder.append(statusLine.characters(), statusLine.length());
-        stringBuilder.append(response.httpStatusText().characters(), response.httpStatusText().length());
-        stringBuilder.append('\n');
-
-        HTTPHeaderMap::const_iterator end = response.httpHeaderFields().end();
-        for (HTTPHeaderMap::const_iterator it = response.httpHeaderFields().begin(); it != end; ++it) {
-            stringBuilder.append(it->first.characters(), it->first.length());
-            stringBuilder.append(separator.characters(), separator.length());
-            stringBuilder.append(it->second.characters(), it->second.length());
-            stringBuilder.append('\n');
-        }
-
-        headers = String::adopt(stringBuilder);
-
-        // If the content is encoded (most likely compressed), then don't send its length to the plugin,
-        // which is only interested in the decoded length, not yet known at the moment.
-        // <rdar://problem/4470599> tracks a request for -[NSURLResponse expectedContentLength] to incorporate this logic.
-        String contentEncoding = response.httpHeaderField("Content-Encoding");
-        if (!contentEncoding.isNull() && contentEncoding != "identity")
-            expectedContentLength = -1;
-    }
+    String headers = buildHTTPHeaders(response, expectedContentLength);
 
     uint32_t streamLength = 0;
     if (expectedContentLength > 0)
@@ -203,9 +210,12 @@ void PluginView::Stream::didFail(NetscapePlugInStreamLoader*, const ResourceErro
 void PluginView::Stream::didFinishLoading(NetscapePlugInStreamLoader*)
 {
     // Calling streamDidFinishLoading could cause us to be deleted, so we hold on to a reference here.
-    RefPtr<Stream> protect(this);
+    RefPtr<Stream> protectStream(this);
 
+    // Protect the plug-in while we're calling into it.
+    NPRuntimeObjectMap::PluginProtector pluginProtector(&m_pluginView->m_npRuntimeObjectMap);
     m_pluginView->m_plugin->streamDidFinishLoading(m_streamID);
+
     m_pluginView->removeStream(this);
     m_pluginView = 0;
 }
@@ -253,6 +263,37 @@ Frame* PluginView::frame()
     return m_pluginElement->document()->frame();
 }
 
+void PluginView::manualLoadDidReceiveResponse(const ResourceResponse& response)
+{
+    // Compute the stream related data from the resource response.
+    const KURL& responseURL = response.url();
+    const String& mimeType = response.mimeType();
+    long long expectedContentLength = response.expectedContentLength();
+    
+    String headers = buildHTTPHeaders(response, expectedContentLength);
+    
+    uint32_t streamLength = 0;
+    if (expectedContentLength > 0)
+        streamLength = expectedContentLength;
+
+    m_plugin->manualStreamDidReceiveResponse(responseURL, streamLength, response.lastModifiedDate(), mimeType, headers);
+}
+
+void PluginView::manualLoadDidReceiveData(const char* bytes, int length)
+{
+    m_plugin->manualStreamDidReceiveData(bytes, length);
+}
+
+void PluginView::manualLoadDidFinishLoading()
+{
+    m_plugin->manualStreamDidFinishLoading();
+}
+
+void PluginView::manualLoadDidFail(const ResourceError& error)
+{
+    m_plugin->manualStreamDidFail(error.isCancellation());
+}
+    
 void PluginView::initializePlugin()
 {
     if (m_isInitialized)
