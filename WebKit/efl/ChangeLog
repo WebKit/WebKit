@@ -1,3 +1,14 @@
+2010-08-03  ryuan choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Darin Adler.
+
+        [EFL] REGRESSION(64425) need to fix build break
+        https://bugs.webkit.org/show_bug.cgi?id=43322
+
+        just add include path missed after r64425
+
+        * CMakeListsEfl.txt:
+
 2010-07-27  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Darin Fisher.
