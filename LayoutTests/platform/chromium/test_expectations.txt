@@ -3129,4 +3129,4 @@ BUG50910 : plugins/npruntime/remove-property.html = TEXT
 BUG50832 : printing/stretch-to-view-height.html = TEXT
 
 // New test added in r64470 fails on Chromium.
-BUG50969 LINUX : fast/events/keydown-numpad-keys.html = TEXT
+BUG50969 : fast/events/keydown-numpad-keys.html = TEXT

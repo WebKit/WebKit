@@ -1,5 +1,11 @@
 2010-08-02  Andrew Wilson  <atwilson@chromium.org>
 
+        Unreviewed Chromium change to mark keydown-numpad-keys.html as failing on all platforms (not just linux)
+
+        * platform/chromium/test_expectations.txt: Mark keydown-numpad-keys.html as failing on all platforms
+
+2010-08-02  Andrew Wilson  <atwilson@chromium.org>
+
         Unreviewed rollback of Chromium expectations files to match rollback of r64471.
 
         * platform/chromium-mac/fast/dom/navigator-detached-no-crash-expected.txt: Removed.
