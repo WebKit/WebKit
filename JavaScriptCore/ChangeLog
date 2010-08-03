@@ -1,3 +1,9 @@
+2010-08-02  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fix after removal of need to compile ExecutableAllocatorPosix.cpp
+
+        * wscript:
+
 2010-08-02  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
 
         Reviewed by Simon Hausmann.

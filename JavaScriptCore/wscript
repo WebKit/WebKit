@@ -29,7 +29,7 @@ import commands
 
 from settings import *
 
-jscore_excludes = ['jsc.cpp', 'ucptable.cpp','ProfilerServer.mm']
+jscore_excludes = ['jsc.cpp', 'ucptable.cpp','ProfilerServer.mm', 'ExecutableAllocatorPosix.cpp']
 jscore_excludes.extend(get_excludes(jscore_dir, ['*Brew.cpp', '*CF.cpp', '*Symbian.cpp']))
 
 sources = []
@@ -37,7 +37,7 @@ sources = []
 jscore_excludes.extend(get_excludes(jscore_dir, ['*None.cpp']))
 
 if building_on_win32:
-    jscore_excludes += ['ExecutableAllocatorPosix.cpp', 'MarkStackPosix.cpp', 'ThreadingPthreads.cpp']
+    jscore_excludes += ['MarkStackPosix.cpp', 'ThreadingPthreads.cpp']
     sources += ['runtime/MarkStackWin.cpp']
 else:
     jscore_excludes.append('JSStringRefBSTR.cpp')

@@ -36,9 +36,7 @@
 #include "SimpleFontData.h"
 
 #if ENABLE(SVG_FONTS)
-#if !PLATFORM(WX)
 #include "FontCustomPlatformData.h"
-#endif
 #include "HTMLNames.h"
 #include "SVGFontData.h"
 #include "SVGFontElement.h"

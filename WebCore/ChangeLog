@@ -1,3 +1,17 @@
+2010-08-02  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fix, add stubs for FontCustomPlatformData to compile code that uses them.
+
+        * css/CSSFontFaceSource.cpp:
+        * platform/graphics/wx/FontCustomPlatformData.cpp: Added.
+        (WebCore::FontCustomPlatformData::~FontCustomPlatformData):
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+        (WebCore::createFontCustomPlatformData):
+        (WebCore::FontCustomPlatformData::supportsFormat):
+        * platform/graphics/wx/FontCustomPlatformData.h: Added.
+        (WebCore::FontCustomPlatformData::FontCustomPlatformData):
+        * wscript:
+
 2010-08-02  Brady Eidson  <beidson@apple.com>
 
         Reviewed by NOBODY (Build fix, forgot to svn add this file)

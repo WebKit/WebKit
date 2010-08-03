@@ -227,6 +227,7 @@ def build(bld):
         excludes.append('WebDOMEventListenerCustom.cpp')
         excludes.append('WebDOMElementTimeControl.cpp')
         excludes.append('WebDOMImageData.cpp')
+        excludes.append('WebDOMInspectorBackend.cpp')
         excludes.append('WebDOMScriptProfile.cpp')
         excludes.append('WebDOMScriptProfileNode.cpp')
         excludes.append('WebNativeEventListener.cpp')
