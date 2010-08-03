@@ -1,3 +1,10 @@
+2010-08-03  Brian Weinstein  <bweinstein@apple.com>
+
+        Fix the Windows build by adding WebCore/mathml to the list of paths to look for header
+        files.
+
+        * WebCore.vcproj/WebCoreCommon.vsprops:
+
 2010-08-03  Mark Rowe  <mrowe@apple.com>
 
         Fix the i386 build with a static_cast hammer.
