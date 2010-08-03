@@ -82,7 +82,11 @@ static void reportFatalErrorInV8(const char* location, const char* message)
     // V8 is shutdown, we cannot use V8 api.
     // The only thing we can do is to disable JavaScript.
     // FIXME: clean up V8Proxy and disable JavaScript.
-    printf("V8 error: %s (%s)\n", message, location);
+    int memoryUsageMB = -1;
+#if PLATFORM(CHROMIUM)
+    memoryUsageMB = ChromiumBridge::memoryUsageMB();
+#endif
+    printf("V8 error: %s (%s).  Current memory usage: %d MB\n", message, location, memoryUsageMB);
     handleFatalErrorInV8();
 }
 
