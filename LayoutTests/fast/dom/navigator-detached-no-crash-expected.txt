@@ -1,6 +1,5 @@
 This tests that the navigator object of a deleted frame is disconnected properly. Accessing fields or methods shouldn't crash the browser. 
  Check Navigator
-navigator.accessibility is OK
 navigator.appCodeName is OK
 navigator.appName is OK
 navigator.appVersion is OK
@@ -17,7 +16,6 @@ navigator.productSub is OK
 navigator.userAgent is OK
 navigator.vendor is OK
 navigator.vendorSub is OK
-navigator.accessibility is OK
 navigator.appCodeName is OK
 navigator.appName is OK
 navigator.appVersion is OK

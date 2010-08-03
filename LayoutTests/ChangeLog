@@ -1,5 +1,18 @@
 2010-08-02  Chris Fleizach  <cfleizach@apple.com>
 
+        Unreviewed, rolling out r64478.
+        http://trac.webkit.org/changeset/64478
+        https://bugs.webkit.org/show_bug.cgi?id=43005
+
+        Rolling out https://bugs.webkit.org/show_bug.cgi?id=43005
+        until further discussion
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/dom/navigator-detached-no-crash-expected.txt:
+        * fast/dom/prototype-inheritance-2-expected.txt:
+
+2010-08-02  Chris Fleizach  <cfleizach@apple.com>
+
         Unreviewed, rolling out r64486.
         http://trac.webkit.org/changeset/64486
         https://bugs.webkit.org/show_bug.cgi?id=43005
