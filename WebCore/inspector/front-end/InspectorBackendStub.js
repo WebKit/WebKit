@@ -46,6 +46,7 @@ WebInspector.InspectorBackendStub = function()
     this._registerDelegate("enableResourceTracking");
     this._registerDelegate("enableSearchingForNode");
     this._registerDelegate("enableTimeline");
+    this._registerDelegate("getApplicationCaches");
     this._registerDelegate("getChildNodes");
     this._registerDelegate("getCookies");
     this._registerDelegate("getDatabaseTableNames");
