@@ -21043,7 +21043,6 @@
 			<File
 				RelativePath="..\accessibility\Accessibility.cpp"
 				>
-            </File>
 			<File
 				RelativePath="..\accessibility\Accessibility.h"
 				>
@@ -22139,7 +22138,7 @@
 			<File
 				RelativePath="..\accessibility\ScreenReader.cpp"
 				>
-            </File>
+                        </File>
 			<File
 				RelativePath="..\accessibility\ScreenReader.h"
 				>
