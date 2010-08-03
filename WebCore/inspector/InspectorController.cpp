@@ -595,6 +595,7 @@ void InspectorController::disconnectFrontend()
     if (!m_frontend)
         return;
     m_frontend.clear();
+    m_remoteFrontend.clear();
 
     connectedFrontendCount--;
     if (!connectedFrontendCount)
@@ -661,7 +662,7 @@ void InspectorController::populateScriptObjects()
 
     ResourcesMap::iterator resourcesEnd = m_resources.end();
     for (ResourcesMap::iterator it = m_resources.begin(); it != resourcesEnd; ++it)
-        it->second->updateScriptObject(m_frontend.get());
+        it->second->updateScriptObject(m_remoteFrontend.get());
 
     m_domAgent->setDocument(m_inspectedPage->mainFrame()->document());
 
@@ -733,8 +734,8 @@ void InspectorController::pruneResources(ResourcesMap* resourceMap, DocumentLoad
 
         if (!loaderToKeep || !resource->isSameLoader(loaderToKeep)) {
             removeResource(resource);
-            if (m_frontend)
-                resource->releaseScriptObject(m_frontend.get());
+            if (m_remoteFrontend)
+                resource->releaseScriptObject(m_remoteFrontend.get());
         }
     }
 }
@@ -795,7 +796,7 @@ void InspectorController::didCommitLoad(DocumentLoader* loader)
                 // We don't add the main resource until its load is committed. This is
                 // needed to keep the load for a user-entered URL from showing up in the
                 // list of resources for the page they are navigating away from.
-                m_mainResource->updateScriptObject(m_frontend.get());
+                m_mainResource->updateScriptObject(m_remoteFrontend.get());
             } else {
                 // Pages loaded from the page cache are committed before
                 // m_mainResource is the right resource for this load, so we
@@ -906,8 +907,8 @@ void InspectorController::didLoadResourceFromMemoryCache(DocumentLoader* loader,
 
     addResource(resource.get());
 
-    if (m_frontend)
-        resource->updateScriptObject(m_frontend.get());
+    if (m_remoteFrontend)
+        resource->updateScriptObject(m_remoteFrontend.get());
 }
 
 void InspectorController::identifierForInitialRequest(unsigned long identifier, DocumentLoader* loader, const ResourceRequest& request)
@@ -930,8 +931,8 @@ void InspectorController::identifierForInitialRequest(unsigned long identifier, 
 
     addResource(resource.get());
 
-    if (m_frontend && loader->frameLoader()->isLoadingFromCachedPage() && resource == m_mainResource)
-        resource->updateScriptObject(m_frontend.get());
+    if (m_remoteFrontend && loader->frameLoader()->isLoadingFromCachedPage() && resource == m_mainResource)
+        resource->updateScriptObject(m_remoteFrontend.get());
 }
 
 void InspectorController::mainResourceFiredDOMContentEvent(DocumentLoader* loader, const KURL& url)
@@ -943,8 +944,8 @@ void InspectorController::mainResourceFiredDOMContentEvent(DocumentLoader* loade
         m_mainResource->markDOMContentEventTime();
         if (m_timelineAgent)
             m_timelineAgent->didMarkDOMContentEvent();
-        if (m_frontend)
-            m_mainResource->updateScriptObject(m_frontend.get());
+        if (m_remoteFrontend)
+            m_mainResource->updateScriptObject(m_remoteFrontend.get());
     }
 }
 
@@ -957,8 +958,8 @@ void InspectorController::mainResourceFiredLoadEvent(DocumentLoader* loader, con
         m_mainResource->markLoadEventTime();
         if (m_timelineAgent)
             m_timelineAgent->didMarkLoadEvent();
-        if (m_frontend)
-            m_mainResource->updateScriptObject(m_frontend.get());
+        if (m_remoteFrontend)
+            m_mainResource->updateScriptObject(m_remoteFrontend.get());
     }
 }
 
@@ -1005,8 +1006,8 @@ void InspectorController::willSendRequest(unsigned long identifier, ResourceRequ
     resource->startTiming();
     resource->updateRequest(request);
 
-    if (resource != m_mainResource && m_frontend)
-        resource->updateScriptObject(m_frontend.get());
+    if (resource != m_mainResource && m_remoteFrontend)
+        resource->updateScriptObject(m_remoteFrontend.get());
 }
 
 void InspectorController::didReceiveResponse(unsigned long identifier, const ResourceResponse& response)
@@ -1017,8 +1018,8 @@ void InspectorController::didReceiveResponse(unsigned long identifier, const Res
     if (RefPtr<InspectorResource> resource = getTrackedResource(identifier)) {
         resource->updateResponse(response);
 
-        if (resource != m_mainResource && m_frontend)
-            resource->updateScriptObject(m_frontend.get());
+        if (resource != m_mainResource && m_remoteFrontend)
+            resource->updateScriptObject(m_remoteFrontend.get());
     }
     if (response.httpStatusCode() >= 400) {
         // The ugly code below is due to that String::format() is not utf8-safe at the moment.
@@ -1039,8 +1040,8 @@ void InspectorController::didReceiveContentLength(unsigned long identifier, int 
 
     resource->addLength(lengthReceived);
 
-    if (resource != m_mainResource && m_frontend)
-        resource->updateScriptObject(m_frontend.get());
+    if (resource != m_mainResource && m_remoteFrontend)
+        resource->updateScriptObject(m_remoteFrontend.get());
 }
 
 void InspectorController::didFinishLoading(unsigned long identifier)
@@ -1058,8 +1059,8 @@ void InspectorController::didFinishLoading(unsigned long identifier)
     resource->endTiming();
 
     // No need to mute this event for main resource since it happens after did commit load.
-    if (m_frontend)
-        resource->updateScriptObject(m_frontend.get());
+    if (m_remoteFrontend)
+        resource->updateScriptObject(m_remoteFrontend.get());
 }
 
 void InspectorController::didFailLoading(unsigned long identifier, const ResourceError& error)
@@ -1083,8 +1084,8 @@ void InspectorController::didFailLoading(unsigned long identifier, const Resourc
     resource->endTiming();
 
     // No need to mute this event for main resource since it happens after did commit load.
-    if (m_frontend)
-        resource->updateScriptObject(m_frontend.get());
+    if (m_remoteFrontend)
+        resource->updateScriptObject(m_remoteFrontend.get());
 }
 
 void InspectorController::resourceRetrievedByXMLHttpRequest(unsigned long identifier, const ScriptString& sourceString, const String& url, const String& sendURL, unsigned sendLineNumber)
@@ -1104,8 +1105,8 @@ void InspectorController::resourceRetrievedByXMLHttpRequest(unsigned long identi
 
     resource->setOverrideContent(sourceString, InspectorResource::XHR);
 
-    if (m_frontend)
-        resource->updateScriptObject(m_frontend.get());
+    if (m_remoteFrontend)
+        resource->updateScriptObject(m_remoteFrontend.get());
 }
 
 void InspectorController::scriptImported(unsigned long identifier, const String& sourceString)
@@ -1119,8 +1120,8 @@ void InspectorController::scriptImported(unsigned long identifier, const String&
 
     resource->setOverrideContent(ScriptString(sourceString), InspectorResource::Script);
 
-    if (m_frontend)
-        resource->updateScriptObject(m_frontend.get());
+    if (m_remoteFrontend)
+        resource->updateScriptObject(m_remoteFrontend.get());
 }
 
 void InspectorController::enableResourceTracking(bool always, bool reload)
@@ -2182,14 +2183,12 @@ void InspectorController::removeAllScriptsToEvaluateOnLoad()
 
 void InspectorController::getResourceContent(long callId, unsigned long identifier)
 {
-    if (!m_frontend)
+    if (!m_remoteFrontend)
         return;
 
     RefPtr<InspectorResource> resource = m_resources.get(identifier);
-    if (resource)
-        m_frontend->didGetResourceContent(callId, resource->sourceString());
-    else
-        m_frontend->didGetResourceContent(callId, "");
+    String content = resource ? resource->sourceString() : String();
+    m_remoteFrontend->didGetResourceContent(callId, content);
 }
 
 void InspectorController::reloadPage()

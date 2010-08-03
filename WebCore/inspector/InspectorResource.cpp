@@ -38,12 +38,12 @@
 #include "DocLoader.h"
 #include "DocumentLoader.h"
 #include "Frame.h"
-#include "InspectorFrontend.h"
+#include "InspectorValues.h"
+#include "RemoteInspectorFrontend.h"
 #include "ResourceLoadTiming.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "TextEncoding.h"
-#include "ScriptObject.h"
 
 namespace WebCore {
 
@@ -146,80 +146,100 @@ void InspectorResource::updateResponse(const ResourceResponse& response)
     m_changes.set(TypeChange);
 }
 
-static void populateHeadersObject(ScriptObject* object, const HTTPHeaderMap& headers)
+static PassRefPtr<InspectorObject> buildHeadersObject(const HTTPHeaderMap& headers)
 {
+    RefPtr<InspectorObject> object = InspectorObject::create();
     HTTPHeaderMap::const_iterator end = headers.end();
     for (HTTPHeaderMap::const_iterator it = headers.begin(); it != end; ++it) {
-        object->set(it->first.string(), it->second);
+        object->setString(it->first.string(), it->second);
     }
+    return object;
 }
 
-void InspectorResource::updateScriptObject(InspectorFrontend* frontend)
+static PassRefPtr<InspectorObject> buildObjectForTiming(ResourceLoadTiming* timing)
+{
+    RefPtr<InspectorObject> jsonObject = InspectorObject::create();
+    jsonObject->setNumber("requestTime", timing->requestTime);
+    jsonObject->setNumber("proxyStart", timing->proxyStart);
+    jsonObject->setNumber("proxyEnd", timing->proxyEnd);
+    jsonObject->setNumber("dnsStart", timing->dnsStart);
+    jsonObject->setNumber("dnsEnd", timing->dnsEnd);
+    jsonObject->setNumber("connectStart", timing->connectStart);
+    jsonObject->setNumber("connectEnd", timing->connectEnd);
+    jsonObject->setNumber("sslStart", timing->sslStart);
+    jsonObject->setNumber("sslEnd", timing->sslEnd);
+    jsonObject->setNumber("sendStart", timing->sendStart);
+    jsonObject->setNumber("sendEnd", timing->sendEnd);
+    jsonObject->setNumber("receiveHeadersEnd", timing->receiveHeadersEnd);
+    return jsonObject;
+}
+
+
+void InspectorResource::updateScriptObject(RemoteInspectorFrontend* frontend)
 {
     if (m_changes.hasChange(NoChange))
         return;
 
-    ScriptObject jsonObject = frontend->newScriptObject();
+    RefPtr<InspectorObject> jsonObject = InspectorObject::create();
+    jsonObject->setNumber("id", m_identifier);
     if (m_changes.hasChange(RequestChange)) {
-        jsonObject.set("url", m_requestURL.string());
-        jsonObject.set("documentURL", m_frame->document()->url().string());
-        jsonObject.set("host", m_requestURL.host());
-        jsonObject.set("path", m_requestURL.path());
-        jsonObject.set("lastPathComponent", m_requestURL.lastPathComponent());
-        ScriptObject requestHeaders = frontend->newScriptObject();
-        populateHeadersObject(&requestHeaders, m_requestHeaderFields);
-        jsonObject.set("requestHeaders", requestHeaders);
-        jsonObject.set("mainResource", m_isMainResource);
-        jsonObject.set("requestMethod", m_requestMethod);
-        jsonObject.set("requestFormData", m_requestFormData);
-        jsonObject.set("didRequestChange", true);
+        jsonObject->setString("url", m_requestURL.string());
+        jsonObject->setString("documentURL", m_frame->document()->url().string());
+        jsonObject->setString("host", m_requestURL.host());
+        jsonObject->setString("path", m_requestURL.path());
+        jsonObject->setString("lastPathComponent", m_requestURL.lastPathComponent());
+        RefPtr<InspectorObject> requestHeaders = buildHeadersObject(m_requestHeaderFields);
+        jsonObject->set("requestHeaders", requestHeaders);
+        jsonObject->setBool("mainResource", m_isMainResource);
+        jsonObject->setString("requestMethod", m_requestMethod);
+        jsonObject->setString("requestFormData", m_requestFormData);
+        jsonObject->setBool("didRequestChange", true);
     }
 
     if (m_changes.hasChange(ResponseChange)) {
-        jsonObject.set("mimeType", m_mimeType);
-        jsonObject.set("suggestedFilename", m_suggestedFilename);
-        jsonObject.set("expectedContentLength", m_expectedContentLength);
-        jsonObject.set("statusCode", m_responseStatusCode);
-        jsonObject.set("statusText", m_responseStatusText);
-        ScriptObject responseHeaders = frontend->newScriptObject();
-        populateHeadersObject(&responseHeaders, m_responseHeaderFields);
-        jsonObject.set("responseHeaders", responseHeaders);
-        jsonObject.set("connectionID", m_connectionID);
-        jsonObject.set("connectionReused", m_connectionReused);
-        jsonObject.set("cached", m_cached);
+        jsonObject->setString("mimeType", m_mimeType);
+        jsonObject->setString("suggestedFilename", m_suggestedFilename);
+        jsonObject->setNumber("expectedContentLength", m_expectedContentLength);
+        jsonObject->setNumber("statusCode", m_responseStatusCode);
+        jsonObject->setString("statusText", m_responseStatusText);
+        RefPtr<InspectorObject> responseHeaders = buildHeadersObject(m_responseHeaderFields);
+        jsonObject->set("responseHeaders", responseHeaders);
+        jsonObject->setNumber("connectionID", m_connectionID);
+        jsonObject->setBool("connectionReused", m_connectionReused);
+        jsonObject->setBool("cached", m_cached);
         if (m_loadTiming && !m_cached)
-            jsonObject.set("timing", buildObjectForTiming(frontend, m_loadTiming.get()));
-        jsonObject.set("didResponseChange", true);
+            jsonObject->set("timing", buildObjectForTiming(m_loadTiming.get()));
+        jsonObject->setBool("didResponseChange", true);
     }
 
     if (m_changes.hasChange(TypeChange)) {
-        jsonObject.set("type", static_cast<int>(type()));
-        jsonObject.set("didTypeChange", true);
+        jsonObject->setNumber("type", static_cast<int>(type()));
+        jsonObject->setBool("didTypeChange", true);
     }
 
     if (m_changes.hasChange(LengthChange)) {
-        jsonObject.set("resourceSize", m_length);
-        jsonObject.set("didLengthChange", true);
+        jsonObject->setNumber("resourceSize", m_length);
+        jsonObject->setBool("didLengthChange", true);
     }
 
     if (m_changes.hasChange(CompletionChange)) {
-        jsonObject.set("failed", m_failed);
-        jsonObject.set("finished", m_finished);
-        jsonObject.set("didCompletionChange", true);
+        jsonObject->setBool("failed", m_failed);
+        jsonObject->setBool("finished", m_finished);
+        jsonObject->setBool("didCompletionChange", true);
     }
 
     if (m_changes.hasChange(TimingChange)) {
         if (m_startTime > 0)
-            jsonObject.set("startTime", m_startTime);
+            jsonObject->setNumber("startTime", m_startTime);
         if (m_responseReceivedTime > 0)
-            jsonObject.set("responseReceivedTime", m_responseReceivedTime);
+            jsonObject->setNumber("responseReceivedTime", m_responseReceivedTime);
         if (m_endTime > 0)
-            jsonObject.set("endTime", m_endTime);
+            jsonObject->setNumber("endTime", m_endTime);
         if (m_loadEventTime > 0)
-            jsonObject.set("loadEventTime", m_loadEventTime);
+            jsonObject->setNumber("loadEventTime", m_loadEventTime);
         if (m_domContentEventTime > 0)
-            jsonObject.set("domContentEventTime", m_domContentEventTime);
-        jsonObject.set("didTimingChange", true);
+            jsonObject->setNumber("domContentEventTime", m_domContentEventTime);
+        jsonObject->setBool("didTimingChange", true);
     }
 
     if (m_changes.hasChange(RedirectsChange)) {
@@ -227,11 +247,11 @@ void InspectorResource::updateScriptObject(InspectorFrontend* frontend)
             m_redirects[i]->updateScriptObject(frontend);
     }
 
-    if (frontend->updateResource(m_identifier, jsonObject))
-        m_changes.clearAll();
+    frontend->updateResource(jsonObject);
+    m_changes.clearAll();
 }
 
-void InspectorResource::releaseScriptObject(InspectorFrontend* frontend)
+void InspectorResource::releaseScriptObject(RemoteInspectorFrontend* frontend)
 {
     m_changes.setAll();
 
@@ -388,24 +408,6 @@ void InspectorResource::addLength(int lengthReceived)
     // until its loading is completed.
     m_endTime = currentTime();
     m_changes.set(TimingChange);
-}
-
-ScriptObject InspectorResource::buildObjectForTiming(InspectorFrontend* frontend, ResourceLoadTiming* timing)
-{
-    ScriptObject jsonObject = frontend->newScriptObject();
-    jsonObject.set("requestTime", timing->requestTime);
-    jsonObject.set("proxyStart", timing->proxyStart);
-    jsonObject.set("proxyEnd", timing->proxyEnd);
-    jsonObject.set("dnsStart", timing->dnsStart);
-    jsonObject.set("dnsEnd", timing->dnsEnd);
-    jsonObject.set("connectStart", timing->connectStart);
-    jsonObject.set("connectEnd", timing->connectEnd);
-    jsonObject.set("sslStart", timing->sslStart);
-    jsonObject.set("sslEnd", timing->sslEnd);
-    jsonObject.set("sendStart", timing->sendStart);
-    jsonObject.set("sendEnd", timing->sendEnd);
-    jsonObject.set("receiveHeadersEnd", timing->receiveHeadersEnd);
-    return jsonObject;
 }
 
 } // namespace WebCore

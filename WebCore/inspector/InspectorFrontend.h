@@ -67,15 +67,6 @@ namespace WebCore {
         void populateApplicationSettings(const String& settings);
         void populateSessionSettings(const String& settings);
 
-        void updateConsoleMessageExpiredCount(unsigned count);
-        void addConsoleMessage(const ScriptObject& messageObj);
-        void updateConsoleMessageRepeatCount(unsigned count);
-        void clearConsoleMessages();
-
-        bool updateResource(unsigned long identifier, const ScriptObject& resourceObj);
-        void removeResource(unsigned long identifier);
-        void didGetResourceContent(long callId, const String& content);
-
         void updateFocusedNode(long nodeId);
         void showPanel(int panel);
         void populateInterface();

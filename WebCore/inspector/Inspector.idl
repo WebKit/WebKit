@@ -44,6 +44,8 @@ module core {
         [notify] void setDocument(out Value root);
         [notify] void updateConsoleMessageExpiredCount(out unsigned long count);
         [notify] void updateConsoleMessageRepeatCount(out unsigned long count);
+        [notify] void updateResource(out Value resource);
+        [notify] void removeResource(out unsigned long resourceId);
 #if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
         [notify] void pausedScript(out Value callFrames);
         [notify] void resumedScript();
@@ -62,7 +64,7 @@ module core {
 
         [handler=Controller] void enableResourceTracking(in boolean always);
         [handler=Controller] void disableResourceTracking(in boolean always);
-        [handler=Controller] void getResourceContent(in long callId, in unsigned long identifier);
+        [handler=Controller] void getResourceContent(in long callId, in unsigned long identifier, out String content);
         [handler=Controller] void reloadPage();
 
         [handler=Controller] void startTimelineProfiler();

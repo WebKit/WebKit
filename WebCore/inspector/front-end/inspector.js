@@ -1144,8 +1144,9 @@ WebInspector.selectDOMStorage = function(o)
     WebInspector.panels.storage.selectDOMStorage(o);
 }
 
-WebInspector.updateResource = function(identifier, payload)
+WebInspector.updateResource = function(payload)
 {
+    var identifier = payload.id;
     var resource = this.resources[identifier];
     if (!resource) {
         resource = new WebInspector.Resource(identifier, payload.url);

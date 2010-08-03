@@ -103,63 +103,6 @@ void InspectorFrontend::populateSessionSettings(const String& settings)
     function.call();
 }
 
-void InspectorFrontend::updateConsoleMessageExpiredCount(unsigned count)
-{
-    ScriptFunctionCall function(m_webInspector, "dispatch"); 
-    function.appendArgument("updateConsoleMessageExpiredCount");
-    function.appendArgument(count);
-    function.call();
-}
-
-void InspectorFrontend::addConsoleMessage(const ScriptObject& messageObj)
-{
-    ScriptFunctionCall function(m_webInspector, "dispatch"); 
-    function.appendArgument("addConsoleMessage");
-    function.appendArgument(messageObj);
-    function.call();
-}
-
-void InspectorFrontend::updateConsoleMessageRepeatCount(unsigned count)
-{
-    ScriptFunctionCall function(m_webInspector, "dispatch"); 
-    function.appendArgument("updateConsoleMessageRepeatCount");
-    function.appendArgument(count);
-    function.call();
-}
-
-void InspectorFrontend::clearConsoleMessages()
-{
-    callSimpleFunction("clearConsoleMessages");
-}
-
-bool InspectorFrontend::updateResource(unsigned long identifier, const ScriptObject& resourceObj)
-{
-    ScriptFunctionCall function(m_webInspector, "dispatch"); 
-    function.appendArgument("updateResource");
-    function.appendArgument(identifier);
-    function.appendArgument(resourceObj);
-    bool hadException = false;
-    function.call(hadException);
-    return !hadException;
-}
-
-void InspectorFrontend::removeResource(unsigned long identifier)
-{
-    ScriptFunctionCall function(m_webInspector, "dispatch"); 
-    function.appendArgument("removeResource");
-    function.appendArgument(identifier);
-    function.call();
-}
-
-void InspectorFrontend::didGetResourceContent(long callId, const String& content)
-{
-    ScriptFunctionCall function(m_webInspector, "dispatch");
-    function.appendArgument("didGetResourceContent");
-    function.appendArgument(callId);
-    function.appendArgument(content);
-    function.call();
-}
-
 void InspectorFrontend::updateFocusedNode(long nodeId)
 {
     ScriptFunctionCall function(m_webInspector, "dispatch"); 

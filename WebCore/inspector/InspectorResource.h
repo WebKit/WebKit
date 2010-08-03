@@ -33,8 +33,6 @@
 
 #include "HTTPHeaderMap.h"
 #include "KURL.h"
-#include "ScriptObject.h"
-#include "ScriptState.h"
 #include "ScriptString.h"
 
 #include <wtf/CurrentTime.h>
@@ -47,8 +45,8 @@ namespace WebCore {
 
     class CachedResource;
     class DocumentLoader;
-    class InspectorFrontend;
     class Frame;
+    class RemoteInspectorFrontend;
     class ResourceLoadTiming;
     class ResourceRequest;
     class ResourceResponse;
@@ -78,8 +76,8 @@ namespace WebCore {
         ~InspectorResource();
 
         PassRefPtr<InspectorResource> appendRedirect(unsigned long identifier, const KURL& redirectURL);
-        void updateScriptObject(InspectorFrontend* frontend);
-        void releaseScriptObject(InspectorFrontend* frontend);
+        void updateScriptObject(RemoteInspectorFrontend* frontend);
+        void releaseScriptObject(RemoteInspectorFrontend* frontend);
 
         void updateRequest(const ResourceRequest&);
         void updateResponse(const ResourceResponse&);
@@ -150,8 +148,6 @@ namespace WebCore {
 
         Type cachedResourceType() const;
         CachedResource* cachedResource() const;
-
-        ScriptObject buildObjectForTiming(InspectorFrontend*, ResourceLoadTiming*);
 
         unsigned long m_identifier;
         RefPtr<DocumentLoader> m_loader;
