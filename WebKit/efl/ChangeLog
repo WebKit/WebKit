@@ -1,3 +1,18 @@
+2010-08-03  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Implement HTML5 slider theme (using the scrollbar theme as base).
+        https://bugs.webkit.org/show_bug.cgi?id=43430
+
+        * DefaultTheme/default.edc: Include slider.edc.
+        * DefaultTheme/widget/slider/slider.edc: Added.
+        * DefaultTheme/widget/slider/slider_h.png: Copied from WebKit/efl/DefaultTheme/widget/scrollbar/scrollbar_h.png.
+        * DefaultTheme/widget/slider/slider_hilight.png: Copied from WebKit/efl/DefaultTheme/widget/scrollbar/scrollbar_hilight.png.
+        * DefaultTheme/widget/slider/slider_knob_h.png: Copied from WebKit/efl/DefaultTheme/widget/scrollbar/scrollbar_knob_h.png.
+        * DefaultTheme/widget/slider/slider_knob_v.png: Copied from WebKit/efl/DefaultTheme/widget/scrollbar/scrollbar_knob_v.png.
+        * DefaultTheme/widget/slider/slider_v.png: Copied from WebKit/efl/DefaultTheme/widget/scrollbar/scrollbar_v.png.
+
 2010-08-03  ryuan choi  <ryuan.choi@samsung.com>
 
         Reviewed by Darin Adler.

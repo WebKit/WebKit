@@ -73,4 +73,5 @@ collections {
 #include "widget/search/field/search_field.edc"
 #include "widget/search/cancel/search_cancel.edc"
 #include "widget/search/decoration/search_decoration.edc"
+#include "widget/slider/slider.edc"
 }

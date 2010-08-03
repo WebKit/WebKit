@@ -1,3 +1,27 @@
+2010-08-03  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Implement HTML5 slider theme (using the scrollbar theme as base).
+        https://bugs.webkit.org/show_bug.cgi?id=43430
+
+        EFL port does not yet support automated tests.
+
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::paintThemePart):
+        (WebCore::RenderThemeEfl::edjeGroupFromFormType): Add Edje groups
+        for both vertical and horizontal sliders.
+        (WebCore::supportsFocus): Add sliders as focusable elements.
+        (WebCore::RenderThemeEfl::paintSliderTrack): Implement.
+        (WebCore::RenderThemeEfl::adjustSliderTrackStyle): Implement.
+        (WebCore::RenderThemeEfl::adjustSliderThumbStyle): Use
+        adjustSliderTrackStyle() implementation.
+        (WebCore::RenderThemeEfl::paintSliderThumb): Use paintSliderTrack()
+        implementation().
+        * platform/efl/RenderThemeEfl.h: Add SliderVertical and
+        * SliderHorizontal.
+        (WebCore::): Added prototypes for adjustSlider*/paintSlider*.
+
 2010-08-03  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Joseph Pecoraro.

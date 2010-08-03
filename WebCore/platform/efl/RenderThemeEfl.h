@@ -50,6 +50,8 @@ enum FormType { // KEEP IN SYNC WITH edjeGroupFromFormType()
     SearchFieldResultsButton,
     SearchFieldResultsDecoration,
     SearchFieldCancelButton,
+    SliderVertical,
+    SliderHorizontal,
     FormTypeLast
 };
 
@@ -135,6 +137,11 @@ public:
     virtual void adjustSearchFieldCancelButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
     virtual bool paintSearchFieldCancelButton(RenderObject*, const PaintInfo&, const IntRect&);
 
+    virtual void adjustSliderTrackStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual bool paintSliderTrack(RenderObject*, const PaintInfo&, const IntRect&);
+
+    virtual void adjustSliderThumbStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual bool paintSliderThumb(RenderObject*, const PaintInfo&, const IntRect&);
 private:
     void createCanvas();
     void createEdje();

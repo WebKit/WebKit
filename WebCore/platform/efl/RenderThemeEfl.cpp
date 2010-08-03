@@ -34,6 +34,7 @@
 #include "Page.h"
 #include "RenderBox.h"
 #include "RenderObject.h"
+#include "RenderSlider.h"
 #include <wtf/text/CString.h>
 
 #include <Ecore_Evas.h>
@@ -256,7 +257,7 @@ void RenderThemeEfl::applyEdjeStateFromForm(Evas_Object* o, ControlStates states
 
 bool RenderThemeEfl::paintThemePart(RenderObject* o, FormType type, const PaintInfo& i, const IntRect& rect)
 {
-    struct ThemePartCacheEntry* ce;
+    ThemePartCacheEntry* ce;
     Eina_List* updates;
     cairo_t* cairo;
 
@@ -272,6 +273,29 @@ bool RenderThemeEfl::paintThemePart(RenderObject* o, FormType type, const PaintI
 
     cairo = i.context->platformContext();
     ASSERT(cairo);
+
+    // Currently, only sliders needs this message; if other widget ever needs special
+    // treatment, move them to special functions.
+    if (type == SliderVertical || type == SliderHorizontal) {
+        RenderSlider* renderSlider = toRenderSlider(o);
+        Edje_Message_Float_Set* msg;
+        int max, value;
+
+        if (type == SliderVertical) {
+            max = rect.height() - renderSlider->thumbRect().height();
+            value = renderSlider->thumbRect().y();
+        } else {
+            max = rect.width() - renderSlider->thumbRect().width();
+            value = renderSlider->thumbRect().x();
+        }
+
+        msg = static_cast<Edje_Message_Float_Set*>(alloca(sizeof(Edje_Message_Float_Set) + sizeof(float)));
+
+        msg->count = 2;
+        msg->val[0] = static_cast<float>(value) / static_cast<float>(max);
+        msg->val[1] = 0.1;
+        edje_object_message_send(ce->o, EDJE_MESSAGE_FLOAT_SET, 0, msg);
+    }
 
     edje_object_calc_force(ce->o);
     edje_object_message_signal_process(ce->o);
@@ -542,6 +566,8 @@ const char* RenderThemeEfl::edjeGroupFromFormType(FormType type) const
         W("search/results_button"),
         W("search/results_decoration"),
         W("search/cancel_button"),
+        W("slider/vertical"),
+        W("slider/horizontal"),
 #undef W
         0
     };
@@ -702,6 +728,8 @@ static bool supportsFocus(ControlPart appearance)
     case MenulistPart:
     case RadioPart:
     case CheckboxPart:
+    case SliderVerticalPart:
+    case SliderHorizontalPart:
         return true;
     default:
         return false;
@@ -728,6 +756,40 @@ int RenderThemeEfl::baselinePosition(const RenderObject* o) const
         return toRenderBox(o)->marginTop() + toRenderBox(o)->height() - 3;
 
     return RenderTheme::baselinePosition(o);
+}
+
+bool RenderThemeEfl::paintSliderTrack(RenderObject* o, const PaintInfo& i, const IntRect& rect)
+{
+    if (o->style()->appearance() == SliderHorizontalPart)
+        return paintThemePart(o, SliderHorizontal, i, rect);
+    return paintThemePart(o, SliderVertical, i, rect);
+}
+
+void RenderThemeEfl::adjustSliderTrackStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+{
+    if (!m_page && e && e->document()->page()) {
+        static_cast<RenderThemeEfl*>(e->document()->page()->theme())->adjustSliderTrackStyle(selector, style, e);
+        return;
+    }
+
+    adjustSizeConstraints(style, SliderHorizontal);
+    style->resetBorder();
+
+    const struct ThemePartDesc *desc = m_partDescs + (size_t)SliderHorizontal;
+    if (style->width().value() < desc->min.width().value())
+        style->setWidth(desc->min.width());
+    if (style->height().value() < desc->min.height().value())
+        style->setHeight(desc->min.height());
+}
+
+void RenderThemeEfl::adjustSliderThumbStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+{
+    adjustSliderTrackStyle(selector, style, e);
+}
+
+bool RenderThemeEfl::paintSliderThumb(RenderObject* o, const PaintInfo& i, const IntRect& rect)
+{
+    return paintSliderTrack(o, i, rect);
 }
 
 void RenderThemeEfl::adjustCheckboxStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
