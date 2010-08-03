@@ -2,6 +2,14 @@
 
         Reviewed by Gustavo Noronha.
 
+        Make string parameters be 'const char*' instead of just 'char*'.
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+
+2010-08-03  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
         Get rid of extra spaces in the type strings.
 
         * bindings/scripts/CodeGeneratorGObject.pm:

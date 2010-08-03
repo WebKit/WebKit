@@ -138,7 +138,7 @@ static void test_dom_node_insertion(DomNodeFixture* fixture, gconstpointer data)
     g_assert(webkit_dom_node_has_child_nodes(WEBKIT_DOM_NODE(body)) == FALSE);
 
     /* Insert one P element */
-    p = webkit_dom_document_create_element(document, (char*)"P", NULL);
+    p = webkit_dom_document_create_element(document, "P", NULL);
     webkit_dom_node_append_child(WEBKIT_DOM_NODE(body), WEBKIT_DOM_NODE(p), NULL);
 
     /* Now it should have one, the same that we inserted */
@@ -150,7 +150,7 @@ static void test_dom_node_insertion(DomNodeFixture* fixture, gconstpointer data)
     g_assert(webkit_dom_node_is_same_node(WEBKIT_DOM_NODE(p), node));
 
     /* Replace the P tag with a DIV tag */
-    div = webkit_dom_document_create_element(document, (char*)"DIV", NULL);
+    div = webkit_dom_document_create_element(document, "DIV", NULL);
     webkit_dom_node_replace_child(WEBKIT_DOM_NODE(body), WEBKIT_DOM_NODE(div), WEBKIT_DOM_NODE(p), NULL);
     g_assert(webkit_dom_node_has_child_nodes(WEBKIT_DOM_NODE(body)));
     list = webkit_dom_node_get_child_nodes(WEBKIT_DOM_NODE(body));

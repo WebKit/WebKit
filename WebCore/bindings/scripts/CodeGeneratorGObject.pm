@@ -802,9 +802,10 @@ sub GenerateFunction {
         }
         addIncludeInBody($paramIDLType);
         my $paramType = GetGlibTypeName($paramIDLType);
+        my $const = $paramType eq "gchar*" ? "const " : "";
         my $paramName = decamelize($param->name);
 
-        $functionSig .= ", $paramType $paramName";
+        $functionSig .= ", ${const}$paramType $paramName";
 
         my $paramIsGDOMType = IsGDOMClassType($paramIDLType);
         if ($paramIsGDOMType) {

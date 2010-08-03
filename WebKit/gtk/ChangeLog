@@ -1,3 +1,17 @@
+2010-08-03  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Update unit tests now that string parameters are 'const char*'.
+
+        * tests/testdomdocument.c:
+        (test_dom_document_title):
+        (test_dom_document_get_elements_by_tag_name):
+        (test_dom_document_get_elements_by_class_name):
+        (test_dom_document_get_element_by_id):
+        * tests/testdomnode.c:
+        (test_dom_node_insertion):
+
 2010-08-02  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

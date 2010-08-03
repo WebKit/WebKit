@@ -75,7 +75,7 @@ static void test_dom_document_title(DomDocumentFixture* fixture, gconstpointer d
     g_assert(title);
     g_assert_cmpstr(title, ==, "This is the title");
     g_free(title);
-    webkit_dom_document_set_title(document, (gchar*)"This is the second title");
+    webkit_dom_document_set_title(document, "This is the second title");
     title = webkit_dom_document_get_title(document);
     g_assert(title);
     g_assert_cmpstr(title, ==, "This is the second title");
@@ -89,7 +89,7 @@ static void test_dom_document_get_elements_by_tag_name(DomDocumentFixture* fixtu
     g_assert(view);
     WebKitDOMDocument* document = webkit_web_view_get_dom_document(view);
     g_assert(document);
-    WebKitDOMNodeList* list = webkit_dom_document_get_elements_by_tag_name(document, (gchar*)"li");
+    WebKitDOMNodeList* list = webkit_dom_document_get_elements_by_tag_name(document, "li");
     g_assert(list);
     gulong length = webkit_dom_node_list_get_length(list);
     g_assert_cmpint(length, ==, 3);
@@ -116,7 +116,7 @@ static void test_dom_document_get_elements_by_class_name(DomDocumentFixture* fix
     g_assert(view);
     WebKitDOMDocument* document = webkit_web_view_get_dom_document(view);
     g_assert(document);
-    WebKitDOMNodeList* list = webkit_dom_document_get_elements_by_class_name(document, (gchar*)"test");
+    WebKitDOMNodeList* list = webkit_dom_document_get_elements_by_class_name(document, "test");
     g_assert(list);
     gulong length = webkit_dom_node_list_get_length(list);
     g_assert_cmpint(length, ==, 2);
@@ -139,17 +139,17 @@ static void test_dom_document_get_element_by_id(DomDocumentFixture* fixture, gco
     g_assert(view);
     WebKitDOMDocument* document = webkit_web_view_get_dom_document(view);
     g_assert(document);
-    WebKitDOMElement* element = webkit_dom_document_get_element_by_id(document, (gchar*)"testok");
+    WebKitDOMElement* element = webkit_dom_document_get_element_by_id(document, "testok");
     g_assert(element);
-    element = webkit_dom_document_get_element_by_id(document, (gchar*)"this-id-does-not-exist");
+    element = webkit_dom_document_get_element_by_id(document, "this-id-does-not-exist");
     g_assert(element == 0);
     /* The DOM spec says the return value is undefined when there's
      * more than one element with the same id; in our case the first
      * one will be returned */
-    element = webkit_dom_document_get_element_by_id(document, (gchar*)"testbad");
+    element = webkit_dom_document_get_element_by_id(document, "testbad");
     g_assert(element);
     WebKitDOMHTMLElement* htmlElement = (WebKitDOMHTMLElement*)element;
-    g_assert_cmpstr(webkit_dom_html_element_get_inner_text(htmlElement), ==, (gchar*)"first");
+    g_assert_cmpstr(webkit_dom_html_element_get_inner_text(htmlElement), ==, "first");
 }
 
 static void test_dom_document_get_links(DomDocumentFixture* fixture, gconstpointer data)
