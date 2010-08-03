@@ -627,7 +627,7 @@ V8Proxy* V8Proxy::retrieve(Frame* frame)
 {
     if (!frame)
         return 0;
-    return frame->script()->proxy();
+    return frame->script()->canExecuteScripts(NotAboutToExecuteScript) ? frame->script()->proxy() : 0;
 }
 
 V8Proxy* V8Proxy::retrieve(ScriptExecutionContext* context)

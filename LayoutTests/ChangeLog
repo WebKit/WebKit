@@ -1,3 +1,10 @@
+2010-08-02  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed. Rolling out r64525 for breaking chromium tests.
+
+        * http/tests/security/sandbox-inherit-to-initial-document-2.html:
+        * platform/chromium/test_expectations.txt:
+
 2010-08-02  Rajiv Makhijani  <rajivmakhijani@chromium.org>
 
         Reviewed by Adam Barth.

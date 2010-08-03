@@ -1,3 +1,10 @@
+2010-08-02  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed. Rolling out r64525 for breaking chromium tests.
+
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::retrieve):
+
 2010-08-02  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix, add stubs for FontCustomPlatformData to compile code that uses them.
