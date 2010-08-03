@@ -25,6 +25,7 @@
 #include "CallFrame.h"
 #include "CodeBlock.h"
 #include "CollectorHeapIterator.h"
+#include "GCActivityCallback.h"
 #include "Interpreter.h"
 #include "JSArray.h"
 #include "JSGlobalObject.h"
@@ -143,6 +144,8 @@ Heap::Heap(JSGlobalData* globalData)
     ASSERT(globalData);
     memset(&m_heap, 0, sizeof(CollectorHeap));
     allocateBlock();
+    m_activityCallback = DefaultGCActivityCallback::create(this);
+    (*m_activityCallback)();
 }
 
 Heap::~Heap()
@@ -1236,6 +1239,8 @@ void Heap::reset()
     resizeBlocks();
 
     JAVASCRIPTCORE_GC_END();
+
+    (*m_activityCallback)();
 }
 
 void Heap::collectAllGarbage()
@@ -1270,6 +1275,11 @@ LiveObjectIterator Heap::primaryHeapBegin()
 LiveObjectIterator Heap::primaryHeapEnd()
 {
     return LiveObjectIterator(m_heap, m_heap.usedBlocks);
+}
+
+void Heap::setActivityCallback(PassOwnPtr<GCActivityCallback> activityCallback)
+{
+    m_activityCallback = activityCallback;
 }
 
 } // namespace JSC

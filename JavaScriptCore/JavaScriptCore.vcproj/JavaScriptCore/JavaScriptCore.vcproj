@@ -709,6 +709,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\runtime\GCActivityCallbackCF.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\GCActivityCallback.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\runtime\GetterSetter.cpp"
 				>
 			</File>

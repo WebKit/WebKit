@@ -65,6 +65,12 @@ JSLock::JSLock(ExecState* exec)
     lock(m_lockBehavior);
 }
 
+JSLock::JSLock(JSGlobalData* globalData)
+    : m_lockBehavior(globalData->isSharedInstance() ? LockForReal : SilenceAssertionsOnly)
+{
+    lock(m_lockBehavior);
+}
+
 void JSLock::lock(JSLockBehavior lockBehavior)
 {
 #ifdef NDEBUG
