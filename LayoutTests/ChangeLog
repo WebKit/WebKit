@@ -1,5 +1,11 @@
 2010-08-02  Kent Tamura  <tkent@chromium.org>
 
+        Unreviewed, test expectation update.
+
+        * platform/chromium/drt_expectations.txt: Fix duplicated entries.
+
+2010-08-02  Kent Tamura  <tkent@chromium.org>
+
         Unreviewed, test expectation update
 
         * platform/chromium/drt_expectations.txt: Add Linux results.
