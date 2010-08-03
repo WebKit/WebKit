@@ -1,3 +1,14 @@
+2010-08-02  Chris Fleizach  <cfleizach@apple.com>
+
+        Unreviewed, rolling out r64486.
+        http://trac.webkit.org/changeset/64486
+        https://bugs.webkit.org/show_bug.cgi?id=43005
+
+        Rolling out https://bugs.webkit.org/show_bug.cgi?id=43005
+        until further discussion
+
+        * platform/qt/fast/dom/Window/window-properties-expected.txt:
+
 2010-08-02  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, test expectation update.
