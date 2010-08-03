@@ -1,3 +1,11 @@
+2010-08-03  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: speculative chromium tests fix.
+
+        * inspector/front-end/ExtensionServer.js:
+        * inspector/front-end/inspector.js:
+        (WebInspector.loaded):
+
 2010-08-03  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Antonio Gomes.

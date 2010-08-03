@@ -526,7 +526,6 @@ WebInspector.loaded = function()
     document.getElementById("close-button-left").addEventListener("click", this.close, true);
     document.getElementById("close-button-right").addEventListener("click", this.close, true);
 
-    this.extensionServer = new WebInspector.ExtensionServer();
     this.extensionServer.initExtensions();
 
     InspectorFrontendHost.loaded();

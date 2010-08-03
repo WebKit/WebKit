@@ -317,3 +317,5 @@ WebInspector.addExtensions = function(extensions)
 {
     WebInspector.extensionServer._addExtensions(extensions);
 }
+
+WebInspector.extensionServer = new WebInspector.ExtensionServer();
