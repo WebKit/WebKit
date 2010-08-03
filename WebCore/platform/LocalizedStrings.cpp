@@ -23,13 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "config.h"
-#import "LocalizedStrings.h"
+#include "config.h"
+#include "LocalizedStrings.h"
 
-#import "IntSize.h"
-#import "LocalizationStrategy.h"
-#import "PlatformStrategies.h"
-#import "PlatformString.h"
+#include "IntSize.h"
+#include "LocalizationStrategy.h"
+#include "PlatformStrategies.h"
+#include "PlatformString.h"
 
 namespace WebCore {
 

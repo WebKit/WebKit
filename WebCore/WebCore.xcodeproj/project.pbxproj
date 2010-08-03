@@ -2466,7 +2466,6 @@
 		934F71440D5A6F5300018D69 /* AuthenticationChallenge.h in Headers */ = {isa = PBXBuildFile; fileRef = 934F71430D5A6F5300018D69 /* AuthenticationChallenge.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		934FE9E50B5CA539003E4A73 /* FileChooser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 934FE9E40B5CA539003E4A73 /* FileChooser.cpp */; };
 		935207BE09BD410A00F2038D /* LocalizedStrings.h in Headers */ = {isa = PBXBuildFile; fileRef = 935207BD09BD410A00F2038D /* LocalizedStrings.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		935207C009BD412100F2038D /* LocalizedStringsMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 935207BF09BD412000F2038D /* LocalizedStringsMac.mm */; };
 		9352084509BD43B900F2038D /* Language.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9352084409BD43B900F2038D /* Language.mm */; };
 		9352087709BD453400F2038D /* CookieJar.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9352087609BD453400F2038D /* CookieJar.mm */; };
 		9352088209BD45E900F2038D /* CookieJar.h in Headers */ = {isa = PBXBuildFile; fileRef = 9352088109BD45E900F2038D /* CookieJar.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4905,6 +4904,7 @@
 		BCFE2F120C1B58380020235F /* JSRect.h in Headers */ = {isa = PBXBuildFile; fileRef = BCFE2F100C1B58370020235F /* JSRect.h */; };
 		BCFF64910EAD15C200C1D6F7 /* LengthBox.h in Headers */ = {isa = PBXBuildFile; fileRef = BCFF648F0EAD15C200C1D6F7 /* LengthBox.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCFF64920EAD15C200C1D6F7 /* LengthSize.h in Headers */ = {isa = PBXBuildFile; fileRef = BCFF64900EAD15C200C1D6F7 /* LengthSize.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		C046E1AC1208A9FE00BA2CF7 /* LocalizedStrings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C046E1AB1208A9FE00BA2CF7 /* LocalizedStrings.cpp */; };
 		C0C054CB1118C8E400CE2636 /* CodeGenerator.pm in Headers */ = {isa = PBXBuildFile; fileRef = 93F8B3050A300FE100F61AB8 /* CodeGenerator.pm */; settings = {ATTRIBUTES = (Private, ); }; };
 		C0C054CC1118C8E400CE2636 /* generate-bindings.pl in Headers */ = {isa = PBXBuildFile; fileRef = 93F8B3070A300FEA00F61AB8 /* generate-bindings.pl */; settings = {ATTRIBUTES = (Private, ); }; };
 		C0C054CD1118C8E400CE2636 /* IDLParser.pm in Headers */ = {isa = PBXBuildFile; fileRef = 14813BF309EDF88E00F757E1 /* IDLParser.pm */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8248,7 +8248,6 @@
 		934F71430D5A6F5300018D69 /* AuthenticationChallenge.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = AuthenticationChallenge.h; sourceTree = "<group>"; };
 		934FE9E40B5CA539003E4A73 /* FileChooser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileChooser.cpp; sourceTree = "<group>"; };
 		935207BD09BD410A00F2038D /* LocalizedStrings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalizedStrings.h; sourceTree = "<group>"; };
-		935207BF09BD412000F2038D /* LocalizedStringsMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LocalizedStringsMac.mm; sourceTree = "<group>"; };
 		9352084409BD43B900F2038D /* Language.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Language.mm; sourceTree = "<group>"; };
 		9352087609BD453400F2038D /* CookieJar.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CookieJar.mm; sourceTree = "<group>"; };
 		9352088109BD45E900F2038D /* CookieJar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CookieJar.h; sourceTree = "<group>"; };
@@ -10610,6 +10609,7 @@
 		BE91FC8B06133666005E3790 /* Position.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = Position.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BE91FC8C06133666005E3790 /* Position.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Position.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BE983D95052A2E0A00892D85 /* WebCoreKeyboardUIMode.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreKeyboardUIMode.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		C046E1AB1208A9FE00BA2CF7 /* LocalizedStrings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LocalizedStrings.cpp; sourceTree = "<group>"; };
 		C0DFC86F0DB6841A003EAE7C /* JSConsoleCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSConsoleCustom.cpp; sourceTree = "<group>"; };
 		C105DA610F3AA68F001DD44F /* TextEncodingDetectorICU.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextEncodingDetectorICU.cpp; sourceTree = "<group>"; };
 		C105DA630F3AA6B8001DD44F /* TextEncodingDetector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextEncodingDetector.h; sourceTree = "<group>"; };
@@ -12307,7 +12307,6 @@
 				9352084409BD43B900F2038D /* Language.mm */,
 				06E81ED60AB5D5E900C87837 /* LocalCurrentGraphicsContext.h */,
 				06E81EEB0AB5DA9700C87837 /* LocalCurrentGraphicsContext.mm */,
-				935207BF09BD412000F2038D /* LocalizedStringsMac.mm */,
 				1402645D0AFDC19B005919E2 /* LoggingMac.mm */,
 				BC772C5D0C4EB3440083285F /* MIMETypeRegistryMac.mm */,
 				A7D3C5230B576B4B002CA450 /* PasteboardHelper.h */,
@@ -16344,6 +16343,7 @@
 				A7AD2F850EC89D07008AB002 /* LinkHash.cpp */,
 				A7AD2F860EC89D07008AB002 /* LinkHash.h */,
 				BC5CFCA811F793320099ED09 /* LocalizationStrategy.h */,
+				C046E1AB1208A9FE00BA2CF7 /* LocalizedStrings.cpp */,
 				935207BD09BD410A00F2038D /* LocalizedStrings.h */,
 				A8239DFE09B3CF8A00B60641 /* Logging.cpp */,
 				A8239DFF09B3CF8A00B60641 /* Logging.h */,
@@ -21643,7 +21643,6 @@
 				BCB16C2C0979C3BD00467741 /* loader.cpp in Sources */,
 				656D37330ADBA5DE00A4554D /* LoaderNSURLExtras.mm in Sources */,
 				06E81EEC0AB5DA9700C87837 /* LocalCurrentGraphicsContext.mm in Sources */,
-				935207C009BD412100F2038D /* LocalizedStringsMac.mm in Sources */,
 				511F23170DC160DA004F0032 /* LocalStorageTask.cpp in Sources */,
 				511F23190DC160DA004F0032 /* LocalStorageThread.cpp in Sources */,
 				BCE1C41C0D982981003B02F2 /* Location.cpp in Sources */,
@@ -22386,6 +22385,7 @@
 				93F19B0508245E59001E9ABC /* XSLTProcessorLibxslt.cpp in Sources */,
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				97DD4D860FDF4D6E00ECF9A4 /* XSSAuditor.cpp in Sources */,
+				C046E1AC1208A9FE00BA2CF7 /* LocalizedStrings.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

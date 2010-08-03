@@ -1,3 +1,18 @@
+2010-08-03  Adam Roben  <aroben@apple.com>
+
+        Rename LocalizedStringsMac.mm to LocalizedStrings.cpp
+
+        LocalizedStringsMac.mm should be usable by other ports
+        https://bugs.webkit.org/show_bug.cgi?id=43441
+
+        Reviewed by Anders Carlsson.
+
+        * WebCore.xcodeproj/project.pbxproj: Updated the file's name and path.
+
+        * platform/LocalizedStrings.cpp: Renamed from
+        WebCore/platform/mac/LocalizedStringsMac.mm. Changed #imports to
+        #includes.
+
 2010-08-03  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Darin Fisher.
