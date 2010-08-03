@@ -132,11 +132,14 @@ JSArray::JSArray(NonNullPassRefPtr<Structure> structure)
     unsigned initialCapacity = 0;
 
     ArrayStorage* storage = static_cast<ArrayStorage*>(fastZeroedMalloc(storageSize(initialCapacity)));
+    storage->m_allocBase = storage;
     m_indexBias = 0;
     setArrayStorage(storage);
     m_vectorLength = initialCapacity;
 
     checkConsistency();
+
+    Heap::heap(this)->reportExtraMemoryCost(storageSize(0));
 }
 
 JSArray::JSArray(NonNullPassRefPtr<Structure> structure, unsigned initialLength, ArrayCreationMode creationMode)
@@ -149,6 +152,7 @@ JSArray::JSArray(NonNullPassRefPtr<Structure> structure, unsigned initialLength,
         initialCapacity = min(BASE_VECTOR_LEN, MIN_SPARSE_ARRAY_INDEX);
     
     ArrayStorage* storage = static_cast<ArrayStorage*>(fastMalloc(storageSize(initialCapacity)));
+    storage->m_allocBase = storage;
     storage->m_length = initialLength;
     m_indexBias = 0;
     m_vectorLength = initialCapacity;
@@ -176,7 +180,7 @@ JSArray::JSArray(NonNullPassRefPtr<Structure> structure, unsigned initialLength,
 
     checkConsistency();
     
-    Heap::heap(this)->reportExtraMemoryCost(initialCapacity * sizeof(JSValue));
+    Heap::heap(this)->reportExtraMemoryCost(storageSize(initialCapacity));
 }
 
 JSArray::JSArray(NonNullPassRefPtr<Structure> structure, const ArgList& list)
@@ -185,6 +189,7 @@ JSArray::JSArray(NonNullPassRefPtr<Structure> structure, const ArgList& list)
     unsigned initialCapacity = list.size();
 
     ArrayStorage* storage = static_cast<ArrayStorage*>(fastMalloc(storageSize(initialCapacity)));
+    storage->m_allocBase = storage;
     m_indexBias = 0;
     storage->m_length = initialCapacity;
     m_vectorLength = initialCapacity;
@@ -215,8 +220,7 @@ JSArray::~JSArray()
 
     ArrayStorage* storage = arrayStorage();
     delete storage->m_sparseValueMap;
-    char* realStorage = reinterpret_cast<char*>(storage) - (m_indexBias * sizeof(JSValue));
-    fastFree(realStorage);
+    fastFree(storage->m_allocBase);
 }
 
 bool JSArray::getOwnPropertySlot(ExecState* exec, unsigned i, PropertySlot& slot)
@@ -416,15 +420,15 @@ NEVER_INLINE void JSArray::putSlowCase(ExecState* exec, unsigned i, JSValue valu
         }
     }
 
-    int baseBias = m_indexBias * sizeof(JSValue);
-    char* baseStorage = reinterpret_cast<char*>(storage - baseBias);
+    void* baseStorage = storage->m_allocBase;
     
     if (!tryFastRealloc(baseStorage, storageSize(newVectorLength + m_indexBias)).getValue(baseStorage)) {
         throwOutOfMemoryError(exec);
         return;
     }
 
-    storage = reinterpret_cast<ArrayStorage*>(baseStorage + baseBias);
+    storage = reinterpret_cast<ArrayStorage*>(static_cast<char*>(baseStorage) + m_indexBias * sizeof(JSValue));
+    storage->m_allocBase = baseStorage;
     setArrayStorage(storage);
     
     unsigned vectorLength = m_vectorLength;
@@ -567,13 +571,13 @@ bool JSArray::increaseVectorLength(unsigned newLength)
     ASSERT(newLength > vectorLength);
     ASSERT(newLength <= MAX_STORAGE_VECTOR_INDEX);
     unsigned newVectorLength = getNewVectorLength(newLength);
-    int baseBias = m_indexBias * sizeof(JSValue);
-    char* baseStorage = reinterpret_cast<char*>(storage) - baseBias;
+    void* baseStorage = storage->m_allocBase;
 
     if (!tryFastRealloc(baseStorage, storageSize(newVectorLength + m_indexBias)).getValue(baseStorage))
         return false;
-    
-    storage = reinterpret_cast<ArrayStorage*>(baseStorage + baseBias);
+
+    storage = reinterpret_cast<ArrayStorage*>(static_cast<char*>(baseStorage) + m_indexBias * sizeof(JSValue));
+    storage->m_allocBase = baseStorage;
     setArrayStorage(storage);
 
     JSValue* vector = m_vector;
@@ -599,23 +603,22 @@ bool JSArray::increaseVectorPrefixLength(unsigned newLength)
     ASSERT(newLength > vectorLength);
     ASSERT(newLength <= MAX_STORAGE_VECTOR_INDEX);
     unsigned newVectorLength = getNewVectorLength(newLength);
-    char* baseStorage = reinterpret_cast<char*>(storage) - (m_indexBias * sizeof(JSValue));
-    
-    char* newBaseStorage = reinterpret_cast<char*>(fastMalloc(storageSize(newVectorLength + m_indexBias)));
+
+    void* newBaseStorage = fastMalloc(storageSize(newVectorLength + m_indexBias));
     if (!newBaseStorage)
         return false;
     
     m_indexBias += newVectorLength - newLength;
-    int newStorageOffset = m_indexBias * sizeof(JSValue);
     
-    newStorage = reinterpret_cast<ArrayStorage*>(newBaseStorage + newStorageOffset);
-    
+    newStorage = reinterpret_cast<ArrayStorage*>(static_cast<char*>(newBaseStorage) + m_indexBias * sizeof(JSValue));
+
     memcpy(newStorage, storage, storageSize(0));
     memcpy(&newStorage->m_vector[newLength - m_vectorLength], &storage->m_vector[0], storage->m_length * sizeof(JSValue));
     
+    newStorage->m_allocBase = newBaseStorage;
     m_vectorLength = newLength;
     
-    fastFree(baseStorage);
+    fastFree(storage->m_allocBase);
 
     setArrayStorage(newStorage);
     

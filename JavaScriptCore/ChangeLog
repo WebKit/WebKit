@@ -1,3 +1,23 @@
+2010-08-03  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Change to keep returned pointer from malloc family functions to
+        quiet memory leak detect.  The pointer is saved in the new m_allocBase
+        member of the ArrayStorage structure.  This fixes the issue found in 
+        https://bugs.webkit.org/show_bug.cgi?id=43229.
+
+        As part of this change, we use m_allocBase when reallocating and
+        freeing the memory associated with ArrayStorage.
+
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::JSArray):
+        (JSC::JSArray::~JSArray):
+        (JSC::JSArray::putSlowCase):
+        (JSC::JSArray::increaseVectorLength):
+        (JSC::JSArray::increaseVectorPrefixLength):
+        * runtime/JSArray.h:
+
 2010-08-03  Geoffrey Garen  <ggaren@apple.com>
 
         Try to fix Windows build: Don't use GCActivityCallbackCF on Windows, since
