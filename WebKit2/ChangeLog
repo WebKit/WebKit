@@ -1,3 +1,11 @@
+2010-08-03  Balazs Kelemen  <kb@inf.u-szeged.hu>
+
+        [Qt] Unreviewed typo fix in the WebKit2/DerivedSources.pro project file.
+
+        Use QMAKE_MKDIR as the command for directory creation.
+
+        * DerivedSources.pro:
+
 2010-08-02  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders Carlsson.

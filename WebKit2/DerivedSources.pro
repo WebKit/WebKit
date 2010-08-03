@@ -142,22 +142,15 @@ WEBKIT2_API_HEADERS += \
 QUOTE = ""
 DOUBLE_ESCAPED_QUOTE = ""
 ESCAPE = ""
-MKDIR = ""
-win32-msvc* {
+win32-msvc*|symbian {
     ESCAPE = "^"
-    MKDIR = md
-} else symbian {
-    ESCAPE = "^"
-    MKDIR = mkdir
 } else:win32-g++*:isEmpty(QMAKE_SH) {
     # MinGW's make will run makefile commands using sh, even if make
     #  was run from the Windows shell, if it finds sh in the path.
     ESCAPE = "^"
-    MKDIR = md
 } else {
     QUOTE = "\'"
     DOUBLE_ESCAPED_QUOTE = "\\\'"
-    MKDIR = mkdir
 }
 
 DIRS = \
@@ -166,7 +159,7 @@ DIRS = \
     $$OUTPUT_DIR/include/WebKit2
 
 for(DIR, DIRS) {
-    !exists($$DIR): system($$MKDIR $$DIR)
+    !exists($$DIR): system($$QMAKE_MKDIR $$DIR)
 }
 
 QMAKE_EXTRA_TARGETS += createdirs
