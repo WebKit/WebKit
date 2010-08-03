@@ -23,43 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "DrawingArea.h"
-
-// Subclasses
-#include "ChunkedUpdateDrawingArea.h"
-#if USE(ACCELERATED_COMPOSITING)
-#include "LayerBackedDrawingArea.h"
-#endif
+#include "DrawingAreaBase.h"
 
 namespace WebKit {
 
-PassRefPtr<DrawingArea> DrawingArea::create(Type type, DrawingAreaID identifier, WebPage* webPage)
+void DrawingAreaBase::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
-    switch (type) {
-        case None:
-            ASSERT_NOT_REACHED();
-            break;
-
-        case ChunkedUpdateDrawingAreaType:
-            return adoptRef(new ChunkedUpdateDrawingArea(identifier, webPage));
-
-#if USE(ACCELERATED_COMPOSITING) && PLATFORM(MAC)
-        case LayerBackedDrawingAreaType:
-            return adoptRef(new LayerBackedDrawingArea(identifier, webPage));
-#endif
-    }
-
-    return 0;
+    DrawingAreaInfo info(type(), id());
+    encoder.encode(info);
 }
 
-DrawingArea::DrawingArea(Type type, DrawingAreaID identifier, WebPage* webPage)
-    : DrawingAreaBase(type, identifier)
-    , m_webPage(webPage)
+bool DrawingAreaBase::decode(CoreIPC::ArgumentDecoder& decoder, DrawingAreaInfo& info)
 {
-}
+    uint32_t drawingAreaType;
+    if (!decoder.decode(drawingAreaType))
+        return false;
 
-DrawingArea::~DrawingArea()
-{
+    DrawingAreaID drawingAreaID;
+    if (!decoder.decode(drawingAreaID))
+        return false;
+
+    info.type = static_cast<Type>(drawingAreaType);
+    info.id = drawingAreaID;
+
+    return true;
 }
 
 } // namespace WebKit

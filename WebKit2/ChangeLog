@@ -1,3 +1,72 @@
+2010-08-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Compositing iframe layout test crashes in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=42860
+        
+        Fix assertion caused by a DrawingArea handling a message that was targetted at an older DrawingArea
+        that it has replaced.
+        
+        This was done by assigning a unique ID to each DrawingAreaProxy that gets created, and passing
+        this ID, along with the type, to the WebProcess via an encoded DrawingAreaInfo. Each message
+        also includes this ID. Messages with an ID that doesn't match that of the current DrawingArea are ignored.
+        
+        Refactored some common code and data into a DrawingAreaBase class which is shared, and adding
+        encode/decode of DrawingAreaInfo.
+
+        * Shared/DrawingAreaBase.cpp: Added.
+        (WebKit::DrawingAreaBase::encode):
+        (WebKit::DrawingAreaBase::decode):
+        * Shared/DrawingAreaBase.h: Added.
+        (WebKit::DrawingAreaBase::):
+        (WebKit::DrawingAreaBase::~DrawingAreaBase):
+        (WebKit::DrawingAreaBase::type):
+        (WebKit::DrawingAreaBase::id):
+        (WebKit::DrawingAreaBase::DrawingAreaInfo::DrawingAreaInfo):
+        (WebKit::DrawingAreaBase::DrawingAreaBase):
+        (CoreIPC::):
+        * UIProcess/ChunkedUpdateDrawingAreaProxy.cpp:
+        (WebKit::ChunkedUpdateDrawingAreaProxy::setSize):
+        (WebKit::ChunkedUpdateDrawingAreaProxy::setPageIsVisible):
+        (WebKit::ChunkedUpdateDrawingAreaProxy::update):
+        * UIProcess/DrawingAreaProxy.cpp:
+        (WebKit::DrawingAreaProxy::DrawingAreaProxy):
+        (WebKit::DrawingAreaProxy::nextDrawingAreaID):
+        * UIProcess/DrawingAreaProxy.h:
+        * UIProcess/LayerBackedDrawingAreaProxy.cpp:
+        (WebKit::LayerBackedDrawingAreaProxy::setSize):
+        (WebKit::LayerBackedDrawingAreaProxy::setPageIsVisible):
+        (WebKit::LayerBackedDrawingAreaProxy::update):
+        * UIProcess/LayerBackedDrawingAreaProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveSyncMessage):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::createWindow):
+        * WebProcess/WebPage/ChunkedUpdateDrawingArea.cpp:
+        (WebKit::ChunkedUpdateDrawingArea::ChunkedUpdateDrawingArea):
+        (WebKit::ChunkedUpdateDrawingArea::didReceiveMessage):
+        * WebProcess/WebPage/ChunkedUpdateDrawingArea.h:
+        * WebProcess/WebPage/DrawingArea.cpp:
+        (WebKit::DrawingArea::create):
+        (WebKit::DrawingArea::DrawingArea):
+        * WebProcess/WebPage/DrawingArea.h:
+        * WebProcess/WebPage/LayerBackedDrawingArea.cpp:
+        (WebKit::LayerBackedDrawingArea::LayerBackedDrawingArea):
+        (WebKit::LayerBackedDrawingArea::didReceiveMessage):
+        * WebProcess/WebPage/LayerBackedDrawingArea.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::create):
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::changeAcceleratedCompositingMode):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::createWebPage):
+        (WebKit::WebProcess::didReceiveMessage):
+        * WebProcess/WebProcess.h:
+        * win/WebKit2.vcproj:
+
 2010-08-03  Alex Milowski  <alex@milowski.com>
 
         Reviewed by Beth Dakin.

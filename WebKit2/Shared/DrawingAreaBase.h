@@ -23,48 +23,71 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DrawingAreaProxy_h
-#define DrawingAreaProxy_h
+#ifndef DrawingAreaBase_h
+#define DrawingAreaBase_h
 
-#include "DrawingAreaBase.h"
+#include "ArgumentCoders.h"
 
-#if PLATFORM(QT)
-class QPainter;
-#endif
+namespace WebCore {
+    class IntRect;
+    class IntSize;
+}
+
+namespace CoreIPC {
+    class ArgumentDecoder;
+    class Connection;
+    class MessageID;
+}
 
 namespace WebKit {
 
-#if PLATFORM(MAC)
-typedef CGContextRef PlatformDrawingContext;
-#elif PLATFORM(WIN)
-typedef HDC PlatformDrawingContext;
-#elif PLATFORM(QT)
-typedef QPainter* PlatformDrawingContext;
-#endif
-
-class DrawingAreaProxy : public DrawingAreaBase {
+class DrawingAreaBase {
 public:
-    static DrawingAreaID nextDrawingAreaID();
-
-    virtual ~DrawingAreaProxy();
-
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder&) = 0;
-    virtual void didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder&, CoreIPC::ArgumentEncoder&) = 0;
-
-    virtual void paint(const WebCore::IntRect&, PlatformDrawingContext) = 0;
-    virtual void setSize(const WebCore::IntSize&) = 0;
-
-    virtual void setPageIsVisible(bool isVisible) = 0;
-    
+    enum Type {
+        None,
+        ChunkedUpdateDrawingAreaType,
 #if USE(ACCELERATED_COMPOSITING)
-    virtual void attachCompositingContext(uint32_t contextID) = 0;
-    virtual void detachCompositingContext() = 0;
+        LayerBackedDrawingAreaType,
 #endif
+    };
+    
+    typedef uint64_t DrawingAreaID;
+    
+    virtual ~DrawingAreaBase() { }
+    
+    Type type() const { return m_type; }
+    DrawingAreaID id() const { return m_id; }
+
+    struct DrawingAreaInfo {
+        Type type;
+        DrawingAreaID id;
+
+        DrawingAreaInfo(Type type = None, DrawingAreaID indentifier = 0)
+            : type(type)
+            , id(indentifier)
+        {
+        }
+    };
+    
+    // The DrawingAreaProxy should never be decoded itself. Instead, the DrawingArea should be decoded.
+    void encode(CoreIPC::ArgumentEncoder& encoder) const;
+    static bool decode(CoreIPC::ArgumentDecoder&, DrawingAreaInfo&);
 
 protected:
-    DrawingAreaProxy(Type);
+    DrawingAreaBase(Type type, DrawingAreaID indentifier)
+        : m_type(type)
+        , m_id(indentifier)
+    {
+    }
+
+    Type m_type;
+    DrawingAreaID m_id;
 };
 
 } // namespace WebKit
 
-#endif // DrawingAreaProxy_h
+namespace CoreIPC {
+template<> struct ArgumentCoder<WebKit::DrawingAreaBase::DrawingAreaInfo> : SimpleArgumentCoder<WebKit::DrawingAreaBase::DrawingAreaInfo> { };
+}
+
+#endif // DrawingAreaBase_h

@@ -595,10 +595,9 @@ void WebPageProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIP
                 // FIXME: Pass the real size.
                 reply.encode(CoreIPC::In(newPage->pageID(), IntSize(100, 100), 
                                          newPage->pageNamespace()->context()->preferences()->store(),
-                                         *(newPage->m_drawingArea.get())));
+                                         *(newPage->drawingArea())));
             } else {
-                // FIXME: We should encode a drawing area type here instead.
-                reply.encode(CoreIPC::In(static_cast<uint64_t>(0), IntSize(), WebPreferencesStore(), 0));
+                reply.encode(CoreIPC::In(static_cast<uint64_t>(0), IntSize(), WebPreferencesStore(), DrawingAreaBase::DrawingAreaInfo()));
             }
             break;
         }
@@ -666,7 +665,7 @@ void WebPageProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIP
                 return;
 
             didChangeAcceleratedCompositing(compositing);
-            reply.encode(CoreIPC::In(static_cast<uint32_t>(drawingArea()->type())));
+            reply.encode(*(drawingArea()));
             break;
         }
 #endif // USE(ACCELERATED_COMPOSITING)

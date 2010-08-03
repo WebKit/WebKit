@@ -126,14 +126,14 @@ WebPage* WebProcess::webPage(uint64_t pageID) const
     return m_pageMap.get(pageID).get();
 }
 
-WebPage* WebProcess::createWebPage(uint64_t pageID, const IntSize& viewSize, const WebPreferencesStore& store, DrawingArea::Type drawingAreaType)
+WebPage* WebProcess::createWebPage(uint64_t pageID, const IntSize& viewSize, const WebPreferencesStore& store, const DrawingAreaBase::DrawingAreaInfo& drawingAreaInfo)
 {
     // It is necessary to check for page existence here since during a window.open() (or targeted
     // link) the WebPage gets created both in the synchronous handler and through the normal way. 
     std::pair<HashMap<uint64_t, RefPtr<WebPage> >::iterator, bool> result = m_pageMap.add(pageID, 0);
     if (result.second) {
         ASSERT(!result.first->second);
-        result.first->second = WebPage::create(pageID, viewSize, store, drawingAreaType);
+        result.first->second = WebPage::create(pageID, viewSize, store, drawingAreaInfo);
     }
 
     ASSERT(result.first->second);
@@ -224,11 +224,11 @@ void WebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
                 uint64_t pageID = arguments->destinationID();
                 IntSize viewSize;
                 WebPreferencesStore store;
-                uint32_t drawingAreaType;
-                if (!arguments->decode(CoreIPC::Out(viewSize, store, drawingAreaType)))
+                DrawingArea::DrawingAreaInfo drawingAreaInfo;
+                if (!arguments->decode(CoreIPC::Out(viewSize, store, drawingAreaInfo)))
                     return;
 
-                createWebPage(pageID, viewSize, store, static_cast<DrawingArea::Type>(drawingAreaType));
+                createWebPage(pageID, viewSize, store, drawingAreaInfo);
                 return;
             }
             case WebProcessMessage::RegisterURLSchemeAsEmptyDocument: {

@@ -58,12 +58,6 @@ public:
     LayerBackedDrawingAreaProxy(PlatformWebView*);
     virtual ~LayerBackedDrawingAreaProxy();
 
-    // The DrawingAreaProxy should never be decoded itself. Instead, the DrawingArea should be decoded.
-    virtual void encode(CoreIPC::ArgumentEncoder& encoder) const
-    {
-        DrawingAreaProxy::encode(encoder);
-    }
-
 private:
     WebPageProxy* page();
 

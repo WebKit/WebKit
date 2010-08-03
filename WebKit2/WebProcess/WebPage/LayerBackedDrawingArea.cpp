@@ -39,8 +39,8 @@ using namespace WebCore;
 
 namespace WebKit {
 
-LayerBackedDrawingArea::LayerBackedDrawingArea(WebPage* webPage)
-    : DrawingArea(LayerBackedDrawingAreaType, webPage)
+LayerBackedDrawingArea::LayerBackedDrawingArea(DrawingAreaID identifier, WebPage* webPage)
+    : DrawingArea(LayerBackedDrawingAreaType, identifier, webPage)
     , m_syncTimer(WebProcess::shared().runLoop(), this, &LayerBackedDrawingArea::syncCompositingLayers)
 #if PLATFORM(MAC) && HAVE(HOSTED_CORE_ANIMATION)
     , m_remoteLayerRef(0)
@@ -148,6 +148,14 @@ void LayerBackedDrawingArea::didUpdate()
 
 void LayerBackedDrawingArea::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder& arguments)
 {
+    DrawingAreaID targetDrawingAreaID;
+    if (!arguments.decode(CoreIPC::Out(targetDrawingAreaID)))
+        return;
+
+    // We can switch drawing areas on the fly, so if this message was targetted at an obsolete drawing area, ignore it.
+    if (targetDrawingAreaID != id())
+        return;
+
     switch (messageID.get<DrawingAreaMessage::Kind>()) {
         case DrawingAreaMessage::SetSize: {
             IntSize size;

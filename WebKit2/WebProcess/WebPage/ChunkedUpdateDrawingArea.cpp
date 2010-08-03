@@ -37,8 +37,8 @@ using namespace WebCore;
 
 namespace WebKit {
 
-ChunkedUpdateDrawingArea::ChunkedUpdateDrawingArea(WebPage* webPage)
-    : DrawingArea(ChunkedUpdateDrawingAreaType, webPage)
+ChunkedUpdateDrawingArea::ChunkedUpdateDrawingArea(DrawingAreaID identifier, WebPage* webPage)
+    : DrawingArea(ChunkedUpdateDrawingAreaType, identifier, webPage)
     , m_isWaitingForUpdate(false)
     , m_paintingIsSuspended(false)
     , m_displayTimer(WebProcess::shared().runLoop(), this, &ChunkedUpdateDrawingArea::display)
@@ -182,6 +182,14 @@ void ChunkedUpdateDrawingArea::didUpdate()
 
 void ChunkedUpdateDrawingArea::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder& arguments)
 {
+    DrawingAreaID targetDrawingAreaID;
+    if (!arguments.decode(CoreIPC::Out(targetDrawingAreaID)))
+        return;
+
+    // We can switch drawing areas on the fly, so if this message was targetted at an obsolete drawing area, ignore it.
+    if (targetDrawingAreaID != id())
+        return;
+
     switch (messageID.get<DrawingAreaMessage::Kind>()) {
         case DrawingAreaMessage::SetSize: {
             IntSize size;

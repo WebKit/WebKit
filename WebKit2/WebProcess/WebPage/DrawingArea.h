@@ -26,45 +26,27 @@
 #ifndef DrawingArea_h
 #define DrawingArea_h
 
+#include "DrawingAreaBase.h"
 #include <WebCore/IntRect.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
-    class IntRect;
-    class IntSize;
 #if USE(ACCELERATED_COMPOSITING)
     class GraphicsLayer;
 #endif
-}
-
-namespace CoreIPC {
-    class ArgumentDecoder;
-    class Connection;
-    class MessageID;
 }
 
 namespace WebKit {
 
 class WebPage;
 
-class DrawingArea : public RefCounted<DrawingArea> {
+class DrawingArea : public DrawingAreaBase, public RefCounted<DrawingArea> {
 public:
-    // This has to match DrawingAreaProxy::Type.
-    enum Type {
-        None,
-        ChunkedUpdateDrawingAreaType,
-#if USE(ACCELERATED_COMPOSITING)
-        LayerBackedDrawingAreaType,
-#endif
-    };
-
     // FIXME: It might make sense to move this create function into a factory style class. 
-    static PassRefPtr<DrawingArea> create(Type, WebPage*);
+    static PassRefPtr<DrawingArea> create(Type, DrawingAreaID, WebPage*);
 
     virtual ~DrawingArea();
-    
-    Type type() const { return m_type; }
     
     virtual void invalidateWindow(const WebCore::IntRect& rect, bool immediate) = 0;
     virtual void invalidateContentsAndWindow(const WebCore::IntRect& rect, bool immediate) = 0;
@@ -84,13 +66,9 @@ public:
 
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder&) = 0;
 
-    // The DrawingArea should never be encoded itself. Instead, the DrawingAreaProxy should be encoded.
-    // The DrawingArea should also never be decoded itself. Instead, the DrawingArea::Type should be decoded.
-
 protected:
-    DrawingArea(Type, WebPage*);
+    DrawingArea(Type, DrawingAreaID, WebPage*);
 
-    Type m_type;
     WebPage* m_webPage;
 };
 

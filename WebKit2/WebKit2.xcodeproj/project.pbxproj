@@ -30,6 +30,8 @@
 		0F5265BA11DD377F0006D33C /* LayerBackedDrawingAreaProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5265B811DD377F0006D33C /* LayerBackedDrawingAreaProxy.h */; };
 		0F5265BC11DD37860006D33C /* LayerBackedDrawingAreaProxyMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F5265BB11DD37860006D33C /* LayerBackedDrawingAreaProxyMac.mm */; };
 		0F52667411DD4A490006D33C /* WebProcessProxyMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F52667311DD4A490006D33C /* WebProcessProxyMac.mm */; };
+		0FB659231208B4DB0044816C /* DrawingAreaBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB659221208B4DB0044816C /* DrawingAreaBase.h */; };
+		0FB659A61208B9EE0044816C /* DrawingAreaBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FB659A51208B9EE0044816C /* DrawingAreaBase.cpp */; };
 		1A10475A110A5AD500A43ECD /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1C7DE100E846E0078DEBC /* JavaScriptCore.framework */; };
 		1A1C4EC810D06099005E67E7 /* WebCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1C79A100E7FC50078DEBC /* WebCore.framework */; };
 		1A1C649B11F4174200553C19 /* WebContextMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A1C648611F415B700553C19 /* WebContextMac.mm */; };
@@ -325,6 +327,8 @@
 		0F5265B811DD377F0006D33C /* LayerBackedDrawingAreaProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayerBackedDrawingAreaProxy.h; sourceTree = "<group>"; };
 		0F5265BB11DD37860006D33C /* LayerBackedDrawingAreaProxyMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LayerBackedDrawingAreaProxyMac.mm; sourceTree = "<group>"; };
 		0F52667311DD4A490006D33C /* WebProcessProxyMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebProcessProxyMac.mm; sourceTree = "<group>"; };
+		0FB659221208B4DB0044816C /* DrawingAreaBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawingAreaBase.h; sourceTree = "<group>"; };
+		0FB659A51208B9EE0044816C /* DrawingAreaBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DrawingAreaBase.cpp; sourceTree = "<group>"; };
 		1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		1A1C648611F415B700553C19 /* WebContextMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebContextMac.mm; sourceTree = "<group>"; };
 		1A2161AE11F37664008AD0F5 /* NPRuntimeObjectMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NPRuntimeObjectMap.h; sourceTree = "<group>"; };
@@ -766,6 +770,8 @@
 				BC111B5F112F635E00337BAB /* CoreIPCSupport */,
 				BC111B5A112F628200337BAB /* mac */,
 				BCF04C8C11FF9B7D00F86A58 /* APIObject.h */,
+				0FB659221208B4DB0044816C /* DrawingAreaBase.h */,
+				0FB659A51208B9EE0044816C /* DrawingAreaBase.cpp */,
 				BCF04C8E11FF9F6E00F86A58 /* WebString.h */,
 				BCDB86C01200FB97007254BE /* WebURL.h */,
 				1A6F9F8E11E13EFC00DB1371 /* CommandLine.h */,
@@ -1339,6 +1345,7 @@
 				BCCB75C61203A1CE00222D1B /* WebContextMessageKinds.h in Headers */,
 				D3B9484711FF4B6500032B39 /* WebPopupMenu.h in Headers */,
 				D3B9484911FF4B6500032B39 /* WebSearchPopupMenu.h in Headers */,
+				0FB659231208B4DB0044816C /* DrawingAreaBase.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1542,6 +1549,7 @@
 				BCDB85831200EC57007254BE /* WKType.cpp in Sources */,
 				D3B9484611FF4B6500032B39 /* WebPopupMenu.cpp in Sources */,
 				D3B9484811FF4B6500032B39 /* WebSearchPopupMenu.cpp in Sources */,
+				0FB659A61208B9EE0044816C /* DrawingAreaBase.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

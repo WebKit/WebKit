@@ -65,7 +65,7 @@ class WebPage : public APIObject {
 public:
     static const Type APIType = TypeBundlePage;
 
-    static PassRefPtr<WebPage> create(uint64_t pageID, const WebCore::IntSize& viewSize, const WebPreferencesStore&, DrawingArea::Type);
+    static PassRefPtr<WebPage> create(uint64_t pageID, const WebCore::IntSize& viewSize, const WebPreferencesStore&, const DrawingAreaBase::DrawingAreaInfo&);
     ~WebPage();
 
     void close();
@@ -120,7 +120,7 @@ public:
     static const WebEvent* currentEvent();
 
 private:
-    WebPage(uint64_t pageID, const WebCore::IntSize& viewSize, const WebPreferencesStore&, DrawingArea::Type);
+    WebPage(uint64_t pageID, const WebCore::IntSize& viewSize, const WebPreferencesStore&, const DrawingAreaBase::DrawingAreaInfo&);
 
     virtual Type type() const { return APIType; }
 

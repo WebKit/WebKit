@@ -74,14 +74,14 @@ namespace WebKit {
 static WTF::RefCountedLeakCounter webPageCounter("WebPage");
 #endif
 
-PassRefPtr<WebPage> WebPage::create(uint64_t pageID, const IntSize& viewSize, const WebPreferencesStore& store, DrawingArea::Type drawingAreaType)
+PassRefPtr<WebPage> WebPage::create(uint64_t pageID, const IntSize& viewSize, const WebPreferencesStore& store, const DrawingAreaBase::DrawingAreaInfo& drawingAreaInfo)
 {
-    return adoptRef(new WebPage(pageID, viewSize, store, drawingAreaType));
+    return adoptRef(new WebPage(pageID, viewSize, store, drawingAreaInfo));
 }
 
-WebPage::WebPage(uint64_t pageID, const IntSize& viewSize, const WebPreferencesStore& store, DrawingArea::Type drawingAreaType)
+WebPage::WebPage(uint64_t pageID, const IntSize& viewSize, const WebPreferencesStore& store, const DrawingAreaBase::DrawingAreaInfo& drawingAreaInfo)
     : m_viewSize(viewSize)
-    , m_drawingArea(DrawingArea::create(drawingAreaType, this))
+    , m_drawingArea(DrawingArea::create(drawingAreaInfo.type, drawingAreaInfo.id, this))
     , m_pageID(pageID)
 {
     ASSERT(m_pageID);
@@ -178,15 +178,14 @@ void WebPage::changeAcceleratedCompositingMode(WebCore::GraphicsLayer* layer)
     
     // Tell the UI process that accelerated compositing changed. It may respond by changing
     // drawing area types.
-    uint32_t newDrawingAreaType;
+    DrawingArea::DrawingAreaInfo newDrawingAreaInfo;
     WebProcess::shared().connection()->sendSync(WebPageProxyMessage::DidChangeAcceleratedCompositing,
                                                 m_pageID, CoreIPC::In(compositing),
-                                                CoreIPC::Out(newDrawingAreaType),
+                                                CoreIPC::Out(newDrawingAreaInfo),
                                                 CoreIPC::Connection::NoTimeout);
     
-    DrawingArea::Type newType = static_cast<DrawingArea::Type>(newDrawingAreaType);
-    if (newType != drawingArea()->type()) {
-        m_drawingArea = DrawingArea::create(newType, this);
+    if (newDrawingAreaInfo.type != drawingArea()->type()) {
+        m_drawingArea = DrawingArea::create(newDrawingAreaInfo.type, newDrawingAreaInfo.id, this);
         m_drawingArea->setNeedsDisplay(IntRect(IntPoint(0, 0), m_viewSize));
     }
 }

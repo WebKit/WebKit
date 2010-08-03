@@ -52,7 +52,7 @@ public:
     RunLoop* runLoop() const { return m_runLoop; }
 
     WebPage* webPage(uint64_t pageID) const;
-    WebPage* createWebPage(uint64_t pageID, const WebCore::IntSize& viewSize, const WebPreferencesStore&, DrawingArea::Type);
+    WebPage* createWebPage(uint64_t pageID, const WebCore::IntSize& viewSize, const WebPreferencesStore&, const DrawingAreaBase::DrawingAreaInfo&);
     void removeWebPage(uint64_t pageID);
 
     InjectedBundle* injectedBundle() const { return m_injectedBundle.get(); }

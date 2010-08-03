@@ -110,10 +110,10 @@ Page* WebChromeClient::createWindow(Frame*, const FrameLoadRequest&, const Windo
     uint64_t newPageID = 0;
     IntSize viewSize;
     WebPreferencesStore store;
-    uint32_t drawingAreaType;
+    DrawingAreaBase::DrawingAreaInfo drawingAreaInfo;
     if (!WebProcess::shared().connection()->sendSync(WebPageProxyMessage::CreateNewPage,
                                                      m_page->pageID(), CoreIPC::In(),
-                                                     CoreIPC::Out(newPageID, viewSize, store, drawingAreaType),
+                                                     CoreIPC::Out(newPageID, viewSize, store, drawingAreaInfo),
                                                      CoreIPC::Connection::NoTimeout)) {
         return 0;
     }
@@ -121,7 +121,7 @@ Page* WebChromeClient::createWindow(Frame*, const FrameLoadRequest&, const Windo
     if (!newPageID)
         return 0;
 
-    WebPage* newWebPage = WebProcess::shared().createWebPage(newPageID, viewSize, store, static_cast<DrawingArea::Type>(drawingAreaType));
+    WebPage* newWebPage = WebProcess::shared().createWebPage(newPageID, viewSize, store, drawingAreaInfo);
     return newWebPage->corePage();
 }
 
