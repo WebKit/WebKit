@@ -709,7 +709,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\GCActivityCallbackCF.cpp"
+				RelativePath="..\..\runtime\GCActivityCallback.cpp"
 				>
 			</File>
 			<File

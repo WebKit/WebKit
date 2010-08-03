@@ -1,5 +1,18 @@
 2010-08-03  Geoffrey Garen  <ggaren@apple.com>
 
+        Try to fix Windows build: Don't use GCActivityCallbackCF on Windows, since
+        PLATFORM(CF) is not defined on Windows.
+        
+        We'll need to enable the GC activity callback some other way, but this
+        change should get the build back to normal.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+
+        * runtime/GCActivityCallbackCF.cpp: Make it easier to detect this error
+        in the future with an explicit error message.
+
+2010-08-03  Geoffrey Garen  <ggaren@apple.com>
+
         Try to fix Windows build: update .def file.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
