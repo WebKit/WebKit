@@ -62,9 +62,9 @@ public:
         Type type;
         DrawingAreaID id;
 
-        DrawingAreaInfo(Type type = None, DrawingAreaID indentifier = 0)
+        DrawingAreaInfo(Type type = None, DrawingAreaID indentifer = 0)
             : type(type)
-            , id(indentifier)
+            , id(indentifer)
         {
         }
     };
@@ -74,9 +74,9 @@ public:
     static bool decode(CoreIPC::ArgumentDecoder&, DrawingAreaInfo&);
 
 protected:
-    DrawingAreaBase(Type type, DrawingAreaID indentifier)
+    DrawingAreaBase(Type type, DrawingAreaID indentifer)
         : m_type(type)
-        , m_id(indentifier)
+        , m_id(indentifer)
     {
     }
 

@@ -1,5 +1,13 @@
 2010-08-03  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix typo in previous commit.
+
+        * Shared/DrawingAreaBase.h:
+        (WebKit::DrawingAreaBase::DrawingAreaInfo::DrawingAreaInfo):
+        (WebKit::DrawingAreaBase::DrawingAreaBase):
+
+2010-08-03  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Anders Carlsson.
 
         Compositing iframe layout test crashes in WebKit2
