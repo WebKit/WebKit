@@ -357,30 +357,6 @@ void InspectorFrontend::resumedScript()
     callSimpleFunction("resumedScript");
 }
 
-void InspectorFrontend::didEditScriptSource(long callId, bool success, const String& result, SerializedScriptValue* newCallFrames)
-{
-    ScriptFunctionCall function(m_webInspector, "dispatch");
-    function.appendArgument("didEditScriptSource");
-    function.appendArgument(callId);
-    function.appendArgument(success);
-    function.appendArgument(result);
-    if (success && newCallFrames) {
-        ScriptValue newCallFramesValue = ScriptValue::deserialize(scriptState(), newCallFrames);
-        ASSERT(!newCallFramesValue .hasNoValue());
-        function.appendArgument(newCallFramesValue);
-    }
-    function.call();
-}
-
-void InspectorFrontend::didGetScriptSource(long callId, const String& result)
-{
-    ScriptFunctionCall function(m_webInspector, "dispatch");
-    function.appendArgument("didGetScriptSource");
-    function.appendArgument(callId);
-    function.appendArgument(result);
-    function.call();
-}
-
 void InspectorFrontend::profilerWasEnabled()
 {
     callSimpleFunction("profilerWasEnabled");

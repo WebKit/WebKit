@@ -1,3 +1,25 @@
+2010-08-02  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: debugger code should serialize call frames to InspectorObjects instead of SerializedScriptValues.
+        https://bugs.webkit.org/show_bug.cgi?id=43339
+
+        No new tests. Refactoring.
+
+        * inspector/InjectedScript.cpp:
+        (WebCore::InjectedScript::callFrames):
+        * inspector/InjectedScript.h:
+        * inspector/Inspector.idl:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::editScriptSource):
+        (WebCore::InspectorController::getScriptSource):
+        (WebCore::InspectorController::currentCallFrames):
+        (WebCore::InspectorController::didPause):
+        * inspector/InspectorController.h:
+        * inspector/front-end/InspectorBackendStub.js:
+        (WebInspector.InspectorBackendStub):
+
 2010-08-03  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.

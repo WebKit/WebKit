@@ -143,6 +143,7 @@ static PassRefPtr<InspectorValue> jsToInspectorValue(ScriptState* scriptState, J
         }
         return inspectorObject;
     }
+    ASSERT_NOT_REACHED();
     return 0;
 }
 

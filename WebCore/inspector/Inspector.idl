@@ -44,6 +44,10 @@ module core {
         [notify] void setDocument(out Value root);
         [notify] void updateConsoleMessageExpiredCount(out unsigned long count);
         [notify] void updateConsoleMessageRepeatCount(out unsigned long count);
+#if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
+        [notify] void pausedScript(out Value callFrames);
+        [notify] void resumedScript();
+#endif
 
         [handler=Controller] void storeLastActivePanel(in String panelName);
 
@@ -82,8 +86,8 @@ module core {
 
         [handler=Controller] void setPauseOnExceptionsState(in long pauseOnExceptionsState);
 
-        [handler=Controller] void editScriptSource(in long callId, in String sourceID, in String newContent);
-        [handler=Controller] void getScriptSource(in long callId, in String sourceID);
+        [handler=Controller] void editScriptSource(in long callId, in String sourceID, in String newContent, out boolean success, out String result, out Value newCallFrames);
+        [handler=Controller] void getScriptSource(in long callId, in String sourceID, out String scriptSource);
 
         [handler=Controller] void enableProfiler(in boolean always);
         [handler=Controller] void disableProfiler(in boolean always);

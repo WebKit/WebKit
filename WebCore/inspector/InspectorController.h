@@ -38,7 +38,6 @@
 #include "ScriptObject.h"
 #include "ScriptProfile.h"
 #include "ScriptState.h"
-#include "ScriptValue.h"
 #include "StringHash.h"
 #include "Timer.h"
 #include <wtf/HashMap.h>
@@ -269,7 +268,6 @@ public:
 
     void resume();
     void setPauseOnExceptionsState(long pauseState);
-    PassRefPtr<SerializedScriptValue> currentCallFrames();
 
     virtual void didParseSource(const String& sourceID, const String& url, const String& data, int firstLine, ScriptWorldType);
     virtual void failedToParseSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage);
@@ -308,6 +306,8 @@ private:
     void releaseFrontendLifetimeAgents();
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
+    PassRefPtr<InspectorValue> currentCallFrames();
+
     void setBreakpoint(long callId, const String& sourceID, unsigned lineNumber, bool enabled, const String& condition);
     void removeBreakpoint(const String& sourceID, unsigned lineNumber);
 

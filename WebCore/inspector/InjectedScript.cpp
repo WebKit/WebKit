@@ -65,12 +65,12 @@ void InjectedScript::dispatch(long callId, const String& methodName, const Strin
 }
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-PassRefPtr<SerializedScriptValue> InjectedScript::callFrames()
+PassRefPtr<InspectorValue> InjectedScript::callFrames()
 {
     ASSERT(!hasNoValue());
     ScriptFunctionCall function(m_injectedScriptObject, "callFrames");
     ScriptValue callFramesValue = function.call();
-    return callFramesValue.serialize(m_injectedScriptObject.scriptState());
+    return callFramesValue.toInspectorValue(m_injectedScriptObject.scriptState());
 }
 #endif
 

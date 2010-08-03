@@ -104,6 +104,7 @@ WebInspector.InspectorBackendStub = function()
     this._registerDelegate("removeBreakpoint");
     this._registerDelegate("activateBreakpoints");
     this._registerDelegate("deactivateBreakpoints");
+    this._registerDelegate("pause");
     this._registerDelegate("resume");
     this._registerDelegate("stepIntoStatement");
     this._registerDelegate("stepOutOfFunction");

@@ -113,6 +113,7 @@ static PassRefPtr<InspectorValue> v8ToInspectorValue(v8::Handle<v8::Value> value
         }
         return inspectorObject;
     }
+    ASSERT_NOT_REACHED();
     return 0;
 }
 
