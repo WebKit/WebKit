@@ -1,3 +1,14 @@
+2010-08-02  Chris Fleizach  <cfleizach@apple.com>
+
+        Unreviewed, rolling out r64471.
+        http://trac.webkit.org/changeset/64471
+        https://bugs.webkit.org/show_bug.cgi?id=43005
+
+        Rolling out https://bugs.webkit.org/show_bug.cgi?id=43005
+        until further discussion
+
+        * GNUmakefile.am:
+
 2010-08-02  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.

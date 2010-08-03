@@ -29,26 +29,9 @@
 #if HAVE(ACCESSIBILITY)
 
 #import "AccessibilityObjectWrapper.h"
-#import "AXObjectCache.h"
 
 namespace WebCore {
 
-bool AccessibilityObject::isScreenReaderRunning() const
-{
-    // If the enhanced user interface is enabled, it means VoiceOver is running.
-    return AXObjectCache::accessibilityEnhancedUserInterfaceEnabled();
-}
-    
-Element* AccessibilityObject::screenReaderFocusedElement() const
-{
-    return 0;
-}
-    
-String AccessibilityObject::screenReaderVersion() const
-{ 
-    return nullAtom;
-}
-    
 bool AccessibilityObject::accessibilityIgnoreAttachment() const
 {
     NSView* attachment = [wrapper() attachmentView];

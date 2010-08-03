@@ -76,12 +76,6 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotific
         case AXLayoutComplete:
             macNotification = "AXLayoutComplete";
             break;
-        case AXScreenChanged:
-            macNotification = "AXScreenChanged";
-            break;
-        case AXElementsChanged:
-            macNotification = "AXElementsChanged";
-            break;
         case AXLoadComplete:
             macNotification = "AXLoadComplete";
             break;

@@ -1,8 +1,6 @@
 {
     'variables': {
         'webcore_bindings_idl_files': [
-            'accessibility/Accessibility.idl',
-            'accessibility/ScreenReader.idl',
             'css/CSSCharsetRule.idl',
             'css/CSSFontFaceRule.idl',
             'css/CSSImportRule.idl',
@@ -442,8 +440,6 @@
             # Source/Header Files
             'accessibility/AXObjectCache.cpp',
             'accessibility/AXObjectCache.h',
-            'accessibility/Accessibility.cpp',
-            'accessibility/Accessibility.h',
             'accessibility/AccessibilityARIAGrid.cpp',
             'accessibility/AccessibilityARIAGrid.h',
             'accessibility/AccessibilityARIAGridCell.cpp',
@@ -486,8 +482,6 @@
             'accessibility/AccessibilityTableHeaderContainer.h',
             'accessibility/AccessibilityTableRow.cpp',
             'accessibility/AccessibilityTableRow.h',
-            'accessibility/ScreenReader.cpp',
-            'accessibility/ScreenReader.h',
             'accessibility/chromium/AXObjectCacheChromium.cpp',
             'accessibility/chromium/AccessibilityObjectChromium.cpp',
             'accessibility/chromium/AccessibilityObjectWrapper.h',

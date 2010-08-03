@@ -28,7 +28,6 @@
 
 VPATH = \
     $(WebCore) \
-    $(WebCore)/accessibility \
     $(WebCore)/bindings/js \
     $(WebCore)/bindings/objc \
     $(WebCore)/css \
@@ -51,7 +50,6 @@ VPATH = \
 DOM_CLASSES = \
     AbstractView \
     AbstractWorker \
-    Accessibility \
     Attr \
     BarInfo \
     BeforeLoadEvent \
@@ -440,7 +438,6 @@ DOM_CLASSES = \
     SVGZoomAndPan \
     SVGZoomEvent \
     Screen \
-    ScreenReader \
     StyleMedia \
     StyleSheet \
     StyleSheetList \

@@ -46,12 +46,6 @@
 #include "AccessibilityObjectWrapper.h"
 #endif
 
-#if PLATFORM(MAC)
-#define SUPPORTS_JSACCESSIBILITY 1
-#else
-#define SUPPORTS_JSACCESSIBILITY 0
-#endif
-
 typedef struct _NSRange NSRange;
 
 #ifdef __OBJC__
@@ -554,16 +548,6 @@ public:
 #endif
 #endif
 
-#if SUPPORTS_JSACCESSIBILITY
-    bool isScreenReaderRunning() const;
-    Element* screenReaderFocusedElement() const;
-    String screenReaderVersion() const;
-#else
-    bool isScreenReaderRunning() const { return false; }
-    Element* screenReaderFocusedElement() const { return 0; }
-    String screenReaderVersion() const { return nullAtom; }
-#endif
-    
 #if HAVE(ACCESSIBILITY)
     // a platform-specific method for determining if an attachment is ignored
     bool accessibilityIgnoreAttachment() const;

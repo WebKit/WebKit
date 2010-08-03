@@ -1,3 +1,40 @@
+2010-08-02  Chris Fleizach  <cfleizach@apple.com>
+
+        Unreviewed, rolling out r64471.
+        http://trac.webkit.org/changeset/64471
+        https://bugs.webkit.org/show_bug.cgi?id=43005
+
+        Rolling out https://bugs.webkit.org/show_bug.cgi?id=43005
+        until further discussion
+
+        * Android.derived.v8bindings.mk:
+        * Android.jscbindings.mk:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * accessibility/AXObjectCache.h:
+        (WebCore::AXObjectCache::):
+        * accessibility/Accessibility.cpp: Removed.
+        * accessibility/Accessibility.h: Removed.
+        * accessibility/Accessibility.idl: Removed.
+        * accessibility/AccessibilityObject.h:
+        * accessibility/ScreenReader.cpp: Removed.
+        * accessibility/ScreenReader.h: Removed.
+        * accessibility/ScreenReader.idl: Removed.
+        * accessibility/mac/AXObjectCacheMac.mm:
+        (WebCore::AXObjectCache::postPlatformNotification):
+        * accessibility/mac/AccessibilityObjectMac.mm:
+        * page/Navigator.cpp:
+        (WebCore::Navigator::disconnectFrame):
+        (WebCore::Navigator::mimeTypes):
+        * page/Navigator.h:
+        * page/Navigator.idl:
+
 2010-08-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.

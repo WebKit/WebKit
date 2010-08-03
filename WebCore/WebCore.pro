@@ -254,7 +254,6 @@ contains(DEFINES, ENABLE_WCSS=1) {
 }
 
 SOURCES += \
-    accessibility/Accessibility.cpp \
     accessibility/AccessibilityImageMapLink.cpp \
     accessibility/AccessibilityMediaControls.cpp \    
     accessibility/AccessibilityMenuList.cpp \
@@ -277,7 +276,6 @@ SOURCES += \
     accessibility/AccessibilityTableHeaderContainer.cpp \    
     accessibility/AccessibilityTableRow.cpp \    
     accessibility/AXObjectCache.cpp \
-    accessibility/ScreenReader.cpp \
     bindings/generic/RuntimeEnabledFeatures.cpp \
     bindings/js/GCController.cpp \
     bindings/js/DOMObjectHashTableMap.cpp \

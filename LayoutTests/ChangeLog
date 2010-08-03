@@ -1,5 +1,17 @@
 2010-08-02  Chris Fleizach  <cfleizach@apple.com>
 
+        Unreviewed, rolling out r64471.
+        http://trac.webkit.org/changeset/64471
+        https://bugs.webkit.org/show_bug.cgi?id=43005
+
+        Rolling out https://bugs.webkit.org/show_bug.cgi?id=43005
+        until further discussion
+
+        * platform/mac/accessibility/js-accessibility-expected.txt: Removed.
+        * platform/mac/accessibility/js-accessibility.html: Removed.
+
+2010-08-02  Chris Fleizach  <cfleizach@apple.com>
+
         Unreviewed, rolling out r64478.
         http://trac.webkit.org/changeset/64478
         https://bugs.webkit.org/show_bug.cgi?id=43005
