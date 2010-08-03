@@ -1,3 +1,10 @@
+2010-08-02  Andrew Wilson  <atwilson@chromium.org>
+
+        Unreviewed rollback of Chromium expectations files to match rollback of r64471.
+
+        * platform/chromium-mac/fast/dom/navigator-detached-no-crash-expected.txt: Removed.
+        * platform/chromium-win/fast/dom/navigator-detached-no-crash-expected.txt: Removed.
+
 2010-08-02  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Use GdkPixbuf for ImageBuffer::toDataURL
