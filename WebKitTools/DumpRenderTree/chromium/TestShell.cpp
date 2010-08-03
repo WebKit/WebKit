@@ -38,7 +38,6 @@
 #include "base/md5.h" // FIXME: Wrap by webkit_support.
 #include "base/string16.h"
 #include "gfx/codec/png_codec.h" // FIXME: Remove dependecy. WebCore/platform/image-encoder is better?
-#include "net/base/escape.h" // FIXME: Remove dependency.
 #include "public/WebDataSource.h"
 #include "public/WebDocument.h"
 #include "public/WebElement.h"
@@ -422,7 +421,7 @@ static string dumpHistoryItem(const WebHistoryItem& item, int indent, bool isCur
         url.replace(0, pos + layoutTestsPatternSize, fileTestPrefix);
     } else if (!url.find(dataUrlPattern)) {
         // URL-escape data URLs to match results upstream.
-        string path = EscapePath(url.substr(dataUrlPatternSize));
+        string path = webkit_support::EscapePath(url.substr(dataUrlPatternSize));
         url.replace(dataUrlPatternSize, url.length(), path);
     }
 

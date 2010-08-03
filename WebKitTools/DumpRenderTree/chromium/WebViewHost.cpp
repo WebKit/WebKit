@@ -35,7 +35,6 @@
 #include "TestNavigationController.h"
 #include "TestShell.h"
 #include "TestWebWorker.h"
-#include "net/base/net_errors.h" // FIXME: can we remove this?
 #include "public/WebCString.h"
 #include "public/WebConsoleMessage.h"
 #include "public/WebContextMenuData.h"
@@ -164,35 +163,6 @@ static void printResponseDescription(const WebURLResponse& response)
     printf("<NSURLResponse %s, http status code %d>",
            descriptionSuitableForTestResult(url).c_str(),
            response.httpStatusCode());
-}
-
-static void printErrorDescription(const WebURLError& error)
-{
-    string domain = error.domain.utf8();
-    int code = error.reason;
-
-    if (domain == net::kErrorDomain) {
-        domain = "NSURLErrorDomain";
-        switch (error.reason) {
-        case net::ERR_ABORTED:
-            code = -999;
-            break;
-        case net::ERR_UNSAFE_PORT:
-            // Our unsafe port checking happens at the network stack level, but we
-            // make this translation here to match the behavior of stock WebKit.
-            domain = "WebKitErrorDomain";
-            code = 103;
-            break;
-        case net::ERR_ADDRESS_INVALID:
-        case net::ERR_ADDRESS_UNREACHABLE:
-            code = -1004;
-            break;
-        }
-    } else
-        LOG_ERROR("Unknown error domain");
-
-    printf("<NSError domain %s, code %d, failing URL \"%s\">",
-           domain.c_str(), code, error.unreachableURL.spec().data());
 }
 
 static void printNodeDescription(const WebNode& node, int exception)
@@ -715,11 +685,7 @@ WebURLError WebViewHost::cannotHandleRequestError(WebFrame*, const WebURLRequest
 
 WebURLError WebViewHost::cancelledError(WebFrame*, const WebURLRequest& request)
 {
-    WebURLError error;
-    error.domain = WebString::fromUTF8(net::kErrorDomain);
-    error.reason = net::ERR_ABORTED;
-    error.unreachableURL = request.url();
-    return error;
+    return webkit_support::CreateCancelledError(request);
 }
 
 void WebViewHost::unableToImplementPolicyWithError(WebFrame* frame, const WebURLError& error)
@@ -960,7 +926,7 @@ void WebViewHost::didFailResourceLoad(WebFrame*, unsigned identifier, const WebU
     if (m_shell->shouldDumpResourceLoadCallbacks()) {
         printResourceDescription(identifier);
         fputs(" - didFailLoadingWithError: ", stdout);
-        printErrorDescription(error);
+        fputs(webkit_support::MakeURLErrorDescription(error).c_str(), stdout);
         fputs("\n", stdout);
     }
     m_resourceIdentifierMap.remove(identifier);

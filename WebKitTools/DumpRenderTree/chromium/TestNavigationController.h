@@ -31,12 +31,12 @@
 #ifndef TestNavigationController_h
 #define TestNavigationController_h
 
-#include "base/basictypes.h"
 #include "base/linked_ptr.h"
 #include "public/WebDataSource.h"
 #include "public/WebHistoryItem.h"
 #include "public/WebString.h"
 #include "public/WebURL.h"
+#include "webkit/support/webkit_support.h"
 #include <string>
 #include <wtf/Vector.h>
 

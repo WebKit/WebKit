@@ -1,3 +1,22 @@
+2010-08-02  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [DRT/Chromium] Remove dependencies to some Chromium headers
+        https://bugs.webkit.org/show_bug.cgi?id=43396
+
+        * DumpRenderTree/chromium/CppVariant.h:
+         Remove base/basictypes.h because webkit_support.h contains it.
+        * DumpRenderTree/chromium/EventSender.cpp:
+        (getCurrentEventTimeSec): Use new wrapper function.
+        * DumpRenderTree/chromium/TestNavigationController.h:
+         Remove base/basictypes.h because webkit_support.h contains it.
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (dumpHistoryItem): Use new wrapper function.
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::cancelledError): Use new wrapper function.
+        (WebViewHost::didFailResourceLoad): Use new wrapper function.
+
 2010-08-02  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

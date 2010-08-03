@@ -42,8 +42,8 @@
 #ifndef CppVariant_h
 #define CppVariant_h
 
-#include "base/basictypes.h"
 #include "public/WebBindings.h"
+#include "webkit/support/webkit_support.h"
 #include <string>
 #include <wtf/Vector.h>
 

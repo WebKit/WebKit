@@ -45,7 +45,6 @@
 
 #include "TestShell.h"
 #include "base/keyboard_codes.h"
-#include "base/time.h"
 #include "public/WebDragData.h"
 #include "public/WebDragOperation.h"
 #include "public/WebPoint.h"
@@ -124,7 +123,7 @@ static uint32 timeOffsetMs = 0;
 
 static double getCurrentEventTimeSec()
 {
-    return (TimeTicks::Now().ToInternalValue() / Time::kMicrosecondsPerMillisecond + timeOffsetMs) / 1000.0;
+    return (webkit_support::GetCurrentTimeInMillisecond() + timeOffsetMs) / 1000.0;
 }
 
 static void advanceEventTime(int32_t deltaMs)
