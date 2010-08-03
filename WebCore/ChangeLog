@@ -1,3 +1,15 @@
+2010-08-03  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Ojan Vafai.
+
+        [GTK] Incorrect keyIdentifier for print screen key events
+        https://bugs.webkit.org/show_bug.cgi?id=43422
+
+        Produce the correct keyIdentifier for GDK_Print (print screen).
+
+        * platform/gtk/KeyEventGtk.cpp:
+        (WebCore::keyIdentifierForGdkKeyCode):
+
 2010-08-03  Anton Muhin  <antonm@chromium.org>
 
         Reviewed by David Levin.

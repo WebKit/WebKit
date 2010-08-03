@@ -126,6 +126,7 @@ static String keyIdentifierForGdkKeyCode(guint keyCode)
         case GDK_Pause:
             return "Pause";
         case GDK_3270_PrintScreen:
+        case GDK_Print:
             return "PrintScreen";
         case GDK_Right:
             return "Right";
