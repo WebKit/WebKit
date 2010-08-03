@@ -60,6 +60,8 @@ void LayerBackedDrawingArea::platformClear()
     WKCARemoteLayerClientInvalidate(m_remoteLayerRef.get());
     m_remoteLayerRef = 0;
 #endif
+
+    m_attached = false;
 }
 
 void LayerBackedDrawingArea::attachCompositingContext()
@@ -143,14 +145,18 @@ void LayerBackedDrawingArea::removeUpdateLayoutRunLoopObserver()
 
 void LayerBackedDrawingArea::updateLayoutRunLoopObserverCallback(CFRunLoopObserverRef, CFRunLoopActivity, void* info)
 {
-    LayerBackedDrawingArea* drawingArea = reinterpret_cast<LayerBackedDrawingArea*>(info);
+    // Keep the drawing area alive while running the callback, since that does layout,
+    // which might replace this drawing area with one of another type.
+    RefPtr<LayerBackedDrawingArea> drawingArea = reinterpret_cast<LayerBackedDrawingArea*>(info);
     drawingArea->updateLayoutRunLoopObserverFired();
 }
 
 void LayerBackedDrawingArea::updateLayoutRunLoopObserverFired()
 {
     m_webPage->layoutIfNeeded();
-    syncCompositingLayers();
+    
+    if (m_attached)
+        syncCompositingLayers();
 }
 
 } // namespace WebKit

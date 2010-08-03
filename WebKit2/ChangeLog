@@ -1,3 +1,22 @@
+2010-08-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Compositing iframe layout test crashes in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=42860
+        
+        Part one of the fix: make DrawingArea ref-counted, so that the object
+        can survide a swap in drawing areas inside the run loop observer callback.
+
+        * WebProcess/WebPage/DrawingArea.cpp:
+        (WebKit::DrawingArea::create):
+        * WebProcess/WebPage/DrawingArea.h:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/mac/LayerBackedDrawingAreaMac.mm:
+        (WebKit::LayerBackedDrawingArea::platformClear):
+        (WebKit::LayerBackedDrawingArea::updateLayoutRunLoopObserverCallback):
+        (WebKit::LayerBackedDrawingArea::updateLayoutRunLoopObserverFired):
+
 2010-08-03  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.

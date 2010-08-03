@@ -33,24 +33,23 @@
 
 namespace WebKit {
 
-DrawingArea* DrawingArea::create(Type type, WebPage* webPage)
+PassRefPtr<DrawingArea> DrawingArea::create(Type type, WebPage* webPage)
 {
-    DrawingArea* drawingArea = 0;
     switch (type) {
         case None:
             ASSERT_NOT_REACHED();
             break;
+
         case ChunkedUpdateDrawingAreaType:
-            drawingArea = new ChunkedUpdateDrawingArea(webPage);
-            break;
+            return adoptRef(new ChunkedUpdateDrawingArea(webPage));
+
 #if USE(ACCELERATED_COMPOSITING) && PLATFORM(MAC)
         case LayerBackedDrawingAreaType:
-            drawingArea = new LayerBackedDrawingArea(webPage);
-            break;
+            return adoptRef(new LayerBackedDrawingArea(webPage));
 #endif
     }
 
-    return drawingArea;
+    return 0;
 }
 
 DrawingArea::DrawingArea(Type type, WebPage* webPage)

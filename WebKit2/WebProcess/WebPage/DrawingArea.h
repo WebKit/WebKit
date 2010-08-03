@@ -27,6 +27,8 @@
 #define DrawingArea_h
 
 #include <WebCore/IntRect.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
     class IntRect;
@@ -46,7 +48,7 @@ namespace WebKit {
 
 class WebPage;
 
-class DrawingArea {
+class DrawingArea : public RefCounted<DrawingArea> {
 public:
     // This has to match DrawingAreaProxy::Type.
     enum Type {
@@ -58,7 +60,8 @@ public:
     };
 
     // FIXME: It might make sense to move this create function into a factory style class. 
-    static DrawingArea* create(Type, WebPage*);
+    static PassRefPtr<DrawingArea> create(Type, WebPage*);
+
     virtual ~DrawingArea();
     
     Type type() const { return m_type; }
