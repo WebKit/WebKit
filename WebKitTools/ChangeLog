@@ -1,3 +1,11 @@
+2010-08-02  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Add alias for run-webkit-tests --webkit-test-runner (run-webkit-tests -2).
+
+        * Scripts/old-run-webkit-tests:
+
 2010-08-02  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Restore the WebKitTestRunner.sln that was removed, and remove the

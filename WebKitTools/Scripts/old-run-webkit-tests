@@ -298,7 +298,7 @@ Usage: $programName [options] [testdir|testpath ...]
   -v|--verbose                    More verbose output (overrides --quiet)
   -m|--merge-leak-depth arg       Merges leak callStacks and prints the number of unique leaks beneath a callstack depth of arg.  Defaults to 5.
   --use-remote-links-to-tests     Link to test files within the SVN repository in the results.
-  --webkit-test-runner            Use WebKitTestRunner rather than DumpRenderTree.
+  -2|--webkit-test-runner         Use WebKitTestRunner rather than DumpRenderTree.
 EOF
 
 setConfiguration();
@@ -342,7 +342,7 @@ my $getOptionsResult = GetOptions(
     'use-remote-links-to-tests' => \$useRemoteLinksToTests,
     'valgrind' => \$useValgrind,
     'verbose|v' => \$verbose,
-    'webkit-test-runner' => \$useWebKitTestRunner,
+    'webkit-test-runner|2' => \$useWebKitTestRunner,
 );
 
 if (!$getOptionsResult || $showHelp) {
