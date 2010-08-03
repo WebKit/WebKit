@@ -41,8 +41,6 @@
 
 namespace WebCore {
 
-class IDBDatabaseRequest;
-
 class IDBRequest : public IDBCallbacks, public EventTarget, public ActiveDOMObject {
 public:
     static PassRefPtr<IDBRequest> create(ScriptExecutionContext* context, PassRefPtr<IDBAny> source) { return adoptRef(new IDBRequest(context, source)); }
@@ -64,7 +62,7 @@ public:
     // IDBCallbacks
     virtual void onError(PassRefPtr<IDBDatabaseError>);
     virtual void onSuccess(); // For "null".
-    virtual void onSuccess(PassRefPtr<IDBDatabase>);
+    virtual void onSuccess(PassRefPtr<IDBDatabaseBackendInterface>);
     virtual void onSuccess(PassRefPtr<IDBIndexBackendInterface>);
     virtual void onSuccess(PassRefPtr<IDBKey>);
     virtual void onSuccess(PassRefPtr<IDBObjectStore>);

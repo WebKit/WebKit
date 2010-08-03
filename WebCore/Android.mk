@@ -743,8 +743,8 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	storage/DatabaseThread.cpp \
 	storage/DatabaseTracker.cpp \
 	storage/IDBAny.cpp \
-	storage/IDBDatabaseImpl.cpp \
-	storage/IDBDatabaseRequest.cpp \
+	storage/IDBDatabase.cpp \
+	storage/IDBDatabaseBackendImpl.cpp \
 	storage/IDBErrorEvent.cpp \
 	storage/IDBEvent.cpp \
 	storage/IDBIndex.cpp \

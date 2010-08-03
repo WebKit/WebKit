@@ -48,8 +48,8 @@ public:
 private:
     IDBFactoryBackendImpl();
 
-    typedef HashMap<String, RefPtr<IDBDatabase> > IDBDatabaseMap;
-    IDBDatabaseMap m_databaseMap;
+    typedef HashMap<String, RefPtr<IDBDatabaseBackendInterface> > IDBDatabaseBackendMap;
+    IDBDatabaseBackendMap m_databaseBackendMap;
 
     // We only create one instance of this class at a time.
     static IDBFactoryBackendImpl* idbFactoryBackendImpl;

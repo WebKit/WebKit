@@ -23,49 +23,51 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBDatabaseImpl_h
-#define IDBDatabaseImpl_h
-
-#include "IDBCallbacks.h"
+#include "config.h"
 #include "IDBDatabase.h"
-#include "StringHash.h"
-#include <wtf/HashMap.h>
+
+#include "IDBAny.h"
+#include "IDBFactoryBackendInterface.h"
+#include "IDBObjectStoreRequest.h"
+#include "IDBRequest.h"
+#include "ScriptExecutionContext.h"
 
 #if ENABLE(INDEXED_DATABASE)
 
 namespace WebCore {
 
-class IDBDatabaseImpl : public IDBDatabase {
-public:
-    static PassRefPtr<IDBDatabase> create(const String& name, const String& description, const String& version)
-    {
-        return adoptRef(new IDBDatabaseImpl(name, description, version));
-    }
-    virtual ~IDBDatabaseImpl();
+IDBDatabase::IDBDatabase(PassRefPtr<IDBDatabaseBackendInterface> backend)
+    : m_backend(backend)
+{
+    // We pass a reference to this object before it can be adopted.
+    relaxAdoptionRequirement();
+}
 
-    // Implements IDBDatabase
-    virtual String name() const { return m_name; }
-    virtual String description() const { return m_description; }
-    virtual String version() const { return m_version; }
-    virtual PassRefPtr<DOMStringList> objectStores() const;
+IDBDatabase::~IDBDatabase()
+{
+}
 
-    virtual void createObjectStore(const String& name, const String& keyPath, bool autoIncrement, PassRefPtr<IDBCallbacks>);
-    virtual PassRefPtr<IDBObjectStore> objectStore(const String& name, unsigned short mode);
-    virtual void removeObjectStore(const String& name, PassRefPtr<IDBCallbacks>);
+PassRefPtr<IDBRequest> IDBDatabase::createObjectStore(ScriptExecutionContext* context, const String& name, const String& keyPath, bool autoIncrement)
+{
+    RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this));
+    m_backend->createObjectStore(name, keyPath, autoIncrement, request);
+    return request;
+}
 
-private:
-    IDBDatabaseImpl(const String& name, const String& description, const String& version);
+PassRefPtr<IDBObjectStoreRequest> IDBDatabase::objectStore(const String& name, unsigned short mode)
+{
+    RefPtr<IDBObjectStore> objectStore = m_backend->objectStore(name, mode);
+    ASSERT(objectStore); // FIXME: If this is null, we should raise a NOT_FOUND_ERR.
+    return IDBObjectStoreRequest::create(objectStore.release());
+}
 
-    String m_name;
-    String m_description;
-    String m_version;
-
-    typedef HashMap<String, RefPtr<IDBObjectStore> > ObjectStoreMap;
-    ObjectStoreMap m_objectStores;
-};
+PassRefPtr<IDBRequest> IDBDatabase::removeObjectStore(ScriptExecutionContext* context, const String& name)
+{
+    RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this));
+    m_backend->removeObjectStore(name, request);
+    return request;
+}
 
 } // namespace WebCore
 
-#endif
-
-#endif // IDBDatabaseImpl_h
+#endif // ENABLE(INDEXED_DATABASE)

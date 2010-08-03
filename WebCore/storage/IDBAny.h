@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-class IDBDatabaseRequest;
+class IDBDatabase;
 class IDBIndex;
 class IDBKey;
 class IDBObjectStoreRequest;
@@ -56,7 +56,7 @@ public:
     enum Type {
         UndefinedType = 0,
         NullType,
-        IDBDatabaseRequestType,
+        IDBDatabaseType,
         IDBFactoryType,
         IDBIndexType,
         IDBKeyType,
@@ -66,7 +66,7 @@ public:
 
     Type type() const { return m_type; }
     // Use type() to figure out which one of these you're allowed to call.
-    PassRefPtr<IDBDatabaseRequest> idbDatabaseRequest();
+    PassRefPtr<IDBDatabase> idbDatabase();
     PassRefPtr<IDBFactory> idbFactory();
     PassRefPtr<IDBIndex> idbIndex();
     PassRefPtr<IDBKey> idbKey();
@@ -75,7 +75,7 @@ public:
 
     // Set can only be called once.
     void set(); // For "null".
-    void set(PassRefPtr<IDBDatabaseRequest>);
+    void set(PassRefPtr<IDBDatabase>);
     void set(PassRefPtr<IDBFactory>);
     void set(PassRefPtr<IDBIndex>);
     void set(PassRefPtr<IDBKey>);
@@ -88,7 +88,7 @@ private:
     Type m_type;
 
     // Only one of the following should ever be in use at any given time.
-    RefPtr<IDBDatabaseRequest> m_idbDatabaseRequest;
+    RefPtr<IDBDatabase> m_idbDatabase;
     RefPtr<IDBFactory> m_idbFactory;
     RefPtr<IDBIndex> m_idbIndex;
     RefPtr<IDBKey> m_idbKey;

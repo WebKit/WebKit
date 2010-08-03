@@ -2837,8 +2837,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSIDBDatabaseError.h \
 	DerivedSources/WebCore/JSIDBDatabaseException.cpp \
 	DerivedSources/WebCore/JSIDBDatabaseException.h \
-	DerivedSources/WebCore/JSIDBDatabaseRequest.cpp \
-	DerivedSources/WebCore/JSIDBDatabaseRequest.h \
+	DerivedSources/WebCore/JSIDBDatabase.cpp \
+	DerivedSources/WebCore/JSIDBDatabase.h \
 	DerivedSources/WebCore/JSIDBErrorEvent.cpp \
 	DerivedSources/WebCore/JSIDBErrorEvent.h \
 	DerivedSources/WebCore/JSIDBEvent.cpp \
@@ -2860,13 +2860,13 @@ webcore_sources += \
 	WebCore/storage/IDBAny.cpp \
 	WebCore/storage/IDBAny.h \
 	WebCore/storage/IDBCallbacks.h \
+	WebCore/storage/IDBDatabase.cpp \
 	WebCore/storage/IDBDatabase.h \
-	WebCore/storage/IDBDatabaseImpl.cpp \
-	WebCore/storage/IDBDatabaseImpl.h \
+	WebCore/storage/IDBDatabaseBackendImpl.cpp \
+	WebCore/storage/IDBDatabaseBackendImpl.h \
+	WebCore/storage/IDBDatabaseBackendInterface.h \
 	WebCore/storage/IDBDatabaseError.h \
 	WebCore/storage/IDBDatabaseException.h \
-	WebCore/storage/IDBDatabaseRequest.cpp \
-	WebCore/storage/IDBDatabaseRequest.h \
 	WebCore/storage/IDBErrorEvent.cpp \
 	WebCore/storage/IDBErrorEvent.h \
 	WebCore/storage/IDBEvent.cpp \

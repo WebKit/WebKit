@@ -10,9 +10,6 @@
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
  *     documentation and/or other materials provided with the distribution.
- * 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
- *     its contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -26,47 +23,49 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "IDBFactoryBackendImpl.h"
+#ifndef IDBDatabaseBackendImpl_h
+#define IDBDatabaseBackendImpl_h
 
-#include "DOMStringList.h"
-#include "IDBDatabaseBackendImpl.h"
-#include "SecurityOrigin.h"
-#include <wtf/Threading.h>
-#include <wtf/UnusedParam.h>
+#include "IDBCallbacks.h"
+#include "IDBDatabase.h"
+#include "StringHash.h"
+#include <wtf/HashMap.h>
 
 #if ENABLE(INDEXED_DATABASE)
 
 namespace WebCore {
 
-PassRefPtr<IDBFactoryBackendImpl> IDBFactoryBackendImpl::create()
-{
-    return adoptRef(new IDBFactoryBackendImpl);
-}
+class IDBDatabaseBackendImpl : public IDBDatabaseBackendInterface {
+public:
+    static PassRefPtr<IDBDatabaseBackendInterface> create(const String& name, const String& description, const String& version)
+    {
+        return adoptRef(new IDBDatabaseBackendImpl(name, description, version));
+    }
+    virtual ~IDBDatabaseBackendImpl();
 
-IDBFactoryBackendImpl::IDBFactoryBackendImpl()
-{
-}
+    // Implements IDBDatabase
+    virtual String name() const { return m_name; }
+    virtual String description() const { return m_description; }
+    virtual String version() const { return m_version; }
+    virtual PassRefPtr<DOMStringList> objectStores() const;
 
-IDBFactoryBackendImpl::~IDBFactoryBackendImpl()
-{
-}
+    virtual void createObjectStore(const String& name, const String& keyPath, bool autoIncrement, PassRefPtr<IDBCallbacks>);
+    virtual PassRefPtr<IDBObjectStore> objectStore(const String& name, unsigned short mode);
+    virtual void removeObjectStore(const String& name, PassRefPtr<IDBCallbacks>);
 
-void IDBFactoryBackendImpl::open(const String& name, const String& description, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin>, Frame*)
-{
-    RefPtr<IDBDatabaseBackendInterface> databaseBackend;
-    IDBDatabaseBackendMap::iterator it = m_databaseBackendMap.find(name);
-    if (it == m_databaseBackendMap.end()) {
-        // FIXME: What should the version be?  The spec doesn't define it yet.
-        databaseBackend = IDBDatabaseBackendImpl::create(name, description, "");
-        m_databaseBackendMap.set(name, databaseBackend);
-    } else
-        databaseBackend = it->second;
+private:
+    IDBDatabaseBackendImpl(const String& name, const String& description, const String& version);
 
-    callbacks->onSuccess(databaseBackend.release());
-}
+    String m_name;
+    String m_description;
+    String m_version;
+
+    typedef HashMap<String, RefPtr<IDBObjectStore> > ObjectStoreMap;
+    ObjectStoreMap m_objectStores;
+};
 
 } // namespace WebCore
 
-#endif // ENABLE(INDEXED_DATABASE)
+#endif
 
+#endif // IDBDatabaseBackendImpl_h

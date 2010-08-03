@@ -1,3 +1,27 @@
+2010-07-30  Andrei Popescu  <andreip@dhcp-172-16-14-12.lon.corp.google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        Rename IDBDatabaseRequest to IDBDatabase
+        https://bugs.webkit.org/show_bug.cgi?id=43250
+
+        * src/IDBCallbacksProxy.cpp:
+        (WebCore::IDBCallbacksProxy::onSuccess):
+        * src/IDBCallbacksProxy.h:
+        * src/IDBDatabaseProxy.cpp:
+        (WebCore::IDBDatabaseProxy::create):
+        * src/IDBDatabaseProxy.h:
+        * src/WebIDBDatabaseImpl.cpp:
+        (WebKit::WebIDBDatabaseImpl::WebIDBDatabaseImpl):
+        (WebKit::WebIDBDatabaseImpl::name):
+        (WebKit::WebIDBDatabaseImpl::description):
+        (WebKit::WebIDBDatabaseImpl::version):
+        (WebKit::WebIDBDatabaseImpl::objectStores):
+        (WebKit::WebIDBDatabaseImpl::createObjectStore):
+        (WebKit::WebIDBDatabaseImpl::objectStore):
+        (WebKit::WebIDBDatabaseImpl::removeObjectStore):
+        * src/WebIDBDatabaseImpl.h:
+
 2010-08-02  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

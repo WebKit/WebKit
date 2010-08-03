@@ -31,7 +31,7 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
-namespace WebCore { class IDBDatabase; }
+namespace WebCore { class IDBDatabaseBackendInterface; }
 
 namespace WebKit {
 
@@ -40,7 +40,7 @@ class WebIDBObjectStore;
 // See comment in WebIndexedDatabase for a high level overview these classes.
 class WebIDBDatabaseImpl : public WebIDBDatabase {
 public:
-    WebIDBDatabaseImpl(WTF::PassRefPtr<WebCore::IDBDatabase> database);
+    WebIDBDatabaseImpl(WTF::PassRefPtr<WebCore::IDBDatabaseBackendInterface>);
     virtual ~WebIDBDatabaseImpl();
 
     virtual WebString name() const;
@@ -53,7 +53,7 @@ public:
     virtual void removeObjectStore(const WebString& name, WebIDBCallbacks* callbacks);
 
 private:
-    WTF::RefPtr<WebCore::IDBDatabase> m_database;
+    WTF::RefPtr<WebCore::IDBDatabaseBackendInterface> m_databaseBackend;
 };
 
 } // namespace WebKit

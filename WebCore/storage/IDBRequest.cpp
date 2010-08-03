@@ -35,7 +35,7 @@
 #include "EventException.h"
 #include "EventListener.h"
 #include "EventNames.h"
-#include "IDBDatabaseRequest.h"
+#include "IDBDatabase.h"
 #include "IDBIndex.h"
 #include "IDBErrorEvent.h"
 #include "IDBObjectStoreRequest.h"
@@ -73,10 +73,10 @@ void IDBRequest::onSuccess()
     m_result->set();
 }
 
-void IDBRequest::onSuccess(PassRefPtr<IDBDatabase> idbDatabase)
+void IDBRequest::onSuccess(PassRefPtr<IDBDatabaseBackendInterface> idbDatabaseBackend)
 {
     onEventCommon();
-    m_result->set(IDBDatabaseRequest::create(idbDatabase));
+    m_result->set(IDBDatabase::create(idbDatabaseBackend));
 }
 
 void IDBRequest::onSuccess(PassRefPtr<IDBIndexBackendInterface> backend)

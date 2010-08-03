@@ -29,7 +29,7 @@
 #ifndef IDBCallbacks_h
 #define IDBCallbacks_h
 
-#include "IDBDatabase.h"
+#include "IDBDatabaseBackendInterface.h"
 #include "IDBDatabaseError.h"
 #include "IDBIndexBackendInterface.h"
 #include "IDBKey.h"
@@ -47,7 +47,7 @@ public:
 
     virtual void onError(PassRefPtr<IDBDatabaseError>) = 0;
     virtual void onSuccess() = 0; // For "null".
-    virtual void onSuccess(PassRefPtr<IDBDatabase>) = 0;
+    virtual void onSuccess(PassRefPtr<IDBDatabaseBackendInterface>) = 0;
     virtual void onSuccess(PassRefPtr<IDBIndexBackendInterface>) = 0;
     virtual void onSuccess(PassRefPtr<IDBKey>) = 0;
     virtual void onSuccess(PassRefPtr<IDBObjectStore>) = 0;

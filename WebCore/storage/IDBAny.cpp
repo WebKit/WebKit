@@ -28,7 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "IDBDatabaseRequest.h"
+#include "IDBDatabase.h"
 #include "IDBFactory.h"
 #include "IDBIndex.h"
 #include "IDBObjectStoreRequest.h"
@@ -50,10 +50,10 @@ IDBAny::~IDBAny()
 {
 }
 
-PassRefPtr<IDBDatabaseRequest> IDBAny::idbDatabaseRequest()
+PassRefPtr<IDBDatabase> IDBAny::idbDatabase()
 {
-    ASSERT(m_type == IDBDatabaseRequestType);
-    return m_idbDatabaseRequest;
+    ASSERT(m_type == IDBDatabaseType);
+    return m_idbDatabase;
 }
 
 PassRefPtr<IDBIndex> IDBAny::idbIndex()
@@ -92,17 +92,17 @@ void IDBAny::set()
     m_type = NullType;
 }
 
-void IDBAny::set(PassRefPtr<IDBDatabaseRequest> value)
+void IDBAny::set(PassRefPtr<IDBDatabase> value)
 {
     ASSERT(m_type == UndefinedType);
-    m_type = IDBDatabaseRequestType;
-    m_idbDatabaseRequest = value;
+    m_type = IDBDatabaseType;
+    m_idbDatabase = value;
 }
 
 void IDBAny::set(PassRefPtr<IDBIndex> value)
 {
     ASSERT(m_type == UndefinedType);
-    m_type = IDBDatabaseRequestType;
+    m_type = IDBDatabaseType;
     m_idbIndex = value;
 }
 

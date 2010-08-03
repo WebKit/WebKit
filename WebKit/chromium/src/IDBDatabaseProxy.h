@@ -26,7 +26,7 @@
 #ifndef IDBDatabaseProxy_h
 #define IDBDatabaseProxy_h
 
-#include "IDBDatabase.h"
+#include "IDBDatabaseBackendInterface.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
@@ -37,9 +37,9 @@ namespace WebKit { class WebIDBDatabase; }
 
 namespace WebCore {
 
-class IDBDatabaseProxy : public IDBDatabase {
+class IDBDatabaseProxy : public IDBDatabaseBackendInterface {
 public:
-    static PassRefPtr<IDBDatabase> create(PassOwnPtr<WebKit::WebIDBDatabase>);
+    static PassRefPtr<IDBDatabaseBackendInterface> create(PassOwnPtr<WebKit::WebIDBDatabase>);
     virtual ~IDBDatabaseProxy();
 
     virtual String name() const;

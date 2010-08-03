@@ -228,7 +228,7 @@ DOM_CLASSES = \
     IDBAny \
     IDBDatabaseError \
     IDBDatabaseException \
-    IDBDatabaseRequest \
+    IDBDatabase \
     IDBErrorEvent \
     IDBEvent \
     IDBFactory \

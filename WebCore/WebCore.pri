@@ -485,7 +485,7 @@ IDL_BINDINGS += \
     storage/IDBAny.idl \
     storage/IDBDatabaseError.idl \
     storage/IDBDatabaseException.idl \
-    storage/IDBDatabaseRequest.idl \
+    storage/IDBDatabase.idl \
     storage/IDBErrorEvent.idl \
     storage/IDBEvent.idl \
     storage/IDBIndex.idl \

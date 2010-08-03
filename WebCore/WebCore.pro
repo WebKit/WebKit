@@ -2426,10 +2426,10 @@ contains(DEFINES, ENABLE_INDEXED_DATABASE=1) {
         storage/IDBAny.h \
         storage/IDBCallbacks.h \
         storage/IDBDatabase.h \
-        storage/IDBDatabaseImpl.h \
+        storage/IDBDatabaseBackendImpl.h \
+        storage/IDBDatabaseBackendInterface.h \
         storage/IDBDatabaseError.h \
         storage/IDBDatabaseException.h \
-        storage/IDBDatabaseRequest.h \
         storage/IDBErrorEvent.h \
         storage/IDBEvent.h \
         storage/IDBFactory.h \
@@ -2451,8 +2451,8 @@ contains(DEFINES, ENABLE_INDEXED_DATABASE=1) {
         bindings/js/JSIDBAnyCustom.cpp \
         bindings/js/JSIDBKeyCustom.cpp \
         storage/IDBAny.cpp \
-        storage/IDBDatabaseImpl.cpp \
-        storage/IDBDatabaseRequest.cpp \
+        storage/IDBDatabase.cpp \
+        storage/IDBDatabaseBackendImpl.cpp \
         storage/IDBErrorEvent.cpp \
         storage/IDBEvent.cpp \
         storage/IDBFactory.cpp \

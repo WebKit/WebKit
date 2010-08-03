@@ -363,7 +363,7 @@ GEN := \
     $(intermediates)/storage/JSIDBAny.h \
     $(intermediates)/storage/JSIDBDatabaseError.h \
     $(intermediates)/storage/JSIDBDatabaseException.h \
-    $(intermediates)/storage/JSIDBDatabaseRequest.h \
+    $(intermediates)/storage/JSIDBDatabase.h \
     $(intermediates)/storage/JSIDBErrorEvent.h \
     $(intermediates)/storage/JSIDBEvent.h \
     $(intermediates)/storage/JSIDBFactory.h \

@@ -1,3 +1,75 @@
+2010-07-30  Andrei Popescu  <andreip@dhcp-172-16-14-12.lon.corp.google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        Rename IDBDatabaseRequest to IDBDatabase
+        https://bugs.webkit.org/show_bug.cgi?id=43250
+
+        No new tests, just refactoring.
+
+        * Android.derived.jscbindings.mk:
+        * Android.derived.v8bindings.mk:
+        * Android.mk:
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.vcproj/WebCore.vcproj~: Added.
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCore.xcodeproj/project.pbxproj~: Added.
+        * bindings/js/JSIDBAnyCustom.cpp:
+        (WebCore::toJS):
+        * bindings/v8/custom/V8IDBAnyCustom.cpp:
+        (WebCore::toV8):
+        * storage/IDBAny.cpp:
+        (WebCore::IDBAny::idbDatabase):
+        (WebCore::IDBAny::set):
+        * storage/IDBAny.h:
+        (WebCore::IDBAny::):
+        * storage/IDBCallbacks.h:
+        * storage/IDBDatabase.cpp: Added.
+        (WebCore::IDBDatabase::IDBDatabase):
+        (WebCore::IDBDatabase::~IDBDatabase):
+        (WebCore::IDBDatabase::createObjectStore):
+        (WebCore::IDBDatabase::objectStore):
+        (WebCore::IDBDatabase::removeObjectStore):
+        * storage/IDBDatabase.h:
+        (WebCore::IDBDatabase::create):
+        (WebCore::IDBDatabase::name):
+        (WebCore::IDBDatabase::description):
+        (WebCore::IDBDatabase::version):
+        (WebCore::IDBDatabase::objectStores):
+        * storage/IDBDatabase.idl: Added.
+        * storage/IDBDatabaseBackendImpl.cpp: Added.
+        (WebCore::IDBDatabaseBackendImpl::IDBDatabaseBackendImpl):
+        (WebCore::IDBDatabaseBackendImpl::~IDBDatabaseBackendImpl):
+        (WebCore::IDBDatabaseBackendImpl::objectStores):
+        (WebCore::IDBDatabaseBackendImpl::createObjectStore):
+        (WebCore::IDBDatabaseBackendImpl::objectStore):
+        (WebCore::IDBDatabaseBackendImpl::removeObjectStore):
+        * storage/IDBDatabaseBackendImpl.h: Added.
+        (WebCore::IDBDatabaseBackendImpl::create):
+        (WebCore::IDBDatabaseBackendImpl::name):
+        (WebCore::IDBDatabaseBackendImpl::description):
+        (WebCore::IDBDatabaseBackendImpl::version):
+        * storage/IDBDatabaseBackendInterface.h: Added.
+        (WebCore::IDBDatabaseBackendInterface::~IDBDatabaseBackendInterface):
+        * storage/IDBDatabaseImpl.cpp: Removed.
+        * storage/IDBDatabaseImpl.h: Removed.
+        * storage/IDBDatabaseRequest.cpp: Removed.
+        * storage/IDBDatabaseRequest.h: Removed.
+        * storage/IDBDatabaseRequest.idl: Removed.
+        * storage/IDBFactoryBackendImpl.cpp:
+        (WebCore::IDBFactoryBackendImpl::open):
+        * storage/IDBFactoryBackendImpl.h:
+        * storage/IDBRequest.cpp:
+        (WebCore::IDBRequest::onSuccess):
+        * storage/IDBRequest.h:
+
 2010-08-03  Satish Sampath  <satish@chromium.org>
 
         Reviewed by Kent Tamura.

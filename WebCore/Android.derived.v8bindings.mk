@@ -344,7 +344,7 @@ GEN := \
     $(intermediates)/bindings/V8IDBAny.h \
     $(intermediates)/bindings/V8IDBDatabaseError.h \
     $(intermediates)/bindings/V8IDBDatabaseException.h \
-    $(intermediates)/bindings/V8IDBDatabaseRequest.h \
+    $(intermediates)/bindings/V8IDBDatabase.h \
     $(intermediates)/bindings/V8IDBErrorEvent.h \
     $(intermediates)/bindings/V8IDBEvent.h \
     $(intermediates)/bindings/V8IDBFactory.h \

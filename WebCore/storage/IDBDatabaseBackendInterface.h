@@ -23,50 +23,44 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBDatabaseRequest_h
-#define IDBDatabaseRequest_h
+#ifndef IDBDatabaseBackendInterface_h
+#define IDBDatabaseBackendInterface_h
 
-#include "DOMStringList.h"
-#include "IDBDatabase.h"
+#include "PlatformString.h"
 #include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
+#include <wtf/Threading.h>
 
 #if ENABLE(INDEXED_DATABASE)
 
 namespace WebCore {
 
-class IDBAny;
-class IDBObjectStoreRequest;
-class IDBRequest;
-class ScriptExecutionContext;
+class DOMStringList;
+class Frame;
+class IDBCallbacks;
+class IDBObjectStore;
 
-class IDBDatabaseRequest : public RefCounted<IDBDatabaseRequest> {
+// This class is shared by IDBDatabase (async) and IDBDatabaseSync (sync).
+// This is implemented by IDBDatabaseBackendImpl and optionally others (in order to proxy
+// calls across process barriers). All calls to these classes should be non-blocking and
+// trigger work on a background thread if necessary.
+class IDBDatabaseBackendInterface : public ThreadSafeShared<IDBDatabaseBackendInterface> {
 public:
-    static PassRefPtr<IDBDatabaseRequest> create(PassRefPtr<IDBDatabase> database)
-    {
-        return adoptRef(new IDBDatabaseRequest(database));
-    }
-    ~IDBDatabaseRequest();
+    virtual ~IDBDatabaseBackendInterface() { }
 
-    // Implement the IDL
-    String name() const { return m_database->name(); }
-    String description() const { return m_database->description(); }
-    String version() const { return m_database->version(); }
-    PassRefPtr<DOMStringList> objectStores() const { return m_database->objectStores(); }
+    virtual String name() const = 0;
+    virtual String description() const = 0;
+    virtual String version() const = 0;
+    virtual PassRefPtr<DOMStringList> objectStores() const = 0;
 
-    PassRefPtr<IDBRequest> createObjectStore(ScriptExecutionContext*, const String& name, const String& keyPath = String(), bool autoIncrement = false);
-    PassRefPtr<IDBObjectStoreRequest> objectStore(const String& name, unsigned short mode = 0); // FIXME: Use constant rather than 0.
-    PassRefPtr<IDBRequest> removeObjectStore(ScriptExecutionContext*, const String& name);
+    // FIXME: Add transaction and setVersion.
 
-private:
-    IDBDatabaseRequest(PassRefPtr<IDBDatabase>);
-
-    RefPtr<IDBDatabase> m_database;
+    virtual void createObjectStore(const String& name, const String& keyPath, bool autoIncrement, PassRefPtr<IDBCallbacks>) = 0;
+    virtual PassRefPtr<IDBObjectStore> objectStore(const String& name, unsigned short mode) = 0;
+    virtual void removeObjectStore(const String& name, PassRefPtr<IDBCallbacks>) = 0;
 };
 
 } // namespace WebCore
 
 #endif
 
-#endif // IDBDatabaseRequest_h
+#endif // IDBDatabaseBackendInterface_h

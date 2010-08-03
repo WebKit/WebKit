@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "IDBDatabaseImpl.h"
+#include "IDBDatabaseBackendImpl.h"
 
 #include "DOMStringList.h"
 #include "IDBDatabaseException.h"
@@ -34,18 +34,18 @@
 
 namespace WebCore {
 
-IDBDatabaseImpl::IDBDatabaseImpl(const String& name, const String& description, const String& version)
+IDBDatabaseBackendImpl::IDBDatabaseBackendImpl(const String& name, const String& description, const String& version)
     : m_name(name)
     , m_description(description)
     , m_version(version)
 {
 }
 
-IDBDatabaseImpl::~IDBDatabaseImpl()
+IDBDatabaseBackendImpl::~IDBDatabaseBackendImpl()
 {
 }
 
-PassRefPtr<DOMStringList> IDBDatabaseImpl::objectStores() const
+PassRefPtr<DOMStringList> IDBDatabaseBackendImpl::objectStores() const
 {
     RefPtr<DOMStringList> objectStoreNames = DOMStringList::create();
     for (ObjectStoreMap::const_iterator it = m_objectStores.begin(); it != m_objectStores.end(); ++it)
@@ -53,7 +53,7 @@ PassRefPtr<DOMStringList> IDBDatabaseImpl::objectStores() const
     return objectStoreNames.release();
 }
 
-void IDBDatabaseImpl::createObjectStore(const String& name, const String& keyPath, bool autoIncrement, PassRefPtr<IDBCallbacks> callbacks)
+void IDBDatabaseBackendImpl::createObjectStore(const String& name, const String& keyPath, bool autoIncrement, PassRefPtr<IDBCallbacks> callbacks)
 {
     if (m_objectStores.contains(name)) {
         callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::CONSTRAINT_ERR, "An objectStore with that name already exists."));
@@ -65,14 +65,14 @@ void IDBDatabaseImpl::createObjectStore(const String& name, const String& keyPat
     callbacks->onSuccess(objectStore.release());
 }
 
-PassRefPtr<IDBObjectStore> IDBDatabaseImpl::objectStore(const String& name, unsigned short mode)
+PassRefPtr<IDBObjectStore> IDBDatabaseBackendImpl::objectStore(const String& name, unsigned short mode)
 {
     // FIXME: If no transaction is running, this should implicitly start one.
     ASSERT_UNUSED(mode, !mode); // FIXME: Handle non-standard modes.
     return m_objectStores.get(name);
 }
 
-void IDBDatabaseImpl::removeObjectStore(const String& name, PassRefPtr<IDBCallbacks> callbacks)
+void IDBDatabaseBackendImpl::removeObjectStore(const String& name, PassRefPtr<IDBCallbacks> callbacks)
 {
     if (!m_objectStores.contains(name)) {
         callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::NOT_FOUND_ERR, "No objectStore with that name exists."));

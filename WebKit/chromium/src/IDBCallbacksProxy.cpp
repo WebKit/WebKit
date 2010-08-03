@@ -69,9 +69,9 @@ void IDBCallbacksProxy::onSuccess()
     m_callbacks.clear();
 }
 
-void IDBCallbacksProxy::onSuccess(PassRefPtr<IDBDatabase> idbDatabase)
+void IDBCallbacksProxy::onSuccess(PassRefPtr<IDBDatabaseBackendInterface> idbDatabaseBackend)
 {
-    m_callbacks->onSuccess(new WebKit::WebIDBDatabaseImpl(idbDatabase));
+    m_callbacks->onSuccess(new WebKit::WebIDBDatabaseImpl(idbDatabaseBackend));
     m_callbacks.clear();
 }
 
