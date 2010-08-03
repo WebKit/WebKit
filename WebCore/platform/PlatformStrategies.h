@@ -32,6 +32,7 @@ namespace WebCore {
 
 class PluginStrategy;
 class LocalizationStrategy;
+class VisitedLinkStrategy;
 
 class PlatformStrategies {
 public:
@@ -49,10 +50,18 @@ public:
         return m_localizationStrategy;
     }
 
+    VisitedLinkStrategy* visitedLinkStrategy()
+    {
+        if (!m_visitedLinkStrategy)
+            m_visitedLinkStrategy = createVisitedLinkStrategy();
+        return m_visitedLinkStrategy;
+    }
+
 protected:
     PlatformStrategies()
-        : m_pluginStrategy(0),
-          m_localizationStrategy(0)
+        : m_pluginStrategy(0)
+        , m_localizationStrategy(0)
+        , m_visitedLinkStrategy(0)
     {
     }
 
@@ -63,9 +72,11 @@ protected:
 private:
     virtual PluginStrategy* createPluginStrategy() = 0;
     virtual LocalizationStrategy* createLocalizationStrategy() = 0;
+    virtual VisitedLinkStrategy* createVisitedLinkStrategy() = 0;
 
     PluginStrategy* m_pluginStrategy;
     LocalizationStrategy* m_localizationStrategy;
+    VisitedLinkStrategy* m_visitedLinkStrategy;
 };
 
 PlatformStrategies* platformStrategies();

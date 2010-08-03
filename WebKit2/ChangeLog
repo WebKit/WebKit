@@ -1,3 +1,16 @@
+2010-08-02  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Add VisitedLinkStrategy for each platform to implement
+        https://bugs.webkit.org/show_bug.cgi?id=43393
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::createVisitedLinkStrategy):
+        (WebKit::WebPlatformStrategies::isLinkVisited): Call back into PageGroup's visited links, for now.
+        (WebKit::WebPlatformStrategies::addVisitedLink): Ditto.
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+
 2010-07-27  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Darin Fisher.

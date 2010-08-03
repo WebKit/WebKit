@@ -1,3 +1,29 @@
+2010-08-02  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Add VisitedLinkStrategy for each platform to implement
+        https://bugs.webkit.org/show_bug.cgi?id=43393
+
+        No new tests. (No change in behavior)
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::SelectorChecker::determineLinkStateSlowCase): Use VisitedLinkStrategy if it's enabled.
+        
+        * loader/HistoryController.cpp:
+        (WebCore::addVisitedLink): Choose VisitedLinkStrategy if it's enabled, else fallback to PageGroup.
+        (WebCore::HistoryController::updateForStandardLoad): Use addVisitedLink helper.
+        (WebCore::HistoryController::updateForRedirectWithLockedBackForwardList): Ditto.
+        (WebCore::HistoryController::updateForClientRedirect): Ditto.
+        (WebCore::HistoryController::updateForSameDocumentNavigation): Ditto.
+        
+        * platform/PlatformStrategies.h:
+        (WebCore::PlatformStrategies::visitedLinkStrategy):
+        (WebCore::PlatformStrategies::PlatformStrategies):
+
 2010-08-02  Chris Fleizach  <cfleizach@apple.com>
 
         Unreviewed, rolling out r64471.

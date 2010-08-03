@@ -48,7 +48,21 @@
 #include "Settings.h"
 #include <wtf/text/CString.h>
 
+#if USE(PLATFORM_STRATEGIES)
+#include "PlatformStrategies.h"
+#include "VisitedLinkStrategy.h"
+#endif
+
 namespace WebCore {
+
+static inline void addVisitedLink(Page* page, const KURL& url)
+{
+#if USE(PLATFORM_STRATEGIES)
+    platformStrategies()->visitedLinkStrategy()->addVisitedLink(page, visitedLinkHash(url.string().characters(), url.string().length()));
+#else
+    page->group().addVisitedLink(url);
+#endif
+}
 
 HistoryController::HistoryController(Frame* frame)
     : m_frame(frame)
@@ -290,7 +304,7 @@ void HistoryController::updateForStandardLoad(HistoryUpdateType updateType)
 
     if (!historyURL.isEmpty() && !needPrivacy) {
         if (Page* page = m_frame->page())
-            page->group().addVisitedLink(historyURL);
+            addVisitedLink(page, historyURL);
 
         if (!frameLoader->documentLoader()->didCreateGlobalHistoryEntry() && frameLoader->documentLoader()->unreachableURL().isEmpty() && !frameLoader->url().isEmpty())
             frameLoader->client()->updateGlobalHistoryRedirectLinks();
@@ -334,7 +348,7 @@ void HistoryController::updateForRedirectWithLockedBackForwardList()
 
     if (!historyURL.isEmpty() && !needPrivacy) {
         if (Page* page = m_frame->page())
-            page->group().addVisitedLink(historyURL);
+            addVisitedLink(page, historyURL);
 
         if (!m_frame->loader()->documentLoader()->didCreateGlobalHistoryEntry() && m_frame->loader()->documentLoader()->unreachableURL().isEmpty() && !m_frame->loader()->url().isEmpty())
             m_frame->loader()->client()->updateGlobalHistoryRedirectLinks();
@@ -361,7 +375,7 @@ void HistoryController::updateForClientRedirect()
 
     if (!historyURL.isEmpty() && !needPrivacy) {
         if (Page* page = m_frame->page())
-            page->group().addVisitedLink(historyURL);
+            addVisitedLink(page, historyURL);
     }
 }
 
@@ -399,7 +413,7 @@ void HistoryController::updateForSameDocumentNavigation()
     if (!page)
         return;
 
-    page->group().addVisitedLink(m_frame->loader()->url());
+    addVisitedLink(page, m_frame->loader()->url());
 }
 
 void HistoryController::updateForFrameLoadCompleted()

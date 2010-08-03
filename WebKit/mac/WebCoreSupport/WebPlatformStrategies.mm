@@ -30,6 +30,8 @@
 #import "WebPluginPackage.h"
 #import <WebCore/BlockExceptions.h>
 #import <WebCore/IntSize.h>
+#import <WebCore/Page.h>
+#import <WebCore/PageGroup.h>
 #import <wtf/StdLibExtras.h>
 
 #ifdef BUILDING_ON_TIGER
@@ -56,6 +58,11 @@ PluginStrategy* WebPlatformStrategies::createPluginStrategy()
 }
 
 LocalizationStrategy* WebPlatformStrategies::createLocalizationStrategy()
+{
+    return this;
+}
+
+VisitedLinkStrategy* WebPlatformStrategies::createVisitedLinkStrategy()
 {
     return this;
 }
@@ -762,3 +769,13 @@ String WebPlatformStrategies::validationMessageStepMismatchText()
     return UI_STRING("step mismatch", "Validation message for input form controls with value not respecting the step attribute");
 }
 
+// VisitedLinkStrategy
+bool WebPlatformStrategies::isLinkVisited(Page* page, LinkHash hash)
+{
+    return page->group().isLinkVisited(hash);
+}
+
+void WebPlatformStrategies::addVisitedLink(Page* page, LinkHash hash)
+{
+    return page->group().addVisitedLinkHash(hash);
+}

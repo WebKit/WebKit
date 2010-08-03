@@ -97,6 +97,11 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 
+#if USE(PLATFORM_STRATEGIES)
+#include "PlatformStrategies.h"
+#include "VisitedLinkStrategy.h"
+#endif
+
 #if ENABLE(DASHBOARD_SUPPORT)
 #include "DashboardRegion.h"
 #endif
@@ -929,7 +934,12 @@ EInsideLink CSSStyleSelector::SelectorChecker::determineLinkStateSlowCase(Elemen
         return InsideUnvisitedLink;
 
     m_linksCheckedForVisitedState.add(hash);
+
+#if USE(PLATFORM_STRATEGIES)
+    return platformStrategies()->visitedLinkStrategy()->isLinkVisited(page, hash) ? InsideVisitedLink : InsideUnvisitedLink;
+#else
     return page->group().isLinkVisited(hash) ? InsideVisitedLink : InsideUnvisitedLink;
+#endif
 }
 
 bool CSSStyleSelector::SelectorChecker::checkSelector(CSSSelector* sel, Element* element) const

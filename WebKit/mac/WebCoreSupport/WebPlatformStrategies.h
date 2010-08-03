@@ -29,8 +29,9 @@
 #include <WebCore/PlatformStrategies.h>
 #include <WebCore/PluginStrategy.h>
 #include <WebCore/LocalizationStrategy.h>
+#include <WebCore/VisitedLinkStrategy.h>
 
-class WebPlatformStrategies : public WebCore::PlatformStrategies, private WebCore::PluginStrategy, private WebCore::LocalizationStrategy {
+class WebPlatformStrategies : public WebCore::PlatformStrategies, private WebCore::PluginStrategy, private WebCore::LocalizationStrategy, private WebCore::VisitedLinkStrategy {
 public:
     static void initialize();
     
@@ -40,6 +41,7 @@ private:
     // WebCore::PlatformStrategies
     virtual WebCore::PluginStrategy* createPluginStrategy();
     virtual WebCore::LocalizationStrategy* createLocalizationStrategy();
+    virtual WebCore::VisitedLinkStrategy* createVisitedLinkStrategy();
 
     // WebCore::PluginStrategy
     virtual void refreshPlugins();
@@ -148,6 +150,10 @@ private:
     virtual WebCore::String validationMessageRangeUnderflowText();
     virtual WebCore::String validationMessageRangeOverflowText();
     virtual WebCore::String validationMessageStepMismatchText();
+
+    // WebCore::VisitedLinkStrategy
+    virtual bool isLinkVisited(WebCore::Page*, WebCore::LinkHash);
+    virtual void addVisitedLink(WebCore::Page*, WebCore::LinkHash);
 };
 
 #endif // WebPlatformStrategies_h
