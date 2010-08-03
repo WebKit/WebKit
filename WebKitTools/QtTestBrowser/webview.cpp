@@ -81,23 +81,54 @@ WebViewGraphicsBased::WebViewGraphicsBased(QWidget* parent)
 
 void WebViewGraphicsBased::setResizesToContents(bool b)
 {
+    if (b == m_resizesToContents)
+        return;
+
     m_resizesToContents = b;
     m_item->setResizesToContents(m_resizesToContents);
+
+    // When setting resizesToContents ON, our web view widget will always size as big as the
+    // web content being displayed, and so will the QWebPage's viewport. It implies that internally
+    // WebCore will work as if there was no content rendered offscreen, and then no scrollbars need
+    // drawing. In order to keep scrolling working, we:
+    //
+    // 1) Set QGraphicsView's scrollbars policy back to 'auto'.
+    // 2) Set scene's boundaries rect to an invalid size, which automatically makes it to be as big
+    //    as it needs to enclose all items onto it. We do that because QGraphicsView also calculates
+    //    the size of its scrollable area according to the amount of content in scene that is rendered
+    //    offscreen.
+    // 3) Set QWebPage's preferredContentsSize according to the size of QGraphicsView's viewport,
+    //    so WebCore properly lays pages out.
+    //
+    // On the other hand, when toggling resizesToContents OFF, we set back the default values, as
+    // opposite as described above.
     if (m_resizesToContents) {
         setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
         setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+        scene()->setSceneRect(QRectF());
+        m_item->page()->setPreferredContentsSize(size());
     } else {
         setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        m_item->page()->setPreferredContentsSize(QSize());
+        QRect viewportRect(QPoint(0, 0), size());
+        m_item->setGeometry(viewportRect);
+        scene()->setSceneRect(viewportRect);
     }
 }
 
 void WebViewGraphicsBased::resizeEvent(QResizeEvent* event)
 {
     QGraphicsView::resizeEvent(event);
-    if (m_resizesToContents)
+
+    QSize size(event->size());
+
+    if (m_resizesToContents) {
+        m_item->page()->setPreferredContentsSize(size);
         return;
-    QRectF rect(QPoint(0, 0), event->size());
+    }
+
+    QRectF rect(QPoint(0, 0), size);
     m_item->setGeometry(rect);
     scene()->setSceneRect(rect);
 }

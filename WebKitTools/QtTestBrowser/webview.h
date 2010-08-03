@@ -84,6 +84,9 @@ public:
     void setResizesToContents(bool b);
     bool resizesToContents() const { return m_resizesToContents; }
 
+    void setCustomLayoutSize(const QSize& size) { return m_item->page()->setPreferredContentsSize(size); }
+    QSize customLayoutSize() const { return m_item->page()->preferredContentsSize(); }
+
     void setYRotation(qreal angle)
     {
 #if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)

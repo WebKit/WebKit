@@ -1,3 +1,23 @@
+2010-08-02  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Kenneth Christiansen.
+
+        [Qt] QtTestBrowser not setting preferredContentsSize for resizesToContents
+        https://bugs.webkit.org/show_bug.cgi?id=43168
+
+        QGraphicsWebView resizesToContents property has to work together with QWebPage's
+        setPreferredContentsSize as stated by the docs. Patch addresses that for QtTestBrowser.
+
+        * QtTestBrowser/launcherwindow.cpp:
+        (LauncherWindow::applyPrefs):
+        * QtTestBrowser/webview.cpp:
+        (WebViewGraphicsBased::setResizesToContents): Properly handle scene, webview and viewport sizes
+                                                      needed when toggle resizesToContents on/off.
+        (WebViewGraphicsBased::resizeEvent):
+        * QtTestBrowser/webview.h:
+        (WebViewGraphicsBased::setCustomLayoutSize): Setter helper.
+        (WebViewGraphicsBased::customLayoutSize): Getter helper.
+
 2010-08-03  Jochen Eisinger  <jochen@chromium.org>
 
         Unreviewed. Adding myself as committer.

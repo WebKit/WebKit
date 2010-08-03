@@ -402,9 +402,10 @@ void LauncherWindow::applyPrefs(LauncherWindow* source)
     if (otherView) {
         view->setItemCacheMode(otherView->itemCacheMode());
         view->setResizesToContents(otherView->resizesToContents());
+        view->setCustomLayoutSize(otherView->customLayoutSize());
     } else {
         view->setItemCacheMode(gCacheWebView ? QGraphicsItem::DeviceCoordinateCache : QGraphicsItem::NoCache);
-        view->setResizesToContents(gResizesToContents);
+        toggleResizesToContents(gResizesToContents);
     }
 }
 
