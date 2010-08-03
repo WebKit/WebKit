@@ -11,10 +11,11 @@
 </div>
 <script>
 Markup.description('This tests switching an unordered list with a nested list to an ordered list.');
-Markup.setNodeToDump('test');
 
 var test = document.getElementById('test');
 window.getSelection().selectAllChildren(test);
 document.execCommand('InsertOrderedList', false, null);
+
+Markup.dump('test');
 </script>
 </body>

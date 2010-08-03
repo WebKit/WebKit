@@ -14,10 +14,11 @@
 </div>
 <script>
 Markup.description('This tests switching multiple lists with an orphaned list child to an ordered list.');
-Markup.setNodeToDump('test');
 
 var test = document.getElementById('test');
 window.getSelection().selectAllChildren(test);
 document.execCommand('InsertOrderedList', false, null);
+
+Markup.dump('test');
 </script>
 </body>

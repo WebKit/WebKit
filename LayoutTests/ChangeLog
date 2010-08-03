@@ -1,3 +1,26 @@
+2010-07-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Ojan Vafai.
+
+        Remove setNodeToDump from dump-as-markup.js
+        https://bugs.webkit.org/show_bug.cgi?id=43286
+
+        Removed Removed Markup.setNodeToDump, replaced all calls to this method by calls to dump.
+        Because we want need to avoid printing "Dump of markup 1:" when dump is called only once,
+        Markup.dump no longer adds the text on the first call. Instead, it'll insert the text
+        on the second call when the first call didn't have the description.
+
+        * editing/execCommand/create-list-from-range-selection.html: Replaced setNodeToDump by dump
+        * editing/execCommand/hilitecolor.html: Replaced setNodeToDump by dump
+        * editing/execCommand/insert-list-empty-div.html: Replaced setNodeToDump by dump
+        * editing/execCommand/switch-list-type-with-inner-list.html: Replaced setNodeToDump by dump
+        * editing/execCommand/switch-list-type-with-orphaned-li.html: Replaced setNodeToDump by dump
+        * editing/selection/home-inside-noneditable-table.html: Replaced setNodeToDump by dump
+        * editing/style/remove-underline-from-stylesheet.html: Replaced setNodeToDump by dump
+        * resources/dump-as-markup.js: Removed Markup.setNodeToDump.
+        (Markup.dump):
+        (Markup.notifyDone):
+
 2010-08-02  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

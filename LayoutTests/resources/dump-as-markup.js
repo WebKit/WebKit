@@ -35,29 +35,30 @@ Markup.dump = function(opt_node, opt_description)
     if (typeof opt_node == 'string')
         opt_node = document.getElementById(opt_node);
 
-    var node = opt_node || Markup._node || document
+    var node = opt_node || document
     var markup = "";
-
-    if (Markup._test_description && !Markup._dumpCalls)
-        markup += Markup._test_description + '\n';
 
     Markup._dumpCalls++;
 
-    // If dump is not called by notifyDone, then print out optional description
-    // because this test is manually calling dump.
-    if (!Markup._done || opt_description) {
+    if (Markup._dumpCalls > 1 || opt_description) {
         if (!opt_description)
             opt_description = "Dump of markup " + Markup._dumpCalls
         if (Markup._dumpCalls > 1)
             markup += '\n';
         markup += '\n' + opt_description + ':\n';
-    }
+    } else
+        Markup._firstCallDidNotHaveDescription = true;
 
     markup += Markup.get(node);
 
     if (!Markup._container) {
         Markup._container = document.createElement('pre');
         Markup._container.style.width = '100%';
+    }
+
+    if (Markup._dumpCalls == 2 && Markup._firstCallDidNotHaveDescription) {
+        var wrapper = Markup._container.getElementsByClassName('dump-as-markup-span')[0];
+        wrapper.insertBefore(document.createTextNode('\nDump of markup 1:\n'), wrapper.firstChild);
     }
 
     // FIXME: Have this respect layoutTestController.dumpChildFramesAsText?
@@ -72,7 +73,13 @@ Markup.dump = function(opt_node, opt_description)
         }
     }
 
-    Markup._container.appendChild(document.createTextNode(markup));
+    if (Markup._test_description && Markup._dumpCalls == 1)
+        Markup._container.appendChild(document.createTextNode(Markup._test_description + '\n'))
+
+    var wrapper = document.createElement('span');
+    wrapper.className = 'dump-as-markup-span';
+    wrapper.appendChild(document.createTextNode(markup));
+    Markup._container.appendChild(wrapper);
 }
 
 Markup.noAutoDump = function()
@@ -89,8 +96,8 @@ Markup.waitUntilDone = function()
 Markup.notifyDone = function()
 {
     // Need to waitUntilDone or some tests won't finish appending the markup before the text is dumped.
-    layoutTestController.waitUntilDone();
-    Markup._done = true;
+    if (window.layoutTestController)
+        layoutTestController.waitUntilDone();
 
     // If dump has already been called, don't bother to dump again
     if (!Markup._dumpCalls)
@@ -106,13 +113,6 @@ Markup.notifyDone = function()
 
     if (window.layoutTestController)
         layoutTestController.notifyDone();
-}
-
-Markup.setNodeToDump = function(node)
-{
-    if (typeof node == "string")
-        node = document.getElementById(node);
-    Markup._node = node
 }
 
 Markup.get = function(node)
