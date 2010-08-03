@@ -1,5 +1,18 @@
 2010-08-03  Sam Weinig  <sam@webkit.org>
 
+        Roll r64566 back in this time with all the overloads in place..
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::shouldInsertNode):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        * WebKitTestRunner/StringFunctions.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::resetPreferencesToConsistentValues):
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+
+2010-08-03  Sam Weinig  <sam@webkit.org>
+
         Rollout r64566. It broke all the WebKit2 tests.
 
         * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
