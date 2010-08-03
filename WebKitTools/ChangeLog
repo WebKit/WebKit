@@ -1,5 +1,21 @@
 2010-08-03  Sam Weinig  <sam@webkit.org>
 
+        Rollout r64566. It broke all the WebKit2 tests.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::operator<<):
+        (WTR::InjectedBundlePage::shouldInsertNode):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        * WebKitTestRunner/StringFunctions.h: Removed.
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::createWKURL):
+        (WTR::WKStringToUTF8):
+        (WTR::TestInvocation::resetPreferencesToConsistentValues):
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+
+2010-08-03  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Anders Carlsson.
 
         WTR: Move all the utility functions for working with strings to a shared header.

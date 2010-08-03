@@ -26,7 +26,6 @@
 #include "InjectedBundlePage.h"
 
 #include "InjectedBundle.h"
-#include "StringFunctions.h"
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <WebKit2/WKArray.h>
 #include <WebKit2/WKBundleFrame.h>
@@ -35,10 +34,44 @@
 #include <WebKit2/WKBundlePagePrivate.h>
 #include <WebKit2/WKRetainPtr.h>
 #include <WebKit2/WKBundleRange.h>
+#include <WebKit2/WKString.h>
+#include <WebKit2/WKStringCF.h>
+#include <wtf/PassOwnPtr.h>
+#include <wtf/RetainPtr.h>
+#include <wtf/Vector.h>
 
 using namespace std;
 
 namespace WTR {
+
+static ostream& operator<<(ostream& out, CFStringRef stringRef)
+{
+    if (!stringRef)
+        return out;
+    CFIndex bufferLength = CFStringGetMaximumSizeForEncoding(CFStringGetLength(stringRef), kCFStringEncodingUTF8) + 1;
+    Vector<char> buffer(bufferLength);
+    if (!CFStringGetCString(stringRef, buffer.data(), bufferLength, kCFStringEncodingUTF8))
+        return out;
+    return out << buffer.data();
+}
+
+static ostream& operator<<(ostream& out, const RetainPtr<CFStringRef>& stringRef)
+{
+    return out << stringRef.get();
+}
+
+static ostream& operator<<(ostream& out, WKStringRef stringRef)
+{
+    if (!stringRef)
+        return out;
+    RetainPtr<CFStringRef> cfString(AdoptCF, WKStringCopyCFString(0, stringRef));
+    return out << cfString;
+}
+
+static ostream& operator<<(ostream& out, const WKRetainPtr<WKStringRef>& stringRef)
+{
+    return out << stringRef.get();
+}
 
 static string dumpPath(WKBundleNodeRef node)
 {
@@ -459,7 +492,7 @@ bool InjectedBundlePage::shouldEndEditing(WKBundleRangeRef range)
 
 bool InjectedBundlePage::shouldInsertNode(WKBundleNodeRef node, WKBundleRangeRef rangeToReplace, WKInsertActionType action)
 {
-    static const char* insertactionstring[] = {
+    static const char *insertactionstring[] = {
         "WebViewInsertActionTyped",
         "WebViewInsertActionPasted",
         "WebViewInsertActionDropped",

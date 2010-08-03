@@ -109,7 +109,6 @@
 		BC952ED311F3C318003398B4 /* CodeGeneratorTestRunner.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = CodeGeneratorTestRunner.pm; sourceTree = "<group>"; };
 		BC952F1D11F3C652003398B4 /* JSLayoutTestController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSLayoutTestController.cpp; path = DerivedSources/WebKitTestRunner/JSLayoutTestController.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC952F1E11F3C652003398B4 /* JSLayoutTestController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSLayoutTestController.h; path = DerivedSources/WebKitTestRunner/JSLayoutTestController.h; sourceTree = BUILT_PRODUCTS_DIR; };
-		BC99A4841208901A007E9F08 /* StringFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringFunctions.h; sourceTree = "<group>"; };
 		BCC997A011D3C8F60017BCA2 /* InjectedBundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundle.cpp; sourceTree = "<group>"; };
 		BCC997A111D3C8F60017BCA2 /* InjectedBundle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundle.h; sourceTree = "<group>"; };
 		BCC997A211D3C8F60017BCA2 /* InjectedBundlePage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundlePage.cpp; sourceTree = "<group>"; };
@@ -150,8 +149,7 @@
 			isa = PBXGroup;
 			children = (
 				BC952EC511F3C10F003398B4 /* DerivedSources.make */,
-				BC99CBF11207642D00FDEE76 /* Shared */,
-				08FB7795FE84155DC02AAC07 /* TestRunner */,
+				08FB7795FE84155DC02AAC07 /* Source */,
 				BC25183511D1571D002EBC01 /* InjectedBundle */,
 				BC793401118F7C8A005EA8E2 /* Configurations */,
 				08FB779DFE84155DC02AAC07 /* External Frameworks and Libraries */,
@@ -161,7 +159,7 @@
 			name = WebKitTestRunner;
 			sourceTree = "<group>";
 		};
-		08FB7795FE84155DC02AAC07 /* TestRunner */ = {
+		08FB7795FE84155DC02AAC07 /* Source */ = {
 			isa = PBXGroup;
 			children = (
 				BC7933FE118F7C74005EA8E2 /* mac */,
@@ -172,7 +170,7 @@
 				BCD7D2F611921278006DB7EE /* TestInvocation.h */,
 				BCD7D2F711921278006DB7EE /* TestInvocation.cpp */,
 			);
-			name = TestRunner;
+			name = Source;
 			sourceTree = "<group>";
 		};
 		08FB779DFE84155DC02AAC07 /* External Frameworks and Libraries */ = {
@@ -280,14 +278,6 @@
 				BC952F1E11F3C652003398B4 /* JSLayoutTestController.h */,
 			);
 			name = "Derived Sources";
-			sourceTree = "<group>";
-		};
-		BC99CBF11207642D00FDEE76 /* Shared */ = {
-			isa = PBXGroup;
-			children = (
-				BC99A4841208901A007E9F08 /* StringFunctions.h */,
-			);
-			name = Shared;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
