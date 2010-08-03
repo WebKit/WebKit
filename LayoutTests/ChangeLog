@@ -1,5 +1,11 @@
 2010-08-03  Pavel Feldman  <pfeldman@chromium.org>
 
+        Not reviewed. Chromium test expectations update.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-08-03  Pavel Feldman  <pfeldman@chromium.org>
+
         Not reviewed. Upstreaming test_expectations.
 
         * platform/chromium/test_expectations.txt:

@@ -3164,6 +3164,6 @@ BUG50969 : fast/events/keydown-numpad-keys.html = TEXT
 // See crbug.com/50637.
 BUG50637 : fast/dom/prototype-inheritance.html = FAIL
 
-BUG51036 : fast/events/special-key-events-in-input-text.html = FAIL
+BUG51036 DEBUG : fast/events/special-key-events-in-input-text.html = FAIL
 
 BUG50825 LINUX : svg/custom/massive-coordinates.svg = FAIL
