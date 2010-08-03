@@ -1,3 +1,9 @@
+2010-08-03  Geoffrey Garen  <ggaren@apple.com>
+
+        Try to fix Windows build: update .def file.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
 2010-08-03  Nathan Lawrence  <nlawrence@apple.com>
 
         Reviewed by Oliver Hunt.
