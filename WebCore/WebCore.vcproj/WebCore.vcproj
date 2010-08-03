@@ -22138,7 +22138,6 @@
 			<File
 				RelativePath="..\accessibility\ScreenReader.cpp"
 				>
-                        </File>
 			<File
 				RelativePath="..\accessibility\ScreenReader.h"
 				>

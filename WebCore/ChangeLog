@@ -1,5 +1,16 @@
 2010-08-02  Chris Fleizach  <cfleizach@apple.com>
 
+        Unreviewed, rolling out r64472.
+        http://trac.webkit.org/changeset/64472
+        https://bugs.webkit.org/show_bug.cgi?id=43005
+
+        Rolling out https://bugs.webkit.org/show_bug.cgi?id=43005
+        until further discussion
+
+        * WebCore.vcproj/WebCore.vcproj:
+
+2010-08-02  Chris Fleizach  <cfleizach@apple.com>
+
         Unreviewed, rolling out r64476.
         http://trac.webkit.org/changeset/64476
 
