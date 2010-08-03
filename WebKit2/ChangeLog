@@ -1,3 +1,17 @@
+2010-08-03  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Frequent ASSERT_NOT_REACHED in Connection::processIncomingMessage when running regression tests
+        https://bugs.webkit.org/show_bug.cgi?id=42926
+        <rdar://problem/8237329>
+
+        Remove this assert, it's bogus. It would fire when a reply came in on the connection queue before 
+        waitForReply was called on the client thread, but that case is already covered.
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::processIncomingMessage):
+
 2010-08-03  Adam Roben  <aroben@apple.com>
 
         Compile out two Mac-only localized strings on non-Mac platforms
