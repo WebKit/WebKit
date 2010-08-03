@@ -1,3 +1,13 @@
+2010-08-03  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Antonio Gomes.
+
+        Fix warning in WebCore/rendering/RenderBoxModelObject.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=43412
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::clipBorderSidePolygon): Remove useless assignment.
+
 2010-08-03  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.
