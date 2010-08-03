@@ -1,3 +1,10 @@
+2010-08-03  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Fix Chromium interactive UI tests.
+
+        * src/js/Tests.js:
+        (.TestSuite.prototype.testResourceHeaders):
+
 2010-07-30  Andrei Popescu  <andreip@dhcp-172-16-14-12.lon.corp.google.com>
 
         Reviewed by Jeremy Orlow.
