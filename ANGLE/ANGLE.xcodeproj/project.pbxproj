@@ -40,7 +40,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		FB39D0D11200F0E300088E69 /* libangle.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libangle.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		5D7C59C51208C68B001C873E /* ANGLE.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = ANGLE.xcconfig; sourceTree = "<group>"; };
+		5D7C59C61208C68B001C873E /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
+		5D7C59C71208C68B001C873E /* DebugRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
+		FB39D0D11200F0E300088E69 /* libANGLE.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libANGLE.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		FB39D1861200F26200088E69 /* BaseTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseTypes.h; sourceTree = "<group>"; };
 		FB39D1871200F26200088E69 /* CodeGenGLSL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.cpp.cpp; path = CodeGenGLSL.cpp; sourceTree = "<group>"; };
 		FB39D1881200F26200088E69 /* CodeGenHLSL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.cpp.cpp; path = CodeGenHLSL.cpp; sourceTree = "<group>"; };
@@ -176,9 +179,9 @@
 		FB39D26F1200F35A00088E69 /* unistd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = unistd.h; sourceTree = "<group>"; };
 		FB39D2BE1200F3E600088E69 /* ResourceLimits.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = ResourceLimits.h; sourceTree = "<group>"; };
 		FB39D2BF1200F3E600088E69 /* ShaderLang.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = ShaderLang.h; sourceTree = "<group>"; };
-		FB39D7201201032000088E69 /* glslang.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glslang.cpp; path = src/intermediate/glslang.cpp; sourceTree = "<group>"; };
-		FB39D7211201032000088E69 /* glslang_tab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glslang_tab.h; path = src/intermediate/glslang_tab.h; sourceTree = "<group>"; };
-		FB39D7221201032000088E69 /* glslang_tab.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glslang_tab.cpp; path = src/intermediate/glslang_tab.cpp; sourceTree = "<group>"; };
+		FB39D7201201032000088E69 /* glslang.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glslang.cpp; path = DerivedSources/ANGLE/glslang.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
+		FB39D7211201032000088E69 /* glslang_tab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glslang_tab.h; path = DerivedSources/ANGLE/glslang_tab.h; sourceTree = BUILT_PRODUCTS_DIR; };
+		FB39D7221201032000088E69 /* glslang_tab.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glslang_tab.cpp; path = DerivedSources/ANGLE/glslang_tab.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -192,12 +195,23 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5D7C59C41208C68B001C873E /* Configurations */ = {
+			isa = PBXGroup;
+			children = (
+				5D7C59C51208C68B001C873E /* ANGLE.xcconfig */,
+				5D7C59C61208C68B001C873E /* Base.xcconfig */,
+				5D7C59C71208C68B001C873E /* DebugRelease.xcconfig */,
+			);
+			path = Configurations;
+			sourceTree = "<group>";
+		};
 		FB39D06E1200ED9200088E69 = {
 			isa = PBXGroup;
 			children = (
 				FB39D2201200F35A00088E69 /* compiler */,
 				FB39D0841200EDEB00088E69 /* Source */,
 				FB39D0CB1200EF9400088E69 /* Intermediates */,
+				5D7C59C41208C68B001C873E /* Configurations */,
 				FB39D0CC1200EF9B00088E69 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -224,7 +238,7 @@
 		FB39D0CC1200EF9B00088E69 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				FB39D0D11200F0E300088E69 /* libangle.a */,
+				FB39D0D11200F0E300088E69 /* libANGLE.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -421,13 +435,13 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		FB39D0D01200F0E300088E69 /* angle */ = {
+		FB39D0D01200F0E300088E69 /* ANGLE */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = FB39D0D61200F11E00088E69 /* Build configuration list for PBXNativeTarget "angle" */;
+			buildConfigurationList = FB39D0D61200F11E00088E69 /* Build configuration list for PBXNativeTarget "ANGLE" */;
 			buildPhases = (
 				FB39D77B1201110C00088E69 /* Headers */,
-				FB39D0DE1200F19100088E69 /* Action "flex_glslang" */,
-				FB39D31C1200F69200088E69 /* Action "bison_glslang" */,
+				FB39D0DE1200F19100088E69 /* Generate glslang lexer */,
+				FB39D31C1200F69200088E69 /* Generate glslang parser */,
 				FB39D0CE1200F0E300088E69 /* Sources */,
 				FB39D0CF1200F0E300088E69 /* Frameworks */,
 			);
@@ -435,9 +449,9 @@
 			);
 			dependencies = (
 			);
-			name = angle;
+			name = ANGLE;
 			productName = angle;
-			productReference = FB39D0D11200F0E300088E69 /* libangle.a */;
+			productReference = FB39D0D11200F0E300088E69 /* libANGLE.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -447,7 +461,6 @@
 			isa = PBXProject;
 			buildConfigurationList = FB39D0731200ED9200088E69 /* Build configuration list for PBXProject "ANGLE" */;
 			compatibilityVersion = "Xcode 2.4";
-			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				English,
@@ -459,46 +472,44 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				FB39D0D01200F0E300088E69 /* angle */,
+				FB39D0D01200F0E300088E69 /* ANGLE */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		FB39D0DE1200F19100088E69 /* Action "flex_glslang" */ = {
+		FB39D0DE1200F19100088E69 /* Generate glslang lexer */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 12;
 			files = (
 			);
 			inputPaths = (
-				compiler/glslang.l,
+				"$(SRCROOT)/src/compiler/glslang.l",
 			);
-			name = "Action \"flex_glslang\"";
+			name = "Generate glslang lexer";
 			outputPaths = (
-				"$(INTERMEDIATE_DIR)/glslang.cpp",
+				"$(BUILT_PRODUCTS_DIR)/DerivedSources/$(PROJECT_NAME)/glslang.cpp",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "echo note: \"Executing flex on compiler/glslang.l\"\necho note: ${INTERMEDIATE_DIR}\nexec flex --noline --nounistd \"--outfile=${INTERMEDIATE_DIR}/glslang.cpp\" src/compiler/glslang.l\nexit 1";
-			showEnvVarsInLog = 0;
+			shellScript = "mkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/${PROJECT_NAME}\"\nflex --noline --nounistd \"--outfile=${BUILT_PRODUCTS_DIR}/DerivedSources/${PROJECT_NAME}/glslang.cpp\" \"${SRCROOT}/src/compiler/glslang.l\"\n";
 		};
-		FB39D31C1200F69200088E69 /* Action "bison_glslang" */ = {
+		FB39D31C1200F69200088E69 /* Generate glslang parser */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
-				compiler/glslang.y,
+				"$(SRCROOT)/src/compiler/glslang.y",
 			);
-			name = "Action \"bison_glslang\"";
+			name = "Generate glslang parser";
 			outputPaths = (
-				"$(INTERMEDIATE_DIR)/glslang_tab.cpp",
-				"$(INTERMEDIATE_DIR)/glslang_tab.h",
+				"$(BUILT_PRODUCTS_DIR)/DerivedSources/$(PROJECT_NAME)/glslang_tab.cpp",
+				"$(BUILT_PRODUCTS_DIR)/DerivedSources/$(PROJECT_NAME)/glslang_tab.h",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "echo note: \"Executing bison on compiler/glslang.y\"\nexec bison --no-lines \"--defines=${INTERMEDIATE_DIR}/glslang_tab.h\" \"--skeleton=yacc.c\" \"--output=${INTERMEDIATE_DIR}/glslang_tab.cpp\" src/compiler/glslang.y\nexit 1\n";
-			showEnvVarsInLog = 0;
+			shellScript = "mkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/${PROJECT_NAME}\"\nbison --no-lines \"--defines=${BUILT_PRODUCTS_DIR}/DerivedSources/${PROJECT_NAME}/glslang_tab.h\" \"--skeleton=yacc.c\" \"--output=${BUILT_PRODUCTS_DIR}/DerivedSources/${PROJECT_NAME}/glslang_tab.cpp\" \"${SRCROOT}/src/compiler/glslang.y\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -541,63 +552,46 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+		5D7C59DB1208C6C3001C873E /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5D7C59C61208C68B001C873E /* Base.xcconfig */;
+			buildSettings = {
+			};
+			name = Production;
+		};
+		5D7C59DC1208C6C3001C873E /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5D7C59C51208C68B001C873E /* ANGLE.xcconfig */;
+			buildSettings = {
+			};
+			name = Production;
+		};
 		FB39D0711200ED9200088E69 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5D7C59C71208C68B001C873E /* DebugRelease.xcconfig */;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT_PRE_XCODE_3_1)";
-				ARCHS_STANDARD_64_BIT_PRE_XCODE_3_1 = x86_64;
-				COPY_PHASE_STRIP = NO;
-				HEADER_SEARCH_PATHS = (
-					"$(SRCROOT)/include",
-					"$(SRCROOT)/src",
-				);
-				INTERMEDIATE_DIR = src/intermediate;
-				PUBLIC_HEADERS_FOLDER_PATH = /usr/local/include;
+				GCC_OPTIMIZATION_LEVEL = 0;
 			};
 			name = Debug;
 		};
 		FB39D0721200ED9200088E69 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5D7C59C71208C68B001C873E /* DebugRelease.xcconfig */;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT_PRE_XCODE_3_1)";
-				ARCHS_STANDARD_64_BIT_PRE_XCODE_3_1 = x86_64;
-				COPY_PHASE_STRIP = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(SRCROOT)/include",
-					"$(SRCROOT)/src",
-				);
-				INTERMEDIATE_DIR = src/intermediate;
-				PUBLIC_HEADERS_FOLDER_PATH = /usr/local/include;
 			};
 			name = Release;
 		};
 		FB39D0D21200F0E400088E69 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5D7C59C51208C68B001C873E /* ANGLE.xcconfig */;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				INSTALL_PATH = /usr/local/lib;
-				PREBINDING = NO;
-				PRODUCT_NAME = angle;
 			};
 			name = Debug;
 		};
 		FB39D0D31200F0E400088E69 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5D7C59C51208C68B001C873E /* ANGLE.xcconfig */;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_MODEL_TUNING = G5;
-				INSTALL_PATH = /usr/local/lib;
-				PREBINDING = NO;
-				PRODUCT_NAME = angle;
-				ZERO_LINK = NO;
 			};
 			name = Release;
 		};
@@ -609,18 +603,20 @@
 			buildConfigurations = (
 				FB39D0711200ED9200088E69 /* Debug */,
 				FB39D0721200ED9200088E69 /* Release */,
+				5D7C59DB1208C6C3001C873E /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Production;
 		};
-		FB39D0D61200F11E00088E69 /* Build configuration list for PBXNativeTarget "angle" */ = {
+		FB39D0D61200F11E00088E69 /* Build configuration list for PBXNativeTarget "ANGLE" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				FB39D0D21200F0E400088E69 /* Debug */,
 				FB39D0D31200F0E400088E69 /* Release */,
+				5D7C59DC1208C6C3001C873E /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Production;
 		};
 /* End XCConfigurationList section */
 	};

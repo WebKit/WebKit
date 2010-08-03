@@ -1,7 +1,25 @@
+2010-08-03  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Adele Peterson.
+
+        Clean up the ANGLE Xcode project.
+
+        Main changes include:
+        • Adding a Production configuration.
+        • Modifying the library name from libangle.a to libANGLE.a.
+        • Installing the headers in a subdirectory of /usr/local/include to avoid polluting the top-level directory.
+        • Generating derived sources in to the built products directory so they're saved along with the symroot.
+        • Switching to using .xcconfig files for maximum cleanliness.
+
+        * ANGLE.xcodeproj/project.pbxproj:
+        * Configurations/ANGLE.xcconfig: Added.
+        * Configurations/Base.xcconfig: Added.
+        * Configurations/DebugRelease.xcconfig: Added.
+
 2010-08-02  Paul Sawaya  <psawaya@apple.com>
 
         Reviewed by Adele Peterson.
 
         Add ANGLE library to WebKit. From the repository (http://angleproject.googlecode.com) as of July 22.
         https://bugs.webkit.org/show_bug.cgi?id=42789
-        
+
