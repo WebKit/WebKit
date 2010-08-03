@@ -1,3 +1,17 @@
+2010-08-03  Adam Roben  <aroben@apple.com>
+
+        Compile out two Mac-only localized strings on non-Mac platforms
+
+        Fixes <http://webkit.org/b/43433> copyImageUnknownFileLabel and
+        AXARIAContentGroupText should only be compiled on Mac
+
+        Reviewed by Anders Carlsson.
+
+        * platform/LocalizationStrategy.h:
+        * platform/LocalizedStrings.h:
+        Wrapped copyImageUnknownFileLabel and AXARIAContentGroupText in
+        PLATFORM(MAC).
+
 2010-08-03  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix, don't build some DOM bindings we don't use.

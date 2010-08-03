@@ -37,7 +37,11 @@ namespace WebCore {
     String submitButtonDefaultLabel();
     String fileButtonChooseFileLabel();
     String fileButtonNoFileSelectedLabel();
+
+#if PLATFORM(MAC)
     String copyImageUnknownFileLabel();
+#endif
+
 #if ENABLE(CONTEXT_MENUS)
     String contextMenuItemTagOpenLinkInNewWindow();
     String contextMenuItemTagDownloadLinkToDisk();
@@ -117,7 +121,10 @@ namespace WebCore {
     String AXHeadingText();
     String AXDefinitionListTermText();
     String AXDefinitionListDefinitionText();
+
+#if PLATFORM(MAC)
     String AXARIAContentGroupText(const String& ariaType);
+#endif
     
     String AXButtonActionVerb();
     String AXRadioButtonActionVerb();

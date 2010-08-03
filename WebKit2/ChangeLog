@@ -1,3 +1,17 @@
+2010-08-03  Adam Roben  <aroben@apple.com>
+
+        Compile out two Mac-only localized strings on non-Mac platforms
+
+        Fixes <http://webkit.org/b/43433> copyImageUnknownFileLabel and
+        AXARIAContentGroupText should only be compiled on Mac
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+        Wrapped copyImageUnknownFileLabel and AXARIAContentGroupText in
+        PLATFORM(MAC).
+
 2010-08-03  Balazs Kelemen  <kb@inf.u-szeged.hu>
 
         [Qt] Unreviewed typo fix in the WebKit2/DerivedSources.pro project file.

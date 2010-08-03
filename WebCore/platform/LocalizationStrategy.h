@@ -41,7 +41,10 @@ public:
     virtual String submitButtonDefaultLabel() = 0;
     virtual String fileButtonChooseFileLabel() = 0;
     virtual String fileButtonNoFileSelectedLabel() = 0;
+
+#if PLATFORM(MAC)
     virtual String copyImageUnknownFileLabel() = 0;
+#endif
 
 #if ENABLE(CONTEXT_MENUS)
     virtual String contextMenuItemTagOpenLinkInNewWindow() = 0;
@@ -122,7 +125,10 @@ public:
     virtual String AXHeadingText() = 0;
     virtual String AXDefinitionListTermText() = 0;
     virtual String AXDefinitionListDefinitionText() = 0;
+
+#if PLATFORM(MAC)
     virtual String AXARIAContentGroupText(const String& ariaType) = 0;
+#endif
     
     virtual String AXButtonActionVerb() = 0;
     virtual String AXRadioButtonActionVerb() = 0;
