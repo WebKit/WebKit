@@ -41,15 +41,15 @@
 #include "SkPaint.h"
 #include "SkPath.h"
 
-#if USE(GLES2_RENDERING)
+#include <wtf/Vector.h>
+
 namespace WebCore {
+
+#if USE(GLES2_RENDERING)
 enum CompositeOperator;
 class GLES2Canvas;
 class GLES2Context;
-}
 #endif
-
-#include <wtf/Vector.h>
 
 // This class holds the platform-specific state for GraphicsContext. We put
 // most of our Skia wrappers on this class. In theory, a lot of this stuff could
@@ -97,8 +97,7 @@ public:
     // invoked.
     // NOTE: |imageBuffer| may be deleted before the |restore| is invoked.
 #if OS(LINUX) || OS(WINDOWS)
-    void beginLayerClippedToImage(const WebCore::FloatRect&,
-                                  const WebCore::ImageBuffer*);
+    void beginLayerClippedToImage(const FloatRect&, const ImageBuffer*);
 #endif
     void clipPathAntiAliased(const SkPath&);
 
@@ -127,7 +126,7 @@ public:
     void setXfermodeMode(SkXfermode::Mode);
     void setFillColor(SkColor);
     void setFillShader(SkShader*);
-    void setStrokeStyle(WebCore::StrokeStyle);
+    void setStrokeStyle(StrokeStyle);
     void setStrokeColor(SkColor);
     void setStrokeThickness(float thickness);
     void setStrokeShader(SkShader*);
@@ -136,7 +135,7 @@ public:
     void setDashPathEffect(SkDashPathEffect*);
 
     SkDrawLooper* getDrawLooper() const;
-    WebCore::StrokeStyle getStrokeStyle() const;
+    StrokeStyle getStrokeStyle() const;
     float getStrokeThickness() const;
     int getTextDrawingMode() const;
     float getAlpha() const;
@@ -155,8 +154,8 @@ public:
 
     skia::PlatformCanvas* canvas() { return m_canvas; }
 
-    WebCore::InterpolationQuality interpolationQuality() const;
-    void setInterpolationQuality(WebCore::InterpolationQuality interpolationQuality);
+    InterpolationQuality interpolationQuality() const;
+    void setInterpolationQuality(InterpolationQuality interpolationQuality);
 
     // FIXME: This should be pushed down to GraphicsContext.
     void drawRect(SkRect rect);
@@ -178,14 +177,14 @@ public:
     // possible quality.
     bool isPrinting();
 
-    void getImageResamplingHint(WebCore::IntSize* srcSize, WebCore::FloatSize* dstSize) const;
-    void setImageResamplingHint(const WebCore::IntSize& srcSize, const WebCore::FloatSize& dstSize);
+    void getImageResamplingHint(IntSize* srcSize, FloatSize* dstSize) const;
+    void setImageResamplingHint(const IntSize& srcSize, const FloatSize& dstSize);
     void clearImageResamplingHint();
     bool hasImageResamplingHint() const;
 #if USE(GLES2_RENDERING)
     bool useGPU() { return m_useGPU; }
-    void setGLES2Context(WebCore::GLES2Context*, const WebCore::IntSize&);
-    WebCore::GLES2Canvas* gpuCanvas() const { return m_gpuCanvas.get(); }
+    void setGLES2Context(GLES2Context*, const IntSize&);
+    GLES2Canvas* gpuCanvas() const { return m_gpuCanvas.get(); }
 #endif
 
 #if USE(GLES2_RENDERING)
@@ -205,12 +204,12 @@ private:
 #if OS(LINUX) || OS(WINDOWS)
     // Used when restoring and the state has an image clip. Only shows the pixels in
     // m_canvas that are also in imageBuffer.
-    void applyClipFromImage(const WebCore::FloatRect&, const SkBitmap&);
+    void applyClipFromImage(const FloatRect&, const SkBitmap&);
 #endif
     void applyAntiAliasedClipPaths(WTF::Vector<SkPath>& paths);
 
 #if USE(GLES2_RENDERING)
-    void uploadSoftwareToHardware(WebCore::CompositeOperator) const;
+    void uploadSoftwareToHardware(CompositeOperator) const;
     void readbackHardwareToSoftware() const;
 #endif
 
@@ -232,16 +231,17 @@ private:
 
     // Stores image sizes for a hint to compute image resampling modes. 
     // Values are used in ImageSkia.cpp
-    WebCore::IntSize m_imageResamplingHintSrcSize;
-    WebCore::FloatSize m_imageResamplingHintDstSize;
+    IntSize m_imageResamplingHintSrcSize;
+    FloatSize m_imageResamplingHintDstSize;
 #if OS(WINDOWS)
     bool m_drawingToImageBuffer;
 #endif
 #if USE(GLES2_RENDERING)
     bool m_useGPU;
-    OwnPtr<WebCore::GLES2Canvas> m_gpuCanvas;
+    OwnPtr<GLES2Canvas> m_gpuCanvas;
     mutable enum { None, Software, Mixed, Hardware } m_backingStoreState;
 #endif
 };
 
+}
 #endif // PlatformContextSkia_h

@@ -1,3 +1,53 @@
+2010-07-30  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Move PlatformContextSkia and NativeImageSkia into the WebCore namespace.
+        https://bugs.webkit.org/show_bug.cgi?id=43272
+
+        One wrinkle is that PlatformContext and NativeImagePtr are 
+        typedef'ed outside outside the WebCore namespace block, so the
+        PlatformContextSkia and NativeImageSkia have to be forward-declared 
+        explicitly within that namespace.  Another solution might be to move
+        those declarations into the WebCore namespace block below, but that
+        would affect platforms other than Skia, so I leave it to the reviewer
+        to decide.
+
+        Test:  if it compiles, you're happy.
+
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/Image.h:
+        * platform/graphics/ImageSource.h:
+        * platform/graphics/skia/NativeImageSkia.cpp:
+        (WebCore::NativeImageSkia::hasResizedBitmap):
+        (WebCore::NativeImageSkia::shouldCacheResampling):
+        * platform/graphics/skia/NativeImageSkia.h:
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::State::State):
+        (WebCore::PlatformContextSkia::beginLayerClippedToImage):
+        (WebCore::PlatformContextSkia::drawRect):
+        (WebCore::PlatformContextSkia::setupPaintForStroking):
+        (WebCore::PlatformContextSkia::getStrokeStyle):
+        (WebCore::PlatformContextSkia::setStrokeStyle):
+        (WebCore::PlatformContextSkia::setTextDrawingMode):
+        (WebCore::PlatformContextSkia::interpolationQuality):
+        (WebCore::PlatformContextSkia::setInterpolationQuality):
+        (WebCore::PlatformContextSkia::getImageResamplingHint):
+        (WebCore::PlatformContextSkia::setImageResamplingHint):
+        (WebCore::PlatformContextSkia::clearImageResamplingHint):
+        (WebCore::PlatformContextSkia::applyClipFromImage):
+        (WebCore::PlatformContextSkia::setGLES2Context):
+        (WebCore::PlatformContextSkia::prepareForSoftwareDraw):
+        (WebCore::PlatformContextSkia::prepareForHardwareDraw):
+        (WebCore::PlatformContextSkia::syncSoftwareCanvas):
+        (WebCore::PlatformContextSkia::uploadSoftwareToHardware):
+        * platform/graphics/skia/PlatformContextSkia.h:
+        (WebCore::PlatformContextSkia::gpuCanvas):
+        * platform/graphics/skia/SkiaFontWin.cpp:
+        (WebCore::windowsCanHandleDrawTextShadow):
+        (WebCore::paintSkiaText):
+        * platform/graphics/skia/SkiaFontWin.h:
+
 2010-08-03  Adam Roben  <aroben@apple.com>
 
         Rename LocalizedStringsMac.mm to LocalizedStrings.cpp

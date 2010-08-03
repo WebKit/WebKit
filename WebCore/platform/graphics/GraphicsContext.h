@@ -69,7 +69,10 @@ class wxWindowDC;
     typedef wxWindowDC PlatformGraphicsContext;
 #endif
 #elif PLATFORM(SKIA)
-typedef class PlatformContextSkia PlatformGraphicsContext;
+namespace WebCore {
+class PlatformContextSkia;
+}
+typedef WebCore::PlatformContextSkia PlatformGraphicsContext;
 #elif PLATFORM(HAIKU)
 class BView;
 typedef BView PlatformGraphicsContext;

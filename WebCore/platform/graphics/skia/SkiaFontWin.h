@@ -34,12 +34,13 @@
 #include <windows.h>
 #include <usp10.h>
 
-class GraphicsContext;
 class SkPath;
 class SkPoint;
-class PlatformContextSkia;
 
 namespace WebCore {
+
+class GraphicsContext;
+class PlatformContextSkia;
 
 // FIXME: Rename file to SkiaWinOutlineCache
 class SkiaWinOutlineCache {

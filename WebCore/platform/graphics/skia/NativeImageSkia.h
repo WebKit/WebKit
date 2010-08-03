@@ -34,6 +34,8 @@
 #include "SkBitmap.h"
 #include "IntSize.h"
 
+namespace WebCore {
+
 // This object is used as the "native image" in our port. When WebKit uses
 // "NativeImagePtr", it is a pointer to this type. It is an SkBitmap, but also
 // stores a cached resized image.
@@ -96,9 +98,10 @@ private:
     // This allows us to see if many requests have been made for the same
     // resized image, we know that we should probably cache it, even if all of
     // those requests individually are small and would not otherwise be cached.
-    mutable WebCore::IntSize m_lastRequestSize;
+    mutable IntSize m_lastRequestSize;
     mutable int m_resizeRequests;
 };
 
+}
 #endif  // NativeImageSkia_h
 

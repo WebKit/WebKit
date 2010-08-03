@@ -35,6 +35,8 @@
 #include "NativeImageSkia.h"
 #include "SkiaUtils.h"
 
+namespace WebCore {
+
 NativeImageSkia::NativeImageSkia()
     : m_isDataComplete(false),
       m_lastRequestSize(0, 0),
@@ -52,7 +54,7 @@ bool NativeImageSkia::hasResizedBitmap(int w, int h) const
     if (m_lastRequestSize.width() == w && m_lastRequestSize.height() == h)
         m_resizeRequests++;
     else {
-        m_lastRequestSize = WebCore::IntSize(w, h);
+        m_lastRequestSize = IntSize(w, h);
         m_resizeRequests = 0;
     }
 
@@ -97,7 +99,7 @@ bool NativeImageSkia::shouldCacheResampling(int destWidth,
     } else {
         // When a different size is being requested, count this as a query
         // (hasResizedBitmap) and reset the counter.
-        m_lastRequestSize = WebCore::IntSize(destWidth, destHeight);
+        m_lastRequestSize = IntSize(destWidth, destHeight);
         m_resizeRequests = 0;
     }
 
@@ -107,3 +109,5 @@ bool NativeImageSkia::shouldCacheResampling(int destWidth,
     int destSubsetSize = destSubsetWidth * destSubsetHeight;
     return destSize / 4 < destSubsetSize;
 }
+
+} // namespace WebCore

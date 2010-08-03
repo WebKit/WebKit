@@ -46,7 +46,9 @@ QT_END_NAMESPACE
 struct _cairo_surface;
 typedef struct _cairo_surface cairo_surface_t;
 #elif PLATFORM(SKIA)
+namespace WebCore {
 class NativeImageSkia;
+}
 #elif PLATFORM(HAIKU)
 class BBitmap;
 #elif OS(WINCE)
@@ -84,7 +86,7 @@ typedef wxBitmap* NativeImagePtr;
 #elif PLATFORM(CAIRO)
 typedef cairo_surface_t* NativeImagePtr;
 #elif PLATFORM(SKIA)
-typedef NativeImageSkia* NativeImagePtr;
+typedef WebCore::NativeImageSkia* NativeImagePtr;
 #elif PLATFORM(HAIKU)
 typedef BBitmap* NativeImagePtr;
 #elif OS(WINCE)
