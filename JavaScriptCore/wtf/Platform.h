@@ -648,7 +648,8 @@
 #endif
 
 #if PLATFORM(WIN)
-#define WTF_USE_WININET 1
+#define WTF_PLATFORM_CF 1
+#define WTF_USE_PTHREADS 0
 #endif
 
 #if PLATFORM(WX)

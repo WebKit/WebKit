@@ -152,9 +152,6 @@
 #define WTF_USE_CFNETWORK 1
 #undef WTF_USE_CURL
 #endif
-#undef WTF_USE_WININET
-#define WTF_PLATFORM_CF 1
-#define WTF_USE_PTHREADS 0
 #endif
 
 #if PLATFORM(MAC)

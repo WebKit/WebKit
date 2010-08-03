@@ -1,3 +1,15 @@
+2010-08-03  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        https://bugs.webkit.org/show_bug.cgi?id=43444
+        PLATFORM(CF) is false on Windows in JavaScriptCore
+
+        Moved some PLATFORM(WIN) #defines down into JavaScriptCore.
+
+        * config.h: Moved WTF_PLATFORM_CF 1 and WTF_USE_PTHREADS 0 to wtf/Platform.h.
+        Removed #undef WTF_USE_WININET because wtf/Platform.h no longer #defines it.
+
 2010-08-03  Alex Milowski  <alex@milowski.com>
 
         Reviewed by Beth Dakin.
