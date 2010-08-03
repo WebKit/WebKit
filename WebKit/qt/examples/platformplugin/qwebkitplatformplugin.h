@@ -81,6 +81,20 @@ Q_SIGNALS:
     void notificationClosed();
 };
 
+class QWebHapticFeedbackPlayer
+{
+public:
+    enum HapticStrength {
+        None, Weak, Medium, Strong
+    };
+
+    enum HapticEvent {
+        Press, Release
+    };
+
+    virtual void playHapticFeedback(const HapticEvent, const QString& hapticType, const HapticStrength) = 0;
+};
+
 class QWebKitPlatformPlugin
 {
 public:
@@ -88,15 +102,17 @@ public:
 
     enum Extension {
         MultipleSelections,
-        Notifications
+        Notifications,
+        Haptics
     };
 
     virtual bool supportsExtension(Extension extension) const = 0;
     virtual QWebSelectMethod* createSelectInputMethod() const = 0;
     virtual QWebNotificationPresenter* createNotificationPresenter() const = 0;
+    virtual QWebHapticFeedbackPlayer* createHapticFeedbackPlayer() const = 0;
 
 };
 
-Q_DECLARE_INTERFACE(QWebKitPlatformPlugin, "com.nokia.Qt.WebKit.PlatformPlugin/1.2");
+Q_DECLARE_INTERFACE(QWebKitPlatformPlugin, "com.nokia.Qt.WebKit.PlatformPlugin/1.3");
 
 #endif // QWEBKITPLATFORMPLUGIN_H
