@@ -273,7 +273,6 @@ BUG_DRT MAC : fast/canvas/webgl/viewport-unchanged-upon-resize.html = TEXT PASS
 
 // Misc.
 BUG_DRT MAC : fast/backgrounds/solid-color-context-restore.html = IMAGE
-BUG_DRT MAC : fast/forms/search-transformed.html = IMAGE
 BUG_DRT MAC : fast/reflections/inline-crash.html = IMAGE
 BUG_DRT MAC LINUX : http/tests/loading/preload-img-test.html = TEXT PASS
 BUG_DRT MAC LINUX : http/tests/plugins/post-url-file.html = TIMEOUT
@@ -333,3 +332,4 @@ BUG_DRT LINUX : svg/zoom/page/zoom-coords-viewattr-01-b.svg = IMAGE
 BUG_DRT LINUX : transforms/2d/hindi-rotated.html = IMAGE+TEXT
 BUG_DRT MAC LINUX : fast/events/special-key-events-in-input-text.html = TEXT
 BUG_DRT LINUX : editing/pasteboard/drag-image-in-about-blank-frame.html = CRASH
+BUG_DRT LINUX : svg/custom/pattern-excessive-malloc.svg = IMAGE PASS

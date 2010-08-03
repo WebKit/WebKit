@@ -1,3 +1,9 @@
+2010-08-03  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, test expectation update for DRT/Chromium.
+
+        * platform/chromium/drt_expectations.txt:
+
 2010-08-02  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, test expectation update.
