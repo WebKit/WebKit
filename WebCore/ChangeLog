@@ -1,3 +1,13 @@
+2010-08-03  Satish Sampath  <satish@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Initiate speech input requests on click event
+        https://bugs.webkit.org/show_bug.cgi?id=43352
+
+        * rendering/TextControlInnerElements.cpp:
+        (WebCore::InputFieldSpeechButtonElement::defaultEventHandler):
+
 2010-08-02  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

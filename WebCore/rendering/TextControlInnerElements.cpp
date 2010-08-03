@@ -372,18 +372,19 @@ void InputFieldSpeechButtonElement::defaultEventHandler(Event* event)
         input->select();
         event->setDefaultHandled();
     }
-    // On mouse up, start speech recognition.
+    // On mouse up, release capture cleanly.
     if (event->type() == eventNames().mouseupEvent && event->isMouseEvent() && static_cast<MouseEvent*>(event)->button() == LeftButton) {
         if (m_capturing && renderer() && renderer()->visibleToHitTesting()) {
             if (Frame* frame = document()->frame()) {
                 frame->eventHandler()->setCapturingMouseEventsNode(0);
                 m_capturing = false;
             }
-            if (hovered()) {
-                speechInput()->startRecognition(this);
-                event->setDefaultHandled();
-            }
         }
+    }
+
+    if (event->type() == eventNames().clickEvent) {
+        speechInput()->startRecognition(this);
+        event->setDefaultHandled();
     }
 
     if (!event->defaultHandled())
