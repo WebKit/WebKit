@@ -23,56 +23,42 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBObjectStoreRequest_h
-#define IDBObjectStoreRequest_h
+#ifndef IDBObjectStoreBackendInterface_h
+#define IDBObjectStoreBackendInterface_h
 
-#include "IDBObjectStore.h"
-#include "IDBRequest.h"
 #include "PlatformString.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
+#include <wtf/Threading.h>
 
 #if ENABLE(INDEXED_DATABASE)
 
 namespace WebCore {
 
 class DOMStringList;
-class IDBAny;
-class IDBIndexRequest;
+class IDBCallbacks;
+class IDBIndexBackendInterface;
 class IDBKey;
 class SerializedScriptValue;
 
-class IDBObjectStoreRequest : public RefCounted<IDBObjectStoreRequest> {
+class IDBObjectStoreBackendInterface : public ThreadSafeShared<IDBObjectStoreBackendInterface> {
 public:
-    static PassRefPtr<IDBObjectStoreRequest> create(PassRefPtr<IDBObjectStore> idbObjectStore)
-    {
-        return adoptRef(new IDBObjectStoreRequest(idbObjectStore));
-    }
-    ~IDBObjectStoreRequest() { }
+    virtual ~IDBObjectStoreBackendInterface() { }
 
-    String name() const;
-    String keyPath() const;
-    PassRefPtr<DOMStringList> indexNames() const;
+    virtual String name() const = 0;
+    virtual String keyPath() const = 0;
+    virtual PassRefPtr<DOMStringList> indexNames() const = 0;
 
-    PassRefPtr<IDBRequest> get(ScriptExecutionContext*, PassRefPtr<IDBKey> key);
-    PassRefPtr<IDBRequest> add(ScriptExecutionContext*, PassRefPtr<SerializedScriptValue> value, PassRefPtr<IDBKey> key = 0);
-    PassRefPtr<IDBRequest> put(ScriptExecutionContext*, PassRefPtr<SerializedScriptValue> value, PassRefPtr<IDBKey> key = 0);
-    PassRefPtr<IDBRequest> remove(ScriptExecutionContext*, PassRefPtr<IDBKey> key);
+    virtual void get(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks>) = 0;
+    virtual void put(PassRefPtr<SerializedScriptValue> value, PassRefPtr<IDBKey> key, bool addOnly, PassRefPtr<IDBCallbacks>) = 0;
+    virtual void remove(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks>) = 0;
 
-    PassRefPtr<IDBRequest> createIndex(ScriptExecutionContext*, const String& name, const String& keyPath, bool unique = false);
-    PassRefPtr<IDBIndex> index(const String& name);
-    PassRefPtr<IDBRequest> removeIndex(ScriptExecutionContext*, const String& name);
-
-private:
-    IDBObjectStoreRequest(PassRefPtr<IDBObjectStore>);
-
-    RefPtr<IDBObjectStore> m_objectStore;
+    virtual void createIndex(const String& name, const String& keyPath, bool unique, PassRefPtr<IDBCallbacks>) = 0;
+    virtual PassRefPtr<IDBIndexBackendInterface> index(const String& name) = 0;
+    virtual void removeIndex(const String& name, PassRefPtr<IDBCallbacks>) = 0;
 };
 
 } // namespace WebCore
 
 #endif
 
-#endif // IDBObjectStoreRequest_h
+#endif // IDBObjectStoreBackendInterface_h
 

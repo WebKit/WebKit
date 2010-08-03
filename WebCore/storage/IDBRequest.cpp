@@ -38,7 +38,7 @@
 #include "IDBDatabase.h"
 #include "IDBIndex.h"
 #include "IDBErrorEvent.h"
-#include "IDBObjectStoreRequest.h"
+#include "IDBObjectStore.h"
 #include "IDBSuccessEvent.h"
 #include "ScriptExecutionContext.h"
 
@@ -73,10 +73,10 @@ void IDBRequest::onSuccess()
     m_result->set();
 }
 
-void IDBRequest::onSuccess(PassRefPtr<IDBDatabaseBackendInterface> idbDatabaseBackend)
+void IDBRequest::onSuccess(PassRefPtr<IDBDatabaseBackendInterface> backend)
 {
     onEventCommon();
-    m_result->set(IDBDatabase::create(idbDatabaseBackend));
+    m_result->set(IDBDatabase::create(backend));
 }
 
 void IDBRequest::onSuccess(PassRefPtr<IDBIndexBackendInterface> backend)
@@ -91,10 +91,10 @@ void IDBRequest::onSuccess(PassRefPtr<IDBKey> idbKey)
     m_result->set(idbKey);
 }
 
-void IDBRequest::onSuccess(PassRefPtr<IDBObjectStore> idbObjectStore)
+void IDBRequest::onSuccess(PassRefPtr<IDBObjectStoreBackendInterface> backend)
 {
     onEventCommon();
-    m_result->set(IDBObjectStoreRequest::create(idbObjectStore));
+    m_result->set(IDBObjectStore::create(backend));
 }
 
 void IDBRequest::onSuccess(PassRefPtr<SerializedScriptValue> serializedScriptValue)

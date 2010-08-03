@@ -2441,8 +2441,8 @@ contains(DEFINES, ENABLE_INDEXED_DATABASE=1) {
         storage/IDBKey.h \
         storage/IDBKeyRange.h \
         storage/IDBObjectStore.h \
-        storage/IDBObjectStoreImpl.h \
-        storage/IDBObjectStoreRequest.h \
+        storage/IDBObjectStoreBackendImpl.h \
+        storage/IDBObjectStoreBackendInterface.h \
         storage/IDBRequest.h \
         storage/IDBSuccessEvent.h
 
@@ -2462,8 +2462,8 @@ contains(DEFINES, ENABLE_INDEXED_DATABASE=1) {
         storage/IDBIndexBackendImpl.cpp \
         storage/IDBKey.cpp \
         storage/IDBKeyRange.cpp \
-        storage/IDBObjectStoreImpl.cpp \
-        storage/IDBObjectStoreRequest.cpp \
+        storage/IDBObjectStore.cpp \
+        storage/IDBObjectStoreBackendImpl.cpp \
         storage/IDBRequest.cpp \
         storage/IDBSuccessEvent.cpp
 }

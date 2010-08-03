@@ -28,7 +28,7 @@
 
 #include "DOMStringList.h"
 #include "IDBCallbacksProxy.h"
-#include "IDBObjectStore.h"
+#include "IDBObjectStoreBackendInterface.h"
 #include "WebIDBIndexImpl.h"
 #include "WebIDBKey.h"
 #include "WebSerializedScriptValue.h"
@@ -39,7 +39,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-WebIDBObjectStoreImpl::WebIDBObjectStoreImpl(PassRefPtr<IDBObjectStore> objectStore)
+WebIDBObjectStoreImpl::WebIDBObjectStoreImpl(PassRefPtr<IDBObjectStoreBackendInterface> objectStore)
     : m_objectStore(objectStore)
 {
 }

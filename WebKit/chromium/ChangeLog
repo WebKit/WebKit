@@ -1,3 +1,23 @@
+2010-08-03  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        [IndexedDB] IDBObjectStoreRequest should be called IDBObjectStore
+        https://bugs.webkit.org/show_bug.cgi?id=43420
+
+        * src/IDBCallbacksProxy.cpp:
+        (WebCore::IDBCallbacksProxy::onSuccess):
+        * src/IDBCallbacksProxy.h:
+        * src/IDBDatabaseProxy.cpp:
+        (WebCore::IDBDatabaseProxy::objectStore):
+        * src/IDBDatabaseProxy.h:
+        * src/IDBObjectStoreProxy.cpp:
+        (WebCore::IDBObjectStoreProxy::create):
+        * src/IDBObjectStoreProxy.h:
+        * src/WebIDBObjectStoreImpl.cpp:
+        (WebKit::WebIDBObjectStoreImpl::WebIDBObjectStoreImpl):
+        * src/WebIDBObjectStoreImpl.h:
+
 2010-08-03  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Fix Chromium interactive UI tests.

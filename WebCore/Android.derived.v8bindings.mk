@@ -351,6 +351,7 @@ GEN := \
     $(intermediates)/bindings/V8IDBIndex.h \
     $(intermediates)/bindings/V8IDBKey.h \
     $(intermediates)/bindings/V8IDBKeyRange.h \
+    $(intermediates)/bindings/V8IDBObjectStore.h \
     $(intermediates)/bindings/V8IDBRequest.h \
     $(intermediates)/bindings/V8IDBSuccessEvent.h
 

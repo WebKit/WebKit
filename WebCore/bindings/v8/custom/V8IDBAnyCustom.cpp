@@ -36,7 +36,7 @@
 #include "V8IDBFactory.h"
 #include "V8IDBIndex.h"
 #include "V8IDBKey.h"
-#include "V8IDBObjectStoreRequest.h"
+#include "V8IDBObjectStore.h"
 
 namespace WebCore {
 
@@ -56,8 +56,8 @@ v8::Handle<v8::Value> toV8(IDBAny* impl)
         return toV8(impl->idbIndex());
     case IDBAny::IDBKeyType:
         return toV8(impl->idbKey());
-    case IDBAny::IDBObjectStoreRequestType:
-        return toV8(impl->idbObjectStoreRequest());
+    case IDBAny::IDBObjectStoreType:
+        return toV8(impl->idbObjectStore());
     case IDBAny::IDBFactoryType:
         return toV8(impl->idbFactory());
     case IDBAny::SerializedScriptValueType:

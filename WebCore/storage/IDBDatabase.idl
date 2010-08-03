@@ -38,7 +38,7 @@ module storage {
 
         [CallWith=ScriptExecutionContext] IDBRequest createObjectStore(in DOMString name, in [Optional, ConvertNullToNullString] DOMString keyPath, in [Optional] boolean autoIncrement);
         // FIXME: objectStore needs to be able to raise an IDBDatabaseException.
-        IDBObjectStoreRequest objectStore(in DOMString name, in [Optional] unsigned short mode);
+        IDBObjectStore objectStore(in DOMString name, in [Optional] unsigned short mode);
         [CallWith=ScriptExecutionContext] IDBRequest removeObjectStore(in DOMString name);
     };
 

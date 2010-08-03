@@ -45012,7 +45012,7 @@
 					>
 				</File>
 				<File
-					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSIDBObjectStoreRequest.cpp"
+					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSIDBObjectStore.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -45064,7 +45064,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSIDBObjectStoreRequest.cpp"
+					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSIDBObjectStore.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -45116,7 +45116,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSIDBObjectStoreRequest.h"
+					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSIDBObjectStore.h"
 					>
 				</File>
 				<File
@@ -50217,23 +50217,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\storage\IDBObjectStore.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\storage\IDBObjectStore.h"
 				>
 			</File>
 			<File
-				RelativePath="..\storage\IDBObjectStoreImpl.cpp"
+				RelativePath="..\storage\IDBObjectStoreBackendImpl.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\storage\IDBObjectStoreImpl.h"
+				RelativePath="..\storage\IDBObjectStoreBackendImpl.h"
 				>
 			</File>
 			<File
-				RelativePath="..\storage\IDBObjectStoreRequest.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\storage\IDBObjectStoreRequest.h"
+				RelativePath="..\storage\IDBObjectStoreBackendInterface.h"
 				>
 			</File>
 			<File

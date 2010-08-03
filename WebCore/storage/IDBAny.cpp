@@ -31,7 +31,7 @@
 #include "IDBDatabase.h"
 #include "IDBFactory.h"
 #include "IDBIndex.h"
-#include "IDBObjectStoreRequest.h"
+#include "IDBObjectStore.h"
 #include "SerializedScriptValue.h"
 
 namespace WebCore {
@@ -68,10 +68,10 @@ PassRefPtr<IDBKey> IDBAny::idbKey()
     return m_idbKey;
 }
 
-PassRefPtr<IDBObjectStoreRequest> IDBAny::idbObjectStoreRequest()
+PassRefPtr<IDBObjectStore> IDBAny::idbObjectStore()
 {
-    ASSERT(m_type == IDBObjectStoreRequestType);
-    return m_idbObjectStoreRequest;
+    ASSERT(m_type == IDBObjectStoreType);
+    return m_idbObjectStore;
 }
 
 PassRefPtr<IDBFactory> IDBAny::idbFactory()
@@ -113,11 +113,11 @@ void IDBAny::set(PassRefPtr<IDBKey> value)
     m_idbKey = value;
 }
 
-void IDBAny::set(PassRefPtr<IDBObjectStoreRequest> value)
+void IDBAny::set(PassRefPtr<IDBObjectStore> value)
 {
     ASSERT(m_type == UndefinedType);
-    m_type = IDBObjectStoreRequestType;
-    m_idbObjectStoreRequest = value;
+    m_type = IDBObjectStoreType;
+    m_idbObjectStore = value;
 }
 
 void IDBAny::set(PassRefPtr<IDBFactory> value)

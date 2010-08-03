@@ -235,7 +235,7 @@ DOM_CLASSES = \
     IDBIndex \
     IDBKey \
     IDBKeyRange \
-    IDBObjectStoreRequest \
+    IDBObjectStore \
     IDBRequest \
     IDBSuccessEvent \
     ImageData \

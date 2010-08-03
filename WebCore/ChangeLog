@@ -1,3 +1,85 @@
+2010-08-03  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        [IndexedDB] IDBObjectStoreRequest should be called IDBObjectStore
+        https://bugs.webkit.org/show_bug.cgi?id=43420
+
+        Renaming IDBObjectStoreRequest to IDBObjectStore.
+
+        No new tests needed, just refactoring.
+
+        * Android.derived.jscbindings.mk:
+        * Android.derived.v8bindings.mk:
+        * Android.mk:
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSIDBAnyCustom.cpp:
+        (WebCore::toJS):
+        * bindings/v8/custom/V8IDBAnyCustom.cpp:
+        (WebCore::toV8):
+        * storage/IDBAny.cpp:
+        (WebCore::IDBAny::idbObjectStore):
+        (WebCore::IDBAny::set):
+        * storage/IDBAny.h:
+        (WebCore::IDBAny::):
+        * storage/IDBCallbacks.h:
+        * storage/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::objectStore):
+        * storage/IDBDatabase.h:
+        * storage/IDBDatabaseBackendImpl.cpp:
+        (WebCore::IDBDatabaseBackendImpl::createObjectStore):
+        (WebCore::IDBDatabaseBackendImpl::objectStore):
+        * storage/IDBDatabaseBackendImpl.h:
+        * storage/IDBDatabaseBackendInterface.h:
+        * storage/IDBObjectStore.cpp: Added.
+        (WebCore::IDBObjectStore::IDBObjectStore):
+        (WebCore::IDBObjectStore::name):
+        (WebCore::IDBObjectStore::keyPath):
+        (WebCore::IDBObjectStore::indexNames):
+        (WebCore::IDBObjectStore::get):
+        (WebCore::IDBObjectStore::add):
+        (WebCore::IDBObjectStore::put):
+        (WebCore::IDBObjectStore::remove):
+        (WebCore::IDBObjectStore::createIndex):
+        (WebCore::IDBObjectStore::index):
+        (WebCore::IDBObjectStore::removeIndex):
+        * storage/IDBObjectStore.h:
+        (WebCore::IDBObjectStore::create):
+        (WebCore::IDBObjectStore::~IDBObjectStore):
+        * storage/IDBObjectStore.idl: Added.
+        * storage/IDBObjectStoreBackendImpl.cpp: Added.
+        (WebCore::IDBObjectStoreBackendImpl::~IDBObjectStoreBackendImpl):
+        (WebCore::IDBObjectStoreBackendImpl::IDBObjectStoreBackendImpl):
+        (WebCore::IDBObjectStoreBackendImpl::indexNames):
+        (WebCore::IDBObjectStoreBackendImpl::get):
+        (WebCore::IDBObjectStoreBackendImpl::put):
+        (WebCore::IDBObjectStoreBackendImpl::remove):
+        (WebCore::IDBObjectStoreBackendImpl::createIndex):
+        (WebCore::IDBObjectStoreBackendImpl::index):
+        (WebCore::IDBObjectStoreBackendImpl::removeIndex):
+        * storage/IDBObjectStoreBackendImpl.h: Added.
+        (WebCore::IDBObjectStoreBackendImpl::create):
+        (WebCore::IDBObjectStoreBackendImpl::name):
+        (WebCore::IDBObjectStoreBackendImpl::keyPath):
+        * storage/IDBObjectStoreBackendInterface.h: Added.
+        (WebCore::IDBObjectStoreBackendInterface::~IDBObjectStoreBackendInterface):
+        * storage/IDBObjectStoreImpl.cpp: Removed.
+        * storage/IDBObjectStoreImpl.h: Removed.
+        * storage/IDBObjectStoreRequest.cpp: Removed.
+        * storage/IDBObjectStoreRequest.h: Removed.
+        * storage/IDBObjectStoreRequest.idl: Removed.
+        * storage/IDBRequest.cpp:
+        (WebCore::IDBRequest::onSuccess):
+        * storage/IDBRequest.h:
+
 2010-08-03  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Ojan Vafai.

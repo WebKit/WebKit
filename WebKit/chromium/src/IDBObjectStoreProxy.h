@@ -26,7 +26,7 @@
 #ifndef IDBObjectStoreProxy_h
 #define IDBObjectStoreProxy_h
 
-#include "IDBObjectStore.h"
+#include "IDBObjectStoreBackendInterface.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
@@ -37,9 +37,9 @@ namespace WebKit { class WebIDBObjectStore; }
 
 namespace WebCore {
 
-class IDBObjectStoreProxy : public IDBObjectStore {
+class IDBObjectStoreProxy : public IDBObjectStoreBackendInterface {
 public:
-    static PassRefPtr<IDBObjectStore> create(PassOwnPtr<WebKit::WebIDBObjectStore>);
+    static PassRefPtr<IDBObjectStoreBackendInterface> create(PassOwnPtr<WebKit::WebIDBObjectStore>);
     ~IDBObjectStoreProxy();
 
     String name() const;

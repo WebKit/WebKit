@@ -37,7 +37,7 @@ namespace WebCore {
 class IDBDatabase;
 class IDBIndex;
 class IDBKey;
-class IDBObjectStoreRequest;
+class IDBObjectStore;
 class IDBFactory;
 class SerializedScriptValue;
 
@@ -60,7 +60,7 @@ public:
         IDBFactoryType,
         IDBIndexType,
         IDBKeyType,
-        IDBObjectStoreRequestType,
+        IDBObjectStoreType,
         SerializedScriptValueType
     };
 
@@ -70,7 +70,7 @@ public:
     PassRefPtr<IDBFactory> idbFactory();
     PassRefPtr<IDBIndex> idbIndex();
     PassRefPtr<IDBKey> idbKey();
-    PassRefPtr<IDBObjectStoreRequest> idbObjectStoreRequest();
+    PassRefPtr<IDBObjectStore> idbObjectStore();
     PassRefPtr<SerializedScriptValue> serializedScriptValue();
 
     // Set can only be called once.
@@ -79,7 +79,7 @@ public:
     void set(PassRefPtr<IDBFactory>);
     void set(PassRefPtr<IDBIndex>);
     void set(PassRefPtr<IDBKey>);
-    void set(PassRefPtr<IDBObjectStoreRequest>);
+    void set(PassRefPtr<IDBObjectStore>);
     void set(PassRefPtr<SerializedScriptValue>);
 
 private:
@@ -92,7 +92,7 @@ private:
     RefPtr<IDBFactory> m_idbFactory;
     RefPtr<IDBIndex> m_idbIndex;
     RefPtr<IDBKey> m_idbKey;
-    RefPtr<IDBObjectStoreRequest> m_idbObjectStoreRequest;
+    RefPtr<IDBObjectStore> m_idbObjectStore;
     RefPtr<SerializedScriptValue> m_serializedScriptValue;
 };
 

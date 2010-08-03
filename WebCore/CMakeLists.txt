@@ -343,7 +343,7 @@ SET(WebCore_IDL_FILES
     storage/IDBIndex.idl
     storage/IDBKey.idl
     storage/IDBKeyRange.idl
-    storage/IDBObjectStoreRequest.idl
+    storage/IDBObjectStore.idl
     storage/IDBRequest.idl
     storage/IDBSuccessEvent.idl
     storage/SQLError.idl
@@ -1445,8 +1445,8 @@ SET(WebCore_SOURCES
     storage/IDBKey.cpp
     storage/IDBKeyRange.cpp
     storage/IDBRequest.cpp
-    storage/IDBObjectStoreImpl.cpp
-    storage/IDBObjectStoreRequest.cpp
+    storage/IDBObjectStore.cpp
+    storage/IDBObjectStoreBackendImpl.cpp
     storage/IDBSuccessEvent.cpp
     storage/IDBFactory.cpp
     storage/IDBFactoryBackendInterface.cpp

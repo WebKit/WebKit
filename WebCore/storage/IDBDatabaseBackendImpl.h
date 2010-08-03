@@ -50,7 +50,7 @@ public:
     virtual PassRefPtr<DOMStringList> objectStores() const;
 
     virtual void createObjectStore(const String& name, const String& keyPath, bool autoIncrement, PassRefPtr<IDBCallbacks>);
-    virtual PassRefPtr<IDBObjectStore> objectStore(const String& name, unsigned short mode);
+    virtual PassRefPtr<IDBObjectStoreBackendInterface> objectStore(const String& name, unsigned short mode);
     virtual void removeObjectStore(const String& name, PassRefPtr<IDBCallbacks>);
 
 private:
@@ -60,7 +60,7 @@ private:
     String m_description;
     String m_version;
 
-    typedef HashMap<String, RefPtr<IDBObjectStore> > ObjectStoreMap;
+    typedef HashMap<String, RefPtr<IDBObjectStoreBackendInterface> > ObjectStoreMap;
     ObjectStoreMap m_objectStores;
 };
 

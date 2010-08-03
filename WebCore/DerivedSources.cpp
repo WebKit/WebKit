@@ -185,7 +185,7 @@
 #include "JSIDBIndex.cpp"
 #include "JSIDBKey.cpp"
 #include "JSIDBKeyRange.cpp"
-#include "JSIDBObjectStoreRequest.cpp"
+#include "JSIDBObjectStore.cpp"
 #include "JSIDBRequest.cpp"
 #include "JSIDBSuccessEvent.cpp"
 #include "JSImageData.cpp"

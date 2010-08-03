@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-PassRefPtr<IDBObjectStore> IDBObjectStoreProxy::create(PassOwnPtr<WebKit::WebIDBObjectStore> objectStore)
+PassRefPtr<IDBObjectStoreBackendInterface> IDBObjectStoreProxy::create(PassOwnPtr<WebKit::WebIDBObjectStore> objectStore)
 {
     return adoptRef(new IDBObjectStoreProxy(objectStore));
 }

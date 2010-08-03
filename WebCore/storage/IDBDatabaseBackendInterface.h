@@ -37,7 +37,7 @@ namespace WebCore {
 class DOMStringList;
 class Frame;
 class IDBCallbacks;
-class IDBObjectStore;
+class IDBObjectStoreBackendInterface;
 
 // This class is shared by IDBDatabase (async) and IDBDatabaseSync (sync).
 // This is implemented by IDBDatabaseBackendImpl and optionally others (in order to proxy
@@ -55,7 +55,7 @@ public:
     // FIXME: Add transaction and setVersion.
 
     virtual void createObjectStore(const String& name, const String& keyPath, bool autoIncrement, PassRefPtr<IDBCallbacks>) = 0;
-    virtual PassRefPtr<IDBObjectStore> objectStore(const String& name, unsigned short mode) = 0;
+    virtual PassRefPtr<IDBObjectStoreBackendInterface> objectStore(const String& name, unsigned short mode) = 0;
     virtual void removeObjectStore(const String& name, PassRefPtr<IDBCallbacks>) = 0;
 };
 

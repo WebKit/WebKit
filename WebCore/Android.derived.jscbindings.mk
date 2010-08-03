@@ -370,6 +370,7 @@ GEN := \
     $(intermediates)/storage/JSIDBIndex.h \
     $(intermediates)/storage/JSIDBKey.h \
     $(intermediates)/storage/JSIDBKeyRange.h \
+    $(intermediates)/storage/JSIDBObjectStore.h \
     $(intermediates)/storage/JSIDBRequest.h \
     $(intermediates)/storage/JSIDBSuccessEvent.h
 

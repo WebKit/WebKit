@@ -23,10 +23,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBObjectStoreImpl_h
-#define IDBObjectStoreImpl_h
+#ifndef IDBObjectStoreBackendImpl_h
+#define IDBObjectStoreBackendImpl_h
 
-#include "IDBObjectStore.h"
+#include "IDBObjectStoreBackendInterface.h"
 #include "StringHash.h"
 #include <wtf/HashMap.h>
 
@@ -36,13 +36,13 @@ namespace WebCore {
 
 template <typename ValueType> class IDBKeyTree;
 
-class IDBObjectStoreImpl : public IDBObjectStore {
+class IDBObjectStoreBackendImpl : public IDBObjectStoreBackendInterface {
 public:
-    static PassRefPtr<IDBObjectStore> create(const String& name, const String& keyPath, bool autoIncrement)
+    static PassRefPtr<IDBObjectStoreBackendInterface> create(const String& name, const String& keyPath, bool autoIncrement)
     {
-        return adoptRef(new IDBObjectStoreImpl(name, keyPath, autoIncrement));
+        return adoptRef(new IDBObjectStoreBackendImpl(name, keyPath, autoIncrement));
     }
-    ~IDBObjectStoreImpl();
+    ~IDBObjectStoreBackendImpl();
 
     String name() const { return m_name; }
     String keyPath() const { return m_keyPath; }
@@ -57,7 +57,7 @@ public:
     void removeIndex(const String& name, PassRefPtr<IDBCallbacks>);
 
 private:
-    IDBObjectStoreImpl(const String& name, const String& keyPath, bool autoIncrement);
+    IDBObjectStoreBackendImpl(const String& name, const String& keyPath, bool autoIncrement);
 
     String m_name;
     String m_keyPath;
@@ -74,4 +74,4 @@ private:
 
 #endif
 
-#endif // IDBObjectStoreImpl_h
+#endif // IDBObjectStoreBackendImpl_h

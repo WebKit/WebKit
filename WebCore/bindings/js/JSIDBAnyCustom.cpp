@@ -36,12 +36,12 @@
 #include "IDBFactory.h"
 #include "IDBIndex.h"
 #include "IDBKey.h"
-#include "IDBObjectStoreRequest.h"
+#include "IDBObjectStore.h"
 #include "JSIDBDatabase.h"
 #include "JSIDBFactory.h"
 #include "JSIDBIndex.h"
 #include "JSIDBKey.h"
-#include "JSIDBObjectStoreRequest.h"
+#include "JSIDBObjectStore.h"
 #include "SerializedScriptValue.h"
 
 using namespace JSC;
@@ -64,8 +64,8 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, IDBAny* idbAny)
         return toJS(exec, globalObject, idbAny->idbIndex());
     case IDBAny::IDBKeyType:
         return toJS(exec, globalObject, idbAny->idbKey());
-    case IDBAny::IDBObjectStoreRequestType:
-        return toJS(exec, globalObject, idbAny->idbObjectStoreRequest());
+    case IDBAny::IDBObjectStoreType:
+        return toJS(exec, globalObject, idbAny->idbObjectStore());
     case IDBAny::IDBFactoryType:
         return toJS(exec, globalObject, idbAny->idbFactory());
     case IDBAny::SerializedScriptValueType:
