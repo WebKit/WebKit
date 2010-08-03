@@ -1,3 +1,14 @@
+2010-08-03  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Incorrect keyIdentifier for print screen key events
+        https://bugs.webkit.org/show_bug.cgi?id=43422
+
+        Skip this test on GTK+ until this bug can be fixed. Correct the
+        baseline, so that the Mac bots pass the test.
+
+        * fast/events/special-key-events-in-input-text-expected.txt:
+        * platform/gtk/Skipped:
+
 2010-08-03  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed. Chromium test expectations update.
