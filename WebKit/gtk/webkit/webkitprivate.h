@@ -273,6 +273,12 @@ extern "C" {
     void
     webkit_web_view_set_tooltip_text(WebKitWebView*, const char*);
 
+    WEBKIT_API void
+    webkit_web_view_execute_core_command_by_name(WebKitWebView* webView, const gchar* name, const gchar* value);
+
+    WEBKIT_API gboolean
+    webkit_web_view_is_command_enabled(WebKitWebView* webView, const gchar* name);
+
     WebKitDownload*
     webkit_download_new_with_handle(WebKitNetworkRequest* request, WebCore::ResourceHandle* handle, const WebCore::ResourceResponse& response);
 

@@ -1,3 +1,15 @@
+2010-08-02  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] DRT implement execCommand()
+        https://bugs.webkit.org/show_bug.cgi?id=35351
+
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::execCommand): Implement using webkit_web_view_execute_core_command_by_name.
+        (LayoutTestController::isCommandEnabled): Implement using webkit_web_view_is_command_enabled.
+        (LayoutTestController::setCacheModel): Move below LayoutTestController::isCommandEnabled.
+
 2010-08-02  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

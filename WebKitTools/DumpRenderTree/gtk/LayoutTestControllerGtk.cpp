@@ -60,6 +60,8 @@ int webkit_web_frame_page_number_for_element_by_id(WebKitWebFrame* frame, const 
 int webkit_web_frame_number_of_pages(WebKitWebFrame* frame, float pageWidth, float pageHeight);
 void webkit_web_inspector_execute_script(WebKitWebInspector* inspector, long callId, const gchar* script);
 gchar* webkit_web_frame_marker_text_for_list_item(WebKitWebFrame* frame, JSContextRef context, JSValueRef nodeObject);
+void webkit_web_view_execute_core_command_by_name(WebKitWebView* webView, const gchar* name, const gchar* value);
+gboolean webkit_web_view_is_command_enabled(WebKitWebView* webView, const gchar* name);
 }
 
 static gchar* copyWebSettingKey(gchar* preferenceKey)
@@ -504,18 +506,30 @@ bool LayoutTestController::elementDoesAutoCompleteForElementWithId(JSStringRef i
 
 void LayoutTestController::execCommand(JSStringRef name, JSStringRef value)
 {
-    // FIXME: implement
+    WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
+    ASSERT(view);
+
+    gchar* cName = JSStringCopyUTF8CString(name);
+    gchar* cValue = JSStringCopyUTF8CString(value);
+    webkit_web_view_execute_core_command_by_name(view, cName, cValue);
+    g_free(cName);
+    g_free(cValue);
+}
+
+bool LayoutTestController::isCommandEnabled(JSStringRef name)
+{
+    WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
+    ASSERT(view);
+
+    gchar* cName = JSStringCopyUTF8CString(name);
+    gboolean result = webkit_web_view_is_command_enabled(view, cName);
+    g_free(cName);
+    return result;
 }
 
 void LayoutTestController::setCacheModel(int)
 {
     // FIXME: implement
-}
-
-bool LayoutTestController::isCommandEnabled(JSStringRef /*name*/)
-{
-    // FIXME: implement
-    return false;
 }
 
 void LayoutTestController::setPersistentUserStyleSheetLocation(JSStringRef jsURL)

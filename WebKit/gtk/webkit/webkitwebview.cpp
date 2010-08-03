@@ -4658,3 +4658,20 @@ WebKitCacheModel webkit_get_cache_model()
     webkit_init();
     return cacheModel;
 }
+
+void webkit_web_view_execute_core_command_by_name(WebKitWebView* webView, const gchar* name, const gchar* value)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+    g_return_if_fail(name);
+    g_return_if_fail(value);
+
+    core(webView)->focusController()->focusedOrMainFrame()->editor()->command(name).execute(value);
+}
+
+gboolean webkit_web_view_is_command_enabled(WebKitWebView* webView, const gchar* name)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
+    g_return_val_if_fail(name, FALSE);
+
+    return core(webView)->focusController()->focusedOrMainFrame()->editor()->command(name).isEnabled();
+}

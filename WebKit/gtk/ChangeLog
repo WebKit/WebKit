@@ -1,3 +1,17 @@
+2010-08-02  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] DRT implement execCommand()
+        https://bugs.webkit.org/show_bug.cgi?id=35351
+
+        * webkit/webkitprivate.h: Add some private methods for the DRT which enable
+        LayoutTestController.execCommand and LayoutTestController.isCommandEnabled:
+        webkit_web_view_execute_core_command_by_name and webkit_web_view_is_command_enabled.
+        * webkit/webkitwebview.cpp: 
+        (webkit_web_view_execute_core_command_by_name): added.
+        (webkit_web_view_is_command_enabled): Added.
+
 2010-07-27  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Darin Fisher.

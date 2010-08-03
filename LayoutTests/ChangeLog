@@ -1,3 +1,20 @@
+2010-08-02  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] DRT implement execCommand()
+        https://bugs.webkit.org/show_bug.cgi?id=35351
+
+        Enable tests which are now passing and re-organize some others that
+        will pass once we have editing callbacks enabled.
+
+        * platform/gtk/Skipped:
+        * platform/gtk/editing/deleting/5300379-expected.txt: Added.
+        * platform/gtk/editing/deleting/delete-to-end-of-paragraph-expected.txt:
+        * platform/gtk/editing/deleting/smart-delete-003-expected.txt: Added.
+        * platform/gtk/editing/deleting/smart-delete-004-expected.txt: Added.
+        * platform/gtk/editing/selection/selection-actions-expected.txt: Added.
+
 2010-08-02  Andrew Wilson  <atwilson@chromium.org>
 
         Unreviewed Chromium change to mark keydown-numpad-keys.html as failing on all platforms (not just linux)
