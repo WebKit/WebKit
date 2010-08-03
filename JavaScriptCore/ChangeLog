@@ -1,3 +1,23 @@
+2010-08-03  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Fixed a crash seen on the GTK 64bit buildbot.
+        
+        When JSArray is allocated for the vptr stealing hack, it's not allocated
+        in the heap, so the JSArray constructor can't safely call Heap::heap().
+        
+        Since this was subtle enough to confuse smart people, I've changed JSArray
+        to have an explicit vptr stealing constructor.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::JSArray):
+        * runtime/JSArray.h:
+        (JSC::JSArray::):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::storeVPtrs):
+
 2010-08-03  Alex Milowski  <alex@milowski.com>
 
         Reviewed by Beth Dakin.

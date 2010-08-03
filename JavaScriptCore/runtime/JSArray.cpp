@@ -126,6 +126,24 @@ inline void JSArray::checkConsistency(ConsistencyCheckType)
 
 #endif
 
+JSArray::JSArray(VPtrStealingHackType)
+    : JSObject(createStructure(jsNull()))
+{
+    unsigned initialCapacity = 0;
+
+    ArrayStorage* storage = static_cast<ArrayStorage*>(fastZeroedMalloc(storageSize(initialCapacity)));
+    storage->m_allocBase = storage;
+    m_indexBias = 0;
+    setArrayStorage(storage);
+    m_vectorLength = initialCapacity;
+
+    checkConsistency();
+    
+    // It's not safe to call Heap::heap(this) in order to report extra memory
+    // cost here, because the VPtrStealingHackType JSArray is not allocated on
+    // the heap. For the same reason, it's OK not to report extra cost.
+}
+
 JSArray::JSArray(NonNullPassRefPtr<Structure> structure)
     : JSObject(structure)
 {

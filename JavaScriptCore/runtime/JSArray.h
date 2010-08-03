@@ -62,6 +62,9 @@ namespace JSC {
         friend class Walker;
 
     public:
+        enum VPtrStealingHackType { VPtrStealingHack };
+        JSArray(VPtrStealingHackType);
+
         explicit JSArray(NonNullPassRefPtr<Structure>);
         JSArray(NonNullPassRefPtr<Structure>, unsigned initialLength, ArrayCreationMode);
         JSArray(NonNullPassRefPtr<Structure>, const ArgList& initialValues);

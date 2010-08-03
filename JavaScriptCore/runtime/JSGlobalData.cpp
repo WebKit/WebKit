@@ -85,7 +85,7 @@ void JSGlobalData::storeVPtrs()
     void* storage = &cell;
 
     COMPILE_ASSERT(sizeof(JSArray) <= sizeof(CollectorCell), sizeof_JSArray_must_be_less_than_CollectorCell);
-    JSCell* jsArray = new (storage) JSArray(JSArray::createStructure(jsNull()));
+    JSCell* jsArray = new (storage) JSArray(JSArray::VPtrStealingHack);
     JSGlobalData::jsArrayVPtr = jsArray->vptr();
     jsArray->~JSCell();
 
