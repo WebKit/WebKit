@@ -37,10 +37,10 @@
 
 namespace WebCore {
 
-static GdkCursor* createNamedCursor(CustomCursorType cursorType)
+static GRefPtr<GdkCursor> createNamedCursor(CustomCursorType cursorType)
 {
     CustomCursor cursor = CustomCursors[cursorType];
-    GdkCursor* c = gdk_cursor_new_from_name(gdk_display_get_default(), cursor.name);
+    GRefPtr<GdkCursor> c = adoptGRef(gdk_cursor_new_from_name(gdk_display_get_default(), cursor.name));
     if (c)
         return c;
 
@@ -48,14 +48,14 @@ static GdkCursor* createNamedCursor(CustomCursorType cursorType)
     const GdkColor bg = { 65535, 65535, 65535, 65535 };
     GRefPtr<GdkPixmap> source = adoptGRef(gdk_bitmap_create_from_data(0, cursor.bits, 32, 32));
     GRefPtr<GdkPixmap> mask = adoptGRef(gdk_bitmap_create_from_data(0, cursor.mask_bits, 32, 32));
-    return gdk_cursor_new_from_pixmap(source.get(), mask.get(), &fg, &bg, cursor.hot_x, cursor.hot_y);
+    return adoptGRef(gdk_cursor_new_from_pixmap(source.get(), mask.get(), &fg, &bg, cursor.hot_x, cursor.hot_y));
 }
 
-static GdkCursor* createCustomCursor(Image* image, const IntPoint& hotSpot)
+static GRefPtr<GdkCursor> createCustomCursor(Image* image, const IntPoint& hotSpot)
 {
     IntPoint effectiveHotSpot = determineHotSpot(image, hotSpot);
     GRefPtr<GdkPixbuf> pixbuf = adoptGRef(image->getGdkPixbuf());
-    return gdk_cursor_new_from_pixbuf(gdk_display_get_default(), pixbuf.get(), effectiveHotSpot.x(), effectiveHotSpot.y());
+    return adoptGRef(gdk_cursor_new_from_pixbuf(gdk_display_get_default(), pixbuf.get(), effectiveHotSpot.x(), effectiveHotSpot.y()));
 }
 
 void Cursor::ensurePlatformCursor() const
@@ -69,77 +69,77 @@ void Cursor::ensurePlatformCursor() const
         m_platformCursor = 0;
         break;
     case Cursor::Cross:
-        m_platformCursor = gdk_cursor_new(GDK_CROSS);
+        m_platformCursor = adoptGRef(gdk_cursor_new(GDK_CROSS));
         break;
     case Cursor::Hand:
-        m_platformCursor = gdk_cursor_new(GDK_HAND2);
+        m_platformCursor = adoptGRef(gdk_cursor_new(GDK_HAND2));
         break;
     case Cursor::IBeam:
-        m_platformCursor = gdk_cursor_new(GDK_XTERM);
+        m_platformCursor = adoptGRef(gdk_cursor_new(GDK_XTERM));
         break;
     case Cursor::Wait:
-        m_platformCursor = gdk_cursor_new(GDK_WATCH);
+        m_platformCursor = adoptGRef(gdk_cursor_new(GDK_WATCH));
         break;
     case Cursor::Help:
-        m_platformCursor = gdk_cursor_new(GDK_QUESTION_ARROW);
+        m_platformCursor = adoptGRef(gdk_cursor_new(GDK_QUESTION_ARROW));
         break;
     case Cursor::Move:
     case Cursor::MiddlePanning:
-        m_platformCursor = gdk_cursor_new(GDK_FLEUR);
+        m_platformCursor = adoptGRef(gdk_cursor_new(GDK_FLEUR));
         break;
     case Cursor::EastResize:
     case Cursor::EastPanning:
-        m_platformCursor = gdk_cursor_new(GDK_RIGHT_SIDE);
+        m_platformCursor = adoptGRef(gdk_cursor_new(GDK_RIGHT_SIDE));
         break;
     case Cursor::NorthResize:
     case Cursor::NorthPanning:
-        m_platformCursor = gdk_cursor_new(GDK_TOP_SIDE);
+        m_platformCursor = adoptGRef(gdk_cursor_new(GDK_TOP_SIDE));
         break;
     case Cursor::NorthEastResize:
     case Cursor::NorthEastPanning:
-        m_platformCursor = gdk_cursor_new(GDK_LEFT_SIDE);
+        m_platformCursor = adoptGRef(gdk_cursor_new(GDK_LEFT_SIDE));
         break;
     case Cursor::NorthWestResize:
     case Cursor::NorthWestPanning:
-        m_platformCursor = gdk_cursor_new(GDK_TOP_LEFT_CORNER);
+        m_platformCursor = adoptGRef(gdk_cursor_new(GDK_TOP_LEFT_CORNER));
         break;
     case Cursor::SouthResize:
     case Cursor::SouthPanning:
-        m_platformCursor = gdk_cursor_new(GDK_BOTTOM_SIDE);
+        m_platformCursor = adoptGRef(gdk_cursor_new(GDK_BOTTOM_SIDE));
         break;
     case Cursor::SouthEastResize:
     case Cursor::SouthEastPanning:
-        m_platformCursor = gdk_cursor_new(GDK_BOTTOM_RIGHT_CORNER);
+        m_platformCursor = adoptGRef(gdk_cursor_new(GDK_BOTTOM_RIGHT_CORNER));
         break;
     case Cursor::SouthWestResize:
     case Cursor::SouthWestPanning:
-        m_platformCursor = gdk_cursor_new(GDK_BOTTOM_LEFT_CORNER);
+        m_platformCursor = adoptGRef(gdk_cursor_new(GDK_BOTTOM_LEFT_CORNER));
         break;
     case Cursor::WestResize:
-        m_platformCursor = gdk_cursor_new(GDK_LEFT_SIDE);
+        m_platformCursor = adoptGRef(gdk_cursor_new(GDK_LEFT_SIDE));
         break;
     case Cursor::NorthSouthResize:
-        m_platformCursor = gdk_cursor_new(GDK_TOP_TEE);
+        m_platformCursor = adoptGRef(gdk_cursor_new(GDK_TOP_TEE));
         break;
     case Cursor::EastWestResize:
     case Cursor::WestPanning:
-        m_platformCursor = gdk_cursor_new(GDK_LEFT_SIDE);
+        m_platformCursor = adoptGRef(gdk_cursor_new(GDK_LEFT_SIDE));
         break;
     case Cursor::NorthEastSouthWestResize:
     case Cursor::NorthWestSouthEastResize:
-        m_platformCursor = gdk_cursor_new(GDK_SIZING);
+        m_platformCursor = adoptGRef(gdk_cursor_new(GDK_SIZING));
         break;
     case Cursor::ColumnResize:
-        m_platformCursor = gdk_cursor_new(GDK_SB_H_DOUBLE_ARROW);
+        m_platformCursor = adoptGRef(gdk_cursor_new(GDK_SB_H_DOUBLE_ARROW));
         break;
     case Cursor::RowResize:
-        m_platformCursor = gdk_cursor_new(GDK_SB_V_DOUBLE_ARROW);
+        m_platformCursor = adoptGRef(gdk_cursor_new(GDK_SB_V_DOUBLE_ARROW));
         break;
     case Cursor::VerticalText:
         m_platformCursor = createNamedCursor(CustomCursorVerticalText);
         break;
     case Cursor::Cell:
-        m_platformCursor = gdk_cursor_new(GDK_PLUS);
+        m_platformCursor = adoptGRef(gdk_cursor_new(GDK_PLUS));
         break;
     case Cursor::ContextMenu:
         m_platformCursor = createNamedCursor(CustomCursorContextMenu);

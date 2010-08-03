@@ -1,3 +1,17 @@
+2010-08-03  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] Remove a memory leak from CusorGtk.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=43424
+
+        * platform/gtk/CursorGtk.cpp:
+        (WebCore::createNamedCursor):
+        (WebCore::createCustomCursor):
+        (WebCore::Cursor::ensurePlatformCursor):
+        * platform/gtk/KeyEventGtk.cpp:
+        (WebCore::keyIdentifierForGdkKeyCode):
+
 2010-08-03  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: speculative chromium tests fix.
