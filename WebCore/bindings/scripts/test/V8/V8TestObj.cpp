@@ -901,7 +901,7 @@ static v8::Handle<v8::Value> methodWithCallbackArgCallback(const v8::Arguments& 
     TestObj* imp = V8TestObj::toNative(args.Holder());
     if (args.Length() <= 0 || !args[0]->IsObject())
         return throwError(TYPE_MISMATCH_ERR);
-    RefPtr<TestCallback> callback = V8TestCallback::create(args[0]);
+    RefPtr<TestCallback> callback = V8TestCallback::create(args[0], getScriptExecutionContext());
     imp->methodWithCallbackArg(callback);
     return v8::Handle<v8::Value>();
 }
@@ -913,7 +913,7 @@ static v8::Handle<v8::Value> methodWithNonCallbackArgAndCallbackArgCallback(cons
     int nonCallback = toInt32(args[0]);
     if (args.Length() <= 1 || !args[1]->IsObject())
         return throwError(TYPE_MISMATCH_ERR);
-    RefPtr<TestCallback> callback = V8TestCallback::create(args[1]);
+    RefPtr<TestCallback> callback = V8TestCallback::create(args[1], getScriptExecutionContext());
     imp->methodWithNonCallbackArgAndCallbackArg(nonCallback, callback);
     return v8::Handle<v8::Value>();
 }
@@ -928,7 +928,7 @@ static v8::Handle<v8::Value> methodWithCallbackAndOptionalArgCallback(const v8::
     }
     if (args.Length() <= 0 || !args[0]->IsObject())
         return throwError(TYPE_MISMATCH_ERR);
-    RefPtr<TestCallback> callback = V8TestCallback::create(args[0]);
+    RefPtr<TestCallback> callback = V8TestCallback::create(args[0], getScriptExecutionContext());
     imp->methodWithCallbackAndOptionalArg(callback);
     return v8::Handle<v8::Value>();
 }

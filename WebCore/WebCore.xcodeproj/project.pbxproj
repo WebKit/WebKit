@@ -4353,6 +4353,8 @@
 		B5B5DC6A119BB3D5002A8790 /* AbstractDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = B5B5DC68119BB3D5002A8790 /* AbstractDatabase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B5C1123B102B6C4600096578 /* SQLTransactionCoordinator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B5C11239102B6C4600096578 /* SQLTransactionCoordinator.cpp */; };
 		B5C1123C102B6C4600096578 /* SQLTransactionCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = B5C1123A102B6C4600096578 /* SQLTransactionCoordinator.h */; };
+		B5D31DFA11CF610B009F22B4 /* ActiveDOMCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B5D31DF811CF610B009F22B4 /* ActiveDOMCallback.cpp */; };
+		B5D31DFB11CF610B009F22B4 /* ActiveDOMCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = B5D31DF911CF610B009F22B4 /* ActiveDOMCallback.h */; };
 		B5D3601A112F8B560048DEA8 /* DatabaseCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = B5D36019112F8B560048DEA8 /* DatabaseCallback.h */; };
 		B71FE6DF11091CB300DAEF77 /* PrintContext.h in Headers */ = {isa = PBXBuildFile; fileRef = B776D43A1104525D00BEB0EC /* PrintContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B734B181119B9911006587BD /* FontTranscoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B734B180119B9911006587BD /* FontTranscoder.cpp */; };
@@ -10017,6 +10019,8 @@
 		B5B5DC68119BB3D5002A8790 /* AbstractDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractDatabase.h; sourceTree = "<group>"; };
 		B5C11239102B6C4600096578 /* SQLTransactionCoordinator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLTransactionCoordinator.cpp; sourceTree = "<group>"; };
 		B5C1123A102B6C4600096578 /* SQLTransactionCoordinator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLTransactionCoordinator.h; sourceTree = "<group>"; };
+		B5D31DF811CF610B009F22B4 /* ActiveDOMCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ActiveDOMCallback.cpp; path = generic/ActiveDOMCallback.cpp; sourceTree = "<group>"; };
+		B5D31DF911CF610B009F22B4 /* ActiveDOMCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ActiveDOMCallback.h; path = generic/ActiveDOMCallback.h; sourceTree = "<group>"; };
 		B5D36019112F8B560048DEA8 /* DatabaseCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseCallback.h; sourceTree = "<group>"; };
 		B734B180119B9911006587BD /* FontTranscoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FontTranscoder.cpp; path = transcoder/FontTranscoder.cpp; sourceTree = "<group>"; };
 		B734B182119B991D006587BD /* FontTranscoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FontTranscoder.h; path = transcoder/FontTranscoder.h; sourceTree = "<group>"; };
@@ -15712,6 +15716,15 @@
 			name = cf;
 			sourceTree = "<group>";
 		};
+		B5D31DF711CF60E5009F22B4 /* generic */ = {
+			isa = PBXGroup;
+			children = (
+				B5D31DF811CF610B009F22B4 /* ActiveDOMCallback.cpp */,
+				B5D31DF911CF610B009F22B4 /* ActiveDOMCallback.h */,
+			);
+			name = generic;
+			sourceTree = "<group>";
+		};
 		B734B17F119B98DB006587BD /* transcoder */ = {
 			isa = PBXGroup;
 			children = (
@@ -15724,6 +15737,7 @@
 		BC1A3790097C6F970019F3D8 /* bindings */ = {
 			isa = PBXGroup;
 			children = (
+				B5D31DF711CF60E5009F22B4 /* generic */,
 				BC1A3793097C6FB10019F3D8 /* js */,
 				BC1A3794097C6FC40019F3D8 /* objc */,
 				93F8B3050A300FE100F61AB8 /* CodeGenerator.pm */,
@@ -17330,6 +17344,7 @@
 				29A812410FBB9C1D00510293 /* AccessibilityTableColumn.h in Headers */,
 				29A8123F0FBB9C1D00510293 /* AccessibilityTableHeaderContainer.h in Headers */,
 				29A812310FBB9C1D00510293 /* AccessibilityTableRow.h in Headers */,
+				B5D31DFB11CF610B009F22B4 /* ActiveDOMCallback.h in Headers */,
 				E1C4DE690EA75C1E0023CCD6 /* ActiveDOMObject.h in Headers */,
 				84D0C4061115F1EA0018AA34 /* AffineTransform.h in Headers */,
 				49E912AB0EFAC906009D0CAF /* Animation.h in Headers */,
@@ -20289,6 +20304,7 @@
 				29A812350FBB9C1D00510293 /* AccessibilityTableColumn.cpp in Sources */,
 				29A812400FBB9C1D00510293 /* AccessibilityTableHeaderContainer.cpp in Sources */,
 				29A812290FBB9C1D00510293 /* AccessibilityTableRow.cpp in Sources */,
+				B5D31DFA11CF610B009F22B4 /* ActiveDOMCallback.cpp in Sources */,
 				E1C4DE6E0EA75C650023CCD6 /* ActiveDOMObject.cpp in Sources */,
 				84D0C4041115F1D40018AA34 /* AffineTransform.cpp in Sources */,
 				49E912AA0EFAC906009D0CAF /* Animation.cpp in Sources */,

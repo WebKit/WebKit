@@ -31,7 +31,6 @@
 
 #if ENABLE(DATABASE)
 
-#include "Frame.h"
 #include "JSSQLError.h"
 #include "JSSQLTransaction.h"
 #include "ScriptExecutionContext.h"
@@ -41,22 +40,19 @@ namespace WebCore {
 
 using namespace JSC;
 
-bool JSSQLStatementErrorCallback::handleEvent(ScriptExecutionContext* context, SQLTransaction* transaction, SQLError* error)
+bool JSSQLStatementErrorCallback::handleEvent(SQLTransaction* transaction, SQLError* error)
 {
-    ASSERT(m_data);
-    ASSERT(context);
+    if (!m_data || !m_data->globalObject() || !canInvokeCallback())
+        return true;
 
     RefPtr<JSSQLStatementErrorCallback> protect(this);
 
     JSC::JSLock lock(SilenceAssertionsOnly);
-    JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(context, m_isolatedWorld.get());
-    if (!globalObject)
-        return true; // if we cannot invoke the callback, roll back the transaction
 
-    ExecState* exec = globalObject->globalExec();
+    ExecState* exec = m_data->globalObject()->globalExec();
     MarkedArgumentBuffer args;
-    args.append(toJS(exec, deprecatedGlobalObjectForPrototype(exec), transaction));
-    args.append(toJS(exec, deprecatedGlobalObjectForPrototype(exec), error));
+    args.append(toJS(exec, transaction));
+    args.append(toJS(exec, error));
 
     bool raisedException = false;
     JSValue result = m_data->invokeCallback(args, &raisedException);

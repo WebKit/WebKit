@@ -73,6 +73,7 @@ SET(WebCore_INCLUDE_DIRECTORIES
 )
 
 SET(WebCore_IDL_INCLUDES
+    bindings/generic
     bindings/js
     css
     dom
@@ -561,6 +562,7 @@ SET(WebCore_SOURCES
 
     bindings/ScriptControllerBase.cpp
 
+    bindings/generic/ActiveDOMCallback.cpp
     bindings/generic/RuntimeEnabledFeatures.cpp
 
     bindings/js/DOMObjectHashTableMap.cpp

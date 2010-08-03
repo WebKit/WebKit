@@ -23,13 +23,14 @@
 
 #if ENABLE(DATABASE)
 
+#include "ActiveDOMCallback.h"
 #include "JSCallbackData.h"
 #include "TestCallback.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
-class JSTestCallback : public TestCallback {
+class JSTestCallback : public TestCallback, public ActiveDOMCallback {
 public:
     static PassRefPtr<JSTestCallback> create(JSC::JSObject* callback, JSDOMGlobalObject* globalObject)
     {
@@ -39,17 +40,15 @@ public:
     virtual ~JSTestCallback();
 
     // Functions
-    virtual bool callbackWithClass1Param(ScriptExecutionContext*, Class1* class1Param);
-    virtual bool callbackWithClass2Param(ScriptExecutionContext*, Class2* class2Param, const String& strArg);
-    COMPILE_ASSERT(false)    virtual int callbackWithNonBoolReturnType(ScriptExecutionContext*, Class3* class3Param);
-    virtual int customCallback(ScriptExecutionContext*, Class5* class5Param, Class6* class6Param);
+    virtual bool callbackWithClass1Param(Class1* class1Param);
+    virtual bool callbackWithClass2Param(Class2* class2Param, const String& strArg);
+    COMPILE_ASSERT(false)    virtual int callbackWithNonBoolReturnType(Class3* class3Param);
+    virtual int customCallback(Class5* class5Param, Class6* class6Param);
 
 private:
     JSTestCallback(JSC::JSObject* callback, JSDOMGlobalObject*);
 
     JSCallbackData* m_data;
-    RefPtr<DOMWrapperWorld> m_isolatedWorld;
-    ScriptExecutionContext* m_scriptExecutionContext;
 };
 
 } // namespace WebCore

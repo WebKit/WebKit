@@ -43,7 +43,7 @@ class ScriptExecutionContext;
 class FileSystemCallback : public RefCounted<FileSystemCallback> {
 public:
     virtual ~FileSystemCallback() { }
-    virtual bool handleEvent(ScriptExecutionContext*, DOMFileSystem*) = 0;
+    virtual bool handleEvent(DOMFileSystem*) = 0;
 };
 
 } // namespace

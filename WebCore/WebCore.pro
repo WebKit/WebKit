@@ -276,6 +276,7 @@ SOURCES += \
     accessibility/AccessibilityTableHeaderContainer.cpp \    
     accessibility/AccessibilityTableRow.cpp \    
     accessibility/AXObjectCache.cpp \
+    bindings/generic/ActiveDOMCallback.cpp \
     bindings/generic/RuntimeEnabledFeatures.cpp \
     bindings/js/GCController.cpp \
     bindings/js/DOMObjectHashTableMap.cpp \
@@ -1081,6 +1082,7 @@ HEADERS += \
     accessibility/AccessibilityTableRow.h \
     accessibility/AXObjectCache.h \
     bindings/ScriptControllerBase.h \
+    bindings/generic/ActiveDOMCallback.h \
     bindings/js/CachedScriptSourceProvider.h \
     bindings/js/GCController.h \
     bindings/js/DOMObjectHashTableMap.h \

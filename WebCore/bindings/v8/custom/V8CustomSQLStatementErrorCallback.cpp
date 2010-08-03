@@ -43,11 +43,14 @@
 
 namespace WebCore {
 
-bool V8SQLStatementErrorCallback::handleEvent(ScriptExecutionContext* context, SQLTransaction* transaction, SQLError* error)
+bool V8SQLStatementErrorCallback::handleEvent(SQLTransaction* transaction, SQLError* error)
 {
+    if (!canInvokeCallback())
+        return true;
+
     v8::HandleScope handleScope;
 
-    v8::Handle<v8::Context> v8Context = toV8Context(context, m_worldContext);
+    v8::Handle<v8::Context> v8Context = toV8Context(scriptExecutionContext(), m_worldContext);
     if (v8Context.IsEmpty())
         return true;
 
@@ -65,15 +68,12 @@ bool V8SQLStatementErrorCallback::handleEvent(ScriptExecutionContext* context, S
         errorHandle
     };
 
-    // Protect the context until the callback returns.
-    RefPtr<ScriptExecutionContext> protector(context);
-
     bool callbackReturnValue = false;
     // Step 6: If the error callback returns false, then move on to the next
     // statement, if any, or onto the next overall step otherwise. Otherwise,
     // the error callback did not return false, or there was no error callback.
     // Jump to the last step in the overall steps.
-    return invokeCallback(m_callback, 2, argv, callbackReturnValue, context) || callbackReturnValue;
+    return invokeCallback(m_callback, 2, argv, callbackReturnValue, scriptExecutionContext()) || callbackReturnValue;
 }
 
 } // namespace WebCore

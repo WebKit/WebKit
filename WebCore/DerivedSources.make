@@ -28,6 +28,7 @@
 
 VPATH = \
     $(WebCore) \
+    $(WebCore)/bindings/generic \
     $(WebCore)/bindings/js \
     $(WebCore)/bindings/objc \
     $(WebCore)/css \

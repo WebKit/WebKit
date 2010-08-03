@@ -617,6 +617,8 @@ webcore_sources += \
 	WebCore/accessibility/AccessibilityTableHeaderContainer.h \
 	WebCore/accessibility/AccessibilityTableRow.cpp \
 	WebCore/accessibility/AccessibilityTableRow.h \
+	WebCore/bindings/generic/ActiveDOMCallback.cpp \
+	WebCore/bindings/generic/ActiveDOMCallback.h \
 	WebCore/bindings/generic/RuntimeEnabledFeatures.cpp \
 	WebCore/bindings/generic/RuntimeEnabledFeatures.h \
 	WebCore/bindings/js/CachedScriptSourceProvider.h \

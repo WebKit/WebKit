@@ -295,7 +295,7 @@ void SQLTransaction::deliverTransactionCallback()
 
     if (m_callback) {
         m_executeSqlAllowed = true;
-        shouldDeliverErrorCallback = !m_callback->handleEvent(m_database->scriptExecutionContext(), this);
+        shouldDeliverErrorCallback = !m_callback->handleEvent(this);
         m_executeSqlAllowed = false;
         m_callback = 0;
     }
@@ -553,7 +553,7 @@ void SQLTransaction::deliverTransactionErrorCallback()
     // Transaction Step 12 - If exists, invoke error callback with the last
     // error to have occurred in this transaction.
     if (m_errorCallback) {
-        m_errorCallback->handleEvent(m_database->scriptExecutionContext(), m_transactionError.get());
+        m_errorCallback->handleEvent(m_transactionError.get());
         m_errorCallback = 0;
     }
 

@@ -1189,11 +1189,7 @@ END
             $implIncludes{"ExceptionCode.h"} = 1;
             push(@implContentDecls, "    if (args.Length() <= $paramIndex || !args[$paramIndex]->IsObject())\n");
             push(@implContentDecls, "        return throwError(TYPE_MISMATCH_ERR);\n");
-            if ($parameter->type eq "VoidCallback") {
-                push(@implContentDecls, "    RefPtr<" . $parameter->type . "> $parameterName = " . $className . "::create(args[$paramIndex], getScriptExecutionContext());\n");
-            } else {
-                push(@implContentDecls, "    RefPtr<" . $parameter->type . "> $parameterName = " . $className . "::create(args[$paramIndex]);\n");
-            }
+            push(@implContentDecls, "    RefPtr<" . $parameter->type . "> $parameterName = ${className}::create(args[$paramIndex], getScriptExecutionContext());\n");
             $paramIndex++;
             next;
         }
@@ -2129,25 +2125,25 @@ sub GenerateCallbackHeader
     # - Add default header template
     push(@headerContent, GenerateHeaderContentHeader($dataNode));
 
-    if ("$interfaceName.h" lt "WorldContextHandle.h") {
-        push(@headerContent, "#include \"$interfaceName.h\"\n");
-        push(@headerContent, "#include \"WorldContextHandle.h\"\n");
-    } else {
-        push(@headerContent, "#include \"WorldContextHandle.h\"\n");
-        push(@headerContent, "#include \"$interfaceName.h\"\n");
-    }
-    push(@headerContent, "#include <v8.h>\n");
-    push(@headerContent, "#include <wtf/Forward.h>\n");
+    my @unsortedIncludes = ();
+    push(@unsortedIncludes, "#include \"ActiveDOMCallback.h\"");
+    push(@unsortedIncludes, "#include \"$interfaceName.h\"");
+    push(@unsortedIncludes, "#include \"WorldContextHandle.h\"");
+    push(@unsortedIncludes, "#include <v8.h>");
+    push(@unsortedIncludes, "#include <wtf/Forward.h>");
+    push(@headerContent, join("\n", sort @unsortedIncludes));
     
-    push(@headerContent, "\nnamespace WebCore {\n\n");
-    push(@headerContent, "class $className : public $interfaceName {\n");
+    push(@headerContent, "\n\nnamespace WebCore {\n\n");
+    push(@headerContent, "class ScriptExecutionContext;\n\n");
+    push(@headerContent, "class $className : public $interfaceName, public ActiveDOMCallback {\n");
 
     push(@headerContent, <<END);
 public:
-    static PassRefPtr<${className}> create(v8::Local<v8::Value> value)
+    static PassRefPtr<${className}> create(v8::Local<v8::Value> value, ScriptExecutionContext* context)
     {
         ASSERT(value->IsObject());
-        return adoptRef(new ${className}(value->ToObject()));
+        ASSERT(context);
+        return adoptRef(new ${className}(value->ToObject(), context));
     }
 
     virtual ~${className}();
@@ -2165,11 +2161,13 @@ END
                     push(@headerContent, "    COMPILE_ASSERT(false)");
             }
 
-            push(@headerContent, "    virtual " . GetNativeTypeForCallbacks($function->signature->type) . " " . $function->signature->name . "(ScriptExecutionContext*");
-            foreach my $param (@params) {
-                push(@headerContent, ", " . GetNativeTypeForCallbacks($param->type) . " " . $param->name);
-            }
+            push(@headerContent, "    virtual " . GetNativeTypeForCallbacks($function->signature->type) . " " . $function->signature->name . "(");
 
+            my @args = ();
+            foreach my $param (@params) {
+                push(@args, GetNativeTypeForCallbacks($param->type) . " " . $param->name);
+            }
+            push(@headerContent, join(", ", @args));
             push(@headerContent, ");\n");
         }
     }
@@ -2177,7 +2175,7 @@ END
     push(@headerContent, <<END);
 
 private:
-    ${className}(v8::Local<v8::Object>);
+    ${className}(v8::Local<v8::Object>, ScriptExecutionContext*);
 
     v8::Persistent<v8::Object> m_callback;
     WorldContextHandle m_worldContext;
@@ -2209,8 +2207,9 @@ sub GenerateCallbackImplementation
     push(@implContent, "#include <wtf/Assertions.h>\n\n");
     push(@implContent, "namespace WebCore {\n\n");
     push(@implContent, <<END);
-${className}::${className}(v8::Local<v8::Object> callback)
-    : m_callback(v8::Persistent<v8::Object>::New(callback))
+${className}::${className}(v8::Local<v8::Object> callback, ScriptExecutionContext* context)
+    : ActiveDOMCallback(context)
+    , m_callback(v8::Persistent<v8::Object>::New(callback))
     , m_worldContext(UseCurrentWorld)
 {
 }
@@ -2234,22 +2233,26 @@ END
             }
 
             AddIncludesForType($function->signature->type);
-            push(@implContent, "\n" . GetNativeTypeForCallbacks($function->signature->type) . " ${className}::" . $function->signature->name . "(ScriptExecutionContext* context");
+            push(@implContent, "\n" . GetNativeTypeForCallbacks($function->signature->type) . " ${className}::" . $function->signature->name . "(");
 
+            my @args = ();
             foreach my $param (@params) {
                 AddIncludesForType($param->type);
-                push(@implContent, ", " . GetNativeTypeForCallbacks($param->type) . " " . $param->name);
+                push(@args, GetNativeTypeForCallbacks($param->type) . " " . $param->name);
             }
+            push(@implContent, join(", ", @args));
 
             push(@implContent, ")\n");
             push(@implContent, "{\n");
+            push(@implContent, "    if (!canInvokeCallback())\n");
+            push(@implContent, "        return true;\n\n");
             push(@implContent, "    v8::HandleScope handleScope;\n\n");
-            push(@implContent, "    v8::Handle<v8::Context> v8Context = toV8Context(context, m_worldContext);\n");
+            push(@implContent, "    v8::Handle<v8::Context> v8Context = toV8Context(scriptExecutionContext(), m_worldContext);\n");
             push(@implContent, "    if (v8Context.IsEmpty())\n");
             push(@implContent, "        return true;\n\n");
             push(@implContent, "    v8::Context::Scope scope(v8Context);\n\n");
 
-            my @argvs = ();
+            @args = ();
             foreach my $param (@params) {
                 my $paramName = $param->name;
                 push(@implContent, "    v8::Handle<v8::Value> ${paramName}Handle = toV8(${paramName});\n");
@@ -2257,14 +2260,14 @@ END
                 push(@implContent, "        CRASH();\n");
                 push(@implContent, "        return true;\n");
                 push(@implContent, "    }\n");
-                push(@argvs, "        ${paramName}Handle");
+                push(@args, "        ${paramName}Handle");
             }
 
             push(@implContent, "\n    v8::Handle<v8::Value> argv[] = {\n");
-            push(@implContent, join(",\n", @argvs));
+            push(@implContent, join(",\n", @args));
             push(@implContent, "\n    };\n\n");
             push(@implContent, "    bool callbackReturnValue = false;\n");
-            push(@implContent, "    return !invokeCallback(m_callback, " . scalar(@params) . ", argv, callbackReturnValue, context);\n");
+            push(@implContent, "    return !invokeCallback(m_callback, " . scalar(@params) . ", argv, callbackReturnValue, scriptExecutionContext());\n");
             push(@implContent, "}\n");
         }
     }

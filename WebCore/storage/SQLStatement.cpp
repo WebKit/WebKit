@@ -170,9 +170,9 @@ bool SQLStatement::performCallback(SQLTransaction* transaction)
     // because then we need to jump to the transaction error callback.
     if (m_error) {
         ASSERT(m_statementErrorCallback);
-        callbackError = m_statementErrorCallback->handleEvent(transaction->database()->scriptExecutionContext(), transaction, m_error.get());
+        callbackError = m_statementErrorCallback->handleEvent(transaction, m_error.get());
     } else if (m_statementCallback)
-        callbackError = !m_statementCallback->handleEvent(transaction->database()->scriptExecutionContext(), transaction, m_resultSet.get());
+        callbackError = !m_statementCallback->handleEvent(transaction, m_resultSet.get());
 
     // Now release our callbacks, to break reference cycles.
     m_statementCallback = 0;

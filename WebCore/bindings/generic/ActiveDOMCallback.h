@@ -28,26 +28,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef EntryCallback_h
-#define EntryCallback_h
+#ifndef ActiveDOMCallback_h
+#define ActiveDOMCallback_h
 
-#if ENABLE(FILE_SYSTEM)
-
-#include <wtf/RefCounted.h>
+#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
-class Entry;
+class ActiveDOMObjectCallbackImpl;
 class ScriptExecutionContext;
 
-class EntryCallback : public RefCounted<EntryCallback> {
+// A class that allows callbacks to behave like ActiveDOMObjects, and also
+// be destroyed on the context thread or any other thread.
+class ActiveDOMCallback {
 public:
-    virtual ~EntryCallback() { }
-    virtual bool handleEvent(Entry*) = 0;
+    ActiveDOMCallback(ScriptExecutionContext* context);
+    ~ActiveDOMCallback();
+
+    bool canInvokeCallback() const;
+    ScriptExecutionContext* scriptExecutionContext() const;
+
+private:
+    // The ActiveDOMObject part of the callback.
+    OwnPtr<ActiveDOMObjectCallbackImpl> m_impl;
 };
 
-} // namespace
+} // namespace WebCore
 
-#endif // ENABLE(FILE_SYSTEM)
-
-#endif // EntryCallback_h
+#endif // ActiveDOMCallback_h

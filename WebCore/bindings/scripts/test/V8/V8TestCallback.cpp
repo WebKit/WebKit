@@ -34,8 +34,9 @@
 
 namespace WebCore {
 
-V8TestCallback::V8TestCallback(v8::Local<v8::Object> callback)
-    : m_callback(v8::Persistent<v8::Object>::New(callback))
+V8TestCallback::V8TestCallback(v8::Local<v8::Object> callback, ScriptExecutionContext* context)
+    : ActiveDOMCallback(context)
+    , m_callback(v8::Persistent<v8::Object>::New(callback))
     , m_worldContext(UseCurrentWorld)
 {
 }
@@ -47,11 +48,14 @@ V8TestCallback::~V8TestCallback()
 
 // Functions
 
-bool V8TestCallback::callbackWithClass1Param(ScriptExecutionContext* context, Class1* class1Param)
+bool V8TestCallback::callbackWithClass1Param(Class1* class1Param)
 {
+    if (!canInvokeCallback())
+        return true;
+
     v8::HandleScope handleScope;
 
-    v8::Handle<v8::Context> v8Context = toV8Context(context, m_worldContext);
+    v8::Handle<v8::Context> v8Context = toV8Context(scriptExecutionContext(), m_worldContext);
     if (v8Context.IsEmpty())
         return true;
 
@@ -68,14 +72,17 @@ bool V8TestCallback::callbackWithClass1Param(ScriptExecutionContext* context, Cl
     };
 
     bool callbackReturnValue = false;
-    return !invokeCallback(m_callback, 1, argv, callbackReturnValue, context);
+    return !invokeCallback(m_callback, 1, argv, callbackReturnValue, scriptExecutionContext());
 }
 
-bool V8TestCallback::callbackWithClass2Param(ScriptExecutionContext* context, Class2* class2Param, const String& strArg)
+bool V8TestCallback::callbackWithClass2Param(Class2* class2Param, const String& strArg)
 {
+    if (!canInvokeCallback())
+        return true;
+
     v8::HandleScope handleScope;
 
-    v8::Handle<v8::Context> v8Context = toV8Context(context, m_worldContext);
+    v8::Handle<v8::Context> v8Context = toV8Context(scriptExecutionContext(), m_worldContext);
     if (v8Context.IsEmpty())
         return true;
 
@@ -98,7 +105,7 @@ bool V8TestCallback::callbackWithClass2Param(ScriptExecutionContext* context, Cl
     };
 
     bool callbackReturnValue = false;
-    return !invokeCallback(m_callback, 2, argv, callbackReturnValue, context);
+    return !invokeCallback(m_callback, 2, argv, callbackReturnValue, scriptExecutionContext());
 }
 
 } // namespace WebCore

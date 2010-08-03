@@ -43,7 +43,7 @@ class ScriptExecutionContext;
 class ErrorCallback : public RefCounted<ErrorCallback> {
 public:
     virtual ~ErrorCallback() { }
-    virtual bool handleEvent(ScriptExecutionContext*, FileError*) = 0;
+    virtual bool handleEvent(FileError*) = 0;
 };
 
 } // namespace

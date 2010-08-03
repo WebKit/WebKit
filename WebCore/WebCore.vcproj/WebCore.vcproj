@@ -40844,6 +40844,18 @@
 				RelativePath="..\bindings\ScriptControllerBase.h"
 				>
 			</File>
+ 			<Filter
+				Name="generic"
+				>
+				<File
+					RelativePath="..\bindings\generic\ActiveDOMCallback.h"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\generic\ActiveDOMCallback.cpp"
+					>
+				</File>
+			</Filter>
 			<Filter
 				Name="generic"
 				>

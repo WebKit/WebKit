@@ -150,7 +150,7 @@ ExceptionCode SQLTransactionSync::begin()
 ExceptionCode SQLTransactionSync::execute()
 {
     ASSERT(m_database->scriptExecutionContext()->isContextThread());
-    if (!m_database->opened() || (m_callback && !m_callback->handleEvent(m_database->scriptExecutionContext(), this))) {
+    if (!m_database->opened() || (m_callback && !m_callback->handleEvent(this))) {
         m_callback = 0;
         return SQLException::UNKNOWN_ERR;
     }

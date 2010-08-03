@@ -2084,12 +2084,13 @@ sub GenerateCallbackHeader
     # - Add default header template and header protection
     push(@headerContentHeader, GenerateHeaderContentHeader($dataNode));
 
+    $headerIncludes{"ActiveDOMCallback.h"} = 1;
     $headerIncludes{"$interfaceName.h"} = 1;
     $headerIncludes{"JSCallbackData.h"} = 1;
     $headerIncludes{"<wtf/Forward.h>"} = 1;
 
     push(@headerContent, "\nnamespace WebCore {\n\n");
-    push(@headerContent, "class $className : public $interfaceName {\n");
+    push(@headerContent, "class $className : public $interfaceName, public ActiveDOMCallback {\n");
     push(@headerContent, "public:\n");
 
     # The static create() method.
@@ -2112,10 +2113,13 @@ sub GenerateCallbackHeader
                 push(@headerContent, "    COMPILE_ASSERT(false)");
             }
 
-            push(@headerContent, "    virtual " . GetNativeType($function->signature->type) . " " . $function->signature->name . "(ScriptExecutionContext*");
+            push(@headerContent, "    virtual " . GetNativeType($function->signature->type) . " " . $function->signature->name . "(");
+
+            my @args = ();
             foreach my $param (@params) {
-                push(@headerContent, ", " . GetNativeType($param->type) . " " . $param->name);
+                push(@args, GetNativeType($param->type) . " " . $param->name);
             }
+            push(@headerContent, join(", ", @args));
 
             push(@headerContent, ");\n");
         }
@@ -2128,8 +2132,6 @@ sub GenerateCallbackHeader
 
     # Private members
     push(@headerContent, "    JSCallbackData* m_data;\n");
-    push(@headerContent, "    RefPtr<DOMWrapperWorld> m_isolatedWorld;\n");
-    push(@headerContent, "    ScriptExecutionContext* m_scriptExecutionContext;\n");
     push(@headerContent, "};\n\n");
 
     push(@headerContent, "} // namespace WebCore\n\n");
@@ -2159,19 +2161,21 @@ sub GenerateCallbackImplementation
 
     # Constructor
     push(@implContent, "${className}::${className}(JSObject* callback, JSDOMGlobalObject* globalObject)\n");
-    push(@implContent, "    : m_data(new JSCallbackData(callback, globalObject))\n");
-    push(@implContent, "    , m_isolatedWorld(globalObject->world())\n");
-    push(@implContent, "    , m_scriptExecutionContext(globalObject->scriptExecutionContext())\n");
+    push(@implContent, "    : ActiveDOMCallback(globalObject->scriptExecutionContext())\n");
+    push(@implContent, "    , m_data(new JSCallbackData(callback, globalObject))\n");
     push(@implContent, "{\n");
     push(@implContent, "}\n\n");
 
     # Destructor
     push(@implContent, "${className}::~${className}()\n");
     push(@implContent, "{\n");
-    push(@implContent, "    if (m_scriptExecutionContext->isContextThread())\n");
+    push(@implContent, "    ScriptExecutionContext* context = scriptExecutionContext();\n");
+    push(@implContent, "    // When the context is destroyed, all tasks with a reference to a callback\n");
+    push(@implContent, "    // should be deleted. So if the context is NULL, we are on the context thread.\n");
+    push(@implContent, "    if (!context || context->isContextThread())\n");
     push(@implContent, "        delete m_data;\n");
     push(@implContent, "    else\n");
-    push(@implContent, "        m_scriptExecutionContext->postTask(DeleteCallbackDataTask::create(m_data));\n");
+    push(@implContent, "        context->postTask(DeleteCallbackDataTask::create(m_data));\n");
     push(@implContent, "#ifndef NDEBUG\n");
     push(@implContent, "    m_data = 0;\n");
     push(@implContent, "#endif\n");
@@ -2189,24 +2193,22 @@ sub GenerateCallbackImplementation
             }
 
             AddIncludesForType($function->signature->type);
-            push(@implContent, "\n" . GetNativeType($function->signature->type) . " ${className}::" . $function->signature->name . "(ScriptExecutionContext* context");
+            push(@implContent, "\n" . GetNativeType($function->signature->type) . " ${className}::" . $function->signature->name . "(");
 
+            my @args = ();
             foreach my $param (@params) {
                 AddIncludesForType($param->type, 1);
-                push(@implContent, ", " . GetNativeType($param->type) . " " . $param->name);
+                push(@args, GetNativeType($param->type) . " " . $param->name);
             }
-
+            push(@implContent, join(", ", @args));
             push(@implContent, ")\n");
 
             push(@implContent, "{\n");
-            push(@implContent, "    ASSERT(m_data);\n");
-            push(@implContent, "    ASSERT(context);\n\n");
+            push(@implContent, "    if (!canInvokeCallback())\n");
+            push(@implContent, "        return true;\n\n");
             push(@implContent, "    RefPtr<$className> protect(this);\n\n");
             push(@implContent, "    JSLock lock(SilenceAssertionsOnly);\n\n");
-            push(@implContent, "    JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(context, m_isolatedWorld.get());\n");
-            push(@implContent, "    if (!globalObject)\n");
-            push(@implContent, "        return true;\n\n");
-            push(@implContent, "    ExecState* exec = globalObject->globalExec();\n");
+            push(@implContent, "    ExecState* exec = m_data->globalObject()->globalExec();\n");
             push(@implContent, "    MarkedArgumentBuffer args;\n");
 
             foreach my $param (@params) {

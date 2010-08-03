@@ -68,9 +68,9 @@ public:
         return new DatabaseCreationCallbackTask(database, creationCallback);
     }
 
-    virtual void performTask(ScriptExecutionContext* context)
+    virtual void performTask(ScriptExecutionContext*)
     {
-        m_creationCallback->handleEvent(context, m_database.get());
+        m_creationCallback->handleEvent(m_database.get());
     }
 
 private:

@@ -43,7 +43,7 @@ class ScriptExecutionContext;
 class MetadataCallback : public RefCounted<MetadataCallback> {
 public:
     virtual ~MetadataCallback() { }
-    virtual bool handleEvent(ScriptExecutionContext*, Metadata*) = 0;
+    virtual bool handleEvent(Metadata*) = 0;
 };
 
 } // namespace
