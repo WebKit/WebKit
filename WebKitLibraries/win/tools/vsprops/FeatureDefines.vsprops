@@ -123,7 +123,7 @@
 	/>
   <UserMacro
 		Name="ENABLE_MATHML"
-		Value=""
+		Value="ENABLE_MATHML"
 		PerformEnvironmentSet="true"
 	/>
   <UserMacro

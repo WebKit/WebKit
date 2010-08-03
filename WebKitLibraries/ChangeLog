@@ -1,3 +1,11 @@
+2010-08-03  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Alice Liu.
+
+        Enable MathML on Windows.
+
+        * win/tools/vsprops/FeatureDefines.vsprops:
+
 2010-07-30  Adam Roben  <aroben@apple.com>
 
         Roll our r64361 and r64363
