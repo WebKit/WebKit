@@ -54,7 +54,7 @@ public:
 
     virtual void didNavigate() = 0;
 
-    virtual void dispatchMessageFromFrontend(const WebDevToolsMessageData&) = 0;
+    virtual void dispatchOnInspectorBackend(const WebString& message) = 0;
 
     virtual void inspectElementAt(const WebPoint&) = 0;
 
@@ -71,8 +71,6 @@ public:
 
     // Asynchronously request debugger to pause immediately.
     WEBKIT_API static void debuggerPauseScript();
-
-    WEBKIT_API static bool dispatchMessageFromFrontendOnIOThread(WebDevToolsMessageTransport*, const WebDevToolsMessageData&);
 
     typedef void (*MessageLoopDispatchHandler)();
 

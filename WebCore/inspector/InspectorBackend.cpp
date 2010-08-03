@@ -52,6 +52,7 @@
 #include "RemoteInspectorFrontend.h"
 #include "ScriptArray.h"
 #include "ScriptBreakpoint.h"
+#include "ScriptProfiler.h"
 #include "SerializedScriptValue.h"
 
 #if ENABLE(DOM_STORAGE)
@@ -292,8 +293,18 @@ void InspectorBackend::clearProfiles()
 
 void InspectorBackend::takeHeapSnapshot()
 {
-    if (m_inspectorController)
-        m_inspectorController->takeHeapSnapshot();
+    ScriptProfiler::takeHeapSnapshot();
+}
+
+void InspectorBackend::getProfilerLogLines(long callId, long position)
+{
+    // FIXME: we should make inspector dispatcher pluggable, so that embedders could contribute APIs instead of polluting the core one
+    // https://bugs.webkit.org/show_bug.cgi?id=43357
+    if (RemoteInspectorFrontend* frontend = remoteFrontend()) {
+        String data;
+        int outPosition = ScriptProfiler::getProfilerLogLines(position, &data);
+        frontend->didGetProfilerLogLines(callId, outPosition, data);
+    }
 }
 #endif
 

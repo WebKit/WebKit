@@ -31,8 +31,6 @@
 #ifndef DebuggerAgentImpl_h
 #define DebuggerAgentImpl_h
 
-#include "DebuggerAgent.h"
-
 #include <v8.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
@@ -47,19 +45,16 @@ class String;
 
 namespace WebKit {
 
+class WebDevToolsAgentClient;
 class WebDevToolsAgentImpl;
 class WebViewImpl;
 
-class DebuggerAgentImpl : public DebuggerAgent {
+class DebuggerAgentImpl {
 public:
     DebuggerAgentImpl(WebKit::WebViewImpl* webViewImpl,
-                      DebuggerAgentDelegate* delegate,
-                      WebDevToolsAgentImpl* webdevtoolsAgent);
+                      WebDevToolsAgentImpl* webdevtoolsAgent,
+                      WebDevToolsAgentClient* webdevtoolsAgentClient);
     virtual ~DebuggerAgentImpl();
-
-    // DebuggerAgent implementation.
-    virtual void getContextId();
-    virtual void processDebugCommands();
 
     void debuggerOutput(const WebCore::String& out);
 
@@ -87,8 +82,8 @@ public:
 
 private:
     WebKit::WebViewImpl* m_webViewImpl;
-    DebuggerAgentDelegate* m_delegate;
     WebDevToolsAgentImpl* m_webdevtoolsAgent;
+    WebDevToolsAgentClient* m_webdevtoolsAgentClient;
     bool m_autoContinueOnException;
 };
 

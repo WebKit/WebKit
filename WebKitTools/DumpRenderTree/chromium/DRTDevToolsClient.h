@@ -55,7 +55,7 @@ public:
     virtual ~DRTDevToolsClient();
 
     // WebDevToolsFrontendClient implementation
-    virtual void sendMessageToAgent(const WebKit::WebDevToolsMessageData&);
+    virtual void sendMessageToBackend(const WebKit::WebString&);
     virtual void sendDebuggerCommandToAgent(const WebKit::WebString& command);
 
     virtual void activateWindow();

@@ -40,7 +40,9 @@ struct WebDevToolsMessageData;
 
 class WebDevToolsAgentClient {
 public:
-    virtual void sendMessageToFrontend(const WebDevToolsMessageData&) { }
+    virtual void sendMessageToInspectorFrontend(const WebString&) { }
+    virtual void sendDebuggerOutput(const WebString&) { }
+    virtual void sendDispatchToAPU(const WebString&) { }
 
     // Invalidates widget which leads to the repaint.
     virtual void forceRepaint() { }

@@ -35,8 +35,4 @@
 
 if (!window["RemoteDebuggerCommandExecutor"]) {
     window["RemoteDebuggerCommandExecutor"] = {};
-    window["RemoteProfilerAgent"] = {};
-    window["RemoteToolsAgent"] = {
-        dispatchOnInspectorController: function() {}
-    };
 }

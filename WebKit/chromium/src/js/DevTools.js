@@ -41,40 +41,18 @@
  * @prama {string} methodName
  * @param {string} param1, param2, param3 Arguments to dispatch.
  */
-devtools$$dispatch = function(remoteName, methodName, param1, param2, param3)
+devtools$$dispatch = function(message)
 {
-    remoteName = "Remote" + remoteName.substring(0, remoteName.length - 8);
-    var agent = window[remoteName];
-    if (!agent) {
-        debugPrint("No remote agent '" + remoteName + "' found.");
-        return;
-    }
-    var method = agent[methodName];
-    if (!method) {
-        debugPrint("No method '" + remoteName + "." + methodName + "' found.");
-        return;
-    }
-    method.call(this, param1, param2, param3);
+    var args = typeof message === "string" ? JSON.parse(message) : message;
+    var methodName = args[0];
+    var parameters = args.slice(1);
+    WebInspector[methodName].apply(WebInspector, parameters);
 };
 
 
 devtools.ToolsAgent = function()
 {
-    RemoteToolsAgent.didDispatchOn = WebInspector.Callback.processCallback;
-    RemoteToolsAgent.dispatchOnClient = this.dispatchOnClient_.bind(this);
     this.profilerAgent_ = new devtools.ProfilerAgent();
-};
-
-
-/**
- * @param {string} script Script exression to be evaluated in the context of the
- *     inspected page.
- * @param {function(Object|string, boolean):undefined} opt_callback Function to
- *     call with the result.
- */
-devtools.ToolsAgent.prototype.evaluateJavaScript = function(script, opt_callback)
-{
-    InspectorBackend.evaluate(script, opt_callback || function() {});
 };
 
 
@@ -86,38 +64,6 @@ devtools.ToolsAgent.prototype.getProfilerAgent = function()
     return this.profilerAgent_;
 };
 
-
-/**
- * @param {string} message Serialized call to be dispatched on WebInspector.
- * @private
- */
-devtools.ToolsAgent.prototype.dispatchOnClient_ = function(message)
-{
-    var args = typeof message === "string" ? JSON.parse(message) : message;
-    var methodName = args[0];
-    var parameters = args.slice(1);
-    WebInspector[methodName].apply(WebInspector, parameters);
-};
-
-
-/**
- * Evaluates js expression.
- * @param {string} expr
- */
-devtools.ToolsAgent.prototype.evaluate = function(expr)
-{
-    RemoteToolsAgent.evaluate(expr);
-};
-
-
-/**
- * Prints string  to the inspector console or shows alert if the console doesn't
- * exist.
- * @param {string} text
- */
-function debugPrint(text) {
-    WebInspector.log(text);
-}
 
 
 /**

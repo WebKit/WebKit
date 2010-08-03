@@ -281,7 +281,7 @@ devtools.profiler.Processor.prototype.__proto__ = devtools.profiler.LogReader.pr
  */
 devtools.profiler.Processor.prototype.printError = function(str)
 {
-    debugPrint(str);
+    WebInspector.log(str);
 };
 
 

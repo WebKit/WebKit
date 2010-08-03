@@ -37,6 +37,7 @@
 #include "Page.h"
 #include "ScriptDebugServer.h"
 #include "V8Binding.h"
+#include "WebDevToolsAgentClient.h"
 #include "WebDevToolsAgentImpl.h"
 #include "WebViewImpl.h"
 #include <wtf/HashSet.h>
@@ -53,11 +54,11 @@ namespace WebKit {
 
 DebuggerAgentImpl::DebuggerAgentImpl(
     WebViewImpl* webViewImpl,
-    DebuggerAgentDelegate* delegate,
-    WebDevToolsAgentImpl* webdevtoolsAgent)
+    WebDevToolsAgentImpl* webdevtoolsAgent,
+    WebDevToolsAgentClient* webdevtoolsAgentClient)
     : m_webViewImpl(webViewImpl)
-    , m_delegate(delegate)
     , m_webdevtoolsAgent(webdevtoolsAgent)
+    , m_webdevtoolsAgentClient(webdevtoolsAgentClient)
     , m_autoContinueOnException(false)
 {
     DebuggerAgentManager::debugAttach(this);
@@ -68,20 +69,9 @@ DebuggerAgentImpl::~DebuggerAgentImpl()
     DebuggerAgentManager::debugDetach(this);
 }
 
-void DebuggerAgentImpl::getContextId()
-{
-    m_delegate->setContextId(m_webdevtoolsAgent->hostId());
-}
-
-void DebuggerAgentImpl::processDebugCommands()
-{
-    DebuggerAgentManager::UtilityContextScope utilityScope;
-    v8::Debug::ProcessDebugMessages();
-}
-
 void DebuggerAgentImpl::debuggerOutput(const String& command)
 {
-    m_delegate->debuggerOutput(command);
+    m_webdevtoolsAgentClient->sendDebuggerOutput(command);
     m_webdevtoolsAgent->forceRepaint();
 }
 

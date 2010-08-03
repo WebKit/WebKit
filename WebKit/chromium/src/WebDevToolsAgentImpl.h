@@ -33,9 +33,6 @@
 
 #include "InspectorClient.h"
 
-#include "APUAgentDelegate.h"
-#include "DevToolsRPC.h"
-#include "ToolsAgent.h"
 #include "WebDevToolsAgentPrivate.h"
 
 #include <v8.h>
@@ -51,7 +48,6 @@ class String;
 
 namespace WebKit {
 
-class DebuggerAgentDelegateStub;
 class DebuggerAgentImpl;
 class WebDevToolsAgentClient;
 class WebFrame;
@@ -64,15 +60,10 @@ struct WebURLError;
 struct WebDevToolsMessageData;
 
 class WebDevToolsAgentImpl : public WebDevToolsAgentPrivate,
-                             public ToolsAgent,
-                             public DevToolsRPC::Delegate,
                              public WebCore::InspectorClient {
 public:
     WebDevToolsAgentImpl(WebViewImpl* webViewImpl, WebDevToolsAgentClient* client);
     virtual ~WebDevToolsAgentImpl();
-
-    // ToolsAgent implementation.
-    virtual void dispatchOnInspectorController(const WebCore::String& message);
 
     // WebDevToolsAgentPrivate implementation.
     virtual void didClearWindowObject(WebFrameImpl* frame);
@@ -81,7 +72,7 @@ public:
     virtual void attach();
     virtual void detach();
     virtual void didNavigate();
-    virtual void dispatchMessageFromFrontend(const WebDevToolsMessageData& data);
+    virtual void dispatchOnInspectorBackend(const WebString& message);
     virtual void inspectElementAt(const WebPoint& point);
     virtual void evaluateInWebInspector(long callId, const WebString& script);
     virtual void setRuntimeFeatureEnabled(const WebString& feature, bool enabled);
@@ -107,9 +98,6 @@ public:
     virtual void timelineProfilerWasStopped();
     virtual bool sendMessageToFrontend(const WebCore::String&);
 
-    // DevToolsRPC::Delegate implementation.
-    virtual void sendRpcMessage(const WebDevToolsMessageData& data);
-
     void forceRepaint();
 
     int hostId() { return m_hostId; }
@@ -130,10 +118,7 @@ private:
     int m_hostId;
     WebDevToolsAgentClient* m_client;
     WebViewImpl* m_webViewImpl;
-    OwnPtr<DebuggerAgentDelegateStub> m_debuggerAgentDelegateStub;
-    OwnPtr<ToolsAgentDelegateStub> m_toolsAgentDelegateStub;
     OwnPtr<DebuggerAgentImpl> m_debuggerAgentImpl;
-    OwnPtr<ApuAgentDelegateStub> m_apuAgentDelegateStub;
     bool m_apuAgentEnabled;
     bool m_resourceTrackingWasEnabled;
     bool m_attached;

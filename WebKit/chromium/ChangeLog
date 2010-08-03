@@ -1,3 +1,70 @@
+2010-08-02  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Chromium DevTools: Get rid of DevTools RPC.
+
+        https://bugs.webkit.org/show_bug.cgi?id=43335
+
+        * WebKit.gyp:
+        * public/WebDevToolsAgent.h:
+        * public/WebDevToolsAgentClient.h:
+        (WebKit::WebDevToolsAgentClient::sendMessageToInspectorFrontend):
+        (WebKit::WebDevToolsAgentClient::sendDebuggerOutput):
+        (WebKit::WebDevToolsAgentClient::sendDispatchToAPU):
+        * public/WebDevToolsFrontend.h:
+        * public/WebDevToolsFrontendClient.h:
+        (WebKit::WebDevToolsFrontendClient::sendMessageToBackend):
+        * public/WebDevToolsMessageData.h: Removed.
+        * public/WebDevToolsMessageTransport.h: Removed.
+        * src/APUAgentDelegate.h: Removed.
+        * src/DebuggerAgent.h: Removed.
+        * src/DebuggerAgentImpl.cpp:
+        (WebKit::DebuggerAgentImpl::DebuggerAgentImpl):
+        (WebKit::DebuggerAgentImpl::debuggerOutput):
+        * src/DebuggerAgentImpl.h:
+        * src/DebuggerAgentManager.cpp:
+        (WebKit::DebuggerAgentManager::debugDetach):
+        (WebKit::DebuggerAgentManager::onV8DebugMessage):
+        (WebKit::DebuggerAgentManager::executeDebuggerCommand):
+        (WebKit::DebuggerAgentManager::sendCommandToV8):
+        (WebKit::DebuggerAgentManager::sendContinueCommandToV8):
+        * src/DevToolsRPC.h: Removed.
+        * src/DevToolsRPCJS.h: Removed.
+        * src/InspectorClientImpl.cpp:
+        * src/InspectorFrontendClientImpl.cpp:
+        (WebKit::InspectorFrontendClientImpl::sendMessageToBackend):
+        * src/ProfilerAgent.h: Removed.
+        * src/ProfilerAgentImpl.cpp: Removed.
+        * src/ProfilerAgentImpl.h: Removed.
+        * src/ToolsAgent.h: Removed.
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::):
+        (WebKit::WebDevToolsAgentImpl::WebDevToolsAgentImpl):
+        (WebKit::WebDevToolsAgentImpl::attach):
+        (WebKit::WebDevToolsAgentImpl::didClearWindowObject):
+        (WebKit::WebDevToolsAgentImpl::dispatchOnInspectorBackend):
+        (WebKit::WebDevToolsAgentImpl::jsDispatchOnClient):
+        (WebKit::WebDevToolsAgentImpl::sendMessageToFrontend):
+        * src/WebDevToolsAgentImpl.h:
+        * src/WebDevToolsFrontendImpl.cpp:
+        (WebKit::WebDevToolsFrontendImpl::WebDevToolsFrontendImpl):
+        (WebKit::WebDevToolsFrontendImpl::dispatchOnInspectorFrontend):
+        (WebKit::WebDevToolsFrontendImpl::frontendLoaded):
+        (WebKit::WebDevToolsFrontendImpl::executeScript):
+        * src/WebDevToolsFrontendImpl.h:
+        * src/js/DevTools.js:
+        (devtools.dispatch):
+        (devtools.ToolsAgent):
+        * src/js/DevToolsHostStub.js:
+        * src/js/ProfilerAgent.js:
+        (devtools.ProfilerAgent):
+        (devtools.ProfilerAgent.prototype._getNextLogLines.else.delayedRequest):
+        (devtools.ProfilerAgent.prototype._getNextLogLines):
+        (devtools.ProfilerAgent.prototype._didGetProfilerLogLines):
+        * src/js/ProfilerProcessor.js:
+        (devtools.profiler.Processor.prototype.printError):
+
 2010-08-02  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.

@@ -44,6 +44,7 @@ public:
     static void start(ScriptState* state, const String& title);
     static PassRefPtr<ScriptProfile> stop(ScriptState* state, const String& title);
     static void takeHeapSnapshot();
+    static long getProfilerLogLines(long position, String* data);
 };
 
 } // namespace WebCore

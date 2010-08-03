@@ -31,7 +31,7 @@
 #ifndef WebDevToolsFrontendImpl_h
 #define WebDevToolsFrontendImpl_h
 
-#include "DevToolsRPC.h"
+#include "PlatformString.h"
 #include "WebDevToolsFrontend.h"
 #include <v8.h>
 #include <wtf/HashMap.h>
@@ -49,15 +49,13 @@ class String;
 
 namespace WebKit {
 
-class JSDebuggerAgentBoundObj;
-class JSProfilerAgentBoundObj;
-class JSToolsAgentBoundObj;
 class WebDevToolsClientDelegate;
 class WebViewImpl;
 struct WebDevToolsMessageData;
 
+using WebCore::String;
+
 class WebDevToolsFrontendImpl : public WebKit::WebDevToolsFrontend
-                              , public DevToolsRPC::Delegate
                               , public Noncopyable {
 public:
     WebDevToolsFrontendImpl(
@@ -66,28 +64,21 @@ public:
         const String& applicationLocale);
     virtual ~WebDevToolsFrontendImpl();
 
-    // DevToolsRPC::Delegate implementation.
-    virtual void sendRpcMessage(const WebKit::WebDevToolsMessageData& data);
-
     // WebDevToolsFrontend implementation.
-    virtual void dispatchMessageFromAgent(const WebKit::WebDevToolsMessageData& data);
+    virtual void dispatchOnInspectorFrontend(const WebString& message);
 
     void frontendLoaded();
 
 private:
-    void executeScript(const Vector<String>& v);
+    void executeScript(const WebString& message);
 
-    static v8::Handle<v8::Value> jsDebuggerCommand(const v8::Arguments& args);
     static v8::Handle<v8::Value> jsDebuggerPauseScript(const v8::Arguments& args);
 
     WebKit::WebViewImpl* m_webViewImpl;
     WebKit::WebDevToolsFrontendClient* m_client;
     String m_applicationLocale;
-    OwnPtr<JSDebuggerAgentBoundObj> m_debuggerAgentObj;
-    OwnPtr<JSProfilerAgentBoundObj> m_profilerAgentObj;
-    OwnPtr<JSToolsAgentBoundObj> m_toolsAgentObj;
     bool m_loaded;
-    Vector<Vector<String> > m_pendingIncomingMessages;
+    Vector<WebString> m_pendingIncomingMessages;
 };
 
 } // namespace WebKit

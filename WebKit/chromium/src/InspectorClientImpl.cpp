@@ -36,7 +36,6 @@
 #include "NotImplemented.h"
 #include "Page.h"
 #include "WebDevToolsAgentImpl.h"
-#include "WebDevToolsMessageData.h"
 #include "WebRect.h"
 #include "WebURL.h"
 #include "WebURLRequest.h"

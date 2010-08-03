@@ -98,6 +98,7 @@ module core {
         void clearProfiles();
 
         void takeHeapSnapshot();
+        void getProfilerLogLines(in long callId, in long inPosition, out long outPosition, out String log);
 #endif
         void setInjectedScriptSource(in String scriptSource);
         void dispatchOnInjectedScript(in long callId, in long injectedScriptId, in String methodName, in String arguments, in boolean async);
@@ -157,5 +158,6 @@ module core {
         void setDOMStorageItem(in long callId, in long storageId, in String key, in String value);
         void removeDOMStorageItem(in long callId, in long storageId, in String key);
 #endif
+
     };
 }

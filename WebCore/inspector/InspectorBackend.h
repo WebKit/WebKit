@@ -112,6 +112,7 @@ public:
     void clearProfiles();
 
     void takeHeapSnapshot();
+    void getProfilerLogLines(long callId, long position);
 #endif
 
     void setInjectedScriptSource(const String& source);

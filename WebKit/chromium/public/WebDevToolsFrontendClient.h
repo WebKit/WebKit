@@ -40,7 +40,7 @@ class WebDevToolsFrontendClient {
 public:
     WebDevToolsFrontendClient() { }
 
-    virtual void sendMessageToAgent(const WebDevToolsMessageData&) { }
+    virtual void sendMessageToBackend(const WebString&) { }
     virtual void sendDebuggerCommandToAgent(const WebString& command) { }
     virtual void sendDebuggerPauseScript() { }
 

@@ -56,7 +56,7 @@ public:
     void setWebView(WebKit::WebView*);
 
     // WebDevToolsAgentClient implementation.
-    virtual void sendMessageToFrontend(const WebKit::WebDevToolsMessageData&);
+    virtual void sendMessageToInspectorFrontend(const WebKit::WebString&);
     virtual int hostIdentifier() { return m_routingID; }
     virtual void forceRepaint();
     virtual void runtimeFeatureStateChanged(const WebKit::WebString& feature, bool enabled);

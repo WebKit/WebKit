@@ -40,6 +40,7 @@
 #include "V8Proxy.h"
 #include "WebDevToolsFrontendClient.h"
 #include "WebDevToolsFrontendImpl.h"
+#include "WebString.h"
 
 using namespace WebCore;
 
@@ -126,13 +127,7 @@ void InspectorFrontendClientImpl::inspectedURLChanged(const String& url)
 
 void InspectorFrontendClientImpl::sendMessageToBackend(const String& message)
 {
-    WebDevToolsMessageData messageData;
-    messageData.className = "ToolsAgent";
-    messageData.methodName = "dispatchOnInspectorController";
-    WebVector<WebString> args(static_cast<size_t>(1));
-    args[0] = message;
-    messageData.arguments.swap(args);
-    m_client->sendMessageToAgent(messageData);
+    m_client->sendMessageToBackend(message);
 }
 
 } // namespace WebKit

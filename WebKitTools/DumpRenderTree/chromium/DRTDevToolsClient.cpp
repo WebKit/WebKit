@@ -64,7 +64,7 @@ DRTDevToolsClient::~DRTDevToolsClient()
         m_drtDevToolsAgent->detach(this);
 }
 
-void DRTDevToolsClient::sendMessageToAgent(const WebDevToolsMessageData& data)
+void DRTDevToolsClient::sendMessageToBackend(const WebString& data)
 {
     if (m_drtDevToolsAgent)
         m_drtDevToolsAgent->asyncCall(DRTDevToolsCallArgs(data));
@@ -103,7 +103,7 @@ void DRTDevToolsClient::asyncCall(const DRTDevToolsCallArgs& args)
 
 void DRTDevToolsClient::call(const DRTDevToolsCallArgs& args)
 {
-    m_webDevToolsFrontend->dispatchMessageFromAgent(args.m_data);
+    m_webDevToolsFrontend->dispatchOnInspectorFrontend(args.m_data);
     if (DRTDevToolsCallArgs::callsCount() == 1)
         allMessagesProcessed();
 }

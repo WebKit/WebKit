@@ -37,8 +37,6 @@
  */
 devtools.ProfilerAgent = function()
 {
-    RemoteProfilerAgent.didGetActiveProfilerModules = this._didGetActiveProfilerModules.bind(this);
-    RemoteProfilerAgent.didGetLogLines = this._didGetLogLines.bind(this);
 
     /**
      * Profiler log position.
@@ -92,10 +90,17 @@ devtools.ProfilerAgent.prototype._getNextLogLines = function(immediately)
     if (this._lastRequestedLogPosition == this._logPosition)
         return;
     var pos = this._lastRequestedLogPosition = this._logPosition;
+
+    var callId = WebInspector.Callback.wrap(this._didGetProfilerLogLines.bind(this));
     if (immediately)
-        RemoteProfilerAgent.getLogLines(pos);
-    else
-        setTimeout(function() { RemoteProfilerAgent.getLogLines(pos); }, 500);
+        InspectorBackend.getProfilerLogLines(callId, pos);
+    else {
+        function delayedRequest()
+        {
+            InspectorBackend.getProfilerLogLines(callId, pos);
+        }
+        setTimeout(delayedRequest, 500);
+    }
 };
 
 
@@ -114,20 +119,11 @@ devtools.ProfilerAgent.prototype.startProfiling = function(modules)
 
 
 /**
- * Handles current profiler status.
- * @param {number} modules List of active (started) modules.
- */
-devtools.ProfilerAgent.prototype._didGetActiveProfilerModules = function(modules)
-{
-};
-
-
-/**
  * Handles a portion of a profiler log retrieved by getLogLines call.
  * @param {number} pos Current position in log.
  * @param {string} log A portion of profiler log.
  */
-devtools.ProfilerAgent.prototype._didGetLogLines = function(pos, log)
+devtools.ProfilerAgent.prototype._didGetProfilerLogLines = function(pos, log)
 {
     this._logPosition = pos;
     if (log.length > 0) {
@@ -138,3 +134,5 @@ devtools.ProfilerAgent.prototype._didGetLogLines = function(pos, log)
         this._lastRequestedLogPosition = this._logPosition - 1;
     }
 };
+
+WebInspector.didGetProfilerLogLines = WebInspector.Callback.processCallback;

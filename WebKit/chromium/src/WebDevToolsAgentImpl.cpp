@@ -46,7 +46,6 @@
 #include "Page.h"
 #include "PageGroup.h"
 #include "PlatformString.h"
-#include "ProfilerAgentImpl.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
@@ -59,8 +58,6 @@
 #include "V8Utilities.h"
 #include "WebDataSource.h"
 #include "WebDevToolsAgentClient.h"
-#include "WebDevToolsMessageData.h"
-#include "WebDevToolsMessageTransport.h"
 #include "WebFrameImpl.h"
 #include "WebRect.h"
 #include "WebString.h"
@@ -108,21 +105,6 @@ void InspectorBackendWeakReferenceCallback(v8::Persistent<v8::Value> object, voi
 static const char kResourceTrackingFeatureName[] = "resource-tracking";
 static const char kTimelineFeatureName[] = "timeline-profiler";
 static const char kApuAgentFeatureName[] = "apu-agent";
-
-class IORPCDelegate : public DevToolsRPC::Delegate, public Noncopyable {
-public:
-    IORPCDelegate() : m_transport(0) { }
-    explicit IORPCDelegate(WebDevToolsMessageTransport* transport) : m_transport(transport) { }
-    virtual ~IORPCDelegate() { }
-    virtual void sendRpcMessage(const WebDevToolsMessageData& data)
-    {
-        if (m_transport)
-            m_transport->sendMessageToFrontendOnIOThread(data);
-    }
-
-private:
-    WebDevToolsMessageTransport* m_transport;
-};
 
 class ClientMessageLoopAdapter : public WebCore::ScriptDebugServer::ClientMessageLoop {
 public:
@@ -222,9 +204,6 @@ WebDevToolsAgentImpl::WebDevToolsAgentImpl(
 {
     DebuggerAgentManager::setExposeV8DebuggerProtocol(
         client->exposeV8DebuggerProtocol());
-    m_debuggerAgentDelegateStub.set(new DebuggerAgentDelegateStub(this));
-    m_toolsAgentDelegateStub.set(new ToolsAgentDelegateStub(this));
-    m_apuAgentDelegateStub.set(new ApuAgentDelegateStub(this));
 }
 
 WebDevToolsAgentImpl::~WebDevToolsAgentImpl()
@@ -251,9 +230,7 @@ void WebDevToolsAgentImpl::attach()
         ClientMessageLoopAdapter::ensureClientMessageLoopCreated(m_client);
 
     m_debuggerAgentImpl.set(
-        new DebuggerAgentImpl(m_webViewImpl,
-                              m_debuggerAgentDelegateStub.get(),
-                              this));
+        new DebuggerAgentImpl(m_webViewImpl, this, m_client));
     createInspectorFrontendProxy();
 
     // Allow controller to send messages to the frontend.
@@ -296,10 +273,6 @@ void WebDevToolsAgentImpl::didNavigate()
 void WebDevToolsAgentImpl::didClearWindowObject(WebFrameImpl* webframe)
 {
     DebuggerAgentManager::setHostId(webframe, m_hostId);
-    if (m_attached) {
-        // Push context id into the client if it is already attached.
-        m_debuggerAgentDelegateStub->setContextId(m_hostId);
-    }
 }
 
 void WebDevToolsAgentImpl::forceRepaint()
@@ -307,21 +280,9 @@ void WebDevToolsAgentImpl::forceRepaint()
     m_client->forceRepaint();
 }
 
-void WebDevToolsAgentImpl::dispatchOnInspectorController(const String& message)
+void WebDevToolsAgentImpl::dispatchOnInspectorBackend(const WebString& message)
 {
     inspectorController()->inspectorBackendDispatcher()->dispatch(message);
-}
-
-void WebDevToolsAgentImpl::dispatchMessageFromFrontend(const WebDevToolsMessageData& data)
-{
-    if (ToolsAgentDispatch::dispatch(this, data))
-        return;
-
-    if (!m_attached)
-        return;
-
-    if (m_debuggerAgentImpl.get() && DebuggerAgentDispatch::dispatch(m_debuggerAgentImpl.get(), data))
-        return;
 }
 
 void WebDevToolsAgentImpl::inspectElementAt(const WebPoint& point)
@@ -342,11 +303,6 @@ void WebDevToolsAgentImpl::setRuntimeFeatureEnabled(const WebString& feature, bo
         else
           ic->disableResourceTracking(false /* not sticky */);
     }
-}
-
-void WebDevToolsAgentImpl::sendRpcMessage(const WebDevToolsMessageData& data)
-{
-    m_client->sendMessageToFrontend(data);
 }
 
 void WebDevToolsAgentImpl::compileUtilityScripts()
@@ -428,7 +384,7 @@ v8::Handle<v8::Value> WebDevToolsAgentImpl::jsDispatchOnClient(const v8::Argumen
     WebDevToolsAgentImpl* agent = static_cast<WebDevToolsAgentImpl*>(v8::External::Cast(*args.Data())->Value());
 
     if (!agent->m_apuAgentEnabled) {
-        agent->m_toolsAgentDelegateStub->dispatchOnClient(message);
+        agent->m_client->sendMessageToInspectorFrontend(message);
         return v8::Undefined();
     }
 
@@ -436,10 +392,10 @@ v8::Handle<v8::Value> WebDevToolsAgentImpl::jsDispatchOnClient(const v8::Argumen
     if (method.isEmpty() || exceptionCatcher.HasCaught())
         return v8::Undefined();
 
-    if (method != "addRecordToTimeline" && method != "updateResource" && method != "addResource")
+    if (method != "updateResource" && method != "addResource")
         return v8::Undefined();
 
-    agent->m_apuAgentDelegateStub->dispatchToApu(message);
+    agent->m_client->sendDispatchToAPU(message);
     return v8::Undefined();
 }
 
@@ -543,18 +499,12 @@ bool WebDevToolsAgentImpl::sendMessageToFrontend(const WebCore::String& message)
     if (!devToolsAgent)
         return false;
 
-    if (devToolsAgent->m_apuAgentEnabled && devToolsAgent->m_apuAgentDelegateStub) {
-        devToolsAgent->m_apuAgentDelegateStub->dispatchToApu(message);
+    if (devToolsAgent->m_apuAgentEnabled) {
+        m_client->sendDispatchToAPU(message);
         return true;
     }
 
-    WebVector<WebString> arguments(size_t(1));
-    arguments[0] = message;
-    WebDevToolsMessageData data;
-    data.className = "ToolsAgentDelegate";
-    data.methodName = "dispatchOnClient";
-    data.arguments.swap(arguments);
-    devToolsAgent->sendRpcMessage(data);
+    m_client->sendMessageToInspectorFrontend(message);
     return true;
 }
 
@@ -606,14 +556,6 @@ void WebDevToolsAgent::debuggerPauseScript()
 void WebDevToolsAgent::setMessageLoopDispatchHandler(MessageLoopDispatchHandler handler)
 {
     DebuggerAgentManager::setMessageLoopDispatchHandler(handler);
-}
-
-bool WebDevToolsAgent::dispatchMessageFromFrontendOnIOThread(WebDevToolsMessageTransport* transport, const WebDevToolsMessageData& data)
-{
-    IORPCDelegate delegate(transport);
-    ProfilerAgentDelegateStub stub(&delegate);
-    ProfilerAgentImpl agent(&stub);
-    return ProfilerAgentDispatch::dispatch(&agent, data);
 }
 
 } // namespace WebKit

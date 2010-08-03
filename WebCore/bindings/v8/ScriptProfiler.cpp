@@ -59,4 +59,14 @@ void ScriptProfiler::takeHeapSnapshot()
                              | v8::PROFILER_MODULE_JS_CONSTRUCTORS);
 }
 
+long ScriptProfiler::getProfilerLogLines(long position, String* data)
+{
+    static char buffer[65536];
+    const int readSize = v8::V8::GetLogLines(position, buffer, sizeof(buffer) - 1);
+    buffer[readSize] = '\0';
+    position += readSize;
+    *data = buffer;
+    return position;
+}
+
 } // namespace WebCore
