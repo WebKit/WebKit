@@ -239,7 +239,7 @@ sub GetGlibTypeName {
     my $type = shift;
     my $name = GetClassName($type);
 
-    my %types = ("DOMString", "gchar* ",
+    my %types = ("DOMString", "gchar*",
                  "DOMTimeStamp", "guint32",
                  "CompareHow", "gushort",
                  "float", "gfloat",
@@ -258,7 +258,7 @@ sub GetGlibTypeName {
                  "unsigned short", "gushort",
                  "void", "void");
 
-    return $types{$type} ? $types{$type} : "$name* ";
+    return $types{$type} ? $types{$type} : "$name*";
 }
 
 sub IsGDOMClassType {

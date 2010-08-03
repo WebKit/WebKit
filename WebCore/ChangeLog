@@ -1,3 +1,11 @@
+2010-08-03  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Get rid of extra spaces in the type strings.
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+
 2010-08-03  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Adam Roben.
