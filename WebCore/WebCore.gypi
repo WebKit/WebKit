@@ -3498,7 +3498,7 @@
             'storage/IDBAny.h',
             'storage/IDBCallbacks.h',
             'storage/IDBDatabase.h',
-            'storage/IDBDatabase.cpp,
+            'storage/IDBDatabase.cpp',
             'storage/IDBDatabaseError.h',
             'storage/IDBDatabaseException.h',
             'storage/IDBDatabaseBackendImpl.cpp',

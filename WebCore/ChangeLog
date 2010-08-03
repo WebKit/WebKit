@@ -1,3 +1,14 @@
+2010-08-03  Andrei Popescu  <andreip@google.com>
+
+        Unreviewed, build fix.
+
+        [IndexedDB] Chromium build is broken due to typo in WebCore.gypi:3501
+        https://bugs.webkit.org/show_bug.cgi?id=43408
+
+        Add missing ' in WebCore.gypi:3501.
+
+        * WebCore.gypi:
+
 2010-07-30  Andrei Popescu  <andreip@dhcp-172-16-14-12.lon.corp.google.com>
 
         Reviewed by Jeremy Orlow.
