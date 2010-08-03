@@ -14,9 +14,30 @@ $typeTransform{"InspectorClient"} = {
     "forward" => "InspectorClient",
     "header" => "InspectorClient.h",
 };
-$typeTransform{"InspectorBackend"} = {
+$typeTransform{"Backend"} = {
     "forward" => "InspectorBackend",
     "header" => "InspectorBackend.h",
+    "handlerAccessor" => "m_inspectorBackend",
+};
+$typeTransform{"Controller"} = {
+    "forward" => "InspectorController",
+    "header" => "InspectorController.h",
+    "handlerAccessor" => "m_inspectorBackend->inspectorController()",
+};
+$typeTransform{"Debug"} = {
+    "forward" => "ScriptDebugServer",
+    "header" => "ScriptDebugServer.h",
+    "handlerAccessor" => "(&ScriptDebugServer::shared())",
+};
+$typeTransform{"DOM"} = {
+    "forward" => "InspectorDOMAgent",
+    "header" => "InspectorDOMAgent.h",
+    "handlerAccessor" => "m_inspectorBackend->inspectorDOMAgent()",
+};
+$typeTransform{"ApplicationCache"} = {
+    "forward" => "InspectorApplicationCacheAgent",
+    "header" => "InspectorApplicationCacheAgent.h",
+    "handlerAccessor" => "m_inspectorBackend->inspectorApplicationCacheAgent()",
 };
 $typeTransform{"PassRefPtr"} = {
     "forwardHeader" => "wtf/PassRefPtr.h",
@@ -168,7 +189,7 @@ sub GenerateInterface
     push(@backendHead, "private:");
     $backendConstructor = join("\n", @backendHead);
     $backendFooter = "    InspectorBackend* m_inspectorBackend;";
-    $backendTypes{"InspectorBackend"} = 1;
+    $backendTypes{"Backend"} = 1;
     $backendTypes{"PassRefPtr"} = 1;
     $backendTypes{"Array"} = 1;
 
@@ -276,7 +297,11 @@ sub generateBackendFunction
         push(@function, "    }");
         ++$i;
     }
-    push(@function, "    m_inspectorBackend->$functionName(" . join(", ", map($_->name, @argsFiltered)) . ");");
+    my $handler = $function->signature->extendedAttributes->{"handler"} || "Backend";
+    my $handlerAccessor = $typeTransform{$handler}->{"handlerAccessor"};
+    $backendTypes{$handler} = 1;
+    push(@function, "    if ($handlerAccessor)");
+    push(@function, "        $handlerAccessor->$functionName(" . join(", ", map($_->name, @argsFiltered)) . ");");
     push(@function, "}");
     push(@function, "");
     push(@backendMethodsImpl, @function);

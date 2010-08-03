@@ -37,14 +37,10 @@
 
 namespace WebCore {
 
-class CachedResource;
-class Database;
 class InspectorApplicationCacheAgent;
 class InspectorDOMAgent;
 class InspectorFrontend;
-class Node;
 class RemoteInspectorFrontend;
-class Storage;
 
 class InspectorBackend : public RefCounted<InspectorBackend>
 {
@@ -57,132 +53,33 @@ public:
     ~InspectorBackend();
 
     InspectorController* inspectorController() { return m_inspectorController; }
+    InspectorDOMAgent* inspectorDOMAgent() { return m_inspectorController->domAgent(); }
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    InspectorApplicationCacheAgent* inspectorApplicationCacheAgent() { return m_inspectorController->applicationCacheAgent(); }
+#endif
     void disconnectController() { m_inspectorController = 0; }
-
-    void saveApplicationSettings(const String&);
-    void saveSessionSettings(const String&);
-
-    void storeLastActivePanel(const String& panelName);
-
-    void enableSearchingForNode();
-    void disableSearchingForNode();
-
-    void enableMonitoringXHR();
-    void disableMonitoringXHR();
-
-    void enableResourceTracking(bool always);
-    void disableResourceTracking(bool always);
-    void getResourceContent(long callId, unsigned long identifier);
-    void reloadPage();
-
-    void startTimelineProfiler();
-    void stopTimelineProfiler();
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     void enableDebugger(bool always);
-    void disableDebugger(bool always);
-
-    void setBreakpoint(long callId, const String& sourceID, unsigned lineNumber, bool enabled, const String& condition);
-    void removeBreakpoint(const String& sourceID, unsigned lineNumber);
-    void activateBreakpoints();
-    void deactivateBreakpoints();
-
-    void pause();
-    void resume();
-
-    void stepOverStatement();
-    void stepIntoStatement();
-    void stepOutOfFunction();
-
-    void setPauseOnExceptionsState(long pauseState);
-
-    void editScriptSource(long callId, const String& sourceID, const String& newContent);
-    void getScriptSource(long callId, const String& sourceID);
-
-    void enableProfiler(bool always);
-    void disableProfiler(bool always);
-
-    void startProfiling();
-    void stopProfiling();
-
-    void getProfileHeaders(long callId);
-    void getProfile(long callId, unsigned uid);
-
-    void removeProfile(unsigned uid);
-    void clearProfiles();
-
     void takeHeapSnapshot();
     void getProfilerLogLines(long callId, long position);
 #endif
 
     void setInjectedScriptSource(const String& source);
     void dispatchOnInjectedScript(long callId, long injectedScriptId, const String& methodName, const String& arguments, bool async);
-    void addScriptToEvaluateOnLoad(const String& source);
-    void removeAllScriptsToEvaluateOnLoad();
-
-    void getChildNodes(long callId, long nodeId);
-    void setAttribute(long callId, long elementId, const String& name, const String& value);
-    void removeAttribute(long callId, long elementId, const String& name);
-    void setTextNodeValue(long callId, long nodeId, const String& value);
-    void getEventListenersForNode(long callId, long nodeId);
-    void copyNode(long nodeId);
-    void removeNode(long callId, long nodeId);
-    void changeTagName(long callId, long nodeId, const String& tagName);
-    void getOuterHTML(long callId, long nodeId);
-    void setOuterHTML(long callId, long nodeId, const String& outerHTML);
-    void addInspectedNode(long nodeId);
-    void performSearch(const String& query, bool runSynchronously);
-    void searchCanceled();
-    void pushNodeByPathToFrontend(long callId, const String& path);
-
     void clearConsoleMessages(long callId);
-
-    void getStyles(long callId, long nodeId, bool authOnly);
-    void getAllStyles(long callId);
-    void getInlineStyle(long callId, long nodeId);
-    void getComputedStyle(long callId, long nodeId);
-    void getStyleSheet(long callId, long styleSheetId);
-    void getRuleRanges(long callId, long styleSheetId);
-    void applyStyleText(long callId, long styleId, const String& styleText, const String& propertyName);
-    void setStyleText(long callId, long styleId, const String& cssText);
-    void setStyleProperty(long callId, long styleId, const String& name, const String& value);
-    void toggleStyleEnabled(long callId, long styleId, const String& propertyName, bool disabled);
-    void setRuleSelector(long callId, long ruleId, const String& selector, long selectedNodeId);
-    void addRule(long callId, const String& selector, long selectedNodeId);
-
-    void highlightDOMNode(long nodeId);
-    void hideDOMNodeHighlight();
-
-    void getCookies(long callId);
-    void deleteCookie(const String& cookieName, const String& domain);
-
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-    void getApplicationCaches(long callId);
-#endif
 
     // Generic code called from custom implementations.
     void releaseWrapperObjectGroup(long injectedScriptId, const String& objectGroup);
-    void didEvaluateForTestInFrontend(long callId, const String& jsonResult);
 
 #if ENABLE(DATABASE)
     void getDatabaseTableNames(long callId, long databaseId);
 #endif
 
-#if ENABLE(DOM_STORAGE)
-    void getDOMStorageEntries(long callId, long storageId);
-    void setDOMStorageItem(long callId, long storageId, const String& key, const String& value);
-    void removeDOMStorageItem(long callId, long storageId, const String& key);
-#endif
-
 private:
     InspectorBackend(InspectorController* inspectorController);
-    InspectorDOMAgent* inspectorDOMAgent();
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-    InspectorApplicationCacheAgent* inspectorApplicationCacheAgent();
-#endif
     InspectorFrontend* inspectorFrontend();
     RemoteInspectorFrontend* remoteFrontend();
-    Node* nodeForId(long nodeId);
 
     InspectorController* m_inspectorController;
 };

@@ -1,3 +1,24 @@
+2010-08-02  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        WebInspector: Trivial InspectorBackend functions were removed.
+        And now it is   bit simpler to change Inspector API because we have
+        less number of abstraction layers.
+        https://bugs.webkit.org/show_bug.cgi?id=43402
+
+        * inspector/CodeGeneratorInspector.pm:
+        * inspector/Inspector.idl:
+        * inspector/InspectorBackend.cpp:
+        (WebCore::InspectorBackend::clearConsoleMessages):
+        (WebCore::InspectorBackend::releaseWrapperObjectGroup):
+        (WebCore::InspectorBackend::inspectorFrontend):
+        (WebCore::InspectorBackend::remoteFrontend):
+        * inspector/InspectorBackend.h:
+        (WebCore::InspectorBackend::inspectorDOMAgent):
+        (WebCore::InspectorBackend::inspectorApplicationCacheAgent):
+        * inspector/InspectorController.h:
+
 2010-08-03  Alexey Proskuryakov  <ap@apple.com>
 
         Unreviewed (emergency test fix).

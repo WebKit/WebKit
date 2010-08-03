@@ -289,6 +289,7 @@ private:
     static const String& frontendSettingsSettingName();
 
     friend class InspectorBackend;
+    friend class InspectorBackendDispatcher;
     friend class InjectedScriptHost;
 
     void populateScriptObjects();
