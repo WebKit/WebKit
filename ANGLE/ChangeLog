@@ -2,6 +2,18 @@
 
         Rubber-stamped by Adele Peterson.
 
+        Remove some unnecessary files from the ANGLE tree.
+
+        * src/compiler/tools/COPYING.bison: Removed.
+        * src/compiler/tools/COPYING.flex: Removed.
+        * src/compiler/tools/README: Removed.
+        * src/compiler/tools/bison.hairy: Removed.
+        * src/compiler/tools/bison.simple: Removed.
+
+2010-08-03  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Adele Peterson.
+
         Clean up the ANGLE Xcode project.
 
         Main changes include:
