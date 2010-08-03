@@ -811,7 +811,7 @@ pkgconfig_DATA = WebKit/gtk/@WEBKITGTK_PC_NAME@-@WEBKITGTK_API_VERSION@.pc
 if ENABLE_INTROSPECTION
 
 JSCore-@WEBKITGTK_API_VERSION@.gir: $(builddir)/WebKit/gtk/JSCore-@WEBKITGTK_API_VERSION@.gir
-	cp $(builddir)/WebKit/gtk/JSCore-@WEBKITGTK_API_VERSION@.gir $(builddir)/
+	$(AM_V_GEN)cp $(builddir)/WebKit/gtk/JSCore-@WEBKITGTK_API_VERSION@.gir $(builddir)/
 
 JSCORE_GIRSOURCES += JSCore-@WEBKITGTK_API_VERSION@.gir
 WEBKIT_GIRSOURCES += WebKit-@WEBKITGTK_API_VERSION@.gir

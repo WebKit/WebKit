@@ -1,3 +1,11 @@
+2010-08-03  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Silence JSCore gir "creation".
+
+        * GNUmakefile.am:
+
 2010-08-02  Chris Fleizach  <cfleizach@apple.com>
 
         Unreviewed, rolling out r64471.
