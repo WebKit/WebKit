@@ -1,5 +1,9 @@
 2010-08-03  Darin Adler  <darin@apple.com>
 
+        * platform/mac-snowleopard/Skipped: Added bug number.
+
+2010-08-03  Darin Adler  <darin@apple.com>
+
         Reviewed by Anders Carlsson.
 
         * platform/mac-snowleopard/Skipped: Skip remove-property test that Anders added while

@@ -27,7 +27,7 @@ plugins/npruntime/construct.html
 # thrown
 plugins/npruntime/invoke-failure.html
 
-# New test added during WebKit2 work; unknown why it fails.
+# https://bugs.webkit.org/show_bug.cgi?id=43438 - New test added during WebKit2 work; unknown why it fails.
 plugins/npruntime/remove-property.html
 
 # Radar bugs needed for these
