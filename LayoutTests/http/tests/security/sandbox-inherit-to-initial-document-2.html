@@ -35,7 +35,9 @@ function test()
         doc.body.appendChild(scr);
     } else {
         document.getElementById("result").innerHTML = "FAIL: no inner frame";
-        layoutTestController.notifyDone();
+        if (window.layoutTestController) {
+            layoutTestController.notifyDone();
+        }
     }
 }
 </script>

@@ -1,3 +1,19 @@
+2010-08-02  Rajiv Makhijani  <rajivmakhijani@chromium.org>
+
+        Reviewed by Adam Barth. 
+
+        Committed by Dirk Pranke.
+
+        Bug 38705 - [v8] chromium fails http/tests/sandbox-inherit-to-initial-document-2
+        https://bugs.webkit.org/show_bug.cgi?id=38705
+
+        WebCore::V8Proxy::retrieve(Frame* frame) calls WebCore::ScriptController::canExecuteScripts
+        and returns 0 if canExecuteScripts is false. It should return the proxy regardless
+        of whether the frame can execute scripts.
+
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::retrieve): Removed canExecuteScripts check.
+
 2010-08-02  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders Carlsson.
