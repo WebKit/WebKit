@@ -583,6 +583,22 @@
 					RelativePath="..\WebProcess\WebCoreSupport\WebInspectorClient.h"
 					>
 				</File>
+				<File
+					RelativePath="..\WebProcess\WebCoreSupport\WebPopupMenu.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\WebCoreSupport\WebPopupMenu.h"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\WebCoreSupport\WebSearchPopupMenu.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\WebCoreSupport\WebSearchPopupMenu.h"
+					>
+				</File>
 				<Filter
 					Name="win"
 					>

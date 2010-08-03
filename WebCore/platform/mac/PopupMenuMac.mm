@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -18,7 +19,7 @@
  */
 
 #import "config.h"
-#import "PopupMenu.h"
+#import "PopupMenuMac.h"
 
 #import "AXObjectCache.h"
 #import "Chrome.h"
@@ -31,6 +32,7 @@
 #import "HTMLOptionElement.h"
 #import "HTMLSelectElement.h"
 #import "Page.h"
+#import "PopupMenuClient.h"
 #import "SimpleFontData.h"
 #import "WebCoreSystemInterface.h"
 
@@ -38,24 +40,24 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-PopupMenu::PopupMenu(PopupMenuClient* client)
+PopupMenuMac::PopupMenuMac(PopupMenuClient* client)
     : m_popupClient(client)
 {
 }
 
-PopupMenu::~PopupMenu()
+PopupMenuMac::~PopupMenuMac()
 {
     if (m_popup)
         [m_popup.get() setControlView:nil];
 }
 
-void PopupMenu::clear()
+void PopupMenuMac::clear()
 {
     if (m_popup)
         [m_popup.get() removeAllItems];
 }
 
-void PopupMenu::populate()
+void PopupMenuMac::populate()
 {
     if (m_popup)
         clear();
@@ -114,7 +116,7 @@ void PopupMenu::populate()
     [[m_popup.get() menu] setMenuChangedMessagesEnabled:messagesEnabled];
 }
 
-void PopupMenu::show(const IntRect& r, FrameView* v, int index)
+void PopupMenuMac::show(const IntRect& r, FrameView* v, int index)
 {
     populate();
     int numItems = [m_popup.get() numberOfItems];
@@ -162,7 +164,7 @@ void PopupMenu::show(const IntRect& r, FrameView* v, int index)
     RefPtr<Frame> frame = v->frame();
     NSEvent* event = [frame->eventHandler()->currentNSEvent() retain];
     
-    RefPtr<PopupMenu> protector(this);
+    RefPtr<PopupMenuMac> protector(this);
 
     RetainPtr<NSView> dummyView(AdoptNS, [[NSView alloc] initWithFrame:r]);
     [view addSubview:dummyView.get()];
@@ -194,18 +196,18 @@ void PopupMenu::show(const IntRect& r, FrameView* v, int index)
     [event release];
 }
 
-void PopupMenu::hide()
+void PopupMenuMac::hide()
 {
     [m_popup.get() dismissPopUp];
 }
     
-void PopupMenu::updateFromElement()
+void PopupMenuMac::updateFromElement()
 {
 }
 
-bool PopupMenu::itemWritingDirectionIsNatural()
+void PopupMenuMac::disconnectClient()
 {
-    return true;
+    m_popupClient = 0;
 }
 
 }

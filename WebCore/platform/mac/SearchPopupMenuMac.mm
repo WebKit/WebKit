@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -18,14 +19,14 @@
  */
 
 #import "config.h"
-#import "SearchPopupMenu.h"
+#import "SearchPopupMenuMac.h"
 
 #import "AtomicString.h"
 
 namespace WebCore {
 
-SearchPopupMenu::SearchPopupMenu(PopupMenuClient* client)
-    : PopupMenu(client)
+SearchPopupMenuMac::SearchPopupMenuMac(PopupMenuClient* client)
+    : m_popup(adoptRef(new PopupMenuMac(client)))
 {
 }
 
@@ -34,12 +35,17 @@ static NSString* autosaveKey(const String& name)
     return [@"com.apple.WebKit.searchField:" stringByAppendingString:name];
 }
 
-bool SearchPopupMenu::enabled()
+PopupMenu* SearchPopupMenuMac::popupMenu()
+{
+    return m_popup.get();
+}
+
+bool SearchPopupMenuMac::enabled()
 {
     return true;
 }
 
-void SearchPopupMenu::saveRecentSearches(const AtomicString& name, const Vector<String>& searchItems)
+void SearchPopupMenuMac::saveRecentSearches(const AtomicString& name, const Vector<String>& searchItems)
 {
     if (name.isEmpty())
         return;
@@ -56,7 +62,7 @@ void SearchPopupMenu::saveRecentSearches(const AtomicString& name, const Vector<
     }
 }
 
-void SearchPopupMenu::loadRecentSearches(const AtomicString& name, Vector<String>& searchItems)
+void SearchPopupMenuMac::loadRecentSearches(const AtomicString& name, Vector<String>& searchItems)
 {
     if (name.isEmpty())
         return;

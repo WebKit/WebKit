@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 Ryan Leavengood <leavengood@gmail.com>
+ * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -18,7 +19,7 @@
  */
 
 #include "config.h"
-#include "SearchPopupMenu.h"
+#include "SearchPopupMenuHaiku.h"
 
 #include "AtomicString.h"
 #include "NotImplemented.h"
@@ -26,25 +27,30 @@
 
 namespace WebCore {
 
-SearchPopupMenu::SearchPopupMenu(PopupMenuClient* client)
-    : PopupMenu(client)
+SearchPopupMenuHaiku::SearchPopupMenuHaiku(PopupMenuClient* client)
+    : m_popup(adoptRef(new PopupMenuHaiku(client)))
 {
 }
 
-void SearchPopupMenu::saveRecentSearches(const AtomicString& name, const Vector<String>& searchItems)
-{
-    notImplemented();
-}
-
-void SearchPopupMenu::loadRecentSearches(const AtomicString& name, Vector<String>& searchItems)
+void SearchPopupMenuHaiku::saveRecentSearches(const AtomicString& name, const Vector<String>& searchItems)
 {
     notImplemented();
 }
 
-bool SearchPopupMenu::enabled()
+void SearchPopupMenuHaiku::loadRecentSearches(const AtomicString& name, Vector<String>& searchItems)
+{
+    notImplemented();
+}
+
+bool SearchPopupMenuHaiku::enabled()
 {
     notImplemented();
     return false;
+}
+
+PopupMenu* SearchPopupMenuHaiku::popupMenu()
+{
+    return m_popup.get();
 }
 
 } // namespace WebCore

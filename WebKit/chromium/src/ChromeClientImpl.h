@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -32,12 +33,15 @@
 #define ChromeClientImpl_h
 
 #include "ChromeClientChromium.h"
+#include "PopupMenu.h"
+#include "SearchPopupMenu.h"
 
 namespace WebCore {
 class AccessibilityObject;
 class FileChooser;
 class HTMLParserQuirks;
 class PopupContainer;
+class PopupMenuClient;
 class SecurityOrigin;
 struct WindowFeatures;
 }
@@ -167,6 +171,10 @@ public:
     // ChromeClientImpl:
     void setCursor(const WebCursorInfo& cursor);
     void setCursorForPlugin(const WebCursorInfo& cursor);
+
+    virtual bool selectItemWritingDirectionIsNatural();
+    virtual PassRefPtr<WebCore::PopupMenu> createPopupMenu(WebCore::PopupMenuClient*) const;
+    virtual PassRefPtr<WebCore::SearchPopupMenu> createSearchPopupMenu(WebCore::PopupMenuClient*) const;
 
 private:
     void getPopupMenuInfo(WebCore::PopupContainer*, WebPopupMenuInfo*);

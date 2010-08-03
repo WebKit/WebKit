@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,9 +35,11 @@
 #include "WebFrameLoaderClient.h"
 #include "WebPage.h"
 #include "WebPageProxyMessageKinds.h"
+#include "WebPopupMenu.h"
 #include "WebPreferencesStore.h"
 #include "WebProcess.h"
 #include "WebProcessProxyMessageKinds.h"
+#include "WebSearchPopupMenu.h"
 #include <WebCore/FileChooser.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
@@ -488,6 +491,21 @@ void WebChromeClient::formDidFocus(const Node*)
 void WebChromeClient::formDidBlur(const Node*)
 {
     notImplemented();
+}
+
+bool WebChromeClient::selectItemWritingDirectionIsNatural()
+{
+    return true;
+}
+
+PassRefPtr<WebCore::PopupMenu> WebChromeClient::createPopupMenu(WebCore::PopupMenuClient* client) const
+{
+    return adoptRef(new WebPopupMenu(client));
+}
+
+PassRefPtr<WebCore::SearchPopupMenu> WebChromeClient::createSearchPopupMenu(WebCore::PopupMenuClient* client) const
+{
+    return adoptRef(new WebSearchPopupMenu(client));
 }
 
 PassOwnPtr<HTMLParserQuirks> WebChromeClient::createHTMLParserQuirks()

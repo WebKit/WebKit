@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Company 100, Inc. All rights reserved.
+ * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,29 +25,34 @@
  */
 
 #include "config.h"
-#include "SearchPopupMenu.h"
+#include "SearchPopupMenuBrew.h"
 
 namespace WebCore {
 
 // Save the past searches stored in 'searchItems' to a database associated with 'name'
-void SearchPopupMenu::saveRecentSearches(const AtomicString& name, const Vector<String>& searchItems)
+void SearchPopupMenuBrew::saveRecentSearches(const AtomicString& name, const Vector<String>& searchItems)
 {
 }
 
 // Load past searches associated with 'name' from the database to 'searchItems'
-void SearchPopupMenu::loadRecentSearches(const AtomicString& name, Vector<String>& searchItems)
+void SearchPopupMenuBrew::loadRecentSearches(const AtomicString& name, Vector<String>& searchItems)
 {
 }
 
 // Create a search popup menu - not sure what else we have to do here
-SearchPopupMenu::SearchPopupMenu(PopupMenuClient* client)
-    : PopupMenu(client)
+SearchPopupMenuBrew::SearchPopupMenuBrew(PopupMenuClient* client)
+    : m_popup(adoptRef(new PopupMenuBrew(client)))
 {
 }
 
-bool SearchPopupMenu::enabled()
+bool SearchPopupMenuBrew::enabled()
 {
     return false;
+}
+
+PopupMenu* SearchPopupMenuBrew::popupMenu()
+{
+    return m_popup.get();
 }
 
 } // namespace WebCore

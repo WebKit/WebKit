@@ -2,6 +2,7 @@
  * This file is part of the popup menu implementation for <select> elements in WebCore.
  *
  * Copyright (C) 2008 Apple Computer, Inc.
+ * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,7 +22,7 @@
  */
 
 #include "config.h"
-#include "PopupMenu.h"
+#include "PopupMenuWx.h"
 
 #include "Frame.h"
 #include "FrameView.h"
@@ -41,18 +42,23 @@ static int s_menuStartId = wxNewId();
 
 namespace WebCore {
 
-PopupMenu::PopupMenu(PopupMenuClient* client)
+PopupMenuWx::PopupMenuWx(PopupMenuClient* client)
     : m_popupClient(client)
     , m_menu(NULL)
 {
 }
 
-PopupMenu::~PopupMenu()
+PopupMenuWx::~PopupMenuWx()
 {
     delete m_menu;
 }
 
-void PopupMenu::show(const IntRect& r, FrameView* v, int index)
+void PopupMenuWx::disconnectClient()
+{
+    m_popupClient = 0;
+}
+
+void PopupMenuWx::show(const IntRect& r, FrameView* v, int index)
 {
     // just delete and recreate
     delete m_menu;
@@ -78,13 +84,13 @@ void PopupMenu::show(const IntRect& r, FrameView* v, int index)
                     m_menu->Append(s_menuStartId + i, client()->itemText(i));
             }
         }
-        nativeWin->Connect(s_menuStartId, s_menuStartId + (size-1), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(PopupMenu::OnMenuItemSelected), NULL, this);
+        nativeWin->Connect(s_menuStartId, s_menuStartId + (size-1), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(PopupMenuWx::OnMenuItemSelected), 0, this);
         nativeWin->PopupMenu(m_menu, r.x() - v->scrollX(), r.y() - v->scrollY());
-        nativeWin->Disconnect(s_menuStartId, s_menuStartId + (size-1), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(PopupMenu::OnMenuItemSelected), NULL, this);
+        nativeWin->Disconnect(s_menuStartId, s_menuStartId + (size-1), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(PopupMenuWx::OnMenuItemSelected), 0, this);
     }
 }
 
-void PopupMenu::OnMenuItemSelected(wxCommandEvent& event)
+void PopupMenuWx::OnMenuItemSelected(wxCommandEvent& event)
 {
     if (client()) {
         client()->valueChanged(event.GetId() - s_menuStartId);
@@ -93,20 +99,15 @@ void PopupMenu::OnMenuItemSelected(wxCommandEvent& event)
     // TODO: Do we need to call Disconnect here? Do we have a ref to the native window still?
 }
 
-void PopupMenu::hide()
+void PopupMenuWx::hide()
 {
     // we don't need to do anything here, the native control only exists during the time
     // show is called
 }
 
-void PopupMenu::updateFromElement()
+void PopupMenuWx::updateFromElement()
 {
     client()->setTextFromItem(m_popupClient->selectedIndex());
-}
-
-bool PopupMenu::itemWritingDirectionIsNatural()
-{
-    return false;
 }
 
 }

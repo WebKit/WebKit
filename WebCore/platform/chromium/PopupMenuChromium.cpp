@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, 2009, Google Inc. All rights reserved.
+ * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -48,7 +49,6 @@
 #include "PlatformMouseEvent.h"
 #include "PlatformScreen.h"
 #include "PlatformWheelEvent.h"
-#include "PopupMenu.h"
 #include "RenderTheme.h"
 #include "ScrollbarTheme.h"
 #include "StringTruncator.h"
@@ -1340,20 +1340,20 @@ bool PopupListBox::isPointInBounds(const IntPoint& point)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// PopupMenu implementation
+// PopupMenuChromium implementation
 // 
 // Note: you cannot add methods to this class, since it is defined above the 
 //       portability layer. To access methods and properties on the
 //       popup widgets, use |popupWindow| above. 
 
-PopupMenu::PopupMenu(PopupMenuClient* client) 
+PopupMenuChromium::PopupMenuChromium(PopupMenuClient* client)
     : m_popupClient(client)
 {
 }
 
-PopupMenu::~PopupMenu()
+PopupMenuChromium::~PopupMenuChromium()
 {
-    // When the PopupMenu is destroyed, the client could already have been
+    // When the PopupMenuChromium is destroyed, the client could already have been
     // deleted.
     if (p.popup)
         p.popup->listBox()->disconnectClient();
@@ -1364,7 +1364,7 @@ PopupMenu::~PopupMenu()
 // to display, handle the input tracking and menu item selection for the popup.
 // Windows and Linux Chromium let our WebKit port handle the display, while
 // another process manages the popup window and input handling.
-void PopupMenu::show(const IntRect& r, FrameView* v, int index)
+void PopupMenuChromium::show(const IntRect& r, FrameView* v, int index)
 {
     if (!p.popup)
         p.popup = PopupContainer::create(client(), PopupContainer::Select, dropDownSettings);
@@ -1375,20 +1375,21 @@ void PopupMenu::show(const IntRect& r, FrameView* v, int index)
 #endif
 }
 
-void PopupMenu::hide()
+void PopupMenuChromium::hide()
 {
     if (p.popup)
         p.popup->hide();
 }
 
-void PopupMenu::updateFromElement()
+void PopupMenuChromium::updateFromElement()
 {
     p.popup->listBox()->updateFromElement();
 }
 
-bool PopupMenu::itemWritingDirectionIsNatural() 
-{ 
-    return false; 
+
+void PopupMenuChromium::disconnectClient()
+{
+    m_popupClient = 0;
 }
 
 } // namespace WebCore
