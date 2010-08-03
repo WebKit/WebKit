@@ -1,3 +1,18 @@
+2010-08-03  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Does not paint the node highlight used by the inspector
+        https://bugs.webkit.org/show_bug.cgi?id=43429
+
+        Implement highlighting the nodes when using the inspector.
+
+        * WebCoreSupport/InspectorClientGtk.cpp:
+        (WebKit::InspectorClient::highlight):
+        (WebKit::InspectorClient::hideHighlight):
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_expose_event):
+
 2010-08-03  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.
@@ -148,7 +163,6 @@
         * WebCoreSupport/ChromeClientGtk.cpp:
         (WebKit::ChromeClient::reachedApplicationCacheOriginQuota):
         * WebCoreSupport/ChromeClientGtk.h:
-
 2010-07-26  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.

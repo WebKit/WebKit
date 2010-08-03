@@ -549,6 +549,11 @@ static gboolean webkit_web_view_expose_event(GtkWidget* widget, GdkEventExpose* 
                 ctx.restore();
             }
         }
+
+        ctx.save();
+        ctx.clip(static_cast<IntRect>(event->area));
+        frame->page()->inspectorController()->drawNodeHighlight(ctx);
+        ctx.restore();
     }
 
     return FALSE;
