@@ -490,8 +490,6 @@ WEB_DOM_HEADERS := $(filter-out WebDOMXSLTProcessor.h,$(DOM_CLASSES:%=WebDOM%.h)
 endif # BUILDING_WX
 
 all : \
-    remove-stray-plugin-and-mime-type-files \
-    \
     $(JS_DOM_HEADERS) \
     $(WEB_DOM_HEADERS) \
     \
@@ -557,12 +555,6 @@ ifeq ($(ENABLE_ORIENTATION_EVENTS), 1)
 endif
 
 # --------
-
-# Temporary build rule. Take out once some time has passed.
-
-.PHONY : remove-stray-plugin-and-mime-type-files
-remove-stray-plugin-and-mime-type-files :
-	(rm DOMMimeTypeArray.h DOMMimeTypeArray.mm DOMMimeTypeArrayInternal.h DOMPluginArray.h DOMPluginArray.mm DOMPluginArrayInternal.h 2> /dev/null) || echo -n
 
 # CSS property names and value keywords
 

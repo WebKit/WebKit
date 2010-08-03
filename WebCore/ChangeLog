@@ -1,3 +1,11 @@
+2010-08-02  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Sam Weinig.
+
+        Removed temporary build rule introduced in r62594.
+
+        * DerivedSources.make:
+
 2010-08-02  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed. Rolling out r64525 for breaking chromium tests.
