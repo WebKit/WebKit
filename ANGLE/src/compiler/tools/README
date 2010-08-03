@@ -1,0 +1,14 @@
+The standalone Bison and Flex win32 executables
+were created by Wilbur Streett and can be obtained from:
+http://userpages.monmouth.com/~wstreett/lex-yacc/lex-yacc.html
+
+Bison version 1.24:
+See COPYING.bison for license information.
+The original source distribution for bison can be obtained from the following location:
+http://angleproject.googlecode.com/files/bison.zip
+
+Flex version 2.5.2
+See COPYING.flex for license information.
+The original source distribution for flex can be obtained from the following location:
+http://angleproject.googlecode.com/files/flex.zip
+
