@@ -1,3 +1,11 @@
+2010-08-03  Alex Milowski  <alex@milowski.com>
+
+        Reviewed by Beth Dakin.
+
+        Changed the ENABLE_MATHML value to enable MathML by default.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2010-08-03  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Sam Weinig.

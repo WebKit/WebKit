@@ -125,7 +125,7 @@ my @features = (
       define => "ENABLE_JAVASCRIPT_DEBUGGER", default => 1, value => \$javaScriptDebuggerSupport },
 
     { option => "mathml", desc => "Toggle MathML support",
-      define => "ENABLE_MATHML", default => 0, value => \$mathmlSupport },
+      define => "ENABLE_MATHML", default => 1, value => \$mathmlSupport },
 
     { option => "notifications", desc => "Toggle Desktop Notifications Support",
       define => "ENABLE_NOTIFICATIONS", default => 0, value => \$notificationsSupport },

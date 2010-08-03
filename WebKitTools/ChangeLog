@@ -1,3 +1,11 @@
+2010-08-03  Alex Milowski  <alex@milowski.com>
+
+        Reviewed by Beth Dakin.
+
+        Changed the default for MathML support so that is is enabled by default.
+
+        * Scripts/build-webkit:
+
 2010-08-03  Sam Weinig  <sam@webkit.org>
 
         Roll r64566 back in this time with all the overloads in place..
