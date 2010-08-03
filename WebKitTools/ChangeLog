@@ -1,5 +1,15 @@
 2010-08-02  Jon Honeycutt  <jhoneycutt@apple.com>
 
+        Restore the WebKitTestRunner.sln that was removed, and remove the
+        correct one.
+
+        Rubber-stamped by Sam Weinig.
+
+        * WebKitTestRunner/WebKitTestRunner.sln: Added.
+        * WebKitTestRunner/win/WebKitTestRunner.sln: Removed.
+
+2010-08-02  Jon Honeycutt  <jhoneycutt@apple.com>
+
         Move InjectedBundle.vcproj to where the other WebKitTestRunner vcprojs live.
 
         Remove the unused WebKitTestRunner.sln.
