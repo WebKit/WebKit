@@ -122,23 +122,22 @@ void RenderMathMLFraction::addChild(RenderObject* child, RenderObject* beforeChi
 void RenderMathMLFraction::layout()
 {
     updateFromElement();
-    
+
     // Adjust the fraction line thickness for the zoom
     if (lastChild() && lastChild()->isRenderBlock())
-        m_lineThickness = m_lineThickness * ceil(gFractionBarWidth * style()->fontSize());
-    
+        m_lineThickness = static_cast<int>(m_lineThickness * ceil(gFractionBarWidth * style()->fontSize()));
+
     RenderBlock::layout();
-    
+
     // The row layout can affect the numerator/denominator width.
     // FIXME: This is probably only needed if one of the children
     // contains an mrow.
     setNeedsLayoutAndPrefWidthsRecalc();
     markContainingBlocksForLayout();
-    
+
     RenderBlock::layout();
-    
 }
-    
+
 void RenderMathMLFraction::paint(PaintInfo& info, int tx, int ty)
 {
     RenderMathMLBlock::paint(info, tx, ty);
