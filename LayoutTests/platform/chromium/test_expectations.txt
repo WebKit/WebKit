@@ -3128,10 +3128,5 @@ BUG50910 : plugins/npruntime/remove-property.html = TEXT
 // New test added in r64409 fails in Chromium.
 BUG50832 : printing/stretch-to-view-height.html = TEXT
 
-// New test added in r64470 fails in Chromium Linux.
+// New test added in r64470 fails on Chromium.
 BUG50969 LINUX : fast/events/keydown-numpad-keys.html = TEXT
-
-BUGATWILSON REBASELINE MAC : editing/pasteboard/input-field-1.html = TEXT
-BUGATWILSON REBASELINE MAC : editing/pasteboard/merge-end-1.html = TEXT
-BUGATWILSON REBASELINE MAC : editing/pasteboard/merge-end-2.html = TEXT
-BUGATWILSON REBASELINE MAC : editing/pasteboard/select-element-1.html = TEXT

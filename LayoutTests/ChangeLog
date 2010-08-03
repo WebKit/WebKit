@@ -1,3 +1,15 @@
+2010-08-02  Andrew Wilson  <atwilson@chromium.org>
+
+        Unreviewed text expectations changes for Chromium.
+
+        * platform/chromium-mac/fast/dom/navigator-detached-no-crash-expected.txt: Added.
+        * platform/chromium-mac/fast/events/special-key-events-in-input-text-expected.txt: Added.
+        * platform/chromium-mac/plugins/npruntime/object-from-destroyed-plugin-expected.txt: Added.
+        * platform/chromium-win/fast/dom/navigator-detached-no-crash-expected.txt: Added.
+        * platform/chromium-win/fast/events/special-key-events-in-input-text-expected.txt: Added.
+        * platform/chromium-win/plugins/npruntime/object-from-destroyed-plugin-expected.txt: Added.
+        * platform/chromium/test_expectations.txt: Mark keydown-numpad-keys.html as failing on all platforms (not just linux).
+
 2010-08-02  Chris Fleizach  <cfleizach@apple.com>
 
         Unreviewed, rolling out r64471.
