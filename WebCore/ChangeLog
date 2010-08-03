@@ -1,3 +1,13 @@
+2010-08-03  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Fix warning in WebCore/plugins/win/PluginMessageThrottlerWin.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=43413
+
+        * plugins/win/PluginMessageThrottlerWin.cpp:
+        (WebCore::PluginMessageThrottlerWin::PluginMessageThrottlerWin): Modify initialization order.
+
 2010-08-03  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
