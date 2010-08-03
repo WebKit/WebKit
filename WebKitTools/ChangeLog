@@ -137,6 +137,21 @@
 
 2010-08-02  Jon Honeycutt  <jhoneycutt@apple.com>
 
+        WebKitTestRunner needs to support loading custom fonts (via the
+        WEBKIT_TESTFONTS environment variable)
+        https://bugs.webkit.org/show_bug.cgi?id=42782
+
+        Reviewed by Adam Roben.
+
+        * WebKitTestRunner/InjectedBundle/win/ActivateFonts.cpp:
+        (WTR::fontsPath):
+        Copied from DRT code. Removed the fallback to DumpRenderTree.resources/,
+        as this directory doesn't appear to be created anymore.
+        (WTR::activateFonts):
+        Loop through the fonts, and call AddFontResourceExW() for each.
+
+2010-08-02  Jon Honeycutt  <jhoneycutt@apple.com>
+
         Restore the WebKitTestRunner.sln that was removed, and remove the
         correct one.
 

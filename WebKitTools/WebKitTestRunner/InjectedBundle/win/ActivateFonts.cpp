@@ -25,11 +25,83 @@
 
 #include "ActivateFonts.h"
 
+#include <string>
+#include <wtf/Vector.h>
+
+static LPCWSTR fontsEnvironmentVariable = L"WEBKIT_TESTFONTS";
+
 namespace WTR {
+
+using namespace std;
+
+static const wstring& fontsPath()
+{
+    static wstring path;
+    static bool initialized;
+
+    if (initialized)
+        return path;
+    initialized = true;
+
+    DWORD size = ::GetEnvironmentVariableW(fontsEnvironmentVariable, 0, 0);
+    Vector<WCHAR> buffer(size);
+    if (!::GetEnvironmentVariableW(fontsEnvironmentVariable, buffer.data(), buffer.size()))
+        return path;
+
+    path = buffer.data();
+    if (path[path.length() - 1] != '\\')
+        path.append(L"\\");
+
+    return path;
+}
+
 
 void activateFonts()
 {
-    // FIXME: Not implemented.
+    static LPCWSTR fontsToInstall[] = {
+        TEXT("AHEM____.ttf"),
+        TEXT("Apple Chancery.ttf"),
+        TEXT("Courier Bold.ttf"),
+        TEXT("Courier.ttf"),
+        TEXT("Helvetica Bold Oblique.ttf"),
+        TEXT("Helvetica Bold.ttf"),
+        TEXT("Helvetica Oblique.ttf"),
+        TEXT("Helvetica.ttf"),
+        TEXT("Helvetica Neue Bold Italic.ttf"),
+        TEXT("Helvetica Neue Bold.ttf"),
+        TEXT("Helvetica Neue Condensed Black.ttf"),
+        TEXT("Helvetica Neue Condensed Bold.ttf"),
+        TEXT("Helvetica Neue Italic.ttf"),
+        TEXT("Helvetica Neue Light Italic.ttf"),
+        TEXT("Helvetica Neue Light.ttf"),
+        TEXT("Helvetica Neue UltraLight Italic.ttf"),
+        TEXT("Helvetica Neue UltraLight.ttf"),
+        TEXT("Helvetica Neue.ttf"),
+        TEXT("Lucida Grande.ttf"),
+        TEXT("Lucida Grande Bold.ttf"),
+        TEXT("Monaco.ttf"),
+        TEXT("Papyrus.ttf"),
+        TEXT("Times Bold Italic.ttf"),
+        TEXT("Times Bold.ttf"),
+        TEXT("Times Italic.ttf"),
+        TEXT("Times Roman.ttf"),
+        TEXT("WebKit Layout Tests 2.ttf"),
+        TEXT("WebKit Layout Tests.ttf"),
+        TEXT("WebKitWeightWatcher100.ttf"),
+        TEXT("WebKitWeightWatcher200.ttf"),
+        TEXT("WebKitWeightWatcher300.ttf"),
+        TEXT("WebKitWeightWatcher400.ttf"),
+        TEXT("WebKitWeightWatcher500.ttf"),
+        TEXT("WebKitWeightWatcher600.ttf"),
+        TEXT("WebKitWeightWatcher700.ttf"),
+        TEXT("WebKitWeightWatcher800.ttf"),
+        TEXT("WebKitWeightWatcher900.ttf")
+    };
+
+    wstring resourcesPath = fontsPath();
+
+    for (unsigned i = 0; i < ARRAYSIZE(fontsToInstall); ++i)
+        ::AddFontResourceExW(wstring(resourcesPath + fontsToInstall[i]).c_str(), FR_PRIVATE, 0);
 }
 
 }
