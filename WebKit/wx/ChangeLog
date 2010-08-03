@@ -1,3 +1,15 @@
+2010-08-03  Malcolm MacLeod  <mmacleod@webmail.co.za>
+
+        Reviewed by Kevin Ollivier.
+
+        Fix crash during HitTest call.
+        https://bugs.webkit.org/show_bug.cgi?id=43372
+
+        * WebFrame.cpp:
+        (wxWebFrame::HitTest):
+        * WebView.cpp:
+        (wxWebViewDOMElementInfo::wxWebViewDOMElementInfo):
+
 2010-07-27  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Darin Fisher.

@@ -458,7 +458,6 @@ wxWebViewDOMElementInfo wxWebFrame::HitTest(const wxPoint& pos) const
     if (m_impl->frame->view()) {
         WebCore::HitTestResult result = m_impl->frame->eventHandler()->hitTestResultAtPoint(m_impl->frame->view()->windowToContents(pos), false);
         if (result.innerNode()) {
-            domInfo.SetInnerNode(new WebDOMNode(result.innerNode()));
             domInfo.SetLink(result.absoluteLinkURL().string());
             domInfo.SetText(result.textContent());
             domInfo.SetImageSrc(result.absoluteImageURL().string());
