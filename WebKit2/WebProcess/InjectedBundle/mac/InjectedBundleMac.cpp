@@ -86,4 +86,8 @@ bool InjectedBundle::load()
     return true;
 }
 
+void InjectedBundle::activateMacFontAscentHack()
+{
+}
+
 } // namespace WebKit

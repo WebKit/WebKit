@@ -1,3 +1,14 @@
+2010-08-03  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        WebKitTestRunner needs to activate the Mac font ascent hack
+        https://bugs.webkit.org/show_bug.cgi?id=43404
+
+        Reviewed by Darin Adler.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::initialize):
+        Call WKBundleActivateMacFontAscentHack().
+
 2010-08-03  Alex Milowski  <alex@milowski.com>
 
         Reviewed by Beth Dakin.
