@@ -331,3 +331,5 @@ BUG_DRT LINUX : svg/hixie/perf/001.xml = TEXT
 BUG_DRT LINUX : svg/hixie/perf/002.xml = TEXT
 BUG_DRT LINUX : svg/zoom/page/zoom-coords-viewattr-01-b.svg = IMAGE
 BUG_DRT LINUX : transforms/2d/hindi-rotated.html = IMAGE+TEXT
+BUG_DRT MAC LINUX : fast/events/special-key-events-in-input-text.html = TEXT
+BUG_DRT LINUX : editing/pasteboard/drag-image-in-about-blank-frame.html = CRASH
