@@ -1,3 +1,9 @@
+2010-08-03  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed. Upstreaming test_expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-08-03  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Adam Barth.

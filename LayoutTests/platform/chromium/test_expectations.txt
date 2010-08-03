@@ -1015,10 +1015,6 @@ BUG24204 WIN LINUX : tables/mozilla_expected_failures/bugs/bug178855.xml = IMAGE
 // Fails on webkit windows as well.
 BUG24207 : fast/events/attempt-scroll-with-no-scrollbars.html = FAIL
 
-// The test may require a proper version of Java 6 RC 10 plugin
-// installed to run.
-BUG10313 : plugins/npruntime/bindings-test.html = FAIL
-
 // No glyph for U+FFFD (Replacement Character : black diamond with
 // question mark) in them
 BUG10315 WIN : fast/encoding/invalid-UTF-8.html = FAIL
@@ -1809,6 +1805,7 @@ BUG5737 LINUX : fast/forms/input-first-letter.html = FAIL
 
 // The (x) in type=search inputs appears to be slightly broken.  This test will also need a rebaseline.
 BUG20439 WIN LINUX : fast/forms/search-transformed.html = FAIL
+BUG50816 MAC : fast/forms/search-transformed.html = FAIL
 
 // Linux's rotated text output looks terrible.
 BUG10397 LINUX : fast/transforms/transformed-document-element.html = FAIL
@@ -3071,6 +3068,35 @@ BUGWK42371 : ietestcenter/Javascript/15.2.3.8-0-1.html = FAIL
 BUGWK42371 : ietestcenter/Javascript/15.2.3.8-0-2.html = FAIL
 BUGWK42371 : ietestcenter/Javascript/15.2.3.8-1.html = FAIL
 
+// These tests all fail because the expected output is wrong. The
+// reason is that JSC does not currently implement Function.prototype.bind
+// These test has intentionally been marked as FAIL, which makes it easy
+// to fix this when webkit implements this ES5 feature.
+BUGWK42371 : ietestcenter/Javascript/15.2.3.3-4-38.html = FAIL
+BUGWK42371 : ietestcenter/Javascript/15.3.4.5-0-1.html = FAIL
+BUGWK42371 : ietestcenter/Javascript/15.3.4.5-0-2.html = FAIL
+BUGWK42371 : ietestcenter/Javascript/15.3.4.5-13.b-1.html = FAIL
+BUGWK42371 : ietestcenter/Javascript/15.3.4.5-13.b-2.html = FAIL
+BUGWK42371 : ietestcenter/Javascript/15.3.4.5-13.b-3.html = FAIL
+BUGWK42371 : ietestcenter/Javascript/15.3.4.5-13.b-4.html = FAIL
+BUGWK42371 : ietestcenter/Javascript/15.3.4.5-13.b-5.html = FAIL
+BUGWK42371 : ietestcenter/Javascript/15.3.4.5-15-1.html = FAIL
+BUGWK42371 : ietestcenter/Javascript/15.3.4.5-15-2.html = FAIL
+BUGWK42371 : ietestcenter/Javascript/15.3.4.5-16-1.html = FAIL
+BUGWK42371 : ietestcenter/Javascript/15.3.4.5-2-1.html = FAIL
+BUGWK42371 : ietestcenter/Javascript/15.3.4.5-2-2.html = FAIL
+BUGWK42371 : ietestcenter/Javascript/15.3.4.5-2-3.html = FAIL
+BUGWK42371 : ietestcenter/Javascript/15.3.4.5-2-4.html = FAIL
+BUGWK42371 : ietestcenter/Javascript/15.3.4.5-2-5.html = FAIL
+BUGWK42371 : ietestcenter/Javascript/15.3.4.5-2-6.html = FAIL
+BUGWK42371 : ietestcenter/Javascript/15.3.4.5-2-7.html = FAIL
+BUGWK42371 : ietestcenter/Javascript/15.3.4.5-2-8.html = FAIL
+BUGWK42371 : ietestcenter/Javascript/15.3.4.5-2-9.html = FAIL
+BUGWK42371 : ietestcenter/Javascript/15.3.4.5-8-1.html = FAIL
+BUGWK42371 : ietestcenter/Javascript/15.3.4.5-8-2.html = FAIL
+BUGWK42371 : ietestcenter/Javascript/15.3.4.5-9-1.html = FAIL
+BUGWK42371 : ietestcenter/Javascript/15.3.4.5-9-2.html = FAIL
+
 BUGWK42403 LINUX WIN : svg/W3C-SVG-1.1/masking-intro-01-f.svg = IMAGE
 BUGWK42403 LINUX WIN : svg/css/circle-in-mask-with-shadow.svg = IMAGE
 BUGWK42403 LINUX WIN : svg/custom/grayscale-gradient-mask.svg = IMAGE
@@ -3130,3 +3156,14 @@ BUG50832 : printing/stretch-to-view-height.html = TEXT
 
 // New test added in r64470 fails on Chromium.
 BUG50969 : fast/events/keydown-numpad-keys.html = TEXT
+
+// This test fails because the expected output is wrong.
+// The reason is the device orientation runtime feature
+// switch had to be switched off for test_shell until
+// it provides a mock DeviceOrientationClient.
+// See crbug.com/50637.
+BUG50637 : fast/dom/prototype-inheritance.html = FAIL
+
+BUG51036 : fast/events/special-key-events-in-input-text.html = FAIL
+
+BUG50825 LINUX : svg/custom/massive-coordinates.svg = FAIL
