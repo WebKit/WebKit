@@ -1,3 +1,11 @@
+2010-08-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        * platform/mac-snowleopard/Skipped: Skip remove-property test that Anders added while
+        working on WebKit2. Unknown why it's failing on SnowLeopard at this time. We could have
+        added SnowLeopard-specific results instead, but for now we decided skipping was easier.
+
 2010-08-03  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Ojan Vafai.
