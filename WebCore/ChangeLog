@@ -1,3 +1,13 @@
+2010-08-03  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Joseph Pecoraro.
+
+        Web Inspector: incorrect absolute protocol-less URLs in tooltips of links in the ElementsTreeOutline
+        https://bugs.webkit.org/show_bug.cgi?id=43246
+
+        * inspector/front-end/inspector.js:
+        (WebInspector.completeURL):
+
 2010-08-03  Adam Roben  <aroben@apple.com>
 
         Compile out two Mac-only localized strings on non-Mac platforms

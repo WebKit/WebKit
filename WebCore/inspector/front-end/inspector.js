@@ -1787,6 +1787,9 @@ WebInspector.completeURL = function(baseURL, href)
         if (path.charAt(0) !== "/") {
             var basePath = match[4] || "/";
             path = basePath.substring(0, basePath.lastIndexOf("/")) + "/" + path;
+        } else if (path.length > 1 && path.charAt(1) === "/") {
+            // href starts with "//" which is a full URL with the protocol dropped (use the baseURL protocol).
+            return match[1] + ":" + path;
         }
         return match[1] + "://" + match[2] + (match[3] ? (":" + match[3]) : "") + path;
     }
