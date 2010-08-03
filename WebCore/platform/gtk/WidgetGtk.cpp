@@ -67,7 +67,7 @@ static GdkDrawable* gdkDrawable(PlatformWidget widget)
     
 void Widget::setCursor(const Cursor& cursor)
 {
-    GdkCursor* platformCursor = cursor.impl();
+    GdkCursor* platformCursor = cursor.platformCursor().get();
 
     // http://bugs.webkit.org/show_bug.cgi?id=16388
     // [GTK] Widget::setCursor() gets called frequently

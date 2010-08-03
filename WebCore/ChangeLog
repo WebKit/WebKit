@@ -1,3 +1,27 @@
+2010-08-02  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] WebKit2 requires lazy cursor support
+        https://bugs.webkit.org/show_bug.cgi?id=43053
+
+        Add lazy cursor support for GTK+. Lazy cursor support is used on some
+        WebKit2 ports to support changing the cursor.
+
+        No new tests, as this should not change functionality.
+
+        * platform/Cursor.h: Changed the m_platformCursor member to be a GRefPtr.
+        This simplifies the logic a great deal.
+        * platform/gtk/CursorGtk.cpp:
+        (WebCore::createNamedCursor): Added, adapted from existing code.
+        (WebCore::createCustomCursor): Added, adapted from existing code.
+        (WebCore::Cursor::ensurePlatformCursor): Added.
+        (WebCore::Cursor::Cursor): Added.
+        (WebCore::Cursor::operator=): Added.
+        (WebCore::Cursor::~Cursor): Added.
+        * platform/gtk/WidgetGtk.cpp:
+        (WebCore::Widget::setCursor): Call platformCusor now to get the actual GdkCursor.
+
 2010-08-02  Rajiv Makhijani  <rajivmakhijani@chromium.org>
 
         Reviewed by Adam Barth. 

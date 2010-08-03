@@ -36,7 +36,7 @@ typedef HICON HCURSOR;
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #elif PLATFORM(GTK)
-typedef struct _GdkCursor GdkCursor;
+#include "GRefPtrGtk.h"
 #elif PLATFORM(QT)
 #include <QCursor>
 #elif PLATFORM(CHROMIUM)
@@ -62,7 +62,7 @@ typedef struct HICON__ *HICON;
 typedef HICON HCURSOR;
 #endif
 
-#if PLATFORM(WIN) || PLATFORM(MAC)
+#if PLATFORM(WIN) || PLATFORM(MAC) || PLATFORM(GTK)
 #define WTF_USE_LAZY_NATIVE_CURSOR 1
 #endif
 
@@ -84,7 +84,7 @@ namespace WebCore {
 #elif PLATFORM(MAC)
     typedef NSCursor* PlatformCursor;
 #elif PLATFORM(GTK)
-    typedef GdkCursor* PlatformCursor;
+    typedef GRefPtr<GdkCursor> PlatformCursor;
 #elif PLATFORM(EFL)
     typedef const char* PlatformCursor;
 #elif PLATFORM(QT) && !defined(QT_NO_CURSOR)

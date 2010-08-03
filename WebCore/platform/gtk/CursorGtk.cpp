@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com
  * Copyright (C) 2007 Christian Dywan <christian@twotoasts.de>
+ * Copyright (C) 2010 Igalia S.L.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,318 +31,172 @@
 
 #include "Image.h"
 #include "IntPoint.h"
-
-#include <wtf/Assertions.h>
-
 #include <gdk/gdk.h>
 #include <gtk/gtk.h>
+#include <wtf/Assertions.h>
 
 namespace WebCore {
 
-static GdkCursor* customCursorNew(CustomCursorType cursorType)
+static GdkCursor* createNamedCursor(CustomCursorType cursorType)
 {
     CustomCursor cursor = CustomCursors[cursorType];
     GdkCursor* c = gdk_cursor_new_from_name(gdk_display_get_default(), cursor.name);
-    if (!c) {
-        const GdkColor fg = { 0, 0, 0, 0 };
-        const GdkColor bg = { 65535, 65535, 65535, 65535 };
+    if (c)
+        return c;
 
-        GdkPixmap* source = gdk_bitmap_create_from_data(NULL, cursor.bits, 32, 32);
-        GdkPixmap* mask = gdk_bitmap_create_from_data(NULL, cursor.mask_bits, 32, 32);
-        c = gdk_cursor_new_from_pixmap(source, mask, &fg, &bg, cursor.hot_x, cursor.hot_y);
-        g_object_unref(source);
-        g_object_unref(mask);
-    }
-    return c;
+    const GdkColor fg = { 0, 0, 0, 0 };
+    const GdkColor bg = { 65535, 65535, 65535, 65535 };
+    GRefPtr<GdkPixmap> source = adoptGRef(gdk_bitmap_create_from_data(0, cursor.bits, 32, 32));
+    GRefPtr<GdkPixmap> mask = adoptGRef(gdk_bitmap_create_from_data(0, cursor.mask_bits, 32, 32));
+    return gdk_cursor_new_from_pixmap(source.get(), mask.get(), &fg, &bg, cursor.hot_x, cursor.hot_y);
 }
 
-
-Cursor::Cursor(const Cursor& other)
-    : m_platformCursor(other.m_platformCursor)
-{
-    if (m_platformCursor)
-        gdk_cursor_ref(m_platformCursor);
-}
-
-Cursor::Cursor(Image* image, const IntPoint& hotSpot)
+static GdkCursor* createCustomCursor(Image* image, const IntPoint& hotSpot)
 {
     IntPoint effectiveHotSpot = determineHotSpot(image, hotSpot);
-    GdkPixbuf* pixbuf = image->getGdkPixbuf();
-    m_platformCursor = gdk_cursor_new_from_pixbuf(gdk_display_get_default(), pixbuf, effectiveHotSpot.x(), effectiveHotSpot.y());
-    g_object_unref(pixbuf);
+    GRefPtr<GdkPixbuf> pixbuf = adoptGRef(image->getGdkPixbuf());
+    return gdk_cursor_new_from_pixbuf(gdk_display_get_default(), pixbuf.get(), effectiveHotSpot.x(), effectiveHotSpot.y());
 }
 
-Cursor::~Cursor()
+void Cursor::ensurePlatformCursor() const
 {
-    if (m_platformCursor)
-        gdk_cursor_unref(m_platformCursor);
+    if (m_platformCursor || m_type == Cursor::Pointer)
+        return;
+
+    switch (m_type) {
+    case Cursor::Pointer:
+        // A null GdkCursor is the default cursor for the window.
+        m_platformCursor = 0;
+        break;
+    case Cursor::Cross:
+        m_platformCursor = gdk_cursor_new(GDK_CROSS);
+        break;
+    case Cursor::Hand:
+        m_platformCursor = gdk_cursor_new(GDK_HAND2);
+        break;
+    case Cursor::IBeam:
+        m_platformCursor = gdk_cursor_new(GDK_XTERM);
+        break;
+    case Cursor::Wait:
+        m_platformCursor = gdk_cursor_new(GDK_WATCH);
+        break;
+    case Cursor::Help:
+        m_platformCursor = gdk_cursor_new(GDK_QUESTION_ARROW);
+        break;
+    case Cursor::Move:
+    case Cursor::MiddlePanning:
+        m_platformCursor = gdk_cursor_new(GDK_FLEUR);
+        break;
+    case Cursor::EastResize:
+    case Cursor::EastPanning:
+        m_platformCursor = gdk_cursor_new(GDK_RIGHT_SIDE);
+        break;
+    case Cursor::NorthResize:
+    case Cursor::NorthPanning:
+        m_platformCursor = gdk_cursor_new(GDK_TOP_SIDE);
+        break;
+    case Cursor::NorthEastResize:
+    case Cursor::NorthEastPanning:
+        m_platformCursor = gdk_cursor_new(GDK_LEFT_SIDE);
+        break;
+    case Cursor::NorthWestResize:
+    case Cursor::NorthWestPanning:
+        m_platformCursor = gdk_cursor_new(GDK_TOP_LEFT_CORNER);
+        break;
+    case Cursor::SouthResize:
+    case Cursor::SouthPanning:
+        m_platformCursor = gdk_cursor_new(GDK_BOTTOM_SIDE);
+        break;
+    case Cursor::SouthEastResize:
+    case Cursor::SouthEastPanning:
+        m_platformCursor = gdk_cursor_new(GDK_BOTTOM_RIGHT_CORNER);
+        break;
+    case Cursor::SouthWestResize:
+    case Cursor::SouthWestPanning:
+        m_platformCursor = gdk_cursor_new(GDK_BOTTOM_LEFT_CORNER);
+        break;
+    case Cursor::WestResize:
+        m_platformCursor = gdk_cursor_new(GDK_LEFT_SIDE);
+        break;
+    case Cursor::NorthSouthResize:
+        m_platformCursor = gdk_cursor_new(GDK_TOP_TEE);
+        break;
+    case Cursor::EastWestResize:
+    case Cursor::WestPanning:
+        m_platformCursor = gdk_cursor_new(GDK_LEFT_SIDE);
+        break;
+    case Cursor::NorthEastSouthWestResize:
+    case Cursor::NorthWestSouthEastResize:
+        m_platformCursor = gdk_cursor_new(GDK_SIZING);
+        break;
+    case Cursor::ColumnResize:
+        m_platformCursor = gdk_cursor_new(GDK_SB_H_DOUBLE_ARROW);
+        break;
+    case Cursor::RowResize:
+        m_platformCursor = gdk_cursor_new(GDK_SB_V_DOUBLE_ARROW);
+        break;
+    case Cursor::VerticalText:
+        m_platformCursor = createNamedCursor(CustomCursorVerticalText);
+        break;
+    case Cursor::Cell:
+        m_platformCursor = gdk_cursor_new(GDK_PLUS);
+        break;
+    case Cursor::ContextMenu:
+        m_platformCursor = createNamedCursor(CustomCursorContextMenu);
+        break;
+    case Cursor::Alias:
+        m_platformCursor = createNamedCursor(CustomCursorAlias);
+        break;
+    case Cursor::Progress:
+        m_platformCursor = createNamedCursor(CustomCursorProgress);
+        break;
+    case Cursor::NoDrop:
+    case Cursor::NotAllowed:
+        m_platformCursor = createNamedCursor(CustomCursorNoDrop);
+        break;
+    case Cursor::Copy:
+        m_platformCursor = createNamedCursor(CustomCursorCopy);
+        break;
+    case Cursor::None:
+        m_platformCursor = createNamedCursor(CustomCursorNone);
+        break;
+    case Cursor::ZoomIn:
+        m_platformCursor = createNamedCursor(CustomCursorZoomIn);
+        break;
+    case Cursor::ZoomOut:
+        m_platformCursor = createNamedCursor(CustomCursorZoomOut);
+        break;
+    case Cursor::Grab:
+        m_platformCursor = createNamedCursor(CustomCursorGrab);
+        break;
+    case Cursor::Grabbing:
+        m_platformCursor = createNamedCursor(CustomCursorGrabbing);
+        break;
+    case Cursor::Custom:
+        m_platformCursor = createCustomCursor(m_image.get(), m_hotSpot);
+        break;
+    }
+}
+
+Cursor::Cursor(const Cursor& other)
+    : m_type(other.m_type)
+    , m_image(other.m_image)
+    , m_hotSpot(other.m_hotSpot)
+    , m_platformCursor(other.m_platformCursor)
+{
 }
 
 Cursor& Cursor::operator=(const Cursor& other)
 {
-    gdk_cursor_ref(other.m_platformCursor);
-    gdk_cursor_unref(m_platformCursor);
+    m_type = other.m_type;
+    m_image = other.m_image;
+    m_hotSpot = other.m_hotSpot;
     m_platformCursor = other.m_platformCursor;
     return *this;
 }
 
-Cursor::Cursor(GdkCursor* c)
-    : m_platformCursor(c)
+Cursor::~Cursor()
 {
-    m_platformCursor = c;
-
-    // The GdkCursor may be NULL - the default cursor for the window.
-    if (c)
-        gdk_cursor_ref(c);
-}
-
-const Cursor& pointerCursor()
-{
-    static Cursor c = 0;
-    return c;
-}
-
-const Cursor& crossCursor()
-{
-    static Cursor c = gdk_cursor_new(GDK_CROSS);
-    return c;
-}
-
-const Cursor& handCursor()
-{
-    static Cursor c = gdk_cursor_new(GDK_HAND2);
-    return c;
-}
-
-const Cursor& moveCursor()
-{
-    static Cursor c = gdk_cursor_new(GDK_FLEUR);
-    return c;
-}
-
-const Cursor& iBeamCursor()
-{
-    static Cursor c = gdk_cursor_new(GDK_XTERM);
-    return c;
-}
-
-const Cursor& waitCursor()
-{
-    static Cursor c = gdk_cursor_new(GDK_WATCH);
-    return c;
-}
-
-const Cursor& helpCursor()
-{
-    static Cursor c = gdk_cursor_new(GDK_QUESTION_ARROW);
-    return c;
-}
-
-const Cursor& eastResizeCursor()
-{
-    static Cursor c = gdk_cursor_new(GDK_RIGHT_SIDE);
-    return c;
-}
-
-const Cursor& northResizeCursor()
-{
-    static Cursor c = gdk_cursor_new(GDK_TOP_SIDE);
-    return c;
-}
-
-const Cursor& northEastResizeCursor()
-{
-    static Cursor c = gdk_cursor_new(GDK_TOP_RIGHT_CORNER);
-    return c;
-}
-
-const Cursor& northWestResizeCursor()
-{
-    static Cursor c = gdk_cursor_new(GDK_TOP_LEFT_CORNER);
-    return c;
-}
-
-const Cursor& southResizeCursor()
-{
-    static Cursor c = gdk_cursor_new(GDK_BOTTOM_SIDE);
-    return c;
-}
-
-const Cursor& southEastResizeCursor()
-{
-    static Cursor c = gdk_cursor_new(GDK_BOTTOM_RIGHT_CORNER);
-    return c;
-}
-
-const Cursor& southWestResizeCursor()
-{
-    static Cursor c = gdk_cursor_new(GDK_BOTTOM_LEFT_CORNER);
-    return c;
-}
-
-const Cursor& westResizeCursor()
-{
-    static Cursor c = gdk_cursor_new(GDK_LEFT_SIDE);
-    return c;
-}
-
-const Cursor& northSouthResizeCursor()
-{
-    static Cursor c = gdk_cursor_new(GDK_TOP_TEE);
-    return c;
-}
-
-const Cursor& eastWestResizeCursor()
-{
-    static Cursor c = gdk_cursor_new(GDK_LEFT_SIDE);
-    return c;
-}
-
-const Cursor& northEastSouthWestResizeCursor()
-{
-    static Cursor c = gdk_cursor_new(GDK_SIZING);
-    return c;
-}
-
-const Cursor& northWestSouthEastResizeCursor()
-{
-    static Cursor c = gdk_cursor_new(GDK_SIZING);
-    return c;
-}
-
-const Cursor& columnResizeCursor()
-{
-    static Cursor c = gdk_cursor_new(GDK_SB_H_DOUBLE_ARROW);
-    return c;
-}
-
-const Cursor& rowResizeCursor()
-{
-    static Cursor c = gdk_cursor_new(GDK_SB_V_DOUBLE_ARROW);
-    return c;
-}
-    
-const Cursor& middlePanningCursor()
-{
-    return moveCursor();
-}
-
-const Cursor& eastPanningCursor()
-{
-    return eastResizeCursor();
-}
-
-const Cursor& northPanningCursor()
-{
-    return northResizeCursor();
-}
-
-const Cursor& northEastPanningCursor()
-{
-    return northEastResizeCursor();
-}
-
-const Cursor& northWestPanningCursor()
-{
-    return northWestResizeCursor();
-}
-
-const Cursor& southPanningCursor()
-{
-    return southResizeCursor();
-}
-
-const Cursor& southEastPanningCursor()
-{
-    return southEastResizeCursor();
-}
-
-const Cursor& southWestPanningCursor()
-{
-    return southWestResizeCursor();
-}
-
-const Cursor& westPanningCursor()
-{
-    return westResizeCursor();
-}
-    
-
-const Cursor& verticalTextCursor()
-{
-    static Cursor c = customCursorNew(CustomCursorVerticalText);
-    return c;
-}
-
-const Cursor& cellCursor()
-{
-    static Cursor c = gdk_cursor_new(GDK_PLUS);
-    return c;
-}
-
-const Cursor& contextMenuCursor()
-{
-    static Cursor c = customCursorNew(CustomCursorContextMenu);
-    return c;
-}
-
-const Cursor& noDropCursor()
-{
-    static Cursor c = customCursorNew(CustomCursorNoDrop);
-    return c;
-}
-
-const Cursor& copyCursor()
-{
-    static Cursor c = customCursorNew(CustomCursorCopy);
-    return c;
-}
-
-const Cursor& progressCursor()
-{
-    static Cursor c = customCursorNew(CustomCursorProgress);
-    return c;
-}
-
-const Cursor& aliasCursor()
-{
-    static Cursor c = customCursorNew(CustomCursorAlias);
-    return c;
-}
-
-const Cursor& noneCursor()
-{
-    static Cursor c = customCursorNew(CustomCursorNone);
-    return c;
-}
-
-const Cursor& notAllowedCursor()
-{
-    return noDropCursor();
-}
-
-const Cursor& zoomInCursor()
-{
-    static Cursor c = customCursorNew(CustomCursorZoomIn);
-    return c;
-}
-
-const Cursor& zoomOutCursor()
-{
-    static Cursor c = customCursorNew(CustomCursorZoomOut);
-    return c;
-}
-
-const Cursor& grabCursor()
-{
-    static Cursor c = customCursorNew(CustomCursorGrab);
-    return c;
-}
-
-const Cursor& grabbingCursor()
-{
-    static Cursor c = customCursorNew(CustomCursorGrabbing);
-    return c;
 }
 
 }
