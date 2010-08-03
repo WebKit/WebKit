@@ -27,11 +27,15 @@
 #include "Event.h"
 #include "EventException.h"
 #include "HTMLNames.h"
+#include "MouseEvent.h"
+#include "UIEvent.h"
 #include "WebKitDOMDOMWindowPrivate.h"
 #include "WebKitDOMElementPrivate.h"
 #include "WebKitDOMNode.h"
 #include "WebKitDOMNodePrivate.h"
 #include "WebKitHTMLElementWrapperFactory.h"
+#include "webkit/WebKitDOMMouseEventPrivate.h"
+#include "webkit/WebKitDOMUIEventPrivate.h"
 
 namespace WebKit {
 
@@ -117,6 +121,27 @@ gpointer kit(Element* element)
         wrappedElement = wrapElement(element);
 
     return DOMObjectCache::put(element, wrappedElement);
+}
+
+gpointer kit(Event* event)
+{
+    if (!event)
+        return 0;
+
+    gpointer kitEvent = DOMObjectCache::get(event);
+    if (kitEvent)
+        return kitEvent;
+
+    gpointer wrappedEvent;
+
+    if (event->isMouseEvent())
+        wrappedEvent = wrapMouseEvent(static_cast<MouseEvent*>(event));
+    else if (event->isUIEvent())
+        wrappedEvent = wrapUIEvent(static_cast<UIEvent*>(event));
+    else
+        wrappedEvent = 0;
+
+    return DOMObjectCache::put(event, wrappedEvent);
 }
 
 static gpointer wrapEventTarget(EventTarget* target)

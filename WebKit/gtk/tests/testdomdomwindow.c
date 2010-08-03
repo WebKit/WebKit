@@ -26,7 +26,7 @@
 
 #if GLIB_CHECK_VERSION(2, 16, 0) && GTK_CHECK_VERSION(2, 14, 0)
 
-#define HTML_DOCUMENT "<html><head><title>This is the title</title></head><body></body></html>"
+#define HTML_DOCUMENT "<html><head><title>This is the title</title></head><body><p id='test'>test</p></body></html>"
 
 typedef struct {
     GtkWidget* webView;
@@ -108,7 +108,7 @@ static void load_event_callback(WebKitWebView* webView, GParamSpec* spec, DomDom
         g_signal_connect(fixture->domWindow, "click-event", G_CALLBACK(clickedCallback), fixture);
 
         g_assert(fixture->clicked == FALSE);
-        gtk_test_widget_click (GTK_WIDGET(fixture->webView), 1, 0);
+        gtk_test_widget_click(GTK_WIDGET(fixture->webView), 1, 0);
     }
 
 }
@@ -132,9 +132,66 @@ static void test_dom_domview_signals(DomDomviewFixture* fixture, gconstpointer d
     gtk_widget_show_all(fixture->window);
     gtk_window_present(GTK_WINDOW(fixture->window));
 
-    g_main_loop_run (fixture->loop);
+    g_main_loop_run(fixture->loop);
 
     g_assert(fixture->loaded);
+    g_assert(fixture->clicked);
+}
+
+static gboolean
+clicked_cb(WebKitDOMEventTarget* target, WebKitDOMEvent* event, DomDomviewFixture* fixture)
+{
+    g_assert(fixture->clicked == FALSE);
+    fixture->clicked = TRUE;
+    finish_loading(fixture);
+    return FALSE;
+}
+
+static void load_status_callback(WebKitWebView* webView, GParamSpec* spec, DomDomviewFixture* fixture)
+{
+    WebKitLoadStatus status = webkit_web_view_get_load_status(webView);
+    if (status == WEBKIT_LOAD_FINISHED) {
+        WebKitDOMDocument* document;
+        WebKitDOMDOMWindow* domWindow;
+        WebKitDOMElement* element;
+        WebKitDOMEvent* event;
+        glong clientX, clientY;
+
+        document = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(fixture->webView));
+        g_assert(document);
+        domWindow = webkit_dom_document_get_default_view(document);
+        g_assert(domWindow);
+        fixture->domWindow = domWindow;
+
+        element = webkit_dom_document_get_element_by_id(document, "test");
+        g_assert(element);
+        event = webkit_dom_document_create_event(document, "MouseEvent", NULL);
+        g_assert(event);
+        g_assert(WEBKIT_DOM_IS_EVENT(event));
+        g_assert(WEBKIT_DOM_IS_MOUSE_EVENT(event));
+        clientX = webkit_dom_element_get_client_left(element);
+        clientY = webkit_dom_element_get_client_top(element);
+        webkit_dom_mouse_event_init_mouse_event(WEBKIT_DOM_MOUSE_EVENT(event),
+                                                "click", TRUE, TRUE,
+                                                fixture->domWindow, 0, 0, 0, clientX, clientY,
+                                                FALSE, FALSE, FALSE, FALSE,
+                                                1, WEBKIT_DOM_EVENT_TARGET(element));
+        g_signal_connect(element, "click-event", G_CALLBACK(clicked_cb), fixture);
+        g_assert(fixture->clicked == FALSE);
+        webkit_dom_event_target_dispatch_event(WEBKIT_DOM_EVENT_TARGET(element), event, NULL);
+    }
+
+}
+
+static void test_dom_domview_dispatch_event(DomDomviewFixture* fixture, gconstpointer data)
+{
+    g_signal_connect(fixture->window, "map-event", G_CALLBACK(map_event_cb), fixture);
+    g_signal_connect(fixture->webView, "notify::load-status", G_CALLBACK(load_status_callback), fixture);
+
+    gtk_widget_show_all(fixture->window);
+    gtk_window_present(GTK_WINDOW(fixture->window));
+
+    g_main_loop_run (fixture->loop);
     g_assert(fixture->clicked);
 }
 
@@ -151,6 +208,12 @@ int main(int argc, char** argv)
                DomDomviewFixture, HTML_DOCUMENT,
                dom_domview_fixture_setup,
                test_dom_domview_signals,
+               dom_domview_fixture_teardown);
+
+    g_test_add("/webkit/domdomview/dispatch_event",
+               DomDomviewFixture, HTML_DOCUMENT,
+               dom_domview_fixture_setup,
+               test_dom_domview_dispatch_event,
                dom_domview_fixture_teardown);
 
     return g_test_run();

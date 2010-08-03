@@ -359,6 +359,7 @@ webkitgtk_built_h_api += \
 	DerivedSources/webkit/WebKitDOMEntityReference.h \
 	DerivedSources/webkit/WebKitDOMEvent.h \
 	DerivedSources/webkit/WebKitDOMMessagePort.h \
+	DerivedSources/webkit/WebKitDOMMouseEvent.h \
 	DerivedSources/webkit/WebKitDOMNamedNodeMap.h \
 	DerivedSources/webkit/WebKitDOMNode.h \
 	DerivedSources/webkit/WebKitDOMNodeFilter.h \
@@ -368,6 +369,7 @@ webkitgtk_built_h_api += \
 	DerivedSources/webkit/WebKitDOMRange.h \
 	DerivedSources/webkit/WebKitDOMText.h \
 	DerivedSources/webkit/WebKitDOMTreeWalker.h \
+	DerivedSources/webkit/WebKitDOMUIEvent.h \
 	DerivedSources/webkit/WebKitDOMBlob.h \
 	DerivedSources/webkit/WebKitDOMFile.h \
 	DerivedSources/webkit/WebKitDOMFileList.h \
@@ -525,6 +527,7 @@ webkitgtk_gdom_built_sources += \
 	DerivedSources/webkit/WebKitDOMEntityReferencePrivate.h \
 	DerivedSources/webkit/WebKitDOMEvent.cpp \
 	DerivedSources/webkit/WebKitDOMEventPrivate.h \
+	DerivedSources/webkit/WebKitDOMEventTargetPrivate.h \
 	DerivedSources/webkit/WebKitDOMFile.cpp \
 	DerivedSources/webkit/WebKitDOMFileList.cpp \
 	DerivedSources/webkit/WebKitDOMFileListPrivate.h \
@@ -665,6 +668,8 @@ webkitgtk_gdom_built_sources += \
 	DerivedSources/webkit/WebKitDOMMemoryInfoPrivate.h \
 	DerivedSources/webkit/WebKitDOMMessagePort.cpp \
 	DerivedSources/webkit/WebKitDOMMessagePortPrivate.h \
+	DerivedSources/webkit/WebKitDOMMouseEvent.cpp \
+	DerivedSources/webkit/WebKitDOMMouseEventPrivate.h \
 	DerivedSources/webkit/WebKitDOMNamedNodeMap.cpp \
 	DerivedSources/webkit/WebKitDOMNamedNodeMapPrivate.h \
 	DerivedSources/webkit/WebKitDOMNavigator.cpp \
@@ -697,6 +702,8 @@ webkitgtk_gdom_built_sources += \
 	DerivedSources/webkit/WebKitDOMTimeRangesPrivate.h \
 	DerivedSources/webkit/WebKitDOMTreeWalker.cpp \
 	DerivedSources/webkit/WebKitDOMTreeWalkerPrivate.h \
+	DerivedSources/webkit/WebKitDOMUIEvent.cpp \
+	DerivedSources/webkit/WebKitDOMUIEventPrivate.h \
 	DerivedSources/webkit/WebKitDOMValidityState.cpp \
 	DerivedSources/webkit/WebKitDOMValidityStatePrivate.h \
 	DerivedSources/webkit/WebKitDOMWebKitPoint.cpp \
@@ -787,6 +794,9 @@ $(top_builddir)/DerivedSources/webkit/WebKitDOMObject.h: $(WebCore)/bindings/gob
 	$(AM_V_GEN)cp -f $< $@
 
 $(top_builddir)/DerivedSources/webkit/WebKitDOMEventTarget.h: $(WebCore)/bindings/gobject/WebKitDOMEventTarget.h
+	$(AM_V_GEN)cp -f $< $@
+
+$(top_builddir)/DerivedSources/webkit/WebKitDOMEventTargetPrivate.h: $(WebCore)/bindings/gobject/WebKitDOMEventTargetPrivate.h
 	$(AM_V_GEN)cp -f $< $@
 
 # Filter out SVG for now

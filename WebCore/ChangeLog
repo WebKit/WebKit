@@ -1,3 +1,22 @@
+2010-08-03  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] Fix DOM event dispatch
+        https://bugs.webkit.org/show_bug.cgi?id=40847
+
+        Bind UI and Mouse events and add ad-hoc kit method for WebCore
+        Events.
+
+        * GNUmakefile.am:
+        * bindings/gobject/WebKitDOMBinding.cpp:
+        (WebKit::kit):
+        * bindings/gobject/WebKitDOMBinding.h:
+        * bindings/gobject/WebKitDOMEventTarget.cpp:
+        (WebKit::core):
+        * bindings/gobject/WebKitDOMEventTargetPrivate.h: Added.
+        * bindings/scripts/CodeGeneratorGObject.pm:
+
 2010-08-03  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Eric Seidel.

@@ -31,6 +31,7 @@
 #include "config.h"
 #include "WebKitDOMEventTarget.h"
 
+#include "EventTarget.h"
 #include "WebKitDOMEvent.h"
 
 typedef WebKitDOMEventTargetIface WebKitDOMEventTargetInterface;
@@ -75,3 +76,18 @@ void webkit_dom_event_target_dispatch_event(WebKitDOMEventTarget* target, WebKit
     if (iface->dispatch_event)
         iface->dispatch_event(target, event, error);
 }
+
+namespace WebKit {
+
+WebCore::EventTarget* core(WebKitDOMEventTarget* request)
+{
+    g_return_val_if_fail(request, 0);
+
+    WebCore::EventTarget* coreObject = static_cast<WebCore::EventTarget*>(WEBKIT_DOM_OBJECT(request)->coreObject);
+    g_return_val_if_fail(coreObject, 0);
+
+    return coreObject;
+}
+
+} // namespace WebKit
+

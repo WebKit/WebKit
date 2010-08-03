@@ -564,6 +564,7 @@ webcoregtk_dom_sources = \
 	WebCore/bindings/gobject/WebKitDOMBinding.h \
 	WebCore/bindings/gobject/WebKitDOMEventTarget.cpp \
 	WebCore/bindings/gobject/WebKitDOMEventTarget.h \
+	WebCore/bindings/gobject/WebKitDOMEventTargetPrivate.h \
 	WebCore/bindings/gobject/WebKitHTMLElementWrapperFactory.cpp \
 	WebCore/bindings/gobject/WebKitHTMLElementWrapperFactory.h \
 	WebCore/bindings/gobject/WebKitDOMObject.cpp \

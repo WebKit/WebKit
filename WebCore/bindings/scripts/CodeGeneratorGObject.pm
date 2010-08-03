@@ -126,6 +126,7 @@ sub ClassNameToGObjectType {
     $CLASS_NAME =~ s/DOMCDATA/DOM_CDATA/;
     $CLASS_NAME =~ s/DOMX_PATH/DOM_XPATH/;
     $CLASS_NAME =~ s/DOM_WEB_KIT/DOM_WEBKIT/;
+    $CLASS_NAME =~ s/DOMUI/DOM_UI/;
     return $CLASS_NAME;
 }
 
@@ -1223,7 +1224,7 @@ EOF
 sub UsesManualKitImplementation {
     my $type = shift;
 
-    return 1 if $type eq "Node" or $type eq "Element";
+    return 1 if $type eq "Node" or $type eq "Element" or $type eq "Event";
     return 0;
 }
 
