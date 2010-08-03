@@ -1,3 +1,16 @@
+2010-08-03  Alexey Proskuryakov  <ap@apple.com>
+
+        Unreviewed (emergency test fix).
+
+        REGRESSION (r64518): Most regression tests fail on ASSERT(shouldTrackVisitedLinks)
+        on Snow Leopard.
+
+        Platforms that use strategies now use a different code path than others, and that code path
+        lacks necessary checks. We don't have a Snow Leopard debug buildbot.
+
+        * page/PageGroup.cpp: (WebCore::PageGroup::addVisitedLinkHash): The private version of
+        addVisitedLink() must not be called when we're not tracking visited links.
+
 2010-08-02  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.
