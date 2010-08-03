@@ -1,3 +1,139 @@
+2010-08-03  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Move WebGL-specific code out of GraphicsContext3D so that G3D can be used as a generic accelerated drawing API
+        https://bugs.webkit.org/show_bug.cgi?id=43221
+
+        Changes the GraphicsContext3D API to use Platform3DObjects instead of WebGLFoo* types like WebGLTexture.
+        WebGLRenderingContext still uses WebGLFoo types and converts to Platform3DObjects internally.  Other
+        consumers of the GraphicsContext3D can use the Platform3DObject APIs directly without any ties to WebGL.
+
+        The majority of this change is purely mechanical.  The less obvious changes are:
+        - move all null checking on WebGLFoo types to WebGLRenderingContext, instead of mixing them
+          between WebGLRenderingContext and the various port-specific implementations of GraphicsContext3D
+        - add a GraphicsContext3D getter to CanvasRenderingContext.  This is needed for the readback
+          path on Chromium/mac.  It may be possible to remove this, but I would prefer to do that
+          in a follow-up patch to minimize churn.
+        - move some texture cube map logic that existed only in the Chromium port of GC3D to
+          WebGLRenderingContext behind #if PLATFORM(CHROMIUM). I think this logic should either
+          exist for all ports or exist for none, but again I would rather change the behavior
+          in a different patch from this one.
+
+        * html/canvas/CanvasRenderingContext.h:
+        (WebCore::CanvasRenderingContext::graphicsContext3D):
+        * html/canvas/WebGLProgram.cpp:
+        (WebCore::WebGLProgram::cacheActiveAttribLocations):
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::attachShader):
+        (WebCore::WebGLRenderingContext::bindAttribLocation):
+        (WebCore::WebGLRenderingContext::bindBuffer):
+        (WebCore::WebGLRenderingContext::bindFramebuffer):
+        (WebCore::WebGLRenderingContext::bindRenderbuffer):
+        (WebCore::WebGLRenderingContext::bindTexture):
+        (WebCore::WebGLRenderingContext::compileShader):
+        (WebCore::WebGLRenderingContext::detachShader):
+        (WebCore::WebGLRenderingContext::framebufferRenderbuffer):
+        (WebCore::WebGLRenderingContext::framebufferTexture2D):
+        (WebCore::WebGLRenderingContext::getActiveAttrib):
+        (WebCore::WebGLRenderingContext::getActiveUniform):
+        (WebCore::WebGLRenderingContext::getAttachedShaders):
+        (WebCore::WebGLRenderingContext::getAttribLocation):
+        (WebCore::WebGLRenderingContext::getProgramParameter):
+        (WebCore::WebGLRenderingContext::getProgramInfoLog):
+        (WebCore::WebGLRenderingContext::getShaderParameter):
+        (WebCore::WebGLRenderingContext::getShaderInfoLog):
+        (WebCore::WebGLRenderingContext::getShaderSource):
+        (WebCore::WebGLRenderingContext::getUniform):
+        (WebCore::WebGLRenderingContext::getUniformLocation):
+        (WebCore::WebGLRenderingContext::isBuffer):
+        (WebCore::WebGLRenderingContext::isFramebuffer):
+        (WebCore::WebGLRenderingContext::isProgram):
+        (WebCore::WebGLRenderingContext::isRenderbuffer):
+        (WebCore::WebGLRenderingContext::isShader):
+        (WebCore::WebGLRenderingContext::isTexture):
+        (WebCore::WebGLRenderingContext::linkProgram):
+        (WebCore::WebGLRenderingContext::shaderSource):
+        (WebCore::WebGLRenderingContext::useProgram):
+        (WebCore::WebGLRenderingContext::validateProgram):
+        (WebCore::WebGLRenderingContext::handleNPOTTextures):
+        (WebCore::WebGLRenderingContext::createFallbackBlackTextures1x1):
+        (WebCore::WebGLRenderingContext::initVertexAttrib0):
+        (WebCore::WebGLRenderingContext::simulateVertexAttrib0):
+        (WebCore::WebGLRenderingContext::restoreStatesAfterVertexAttrib0Simulation):
+        * html/canvas/WebGLRenderingContext.h:
+        (WebCore::WebGLRenderingContext::graphicsContext3D):
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+        (WebCore::GraphicsContext3D::paintRenderingResultsToCanvas):
+        (WebCore::GraphicsContext3D::beginPaint):
+        (WebCore::GraphicsContext3D::attachShader):
+        (WebCore::GraphicsContext3D::bindAttribLocation):
+        (WebCore::GraphicsContext3D::bindBuffer):
+        (WebCore::GraphicsContext3D::bindFramebuffer):
+        (WebCore::GraphicsContext3D::bindRenderbuffer):
+        (WebCore::GraphicsContext3D::bindTexture):
+        (WebCore::GraphicsContext3D::compileShader):
+        (WebCore::GraphicsContext3D::detachShader):
+        (WebCore::GraphicsContext3D::framebufferRenderbuffer):
+        (WebCore::GraphicsContext3D::framebufferTexture2D):
+        (WebCore::GraphicsContext3D::getActiveAttrib):
+        (WebCore::GraphicsContext3D::getActiveUniform):
+        (WebCore::GraphicsContext3D::getAttachedShaders):
+        (WebCore::GraphicsContext3D::getAttribLocation):
+        (WebCore::GraphicsContext3D::isBuffer):
+        (WebCore::GraphicsContext3D::isFramebuffer):
+        (WebCore::GraphicsContext3D::isProgram):
+        (WebCore::GraphicsContext3D::isRenderbuffer):
+        (WebCore::GraphicsContext3D::isShader):
+        (WebCore::GraphicsContext3D::isTexture):
+        (WebCore::GraphicsContext3D::linkProgram):
+        (WebCore::GraphicsContext3D::shaderSource):
+        (WebCore::GraphicsContext3D::useProgram):
+        (WebCore::GraphicsContext3D::validateProgram):
+        (WebCore::GraphicsContext3D::getProgramiv):
+        (WebCore::GraphicsContext3D::getProgramInfoLog):
+        (WebCore::GraphicsContext3D::getShaderiv):
+        (WebCore::GraphicsContext3D::getShaderInfoLog):
+        (WebCore::GraphicsContext3D::getShaderSource):
+        (WebCore::GraphicsContext3D::getUniformfv):
+        (WebCore::GraphicsContext3D::getUniformiv):
+        (WebCore::GraphicsContext3D::getUniformLocation):
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3D::beginPaint):
+        (WebCore::GraphicsContext3D::paintRenderingResultsToCanvas):
+        (WebCore::GraphicsContext3D::attachShader):
+        (WebCore::GraphicsContext3D::bindAttribLocation):
+        (WebCore::GraphicsContext3D::bindBuffer):
+        (WebCore::GraphicsContext3D::bindFramebuffer):
+        (WebCore::GraphicsContext3D::bindRenderbuffer):
+        (WebCore::GraphicsContext3D::bindTexture):
+        (WebCore::GraphicsContext3D::compileShader):
+        (WebCore::GraphicsContext3D::detachShader):
+        (WebCore::GraphicsContext3D::framebufferRenderbuffer):
+        (WebCore::GraphicsContext3D::framebufferTexture2D):
+        (WebCore::GraphicsContext3D::getActiveAttrib):
+        (WebCore::GraphicsContext3D::getActiveUniform):
+        (WebCore::GraphicsContext3D::getAttribLocation):
+        (WebCore::GraphicsContext3D::isBuffer):
+        (WebCore::GraphicsContext3D::isFramebuffer):
+        (WebCore::GraphicsContext3D::isProgram):
+        (WebCore::GraphicsContext3D::isRenderbuffer):
+        (WebCore::GraphicsContext3D::isShader):
+        (WebCore::GraphicsContext3D::isTexture):
+        (WebCore::GraphicsContext3D::linkProgram):
+        (WebCore::GraphicsContext3D::shaderSource):
+        (WebCore::GraphicsContext3D::useProgram):
+        (WebCore::GraphicsContext3D::validateProgram):
+        (WebCore::GraphicsContext3D::getProgramiv):
+        (WebCore::GraphicsContext3D::getProgramInfoLog):
+        (WebCore::GraphicsContext3D::getShaderiv):
+        (WebCore::GraphicsContext3D::getShaderInfoLog):
+        (WebCore::GraphicsContext3D::getShaderSource):
+        (WebCore::GraphicsContext3D::getUniformfv):
+        (WebCore::GraphicsContext3D::getUniformiv):
+        (WebCore::GraphicsContext3D::getUniformLocation):
+
 2010-08-03  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.

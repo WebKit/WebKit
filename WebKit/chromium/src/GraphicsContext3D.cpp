@@ -35,22 +35,16 @@
 #include "GraphicsContext3D.h"
 
 #include "CachedImage.h"
+#include "CanvasRenderingContext.h"
 #include "Chrome.h"
 #include "ChromeClientImpl.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
 #include "ImageBuffer.h"
 #include "ImageData.h"
-#include "WebGLBuffer.h"
 #include "Int8Array.h"
 #include "Float32Array.h"
-#include "WebGLFramebuffer.h"
 #include "Int32Array.h"
-#include "WebGLProgram.h"
-#include "WebGLRenderbuffer.h"
-#include "WebGLRenderingContext.h"
-#include "WebGLShader.h"
-#include "WebGLTexture.h"
 #include "Uint8Array.h"
 #include "WebGLLayerChromium.h"
 #include "WebGraphicsContext3D.h"
@@ -94,8 +88,6 @@ namespace WebCore {
 // Uncomment this to render to a separate window for debugging
 // #define RENDER_TO_DEBUGGING_WINDOW
 
-#define EXTRACT(val) (!val ? 0 : val->object())
-
 class GraphicsContext3DInternal {
 public:
     GraphicsContext3DInternal();
@@ -112,8 +104,8 @@ public:
 
     void reshape(int width, int height);
 
-    void paintRenderingResultsToCanvas(WebGLRenderingContext* context);
-    void beginPaint(WebGLRenderingContext* context);
+    void paintRenderingResultsToCanvas(CanvasRenderingContext* context);
+    void beginPaint(CanvasRenderingContext* context);
     void endPaint();
 
     void prepareTexture();
@@ -127,12 +119,12 @@ public:
     // Entry points for WebGL.
     //
     void activeTexture(unsigned long texture);
-    void attachShader(WebGLProgram* program, WebGLShader* shader);
-    void bindAttribLocation(WebGLProgram*, unsigned long index, const String& name);
-    void bindBuffer(unsigned long target, WebGLBuffer*);
-    void bindFramebuffer(unsigned long target, WebGLFramebuffer*);
-    void bindRenderbuffer(unsigned long target, WebGLRenderbuffer*);
-    void bindTexture(unsigned long target, WebGLTexture* texture);
+    void attachShader(Platform3DObject program, Platform3DObject shader);
+    void bindAttribLocation(Platform3DObject, unsigned long index, const String& name);
+    void bindBuffer(unsigned long target, Platform3DObject);
+    void bindFramebuffer(unsigned long target, Platform3DObject);
+    void bindRenderbuffer(unsigned long target, Platform3DObject);
+    void bindTexture(unsigned long target, Platform3DObject texture);
     void blendColor(double red, double green, double blue, double alpha);
     void blendEquation(unsigned long mode);
     void blendEquationSeparate(unsigned long modeRGB, unsigned long modeAlpha);
@@ -151,7 +143,7 @@ public:
     void clearDepth(double depth);
     void clearStencil(long s);
     void colorMask(bool red, bool green, bool blue, bool alpha);
-    void compileShader(WebGLShader*);
+    void compileShader(Platform3DObject);
 
     void copyTexImage2D(unsigned long target, long level, unsigned long internalformat, long x, long y, unsigned long width, unsigned long height, long border);
     void copyTexSubImage2D(unsigned long target, long level, long xoffset, long yoffset, long x, long y, unsigned long width, unsigned long height);
@@ -159,7 +151,7 @@ public:
     void depthFunc(unsigned long func);
     void depthMask(bool flag);
     void depthRange(double zNear, double zFar);
-    void detachShader(WebGLProgram*, WebGLShader*);
+    void detachShader(Platform3DObject, Platform3DObject);
     void disable(unsigned long cap);
     void disableVertexAttribArray(unsigned long index);
     void drawArrays(unsigned long mode, long first, long count);
@@ -169,17 +161,17 @@ public:
     void enableVertexAttribArray(unsigned long index);
     void finish();
     void flush();
-    void framebufferRenderbuffer(unsigned long target, unsigned long attachment, unsigned long renderbuffertarget, WebGLRenderbuffer*);
-    void framebufferTexture2D(unsigned long target, unsigned long attachment, unsigned long textarget, WebGLTexture*, long level);
+    void framebufferRenderbuffer(unsigned long target, unsigned long attachment, unsigned long renderbuffertarget, Platform3DObject);
+    void framebufferTexture2D(unsigned long target, unsigned long attachment, unsigned long textarget, Platform3DObject, long level);
     void frontFace(unsigned long mode);
     void generateMipmap(unsigned long target);
 
-    bool getActiveAttrib(WebGLProgram* program, unsigned long index, ActiveInfo&);
-    bool getActiveUniform(WebGLProgram* program, unsigned long index, ActiveInfo&);
+    bool getActiveAttrib(Platform3DObject program, unsigned long index, ActiveInfo&);
+    bool getActiveUniform(Platform3DObject program, unsigned long index, ActiveInfo&);
 
-    void getAttachedShaders(WebGLProgram* program, int maxCount, int* count, unsigned int* shaders);
+    void getAttachedShaders(Platform3DObject program, int maxCount, int* count, unsigned int* shaders);
 
-    int  getAttribLocation(WebGLProgram*, const String& name);
+    int getAttribLocation(Platform3DObject, const String& name);
 
     void getBooleanv(unsigned long pname, unsigned char* value);
 
@@ -195,26 +187,26 @@ public:
 
     void getIntegerv(unsigned long pname, int* value);
 
-    void getProgramiv(WebGLProgram* program, unsigned long pname, int* value);
+    void getProgramiv(Platform3DObject program, unsigned long pname, int* value);
 
-    String getProgramInfoLog(WebGLProgram*);
+    String getProgramInfoLog(Platform3DObject);
 
     void getRenderbufferParameteriv(unsigned long target, unsigned long pname, int* value);
 
-    void getShaderiv(WebGLShader*, unsigned long pname, int* value);
+    void getShaderiv(Platform3DObject, unsigned long pname, int* value);
 
-    String getShaderInfoLog(WebGLShader*);
+    String getShaderInfoLog(Platform3DObject);
 
-    String getShaderSource(WebGLShader*);
+    String getShaderSource(Platform3DObject);
     String getString(unsigned long name);
 
     void getTexParameterfv(unsigned long target, unsigned long pname, float* value);
     void getTexParameteriv(unsigned long target, unsigned long pname, int* value);
 
-    void getUniformfv(WebGLProgram* program, long location, float* value);
-    void getUniformiv(WebGLProgram* program, long location, int* value);
+    void getUniformfv(Platform3DObject program, long location, float* value);
+    void getUniformiv(Platform3DObject program, long location, int* value);
 
-    long getUniformLocation(WebGLProgram*, const String& name);
+    long getUniformLocation(Platform3DObject, const String& name);
 
     void getVertexAttribfv(unsigned long index, unsigned long pname, float* value);
     void getVertexAttribiv(unsigned long index, unsigned long pname, int* value);
@@ -222,15 +214,15 @@ public:
     long getVertexAttribOffset(unsigned long index, unsigned long pname);
 
     void hint(unsigned long target, unsigned long mode);
-    bool isBuffer(WebGLBuffer*);
+    bool isBuffer(Platform3DObject);
     bool isEnabled(unsigned long cap);
-    bool isFramebuffer(WebGLFramebuffer*);
-    bool isProgram(WebGLProgram*);
-    bool isRenderbuffer(WebGLRenderbuffer*);
-    bool isShader(WebGLShader*);
-    bool isTexture(WebGLTexture*);
+    bool isFramebuffer(Platform3DObject);
+    bool isProgram(Platform3DObject);
+    bool isRenderbuffer(Platform3DObject);
+    bool isShader(Platform3DObject);
+    bool isTexture(Platform3DObject);
     void lineWidth(double);
-    void linkProgram(WebGLProgram*);
+    void linkProgram(Platform3DObject);
     void pixelStorei(unsigned long pname, long param);
     void polygonOffset(double factor, double units);
 
@@ -240,7 +232,7 @@ public:
     void renderbufferStorage(unsigned long target, unsigned long internalformat, unsigned long width, unsigned long height);
     void sampleCoverage(double value, bool invert);
     void scissor(long x, long y, unsigned long width, unsigned long height);
-    void shaderSource(WebGLShader*, const String& string);
+    void shaderSource(Platform3DObject, const String& string);
     void stencilFunc(unsigned long func, long ref, unsigned long mask);
     void stencilFuncSeparate(unsigned long face, unsigned long func, long ref, unsigned long mask);
     void stencilMask(unsigned long mask);
@@ -277,8 +269,8 @@ public:
     void uniformMatrix3fv(long location, bool transpose, float* value, int size);
     void uniformMatrix4fv(long location, bool transpose, float* value, int size);
 
-    void useProgram(WebGLProgram*);
-    void validateProgram(WebGLProgram*);
+    void useProgram(Platform3DObject);
+    void validateProgram(Platform3DObject);
 
     void vertexAttrib1f(unsigned long indx, float x);
     void vertexAttrib1fv(unsigned long indx, float* values);
@@ -400,7 +392,7 @@ WebGLLayerChromium* GraphicsContext3DInternal::platformLayer() const
 }
 #endif
 
-void GraphicsContext3DInternal::paintRenderingResultsToCanvas(WebGLRenderingContext* context)
+void GraphicsContext3DInternal::paintRenderingResultsToCanvas(CanvasRenderingContext* context)
 {
     HTMLCanvasElement* canvas = context->canvas();
     ImageBuffer* imageBuffer = canvas->buffer();
@@ -459,7 +451,7 @@ void GraphicsContext3DInternal::paintRenderingResultsToCanvas(WebGLRenderingCont
 #endif
 }
 
-void GraphicsContext3DInternal::beginPaint(WebGLRenderingContext* context)
+void GraphicsContext3DInternal::beginPaint(CanvasRenderingContext* context)
 {
     paintRenderingResultsToCanvas(context);
 }
@@ -508,40 +500,16 @@ void GraphicsContext3DInternal::name(t1 a1) \
     m_impl->name(a1); \
 }
 
-#define DELEGATE_TO_IMPL_1_X(name, t1) \
-void GraphicsContext3DInternal::name(t1 a1) \
-{ \
-    m_impl->name(EXTRACT(a1));                  \
-}
-
 #define DELEGATE_TO_IMPL_1R(name, t1, rt)    \
 rt GraphicsContext3DInternal::name(t1 a1) \
 { \
     return m_impl->name(a1); \
 }
 
-#define DELEGATE_TO_IMPL_1R_X(name, t1, rt)    \
-rt GraphicsContext3DInternal::name(t1 a1) \
-{ \
-    return m_impl->name(EXTRACT(a1));           \
-}
-
 #define DELEGATE_TO_IMPL_2(name, t1, t2) \
 void GraphicsContext3DInternal::name(t1 a1, t2 a2) \
 { \
     m_impl->name(a1, a2); \
-}
-
-#define DELEGATE_TO_IMPL_2_X12(name, t1, t2) \
-void GraphicsContext3DInternal::name(t1 a1, t2 a2) \
-{ \
-    m_impl->name(EXTRACT(a1), EXTRACT(a2));     \
-}
-
-#define DELEGATE_TO_IMPL_2_X2(name, t1, t2) \
-void GraphicsContext3DInternal::name(t1 a1, t2 a2) \
-{ \
-    m_impl->name(a1, EXTRACT(a2));     \
 }
 
 #define DELEGATE_TO_IMPL_2R(name, t1, t2, rt)  \
@@ -556,12 +524,6 @@ void GraphicsContext3DInternal::name(t1 a1, t2 a2, t3 a3)    \
     m_impl->name(a1, a2, a3);                  \
 }
 
-#define DELEGATE_TO_IMPL_3_X1(name, t1, t2, t3)   \
-void GraphicsContext3DInternal::name(t1 a1, t2 a2, t3 a3)    \
-{ \
-    m_impl->name(EXTRACT(a1), a2, a3);          \
-}
-
 #define DELEGATE_TO_IMPL_3R(name, t1, t2, t3, rt)   \
 rt GraphicsContext3DInternal::name(t1 a1, t2 a2, t3 a3)    \
 { \
@@ -574,28 +536,10 @@ void GraphicsContext3DInternal::name(t1 a1, t2 a2, t3 a3, t4 a4)  \
     m_impl->name(a1, a2, a3, a4);              \
 }
 
-#define DELEGATE_TO_IMPL_4_X1(name, t1, t2, t3, t4)    \
-void GraphicsContext3DInternal::name(t1 a1, t2 a2, t3 a3, t4 a4)  \
-{ \
-    m_impl->name(EXTRACT(a1), a2, a3, a4);     \
-}
-
-#define DELEGATE_TO_IMPL_4_X4(name, t1, t2, t3, t4)    \
-void GraphicsContext3DInternal::name(t1 a1, t2 a2, t3 a3, t4 a4)  \
-{ \
-    m_impl->name(a1, a2, a3, EXTRACT(a4));      \
-}
-
 #define DELEGATE_TO_IMPL_5(name, t1, t2, t3, t4, t5)      \
 void GraphicsContext3DInternal::name(t1 a1, t2 a2, t3 a3, t4 a4, t5 a5)        \
 { \
     m_impl->name(a1, a2, a3, a4, a5);   \
-}
-
-#define DELEGATE_TO_IMPL_5_X4(name, t1, t2, t3, t4, t5)                \
-void GraphicsContext3DInternal::name(t1 a1, t2 a2, t3 a3, t4 a4, t5 a5)        \
-{ \
-    m_impl->name(a1, a2, a3, EXTRACT(a4), a5);  \
 }
 
 #define DELEGATE_TO_IMPL_5R(name, t1, t2, t3, t4, t5, rt)      \
@@ -649,43 +593,17 @@ bool GraphicsContext3DInternal::isGLES2Compliant() const
 }
 
 DELEGATE_TO_IMPL_1(activeTexture, unsigned long)
-DELEGATE_TO_IMPL_2_X12(attachShader, WebGLProgram*, WebGLShader*)
+DELEGATE_TO_IMPL_2(attachShader, Platform3DObject, Platform3DObject)
 
-void GraphicsContext3DInternal::bindAttribLocation(WebGLProgram* program, unsigned long index, const String& name)
+void GraphicsContext3DInternal::bindAttribLocation(Platform3DObject program, unsigned long index, const String& name)
 {
-    m_impl->bindAttribLocation(EXTRACT(program), index, name.utf8().data());
+    m_impl->bindAttribLocation(program, index, name.utf8().data());
 }
 
-DELEGATE_TO_IMPL_2_X2(bindBuffer, unsigned long, WebGLBuffer*)
-DELEGATE_TO_IMPL_2_X2(bindFramebuffer, unsigned long, WebGLFramebuffer*)
-DELEGATE_TO_IMPL_2_X2(bindRenderbuffer, unsigned long, WebGLRenderbuffer*)
-
-static const int kTextureWrapR = 0x8072;
-
-// If we didn't have to hack GL_TEXTURE_WRAP_R for cube maps,
-// we could just use:
-// DELEGATE_TO_IMPL_2_X2(bindTexture, unsigned long, WebGLTexture*)
-void GraphicsContext3DInternal::bindTexture(unsigned long target,
-                                            WebGLTexture* texture)
-{
-    unsigned int textureObject = EXTRACT(texture);
-
-    m_impl->bindTexture(target, textureObject);
-
-    // FIXME: GL_TEXTURE_WRAP_R isn't exposed in the OpenGL ES 2.0
-    // API. On desktop OpenGL implementations it seems necessary to
-    // set this wrap mode to GL_CLAMP_TO_EDGE to get correct behavior
-    // of cube maps.
-    if (texture)
-        if (target == GraphicsContext3D::TEXTURE_CUBE_MAP) {
-            if (!texture->isCubeMapRWrapModeInitialized()) {
-                m_impl->texParameteri(GraphicsContext3D::TEXTURE_CUBE_MAP, kTextureWrapR, GraphicsContext3D::CLAMP_TO_EDGE);
-                texture->setCubeMapRWrapModeInitialized(true);
-            }
-        } else
-            texture->setCubeMapRWrapModeInitialized(false);
-}
-
+DELEGATE_TO_IMPL_2(bindBuffer, unsigned long, Platform3DObject)
+DELEGATE_TO_IMPL_2(bindFramebuffer, unsigned long, Platform3DObject)
+DELEGATE_TO_IMPL_2(bindRenderbuffer, unsigned long, Platform3DObject)
+DELEGATE_TO_IMPL_2(bindTexture, unsigned long, Platform3DObject)
 DELEGATE_TO_IMPL_4(blendColor, double, double, double, double)
 DELEGATE_TO_IMPL_1(blendEquation, unsigned long)
 DELEGATE_TO_IMPL_2(blendEquationSeparate, unsigned long, unsigned long)
@@ -723,7 +641,7 @@ DELEGATE_TO_IMPL_4(clearColor, double, double, double, double)
 DELEGATE_TO_IMPL_1(clearDepth, double)
 DELEGATE_TO_IMPL_1(clearStencil, long)
 DELEGATE_TO_IMPL_4(colorMask, bool, bool, bool, bool)
-DELEGATE_TO_IMPL_1_X(compileShader, WebGLShader*)
+DELEGATE_TO_IMPL_1(compileShader, Platform3DObject)
 
 DELEGATE_TO_IMPL_8(copyTexImage2D, unsigned long, long, unsigned long, long, long, unsigned long, unsigned long, long)
 DELEGATE_TO_IMPL_8(copyTexSubImage2D, unsigned long, long, long, long, long, long, unsigned long, unsigned long)
@@ -731,7 +649,7 @@ DELEGATE_TO_IMPL_1(cullFace, unsigned long)
 DELEGATE_TO_IMPL_1(depthFunc, unsigned long)
 DELEGATE_TO_IMPL_1(depthMask, bool)
 DELEGATE_TO_IMPL_2(depthRange, double, double)
-DELEGATE_TO_IMPL_2_X12(detachShader, WebGLProgram*, WebGLShader*)
+DELEGATE_TO_IMPL_2(detachShader, Platform3DObject, Platform3DObject)
 DELEGATE_TO_IMPL_1(disable, unsigned long)
 DELEGATE_TO_IMPL_1(disableVertexAttribArray, unsigned long)
 DELEGATE_TO_IMPL_3(drawArrays, unsigned long, long, long)
@@ -741,15 +659,15 @@ DELEGATE_TO_IMPL_1(enable, unsigned long)
 DELEGATE_TO_IMPL_1(enableVertexAttribArray, unsigned long)
 DELEGATE_TO_IMPL(finish)
 DELEGATE_TO_IMPL(flush)
-DELEGATE_TO_IMPL_4_X4(framebufferRenderbuffer, unsigned long, unsigned long, unsigned long, WebGLRenderbuffer*)
-DELEGATE_TO_IMPL_5_X4(framebufferTexture2D, unsigned long, unsigned long, unsigned long, WebGLTexture*, long)
+DELEGATE_TO_IMPL_4(framebufferRenderbuffer, unsigned long, unsigned long, unsigned long, Platform3DObject)
+DELEGATE_TO_IMPL_5(framebufferTexture2D, unsigned long, unsigned long, unsigned long, Platform3DObject, long)
 DELEGATE_TO_IMPL_1(frontFace, unsigned long)
 DELEGATE_TO_IMPL_1(generateMipmap, unsigned long)
 
-bool GraphicsContext3DInternal::getActiveAttrib(WebGLProgram* program, unsigned long index, ActiveInfo& info)
+bool GraphicsContext3DInternal::getActiveAttrib(Platform3DObject program, unsigned long index, ActiveInfo& info)
 {
     WebKit::WebGraphicsContext3D::ActiveInfo webInfo;
-    if (!m_impl->getActiveAttrib(EXTRACT(program), index, webInfo))
+    if (!m_impl->getActiveAttrib(program, index, webInfo))
         return false;
     info.name = webInfo.name;
     info.type = webInfo.type;
@@ -757,10 +675,10 @@ bool GraphicsContext3DInternal::getActiveAttrib(WebGLProgram* program, unsigned 
     return true;
 }
 
-bool GraphicsContext3DInternal::getActiveUniform(WebGLProgram* program, unsigned long index, ActiveInfo& info)
+bool GraphicsContext3DInternal::getActiveUniform(Platform3DObject program, unsigned long index, ActiveInfo& info)
 {
     WebKit::WebGraphicsContext3D::ActiveInfo webInfo;
-    if (!m_impl->getActiveUniform(EXTRACT(program), index, webInfo))
+    if (!m_impl->getActiveUniform(program, index, webInfo))
         return false;
     info.name = webInfo.name;
     info.type = webInfo.type;
@@ -768,11 +686,11 @@ bool GraphicsContext3DInternal::getActiveUniform(WebGLProgram* program, unsigned
     return true;
 }
 
-DELEGATE_TO_IMPL_4_X1(getAttachedShaders, WebGLProgram*, int, int*, unsigned int*)
+DELEGATE_TO_IMPL_4(getAttachedShaders, Platform3DObject, int, int*, unsigned int*)
 
-int GraphicsContext3DInternal::getAttribLocation(WebGLProgram* program, const String& name)
+int GraphicsContext3DInternal::getAttribLocation(Platform3DObject program, const String& name)
 {
-    return m_impl->getAttribLocation(EXTRACT(program), name.utf8().data());
+    return m_impl->getAttribLocation(program, name.utf8().data());
 }
 
 DELEGATE_TO_IMPL_2(getBooleanv, unsigned long, unsigned char*)
@@ -799,25 +717,25 @@ DELEGATE_TO_IMPL_4(getFramebufferAttachmentParameteriv, unsigned long, unsigned 
 
 DELEGATE_TO_IMPL_2(getIntegerv, unsigned long, int*)
 
-DELEGATE_TO_IMPL_3_X1(getProgramiv, WebGLProgram*, unsigned long, int*)
+DELEGATE_TO_IMPL_3(getProgramiv, Platform3DObject, unsigned long, int*)
 
-String GraphicsContext3DInternal::getProgramInfoLog(WebGLProgram* program)
+String GraphicsContext3DInternal::getProgramInfoLog(Platform3DObject program)
 {
-    return m_impl->getProgramInfoLog(EXTRACT(program));
+    return m_impl->getProgramInfoLog(program);
 }
 
 DELEGATE_TO_IMPL_3(getRenderbufferParameteriv, unsigned long, unsigned long, int*)
 
-DELEGATE_TO_IMPL_3_X1(getShaderiv, WebGLShader*, unsigned long, int*)
+DELEGATE_TO_IMPL_3(getShaderiv, Platform3DObject, unsigned long, int*)
 
-String GraphicsContext3DInternal::getShaderInfoLog(WebGLShader* shader)
+String GraphicsContext3DInternal::getShaderInfoLog(Platform3DObject shader)
 {
-    return m_impl->getShaderInfoLog(EXTRACT(shader));
+    return m_impl->getShaderInfoLog(shader);
 }
 
-String GraphicsContext3DInternal::getShaderSource(WebGLShader* shader)
+String GraphicsContext3DInternal::getShaderSource(Platform3DObject shader)
 {
-    return m_impl->getShaderSource(EXTRACT(shader));
+    return m_impl->getShaderSource(shader);
 }
 
 String GraphicsContext3DInternal::getString(unsigned long name)
@@ -828,12 +746,12 @@ String GraphicsContext3DInternal::getString(unsigned long name)
 DELEGATE_TO_IMPL_3(getTexParameterfv, unsigned long, unsigned long, float*)
 DELEGATE_TO_IMPL_3(getTexParameteriv, unsigned long, unsigned long, int*)
 
-DELEGATE_TO_IMPL_3_X1(getUniformfv, WebGLProgram*, long, float*)
-DELEGATE_TO_IMPL_3_X1(getUniformiv, WebGLProgram*, long, int*)
+DELEGATE_TO_IMPL_3(getUniformfv, Platform3DObject, long, float*)
+DELEGATE_TO_IMPL_3(getUniformiv, Platform3DObject, long, int*)
 
-long GraphicsContext3DInternal::getUniformLocation(WebGLProgram* program, const String& name)
+long GraphicsContext3DInternal::getUniformLocation(Platform3DObject program, const String& name)
 {
-    return m_impl->getUniformLocation(EXTRACT(program), name.utf8().data());
+    return m_impl->getUniformLocation(program, name.utf8().data());
 }
 
 DELEGATE_TO_IMPL_3(getVertexAttribfv, unsigned long, unsigned long, float*)
@@ -842,15 +760,15 @@ DELEGATE_TO_IMPL_3(getVertexAttribiv, unsigned long, unsigned long, int*)
 DELEGATE_TO_IMPL_2R(getVertexAttribOffset, unsigned long, unsigned long, long)
 
 DELEGATE_TO_IMPL_2(hint, unsigned long, unsigned long)
-DELEGATE_TO_IMPL_1R_X(isBuffer, WebGLBuffer*, bool)
+DELEGATE_TO_IMPL_1R(isBuffer, Platform3DObject, bool)
 DELEGATE_TO_IMPL_1R(isEnabled, unsigned long, bool)
-DELEGATE_TO_IMPL_1R_X(isFramebuffer, WebGLFramebuffer*, bool)
-DELEGATE_TO_IMPL_1R_X(isProgram, WebGLProgram*, bool)
-DELEGATE_TO_IMPL_1R_X(isRenderbuffer, WebGLRenderbuffer*, bool)
-DELEGATE_TO_IMPL_1R_X(isShader, WebGLShader*, bool)
-DELEGATE_TO_IMPL_1R_X(isTexture, WebGLTexture*, bool)
+DELEGATE_TO_IMPL_1R(isFramebuffer, Platform3DObject, bool)
+DELEGATE_TO_IMPL_1R(isProgram, Platform3DObject, bool)
+DELEGATE_TO_IMPL_1R(isRenderbuffer, Platform3DObject, bool)
+DELEGATE_TO_IMPL_1R(isShader, Platform3DObject, bool)
+DELEGATE_TO_IMPL_1R(isTexture, Platform3DObject, bool)
 DELEGATE_TO_IMPL_1(lineWidth, double)
-DELEGATE_TO_IMPL_1_X(linkProgram, WebGLProgram*)
+DELEGATE_TO_IMPL_1(linkProgram, Platform3DObject)
 DELEGATE_TO_IMPL_2(pixelStorei, unsigned long, long)
 DELEGATE_TO_IMPL_2(polygonOffset, double, double)
 DELEGATE_TO_IMPL_7(readPixels, long, long, unsigned long, unsigned long, unsigned long, unsigned long, void*)
@@ -859,9 +777,9 @@ DELEGATE_TO_IMPL_4(renderbufferStorage, unsigned long, unsigned long, unsigned l
 DELEGATE_TO_IMPL_2(sampleCoverage, double, bool)
 DELEGATE_TO_IMPL_4(scissor, long, long, unsigned long, unsigned long)
 
-void GraphicsContext3DInternal::shaderSource(WebGLShader* shader, const String& string)
+void GraphicsContext3DInternal::shaderSource(Platform3DObject shader, const String& string)
 {
-    m_impl->shaderSource(EXTRACT(shader), string.utf8().data());
+    m_impl->shaderSource(shader, string.utf8().data());
 }
 
 DELEGATE_TO_IMPL_3(stencilFunc, unsigned long, long, unsigned long)
@@ -957,8 +875,8 @@ void GraphicsContext3DInternal::uniformMatrix4fv(long location, bool transpose, 
     m_impl->uniformMatrix4fv(location, size, transpose, value);
 }
 
-DELEGATE_TO_IMPL_1_X(useProgram, WebGLProgram*)
-DELEGATE_TO_IMPL_1_X(validateProgram, WebGLProgram*)
+DELEGATE_TO_IMPL_1(useProgram, Platform3DObject)
+DELEGATE_TO_IMPL_1(validateProgram, Platform3DObject)
 
 DELEGATE_TO_IMPL_2(vertexAttrib1f, unsigned long, float)
 DELEGATE_TO_IMPL_2(vertexAttrib1fv, unsigned long, float*)
@@ -1140,13 +1058,13 @@ DELEGATE_TO_INTERNAL_1R(sizeInBytes, int, int)
 DELEGATE_TO_INTERNAL_2(reshape, int, int)
 
 DELEGATE_TO_INTERNAL_1(activeTexture, unsigned long)
-DELEGATE_TO_INTERNAL_2(attachShader, WebGLProgram*, WebGLShader*)
-DELEGATE_TO_INTERNAL_3(bindAttribLocation, WebGLProgram*, unsigned long, const String&)
+DELEGATE_TO_INTERNAL_2(attachShader, Platform3DObject, Platform3DObject)
+DELEGATE_TO_INTERNAL_3(bindAttribLocation, Platform3DObject, unsigned long, const String&)
 
-DELEGATE_TO_INTERNAL_2(bindBuffer, unsigned long, WebGLBuffer*)
-DELEGATE_TO_INTERNAL_2(bindFramebuffer, unsigned long, WebGLFramebuffer*)
-DELEGATE_TO_INTERNAL_2(bindRenderbuffer, unsigned long, WebGLRenderbuffer*)
-DELEGATE_TO_INTERNAL_2(bindTexture, unsigned long, WebGLTexture*)
+DELEGATE_TO_INTERNAL_2(bindBuffer, unsigned long, Platform3DObject)
+DELEGATE_TO_INTERNAL_2(bindFramebuffer, unsigned long, Platform3DObject)
+DELEGATE_TO_INTERNAL_2(bindRenderbuffer, unsigned long, Platform3DObject)
+DELEGATE_TO_INTERNAL_2(bindTexture, unsigned long, Platform3DObject)
 DELEGATE_TO_INTERNAL_4(blendColor, double, double, double, double)
 DELEGATE_TO_INTERNAL_1(blendEquation, unsigned long)
 DELEGATE_TO_INTERNAL_2(blendEquationSeparate, unsigned long, unsigned long)
@@ -1165,7 +1083,7 @@ DELEGATE_TO_INTERNAL_4(clearColor, double, double, double, double)
 DELEGATE_TO_INTERNAL_1(clearDepth, double)
 DELEGATE_TO_INTERNAL_1(clearStencil, long)
 DELEGATE_TO_INTERNAL_4(colorMask, bool, bool, bool, bool)
-DELEGATE_TO_INTERNAL_1(compileShader, WebGLShader*)
+DELEGATE_TO_INTERNAL_1(compileShader, Platform3DObject)
 
 DELEGATE_TO_INTERNAL_8(copyTexImage2D, unsigned long, long, unsigned long, long, long, unsigned long, unsigned long, long)
 DELEGATE_TO_INTERNAL_8(copyTexSubImage2D, unsigned long, long, long, long, long, long, unsigned long, unsigned long)
@@ -1173,7 +1091,7 @@ DELEGATE_TO_INTERNAL_1(cullFace, unsigned long)
 DELEGATE_TO_INTERNAL_1(depthFunc, unsigned long)
 DELEGATE_TO_INTERNAL_1(depthMask, bool)
 DELEGATE_TO_INTERNAL_2(depthRange, double, double)
-DELEGATE_TO_INTERNAL_2(detachShader, WebGLProgram*, WebGLShader*)
+DELEGATE_TO_INTERNAL_2(detachShader, Platform3DObject, Platform3DObject)
 DELEGATE_TO_INTERNAL_1(disable, unsigned long)
 DELEGATE_TO_INTERNAL_1(disableVertexAttribArray, unsigned long)
 DELEGATE_TO_INTERNAL_3(drawArrays, unsigned long, long, long)
@@ -1183,17 +1101,17 @@ DELEGATE_TO_INTERNAL_1(enable, unsigned long)
 DELEGATE_TO_INTERNAL_1(enableVertexAttribArray, unsigned long)
 DELEGATE_TO_INTERNAL(finish)
 DELEGATE_TO_INTERNAL(flush)
-DELEGATE_TO_INTERNAL_4(framebufferRenderbuffer, unsigned long, unsigned long, unsigned long, WebGLRenderbuffer*)
-DELEGATE_TO_INTERNAL_5(framebufferTexture2D, unsigned long, unsigned long, unsigned long, WebGLTexture*, long)
+DELEGATE_TO_INTERNAL_4(framebufferRenderbuffer, unsigned long, unsigned long, unsigned long, Platform3DObject)
+DELEGATE_TO_INTERNAL_5(framebufferTexture2D, unsigned long, unsigned long, unsigned long, Platform3DObject, long)
 DELEGATE_TO_INTERNAL_1(frontFace, unsigned long)
 DELEGATE_TO_INTERNAL_1(generateMipmap, unsigned long)
 
-DELEGATE_TO_INTERNAL_3R(getActiveAttrib, WebGLProgram*, unsigned long, ActiveInfo&, bool)
-DELEGATE_TO_INTERNAL_3R(getActiveUniform, WebGLProgram*, unsigned long, ActiveInfo&, bool)
+DELEGATE_TO_INTERNAL_3R(getActiveAttrib, Platform3DObject, unsigned long, ActiveInfo&, bool)
+DELEGATE_TO_INTERNAL_3R(getActiveUniform, Platform3DObject, unsigned long, ActiveInfo&, bool)
 
-DELEGATE_TO_INTERNAL_4(getAttachedShaders, WebGLProgram*, int, int*, unsigned int*)
+DELEGATE_TO_INTERNAL_4(getAttachedShaders, Platform3DObject, int, int*, unsigned int*)
 
-DELEGATE_TO_INTERNAL_2R(getAttribLocation, WebGLProgram*, const String&, int)
+DELEGATE_TO_INTERNAL_2R(getAttribLocation, Platform3DObject, const String&, int)
 
 DELEGATE_TO_INTERNAL_2(getBooleanv, unsigned long, unsigned char*)
 
@@ -1209,26 +1127,26 @@ DELEGATE_TO_INTERNAL_4(getFramebufferAttachmentParameteriv, unsigned long, unsig
 
 DELEGATE_TO_INTERNAL_2(getIntegerv, unsigned long, int*)
 
-DELEGATE_TO_INTERNAL_3(getProgramiv, WebGLProgram*, unsigned long, int*)
+DELEGATE_TO_INTERNAL_3(getProgramiv, Platform3DObject, unsigned long, int*)
 
-DELEGATE_TO_INTERNAL_1R(getProgramInfoLog, WebGLProgram*, String)
+DELEGATE_TO_INTERNAL_1R(getProgramInfoLog, Platform3DObject, String)
 
 DELEGATE_TO_INTERNAL_3(getRenderbufferParameteriv, unsigned long, unsigned long, int*)
 
-DELEGATE_TO_INTERNAL_3(getShaderiv, WebGLShader*, unsigned long, int*)
+DELEGATE_TO_INTERNAL_3(getShaderiv, Platform3DObject, unsigned long, int*)
 
-DELEGATE_TO_INTERNAL_1R(getShaderInfoLog, WebGLShader*, String)
+DELEGATE_TO_INTERNAL_1R(getShaderInfoLog, Platform3DObject, String)
 
-DELEGATE_TO_INTERNAL_1R(getShaderSource, WebGLShader*, String)
+DELEGATE_TO_INTERNAL_1R(getShaderSource, Platform3DObject, String)
 DELEGATE_TO_INTERNAL_1R(getString, unsigned long, String)
 
 DELEGATE_TO_INTERNAL_3(getTexParameterfv, unsigned long, unsigned long, float*)
 DELEGATE_TO_INTERNAL_3(getTexParameteriv, unsigned long, unsigned long, int*)
 
-DELEGATE_TO_INTERNAL_3(getUniformfv, WebGLProgram*, long, float*)
-DELEGATE_TO_INTERNAL_3(getUniformiv, WebGLProgram*, long, int*)
+DELEGATE_TO_INTERNAL_3(getUniformfv, Platform3DObject, long, float*)
+DELEGATE_TO_INTERNAL_3(getUniformiv, Platform3DObject, long, int*)
 
-DELEGATE_TO_INTERNAL_2R(getUniformLocation, WebGLProgram*, const String&, long)
+DELEGATE_TO_INTERNAL_2R(getUniformLocation, Platform3DObject, const String&, long)
 
 DELEGATE_TO_INTERNAL_3(getVertexAttribfv, unsigned long, unsigned long, float*)
 DELEGATE_TO_INTERNAL_3(getVertexAttribiv, unsigned long, unsigned long, int*)
@@ -1236,15 +1154,15 @@ DELEGATE_TO_INTERNAL_3(getVertexAttribiv, unsigned long, unsigned long, int*)
 DELEGATE_TO_INTERNAL_2R(getVertexAttribOffset, unsigned long, unsigned long, long)
 
 DELEGATE_TO_INTERNAL_2(hint, unsigned long, unsigned long)
-DELEGATE_TO_INTERNAL_1R(isBuffer, WebGLBuffer*, bool)
+DELEGATE_TO_INTERNAL_1R(isBuffer, Platform3DObject, bool)
 DELEGATE_TO_INTERNAL_1R(isEnabled, unsigned long, bool)
-DELEGATE_TO_INTERNAL_1R(isFramebuffer, WebGLFramebuffer*, bool)
-DELEGATE_TO_INTERNAL_1R(isProgram, WebGLProgram*, bool)
-DELEGATE_TO_INTERNAL_1R(isRenderbuffer, WebGLRenderbuffer*, bool)
-DELEGATE_TO_INTERNAL_1R(isShader, WebGLShader*, bool)
-DELEGATE_TO_INTERNAL_1R(isTexture, WebGLTexture*, bool)
+DELEGATE_TO_INTERNAL_1R(isFramebuffer, Platform3DObject, bool)
+DELEGATE_TO_INTERNAL_1R(isProgram, Platform3DObject, bool)
+DELEGATE_TO_INTERNAL_1R(isRenderbuffer, Platform3DObject, bool)
+DELEGATE_TO_INTERNAL_1R(isShader, Platform3DObject, bool)
+DELEGATE_TO_INTERNAL_1R(isTexture, Platform3DObject, bool)
 DELEGATE_TO_INTERNAL_1(lineWidth, double)
-DELEGATE_TO_INTERNAL_1(linkProgram, WebGLProgram*)
+DELEGATE_TO_INTERNAL_1(linkProgram, Platform3DObject)
 DELEGATE_TO_INTERNAL_2(pixelStorei, unsigned long, long)
 DELEGATE_TO_INTERNAL_2(polygonOffset, double, double)
 
@@ -1254,7 +1172,7 @@ DELEGATE_TO_INTERNAL(releaseShaderCompiler)
 DELEGATE_TO_INTERNAL_4(renderbufferStorage, unsigned long, unsigned long, unsigned long, unsigned long)
 DELEGATE_TO_INTERNAL_2(sampleCoverage, double, bool)
 DELEGATE_TO_INTERNAL_4(scissor, long, long, unsigned long, unsigned long)
-DELEGATE_TO_INTERNAL_2(shaderSource, WebGLShader*, const String&)
+DELEGATE_TO_INTERNAL_2(shaderSource, Platform3DObject, const String&)
 DELEGATE_TO_INTERNAL_3(stencilFunc, unsigned long, long, unsigned long)
 DELEGATE_TO_INTERNAL_4(stencilFuncSeparate, unsigned long, unsigned long, long, unsigned long)
 DELEGATE_TO_INTERNAL_1(stencilMask, unsigned long)
@@ -1287,8 +1205,8 @@ DELEGATE_TO_INTERNAL_4(uniformMatrix2fv, long, bool, float*, int)
 DELEGATE_TO_INTERNAL_4(uniformMatrix3fv, long, bool, float*, int)
 DELEGATE_TO_INTERNAL_4(uniformMatrix4fv, long, bool, float*, int)
 
-DELEGATE_TO_INTERNAL_1(useProgram, WebGLProgram*)
-DELEGATE_TO_INTERNAL_1(validateProgram, WebGLProgram*)
+DELEGATE_TO_INTERNAL_1(useProgram, Platform3DObject)
+DELEGATE_TO_INTERNAL_1(validateProgram, Platform3DObject)
 
 DELEGATE_TO_INTERNAL_2(vertexAttrib1f, unsigned long, float)
 DELEGATE_TO_INTERNAL_2(vertexAttrib1fv, unsigned long, float*)
@@ -1302,8 +1220,8 @@ DELEGATE_TO_INTERNAL_6(vertexAttribPointer, unsigned long, int, int, bool, unsig
 
 DELEGATE_TO_INTERNAL_4(viewport, long, long, unsigned long, unsigned long)
 
-DELEGATE_TO_INTERNAL_1(paintRenderingResultsToCanvas, WebGLRenderingContext*)
-DELEGATE_TO_INTERNAL_1(beginPaint, WebGLRenderingContext*)
+DELEGATE_TO_INTERNAL_1(paintRenderingResultsToCanvas, CanvasRenderingContext*)
+DELEGATE_TO_INTERNAL_1(beginPaint, CanvasRenderingContext*)
 DELEGATE_TO_INTERNAL(endPaint)
 
 DELEGATE_TO_INTERNAL_R(createBuffer, unsigned)

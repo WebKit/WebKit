@@ -31,6 +31,7 @@
 namespace WebCore {
 
     class CanvasObject;
+    class GraphicsContext3D;
     class HTMLCanvasElement;
 
     class CanvasRenderingContext : public Noncopyable {
@@ -47,6 +48,10 @@ namespace WebCore {
         virtual bool is2d() const { return false; }
         virtual bool is3d() const { return false; }
         virtual bool isAccelerated() const { return false; }
+        
+        // For accelerated canvases, returns a pointer to the underlying GraphicsContext3D.
+        // For non accelerated canvases returns 0.
+        virtual GraphicsContext3D* graphicsContext3D() const { return 0; }
 
     private:
         HTMLCanvasElement* m_canvas;

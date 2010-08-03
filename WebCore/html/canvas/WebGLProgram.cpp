@@ -56,17 +56,17 @@ bool WebGLProgram::cacheActiveAttribLocations()
         return false;
     GraphicsContext3D* context3d = context()->graphicsContext3D();
     int linkStatus;
-    context3d->getProgramiv(this, GraphicsContext3D::LINK_STATUS, &linkStatus);
+    context3d->getProgramiv(object(), GraphicsContext3D::LINK_STATUS, &linkStatus);
     if (!linkStatus)
         return false;
 
     int numAttribs = 0;
-    context3d->getProgramiv(this, GraphicsContext3D::ACTIVE_ATTRIBUTES, &numAttribs);
+    context3d->getProgramiv(object(), GraphicsContext3D::ACTIVE_ATTRIBUTES, &numAttribs);
     m_activeAttribLocations.resize(static_cast<size_t>(numAttribs));
     for (int i = 0; i < numAttribs; ++i) {
         ActiveInfo info;
-        context3d->getActiveAttrib(this, i, info);
-        m_activeAttribLocations[i] = context3d->getAttribLocation(this, info.name.charactersWithNullTermination());
+        context3d->getActiveAttrib(object(), i, info);
+        m_activeAttribLocations[i] = context3d->getAttribLocation(object(), info.name.charactersWithNullTermination());
     }
 
     return true;

@@ -73,22 +73,16 @@ const Platform3DObject NullPlatform3DObject = 0;
 #endif
 
 namespace WebCore {
-    class WebGLActiveInfo;
     class ArrayBuffer;
     class ArrayBufferView;
-    class WebGLBuffer;
-    class Uint8Array;
+    class CanvasRenderingContext;
     class Float32Array;
-    class WebGLFramebuffer;
-    class Int32Array;
-    class WebGLProgram;
-    class WebGLRenderbuffer;
-    class WebGLRenderingContext;
-    class WebGLShader;
-    class WebGLTexture;
+    class HostWindow;
     class Image;
     class ImageData;
-    class HostWindow;
+    class Int32Array;
+    class Uint8Array;
+    class WebGLActiveInfo;
 
     struct ActiveInfo {
         String name;
@@ -543,12 +537,12 @@ namespace WebCore {
         //
 
         void activeTexture(unsigned long texture);
-        void attachShader(WebGLProgram* program, WebGLShader* shader);
-        void bindAttribLocation(WebGLProgram*, unsigned long index, const String& name);
-        void bindBuffer(unsigned long target, WebGLBuffer*);
-        void bindFramebuffer(unsigned long target, WebGLFramebuffer*);
-        void bindRenderbuffer(unsigned long target, WebGLRenderbuffer*);
-        void bindTexture(unsigned long target, WebGLTexture* texture);
+        void attachShader(Platform3DObject program, Platform3DObject shader);
+        void bindAttribLocation(Platform3DObject, unsigned long index, const String& name);
+        void bindBuffer(unsigned long target, Platform3DObject);
+        void bindFramebuffer(unsigned long target, Platform3DObject);
+        void bindRenderbuffer(unsigned long target, Platform3DObject);
+        void bindTexture(unsigned long target, Platform3DObject texture);
         void blendColor(double red, double green, double blue, double alpha);
         void blendEquation(unsigned long mode);
         void blendEquationSeparate(unsigned long modeRGB, unsigned long modeAlpha);
@@ -567,7 +561,7 @@ namespace WebCore {
         void clearDepth(double depth);
         void clearStencil(long s);
         void colorMask(bool red, bool green, bool blue, bool alpha);
-        void compileShader(WebGLShader*);
+        void compileShader(Platform3DObject);
         
         //void compressedTexImage2D(unsigned long target, long level, unsigned long internalformat, unsigned long width, unsigned long height, long border, unsigned long imageSize, const void* data);
         //void compressedTexSubImage2D(unsigned long target, long level, long xoffset, long yoffset, unsigned long width, unsigned long height, unsigned long format, unsigned long imageSize, const void* data);
@@ -578,7 +572,7 @@ namespace WebCore {
         void depthFunc(unsigned long func);
         void depthMask(bool flag);
         void depthRange(double zNear, double zFar);
-        void detachShader(WebGLProgram*, WebGLShader*);
+        void detachShader(Platform3DObject, Platform3DObject);
         void disable(unsigned long cap);
         void disableVertexAttribArray(unsigned long index);
         void drawArrays(unsigned long mode, long first, long count);
@@ -588,17 +582,17 @@ namespace WebCore {
         void enableVertexAttribArray(unsigned long index);
         void finish();
         void flush();
-        void framebufferRenderbuffer(unsigned long target, unsigned long attachment, unsigned long renderbuffertarget, WebGLRenderbuffer*);
-        void framebufferTexture2D(unsigned long target, unsigned long attachment, unsigned long textarget, WebGLTexture*, long level);
+        void framebufferRenderbuffer(unsigned long target, unsigned long attachment, unsigned long renderbuffertarget, Platform3DObject);
+        void framebufferTexture2D(unsigned long target, unsigned long attachment, unsigned long textarget, Platform3DObject, long level);
         void frontFace(unsigned long mode);
         void generateMipmap(unsigned long target);
 
-        bool getActiveAttrib(WebGLProgram* program, unsigned long index, ActiveInfo&);
-        bool getActiveUniform(WebGLProgram* program, unsigned long index, ActiveInfo&);
+        bool getActiveAttrib(Platform3DObject program, unsigned long index, ActiveInfo&);
+        bool getActiveUniform(Platform3DObject program, unsigned long index, ActiveInfo&);
 
-        void getAttachedShaders(WebGLProgram* program, int maxCount, int* count, unsigned int* shaders);
+        void getAttachedShaders(Platform3DObject program, int maxCount, int* count, unsigned int* shaders);
 
-        int  getAttribLocation(WebGLProgram*, const String& name);
+        int getAttribLocation(Platform3DObject, const String& name);
 
         void getBooleanv(unsigned long pname, unsigned char* value);
 
@@ -614,29 +608,29 @@ namespace WebCore {
 
         void getIntegerv(unsigned long pname, int* value);
 
-        void getProgramiv(WebGLProgram* program, unsigned long pname, int* value);
+        void getProgramiv(Platform3DObject program, unsigned long pname, int* value);
 
-        String getProgramInfoLog(WebGLProgram*);
+        String getProgramInfoLog(Platform3DObject);
 
         void getRenderbufferParameteriv(unsigned long target, unsigned long pname, int* value);
 
-        void getShaderiv(WebGLShader*, unsigned long pname, int* value);
+        void getShaderiv(Platform3DObject, unsigned long pname, int* value);
 
-        String getShaderInfoLog(WebGLShader*);
+        String getShaderInfoLog(Platform3DObject);
 
         // TBD
         // void glGetShaderPrecisionFormat (GLenum shadertype, GLenum precisiontype, GLint* range, GLint* precision);
 
-        String getShaderSource(WebGLShader*);
+        String getShaderSource(Platform3DObject);
         String getString(unsigned long name);
 
         void getTexParameterfv(unsigned long target, unsigned long pname, float* value);
         void getTexParameteriv(unsigned long target, unsigned long pname, int* value);
 
-        void getUniformfv(WebGLProgram* program, long location, float* value);
-        void getUniformiv(WebGLProgram* program, long location, int* value);
+        void getUniformfv(Platform3DObject program, long location, float* value);
+        void getUniformiv(Platform3DObject program, long location, int* value);
 
-        long getUniformLocation(WebGLProgram*, const String& name);
+        long getUniformLocation(Platform3DObject, const String& name);
 
         void getVertexAttribfv(unsigned long index, unsigned long pname, float* value);
         void getVertexAttribiv(unsigned long index, unsigned long pname, int* value);
@@ -644,15 +638,15 @@ namespace WebCore {
         long getVertexAttribOffset(unsigned long index, unsigned long pname);
 
         void hint(unsigned long target, unsigned long mode);
-        bool isBuffer(WebGLBuffer*);
+        bool isBuffer(Platform3DObject);
         bool isEnabled(unsigned long cap);
-        bool isFramebuffer(WebGLFramebuffer*);
-        bool isProgram(WebGLProgram*);
-        bool isRenderbuffer(WebGLRenderbuffer*);
-        bool isShader(WebGLShader*);
-        bool isTexture(WebGLTexture*);
+        bool isFramebuffer(Platform3DObject);
+        bool isProgram(Platform3DObject);
+        bool isRenderbuffer(Platform3DObject);
+        bool isShader(Platform3DObject);
+        bool isTexture(Platform3DObject);
         void lineWidth(double);
-        void linkProgram(WebGLProgram*);
+        void linkProgram(Platform3DObject);
         void pixelStorei(unsigned long pname, long param);
         void polygonOffset(double factor, double units);
         
@@ -662,7 +656,7 @@ namespace WebCore {
         void renderbufferStorage(unsigned long target, unsigned long internalformat, unsigned long width, unsigned long height);
         void sampleCoverage(double value, bool invert);
         void scissor(long x, long y, unsigned long width, unsigned long height);
-        void shaderSource(WebGLShader*, const String& string);
+        void shaderSource(Platform3DObject, const String& string);
         void stencilFunc(unsigned long func, long ref, unsigned long mask);
         void stencilFuncSeparate(unsigned long face, unsigned long func, long ref, unsigned long mask);
         void stencilMask(unsigned long mask);
@@ -697,8 +691,8 @@ namespace WebCore {
         void uniformMatrix3fv(long location, bool transpose, float* value, int size);
         void uniformMatrix4fv(long location, bool transpose, float* value, int size);
 
-        void useProgram(WebGLProgram*);
-        void validateProgram(WebGLProgram*);
+        void useProgram(Platform3DObject);
+        void validateProgram(Platform3DObject);
 
         void vertexAttrib1f(unsigned long indx, float x);
         void vertexAttrib1fv(unsigned long indx, float* values);
@@ -720,10 +714,10 @@ namespace WebCore {
                            int canvasWidth, int canvasHeight, CGContextRef context);
 #endif
 
-        void paintRenderingResultsToCanvas(WebGLRenderingContext* context);
+        void paintRenderingResultsToCanvas(CanvasRenderingContext* context);
 
         // Helpers for notification about paint events
-        void beginPaint(WebGLRenderingContext* context);
+        void beginPaint(CanvasRenderingContext* context);
         void endPaint();
 #if PLATFORM(QT)
         void paint(QPainter* painter, const QRect& rect) const;

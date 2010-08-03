@@ -303,7 +303,7 @@ class WebKitCSSMatrix;
 
         void viewport(long x, long y, unsigned long width, unsigned long height);
 
-        GraphicsContext3D* graphicsContext3D() const { return m_context.get(); }
+        virtual GraphicsContext3D* graphicsContext3D() const { return m_context.get(); }
     
         void reshape(int width, int height);
 
