@@ -56,8 +56,8 @@ bool RenderMathMLOperator::isChildAllowed(RenderObject*, RenderStyle*) const
     return false;
 }
 
-static const float gOperatorSpacer = 0.1;
-static const float gOperatorExpansion = 1.2;
+static const float gOperatorSpacer = 0.1f;
+static const float gOperatorExpansion = 1.2f;
 
 void  RenderMathMLOperator::stretchToHeight(int height)
 {
@@ -113,7 +113,7 @@ static const int gMinimumStretchHeight = 24;
 static const int gGlyphHeight = 10;
 static const int gMiddleGlyphTopAdjust = -2;
 static const int gBottomGlyphTopAdjust = -4;
-static const float gMinimumRatioForStretch = 0.10;
+static const float gMinimumRatioForStretch = 0.10f;
 
 void RenderMathMLOperator::updateFromElement()
 {

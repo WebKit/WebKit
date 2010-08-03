@@ -44,7 +44,7 @@ using namespace MathMLNames;
 
 static const int gTopAdjustDivisor = 3;
 static const int gSubsupScriptMargin = 1;
-static const float gSubSupStretch = 1.2;
+static const float gSubSupStretch = 1.2f;
 
 RenderMathMLSubSup::RenderMathMLSubSup(Element* element) 
     : RenderMathMLBlock(element)

@@ -1,5 +1,17 @@
 2010-08-03  Beth Dakin  <bdakin@apple.com>
 
+        Speculative build fix for Leopard.
+
+        * mathml/RenderMathMLOperator.cpp:
+        * mathml/RenderMathMLRoot.cpp:
+        (WebCore::RenderMathMLRoot::paint):
+        (WebCore::RenderMathMLRoot::layout):
+        * mathml/RenderMathMLSquareRoot.cpp:
+        (WebCore::RenderMathMLSquareRoot::paint):
+        * mathml/RenderMathMLSubSup.cpp:
+
+2010-08-03  Beth Dakin  <bdakin@apple.com>
+
         Speculative build fix.
 
         * css/mathml.css:
