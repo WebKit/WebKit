@@ -1,3 +1,17 @@
+2010-08-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Range::create should not be calling deprecatedEditingOffset and node on start and end
+        https://bugs.webkit.org/show_bug.cgi?id=43385
+
+        Replaced node() and deprecatedEditingOffset() by containerNode() and computeOffsetInContainerNode().
+
+        No new tests added since this does not change the behavior.
+
+        * dom/Range.cpp:
+        (WebCore::Range::create):
+
 2010-08-02  Chris Fleizach  <cfleizach@apple.com>
 
         Unreviewed, rolling out r64472.

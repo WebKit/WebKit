@@ -94,8 +94,7 @@ PassRefPtr<Range> Range::create(PassRefPtr<Document> ownerDocument, PassRefPtr<N
 
 PassRefPtr<Range> Range::create(PassRefPtr<Document> ownerDocument, const Position& start, const Position& end)
 {
-    // FIXME: we shouldn't be using deprecatedEditingOffset here
-    return adoptRef(new Range(ownerDocument, start.node(), start.deprecatedEditingOffset(), end.node(), end.deprecatedEditingOffset()));
+    return adoptRef(new Range(ownerDocument, start.containerNode(), start.computeOffsetInContainerNode(), end.containerNode(), end.computeOffsetInContainerNode()));
 }
 
 Range::~Range()
