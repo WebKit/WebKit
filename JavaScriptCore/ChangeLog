@@ -1,5 +1,11 @@
 2010-08-03  Gavin Barraclough  <barraclough@apple.com>
 
+        Speculative windows build fix.
+
+        * wtf/Bitmap.h:
+
+2010-08-03  Gavin Barraclough  <barraclough@apple.com>
+
         Build fix following r64624.
 
         * JavaScriptCore.xcodeproj/project.pbxproj:

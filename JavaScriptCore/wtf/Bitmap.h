@@ -22,6 +22,8 @@
 #include "FixedArray.h"
 #include "StdLibExtras.h"
 
+#include <stdint.h>
+
 namespace WTF {
 
 template<size_t size>
