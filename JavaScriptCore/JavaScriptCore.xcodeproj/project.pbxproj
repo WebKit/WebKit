@@ -510,7 +510,7 @@
 		C0A272630E50A06300E96E15 /* NotFound.h in Headers */ = {isa = PBXBuildFile; fileRef = C0A2723F0E509F1E00E96E15 /* NotFound.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD2724681208D1FF00F9ABE7 /* AlignedMemoryAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = DD2724671208D1FF00F9ABE7 /* AlignedMemoryAllocator.h */; };
 		DD2724691208D1FF00F9ABE7 /* AlignedMemoryAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = DD2724671208D1FF00F9ABE7 /* AlignedMemoryAllocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DD377CBC12072C18006A2517 /* Bitmap.h in Headers */ = {isa = PBXBuildFile; fileRef = DD377CBB12072C18006A2517 /* Bitmap.h */; };
+		DD377CBC12072C18006A2517 /* Bitmap.h in Headers */ = {isa = PBXBuildFile; fileRef = DD377CBB12072C18006A2517 /* Bitmap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDF7ABD411F60ED200108E36 /* GCActivityCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF7ABD211F60ED200108E36 /* GCActivityCallback.h */; };
 		DDF7ABD511F60ED200108E36 /* GCActivityCallbackCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDF7ABD311F60ED200108E36 /* GCActivityCallbackCF.cpp */; };
 		E124A8F70E555775003091F1 /* OpaqueJSString.h in Headers */ = {isa = PBXBuildFile; fileRef = E124A8F50E555775003091F1 /* OpaqueJSString.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1937,6 +1937,7 @@
 				868BFA0A117CEFD100B908B1 /* AtomicStringImpl.h in Headers */,
 				BC18C3EB0E16F5CD00B34460 /* AVLTree.h in Headers */,
 				147B83AC0E6DB8C9004775A4 /* BatchedTransitionOptimizer.h in Headers */,
+				DD377CBC12072C18006A2517 /* Bitmap.h in Headers */,
 				BC18C3EC0E16F5CD00B34460 /* BooleanObject.h in Headers */,
 				86676D5211FED9BC004B6863 /* BumpPointerAllocator.h in Headers */,
 				A7A1F7AD0F252B3C00E184E2 /* ByteArray.h in Headers */,
@@ -2207,7 +2208,6 @@
 				868BFA18117CF19900B908B1 /* WTFString.h in Headers */,
 				86D08D5411793613006E5ED0 /* WTFThreadData.h in Headers */,
 				9688CB160ED12B4E001D649F /* X86Assembler.h in Headers */,
-				DD377CBC12072C18006A2517 /* Bitmap.h in Headers */,
 				DDF7ABD411F60ED200108E36 /* GCActivityCallback.h in Headers */,
 				DD2724691208D1FF00F9ABE7 /* AlignedMemoryAllocator.h in Headers */,
 			);
@@ -2303,6 +2303,7 @@
 			isa = PBXProject;
 			buildConfigurationList = 149C277108902AFE008A9EFC /* Build configuration list for PBXProject "JavaScriptCore" */;
 			compatibilityVersion = "Xcode 2.4";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,

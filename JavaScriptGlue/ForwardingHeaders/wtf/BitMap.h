@@ -1,0 +1,1 @@
+#include <JavaScriptCore/BitMap.h>

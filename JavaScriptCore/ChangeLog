@@ -1,3 +1,10 @@
+2010-08-03  Gavin Barraclough  <barraclough@apple.com>
+
+        Build fix following r64624.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * wtf/PageAllocation.h:
+
 2010-08-03  Nathan Lawrence  <nlawrence@apple.com>
 
         Reviewed by Gavin Barraclough.

@@ -1,3 +1,9 @@
+2010-08-03  Gavin Barraclough  <barraclough@apple.com>
+
+        Build fix following r64624.
+
+        * ForwardingHeaders/wtf/BitMap.h: Added.
+
 2010-07-27  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
