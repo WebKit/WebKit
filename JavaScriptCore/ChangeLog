@@ -1,3 +1,28 @@
+2010-08-03  Nathan Lawrence  <nlawrence@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Tightened up some get_by_id_chain* code generation
+        https://bugs.webkit.org/show_bug.cgi?id=40935
+
+        This is in the style of
+        https://bugs.webkit.org/show_bug.cgi?id=30539, and changed code to
+        call accessor functions when it was not necessary to directly access
+        the private variables.
+
+        * jit/JIT.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::compileGetDirectOffset):
+        (JSC::JIT::testPrototype):
+        (JSC::JIT::privateCompilePutByIdTransition):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::testPrototype):
+        (JSC::JIT::privateCompilePutByIdTransition):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+
 2010-08-03  Adam Roben  <aroben@apple.com>
 
         Turn on PLATFORM_STRATEGIES on Windows

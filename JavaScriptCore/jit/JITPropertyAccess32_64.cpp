@@ -588,12 +588,21 @@ void JIT::compileGetDirectOffset(JSObject* base, RegisterID temp, RegisterID res
     load32(Address(temp, offset + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), resultTag);
 }
 
-void JIT::testPrototype(Structure* structure, JumpList& failureCases)
+void JIT::testPrototype(JSValue prototype, JumpList& failureCases)
 {
-    if (structure->m_prototype.isNull())
+    if (prototype.isNull())
         return;
     
-    failureCases.append(branchPtr(NotEqual, AbsoluteAddress(&asCell(structure->m_prototype)->m_structure), ImmPtr(asCell(structure->m_prototype)->m_structure)));
+    // We have a special case for X86_64 here because X86 instructions that take immediate values
+    // only take 32 bit immediate values, wheras the pointer constants we are using here are 64 bit
+    // values.  In the non X86_64 case, the generated code is slightly more efficient because it uses
+    // two less instructions and doesn't require any scratch registers.
+#if CPU(X86_64)
+    move(ImmPtr(asCell(prototype)->structure()), regT3);
+    failureCases.append(branchPtr(NotEqual, AbsoluteAddress(&asCell(prototype)->m_structure), regT3));
+#else
+    failureCases.append(branchPtr(NotEqual, AbsoluteAddress(&asCell(prototype)->m_structure), ImmPtr(asCell(prototype)->structure())));
+#endif
 }
 
 bool JIT::privateCompilePutByIdTransition(StructureStubInfo* stubInfo, Structure* oldStructure, Structure* newStructure, size_t cachedOffset, StructureChain* chain, ReturnAddressPtr returnAddress, bool direct)
@@ -603,12 +612,12 @@ bool JIT::privateCompilePutByIdTransition(StructureStubInfo* stubInfo, Structure
     JumpList failureCases;
     failureCases.append(branch32(NotEqual, regT1, Imm32(JSValue::CellTag)));
     failureCases.append(branchPtr(NotEqual, Address(regT0, OBJECT_OFFSETOF(JSCell, m_structure)), ImmPtr(oldStructure)));
-    testPrototype(oldStructure, failureCases);
+    testPrototype(oldStructure->storedPrototype(), failureCases);
     
     if (!direct) {
         // Verify that nothing in the prototype chain has a setter for this property. 
         for (RefPtr<Structure>* it = chain->head(); *it; ++it)
-            testPrototype(it->get(), failureCases);
+            testPrototype((*it)->storedPrototype(), failureCases);
     }
 
     // Reallocate property storage if needed.
@@ -1001,20 +1010,12 @@ bool JIT::privateCompileGetByIdChainList(StructureStubInfo* stubInfo, Structure*
     bucketsOfFail.append(checkStructure(regT0, structure));
     
     Structure* currStructure = structure;
-    RefPtr<Structure>* chainEntries = chain->head();
+    RefPtr<Structure>* it = chain->head();
     JSObject* protoObject = 0;
-    for (unsigned i = 0; i < count; ++i) {
+    for (unsigned i = 0; i < count; ++i, ++it) {
         protoObject = asObject(currStructure->prototypeForLookup(callFrame));
-        currStructure = chainEntries[i].get();
-        
-        // Check the prototype object's Structure had not changed.
-        Structure** prototypeStructureAddress = &(protoObject->m_structure);
-#if CPU(X86_64)
-        move(ImmPtr(currStructure), regT3);
-        bucketsOfFail.append(branchPtr(NotEqual, AbsoluteAddress(prototypeStructureAddress), regT3));
-#else
-        bucketsOfFail.append(branchPtr(NotEqual, AbsoluteAddress(prototypeStructureAddress), ImmPtr(currStructure)));
-#endif
+        currStructure = it->get();
+        testPrototype(protoObject, bucketsOfFail);
     }
     ASSERT(protoObject);
     
@@ -1084,20 +1085,12 @@ bool JIT::privateCompileGetByIdChain(StructureStubInfo* stubInfo, Structure* str
     bucketsOfFail.append(checkStructure(regT0, structure));
     
     Structure* currStructure = structure;
-    RefPtr<Structure>* chainEntries = chain->head();
+    RefPtr<Structure>* it = chain->head();
     JSObject* protoObject = 0;
-    for (unsigned i = 0; i < count; ++i) {
+    for (unsigned i = 0; i < count; ++i, ++it) {
         protoObject = asObject(currStructure->prototypeForLookup(callFrame));
-        currStructure = chainEntries[i].get();
-        
-        // Check the prototype object's Structure had not changed.
-        Structure** prototypeStructureAddress = &(protoObject->m_structure);
-#if CPU(X86_64)
-        move(ImmPtr(currStructure), regT3);
-        bucketsOfFail.append(branchPtr(NotEqual, AbsoluteAddress(prototypeStructureAddress), regT3));
-#else
-        bucketsOfFail.append(branchPtr(NotEqual, AbsoluteAddress(prototypeStructureAddress), ImmPtr(currStructure)));
-#endif
+        currStructure = it->get();
+        testPrototype(protoObject, bucketsOfFail);
     }
     ASSERT(protoObject);
     
