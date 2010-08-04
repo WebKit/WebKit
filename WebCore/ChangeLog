@@ -1,3 +1,14 @@
+2010-08-04  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Use a QImage for the stroke applier scratch context
+
+        This avoids leaking a server-side resource on some graphics systems.
+
+        * platform/graphics/qt/PathQt.cpp:
+        (WebCore::scratchContext):
+
 2010-08-03  Ben Murdoch  <benm@google.com>
 
         Reviewed by Darin Adler.

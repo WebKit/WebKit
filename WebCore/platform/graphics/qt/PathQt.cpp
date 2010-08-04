@@ -123,8 +123,10 @@ bool Path::contains(const FloatPoint& point, WindRule rule) const
 
 static GraphicsContext* scratchContext()
 {
-    static ImageBuffer* scratch = ImageBuffer::create(IntSize(1, 1)).leakPtr();
-    return scratch->context();
+    static QImage image(1, 1, QImage::Format_ARGB32_Premultiplied);
+    static QPainter painter(&image);
+    static GraphicsContext* context = new GraphicsContext(&painter);
+    return context;
 }
 
 bool Path::strokeContains(StrokeStyleApplier* applier, const FloatPoint& point) const
