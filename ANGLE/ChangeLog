@@ -1,3 +1,49 @@
+2010-08-04  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Update ANGLE to r352
+        https://bugs.webkit.org/show_bug.cgi?id=43500
+
+        Updated ANGLE to r352 (July 26, 2010). Built WebKit to test.
+
+        * include/GLSLANG/ShaderLang.h:
+        * src/compiler/Initialize.cpp:
+        (BuiltInFunctionsCommon):
+        (BuiltInFunctionsVertex):
+        (BuiltInFunctionsFragment):
+        (StandardUniforms):
+        (DefaultPrecisionVertex):
+        (DefaultPrecisionFragment):
+        (BuiltInConstants):
+        (TBuiltIns::initialize):
+        (IdentifyBuiltIns):
+        * src/compiler/Initialize.h:
+        (TBuiltIns::getBuiltInStrings):
+        * src/compiler/OutputGLSL.cpp:
+        (TOutputGLSL::visitSelection):
+        * src/compiler/ShHandle.h:
+        (TCompiler::getLanguage):
+        (TCompiler::getSpec):
+        (TCompiler::getSymbolTable):
+        (TCompiler::getInfoSink):
+        * src/compiler/ShaderLang.cpp:
+        (InitializeSymbolTable):
+        (GenerateBuiltInSymbolTable):
+        (ShInitialize):
+        (ShConstructCompiler):
+        (ShFinalize):
+        (ShCompile):
+        * src/compiler/SymbolTable.h:
+        (TSymbolTable::atBuiltInLevel):
+        (TSymbolTable::atGlobalLevel):
+        (TSymbolTable::push):
+        (TSymbolTable::getGlobalLevel):
+        (TSymbolTable::currentLevel):
+        * src/libGLESv2/Shader.cpp:
+        (gl::Shader::Shader):
+        (gl::Shader::compileToHLSL):
+
 2010-08-03  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Adele Peterson.

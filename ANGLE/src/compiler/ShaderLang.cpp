@@ -17,15 +17,68 @@
 #include "compiler/ShHandle.h"
 #include "compiler/SymbolTable.h"
 
-//
-// A symbol table for each language.  Each has a different
-// set of built-ins, and we want to preserve that from
-// compile to compile.
-//
-TSymbolTable* SymbolTables[EShLangCount];
+static bool InitializeSymbolTable(
+        const TBuiltInStrings& builtInStrings,
+        EShLanguage language, EShSpec spec, const TBuiltInResource& resources,
+        TInfoSink& infoSink, TSymbolTable& symbolTable)
+{
+    TIntermediate intermediate(infoSink);
+    TParseContext parseContext(symbolTable, intermediate, language, spec, infoSink);
 
+    GlobalParseContext = &parseContext;
 
-TPoolAllocator* PerProcessGPA = 0;
+    setInitialState();
+
+    assert(symbolTable.isEmpty());       
+    //
+    // Parse the built-ins.  This should only happen once per
+    // language symbol table.
+    //
+    // Push the symbol table to give it an initial scope.  This
+    // push should not have a corresponding pop, so that built-ins
+    // are preserved, and the test for an empty table fails.
+    //
+    symbolTable.push();
+    
+    //Initialize the Preprocessor
+    if (InitPreprocessor())
+    {
+        infoSink.info.message(EPrefixInternalError,  "Unable to intialize the Preprocessor");
+        return false;
+    }
+
+    for (TBuiltInStrings::const_iterator i = builtInStrings.begin(); i != builtInStrings.end(); ++i)
+    {
+        const char* builtInShaders[1];
+        int builtInLengths[1];
+
+        builtInShaders[0] = (*i).c_str();
+        builtInLengths[0] = (int) (*i).size();
+
+        if (PaParseStrings(const_cast<char**>(builtInShaders), builtInLengths, 1, parseContext) != 0)
+        {
+            infoSink.info.message(EPrefixInternalError, "Unable to parse built-ins");
+            return false;
+        }
+    }
+
+    IdentifyBuiltIns(language, spec, resources, symbolTable);
+
+    FinalizePreprocessor();
+
+    return true;
+}
+
+static bool GenerateBuiltInSymbolTable(
+        EShLanguage language, EShSpec spec, const TBuiltInResource& resources,
+        TInfoSink& infoSink, TSymbolTable& symbolTable)
+{
+    TBuiltIns builtIns;
+
+    builtIns.initialize(language, spec, resources);
+    return InitializeSymbolTable(builtIns.getBuiltInStrings(), language, spec, resources, infoSink, symbolTable);
+}
+
 //
 // This is the platform independent interface between an OGL driver
 // and the shading language compiler.
@@ -37,42 +90,7 @@ TPoolAllocator* PerProcessGPA = 0;
 //
 int ShInitialize()
 {
-    TInfoSink infoSink;
-    bool ret = true;
-
-    if (!InitProcess())
-        return 0;
-
-    // This method should be called once per process. If its called by multiple threads, then 
-    // we need to have thread synchronization code around the initialization of per process
-    // global pool allocator
-    if (!PerProcessGPA) { 
-        TPoolAllocator *builtInPoolAllocator = new TPoolAllocator(true);
-        builtInPoolAllocator->push();
-        TPoolAllocator* gPoolAllocator = &GlobalPoolAllocator;
-        SetGlobalPoolAllocatorPtr(builtInPoolAllocator);
-
-        TSymbolTable symTables[EShLangCount];
-        GenerateBuiltInSymbolTable(0, infoSink, symTables);
-
-        PerProcessGPA = new TPoolAllocator(true);
-        PerProcessGPA->push();
-        SetGlobalPoolAllocatorPtr(PerProcessGPA);
-
-        SymbolTables[EShLangVertex] = new TSymbolTable;
-        SymbolTables[EShLangVertex]->copyTable(symTables[EShLangVertex]);
-        SymbolTables[EShLangFragment] = new TSymbolTable;
-        SymbolTables[EShLangFragment]->copyTable(symTables[EShLangFragment]);
-
-        SetGlobalPoolAllocatorPtr(gPoolAllocator);
-
-        symTables[EShLangVertex].pop();
-        symTables[EShLangFragment].pop();
-
-        builtInPoolAllocator->popAll();
-        delete builtInPoolAllocator;        
-
-    }
+    bool ret = InitProcess();
 
     return ret ? 1 : 0;
 }
@@ -81,13 +99,22 @@ int ShInitialize()
 // Driver calls these to create and destroy compiler objects.
 //
 
-ShHandle ShConstructCompiler(EShLanguage language, EShSpec spec)
+ShHandle ShConstructCompiler(EShLanguage language, EShSpec spec, const TBuiltInResource* resources)
 {
     if (!InitThread())
         return 0;
 
     TShHandleBase* base = static_cast<TShHandleBase*>(ConstructCompiler(language, spec));
-    
+    TCompiler* compiler = base->getAsCompiler();
+    if (compiler == 0)
+        return 0;
+
+    // Generate built-in symbol table.
+    if (!GenerateBuiltInSymbolTable(language, spec, *resources, compiler->getInfoSink(), compiler->getSymbolTable())) {
+        ShDestruct(base);
+        return 0;
+    }
+
     return reinterpret_cast<void*>(base);
 }
 
@@ -106,97 +133,8 @@ void ShDestruct(ShHandle handle)
 // Cleanup symbol tables
 //
 int ShFinalize()
-{  
-  if (PerProcessGPA) {
-    PerProcessGPA->popAll();
-    delete PerProcessGPA;
-    PerProcessGPA = 0;
-  }
-  for (int i = 0; i < EShLangCount; ++i) {
-    delete SymbolTables[i];
-    SymbolTables[i] = 0;
-  }
-  return 1;
-}
-
-bool GenerateBuiltInSymbolTable(const TBuiltInResource* resources, TInfoSink& infoSink, TSymbolTable* symbolTables, EShLanguage language)
 {
-    TBuiltIns builtIns;
-    
-	if (resources) {
-		builtIns.initialize(*resources);
-		InitializeSymbolTable(builtIns.getBuiltInStrings(), language, infoSink, resources, symbolTables);
-	} else {
-		builtIns.initialize();
-		InitializeSymbolTable(builtIns.getBuiltInStrings(), EShLangVertex, infoSink, resources, symbolTables);
-		InitializeSymbolTable(builtIns.getBuiltInStrings(), EShLangFragment, infoSink, resources, symbolTables);
-	}
-
-    return true;
-}
-
-bool InitializeSymbolTable(TBuiltInStrings* BuiltInStrings, EShLanguage language, TInfoSink& infoSink, const TBuiltInResource* resources, TSymbolTable* symbolTables)
-{
-    TIntermediate intermediate(infoSink);	
-    TSymbolTable* symbolTable;
-	
-	if (resources)
-		symbolTable = symbolTables;
-	else
-		symbolTable = &symbolTables[language];
-
-    // TODO(alokp): Investigate if a parse-context is necessary here and
-    // if symbol-table can be shared between GLES2 and WebGL specs.
-    TParseContext parseContext(*symbolTable, intermediate, language, EShSpecGLES2, infoSink);
-
-    GlobalParseContext = &parseContext;
-    
-    setInitialState();
-
-    assert(symbolTable->isEmpty() || symbolTable->atSharedBuiltInLevel());
-       
-    //
-    // Parse the built-ins.  This should only happen once per
-    // language symbol table.
-    //
-    // Push the symbol table to give it an initial scope.  This
-    // push should not have a corresponding pop, so that built-ins
-    // are preserved, and the test for an empty table fails.
-    //
-
-    symbolTable->push();
-    
-    //Initialize the Preprocessor
-    int ret = InitPreprocessor();
-    if (ret) {
-        infoSink.info.message(EPrefixInternalError,  "Unable to intialize the Preprocessor");
-        return false;
-    }
-    
-    for (TBuiltInStrings::iterator i  = BuiltInStrings[parseContext.language].begin();
-                                    i != BuiltInStrings[parseContext.language].end();
-                                    ++i) {
-        const char* builtInShaders[1];
-        int builtInLengths[1];
-
-        builtInShaders[0] = (*i).c_str();
-        builtInLengths[0] = (int) (*i).size();
-
-        if (PaParseStrings(const_cast<char**>(builtInShaders), builtInLengths, 1, parseContext) != 0) {
-            infoSink.info.message(EPrefixInternalError, "Unable to parse built-ins");
-            return false;
-        }
-    }
-
-	if (resources) {
-		IdentifyBuiltIns(parseContext.language, *symbolTable, *resources);
-	} else {									   
-		IdentifyBuiltIns(parseContext.language, *symbolTable);
-	}
-
-    FinalizePreprocessor();
-
-    return true;
+    return 1;
 }
 
 //
@@ -211,7 +149,6 @@ int ShCompile(
     const char* const shaderStrings[],
     const int numStrings,
     const EShOptimizationLevel optLevel,
-    const TBuiltInResource* resources,
     int debugOptions
     )
 {
@@ -227,7 +164,7 @@ int ShCompile(
         return 0;
     
     GlobalPoolAllocator.push();
-    TInfoSink& infoSink = compiler->infoSink;
+    TInfoSink& infoSink = compiler->getInfoSink();
     infoSink.info.erase();
     infoSink.debug.erase();
     infoSink.obj.erase();
@@ -236,25 +173,22 @@ int ShCompile(
         return 1;
 
     TIntermediate intermediate(infoSink);
-    TSymbolTable symbolTable(*SymbolTables[compiler->getLanguage()]);
-    
-    GenerateBuiltInSymbolTable(resources, infoSink, &symbolTable, compiler->getLanguage());
+    TSymbolTable& symbolTable = compiler->getSymbolTable();
 
     TParseContext parseContext(symbolTable, intermediate, compiler->getLanguage(), compiler->getSpec(), infoSink);
     parseContext.initializeExtensionBehavior();
-
     GlobalParseContext = &parseContext;
-    
+ 
     setInitialState();
 
-    InitPreprocessor();    
+    InitPreprocessor();
     //
     // Parse the application's shaders.  All the following symbol table
     // work will be throw-away, so push a new allocation scope that can
     // be thrown away, then push a scope for the current shader's globals.
     //
     bool success = true;
-    
+
     symbolTable.push();
     if (!symbolTable.atGlobalLevel())
         parseContext.infoSink.info.message(EPrefixInternalError, "Wrong symbol table level");
@@ -301,7 +235,7 @@ int ShCompile(
     // Ensure symbol table is returned to the built-in level,
     // throwing away all but the built-ins.
     //
-    while (! symbolTable.atSharedBuiltInLevel())
+    while (!symbolTable.atBuiltInLevel())
         symbolTable.pop();
 
     FinalizePreprocessor();

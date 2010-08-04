@@ -31,9 +31,9 @@
 //
 
 #include <assert.h>
-#include "compiler/Common.h"
-#include "compiler/intermediate.h"
+
 #include "compiler/InfoSink.h"
+#include "compiler/intermediate.h"
 
 //
 // Symbol base class.  (Can build functions or variables out of these...)
@@ -239,13 +239,6 @@ public:
         //
     }
 
-    TSymbolTable(TSymbolTable& symTable)
-    {
-        table.push_back(symTable.table[0]);
-        precisionStack.push_back( symTable.precisionStack[0] );
-        uniqueId = symTable.uniqueId;
-    }
-
     ~TSymbolTable()
     {
         // level 0 is always built In symbols, so we never pop that out
@@ -259,11 +252,10 @@ public:
     // globals are at level 1.
     //
     bool isEmpty() { return table.size() == 0; }
-    bool atBuiltInLevel() { return atSharedBuiltInLevel() || atDynamicBuiltInLevel(); }
-    bool atSharedBuiltInLevel() { return table.size() == 1; }	
-    bool atGlobalLevel() { return table.size() <= 3; }
+    bool atBuiltInLevel() { return table.size() == 1; }
+    bool atGlobalLevel() { return table.size() <= 2; }
     void push()
-    { 
+    {
         table.push_back(new TSymbolTableLevel);
         precisionStack.push_back( PrecisionStackLevel() );
     }
@@ -297,7 +289,7 @@ public:
         return symbol;
     }
 
-    TSymbolTableLevel* getGlobalLevel() { assert(table.size() >= 3); return table[2]; }
+    TSymbolTableLevel* getGlobalLevel() { assert(table.size() >= 2); return table[1]; }
     void relateToOperator(const char* name, TOperator op) { table[0]->relateToOperator(name, op); }
     int getMaxSymbolId() { return uniqueId; }
     void dump(TInfoSink &infoSink) const;
@@ -329,7 +321,6 @@ public:
 
 protected:    
     int currentLevel() const { return static_cast<int>(table.size()) - 1; }
-    bool atDynamicBuiltInLevel() { return table.size() == 2; }
 
     std::vector<TSymbolTableLevel*> table;
     typedef std::map< TBasicType, TPrecision > PrecisionStackLevel;

@@ -17,6 +17,7 @@
 #include "GLSLANG/ShaderLang.h"
 
 #include "compiler/InfoSink.h"
+#include "compiler/SymbolTable.h"
 
 class TCompiler;
 class TIntermNode;
@@ -40,18 +41,24 @@ public:
     TCompiler(EShLanguage l, EShSpec s) : language(l), spec(s) { }
     virtual ~TCompiler() { }
 
-    EShLanguage getLanguage() { return language; }
-    EShSpec getSpec() { return spec; }
-    virtual TInfoSink& getInfoSink() { return infoSink; }
+    EShLanguage getLanguage() const { return language; }
+    EShSpec getSpec() const { return spec; }
+    TSymbolTable& getSymbolTable() { return symbolTable; }
+    TInfoSink& getInfoSink() { return infoSink; }
 
     virtual bool compile(TIntermNode* root) = 0;
 
     virtual TCompiler* getAsCompiler() { return this; }
 
-    TInfoSink infoSink;
 protected:
     EShLanguage language;
     EShSpec spec;
+
+    // Built-in symbol table for the given language, spec, and resources.
+    // It is preserved from compile-to-compile.
+    TSymbolTable symbolTable;
+    // Output sink.
+    TInfoSink infoSink;
 };
 
 //

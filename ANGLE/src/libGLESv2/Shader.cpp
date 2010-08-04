@@ -34,8 +34,18 @@ Shader::Shader(Context *context, GLuint handle) : mHandle(handle), mContext(cont
 
         if (result)
         {
-            mFragmentCompiler = ShConstructCompiler(EShLangFragment, EShSpecGLES2);
-            mVertexCompiler = ShConstructCompiler(EShLangVertex, EShSpecGLES2);
+            TBuiltInResource resources;
+            resources.maxVertexAttribs = MAX_VERTEX_ATTRIBS;
+            resources.maxVertexUniformVectors = MAX_VERTEX_UNIFORM_VECTORS;
+            resources.maxVaryingVectors = MAX_VARYING_VECTORS;
+            resources.maxVertexTextureImageUnits = MAX_VERTEX_TEXTURE_IMAGE_UNITS;
+            resources.maxCombinedTextureImageUnits = MAX_COMBINED_TEXTURE_IMAGE_UNITS;
+            resources.maxTextureImageUnits = MAX_TEXTURE_IMAGE_UNITS;
+            resources.maxFragmentUniformVectors = MAX_FRAGMENT_UNIFORM_VECTORS;
+            resources.maxDrawBuffers = MAX_DRAW_BUFFERS;
+
+            mFragmentCompiler = ShConstructCompiler(EShLangFragment, EShSpecGLES2, &resources);
+            mVertexCompiler = ShConstructCompiler(EShLangVertex, EShSpecGLES2, &resources);
         }
     }
 
@@ -267,18 +277,7 @@ void Shader::compileToHLSL(void *compiler)
     delete[] mInfoLog;
     mInfoLog = NULL;
 
-    TBuiltInResource resources;
-
-    resources.maxVertexAttribs = MAX_VERTEX_ATTRIBS;
-    resources.maxVertexUniformVectors = MAX_VERTEX_UNIFORM_VECTORS;
-    resources.maxVaryingVectors = MAX_VARYING_VECTORS;
-    resources.maxVertexTextureImageUnits = MAX_VERTEX_TEXTURE_IMAGE_UNITS;
-    resources.maxCombinedTextureImageUnits = MAX_COMBINED_TEXTURE_IMAGE_UNITS;
-    resources.maxTextureImageUnits = MAX_TEXTURE_IMAGE_UNITS;
-    resources.maxFragmentUniformVectors = MAX_FRAGMENT_UNIFORM_VECTORS;
-    resources.maxDrawBuffers = MAX_DRAW_BUFFERS;
-
-    int result = ShCompile(compiler, &mSource, 1, EShOptNone, &resources, EDebugOpNone);
+    int result = ShCompile(compiler, &mSource, 1, EShOptNone, EDebugOpNone);
     const char *obj = ShGetObjectCode(compiler);
     const char *info = ShGetInfoLog(compiler);
 

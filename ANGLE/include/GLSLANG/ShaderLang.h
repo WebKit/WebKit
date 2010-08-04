@@ -70,7 +70,7 @@ typedef void* ShHandle;
 //
 // Driver calls these to create and destroy compiler objects.
 //
-ShHandle ShConstructCompiler(EShLanguage, EShSpec);  // one per shader
+ShHandle ShConstructCompiler(EShLanguage, EShSpec, const TBuiltInResource*);
 void ShDestruct(ShHandle);
 
 //
@@ -85,7 +85,6 @@ int ShCompile(
     const char* const shaderStrings[],
     const int numStrings,
     const EShOptimizationLevel,
-    const TBuiltInResource *resources,
     int debugOptions
     );
 
