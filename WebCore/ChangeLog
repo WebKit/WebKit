@@ -1,3 +1,9 @@
+2010-08-04  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fix. Enclose PlatformStrategy methods in USE(PLATFORM_STRATEGIES).
+        
+        * platform/LocalizedStrings.cpp:
+
 2010-08-04  François Sausset  <sausset@gmail.com>
 
         Reviewed by Kenneth Rohde Christiansen.

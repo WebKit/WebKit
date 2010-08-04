@@ -33,6 +33,8 @@
 
 namespace WebCore {
 
+#if USE(PLATFORM_STRATEGIES)
+
 String inputElementAltText()
 {
     return platformStrategies()->localizationStrategy()->inputElementAltText();
@@ -561,5 +563,7 @@ String validationMessageStepMismatchText()
 {
     return platformStrategies()->localizationStrategy()->validationMessageStepMismatchText();
 }
+
+#endif // USE(PLATFORM_STRATEGIES)
 
 } // namespace WebCore
