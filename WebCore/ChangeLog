@@ -1,3 +1,18 @@
+2010-08-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        System color changes are not applied properly
+        https://bugs.webkit.org/show_bug.cgi?id=43468
+
+        * manual-tests/system-color-change.html: Added.
+
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::platformColorsDidChange): Added a call to
+        Page::setNeedsReapplyStyles, so all frames of all pages will recompute
+        in case they use system colors. It's rare for these colors to change,
+        so OK to do a little extra style computation.
+
 2010-08-04  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Revert changed license in SVGFEOffsetElement.h, thanks Gabor for noticing.
