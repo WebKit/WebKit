@@ -1,3 +1,14 @@
+2010-08-03  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed.  Skipping test which fails on some Leopard installs.
+
+        http/tests/media/video-seekable-stall.html fails on the Leopard Commit Queue Machine
+        https://bugs.webkit.org/show_bug.cgi?id=35271
+
+        Skip this failing test as the most expedient solution.
+
+        * platform/mac-leopard/Skipped:
+
 2010-08-03  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Removed duplicate expectations from the DRT overrides.
