@@ -538,8 +538,7 @@ module html {
         WebGLActiveInfo getActiveUniform(in WebGLProgram program, in unsigned long index)
             raises (DOMException);
 
-        // Array getAttachedShaders(GLuint program) raises (DOMException);
-        [Custom] void getAttachedShaders(GLuint program)
+        [Custom] void getAttachedShaders(in WebGLProgram program)
             raises (DOMException);
 
         int          getAttribLocation(in WebGLProgram program, in DOMString name);

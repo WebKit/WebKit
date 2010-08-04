@@ -1,3 +1,12 @@
+2010-08-04  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Adam Barth.
+
+        getAttachedShaders takes wrong parameter type in WebGLRenderingContext.idl
+        https://bugs.webkit.org/show_bug.cgi?id=43517
+
+        * html/canvas/WebGLRenderingContext.idl: Fix the wrong parameter type in getAttachedShaders().
+
 2010-08-04  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Dimitri Glazkov.
