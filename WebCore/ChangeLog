@@ -1,3 +1,27 @@
+2010-08-03  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Darin Adler.
+
+        HTML5 parser may cause onload not to fire
+        https://bugs.webkit.org/show_bug.cgi?id=43423
+
+        If a complex page causes the HTML parser to yield,
+        then when parsing continues again and eventually
+        finishes, we are missing a call to endIfDelayed(). This
+        results in onload never being called.
+
+        Not for lack of trying, but it seems almost
+        impossible to write a reliable test for this bug,
+        due to the highly timing-dependent nature of the
+        bug. The link above contains further discussion and
+        attempts at writing a test.
+        
+        * html/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::resumeParsingAfterYield):
+        Add a call to endIfDelayed() after pumping the tokenizer
+        post the parser yielding to ensure that the parsing step
+        is completed properly and the onload event fires.
+
 2010-08-04  Dirk Schulze  <krit@webkit.org>
 
         Unreviewed sort of XCode project file.

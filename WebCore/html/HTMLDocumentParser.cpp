@@ -138,6 +138,7 @@ void HTMLDocumentParser::resumeParsingAfterYield()
     // We should never be here unless we can pump immediately.  Call pumpTokenizer()
     // directly so that ASSERTS will fire if we're wrong.
     pumpTokenizer(AllowYield);
+    endIfDelayed();
 }
 
 bool HTMLDocumentParser::runScriptsForPausedTreeBuilder()
