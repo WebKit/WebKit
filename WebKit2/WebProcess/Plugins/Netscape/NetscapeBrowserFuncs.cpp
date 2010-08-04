@@ -462,6 +462,8 @@ static NPError NPN_SetValue(NPP npp, NPPVariable variable, void *value)
         }
 #endif
 
+        case NPPVpluginWindowBool:
+        case NPPVpluginTransparentBool:
         default:
             notImplemented();
             return NPERR_GENERIC_ERROR;

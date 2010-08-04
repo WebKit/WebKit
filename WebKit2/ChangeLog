@@ -2,6 +2,14 @@
 
         Windows build fix
 
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::NPN_SetValue): Added some case statements that are compiled
+        on Windows to avoid a warning about having default but not cases.
+
+2010-08-04  Adam Roben  <aroben@apple.com>
+
+        Windows build fix
+
         * win/WebKit2.vcproj: Added NetscapeBrowserFuncs.
 
 2010-08-04  Adam Roben  <aroben@apple.com>
