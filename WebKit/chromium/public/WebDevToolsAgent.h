@@ -51,6 +51,7 @@ public:
 
     virtual void attach() = 0;
     virtual void detach() = 0;
+    virtual void frontendLoaded() = 0;
 
     virtual void didNavigate() = 0;
 
