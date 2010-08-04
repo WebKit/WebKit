@@ -102,9 +102,7 @@ namespace WebCore {
 
         void profilerWasEnabled();
         void profilerWasDisabled();
-        void addProfileHeader(const ScriptValue& profile);
         void setRecordingProfile(bool isProfiling);
-        void didGetProfileHeaders(long callId, const ScriptArray& headers);
         void didGetProfile(long callId, const ScriptValue& profile);
 #endif
 

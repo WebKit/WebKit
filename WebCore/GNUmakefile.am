@@ -776,6 +776,7 @@ webcore_sources += \
 	WebCore/bindings/js/ScriptInstance.h \
 	WebCore/bindings/js/ScriptObject.cpp \
 	WebCore/bindings/js/ScriptObject.h \
+	WebCore/bindings/js/ScriptProfile.cpp \
 	WebCore/bindings/js/ScriptProfile.h \
 	WebCore/bindings/js/ScriptProfileNode.h \
 	WebCore/bindings/js/ScriptProfiler.cpp \

@@ -108,14 +108,6 @@
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 #include "ScriptDebugServer.h"
-#if USE(JSC)
-#include <runtime/JSLock.h>
-#include <runtime/UString.h>
-#include "JSScriptProfile.h"
-#else
-#include "ScriptScope.h"
-#include "V8ScriptProfile.h"
-#endif
 #endif
 
 using namespace std;
@@ -1498,11 +1490,8 @@ void InspectorController::addProfile(PassRefPtr<ScriptProfile> prpProfile, unsig
     RefPtr<ScriptProfile> profile = prpProfile;
     m_profiles.add(profile->uid(), profile);
 
-    if (m_frontend) {
-#if USE(JSC)
-        JSC::JSLock lock(JSC::SilenceAssertionsOnly);
-#endif
-        m_frontend->addProfileHeader(createProfileHeader(*profile));
+    if (m_remoteFrontend) {
+        m_remoteFrontend->addProfileHeader(createProfileHeader(*profile));
     }
 
     addProfileFinishedMessageToConsole(profile, lineNumber, sourceURL);
@@ -1512,11 +1501,7 @@ void InspectorController::addProfileFinishedMessageToConsole(PassRefPtr<ScriptPr
 {
     RefPtr<ScriptProfile> profile = prpProfile;
 
-#if USE(JSC)
-    String title = ustringToString(profile->title());
-#else
     String title = profile->title();
-#endif
     String message = String::format("Profile \"webkit-profile://%s/%s#%d\" finished.", CPUProfileType, encodeWithURLEscapeSequences(title).utf8().data(), profile->uid());
     addMessageToConsole(JSMessageSource, LogMessageType, LogMessageLevel, message, lineNumber, sourceURL);
 }
@@ -1548,14 +1533,13 @@ void InspectorController::clearProfiles()
 
 void InspectorController::getProfileHeaders(long callId)
 {
-    if (!m_frontend)
+    if (!m_remoteFrontend)
         return;
-    ScriptArray result = m_frontend->newScriptArray();
+    RefPtr<InspectorArray> result = InspectorArray::create();
     ProfilesMap::iterator profilesEnd = m_profiles.end();
-    int i = 0;
     for (ProfilesMap::iterator it = m_profiles.begin(); it != profilesEnd; ++it)
-        result.set(i++, createProfileHeader(*it->second));
-    m_frontend->didGetProfileHeaders(callId, result);
+        result->push(createProfileHeader(*it->second));
+    m_remoteFrontend->didGetProfileHeaders(callId, result);
 }
 
 void InspectorController::getProfile(long callId, unsigned uid)
@@ -1564,27 +1548,18 @@ void InspectorController::getProfile(long callId, unsigned uid)
         return;
     ProfilesMap::iterator it = m_profiles.find(uid);
     if (it != m_profiles.end()) {
-#if USE(JSC)
-        m_frontend->didGetProfile(callId, toJS(m_frontend->scriptState(), it->second.get()));
-#else
-        ScriptScope scope(m_frontend->scriptState());
-        m_frontend->didGetProfile(callId, toV8(it->second.get()));
-#endif
+        RefPtr<InspectorObject> profileObject = createProfileHeader(*it->second);
+        profileObject->set("head", it->second->buildInspectorObjectForHead());
+        m_remoteFrontend->didGetProfile(callId, profileObject);
     }
 }
 
-ScriptObject InspectorController::createProfileHeader(const ScriptProfile& profile)
+PassRefPtr<InspectorObject> InspectorController::createProfileHeader(const ScriptProfile& profile)
 {
-#if USE(JSC)
-    String title = ustringToString(profile.title());
-#else
-    String title = profile.title();
-#endif
-
-    ScriptObject header = m_frontend->newScriptObject();
-    header.set("title", title);
-    header.set("uid", profile.uid());
-    header.set("typeId", String(CPUProfileType));
+    RefPtr<InspectorObject> header = InspectorObject::create();
+    header->setString("title", profile.title());
+    header->setNumber("uid", profile.uid());
+    header->setString("typeId", String(CPUProfileType));
     return header;
 }
 

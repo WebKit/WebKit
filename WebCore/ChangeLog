@@ -1,3 +1,36 @@
+2010-08-04  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: serialize CPU profiles to InspectorValues instead of
+        using JS wrappers.
+        https://bugs.webkit.org/show_bug.cgi?id=43475
+
+        * Android.jscbindings.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/ScriptProfile.h:
+        * bindings/js/ScriptProfiler.cpp:
+        (WebCore::ScriptProfiler::stop):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/v8/ScriptProfile.cpp:
+        (WebCore::buildInspectorObjectFor):
+        (WebCore::ScriptProfile::buildInspectorObjectForHead):
+        * bindings/v8/ScriptProfile.h:
+        * inspector/Inspector.idl:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::addProfile):
+        (WebCore::InspectorController::addProfileFinishedMessageToConsole):
+        (WebCore::InspectorController::getProfileHeaders):
+        (WebCore::InspectorController::getProfile):
+        (WebCore::InspectorController::createProfileHeader):
+        * inspector/InspectorController.h:
+        * inspector/InspectorFrontend.cpp:
+        * inspector/InspectorFrontend.h:
+
 2010-08-04  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Simon Hausmann.

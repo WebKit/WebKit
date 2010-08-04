@@ -299,7 +299,7 @@ sub AddIncludesForSVGAnimatedType
 sub IsScriptProfileType
 {
     my $type = shift;
-    return 1 if ($type eq "ScriptProfile" or $type eq "ScriptProfileNode");
+    return 1 if ($type eq "ScriptProfileNode");
     return 0;
 }
 

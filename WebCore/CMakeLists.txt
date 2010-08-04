@@ -684,6 +684,7 @@ SET(WebCore_SOURCES
     bindings/js/ScriptFunctionCall.cpp
     bindings/js/ScriptGCEvent.cpp
     bindings/js/ScriptObject.cpp
+    bindings/js/ScriptProfile.cpp
     bindings/js/ScriptProfiler.cpp
     bindings/js/ScriptState.cpp
     bindings/js/ScriptValue.cpp

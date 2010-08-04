@@ -48248,6 +48248,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\ScriptProfile.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\ScriptSourceCode.h"
 					>
 				</File>

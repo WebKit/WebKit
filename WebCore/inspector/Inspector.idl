@@ -49,6 +49,7 @@ module core {
 #if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
         [notify] void pausedScript(out Value callFrames);
         [notify] void resumedScript();
+        [notify] void addProfileHeader(out Object header);
 #endif
 
         [handler=Controller] void storeLastActivePanel(in String panelName);
@@ -97,8 +98,8 @@ module core {
         [handler=Controller] void startProfiling();
         [handler=Controller] void stopProfiling();
 
-        [handler=Controller] void getProfileHeaders(in long callId);
-        [handler=Controller] void getProfile(in long callId, in unsigned long uid);
+        [handler=Controller] void getProfileHeaders(in long callId, out Array headers);
+        [handler=Controller] void getProfile(in long callId, in unsigned long uid, out Object profile);
 
         [handler=Controller] void removeProfile(in unsigned long uid);
         [handler=Controller] void clearProfiles();

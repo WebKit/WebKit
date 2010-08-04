@@ -310,28 +310,11 @@ void InspectorFrontend::profilerWasDisabled()
     callSimpleFunction("profilerWasDisabled");
 }
 
-void InspectorFrontend::addProfileHeader(const ScriptValue& profile)
-{
-    ScriptFunctionCall function(m_webInspector, "dispatch"); 
-    function.appendArgument("addProfileHeader");
-    function.appendArgument(profile);
-    function.call();
-}
-
 void InspectorFrontend::setRecordingProfile(bool isProfiling)
 {
     ScriptFunctionCall function(m_webInspector, "dispatch"); 
     function.appendArgument("setRecordingProfile");
     function.appendArgument(isProfiling);
-    function.call();
-}
-
-void InspectorFrontend::didGetProfileHeaders(long callId, const ScriptArray& headers)
-{
-    ScriptFunctionCall function(m_webInspector, "dispatch"); 
-    function.appendArgument("didGetProfileHeaders");
-    function.appendArgument(callId);
-    function.appendArgument(headers);
     function.call();
 }
 

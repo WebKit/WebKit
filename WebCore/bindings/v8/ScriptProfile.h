@@ -40,6 +40,8 @@ class CpuProfile;
 
 namespace WebCore {
 
+class InspectorObject;
+
 class ScriptProfile : public RefCounted<ScriptProfile> {
 public:
     static PassRefPtr<ScriptProfile> create(const v8::CpuProfile* profile)
@@ -52,12 +54,13 @@ public:
     unsigned int uid() const;
     PassRefPtr<ScriptProfileNode> head() const;
 
-protected:
+    PassRefPtr<InspectorObject> buildInspectorObjectForHead() const;
+
+private:
     ScriptProfile(const v8::CpuProfile* profile)
         : m_profile(profile)
     {}
 
-private:
     const v8::CpuProfile* m_profile;
 };
 
