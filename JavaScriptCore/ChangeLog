@@ -1,3 +1,18 @@
+2010-08-03  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=43314.  The prior code
+        was using the wrong "length" value to move array contents when adding
+        space to the beginning of an array for an unshift() or similar
+        operation.  Instead of using m_vectorLength, the length of the
+        allocated JSValue array, the code was using m_length, the declared
+        length of the array.  These two values do not need to match.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::increaseVectorPrefixLength):
+
 2010-08-03  Chao-ying Fu  <fu@mips.com>
 
         Reviewed by Gavin Barraclough.

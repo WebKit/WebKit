@@ -631,7 +631,7 @@ bool JSArray::increaseVectorPrefixLength(unsigned newLength)
     newStorage = reinterpret_cast<ArrayStorage*>(static_cast<char*>(newBaseStorage) + m_indexBias * sizeof(JSValue));
 
     memcpy(newStorage, storage, storageSize(0));
-    memcpy(&newStorage->m_vector[newLength - m_vectorLength], &storage->m_vector[0], storage->m_length * sizeof(JSValue));
+    memcpy(&newStorage->m_vector[newLength - m_vectorLength], &storage->m_vector[0], vectorLength * sizeof(JSValue));
     
     newStorage->m_allocBase = newBaseStorage;
     m_vectorLength = newLength;
