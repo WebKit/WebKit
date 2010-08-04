@@ -1,3 +1,9 @@
+2010-08-04  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Revert changed license in SVGFEOffsetElement.h, thanks Gabor for noticing.
+
+        * svg/SVGFEOffsetElement.h:
+
 2010-08-03  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Sam Weinig.
