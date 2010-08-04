@@ -871,6 +871,14 @@
 					Name="Netscape"
 					>
 					<File
+						RelativePath="..\WebProcess\Plugins\Netscape\NetscapeBrowserFuncs.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\WebProcess\Plugins\Netscape\NetscapeBrowserFuncs.h"
+						>
+					</File>
+					<File
 						RelativePath="..\WebProcess\Plugins\Netscape\NetscapePlugin.cpp"
 						>
 					</File>

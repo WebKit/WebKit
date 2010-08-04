@@ -2,6 +2,12 @@
 
         Windows build fix
 
+        * win/WebKit2.vcproj: Added NetscapeBrowserFuncs.
+
+2010-08-04  Adam Roben  <aroben@apple.com>
+
+        Windows build fix
+
         The functions in NetscapePluginModuleWin.cpp have been moved to
         NetscapePluginModule.cpp.
 
