@@ -39,8 +39,7 @@ using namespace WebCore;
 
 + (void)setMaximumSize:(long long)size
 {
-    cacheStorage().empty();
-    cacheStorage().vacuumDatabaseFile();
+    [WebApplicationCache deleteAllApplicationCaches];
     cacheStorage().setMaximumSize(size);
 }
 
@@ -52,6 +51,12 @@ using namespace WebCore;
 + (void)setDefaultOriginQuota:(long long)size
 {
     cacheStorage().setDefaultOriginQuota(size);
+}
+
++ (void)deleteAllApplicationCaches
+{
+    cacheStorage().empty();
+    cacheStorage().vacuumDatabaseFile();
 }
 
 @end

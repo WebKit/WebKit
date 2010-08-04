@@ -1,3 +1,19 @@
+2010-08-03  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by David Kilzer.
+
+        Limit ApplicationCache Total and Per-Origin Storage Capacity (Quotas)
+        https://bugs.webkit.org/show_bug.cgi?id=40627
+
+        Part 6 - LayoutTest and Cleanup
+
+        Test: http/tests/appcache/origin-quota.html
+
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::scheduleReachedOriginQuotaCallback): made synchronous, as asynchronously the cache group was deleted too soon.
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::storeUpdatedQuotaForOrigin): all storing operations should force the database to be created if needed.
+
 2010-08-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.

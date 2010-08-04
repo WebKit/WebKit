@@ -124,6 +124,11 @@ bool LayoutTestController::callShouldCloseOnWebView()
     return [[mainFrame webView] shouldClose];
 }
 
+void LayoutTestController::clearAllApplicationCaches()
+{
+    [WebApplicationCache deleteAllApplicationCaches];
+}
+
 void LayoutTestController::clearAllDatabases()
 {
     [[WebDatabaseManager sharedWebDatabaseManager] deleteAllDatabases];
@@ -292,6 +297,13 @@ void LayoutTestController::setAlwaysAcceptCookies(bool alwaysAcceptCookies)
 void LayoutTestController::setAppCacheMaximumSize(unsigned long long size)
 {
     [WebApplicationCache setMaximumSize:size];
+}
+
+void LayoutTestController::setApplicationCacheOriginQuota(unsigned long long quota)
+{
+    WebSecurityOrigin *origin = [[WebSecurityOrigin alloc] initWithURL:[NSURL URLWithString:@"http://127.0.0.1:8000"]];
+    [[origin applicationCacheQuotaManager] setQuota:quota];
+    [origin release];
 }
 
 void LayoutTestController::setAuthorAndUserStylesEnabled(bool flag)

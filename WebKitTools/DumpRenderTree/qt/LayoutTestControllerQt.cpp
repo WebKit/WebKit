@@ -494,6 +494,16 @@ void LayoutTestController::dispatchPendingLoadRequests()
     // FIXME: Implement for testing fix for 6727495
 }
 
+void LayoutTestController::clearAllApplicationCaches()
+{
+    // FIXME: implement to support Application Cache quotas.
+}
+
+void LayoutTestController::setApplicationCacheOriginQuota(unsigned long long quota)
+{
+    // FIXME: implement to support Application Cache quotas.
+}
+
 void LayoutTestController::setDatabaseQuota(int size)
 {
     if (!m_topLoadingFrame)

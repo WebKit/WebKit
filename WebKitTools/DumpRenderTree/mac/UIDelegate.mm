@@ -33,6 +33,7 @@
 #import "DumpRenderTreeDraggingInfo.h"
 #import "EventSendingController.h"
 #import "LayoutTestController.h"
+#import <WebKit/WebApplicationCache.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebQuotaManager.h>
@@ -156,12 +157,24 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
 
 - (void)webView:(WebView *)sender frame:(WebFrame *)frame exceededDatabaseQuotaForSecurityOrigin:(WebSecurityOrigin *)origin database:(NSString *)databaseIdentifier
 {
-    if (!done && gLayoutTestController->dumpDatabaseCallbacks())
+    if (!done && gLayoutTestController->dumpDatabaseCallbacks()) {
         printf("UI DELEGATE DATABASE CALLBACK: exceededDatabaseQuotaForSecurityOrigin:{%s, %s, %i} database:%s\n", [[origin protocol] UTF8String], [[origin host] UTF8String], 
             [origin port], [databaseIdentifier UTF8String]);
+    }
 
     static const unsigned long long defaultQuota = 5 * 1024 * 1024;    
     [[origin databaseQuotaManager] setQuota:defaultQuota];
+}
+
+- (void)webView:(WebView *)sender exceededApplicationCacheOriginQuotaForSecurityOrigin:(WebSecurityOrigin *)origin
+{
+    if (!done && gLayoutTestController->dumpApplicationCacheDelegateCallbacks()) {
+        printf("UI DELEGATE APPLICATION CACHE CALLBACK: exceededApplicationCacheOriginQuotaForSecurityOrigin:{%s, %s, %i}\n",
+            [[origin protocol] UTF8String], [[origin host] UTF8String], [origin port]);
+    }
+
+    static const unsigned long long defaultOriginQuota = [WebApplicationCache defaultOriginQuota];
+    [[origin applicationCacheQuotaManager] setQuota:defaultOriginQuota];
 }
 
 - (void)webView:(WebView *)sender setStatusText:(NSString *)text

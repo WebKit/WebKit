@@ -1,0 +1,9 @@
+UI DELEGATE APPLICATION CACHE CALLBACK: exceededApplicationCacheOriginQuotaForSecurityOrigin:{http, 127.0.0.1, 8000}
+This test checks that per-origin application cache quotas are enforced.
+
+This test sets the quota for the origin to 20kb, and attempts to fill it up with 2 iframes that are 13kb each. The application cache download process should fail on the 2nd iframe and the UI Delegate should be informed of the exceeded quota. Increasing the size to 40kb. A 3rd iframe is added, which should succeed.
+
+PASS - cached iframe-1
+PASS - error caching iframe-2 as expected
+PASS - cached iframe-3
+

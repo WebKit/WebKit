@@ -250,6 +250,11 @@ public:
     void addOriginAccessWhitelistEntry(const CppArgumentList&, CppVariant*);
     void removeOriginAccessWhitelistEntry(const CppArgumentList&, CppVariant*);
 
+    // Clears all Application Caches.
+    void clearAllApplicationCaches(const CppArgumentList&, CppVariant*);
+    // Sets the Application Quota for the localhost origin.
+    void setApplicationCacheOriginQuota(const CppArgumentList&, CppVariant*);
+
     // Clears all databases.
     void clearAllDatabases(const CppArgumentList&, CppVariant*);
     // Sets the default quota for all origins

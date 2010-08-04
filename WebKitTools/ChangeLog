@@ -5,6 +5,58 @@
         Limit ApplicationCache Total and Per-Origin Storage Capacity (Quotas)
         https://bugs.webkit.org/show_bug.cgi?id=40627
 
+        Part 6 - LayoutTest and Cleanup
+
+          Allow tests to delete application caches and set application cache
+          origin quotas, so they can be tested.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (dumpApplicationCacheDelegateCallbacksCallback): JavaScript callback, delegates to the controller.
+        (clearAllApplicationCachesCallback): should delete all application caches.
+        (setApplicationCacheOriginQuotaCallback): should set the origin quota for the localhost tests.
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        (LayoutTestController::dumpApplicationCacheDelegateCallbacks): accessor to see if application cache callbacks should be output.
+        (LayoutTestController::setDumpApplicationCacheDelegateCallbacks): enable or disable debug output when the application cache quota is reached.
+
+          Mac implementation.
+
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::clearAllApplicationCaches): delete application caches.
+        (LayoutTestController::setApplicationCacheOriginQuota): set the quota for localhost.
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate webView:frame:exceededDatabaseQuotaForSecurityOrigin:database:]): style fix.
+        (-[UIDelegate webView:exceededApplicationCacheOriginQuotaForSecurityOrigin:]): reset the quota.
+
+          Stub implementations for other platforms.
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::clearAllApplicationCaches):
+        (LayoutTestController::setApplicationCacheOriginQuota):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::clearAllApplicationCaches):
+        (LayoutTestController::setApplicationCacheOriginQuota):
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::clearAllApplicationCaches):
+        (LayoutTestController::setApplicationCacheOriginQuota):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::clearAllApplicationCaches):
+        (LayoutTestController::setApplicationCacheOriginQuota):
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::clearAllApplicationCaches):
+        (LayoutTestController::setApplicationCacheOriginQuota):
+
+2010-08-03  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by David Kilzer.
+
+        Limit ApplicationCache Total and Per-Origin Storage Capacity (Quotas)
+        https://bugs.webkit.org/show_bug.cgi?id=40627
+
         Part 5 - Refactor Quota Management in WebSecurityOrigin into Managers
 
           Change old style calls to make use of the managers.

@@ -174,6 +174,9 @@ public slots:
     void dispatchPendingLoadRequests();
     void disableImageLoading();
 
+    void clearAllApplicationCaches();
+    void setApplicationCacheOriginQuota(unsigned long long quota);
+
     void setDatabaseQuota(int size);
     void clearAllDatabases();
     void setIconDatabaseEnabled(bool enable);

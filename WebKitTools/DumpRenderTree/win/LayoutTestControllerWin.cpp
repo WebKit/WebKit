@@ -888,6 +888,16 @@ bool LayoutTestController::isCommandEnabled(JSStringRef /*name*/)
     return false;
 }
 
+void LayoutTestController::clearAllApplicationCaches()
+{
+    // FIXME: implement to support Application Cache quotas.
+}
+
+void LayoutTestController::setApplicationCacheOriginQuota(unsigned long long quota)
+{
+    // FIXME: implement to support Application Cache quotas.
+}
+
 void LayoutTestController::clearAllDatabases()
 {
     COMPtr<IWebDatabaseManager> databaseManager;

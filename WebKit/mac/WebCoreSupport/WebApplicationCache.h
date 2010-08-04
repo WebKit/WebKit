@@ -33,4 +33,6 @@
 + (long long)defaultOriginQuota;
 + (void)setDefaultOriginQuota:(long long)size;
 
++ (void)deleteAllApplicationCaches;
+
 @end

@@ -542,6 +542,16 @@ void LayoutTestController::clearPersistentUserStyleSheet()
     // FIXME: implement
 }
 
+void LayoutTestController::clearAllApplicationCaches()
+{
+    // FIXME: implement to support Application Cache quotas.
+}
+
+void LayoutTestController::setApplicationCacheOriginQuota(unsigned long long quota)
+{
+    // FIXME: implement to support Application Cache quotas.
+}
+
 void LayoutTestController::clearAllDatabases()
 {
     webkit_remove_all_web_databases();
