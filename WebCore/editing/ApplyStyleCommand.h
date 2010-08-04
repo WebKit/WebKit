@@ -82,11 +82,9 @@ private:
     bool nodeFullySelected(Node*, const Position& start, const Position& end) const;
     bool nodeFullyUnselected(Node*, const Position& start, const Position& end) const;
     PassRefPtr<CSSMutableStyleDeclaration> extractTextDecorationStyle(Node*);
-    PassRefPtr<CSSMutableStyleDeclaration> extractAndNegateTextDecorationStyle(Node*);
     void applyTextDecorationStyle(Node*, CSSMutableStyleDeclaration *style);
-    void pushDownTextDecorationStyleAroundNode(Node*, bool forceNegate);
-    void pushDownTextDecorationStyleAtBoundaries(const Position& start, const Position& end);
-    
+    void pushDownTextDecorationStyleAroundNode(Node*);
+
     // style-application helpers
     void applyBlockStyle(CSSMutableStyleDeclaration*);
     void applyRelativeFontStyleChange(CSSMutableStyleDeclaration*);

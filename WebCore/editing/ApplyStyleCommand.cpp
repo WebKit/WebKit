@@ -1385,31 +1385,6 @@ PassRefPtr<CSSMutableStyleDeclaration> ApplyStyleCommand::extractTextDecorationS
     return textDecorationStyle.release();
 }
 
-PassRefPtr<CSSMutableStyleDeclaration> ApplyStyleCommand::extractAndNegateTextDecorationStyle(Node* node)
-{
-    ASSERT(node);
-    ASSERT(node->isElementNode());
-    
-    // non-html elements not handled yet
-    if (!node->isHTMLElement())
-        return 0;
-
-    RefPtr<CSSComputedStyleDeclaration> nodeStyle = computedStyle(node);
-    ASSERT(nodeStyle);
-
-    int properties[1] = { CSSPropertyTextDecoration };
-    RefPtr<CSSMutableStyleDeclaration> textDecorationStyle = nodeStyle->copyPropertiesInSet(properties, 1);
-
-    RefPtr<CSSValue> property = nodeStyle->getPropertyCSSValue(CSSPropertyTextDecoration);
-    if (property && !equalIgnoringCase(property->cssText(), "none")) {
-        RefPtr<CSSMutableStyleDeclaration> newStyle = textDecorationStyle->copy();
-        newStyle->setProperty(CSSPropertyTextDecoration, "none");
-        applyTextDecorationStyle(node, newStyle.get());
-    }
-
-    return textDecorationStyle.release();
-}
-
 void ApplyStyleCommand::applyTextDecorationStyle(Node *node, CSSMutableStyleDeclaration *style)
 {
     ASSERT(node);
@@ -1443,7 +1418,7 @@ void ApplyStyleCommand::applyTextDecorationStyle(Node *node, CSSMutableStyleDecl
         surroundNodeRangeWithElement(node, node, createHTMLElement(document(), sTag));    
 }
 
-void ApplyStyleCommand::pushDownTextDecorationStyleAroundNode(Node* targetNode, bool forceNegate)
+void ApplyStyleCommand::pushDownTextDecorationStyleAroundNode(Node* targetNode)
 {
     ASSERT(targetNode);
     Node* highestAncestor = highestAncestorWithTextDecoration(targetNode);
@@ -1455,7 +1430,7 @@ void ApplyStyleCommand::pushDownTextDecorationStyleAroundNode(Node* targetNode, 
     while (current != targetNode) {
         ASSERT(current);
         ASSERT(current->contains(targetNode));
-        RefPtr<CSSMutableStyleDeclaration> decoration = forceNegate ? extractAndNegateTextDecorationStyle(current) : extractTextDecorationStyle(current);
+        RefPtr<CSSMutableStyleDeclaration> decoration = extractTextDecorationStyle(current);
 
         // The inner loop will go through children on each level
         Node* child = current->firstChild();
@@ -1476,34 +1451,6 @@ void ApplyStyleCommand::pushDownTextDecorationStyleAroundNode(Node* targetNode, 
     }
 }
 
-void ApplyStyleCommand::pushDownTextDecorationStyleAtBoundaries(const Position &start, const Position &end)
-{
-    // We need to work in two passes. First we push down any inline
-    // styles that set text decoration. Then we look for any remaining
-    // styles (caused by stylesheets) and explicitly negate text
-    // decoration while pushing down.
-
-    pushDownTextDecorationStyleAroundNode(start.node(), false);
-    updateLayout();
-    pushDownTextDecorationStyleAroundNode(start.node(), true);
-
-    pushDownTextDecorationStyleAroundNode(end.node(), false);
-    updateLayout();
-    pushDownTextDecorationStyleAroundNode(end.node(), true);
-}
-
-// FIXME: Why does this exist?  Callers should either use lastOffsetForEditing or lastOffsetInNode
-static int maxRangeOffset(Node *n)
-{
-    if (n->offsetInCharacters())
-        return n->maxCharacterOffset();
-
-    if (n->isElementNode())
-        return n->childNodeCount();
-
-    return 1;
-}
-
 void ApplyStyleCommand::removeInlineStyle(PassRefPtr<CSSMutableStyleDeclaration> style, const Position &start, const Position &end)
 {
     ASSERT(start.isNotNull());
@@ -1515,7 +1462,8 @@ void ApplyStyleCommand::removeInlineStyle(PassRefPtr<CSSMutableStyleDeclaration>
     RefPtr<CSSValue> textDecorationSpecialProperty = style->getPropertyCSSValue(CSSPropertyWebkitTextDecorationsInEffect);
 
     if (textDecorationSpecialProperty) {
-        pushDownTextDecorationStyleAtBoundaries(start.downstream(), end.upstream());
+        pushDownTextDecorationStyleAroundNode(start.downstream().node());
+        pushDownTextDecorationStyleAroundNode(end.upstream().node());
         style = style->copy();
         style->setProperty(CSSPropertyTextDecoration, textDecorationSpecialProperty->cssText(), style->getPropertyPriority(CSSPropertyWebkitTextDecorationsInEffect));
     }
@@ -1545,8 +1493,8 @@ void ApplyStyleCommand::removeInlineStyle(PassRefPtr<CSSMutableStyleDeclaration>
                     // Since elem must have been fully selected, and it is at the end
                     // of the selection, it is clear we can set the new e offset to
                     // the max range offset of prev.
-                    ASSERT(e.deprecatedEditingOffset() >= maxRangeOffset(e.node()));
-                    e = Position(prev, maxRangeOffset(prev));
+                    ASSERT(e.deprecatedEditingOffset() >= lastOffsetForEditing(e.node()));
+                    e = Position(prev, lastOffsetForEditing(prev));
                 }
             }
         }

@@ -1,5 +1,28 @@
 2010-08-03  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        extractAndNegateTextDecorationStyle and maxRangeOffset in ApplyStyleCommand.cpp should be deleted
+        https://bugs.webkit.org/show_bug.cgi?id=43437
+
+        Removed extractAndNegateTextDecorationStyle because we never push down text decorations added by CSS rules
+        as discussed on the bug 27809. Also removed pushDownTextDecorationStyleAtBoundaries because it only existed
+        to encapsulate the complexity of calling pushDownTextDecorationStyleAroundNode first with forceNegate = false
+        (calling pushDownTextDecorationStyleAroundNode) and again with forceNegate = true (calling extractAndNegateTextDecorationStyle)
+        after updating layout but neither the layout update nor the second call to pushDownTextDecorationStyleAroundNode
+        is needed after the removal of extractAndNegateTextDecorationStyle.
+
+        Also replaced maxRangeOffset by lastOffsetForEditing as FIXME (added by r48235) indicated.
+
+        No new tests added since this is a clean up.
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::pushDownTextDecorationStyleAroundNode): No longer takes forceNegate as an argument.
+        (WebCore::ApplyStyleCommand::removeInlineStyle): Calls pushDownTextDecorationStyleAroundNode directly.
+        * editing/ApplyStyleCommand.h:
+
+2010-08-03  Ryosuke Niwa  <rniwa@webkit.org>
+
         Reviewed by Ojan Vafai.
 
         Extract a function that serializes nodes from the range version of createMarkup
