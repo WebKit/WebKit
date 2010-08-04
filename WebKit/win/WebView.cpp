@@ -2111,10 +2111,8 @@ LRESULT CALLBACK WebView::WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam,
                 // child of ours (for example a plugin).
                 if (!IsChild(hWnd, reinterpret_cast<HWND>(wParam)))
                     focusController->setFocused(true);
-            } else {
+            } else
                 focusController->setFocused(true);
-                focusController->setFocusedFrame(webView->page()->mainFrame());
-            }
             break;
         }
         case WM_KILLFOCUS: {

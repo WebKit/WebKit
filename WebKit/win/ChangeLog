@@ -1,3 +1,15 @@
+2010-08-03  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=42939
+        WebEditorClient::didBeginEditing is never called in WebKit2
+
+        * WebView.cpp: (WebView::WebViewWndProc): Removed a call to setFocusedFrame. WebCore will
+        now set it to main frame, and besides, this call should have been before setFocused(), not
+        after it. My understanding is that we weren't getting all the same editing delegates on Windows,
+        so this change may make WebKit1 on Windows behave more like Mac - but I haven't tested it.
+
 2010-07-27  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Darin Fisher.

@@ -1,3 +1,12 @@
+2010-08-03  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=42939
+        WebEditorClient::didBeginEditing is never called in WebKit2
+
+        * platform/mac-wk2/Skipped: Unskipped many tests, changed categorization for others.
+
 2010-08-03  Andrew Wilson  <atwilson@chromium.org>
 
         Unreviewed chromium test expectations fixup for origin-quota.html.

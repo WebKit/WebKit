@@ -123,8 +123,11 @@ void FocusController::setFocused(bool focused)
         return;
     
     m_isFocused = focused;
-    
-    if (m_focusedFrame && m_focusedFrame->view()) {
+
+    if (!m_focusedFrame)
+        setFocusedFrame(m_page->mainFrame());
+
+    if (m_focusedFrame->view()) {
         m_focusedFrame->selection()->setFocused(focused);
         dispatchEventsOnWindowAndFocusedNode(m_focusedFrame->document(), focused);
     }
