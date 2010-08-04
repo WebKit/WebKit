@@ -1,3 +1,12 @@
+2010-08-04  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Set correct default minimumFontSize.
+
+        * Shared/WebPreferencesStore.cpp:
+        (WebKit::WebPreferencesStore::WebPreferencesStore):
+
 2010-08-03  Adam Roben  <aroben@apple.com>
 
         Turn on PLATFORM_STRATEGIES on Windows
