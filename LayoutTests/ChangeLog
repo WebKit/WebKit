@@ -11,6 +11,16 @@
 
 2010-08-03  Joseph Pecoraro  <joepeck@webkit.org>
 
+        Skipping tests for a new feature not implemented on some platforms.
+        Follow-up bugs have been filed and are listed below.
+
+        * platform/chromium/test_expectations.txt: https://bugs.webkit.org/show_bug.cgi?id=43459
+        * platform/gtk/Skipped: https://bugs.webkit.org/show_bug.cgi?id=43456
+        * platform/qt/Skipped: https://bugs.webkit.org/show_bug.cgi?id=43455
+        * platform/win/Skipped: https://bugs.webkit.org/show_bug.cgi?id=43458
+
+2010-08-03  Joseph Pecoraro  <joepeck@webkit.org>
+
         Reviewed by David Kilzer.
 
         Limit ApplicationCache Total and Per-Origin Storage Capacity (Quotas)

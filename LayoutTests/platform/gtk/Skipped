@@ -3114,6 +3114,7 @@ http/tests/appcache/foreign-iframe-main.html
 http/tests/appcache/local-content.html
 http/tests/appcache/manifest-redirect-2.html
 http/tests/appcache/offline-access.html
+http/tests/appcache/origin-quota.html
 http/tests/appcache/resource-redirect-2.html
 http/tests/cookies/double-quoted-value-with-semi-colon.html
 http/tests/history/redirect-200-refresh-2-seconds.pl

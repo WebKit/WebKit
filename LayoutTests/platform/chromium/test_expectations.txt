@@ -3167,3 +3167,6 @@ BUG50637 : fast/dom/prototype-inheritance.html = FAIL
 BUG51036 DEBUG : fast/events/special-key-events-in-input-text.html = FAIL
 
 BUG50825 LINUX : svg/custom/massive-coordinates.svg = FAIL
+
+// Application Cache Quotas
+BUG43459 : http/tests/appcache/origin-quota.html = FAIL

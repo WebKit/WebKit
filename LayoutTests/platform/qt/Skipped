@@ -28,6 +28,7 @@
 # - failing editing/input tests
 # - Failing SVG tests
 # - failing animations tests
+# - failing application cache quota tests
 # - Failing CSS Tests
 # - Failing dom/xhtml tests
 # - Failing editing/deleting tests
@@ -1595,6 +1596,11 @@ svg/hixie/mixed/007.xml
 # Needs expected results
 animations/animation-drt-api.html
 animations/animation-drt-api-multiple-keyframes.html
+
+# ============================================================================= #
+# failing application cache quota tests
+# ============================================================================= #
+http/tests/appcache/origin-quota.html
 
 # ============================================================================= #
 # Failing CSS Tests

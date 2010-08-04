@@ -953,3 +953,7 @@ fast/dom/webtiming.html
 fast/dom/webtiming-navigate-within-document.html
 http/tests/misc/webtiming-one-redirect.php
 http/tests/misc/webtiming-two-redirects.php
+
+# Application Cache Quotas
+# https://bugs.webkit.org/show_bug.cgi?id=43458
+http/tests/appcache/origin-quota.html
