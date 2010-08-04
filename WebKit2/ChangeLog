@@ -1,3 +1,9 @@
+2010-08-04  Ada Chan  <adachan@apple.com>
+
+        Windows build fix        
+
+        * win/WebKit2Generated.make:
+
 2010-08-04  John Sullivan  <sullivan@apple.com>
 
         Build fix, rubber-stamped by Brady Eidson.
