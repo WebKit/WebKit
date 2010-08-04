@@ -23,45 +23,44 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NetscapePluginModule_h
-#define NetscapePluginModule_h
+#ifndef Module_h
+#define Module_h
 
-#include "Module.h"
 #include <WebCore/PlatformString.h>
-#include <WebCore/npfunctions.h>
-#include <wtf/RefCounted.h>
+#include <wtf/Noncopyable.h>
+
+#if PLATFORM(MAC)
+#include <wtf/RetainPtr.h>
+#endif
 
 namespace WebKit {
 
-class NetscapePluginModule : public RefCounted<NetscapePluginModule> {
+class Module : public Noncopyable {
 public:
-    static PassRefPtr<NetscapePluginModule> getOrCreate(const WebCore::String& pluginPath);
-    ~NetscapePluginModule();
+    Module(const WebCore::String& path);
+    ~Module();
 
-    const NPPluginFuncs& pluginFuncs() const { return m_pluginFuncs; }
-
-    void pluginCreated();
-    void pluginDestroyed();
-
-private:
-    explicit NetscapePluginModule(const WebCore::String& pluginPath);
-
-    bool tryLoad();
     bool load();
+    // Note: On Mac this leaks the CFBundle to avoid crashes when a bundle is unloaded and there are
+    // live Objective-C objects whose methods come from that bundle.
     void unload();
 
-    void shutdown();
+    template<typename FunctionType> FunctionType functionPointer(const char* functionName) const;
 
-    WebCore::String m_pluginPath;
-    bool m_isInitialized;
-    unsigned m_pluginCount;
+private:
+    void* platformFunctionPointer(const char* functionName) const;
 
-    NPP_ShutdownProcPtr m_shutdownProcPtr;
-    NPPluginFuncs m_pluginFuncs;
-
-    OwnPtr<Module> m_module;
+    WebCore::String m_path;
+#if PLATFORM(MAC)
+    RetainPtr<CFBundleRef> m_bundle;
+#endif
 };
-    
-} // namespace WebKit
 
-#endif // NetscapePluginModule_h
+template<typename FunctionType> FunctionType Module::functionPointer(const char* functionName) const
+{
+    return reinterpret_cast<FunctionType>(platformFunctionPointer(functionName));
+}
+
+}
+
+#endif

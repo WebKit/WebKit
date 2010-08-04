@@ -23,45 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NetscapePluginModule_h
-#define NetscapePluginModule_h
-
 #include "Module.h"
-#include <WebCore/PlatformString.h>
-#include <WebCore/npfunctions.h>
-#include <wtf/RefCounted.h>
+
+#include "NotImplemented.h"
 
 namespace WebKit {
 
-class NetscapePluginModule : public RefCounted<NetscapePluginModule> {
-public:
-    static PassRefPtr<NetscapePluginModule> getOrCreate(const WebCore::String& pluginPath);
-    ~NetscapePluginModule();
+bool Module::load()
+{
+    notImplemented();
+    return false;
+}
 
-    const NPPluginFuncs& pluginFuncs() const { return m_pluginFuncs; }
+void Module::unload()
+{
+    notImplemented();
+}
 
-    void pluginCreated();
-    void pluginDestroyed();
+void* Module::platformFunctionPointer(const char* functionName) const
+{
+    notImplemented();
+    return 0;
+}
 
-private:
-    explicit NetscapePluginModule(const WebCore::String& pluginPath);
-
-    bool tryLoad();
-    bool load();
-    void unload();
-
-    void shutdown();
-
-    WebCore::String m_pluginPath;
-    bool m_isInitialized;
-    unsigned m_pluginCount;
-
-    NPP_ShutdownProcPtr m_shutdownProcPtr;
-    NPPluginFuncs m_pluginFuncs;
-
-    OwnPtr<Module> m_module;
-};
-    
-} // namespace WebKit
-
-#endif // NetscapePluginModule_h
+}

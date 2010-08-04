@@ -25,6 +25,10 @@
 
 #include "NetscapePluginModule.h"
 
+#include "Module.h"
+#include "NetscapeBrowserFuncs.h"
+#include <wtf/PassOwnPtr.h>
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -107,6 +111,40 @@ bool NetscapePluginModule::load()
     initializedNetscapePluginModules().append(this);
 
     return true;
+}
+
+bool NetscapePluginModule::tryLoad()
+{
+    m_module = adoptPtr(new Module(m_pluginPath));
+    if (!m_module->load())
+        return false;
+
+    NP_InitializeFuncPtr initializeFuncPtr = m_module->functionPointer<NP_InitializeFuncPtr>("NP_Initialize");
+    if (!initializeFuncPtr)
+        return false;
+
+    NP_GetEntryPointsFuncPtr getEntryPointsFuncPtr = m_module->functionPointer<NP_GetEntryPointsFuncPtr>("NP_GetEntryPoints");
+    if (!getEntryPointsFuncPtr)
+        return false;
+
+    m_shutdownProcPtr = m_module->functionPointer<NPP_ShutdownProcPtr>("NP_Shutdown");
+    if (!m_shutdownProcPtr)
+        return false;
+
+    if (initializeFuncPtr(netscapeBrowserFuncs()) != NPERR_NO_ERROR)
+        return false;
+
+    m_pluginFuncs.size = sizeof(NPPluginFuncs);
+    m_pluginFuncs.version = (NP_VERSION_MAJOR << 8) | NP_VERSION_MINOR;
+    if (getEntryPointsFuncPtr(&m_pluginFuncs) != NPERR_NO_ERROR)
+        return false;
+
+    return true;
+}
+
+void NetscapePluginModule::unload()
+{
+    m_module = 0;
 }
 
 } // namespace WebKit

@@ -1,3 +1,56 @@
+2010-08-04  Adam Roben  <aroben@apple.com>
+
+        Move bundle-loading code from NetscapePluginModule to a new Module
+        class
+
+        This allows more NetscapePluginModule code to be cross-platform.
+
+        Fixes <http://webkit.org/b/43497> NetscapePluginModule::try/unload
+        should be cross-platform
+
+        Reviewed by Anders Carlsson.
+
+        * Platform/Module.cpp: Added.
+        (WebKit::Module::Module): Store our path.
+        (WebKit::Module::~Module): Unload our native module.
+
+        * Platform/Module.h: Added.
+        (WebKit::Module::leakBundle): Does what it says.
+        (WebKit::Module::functionPointer): Returns a pointer to the named
+        function, with the right type.
+
+        * Platform/mac/ModuleMac.mm: Added.
+        (WebKit::Module::load): Code was moved here from
+        NetscapePluginModule::tryLoad.
+        (WebKit::Module::unload): Just clears our bundle.
+        (WebKit::Module::platformFunctionPointer): Code was moved here from
+        NetscapePluginModuleMac.cpp.
+
+        * Platform/qt/ModuleQt.cpp: Added.
+        (WebKit::Module::load):
+        (WebKit::Module::unload):
+        (WebKit::Module::platformFunctionPointer):
+        * Platform/win/ModuleWin.cpp: Added.
+        (WebKit::Module::load):
+        (WebKit::Module::unload):
+        (WebKit::Module::platformFunctionPointer):
+        Just stubbed out these functions.
+
+        * WebKit2.xcodeproj/project.pbxproj: Added Module.
+
+        * WebProcess/Plugins/Netscape/NetscapePluginModule.cpp:
+        (WebKit::NetscapePluginModule::tryLoad):
+        (WebKit::NetscapePluginModule::unload):
+        Moved here from NetscapePluginModuleMac.cpp. Now uses the
+        cross-platform m_module member.
+
+        * WebProcess/Plugins/Netscape/NetscapePluginModule.h: Replaced
+        m_bundle with m_module.
+
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginModuleMac.cpp: Removed.
+
+        * win/WebKit2.vcproj: Added Module.
+
 2010-08-04  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.

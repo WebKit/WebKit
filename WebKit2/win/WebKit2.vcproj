@@ -1329,6 +1329,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Platform\Module.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Platform\Module.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Platform\RunLoop.cpp"
 				>
 			</File>
@@ -1351,6 +1359,10 @@
 			<Filter
 				Name="win"
 				>
+				<File
+					RelativePath="..\Platform\win\ModuleWin.cpp"
+					>
+				</File>
 				<File
 					RelativePath="..\Platform\win\RunLoopWin.cpp"
 					>

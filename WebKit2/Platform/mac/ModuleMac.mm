@@ -23,45 +23,40 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NetscapePluginModule_h
-#define NetscapePluginModule_h
-
 #include "Module.h"
-#include <WebCore/PlatformString.h>
-#include <WebCore/npfunctions.h>
-#include <wtf/RefCounted.h>
 
 namespace WebKit {
 
-class NetscapePluginModule : public RefCounted<NetscapePluginModule> {
-public:
-    static PassRefPtr<NetscapePluginModule> getOrCreate(const WebCore::String& pluginPath);
-    ~NetscapePluginModule();
+bool Module::load()
+{
+    RetainPtr<CFStringRef> bundlePath(AdoptCF, m_path.createCFString());
+    RetainPtr<CFURLRef> bundleURL(AdoptCF, CFURLCreateWithFileSystemPath(kCFAllocatorDefault, bundlePath.get(), kCFURLPOSIXPathStyle, FALSE));
+    if (!bundleURL)
+        return false;
 
-    const NPPluginFuncs& pluginFuncs() const { return m_pluginFuncs; }
+    RetainPtr<CFBundleRef> bundle(AdoptCF, CFBundleCreate(kCFAllocatorDefault, bundleURL.get()));
+    if (!bundle)
+        return false;
 
-    void pluginCreated();
-    void pluginDestroyed();
+    if (!CFBundleLoadExecutable(bundle.get()))
+        return false;
 
-private:
-    explicit NetscapePluginModule(const WebCore::String& pluginPath);
+    m_bundle.adoptCF(bundle.releaseRef());
+    return true;
+}
 
-    bool tryLoad();
-    bool load();
-    void unload();
+void Module::unload()
+{
+    // See the comment in Module.h for why we leak the bundle here.
+    m_bundle.releaseRef();
+}
 
-    void shutdown();
+void* Module::platformFunctionPointer(const char* functionName) const
+{
+    if (!m_bundle)
+        return 0;
+    RetainPtr<CFStringRef> functionNameString(AdoptCF, CFStringCreateWithCStringNoCopy(kCFAllocatorDefault, functionName, kCFStringEncodingASCII, kCFAllocatorNull));
+    return CFBundleGetFunctionPointerForName(m_bundle.get(), functionNameString.get());
+}
 
-    WebCore::String m_pluginPath;
-    bool m_isInitialized;
-    unsigned m_pluginCount;
-
-    NPP_ShutdownProcPtr m_shutdownProcPtr;
-    NPPluginFuncs m_pluginFuncs;
-
-    OwnPtr<Module> m_module;
-};
-    
-} // namespace WebKit
-
-#endif // NetscapePluginModule_h
+}
