@@ -1,3 +1,22 @@
+2010-08-03  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Tony Chang.
+
+        [DRT] Assertion failed when drag and move a draggable element.
+        https://bugs.webkit.org/show_bug.cgi?id=41695
+
+        mouseMoveToX() did call [WebHTMLView mouseDragged] even if dragging started.
+        But Cocoa doesn't call mouseDragged() until dragging is done.
+        Other part of DumpRenderTree also assumes Cocoa behavior and an assertion
+        on UIDelegate failed when mouseDragged() is called during dragging.
+        This change eliminated the mouseDragged() call when dragging begins,
+        which is implicated by draggingInfo instance.
+        
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (-[EventSendingController mouseMoveToX:Y:]):
+
+        Test: fast/events/dragging-mouse-moves.html
+        
 2010-08-02  Steve Block  <steveblock@google.com>
 
         Reviewed by Alexey Proskuryakov.

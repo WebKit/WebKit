@@ -449,13 +449,13 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
     NSView *subView = [[mainFrame webView] hitTest:[event locationInWindow]];
     if (subView) {
         if (leftMouseButtonDown) {
-            [subView mouseDragged:event];
             if (draggingInfo) {
                 // Per NSDragging.h: draggingSources may not implement draggedImage:movedTo:
                 if ([[draggingInfo draggingSource] respondsToSelector:@selector(draggedImage:movedTo:)])
                     [[draggingInfo draggingSource] draggedImage:[draggingInfo draggedImage] movedTo:lastMousePosition];
                 [[mainFrame webView] draggingUpdated:draggingInfo];
-            }
+            } else
+                [subView mouseDragged:event];
         } else
             [subView mouseMoved:event];
     }

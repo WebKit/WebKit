@@ -1,3 +1,13 @@
+2010-08-03  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Tony Chang.
+
+        [DRT] Assertion failed when drag and move a draggable element.
+        https://bugs.webkit.org/show_bug.cgi?id=41695
+
+        * fast/events/dragging-mouse-moves-expected.txt: Added.
+        * fast/events/dragging-mouse-moves.html: Added.
+
 2010-08-04  Steve Block  <steveblock@google.com>
 
         Unreviewed build fix.
