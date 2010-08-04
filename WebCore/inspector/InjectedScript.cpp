@@ -35,7 +35,6 @@
 
 #include "InspectorValues.h"
 #include "PlatformString.h"
-#include "SerializedScriptValue.h"
 #include "ScriptFunctionCall.h"
 
 namespace WebCore {
@@ -45,7 +44,7 @@ InjectedScript::InjectedScript(ScriptObject injectedScriptObject)
 {
 }
 
-void InjectedScript::dispatch(long callId, const String& methodName, const String& arguments, bool async, RefPtr<SerializedScriptValue>* result, bool* hadException) 
+void InjectedScript::dispatch(long callId, const String& methodName, const String& arguments, bool async, RefPtr<InspectorValue>* result, bool* hadException) 
 {
     ASSERT(!hasNoValue());
     if (!canAccessInspectedWindow()) {
@@ -61,7 +60,7 @@ void InjectedScript::dispatch(long callId, const String& methodName, const Strin
     *hadException = false;
     ScriptValue resultValue = function.call(*hadException);
     if (!*hadException)
-        *result = resultValue.serialize(m_injectedScriptObject.scriptState());
+        *result = resultValue.toInspectorValue(m_injectedScriptObject.scriptState());
 }
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)

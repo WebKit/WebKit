@@ -48,6 +48,7 @@
 #include "InjectedScriptHost.h"
 #include "InspectorController.h"
 #include "InspectorResource.h"
+#include "InspectorValues.h"
 #include "JSDOMWindow.h"
 #include "JSDOMWindowCustom.h"
 #include "JSNode.h"
@@ -55,7 +56,6 @@
 #include "Node.h"
 #include "Page.h"
 #if ENABLE(DOM_STORAGE)
-#include "SerializedScriptValue.h"
 #include "Storage.h"
 #include "JSStorage.h"
 #endif
@@ -201,12 +201,12 @@ JSValue JSInjectedScriptHost::reportDidDispatchOnInjectedScript(ExecState* exec)
         return jsUndefined();
     int callId = exec->argument(0).asInt32();
     
-    RefPtr<SerializedScriptValue> result(SerializedScriptValue::create(exec, exec->argument(1)));
+    RefPtr<InspectorValue> result = ScriptValue(exec->argument(1)).toInspectorValue(exec);
     
     bool isException;
     if (!exec->argument(2).getBoolean(isException))
         return jsUndefined();
-    impl()->reportDidDispatchOnInjectedScript(callId, result.get(), isException);
+    impl()->reportDidDispatchOnInjectedScript(callId, result, isException);
     return jsUndefined();
 }
 

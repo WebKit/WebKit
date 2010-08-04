@@ -38,14 +38,12 @@
 
 namespace WebCore {
     class ConsoleMessage;
-    class Database;
     class Frame;
     class InspectorClient;
     class InspectorResource;
     class InspectorWorkerResource;
     class Node;
     class ScriptString;
-    class SerializedScriptValue;
     class Storage;
 
     class InspectorFrontend : public Noncopyable {
@@ -97,8 +95,6 @@ namespace WebCore {
         void parsedScriptSource(const String& sourceID, const String& url, const String& data, int firstLine, int scriptWorldType);
         void restoredBreakpoint(const String& sourceID, const String& url, int line, bool enabled, const String& condition);
         void failedToParseScriptSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage);
-        void pausedScript(SerializedScriptValue* callFrames);
-        void resumedScript();
 
         void profilerWasEnabled();
         void profilerWasDisabled();
@@ -132,7 +128,6 @@ namespace WebCore {
 #endif // ENABLE(WORKER)
 
         void didGetCookies(long callId, const ScriptArray& cookies, const String& cookiesString);
-        void didDispatchOnInjectedScript(long callId, SerializedScriptValue* result, bool isException);
 
         void contextMenuItemSelected(int itemId);
         void contextMenuCleared();

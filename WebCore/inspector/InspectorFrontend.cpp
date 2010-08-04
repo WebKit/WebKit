@@ -44,7 +44,6 @@
 #include "ScriptState.h"
 #include "ScriptString.h"
 #include "ScriptValue.h"
-#include "SerializedScriptValue.h"
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
@@ -286,20 +285,6 @@ void InspectorFrontend::failedToParseScriptSource(const String& url, const Strin
     function.call();
 }
 
-void InspectorFrontend::pausedScript(SerializedScriptValue* callFrames)
-{
-    ScriptValue callFramesValue = ScriptValue::deserialize(scriptState(), callFrames);
-    ScriptFunctionCall function(m_webInspector, "dispatch");
-    function.appendArgument("pausedScript");
-    function.appendArgument(callFramesValue);
-    function.call();
-}
-
-void InspectorFrontend::resumedScript()
-{
-    callSimpleFunction("resumedScript");
-}
-
 void InspectorFrontend::profilerWasEnabled()
 {
     callSimpleFunction("profilerWasEnabled");
@@ -364,21 +349,6 @@ void InspectorFrontend::didGetCookies(long callId, const ScriptArray& cookies, c
     function.appendArgument(callId);
     function.appendArgument(cookies);
     function.appendArgument(cookiesString);
-    function.call();
-}
-
-void InspectorFrontend::didDispatchOnInjectedScript(long callId, SerializedScriptValue* result, bool isException)
-{
-    ScriptFunctionCall function(m_webInspector, "dispatch"); 
-    function.appendArgument("didDispatchOnInjectedScript");
-    function.appendArgument(callId);
-    if (isException)
-        function.appendArgument("");
-    else {
-        ScriptValue resultValue = ScriptValue::deserialize(scriptState(), result);
-        function.appendArgument(resultValue);
-    }
-    function.appendArgument(isException);
     function.call();
 }
 

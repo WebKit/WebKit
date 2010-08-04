@@ -1856,7 +1856,7 @@ void InspectorController::didPause(ScriptState* scriptState)
 void InspectorController::didContinue()
 {
     m_pausedScriptState = 0;
-    m_frontend->resumedScript();
+    m_remoteFrontend->resumedScript();
 }
 
 #endif

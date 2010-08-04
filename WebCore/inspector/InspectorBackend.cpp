@@ -94,7 +94,7 @@ void InspectorBackend::setInjectedScriptSource(const String& source)
 
 void InspectorBackend::dispatchOnInjectedScript(long callId, long injectedScriptId, const String& methodName, const String& arguments, bool async)
 {
-    InspectorFrontend* frontend = inspectorFrontend();
+    RemoteInspectorFrontend* frontend = remoteFrontend();
     if (!frontend)
         return;
 
@@ -110,12 +110,12 @@ void InspectorBackend::dispatchOnInjectedScript(long callId, long injectedScript
     if (injectedScript.hasNoValue())
         return;
 
-    RefPtr<SerializedScriptValue> result;
+    RefPtr<InspectorValue> result;
     bool hadException = false;
     injectedScript.dispatch(callId, methodName, arguments, async, &result, &hadException);
     if (async)
         return;  // InjectedScript will return result asynchronously by means of ::reportDidDispatchOnInjectedScript.
-    frontend->didDispatchOnInjectedScript(callId, result.get(), hadException);
+    frontend->didDispatchOnInjectedScript(callId, result, hadException);
 }
 
 void InspectorBackend::clearConsoleMessages(long callId)

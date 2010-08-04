@@ -1,3 +1,29 @@
+2010-08-04  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: use InspectorValue to push dispatch results from the injected script
+        https://bugs.webkit.org/show_bug.cgi?id=43483
+
+        * bindings/js/JSInjectedScriptHostCustom.cpp:
+        (WebCore::JSInjectedScriptHost::reportDidDispatchOnInjectedScript):
+        * bindings/v8/custom/V8InjectedScriptHostCustom.cpp:
+        (WebCore::V8InjectedScriptHost::reportDidDispatchOnInjectedScriptCallback):
+        * inspector/InjectedScript.cpp:
+        (WebCore::InjectedScript::dispatch):
+        * inspector/InjectedScript.h:
+        * inspector/InjectedScriptHost.cpp:
+        (WebCore::InjectedScriptHost::reportDidDispatchOnInjectedScript):
+        (WebCore::InjectedScriptHost::remoteFrontend):
+        * inspector/InjectedScriptHost.h:
+        * inspector/Inspector.idl:
+        * inspector/InspectorBackend.cpp:
+        (WebCore::InspectorBackend::dispatchOnInjectedScript):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::didContinue):
+        * inspector/InspectorFrontend.cpp:
+        * inspector/InspectorFrontend.h:
+
 2010-08-04  Abhishek Arya  <inferno@chromium.org>
 
         Unreviewed. Put missing equivalent js bindings check.

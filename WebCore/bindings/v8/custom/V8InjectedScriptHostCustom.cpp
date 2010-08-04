@@ -37,10 +37,10 @@
 #include "InjectedScript.h"
 #include "InjectedScriptHost.h"
 #include "InspectorController.h"
+#include "InspectorValues.h"
 #include "Node.h"
 #include "Page.h"
 #include "ScriptDebugServer.h"
-#include "SerializedScriptValue.h"
 
 #include "V8Binding.h"
 #include "V8BindingState.h"
@@ -215,9 +215,9 @@ v8::Handle<v8::Value> V8InjectedScriptHost::reportDidDispatchOnInjectedScriptCal
         return v8::Undefined();
     InjectedScriptHost* host = V8InjectedScriptHost::toNative(args.Holder());
     int callId = args[0]->ToInt32()->Value();
-    RefPtr<SerializedScriptValue> result(SerializedScriptValue::create(args[1]));
+    RefPtr<InspectorValue> result = ScriptValue(args[1]).toInspectorValue(ScriptState::current());
     bool isException = args[2]->ToBoolean()->Value();
-    host->reportDidDispatchOnInjectedScript(callId, result.get(), isException);
+    host->reportDidDispatchOnInjectedScript(callId, result, isException);
     return v8::Undefined();
 }
 
