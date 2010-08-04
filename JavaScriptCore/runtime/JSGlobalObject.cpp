@@ -80,16 +80,16 @@ static const int initialTickCountThreshold = 255;
 // Preferred number of milliseconds between each timeout check
 static const int preferredScriptCheckTimeInterval = 1000;
 
-template<typename T> static inline void markIfNeeded(MarkStack& markStack, T*& v)
+static inline void markIfNeeded(MarkStack& markStack, JSValue v)
 {
     if (v)
         markStack.append(v);
 }
 
-static inline void markIfNeeded(MarkStack& markStack, RefPtr<Structure>& s)
+static inline void markIfNeeded(MarkStack& markStack, const RefPtr<Structure>& s)
 {
     if (s)
-        markStack.append(s->storedPrototype());
+        markIfNeeded(markStack, s->storedPrototype());
 }
 
 JSGlobalObject::~JSGlobalObject()

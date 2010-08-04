@@ -68,16 +68,4 @@ CallType NativeErrorConstructor::getCallData(CallData& callData)
     return CallTypeHost;
 }
 
-PassRefPtr<Structure> NativeErrorConstructor::createStructure(JSObject* prototype)
-{
-    return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount);
-}
-
-void NativeErrorConstructor::markChildren(MarkStack& markStack)
-{
-    InternalFunction::markChildren(markStack);
-
-    markStack.append(m_errorStructure->storedPrototype());
-}
-
 } // namespace JSC

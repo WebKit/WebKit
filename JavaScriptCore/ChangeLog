@@ -1,3 +1,38 @@
+2010-08-04  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r64655.
+        http://trac.webkit.org/changeset/64655
+        https://bugs.webkit.org/show_bug.cgi?id=43496
+
+        JavaScriptCore references patch seems to have caused
+        regressions in QT and GTK builds (Requested by nlawrence on
+        #webkit).
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::markAggregate):
+        * runtime/Collector.cpp:
+        (JSC::Heap::markConservatively):
+        * runtime/JSCell.h:
+        (JSC::JSValue::asCell):
+        (JSC::MarkStack::append):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::markIfNeeded):
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::Holder::object):
+        * runtime/JSObject.h:
+        (JSC::JSObject::prototype):
+        * runtime/JSStaticScopeObject.cpp:
+        (JSC::JSStaticScopeObject::markChildren):
+        * runtime/JSValue.h:
+        (JSC::JSValue::):
+        (JSC::JSValue::JSValue):
+        (JSC::JSValue::asCell):
+        * runtime/MarkStack.h:
+        * runtime/NativeErrorConstructor.cpp:
+        * runtime/NativeErrorConstructor.h:
+        * runtime/Structure.h:
+        (JSC::Structure::storedPrototype):
+
 2010-08-04  Gavin Barraclough  <barraclough@apple.com>
 
         Rubber stamped by Sam Weinig.

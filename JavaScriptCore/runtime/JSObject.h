@@ -86,8 +86,7 @@ namespace JSC {
         // in the class as it results in the vtable being generated as a weak symbol
         virtual ~JSObject();
 
-        JSValue& prototype();
-        const JSValue& prototype() const;
+        JSValue prototype() const;
         void setPrototype(JSValue prototype);
         bool setPrototypeWithCycleCheck(JSValue prototype);
         
@@ -313,12 +312,7 @@ inline JSObject::~JSObject()
     m_structure->deref();
 }
 
-inline JSValue& JSObject::prototype()
-{
-    return m_structure->storedPrototype();
-}
-
-inline const JSValue& JSObject::prototype() const
+inline JSValue JSObject::prototype() const
 {
     return m_structure->storedPrototype();
 }

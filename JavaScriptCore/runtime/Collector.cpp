@@ -691,13 +691,7 @@ void Heap::markConservatively(MarkStack& markStack, void* start, void* end)
             for (size_t block = 0; block < usedBlocks; block++) {
                 if (m_heap.collectorBlock(block) != blockAddr)
                     continue;
-                // While markStack.append normally takes a reference to update,
-                // we don't actually want the heap to be updated since we don't
-                // know for sure that it's actually a pointer. In the future
-                // this will be replaced by some appendRoot function for this
-                // specific case.
-                JSCell* cell = reinterpret_cast<JSCell*>(xAsBits);
-                markStack.append(cell);
+                markStack.append(reinterpret_cast<JSCell*>(xAsBits));
                 markStack.drain();
             }
         }
