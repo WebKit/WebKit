@@ -1,3 +1,16 @@
+2010-08-03  Balazs Kelemen  <kb@inf.u-szeged.hu>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Close the WebProcess
+
+        https://bugs.webkit.org/show_bug.cgi?id=41690
+
+        * Platform/CoreIPC/qt/ConnectionQt.cpp:
+        (CoreIPC::Connection::open): Registered connectionDidClose to be called when the client disconnected.
+        * Platform/qt/RunLoopQt.cpp:
+        (RunLoop::stop): Implemented by calling QCoreApplication::exit.
+
 2010-08-03  Jon Honeycutt  <jhoneycutt@apple.com>
 
         WebKitTestRunner needs to activate the Mac font ascent hack

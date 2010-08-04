@@ -99,6 +99,7 @@ bool Connection::open()
         m_socket->connectToServer(m_serverName);
         m_connectionQueue.moveSocketToWorkThread(m_socket);
         m_connectionQueue.connectSignal(m_socket, SIGNAL(readyRead()), WorkItem::create(this, &Connection::readyReadHandler));
+        m_connectionQueue.connectSignal(m_socket, SIGNAL(disconnected()), WorkItem::create(this, &Connection::connectionDidClose));
         m_isConnected = m_socket->waitForConnected();
     }
     return m_isConnected;
