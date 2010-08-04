@@ -1,3 +1,16 @@
+2010-08-04  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Jeremy Orlow.
+
+        [Gtk] Make sure DRT return the right AXTitle for controls
+        https://bugs.webkit.org/show_bug.cgi?id=39997
+
+        Added expected results file to the GTK port and removed the new
+        test from the Skipped file.
+
+        * platform/gtk/Skipped:
+        * platform/gtk/accessibility/aria-checkbox-text-expected.txt: Copied from LayoutTests/platform/mac/accessibility/aria-checkbox-text-expected.txt.
+
 2010-08-04  Abhishek Arya  <inferno@chromium.org>
 
         Unreviewed. QT expectation fix.

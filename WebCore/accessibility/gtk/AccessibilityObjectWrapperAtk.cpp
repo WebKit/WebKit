@@ -160,6 +160,11 @@ static const gchar* webkit_accessible_get_name(AtkObject* object)
             if (ATK_IS_TEXT(atkObject))
                 return webkit_accessible_text_get_text(ATK_TEXT(atkObject), 0, -1);
         }
+
+        // Try text under the node
+        String textUnder = renderObject->textUnderElement();
+        if (textUnder.length())
+            return returnString(textUnder);
     }
 
     if (renderObject->isImage() || renderObject->isInputImage()) {

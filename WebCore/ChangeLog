@@ -1,3 +1,16 @@
+2010-08-04  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Jeremy Orlow.
+
+        [Gtk] Make sure DRT return the right AXTitle for controls
+        https://bugs.webkit.org/show_bug.cgi?id=39997
+
+        Fallback to the text under the given element as its name in case
+        it's a control element and has no associated label for it.
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (webkit_accessible_get_name):
+
 2010-08-02  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Dimitri Glazkov.
