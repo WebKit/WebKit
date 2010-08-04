@@ -1,3 +1,9 @@
+// This file contains layout test failures specific to Chromium DumpRenderTree.
+// This is going to be removed when Chromium port switches to DumpRenderTree
+// from test_shell.
+//
+// If you'd like to add expectations for Chromium port, please add them to
+// test_expectations.txt.
 //
 // BUG_DRT: We don't have a dedicated bug yet.
 //

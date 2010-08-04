@@ -1,5 +1,13 @@
 2010-08-03  Kent Tamura  <tkent@chromium.org>
 
+        Rubber-stamped by Eric Seidel.
+
+        Add an explanation comment to drt_expectations.txt.
+
+        * platform/chromium/drt_expectations.txt:
+
+2010-08-03  Kent Tamura  <tkent@chromium.org>
+
         Reviewed by Ojan Vafai.
 
         <input type=number> UI: Support wheel events
