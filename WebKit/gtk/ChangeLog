@@ -1,3 +1,10 @@
+2010-08-03  Daniel Bates  <dbates@rim.com>
+
+        Fix misspelled word 'teh' in the description of the XSS Auditor setting.
+
+        * webkit/webkitwebsettings.cpp:
+        (webkit_web_settings_class_init):
+
 2010-08-03  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.

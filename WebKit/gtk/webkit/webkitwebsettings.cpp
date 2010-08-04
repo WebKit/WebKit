@@ -569,7 +569,7 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                     PROP_ENABLE_XSS_AUDITOR,
                                     g_param_spec_boolean("enable-xss-auditor",
                                                          _("Enable XSS Auditor"),
-                                                         _("Whether to enable teh XSS auditor"),
+                                                         _("Whether to enable the XSS auditor"),
                                                          TRUE,
                                                          flags));
     /**
