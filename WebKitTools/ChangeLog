@@ -1,3 +1,13 @@
+2010-08-04  Markus Goetz  <Markus.Goetz@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Change wording in QtTestBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=43241
+
+        * QtTestBrowser/launcherwindow.cpp:
+        (LauncherWindow::createChrome):
+
 2010-08-04  Aaron Boodman  <aa@chromium.org>
 
         Reviewed by Eric Seidel.

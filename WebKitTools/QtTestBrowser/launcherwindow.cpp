@@ -242,7 +242,7 @@ void LauncherWindow::createChrome()
     toggleFrameFlattening->setChecked(settings->testAttribute(QWebSettings::FrameFlatteningEnabled));
 
 #if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
-    QAction* touchMockAction = toolsMenu->addAction("Toggle multitouch mocking", this, SLOT(setTouchMocking(bool)));
+    QAction* touchMockAction = toolsMenu->addAction("Toggle touch mocking", this, SLOT(setTouchMocking(bool)));
     touchMockAction->setCheckable(true);
     touchMockAction->setShortcut(QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_T));
 #endif
