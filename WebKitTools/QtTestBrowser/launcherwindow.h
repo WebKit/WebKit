@@ -75,11 +75,48 @@
 #undef KeyPress
 #endif
 
+class WindowOptions {
+public:
+    WindowOptions()
+        : useGraphicsView(false)
+        , useCompositing(true)
+        , useTiledBackingStore(false)
+        , useWebGL(false)
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_S60)
+        , useFrameFlattening(true)
+#else
+        , useFrameFlattening(false)
+#endif
+        , cacheWebView(false)
+        , showFrameRate(false)
+        , resizesToContents(false)
+        , viewportUpdateMode(QGraphicsView::MinimalViewportUpdate)
+#if defined(QT_CONFIGURED_WITH_OPENGL)
+        , useQGLWidgetViewport(false)
+#endif
+    {
+    }
+
+    bool useGraphicsView;
+    bool useCompositing;
+    bool useTiledBackingStore;
+    bool useWebGL;
+    bool useFrameFlattening;
+    bool cacheWebView;
+    bool showFrameRate;
+    bool resizesToContents;
+    QGraphicsView::ViewportUpdateMode viewportUpdateMode;
+#if defined(QT_CONFIGURED_WITH_OPENGL)
+    bool useQGLWidgetViewport;
+#endif
+    QUrl inspectorUrl;
+};
+
 class LauncherWindow : public MainWindow {
     Q_OBJECT
 
 public:
-    LauncherWindow(LauncherWindow* other = 0, bool shareScene = false);
+    LauncherWindow(WindowOptions* data = 0, QGraphicsScene* sharedScene = 0);
     virtual ~LauncherWindow();
 
     virtual void keyPressEvent(QKeyEvent* event);
@@ -90,22 +127,6 @@ public:
 #endif
 
     bool eventFilter(QObject* obj, QEvent* event);
-
-public:
-    static const int gExitClickArea = 80;
-    static bool gUseGraphicsView;
-    static bool gUseCompositing;
-    static bool gCacheWebView;
-    static bool gShowFrameRate;
-    static bool gResizesToContents;
-    static bool gUseTiledBackingStore;
-    static bool gUseFrameFlattening;
-    static QGraphicsView::ViewportUpdateMode gViewportUpdateMode;
-    static QUrl gInspectorUrl;
-
-#if defined(QT_CONFIGURED_WITH_OPENGL)
-    static bool gUseQGLWidgetViewport;
-#endif
 
 protected slots:
     void loadStarted();
@@ -127,7 +148,7 @@ protected slots:
     /* void dumpPlugins() */
     void dumpHtml();
 
-    void initializeView(bool useGraphicsView = false);
+    void initializeView();
 
     void setTouchMocking(bool on);
     void toggleAcceleratedCompositing(bool toggle);
@@ -158,10 +179,10 @@ signals:
     void enteredFullScreenMode(bool on);
 
 private:
-    void init(bool useGraphicsView = false);
+    void init();
     bool isGraphicsBased() const;
     void createChrome();
-    void applyPrefs(LauncherWindow* other = 0);
+    void applyPrefs();
     void applyZoom();
 
 private:
@@ -170,6 +191,8 @@ private:
 
     QWidget* m_view;
     WebInspector* m_inspector;
+
+    WindowOptions m_windowOptions;
 
     QAction* m_formatMenuAction;
     QAction* m_flipAnimated;

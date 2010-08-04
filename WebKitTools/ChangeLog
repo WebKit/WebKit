@@ -1,3 +1,46 @@
+2010-08-04  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Simon Hausmann and Kenneth Christiansen.
+
+        [Qt] [QtTestBrowser] Clean up static and global menu state controls
+        https://bugs.webkit.org/show_bug.cgi?id=43448
+
+        After LauncherWindow class was refactored out of from main.cpp, all global variables that
+        were hanging in main.cpp became temporarily public static class members of newly added
+        LauncherWindow class. This design was not properly handling the initial purpose of the
+        global variables: newly created launcher windows should inherit the settings of the originating
+        one.
+
+        In order to properly fix the problem, this patch introduces a WindowOptions class, as a POD. It
+        comprises all data needed to handling the goal described above.
+
+        * QtTestBrowser/launcherwindow.cpp:
+        (LauncherWindow::LauncherWindow): The class now receives an optional WindowOptions pointer object
+                                          holding all user settings configured in the menus and command line.
+                                          It also receices an optional QGraphicsScene points in case we are doing
+                                          a "Clone Window".
+        (LauncherWindow::init): Removed the usesGraphics parameter because the class member m_userData holds its
+                                value.
+        (LauncherWindow::initializeView): Ditto.
+        (LauncherWindow::createChrome): Changed all references to gXXX to m_userData.XXX
+        (LauncherWindow::applyPrefs): Removed the "LauncherWindow* source" parameter. All data needed to properly
+                                      apply the preferences is provided by m_userData.
+        (LauncherWindow::toggleAcceleratedCompositing): Change gXXX by m_userData.XXX
+        (LauncherWindow::toggleResizesToContents): Ditto.
+        (LauncherWindow::toggleWebGL): Ditto.
+        (LauncherWindow::toggleFrameFlattening): Ditto.
+        (LauncherWindow::toggleQGLWidgetViewport): Ditto.
+        (LauncherWindow::changeViewportUpdateMode): Ditto.
+        (LauncherWindow::showFPS): Ditto.
+        (LauncherWindow::newWindow): Changed to pass the userData.
+        (LauncherWindow::cloneWindow): Ditto.
+        * QtTestBrowser/launcherwindow.h:
+        (WindowOptions::WindowOptions):
+        * QtTestBrowser/main.cpp:
+        (requiresGraphicsView):
+        (LauncherApplication::handleUserOptions):
+        (main):
+
 2010-08-04  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix for gcc not importing all symbols from convenience libraries.
