@@ -973,6 +973,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\UIProcess\WebData.h"
+				>
+			</File>
+			<File
 				RelativePath="..\UIProcess\WebFramePolicyListenerProxy.cpp"
 				>
 			</File>
@@ -1120,6 +1124,14 @@
 					</File>
 					<File
 						RelativePath="..\UIProcess\API\C\WKContextPrivate.h"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKData.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKData.h"
 						>
 					</File>
 					<File

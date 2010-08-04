@@ -160,6 +160,9 @@ WK_EXPORT double WKPageGetEstimatedProgress(WKPageRef page);
     
 WK_EXPORT void WKPageTerminate(WKPageRef page);
 
+WK_EXPORT WKDataRef WKPageCopySessionState(WKPageRef page);
+WK_EXPORT void WKPageRestoreFromSessionState(WKPageRef page, WKDataRef sessionStateData);
+
 WK_EXPORT void WKPageSetPageLoaderClient(WKPageRef page, const WKPageLoaderClient* client);
 WK_EXPORT void WKPageSetPagePolicyClient(WKPageRef page, const WKPagePolicyClient* client);
 WK_EXPORT void WKPageSetPageUIClient(WKPageRef page, const WKPageUIClient* client);

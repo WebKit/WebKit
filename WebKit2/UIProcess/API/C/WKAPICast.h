@@ -42,6 +42,7 @@ class ImmutableArray;
 class WebBackForwardList;
 class WebBackForwardListItem;
 class WebContext;
+class WebData;
 class WebFramePolicyListenerProxy;
 class WebFrameProxy;
 class WebNavigationData;
@@ -52,33 +53,37 @@ class WebString;
 
 template<typename APIType> struct APITypeInfo { };
 template<> struct APITypeInfo<WKTypeRef>                        { typedef APIObject* ImplType; };
-template<> struct APITypeInfo<WKFrameRef>                       { typedef WebFrameProxy* ImplType; };
-template<> struct APITypeInfo<WKPageRef>                        { typedef WebPageProxy* ImplType; };
-template<> struct APITypeInfo<WKContextRef>                     { typedef WebContext* ImplType; };
-template<> struct APITypeInfo<WKPageNamespaceRef>               { typedef WebPageNamespace* ImplType; };
-template<> struct APITypeInfo<WKFramePolicyListenerRef>         { typedef WebFramePolicyListenerProxy* ImplType; };
-template<> struct APITypeInfo<WKPreferencesRef>                 { typedef WebPreferences* ImplType; };
-template<> struct APITypeInfo<WKStringRef>                      { typedef WebString* ImplType; };
-template<> struct APITypeInfo<WKURLRef>                         { typedef WebURL* ImplType; };
-template<> struct APITypeInfo<WKNavigationDataRef>              { typedef WebNavigationData* ImplType; };
 template<> struct APITypeInfo<WKArrayRef>                       { typedef ImmutableArray* ImplType; };
 template<> struct APITypeInfo<WKBackForwardListItemRef>         { typedef WebBackForwardListItem* ImplType; };
 template<> struct APITypeInfo<WKBackForwardListRef>             { typedef WebBackForwardList* ImplType; };
+template<> struct APITypeInfo<WKContextRef>                     { typedef WebContext* ImplType; };
+template<> struct APITypeInfo<WKDataRef>                        { typedef WebData* ImplType; };
+template<> struct APITypeInfo<WKFramePolicyListenerRef>         { typedef WebFramePolicyListenerProxy* ImplType; };
+template<> struct APITypeInfo<WKFrameRef>                       { typedef WebFrameProxy* ImplType; };
+template<> struct APITypeInfo<WKNavigationDataRef>              { typedef WebNavigationData* ImplType; };
+template<> struct APITypeInfo<WKPageNamespaceRef>               { typedef WebPageNamespace* ImplType; };
+template<> struct APITypeInfo<WKPageRef>                        { typedef WebPageProxy* ImplType; };
+template<> struct APITypeInfo<WKPreferencesRef>                 { typedef WebPreferences* ImplType; };
+template<> struct APITypeInfo<WKStringRef>                      { typedef WebString* ImplType; };
+template<> struct APITypeInfo<WKURLRef>                         { typedef WebURL* ImplType; };
+
 
 template<typename ImplType> struct ImplTypeInfo { };
 template<> struct ImplTypeInfo<APIObject*>                      { typedef WKTypeRef APIType; };
-template<> struct ImplTypeInfo<WebFrameProxy*>                  { typedef WKFrameRef APIType; };
-template<> struct ImplTypeInfo<WebPageProxy*>                   { typedef WKPageRef APIType; };
+template<> struct ImplTypeInfo<ImmutableArray*>                 { typedef WKArrayRef APIType; };
+template<> struct ImplTypeInfo<WebBackForwardList*>             { typedef WKBackForwardListRef APIType; };
+template<> struct ImplTypeInfo<WebBackForwardListItem*>         { typedef WKBackForwardListItemRef APIType; };
 template<> struct ImplTypeInfo<WebContext*>                     { typedef WKContextRef APIType; };
-template<> struct ImplTypeInfo<WebPageNamespace*>               { typedef WKPageNamespaceRef APIType; };
+template<> struct ImplTypeInfo<WebData*>                        { typedef WKDataRef APIType; };
 template<> struct ImplTypeInfo<WebFramePolicyListenerProxy*>    { typedef WKFramePolicyListenerRef APIType; };
+template<> struct ImplTypeInfo<WebFrameProxy*>                  { typedef WKFrameRef APIType; };
+template<> struct ImplTypeInfo<WebNavigationData*>              { typedef WKNavigationDataRef APIType; };
+template<> struct ImplTypeInfo<WebPageNamespace*>               { typedef WKPageNamespaceRef APIType; };
+template<> struct ImplTypeInfo<WebPageProxy*>                   { typedef WKPageRef APIType; };
 template<> struct ImplTypeInfo<WebPreferences*>                 { typedef WKPreferencesRef APIType; };
 template<> struct ImplTypeInfo<WebString*>                      { typedef WKStringRef APIType; };
 template<> struct ImplTypeInfo<WebURL*>                         { typedef WKURLRef APIType; };
-template<> struct ImplTypeInfo<WebNavigationData*>              { typedef WKNavigationDataRef APIType; };
-template<> struct ImplTypeInfo<ImmutableArray*>                 { typedef WKArrayRef APIType; };
-template<> struct ImplTypeInfo<WebBackForwardListItem*>         { typedef WKBackForwardListItemRef APIType; };
-template<> struct ImplTypeInfo<WebBackForwardList*>             { typedef WKBackForwardListRef APIType; };
+
 
 template<typename ImplType, typename APIType = typename ImplTypeInfo<ImplType*>::APIType>
 class ProxyingRefPtr {

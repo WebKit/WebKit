@@ -86,6 +86,9 @@
 		1AEFD27911D16C81008219D3 /* ArgumentCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AEFD27811D16C81008219D3 /* ArgumentCoder.h */; };
 		1AEFD2F711D1807B008219D3 /* ArgumentCoders.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AEFD2F611D1807B008219D3 /* ArgumentCoders.h */; };
 		1AF3060A111B599E00F96436 /* WebKit2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* WebKit2.framework */; };
+		514AF6C81209EE7300A26C97 /* WKData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 514AF6C61209EE7300A26C97 /* WKData.cpp */; };
+		514AF6C91209EE7300A26C97 /* WKData.h in Headers */ = {isa = PBXBuildFile; fileRef = 514AF6C71209EE7300A26C97 /* WKData.h */; };
+		51578B831209ECEF00A37C4A /* WebData.h in Headers */ = {isa = PBXBuildFile; fileRef = 51578B821209ECEF00A37C4A /* WebData.h */; };
 		5DAD729C116FF86200EE5396 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0867D6A5FE840307C02AAC07 /* AppKit.framework */; };
 		6D8A91A611F0EFD100DD01FE /* com.apple.WebProcess.sb in Resources */ = {isa = PBXBuildFile; fileRef = 6D8A91A511F0EFD100DD01FE /* com.apple.WebProcess.sb */; };
 		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
@@ -388,6 +391,9 @@
 		1AEFD27811D16C81008219D3 /* ArgumentCoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArgumentCoder.h; sourceTree = "<group>"; };
 		1AEFD2F611D1807B008219D3 /* ArgumentCoders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArgumentCoders.h; sourceTree = "<group>"; };
 		32DBCF5E0370ADEE00C91783 /* WebKit2Prefix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKit2Prefix.h; sourceTree = "<group>"; };
+		514AF6C61209EE7300A26C97 /* WKData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKData.cpp; sourceTree = "<group>"; };
+		514AF6C71209EE7300A26C97 /* WKData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKData.h; sourceTree = "<group>"; };
+		51578B821209ECEF00A37C4A /* WebData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebData.h; sourceTree = "<group>"; };
 		5DAD7294116FF70B00EE5396 /* WebProcess.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = WebProcess.xcconfig; sourceTree = "<group>"; };
 		5DAD73F1116FF90C00EE5396 /* BaseTarget.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = BaseTarget.xcconfig; sourceTree = "<group>"; };
 		6D8A91A511F0EFD100DD01FE /* com.apple.WebProcess.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = com.apple.WebProcess.sb; path = WebProcess/com.apple.WebProcess.sb; sourceTree = "<group>"; };
@@ -772,19 +778,20 @@
 				BCF04C8C11FF9B7D00F86A58 /* APIObject.h */,
 				0FB659221208B4DB0044816C /* DrawingAreaBase.h */,
 				0FB659A51208B9EE0044816C /* DrawingAreaBase.cpp */,
-				BCF04C8E11FF9F6E00F86A58 /* WebString.h */,
-				BCDB86C01200FB97007254BE /* WebURL.h */,
 				1A6F9F8E11E13EFC00DB1371 /* CommandLine.h */,
 				BC64696D11DBE603006455B0 /* ImmutableArray.cpp */,
 				BC64696E11DBE603006455B0 /* ImmutableArray.h */,
 				BCC57161115ADB42001CCAF9 /* NotImplemented.h */,
 				BC1DD7B1114DC396005ADAF3 /* WebCoreArgumentCoders.h */,
+				51578B821209ECEF00A37C4A /* WebData.h */,
 				BC032DAF10F4380F0058C15A /* WebEvent.h */,
 				BC032DB010F4380F0058C15A /* WebEventConversion.cpp */,
 				BC032DB110F4380F0058C15A /* WebEventConversion.h */,
 				BCF69F981176CED600471A52 /* WebNavigationDataStore.h */,
 				BCD598AB112B7FDF00EC8C23 /* WebPreferencesStore.cpp */,
 				BCD598AA112B7FDF00EC8C23 /* WebPreferencesStore.h */,
+				BCF04C8E11FF9F6E00F86A58 /* WebString.h */,
+				BCDB86C01200FB97007254BE /* WebURL.h */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -982,6 +989,8 @@
 				BCB9E24A1120E15C00A137E0 /* WKContext.cpp */,
 				BCB9E2491120E15C00A137E0 /* WKContext.h */,
 				BCC938E01180DE440085E5FE /* WKContextPrivate.h */,
+				514AF6C61209EE7300A26C97 /* WKData.cpp */,
+				514AF6C71209EE7300A26C97 /* WKData.h */,
 				BCD01398110FA420003B8A67 /* WKFrame.cpp */,
 				BCD01397110FA420003B8A67 /* WKFrame.h */,
 				BCB9F6A41123DD0D00A137E0 /* WKFramePolicyListener.cpp */,
@@ -1346,6 +1355,8 @@
 				D3B9484711FF4B6500032B39 /* WebPopupMenu.h in Headers */,
 				D3B9484911FF4B6500032B39 /* WebSearchPopupMenu.h in Headers */,
 				0FB659231208B4DB0044816C /* DrawingAreaBase.h in Headers */,
+				51578B831209ECEF00A37C4A /* WebData.h in Headers */,
+				514AF6C91209EE7300A26C97 /* WKData.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1550,6 +1561,7 @@
 				D3B9484611FF4B6500032B39 /* WebPopupMenu.cpp in Sources */,
 				D3B9484811FF4B6500032B39 /* WebSearchPopupMenu.cpp in Sources */,
 				0FB659A61208B9EE0044816C /* DrawingAreaBase.cpp in Sources */,
+				514AF6C81209EE7300A26C97 /* WKData.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

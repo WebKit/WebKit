@@ -23,54 +23,51 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIObject_h
-#define APIObject_h
+#ifndef WebData_h
+#define WebData_h
 
-#include <wtf/RefCounted.h>
+#include "APIObject.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/Vector.h>
 
 namespace WebKit {
 
-class APIObject : public RefCounted<APIObject> {
+// WebData - A data buffer type suitable for vending to an API.
+
+class WebData : public APIObject {
 public:
-    enum Type {
-        // Base types
-        TypeArray,
-        TypeData,
-        TypeString,
-        TypeURL,
-        
-        // UIProcess types
-        TypeBackForwardList,
-        TypeBackForwardListItem,
-        TypeContext,
-        TypeFrame,
-        TypeFramePolicyListener,
-        TypeNavigationData,
-        TypePage,
-        TypePageNamespace,
-        TypePreferences,
+    static const Type APIType = TypeData;
 
-        // Bundle types
-        TypeBundle,
-        TypeBundleFrame,
-        TypeBundlePage,
-        
-        // Platform specific
-        TypeView
-    };
+    static PassRefPtr<WebData> create(const unsigned char* bytes, size_t size)
+    {
+        return adoptRef(new WebData(bytes, size));
+    }
+    
+    static PassRefPtr<WebData> create(const Vector<unsigned char>& buffer)
+    {
+        return adoptRef(new WebData(buffer));
+    }
+    
+    const unsigned char* bytes() const { return m_buffer.data(); }
+    size_t size() const { return m_buffer.size(); }
 
-    virtual ~APIObject()
+private:
+    WebData(const unsigned char* bytes, size_t size)
+        : m_buffer(size)
+    {
+        memcpy(m_buffer.data(), bytes, size);
+    }
+    
+    WebData(const Vector<unsigned char>& buffer)
+        : m_buffer(buffer)
     {
     }
 
-    virtual Type type() const = 0;
+    virtual Type type() const { return APIType; }
 
-protected:
-    APIObject()
-    {
-    }
+    Vector<unsigned char> m_buffer;
 };
 
 } // namespace WebKit
 
-#endif // APIObject_h
+#endif // WebData_h

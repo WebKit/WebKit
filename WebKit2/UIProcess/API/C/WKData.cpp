@@ -23,54 +23,41 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIObject_h
-#define APIObject_h
+#include "WKData.h"
 
-#include <wtf/RefCounted.h>
+#include "WebData.h"
+#include "WKAPICast.h"
 
-namespace WebKit {
+using namespace WebKit;
 
-class APIObject : public RefCounted<APIObject> {
-public:
-    enum Type {
-        // Base types
-        TypeArray,
-        TypeData,
-        TypeString,
-        TypeURL,
-        
-        // UIProcess types
-        TypeBackForwardList,
-        TypeBackForwardListItem,
-        TypeContext,
-        TypeFrame,
-        TypeFramePolicyListener,
-        TypeNavigationData,
-        TypePage,
-        TypePageNamespace,
-        TypePreferences,
+WKTypeID WKDataGetTypeID()
+{
+    return toRef(WebData::APIType);
+}
 
-        // Bundle types
-        TypeBundle,
-        TypeBundleFrame,
-        TypeBundlePage,
-        
-        // Platform specific
-        TypeView
-    };
+WKDataRef WKDataCreate(const unsigned char* bytes, size_t size)
+{
+    RefPtr<WebData> data = WebData::create(bytes, size);
+    return toRef(data.release().releaseRef());
+}
 
-    virtual ~APIObject()
-    {
-    }
+const unsigned char* WKDataGetBytes(WKDataRef dataRef)
+{
+    return toWK(dataRef)->bytes();
+}
 
-    virtual Type type() const = 0;
+size_t WKDataGetSize(WKDataRef dataRef)
+{
+    return toWK(dataRef)->size();
+}
 
-protected:
-    APIObject()
-    {
-    }
-};
+WKDataRef WKDataRetain(WKDataRef dataRef)
+{
+    toWK(dataRef)->ref();
+    return dataRef;
+}
 
-} // namespace WebKit
-
-#endif // APIObject_h
+void WKDataRelease(WKDataRef dataRef)
+{
+    toWK(dataRef)->deref();
+}

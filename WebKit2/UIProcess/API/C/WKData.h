@@ -23,54 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIObject_h
-#define APIObject_h
+#ifndef WKData_h
+#define WKData_h
 
-#include <wtf/RefCounted.h>
+#include <WebKit2/WKBase.h>
 
-namespace WebKit {
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-class APIObject : public RefCounted<APIObject> {
-public:
-    enum Type {
-        // Base types
-        TypeArray,
-        TypeData,
-        TypeString,
-        TypeURL,
-        
-        // UIProcess types
-        TypeBackForwardList,
-        TypeBackForwardListItem,
-        TypeContext,
-        TypeFrame,
-        TypeFramePolicyListener,
-        TypeNavigationData,
-        TypePage,
-        TypePageNamespace,
-        TypePreferences,
+WK_EXPORT WKTypeID WKDataGetTypeID();
 
-        // Bundle types
-        TypeBundle,
-        TypeBundleFrame,
-        TypeBundlePage,
-        
-        // Platform specific
-        TypeView
-    };
+WK_EXPORT WKDataRef WKDataCreate(const unsigned char* bytes, size_t size);
 
-    virtual ~APIObject()
-    {
-    }
+WK_EXPORT const unsigned char* WKDataGetBytes(WKDataRef data);
+WK_EXPORT size_t WKDataGetSize(WKDataRef data);
 
-    virtual Type type() const = 0;
+WK_EXPORT WKDataRef WKDataRetain(WKDataRef data);
+WK_EXPORT void WKDataRelease(WKDataRef data);
 
-protected:
-    APIObject()
-    {
-    }
-};
+#ifdef __cplusplus
+}
+#endif
 
-} // namespace WebKit
+WK_DECLARE_RETAIN_RELEASE_OVERLOADS(WKData)
 
-#endif // APIObject_h
+#endif // WKData_h

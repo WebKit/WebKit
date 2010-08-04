@@ -39,6 +39,7 @@ typedef struct OpaqueWKArrayRef* WKArrayRef;
 typedef struct OpaqueWKBackForwardListItemRef* WKBackForwardListItemRef;
 typedef struct OpaqueWKBackForwardListRef* WKBackForwardListRef;
 typedef struct OpaqueWKContext* WKContextRef;
+typedef struct OpaqueWKData* WKDataRef;
 typedef struct OpaqueWKFrame* WKFrameRef;
 typedef struct OpaqueWKFramePolicyListener* WKFramePolicyListenerRef;
 typedef struct OpaqueWKNavigationDataRef* WKNavigationDataRef;

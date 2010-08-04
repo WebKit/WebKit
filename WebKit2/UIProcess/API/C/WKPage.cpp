@@ -28,6 +28,7 @@
 
 #include "WKAPICast.h"
 #include "WebBackForwardList.h"
+#include "WebData.h"
 #include "WebPageProxy.h"
 
 #ifdef __BLOCKS__
@@ -129,6 +130,17 @@ double WKPageGetEstimatedProgress(WKPageRef pageRef)
 void WKPageTerminate(WKPageRef pageRef)
 {
     toWK(pageRef)->terminateProcess();
+}
+
+WKDataRef WKPageCopySessionState(WKPageRef pageRef)
+{
+    RefPtr<WebData> state = toWK(pageRef)->sessionState();
+    return toRef(state.release().releaseRef());
+}
+
+void WKPageRestoreFromSessionState(WKPageRef pageRef, WKDataRef sessionStateData)
+{
+    toWK(pageRef)->restoreFromSessionState(toWK(sessionStateData));
 }
 
 void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClient* wkClient)

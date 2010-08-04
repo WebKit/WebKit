@@ -1,3 +1,49 @@
+2010-08-04  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Lay the groundwork for saving/restoring page session state to WK2
+        https://bugs.webkit.org/show_bug.cgi?id=43495
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+
+        * Shared/APIObject.h:
+        (WebKit::APIObject::):
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKBase.h:
+        
+        Arbitrary byte buffer:
+        * Shared/WebData.h: Added.
+        (WebKit::WebData::create):
+        (WebKit::WebData::bytes):
+        (WebKit::WebData::size):
+        (WebKit::WebData::WebData):
+        (WebKit::WebData::type):
+        
+        API facing object to act as a byte buffer:
+        * UIProcess/API/C/WKData.cpp: Added.
+        (WKDataGetTypeID):
+        (WKDataCreate):
+        (WKDataGetBytes):
+        (WKDataGetSize):
+        (WKDataRetain):
+        (WKDataRelease):
+        * UIProcess/API/C/WKData.h: Added.
+
+        API for saving/restoring state:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageCopySessionState):
+        (WKPageRestoreFromSessionState):
+        * UIProcess/API/C/WKPage.h:
+
+        These will be filled in later:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::sessionState):
+        (WebKit::WebPageProxy::restoreFromSessionState):
+        * UIProcess/WebPageProxy.h:
+
+
 2010-08-04  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
