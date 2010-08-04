@@ -1,3 +1,9 @@
+2010-08-04  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Updating Windows DRT expectations after DRT's successful run.
+
+        * platform/chromium/drt_expectations.txt: Added failure expectations.
+
 2010-08-04  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Eric Seidel.
