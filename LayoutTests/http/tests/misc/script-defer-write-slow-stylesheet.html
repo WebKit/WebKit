@@ -1,0 +1,29 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" href="../../js-test-resources/js-test-style.css">
+<script src="../../js-test-resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script type="text/javascript">
+var jsTestIsAsync = true;
+
+description('This tests that a slow stylesheet written by a deferred script delays DOMContentLoaded.');
+
+document.addEventListener("DOMContentLoaded", function() {
+  debug('DOMContentLoaded');
+
+  finishJSTest();
+}, false);
+</script>
+<script src="http://127.0.0.1:8000/misc/resources/script-write-slow-stylesheet.js" defer="defer"></script>
+<script src="http://127.0.0.1:8000/misc/resources/script-debug-body-background.js" defer="defer"></script>
+<script>
+var successfullyParsed = true;
+</script>
+<script src="../../js-test-resources/js-test-post.js"></script>
+</body>
+</html>

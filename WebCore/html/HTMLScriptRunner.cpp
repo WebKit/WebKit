@@ -228,31 +228,66 @@ bool HTMLScriptRunner::executeScriptsWaitingForStylesheets()
     return executeParsingBlockingScripts();
 }
 
-void HTMLScriptRunner::requestScript(Element* script)
+bool HTMLScriptRunner::executeScriptsWaitingForParsing()
 {
-    ASSERT(!m_parsingBlockingScript.element);
-    AtomicString srcValue = script->getAttribute(srcAttr);
-    // Allow the host to disllow script loads (using the XSSAuditor, etc.)
-    if (!m_host->shouldLoadExternalScriptFromSrc(srcValue))
-        return;
-    // FIXME: We need to resolve the url relative to the element.
-    if (!script->dispatchBeforeLoadEvent(srcValue))
-        return;
-    m_parsingBlockingScript.element = script;
-    // This should correctly return 0 for empty or invalid srcValues.
-    CachedScript* cachedScript = m_document->docLoader()->requestScript(srcValue, toScriptElement(script)->scriptCharset());
-    if (!cachedScript) {
-        notImplemented(); // Dispatch error event.
-        return;
+    while (!m_scriptsToExecuteAfterParsing.isEmpty()) {
+        ASSERT(!haveParsingBlockingScript());
+        m_parsingBlockingScript = m_scriptsToExecuteAfterParsing.takeFirst();
+        ASSERT(m_parsingBlockingScript.cachedScript());
+        if (!m_parsingBlockingScript.cachedScript()->isLoaded()) {
+            watchForLoad(m_parsingBlockingScript);
+            return false;
+        }
+        if (!executeParsingBlockingScripts())
+            return false;
     }
 
-    m_parsingBlockingScript.setCachedScript(cachedScript);
+    return m_scriptsToExecuteAfterParsing.isEmpty();
+}
+
+bool HTMLScriptRunner::requestScript(PendingScript& pendingScript, Element* scriptElement)
+{
+    ASSERT(!pendingScript.element);
+    const AtomicString& srcValue = scriptElement->getAttribute(srcAttr);
+    if (!m_host->shouldLoadExternalScriptFromSrc(srcValue))
+        return false;
+    // FIXME: We need to resolve the url relative to the element.
+    if (!scriptElement->dispatchBeforeLoadEvent(srcValue))
+        return false;
+    pendingScript.element = scriptElement;
+    // This should correctly return 0 for empty or invalid srcValues.
+    CachedScript* cachedScript = m_document->docLoader()->requestScript(srcValue, toScriptElement(scriptElement)->scriptCharset());
+    if (!cachedScript) {
+        notImplemented(); // Dispatch error event.
+        return false;
+    }
+
+    pendingScript.setCachedScript(cachedScript);
+    return true;
+}
+
+void HTMLScriptRunner::requestParsingBlockingScript(Element* scriptElement)
+{
+    if (!requestScript(m_parsingBlockingScript, scriptElement))
+        return;
+
+    ASSERT(m_parsingBlockingScript.cachedScript());
 
     // We only care about a load callback if cachedScript is not already
     // in the cache.  Callers will attempt to run the m_parsingBlockingScript
     // if possible before returning control to the parser.
     if (!m_parsingBlockingScript.cachedScript()->isLoaded())
         watchForLoad(m_parsingBlockingScript);
+}
+
+void HTMLScriptRunner::requestDeferredScript(Element* scriptElement)
+{
+    PendingScript pendingScript;
+    if (!requestScript(pendingScript, scriptElement))
+        return;
+
+    ASSERT(pendingScript.cachedScript());
+    m_scriptsToExecuteAfterParsing.append(pendingScript);
 }
 
 // This method is meant to match the HTML5 definition of "running a script"
@@ -267,8 +302,11 @@ void HTMLScriptRunner::runScript(Element* script, int startingLineNumber)
         notImplemented(); // event for support
 
         if (script->hasAttribute(srcAttr)) {
-            // FIXME: Handle defer and async
-            requestScript(script);
+            // FIXME: Handle async
+            if (script->hasAttribute(deferAttr))
+                requestDeferredScript(script);
+            else
+                requestParsingBlockingScript(script);
         } else {
             // FIXME: We do not block inline <script> tags on stylesheets to match the
             // old parser for now.  See https://bugs.webkit.org/show_bug.cgi?id=40047

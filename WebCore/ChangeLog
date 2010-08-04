@@ -1,3 +1,36 @@
+2010-08-04  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Support <script defer> as specified by HTML5
+        https://bugs.webkit.org/show_bug.cgi?id=40934
+
+        See: http://dev.w3.org/html5/spec/Overview.html#the-end
+
+        Tests: fast/dom/HTMLScriptElement/defer-double-defer-write.html
+               fast/dom/HTMLScriptElement/defer-double-write.html
+               fast/dom/HTMLScriptElement/defer-inline-script.html
+               fast/dom/HTMLScriptElement/defer-onbeforeload.html
+               fast/dom/HTMLScriptElement/defer-script-invalid-url.html
+               http/tests/misc/script-defer-after-slow-stylesheet.html
+               http/tests/misc/script-defer-write-slow-stylesheet.html
+               http/tests/misc/script-defer.html
+
+        * html/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::attemptToEnd):
+        (WebCore::HTMLDocumentParser::endIfDelayed):
+        (WebCore::HTMLDocumentParser::executeScriptsWaitingForParsingAndEnd):
+        * html/HTMLDocumentParser.h:
+        * html/HTMLScriptRunner.cpp:
+        (WebCore::HTMLScriptRunner::executeScriptsWaitingForParsing):
+        (WebCore::HTMLScriptRunner::requestScript):
+        (WebCore::HTMLScriptRunner::requestParsingBlockingScript):
+        (WebCore::HTMLScriptRunner::requestDeferredScript):
+        (WebCore::HTMLScriptRunner::runScript):
+        * html/HTMLScriptRunner.h:
+        (WebCore::HTMLScriptRunner::PendingScript::PendingScript):
+        (WebCore::HTMLScriptRunner::PendingScript::operator=):
+
 2010-08-04  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix for gcc not importing all symbols from convenience libraries.
