@@ -33,6 +33,7 @@
 #import "EditingDelegate.h"
 #import "MockGeolocationProvider.h"
 #import "PolicyDelegate.h"
+#import "UIDelegate.h"
 #import "WorkQueue.h"
 #import "WorkQueueItem.h"
 #import <Foundation/Foundation.h>
@@ -353,6 +354,12 @@ void LayoutTestController::setMockGeolocationError(int code, JSStringRef message
     NSString *messageNS = (NSString *)messageCF.get();
     NSError *error = [NSError errorWithDomain:WebKitErrorDomain code:code userInfo:[NSDictionary dictionaryWithObject:messageNS forKey:NSLocalizedDescriptionKey]];
     [[MockGeolocationProvider shared] setError:error];
+}
+
+void LayoutTestController::setGeolocationPermission(bool allow)
+{
+    setGeolocationPermissionCommon(allow);
+    [[[mainFrame webView] UIDelegate] didSetMockGeolocationPermission];
 }
 
 void LayoutTestController::setIconDatabaseEnabled(bool iconDatabaseEnabled)

@@ -292,6 +292,8 @@ public:
 private:
     LayoutTestController(const std::string& testPathOrURL, const std::string& expectedPixelHash);
 
+    void setGeolocationPermissionCommon(bool allow);
+
     bool m_dumpApplicationCacheDelegateCallbacks;
     bool m_dumpAsPDF;
     bool m_dumpAsText;

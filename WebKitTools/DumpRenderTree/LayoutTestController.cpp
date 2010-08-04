@@ -1975,7 +1975,7 @@ void LayoutTestController::waitToDumpWatchdogTimerFired()
     notifyDone();
 }
 
-void LayoutTestController::setGeolocationPermission(bool allow)
+void LayoutTestController::setGeolocationPermissionCommon(bool allow)
 {
     m_isGeolocationPermissionSet = true;
     m_geolocationPermission = allow;

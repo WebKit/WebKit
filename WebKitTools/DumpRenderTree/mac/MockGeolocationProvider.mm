@@ -74,6 +74,9 @@
 - (void)registerWebView:(WebView *)webView
 {
     _registeredViews.add(webView);
+
+    if (!_timer)
+        _timer = [NSTimer scheduledTimerWithTimeInterval:0 target:self selector:@selector(timerFired) userInfo:0 repeats:NO];
 }
 
 - (void)unregisterWebView:(WebView *)webView

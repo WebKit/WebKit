@@ -185,11 +185,41 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
 
 - (void)webView:(WebView *)webView decidePolicyForGeolocationRequestFromOrigin:(WebSecurityOrigin *)origin frame:(WebFrame *)frame listener:(id<WebGeolocationPolicyListener>)listener
 {
-    // FIXME: If mock permission isn't set yet, we should send the response asynchronously.
-    if (gLayoutTestController->isGeolocationPermissionSet() && gLayoutTestController->geolocationPermission())
+    if (!gLayoutTestController->isGeolocationPermissionSet()) {
+        if (!m_pendingGeolocationPermissionListeners)
+            m_pendingGeolocationPermissionListeners = [[NSMutableSet set] retain];
+        [m_pendingGeolocationPermissionListeners addObject:listener];
+        return;
+    }
+
+    if (gLayoutTestController->geolocationPermission())
         [listener allow];
     else
         [listener deny];
+}
+
+- (void)didSetMockGeolocationPermission
+{
+    ASSERT(gLayoutTestController->isGeolocationPermissionSet());
+    if (m_pendingGeolocationPermissionListeners && !m_timer)
+        m_timer = [NSTimer scheduledTimerWithTimeInterval:0 target:self selector:@selector(timerFired) userInfo:0 repeats:NO];
+}
+
+- (void)timerFired
+{
+    ASSERT(gLayoutTestController->isGeolocationPermissionSet());
+    m_timer = 0;
+    NSEnumerator* enumerator = [m_pendingGeolocationPermissionListeners objectEnumerator];
+    id<WebGeolocationPolicyListener> listener;
+    while ((listener = [enumerator nextObject])) {
+        if (gLayoutTestController->geolocationPermission())
+            [listener allow];
+        else
+            [listener deny];
+    }
+    [m_pendingGeolocationPermissionListeners removeAllObjects];
+    [m_pendingGeolocationPermissionListeners release];
+    m_pendingGeolocationPermissionListeners = nil;
 }
 
 - (BOOL)webView:(WebView *)sender shouldHaltPlugin:(DOMNode *)pluginNode
@@ -207,6 +237,8 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
 {
     [draggingInfo release];
     draggingInfo = nil;
+    [m_pendingGeolocationPermissionListeners release];
+    m_pendingGeolocationPermissionListeners = nil;
 
     [super dealloc];
 }

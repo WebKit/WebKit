@@ -1,3 +1,18 @@
+2010-08-02  Steve Block  <steveblock@google.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Adds Geolocation LayoutTests for the case where permission is not granted or denied immediately
+        https://bugs.webkit.org/show_bug.cgi?id=40002
+
+        * fast/dom/Geolocation/delayed-permission-allowed-expected.txt: Added.
+        * fast/dom/Geolocation/delayed-permission-allowed.html: Added.
+        * fast/dom/Geolocation/delayed-permission-denied-expected.txt: Added.
+        * fast/dom/Geolocation/delayed-permission-denied.html: Added.
+        * fast/dom/Geolocation/script-tests/delayed-permission-allowed.js: Added.
+        * fast/dom/Geolocation/script-tests/delayed-permission-denied.js: Added.
+        * platform/gtk/Skipped: Added new tests to GTK skipped lists
+
 2010-08-03  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Sam Weinig.

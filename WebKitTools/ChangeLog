@@ -1,3 +1,42 @@
+2010-08-02  Steve Block  <steveblock@google.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Adds Geolocation LayoutTests for the case where permission is not granted or denied immediately
+        https://bugs.webkit.org/show_bug.cgi?id=40002
+
+        The code in LayoutTestController::setGeolocationPermission() was moved to
+        setGeolocationPermissionCommon() to allow each port to provide its own
+        implementation of setGeolocationPermission().
+
+        For the Mac port, setGeolocationPermission() notifies the UIDelegate of the
+        new permission, so it can call back to WebCore if permission requests are in
+        progress and are waiting for a response. A minor fix to the Mac
+        MockGeolocationProvider was also required to make sure that the mock provider
+        calls back to WebCore when it is first started.
+
+        For other ports, LayoutTestController::setGeolocationPermission() is not
+        implemented.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (LayoutTestController::setGeolocationPermissionCommon):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::setGeolocationPermission):
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::setGeolocationPermission):
+        * DumpRenderTree/mac/MockGeolocationProvider.mm:
+        (-[MockGeolocationProvider registerWebView:]):
+        * DumpRenderTree/mac/UIDelegate.h:
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate webView:decidePolicyForGeolocationRequestFromOrigin:frame:listener:]):
+        (-[UIDelegate setGeolocationPermission:]):
+        (-[UIDelegate dealloc]):
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::setGeolocationPermission):
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::setGeolocationPermission):
+
 2010-08-03  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.

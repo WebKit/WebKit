@@ -1087,6 +1087,8 @@ fast/dom/DeviceOrientation/create-event.html
 fast/dom/DeviceOrientation/optional-event-properties.html
 fast/dom/DeviceOrientation/window-property.html
 fast/dom/Geolocation/callback-exception.html
+fast/dom/Geolocation/delayed-permission-allowed.html
+fast/dom/Geolocation/delayed-permission-denied.html
 fast/dom/Geolocation/error.html
 fast/dom/Geolocation/multiple-requests.html
 fast/dom/Geolocation/permission-denied-already-clear-watch.html
