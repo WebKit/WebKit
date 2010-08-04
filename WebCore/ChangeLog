@@ -1,5 +1,12 @@
 2010-08-04  Dan Bernstein  <mitz@apple.com>
 
+        Build fix.
+
+        * platform/text/mac/HyphenationMac.mm:
+        (WebCore::lastHyphenLocation):
+
+2010-08-04  Dan Bernstein  <mitz@apple.com>
+
         Release build fix.
 
         * platform/text/mac/HyphenationMac.mm:

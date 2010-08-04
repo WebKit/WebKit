@@ -60,7 +60,7 @@ bool canHyphenate(const AtomicString& localeIdentifier)
 
 size_t lastHyphenLocation(const UChar* characters, size_t length, size_t beforeIndex, const AtomicString& localeIdentifier)
 {
-    ASSERT_UNUSED(canHyphenate(localeIdentifier));
+    ASSERT_UNUSED(localeIdentifier, canHyphenate(localeIdentifier));
 
     RetainPtr<CFStringRef> string(AdoptCF, CFStringCreateWithCharactersNoCopy(kCFAllocatorDefault, characters, length, kCFAllocatorNull));
     return wkGetHyphenationLocationBeforeIndex(string.get(), beforeIndex);
