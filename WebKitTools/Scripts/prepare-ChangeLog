@@ -264,8 +264,16 @@ if ($bugNumber) {
     # care about validating that bugs.webkit.org is who it says it is here.
     my $descriptionLine = `curl --insecure --silent "$bugXMLURL" | grep short_desc`;
     if ($descriptionLine !~ /<short_desc>(.*)<\/short_desc>/) {
-        print STDERR "  Bug $bugNumber has no bug description. Maybe you set wrong bug ID?\n";
-        print STDERR "  The bug URL: $bugXMLURL\n";
+        # Maybe the reason the above did not work is because the curl that is installed doesn't
+        # support ssl at all.
+        if (`curl --version | grep ^Protocols` !~ /\bhttps\b/) {
+            print STDERR "  Could not get description for bug $bugNumber.\n";
+            print STDERR "  It looks like your version of curl does not support ssl.\n";
+            print STDERR "  If you are using macports, this can be fixed with sudo port install curl+ssl.\n";
+        } else {
+            print STDERR "  Bug $bugNumber has no bug description. Maybe you set wrong bug ID?\n";
+            print STDERR "  The bug URL: $bugXMLURL\n";
+        }
         exit 1;
     }
     $bugDescription = decodeEntities($1);

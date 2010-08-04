@@ -1,3 +1,12 @@
+2010-08-04  Aaron Boodman  <aa@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        prepare-ChangeLog fails mysteriously if curl doesn't support ssl
+        https://bugs.webkit.org/show_bug.cgi?id=43460
+
+        * Scripts/prepare-ChangeLog:
+
 2010-08-03  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Tony Chang.
