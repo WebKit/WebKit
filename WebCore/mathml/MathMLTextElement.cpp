@@ -49,11 +49,8 @@ PassRefPtr<MathMLTextElement> MathMLTextElement::create(const QualifiedName& tag
 
 RenderObject* MathMLTextElement::createRenderer(RenderArena* arena, RenderStyle* style)
 {
-    if (hasLocalName(MathMLNames::moTag)) {
-        RenderObject* object = new (arena) RenderMathMLOperator(this);
-        object->setStyle(style);
-        return object;
-    }
+    if (hasLocalName(MathMLNames::moTag))
+        return new (arena) RenderMathMLOperator(this);
 
     return MathMLElement::createRenderer(arena, style);
 }

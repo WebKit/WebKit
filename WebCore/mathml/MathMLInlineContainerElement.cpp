@@ -53,33 +53,30 @@ PassRefPtr<MathMLInlineContainerElement> MathMLInlineContainerElement::create(co
     return adoptRef(new MathMLInlineContainerElement(tagName, document));
 }
 
-RenderObject* MathMLInlineContainerElement::createRenderer(RenderArena* arena, RenderStyle* style)
+RenderObject* MathMLInlineContainerElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
-    RenderObject* object;
     if (hasLocalName(MathMLNames::mrowTag))
-        object = new (arena) RenderMathMLRow(this);
+        return new (arena) RenderMathMLRow(this);
     else if (hasLocalName(MathMLNames::msubTag))
-        object = new (arena) RenderMathMLSubSup(this);
+        return new (arena) RenderMathMLSubSup(this);
     else if (hasLocalName(MathMLNames::msupTag))
-        object = new (arena) RenderMathMLSubSup(this);
+        return new (arena) RenderMathMLSubSup(this);
     else if (hasLocalName(MathMLNames::msubsupTag))
-        object = new (arena) RenderMathMLSubSup(this);
+        return new (arena) RenderMathMLSubSup(this);
     else if (hasLocalName(MathMLNames::moverTag))
-        object = new (arena) RenderMathMLUnderOver(this);
+        return new (arena) RenderMathMLUnderOver(this);
     else if (hasLocalName(MathMLNames::munderTag))
-        object = new (arena) RenderMathMLUnderOver(this);
+        return new (arena) RenderMathMLUnderOver(this);
     else if (hasLocalName(MathMLNames::munderoverTag))
-        object = new (arena) RenderMathMLUnderOver(this);
+        return new (arena) RenderMathMLUnderOver(this);
     else if (hasLocalName(MathMLNames::mfracTag))
-        object = new (arena) RenderMathMLFraction(this);
+        return new (arena) RenderMathMLFraction(this);
     else if (hasLocalName(MathMLNames::msqrtTag))
-        object = new (arena) RenderMathMLSquareRoot(this);
+        return new (arena) RenderMathMLSquareRoot(this);
     else if (hasLocalName(MathMLNames::mrootTag))
-        object = new (arena) RenderMathMLRoot(this);
+        return new (arena) RenderMathMLRoot(this);
     else
-        object = new (arena) RenderMathMLBlock(this);
-    object->setStyle(style);
-    return object;
+        return new (arena) RenderMathMLBlock(this);
 }
 
 }

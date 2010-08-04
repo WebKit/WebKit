@@ -44,11 +44,9 @@ PassRefPtr<MathMLMathElement> MathMLMathElement::create(const QualifiedName& tag
     return adoptRef(new MathMLMathElement(tagName, document));
 }
 
-RenderObject* MathMLMathElement::createRenderer(RenderArena* arena, RenderStyle* style)
+RenderObject* MathMLMathElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
-    RenderMathMLMath* renderer = new (arena) RenderMathMLMath(this);
-    renderer->setStyle(style);
-    return renderer;
+    return new (arena) RenderMathMLMath(this);
 }
 
 }

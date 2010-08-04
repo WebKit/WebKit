@@ -1,3 +1,15 @@
+2010-08-04  François Sausset  <sausset@gmail.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Regression test: overflow: auto; on a math element was a cause of crash.
+        https://bugs.webkit.org/show_bug.cgi?id=42894
+
+        * mathml/presentation/style.xhtml: Added.
+        * platform/mac/mathml/presentation/style-expected.checksum: Added.
+        * platform/mac/mathml/presentation/style-expected.png: Added.
+        * platform/mac/mathml/presentation/style-expected.txt: Added.
+
 2010-08-04  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Jeremy Orlow.
