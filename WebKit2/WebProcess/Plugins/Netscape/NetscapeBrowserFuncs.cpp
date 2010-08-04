@@ -468,8 +468,6 @@ static NPError NPN_SetValue(NPP npp, NPPVariable variable, void *value)
             notImplemented();
             return NPERR_GENERIC_ERROR;
     }
-    
-    return NPERR_NO_ERROR;
 }
 
 static void NPN_InvalidateRect(NPP npp, NPRect* invalidRect)
