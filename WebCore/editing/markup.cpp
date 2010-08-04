@@ -818,6 +818,84 @@ private:
     Vector<String> postMarkups;
 };
 
+static Node* serializeNodes(MarkupAccumulatorWrapper& accumulator, Node* startNode, Node* pastEnd, Vector<Node*>* nodes, const Range* range, EAnnotateForInterchange annotate, EAbsoluteURLs absoluteURLs)
+{
+    Vector<Node*> ancestorsToClose;
+    Node* next;
+    Node* lastClosed = 0;
+    for (Node* n = startNode; n != pastEnd; n = next) {
+        // According to <rdar://problem/5730668>, it is possible for n to blow
+        // past pastEnd and become null here. This shouldn't be possible.
+        // This null check will prevent crashes (but create too much markup)
+        // and the ASSERT will hopefully lead us to understanding the problem.
+        ASSERT(n);
+        if (!n)
+            break;
+        
+        next = n->traverseNextNode();
+        bool openedTag = false;
+
+        if (isBlock(n) && canHaveChildrenForEditing(n) && next == pastEnd)
+            // Don't write out empty block containers that aren't fully selected.
+            continue;
+
+        if (!n->renderer() && !enclosingNodeWithTag(Position(n, 0), selectTag)) {
+            next = n->traverseNextSibling();
+            // Don't skip over pastEnd.
+            if (pastEnd && pastEnd->isDescendantOf(n))
+                next = pastEnd;
+        } else {
+            // Add the node to the markup if we're not skipping the descendants
+            accumulator.insertOpenTag(n, range, annotate, absoluteURLs);
+            if (nodes)
+                nodes->append(n);
+
+            // If node has no children, close the tag now.
+            if (!n->childNodeCount()) {
+                accumulator.insertEndTag(n);
+                lastClosed = n;
+            } else {
+                openedTag = true;
+                ancestorsToClose.append(n);
+            }
+        }
+
+        // If we didn't insert open tag and there's no more siblings or we're at the end of the traversal, take care of ancestors.
+        // FIXME: What happens if we just inserted open tag and reached the end?
+        if (!openedTag && (!n->nextSibling() || next == pastEnd)) {
+            // Close up the ancestors.
+            while (!ancestorsToClose.isEmpty()) {
+                Node* ancestor = ancestorsToClose.last();
+                if (next != pastEnd && next->isDescendantOf(ancestor))
+                    break;
+                // Not at the end of the range, close ancestors up to sibling of next node.
+                accumulator.insertEndTag(ancestor);
+                lastClosed = ancestor;
+                ancestorsToClose.removeLast();
+            }
+
+            // Surround the currently accumulated markup with markup for ancestors we never opened as we leave the subtree(s) rooted at those ancestors.
+            Node* nextParent = next ? next->parentNode() : 0;
+            if (next != pastEnd && n != nextParent) {
+                Node* lastAncestorClosedOrSelf = n->isDescendantOf(lastClosed) ? lastClosed : n;
+                for (Node *parent = lastAncestorClosedOrSelf->parent(); parent && parent != nextParent; parent = parent->parentNode()) {
+                    // All ancestors that aren't in the ancestorsToClose list should either be a) unrendered:
+                    if (!parent->renderer())
+                        continue;
+                    // or b) ancestors that we never encountered during a pre-order traversal starting at startNode:
+                    ASSERT(startNode->isDescendantOf(parent));
+                    accumulator.wrapWithNode(parent, range, annotate, absoluteURLs);
+                    if (nodes)
+                        nodes->append(parent);
+                    lastClosed = parent;
+                }
+            }
+        }
+    }
+
+    return lastClosed;
+}
+
 // FIXME: Shouldn't we omit style info when annotate == DoNotAnnotateForInterchange? 
 // FIXME: At least, annotation and style info should probably not be included in range.markupString()
 String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterchange annotate, bool convertBlocksToInlines, EAbsoluteURLs absoluteURLs)
@@ -856,9 +934,7 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
 
     MarkupAccumulatorWrapper accumulator;
     Node* pastEnd = updatedRange->pastLastNode();
-    Node* lastClosed = 0;
-    Vector<Node*> ancestorsToClose;
-    
+
     Node* startNode = updatedRange->firstNode();
     VisiblePosition visibleStart(updatedRange->startPosition(), VP_DEFAULT_AFFINITY);
     VisiblePosition visibleEnd(updatedRange->endPosition(), VP_DEFAULT_AFFINITY);
@@ -879,84 +955,7 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
         }
     }
 
-    Node* next;
-    for (Node* n = startNode; n != pastEnd; n = next) {
-        // According to <rdar://problem/5730668>, it is possible for n to blow
-        // past pastEnd and become null here. This shouldn't be possible.
-        // This null check will prevent crashes (but create too much markup)
-        // and the ASSERT will hopefully lead us to understanding the problem.
-        ASSERT(n);
-        if (!n)
-            break;
-    
-        next = n->traverseNextNode();
-        bool skipDescendants = false;
-        bool addMarkupForNode = true;
-        
-        if (!n->renderer() && !enclosingNodeWithTag(Position(n, 0), selectTag)) {
-            skipDescendants = true;
-            addMarkupForNode = false;
-            next = n->traverseNextSibling();
-            // Don't skip over pastEnd.
-            if (pastEnd && pastEnd->isDescendantOf(n))
-                next = pastEnd;
-        }
-
-        if (isBlock(n) && canHaveChildrenForEditing(n) && next == pastEnd)
-            // Don't write out empty block containers that aren't fully selected.
-            continue;
-        
-        // Add the node to the markup.
-        if (addMarkupForNode) {
-
-            accumulator.insertOpenTag(n, updatedRange.get(), annotate, absoluteURLs);
-            if (nodes)
-                nodes->append(n);
-        }
-        
-        if (n->firstChild() == 0 || skipDescendants) {
-            // Node has no children, or we are skipping it's descendants, add its close tag now.
-            if (addMarkupForNode) {
-                accumulator.insertEndTag(n);
-                lastClosed = n;
-            }
-            
-            // Check if the node is the last leaf of a tree.
-            if (!n->nextSibling() || next == pastEnd) {
-                if (!ancestorsToClose.isEmpty()) {
-                    // Close up the ancestors.
-                    do {
-                        Node *ancestor = ancestorsToClose.last();
-                        if (next != pastEnd && next->isDescendantOf(ancestor))
-                            break;
-                        // Not at the end of the range, close ancestors up to sibling of next node.
-                        accumulator.insertEndTag(ancestor);
-                        lastClosed = ancestor;
-                        ancestorsToClose.removeLast();
-                    } while (!ancestorsToClose.isEmpty());
-                }
-                
-                // Surround the currently accumulated markup with markup for ancestors we never opened as we leave the subtree(s) rooted at those ancestors.
-                Node* nextParent = next ? next->parentNode() : 0;
-                if (next != pastEnd && n != nextParent) {
-                    Node* lastAncestorClosedOrSelf = n->isDescendantOf(lastClosed) ? lastClosed : n;
-                    for (Node *parent = lastAncestorClosedOrSelf->parent(); parent != 0 && parent != nextParent; parent = parent->parentNode()) {
-                        // All ancestors that aren't in the ancestorsToClose list should either be a) unrendered:
-                        if (!parent->renderer())
-                            continue;
-                        // or b) ancestors that we never encountered during a pre-order traversal starting at startNode:
-                        ASSERT(startNode->isDescendantOf(parent));
-                        accumulator.wrapWithNode(parent, updatedRange.get(), annotate, absoluteURLs);
-                        if (nodes)
-                            nodes->append(parent);
-                        lastClosed = parent;
-                    }
-                }
-            }
-        } else if (addMarkupForNode && !skipDescendants)
-            // We added markup for this node, and we're descending into it.  Set it to close eventually.
-            ancestorsToClose.append(n);
-    }
+    Node* lastClosed = serializeNodes(accumulator, startNode, pastEnd, nodes, range, annotate, absoluteURLs);
 
     // Include ancestors that aren't completely inside the range but are required to retain 
     // the structure and appearance of the copied markup.

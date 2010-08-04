@@ -1,3 +1,17 @@
+2010-08-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Ojan Vafai.
+
+        Extract a function that serializes nodes from the range version of createMarkup
+        https://bugs.webkit.org/show_bug.cgi?id=43405
+
+        Extracted serializeNodes that serializes nodes from createMarkup.
+        No new tests added since this is a clean up.
+
+        * editing/markup.cpp:
+        (WebCore::serializeNodes): Added.
+        (WebCore::createMarkup): Calls serializeNodes.
+
 2010-08-03  Brian Weinstein  <bweinstein@apple.com>
 
         Fix the build by adding the needed MathML source files to WebCore's vcproj.
