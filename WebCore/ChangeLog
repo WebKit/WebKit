@@ -1,3 +1,28 @@
+2010-08-04  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: serialize database resources to InspectorValues
+        https://bugs.webkit.org/show_bug.cgi?id=43482
+
+        * inspector/Inspector.idl:
+        * inspector/InspectorBackend.cpp:
+        (WebCore::InspectorBackend::getDatabaseTableNames):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::populateScriptObjects):
+        (WebCore::InspectorController::selectDatabase):
+        (WebCore::InspectorController::didOpenDatabase):
+        * inspector/InspectorController.h:
+        * inspector/InspectorDatabaseResource.cpp:
+        (WebCore::InspectorDatabaseResource::create):
+        (WebCore::InspectorDatabaseResource::InspectorDatabaseResource):
+        (WebCore::InspectorDatabaseResource::bind):
+        * inspector/InspectorDatabaseResource.h:
+        * inspector/InspectorFrontend.cpp:
+        * inspector/InspectorFrontend.h:
+        * storage/Database.cpp:
+        (WebCore::Database::openDatabase):
+
 2010-08-03  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

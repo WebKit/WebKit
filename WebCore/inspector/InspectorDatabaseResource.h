@@ -32,41 +32,33 @@
 #define InspectorDatabaseResource_h
 
 #if ENABLE(DATABASE)
-
-#include "Database.h"
-#include "ScriptObject.h"
-#include "ScriptState.h"
-
+#include "PlatformString.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
-    class InspectorFrontend;
-    
-    class InspectorDatabaseResource : public RefCounted<InspectorDatabaseResource> {
-    public:
-        static PassRefPtr<InspectorDatabaseResource> create(Database* database, const String& domain, const String& name, const String& version)
-        {
-            return adoptRef(new InspectorDatabaseResource(database, domain, name, version));
-        }
+class Database;
+class RemoteInspectorFrontend;
 
-        void bind(InspectorFrontend* frontend);
-        void unbind();
-        Database* database() { return m_database.get(); }
-        long id() const { return m_id; }
-    private:
-        InspectorDatabaseResource(Database*, const String& domain, const String& name, const String& version);
-        
-        RefPtr<Database> m_database;
-        int m_id;
-        String m_domain;
-        String m_name;
-        String m_version;
-        bool m_scriptObjectCreated;
+class InspectorDatabaseResource : public RefCounted<InspectorDatabaseResource> {
+public:
+    static PassRefPtr<InspectorDatabaseResource> create(PassRefPtr<Database> database, const String& domain, const String& name, const String& version);
 
-        static int s_nextUnusedId;
-    };
+    void bind(RemoteInspectorFrontend* frontend);
+    void unbind();
+    Database* database() { return m_database.get(); }
+    long id() const { return m_id; }
+private:
+    InspectorDatabaseResource(PassRefPtr<Database>, const String& domain, const String& name, const String& version);
+
+    RefPtr<Database> m_database;
+    int m_id;
+    String m_domain;
+    String m_name;
+    String m_version;
+    bool m_scriptObjectCreated;
+};
 
 } // namespace WebCore
 

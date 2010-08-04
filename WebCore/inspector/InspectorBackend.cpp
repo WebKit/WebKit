@@ -134,14 +134,14 @@ void InspectorBackend::releaseWrapperObjectGroup(long injectedScriptId, const St
 #if ENABLE(DATABASE)
 void InspectorBackend::getDatabaseTableNames(long callId, long databaseId)
 {
-    if (InspectorFrontend* frontend = inspectorFrontend()) {
-        ScriptArray result = frontend->newScriptArray();
+    if (RemoteInspectorFrontend* frontend = remoteFrontend()) {
+        RefPtr<InspectorArray> result = InspectorArray::create();
         Database* database = m_inspectorController->databaseForId(databaseId);
         if (database) {
             Vector<String> tableNames = database->tableNames();
             unsigned length = tableNames.size();
             for (unsigned i = 0; i < length; ++i)
-                result.set(i, tableNames[i]);
+                result->pushString(tableNames[i]);
         }
         frontend->didGetDatabaseTableNames(callId, result);
     }

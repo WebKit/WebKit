@@ -51,6 +51,10 @@ module core {
         [notify] void resumedScript();
         [notify] void addProfileHeader(out Object header);
 #endif
+#if defined(ENABLE_DATABASE) && ENABLE_DATABASE
+        [notify] void addDatabase(out Object database);
+        [notify] void selectDatabase(out int databaseId);
+#endif
 
         [handler=Controller] void storeLastActivePanel(in String panelName);
 
@@ -157,7 +161,7 @@ module core {
         [handler=Controller] void didEvaluateForTestInFrontend(in long callId, in String jsonResult);
 
 #if defined(ENABLE_DATABASE) && ENABLE_DATABASE
-        [handler=Backend] void getDatabaseTableNames(in long callId, in long databaseId);
+        [handler=Backend] void getDatabaseTableNames(in long callId, in long databaseId, out Array tableNames);
 #endif
 
 #if defined(ENABLE_DOM_STORAGE) && ENABLE_DOM_STORAGE

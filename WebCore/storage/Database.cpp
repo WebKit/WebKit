@@ -109,7 +109,7 @@ PassRefPtr<Database> Database::openDatabase(ScriptExecutionContext* context, con
     if (context->isDocument()) {
         Document* document = static_cast<Document*>(context);
         if (Page* page = document->page())
-            page->inspectorController()->didOpenDatabase(database.get(), context->securityOrigin()->host(), name, expectedVersion);
+            page->inspectorController()->didOpenDatabase(database, context->securityOrigin()->host(), name, expectedVersion);
     }
 #endif
 

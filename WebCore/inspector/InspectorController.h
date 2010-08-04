@@ -213,7 +213,7 @@ public:
 #endif
 
 #if ENABLE(DATABASE)
-    void didOpenDatabase(Database*, const String& domain, const String& name, const String& version);
+    void didOpenDatabase(PassRefPtr<Database>, const String& domain, const String& name, const String& version);
 #endif
 #if ENABLE(DOM_STORAGE)
     void didUseDOMStorage(StorageArea* storageArea, bool isLocalStorage, Frame* frame);

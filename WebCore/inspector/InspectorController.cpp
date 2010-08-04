@@ -671,7 +671,7 @@ void InspectorController::populateScriptObjects()
 #if ENABLE(DATABASE)
     DatabaseResourcesMap::iterator databasesEnd = m_databaseResources.end();
     for (DatabaseResourcesMap::iterator it = m_databaseResources.begin(); it != databasesEnd; ++it)
-        it->second->bind(m_frontend.get());
+        it->second->bind(m_remoteFrontend.get());
 #endif
 #if ENABLE(DOM_STORAGE)
     DOMStorageResourcesMap::iterator domStorageEnd = m_domStorageResources.end();
@@ -1264,12 +1264,12 @@ void InspectorController::didDestroyWorker(intptr_t id)
 #if ENABLE(DATABASE)
 void InspectorController::selectDatabase(Database* database)
 {
-    if (!m_frontend)
+    if (!m_remoteFrontend)
         return;
 
     for (DatabaseResourcesMap::iterator it = m_databaseResources.begin(); it != m_databaseResources.end(); ++it) {
         if (it->second->database() == database) {
-            m_frontend->selectDatabase(it->first);
+            m_remoteFrontend->selectDatabase(it->first);
             break;
         }
     }
@@ -1283,7 +1283,7 @@ Database* InspectorController::databaseForId(long databaseId)
     return it->second->database();
 }
 
-void InspectorController::didOpenDatabase(Database* database, const String& domain, const String& name, const String& version)
+void InspectorController::didOpenDatabase(PassRefPtr<Database> database, const String& domain, const String& name, const String& version)
 {
     if (!enabled())
         return;
@@ -1293,8 +1293,8 @@ void InspectorController::didOpenDatabase(Database* database, const String& doma
     m_databaseResources.set(resource->id(), resource);
 
     // Resources are only bound while visible.
-    if (m_frontend)
-        resource->bind(m_frontend.get());
+    if (m_remoteFrontend)
+        resource->bind(m_remoteFrontend.get());
 }
 #endif
 
