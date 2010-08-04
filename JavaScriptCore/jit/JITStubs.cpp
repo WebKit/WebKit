@@ -304,6 +304,12 @@ extern "C" {
     }
 }
 
+#elif COMPILER(MSVC) && CPU(ARM_TRADITIONAL)
+
+#define THUNK_RETURN_ADDRESS_OFFSET 64
+#define PRESERVEDR4_OFFSET          68
+// See DEFINE_STUB_FUNCTION for more information.
+
 #else
     #error "JIT not supported on this platform."
 #endif
@@ -648,6 +654,12 @@ extern "C" {
          }
      }
 }
+
+#elif COMPILER(MSVC) && CPU(ARM_TRADITIONAL)
+
+#define THUNK_RETURN_ADDRESS_OFFSET 32
+#define PRESERVEDR4_OFFSET          36
+// See DEFINE_STUB_FUNCTION for more information.
 
 #else
     #error "JIT not supported on this platform."
@@ -1135,6 +1147,62 @@ RVCT()
 
 /* Include the generated file */
 #include "GeneratedJITStubs_RVCT.h"
+
+#elif CPU(ARM_TRADITIONAL) && COMPILER(MSVC)
+
+#define DEFINE_STUB_FUNCTION(rtype, op) extern "C" rtype JITStubThunked_##op(STUB_ARGS_DECLARATION)
+
+/* The following is a workaround for MSVC toolchain; inline assembler is not supported */
+
+/* The following section is a template to generate code for GeneratedJITStubs_MSVC.asm */
+/* The pattern "#xxx#" will be replaced with "xxx" */
+
+/*
+MSVC_BEGIN(    AREA Trampoline, CODE)
+MSVC_BEGIN()
+MSVC_BEGIN(    EXPORT ctiTrampoline)
+MSVC_BEGIN(    EXPORT ctiVMThrowTrampoline)
+MSVC_BEGIN(    EXPORT ctiOpThrowNotCaught)
+MSVC_BEGIN()
+MSVC_BEGIN(ctiTrampoline PROC)
+MSVC_BEGIN(    stmdb sp!, {r1-r3})
+MSVC_BEGIN(    stmdb sp!, {r4-r8, lr})
+MSVC_BEGIN(    sub sp, sp, ##offset#+4)
+MSVC_BEGIN(    mov r4, r2)
+MSVC_BEGIN(    mov r5, #512)
+MSVC_BEGIN(    ; r0 contains the code)
+MSVC_BEGIN(    mov lr, pc)
+MSVC_BEGIN(    bx r0)
+MSVC_BEGIN(    add sp, sp, ##offset#+4)
+MSVC_BEGIN(    ldmia sp!, {r4-r8, lr})
+MSVC_BEGIN(    add sp, sp, #12)
+MSVC_BEGIN(    bx lr)
+MSVC_BEGIN(ctiTrampoline ENDP)
+MSVC_BEGIN()
+MSVC_BEGIN(ctiVMThrowTrampoline PROC)
+MSVC_BEGIN(    mov r0, sp)
+MSVC_BEGIN(    mov lr, pc)
+MSVC_BEGIN(    bl cti_vm_throw)
+MSVC_BEGIN(ctiOpThrowNotCaught)
+MSVC_BEGIN(    add sp, sp, ##offset#+4)
+MSVC_BEGIN(    ldmia sp!, {r4-r8, lr})
+MSVC_BEGIN(    add sp, sp, #12)
+MSVC_BEGIN(    bx lr)
+MSVC_BEGIN(ctiVMThrowTrampoline ENDP)
+MSVC_BEGIN()
+
+MSVC(    EXPORT cti_#op#)
+MSVC(    IMPORT JITStubThunked_#op#)
+MSVC(cti_#op# PROC)
+MSVC(    str lr, [sp, ##offset#])
+MSVC(    bl JITStubThunked_#op#)
+MSVC(    ldr lr, [sp, ##offset#])
+MSVC(    bx lr)
+MSVC(cti_#op# ENDP)
+MSVC()
+
+MSVC_END(    END)
+*/
 
 #else
 #define DEFINE_STUB_FUNCTION(rtype, op) rtype JIT_STUB cti_##op(STUB_ARGS_DECLARATION)

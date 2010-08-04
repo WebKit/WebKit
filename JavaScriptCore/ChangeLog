@@ -1,3 +1,14 @@
+2010-08-03  Patrick Gansterer  <paroga@paroga.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Implement DEFINE_STUB_FUNCTION for WinCE.
+        https://bugs.webkit.org/show_bug.cgi?id=34953
+
+        * jit/JITStubs.cpp:
+        (JSC::):
+        (JSC::DEFINE_STUB_FUNCTION):
+
 2010-08-02  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
