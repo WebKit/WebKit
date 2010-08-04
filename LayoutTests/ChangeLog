@@ -1,3 +1,14 @@
+2010-08-04  Abhishek Arya  <inferno@chromium.org>
+
+        Unreviewed.
+
+        Add qt specific layout test results for my commit http://trac.webkit.org/changeset/64647.
+        Fix timeout in my layout test since it was generating too many events in qt.
+
+        * fast/notifications/notifications-document-close-crash.html:
+        * platform/qt/fast/notifications: Added.
+        * platform/qt/fast/notifications/notifications-document-close-crash-expected.txt: Added.
+
 2010-08-04  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed. Chromium expectations update.

@@ -17,7 +17,7 @@
             var target = window.open("about:blank");
             var notification = target.webkitNotifications;
             target.location.reload();
-            var timer = setInterval("crash()", 10);
+            var timer = setInterval("crash()", 60);
             setTimeout("finish()", 100);
 
             function crash()
