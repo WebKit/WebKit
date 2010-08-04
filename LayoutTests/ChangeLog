@@ -1,3 +1,15 @@
+2010-08-04  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Allow the language for hyphenation to be specified
+        https://bugs.webkit.org/show_bug.cgi?id=43467
+
+        * fast/text/hyphenate-locale.html: Added.
+        * platform/mac/fast/text/hyphenate-locale-expected.checksum: Added.
+        * platform/mac/fast/text/hyphenate-locale-expected.png: Added.
+        * platform/mac/fast/text/hyphenate-locale-expected.txt: Added.
+
 2010-08-04  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Updating Windows DRT expectations after DRT's successful run.

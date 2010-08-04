@@ -217,6 +217,7 @@ z-index
 -webkit-font-smoothing
 -webkit-highlight
 -webkit-hyphenate-character
+-webkit-hyphenate-locale
 -webkit-hyphens
 -webkit-line-break
 -webkit-line-clamp

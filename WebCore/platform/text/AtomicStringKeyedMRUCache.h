@@ -23,18 +23,49 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Hyphenation_h
-#define Hyphenation_h
-
-#include <wtf/unicode/Unicode.h>
+#ifndef AtomicStringKeyedMRUCache_h
+#define AtomicStringKeyedMRUCache_h
 
 namespace WebCore {
 
-class AtomicString;
+template<typename T, size_t capacity = 4>
+class AtomicStringKeyedMRUCache {
+public:
+    T get(const AtomicString& key)
+    {
+        if (key.isNull()) {
+            DEFINE_STATIC_LOCAL(T, valueForNull, (createValueForNullKey()));
+            return valueForNull;
+        }
 
-bool canHyphenate(const AtomicString& localeIdentifier);
-size_t lastHyphenLocation(const UChar*, size_t length, size_t beforeIndex, const AtomicString& localeIdentifier);
+        for (size_t i = 0; i < m_cache.size(); ++i) {
+            if (m_cache[i].first == key) {
+                size_t foundIndex = i;
+                if (foundIndex + 1 < m_cache.size()) {
+                    Entry entry = m_cache[foundIndex];
+                    m_cache.remove(foundIndex);
+                    foundIndex = m_cache.size();
+                    m_cache.append(entry);
+                }
+                return m_cache[foundIndex].second;
+            }
+        }
+        if (m_cache.size() == capacity)
+            m_cache.remove(0);
 
-} // namespace WebCore
+        m_cache.append(std::make_pair(key, createValueForKey(key)));
+        return m_cache.last().second;
+    }
 
-#endif // Hyphenation_h
+private:
+    T createValueForNullKey();
+    T createValueForKey(const AtomicString&);
+
+    typedef pair<AtomicString, T> Entry;
+    typedef Vector<Entry, capacity> Cache;
+    Cache m_cache;
+};
+
+}
+
+#endif // AtomicStringKeyedMRUCache_h

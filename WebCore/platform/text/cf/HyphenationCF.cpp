@@ -28,24 +28,43 @@
 
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 
+#include "AtomicString.h"
+#include "AtomicStringKeyedMRUCache.h"
 #include "TextBreakIteratorInternalICU.h"
+#include <wtf/ListHashSet.h>
 #include <wtf/RetainPtr.h>
 
 namespace WebCore {
 
-static CFLocaleRef createCurrentSearchLocale()
+template<>
+RetainPtr<CFLocaleRef> AtomicStringKeyedMRUCache<RetainPtr<CFLocaleRef> >::createValueForNullKey()
 {
-    RetainPtr<CFStringRef> localeIdentifier(AdoptCF, CFStringCreateWithBytesNoCopy(kCFAllocatorDefault, (const UInt8*)currentSearchLocaleID(), strlen(currentSearchLocaleID()), kCFStringEncodingASCII, false, kCFAllocatorNull));
-    return CFLocaleCreate(kCFAllocatorDefault, localeIdentifier.get());
+    RetainPtr<CFStringRef> cfLocaleIdentifier(AdoptCF, CFStringCreateWithBytesNoCopy(kCFAllocatorDefault, reinterpret_cast<const UInt8*>(currentSearchLocaleID()), strlen(currentSearchLocaleID()), kCFStringEncodingASCII, false, kCFAllocatorNull));
+    RetainPtr<CFLocaleRef> locale(AdoptCF, CFLocaleCreate(kCFAllocatorDefault, cfLocaleIdentifier.get()));
+    return locale;
 }
 
-size_t lastHyphenLocation(const UChar* characters, size_t length, size_t beforeIndex)
+template<>
+RetainPtr<CFLocaleRef> AtomicStringKeyedMRUCache<RetainPtr<CFLocaleRef> >::createValueForKey(const AtomicString& localeIdentifier)
+{
+    RetainPtr<CFStringRef> cfLocaleIdentifier(AdoptCF, localeIdentifier.createCFString());
+    RetainPtr<CFLocaleRef> locale(AdoptCF, CFLocaleCreate(kCFAllocatorDefault, cfLocaleIdentifier.get()));
+    return locale;
+}
+
+bool canHyphenate(const AtomicString& /* localeIdentifer */)
+{
+    return true;
+}
+
+size_t lastHyphenLocation(const UChar* characters, size_t length, size_t beforeIndex, const AtomicString& localeIdentifier)
 {
     RetainPtr<CFStringRef> string(AdoptCF, CFStringCreateWithCharactersNoCopy(kCFAllocatorDefault, characters, length, kCFAllocatorNull));
 
-    static CFLocaleRef locale = createCurrentSearchLocale();
+    DEFINE_STATIC_LOCAL(AtomicStringKeyedMRUCache<RetainPtr<CFLocaleRef> >, cfLocaleCache, ());
+    RetainPtr<CFLocaleRef> locale = cfLocaleCache.get(localeIdentifier);
 
-    CFIndex result = CFStringGetHyphenationLocationBeforeIndex(string.get(), beforeIndex, CFRangeMake(0, length), 0, locale, 0);
+    CFIndex result = CFStringGetHyphenationLocationBeforeIndex(string.get(), beforeIndex, CFRangeMake(0, length), 0, locale.get(), 0);
     return result == kCFNotFound ? 0 : result;
 }
 

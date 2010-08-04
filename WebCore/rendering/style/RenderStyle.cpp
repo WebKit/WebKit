@@ -385,7 +385,8 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
             rareInheritedData->khtmlLineBreak != other->rareInheritedData->khtmlLineBreak ||
             rareInheritedData->textSecurity != other->rareInheritedData->textSecurity ||
             rareInheritedData->hyphens != other->rareInheritedData->hyphens ||
-            rareInheritedData->hyphenateCharacter != other->rareInheritedData->hyphenateCharacter)
+            rareInheritedData->hyphenationString != other->rareInheritedData->hyphenationString ||
+            rareInheritedData->hyphenationLocale != other->rareInheritedData->hyphenationLocale)
             return StyleDifferenceLayout;
 
         if (!rareInheritedData->shadowDataEquivalent(*other->rareInheritedData.get()))
@@ -832,9 +833,9 @@ const AtomicString& RenderStyle::hyphenString() const
 {
     ASSERT(hyphens() == HyphensAuto);
 
-    const AtomicString& hyphenateCharacter = rareInheritedData.get()->hyphenateCharacter;
-    if (!hyphenateCharacter.isNull())
-        return hyphenateCharacter;
+    const AtomicString& hyphenationString = rareInheritedData.get()->hyphenationString;
+    if (!hyphenationString.isNull())
+        return hyphenationString;
 
     // FIXME: This should depend on locale.
     DEFINE_STATIC_LOCAL(AtomicString, hyphenMinusString, (&hyphen, 1));

@@ -1322,7 +1322,7 @@ static inline unsigned textWidth(RenderText* text, unsigned from, unsigned len, 
     return font.width(TextRun(text->characters() + from, len, !collapseWhiteSpace, xPos));
 }
 
-static void tryHyphenating(RenderText* text, const Font& font, int lastSpace, int pos, int xPos, int availableWidth, bool isFixedPitch, bool collapseWhiteSpace, int lastSpaceWordSpacing, InlineIterator& lineBreak, int nextBreakable, bool& hyphenated)
+static void tryHyphenating(RenderText* text, const Font& font, const AtomicString& localeIdentifier, int lastSpace, int pos, int xPos, int availableWidth, bool isFixedPitch, bool collapseWhiteSpace, int lastSpaceWordSpacing, InlineIterator& lineBreak, int nextBreakable, bool& hyphenated)
 {
     const AtomicString& hyphenString = text->style()->hyphenString();
     int hyphenWidth = font.width(TextRun(hyphenString.characters(), hyphenString.length()));
@@ -1331,7 +1331,7 @@ static void tryHyphenating(RenderText* text, const Font& font, int lastSpace, in
     if (!prefixLength)
         return;
 
-    prefixLength = 1 + lastHyphenLocation(text->characters() + lastSpace + 1, pos - lastSpace - 1, prefixLength - 1);
+    prefixLength = 1 + lastHyphenLocation(text->characters() + lastSpace + 1, pos - lastSpace - 1, prefixLength, localeIdentifier);
     if (prefixLength <= 1)
         return;
 
@@ -1565,7 +1565,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
             RenderStyle* style = t->style(firstLine);
             const Font& f = style->font();
             bool isFixedPitch = f.isFixedPitch();
-            bool canHyphenate = style->hyphens() == HyphensAuto;
+            bool canHyphenate = style->hyphens() == HyphensAuto && WebCore::canHyphenate(style->hyphenationLocale());
 
             int lastSpace = pos;
             int wordSpacing = o->style()->wordSpacing();
@@ -1711,7 +1711,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
                         }
                         if (lineWasTooWide || w + tmpW > width) {
                             if (canHyphenate && w + tmpW > width) {
-                                tryHyphenating(t, f, lastSpace, pos, w + tmpW - additionalTmpW, width, isFixedPitch, collapseWhiteSpace, lastSpaceWordSpacing, lBreak, nextBreakable, hyphenated);
+                                tryHyphenating(t, f, style->hyphenationLocale(), lastSpace, pos, w + tmpW - additionalTmpW, width, isFixedPitch, collapseWhiteSpace, lastSpaceWordSpacing, lBreak, nextBreakable, hyphenated);
                                 if (hyphenated)
                                     goto end;
                             }
@@ -1825,7 +1825,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
             tmpW += inlineWidth(o, !appliedStartWidth, true);
 
             if (canHyphenate && w + tmpW > width) {
-                tryHyphenating(t, f, lastSpace, pos, w + tmpW - additionalTmpW, width, isFixedPitch, collapseWhiteSpace, lastSpaceWordSpacing, lBreak, nextBreakable, hyphenated);
+                tryHyphenating(t, f, style->hyphenationLocale(), lastSpace, pos, w + tmpW - additionalTmpW, width, isFixedPitch, collapseWhiteSpace, lastSpaceWordSpacing, lBreak, nextBreakable, hyphenated);
                 if (hyphenated)
                     goto end;
             }

@@ -5215,11 +5215,19 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     }
     case CSSPropertyWebkitHyphenateCharacter: {
-        HANDLE_INHERIT_AND_INITIAL(hyphenateCharacter, HyphenateCharacter);
+        HANDLE_INHERIT_AND_INITIAL(hyphenationString, HyphenationString);
         if (primitiveValue->getIdent() == CSSValueAuto)
-            m_style->setHyphenateCharacter(nullAtom);
+            m_style->setHyphenationString(nullAtom);
         else
-            m_style->setHyphenateCharacter(primitiveValue->getStringValue());
+            m_style->setHyphenationString(primitiveValue->getStringValue());
+        return;
+    }
+    case CSSPropertyWebkitHyphenateLocale: {
+        HANDLE_INHERIT_AND_INITIAL(hyphenationLocale, HyphenationLocale);
+        if (primitiveValue->getIdent() == CSSValueAuto)
+            m_style->setHyphenationLocale(nullAtom);
+        else
+            m_style->setHyphenationLocale(primitiveValue->getStringValue());
         return;
     }
     case CSSPropertyWebkitBorderFit: {

@@ -1,3 +1,76 @@
+2010-08-04  Dan Bernstein  <mitz@apple.com>
+
+        Allow the language for hyphenation to be specified
+        https://bugs.webkit.org/show_bug.cgi?id=43467
+
+        Test: fast/text/hyphenate-locale.html
+
+        Added a -webkit-hyphenate-locale property whose value can be either auto or a locale identifier
+        string. The initial value is auto and the property is inherited. When the value is a locale
+        identifier, hyphenation should follow the rules for the specified locale.
+
+        * WebCore.xcodeproj/project.pbxproj: Added AtomicStringKeyedMRUCache.h.
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue): Handle -webkit-hyphenate-locale.
+        Updated for the renaming of RenderStyle::hyphenateCharacter() to hyphenationString().
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue): Parse -webkit-hyphenate-locale.
+        * css/CSSPropertyNames.in: Added -webkit-hyphenate-locale.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty): Apply the -webkit-hyphenate-locale property to the
+        RenderStyle. Updated for the renaming of RenderStyle::hyphenateCharacter() to hyphenationString().
+        * platform/text/AtomicStringKeyedMRUCache.h: Added.
+        (WebCore::AtomicStringKeyedMRUCache::get):
+        * platform/text/Hyphenation.cpp:
+        (WebCore::canHyphenate): Added an implementation that returns false.
+        (WebCore::lastHyphenLocation): Now asserts that it is not called, because it is an error to call
+        this function if canHyphenate() returned false.
+        * platform/text/Hyphenation.h:
+        Added canHyphenate(). Returns true if hyphenation is possible for the given locale identifier.
+        * platform/text/android/HyphenationAndroid.cpp:
+        (WebCore::canHyphenate): Added an implementation that returns true and a FIXME.
+        (WebCore::lastHyphenLocation): Added unused localeIdentifier parameter.
+        * platform/text/cf/HyphenationCF.cpp:
+        (WebCore::AtomicStringKeyedMRUCache<RetainPtr<CFLocaleRef> >::createValueForNullKey): Returns
+        the CFLocaleRef for the current search locale.
+        (WebCore::AtomicStringKeyedMRUCache<RetainPtr<CFLocaleRef> >::createValueForKey): Returns a
+        CFLocaleRef for the locale identifier.
+        (WebCore::canHyphenate): Added. Returns true.
+        (WebCore::lastHyphenLocation): Added localeIdentifier parameter, used to pass a CFLocaleRef to
+        the hyphenation function.
+        * platform/text/mac/HyphenationMac.mm:
+        (WebCore::AtomicStringKeyedMRUCache<bool>::createValueForNullKey): Returns whether the current
+        search locale is english.
+        (WebCore::AtomicStringKeyedMRUCache<bool>::createValueForKey): Returns whether the locale identifier
+        string identifies locale with the English language.
+        (WebCore::canHyphenate): Added. Returns true if the locale language is English.
+        (WebCore::lastHyphenLocation): Added localeIdentifier parameter and an assertion that its language
+        is English.
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::tryHyphenating): Added a locale identifier parameter, which is passed down to
+        lastHyphenLocation(). Added 1 to the value passed for the beforeIndex parameter to lastHyphenLocation(),
+        because the latter only returns values smaller than that index. The Mac implementation could
+        return a value equal to beforeIndex, but that is fixed in the WebKitSystemInterface part of this patch.
+        (WebCore::RenderBlock::findNextLineBreak): Only set canHyphenate to true if hyphenation is possible
+        for the specified hyphenation locale. Pass the hyphenation locale to tryHyphenating().
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::diff): Compare hyphenation locales.
+        (WebCore::RenderStyle::hyphenString): Updated for the renaming of hyphenateCharacter() to
+        hyphenationString().
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::hyphenationString): Renamed hyphenateCharacter() to this.
+        (WebCore::InheritedFlags::hyphenationLocale): Added this accessor.
+        (WebCore::InheritedFlags::setHyphenationString): Renamed setHyphenateCharacter() to this.
+        (WebCore::InheritedFlags::setHyphenationLocale): Added this accessor.
+        (WebCore::InheritedFlags::initialHyphenationString): Renamed initialHyphenateCharacter() to this.
+        (WebCore::InheritedFlags::initialHyphenateLocale): Added. Returns the null atom, which represents a
+        value of auto.
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData): Copy the hyphenation locale. Updated for
+        rename.
+        (WebCore::StyleRareInheritedData::operator==): Compare the hyphenation locales. Updated for rename.
+        * rendering/style/StyleRareInheritedData.h:
+
 2010-08-04  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Eric Seidel.

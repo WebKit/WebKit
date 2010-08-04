@@ -71,7 +71,8 @@ StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedData& o)
     , userSelect(o.userSelect)
     , colorSpace(o.colorSpace)
     , hyphens(o.hyphens)
-    , hyphenateCharacter(o.hyphenateCharacter)
+    , hyphenationString(o.hyphenationString)
+    , hyphenationLocale(o.hyphenationLocale)
 {
 }
 
@@ -112,7 +113,8 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && userSelect == o.userSelect
         && colorSpace == o.colorSpace
         && hyphens == o.hyphens
-        && hyphenateCharacter == o.hyphenateCharacter;
+        && hyphenationString == o.hyphenationString
+        && hyphenationLocale == o.hyphenationLocale;
 }
 
 bool StyleRareInheritedData::shadowDataEquivalent(const StyleRareInheritedData& o) const

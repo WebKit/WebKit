@@ -1,3 +1,15 @@
+2010-08-04  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WebKitSystemInterface part of: Allow the language for hyphenation to be specified
+        https://bugs.webkit.org/show_bug.cgi?id=43467
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceLeopard.a:
+        * libWebKitSystemInterfaceSnowLeopard.a:
+        * libWebKitSystemInterfaceTiger.a:
+
 2010-08-03  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Alice Liu.

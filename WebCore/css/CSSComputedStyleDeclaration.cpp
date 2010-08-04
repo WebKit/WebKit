@@ -910,9 +910,13 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyWebkitHyphens:
             return CSSPrimitiveValue::create(style->hyphens());
         case CSSPropertyWebkitHyphenateCharacter:
-            if (style->hyphenateCharacter().isNull())
+            if (style->hyphenationString().isNull())
                 return CSSPrimitiveValue::createIdentifier(CSSValueAuto);
-            return CSSPrimitiveValue::create(style->hyphenateCharacter(), CSSPrimitiveValue::CSS_STRING);
+            return CSSPrimitiveValue::create(style->hyphenationString(), CSSPrimitiveValue::CSS_STRING);
+        case CSSPropertyWebkitHyphenateLocale:
+            if (style->hyphenationLocale().isNull())
+                return CSSPrimitiveValue::createIdentifier(CSSValueAuto);
+            return CSSPrimitiveValue::create(style->hyphenationLocale(), CSSPrimitiveValue::CSS_STRING);
         case CSSPropertyWebkitBorderFit:
             if (style->borderFit() == BorderFitBorder)
                 return CSSPrimitiveValue::createIdentifier(CSSValueBorder);
