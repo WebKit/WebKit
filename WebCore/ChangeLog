@@ -1,3 +1,43 @@
+2010-08-02  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Port Chromium's accelerated compositing to Mac OS X
+        https://bugs.webkit.org/show_bug.cgi?id=43398
+
+        No new tests. Tested manually with CSS 3D and WebGL tests.
+
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        (WebCore::clearBorderColor):
+        (WebCore::clearLayerBackgroundColor):
+         - Fixed compilation problems with gcc.
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        (WebCore::ImageLayerChromium::updateTextureContents):
+         - Added Core Graphics port.
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::LayerChromium):
+         - Fixed compilation problems with gcc related to initialization
+           order of members.
+        (WebCore::LayerChromium::updateTextureContents):
+        (WebCore::LayerChromium::updateTextureRect):
+         - Ported to Core Graphics, adjusting for lower-left coordinate
+           system origin.
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::LayerRendererChromium):
+         - Fixed compilation problems with gcc related to initialization
+           order of members.
+        (WebCore::LayerRendererChromium::setRootLayerCanvasSize):
+         - Ported to Core Graphics.
+        (WebCore::LayerRendererChromium::drawLayers):
+         - Added more debug-only error calls during drawing phase.
+           Adjusted scrolling and incremental updating code for Core
+           Graphics' lower-left coordinate system origin.
+        (WebCore::LayerRendererChromium::initializeSharedGLObjects):
+         - Removed color channel swizzling in Core Graphics port. Fixed
+           preexisting bug in initialization check of m_rootLayerTextureId.
+        * platform/graphics/chromium/LayerRendererChromium.h:
+         - Added needed data members for Core Graphics port.
+
 2010-08-04  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

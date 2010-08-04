@@ -911,6 +911,13 @@ void WebViewImpl::resize(const WebSize& newSize)
         WebRect damagedRect(0, 0, m_size.width, m_size.height);
         m_client->didInvalidateRect(damagedRect);
     }
+
+#if OS(DARWIN)
+    if (m_gles2Context) {
+        m_gles2Context->resizeOnscreenContent(WebSize(std::max(1, m_size.width),
+                                                      std::max(1, m_size.height)));
+    }
+#endif
 }
 
 void WebViewImpl::layout()
@@ -2154,6 +2161,22 @@ void WebViewImpl::updateRootLayerContents(const WebRect& rect)
         rootLayerContext->restore();
 
         platformCanvas->restore();
+#elif PLATFORM(CG)
+        CGContextRef cgContext = rootLayerContext->platformContext();
+
+        CGContextSaveGState(cgContext);
+
+        // Bring the CoreGraphics context into the coordinate system of the paint rect.
+        CGContextTranslateCTM(cgContext, -rect.x, -rect.y);
+
+        rootLayerContext->save();
+
+        webframe->paintWithContext(*rootLayerContext, rect);
+        rootLayerContext->restore();
+
+        CGContextRestoreGState(cgContext);
+#else
+#error Must port to your platform
 #endif
     }
 }
@@ -2203,6 +2226,11 @@ WebGLES2Context* WebViewImpl::gles2Context()
             m_gles2Context.clear();
             return 0;
         }
+
+#if OS(DARWIN)
+        m_gles2Context->resizeOnscreenContent(WebSize(std::max(1, m_size.width),
+                                                      std::max(1, m_size.height)));
+#endif
     }
     return m_gles2Context.get();
 }

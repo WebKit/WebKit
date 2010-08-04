@@ -56,26 +56,26 @@ PassRefPtr<LayerChromium> LayerChromium::create(GraphicsLayerChromium* owner)
 }
 
 LayerChromium::LayerChromium(GraphicsLayerChromium* owner)
-    : m_needsDisplayOnBoundsChange(false)
-    , m_owner(owner)
+    : m_owner(owner)
+    , m_contentsDirty(false)
     , m_superlayer(0)
+    , m_anchorPoint(0.5, 0.5)
+    , m_backgroundColor(0, 0, 0, 0)
+    , m_borderColor(0, 0, 0, 0)
     , m_layerRenderer(0)
+    , m_edgeAntialiasingMask(0)
+    , m_opacity(1.0)
+    , m_zPosition(0.0)
+    , m_anchorPointZ(0)
     , m_borderWidth(0)
     , m_allocatedTextureId(0)
-    , m_borderColor(0, 0, 0, 0)
-    , m_backgroundColor(0, 0, 0, 0)
-    , m_anchorPoint(0.5, 0.5)
-    , m_anchorPointZ(0)
     , m_clearsContext(false)
     , m_doubleSided(true)
-    , m_edgeAntialiasingMask(0)
     , m_hidden(false)
     , m_masksToBounds(false)
-    , m_opacity(1.0)
     , m_opaque(true)
-    , m_zPosition(0.0)
     , m_geometryFlipped(false)
-    , m_contentsDirty(false)
+    , m_needsDisplayOnBoundsChange(false)
 {
 }
 
@@ -162,6 +162,40 @@ void LayerChromium::updateTextureContents(unsigned textureId)
         pixels = skiaBitmap->getPixels();
         bitmapSize = IntSize(skiaBitmap->width(), skiaBitmap->height());
     }
+#elif PLATFORM(CG)
+    requiredTextureSize = m_bounds;
+    IntRect boundsRect(IntPoint(0, 0), m_bounds);
+
+    // If the texture needs to be reallocated then we must redraw the entire
+    // contents of the layer.
+    if (requiredTextureSize != m_allocatedTextureSize)
+        dirtyRect = boundsRect;
+    else {
+        // Clip the dirtyRect to the size of the layer to avoid drawing outside
+        // the bounds of the backing texture.
+        dirtyRect.intersect(boundsRect);
+    }
+
+    Vector<uint8_t> tempVector;
+    int rowBytes = 4 * dirtyRect.width();
+    tempVector.resize(rowBytes * dirtyRect.height());
+    memset(tempVector.data(), 0, tempVector.size());
+    // FIXME: unsure whether this is the best color space choice.
+    RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateWithName(kCGColorSpaceGenericRGBLinear));
+    RetainPtr<CGContextRef> contextCG(AdoptCF, CGBitmapContextCreate(tempVector.data(),
+                                                                     dirtyRect.width(), dirtyRect.height(), 8, rowBytes,
+                                                                     colorSpace.get(),
+                                                                     kCGImageAlphaPremultipliedLast));
+
+    GraphicsContext graphicsContext(contextCG.get());
+
+    // Translate the graphics contxt into the coordinate system of the dirty rect.
+    graphicsContext.translate(-dirtyRect.x(), -dirtyRect.y());
+
+    m_owner->paintGraphicsLayerContents(graphicsContext, dirtyRect);
+
+    pixels = tempVector.data();
+    bitmapSize = dirtyRect.size();
 #else
 #error "Need to implement for your platform."
 #endif
@@ -187,7 +221,17 @@ void LayerChromium::updateTextureRect(void* pixels, const IntSize& bitmapSize, c
     } else {
         ASSERT(updateRect.width() <= m_allocatedTextureSize.width() && updateRect.height() <= m_allocatedTextureSize.height());
         ASSERT(updateRect.width() == bitmapSize.width() && updateRect.height() == bitmapSize.height());
+#if PLATFORM(CG)
+        // The origin is at the lower left in Core Graphics' coordinate system. We need to correct for this here.
+        glTexSubImage2D(GL_TEXTURE_2D, 0,
+                        updateRect.x(), m_allocatedTextureSize.height() - updateRect.height() - updateRect.y(),
+                        updateRect.width(), updateRect.height(),
+                        GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+#elif PLATFORM(SKIA)
         glTexSubImage2D(GL_TEXTURE_2D, 0, updateRect.x(), updateRect.y(), updateRect.width(), updateRect.height(), GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+#else
+#error "Need to implement for your platform."
+#endif
     }
 
     m_dirtyRect.setSize(FloatSize());

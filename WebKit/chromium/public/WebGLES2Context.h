@@ -58,6 +58,12 @@ public:
 
     // Returns the ID of the texture used for offscreen rendering in the context of the parent.
     virtual unsigned getOffscreenContentParentTextureId() = 0;
+
+    // The following function is used only on Mac OS X and is needed
+    // in order to report window size changes.
+#if defined(__APPLE__)
+    virtual void resizeOnscreenContent(const WebSize&) = 0;
+#endif
 };
 
 } // namespace WebKit

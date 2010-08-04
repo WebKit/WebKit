@@ -42,13 +42,17 @@
 #if PLATFORM(SKIA)
 #include "NativeImageSkia.h"
 #include "PlatformContextSkia.h"
+#elif PLATFORM(CG)
+#include <CoreGraphics/CGBitmapContext.h>
 #endif
 
 #include <GLES2/gl2.h>
 
 namespace WebCore {
 
+#ifndef NDEBUG
 static WTFLogChannel LogLayerRenderer = { 0x00000000, "LayerRenderer", WTFLogChannelOn };
+#endif
 
 static void checkGLError()
 {
@@ -195,12 +199,12 @@ PassOwnPtr<LayerRendererChromium> LayerRendererChromium::create(PassOwnPtr<GLES2
 }
 
 LayerRendererChromium::LayerRendererChromium(PassOwnPtr<GLES2Context> gles2Context)
-    : m_rootLayer(0)
-    , m_needsDisplay(false)
+    : m_rootLayerTextureWidth(0)
+    , m_rootLayerTextureHeight(0)
     , m_positionLocation(0)
     , m_texCoordLocation(1)
-    , m_rootLayerTextureWidth(0)
-    , m_rootLayerTextureHeight(0)
+    , m_rootLayer(0)
+    , m_needsDisplay(false)
     , m_scrollPosition(IntPoint(-1, -1))
     , m_currentShaderProgramType(NumShaderProgramTypes)
     , m_gles2Context(gles2Context)
@@ -245,6 +249,19 @@ void LayerRendererChromium::setRootLayerCanvasSize(const IntSize& size)
     m_rootLayerSkiaContext->setDrawingToImageBuffer(true);
 #endif
     m_rootLayerGraphicsContext = new GraphicsContext(reinterpret_cast<PlatformGraphicsContext*>(m_rootLayerSkiaContext.get()));
+#elif PLATFORM(CG)
+    // Release the previous CGBitmapContext before reallocating the backing store as a precaution.
+    m_rootLayerCGContext.adoptCF(0);
+    int rowBytes = 4 * size.width();
+    m_rootLayerBackingStore.resize(rowBytes * size.height());
+    memset(m_rootLayerBackingStore.data(), 0, m_rootLayerBackingStore.size());
+    // FIXME: unsure whether this is the best color space choice.
+    RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateWithName(kCGColorSpaceGenericRGBLinear));
+    m_rootLayerCGContext.adoptCF(CGBitmapContextCreate(m_rootLayerBackingStore.data(),
+                                                       size.width(), size.height(), 8, rowBytes,
+                                                       colorSpace.get(),
+                                                       kCGImageAlphaPremultipliedLast));
+    m_rootLayerGraphicsContext = new GraphicsContext(m_rootLayerCGContext.get());
 #else
 #error "Need to implement for your platform."
 #endif
@@ -304,34 +321,51 @@ void LayerRendererChromium::drawLayers(const IntRect& updateRect, const IntRect&
     // and viewport.
     makeContextCurrent();
 
+    checkGLError();
+
     glBindTexture(GL_TEXTURE_2D, m_rootLayerTextureId);
 
-    unsigned visibleRectWidth = visibleRect.width();
-    unsigned visibleRectHeight = visibleRect.height();
+    checkGLError();
+
+    int visibleRectWidth = visibleRect.width();
+    int visibleRectHeight = visibleRect.height();
     if (visibleRectWidth != m_rootLayerTextureWidth || visibleRectHeight != m_rootLayerTextureHeight) {
         m_rootLayerTextureWidth = visibleRect.width();
         m_rootLayerTextureHeight = visibleRect.height();
 
         m_projectionMatrix = orthoMatrix(0, visibleRectWidth + 0.5, visibleRectHeight + 0.5, 0, -1000, 1000);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_rootLayerTextureWidth, m_rootLayerTextureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+
+        checkGLError();
     }
 
     // The GL viewport covers the entire visible area, including the scrollbars.
     glViewport(0, 0, visibleRectWidth, visibleRectHeight);
 
+    checkGLError();
+
     // The layer, scroll and debug border shaders all use the same vertex attributes
     // so we can bind them only once.
     glBindBuffer(GL_ARRAY_BUFFER, m_quadVboIds[Vertices]);
+    checkGLError();
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_quadVboIds[LayerElements]);
+    checkGLError();
     GLuint offset = 0;
     glVertexAttribPointer(m_positionLocation, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(offset));
+    checkGLError();
     offset += 3 * sizeof(GLfloat);
     glVertexAttribPointer(m_texCoordLocation, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(offset));
+    checkGLError();
     glEnableVertexAttribArray(m_positionLocation);
+    checkGLError();
     glEnableVertexAttribArray(m_texCoordLocation);
+    checkGLError();
     glActiveTexture(GL_TEXTURE0);
+    checkGLError();
     glDisable(GL_DEPTH_TEST);
+    checkGLError();
     glDisable(GL_CULL_FACE);
+    checkGLError();
 
     if (m_scrollPosition == IntPoint(-1, -1))
         m_scrollPosition = scrollPosition;
@@ -346,15 +380,28 @@ void LayerRendererChromium::drawLayers(const IntRect& updateRect, const IntRect&
         // root layer texture. The newly exposed area is subesquently filled as usual with
         // the contents of the updateRect.
         TransformationMatrix scrolledLayerMatrix;
+#if PLATFORM(SKIA)
+        float scaleFactor = 1.0f;
+#elif PLATFORM(CG)
+        // Because the contents of the OpenGL texture are inverted
+        // vertically compared to the Skia backend, we need to move
+        // the backing store in the opposite direction.
+        float scaleFactor = -1.0f;
+#else
+#error "Need to implement for your platform."
+#endif
+
         scrolledLayerMatrix.translate3d((int)floorf(0.5 * visibleRect.width() + 0.5) - scrollDelta.x(),
-            (int)floorf(0.5 * visibleRect.height() + 0.5) + scrollDelta.y(), 0);
+            (int)floorf(0.5 * visibleRect.height() + 0.5) + scaleFactor * scrollDelta.y(), 0);
         scrolledLayerMatrix.scale3d(1, -1, 1);
 
         // Switch shaders to avoid RGB swizzling.
         useShaderProgram(ScrollLayerProgram);
         glUniform1i(m_shaderPrograms[ScrollLayerProgram].m_samplerLocation, 0);
+        checkGLError();
 
         drawTexturedQuad(scrolledLayerMatrix, visibleRect.width(), visibleRect.height(), 1);
+        checkGLError();
 
         glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, contentRect.width(), contentRect.height());
 
@@ -381,31 +428,52 @@ void LayerRendererChromium::drawLayers(const IntRect& updateRect, const IntRect&
         // Copy the contents of the updated rect to the root layer texture.
         glTexSubImage2D(GL_TEXTURE_2D, 0, updateRect.x(), updateRect.y(), updateRect.width(), updateRect.height(), GL_RGBA, GL_UNSIGNED_BYTE, pixels);
         checkGLError();
+#elif PLATFORM(CG)
+        // Get the contents of the updated rect.
+        ASSERT(static_cast<int>(CGBitmapContextGetWidth(m_rootLayerCGContext.get())) == updateRect.width() && static_cast<int>(CGBitmapContextGetHeight(m_rootLayerCGContext.get())) == updateRect.height());
+        void* pixels = m_rootLayerBackingStore.data();
+
+        checkGLError();
+        // Copy the contents of the updated rect to the root layer texture.
+        // The origin is at the lower left in Core Graphics' coordinate system. We need to correct for this here.
+        glTexSubImage2D(GL_TEXTURE_2D, 0,
+                        updateRect.x(), m_rootLayerTextureHeight - updateRect.y() - updateRect.height(),
+                        updateRect.width(), updateRect.height(),
+                        GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+        checkGLError();
 #else
-#error Must port to your platform
+#error "Need to implement for your platform."
 #endif
     }
 
     glClearColor(0, 0, 1, 1);
+    checkGLError();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    checkGLError();
 
     // Render the root layer using a quad that takes up the entire visible area of the window.
     useShaderProgram(ContentLayerProgram);
+    checkGLError();
     glUniform1i(m_samplerLocation, 0);
+    checkGLError();
     TransformationMatrix layerMatrix;
     layerMatrix.translate3d(visibleRect.width() / 2, visibleRect.height() / 2, 0);
     drawTexturedQuad(layerMatrix, visibleRect.width(), visibleRect.height(), 1);
+    checkGLError();
 
     // If culling is enabled then we will cull the backface.
     glCullFace(GL_BACK);
+    checkGLError();
     // The orthographic projection is setup such that Y starts at zero and
     // increases going down the page so we need to adjust the winding order of
     // front facing triangles.
     glFrontFace(GL_CW);
+    checkGLError();
 
     // The shader used to render layers returns pre-multiplied alpha colors
     // so we need to send the blending mode appropriately.
     glEnable(GL_BLEND);
+    checkGLError();
     glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
     checkGLError();
@@ -668,6 +736,9 @@ bool LayerRendererChromium::initializeSharedGLObjects()
         "  gl_Position = matrix * a_position; \n"
         "  v_texCoord = a_texCoord;   \n"
         "}                            \n";
+    // Note differences between Skia and Core Graphics versions:
+    //  - Skia uses BGRA and origin is upper left
+    //  - Core Graphics uses RGBA and origin is lower left
     char fragmentShaderString[] =
         "precision mediump float;                            \n"
         "varying vec2 v_texCoord;                            \n"
@@ -675,8 +746,15 @@ bool LayerRendererChromium::initializeSharedGLObjects()
         "uniform float alpha;                                \n"
         "void main()                                         \n"
         "{                                                   \n"
+#if PLATFORM(SKIA)
         "  vec4 texColor = texture2D(s_texture, v_texCoord); \n"
         "  gl_FragColor = vec4(texColor.z, texColor.y, texColor.x, texColor.w) * alpha; \n"
+#elif PLATFORM(CG)
+        "  vec4 texColor = texture2D(s_texture, vec2(v_texCoord.x, 1.0 - v_texCoord.y)); \n"
+        "  gl_FragColor = vec4(texColor.x, texColor.y, texColor.z, texColor.w) * alpha; \n"
+#else
+#error "Need to implement for your platform."
+#endif
         "}                                                   \n";
 
     // Fragment shader used for rendering the scrolled root layer quad. It differs
@@ -775,7 +853,7 @@ bool LayerRendererChromium::initializeSharedGLObjects()
 
     // Create a texture object to hold the contents of the root layer.
     m_rootLayerTextureId = createLayerTexture();
-    if (m_rootLayerTextureId == -1) {
+    if (!m_rootLayerTextureId) {
         LOG_ERROR("Failed to create texture for root layer");
         return false;
     }

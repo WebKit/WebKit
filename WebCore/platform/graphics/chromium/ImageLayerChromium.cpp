@@ -39,6 +39,13 @@
 #include "PlatformContextSkia.h"
 #endif
 
+#if PLATFORM(CG)
+#include <CoreGraphics/CGBitmapContext.h>
+#include <CoreGraphics/CGContext.h>
+#include <CoreGraphics/CGImage.h>
+#include <wtf/RetainPtr.h>
+#endif
+
 namespace WebCore {
 
 PassRefPtr<ImageLayerChromium> ImageLayerChromium::create(GraphicsLayerChromium* owner)
@@ -82,6 +89,43 @@ void ImageLayerChromium::updateTextureContents(unsigned textureId)
         pixels = skiaBitmap->getPixels();
         bitmapSize = IntSize(skiaBitmap->width(), skiaBitmap->height());
     }
+#elif PLATFORM(CG)
+    // NativeImagePtr is a CGImageRef on Mac OS X.
+    CGImageRef cgImage = m_contents;
+    int width = CGImageGetWidth(cgImage);
+    int height = CGImageGetHeight(cgImage);
+    requiredTextureSize = IntSize(width, height);
+    bitmapSize = requiredTextureSize;
+    // FIXME: we should get rid of this temporary copy where possible.
+    int tempRowBytes = width * 4;
+    Vector<uint8_t> tempVector;
+    tempVector.resize(height * tempRowBytes);
+    // Note we do not zero this vector since we are going to
+    // completely overwrite its contents with the image below.
+    // Try to reuse the color space from the image to preserve its colors.
+    // Some images use a color space (such as indexed) unsupported by the bitmap context.
+    RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGImageGetColorSpace(cgImage));
+    CGColorSpaceModel colorSpaceModel = CGColorSpaceGetModel(colorSpace.get());
+    switch (colorSpaceModel) {
+    case kCGColorSpaceModelMonochrome:
+    case kCGColorSpaceModelRGB:
+    case kCGColorSpaceModelCMYK:
+    case kCGColorSpaceModelLab:
+    case kCGColorSpaceModelDeviceN:
+        break;
+    default:
+        colorSpace.adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceGenericRGBLinear));
+        break;
+    }
+    RetainPtr<CGContextRef> tempContext(AdoptCF, CGBitmapContextCreate(tempVector.data(),
+                                                                       width, height, 8, tempRowBytes,
+                                                                       colorSpace.get(),
+                                                                       kCGImageAlphaPremultipliedLast));
+    CGContextSetBlendMode(tempContext.get(), kCGBlendModeCopy);
+    CGContextDrawImage(tempContext.get(),
+                       CGRectMake(0, 0, static_cast<CGFloat>(width), static_cast<CGFloat>(height)),
+                       cgImage);
+    pixels = tempVector.data();
 #else
 #error "Need to implement for your platform."
 #endif

@@ -69,7 +69,7 @@ static void setLayerBorderColor(LayerChromium& layer, const Color& color)
 
 static void clearBorderColor(LayerChromium& layer)
 {
-    layer.setBorderColor(0);
+    layer.setBorderColor(static_cast<RGBA32>(0));
 }
 
 static void setLayerBackgroundColor(LayerChromium& layer, const Color& color)
@@ -79,7 +79,7 @@ static void setLayerBackgroundColor(LayerChromium& layer, const Color& color)
 
 static void clearLayerBackgroundColor(LayerChromium& layer)
 {
-    layer.setBackgroundColor(0);
+    layer.setBackgroundColor(static_cast<RGBA32>(0));
 }
 
 GraphicsLayer::CompositingCoordinatesOrientation GraphicsLayer::compositingCoordinatesOrientation()
