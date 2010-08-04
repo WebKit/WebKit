@@ -180,17 +180,17 @@ void RenderMathMLOperator::updateFromElement()
         // font size to adjust the glyph size.
         int currentFontSize = style()->fontSize();
         if (!stretchDisabled && isStretchy && m_stretchHeight > 0 && m_stretchHeight <= gMinimumStretchHeight  && m_stretchHeight > currentFontSize) {
-            FontDescription* desc = new FontDescription();
-            desc->setIsAbsoluteSize(true);
-            desc->setSpecifiedSize(m_stretchHeight);
-            desc->setComputedSize(m_stretchHeight);
-            newStyle->setFontDescription(*desc);
+            FontDescription desc;
+            desc.setIsAbsoluteSize(true);
+            desc.setSpecifiedSize(m_stretchHeight);
+            desc.setComputedSize(m_stretchHeight);
+            newStyle->setFontDescription(desc);
             newStyle->font().update(newStyle->font().fontSelector());
             newStyle->setVerticalAlign(BASELINE);
             m_isCentered = false;
         } else {
             int topPad = (m_stretchHeight - currentFontSize) / 2;
-            
+
             if (topPad / static_cast<float>(m_stretchHeight) > gMinimumRatioForStretch) {
                 newStyle->setVerticalAlign(TOP);
                 newStyle->setPaddingTop(Length(topPad, Fixed));
@@ -199,11 +199,11 @@ void RenderMathMLOperator::updateFromElement()
                 newStyle->setVerticalAlign(BASELINE);
             }
         }
-        
+
         container->setStyle(newStyle.release());
         addChild(container);
-     
-        // Build the text of the operator.  
+
+        // Build the text of the operator.
         RenderText* text = 0;
         if (m_operator) 
             text = new (renderArena()) RenderText(node(), StringImpl::create(&m_operator, 1));
@@ -290,25 +290,25 @@ RefPtr<RenderStyle> RenderMathMLOperator::createStackableStyle(int size, int top
     newStyle->inheritFrom(style());
     newStyle->setDisplay(BLOCK);
 
-    FontDescription* desc = new FontDescription();
-    desc->setIsAbsoluteSize(true);
-    desc->setSpecifiedSize(gGlyphFontSize);
-    desc->setComputedSize(gGlyphFontSize);
-    newStyle->setFontDescription(*desc);
+    FontDescription desc;
+    desc.setIsAbsoluteSize(true);
+    desc.setSpecifiedSize(gGlyphFontSize);
+    desc.setComputedSize(gGlyphFontSize);
+    newStyle->setFontDescription(desc);
     newStyle->font().update(newStyle->font().fontSelector());
     newStyle->setLineHeight(Length(gGlyphLineHeight, Fixed));
     newStyle->setVerticalAlign(TOP);
-    
+
     if (size > 0)
         newStyle->setMaxHeight(Length(size, Fixed));
-        
+
     newStyle->setOverflowY(OHIDDEN);
     newStyle->setOverflowX(OHIDDEN);
     if (topRelative) {
         newStyle->setTop(Length(topRelative, Fixed));
         newStyle->setPosition(RelativePosition);
     }
-    
+
     return newStyle;
 }
 

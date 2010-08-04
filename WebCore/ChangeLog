@@ -1,3 +1,13 @@
+2010-08-04  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Don't leak FontDescription objects inside MathML.
+
+        * mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::updateFromElement): Don't unnecessarily allocate the FontDescription on the heap.
+        (WebCore::RenderMathMLOperator::createStackableStyle): Ditto.
+
 2010-08-04  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Dimitri Glazkov.
