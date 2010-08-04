@@ -1,3 +1,45 @@
+2010-08-03  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Nate Chapin.
+
+        Move WebGL-specific code out of GraphicsContext3D so that G3D can be used as a generic accelerated drawing API
+        https://bugs.webkit.org/show_bug.cgi?id=43221
+
+        Added a helper function to extract the contents of WebGL objects
+        to reduce duplicated code and fix a couple of potential crashes
+        introduced in the previous refactoring.
+
+        No new tests; ran existing WebGL tests.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::attachShader):
+        (WebCore::WebGLRenderingContext::bindAttribLocation):
+        (WebCore::WebGLRenderingContext::bindBuffer):
+        (WebCore::WebGLRenderingContext::bindFramebuffer):
+        (WebCore::WebGLRenderingContext::bindRenderbuffer):
+        (WebCore::WebGLRenderingContext::bindTexture):
+        (WebCore::WebGLRenderingContext::compileShader):
+        (WebCore::WebGLRenderingContext::detachShader):
+        (WebCore::WebGLRenderingContext::framebufferRenderbuffer):
+        (WebCore::WebGLRenderingContext::framebufferTexture2D):
+        (WebCore::WebGLRenderingContext::getActiveAttrib):
+        (WebCore::WebGLRenderingContext::getActiveUniform):
+        (WebCore::WebGLRenderingContext::getAttachedShaders):
+        (WebCore::WebGLRenderingContext::getAttribLocation):
+        (WebCore::WebGLRenderingContext::getProgramParameter):
+        (WebCore::WebGLRenderingContext::getProgramInfoLog):
+        (WebCore::WebGLRenderingContext::getShaderParameter):
+        (WebCore::WebGLRenderingContext::getShaderInfoLog):
+        (WebCore::WebGLRenderingContext::getShaderSource):
+        (WebCore::WebGLRenderingContext::getUniform):
+        (WebCore::WebGLRenderingContext::getUniformLocation):
+        (WebCore::WebGLRenderingContext::linkProgram):
+        (WebCore::WebGLRenderingContext::shaderSource):
+        (WebCore::WebGLRenderingContext::useProgram):
+        (WebCore::WebGLRenderingContext::validateProgram):
+        (WebCore::WebGLRenderingContext::handleNPOTTextures):
+        (WebCore::WebGLRenderingContext::restoreStatesAfterVertexAttrib0Simulation):
+
 2010-08-04  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Jeremy Orlow.
