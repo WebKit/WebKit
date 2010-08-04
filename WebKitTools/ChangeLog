@@ -1,3 +1,29 @@
+2010-08-04  Victor Wang  <victorw@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        -. Add result.json incremental merging functionality to test results app engine.
+        -. blobstore is not suitable for AE data merging and there is no API to
+           programatically edit existing blob or write a new one yet, so replace blobstore
+           with datastore. If file is oversize (>1000*1000 bytes), store file data in
+           multiple datastore entries.
+        -. Fix styles.
+
+        Test: jsonresults_unittest to test merging logics.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38599
+
+        * TestResultServer/handlers/dashboardhandler.py:
+        * TestResultServer/handlers/menu.py:
+        * TestResultServer/handlers/testfilehandler.py:
+        * TestResultServer/main.py:
+        * TestResultServer/model/dashboardfile.py:
+        * TestResultServer/model/datastorefile.py: Added.
+        * TestResultServer/model/jsonresults.py: Added.
+        * TestResultServer/model/jsonresults_unittest.py: Added.
+        * TestResultServer/model/testfile.py:
+        * TestResultServer/templates/uploadform.html:
+
 2010-08-04  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Simon Hausmann and Kenneth Christiansen.

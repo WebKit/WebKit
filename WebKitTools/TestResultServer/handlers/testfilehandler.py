@@ -3,7 +3,7 @@
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
 # met:
-# 
+#
 #     * Redistributions of source code must retain the above copyright
 # notice, this list of conditions and the following disclaimer.
 #     * Redistributions in binary form must reproduce the above
@@ -13,7 +13,7 @@
 #     * Neither the name of Google Inc. nor the names of its
 # contributors may be used to endorse or promote products derived from
 # this software without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 # LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -30,11 +30,10 @@ import logging
 import urllib
 
 from google.appengine.api import users
-from google.appengine.ext import blobstore
 from google.appengine.ext import webapp
-from google.appengine.ext.webapp import blobstore_handlers
 from google.appengine.ext.webapp import template
 
+from model.jsonresults import JsonResults
 from model.testfile import TestFile
 
 PARAM_BUILDER = "builder"
@@ -43,10 +42,11 @@ PARAM_FILE = "file"
 PARAM_NAME = "name"
 PARAM_KEY = "key"
 PARAM_TEST_TYPE = "testtype"
+PARAM_INCREMENTAL = "incremental"
 
 
 class DeleteFile(webapp.RequestHandler):
-    """Delete test file for a given builder and name from datastore (metadata) and blobstore (file data)."""
+    """Delete test file for a given builder and name from datastore."""
 
     def get(self):
         key = self.request.get(PARAM_KEY)
@@ -55,7 +55,7 @@ class DeleteFile(webapp.RequestHandler):
         name = self.request.get(PARAM_NAME)
 
         logging.debug(
-            "Deleting File, builder: %s, test_type: %s, name: %s, blob key: %s.",
+            "Deleting File, builder: %s, test_type: %s, name: %s, key: %s.",
             builder, test_type, name, key)
 
         TestFile.delete_file(key, builder, test_type, name, 100)
@@ -65,7 +65,7 @@ class DeleteFile(webapp.RequestHandler):
             % (builder, test_type, name))
 
 
-class GetFile(blobstore_handlers.BlobstoreDownloadHandler):
+class GetFile(webapp.RequestHandler):
     """Get file content or list of files for given builder and name."""
 
     def _get_file_list(self, builder, test_type, name):
@@ -77,7 +77,8 @@ class GetFile(blobstore_handlers.BlobstoreDownloadHandler):
             name: file name
         """
 
-        files = TestFile.get_files(builder, test_type, name, 100)
+        files = TestFile.get_files(
+            builder, test_type, name, load_data=False, limit=100)
         if not files:
             logging.info("File not found, builder: %s, test_type: %s, name: %s.",
                          builder, test_type, name)
@@ -103,16 +104,15 @@ class GetFile(blobstore_handlers.BlobstoreDownloadHandler):
             name: file name
         """
 
-        files = TestFile.get_files(builder, test_type, name, 1)
+        files = TestFile.get_files(
+            builder, test_type, name, load_data=True, limit=1)
         if not files:
             logging.info("File not found, builder: %s, test_type: %s, name: %s.",
                          builder, test_type, name)
             return
 
-        blob_key = files[0].blob_key
-        blob_info = blobstore.get(blob_key)
-        if blob_info:
-            self.send_blob(blob_info, "text/plain")
+        self.response.headers["Content-Type"] = "text/plain; charset=utf-8"
+        self.response.out.write(files[0].data)
 
     def get(self):
         builder = self.request.get(PARAM_BUILDER)
@@ -133,89 +133,69 @@ class GetFile(blobstore_handlers.BlobstoreDownloadHandler):
             return self._get_file_content(builder, test_type, name)
 
 
-class GetUploadUrl(webapp.RequestHandler):
-    """Get an url for uploading file to blobstore. A special url is required for each blobsotre upload."""
-
-    def get(self):
-        upload_url = blobstore.create_upload_url("/testfile/upload")
-        logging.info("Getting upload url: %s.", upload_url)
-        self.response.out.write(upload_url)
-
-
-class Upload(blobstore_handlers.BlobstoreUploadHandler):
-    """Upload file to blobstore."""
+class Upload(webapp.RequestHandler):
+    """Upload test results file to datastore."""
 
     def post(self):
-        uploaded_files = self.get_uploads("file")
-        if not uploaded_files:
-            return self._upload_done([("Missing upload file field.")])
+        file_params = self.request.POST.getall(PARAM_FILE)
+        if not file_params:
+            self.response.out.write("FAIL: missing upload file field.")
+            return
 
         builder = self.request.get(PARAM_BUILDER)
         if not builder:
-            for blob_info in uploaded_files:
-                blob_info.delete()
-    
-            return self._upload_done([("Missing builder parameter in upload request.")])
+            self.response.out.write("FAIL: missing builder parameter.")
+            return
 
         test_type = self.request.get(PARAM_TEST_TYPE)
+        incremental = self.request.get(PARAM_INCREMENTAL)
 
         logging.debug(
             "Processing upload request, builder: %s, test_type: %s.",
             builder, test_type)
 
+        # There are two possible types of each file_params in the request:
+        # one file item or a list of file items.
+        # Normalize file_params to a file item list.
+        files = []
+        logging.debug("test: %s, type:%s", file_params, type(file_params))
+        for item in file_params:
+            if not isinstance(item, list) and not isinstance(item, tuple):
+                item = [item]
+            files.extend(item)
+
         errors = []
-        for blob_info in uploaded_files:
-            tf = TestFile.update_file(builder, test_type, blob_info)
-            if not tf:
+        for file in files:
+            filename = file.filename.lower()
+            if ((incremental and filename == "results.json") or
+                (filename == "incremental_results.json")):
+                # Merge incremental json results.
+                saved_file = JsonResults.update(builder, test_type, file.value)
+            else:
+                saved_file = TestFile.update(
+                    builder, test_type, file.filename, file.value)
+
+            if not saved_file:
                 errors.append(
                     "Upload failed, builder: %s, test_type: %s, name: %s." %
-                    (builder, test_type, blob_info.filename))
-                blob_info.delete()
+                    (builder, test_type, file.filename))
 
-        return self._upload_done(errors)
-
-    def _upload_done(self, errors):
-        logging.info("upload done.")
-
-        error_messages = []
-        for error in errors:
-            logging.info(error)
-            error_messages.append("error=%s" % urllib.quote(error))
-
-        if error_messages:
-            redirect_url = "/uploadfail?%s" % "&".join(error_messages)
+        if errors:
+            messages = "FAIL: " + "; ".join(errors)
+            logging.warning(messages)
+            self.response.set_status(500, messages)
+            self.response.out.write("FAIL")
         else:
-            redirect_url = "/uploadsuccess"
-
-        logging.info(redirect_url)
-        # BlobstoreUploadHandler requires redirect at the end.
-        self.redirect(redirect_url)
+            self.response.set_status(200)
+            self.response.out.write("OK")
 
 
 class UploadForm(webapp.RequestHandler):
-    """Show a form so user can submit a file to blobstore."""
+    """Show a form so user can upload a file."""
 
     def get(self):
-        upload_url = blobstore.create_upload_url("/testfile/upload")
         template_values = {
-            "upload_url": upload_url,
+            "upload_url": "/testfile/upload",
         }
         self.response.out.write(template.render("templates/uploadform.html",
                                                 template_values))
-
-class UploadStatus(webapp.RequestHandler):
-    """Return status of file uploading"""
-
-    def get(self):
-        logging.debug("Update status")
-
-        if self.request.path == "/uploadsuccess":
-            self.response.set_status(200)
-            self.response.out.write("OK")
-        else:
-            errors = self.request.params.getall("error")
-            if errors:
-                messages = "FAIL: " + "; ".join(errors)
-                logging.warning(messages)
-                self.response.set_status(500, messages)
-                self.response.out.write("FAIL")
