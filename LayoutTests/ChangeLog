@@ -1,3 +1,12 @@
+2010-08-04  Steve Block  <steveblock@google.com>
+
+        Unreviewed build fix.
+
+        Add new Geolocation delayed permission tests to Qt skipped list
+        https://bugs.webkit.org/show_bug.cgi?id=43478
+
+        * platform/qt/Skipped:
+
 2010-08-02  Steve Block  <steveblock@google.com>
 
         Reviewed by Alexey Proskuryakov.
