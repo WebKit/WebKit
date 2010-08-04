@@ -1,5 +1,11 @@
 2010-08-03  Andrew Wilson  <atwilson@chromium.org>
 
+        Unreviewed chromium test expectations fixup for origin-quota.html.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-08-03  Andrew Wilson  <atwilson@chromium.org>
+
         Unreviewed chromium test expectations fixup to fix canary bot redness.
 
         * platform/chromium/test_expectations.txt:
