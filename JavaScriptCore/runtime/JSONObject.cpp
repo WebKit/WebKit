@@ -82,12 +82,13 @@ private:
     public:
         Holder(JSObject*);
 
-        JSObject* object() const { return m_object; }
+        JSObject*& object() { return m_object; }
+        JSObject* const& object() const { return m_object; }
 
         bool appendNextProperty(Stringifier&, StringBuilder&);
 
     private:
-        JSObject* const m_object;
+        JSObject* m_object;
         const bool m_isArray;
         bool m_isJSArray;
         unsigned m_index;

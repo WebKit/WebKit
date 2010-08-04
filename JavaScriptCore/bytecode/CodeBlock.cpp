@@ -1513,7 +1513,7 @@ void CodeBlock::refStructures(Instruction* vPC) const
 void CodeBlock::markAggregate(MarkStack& markStack)
 {
     for (size_t i = 0; i < m_constantRegisters.size(); ++i)
-        markStack.append(m_constantRegisters[i].jsValue());
+        markStack.append(m_constantRegisters[i]);
     for (size_t i = 0; i < m_functionExprs.size(); ++i)
         m_functionExprs[i]->markAggregate(markStack);
     for (size_t i = 0; i < m_functionDecls.size(); ++i)

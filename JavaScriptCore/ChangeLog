@@ -1,3 +1,46 @@
+2010-08-04  Nathan Lawrence  <nlawrence@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Refactoring MarkStack::append to take a reference.  This is in
+        preparation for movable objects when we will need to update pointers.
+        http://bugs.webkit.org/show_bug.cgi?id=41177
+
+        Unless otherwise noted, all changes are to either return by reference
+        or pass a reference to MarkStack::append.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::markAggregate):
+        * runtime/Collector.cpp:
+        (JSC::Heap::markConservatively):
+            Added a temporary variable to prevent marking from changing an
+            unknown value on the stack
+        * runtime/JSCell.h:
+        (JSC::JSValue::asCell):
+        (JSC::MarkStack::append):
+        (JSC::MarkStack::appendInternal):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::markIfNeeded):
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::Holder::object):
+        * runtime/JSObject.h:
+        (JSC::JSObject::prototype):
+        * runtime/JSStaticScopeObject.cpp:
+        (JSC::JSStaticScopeObject::markChildren):
+        * runtime/JSValue.h:
+        (JSC::JSValue::JSValue):
+        (JSC::JSValue::asCell):
+        * runtime/MarkStack.h:
+        * runtime/NativeErrorConstructor.cpp:
+        (JSC::NativeErrorConstructor::createStructure):
+            Changed the structure flags to include a custom markChildren.
+        (JSC::NativeErrorConstructor::markChildren):
+            Update the prototype of the stored structure.
+        * runtime/NativeErrorConstructor.h:
+            Added structure flags.
+        * runtime/Structure.h:
+        (JSC::Structure::storedPrototype):
+
 2010-08-03  Nathan Lawrence  <nlawrence@apple.com>
 
         Reviewed by Oliver Hunt.

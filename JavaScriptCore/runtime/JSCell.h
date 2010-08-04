@@ -35,6 +35,7 @@
 namespace JSC {
 
     class JSCell : public NoncopyableCustomAllocated {
+        friend class CollectorHeap;
         friend class GetterSetter;
         friend class Heap;
         friend class JIT;
@@ -237,7 +238,13 @@ namespace JSC {
     }
 
 #if !USE(JSVALUE32_64)
-    ALWAYS_INLINE JSCell* JSValue::asCell() const
+    ALWAYS_INLINE JSCell*& JSValue::asCell()
+    {
+        ASSERT(isCell());
+        return m_ptr;
+    }
+
+    ALWAYS_INLINE JSCell* const& JSValue::asCell() const
     {
         ASSERT(isCell());
         return m_ptr;
@@ -329,7 +336,41 @@ namespace JSC {
         return isCell() ? asCell()->toThisObject(exec) : toThisObjectSlowCase(exec);
     }
 
-    ALWAYS_INLINE void MarkStack::append(JSCell* cell)
+    template<typename T>
+    ALWAYS_INLINE void MarkStack::append(T*& cell)
+    {
+        // References in C++ are not covariant.  JSObject* being a subtype of JSCell*
+        // does not mean that JSObject*& can be used as a subtype of JSCell*& because
+        // treating a JSObject*& as a JSCell*& would allow us to change the pointer to
+        // point to something that is a JSCell but not a JSObject.
+        //
+        // In this case, we need to be able to change the pointer, and although we know
+        // it to be safe, C++ doesn't, requiring us to use templated functions that
+        // pass a casted version to an internal function.
+        //
+        // Currently we're not doing anything with the value of the pointer, so nothing
+        // unsafe will happen.  In the future, when we have movable objects, we will be
+        // changing the value of the pointer to be the new location, in which case the
+        // type will be preserved.
+        JSCell*& ptr = *reinterpret_cast<JSCell**>(&cell);
+        appendInternal(ptr);
+    }
+
+    ALWAYS_INLINE void MarkStack::append(JSValue& value)
+    {
+        ASSERT(value);
+        if (value.isCell())
+            appendInternal(value.asCell());
+    }
+
+    ALWAYS_INLINE void MarkStack::append(Register& reg)
+    {
+        JSValue value = reg.jsValue();
+        append(value);
+        reg = value;
+    }
+
+    inline void MarkStack::appendInternal(JSCell*& cell)
     {
         ASSERT(!m_isCheckingForDefaultMarkViolation);
         ASSERT(cell);
@@ -338,13 +379,6 @@ namespace JSC {
         Heap::markCell(cell);
         if (cell->structure()->typeInfo().type() >= CompoundType)
             m_values.append(cell);
-    }
-
-    ALWAYS_INLINE void MarkStack::append(JSValue value)
-    {
-        ASSERT(value);
-        if (value.isCell())
-            append(value.asCell());
     }
 
     inline Heap* Heap::heap(JSValue v)

@@ -46,8 +46,9 @@ namespace JSC {
         {
         }
 
-        ALWAYS_INLINE void append(JSValue);
-        void append(JSCell*);
+        template<typename T> ALWAYS_INLINE void append(T*& cell);
+        ALWAYS_INLINE void append(JSValue&);
+        ALWAYS_INLINE void append(Register&);
         
         ALWAYS_INLINE void appendValues(Register* values, size_t count, MarkSetProperties properties = NoNullValues)
         {
@@ -70,6 +71,8 @@ namespace JSC {
         }
 
     private:
+        void appendInternal(JSCell*&);
+
         void markChildren(JSCell*);
 
         struct MarkSet {

@@ -36,10 +36,16 @@ namespace JSC {
         static const ClassInfo info;
 
         Structure* errorStructure() { return m_errorStructure.get(); }
+        static PassRefPtr<Structure> createStructure(JSObject* prototype);
+
+    protected:
+        static const unsigned StructureFlags = InternalFunction::StructureFlags | OverridesMarkChildren;
 
     private:
         virtual ConstructType getConstructData(ConstructData&);
         virtual CallType getCallData(CallData&);
+
+        virtual void markChildren(MarkStack&);
 
         virtual const ClassInfo* classInfo() const { return &info; }
 

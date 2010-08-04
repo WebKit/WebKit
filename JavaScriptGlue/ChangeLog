@@ -1,3 +1,15 @@
+2010-08-04  Nathan Lawrence  <nlawrence@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Removed unneeded marking.  We need to remove this marking in order to have
+        MarkStack::append take references for updating movable objects.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41177
+
+        * JSValueWrapper.cpp:
+        (JSValueWrapper::JSObjectMark):
+
 2010-08-03  Gavin Barraclough  <barraclough@apple.com>
 
         Build fix following r64624.
