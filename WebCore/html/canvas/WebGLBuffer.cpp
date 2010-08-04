@@ -38,7 +38,7 @@ PassRefPtr<WebGLBuffer> WebGLBuffer::create(WebGLRenderingContext* ctx)
 }
 
 WebGLBuffer::WebGLBuffer(WebGLRenderingContext* ctx)
-    : CanvasObject(ctx)
+    : WebGLObject(ctx)
     , m_target(0)
     , m_byteLength(0)
     , m_nextAvailableCacheEntry(0)

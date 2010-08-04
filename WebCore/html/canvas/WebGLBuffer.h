@@ -26,7 +26,7 @@
 #ifndef WebGLBuffer_h
 #define WebGLBuffer_h
 
-#include "CanvasObject.h"
+#include "WebGLObject.h"
 #include "ArrayBuffer.h"
 
 #include <wtf/PassRefPtr.h>
@@ -34,7 +34,7 @@
 
 namespace WebCore {
     
-    class WebGLBuffer : public CanvasObject {
+    class WebGLBuffer : public WebGLObject {
     public:
         virtual ~WebGLBuffer() { deleteObject(); }
         

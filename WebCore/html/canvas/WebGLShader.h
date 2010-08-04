@@ -26,14 +26,14 @@
 #ifndef WebGLShader_h
 #define WebGLShader_h
 
-#include "CanvasObject.h"
+#include "WebGLObject.h"
 
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
     
-    class WebGLShader : public CanvasObject {
+    class WebGLShader : public WebGLObject {
     public:
         virtual ~WebGLShader() { deleteObject(); }
         

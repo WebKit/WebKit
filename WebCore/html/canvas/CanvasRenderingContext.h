@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-    class CanvasObject;
+    class WebGLObject;
     class GraphicsContext3D;
     class HTMLCanvasElement;
 

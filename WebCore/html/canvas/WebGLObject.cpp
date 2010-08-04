@@ -27,25 +27,25 @@
 
 #if ENABLE(3D_CANVAS)
 
-#include "CanvasObject.h"
+#include "WebGLObject.h"
 #include "WebGLRenderingContext.h"
 
 namespace WebCore {
     
-CanvasObject::CanvasObject(WebGLRenderingContext* context)
+WebGLObject::WebGLObject(WebGLRenderingContext* context)
     : m_object(0)
     , m_shouldDeleteObject(true)
     , m_context(context)
 {
 }
 
-CanvasObject::~CanvasObject()
+WebGLObject::~WebGLObject()
 {
     if (m_context)
         m_context->removeObject(this);
 }
 
-void CanvasObject::setObject(Platform3DObject object, bool shouldDeleteObject)
+void WebGLObject::setObject(Platform3DObject object, bool shouldDeleteObject)
 {
     if (object == m_object)
         return;
@@ -55,7 +55,7 @@ void CanvasObject::setObject(Platform3DObject object, bool shouldDeleteObject)
     m_shouldDeleteObject = shouldDeleteObject;
 }
 
-void CanvasObject::deleteObject()
+void WebGLObject::deleteObject()
 {
     if (m_object) {
         if (m_shouldDeleteObject)

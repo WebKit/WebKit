@@ -26,7 +26,7 @@
 #ifndef WebGLTexture_h
 #define WebGLTexture_h
 
-#include "CanvasObject.h"
+#include "WebGLObject.h"
 
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -34,7 +34,7 @@
 
 namespace WebCore {
     
-    class WebGLTexture : public CanvasObject {
+    class WebGLTexture : public WebGLObject {
     public:
         virtual ~WebGLTexture() { deleteObject(); }
         

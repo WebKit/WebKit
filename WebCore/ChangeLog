@@ -1,3 +1,65 @@
+2010-08-04  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Rename CanvasObject to WebGLObject
+        https://bugs.webkit.org/show_bug.cgi?id=31564
+
+        Renamed CanvasObject to WebGLObject using do-webcore-rename script.
+        Because it seems the new convention is to not check in the changes
+        made to this script, only checking in its effects. No new tests;
+        built and ran WebGL in Safari and Chromium to test.
+
+        * Android.mk:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/canvas/CanvasObject.cpp: Removed.
+        * html/canvas/CanvasObject.h: Removed.
+        * html/canvas/CanvasRenderingContext.h:
+        * html/canvas/WebGLBuffer.cpp:
+        (WebCore::WebGLBuffer::WebGLBuffer):
+        * html/canvas/WebGLBuffer.h:
+        * html/canvas/WebGLFramebuffer.cpp:
+        (WebCore::WebGLFramebuffer::WebGLFramebuffer):
+        (WebCore::WebGLFramebuffer::setAttachment):
+        (WebCore::WebGLFramebuffer::onAttachedObjectChange):
+        (WebCore::WebGLFramebuffer::isUninitialized):
+        (WebCore::WebGLFramebuffer::setInitialized):
+        * html/canvas/WebGLFramebuffer.h:
+        * html/canvas/WebGLObject.cpp: Copied from WebCore/html/canvas/CanvasObject.cpp.
+        (WebCore::WebGLObject::WebGLObject):
+        (WebCore::WebGLObject::~WebGLObject):
+        (WebCore::WebGLObject::setObject):
+        (WebCore::WebGLObject::deleteObject):
+        * html/canvas/WebGLObject.h: Copied from WebCore/html/canvas/CanvasObject.h.
+        * html/canvas/WebGLProgram.cpp:
+        (WebCore::WebGLProgram::WebGLProgram):
+        * html/canvas/WebGLProgram.h:
+        * html/canvas/WebGLRenderbuffer.cpp:
+        (WebCore::WebGLRenderbuffer::WebGLRenderbuffer):
+        * html/canvas/WebGLRenderbuffer.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::objectOrZero):
+        (WebCore::WebGLRenderingContext::validateWebGLObject):
+        (WebCore::WebGLRenderingContext::removeObject):
+        (WebCore::WebGLRenderingContext::addObject):
+        (WebCore::WebGLRenderingContext::detachAndRemoveAllObjects):
+        (WebCore::WebGLRenderingContext::findTexture):
+        (WebCore::WebGLRenderingContext::findRenderbuffer):
+        (WebCore::WebGLRenderingContext::findBuffer):
+        (WebCore::WebGLRenderingContext::findShader):
+        * html/canvas/WebGLRenderingContext.h:
+        * html/canvas/WebGLShader.cpp:
+        (WebCore::WebGLShader::WebGLShader):
+        * html/canvas/WebGLShader.h:
+        * html/canvas/WebGLTexture.cpp:
+        (WebCore::WebGLTexture::WebGLTexture):
+        * html/canvas/WebGLTexture.h:
+        * html/canvas/WebGLUniformLocation.h:
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+
 2010-08-04  Dan Bernstein  <mitz@apple.com>
 
         Build fix.

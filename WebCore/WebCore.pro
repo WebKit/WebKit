@@ -3007,7 +3007,7 @@ tobe|!tobe: QT += opengl
 HEADERS += \
         bindings/js/JSArrayBufferViewHelper.h \
         html/canvas/CanvasContextAttributes.h \
-        html/canvas/CanvasObject.h \
+        html/canvas/WebGLObject.h \
         html/canvas/WebGLActiveInfo.h \
         html/canvas/ArrayBuffer.h \
         html/canvas/ArrayBufferView.h \
@@ -3042,7 +3042,7 @@ SOURCES += \
         bindings/js/JSUint32ArrayCustom.cpp \
         bindings/js/JSUint16ArrayCustom.cpp \
         html/canvas/CanvasContextAttributes.cpp \
-        html/canvas/CanvasObject.cpp \
+        html/canvas/WebGLObject.cpp \
         html/canvas/ArrayBuffer.cpp \
         html/canvas/ArrayBufferView.cpp \
         html/canvas/WebGLBuffer.cpp \

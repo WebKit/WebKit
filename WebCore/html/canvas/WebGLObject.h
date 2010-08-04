@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CanvasObject_h
-#define CanvasObject_h
+#ifndef WebGLObject_h
+#define WebGLObject_h
 
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -35,9 +35,9 @@ namespace WebCore {
 
     class WebGLRenderingContext;
     
-    class CanvasObject : public RefCounted<CanvasObject> {
+    class WebGLObject : public RefCounted<WebGLObject> {
     public:
-        virtual ~CanvasObject();
+        virtual ~WebGLObject();
         
         Platform3DObject object() const { return m_object; }
         void setObject(Platform3DObject, bool shouldDeleteObject = true);
@@ -59,7 +59,7 @@ namespace WebCore {
         virtual bool isTexture() const { return false; }
 
     protected:
-        CanvasObject(WebGLRenderingContext*);
+        WebGLObject(WebGLRenderingContext*);
         virtual void _deleteObject(Platform3DObject) = 0;
     
     private:
@@ -76,4 +76,4 @@ namespace WebCore {
     
 } // namespace WebCore
 
-#endif // CanvasObject_h
+#endif // WebGLObject_h

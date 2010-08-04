@@ -919,8 +919,8 @@
 		49C7B9CC1042D32F0009D447 /* Int8Array.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9AC1042D32E0009D447 /* Int8Array.h */; };
 		49C7B9CE1042D32F0009D447 /* WebGLFramebuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9AE1042D32E0009D447 /* WebGLFramebuffer.cpp */; };
 		49C7B9CF1042D32F0009D447 /* WebGLFramebuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9AF1042D32E0009D447 /* WebGLFramebuffer.h */; };
-		49C7B9D41042D32F0009D447 /* CanvasObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9B41042D32F0009D447 /* CanvasObject.cpp */; };
-		49C7B9D51042D32F0009D447 /* CanvasObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9B51042D32F0009D447 /* CanvasObject.h */; };
+		49C7B9D41042D32F0009D447 /* WebGLObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9B41042D32F0009D447 /* WebGLObject.cpp */; };
+		49C7B9D51042D32F0009D447 /* WebGLObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9B51042D32F0009D447 /* WebGLObject.h */; };
 		49C7B9D61042D32F0009D447 /* WebGLProgram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9B61042D32F0009D447 /* WebGLProgram.cpp */; };
 		49C7B9D71042D32F0009D447 /* WebGLProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9B71042D32F0009D447 /* WebGLProgram.h */; };
 		49C7B9D91042D32F0009D447 /* WebGLRenderbuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9B91042D32F0009D447 /* WebGLRenderbuffer.cpp */; };
@@ -6657,8 +6657,8 @@
 		49C7B9AE1042D32E0009D447 /* WebGLFramebuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebGLFramebuffer.cpp; path = canvas/WebGLFramebuffer.cpp; sourceTree = "<group>"; };
 		49C7B9AF1042D32E0009D447 /* WebGLFramebuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebGLFramebuffer.h; path = canvas/WebGLFramebuffer.h; sourceTree = "<group>"; };
 		49C7B9B01042D32E0009D447 /* WebGLFramebuffer.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WebGLFramebuffer.idl; path = canvas/WebGLFramebuffer.idl; sourceTree = "<group>"; };
-		49C7B9B41042D32F0009D447 /* CanvasObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CanvasObject.cpp; path = canvas/CanvasObject.cpp; sourceTree = "<group>"; };
-		49C7B9B51042D32F0009D447 /* CanvasObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CanvasObject.h; path = canvas/CanvasObject.h; sourceTree = "<group>"; };
+		49C7B9B41042D32F0009D447 /* WebGLObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebGLObject.cpp; path = canvas/WebGLObject.cpp; sourceTree = "<group>"; };
+		49C7B9B51042D32F0009D447 /* WebGLObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebGLObject.h; path = canvas/WebGLObject.h; sourceTree = "<group>"; };
 		49C7B9B61042D32F0009D447 /* WebGLProgram.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebGLProgram.cpp; path = canvas/WebGLProgram.cpp; sourceTree = "<group>"; };
 		49C7B9B71042D32F0009D447 /* WebGLProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebGLProgram.h; path = canvas/WebGLProgram.h; sourceTree = "<group>"; };
 		49C7B9B81042D32F0009D447 /* WebGLProgram.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WebGLProgram.idl; path = canvas/WebGLProgram.idl; sourceTree = "<group>"; };
@@ -11784,8 +11784,8 @@
 				49484FB3102CF23C00187DD3 /* CanvasGradient.cpp */,
 				49484FB4102CF23C00187DD3 /* CanvasGradient.h */,
 				49484FB5102CF23C00187DD3 /* CanvasGradient.idl */,
-				49C7B9B41042D32F0009D447 /* CanvasObject.cpp */,
-				49C7B9B51042D32F0009D447 /* CanvasObject.h */,
+				49C7B9B41042D32F0009D447 /* WebGLObject.cpp */,
+				49C7B9B51042D32F0009D447 /* WebGLObject.h */,
 				49484FB6102CF23C00187DD3 /* CanvasPattern.cpp */,
 				49484FB7102CF23C00187DD3 /* CanvasPattern.h */,
 				49484FB8102CF23C00187DD3 /* CanvasPattern.idl */,
@@ -17433,7 +17433,7 @@
 				93F1995008245E59001E9ABC /* CachePolicy.h in Headers */,
 				6E4E91AD10F7FB3100A2779C /* CanvasContextAttributes.h in Headers */,
 				49484FC2102CF23C00187DD3 /* CanvasGradient.h in Headers */,
-				49C7B9D51042D32F0009D447 /* CanvasObject.h in Headers */,
+				49C7B9D51042D32F0009D447 /* WebGLObject.h in Headers */,
 				49484FC5102CF23C00187DD3 /* CanvasPattern.h in Headers */,
 				49484FC8102CF23C00187DD3 /* CanvasPixelArray.h in Headers */,
 				49C7B9DD1042D32F0009D447 /* CanvasRenderingContext.h in Headers */,
@@ -20377,7 +20377,7 @@
 				BCB16C270979C3BD00467741 /* CachedXSLStyleSheet.cpp in Sources */,
 				6E4E91AC10F7FB3100A2779C /* CanvasContextAttributes.cpp in Sources */,
 				49484FC1102CF23C00187DD3 /* CanvasGradient.cpp in Sources */,
-				49C7B9D41042D32F0009D447 /* CanvasObject.cpp in Sources */,
+				49C7B9D41042D32F0009D447 /* WebGLObject.cpp in Sources */,
 				49484FC4102CF23C00187DD3 /* CanvasPattern.cpp in Sources */,
 				49484FC7102CF23C00187DD3 /* CanvasPixelArray.cpp in Sources */,
 				49C7B9DC1042D32F0009D447 /* CanvasRenderingContext.cpp in Sources */,

@@ -33,7 +33,7 @@
 
 #include "ArrayBuffer.h"
 #include "ArrayBufferView.h"
-#include "CanvasObject.h"
+#include "WebGLObject.h"
 #include "CanvasRenderingContext.h"
 #include "Float32Array.h"
 #include "GraphicsContext.h"

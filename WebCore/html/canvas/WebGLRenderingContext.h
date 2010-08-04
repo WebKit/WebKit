@@ -41,7 +41,7 @@ class WebGLActiveInfo;
 class WebGLBuffer;
 class WebGLContextAttributes;
 class WebGLFramebuffer;
-class CanvasObject;
+class WebGLObject;
 class WebGLProgram;
 class WebGLRenderbuffer;
 class WebGLShader;
@@ -315,14 +315,14 @@ class WebKitCSSMatrix;
         void beginPaint();
         void endPaint();
         
-        void removeObject(CanvasObject*);
+        void removeObject(WebGLObject*);
         
     private:
-        friend class CanvasObject;
+        friend class WebGLObject;
 
         WebGLRenderingContext(HTMLCanvasElement*, PassOwnPtr<GraphicsContext3D>);
 
-        void addObject(CanvasObject*);
+        void addObject(WebGLObject*);
         void detachAndRemoveAllObjects();
         WebGLTexture* findTexture(Platform3DObject);
         WebGLRenderbuffer* findRenderbuffer(Platform3DObject);
@@ -348,14 +348,14 @@ class WebKitCSSMatrix;
         bool validateIndexArrayPrecise(unsigned long count, unsigned long type, long offset, long& numElementsRequired);
         bool validateRenderingState(long numElements);
 
-        bool validateWebGLObject(CanvasObject* object);
+        bool validateWebGLObject(WebGLObject* object);
 
         OwnPtr<GraphicsContext3D> m_context;
         bool m_needsUpdate;
         bool m_markedCanvasDirty;
         // FIXME: I think this is broken -- it does not increment any
         // reference counts, so may refer to destroyed objects.
-        HashSet<RefPtr<CanvasObject> > m_canvasObjects;
+        HashSet<RefPtr<WebGLObject> > m_canvasObjects;
         
         // List of bound VBO's. Used to maintain info about sizes for ARRAY_BUFFER and stored values for ELEMENT_ARRAY_BUFFER
         RefPtr<WebGLBuffer> m_boundArrayBuffer;

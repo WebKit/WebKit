@@ -26,7 +26,7 @@
 #ifndef WebGLProgram_h
 #define WebGLProgram_h
 
-#include "CanvasObject.h"
+#include "WebGLObject.h"
 
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -34,7 +34,7 @@
 
 namespace WebCore {
     
-    class WebGLProgram : public CanvasObject {
+    class WebGLProgram : public WebGLObject {
     public:
         virtual ~WebGLProgram() { deleteObject(); }
         

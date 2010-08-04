@@ -288,7 +288,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	\
 	html/canvas/CanvasGradient.cpp \
 	html/canvas/CanvasNumberArray.cpp \
-	html/canvas/CanvasObject.cpp \
+	html/canvas/WebGLObject.cpp \
 	html/canvas/CanvasPattern.cpp \
 	html/canvas/CanvasPixelArray.cpp \
 	html/canvas/CanvasRenderingContext.cpp \

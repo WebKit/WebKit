@@ -21,7 +21,7 @@
 #include "GraphicsContext3D.h"
 
 #include "ArrayBufferView.h"
-#include "CanvasObject.h"
+#include "WebGLObject.h"
 #include "CanvasRenderingContext.h"
 #include "Float32Array.h"
 #include "GraphicsContext.h"

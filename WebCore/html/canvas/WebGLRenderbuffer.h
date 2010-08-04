@@ -26,14 +26,14 @@
 #ifndef WebGLRenderbuffer_h
 #define WebGLRenderbuffer_h
 
-#include "CanvasObject.h"
+#include "WebGLObject.h"
 
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
     
-    class WebGLRenderbuffer : public CanvasObject {
+    class WebGLRenderbuffer : public WebGLObject {
     public:
         virtual ~WebGLRenderbuffer() { deleteObject(); }
         
