@@ -36,6 +36,7 @@
 #include "GraphicsContext.h"
 #include "HTMLMetaElement.h"
 #include "HitTestResult.h"
+#include "HTTPParsers.h"
 #include "IconDatabase.h"
 #include "InspectorController.h"
 #include "JSDOMBinding.h"
@@ -830,10 +831,15 @@ void QWebFrame::setContent(const QByteArray &data, const QString &mimeType, cons
     KURL kurl(baseUrl);
     WebCore::ResourceRequest request(kurl);
     WTF::RefPtr<WebCore::SharedBuffer> buffer = WebCore::SharedBuffer::create(data.constData(), data.length());
-    QString actualMimeType = mimeType;
-    if (actualMimeType.isEmpty())
+    QString actualMimeType;
+    WebCore::String encoding;
+    if (mimeType.isEmpty())
         actualMimeType = QLatin1String("text/html");
-    WebCore::SubstituteData substituteData(buffer, WebCore::String(actualMimeType), WebCore::String(), KURL());
+    else {
+        actualMimeType = extractMIMETypeFromMediaType(mimeType);
+        encoding = extractCharsetFromMediaType(mimeType);
+    }
+    WebCore::SubstituteData substituteData(buffer, WebCore::String(actualMimeType), encoding, KURL());
     d->frame->loader()->load(request, substituteData, false);
 }
 

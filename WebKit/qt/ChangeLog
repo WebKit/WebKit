@@ -1,3 +1,14 @@
+2010-08-04  Pierre Rossi  <pierre.rossi@nokia.com>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] QWebFrame::setContent() does not respect charset provided in the mimeType
+        https://bugs.webkit.org/show_bug.cgi?id=43125
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::setContent):
+        * tests/qwebframe/tst_qwebframe.cpp:
+
 2010-08-03  Noam Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

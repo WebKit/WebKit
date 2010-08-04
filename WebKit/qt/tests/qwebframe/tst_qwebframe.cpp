@@ -33,6 +33,7 @@
 #include <QRegExp>
 #include <QNetworkRequest>
 #include <QNetworkReply>
+#include <QTextCodec>
 #ifndef QT_NO_OPENSSL
 #include <qsslerror.h>
 #endif
@@ -625,6 +626,8 @@ private slots:
     void qObjectWrapperWithSameIdentity();
     void introspectQtMethods_data();
     void introspectQtMethods();
+    void setContent_data();
+    void setContent();
 
 private:
     QString  evalJS(const QString&s) {
@@ -3099,6 +3102,35 @@ void tst_QWebFrame::introspectQtMethods()
     }
 
     QVERIFY(evalJSV("var props=[]; for (var p in myObject.deleteLater) {props.push(p);}; props.sort()").toStringList().isEmpty());
+}
+
+void tst_QWebFrame::setContent_data()
+{
+    QTest::addColumn<QString>("mimeType");
+    QTest::addColumn<QByteArray>("testContents");
+    QTest::addColumn<QString>("expected");
+
+    QString str = QString::fromUtf8("ὕαλον ϕαγεῖν δύναμαι· τοῦτο οὔ με βλάπτει");
+    QTest::newRow("UTF-8 plain text") << "text/plain; charset=utf-8" << str.toUtf8() << str;
+
+    QTextCodec *utf16 = QTextCodec::codecForName("UTF-16");
+    if (utf16)
+        QTest::newRow("UTF-16 plain text") << "text/plain; charset=utf-16" << utf16->fromUnicode(str) << str;
+
+    str = QString::fromUtf8("Une chaîne de caractères à sa façon.");
+    QTest::newRow("latin-1 plain text") << "text/plain; charset=iso-8859-1" << str.toLatin1() << str;
+
+
+}
+
+void tst_QWebFrame::setContent()
+{
+    QFETCH(QString, mimeType);
+    QFETCH(QByteArray, testContents);
+    QFETCH(QString, expected);
+    m_view->setContent(testContents, mimeType);
+    QWebFrame* mainFrame = m_view->page()->mainFrame();
+    QCOMPARE(expected , mainFrame->toPlainText());
 }
 
 QTEST_MAIN(tst_QWebFrame)
