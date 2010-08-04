@@ -1,3 +1,18 @@
+2010-08-03  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Null the script execution context when disconnecting frame in notifications.
+        Make sure that script execution context is valid in notification requestPermission.
+        https://bugs.webkit.org/show_bug.cgi?id=43295
+
+        Tests: fast/notifications/notifications-document-close-crash.html
+
+        * bindings/v8/custom/V8NotificationCenterCustom.cpp:
+        (WebCore::V8NotificationCenter::requestPermissionCallback):
+        * notifications/NotificationCenter.cpp:
+        (WebCore::NotificationCenter::disconnectFrame):
+
 2010-08-03  Adam Roben  <aroben@apple.com>
 
         Turn on PLATFORM_STRATEGIES on Windows

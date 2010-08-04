@@ -83,6 +83,10 @@ v8::Handle<v8::Value> V8NotificationCenter::requestPermissionCallback(const v8::
     NotificationCenter* notificationCenter = V8NotificationCenter::toNative(args.Holder());
     ScriptExecutionContext* context = notificationCenter->context();
 
+    // Make sure that script execution context is valid.
+    if (!context)
+        return throwError(INVALID_STATE_ERR);
+
     // Requesting permission is only valid from a page context.
     if (context->isWorkerContext())
         return throwError(NOT_SUPPORTED_ERR);

@@ -68,6 +68,7 @@ void NotificationCenter::disconnectFrame()
         return;
     m_notificationPresenter->cancelRequestsForPermission(m_scriptExecutionContext);
     m_notificationPresenter = 0;
+    m_scriptExecutionContext = 0;
 }
 
 } // namespace WebCore
