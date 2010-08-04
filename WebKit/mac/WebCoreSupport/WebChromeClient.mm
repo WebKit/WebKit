@@ -30,8 +30,6 @@
 #import "WebChromeClient.h"
 
 #import "DOMNodeInternal.h"
-#import "WebApplicationCacheSecurityOrigin.h"
-#import "WebDatabaseSecurityOrigin.h"
 #import "WebDefaultUIDelegate.h"
 #import "WebDelegateImplementationCaching.h"
 #import "WebElementDictionary.h"
@@ -43,6 +41,7 @@
 #import "WebKitSystemInterface.h"
 #import "WebNSURLRequestExtras.h"
 #import "WebPlugin.h"
+#import "WebQuotaManager.h"
 #import "WebSecurityOriginInternal.h"
 #import "WebUIDelegatePrivate.h"
 #import "WebView.h"
@@ -559,11 +558,11 @@ void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& database
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    WebDatabaseSecurityOrigin *webOrigin = [[WebDatabaseSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:frame->document()->securityOrigin()];
+    WebSecurityOrigin *webOrigin = [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:frame->document()->securityOrigin()];
     // FIXME: remove this workaround once shipping Safari has the necessary delegate implemented.
     if (WKAppVersionCheckLessThan(@"com.apple.Safari", -1, 3.1)) {
         const unsigned long long defaultQuota = 5 * 1024 * 1024; // 5 megabytes should hopefully be enough to test storage support.
-        [webOrigin setQuota:defaultQuota];
+        [[webOrigin databaseQuotaManager] setQuota:defaultQuota];
     } else
         CallUIDelegate(m_webView, @selector(webView:frame:exceededDatabaseQuotaForSecurityOrigin:database:), kit(frame), webOrigin, (NSString *)databaseName);
     [webOrigin release];
@@ -582,7 +581,7 @@ void WebChromeClient::reachedApplicationCacheOriginQuota(SecurityOrigin* origin)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    WebApplicationCacheSecurityOrigin *webOrigin = [[WebApplicationCacheSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:origin];
+    WebSecurityOrigin *webOrigin = [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:origin];
     CallUIDelegate(m_webView, @selector(webView:exceededApplicationCacheOriginQuotaForSecurityOrigin:), webOrigin);
     [webOrigin release];
 

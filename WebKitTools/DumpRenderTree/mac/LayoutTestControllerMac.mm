@@ -60,6 +60,7 @@
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebPreferencesPrivate.h>
+#import <WebKit/WebQuotaManager.h>
 #import <WebKit/WebScriptWorld.h>
 #import <WebKit/WebSecurityOriginPrivate.h>
 #import <WebKit/WebTypesInternal.h>
@@ -310,7 +311,7 @@ void LayoutTestController::setCustomPolicyDelegate(bool setDelegate, bool permis
 void LayoutTestController::setDatabaseQuota(unsigned long long quota)
 {    
     WebSecurityOrigin *origin = [[WebSecurityOrigin alloc] initWithURL:[NSURL URLWithString:@"file:///"]];
-    [origin setQuota:quota];
+    [[origin databaseQuotaManager] setQuota:quota];
     [origin release];
 }
 

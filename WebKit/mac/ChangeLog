@@ -1,3 +1,58 @@
+2010-08-03  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by David Kilzer.
+
+        Limit ApplicationCache Total and Per-Origin Storage Capacity (Quotas)
+        https://bugs.webkit.org/show_bug.cgi?id=40627
+
+        Part 5 - Refactor Quota Management in WebSecurityOrigin into Managers
+
+        Per-Origin quotas exist for Databases and Application Caches. Clients
+        given a WebSecurityOrigin have the ability to set the quota for any
+        per-origin quota type. This puts quota management into an interface
+        and WebSecurityOrigin allows access to quota managers for the
+        different types of quotas.
+
+        This also deprecates the old methods on WebSecurityOrigin. They are
+        left in for now to prevent breaking older clients.
+
+          The WebQuotaManager interface allows querying and modifying a
+          per-origin quota. This is implemented for both Databases and
+          Application Caches.
+
+        * Misc/WebQuotaManager.h: Added. Interface for quota management (usage, quota, setQuota).
+        * Storage/WebDatabaseQuotaManager.h: Added.
+        * Storage/WebDatabaseQuotaManager.mm: Added.
+        (-[WebDatabaseQuotaManager origin]):
+        (-[WebDatabaseQuotaManager usage]):
+        (-[WebDatabaseQuotaManager quota]):
+        (-[WebDatabaseQuotaManager setQuota:]):
+        * Storage/WebDatabaseSecurityOrigin.h: Removed.
+        * Storage/WebDatabaseSecurityOrigin.mm: Removed.
+        * WebCoreSupport/WebApplicationCacheQuotaManager.h: Added.
+        * WebCoreSupport/WebApplicationCacheQuotaManager.mm: Added.
+        (-[WebApplicationCacheQuotaManager origin]):
+        (-[WebApplicationCacheQuotaManager usage]):
+        (-[WebApplicationCacheQuotaManager quota]):
+        (-[WebApplicationCacheQuotaManager setQuota:]):
+        * WebCoreSupport/WebSecurityOriginPrivate.h: Added a category to access managers. Deprecated old methods.
+
+          Remove the WebSecurityOrigin sub-classes. Managers are better.
+
+        * WebCoreSupport/WebApplicationCacheSecurityOrigin.h: Removed.
+        * WebCoreSupport/WebApplicationCacheSecurityOrigin.mm: Removed.
+
+          Create the managers lazily. Change old style calls to make use
+          of the managers.
+
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::exceededDatabaseQuota):
+        (WebChromeClient::reachedApplicationCacheOriginQuota):
+        * WebCoreSupport/WebSecurityOrigin.mm:
+        (-[WebSecurityOrigin applicationCacheQuotaManager]):
+        (-[WebSecurityOrigin databaseQuotaManager]):
+        (-[WebSecurityOrigin dealloc]): release the managers if they exist.
+
 2010-08-03  Alex Milowski  <alex@milowski.com>
 
         Reviewed by Beth Dakin.

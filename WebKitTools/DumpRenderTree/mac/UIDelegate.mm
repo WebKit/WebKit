@@ -35,6 +35,7 @@
 #import "LayoutTestController.h"
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebHTMLViewPrivate.h>
+#import <WebKit/WebQuotaManager.h>
 #import <WebKit/WebSecurityOriginPrivate.h>
 #import <WebKit/WebUIDelegatePrivate.h>
 #import <WebKit/WebView.h>
@@ -160,7 +161,7 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
             [origin port], [databaseIdentifier UTF8String]);
 
     static const unsigned long long defaultQuota = 5 * 1024 * 1024;    
-    [origin setQuota:defaultQuota];
+    [[origin databaseQuotaManager] setQuota:defaultQuota];
 }
 
 - (void)webView:(WebView *)sender setStatusText:(NSString *)text

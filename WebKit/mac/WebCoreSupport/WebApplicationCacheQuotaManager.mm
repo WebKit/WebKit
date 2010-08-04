@@ -23,7 +23,59 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WebSecurityOriginInternal.h"
+#import "WebApplicationCacheQuotaManager.h"
 
-@interface WebApplicationCacheSecurityOrigin : WebSecurityOrigin
+#import "WebSecurityOriginInternal.h"
+#import <WebCore/ApplicationCacheStorage.h>
+
+using namespace WebCore;
+
+@implementation WebApplicationCacheQuotaManager
+
+- (id)initWithOrigin:(WebSecurityOrigin *)origin
+{
+    self = [super init];
+    if (!self)
+        return nil;
+
+    _origin = origin;
+    return self;
+}
+
+- (WebSecurityOrigin *)origin
+{
+    return _origin;
+}
+
+- (unsigned long long)usage
+{
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    long long usage;
+    if (cacheStorage().usageForOrigin([_origin _core], usage))
+        return usage;
+    return 0;
+#else
+    return 0;
+#endif
+}
+
+- (unsigned long long)quota
+{
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    long long quota;
+    if (cacheStorage().quotaForOrigin([_origin _core], quota))
+        return quota;
+    return 0;
+#else
+    return 0;
+#endif
+}
+
+- (void)setQuota:(unsigned long long)quota
+{
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    cacheStorage().storeUpdatedQuotaForOrigin([_origin _core], quota);
+#endif
+}
+
 @end

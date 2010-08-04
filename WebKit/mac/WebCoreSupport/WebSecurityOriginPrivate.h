@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2010 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,9 +27,12 @@
  */
 
 @class WebSecurityOriginPrivate;
+@protocol WebQuotaManager;
 
 @interface WebSecurityOrigin : NSObject {
     WebSecurityOriginPrivate *_private;
+    id<WebQuotaManager> _applicationCacheQuotaManager;
+    id<WebQuotaManager> _databaseQuotaManager;
 }
 
 - (id)initWithURL:(NSURL *)url;
@@ -40,16 +43,17 @@
 // Returns zero if the port is the default port for the protocol, non-zero otherwise.
 - (unsigned short)port;
 
-// Meant to be implemented in a subclass.
-// Returns the current total usage of all relevant items in this security origin in bytes.
+@end
+
+@interface WebSecurityOrigin (WebQuotaManagers)
+- (id<WebQuotaManager>)applicationCacheQuotaManager;
+- (id<WebQuotaManager>)databaseQuotaManager;
+@end
+
+// FIXME: The following methods are deprecated and should removed later.
+// Clients should instead get a WebQuotaManager, and query / set the quota via the Manager.
+@interface WebSecurityOrigin (Deprecated)
 - (unsigned long long)usage;
-
-// Meant to be implemented in a subclass.
-// Returns the quota of this security origin in bytes.
 - (unsigned long long)quota;
-
-// Meant to be implemented in a subclass.
-// Sets the storage quota in bytes.
 - (void)setQuota:(unsigned long long)quota;
-
 @end

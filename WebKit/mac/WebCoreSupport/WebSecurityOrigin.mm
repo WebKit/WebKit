@@ -28,9 +28,12 @@
 
 #import "WebSecurityOriginInternal.h"
 
+#import "WebApplicationCacheQuotaManager.h"
+#import "WebDatabaseQuotaManager.h"
+#import "WebQuotaManager.h"
 #import <WebCore/KURL.h>
-#import <WebCore/SecurityOrigin.h>
 #import <WebCore/DatabaseTracker.h>
+#import <WebCore/SecurityOrigin.h>
 
 using namespace WebCore;
 
@@ -69,38 +72,6 @@ using namespace WebCore;
     return reinterpret_cast<SecurityOrigin*>(_private)->port();
 }
 
-// FIXME: https://bugs.webkit.org/show_bug.cgi?id=40627
-// Proper steps should be taken to have subclass implementations of SecurityOrigin's
-// origin, quota, and setQuota methods.
-
-- (unsigned long long)usage
-{
-#if ENABLE(DATABASE)
-    return DatabaseTracker::tracker().usageForOrigin(reinterpret_cast<SecurityOrigin*>(_private));
-#else
-    return 0;
-#endif
-}
-
-- (unsigned long long)quota
-{
-#if ENABLE(DATABASE)
-    return DatabaseTracker::tracker().quotaForOrigin(reinterpret_cast<SecurityOrigin*>(_private));
-#else
-    return 0;
-#endif
-}
-
-// If the quota is set to a value lower than the current usage, that quota will
-// "stick" but no data will be purged to meet the new quota. This will simply
-// prevent new data from being added to databases in that origin
-- (void)setQuota:(unsigned long long)quota
-{
-#if ENABLE(DATABASE)
-    DatabaseTracker::tracker().setQuota(reinterpret_cast<SecurityOrigin*>(_private), quota);
-#endif
-}
-
 - (BOOL)isEqual:(id)anObject
 {
     if (![anObject isMemberOfClass:[WebSecurityOrigin class]]) {
@@ -114,6 +85,10 @@ using namespace WebCore;
 {
     if (_private)
         reinterpret_cast<SecurityOrigin*>(_private)->deref();
+    if (_applicationCacheQuotaManager)
+        [(NSObject *)_applicationCacheQuotaManager release];
+    if (_databaseQuotaManager)
+        [(NSObject *)_databaseQuotaManager release];
     [super dealloc];
 }
 
@@ -144,6 +119,65 @@ using namespace WebCore;
 - (SecurityOrigin *)_core
 {
     return reinterpret_cast<SecurityOrigin*>(_private);
+}
+
+@end
+
+
+#pragma mark -
+#pragma mark WebQuotaManagers
+
+@implementation WebSecurityOrigin (WebQuotaManagers)
+
+- (id<WebQuotaManager>)applicationCacheQuotaManager
+{
+    if (!_applicationCacheQuotaManager)
+        _applicationCacheQuotaManager = [[WebApplicationCacheQuotaManager alloc] initWithOrigin:self];
+    return _applicationCacheQuotaManager;
+}
+
+- (id<WebQuotaManager>)databaseQuotaManager
+{
+    if (!_databaseQuotaManager)
+        _databaseQuotaManager = [[WebDatabaseQuotaManager alloc] initWithOrigin:self];
+    return _databaseQuotaManager;
+}
+
+@end
+
+
+#pragma mark -
+#pragma mark Deprecated
+
+// FIXME: The following methods are deprecated and should removed later.
+// Clients should instead get a WebQuotaManager, and query / set the quota via the Manager.
+// NOTE: the <WebCore/DatabaseTracker.h> #include should be removed as well.
+
+@implementation WebSecurityOrigin (Deprecated)
+
+- (unsigned long long)usage
+{
+#if ENABLE(DATABASE)
+    return DatabaseTracker::tracker().usageForOrigin(reinterpret_cast<SecurityOrigin*>(_private));
+#else
+    return 0;
+#endif
+}
+
+- (unsigned long long)quota
+{
+#if ENABLE(DATABASE)
+    return DatabaseTracker::tracker().quotaForOrigin(reinterpret_cast<SecurityOrigin*>(_private));
+#else
+    return 0;
+#endif
+}
+
+- (void)setQuota:(unsigned long long)quota
+{
+#if ENABLE(DATABASE)
+    DatabaseTracker::tracker().setQuota(reinterpret_cast<SecurityOrigin*>(_private), quota);
+#endif
 }
 
 @end

@@ -313,13 +313,14 @@
 		93EB178D09F88D460091F8FF /* WebSystemInterface.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93EB178C09F88D460091F8FF /* WebSystemInterface.mm */; };
 		93EB178F09F88D510091F8FF /* WebSystemInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 93EB178E09F88D510091F8FF /* WebSystemInterface.h */; };
 		93FDE9330D79CAF30074F029 /* WebHistoryInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 93FDE9320D79CAF30074F029 /* WebHistoryInternal.h */; };
+		A57E2F24120749E600048DF3 /* WebQuotaManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A57E2F22120749E600048DF3 /* WebQuotaManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5DEFC0A11D5331C00885273 /* WebSecurityOrigin.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5DEFC0711D5331C00885273 /* WebSecurityOrigin.mm */; };
 		A5DEFC0B11D5331C00885273 /* WebSecurityOriginInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = A5DEFC0811D5331C00885273 /* WebSecurityOriginInternal.h */; };
 		A5DEFC0C11D5331C00885273 /* WebSecurityOriginPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = A5DEFC0911D5331C00885273 /* WebSecurityOriginPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A5DEFC0F11D5343E00885273 /* WebDatabaseSecurityOrigin.h in Headers */ = {isa = PBXBuildFile; fileRef = A5DEFC0D11D5343E00885273 /* WebDatabaseSecurityOrigin.h */; };
-		A5DEFC1011D5343E00885273 /* WebDatabaseSecurityOrigin.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5DEFC0E11D5343E00885273 /* WebDatabaseSecurityOrigin.mm */; };
-		A5DEFC1311D5344B00885273 /* WebApplicationCacheSecurityOrigin.h in Headers */ = {isa = PBXBuildFile; fileRef = A5DEFC1111D5344B00885273 /* WebApplicationCacheSecurityOrigin.h */; };
-		A5DEFC1411D5344B00885273 /* WebApplicationCacheSecurityOrigin.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5DEFC1211D5344B00885273 /* WebApplicationCacheSecurityOrigin.mm */; };
+		A5DEFC0F11D5343E00885273 /* WebDatabaseQuotaManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A5DEFC0D11D5343E00885273 /* WebDatabaseQuotaManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A5DEFC1011D5343E00885273 /* WebDatabaseQuotaManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5DEFC0E11D5343E00885273 /* WebDatabaseQuotaManager.mm */; };
+		A5DEFC1311D5344B00885273 /* WebApplicationCacheQuotaManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A5DEFC1111D5344B00885273 /* WebApplicationCacheQuotaManager.h */; };
+		A5DEFC1411D5344B00885273 /* WebApplicationCacheQuotaManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5DEFC1211D5344B00885273 /* WebApplicationCacheQuotaManager.mm */; };
 		A70936AF0B5608DC00CDB48E /* WebDragClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A70936AD0B5608DC00CDB48E /* WebDragClient.h */; };
 		A70936B00B5608DC00CDB48E /* WebDragClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = A70936AE0B5608DC00CDB48E /* WebDragClient.mm */; };
 		A7D3C5BC0B5773C5002CA450 /* WebPasteboardHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = A7D3C5BA0B5773C5002CA450 /* WebPasteboardHelper.h */; };
@@ -608,13 +609,14 @@
 		9CAE9D070252A4130ECA16EA /* WebPreferencesPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPreferencesPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		9CE1F8A302A5C6F30ECA2ACD /* WebImageRendererFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebImageRendererFactory.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		9CF0E249021361B00ECA16EA /* WebFramePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebFramePrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		A57E2F22120749E600048DF3 /* WebQuotaManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebQuotaManager.h; sourceTree = "<group>"; };
 		A5DEFC0711D5331C00885273 /* WebSecurityOrigin.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebSecurityOrigin.mm; sourceTree = "<group>"; };
 		A5DEFC0811D5331C00885273 /* WebSecurityOriginInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSecurityOriginInternal.h; sourceTree = "<group>"; };
 		A5DEFC0911D5331C00885273 /* WebSecurityOriginPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSecurityOriginPrivate.h; sourceTree = "<group>"; };
-		A5DEFC0D11D5343E00885273 /* WebDatabaseSecurityOrigin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDatabaseSecurityOrigin.h; sourceTree = "<group>"; };
-		A5DEFC0E11D5343E00885273 /* WebDatabaseSecurityOrigin.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDatabaseSecurityOrigin.mm; sourceTree = "<group>"; };
-		A5DEFC1111D5344B00885273 /* WebApplicationCacheSecurityOrigin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebApplicationCacheSecurityOrigin.h; sourceTree = "<group>"; };
-		A5DEFC1211D5344B00885273 /* WebApplicationCacheSecurityOrigin.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebApplicationCacheSecurityOrigin.mm; sourceTree = "<group>"; };
+		A5DEFC0D11D5343E00885273 /* WebDatabaseQuotaManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDatabaseQuotaManager.h; sourceTree = "<group>"; };
+		A5DEFC0E11D5343E00885273 /* WebDatabaseQuotaManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDatabaseQuotaManager.mm; sourceTree = "<group>"; };
+		A5DEFC1111D5344B00885273 /* WebApplicationCacheQuotaManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebApplicationCacheQuotaManager.h; sourceTree = "<group>"; };
+		A5DEFC1211D5344B00885273 /* WebApplicationCacheQuotaManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebApplicationCacheQuotaManager.mm; sourceTree = "<group>"; };
 		A70936AD0B5608DC00CDB48E /* WebDragClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebDragClient.h; sourceTree = "<group>"; };
 		A70936AE0B5608DC00CDB48E /* WebDragClient.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDragClient.mm; sourceTree = "<group>"; };
 		A7D3C5BA0B5773C5002CA450 /* WebPasteboardHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPasteboardHelper.h; sourceTree = "<group>"; };
@@ -969,6 +971,7 @@
 				F508946A02B71D59018A9CD4 /* WebNSViewExtras.m */,
 				9345DDAE0365FB27008635CE /* WebNSWindowExtras.h */,
 				9345DDAF0365FB27008635CE /* WebNSWindowExtras.m */,
+				A57E2F22120749E600048DF3 /* WebQuotaManager.h */,
 				F59668C802AD2923018635CA /* WebStringTruncator.h */,
 				F59668C902AD2923018635CA /* WebStringTruncator.mm */,
 				DD7CDEE60A23BA9E00069928 /* WebTypesInternal.h */,
@@ -1020,8 +1023,8 @@
 				511F3FD10CECC88F00852565 /* WebDatabaseManager.mm */,
 				51AEDEF00CECF45700854328 /* WebDatabaseManagerInternal.h */,
 				511F3FD20CECC88F00852565 /* WebDatabaseManagerPrivate.h */,
-				A5DEFC0D11D5343E00885273 /* WebDatabaseSecurityOrigin.h */,
-				A5DEFC0E11D5343E00885273 /* WebDatabaseSecurityOrigin.mm */,
+				A5DEFC0D11D5343E00885273 /* WebDatabaseQuotaManager.h */,
+				A5DEFC0E11D5343E00885273 /* WebDatabaseQuotaManager.mm */,
 				511F3FD30CECC88F00852565 /* WebDatabaseTrackerClient.h */,
 				511F3FD40CECC88F00852565 /* WebDatabaseTrackerClient.mm */,
 			);
@@ -1238,8 +1241,8 @@
 			children = (
 				B68049710FFBCEC1009F7F62 /* WebApplicationCache.h */,
 				B68049720FFBCEC1009F7F62 /* WebApplicationCache.mm */,
-				A5DEFC1111D5344B00885273 /* WebApplicationCacheSecurityOrigin.h */,
-				A5DEFC1211D5344B00885273 /* WebApplicationCacheSecurityOrigin.mm */,
+				A5DEFC1111D5344B00885273 /* WebApplicationCacheQuotaManager.h */,
+				A5DEFC1211D5344B00885273 /* WebApplicationCacheQuotaManager.mm */,
 				51CBFCAC0D10E6C5002DBF51 /* WebCachedFramePlatformData.h */,
 				14D8252D0AF955090004F057 /* WebChromeClient.h */,
 				14D8252E0AF955090004F057 /* WebChromeClient.mm */,
@@ -1569,8 +1572,9 @@
 				41F4484F10338E8C0030E55E /* WebWorkersPrivate.h in Headers */,
 				A5DEFC0B11D5331C00885273 /* WebSecurityOriginInternal.h in Headers */,
 				A5DEFC0C11D5331C00885273 /* WebSecurityOriginPrivate.h in Headers */,
-				A5DEFC0F11D5343E00885273 /* WebDatabaseSecurityOrigin.h in Headers */,
-				A5DEFC1311D5344B00885273 /* WebApplicationCacheSecurityOrigin.h in Headers */,
+				A5DEFC0F11D5343E00885273 /* WebDatabaseQuotaManager.h in Headers */,
+				A5DEFC1311D5344B00885273 /* WebApplicationCacheQuotaManager.h in Headers */,
+				A57E2F24120749E600048DF3 /* WebQuotaManager.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1930,8 +1934,8 @@
 				0FD3B0F91076C3F700039B96 /* WebWindowAnimation.m in Sources */,
 				41F4485010338E8C0030E55E /* WebWorkersPrivate.mm in Sources */,
 				A5DEFC0A11D5331C00885273 /* WebSecurityOrigin.mm in Sources */,
-				A5DEFC1011D5343E00885273 /* WebDatabaseSecurityOrigin.mm in Sources */,
-				A5DEFC1411D5344B00885273 /* WebApplicationCacheSecurityOrigin.mm in Sources */,
+				A5DEFC1011D5343E00885273 /* WebDatabaseQuotaManager.mm in Sources */,
+				A5DEFC1411D5344B00885273 /* WebApplicationCacheQuotaManager.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

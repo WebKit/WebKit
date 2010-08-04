@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WebApplicationCacheSecurityOrigin.h"
+#import "WebDatabaseQuotaManager.h"
 
-#import <WebCore/ApplicationCacheStorage.h>
+#import "WebSecurityOriginInternal.h"
+#import <WebCore/DatabaseTracker.h>
 
 using namespace WebCore;
 
-@implementation WebApplicationCacheSecurityOrigin
+@implementation WebDatabaseQuotaManager
+
+- (id)initWithOrigin:(WebSecurityOrigin *)origin
+{
+    self = [super init];
+    if (!self)
+        return nil;
+
+    _origin = origin;
+    return self;
+}
+
+- (WebSecurityOrigin *)origin
+{
+    return _origin;
+}
 
 - (unsigned long long)usage
 {
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-    long long usage;
-    if (cacheStorage().usageForOrigin(reinterpret_cast<SecurityOrigin*>(_private), usage))
-        return usage;
-    return 0;
+#if ENABLE(DATABASE)
+    return DatabaseTracker::tracker().usageForOrigin([_origin _core]);
 #else
     return 0;
 #endif
@@ -45,20 +58,20 @@ using namespace WebCore;
 
 - (unsigned long long)quota
 {
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-    long long quota;
-    if (cacheStorage().quotaForOrigin(reinterpret_cast<SecurityOrigin*>(_private), quota))
-        return quota;
-    return 0;
+#if ENABLE(DATABASE)
+    return DatabaseTracker::tracker().quotaForOrigin([_origin _core]);
 #else
     return 0;
 #endif
 }
 
+// If the quota is set to a value lower than the current usage, that quota will
+// "stick" but no data will be purged to meet the new quota. This will simply
+// prevent new data from being added to databases in that origin.
 - (void)setQuota:(unsigned long long)quota
 {
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-    cacheStorage().storeUpdatedQuotaForOrigin(reinterpret_cast<SecurityOrigin*>(_private), quota);
+#if ENABLE(DATABASE)
+    DatabaseTracker::tracker().setQuota([_origin _core], quota);
 #endif
 }
 
