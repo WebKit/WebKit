@@ -1,5 +1,11 @@
 2010-08-04  Abhishek Arya  <inferno@chromium.org>
 
+        Unreviewed. QT expectation fix.
+
+        * platform/qt/fast/notifications/notifications-document-close-crash-expected.txt:
+
+2010-08-04  Abhishek Arya  <inferno@chromium.org>
+
         Unreviewed.
 
         Add qt specific layout test results for my commit http://trac.webkit.org/changeset/64647.
