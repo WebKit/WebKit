@@ -786,6 +786,7 @@
         '<(chromium_src_dir)/third_party/npapi/npapi.gyp:npapi',
         '<(chromium_src_dir)/third_party/ots/ots.gyp:ots',
         '<(chromium_src_dir)/third_party/sqlite/sqlite.gyp:sqlite',
+        '<(chromium_src_dir)/third_party/angle/src/build_angle.gyp:translator_common',
       ],
       'defines': [
         'WEBCORE_NAVIGATOR_VENDOR="Google Inc."',
@@ -793,7 +794,8 @@
       'include_dirs': [
         '<(INTERMEDIATE_DIR)',
         '<@(webcore_include_dirs)',
-        '<(chromium_src_dir)/gpu'
+        '<(chromium_src_dir)/gpu',
+        '<(chromium_src_dir)/third_party/angle/include/GLSLANG',
       ],
       'sources': [
         '<@(webcore_files)',

@@ -1,3 +1,15 @@
+2010-08-04  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Add ANGLE dependency for Chromium WebCore build
+        https://bugs.webkit.org/show_bug.cgi?id=43508
+
+        No new tests. Built modified version of patch from bug 42405 in
+        Chromium to test.
+
+        * WebCore.gyp/WebCore.gyp:
+
 2010-08-04  Dan Bernstein  <mitz@apple.com>
 
         Allow the language for hyphenation to be specified
