@@ -26,6 +26,8 @@
 %module webview
 
 %{
+#include "config.h"
+
 #include "wx/wxPython/wxPython.h"
 #include "wx/wxPython/pyclasses.h"
 #include "WebBrowserShell.h"

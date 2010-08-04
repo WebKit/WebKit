@@ -30,7 +30,7 @@ from settings import *
 webcore_sources = {}
 
 if build_port == "wx":
-    webcore_sources['wx'] = ['platform/KillRingNone.cpp']  
+    webcore_sources['wx'] = ['platform/KillRingNone.cpp', 'bindings/cpp/WebDOMEventTarget.cpp']  
 
     if building_on_win32:
         # make sure platform/wx comes after this so we get the right
@@ -69,7 +69,6 @@ if build_port == "wx":
                'platform/graphics/wx/FontPlatformDataWxMac.mm',
                'platform/text/mac/ShapeArabic.c',
                'platform/wx/wxcode/mac/carbon/fontprops.mm',
-               'plugins/wx/PluginDataWx.cpp',
                'plugins/mac/PluginPackageMac.cpp',
                'plugins/mac/PluginViewMac.mm'
         ]
@@ -137,8 +136,8 @@ def build(bld):
 
     features = [build_port]
     exclude_patterns = ['*AllInOne.cpp', '*Brew.cpp', '*CFNet.cpp', '*Chromium*.cpp', 
-            '*Gtk.cpp', '*Mac.cpp', '*None.cpp', '*Qt.cpp', '*Safari.cpp',
-            'test*bindings.*', '*Wince.cpp', "WebDOMSVG*.cpp"]
+            '*Efl.cpp', '*Gtk.cpp', '*Haiku.cpp', '*Mac.cpp', '*None.cpp', '*Qt.cpp', '*Safari.cpp',
+            'test*bindings.*', '*Wince.cpp', "WebDOMCanvas*.cpp", "WebDOMSVG*.cpp"]
     if build_port == 'wx':
         features.append('curl')
         if not building_on_win32:
@@ -188,13 +187,8 @@ def build(bld):
         excludes = get_excludes(webcore_dir, exclude_patterns)
         excludes.extend(['UserStyleSheetLoader.cpp', 'RenderMediaControls.cpp'])
 
-
-        # FIXME: undo this once these classes are fully implemented
-        excludes.append('SocketStreamErrorBase.cpp')
-        excludes.append('SocketStreamHandleBase.cpp')
-
         # intermediate sources
-        excludes.append('CSSValueKeywords.c')
+        excludes.append('CSSValueKeywords.cpp')
         excludes.append('CSSPropertyNames.cpp')
         excludes.append('tokenizer.cpp')
 
@@ -222,6 +216,8 @@ def build(bld):
         excludes.append('JSSVGTransformable.cpp')
         excludes.append('JSSVGURIReference.cpp')
         
+        # These are C++ DOM Bindings that won't compile because they look for things not in trunk.
+        excludes.append('WebDOMEventTarget.cpp')
         excludes.append('WebDOMAbstractView.cpp')
         excludes.append('WebDOMBlobBuilder.cpp')
         excludes.append('WebDOMDatabaseCallback.cpp')

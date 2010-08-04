@@ -1,3 +1,10 @@
+2010-08-04  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fix for gcc not importing all symbols from convenience libraries.
+        Works on 10.6 only for Mac until the build system is reworked. 
+
+        * wx/build/settings.py:
+
 2010-08-04  Markus Goetz  <Markus.Goetz@nokia.com>
 
         Reviewed by Simon Hausmann.

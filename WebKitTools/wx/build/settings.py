@@ -303,8 +303,15 @@ def common_configure(conf):
             conf.env['LIB_WX'] = wxlibs
             conf.env['LIBPATH_WX'] = wxlibpaths
 
-    conf.env['LIB_JSCORE'] = [libprefix + 'jscore']
-    conf.env['LIB_WEBCORE'] = [libprefix + 'webcore']
+    if building_on_win32:
+        conf.env['LIB_JSCORE'] = [libprefix + 'jscore']
+        conf.env['LIB_WEBCORE'] = [libprefix + 'webcore']
+    elif sys.platform.startswith('darwin'):
+        conf.env['LINKFLAGS_JSCORE'] = ['-Wl,-force_load,%s' % os.path.join(output_dir, 'libjscore.a')]
+        conf.env['LINKFLAGS_WEBCORE'] = ['-Wl,-force_load,%s' % os.path.join(output_dir, 'libwebcore.a')]
+    else:
+        conf.env['LINKFLAGS_JSCORE'] = ['-Wl,-whole-archive', '-ljscore', '-Wl,-no-whole-archive']
+        conf.env['LINKFLAGS_WEBCORE'] = ['-Wl,-whole-archive', '-lwebcore', '-Wl,-no-whole-archive']
 
     if sys.platform.startswith('darwin'):
         conf.env['LIB_ICU'] = ['icucore']

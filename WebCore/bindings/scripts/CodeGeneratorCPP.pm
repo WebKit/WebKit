@@ -421,10 +421,14 @@ sub GenerateHeader
         foreach my $attribute (@{$dataNode->attributes}) {
             next if ShouldSkipTypeInHeader($attribute);
 
+            my $attributeConditionalString = GenerateConditionalString($attribute->signature);
             my $attributeName = $attribute->signature->name;
             my $attributeType = GetCPPType($attribute->signature->type, 0);
             my $attributeIsReadonly = ($attribute->type =~ /^readonly/);
-            my $property = "    " . $attributeType . ($attributeType =~ /\*$/ ? "" : " ") . $attributeName . "() const";
+            my $property = "";
+            
+            $property .= "#if ${attributeConditionalString}\n" if $attributeConditionalString;
+            $property .= "    " . $attributeType . ($attributeType =~ /\*$/ ? "" : " ") . $attributeName . "() const";
 
             my $availabilityMacro = "";
             my $declarationSuffix = ";\n";
@@ -439,10 +443,11 @@ sub GenerateHeader
             if (!$attributeIsReadonly and !$attribute->signature->extendedAttributes->{"Replaceable"}) {
                 $property = "    void $setterName($attributeType)";
                 $property .= $declarationSuffix;
-                push(@headerAttributes, $property);
+                push(@headerAttributes, $property); 
             }
-        }
 
+            push(@headerAttributes, "#endif\n") if $attributeConditionalString;
+        }
         push(@headerContent, @headerAttributes) if @headerAttributes > 0;
     }
 
