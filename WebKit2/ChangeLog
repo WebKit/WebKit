@@ -1,5 +1,15 @@
 2010-08-04  Adam Roben  <aroben@apple.com>
 
+        Windows build fix
+
+        The functions in NetscapePluginModuleWin.cpp have been moved to
+        NetscapePluginModule.cpp.
+
+        * WebProcess/Plugins/Netscape/win/NetscapePluginModuleWin.cpp: Removed.
+        * win/WebKit2.vcproj: Removed NetscapePluginModuleWin.
+
+2010-08-04  Adam Roben  <aroben@apple.com>
+
         Move bundle-loading code from NetscapePluginModule to a new Module
         class
 
