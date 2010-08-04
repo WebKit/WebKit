@@ -30,7 +30,15 @@ building-libs {
                 LIBS += -lQtWebKit
                 symbian {
                     TARGET.EPOCSTACKSIZE = 0x14000 // 80 kB
-                    TARGET.EPOCHEAPSIZE = 0x20000 0x6000000 // Min 128kB, Max 96MB
+                    # For EXEs only: set heap to usable value
+                    TARGET.EPOCHEAPSIZE = 
+                    heapSizeRule = \
+                    "$${LITERAL_HASH}ifdef WINSCW" \
+                        "EPOCHEAPSIZE  0x40000 0x2000000 // Min 256kB, Max 32MB" \
+                    "$${LITERAL_HASH}else" \
+                        "EPOCHEAPSIZE  0x40000 0x6000000 // Min 256kB, Max 96MB" \
+                    "$${LITERAL_HASH}endif"
+                    MMP_RULES += heapSizeRule
                 }
             }
         }
