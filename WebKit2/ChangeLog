@@ -1,3 +1,10 @@
+2010-08-04  John Sullivan  <sullivan@apple.com>
+
+        Build fix, rubber-stamped by Brady Eidson.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Made WKData.h a public header.
+
 2010-08-04  Adam Roben  <aroben@apple.com>
 
         Windows build fix

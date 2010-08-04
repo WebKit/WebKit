@@ -86,7 +86,7 @@
 		1AEFD2F711D1807B008219D3 /* ArgumentCoders.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AEFD2F611D1807B008219D3 /* ArgumentCoders.h */; };
 		1AF3060A111B599E00F96436 /* WebKit2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* WebKit2.framework */; };
 		514AF6C81209EE7300A26C97 /* WKData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 514AF6C61209EE7300A26C97 /* WKData.cpp */; };
-		514AF6C91209EE7300A26C97 /* WKData.h in Headers */ = {isa = PBXBuildFile; fileRef = 514AF6C71209EE7300A26C97 /* WKData.h */; };
+		514AF6C91209EE7300A26C97 /* WKData.h in Headers */ = {isa = PBXBuildFile; fileRef = 514AF6C71209EE7300A26C97 /* WKData.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		51578B831209ECEF00A37C4A /* WebData.h in Headers */ = {isa = PBXBuildFile; fileRef = 51578B821209ECEF00A37C4A /* WebData.h */; };
 		5DAD729C116FF86200EE5396 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0867D6A5FE840307C02AAC07 /* AppKit.framework */; };
 		6D8A91A611F0EFD100DD01FE /* com.apple.WebProcess.sb in Resources */ = {isa = PBXBuildFile; fileRef = 6D8A91A511F0EFD100DD01FE /* com.apple.WebProcess.sb */; };
