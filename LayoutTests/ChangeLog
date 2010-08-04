@@ -1,3 +1,9 @@
+2010-08-04  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed. Chromium test expectations update.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-08-03  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Tony Chang.

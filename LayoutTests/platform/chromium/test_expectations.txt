@@ -3167,4 +3167,11 @@ BUG50637 : fast/dom/prototype-inheritance.html = FAIL
 BUG51036 DEBUG : fast/events/special-key-events-in-input-text.html = FAIL
 
 // Application Cache Quotas
-BUG43459 : http/tests/appcache/origin-quota.html = TEXT MISSING
+BUGWK43459 : http/tests/appcache/origin-quota.html = TEXT MISSING
+
+// Missing LayoutTestController harness.
+BUGWK43480 : fast/dom/Geolocation/delayed-permission-allowed.html = TEXT
+BUGWK43480 : fast/dom/Geolocation/delayed-permission-denied.html = TEXT
+
+BUG51161 LINUX DEBUG : svg/W3C-SVG-1.1/masking-mask-01-b.svg = CRASH
+BUG51161 LINUX DEBUG : svg/clip-path/clip-path-text.svg = CRASH
