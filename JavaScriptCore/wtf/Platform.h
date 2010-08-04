@@ -1074,7 +1074,7 @@ on MinGW. See https://bugs.webkit.org/show_bug.cgi?id=29268 */
 #define ENABLE_JSC_ZOMBIES 0
 
 /* FIXME: Eventually we should enable this for all platforms and get rid of the define. */
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(WIN)
 #define WTF_USE_PLATFORM_STRATEGIES 1
 #endif
 

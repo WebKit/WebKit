@@ -54,6 +54,7 @@
 #include "WebKitSystemBits.h"
 #include "WebMutableURLRequest.h"
 #include "WebNotificationCenter.h"
+#include "WebPlatformStrategies.h"
 #include "WebPluginHalterClient.h"
 #include "WebPreferences.h"
 #include "WebScriptWorld.h"
@@ -2555,6 +2556,7 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
     WebKitInitializeWebDatabasesIfNecessary();
 #endif
     WebKitSetApplicationCachePathIfNecessary();
+    WebPlatformStrategies::initialize();
     
 #if USE(SAFARI_THEME)
     BOOL shouldPaintNativeControls;

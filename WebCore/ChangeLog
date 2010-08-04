@@ -1,3 +1,24 @@
+2010-08-03  Adam Roben  <aroben@apple.com>
+
+        Turn on PLATFORM_STRATEGIES on Windows
+
+        Fixes <http://webkit.org/b/43431>.
+
+        Reviewed by Anders Carlsson.
+
+        * WebCore.vcproj/WebCore.vcproj: Added LocalizedStrings.cpp,
+        PlatformStrategies.h, LocalizationStrategy.h, PluginStrategy.h, and
+        VisitedLinkStrategy.h. Removed PluginDataWin.cpp
+
+        * platform/LocalizedStrings.cpp: Wrapped Mac-only functions in
+        PLATFORM(MAC) guards.
+
+        (WebCore::uploadFileText):
+        (WebCore::allFilesText):
+        Added these Windows-only functions.
+
+        * plugins/win/PluginDataWin.cpp: Removed.
+
 2010-08-04  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

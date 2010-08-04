@@ -63,10 +63,12 @@ String fileButtonNoFileSelectedLabel()
     return platformStrategies()->localizationStrategy()->fileButtonNoFileSelectedLabel();
 }
 
+#if PLATFORM(MAC)
 String copyImageUnknownFileLabel()
 {
     return platformStrategies()->localizationStrategy()->copyImageUnknownFileLabel();
 }
+#endif
 
 #if ENABLE(CONTEXT_MENUS)
 String contextMenuItemTagOpenLinkInNewWindow()
@@ -154,10 +156,12 @@ String contextMenuItemTagLearnSpelling()
     return platformStrategies()->localizationStrategy()->contextMenuItemTagLearnSpelling();
 }
 
+#if PLATFORM(MAC)
 String contextMenuItemTagSearchInSpotlight()
 {
     return platformStrategies()->localizationStrategy()->contextMenuItemTagSearchInSpotlight();
 }
+#endif
 
 String contextMenuItemTagSearchWeb()
 {
@@ -209,10 +213,12 @@ String contextMenuItemTagFontMenu()
     return platformStrategies()->localizationStrategy()->contextMenuItemTagFontMenu();
 }
 
+#if PLATFORM(MAC)
 String contextMenuItemTagShowFonts()
 {
     return platformStrategies()->localizationStrategy()->contextMenuItemTagShowFonts();
 }
+#endif
 
 String contextMenuItemTagBold()
 {
@@ -234,6 +240,7 @@ String contextMenuItemTagOutline()
     return platformStrategies()->localizationStrategy()->contextMenuItemTagOutline();
 }
 
+#if PLATFORM(MAC)
 String contextMenuItemTagStyles()
 {
     return platformStrategies()->localizationStrategy()->contextMenuItemTagStyles();
@@ -258,6 +265,7 @@ String contextMenuItemTagStopSpeaking()
 {
     return platformStrategies()->localizationStrategy()->contextMenuItemTagStopSpeaking();
 }
+#endif
 
 String contextMenuItemTagWritingDirectionMenu()
 {
@@ -283,6 +291,8 @@ String contextMenuItemTagRightToLeft()
 {
     return platformStrategies()->localizationStrategy()->contextMenuItemTagRightToLeft();
 }
+
+#if PLATFORM(MAC)
 
 String contextMenuItemTagCorrectSpellingAutomatically()
 {
@@ -348,6 +358,8 @@ String contextMenuItemTagChangeBack(const String& replacedString)
 {
     return platformStrategies()->localizationStrategy()->contextMenuItemTagChangeBack(replacedString);
 }
+
+#endif // PLATFORM(MAC)
     
 String contextMenuItemTagInspectElement()
 {
@@ -406,10 +418,12 @@ String AXDefinitionListDefinitionText()
     return platformStrategies()->localizationStrategy()->AXDefinitionListDefinitionText();
 }
 
+#if PLATFORM(MAC)
 String AXARIAContentGroupText(const String& ariaType)
 {
     return platformStrategies()->localizationStrategy()->AXARIAContentGroupText(ariaType);
 }
+#endif
     
 String AXButtonActionVerb()
 {
@@ -470,6 +484,18 @@ String unknownFileSizeText()
 {
     return platformStrategies()->localizationStrategy()->unknownFileSizeText();
 }
+
+#if PLATFORM(WIN)
+String uploadFileText()
+{
+    return platformStrategies()->localizationStrategy()->uploadFileText();
+}
+
+String allFilesText()
+{
+    return platformStrategies()->localizationStrategy()->allFilesText();
+}
+#endif
 
 String imageTitle(const String& filename, const IntSize& size)
 {

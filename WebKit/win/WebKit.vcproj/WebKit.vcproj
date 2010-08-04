@@ -418,10 +418,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\WebCoreLocalizedStrings.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\WebKitClassFactory.cpp"
 				>
 			</File>
@@ -1325,6 +1321,14 @@
 			</File>
 			<File
 				RelativePath="..\WebCoreSupport\WebInspectorDelegate.h"
+				>
+			</File>
+			<File
+				RelativePath="..\WebCoreSupport\WebPlatformStrategies.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\WebCoreSupport\WebPlatformStrategies.h"
 				>
 			</File>
 			<File

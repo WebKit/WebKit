@@ -23341,6 +23341,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\LocalizationStrategy.h"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\LocalizedStrings.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\LocalizedStrings.h"
 				>
 			</File>
@@ -23386,6 +23394,14 @@
 			</File>
 			<File
 				RelativePath="..\platform\PlatformScreen.h"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\PlatformStrategies.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\PlatformStrategies.h"
 				>
 			</File>
 			<File
@@ -23534,6 +23550,10 @@
 			</File>
 			<File
 				RelativePath="..\platform\UUID.h"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\VisitedLinkStrategy.h"
 				>
 			</File>
 			<File
@@ -48541,6 +48561,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\plugins\PluginStrategy.h"
+				>
+			</File>
+			<File
 				RelativePath="..\plugins\PluginStream.cpp"
 				>
 			</File>
@@ -48561,10 +48585,6 @@
 				>
 				<File
 					RelativePath="..\plugins\win\PluginDatabaseWin.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\plugins\win\PluginDataWin.cpp"
 					>
 				</File>
 				<File

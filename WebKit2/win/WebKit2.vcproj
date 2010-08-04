@@ -592,6 +592,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\WebProcess\WebCoreSupport\WebPlatformStrategies.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\WebCoreSupport\WebPlatformStrategies.h"
+					>
+				</File>
+				<File
 					RelativePath="..\WebProcess\WebCoreSupport\WebPopupMenu.cpp"
 					>
 				</File>
@@ -730,10 +738,6 @@
 							>
 						</File>
 						<File
-							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundlePrivate.h"
-							>
-						</File>
-						<File
 							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundleAPICast.h"
 							>
 						</File>
@@ -775,6 +779,10 @@
 						</File>
 						<File
 							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundlePagePrivate.h"
+							>
+						</File>
+						<File
+							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundlePrivate.h"
 							>
 						</File>
 						<File
