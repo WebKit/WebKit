@@ -1,4 +1,4 @@
-#ifndef WebCore_FWD_BitMap_h
-#define WebCore_FWD_BitMap_h
-#include <JavaScriptCore/BitMap.h>
+#ifndef WebCore_FWD_Bitmap_h
+#define WebCore_FWD_Bitmap_h
+#include <JavaScriptCore/Bitmap.h>
 #endif

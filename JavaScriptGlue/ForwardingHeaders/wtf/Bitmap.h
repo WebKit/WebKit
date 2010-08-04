@@ -1,1 +1,1 @@
-#include <JavaScriptCore/BitMap.h>
+#include <JavaScriptCore/Bitmap.h>
