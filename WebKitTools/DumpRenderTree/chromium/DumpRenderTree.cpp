@@ -36,8 +36,6 @@
 
 using namespace std;
 
-void platformInit();
-
 static const char optionComplexText[] = "--complex-text";
 static const char optionDumpAllPixels[] = "--dump-all-pixels";
 static const char optionNotree[] = "--notree";
@@ -48,6 +46,7 @@ static const char optionTree[] = "--tree";
 static const char optionPixelTestsWithName[] = "--pixel-tests=";
 static const char optionTestShell[] = "--test-shell";
 static const char optionAllowExternalPages[] = "--allow-external-pages";
+static const char optionStartupDialog[] = "--testshell-startup-dialog";
 
 static void runTest(TestShell& shell, TestParams& params, const string& testName, bool testShellMode)
 {
@@ -91,6 +90,7 @@ int main(int argc, char* argv[])
     bool serverMode = false;
     bool testShellMode = false;
     bool allowExternalPages = false;
+    bool startupDialog = false;
     for (int i = 1; i < argc; ++i) {
         string argument(argv[i]);
         if (argument == "-")
@@ -107,6 +107,8 @@ int main(int argc, char* argv[])
             serverMode = true;
         } else if (argument == optionAllowExternalPages)
             allowExternalPages = true;
+        else if (argument == optionStartupDialog)
+            startupDialog = true;
         else if (argument.size() && argument[0] == '-')
             fprintf(stderr, "Unknown option: %s\n", argv[i]);
         else
@@ -116,6 +118,9 @@ int main(int argc, char* argv[])
         fprintf(stderr, "--pixel-tests with --test-shell requires a file name.\n");
         return EXIT_FAILURE;
     }
+
+    if (startupDialog)
+        openStartupDialog();
 
     { // Explicit scope for the TestShell instance.
         TestShell shell(testShellMode);

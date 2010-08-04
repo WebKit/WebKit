@@ -2,6 +2,25 @@
 
         Reviewed by Dimitri Glazkov.
 
+        [DRT/Chromium] Implement --testshell-startup-dialog
+        https://bugs.webkit.org/show_bug.cgi?id=40616
+
+        * DumpRenderTree/chromium/DumpRenderTree.cpp:
+        (main): Check --testshell-startup-dialog, and call openStartUpDialog()
+        if it is specfied.
+        * DumpRenderTree/chromium/TestShell.h:
+          Declare openStartUpDialog().
+        * DumpRenderTree/chromium/TestShellGtk.cpp:
+        (openStartupDialog):
+        * DumpRenderTree/chromium/TestShellMac.mm:
+        (openStartupDialog):
+        * DumpRenderTree/chromium/TestShellWin.cpp:
+        (openStartupDialog):
+
+2010-08-03  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
         [DRT/Chromium] Remove dependency of base/md5.h
         https://bugs.webkit.org/show_bug.cgi?id=43403
 

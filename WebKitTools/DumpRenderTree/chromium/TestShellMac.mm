@@ -127,3 +127,13 @@ void TestShell::waitTestFinished()
 void platformInit(int*, char***)
 {
 }
+
+void openStartupDialog()
+{
+    // FIXME: This code doesn't work. Need NSApplication event loop?
+    NSAlert* alert = [[[NSAlert alloc] init] autorelease];
+    alert.messageText = @"Attach to me?";
+    alert.informativeText = @"This would probably be a good time to attach your debugger.";
+    [alert addButtonWithTitle:@"OK"];
+    [alert runModal];
+}

@@ -194,3 +194,12 @@ void platformInit(int* argc, char*** argv)
 
     setupFontconfig();
 }
+
+void openStartupDialog()
+{
+    GtkWidget* dialog = gtk_message_dialog_new(
+        0, GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_OK, "Attach to me?");
+    gtk_window_set_title(GTK_WINDOW(dialog), "DumpRenderTree");
+    gtk_dialog_run(GTK_DIALOG(dialog)); // Runs a nested message loop.
+    gtk_widget_destroy(dialog);
+}

@@ -185,5 +185,6 @@ private:
 };
 
 void platformInit(int*, char***);
+void openStartupDialog();
 
 #endif // TestShell_h

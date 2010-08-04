@@ -149,3 +149,8 @@ void platformInit(int*, char***)
     }
     // We don't need to release the font explicitly.
 }
+
+void openStartupDialog()
+{
+    ::MessageBox(0, L"Attach to me?", L"DumpRenderTree", MB_OK);
+}
