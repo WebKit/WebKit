@@ -95,21 +95,21 @@ class MyObject : QObject {
     myQObject.somethingChanged.disconnect(myOtherQObject.doSomething);
     //! [9]
     //! [10]
-    connect(thisObject, function)
+    myQObject.somethingChanged.connect(thisObject, function)
     //! [10]
     //! [11]
-    var obj = { x: 123 };
-    var fun = function() { print(this.x); };
-    myQObject.somethingChanged.connect(obj, fun);
+    var form = { x: 123 };
+    var onClicked = function() { print(this.x); };
+    myButton.clicked.connect(form, onClicked);
     //! [11]
     //! [12]
-    myQObject.somethingChanged.disconnect(obj, fun);
+    myQObject.somethingChanged.disconnect(thisObject, function);
     //! [12]
     //! [13]
     connect(function);
     //! [13]
     //! [14]
-    connect(thisObject, functionName)
+    myQObject.somethingChanged.connect(thisObject, "functionName")
     //! [14]
     //! [15]
     var obj = { x: 123, fun: function() { print(this.x); } };
@@ -119,7 +119,7 @@ class MyObject : QObject {
     connect(function);
     //! [16]
     //! [17]
-    myQObject.somethingChanged.disconnect(obj, "fun");
+    myQObject.somethingChanged.disconnect(thisObject, "functionName");
     //! [17]
     //! [18]
     try {
@@ -145,8 +145,8 @@ class MyObject : QObject {
         Q_OBJECT
 
     public:
-        Q_INVOKABLE void thisMethodIsInvokableInQtScript();
-        void thisMethodIsNotInvokableInQtScript();
+        Q_INVOKABLE void thisMethodIsInvokableInJavaScript();
+        void thisMethodIsNotInvokableInJavaScript();
 
         ...
     };
