@@ -910,9 +910,10 @@
 #if (CPU(X86_64) && (OS(UNIX) || OS(WINDOWS))) \
     || (CPU(IA64) && !CPU(IA64_32)) \
     || CPU(ALPHA) \
-    || CPU(SPARC64)
+    || CPU(SPARC64) \
+    || CPU(PPC64)
 #define WTF_USE_JSVALUE64 1
-#elif CPU(PPC64) || CPU(MIPS) || (CPU(ARM_TRADITIONAL) && !COMPILER(GCC))
+#elif CPU(MIPS) || (CPU(ARM_TRADITIONAL) && !COMPILER(GCC))
 #define WTF_USE_JSVALUE32 1
 #elif OS(WINDOWS) && COMPILER(MINGW)
 /* Using JSVALUE32_64 causes padding/alignement issues for JITStubArg
