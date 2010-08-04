@@ -67,6 +67,7 @@
 #include "StepRange.h"
 #include "StringHash.h"
 #include "TextEvent.h"
+#include "WheelEvent.h"
 #include <wtf/HashMap.h>
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
@@ -2407,6 +2408,20 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
     if (evt->isBeforeTextInsertedEvent())
         handleBeforeTextInsertedEvent(evt);
 
+    if (hasSpinButton() && evt->isWheelEvent()) {
+        WheelEvent* wheel = static_cast<WheelEvent*>(evt);
+        int step = 0;
+        if (wheel->wheelDeltaY() > 0) {
+            step = 1;
+        } else if (wheel->wheelDeltaY() < 0) {
+            step = -1;
+        }
+        if (step) {
+            stepUpFromRenderer(step);
+            evt->setDefaultHandled();
+            return;
+        }
+    }
     if (isTextField() && renderer() && (evt->isMouseEvent() || evt->isDragEvent() || evt->isWheelEvent() || evt->type() == eventNames().blurEvent || evt->type() == eventNames().focusEvent))
         toRenderTextControlSingleLine(renderer())->forwardEvent(evt);
 
