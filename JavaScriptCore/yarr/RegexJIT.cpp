@@ -1466,7 +1466,17 @@ public:
     {
         generate();
 
-        LinkBuffer patchBuffer(this, globalData->executableAllocator.poolForSize(size()));
+        RefPtr<ExecutablePool> executablePool = globalData->executableAllocator.poolForSize(size());
+        if (!executablePool) {
+            m_shouldFallBack = true;
+            return;
+        }
+
+        LinkBuffer patchBuffer(this, executablePool.release());
+        if (!patchBuffer.allocationSuccessful()) {
+            m_shouldFallBack = true;
+            return;
+        }
 
         for (unsigned i = 0; i < m_backtrackRecords.size(); ++i)
             patchBuffer.patch(m_backtrackRecords[i].dataLabel, patchBuffer.locationOf(m_backtrackRecords[i].backtrackLocation));

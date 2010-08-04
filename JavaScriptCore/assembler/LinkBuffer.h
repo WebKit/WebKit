@@ -56,6 +56,12 @@ class LinkBuffer : public Noncopyable {
     typedef MacroAssembler::DataLabel32 DataLabel32;
     typedef MacroAssembler::DataLabelPtr DataLabelPtr;
 
+    enum LinkBufferState {
+        StateInit,
+        StateChecked,
+        StateFinalized,
+    };
+
 public:
     // Note: Initialization sequence is significant, since executablePool is a PassRefPtr.
     //       First, executablePool is copied into m_executablePool, then the initialization of
@@ -65,14 +71,25 @@ public:
         , m_code(masm->m_assembler.executableCopy(m_executablePool.get()))
         , m_size(masm->m_assembler.size())
 #ifndef NDEBUG
-        , m_completed(false)
+        , m_state(StateInit)
 #endif
     {
     }
 
     ~LinkBuffer()
     {
-        ASSERT(m_completed);
+        ASSERT(m_state == StateFinalized);
+    }
+
+    // After constructing a link buffer, a client must call allocationSuccessful() to check alloc did not return 0.
+    bool allocationSuccessful()
+    {
+#ifndef NDEBUG
+        ASSERT(m_state == StateInit);
+        m_state = StateChecked;
+#endif
+
+        return m_code;
     }
 
     // These methods are used to link or set values at code generation time.
@@ -170,8 +187,8 @@ private:
     void performFinalization()
     {
 #ifndef NDEBUG
-        ASSERT(!m_completed);
-        m_completed = true;
+        ASSERT(m_state == StateChecked);
+        m_state = StateFinalized;
 #endif
 
         ExecutableAllocator::makeExecutable(code(), m_size);
@@ -182,7 +199,7 @@ private:
     void* m_code;
     size_t m_size;
 #ifndef NDEBUG
-    bool m_completed;
+    LinkBufferState m_state;
 #endif
 };
 

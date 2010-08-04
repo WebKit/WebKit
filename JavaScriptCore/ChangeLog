@@ -1,3 +1,91 @@
+2010-08-02  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 43390 - Do not CRASH if we run out of room for jit code.
+
+        Change the ExecutableAllocator implementations not to crash, and to return 0 if memory cannot be allocated.
+        The assemblers should pass this through without trying to use it in executableCopy.
+        Change the LinkBuffer to handle this, and to provide an allocationSuccessful() method to test for this.
+
+        Change the JIT to throw an exception if allocation fails.
+        Make JIT optimizations fail gracefully if memory cannot be allocated (use non-optimized path).
+        Change YARR JIT to fallback to PCRE 
+
+        * assembler/ARMAssembler.cpp:
+        (JSC::ARMAssembler::executableCopy):
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::executableCopy):
+        * assembler/LinkBuffer.h:
+        (JSC::LinkBuffer::allocationSuccessful):
+        * assembler/MIPSAssembler.h:
+        (JSC::MIPSAssembler::executableCopy):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::executableCopy):
+        * bytecode/StructureStubInfo.h:
+        (JSC::StructureStubInfo::initGetByIdProto):
+        (JSC::StructureStubInfo::initGetByIdChain):
+        (JSC::StructureStubInfo::initGetByIdSelfList):
+        (JSC::StructureStubInfo::initGetByIdProtoList):
+        (JSC::StructureStubInfo::initPutByIdTransition):
+        * jit/ExecutableAllocator.cpp:
+        (JSC::ExecutablePool::systemAlloc):
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+        (JSC::FixedVMPoolAllocator::allocInternal):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        * jit/JIT.h:
+        (JSC::JIT::compileGetByIdProto):
+        (JSC::JIT::compileGetByIdSelfList):
+        (JSC::JIT::compileGetByIdProtoList):
+        (JSC::JIT::compileGetByIdChainList):
+        (JSC::JIT::compileGetByIdChain):
+        (JSC::JIT::compilePutByIdTransition):
+        (JSC::JIT::compilePatchGetArrayLength):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        (JSC::JIT::privateCompileCTINativeCall):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::stringGetByValStubGenerator):
+        (JSC::JIT::privateCompilePutByIdTransition):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdSelfList):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::stringGetByValStubGenerator):
+        (JSC::JIT::privateCompilePutByIdTransition):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdSelfList):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::tryCachePutByID):
+        (JSC::JITThunks::tryCacheGetByID):
+        (JSC::DEFINE_STUB_FUNCTION):
+        (JSC::setupPolymorphicProtoList):
+        * jit/JITStubs.h:
+        * jit/SpecializedThunkJIT.h:
+        (JSC::SpecializedThunkJIT::finalize):
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::createOutOfMemoryError):
+        * runtime/ExceptionHelpers.h:
+        * runtime/Executable.cpp:
+        (JSC::EvalExecutable::compileInternal):
+        (JSC::ProgramExecutable::compileInternal):
+        (JSC::FunctionExecutable::compileForCallInternal):
+        (JSC::FunctionExecutable::compileForConstructInternal):
+        (JSC::FunctionExecutable::reparseExceptionInfo):
+        (JSC::EvalExecutable::reparseExceptionInfo):
+        * yarr/RegexJIT.cpp:
+        (JSC::Yarr::RegexGenerator::compile):
+
 2010-08-03  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

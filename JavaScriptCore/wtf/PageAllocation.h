@@ -73,9 +73,9 @@ public:
 #if defined(NDEBUG) && !OS(SYMBIAN)
         UNUSED_PARAM(parent);
 #endif
-        ASSERT(base >= parent.m_base);
-        ASSERT(size <= parent.m_size);
-        ASSERT(static_cast<char*>(base) + size <= static_cast<char*>(parent.m_base) + parent.m_size);
+        ASSERT(!base || base >= parent.m_base);
+        ASSERT(!base || size <= parent.m_size);
+        ASSERT(!base || static_cast<char*>(base) + size <= static_cast<char*>(parent.m_base) + parent.m_size);
     }
 
     void* base() const { return m_base; }

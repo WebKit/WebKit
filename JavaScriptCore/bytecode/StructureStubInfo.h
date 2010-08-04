@@ -66,7 +66,7 @@ namespace JSC {
             baseObjectStructure->ref();
         }
 
-        void initGetByIdProto(Structure* baseObjectStructure, Structure* prototypeStructure)
+        void initGetByIdProto(Structure* baseObjectStructure, Structure* prototypeStructure, CodeLocationLabel routine)
         {
             accessType = access_get_by_id_proto;
 
@@ -75,9 +75,11 @@ namespace JSC {
 
             u.getByIdProto.prototypeStructure = prototypeStructure;
             prototypeStructure->ref();
+
+            stubRoutine = routine;
         }
 
-        void initGetByIdChain(Structure* baseObjectStructure, StructureChain* chain)
+        void initGetByIdChain(Structure* baseObjectStructure, StructureChain* chain, CodeLocationLabel routine)
         {
             accessType = access_get_by_id_chain;
 
@@ -86,27 +88,33 @@ namespace JSC {
 
             u.getByIdChain.chain = chain;
             chain->ref();
+
+            stubRoutine = routine;
         }
 
-        void initGetByIdSelfList(PolymorphicAccessStructureList* structureList, int listSize)
+        void initGetByIdSelfList(PolymorphicAccessStructureList* structureList)
         {
             accessType = access_get_by_id_self_list;
 
             u.getByIdProtoList.structureList = structureList;
-            u.getByIdProtoList.listSize = listSize;
+            u.getByIdProtoList.listSize = 1;
+
+            stubRoutine = CodeLocationLabel();
         }
 
-        void initGetByIdProtoList(PolymorphicAccessStructureList* structureList, int listSize)
+        void initGetByIdProtoList(PolymorphicAccessStructureList* structureList)
         {
             accessType = access_get_by_id_proto_list;
 
             u.getByIdProtoList.structureList = structureList;
-            u.getByIdProtoList.listSize = listSize;
+            u.getByIdProtoList.listSize = 1;
+
+            stubRoutine = CodeLocationLabel();
         }
 
         // PutById*
 
-        void initPutByIdTransition(Structure* previousStructure, Structure* structure, StructureChain* chain)
+        void initPutByIdTransition(Structure* previousStructure, Structure* structure, StructureChain* chain, CodeLocationLabel routine)
         {
             accessType = access_put_by_id_transition;
 
@@ -118,6 +126,8 @@ namespace JSC {
 
             u.putByIdTransition.chain = chain;
             chain->ref();
+
+            stubRoutine = routine;
         }
 
         void initPutByIdReplace(Structure* baseObjectStructure)

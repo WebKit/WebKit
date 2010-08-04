@@ -90,10 +90,7 @@ private:
     typedef Vector<Allocation, 2> AllocationList;
 
 public:
-    static PassRefPtr<ExecutablePool> create(size_t n)
-    {
-        return adoptRef(new ExecutablePool(n));
-    }
+    static PassRefPtr<ExecutablePool> create(size_t n);
 
     void* alloc(size_t n)
     {
@@ -127,7 +124,7 @@ private:
     static Allocation systemAlloc(size_t n);
     static void systemRelease(Allocation& alloc);
 
-    ExecutablePool(size_t n);
+    ExecutablePool(Allocation&);
 
     void* poolAllocate(size_t n);
 
@@ -145,8 +142,11 @@ public:
     {
         if (!pageSize)
             intializePageSize();
-        if (isValid())
+        if (isValid()) {
             m_smallAllocationPool = ExecutablePool::create(JIT_ALLOCATOR_LARGE_ALLOC_SIZE);
+            if (!m_smallAllocationPool)
+                CRASH();
+        }
 #if !ENABLE(INTERPRETER)
         else
             CRASH();
@@ -163,7 +163,7 @@ public:
             return m_smallAllocationPool;
 
         // If the request is large, we just provide a unshared allocator
-        if (n > JIT_ALLOCATOR_LARGE_ALLOC_SIZE)
+        if (n > JIT_ALLOCATOR_LARGE_ALLOC_SIZE) 
             return ExecutablePool::create(n);
 
         // Create a new allocator
@@ -286,15 +286,20 @@ private:
     static void intializePageSize();
 };
 
-inline ExecutablePool::ExecutablePool(size_t n)
+inline PassRefPtr<ExecutablePool> ExecutablePool::create(size_t n)
+    {
+        Allocation mem = systemAlloc(roundUpAllocationSize(n, JIT_ALLOCATOR_PAGE_SIZE));
+        if (!mem)
+            return 0;
+        return adoptRef(new ExecutablePool(mem));
+    }
+
+inline ExecutablePool::ExecutablePool(Allocation& mem)
 {
-    size_t allocSize = roundUpAllocationSize(n, JIT_ALLOCATOR_PAGE_SIZE);
-    Allocation mem = systemAlloc(allocSize);
+    ASSERT(!!mem);
     m_pools.append(mem);
     m_freePtr = static_cast<char*>(mem.base());
-    if (!m_freePtr)
-        CRASH(); // Failed to allocate
-    m_end = m_freePtr + allocSize;
+    m_end = m_freePtr + mem.size();
 }
 
 inline void* ExecutablePool::poolAllocate(size_t n)
@@ -303,8 +308,8 @@ inline void* ExecutablePool::poolAllocate(size_t n)
     
     Allocation result = systemAlloc(allocSize);
     if (!result.base())
-        CRASH(); // Failed to allocate
-    
+        return 0; // Failed to allocate
+
     ASSERT(m_end >= m_freePtr);
     if ((allocSize - n) > static_cast<size_t>(m_end - m_freePtr)) {
         // Replace allocation pool

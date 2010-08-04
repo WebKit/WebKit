@@ -1628,6 +1628,8 @@ public:
     void* executableCopy(ExecutablePool* allocator)
     {
         void* copy = m_formatter.executableCopy(allocator);
+        if (!copy)
+            return 0;
 
         unsigned jumpCount = m_jumpsToLink.size();
         for (unsigned i = 0; i < jumpCount; ++i) {
@@ -1637,7 +1639,6 @@ public:
         }
         m_jumpsToLink.clear();
 
-        ASSERT(copy);
         return copy;
     }
 

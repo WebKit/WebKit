@@ -186,6 +186,11 @@ JSObject* createNotAnObjectError(ExecState* exec, JSNotAnObjectErrorStub* error,
     return exception;
 }
 
+JSObject* createOutOfMemoryError(JSGlobalObject* globalObject)
+{
+    return createError(globalObject, "Out of memory");
+}
+
 JSValue throwOutOfMemoryError(ExecState* exec)
 {
     return throwError(exec, createError(exec, "Out of memory"));

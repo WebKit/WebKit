@@ -1626,9 +1626,7 @@ public:
     
     void* executableCopy(ExecutablePool* allocator)
     {
-        void* copy = m_formatter.executableCopy(allocator);
-        ASSERT(copy);
-        return copy;
+        return m_formatter.executableCopy(allocator);
     }
 
 private:
