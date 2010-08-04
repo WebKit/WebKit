@@ -1,3 +1,62 @@
+2010-08-03  Nathan Lawrence  <nlawrence@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        https://bugs.webkit.org/show_bug.cgi?id=43269
+
+        Added new allocateAligned methods to PageAllocation.  In order to
+        prevent a regress in performance, the function needs to be inlined.
+
+        Additionally, I ported the symbian block allocator to use
+        PageAllocation and added a new WTF::Bitmap class to support this.
+
+        * GNUmakefile.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/AlignedMemoryAllocator.h: Added.
+        (JSC::AlignedMemory::deallocate):
+        (JSC::AlignedMemory::base):
+        (JSC::AlignedMemory::AlignedMemory):
+        (JSC::AlignedMemoryAllocator::destroy):
+        (JSC::AlignedMemoryAllocator::allocate):
+        (JSC::AlignedMemoryAllocator::AlignedMemoryAllocator):
+        (JSC::AlignedMemoryAllocator::~AlignedMemoryAllocator):
+        (JSC::AlignedMemoryAllocator::free):
+        * runtime/Collector.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::destroy):
+        (JSC::Heap::allocateBlock):
+        (JSC::Heap::freeBlock):
+        (JSC::Heap::freeBlocks):
+        (JSC::Heap::allocate):
+        (JSC::Heap::shrinkBlocks):
+        (JSC::Heap::markConservatively):
+        (JSC::Heap::clearMarkBits):
+        (JSC::Heap::markedCells):
+        * runtime/Collector.h:
+        (JSC::CollectorHeap::collectorBlock):
+        * runtime/CollectorHeapIterator.h:
+        (JSC::CollectorHeapIterator::operator*):
+        (JSC::LiveObjectIterator::operator++):
+        (JSC::DeadObjectIterator::operator++):
+        * wtf/Bitmap.h: Added.
+        (WTF::Bitmap::get):
+        (WTF::Bitmap::set):
+        (WTF::Bitmap::clear):
+        (WTF::Bitmap::clearAll):
+        (WTF::Bitmap::advanceToNextFreeBit):
+        (WTF::Bitmap::count):
+        (WTF::Bitmap::isEmpty):
+        (WTF::Bitmap::isFull):
+        * wtf/PageAllocation.h:
+        (WTF::PageAllocation::operator UnspecifiedBoolType):
+        (WTF::PageAllocation::allocateAligned):
+        (WTF::PageAllocation::reserveAligned):
+        * wtf/Platform.h:
+        * wtf/symbian: Removed.
+        * wtf/symbian/BlockAllocatorSymbian.cpp: Removed.
+        * wtf/symbian/BlockAllocatorSymbian.h: Removed.
+
 2010-08-03  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Gavin Barraclough.

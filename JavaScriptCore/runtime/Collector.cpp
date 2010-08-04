@@ -136,9 +136,6 @@ Heap::Heap(JSGlobalData* globalData)
     , m_registeredThreads(0)
     , m_currentThreadRegistrar(0)
 #endif
-#if OS(SYMBIAN)
-    , m_blockallocator(JSCCOLLECTOR_VIRTUALMEM_RESERVATION, BLOCK_SIZE)
-#endif
     , m_globalData(globalData)
 {
     ASSERT(globalData);
@@ -186,63 +183,17 @@ void Heap::destroy()
         t = next;
     }
 #endif
-#if OS(SYMBIAN)
     m_blockallocator.destroy();
-#endif
     m_globalData = 0;
 }
 
 NEVER_INLINE CollectorBlock* Heap::allocateBlock()
 {
-#if OS(DARWIN)
-    vm_address_t address = 0;
-    vm_map(current_task(), &address, BLOCK_SIZE, BLOCK_OFFSET_MASK, VM_FLAGS_ANYWHERE | VM_TAG_FOR_COLLECTOR_MEMORY, MEMORY_OBJECT_NULL, 0, FALSE, VM_PROT_DEFAULT, VM_PROT_DEFAULT, VM_INHERIT_DEFAULT);
-#elif OS(SYMBIAN)
-    void* address = m_blockallocator.alloc();  
-    if (!address)
-        CRASH();
-#elif OS(WINCE)
-    void* address = VirtualAlloc(NULL, BLOCK_SIZE, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
-#elif OS(WINDOWS)
-#if COMPILER(MINGW) && !COMPILER(MINGW64)
-    void* address = __mingw_aligned_malloc(BLOCK_SIZE, BLOCK_SIZE);
-#else
-    void* address = _aligned_malloc(BLOCK_SIZE, BLOCK_SIZE);
-#endif
-    memset(address, 0, BLOCK_SIZE);
-#elif HAVE(POSIX_MEMALIGN)
-    void* address;
-    posix_memalign(&address, BLOCK_SIZE, BLOCK_SIZE);
-#else
-
-#if ENABLE(JSC_MULTIPLE_THREADS)
-#error Need to initialize pagesize safely.
-#endif
-    static size_t pagesize = getpagesize();
-
-    size_t extra = 0;
-    if (BLOCK_SIZE > pagesize)
-        extra = BLOCK_SIZE - pagesize;
-
-    void* mmapResult = mmap(NULL, BLOCK_SIZE + extra, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);
-    uintptr_t address = reinterpret_cast<uintptr_t>(mmapResult);
-
-    size_t adjust = 0;
-    if ((address & BLOCK_OFFSET_MASK) != 0)
-        adjust = BLOCK_SIZE - (address & BLOCK_OFFSET_MASK);
-
-    if (adjust > 0)
-        munmap(reinterpret_cast<char*>(address), adjust);
-
-    if (adjust < extra)
-        munmap(reinterpret_cast<char*>(address + adjust + BLOCK_SIZE), extra - adjust);
-
-    address += adjust;
-#endif
+    AlignedBlock allocation = m_blockallocator.allocate();
+    CollectorBlock* block = static_cast<CollectorBlock*>(allocation.base());
 
     // Initialize block.
 
-    CollectorBlock* block = reinterpret_cast<CollectorBlock*>(address);
     block->heap = this;
     clearMarkBits(block);
 
@@ -254,14 +205,14 @@ NEVER_INLINE CollectorBlock* Heap::allocateBlock()
 
     size_t numBlocks = m_heap.numBlocks;
     if (m_heap.usedBlocks == numBlocks) {
-        static const size_t maxNumBlocks = ULONG_MAX / sizeof(CollectorBlock*) / GROWTH_FACTOR;
+        static const size_t maxNumBlocks = ULONG_MAX / sizeof(AlignedBlock) / GROWTH_FACTOR;
         if (numBlocks > maxNumBlocks)
             CRASH();
         numBlocks = max(MIN_ARRAY_SIZE, numBlocks * GROWTH_FACTOR);
         m_heap.numBlocks = numBlocks;
-        m_heap.blocks = static_cast<CollectorBlock**>(fastRealloc(m_heap.blocks, numBlocks * sizeof(CollectorBlock*)));
+        m_heap.blocks = static_cast<AlignedBlock*>(fastRealloc(m_heap.blocks, numBlocks * sizeof(AlignedBlock)));
     }
-    m_heap.blocks[m_heap.usedBlocks++] = block;
+    m_heap.blocks[m_heap.usedBlocks++] = allocation;
 
     return block;
 }
@@ -274,7 +225,7 @@ NEVER_INLINE void Heap::freeBlock(size_t block)
     ObjectIterator end(m_heap, block + 1);
     for ( ; it != end; ++it)
         (*it)->~JSCell();
-    freeBlockPtr(m_heap.blocks[block]);
+    m_heap.blocks[block].deallocate();
 
     // swap with the last block so we compact as we go
     m_heap.blocks[block] = m_heap.blocks[m_heap.usedBlocks - 1];
@@ -282,29 +233,8 @@ NEVER_INLINE void Heap::freeBlock(size_t block)
 
     if (m_heap.numBlocks > MIN_ARRAY_SIZE && m_heap.usedBlocks < m_heap.numBlocks / LOW_WATER_FACTOR) {
         m_heap.numBlocks = m_heap.numBlocks / GROWTH_FACTOR; 
-        m_heap.blocks = static_cast<CollectorBlock**>(fastRealloc(m_heap.blocks, m_heap.numBlocks * sizeof(CollectorBlock*)));
+        m_heap.blocks = static_cast<AlignedBlock*>(fastRealloc(m_heap.blocks, m_heap.numBlocks * sizeof(AlignedBlock)));
     }
-}
-
-NEVER_INLINE void Heap::freeBlockPtr(CollectorBlock* block)
-{
-#if OS(DARWIN)    
-    vm_deallocate(current_task(), reinterpret_cast<vm_address_t>(block), BLOCK_SIZE);
-#elif OS(SYMBIAN)
-    m_blockallocator.free(reinterpret_cast<void*>(block));
-#elif OS(WINCE)
-    VirtualFree(block, 0, MEM_RELEASE);
-#elif OS(WINDOWS)
-#if COMPILER(MINGW) && !COMPILER(MINGW64)
-    __mingw_aligned_free(block);
-#else
-    _aligned_free(block);
-#endif
-#elif HAVE(POSIX_MEMALIGN)
-    free(block);
-#else
-    munmap(reinterpret_cast<char*>(block), BLOCK_SIZE);
-#endif
 }
 
 void Heap::freeBlocks()
@@ -330,7 +260,7 @@ void Heap::freeBlocks()
         it->first->~JSCell();
 
     for (size_t block = 0; block < m_heap.usedBlocks; ++block)
-        freeBlockPtr(m_heap.blocks[block]);
+        m_heap.blocks[block].deallocate();
 
     fastFree(m_heap.blocks);
 
@@ -383,7 +313,7 @@ allocate:
 
     do {
         ASSERT(m_heap.nextBlock < m_heap.usedBlocks);
-        Block* block = reinterpret_cast<Block*>(m_heap.blocks[m_heap.nextBlock]);
+        Block* block = m_heap.collectorBlock(m_heap.nextBlock);
         do {
             ASSERT(m_heap.nextCell < HeapConstants::cellsPerBlock);
             if (!block->marked.get(m_heap.nextCell)) { // Always false for the last cell in the block
@@ -438,10 +368,10 @@ void Heap::shrinkBlocks(size_t neededBlocks)
     
     // Clear the always-on last bit, so isEmpty() isn't fooled by it.
     for (size_t i = 0; i < m_heap.usedBlocks; ++i)
-        m_heap.blocks[i]->marked.clear(HeapConstants::cellsPerBlock - 1);
+        m_heap.collectorBlock(i)->marked.clear(HeapConstants::cellsPerBlock - 1);
 
     for (size_t i = 0; i != m_heap.usedBlocks && m_heap.usedBlocks != neededBlocks; ) {
-        if (m_heap.blocks[i]->marked.isEmpty()) {
+        if (m_heap.collectorBlock(i)->marked.isEmpty()) {
             freeBlock(i);
         } else
             ++i;
@@ -449,7 +379,7 @@ void Heap::shrinkBlocks(size_t neededBlocks)
 
     // Reset the always-on last bit.
     for (size_t i = 0; i < m_heap.usedBlocks; ++i)
-        m_heap.blocks[i]->marked.set(HeapConstants::cellsPerBlock - 1);
+        m_heap.collectorBlock(i)->marked.set(HeapConstants::cellsPerBlock - 1);
 }
 
 #if OS(WINCE)
@@ -744,7 +674,6 @@ void Heap::markConservatively(MarkStack& markStack, void* start, void* end)
     char** p = static_cast<char**>(start);
     char** e = static_cast<char**>(end);
 
-    CollectorBlock** blocks = m_heap.blocks;
     while (p != e) {
         char* x = *p++;
         if (isPossibleCell(x)) {
@@ -760,7 +689,7 @@ void Heap::markConservatively(MarkStack& markStack, void* start, void* end)
             CollectorBlock* blockAddr = reinterpret_cast<CollectorBlock*>(xAsBits - offset);
             usedBlocks = m_heap.usedBlocks;
             for (size_t block = 0; block < usedBlocks; block++) {
-                if (blocks[block] != blockAddr)
+                if (m_heap.collectorBlock(block) != blockAddr)
                     continue;
                 markStack.append(reinterpret_cast<JSCell*>(xAsBits));
                 markStack.drain();
@@ -1009,7 +938,7 @@ void Heap::markProtectedObjects(MarkStack& markStack)
 void Heap::clearMarkBits()
 {
     for (size_t i = 0; i < m_heap.usedBlocks; ++i)
-        clearMarkBits(m_heap.blocks[i]);
+        clearMarkBits(m_heap.collectorBlock(i));
 }
 
 void Heap::clearMarkBits(CollectorBlock* block)
@@ -1028,9 +957,9 @@ size_t Heap::markedCells(size_t startBlock, size_t startCell) const
         return 0;
 
     size_t result = 0;
-    result += m_heap.blocks[startBlock]->marked.count(startCell);
+    result += m_heap.collectorBlock(startBlock)->marked.count(startCell);
     for (size_t i = startBlock + 1; i < m_heap.usedBlocks; ++i)
-        result += m_heap.blocks[i]->marked.count();
+        result += m_heap.collectorBlock(i)->marked.count();
 
     return result;
 }

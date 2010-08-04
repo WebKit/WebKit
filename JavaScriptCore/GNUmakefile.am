@@ -212,6 +212,7 @@ javascriptcore_sources += \
 	JavaScriptCore/profiler/ProfileNode.h \
 	JavaScriptCore/profiler/Profiler.cpp \
 	JavaScriptCore/profiler/Profiler.h \
+	JavaScriptCore/runtime/AlignedMemoryAllocator.h \
 	JavaScriptCore/runtime/ArgList.cpp \
 	JavaScriptCore/runtime/ArgList.h \
 	JavaScriptCore/runtime/Arguments.cpp \
@@ -411,6 +412,7 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/Assertions.h \
 	JavaScriptCore/wtf/Atomics.h \
 	JavaScriptCore/wtf/AVLTree.h \
+	JavaScriptCore/wtf/Bitmap.h \
 	JavaScriptCore/wtf/BumpPointerAllocator.h \
 	JavaScriptCore/wtf/ByteArray.cpp \
 	JavaScriptCore/wtf/ByteArray.h \

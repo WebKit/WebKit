@@ -508,6 +508,9 @@
 		BCFD8C920EEB2EE700283848 /* JumpTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCFD8C900EEB2EE700283848 /* JumpTable.cpp */; };
 		BCFD8C930EEB2EE700283848 /* JumpTable.h in Headers */ = {isa = PBXBuildFile; fileRef = BCFD8C910EEB2EE700283848 /* JumpTable.h */; };
 		C0A272630E50A06300E96E15 /* NotFound.h in Headers */ = {isa = PBXBuildFile; fileRef = C0A2723F0E509F1E00E96E15 /* NotFound.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		DD2724681208D1FF00F9ABE7 /* AlignedMemoryAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = DD2724671208D1FF00F9ABE7 /* AlignedMemoryAllocator.h */; };
+		DD2724691208D1FF00F9ABE7 /* AlignedMemoryAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = DD2724671208D1FF00F9ABE7 /* AlignedMemoryAllocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		DD377CBC12072C18006A2517 /* Bitmap.h in Headers */ = {isa = PBXBuildFile; fileRef = DD377CBB12072C18006A2517 /* Bitmap.h */; };
 		DDF7ABD411F60ED200108E36 /* GCActivityCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF7ABD211F60ED200108E36 /* GCActivityCallback.h */; };
 		DDF7ABD511F60ED200108E36 /* GCActivityCallbackCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDF7ABD311F60ED200108E36 /* GCActivityCallbackCF.cpp */; };
 		E124A8F70E555775003091F1 /* OpaqueJSString.h in Headers */ = {isa = PBXBuildFile; fileRef = E124A8F50E555775003091F1 /* OpaqueJSString.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1051,6 +1054,8 @@
 		C0A2723F0E509F1E00E96E15 /* NotFound.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotFound.h; sourceTree = "<group>"; };
 		D21202280AD4310C00ED79B6 /* DateConversion.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = DateConversion.cpp; sourceTree = "<group>"; };
 		D21202290AD4310C00ED79B6 /* DateConversion.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DateConversion.h; sourceTree = "<group>"; };
+		DD2724671208D1FF00F9ABE7 /* AlignedMemoryAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlignedMemoryAllocator.h; sourceTree = "<group>"; };
+		DD377CBB12072C18006A2517 /* Bitmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Bitmap.h; sourceTree = "<group>"; };
 		DDF7ABD211F60ED200108E36 /* GCActivityCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCActivityCallback.h; sourceTree = "<group>"; };
 		DDF7ABD311F60ED200108E36 /* GCActivityCallbackCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GCActivityCallbackCF.cpp; sourceTree = "<group>"; };
 		E11D51750B2E798D0056C188 /* StringExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringExtras.h; sourceTree = "<group>"; };
@@ -1410,6 +1415,7 @@
 				65E217B708E7EECC0023E5F6 /* Assertions.h */,
 				BC5F7BBB11823B590052C02C /* Atomics.h */,
 				E1A596370DE3E1C300C17E37 /* AVLTree.h */,
+				DD377CBB12072C18006A2517 /* Bitmap.h */,
 				86676D4D11FED55D004B6863 /* BumpPointerAllocator.h */,
 				A7A1F7AA0F252B3C00E184E2 /* ByteArray.cpp */,
 				A7A1F7AB0F252B3C00E184E2 /* ByteArray.h */,
@@ -1559,6 +1565,7 @@
 		7EF6E0BB0EB7A1EC0079AFAF /* runtime */ = {
 			isa = PBXGroup;
 			children = (
+				DD2724671208D1FF00F9ABE7 /* AlignedMemoryAllocator.h */,
 				DDF7ABD211F60ED200108E36 /* GCActivityCallback.h */,
 				DDF7ABD311F60ED200108E36 /* GCActivityCallbackCF.cpp */,
 				BCF605110E203EF800B9A64D /* ArgList.cpp */,
@@ -1901,6 +1908,7 @@
 				144007570A5370D20005F061 /* JSNodeList.h in Headers */,
 				144005CC0A5338F80005F061 /* Node.h in Headers */,
 				1440074A0A536CC20005F061 /* NodeList.h in Headers */,
+				DD2724681208D1FF00F9ABE7 /* AlignedMemoryAllocator.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2199,7 +2207,9 @@
 				868BFA18117CF19900B908B1 /* WTFString.h in Headers */,
 				86D08D5411793613006E5ED0 /* WTFThreadData.h in Headers */,
 				9688CB160ED12B4E001D649F /* X86Assembler.h in Headers */,
+				DD377CBC12072C18006A2517 /* Bitmap.h in Headers */,
 				DDF7ABD411F60ED200108E36 /* GCActivityCallback.h in Headers */,
+				DD2724691208D1FF00F9ABE7 /* AlignedMemoryAllocator.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

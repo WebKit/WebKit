@@ -216,7 +216,6 @@ SOURCES += \
     wtf/PageAllocation.cpp \
     wtf/RandomNumber.cpp \
     wtf/RefCountedLeakCounter.cpp \
-    wtf/symbian/BlockAllocatorSymbian.cpp \
     wtf/ThreadingNone.cpp \
     wtf/Threading.cpp \
     wtf/TypeTraits.cpp \

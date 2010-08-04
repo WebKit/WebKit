@@ -77,7 +77,7 @@ namespace JSC {
 
     inline JSCell* CollectorHeapIterator::operator*() const
     {
-        return reinterpret_cast<JSCell*>(&m_heap.blocks[m_block]->cells[m_cell]);
+        return reinterpret_cast<JSCell*>(&m_heap.collectorBlock(m_block)->cells[m_cell]);
     }
     
     // Iterators advance up to the next-to-last -- and not the last -- cell in a
@@ -103,7 +103,7 @@ namespace JSC {
         if (m_block < m_heap.nextBlock || (m_block == m_heap.nextBlock && m_cell < m_heap.nextCell))
             return *this;
 
-        while (m_block < m_heap.usedBlocks && !m_heap.blocks[m_block]->marked.get(m_cell))
+        while (m_block < m_heap.usedBlocks && !m_heap.collectorBlock(m_block)->marked.get(m_cell))
             advance(HeapConstants::cellsPerBlock - 1);
         return *this;
     }
@@ -119,7 +119,7 @@ namespace JSC {
         do {
             advance(HeapConstants::cellsPerBlock - 1);
             ASSERT(m_block > m_heap.nextBlock || (m_block == m_heap.nextBlock && m_cell >= m_heap.nextCell));
-        } while (m_block < m_heap.usedBlocks && m_heap.blocks[m_block]->marked.get(m_cell));
+        } while (m_block < m_heap.usedBlocks && m_heap.collectorBlock(m_block)->marked.get(m_cell));
         return *this;
     }
 

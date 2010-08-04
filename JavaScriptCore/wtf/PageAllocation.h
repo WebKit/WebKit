@@ -39,6 +39,51 @@
 #define PAGE_ALLOCATION_ALLOCATE_AT 0
 #endif
 
+#if HAVE(MMAP)
+#include <sys/mman.h>
+#include <unistd.h>
+#endif
+
+#if OS(DARWIN)
+
+#include <mach/mach_init.h>
+#include <mach/mach_port.h>
+#include <mach/task.h>
+#include <mach/thread_act.h>
+#include <mach/vm_map.h>
+
+#elif OS(WINDOWS)
+
+#include <malloc.h>
+#include <windows.h>
+
+#elif OS(HAIKU)
+
+#include <OS.h>
+
+#elif OS(UNIX)
+
+#include <stdlib.h>
+
+#if OS(SOLARIS)
+#include <thread.h>
+#else
+#include <pthread.h>
+#endif
+
+#if HAVE(PTHREAD_NP_H)
+#include <pthread_np.h>
+#endif
+
+#if OS(QNX)
+#include <errno.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <sys/procfs.h>
+#endif
+
+#endif
+
 namespace WTF {
 
 class PageAllocation {
@@ -82,6 +127,12 @@ public:
     size_t size() const { return m_size; }
 
     bool operator!() const { return !m_base; }
+#if COMPILER(WINSCW)
+    operator bool const { return m_base; }
+#else
+    typedef void* PageAllocation::*UnspecifiedBoolType;
+    operator UnspecifiedBoolType() const { return m_base ? &PageAllocation::m_base : 0; }
+#endif
 
     bool commit(void*, size_t, bool writable = true, bool executable = false) const;
     void decommit(void*, size_t) const;
@@ -93,6 +144,11 @@ public:
     static PageAllocation allocateAt(void* address, bool fixed, size_t, Usage = UnknownUsage, bool writable = true, bool executable = false);
     static PageAllocation reserveAt(void* address, bool fixed, size_t, Usage = UnknownUsage, bool writable = true, bool executable = false);
 #endif
+
+#if HAVE(ALIGNED_ALLOCATE)
+    static PageAllocation allocateAligned(size_t, Usage = UnknownUsage, bool writable = true, bool executable = false);
+#endif
+
     static size_t pagesize();
 
 private:
@@ -117,6 +173,89 @@ private:
     RChunk* m_chunk;
 #endif
 };
+
+#if HAVE(ALIGNED_ALLOCATE)
+
+#if OS(DARWIN)
+
+inline PageAllocation PageAllocation::allocateAligned(size_t size, Usage, bool writable, bool executable)
+{
+    ASSERT(!(size & (size - 1)));
+    vm_address_t address = 0;
+    vm_prot_t protection = VM_PROT_READ;
+    protection |= executable ? VM_PROT_EXECUTE : 0;
+    protection |= writable ? VM_PROT_WRITE : 0;
+    vm_map(current_task(), &address, size, (size - 1), VM_FLAGS_ANYWHERE | VM_TAG_FOR_COLLECTOR_MEMORY, MEMORY_OBJECT_NULL, 0, FALSE, protection, protection, VM_INHERIT_DEFAULT);
+    return PageAllocation(reinterpret_cast<void*>(address), size);
+}
+
+#elif OS(WINDOWS)
+
+inline PageAllocation PageAllocation::allocateAligned(size_t size, Usage usage, bool writable, bool executable)
+{
+    ASSERT(writable && !executable);
+#if COMPILER(MINGW) && !COMPILER(MINGW64)
+    void* address = __mingw_aligned_malloc(size, size);
+#else
+    void* address = _aligned_malloc(size, size);
+#endif
+    memset(address, 0, size);
+    return PageAllocation(address, size);
+}
+
+#elif HAVE(POSIX_MEMALIGN)
+
+inline PageAllocation PageAllocation::allocateAligned(size_t size, Usage usage, bool writable, bool executable)
+{
+    ASSERT(writable && !executable);
+
+    void* address;
+    posix_memalign(&address, size, size);
+    return PageAllocation(address, size);
+}
+
+#elif HAVE(MMAP)
+
+inline PageAllocation PageAllocation::allocateAligned(size_t size, Usage usage, bool writable, bool executable)
+{
+    ASSERT(!(size & (size - 1)));
+    ASSERT(writable && !executable);
+    static size_t pagesize = getpagesize();
+
+    size_t extra = 0;
+    if (size > pagesize)
+        extra = size - pagesize;
+
+    int flags = MAP_PRIVATE | MAP_ANON;
+
+    int protection = PROT_READ;
+    if (writable)
+        protection |= PROT_WRITE;
+    if (executable)
+        protection |= PROT_EXEC;
+
+    // use page allocation
+    void* mmapResult = mmap(0, size + extra, protection, flags, usage, 0);
+    uintptr_t address = reinterpret_cast<uintptr_t>(mmapResult);
+
+    size_t adjust = 0;
+    if ((address & (size - 1)))
+        adjust = size - (address & (size - 1));
+
+    if (adjust > 0)
+        munmap(reinterpret_cast<char*>(address), adjust);
+
+    if (adjust < extra)
+        munmap(reinterpret_cast<char*>(address + adjust + size), extra - adjust);
+
+    address += adjust;
+
+    return PageAllocation(reinterpret_cast<void*>(address), size);
+}
+
+#endif
+
+#endif
 
 }
 

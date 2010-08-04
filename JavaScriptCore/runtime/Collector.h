@@ -22,23 +22,22 @@
 #ifndef Collector_h
 #define Collector_h
 
+#include "AlignedMemoryAllocator.h"
 #include <stddef.h>
 #include <string.h>
+#include <wtf/Bitmap.h>
 #include <wtf/FixedArray.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
+#include <wtf/PageAllocation.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Threading.h>
 
 #if ENABLE(JSC_MULTIPLE_THREADS)
 #include <pthread.h>
-#endif
-
-#if OS(SYMBIAN)
-#include <wtf/symbian/BlockAllocatorSymbian.h>
 #endif
 
 #define ASSERT_CLASS_FITS_IN_CELL(class) COMPILE_ASSERT(sizeof(class) <= CELL_SIZE, class_fits_in_cell)
@@ -57,10 +56,19 @@ namespace JSC {
 
     class LiveObjectIterator;
 
+#if OS(WINCE) || OS(SYMBIAN)
+    const size_t BLOCK_SIZE = 64 * 1024; // 64k
+#else
+    const size_t BLOCK_SIZE = 64 * 4096; // 256k
+#endif
+
+    typedef AlignedMemoryAllocator<BLOCK_SIZE> AlignedAllocator;
+    typedef AlignedMemory<BLOCK_SIZE> AlignedBlock;
+
     struct CollectorHeap {
         size_t nextBlock;
         size_t nextCell;
-        CollectorBlock** blocks;
+        AlignedBlock* blocks;
         
         void* nextNumber;
 
@@ -71,6 +79,11 @@ namespace JSC {
         bool didShrink;
 
         OperationInProgress operationInProgress;
+
+        CollectorBlock* collectorBlock(size_t index) const
+        {
+            return static_cast<CollectorBlock*>(blocks[index].base());
+        }
     };
 
     class Heap : public Noncopyable {
@@ -140,7 +153,6 @@ namespace JSC {
 
         NEVER_INLINE CollectorBlock* allocateBlock();
         NEVER_INLINE void freeBlock(size_t);
-        NEVER_INLINE void freeBlockPtr(CollectorBlock*);
         void freeBlocks();
         void resizeBlocks();
         void growBlocks(size_t neededBlocks);
@@ -181,21 +193,13 @@ namespace JSC {
         pthread_key_t m_currentThreadRegistrar;
 #endif
 
-#if OS(SYMBIAN)
         // Allocates collector blocks with correct alignment
-        WTF::AlignedBlockAllocator m_blockallocator; 
-#endif
+        AlignedAllocator m_blockallocator; 
         
         JSGlobalData* m_globalData;
     };
 
     // tunable parameters
-#if OS(WINCE) || OS(SYMBIAN)
-    const size_t BLOCK_SIZE = 64 * 1024; // 64k
-#else
-    const size_t BLOCK_SIZE = 64 * 4096; // 256k
-#endif
-
     // derived constants
     const size_t BLOCK_OFFSET_MASK = BLOCK_SIZE - 1;
     const size_t BLOCK_MASK = ~BLOCK_OFFSET_MASK;
