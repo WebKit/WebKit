@@ -1,3 +1,9 @@
+2010-08-05  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Fix Win compilation.
+
+        * bindings/js/JSBindingsAllInOne.cpp:
+
 2010-08-05  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Tor Arne Vestbø.
