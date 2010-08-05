@@ -889,7 +889,8 @@ class TestRunner:
             self._port, self._options.builder_name, self._options.build_name,
             self._options.build_number, self._options.results_directory,
             BUILDER_BASE_URL, individual_test_timings,
-            self._expectations, result_summary, self._test_files_list)
+            self._expectations, result_summary, self._test_files_list,
+            self._options.upload_incremental_results)
 
         _log.debug("Finished writing JSON files.")
 
@@ -900,8 +901,12 @@ class TestRunner:
         _log.info("Uploading JSON files for builder: %s",
                    self._options.builder_name)
 
-        attrs = [('builder', self._options.builder_name)]
-        json_files = ["expectations.json", "results.json"]
+        attrs = [("builder", self._options.builder_name)]
+        json_files = ["expectations.json"]
+        if self._options.upload_incremental_results:
+            json_files.append("incremental_results.json")
+        else:
+            json_files.append("results.json")
 
         files = [(file, os.path.join(self._options.results_directory, file))
             for file in json_files]
@@ -1656,6 +1661,10 @@ def parse_args(args=None):
         optparse.make_option("--test-results-server", default="",
             help=("If specified, upload results json files to this appengine "
                   "server.")),
+        optparse.make_option("--upload-incremental-results",
+            action="store_true",
+            default=False,
+            help="If true, upload incremental json results to server."),
     ]
 
     option_list = (configuration_options + print_options +

@@ -82,10 +82,12 @@ class JSONResultsGeneratorBase(object):
     ALL_FIXABLE_COUNT = "allFixableCount"
 
     RESULTS_FILENAME = "results.json"
+    INCREMENTAL_RESULTS_FILENAME = "incremental_results.json"
 
     def __init__(self, builder_name, build_name, build_number,
         results_file_base_path, builder_base_url,
-        test_results_map, svn_repositories=None):
+        test_results_map, svn_repositories=None,
+        generate_incremental_results=False):
         """Modifies the results.json file. Grabs it off the archive directory
         if it is not found locally.
 
@@ -108,41 +110,59 @@ class JSONResultsGeneratorBase(object):
         self._builder_base_url = builder_base_url
         self._results_file_path = os.path.join(results_file_base_path,
             self.RESULTS_FILENAME)
+        self._incremental_results_file_path = os.path.join(
+            results_file_base_path, self.INCREMENTAL_RESULTS_FILENAME)
 
         self._test_results_map = test_results_map
         self._test_results = test_results_map.values()
+        self._generate_incremental_results = generate_incremental_results
 
         self._svn_repositories = svn_repositories
         if not self._svn_repositories:
             self._svn_repositories = {}
 
         self._json = None
+        self._archived_results = None
 
     def generate_json_output(self):
         """Generates the JSON output file."""
+
+        # Generate the JSON output file that has full results.
+        # FIXME: stop writing out the full results file once all bots use
+        # incremental results.
         if not self._json:
             self._json = self.get_json()
         if self._json:
-            # Specify separators in order to get compact encoding.
-            json_data = simplejson.dumps(self._json, separators=(',', ':'))
-            json_string = self.JSON_PREFIX + json_data + self.JSON_SUFFIX
+            self._generate_json_file(self._json, self._results_file_path)
 
-            results_file = codecs.open(self._results_file_path, "w", "utf-8")
-            results_file.write(json_string)
-            results_file.close()
+        # Generate the JSON output file that only has incremental results.
+        if self._generate_incremental_results:
+            json = self.get_json(incremental=True)
+            if json:
+                self._generate_json_file(
+                    json, self._incremental_results_file_path)
 
-    def get_json(self):
+    def get_json(self, incremental=False):
         """Gets the results for the results.json file."""
-        if self._json:
-            return self._json
+        if incremental:
+            results_json = {}
+        else:
+            if self._json:
+                return self._json
 
-        results_json, error = self._get_archived_json_results()
-        if error:
-            # If there was an error don't write a results.json
-            # file at all as it would lose all the information on the bot.
-            _log.error("Archive directory is inaccessible. Not modifying "
-                       "or clobbering the results.json file: " + str(error))
-            return None
+            if not self._archived_results:
+                self._archived_results, error = \
+                    self._get_archived_json_results()
+                if error:
+                    # If there was an error don't write a results.json
+                    # file at all as it would lose all the information on the
+                    # bot.
+                    _log.error("Archive directory is inaccessible. Not "
+                               "modifying or clobbering the results.json "
+                               "file: " + str(error))
+                    return None
+
+            results_json = self._archived_results
 
         builder_name = self._builder_name
         if results_json and builder_name not in results_json:
@@ -168,8 +188,19 @@ class JSONResultsGeneratorBase(object):
         for test in all_failing_tests:
             self._insert_test_time_and_result(test, tests)
 
-        self._json = results_json
-        return self._json
+        return results_json
+
+    def set_archived_results(self, archived_results):
+        self._archived_results = archived_results
+
+    def _generate_json_file(self, json, file_path):
+        # Specify separators in order to get compact encoding.
+        json_data = simplejson.dumps(json, separators=(',', ':'))
+        json_string = self.JSON_PREFIX + json_data + self.JSON_SUFFIX
+
+        results_file = codecs.open(file_path, "w", "utf-8")
+        results_file.write(json_string)
+        results_file.close()
 
     def _get_test_timing(self, test_name):
         """Returns test timing data (elapsed time) in second

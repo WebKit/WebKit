@@ -56,7 +56,8 @@ class JSONLayoutResultsGenerator(json_results_generator.JSONResultsGeneratorBase
 
     def __init__(self, port, builder_name, build_name, build_number,
         results_file_base_path, builder_base_url,
-        test_timings, expectations, result_summary, all_tests):
+        test_timings, expectations, result_summary, all_tests,
+        generate_incremental_results=False):
         """Modifies the results.json file. Grabs it off the archive directory
         if it is not found locally.
 
@@ -66,7 +67,8 @@ class JSONLayoutResultsGenerator(json_results_generator.JSONResultsGeneratorBase
         """
         super(JSONLayoutResultsGenerator, self).__init__(
             builder_name, build_name, build_number, results_file_base_path,
-            builder_base_url, {}, port.test_repository_paths())
+            builder_base_url, {}, port.test_repository_paths(),
+            generate_incremental_results)
 
         self._port = port
         self._expectations = expectations
