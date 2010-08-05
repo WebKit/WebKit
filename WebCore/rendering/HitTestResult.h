@@ -86,8 +86,8 @@ public:
     IntRect rectFromPoint(int x, int y) const;
     IntRect rectFromPoint(const IntPoint&) const;
     IntSize padding() const { return m_padding; }
-    int paddingWidth() const { return m_padding.width() >= 0 ? m_padding.width() : 0; }
-    int paddingHeight() const { return m_padding.height() >= 0 ? m_padding.height() : 0; }
+    int paddingWidth() const { return m_padding.width(); }
+    int paddingHeight() const { return m_padding.height(); }
     // Returns true if it is rect-based hit test and needs to continue until the rect is fully
     // enclosed by the boundaries of a node.
     bool addNodeToRectBasedTestResult(Node*, int x, int y, const IntRect& rect = IntRect());
