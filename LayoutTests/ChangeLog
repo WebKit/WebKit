@@ -1,3 +1,9 @@
+2010-08-04  Andrew Wilson  <atwilson@chromium.org>
+
+        Unreviewed fix for chromium test expectations.
+
+        * platform/chromium/test_expectations.txt: Removed incorrectly formatted line.
+
 2010-08-04  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
