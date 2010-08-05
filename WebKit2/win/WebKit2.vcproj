@@ -1420,7 +1420,6 @@
 				RelativePath="..\Platform\WorkItem.h"
 				>
 			</File>
-            </File>
 			<File
 				RelativePath="..\Platform\WorkQueue.cpp"
 				>
