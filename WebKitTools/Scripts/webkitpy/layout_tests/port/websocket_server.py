@@ -60,7 +60,7 @@ _DEFAULT_WSS_PORT = 9323
 
 def url_is_alive(url):
     """Checks to see if we get an http response from |url|.
-    We poll the url 5 times with a 1 second delay.  If we don't
+    We poll the url 20 times with a 0.5 second delay.  If we don't
     get a reply in that time, we give up and assume the httpd
     didn't start properly.
 
@@ -70,7 +70,7 @@ def url_is_alive(url):
       True if the url is alive.
     """
     sleep_time = 0.5
-    wait_time = 5
+    wait_time = 10
     while wait_time > 0:
         try:
             response = urllib.urlopen(url)

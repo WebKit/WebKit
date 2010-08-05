@@ -1,3 +1,13 @@
+2010-08-04  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        NRWT: websocket_server startup detection failure
+        https://bugs.webkit.org/show_bug.cgi?id=43466
+
+        * Scripts/webkitpy/layout_tests/port/websocket_server.py:
+         Increase timeout value: 5 second -> 10 second
+
 2010-08-04  Victor Wang  <victorw@chromium.org>
 
         Reviewed by Ojan Vafai.
