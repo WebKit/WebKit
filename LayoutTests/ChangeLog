@@ -1,3 +1,10 @@
+2010-08-05  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Add missing pixel test results for svg/in-html test.
+
+        * platform/mac/svg/in-html/circle-expected.checksum: Added.
+        * platform/mac/svg/in-html/circle-expected.png: Added.
+
 2010-08-05  Satish Sampath  <satish@chromium.org>
 
         Reviewed by Jeremy Orlow.
