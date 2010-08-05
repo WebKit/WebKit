@@ -586,6 +586,11 @@ WebInspector.dispatchMessageFromBackend = function(arguments)
     WebInspector.dispatch.apply(this, arguments);
 }
 
+WebInspector.reportProtocolError = function(callId, methodName, errorText)
+{
+    WebInspector.log("InspectorBackend." + methodName + " failed with error text: '" + errorText + "'");
+    WebInspector.Callback.removeCallbackEntry(callId);
+}
 
 WebInspector.windowResize = function(event)
 {

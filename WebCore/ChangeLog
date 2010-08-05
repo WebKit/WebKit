@@ -1,3 +1,81 @@
+2010-08-05  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        WebInspector: In the current implementation of inspector agents we're calling
+        did methods manually. That is error prone and is bad from protocol point of view.
+        It would be better to call did methods automatically from the corresponding methods
+        of InspectorBackendDispatcher and report the results. As far as our protocol is
+        statefull this trick will keep it in the consistent state.
+        https://bugs.webkit.org/show_bug.cgi?id=43489
+
+        * inspector/CodeGeneratorInspector.pm:
+        * inspector/Inspector.idl:
+        * inspector/InspectorApplicationCacheAgent.cpp:
+        (WebCore::InspectorApplicationCacheAgent::getApplicationCaches):
+        * inspector/InspectorApplicationCacheAgent.h:
+        * inspector/InspectorBackend.cpp:
+        (WebCore::InspectorBackend::getProfilerLogLines):
+        (WebCore::InspectorBackend::setInjectedScriptSource):
+        (WebCore::InspectorBackend::dispatchOnInjectedScript):
+        (WebCore::InspectorBackend::clearConsoleMessages):
+        (WebCore::InspectorBackend::releaseWrapperObjectGroup):
+        (WebCore::InspectorBackend::getDatabaseTableNames):
+        * inspector/InspectorBackend.h:
+        * inspector/InspectorCSSStore.cpp:
+        (WebCore::InspectorCSSStore::inspectorStyleSheet):
+        * inspector/InspectorCSSStore.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::getCookies):
+        (WebCore::InspectorController::getDOMStorageEntries):
+        (WebCore::InspectorController::setDOMStorageItem):
+        (WebCore::InspectorController::removeDOMStorageItem):
+        (WebCore::InspectorController::getProfileHeaders):
+        (WebCore::InspectorController::getProfile):
+        (WebCore::InspectorController::editScriptSource):
+        (WebCore::InspectorController::getScriptSource):
+        (WebCore::InspectorController::setBreakpoint):
+        (WebCore::InspectorController::getResourceContent):
+        * inspector/InspectorController.h:
+        (WebCore::InspectorController::inspectorClient):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::getChildNodes):
+        (WebCore::InspectorDOMAgent::setAttribute):
+        (WebCore::InspectorDOMAgent::removeAttribute):
+        (WebCore::InspectorDOMAgent::removeNode):
+        (WebCore::InspectorDOMAgent::changeTagName):
+        (WebCore::InspectorDOMAgent::getOuterHTML):
+        (WebCore::InspectorDOMAgent::setOuterHTML):
+        (WebCore::InspectorDOMAgent::setTextNodeValue):
+        (WebCore::InspectorDOMAgent::getEventListenersForNode):
+        (WebCore::InspectorDOMAgent::getStyles):
+        (WebCore::InspectorDOMAgent::getAllStyles):
+        (WebCore::InspectorDOMAgent::getStyleSheet):
+        (WebCore::InspectorDOMAgent::getRuleRanges):
+        (WebCore::InspectorDOMAgent::getInlineStyle):
+        (WebCore::InspectorDOMAgent::getComputedStyle):
+        (WebCore::InspectorDOMAgent::applyStyleText):
+        (WebCore::InspectorDOMAgent::setStyleText):
+        (WebCore::InspectorDOMAgent::setStyleProperty):
+        (WebCore::InspectorDOMAgent::toggleStyleEnabled):
+        (WebCore::InspectorDOMAgent::setRuleSelector):
+        (WebCore::InspectorDOMAgent::addRule):
+        (WebCore::InspectorDOMAgent::buildObjectForRule):
+        (WebCore::InspectorDOMAgent::pushNodeByPathToFrontend):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorValues.cpp:
+        (WebCore::InspectorValue::asNumber):
+        (WebCore::InspectorBasicValue::asNumber):
+        * inspector/InspectorValues.h:
+        * inspector/front-end/Callback.js:
+        (WebInspector.Callback.prototype.processCallback):
+        (WebInspector.Callback.prototype.removeCallbackEntry):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.reset):
+        * inspector/front-end/inspector.js:
+        (WebInspector.reportProtocolError):
+
 2010-08-04  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Dimitri Glazkov.

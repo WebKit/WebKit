@@ -71,7 +71,7 @@ public:
     CSSStyleSheet* styleSheetForId(long styleSheetId);
     CSSStyleRule* ruleForId(long styleRuleId);
     DisabledStyleDeclaration* disabledStyleForId(long styleId, bool createIfAbsent);
-    CSSStyleSheet* inspectorStyleSheet(Document* ownerDocument, bool createIfAbsent, long callId);
+    CSSStyleSheet* inspectorStyleSheet(Document* ownerDocument, bool createIfAbsent);
     void removeDocument(Document*);
 
     long bindRule(CSSStyleRule* rule);

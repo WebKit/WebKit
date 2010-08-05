@@ -88,7 +88,7 @@ module core {
         [handler=Backend] void enableDebugger(in boolean always);
         [handler=Controller] void disableDebugger(in boolean always);
 
-        [handler=Controller] void setBreakpoint(in long callId, in String sourceID, in unsigned long lineNumber, in boolean enabled, in String condition);
+        [handler=Controller] void setBreakpoint(in long callId, in String sourceID, in unsigned int lineNumber, in boolean enabled, in String condition, out boolean success, out unsigned int actualLineNumber);
         [handler=Controller] void removeBreakpoint(in String sourceID, in unsigned long lineNumber);
         [handler=Debug] void activateBreakpoints();
         [handler=Debug] void deactivateBreakpoints();
@@ -121,20 +121,20 @@ module core {
         [handler=Backend] void getProfilerLogLines(in long callId, in long inPosition, out long outPosition, out String log);
 #endif
         [handler=Backend] void setInjectedScriptSource(in String scriptSource);
-        [handler=Backend] void dispatchOnInjectedScript(in long callId, in long injectedScriptId, in String methodName, in String arguments, in boolean async, out Value result, out boolean isException);
+        [handler=Backend, async] void dispatchOnInjectedScript(in long callId, in long injectedScriptId, in String methodName, in String arguments, in boolean async, out Value result, out boolean isException);
         [handler=Controller] void addScriptToEvaluateOnLoad(in String scriptSource);
         [handler=Controller] void removeAllScriptsToEvaluateOnLoad();
 
         [handler=DOM] void getChildNodes(in long callId, in long nodeId);
         [handler=DOM, customResponse=didApplyDomChange] void setAttribute(in long callId, in long elementId, in String name, in String value, out boolean success);
         [handler=DOM, customResponse=didApplyDomChange] void removeAttribute(in long callId, in long elementId, in String name, out boolean success);
-        [handler=DOM] void setTextNodeValue(in long callId, in long nodeId, in String value);
-        [handler=DOM] void getEventListenersForNode(in long callId, in long nodeId, out long nodeId, out Array listenersArray);
+        [handler=DOM, customResponse=didApplyDomChange] void setTextNodeValue(in long callId, in long nodeId, in String value, out boolean success);
+        [handler=DOM] void getEventListenersForNode(in long callId, in long nodeId, out long outNodeId, out Array listenersArray);
         [handler=DOM] void copyNode(in long nodeId);
-        [handler=DOM] void removeNode(in long callId, in long nodeId, out long nodeId);
-        [handler=DOM] void changeTagName(in long callId, in long nodeId, in String newTagName, out long nodeId);
+        [handler=DOM] void removeNode(in long callId, in long nodeId, out long outNodeId);
+        [handler=DOM] void changeTagName(in long callId, in long nodeId, in String newTagName, out long outNodeId);
         [handler=DOM] void getOuterHTML(in long callId, in long nodeId, out String outerHTML);
-        [handler=DOM] void setOuterHTML(in long callId, in long nodeId, in String outerHTML, out long nodeId);
+        [handler=DOM] void setOuterHTML(in long callId, in long nodeId, in String outerHTML, out long outNodeId);
         [handler=DOM] void addInspectedNode(in long nodeId);
         [handler=DOM] void performSearch(in String query, in boolean runSynchronously);
         [handler=DOM] void searchCanceled();
@@ -149,7 +149,7 @@ module core {
         [handler=DOM] void getAllStyles(in long callId, out Array styles);
         [handler=DOM] void getInlineStyle(in long callId, in long nodeId, out Value style);
         [handler=DOM] void getComputedStyle(in long callId, in long nodeId, out Value style);
-        [handler=DOM] void getStyleSheet(in long callId, in long styleSheetId, out Value styleSheet);
+        [handler=DOM] void getStyleSheet(in long callId, in long styleSheetId, out Object styleSheet);
         [handler=DOM] void getRuleRanges(in long callId, in long styleSheetId, out Value ranges);
         [handler=DOM] void applyStyleText(in long callId, in long styleId, in String styleText, in String propertyName, out boolean success, out Value style, out Array changedProperties);
         [handler=DOM] void setStyleText(in long callId, in long styleId, in String styleText, out boolean success);
@@ -166,7 +166,7 @@ module core {
 #endif
 
         [handler=Backend] void releaseWrapperObjectGroup(in long injectedScriptId, in String objectGroup);
-        [handler=Controller] void didEvaluateForTestInFrontend(in long callId, in String jsonResult);
+        [handler=Controller] void didEvaluateForTestInFrontend(in long testCallId, in String jsonResult);
 
 #if defined(ENABLE_DATABASE) && ENABLE_DATABASE
         [handler=Backend] void getDatabaseTableNames(in long callId, in long databaseId, out Array tableNames);

@@ -61,21 +61,17 @@ void InspectorApplicationCacheAgent::updateNetworkState(bool isNowOnline)
     m_frontend->updateNetworkState(isNowOnline);
 }
 
-void InspectorApplicationCacheAgent::getApplicationCaches(long callId)
+void InspectorApplicationCacheAgent::getApplicationCaches(long, RefPtr<InspectorValue>* applicationCaches)
 {
     DocumentLoader* documentLoader = m_inspectorController->inspectedPage()->mainFrame()->loader()->documentLoader();
-    RefPtr<InspectorValue> applicationCaches;
     if (documentLoader) {
         ApplicationCacheHost* host = documentLoader->applicationCacheHost();
         ApplicationCacheHost::CacheInfo info = host->applicationCacheInfo();
 
         ApplicationCacheHost::ResourceInfoList resources;
         host->fillResourceList(&resources);
-        applicationCaches = buildObjectForApplicationCache(resources, info);
-    } else
-        applicationCaches = InspectorValue::null();
-
-    m_frontend->didGetApplicationCaches(callId, applicationCaches);
+        *applicationCaches = buildObjectForApplicationCache(resources, info);
+    }
 }
 
 PassRefPtr<InspectorObject> InspectorApplicationCacheAgent::buildObjectForApplicationCache(const ApplicationCacheHost::ResourceInfoList& applicationCacheResources, const ApplicationCacheHost::CacheInfo& applicationCacheInfo)

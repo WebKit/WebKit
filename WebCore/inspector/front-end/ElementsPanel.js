@@ -179,12 +179,12 @@ WebInspector.ElementsPanel.prototype = {
         this.recentlyModifiedNodes = [];
 
         delete this.currentQuery;
-        this.searchCanceled();
     },
 
     setDocument: function(inspectedRootDocument)
     {
         this.reset();
+        this.searchCanceled();
 
         if (!inspectedRootDocument)
             return;

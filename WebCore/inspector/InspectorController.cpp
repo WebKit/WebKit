@@ -186,7 +186,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* client)
     , m_resourceTrackingEnabled(false)
     , m_settingsLoaded(false)
     , m_inspectorBackend(InspectorBackend::create(this))
-    , m_inspectorBackendDispatcher(new InspectorBackendDispatcher(m_inspectorBackend.get()))
+    , m_inspectorBackendDispatcher(new InspectorBackendDispatcher(this))
     , m_injectedScriptHost(InjectedScriptHost::create(this))
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     , m_debuggerEnabled(false)
@@ -1299,11 +1299,8 @@ void InspectorController::didOpenDatabase(PassRefPtr<Database> database, const S
 }
 #endif
 
-void InspectorController::getCookies(long callId)
+void InspectorController::getCookies(long, RefPtr<InspectorArray>* cookies, WebCore::String* cookiesString)
 {
-    if (!m_remoteFrontend)
-        return;
-
     // If we can get raw cookies.
     ListHashSet<Cookie> rawCookiesList;
 
@@ -1337,15 +1334,11 @@ void InspectorController::getCookies(long callId)
         }
     }
 
-    RefPtr<InspectorArray> cookies;
-    String cookiesString;
     if (rawCookiesImplemented)
-        cookies = buildArrayForCookies(rawCookiesList);
+        *cookies = buildArrayForCookies(rawCookiesList);
     else {
-        cookies = InspectorArray::create();
-        cookiesString = stringCookiesList;
+        *cookiesString = stringCookiesList;
     }
-    m_remoteFrontend->didGetCookies(callId, cookies, cookiesString);
 }
 
 PassRefPtr<InspectorArray> InspectorController::buildArrayForCookies(ListHashSet<Cookie>& cookiesList)
@@ -1427,12 +1420,8 @@ void InspectorController::selectDOMStorage(Storage* storage)
         m_remoteFrontend->selectDOMStorage(storageResourceId);
 }
 
-void InspectorController::getDOMStorageEntries(long callId, long storageId)
+void InspectorController::getDOMStorageEntries(long, long storageId, RefPtr<InspectorArray>* entries)
 {
-    if (!m_remoteFrontend)
-        return;
-
-    RefPtr<InspectorArray> jsonArray = InspectorArray::create();
     InspectorDOMStorageResource* storageResource = getDOMStorageResourceForId(storageId);
     if (storageResource) {
         storageResource->startReportingChangesToFrontend();
@@ -1443,39 +1432,28 @@ void InspectorController::getDOMStorageEntries(long callId, long storageId)
             RefPtr<InspectorArray> entry = InspectorArray::create();
             entry->pushString(name);
             entry->pushString(value);
-            jsonArray->push(entry);
+            (*entries)->push(entry);
         }
     }
-    m_remoteFrontend->didGetDOMStorageEntries(callId, jsonArray);
 }
 
-void InspectorController::setDOMStorageItem(long callId, long storageId, const String& key, const String& value)
+void InspectorController::setDOMStorageItem(long, long storageId, const String& key, const String& value, bool* success)
 {
-    if (!m_remoteFrontend)
-        return;
-
-    bool success = false;
     InspectorDOMStorageResource* storageResource = getDOMStorageResourceForId(storageId);
     if (storageResource) {
         ExceptionCode exception = 0;
         storageResource->domStorage()->setItem(key, value, exception);
-        success = !exception;
+        *success = !exception;
     }
-    m_remoteFrontend->didSetDOMStorageItem(callId, success);
 }
 
-void InspectorController::removeDOMStorageItem(long callId, long storageId, const String& key)
+void InspectorController::removeDOMStorageItem(long, long storageId, const String& key, bool* success)
 {
-    if (!m_remoteFrontend)
-        return;
-
-    bool success = false;
     InspectorDOMStorageResource* storageResource = getDOMStorageResourceForId(storageId);
     if (storageResource) {
         storageResource->domStorage()->removeItem(key);
-        success = true;
+        *success = true;
     }
-    m_remoteFrontend->didRemoveDOMStorageItem(callId, success);
 }
 
 InspectorDOMStorageResource* InspectorController::getDOMStorageResourceForId(long storageId)
@@ -1537,26 +1515,19 @@ void InspectorController::clearProfiles()
     m_nextUserInitiatedProfileNumber = 1;
 }
 
-void InspectorController::getProfileHeaders(long callId)
+void InspectorController::getProfileHeaders(long, RefPtr<InspectorArray>* headers)
 {
-    if (!m_remoteFrontend)
-        return;
-    RefPtr<InspectorArray> result = InspectorArray::create();
     ProfilesMap::iterator profilesEnd = m_profiles.end();
     for (ProfilesMap::iterator it = m_profiles.begin(); it != profilesEnd; ++it)
-        result->push(createProfileHeader(*it->second));
-    m_remoteFrontend->didGetProfileHeaders(callId, result);
+        (*headers)->push(createProfileHeader(*it->second));
 }
 
-void InspectorController::getProfile(long callId, unsigned uid)
+void InspectorController::getProfile(long, unsigned uid, RefPtr<InspectorObject>* profileObject)
 {
-    if (!m_frontend)
-        return;
     ProfilesMap::iterator it = m_profiles.find(uid);
     if (it != m_profiles.end()) {
-        RefPtr<InspectorObject> profileObject = createProfileHeader(*it->second);
-        profileObject->set("head", it->second->buildInspectorObjectForHead());
-        m_remoteFrontend->didGetProfile(callId, profileObject);
+        *profileObject = createProfileHeader(*it->second);
+        (*profileObject)->set("head", it->second->buildInspectorObjectForHead());
     }
 }
 
@@ -1724,22 +1695,15 @@ void InspectorController::disableDebugger(bool always)
         m_frontend->debuggerWasDisabled();
 }
 
-void InspectorController::editScriptSource(long callId, const String& sourceID, const String& newContent)
+void InspectorController::editScriptSource(long, const String& sourceID, const String& newContent, bool* success, String* result, RefPtr<InspectorValue>* newCallFrames)
 {
-    String result;
-    bool success = ScriptDebugServer::shared().editScriptSource(sourceID, newContent, result);
-    RefPtr<InspectorValue> callFrames;
-    if (success)
-        callFrames = currentCallFrames();
-    m_remoteFrontend->didEditScriptSource(callId, success, result, callFrames.get());
+    if (*success = ScriptDebugServer::shared().editScriptSource(sourceID, newContent, *result))
+        *newCallFrames = currentCallFrames();
 }
 
-void InspectorController::getScriptSource(long callId, const String& sourceID)
+void InspectorController::getScriptSource(long, const String& sourceID, String* scriptSource)
 {
-    if (!m_frontend)
-        return;
-    String scriptSource = m_scriptIDToContent.get(sourceID);
-    m_remoteFrontend->didGetScriptSource(callId, scriptSource);
+    *scriptSource = m_scriptIDToContent.get(sourceID);
 }
 
 void InspectorController::resume()
@@ -1768,27 +1732,25 @@ PassRefPtr<InspectorValue> InspectorController::currentCallFrames()
     return injectedScript.callFrames();
 }
 
-void InspectorController::setBreakpoint(long callId, const String& sourceID, unsigned lineNumber, bool enabled, const String& condition)
+void InspectorController::setBreakpoint(long, const String& sourceID, unsigned lineNumber, bool enabled, const String& condition, bool* success, unsigned int* actualLineNumber)
 {
     ScriptBreakpoint breakpoint(enabled, condition);
-    unsigned actualLineNumber = 0;
-    bool success = ScriptDebugServer::shared().setBreakpoint(sourceID, breakpoint, lineNumber, &actualLineNumber);
-    m_frontend->didSetBreakpoint(callId, success, actualLineNumber);
-    if (!success)
+    *success = ScriptDebugServer::shared().setBreakpoint(sourceID, breakpoint, lineNumber, actualLineNumber);
+    if (!*success)
         return;
 
     String url = m_sourceIDToURL.get(sourceID);
     if (url.isEmpty())
         return;
 
-    String breakpointId = formatBreakpointId(sourceID, actualLineNumber);
-    m_breakpointsMapping.set(breakpointId, actualLineNumber);
+    String breakpointId = formatBreakpointId(sourceID, *actualLineNumber);
+    m_breakpointsMapping.set(breakpointId, *actualLineNumber);
 
     String key = md5Base16(url);
     HashMap<String, SourceBreakpoints>::iterator it = m_stickyBreakpoints.find(key);
     if (it == m_stickyBreakpoints.end())
         it = m_stickyBreakpoints.set(key, SourceBreakpoints()).first;
-    it->second.set(actualLineNumber, breakpoint);
+    it->second.set(*actualLineNumber, breakpoint);
     saveBreakpoints();
 }
 
@@ -2167,14 +2129,10 @@ void InspectorController::setInspectorExtensionAPI(const String& source)
     m_inspectorExtensionAPI = source;
 }
 
-void InspectorController::getResourceContent(long callId, unsigned long identifier)
+void InspectorController::getResourceContent(long, unsigned long identifier, String* content)
 {
-    if (!m_remoteFrontend)
-        return;
-
     RefPtr<InspectorResource> resource = m_resources.get(identifier);
-    String content = resource ? resource->sourceString() : String();
-    m_remoteFrontend->didGetResourceContent(callId, content);
+    *content = resource ? resource->sourceString() : String();
 }
 
 void InspectorController::reloadPage()
