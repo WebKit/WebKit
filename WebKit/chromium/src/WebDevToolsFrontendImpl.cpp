@@ -119,27 +119,6 @@ WebDevToolsFrontendImpl::~WebDevToolsFrontendImpl()
 
 void WebDevToolsFrontendImpl::dispatchOnInspectorFrontend(const WebString& message)
 {
-    if (!m_loaded) {
-        m_pendingIncomingMessages.append(message);
-        return;
-    }
-    executeScript(message);
-}
-
-void WebDevToolsFrontendImpl::frontendLoaded()
-{
-    m_loaded = true;
-
-    for (Vector<WebString>::iterator it = m_pendingIncomingMessages.begin();
-         it != m_pendingIncomingMessages.end();
-         ++it) {
-        executeScript(*it);
-    }
-    m_pendingIncomingMessages.clear();
-}
-
-void WebDevToolsFrontendImpl::executeScript(const WebString& message)
-{
     WebFrameImpl* frame = m_webViewImpl->mainFrameImpl();
     v8::HandleScope scope;
     v8::Handle<v8::Context> frameContext = V8Proxy::context(frame->frame());
@@ -152,6 +131,11 @@ void WebDevToolsFrontendImpl::executeScript(const WebString& message)
     v8::TryCatch tryCatch;
     tryCatch.SetVerbose(true);
     function->Call(frameContext->Global(), args.size(), args.data());
+}
+
+void WebDevToolsFrontendImpl::frontendLoaded()
+{
+    m_client->sendFrontendLoaded();
 }
 
 v8::Handle<v8::Value> WebDevToolsFrontendImpl::jsDebuggerPauseScript(const v8::Arguments& args)

@@ -1,3 +1,20 @@
+2010-08-05  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        DevTools: get rid of delayed command dispatching on front-end side.
+
+        https://bugs.webkit.org/show_bug.cgi?id=43479
+
+        * DumpRenderTree/chromium/DRTDevToolsAgent.cpp:
+        (DRTDevToolsAgent::detach):
+        (DRTDevToolsAgent::frontendLoaded):
+        * DumpRenderTree/chromium/DRTDevToolsAgent.h:
+        * DumpRenderTree/chromium/DRTDevToolsClient.cpp:
+        (DRTDevToolsClient::~DRTDevToolsClient):
+        (DRTDevToolsClient::sendFrontendLoaded):
+        * DumpRenderTree/chromium/DRTDevToolsClient.h:
+
 2010-08-04  Kenichi Ishibashi  <bashi@google.com>
 
         Reviewed by Shinichiro Hamaji.

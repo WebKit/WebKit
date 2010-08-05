@@ -70,15 +70,12 @@ public:
     void frontendLoaded();
 
 private:
-    void executeScript(const WebString& message);
-
     static v8::Handle<v8::Value> jsDebuggerPauseScript(const v8::Arguments& args);
 
     WebKit::WebViewImpl* m_webViewImpl;
     WebKit::WebDevToolsFrontendClient* m_client;
     String m_applicationLocale;
     bool m_loaded;
-    Vector<WebString> m_pendingIncomingMessages;
 };
 
 } // namespace WebKit

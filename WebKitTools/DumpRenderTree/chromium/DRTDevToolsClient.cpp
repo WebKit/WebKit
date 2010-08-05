@@ -61,7 +61,12 @@ DRTDevToolsClient::~DRTDevToolsClient()
     // m_drtDevToolsAgent and we should clean pending requests a bit earlier.
     m_callMethodFactory.RevokeAll();
     if (m_drtDevToolsAgent)
-        m_drtDevToolsAgent->detach(this);
+        m_drtDevToolsAgent->detach();
+}
+
+void DRTDevToolsClient::sendFrontendLoaded() {
+    if (m_drtDevToolsAgent)
+        m_drtDevToolsAgent->frontendLoaded();
 }
 
 void DRTDevToolsClient::sendMessageToBackend(const WebString& data)

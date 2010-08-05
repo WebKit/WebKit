@@ -1,3 +1,27 @@
+2010-08-05  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        DevTools: get rid of delayed command dispatching on front-end side.
+
+        https://bugs.webkit.org/show_bug.cgi?id=43479
+
+        * public/WebDevToolsFrontendClient.h:
+        (WebKit::WebDevToolsFrontendClient::sendFrontendLoaded):
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::WebDevToolsAgentImpl::attach):
+        (WebKit::WebDevToolsAgentImpl::frontendLoaded):
+        * src/WebDevToolsAgentImpl.h:
+        * src/WebDevToolsFrontendImpl.cpp:
+        (WebKit::WebDevToolsFrontendImpl::dispatchOnInspectorFrontend):
+        (WebKit::WebDevToolsFrontendImpl::frontendLoaded):
+        * src/WebDevToolsFrontendImpl.h:
+        * src/js/DevTools.js:
+        (WebInspector.doLoadedDone):
+        * src/js/Tests.js:
+        (.uiTests.runTest):
+        (.):
+
 2010-08-02  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Dimitri Glazkov.

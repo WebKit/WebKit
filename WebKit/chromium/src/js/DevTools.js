@@ -88,13 +88,15 @@ var context = {};  // Used by WebCore's inspector routines.
     }
     if ("page" in WebInspector._paramsObject) {
         WebInspector.socket = new WebSocket("ws://" + window.location.host + "/devtools/page/" + WebInspector._paramsObject.page);
-        WebInspector.socket.onmessage = function(message) { eval(message.data); }
+        WebInspector.socket.onmessage = function(message) { devtools$$dispatch(message.data); }
         WebInspector.socket.onerror = function(error) { console.err(error); }
         WebInspector.socket.onopen = function() {
             WebInspector.socketOpened = true;
             if (WebInspector.loadedDone)
                 WebInspector.doLoadedDone();
         };
+        InspectorFrontendHost.sendMessageToBackend = WebInspector.socket.send.bind(WebInspector.socket);
+        InspectorFrontendHost.loaded = WebInspector.socket.send.bind(WebInspector.socket, "loaded");
     }
 })();
 ///////////////////////////////////////////////////////////////////////////////
@@ -111,7 +113,6 @@ WebInspector.loaded = function()
     Preferences.debuggerAlwaysEnabled = true;
     Preferences.profilerAlwaysEnabled = true;
     Preferences.canEditScriptSource = true;
-    
     if ("page" in WebInspector._paramsObject) {
         WebInspector.loadedDone = true;
         if (WebInspector.socketOpened)
@@ -123,7 +124,6 @@ WebInspector.loaded = function()
 
 WebInspector.doLoadedDone = function() {
     oldLoaded.call(this);
-    InspectorFrontendHost.loaded();
 }
 
 devtools.domContentLoaded = function()

@@ -122,10 +122,7 @@ WebInspector.InspectorBackendStub.prototype = {
     sendMessageToBackend: function()
     {
         var message = JSON.stringify(Array.prototype.slice.call(arguments));
-        if (WebInspector._paramsObject && "page" in WebInspector._paramsObject)
-            WebInspector.socket.send(message);
-        else
-            InspectorFrontendHost.sendMessageToBackend(message);
+        InspectorFrontendHost.sendMessageToBackend(message);
     }
 }
 

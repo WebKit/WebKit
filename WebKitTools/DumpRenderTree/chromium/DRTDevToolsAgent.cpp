@@ -120,13 +120,19 @@ void DRTDevToolsAgent::attach(DRTDevToolsClient* client)
         agent->attach();
 }
 
-void DRTDevToolsAgent::detach(DRTDevToolsClient* client)
+void DRTDevToolsAgent::detach()
 {
     ASSERT(m_drtDevToolsClient);
     WebDevToolsAgent* agent = webDevToolsAgent();
     if (agent)
         agent->detach();
     m_drtDevToolsClient = 0;
+}
+
+void DRTDevToolsAgent::frontendLoaded() {
+    WebDevToolsAgent* agent = webDevToolsAgent();
+    if (agent)
+        agent->frontendLoaded();
 }
 
 bool DRTDevToolsAgent::setTimelineProfilingEnabled(bool enabled)

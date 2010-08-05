@@ -1845,8 +1845,24 @@ uiTests.runAllTests = function()
  */
 uiTests.runTest = function(name)
 {
-    new TestSuite().runTest(name);
+    if (uiTests._populatedInterface)
+        new TestSuite().runTest(name);
+    else
+        uiTests._pendingTestName = name;
 };
 
+(function() {
+var oldShowElementsPanel = WebInspector.showElementsPanel;
+WebInspector.showElementsPanel = function()
+{
+    oldShowElementsPanel.call(this);
+    uiTests._populatedInterface = true;
+    var name = uiTests._pendingTestName;
+    delete uiTests._pendingTestName;
+    if (name)
+        new TestSuite().runTest(name);
+}
+
+})();
 
 }
