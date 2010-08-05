@@ -3179,3 +3179,6 @@ BUGWK43543 DEBUG : fast/parser/residual-style-dom.html = TIMEOUT
 BUGWK43543 LINUX MAC DEBUG : fast/parser/residual-style-hang.html = TIMEOUT
 
 BUGPFELDMAN WIN : http/tests/inspector-enabled/console-log-before-frame-navigation.html = TEXT
+
+// Failure caused by r64749
+BUGSATISH: fast/speech/input-text-speechbutton.html = TIMEOUT
