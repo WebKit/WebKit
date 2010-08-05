@@ -311,7 +311,6 @@ void tst_QWebView::focusInputTypes()
     QVERIFY(webView->inputMethodHints() == Qt::ImhHiddenText);
     QVERIFY(webView->testAttribute(Qt::WA_InputMethodEnabled));
 
-    qWarning("clicking on text area");
     // 'text area' field
     webView->fireMouseClick(QPoint(20, 320));
     QVERIFY(webView->inputMethodHints() == Qt::ImhNone);
