@@ -1,3 +1,22 @@
+2010-08-05  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
+
+        Reviewed by Simon Hausmann.
+
+        Make the viewport meta tag parser support the Android
+        target-densitydpi extension.
+        http://webkit.org/b/43492
+
+        http://developer.android.com/reference/android/webkit/WebView.html
+        Section 'Building web pages to support different screen densities'
+
+        * dom/ViewportArguments.cpp:
+        (WebCore::setViewportFeature):
+        (WebCore::viewportErrorMessageTemplate):
+        * dom/ViewportArguments.h:
+        (WebCore::):
+        (WebCore::ViewportArguments::ViewportArguments):
+        (WebCore::ViewportArguments::hasCustomArgument):
+
 2010-08-05  Jian Li  <jianli@chromium.org>
  
         Reviewed by David Levin.
