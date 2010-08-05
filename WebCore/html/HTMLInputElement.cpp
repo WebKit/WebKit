@@ -2817,10 +2817,16 @@ HTMLOptionElement* HTMLInputElement::selectedOption() const
 
 void HTMLInputElement::stepUpFromRenderer(int n)
 {
-    // The difference from stepUp()/stepDown() is:
-    // If the current value is invalid, the value will be
-    //  - the minimum value if n > 0
-    //  - the maximum value if n < 0
+    // The differences from stepUp()/stepDown():
+    // If the current value is not a number, the value will be
+    //  - The value should be the minimum value if n > 0
+    //  - The value should be the maximum value if n < 0
+    // If the current value is smaller than the minimum value:
+    //  - The value should be the minimum value if n > 0
+    //  - Nothing should happen if n < 0
+    // If the current value is larger than the maximum value:
+    //  - The value should be the maximum value if n < 0
+    //  - Nothing should happen if n > 0
 
     ASSERT(hasSpinButton());
     if (!hasSpinButton())
@@ -2832,7 +2838,7 @@ void HTMLInputElement::stepUpFromRenderer(int n)
     const double nan = numeric_limits<double>::quiet_NaN();
     String currentStringValue = value();
     double current = parseToDouble(currentStringValue, nan);
-    if (!isfinite(current))
+    if (!isfinite(current) || (n > 0 && current < minimum()) || (n < 0 && current > maximum()))
         setValue(serialize(n > 0 ? minimum() : maximum()));
     else {
         ExceptionCode ec;
