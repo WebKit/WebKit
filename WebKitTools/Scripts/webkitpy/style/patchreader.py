@@ -73,3 +73,8 @@ class PatchReader(object):
             if line_numbers:
                 self._text_file_reader.process_file(file_path=path,
                                                     line_numbers=line_numbers)
+            else:
+                # We don't check the file which contains deleted lines only
+                # but would like to treat it as to be processed so that
+                # we count up number of such files.
+                self._text_file_reader.count_delete_only_file()

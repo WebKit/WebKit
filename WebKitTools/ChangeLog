@@ -1,3 +1,17 @@
+2010-08-05  Kenichi Ishibashi  <bashi@google.com>
+
+        Reviewed by Shinichiro Hamaji.
+
+        check-webkit-style returns non-zero when patch is entirely minus lines.
+        https://bugs.webkit.org/show_bug.cgi?id=38169
+
+        * Scripts/check-webkit-style:
+        Check whether a patch contains modified files that are entirely minus lines.
+        * Scripts/webkitpy/style/filereader.py:
+        Add a variable that holds number of files that contain only deleted lines.
+        * Scripts/webkitpy/style/patchreader.py:
+        Count up modified files that contain only deleted lines.
+
 2010-08-05  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

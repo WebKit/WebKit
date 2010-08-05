@@ -47,6 +47,10 @@ class TextFileReader(object):
          file_count: The total number of files passed to this instance
                      for processing, including non-text files and files
                      that should be skipped.
+         delete_only_file_count: The total number of files that are not
+                                 processed this instance actually because
+                                 the files don't have any modified lines
+                                 but should be treated as processed.
 
     """
 
@@ -59,6 +63,7 @@ class TextFileReader(object):
         """
         self._processor = processor
         self.file_count = 0
+        self.delete_only_file_count = 0
 
     def _read_lines(self, file_path):
         """Read the file at a path, and return its lines.
@@ -146,3 +151,12 @@ class TextFileReader(object):
                 self._process_directory(directory=path)
             else:
                 self.process_file(path)
+
+    def count_delete_only_file(self):
+        """Count up files that contains only deleted lines.
+
+        Files which has no modified or newly-added lines don't need
+        to check style, but should be treated as checked. For that
+        purpose, we just count up the number of such files.
+        """
+        self.delete_only_file_count += 1

@@ -159,3 +159,8 @@ class TextFileReaderTest(LoggingTestCase):
         processed = [(['bar'], file_path2, None),
                      (['foo'], file_path1, None)]
         self._assert_file_reader(processed, 2)
+
+    def test_count_delete_only_file(self):
+        self._file_reader.count_delete_only_file()
+        delete_only_file_count = self._file_reader.delete_only_file_count
+        self.assertEquals(delete_only_file_count, 1)

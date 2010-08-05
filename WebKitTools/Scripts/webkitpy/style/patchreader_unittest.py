@@ -45,9 +45,14 @@ class PatchReaderTest(unittest.TestCase):
         def __init__(self):
             self.passed_to_process_file = []
             """A list of (file_path, line_numbers) pairs."""
+            self.delete_only_file_count = 0
+            """A number of times count_delete_only_file() called"""
 
         def process_file(self, file_path, line_numbers):
             self.passed_to_process_file.append((file_path, line_numbers))
+
+        def count_delete_only_file(self):
+            self.delete_only_file_count += 1
 
     def setUp(self):
         file_reader = self.MockTextFileReader()
@@ -57,9 +62,11 @@ class PatchReaderTest(unittest.TestCase):
     def _call_check_patch(self, patch_string):
         self._patch_checker.check(patch_string)
 
-    def _assert_checked(self, passed_to_process_file):
+    def _assert_checked(self, passed_to_process_file, delete_only_file_count):
         self.assertEquals(self._file_reader.passed_to_process_file,
                           passed_to_process_file)
+        self.assertEquals(self._file_reader.delete_only_file_count,
+                          delete_only_file_count)
 
     def test_check_patch(self):
         # The modified line_numbers array for this patch is: [2].
@@ -71,7 +78,7 @@ index ef65bee..e3db70e 100644
  # Required for Python to search this directory for module files
 +# New line
 """)
-        self._assert_checked([("__init__.py", set([2]))])
+        self._assert_checked([("__init__.py", set([2]))], 0)
 
     def test_check_patch_with_deletion(self):
         self._call_check_patch("""Index: __init__.py
@@ -82,4 +89,4 @@ index ef65bee..e3db70e 100644
 -foobar
 """)
         # _mock_check_file should not be called for the deletion patch.
-        self._assert_checked([])
+        self._assert_checked([], 1)
