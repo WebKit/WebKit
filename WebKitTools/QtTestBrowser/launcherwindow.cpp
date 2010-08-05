@@ -40,8 +40,6 @@ LauncherWindow::LauncherWindow(WindowOptions* data, QGraphicsScene* sharedScene)
     , m_view(0)
     , m_inspector(0)
     , m_formatMenuAction(0)
-    , m_flipAnimated(0)
-    , m_flipYAnimated(0)
 #if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
     , m_zoomAnimation(0)
 #endif
@@ -115,12 +113,6 @@ void LauncherWindow::initializeView()
     } else {
         WebViewGraphicsBased* view = new WebViewGraphicsBased(splitter);
         view->setPage(page());
-
-        if (m_flipAnimated)
-            connect(m_flipAnimated, SIGNAL(triggered()), view, SLOT(animatedFlip()));
-
-        if (m_flipYAnimated)
-            connect(m_flipYAnimated, SIGNAL(triggered()), view, SLOT(animatedYFlip()));
 
         connect(view, SIGNAL(currentFPSUpdated(int)), this, SLOT(updateFPS(int)));
 
@@ -322,18 +314,18 @@ void LauncherWindow::createChrome()
 
     graphicsViewMenu->addSeparator();
 
-    m_flipAnimated = graphicsViewMenu->addAction("Animated Flip");
-    m_flipAnimated->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
-    m_flipAnimated->setEnabled(isGraphicsBased());
+    QAction* flipAnimated = graphicsViewMenu->addAction("Animated Flip");
+    flipAnimated->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
+    flipAnimated->setEnabled(isGraphicsBased());
 
-    m_flipYAnimated = graphicsViewMenu->addAction("Animated Y-Flip");
-    m_flipYAnimated->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
-    m_flipYAnimated->setEnabled(isGraphicsBased());
+    QAction* flipYAnimated = graphicsViewMenu->addAction("Animated Y-Flip");
+    flipYAnimated->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
+    flipYAnimated->setEnabled(isGraphicsBased());
 
     if (isGraphicsBased()) {
         WebViewGraphicsBased* view = static_cast<WebViewGraphicsBased*>(m_view);
-        connect(m_flipAnimated, SIGNAL(triggered()), view, SLOT(animatedFlip()));
-        connect(m_flipYAnimated, SIGNAL(triggered()), view, SLOT(animatedYFlip()));
+        connect(flipAnimated, SIGNAL(triggered()), view, SLOT(animatedFlip()));
+        connect(flipYAnimated, SIGNAL(triggered()), view, SLOT(animatedYFlip()));
     }
 
     QAction* cloneWindow = graphicsViewMenu->addAction("Clone Window", this, SLOT(cloneWindow()));

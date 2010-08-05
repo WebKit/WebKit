@@ -26,6 +26,28 @@
 
 2010-08-04  Antonio Gomes  <tonikitoo@webkit.org>
 
+        Reviewed by Kenneth Christiansen.
+
+        [Qt] [QtTestBrowser] Remove unneeded QAction class members
+        https://bugs.webkit.org/show_bug.cgi?id=43518
+
+        LauncherWindow class has two totally unneeded class members: m_flopAnimated and
+        m_flipYAnimated. Also, in initializeView method there are some dead code block
+        trying to connect them at the wrong time, when they have not been instanciated.
+
+        This patch:
+
+        - removes the two cited class members in favor of local variables in createChrome method;
+        - removes the dead code block.
+
+        * QtTestBrowser/launcherwindow.cpp:
+        (LauncherWindow::LauncherWindow):
+        (LauncherWindow::initializeView):
+        (LauncherWindow::createChrome):
+        * QtTestBrowser/launcherwindow.h:
+
+2010-08-04  Antonio Gomes  <tonikitoo@webkit.org>
+
         Reviewed by Simon Hausmann and Kenneth Christiansen.
 
         [Qt] [QtTestBrowser] Clean up static and global menu state controls
