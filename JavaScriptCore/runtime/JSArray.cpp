@@ -850,10 +850,13 @@ void JSArray::unshiftCount(ExecState* exec, int count)
         storage = reinterpret_cast<ArrayStorage*>(newBaseStorage);
         setArrayStorage(storage);
         m_vectorLength += count;
-    } else if ((!m_indexBias) && (!increaseVectorPrefixLength(m_vectorLength + count))) {
+    } else if (!increaseVectorPrefixLength(m_vectorLength + count)) {
         throwOutOfMemoryError(exec);
         return;
     }
+
+    for (int i = 0; i < count; i++)
+        m_vector[i] = JSValue();
 }
 
 void JSArray::markChildren(MarkStack& markStack)

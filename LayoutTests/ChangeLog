@@ -1,3 +1,14 @@
+2010-08-05  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Darin Adler.
+
+        New regression tests added as part of unshift fix for bug described
+        inhttps://bugs.webkit.org/show_bug.cgi?id=43401.
+
+        * fast/js/script-tests/unshift-multi.js: Added.
+        * fast/js/unshift-multi-expected.txt: Added.
+        * fast/js/unshift-multi.html: Added.
+
 2010-08-05  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Some sputnik tests fail

@@ -1,3 +1,13 @@
+2010-08-05  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fixed https://bugs.webkit.org/show_bug.cgi?id=43401 where array 
+        content aren't properly initialized as part of unshift.  
+
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::unshiftCount):
+
 2010-08-05  Jian Li  <jianli@chromium.org>
 
         Reviewed by David Levin.
