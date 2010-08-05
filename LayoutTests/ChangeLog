@@ -1,3 +1,9 @@
+2010-08-04  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, test expectation update.
+
+        * platform/chromium/drt_expectations.txt: Add flaky tests on DRT/Chromium/Mac
+
 2010-08-03  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt and Beth Dakin.
