@@ -1,3 +1,18 @@
+2010-08-05  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        Allow custom memory allocation control for DoctypeData class
+        https://bugs.webkit.org/show_bug.cgi?id=43343
+
+        Inherits the following class from Noncopyable because it is
+        instantiated by 'new' and no need to be copyable:
+
+        class name  - instantiated at: WebCore/'location'
+        DoctypeData - html/HTMLToken.h:113
+
+        * html/HTMLToken.h:
+
 2010-08-05  François Sausset  <sausset@gmail.com>
 
         Reviewed by Darin Adler.
