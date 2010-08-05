@@ -36,6 +36,7 @@ public:
         // Base types
         TypeArray,
         TypeData,
+        TypeError,
         TypeString,
         TypeURL,
         

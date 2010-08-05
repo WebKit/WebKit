@@ -1,3 +1,47 @@
+2010-08-04  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Change callback APIs to include an Error object in one callback, instead of having a second callback for failure.
+        https://bugs.webkit.org/show_bug.cgi?id=43522
+
+        This includes adding a WKErrorRef object which - for now - either exists or doesn't.
+        In the future, it may contain useful information about the error.
+        
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+        * win/WebKit2Generated.make:
+        
+        * Shared/APIObject.h:
+        (WebKit::APIObject::):
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKBase.h:
+        
+        * Shared/WebError.h: Added.
+        (WebKit::WebError::create):
+        (WebKit::WebError::WebError):
+        (WebKit::WebError::type):
+        
+        * UIProcess/API/C/WKError.cpp: Added.
+        (WKErrorGetTypeID):
+        * UIProcess/API/C/WKError.h: Added.
+        
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageRunJavaScriptInMainFrame):
+        (callRunJavaScriptBlockAndRelease):
+        (WKPageRunJavaScriptInMainFrame_b):
+        (WKPageRenderTreeExternalRepresentation):
+        (callRenderTreeExternalRepresentationBlockAndDispose):
+        (WKPageRenderTreeExternalRepresentation_b):
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/API/C/WKPagePrivate.h:
+        
+        * UIProcess/GenericCallback.h:
+        (WebKit::GenericCallback::create):
+        (WebKit::GenericCallback::performCallbackWithReturnValue):
+        (WebKit::GenericCallback::invalidate):
+        (WebKit::GenericCallback::GenericCallback):
+
 2010-08-04  Ada Chan  <adachan@apple.com>
 
         Windows build fix        

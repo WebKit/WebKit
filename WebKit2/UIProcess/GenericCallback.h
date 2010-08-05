@@ -27,6 +27,8 @@
 #define GenericCallback_h
 
 #include "WKAPICast.h"
+
+#include "WebError.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
@@ -35,12 +37,11 @@ namespace WebKit {
 template<typename APIReturnValueType, typename InternalReturnValueType = typename APITypeInfo<APIReturnValueType>::ImplType>
 class GenericCallback : public RefCounted<GenericCallback<APIReturnValueType, InternalReturnValueType> > {
 public:
-    typedef void (*CallbackFunction)(APIReturnValueType, void*);
-    typedef void (*CallbackDisposeFunction)(void*);
+    typedef void (*CallbackFunction)(APIReturnValueType, WKErrorRef, void*);
 
-    static PassRefPtr<GenericCallback> create(void* context, CallbackFunction callback, CallbackDisposeFunction disposeCallback)
+    static PassRefPtr<GenericCallback> create(void* context, CallbackFunction callback)
     {
-        return adoptRef(new GenericCallback(context, callback, disposeCallback));
+        return adoptRef(new GenericCallback(context, callback));
     }
 
     ~GenericCallback()
@@ -52,20 +53,19 @@ public:
     {
         ASSERT(m_callback);
 
-        m_callback(toRef(returnValue), m_context);
+        m_callback(toRef(returnValue), 0, m_context);
 
         m_callback = 0;
-        m_disposeCallback = 0;
     }
     
     void invalidate()
     {
         ASSERT(m_callback);
 
-        m_disposeCallback(m_context);
-
+        RefPtr<WebError> error = WebError::create();
+        m_callback(0, toRef(error.get()), m_context);
+        
         m_callback = 0;
-        m_disposeCallback = 0;
     }
 
     uint64_t callbackID() const { return m_callbackID; }
@@ -77,17 +77,15 @@ private:
         return uniqueCallbackID++;
     }
 
-    GenericCallback(void* context, CallbackFunction callback, CallbackDisposeFunction disposeCallback)
+    GenericCallback(void* context, CallbackFunction callback)
         : m_context(context)
         , m_callback(callback)
-        , m_disposeCallback(disposeCallback)
         , m_callbackID(generateCallbackID())
     {
     }
 
     void* m_context;
     CallbackFunction m_callback;
-    CallbackDisposeFunction m_disposeCallback;
     uint64_t m_callbackID;
 };
 

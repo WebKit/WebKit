@@ -23,26 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKPagePrivate_h
-#define WKPagePrivate_h
+#ifndef WKError_h
+#define WKError_h
 
 #include <WebKit2/WKBase.h>
-#include <WebKit2/WKPage.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef void (*WKPageRenderTreeExternalRepresentationFunction)(WKStringRef, WKErrorRef, void*);
-WK_EXPORT void WKPageRenderTreeExternalRepresentation(WKPageRef page, void *context, WKPageRenderTreeExternalRepresentationFunction function);
+WK_EXPORT WKTypeID WKErrorGetTypeID();
 
-#ifdef __BLOCKS__
-typedef void (^WKPageRenderTreeExternalRepresentationBlock)(WKStringRef, WKErrorRef);
-WK_EXPORT void WKPageRenderTreeExternalRepresentation_b(WKPageRef page, WKPageRenderTreeExternalRepresentationBlock block);
-#endif
+WK_EXPORT WKErrorRef WKErrorRetain(WKErrorRef error);
+WK_EXPORT void WKErrorRelease(WKErrorRef error);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* WKPagePrivate_h */
+WK_DECLARE_RETAIN_RELEASE_OVERLOADS(WKError)
+
+#endif // WKError_h

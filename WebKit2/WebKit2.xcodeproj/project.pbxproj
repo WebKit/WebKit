@@ -88,6 +88,9 @@
 		514AF6C81209EE7300A26C97 /* WKData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 514AF6C61209EE7300A26C97 /* WKData.cpp */; };
 		514AF6C91209EE7300A26C97 /* WKData.h in Headers */ = {isa = PBXBuildFile; fileRef = 514AF6C71209EE7300A26C97 /* WKData.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		51578B831209ECEF00A37C4A /* WebData.h in Headers */ = {isa = PBXBuildFile; fileRef = 51578B821209ECEF00A37C4A /* WebData.h */; };
+		516A4A59120A1AB500C05B7F /* WKError.h in Headers */ = {isa = PBXBuildFile; fileRef = 516A4A57120A1AB500C05B7F /* WKError.h */; };
+		516A4A5A120A1AB500C05B7F /* WKError.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 516A4A58120A1AB500C05B7F /* WKError.cpp */; };
+		516A4A5D120A2CCD00C05B7F /* WebError.h in Headers */ = {isa = PBXBuildFile; fileRef = 516A4A5B120A2CCD00C05B7F /* WebError.h */; };
 		5DAD729C116FF86200EE5396 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0867D6A5FE840307C02AAC07 /* AppKit.framework */; };
 		6D8A91A611F0EFD100DD01FE /* com.apple.WebProcess.sb in Resources */ = {isa = PBXBuildFile; fileRef = 6D8A91A511F0EFD100DD01FE /* com.apple.WebProcess.sb */; };
 		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
@@ -395,6 +398,9 @@
 		514AF6C61209EE7300A26C97 /* WKData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKData.cpp; sourceTree = "<group>"; };
 		514AF6C71209EE7300A26C97 /* WKData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKData.h; sourceTree = "<group>"; };
 		51578B821209ECEF00A37C4A /* WebData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebData.h; sourceTree = "<group>"; };
+		516A4A57120A1AB500C05B7F /* WKError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKError.h; sourceTree = "<group>"; };
+		516A4A58120A1AB500C05B7F /* WKError.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKError.cpp; sourceTree = "<group>"; };
+		516A4A5B120A2CCD00C05B7F /* WebError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebError.h; sourceTree = "<group>"; };
 		5DAD7294116FF70B00EE5396 /* WebProcess.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = WebProcess.xcconfig; sourceTree = "<group>"; };
 		5DAD73F1116FF90C00EE5396 /* BaseTarget.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = BaseTarget.xcconfig; sourceTree = "<group>"; };
 		6D8A91A511F0EFD100DD01FE /* com.apple.WebProcess.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = com.apple.WebProcess.sb; path = WebProcess/com.apple.WebProcess.sb; sourceTree = "<group>"; };
@@ -788,6 +794,7 @@
 				BCC57161115ADB42001CCAF9 /* NotImplemented.h */,
 				BC1DD7B1114DC396005ADAF3 /* WebCoreArgumentCoders.h */,
 				51578B821209ECEF00A37C4A /* WebData.h */,
+				516A4A5B120A2CCD00C05B7F /* WebError.h */,
 				BC032DAF10F4380F0058C15A /* WebEvent.h */,
 				BC032DB010F4380F0058C15A /* WebEventConversion.cpp */,
 				BC032DB110F4380F0058C15A /* WebEventConversion.h */,
@@ -995,6 +1002,8 @@
 				BCC938E01180DE440085E5FE /* WKContextPrivate.h */,
 				514AF6C61209EE7300A26C97 /* WKData.cpp */,
 				514AF6C71209EE7300A26C97 /* WKData.h */,
+				516A4A58120A1AB500C05B7F /* WKError.cpp */,
+				516A4A57120A1AB500C05B7F /* WKError.h */,
 				BCD01398110FA420003B8A67 /* WKFrame.cpp */,
 				BCD01397110FA420003B8A67 /* WKFrame.h */,
 				BCB9F6A41123DD0D00A137E0 /* WKFramePolicyListener.cpp */,
@@ -1364,6 +1373,8 @@
 				51578B831209ECEF00A37C4A /* WebData.h in Headers */,
 				514AF6C91209EE7300A26C97 /* WKData.h in Headers */,
 				C0E3AA7C1209E83C00A49D01 /* Module.h in Headers */,
+				516A4A59120A1AB500C05B7F /* WKError.h in Headers */,
+				516A4A5D120A2CCD00C05B7F /* WebError.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1570,6 +1581,7 @@
 				514AF6C81209EE7300A26C97 /* WKData.cpp in Sources */,
 				C0E3AA7A1209E83000A49D01 /* ModuleMac.mm in Sources */,
 				C0E3AA7B1209E83500A49D01 /* Module.cpp in Sources */,
+				516A4A5A120A1AB500C05B7F /* WKError.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

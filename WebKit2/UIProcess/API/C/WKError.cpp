@@ -23,26 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKPagePrivate_h
-#define WKPagePrivate_h
+#include "WKError.h"
 
-#include <WebKit2/WKBase.h>
-#include <WebKit2/WKPage.h>
+#include "WebError.h"
+#include "WKAPICast.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+using namespace WebKit;
 
-typedef void (*WKPageRenderTreeExternalRepresentationFunction)(WKStringRef, WKErrorRef, void*);
-WK_EXPORT void WKPageRenderTreeExternalRepresentation(WKPageRef page, void *context, WKPageRenderTreeExternalRepresentationFunction function);
-
-#ifdef __BLOCKS__
-typedef void (^WKPageRenderTreeExternalRepresentationBlock)(WKStringRef, WKErrorRef);
-WK_EXPORT void WKPageRenderTreeExternalRepresentation_b(WKPageRef page, WKPageRenderTreeExternalRepresentationBlock block);
-#endif
-
-#ifdef __cplusplus
+WKTypeID WKErrorGetTypeID()
+{
+    return toRef(WebError::APIType);
 }
-#endif
-
-#endif /* WKPagePrivate_h */

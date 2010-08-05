@@ -43,6 +43,7 @@ class WebBackForwardList;
 class WebBackForwardListItem;
 class WebContext;
 class WebData;
+class WebError;
 class WebFramePolicyListenerProxy;
 class WebFrameProxy;
 class WebNavigationData;
@@ -75,6 +76,7 @@ template<> struct ImplTypeInfo<WebBackForwardList*>             { typedef WKBack
 template<> struct ImplTypeInfo<WebBackForwardListItem*>         { typedef WKBackForwardListItemRef APIType; };
 template<> struct ImplTypeInfo<WebContext*>                     { typedef WKContextRef APIType; };
 template<> struct ImplTypeInfo<WebData*>                        { typedef WKDataRef APIType; };
+template<> struct ImplTypeInfo<WebError*>                       { typedef WKErrorRef APIType; };
 template<> struct ImplTypeInfo<WebFramePolicyListenerProxy*>    { typedef WKFramePolicyListenerRef APIType; };
 template<> struct ImplTypeInfo<WebFrameProxy*>                  { typedef WKFrameRef APIType; };
 template<> struct ImplTypeInfo<WebNavigationData*>              { typedef WKNavigationDataRef APIType; };

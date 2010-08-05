@@ -981,6 +981,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\UIProcess\WebError.h"
+				>
+			</File>
+			<File
 				RelativePath="..\UIProcess\WebFramePolicyListenerProxy.cpp"
 				>
 			</File>
@@ -1136,6 +1140,14 @@
 					</File>
 					<File
 						RelativePath="..\UIProcess\API\C\WKData.h"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKError.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKError.h"
 						>
 					</File>
 					<File

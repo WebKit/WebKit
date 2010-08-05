@@ -23,26 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKPagePrivate_h
-#define WKPagePrivate_h
+#ifndef WebError_h
+#define WebError_h
 
-#include <WebKit2/WKBase.h>
-#include <WebKit2/WKPage.h>
+#include "APIObject.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include <wtf/PassRefPtr.h>
 
-typedef void (*WKPageRenderTreeExternalRepresentationFunction)(WKStringRef, WKErrorRef, void*);
-WK_EXPORT void WKPageRenderTreeExternalRepresentation(WKPageRef page, void *context, WKPageRenderTreeExternalRepresentationFunction function);
+namespace WebKit {
 
-#ifdef __BLOCKS__
-typedef void (^WKPageRenderTreeExternalRepresentationBlock)(WKStringRef, WKErrorRef);
-WK_EXPORT void WKPageRenderTreeExternalRepresentation_b(WKPageRef page, WKPageRenderTreeExternalRepresentationBlock block);
-#endif
+// WebError - An error type suitable for vending to an API.
 
-#ifdef __cplusplus
-}
-#endif
+class WebError : public APIObject {
+public:
+    static const Type APIType = TypeError;
 
-#endif /* WKPagePrivate_h */
+    static PassRefPtr<WebError> create()
+    {
+        return adoptRef(new WebError);
+    }
+
+private:
+    WebError()
+    {
+    }
+
+    virtual Type type() const { return APIType; }
+};
+
+} // namespace WebKit
+
+#endif // WebError_h
