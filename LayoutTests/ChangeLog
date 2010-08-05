@@ -1,3 +1,9 @@
+2010-08-05  Jeremy Orlow  <jorlow@chromium.org>
+
+        Don't skip speech tests.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-08-05  François Sausset  <sausset@gmail.com>
 
         Reviewed by Kenneth Rohde Christiansen.
