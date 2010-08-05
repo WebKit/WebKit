@@ -28,6 +28,7 @@
 #if ENABLE(3D_CANVAS)
 
 #include "WebGLObject.h"
+
 #include "WebGLRenderingContext.h"
 
 namespace WebCore {
@@ -61,7 +62,7 @@ void WebGLObject::deleteObject()
         if (m_shouldDeleteObject)
             if (m_context) {
                 m_context->graphicsContext3D()->makeContextCurrent();
-                _deleteObject(m_object);
+                deleteObjectImpl(m_object);
             }
         m_object = 0;
     }

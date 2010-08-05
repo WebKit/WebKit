@@ -38,13 +38,13 @@
 #include "CanvasRenderingContext.h"
 #include "Chrome.h"
 #include "ChromeClientImpl.h"
+#include "Float32Array.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
 #include "ImageBuffer.h"
 #include "ImageData.h"
-#include "Int8Array.h"
-#include "Float32Array.h"
 #include "Int32Array.h"
+#include "Int8Array.h"
 #include "Uint8Array.h"
 #include "WebGLLayerChromium.h"
 #include "WebGraphicsContext3D.h"
@@ -414,9 +414,8 @@ void GraphicsContext3DInternal::paintRenderingResultsToCanvas(CanvasRenderingCon
             m_resizingBitmap.setConfig(SkBitmap::kARGB_8888_Config,
                                        m_impl->width(),
                                        m_impl->height());
-            if (!m_resizingBitmap.allocPixels()) {
+            if (!m_resizingBitmap.allocPixels())
                 return;
-            }
         }
         readbackBitmap = &m_resizingBitmap;
     }

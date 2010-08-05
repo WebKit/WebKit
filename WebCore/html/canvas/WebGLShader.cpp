@@ -28,6 +28,7 @@
 #if ENABLE(3D_CANVAS)
 
 #include "WebGLShader.h"
+
 #include "WebGLRenderingContext.h"
 
 namespace WebCore {
@@ -44,7 +45,7 @@ WebGLShader::WebGLShader(WebGLRenderingContext* ctx, GraphicsContext3D::WebGLEnu
     setObject(context()->graphicsContext3D()->createShader(type));
 }
 
-void WebGLShader::_deleteObject(Platform3DObject object)
+void WebGLShader::deleteObjectImpl(Platform3DObject object)
 {
     context()->graphicsContext3D()->deleteShader(object);
 }

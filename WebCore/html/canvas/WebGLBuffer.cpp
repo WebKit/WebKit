@@ -28,6 +28,7 @@
 #if ENABLE(3D_CANVAS)
 
 #include "WebGLBuffer.h"
+
 #include "WebGLRenderingContext.h"
 
 namespace WebCore {
@@ -47,7 +48,7 @@ WebGLBuffer::WebGLBuffer(WebGLRenderingContext* ctx)
     clearCachedMaxIndices();
 }
 
-void WebGLBuffer::_deleteObject(Platform3DObject object)
+void WebGLBuffer::deleteObjectImpl(Platform3DObject object)
 {
     context()->graphicsContext3D()->deleteBuffer(object);
 }
@@ -66,7 +67,9 @@ bool WebGLBuffer::associateBufferData(int size)
             return false;
         }
         return true;
-    } else if (m_target == GraphicsContext3D::ARRAY_BUFFER) {
+    }
+
+    if (m_target == GraphicsContext3D::ARRAY_BUFFER) {
         m_byteLength = size;
         return true;
     }

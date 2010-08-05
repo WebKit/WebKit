@@ -53,26 +53,32 @@ PassRefPtr<ArrayBuffer> ArrayBuffer::create(ArrayBuffer* other)
 
 ArrayBuffer::ArrayBuffer(void* data, unsigned sizeInBytes)
     : m_sizeInBytes(sizeInBytes)
-    , m_data(data) {
+    , m_data(data)
+{
 }
 
-void* ArrayBuffer::data() {
+void* ArrayBuffer::data()
+{
     return m_data;
 }
 
-const void* ArrayBuffer::data() const {
+const void* ArrayBuffer::data() const
+{
     return m_data;
 }
 
-unsigned ArrayBuffer::byteLength() const {
+unsigned ArrayBuffer::byteLength() const
+{
     return m_sizeInBytes;
 }
 
-ArrayBuffer::~ArrayBuffer() {
+ArrayBuffer::~ArrayBuffer()
+{
     WTF::fastFree(m_data);
 }
 
-void* ArrayBuffer::tryAllocate(unsigned numElements, unsigned elementByteSize) {
+void* ArrayBuffer::tryAllocate(unsigned numElements, unsigned elementByteSize)
+{
     void* result;
     // Do not allow 32-bit overflow of the total size
     if (numElements) {

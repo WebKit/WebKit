@@ -33,97 +33,99 @@
 #include <wtf/Vector.h>
 
 namespace WebCore {
-    
-    class WebGLTexture : public WebGLObject {
+
+class WebGLTexture : public WebGLObject {
+public:
+    virtual ~WebGLTexture() { deleteObject(); }
+
+    static PassRefPtr<WebGLTexture> create(WebGLRenderingContext*);
+
+    bool isCubeMapRWrapModeInitialized()
+    {
+        return cubeMapRWrapModeInitialized;
+    }
+
+    void setCubeMapRWrapModeInitialized(bool initialized)
+    {
+        cubeMapRWrapModeInitialized = initialized;
+    }
+
+    void setTarget(unsigned long target, int maxLevel);
+    void setParameteri(unsigned long pname, int param);
+    void setParameterf(unsigned long pname, float param);
+
+    void setLevelInfo(unsigned long target, int level, unsigned long internalFormat, int width, int height, unsigned long type);
+
+    bool canGenerateMipmaps();
+    // Generate all level information.
+    void generateMipmapLevelInfo();
+
+    unsigned long getInternalFormat() const;
+
+    // Whether width/height is NotPowerOfTwo.
+    static bool isNPOT(unsigned, unsigned);
+
+    bool isNPOT() const;
+    // Determine if texture sampling should always return [0, 0, 0, 1] (OpenGL ES 2.0 Sec 3.8.2).
+    bool needToUseBlackTexture() const;
+
+    static int computeLevelCount(int width, int height);
+
+protected:
+    WebGLTexture(WebGLRenderingContext*);
+
+    virtual void deleteObjectImpl(Platform3DObject);
+
+private:
+    virtual bool isTexture() const { return true; }
+
+    void update();
+
+    int mapTargetToIndex(unsigned long);
+
+    bool cubeMapRWrapModeInitialized;
+
+    unsigned long m_target;
+
+    int m_minFilter;
+    int m_magFilter;
+    int m_wrapS;
+    int m_wrapT;
+
+    class LevelInfo {
     public:
-        virtual ~WebGLTexture() { deleteObject(); }
-        
-        static PassRefPtr<WebGLTexture> create(WebGLRenderingContext*);
-
-        bool isCubeMapRWrapModeInitialized() {
-            return cubeMapRWrapModeInitialized;
+        LevelInfo()
+            : valid(false)
+            , internalFormat(0)
+            , width(0)
+            , height(0)
+            , type(0)
+        {
         }
 
-        void setCubeMapRWrapModeInitialized(bool initialized) {
-            cubeMapRWrapModeInitialized = initialized;
+        void setInfo(unsigned long internalFmt, int w, int h, unsigned long tp)
+        {
+            valid = true;
+            internalFormat = internalFmt;
+            width = w;
+            height = h;
+            type = tp;
         }
 
-        void setTarget(unsigned long target, int maxLevel);
-        void setParameteri(unsigned long pname, int param);
-        void setParameterf(unsigned long pname, float param);
-
-        void setLevelInfo(unsigned long target, int level, unsigned long internalFormat, int width, int height, unsigned long type);
-
-        bool canGenerateMipmaps();
-        // Generate all level information.
-        void generateMipmapLevelInfo();
-
-        unsigned long getInternalFormat() const;
-
-        // Whether width/height is NotPowerOfTwo.
-        static bool isNPOT(unsigned, unsigned);
-
-        bool isNPOT() const;
-        // Determine if texture sampling should always return [0, 0, 0, 1] (OpenGL ES 2.0 Sec 3.8.2).
-        bool needToUseBlackTexture() const;
-
-        static int computeLevelCount(int width, int height);
-
-    protected:
-        WebGLTexture(WebGLRenderingContext*);
-
-        virtual void _deleteObject(Platform3DObject);
-
-    private:
-        virtual bool isTexture() const { return true; }
-
-        void update();
-
-        int mapTargetToIndex(unsigned long);
-
-        bool cubeMapRWrapModeInitialized;
-
-        unsigned long m_target;
-
-        int m_minFilter;
-        int m_magFilter;
-        int m_wrapS;
-        int m_wrapT;
-
-        class LevelInfo {
-        public:
-            LevelInfo()
-                : valid(false)
-                , internalFormat(0)
-                , width(0)
-                , height(0)
-                , type(0)
-            {
-            }
-
-            void setInfo(unsigned long internalFmt, int w, int h, unsigned long tp)
-            {
-                valid = true;
-                internalFormat = internalFmt;
-                width = w;
-                height = h;
-                type = tp;
-            }
-
-            bool valid;
-            unsigned long internalFormat;
-            int width;
-            int height;
-            unsigned long type;
-        };
-
-        Vector<Vector<LevelInfo> > m_info;
-
-        bool m_isNPOT;
-        bool m_isComplete;
-        bool m_needToUseBlackTexture;
+        bool valid;
+        unsigned long internalFormat;
+        int width;
+        int height;
+        unsigned long type;
     };
-    
+
+    Vector<Vector<LevelInfo> > m_info;
+
+    bool m_isNPOT;
+    bool m_isComplete;
+    bool m_needToUseBlackTexture;
+};
+
 } // namespace WebCore
 
 #endif // WebGLTexture_h

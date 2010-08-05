@@ -27,8 +27,8 @@
 #ifndef TypedArrayBase_h
 #define TypedArrayBase_h
 
-#include "ArrayBufferView.h"
 #include "ArrayBuffer.h"
+#include "ArrayBufferView.h"
 
 namespace WebCore {
 

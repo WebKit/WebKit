@@ -29,14 +29,15 @@
 #if ENABLE(3D_CANVAS)
 
 #include "WebGLGetInfo.h"
-#include "WebGLBuffer.h"
+
 #include "Float32Array.h"
-#include "WebGLFramebuffer.h"
 #include "Int32Array.h"
+#include "Uint8Array.h"
+#include "WebGLBuffer.h"
+#include "WebGLFramebuffer.h"
 #include "WebGLProgram.h"
 #include "WebGLRenderbuffer.h"
 #include "WebGLTexture.h"
-#include "Uint8Array.h"
 
 namespace WebCore {
 

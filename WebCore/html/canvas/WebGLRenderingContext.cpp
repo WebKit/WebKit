@@ -29,8 +29,8 @@
 
 #include "WebGLRenderingContext.h"
 
-#include "CheckedInt.h"
 #include "CanvasPixelArray.h"
+#include "CheckedInt.h"
 #include "Console.h"
 #include "DOMWindow.h"
 #include "FrameView.h"
@@ -41,15 +41,15 @@
 #include "NotImplemented.h"
 #include "RenderBox.h"
 #include "RenderLayer.h"
-#include "WebGLActiveInfo.h"
 #include "Uint16Array.h"
+#include "WebGLActiveInfo.h"
 #include "WebGLBuffer.h"
 #include "WebGLContextAttributes.h"
 #include "WebGLFramebuffer.h"
 #include "WebGLProgram.h"
 #include "WebGLRenderbuffer.h"
-#include "WebGLTexture.h"
 #include "WebGLShader.h"
+#include "WebGLTexture.h"
 #include "WebGLUniformLocation.h"
 
 #include <wtf/ByteArray.h>
@@ -171,9 +171,8 @@ bool WebGLRenderingContext::paintRenderingResultsToCanvas()
 
 void WebGLRenderingContext::beginPaint()
 {
-    if (m_markedCanvasDirty) {
+    if (m_markedCanvasDirty)
         m_context->beginPaint(this);
-    }
 }
 
 void WebGLRenderingContext::endPaint()
@@ -350,7 +349,7 @@ void WebGLRenderingContext::blendColor(double red, double green, double blue, do
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::blendEquation( unsigned long mode )
+void WebGLRenderingContext::blendEquation(unsigned long mode)
 {
     if (!isGLES2Compliant()) {
         if (!validateBlendEquation(mode))
@@ -1143,9 +1142,8 @@ PassRefPtr<WebGLActiveInfo> WebGLRenderingContext::getActiveAttrib(WebGLProgram*
     ActiveInfo info;
     if (!validateWebGLObject(program))
         return 0;
-    if (!m_context->getActiveAttrib(objectOrZero(program), index, info)) {
+    if (!m_context->getActiveAttrib(objectOrZero(program), index, info))
         return 0;
-    }
     return WebGLActiveInfo::create(info.name, info.type, info.size);
 }
 
@@ -1155,13 +1153,11 @@ PassRefPtr<WebGLActiveInfo> WebGLRenderingContext::getActiveUniform(WebGLProgram
     ActiveInfo info;
     if (!validateWebGLObject(program))
         return 0;
-    if (!m_context->getActiveUniform(objectOrZero(program), index, info)) {
+    if (!m_context->getActiveUniform(objectOrZero(program), index, info))
         return 0;
-    }
-    if (!isGLES2Compliant()) {
+    if (!isGLES2Compliant())
         if (info.size > 1 && !info.name.endsWith("[0]"))
             info.name.append("[0]");
-    }
     return WebGLActiveInfo::create(info.name, info.type, info.size);
 }
 
@@ -1215,8 +1211,7 @@ WebGLGetInfo WebGLRenderingContext::getBufferParameter(unsigned long target, uns
     m_context->getBufferParameteriv(target, pname, &value);
     if (pname == GraphicsContext3D::BUFFER_SIZE)
         return WebGLGetInfo(static_cast<long>(value));
-    else
-        return WebGLGetInfo(static_cast<unsigned long>(value));
+    return WebGLGetInfo(static_cast<unsigned long>(value));
 }
 
 PassRefPtr<WebGLContextAttributes> WebGLRenderingContext::getContextAttributes()
@@ -1258,23 +1253,22 @@ WebGLGetInfo WebGLRenderingContext::getFramebufferAttachmentParameter(unsigned l
         m_context->getFramebufferAttachmentParameteriv(target, attachment, pname, &value);
         if (pname == GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
             return WebGLGetInfo(static_cast<unsigned long>(value));
-        else
-            return WebGLGetInfo(static_cast<long>(value));
-    } else {
-        WebGLStateRestorer(this, false);
-        int type = 0;
-        m_context->getFramebufferAttachmentParameteriv(target, attachment, GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE, &type);
-        int value = 0;
-        m_context->getFramebufferAttachmentParameteriv(target, attachment, GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_OBJECT_NAME, &value);
-        switch (type) {
-        case GraphicsContext3D::RENDERBUFFER:
-            return WebGLGetInfo(PassRefPtr<WebGLRenderbuffer>(findRenderbuffer(static_cast<Platform3DObject>(value))));
-        case GraphicsContext3D::TEXTURE:
-            return WebGLGetInfo(PassRefPtr<WebGLTexture>(findTexture(static_cast<Platform3DObject>(value))));
-        default:
-            // FIXME: raise exception?
-            return WebGLGetInfo();
-        }
+        return WebGLGetInfo(static_cast<long>(value));
+    }
+
+    WebGLStateRestorer(this, false);
+    int type = 0;
+    m_context->getFramebufferAttachmentParameteriv(target, attachment, GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE, &type);
+    int value = 0;
+    m_context->getFramebufferAttachmentParameteriv(target, attachment, GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_OBJECT_NAME, &value);
+    switch (type) {
+    case GraphicsContext3D::RENDERBUFFER:
+        return WebGLGetInfo(PassRefPtr<WebGLRenderbuffer>(findRenderbuffer(static_cast<Platform3DObject>(value))));
+    case GraphicsContext3D::TEXTURE:
+        return WebGLGetInfo(PassRefPtr<WebGLTexture>(findTexture(static_cast<Platform3DObject>(value))));
+    default:
+        // FIXME: raise exception?
+        return WebGLGetInfo();
     }
 }
 
@@ -3050,7 +3044,7 @@ void WebGLRenderingContext::vertexAttribPointer(unsigned long index, long size, 
         m_vertexAttribState.resize(index + 1);
 
     long validatedStride = bytesPerElement;
-    if (stride != 0) {
+    if (stride) {
         if ((long) stride < bytesPerElement) {
             m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
             return;

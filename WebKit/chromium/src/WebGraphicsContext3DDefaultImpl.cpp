@@ -32,12 +32,12 @@
 
 #if ENABLE(3D_CANVAS)
 
-#include <stdio.h>
-#include <string.h>
-
 #include "WebGraphicsContext3DDefaultImpl.h"
 
 #include "NotImplemented.h"
+
+#include <stdio.h>
+#include <string.h>
 
 #if OS(LINUX)
 #include <dlfcn.h>

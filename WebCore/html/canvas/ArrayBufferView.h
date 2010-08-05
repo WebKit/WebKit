@@ -26,13 +26,14 @@
 #ifndef ArrayBufferView_h
 #define ArrayBufferView_h
 
-#include <algorithm>
+#include "ArrayBuffer.h"
 #include "ExceptionCode.h"
+
+#include <algorithm>
 #include <limits.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
-#include "ArrayBuffer.h"
 
 namespace WebCore {
 

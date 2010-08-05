@@ -325,8 +325,8 @@ private:
 
     static bool s_initializedGLEW;
 #if OS(WINDOWS)
-    HWND  m_canvasWindow;
-    HDC   m_canvasDC;
+    HWND m_canvasWindow;
+    HDC m_canvasDC;
     HGLRC m_contextObj;
 #elif PLATFORM(CG)
     CGLPBufferObj m_pbuffer;

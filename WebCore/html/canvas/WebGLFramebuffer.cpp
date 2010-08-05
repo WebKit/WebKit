@@ -28,6 +28,7 @@
 #if ENABLE(3D_CANVAS)
 
 #include "WebGLFramebuffer.h"
+
 #include "WebGLRenderingContext.h"
 
 namespace WebCore {
@@ -105,7 +106,7 @@ unsigned long WebGLFramebuffer::getColorBufferFormat()
     return 0;
 }
 
-void WebGLFramebuffer::_deleteObject(Platform3DObject object)
+void WebGLFramebuffer::deleteObjectImpl(Platform3DObject object)
 {
     context()->graphicsContext3D()->deleteFramebuffer(object);
 }

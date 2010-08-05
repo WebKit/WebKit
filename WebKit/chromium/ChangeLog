@@ -1,3 +1,19 @@
+2010-08-04  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Style cleanups in WebGL
+        https://bugs.webkit.org/show_bug.cgi?id=38761
+
+        Cleaned up all style violations in WebGL-related files reported by
+        check-webkit-style. No logic or other changes. Built WebKit and
+        Chromium and ran WebGL layout tests.
+
+        * src/GraphicsContext3D.cpp:
+        (WebCore::GraphicsContext3DInternal::paintRenderingResultsToCanvas):
+        * src/WebGraphicsContext3DDefaultImpl.cpp:
+        * src/WebGraphicsContext3DDefaultImpl.h:
+
 2010-08-05  Jian Li  <jianli@chromium.org>
 
         Reviewed by David Levin.

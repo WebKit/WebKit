@@ -33,40 +33,40 @@
 #include <wtf/Vector.h>
 
 namespace WebCore {
-    
-    class WebGLProgram : public WebGLObject {
-    public:
-        virtual ~WebGLProgram() { deleteObject(); }
-        
-        static PassRefPtr<WebGLProgram> create(WebGLRenderingContext*);
 
-        // cacheActiveAttribLocation() is only called once after linkProgram()
-        // succeeds.
-        bool cacheActiveAttribLocations();
-        int numActiveAttribLocations() const;
-        int getActiveAttribLocation(int index) const;
+class WebGLProgram : public WebGLObject {
+public:
+    virtual ~WebGLProgram() { deleteObject(); }
 
-        bool isUsingVertexAttrib0() const;
+    static PassRefPtr<WebGLProgram> create(WebGLRenderingContext*);
 
-        // Return true means getProgramParameter(LINK_STATUS) should return
-        // false; return false means we should actually call
-        // getProgramParameter(LINK_STATUS) to find out.
-        bool isLinkFailureFlagSet() const { return m_linkFailure; }
-        void setLinkFailureFlag(bool failed) { m_linkFailure = failed; }
+    // cacheActiveAttribLocation() is only called once after linkProgram()
+    // succeeds.
+    bool cacheActiveAttribLocations();
+    int numActiveAttribLocations() const;
+    int getActiveAttribLocation(int index) const;
 
-    protected:
-        WebGLProgram(WebGLRenderingContext*);
-        
-        virtual void _deleteObject(Platform3DObject);
+    bool isUsingVertexAttrib0() const;
 
-    private:
-        virtual bool isProgram() const { return true; }
+    // Return true means getProgramParameter(LINK_STATUS) should return
+    // false; return false means we should actually call
+    // getProgramParameter(LINK_STATUS) to find out.
+    bool isLinkFailureFlagSet() const { return m_linkFailure; }
+    void setLinkFailureFlag(bool failed) { m_linkFailure = failed; }
 
-        Vector<int> m_activeAttribLocations;
+protected:
+    WebGLProgram(WebGLRenderingContext*);
 
-        bool m_linkFailure;
-    };
-    
+    virtual void deleteObjectImpl(Platform3DObject);
+
+private:
+    virtual bool isProgram() const { return true; }
+
+    Vector<int> m_activeAttribLocations;
+
+    bool m_linkFailure;
+};
+
 } // namespace WebCore
 
 #endif // WebGLProgram_h

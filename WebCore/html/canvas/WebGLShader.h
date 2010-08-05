@@ -32,25 +32,25 @@
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
-    
-    class WebGLShader : public WebGLObject {
-    public:
-        virtual ~WebGLShader() { deleteObject(); }
-        
-        static PassRefPtr<WebGLShader> create(WebGLRenderingContext*, GraphicsContext3D::WebGLEnumType);
 
-        GraphicsContext3D::WebGLEnumType getType() const { return m_type; }
+class WebGLShader : public WebGLObject {
+public:
+    virtual ~WebGLShader() { deleteObject(); }
 
-    private:
-        WebGLShader(WebGLRenderingContext*, GraphicsContext3D::WebGLEnumType);
+    static PassRefPtr<WebGLShader> create(WebGLRenderingContext*, GraphicsContext3D::WebGLEnumType);
 
-        virtual void _deleteObject(Platform3DObject);
+    GraphicsContext3D::WebGLEnumType getType() const { return m_type; }
 
-        virtual bool isShader() const { return true; }
+private:
+    WebGLShader(WebGLRenderingContext*, GraphicsContext3D::WebGLEnumType);
 
-        GraphicsContext3D::WebGLEnumType m_type;
-    };
-    
+    virtual void deleteObjectImpl(Platform3DObject);
+
+    virtual bool isShader() const { return true; }
+
+    GraphicsContext3D::WebGLEnumType m_type;
+};
+
 } // namespace WebCore
 
 #endif // WebGLShader_h

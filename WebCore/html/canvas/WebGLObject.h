@@ -26,54 +26,54 @@
 #ifndef WebGLObject_h
 #define WebGLObject_h
 
+#include "GraphicsContext3D.h"
+
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
-#include "GraphicsContext3D.h"
-
 namespace WebCore {
 
-    class WebGLRenderingContext;
-    
-    class WebGLObject : public RefCounted<WebGLObject> {
-    public:
-        virtual ~WebGLObject();
-        
-        Platform3DObject object() const { return m_object; }
-        void setObject(Platform3DObject, bool shouldDeleteObject = true);
-        void deleteObject();
-        
-        void detachContext()
-        {
-            deleteObject();
-            m_context = 0;
-        }
+class WebGLRenderingContext;
 
-        WebGLRenderingContext* context() const { return m_context; }
+class WebGLObject : public RefCounted<WebGLObject> {
+public:
+    virtual ~WebGLObject();
 
-        virtual bool isBuffer() const { return false; }
-        virtual bool isFramebuffer() const { return false; }
-        virtual bool isProgram() const { return false; }
-        virtual bool isRenderbuffer() const { return false; }
-        virtual bool isShader() const { return false; }
-        virtual bool isTexture() const { return false; }
+    Platform3DObject object() const { return m_object; }
+    void setObject(Platform3DObject, bool shouldDeleteObject = true);
+    void deleteObject();
 
-    protected:
-        WebGLObject(WebGLRenderingContext*);
-        virtual void _deleteObject(Platform3DObject) = 0;
-    
-    private:
-        Platform3DObject m_object;
-        // The shouldDeleteObject flag indicates whether this wrapper
-        // owns the underlying resource and should delete it when the
-        // wrapper is unreferenced for the last time and deleted. It
-        // is only set to false for certain objects returned from get
-        // queries. FIXME: should consider canonicalizing all of these
-        // objects in the future.
-        bool m_shouldDeleteObject;
-        WebGLRenderingContext* m_context;
-    };
-    
+    void detachContext()
+    {
+        deleteObject();
+        m_context = 0;
+    }
+
+    WebGLRenderingContext* context() const { return m_context; }
+
+    virtual bool isBuffer() const { return false; }
+    virtual bool isFramebuffer() const { return false; }
+    virtual bool isProgram() const { return false; }
+    virtual bool isRenderbuffer() const { return false; }
+    virtual bool isShader() const { return false; }
+    virtual bool isTexture() const { return false; }
+
+protected:
+    WebGLObject(WebGLRenderingContext*);
+    virtual void deleteObjectImpl(Platform3DObject) = 0;
+
+private:
+    Platform3DObject m_object;
+    // The shouldDeleteObject flag indicates whether this wrapper
+    // owns the underlying resource and should delete it when the
+    // wrapper is unreferenced for the last time and deleted. It
+    // is only set to false for certain objects returned from get
+    // queries. FIXME: should consider canonicalizing all of these
+    // objects in the future.
+    bool m_shouldDeleteObject;
+    WebGLRenderingContext* m_context;
+};
+
 } // namespace WebCore
 
 #endif // WebGLObject_h

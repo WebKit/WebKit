@@ -1,3 +1,107 @@
+2010-08-04  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Style cleanups in WebGL
+        https://bugs.webkit.org/show_bug.cgi?id=38761
+
+        Cleaned up all style violations in WebGL-related files reported by
+        check-webkit-style. No logic or other changes. Built WebKit and
+        Chromium and ran WebGL layout tests.
+
+        * html/canvas/ArrayBuffer.cpp:
+        (WebCore::ArrayBuffer::ArrayBuffer):
+        (WebCore::ArrayBuffer::data):
+        (WebCore::ArrayBuffer::byteLength):
+        (WebCore::ArrayBuffer::~ArrayBuffer):
+        (WebCore::ArrayBuffer::tryAllocate):
+        * html/canvas/ArrayBufferView.cpp:
+        (WebCore::ArrayBufferView::setImpl):
+        * html/canvas/ArrayBufferView.h:
+        * html/canvas/TypedArrayBase.h:
+        * html/canvas/WebGLBuffer.cpp:
+        (WebCore::WebGLBuffer::deleteObjectImpl):
+        (WebCore::WebGLBuffer::associateBufferData):
+        * html/canvas/WebGLBuffer.h:
+        (WebCore::WebGLBuffer::~WebGLBuffer):
+        (WebCore::WebGLBuffer::elementArrayBuffer):
+        (WebCore::WebGLBuffer::getTarget):
+        (WebCore::WebGLBuffer::isBuffer):
+        * html/canvas/WebGLFramebuffer.cpp:
+        (WebCore::WebGLFramebuffer::deleteObjectImpl):
+        * html/canvas/WebGLFramebuffer.h:
+        (WebCore::WebGLFramebuffer::~WebGLFramebuffer):
+        (WebCore::WebGLFramebuffer::isDepthAttached):
+        (WebCore::WebGLFramebuffer::isStencilAttached):
+        (WebCore::WebGLFramebuffer::isDepthStencilAttached):
+        (WebCore::WebGLFramebuffer::isFramebuffer):
+        * html/canvas/WebGLGetInfo.cpp:
+        * html/canvas/WebGLGetInfo.h:
+        * html/canvas/WebGLObject.cpp:
+        (WebCore::WebGLObject::deleteObject):
+        * html/canvas/WebGLObject.h:
+        (WebCore::WebGLObject::object):
+        (WebCore::WebGLObject::detachContext):
+        (WebCore::WebGLObject::context):
+        (WebCore::WebGLObject::isBuffer):
+        (WebCore::WebGLObject::isFramebuffer):
+        (WebCore::WebGLObject::isProgram):
+        (WebCore::WebGLObject::isRenderbuffer):
+        (WebCore::WebGLObject::isShader):
+        (WebCore::WebGLObject::isTexture):
+        * html/canvas/WebGLProgram.cpp:
+        (WebCore::WebGLProgram::deleteObjectImpl):
+        * html/canvas/WebGLProgram.h:
+        (WebCore::WebGLProgram::~WebGLProgram):
+        (WebCore::WebGLProgram::isLinkFailureFlagSet):
+        (WebCore::WebGLProgram::setLinkFailureFlag):
+        (WebCore::WebGLProgram::isProgram):
+        * html/canvas/WebGLRenderbuffer.cpp:
+        (WebCore::WebGLRenderbuffer::deleteObjectImpl):
+        * html/canvas/WebGLRenderbuffer.h:
+        (WebCore::WebGLRenderbuffer::~WebGLRenderbuffer):
+        (WebCore::WebGLRenderbuffer::setInternalFormat):
+        (WebCore::WebGLRenderbuffer::getInternalFormat):
+        (WebCore::WebGLRenderbuffer::isInitialized):
+        (WebCore::WebGLRenderbuffer::setInitialized):
+        (WebCore::WebGLRenderbuffer::isRenderbuffer):
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::beginPaint):
+        (WebCore::WebGLRenderingContext::blendEquation):
+        (WebCore::WebGLRenderingContext::getActiveAttrib):
+        (WebCore::WebGLRenderingContext::getActiveUniform):
+        (WebCore::WebGLRenderingContext::getBufferParameter):
+        (WebCore::WebGLRenderingContext::getFramebufferAttachmentParameter):
+        (WebCore::WebGLRenderingContext::vertexAttribPointer):
+        * html/canvas/WebGLRenderingContext.h:
+        (WebCore::WebGLRenderingContext::is3d):
+        (WebCore::WebGLRenderingContext::isAccelerated):
+        (WebCore::WebGLRenderingContext::graphicsContext3D):
+        (WebCore::WebGLRenderingContext::cleanupAfterGraphicsCall):
+        (WebCore::WebGLRenderingContext::VertexAttribState::VertexAttribState):
+        (WebCore::WebGLRenderingContext::VertexAttribState::initValue):
+        * html/canvas/WebGLShader.cpp:
+        (WebCore::WebGLShader::deleteObjectImpl):
+        * html/canvas/WebGLShader.h:
+        (WebCore::WebGLShader::~WebGLShader):
+        (WebCore::WebGLShader::getType):
+        (WebCore::WebGLShader::isShader):
+        * html/canvas/WebGLTexture.cpp:
+        (WebCore::WebGLTexture::deleteObjectImpl):
+        * html/canvas/WebGLTexture.h:
+        (WebCore::WebGLTexture::~WebGLTexture):
+        (WebCore::WebGLTexture::isCubeMapRWrapModeInitialized):
+        (WebCore::WebGLTexture::setCubeMapRWrapModeInitialized):
+        (WebCore::WebGLTexture::isTexture):
+        (WebCore::WebGLTexture::LevelInfo::LevelInfo):
+        (WebCore::WebGLTexture::LevelInfo::setInfo):
+        * platform/graphics/GraphicsContext3D.h:
+        (WebCore::GraphicsContext3D::):
+        (WebCore::GraphicsContext3D::Attributes::Attributes):
+        (WebCore::GraphicsContext3D::platformGraphicsContext3D):
+        (WebCore::GraphicsContext3D::platformTexture):
+        (WebCore::GraphicsContext3D::platformLayer):
+
 2010-08-05  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
 
         Reviewed by Simon Hausmann.
