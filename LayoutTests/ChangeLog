@@ -1,3 +1,16 @@
+2010-08-05  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Some sputnik tests fail
+        https://bugs.webkit.org/show_bug.cgi?id=43568
+
+        Unskip the majority of the Sputnik tests. Most of them are passing
+        and a few just needed GTK+ baselines showing that they pass.
+
+        * platform/gtk/Skipped: Skip remaining failures.
+        * platform/gtk/fast/js/sputnik/Unicode/Unicode_510/S7.6_A3.2-expected.txt: Copied from LayoutTests/platform/win/fast/js/sputnik/Unicode/Unicode_510/S7.6_A3.2-expected.txt.
+        * platform/gtk/fast/js/sputnik/Unicode/Unicode_510/S7.6_A5.3_T1-expected.txt: Copied from LayoutTests/platform/win/fast/js/sputnik/Unicode/Unicode_510/S7.6_A5.3_T1-expected.txt.
+        * platform/gtk/fast/js/sputnik/Unicode/Unicode_510/S7.6_A5.3_T2-expected.txt: Copied from LayoutTests/platform/win/fast/js/sputnik/Unicode/Unicode_510/S7.6_A5.3_T2-expected.txt.
+
 2010-08-05  Jian Li  <jianli@chromium.org>
 
         Update test results caused by r64763.
