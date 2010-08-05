@@ -1,3 +1,15 @@
+2010-08-05  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Kent Tamura.
+
+        [BREWMP] Define htonl, htons, ntohl and ntohs
+        https://bugs.webkit.org/show_bug.cgi?id=43397
+
+        In BREWMP, AEEStdLib.h provides macros for byte order conversion: HTONL, HTONS, NTOHL and NTOHS.
+        Use these macros to define htonl, htons, ntohl and ntohs used by WOFFFileFormat.cpp.
+
+        * platform/graphics/WOFFFileFormat.cpp:
+
 2010-08-04  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

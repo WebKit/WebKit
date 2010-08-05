@@ -32,6 +32,13 @@
 
 #if !PLATFORM(WIN)
 #include <zlib.h>
+#if PLATFORM(BREWMP)
+#include <AEEStdLib.h>
+#define htonl(x) HTONL(x)
+#define htons(x) HTONS(x)
+#define ntohl(x) NTOHL(x)
+#define ntohs(x) NTOHS(x)
+#endif
 #else
 #include "SoftLinking.h"
 
