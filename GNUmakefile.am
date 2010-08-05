@@ -1136,16 +1136,16 @@ CLEANFILES += \
 	$(top_builddir)/stamp-webkitmarshal.h \
 	$(top_builddir)/stamp-webkitenumtypes.cpp \
 	$(top_builddir)/stamp-webkitenumtypes.h \
-	$(top_builddir)/Programs/GtkLauncher \
-	$(top_builddir)/WebKit/gtk/docs/version.xml \
-	$(top_builddir)/WebKit/gtk/docs/GNUmakefile \
-	$(top_builddir)/WebKit/gtk/@WEBKITGTK_PC_NAME@-@WEBKITGTK_API_VERSION@.pc \
-	$(top_builddir)/WebKit/gtk/webkit/webkitversion.h
+	$(top_builddir)/Programs/GtkLauncher
 
 DISTCLEANFILES += \
 	$(CLEANFILES) \
 	$(builddir)/doltcompile \
-	$(builddir)/doltlibtool
+	$(builddir)/doltlibtool \
+	$(top_builddir)/WebKit/gtk/docs/version.xml \
+	$(top_builddir)/WebKit/gtk/docs/GNUmakefile \
+	$(top_builddir)/WebKit/gtk/@WEBKITGTK_PC_NAME@-@WEBKITGTK_API_VERSION@.pc \
+	$(top_builddir)/WebKit/gtk/webkit/webkitversion.h
 
 MAINTAINERCLEANFILES += \
 	$(CLEANFILES) \
