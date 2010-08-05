@@ -105,7 +105,6 @@ private:
     void begin();
     void attemptToEnd();
     void endIfDelayed();
-    void executeScriptsWaitingForParsingAndEnd();
     void end();
 
     bool isScheduledForResume() const;

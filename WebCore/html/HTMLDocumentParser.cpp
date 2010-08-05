@@ -281,7 +281,7 @@ void HTMLDocumentParser::attemptToEnd()
         m_endWasDelayed = true;
         return;
     }
-    executeScriptsWaitingForParsingAndEnd();
+    end();
 }
 
 void HTMLDocumentParser::endIfDelayed()
@@ -290,19 +290,6 @@ void HTMLDocumentParser::endIfDelayed()
         return;
 
     m_endWasDelayed = false;
-    executeScriptsWaitingForParsingAndEnd();
-}
-
-void HTMLDocumentParser::executeScriptsWaitingForParsingAndEnd()
-{
-    if (m_scriptRunner) {
-        bool continueParsing = m_scriptRunner->executeScriptsWaitingForParsing();
-        if (!continueParsing) {
-            m_treeBuilder->setPaused(true);
-            m_endWasDelayed = true;
-            return;
-        }
-    }
     end();
 }
 

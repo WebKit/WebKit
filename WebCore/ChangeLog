@@ -1,3 +1,21 @@
+2010-08-04  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r64674.
+        http://trac.webkit.org/changeset/64674
+        https://bugs.webkit.org/show_bug.cgi?id=43532
+
+        Doesn't work with HTML5 tree builder (Requested by tonyg-cr on
+        #webkit).
+
+        * html/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::attemptToEnd):
+        (WebCore::HTMLDocumentParser::endIfDelayed):
+        * html/HTMLDocumentParser.h:
+        * html/HTMLScriptRunner.cpp:
+        (WebCore::HTMLScriptRunner::requestScript):
+        (WebCore::HTMLScriptRunner::runScript):
+        * html/HTMLScriptRunner.h:
+
 2010-08-04  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
