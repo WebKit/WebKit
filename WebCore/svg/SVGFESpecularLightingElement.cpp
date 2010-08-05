@@ -25,7 +25,6 @@
 #include "SVGFESpecularLightingElement.h"
 
 #include "Attribute.h"
-#include "RenderObject.h"
 #include "SVGColor.h"
 #include "SVGFELightElement.h"
 #include "SVGNames.h"

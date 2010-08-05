@@ -1,3 +1,47 @@
+2010-08-04  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVGFilterElement & SVGFE*Element don't support dynamic invalidation, when attributes change
+        https://bugs.webkit.org/show_bug.cgi?id=42244
+
+        Implementing svgAttributeChanged for SVGFESpotLightElement object.
+        Furthermore, invalidateFilter has been moved to SVGFilterElement, and
+        it is a static function now.
+
+        Tests: svg/dynamic-updates/SVGFESpotLightElement-dom-limitingConeAngle-attr.html
+               svg/dynamic-updates/SVGFESpotLightElement-dom-pointsAtX-attr.html
+               svg/dynamic-updates/SVGFESpotLightElement-dom-pointsAtY-attr.html
+               svg/dynamic-updates/SVGFESpotLightElement-dom-pointsAtZ-attr.html
+               svg/dynamic-updates/SVGFESpotLightElement-dom-specularExponent-attr.html
+               svg/dynamic-updates/SVGFESpotLightElement-dom-x-attr.html
+               svg/dynamic-updates/SVGFESpotLightElement-dom-y-attr.html
+               svg/dynamic-updates/SVGFESpotLightElement-dom-z-attr.html
+               svg/dynamic-updates/SVGFESpotLightElement-svgdom-limitingConeAngle-prop.html
+               svg/dynamic-updates/SVGFESpotLightElement-svgdom-pointsAtX-prop.html
+               svg/dynamic-updates/SVGFESpotLightElement-svgdom-pointsAtY-prop.html
+               svg/dynamic-updates/SVGFESpotLightElement-svgdom-pointsAtZ-prop.html
+               svg/dynamic-updates/SVGFESpotLightElement-svgdom-specularExponent-prop.html
+               svg/dynamic-updates/SVGFESpotLightElement-svgdom-x-prop.html
+               svg/dynamic-updates/SVGFESpotLightElement-svgdom-y-prop.html
+               svg/dynamic-updates/SVGFESpotLightElement-svgdom-z-prop.html
+
+        * svg/SVGFEDiffuseLightingElement.cpp:
+        (WebCore::SVGFEDiffuseLightingElement::svgAttributeChanged):
+        * svg/SVGFELightElement.cpp:
+        (WebCore::SVGFELightElement::svgAttributeChanged):
+        (WebCore::SVGFELightElement::childrenChanged):
+        * svg/SVGFELightElement.h:
+        * svg/SVGFEOffsetElement.cpp:
+        (WebCore::SVGFEOffsetElement::svgAttributeChanged):
+        * svg/SVGFESpecularLightingElement.cpp:
+        * svg/SVGFilterElement.h:
+        (WebCore::SVGFilterElement::invalidateFilter):
+        * svg/SVGFilterPrimitiveStandardAttributes.cpp:
+        (WebCore::SVGFilterPrimitiveStandardAttributes::svgAttributeChanged):
+        (WebCore::SVGFilterPrimitiveStandardAttributes::childrenChanged):
+        * svg/SVGFilterPrimitiveStandardAttributes.h:
+
 2010-08-05  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

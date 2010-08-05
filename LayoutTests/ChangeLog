@@ -1,3 +1,107 @@
+2010-08-04  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVGFilterElement & SVGFE*Element don't support dynamic invalidation, when attributes change
+        https://bugs.webkit.org/show_bug.cgi?id=42244
+
+        * platform/mac/svg/dynamic-updates/SVGFESpotLightElement-dom-limitingConeAngle-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFESpotLightElement-dom-limitingConeAngle-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFESpotLightElement-dom-pointsAtX-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFESpotLightElement-dom-pointsAtX-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFESpotLightElement-dom-pointsAtY-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFESpotLightElement-dom-pointsAtY-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFESpotLightElement-dom-pointsAtZ-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFESpotLightElement-dom-pointsAtZ-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFESpotLightElement-dom-specularExponent-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFESpotLightElement-dom-specularExponent-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFESpotLightElement-dom-x-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFESpotLightElement-dom-x-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFESpotLightElement-dom-y-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFESpotLightElement-dom-y-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFESpotLightElement-dom-z-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFESpotLightElement-dom-z-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFESpotLightElement-svgdom-limitingConeAngle-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFESpotLightElement-svgdom-limitingConeAngle-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFESpotLightElement-svgdom-pointsAtX-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFESpotLightElement-svgdom-pointsAtX-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFESpotLightElement-svgdom-pointsAtY-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFESpotLightElement-svgdom-pointsAtY-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFESpotLightElement-svgdom-pointsAtZ-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFESpotLightElement-svgdom-pointsAtZ-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFESpotLightElement-svgdom-specularExponent-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFESpotLightElement-svgdom-specularExponent-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFESpotLightElement-svgdom-x-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFESpotLightElement-svgdom-x-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFESpotLightElement-svgdom-y-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFESpotLightElement-svgdom-y-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFESpotLightElement-svgdom-z-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFESpotLightElement-svgdom-z-prop-expected.png: Added.
+        * svg/dynamic-updates/SVGFESpotLightElement-dom-limitingConeAngle-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFESpotLightElement-dom-limitingConeAngle-attr.html: Added.
+        * svg/dynamic-updates/SVGFESpotLightElement-dom-pointsAtX-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFESpotLightElement-dom-pointsAtX-attr.html: Added.
+        * svg/dynamic-updates/SVGFESpotLightElement-dom-pointsAtY-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFESpotLightElement-dom-pointsAtY-attr.html: Added.
+        * svg/dynamic-updates/SVGFESpotLightElement-dom-pointsAtZ-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFESpotLightElement-dom-pointsAtZ-attr.html: Added.
+        * svg/dynamic-updates/SVGFESpotLightElement-dom-specularExponent-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFESpotLightElement-dom-specularExponent-attr.html: Added.
+        * svg/dynamic-updates/SVGFESpotLightElement-dom-x-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFESpotLightElement-dom-x-attr.html: Added.
+        * svg/dynamic-updates/SVGFESpotLightElement-dom-y-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFESpotLightElement-dom-y-attr.html: Added.
+        * svg/dynamic-updates/SVGFESpotLightElement-dom-z-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFESpotLightElement-dom-z-attr.html: Added.
+        * svg/dynamic-updates/SVGFESpotLightElement-svgdom-limitingConeAngle-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFESpotLightElement-svgdom-limitingConeAngle-prop.html: Added.
+        * svg/dynamic-updates/SVGFESpotLightElement-svgdom-pointsAtX-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFESpotLightElement-svgdom-pointsAtX-prop.html: Added.
+        * svg/dynamic-updates/SVGFESpotLightElement-svgdom-pointsAtY-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFESpotLightElement-svgdom-pointsAtY-prop.html: Added.
+        * svg/dynamic-updates/SVGFESpotLightElement-svgdom-pointsAtZ-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFESpotLightElement-svgdom-pointsAtZ-prop.html: Added.
+        * svg/dynamic-updates/SVGFESpotLightElement-svgdom-specularExponent-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFESpotLightElement-svgdom-specularExponent-prop.html: Added.
+        * svg/dynamic-updates/SVGFESpotLightElement-svgdom-x-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFESpotLightElement-svgdom-x-prop.html: Added.
+        * svg/dynamic-updates/SVGFESpotLightElement-svgdom-y-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFESpotLightElement-svgdom-y-prop.html: Added.
+        * svg/dynamic-updates/SVGFESpotLightElement-svgdom-z-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFESpotLightElement-svgdom-z-prop.html: Added.
+        * svg/dynamic-updates/script-tests/SVGFESpotLightElement-dom-limitingConeAngle-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFESpotLightElement-dom-pointsAtX-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFESpotLightElement-dom-pointsAtY-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFESpotLightElement-dom-pointsAtZ-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFESpotLightElement-dom-specularExponent-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFESpotLightElement-dom-x-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFESpotLightElement-dom-y-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFESpotLightElement-dom-z-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFESpotLightElement-svgdom-limitingConeAngle-prop.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFESpotLightElement-svgdom-pointsAtX-prop.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFESpotLightElement-svgdom-pointsAtY-prop.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFESpotLightElement-svgdom-pointsAtZ-prop.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFESpotLightElement-svgdom-specularExponent-prop.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFESpotLightElement-svgdom-x-prop.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFESpotLightElement-svgdom-y-prop.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFESpotLightElement-svgdom-z-prop.js: Added.
+        (executeTest):
+
 2010-08-04  Adam Barth  <abarth@webkit.org>
 
         Enable HTML5 tree builder

@@ -74,7 +74,7 @@ void SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(const QualifiedNa
         || attrName == SVGNames::widthAttr
         || attrName == SVGNames::heightAttr
         || attrName == SVGNames::resultAttr)
-        invalidateFilter();
+        SVGFilterElement::invalidateFilter(this);
 }
 
 void SVGFilterPrimitiveStandardAttributes::synchronizeProperty(const QualifiedName& attrName)
@@ -107,7 +107,7 @@ void SVGFilterPrimitiveStandardAttributes::childrenChanged(bool changedByParser,
     SVGStyledElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
 
     if (!changedByParser)
-        invalidateFilter();
+        SVGFilterElement::invalidateFilter(this);
 }
 
 void SVGFilterPrimitiveStandardAttributes::setStandardAttributes(bool primitiveBoundingBoxMode, FilterEffect* filterEffect) const

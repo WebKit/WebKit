@@ -23,7 +23,6 @@
 #include "SVGFEDiffuseLightingElement.h"
 
 #include "Attr.h"
-#include "RenderObject.h"
 #include "SVGColor.h"
 #include "SVGFEDiffuseLighting.h"
 #include "SVGFELightElement.h"
@@ -75,7 +74,7 @@ void SVGFEDiffuseLightingElement::svgAttributeChanged(const QualifiedName& attrN
         || attrName == SVGNames::diffuseConstantAttr
         || attrName == SVGNames::kernelUnitLengthAttr
         || attrName == SVGNames::lighting_colorAttr)
-        invalidateFilter();
+        SVGFilterElement::invalidateFilter(this);
 }
 
 void SVGFEDiffuseLightingElement::synchronizeProperty(const QualifiedName& attrName)

@@ -50,15 +50,6 @@ public:
 
     void setStandardAttributes(bool, FilterEffect*) const;
 
-protected:
-    void invalidateFilter()
-    {
-        if (!inDocument() || !parentNode()->hasTagName(SVGNames::filterTag))
-            return;
-        if (RenderObject* object = parentNode()->renderer())
-            object->setNeedsLayout(true);
-    }
-
 private:
     DECLARE_ANIMATED_PROPERTY(SVGFilterPrimitiveStandardAttributes, SVGNames::xAttr, SVGLength, X, x)
     DECLARE_ANIMATED_PROPERTY(SVGFilterPrimitiveStandardAttributes, SVGNames::yAttr, SVGLength, Y, y)
