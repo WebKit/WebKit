@@ -3715,6 +3715,12 @@ class WebKitStyleTest(CppStyleTestBase):
         self.assert_lint('unsigned _fillRule : 1;',
                          '_fillRule' + name_underscore_error_message)
 
+        # new operators in initialization.
+        self.assert_lint('OwnPtr<uint32_t> variable(new uint32_t);', '')
+        self.assert_lint('OwnPtr<uint32_t> variable(new (expr) uint32_t);', '')
+        self.assert_lint('OwnPtr<uint32_t> under_score(new uint32_t);',
+                         'under_score' + name_underscore_error_message)
+
 
     def test_comments(self):
         # A comment at the beginning of a line is ok.

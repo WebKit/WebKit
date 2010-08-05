@@ -2451,6 +2451,9 @@ def check_identifier_name_in_declaration(filename, line_number, line, error):
     line = sub(r'(unsigned|signed) (?=char|short|int|long)', '', line)
     line = sub(r'\b(inline|using|static|const|volatile|auto|register|extern|typedef|restrict|struct|class|virtual)(?=\W)', '', line)
 
+    # Remove "new" and "new (expr)" to simplify, too.
+    line = sub(r'new\s*(\([^)]*\))?', '', line)
+
     # Remove all template parameters by removing matching < and >.
     # Loop until no templates are removed to remove nested templates.
     while True:

@@ -1,3 +1,13 @@
+2010-08-04  Kenichi Ishibashi  <bashi@google.com>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Fixes check-webkit-style false positive on "new uint32_t."
+        https://bugs.webkit.org/show_bug.cgi?id=43077
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+
 2010-08-04  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.
