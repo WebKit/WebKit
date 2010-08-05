@@ -31,7 +31,6 @@
 #ifndef ScriptCallStack_h
 #define ScriptCallStack_h
 
-#include "ScriptArray.h"
 #include "ScriptCallFrame.h"
 #include "ScriptState.h"
 #include "ScriptString.h"

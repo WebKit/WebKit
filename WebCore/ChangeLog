@@ -1,3 +1,28 @@
+2010-08-05  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: remove mutator methods from ScriptObject and remove ScriptArray.
+        We shouldn't modify JS objects from InspectorController, InspectorValues
+        should be used instead.
+        https://bugs.webkit.org/show_bug.cgi?id=43546
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/ScriptArray.cpp: Removed.
+        * bindings/js/ScriptArray.h: Removed.
+        * bindings/js/ScriptCallStack.h:
+        * bindings/js/ScriptObject.cpp:
+        * bindings/js/ScriptObject.h:
+        * bindings/v8/ScriptArray.cpp: Removed.
+        * bindings/v8/ScriptArray.h: Removed.
+        * bindings/v8/ScriptCallStack.h:
+        * bindings/v8/ScriptObject.cpp:
+        * bindings/v8/ScriptObject.h:
+
 2010-08-05  Ned Holbrook  <nholbrook@apple.com>
 
         Reviewed by Darin Adler.

@@ -34,7 +34,6 @@
 #include "ScriptController.h"
 #include "ScriptExecutionContext.h"
 #include "ScriptSourceCode.h"
-#include "ScriptValue.h"
 #include <runtime/JSLock.h>
 
 #if ENABLE(WORKERS)

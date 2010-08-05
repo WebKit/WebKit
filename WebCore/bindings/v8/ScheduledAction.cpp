@@ -34,7 +34,6 @@
 #include "Document.h"
 #include "ScriptExecutionContext.h"
 #include "ScriptSourceCode.h"
-#include "ScriptValue.h"
 
 #include "V8Binding.h"
 #include "V8Proxy.h"

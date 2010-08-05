@@ -1401,8 +1401,6 @@
 		7A0E770F10C00A8800A0276E /* InspectorFrontendHost.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A0E770C10C00A8800A0276E /* InspectorFrontendHost.h */; };
 		7A0E771E10C00DB100A0276E /* JSInspectorFrontendHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0E771C10C00DB100A0276E /* JSInspectorFrontendHost.cpp */; };
 		7A0E771F10C00DB100A0276E /* JSInspectorFrontendHost.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A0E771D10C00DB100A0276E /* JSInspectorFrontendHost.h */; };
-		7A1E88F5101CC384000C4DF5 /* ScriptArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A1E88F3101CC384000C4DF5 /* ScriptArray.cpp */; };
-		7A1E88F6101CC384000C4DF5 /* ScriptArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A1E88F4101CC384000C4DF5 /* ScriptArray.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7A24587B1021EAF4000A00AA /* InspectorDOMAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A2458791021EAF4000A00AA /* InspectorDOMAgent.cpp */; };
 		7A24587C1021EAF4000A00AA /* InspectorDOMAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A24587A1021EAF4000A00AA /* InspectorDOMAgent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7A674BDB0F9EBF4E006CF099 /* PageGroupLoadDeferrer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A674BD90F9EBF4E006CF099 /* PageGroupLoadDeferrer.cpp */; };
@@ -7198,8 +7196,6 @@
 		7A0E770D10C00A8800A0276E /* InspectorFrontendHost.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = InspectorFrontendHost.idl; sourceTree = "<group>"; };
 		7A0E771C10C00DB100A0276E /* JSInspectorFrontendHost.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSInspectorFrontendHost.cpp; sourceTree = "<group>"; };
 		7A0E771D10C00DB100A0276E /* JSInspectorFrontendHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSInspectorFrontendHost.h; sourceTree = "<group>"; };
-		7A1E88F3101CC384000C4DF5 /* ScriptArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptArray.cpp; sourceTree = "<group>"; };
-		7A1E88F4101CC384000C4DF5 /* ScriptArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptArray.h; sourceTree = "<group>"; };
 		7A2458791021EAF4000A00AA /* InspectorDOMAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorDOMAgent.cpp; sourceTree = "<group>"; };
 		7A24587A1021EAF4000A00AA /* InspectorDOMAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorDOMAgent.h; sourceTree = "<group>"; };
 		7A674BD90F9EBF4E006CF099 /* PageGroupLoadDeferrer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageGroupLoadDeferrer.cpp; sourceTree = "<group>"; };
@@ -15805,8 +15801,6 @@
 				F3D461471161D53200CA0D09 /* JSWorkerContextErrorHandler.h */,
 				BCA378BA0D15F64200B793D6 /* ScheduledAction.cpp */,
 				BCA378BB0D15F64200B793D6 /* ScheduledAction.h */,
-				7A1E88F3101CC384000C4DF5 /* ScriptArray.cpp */,
-				7A1E88F4101CC384000C4DF5 /* ScriptArray.h */,
 				41F1D21E0EF35C2A00DA8753 /* ScriptCachedFrameData.cpp */,
 				41F1D21D0EF35C2A00DA8753 /* ScriptCachedFrameData.h */,
 				416E75CA0EDF90C700360E1D /* ScriptCallFrame.cpp */,
@@ -19432,7 +19426,6 @@
 				5162C7F511F77EFB00612EFE /* SchemeRegistry.h in Headers */,
 				BCEC01BE0C274DAC009F4EC9 /* Screen.h in Headers */,
 				A84D82C111D3474800972990 /* ScriptableDocumentParser.h in Headers */,
-				7A1E88F6101CC384000C4DF5 /* ScriptArray.h in Headers */,
 				7AFD4A8B1131C2760035B883 /* ScriptBreakpoint.h in Headers */,
 				41F1D21F0EF35C2A00DA8753 /* ScriptCachedFrameData.h in Headers */,
 				416E75CB0EDF90C700360E1D /* ScriptCallFrame.h in Headers */,
@@ -21909,7 +21902,6 @@
 				5162C7F411F77EFB00612EFE /* SchemeRegistry.cpp in Sources */,
 				BCEC01BD0C274DAC009F4EC9 /* Screen.cpp in Sources */,
 				A84D82C211D3474800972990 /* ScriptableDocumentParser.cpp in Sources */,
-				7A1E88F5101CC384000C4DF5 /* ScriptArray.cpp in Sources */,
 				200B190911C277D900DCCD3A /* ScriptBreakpoint.cpp in Sources */,
 				41F1D2200EF35C2A00DA8753 /* ScriptCachedFrameData.cpp in Sources */,
 				416E75CC0EDF90C700360E1D /* ScriptCallFrame.cpp in Sources */,

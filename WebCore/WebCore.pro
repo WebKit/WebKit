@@ -368,7 +368,6 @@ SOURCES += \
     bindings/js/JSPluginElementFunctions.cpp \
     bindings/js/JSPopStateEventCustom.cpp \
     bindings/js/JSWorkerContextErrorHandler.cpp \
-    bindings/js/ScriptArray.cpp \
     bindings/js/ScriptCachedFrameData.cpp \
     bindings/js/ScriptCallFrame.cpp \
     bindings/js/ScriptCallStack.cpp \
@@ -1124,7 +1123,6 @@ HEADERS += \
     bindings/js/JSWorkerContextErrorHandler.h \
     bindings/js/JavaScriptCallFrame.h \
     bindings/js/ScheduledAction.h \
-    bindings/js/ScriptArray.h \
     bindings/js/ScriptCachedFrameData.h \
     bindings/js/ScriptCallFrame.h \
     bindings/js/ScriptCallStack.h \
