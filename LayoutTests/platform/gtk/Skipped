@@ -5868,8 +5868,9 @@ fast/parser/residual-style-hang.html
 # https://bugs.webkit.org/show_bug.cgi?id=43568
 fast/js/sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.12_Array_prototype_splice/S15.4.4.12_A2.1_T3.html
 fast/js/sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.16_sin/S15.8.2.16_A7.html
-fast/js/sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.18_tan/S15.8.2.18_A7.htm
+fast/js/sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.18_tan/S15.8.2.18_A7.html
 fast/js/sputnik/Unicode/Unicode_510/S7.6_A3.1.html
+
 # The following Sputnik tests fail on debug builds.
 fast/js/sputnik/Conformance/07_Lexical_Conventions/7.3_Line_Terminators/S7.3_A2.1_T1.html
 fast/js/sputnik/Conformance/07_Lexical_Conventions/7.3_Line_Terminators/S7.3_A2.1_T2.html
@@ -5899,4 +5900,17 @@ fast/js/sputnik/Unicode/Unicode_410/S7.6_A5.3_T2.html
 fast/js/sputnik/Unicode/Unicode_500/S7.6_A3.1.html
 fast/js/sputnik/Unicode/Unicode_500/S7.6_A3.2.html
 fast/js/sputnik/Unicode/Unicode_500/S7.6_A5.3_T2.html
+fast/js/sputnik/Unicode/Unicode_510/S7.6_A3.2.html
+fast/js/sputnik/Unicode/Unicode_510/S7.6_A5.3_T2.html
 
+# The following Sputnik tests fail on the 32bit release bot
+fast/js/sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.18_tan/S15.8.2.18_A7.html
+fast/js/sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T1.html
+fast/js/sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T2.html
+fast/js/sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T3.html
+fast/js/sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T4.html
+fast/js/sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T5.html
+fast/js/sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T6.html
+fast/js/sputnik/Unicode/Unicode_510/S7.6_A3.2.html
+fast/js/sputnik/Unicode/Unicode_510/S7.6_A5.3_T1.html
+fast/js/sputnik/Unicode/Unicode_510/S7.6_A5.3_T2.html

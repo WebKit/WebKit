@@ -1,3 +1,10 @@
+2010-08-05  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Some sputnik tests fail
+        https://bugs.webkit.org/show_bug.cgi?id=43568
+
+        * platform/gtk/Skipped: Skip some more failing Sputnik tests.
+
 2010-08-05  Tony Chang  <tony@chromium.org>
 
         Reviewed by David Hyatt.
