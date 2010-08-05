@@ -1647,7 +1647,12 @@ void HTMLTreeBuilder::reparentChildren(Element* oldParent, Element* newParent)
 // http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#parsing-main-inbody
 void HTMLTreeBuilder::callTheAdoptionAgency(AtomicHTMLToken& token)
 {
-    while (1) {
+    // The adoption agency algorithm is N^2.  We limit the number of iterations
+    // to stop from hanging the whole browser.  This limit is copied from the
+    // legacy tree builder and might need to be tweaked in the future.
+    static const int adoptionAgencyIterationLimit = 10;
+
+    for (int i = 0; i < adoptionAgencyIterationLimit; ++i) {
         // 1.
         Element* formattingElement = m_tree.activeFormattingElements()->closestElementInScopeWithName(token.name());
         if (!formattingElement || ((m_tree.openElements()->contains(formattingElement)) && !m_tree.openElements()->inScope(formattingElement))) {
@@ -1680,7 +1685,7 @@ void HTMLTreeBuilder::callTheAdoptionAgency(AtomicHTMLToken& token)
         HTMLElementStack::ElementRecord* node = furthestBlock;
         HTMLElementStack::ElementRecord* nextNode = node->next();
         HTMLElementStack::ElementRecord* lastNode = furthestBlock;
-        while (1) {
+        for (int i = 0; i < adoptionAgencyIterationLimit; ++i) {
             // 6.1
             node = nextNode;
             ASSERT(node);

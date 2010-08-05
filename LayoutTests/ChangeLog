@@ -1,3 +1,18 @@
+2010-08-04  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        fast/parser/residual-style-hang.html hangs
+        https://bugs.webkit.org/show_bug.cgi?id=42950
+
+        Add a dump-as-markup test that shows what DOM we actually create in
+        this case.
+
+        Note: these results are for the existing parser.
+
+        * fast/parser/residual-style-dom-expected.txt: Added.
+        * fast/parser/residual-style-dom.html: Added.
+
 2010-08-04  Andrew Wilson  <atwilson@chromium.org>
 
         Unreviewed fix for chromium test expectations.
