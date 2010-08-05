@@ -1,3 +1,18 @@
+2010-08-05  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=43516 REGRESSION: 
+        Huge number of memory leaks after enabling MathML
+        -and corresponding-
+        <rdar://problem/8274123>
+
+        Destroy the old children in 
+        RenderMathMLOperator::updateFromElement() instead of just removing 
+        them since just removing them will cause them to leak.
+        * mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::updateFromElement):
+
 2010-08-05  Tony Chang  <tony@chromium.org>
 
         Reviewed by David Hyatt.

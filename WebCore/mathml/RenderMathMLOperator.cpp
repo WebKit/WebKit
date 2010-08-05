@@ -117,11 +117,12 @@ static const float gMinimumRatioForStretch = 0.10f;
 
 void RenderMathMLOperator::updateFromElement()
 {
-    // clear our children
-    while (firstChild()) {
-       RenderObject* obj = firstChild();
-       removeChild(obj);
-    }
+    // Destroy our current children
+    children()->destroyLeftoverChildren();
+
+    // Since we share a node with our children, destroying our children will set our node's
+    // renderer to 0, so we need to re-set it back to this.
+    node()->setRenderer(this);
     
     // If the operator is fixed, it will be contained in m_operator
     UChar firstChar = m_operator;
