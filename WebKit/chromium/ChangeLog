@@ -1,3 +1,23 @@
+2010-08-05  Satish Sampath  <satish@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Add speech input controller mock in WebKit and a layout test.
+        https://bugs.webkit.org/show_bug.cgi?id=43477
+
+        * WebKit.gyp:
+        * public/WebSpeechInputControllerMock.h: Added WebKit speech input controller mock interface.
+        * src/WebSpeechInputControllerMockImpl.cpp: Added implementation of the above mock.
+        (WebKit::WebSpeechInputControllerMockImpl::WebSpeechInputControllerMockImpl):
+        (WebKit::WebSpeechInputControllerMockImpl::setMockRecognitionResult):
+        (WebKit::WebSpeechInputControllerMockImpl::didCompleteRecording):
+        (WebKit::WebSpeechInputControllerMockImpl::didCompleteRecognition):
+        (WebKit::WebSpeechInputControllerMockImpl::setRecognitionResult):
+        (WebKit::WebSpeechInputControllerMockImpl::startRecognition):
+        (WebKit::WebSpeechInputControllerMockImpl::cancelRecognition):
+        (WebKit::WebSpeechInputControllerMockImpl::stopRecording):
+        (WebKit::WebSpeechInputControllerMock::create):
+
 2010-08-05  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

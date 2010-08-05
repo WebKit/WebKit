@@ -1,3 +1,16 @@
+2010-08-05  Satish Sampath  <satish@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Add speech input controller mock in WebKit and a layout test.
+        https://bugs.webkit.org/show_bug.cgi?id=43477
+
+        * fast/speech/input-text-speechbutton-expected.txt: Added.
+        * fast/speech/input-text-speechbutton.html: Added.
+        * fast/speech/script-tests/input-text-speechbutton.js: Added.
+        (onChange):
+        (run):
+
 2010-08-05  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Skip new debugger test on Qt.

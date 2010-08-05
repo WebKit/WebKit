@@ -501,6 +501,11 @@ WebKit::WebGeolocationService* WebViewHost::geolocationService()
     return m_geolocationServiceMock.get();
 }
 
+WebSpeechInputController* WebViewHost::speechInputController(WebKit::WebSpeechInputListener* listener)
+{
+    return m_shell->layoutTestController()->speechInputController(listener);
+}
+
 // WebWidgetClient -----------------------------------------------------------
 
 void WebViewHost::didInvalidateRect(const WebRect& rect)

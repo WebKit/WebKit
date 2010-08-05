@@ -1,3 +1,36 @@
+2010-08-05  Satish Sampath  <satish@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Add speech input controller mock in WebKit and a layout test.
+        https://bugs.webkit.org/show_bug.cgi?id=43477
+
+        Added LayoutTestController::setMockSpeechInputResultCallback method.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (setMockSpeechInputResultCallback): Wrapper invoking the member function.
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::setMockSpeechInputResult): Sets the mock result.
+        (LayoutTestController::speechInputController): Creates the mock controller.
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::speechInputController): Creates the mock controller.
+        * DumpRenderTree/chromium/WebViewHost.h:
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::setMockSpeechInputResult): dummy method.
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::setMockSpeechInputResult): dummy method.
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::setMockSpeechInputResult): dummy method.
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp: dummy method.
+        (LayoutTestController::setMockSpeechInputResult):
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp: dummy method.
+        (LayoutTestController::setMockSpeechInputResult):
+
 2010-08-04  Adam Roben  <aroben@apple.com>
 
         Fix the path to TestNetscapePlugin's directory on Windows

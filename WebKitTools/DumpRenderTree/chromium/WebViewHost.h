@@ -46,6 +46,8 @@ class TestShell;
 namespace WebKit {
 class WebFrame;
 class WebGeolocationServiceMock;
+class WebSpeechInputController;
+class WebSpeechInputListener;
 class WebURL;
 struct WebRect;
 struct WebURLError;
@@ -126,6 +128,7 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual void focusAccessibilityObject(const WebKit::WebAccessibilityObject&);
     virtual WebKit::WebNotificationPresenter* notificationPresenter();
     virtual WebKit::WebGeolocationService* geolocationService();
+    virtual WebKit::WebSpeechInputController* speechInputController(WebKit::WebSpeechInputListener*);
 
     // WebKit::WebWidgetClient
     virtual void didInvalidateRect(const WebKit::WebRect&);

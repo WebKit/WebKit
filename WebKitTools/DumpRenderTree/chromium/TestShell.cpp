@@ -46,6 +46,7 @@
 #include "public/WebScriptController.h"
 #include "public/WebSettings.h"
 #include "public/WebSize.h"
+#include "public/WebSpeechInputControllerMock.h"
 #include "public/WebString.h"
 #include "public/WebURLRequest.h"
 #include "public/WebURLResponse.h"

@@ -47,6 +47,7 @@
 #include "public/WebSecurityPolicy.h"
 #include "public/WebSettings.h"
 #include "public/WebSize.h"
+#include "public/WebSpeechInputControllerMock.h"
 #include "public/WebURL.h"
 #include "public/WebView.h"
 #include "webkit/support/webkit_support.h"
@@ -174,6 +175,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("setMockGeolocationPosition", &LayoutTestController::setMockGeolocationPosition);
     bindMethod("setMockGeolocationError", &LayoutTestController::setMockGeolocationError);
     bindMethod("abortModal", &LayoutTestController::abortModal);
+    bindMethod("setMockSpeechInputResult", &LayoutTestController::setMockSpeechInputResult);
 
     // The fallback method is called when an unknown method is invoked.
     bindFallbackMethod(&LayoutTestController::fallbackMethod);
@@ -1368,4 +1370,20 @@ void LayoutTestController::setMockGeolocationError(const CppArgumentList& argume
 void LayoutTestController::abortModal(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
+}
+
+void LayoutTestController::setMockSpeechInputResult(const CppArgumentList& arguments, CppVariant* result)
+{
+    result->setNull();
+    if (arguments.size() < 1 || !arguments[0].isString())
+        return;
+
+    m_speechInputControllerMock->setMockRecognitionResult(cppVariantToWebString(arguments[0]));
+}
+
+WebKit::WebSpeechInputController* LayoutTestController::speechInputController(WebKit::WebSpeechInputListener* listener)
+{
+    if (!m_speechInputControllerMock.get())
+        m_speechInputControllerMock.set(WebSpeechInputControllerMock::create(listener));
+    return m_speechInputControllerMock.get();
 }
