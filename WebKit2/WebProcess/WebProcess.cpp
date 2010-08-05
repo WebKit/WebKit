@@ -177,6 +177,12 @@ void WebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
 {
     if (messageID.is<CoreIPC::MessageClassWebProcess>()) {
         switch (messageID.get<WebProcessMessage::Kind>()) {
+            case WebProcessMessage::SetVisitedLinkTable:
+            case WebProcessMessage::VisitedLinkStateChanged:
+            case WebProcessMessage::AllVisitedLinkStateChanged:
+                // FIXME: Implement.
+                return;
+            
             case WebProcessMessage::AddVisitedLink: {
                 WebCore::LinkHash hash;
                 if (!arguments->decode(CoreIPC::Out(hash)))

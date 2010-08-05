@@ -2,6 +2,47 @@
 
         Reviewed by Sam Weinig.
 
+        Add VisitedLinkProvider class
+        https://bugs.webkit.org/show_bug.cgi?id=43570
+
+        * Shared/CoreIPCSupport/WebProcessMessageKinds.h:
+        (WebProcessMessage::):
+        Add SetVisitedLinkTable, VisitedLinkStateChanged and AllVisitedLinkStateChanged.
+
+        * UIProcess/VisitedLinkProvider.cpp: Added.
+        (WebKit::VisitedLinkProvider::VisitedLinkProvider):
+        Initialize table.
+
+        (WebKit::VisitedLinkProvider::populateVisitedLinksIfNeeded):
+        Ask the context to populate visited links.
+
+        (WebKit::VisitedLinkProvider::addVisitedLink):
+        Add the link hash to the set of pending visited links and start the timer.
+
+        (WebKit::nextPowerOf2):
+        Add helper function.
+
+        (WebKit::tableSizeForKeyCount):
+        Given a key count, returns a table size. The table size is always a power of two, and
+        is chosen so that the table is always at least half empty.
+
+        (WebKit::VisitedLinkProvider::pendingVisitedLinksTimerFired):
+        First, check if we need to resize the hash table and allocate new shared memory for it if that is the case.
+        Then, go through the pending link hash vector and insert all the elements in the table. Finally, notify the web
+        process about visited links whose state have changed.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::didReceiveMessage):
+        Add case statements.
+
+        * win/WebKit2.vcproj:
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add VisitedLinkProvider.cpp and VisitedLinkProvider.h.
+
+2010-08-05  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Add VisitedLinkTable class
         https://bugs.webkit.org/show_bug.cgi?id=43566
 

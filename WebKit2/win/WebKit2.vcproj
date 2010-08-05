@@ -953,6 +953,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\UIProcess\VisitedLinkProvider.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\VisitedLinkProvider.h"
+				>
+			</File>
+			<File
 				RelativePath="..\UIProcess\WebBackForwardList.cpp"
 				>
 			</File>

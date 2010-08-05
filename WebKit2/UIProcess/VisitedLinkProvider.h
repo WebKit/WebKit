@@ -23,40 +23,44 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebProcessMessageKinds_h
-#define WebProcessMessageKinds_h
+#ifndef VisitedLinkProvider_h
+#define VisitedLinkProvider_h
 
-// Messages sent from WebKit to the web process.
+#include "RunLoop.h"
+#include "VisitedLinkTable.h"
+#include <WebCore/LinkHash.h>
+#include <wtf/HashSet.h>
+#include <wtf/Noncopyable.h>
 
-#include "MessageID.h"
+namespace WebCore {
+    class String;
+}
 
-namespace WebProcessMessage {
+namespace WebKit {
 
-enum Kind {
-    SetVisitedLinkTable,
-    VisitedLinkStateChanged,
-    AllVisitedLinkStateChanged,
+class WebContext;
     
-    // FIXME: Remove AddVisitedLink.
-    AddVisitedLink,
-    LoadInjectedBundle,
-    SetApplicationCacheDirectory,
-    SetShouldTrackVisitedLinks,
-    Create,
-    RegisterURLSchemeAsEmptyDocument,
-#if PLATFORM(MAC)
-    SetupAcceleratedCompositingPort
-#endif
+class VisitedLinkProvider : Noncopyable {
+public:
+    explicit VisitedLinkProvider(WebContext*);
+
+    void populateVisitedLinksIfNeeded();
+    void addVisitedLink(WebCore::LinkHash);
+
+private:
+    void pendingVisitedLinksTimerFired();
+
+    WebContext* m_context;
+    bool m_visitedLinksPopulated;
+
+    unsigned m_keyCount;
+    unsigned m_tableSize;
+    VisitedLinkTable m_table;
+
+    HashSet<WebCore::LinkHash, WebCore::LinkHashHash> m_pendingVisitedLinks;
+    RunLoop::Timer<VisitedLinkProvider> m_pendingVisitedLinksTimer;
 };
 
-}
+} // namespace WebKit
 
-namespace CoreIPC {
-
-template<> struct MessageKindTraits<WebProcessMessage::Kind> { 
-    static const MessageClass messageClass = MessageClassWebProcess;
-};
-
-}
-
-#endif // WebProcessMessageKinds_h
+#endif // VisitedLinkProvider_h
