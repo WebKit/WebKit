@@ -378,16 +378,15 @@ VisiblePositionRange AccessibilityObject::visiblePositionRangeForRange(const Pla
     // Gtk ATs need this for all text objects; not just text controls.
     if (!textLength) {
         Node* node = this->node();
-        if (node) {
-            RenderText* renderText = toRenderText(node->renderer());
-            if (renderText)
-                textLength = renderText->textLength();
-
-            // Get the text length from the elements under the
-            // accessibility object if not a RenderText object.
-            if (!textLength && allowsTextRanges())
-                textLength = textUnderElement().length();
+        RenderObject* renderer = node ? node->renderer() : 0;
+        if (renderer && renderer->isText()) {
+            RenderText* renderText = toRenderText(renderer);
+            textLength = renderText ? renderText->textLength() : 0;
         }
+        // Get the text length from the elements under the
+        // accessibility object if the value is still zero.
+        if (!textLength && allowsTextRanges())
+            textLength = textUnderElement().length();
     }
 #endif
     if (range.start + range.length > textLength)

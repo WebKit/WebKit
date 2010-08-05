@@ -1,3 +1,18 @@
+2010-08-05  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Extra check needed at AccessibilityObject::visiblePositionRangeForRange
+        https://bugs.webkit.org/show_bug.cgi?id=43418
+
+        Ensure the renderer is a RenderText before calling toRenderText()
+
+        Also, simplified code a bit to avoid so many nested if's in that
+        part of the code, while keeping the same logic.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::visiblePositionRangeForRange):
+
 2010-08-05  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Kent Tamura.
