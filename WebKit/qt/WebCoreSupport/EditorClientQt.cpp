@@ -596,12 +596,7 @@ void EditorClientQt::setInputMethodState(bool active)
     QWebPageClient* webPageClient = m_page->d->client;
     if (webPageClient) {
 #if QT_VERSION >= 0x040600
-        // Make sure to reset input method hint
-        webPageClient->setInputMethodHint(Qt::ImhDialableCharactersOnly, false);
-        webPageClient->setInputMethodHint(Qt::ImhDigitsOnly, false);
-        webPageClient->setInputMethodHint(Qt::ImhEmailCharactersOnly, false);
-        webPageClient->setInputMethodHint(Qt::ImhUrlCharactersOnly, false);
-        webPageClient->setInputMethodHint(Qt::ImhHiddenText, false);
+        Qt::InputMethodHints hints;
 
         HTMLInputElement* inputElement = 0;
         Frame* frame = m_page->d->page->focusController()->focusedOrMainFrame();
@@ -611,24 +606,29 @@ void EditorClientQt::setInputMethodState(bool active)
 
         if (inputElement) {
             // Set input method hints for "number", "tel", "email", "url" and "password" input elements.
-            webPageClient->setInputMethodHint(Qt::ImhDialableCharactersOnly, inputElement->isTelephoneField());
-            webPageClient->setInputMethodHint(Qt::ImhDigitsOnly, inputElement->isNumberField());
-            webPageClient->setInputMethodHint(Qt::ImhEmailCharactersOnly, inputElement->isEmailField());
-            webPageClient->setInputMethodHint(Qt::ImhUrlCharactersOnly, inputElement->isUrlField());
+            if (inputElement->isTelephoneField())
+                hints |= Qt::ImhDialableCharactersOnly;
+            if (inputElement->isNumberField())
+                hints |= Qt::ImhDigitsOnly;
+            if (inputElement->isEmailField())
+                hints |= Qt::ImhEmailCharactersOnly;
+            if (inputElement->isUrlField())
+                hints |= Qt::ImhUrlCharactersOnly;
             // Setting the Qt::WA_InputMethodEnabled attribute true and Qt::ImhHiddenText flag
             // for password fields. The Qt platform is responsible for determining which widget
             // will receive input method events for password fields.
-            bool isPasswordField = inputElement->isPasswordField();
-            webPageClient->setInputMethodHint(Qt::ImhHiddenText, isPasswordField);
-            if (isPasswordField)
+            if (inputElement->isPasswordField()) {
                 active = true;
+                hints |= Qt::ImhHiddenText;
+            }
         }
 
 #if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6) || defined(Q_OS_SYMBIAN)
         // disables auto-uppercase and predictive text for mobile devices
-        webPageClient->setInputMethodHint(Qt::ImhNoAutoUppercase, true);
-        webPageClient->setInputMethodHint(Qt::ImhNoPredictiveText, true);
+        hints |= Qt::ImhNoAutoUppercase;
+        hints |= Qt::ImhNoPredictiveText;
 #endif // Q_WS_MAEMO_5 || Q_WS_MAEMO_6 || Q_OS_SYMBIAN
+       webPageClient->setInputMethodHints(hints);
 #endif // QT_VERSION check
         webPageClient->setInputMethodEnabled(active);
     }

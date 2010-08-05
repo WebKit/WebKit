@@ -1,3 +1,15 @@
+2010-08-05  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] Clean up the input method handling
+        https://bugs.webkit.org/show_bug.cgi?id=43545
+
+        Changed input method hint interface to be more efficient by setting
+        all hints in one shot, like in QWidget.
+
+        * platform/qt/QWebPageClient.h:
+
 2010-08-05  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
