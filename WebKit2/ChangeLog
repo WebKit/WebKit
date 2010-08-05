@@ -1,3 +1,57 @@
+2010-08-04  Adam Roben  <aroben@apple.com>
+
+        Teach WebKit2 how to load the TestNetscapePlugin
+
+        Fixes <http://webkit.org/b/43513> WebKitTestRunner on Windows fails to
+        load TestNetscapePlugin
+
+        Reviewed by Jon Honeycutt.
+
+        * Platform/Module.cpp:
+        (WebKit::Module::Module): Initialize m_module on Windows.
+
+        * Platform/Module.h: Added m_module on Windows.
+
+        * Platform/win/ModuleWin.cpp:
+        (WebKit::Module::load): Implemented using ::LoadLibraryExW.
+        (WebKit::Module::unload): Implemented using ::FreeLibrary.
+        (WebKit::Module::platformFunctionPointer): Implemented using
+        ::GetProcAddress.
+
+        * Platform/win/RunLoopWin.cpp:
+        (RunLoop::TimerBase::timerFired): Kill the native timer before calling
+        the fired callback. This makes all our timers non-repeating, but
+        that's all we need currently.
+        (RunLoop::TimerBase::start): Added an assertion to help us figure out
+        when we need to implement repeating timers. Also fixed a typo.
+
+        * UIProcess/Plugins/win/PluginInfoStoreWin.cpp:
+        (WebKit::PluginInfoStore::pluginsDirectories): Added a FIXME.
+
+        (WebKit::PathWalker::PathWalker):
+        (WebKit::PathWalker::~PathWalker):
+        (WebKit::PathWalker::isValid):
+        (WebKit::PathWalker::data):
+        (WebKit::PathWalker::step):
+        Added. This class wraps the ::FindFirstFile/::FindNextFile APIs.
+
+        (WebKit::PluginInfoStore::pluginPathsInDirectory): Implemented by
+        porting logic from
+        WebCore::PluginDatabase::getPluginPathsInDirectories.
+        (WebKit::getVersionInfo): Copied from PluginDatabaseWin.cpp.
+        (WebKit::PluginInfoStore::getPluginInfo): Implemented by porting logic
+        from WebCore::PluginPackage::fetchInfo.
+        (WebKit::PluginInfoStore::shouldUsePlugin): Changed to always return
+        true for now. Added a FIXME about implementing this for real.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didReceiveSyncMessage):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::createPlugin):
+        Removed PLATFORM(MAC) guards around plugin code.
+
+        * win/WebKit2.vcproj: Let VS sort the file.
+
 2010-08-05  Antti Koivisto  <koivisto@iki.fi>
 
         Reviewed by Kenneth Rohde Christiansen.

@@ -337,7 +337,6 @@ void WebProcessProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, Cor
             }
 
             case WebProcessProxyMessage::GetPluginHostConnection: {
-#if PLATFORM(MAC)
                 String mimeType;
                 String urlString;
                 
@@ -347,7 +346,6 @@ void WebProcessProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, Cor
                 String pluginPath;
                 getPluginHostConnection(mimeType, KURL(ParsedURLString, urlString), pluginPath);
                 reply->encode(CoreIPC::In(pluginPath));
-#endif
                 break;
             }
 

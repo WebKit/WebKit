@@ -121,6 +121,9 @@ void RunLoop::TimerBase::timerFired(RunLoop* runLoop, uint64_t ID)
     ASSERT(it != runLoop->m_activeTimers.end());
     TimerBase* timer = it->second;
 
+    // FIMXE: Support repeating timers.
+
+    ::KillTimer(runLoop->m_runLoopMessageWindow, ID);
     timer->fired();
 }
 
@@ -141,9 +144,10 @@ RunLoop::TimerBase::~TimerBase()
     stop();
 }
 
-void RunLoop::TimerBase::start(double nextFireInterval, double /*repeatInterval*/)
+void RunLoop::TimerBase::start(double nextFireInterval, double repeatInterval)
 {
-    // FIMXE: Support repeating timers.
+    // FIXME: Support repeating timers.
+    ASSERT_ARG(repeatInterval, !repeatInterval);
 
     m_runLoop->m_activeTimers.set(m_ID, this);
     ::SetTimer(m_runLoop->m_runLoopMessageWindow, m_ID, nextFireInterval, 0);

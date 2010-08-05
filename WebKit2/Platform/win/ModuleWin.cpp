@@ -25,25 +25,31 @@
 
 #include "Module.h"
 
-#include "NotImplemented.h"
+#include <shlwapi.h>
 
 namespace WebKit {
 
 bool Module::load()
 {
-    notImplemented();
-    return false;
+    ASSERT(!::PathIsRelativeW(m_path.charactersWithNullTermination()));
+    m_module = ::LoadLibraryExW(m_path.charactersWithNullTermination(), 0, LOAD_WITH_ALTERED_SEARCH_PATH);
+    return m_module;
 }
 
 void Module::unload()
 {
-    notImplemented();
+    if (!m_module)
+        return;
+    ::FreeLibrary(m_module);
+    m_module = 0;
 }
 
 void* Module::platformFunctionPointer(const char* functionName) const
 {
-    notImplemented();
-    return 0;
+    if (!m_module)
+        return 0;
+
+    return ::GetProcAddress(m_module, functionName);
 }
 
-}
+} // namespace WebKit

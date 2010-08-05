@@ -28,8 +28,15 @@
 #include <fcntl.h>
 #include <io.h>
 #include <WebKit2/WKStringCF.h>
+#include <wtf/RetainPtr.h>
 
 namespace WTR {
+
+#if !defined(NDEBUG) && (!defined(DEBUG_INTERNAL) || defined(DEBUG_ALL))
+const LPWSTR testPluginDirectoryName = L"TestNetscapePlugin_Debug";
+#else
+const LPWSTR testPluginDirectoryName = L"TestNetscapePlugin";
+#endif
 
 void TestController::platformInitialize()
 {
@@ -52,9 +59,12 @@ void TestController::initializeInjectedBundlePath()
 
 void TestController::initializeTestPluginDirectory()
 {
-    CFStringRef exeContainerPath = CFURLCopyFileSystemPath(CFURLCreateCopyDeletingLastPathComponent(0, CFBundleCopyExecutableURL(CFBundleGetMainBundle())), kCFURLWindowsPathStyle);
-    CFMutableStringRef bundlePath = CFStringCreateMutableCopy(0, 0, exeContainerPath);
-    m_testPluginDirectory.adopt(WKStringCreateWithCFString(bundlePath));
+    RetainPtr<CFURLRef> bundleURL(AdoptCF, CFBundleCopyExecutableURL(CFBundleGetMainBundle()));
+    RetainPtr<CFURLRef> bundleDirectoryURL(AdoptCF, CFURLCreateCopyDeletingLastPathComponent(0, bundleURL.get()));
+    RetainPtr<CFStringRef> testPluginDirectoryNameString(AdoptCF, CFStringCreateWithCharacters(0, reinterpret_cast<const UniChar*>(testPluginDirectoryName), wcslen(testPluginDirectoryName)));
+    RetainPtr<CFURLRef> testPluginDirectoryURL(AdoptCF, CFURLCreateCopyAppendingPathComponent(0, bundleDirectoryURL.get(), testPluginDirectoryNameString.get(), true));
+    RetainPtr<CFStringRef> testPluginDirectoryPath(AdoptCF, CFURLCopyFileSystemPath(testPluginDirectoryURL.get(), kCFURLWindowsPathStyle));
+    m_testPluginDirectory.adopt(WKStringCreateWithCFString(testPluginDirectoryPath.get()));
 }
 
 } // namespace WTR

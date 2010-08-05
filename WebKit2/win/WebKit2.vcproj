@@ -1341,15 +1341,15 @@
 			Name="Platform"
 			>
 			<File
-				RelativePath="..\Platform\PlatformProcessIdentifier.h"
-				>
-			</File>
-			<File
 				RelativePath="..\Platform\Module.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\Platform\Module.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Platform\PlatformProcessIdentifier.h"
 				>
 			</File>
 			<File

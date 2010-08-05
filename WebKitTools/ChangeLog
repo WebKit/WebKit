@@ -1,3 +1,18 @@
+2010-08-04  Adam Roben  <aroben@apple.com>
+
+        Fix the path to TestNetscapePlugin's directory on Windows
+
+        Fixes <http://webkit.org/b/43513> WebKitTestRunner on Windows fails to
+        load TestNetscapePlugin
+
+        Reviewed by Jon Honeycutt.
+
+        * WebKitTestRunner/win/TestControllerWin.cpp:
+        (WTR::TestController::initializeTestPluginDirectory):
+        TestNetscapePlugin is in a TestNetscapePlugin[_Debug] directory that's
+        next to WebKitTestRunner.exe. Previously we were passing the directory
+        that contains WebKitTestRunner.exe. Also fixed some leaks.
+
 2010-08-05  Kenichi Ishibashi  <bashi@google.com>
 
         Reviewed by Shinichiro Hamaji.
