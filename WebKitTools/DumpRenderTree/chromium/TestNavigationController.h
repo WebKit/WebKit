@@ -31,13 +31,14 @@
 #ifndef TestNavigationController_h
 #define TestNavigationController_h
 
-#include "base/linked_ptr.h"
 #include "public/WebDataSource.h"
 #include "public/WebHistoryItem.h"
 #include "public/WebString.h"
 #include "public/WebURL.h"
 #include "webkit/support/webkit_support.h"
 #include <string>
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
 // Associated with browser-initated navigations to hold tracking data.
@@ -56,16 +57,17 @@ public:
 };
 
 // Stores one back/forward navigation state for the test shell.
-class TestNavigationEntry: public Noncopyable {
+class TestNavigationEntry: public RefCounted<TestNavigationEntry> {
 public:
-    TestNavigationEntry();
-    TestNavigationEntry(int pageID,
-                        const WebKit::WebURL&,
-                        const WebKit::WebString& title,
-                        const WebKit::WebString& targetFrame);
+    static PassRefPtr<TestNavigationEntry> create();
+    static PassRefPtr<TestNavigationEntry> create(
+        int pageID,
+        const WebKit::WebURL&,
+        const WebKit::WebString& title,
+        const WebKit::WebString& targetFrame);
 
     // Virtual to allow test_shell to extend the class.
-    ~TestNavigationEntry();
+    virtual ~TestNavigationEntry();
 
     // Set / Get the URI
     void setURL(const WebKit::WebURL& url) { m_url = url; }
@@ -86,6 +88,12 @@ public:
     const WebKit::WebString& targetFrame() const { return m_targetFrame; }
 
 private:
+    TestNavigationEntry();
+    TestNavigationEntry(int pageID,
+                        const WebKit::WebURL&,
+                        const WebKit::WebString& title,
+                        const WebKit::WebString& targetFrame);
+
     // Describes the current page that the tab represents. This is not relevant
     // for all tab contents types.
     int32_t m_pageID;
@@ -120,8 +128,7 @@ public:
     // Causes the controller to go to the specified index.
     void goToIndex(int);
 
-    // Causes the controller to load the specified entry.  The controller
-    // assumes ownership of the entry.
+    // Causes the controller to load the specified entry.
     // NOTE: Do not pass an entry that the controller already owns!
     void loadEntry(TestNavigationEntry*);
 
@@ -156,9 +163,9 @@ public:
     // Returns the index of the last committed entry.
     int lastCommittedEntryIndex() const { return m_lastCommittedEntryIndex; }
 
-    // Used to inform us of a navigation being committed for a tab. We will take
-    // ownership of the entry. Any entry located forward to the current entry will
-    // be deleted. The new entry becomes the current entry.
+    // Used to inform us of a navigation being committed for a tab. Any entry
+    // located forward to the current entry will be deleted. The new entry
+    // becomes the current entry.
     void didNavigateToEntry(TestNavigationEntry*);
 
     // Used to inform us to discard its pending entry.
@@ -180,14 +187,14 @@ private:
     void updateMaxPageID();
 
     // List of NavigationEntry for this tab
-    typedef Vector<linked_ptr<TestNavigationEntry> > NavigationEntryList;
+    typedef Vector<RefPtr<TestNavigationEntry> > NavigationEntryList;
     typedef NavigationEntryList::iterator NavigationEntryListIterator;
     NavigationEntryList m_entries;
 
     // An entry we haven't gotten a response for yet.  This will be discarded
     // when we navigate again.  It's used only so we know what the currently
     // displayed tab is.
-    TestNavigationEntry* m_pendingEntry;
+    RefPtr<TestNavigationEntry> m_pendingEntry;
 
     // currently visible entry
     int m_lastCommittedEntryIndex;

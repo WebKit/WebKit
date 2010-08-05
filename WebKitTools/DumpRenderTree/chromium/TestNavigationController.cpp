@@ -40,6 +40,17 @@ using namespace std;
 // ----------------------------------------------------------------------------
 // TestNavigationEntry
 
+PassRefPtr<TestNavigationEntry> TestNavigationEntry::create()
+{
+    return adoptRef(new TestNavigationEntry);
+}
+
+PassRefPtr<TestNavigationEntry> TestNavigationEntry::create(
+    int pageID, const WebURL& url, const WebString& title, const WebString& targetFrame)
+{
+    return adoptRef(new TestNavigationEntry(pageID, url, title, targetFrame));
+}
+
 TestNavigationEntry::TestNavigationEntry()
     : m_pageID(-1) {}
 
@@ -136,7 +147,7 @@ TestNavigationEntry* TestNavigationController::lastCommittedEntry() const
 
 TestNavigationEntry* TestNavigationController::activeEntry() const
 {
-    TestNavigationEntry* entry = m_pendingEntry;
+    TestNavigationEntry* entry = m_pendingEntry.get();
     if (!entry)
         entry = lastCommittedEntry();
     return entry;
@@ -182,14 +193,14 @@ void TestNavigationController::didNavigateToEntry(TestNavigationEntry* entry)
         m_entries[existingEntryIndex].get() : 0;
     if (!existingEntry) {
         // No existing entry, then simply ignore this navigation!
-    } else if (existingEntry == m_pendingEntry) {
+    } else if (existingEntry == m_pendingEntry.get()) {
         // The given entry might provide a new URL... e.g., navigating back to a
         // page in session history could have resulted in a new client redirect.
         existingEntry->setURL(entry->URL());
         existingEntry->setContentState(entry->contentState());
         m_lastCommittedEntryIndex = m_pendingEntryIndex;
         m_pendingEntryIndex = -1;
-        m_pendingEntry = 0;
+        m_pendingEntry.clear();
     } else if (m_pendingEntry && m_pendingEntry->pageID() == -1
                && GURL(m_pendingEntry->URL()) == GURL(existingEntry->URL().spec())) {
         // Not a new navigation
@@ -206,15 +217,12 @@ void TestNavigationController::didNavigateToEntry(TestNavigationEntry* entry)
         m_lastCommittedEntryIndex = existingEntryIndex;
     }
 
-    delete entry;
     updateMaxPageID();
 }
 
 void TestNavigationController::discardPendingEntry()
 {
-    if (m_pendingEntryIndex == -1)
-        delete m_pendingEntry;
-    m_pendingEntry = 0;
+    m_pendingEntry.clear();
     m_pendingEntryIndex = -1;
 }
 
@@ -231,7 +239,7 @@ void TestNavigationController::insertEntry(TestNavigationEntry* entry)
         }
     }
 
-    m_entries.append(linked_ptr<TestNavigationEntry>(entry));
+    m_entries.append(RefPtr<TestNavigationEntry>(entry));
     m_lastCommittedEntryIndex = static_cast<int>(m_entries.size()) - 1;
     updateMaxPageID();
 }
@@ -250,10 +258,10 @@ void TestNavigationController::navigateToPendingEntry(bool reload)
     // For session history navigations only the pending_entry_index_ is set.
     if (!m_pendingEntry) {
         ASSERT(m_pendingEntryIndex != -1);
-        m_pendingEntry = m_entries[m_pendingEntryIndex].get();
+        m_pendingEntry = m_entries[m_pendingEntryIndex];
     }
 
-    if (m_host->navigate(*m_pendingEntry, reload)) {
+    if (m_host->navigate(*m_pendingEntry.get(), reload)) {
         // Note: this is redundant if navigation completed synchronously because
         // DidNavigateToEntry call this as well.
         updateMaxPageID();

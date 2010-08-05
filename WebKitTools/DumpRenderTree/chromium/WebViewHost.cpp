@@ -1047,7 +1047,7 @@ void WebViewHost::loadURLForFrame(const WebURL& url, const WebString& frameName)
     if (!url.isValid())
         return;
     TestShell::resizeWindowForTest(this, url);
-    navigationController()->loadEntry(new TestNavigationEntry(-1, url, WebString(), frameName));
+    navigationController()->loadEntry(TestNavigationEntry::create(-1, url, WebString(), frameName).get());
 }
 
 bool WebViewHost::navigate(const TestNavigationEntry& entry, bool reload)
@@ -1146,7 +1146,7 @@ void WebViewHost::updateURL(WebFrame* frame)
     WebDataSource* ds = frame->dataSource();
     ASSERT(ds);
     const WebURLRequest& request = ds->request();
-    OwnPtr<TestNavigationEntry> entry(new TestNavigationEntry);
+    RefPtr<TestNavigationEntry> entry(TestNavigationEntry::create());
 
     // The referrer will be empty on https->http transitions. It
     // would be nice if we could get the real referrer from somewhere.
@@ -1160,7 +1160,7 @@ void WebViewHost::updateURL(WebFrame* frame)
     if (!historyItem.isNull())
         entry->setContentState(historyItem);
 
-    navigationController()->didNavigateToEntry(entry.leakPtr());
+    navigationController()->didNavigateToEntry(entry.get());
     updateAddressBar(frame->view());
     m_lastPageIdUpdated = max(m_lastPageIdUpdated, m_pageId);
 }
@@ -1173,7 +1173,7 @@ void WebViewHost::updateSessionHistory(WebFrame* frame)
     if (m_pageId == -1)
         return;
 
-    TestNavigationEntry* entry = static_cast<TestNavigationEntry*>(navigationController()->entryWithPageID(m_pageId));
+    TestNavigationEntry* entry = navigationController()->entryWithPageID(m_pageId);
     if (!entry)
         return;
 

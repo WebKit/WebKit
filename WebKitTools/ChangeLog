@@ -2,6 +2,33 @@
 
         Reviewed by Dimitri Glazkov.
 
+        [DRT/Chromium] Remove base/linked_ptr.h dependency
+        https://bugs.webkit.org/show_bug.cgi?id=43472
+
+        Replace linked_ptr<TestNavigationEntry> with RefPtr<TestNavigationEntry>.
+        We need to use RefPtr<> because m_pendingEntry points an object in
+        m_entries or not in m_entries.
+
+        * DumpRenderTree/chromium/TestNavigationController.cpp:
+        (TestNavigationEntry::create): Added.
+        (TestNavigationController::activeEntry):
+        (TestNavigationController::didNavigateToEntry):
+        (TestNavigationController::discardPendingEntry):
+        (TestNavigationController::insertEntry):
+        (TestNavigationController::navigateToPendingEntry):
+        * DumpRenderTree/chromium/TestNavigationController.h:
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::loadURLForFrame):
+         Use TestNavigationEntry::create().
+        (WebViewHost::updateURL):
+         Use RefPtr<>.
+        (WebViewHost::updateSessionHistory):
+         Remove unnecessary static_cast<>.
+
+2010-08-04  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
         Fix a problem that "archived test results" step doesn't work on Chromium buildbots
         https://bugs.webkit.org/show_bug.cgi?id=43333
 
