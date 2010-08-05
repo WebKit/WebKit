@@ -1,5 +1,14 @@
 2010-08-05  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
+        Rubber-stamped by Xan Lopez.
+
+        Remove GHashTable left-overs. GHashTable is ref-counted, and is
+        correctly supported by GRefPtr.
+
+        * wtf/gobject/GOwnPtr.h:
+
+2010-08-05  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
         Unreviewed.
 
         Typo fix that makes distcheck happy.
