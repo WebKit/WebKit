@@ -24,6 +24,7 @@
 #include "config.h"
 #include "WebKitDOMBinding.h"
 
+#include "Element.h"
 #include "Event.h"
 #include "EventException.h"
 #include "HTMLNames.h"
@@ -82,7 +83,7 @@ static gpointer createWrapper(Node* node)
         if (node->isHTMLElement())
             wrappedNode = createHTMLElementWrapper(static_cast<HTMLElement*>(node));
         else
-            wrappedNode = wrapNode(node);
+            wrappedNode = wrapElement(static_cast<Element*>(node));
         break;
     default:
         wrappedNode = wrapNode(node);

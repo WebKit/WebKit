@@ -1,3 +1,13 @@
+2010-08-05  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        When trying to wrap a Node we know is an Element fallback to a
+        simple Element wrapper in the worst case, not to Node.
+
+        * bindings/gobject/WebKitDOMBinding.cpp:
+        (WebKit::createWrapper):
+
 2010-08-05  François Sausset  <sausset@gmail.com>
 
         Reviewed by Kenneth Rohde Christiansen.
