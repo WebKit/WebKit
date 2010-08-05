@@ -5411,11 +5411,6 @@ inspector/debugger-pause-in-eval-script.html
 inspector/debugger-proto-property.html
 inspector/debugger-eval-while-paused.html
 
-# [Qt] New tests are failing at Qt/GTK(r64458):
-# Bug against caseq: https://bugs.webkit.org/show_bug.cgi?id=43344
-inspector/extensions.html
-inspector/extensions-api.html
-
 # [Qt] fast/text/bidi-explicit-embedding-past-end.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=41241
 fast/text/bidi-explicit-embedding-past-end.html

@@ -195,9 +195,7 @@ void InspectorFrontendHost::moveWindowBy(float x, float y) const
 void InspectorFrontendHost::setExtensionAPI(const String& script)
 {
     InspectorController* inspector = m_frontendPage->inspectorController();
-
-    inspector->removeAllScriptsToEvaluateOnLoad();
-    inspector->addScriptToEvaluateOnLoad(script);
+    inspector->setInspectorExtensionAPI(script);
 }
 
 String InspectorFrontendHost::localizedStringsURL()

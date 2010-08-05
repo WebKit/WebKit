@@ -1,3 +1,18 @@
+2010-08-05  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Separated WebInspector extension API injection logic from other scripts that inspector injects.
+        Enabled injection of the API scripts even if inspector is disabled for inspector front-end page.
+        https://bugs.webkit.org/show_bug.cgi?id=43344
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::inspectedWindowScriptObjectCleared):
+        (WebCore::InspectorController::setInspectorExtensionAPI):
+        * inspector/InspectorController.h:
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::setExtensionAPI):
+
 2010-08-05  Charles Wei  <charles.wei@torchmobile.com.cn>
 
         Reviewed by George Staikos.

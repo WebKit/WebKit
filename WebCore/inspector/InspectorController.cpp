@@ -450,18 +450,19 @@ void InspectorController::inspectedWindowScriptObjectCleared(Frame* frame)
     if (m_inspectorFrontendClient && frame == m_inspectedPage->mainFrame())
         m_inspectorFrontendClient->windowObjectCleared();
 
-    if (!enabled())
-        return;
-
-    if (m_frontend && frame != m_inspectedPage->mainFrame())
-        m_injectedScriptHost->discardInjectedScripts();
-    if (m_scriptsToEvaluateOnLoad.size()) {
-        ScriptState* scriptState = mainWorldScriptState(frame);
-        for (Vector<String>::iterator it = m_scriptsToEvaluateOnLoad.begin();
-             it != m_scriptsToEvaluateOnLoad.end(); ++it) {
-            m_injectedScriptHost->injectScript(*it, scriptState);
+    if (enabled()) {
+        if (m_frontend && frame == m_inspectedPage->mainFrame())
+            m_injectedScriptHost->discardInjectedScripts();
+        if (m_scriptsToEvaluateOnLoad.size()) {
+            ScriptState* scriptState = mainWorldScriptState(frame);
+            for (Vector<String>::iterator it = m_scriptsToEvaluateOnLoad.begin();
+                 it != m_scriptsToEvaluateOnLoad.end(); ++it) {
+                m_injectedScriptHost->injectScript(*it, scriptState);
+            }
         }
     }
+    if (!m_inspectorExtensionAPI.isEmpty())
+        m_injectedScriptHost->injectScript(m_inspectorExtensionAPI, mainWorldScriptState(frame));
 }
 
 void InspectorController::setSearchingForNode(bool enabled)
@@ -2159,6 +2160,11 @@ void InspectorController::addScriptToEvaluateOnLoad(const String& source)
 void InspectorController::removeAllScriptsToEvaluateOnLoad()
 {
     m_scriptsToEvaluateOnLoad.clear();
+}
+
+void InspectorController::setInspectorExtensionAPI(const String& source)
+{
+    m_inspectorExtensionAPI = source;
 }
 
 void InspectorController::getResourceContent(long callId, unsigned long identifier)

@@ -1,3 +1,13 @@
+2010-08-05  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Re-enabling inspector/extension* tests following a fix in InspectorController.
+        https://bugs.webkit.org/show_bug.cgi?id=43344
+        
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+
 2010-08-05  Charles Wei  <charles.wei@torchmobile.com.cn>
 
         Reviewed by George Staikos.
