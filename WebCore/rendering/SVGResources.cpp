@@ -141,8 +141,10 @@ static inline String targetReferenceFromResource(SVGElement* element)
         target = static_cast<SVGPatternElement*>(element)->href();
     else if (element->hasTagName(SVGNames::linearGradientTag) || element->hasTagName(SVGNames::radialGradientTag))
         target = static_cast<SVGGradientElement*>(element)->href();
+#if ENABLE(FILTERS)
     else if (element->hasTagName(SVGNames::filterTag))
         target = static_cast<SVGFilterElement*>(element)->href();
+#endif
     else
         ASSERT_NOT_REACHED();
 
@@ -372,16 +374,18 @@ void SVGResources::resourceDestroyed(RenderSVGResourceContainer* resource)
             m_fillStrokeData->stroke = 0;
         }
         break;
-#if ENABLE(FILTERS)
     case FilterResourceType:
+#if ENABLE(FILTERS)
         if (!m_clipperFilterMaskerData)
             break;
         if (m_clipperFilterMaskerData->filter == resource) {
             m_clipperFilterMaskerData->filter->invalidateClients();
             m_clipperFilterMaskerData->filter = 0;
         }
-        break;
+#else
+        ASSERT_NOT_REACHED();
 #endif
+        break;
     case ClipperResourceType:
         if (!m_clipperFilterMaskerData)
             break; 
