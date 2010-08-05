@@ -1,3 +1,33 @@
+2010-08-05  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: forbid InspectorController to create script objects directly in the frontend
+        https://bugs.webkit.org/show_bug.cgi?id=43541
+
+        Cookie and AppCache data are now serialized into InspectorValues instead of
+        ScriptObjects. These were last usages of InspectorFrontend::newScript{Object,Array}
+        so we can remove them now and use only InspectorValues to pass data to the inspector
+        frontend.
+
+        * inspector/Inspector.idl:
+        * inspector/InspectorApplicationCacheAgent.cpp:
+        (WebCore::InspectorApplicationCacheAgent::InspectorApplicationCacheAgent):
+        (WebCore::InspectorApplicationCacheAgent::getApplicationCaches):
+        (WebCore::InspectorApplicationCacheAgent::buildObjectForApplicationCache):
+        (WebCore::InspectorApplicationCacheAgent::buildArrayForApplicationCacheResources):
+        (WebCore::InspectorApplicationCacheAgent::buildObjectForApplicationCacheResource):
+        * inspector/InspectorApplicationCacheAgent.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::connectFrontend):
+        (WebCore::InspectorController::getCookies):
+        (WebCore::InspectorController::buildArrayForCookies):
+        (WebCore::InspectorController::buildObjectForCookie):
+        * inspector/InspectorController.h:
+        * inspector/InspectorFrontend.cpp:
+        (WebCore::InspectorFrontend::setRecordingProfile):
+        * inspector/InspectorFrontend.h:
+
 2010-08-05  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Xan Lopez.

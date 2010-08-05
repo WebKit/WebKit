@@ -29,18 +29,19 @@
 
 #include "ApplicationCacheHost.h"
 #include <wtf/Noncopyable.h>
+#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
+class InspectorArray;
 class InspectorController;
-class InspectorFrontend;
+class InspectorObject;
+class RemoteInspectorFrontend;
 class ResourceResponse;
-class ScriptArray;
-class ScriptObject;
 
 class InspectorApplicationCacheAgent : public Noncopyable {
 public:
-    InspectorApplicationCacheAgent(InspectorController* inspectorController, InspectorFrontend* frontend);
+    InspectorApplicationCacheAgent(InspectorController* inspectorController, RemoteInspectorFrontend* frontend);
     ~InspectorApplicationCacheAgent() { }
 
     // Backend to Frontend
@@ -52,12 +53,12 @@ public:
     void getApplicationCaches(long callId);
 
 private:
-    ScriptObject buildObjectForApplicationCache(const ApplicationCacheHost::ResourceInfoList&, const ApplicationCacheHost::CacheInfo&);
-    ScriptArray buildArrayForApplicationCacheResources(const ApplicationCacheHost::ResourceInfoList&);
-    ScriptObject buildObjectForApplicationCacheResource(const ApplicationCacheHost::ResourceInfo&);
+    PassRefPtr<InspectorObject> buildObjectForApplicationCache(const ApplicationCacheHost::ResourceInfoList&, const ApplicationCacheHost::CacheInfo&);
+    PassRefPtr<InspectorArray> buildArrayForApplicationCacheResources(const ApplicationCacheHost::ResourceInfoList&);
+    PassRefPtr<InspectorObject> buildObjectForApplicationCacheResource(const ApplicationCacheHost::ResourceInfo&);
 
     InspectorController* m_inspectorController;
-    InspectorFrontend* m_frontend;
+    RemoteInspectorFrontend* m_frontend;
 };
 
 } // namespace WebCore

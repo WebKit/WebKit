@@ -33,7 +33,6 @@
 
 #include "Console.h"
 #include "KURL.h"
-#include "ScriptObject.h"
 #include "ScriptState.h"
 
 #include <wtf/Vector.h>
@@ -44,7 +43,7 @@ class InspectorObject;
 class RemoteInspectorFrontend;
 class ScriptCallFrame;
 class ScriptCallStack;
-class ScriptString;
+class ScriptValue;
 
 class ConsoleMessage : public Noncopyable {
 public:

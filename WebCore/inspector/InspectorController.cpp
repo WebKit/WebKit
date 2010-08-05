@@ -533,7 +533,7 @@ void InspectorController::connectFrontend(const ScriptObject& webInspector)
     showPanel(m_showAfterVisible);
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
-    m_applicationCacheAgent = new InspectorApplicationCacheAgent(this, m_frontend.get());
+    m_applicationCacheAgent = new InspectorApplicationCacheAgent(this, m_remoteFrontend.get());
 #endif
 
     if (!connectedFrontendCount)
@@ -1300,7 +1300,7 @@ void InspectorController::didOpenDatabase(PassRefPtr<Database> database, const S
 
 void InspectorController::getCookies(long callId)
 {
-    if (!m_frontend)
+    if (!m_remoteFrontend)
         return;
 
     // If we can get raw cookies.
@@ -1336,36 +1336,41 @@ void InspectorController::getCookies(long callId)
         }
     }
 
-    if (!rawCookiesImplemented)
-        m_frontend->didGetCookies(callId, m_frontend->newScriptArray(), stringCookiesList);
-    else
-        m_frontend->didGetCookies(callId, buildArrayForCookies(rawCookiesList), String());
+    RefPtr<InspectorArray> cookies;
+    String cookiesString;
+    if (rawCookiesImplemented)
+        cookies = buildArrayForCookies(rawCookiesList);
+    else {
+        cookies = InspectorArray::create();
+        cookiesString = stringCookiesList;
+    }
+    m_remoteFrontend->didGetCookies(callId, cookies, cookiesString);
 }
 
-ScriptArray InspectorController::buildArrayForCookies(ListHashSet<Cookie>& cookiesList)
+PassRefPtr<InspectorArray> InspectorController::buildArrayForCookies(ListHashSet<Cookie>& cookiesList)
 {
-    ScriptArray cookies = m_frontend->newScriptArray();
+    RefPtr<InspectorArray> cookies = InspectorArray::create();
 
     ListHashSet<Cookie>::iterator end = cookiesList.end();
     ListHashSet<Cookie>::iterator it = cookiesList.begin();
     for (int i = 0; it != end; ++it, i++)
-        cookies.set(i, buildObjectForCookie(*it));
+        cookies->push(buildObjectForCookie(*it));
 
     return cookies;
 }
 
-ScriptObject InspectorController::buildObjectForCookie(const Cookie& cookie)
+PassRefPtr<InspectorObject> InspectorController::buildObjectForCookie(const Cookie& cookie)
 {
-    ScriptObject value = m_frontend->newScriptObject();
-    value.set("name", cookie.name);
-    value.set("value", cookie.value);
-    value.set("domain", cookie.domain);
-    value.set("path", cookie.path);
-    value.set("expires", cookie.expires);
-    value.set("size", (cookie.name.length() + cookie.value.length()));
-    value.set("httpOnly", cookie.httpOnly);
-    value.set("secure", cookie.secure);
-    value.set("session", cookie.session);
+    RefPtr<InspectorObject> value = InspectorObject::create();
+    value->setString("name", cookie.name);
+    value->setString("value", cookie.value);
+    value->setString("domain", cookie.domain);
+    value->setString("path", cookie.path);
+    value->setNumber("expires", cookie.expires);
+    value->setNumber("size", (cookie.name.length() + cookie.value.length()));
+    value->setBool("httpOnly", cookie.httpOnly);
+    value->setBool("secure", cookie.secure);
+    value->setBool("session", cookie.session);
     return value;
 }
 

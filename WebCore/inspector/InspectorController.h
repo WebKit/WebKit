@@ -33,9 +33,7 @@
 #include "Cookie.h"
 #include "InspectorDOMAgent.h"
 #include "PlatformString.h"
-#include "ScriptArray.h"
 #include "ScriptBreakpoint.h"
-#include "ScriptObject.h"
 #include "ScriptProfile.h"
 #include "ScriptState.h"
 #include "StringHash.h"
@@ -82,6 +80,7 @@ class ResourceRequest;
 class ResourceResponse;
 class ResourceError;
 class ScriptCallStack;
+class ScriptObject;
 class ScriptString;
 class SharedBuffer;
 class Storage;
@@ -328,8 +327,8 @@ private:
     InspectorDOMStorageResource* getDOMStorageResourceForId(long storageId);
 #endif
 
-    ScriptObject buildObjectForCookie(const Cookie&);
-    ScriptArray buildArrayForCookies(ListHashSet<Cookie>&);
+    PassRefPtr<InspectorObject> buildObjectForCookie(const Cookie&);
+    PassRefPtr<InspectorArray> buildArrayForCookies(ListHashSet<Cookie>&);
 
     void focusNode();
 

@@ -32,19 +32,11 @@
 
 #if ENABLE(INSPECTOR)
 
-#include "Frame.h"
-#include "InjectedScript.h"
-#include "InjectedScriptHost.h"
 #include "InspectorClient.h"
 #include "InspectorController.h"
 #include "InspectorWorkerResource.h"
-#include "Node.h"
 #include "ScriptFunctionCall.h"
-#include "ScriptObject.h"
 #include "ScriptState.h"
-#include "ScriptString.h"
-#include "ScriptValue.h"
-#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
@@ -69,16 +61,6 @@ void InspectorFrontend::inspectedPageDestroyed()
 {
     ScriptFunctionCall function(m_webInspector, "inspectedPageDestroyed");
     function.call();
-}
-
-ScriptArray InspectorFrontend::newScriptArray()
-{
-    return ScriptArray::createNew(scriptState());
-}
-
-ScriptObject InspectorFrontend::newScriptObject()
-{
-    return ScriptObject::createNew(scriptState());
 }
 
 void InspectorFrontend::didCommitLoad()
@@ -302,15 +284,6 @@ void InspectorFrontend::setRecordingProfile(bool isProfiling)
     function.appendArgument(isProfiling);
     function.call();
 }
-
-void InspectorFrontend::didGetProfile(long callId, const ScriptValue& profile)
-{
-    ScriptFunctionCall function(m_webInspector, "dispatch"); 
-    function.appendArgument("didGetProfile");
-    function.appendArgument(callId);
-    function.appendArgument(profile);
-    function.call();
-}
 #endif
 
 void InspectorFrontend::didPushNodeByPathToFrontend(long callId, long nodeId)
@@ -341,43 +314,6 @@ void InspectorFrontend::didDestroyWorker(const InspectorWorkerResource& worker)
     function.call();
 }
 #endif // ENABLE(WORKERS)
-
-void InspectorFrontend::didGetCookies(long callId, const ScriptArray& cookies, const String& cookiesString)
-{
-    ScriptFunctionCall function(m_webInspector, "dispatch"); 
-    function.appendArgument("didGetCookies");
-    function.appendArgument(callId);
-    function.appendArgument(cookies);
-    function.appendArgument(cookiesString);
-    function.call();
-}
-
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-void InspectorFrontend::didGetApplicationCaches(long callId, const ScriptValue& applicationCaches)
-{
-    ScriptFunctionCall function(m_webInspector, "dispatch");
-    function.appendArgument("didGetApplicationCaches");
-    function.appendArgument(callId);
-    function.appendArgument(applicationCaches);
-    function.call();
-}
-
-void InspectorFrontend::updateApplicationCacheStatus(int status)
-{
-    ScriptFunctionCall function(m_webInspector, "dispatch"); 
-    function.appendArgument("updateApplicationCacheStatus");
-    function.appendArgument(status);
-    function.call();
-}
-
-void InspectorFrontend::updateNetworkState(bool isNowOnline)
-{
-    ScriptFunctionCall function(m_webInspector, "dispatch"); 
-    function.appendArgument("updateNetworkState");
-    function.appendArgument(isNowOnline);
-    function.call();
-}    
-#endif
 
 void InspectorFrontend::contextMenuItemSelected(int itemId)
 {

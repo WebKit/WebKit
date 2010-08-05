@@ -30,21 +30,13 @@
 #ifndef InspectorFrontend_h
 #define InspectorFrontend_h
 
-#include "InspectorValues.h"
-#include "ScriptArray.h"
 #include "ScriptObject.h"
 #include "ScriptState.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
-    class ConsoleMessage;
-    class Frame;
     class InspectorClient;
-    class InspectorResource;
     class InspectorWorkerResource;
-    class Node;
-    class ScriptString;
-    class Storage;
 
     class InspectorFrontend : public Noncopyable {
     public:
@@ -56,9 +48,6 @@ namespace WebCore {
 
         void close();
         void inspectedPageDestroyed();
-
-        ScriptArray newScriptArray();
-        ScriptObject newScriptObject();
 
         void didCommitLoad();
 
@@ -99,13 +88,6 @@ namespace WebCore {
         void profilerWasEnabled();
         void profilerWasDisabled();
         void setRecordingProfile(bool isProfiling);
-        void didGetProfile(long callId, const ScriptValue& profile);
-#endif
-
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-        void updateApplicationCacheStatus(int status);
-        void updateNetworkState(bool isNowOnline);
-        void didGetApplicationCaches(long callId, const ScriptValue& applicationCaches);
 #endif
 
         void didPushNodeByPathToFrontend(long callId, long nodeId);
@@ -117,8 +99,6 @@ namespace WebCore {
         void didCreateWorker(const InspectorWorkerResource&);
         void didDestroyWorker(const InspectorWorkerResource&);
 #endif // ENABLE(WORKER)
-
-        void didGetCookies(long callId, const ScriptArray& cookies, const String& cookiesString);
 
         void contextMenuItemSelected(int itemId);
         void contextMenuCleared();
