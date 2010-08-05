@@ -2,6 +2,21 @@
 
         Reviewed by Simon Hausmann.
 
+        Allow custom memory allocation control for ClipperData struct
+        https://bugs.webkit.org/show_bug.cgi?id=43337
+
+        Inherits the following class from FastAllocBase because it is
+        instantiated by 'new':                                     
+
+        class name         - instantiated at: WebCore/'location'
+        RenderLayerBacking - rendering/RenderSVGResourceClipper.cpp:165
+
+        * rendering/RenderSVGResourceClipper.h:
+
+2010-08-05  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
         Allow custom memory allocation control for DoctypeData class
         https://bugs.webkit.org/show_bug.cgi?id=43343
 

@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-struct ClipperData {
+struct ClipperData : FastAllocBase {
     OwnPtr<ImageBuffer> clipMaskImage;
 };
 
