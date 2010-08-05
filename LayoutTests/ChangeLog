@@ -1,3 +1,18 @@
+2010-08-05  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        js-test-pre.js's escapeHTML should escape null characters so we can see them
+        https://bugs.webkit.org/show_bug.cgi?id=43579
+
+        * fast/canvas/canvas-getContext-invalid-expected.txt:
+        * fast/js/null-char-in-string-expected.txt:
+        * fast/js/resources/js-test-pre.js:
+        (escapeHTML):
+        * fast/js/switch-behaviour-expected.txt:
+        * storage/domstorage/complex-values-expected.txt:
+        * websocket/tests/bad-sub-protocol-control-chars-expected.txt:
+
 2010-08-05  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed build fix for chromium.

@@ -23,7 +23,7 @@ function debug(msg)
 
 function escapeHTML(text)
 {
-    return text.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+    return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/\0/g, "\\0");
 }
 
 function testPassed(msg)
