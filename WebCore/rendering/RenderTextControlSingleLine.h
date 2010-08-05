@@ -102,7 +102,7 @@ private:
     PassRefPtr<RenderStyle> createInnerSpinButtonStyle() const;
     PassRefPtr<RenderStyle> createOuterSpinButtonStyle() const;
 #if ENABLE(INPUT_SPEECH)
-    PassRefPtr<RenderStyle> createSpeechButtonStyle(const RenderStyle* startStyle) const;
+    PassRefPtr<RenderStyle> createSpeechButtonStyle() const;
 #endif
 
     void updateCancelButtonVisibility() const;

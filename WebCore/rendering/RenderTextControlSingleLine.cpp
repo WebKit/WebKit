@@ -74,6 +74,10 @@ RenderTextControlSingleLine::~RenderTextControlSingleLine()
         m_innerSpinButton->detach();
     if (m_outerSpinButton)
         m_outerSpinButton->detach();
+#if ENABLE(INPUT_SPEECH)
+    if (m_speechButton)
+        m_speechButton->detach();
+#endif
 }
 
 RenderStyle* RenderTextControlSingleLine::textBaseStyle() const
@@ -266,6 +270,22 @@ void RenderTextControlSingleLine::layout()
         spinBox->setHeight(height() - borderTop() - borderBottom());
     }
 
+#if ENABLE(INPUT_SPEECH)
+    if (RenderBox* button = m_speechButton ? m_speechButton->renderBox() : 0) {
+        if (m_innerBlock) {
+            // This is mostly the case where this is a search field. The speech button is a sibling
+            // of the inner block and laid out at the far right.
+            int x = width() - borderAndPaddingWidth() - button->width() - button->borderAndPaddingWidth();
+            int y = (height() - button->height()) / 2;
+            button->setLocation(x, y);
+        } else {
+            // For non-search fields which are simpler and we let the defaut layout handle things
+            // except for small tweaking below.
+            button->setLocation(button->x() + paddingRight(), (height() - button->height()) / 2);
+        }
+    }
+#endif
+
     // Center the spin button vertically, and move it to the right by
     // padding + border of the text fields.
     if (RenderBox* spinBox = m_outerSpinButton ? m_outerSpinButton->renderBox() : 0) {
@@ -301,13 +321,13 @@ bool RenderTextControlSingleLine::nodeAtPoint(const HitTestRequest& request, Hit
         return true;
     if (m_outerSpinButton && result.innerNode() == m_outerSpinButton)
         return true;
+#if ENABLE(INPUT_SPEECH)
+    if (m_speechButton && result.innerNode() == m_speechButton)
+        return true;
+#endif
     // If we're not a search field, or we already found the speech, results or cancel buttons, we're done.
     if (!m_innerBlock || result.innerNode() == m_resultsButton || result.innerNode() == m_cancelButton)
         return true;
-#if ENABLE(INPUT_SPEECH)
-    if (m_innerBlock && m_speechButton && result.innerNode() == m_speechButton)
-        return true;
-#endif
 
     Node* innerNode = 0;
     RenderBox* innerBlockRenderer = m_innerBlock->renderBox();
@@ -319,19 +339,6 @@ bool RenderTextControlSingleLine::nodeAtPoint(const HitTestRequest& request, Hit
     int textLeft = tx + x() + innerBlockRenderer->x() + innerTextRenderer->x();
     if (m_resultsButton && m_resultsButton->renderer() && xPos < textLeft)
         innerNode = m_resultsButton.get();
-
-#if ENABLE(INPUT_SPEECH)
-    if (!innerNode && m_speechButton && m_speechButton->renderer()) {
-        int buttonLeft = textLeft + innerTextRenderer->width();
-        if (m_cancelButton) {
-            RenderBox* cancelRenderer = m_cancelButton->renderBox();
-            cancelRenderer->calcWidth();
-            buttonLeft += cancelRenderer->width() + cancelRenderer->marginLeft() + cancelRenderer->marginRight();
-        }
-        if (xPos > buttonLeft)
-            innerNode = m_speechButton.get();
-    }
-#endif
 
     if (!innerNode) {
         int textRight = textLeft + innerTextRenderer->width();
@@ -414,7 +421,7 @@ void RenderTextControlSingleLine::styleDidChange(StyleDifference diff, const Ren
 
 #if ENABLE(INPUT_SPEECH)
     if (RenderObject* speechRenderer = m_speechButton ? m_speechButton->renderer() : 0)
-        speechRenderer->setStyle(createSpeechButtonStyle(style()));
+        speechRenderer->setStyle(createSpeechButtonStyle());
 #endif
 
     setHasOverflowClip(false);
@@ -447,10 +454,6 @@ void RenderTextControlSingleLine::capsLockStateMayHaveChanged()
 bool RenderTextControlSingleLine::hasControlClip() const
 {
     bool clip = m_cancelButton;
-#if ENABLE(INPUT_SPEECH)
-    if (m_speechButton)
-        clip = true;
-#endif
     return clip;
 }
 
@@ -592,29 +595,21 @@ void RenderTextControlSingleLine::adjustControlHeightBasedOnLineHeight(int lineH
         lineHeight = max(lineHeight, cancelRenderer->height());
     }
 
-#if ENABLE(INPUT_SPEECH)
-    if (RenderBox* speechRenderer = m_speechButton ? m_speechButton->renderBox() : 0) {
-        toRenderBlock(speechRenderer)->calcHeight();
-        setHeight(max(height(),
-                  speechRenderer->borderTop() + speechRenderer->borderBottom() +
-                  speechRenderer->paddingTop() + speechRenderer->paddingBottom() +
-                  speechRenderer->marginTop() + speechRenderer->marginBottom()));
-        lineHeight = max(lineHeight, speechRenderer->height());
-    }
-#endif
-
     setHeight(height() + lineHeight);
 }
 
 void RenderTextControlSingleLine::createSubtreeIfNeeded()
 {
     bool createSubtree = inputElement()->isSearchField();
-#if ENABLE(INPUT_SPEECH)
-    if (inputElement()->isSpeechEnabled())
-        createSubtree = true;
-#endif
     if (!createSubtree) {
         RenderTextControl::createSubtreeIfNeeded(m_innerBlock.get());
+#if ENABLE(INPUT_SPEECH)
+        if (inputElement()->isSpeechEnabled() && !m_speechButton) {
+            // Create the speech button element.
+            m_speechButton = InputFieldSpeechButtonElement::create(node());
+            m_speechButton->attachInnerElement(node(), createSpeechButtonStyle(), renderArena());
+        }
+#endif
         bool hasSpinButton = inputElement()->hasSpinButton();
         if (hasSpinButton && !m_innerSpinButton) {
             m_innerSpinButton = SpinButtonElement::create(node());
@@ -632,6 +627,13 @@ void RenderTextControlSingleLine::createSubtreeIfNeeded()
         m_innerBlock = TextControlInnerElement::create(node());
         m_innerBlock->attachInnerElement(node(), createInnerBlockStyle(style()), renderArena());
     }
+#if ENABLE(INPUT_SPEECH)
+    if (inputElement()->isSpeechEnabled() && !m_speechButton) {
+        // Create the speech button element.
+        m_speechButton = InputFieldSpeechButtonElement::create(node());
+        m_speechButton->attachInnerElement(node(), createSpeechButtonStyle(), renderArena());
+    }
+#endif
     if (inputElement()->hasSpinButton() && !m_outerSpinButton) {
         m_outerSpinButton = SpinButtonElement::create(node());
         m_outerSpinButton->attachInnerElement(node(), createOuterSpinButtonStyle(), renderArena());
@@ -655,13 +657,6 @@ void RenderTextControlSingleLine::createSubtreeIfNeeded()
             m_cancelButton->attachInnerElement(m_innerBlock.get(), createCancelButtonStyle(m_innerBlock->renderer()->style()), renderArena());
         }
     }
-#if ENABLE(INPUT_SPEECH)
-    if (inputElement()->isSpeechEnabled() && !m_speechButton) {
-        // Create the speech button element.
-        m_speechButton = InputFieldSpeechButtonElement::create(document());
-        m_speechButton->attachInnerElement(m_innerBlock.get(), createSpeechButtonStyle(m_innerBlock->renderer()->style()), renderArena());
-    }
-#endif
 }
 
 void RenderTextControlSingleLine::updateFromElement()
@@ -717,7 +712,12 @@ PassRefPtr<RenderStyle> RenderTextControlSingleLine::createInnerTextStyle(const 
     if (textBlockStyle->font().lineSpacing() > lineHeight(true, true))
         textBlockStyle->setLineHeight(Length(-100.0f, Percent));
 
-    textBlockStyle->setDisplay(m_innerBlock || inputElement()->hasSpinButton() ? INLINE_BLOCK : BLOCK);
+    WebCore::EDisplay display = (m_innerBlock || inputElement()->hasSpinButton() ? INLINE_BLOCK : BLOCK);
+#if ENABLE(INPUT_SPEECH)
+    if (inputElement()->isSpeechEnabled())
+      display = INLINE_BLOCK;
+#endif
+    textBlockStyle->setDisplay(display);
 
     // We're adding one extra pixel of padding to match WinIE.
     textBlockStyle->setPaddingLeft(Length(1, Fixed));
@@ -810,14 +810,13 @@ PassRefPtr<RenderStyle> RenderTextControlSingleLine::createOuterSpinButtonStyle(
 }
 
 #if ENABLE(INPUT_SPEECH)
-PassRefPtr<RenderStyle> RenderTextControlSingleLine::createSpeechButtonStyle(const RenderStyle* startStyle) const
+PassRefPtr<RenderStyle> RenderTextControlSingleLine::createSpeechButtonStyle() const
 {
     ASSERT(node()->isHTMLElement());
     RefPtr<RenderStyle> buttonStyle = getCachedPseudoStyle(INPUT_SPEECH_BUTTON);
     if (!buttonStyle)
         buttonStyle = RenderStyle::create();
-    if (startStyle)
-        buttonStyle->inheritFrom(startStyle);
+    buttonStyle->inheritFrom(style());
     return buttonStyle.release();
 }
 #endif
@@ -970,10 +969,6 @@ int RenderTextControlSingleLine::clientPaddingRight() const
 
     if (RenderBox* cancelRenderer = m_cancelButton ? m_cancelButton->renderBox() : 0)
         padding += cancelRenderer->width();
-#if ENABLE(INPUT_SPEECH)
-    if (RenderBox* speechRenderer = m_speechButton ? m_speechButton->renderBox() : 0)
-        padding += speechRenderer->width();
-#endif
 
     return padding;
 }

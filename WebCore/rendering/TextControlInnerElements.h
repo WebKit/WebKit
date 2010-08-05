@@ -119,8 +119,9 @@ class InputFieldSpeechButtonElement
     : public TextControlInnerElement,
       public SpeechInputListener {
 public:
-    static PassRefPtr<InputFieldSpeechButtonElement> create(Document*);
+    static PassRefPtr<InputFieldSpeechButtonElement> create(Node*);
 
+    virtual void detach();
     virtual void defaultEventHandler(Event*);
 
     // SpeechInputListener methods.
@@ -129,8 +130,7 @@ public:
     void setRecognitionResult(const String& result);
 
 private:
-    InputFieldSpeechButtonElement(Document*);
-    virtual void detach();
+    InputFieldSpeechButtonElement(Node*);
     SpeechInput* speechInput();
 
     bool m_capturing;

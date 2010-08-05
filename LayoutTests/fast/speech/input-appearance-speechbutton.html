@@ -12,12 +12,23 @@
 <script>
 var parent = document.createElement('div');
 document.body.appendChild(parent);
-parent.innerHTML = '<table><tr><td id=p1><td id=p2></tr></table>';
+parent.innerHTML = '<table><tr><td id=p1><td id=p2><td id=p3></tr></table>';
+var cells = ["", "", ""];
+var maxCellCount = [7, 5, 5];
+var cellCount = 0;
+var index = 0;
 for (var size = 8; size < 24; size++) {
-    var div = document.createElement('div');
-    document.getElementById(size < (24 + 8) / 2 ? 'p1' : 'p2').appendChild(div);
-    div.innerHTML = '<input style="font-size:' + size + 'px" value="A quick brown fox jumps over the lazy dog"> <br>'
-        + '<input style="font-size:' + size + 'px" value="A quick brown fox jumps over the lazy dog" speech>';
+    cells[index] += '<input style="font-size:' + size + 'px" value="A quick brown fox jumps over the lazy dog"><br>'
+        + '<input style="font-size:' + size + 'px" value="A quick brown fox jumps over the lazy dog" speech><br>';
+    if (++cellCount >= maxCellCount[index]) {
+        ++index;
+        cellCount = 0;
+    }
+}
+for (var i = 0; i < cells.length; ++i) {
+  var div = document.createElement('div');
+  div.innerHTML = cells[i];
+  document.getElementById('p' + (i + 1)).appendChild(div);
 }
 </script>
 </body>

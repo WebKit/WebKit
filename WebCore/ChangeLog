@@ -1,3 +1,30 @@
+2010-08-05  Satish Sampath  <satish@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Fix rendering of speech button and enable layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=43425
+
+        Rewrote the speech button rendering code to match how the spin buttons (for input type=number)
+        are implemented as the previous implementation did not work well on many platforms.
+
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::~RenderTextControlSingleLine):
+        (WebCore::RenderTextControlSingleLine::layout):
+        (WebCore::RenderTextControlSingleLine::nodeAtPoint):
+        (WebCore::RenderTextControlSingleLine::styleDidChange):
+        (WebCore::RenderTextControlSingleLine::hasControlClip):
+        (WebCore::RenderTextControlSingleLine::adjustControlHeightBasedOnLineHeight):
+        (WebCore::RenderTextControlSingleLine::createSubtreeIfNeeded):
+        (WebCore::RenderTextControlSingleLine::createInnerTextStyle):
+        (WebCore::RenderTextControlSingleLine::createSpeechButtonStyle):
+        (WebCore::RenderTextControlSingleLine::clientPaddingRight):
+        * rendering/RenderTextControlSingleLine.h:
+        * rendering/TextControlInnerElements.cpp:
+        (WebCore::InputFieldSpeechButtonElement::InputFieldSpeechButtonElement):
+        (WebCore::InputFieldSpeechButtonElement::create):
+        * rendering/TextControlInnerElements.h:
+
 2010-08-05  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.

@@ -1,3 +1,42 @@
+2010-08-05  Satish Sampath  <satish@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Fix rendering of speech button and enable layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=43425
+
+        Added layout and pixel test expecations for speech button on chromium-linux and chromium-mac.
+        Also enabled the relevant layout tests on these platforms.
+        Non chromium ports don't have the feature flag enabled and the code does not get compiled in yet,
+        so there are no test expectations for those ports.
+
+        * fast/speech/input-appearance-numberandspeech-expected.txt: Removed.
+        * fast/speech/input-appearance-numberandspeech.html:
+        * fast/speech/input-appearance-searchandspeech-expected.txt: Removed.
+        * fast/speech/input-appearance-searchandspeech.html:
+        * fast/speech/input-appearance-speechbutton-expected.txt: Removed.
+        * fast/speech/input-appearance-speechbutton.html:
+        * platform/chromium-linux/fast/speech/input-appearance-searchandspeech-expected.checksum: Added.
+        * platform/chromium-linux/fast/speech/input-appearance-searchandspeech-expected.png: Added.
+        * platform/chromium-linux/fast/speech/input-appearance-searchandspeech-expected.txt: Added.
+        * platform/chromium-linux/fast/speech/input-appearance-speechbutton-expected.checksum: Added.
+        * platform/chromium-linux/fast/speech/input-appearance-speechbutton-expected.png: Added.
+        * platform/chromium-linux/fast/speech/input-appearance-speechbutton-expected.txt: Added.
+        * platform/chromium-mac/fast/speech/input-appearance-numberandspeech-expected.checksum: Added.
+        * platform/chromium-mac/fast/speech/input-appearance-numberandspeech-expected.png: Added.
+        * platform/chromium-mac/fast/speech/input-appearance-numberandspeech-expected.txt: Added.
+        * platform/chromium-mac/fast/speech/input-appearance-searchandspeech-expected.checksum: Added.
+        * platform/chromium-mac/fast/speech/input-appearance-searchandspeech-expected.png: Added.
+        * platform/chromium-mac/fast/speech/input-appearance-searchandspeech-expected.txt: Added.
+        * platform/chromium-mac/fast/speech/input-appearance-speechbutton-expected.checksum: Added.
+        * platform/chromium-mac/fast/speech/input-appearance-speechbutton-expected.png: Added.
+        * platform/chromium-mac/fast/speech/input-appearance-speechbutton-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/mac/fast/forms/input-appearance-numberandspeech-expected.checksum: Removed.
+        * platform/mac/fast/forms/input-appearance-numberandspeech-expected.png: Removed.
+        * platform/mac/fast/forms/input-appearance-speechbutton-expected.checksum: Removed.
+        * platform/mac/fast/forms/input-appearance-speechbutton-expected.png: Removed.
+
 2010-08-05  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.
