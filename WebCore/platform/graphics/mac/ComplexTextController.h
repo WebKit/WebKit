@@ -127,7 +127,7 @@ private:
         unsigned m_stringLocation;
         size_t m_stringLength;
 #if USE(CORE_TEXT)
-        RetainPtr<CFMutableDataRef> m_coreTextIndicesData;
+        Vector<CFIndex, 64> m_coreTextIndicesVector;
         const CFIndex* m_coreTextIndices;
 #endif
 #if USE(ATSUI)

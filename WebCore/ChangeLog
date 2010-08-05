@@ -1,3 +1,16 @@
+2010-08-05  Ned Holbrook  <nholbrook@apple.com>
+
+        Reviewed by Darin Adler.
+
+        ~5% complex layout performance improvement.
+        https://bugs.webkit.org/show_bug.cgi?id=43436
+
+        * platform/graphics/mac/ComplexTextController.h:
+        * platform/graphics/mac/ComplexTextControllerCoreText.cpp:
+        (WebCore::ComplexTextController::ComplexTextRun::ComplexTextRun): Use Vector rather than CFMutableData.
+        (WebCore::ComplexTextController::ComplexTextRun::createTextRunFromFontDataCoreText): Ditto.
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharactersCoreText): Avoid typesetter allocation unless using typesetter options.
+
 2010-08-05  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.
