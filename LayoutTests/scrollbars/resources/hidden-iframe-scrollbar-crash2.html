@@ -1,0 +1,28 @@
+<html>
+<body><p>
+This is some text to force a scrollbar to appear.
+This is some text to force a scrollbar to appear.
+This is some text to force a scrollbar to appear.
+</p>
+<img id="i" onbeforeload="beforeload()" onload="pass()">
+</body>
+<script>
+function beforeload()
+{
+    setTimeout(function() {
+        var win = window.parent;
+        win.document.getElementById("iframe").style.display = "none";
+    });
+    return true;
+}
+
+function pass()
+{
+    var win = window.parent;
+    win.document.getElementById("iframe").style.display = "";
+    win.document.body.appendChild(document.createTextNode("PASSED"));
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+</script>
+</html>

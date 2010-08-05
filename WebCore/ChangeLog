@@ -1,3 +1,26 @@
+2010-08-05  Tony Chang  <tony@chromium.org>
+
+        Reviewed by David Hyatt.
+
+        Fix a crash when a hidden iframe with a custom scrollbar finishes loading an image.
+        https://bugs.webkit.org/show_bug.cgi?id=42724
+
+        Test: scrollbars/hidden-iframe-scrollbar-crash2.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::createScrollbar):
+        * rendering/RenderScrollbar.cpp:
+        (WebCore::RenderScrollbar::createCustomScrollbar): Pass in Frame
+        (WebCore::RenderScrollbar::RenderScrollbar): Pass in Frame
+        (WebCore::RenderScrollbar::owningRenderer): Use the frame to get the RenderBox
+        (WebCore::RenderScrollbar::getScrollbarPseudoStyle):
+        (WebCore::RenderScrollbar::updateScrollbarParts):
+        (WebCore::RenderScrollbar::updateScrollbarPart):
+        * rendering/RenderScrollbar.h:
+        * rendering/RenderScrollbarPart.cpp:
+        (WebCore::RenderScrollbarPart::computeScrollbarWidth): null check
+        (WebCore::RenderScrollbarPart::computeScrollbarHeight): null check
+
 2010-08-05  Yong Li  <yoli@rim.com>
 
         Reviewed by Adam Treat.
