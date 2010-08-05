@@ -55,6 +55,7 @@ public:
         TypeBundle,
         TypeBundleFrame,
         TypeBundlePage,
+        TypeBundleScriptWorld,
         TypeBundleNodeHandle,
 
         // Platform specific

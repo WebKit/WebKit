@@ -41,6 +41,7 @@ namespace WebKit {
 
 class InjectedBundle;
 class InjectedBundleNodeHandle;
+class InjectedBundleScriptWorld;
 class WebFrame;
 class WebPage;
 
@@ -49,6 +50,7 @@ template<> struct BundleAPITypeInfo<WKBundleFrameRef>                   { typede
 template<> struct BundleAPITypeInfo<WKBundlePageRef>                    { typedef WebPage* ImplType; };
 template<> struct BundleAPITypeInfo<WKBundleRef>                        { typedef InjectedBundle* ImplType; };
 template<> struct BundleAPITypeInfo<WKBundleNodeHandleRef>              { typedef InjectedBundleNodeHandle* ImplType; };
+template<> struct BundleAPITypeInfo<WKBundleScriptWorldRef>             { typedef InjectedBundleScriptWorld* ImplType; };
 template<> struct BundleAPITypeInfo<WKBundleNodeRef>                    { typedef WebCore::Node* ImplType; };
 template<> struct BundleAPITypeInfo<WKBundleRangeRef>                   { typedef WebCore::Range* ImplType; };
 template<> struct BundleAPITypeInfo<WKBundleCSSStyleDeclarationRef>     { typedef WebCore::CSSStyleDeclaration* ImplType; };
@@ -56,6 +58,7 @@ template<> struct BundleAPITypeInfo<WKBundleCSSStyleDeclarationRef>     { typede
 template<typename ImplType> struct BundleImplTypeInfo { };
 template<> struct BundleImplTypeInfo<InjectedBundle*>                   { typedef WKBundleRef APIType; };
 template<> struct BundleImplTypeInfo<InjectedBundleNodeHandle*>         { typedef WKBundleNodeHandleRef APIType; };
+template<> struct BundleImplTypeInfo<InjectedBundleScriptWorld*>        { typedef WKBundleScriptWorldRef APIType; };
 template<> struct BundleImplTypeInfo<WebFrame*>                         { typedef WKBundleFrameRef APIType; };
 template<> struct BundleImplTypeInfo<WebPage*>                          { typedef WKBundlePageRef APIType; };
 template<> struct BundleImplTypeInfo<WebCore::CSSStyleDeclaration*>     { typedef WKBundleCSSStyleDeclarationRef APIType; };

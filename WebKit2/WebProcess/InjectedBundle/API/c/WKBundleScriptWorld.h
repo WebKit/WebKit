@@ -23,32 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKBundleBase_h
-#define WKBundleBase_h
+#ifndef WKBundleScriptWorld_h
+#define WKBundleScriptWorld_h
 
-typedef struct OpaqueWKBundle* WKBundleRef;
-typedef struct OpaqueWKBundleFrame* WKBundleFrameRef;
-typedef struct OpaqueWKBundleNodeHandle* WKBundleNodeHandleRef;
-typedef struct OpaqueWKBundlePage* WKBundlePageRef;
-typedef struct OpaqueWKBundleScriptWorld* WKBundleScriptWorldRef;
+#include <WebKit2/WKBase.h>
+#include <WebKit2/WKBundleBase.h>
 
-typedef struct OpaqueWKBundleDOMCSSStyleDeclaration* WKBundleCSSStyleDeclarationRef;
-typedef struct OpaqueWKBundleNode* WKBundleNodeRef;
-typedef struct OpaqueWKBundleRange* WKBundleRangeRef;
-
-#undef WK_EXPORT
-#if defined(WK_NO_EXPORT)
-#define WK_EXPORT
-#elif defined(__GNUC__)
-#define WK_EXPORT __attribute__((visibility("default")))
-#elif defined(WIN32) || defined(_WIN32)
-#if BUILDING_WEBKIT
-#define WK_EXPORT __declspec(dllexport)
-#else
-#define WK_EXPORT __declspec(dllimport)
-#endif
-#else
-#define WK_EXPORT
+#ifdef __cplusplus
+extern "C" {
 #endif
 
-#endif /* WKBundleBase_h */
+WK_EXPORT WKTypeID WKBundleScriptWorldGetTypeID();
+
+WK_EXPORT WKBundleScriptWorldRef WKBundleScriptWorldCreateWorld();
+WK_EXPORT WKBundleScriptWorldRef WKBundleScriptWorldNormalWorld();
+
+WK_EXPORT WKBundleScriptWorldRef WKBundleScriptWorldRetain(WKBundleScriptWorldRef scriptWorld);
+WK_EXPORT void WKBundleScriptWorldRelease(WKBundleScriptWorldRef scriptWorld);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* WKBundleScriptWorld_h */

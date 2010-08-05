@@ -731,6 +731,14 @@
 					RelativePath="..\WebProcess\InjectedBundle\InjectedBundlePageUIClient.h"
 					>
 				</File>
+				<File
+					RelativePath="..\WebProcess\InjectedBundle\InjectedBundleScriptWorld.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\InjectedBundle\InjectedBundleScriptWorld.h"
+					>
+				</File>
 				<Filter
 					Name="API"
 					>
@@ -807,6 +815,14 @@
 						</File>
 						<File
 							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundleRange.h"
+							>
+						</File>
+						<File
+							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundleScriptWorld.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundleScriptWorld.h"
 							>
 						</File>
 					</Filter>

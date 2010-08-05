@@ -23,32 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKBundleBase_h
-#define WKBundleBase_h
+#include "WKBundleScriptWorld.h"
 
-typedef struct OpaqueWKBundle* WKBundleRef;
-typedef struct OpaqueWKBundleFrame* WKBundleFrameRef;
-typedef struct OpaqueWKBundleNodeHandle* WKBundleNodeHandleRef;
-typedef struct OpaqueWKBundlePage* WKBundlePageRef;
-typedef struct OpaqueWKBundleScriptWorld* WKBundleScriptWorldRef;
+#include "InjectedBundleScriptWorld.h"
+#include "WKAPICast.h"
+#include "WKBundleAPICast.h"
 
-typedef struct OpaqueWKBundleDOMCSSStyleDeclaration* WKBundleCSSStyleDeclarationRef;
-typedef struct OpaqueWKBundleNode* WKBundleNodeRef;
-typedef struct OpaqueWKBundleRange* WKBundleRangeRef;
+using namespace WebKit;
 
-#undef WK_EXPORT
-#if defined(WK_NO_EXPORT)
-#define WK_EXPORT
-#elif defined(__GNUC__)
-#define WK_EXPORT __attribute__((visibility("default")))
-#elif defined(WIN32) || defined(_WIN32)
-#if BUILDING_WEBKIT
-#define WK_EXPORT __declspec(dllexport)
-#else
-#define WK_EXPORT __declspec(dllimport)
-#endif
-#else
-#define WK_EXPORT
-#endif
+WKTypeID WKBundleScriptWorldGetTypeID()
+{
+    return toRef(InjectedBundleScriptWorld::APIType);
+}
 
-#endif /* WKBundleBase_h */
+WKBundleScriptWorldRef WKBundleScriptWorldCreateWorld()
+{
+    RefPtr<InjectedBundleScriptWorld> world = InjectedBundleScriptWorld::create();
+    return toRef(world.release().releaseRef());
+}
+
+WKBundleScriptWorldRef WKBundleScriptWorldNormalWorld()
+{
+    return toRef(InjectedBundleScriptWorld::normalWorld());
+}
+
+WKBundleScriptWorldRef WKBundleScriptWorldRetain(WKBundleScriptWorldRef scriptWorldRef)
+{
+    toWK(scriptWorldRef)->ref();
+    return scriptWorldRef;
+}
+
+void WKBundleScriptWorldRelease(WKBundleScriptWorldRef scriptWorldRef)
+{
+    toWK(scriptWorldRef)->deref();
+}

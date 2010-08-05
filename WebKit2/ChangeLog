@@ -1,5 +1,38 @@
 2010-08-05  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Gavin Barraclough.
+
+        Add script world API for injected bundles
+        https://bugs.webkit.org/show_bug.cgi?id=43577
+
+        * Shared/APIObject.h:
+        (WebKit::APIObject::):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/c/WKBundleAPICast.h:
+        (WebKit::):
+        * WebProcess/InjectedBundle/API/c/WKBundleBase.h:
+        * WebProcess/InjectedBundle/API/c/WKBundleScriptWorld.cpp: Added.
+        (WKBundleScriptWorldGetTypeID):
+        (WKBundleScriptWorldCreateWorld):
+        (WKBundleScriptWorldNormalWorld):
+        (WKBundleScriptWorldRetain):
+        (WKBundleScriptWorldRelease):
+        * WebProcess/InjectedBundle/API/c/WKBundleScriptWorld.h: Added.
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp:
+        * WebProcess/InjectedBundle/InjectedBundleScriptWorld.cpp: Added.
+        (WebKit::allWorlds):
+        (WebKit::InjectedBundleScriptWorld::create):
+        (WebKit::InjectedBundleScriptWorld::getOrCreate):
+        (WebKit::InjectedBundleScriptWorld::normalWorld):
+        (WebKit::InjectedBundleScriptWorld::InjectedBundleScriptWorld):
+        (WebKit::InjectedBundleScriptWorld::~InjectedBundleScriptWorld):
+        * WebProcess/InjectedBundle/InjectedBundleScriptWorld.h: Added.
+        (WebKit::InjectedBundleScriptWorld::type):
+        * win/WebKit2.vcproj:
+        * win/WebKit2Generated.make:
+
+2010-08-05  Sam Weinig  <sam@webkit.org>
+
         Reviewed Anders Carlsson.
 
         Add DOM Node wrapper class for injected bundle

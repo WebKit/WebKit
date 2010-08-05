@@ -23,47 +23,57 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "InjectedBundleNodeHandle.h"
+#include "InjectedBundleScriptWorld.h"
 
-#include <WebCore/Node.h>
+#include <WebCore/DOMWrapperWorld.h>
+#include <WebCore/ScriptController.h>
 #include <wtf/HashMap.h>
 
 using namespace WebCore;
 
 namespace WebKit {
 
-typedef HashMap<Node*, InjectedBundleNodeHandle*> DOMHandleCache;
+typedef HashMap<DOMWrapperWorld*, InjectedBundleScriptWorld*> WorldMap;
 
-static DOMHandleCache& domHandleCache()
+static WorldMap& allWorlds()
 {
-    DEFINE_STATIC_LOCAL(DOMHandleCache, cache, ());
-    return cache;
+    DEFINE_STATIC_LOCAL(WorldMap, map, ());
+    return map;
 }
 
-PassRefPtr<InjectedBundleNodeHandle> InjectedBundleNodeHandle::getOrCreate(Node* node)
+PassRefPtr<InjectedBundleScriptWorld> InjectedBundleScriptWorld::create()
 {
-    std::pair<DOMHandleCache::iterator, bool> result = domHandleCache().add(node, 0);
-    if (!result.second)
-        return PassRefPtr<InjectedBundleNodeHandle>(result.first->second);
-
-    RefPtr<InjectedBundleNodeHandle> nodeHandle = InjectedBundleNodeHandle::create(node);
-    result.first->second = nodeHandle.get();
-    return nodeHandle.release();
+    return adoptRef(new InjectedBundleScriptWorld(ScriptController::createWorld()));
 }
 
-PassRefPtr<InjectedBundleNodeHandle> InjectedBundleNodeHandle::create(Node* node)
+PassRefPtr<InjectedBundleScriptWorld> InjectedBundleScriptWorld::getOrCreate(DOMWrapperWorld* world)
 {
-    return adoptRef(new InjectedBundleNodeHandle(node));
+    if (world == mainThreadNormalWorld())
+        return normalWorld();
+
+    if (InjectedBundleScriptWorld* existingWorld = allWorlds().get(world))
+        return existingWorld;
+
+    return adoptRef(new InjectedBundleScriptWorld(world));
 }
 
-InjectedBundleNodeHandle::InjectedBundleNodeHandle(Node* node)
-    : m_node(node)
+InjectedBundleScriptWorld* InjectedBundleScriptWorld::normalWorld()
 {
+    static InjectedBundleScriptWorld* world = adoptRef(new InjectedBundleScriptWorld(mainThreadNormalWorld())).leakRef();
+    return world;
 }
 
-InjectedBundleNodeHandle::~InjectedBundleNodeHandle()
+InjectedBundleScriptWorld::InjectedBundleScriptWorld(PassRefPtr<DOMWrapperWorld> world)
+    : m_world(world)
 {
-    domHandleCache().remove(m_node.get());
+    ASSERT(!allWorlds().contains(m_world.get()));
+    allWorlds().add(m_world.get(), this);
+}
+
+InjectedBundleScriptWorld::~InjectedBundleScriptWorld()
+{
+    ASSERT(allWorlds().contains(m_world.get()));
+    allWorlds().remove(m_world.get());
 }
 
 } // namespace WebKit

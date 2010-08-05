@@ -23,32 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKBundleBase_h
-#define WKBundleBase_h
+#ifndef InjectedBundleScriptWorld_h
+#define InjectedBundleScriptWorld_h
 
-typedef struct OpaqueWKBundle* WKBundleRef;
-typedef struct OpaqueWKBundleFrame* WKBundleFrameRef;
-typedef struct OpaqueWKBundleNodeHandle* WKBundleNodeHandleRef;
-typedef struct OpaqueWKBundlePage* WKBundlePageRef;
-typedef struct OpaqueWKBundleScriptWorld* WKBundleScriptWorldRef;
+#include "APIObject.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 
-typedef struct OpaqueWKBundleDOMCSSStyleDeclaration* WKBundleCSSStyleDeclarationRef;
-typedef struct OpaqueWKBundleNode* WKBundleNodeRef;
-typedef struct OpaqueWKBundleRange* WKBundleRangeRef;
+namespace WebCore {
+    class DOMWrapperWorld;
+}
 
-#undef WK_EXPORT
-#if defined(WK_NO_EXPORT)
-#define WK_EXPORT
-#elif defined(__GNUC__)
-#define WK_EXPORT __attribute__((visibility("default")))
-#elif defined(WIN32) || defined(_WIN32)
-#if BUILDING_WEBKIT
-#define WK_EXPORT __declspec(dllexport)
-#else
-#define WK_EXPORT __declspec(dllimport)
-#endif
-#else
-#define WK_EXPORT
-#endif
+namespace WebKit {
 
-#endif /* WKBundleBase_h */
+class InjectedBundleScriptWorld : public APIObject {
+public:
+    static const Type APIType = TypeBundleScriptWorld;
+
+    static PassRefPtr<InjectedBundleScriptWorld> create();
+    static PassRefPtr<InjectedBundleScriptWorld> getOrCreate(WebCore::DOMWrapperWorld*);
+    static InjectedBundleScriptWorld* normalWorld();
+
+    ~InjectedBundleScriptWorld();
+
+private:
+    InjectedBundleScriptWorld(PassRefPtr<WebCore::DOMWrapperWorld>);
+
+    virtual Type type() const { return APIType; }
+
+    RefPtr<WebCore::DOMWrapperWorld> m_world;
+};
+
+} // namespace WebKit
+
+#endif // InjectedBundleScriptWorld_h
