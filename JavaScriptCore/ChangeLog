@@ -1,5 +1,12 @@
 2010-08-04  Gavin Barraclough  <barraclough@apple.com>
 
+        Windows build fix part II.
+
+        * wtf/PageReservation.h:
+        (WTF::PageReservation::systemReserve):
+
+2010-08-04  Gavin Barraclough  <barraclough@apple.com>
+
         Windows build fix.
 
         * wtf/PageReservation.h:
