@@ -1,3 +1,15 @@
+2010-08-04  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Pick up spec change w.r.t. replacement character and <frameset>
+        https://bugs.webkit.org/show_bug.cgi?id=43073
+
+        Apparently this fixes parsing for some home router configuration pages.
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processCharacterBuffer):
+
 2010-08-04  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.

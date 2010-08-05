@@ -61,20 +61,37 @@ static const int uninitializedLineNumberValue = -1;
 
 namespace {
 
-inline bool isTreeBuilderWhitepace(UChar cc)
+inline bool isTreeBuilderWhitepace(UChar c)
 {
-    return cc == '\t' || cc == '\x0A' || cc == '\x0C' || cc == '\x0D' || cc == ' ';
+    // FIXME: Consider branch permutations.
+    return c == '\t' || c == '\x0A' || c == '\x0C' || c == '\x0D' || c == ' ';
 }
 
-inline bool hasNonWhitespace(const String& string)
+inline bool isTreeBuilderWhitepaceOrReplacementCharacter(UChar c)
+{
+    return isTreeBuilderWhitepace(c) || c == 0xFFFD;
+}
+
+template<bool isSpecialCharacter(UChar c)>
+inline bool isAllSpecialCharacters(const String& string)
 {
     const UChar* characters = string.characters();
     const unsigned length = string.length();
     for (unsigned i = 0; i < length; ++i) {
-        if (!isTreeBuilderWhitepace(characters[i]))
-            return true;
+        if (!isSpecialCharacter(characters[i]))
+            return false;
     }
-    return false;
+    return true;
+}
+
+inline bool isAllWhitespace(const String& string)
+{
+    return isAllSpecialCharacters<isTreeBuilderWhitepace>(string);
+}
+
+inline bool isAllWhitespaceOrReplacementCharacters(const String& string)
+{
+    return isAllSpecialCharacters<isTreeBuilderWhitepaceOrReplacementCharacter>(string);
 }
 
 bool shouldUseLegacyTreeBuilder(Document* document)
@@ -2491,7 +2508,7 @@ ReprocessBuffer:
         m_tree.reconstructTheActiveFormattingElements();
         String characters = buffer.takeRemaining();
         m_tree.insertTextNode(characters);
-        if (m_framesetOk && hasNonWhitespace(characters))
+        if (m_framesetOk && !isAllWhitespaceOrReplacementCharacters(characters))
             m_framesetOk = false;
         break;
     }
@@ -2565,7 +2582,7 @@ ReprocessBuffer:
         ASSERT(insertionMode() == InForeignContentMode);
         String characters = buffer.takeRemaining();
         m_tree.insertTextNode(characters);
-        if (m_framesetOk && hasNonWhitespace(characters))
+        if (m_framesetOk && !isAllWhitespace(characters))
             m_framesetOk = false;
         break;
     }
@@ -2709,7 +2726,7 @@ void HTMLTreeBuilder::defaultForAfterHead()
 void HTMLTreeBuilder::defaultForInTableText()
 {
     String characters = String::adopt(m_pendingTableCharacters);
-    if (hasNonWhitespace(characters)) {
+    if (!isAllWhitespace(characters)) {
         // FIXME: parse error
         HTMLConstructionSite::RedirectToFosterParentGuard redirecter(m_tree);
         m_tree.reconstructTheActiveFormattingElements();
