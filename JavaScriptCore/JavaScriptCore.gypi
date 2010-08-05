@@ -400,6 +400,7 @@
             'wtf/OwnPtrCommon.h',
             'wtf/PageAllocation.cpp',
             'wtf/PageAllocation.h',
+            'wtf/PageReservation',
             'wtf/PassOwnPtr.h',
             'wtf/PassRefPtr.h',
             'wtf/Platform.h',

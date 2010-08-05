@@ -1,5 +1,13 @@
 2010-08-04  Gavin Barraclough  <barraclough@apple.com>
 
+        Build fix - add new header to !Mac projects.
+
+        * GNUmakefile.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+
+2010-08-04  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Sam Weinig.
 
         Bug 43515 - Fix small design issues with PageAllocation, split out PageReservation.
