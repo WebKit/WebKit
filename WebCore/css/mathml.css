@@ -113,8 +113,12 @@ annotation, annotation-xml {
 mphantom {
     visibility: hidden;
 }
+
 merror {
     outline: solid thin red;
+    font-weight: bold;
+    font-family: sans-serif;
+    background-color: lightYellow;
 }
 
 msqrt {
