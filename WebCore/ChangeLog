@@ -1,3 +1,9 @@
+2010-08-05  Adam Barth  <abarth@webkit.org>
+
+        Actually make HTMLEntityNames.json valid JSON.
+
+        * html/HTMLEntityNames.json:
+
 2010-08-05  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Kenneth Rohde Christiansen.
