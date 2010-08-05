@@ -1,3 +1,39 @@
+2010-08-05  Satish Sampath  <satish@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Updated test expectations for speech input in the chromium port
+        https://bugs.webkit.org/show_bug.cgi?id=43563
+
+        * platform/chromium-linux/fast/speech/input-appearance-numberandspeech-expected.checksum: Added.
+        * platform/chromium-linux/fast/speech/input-appearance-numberandspeech-expected.png: Added.
+        * platform/chromium-linux/fast/speech/input-appearance-numberandspeech-expected.txt: Added.
+        * platform/chromium-linux/fast/speech/input-appearance-searchandspeech-expected.checksum:
+        * platform/chromium-linux/fast/speech/input-appearance-searchandspeech-expected.png:
+        * platform/chromium-linux/fast/speech/input-appearance-searchandspeech-expected.txt:
+        * platform/chromium-linux/fast/speech/input-appearance-speechbutton-expected.checksum:
+        * platform/chromium-linux/fast/speech/input-appearance-speechbutton-expected.png:
+        * platform/chromium-linux/fast/speech/input-appearance-speechbutton-expected.txt:
+        * platform/chromium-mac/fast/speech/input-appearance-numberandspeech-expected.checksum:
+        * platform/chromium-mac/fast/speech/input-appearance-numberandspeech-expected.png:
+        * platform/chromium-mac/fast/speech/input-appearance-numberandspeech-expected.txt:
+        * platform/chromium-mac/fast/speech/input-appearance-searchandspeech-expected.checksum:
+        * platform/chromium-mac/fast/speech/input-appearance-searchandspeech-expected.png:
+        * platform/chromium-mac/fast/speech/input-appearance-searchandspeech-expected.txt:
+        * platform/chromium-mac/fast/speech/input-appearance-speechbutton-expected.checksum:
+        * platform/chromium-mac/fast/speech/input-appearance-speechbutton-expected.png:
+        * platform/chromium-mac/fast/speech/input-appearance-speechbutton-expected.txt:
+        * platform/chromium-win/fast/speech/input-appearance-numberandspeech-expected.checksum: Added.
+        * platform/chromium-win/fast/speech/input-appearance-numberandspeech-expected.png: Added.
+        * platform/chromium-win/fast/speech/input-appearance-numberandspeech-expected.txt: Added.
+        * platform/chromium-win/fast/speech/input-appearance-searchandspeech-expected.checksum: Added.
+        * platform/chromium-win/fast/speech/input-appearance-searchandspeech-expected.png: Added.
+        * platform/chromium-win/fast/speech/input-appearance-searchandspeech-expected.txt: Added.
+        * platform/chromium-win/fast/speech/input-appearance-speechbutton-expected.checksum: Added.
+        * platform/chromium-win/fast/speech/input-appearance-speechbutton-expected.png: Added.
+        * platform/chromium-win/fast/speech/input-appearance-speechbutton-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-08-05  Jeremy Orlow  <jorlow@chromium.org>
 
         Don't skip speech tests.

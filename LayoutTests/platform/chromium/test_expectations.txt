@@ -2883,13 +2883,6 @@ BUGWK41311 WIN LINUX : fast/borders/borderRadiusDouble07.html = IMAGE
 BUGWK41311 WIN LINUX : fast/borders/borderRadiusDouble08.html = IMAGE
 BUGWK41311 WIN LINUX : fast/borders/borderRadiusDouble09.html = IMAGE
 
-// Speech input UI expectations are not yet available for windows, so temporarily
-// disabled. Will add them it shortly.
-BUG44844 WIN: fast/speech = IMAGE+TEXT
-
-// This test uses <input type='number'> which is not yet ready on chromium-linux
-BUG44844 LINUX: fast/speech/input-appearance-numberandspeech.html = IMAGE+TEXT
-
 // v8 bindings for dataset need to be implemented.
 BUG48133 :  fast/dom/dataset-xhtml.xhtml = TEXT
 BUG48133 :  fast/dom/dataset.html = TEXT
