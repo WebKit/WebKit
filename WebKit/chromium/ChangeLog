@@ -1,3 +1,13 @@
+2010-08-05  John Gregg  <johnnyg@google.com>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] WebFileChooserParams should have default constructor
+        https://bugs.webkit.org/show_bug.cgi?id=43435
+
+        * public/WebFileChooserParams.h:
+        (WebKit::WebFileChooserParams::WebFileChooserParams):
+
 2010-08-05  Victoria Kirst  <vrk@google.com>
 
         Reviewed by David Levin.

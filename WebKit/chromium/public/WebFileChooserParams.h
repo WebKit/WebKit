@@ -59,6 +59,12 @@ struct WebFileChooserParams {
     //  - replacing with other files
     // before opening a file chooser dialog.
     WebVector<WebString> selectedFiles;
+
+    WebFileChooserParams()
+        : multiSelect(false)
+        , directory(false)
+    {
+    }
 };
 
 } // namespace WebKit
