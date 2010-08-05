@@ -28,8 +28,7 @@
 WKStringRef WKStringCreateWithQString(const QString& qString)
 {
     WebCore::String string(qString);
-    RefPtr<WebCore::StringImpl> stringImpl = string.impl();
-    return toRef(stringImpl.release().releaseRef());
+    return toCopiedRef(string);
 }
 
 QString WKStringCopyQString(WKStringRef stringRef)

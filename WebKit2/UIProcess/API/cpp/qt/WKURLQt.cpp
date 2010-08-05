@@ -28,8 +28,7 @@
 WKURLRef WKURLCreateWithQUrl(const QUrl& qURL)
 {
     WebCore::String urlString(qURL.toString());
-    RefPtr<WebCore::StringImpl> urlStringImpl = urlString.impl();
-    return toURLRef(urlStringImpl.release().releaseRef());
+    return toCopiedURLRef(urlString);
 }
 
 QUrl WKURLCopyQUrl(WKURLRef urlRef)

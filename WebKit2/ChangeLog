@@ -1,3 +1,15 @@
+2010-08-05  Antti Koivisto  <koivisto@iki.fi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Use toCopiedRef for making WK objects
+        https://bugs.webkit.org/show_bug.cgi?id=43552
+
+        * UIProcess/API/cpp/qt/WKStringQt.cpp:
+        (WKStringCreateWithQString):
+        * UIProcess/API/cpp/qt/WKURLQt.cpp:
+        (WKURLCreateWithQUrl):
+
 2010-08-04  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.
