@@ -596,6 +596,13 @@ void EditorClientQt::setInputMethodState(bool active)
     QWebPageClient* webPageClient = m_page->d->client;
     if (webPageClient) {
 #if QT_VERSION >= 0x040600
+        // Make sure to reset input method hint
+        webPageClient->setInputMethodHint(Qt::ImhDialableCharactersOnly, false);
+        webPageClient->setInputMethodHint(Qt::ImhDigitsOnly, false);
+        webPageClient->setInputMethodHint(Qt::ImhEmailCharactersOnly, false);
+        webPageClient->setInputMethodHint(Qt::ImhUrlCharactersOnly, false);
+        webPageClient->setInputMethodHint(Qt::ImhHiddenText, false);
+
         HTMLInputElement* inputElement = 0;
         Frame* frame = m_page->d->page->focusController()->focusedOrMainFrame();
         if (frame && frame->document() && frame->document()->focusedNode())
