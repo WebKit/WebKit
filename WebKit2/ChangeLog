@@ -1,3 +1,10 @@
+2010-08-05  Steve Falkenburg  <sfalken@apple.com>
+
+        Windows build fix.
+        Add missing include path.
+
+        * win/WebKit2Common.vsprops:
+
 2010-08-05  Brady Eidson  <beidson@apple.com>
 
         Rubberstamped by Sam Weinig.
