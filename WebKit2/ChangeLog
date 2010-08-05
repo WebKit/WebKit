@@ -1,3 +1,11 @@
+2010-08-05  Balazs Kelemen  <kb@inf.u-szeged.hu>
+
+        Rubber-stamped by Kenneth Rohde Christiansen.
+
+        [Qt] Remove redundant include paths from WebKit2.pro.
+
+        * WebKit2.pro:
+
 2010-08-04  Adam Roben  <aroben@apple.com>
 
         Teach WebKit2 how to load the TestNetscapePlugin

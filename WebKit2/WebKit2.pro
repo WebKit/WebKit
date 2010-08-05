@@ -7,16 +7,6 @@ SOURCES += \
 isEmpty(OUTPUT_DIR): OUTPUT_DIR = ..
 include(../WebKit.pri)
 
-INCLUDEPATH += \
-    $$OUTPUT_DIR/include \
-    $$PWD/UIProcess/API/C \
-    $$PWD/Platform \
-    $$PWD/Platform/CoreIPC \
-    $$PWD/Shared \
-    $$PWD/WebProcess \
-    $$PWD/WebProcess/WebPage \
-    $$PWD/../JavaScriptCore
-
 DESTDIR = $$OUTPUT_DIR/bin
 !CONFIG(standalone_package): CONFIG -= app_bundle
 
