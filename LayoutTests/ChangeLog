@@ -3,6 +3,15 @@
         Enable HTML5 tree builder
         https://bugs.webkit.org/show_bug.cgi?id=42804
 
+        Update expected results for Leopard.
+
+        * platform/mac-leopard/fast/forms/file-input-disabled-expected.txt:
+
+2010-08-04  Adam Barth  <abarth@webkit.org>
+
+        Enable HTML5 tree builder
+        https://bugs.webkit.org/show_bug.cgi?id=42804
+
         Update expected results for Qt.  These results look correct vis-a-vis
         the Mac changes.
 
