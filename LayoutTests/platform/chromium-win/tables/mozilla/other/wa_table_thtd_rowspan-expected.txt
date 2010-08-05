@@ -169,7 +169,6 @@ layer at (0,0) size 785x2481
                       text run at (11,51) width 601: "header cell occupy the same vertical space as the integer number of cells specified in rows "
                       text run at (612,51) width 58: "above or"
                       text run at (11,71) width 637: "below it. The browser flows the contents of the spanning cell to occupy the entire spanned space."
-                RenderInline {B} at (0,0) size 0x0
       RenderBlock {P} at (0,781) size 769x40
         RenderBR {BR} at (0,0) size 0x19
         RenderBR {BR} at (0,20) size 0x19
@@ -530,7 +529,6 @@ layer at (0,0) size 785x2481
                       text run at (11,51) width 551: "cell occupy the same vertical space as the integer number of cells specified in rows "
                       text run at (562,51) width 100: "above or below"
                       text run at (11,71) width 595: "it. The browser flows the contents of the spanning cell to occupy the entire spanned space."
-                RenderInline {B} at (0,0) size 0x0
       RenderBlock {P} at (0,1380) size 769x40
         RenderBR {BR} at (0,0) size 0x19
         RenderBR {BR} at (0,20) size 0x19

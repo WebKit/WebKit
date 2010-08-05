@@ -27,3 +27,6 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (116,54) size 91x24 [bgcolor=#FFFF00] [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 24x19
                 text run at (2,2) width 24: "L C"
+      RenderBlock (anonymous) at (0,82) size 784x0
+        RenderInline {B} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0

@@ -18,10 +18,8 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,2) size 54x19
                 text run at (2,2) width 54: "Last row"
       RenderBlock (anonymous) at (0,76) size 784x20
-        RenderText {#text} at (0,0) size 4x19
-          text run at (0,0) width 4: " "
-        RenderText {#text} at (4,0) size 4x19
-          text run at (4,0) width 4: " "
+        RenderText {#text} at (0,0) size 8x19
+          text run at (0,0) width 8: "  "
       RenderTable {TABLE} at (0,96) size 65x56 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 63x54
           RenderTableRow {TR} at (0,2) size 63x0
@@ -35,12 +33,8 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,2) size 54x19
                 text run at (2,2) width 54: "Last row"
       RenderBlock (anonymous) at (0,152) size 784x20
-        RenderText {#text} at (0,0) size 4x19
-          text run at (0,0) width 4: " "
-        RenderText {#text} at (4,0) size 4x19
-          text run at (4,0) width 4: " "
-        RenderText {#text} at (8,0) size 4x19
-          text run at (8,0) width 4: " "
+        RenderText {#text} at (0,0) size 12x19
+          text run at (0,0) width 12: "   "
       RenderTable {TABLE} at (0,172) size 65x56 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 63x54
           RenderTableRow {TR} at (0,2) size 63x0

@@ -29,5 +29,3 @@ layer at (0,0) size 800x600
         RenderInline {I} at (0,0) size 37x19
           RenderText {#text} at (101,0) size 37x19
             text run at (101,0) width 37: " Italic"
-      RenderBlock (anonymous) at (0,246) size 784x0
-        RenderInline {I} at (0,0) size 0x0

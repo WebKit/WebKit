@@ -1,3 +1,189 @@
+2010-08-05  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed. Rebaselined a bunch of chromium layout tests after the parser switch.
+
+        https://bugs.webkit.org/show_bug.cgi?id=43547
+
+        * platform/chromium-linux/fast/forms/file-input-disabled-expected.txt:
+        * platform/chromium-linux/fast/forms/form-element-geometry-expected.txt:
+        * platform/chromium-linux/fast/forms/preserveFormDuringResidualStyle-expected.checksum:
+        * platform/chromium-linux/fast/forms/preserveFormDuringResidualStyle-expected.png:
+        * platform/chromium-linux/fast/forms/text-style-color-expected.checksum:
+        * platform/chromium-linux/fast/forms/text-style-color-expected.png:
+        * platform/chromium-linux/fast/invalid/019-expected.checksum:
+        * platform/chromium-linux/fast/invalid/019-expected.png:
+        * platform/chromium-linux/fast/invalid/missing-address-end-tag-expected.checksum:
+        * platform/chromium-linux/fast/invalid/missing-address-end-tag-expected.png:
+        * platform/chromium-linux/fast/invalid/residual-style-expected.checksum:
+        * platform/chromium-linux/fast/invalid/residual-style-expected.png:
+        * platform/chromium-linux/fast/invalid/residual-style-expected.txt:
+        * platform/chromium-linux/fast/invalid/table-inside-stray-table-content-expected.checksum:
+        * platform/chromium-linux/fast/invalid/table-inside-stray-table-content-expected.png:
+        * platform/chromium-linux/fast/parser/remove-block-in-residual-style-expected.checksum:
+        * platform/chromium-linux/fast/parser/remove-block-in-residual-style-expected.png:
+        * platform/chromium-linux/fonts/fantasy-expected.txt:
+        * platform/chromium-linux/tables/mozilla/bugs/adforce_imgis_com-expected.txt: Added.
+        * platform/chromium-linux/tables/mozilla/bugs/bug1188-expected.txt:
+        * platform/chromium-linux/tables/mozilla/bugs/bug1318-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/bugs/bug1318-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug1318-expected.txt:
+        * platform/chromium-linux/tables/mozilla/bugs/bug138725-expected.txt:
+        * platform/chromium-linux/tables/mozilla/bugs/bug2516-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/bugs/bug2516-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug278385-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/bugs/bug278385-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug30559-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/bugs/bug30559-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug32447-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/bugs/bug32447-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug34538-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/bugs/bug34538-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug4527-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/bugs/bug4527-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug48028-1-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/bugs/bug48028-1-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug56563-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/bugs/bug56563-expected.png: Added.
+        * platform/chromium-linux/tables/mozilla/other/wa_table_thtd_rowspan-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/other/wa_table_thtd_rowspan-expected.png:
+        * platform/chromium-linux/tables/mozilla/other/wa_table_tr_align-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/other/wa_table_tr_align-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug1725-expected.checksum:
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug1725-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug1725-expected.txt:
+        * platform/chromium-mac/fast/dom/isindex-001-expected.checksum: Added.
+        * platform/chromium-mac/fast/dom/isindex-001-expected.png: Added.
+        * platform/chromium-mac/fast/forms/form-in-malformed-markup-expected.checksum: Added.
+        * platform/chromium-mac/fast/forms/form-in-malformed-markup-expected.png: Added.
+        * platform/chromium-mac/fast/forms/formmove3-expected.checksum: Added.
+        * platform/chromium-mac/fast/forms/formmove3-expected.png: Added.
+        * platform/chromium-mac/fast/forms/isindex-placeholder-expected.checksum: Added.
+        * platform/chromium-mac/fast/forms/isindex-placeholder-expected.png: Added.
+        * platform/chromium-mac/fast/forms/preserveFormDuringResidualStyle-expected.checksum: Added.
+        * platform/chromium-mac/fast/forms/preserveFormDuringResidualStyle-expected.png: Added.
+        * platform/chromium-mac/fast/forms/text-style-color-expected.checksum: Added.
+        * platform/chromium-mac/fast/forms/text-style-color-expected.png: Added.
+        * platform/chromium-mac/fast/invalid/019-expected.checksum: Added.
+        * platform/chromium-mac/fast/invalid/019-expected.png: Added.
+        * platform/chromium-mac/fast/invalid/missing-address-end-tag-expected.checksum: Added.
+        * platform/chromium-mac/fast/invalid/missing-address-end-tag-expected.png: Added.
+        * platform/chromium-mac/fast/invalid/residual-style-expected.checksum:
+        * platform/chromium-mac/fast/invalid/residual-style-expected.png:
+        * platform/chromium-mac/fast/invalid/residual-style-expected.txt: Added.
+        * platform/chromium-mac/fast/invalid/table-inside-stray-table-content-expected.checksum: Added.
+        * platform/chromium-mac/fast/invalid/table-inside-stray-table-content-expected.png: Added.
+        * platform/chromium-mac/fast/parser/remove-block-in-residual-style-expected.checksum: Added.
+        * platform/chromium-mac/fast/parser/remove-block-in-residual-style-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/bugs/bug2516-expected.checksum: Added.
+        * platform/chromium-mac/tables/mozilla/bugs/bug2516-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/bugs/bug278385-expected.checksum: Added.
+        * platform/chromium-mac/tables/mozilla/bugs/bug278385-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/bugs/bug30559-expected.checksum: Added.
+        * platform/chromium-mac/tables/mozilla/bugs/bug30559-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/bugs/bug32447-expected.checksum: Added.
+        * platform/chromium-mac/tables/mozilla/bugs/bug32447-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/bugs/bug34538-expected.checksum: Added.
+        * platform/chromium-mac/tables/mozilla/bugs/bug34538-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/bugs/bug48028-1-expected.checksum: Added.
+        * platform/chromium-mac/tables/mozilla/bugs/bug48028-1-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/bugs/bug56563-expected.checksum: Added.
+        * platform/chromium-mac/tables/mozilla/bugs/bug56563-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug1725-expected.checksum: Added.
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug1725-expected.png: Added.
+        * platform/chromium-win/fast/block/float/float-in-float-painting-expected.txt:
+        * platform/chromium-win/fast/events/focusingUnloadedFrame-expected.txt:
+        * platform/chromium-win/fast/forms/file-input-disabled-expected.txt:
+        * platform/chromium-win/fast/forms/form-added-to-table-expected.txt:
+        * platform/chromium-win/fast/forms/form-element-geometry-expected.txt:
+        * platform/chromium-win/fast/forms/preserveFormDuringResidualStyle-expected.checksum:
+        * platform/chromium-win/fast/forms/preserveFormDuringResidualStyle-expected.png:
+        * platform/chromium-win/fast/forms/preserveFormDuringResidualStyle-expected.txt:
+        * platform/chromium-win/fast/forms/text-style-color-expected.checksum:
+        * platform/chromium-win/fast/forms/text-style-color-expected.png:
+        * platform/chromium-win/fast/forms/text-style-color-expected.txt:
+        * platform/chromium-win/fast/invalid/004-expected.txt:
+        * platform/chromium-win/fast/invalid/005-expected.txt:
+        * platform/chromium-win/fast/invalid/007-expected.txt:
+        * platform/chromium-win/fast/invalid/012-expected.txt:
+        * platform/chromium-win/fast/invalid/017-expected.txt:
+        * platform/chromium-win/fast/invalid/018-expected.txt:
+        * platform/chromium-win/fast/invalid/019-expected.checksum:
+        * platform/chromium-win/fast/invalid/019-expected.png:
+        * platform/chromium-win/fast/invalid/019-expected.txt:
+        * platform/chromium-win/fast/invalid/missing-address-end-tag-expected.checksum:
+        * platform/chromium-win/fast/invalid/missing-address-end-tag-expected.png:
+        * platform/chromium-win/fast/invalid/missing-address-end-tag-expected.txt:
+        * platform/chromium-win/fast/invalid/missing-font-end-tag-expected.txt:
+        * platform/chromium-win/fast/invalid/residual-style-expected.checksum:
+        * platform/chromium-win/fast/invalid/residual-style-expected.png:
+        * platform/chromium-win/fast/invalid/residual-style-expected.txt:
+        * platform/chromium-win/fast/invalid/table-inside-stray-table-content-expected.checksum:
+        * platform/chromium-win/fast/invalid/table-inside-stray-table-content-expected.png:
+        * platform/chromium-win/fast/invalid/table-inside-stray-table-content-expected.txt:
+        * platform/chromium-win/fast/parser/nofoo-tags-inside-paragraph-expected.txt:
+        * platform/chromium-win/fast/parser/remove-block-in-residual-style-expected.checksum:
+        * platform/chromium-win/fast/parser/remove-block-in-residual-style-expected.png:
+        * platform/chromium-win/fast/parser/remove-block-in-residual-style-expected.txt:
+        * platform/chromium-win/fast/parser/title-error-test-expected.txt:
+        * platform/chromium-win/fast/table/fixed-table-non-cell-in-row-expected.txt:
+        * platform/chromium-win/fast/table/inline-form-assert-expected.txt:
+        * platform/chromium-win/fast/table/insert-cell-before-form-expected.txt:
+        * platform/chromium-win/fast/table/insert-row-before-form-expected.txt:
+        * platform/chromium-win/fast/text/large-text-composed-char-expected.txt:
+        * platform/chromium-win/fonts/cursive-expected.txt:
+        * platform/chromium-win/fonts/fantasy-expected.txt:
+        * platform/chromium-win/fonts/monospace-expected.txt:
+        * platform/chromium-win/fonts/sans-serif-expected.txt:
+        * platform/chromium-win/fonts/serif-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug113235-2-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug1188-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug1318-expected.checksum:
+        * platform/chromium-win/tables/mozilla/bugs/bug1318-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug1318-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug138725-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug2267-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug2516-expected.checksum:
+        * platform/chromium-win/tables/mozilla/bugs/bug2516-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug2516-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug2757-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug278385-expected.checksum:
+        * platform/chromium-win/tables/mozilla/bugs/bug278385-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug278385-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug30559-expected.checksum:
+        * platform/chromium-win/tables/mozilla/bugs/bug30559-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug30559-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug32447-expected.checksum:
+        * platform/chromium-win/tables/mozilla/bugs/bug32447-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug32447-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug34538-expected.checksum:
+        * platform/chromium-win/tables/mozilla/bugs/bug34538-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug34538-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug4527-expected.checksum:
+        * platform/chromium-win/tables/mozilla/bugs/bug4527-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug4527-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug48028-1-expected.checksum:
+        * platform/chromium-win/tables/mozilla/bugs/bug48028-1-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug48028-1-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug48028-2-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug53690-2-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug56563-expected.checksum:
+        * platform/chromium-win/tables/mozilla/bugs/bug56563-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug56563-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug78162-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug96334-expected.checksum:
+        * platform/chromium-win/tables/mozilla/bugs/bug96334-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug96334-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug96343-expected.checksum:
+        * platform/chromium-win/tables/mozilla/bugs/bug96343-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug96343-expected.txt:
+        * platform/chromium-win/tables/mozilla/other/wa_table_thtd_rowspan-expected.txt:
+        * platform/chromium-win/tables/mozilla/other/wa_table_tr_align-expected.txt:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug1725-expected.checksum:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug1725-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug1725-expected.txt:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug65372-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2010-08-05  Adam Barth  <abarth@webkit.org>
 
         residual-style-hang times out on Gtk

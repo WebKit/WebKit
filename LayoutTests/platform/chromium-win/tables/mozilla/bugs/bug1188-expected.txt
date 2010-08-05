@@ -97,7 +97,6 @@ layer at (0,0) size 800x600
                     RenderInline {B} at (0,0) size 48x16
                       RenderText {#text} at (16,3) size 48x16
                         text run at (16,3) width 48: "Contact"
-                RenderInline {FONT} at (0,0) size 0x16 [color=#0066FF]
                 RenderText {#text} at (64,1) size 11x19
                   text run at (64,1) width 11: " : "
                 RenderInline {SMALL} at (0,0) size 503x15
