@@ -23,22 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKBundleNode_h
-#define WKBundleNode_h
+#include "WKBundleNodeHandle.h"
 
-#include <WebKit2/WKBase.h>
-#include <WebKit2/WKBundleBase.h>
+#include "InjectedBundleNodeHandle.h"
+#include "WKAPICast.h"
+#include "WKBundleAPICast.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+using namespace WebKit;
 
-WK_EXPORT WKStringRef WKBundleNodeCopyNodeName(WKBundleNodeRef node);
-
-WK_EXPORT WKBundleNodeRef WKBundleNodeGetParent(WKBundleNodeRef node);
-
-#ifdef __cplusplus
+WKTypeID WKBundleNodeHandleGetTypeID()
+{
+    return toRef(InjectedBundleNodeHandle::APIType);
 }
-#endif
 
-#endif /* WKBundleNode_h */
+WKBundleNodeHandleRef WKBundleNodeHandleRetain(WKBundleNodeHandleRef nodeHandleRef)
+{
+    toWK(nodeHandleRef)->ref();
+    return nodeHandleRef;
+}
+
+void WKBundleNodeHandleRelease(WKBundleNodeHandleRef nodeHandleRef)
+{
+    toWK(nodeHandleRef)->deref();
+}

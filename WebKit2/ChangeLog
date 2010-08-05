@@ -1,3 +1,40 @@
+2010-08-05  Sam Weinig  <sam@webkit.org>
+
+        Reviewed Anders Carlsson.
+
+        Add DOM Node wrapper class for injected bundle
+        https://bugs.webkit.org/show_bug.cgi?id=43524
+
+        - This class should not expose any DOM APIs, but just be a handle that can be used to get a JS
+          wrapper for the node in a specific world.
+
+        * Shared/APIObject.h:
+        (WebKit::APIObject::):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/c/WKBundleAPICast.h:
+        (WebKit::):
+        * WebProcess/InjectedBundle/API/c/WKBundleBase.h:
+        * WebProcess/InjectedBundle/API/c/WKBundleNode.h:
+        * WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.cpp: Added.
+        (WKBundleNodeHandleGetTypeID):
+        (WKBundleNodeHandleRetain):
+        (WKBundleNodeHandleRelease):
+        * WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.h: Added.
+        * WebProcess/InjectedBundle/DOM: Added.
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp: Added.
+        (WebKit::domHandleCache):
+        (WebKit::getDOMHandle):
+        (WebKit::setDOMHandle):
+        (WebKit::removeDOMHandle):
+        (WebKit::InjectedBundleNodeHandle::getOrCreate):
+        (WebKit::InjectedBundleNodeHandle::create):
+        (WebKit::InjectedBundleNodeHandle::InjectedBundleNodeHandle):
+        (WebKit::InjectedBundleNodeHandle::~InjectedBundleNodeHandle):
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.h: Added.
+        (WebKit::InjectedBundleNodeHandle::type):
+        * win/WebKit2.vcproj:
+        * win/WebKit2Generated.make:
+
 2010-08-05  Anders Carlsson  <andersca@apple.com>
 
         Build fix.

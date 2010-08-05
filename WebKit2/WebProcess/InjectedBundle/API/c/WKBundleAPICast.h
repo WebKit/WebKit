@@ -40,24 +40,27 @@ namespace WebCore {
 namespace WebKit {
 
 class InjectedBundle;
+class InjectedBundleNodeHandle;
 class WebFrame;
 class WebPage;
 
 template<typename APIType> struct BundleAPITypeInfo { };
-template<> struct BundleAPITypeInfo<WKBundleCSSStyleDeclarationRef>     { typedef WebCore::CSSStyleDeclaration* ImplType; };
 template<> struct BundleAPITypeInfo<WKBundleFrameRef>                   { typedef WebFrame* ImplType; };
-template<> struct BundleAPITypeInfo<WKBundleNodeRef>                    { typedef WebCore::Node* ImplType; };
 template<> struct BundleAPITypeInfo<WKBundlePageRef>                    { typedef WebPage* ImplType; };
-template<> struct BundleAPITypeInfo<WKBundleRangeRef>                   { typedef WebCore::Range* ImplType; };
 template<> struct BundleAPITypeInfo<WKBundleRef>                        { typedef InjectedBundle* ImplType; };
+template<> struct BundleAPITypeInfo<WKBundleNodeHandleRef>              { typedef InjectedBundleNodeHandle* ImplType; };
+template<> struct BundleAPITypeInfo<WKBundleNodeRef>                    { typedef WebCore::Node* ImplType; };
+template<> struct BundleAPITypeInfo<WKBundleRangeRef>                   { typedef WebCore::Range* ImplType; };
+template<> struct BundleAPITypeInfo<WKBundleCSSStyleDeclarationRef>     { typedef WebCore::CSSStyleDeclaration* ImplType; };
 
 template<typename ImplType> struct BundleImplTypeInfo { };
 template<> struct BundleImplTypeInfo<InjectedBundle*>                   { typedef WKBundleRef APIType; };
+template<> struct BundleImplTypeInfo<InjectedBundleNodeHandle*>         { typedef WKBundleNodeHandleRef APIType; };
+template<> struct BundleImplTypeInfo<WebFrame*>                         { typedef WKBundleFrameRef APIType; };
+template<> struct BundleImplTypeInfo<WebPage*>                          { typedef WKBundlePageRef APIType; };
 template<> struct BundleImplTypeInfo<WebCore::CSSStyleDeclaration*>     { typedef WKBundleCSSStyleDeclarationRef APIType; };
 template<> struct BundleImplTypeInfo<WebCore::Node*>                    { typedef WKBundleNodeRef APIType; };
 template<> struct BundleImplTypeInfo<WebCore::Range*>                   { typedef WKBundleRangeRef APIType; };
-template<> struct BundleImplTypeInfo<WebFrame*>                         { typedef WKBundleFrameRef APIType; };
-template<> struct BundleImplTypeInfo<WebPage*>                          { typedef WKBundlePageRef APIType; };
 
 } // namespace WebKit
 

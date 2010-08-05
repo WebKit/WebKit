@@ -55,7 +55,8 @@ public:
         TypeBundle,
         TypeBundleFrame,
         TypeBundlePage,
-        
+        TypeBundleNodeHandle,
+
         // Platform specific
         TypeView
     };

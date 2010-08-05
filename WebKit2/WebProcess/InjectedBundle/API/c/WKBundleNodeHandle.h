@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKBundleNode_h
-#define WKBundleNode_h
+#ifndef WKBundleNodeHandle_h
+#define WKBundleNodeHandle_h
 
 #include <WebKit2/WKBase.h>
 #include <WebKit2/WKBundleBase.h>
@@ -33,12 +33,13 @@
 extern "C" {
 #endif
 
-WK_EXPORT WKStringRef WKBundleNodeCopyNodeName(WKBundleNodeRef node);
+WK_EXPORT WKTypeID WKBundleNodeHandleGetTypeID();
 
-WK_EXPORT WKBundleNodeRef WKBundleNodeGetParent(WKBundleNodeRef node);
+WK_EXPORT WKBundleNodeHandleRef WKBundleNodeHandleRetain(WKBundleNodeHandleRef nodeHandle);
+WK_EXPORT void WKBundleNodeHandleRelease(WKBundleNodeHandleRef nodeHandle);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* WKBundleNode_h */
+#endif /* WKBundleNodeHandle_h */

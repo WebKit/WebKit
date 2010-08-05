@@ -23,22 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKBundleNode_h
-#define WKBundleNode_h
+#include "APIObject.h"
+#include <wtf/RefPtr.h>
+#include <wtf/PassRefPtr.h>
 
-#include <WebKit2/WKBase.h>
-#include <WebKit2/WKBundleBase.h>
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-WK_EXPORT WKStringRef WKBundleNodeCopyNodeName(WKBundleNodeRef node);
-
-WK_EXPORT WKBundleNodeRef WKBundleNodeGetParent(WKBundleNodeRef node);
-
-#ifdef __cplusplus
+namespace WebCore {
+    class Node;
 }
-#endif
 
-#endif /* WKBundleNode_h */
+namespace WebKit {
+
+class InjectedBundleNodeHandle : public APIObject {
+public:
+    static const Type APIType = TypeBundleNodeHandle;
+
+    static PassRefPtr<InjectedBundleNodeHandle> getOrCreate(WebCore::Node*);
+    ~InjectedBundleNodeHandle();
+
+private:
+    static PassRefPtr<InjectedBundleNodeHandle> create(WebCore::Node*);
+    InjectedBundleNodeHandle(WebCore::Node*);
+
+    virtual Type type() const { return APIType; }
+
+    RefPtr<WebCore::Node> m_node;
+};
+
+} // namespace WebKit

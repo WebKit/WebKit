@@ -27,10 +27,12 @@
 #define WKBundleBase_h
 
 typedef struct OpaqueWKBundle* WKBundleRef;
-typedef struct OpaqueWKBundleDOMCSSStyleDeclaration* WKBundleCSSStyleDeclarationRef;
 typedef struct OpaqueWKBundleFrame* WKBundleFrameRef;
-typedef struct OpaqueWKBundleNode* WKBundleNodeRef;
+typedef struct OpaqueWKBundleNodeHandle* WKBundleNodeHandleRef;
 typedef struct OpaqueWKBundlePage* WKBundlePageRef;
+
+typedef struct OpaqueWKBundleDOMCSSStyleDeclaration* WKBundleCSSStyleDeclarationRef;
+typedef struct OpaqueWKBundleNode* WKBundleNodeRef;
 typedef struct OpaqueWKBundleRange* WKBundleRangeRef;
 
 #undef WK_EXPORT

@@ -778,6 +778,14 @@
 							>
 						</File>
 						<File
+							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundleNodeHandle.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundleNodeHandle.h"
+							>
+						</File>
+						<File
 							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundlePage.cpp"
 							>
 						</File>
@@ -802,6 +810,18 @@
 							>
 						</File>
 					</Filter>
+				</Filter>
+				<Filter
+					Name="DOM"
+					>
+					<File
+						RelativePath="..\WebProcess\InjectedBundle\DOM\InjectedBundleNodeHandle.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\WebProcess\InjectedBundle\DOM\InjectedBundleNodeHandle.h"
+						>
+					</File>
 				</Filter>
 				<Filter
 					Name="win"
