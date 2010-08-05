@@ -104,7 +104,7 @@ PlatformWheelEventBuilder::PlatformWheelEventBuilder(Widget* widget, const WebMo
 
 // MakePlatformKeyboardEvent --------------------------------------------------
 
-static inline const PlatformKeyboardEvent::Type toPlatformKeyboardEventType(WebInputEvent::Type type)
+static inline PlatformKeyboardEvent::Type toPlatformKeyboardEventType(WebInputEvent::Type type)
 {
     switch (type) {
     case WebInputEvent::KeyUp:

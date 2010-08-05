@@ -1,3 +1,13 @@
+2010-08-05  Nico Weber  <thakis@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Remove useless const on return-by-value (fixes a clang warning)
+        https://bugs.webkit.org/show_bug.cgi?id=43491
+
+        * src/WebInputEventConversion.cpp:
+        (WebKit::toPlatformKeyboardEventType):
+
 2010-08-05  Satish Sampath  <satish@chromium.org>
 
         Reviewed by Jeremy Orlow.
