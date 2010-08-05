@@ -37,7 +37,8 @@ function constructorPropertiesOnWindow(globalObject)
             type =="Uint16ArrayConstructor" ||
             type =="Uint32ArrayConstructor" ||
             type == "FileErrorConstructor" ||
-            type == "FileReaderConstructor")
+            type == "FileReaderConstructor" ||
+            type == "BlobBuilderConstructor")
             continue;
         if (!type.match('Constructor$'))
             continue;

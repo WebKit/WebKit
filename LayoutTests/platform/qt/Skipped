@@ -5492,3 +5492,6 @@ fast/events/special-key-events-in-input-text.html
 # https://bugs.webkit.org/show_bug.cgi?id=43478
 fast/dom/Geolocation/delayed-permission-allowed.html
 fast/dom/Geolocation/delayed-permission-denied.html
+
+# BlodBuilder is not enabled
+http/tests/local/blob/send-data-blob.html

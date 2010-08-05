@@ -1,5 +1,29 @@
 2010-08-05  Jian Li  <jianli@chromium.org>
 
+        Update test results caused by r64763.
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/dom/Window/window-properties.html:
+        * fast/dom/constructed-objects-prototypes-expected.txt:
+        * fast/dom/script-tests/constructed-objects-prototypes.js:
+        (constructorPropertiesOnWindow):
+        * platform/gtk/Skipped:
+        * platform/gtk/fast/dom/Window/window-properties-expected.txt:
+        * platform/gtk/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/gtk/fast/dom/prototype-inheritance-expected.txt:
+        * platform/gtk/fast/js/global-constructors-expected.txt:
+        * platform/qt/Skipped:
+        * platform/qt/fast/dom/Window/window-properties-expected.txt:
+        * platform/qt/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/qt/fast/dom/prototype-inheritance-expected.txt:
+        * platform/qt/fast/js/global-constructors-expected.txt:
+        * platform/win/Skipped:
+        * platform/win/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/win/fast/dom/prototype-inheritance-expected.txt:
+        * platform/win/fast/js/global-constructors-expected.txt:
+
+2010-08-05  Jian Li  <jianli@chromium.org>
+
         Chromium test expectations update.
 
         * platform/chromium/test_expectations.txt:

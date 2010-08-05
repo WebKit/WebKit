@@ -3146,6 +3146,7 @@ http/tests/loading/preload-img-test.html
 http/tests/loading/redirect-with-no-location-crash.html
 http/tests/loading/slow-parsing-subframe.html
 http/tests/loading/text-content-type-with-binary-extension.html
+http/tests/local/blob/send-data-blob.html
 http/tests/local/blob/send-hybrid-blob.html
 http/tests/local/blob/send-sliced-data-blob.html
 http/tests/local/formdata/send-form-data.html
