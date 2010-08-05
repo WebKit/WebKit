@@ -219,19 +219,20 @@ template <MatchType type> int getScaledValue(const Vector<int>& scaledValues, in
 
 void ImageDecoder::prepareScaleDataIfNecessary()
 {
+    m_scaled = false;
+    m_scaledColumns.clear();
+    m_scaledRows.clear();
+
     int width = size().width();
     int height = size().height();
     int numPixels = height * width;
-    if (m_maxNumPixels > 0 && numPixels > m_maxNumPixels) {
-        m_scaled = true;
-        double scale = sqrt(m_maxNumPixels / (double)numPixels);
-        fillScaledValues(m_scaledColumns, scale, width);
-        fillScaledValues(m_scaledRows, scale, height);
-    } else if (m_scaled) {
-        m_scaled = false;
-        m_scaledColumns.clear();
-        m_scaledRows.clear();
-    }
+    if (m_maxNumPixels <= 0 || numPixels <= m_maxNumPixels)
+        return;
+
+    m_scaled = true;
+    double scale = sqrt(m_maxNumPixels / (double)numPixels);
+    fillScaledValues(m_scaledColumns, scale, width);
+    fillScaledValues(m_scaledRows, scale, height);
 }
 
 int ImageDecoder::upperBoundScaledX(int origX, int searchStart)
