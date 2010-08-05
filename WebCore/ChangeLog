@@ -1,3 +1,19 @@
+2010-08-05  François Sausset  <sausset@gmail.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Implement basic values of MathML mathvariant attribute
+        https://bugs.webkit.org/show_bug.cgi?id=43481
+
+        Test: mathml/presentation/attributes.xhtml
+
+        * css/mathml.css:
+        (math[mathvariant="normal"], mstyle[mathvariant="normal"], mo[mathvariant="normal"], mn[mathvariant="normal"], mi[mathvariant="normal"], mtext[mathvariant="normal"], mspace[mathvariant="normal"], ms[mathvariant="normal"]):
+        (math[mathvariant="bold"], mstyle[mathvariant="bold"], mo[mathvariant="bold"], mn[mathvariant="bold"], mi[mathvariant="bold"], mtext[mathvariant="bold"], mspace[mathvariant="bold"], ms[mathvariant="bold"]):
+        (math[mathvariant="italic"], mstyle[mathvariant="italic"], mo[mathvariant="italic"], mn[mathvariant="italic"], mi[mathvariant="italic"], mtext[mathvariant="italic"], mspace[mathvariant="italic"], ms[mathvariant="italic"]):
+        (math[mathvariant="bold-italic"], mstyle[mathvariant="bold-italic"], mo[mathvariant="bold-italic"], mn[mathvariant="bold-italic"], mi[mathvariant="bold-italic"], mtext[mathvariant="bold-italic"], mspace[mathvariant="bold-italic"], ms[mathvariant="bold-italic"]):
+        * mathml/mathattrs.in:
+
 2010-08-05  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
