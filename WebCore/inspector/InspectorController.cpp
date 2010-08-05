@@ -676,7 +676,7 @@ void InspectorController::populateScriptObjects()
 #if ENABLE(DOM_STORAGE)
     DOMStorageResourcesMap::iterator domStorageEnd = m_domStorageResources.end();
     for (DOMStorageResourcesMap::iterator it = m_domStorageResources.begin(); it != domStorageEnd; ++it)
-        it->second->bind(m_frontend.get());
+        it->second->bind(m_remoteFrontend.get());
 #endif
 #if ENABLE(WORKERS)
     WorkersMap::iterator workersEnd = m_workers.end();
@@ -1396,14 +1396,14 @@ void InspectorController::didUseDOMStorage(StorageArea* storageArea, bool isLoca
     m_domStorageResources.set(resource->id(), resource);
 
     // Resources are only bound while visible.
-    if (m_frontend)
-        resource->bind(m_frontend.get());
+    if (m_remoteFrontend)
+        resource->bind(m_remoteFrontend.get());
 }
 
 void InspectorController::selectDOMStorage(Storage* storage)
 {
     ASSERT(storage);
-    if (!m_frontend)
+    if (!m_remoteFrontend)
         return;
 
     Frame* frame = storage->frame();
@@ -1418,15 +1418,15 @@ void InspectorController::selectDOMStorage(Storage* storage)
         }
     }
     if (storageResourceId)
-        m_frontend->selectDOMStorage(storageResourceId);
+        m_remoteFrontend->selectDOMStorage(storageResourceId);
 }
 
 void InspectorController::getDOMStorageEntries(long callId, long storageId)
 {
-    if (!m_frontend)
+    if (!m_remoteFrontend)
         return;
 
-    ScriptArray jsonArray = m_frontend->newScriptArray();
+    RefPtr<InspectorArray> jsonArray = InspectorArray::create();
     InspectorDOMStorageResource* storageResource = getDOMStorageResourceForId(storageId);
     if (storageResource) {
         storageResource->startReportingChangesToFrontend();
@@ -1434,18 +1434,18 @@ void InspectorController::getDOMStorageEntries(long callId, long storageId)
         for (unsigned i = 0; i < domStorage->length(); ++i) {
             String name(domStorage->key(i));
             String value(domStorage->getItem(name));
-            ScriptArray entry = m_frontend->newScriptArray();
-            entry.set(0, name);
-            entry.set(1, value);
-            jsonArray.set(i, entry);
+            RefPtr<InspectorArray> entry = InspectorArray::create();
+            entry->pushString(name);
+            entry->pushString(value);
+            jsonArray->push(entry);
         }
     }
-    m_frontend->didGetDOMStorageEntries(callId, jsonArray);
+    m_remoteFrontend->didGetDOMStorageEntries(callId, jsonArray);
 }
 
 void InspectorController::setDOMStorageItem(long callId, long storageId, const String& key, const String& value)
 {
-    if (!m_frontend)
+    if (!m_remoteFrontend)
         return;
 
     bool success = false;
@@ -1455,12 +1455,12 @@ void InspectorController::setDOMStorageItem(long callId, long storageId, const S
         storageResource->domStorage()->setItem(key, value, exception);
         success = !exception;
     }
-    m_frontend->didSetDOMStorageItem(callId, success);
+    m_remoteFrontend->didSetDOMStorageItem(callId, success);
 }
 
 void InspectorController::removeDOMStorageItem(long callId, long storageId, const String& key)
 {
-    if (!m_frontend)
+    if (!m_remoteFrontend)
         return;
 
     bool success = false;
@@ -1469,7 +1469,7 @@ void InspectorController::removeDOMStorageItem(long callId, long storageId, cons
         storageResource->domStorage()->removeItem(key);
         success = true;
     }
-    m_frontend->didRemoveDOMStorageItem(callId, success);
+    m_remoteFrontend->didRemoveDOMStorageItem(callId, success);
 }
 
 InspectorDOMStorageResource* InspectorController::getDOMStorageResourceForId(long storageId)

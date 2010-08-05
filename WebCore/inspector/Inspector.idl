@@ -55,6 +55,11 @@ module core {
         [notify] void addDatabase(out Object database);
         [notify] void selectDatabase(out int databaseId);
 #endif
+#if defined(ENABLE_DOM_STORAGE) && ENABLE_DOM_STORAGE
+        [notify] void addDOMStorage(out Object storage);
+        [notify] void updateDOMStorage(out int storageId);
+        [notify] void selectDOMStorage(out int storageId);
+#endif
 
         [handler=Controller] void storeLastActivePanel(in String panelName);
 
@@ -164,9 +169,9 @@ module core {
 #endif
 
 #if defined(ENABLE_DOM_STORAGE) && ENABLE_DOM_STORAGE
-        [handler=Controller] void getDOMStorageEntries(in long callId, in long storageId);
-        [handler=Controller] void setDOMStorageItem(in long callId, in long storageId, in String key, in String value);
-        [handler=Controller] void removeDOMStorageItem(in long callId, in long storageId, in String key);
+        [handler=Controller] void getDOMStorageEntries(in long callId, in long storageId, out Array entries);
+        [handler=Controller] void setDOMStorageItem(in long callId, in long storageId, in String key, in String value, out boolean success);
+        [handler=Controller] void removeDOMStorageItem(in long callId, in long storageId, in String key, out boolean success);
 #endif
 
     };

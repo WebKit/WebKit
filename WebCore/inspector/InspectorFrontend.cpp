@@ -352,61 +352,6 @@ void InspectorFrontend::didGetCookies(long callId, const ScriptArray& cookies, c
     function.call();
 }
 
-#if ENABLE(DOM_STORAGE)
-bool InspectorFrontend::addDOMStorage(const ScriptObject& domStorageObj)
-{
-    ScriptFunctionCall function(m_webInspector, "dispatch"); 
-    function.appendArgument("addDOMStorage");
-    function.appendArgument(domStorageObj);
-    bool hadException = false;
-    function.call(hadException);
-    return !hadException;
-}
-
-void InspectorFrontend::selectDOMStorage(long storageId)
-{
-    ScriptFunctionCall function(m_webInspector, "dispatch"); 
-    function.appendArgument("selectDOMStorage");
-    function.appendArgument(storageId);
-    function.call();
-}
-
-void InspectorFrontend::didGetDOMStorageEntries(long callId, const ScriptArray& entries)
-{
-    ScriptFunctionCall function(m_webInspector, "dispatch"); 
-    function.appendArgument("didGetDOMStorageEntries");
-    function.appendArgument(callId);
-    function.appendArgument(entries);
-    function.call();
-}
-
-void InspectorFrontend::didSetDOMStorageItem(long callId, bool success)
-{
-    ScriptFunctionCall function(m_webInspector, "dispatch"); 
-    function.appendArgument("didSetDOMStorageItem");
-    function.appendArgument(callId);
-    function.appendArgument(success);
-    function.call();
-}
-
-void InspectorFrontend::didRemoveDOMStorageItem(long callId, bool success)
-{
-    ScriptFunctionCall function(m_webInspector, "dispatch"); 
-    function.appendArgument("didRemoveDOMStorageItem");
-    function.appendArgument(callId);
-    function.appendArgument(success);
-    function.call();
-}
-
-void InspectorFrontend::updateDOMStorage(long storageId)
-{
-    ScriptFunctionCall function(m_webInspector, "dispatch");
-    function.appendArgument("updateDOMStorage");
-    function.appendArgument(storageId);
-    function.call();
-}
-#endif
-
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
 void InspectorFrontend::didGetApplicationCaches(long callId, const ScriptValue& applicationCaches)
 {

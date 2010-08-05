@@ -102,15 +102,6 @@ namespace WebCore {
         void didGetProfile(long callId, const ScriptValue& profile);
 #endif
 
-#if ENABLE(DOM_STORAGE)
-        bool addDOMStorage(const ScriptObject& domStorageObj);
-        void selectDOMStorage(long storageId);
-        void didGetDOMStorageEntries(long callId, const ScriptArray& entries);
-        void didSetDOMStorageItem(long callId, bool success);
-        void didRemoveDOMStorageItem(long callId, bool success);
-        void updateDOMStorage(long storageId);
-#endif
-
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
         void updateApplicationCacheStatus(int status);
         void updateNetworkState(bool isNowOnline);

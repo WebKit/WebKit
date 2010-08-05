@@ -34,8 +34,6 @@
 #if ENABLE(DOM_STORAGE)
 
 #include "EventListener.h"
-#include "ScriptObject.h"
-#include "ScriptState.h"
 
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -45,7 +43,7 @@ namespace WebCore {
 
     class Storage;
     class Frame;
-    class InspectorFrontend;
+    class RemoteInspectorFrontend;
 
     class InspectorDOMStorageResource : public EventListener {
     public:
@@ -58,7 +56,7 @@ namespace WebCore {
             return listener->type() == InspectorDOMStorageResourceType ? static_cast<const InspectorDOMStorageResource*>(listener) : 0;
         }
 
-        void bind(InspectorFrontend* frontend);
+        void bind(RemoteInspectorFrontend* frontend);
         void unbind();
         void startReportingChangesToFrontend();
 
@@ -76,7 +74,7 @@ namespace WebCore {
         RefPtr<Storage> m_domStorage;
         bool m_isLocalStorage;
         RefPtr<Frame> m_frame;
-        InspectorFrontend* m_frontend;
+        RemoteInspectorFrontend* m_frontend;
         int m_id;
         bool m_reportingChangesToFrontend;
 

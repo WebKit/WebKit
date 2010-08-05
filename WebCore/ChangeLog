@@ -1,3 +1,24 @@
+2010-08-05  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: serialize DOM storage items to InspectorValues
+        https://bugs.webkit.org/show_bug.cgi?id=43486
+
+        * inspector/Inspector.idl:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::populateScriptObjects):
+        (WebCore::InspectorController::didUseDOMStorage):
+        (WebCore::InspectorController::selectDOMStorage):
+        (WebCore::InspectorController::getDOMStorageEntries):
+        (WebCore::InspectorController::setDOMStorageItem):
+        (WebCore::InspectorController::removeDOMStorageItem):
+        * inspector/InspectorDOMStorageResource.cpp:
+        (WebCore::InspectorDOMStorageResource::bind):
+        * inspector/InspectorDOMStorageResource.h:
+        * inspector/InspectorFrontend.cpp:
+        * inspector/InspectorFrontend.h:
+
 2010-08-04  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
