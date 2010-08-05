@@ -1,3 +1,15 @@
+2010-08-05  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: inspected page crashes when there is a cyclic reference in Object prototype
+        https://bugs.webkit.org/show_bug.cgi?id=43558
+
+        Test: inspector/debugger-cyclic-ref.html
+
+        * bindings/v8/ScriptValue.cpp:
+        (WebCore::v8ToInspectorValue):
+
 2010-08-05  Satish Sampath  <satish@chromium.org>
 
         Reviewed by Jeremy Orlow.
