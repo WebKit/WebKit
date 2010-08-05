@@ -215,10 +215,12 @@ inline void PageReservation::systemDecommit(void* start, size_t size)
 inline PageReservation PageReservation::systemReserve(size_t size, Usage usage, bool writable, bool executable)
 {
     // Record the protection for use during commit.
-    m_protection = executable ?
+    DWORD protection = executable ?
         (writable ? PAGE_EXECUTE_READWRITE : PAGE_EXECUTE_READ) :
         (writable ? PAGE_READWRITE : PAGE_READONLY);
-    return PageReservation(VirtualAlloc(0, size, MEM_RESERVE, m_protection), size);
+    PageReservation reservation(VirtualAlloc(0, size, MEM_RESERVE, m_protection), size);
+    reservation.m_protection = protection;
+    return reservation;
 }
 
 
