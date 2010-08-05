@@ -29,7 +29,9 @@
 #include "ArgumentEncoder.h"
 #include "Arguments.h"
 #include "MachPort.h"
+#include <mach/mach_port.h>
 #include <mach/mach_vm.h>
+#include <mach/vm_map.h>
 #include <wtf/RefPtr.h>
 
 namespace WebKit {
