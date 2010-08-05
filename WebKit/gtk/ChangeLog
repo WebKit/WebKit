@@ -1,3 +1,16 @@
+2010-08-05  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] Use correct path for Inspector data files in GTK+3.x builds
+        https://bugs.webkit.org/show_bug.cgi?id=43445
+
+        Use the right data path for inspector files when building with
+        GTK+ 3.x.
+
+        * WebCoreSupport/InspectorClientGtk.cpp:
+        (WebKit::InspectorClient::openInspectorFrontend):
+
 2010-08-03  Daniel Bates  <dbates@rim.com>
 
         Fix misspelled word 'teh' in the description of the XSS Auditor setting.
