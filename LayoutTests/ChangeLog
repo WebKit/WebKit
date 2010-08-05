@@ -1,3 +1,9 @@
+2010-08-05  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed. Chromium test expectations update.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-08-05  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Add missing pixel test results for svg/in-html test.

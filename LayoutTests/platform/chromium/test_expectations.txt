@@ -3182,5 +3182,7 @@ BUG51161 LINUX DEBUG : svg/clip-path/clip-path-text.svg = CRASH
 
 BUGWK43543 : http/tests/misc/isindex-formdata.html = TIMEOUT
 BUGWK43543 : http/tests/misc/isindex-with-no-form-base-href.html = TEXT TIMEOUT
+BUGWK43543 DEBUG : fast/parser/residual-style-dom.html = TIMEOUT
+BUGWK43543 LINUX MAC DEBUG : fast/parser/residual-style-hang.html = TIMEOUT
 
 BUGPFELDMAN WIN : http/tests/inspector-enabled/console-log-before-frame-navigation.html = TEXT
