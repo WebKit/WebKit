@@ -32,4 +32,17 @@ namespace WTF {
 
 size_t PageAllocation::s_pageSize = 0;
 
+#ifndef NDEBUG
+
+int PageAllocation::lastError()
+{
+#if OS(WINCE)
+    return GetLastError();
+#else
+    return errno;
+#endif
+}
+
+#endif
+
 }

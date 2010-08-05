@@ -72,10 +72,8 @@ public:
     bool commit(void* start, size_t size)
     {
         ASSERT(m_base);
-        // size must be a multiple of pageSize.
-        ASSERT(!(size & (pageSize() - 1)));
-        // address must be aligned to pageSize.
-        ASSERT(!(reinterpret_cast<intptr_t>(start) & (pageSize() - 1)));
+        ASSERT(isPageAligned(start));
+        ASSERT(isPageAligned(size));
 
         bool commited = systemCommit(start, size);
 #ifndef NDEBUG
@@ -87,10 +85,8 @@ public:
     void decommit(void* start, size_t size)
     {
         ASSERT(m_base);
-        // size must be a multiple of pageSize.
-        ASSERT(!(size & (pageSize() - 1)));
-        // address must be aligned to pageSize.
-        ASSERT(!(reinterpret_cast<intptr_t>(start) & (pageSize() - 1)));
+        ASSERT(isPageAligned(start));
+        ASSERT(isPageAligned(size));
 
 #ifndef NDEBUG
         m_committed -= size;
@@ -100,18 +96,15 @@ public:
 
     static PageReservation reserve(size_t size, Usage usage = UnknownUsage, bool writable = true, bool executable = false)
     {
-        // size must be a multiple of pageSize.
-        ASSERT(!(size & (pageSize() - 1)));
+        ASSERT(isPageAligned(size));
         return systemReserve(size, usage, writable, executable);
     }
 
 #if HAVE(PAGE_ALLOCATE_AT)
     static PageReservation reserveAt(void* address, bool fixed, size_t size, Usage usage = UnknownUsage, bool writable = true, bool executable = false)
     {
-        // size must be a multiple of pageSize.
-        ASSERT(!(size & (pageSize() - 1)));
-        // address must be aligned to pageSize.
-        ASSERT(!(reinterpret_cast<intptr_t>(address) & (pageSize() - 1)));
+        ASSERT(isPageAligned(address));
+        ASSERT(isPageAligned(size));
         return systemReserveAt(address, fixed, size, usage, writable, executable);
     }
 #endif
@@ -122,6 +115,10 @@ public:
         ASSERT(!m_committed);
         systemDeallocate(false);
     }
+
+#ifndef NDEBUG
+    using PageAllocation::lastError;
+#endif
 
 private:
 #if OS(SYMBIAN)

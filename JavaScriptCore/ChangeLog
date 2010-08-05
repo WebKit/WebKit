@@ -1,3 +1,33 @@
+2010-08-05  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 43185 - Switch RegisterFile over to use PageAllocation
+
+        Remove platform-specific memory allocation code.
+
+        * interpreter/RegisterFile.cpp:
+        (JSC::RegisterFile::~RegisterFile):
+        (JSC::RegisterFile::releaseExcessCapacity):
+        * interpreter/RegisterFile.h:
+        (JSC::RegisterFile::RegisterFile):
+        (JSC::RegisterFile::grow):
+        (JSC::RegisterFile::checkAllocatedOkay):
+        * wtf/PageAllocation.cpp:
+        (WTF::PageAllocation::lastError):
+        * wtf/PageAllocation.h:
+        (WTF::PageAllocation::allocate):
+        (WTF::PageAllocation::allocateAt):
+        (WTF::PageAllocation::allocateAligned):
+        (WTF::PageAllocation::pageSize):
+        (WTF::PageAllocation::isPageAligned):
+        (WTF::PageAllocation::isPowerOfTwo):
+        * wtf/PageReservation.h:
+        (WTF::PageReservation::commit):
+        (WTF::PageReservation::decommit):
+        (WTF::PageReservation::reserve):
+        (WTF::PageReservation::reserveAt):
+
 2010-08-05  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Darin Adler.
