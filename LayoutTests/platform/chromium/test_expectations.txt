@@ -2837,6 +2837,7 @@ BUG47035 WIN DEBUG : fast/loader/stateobjects/document-destroyed-navigate-back-w
 // We don't implement it yet.
 BUG47083 : fast/text/hyphenate-character.html = IMAGE+TEXT
 BUG47083 : fast/text/hyphens.html = IMAGE+TEXT
+BUG47083 : fast/text/hyphenate-locale.html = IMAGE+TEXT
 
 // Related to https://bugs.webkit.org/show_bug.cgi?id=35350
 BUG45048 LINUX MAC : fast/events/show-modal-dialog-onblur-onfocus.html = FAIL
@@ -3175,3 +3176,5 @@ BUGWK43480 SKIP : fast/dom/Geolocation/delayed-permission-denied.html = TEXT TIM
 
 BUG51161 LINUX DEBUG : svg/W3C-SVG-1.1/masking-mask-01-b.svg = CRASH
 BUG51161 LINUX DEBUG : svg/clip-path/clip-path-text.svg = CRASH
+
+BUG47083

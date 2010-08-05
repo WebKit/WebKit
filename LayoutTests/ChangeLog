@@ -1,3 +1,9 @@
+2010-08-04  Andrew Wilson  <atwilson@chromium.org>
+
+        Unreviewed change to Chromium test expectations to mark hyphenate-locale.html as failing.
+
+        * platform/chromium/test_expectations.txt: mark hyphenate-locate.html as failing.
+
 2010-08-04  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.
