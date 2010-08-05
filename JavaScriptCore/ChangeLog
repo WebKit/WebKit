@@ -1,3 +1,11 @@
+2010-08-05  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Unreviewed.
+
+        Typo fix that makes distcheck happy.
+
+        * GNUmakefile.am:
+
 2010-08-03  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt and Beth Dakin.
