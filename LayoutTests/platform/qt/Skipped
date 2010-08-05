@@ -5410,6 +5410,7 @@ inspector/debugger-pause-on-debugger-statement.html
 inspector/debugger-pause-in-eval-script.html
 inspector/debugger-proto-property.html
 inspector/debugger-eval-while-paused.html
+inspector/debugger-cyclic-ref.html
 
 # [Qt] fast/text/bidi-explicit-embedding-past-end.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=41241

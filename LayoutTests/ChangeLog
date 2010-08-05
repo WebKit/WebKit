@@ -1,5 +1,11 @@
 2010-08-05  Yury Semikhatsky  <yurys@chromium.org>
 
+        Unreviewed. Skip new debugger test on Qt.
+
+        * platform/qt/Skipped:
+
+2010-08-05  Yury Semikhatsky  <yurys@chromium.org>
+
         Reviewed by Pavel Feldman.
 
         Web Inspector: inspected page crashes when there is a cyclic reference in Object prototype
