@@ -1,3 +1,13 @@
+2010-08-05  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed build fix for Chromium.
+
+        WebInspector: inspector/debugger-breakpoints-not-activated-on-reload.html
+        was regressed. I'll fix it tomorrow.
+        https://bugs.webkit.org/show_bug.cgi?id=43574
+
+        * platform/chromium/test_expectations.txt:
+
 2010-08-05  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Some sputnik tests fail

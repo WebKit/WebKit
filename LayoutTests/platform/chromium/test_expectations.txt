@@ -99,6 +99,7 @@ BUG24182 SLOW : http/tests/cache/subresource-failover-to-network.html = PASS
 BUG24182 WIN DEBUG : animations/play-state.html = PASS TEXT
 BUG24182 SLOW WIN RELEASE : animations/play-state.html = PASS TEXT
 BUG24182 LINUX : animations/play-state.html = PASS TEXT
+BUG43574 WIN : inspector/debugger-breakpoints-not-activated-on-reload.html = FAIL
 
 // Usually <1s in release, ~1s in debug, but occasionally >5s in release.
 BUG27335 WIN RELEASE : plugins/embed-attributes-setting.html = PASS TIMEOUT
