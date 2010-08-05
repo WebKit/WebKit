@@ -26,7 +26,6 @@
 import optparse, os, shutil, subprocess, sys
 
 sourceRootDirectory = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-layoutTestResultsDir = os.path.abspath(os.path.join(sourceRootDirectory, "layout-test-results"))
 archiveFile = os.path.join(sourceRootDirectory, "layout-test-results.zip")
 
 def main():
@@ -43,9 +42,16 @@ def main():
     if action not in ('archive'):
         parser.error("Action is required")
 
-    return archiveTestResults(options.configuration, options.platform)
+    layoutTestResultsDir = os.path.abspath(os.path.join(sourceRootDirectory, "layout-test-results"))
+    if options.platform == 'chromium':
+        # See results_directory() in webkitpy/layout_tests/port/chromium.py.
+        layoutTestResultsDir = os.path.abspath(os.path.join(sourceRootDirectory,
+            "WebKit", "chromium", "webkit", options.configuration.capitalize(),
+            "layout-test-results"))
 
-def archiveTestResults(configuration, platform):
+    return archiveTestResults(options.configuration, options.platform, layoutTestResultsDir)
+
+def archiveTestResults(configuration, platform, layoutTestResultsDir):
     assert platform in ('mac', 'win', 'gtk', 'qt', 'chromium')
 
     try:
