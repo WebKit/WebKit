@@ -1,5 +1,38 @@
 2010-08-05  Pavel Feldman  <pfeldman@chromium.org>
 
+        Not reviewed. Chromium expectations update.
+
+        * platform/chromium-linux/fast/dom/isindex-001-expected.checksum: Added.
+        * platform/chromium-linux/fast/dom/isindex-001-expected.png: Added.
+        * platform/chromium-linux/fast/dom/isindex-002-expected.checksum:
+        * platform/chromium-linux/fast/dom/isindex-002-expected.png:
+        * platform/chromium-linux/fast/forms/form-in-malformed-markup-expected.checksum:
+        * platform/chromium-linux/fast/forms/form-in-malformed-markup-expected.png:
+        * platform/chromium-linux/fast/forms/formmove3-expected.checksum:
+        * platform/chromium-linux/fast/forms/formmove3-expected.png:
+        * platform/chromium-linux/fast/forms/formmove3-expected.txt:
+        * platform/chromium-linux/fast/forms/isindex-placeholder-expected.checksum:
+        * platform/chromium-linux/fast/forms/isindex-placeholder-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug96334-expected.txt:
+        * platform/chromium-win/fast/dom/isindex-001-expected.checksum:
+        * platform/chromium-win/fast/dom/isindex-001-expected.png:
+        * platform/chromium-win/fast/dom/isindex-001-expected.txt: Added.
+        * platform/chromium-win/fast/dom/isindex-002-expected.checksum:
+        * platform/chromium-win/fast/dom/isindex-002-expected.png:
+        * platform/chromium-win/fast/dom/isindex-002-expected.txt:
+        * platform/chromium-win/fast/forms/form-in-malformed-markup-expected.checksum:
+        * platform/chromium-win/fast/forms/form-in-malformed-markup-expected.png:
+        * platform/chromium-win/fast/forms/form-in-malformed-markup-expected.txt:
+        * platform/chromium-win/fast/forms/formmove3-expected.checksum:
+        * platform/chromium-win/fast/forms/formmove3-expected.png:
+        * platform/chromium-win/fast/forms/formmove3-expected.txt:
+        * platform/chromium-win/fast/forms/isindex-placeholder-expected.checksum:
+        * platform/chromium-win/fast/forms/isindex-placeholder-expected.png:
+        * platform/chromium-win/fast/forms/isindex-placeholder-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/adforce_imgis_com-expected.txt:
+
+2010-08-05  Pavel Feldman  <pfeldman@chromium.org>
+
         Not reviewed. Rebaselined a bunch of chromium layout tests after the parser switch.
 
         https://bugs.webkit.org/show_bug.cgi?id=43547
