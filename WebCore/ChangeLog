@@ -1,3 +1,16 @@
+2010-08-04  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Enable HTML5 tree builder
+        https://bugs.webkit.org/show_bug.cgi?id=42804
+
+        Months of work into a single line code change.
+        Geez.  Should have thought of this sooner.
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::HTMLTreeBuilder):
+
 2010-08-04  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.

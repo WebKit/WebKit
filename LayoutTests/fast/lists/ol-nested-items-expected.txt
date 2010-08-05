@@ -4,7 +4,7 @@ This tests that list items are properly marked when some of the items are indire
 2 Two
 3 Three
 4 Four
--> 5 Five
+5 Five
 -> 6 Six
 10 Ten
 11 Eleven

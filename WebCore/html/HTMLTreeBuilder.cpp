@@ -344,7 +344,6 @@ HTMLTreeBuilder::HTMLTreeBuilder(HTMLTokenizer* tokenizer, HTMLDocument* documen
     , m_originalInsertionMode(InitialMode)
     , m_secondaryInsertionMode(InitialMode)
     , m_tokenizer(tokenizer)
-    , m_legacyTreeBuilder(shouldUseLegacyTreeBuilder(document) ? new LegacyHTMLTreeBuilder(document, reportErrors) : 0)
     , m_lastScriptElementStartLine(uninitializedLineNumberValue)
     , m_scriptToProcessStartLine(uninitializedLineNumberValue)
     , m_fragmentScriptingPermission(FragmentScriptingAllowed)

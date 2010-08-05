@@ -12,6 +12,7 @@ layer at (0,0) size 785x852
                   RenderView at (0,0) size 304x300
                 layer at (0,0) size 304x300
                   RenderBlock {HTML} at (0,0) size 304x300
+                    RenderBody {BODY} at (8,8) size 288x284
               RenderText {#text} at (0,0) size 0x0
       RenderTable {TABLE} at (0,310) size 606x306
         RenderTableSection {TBODY} at (0,0) size 606x306
@@ -28,6 +29,7 @@ layer at (0,0) size 785x852
                   RenderView at (0,0) size 304x146
                 layer at (0,0) size 304x146
                   RenderBlock {HTML} at (0,0) size 304x146
+                    RenderBody {BODY} at (8,8) size 288x130
               RenderText {#text} at (0,0) size 0x0
       RenderTable {TABLE} at (0,772) size 606x64
         RenderTableSection {TBODY} at (0,0) size 606x64

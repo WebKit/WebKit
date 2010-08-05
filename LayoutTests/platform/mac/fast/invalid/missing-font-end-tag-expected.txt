@@ -12,8 +12,6 @@ layer at (0,0) size 800x600
         RenderText {#text} at (173,0) size 475x18
           text run at (173,0) width 475: " Minor refactoring to HTMLParser::handleError() to remove duplicate code"
       RenderBlock (anonymous) at (0,18) size 784x18
-        RenderInline {FONT} at (0,0) size 25x18
-          RenderText {#text} at (0,0) size 25x18
-            text run at (0,0) width 25: "font"
-        RenderText {#text} at (25,0) size 9x18
-          text run at (25,0) width 9: "tr"
+        RenderInline {FONT} at (0,0) size 34x18
+          RenderText {#text} at (0,0) size 34x18
+            text run at (0,0) width 34: "fonttr"

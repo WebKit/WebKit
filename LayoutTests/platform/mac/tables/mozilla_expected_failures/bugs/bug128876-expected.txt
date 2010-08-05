@@ -13,3 +13,4 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (555,2) size 206x2 [r=1 c=2 rs=1 cs=1]
               RenderInline {SPAN} at (0,0) size 0x0
                 RenderText {#text} at (0,0) size 0x0
+                RenderText {#text} at (0,0) size 0x0

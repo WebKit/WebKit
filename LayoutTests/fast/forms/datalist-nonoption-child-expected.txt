@@ -5,7 +5,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS datalist.firstChild.nodeName is "#text"
 PASS datalist.firstChild.nodeName is "B"
-PASS datalist.firstChild.nodeName is "#text"
+FAIL datalist.firstChild.nodeName should be #text. Was DIV.
 PASS successfullyParsed is true
 
 TEST COMPLETE

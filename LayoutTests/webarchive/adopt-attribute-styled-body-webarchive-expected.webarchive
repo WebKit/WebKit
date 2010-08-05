@@ -101,7 +101,7 @@ window.parent.bodyToAdopt = null;
 &lt;a href="about:blank"&gt;Spaceballs: The Visited Link&lt;/a&gt;
 
 
-&lt;/body&gt;&lt;/html&gt;</string>
+&lt;/body&gt;&lt;body&gt;&lt;/body&gt;&lt;/html&gt;</string>
 				<key>WebResourceFrameName</key>
 				<string>&lt;!--framePath //&lt;!--frame0--&gt;--&gt;</string>
 				<key>WebResourceMIMEType</key>

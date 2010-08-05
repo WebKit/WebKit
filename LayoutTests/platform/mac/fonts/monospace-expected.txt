@@ -341,10 +341,9 @@ layer at (0,0) size 785x4757
           RenderText {#text} at (0,1410) size 32x15
             text run at (0,1410) width 32: "}}}}"
           RenderBR {BR} at (32,1422) size 0x0
-      RenderBlock (anonymous) at (0,1897) size 769x0
-        RenderInline {FONT} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,1897) size 769x1410
-        RenderBlock {P} at (0,0) size 769x1410
+      RenderBlock {P} at (0,1897) size 769x1410
+        RenderInline {FONT} at (0,0) size 32x1410
+          RenderText {#text} at (0,0) size 0x0
           RenderInline {B} at (0,0) size 32x1410
             RenderText {#text} at (0,0) size 32x15
               text run at (0,0) width 32: "    "
@@ -629,8 +628,6 @@ layer at (0,0) size 785x4757
               text run at (0,1395) width 32: "}}}}"
             RenderBR {BR} at (32,1407) size 0x0
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,3320) size 769x0
-        RenderInline {FONT} at (0,0) size 0x0
       RenderBlock {P} at (0,3323) size 769x1410
         RenderInline {FONT} at (0,0) size 32x1410
           RenderText {#text} at (0,0) size 0x0

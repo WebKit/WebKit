@@ -1,3 +1,103 @@
+2010-08-04  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Enable HTML5 tree builder
+        https://bugs.webkit.org/show_bug.cgi?id=42804
+
+        Lots of crazy changes.  As far as we can tell, these
+        are all progressions/match minefield.  For a more in-depth,
+        per-test breakdown see the spreadsheet:
+        http://spreadsheets.google.com/ccc?key=0AlC4tS7Ao1fIdEo0SFdLaVpiclBHMVNQcHlTenV5TEE
+
+        * dom/html/level2/html/HTMLIsIndexElement01-expected.txt: Expected, <isindex> now gets converted into a <form><input> tree.
+        * dom/html/level2/html/HTMLIsIndexElement02-expected.txt:
+        * dom/html/level2/html/HTMLIsIndexElement03-expected.txt:
+        * editing/execCommand/indent-div-inside-list-expected.txt:
+        * fast/dom/HTMLLabelElement/label-control-expected.txt:
+        * fast/dom/attribute-case-sensitivity-expected.txt:
+        * fast/dom/no-elements-expected.txt:
+        * fast/events/tabindex-focus-blur-all-expected.txt:
+        * fast/forms/datalist-nonoption-child-expected.txt:
+        * fast/lists/ol-nested-items-expected.txt:
+        * fast/parser/remove-current-node-parent-expected.txt:
+        * fast/parser/residual-style-dom-expected.txt:
+        * fast/parser/residual-style-hang-expected.txt:
+        * html5lib/runner-expected.txt: massive progression
+        * html5lib/webkit-resumer-expected.txt: massive progression.
+        * http/tests/misc/isindex-formdata-expected.txt:
+        * http/tests/misc/isindex-with-no-form-base-href-expected.txt:
+        * http/tests/xmlhttprequest/close-window-expected.txt:
+        * platform/mac/editing/selection/designmode-no-caret-expected.txt:
+        * platform/mac/fast/block/float/4145535Crash-expected.txt:
+        * platform/mac/fast/block/float/float-in-float-painting-expected.txt:
+        * platform/mac/fast/dom/isindex-001-expected.txt:
+        * platform/mac/fast/dom/isindex-002-expected.txt:
+        * platform/mac/fast/events/focusingUnloadedFrame-expected.txt:
+        * platform/mac/fast/forms/file-input-disabled-expected.txt:
+        * platform/mac/fast/forms/form-added-to-table-expected.txt:
+        * platform/mac/fast/forms/form-element-geometry-expected.txt:
+        * platform/mac/fast/forms/form-in-malformed-markup-expected.txt:
+        * platform/mac/fast/forms/formmove3-expected.txt:
+        * platform/mac/fast/forms/isindex-placeholder-expected.txt:
+        * platform/mac/fast/forms/preserveFormDuringResidualStyle-expected.txt:
+        * platform/mac/fast/forms/text-style-color-expected.txt:
+        * platform/mac/fast/invalid/004-expected.txt:
+        * platform/mac/fast/invalid/005-expected.txt:
+        * platform/mac/fast/invalid/007-expected.txt:
+        * platform/mac/fast/invalid/012-expected.txt:
+        * platform/mac/fast/invalid/017-expected.txt:
+        * platform/mac/fast/invalid/018-expected.txt:
+        * platform/mac/fast/invalid/019-expected.txt:
+        * platform/mac/fast/invalid/missing-address-end-tag-expected.txt:
+        * platform/mac/fast/invalid/missing-font-end-tag-expected.txt:
+        * platform/mac/fast/invalid/residual-style-expected.txt:
+        * platform/mac/fast/invalid/table-inside-stray-table-content-expected.txt:
+        * platform/mac/fast/invalid/table-residual-style-crash-expected.txt:
+        * platform/mac/fast/parser/nofoo-tags-inside-paragraph-expected.txt:
+        * platform/mac/fast/parser/remove-block-in-residual-style-expected.txt:
+        * platform/mac/fast/parser/title-error-test-expected.txt:
+        * platform/mac/fast/table/fixed-table-non-cell-in-row-expected.txt:
+        * platform/mac/fast/table/giantCellspacing-expected.txt:
+        * platform/mac/fast/table/inline-form-assert-expected.txt:
+        * platform/mac/fast/table/insert-cell-before-form-expected.txt:
+        * platform/mac/fast/table/insert-row-before-form-expected.txt:
+        * platform/mac/fast/text/large-text-composed-char-expected.txt:
+        * platform/mac/fonts/cursive-expected.txt:
+        * platform/mac/fonts/fantasy-expected.txt:
+        * platform/mac/fonts/monospace-expected.txt:
+        * platform/mac/fonts/sans-serif-expected.txt:
+        * platform/mac/fonts/serif-expected.txt:
+        * platform/mac/tables/mozilla/bugs/adforce_imgis_com-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug113235-2-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug1188-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug1318-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug137388-1-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug137388-2-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug138725-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug2267-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug2516-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug2757-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug278385-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug30559-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug32447-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug34538-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug4527-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug48028-1-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug48028-2-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug53690-2-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug56563-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug78162-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug96334-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug96343-expected.txt:
+        * platform/mac/tables/mozilla/other/wa_table_thtd_rowspan-expected.txt:
+        * platform/mac/tables/mozilla/other/wa_table_tr_align-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug128876-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug1725-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug65372-expected.txt:
+        * webarchive/adopt-attribute-styled-body-webarchive-expected.webarchive:
+        * webarchive/test-frameset-expected.webarchive:
+
 2010-08-04  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.

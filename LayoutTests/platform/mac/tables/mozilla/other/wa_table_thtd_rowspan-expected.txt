@@ -169,7 +169,6 @@ layer at (0,0) size 785x2358
                       text run at (11,47) width 637: "table header cell occupy the same vertical space as the integer number of cells specified in rows"
                       text run at (11,65) width 606: "above or below it. The browser flows the contents of the spanning cell to occupy the entire"
                       text run at (11,83) width 102: "spanned space."
-                RenderInline {B} at (0,0) size 0x0
       RenderBlock {P} at (0,760) size 769x36
         RenderBR {BR} at (0,0) size 0x18
         RenderBR {BR} at (0,18) size 0x18
@@ -531,7 +530,6 @@ layer at (0,0) size 785x2358
                       text run at (635,47) width 40: "above"
                       text run at (11,65) width 623: "or below it. The browser flows the contents of the spanning cell to occupy the entire spanned"
                       text run at (11,83) width 41: "space."
-                RenderInline {B} at (0,0) size 0x0
       RenderBlock {P} at (0,1337) size 769x36
         RenderBR {BR} at (0,0) size 0x18
         RenderBR {BR} at (0,18) size 0x18
