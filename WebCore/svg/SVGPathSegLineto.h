@@ -23,6 +23,7 @@
 
 #if ENABLE(SVG)
 
+#include "PlatformString.h"
 #include "SVGPathSeg.h"
 
 namespace WebCore {

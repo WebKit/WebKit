@@ -3807,6 +3807,7 @@
             'svg/SVGPathElement.h',
             'svg/SVGPathParser.cpp',
             'svg/SVGPathParser.h',
+            'svg/SVGPathSeg.cpp',
             'svg/SVGPathSeg.h',
             'svg/SVGPathSegArc.cpp',
             'svg/SVGPathSegArc.h',

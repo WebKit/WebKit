@@ -1,3 +1,59 @@
+2010-08-05  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Touching SVGNames should only rebuild hundreds of files, not thousands
+        https://bugs.webkit.org/show_bug.cgi?id=43308
+
+        Remove SVGNames.h include from several core SVG header files
+        which do not need to include it.
+
+        One of them, SVGPathSeg.h, required creation of an SVGPathSeg.cpp.
+        A bunch of SVGPathSeg* could remove PlatformString.h includes if
+        we moved their toString() methods into the .cpp files.
+
+        I re-indented on header to stop check-webkit-style from complaining.
+        I removed a couple mode lines I saw, since my understanding from
+        previous webkit-dev threads is that we plan to remove those all.
+
+        No functional change, thus no tests.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * svg/SVGAllInOne.cpp:
+        * svg/SVGAngle.h:
+        * svg/SVGPathSeg.cpp: Added.
+        (WebCore::SVGPathSeg::~SVGPathSeg):
+        (WebCore::SVGPathSeg::pathSegType):
+        (WebCore::SVGPathSeg::pathSegTypeAsLetter):
+        (WebCore::SVGPathSeg::toString):
+        (WebCore::SVGPathSeg::associatedAttributeName):
+        (WebCore::SVGPathSegSingleCoord::toString):
+        * svg/SVGPathSeg.h:
+        (WebCore::SVGPathSegSingleCoord::SVGPathSegSingleCoord):
+        * svg/SVGPathSegArc.cpp:
+        (WebCore::SVGPathSegArc::toString):
+        * svg/SVGPathSegArc.h:
+        (WebCore::SVGPathSegArc::SVGPathSegArc):
+        * svg/SVGPathSegClosePath.h:
+        (WebCore::SVGPathSegClosePath::create):
+        (WebCore::SVGPathSegClosePath::pathSegType):
+        (WebCore::SVGPathSegClosePath::pathSegTypeAsLetter):
+        (WebCore::SVGPathSegClosePath::toString):
+        * svg/SVGPathSegCurvetoCubic.h:
+        * svg/SVGPathSegCurvetoCubicSmooth.h:
+        * svg/SVGPathSegCurvetoQuadratic.h:
+        * svg/SVGPathSegCurvetoQuadraticSmooth.h:
+        * svg/SVGPathSegLineto.h:
+        * svg/SVGPathSegLinetoHorizontal.h:
+        * svg/SVGPathSegLinetoVertical.h:
+        * svg/SVGPathSegMoveto.h:
+        * svg/SVGTransform.h:
+
 2010-08-05  Dirk Schulze  <krit@webkit.org>
 
         Unreviewed sort of XCode project file.

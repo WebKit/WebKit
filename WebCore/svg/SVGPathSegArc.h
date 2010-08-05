@@ -23,6 +23,7 @@
 
 #if ENABLE(SVG)
 
+#include "PlatformString.h"
 #include "SVGPathSeg.h"
 
 namespace WebCore {
@@ -30,9 +31,17 @@ namespace WebCore {
     class SVGPathSegArc : public SVGPathSeg {
     public:
         SVGPathSegArc(float x, float y, float r1, float r2, float angle, bool largeArcFlag, bool sweepFlag)
-        : m_x(x), m_y(y), m_r1(r1), m_r2(r2), m_angle(angle), m_largeArcFlag(largeArcFlag), m_sweepFlag(sweepFlag) {}
+            : m_x(x)
+            , m_y(y)
+            , m_r1(r1)
+            , m_r2(r2)
+            , m_angle(angle)
+            , m_largeArcFlag(largeArcFlag)
+            , m_sweepFlag(sweepFlag)
+        {
+        }
 
-        virtual String toString() const { return pathSegTypeAsLetter() + String::format(" %.6lg %.6lg %.6lg %d %d %.6lg %.6lg", m_r1, m_r2, m_angle, m_largeArcFlag, m_sweepFlag, m_x, m_y); }
+        virtual String toString() const;
 
         void setX(float x) { m_x = x; }
         float x() const { return m_x; }

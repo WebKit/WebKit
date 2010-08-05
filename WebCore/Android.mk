@@ -865,6 +865,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	svg/SVGPathBuilder.cpp \
 	svg/SVGPathElement.cpp \
 	svg/SVGPathParser.cpp \
+	svg/SVGPathSeg.cpp \
 	svg/SVGPathSegArc.cpp \
 	svg/SVGPathSegClosePath.cpp \
 	svg/SVGPathSegCurvetoCubic.cpp \

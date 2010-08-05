@@ -110,6 +110,7 @@
 #include "SVGPathBuilder.cpp"
 #include "SVGPathElement.cpp"
 #include "SVGPathParser.cpp"
+#include "SVGPathSeg.cpp"
 #include "SVGPathSegArc.cpp"
 #include "SVGPathSegClosePath.cpp"
 #include "SVGPathSegCurvetoCubic.cpp"

@@ -22,18 +22,17 @@
 #define SVGPathSeg_h
 
 #if ENABLE(SVG)
-#include "PlatformString.h"
-#include "SVGNames.h"
-
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
+    class String;
     class SVGPathElement;
     class SVGStyledElement;
+    class QualifiedName;
 
     class SVGPathSeg : public RefCounted<SVGPathSeg> {
     public:
-        virtual ~SVGPathSeg() { }
+        virtual ~SVGPathSeg();
 
         enum SVGPathSegType {
             PATHSEG_UNKNOWN                         = 0,
@@ -58,11 +57,11 @@ namespace WebCore {
             PATHSEG_CURVETO_QUADRATIC_SMOOTH_REL    = 19
         };
 
-        virtual unsigned short pathSegType() const { return PATHSEG_UNKNOWN; }
-        virtual String pathSegTypeAsLetter() const { return ""; }
-        virtual String toString() const { return ""; }
+        virtual unsigned short pathSegType() const;
+        virtual String pathSegTypeAsLetter() const;
+        virtual String toString() const;
 
-        const QualifiedName& associatedAttributeName() const { return SVGNames::dAttr; }
+        const QualifiedName& associatedAttributeName() const;
         
     protected:
         SVGPathSeg() { }
@@ -71,7 +70,11 @@ namespace WebCore {
     class SVGPathSegSingleCoord : public SVGPathSeg { 
     public:
         SVGPathSegSingleCoord(float x, float y)
-        : SVGPathSeg() , m_x(x) , m_y(y) {}
+            : SVGPathSeg()
+            , m_x(x)
+            , m_y(y)
+        {
+        }
 
         void setX(float x) { m_x = x; }
         float x() const { return m_x; }
@@ -79,13 +82,12 @@ namespace WebCore {
         void setY(float y) { m_y = y; }
         float y() const { return m_y; }
 
-        virtual String toString() const { return pathSegTypeAsLetter() + String::format(" %.6lg %.6lg", m_x, m_y); }
+        virtual String toString() const;
 
     private:
         float m_x;
         float m_y;
     };
-
 
 } // namespace WebCore
 

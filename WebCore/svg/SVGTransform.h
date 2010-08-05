@@ -24,7 +24,6 @@
 #if ENABLE(SVG)
 #include "AffineTransform.h"
 #include "FloatPoint.h"
-#include "SVGNames.h"
 
 namespace WebCore {
     
