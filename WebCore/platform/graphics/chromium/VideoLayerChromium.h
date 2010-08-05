@@ -43,9 +43,19 @@ class VideoLayerChromium : public LayerChromium {
 public:
     static PassRefPtr<VideoLayerChromium> create(GraphicsLayerChromium* owner = 0);
     virtual bool drawsContent() { return true; }
+    virtual void updateTextureContents(unsigned textureId);
 
 private:
     VideoLayerChromium(GraphicsLayerChromium* owner);
+    void createTextureRect(const IntSize& requiredTextureSize, const IntRect& updateRect, unsigned textureId);
+    void updateTextureRect(const IntRect& updateRect, unsigned textureId);
+    void updateCompleted();
+
+    unsigned m_allocatedTextureId;
+    IntSize m_allocatedTextureSize;
+    OwnPtr<skia::PlatformCanvas> m_canvas;
+    OwnPtr<PlatformContextSkia> m_skiaContext;
+    OwnPtr<GraphicsContext> m_graphicsContext;
 };
 
 }

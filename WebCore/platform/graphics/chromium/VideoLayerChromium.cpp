@@ -31,8 +31,20 @@
 #include "config.h"
 
 #if USE(ACCELERATED_COMPOSITING)
-
 #include "VideoLayerChromium.h"
+
+#include "LayerRendererChromium.h"
+#include "RenderLayerBacking.h"
+#include "skia/ext/platform_canvas.h"
+
+#include <GLES2/gl2.h>
+#define GL_GLEXT_PROTOTYPES
+#include <GLES2/gl2ext.h>
+
+#if PLATFORM(SKIA)
+#include "NativeImageSkia.h"
+#include "PlatformContextSkia.h"
+#endif
 
 namespace WebCore {
 
@@ -43,7 +55,124 @@ PassRefPtr<VideoLayerChromium> VideoLayerChromium::create(GraphicsLayerChromium*
 
 VideoLayerChromium::VideoLayerChromium(GraphicsLayerChromium* owner)
     : LayerChromium(owner)
+    , m_allocatedTextureId(0)
+    , m_canvas(0)
+    , m_skiaContext(0)
+    , m_graphicsContext(0)
 {
+}
+
+void VideoLayerChromium::updateTextureContents(unsigned textureId)
+{
+    RenderLayerBacking* backing = static_cast<RenderLayerBacking*>(m_owner->client());
+    if (!backing || backing->paintingGoesToWindow())
+        return;
+
+    ASSERT(drawsContent());
+
+    IntRect dirtyRect(m_dirtyRect);
+    IntSize requiredTextureSize;
+
+#if PLATFORM(SKIA)
+    requiredTextureSize = m_bounds;
+    IntRect boundsRect(IntPoint(0, 0), m_bounds);
+
+    // If the texture needs to be reallocated, then we must redraw the entire
+    // contents of the layer.
+    if (requiredTextureSize != m_allocatedTextureSize)
+        dirtyRect = boundsRect;
+    else {
+        // Clip the dirtyRect to the size of the layer to avoid drawing outside
+        // the bounds of the backing texture.
+        dirtyRect.intersect(boundsRect);
+    }
+
+    if (!m_canvas.get()
+        || dirtyRect.width() != m_canvas->getDevice()->width()
+        || dirtyRect.height() != m_canvas->getDevice()->height()) {
+        m_canvas = new skia::PlatformCanvas(dirtyRect.width(), dirtyRect.height(), true);
+        m_skiaContext = new PlatformContextSkia(m_canvas.get());
+
+#if OS(WINDOWS)
+        // This is needed to get text to show up correctly. Without it,
+        // GDI renders with zero alpha and the text becomes invisible.
+        // Unfortunately, setting this to true disables cleartype.
+        // FIXME: Does this take us down a very slow text rendering path?
+        // FIXME: Why is this is a windows-only call?
+        m_skiaContext->setDrawingToImageBuffer(true);
+#endif
+        m_graphicsContext = new GraphicsContext(reinterpret_cast<PlatformGraphicsContext*>(m_skiaContext.get()));
+    }
+
+    // Bring the canvas into the coordinate system of the paint rect.
+    m_canvas->translate(static_cast<SkScalar>(-dirtyRect.x()), static_cast<SkScalar>(-dirtyRect.y()));
+
+    // If the texture id or size changed since last time, then we need to tell GL
+    // to re-allocate a texture.
+    if (m_allocatedTextureId != textureId || requiredTextureSize != m_allocatedTextureSize)
+        createTextureRect(requiredTextureSize, dirtyRect, textureId);
+    else
+        updateTextureRect(dirtyRect, textureId);
+#else
+#error "Need to implement for your platform."
+#endif
+}
+
+void VideoLayerChromium::createTextureRect(const IntSize& requiredTextureSize, const IntRect& updateRect, unsigned textureId)
+{
+    // Paint into graphics context and get bitmap.
+    m_owner->paintGraphicsLayerContents(*m_graphicsContext, updateRect);
+    const SkBitmap& bitmap = m_canvas->getDevice()->accessBitmap(false);
+    const SkBitmap* skiaBitmap = &bitmap;
+    ASSERT(skiaBitmap);
+
+    void* pixels = 0;
+    IntSize bitmapSize;
+    SkAutoLockPixels lock(*skiaBitmap);
+    SkBitmap::Config skiaConfig = skiaBitmap->config();
+    // FIXME: Do we need to support more image configurations?
+    if (skiaConfig == SkBitmap::kARGB_8888_Config) {
+        pixels = skiaBitmap->getPixels();
+        bitmapSize = IntSize(skiaBitmap->width(), skiaBitmap->height());
+    }
+
+    if (!pixels)
+        return;
+
+    glBindTexture(GL_TEXTURE_2D, textureId);
+    ASSERT(bitmapSize == requiredTextureSize);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, requiredTextureSize.width(), requiredTextureSize.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+
+    m_allocatedTextureId = textureId;
+    m_allocatedTextureSize = requiredTextureSize;
+
+    updateCompleted();
+}
+
+void VideoLayerChromium::updateTextureRect(const IntRect& updateRect, unsigned textureId)
+{
+    const SkBitmap& bitmap = m_canvas->getDevice()->accessBitmap(true);
+    SkBitmap* skiaBitmap = const_cast<SkBitmap*>(&bitmap);
+    ASSERT(skiaBitmap);
+
+    SkAutoLockPixels lock(*skiaBitmap);
+    SkBitmap::Config skiaConfig = skiaBitmap->config();
+
+    if (skiaConfig == SkBitmap::kARGB_8888_Config) {
+        glBindTexture(GL_TEXTURE_2D, textureId);
+        void* mem = glMapTexSubImage2D(GL_TEXTURE_2D, 0, updateRect.x(), updateRect.y(), updateRect.width(), updateRect.height(), GL_RGBA, GL_UNSIGNED_BYTE, GL_WRITE_ONLY);
+        skiaBitmap->setPixels(mem);
+        m_owner->paintGraphicsLayerContents(*m_graphicsContext, updateRect);
+        glUnmapTexSubImage2D(mem);
+    }
+
+    updateCompleted();
+}
+
+void VideoLayerChromium::updateCompleted()
+{
+    m_dirtyRect.setSize(FloatSize());
+    m_contentsDirty = false;
 }
 
 }

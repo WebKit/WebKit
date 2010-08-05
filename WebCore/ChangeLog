@@ -1,3 +1,22 @@
+2010-08-05  Victoria Kirst  <vrk@google.com>
+
+        Reviewed by David Levin.
+
+        Added logic to use glMapTexSubImage2D to write video layer to GPU
+        texture. Also fixes CPU usage problem from previous patch.
+        https://bugs.webkit.org/show_bug.cgi?id=43101
+
+        No change in user-visible functionality (since it isn't turned on),
+        so no new tests.
+
+        * platform/graphics/chromium/VideoLayerChromium.cpp:
+        (WebCore::VideoLayerChromium::VideoLayerChromium):
+        (WebCore::VideoLayerChromium::updateTextureContents):
+        (WebCore::VideoLayerChromium::createTextureRect):
+        (WebCore::VideoLayerChromium::updateTextureRect):
+        (WebCore::VideoLayerChromium::updateCompleted):
+        * platform/graphics/chromium/VideoLayerChromium.h:
+
 2010-08-05  Zoltan Horvath  <zoltan@webkit.org>
 
         Reviewed by Simon Hausmann.
