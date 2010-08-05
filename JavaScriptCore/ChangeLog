@@ -1,3 +1,76 @@
+2010-08-04  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 43515 - Fix small design issues with PageAllocation, split out PageReservation.
+
+        The PageAllocation class has a number of issues:
+        * Changes in bug #43269 accidentally switched SYMBIAN over to use malloc/free to allocate
+          blocks of memory for the GC heap, instead of allocating RChunks.  Revert this change in
+          behaviour.
+        * In order for PageAllocation to work correctly on WinCE we should be decommitting memory
+          before deallocating.  In order to simplify understanding the expected state at deallocate,
+          split behaviour out into PageAllocation and PageReservation classes.  Require that all
+          memory be decommitted before calling deallocate on a PageReservation, add asserts to
+          enforce this.
+        * add many missing asserts.
+        * inline more functions.
+        * remove ability to create sub-PageAllocations from an existing PageAllocations object -
+          this presented an interface that would allow sub regions to be deallocated, which would
+          not have provided expected behaviour.
+        * remove writable/executable arguments to commit, this value can be cached at the point
+          the memory is reserved.
+        * remove writable/executable arguments to allocateAligned, protection other than RW is not
+          supported.
+        * add missing checks for overflow & failed allocation to mmap path through allocateAligned.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * jit/ExecutableAllocator.cpp:
+        (JSC::ExecutableAllocator::intializePageSize):
+        * jit/ExecutableAllocator.h:
+        (JSC::ExecutablePool::Allocation::Allocation):
+        (JSC::ExecutablePool::Allocation::base):
+        (JSC::ExecutablePool::Allocation::size):
+        (JSC::ExecutablePool::Allocation::operator!):
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+        (JSC::FixedVMPoolAllocator::reuse):
+        (JSC::FixedVMPoolAllocator::coalesceFreeSpace):
+        (JSC::FixedVMPoolAllocator::FixedVMPoolAllocator):
+        (JSC::FixedVMPoolAllocator::alloc):
+        (JSC::FixedVMPoolAllocator::free):
+        (JSC::FixedVMPoolAllocator::allocInternal):
+        * runtime/AlignedMemoryAllocator.h:
+        (JSC::::allocate):
+        (JSC::::AlignedMemoryAllocator):
+        * runtime/Collector.cpp:
+        (JSC::Heap::allocateBlock):
+        * runtime/Collector.h:
+        * wtf/PageAllocation.cpp:
+        * wtf/PageAllocation.h:
+        (WTF::PageAllocation::operator!):
+        (WTF::PageAllocation::allocate):
+        (WTF::PageAllocation::allocateAt):
+        (WTF::PageAllocation::allocateAligned):
+        (WTF::PageAllocation::deallocate):
+        (WTF::PageAllocation::pageSize):
+        (WTF::PageAllocation::systemAllocate):
+        (WTF::PageAllocation::systemAllocateAt):
+        (WTF::PageAllocation::systemAllocateAligned):
+        (WTF::PageAllocation::systemDeallocate):
+        (WTF::PageAllocation::systemPageSize):
+        * wtf/PageReservation.h: Copied from JavaScriptCore/wtf/PageAllocation.h.
+        (WTF::PageReservation::PageReservation):
+        (WTF::PageReservation::commit):
+        (WTF::PageReservation::decommit):
+        (WTF::PageReservation::reserve):
+        (WTF::PageReservation::reserveAt):
+        (WTF::PageReservation::deallocate):
+        (WTF::PageReservation::systemCommit):
+        (WTF::PageReservation::systemDecommit):
+        (WTF::PageReservation::systemReserve):
+        (WTF::PageReservation::systemReserveAt):
+        * wtf/Platform.h:
+
 2010-08-04  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r64655.

@@ -35,6 +35,7 @@
 #include <sys/mman.h>
 #include <unistd.h>
 #include <wtf/AVLTree.h>
+#include <wtf/PageReservation.h>
 #include <wtf/VMTags.h>
 
 #if CPU(X86_64)
@@ -131,12 +132,12 @@ class FixedVMPoolAllocator
 
     void reuse(void* position, size_t size)
     {
-        bool okay = m_allocation.commit(position, size, EXECUTABLE_POOL_WRITABLE, true);
+        bool okay = m_allocation.commit(position, size);
         ASSERT_UNUSED(okay, okay);
     }
 
     // All addition to the free list should go through this method, rather than
-    // calling insert directly, to avoid multiple entries beging added with the
+    // calling insert directly, to avoid multiple entries being added with the
     // same key.  All nodes being added should be singletons, they should not
     // already be a part of a chain.
     void addToFreeList(FreeListEntry* entry)
@@ -155,7 +156,7 @@ class FixedVMPoolAllocator
     }
 
     // We do not attempt to coalesce addition, which may lead to fragmentation;
-    // instead we periodically perform a sweep to try to coalesce neigboring
+    // instead we periodically perform a sweep to try to coalesce neighboring
     // entries in m_freeList.  Presently this is triggered at the point 16MB
     // of memory has been released.
     void coalesceFreeSpace()
@@ -168,7 +169,7 @@ class FixedVMPoolAllocator
         for (FreeListEntry* entry; (entry = *iter); ++iter) {
             // Each entry in m_freeList might correspond to multiple
             // free chunks of memory (of the same size).  Walk the chain
-            // (this is likely of couse only be one entry long!) adding
+            // (this is likely of course only be one entry long!) adding
             // each entry to the Vector (at reseting the next in chain
             // pointer to separate each node out).
             FreeListEntry* next;
@@ -283,16 +284,16 @@ public:
         //
         // But! - as a temporary workaround for some plugin problems (rdar://problem/6812854),
         // for now instead of 2^26 bits of ASLR lets stick with 25 bits of randomization plus
-        // 2^24, which should put up somewhere in the middle of usespace (in the address range
+        // 2^24, which should put up somewhere in the middle of userspace (in the address range
         // 0x200000000000 .. 0x5fffffffffff).
 #if VM_POOL_ASLR
         intptr_t randomLocation = 0;
         randomLocation = arc4random() & ((1 << 25) - 1);
         randomLocation += (1 << 24);
         randomLocation <<= 21;
-        m_allocation = PageAllocation::reserveAt(reinterpret_cast<void*>(randomLocation), false, totalHeapSize, PageAllocation::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true);
+        m_allocation = PageReservation::reserveAt(reinterpret_cast<void*>(randomLocation), false, totalHeapSize, PageAllocation::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true);
 #else
-        m_allocation = PageAllocation::reserve(totalHeapSize, PageAllocation::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true);
+        m_allocation = PageReservation::reserve(totalHeapSize, PageAllocation::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true);
 #endif
 
         if (!!m_allocation)
@@ -303,12 +304,12 @@ public:
 #endif
     }
 
-    PageAllocation alloc(size_t size)
+    ExecutablePool::Allocation alloc(size_t size)
     {
-        return PageAllocation(allocInternal(size), size, m_allocation);
+        return ExecutablePool::Allocation(allocInternal(size), size);
     }
 
-    void free(PageAllocation allocation)
+    void free(ExecutablePool::Allocation allocation)
     {
         void* pointer = allocation.base();
         size_t size = allocation.size();
@@ -356,12 +357,12 @@ private:
             result = m_commonSizedAllocations.last();
             m_commonSizedAllocations.removeLast();
         } else {
-            // Serach m_freeList for a suitable sized chunk to allocate memory from.
+            // Search m_freeList for a suitable sized chunk to allocate memory from.
             FreeListEntry* entry = m_freeList.search(size, m_freeList.GREATER_EQUAL);
 
             // This is bad news.
             if (!entry) {
-                // Errk!  Lets take a last-ditch desparation attempt at defragmentation...
+                // Errk!  Lets take a last-ditch desperation attempt at defragmentation...
                 coalesceFreeSpace();
                 // Did that free up a large enough chunk?
                 entry = m_freeList.search(size, m_freeList.GREATER_EQUAL);
@@ -423,7 +424,7 @@ private:
     // This is used for housekeeping, to trigger defragmentation of the freed lists.
     size_t m_countFreedSinceLastCoalesce;
 
-    PageAllocation m_allocation;
+    PageReservation m_allocation;
 };
 
 void ExecutableAllocator::intializePageSize()

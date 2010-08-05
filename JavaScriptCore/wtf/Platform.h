@@ -708,7 +708,6 @@
 #define HAVE_ERRNO_H 1
 #define HAVE_LANGINFO_H 1
 #define HAVE_MMAP 1
-#define HAVE_ALIGNED_ALLOCATE 1
 #define HAVE_MERGESORT 1
 #define HAVE_SBRK 1
 #define HAVE_STRINGS_H 1
@@ -737,10 +736,9 @@
 
 #if OS(WINCE)
 #define HAVE_ERRNO_H 0
-#define HAVE_ALIGNED_ALLOCATE 0
 #else
 #define HAVE_SYS_TIMEB_H 1
-#define HAVE_ALIGNED_ALLOCATE 1
+#define HAVE_ALIGNED_MALLOC 1
 #endif
 #define HAVE_VIRTUALALLOC 1
 
@@ -797,12 +795,11 @@
 
 #endif
 
-#if !defined(HAVE_ALIGNED_ALLOCATE)
-#if HAVE(POSIX_MEMALIGN)
-#define HAVE_ALIGNED_ALLOCATE 1
-#else
-#define HAVE_ALIGNED_ALLOCATE 0
+#if HAVE(MMAP) || (HAVE(VIRTUALALLOC) && HAVE(ALIGNED_MALLOC))
+#define HAVE_PAGE_ALLOCATE_ALIGNED 1
 #endif
+#if HAVE(MMAP)
+#define HAVE_PAGE_ALLOCATE_AT 1
 #endif
 
 /* ENABLE macro defaults */

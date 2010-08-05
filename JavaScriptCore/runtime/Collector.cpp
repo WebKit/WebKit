@@ -191,6 +191,8 @@ NEVER_INLINE CollectorBlock* Heap::allocateBlock()
 {
     AlignedBlock allocation = m_blockallocator.allocate();
     CollectorBlock* block = static_cast<CollectorBlock*>(allocation.base());
+    if (!block)
+        CRASH();
 
     // Initialize block.
 

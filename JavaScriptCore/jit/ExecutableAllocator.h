@@ -85,11 +85,28 @@ inline size_t roundUpAllocationSize(size_t request, size_t granularity)
 namespace JSC {
 
 class ExecutablePool : public RefCounted<ExecutablePool> {
-private:
+public:
+#if ENABLE(EXECUTABLE_ALLOCATOR_DEMAND)
     typedef PageAllocation Allocation;
+#else
+    class Allocation {
+    public:
+        Allocation(void* base, size_t size)
+            : m_base(base)
+            , m_size(size)
+        {
+        }
+        void* base() { return m_base; }
+        size_t size() { return m_size; }
+        bool operator!() const { return !m_base; }
+
+    private:
+        void* m_base;
+        size_t m_size;
+    };
+#endif
     typedef Vector<Allocation, 2> AllocationList;
 
-public:
     static PassRefPtr<ExecutablePool> create(size_t n);
 
     void* alloc(size_t n)

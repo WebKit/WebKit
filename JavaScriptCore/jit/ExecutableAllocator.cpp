@@ -45,7 +45,7 @@ void ExecutableAllocator::intializePageSize()
     // for moving memory model limitation
     ExecutableAllocator::pageSize = 256 * 1024;
 #else
-    ExecutableAllocator::pageSize = PageAllocation::pagesize();
+    ExecutableAllocator::pageSize = PageAllocation::pageSize();
 #endif
 }
 

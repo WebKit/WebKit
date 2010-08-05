@@ -1,3 +1,13 @@
+2010-08-04  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 43515 - Fix small design issues with PageAllocation, split out PageReservation.
+        (add forwarding headers)
+
+        * ForwardingHeaders/wtf/Bitmap.h: Added.
+        * ForwardingHeaders/wtf/PageReservation.h: Added.
+
 2010-08-04  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Adam Barth.
