@@ -12,6 +12,12 @@
 
         Not reviewed. More chromium test rebaselines.
 
+        * platform/chromium/test_expectations.txt:
+
+2010-08-05  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed. More chromium test rebaselines.
+
         * platform/chromium-linux/svg/in-html/circle-expected.checksum: Added.
         * platform/chromium-linux/svg/in-html/circle-expected.png: Added.
         * platform/chromium-mac/fast/invalid/residual-style-expected.txt: Removed.
