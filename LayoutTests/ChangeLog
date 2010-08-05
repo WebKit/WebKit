@@ -1,5 +1,16 @@
 2010-08-05  Adam Barth  <abarth@webkit.org>
 
+        residual-style-hang times out on Gtk
+        https://bugs.webkit.org/show_bug.cgi?id=43540
+
+        Skip fast/parser/residual-style-hang.html on Gtk.  Hopefully someone
+        with access to a Gtk machine can help us understand why this is
+        hanging.  There's (a little) more information in the bug page.
+
+        * platform/gtk/Skipped:
+
+2010-08-05  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         Add a test for SVG-in-HTML

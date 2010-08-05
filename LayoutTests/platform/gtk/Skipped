@@ -5866,3 +5866,8 @@ inspector/debugger-breakpoints-not-activated-on-reload.html
 # register as a triple-click even though the mouse have moved
 # outside of the double-click distance.
 editing/selection/5195166-1.html
+
+# Times out.  We need to figure out whether this is just caused by a slow bot
+# or if there's a real bug here.
+# https://bugs.webkit.org/show_bug.cgi?id=43540
+fast/parser/residual-style-hang.html
