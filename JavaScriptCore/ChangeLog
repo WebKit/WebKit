@@ -1,3 +1,68 @@
+2010-08-05  Nathan Lawrence  <nlawrence@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=43464
+
+        Currently, the global object is being embedded in the JavaScriptCore
+        bytecode, however since the global object is the same for all opcodes
+        in a code block, we can have the global object just be a member of the
+        associated code block.
+
+        Additionally, I added an assert inside of emitOpcode that verifies
+        that the last generated opcode was of the correct length.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::derefStructures):
+        (JSC::CodeBlock::markAggregate):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::globalObject):
+        (JSC::GlobalCodeBlock::GlobalCodeBlock):
+        (JSC::ProgramCodeBlock::ProgramCodeBlock):
+        (JSC::EvalCodeBlock::EvalCodeBlock):
+        (JSC::FunctionCodeBlock::FunctionCodeBlock):
+        * bytecode/Opcode.h:
+        (JSC::opcodeLength):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitOpcode):
+            Added an assert to check that the last generated opcode is the
+            correct length.
+        (JSC::BytecodeGenerator::rewindBinaryOp):
+            Changed the last opcode to op_end since the length will no longer
+            be correct.
+        (JSC::BytecodeGenerator::rewindUnaryOp):
+            Changed the last opcode to op_end since the length will no longer
+            be correct.
+        (JSC::BytecodeGenerator::emitResolve):
+        (JSC::BytecodeGenerator::emitGetScopedVar):
+        (JSC::BytecodeGenerator::emitPutScopedVar):
+        (JSC::BytecodeGenerator::emitResolveWithBase):
+        * bytecompiler/BytecodeGenerator.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::resolveGlobal):
+        (JSC::Interpreter::resolveGlobalDynamic):
+        (JSC::Interpreter::privateExecute):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_get_global_var):
+        (JSC::JIT::emit_op_put_global_var):
+        (JSC::JIT::emit_op_resolve_global):
+        (JSC::JIT::emitSlow_op_resolve_global):
+        (JSC::JIT::emit_op_resolve_global_dynamic):
+        (JSC::JIT::emitSlow_op_resolve_global_dynamic):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_get_global_var):
+        (JSC::JIT::emit_op_put_global_var):
+        (JSC::JIT::emit_op_resolve_global):
+        (JSC::JIT::emitSlow_op_resolve_global):
+        * jit/JITStubs.cpp:
+        (JSC::cti_op_resolve_global):
+        * runtime/Executable.cpp:
+        (JSC::FunctionExecutable::compileForCallInternal):
+        (JSC::FunctionExecutable::compileForConstructInternal):
+        (JSC::FunctionExecutable::reparseExceptionInfo):
+
 2010-08-05  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.

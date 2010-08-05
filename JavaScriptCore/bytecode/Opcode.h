@@ -93,12 +93,12 @@ namespace JSC {
         \
         macro(op_resolve, 3) \
         macro(op_resolve_skip, 4) \
-        macro(op_resolve_global, 6) \
-        macro(op_resolve_global_dynamic, 7) \
+        macro(op_resolve_global, 5) \
+        macro(op_resolve_global_dynamic, 6) \
         macro(op_get_scoped_var, 4) \
         macro(op_put_scoped_var, 4) \
-        macro(op_get_global_var, 4) \
-        macro(op_put_global_var, 4) \
+        macro(op_get_global_var, 3) \
+        macro(op_put_global_var, 3) \
         macro(op_resolve_base, 3) \
         macro(op_resolve_with_base, 4) \
         macro(op_get_by_id, 8) \
@@ -253,6 +253,17 @@ namespace JSC {
     };
 
 #endif
+
+    inline size_t opcodeLength(OpcodeID opcode)
+    {
+        switch (opcode) {
+#define OPCODE_ID_LENGTHS(id, length) case id: return OPCODE_LENGTH(id);
+             FOR_EACH_OPCODE_ID(OPCODE_ID_LENGTHS)
+#undef OPCODE_ID_LENGTHS
+        }
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
 
 } // namespace JSC
 

@@ -1344,8 +1344,9 @@ void CodeBlock::dumpStatistics()
 #endif
 }
 
-CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, CodeType codeType, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset, SymbolTable* symTab, bool isConstructor)
-    : m_numCalleeRegisters(0)
+CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, CodeType codeType, JSGlobalObject *globalObject, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset, SymbolTable* symTab, bool isConstructor)
+    : m_globalObject(globalObject)
+    , m_numCalleeRegisters(0)
     , m_numVars(0)
     , m_numParameters(0)
     , m_isConstructor(isConstructor)
@@ -1457,8 +1458,8 @@ void CodeBlock::derefStructures(Instruction* vPC) const
         return;
     }
     if (vPC[0].u.opcode == interpreter->getOpcode(op_resolve_global) || vPC[0].u.opcode == interpreter->getOpcode(op_resolve_global_dynamic)) {
-        if(vPC[4].u.structure)
-            vPC[4].u.structure->deref();
+        if (vPC[3].u.structure)
+            vPC[3].u.structure->deref();
         return;
     }
     if ((vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_proto_list))
@@ -1518,6 +1519,7 @@ void CodeBlock::markAggregate(MarkStack& markStack)
         m_functionExprs[i]->markAggregate(markStack);
     for (size_t i = 0; i < m_functionDecls.size(); ++i)
         m_functionDecls[i]->markAggregate(markStack);
+    markStack.append(m_globalObject);
 }
 
 bool CodeBlock::reparseForExceptionInfoIfNecessary(CallFrame* callFrame)

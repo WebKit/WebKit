@@ -144,28 +144,28 @@ NEVER_INLINE bool Interpreter::resolveSkip(CallFrame* callFrame, Instruction* vP
 NEVER_INLINE bool Interpreter::resolveGlobal(CallFrame* callFrame, Instruction* vPC, JSValue& exceptionValue)
 {
     int dst = vPC[1].u.operand;
-    JSGlobalObject* globalObject = static_cast<JSGlobalObject*>(vPC[2].u.jsCell);
+    CodeBlock* codeBlock = callFrame->codeBlock();
+    JSGlobalObject* globalObject = codeBlock->globalObject();
     ASSERT(globalObject->isGlobalObject());
-    int property = vPC[3].u.operand;
-    Structure* structure = vPC[4].u.structure;
-    int offset = vPC[5].u.operand;
+    int property = vPC[2].u.operand;
+    Structure* structure = vPC[3].u.structure;
+    int offset = vPC[4].u.operand;
 
     if (structure == globalObject->structure()) {
         callFrame->r(dst) = JSValue(globalObject->getDirectOffset(offset));
         return true;
     }
 
-    CodeBlock* codeBlock = callFrame->codeBlock();
     Identifier& ident = codeBlock->identifier(property);
     PropertySlot slot(globalObject);
     if (globalObject->getPropertySlot(callFrame, ident, slot)) {
         JSValue result = slot.getValue(callFrame, ident);
         if (slot.isCacheableValue() && !globalObject->structure()->isUncacheableDictionary() && slot.slotBase() == globalObject) {
-            if (vPC[4].u.structure)
-                vPC[4].u.structure->deref();
+            if (vPC[3].u.structure)
+                vPC[3].u.structure->deref();
             globalObject->structure()->ref();
-            vPC[4] = globalObject->structure();
-            vPC[5] = slot.cachedOffset();
+            vPC[3] = globalObject->structure();
+            vPC[4] = slot.cachedOffset();
             callFrame->r(dst) = JSValue(result);
             return true;
         }
@@ -184,13 +184,13 @@ NEVER_INLINE bool Interpreter::resolveGlobal(CallFrame* callFrame, Instruction* 
 NEVER_INLINE bool Interpreter::resolveGlobalDynamic(CallFrame* callFrame, Instruction* vPC, JSValue& exceptionValue)
 {
     int dst = vPC[1].u.operand;
-    JSGlobalObject* globalObject = static_cast<JSGlobalObject*>(vPC[2].u.jsCell);
-    ASSERT(globalObject->isGlobalObject());
-    int property = vPC[3].u.operand;
-    Structure* structure = vPC[4].u.structure;
-    int offset = vPC[5].u.operand;
     CodeBlock* codeBlock = callFrame->codeBlock();
-    int skip = vPC[6].u.operand;
+    JSGlobalObject* globalObject = codeBlock->globalObject();
+    ASSERT(globalObject->isGlobalObject());
+    int property = vPC[2].u.operand;
+    Structure* structure = vPC[3].u.structure;
+    int offset = vPC[4].u.operand;
+    int skip = vPC[5].u.operand;
     
     ScopeChainNode* scopeChain = callFrame->scopeChain();
     ScopeChainIterator iter = scopeChain->begin();
@@ -231,11 +231,11 @@ NEVER_INLINE bool Interpreter::resolveGlobalDynamic(CallFrame* callFrame, Instru
     if (globalObject->getPropertySlot(callFrame, ident, slot)) {
         JSValue result = slot.getValue(callFrame, ident);
         if (slot.isCacheableValue() && !globalObject->structure()->isUncacheableDictionary() && slot.slotBase() == globalObject) {
-            if (vPC[4].u.structure)
-                vPC[4].u.structure->deref();
+            if (vPC[3].u.structure)
+                vPC[3].u.structure->deref();
             globalObject->structure()->ref();
-            vPC[4] = globalObject->structure();
-            vPC[5] = slot.cachedOffset();
+            vPC[3] = globalObject->structure();
+            vPC[4] = slot.cachedOffset();
             callFrame->r(dst) = JSValue(result);
             return true;
         }
@@ -2284,9 +2284,9 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
            Gets the global var at global slot index and places it in register dst.
          */
         int dst = vPC[1].u.operand;
-        JSGlobalObject* scope = static_cast<JSGlobalObject*>(vPC[2].u.jsCell);
+        JSGlobalObject* scope = codeBlock->globalObject();
         ASSERT(scope->isGlobalObject());
-        int index = vPC[3].u.operand;
+        int index = vPC[2].u.operand;
 
         callFrame->r(dst) = scope->registerAt(index);
         vPC += OPCODE_LENGTH(op_get_global_var);
@@ -2297,10 +2297,10 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
          
            Puts value into global slot index.
          */
-        JSGlobalObject* scope = static_cast<JSGlobalObject*>(vPC[1].u.jsCell);
+        JSGlobalObject* scope = codeBlock->globalObject();
         ASSERT(scope->isGlobalObject());
-        int index = vPC[2].u.operand;
-        int value = vPC[3].u.operand;
+        int index = vPC[1].u.operand;
+        int value = vPC[2].u.operand;
         
         scope->registerAt(index) = JSValue(callFrame->r(value).jsValue());
         vPC += OPCODE_LENGTH(op_put_global_var);

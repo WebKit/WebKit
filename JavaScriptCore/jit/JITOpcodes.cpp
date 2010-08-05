@@ -468,18 +468,18 @@ void JIT::emit_op_construct(Instruction* currentInstruction)
 
 void JIT::emit_op_get_global_var(Instruction* currentInstruction)
 {
-    JSVariableObject* globalObject = static_cast<JSVariableObject*>(currentInstruction[2].u.jsCell);
+    JSVariableObject* globalObject = m_codeBlock->globalObject();
     move(ImmPtr(globalObject), regT0);
-    emitGetVariableObjectRegister(regT0, currentInstruction[3].u.operand, regT0);
+    emitGetVariableObjectRegister(regT0, currentInstruction[2].u.operand, regT0);
     emitPutVirtualRegister(currentInstruction[1].u.operand);
 }
 
 void JIT::emit_op_put_global_var(Instruction* currentInstruction)
 {
-    emitGetVirtualRegister(currentInstruction[3].u.operand, regT1);
-    JSVariableObject* globalObject = static_cast<JSVariableObject*>(currentInstruction[1].u.jsCell);
+    emitGetVirtualRegister(currentInstruction[2].u.operand, regT1);
+    JSVariableObject* globalObject = m_codeBlock->globalObject();
     move(ImmPtr(globalObject), regT0);
-    emitPutVariableObjectRegister(regT1, regT0, currentInstruction[2].u.operand);
+    emitPutVariableObjectRegister(regT1, regT0, currentInstruction[1].u.operand);
 }
 
 void JIT::emit_op_get_scoped_var(Instruction* currentInstruction)
@@ -650,7 +650,7 @@ void JIT::emit_op_resolve_skip(Instruction* currentInstruction)
 void JIT::emit_op_resolve_global(Instruction* currentInstruction, bool)
 {
     // Fast case
-    void* globalObject = currentInstruction[2].u.jsCell;
+    void* globalObject = m_codeBlock->globalObject();
     unsigned currentIndex = m_globalResolveInfoIndex++;
     void* structureAddress = &(m_codeBlock->globalResolveInfo(currentIndex).structure);
     void* offsetAddr = &(m_codeBlock->globalResolveInfo(currentIndex).offset);
@@ -671,16 +671,15 @@ void JIT::emit_op_resolve_global(Instruction* currentInstruction, bool)
 void JIT::emitSlow_op_resolve_global(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     unsigned dst = currentInstruction[1].u.operand;
-    void* globalObject = currentInstruction[2].u.jsCell;
-    Identifier* ident = &m_codeBlock->identifier(currentInstruction[3].u.operand);
+    Identifier* ident = &m_codeBlock->identifier(currentInstruction[2].u.operand);
     
     unsigned currentIndex = m_globalResolveInfoIndex++;
     
     linkSlowCase(iter);
     JITStubCall stubCall(this, cti_op_resolve_global);
-    stubCall.addArgument(ImmPtr(globalObject));
     stubCall.addArgument(ImmPtr(ident));
     stubCall.addArgument(Imm32(currentIndex));
+    stubCall.addArgument(regT0);
     stubCall.call(dst);
 }
 
@@ -1495,7 +1494,7 @@ void JIT::emitSlow_op_to_jsnumber(Instruction* currentInstruction, Vector<SlowCa
 
 void JIT::emit_op_resolve_global_dynamic(Instruction* currentInstruction)
 {
-    int skip = currentInstruction[6].u.operand;
+    int skip = currentInstruction[5].u.operand;
     
     emitGetFromCallFrameHeaderPtr(RegisterFile::ScopeChain, regT0);
     while (skip--) {
@@ -1509,9 +1508,8 @@ void JIT::emit_op_resolve_global_dynamic(Instruction* currentInstruction)
 void JIT::emitSlow_op_resolve_global_dynamic(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     unsigned dst = currentInstruction[1].u.operand;
-    void* globalObject = currentInstruction[2].u.jsCell;
-    Identifier* ident = &m_codeBlock->identifier(currentInstruction[3].u.operand);
-    int skip = currentInstruction[6].u.operand;
+    Identifier* ident = &m_codeBlock->identifier(currentInstruction[2].u.operand);
+    int skip = currentInstruction[5].u.operand;
     while (skip--)
         linkSlowCase(iter);
     JITStubCall resolveStubCall(this, cti_op_resolve);
@@ -1523,9 +1521,9 @@ void JIT::emitSlow_op_resolve_global_dynamic(Instruction* currentInstruction, Ve
     
     linkSlowCase(iter); // We managed to skip all the nodes in the scope chain, but the cache missed.
     JITStubCall stubCall(this, cti_op_resolve_global);
-    stubCall.addArgument(ImmPtr(globalObject));
     stubCall.addArgument(ImmPtr(ident));
     stubCall.addArgument(Imm32(currentIndex));
+    stubCall.addArgument(regT0);
     stubCall.call(dst);
 }
 

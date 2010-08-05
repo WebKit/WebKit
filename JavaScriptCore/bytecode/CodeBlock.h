@@ -275,7 +275,10 @@ namespace JSC {
     class CodeBlock : public FastAllocBase {
         friend class JIT;
     protected:
-        CodeBlock(ScriptExecutable* ownerExecutable, CodeType, PassRefPtr<SourceProvider>, unsigned sourceOffset, SymbolTable* symbolTable, bool isConstructor);
+        CodeBlock(ScriptExecutable* ownerExecutable, CodeType, JSGlobalObject*, PassRefPtr<SourceProvider>, unsigned sourceOffset, SymbolTable* symbolTable, bool isConstructor);
+
+        JSGlobalObject* m_globalObject;
+
     public:
         virtual ~CodeBlock();
 
@@ -483,6 +486,7 @@ namespace JSC {
         unsigned addRegExp(RegExp* r) { createRareDataIfNecessary(); unsigned size = m_rareData->m_regexps.size(); m_rareData->m_regexps.append(r); return size; }
         RegExp* regexp(int index) const { ASSERT(m_rareData); return m_rareData->m_regexps[index].get(); }
 
+        JSGlobalObject* globalObject() { return m_globalObject; }
 
         // Jump Tables
 
@@ -602,9 +606,8 @@ namespace JSC {
 
     class GlobalCodeBlock : public CodeBlock {
     public:
-        GlobalCodeBlock(ScriptExecutable* ownerExecutable, CodeType codeType, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset, JSGlobalObject* globalObject)
-            : CodeBlock(ownerExecutable, codeType, sourceProvider, sourceOffset, &m_unsharedSymbolTable, false)
-            , m_globalObject(globalObject)
+        GlobalCodeBlock(ScriptExecutable* ownerExecutable, CodeType codeType, JSGlobalObject* globalObject, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset)
+            : CodeBlock(ownerExecutable, codeType, globalObject, sourceProvider, sourceOffset, &m_unsharedSymbolTable, false)
         {
             m_globalObject->codeBlocks().add(this);
         }
@@ -618,14 +621,13 @@ namespace JSC {
         void clearGlobalObject() { m_globalObject = 0; }
 
     private:
-        JSGlobalObject* m_globalObject; // For program and eval nodes, the global object that marks the constant pool.
         SymbolTable m_unsharedSymbolTable;
     };
 
     class ProgramCodeBlock : public GlobalCodeBlock {
     public:
         ProgramCodeBlock(ProgramExecutable* ownerExecutable, CodeType codeType, JSGlobalObject* globalObject, PassRefPtr<SourceProvider> sourceProvider)
-            : GlobalCodeBlock(ownerExecutable, codeType, sourceProvider, 0, globalObject)
+            : GlobalCodeBlock(ownerExecutable, codeType, globalObject, sourceProvider, 0)
         {
         }
     };
@@ -633,7 +635,7 @@ namespace JSC {
     class EvalCodeBlock : public GlobalCodeBlock {
     public:
         EvalCodeBlock(EvalExecutable* ownerExecutable, JSGlobalObject* globalObject, PassRefPtr<SourceProvider> sourceProvider, int baseScopeDepth)
-            : GlobalCodeBlock(ownerExecutable, EvalCode, sourceProvider, 0, globalObject)
+            : GlobalCodeBlock(ownerExecutable, EvalCode, globalObject, sourceProvider, 0)
             , m_baseScopeDepth(baseScopeDepth)
         {
         }
@@ -659,8 +661,8 @@ namespace JSC {
         // as we need to initialise the CodeBlock before we could initialise any RefPtr to hold the shared
         // symbol table, so we just pass as a raw pointer with a ref count of 1.  We then manually deref
         // in the destructor.
-        FunctionCodeBlock(FunctionExecutable* ownerExecutable, CodeType codeType, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset, bool isConstructor)
-            : CodeBlock(ownerExecutable, codeType, sourceProvider, sourceOffset, SharedSymbolTable::create().releaseRef(), isConstructor)
+        FunctionCodeBlock(FunctionExecutable* ownerExecutable, CodeType codeType, JSGlobalObject* globalObject, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset, bool isConstructor)
+            : CodeBlock(ownerExecutable, codeType, globalObject, sourceProvider, sourceOffset, SharedSymbolTable::create().releaseRef(), isConstructor)
         {
         }
         ~FunctionCodeBlock()

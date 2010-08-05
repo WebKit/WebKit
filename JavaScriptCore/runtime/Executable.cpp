@@ -200,7 +200,7 @@ JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, ScopeChain
     JSGlobalObject* globalObject = scopeChain.globalObject();
 
     ASSERT(!m_codeBlockForCall);
-    m_codeBlockForCall = adoptPtr(new FunctionCodeBlock(this, FunctionCode, source().provider(), source().startOffset(), false));
+    m_codeBlockForCall = adoptPtr(new FunctionCodeBlock(this, FunctionCode, globalObject, source().provider(), source().startOffset(), false));
     OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(body.get(), globalObject->debugger(), scopeChain, m_codeBlockForCall->symbolTable(), m_codeBlockForCall.get())));
     generator->generate();
     m_numParametersForCall = m_codeBlockForCall->m_numParameters;
@@ -245,7 +245,7 @@ JSObject* FunctionExecutable::compileForConstructInternal(ExecState* exec, Scope
     JSGlobalObject* globalObject = scopeChain.globalObject();
 
     ASSERT(!m_codeBlockForConstruct);
-    m_codeBlockForConstruct = adoptPtr(new FunctionCodeBlock(this, FunctionCode, source().provider(), source().startOffset(), true));
+    m_codeBlockForConstruct = adoptPtr(new FunctionCodeBlock(this, FunctionCode, globalObject, source().provider(), source().startOffset(), true));
     OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(body.get(), globalObject->debugger(), scopeChain, m_codeBlockForConstruct->symbolTable(), m_codeBlockForConstruct.get())));
     generator->generate();
     m_numParametersForConstruct = m_codeBlockForConstruct->m_numParameters;
@@ -293,7 +293,7 @@ PassOwnPtr<ExceptionInfo> FunctionExecutable::reparseExceptionInfo(JSGlobalData*
     ScopeChain scopeChain(scopeChainNode);
     JSGlobalObject* globalObject = scopeChain.globalObject();
 
-    OwnPtr<CodeBlock> newCodeBlock(adoptPtr(new FunctionCodeBlock(this, FunctionCode, source().provider(), source().startOffset(), codeBlock->m_isConstructor)));
+    OwnPtr<CodeBlock> newCodeBlock(adoptPtr(new FunctionCodeBlock(this, FunctionCode, globalObject, source().provider(), source().startOffset(), codeBlock->m_isConstructor)));
     globalData->functionCodeBlockBeingReparsed = newCodeBlock.get();
 
     OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(newFunctionBody.get(), globalObject->debugger(), scopeChain, newCodeBlock->symbolTable(), newCodeBlock.get())));

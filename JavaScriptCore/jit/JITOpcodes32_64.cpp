@@ -525,9 +525,9 @@ void JIT::emit_op_new_func(Instruction* currentInstruction)
 void JIT::emit_op_get_global_var(Instruction* currentInstruction)
 {
     int dst = currentInstruction[1].u.operand;
-    JSGlobalObject* globalObject = static_cast<JSGlobalObject*>(currentInstruction[2].u.jsCell);
+    JSGlobalObject* globalObject = m_codeBlock->globalObject();
     ASSERT(globalObject->isGlobalObject());
-    int index = currentInstruction[3].u.operand;
+    int index = currentInstruction[2].u.operand;
 
     loadPtr(&globalObject->d()->registers, regT2);
 
@@ -538,10 +538,10 @@ void JIT::emit_op_get_global_var(Instruction* currentInstruction)
 
 void JIT::emit_op_put_global_var(Instruction* currentInstruction)
 {
-    JSGlobalObject* globalObject = static_cast<JSGlobalObject*>(currentInstruction[1].u.jsCell);
+    JSGlobalObject* globalObject = m_codeBlock->globalObject();
     ASSERT(globalObject->isGlobalObject());
-    int index = currentInstruction[2].u.operand;
-    int value = currentInstruction[3].u.operand;
+    int index = currentInstruction[1].u.operand;
+    int value = currentInstruction[2].u.operand;
 
     emitLoad(value, regT1, regT0);
 
@@ -678,7 +678,7 @@ void JIT::emit_op_resolve_global(Instruction* currentInstruction, bool dynamic)
     // FIXME: Optimize to use patching instead of so many memory accesses.
 
     unsigned dst = currentInstruction[1].u.operand;
-    void* globalObject = currentInstruction[2].u.jsCell;
+    void* globalObject = m_codeBlock->globalObject();
 
     unsigned currentIndex = m_globalResolveInfoIndex++;
     void* structureAddress = &(m_codeBlock->globalResolveInfo(currentIndex).structure);
@@ -701,14 +701,12 @@ void JIT::emit_op_resolve_global(Instruction* currentInstruction, bool dynamic)
 void JIT::emitSlow_op_resolve_global(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     unsigned dst = currentInstruction[1].u.operand;
-    void* globalObject = currentInstruction[2].u.jsCell;
-    Identifier* ident = &m_codeBlock->identifier(currentInstruction[3].u.operand);
+    Identifier* ident = &m_codeBlock->identifier(currentInstruction[2].u.operand);
 
     unsigned currentIndex = m_globalResolveInfoIndex++;
 
     linkSlowCase(iter);
     JITStubCall stubCall(this, cti_op_resolve_global);
-    stubCall.addArgument(ImmPtr(globalObject));
     stubCall.addArgument(ImmPtr(ident));
     stubCall.addArgument(Imm32(currentIndex));
     stubCall.call(dst);
