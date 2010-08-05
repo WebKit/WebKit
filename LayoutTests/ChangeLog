@@ -1,3 +1,18 @@
+2010-08-04  Adam Barth  <abarth@webkit.org>
+
+        Enable HTML5 tree builder
+        https://bugs.webkit.org/show_bug.cgi?id=42804
+
+        Update expected results for Qt.  These results look correct vis-a-vis
+        the Mac changes.
+
+        * platform/qt/fast/block/float/4145535Crash-expected.txt:
+        * platform/qt/fast/dom/isindex-001-expected.txt:
+        * platform/qt/fast/forms/isindex-placeholder-expected.txt:
+        * platform/qt/fast/forms/text-style-color-expected.txt:
+        * platform/qt/tables/mozilla/bugs/adforce_imgis_com-expected.txt:
+        * platform/qt/tables/mozilla_expected_failures/bugs/bug128876-expected.txt:
+
 2010-08-04  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
