@@ -417,6 +417,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\VisitedLinkTable.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Shared\VisitedLinkTable.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\WebCoreTypeArgumentMarshalling.h"
 				>
 			</File>
