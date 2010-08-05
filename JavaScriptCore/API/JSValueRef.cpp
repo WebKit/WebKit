@@ -213,6 +213,12 @@ JSValueRef JSValueMakeNumber(JSContextRef ctx, double value)
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
 
+    // Our JSValue representation relies on a standard bit pattern for NaN. NaNs
+    // generated internally to JavaScriptCore naturally have that representation,
+    // but an external NaN might not.
+    if (isnan(value))
+        value = NaN;
+
     return toRef(exec, jsNumber(exec, value));
 }
 

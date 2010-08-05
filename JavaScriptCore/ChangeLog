@@ -1,3 +1,18 @@
+2010-08-03  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt and Beth Dakin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=43461
+        Invalid NaN parsing
+        
+        * wtf/dtoa.cpp: Turn off the dtoa feature that allows you to specify a
+        non-standard NaN representation, since our NaN encoding assumes that all
+        true NaNs have the standard bit pattern.
+
+        * API/JSValueRef.cpp:
+        (JSValueMakeNumber): Don't allow an API client to accidentally specify
+        a non-standard NaN either.
+
 2010-08-04  Gavin Barraclough  <barraclough@apple.com>
 
         Windows build fix part II.
