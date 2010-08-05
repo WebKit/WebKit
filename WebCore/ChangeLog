@@ -1,3 +1,15 @@
+2010-08-05  Charles Wei  <charles.wei@torchmobile.com.cn>
+
+        Reviewed by George Staikos.
+
+        <noscript> is working the other way around in some cases with xhtmlmp enabled
+        https://bugs.webkit.org/show_bug.cgi?id=43469
+
+        Test: fast/xhtmlmp/noscript-basic.xhtml
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+
 2010-08-05  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Fix Win compilation.

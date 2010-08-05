@@ -465,7 +465,7 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     static int docID = 0;
     m_docID = docID++;
 #if ENABLE(XHTMLMP)
-    m_shouldProcessNoScriptElement = m_frame && m_frame->script()->canExecuteScripts(NotAboutToExecuteScript);
+    m_shouldProcessNoScriptElement = !(m_frame && m_frame->script()->canExecuteScripts(NotAboutToExecuteScript));
 #endif
 }
 
