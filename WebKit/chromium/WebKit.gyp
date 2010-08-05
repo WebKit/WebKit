@@ -688,6 +688,7 @@
                         '<(chromium_src_dir)/testing/gtest.gyp:gtest',
                         '<(chromium_src_dir)/base/base.gyp:base',
                         '<(chromium_src_dir)/base/base.gyp:base_i18n',
+                        '<(chromium_src_dir)/base/base.gyp:test_support_base',
                         '<(chromium_src_dir)/gpu/gpu.gyp:gles2_c_lib',
                     ],
                     'include_dirs': [
