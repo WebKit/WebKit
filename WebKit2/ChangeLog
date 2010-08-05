@@ -1,3 +1,11 @@
+2010-08-05  Brady Eidson  <beidson@apple.com>
+
+        Rubberstamped by Sam Weinig.
+
+        Export WKError.h
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2010-08-05  Steve Falkenburg  <sfalken@apple.com>
 
         Windows build fix.

@@ -94,7 +94,7 @@
 		514AF6C81209EE7300A26C97 /* WKData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 514AF6C61209EE7300A26C97 /* WKData.cpp */; };
 		514AF6C91209EE7300A26C97 /* WKData.h in Headers */ = {isa = PBXBuildFile; fileRef = 514AF6C71209EE7300A26C97 /* WKData.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		51578B831209ECEF00A37C4A /* WebData.h in Headers */ = {isa = PBXBuildFile; fileRef = 51578B821209ECEF00A37C4A /* WebData.h */; };
-		516A4A59120A1AB500C05B7F /* WKError.h in Headers */ = {isa = PBXBuildFile; fileRef = 516A4A57120A1AB500C05B7F /* WKError.h */; };
+		516A4A59120A1AB500C05B7F /* WKError.h in Headers */ = {isa = PBXBuildFile; fileRef = 516A4A57120A1AB500C05B7F /* WKError.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		516A4A5A120A1AB500C05B7F /* WKError.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 516A4A58120A1AB500C05B7F /* WKError.cpp */; };
 		516A4A5D120A2CCD00C05B7F /* WebError.h in Headers */ = {isa = PBXBuildFile; fileRef = 516A4A5B120A2CCD00C05B7F /* WebError.h */; };
 		5DAD729C116FF86200EE5396 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0867D6A5FE840307C02AAC07 /* AppKit.framework */; };
