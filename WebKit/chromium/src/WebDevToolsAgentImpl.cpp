@@ -102,6 +102,7 @@ void InspectorBackendWeakReferenceCallback(v8::Persistent<v8::Value> object, voi
     object.Dispose();
 }
 
+static const char kFrontendConnectedFeatureName[] = "frontend-connected";
 static const char kResourceTrackingFeatureName[] = "resource-tracking";
 static const char kTimelineFeatureName[] = "timeline-profiler";
 static const char kApuAgentFeatureName[] = "apu-agent";
@@ -269,6 +270,7 @@ void WebDevToolsAgentImpl::frontendLoaded()
         v8::Local<v8::Context>::New(m_utilityContext));
     InspectorController* ic = inspectorController();
     ic->connectFrontend(ScriptObject(state, m_utilityContext->Global()));
+    m_client->runtimeFeatureStateChanged(kFrontendConnectedFeatureName, true);
 }
 
 void WebDevToolsAgentImpl::didNavigate()
@@ -309,7 +311,8 @@ void WebDevToolsAgentImpl::setRuntimeFeatureEnabled(const WebString& feature, bo
           ic->enableResourceTracking(false /* not sticky */, false /* no reload */);
         else
           ic->disableResourceTracking(false /* not sticky */);
-    }
+    } else if (feature == kFrontendConnectedFeatureName && enabled)
+        frontendLoaded();
 }
 
 void WebDevToolsAgentImpl::compileUtilityScripts()
