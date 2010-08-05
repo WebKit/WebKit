@@ -37,7 +37,8 @@ from handlers.dashboard import Dashboard
 from handlers.gc import GC
 from handlers.patch import Patch
 from handlers.patchstatus import PatchStatus
-from handlers.recentstatus import RecentStatus
+from handlers.queuestatus import QueueStatus
+from handlers.recentstatus import QueuesOverview
 from handlers.showresults import ShowResults
 from handlers.statusbubble import StatusBubble
 from handlers.svnrevision import SVNRevision
@@ -49,7 +50,7 @@ from handlers.updateworkitems import UpdateWorkItems
 webapp.template.register_template_library('filters.webkit_extras')
 
 routes = [
-    ('/', RecentStatus),
+    ('/', QueuesOverview),
     ('/dashboard', Dashboard),
     ('/gc', GC),
     (r'/patch-status/(.*)/(.*)', PatchStatus),
@@ -57,7 +58,7 @@ routes = [
     (r'/results/(.*)', ShowResults),
     (r'/status-bubble/(.*)', StatusBubble),
     (r'/svn-revision/(.*)', SVNRevision),
-    (r'/queue-status/(.*)', RecentStatus),
+    (r'/queue-status/(.*)', QueueStatus),
     ('/update-status', UpdateStatus),
     ('/update-work-items', UpdateWorkItems),
     ('/update-svn-revision', UpdateSVNRevision),

@@ -1,3 +1,21 @@
+2010-05-23  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        QueueStatusServer needs better queue-status pages
+        https://bugs.webkit.org/show_bug.cgi?id=39562
+
+        The primary goal of this patch is to display queue
+        positions somewhere on the site so that it's easier
+        for commit-queue users to know when their pach will
+        be landed.  I also tried to improve the root page
+        to be more useful than the previous wall of status text.
+
+        * QueueStatusServer/handlers/recentstatus.py:
+        * QueueStatusServer/main.py:
+        * QueueStatusServer/model/queues.py:
+        * QueueStatusServer/templates/recentstatus.html:
+
 2010-08-05  Victor Wang  <victorw@chromium.org>
 
         Reviewed by Ojan Vafai.

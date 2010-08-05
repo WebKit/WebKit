@@ -3,22 +3,52 @@
 <head>
 <title>WebKit Queue Status</title>
 <link type="text/css" rel="stylesheet" href="/stylesheets/dashboard.css" />
+<style>
+.queue_bubble {
+    border: 1px solid black;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    padding: 5px;
+}
+.queue_name {
+    float:left;
+}
+.last_heard_from {
+    float: right;
+}
+.status_text {
+    clear: both;
+}
+.alive {
+    background-color: #8FDF5F;
+}
+.behind {
+    background-color: #FFFC6C;
+}
+.dead {
+    background-color: #E98080;
+}
+</style>
 </head>
 <body>
-<h1>WebKit Queue Status</h1>{% for queue_name, statuses in queue_status.items %}
-<div class="status-details">
-  <h2>{{ queue_name }}</h2>
-  <ul>{% for status in statuses %}
-    <li>{% if status.active_bug_id %}
-      <span class="status-bug">
-        Patch {{ status.active_patch_id|force_escape|webkit_attachment_id|safe }} from bug
-        {{ status.active_bug_id|force_escape|webkit_bug_id|safe }}:
-      </span>{% endif %}
-      <span class="status-message">{{ status.message|force_escape|urlize|webkit_linkify|safe }}</span>{% if status.results_file %}
-      <span class="status-results">[{{ status.key.id|results_link|safe }}]</span>{% endif %}
-      <span class="status-date">{{ status.date|timesince }} ago</span>
-    </li>{% endfor %}
-  </ul>
-</div>{% endfor %}
+<h1>WebKit Queue Status</h1>
+{% for queue in queues %}
+<div class="queue_bubble {{ queue.status_class }}">
+    <div class="queue_name">
+        <a href="/queue-status/{{ queue.name }}">
+        {{ queue.display_name }}
+        </a>
+    </div>
+    {% if queue.last_heard_from %}
+    <div class="last_heard_from">{{ queue.last_heard_from|timesince }} ago</div>
+    {% endif %}
+    <div class="status_text">
+        Status: {{ queue.status_text|force_escape|urlize|webkit_linkify|safe }}
+    </div>
+    <div>
+        {{ queue.pending_items_count }} pending
+    </div>
+</div>
+{% endfor %}
 </body>
 </html>

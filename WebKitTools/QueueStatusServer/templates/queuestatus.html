@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>{{ display_queue_name }} Status</title>
+<link type="text/css" rel="stylesheet" href="/stylesheets/dashboard.css" />
+</head>
+<body>
+<h1>{{ display_queue_name }} Status</h1>
+
+<h3>Recent Status</h3>
+
+<div class="status-details">
+  <ul>
+    {% for status in statuses %}
+    <li>{% if status.active_bug_id %}
+    <span class="status-bug">
+      Patch {{ status.active_patch_id|force_escape|webkit_attachment_id|safe }} from bug
+      {{ status.active_bug_id|force_escape|webkit_bug_id|safe }}:
+    </span>{% endif %}
+    <span class="status-message">{{ status.message|force_escape|urlize|webkit_linkify|safe }}</span>
+    {% if status.results_file %}
+    <span class="status-results">[{{ status.key.id|results_link|safe }}]</span>
+    {% endif %}
+    <span class="status-date">{{ status.date|timesince }} ago</span>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+
+<h3>Patches in queue</h3>
+<table>
+    <tr><th>Position</th><th>Patch</th></tr>
+    {% for row in work_item_rows %}
+    <tr>
+        <td>#{{ forloop.counter }}</td>
+        <td>
+          {{ row.attachment_id|force_escape|webkit_attachment_id|safe }}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+</body>
+</html>

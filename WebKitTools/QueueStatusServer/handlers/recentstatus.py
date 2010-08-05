@@ -26,32 +26,68 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import datetime
+
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 
-from model.queues import queues
+from model.queues import queues, display_name_for_queue
 from model.queuestatus import QueueStatus
+from model.workitems import WorkItems
 
-class RecentStatus(webapp.RequestHandler):
-    def _title_case(self, string):
-        words = string.split(" ")
-        words = map(lambda word: word.capitalize(), words)
-        return " ".join(words)
 
-    def _pretty_queue_name(self, queue_name):
-        return self._title_case(queue_name.replace("-", " "))
+class QueueBubble(object):
+    """View support class for recentstatus.html"""
+    def __init__(self, queue_name):
+        self._queue_name = queue_name
+        self._work_items = WorkItems.all().filter("queue_name =", queue_name).get()
+        self._last_status = QueueStatus.all().filter("queue_name =", queue_name).order("-date").get()
 
-    # We could change "/" to just redirect to /queue-status/commit-queue in the future
-    # at which point we would not need a default value for queue_name here.
-    def get(self, queue_name="commit-queue"):
-        queue_status = {}
-        for queue in queues:
-            statuses = QueueStatus.all().filter("queue_name =", queue).order("-date").fetch(6)
-            if not statuses:
-                continue
-            queue_status[queue] = statuses
+    def name(self):
+        return self._queue_name
 
+    def display_name(self):
+        return display_name_for_queue(self._queue_name)
+
+    def _last_status_date(self):
+        if not self._last_status:
+            return None
+        return self._last_status.date
+
+    def last_heard_from(self):
+        if not self._work_items:
+            return self._last_status_date()
+        return max(self._last_status_date(), self._work_items.date)
+
+    def is_alive(self):
+        if not self.last_heard_from():
+            return False
+        return self.last_heard_from() > (datetime.datetime.now() - datetime.timedelta(minutes=30))
+
+    def status_class(self):
+        if not self.is_alive():
+            return "dead"
+        if self.pending_items_count() > 1:
+            return "behind"
+        return "alive"
+
+    def status_text(self):
+        if not self._work_items:
+            return "Offline"
+        if not self._work_items.item_ids:
+            return "Idle"
+        return self._last_status.message
+
+    def pending_items_count(self):
+        if not self._work_items:
+            return 0
+        return len(self._work_items.item_ids)
+
+
+class QueuesOverview(webapp.RequestHandler):
+
+    def get(self):
         template_values = {
-            "queue_status" : queue_status,
+            "queues": [QueueBubble(queue_name) for queue_name in queues],
         }
         self.response.out.write(template.render("templates/recentstatus.html", template_values))
