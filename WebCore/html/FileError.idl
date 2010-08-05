@@ -30,7 +30,7 @@
 
 module html {
     interface [
-        Conditional=FILE_READER|FILE_WRITER,
+        Conditional=BLOB|FILE_WRITER,
         DontCheckEnums
     ] FileError {
 #if !defined(LANGUAGE_OBJECTIVE_C)

@@ -31,7 +31,7 @@
 #ifndef FileReader_h
 #define FileReader_h
 
-#if ENABLE(FILE_READER)
+#if ENABLE(BLOB)
 
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
@@ -166,6 +166,6 @@ private:
 
 } // namespace WebCore
 
-#endif
+#endif // ENABLE(BLOB)
 
 #endif // FileReader_h

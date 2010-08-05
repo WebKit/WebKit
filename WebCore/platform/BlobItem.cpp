@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-#if ENABLE(BLOB_SLICE)
+#if ENABLE(BLOB)
 static const double invalidModificationTime = 0;
 
 static double getFileSnapshotModificationTime(const String& path)
@@ -48,11 +48,11 @@ static double getFileSnapshotModificationTime(const String& path)
         return static_cast<double>(modificationTime);
     return invalidModificationTime;
 }
-#endif // ENABLE(BLOB_SLICE)
+#endif // ENABLE(BLOB)
 
 // DataBlobItem ----------------------------------------------------------------
 
-#if ENABLE(BLOB_SLICE)
+#if ENABLE(BLOB)
 PassRefPtr<BlobItem> DataBlobItem::slice(long long start, long long length)
 {
     ASSERT(start >= 0 && length >= 0);
@@ -63,7 +63,7 @@ PassRefPtr<BlobItem> DataBlobItem::slice(long long start, long long length)
         length = size() - start;
     return DataRangeBlobItem::create(this, start, length);
 }
-#endif // ENABLE(BLOB_SLICE)
+#endif
 
 // FileBlobItem ----------------------------------------------------------------
 
@@ -101,7 +101,7 @@ unsigned long long FileBlobItem::size() const
     return static_cast<unsigned long long>(size);
 }
 
-#if ENABLE(BLOB_SLICE)
+#if ENABLE(BLOB)
 PassRefPtr<BlobItem> FileBlobItem::slice(long long start, long long length)
 {
     ASSERT(start >= 0 && length >= 0);
@@ -115,7 +115,7 @@ PassRefPtr<BlobItem> FileBlobItem::slice(long long start, long long length)
     double modificationTime = fileRangeItem ? fileRangeItem->snapshotModificationTime() : getFileSnapshotModificationTime(path());
     return FileRangeBlobItem::create(path(), start, length, modificationTime);
 }
-#endif // ENABLE(BLOB_SLICE)
+#endif // ENABLE(BLOB)
 
 // StringBlobItem --------------------------------------------------------------
 
@@ -141,7 +141,7 @@ ByteArrayBlobItem::ByteArrayBlobItem(const char* data, size_t size)
     m_bytesArray.append(data, size);
 }
 
-#if ENABLE(BLOB_SLICE)
+#if ENABLE(BLOB)
 
 // DataRangeBlobItem -----------------------------------------------------------
 
@@ -187,6 +187,6 @@ FileRangeBlobItem::FileRangeBlobItem(const String& path, long long start, long l
     m_uniqueName.replace("-", ""); // For safty, remove '-' from the filename snce some servers may not like it.
 }
 
-#endif // ENABLE(BLOB_SLICE)
+#endif // ENABLE(BLOB)
 
 } // namespace WebCore

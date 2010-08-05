@@ -88,7 +88,7 @@
 #include "WebSocket.h"
 #endif
 
-#if ENABLE(FILE_READER)
+#if ENABLE(BLOB)
 #include "JSFileReader.h"
 #include "FileReader.h"
 #endif
@@ -164,7 +164,7 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, EventTarget* targ
         return toJS(exec, webSocket);
 #endif
 
-#if ENABLE(FILE_READER)
+#if ENABLE(BLOB)
     if (FileReader* fileReader = target->toFileReader())
         return toJS(exec, globalObject, fileReader);
 #endif

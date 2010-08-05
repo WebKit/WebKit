@@ -31,7 +31,7 @@
 #ifndef FileStream_h
 #define FileStream_h
 
-#if ENABLE(FILE_READER) || ENABLE(FILE_WRITER)
+#if ENABLE(BLOB) || ENABLE(FILE_WRITER)
 
 #include "FileStreamClient.h"
 #include "FileSystem.h"
@@ -73,6 +73,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(FILE_READER) || ENABLE(FILE_WRITER)
+#endif // ENABLE(BLOB) || ENABLE(FILE_WRITER)
 
 #endif // FileStream_h

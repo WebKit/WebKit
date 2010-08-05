@@ -60,8 +60,8 @@ my ($linkPrefetchSupport, $threeDCanvasSupport, $threeDRenderingSupport, $channe
     $javaScriptDebuggerSupport, $mathmlSupport, $offlineWebApplicationSupport, $rubySupport, $systemMallocSupport, $sandboxSupport, $sharedWorkersSupport,
     $svgSupport, $svgAnimationSupport, $svgAsImageSupport, $svgDOMObjCBindingsSupport, $svgFontsSupport,
     $svgForeignObjectSupport, $svgUseSupport, $videoSupport, $webSocketsSupport, $webTimingSupport, $wmlSupport, $wcssSupport, $xhtmlmpSupport, $workersSupport,
-    $xpathSupport, $xsltSupport, $coverageSupport, $notificationsSupport, $blobSliceSupport, $tiledBackingStoreSupport,
-    $fileReaderSupport, $fileWriterSupport, $fileSystemSupport, $directoryUploadSupport, $deviceOrientationSupport);
+    $xpathSupport, $xsltSupport, $coverageSupport, $notificationsSupport, $blobSupport, $tiledBackingStoreSupport,
+    $fileWriterSupport, $fileSystemSupport, $directoryUploadSupport, $deviceOrientationSupport);
 
 my @features = (
     { option => "link-prefetch", desc => "Toggle pre fetching support",
@@ -73,8 +73,8 @@ my @features = (
     { option => "3d-rendering", desc => "Toggle 3D rendering support",
       define => "ENABLE_3D_RENDERING", default => (isAppleMacWebKit() && !isTiger()), value => \$threeDRenderingSupport },
 
-    { option => "blob-slice", desc => "Toggle Blob.slice support",
-      define => "ENABLE_BLOB_SLICE", default => (isAppleMacWebKit()), value => \$blobSliceSupport },
+    { option => "blob", desc => "Toggle Blob support",
+      define => "ENABLE_BLOB", default => (isAppleMacWebKit()), value => \$blobSupport },
 
     { option => "channel-messaging", desc => "Toggle MessageChannel and MessagePort support",
       define => "ENABLE_CHANNEL_MESSAGING", default => 1, value => \$channelMessagingSupport },
@@ -195,9 +195,6 @@ my @features = (
 
     { option => "xslt", desc => "Toggle XSLT support",
       define => "ENABLE_XSLT", default => 1, value => \$xsltSupport },
-
-    { option => "file-reader", desc => "Toggle FileReader support",
-      define => "ENABLE_FILE_READER", default => isAppleWebKit(), value => \$fileReaderSupport },
 
     { option => "file-writer", desc => "Toggle FileWriter support",
       define => "ENABLE_FILE_WRITER", default => 0, value => \$fileWriterSupport },

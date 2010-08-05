@@ -30,7 +30,7 @@
 
 module html {
     interface [
-        Conditional=FILE_READER,
+        Conditional=BLOB,
         CanBeConstructed,
         CallWith=ScriptExecutionContext,
         EventTarget,

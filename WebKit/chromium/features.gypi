@@ -40,7 +40,7 @@
       # features_override.gypi inline documentation for more details.
       'feature_defines%': [
         'ENABLE_3D_CANVAS=1',
-        'ENABLE_BLOB_SLICE=1',
+        'ENABLE_BLOB=1',
         'ENABLE_CHANNEL_MESSAGING=1',
         'ENABLE_DASHBOARD_SUPPORT=0',
         'ENABLE_DATABASE=1',
@@ -49,7 +49,6 @@
         'ENABLE_DIRECTORY_UPLOAD=1',
         'ENABLE_DOM_STORAGE=1',
         'ENABLE_EVENTSOURCE=1',
-        'ENABLE_FILE_READER=1',
         'ENABLE_FILE_WRITER=1',
         'ENABLE_FILE_SYSTEM=1',
         'ENABLE_FILTERS=1',

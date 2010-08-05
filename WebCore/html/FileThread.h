@@ -31,7 +31,7 @@
 #ifndef FileThread_h
 #define FileThread_h
 
-#if ENABLE(FILE_WRITER) || ENABLE(FILE_READER)
+#if ENABLE(BLOB) || ENABLE(FILE_WRITER)
 
 #include <wtf/MessageQueue.h>
 #include <wtf/PassOwnPtr.h>
@@ -83,6 +83,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(FILE_WRITER) || ENABLE(FILE_READER)
+#endif // ENABLE(BLOB) || ENABLE(FILE_WRITER)
 
 #endif // FileThread_h

@@ -630,13 +630,13 @@ AC_ARG_ENABLE(web_timing,
               [],[enable_web_timing="no"])
 AC_MSG_RESULT([$enable_web_timing])
 
-# check whether to enable Blob.slice support
-AC_MSG_CHECKING([whether to enable Blob.slice support])
-AC_ARG_ENABLE(blob_slice,
-              AC_HELP_STRING([--enable-blob-slice],
-                             [enable support for Blob.slice [default=no]]),
-              [],[enable_blob_slice="no"])
-AC_MSG_RESULT([$enable_blob_slice])
+# check whether to enable Blob support
+AC_MSG_CHECKING([whether to enable Blob support])
+AC_ARG_ENABLE(blob,
+              AC_HELP_STRING([--enable-blob],
+                             [enable support for Blob [default=no]]),
+              [],[enable_blob="no"])
+AC_MSG_RESULT([$enable_blob])
 
 # check whether to enable Fast Mobile Scrolling support
 AC_MSG_CHECKING([whether to enable Fast Mobile Scrolling])
@@ -645,14 +645,6 @@ AC_ARG_ENABLE(fast_mobile_scrolling,
                              [enable support for Fast Mobile Scrolling [default=no]]),
               [],[enable_fast_mobile_scrolling="no"])
 AC_MSG_RESULT([$enable_fast_mobile_scrolling])
-
-# check whether to enable FileReader support
-AC_MSG_CHECKING([whether to enable FileReader support])
-AC_ARG_ENABLE(file_reader,
-              AC_HELP_STRING([--enable-file-reader],
-                             [enable support for FileReader [default=no]]),
-              [],[enable_file_reader="no"])
-AC_MSG_RESULT([$enable_file_reader])
 
 # check whether to enable FileWriter support
 AC_MSG_CHECKING([whether to enable FileWriter support])
@@ -885,7 +877,7 @@ AM_CONDITIONAL([USE_PANGO], [test "$with_font_backend" = "pango"])
 # WebKit feature conditionals
 AM_CONDITIONAL([ENABLE_DEBUG],[test "$enable_debug" = "yes"])
 AM_CONDITIONAL([ENABLE_3D_TRANSFORMS],[test "$enable_3D_transforms" = "yes"])
-AM_CONDITIONAL([ENABLE_BLOB_SLICE],[test "$enable_blob_slice" = "yes"])
+AM_CONDITIONAL([ENABLE_BLOB],[test "$enable_blob" = "yes"])
 AM_CONDITIONAL([ENABLE_CHANNEL_MESSAGING],[test "$enable_channel_messaging" = "yes"])
 AM_CONDITIONAL([ENABLE_JAVASCRIPT_DEBUGGER],[test "$enable_javascript_debugger" = "yes"])
 AM_CONDITIONAL([ENABLE_OFFLINE_WEB_APPLICATIONS],[test "$enable_offline_web_applications" = "yes"])
@@ -904,7 +896,6 @@ AM_CONDITIONAL([ENABLE_XHTMLMP],[test "$enable_xhtmlmp" = "yes"])
 AM_CONDITIONAL([ENABLE_XPATH],[test "$enable_xpath" = "yes"])
 AM_CONDITIONAL([ENABLE_XSLT],[test "$enable_xslt" = "yes"])
 AM_CONDITIONAL([ENABLE_FILTERS],[test "$enable_filters" = "yes"])
-AM_CONDITIONAL([ENABLE_FILE_READER],[test "$enable_file_reader" = "yes"])
 AM_CONDITIONAL([ENABLE_FILE_WRITER],[test "$enable_file_writer" = "yes"])
 AM_CONDITIONAL([ENABLE_GEOLOCATION], [test "$enable_geolocation" = "yes"])
 AM_CONDITIONAL([ENABLE_MATHML], [test "$enable_mathml" = "yes"])
@@ -961,12 +952,11 @@ Build configuration:
  Optimized memory allocator                               : $enable_fast_malloc
 Features:
  3D Transforms                                            : $enable_3D_transforms
- Blob.slice support                                       : $enable_blob_slice
+ Blob support                                             : $enable_blob
  Directory upload                                         : $enable_directory_upload
  Fast Mobile Scrolling                                    : $enable_fast_mobile_scrolling
  JIT compilation                                          : $enable_jit
  Filters support                                          : $enable_filters
- FileReader support                                       : $enable_file_reader
  FileWriter support                                       : $enable_file_writer
  Geolocation support                                      : $enable_geolocation
  JavaScript debugger/profiler support                     : $enable_javascript_debugger

@@ -124,7 +124,7 @@ struct FormStreamFields {
     SchedulePairHashSet scheduledRunLoopPairs;
     Vector<FormDataElement> remainingElements; // in reverse order
     CFReadStreamRef currentStream;
-#if ENABLE(BLOB_SLICE)
+#if ENABLE(BLOB)
     long long currentStreamRangeLength;
 #endif
     char* currentData;
@@ -140,7 +140,7 @@ static void closeCurrentStream(FormStreamFields *form)
         CFReadStreamSetClient(form->currentStream, kCFStreamEventNone, NULL, NULL);
         CFRelease(form->currentStream);
         form->currentStream = NULL;
-#if ENABLE(BLOB_SLICE)
+#if ENABLE(BLOB)
         form->currentStreamRangeLength = FormDataElement::toEndOfFile;
 #endif
     }
@@ -167,7 +167,7 @@ static bool advanceCurrentStream(FormStreamFields* form)
         form->currentStream = CFReadStreamCreateWithBytesNoCopy(0, reinterpret_cast<const UInt8*>(data), size, kCFAllocatorNull);
         form->currentData = data;
     } else {
-#if ENABLE(BLOB_SLICE)
+#if ENABLE(BLOB)
         // Check if the file has been changed or not if required.
         if (nextInput.m_expectedFileModificationTime != FormDataElement::doNotCheckFileChange) {
             time_t fileModificationTime;
@@ -183,7 +183,7 @@ static bool advanceCurrentStream(FormStreamFields* form)
             // The file must have been removed or become unreadable.
             return false;
         }
-#if ENABLE(BLOB_SLICE)
+#if ENABLE(BLOB)
         if (nextInput.m_fileStart > 0) {
             CFNumberRef position = CFNumberCreate(0, kCFNumberLongLongType, &nextInput.m_fileStart);
             CFReadStreamSetProperty(form->currentStream, kCFStreamPropertyFileCurrentOffset, position);
@@ -224,7 +224,7 @@ static void* formCreate(CFReadStreamRef stream, void* context)
 
     FormStreamFields* newInfo = new FormStreamFields;
     newInfo->currentStream = NULL;
-#if ENABLE(BLOB_SLICE)
+#if ENABLE(BLOB)
     newInfo->currentStreamRangeLength = FormDataElement::toEndOfFile;
 #endif
     newInfo->currentData = 0;
@@ -272,7 +272,7 @@ static CFIndex formRead(CFReadStreamRef stream, UInt8* buffer, CFIndex bufferLen
 
     while (form->currentStream) {
         CFIndex bytesToRead = bufferLength;
-#if ENABLE(BLOB_SLICE)
+#if ENABLE(BLOB)
         if (form->currentStreamRangeLength != FormDataElement::toEndOfFile && form->currentStreamRangeLength < bytesToRead)
             bytesToRead = static_cast<CFIndex>(form->currentStreamRangeLength);
 #endif
@@ -285,7 +285,7 @@ static CFIndex formRead(CFReadStreamRef stream, UInt8* buffer, CFIndex bufferLen
             error->error = 0;
             *atEOF = FALSE;
             form->bytesSent += bytesRead;
-#if ENABLE(BLOB_SLICE)
+#if ENABLE(BLOB)
             if (form->currentStreamRangeLength != FormDataElement::toEndOfFile)
                 form->currentStreamRangeLength -= bytesRead;
 #endif
@@ -401,7 +401,7 @@ void setHTTPBody(NSMutableURLRequest *request, PassRefPtr<FormData> formData)
         if (element.m_type == FormDataElement::data)
             length += element.m_data.size();
         else {
-#if ENABLE(BLOB_SLICE)
+#if ENABLE(BLOB)
             // If we're sending the file range, use the existing range length for now. We will detect if the file has been changed right before we read the file and abort the operation if necessary.
             if (element.m_fileLength != FormDataElement::toEndOfFile) {
                 length += element.m_fileLength;

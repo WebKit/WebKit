@@ -31,7 +31,7 @@
 #ifndef FileError_h
 #define FileError_h
 
-#if ENABLE(FILE_READER) || ENABLE(FILE_WRITER)
+#if ENABLE(BLOB) || ENABLE(FILE_WRITER)
 
 #include "ExceptionCode.h"
 #include <wtf/PassRefPtr.h>
@@ -55,6 +55,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(FILE_READER) || ENABLE(FILE_WRITER)
+#endif // ENABLE(BLOB) || ENABLE(FILE_WRITER)
 
 #endif // FileError_h

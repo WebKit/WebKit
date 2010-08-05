@@ -747,10 +747,10 @@ module window {
 
         attribute DOMFormDataConstructor FormData;
 
-        attribute [Conditional=FILE_READER|FILE_WRITER] FileErrorConstructor FileError;
-        attribute [Conditional=FILE_READER] FileReaderConstructor FileReader;
+        attribute [Conditional=BLOB|FILE_WRITER] FileErrorConstructor FileError;
+        attribute [Conditional=BLOB] FileReaderConstructor FileReader;
 
-        attribute BlobBuilderConstructor BlobBuilder;
+        attribute [Conditional=BLOB] BlobBuilderConstructor BlobBuilder;
 
 #endif // defined(LANGUAGE_JAVASCRIPT)
 

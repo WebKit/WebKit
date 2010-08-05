@@ -120,7 +120,7 @@ namespace WebCore {
 #if ENABLE(NOTIFICATIONS)
         virtual Notification* toNotification();
 #endif
-#if ENABLE(FILE_READER)
+#if ENABLE(BLOB)
         virtual FileReader* toFileReader();
 #endif
 

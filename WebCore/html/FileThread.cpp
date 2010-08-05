@@ -30,7 +30,7 @@
 
 #include "config.h"
 
-#if ENABLE(FILE_WRITER) || ENABLE(FILE_READER)
+#if ENABLE(BLOB) || ENABLE(FILE_WRITER)
 
 #include "FileThread.h"
 
@@ -116,4 +116,4 @@ void* FileThread::runLoop()
 
 } // namespace WebCore
 
-#endif // ENABLE(FILE_WRITER) || ENABLE(FILE_READER)
+#endif // ENABLE(BLOB) || ENABLE(FILE_WRITER)

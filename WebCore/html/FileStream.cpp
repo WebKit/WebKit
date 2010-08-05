@@ -30,7 +30,7 @@
 
 #include "config.h"
 
-#if ENABLE(FILE_READER) || ENABLE(FILE_WRITER)
+#if ENABLE(BLOB) || ENABLE(FILE_WRITER)
 
 #include "FileStream.h"
 
@@ -98,7 +98,6 @@ void FileStream::openForRead(Blob* blob)
         return;
     }
 
-#if ENABLE(BLOB_SLICE)
     const FileRangeBlobItem* fileRangeItem = fileItem->toFileRangeBlobItem();
     if (fileRangeItem) {
         // Check the modificationt time for the possible file change.
@@ -115,7 +114,6 @@ void FileStream::openForRead(Blob* blob)
             }
         }
     }
-#endif
 
     // Get the size.
     m_totalBytesToRead = blob->size();
@@ -182,4 +180,4 @@ void FileStream::truncate(long long)
 
 } // namespace WebCore
 
-#endif // ENABLE(FILE_READER) || ENABLE(FILE_WRITER)
+#endif // ENABLE(BLOB) || ENABLE(FILE_WRITER)

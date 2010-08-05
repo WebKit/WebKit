@@ -4310,20 +4310,12 @@ webcore_cppflags += -DENABLE_WEB_SOCKETS=0
 endif  # END ENABLE_WEB_SOCKETS
 
 # ---
-# Blob.slice support
+# Blob support
 # ---
-if ENABLE_BLOB_SLICE
-FEATURE_DEFINES += ENABLE_BLOB_SLICE=1
-webcore_cppflags += -DENABLE_BLOB_SLICE=1
-endif  # END ENABLE_BLOB_SLICE
-
-# ---
-# FileReader support
-# ---
-if ENABLE_FILE_READER
-FEATURE_DEFINES += ENABLE_FILE_READER=1
-webcore_cppflags += -DENABLE_FILE_READER=1
-endif  # END ENABLE_FILE_READER
+if ENABLE_BLOB
+FEATURE_DEFINES += ENABLE_BLOB=1
+webcore_cppflags += -DENABLE_BLOB=1
+endif  # END ENABLE_BLOB
 
 # ---
 # FileWriter support

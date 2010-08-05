@@ -1,3 +1,60 @@
+2010-08-05  Jian Li  <jianli@chromium.org>
+ 
+        Reviewed by David Levin.
+
+        Unify blob related feature defines to ENABLE(BLOB).
+        https://bugs.webkit.org/show_bug.cgi?id=43081
+
+        * Configurations/FeatureDefines.xcconfig:
+        * GNUmakefile.am:
+        * WebCore.pri:
+        * bindings/js/JSEventTarget.cpp:
+        (WebCore::toJS):
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::convertEventTargetToV8Object):
+        * dom/EventTarget.cpp:
+        * dom/EventTarget.h:
+        * dom/ExceptionCode.h:
+        (WebCore::):
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::~ScriptExecutionContext):
+        * dom/ScriptExecutionContext.h:
+        * html/Blob.cpp:
+        * html/Blob.h:
+        * html/Blob.idl:
+        * html/FileError.h:
+        * html/FileError.idl:
+        * html/FileReader.cpp:
+        * html/FileReader.h:
+        * html/FileReader.idl:
+        * html/FileStream.cpp:
+        (WebCore::FileStream::openForRead):
+        * html/FileStream.h:
+        * html/FileStreamClient.h:
+        * html/FileStreamProxy.cpp:
+        * html/FileStreamProxy.h:
+        * html/FileThread.cpp:
+        * html/FileThread.h:
+        * page/DOMWindow.idl:
+        * platform/BlobItem.cpp:
+        (WebCore::getFileSnapshotModificationTime):
+        (WebCore::DataBlobItem::slice):
+        (WebCore::FileBlobItem::slice):
+        * platform/BlobItem.h:
+        * platform/network/FormData.cpp:
+        (WebCore::FormData::deepCopy):
+        (WebCore::FormData::appendFile):
+        (WebCore::FormData::appendItem):
+        (WebCore::FormData::appendKeyValuePairItems):
+        * platform/network/FormData.h:
+        (WebCore::operator==):
+        * platform/network/mac/FormDataStreamMac.mm:
+        (WebCore::closeCurrentStream):
+        (WebCore::advanceCurrentStream):
+        (WebCore::formCreate):
+        (WebCore::formRead):
+        (WebCore::setHTTPBody):
+
 2010-08-05  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.

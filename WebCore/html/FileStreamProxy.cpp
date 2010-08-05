@@ -30,7 +30,7 @@
 
 #include "config.h"
 
-#if ENABLE(FILE_READER) || ENABLE(FILE_WRITER)
+#if ENABLE(BLOB) || ENABLE(FILE_WRITER)
 
 #include "FileStreamProxy.h"
 
@@ -199,4 +199,4 @@ void FileStreamProxy::didStop()
 
 } // namespace WebCore
 
-#endif // ENABLE(FILE_WRITER)
+#endif // ENABLE(BLOB) || ENABLE(FILE_WRITER)
