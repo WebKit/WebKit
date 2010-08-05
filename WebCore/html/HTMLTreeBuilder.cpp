@@ -1955,6 +1955,7 @@ void HTMLTreeBuilder::processEndTagForInBody(AtomicHTMLToken& token)
         || token.name() == divTag
         || token.name() == dlTag
         || token.name() == fieldsetTag
+        || token.name() == figcaptionTag
         || token.name() == figureTag
         || token.name() == footerTag
         || token.name() == headerTag
@@ -1965,6 +1966,7 @@ void HTMLTreeBuilder::processEndTagForInBody(AtomicHTMLToken& token)
         || token.name() == olTag
         || token.name() == preTag
         || token.name() == sectionTag
+        || token.name() == summaryTag
         || token.name() == ulTag) {
         if (!m_tree.openElements()->inScope(token.name())) {
             parseError(token);

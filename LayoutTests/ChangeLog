@@ -2,6 +2,15 @@
 
         Reviewed by Eric Seidel.
 
+        Pick up spec change w.r.t. figcaption and summary
+        https://bugs.webkit.org/show_bug.cgi?id=43075
+
+        * html5lib/runner-expected-html5.txt:
+
+2010-08-04  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Pick up spec change w.r.t. replacement character and <frameset>
         https://bugs.webkit.org/show_bug.cgi?id=43073
 

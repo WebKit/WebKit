@@ -162,8 +162,6 @@ resources/tests18.dat: PASS
 
 resources/tests19.dat:
 63
-101
-102
 
 Test 63 of 102 in resources/tests19.dat failed. Input:
 <!doctype html><keygen><frameset>
@@ -185,44 +183,6 @@ Expected:
 |   <head>
 |   <body>
 |     <keygen>
-
-Test 101 of 102 in resources/tests19.dat failed. Input:
-<!doctype html><figcaption><article></figcaption>a
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <figcaption>
-|       <article>
-|         "a"
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <figcaption>
-|       <article>
-|     "a"
-
-Test 102 of 102 in resources/tests19.dat failed. Input:
-<!doctype html><summary><article></summary>a
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <summary>
-|       <article>
-|         "a"
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <summary>
-|       <article>
-|     "a"
 resources/tests20.dat:
 16
 
