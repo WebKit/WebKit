@@ -94,6 +94,7 @@ namespace JSC {
 
         ALWAYS_INLINE bool lastTokenWasRestrKeyword() const;
 
+        ALWAYS_INLINE JSTokenType parseIdentifier(JSTokenData*, LexType);
         ALWAYS_INLINE bool parseString(JSTokenData* lvalp);
 
         static const size_t initialReadBufferCapacity = 32;

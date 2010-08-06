@@ -399,6 +399,60 @@ inline void Lexer::record16(int c)
     record16(UChar(static_cast<unsigned short>(c)));
 }
 
+ALWAYS_INLINE JSTokenType Lexer::parseIdentifier(JSTokenData* lvalp, LexType lexType)
+{
+    bool bufferRequired = false;
+    const UChar* identifierStart = currentCharacter();
+    int identifierLength;
+
+    while (true) {
+        if (LIKELY(isIdentPart(m_current))) {
+            shift();
+            continue;
+        }
+        if (LIKELY(m_current != '\\'))
+            break;
+
+        // \uXXXX unicode characters.
+        bufferRequired = true;
+        if (identifierStart != currentCharacter())
+            m_buffer16.append(identifierStart, currentCharacter() - identifierStart);
+        shift();
+        if (UNLIKELY(m_current != 'u'))
+            return ERRORTOK;
+        shift();
+        int character = getUnicodeCharacter();
+        if (UNLIKELY(character == -1))
+            return ERRORTOK;
+        if (UNLIKELY(m_buffer16.size() ? !isIdentPart(character) : !isIdentStart(character)))
+            return ERRORTOK;
+        record16(character);
+        identifierStart = currentCharacter();
+    }
+
+    if (!bufferRequired)
+        identifierLength = currentCharacter() - identifierStart;
+    else {
+        if (identifierStart != currentCharacter())
+            m_buffer16.append(identifierStart, currentCharacter() - identifierStart);
+        identifierStart = m_buffer16.data();
+        identifierLength = m_buffer16.size();
+    }
+
+    const Identifier* ident = makeIdentifier(identifierStart, identifierLength);
+    lvalp->ident = ident;
+    m_delimited = false;
+
+    if (LIKELY(!bufferRequired && lexType == IdentifyReservedWords)) {
+        // Keywords must not be recognized if there was an \uXXXX in the identifier.
+        const HashEntry* entry = m_keywordTable.entry(m_globalData, *ident);
+        return entry ? static_cast<JSTokenType>(entry->lexerValue()) : IDENT;
+    }
+
+    m_buffer16.resize(0);
+    return IDENT;
+}
+
 ALWAYS_INLINE bool Lexer::parseString(JSTokenData* lvalp)
 {
     int stringQuoteCharacter = m_current;
@@ -488,7 +542,6 @@ JSTokenType Lexer::lex(JSTokenData* lvalp, JSTokenInfo* llocp, LexType lexType)
     ASSERT(m_buffer16.isEmpty());
 
     JSTokenType token = ERRORTOK;
-    int identChar = 0;
     m_terminator = false;
 
 start:
@@ -753,8 +806,6 @@ start:
         shift();
         token = CLOSEBRACE;
         break;
-    case CharacterBackSlash:
-        goto startIdentifierWithBackslash;
     case CharacterZero:
         goto startNumberWithZeroDigit;
     case CharacterNumber:
@@ -768,7 +819,10 @@ start:
         break;
     case CharacterIdentifierStart:
         ASSERT(isIdentStart(m_current));
-        goto startIdentifierOrKeyword;
+        // Fall through into CharacterBackSlash.
+    case CharacterBackSlash:
+        token = parseIdentifier(lvalp, lexType);
+        break;
     case CharacterLineTerminator:
         ASSERT(isLineTerminator(m_current));
         shiftLineTerminator();
@@ -788,53 +842,6 @@ start:
 
     m_atLineStart = false;
     goto returnToken;
-
-startIdentifierWithBackslash: {
-    shift();
-    if (UNLIKELY(m_current != 'u'))
-        goto returnError;
-    shift();
-
-    identChar = getUnicodeCharacter();
-    if (UNLIKELY(identChar == -1))
-        goto returnError;
-    if (UNLIKELY(!isIdentStart(identChar)))
-        goto returnError;
-    goto inIdentifierAfterCharacterCheck;
-}
-
-startIdentifierOrKeyword: {
-    const UChar* identifierStart = currentCharacter();
-    shift();
-    while (isIdentPart(m_current))
-        shift();
-    if (LIKELY(m_current != '\\')) {
-        // Fast case for idents which does not contain \uCCCC characters
-        lvalp->ident = makeIdentifier(identifierStart, currentCharacter() - identifierStart);
-        goto doneIdentifierOrKeyword;
-    }
-    m_buffer16.append(identifierStart, currentCharacter() - identifierStart);
-}
-
-    do {
-        shift();
-        if (UNLIKELY(m_current != 'u'))
-            goto returnError;
-        shift();
-        identChar = getUnicodeCharacter();
-        if (UNLIKELY(identChar == -1))
-            goto returnError;
-        if (UNLIKELY(!isIdentPart(identChar)))
-            goto returnError;
-inIdentifierAfterCharacterCheck:
-        record16(identChar);
-
-        while (isIdentPart(m_current)) {
-            record16(m_current);
-            shift();
-        }
-    } while (UNLIKELY(m_current == '\\'));
-    goto doneIdentifier;
 
 inSingleLineComment:
     while (!isLineTerminator(m_current)) {
@@ -1008,27 +1015,7 @@ doneNumeric:
 doneSemicolon:
     token = SEMICOLON;
     m_delimited = true;
-    goto returnToken;
-
-doneIdentifier:
-    m_atLineStart = false;
-    m_delimited = false;
-    lvalp->ident = makeIdentifier(m_buffer16.data(), m_buffer16.size());
-    m_buffer16.resize(0);
-    token = IDENT;
-    goto returnToken;
-
-doneIdentifierOrKeyword: {
-    m_atLineStart = false;
-    m_delimited = false;
-    m_buffer16.resize(0);
-    if (lexType == IdentifyReservedWords) {
-        const HashEntry* entry = m_keywordTable.entry(m_globalData, *lvalp->ident);
-        token = entry ? static_cast<JSTokenType>(entry->lexerValue()) : IDENT;
-    } else
-        token = IDENT;
     // Fall through into returnToken.
-}
 
 returnToken: {
     int lineNumber = m_lineNumber;
