@@ -24,6 +24,7 @@
 #include "config.h"
 #include "ScriptElement.h"
 
+#include "AsyncScriptRunner.h"
 #include "CachedScript.h"
 #include "DocLoader.h"
 #include "Document.h"
@@ -246,7 +247,7 @@ void ScriptElementData::execute(CachedScript* cachedScript)
 void ScriptElementData::notifyFinished(CachedResource* o)
 {
     ASSERT_UNUSED(o, o == m_cachedScript);
-    m_element->document()->executeScriptSoon(this, m_cachedScript);
+    m_element->document()->asyncScriptRunner()->executeScriptSoon(this, m_cachedScript);
     m_cachedScript = 0;
 }
 

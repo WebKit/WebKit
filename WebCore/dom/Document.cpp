@@ -28,6 +28,7 @@
 
 #include "AXObjectCache.h"
 #include "AnimationController.h"
+#include "AsyncScriptRunner.h"
 #include "Attr.h"
 #include "Attribute.h"
 #include "CDATASection.h"
@@ -373,7 +374,7 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     , m_startTime(currentTime())
     , m_overMinimumLayoutThreshold(false)
     , m_extraLayoutDelay(0)
-    , m_executeScriptSoonTimer(this, &Document::executeScriptSoonTimerFired)
+    , m_asyncScriptRunner(AsyncScriptRunner::create())
     , m_xmlVersion("1.0")
     , m_xmlStandalone(false)
 #if ENABLE(XBL)
@@ -522,8 +523,7 @@ Document::~Document()
     ASSERT(m_ranges.isEmpty());
     ASSERT(!m_styleRecalcTimer.isActive());
 
-    for (size_t i = 0; i < m_scriptsToExecuteSoon.size(); ++i)
-        m_scriptsToExecuteSoon[i].first->element()->deref(); // Balances ref() in executeScriptSoon().
+    m_asyncScriptRunner.clear();
 
     removeAllEventListeners();
 
@@ -4829,45 +4829,6 @@ void Document::updateFocusAppearanceTimerFired(Timer<Document>*)
     Element* element = static_cast<Element*>(node);
     if (element->isFocusable())
         element->updateFocusAppearance(m_updateFocusAppearanceRestoresSelection);
-}
-
-void Document::executeScriptSoonTimerFired(Timer<Document>* timer)
-{
-    ASSERT_UNUSED(timer, timer == &m_executeScriptSoonTimer);
-
-    Vector<pair<ScriptElementData*, CachedResourceHandle<CachedScript> > > scripts;
-    scripts.swap(m_scriptsToExecuteSoon);
-    size_t size = scripts.size();
-    for (size_t i = 0; i < size; ++i) {
-        scripts[i].first->execute(scripts[i].second.get());
-        scripts[i].first->element()->deref(); // Balances ref() in executeScriptSoon().
-    }
-}
-
-void Document::executeScriptSoon(ScriptElementData* data, CachedResourceHandle<CachedScript> cachedScript)
-{
-    ASSERT_ARG(data, data);
-
-    Element* element = data->element();
-    ASSERT(element);
-    ASSERT(element->document() == this);
-    ASSERT(element->inDocument());
-
-    m_scriptsToExecuteSoon.append(make_pair(data, cachedScript));
-    element->ref(); // Balanced by deref()s in executeScriptSoonTimerFired() and ~Document().
-    if (!m_executeScriptSoonTimer.isActive())
-        m_executeScriptSoonTimer.startOneShot(0);
-}
-
-void Document::suspendExecuteScriptSoonTimer()
-{
-    m_executeScriptSoonTimer.stop();
-}
-
-void Document::resumeExecuteScriptSoonTimer()
-{
-    if (!m_scriptsToExecuteSoon.isEmpty())
-        m_executeScriptSoonTimer.startOneShot(0);
 }
 
 // FF method for accessing the selection added for compatibility.

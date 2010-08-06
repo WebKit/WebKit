@@ -1075,6 +1075,8 @@
             'dom/default/PlatformMessagePortChannel.h',
             'dom/ActiveDOMObject.cpp',
             'dom/ActiveDOMObject.h',
+            'dom/AsyncScriptRunner.cpp',
+            'dom/AsyncScriptRunner.h',
             'dom/Attr.cpp',
             'dom/Attr.h',
             'dom/Attribute.cpp',

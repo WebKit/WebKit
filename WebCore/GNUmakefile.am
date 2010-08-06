@@ -969,6 +969,8 @@ webcore_sources += \
 	WebCore/css/WebKitCSSTransformValue.h \
 	WebCore/dom/ActiveDOMObject.cpp \
 	WebCore/dom/ActiveDOMObject.h \
+	WebCore/dom/AsyncScriptRunner.cpp \
+	WebCore/dom/AsyncScriptRunner.h \
 	WebCore/dom/Attr.cpp \
 	WebCore/dom/Attr.h \
 	WebCore/dom/Attribute.cpp \

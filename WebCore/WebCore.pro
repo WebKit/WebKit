@@ -459,6 +459,7 @@ SOURCES += \
     css/WebKitCSSMatrix.cpp \
     css/WebKitCSSTransformValue.cpp \
     dom/ActiveDOMObject.cpp \
+    dom/AsyncScriptRunner.cpp \
     dom/Attr.cpp \
     dom/Attribute.cpp \
     dom/BeforeProcessEvent.cpp \

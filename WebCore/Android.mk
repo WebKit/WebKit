@@ -98,6 +98,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	css/WebKitCSSTransformValue.cpp \
 	\
 	dom/ActiveDOMObject.cpp \
+	dom/AsyncScriptRunner.cpp \
 	dom/Attr.cpp \
 	dom/Attribute.cpp \
 	dom/BeforeTextInsertedEvent.cpp \

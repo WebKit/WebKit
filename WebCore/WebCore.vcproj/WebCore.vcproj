@@ -32529,6 +32529,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\dom\AsyncScriptRunner.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\AsyncScriptRunner.h"
+				>
+			</File>
+			<File
 				RelativePath="..\dom\Attr.cpp"
 				>
 			</File>
