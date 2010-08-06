@@ -1,3 +1,14 @@
+2010-08-05  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Jon Honeycutt.
+
+        Bug 43593 - WebView::backingStore should check if m_backingStoreBitmap is NULL.
+        https://bugs.webkit.org/show_bug.cgi?id=43593
+
+        * WebView.cpp:
+        (WebView::backingStore):
+        If m_backingStoreBitmap is NULL, return E_FAIL.
+
 2010-08-05  Gavin Barraclough  <barraclough@apple.com>
 
         Rubber stamped by Sam Weinig

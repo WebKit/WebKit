@@ -5725,6 +5725,8 @@ HRESULT STDMETHODCALLTYPE WebView::backingStore(
 {
     if (!hBitmap)
         return E_POINTER;
+    if (!m_backingStoreBitmap)
+        return E_FAIL;
     *hBitmap = reinterpret_cast<OLE_HANDLE>(m_backingStoreBitmap->handle());
     return S_OK;
 }
