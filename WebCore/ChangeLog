@@ -1,5 +1,17 @@
 2010-08-06  Dumitru Daniliuc  <dumi@chromium.org>
 
+        Unreviewed, fix the "GTK Linux 64-bit Debug" bot.
+
+        CodeGeneratorGObject.pm doesn't know yet how to auto-generate
+        callbacks, so we should not auto-generate functions that take
+        callbacks as parameters. This shouldn't break anything, because
+        all these functions were marked as ["Custom"] until now, and this
+        code generator skipped those functions anyway.
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+
+2010-08-06  Dumitru Daniliuc  <dumi@chromium.org>
+
         Unreviewed, "Qt Linux Realese minimal" build fix.
 
         * bindings/scripts/CodeGeneratorJS.pm:
