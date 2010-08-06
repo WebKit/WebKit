@@ -1,3 +1,65 @@
+2010-08-06  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Chris Fleizach.
+
+        Make AX Code use more specific RenderObject subclass types
+        https://bugs.webkit.org/show_bug.cgi?id=43632
+
+        No functional change, thus no tests.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::nodeHasRole):
+         - Make this take a String instead of AtomicString, to avoid
+           thrashing the atomic string hash.
+           It would be better to take a const char* here, except
+           one caller passes nullAtom.
+        (WebCore::createFromRenderer):
+         - Split this out from getOrCreate to make it simpler.
+         - No longer needs to deal with setting a "result"
+           pointer and can instead just return.
+         - I've also made this function use RenderBoxModelObject*
+           where appropriate.
+        (WebCore::AXObjectCache::getOrCreate):
+        * accessibility/AXObjectCache.h:
+        * accessibility/AccessibilityImageMapLink.cpp:
+        (WebCore::AccessibilityImageMapLink::AccessibilityImageMapLink):
+         - Fix style.
+        * accessibility/AccessibilityMenuList.cpp:
+        (WebCore::AccessibilityMenuList::AccessibilityMenuList):
+         - Use a more specific type.
+        (WebCore::AccessibilityMenuList::renderer):
+        * accessibility/AccessibilityMenuList.h:
+        (WebCore::AccessibilityMenuList::create):
+        * accessibility/AccessibilityMenuListPopup.cpp:
+         - Need RenderMenuList.h since renderer() is a RenderMenuList*
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::renderListItemContainerForNode):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::renderBoxModelObject):
+         - New helper function, similar to Node::renderBoxModelObject()
+        (WebCore::isInlineWithContinuation):
+        (WebCore::AccessibilityRenderObject::isNativeImage):
+        (WebCore::AccessibilityRenderObject::isAttachment):
+        (WebCore::AccessibilityRenderObject::isMultiSelectable):
+        (WebCore::AccessibilityRenderObject::isReadOnly):
+        (WebCore::AccessibilityRenderObject::isFieldset):
+        (WebCore::AccessibilityRenderObject::actionElement):
+        (WebCore::AccessibilityRenderObject::stringValue):
+        (WebCore::AccessibilityRenderObject::accessibilityIsIgnored):
+        (WebCore::AccessibilityRenderObject::setValue):
+        (WebCore::AccessibilityRenderObject::widget):
+        (WebCore::AccessibilityRenderObject::visiblePositionForPoint):
+        (WebCore::AccessibilityRenderObject::doAccessibilityHitTest):
+        (WebCore::AccessibilityRenderObject::renderObjectIsObservable):
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole):
+        (WebCore::AccessibilityRenderObject::addChildren):
+        (WebCore::msaaRoleForRenderer):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::isTableExposableThroughAccessibility):
+        * accessibility/AccessibilityTable.h:
+         - Remove unneeded "using namespace std".
+
 2010-08-06  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Eric Seidel.

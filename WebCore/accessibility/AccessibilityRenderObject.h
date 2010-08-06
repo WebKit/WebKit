@@ -1,3 +1,4 @@
+
 /*
  * Copyright (C) 2008 Apple Inc. All rights reserved.
  *
@@ -30,7 +31,7 @@
 #define AccessibilityRenderObject_h
 
 #include "AccessibilityObject.h"
-#include "RenderObject.h"
+#include <wtf/Forward.h>
 
 namespace WebCore {
     
@@ -165,6 +166,7 @@ public:
     
     void setRenderer(RenderObject* renderer) { m_renderer = renderer; }
     RenderObject* renderer() const { return m_renderer; }
+    RenderBoxModelObject* renderBoxModelObject() const;
     virtual Node* node() const;
 
     RenderView* topRenderer() const;

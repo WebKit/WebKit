@@ -59,8 +59,13 @@
 #endif
 #include "InputElement.h"
 #include "Page.h"
-#include "RenderObject.h"
+#include "RenderListBox.h"
+#include "RenderMenuList.h"
+#include "RenderTable.h"
+#include "RenderTableCell.h"
+#include "RenderTableRow.h"
 #include "RenderProgress.h"
+#include "RenderSlider.h"
 #include "RenderView.h"
 
 #include <wtf/PassRefPtr.h>
@@ -160,80 +165,87 @@ AccessibilityObject* AXObjectCache::get(RenderObject* renderer)
     
     return obj;
 }
-    
-bool AXObjectCache::nodeHasRole(Node* node, const AtomicString& role)
+
+// FIXME: This probably belongs on Node.
+// FIXME: This should take a const char*, but one caller passes nullAtom.
+bool nodeHasRole(Node* node, const String& role)
 {
     if (!node || !node->isElementNode())
         return false;
-    
+
     return equalIgnoringCase(static_cast<Element*>(node)->getAttribute(roleAttr), role);
+}
+
+static PassRefPtr<AccessibilityObject> createFromRenderer(RenderObject* renderer)
+{
+    // FIXME: How could renderer->node() ever not be an Element?
+    Node* node = renderer->node();
+
+    // If the node is aria role="list" or the aria role is empty and its a
+    // ul/ol/dl type (it shouldn't be a list if aria says otherwise).
+    if (node && ((nodeHasRole(node, "list") || nodeHasRole(node, "directory"))
+                      || (nodeHasRole(node, nullAtom) && (node->hasTagName(ulTag) || node->hasTagName(olTag) || node->hasTagName(dlTag)))))
+        return AccessibilityList::create(renderer);
+
+    // aria tables
+    if (nodeHasRole(node, "grid") || nodeHasRole(node, "treegrid"))
+        return AccessibilityARIAGrid::create(renderer);
+    if (nodeHasRole(node, "row"))
+        return AccessibilityARIAGridRow::create(renderer);
+    if (nodeHasRole(node, "gridcell") || nodeHasRole(node, "columnheader") || nodeHasRole(node, "rowheader"))
+        return AccessibilityARIAGridCell::create(renderer);
+
+#if ENABLE(VIDEO)
+    // media controls
+    if (node && node->isMediaControlElement())
+        return AccessibilityMediaControl::create(renderer);
+#endif
+
+    if (renderer->isBoxModelObject()) {
+        RenderBoxModelObject* cssBox = toRenderBoxModelObject(renderer);
+        if (cssBox->isListBox())
+            return AccessibilityListBox::create(toRenderListBox(cssBox));
+        if (cssBox->isMenuList())
+            return AccessibilityMenuList::create(toRenderMenuList(cssBox));
+
+        // standard tables
+        if (cssBox->isTable())
+            return AccessibilityTable::create(toRenderTable(cssBox));
+        if (cssBox->isTableRow())
+            return AccessibilityTableRow::create(toRenderTableRow(cssBox));
+        if (cssBox->isTableCell())
+            return AccessibilityTableCell::create(toRenderTableCell(cssBox));
+
+#if ENABLE(PROGRESS_TAG)
+        // progress bar
+        if (cssBox->isProgress())
+            return AccessibilityProgressIndicator::create(toRenderProgress(cssBox));
+#endif
+
+        // input type=range
+        if (cssBox->isSlider())
+            return AccessibilitySlider::create(toRenderSlider(cssBox));
+    }
+
+    return AccessibilityRenderObject::create(renderer);
 }
 
 AccessibilityObject* AXObjectCache::getOrCreate(RenderObject* renderer)
 {
     if (!renderer)
         return 0;
-    
-    AccessibilityObject* obj = get(renderer);
 
-    if (!obj) {
-        Node* node = renderer->node();
-        RefPtr<AccessibilityObject> newObj = 0;
-        if (renderer->isListBox())
-            newObj = AccessibilityListBox::create(renderer);
-        else if (renderer->isMenuList())
-            newObj = AccessibilityMenuList::create(renderer);
+    if (AccessibilityObject* obj = get(renderer))
+        return obj;
 
-        // If the node is aria role="list" or the aria role is empty and its a ul/ol/dl type (it shouldn't be a list if aria says otherwise). 
-        else if (node && ((nodeHasRole(node, "list") || nodeHasRole(node, "directory"))
-                          || (nodeHasRole(node, nullAtom) && (node->hasTagName(ulTag) || node->hasTagName(olTag) || node->hasTagName(dlTag)))))
-            newObj = AccessibilityList::create(renderer);
-        
-        // aria tables
-        else if (nodeHasRole(node, "grid") || nodeHasRole(node, "treegrid"))
-            newObj = AccessibilityARIAGrid::create(renderer);
-        else if (nodeHasRole(node, "row"))
-            newObj = AccessibilityARIAGridRow::create(renderer);
-        else if (nodeHasRole(node, "gridcell") || nodeHasRole(node, "columnheader") || nodeHasRole(node, "rowheader"))
-            newObj = AccessibilityARIAGridCell::create(renderer);
+    RefPtr<AccessibilityObject> newObj = createFromRenderer(renderer);
 
-        // standard tables
-        else if (renderer->isTable())
-            newObj = AccessibilityTable::create(renderer);
-        else if (renderer->isTableRow())
-            newObj = AccessibilityTableRow::create(renderer);
-        else if (renderer->isTableCell())
-            newObj = AccessibilityTableCell::create(renderer);
+    getAXID(newObj.get());
 
-#if ENABLE(VIDEO)
-        // media controls
-        else if (renderer->node() && renderer->node()->isMediaControlElement())
-            newObj = AccessibilityMediaControl::create(renderer);
-#endif
-
-#if ENABLE(PROGRESS_TAG)
-        // progress bar
-        else if (renderer->isProgress())
-            newObj = AccessibilityProgressIndicator::create(toRenderProgress(renderer));
-#endif
-
-        // input type=range
-        else if (renderer->isSlider())
-            newObj = AccessibilitySlider::create(renderer);
-
-        else
-            newObj = AccessibilityRenderObject::create(renderer);
-        
-        obj = newObj.get();
-        
-        getAXID(obj);
-        
-        m_renderObjectMapping.set(renderer, obj->axObjectID());
-        m_objects.set(obj->axObjectID(), obj);    
-        attachWrapper(obj);
-    }
-    
-    return obj;
+    m_renderObjectMapping.set(renderer, newObj->axObjectID());
+    m_objects.set(newObj->axObjectID(), newObj);
+    attachWrapper(newObj.get());
+    return newObj.get();
 }
 
 AccessibilityObject* AXObjectCache::getOrCreate(AccessibilityRole role)

@@ -120,8 +120,19 @@ void AccessibilityRenderObject::detach()
     m_renderer = 0;    
 }
 
-static inline bool isInlineWithContinuation(RenderObject* renderer)
+RenderBoxModelObject* AccessibilityRenderObject::renderBoxModelObject() const
 {
+    if (!m_renderer || !m_renderer->isBoxModelObject())
+        return 0;
+    return toRenderBoxModelObject(m_renderer);
+}
+
+static inline bool isInlineWithContinuation(RenderObject* object)
+{
+    if (!object->isBoxModelObject())
+        return false;
+
+    RenderBoxModelObject* renderer = toRenderBoxModelObject(object);
     if (!renderer->isRenderInline())
         return false;
 
@@ -429,7 +440,7 @@ bool AccessibilityRenderObject::isTextControl() const
 
 bool AccessibilityRenderObject::isNativeImage() const
 {
-    return m_renderer->isImage();
+    return m_renderer->isBoxModelObject() && toRenderBoxModelObject(m_renderer)->isImage();
 }    
     
 bool AccessibilityRenderObject::isImage() const
@@ -439,12 +450,12 @@ bool AccessibilityRenderObject::isImage() const
 
 bool AccessibilityRenderObject::isAttachment() const
 {
-    if (!m_renderer)
+    RenderBoxModelObject* renderer = renderBoxModelObject();
+    if (!renderer)
         return false;
-    
     // Widgets are the replaced elements that we represent to AX as attachments
-    bool isWidget = m_renderer && m_renderer->isWidget();
-    ASSERT(!isWidget || (m_renderer->isReplaced() && !isImage()));
+    bool isWidget = renderer->isWidget();
+    ASSERT(!isWidget || (renderer->isReplaced() && !isImage()));
     return isWidget && ariaRoleAttribute() == UnknownRole;
 }
 
@@ -603,7 +614,7 @@ bool AccessibilityRenderObject::isMultiSelectable() const
     if (equalIgnoringCase(ariaMultiSelectable, "false"))
         return false;
     
-    if (!m_renderer->isListBox())
+    if (!m_renderer->isBoxModelObject() || !toRenderBoxModelObject(m_renderer)->isListBox())
         return false;
     return m_renderer->node() && static_cast<HTMLSelectElement*>(m_renderer->node())->multiple();
 }
@@ -628,11 +639,14 @@ bool AccessibilityRenderObject::isReadOnly() const
         return !frame->isContentEditable();
     }
 
-    if (m_renderer->isTextField())
-        return static_cast<HTMLInputElement*>(m_renderer->node())->readOnly();
-    if (m_renderer->isTextArea())
-        return static_cast<HTMLTextAreaElement*>(m_renderer->node())->readOnly();
-    
+    if (m_renderer->isBoxModelObject()) {
+        RenderBoxModelObject* box = toRenderBoxModelObject(m_renderer);
+        if (box->isTextField())
+            return static_cast<HTMLInputElement*>(box->node())->readOnly();
+        if (box->isTextArea())
+            return static_cast<HTMLTextAreaElement*>(box->node())->readOnly();
+    }
+
     return !m_renderer->node() || !m_renderer->node()->isContentEditable();
 }
 
@@ -699,10 +713,10 @@ bool AccessibilityRenderObject::isControl() const
 
 bool AccessibilityRenderObject::isFieldset() const
 {
-    if (!m_renderer)
+    RenderBoxModelObject* renderer = renderBoxModelObject();
+    if (!renderer)
         return false;
-    
-    return m_renderer->isFieldset();
+    return renderer->isFieldset();
 }
   
 bool AccessibilityRenderObject::isGroup() const
@@ -789,7 +803,7 @@ Element* AccessibilityRenderObject::actionElement() const
         } else if (node->hasTagName(buttonTag))
             return static_cast<Element*>(node);
     }
-            
+
     if (isFileUploadButton())
         return static_cast<Element*>(m_renderer->node());
             
@@ -799,7 +813,7 @@ Element* AccessibilityRenderObject::actionElement() const
     if (isImageButton())
         return static_cast<Element*>(m_renderer->node());
     
-    if (m_renderer->isMenuList())
+    if (m_renderer->isBoxModelObject() && toRenderBoxModelObject(m_renderer)->isMenuList())
         return static_cast<Element*>(m_renderer->node());
 
     AccessibilityRole role = roleValue();
@@ -1049,7 +1063,9 @@ String AccessibilityRenderObject::stringValue() const
 {
     if (!m_renderer || isPasswordField())
         return String();
-    
+
+    RenderBoxModelObject* cssBox = renderBoxModelObject();
+
     if (ariaRoleAttribute() == StaticTextRole) {
         String staticText = text();
         if (!staticText.length())
@@ -1060,7 +1076,7 @@ String AccessibilityRenderObject::stringValue() const
     if (m_renderer->isText())
         return textUnderElement();
     
-    if (m_renderer->isMenuList()) {
+    if (cssBox && cssBox->isMenuList()) {
         // RenderMenuList will go straight to the text() of its selected item.
         // This has to be overriden in the case where the selected item has an aria label
         SelectElement* selectNode = toSelectElement(static_cast<Element*>(m_renderer->node()));
@@ -1082,7 +1098,7 @@ String AccessibilityRenderObject::stringValue() const
     if (m_renderer->isListMarker())
         return toRenderListMarker(m_renderer)->text();
     
-    if (m_renderer->isRenderButton())
+    if (cssBox && cssBox->isRenderButton())
         return toRenderButton(m_renderer)->text();
 
     if (isWebArea()) {
@@ -1701,13 +1717,13 @@ bool AccessibilityRenderObject::accessibilityIsIgnored() const
     // An ARIA tree can only have tree items and static text as children.
     if (!isAllowedChildOfTree())
         return true;
-    
+
     // ignore popup menu items because AppKit does
     for (RenderObject* parent = m_renderer->parent(); parent; parent = parent->parent()) {
-        if (parent->isMenuList())
+        if (parent->isBoxModelObject() && toRenderBoxModelObject(parent)->isMenuList())
             return true;
     }
-    
+
     // find out if this element is inside of a label element.
     // if so, it may be ignored because it's the label for a checkbox or radio button
     AccessibilityObject* controlObject = correspondingControlForLabelElement();
@@ -2182,20 +2198,24 @@ void AccessibilityRenderObject::setSelectedRows(AccessibilityChildrenVector& sel
     
 void AccessibilityRenderObject::setValue(const String& string)
 {
-    if (!m_renderer)
+    if (!m_renderer || !m_renderer->node() || !m_renderer->node()->isElementNode())
         return;
-    
+    Element* element = static_cast<Element*>(m_renderer->node());
+
+    if (roleValue() == SliderRole)
+        element->setAttribute(aria_valuenowAttr, string);
+
+    if (!m_renderer->isBoxModelObject())
+        return;
+    RenderBoxModelObject* renderer = toRenderBoxModelObject(m_renderer);
+
     // FIXME: Do we want to do anything here for ARIA textboxes?
-    if (m_renderer->isTextField()) {
-        HTMLInputElement* input = static_cast<HTMLInputElement*>(m_renderer->node());
-        input->setValue(string);
-    } else if (m_renderer->isTextArea()) {
-        HTMLTextAreaElement* textArea = static_cast<HTMLTextAreaElement*>(m_renderer->node());
-        textArea->setValue(string);
-    } else if (roleValue() == SliderRole) {
-        Node* element = m_renderer->node();
-        if (element && element->isElementNode())
-            static_cast<Element*>(element)->setAttribute(aria_valuenowAttr, string);
+    if (renderer->isTextField()) {
+        // FIXME: This is not safe!  Other elements could have a TextField renderer.
+        static_cast<HTMLInputElement*>(element)->setValue(string);
+    } else if (renderer->isTextArea()) {
+        // FIXME: This is not safe!  Other elements could have a TextArea renderer.
+        static_cast<HTMLTextAreaElement*>(element)->setValue(string);
     }
 }
 
@@ -2255,7 +2275,7 @@ FrameView* AccessibilityRenderObject::topDocumentFrameView() const
 
 Widget* AccessibilityRenderObject::widget() const
 {
-    if (!m_renderer->isWidget())
+    if (!m_renderer->isBoxModelObject() || !toRenderBoxModelObject(m_renderer)->isWidget())
         return 0;
     return toRenderWidget(m_renderer)->widget();
 }
@@ -2516,12 +2536,12 @@ VisiblePosition AccessibilityRenderObject::visiblePositionForPoint(const IntPoin
             return VisiblePosition();
         
         pointResult = result.localPoint();
-        
+
         // done if hit something other than a widget
-        RenderObject* renderer = innerNode->renderer();
+        RenderBoxModelObject* renderer = innerNode->renderBoxModelObject();
         if (!renderer->isWidget())
             break;
-        
+
         // descend into widget (FRAME, IFRAME, OBJECT...)
         Widget* widget = toRenderWidget(renderer)->widget();
         if (!widget || !widget->isFrameView())
@@ -2706,13 +2726,13 @@ AccessibilityObject* AccessibilityRenderObject::doAccessibilityHitTest(const Int
     
     AccessibilityObject* result = obj->document()->axObjectCache()->getOrCreate(obj);
 
-    if (obj->isListBox()) {
+    if (obj->isBoxModelObject() && toRenderBoxModelObject(obj)->isListBox()) {
         // Make sure the children are initialized so that hit testing finds the right element.
         AccessibilityListBox* listBox = static_cast<AccessibilityListBox*>(result);
         listBox->updateChildrenIfNecessary();
         return listBox->doAccessibilityHitTest(point);
     }
-        
+
     if (result->accessibilityIsIgnored()) {
         // If this element is the label of a control, a hit test should return the control.
         AccessibilityObject* controlObject = result->correspondingControlForLabelElement();
@@ -2870,13 +2890,12 @@ bool AccessibilityRenderObject::renderObjectIsObservable(RenderObject* renderer)
         return true;
     
     // AX clients will listen for AXSelectedChildrenChanged on listboxes.
-    AXObjectCache* cache = axObjectCache();
     Node* node = renderer->node();
-    if (renderer->isListBox() || cache->nodeHasRole(node, "listbox"))
+    if (nodeHasRole(node, "listbox") || (renderer->isBoxModelObject() && toRenderBoxModelObject(renderer)->isListBox()))
         return true;
-    
+
     // Textboxes should send out notifications.
-    if (cache->nodeHasRole(node, "textbox"))
+    if (nodeHasRole(node, "textbox"))
         return true;
     
     return false;
@@ -2950,13 +2969,15 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     AccessibilityRole ariaRole = ariaRoleAttribute();
     if (ariaRole != UnknownRole)
         return ariaRole;
-    
+
+    RenderBoxModelObject* cssBox = renderBoxModelObject();
+
     if (node && node->isLink()) {
-        if (m_renderer->isImage())
+        if (cssBox && cssBox->isImage())
             return ImageMapRole;
         return WebCoreLinkRole;
     }
-    if (m_renderer->isListItem())
+    if (cssBox && cssBox->isListItem())
         return ListItemRole;
     if (m_renderer->isListMarker())
         return ListMarkerRole;
@@ -2964,23 +2985,23 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
         return ButtonRole;
     if (m_renderer->isText())
         return StaticTextRole;
-    if (m_renderer->isImage()) {
+    if (cssBox && cssBox->isImage()) {
         if (node && node->hasTagName(inputTag))
             return ButtonRole;
         return ImageRole;
     }
     if (node && node->hasTagName(canvasTag))
         return ImageRole;
-    
-    if (m_renderer->isRenderView())
+
+    if (cssBox && cssBox->isRenderView())
         return WebAreaRole;
     
-    if (m_renderer->isTextField())
+    if (cssBox && cssBox->isTextField())
         return TextFieldRole;
     
-    if (m_renderer->isTextArea())
+    if (cssBox && cssBox->isTextArea())
         return TextAreaRole;
-    
+
     if (node && node->hasTagName(inputTag)) {
         HTMLInputElement* input = static_cast<HTMLInputElement*>(node);
         if (input->inputType() == HTMLInputElement::CHECKBOX)
@@ -2997,7 +3018,7 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     if (isFileUploadButton())
         return ButtonRole;
     
-    if (m_renderer->isMenuList())
+    if (cssBox && cssBox->isMenuList())
         return PopUpButtonRole;
     
     if (headingLevel())
@@ -3287,8 +3308,9 @@ void AccessibilityRenderObject::addChildren()
     }
     
     // for a RenderImage, add the <area> elements as individual accessibility objects
-    if (m_renderer->isRenderImage()) {
-        HTMLMapElement* map = toRenderImage(m_renderer)->imageMap();
+    RenderBoxModelObject* cssBox = renderBoxModelObject();
+    if (cssBox && cssBox->isRenderImage()) {
+        HTMLMapElement* map = toRenderImage(cssBox)->imageMap();
         if (map) {
             for (Node* current = map->firstChild(); current; current = current->traverseNextNode(map)) {
 
@@ -3605,7 +3627,7 @@ static AccessibilityRole msaaRoleForRenderer(const RenderObject* renderer)
     if (renderer->isText())
         return EditableTextRole;
 
-    if (renderer->isListItem())
+    if (renderer->isBoxModelObject() && toRenderBoxModelObject(renderer)->isListItem())
         return ListItemRole;
 
     return UnknownRole;

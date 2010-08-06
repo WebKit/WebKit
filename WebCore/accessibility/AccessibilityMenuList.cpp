@@ -32,10 +32,14 @@
 
 namespace WebCore {
 
-AccessibilityMenuList::AccessibilityMenuList(RenderObject* renderer)
+AccessibilityMenuList::AccessibilityMenuList(RenderMenuList* renderer)
     : AccessibilityRenderObject(renderer)
 {
-    ASSERT_ARG(renderer, renderer->isMenuList());
+}
+
+RenderMenuList* AccessibilityMenuList::renderer() const
+{
+    return toRenderMenuList(AccessibilityRenderObject::renderer());
 }
 
 bool AccessibilityMenuList::press() const

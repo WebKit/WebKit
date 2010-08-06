@@ -31,7 +31,7 @@
 #include "AccessibilityMenuListOption.h"
 #include "HTMLNames.h"
 #include "HTMLSelectElement.h"
-#include "RenderObject.h"
+#include "RenderMenuList.h"
 
 namespace WebCore {
 

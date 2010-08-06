@@ -33,18 +33,15 @@
 #include "AccessibilityRenderObject.h"
 #include "Document.h"
 #include "HTMLNames.h"
-#include "IntRect.h"
-#include "RenderObject.h"
-
-using namespace std;
+#include "RenderBoxModelObject.h"
 
 namespace WebCore {
     
 using namespace HTMLNames;
 
 AccessibilityImageMapLink::AccessibilityImageMapLink()
-    : m_areaElement(0), 
-      m_mapElement(0)
+    : m_areaElement(0)
+    , m_mapElement(0)
 {
 }
 

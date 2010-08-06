@@ -124,8 +124,6 @@ public:
     void postNotification(RenderObject*, AXNotification, bool postToElement, PostType = PostAsynchronously);
     void postNotification(AccessibilityObject*, Document*, AXNotification, bool postToElement, PostType = PostAsynchronously);
 
-    bool nodeHasRole(Node*, const AtomicString& role);
-
 protected:
     void postPlatformNotification(AccessibilityObject*, AXNotification);
 
@@ -145,6 +143,8 @@ private:
     
     AXID getAXID(AccessibilityObject*);
 };
+
+bool nodeHasRole(Node*, const String& role);
 
 #if !HAVE(ACCESSIBILITY)
 inline void AXObjectCache::handleActiveDescendantChanged(RenderObject*) { }

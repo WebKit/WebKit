@@ -43,8 +43,6 @@
 #include "RenderTableCell.h"
 #include "RenderTableSection.h"
 
-using namespace std;
-
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -75,7 +73,7 @@ bool AccessibilityTable::isTableExposableThroughAccessibility()
     // <table> should be exposed as an AXTable. The goal
     // is to only show "data" tables
     
-    if (!m_renderer || !m_renderer->isTable())
+    if (!renderer())
         return false;
     
     // if the developer assigned an aria role to this, then we shouldn't 
@@ -196,7 +194,7 @@ bool AccessibilityTable::isTableExposableThroughAccessibility()
             // For the first 5 rows, cache the background color so we can check if this table has zebra-striped rows.
             if (row < 5 && row == alternatingRowColorCount) {
                 RenderObject* renderRow = cell->parent();
-                if (!renderRow || !renderRow->isTableRow())
+                if (!renderRow || !renderRow->isBoxModelObject() || !toRenderBoxModelObject(renderRow)->isTableRow())
                     continue;
                 RenderStyle* rowRenderStyle = renderRow->style();
                 if (!rowRenderStyle)

@@ -50,7 +50,7 @@ protected:
 public:
     static PassRefPtr<AccessibilityTable> create(RenderObject*);
     virtual ~AccessibilityTable();
-    
+
     virtual bool isDataTable() const;
     virtual AccessibilityRole roleValue() const;
     virtual bool isAriaTable() const { return false; }
@@ -78,17 +78,17 @@ public:
 
     // an object that contains, as children, all the objects that act as headers
     AccessibilityObject* headerContainer();
-    
-protected:    
+
+protected:
     AccessibilityChildrenVector m_rows;
     AccessibilityChildrenVector m_columns;
-    
+
     AccessibilityTableHeaderContainer* m_headerContainer;
     mutable bool m_isAccessibilityTable;
-    
+
     bool isTableExposableThroughAccessibility();
 };
-    
+
 } // namespace WebCore 
 
 #endif // AccessibilityTable_h
