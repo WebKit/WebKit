@@ -1176,58 +1176,74 @@ END
         my $parameterName = $parameter->name;
 
         if ($parameter->extendedAttributes->{"Optional"}) {
-            # Generate early call if there are not enough parameters.
-            push(@implContentDecls, "    if (args.Length() <= $paramIndex) {\n");
-            my $functionCall = GenerateFunctionCallString($function, $paramIndex, "    " x 2, $implClassName);
-            push(@implContentDecls, $functionCall);
-            push(@implContentDecls, "    }\n");
+            # Optional callbacks should be handled differently because:
+            # - they always have a default value: 0
+            # - it reduces the number of overloaded functions with different number of parameters
+            if (!$parameter->extendedAttributes->{"Callback"}) {
+                # Generate early call if there are not enough parameters.
+                push(@implContentDecls, "    if (args.Length() <= $paramIndex) {\n");
+                my $functionCall = GenerateFunctionCallString($function, $paramIndex, "    " x 2, $implClassName);
+                push(@implContentDecls, $functionCall);
+                push(@implContentDecls, "    }\n");
+            }
+        } else {
+          push(@implContentDecls, "    if (args.Length() <= $paramIndex)\n");
+          push(@implContentDecls, "        return throwError(TYPE_MISMATCH_ERR);\n");
         }
 
+        if (BasicTypeCanFailConversion($parameter)) {
+            push(@implContentDecls, "    bool ${parameterName}Ok;\n");
+        }
+
+        my $nativeType = GetNativeTypeFromSignature($parameter, $paramIndex);
         if ($parameter->extendedAttributes->{"Callback"}) {
             my $className = GetCallbackClassName($parameter->type);
             $implIncludes{"$className.h"} = 1;
             $implIncludes{"ExceptionCode.h"} = 1;
-            push(@implContentDecls, "    if (args.Length() <= $paramIndex || !args[$paramIndex]->IsObject())\n");
-            push(@implContentDecls, "        return throwError(TYPE_MISMATCH_ERR);\n");
-            push(@implContentDecls, "    RefPtr<" . $parameter->type . "> $parameterName = ${className}::create(args[$paramIndex], getScriptExecutionContext());\n");
+            if ($parameter->extendedAttributes->{"Optional"}) {
+                push(@implContentDecls, "    RefPtr<" . $parameter->type . "> $parameterName;\n");
+                push(@implContentDecls, "    if (args.Length() > $paramIndex && args[$paramIndex]->IsObject())\n");
+                push(@implContentDecls, "        $parameterName = ${className}::create(args[$paramIndex], getScriptExecutionContext());\n");
+            } else {
+                push(@implContentDecls, "    if (!args[$paramIndex]->IsObject())\n");
+                push(@implContentDecls, "        return throwError(TYPE_MISMATCH_ERR);\n");
+                push(@implContentDecls, "    RefPtr<" . $parameter->type . "> $parameterName = ${className}::create(args[$paramIndex], getScriptExecutionContext());\n");
+            }
             $paramIndex++;
             next;
-        }
-
-        if ($parameter->type eq "SerializedScriptValue") {
+        } elsif ($parameter->type eq "SerializedScriptValue") {
             $implIncludes{"SerializedScriptValue.h"} = 1;
             push(@implContentDecls, "    bool ${parameterName}DidThrow = false;\n");
-        } elsif (BasicTypeCanFailConversion($parameter)) {
-            push(@implContentDecls, "    bool ${parameterName}Ok;\n");
-        }
-
-        push(@implContentDecls, "    " . GetNativeTypeFromSignature($parameter, $paramIndex) . " $parameterName = ");
-
-        if ($parameter->type eq "SerializedScriptValue") {
-            push(@implContentDecls, "SerializedScriptValue::create(args[$paramIndex], ${parameterName}DidThrow);\n");
+            push(@implContentDecls, "    $nativeType $parameterName = SerializedScriptValue::create(args[$paramIndex], ${parameterName}DidThrow);\n");
             push(@implContentDecls, "    if (${parameterName}DidThrow)\n");
             push(@implContentDecls, "        return v8::Undefined();\n");
-        } else {
-            push(@implContentDecls, JSValueToNative($parameter, "args[$paramIndex]",
-                                                    BasicTypeCanFailConversion($parameter) ?  "${parameterName}Ok" : undef) . ";\n");
-        }
-
-        if (TypeCanFailConversion($parameter)) {
+        } elsif (TypeCanFailConversion($parameter)) {
             $implIncludes{"ExceptionCode.h"} = 1;
-            push(@implContentDecls,
-"    if (UNLIKELY(!$parameterName" . (BasicTypeCanFailConversion($parameter) ? "Ok" : "") . ")) {\n" .
-"        ec = TYPE_MISMATCH_ERR;\n" .
-"        goto fail;\n" .
-"    }\n");
+            push(@implContentDecls, "    $nativeType $parameterName = " .
+                 JSValueToNative($parameter, "args[$paramIndex]",
+                                 BasicTypeCanFailConversion($parameter) ? "${parameterName}Ok" : undef) . ";\n");
+            push(@implContentDecls, "    if (UNLIKELY(!$parameterName" . (BasicTypeCanFailConversion($parameter) ? "Ok" : "") . ")) {\n");
+            push(@implContentDecls, "        ec = TYPE_MISMATCH_ERR;\n");
+            push(@implContentDecls, "        goto fail;\n");
+            push(@implContentDecls, "    }\n");
+        } elsif ($nativeType =~ /^V8Parameter/) {
+            # Exceptions are handled in V8Parameter's operators.
+            push(@implContentDecls, "    $nativeType $parameterName = " .
+                 JSValueToNative($parameter, "args[$paramIndex]",
+                                 BasicTypeCanFailConversion($parameter) ? "{$parameterName}Ok" : undef) . ";\n");
+        } else {
+            $implIncludes{"V8BindingMacros.h"} = 1;
+            push(@implContentDecls, "    EXCEPTION_BLOCK($nativeType, $parameterName, " .
+                 JSValueToNative($parameter, "args[$paramIndex]",
+                                 BasicTypeCanFailConversion($parameter) ? "{$parameterName}Ok" : undef) . ");\n");
         }
 
         if ($parameter->extendedAttributes->{"IsIndex"}) {
             $implIncludes{"ExceptionCode.h"} = 1;
-            push(@implContentDecls,
-"    if (UNLIKELY($parameterName < 0)) {\n" .
-"        ec = INDEX_SIZE_ERR;\n" .
-"        goto fail;\n" .
-"    }\n");
+            push(@implContentDecls, "    if (UNLIKELY($parameterName < 0)) {\n");
+            push(@implContentDecls, "        ec = INDEX_SIZE_ERR;\n");
+            push(@implContentDecls, "        goto fail;\n");
+            push(@implContentDecls, "    }\n");
         }
 
         $paramIndex++;
@@ -2825,7 +2841,8 @@ sub JSValueToNative
     return "static_cast<$type>($value->NumberValue())" if $type eq "float" or $type eq "double";
     return "$value->NumberValue()" if $type eq "SVGNumber";
 
-    return "toInt32($value${maybeOkParam})" if $type eq "unsigned long" or $type eq "unsigned short" or $type eq "long";
+    return "toInt32($value${maybeOkParam})" if $type eq "long";
+    return "toUInt32($value${maybeOkParam})" if $type eq "unsigned long" or $type eq "unsigned short";
     return "toInt64($value)" if $type eq "unsigned long long" or $type eq "long long";
     return "static_cast<Range::CompareHow>($value->Int32Value())" if $type eq "CompareHow";
     return "static_cast<SVGPaint::SVGPaintType>($value->ToInt32()->Int32Value())" if $type eq "SVGPaintType";
@@ -2955,7 +2972,8 @@ sub RequiresCustomSignature
     }
 
     foreach my $parameter (@{$function->parameters}) {
-        if ($parameter->extendedAttributes->{"Optional"}) {
+        if ($parameter->extendedAttributes->{"Optional"} ||
+            $parameter->extendedAttributes->{"Callback"}) {
             return 0;
         }
     }

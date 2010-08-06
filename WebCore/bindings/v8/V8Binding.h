@@ -33,9 +33,11 @@
 
 #include "AtomicString.h"
 #include "BindingSecurity.h"
+#include "ExceptionCode.h"
 #include "MathExtras.h"
 #include "PlatformString.h"
 #include "V8DOMWrapper.h"
+#include "V8Proxy.h"
 
 #include <v8.h>
 
@@ -225,13 +227,73 @@ namespace WebCore {
         v8::Local<v8::Value> m_v8Object;
     };
     
-    template<> inline V8Parameter<DefaultMode>::operator String() { return toWebCoreString(m_v8Object); }
-    template<> inline V8Parameter<WithNullCheck>::operator String() { return toWebCoreStringWithNullCheck(m_v8Object); }
-    template<> inline V8Parameter<WithUndefinedOrNullCheck>::operator String() { return toWebCoreStringWithNullOrUndefinedCheck(m_v8Object); }
+    template<> inline V8Parameter<DefaultMode>::operator String()
+    {
+        String result;
+        v8::TryCatch block;
+        result = toWebCoreString(m_v8Object);
+        if (block.HasCaught()) {
+            V8Proxy::setDOMException(TYPE_MISMATCH_ERR);
+            return String();
+        }
+        return result;
+    }
+    template<> inline V8Parameter<WithNullCheck>::operator String()
+    {
+        String result;
+        v8::TryCatch block;
+        result = toWebCoreStringWithNullCheck(m_v8Object);
+        if (block.HasCaught()) {
+            V8Proxy::setDOMException(TYPE_MISMATCH_ERR);
+            return String();
+        }
+        return result;
+    }
+    template<> inline V8Parameter<WithUndefinedOrNullCheck>::operator String()
+    {
+        String result;
+        v8::TryCatch block;
+        result = toWebCoreStringWithNullOrUndefinedCheck(m_v8Object);
+        if (block.HasCaught()) {
+            V8Proxy::setDOMException(TYPE_MISMATCH_ERR);
+            return String();
+        }
+        return result;
+    }
 
-    template<> inline V8Parameter<DefaultMode>::operator AtomicString() { return v8ValueToAtomicWebCoreString(m_v8Object); }
-    template<> inline V8Parameter<WithNullCheck>::operator AtomicString() { return toAtomicWebCoreStringWithNullCheck(m_v8Object); }
-    template<> inline V8Parameter<WithUndefinedOrNullCheck>::operator AtomicString() { return toAtomicWebCoreStringWithNullCheck(m_v8Object); }
+    template<> inline V8Parameter<DefaultMode>::operator AtomicString()
+    {
+        AtomicString result;
+        v8::TryCatch block;
+        result = v8ValueToAtomicWebCoreString(m_v8Object);
+        if (block.HasCaught()) {
+            V8Proxy::setDOMException(TYPE_MISMATCH_ERR);
+            return AtomicString();
+        }
+        return result;
+    }
+    template<> inline V8Parameter<WithNullCheck>::operator AtomicString()
+    {
+        AtomicString result;
+        v8::TryCatch block;
+        result = toAtomicWebCoreStringWithNullCheck(m_v8Object);
+        if (block.HasCaught()) {
+            V8Proxy::setDOMException(TYPE_MISMATCH_ERR);
+            return AtomicString();
+        }
+        return result;
+    }
+    template<> inline V8Parameter<WithUndefinedOrNullCheck>::operator AtomicString()
+    {
+        AtomicString result;
+        v8::TryCatch block;
+        result = toAtomicWebCoreStringWithNullCheck(m_v8Object);
+        if (block.HasCaught()) {
+            V8Proxy::setDOMException(TYPE_MISMATCH_ERR);
+            return AtomicString();
+        }
+        return result;
+    }
 
 } // namespace WebCore
 

@@ -41,9 +41,9 @@ try {
 
 try {
     db = openDatabaseSync("DBName", "DBVersion", "DBDescription", 1024, 0);
-    postMessage("FAIL: the fifth argument to openDatabaseSync() must be an object, if present.");
+    postMessage("PASS: calling openDatabaseSync() with a null creation callback succeeded.");
 } catch (err) {
-    postMessage("PASS: " + err.message);
+    postMessage("FAIL: " + err.message);
 }
 
 try {

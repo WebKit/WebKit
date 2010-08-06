@@ -1,3 +1,104 @@
+2010-08-06  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Auto-generate all HTML5 DB bindings.
+        https://bugs.webkit.org/show_bug.cgi?id=43382
+
+        * Android.jscbindings.mk: Remove {JS|V8}Database{Sync}Custom.cpp
+        and the custom implementations of openDatabas{Sync}().
+        * Android.v8bindings.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        * bindings/js/JSDatabaseCustom.cpp: Removed.
+        * bindings/js/JSDatabaseSyncCustom.cpp: Removed.
+        * bindings/js/JSWorkerContextCustom.cpp:
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        * bindings/v8/custom/V8DatabaseCustom.cpp: Removed.
+        * bindings/v8/custom/V8DatabaseSyncCustom.cpp: Removed.
+        * bindings/v8/custom/V8WorkerContextCustom.cpp:
+
+        * bindings/scripts/CodeGeneratorJS.pm: Change the code generators
+        to check that a value was passed for each non-optional argument,
+        and that the value can be converted to the argument type.
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/scripts/test/JS/JSTestCallback.cpp:
+        (WebCore::JSTestCallback::~JSTestCallback):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionVoidMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionIntMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionObjMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionMethodThatRequiresAllArgs):
+        (WebCore::jsTestObjPrototypeFunctionMethodThatRequiresAllArgsAndThrows):
+        (WebCore::jsTestObjPrototypeFunctionSerializedValue):
+        (WebCore::jsTestObjPrototypeFunctionIdbKey):
+        (WebCore::jsTestObjPrototypeFunctionCustomArgsAndException):
+        (WebCore::jsTestObjPrototypeFunctionWithDynamicFrameAndArg):
+        (WebCore::jsTestObjPrototypeFunctionWithDynamicFrameAndOptionalArg):
+        (WebCore::jsTestObjPrototypeFunctionWithDynamicFrameAndUserGesture):
+        (WebCore::jsTestObjPrototypeFunctionWithDynamicFrameAndUserGestureASAD):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndOptionalArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndTwoOptionalArgs):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithCallbackArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithNonCallbackArgAndCallbackArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithCallbackAndOptionalArg):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod1):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod2):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod3):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod4):
+        * bindings/scripts/test/TestObj.idl:
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjInternal::voidMethodWithArgsCallback):
+        (WebCore::TestObjInternal::intMethodWithArgsCallback):
+        (WebCore::TestObjInternal::objMethodWithArgsCallback):
+        (WebCore::TestObjInternal::methodThatRequiresAllArgsCallback):
+        (WebCore::TestObjInternal::methodThatRequiresAllArgsAndThrowsCallback):
+        (WebCore::TestObjInternal::serializedValueCallback):
+        (WebCore::TestObjInternal::idbKeyCallback):
+        (WebCore::TestObjInternal::customArgsAndExceptionCallback):
+        (WebCore::TestObjInternal::withDynamicFrameAndArgCallback):
+        (WebCore::TestObjInternal::withDynamicFrameAndOptionalArgCallback):
+        (WebCore::TestObjInternal::withDynamicFrameAndUserGestureCallback):
+        (WebCore::TestObjInternal::withDynamicFrameAndUserGestureASADCallback):
+        (WebCore::TestObjInternal::methodWithOptionalArgCallback):
+        (WebCore::TestObjInternal::methodWithNonOptionalArgAndOptionalArgCallback):
+        (WebCore::TestObjInternal::methodWithNonOptionalArgAndTwoOptionalArgsCallback):
+        (WebCore::TestObjInternal::methodWithCallbackArgCallback):
+        (WebCore::TestObjInternal::methodWithNonCallbackArgAndCallbackArgCallback):
+        (WebCore::TestObjInternal::methodWithCallbackAndOptionalArgCallback):
+        (WebCore::TestObjInternal::overloadedMethod1Callback):
+        (WebCore::TestObjInternal::overloadedMethod2Callback):
+        (WebCore::TestObjInternal::overloadedMethod3Callback):
+        (WebCore::TestObjInternal::overloadedMethod4Callback):
+        (WebCore::):
+        (WebCore::ConfigureV8TestObjTemplate):
+        * bindings/v8/V8Binding.h:
+        (WebCore::String):
+        (WebCore::AtomicString):
+
+        * page/DOMWindow.idl: Minor changes required by the auto-generated
+        bindings.
+        * storage/Database.cpp:
+        (WebCore::Database::transaction):
+        (WebCore::Database::readTransaction):
+        (WebCore::Database::runTransaction):
+        * storage/Database.h:
+        * storage/Database.idl:
+        * storage/DatabaseSync.cpp:
+        (WebCore::DatabaseSync::transaction):
+        (WebCore::DatabaseSync::readTransaction):
+        (WebCore::DatabaseSync::runTransaction):
+        * storage/DatabaseSync.h:
+        * storage/DatabaseSync.idl:
+        * workers/WorkerContext.idl:
+
 2010-08-06  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Sort XCode project file.
