@@ -1,3 +1,16 @@
+2010-08-05  Chao-ying Fu  <fu@mips.com>
+
+        Reviewed by Darin Adler.
+
+        Define WTF_USE_ARENA_ALLOC_ALIGNMENT_INTEGER for MIPS
+        https://bugs.webkit.org/show_bug.cgi?id=43514
+
+        MIPS needs to define WTF_USE_ARENA_ALLOC_ALIGNMENT_INTEGER, so that
+        RenderArena::allocate() can return 8-byte aligned memory to avoid
+        exceptions on sdc1/ldc1.
+
+        * wtf/Platform.h:
+
 2010-08-05  Gavin Barraclough  <barraclough@apple.com>
 
         Rubber stamped by Sam Weinig
