@@ -1,5 +1,11 @@
 2010-08-06  Dumitru Daniliuc  <dumi@chromium.org>
 
+        Unreviewed, "Qt Linux Realese minimal" build fix.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+
+2010-08-06  Dumitru Daniliuc  <dumi@chromium.org>
+
         Reviewed by Adam Barth.
 
         Auto-generate all HTML5 DB bindings.

@@ -1925,6 +1925,7 @@ sub GenerateImplementation
                                 push(@implContent, "    }\n");
                             }
                         } else {
+                            $implIncludes{"ExceptionCode.h"} = 1;
                             push(@implContent, "    if (exec->argumentCount() <= $argsIndex) {\n");
                             push(@implContent, "        setDOMException(exec, TYPE_MISMATCH_ERR);\n");
                             push(@implContent, "        return JSValue::encode(jsUndefined());\n");
