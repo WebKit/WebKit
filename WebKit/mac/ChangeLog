@@ -1,3 +1,17 @@
+2010-08-06  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        add "const" to WebChromeClient::webView().
+        https://bugs.webkit.org/show_bug.cgi?id=43631
+
+        Change WebChromeClient::webView() to be const because ChromeClient::didReceiveViewportArguments
+        is const method now, and calling webView() inside port-specific didReceiveViewportArguments
+        implementation fails compiling if webView() is not const.
+
+        * WebCoreSupport/WebChromeClient.h:
+        (WebChromeClient::webView):
+
 2010-08-06  Jessie Berlin  <jberlin@apple.com>
 
         Roll out http://trac.webkit.org/changeset/64801, which broke the Safari Windows Build.
