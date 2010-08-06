@@ -25,10 +25,10 @@
 #include "FloatRect.h"
 #include "PlatformString.h"
 #include "SVGNames.h"
-#include <wtf/Forward.h>
 
 namespace WebCore {
 
+    class String;
     class AffineTransform;
 
     class SVGPreserveAspectRatio {

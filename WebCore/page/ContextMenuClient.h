@@ -27,7 +27,6 @@
 #define ContextMenuClient_h
 
 #include "PlatformMenuDescription.h"
-#include <wtf/Forward.h>
 
 namespace WebCore {
     class ContextMenu;
@@ -35,6 +34,7 @@ namespace WebCore {
     class Frame;
     class HitTestResult;
     class KURL;
+    class String;
 
     class ContextMenuClient {
     public:

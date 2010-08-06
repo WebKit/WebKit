@@ -43,6 +43,7 @@ namespace WebCore {
     class CachedFrame;
     class HistoryItem;
     class ProtectionSpace;
+    class String;
     class ResourceLoader;
     class ResourceRequest;
 }

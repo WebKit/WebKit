@@ -33,12 +33,11 @@
 
 #if ENABLE(DATABASE)
 
-#include <wtf/Forward.h>
-
 namespace WebCore {
 
 class AbstractDatabase;
 class ScriptExecutionContext;
+class String;
 
 // The implementation of this class is in the WebKit API (Chromium source tree)
 // in WebKit/chromium/src/DatabaseObserver.cpp.

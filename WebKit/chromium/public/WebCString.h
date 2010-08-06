@@ -34,7 +34,7 @@
 #include "WebCommon.h"
 
 #if WEBKIT_IMPLEMENTATION
-#include <wtf/Forward.h>
+namespace WTF { class CString; }
 #else
 #include <string>
 #endif

@@ -28,7 +28,10 @@
 
 #include "WKPage.h"
 #include <WebCore/FrameLoaderTypes.h>
-#include <wtf/Forward.h>
+
+namespace WebCore {
+    class String;
+}
 
 namespace WebKit {
 

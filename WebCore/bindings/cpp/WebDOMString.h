@@ -22,7 +22,11 @@
 #define WebDOMString_h
 
 #include <WebDOMCString.h>
-#include <wtf/Forward.h>
+
+namespace WebCore {
+class String;
+class AtomicString;
+}
 
 class WebDOMStringPrivate;
 

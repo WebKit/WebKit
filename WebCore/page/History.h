@@ -27,7 +27,6 @@
 #define History_h
 
 #include "KURL.h"
-#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
@@ -35,6 +34,7 @@ namespace WebCore {
 
 class Frame;
 class SerializedScriptValue;
+class String;
 typedef int ExceptionCode;
 
 class History : public RefCounted<History> {

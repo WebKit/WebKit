@@ -28,11 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <wtf/Forward.h>
-
 namespace WebCore {
 
 class KURL;
+class String;
 
 #if OS(WINDOWS)
 void replaceNewlinesWithWindowsStyleNewlines(String&);

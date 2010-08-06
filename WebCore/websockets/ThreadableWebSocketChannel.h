@@ -33,7 +33,6 @@
 
 #if ENABLE(WEB_SOCKETS)
 
-#include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PassRefPtr.h>
 
@@ -41,6 +40,7 @@ namespace WebCore {
 
 class KURL;
 class ScriptExecutionContext;
+class String;
 class WebSocketChannelClient;
 
 class ThreadableWebSocketChannel : public Noncopyable {

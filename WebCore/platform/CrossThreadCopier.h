@@ -31,7 +31,6 @@
 #ifndef CrossThreadCopier_h
 #define CrossThreadCopier_h
 
-#include <wtf/Forward.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
@@ -44,6 +43,7 @@ namespace WebCore {
     class ResourceError;
     class ResourceRequest;
     class ResourceResponse;
+    class String;
     struct CrossThreadResourceResponseData;
     struct CrossThreadResourceRequestData;
     struct ThreadableLoaderOptions;

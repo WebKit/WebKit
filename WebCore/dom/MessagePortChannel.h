@@ -36,7 +36,6 @@
 #include "SerializedScriptValue.h"
 
 #include <wtf/OwnPtr.h>
-#include <wtf/Forward.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -49,6 +48,7 @@ namespace WebCore {
     class PlatformMessagePortChannel;
     class ScriptExecutionContext;
     class SerializedScriptValue;
+    class String;
 
     // The overwhelmingly common case is sending a single port, so handle that efficiently with an inline buffer of size 1.
     typedef Vector<OwnPtr<MessagePortChannel>, 1> MessagePortChannelArray;

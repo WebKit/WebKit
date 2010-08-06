@@ -1,3 +1,14 @@
+2010-08-06  Jessie Berlin  <jberlin@apple.com>
+
+        Roll out http://trac.webkit.org/changeset/64801, which broke the Safari Windows Build.
+        Unreviewed.
+
+        * COMVariantSetter.h:
+        * MarshallingHelpers.h:
+        * WebCoreSupport/WebContextMenuClient.h:
+        * WebCoreSupport/WebPluginHalterClient.h:
+        * WebHistory.h:
+
 2010-08-05  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Jon Honeycutt.

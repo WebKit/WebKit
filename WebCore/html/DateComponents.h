@@ -32,10 +32,11 @@
 #define DateComponents_h
 
 #include <limits>
-#include <wtf/Forward.h>
 #include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
+
+class String;
 
 // A DateComponents instance represents one of the following date and time combinations:
 // * Month type: year-month

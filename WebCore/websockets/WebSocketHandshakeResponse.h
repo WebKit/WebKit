@@ -35,9 +35,10 @@
 
 #include "HTTPHeaderMap.h"
 #include "PlatformString.h"
-#include <wtf/Forward.h>
 
 namespace WebCore {
+
+class AtomicString;
 
 class WebSocketHandshakeResponse {
 public:

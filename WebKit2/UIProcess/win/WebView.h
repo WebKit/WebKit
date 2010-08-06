@@ -30,9 +30,12 @@
 #include "PageClient.h"
 #include "WebPageProxy.h"
 #include <WebCore/WindowMessageListener.h>
-#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
+
+namespace WebCore {
+    class String;
+}
 
 namespace WebKit {
 

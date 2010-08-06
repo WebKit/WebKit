@@ -33,9 +33,10 @@
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 
 #include "ScriptState.h"
-#include <wtf/Forward.h>
 
 namespace WebCore {
+
+class String;
 
 enum ScriptWorldType {
 MAIN_WORLD = 0,

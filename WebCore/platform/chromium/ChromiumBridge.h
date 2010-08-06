@@ -38,7 +38,6 @@
 #include "PasteboardPrivate.h"
 #include "PluginData.h"
 
-#include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 
@@ -74,6 +73,7 @@ namespace WebCore {
     class IDBFactoryBackendInterface;
     class IntRect;
     class KURL;
+    class String;
     class Widget;
 
     struct Cookie;

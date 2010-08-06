@@ -31,13 +31,13 @@
 #ifndef InspectorFrontendClient_h
 #define InspectorFrontendClient_h
 
-#include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class ContextMenuItem;
 class Event;
+class String;
 
 class InspectorFrontendClient {
 public:

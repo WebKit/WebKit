@@ -24,11 +24,11 @@
 #define RenderText_h
 
 #include "RenderObject.h"
-#include <wtf/Forward.h>
 
 namespace WebCore {
 
 class InlineTextBox;
+class StringImpl;
 
 class RenderText : public RenderObject {
 public:

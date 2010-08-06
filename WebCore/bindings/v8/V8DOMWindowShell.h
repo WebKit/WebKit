@@ -32,7 +32,6 @@
 #define V8DOMWindowShell_h
 
 #include "WrapperTypeInfo.h"
-#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -42,6 +41,7 @@ namespace WebCore {
 
 class DOMWindow;
 class Frame;
+class String;
 
 // V8WindowShell represents all the per-global object state for a Frame that
 // persist between navigations.

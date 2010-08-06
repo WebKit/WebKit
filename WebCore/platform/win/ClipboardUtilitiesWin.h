@@ -28,12 +28,12 @@
 
 #include "DragData.h"
 #include <windows.h>
-#include <wtf/Forward.h>
 
 namespace WebCore {
 
 class Document;
 class KURL;
+class String;
 
 HGLOBAL createGlobalData(const String&);
 HGLOBAL createGlobalData(const Vector<char>&);

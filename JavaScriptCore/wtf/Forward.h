@@ -31,8 +31,6 @@ namespace WTF {
     template<typename T> class PassRefPtr;
     template<typename T> class RefPtr;
     template<typename T, size_t inlineCapacity> class Vector;
-
-    class CString;
 }
 
 using WTF::ListRefPtr;
@@ -42,19 +40,5 @@ using WTF::PassOwnPtr;
 using WTF::PassRefPtr;
 using WTF::RefPtr;
 using WTF::Vector;
-
-using WTF::CString;
-
-namespace WebCore {
-    class AtomicString;
-    class AtomicStringImpl;
-    class String;
-    class StringImpl;
-}
-
-using WebCore::AtomicString;
-using WebCore::AtomicStringImpl;
-using WebCore::String;
-using WebCore::StringImpl;
 
 #endif // WTF_Forward_h

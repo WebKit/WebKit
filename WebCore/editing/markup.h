@@ -38,6 +38,7 @@ namespace WebCore {
     class KURL;
     class Node;
     class Range;
+    class String;
 
     enum EChildrenOnly { IncludeNode, ChildrenOnly };
     enum EAbsoluteURLs { DoNotResolveURLs, AbsoluteURLs };

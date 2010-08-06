@@ -58,6 +58,7 @@ class KeyboardEvent;
 class Node;
 class Range;
 class VisibleSelection;
+class String;
 class VisiblePosition;
 
 struct GrammarDetail {

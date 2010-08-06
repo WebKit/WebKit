@@ -21,12 +21,13 @@
 #ifndef CheckedRadioButtons_h
 #define CheckedRadioButtons_h
 
-#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
+class AtomicString;
+class AtomicStringImpl;
 class HTMLInputElement;
 class HTMLFormControlElement;
 

@@ -21,7 +21,6 @@
 #define FormData_h
 
 #include "PlatformString.h"
-#include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
@@ -88,7 +87,7 @@ class FormData : public RefCounted<FormData> {
 public:
     static PassRefPtr<FormData> create();
     static PassRefPtr<FormData> create(const void*, size_t);
-    static PassRefPtr<FormData> create(const CString&);
+    static PassRefPtr<FormData> create(const WTF::CString&);
     static PassRefPtr<FormData> create(const Vector<char>&);
     static PassRefPtr<FormData> create(const BlobItemList&, const TextEncoding&);
     static PassRefPtr<FormData> createMultiPart(const BlobItemList&, const TextEncoding&, Document*);

@@ -24,9 +24,9 @@
 #define DocumentMarker_h
 
 #include "PlatformString.h"
-#include <wtf/Forward.h>
 
 namespace WebCore {
+    class String;
 
 // A range of a node within a document that is "marked", such as the range of a misspelled word.
 // It optionally includes a description that could be displayed in the user interface.

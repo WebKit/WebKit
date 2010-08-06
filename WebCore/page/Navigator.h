@@ -21,7 +21,6 @@
 #define Navigator_h
 
 #include "NavigatorBase.h"
-#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -33,6 +32,7 @@ class DOMPluginArray;
 class Frame;
 class Geolocation;
 class PluginData;
+class String;
 
 class Navigator : public NavigatorBase, public RefCounted<Navigator> {
 public:

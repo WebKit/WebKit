@@ -24,7 +24,6 @@
 
 #include "CSSValue.h"
 #include "Color.h"
-#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
@@ -35,6 +34,7 @@ class Pair;
 class RGBColor;
 class Rect;
 class RenderStyle;
+class StringImpl;
 
 struct Length;
 

@@ -31,7 +31,6 @@
 #define FontCache_h
 
 #include <limits.h>
-#include <wtf/Forward.h>
 #include <wtf/Vector.h>
 #include <wtf/unicode/Unicode.h>
 
@@ -43,6 +42,7 @@
 namespace WebCore
 {
 
+class AtomicString;
 class Font;
 class FontPlatformData;
 class FontData;

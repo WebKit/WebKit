@@ -22,13 +22,13 @@
 #define DOMMimeTypeArray_h
 
 #include "DOMMimeType.h"
-#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
+class AtomicString;
 class Frame;
 class PluginData;
 

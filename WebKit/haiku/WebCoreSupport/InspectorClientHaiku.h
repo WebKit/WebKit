@@ -31,11 +31,12 @@
 #define InspectorClientHaiku_h
 
 #include "InspectorClient.h"
-#include <wtf/Forward.h>
+
 
 namespace WebCore {
     class Node;
     class Page;
+    class String;
 
     class InspectorClientHaiku : public InspectorClient {
     public:

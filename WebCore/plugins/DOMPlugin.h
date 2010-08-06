@@ -21,14 +21,15 @@
 #define DOMPlugin_h
 
 #include "DOMMimeType.h"
-#include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
+class AtomicString;
 class Plugin;
 class PluginData;
+class String;
 
 class DOMPlugin : public RefCounted<DOMPlugin> {
 public:

@@ -26,10 +26,9 @@
 #ifndef HTMLInterchange_h
 #define HTMLInterchange_h
 
-#include <wtf/Forward.h>
-
 namespace WebCore {
 
+class String;
 class Text;
 
 #define AppleInterchangeNewline   "Apple-interchange-newline"

@@ -26,11 +26,10 @@
 #ifndef ViewportArguments_h
 #define ViewportArguments_h
 
-#include <wtf/Forward.h>
-
 namespace WebCore {
 
 class Document;
+class String;
 
 enum ViewportErrorCode {
     DeviceWidthShouldBeUsedWarning,

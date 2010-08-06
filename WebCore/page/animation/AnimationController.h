@@ -36,12 +36,14 @@ namespace WebCore {
 
 class AnimationBase;
 class AnimationControllerPrivate;
+class AtomicString;
 class Document;
 class Element;
 class Frame;
 class Node;
 class RenderObject;
 class RenderStyle;
+class String;
 
 class AnimationController {
 public:

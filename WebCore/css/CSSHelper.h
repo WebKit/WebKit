@@ -22,9 +22,9 @@
 #ifndef CSSHelper_h
 #define CSSHelper_h
 
-#include <wtf/Forward.h>
-
 namespace WebCore {
+
+    class String;
 
     // Used in many inappropriate contexts throughout WebCore. We'll have to examine and test
     // each call site to find out whether it needs the various things this function does. That

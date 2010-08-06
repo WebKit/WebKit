@@ -28,7 +28,6 @@
 #ifndef FontPlatformData_h
 #define FontPlatformData_h
 
-#include <wtf/Forward.h>
 #include <cairo.h>
 #include "FontDescription.h"
 #include "GlyphBuffer.h"
@@ -50,6 +49,8 @@
 typedef struct HFONT__* HFONT;
 #endif
 namespace WebCore {
+
+class String;
 
 class FontPlatformData {
 public:

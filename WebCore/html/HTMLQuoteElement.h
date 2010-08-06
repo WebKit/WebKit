@@ -24,10 +24,11 @@
 #ifndef HTMLQuoteElement_h
 #define HTMLQuoteElement_h
 
-#include <wtf/Forward.h>
 #include "HTMLElement.h"
 
 namespace WebCore {
+
+class String;
 
 class HTMLQuoteElement : public HTMLElement {
 public:

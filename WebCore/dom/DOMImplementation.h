@@ -24,7 +24,6 @@
 #ifndef DOMImplementation_h
 #define DOMImplementation_h
 
-#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
@@ -36,6 +35,7 @@ class DocumentType;
 class Frame;
 class HTMLDocument;
 class KURL;
+class String;
 
 typedef int ExceptionCode;
 

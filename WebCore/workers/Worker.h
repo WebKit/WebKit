@@ -37,7 +37,6 @@
 #include "EventTarget.h"
 #include "MessagePort.h"
 #include "WorkerScriptLoaderClient.h"
-#include <wtf/Forward.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -46,6 +45,7 @@
 namespace WebCore {
 
     class ScriptExecutionContext;
+    class String;
     class WorkerContextProxy;
     class WorkerScriptLoader;
 

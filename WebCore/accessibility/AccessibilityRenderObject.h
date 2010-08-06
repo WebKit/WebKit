@@ -31,7 +31,6 @@
 
 #include "AccessibilityObject.h"
 #include "RenderObject.h"
-#include <wtf/Forward.h>
 
 namespace WebCore {
     
@@ -53,6 +52,7 @@ class RenderListBox;
 class RenderTextControl;
 class RenderView;
 class VisibleSelection;
+class String;
 class Widget;
     
 class AccessibilityRenderObject : public AccessibilityObject {

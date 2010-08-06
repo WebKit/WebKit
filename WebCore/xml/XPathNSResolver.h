@@ -29,10 +29,11 @@
 
 #if ENABLE(XPATH)
 
-#include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
+
+    class String;
 
     class XPathNSResolver : public RefCounted<XPathNSResolver> {
     public:

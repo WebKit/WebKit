@@ -1,10 +1,7 @@
-2010-08-05  Gavin Barraclough  <barraclough@apple.com>
+2010-08-06  Jessie Berlin  <jberlin@apple.com>
 
-        Rubber stamped by Sam Weinig
-
-        Bug 43594 - Add string forwards to Forward.h
-        This allows us to remove forward declarations for these classes from
-        WebCore/WebKit (a step in moving these class from WebCore:: to WTF::).
+        Roll out http://trac.webkit.org/changeset/64801, which broke the Safari Windows Build.
+        Unreviewed.
 
         * WebKit.xcodeproj/project.pbxproj:
 

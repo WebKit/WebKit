@@ -1,5 +1,13 @@
 2010-08-06  Jessie Berlin  <jberlin@apple.com>
 
+        Roll out http://trac.webkit.org/changeset/64801, which broke the Safari Windows Build.
+        Unreviewed.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * wtf/Forward.h:
+
+2010-08-06  Jessie Berlin  <jberlin@apple.com>
+
         Windows Build Fix (continued). Unreviewed.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:

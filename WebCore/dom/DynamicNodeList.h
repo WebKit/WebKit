@@ -31,6 +31,7 @@
 
 namespace WebCore {
 
+    class AtomicString;
     class Element;
     class Node;
 

@@ -30,7 +30,6 @@
 #if ENABLE(WORKERS)
 
 #include "WorkerRunLoop.h"
-#include <wtf/Forward.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -39,6 +38,7 @@ namespace WebCore {
 
     class KURL;
     class NotificationPresenter;
+    class String;
     class WorkerContext;
     class WorkerLoaderProxy;
     class WorkerReportingProxy;

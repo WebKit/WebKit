@@ -33,7 +33,6 @@
 #include "PlatformString.h"
 #include "ScriptProfile.h"
 
-#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
@@ -45,6 +44,7 @@ typedef Vector<RefPtr<ScriptProfile> > ProfilesArray;
 
 class Frame;
 class Page;
+class String;
 class ScriptCallStack;
 
 // Keep in sync with inspector/front-end/Console.js

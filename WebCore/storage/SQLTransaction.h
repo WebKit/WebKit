@@ -48,6 +48,7 @@ class SQLTransaction;
 class SQLTransactionCallback;
 class SQLTransactionErrorCallback;
 class SQLValue;
+class String;
 class VoidCallback;
 
 class SQLTransactionWrapper : public ThreadSafeShared<SQLTransactionWrapper> {

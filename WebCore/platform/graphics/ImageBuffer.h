@@ -32,7 +32,6 @@
 #include "Image.h"
 #include "IntSize.h"
 #include "ImageBufferData.h"
-#include <wtf/Forward.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
@@ -43,6 +42,7 @@ namespace WebCore {
     class ImageData;
     class IntPoint;
     class IntRect;
+    class String;
     
     enum ImageColorSpace {
         Unknown,

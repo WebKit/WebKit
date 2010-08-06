@@ -24,7 +24,6 @@
 #include "IntRect.h"
 #include "IntSize.h"
 #include "TextDirection.h"
-#include <wtf/Forward.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/RefPtr.h>
 
@@ -37,6 +36,7 @@ class IntRect;
 class KURL;
 class Node;
 class Scrollbar;
+class String;
 
 class HitTestResult {
 public:

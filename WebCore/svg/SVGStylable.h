@@ -22,13 +22,13 @@
 #define SVGStylable_h
 
 #if ENABLE(SVG)
-#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
     class CSSValue;
     class CSSStyleDeclaration;
+    class String;
     class QualifiedName;
 
     class SVGStylable {

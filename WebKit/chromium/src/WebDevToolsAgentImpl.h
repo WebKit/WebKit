@@ -36,7 +36,6 @@
 #include "WebDevToolsAgentPrivate.h"
 
 #include <v8.h>
-#include <wtf/Forward.h>
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
@@ -44,6 +43,7 @@ class Document;
 class InspectorClient;
 class InspectorController;
 class Node;
+class String;
 }
 
 namespace WebKit {

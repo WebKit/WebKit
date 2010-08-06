@@ -34,7 +34,6 @@
 #include "Range.h"
 #include "VisiblePosition.h"
 #include "VisibleSelection.h"
-#include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
@@ -88,6 +87,7 @@ class Node;
 class RenderObject;
 class RenderListItem;
 class VisibleSelection;
+class String;
 class Widget;
 
 typedef unsigned AXID;

@@ -23,13 +23,13 @@
 #define FontCustomPlatformData_h
 
 #include "FontRenderingMode.h"
-#include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
 class FontPlatformData;
 class SharedBuffer;
+class String;
 
 struct FontCustomPlatformData : Noncopyable {
     ~FontCustomPlatformData();

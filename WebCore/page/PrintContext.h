@@ -21,7 +21,6 @@
 #ifndef PrintContext_h
 #define PrintContext_h
 
-#include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -32,6 +31,7 @@ class FloatRect;
 class FloatSize;
 class GraphicsContext;
 class IntRect;
+class String;
 
 class PrintContext {
 public:

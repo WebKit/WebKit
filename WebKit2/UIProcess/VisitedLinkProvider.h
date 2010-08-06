@@ -29,9 +29,12 @@
 #include "RunLoop.h"
 #include "VisitedLinkTable.h"
 #include <WebCore/LinkHash.h>
-#include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
+
+namespace WebCore {
+    class String;
+}
 
 namespace WebKit {
 

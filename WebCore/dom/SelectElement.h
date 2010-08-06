@@ -23,7 +23,6 @@
 #define SelectElement_h
 
 #include "Event.h"
-#include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -35,6 +34,7 @@ class FormDataList;
 class HTMLFormElement;
 class KeyboardEvent;
 class SelectElementData;
+class String;
 
 class SelectElement {
 public:

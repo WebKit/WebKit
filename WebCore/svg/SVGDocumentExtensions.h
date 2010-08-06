@@ -25,7 +25,6 @@
 #include "AtomicStringHash.h"
 #include "SVGResourcesCache.h"
 #include "StringImpl.h"
-#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/PassOwnPtr.h>
@@ -34,6 +33,7 @@ namespace WebCore {
 
 class Document;
 class RenderSVGResourceContainer;
+class String;
 class SVGStyledElement;
 class SVGSMILElement;
 class SVGSVGElement;

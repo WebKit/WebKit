@@ -33,7 +33,6 @@
 #include "ProcessModel.h"
 #include "ResponsivenessTimer.h"
 #include "WebPageProxy.h"
-#include <wtf/Forward.h>
 #include <WebCore/LinkHash.h>
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
@@ -41,6 +40,7 @@
 
 namespace WebCore {
     class KURL;
+    class String;
 };
 
 namespace WebKit {

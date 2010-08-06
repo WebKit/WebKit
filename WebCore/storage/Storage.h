@@ -36,6 +36,7 @@ namespace WebCore {
 
     class Frame;
     class StorageArea;
+    class String;
     typedef int ExceptionCode;
 
     class Storage : public RefCounted<Storage> {

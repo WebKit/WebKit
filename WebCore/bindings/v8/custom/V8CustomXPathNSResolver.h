@@ -41,6 +41,7 @@
 
 namespace WebCore {
 
+class String;
 class V8Proxy;
 
 // V8CustomXPathNSResolver does not create a persistent handle to the

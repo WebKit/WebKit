@@ -34,12 +34,12 @@
 #include "OwnHandle.h"
 #include "ScriptSourceCode.h"
 #include "V8GCController.h"
-#include <wtf/Forward.h>
 
 #include <v8.h>
 
 namespace WebCore {
 
+    class String;
     class ScriptExecutionContext;
     class V8Proxy;
     class WorkerContext;

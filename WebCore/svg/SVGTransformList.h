@@ -24,10 +24,11 @@
 #if ENABLE(SVG)
 #include "SVGList.h"
 #include "SVGTransform.h"
-#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
+
+    class String;
 
     class SVGTransformList : public SVGPODList<SVGTransform> {
     public:

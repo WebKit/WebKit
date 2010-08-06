@@ -33,7 +33,6 @@
 #include "EventListener.h"
 #include "EventNames.h"
 #include "EventTarget.h"
-#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -41,8 +40,10 @@
 
 namespace WebCore {
 
+class AtomicStringImpl;
 class Frame;
 class KURL;
+class String;
 
 class DOMApplicationCache : public RefCounted<DOMApplicationCache>, public EventTarget {
 public:

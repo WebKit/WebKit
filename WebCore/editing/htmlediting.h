@@ -39,6 +39,7 @@ class HTMLElement;
 class Node;
 class Position;
 class Range;
+class String;
 class VisiblePosition;
 class VisibleSelection;
 

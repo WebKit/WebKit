@@ -21,7 +21,6 @@
 #ifndef StyleSheetList_h
 #define StyleSheetList_h
 
-#include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
@@ -31,6 +30,7 @@ namespace WebCore {
 class Document;
 class HTMLStyleElement;
 class StyleSheet;
+class String;
 
 typedef Vector<RefPtr<StyleSheet> > StyleSheetVector;
 

@@ -46,6 +46,7 @@ class SQLTransactionClient;
 class SQLTransactionSyncCallback;
 class SQLValue;
 class SQLiteTransaction;
+class String;
 
 // Instances of this class should be created and used only on the worker's context thread.
 class SQLTransactionSync : public RefCounted<SQLTransactionSync> {

@@ -28,7 +28,10 @@
 
 #include "WKBundlePage.h"
 #include <JavaScriptCore/JSBase.h>
-#include <wtf/Forward.h>
+
+namespace WebCore {
+    class String;
+}
 
 namespace WebKit {
 

@@ -24,7 +24,6 @@
 
 #include "PopupMenuStyle.h"
 #include "ScrollTypes.h"
-#include <wtf/Forward.h>
 
 namespace WebCore {
 
@@ -33,6 +32,7 @@ class FontSelector;
 class HostWindow;
 class Scrollbar;
 class ScrollbarClient;
+class String;
 
 class PopupMenuClient {
 public:

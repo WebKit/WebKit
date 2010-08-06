@@ -35,7 +35,6 @@
 #include "Document.h"
 #include "IntRect.h"
 #include "StringHash.h"
-#include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/Noncopyable.h>
@@ -89,6 +88,7 @@ class GraphicsContext;
 class IntRect;
 class IntSize;
 class MediaPlayer;
+class String;
 class TimeRanges;
 
 class MediaPlayerClient {

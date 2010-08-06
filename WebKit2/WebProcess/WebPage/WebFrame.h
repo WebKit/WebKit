@@ -33,13 +33,13 @@
 #include <WebCore/FrameLoaderClient.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/PolicyChecker.h>
-#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
     class Frame;
     class HTMLFrameOwnerElement;
+    class String;
 }
 
 namespace WebKit {

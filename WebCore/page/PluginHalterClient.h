@@ -26,11 +26,10 @@
 #ifndef PluginHalterClient_h
 #define PluginHalterClient_h
 
-#include <wtf/Forward.h>
-
 namespace WebCore {
 
 class Node;
+class String;
 
 class PluginHalterClient {
 public:

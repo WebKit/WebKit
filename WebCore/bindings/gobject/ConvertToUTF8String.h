@@ -21,9 +21,8 @@
 #ifndef ConvertToUTF8String_h
 #define ConvertToUTF8String_h
 
-#include <wtf/Forward.h>
-
 namespace WebCore {
+class String;
 class KURL;
 }
 

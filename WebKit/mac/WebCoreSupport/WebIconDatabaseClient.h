@@ -27,7 +27,10 @@
  */
 
 #import <WebCore/IconDatabaseClient.h>
-#import <wtf/Forward.h>
+
+namespace WebCore {
+    class String;
+}
 
 class WebIconDatabaseClient : public WebCore::IconDatabaseClient {
 public:

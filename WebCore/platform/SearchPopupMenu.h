@@ -22,11 +22,12 @@
 #define SearchPopupMenu_h
 
 #include "PopupMenu.h"
-#include <wtf/Forward.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+class AtomicString;
 
 class SearchPopupMenu : public RefCounted<SearchPopupMenu> {
 public:

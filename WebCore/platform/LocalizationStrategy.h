@@ -28,10 +28,9 @@
 
 #if USE(PLATFORM_STRATEGIES)
 
-#include <wtf/Forward.h>
-
 namespace WebCore {
 
+class String;
 class IntSize;
 
 class LocalizationStrategy {

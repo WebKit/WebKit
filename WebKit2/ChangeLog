@@ -1,3 +1,28 @@
+2010-08-06  Jessie Berlin  <jberlin@apple.com>
+
+        Roll out http://trac.webkit.org/changeset/64801, which broke the Safari Windows Build.
+        Unreviewed.
+
+        * UIProcess/PageClient.h:
+        * UIProcess/VisitedLinkProvider.h:
+        * UIProcess/WebContextInjectedBundleClient.h:
+        * UIProcess/WebFrameProxy.h:
+        * UIProcess/WebHistoryClient.h:
+        * UIProcess/WebLoaderClient.h:
+        * UIProcess/WebPolicyClient.h:
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebUIClient.h:
+        * UIProcess/win/WebView.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageEditorClient.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.h:
+        * WebProcess/Plugins/NPRuntimeObjectMap.h:
+        * WebProcess/Plugins/Netscape/NetscapePluginStream.h:
+        * WebProcess/Plugins/PluginController.h:
+        * WebProcess/WebPage/WebFrame.h:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebProcess.h:
+
 2010-08-05  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

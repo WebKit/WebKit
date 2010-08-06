@@ -27,7 +27,10 @@
 #define WebHistoryClient_h
 
 #include "WKContext.h"
-#include <wtf/Forward.h>
+
+namespace WebCore {
+    class String;
+}
 
 namespace WebKit {
 

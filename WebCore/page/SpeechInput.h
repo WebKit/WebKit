@@ -34,13 +34,13 @@
 #if ENABLE(INPUT_SPEECH)
 
 #include "SpeechInputListener.h"
-#include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
 class SpeechInputClient;
 class SpeechInputListener;
+class String;
 
 // This class connects the input elements requiring speech input with the platform specific
 // speech recognition engine. It provides methods for the input elements to activate speech

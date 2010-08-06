@@ -30,7 +30,7 @@
 #define InspectorCSSStore_h
 
 #include "StringHash.h"
-#include <wtf/Forward.h>
+
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 
@@ -44,6 +44,7 @@ class CSSStyleDeclaration;
 class CSSRuleList;
 class CSSStyleRule;
 class CSSStyleSheet;
+class String;
 class StyleBase;
 
 typedef std::pair<String, String> PropertyValueAndPriority;

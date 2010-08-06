@@ -24,13 +24,12 @@
  *
  */
 
-#include <wtf/Forward.h>
-
 namespace WebCore {
 
     class HTTPHeaderMap;
     class ResourceResponse;
     class SecurityOrigin;
+    class String;
 
     bool isSimpleCrossOriginAccessRequest(const String& method, const HTTPHeaderMap&);
     bool isOnAccessControlSimpleRequestMethodWhitelist(const String&);

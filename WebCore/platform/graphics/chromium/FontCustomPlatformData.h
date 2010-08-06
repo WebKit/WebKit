@@ -33,7 +33,6 @@
 #define FontCustomPlatformData_h
 
 #include "FontRenderingMode.h"
-#include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 
 #if OS(WINDOWS)
@@ -47,6 +46,7 @@ namespace WebCore {
 
 class FontPlatformData;
 class SharedBuffer;
+class String;
 
 struct FontCustomPlatformData : Noncopyable {
 #if OS(WINDOWS)

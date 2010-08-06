@@ -27,7 +27,6 @@
 #ifndef ImageSource_h
 #define ImageSource_h
 
-#include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 
@@ -61,6 +60,7 @@ namespace WebCore {
 class IntPoint;
 class IntSize;
 class SharedBuffer;
+class String;
 
 #if PLATFORM(CG)
 typedef CGImageSourceRef NativeImageSourcePtr;

@@ -35,13 +35,13 @@
 
 #include "FileStreamClient.h"
 #include "FileSystem.h"
-#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
 class Blob;
+class String;
 
 // All methods are synchronous and should be called on File or Worker thread.
 class FileStream : public RefCounted<FileStream> {

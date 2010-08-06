@@ -41,6 +41,7 @@
 namespace WebCore {
 
     class AbstractWorker;
+    class AtomicString;
     class DedicatedWorkerContext;
     class DOMApplicationCache;
     class DOMWindow;

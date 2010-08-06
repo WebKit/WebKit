@@ -28,10 +28,11 @@
 
 #include <CoreFoundation/CoreFoundation.h>
 
-#include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
+
+class String;
 
 // Writes a limited subset of binary property lists.
 // Covers only what's needed for writing browser history as of this writing.

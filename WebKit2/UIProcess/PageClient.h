@@ -26,9 +26,8 @@
 #ifndef PageClient_h
 #define PageClient_h
 
-#include <wtf/Forward.h>
-
 namespace WebCore {
+    class String;
     class Cursor;
 }
 

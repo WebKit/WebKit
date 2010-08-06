@@ -29,7 +29,6 @@
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 #include "ScriptProfileNode.h"
-#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -41,6 +40,7 @@ class Profile;
 namespace WebCore {
 
 class InspectorObject;
+class String;
 
 class ScriptProfile : public RefCounted<ScriptProfile> {
 public:

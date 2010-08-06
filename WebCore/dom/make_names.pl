@@ -770,13 +770,13 @@ sub printFactoryHeaderFile
 #ifndef $parameters{namespace}ElementFactory_h
 #define $parameters{namespace}ElementFactory_h
 
-#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
     class Element;
     class Document;
     class QualifiedName;
+    class AtomicString;
 }
 
 namespace WebCore {

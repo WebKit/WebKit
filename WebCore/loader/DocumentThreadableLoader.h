@@ -34,7 +34,6 @@
 #include "FrameLoaderTypes.h"
 #include "SubresourceLoaderClient.h"
 #include "ThreadableLoader.h"
-#include <wtf/Forward.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -44,6 +43,7 @@ namespace WebCore {
     class Document;
     class KURL;
     class ResourceRequest;
+    class String;
     class ThreadableLoaderClient;
 
     class DocumentThreadableLoader : public RefCounted<DocumentThreadableLoader>, public ThreadableLoader, private SubresourceLoaderClient  {

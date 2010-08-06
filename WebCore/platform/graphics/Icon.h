@@ -49,6 +49,7 @@ namespace WebCore {
 
 class GraphicsContext;
 class IntRect;
+class String;
     
 class Icon : public RefCounted<Icon> {
 public:

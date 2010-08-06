@@ -94,7 +94,6 @@ typedef PlatformWidget PlatformPageClient;
 #include "IntRect.h"
 #include "IntSize.h"
 
-#include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -106,6 +105,9 @@ class GraphicsContext;
 class PlatformMouseEvent;
 class ScrollView;
 class WidgetPrivate;
+#if PLATFORM(EFL)
+class String;
+#endif
 
 // The Widget class serves as a base class for three kinds of objects:
 // (1) Scrollable areas (ScrollView)

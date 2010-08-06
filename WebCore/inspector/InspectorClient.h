@@ -27,13 +27,13 @@
 #define InspectorClient_h
 
 #include "InspectorController.h"
-#include <wtf/Forward.h>
 
 namespace WebCore {
 
 class InspectorController;
 class Node;
 class Page;
+class String;
 
 class InspectorClient {
 public:

@@ -40,12 +40,12 @@
 #include "EventTarget.h"
 #include "KURL.h"
 #include "WebSocketChannelClient.h"
-#include <wtf/Forward.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
+    class String;
     class ThreadableWebSocketChannel;
 
     class WebSocket : public RefCounted<WebSocket>, public EventTarget, public ActiveDOMObject, public WebSocketChannelClient {

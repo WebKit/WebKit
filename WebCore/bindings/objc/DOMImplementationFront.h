@@ -37,6 +37,7 @@ class Document;
 class DocumentType;
 class HTMLDocument;
 class JSDOMImplementation;
+class String;
 
 typedef int ExceptionCode;
 

@@ -34,7 +34,6 @@
 #include "PlatformString.h"
 #include "StringBuilder.h"
 #include "StringHash.h"
-#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 
@@ -48,6 +47,7 @@ namespace WebCore {
 class Document;
 class Element;
 class Node;
+class String;
 class TextEncoding;
 }
 

@@ -33,11 +33,12 @@
 
 #include "MessagePort.h"
 #include <runtime/JSValue.h>
-#include <wtf/Forward.h>
 
 namespace WebCore {
 
     typedef int ExceptionCode;
+
+    class String;
 
     // Helper function which pulls the values out of a JS sequence and into a MessagePortArray.
     // Also validates the elements per sections 4.1.13 and 4.1.15 of the WebIDL spec and section 8.3.3 of the HTML5 spec.

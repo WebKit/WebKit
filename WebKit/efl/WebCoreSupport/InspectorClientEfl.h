@@ -33,11 +33,11 @@
 #define InspectorClientEfl_h
 
 #include "InspectorClient.h"
-#include <wtf/Forward.h>
 
 namespace WebCore {
 class Node;
 class Page;
+class String;
 
 class InspectorClientEfl : public WebCore::InspectorClient {
 public:

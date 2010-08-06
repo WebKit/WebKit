@@ -32,7 +32,6 @@
 #include "Timer.h"
 #include <QTMovie.h>
 #include <QTMovieGWorld.h>
-#include <wtf/Forward.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/RetainPtr.h>
 
@@ -51,6 +50,7 @@ namespace WebCore {
 class GraphicsContext;
 class IntSize;
 class IntRect;
+class String;
 
 class MediaPlayerPrivate : public MediaPlayerPrivateInterface, public QTMovieClient, public QTMovieGWorldClient 
 #if USE(ACCELERATED_COMPOSITING)

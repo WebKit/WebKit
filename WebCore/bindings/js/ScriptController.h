@@ -26,7 +26,6 @@
 #include "ScriptControllerBase.h"
 #include "ScriptInstance.h"
 #include <runtime/Protect.h>
-#include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 
 #if PLATFORM(MAC)
@@ -58,6 +57,7 @@ class Frame;
 class Node;
 class ScriptSourceCode;
 class ScriptValue;
+class String;
 class Widget;
 class XSSAuditor;
 

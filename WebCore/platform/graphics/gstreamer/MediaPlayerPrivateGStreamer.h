@@ -25,7 +25,6 @@
 
 #if ENABLE(VIDEO)
 
-#include <wtf/Forward.h>
 #include "MediaPlayerPrivate.h"
 #include "Timer.h"
 
@@ -43,6 +42,7 @@ namespace WebCore {
 class GraphicsContext;
 class IntSize;
 class IntRect;
+class String;
 class GStreamerGWorld;
 
 gboolean mediaPlayerPrivateMessageCallback(GstBus* bus, GstMessage* message, gpointer data);

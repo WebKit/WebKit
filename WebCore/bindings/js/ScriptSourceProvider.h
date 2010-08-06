@@ -28,9 +28,10 @@
 #define ScriptSourceProvider_h
 
 #include <parser/SourceProvider.h>
-#include <wtf/Forward.h>
 
 namespace WebCore {
+
+    class String;
 
     class ScriptSourceProvider : public JSC::SourceProvider {
     public:

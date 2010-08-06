@@ -33,7 +33,6 @@
 #include "InjectedBundlePageUIClient.h"
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/IntRect.h>
-#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
@@ -49,6 +48,7 @@ namespace WebCore {
     class GraphicsContext;
     class KeyboardEvent;
     class Page;
+    class String;
 }
 
 namespace WebKit {

@@ -46,6 +46,7 @@ class NSResponder;
 
 namespace WebCore {
 
+    class AtomicString;
     class Element;
     class FileChooser;
     class FloatRect;
@@ -58,6 +59,7 @@ namespace WebCore {
     class Page;
     class SecurityOrigin;
     class PopupMenuClient;
+    class String;
     class Widget;
 
     struct FrameLoadRequest;

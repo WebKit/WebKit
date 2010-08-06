@@ -42,6 +42,7 @@ class DOMDocumentFragment;
 
 namespace WebCore {
 
+    class String;
     class Document;
     
     class PasteboardHelper {

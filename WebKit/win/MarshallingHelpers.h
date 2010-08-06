@@ -26,12 +26,12 @@
 #ifndef MarshallingHelpers_H
 #define MarshallingHelpers_H
 
-#include <wtf/Forward.h>
 #include <CoreFoundation/CoreFoundation.h>
 
 namespace WebCore {
     class IntRect;
     class KURL;
+    class String;
 }
 
 class MarshallingHelpers

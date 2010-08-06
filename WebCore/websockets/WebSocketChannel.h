@@ -37,13 +37,13 @@
 #include "ThreadableWebSocketChannel.h"
 #include "Timer.h"
 #include "WebSocketHandshake.h"
-#include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
     class ScriptExecutionContext;
+    class String;
     class SocketStreamHandle;
     class SocketStreamError;
     class WebSocketChannelClient;

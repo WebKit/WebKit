@@ -25,11 +25,11 @@
 #include "PlatformString.h"
 #include "SVGLocatable.h"
 #include "SVGTransformList.h"
-#include <wtf/Forward.h>
 
 namespace WebCore {
     
 class AffineTransform;
+class AtomicString;
 class SVGTransform;
 class QualifiedName;
 

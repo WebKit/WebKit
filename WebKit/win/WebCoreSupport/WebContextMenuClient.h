@@ -26,6 +26,9 @@
 #include <WebCore/ContextMenuClient.h>
 #include <wtf/Forward.h>
 
+namespace WebCore {
+    class String;
+}
 class WebView;
 
 class WebContextMenuClient : public WebCore::ContextMenuClient {

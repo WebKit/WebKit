@@ -45,6 +45,7 @@ class NSView;
 
 namespace WebCore {
 
+class AtomicString;
 class Clipboard;
 class Cursor;
 class Event;
@@ -65,6 +66,7 @@ class RenderLayer;
 class RenderObject;
 class RenderWidget;
 class Scrollbar;
+class String;
 class SVGElementInstance;
 class TextEvent;
 class TouchEvent;

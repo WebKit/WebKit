@@ -1,3 +1,17 @@
+2010-08-06  Jessie Berlin  <jberlin@apple.com>
+
+        Roll out http://trac.webkit.org/changeset/64801, which broke the Safari Windows Build.
+        Unreviewed.
+
+        * public/WebCString.h:
+        * public/WebString.h:
+        * src/DOMUtilitiesPrivate.h:
+        * src/DebuggerAgentImpl.h:
+        * src/DebuggerAgentManager.h:
+        * src/WebDevToolsAgentImpl.h:
+        * src/WebDevToolsFrontendImpl.h:
+        * src/WebPageSerializerImpl.h:
+
 2010-08-06  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

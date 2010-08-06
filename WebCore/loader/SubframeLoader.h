@@ -40,6 +40,7 @@
 
 namespace WebCore {
 
+class AtomicString;
 class Frame;
 class FrameLoaderClient;
 class HTMLAppletElement;

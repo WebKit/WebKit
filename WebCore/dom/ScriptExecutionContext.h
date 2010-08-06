@@ -29,7 +29,6 @@
 
 #include "Console.h"
 #include "KURL.h"
-#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/PassOwnPtr.h>
@@ -52,6 +51,7 @@ namespace WebCore {
     class MessagePort;
     class SecurityOrigin;
     class ScriptString;
+    class String;
 #if ENABLE(INSPECTOR)
     class InspectorController;
 #endif

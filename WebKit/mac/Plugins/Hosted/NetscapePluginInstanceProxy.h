@@ -32,12 +32,15 @@
 #include <WebCore/Timer.h>
 #include <WebKit/npapi.h>
 #include <wtf/Deque.h>
-#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
 #include "WebKitPluginHostTypes.h"
+
+namespace WebCore {
+    class String;
+}
 
 namespace JSC {
     namespace Bindings {

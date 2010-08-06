@@ -30,7 +30,6 @@
 
 #include <algorithm>
 #include <wtf/FastAllocBase.h>
-#include <wtf/Forward.h>
 
 #if PLATFORM(CG)
 typedef struct CGPath PlatformPath;
@@ -79,6 +78,7 @@ namespace WebCore {
     class FloatRect;
     class FloatSize;
     class GraphicsContext;
+    class String;
     class StrokeStyleApplier;
 
     enum WindRule {

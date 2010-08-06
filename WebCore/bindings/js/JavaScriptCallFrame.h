@@ -30,11 +30,12 @@
 
 #include <debugger/DebuggerCallFrame.h>
 #include <interpreter/CallFrame.h>
-#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
+
+class String;
 
 class JavaScriptCallFrame : public RefCounted<JavaScriptCallFrame> {
 public:

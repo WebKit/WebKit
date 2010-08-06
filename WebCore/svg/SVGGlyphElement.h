@@ -24,13 +24,13 @@
 
 #if ENABLE(SVG_FONTS)
 #include "SVGStyledElement.h"
-#include <wtf/Forward.h>
 
 #include <limits>
 #include "Path.h"
 
 namespace WebCore {
 
+    class AtomicString;
     class SVGFontData;
 
     // Describe a SVG <glyph> element

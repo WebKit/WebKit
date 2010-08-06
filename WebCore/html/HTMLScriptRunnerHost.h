@@ -26,10 +26,9 @@
 #ifndef HTMLScriptRunnerHost_h
 #define HTMLScriptRunnerHost_h
 
-#include <wtf/Forward.h>
-
 namespace WebCore {
 
+class AtomicString;
 class CachedResource;
 class Element;
 class HTMLInputStream;

@@ -35,7 +35,6 @@
 
 #include "ExceptionCode.h"
 #include "StringHash.h"
-#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
@@ -51,6 +50,7 @@ namespace WebCore {
     class ScriptExecutionContext;
     class SharedWorker;
     class SharedWorkerProxy;
+    class String;
 
     // Platform-specific implementation of the SharedWorkerRepository static interface.
     class DefaultSharedWorkerRepository : public Noncopyable {

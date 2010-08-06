@@ -23,7 +23,6 @@
 
 #include "FontRenderingMode.h"
 #include "PlatformString.h"
-#include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 
 typedef struct CGFont* CGFontRef;
@@ -32,6 +31,7 @@ namespace WebCore {
 
 class FontPlatformData;
 class SharedBuffer;
+class String;
 
 struct FontCustomPlatformData : Noncopyable {
     FontCustomPlatformData(HANDLE fontReference, const String& name)
