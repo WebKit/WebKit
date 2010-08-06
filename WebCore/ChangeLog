@@ -1,3 +1,19 @@
+2010-08-05  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Simon Fraser.
+
+        Form button input elements lacking text in some cases after switching from
+        visibility:collapse to visibility:visible
+        https://bugs.webkit.org/show_bug.cgi?id=38050
+        
+        A relayout is required after toggling visibility from collapse to another value.
+
+        Test: fast/css/visibility-collapse-form-buttons.html
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::diff): If we're toggling from visibility:collapse to another
+            visibility value (or vice versa) then we need to trigger a relayout.
+
 2010-08-05  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

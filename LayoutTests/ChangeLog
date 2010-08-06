@@ -1,3 +1,13 @@
+2010-08-05  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Simon Fraser.
+
+        Form button input elements lacking text in some cases after switching from visibility:collapse to visibility:visible
+        https://bugs.webkit.org/show_bug.cgi?id=38050
+
+        * fast/css/visibility-collapse-form-buttons-expected.txt: Added.
+        * fast/css/visibility-collapse-form-buttons.html: Added.
+
 2010-08-05  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.
