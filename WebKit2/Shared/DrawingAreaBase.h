@@ -65,8 +65,8 @@ public:
     };
     
     // The DrawingAreaProxy should never be decoded itself. Instead, the DrawingArea should be decoded.
-    void encode(CoreIPC::ArgumentEncoder& encoder) const;
-    static bool decode(CoreIPC::ArgumentDecoder&, DrawingAreaInfo&);
+    void encode(CoreIPC::ArgumentEncoder* encoder) const;
+    static bool decode(CoreIPC::ArgumentDecoder*, DrawingAreaInfo&);
 
 protected:
     DrawingAreaBase(Type type, DrawingAreaID identifier)

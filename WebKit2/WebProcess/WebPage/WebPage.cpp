@@ -542,7 +542,7 @@ void WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent& keyboard
         m_page->focusController()->focusedOrMainFrame()->eventHandler()->scrollRecursively(direction, granularity);
 }
 
-void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder& arguments)
+void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
 {
     if (messageID.is<CoreIPC::MessageClassDrawingArea>()) {
         ASSERT(m_drawingArea);
@@ -553,7 +553,7 @@ void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Messag
     switch (messageID.get<WebPageMessage::Kind>()) {
         case WebPageMessage::SetActive: {
             bool active;
-            if (!arguments.decode(active))
+            if (!arguments->decode(active))
                 return;
          
             setActive(active);
@@ -561,7 +561,7 @@ void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Messag
         }
         case WebPageMessage::SetFocused: {
             bool focused;
-            if (!arguments.decode(focused))
+            if (!arguments->decode(focused))
                 return;
             
             setFocused(focused);
@@ -569,7 +569,7 @@ void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Messag
         }
         case WebPageMessage::SetIsInWindow: {
             bool isInWindow;
-            if (!arguments.decode(isInWindow))
+            if (!arguments->decode(isInWindow))
                 return;
             
             setIsInWindow(isInWindow);
@@ -577,14 +577,14 @@ void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Messag
         }
         case WebPageMessage::MouseEvent: {
             WebMouseEvent event;
-            if (!arguments.decode(event))
+            if (!arguments->decode(event))
                 return;
             mouseEvent(event);
             return;
         }
         case WebPageMessage::PreferencesDidChange: {
             WebPreferencesStore store;
-            if (!arguments.decode(store))
+            if (!arguments->decode(store))
                 return;
             
             preferencesDidChange(store);
@@ -592,7 +592,7 @@ void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Messag
         }
         case WebPageMessage::WheelEvent: {
             WebWheelEvent event;
-            if (!arguments.decode(event))
+            if (!arguments->decode(event))
                 return;
 
             wheelEvent(event);
@@ -600,7 +600,7 @@ void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Messag
         }
         case WebPageMessage::KeyEvent: {
             WebKeyboardEvent event;
-            if (!arguments.decode(event))
+            if (!arguments->decode(event))
                 return;
 
             keyEvent(event);
@@ -608,7 +608,7 @@ void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Messag
         }
         case WebPageMessage::LoadURL: {
             String url;
-            if (!arguments.decode(url))
+            if (!arguments->decode(url))
                 return;
             
             loadURL(url);
@@ -619,7 +619,7 @@ void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Messag
             break;
         case WebPageMessage::Reload: {
             bool reloadFromOrigin;
-            if (!arguments.decode(CoreIPC::Out(reloadFromOrigin)))
+            if (!arguments->decode(CoreIPC::Out(reloadFromOrigin)))
                 return;
 
             reload(reloadFromOrigin);
@@ -627,21 +627,21 @@ void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Messag
         }
         case WebPageMessage::GoForward: {
             uint64_t backForwardItemID;
-            if (!arguments.decode(CoreIPC::Out(backForwardItemID)))
+            if (!arguments->decode(CoreIPC::Out(backForwardItemID)))
                 return;
             goForward(backForwardItemID);
             return;
         }
         case WebPageMessage::GoBack: {
             uint64_t backForwardItemID;
-            if (!arguments.decode(CoreIPC::Out(backForwardItemID)))
+            if (!arguments->decode(CoreIPC::Out(backForwardItemID)))
                 return;
             goBack(backForwardItemID);
             return;
         }
        case WebPageMessage::GoToBackForwardItem: {
             uint64_t backForwardItemID;
-            if (!arguments.decode(CoreIPC::Out(backForwardItemID)))
+            if (!arguments->decode(CoreIPC::Out(backForwardItemID)))
                 return;
             goToBackForwardItem(backForwardItemID);
             return;
@@ -650,7 +650,7 @@ void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Messag
             uint64_t frameID;
             uint64_t listenerID;
             uint32_t policyAction;
-            if (!arguments.decode(CoreIPC::Out(frameID, listenerID, policyAction)))
+            if (!arguments->decode(CoreIPC::Out(frameID, listenerID, policyAction)))
                 return;
             didReceivePolicyDecision(webFrame(frameID), listenerID, (WebCore::PolicyAction)policyAction);
             return;
@@ -658,14 +658,14 @@ void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Messag
         case WebPageMessage::RunJavaScriptInMainFrame: {
             String script;
             uint64_t callbackID;
-            if (!arguments.decode(CoreIPC::Out(script, callbackID)))
+            if (!arguments->decode(CoreIPC::Out(script, callbackID)))
                 return;
             runJavaScriptInMainFrame(script, callbackID);
             return;
         }
         case WebPageMessage::GetRenderTreeExternalRepresentation: {
             uint64_t callbackID;
-            if (!arguments.decode(callbackID))
+            if (!arguments->decode(callbackID))
                 return;
             getRenderTreeExternalRepresentation(callbackID);
             return;

@@ -36,12 +36,12 @@ class ArgumentEncoder;
 template<typename T> struct ArgumentCoder {
     static void encode(ArgumentEncoder* encoder, const T& t)
     {
-        t.encode(*encoder);
+        t.encode(encoder);
     }
 
     static bool decode(ArgumentDecoder* decoder, T& t)
     {
-        return T::decode(*decoder, t);
+        return T::decode(decoder, t);
     }
 };
 

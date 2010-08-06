@@ -388,7 +388,7 @@ WebFrameProxy* WebPageProxy::webFrame(uint64_t frameID) const
     return m_frameMap.get(frameID).get();
 }
 
-void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder& arguments)
+void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
 {
     if (messageID.is<CoreIPC::MessageClassDrawingAreaProxy>()) {
         m_drawingArea->didReceiveMessage(connection, messageID, arguments);
@@ -398,14 +398,14 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
     switch (messageID.get<WebPageProxyMessage::Kind>()) {
         case WebPageProxyMessage::DidCreateMainFrame: {
             uint64_t frameID;
-            if (!arguments.decode(frameID))
+            if (!arguments->decode(frameID))
                 return;
             didCreateMainFrame(frameID);
             break;
         }
         case WebPageProxyMessage::DidCreateSubFrame: {
             uint64_t frameID;
-            if (!arguments.decode(frameID))
+            if (!arguments->decode(frameID))
                 return;
             didCreateSubFrame(frameID);
             break;
@@ -413,42 +413,42 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
         case WebPageProxyMessage::DidStartProvisionalLoadForFrame: {
             uint64_t frameID;
             String url;
-            if (!arguments.decode(CoreIPC::Out(frameID, url)))
+            if (!arguments->decode(CoreIPC::Out(frameID, url)))
                 return;
             didStartProvisionalLoadForFrame(webFrame(frameID), url);
             break;
         }
         case WebPageProxyMessage::DidReceiveServerRedirectForProvisionalLoadForFrame: {
             uint64_t frameID;
-            if (!arguments.decode(frameID))
+            if (!arguments->decode(frameID))
                 return;
             didReceiveServerRedirectForProvisionalLoadForFrame(webFrame(frameID));
             break;
         }
         case WebPageProxyMessage::DidFailProvisionalLoadForFrame: {
             uint64_t frameID;
-            if (!arguments.decode(frameID))
+            if (!arguments->decode(frameID))
                 return;
             didFailProvisionalLoadForFrame(webFrame(frameID));
             break;
         }
         case WebPageProxyMessage::DidCommitLoadForFrame: {
             uint64_t frameID;
-            if (!arguments.decode(frameID))
+            if (!arguments->decode(frameID))
                 return;
             didCommitLoadForFrame(webFrame(frameID));
             break;
         }
         case WebPageProxyMessage::DidFinishLoadForFrame: {
             uint64_t frameID;
-            if (!arguments.decode(frameID))
+            if (!arguments->decode(frameID))
                 return;
             didFinishLoadForFrame(webFrame(frameID));
             break;
         }
         case WebPageProxyMessage::DidFailLoadForFrame: {
             uint64_t frameID;
-            if (!arguments.decode(frameID))
+            if (!arguments->decode(frameID))
                 return;
             didFailLoadForFrame(webFrame(frameID));
             break;
@@ -456,21 +456,21 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
         case WebPageProxyMessage::DidReceiveTitleForFrame: {
             uint64_t frameID;
             String title;
-            if (!arguments.decode(CoreIPC::Out(frameID, title)))
+            if (!arguments->decode(CoreIPC::Out(frameID, title)))
                 return;
             didReceiveTitleForFrame(webFrame(frameID), title);
             break;
         }
         case WebPageProxyMessage::DidFirstLayoutForFrame: {
             uint64_t frameID;
-            if (!arguments.decode(frameID))
+            if (!arguments->decode(frameID))
                 return;
             didFirstLayoutForFrame(webFrame(frameID));
             break;
         }
         case WebPageProxyMessage::DidFirstVisuallyNonEmptyLayoutForFrame: {
             uint64_t frameID;
-            if (!arguments.decode(frameID))
+            if (!arguments->decode(frameID))
                 return;
             didFirstVisuallyNonEmptyLayoutForFrame(webFrame(frameID));
             break;
@@ -480,7 +480,7 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
             break;
         case WebPageProxyMessage::DidChangeProgress: {
             double value;
-            if (!arguments.decode(value))
+            if (!arguments->decode(value))
                 return;
             didChangeProgress(value);
             break;
@@ -490,7 +490,7 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
             break;
         case WebPageProxyMessage::DidReceiveEvent: {
             uint32_t type;
-            if (!arguments.decode(type))
+            if (!arguments->decode(type))
                 return;
             didReceiveEvent((WebEvent::Type)type);
             break;
@@ -498,7 +498,7 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
         case WebPageProxyMessage::TakeFocus: {
             // FIXME: Use enum here.
             bool direction;
-            if (!arguments.decode(direction))
+            if (!arguments->decode(direction))
                 return;
             takeFocus(direction);
             break;
@@ -508,7 +508,7 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
             uint32_t navigationType;
             String url;
             uint64_t listenerID;
-            if (!arguments.decode(CoreIPC::Out(frameID, navigationType, url, listenerID)))
+            if (!arguments->decode(CoreIPC::Out(frameID, navigationType, url, listenerID)))
                 return;
             decidePolicyForNavigationAction(webFrame(frameID), static_cast<NavigationType>(navigationType), url, listenerID);
             break;
@@ -518,7 +518,7 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
             uint32_t navigationType;
             String url;
             uint64_t listenerID;
-            if (!arguments.decode(CoreIPC::Out(frameID, navigationType, url, listenerID)))
+            if (!arguments->decode(CoreIPC::Out(frameID, navigationType, url, listenerID)))
                 return;
             decidePolicyForNewWindowAction(webFrame(frameID), static_cast<NavigationType>(navigationType), url, listenerID);
             break;
@@ -528,7 +528,7 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
             String MIMEType;
             String url;
             uint64_t listenerID;
-            if (!arguments.decode(CoreIPC::Out(frameID, MIMEType, url, listenerID)))
+            if (!arguments->decode(CoreIPC::Out(frameID, MIMEType, url, listenerID)))
                 return;
             decidePolicyForMIMEType(webFrame(frameID), MIMEType, url, listenerID);
             break;
@@ -536,7 +536,7 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
         case WebPageProxyMessage::DidRunJavaScriptInMainFrame: {
             String resultString;
             uint64_t callbackID;
-            if (!arguments.decode(CoreIPC::Out(resultString, callbackID)))
+            if (!arguments->decode(CoreIPC::Out(resultString, callbackID)))
                 return;
             didRunJavaScriptInMainFrame(resultString, callbackID);
             break;
@@ -544,14 +544,14 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
         case WebPageProxyMessage::DidGetRenderTreeExternalRepresentation: {
             String resultString;
             uint64_t callbackID;
-            if (!arguments.decode(CoreIPC::Out(resultString, callbackID)))
+            if (!arguments->decode(CoreIPC::Out(resultString, callbackID)))
                 return;
             didGetRenderTreeExternalRepresentation(resultString, callbackID);
             break;
         }
         case WebPageProxyMessage::SetToolTip: {
             String toolTip;
-            if (!arguments.decode(toolTip))
+            if (!arguments->decode(toolTip))
                 return;
             setToolTip(toolTip);
             break;
@@ -559,7 +559,7 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
         case WebPageProxyMessage::SetCursor: {
 #if USE(LAZY_NATIVE_CURSOR)
             Cursor cursor;
-            if (!arguments.decode(cursor))
+            if (!arguments->decode(cursor))
                 return;
             setCursor(cursor);
 #endif
@@ -575,14 +575,14 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
         }
         case WebPageProxyMessage::BackForwardAddItem: {
             uint64_t itemID;
-            if (!arguments.decode(CoreIPC::Out(itemID)))
+            if (!arguments->decode(CoreIPC::Out(itemID)))
                 return;
             addItemToBackForwardList(process()->webBackForwardItem(itemID));
             break;
         }
         case WebPageProxyMessage::BackForwardGoToItem: {
             uint64_t itemID;
-            if (!arguments.decode(CoreIPC::Out(itemID)))
+            if (!arguments->decode(CoreIPC::Out(itemID)))
                 return;
             goToItemInBackForwardList(process()->webBackForwardItem(itemID));
             break;
@@ -593,7 +593,7 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
     }
 }
 
-void WebPageProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder& arguments, CoreIPC::ArgumentEncoder& reply)
+void WebPageProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, CoreIPC::ArgumentEncoder* reply)
 {
     if (messageID.is<CoreIPC::MessageClassDrawingAreaProxy>()) {
         m_drawingArea->didReceiveSyncMessage(connection, messageID, arguments, reply);
@@ -605,18 +605,18 @@ void WebPageProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIP
             RefPtr<WebPageProxy> newPage = createNewPage();
             if (newPage) {
                 // FIXME: Pass the real size.
-                reply.encode(CoreIPC::In(newPage->pageID(), IntSize(100, 100), 
-                                         newPage->pageNamespace()->context()->preferences()->store(),
-                                         *(newPage->drawingArea())));
+                reply->encode(CoreIPC::In(newPage->pageID(), IntSize(100, 100), 
+                                          newPage->pageNamespace()->context()->preferences()->store(),
+                                          *(newPage->drawingArea())));
             } else {
-                reply.encode(CoreIPC::In(static_cast<uint64_t>(0), IntSize(), WebPreferencesStore(), DrawingAreaBase::DrawingAreaInfo()));
+                reply->encode(CoreIPC::In(static_cast<uint64_t>(0), IntSize(), WebPreferencesStore(), DrawingAreaBase::DrawingAreaInfo()));
             }
             break;
         }
         case WebPageProxyMessage::RunJavaScriptAlert: {
             uint64_t frameID;
             String message;
-            if (!arguments.decode(CoreIPC::Out(frameID, message)))
+            if (!arguments->decode(CoreIPC::Out(frameID, message)))
                 return;
             runJavaScriptAlert(webFrame(frameID), message);
             break;
@@ -625,11 +625,11 @@ void WebPageProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIP
             // FIXME: We should probably encode something in the case that the arguments do not decode correctly.
             uint64_t frameID;
             String message;
-            if (!arguments.decode(CoreIPC::Out(frameID, message)))
+            if (!arguments->decode(CoreIPC::Out(frameID, message)))
                 return;
 
             bool result = runJavaScriptConfirm(webFrame(frameID), message);
-            reply.encode(CoreIPC::In(result));
+            reply->encode(CoreIPC::In(result));
             break;
         }
         case WebPageProxyMessage::RunJavaScriptPrompt: {
@@ -637,47 +637,47 @@ void WebPageProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIP
             uint64_t frameID;
             String message;
             String defaultValue;
-            if (!arguments.decode(CoreIPC::Out(frameID, message, defaultValue)))
+            if (!arguments->decode(CoreIPC::Out(frameID, message, defaultValue)))
                 return;
 
             String result = runJavaScriptPrompt(webFrame(frameID), message, defaultValue);
-            reply.encode(CoreIPC::In(result));
+            reply->encode(CoreIPC::In(result));
             break;
         }
         case WebPageProxyMessage::BackForwardCurrentItem: {
             WebBackForwardListItem* currentItem = m_backForwardList->currentItem();
             uint64_t currentItemID = currentItem ? currentItem->itemID() : 0;
-            reply.encode(CoreIPC::In(currentItemID));
+            reply->encode(CoreIPC::In(currentItemID));
             break;
         }
         case WebPageProxyMessage::BackForwardItemAtIndex: {
             int itemIndex;
-            if (!arguments.decode(CoreIPC::Out(itemIndex)))
+            if (!arguments->decode(CoreIPC::Out(itemIndex)))
                 return;
 
             WebBackForwardListItem* item = m_backForwardList->itemAtIndex(itemIndex);
             uint64_t itemID = item ? item->itemID() : 0;
-            reply.encode(CoreIPC::In(itemID));
+            reply->encode(CoreIPC::In(itemID));
             break;
         }
         case WebPageProxyMessage::BackForwardBackListCount: {
             int backListCount = m_backForwardList->backListCount();
-            reply.encode(CoreIPC::In(backListCount));
+            reply->encode(CoreIPC::In(backListCount));
             break;
         }
         case WebPageProxyMessage::BackForwardForwardListCount: {
             int forwardListCount = m_backForwardList->forwardListCount();
-            reply.encode(CoreIPC::In(forwardListCount));
+            reply->encode(CoreIPC::In(forwardListCount));
             break;
         }
 #if USE(ACCELERATED_COMPOSITING)
         case WebPageProxyMessage::DidChangeAcceleratedCompositing: {
             bool compositing;
-            if (!arguments.decode(CoreIPC::Out(compositing)))
+            if (!arguments->decode(CoreIPC::Out(compositing)))
                 return;
 
             didChangeAcceleratedCompositing(compositing);
-            reply.encode(*(drawingArea()));
+            reply->encode(*(drawingArea()));
             break;
         }
 #endif // USE(ACCELERATED_COMPOSITING)

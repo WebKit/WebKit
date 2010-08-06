@@ -93,7 +93,7 @@ public:
     void show();
 
     // -- Called from WebProcess.
-    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder&);
+    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 
     // -- InjectedBundle methods
     void initializeInjectedBundleEditorClient(WKBundlePageEditorClient*);

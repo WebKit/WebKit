@@ -79,8 +79,8 @@ public:
     void debug();
 
 private:
-    ArgumentDecoder(const ArgumentDecoder&);
-    ArgumentDecoder& operator=(const ArgumentDecoder&);
+    ArgumentDecoder(const ArgumentDecoder*);
+    ArgumentDecoder* operator=(const ArgumentDecoder*);
 
     void initialize(const uint8_t* buffer, size_t bufferSize);
 

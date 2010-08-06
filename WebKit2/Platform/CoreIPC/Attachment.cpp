@@ -58,14 +58,14 @@ void Attachment::release()
 }
 #endif
 
-void Attachment::encode(ArgumentEncoder& encoder) const
+void Attachment::encode(ArgumentEncoder* encoder) const
 {
-    encoder.addAttachment(*this);
+    encoder->addAttachment(*this);
 }
 
-bool Attachment::decode(ArgumentDecoder& decoder, Attachment& attachment)
+bool Attachment::decode(ArgumentDecoder* decoder, Attachment& attachment)
 {
-    if (!decoder.removeAttachment(attachment))
+    if (!decoder->removeAttachment(attachment))
         return false;
     return true;
 }

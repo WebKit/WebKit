@@ -62,7 +62,7 @@ void ChunkedUpdateDrawingAreaProxy::paint(const IntRect& rect, PlatformDrawingCo
 
         OwnPtr<CoreIPC::ArgumentDecoder> arguments = page->process()->connection()->waitFor(DrawingAreaProxyMessage::DidSetSize, page->pageID(), 0.04);
         if (arguments)
-            didReceiveMessage(page->process()->connection(), CoreIPC::MessageID(DrawingAreaProxyMessage::DidSetSize), *arguments.get());
+            didReceiveMessage(page->process()->connection(), CoreIPC::MessageID(DrawingAreaProxyMessage::DidSetSize), arguments.get());
     }
 
     platformPaint(rect, context);
@@ -144,12 +144,12 @@ void ChunkedUpdateDrawingAreaProxy::update(UpdateChunk* updateChunk)
     page->process()->send(DrawingAreaMessage::DidUpdate, page->pageID(), CoreIPC::In(id()));
 }
 
-void ChunkedUpdateDrawingAreaProxy::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder& arguments)
+void ChunkedUpdateDrawingAreaProxy::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
 {
     switch (messageID.get<DrawingAreaProxyMessage::Kind>()) {
         case DrawingAreaProxyMessage::Update: {
             UpdateChunk updateChunk;
-            if (!arguments.decode(updateChunk))
+            if (!arguments->decode(updateChunk))
                 return;
 
             update(&updateChunk);
@@ -157,7 +157,7 @@ void ChunkedUpdateDrawingAreaProxy::didReceiveMessage(CoreIPC::Connection*, Core
         }
         case DrawingAreaProxyMessage::DidSetSize: {
             UpdateChunk updateChunk;
-            if (!arguments.decode(CoreIPC::Out(updateChunk)))
+            if (!arguments->decode(CoreIPC::Out(updateChunk)))
                 return;
 
             didSetSize(&updateChunk);

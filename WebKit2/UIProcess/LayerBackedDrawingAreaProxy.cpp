@@ -118,7 +118,7 @@ void LayerBackedDrawingAreaProxy::update()
     page->process()->connection()->send(DrawingAreaMessage::DidUpdate, page->pageID(), CoreIPC::In(id()));
 }
 
-void LayerBackedDrawingAreaProxy::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder& arguments)
+void LayerBackedDrawingAreaProxy::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
 {
     switch (messageID.get<DrawingAreaProxyMessage::Kind>()) {
         case DrawingAreaProxyMessage::Update: {
@@ -134,13 +134,13 @@ void LayerBackedDrawingAreaProxy::didReceiveMessage(CoreIPC::Connection*, CoreIP
     }
 }
 
-void LayerBackedDrawingAreaProxy::didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder& arguments, CoreIPC::ArgumentEncoder&)
+void LayerBackedDrawingAreaProxy::didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, CoreIPC::ArgumentEncoder*)
 {
     switch (messageID.get<DrawingAreaProxyMessage::Kind>()) {
 #if USE(ACCELERATED_COMPOSITING)
         case DrawingAreaProxyMessage::AttachCompositingContext: {
             uint32_t contextID;
-            if (!arguments.decode(CoreIPC::Out(contextID)))
+            if (!arguments->decode(CoreIPC::Out(contextID)))
                 return;
             attachCompositingContext(contextID);
             break;

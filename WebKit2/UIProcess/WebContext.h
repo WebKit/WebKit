@@ -104,7 +104,7 @@ public:
     void addVisitedLink(const WebCore::String&);
     void addVisitedLink(WebCore::LinkHash);
 
-    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder&);
+    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 
 private:
     WebContext(ProcessModel, const WebCore::String& injectedBundlePath);

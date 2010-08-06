@@ -68,26 +68,26 @@ public:
     {
     }
 
-    void encode(CoreIPC::ArgumentEncoder& encoder) const 
+    void encode(CoreIPC::ArgumentEncoder* encoder) const 
     {
         APIObject::Type type = m_root->type();
-        encoder.encode(static_cast<uint32_t>(type));
+        encoder->encode(static_cast<uint32_t>(type));
         switch (type) {
         case APIObject::TypeArray: {
             ImmutableArray* array = static_cast<ImmutableArray*>(m_root);
-            encoder.encode(static_cast<uint64_t>(array->size()));
+            encoder->encode(static_cast<uint64_t>(array->size()));
             for (size_t i = 0; i < array->size(); ++i)
-                encoder.encode(PostMessageEncoder(array->at(i)));
+                encoder->encode(PostMessageEncoder(array->at(i)));
             break;
         }
         case APIObject::TypeString: {
             WebString* string = static_cast<WebString*>(m_root);
-            encoder.encode(string->string());
+            encoder->encode(string->string());
             break;
         }
         case APIObject::TypePage: {
             WebPageProxy* page = static_cast<WebPageProxy*>(m_root);
-            encoder.encode(page->pageID());
+            encoder->encode(page->pageID());
             break;
         }
         default:
@@ -114,16 +114,16 @@ public:
     {
     }
 
-    static bool decode(CoreIPC::ArgumentDecoder& decoder, PostMessageDecoder& coder)
+    static bool decode(CoreIPC::ArgumentDecoder* decoder, PostMessageDecoder& coder)
     {
         uint32_t type;
-        if (!decoder.decode(type))
+        if (!decoder->decode(type))
             return false;
 
         switch (type) {
         case APIObject::TypeArray: {
             uint64_t size;
-            if (!decoder.decode(size))
+            if (!decoder->decode(size))
                 return false;
             
             OwnArrayPtr<APIObject*> array;
@@ -132,7 +132,7 @@ public:
             for (size_t i = 0; i < size; ++i) {
                 APIObject* element;
                 PostMessageDecoder messageCoder(&element, coder.m_context);
-                if (!decoder.decode(messageCoder))
+                if (!decoder->decode(messageCoder))
                     return false;
                 array[i] = element;
             }
@@ -142,14 +142,14 @@ public:
         }
         case APIObject::TypeString: {
             String string;
-            if (!decoder.decode(string))
+            if (!decoder->decode(string))
                 return false;
             *(coder.m_root) = WebString::create(string).leakRef();
             break;
         }
         case APIObject::TypeBundlePage: {
             uint64_t pageID;
-            if (!decoder.decode(pageID))
+            if (!decoder->decode(pageID))
                 return false;
             *(coder.m_root) = coder.m_context->process()->webPage(pageID);
             break;
@@ -397,7 +397,7 @@ void WebContext::addVisitedLink(LinkHash linkHash)
     m_visitedLinkProvider.addVisitedLink(linkHash);
 }
         
-void WebContext::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder& arguments)
+void WebContext::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
 {
     switch (messageID.get<WebContextMessage::Kind>()) {
         case WebContextMessage::PostMessage: {
@@ -405,7 +405,7 @@ void WebContext::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
             // FIXME: This should be a RefPtr<APIObject>
             APIObject* messageBody = 0;
             PostMessageDecoder messageCoder(&messageBody, this);
-            if (!arguments.decode(CoreIPC::Out(messageName, messageCoder)))
+            if (!arguments->decode(CoreIPC::Out(messageName, messageCoder)))
                 return;
 
             didReceiveMessageFromInjectedBundle(messageName, messageBody);

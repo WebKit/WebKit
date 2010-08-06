@@ -64,8 +64,8 @@ public:
     bool deallocate() const { ASSERT(m_type == MachOOLMemoryType); return m_oolMemory.deallocate; }
 #endif
 
-    void encode(ArgumentEncoder&) const;
-    static bool decode(ArgumentDecoder&, Attachment&);
+    void encode(ArgumentEncoder*) const;
+    static bool decode(ArgumentDecoder*, Attachment&);
     
 private:
     Type m_type;

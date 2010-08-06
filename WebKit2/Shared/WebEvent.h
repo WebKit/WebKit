@@ -82,20 +82,20 @@ protected:
     {
     }
 
-    void encode(CoreIPC::ArgumentEncoder& encoder) const
+    void encode(CoreIPC::ArgumentEncoder* encoder) const
     {
-        encoder.encode(m_type);
-        encoder.encode(m_modifiers);
-        encoder.encode(m_timestamp);
+        encoder->encode(m_type);
+        encoder->encode(m_modifiers);
+        encoder->encode(m_timestamp);
     }
 
-    static bool decode(CoreIPC::ArgumentDecoder& decoder, WebEvent& t)
+    static bool decode(CoreIPC::ArgumentDecoder* decoder, WebEvent& t)
     {
-        if (!decoder.decode(t.m_type))
+        if (!decoder->decode(t.m_type))
             return false;
-        if (!decoder.decode(t.m_modifiers))
+        if (!decoder->decode(t.m_modifiers))
             return false;
-        if (!decoder.decode(t.m_timestamp))
+        if (!decoder->decode(t.m_timestamp))
             return false;
 
         return true;
@@ -145,14 +145,14 @@ public:
     float deltaZ() const { return m_deltaZ; }
     int clickCount() const { return m_clickCount; }
 
-    void encode(CoreIPC::ArgumentEncoder& encoder) const
+    void encode(CoreIPC::ArgumentEncoder* encoder) const
     {
-        encoder.encodeBytes(reinterpret_cast<const uint8_t*>(this), sizeof(*this));
+        encoder->encodeBytes(reinterpret_cast<const uint8_t*>(this), sizeof(*this));
     }
 
-    static bool decode(CoreIPC::ArgumentDecoder& decoder, WebMouseEvent& t)
+    static bool decode(CoreIPC::ArgumentDecoder* decoder, WebMouseEvent& t)
     {
-        return decoder.decodeBytes(reinterpret_cast<uint8_t*>(&t), sizeof(t));
+        return decoder->decodeBytes(reinterpret_cast<uint8_t*>(&t), sizeof(t));
     }
 
 private:
@@ -208,14 +208,14 @@ public:
     float wheelTicksY() const { return m_wheelTicksY; }
     Granularity granularity() const { return (Granularity)m_granularity; }
 
-    void encode(CoreIPC::ArgumentEncoder& encoder) const
+    void encode(CoreIPC::ArgumentEncoder* encoder) const
     {
-        encoder.encodeBytes(reinterpret_cast<const uint8_t*>(this), sizeof(*this));
+        encoder->encodeBytes(reinterpret_cast<const uint8_t*>(this), sizeof(*this));
     }
 
-    static bool decode(CoreIPC::ArgumentDecoder& decoder, WebWheelEvent& t)
+    static bool decode(CoreIPC::ArgumentDecoder* decoder, WebWheelEvent& t)
     {
-        return decoder.decodeBytes(reinterpret_cast<uint8_t*>(&t), sizeof(t));
+        return decoder->decodeBytes(reinterpret_cast<uint8_t*>(&t), sizeof(t));
     }
 
 private:
@@ -264,49 +264,49 @@ public:
     bool isKeypad() const { return m_isKeypad; }
     bool isSystemKey() const { return m_isSystemKey; }
 
-    void encode(CoreIPC::ArgumentEncoder& encoder) const
+    void encode(CoreIPC::ArgumentEncoder* encoder) const
     {
         WebEvent::encode(encoder);
 
-        encoder.encode(m_text);
-        encoder.encode(m_unmodifiedText);
-        encoder.encode(m_keyIdentifier);
-        encoder.encode(m_windowsVirtualKeyCode);
-        encoder.encode(m_nativeVirtualKeyCode);
-        encoder.encode(m_isAutoRepeat);
-        encoder.encode(m_isKeypad);
-        encoder.encode(m_isSystemKey);
+        encoder->encode(m_text);
+        encoder->encode(m_unmodifiedText);
+        encoder->encode(m_keyIdentifier);
+        encoder->encode(m_windowsVirtualKeyCode);
+        encoder->encode(m_nativeVirtualKeyCode);
+        encoder->encode(m_isAutoRepeat);
+        encoder->encode(m_isKeypad);
+        encoder->encode(m_isSystemKey);
     }
 
-    static bool decode(CoreIPC::ArgumentDecoder& decoder, WebKeyboardEvent& t)
+    static bool decode(CoreIPC::ArgumentDecoder* decoder, WebKeyboardEvent& t)
     {
         if (!WebEvent::decode(decoder, t))
             return false;
 
         WebCore::String text;
-        if (!decoder.decode(text))
+        if (!decoder->decode(text))
             return false;
         t.m_text = text;
 
         WebCore::String unmodifiedText;
-        if (!decoder.decode(unmodifiedText))
+        if (!decoder->decode(unmodifiedText))
             return false;
         t.m_unmodifiedText = unmodifiedText;
 
         WebCore::String keyIdentifier;
-        if (!decoder.decode(keyIdentifier))
+        if (!decoder->decode(keyIdentifier))
             return false;
         t.m_keyIdentifier = keyIdentifier;
 
-        if (!decoder.decode(t.m_windowsVirtualKeyCode))
+        if (!decoder->decode(t.m_windowsVirtualKeyCode))
             return false;
-        if (!decoder.decode(t.m_nativeVirtualKeyCode))
+        if (!decoder->decode(t.m_nativeVirtualKeyCode))
             return false;
-        if (!decoder.decode(t.m_isAutoRepeat))
+        if (!decoder->decode(t.m_isAutoRepeat))
             return false;
-        if (!decoder.decode(t.m_isKeypad))
+        if (!decoder->decode(t.m_isKeypad))
             return false;
-        if (!decoder.decode(t.m_isSystemKey))
+        if (!decoder->decode(t.m_isSystemKey))
             return false;
         return true;
     }

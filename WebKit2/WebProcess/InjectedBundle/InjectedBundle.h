@@ -77,7 +77,7 @@ public:
     void willDestroyPage(WebPage*);
     void didReceiveMessage(const WebCore::String&, APIObject*);
 
-    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder&);
+    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 
 private:
     InjectedBundle(const WebCore::String&);

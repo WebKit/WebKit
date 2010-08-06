@@ -33,11 +33,11 @@ namespace CoreIPC {
     
 class Arguments0 {
 public:
-    void encode(ArgumentEncoder&) const 
+    void encode(ArgumentEncoder*) const 
     {
     }
 
-    static bool decode(ArgumentDecoder&, Arguments0&)
+    static bool decode(ArgumentDecoder*, Arguments0&)
     {
         return true;
     }
@@ -60,14 +60,14 @@ public:
     {
     }
 
-    void encode(ArgumentEncoder& encoder) const 
+    void encode(ArgumentEncoder* encoder) const 
     {
-        encoder.encode(m_value);
+        encoder->encode(m_value);
     }
 
-    static bool decode(ArgumentDecoder& decoder, Arguments1<T1>& result)
+    static bool decode(ArgumentDecoder* decoder, Arguments1<T1>& result)
     {
-        return decoder.decode(result.m_value);
+        return decoder->decode(result.m_value);
     }
     
 private:
@@ -92,18 +92,18 @@ public:
     {
     }
 
-    void encode(ArgumentEncoder& encoder) const 
+    void encode(ArgumentEncoder* encoder) const 
     {
         Arguments1<T1>::encode(encoder);
-        encoder.encode(m_value);
+        encoder->encode(m_value);
     }
 
-    static bool decode(ArgumentDecoder& decoder, Arguments2<T1, T2>& result)
+    static bool decode(ArgumentDecoder* decoder, Arguments2<T1, T2>& result)
     {
         if (!Arguments1<T1>::decode(decoder, result))
             return false;
         
-        return decoder.decode(result.m_value);
+        return decoder->decode(result.m_value);
     }
 
 private:
@@ -128,18 +128,18 @@ public:
     {
     }
 
-    void encode(ArgumentEncoder& encoder) const 
+    void encode(ArgumentEncoder* encoder) const 
     {
         Arguments2<T1, T2>::encode(encoder);
-        encoder.encode(m_value);
+        encoder->encode(m_value);
     }
 
-    static bool decode(ArgumentDecoder& decoder, Arguments3<T1, T2, T3>& result)
+    static bool decode(ArgumentDecoder* decoder, Arguments3<T1, T2, T3>& result)
     {
         if (!Arguments2<T1, T2>::decode(decoder, result))
             return false;
         
-        return decoder.decode(result.m_value);
+        return decoder->decode(result.m_value);
     }
 
 private:
@@ -164,18 +164,18 @@ public:
     {
     }
 
-    void encode(ArgumentEncoder& encoder) const
+    void encode(ArgumentEncoder* encoder) const
     {
         Arguments3<T1, T2, T3>::encode(encoder);
-        encoder.encode(m_value);
+        encoder->encode(m_value);
     }
     
-    static bool decode(ArgumentDecoder& decoder, Arguments4<T1, T2, T3, T4>& result)
+    static bool decode(ArgumentDecoder* decoder, Arguments4<T1, T2, T3, T4>& result)
     {
         if (!Arguments3<T1, T2, T3>::decode(decoder, result))
             return false;
         
-        return decoder.decode(result.m_value);
+        return decoder->decode(result.m_value);
     }
 
 private:
@@ -200,18 +200,18 @@ public:
     {
     }
 
-    void encode(ArgumentEncoder& encoder) const
+    void encode(ArgumentEncoder* encoder) const
     {
         Arguments4<T1, T2, T3, T4>::encode(encoder);
-        encoder.encode(m_value);
+        encoder->encode(m_value);
     }
     
-    static bool decode(ArgumentDecoder& decoder, Arguments5<T1, T2, T3, T4, T5>& result)
+    static bool decode(ArgumentDecoder* decoder, Arguments5<T1, T2, T3, T4, T5>& result)
     {
         if (!Arguments4<T1, T2, T3, T4>::decode(decoder, result))
             return false;
         
-        return decoder.decode(result.m_value);
+        return decoder->decode(result.m_value);
     }
 
 private:

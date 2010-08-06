@@ -39,56 +39,56 @@ struct WebPreferencesStore {
     WebPreferencesStore& operator=(const WebPreferencesStore&);
     void swap(WebPreferencesStore&);
 
-    void encode(CoreIPC::ArgumentEncoder& encoder) const
+    void encode(CoreIPC::ArgumentEncoder* encoder) const
     {
-        encoder.encode(javaScriptEnabled);
-        encoder.encode(loadsImagesAutomatically);
-        encoder.encode(pluginsEnabled);
-        encoder.encode(offlineWebApplicationCacheEnabled);
-        encoder.encode(localStorageEnabled);
-        encoder.encode(minimumFontSize);
-        encoder.encode(minimumLogicalFontSize);
-        encoder.encode(defaultFontSize);
-        encoder.encode(defaultFixedFontSize);
-        encoder.encode(standardFontFamily);
-        encoder.encode(cursiveFontFamily);
-        encoder.encode(fantasyFontFamily);
-        encoder.encode(fixedFontFamily);
-        encoder.encode(sansSerifFontFamily);
-        encoder.encode(serifFontFamily);
+        encoder->encode(javaScriptEnabled);
+        encoder->encode(loadsImagesAutomatically);
+        encoder->encode(pluginsEnabled);
+        encoder->encode(offlineWebApplicationCacheEnabled);
+        encoder->encode(localStorageEnabled);
+        encoder->encode(minimumFontSize);
+        encoder->encode(minimumLogicalFontSize);
+        encoder->encode(defaultFontSize);
+        encoder->encode(defaultFixedFontSize);
+        encoder->encode(standardFontFamily);
+        encoder->encode(cursiveFontFamily);
+        encoder->encode(fantasyFontFamily);
+        encoder->encode(fixedFontFamily);
+        encoder->encode(sansSerifFontFamily);
+        encoder->encode(serifFontFamily);
     }
 
-    static bool decode(CoreIPC::ArgumentDecoder& decoder, WebPreferencesStore& s)
+    static bool decode(CoreIPC::ArgumentDecoder* decoder, WebPreferencesStore& s)
     {
-        if (!decoder.decode(s.javaScriptEnabled))
+        if (!decoder->decode(s.javaScriptEnabled))
             return false;
-        if (!decoder.decode(s.loadsImagesAutomatically))
+        if (!decoder->decode(s.loadsImagesAutomatically))
             return false;
-        if (!decoder.decode(s.pluginsEnabled))
+        if (!decoder->decode(s.pluginsEnabled))
             return false;
-        if (!decoder.decode(s.offlineWebApplicationCacheEnabled))
+        if (!decoder->decode(s.offlineWebApplicationCacheEnabled))
             return false;
-        if (!decoder.decode(s.localStorageEnabled))
+        if (!decoder->decode(s.localStorageEnabled))
             return false;
-        if (!decoder.decode(s.minimumFontSize))
+        if (!decoder->decode(s.minimumFontSize))
             return false;
-        if (!decoder.decode(s.minimumLogicalFontSize))
+        if (!decoder->decode(s.minimumLogicalFontSize))
             return false;
-        if (!decoder.decode(s.defaultFontSize))
+        if (!decoder->decode(s.defaultFontSize))
             return false;
-        if (!decoder.decode(s.defaultFixedFontSize))
+        if (!decoder->decode(s.defaultFixedFontSize))
             return false;
-        if (!decoder.decode(s.standardFontFamily))
+        if (!decoder->decode(s.standardFontFamily))
             return false;
-        if (!decoder.decode(s.cursiveFontFamily))
+        if (!decoder->decode(s.cursiveFontFamily))
             return false;
-        if (!decoder.decode(s.fantasyFontFamily))
+        if (!decoder->decode(s.fantasyFontFamily))
             return false;
-        if (!decoder.decode(s.fixedFontFamily))
+        if (!decoder->decode(s.fixedFontFamily))
             return false;
-        if (!decoder.decode(s.sansSerifFontFamily))
+        if (!decoder->decode(s.sansSerifFontFamily))
             return false;
-        if (!decoder.decode(s.serifFontFamily))
+        if (!decoder->decode(s.serifFontFamily))
             return false;
         return true;
     }

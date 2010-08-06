@@ -49,8 +49,8 @@ public:
         Handle();
         ~Handle();
 
-        void encode(CoreIPC::ArgumentEncoder&) const;
-        static bool decode(CoreIPC::ArgumentDecoder&, Handle&);
+        void encode(CoreIPC::ArgumentEncoder*) const;
+        static bool decode(CoreIPC::ArgumentDecoder*, Handle&);
 
     private:
         friend class SharedMemory;

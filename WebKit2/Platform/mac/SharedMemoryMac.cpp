@@ -48,27 +48,27 @@ SharedMemory::Handle::~Handle()
         mach_port_deallocate(mach_task_self(), m_port);
 }
 
-void SharedMemory::Handle::encode(CoreIPC::ArgumentEncoder& encoder) const
+void SharedMemory::Handle::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
     ASSERT(m_port);
     ASSERT(m_size);
     
-    encoder.encodeUInt64(m_size);
-    encoder.encode(CoreIPC::MachPort(m_port, MACH_MSG_TYPE_COPY_SEND));
+    encoder->encodeUInt64(m_size);
+    encoder->encode(CoreIPC::MachPort(m_port, MACH_MSG_TYPE_COPY_SEND));
     m_port = MACH_PORT_NULL;
 }
 
-bool SharedMemory::Handle::decode(CoreIPC::ArgumentDecoder& decoder, Handle& handle)
+bool SharedMemory::Handle::decode(CoreIPC::ArgumentDecoder* decoder, Handle& handle)
 {
     ASSERT(!handle.m_port);
     ASSERT(!handle.m_size);
 
     uint64_t size;
-    if (!decoder.decodeUInt64(size))
+    if (!decoder->decodeUInt64(size))
         return false;
 
     CoreIPC::MachPort machPort;
-    if (!decoder.decode(CoreIPC::Out(machPort)))
+    if (!decoder->decode(CoreIPC::Out(machPort)))
         return false;
     
     handle.m_size = size;

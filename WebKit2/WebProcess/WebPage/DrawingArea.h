@@ -64,7 +64,7 @@ public:
     virtual void syncCompositingLayers() = 0;
 #endif
 
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder&) = 0;
+    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*) = 0;
 
 protected:
     DrawingArea(Type, DrawingAreaID, WebPage*);

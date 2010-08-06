@@ -68,7 +68,7 @@ public:
     virtual void scheduleCompositingLayerSync();
     virtual void syncCompositingLayers();
 
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder&);
+    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 
 private:
 
