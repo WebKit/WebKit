@@ -71,7 +71,7 @@ namespace JSC {
 #define SYMBOL_STRING(name) #name
 #endif
 
-#if OS(IPHONE_OS)
+#if OS(IOS)
 #define THUMB_FUNC_PARAM(name) SYMBOL_STRING(name)
 #else
 #define THUMB_FUNC_PARAM(name)

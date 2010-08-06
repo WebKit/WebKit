@@ -34,7 +34,7 @@
 #include <wtf/UnusedParam.h>
 #include <wtf/Vector.h>
 
-#if OS(IPHONE_OS)
+#if OS(IOS)
 #include <libkern/OSCacheControl.h>
 #include <sys/mman.h>
 #endif
@@ -239,7 +239,7 @@ public:
         _flush_cache(reinterpret_cast<char*>(code), size, BCACHE);
 #endif
     }
-#elif CPU(ARM_THUMB2) && OS(IPHONE_OS)
+#elif CPU(ARM_THUMB2) && OS(IOS)
     static void cacheFlush(void* code, size_t size)
     {
         sys_dcache_flush(code, size);

@@ -1,3 +1,24 @@
+2010-08-05  Andy Estes  <aestes@apple.com>
+
+        Reviewed by David Kilzer.
+
+        Rename iOS-related OS and PLATFORM macros.
+        https://bugs.webkit.org/show_bug.cgi?id=43493
+        
+        Rename WTF_OS_IPHONE_OS to WTF_OS_IOS, WTF_PLATFORM_IPHONE to
+        WTF_PLATFORM_IOS, and WTF_PLATFORM_IPHONE_SIMULATOR to
+        WTF_PLATFORM_IOS_SIMULATOR.
+
+        * jit/ExecutableAllocator.h:
+        * jit/JITStubs.cpp:
+        * profiler/ProfilerServer.mm:
+        (-[ProfilerServer init]):
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMallocStats::):
+        * wtf/Platform.h:
+        * wtf/unicode/icu/CollatorICU.cpp:
+        (WTF::Collator::userDefault):
+
 2010-08-05  Nathan Lawrence  <nlawrence@apple.com>
 
         Reviewed by Darin Adler.

@@ -31,7 +31,7 @@
 #import "WindowsKeyboardCodes.h"
 #import <wtf/ASCIICType.h>
 
-#if PLATFORM(IPHONE)
+#if PLATFORM(IOS)
 #import "KeyEventCodesIPhone.h"
 #endif
 

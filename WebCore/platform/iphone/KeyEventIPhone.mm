@@ -26,7 +26,7 @@
 #import "config.h"
 #import "PlatformKeyboardEvent.h"
 
-#if PLATFORM(IPHONE)
+#if PLATFORM(IOS)
 
 #import "KeyEventCocoa.h"
 #import "Logging.h"
@@ -116,4 +116,4 @@ bool PlatformKeyboardEvent::currentCapsLockState()
 
 }
 
-#endif // PLATFORM(IPHONE)
+#endif // PLATFORM(IOS)
