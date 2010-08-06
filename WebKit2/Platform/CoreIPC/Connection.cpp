@@ -237,8 +237,12 @@ void Connection::dispatchMessages()
 
     // Dispatch messages.
     for (size_t i = 0; i < incomingMessages.size(); ++i) {
+        // If someone calls invalidate while we're invalidating messages, we should stop.
+        if (!m_client)
+            return;
+        
         IncomingMessage& message = incomingMessages[i];
-        ArgumentDecoder* arguments = message.arguments();
+        OwnPtr<ArgumentDecoder> arguments = message.releaseArguments();
 
         if (message.messageID().isSync()) {
             // Decode the sync request ID.
@@ -253,14 +257,18 @@ void Connection::dispatchMessages()
             OwnPtr<ArgumentEncoder> replyEncoder(new ArgumentEncoder(syncRequestID));
             
             // Hand off both the decoder and encoder to the client..
-            m_client->didReceiveSyncMessage(this, message.messageID(), arguments, replyEncoder.get());
+            m_client->didReceiveSyncMessage(this, message.messageID(), arguments.get(), replyEncoder.get());
             
+            // FIXME: If the message was invalid, we should send back a SyncMessageError.
+            ASSERT(!arguments->isInvalid());
+
             // Send the reply.
             sendMessage(MessageID(CoreIPCMessage::SyncMessageReply), replyEncoder.release());
         } else
-            m_client->didReceiveMessage(this, message.messageID(), arguments);
+            m_client->didReceiveMessage(this, message.messageID(), arguments.get());
 
-        message.destroy();
+        if (arguments->isInvalid())
+            m_client->didReceiveInvalidMessage(this, message.messageID());
     }
 }
 

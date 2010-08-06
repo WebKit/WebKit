@@ -332,4 +332,10 @@ void WebProcess::didClose(CoreIPC::Connection*)
     m_runLoop->stop();
 }
 
+void WebProcess::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::MessageID)
+{
+    // We received an invalid message, but since this is from the UI process (which we trust),
+    // we'll let it slide.
+}
+
 } // namespace WebKit

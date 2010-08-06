@@ -41,6 +41,9 @@ public:
 
     uint64_t destinationID() const { return m_destinationID; }
 
+    bool isInvalid() const { return m_bufferPos > m_bufferEnd; }
+    void markInvalid() { m_bufferPos = m_bufferEnd + 1; }
+
     bool decodeBytes(Vector<uint8_t>&);
     bool decodeBytes(uint8_t*, size_t);
 

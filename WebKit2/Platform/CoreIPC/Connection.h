@@ -68,8 +68,9 @@ public:
     protected:
         virtual ~Client() { }
 
-    public:        
+    public:
         virtual void didClose(Connection*) = 0;
+        virtual void didReceiveInvalidMessage(Connection*, MessageID) = 0;
     };
 
 #if PLATFORM(MAC)
@@ -114,9 +115,12 @@ private:
         MessageID messageID() const { return m_messageID; }
         T* arguments() const { return m_arguments; }
         
-        void destroy() 
+        PassOwnPtr<T> releaseArguments()
         {
-            delete m_arguments;
+            T* arguments = m_arguments;
+            m_arguments = 0;
+
+            return arguments;
         }
         
     private:

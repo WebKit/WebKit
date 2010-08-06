@@ -87,6 +87,7 @@ private:
     // CoreIPC::Connection::Client
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
     void didClose(CoreIPC::Connection*);
+    void didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::MessageID);
 
     RefPtr<CoreIPC::Connection> m_connection;
     HashMap<uint64_t, RefPtr<WebPage> > m_pageMap;

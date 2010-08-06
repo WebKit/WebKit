@@ -2,6 +2,47 @@
 
         Reviewed by Adam Roben.
 
+        Detect invalid CoreIPC messages and call didReceiveInvalidMessage
+        https://bugs.webkit.org/show_bug.cgi?id=43643
+        <rdar://problem/7891069>
+
+        * Platform/CoreIPC/ArgumentDecoder.cpp:
+        (CoreIPC::ArgumentDecoder::alignBufferPosition):
+        If we can't correctly align the buffer position, mark the decoder as invalid.
+
+        * Platform/CoreIPC/ArgumentDecoder.h:
+        (CoreIPC::ArgumentDecoder::isInvalid):
+        Check if the argument decoder is valid.
+
+        (CoreIPC::ArgumentDecoder::markInvalid):
+        Mark the argument decoder as invalid, by setting its buffer position past its end position.
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::dispatchMessages):
+        Check if m_client is null before dispatching messages. If an argument decoder was marked invalid, call
+        Connection::Client::didReceiveInvalidMessage.
+
+        * Platform/CoreIPC/Connection.h:
+        (CoreIPC::Connection::Message::releaseArguments):
+        Rename destroy to releaseArguments and make it return a PassOwnPtr.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::~WebProcessProxy):
+        Call releaseArguments instead of destroy.
+
+        (WebKit::WebProcessProxy::didReceiveInvalidMessage):
+        Kill the web process and invalidate its connection.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::didReceiveInvalidMessage):
+        Don't do anything, if the UI process is sending invalid messages there's not much we can do.
+
+        * WebProcess/WebProcess.h:
+
+2010-08-06  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
         Add CoreIPC::MessageReceiver class
         https://bugs.webkit.org/show_bug.cgi?id=43637
 

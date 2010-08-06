@@ -69,7 +69,7 @@ bool ArgumentDecoder::alignBufferPosition(unsigned alignment, size_t size)
     uint8_t* buffer = roundUpToAlignment(m_bufferPos, alignment);
     if (buffer + size > m_bufferEnd) {
         // We've walked off the end of this buffer.
-        m_bufferPos = m_bufferEnd;
+        markInvalid();
         return false;
     }
     

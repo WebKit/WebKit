@@ -94,7 +94,7 @@ WebProcessProxy::~WebProcessProxy()
     ASSERT(!m_connection);
     
     for (size_t i = 0; i < m_pendingMessages.size(); ++i)
-        m_pendingMessages[i].destroy();
+        m_pendingMessages[i].releaseArguments();
 
     if (m_processLauncher) {
         m_processLauncher->invalidate();
@@ -396,6 +396,14 @@ void WebProcessProxy::didClose(CoreIPC::Connection*)
 
     // This may cause us to be deleted.
     WebProcessManager::shared().processDidClose(this, m_context);
+}
+
+void WebProcessProxy::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID)
+{
+    // We received an invalid message from the web process, invalidate our connection and kill it.
+    m_connection->invalidate();
+
+    terminate();
 }
 
 void WebProcessProxy::didBecomeUnresponsive(ResponsivenessTimer*)
