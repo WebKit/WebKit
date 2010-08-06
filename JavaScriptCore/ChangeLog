@@ -1,5 +1,11 @@
 2010-08-06  Jessie Berlin  <jberlin@apple.com>
 
+        Windows Build Fix (continued). Unreviewed.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2010-08-06  Jessie Berlin  <jberlin@apple.com>
+
         Windows Build Fix. Unreviewed.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:

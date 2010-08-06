@@ -46,6 +46,7 @@ EXPORTS
     ?addPropertyTransitionToExistingStructure@Structure@JSC@@SA?AV?$PassRefPtr@VStructure@JSC@@@WTF@@PAV12@ABVIdentifier@2@IPAVJSCell@2@AAI@Z
     ?addPropertyWithoutTransition@Structure@JSC@@QAEIABVIdentifier@2@IPAVJSCell@2@@Z
     ?addSlowCase@Identifier@JSC@@CA?AV?$PassRefPtr@VStringImpl@WebCore@@@WTF@@PAVExecState@2@PAVStringImpl@WebCore@@@Z
+    ?addWeakGCHandle@Heap@JSC@@QAEPAVWeakGCHandle@2@PAVJSCell@2@@Z
     ?allocate@Heap@JSC@@QAEPAXI@Z
     ?allocatePropertyStorage@JSObject@JSC@@QAEXII@Z
     ?allocateStack@MarkStack@JSC@@CAPAXI@Z
@@ -142,6 +143,7 @@ EXPORTS
     ?fastZeroedMalloc@WTF@@YAPAXI@Z
     ?fillGetterPropertySlot@JSObject@JSC@@QAEXAAVPropertySlot@2@PAVJSValue@2@@Z
     ?focus@Profile@JSC@@QAEXPBVProfileNode@2@@Z
+    ?free@WeakGCHandlePool@JSC@@QAEXPAVWeakGCHandle@2@@Z
     ?from@Identifier@JSC@@SA?AV12@PAVExecState@2@H@Z
     ?from@Identifier@JSC@@SA?AV12@PAVExecState@2@I@Z
     ?from@UString@JSC@@SA?AV12@H@Z
@@ -227,6 +229,7 @@ EXPORTS
     ?objectProtoFuncToString@JSC@@YI_JPAVExecState@1@@Z
     ?parse@Parser@JSC@@AAEXPAVJSGlobalData@2@PAHPAVUString@2@@Z
     ?parseDateFromNullTerminatedCharacters@WTF@@YANPBD@Z
+    ?pool@WeakGCHandle@JSC@@QAEPAVWeakGCHandlePool@2@XZ
     ?profiler@Profiler@JSC@@SAPAV12@XZ
     ?protect@Heap@JSC@@QAEXVJSValue@2@@Z
     ?protectedGlobalObjectCount@Heap@JSC@@QAEIXZ
