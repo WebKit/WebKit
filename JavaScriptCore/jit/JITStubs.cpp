@@ -239,7 +239,7 @@ SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
 #define EXCEPTION_OFFSET                 0x58
 #define ENABLE_PROFILER_REFERENCE_OFFSET 0x60
 
-#elif COMPILER(GCC) && CPU(ARM_TRADITIONAL)
+#elif (COMPILER(GCC) || COMPILER(RVCT)) && CPU(ARM_TRADITIONAL)
 
 #define THUNK_RETURN_ADDRESS_OFFSET 64
 #define PRESERVEDR4_OFFSET          68
@@ -457,7 +457,7 @@ SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
 #define EXCEPTION_OFFSET                 0x38
 #define ENABLE_PROFILER_REFERENCE_OFFSET 0x40
 
-#elif COMPILER(GCC) && CPU(ARM_TRADITIONAL)
+#elif (COMPILER(GCC) || COMPILER(RVCT)) && CPU(ARM_TRADITIONAL)
 
 #define THUNK_RETURN_ADDRESS_OFFSET 32
 #define PRESERVEDR4_OFFSET          36
@@ -553,48 +553,6 @@ SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
 ".set macro" "\n"
 ".end " SYMBOL_STRING(ctiOpThrowNotCaught) "\n"
 );
-
-#elif COMPILER(RVCT) && CPU(ARM_TRADITIONAL)
-
-#define THUNK_RETURN_ADDRESS_OFFSET 32
-#define PRESERVEDR4_OFFSET          36
-
-__asm EncodedJSValue ctiTrampoline(void*, RegisterFile*, CallFrame*, JSValue*, Profiler**, JSGlobalData*)
-{
-    ARM
-    stmdb sp!, {r1-r3}
-    stmdb sp!, {r4-r8, lr}
-    sub sp, sp, #36
-    mov r4, r2
-    mov r5, #512
-    mov lr, pc
-    bx r0
-    add sp, sp, #36
-    ldmia sp!, {r4-r8, lr}
-    add sp, sp, #12
-    bx lr
-}
-
-__asm void ctiVMThrowTrampoline()
-{
-    ARM
-    PRESERVE8
-    mov r0, sp
-    bl cti_vm_throw
-    add sp, sp, #36
-    ldmia sp!, {r4-r8, lr}
-    add sp, sp, #12
-    bx lr
-}
-
-__asm void ctiOpThrowNotCaught()
-{
-    ARM
-    add sp, sp, #36
-    ldmia sp!, {r4-r8, lr}
-    add sp, sp, #12
-    bx lr
-}
 
 #elif COMPILER(MSVC) && CPU(X86)
 
@@ -767,6 +725,44 @@ SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
     "mov pc, lr" "\n"
 );
 
+#elif COMPILER(RVCT) && CPU(ARM_TRADITIONAL)
+
+__asm EncodedJSValue ctiTrampoline(void*, RegisterFile*, CallFrame*, JSValue*, Profiler**, JSGlobalData*)
+{
+    ARM
+    stmdb sp!, {r1-r3}
+    stmdb sp!, {r4-r8, lr}
+    sub sp, sp, # PRESERVEDR4_OFFSET
+    mov r4, r2
+    mov r5, #512
+    mov lr, pc
+    bx r0
+    add sp, sp, # PRESERVEDR4_OFFSET
+    ldmia sp!, {r4-r8, lr}
+    add sp, sp, #12
+    bx lr
+}
+
+__asm void ctiVMThrowTrampoline()
+{
+    ARM
+    PRESERVE8
+    mov r0, sp
+    bl cti_vm_throw
+    add sp, sp, # PRESERVEDR4_OFFSET
+    ldmia sp!, {r4-r8, lr}
+    add sp, sp, #12
+    bx lr
+}
+
+__asm void ctiOpThrowNotCaught()
+{
+    ARM
+    add sp, sp, # PRESERVEDR4_OFFSET
+    ldmia sp!, {r4-r8, lr}
+    add sp, sp, #12
+    bx lr
+}
 #endif
 
 #if ENABLE(OPCODE_SAMPLING)
@@ -1137,9 +1133,9 @@ RVCT(__asm #rtype# cti_#op#(STUB_ARGS_DECLARATION))
 RVCT({)
 RVCT(    ARM)
 RVCT(    IMPORT JITStubThunked_#op#)
-RVCT(    str lr, [sp, ##offset#])
+RVCT(    str lr, [sp, # THUNK_RETURN_ADDRESS_OFFSET])
 RVCT(    bl JITStubThunked_#op#)
-RVCT(    ldr lr, [sp, ##offset#])
+RVCT(    ldr lr, [sp, # THUNK_RETURN_ADDRESS_OFFSET])
 RVCT(    bx lr)
 RVCT(})
 RVCT()

@@ -25,16 +25,17 @@ use Getopt::Long;
 my $usage = basename($0) . " --prefix prefix [--offset offset] file";
 
 my $rtype_template = quotemeta("#rtype#");
-my $offset_template = quotemeta("#offset#");
+my $offset_template = quotemeta(" THUNK_RETURN_ADDRESS_OFFSET");
 my $op_template = quotemeta("#op#");
 
 my $prefix;
+my $offset_is_set = 0;
 my $offset = 32;
 my $file;
 
 my $getOptionsResult = GetOptions(
     'prefix=s' => \$prefix,
-    'offset=i' => \$offset
+    'offset=i' => sub { $offset_is_set = 1; $offset = $_[1]; }
 );
 
 $file = $ARGV[0];
@@ -54,7 +55,9 @@ open(IN, $file) or die "No such file $file";
 while ( $_ = <IN> ) {
     if ( /^$prefix\_BEGIN\((.*)\)/ ) {
         $stub = $1;
-        $stub =~ s/$offset_template/$offset/g;
+        if ($offset_is_set) {
+            $stub =~ s/$offset_template/$offset/g;
+        }
         print $stub . "\n";
     }
     if ( /^$prefix\((.*)\)/ ) {
@@ -67,7 +70,9 @@ while ( $_ = <IN> ) {
         $stub = $stub_template;
         $rtype = quotemeta($1);
         $op = quotemeta($2);
-        $stub =~ s/$offset_template/$offset/g;
+        if ($offset_is_set) {
+            $stub =~ s/$offset_template/$offset/g;
+        }
         $stub =~ s/$rtype_template/$rtype/g;
         $stub =~ s/$op_template/$op/g;
         $stub =~ s/\\\*/\*/g;

@@ -1,3 +1,19 @@
+2010-08-06  Gabor Loki  <loki@webkit.org>
+
+        Reviewed by Gavin Barraclough.
+
+        The ARM JIT does not support JSValue32_64 with RVCT
+        https://bugs.webkit.org/show_bug.cgi?id=43411
+
+        JSValue32_64 is enabled for RVCT by default.
+
+        * create_jit_stubs:
+        * jit/JITStubs.cpp:
+        (JSC::ctiTrampoline):
+        (JSC::ctiVMThrowTrampoline):
+        (JSC::ctiOpThrowNotCaught):
+        * wtf/Platform.h:
+
 2010-08-05  Chao-ying Fu  <fu@mips.com>
 
         Reviewed by Darin Adler.
