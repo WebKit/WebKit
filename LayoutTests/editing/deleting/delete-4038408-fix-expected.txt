@@ -1,7 +1,7 @@
-EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 13 of DIV > BODY > HTML > #document
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 5 of DIV > BODY > HTML > #document
 EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldDeleteDOMRange:range from 0 of DIV > BLOCKQUOTE > DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > DIV > BODY > HTML > #document
@@ -31,37 +31,116 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 31 of #text > DIV > DIV > BODY > HTML > #document to 31 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x204 [border: (2px solid #FF0000)]
-        RenderBlock {DIV} at (14,14) size 756x18
-          RenderText {#text} at (0,0) size 46x18
-            text run at (0,0) width 46: "Radar: "
-          RenderInline {A} at (0,0) size 359x18 [color=#0000EE]
-            RenderText {#text} at (46,0) size 359x18
-              text run at (46,0) width 359: "rdar://problems/4038408&4154187&4125087&4125381"
-        RenderBlock {DIV} at (14,32) size 756x18
-          RenderText {#text} at (0,0) size 674x18
-            text run at (0,0) width 674: "Deletion of reply text should not produce reply text style unless the caret is inside the reply text blockquote."
-        RenderBlock {DIV} at (14,50) size 756x18
-          RenderBR {BR} at (0,0) size 0x18
-        RenderBlock {DIV} at (14,68) size 756x18
-          RenderText {#text} at (0,0) size 299x18
-            text run at (0,0) width 299: "This tests deletion from underneath quoted text:"
-        RenderBlock {DIV} at (14,86) size 756x18
-          RenderBR {BR} at (0,0) size 0x18
-        RenderBlock {DIV} at (14,104) size 756x86
-          RenderBlock {BLOCKQUOTE} at (0,0) size 756x68 [color=#0000FF] [border: (2px solid #0000FF)]
-            RenderBlock {DIV} at (18,16) size 722x18
-              RenderText {#text} at (0,0) size 145x18
-                text run at (0,0) width 145: "Here is some reply text"
-            RenderBlock {DIV} at (18,34) size 722x18
-              RenderText {#text} at (0,0) size 208x18
-                text run at (0,0) width 208: "It should have the reply text style"
-          RenderBlock (anonymous) at (0,68) size 756x18
-            RenderText {#text} at (0,0) size 195x18
-              text run at (0,0) width 195: "This text should not be quoted."
-caret: position 31 of child 2 {#text} of child 11 {DIV} of child 1 {DIV} of body
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
+rdar://problems/4038408&4154187&4125087&4125381, This tests deletion from underneath quoted text:
+
+before deletion:
+| "
+"
+| <div>
+|   <#selection-caret>
+|   <br>
+|     class="khtml-block-placeholder"
+| "
+"
+| <div>
+|   "
+"
+|   <blockquote>
+|     style="color:blue;"
+|     type="cite"
+|     "
+"
+|     <div>
+|       "Here is some reply text"
+|     "
+"
+|     <div>
+|       "It should have the reply text style"
+|     "
+"
+|     <div>
+|       <br>
+|         class="khtml-block-placeholder"
+|     "
+"
+|     <div>
+|       <br>
+|         class="khtml-block-placeholder"
+|     "
+"
+|     <div>
+|       <br>
+|         class="khtml-block-placeholder"
+|     "
+"
+|   "
+
+
+"
+|   <div>
+|     <br>
+|       class="khtml-block-placeholder"
+|   "
+"
+| "
+
+"
+
+after deletion:
+| "
+"
+| <div>
+|   <br>
+|     class="khtml-block-placeholder"
+| "
+"
+| <div>
+|   "
+"
+|   <blockquote>
+|     style="color:blue;"
+|     type="cite"
+|     "
+"
+|     <div>
+|       "Here is some reply text"
+|     "
+"
+|     <div>
+|       "It should have the reply text style<#selection-caret>"
+|   "
+"
+| "
+
+"
+
+after insert text:
+| "
+"
+| <div>
+|   <br>
+|     class="khtml-block-placeholder"
+| "
+"
+| <div>
+|   "
+"
+|   <blockquote>
+|     style="color:blue;"
+|     type="cite"
+|     "
+"
+|     <div>
+|       "Here is some reply text"
+|     "
+"
+|     <div>
+|       "It should have the reply text style"
+|   "This text should not be quoted.<#selection-caret>"
+|   "
+"
+| "
+
+"

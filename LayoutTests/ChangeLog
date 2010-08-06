@@ -1,3 +1,50 @@
+2010-08-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Tony Chang.
+
+        dumpAsMarkup conversion: deleting/delete-4038408-fix.html, deleting/delete-br-011.html, and execCommand/format-block-from-range-selection.html
+        https://bugs.webkit.org/show_bug.cgi?id=43580
+
+        Converted deleting/delete-4038408-fix.html, deleting/delete-br-011.html, and execCommand/format-block-from-range-selection.html
+        to a dumpAsMarkup test because all the tests were testing the correctness of the resultant DOM tree.
+        In addition, removed editing delegates from execCommand/format-block-from-range-selection.html because it's not relevant to the test.
+
+        * editing/deleting/delete-4038408-fix-expected.txt: Added.
+        * editing/deleting/delete-4038408-fix.html: Converted.
+        * editing/deleting/delete-br-011-expected.txt: Added.
+        * editing/deleting/delete-br-011.html: Converted.
+        * editing/execCommand/format-block-from-range-selection-expected.txt: Added.
+        * editing/execCommand/format-block-from-range-selection.html: Converted.
+        * platform/chromium-linux/editing/deleting/delete-4038408-fix-expected.checksum: Removed.
+        * platform/chromium-linux/editing/deleting/delete-4038408-fix-expected.png: Removed.
+        * platform/chromium-linux/editing/deleting/delete-br-011-expected.checksum: Removed.
+        * platform/chromium-linux/editing/deleting/delete-br-011-expected.png: Removed.
+        * platform/chromium-linux/editing/execCommand/format-block-from-range-selection-expected.checksum: Removed.
+        * platform/chromium-linux/editing/execCommand/format-block-from-range-selection-expected.png: Removed.
+        * platform/chromium-win/editing/deleting/delete-4038408-fix-expected.checksum: Removed.
+        * platform/chromium-win/editing/deleting/delete-4038408-fix-expected.png: Removed.
+        * platform/chromium-win/editing/deleting/delete-4038408-fix-expected.txt: Removed.
+        * platform/chromium-win/editing/deleting/delete-br-011-expected.checksum: Removed.
+        * platform/chromium-win/editing/deleting/delete-br-011-expected.png: Removed.
+        * platform/chromium-win/editing/deleting/delete-br-011-expected.txt: Removed.
+        * platform/chromium-win/editing/execCommand/format-block-from-range-selection-expected.checksum: Removed.
+        * platform/chromium-win/editing/execCommand/format-block-from-range-selection-expected.png: Removed.
+        * platform/chromium-win/editing/execCommand/format-block-from-range-selection-expected.txt: Removed.
+        * platform/mac-leopard/editing/deleting/delete-4038408-fix-expected.checksum: Removed.
+        * platform/mac-leopard/editing/deleting/delete-4038408-fix-expected.png: Removed.
+        * platform/mac/editing/deleting/delete-4038408-fix-expected.checksum: Removed.
+        * platform/mac/editing/deleting/delete-4038408-fix-expected.png: Removed.
+        * platform/mac/editing/deleting/delete-4038408-fix-expected.txt: Removed.
+        * platform/mac/editing/deleting/delete-br-011-expected.checksum: Removed.
+        * platform/mac/editing/deleting/delete-br-011-expected.png: Removed.
+        * platform/mac/editing/deleting/delete-br-011-expected.txt: Removed.
+        * platform/mac/editing/execCommand/format-block-from-range-selection-expected.checksum: Removed.
+        * platform/mac/editing/execCommand/format-block-from-range-selection-expected.png: Removed.
+        * platform/mac/editing/execCommand/format-block-from-range-selection-expected.txt: Removed.
+        * platform/qt/editing/deleting/delete-4038408-fix-expected.txt: Removed.
+        * platform/qt/editing/deleting/delete-br-011-expected.txt: Removed.
+        * platform/qt/editing/execCommand/format-block-from-range-selection-expected.txt: Removed.
+
 2010-08-05  Adam Barth  <abarth@webkit.org>
 
         Update Qt result showing that we strip nulls in this case.
