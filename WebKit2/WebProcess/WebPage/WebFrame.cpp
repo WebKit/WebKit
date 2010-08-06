@@ -25,6 +25,8 @@
 
 #include "WebFrame.h"
 
+#include "InjectedBundleNodeHandle.h"
+#include "InjectedBundleScriptWorld.h"
 #include "WebPage.h"
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/JSLock.h>
@@ -249,9 +251,21 @@ bool WebFrame::pauseAnimationOnElementWithId(const String& animationName, const 
 
 JSGlobalContextRef WebFrame::jsContext()
 {
-    // FIXME: Is there a way to get this and know that it's a JSGlobalContextRef?
-    // The const_cast here is a bit ugly.
-    return const_cast<JSGlobalContextRef>(toRef(m_coreFrame->script()->globalObject(mainThreadNormalWorld())->globalExec()));
+    return toGlobalRef(m_coreFrame->script()->globalObject(mainThreadNormalWorld())->globalExec());
+}
+
+JSGlobalContextRef WebFrame::jsContextForWorld(InjectedBundleScriptWorld* world)
+{
+    return toGlobalRef(m_coreFrame->script()->globalObject(world->coreWorld())->globalExec());
+}
+
+JSValueRef WebFrame::jsWrapperForWorld(InjectedBundleNodeHandle* nodeHandle, InjectedBundleScriptWorld* world)
+{
+    JSDOMWindow* globalObject = m_coreFrame->script()->globalObject(world->coreWorld());
+    ExecState* exec = globalObject->globalExec();
+
+    JSLock lock(SilenceAssertionsOnly);
+    return toRef(exec, toJS(exec, globalObject, nodeHandle->coreNode()));
 }
 
 JSValueRef WebFrame::computedStyleIncludingVisitedInfo(JSObjectRef element)

@@ -43,6 +43,9 @@ WK_EXPORT WKStringRef WKBundleFrameCopyName(WKBundleFrameRef frame);
 WK_EXPORT WKURLRef WKBundleFrameCopyURL(WKBundleFrameRef frame);
 
 WK_EXPORT JSGlobalContextRef WKBundleFrameGetJavaScriptContext(WKBundleFrameRef frame);
+WK_EXPORT JSGlobalContextRef WKBundleFrameGetJavaScriptContextForWorld(WKBundleFrameRef frame, WKBundleScriptWorldRef world);
+
+WK_EXPORT JSValueRef WKBundleFrameGetJavaScriptWrapperForNodeForWorld(WKBundleFrameRef frame, WKBundleNodeHandleRef nodeHandle, WKBundleScriptWorldRef world);
 
 #ifdef __cplusplus
 }

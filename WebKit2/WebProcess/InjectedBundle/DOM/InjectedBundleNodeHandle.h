@@ -24,8 +24,9 @@
  */
 
 #include "APIObject.h"
-#include <wtf/RefPtr.h>
+#include <JavaScriptCore/JSBase.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
     class Node;
@@ -33,12 +34,16 @@ namespace WebCore {
 
 namespace WebKit {
 
+class InjectedBundleScriptWorld;
+
 class InjectedBundleNodeHandle : public APIObject {
 public:
     static const Type APIType = TypeBundleNodeHandle;
 
     static PassRefPtr<InjectedBundleNodeHandle> getOrCreate(WebCore::Node*);
     ~InjectedBundleNodeHandle();
+
+    WebCore::Node* coreNode() const;
 
 private:
     static PassRefPtr<InjectedBundleNodeHandle> create(WebCore::Node*);

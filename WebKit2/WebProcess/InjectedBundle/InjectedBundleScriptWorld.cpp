@@ -76,4 +76,9 @@ InjectedBundleScriptWorld::~InjectedBundleScriptWorld()
     allWorlds().remove(m_world.get());
 }
 
+DOMWrapperWorld* InjectedBundleScriptWorld::coreWorld() const
+{
+    return m_world.get();
+}
+
 } // namespace WebKit
