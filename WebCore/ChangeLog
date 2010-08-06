@@ -1,3 +1,37 @@
+2010-08-05  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        U+0000 is turned to U+FFFD (replacement character)
+        https://bugs.webkit.org/show_bug.cgi?id=42112
+
+        This patch introduces an intentional parsing difference from the HTML5
+        parsing specificiation.  The spec requires us to convert NULL
+        characters to U+FFFD, but doing so causes compatibility issues with a
+        number of sites, including US Bank.
+
+        In this patch, we strip the null characters instead in certain cases.
+        Firefox has made a corresponding change.  After gathering compatability
+        data, we hope to convince the HTML WG to adopt this change.
+
+        Tests: fast/tokenizer/null-in-text.html
+               fast/tokenizer/null-xss.html
+
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::HTMLTokenizer):
+        (WebCore::HTMLTokenizer::reset):
+        * html/HTMLTokenizer.h:
+        (WebCore::HTMLTokenizer::setSkipLeadingNewLineForListing):
+        (WebCore::HTMLTokenizer::forceNullCharacterReplacement):
+        (WebCore::HTMLTokenizer::setForceNullCharacterReplacement):
+        (WebCore::HTMLTokenizer::shouldSkipNullCharacters):
+        (WebCore::HTMLTokenizer::InputStreamPreprocessor::InputStreamPreprocessor):
+        (WebCore::HTMLTokenizer::InputStreamPreprocessor::peek):
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::passTokenToLegacyParser):
+        (WebCore::HTMLTreeBuilder::constructTreeFromToken):
+        (WebCore::HTMLTreeBuilder::processStartTagForInBody):
+
 2010-08-05  Andy Estes  <aestes@apple.com>
 
         Reviewed by David Kilzer.

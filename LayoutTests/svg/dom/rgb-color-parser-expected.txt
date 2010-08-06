@@ -254,8 +254,8 @@ Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(71+1+()33
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(.27+
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: 
-Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: �
-Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(�)
+Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: 
+Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb()
 PASS successfullyParsed is true
 
 TEST COMPLETE

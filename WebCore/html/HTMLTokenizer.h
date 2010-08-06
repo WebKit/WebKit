@@ -132,14 +132,27 @@ public:
 
     // Hack to skip leading newline in <pre>/<listing> for authoring ease.
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#parsing-main-inbody
-    void skipLeadingNewLineForListing() { m_skipLeadingNewLineForListing = true; }
+    void setSkipLeadingNewLineForListing(bool value) { m_skipLeadingNewLineForListing = value; }
+
+    bool forceNullCharacterReplacement() const { return m_forceNullCharacterReplacement; }
+    void setForceNullCharacterReplacement(bool value) { m_forceNullCharacterReplacement = value; }
+
+    bool shouldSkipNullCharacters() const
+    {
+        return !m_forceNullCharacterReplacement
+            && (m_state == DataState
+                || m_state == RCDATAState
+                || m_state == RAWTEXTState
+                || m_state == PLAINTEXTState);
+    }
 
 private:
     // http://www.whatwg.org/specs/web-apps/current-work/#preprocessing-the-input-stream
     class InputStreamPreprocessor : public Noncopyable {
     public:
-        InputStreamPreprocessor()
-            : m_nextInputCharacter('\0')
+        InputStreamPreprocessor(HTMLTokenizer* tokenizer)
+            : m_tokenizer(tokenizer)
+            , m_nextInputCharacter('\0')
             , m_skipNextNewLine(false)
         {
         }
@@ -151,6 +164,7 @@ private:
         // characters in |source| (after collapsing \r\n, etc).
         ALWAYS_INLINE bool peek(SegmentedString& source, int& lineNumber)
         {
+        PeekAgain:
             m_nextInputCharacter = *source;
 
             // Every branch in this function is expensive, so we have a
@@ -179,8 +193,15 @@ private:
                 // a number of specific character values are parse errors and should be replaced
                 // by the replacement character. We suspect this is a problem with the spec as doing
                 // that filtering breaks surrogate pair handling and causes us not to match Minefield.
-                if (m_nextInputCharacter == '\0' && !shouldTreatNullAsEndOfFileMarker(source))
+                if (m_nextInputCharacter == '\0' && !shouldTreatNullAsEndOfFileMarker(source)) {
+                    if (m_tokenizer->shouldSkipNullCharacters()) {
+                        source.advancePastNonNewline();
+                        if (source.isEmpty())
+                            return false;
+                        goto PeekAgain;
+                    }
                     m_nextInputCharacter = 0xFFFD;
+                }
             }
             return true;
         }
@@ -201,6 +222,8 @@ private:
         {
             return source.isClosed() && source.length() == 1;
         }
+
+        HTMLTokenizer* m_tokenizer;
 
         // http://www.whatwg.org/specs/web-apps/current-work/#next-input-character
         UChar m_nextInputCharacter;
@@ -242,6 +265,7 @@ private:
     int m_lineNumber;
 
     bool m_skipLeadingNewLineForListing;
+    bool m_forceNullCharacterReplacement;
 
     // http://www.whatwg.org/specs/web-apps/current-work/#temporary-buffer
     Vector<UChar, 32> m_temporaryBuffer;

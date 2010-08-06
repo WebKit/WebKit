@@ -97,6 +97,7 @@ inline bool isEndTagBufferingState(HTMLTokenizer::State state)
 }
 
 HTMLTokenizer::HTMLTokenizer()
+    : m_inputStreamPreprocessor(this)
 {
     reset();
 }
@@ -111,6 +112,7 @@ void HTMLTokenizer::reset()
     m_token = 0;
     m_lineNumber = 0;
     m_skipLeadingNewLineForListing = false;
+    m_forceNullCharacterReplacement = false;
     m_additionalAllowedCharacter = '\0';
 }
 

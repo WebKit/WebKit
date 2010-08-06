@@ -1,5 +1,28 @@
 2010-08-05  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        U+0000 is turned to U+FFFD (replacement character)
+        https://bugs.webkit.org/show_bug.cgi?id=42112
+
+        Update test results to show null stripping.  These changes are mostly
+        going back to the old results we had before we added the FFFD
+        replacement.
+
+        * fast/dom/stripNullFromTextNodes-expected.txt:
+        * fast/tokenizer/null-in-text-expected.txt: Added.
+        * fast/tokenizer/null-in-text.html: Added.
+        * fast/tokenizer/null-xss-expected.txt: Added.
+        * fast/tokenizer/null-xss.html: Added.
+            - The main risk with stripping null characters is that they'll be
+              used in XSS attacks.  This test shows that we don't strip null
+              characters from tag names.
+        * platform/mac/fast/text/stripNullFromText-expected.txt:
+        * svg/dom/fuzz-path-parser-expected.txt:
+        * svg/dom/rgb-color-parser-expected.txt:
+
+2010-08-05  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Darin Adler.
 
         js-test-pre.js's escapeHTML should escape null characters so we can see them
