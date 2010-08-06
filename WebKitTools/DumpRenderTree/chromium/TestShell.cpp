@@ -278,6 +278,9 @@ void TestShell::resetTestController()
     m_eventSender->reset();
     m_webViewHost->reset();
     m_notificationPresenter->reset();
+    m_drtDevToolsAgent->reset();
+    if (m_drtDevToolsClient)
+        m_drtDevToolsClient->reset();
 }
 
 void TestShell::loadURL(const WebURL& url)

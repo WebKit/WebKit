@@ -64,6 +64,11 @@ DRTDevToolsClient::~DRTDevToolsClient()
         m_drtDevToolsAgent->detach();
 }
 
+void DRTDevToolsClient::reset()
+{
+    m_callMethodFactory.RevokeAll();
+}
+
 void DRTDevToolsClient::sendFrontendLoaded() {
     if (m_drtDevToolsAgent)
         m_drtDevToolsAgent->frontendLoaded();

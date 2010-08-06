@@ -323,6 +323,7 @@ void EventSender::reset()
     timeOffsetMs = 0;
     touchModifiers = 0;
     touchPoints.clear();
+    m_methodFactory.RevokeAll();
 }
 
 WebView* EventSender::webview()

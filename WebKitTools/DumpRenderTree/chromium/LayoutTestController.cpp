@@ -514,6 +514,7 @@ void LayoutTestController::reset()
     else
         m_closeRemainingWindows = true;
     m_workQueue.reset();
+    m_timeoutFactory.RevokeAll();
 }
 
 void LayoutTestController::locationChangeDone()

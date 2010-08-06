@@ -54,6 +54,11 @@ DRTDevToolsAgent::DRTDevToolsAgent()
         WebDevToolsAgent::setMessageLoopDispatchHandler(&DRTDevToolsAgent::dispatchMessageLoop);
 }
 
+void DRTDevToolsAgent::reset()
+{
+    m_callMethodFactory.RevokeAll();
+}
+
 void DRTDevToolsAgent::setWebView(WebView* webView)
 {
     m_webView = webView;

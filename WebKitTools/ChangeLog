@@ -1,3 +1,23 @@
+2010-08-06  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [DRT/Chromium] Should revoke scheduled tasks
+        https://bugs.webkit.org/show_bug.cgi?id=43560
+
+        * DumpRenderTree/chromium/DRTDevToolsAgent.cpp:
+        (DRTDevToolsAgent::reset): Calls RevokeAll().
+        * DumpRenderTree/chromium/DRTDevToolsAgent.h:
+        * DumpRenderTree/chromium/DRTDevToolsClient.cpp:
+        (DRTDevToolsClient::reset): Calls RevokeAll().
+        * DumpRenderTree/chromium/DRTDevToolsClient.h:
+        * DumpRenderTree/chromium/EventSender.cpp:
+        (EventSender::reset): Calls RevokeAll().
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::reset): Calls RevokeAll().
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::resetTestController): Calls DRTDevToolsAgent::reset() and DRTDevToolsClient::reset().
+
 2010-08-06  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Antonio Gomes.

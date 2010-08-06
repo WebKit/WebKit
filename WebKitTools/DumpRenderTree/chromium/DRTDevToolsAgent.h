@@ -52,6 +52,7 @@ class DRTDevToolsAgent : public WebKit::WebDevToolsAgentClient
 public:
     DRTDevToolsAgent();
     virtual ~DRTDevToolsAgent() {}
+    void reset();
 
     void setWebView(WebKit::WebView*);
 

@@ -53,6 +53,7 @@ class DRTDevToolsClient : public WebKit::WebDevToolsFrontendClient
 public:
     DRTDevToolsClient(DRTDevToolsAgent*, WebKit::WebView*);
     virtual ~DRTDevToolsClient();
+    void reset();
 
     // WebDevToolsFrontendClient implementation
     virtual void sendFrontendLoaded();
