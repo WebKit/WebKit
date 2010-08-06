@@ -1,5 +1,21 @@
 2010-08-06  Anders Carlsson  <andersca@apple.com>
 
+        Build fixes.
+
+        * Platform/win/SharedMemoryWin.cpp:
+        (WebKit::SharedMemory::Handle::encode):
+        (WebKit::SharedMemory::Handle::decode):
+        * Shared/qt/UpdateChunk.cpp:
+        (WebKit::UpdateChunk::encode):
+        (WebKit::UpdateChunk::decode):
+        * Shared/qt/UpdateChunk.h:
+        * Shared/win/UpdateChunk.cpp:
+        (WebKit::UpdateChunk::encode):
+        (WebKit::UpdateChunk::decode):
+        * Shared/win/UpdateChunk.h:
+
+2010-08-06  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Change all ArgumentEncoder and ArgumentDecoder references to pointers

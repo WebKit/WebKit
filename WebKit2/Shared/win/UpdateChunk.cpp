@@ -52,21 +52,21 @@ UpdateChunk::UpdateChunk(const IntRect& rect, HANDLE bitmapSharedMemory)
 {
 }
 
-void UpdateChunk::encode(CoreIPC::ArgumentEncoder& encoder) const
+void UpdateChunk::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
-    encoder.encode(m_rect);
-    encoder.encode(reinterpret_cast<uintptr_t>(m_bitmapSharedMemory));
+    encoder->encode(m_rect);
+    encoder->encode(reinterpret_cast<uintptr_t>(m_bitmapSharedMemory));
 }
 
-bool UpdateChunk::decode(CoreIPC::ArgumentDecoder& decoder, UpdateChunk& updateChunk)
+bool UpdateChunk::decode(CoreIPC::ArgumentDecoder* decoder, UpdateChunk& updateChunk)
 {
     IntRect rect;
-    if (!decoder.decode(rect))
+    if (!decoder->decode(rect))
         return false;
     updateChunk.m_rect = rect;
 
     uintptr_t bitmapSharedMmemory;
-    if (!decoder.decode(bitmapSharedMmemory))
+    if (!decoder->decode(bitmapSharedMmemory))
         return false;
 
     updateChunk.m_bitmapSharedMemory = reinterpret_cast<HANDLE>(bitmapSharedMmemory);

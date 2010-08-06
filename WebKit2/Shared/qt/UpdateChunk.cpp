@@ -125,23 +125,23 @@ uint8_t* UpdateChunk::data()
     return reinterpret_cast<uint8_t*>(m_mappedMemory->data);
 }
 
-void UpdateChunk::encode(CoreIPC::ArgumentEncoder& encoder) const
+void UpdateChunk::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
-    encoder.encode(m_rect);
-    encoder.encode(String(m_mappedMemory->file->fileName()));
+    encoder->encode(m_rect);
+    encoder->encode(String(m_mappedMemory->file->fileName()));
 
     m_mappedMemory = 0;
 }
 
-bool UpdateChunk::decode(CoreIPC::ArgumentDecoder& decoder, UpdateChunk& chunk)
+bool UpdateChunk::decode(CoreIPC::ArgumentDecoder* decoder, UpdateChunk& chunk)
 {
     IntRect rect;
-    if (!decoder.decode(rect))
+    if (!decoder->decode(rect))
         return false;
     chunk.m_rect = rect;
     
     String fileName;
-    if (!decoder.decode(fileName))
+    if (!decoder->decode(fileName))
         return false;
 
     chunk.m_mappedMemory = mapFile(fileName, chunk.size());
