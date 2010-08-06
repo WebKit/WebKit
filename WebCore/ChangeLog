@@ -1,3 +1,12 @@
+2010-08-05  Alexey Proskuryakov  <ap@apple.com>
+
+        Fix http/tests/webarchive/test-css-url-encoding-shift-jis.html
+
+        For some reason, I didn't see the failure locally, but bots complain.
+
+        * platform/text/TextCodecICU.cpp: (WebCore::TextCodecICU::registerExtendedEncodingNames):
+        Register "shift-jis" (with dash instead of underscore). At least Firefox supports it.
+
 2010-08-05  Ben Murdoch  <benm@google.com>
 
         Reviewed by Simon Fraser.

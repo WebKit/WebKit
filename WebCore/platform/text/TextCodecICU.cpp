@@ -164,6 +164,7 @@ void TextCodecICU::registerExtendedEncodingNames(EncodingNameRegistrar registrar
     registrar("x-windows-949", "windows-949");
     registrar("x-uhc", "windows-949");
     registrar("utf8", "UTF-8");
+    registrar("shift-jis", "Shift_JIS");
 
     // These aliases are present in modern versions of ICU, but use different codecs, and have no standard names.
     // They are not present in ICU 3.2.

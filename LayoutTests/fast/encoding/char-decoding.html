@@ -21,6 +21,10 @@ testDecode('gbk', '%A3%A0', 'U+3000');
 testDecode('gb18030', '%A3%A0', 'U+3000');
 testDecode('EUC-CN', '%A3%A0', 'U+3000');
 
+// Test Shift_JIS aliases.
+testDecode('Shift_JIS', '%82%d0', 'U+3072');
+testDecode('shift-jis', '%82%d0', 'U+3072');
+
 // Test that all Korean encodings of EUC-KR family are treated as windows-949.
 var korean = {
     encodings: ['korean', 'EUC-KR', 'windows-949', 'x-windows-949', 'x-uhc',

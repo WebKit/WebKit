@@ -1,3 +1,11 @@
+2010-08-05  Alexey Proskuryakov  <ap@apple.com>
+
+        Fix http/tests/webarchive/test-css-url-encoding-shift-jis.html
+
+        * fast/encoding/char-decoding-expected.txt:
+        * fast/encoding/char-decoding.html:
+        Also added an explicit case for this encoding name.
+
 2010-08-05  Ben Murdoch  <benm@google.com>
 
         Reviewed by Simon Fraser.
