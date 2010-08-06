@@ -2159,7 +2159,14 @@ sub readSkippedFiles($)
 {
     my ($constraintPath) = @_;
 
-    foreach my $level (@platformTestHierarchy) {
+    my @skippedFileDirectories = @platformTestHierarchy;
+
+    # Because nearly all of the skipped tests for WebKit 2 on Mac are due to
+    # cross-platform issues, Windows will use both the Mac and Windows skipped
+    # lists to avoid maintaining separate lists.
+    push(@skippedFilePaths, catdir($platformBaseDirectory, "mac-wk2")) if $platform eq "win-wk2";
+
+    foreach my $level (@skippedFileDirectories) {
         if (open SKIPPED, "<", "$level/Skipped") {
             if ($verbose) {
                 my ($dir, $name) = splitpath($level);
