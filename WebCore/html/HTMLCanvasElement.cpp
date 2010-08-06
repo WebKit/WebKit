@@ -169,6 +169,12 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type, Canvas
                 usesDashbardCompatibilityMode = settings->usesDashboardBackwardCompatibilityMode();
 #endif
             m_context = new CanvasRenderingContext2D(this, document()->inCompatMode(), usesDashbardCompatibilityMode);
+#if ENABLE(ACCELERATED_2D_CANVAS) && USE(ACCELERATED_COMPOSITING)
+            if (m_context) {
+                // Need to make sure a RenderLayer and compositing layer get created for the Canvas
+                setNeedsStyleRecalc(SyntheticStyleChange);
+            }
+#endif
         }
         return m_context.get();
     }
@@ -216,7 +222,7 @@ void HTMLCanvasElement::willDraw(const FloatRect& rect)
         m_dirtyRect.unite(r);
         ro->repaintRectangle(enclosingIntRect(m_dirtyRect));
     }
-    
+
     if (m_observer)
         m_observer->canvasChanged(this, rect);
 }
@@ -299,12 +305,8 @@ bool HTMLCanvasElement::is3D() const
 
 void HTMLCanvasElement::makeRenderingResultsAvailable()
 {
-#if ENABLE(3D_CANVAS)
-    if (is3D()) {
-        WebGLRenderingContext* context3d = reinterpret_cast<WebGLRenderingContext*>(renderingContext());
-        context3d->paintRenderingResultsToCanvas();
-    }
-#endif
+    if (m_context)
+        m_context->paintRenderingResultsToCanvas();
 }
 
 void HTMLCanvasElement::recalcStyle(StyleChange change)

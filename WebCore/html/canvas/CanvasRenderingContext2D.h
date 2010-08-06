@@ -42,6 +42,10 @@
 #include <ApplicationServices/ApplicationServices.h>
 #endif
 
+#if USE(ACCELERATED_COMPOSITING)
+#include "GraphicsLayer.h"
+#endif
+
 namespace WebCore {
 
 class CanvasGradient;
@@ -56,6 +60,10 @@ class ImageData;
 class KURL;
 class TextMetrics;
 
+#if ENABLE(ACCELERATED_2D_CANVAS)
+class GraphicsContext3D;
+#endif
+
 typedef int ExceptionCode;
 
 class CanvasRenderingContext2D : public CanvasRenderingContext {
@@ -65,6 +73,7 @@ public:
     virtual ~CanvasRenderingContext2D();
 
     virtual bool is2d() const { return true; }
+    virtual bool isAccelerated() const;
 
     CanvasStyle* strokeStyle() const;
     void setStrokeStyle(PassRefPtr<CanvasStyle>);
@@ -212,6 +221,12 @@ public:
     LineCap getLineCap() const { return state().m_lineCap; }
     LineJoin getLineJoin() const { return state().m_lineJoin; }
 
+    virtual void paintRenderingResultsToCanvas();
+
+#if ENABLE(ACCELERATED_2D_CANVAS)
+    virtual GraphicsContext3D* graphicsContext3D() const { return m_context3D.get(); }
+#endif
+
 private:
     struct State {
         State();
@@ -280,6 +295,10 @@ private:
     bool m_usesCSSCompatibilityParseMode;
 #if ENABLE(DASHBOARD_SUPPORT)
     bool m_usesDashboardCompatibilityMode;
+#endif
+
+#if ENABLE(ACCELERATED_2D_CANVAS)
+    OwnPtr<GraphicsContext3D> m_context3D;
 #endif
 };
 

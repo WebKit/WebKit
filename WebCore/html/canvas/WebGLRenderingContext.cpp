@@ -156,7 +156,7 @@ void WebGLRenderingContext::markContextChanged()
     m_markedCanvasDirty = true;
 }
 
-bool WebGLRenderingContext::paintRenderingResultsToCanvas()
+void WebGLRenderingContext::paintRenderingResultsToCanvas()
 {
     if (m_markedCanvasDirty) {
         // FIXME: It should not be necessary to clear the image before doing a readback.
@@ -164,9 +164,7 @@ bool WebGLRenderingContext::paintRenderingResultsToCanvas()
         canvas()->buffer()->clearImage();
         m_markedCanvasDirty = false;
         m_context->paintRenderingResultsToCanvas(this);
-        return true;
     }
-    return false;
 }
 
 void WebGLRenderingContext::beginPaint()

@@ -1,3 +1,41 @@
+2010-08-06  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        Accelerated 2d canvases should get compositing layers
+        https://bugs.webkit.org/show_bug.cgi?id=43362
+
+        Allows for 2d canvas rendering contexts to use a GraphicsContext3D for
+        accelerated rendering.  The rendering context holds the GraphicsContext3D
+        alive and exposes it to the compositor.  The 3d context itself is passed
+        down through the GraphicsContext to use for actual rendering:
+        https://bug-43362-attachments.webkit.org/attachment.cgi?id=63557
+
+        This approach will let us simultaneously prototype accelerated techniques
+        for canvas 2d and revise the design of canvas elements without destabilizing
+        all ports.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::getContext):
+        (WebCore::HTMLCanvasElement::willDraw):
+        (WebCore::HTMLCanvasElement::makeRenderingResultsAvailable):
+        * html/canvas/CanvasRenderingContext.h:
+        (WebCore::CanvasRenderingContext::paintRenderingResultsToCanvas):
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::CanvasRenderingContext2D):
+        (WebCore::CanvasRenderingContext2D::isAccelerated):
+        (WebCore::CanvasRenderingContext2D::reset):
+        (WebCore::CanvasRenderingContext2D::willDraw):
+        (WebCore::CanvasRenderingContext2D::paintRenderingResultsToCanvas):
+        * html/canvas/CanvasRenderingContext2D.h:
+        (WebCore::CanvasRenderingContext2D::graphicsContext3D):
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::paintRenderingResultsToCanvas):
+        * html/canvas/WebGLRenderingContext.h:
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::syncSoftwareCanvas):
+
 2010-08-06  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Chris Fleizach.

@@ -1276,4 +1276,21 @@ void GraphicsContext::translate(float w, float h)
                                            WebCoreFloatToSkScalar(h));
 }
 
+void GraphicsContext::setGraphicsContext3D(GraphicsContext3D* context3D, const IntSize& size)
+{
+#if USE(GLES2_RENDERING)
+    platformContext()->setGraphicsContext3D(context3D, size);
+#else
+    UNUSED_PARAM(context3D);
+    UNUSED_PARAM(size);
+#endif
+}
+
+void GraphicsContext::syncSoftwareCanvas()
+{
+#if USE(GLES2_RENDERING)
+    platformContext()->syncSoftwareCanvas();
+#endif
+}
+
 }  // namespace WebCore
