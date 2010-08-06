@@ -81,12 +81,13 @@ public:
 
     virtual void setNeedsDisplay();
     virtual void setNeedsDisplayInRect(const FloatRect&);
+    virtual void setContentsNeedsDisplay();
 
     virtual void setContentsRect(const IntRect&);
 
     virtual void setContentsToImage(Image*);
     virtual void setContentsToMedia(PlatformLayer*);
-    virtual void setContentsToWebGL(PlatformLayer*);
+    virtual void setContentsToCanvas(PlatformLayer*);
 
     virtual PlatformLayer* platformLayer() const;
 
@@ -137,7 +138,7 @@ private:
         NoContentsLayer = 0,
         ContentsLayerForImage,
         ContentsLayerForVideo,
-        ContentsLayerForWebGL
+        ContentsLayerForCanvas
     };
 
     ContentsLayerPurpose m_contentsLayerPurpose;

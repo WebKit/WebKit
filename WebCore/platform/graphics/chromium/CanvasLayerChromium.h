@@ -29,8 +29,8 @@
  */
 
 
-#ifndef WebGLLayerChromium_h
-#define WebGLLayerChromium_h
+#ifndef CanvasLayerChromium_h
+#define CanvasLayerChromium_h
 
 #if USE(ACCELERATED_COMPOSITING)
 
@@ -40,10 +40,10 @@ namespace WebCore {
 
 class GraphicsContext3D;
 
-// A Layer that contains a WebGL element.
-class WebGLLayerChromium : public LayerChromium {
+// A Layer containing a WebGL or accelerated 2d canvas
+class CanvasLayerChromium : public LayerChromium {
 public:
-    static PassRefPtr<WebGLLayerChromium> create(GraphicsLayerChromium* owner = 0);
+    static PassRefPtr<CanvasLayerChromium> create(GraphicsLayerChromium* owner = 0);
     virtual bool drawsContent() { return m_context; }
     virtual bool ownsTexture() { return true; }
     virtual void updateTextureContents(unsigned);
@@ -55,7 +55,7 @@ public:
     static void setShaderProgramId(unsigned shaderProgramId) { m_shaderProgramId = shaderProgramId; }
 
 private:
-    WebGLLayerChromium(GraphicsLayerChromium* owner);
+    explicit CanvasLayerChromium(GraphicsLayerChromium* owner);
     GraphicsContext3D* m_context;
     unsigned m_textureId;
     bool m_textureChanged;

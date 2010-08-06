@@ -35,6 +35,7 @@
 #include "GraphicsContext3D.h"
 
 #include "CachedImage.h"
+#include "CanvasLayerChromium.h"
 #include "CanvasRenderingContext.h"
 #include "Chrome.h"
 #include "ChromeClientImpl.h"
@@ -46,7 +47,6 @@
 #include "Int32Array.h"
 #include "Int8Array.h"
 #include "Uint8Array.h"
-#include "WebGLLayerChromium.h"
 #include "WebGraphicsContext3D.h"
 #include "WebGraphicsContext3DDefaultImpl.h"
 #include "WebKit.h"
@@ -111,7 +111,7 @@ public:
     void prepareTexture();
 
 #if USE(ACCELERATED_COMPOSITING)
-    WebGLLayerChromium* platformLayer() const;
+    CanvasLayerChromium* platformLayer() const;
 #endif
     bool isGLES2Compliant() const;
 
@@ -304,7 +304,7 @@ public:
 private:
     OwnPtr<WebKit::WebGraphicsContext3D> m_impl;
 #if USE(ACCELERATED_COMPOSITING)
-    RefPtr<WebGLLayerChromium> m_compositingLayer;
+    RefPtr<CanvasLayerChromium> m_compositingLayer;
 #endif
 #if PLATFORM(SKIA)
     // If the width and height of the Canvas's backing store don't
@@ -365,7 +365,7 @@ bool GraphicsContext3DInternal::initialize(GraphicsContext3D::Attributes attrs,
     m_impl.set(webContext);
 
 #if USE(ACCELERATED_COMPOSITING)
-    m_compositingLayer = WebGLLayerChromium::create(0);
+    m_compositingLayer = CanvasLayerChromium::create(0);
 #endif
     return true;
 }
@@ -386,7 +386,7 @@ void GraphicsContext3DInternal::prepareTexture()
 }
 
 #if USE(ACCELERATED_COMPOSITING)
-WebGLLayerChromium* GraphicsContext3DInternal::platformLayer() const
+CanvasLayerChromium* GraphicsContext3DInternal::platformLayer() const
 {
     return m_compositingLayer.get();
 }
@@ -1046,9 +1046,9 @@ void GraphicsContext3D::prepareTexture()
 #if USE(ACCELERATED_COMPOSITING)
 PlatformLayer* GraphicsContext3D::platformLayer() const
 {
-    WebGLLayerChromium* webGLLayer = m_internal->platformLayer();
-    webGLLayer->setContext(this);
-    return webGLLayer;
+    CanvasLayerChromium* canvasLayer = m_internal->platformLayer();
+    canvasLayer->setContext(this);
+    return canvasLayer;
 }
 #endif
 

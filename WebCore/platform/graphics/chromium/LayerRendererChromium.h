@@ -88,7 +88,7 @@ public:
     GraphicsContext* rootLayerGraphicsContext() const { return m_rootLayerGraphicsContext.get(); }
 
 private:
-    enum ShaderProgramType { DebugBorderProgram, ScrollLayerProgram, ContentLayerProgram, WebGLLayerProgram, NumShaderProgramTypes };
+    enum ShaderProgramType { DebugBorderProgram, ScrollLayerProgram, ContentLayerProgram, CanvasLayerProgram, NumShaderProgramTypes };
 
     void updateLayersRecursive(LayerChromium* layer, const TransformationMatrix& parentMatrix, float opacity, const IntRect& visibleRect);
 

@@ -917,10 +917,8 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers()
     if (m_uncommittedChanges & ContentsMediaLayerChanged) // Needs to happen before ChildrenChanged
         updateContentsMediaLayer();
     
-#if ENABLE(3D_CANVAS)
-    if (m_uncommittedChanges & ContentsWebGLLayerChanged) // Needs to happen before ChildrenChanged
-        updateContentsWebGLLayer();
-#endif
+    if (m_uncommittedChanges & ContentsCanvasLayerChanged) // Needs to happen before ChildrenChanged
+        updateContentsCanvasLayer();
     
     if (m_uncommittedChanges & BackgroundColorChanged)  // Needs to happen before ChildrenChanged, and after updating image or video
         updateLayerBackgroundColor();
@@ -1396,18 +1394,16 @@ void GraphicsLayerCA::updateContentsMediaLayer()
     }
 }
 
-#if ENABLE(3D_CANVAS)
-void GraphicsLayerCA::updateContentsWebGLLayer()
+void GraphicsLayerCA::updateContentsCanvasLayer()
 {
-    // WebGLLayer was set as m_contentsLayer, and will get parented in updateSublayerList().
+    // CanvasLayer was set as m_contentsLayer, and will get parented in updateSublayerList().
     if (m_contentsLayer) {
         setupContentsLayer(m_contentsLayer.get());
         [m_contentsLayer.get() setNeedsDisplay];
         updateContentsRect();
     }
 }
-#endif
-    
+
 void GraphicsLayerCA::updateContentsRect()
 {
     if (!m_contentsLayer)
@@ -1722,22 +1718,20 @@ void GraphicsLayerCA::pauseAnimationOnLayer(AnimatedPropertyID property, const S
     }
 }
 
-#if ENABLE(3D_CANVAS)
-void GraphicsLayerCA::setContentsToWebGL(PlatformLayer* webglLayer)
+void GraphicsLayerCA::setContentsToCanvas(PlatformLayer* canvasLayer)
 {
-    if (webglLayer == m_contentsLayer)
+    if (canvasLayer == m_contentsLayer)
         return;
         
-    m_contentsLayer = webglLayer;
+    m_contentsLayer = canvasLayer;
     if (m_contentsLayer && [m_contentsLayer.get() respondsToSelector:@selector(setLayerOwner:)])
         [(id)m_contentsLayer.get() setLayerOwner:this];
     
-    m_contentsLayerPurpose = webglLayer ? ContentsLayerForWebGL : NoContentsLayer;
+    m_contentsLayerPurpose = canvasLayer ? ContentsLayerForCanvas : NoContentsLayer;
 
     noteSublayersChanged();
-    noteLayerPropertyChanged(ContentsWebGLLayerChanged);
+    noteLayerPropertyChanged(ContentsCanvasLayerChanged);
 }
-#endif
     
 void GraphicsLayerCA::repaintLayerDirtyRects()
 {

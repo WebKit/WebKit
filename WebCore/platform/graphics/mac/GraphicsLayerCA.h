@@ -103,9 +103,8 @@ public:
     
     virtual void setContentsToImage(Image*);
     virtual void setContentsToMedia(PlatformLayer*);
-#if ENABLE(3D_CANVAS)
-    virtual void setContentsToWebGL(PlatformLayer*);
-#endif
+    virtual void setContentsToCanvas(PlatformLayer*);
+
     virtual bool hasContentsLayer() const { return m_contentsLayer; }
     
     virtual PlatformLayer* platformLayer() const;
@@ -258,9 +257,7 @@ private:
 
     void updateContentsImage();
     void updateContentsMediaLayer();
-#if ENABLE(3D_CANVAS)
-    void updateContentsWebGLLayer();
-#endif
+    void updateContentsCanvasLayer();
     void updateContentsRect();
     void updateGeometryOrientation();
     void updateMaskLayer();
@@ -305,9 +302,7 @@ private:
         DirtyRectsChanged = 1 << 16,
         ContentsImageChanged = 1 << 17,
         ContentsMediaLayerChanged = 1 << 18,
-#if ENABLE(3D_CANVAS)
-        ContentsWebGLLayerChanged = 1 << 19,
-#endif
+        ContentsCanvasLayerChanged = 1 << 19,
         ContentsRectChanged = 1 << 20,
         GeometryOrientationChanged = 1 << 21,
         MaskLayerChanged = 1 << 22,
@@ -332,10 +327,8 @@ private:
     enum ContentsLayerPurpose {
         NoContentsLayer = 0,
         ContentsLayerForImage,
-        ContentsLayerForMedia
-#if ENABLE(3D_CANVAS)
-        , ContentsLayerForWebGL
-#endif
+        ContentsLayerForMedia,
+        ContentsLayerForCanvas
     };
     
     ContentsLayerPurpose m_contentsLayerPurpose;

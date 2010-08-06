@@ -1,3 +1,18 @@
+2010-08-06  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        Composited canvas should be treated the same by the compositor and not be WebGL specific
+        https://bugs.webkit.org/show_bug.cgi?id=43589
+
+        Initializes the platformLayer as a CanvasLayerChromium, not a WebGLLayerChromium.
+        The layer itself isn't WebGL-specific.
+
+        * src/GraphicsContext3D.cpp:
+        (WebCore::GraphicsContext3DInternal::initialize):
+        (WebCore::GraphicsContext3DInternal::platformLayer):
+        (WebCore::GraphicsContext3D::platformLayer):
+
 2010-08-06  Jessie Berlin  <jberlin@apple.com>
 
         Roll out http://trac.webkit.org/changeset/64801, which broke the Safari Windows Build.

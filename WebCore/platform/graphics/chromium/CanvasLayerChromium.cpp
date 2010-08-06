@@ -32,21 +32,21 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "WebGLLayerChromium.h"
+#include "CanvasLayerChromium.h"
 
 #include "GraphicsContext3D.h"
 #include <GLES2/gl2.h>
 
 namespace WebCore {
 
-unsigned WebGLLayerChromium::m_shaderProgramId = 0;
+unsigned CanvasLayerChromium::m_shaderProgramId = 0;
 
-PassRefPtr<WebGLLayerChromium> WebGLLayerChromium::create(GraphicsLayerChromium* owner)
+PassRefPtr<CanvasLayerChromium> CanvasLayerChromium::create(GraphicsLayerChromium* owner)
 {
-    return adoptRef(new WebGLLayerChromium(owner));
+    return adoptRef(new CanvasLayerChromium(owner));
 }
 
-WebGLLayerChromium::WebGLLayerChromium(GraphicsLayerChromium* owner)
+CanvasLayerChromium::CanvasLayerChromium(GraphicsLayerChromium* owner)
     : LayerChromium(owner)
     , m_context(0)
     , m_textureId(0)
@@ -54,12 +54,12 @@ WebGLLayerChromium::WebGLLayerChromium(GraphicsLayerChromium* owner)
 {
 }
 
-unsigned WebGLLayerChromium::textureId()
+unsigned CanvasLayerChromium::textureId()
 {
     return m_textureId;
 }
 
-void WebGLLayerChromium::updateTextureContents(unsigned textureId)
+void CanvasLayerChromium::updateTextureContents(unsigned textureId)
 {
     ASSERT(textureId == m_textureId);
     ASSERT(m_context);
@@ -80,7 +80,7 @@ void WebGLLayerChromium::updateTextureContents(unsigned textureId)
     }
 }
 
-void WebGLLayerChromium::setContext(const GraphicsContext3D* context)
+void CanvasLayerChromium::setContext(const GraphicsContext3D* context)
 {
     m_context = const_cast<GraphicsContext3D*>(context);
 

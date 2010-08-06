@@ -1,3 +1,59 @@
+2010-08-06  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        Composited canvas should be treated the same by the compositor and not be WebGL specific
+        https://bugs.webkit.org/show_bug.cgi?id=43589
+
+        This treats all GraphicsContext3D-backed layers the same instead of special casing WebGL.
+        The cross-platform change is to rename GraphicsLayer::setContentsToWebGL() to
+        GraphicsLayer::setContentsToCanvas() and to rename all implementations.
+
+        This patch also renames the chromium class used for accelerating these layers.
+
+        Cross platform changes:
+        * WebCore.gypi:
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::setContentsToCanvas):
+            Rename the function on the base class. GraphicsLayerCA and GraphicsLayerChromium implement this.
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::isAcceleratedCanvas):
+            Helper function to see if a renderer is associated with an accelerated compositing layer.
+        (WebCore::RenderLayerBacking::updateGraphicsLayerConfiguration):
+        (WebCore::RenderLayerBacking::containsPaintedContent):
+        (WebCore::RenderLayerBacking::rendererContentChanged):
+       Chromium specific changes:
+        * platform/graphics/chromium/CanvasLayerChromium.cpp: Added.
+        (WebCore::CanvasLayerChromium::create):
+        (WebCore::CanvasLayerChromium::CanvasLayerChromium):
+        (WebCore::CanvasLayerChromium::textureId):
+        (WebCore::CanvasLayerChromium::updateTextureContents):
+        (WebCore::CanvasLayerChromium::setContext):
+        * platform/graphics/chromium/CanvasLayerChromium.h: Added.
+        (WebCore::CanvasLayerChromium::drawsContent):
+        (WebCore::CanvasLayerChromium::ownsTexture):
+        (WebCore::CanvasLayerChromium::shaderProgramId):
+        (WebCore::CanvasLayerChromium::setShaderProgramId):
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        (WebCore::GraphicsLayerChromium::setContentsNeedsDisplay):
+        (WebCore::GraphicsLayerChromium::setContentsToCanvas):
+        * platform/graphics/chromium/GraphicsLayerChromium.h:
+        (WebCore::GraphicsLayerChromium::):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::drawLayer):
+        (WebCore::LayerRendererChromium::initializeSharedGLObjects):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        (WebCore::LayerRendererChromium::):
+        * platform/graphics/chromium/WebGLLayerChromium.cpp: Removed.
+        * platform/graphics/chromium/WebGLLayerChromium.h: Removed.
+        Mac specific changes:
+        * platform/graphics/mac/GraphicsLayerCA.h:
+        (WebCore::GraphicsLayerCA::):
+        * platform/graphics/mac/GraphicsLayerCA.mm:
+        (WebCore::GraphicsLayerCA::commitLayerChangesBeforeSublayers):
+        (WebCore::GraphicsLayerCA::updateContentsCanvasLayer):
+        (WebCore::GraphicsLayerCA::setContentsToCanvas):
+
 2010-08-06  Patrick Gansterer  <paroga@paroga.com>
 
         Reviewed by Eric Seidel.

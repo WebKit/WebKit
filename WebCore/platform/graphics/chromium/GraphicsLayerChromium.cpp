@@ -53,7 +53,7 @@
 #include "PlatformString.h"
 #include "SystemTime.h"
 #include "TransformLayerChromium.h"
-#include "WebGLLayerChromium.h"
+
 #include <wtf/CurrentTime.h>
 #include <wtf/StringExtras.h>
 #include <wtf/text/CString.h>
@@ -285,6 +285,11 @@ void GraphicsLayerChromium::setOpacity(float opacity)
     primaryLayer()->setOpacity(opacity);
 }
 
+void GraphicsLayerChromium::setContentsNeedsDisplay()
+{
+    if (m_contentsLayer)
+        m_contentsLayer->setNeedsDisplay();
+}
 void GraphicsLayerChromium::setNeedsDisplay()
 {
     if (drawsContent())
@@ -334,19 +339,17 @@ void GraphicsLayerChromium::setContentsToImage(Image* image)
         updateSublayerList();
 }
 
-#if ENABLE(3D_CANVAS)
-void GraphicsLayerChromium::setContentsToWebGL(PlatformLayer* platformLayer)
+void GraphicsLayerChromium::setContentsToCanvas(PlatformLayer* platformLayer)
 {
     bool childrenChanged = false;
     if (platformLayer) {
-        if (!m_contentsLayer.get() || m_contentsLayerPurpose != ContentsLayerForWebGL) {
-            WebGLLayerChromium* webGLLayer = static_cast<WebGLLayerChromium*>(platformLayer);
-            setupContentsLayer(webGLLayer);
-            m_contentsLayer = webGLLayer;
-            m_contentsLayerPurpose = ContentsLayerForWebGL;
+        platformLayer->setOwner(this);
+        if (!m_contentsLayer.get() || m_contentsLayerPurpose != ContentsLayerForCanvas) {
+            setupContentsLayer(platformLayer);
+            m_contentsLayer = platformLayer;
+            m_contentsLayerPurpose = ContentsLayerForCanvas;
             childrenChanged = true;
         }
-        platformLayer->setOwner(this);
         platformLayer->setNeedsDisplay();
         updateContentsRect();
     } else {
@@ -361,7 +364,6 @@ void GraphicsLayerChromium::setContentsToWebGL(PlatformLayer* platformLayer)
     if (childrenChanged)
         updateSublayerList();
 }
-#endif
 
 void GraphicsLayerChromium::setContentsToMedia(PlatformLayer* layer)
 {
