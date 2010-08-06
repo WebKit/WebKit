@@ -32,12 +32,14 @@
 #include "Clipboard.h"
 #include "CompositionEvent.h"
 #include "CustomEvent.h"
+#include "DeviceMotionEvent.h"
 #include "DeviceOrientationEvent.h"
 #include "Event.h"
 #include "JSBeforeLoadEvent.h"
 #include "JSClipboard.h"
 #include "JSCustomEvent.h"
 #include "JSCompositionEvent.h"
+#include "JSDeviceMotionEvent.h"
 #include "JSDeviceOrientationEvent.h"
 #include "JSErrorEvent.h"
 #include "JSKeyboardEvent.h"
@@ -173,6 +175,8 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, Event* event)
     else if (event->isCustomEvent())
         wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, CustomEvent, event);
 #if ENABLE(DEVICE_ORIENTATION)
+    else if (event->isDeviceMotionEvent())
+        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, DeviceMotionEvent, event);
     else if (event->isDeviceOrientationEvent())
         wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, DeviceOrientationEvent, event);
 #endif

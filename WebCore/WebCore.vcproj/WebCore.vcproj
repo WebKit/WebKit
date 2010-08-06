@@ -2905,6 +2905,62 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\WebCore\DerivedSources\JSDeviceMotionEvent.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Internal|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Cairo|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_Cairo|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_All|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\WebCore\DerivedSources\JSDeviceMotionEvent.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\WebCore\DerivedSources\JSDeviceOrientationEvent.cpp"
 				>
 				<FileConfiguration
@@ -32653,6 +32709,34 @@
 				>
 			</File>
 			<File
+				RelativePath="..\dom\DeviceMotionClient.h"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\DeviceMotionController.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\DeviceMotionController.h"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\DeviceMotionData.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\DeviceMotionData.h"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\DeviceMotionEvent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\DeviceMotionEvent.h"
+				>
+			</File>
+			<File
 				RelativePath="..\dom\DeviceOrientation.cpp"
 				>
 			</File>
@@ -42397,6 +42481,58 @@
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSDesktopNotificationsCustom.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_Internal|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_Cairo|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release_Cairo|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_All|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSDeviceMotionEventCustom.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"

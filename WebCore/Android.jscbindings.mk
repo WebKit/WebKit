@@ -93,6 +93,7 @@ LOCAL_SRC_FILES += \
 	bindings/js/JSDatabaseCustom.cpp \
 	bindings/js/JSDedicatedWorkerContextCustom.cpp \
 	bindings/js/JSDesktopNotificationsCustom.cpp \
+	bindings/js/JSDeviceMotionEventCustom.cpp \
 	bindings/js/JSDeviceOrientationEventCustom.cpp \
 	bindings/js/JSDocumentCustom.cpp \
 	bindings/js/JSElementCustom.cpp \

@@ -78,7 +78,8 @@ plugins/clicking-missing-plugin-fires-delegate.html
 #       Feature not supported... yet
 # =========================================================================== #
 
-# This port doesn't support DeviceOrientation.
+# This port doesn't support DeviceMotion or DeviceOrientation.
+fast/dom/DeviceMotion
 fast/dom/DeviceOrientation
 fast/dom/Window/window-properties-device-orientation.html
 

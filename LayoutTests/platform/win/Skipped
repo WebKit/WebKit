@@ -874,7 +874,8 @@ editing/spelling/context-menu-suggestions.html
 # IndexedDB is not yet enabled.
 storage/indexeddb
 
-# This port doesn't support DeviceOrientation.
+# This port doesn't support DeviceMotion or DeviceOrientation.
+fast/dom/DeviceMotion
 fast/dom/DeviceOrientation
 fast/dom/Window/window-properties-device-orientation.html
 

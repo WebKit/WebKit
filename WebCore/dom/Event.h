@@ -140,6 +140,7 @@ namespace WebCore {
         virtual bool isTouchEvent() const;
 #endif
 #if ENABLE(DEVICE_ORIENTATION)
+        virtual bool isDeviceMotionEvent() const;
         virtual bool isDeviceOrientationEvent() const;
 #endif
         bool fromUserGesture();

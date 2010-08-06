@@ -338,6 +338,7 @@ namespace WebCore {
 #endif
 
 #if ENABLE(DEVICE_ORIENTATION)
+        DEFINE_ATTRIBUTE_EVENT_LISTENER(devicemotion);
         DEFINE_ATTRIBUTE_EVENT_LISTENER(deviceorientation);
 #endif
 

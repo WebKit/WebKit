@@ -105,6 +105,7 @@ GEN := \
     $(intermediates)/dom/JSDOMCoreException.h \
     $(intermediates)/dom/JSDOMImplementation.h \
     $(intermediates)/dom/JSDOMStringList.h \
+    $(intermediates)/dom/JSDeviceMotionEvent.h \
     $(intermediates)/dom/JSDeviceOrientationEvent.h \
     $(intermediates)/dom/JSDocument.h \
     $(intermediates)/dom/JSDocumentFragment.h \

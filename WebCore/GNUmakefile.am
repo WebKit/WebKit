@@ -181,6 +181,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSDataGridColumnList.h \
 	DerivedSources/WebCore/JSDedicatedWorkerContext.cpp \
 	DerivedSources/WebCore/JSDedicatedWorkerContext.h \
+	DerivedSources/WebCore/JSDeviceMotionEvent.cpp \
+	DerivedSources/WebCore/JSDeviceMotionEvent.h \
 	DerivedSources/WebCore/JSDeviceOrientationEvent.cpp \
 	DerivedSources/WebCore/JSDeviceOrientationEvent.h \
 	DerivedSources/WebCore/JSDocument.cpp \
@@ -671,6 +673,7 @@ webcore_sources += \
 	WebCore/bindings/js/JSDOMWindowShell.h \
 	WebCore/bindings/js/JSDOMWrapper.cpp \
 	WebCore/bindings/js/JSDOMWrapper.h \
+	WebCore/bindings/js/JSDeviceMotionEventCustom.cpp \
 	WebCore/bindings/js/JSDeviceOrientationEventCustom.cpp \
 	WebCore/bindings/js/JSDocumentCustom.cpp \
 	WebCore/bindings/js/JSElementCustom.cpp \
@@ -1019,6 +1022,13 @@ webcore_sources += \
 	WebCore/dom/DatasetDOMStringMap.h \
 	WebCore/dom/DecodedDataDocumentParser.cpp \
 	WebCore/dom/DecodedDataDocumentParser.h \
+	WebCore/dom/DeviceMotionClient.h \
+	WebCore/dom/DeviceMotionController.cpp \
+	WebCore/dom/DeviceMotionController.h \
+	WebCore/dom/DeviceMotionData.cpp \
+	WebCore/dom/DeviceMotionData.h \
+	WebCore/dom/DeviceMotionEvent.cpp \
+	WebCore/dom/DeviceMotionEvent.h \
 	WebCore/dom/DeviceOrientation.cpp \
 	WebCore/dom/DeviceOrientation.h \
 	WebCore/dom/DeviceOrientationClient.h \

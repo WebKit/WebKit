@@ -1,4 +1,5 @@
-<p>This test dumps all of the properties that are reachable from the window.DeviceOrientationEvent and window.ondeviceorientation objects, along with their types.</p>
+<p>This test dumps all of the properties that are reachable from the window.DeviceMotionEvent window.ondevicemotion, window.DeviceOrientationEvent and window.ondeviceorientation objects, along with their types.
+  These properties are currently guarded by ENABLE_DEVICE_ORIENTATION.</p>
 <hr>
 <pre id="pre"></pre>
 
@@ -88,6 +89,8 @@ function logProperties(object, objectName)
     }
 }
 
+logValue('window.DeviceMotionEvent');
+logValue('window.ondevicemotion');
 logValue('window.DeviceOrientationEvent');
 logValue('window.ondeviceorientation');
 flushLog();

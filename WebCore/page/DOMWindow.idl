@@ -305,8 +305,10 @@ module window {
         attribute [Conditional=TOUCH_EVENTS,EnabledAtRuntime] EventListener ontouchend;
         attribute [Conditional=TOUCH_EVENTS,EnabledAtRuntime] EventListener ontouchcancel;
 
-        attribute [Conditional=DEVICE_ORIENTATION, EnabledAtRuntime] DeviceOrientationEventConstructor DeviceOrientationEvent;
-        attribute [Conditional=DEVICE_ORIENTATION, EnabledAtRuntime] EventListener ondeviceorientation;
+        attribute [Conditional=DEVICE_ORIENTATION,EnabledAtRuntime] DeviceMotionEventConstructor DeviceMotionEvent;
+        attribute [Conditional=DEVICE_ORIENTATION,EnabledAtRuntime] EventListener ondevicemotion;
+        attribute [Conditional=DEVICE_ORIENTATION,EnabledAtRuntime] DeviceOrientationEventConstructor DeviceOrientationEvent;
+        attribute [Conditional=DEVICE_ORIENTATION,EnabledAtRuntime] EventListener ondeviceorientation;
 
         // EventTarget interface
         [Custom] void addEventListener(in DOMString type,

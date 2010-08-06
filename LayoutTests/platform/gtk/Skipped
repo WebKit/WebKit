@@ -1081,6 +1081,9 @@ fast/dom/client-width-height-quirks.html
 fast/dom/client-width-height.html
 fast/dom/cssTarget-crash.html
 fast/dom/frame-loading-via-document-write.html
+fast/dom/DeviceMotion/create-event.html
+fast/dom/DeviceMotion/optional-event-properties.html
+fast/dom/DeviceMotion/window-property.html
 fast/dom/DeviceOrientation/basic-operation.html
 fast/dom/DeviceOrientation/create-event.html
 fast/dom/DeviceOrientation/optional-event-properties.html

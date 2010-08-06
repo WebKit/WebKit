@@ -144,6 +144,7 @@ SET(WebCore_IDL_FILES
     dom/Comment.idl
     dom/CompositionEvent.idl
     dom/CustomEvent.idl
+    dom/DeviceMotionEvent.idl
     dom/DeviceOrientationEvent.idl
     dom/DocumentFragment.idl
     dom/Document.idl
@@ -596,6 +597,7 @@ SET(WebCore_SOURCES
     bindings/js/JSDataGridDataSource.cpp
     bindings/js/JSDebugWrapperSet.cpp
     bindings/js/JSDedicatedWorkerContextCustom.cpp
+    bindings/js/JSDeviceMotionEventCustom.cpp
     bindings/js/JSDeviceOrientationEventCustom.cpp
     bindings/js/JSDocumentCustom.cpp
     bindings/js/JSDOMApplicationCacheCustom.cpp
@@ -791,6 +793,9 @@ SET(WebCore_SOURCES
     dom/CustomEvent.cpp
     dom/DatasetDOMStringMap.cpp
     dom/DecodedDataDocumentParser.cpp
+    dom/DeviceMotionController.cpp
+    dom/DeviceMotionData.cpp
+    dom/DeviceMotionEvent.cpp
     dom/DeviceOrientation.cpp
     dom/DeviceOrientationController.cpp
     dom/DeviceOrientationEvent.cpp

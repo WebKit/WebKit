@@ -1,3 +1,38 @@
+2010-08-06  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Simon Fraser and Steve Block
+
+        https://bugs.webkit.org/show_bug.cgi?id=42865
+        Implement DeviceMotionEvent
+
+        Add DeviceMotion and ondevicemotion testing to
+        the device-orientation test, and make sure the DeviceMotion
+        interface is not tested in the generic window object.
+
+        * fast/dom/Window/window-properties-device-orientation-expected.txt:
+        * fast/dom/Window/window-properties-device-orientation.html:
+        * fast/dom/Window/window-properties.html:
+
+        Add some tests for the DeviceMotionEvent interface.
+
+        * fast/dom/DeviceMotion/create-event-expected.txt: Added.
+        * fast/dom/DeviceMotion/create-event.html: Added.
+        * fast/dom/DeviceMotion/optional-event-properties-expected.txt: Added.
+        * fast/dom/DeviceMotion/optional-event-properties.html: Added.
+        * fast/dom/DeviceMotion/script-tests/TEMPLATE.html: Added.
+        * fast/dom/DeviceMotion/script-tests/create-event.js: Added.
+        * fast/dom/DeviceMotion/script-tests/optional-event-properties.js: Added.
+        * fast/dom/DeviceMotion/script-tests/window-property.js: Added.
+        * fast/dom/DeviceMotion/window-property-expected.txt: Added.
+        * fast/dom/DeviceMotion/window-property.html: Added.
+
+        Make sure these are skipped on Mac, Win, GTK and QT.
+
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2010-08-06  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed. Rolling out 64835, 64836 and 64839.

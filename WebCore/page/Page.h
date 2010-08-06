@@ -44,6 +44,8 @@ namespace WebCore {
     class ChromeClient;
     class ContextMenuClient;
     class ContextMenuController;
+    class DeviceMotionClient;
+    class DeviceMotionController;
     class DeviceOrientationClient;
     class DeviceOrientationController;
     class Document;
@@ -101,6 +103,7 @@ namespace WebCore {
                 , inspectorClient(0)
                 , pluginHalterClient(0)
                 , geolocationControllerClient(0)
+                , deviceMotionClient(0)
                 , deviceOrientationClient(0)
                 , backForwardControllerClient(0)
                 , speechInputClient(0)
@@ -113,6 +116,7 @@ namespace WebCore {
             InspectorClient* inspectorClient;
             PluginHalterClient* pluginHalterClient;
             GeolocationControllerClient* geolocationControllerClient;
+            DeviceMotionClient* deviceMotionClient;
             DeviceOrientationClient* deviceOrientationClient;
             BackForwardControllerClient* backForwardControllerClient;
             SpeechInputClient* speechInputClient;
@@ -179,6 +183,7 @@ namespace WebCore {
         GeolocationController* geolocationController() const { return m_geolocationController.get(); }
 #endif
 #if ENABLE(DEVICE_ORIENTATION)
+        DeviceMotionController* deviceMotionController() const { return m_deviceMotionController.get(); }
         DeviceOrientationController* deviceOrientationController() const { return m_deviceOrientationController.get(); }
 #endif
 #if ENABLE(INPUT_SPEECH)
@@ -313,6 +318,7 @@ namespace WebCore {
         OwnPtr<GeolocationController> m_geolocationController;
 #endif
 #if ENABLE(DEVICE_ORIENTATION)
+        OwnPtr<DeviceMotionController> m_deviceMotionController;
         OwnPtr<DeviceOrientationController> m_deviceOrientationController;
 #endif
 #if ENABLE(INPUT_SPEECH)

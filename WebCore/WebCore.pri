@@ -293,6 +293,7 @@ IDL_BINDINGS += \
     dom/Comment.idl \
     dom/CompositionEvent.idl \
     dom/CustomEvent.idl \
+    dom/DeviceMotionEvent.idl \
     dom/DeviceOrientationEvent.idl \
     dom/DocumentFragment.idl \
     dom/Document.idl \
