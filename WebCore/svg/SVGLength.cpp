@@ -388,10 +388,9 @@ SVGLength SVGLength::fromCSSPrimitiveValue(CSSPrimitiveValue* value)
 
 PassRefPtr<CSSPrimitiveValue> SVGLength::toCSSPrimitiveValue(const SVGLength& length)
 {
-    CSSPrimitiveValue::UnitTypes cssType;
+    CSSPrimitiveValue::UnitTypes cssType = CSSPrimitiveValue::CSS_UNKNOWN;
     switch (length.unitType()) {
     case LengthTypeUnknown:
-        cssType = CSSPrimitiveValue::CSS_UNKNOWN;
         break;
     case LengthTypeNumber:
         cssType = CSSPrimitiveValue::CSS_NUMBER;
