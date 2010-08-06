@@ -116,7 +116,7 @@ Vector<String> listDirectory(const String& path, const String& filter)
 CString openTemporaryFile(const char* prefix, PlatformFileHandle& handle)
 {
 #ifndef QT_NO_TEMPORARYFILE
-    QTemporaryFile* tempFile = new QTemporaryFile(QLatin1String(prefix));
+    QTemporaryFile* tempFile = new QTemporaryFile(QDir::tempPath() + QLatin1Char('/') + QLatin1String(prefix));
     tempFile->setAutoRemove(false);
     QFile* temp = tempFile;
     if (temp->open(QIODevice::ReadWrite)) {

@@ -1,3 +1,16 @@
+2010-08-05  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] Temporary files should not be created in the current directory
+        https://bugs.webkit.org/show_bug.cgi?id=43562
+
+        Don't create temporary files in the current directory, use QDir::tempPath()
+        instead, as suggested by the QTemporaryFile documentation.
+
+        * platform/qt/FileSystemQt.cpp:
+        (WebCore::openTemporaryFile):
+
 2010-08-05  François Sausset  <sausset@gmail.com>
 
         Reviewed by Kenneth Rohde Christiansen.
