@@ -29,6 +29,13 @@
 
 #include "JSWorkerContext.h"
 
+#if ENABLE(DATABASE)
+#include "Database.h"
+#include "DatabaseSync.h"
+#include "JSDatabase.h"
+#include "JSDatabaseCallback.h"
+#include "JSDatabaseSync.h"
+#endif
 #include "ExceptionCode.h"
 #include "JSDOMBinding.h"
 #include "JSDOMGlobalObject.h"
@@ -143,6 +150,89 @@ JSValue JSWorkerContext::setInterval(ExecState* exec)
 JSValue JSWorkerContext::messageChannel(ExecState* exec) const
 {
     return getDOMConstructor<JSMessageChannelConstructor>(exec, this);
+}
+#endif
+
+#if ENABLE(DATABASE)
+JSValue JSWorkerContext::openDatabase(ExecState* exec) 
+{ 
+    if (exec->argumentCount() < 4) {
+        setDOMException(exec, SYNTAX_ERR);
+        return jsUndefined();
+    }
+
+    String name = ustringToString(exec->argument(0).toString(exec));
+    if (exec->hadException())
+        return jsUndefined();
+
+    String version = ustringToString(exec->argument(1).toString(exec));
+    if (exec->hadException())
+        return jsUndefined();
+
+    String displayName = ustringToString(exec->argument(2).toString(exec));
+    if (exec->hadException())
+        return jsUndefined();
+
+    // exec->argument(3) = estimated size
+    unsigned long estimatedSize = exec->argument(3).toUInt32(exec);
+    if (exec->hadException())
+        return jsUndefined();
+
+    RefPtr<DatabaseCallback> creationCallback;
+    if (exec->argumentCount() >= 5) {
+        if (!exec->argument(4).isObject()) {
+            setDOMException(exec, TYPE_MISMATCH_ERR);
+            return jsUndefined();
+        }
+
+        creationCallback = JSDatabaseCallback::create(asObject(exec->argument(4)), globalObject());
+    }
+ 
+    ExceptionCode ec = 0; 
+    JSValue result = toJS(exec, globalObject(), WTF::getPtr(impl()->openDatabase(name, version, displayName, estimatedSize, creationCallback.release(), ec))); 
+    setDOMException(exec, ec); 
+    return result; 
+} 
+ 
+JSValue JSWorkerContext::openDatabaseSync(ExecState* exec)
+{
+    if (exec->argumentCount() < 4) {
+        setDOMException(exec, SYNTAX_ERR);
+        return jsUndefined();
+    }
+
+    String name = ustringToString(exec->argument(0).toString(exec));
+    if (exec->hadException())
+        return jsUndefined();
+
+    String version = ustringToString(exec->argument(1).toString(exec));
+    if (exec->hadException())
+        return jsUndefined();
+
+    String displayName = ustringToString(exec->argument(2).toString(exec));
+    if (exec->hadException())
+        return jsUndefined();
+
+    // exec->argument(3) = estimated size
+    unsigned long estimatedSize = exec->argument(3).toUInt32(exec);
+    if (exec->hadException())
+        return jsUndefined();
+
+    RefPtr<DatabaseCallback> creationCallback;
+    if (exec->argumentCount() >= 5) {
+        if (!exec->argument(4).isObject()) {
+            setDOMException(exec, TYPE_MISMATCH_ERR);
+            return jsUndefined();
+        }
+
+        creationCallback = JSDatabaseCallback::create(asObject(exec->argument(4)), globalObject());
+    }
+
+    ExceptionCode ec = 0;
+    JSValue result = toJS(exec, globalObject(), WTF::getPtr(impl()->openDatabaseSync(name, version, displayName, estimatedSize, creationCallback.release(), ec)));
+
+    setDOMException(exec, ec);
+    return result;
 }
 #endif
 

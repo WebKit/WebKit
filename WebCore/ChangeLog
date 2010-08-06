@@ -1,3 +1,114 @@
+2010-08-06  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed. Rolling out 64835, 64836 and 64839.
+
+        * Android.jscbindings.mk:
+        * Android.v8bindings.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::openDatabase):
+        * bindings/js/JSDatabaseCustom.cpp: Added.
+        (WebCore::JSDatabase::changeVersion):
+        (WebCore::createTransaction):
+        (WebCore::JSDatabase::transaction):
+        (WebCore::JSDatabase::readTransaction):
+        * bindings/js/JSDatabaseSyncCustom.cpp: Added.
+        (WebCore::JSDatabaseSync::changeVersion):
+        (WebCore::createTransaction):
+        (WebCore::JSDatabaseSync::transaction):
+        (WebCore::JSDatabaseSync::readTransaction):
+        * bindings/js/JSWorkerContextCustom.cpp:
+        (WebCore::JSWorkerContext::openDatabase):
+        (WebCore::JSWorkerContext::openDatabaseSync):
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/scripts/test/JS/JSTestCallback.cpp:
+        (WebCore::JSTestCallback::~JSTestCallback):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionVoidMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionIntMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionObjMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionMethodThatRequiresAllArgs):
+        (WebCore::jsTestObjPrototypeFunctionMethodThatRequiresAllArgsAndThrows):
+        (WebCore::jsTestObjPrototypeFunctionSerializedValue):
+        (WebCore::jsTestObjPrototypeFunctionIdbKey):
+        (WebCore::jsTestObjPrototypeFunctionCustomArgsAndException):
+        (WebCore::jsTestObjPrototypeFunctionWithDynamicFrameAndArg):
+        (WebCore::jsTestObjPrototypeFunctionWithDynamicFrameAndOptionalArg):
+        (WebCore::jsTestObjPrototypeFunctionWithDynamicFrameAndUserGesture):
+        (WebCore::jsTestObjPrototypeFunctionWithDynamicFrameAndUserGestureASAD):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndOptionalArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndTwoOptionalArgs):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithCallbackArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithNonCallbackArgAndCallbackArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithCallbackAndOptionalArg):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod1):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod2):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod3):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod4):
+        * bindings/scripts/test/TestObj.idl:
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjInternal::voidMethodWithArgsCallback):
+        (WebCore::TestObjInternal::intMethodWithArgsCallback):
+        (WebCore::TestObjInternal::objMethodWithArgsCallback):
+        (WebCore::TestObjInternal::methodThatRequiresAllArgsCallback):
+        (WebCore::TestObjInternal::methodThatRequiresAllArgsAndThrowsCallback):
+        (WebCore::TestObjInternal::serializedValueCallback):
+        (WebCore::TestObjInternal::idbKeyCallback):
+        (WebCore::TestObjInternal::customArgsAndExceptionCallback):
+        (WebCore::TestObjInternal::withDynamicFrameAndArgCallback):
+        (WebCore::TestObjInternal::withDynamicFrameAndOptionalArgCallback):
+        (WebCore::TestObjInternal::withDynamicFrameAndUserGestureCallback):
+        (WebCore::TestObjInternal::withDynamicFrameAndUserGestureASADCallback):
+        (WebCore::TestObjInternal::methodWithOptionalArgCallback):
+        (WebCore::TestObjInternal::methodWithNonOptionalArgAndOptionalArgCallback):
+        (WebCore::TestObjInternal::methodWithNonOptionalArgAndTwoOptionalArgsCallback):
+        (WebCore::TestObjInternal::methodWithCallbackArgCallback):
+        (WebCore::TestObjInternal::methodWithNonCallbackArgAndCallbackArgCallback):
+        (WebCore::TestObjInternal::methodWithCallbackAndOptionalArgCallback):
+        (WebCore::TestObjInternal::overloadedMethod1Callback):
+        (WebCore::TestObjInternal::overloadedMethod2Callback):
+        (WebCore::TestObjInternal::overloadedMethod3Callback):
+        (WebCore::TestObjInternal::overloadedMethod4Callback):
+        (WebCore::):
+        (WebCore::ConfigureV8TestObjTemplate):
+        * bindings/v8/V8Binding.h:
+        (WebCore::String):
+        (WebCore::AtomicString):
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::V8DOMWindow::openDatabaseCallback):
+        * bindings/v8/custom/V8DatabaseCustom.cpp: Added.
+        (WebCore::V8Database::changeVersionCallback):
+        (WebCore::createTransaction):
+        (WebCore::V8Database::transactionCallback):
+        (WebCore::V8Database::readTransactionCallback):
+        * bindings/v8/custom/V8DatabaseSyncCustom.cpp: Added.
+        (WebCore::V8DatabaseSync::changeVersionCallback):
+        (WebCore::createTransaction):
+        (WebCore::V8DatabaseSync::transactionCallback):
+        (WebCore::V8DatabaseSync::readTransactionCallback):
+        * bindings/v8/custom/V8WorkerContextCustom.cpp:
+        (WebCore::V8WorkerContext::openDatabaseCallback):
+        (WebCore::V8WorkerContext::openDatabaseSyncCallback):
+        * page/DOMWindow.idl:
+        * storage/Database.cpp:
+        (WebCore::Database::transaction):
+        * storage/Database.h:
+        * storage/Database.idl:
+        * storage/DatabaseSync.cpp:
+        (WebCore::DatabaseSync::transaction):
+        * storage/DatabaseSync.h:
+        * storage/DatabaseSync.idl:
+        * workers/WorkerContext.idl:
+
 2010-08-06  Dumitru Daniliuc  <dumi@chromium.org>
 
         Unreviewed, fix the "GTK Linux 64-bit Debug" bot.

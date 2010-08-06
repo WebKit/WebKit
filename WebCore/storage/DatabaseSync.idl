@@ -36,9 +36,9 @@ module storage {
         NoStaticTables
     ] DatabaseSync {
         readonly attribute DOMString version;
-        void changeVersion(in DOMString oldVersion, in DOMString newVersion, in [Callback, Optional] SQLTransactionSyncCallback callback) raises(DOMException);
-        void transaction(in [Callback] SQLTransactionSyncCallback callback) raises(DOMException);
-        void readTransaction(in [Callback] SQLTransactionSyncCallback callback) raises(DOMException);
+        [Custom] void changeVersion(in DOMString oldVersion, in DOMString newVersion, in SQLTransactionSyncCallback callback);
+        [Custom] void transaction(in SQLTransactionSyncCallback callback);
+        [Custom] void readTransaction(in SQLTransactionSyncCallback callback);
     };
 
 }

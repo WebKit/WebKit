@@ -22,6 +22,7 @@
 
 #include "AtomicString.h"
 #include "Chrome.h"
+#include "Database.h"
 #include "DOMWindow.h"
 #include "Document.h"
 #include "ExceptionCode.h"
@@ -35,6 +36,10 @@
 #include "HTMLDocument.h"
 #include "History.h"
 #include "JSAudioConstructor.h"
+#if ENABLE(DATABASE)
+#include "JSDatabase.h"
+#include "JSDatabaseCallback.h"
+#endif
 #include "JSDOMWindowShell.h"
 #include "JSEvent.h"
 #include "JSEventListener.h"
@@ -1000,6 +1005,49 @@ JSValue JSDOMWindow::removeEventListener(ExecState* exec)
     impl()->removeEventListener(ustringToAtomicString(exec->argument(0).toString(exec)), JSEventListener::create(asObject(listener), this, false, currentWorld(exec)).get(), exec->argument(2).toBoolean(exec));
     return jsUndefined();
 }
+
+#if ENABLE(DATABASE)
+JSValue JSDOMWindow::openDatabase(ExecState* exec)
+{
+    if (!allowsAccessFrom(exec) || (exec->argumentCount() < 4)) {
+        setDOMException(exec, SYNTAX_ERR);
+        return jsUndefined();
+    }
+
+    String name = ustringToString(exec->argument(0).toString(exec));
+    if (exec->hadException())
+        return jsUndefined();
+
+    String version = ustringToString(exec->argument(1).toString(exec));
+    if (exec->hadException())
+        return jsUndefined();
+
+    String displayName = ustringToString(exec->argument(2).toString(exec));
+    if (exec->hadException())
+        return jsUndefined();
+
+    // exec->argument(3) = estimated size
+    unsigned long estimatedSize = exec->argument(3).toUInt32(exec);
+    if (exec->hadException())
+        return jsUndefined();
+
+    RefPtr<DatabaseCallback> creationCallback;
+    if (exec->argumentCount() >= 5) {
+        if (!exec->argument(4).isObject()) {
+            setDOMException(exec, TYPE_MISMATCH_ERR);
+            return jsUndefined();
+        }
+
+        creationCallback = JSDatabaseCallback::create(asObject(exec->argument(4)), globalObject());
+    }
+
+    ExceptionCode ec = 0;
+    JSValue result = toJS(exec, globalObject(), WTF::getPtr(impl()->openDatabase(name, version, displayName, estimatedSize, creationCallback.release(), ec)));
+
+    setDOMException(exec, ec);
+    return result;
+}
+#endif
 
 DOMWindow* toDOMWindow(JSValue value)
 {

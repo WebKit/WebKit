@@ -90,6 +90,7 @@ LOCAL_SRC_FILES += \
 	bindings/js/JSDatabaseCallback.cpp \
 	bindings/js/JSDataGridColumnListCustom.cpp \
 	bindings/js/JSDataGridDataSource.cpp \
+	bindings/js/JSDatabaseCustom.cpp \
 	bindings/js/JSDedicatedWorkerContextCustom.cpp \
 	bindings/js/JSDesktopNotificationsCustom.cpp \
 	bindings/js/JSDeviceOrientationEventCustom.cpp \

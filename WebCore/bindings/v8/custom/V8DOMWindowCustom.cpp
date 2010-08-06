@@ -32,6 +32,7 @@
 #include "V8DOMWindow.h"
 
 #include "Chrome.h"
+#include "Database.h"
 #include "DOMTimer.h"
 #include "DOMWindow.h"
 #include "ExceptionCode.h"
@@ -54,6 +55,8 @@
 #include "V8BindingMacros.h"
 #include "V8BindingState.h"
 #include "V8CustomEventListener.h"
+#include "V8Database.h"
+#include "V8DatabaseCallback.h"
 #include "V8GCForContextDispose.h"
 #include "V8HiddenPropertyName.h"
 #include "V8HTMLAudioElementConstructor.h"
@@ -786,6 +789,39 @@ v8::Handle<v8::Value> V8DOMWindow::setIntervalCallback(const v8::Arguments& args
     INC_STATS("DOM.DOMWindow.setInterval()");
     return WindowSetTimeoutImpl(args, false);
 }
+
+#if ENABLE(DATABASE)
+v8::Handle<v8::Value> V8DOMWindow::openDatabaseCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.DOMWindow.openDatabase");
+    if (args.Length() < 4)
+        return throwError(SYNTAX_ERR);
+
+    TO_WEBCORE_STRING_EXCEPTION_BLOCK(name, args[0]);
+    TO_WEBCORE_STRING_EXCEPTION_BLOCK(version, args[1]);
+    TO_WEBCORE_STRING_EXCEPTION_BLOCK(displayName, args[2]);
+    EXCEPTION_BLOCK(unsigned long, estimatedSize, args[3]->Uint32Value());
+
+    DOMWindow* imp = V8DOMWindow::toNative(args.Holder());
+    if (!V8BindingSecurity::canAccessFrame(V8BindingState::Only(), imp->frame(), true))
+        return v8::Undefined();
+
+    ScriptExecutionContext* scriptExecutionContext = getScriptExecutionContext();
+    RefPtr<DatabaseCallback> creationCallback;
+    if (args.Length() >= 5) {
+        if (!args[4]->IsObject())
+            return throwError(TYPE_MISMATCH_ERR);
+
+        creationCallback = V8DatabaseCallback::create(args[4], scriptExecutionContext);
+    }
+
+    ExceptionCode ec = 0;
+    v8::Handle<v8::Value> result = toV8(imp->openDatabase(name, version, displayName, estimatedSize, creationCallback.release(), ec));
+
+    V8Proxy::setDOMException(ec);
+    return result;
+}
+#endif // ENABLE(DATABASE)
 
 bool V8DOMWindow::namedSecurityCheck(v8::Local<v8::Object> host, v8::Local<v8::Value> key, v8::AccessType type, v8::Local<v8::Value>)
 {

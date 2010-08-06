@@ -33,6 +33,12 @@
 #if ENABLE(WORKERS)
 #include "V8WorkerContext.h"
 
+#if ENABLE(DATABASE)
+#include "Database.h"
+#include "V8Database.h"
+#include "V8DatabaseCallback.h"
+#include "V8DatabaseSync.h"
+#endif
 #include "DOMTimer.h"
 #include "ExceptionCode.h"
 #include "ScheduledAction.h"
@@ -136,6 +142,66 @@ v8::Handle<v8::Value> toV8(WorkerContext* impl)
     ASSERT(!global.IsEmpty());
     return global;
 }
+
+#if ENABLE(DATABASE)
+v8::Handle<v8::Value> V8WorkerContext::openDatabaseCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.V8WorkerContext.openDatabase()");
+    if (args.Length() < 4)
+        return throwError(SYNTAX_ERR);
+
+    TO_WEBCORE_STRING_EXCEPTION_BLOCK(name, args[0]);
+    TO_WEBCORE_STRING_EXCEPTION_BLOCK(version, args[1]);
+    TO_WEBCORE_STRING_EXCEPTION_BLOCK(displayName, args[2]);
+    EXCEPTION_BLOCK(unsigned long, estimatedSize, args[3]->Uint32Value());
+
+    WorkerContext* workerContext = V8WorkerContext::toNative(args.Holder());
+
+    ScriptExecutionContext* scriptExecutionContext = getScriptExecutionContext();
+    RefPtr<DatabaseCallback> creationCallback;
+    if (args.Length() >= 5) {
+        if (!args[4]->IsObject())
+            return throwError(TYPE_MISMATCH_ERR);
+
+        creationCallback = V8DatabaseCallback::create(args[4], scriptExecutionContext);
+    }
+
+    ExceptionCode ec = 0;
+    v8::Handle<v8::Value> result = toV8(workerContext->openDatabase(name, version, displayName, estimatedSize, creationCallback.release(), ec));
+
+    V8Proxy::setDOMException(ec);
+    return result;
+}
+
+v8::Handle<v8::Value> V8WorkerContext::openDatabaseSyncCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.V8WorkerContext.openDatabaseSync()");
+    if (args.Length() < 4)
+        return throwError(SYNTAX_ERR);
+
+    TO_WEBCORE_STRING_EXCEPTION_BLOCK(name, args[0]);
+    TO_WEBCORE_STRING_EXCEPTION_BLOCK(version, args[1]);
+    TO_WEBCORE_STRING_EXCEPTION_BLOCK(displayName, args[2]);
+    EXCEPTION_BLOCK(unsigned long, estimatedSize, args[3]->Uint32Value());
+
+    WorkerContext* workerContext = V8WorkerContext::toNative(args.Holder());
+
+    ScriptExecutionContext* scriptExecutionContext = getScriptExecutionContext();
+    RefPtr<DatabaseCallback> creationCallback;
+    if (args.Length() >= 5) {
+        if (!args[4]->IsObject())
+            return throwError(TYPE_MISMATCH_ERR);
+
+        creationCallback = V8DatabaseCallback::create(args[4], scriptExecutionContext);
+    }
+
+    ExceptionCode ec = 0;
+    v8::Handle<v8::Value> result = toV8(workerContext->openDatabaseSync(name, version, displayName, estimatedSize, creationCallback.release(), ec));
+
+    V8Proxy::setDOMException(ec);
+    return result;
+}
+#endif
 
 } // namespace WebCore
 

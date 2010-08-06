@@ -42,13 +42,10 @@ JSTestCallback::JSTestCallback(JSObject* callback, JSDOMGlobalObject* globalObje
 
 JSTestCallback::~JSTestCallback()
 {
-    ScriptExecutionContext* context = scriptExecutionContext();
-    // When the context is destroyed, all tasks with a reference to a callback
-    // should be deleted. So if the context is NULL, we are on the context thread.
-    if (!context || context->isContextThread())
+    if (m_scriptExecutionContext->isContextThread())
         delete m_data;
     else
-        context->postTask(DeleteCallbackDataTask::create(m_data));
+        m_data->globalObject()->scriptExecutionContext()->postTask(DeleteCallbackDataTask::create(m_data));
 #ifndef NDEBUG
     m_data = 0;
 #endif

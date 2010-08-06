@@ -128,17 +128,7 @@ void DatabaseSync::changeVersion(const String& oldVersion, const String& newVers
     setExpectedVersion(newVersion);
 }
 
-void DatabaseSync::transaction(PassRefPtr<SQLTransactionSyncCallback> callback, ExceptionCode& ec)
-{
-    runTransaction(callback, false, ec);
-}
-
-void DatabaseSync::readTransaction(PassRefPtr<SQLTransactionSyncCallback> callback, ExceptionCode& ec)
-{
-    runTransaction(callback, true, ec);
-}
-
-void DatabaseSync::runTransaction(PassRefPtr<SQLTransactionSyncCallback> callback, bool readOnly, ExceptionCode& ec)
+void DatabaseSync::transaction(PassRefPtr<SQLTransactionSyncCallback> callback, bool readOnly, ExceptionCode& ec)
 {
     ASSERT(m_scriptExecutionContext->isContextThread());
 

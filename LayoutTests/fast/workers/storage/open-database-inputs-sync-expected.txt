@@ -1,10 +1,10 @@
 This test makes sure that openDatabaseSync() accepts only valid parameters.
+PASS: SYNTAX_ERR: DOM Exception 12
+PASS: SYNTAX_ERR: DOM Exception 12
+PASS: undefined
+PASS: undefined
+PASS: undefined
 PASS: TYPE_MISMATCH_ERR: DOM Exception 17
-PASS: TYPE_MISMATCH_ERR: DOM Exception 17
-PASS: undefined
-PASS: undefined
-PASS: undefined
-PASS: calling openDatabaseSync() with a null creation callback succeeded.
 PASS: openDatabaseSync() succeeded.
 PASS: openDatabaseSync() succeeded.
 PASS: calling openDatabaseSync() with a creation callback succeeded.

@@ -208,14 +208,6 @@ sub SkipFunction {
         return 1;
     }
 
-    # Skip functions that take ["Callback"] parameters, since this
-    # code generator doesn't know yet how to auto-generate callbacks.
-    foreach my $param (@{$function->parameters}) {
-        if ($param->extendedAttributes->{"Callback"}) {
-            return 1;
-        }
-    }
-
     return 0;
 }
 

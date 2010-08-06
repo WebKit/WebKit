@@ -30,7 +30,7 @@ function runTest()
             tx.executeSql("INSERT INTO Test VALUES (?)", [5]);
         }, null, function() { finishTest(); });
     } catch(err) {
-        document.getElementById("console").innerHTML = "FAIL: " + err.message;
+        document.getElementById("console").innerHTML = "FAIL";
         finishTest();
     }
 }
