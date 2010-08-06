@@ -1,3 +1,17 @@
+2010-08-04  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        WebGLBuffer::associateBufferData(ArrayBufferView* array) copies incorrect data for sliced views
+        https://bugs.webkit.org/show_bug.cgi?id=42124
+
+        * html/canvas/WebGLBuffer.cpp:
+        (WebCore::WebGLBuffer::associateBufferDataImpl): Helper function that's called by all associateBufferData().
+        (WebCore::WebGLBuffer::associateBufferData): Call associateBufferDataImpl().
+        (WebCore::WebGLBuffer::associateBufferSubDataImpl): Helper function that's called by all associateBufferSubData().
+        (WebCore::WebGLBuffer::associateBufferSubData): Call associateBufferSubDataImpl().
+        * html/canvas/WebGLBuffer.h: Declare helper functions.
+
 2010-08-06  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

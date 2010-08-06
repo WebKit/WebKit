@@ -90,6 +90,11 @@ private:
 
     // Clears all of the cached max indices.
     void clearCachedMaxIndices();
+
+    // Helper function called by the three associateBufferData().
+    bool associateBufferDataImpl(ArrayBuffer* array, unsigned byteOffset, unsigned byteLength);
+    // Helper function called by the two associateBufferSubData().
+    bool associateBufferSubDataImpl(long offset, ArrayBuffer* array, unsigned arrayByteOffset, unsigned byteLength);
 };
 
 } // namespace WebCore
