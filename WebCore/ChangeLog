@@ -1,3 +1,17 @@
+2010-08-05  Patrick Gansterer  <paroga@paroga.com>
+
+        Reviewed by Adam Roben.
+
+        Make SearchPopupMenuWin more portable
+        https://bugs.webkit.org/show_bug.cgi?id=43527
+
+        Add #if PLATFORM(CF) around CoreFoundation code.
+
+        * platform/win/SearchPopupMenuWin.cpp:
+        (WebCore::SearchPopupMenuWin::enabled):
+        (WebCore::SearchPopupMenuWin::saveRecentSearches):
+        (WebCore::SearchPopupMenuWin::loadRecentSearches):
+
 2010-08-05  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r63653.

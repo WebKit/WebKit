@@ -22,7 +22,10 @@
 #include "SearchPopupMenuWin.h"
 
 #include "AtomicString.h"
+
+#if PLATFORM(CF)
 #include <wtf/RetainPtr.h>
+#endif
 
 namespace WebCore {
 
@@ -38,20 +41,27 @@ PopupMenu* SearchPopupMenuWin::popupMenu()
 
 bool SearchPopupMenuWin::enabled()
 {
+#if PLATFORM(CF)
     return true;
+#else
+    return false;
+#endif
 }
 
+#if PLATFORM(CF)
 static RetainPtr<CFStringRef> autosaveKey(const String& name)
 {
     String key = "com.apple.WebKit.searchField:" + name;
     return RetainPtr<CFStringRef>(AdoptCF, key.createCFString());
 }
+#endif
 
 void SearchPopupMenuWin::saveRecentSearches(const AtomicString& name, const Vector<String>& searchItems)
 {
     if (name.isEmpty())
         return;
 
+#if PLATFORM(CF)
     RetainPtr<CFMutableArrayRef> items;
 
     size_t size = searchItems.size();
@@ -65,6 +75,7 @@ void SearchPopupMenuWin::saveRecentSearches(const AtomicString& name, const Vect
 
     CFPreferencesSetAppValue(autosaveKey(name).get(), items.get(), kCFPreferencesCurrentApplication);
     CFPreferencesAppSynchronize(kCFPreferencesCurrentApplication);
+#endif
 }
 
 void SearchPopupMenuWin::loadRecentSearches(const AtomicString& name, Vector<String>& searchItems)
@@ -72,6 +83,7 @@ void SearchPopupMenuWin::loadRecentSearches(const AtomicString& name, Vector<Str
     if (name.isEmpty())
         return;
 
+#if PLATFORM(CF)
     searchItems.clear();
     RetainPtr<CFArrayRef> items(AdoptCF, reinterpret_cast<CFArrayRef>(CFPreferencesCopyAppValue(autosaveKey(name).get(), kCFPreferencesCurrentApplication)));
 
@@ -84,6 +96,7 @@ void SearchPopupMenuWin::loadRecentSearches(const AtomicString& name, Vector<Str
         if (CFGetTypeID(item) == CFStringGetTypeID())
             searchItems.append(item);
     }
+#endif
 }
 
 }
