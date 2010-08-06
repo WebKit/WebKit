@@ -1,3 +1,14 @@
+2010-08-05  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Jon Honeycutt.
+
+        Fix some leaks seen on the buildbot.
+
+        * platform/graphics/cg/GraphicsContext3DCG.cpp:
+        (WebCore::GraphicsContext3D::paintToCanvas): Adopt the newly-created CoreGraphics objects rather than sharing ownership
+        and over-incrementing their reference count. Also cleaned up the bizarre wrapping used for function arguments while I was
+        touching this code.
+
 2010-08-05  James Robinson  <jamesr@chromium.org>
 
         Rubber stamped by Eric Seidel.
