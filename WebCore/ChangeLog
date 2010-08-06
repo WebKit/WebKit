@@ -1,3 +1,16 @@
+2010-08-06  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Darin Adler.
+
+        Change permission to access methods in XMLDocumentParser.h
+        https://bugs.webkit.org/show_bug.cgi?id=43180
+
+        Change permission to access wellFormed(), lineNumber() and columnNumber()
+        in XMLDocumentParser.h. Because, the methods are used by WML.
+
+        * dom/XMLDocumentParser.h:
+        (WebCore::XMLDocumentParser::wellFormed): Change accebility permission. 
+
 2010-08-06  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.
