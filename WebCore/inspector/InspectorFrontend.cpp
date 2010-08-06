@@ -221,52 +221,6 @@ void InspectorFrontend::debuggerWasDisabled()
     callSimpleFunction("debuggerWasDisabled");
 }
 
-void InspectorFrontend::didSetBreakpoint(long callId, bool success, unsigned line)
-{
-    ScriptFunctionCall function(m_webInspector, "dispatch");
-    function.appendArgument("didSetBreakpoint");
-    function.appendArgument(callId);
-    function.appendArgument(success);
-    function.appendArgument(line);
-    function.call();
-}
-
-void InspectorFrontend::parsedScriptSource(const String& sourceID, const String& url, const String& data, int firstLine, int scriptWorldType)
-{
-    ScriptFunctionCall function(m_webInspector, "dispatch"); 
-    function.appendArgument("parsedScriptSource");
-    function.appendArgument(sourceID);
-    function.appendArgument(url);
-    function.appendArgument(data);
-    function.appendArgument(firstLine);
-    function.appendArgument(scriptWorldType);
-    function.call();
-}
-
-void InspectorFrontend::restoredBreakpoint(const String& sourceID, const String& url, int line, bool enabled, const String& condition)
-{
-    ScriptFunctionCall function(m_webInspector, "dispatch");
-    function.appendArgument("restoredBreakpoint");
-    function.appendArgument(sourceID);
-    function.appendArgument(url);
-    function.appendArgument(line);
-    function.appendArgument(enabled);
-    function.appendArgument(condition);
-    function.call();
-}
-
-void InspectorFrontend::failedToParseScriptSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage)
-{
-    ScriptFunctionCall function(m_webInspector, "dispatch"); 
-    function.appendArgument("failedToParseScriptSource");
-    function.appendArgument(url);
-    function.appendArgument(data);
-    function.appendArgument(firstLine);
-    function.appendArgument(errorLine);
-    function.appendArgument(errorMessage);
-    function.call();
-}
-
 void InspectorFrontend::profilerWasEnabled()
 {
     callSimpleFunction("profilerWasEnabled");

@@ -24,9 +24,9 @@ $typeTransform{"Controller"} = {
     "handlerAccessor" => "m_inspectorController",
 };
 $typeTransform{"Debug"} = {
-    "forward" => "ScriptDebugServer",
-    "header" => "ScriptDebugServer.h",
-    "handlerAccessor" => "(&ScriptDebugServer::shared())",
+    "forward" => "InspectorDebuggerAgent",
+    "header" => "InspectorDebuggerAgent.h",
+    "handlerAccessor" => "m_inspectorController->debuggerAgent()",
 };
 $typeTransform{"DOM"} = {
     "forward" => "InspectorDOMAgent",

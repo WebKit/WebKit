@@ -1750,6 +1750,8 @@
             'inspector/InspectorCSSStore.h',
             'inspector/InspectorDatabaseResource.cpp',
             'inspector/InspectorDatabaseResource.h',
+            'inspector/InspectorDebuggerAgent.cpp',
+            'inspector/InspectorDebuggerAgent.h',
             'inspector/InspectorDOMAgent.cpp',
             'inspector/InspectorDOMAgent.h',
             'inspector/InspectorDOMStorageResource.cpp',

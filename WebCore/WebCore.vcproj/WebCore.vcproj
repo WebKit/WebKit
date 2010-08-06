@@ -50993,6 +50993,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\inspector\InspectorDebuggerAgent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\InspectorDebuggerAgent.h"
+				>
+			</File>
+			<File
 				RelativePath="..\inspector\InspectorDOMAgent.cpp"
 				>
 			</File>

@@ -745,6 +745,7 @@ SOURCES += \
     inspector/InspectorCSSStore.cpp \
     inspector/InspectorController.cpp \
     inspector/InspectorDatabaseResource.cpp \
+    inspector/InspectorDebuggerAgent.cpp \
     inspector/InspectorDOMAgent.cpp \
     inspector/InspectorDOMStorageResource.cpp \
     inspector/InspectorFrontend.cpp \
@@ -1505,6 +1506,7 @@ HEADERS += \
     inspector/InspectorBackend.h \
     inspector/InspectorController.h \
     inspector/InspectorDatabaseResource.h \
+    inspector/InspectorDebuggerAgent.h \
     inspector/InspectorDOMStorageResource.h \
     inspector/InspectorFrontend.h \
     inspector/InspectorFrontendClient.h \

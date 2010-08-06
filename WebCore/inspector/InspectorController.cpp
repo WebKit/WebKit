@@ -61,6 +61,7 @@
 #include "InspectorFrontendClient.h"
 #include "InspectorDOMStorageResource.h"
 #include "InspectorDatabaseResource.h"
+#include "InspectorDebuggerAgent.h"
 #include "InspectorFrontend.h"
 #include "InspectorResource.h"
 #include "InspectorValues.h"
@@ -73,7 +74,6 @@
 #include "RenderInline.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
-#include "ScriptBreakpoint.h"
 #include "ScriptCallStack.h"
 #include "ScriptFunctionCall.h"
 #include "ScriptObject.h"
@@ -89,7 +89,6 @@
 #include <wtf/text/CString.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/ListHashSet.h>
-#include <wtf/MD5.h>
 #include <wtf/RefCounted.h>
 #include <wtf/StdLibExtras.h>
 
@@ -145,32 +144,6 @@ static const unsigned expireConsoleMessagesStep = 100;
 
 static unsigned s_inspectorControllerCount;
 
-namespace {
-
-String md5Base16(const String& string)
-{
-    static const char digits[] = "0123456789abcdef";
-
-    MD5 md5;
-    md5.addBytes(reinterpret_cast<const uint8_t*>(string.characters()), string.length() * 2);
-    Vector<uint8_t, 16> digest;
-    md5.checksum(digest);
-
-    Vector<char, 32> result;
-    for (int i = 0; i < 16; ++i) {
-        result.append(digits[(digest[i] >> 4) & 0xf]);
-        result.append(digits[digest[i] & 0xf]);
-    }
-    return String(result.data(), result.size());
-}
-
-String formatBreakpointId(const String& sourceID, unsigned lineNumber)
-{
-    return String::format("%s:%d", sourceID.utf8().data(), lineNumber);
-}
-
-}
-
 InspectorController::InspectorController(Page* page, InspectorClient* client)
     : m_inspectedPage(page)
     , m_client(client)
@@ -189,10 +162,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* client)
     , m_inspectorBackendDispatcher(new InspectorBackendDispatcher(this))
     , m_injectedScriptHost(InjectedScriptHost::create(this))
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    , m_debuggerEnabled(false)
     , m_attachDebuggerWhenShown(false)
-    , m_pausedScriptState(0)
-    , m_breakpointsLoaded(false)
     , m_profilerEnabled(!WTF_USE_JSC)
     , m_recordingUserInitiatedProfile(false)
     , m_currentUserInitiatedProfileNumber(-1)
@@ -230,6 +200,9 @@ void InspectorController::inspectedPageDestroyed()
 
     hideHighlight();
 
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+    m_debuggerAgent.clear();
+#endif
     ASSERT(m_inspectedPage);
     m_inspectedPage = 0;
 
@@ -510,7 +483,7 @@ void InspectorController::connectFrontend(const ScriptObject& webInspector)
     populateScriptObjects();
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    if (ScriptDebugServer::shared().isDebuggerAlwaysEnabled()) {
+    if (InspectorDebuggerAgent::isDebuggerAlwaysEnabled()) {
         // FIXME (40364): This will force pushing script sources to frontend even if script
         // panel is inactive.
         enableDebuggerFromFrontend(false);
@@ -598,7 +571,7 @@ void InspectorController::disconnectFrontend()
     // If the window is being closed with the debugger enabled,
     // remember this state to re-enable debugger on the next window
     // opening.
-    bool debuggerWasEnabled = m_debuggerEnabled;
+    bool debuggerWasEnabled = debuggerEnabled();
     disableDebugger();
     m_attachDebuggerWhenShown = debuggerWasEnabled;
 #endif
@@ -666,7 +639,7 @@ void InspectorController::populateScriptObjects()
         m_consoleMessages[i]->addToFrontend(m_remoteFrontend.get(), m_injectedScriptHost.get());
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    if (m_debuggerEnabled)
+    if (debuggerEnabled())
         m_frontend->updatePauseOnExceptionsState(ScriptDebugServer::shared().pauseOnExceptionsState());
 #endif
 #if ENABLE(DATABASE)
@@ -750,11 +723,8 @@ void InspectorController::didCommitLoad(DocumentLoader* loader)
         m_times.clear();
         m_counts.clear();
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-        m_sourceIDToURL.clear();
-        m_scriptIDToContent.clear();
-        m_stickyBreakpoints.clear();
-        m_breakpointsMapping.clear();
-        m_breakpointsLoaded = false;
+        if (m_debuggerAgent)
+            m_debuggerAgent->clearForPageNavigation();
 #endif
 #if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
         m_profiles.clear();
@@ -1646,16 +1616,14 @@ void InspectorController::disableProfiler(bool always)
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 void InspectorController::enableDebuggerFromFrontend(bool always)
 {
-    ASSERT(!m_debuggerEnabled);
+    ASSERT(!debuggerEnabled());
     if (always)
         setSetting(debuggerEnabledSettingName, "true");
 
     ASSERT(m_inspectedPage);
 
-    ScriptDebugServer::shared().clearBreakpoints();
-    ScriptDebugServer::shared().addListener(this, m_inspectedPage);
+    m_debuggerAgent = InspectorDebuggerAgent::create(this);
 
-    m_debuggerEnabled = true;
     m_frontend->debuggerWasEnabled();
 }
 
@@ -1664,7 +1632,7 @@ void InspectorController::enableDebugger()
     if (!enabled())
         return;
 
-    if (m_debuggerEnabled)
+    if (debuggerEnabled())
         return;
 
     if (!m_frontend)
@@ -1685,148 +1653,19 @@ void InspectorController::disableDebugger(bool always)
 
     ASSERT(m_inspectedPage);
 
-    ScriptDebugServer::shared().removeListener(this, m_inspectedPage);
+    m_debuggerAgent.clear();
 
-    m_debuggerEnabled = false;
     m_attachDebuggerWhenShown = false;
-    m_pausedScriptState = 0;
 
     if (m_frontend)
         m_frontend->debuggerWasDisabled();
 }
 
-void InspectorController::editScriptSource(long, const String& sourceID, const String& newContent, bool* success, String* result, RefPtr<InspectorValue>* newCallFrames)
-{
-    if (*success = ScriptDebugServer::shared().editScriptSource(sourceID, newContent, *result))
-        *newCallFrames = currentCallFrames();
-}
-
-void InspectorController::getScriptSource(long, const String& sourceID, String* scriptSource)
-{
-    *scriptSource = m_scriptIDToContent.get(sourceID);
-}
-
 void InspectorController::resume()
 {
-    if (!m_debuggerEnabled)
-        return;
-    ScriptDebugServer::shared().continueProgram();
+    if (m_debuggerAgent)
+        m_debuggerAgent->resume();
 }
-
-void InspectorController::setPauseOnExceptionsState(long pauseState)
-{
-    ScriptDebugServer::shared().setPauseOnExceptionsState(static_cast<ScriptDebugServer::PauseOnExceptionsState>(pauseState));
-    if (m_frontend)
-        m_frontend->updatePauseOnExceptionsState(ScriptDebugServer::shared().pauseOnExceptionsState());
-}
-
-PassRefPtr<InspectorValue> InspectorController::currentCallFrames()
-{
-    if (!m_pausedScriptState)
-        return InspectorValue::null();
-    InjectedScript injectedScript = m_injectedScriptHost->injectedScriptFor(m_pausedScriptState);
-    if (injectedScript.hasNoValue()) {
-        ASSERT_NOT_REACHED();
-        return InspectorValue::null();
-    }
-    return injectedScript.callFrames();
-}
-
-void InspectorController::setBreakpoint(long, const String& sourceID, unsigned lineNumber, bool enabled, const String& condition, bool* success, unsigned int* actualLineNumber)
-{
-    ScriptBreakpoint breakpoint(enabled, condition);
-    *success = ScriptDebugServer::shared().setBreakpoint(sourceID, breakpoint, lineNumber, actualLineNumber);
-    if (!*success)
-        return;
-
-    String url = m_sourceIDToURL.get(sourceID);
-    if (url.isEmpty())
-        return;
-
-    String breakpointId = formatBreakpointId(sourceID, *actualLineNumber);
-    m_breakpointsMapping.set(breakpointId, *actualLineNumber);
-
-    String key = md5Base16(url);
-    HashMap<String, SourceBreakpoints>::iterator it = m_stickyBreakpoints.find(key);
-    if (it == m_stickyBreakpoints.end())
-        it = m_stickyBreakpoints.set(key, SourceBreakpoints()).first;
-    it->second.set(*actualLineNumber, breakpoint);
-    saveBreakpoints();
-}
-
-void InspectorController::removeBreakpoint(const String& sourceID, unsigned lineNumber)
-{
-    ScriptDebugServer::shared().removeBreakpoint(sourceID, lineNumber);
-
-    String url = m_sourceIDToURL.get(sourceID);
-    if (url.isEmpty())
-        return;
-
-    String breakpointId = formatBreakpointId(sourceID, lineNumber);
-    HashMap<String, unsigned>::iterator mappingIt = m_breakpointsMapping.find(breakpointId);
-    if (mappingIt == m_breakpointsMapping.end())
-        return;
-    unsigned stickyLine = mappingIt->second;
-    m_breakpointsMapping.remove(mappingIt);
-
-    HashMap<String, SourceBreakpoints>::iterator it = m_stickyBreakpoints.find(md5Base16(url));
-    if (it == m_stickyBreakpoints.end())
-        return;
-
-    it->second.remove(stickyLine);
-    saveBreakpoints();
-}
-
-// JavaScriptDebugListener functions
-
-void InspectorController::didParseSource(const String& sourceID, const String& url, const String& data, int firstLine, ScriptWorldType worldType)
-{
-    // Don't send script content to the front end until it's really needed.
-    m_frontend->parsedScriptSource(sourceID, url, "", firstLine, worldType);
-
-    m_scriptIDToContent.set(sourceID, data);
-
-    if (url.isEmpty())
-        return;
-
-    loadBreakpoints();
-    HashMap<String, SourceBreakpoints>::iterator it = m_stickyBreakpoints.find(md5Base16(url));
-    if (it != m_stickyBreakpoints.end()) {
-        for (SourceBreakpoints::iterator breakpointIt = it->second.begin(); breakpointIt != it->second.end(); ++breakpointIt) {
-            int lineNumber = breakpointIt->first;
-            if (firstLine > lineNumber)
-                continue;
-            unsigned actualLineNumber = 0;
-            bool success = ScriptDebugServer::shared().setBreakpoint(sourceID, breakpointIt->second, lineNumber, &actualLineNumber);
-            if (!success)
-                continue;
-            m_frontend->restoredBreakpoint(sourceID, url, actualLineNumber, breakpointIt->second.enabled, breakpointIt->second.condition);
-            String breakpointId = formatBreakpointId(sourceID, actualLineNumber);
-            m_breakpointsMapping.set(breakpointId, lineNumber);
-        }
-    }
-    m_sourceIDToURL.set(sourceID, url);
-}
-
-void InspectorController::failedToParseSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage)
-{
-    m_frontend->failedToParseScriptSource(url, data, firstLine, errorLine, errorMessage);
-}
-
-void InspectorController::didPause(ScriptState* scriptState)
-{
-    ASSERT(scriptState && !m_pausedScriptState);
-    m_pausedScriptState = scriptState;
-    RefPtr<InspectorValue> callFrames = currentCallFrames();
-    m_remoteFrontend->pausedScript(callFrames.get());
-}
-
-void InspectorController::didContinue()
-{
-    m_pausedScriptState = 0;
-    m_remoteFrontend->resumedScript();
-}
-
 #endif
 
 void InspectorController::evaluateForTestInFrontend(long callId, const String& script)
@@ -1852,39 +1691,16 @@ void InspectorController::didEvaluateForTestInFrontend(long callId, const String
 String InspectorController::breakpointsSettingKey()
 {
     DEFINE_STATIC_LOCAL(String, keyPrefix, ("breakpoints:"));
-    return keyPrefix + md5Base16(m_mainResource->requestURL());
+    return keyPrefix + InspectorDebuggerAgent::md5Base16(m_mainResource->requestURL());
 }
 
-void InspectorController::loadBreakpoints()
+PassRefPtr<InspectorValue> InspectorController::loadBreakpoints()
 {
-    if (m_breakpointsLoaded)
-        return;
-    m_breakpointsLoaded = true;
-
-    RefPtr<InspectorValue> parsedSetting = InspectorValue::parseJSON(setting(breakpointsSettingKey()));
-    if (!parsedSetting)
-        return;
-    RefPtr<InspectorObject> breakpoints = parsedSetting->asObject();
-    if (!breakpoints)
-        return;
-    for (InspectorObject::iterator it = breakpoints->begin(); it != breakpoints->end(); ++it) {
-        RefPtr<InspectorObject> breakpointsForURL = it->second->asObject();
-        if (!breakpointsForURL)
-            continue;
-        HashMap<String, SourceBreakpoints>::iterator sourceBreakpointsIt = m_stickyBreakpoints.set(it->first, SourceBreakpoints()).first;
-        ScriptBreakpoint::sourceBreakpointsFromInspectorObject(breakpointsForURL, &sourceBreakpointsIt->second);
-    }
+    return InspectorValue::parseJSON(setting(breakpointsSettingKey()));
 }
 
-void InspectorController::saveBreakpoints()
+void InspectorController::saveBreakpoints(PassRefPtr<InspectorObject> breakpoints)
 {
-    RefPtr<InspectorObject> breakpoints = InspectorObject::create();
-    for (HashMap<String, SourceBreakpoints>::iterator it(m_stickyBreakpoints.begin()); it != m_stickyBreakpoints.end(); ++it) {
-        if (it->second.isEmpty())
-            continue;
-        RefPtr<InspectorObject> breakpointsForURL = ScriptBreakpoint::inspectorObjectFromSourceBreakpoints(it->second);
-        breakpoints->set(it->first, breakpointsForURL);
-    }
     setSetting(breakpointsSettingKey(), breakpoints->toJSONString());
 }
 #endif

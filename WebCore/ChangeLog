@@ -1,3 +1,63 @@
+2010-08-06  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: extract debugger implementation into InspectorDebuggerAgent
+        https://bugs.webkit.org/show_bug.cgi?id=42340
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/CodeGeneratorInspector.pm:
+        * inspector/Inspector.idl:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::connectFrontend):
+        (WebCore::InspectorController::didCommitLoad):
+        (WebCore::InspectorController::enableDebuggerFromFrontend):
+        (WebCore::InspectorController::disableDebugger):
+        (WebCore::InspectorController::resume):
+        (WebCore::InspectorController::loadBreakpoints):
+        (WebCore::InspectorController::saveBreakpoints):
+        * inspector/InspectorController.h:
+        (WebCore::InspectorController::debuggerAgent):
+        * inspector/InspectorDebuggerAgent.cpp: Added.
+        (WebCore::md5Base16):
+        (WebCore::formatBreakpointId):
+        (WebCore::InspectorDebuggerAgent::create):
+        (WebCore::InspectorDebuggerAgent::InspectorDebuggerAgent):
+        (WebCore::InspectorDebuggerAgent::~InspectorDebuggerAgent):
+        (WebCore::InspectorDebuggerAgent::isDebuggerAlwaysEnabled):
+        (WebCore::InspectorDebuggerAgent::activateBreakpoints):
+        (WebCore::InspectorDebuggerAgent::deactivateBreakpoints):
+        (WebCore::InspectorDebuggerAgent::setBreakpoint):
+        (WebCore::InspectorDebuggerAgent::removeBreakpoint):
+        (WebCore::InspectorDebuggerAgent::editScriptSource):
+        (WebCore::InspectorDebuggerAgent::getScriptSource):
+        (WebCore::InspectorDebuggerAgent::pause):
+        (WebCore::InspectorDebuggerAgent::resume):
+        (WebCore::InspectorDebuggerAgent::stepOverStatement):
+        (WebCore::InspectorDebuggerAgent::stepIntoStatement):
+        (WebCore::InspectorDebuggerAgent::stepOutOfFunction):
+        (WebCore::InspectorDebuggerAgent::setPauseOnExceptionsState):
+        (WebCore::InspectorDebuggerAgent::clearForPageNavigation):
+        (WebCore::InspectorDebuggerAgent::currentCallFrames):
+        (WebCore::InspectorDebuggerAgent::loadBreakpoints):
+        (WebCore::InspectorDebuggerAgent::saveBreakpoints):
+        (WebCore::InspectorDebuggerAgent::didParseSource):
+        (WebCore::InspectorDebuggerAgent::failedToParseSource):
+        (WebCore::InspectorDebuggerAgent::didPause):
+        (WebCore::InspectorDebuggerAgent::didContinue):
+        (WebCore::InspectorDebuggerAgent::remoteFrontend):
+        * inspector/InspectorDebuggerAgent.h: Added.
+        * inspector/InspectorFrontend.cpp:
+        * inspector/InspectorFrontend.h:
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel):
+
 2010-08-06  Dean Jackson  <dino@apple.com>
 
         Reviewed by Simon Fraser and Steve Block.

@@ -47,8 +47,12 @@ module core {
         [notify] void updateResource(out Value resource);
         [notify] void removeResource(out unsigned long resourceId);
 #if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
+        [notify] void parsedScriptSource(out String sourceID, out String url, out String data, out int firstLine, out int scriptWorldType);
+        [notify] void failedToParseScriptSource(out String url, out String data, out int firstLine, out int errorLine, out String errorMessage);
         [notify] void pausedScript(out Value callFrames);
         [notify] void resumedScript();
+        [notify] void restoredBreakpoint(out String sourceID, out String url, out int line, out boolean enabled, out String condition);
+        [notify] void updatePauseOnExceptionsState(out long state);
         [notify] void addProfileHeader(out Object header);
 #endif
 #if defined(ENABLE_DATABASE) && ENABLE_DATABASE
@@ -88,22 +92,22 @@ module core {
         [handler=Backend] void enableDebugger(in boolean always);
         [handler=Controller] void disableDebugger(in boolean always);
 
-        [handler=Controller] void setBreakpoint(in long callId, in String sourceID, in unsigned int lineNumber, in boolean enabled, in String condition, out boolean success, out unsigned int actualLineNumber);
-        [handler=Controller] void removeBreakpoint(in String sourceID, in unsigned long lineNumber);
+        [handler=Debug] void setBreakpoint(in long callId, in String sourceID, in unsigned int lineNumber, in boolean enabled, in String condition, out boolean success, out unsigned int actualLineNumber);
+        [handler=Debug] void removeBreakpoint(in String sourceID, in unsigned long lineNumber);
         [handler=Debug] void activateBreakpoints();
         [handler=Debug] void deactivateBreakpoints();
 
         [handler=Debug] void pause();
-        [handler=Controller] void resume();
+        [handler=Debug] void resume();
 
         [handler=Debug] void stepOverStatement();
         [handler=Debug] void stepIntoStatement();
         [handler=Debug] void stepOutOfFunction();
 
-        [handler=Controller] void setPauseOnExceptionsState(in long pauseOnExceptionsState);
+        [handler=Debug] void setPauseOnExceptionsState(in long pauseOnExceptionsState);
 
-        [handler=Controller] void editScriptSource(in long callId, in String sourceID, in String newContent, out boolean success, out String result, out Value newCallFrames);
-        [handler=Controller] void getScriptSource(in long callId, in String sourceID, out String scriptSource);
+        [handler=Debug] void editScriptSource(in long callId, in String sourceID, in String newContent, out boolean success, out String result, out Value newCallFrames);
+        [handler=Debug] void getScriptSource(in long callId, in String sourceID, out String scriptSource);
 
         [handler=Controller] void enableProfiler(in boolean always);
         [handler=Controller] void disableProfiler(in boolean always);

@@ -1602,6 +1602,8 @@ webcore_sources += \
 	WebCore/inspector/InspectorCSSStore.h \
 	WebCore/inspector/InspectorDatabaseResource.cpp \
 	WebCore/inspector/InspectorDatabaseResource.h \
+	WebCore/inspector/InspectorDebuggerAgent.cpp \
+	WebCore/inspector/InspectorDebuggerAgent.h \
 	WebCore/inspector/InspectorDOMAgent.cpp \
 	WebCore/inspector/InspectorDOMAgent.h \
 	WebCore/inspector/InspectorDOMStorageResource.cpp \
