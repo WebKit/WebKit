@@ -1,5 +1,13 @@
 2010-08-06  Eric Carlson  <eric.carlson@apple.com>
 
+        Unreviewed, release Qt build fix.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::containsPaintedContent): Guard call to toRenderVideo()
+        with #if ENABLE(VIDEO).
+
+2010-08-06  Eric Carlson  <eric.carlson@apple.com>
+
         Reviewed by Simon Fraser.
 
         HTML5 "video" tag with poster frame defined "flashes" right before movie displays
