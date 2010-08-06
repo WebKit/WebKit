@@ -4530,14 +4530,14 @@ EXTRA_DIST += \
 	WebCore/xml/XPathGrammar.y
 
 # Installing web inspector files
-webinspectordir = ${datadir}/webkit-@WEBKITGTK_API_VERSION@/webinspector
+webinspectordir = ${datadir}/webkitgtk-@WEBKITGTK_API_VERSION@/webinspector
 dist_webinspector_DATA = \
 	$(WebCore)/English.lproj/localizedStrings.js \
 	$(shell ls $(WebCore)/inspector/front-end/*.js) \
 	$(shell ls $(WebCore)/inspector/front-end/*.html) \
 	$(shell ls $(WebCore)/inspector/front-end/*.css)
 
-webinspectorimagesdir = ${datadir}/webkit-@WEBKITGTK_API_VERSION@/webinspector/Images
+webinspectorimagesdir = ${datadir}/webkitgtk-@WEBKITGTK_API_VERSION@/webinspector/Images
 dist_webinspectorimages_DATA = \
 	$(shell ls $(WebCore)/inspector/front-end/Images/*.gif) \
 	$(shell ls $(WebCore)/inspector/front-end/Images/*.png)

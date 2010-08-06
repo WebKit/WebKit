@@ -86,7 +86,7 @@ void InspectorClient::openInspectorFrontend(InspectorController* controller)
         GOwnPtr<gchar> fullPath(g_strdup_printf("%s/WebCore/inspector/front-end/inspector.html", currentDirectory.get()));
         inspectorURI.set(g_filename_to_uri(fullPath.get(), NULL, NULL));
     } else {
-        GOwnPtr<gchar> dataPath(g_strdup_printf(DATA_DIR"/webkit-%.1f/webinspector/inspector.html", WEBKITGTK_API_VERSION));
+        GOwnPtr<gchar> dataPath(g_strdup_printf(DATA_DIR"/webkitgtk-%.1f/webinspector/inspector.html", WEBKITGTK_API_VERSION));
         inspectorURI.set(g_filename_to_uri(dataPath.get(), NULL, NULL));
     }
 
@@ -205,8 +205,10 @@ String InspectorFrontendClient::localizedStringsURL()
         GOwnPtr<gchar> currentDirectory(g_get_current_dir());
         GOwnPtr<gchar> fullPath(g_strdup_printf("%s/WebCore/English.lproj/localizedStrings.js", currentDirectory.get()));
         URL.set(g_filename_to_uri(fullPath.get(), NULL, NULL));
-    } else
-        URL.set(g_filename_to_uri(DATA_DIR"/webkit-1.0/webinspector/localizedStrings.js", NULL, NULL));
+    } else {
+        GOwnPtr<gchar> localizedStringsPath(g_strdup_printf(DATA_DIR"/webkitgtk-%.1f/webinspector/localizedStrings.js", WEBKITGTK_API_VERSION));
+        URL.set(g_filename_to_uri(localizedStringsPath.get(), NULL, NULL));
+    }
 
     // FIXME: support l10n of localizedStrings.js
     return String::fromUTF8(URL.get());

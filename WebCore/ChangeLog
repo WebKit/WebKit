@@ -1,3 +1,12 @@
+2010-08-06  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Xan Lopez.
+
+        Use new "package" name also for the directory where the inspector
+        support files are installed.
+
+        * GNUmakefile.am:
+
 2010-08-06  Jian Li  <jianli@chromium.org>
 
         Fix chromium build break.
