@@ -36,6 +36,7 @@
 #include "ScriptState.h"
 #include "StringHash.h"
 #include <wtf/HashMap.h>
+#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 class InjectedScriptHost;
