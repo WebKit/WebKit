@@ -26,6 +26,10 @@
 #include "config.h"
 #include "PluginView.h"
 
+#if USE(JSC)
+#include "Bridge.h"
+#endif
+
 using namespace WTF;
 
 namespace WebCore {
@@ -135,10 +139,17 @@ void PluginView::handleFocusOutEvent()
 // ports using PluginView, but until then, if new functions like this are 
 // added, please make sure they have the proper platform #ifs so that changes
 // do not break ports who compile both this file and PluginView.cpp.   
-#if PLATFORM(MAC) || PLATFORM(CHROMIUM) || PLATFORM(EFL)
+#if PLATFORM(MAC) || PLATFORM(CHROMIUM) || PLATFORM(EFL) || OS(WINCE) && !PLATFORM(QT)
 #if ENABLE(NETSCAPE_PLUGIN_API)
 void PluginView::keepAlive(NPP)
 {
+}
+#endif
+
+#if USE(JSC)
+PassRefPtr<JSC::Bindings::Instance> PluginView::bindingInstance()
+{
+    return 0;
 }
 #endif
 
