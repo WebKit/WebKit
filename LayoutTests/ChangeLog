@@ -1,3 +1,19 @@
+2010-08-06  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: Chromium test expectations rebaseline.
+
+        * platform/chromium-linux/fast/text/stripNullFromText-expected.checksum:
+        * platform/chromium-linux/fast/text/stripNullFromText-expected.png: Added.
+        * platform/chromium-linux/fast/text/stripNullFromText-expected.txt:
+        * platform/chromium-linux/websocket/tests/bad-sub-protocol-control-chars-expected.txt: Added.
+        * platform/chromium-mac/fast/text/stripNullFromText-expected.checksum:
+        * platform/chromium-mac/fast/text/stripNullFromText-expected.png:
+        * platform/chromium-mac/websocket/tests/bad-sub-protocol-control-chars-expected.txt:
+        * platform/chromium-win/fast/text/stripNullFromText-expected.checksum:
+        * platform/chromium-win/fast/text/stripNullFromText-expected.png:
+        * platform/chromium-win/fast/text/stripNullFromText-expected.txt:
+        * platform/chromium-win/websocket/tests/bad-sub-protocol-control-chars-expected.txt:
+
 2010-08-05  Alexey Proskuryakov  <ap@apple.com>
 
         Fix http/tests/webarchive/test-css-url-encoding-shift-jis.html
