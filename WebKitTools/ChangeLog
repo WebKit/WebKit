@@ -1,3 +1,11 @@
+2010-08-06  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] Fix the DRT build on Mac OS X
+
+        * DumpRenderTree/qt/DumpRenderTree.pro:
+
 2010-08-06  Jochen Eisinger  <jochen@chromium.org>
 
         Reviewed by Pavel Feldman.

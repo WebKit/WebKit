@@ -13,7 +13,7 @@ INCLUDEPATH += ../../../JavaScriptCore/ForwardingHeaders
 INCLUDEPATH += $$BASEDIR
 DESTDIR = ../../../bin
 
-!win32:!symbian {
+unix:!mac {
     CONFIG += link_pkgconfig
     PKGCONFIG += fontconfig
 }
