@@ -23,39 +23,56 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebIDBCallbacksImpl_h
-#define WebIDBCallbacksImpl_h
+#include "config.h"
+#include "WebIDBCursorImpl.h"
 
-#include "WebIDBCallbacks.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
+#include "IDBAny.h"
+#include "IDBCallbacksProxy.h"
+#include "IDBCursorBackendInterface.h"
+#include "IDBKey.h"
+#include "WebIDBKey.h"
 
-#if ENABLE(INDEXED_DATABASE)
+using namespace WebCore;
 
-namespace WebCore {
+namespace WebKit {
 
-class IDBCallbacks;
+WebIDBCursorImpl::WebIDBCursorImpl(PassRefPtr<IDBCursorBackendInterface> idbCursorBackend)
+    : m_idbCursorBackend(idbCursorBackend)
+{
+}
 
-class WebIDBCallbacksImpl : public WebKit::WebIDBCallbacks {
-public:
-    WebIDBCallbacksImpl(PassRefPtr<IDBCallbacks>);
-    virtual ~WebIDBCallbacksImpl();
+WebIDBCursorImpl::~WebIDBCursorImpl()
+{
+}
 
-    virtual void onError(const WebKit::WebIDBDatabaseError&);
-    virtual void onSuccess(); // For "null".
-    virtual void onSuccess(WebKit::WebIDBCursor*);
-    virtual void onSuccess(WebKit::WebIDBDatabase*);
-    virtual void onSuccess(const WebKit::WebIDBKey&);
-    virtual void onSuccess(WebKit::WebIDBIndex*);
-    virtual void onSuccess(WebKit::WebIDBObjectStore*);
-    virtual void onSuccess(const WebKit::WebSerializedScriptValue&);
+unsigned short WebIDBCursorImpl::direction() const
+{
+    return m_idbCursorBackend->direction();
+}
 
-private:
-    RefPtr<IDBCallbacks> m_callbacks;
-};
+WebIDBKey WebIDBCursorImpl::key() const
+{
+    return WebIDBKey(m_idbCursorBackend->key());
+}
+
+WebSerializedScriptValue WebIDBCursorImpl::value() const
+{
+    return m_idbCursorBackend->value()->serializedScriptValue();
+}
+
+void WebIDBCursorImpl::update(const WebSerializedScriptValue& value, WebIDBCallbacks* callbacks)
+{
+    m_idbCursorBackend->update(value, IDBCallbacksProxy::create(callbacks));
+}
+
+void WebIDBCursorImpl::continueFunction(const WebIDBKey& key, WebIDBCallbacks* callbacks)
+{
+    m_idbCursorBackend->continueFunction(key, IDBCallbacksProxy::create(callbacks));
+}
+
+void WebIDBCursorImpl::remove(WebIDBCallbacks* callbacks)
+{
+    m_idbCursorBackend->remove(IDBCallbacksProxy::create(callbacks));
+}
 
 } // namespace WebCore
-
-#endif
-
-#endif // WebIDBCallbacksImpl_h

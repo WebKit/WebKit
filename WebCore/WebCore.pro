@@ -2424,6 +2424,9 @@ contains(DEFINES, ENABLE_INDEXED_DATABASE=1) {
         bindings/js/IDBBindingUtilities.h \
         storage/IDBAny.h \
         storage/IDBCallbacks.h \
+        storage/IDBCursor.h \
+        storage/IDBCursorBackendImpl.h \
+        storage/IDBCursorBackendInterface.h \
         storage/IDBDatabase.h \
         storage/IDBDatabaseBackendImpl.h \
         storage/IDBDatabaseBackendInterface.h \
@@ -2452,6 +2455,8 @@ contains(DEFINES, ENABLE_INDEXED_DATABASE=1) {
         bindings/js/JSIDBAnyCustom.cpp \
         bindings/js/JSIDBKeyCustom.cpp \
         storage/IDBAny.cpp \
+        storage/IDBCursor.cpp \
+        storage/IDBCursorBackendImpl.cpp \
         storage/IDBDatabase.cpp \
         storage/IDBDatabaseBackendImpl.cpp \
         storage/IDBErrorEvent.cpp \

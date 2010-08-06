@@ -29,7 +29,9 @@
 #include "DOMStringList.h"
 #include "IDBCallbacks.h"
 #include "IDBIndexBackendProxy.h"
+#include "IDBKeyRange.h"
 #include "WebIDBCallbacksImpl.h"
+#include "WebIDBKeyRange.h"
 #include "WebIDBIndex.h"
 #include "WebIDBKey.h"
 #include "WebIDBObjectStore.h"
@@ -99,6 +101,11 @@ PassRefPtr<IDBIndexBackendInterface> IDBObjectStoreProxy::index(const String& na
 void IDBObjectStoreProxy::removeIndex(const String& name, PassRefPtr<IDBCallbacks> callbacks)
 {
     m_webIDBObjectStore->removeIndex(name, new WebIDBCallbacksImpl(callbacks));
+}
+
+void IDBObjectStoreProxy::openCursor(PassRefPtr<IDBKeyRange> range, unsigned short direction, PassRefPtr<IDBCallbacks> callbacks)
+{
+    m_webIDBObjectStore->openCursor(range, direction, new WebIDBCallbacksImpl(callbacks));
 }
 
 } // namespace WebCore

@@ -1,3 +1,4 @@
+
 ##
 ## Copyright 2009, The Android Open Source Project
 ##
@@ -361,6 +362,7 @@ $(patsubst %.h,%.cpp,$(GEN)): $(intermediates)/storage/%.cpp : $(intermediates)/
 # Indexed Database
 GEN := \
     $(intermediates)/storage/JSIDBAny.h \
+    $(intermediates)/storage/JSIDBCursor.h \
     $(intermediates)/storage/JSIDBDatabaseError.h \
     $(intermediates)/storage/JSIDBDatabaseException.h \
     $(intermediates)/storage/JSIDBDatabase.h \

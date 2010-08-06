@@ -1,3 +1,69 @@
+2010-08-05  Marcus Bulach  <bulach@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Initial bindings and plumbing for IDBCursor.
+        https://bugs.webkit.org/show_bug.cgi?id=41888
+
+        Test: storage/indexeddb/idb-opencursor.html
+
+        * WebKit.gyp:
+        * public/WebIDBCallbacks.h:
+        (WebKit::WebIDBCallbacks::onSuccess):
+        * public/WebIDBCursor.h: Added.
+        (WebKit::WebIDBCursor::~WebIDBCursor):
+        (WebKit::WebIDBCursor::direction):
+        (WebKit::WebIDBCursor::key):
+        (WebKit::WebIDBCursor::value):
+        (WebKit::WebIDBCursor::update):
+        (WebKit::WebIDBCursor::continueFunction):
+        (WebKit::WebIDBCursor::remove):
+        * public/WebIDBKeyRange.h: Added.
+        (WebKit::WebIDBKeyRange::~WebIDBKeyRange):
+        (WebKit::WebIDBKeyRange::WebIDBKeyRange):
+        * public/WebIDBObjectStore.h:
+        (WebKit::WebIDBObjectStore::openCursor):
+        * src/IDBCallbacksProxy.cpp:
+        (WebCore::IDBCallbacksProxy::onSuccess):
+        * src/IDBCallbacksProxy.h:
+        * src/IDBCursorBackendProxy.cpp: Added.
+        (WebCore::IDBCursorBackendProxy::create):
+        (WebCore::IDBCursorBackendProxy::IDBCursorBackendProxy):
+        (WebCore::IDBCursorBackendProxy::~IDBCursorBackendProxy):
+        (WebCore::IDBCursorBackendProxy::direction):
+        (WebCore::IDBCursorBackendProxy::key):
+        (WebCore::IDBCursorBackendProxy::value):
+        (WebCore::IDBCursorBackendProxy::update):
+        (WebCore::IDBCursorBackendProxy::continueFunction):
+        (WebCore::IDBCursorBackendProxy::remove):
+        * src/IDBCursorBackendProxy.h: Added.
+        * src/IDBObjectStoreProxy.cpp:
+        (WebCore::IDBObjectStoreProxy::openCursor):
+        * src/IDBObjectStoreProxy.h:
+        * src/WebIDBCallbacksImpl.cpp:
+        (WebCore::WebIDBCallbacksImpl::onSuccess):
+        * src/WebIDBCallbacksImpl.h:
+        * src/WebIDBCursorImpl.cpp: Added.
+        (WebKit::WebIDBCursorImpl::WebIDBCursorImpl):
+        (WebKit::WebIDBCursorImpl::~WebIDBCursorImpl):
+        (WebKit::WebIDBCursorImpl::direction):
+        (WebKit::WebIDBCursorImpl::key):
+        (WebKit::WebIDBCursorImpl::value):
+        (WebKit::WebIDBCursorImpl::update):
+        (WebKit::WebIDBCursorImpl::continueFunction):
+        (WebKit::WebIDBCursorImpl::remove):
+        * src/WebIDBCursorImpl.h: Added.
+        * src/WebIDBKeyRange.cpp: Added.
+        (WebKit::WebIDBKeyRange::WebIDBKeyRange):
+        (WebKit::WebIDBKeyRange::assign):
+        (WebKit::WebIDBKeyRange::reset):
+        (WebKit::WebIDBKeyRange::left):
+        (WebKit::WebIDBKeyRange::right):
+        (WebKit::WebIDBKeyRange::flags):
+        * src/WebIDBObjectStoreImpl.cpp:
+        (WebKit::WebIDBObjectStoreImpl::openCursor):
+        * src/WebIDBObjectStoreImpl.h:
+
 2010-08-05  Andrei Popescu  <andreip@dhcp-172-16-14-12.lon.corp.google.com>
 
         Reviewed by Jeremy Orlow.

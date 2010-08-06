@@ -56,6 +56,8 @@ public:
     PassRefPtr<IDBIndexBackendInterface> index(const String& name);
     void removeIndex(const String& name, PassRefPtr<IDBCallbacks>);
 
+    void openCursor(PassRefPtr<IDBKeyRange> range, unsigned short direction, PassRefPtr<IDBCallbacks>);
+
 private:
     IDBObjectStoreBackendImpl(const String& name, const String& keyPath, bool autoIncrement);
 

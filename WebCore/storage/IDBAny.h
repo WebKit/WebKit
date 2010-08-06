@@ -34,6 +34,7 @@
 
 namespace WebCore {
 
+class IDBCursor;
 class IDBDatabase;
 class IDBIndex;
 class IDBKey;
@@ -56,6 +57,7 @@ public:
     enum Type {
         UndefinedType = 0,
         NullType,
+        IDBCursorType,
         IDBDatabaseType,
         IDBFactoryType,
         IDBIndexType,
@@ -66,6 +68,7 @@ public:
 
     Type type() const { return m_type; }
     // Use type() to figure out which one of these you're allowed to call.
+    PassRefPtr<IDBCursor> idbCursor();
     PassRefPtr<IDBDatabase> idbDatabase();
     PassRefPtr<IDBFactory> idbFactory();
     PassRefPtr<IDBIndex> idbIndex();
@@ -75,6 +78,7 @@ public:
 
     // Set can only be called once.
     void set(); // For "null".
+    void set(PassRefPtr<IDBCursor>);
     void set(PassRefPtr<IDBDatabase>);
     void set(PassRefPtr<IDBFactory>);
     void set(PassRefPtr<IDBIndex>);
@@ -88,6 +92,7 @@ private:
     Type m_type;
 
     // Only one of the following should ever be in use at any given time.
+    RefPtr<IDBCursor> m_idbCursor;
     RefPtr<IDBDatabase> m_idbDatabase;
     RefPtr<IDBFactory> m_idbFactory;
     RefPtr<IDBIndex> m_idbIndex;

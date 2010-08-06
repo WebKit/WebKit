@@ -483,6 +483,7 @@ IDL_BINDINGS += \
     storage/DatabaseCallback.idl \
     storage/DatabaseSync.idl \
     storage/IDBAny.idl \
+    storage/IDBCursor.idl \
     storage/IDBDatabaseError.idl \
     storage/IDBDatabaseException.idl \
     storage/IDBDatabase.idl \

@@ -28,9 +28,11 @@
 
 #include "DOMStringList.h"
 #include "IDBCallbacksProxy.h"
+#include "IDBKeyRange.h"
 #include "IDBObjectStoreBackendInterface.h"
 #include "WebIDBIndexImpl.h"
 #include "WebIDBKey.h"
+#include "WebIDBKeyRange.h"
 #include "WebSerializedScriptValue.h"
 
 #if ENABLE(INDEXED_DATABASE)
@@ -94,6 +96,11 @@ WebIDBIndex* WebIDBObjectStoreImpl::index(const WebString& name)
 void WebIDBObjectStoreImpl::removeIndex(const WebString& name, WebIDBCallbacks* callbacks)
 {
     m_objectStore->removeIndex(name, IDBCallbacksProxy::create(callbacks));
+}
+
+void WebIDBObjectStoreImpl::openCursor(const WebIDBKeyRange& keyRange, unsigned short direction, WebIDBCallbacks* callbacks)
+{
+    m_objectStore->openCursor(IDBKeyRange::create(keyRange.left(), keyRange.right(), keyRange.flags()), direction, IDBCallbacksProxy::create(callbacks));
 }
 
 } // namespace WebCore

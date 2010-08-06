@@ -226,6 +226,7 @@ DOM_CLASSES = \
     HTMLVideoElement \
     History \
     IDBAny \
+    IDBCursor \
     IDBDatabaseError \
     IDBDatabaseException \
     IDBDatabase \

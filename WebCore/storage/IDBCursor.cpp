@@ -23,39 +23,66 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebIDBCallbacksImpl_h
-#define WebIDBCallbacksImpl_h
-
-#include "WebIDBCallbacks.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
+#include "config.h"
+#include "IDBCursor.h"
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBAny.h"
+#include "IDBCallbacks.h"
+#include "IDBCursorBackendInterface.h"
+#include "IDBKey.h"
+#include "IDBRequest.h"
+#include "ScriptExecutionContext.h"
+#include "SerializedScriptValue.h"
+
 namespace WebCore {
 
-class IDBCallbacks;
+IDBCursor::IDBCursor(PassRefPtr<IDBCursorBackendInterface> backend)
+    : m_backend(backend)
+{
+}
 
-class WebIDBCallbacksImpl : public WebKit::WebIDBCallbacks {
-public:
-    WebIDBCallbacksImpl(PassRefPtr<IDBCallbacks>);
-    virtual ~WebIDBCallbacksImpl();
+IDBCursor::~IDBCursor()
+{
+}
 
-    virtual void onError(const WebKit::WebIDBDatabaseError&);
-    virtual void onSuccess(); // For "null".
-    virtual void onSuccess(WebKit::WebIDBCursor*);
-    virtual void onSuccess(WebKit::WebIDBDatabase*);
-    virtual void onSuccess(const WebKit::WebIDBKey&);
-    virtual void onSuccess(WebKit::WebIDBIndex*);
-    virtual void onSuccess(WebKit::WebIDBObjectStore*);
-    virtual void onSuccess(const WebKit::WebSerializedScriptValue&);
+unsigned short IDBCursor::direction() const
+{
+    return m_backend->direction();
+}
 
-private:
-    RefPtr<IDBCallbacks> m_callbacks;
-};
+PassRefPtr<IDBKey> IDBCursor::key() const
+{
+    return m_backend->key();
+}
+
+PassRefPtr<IDBAny> IDBCursor::value() const
+{
+    return m_backend->value();
+}
+
+PassRefPtr<IDBRequest> IDBCursor::update(ScriptExecutionContext* context, PassRefPtr<SerializedScriptValue> value)
+{
+    RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this));
+    m_backend->update(value, request);
+    return request.release();
+}
+
+PassRefPtr<IDBRequest> IDBCursor::continueFunction(ScriptExecutionContext* context, PassRefPtr<IDBKey> key)
+{
+    RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this));
+    m_backend->continueFunction(key, request);
+    return request.release();
+}
+
+PassRefPtr<IDBRequest> IDBCursor::remove(ScriptExecutionContext* context)
+{
+    RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this));
+    m_backend->remove(request);
+    return request.release();
+}
 
 } // namespace WebCore
 
-#endif
-
-#endif // WebIDBCallbacksImpl_h
+#endif // ENABLE(INDEXED_DATABASE)

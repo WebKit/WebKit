@@ -26,6 +26,7 @@
 #ifndef IDBObjectStore_h
 #define IDBObjectStore_h
 
+#include "IDBCursor.h"
 #include "IDBObjectStoreBackendInterface.h"
 #include "IDBRequest.h"
 #include "PlatformString.h"
@@ -40,6 +41,7 @@ namespace WebCore {
 class DOMStringList;
 class IDBAny;
 class IDBIndexRequest;
+class IDBKeyRange;
 class IDBKey;
 class SerializedScriptValue;
 
@@ -63,6 +65,8 @@ public:
     PassRefPtr<IDBRequest> createIndex(ScriptExecutionContext*, const String& name, const String& keyPath, bool unique = false);
     PassRefPtr<IDBIndex> index(const String& name);
     PassRefPtr<IDBRequest> removeIndex(ScriptExecutionContext*, const String& name);
+
+    PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext*, PassRefPtr<IDBKeyRange> = 0, unsigned short direction = IDBCursor::NEXT);
 
 private:
     IDBObjectStore(PassRefPtr<IDBObjectStoreBackendInterface>);

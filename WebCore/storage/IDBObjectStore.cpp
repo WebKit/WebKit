@@ -30,6 +30,7 @@
 #include "IDBAny.h"
 #include "IDBIndex.h"
 #include "IDBKey.h"
+#include "IDBKeyRange.h"
 #include "SerializedScriptValue.h"
 #include <wtf/UnusedParam.h>
 
@@ -106,6 +107,13 @@ PassRefPtr<IDBRequest> IDBObjectStore::removeIndex(ScriptExecutionContext* conte
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this));
     m_objectStore->removeIndex(name, request);
     return request;
+}
+
+PassRefPtr<IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> range, unsigned short direction)
+{
+    RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this));
+    m_objectStore->openCursor(range, direction, request);
+    return request.release();
 }
 
 } // namespace WebCore

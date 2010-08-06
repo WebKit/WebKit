@@ -28,6 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBCursor.h"
 #include "IDBDatabase.h"
 #include "IDBFactory.h"
 #include "IDBIndex.h"
@@ -48,6 +49,12 @@ IDBAny::IDBAny()
 
 IDBAny::~IDBAny()
 {
+}
+
+PassRefPtr<IDBCursor> IDBAny::idbCursor()
+{
+    ASSERT(m_type == IDBCursorType);
+    return m_idbCursor;
 }
 
 PassRefPtr<IDBDatabase> IDBAny::idbDatabase()
@@ -90,6 +97,13 @@ void IDBAny::set()
 {
     ASSERT(m_type == UndefinedType);
     m_type = NullType;
+}
+
+void IDBAny::set(PassRefPtr<IDBCursor> value)
+{
+    ASSERT(m_type == UndefinedType);
+    m_type = IDBCursorType;
+    m_idbCursor = value;
 }
 
 void IDBAny::set(PassRefPtr<IDBDatabase> value)

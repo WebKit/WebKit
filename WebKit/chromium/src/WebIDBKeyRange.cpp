@@ -23,39 +23,61 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebIDBCallbacksImpl_h
-#define WebIDBCallbacksImpl_h
+#include "config.h"
+#include "WebIDBKeyRange.h"
 
-#include "WebIDBCallbacks.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
+#include "IDBKey.h"
+#include "IDBKeyRange.h"
+#include "WebIDBKey.h"
 
-#if ENABLE(INDEXED_DATABASE)
+using WebCore::IDBKeyRange;
 
-namespace WebCore {
+namespace WebKit {
 
-class IDBCallbacks;
+void WebIDBKeyRange::assign(const WebIDBKeyRange& other)
+{
+    m_private = other.m_private;
+}
 
-class WebIDBCallbacksImpl : public WebKit::WebIDBCallbacks {
-public:
-    WebIDBCallbacksImpl(PassRefPtr<IDBCallbacks>);
-    virtual ~WebIDBCallbacksImpl();
+void WebIDBKeyRange::assign(const WebIDBKey& left, const WebIDBKey& right, unsigned short flags)
+{
+    m_private = IDBKeyRange::create(left, right, flags);
+}
 
-    virtual void onError(const WebKit::WebIDBDatabaseError&);
-    virtual void onSuccess(); // For "null".
-    virtual void onSuccess(WebKit::WebIDBCursor*);
-    virtual void onSuccess(WebKit::WebIDBDatabase*);
-    virtual void onSuccess(const WebKit::WebIDBKey&);
-    virtual void onSuccess(WebKit::WebIDBIndex*);
-    virtual void onSuccess(WebKit::WebIDBObjectStore*);
-    virtual void onSuccess(const WebKit::WebSerializedScriptValue&);
+void WebIDBKeyRange::reset()
+{
+    m_private.reset();
+}
 
-private:
-    RefPtr<IDBCallbacks> m_callbacks;
-};
+WebIDBKey WebIDBKeyRange::left() const
+{
+    return m_private->left();
+}
 
-} // namespace WebCore
+WebIDBKey WebIDBKeyRange::right() const
+{
+    return m_private->right();
+}
 
-#endif
+unsigned short WebIDBKeyRange::flags() const
+{
+    return m_private->flags();
+}
 
-#endif // WebIDBCallbacksImpl_h
+WebIDBKeyRange::WebIDBKeyRange(const PassRefPtr<IDBKeyRange>& value)
+    : m_private(value)
+{
+}
+
+WebIDBKeyRange& WebIDBKeyRange::operator=(const PassRefPtr<IDBKeyRange>& value)
+{
+    m_private = value;
+    return *this;
+}
+
+WebIDBKeyRange::operator PassRefPtr<IDBKeyRange>() const
+{
+    return m_private.get();
+}
+
+} // namespace WebKit

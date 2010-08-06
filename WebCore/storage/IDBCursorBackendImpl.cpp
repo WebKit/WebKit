@@ -23,39 +23,66 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebIDBCallbacksImpl_h
-#define WebIDBCallbacksImpl_h
-
-#include "WebIDBCallbacks.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
+#include "config.h"
+#include "IDBCursorBackendImpl.h"
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBAny.h"
+#include "IDBCallbacks.h"
+#include "IDBKeyRange.h"
+#include "IDBObjectStoreBackendImpl.h"
+#include "IDBRequest.h"
+#include "SerializedScriptValue.h"
+
 namespace WebCore {
 
-class IDBCallbacks;
+IDBCursorBackendImpl::IDBCursorBackendImpl(PassRefPtr<IDBObjectStoreBackendImpl> idbObjectStore, PassRefPtr<IDBKeyRange> keyRange, IDBCursor::Direction direction, PassRefPtr<IDBKey> key, PassRefPtr<SerializedScriptValue> value)
+    : m_idbObjectStore(idbObjectStore)
+    , m_keyRange(keyRange)
+    , m_direction(direction)
+    , m_key(key)
+    , m_value(IDBAny::create(value.get()))
+{
+}
 
-class WebIDBCallbacksImpl : public WebKit::WebIDBCallbacks {
-public:
-    WebIDBCallbacksImpl(PassRefPtr<IDBCallbacks>);
-    virtual ~WebIDBCallbacksImpl();
+IDBCursorBackendImpl::~IDBCursorBackendImpl()
+{
+}
 
-    virtual void onError(const WebKit::WebIDBDatabaseError&);
-    virtual void onSuccess(); // For "null".
-    virtual void onSuccess(WebKit::WebIDBCursor*);
-    virtual void onSuccess(WebKit::WebIDBDatabase*);
-    virtual void onSuccess(const WebKit::WebIDBKey&);
-    virtual void onSuccess(WebKit::WebIDBIndex*);
-    virtual void onSuccess(WebKit::WebIDBObjectStore*);
-    virtual void onSuccess(const WebKit::WebSerializedScriptValue&);
+unsigned short IDBCursorBackendImpl::direction() const
+{
+    return m_direction;
+}
 
-private:
-    RefPtr<IDBCallbacks> m_callbacks;
-};
+PassRefPtr<IDBKey> IDBCursorBackendImpl::key() const
+{
+    return m_key;
+}
+
+PassRefPtr<IDBAny> IDBCursorBackendImpl::value() const
+{
+    return m_value;
+}
+
+void IDBCursorBackendImpl::update(PassRefPtr<SerializedScriptValue>, PassRefPtr<IDBCallbacks>)
+{
+    // FIXME: Implement this method.
+    ASSERT_NOT_REACHED();
+}
+
+void IDBCursorBackendImpl::continueFunction(PassRefPtr<IDBKey>, PassRefPtr<IDBCallbacks>)
+{
+    // FIXME: Implement this method.
+    ASSERT_NOT_REACHED();
+}
+
+void IDBCursorBackendImpl::remove(PassRefPtr<IDBCallbacks>)
+{
+    // FIXME: Implement this method.
+    ASSERT_NOT_REACHED();
+}
 
 } // namespace WebCore
 
-#endif
-
-#endif // WebIDBCallbacksImpl_h
+#endif // ENABLE(INDEXED_DATABASE)

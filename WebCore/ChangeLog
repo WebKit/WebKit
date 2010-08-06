@@ -1,3 +1,71 @@
+2010-08-05  Marcus Bulach  <bulach@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Initial bindings and plumbing for IDBCursor.
+        https://bugs.webkit.org/show_bug.cgi?id=41888
+
+        Test: storage/indexeddb/idb-opencursor.html
+
+        * Android.derived.jscbindings.mk:
+        * Android.derived.v8bindings.mk:
+        * Android.mk:
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/v8/custom/V8IDBAnyCustom.cpp:
+        (WebCore::toV8):
+        * storage/IDBAny.cpp:
+        (WebCore::IDBAny::idbCursor):
+        (WebCore::IDBAny::set):
+        * storage/IDBAny.h:
+        (WebCore::IDBAny::):
+        * storage/IDBCallbacks.h:
+        * storage/IDBCursor.cpp: Added.
+        (WebCore::IDBCursor::IDBCursor):
+        (WebCore::IDBCursor::~IDBCursor):
+        (WebCore::IDBCursor::direction):
+        (WebCore::IDBCursor::key):
+        (WebCore::IDBCursor::value):
+        (WebCore::IDBCursor::update):
+        (WebCore::IDBCursor::continueFunction):
+        (WebCore::IDBCursor::remove):
+        * storage/IDBCursor.h: Added.
+        (WebCore::IDBCursor::):
+        (WebCore::IDBCursor::create):
+        * storage/IDBCursor.idl: Added.
+        * storage/IDBCursorBackendImpl.cpp: Added.
+        (WebCore::IDBCursorBackendImpl::IDBCursorBackendImpl):
+        (WebCore::IDBCursorBackendImpl::~IDBCursorBackendImpl):
+        (WebCore::IDBCursorBackendImpl::direction):
+        (WebCore::IDBCursorBackendImpl::key):
+        (WebCore::IDBCursorBackendImpl::value):
+        (WebCore::IDBCursorBackendImpl::update):
+        (WebCore::IDBCursorBackendImpl::continueFunction):
+        (WebCore::IDBCursorBackendImpl::remove):
+        * storage/IDBCursorBackendImpl.h: Added.
+        (WebCore::IDBCursorBackendImpl::create):
+        * storage/IDBCursorBackendInterface.h: Added.
+        (WebCore::IDBCursorBackendInterface::~IDBCursorBackendInterface):
+        * storage/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::openCursor):
+        * storage/IDBObjectStore.h:
+        * storage/IDBObjectStore.idl:
+        * storage/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::openCursor):
+        * storage/IDBObjectStoreBackendImpl.h:
+        * storage/IDBObjectStoreBackendInterface.h:
+        * storage/IDBRequest.cpp:
+        (WebCore::IDBRequest::onSuccess):
+        (WebCore::IDBRequest::timerFired):
+        * storage/IDBRequest.h:
+
 2010-08-06  Andrei Popescu  <andreip@google.com>
 
         Unreviewed, release build fix.

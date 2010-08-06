@@ -23,39 +23,35 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebIDBCallbacksImpl_h
-#define WebIDBCallbacksImpl_h
+#ifndef WebIDBCursorImpl_h
+#define WebIDBCursorImpl_h
 
-#include "WebIDBCallbacks.h"
+#include "WebCommon.h"
+#include "WebIDBCursor.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
-#if ENABLE(INDEXED_DATABASE)
+namespace WebCore { class IDBCursorBackendInterface; }
 
-namespace WebCore {
+namespace WebKit {
 
-class IDBCallbacks;
-
-class WebIDBCallbacksImpl : public WebKit::WebIDBCallbacks {
+// See comment in WebIndexedObjectStore for a high level overview these classes.
+class WebIDBCursorImpl : public WebIDBCursor {
 public:
-    WebIDBCallbacksImpl(PassRefPtr<IDBCallbacks>);
-    virtual ~WebIDBCallbacksImpl();
+    WebIDBCursorImpl(WTF::PassRefPtr<WebCore::IDBCursorBackendInterface>);
+    virtual ~WebIDBCursorImpl();
 
-    virtual void onError(const WebKit::WebIDBDatabaseError&);
-    virtual void onSuccess(); // For "null".
-    virtual void onSuccess(WebKit::WebIDBCursor*);
-    virtual void onSuccess(WebKit::WebIDBDatabase*);
-    virtual void onSuccess(const WebKit::WebIDBKey&);
-    virtual void onSuccess(WebKit::WebIDBIndex*);
-    virtual void onSuccess(WebKit::WebIDBObjectStore*);
-    virtual void onSuccess(const WebKit::WebSerializedScriptValue&);
+    virtual unsigned short direction() const;
+    virtual WebIDBKey key() const;
+    virtual WebSerializedScriptValue value() const;
+    virtual void update(const WebSerializedScriptValue&, WebIDBCallbacks*);
+    virtual void continueFunction(const WebIDBKey&, WebIDBCallbacks*);
+    virtual void remove(WebIDBCallbacks*);
 
-private:
-    RefPtr<IDBCallbacks> m_callbacks;
+ private:
+    WTF::RefPtr<WebCore::IDBCursorBackendInterface> m_idbCursorBackend;
 };
 
-} // namespace WebCore
+} // namespace WebKit
 
-#endif
-
-#endif // WebIDBCallbacksImpl_h
+#endif // WebIDBCursorImpl_h

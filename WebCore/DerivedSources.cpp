@@ -176,6 +176,7 @@
 #include "JSHTMLUListElement.cpp"
 #include "JSHTMLVideoElement.cpp"
 #include "JSIDBAny.cpp"
+#include "JSIDBCursor.cpp"
 #include "JSIDBDatabase.cpp"
 #include "JSIDBDatabaseError.cpp"
 #include "JSIDBDatabaseException.cpp"

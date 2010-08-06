@@ -23,39 +23,56 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebIDBCallbacksImpl_h
-#define WebIDBCallbacksImpl_h
-
-#include "WebIDBCallbacks.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
+#ifndef IDBCursor_h
+#define IDBCursor_h
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
+#include <wtf/Threading.h>
+
 namespace WebCore {
 
+class IDBAny;
 class IDBCallbacks;
+class IDBCursorBackendInterface;
+class IDBKey;
+class IDBRequest;
+class ScriptExecutionContext;
+class SerializedScriptValue;
 
-class WebIDBCallbacksImpl : public WebKit::WebIDBCallbacks {
+class IDBCursor : public ThreadSafeShared<IDBCursor> {
 public:
-    WebIDBCallbacksImpl(PassRefPtr<IDBCallbacks>);
-    virtual ~WebIDBCallbacksImpl();
+    enum Direction {
+        NEXT = 0,
+        NEXT_NO_DUPLICATE = 1,
+        PREV = 2,
+        PREV_NO_DUPLICATE = 3,
+    };
+    static PassRefPtr<IDBCursor> create(PassRefPtr<IDBCursorBackendInterface> backend)
+    {
+        return adoptRef(new IDBCursor(backend));
+    }
+    virtual ~IDBCursor();
 
-    virtual void onError(const WebKit::WebIDBDatabaseError&);
-    virtual void onSuccess(); // For "null".
-    virtual void onSuccess(WebKit::WebIDBCursor*);
-    virtual void onSuccess(WebKit::WebIDBDatabase*);
-    virtual void onSuccess(const WebKit::WebIDBKey&);
-    virtual void onSuccess(WebKit::WebIDBIndex*);
-    virtual void onSuccess(WebKit::WebIDBObjectStore*);
-    virtual void onSuccess(const WebKit::WebSerializedScriptValue&);
+    // Implement the IDL
+    virtual unsigned short direction() const;
+    virtual PassRefPtr<IDBKey> key() const;
+    virtual PassRefPtr<IDBAny> value() const;
+    virtual PassRefPtr<IDBRequest> update(ScriptExecutionContext*, PassRefPtr<SerializedScriptValue>);
+    virtual PassRefPtr<IDBRequest> continueFunction(ScriptExecutionContext*, PassRefPtr<IDBKey> = 0);
+    virtual PassRefPtr<IDBRequest> remove(ScriptExecutionContext*);
 
 private:
-    RefPtr<IDBCallbacks> m_callbacks;
+    explicit IDBCursor(PassRefPtr<IDBCursorBackendInterface>);
+
+    RefPtr<IDBCursorBackendInterface> m_backend;
 };
 
 } // namespace WebCore
 
 #endif
 
-#endif // WebIDBCallbacksImpl_h
+#endif // IDBCursor_h

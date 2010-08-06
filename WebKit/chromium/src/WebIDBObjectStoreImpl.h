@@ -55,6 +55,8 @@ public:
     WebIDBIndex* index(const WebString& name);
     void removeIndex(const WebString& name, WebIDBCallbacks* callbacks);
 
+    void openCursor(const WebIDBKeyRange&, unsigned short direction, WebIDBCallbacks*);
+
  private:
     WTF::RefPtr<WebCore::IDBObjectStoreBackendInterface> m_objectStore;
 };

@@ -23,39 +23,56 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebIDBCallbacksImpl_h
-#define WebIDBCallbacksImpl_h
+#ifndef WebIDBCursor_h
+#define WebIDBCursor_h
 
+#include "WebCommon.h"
 #include "WebIDBCallbacks.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
+#include "WebIDBKey.h"
+#include "WebSerializedScriptValue.h"
+#include "WebString.h"
 
-#if ENABLE(INDEXED_DATABASE)
+namespace WebKit {
 
-namespace WebCore {
-
-class IDBCallbacks;
-
-class WebIDBCallbacksImpl : public WebKit::WebIDBCallbacks {
+// See comment in WebIndexedDatabase for a high level overview these classes.
+class WebIDBCursor {
 public:
-    WebIDBCallbacksImpl(PassRefPtr<IDBCallbacks>);
-    virtual ~WebIDBCallbacksImpl();
+    virtual ~WebIDBCursor() { }
 
-    virtual void onError(const WebKit::WebIDBDatabaseError&);
-    virtual void onSuccess(); // For "null".
-    virtual void onSuccess(WebKit::WebIDBCursor*);
-    virtual void onSuccess(WebKit::WebIDBDatabase*);
-    virtual void onSuccess(const WebKit::WebIDBKey&);
-    virtual void onSuccess(WebKit::WebIDBIndex*);
-    virtual void onSuccess(WebKit::WebIDBObjectStore*);
-    virtual void onSuccess(const WebKit::WebSerializedScriptValue&);
+    virtual unsigned short direction() const
+    {
+        WEBKIT_ASSERT_NOT_REACHED();
+        return 0;
+    }
 
-private:
-    RefPtr<IDBCallbacks> m_callbacks;
+    virtual WebIDBKey key() const
+    {
+        WEBKIT_ASSERT_NOT_REACHED();
+        return WebIDBKey("");
+    }
+
+    virtual WebSerializedScriptValue value() const
+    {
+        WEBKIT_ASSERT_NOT_REACHED();
+        return WebSerializedScriptValue();
+    }
+
+    virtual void update(const WebSerializedScriptValue&, WebIDBCallbacks*)
+    {
+        WEBKIT_ASSERT_NOT_REACHED();
+    }
+
+    virtual void continueFunction(const WebIDBKey&, WebIDBCallbacks*)
+    {
+        WEBKIT_ASSERT_NOT_REACHED();
+    }
+
+    virtual void remove(WebIDBCallbacks*)
+    {
+        WEBKIT_ASSERT_NOT_REACHED();
+    }
 };
 
-} // namespace WebCore
+} // namespace WebKit
 
-#endif
-
-#endif // WebIDBCallbacksImpl_h
+#endif // WebIDBCursor_h

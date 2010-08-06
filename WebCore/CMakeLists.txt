@@ -334,6 +334,7 @@ SET(WebCore_IDL_FILES
     storage/DatabaseCallback.idl
     storage/DatabaseSync.idl
     storage/IDBAny.idl
+    storage/IDBCursor.idl
     storage/IDBDatabaseError.idl
     storage/IDBDatabaseException.idl
     storage/IDBDatabase.idl
@@ -1439,6 +1440,8 @@ SET(WebCore_SOURCES
     storage/IDBAny.cpp
     storage/IDBDatabase.cpp
     storage/IDBDatabaseBackendImpl.cpp
+    storage/IDBCursor.cpp
+    storage/IDBCursorBackendImpl.cpp
     storage/IDBErrorEvent.cpp
     storage/IDBEvent.cpp
     storage/IDBIndex.cpp

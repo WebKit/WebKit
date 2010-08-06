@@ -23,39 +23,38 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebIDBCallbacksImpl_h
-#define WebIDBCallbacksImpl_h
-
-#include "WebIDBCallbacks.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
+#ifndef IDBCursorBackendInterface_h
+#define IDBCursorBackendInterface_h
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
+#include <wtf/Threading.h>
+
 namespace WebCore {
 
+class IDBAny;
 class IDBCallbacks;
+class IDBKey;
+class IDBRequest;
+class SerializedScriptValue;
 
-class WebIDBCallbacksImpl : public WebKit::WebIDBCallbacks {
+class IDBCursorBackendInterface : public ThreadSafeShared<IDBCursorBackendInterface> {
 public:
-    WebIDBCallbacksImpl(PassRefPtr<IDBCallbacks>);
-    virtual ~WebIDBCallbacksImpl();
+    virtual ~IDBCursorBackendInterface() {}
 
-    virtual void onError(const WebKit::WebIDBDatabaseError&);
-    virtual void onSuccess(); // For "null".
-    virtual void onSuccess(WebKit::WebIDBCursor*);
-    virtual void onSuccess(WebKit::WebIDBDatabase*);
-    virtual void onSuccess(const WebKit::WebIDBKey&);
-    virtual void onSuccess(WebKit::WebIDBIndex*);
-    virtual void onSuccess(WebKit::WebIDBObjectStore*);
-    virtual void onSuccess(const WebKit::WebSerializedScriptValue&);
+    virtual unsigned short direction() const = 0;
+    virtual PassRefPtr<IDBKey> key() const = 0;
+    virtual PassRefPtr<IDBAny> value() const = 0;
 
-private:
-    RefPtr<IDBCallbacks> m_callbacks;
+    virtual void update(PassRefPtr<SerializedScriptValue>, PassRefPtr<IDBCallbacks>) = 0;
+    virtual void continueFunction(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks>) = 0;
+    virtual void remove(PassRefPtr<IDBCallbacks>) = 0;
 };
 
 } // namespace WebCore
 
 #endif
 
-#endif // WebIDBCallbacksImpl_h
+#endif // IDBCursorBackendInterface_h

@@ -29,8 +29,10 @@
 #include "DOMStringList.h"
 #include "IDBBindingUtilities.h"
 #include "IDBCallbacks.h"
+#include "IDBCursorBackendImpl.h"
 #include "IDBDatabaseException.h"
 #include "IDBIndexBackendImpl.h"
+#include "IDBKeyRange.h"
 #include "IDBKeyTree.h"
 
 #if ENABLE(INDEXED_DATABASE)
@@ -130,6 +132,16 @@ void IDBObjectStoreBackendImpl::removeIndex(const String& name, PassRefPtr<IDBCa
     callbacks->onSuccess();
 }
 
+void IDBObjectStoreBackendImpl::openCursor(PassRefPtr<IDBKeyRange> range, unsigned short direction, PassRefPtr<IDBCallbacks> callbacks)
+{
+    RefPtr<IDBKey> key = range->left();
+    RefPtr<SerializedScriptValue> value = m_tree->get(key.get());
+    if (value) {
+        RefPtr<IDBCursorBackendInterface> cursor = IDBCursorBackendImpl::create(this, range, static_cast<IDBCursor::Direction>(direction), key, value);
+        callbacks->onSuccess(cursor.release());
+    } else
+      callbacks->onSuccess();
+}
 
 } // namespace WebCore
 

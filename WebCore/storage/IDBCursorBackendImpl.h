@@ -23,39 +23,49 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebIDBCallbacksImpl_h
-#define WebIDBCallbacksImpl_h
 
-#include "WebIDBCallbacks.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
+#ifndef IDBCursorBackendImpl_h
+#define IDBCursorBackendImpl_h
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBCursor.h"
+#include "IDBCursorBackendInterface.h"
+#include <wtf/RefPtr.h>
+
 namespace WebCore {
 
-class IDBCallbacks;
+class IDBKeyRange;
+class IDBObjectStoreBackendImpl;
+class SerializedScriptValue;
 
-class WebIDBCallbacksImpl : public WebKit::WebIDBCallbacks {
+class IDBCursorBackendImpl : public IDBCursorBackendInterface {
 public:
-    WebIDBCallbacksImpl(PassRefPtr<IDBCallbacks>);
-    virtual ~WebIDBCallbacksImpl();
+    static PassRefPtr<IDBCursorBackendImpl> create(PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBKeyRange> keyRange, IDBCursor::Direction direction, PassRefPtr<IDBKey> key, PassRefPtr<SerializedScriptValue> value)
+    {
+        return adoptRef(new IDBCursorBackendImpl(objectStore, keyRange, direction, key, value));
+    }
+    virtual ~IDBCursorBackendImpl();
 
-    virtual void onError(const WebKit::WebIDBDatabaseError&);
-    virtual void onSuccess(); // For "null".
-    virtual void onSuccess(WebKit::WebIDBCursor*);
-    virtual void onSuccess(WebKit::WebIDBDatabase*);
-    virtual void onSuccess(const WebKit::WebIDBKey&);
-    virtual void onSuccess(WebKit::WebIDBIndex*);
-    virtual void onSuccess(WebKit::WebIDBObjectStore*);
-    virtual void onSuccess(const WebKit::WebSerializedScriptValue&);
+    virtual unsigned short direction() const;
+    virtual PassRefPtr<IDBKey> key() const;
+    virtual PassRefPtr<IDBAny> value() const;
+    virtual void update(PassRefPtr<SerializedScriptValue>, PassRefPtr<IDBCallbacks>);
+    virtual void continueFunction(PassRefPtr<IDBKey>, PassRefPtr<IDBCallbacks>);
+    virtual void remove(PassRefPtr<IDBCallbacks>);
 
 private:
-    RefPtr<IDBCallbacks> m_callbacks;
+    IDBCursorBackendImpl(PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<IDBKeyRange>, IDBCursor::Direction, PassRefPtr<IDBKey>, PassRefPtr<SerializedScriptValue>);
+
+    RefPtr<IDBObjectStoreBackendImpl> m_idbObjectStore;
+    RefPtr<IDBKeyRange> m_keyRange;
+    IDBCursor::Direction m_direction;
+    RefPtr<IDBKey> m_key;
+    RefPtr<IDBAny> m_value;
 };
 
 } // namespace WebCore
 
-#endif
+#endif // ENABLE(INDEXED_DATABASE)
 
-#endif // WebIDBCallbacksImpl_h
+#endif // IDBCursorBackendImpl_h

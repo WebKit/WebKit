@@ -342,6 +342,7 @@ $(patsubst %.h,%.cpp,$(GEN)): $(intermediates)/bindings/%.cpp : $(intermediates)
 # Indexed Database
 GEN := \
     $(intermediates)/bindings/V8IDBAny.h \
+    $(intermediates)/bindings/V8IDBCursor.h \
     $(intermediates)/bindings/V8IDBDatabaseError.h \
     $(intermediates)/bindings/V8IDBDatabaseException.h \
     $(intermediates)/bindings/V8IDBDatabase.h \

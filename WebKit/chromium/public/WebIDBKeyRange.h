@@ -23,39 +23,44 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebIDBCallbacksImpl_h
-#define WebIDBCallbacksImpl_h
+#ifndef WebIDBKeyRange_h
+#define WebIDBKeyRange_h
 
-#include "WebIDBCallbacks.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
+#include "WebCommon.h"
+#include "WebPrivatePtr.h"
 
-#if ENABLE(INDEXED_DATABASE)
+namespace WebCore { class IDBKeyRange; }
 
-namespace WebCore {
+namespace WebKit {
 
-class IDBCallbacks;
+class WebIDBKey;
+class WebString;
 
-class WebIDBCallbacksImpl : public WebKit::WebIDBCallbacks {
+class WebIDBKeyRange {
 public:
-    WebIDBCallbacksImpl(PassRefPtr<IDBCallbacks>);
-    virtual ~WebIDBCallbacksImpl();
+    ~WebIDBKeyRange() { reset(); }
 
-    virtual void onError(const WebKit::WebIDBDatabaseError&);
-    virtual void onSuccess(); // For "null".
-    virtual void onSuccess(WebKit::WebIDBCursor*);
-    virtual void onSuccess(WebKit::WebIDBDatabase*);
-    virtual void onSuccess(const WebKit::WebIDBKey&);
-    virtual void onSuccess(WebKit::WebIDBIndex*);
-    virtual void onSuccess(WebKit::WebIDBObjectStore*);
-    virtual void onSuccess(const WebKit::WebSerializedScriptValue&);
+    WebIDBKeyRange(const WebIDBKeyRange& keyRange) { assign(keyRange); }
+    WebIDBKeyRange(const WebIDBKey& left, const WebIDBKey& right, unsigned short flags) { assign(left, right, flags); }
 
-private:
-    RefPtr<IDBCallbacks> m_callbacks;
-};
+    WEBKIT_API WebIDBKey left() const;
+    WEBKIT_API WebIDBKey right() const;
+    WEBKIT_API unsigned short flags() const;
 
-} // namespace WebCore
+    WEBKIT_API void assign(const WebIDBKeyRange&);
+    WEBKIT_API void assign(const WebIDBKey& left, const WebIDBKey& right, unsigned short flags);
+    WEBKIT_API void reset();
 
+#if WEBKIT_IMPLEMENTATION
+    WebIDBKeyRange(const WTF::PassRefPtr<WebCore::IDBKeyRange>&);
+    WebIDBKeyRange& operator=(const WTF::PassRefPtr<WebCore::IDBKeyRange>&);
+    operator WTF::PassRefPtr<WebCore::IDBKeyRange>() const;
 #endif
 
-#endif // WebIDBCallbacksImpl_h
+private:
+    WebPrivatePtr<WebCore::IDBKeyRange> m_private;
+};
+
+} // namespace WebKit
+
+#endif // WebIDBKeyRange_h

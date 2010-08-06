@@ -2863,6 +2863,11 @@ webcore_sources += \
 	WebCore/storage/IDBAny.h \
 	WebCore/storage/IDBCallbacks.h \
 	WebCore/storage/IDBDatabase.cpp \
+	WebCore/storage/IDBCursor.h \
+	WebCore/storage/IDBCursor.cpp \
+	WebCore/storage/IDBCursorBackendImpl.cpp \
+	WebCore/storage/IDBCursorBackendImpl.h \
+	WebCore/storage/IDBCursorBackendInterface.h \
 	WebCore/storage/IDBDatabase.h \
 	WebCore/storage/IDBDatabaseBackendImpl.cpp \
 	WebCore/storage/IDBDatabaseBackendImpl.h \
