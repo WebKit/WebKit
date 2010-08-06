@@ -186,7 +186,8 @@ void TextCodecICU::registerExtendedEncodingNames(EncodingNameRegistrar registrar
     registrar("ISO8859-13", "ISO-8859-13");
     registrar("ISO8859-14", "ISO-8859-14");
     registrar("ISO8859-15", "ISO-8859-15");
-    registrar("ISO8859-16", "ISO-8859-16");
+    // Not registering ISO8859-16, because Firefox (as of version 3.6.6) doesn't know this particular alias,
+    // and because older versions of ICU don't support ISO-8859-16 encoding at all.
 }
 
 void TextCodecICU::registerExtendedCodecs(TextCodecRegistrar registrar)

@@ -1,3 +1,13 @@
+2010-08-06  Alexey Proskuryakov  <ap@apple.com>
+
+        Fix crashing Leopard and Gtk bots.
+
+        * platform/text/TextCodecICU.cpp: (WebCore::TextCodecICU::registerExtendedEncodingNames):
+        Don't register ISO8859-16, because older versions of ICU don't support ISO-8859-16, causing
+        crashes when we try to register an alias. Also, we don't need it, because Firefox doesn't
+        support this particular alias (it supports ISO8859-1 to ISO8859-15, but only supports the
+        main name for ISO-8859-16).
+
 2010-08-06  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.
