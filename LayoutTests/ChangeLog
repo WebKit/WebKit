@@ -1,3 +1,13 @@
+2010-08-05  Erik Arvidsson  <arv@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Calling setCustomValidity should trigger a layout
+        https://bugs.webkit.org/show_bug.cgi?id=43582
+
+        * fast/forms/setCustomValidity-expected.txt: Added.
+        * fast/forms/setCustomValidity.html: Added.
+
 2010-08-05  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
