@@ -30,6 +30,9 @@
 
 #include "config.h"
 
+#include "PlatformContextSkia.h"
+
+#include "AffineTransform.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "NativeImageSkia.h"
@@ -45,10 +48,9 @@
 #include "SkDashPathEffect.h"
 
 #if USE(GLES2_RENDERING)
+#include "GraphicsContext3D.h"
 #include "GLES2Canvas.h"
-#include "GLES2Context.h"
 #include "GLES2Texture.h"
-#include <GLES2/gl2.h>
 #endif
 
 #include <wtf/MathExtras.h>
@@ -675,7 +677,8 @@ void PlatformContextSkia::applyAntiAliasedClipPaths(WTF::Vector<SkPath>& paths)
 }
 
 #if USE(GLES2_RENDERING)
-void PlatformContextSkia::setGLES2Context(GLES2Context* context, const IntSize& size)
+
+void PlatformContextSkia::setGraphicsContext3D(GraphicsContext3D* context, const WebCore::IntSize& size)
 {
     m_useGPU = true;
     m_gpuCanvas = new GLES2Canvas(context, size);
@@ -760,25 +763,26 @@ void PlatformContextSkia::uploadSoftwareToHardware(CompositeOperator op) const
 {
     const SkBitmap& bitmap = m_canvas->getDevice()->accessBitmap(false);
     SkAutoLockPixels lock(bitmap);
-    m_gpuCanvas->gles2Context()->makeCurrent();
     // FIXME: Keep a texture around for this rather than constantly creating/destroying one.
-    RefPtr<GLES2Texture> texture = GLES2Texture::create(GLES2Texture::BGRA8, bitmap.width(), bitmap.height());
+    GraphicsContext3D* context = m_gpuCanvas->context();
+    RefPtr<GLES2Texture> texture = GLES2Texture::create(context, GLES2Texture::BGRA8, bitmap.width(), bitmap.height());
     texture->load(bitmap.getPixels());
     IntRect rect(0, 0, bitmap.width(), bitmap.height());
-    gpuCanvas()->drawTexturedRect(texture.get(), rect, rect, DeviceColorSpace, op);
+    AffineTransform identity;
+    gpuCanvas()->drawTexturedRect(texture.get(), rect, rect, identity, 1.0, DeviceColorSpace, op);
 }
 
 void PlatformContextSkia::readbackHardwareToSoftware() const
 {
     const SkBitmap& bitmap = m_canvas->getDevice()->accessBitmap(true);
     SkAutoLockPixels lock(bitmap);
-    m_gpuCanvas->gles2Context()->makeCurrent();
     int width = bitmap.width(), height = bitmap.height();
     OwnArrayPtr<uint32_t> buf(new uint32_t[width]);
+    GraphicsContext3D* context = m_gpuCanvas->context();
     // Flips the image vertically.
     for (int y = 0; y < height; ++y) {
         uint32_t* pixels = bitmap.getAddr32(0, y);
-        glReadPixels(0, height - 1 - y, width, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+        context->readPixels(0, height - 1 - y, width, 1, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, pixels);
         for (int i = 0; i < width; ++i) {
             uint32_t pixel = pixels[i];
             // Swizzles from RGBA -> BGRA.

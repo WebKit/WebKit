@@ -48,7 +48,7 @@ namespace WebCore {
 #if USE(GLES2_RENDERING)
 enum CompositeOperator;
 class GLES2Canvas;
-class GLES2Context;
+class GraphicsContext3D;
 #endif
 
 // This class holds the platform-specific state for GraphicsContext. We put
@@ -183,7 +183,7 @@ public:
     bool hasImageResamplingHint() const;
 #if USE(GLES2_RENDERING)
     bool useGPU() { return m_useGPU; }
-    void setGLES2Context(GLES2Context*, const IntSize&);
+    void setGraphicsContext3D(GraphicsContext3D*, const IntSize&);
     GLES2Canvas* gpuCanvas() const { return m_gpuCanvas.get(); }
 #endif
 

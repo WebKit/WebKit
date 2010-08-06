@@ -37,20 +37,22 @@
 #include "RefPtr.h"
 
 namespace WebCore {
+class GraphicsContext3D;
 
 class GLES2Texture : public RefCounted<GLES2Texture> {
 public:
     ~GLES2Texture();
     enum Format { RGBA8, BGRA8 };
-    static PassRefPtr<GLES2Texture> create(Format, int width, int height);
+    static PassRefPtr<GLES2Texture> create(GraphicsContext3D*, Format, int width, int height);
     void bind();
     void load(void* pixels);
     Format format() const { return m_format; }
     int width() const { return m_width; }
     int height() const { return m_height; }
 private:
-    GLES2Texture(unsigned int textureId, Format format, int width, int height);
-    unsigned int m_textureId;
+    GLES2Texture(GraphicsContext3D*, unsigned textureId, Format, int width, int height);
+    GraphicsContext3D* m_context;
+    unsigned m_textureId;
     Format m_format;
     int m_width;
     int m_height;

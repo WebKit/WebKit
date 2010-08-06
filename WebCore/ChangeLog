@@ -1,5 +1,55 @@
 2010-08-06  James Robinson  <jamesr@chromium.org>
 
+        Reviewed by Dimitri Glazkov.
+
+        [chromium] Implement GLES2Canvas/Texture in terms of GraphicsContext3D instead of direct OpenGL calls
+        https://bugs.webkit.org/show_bug.cgi?id=43608
+
+        This converts all OpenGL calls in GLES2(Canvas|Texture) to calls on the corresponding GraphicsContext3D
+        API, due to feedback on https://bugs.webkit.org/show_bug.cgi?id=43362.  Nearly all the changes are
+        applying the regex s/gl([A-Z])/m_context->%1</ and removing unnecessary makeCurrent() calls.
+        Other changes hilighted below.
+
+        * platform/graphics/chromium/GLES2Canvas.cpp:
+        (WebCore::affineTo3x3):
+        (WebCore::GLES2Canvas::GLES2Canvas):
+        (WebCore::GLES2Canvas::~GLES2Canvas):
+        (WebCore::GLES2Canvas::clearRect):
+        (WebCore::GLES2Canvas::fillRect):
+        (WebCore::GLES2Canvas::drawTexturedRect):
+        (WebCore::GLES2Canvas::applyCompositeOperator):
+        (WebCore::GLES2Canvas::getQuadVertices):
+        (WebCore::GLES2Canvas::getQuadIndices):
+            - use new typed XXArray classes for buffer uploads
+        (WebCore::loadShader):
+        (WebCore::GLES2Canvas::getSimpleProgram):
+        (WebCore::GLES2Canvas::getTexProgram):
+        (WebCore::GLES2Canvas::createTexture):
+        (WebCore::GLES2Canvas::checkGLError):
+        * platform/graphics/chromium/GLES2Canvas.h:
+        (WebCore::GLES2Canvas::context):
+        * platform/graphics/chromium/GLES2Texture.cpp:
+        (WebCore::GLES2Texture::GLES2Texture):
+        (WebCore::GLES2Texture::~GLES2Texture):
+        (WebCore::GLES2Texture::create):
+        (WebCore::convertFormat):
+        (WebCore::GLES2Texture::load):
+        (WebCore::GLES2Texture::bind):
+        * platform/graphics/chromium/GLES2Texture.h:
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::fillRect):
+            - add a missing restore() call to the H/W path
+        * platform/graphics/skia/ImageSkia.cpp:
+        (WebCore::drawBitmapGLES2):
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::setGraphicsContext3D):
+        (WebCore::PlatformContextSkia::uploadSoftwareToHardware):
+            - avoid applying CTM to uploads
+        (WebCore::PlatformContextSkia::readbackHardwareToSoftware):
+        * platform/graphics/skia/PlatformContextSkia.h:
+
+2010-08-06  James Robinson  <jamesr@chromium.org>
+
         Reviewed by Simon Fraser.
 
         Composited canvas should be treated the same by the compositor and not be WebGL specific

@@ -34,20 +34,22 @@
 
 #include "GLES2Canvas.h"
 
+#include "Float32Array.h"
 #include "FloatRect.h"
-#include "GLES2Context.h"
 #include "GLES2Texture.h"
-
-#include <GLES2/gl2.h>
+#include "GraphicsContext3D.h"
+#include "PlatformString.h"
+#include "Uint16Array.h"
 
 #define _USE_MATH_DEFINES
 #include <math.h>
 
+#include <wtf/text/CString.h>
 #include <wtf/OwnArrayPtr.h>
 
 namespace WebCore {
 
-static inline void affineTo3x3(const AffineTransform& transform, GLfloat mat[9])
+static inline void affineTo3x3(const AffineTransform& transform, float mat[9])
 {
     mat[0] = transform.a();
     mat[1] = transform.b();
@@ -73,8 +75,8 @@ struct GLES2Canvas::State {
     AffineTransform m_ctm;
 };
 
-GLES2Canvas::GLES2Canvas(GLES2Context* context, const IntSize& size)
-    : m_gles2Context(context)
+GLES2Canvas::GLES2Canvas(GraphicsContext3D* context, const IntSize& size)
+    : m_context(context)
     , m_quadVertices(0)
     , m_quadIndices(0)
     , m_simpleProgram(0)
@@ -92,10 +94,8 @@ GLES2Canvas::GLES2Canvas(GLES2Context* context, const IntSize& size)
     m_flipMatrix.translate(-1.0f, 1.0f);
     m_flipMatrix.scale(2.0f / size.width(), -2.0f / size.height());
 
-    m_gles2Context->makeCurrent();
-    m_gles2Context->resizeOffscreenContent(size);
-    m_gles2Context->swapBuffers();
-    glViewport(0, 0, size.width(), size.height());
+    m_context->reshape(size.width(), size.height());
+    m_context->viewport(0, 0, size.width(), size.height());
 
     m_stateStack.append(State());
     m_state = &m_stateStack.last();
@@ -107,69 +107,58 @@ GLES2Canvas::GLES2Canvas(GLES2Context* context, const IntSize& size)
 
 GLES2Canvas::~GLES2Canvas()
 {
-    m_gles2Context->makeCurrent();
-    if (m_simpleProgram)
-        glDeleteProgram(m_simpleProgram);
-    if (m_texProgram)
-        glDeleteProgram(m_texProgram);
-    if (m_quadVertices)
-        glDeleteBuffers(1, &m_quadVertices);
-    if (m_quadIndices)
-        glDeleteBuffers(1, &m_quadVertices);
+    m_context->deleteProgram(m_simpleProgram);
+    m_context->deleteProgram(m_texProgram);
+    m_context->deleteBuffer(m_quadVertices);
+    m_context->deleteBuffer(m_quadIndices);
 }
 
 void GLES2Canvas::clearRect(const FloatRect& rect)
 {
-    m_gles2Context->makeCurrent();
-
-    glScissor(rect.x(), rect.y(), rect.width(), rect.height());
-    glEnable(GL_SCISSOR_TEST);
-    glClear(GL_COLOR_BUFFER_BIT);
-    glDisable(GL_SCISSOR_TEST);
+    m_context->scissor(rect.x(), rect.y(), rect.width(), rect.height());
+    m_context->enable(GraphicsContext3D::SCISSOR_TEST);
+    m_context->clear(GraphicsContext3D::COLOR_BUFFER_BIT);
+    m_context->disable(GraphicsContext3D::SCISSOR_TEST);
 }
 
 void GLES2Canvas::fillRect(const FloatRect& rect, const Color& color, ColorSpace colorSpace)
 {
-    m_gles2Context->makeCurrent();
-
-    glBindBuffer(GL_ARRAY_BUFFER, getQuadVertices());
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, getQuadIndices());
+    m_context->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, getQuadVertices());
+    m_context->bindBuffer(GraphicsContext3D::ELEMENT_ARRAY_BUFFER, getQuadIndices());
 
     float rgba[4];
     color.getRGBA(rgba[0], rgba[1], rgba[2], rgba[3]);
-    glUniform4f(m_simpleColorLocation, rgba[0] * rgba[3], rgba[1] * rgba[3], rgba[2] * rgba[3], rgba[3]);
+    m_context->uniform4f(m_simpleColorLocation, rgba[0] * rgba[3], rgba[1] * rgba[3], rgba[2] * rgba[3], rgba[3]);
 
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+    m_context->drawElements(GraphicsContext3D::TRIANGLES, 6, GraphicsContext3D::UNSIGNED_SHORT, 0);
 }
 
 void GLES2Canvas::fillRect(const FloatRect& rect)
 {
-    m_gles2Context->makeCurrent();
-
     applyCompositeOperator(m_state->m_compositeOp);
 
-    glBindBuffer(GL_ARRAY_BUFFER, getQuadVertices());
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, getQuadIndices());
+    m_context->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, getQuadVertices());
+    m_context->bindBuffer(GraphicsContext3D::ELEMENT_ARRAY_BUFFER, getQuadIndices());
 
-    glUseProgram(getSimpleProgram());
+    m_context->useProgram(getSimpleProgram());
 
     float rgba[4];
     m_state->m_fillColor.getRGBA(rgba[0], rgba[1], rgba[2], rgba[3]);
-    glUniform4f(m_simpleColorLocation, rgba[0] * rgba[3], rgba[1] * rgba[3], rgba[2] * rgba[3], rgba[3]);
+    m_context->uniform4f(m_simpleColorLocation, rgba[0] * rgba[3], rgba[1] * rgba[3], rgba[2] * rgba[3], rgba[3]);
 
     AffineTransform matrix(m_flipMatrix);
     matrix.multLeft(m_state->m_ctm);
     matrix.translate(rect.x(), rect.y());
     matrix.scale(rect.width(), rect.height());
-    GLfloat mat[9];
+    float mat[9];
     affineTo3x3(matrix, mat);
-    glUniformMatrix3fv(m_simpleMatrixLocation, 1, GL_FALSE, mat);
+    m_context->uniformMatrix3fv(m_simpleMatrixLocation, false /*transpose*/, mat, 1 /*count*/);
 
-    glVertexAttribPointer(m_simplePositionLocation, 3, GL_FLOAT, GL_FALSE, 0, (GLvoid*)(0));
+    m_context->vertexAttribPointer(m_simplePositionLocation, 3, GraphicsContext3D::FLOAT, false, 0, 0);
 
-    glEnableVertexAttribArray(m_simplePositionLocation);
+    m_context->enableVertexAttribArray(m_simplePositionLocation);
 
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+    m_context->drawElements(GraphicsContext3D::TRIANGLES, 6, GraphicsContext3D::UNSIGNED_SHORT, 0);
 }
 
 void GLES2Canvas::setFillColor(const Color& color, ColorSpace colorSpace)
@@ -222,49 +211,47 @@ void GLES2Canvas::drawTexturedRect(GLES2Texture* texture, const FloatRect& srcRe
 
 void GLES2Canvas::drawTexturedRect(GLES2Texture* texture, const FloatRect& srcRect, const FloatRect& dstRect, const AffineTransform& transform, float alpha, ColorSpace colorSpace, CompositeOperator compositeOp)
 {
-    m_gles2Context->makeCurrent();
-
     applyCompositeOperator(compositeOp);
 
-    glBindBuffer(GL_ARRAY_BUFFER, getQuadVertices());
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, getQuadIndices());
+    m_context->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, getQuadVertices());
+    m_context->bindBuffer(GraphicsContext3D::ELEMENT_ARRAY_BUFFER, getQuadIndices());
     checkGLError("glBindBuffer");
 
-    glUseProgram(getTexProgram());
+    m_context->useProgram(getTexProgram());
     checkGLError("glUseProgram");
 
-    glActiveTexture(GL_TEXTURE0);
+    m_context->activeTexture(GraphicsContext3D::TEXTURE0);
     texture->bind();
 
-    glUniform1i(m_texSamplerLocation, 0);
+    m_context->uniform1i(m_texSamplerLocation, 0);
     checkGLError("glUniform1i");
 
-    glUniform1f(m_texAlphaLocation, alpha);
+    m_context->uniform1f(m_texAlphaLocation, alpha);
     checkGLError("glUniform1f for alpha");
 
     AffineTransform matrix(m_flipMatrix);
     matrix.multLeft(transform);
     matrix.translate(dstRect.x(), dstRect.y());
     matrix.scale(dstRect.width(), dstRect.height());
-    GLfloat mat[9];
+    float mat[9];
     affineTo3x3(matrix, mat);
-    glUniformMatrix3fv(m_texMatrixLocation, 1, GL_FALSE, mat);
+    m_context->uniformMatrix3fv(m_texMatrixLocation, false /*transpose*/, mat, 1 /*count*/);
     checkGLError("glUniformMatrix3fv");
 
     AffineTransform texMatrix;
     texMatrix.scale(1.0f / texture->width(), 1.0f / texture->height());
     texMatrix.translate(srcRect.x(), srcRect.y());
     texMatrix.scale(srcRect.width(), srcRect.height());
-    GLfloat texMat[9];
+    float texMat[9];
     affineTo3x3(texMatrix, texMat);
-    glUniformMatrix3fv(m_texTexMatrixLocation, 1, GL_FALSE, texMat);
+    m_context->uniformMatrix3fv(m_texTexMatrixLocation, false /*transpose*/, texMat, 1 /*count*/);
     checkGLError("glUniformMatrix3fv");
 
-    glVertexAttribPointer(m_texPositionLocation, 3, GL_FLOAT, GL_FALSE, 0, (GLvoid*)(0));
+    m_context->vertexAttribPointer(m_texPositionLocation, 3, GraphicsContext3D::FLOAT, false, 0, 0);
 
-    glEnableVertexAttribArray(m_texPositionLocation);
+    m_context->enableVertexAttribArray(m_texPositionLocation);
 
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+    m_context->drawElements(GraphicsContext3D::TRIANGLES, 6, GraphicsContext3D::UNSIGNED_SHORT, 0);
     checkGLError("glDrawElements");
 }
 
@@ -280,56 +267,56 @@ void GLES2Canvas::applyCompositeOperator(CompositeOperator op)
 
     switch (op) {
     case CompositeClear:
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_ZERO, GL_ZERO);
+        m_context->enable(GraphicsContext3D::BLEND);
+        m_context->blendFunc(GraphicsContext3D::ZERO, GraphicsContext3D::ZERO);
         break;
     case CompositeCopy:
-        glDisable(GL_BLEND);
+        m_context->disable(GraphicsContext3D::BLEND);
         break;
     case CompositeSourceOver:
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+        m_context->enable(GraphicsContext3D::BLEND);
+        m_context->blendFunc(GraphicsContext3D::ONE, GraphicsContext3D::ONE_MINUS_SRC_ALPHA);
         break;
     case CompositeSourceIn:
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_DST_ALPHA, GL_ZERO);
+        m_context->enable(GraphicsContext3D::BLEND);
+        m_context->blendFunc(GraphicsContext3D::DST_ALPHA, GraphicsContext3D::ZERO);
         break;
     case CompositeSourceOut:
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_ONE_MINUS_DST_ALPHA, GL_ZERO);
+        m_context->enable(GraphicsContext3D::BLEND);
+        m_context->blendFunc(GraphicsContext3D::ONE_MINUS_DST_ALPHA, GraphicsContext3D::ZERO);
         break;
     case CompositeSourceAtop:
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_DST_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        m_context->enable(GraphicsContext3D::BLEND);
+        m_context->blendFunc(GraphicsContext3D::DST_ALPHA, GraphicsContext3D::ONE_MINUS_SRC_ALPHA);
         break;
     case CompositeDestinationOver:
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_ONE_MINUS_DST_ALPHA, GL_ONE);
+        m_context->enable(GraphicsContext3D::BLEND);
+        m_context->blendFunc(GraphicsContext3D::ONE_MINUS_DST_ALPHA, GraphicsContext3D::ONE);
         break;
     case CompositeDestinationIn:
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_ZERO, GL_SRC_ALPHA);
+        m_context->enable(GraphicsContext3D::BLEND);
+        m_context->blendFunc(GraphicsContext3D::ZERO, GraphicsContext3D::SRC_ALPHA);
         break;
     case CompositeDestinationOut:
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_ZERO, GL_ONE_MINUS_SRC_ALPHA);
+        m_context->enable(GraphicsContext3D::BLEND);
+        m_context->blendFunc(GraphicsContext3D::ZERO, GraphicsContext3D::ONE_MINUS_SRC_ALPHA);
         break;
     case CompositeDestinationAtop:
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_ONE_MINUS_DST_ALPHA, GL_SRC_ALPHA);
+        m_context->enable(GraphicsContext3D::BLEND);
+        m_context->blendFunc(GraphicsContext3D::ONE_MINUS_DST_ALPHA, GraphicsContext3D::SRC_ALPHA);
         break;
     case CompositeXOR:
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_ONE_MINUS_DST_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        m_context->enable(GraphicsContext3D::BLEND);
+        m_context->blendFunc(GraphicsContext3D::ONE_MINUS_DST_ALPHA, GraphicsContext3D::ONE_MINUS_SRC_ALPHA);
         break;
     case CompositePlusDarker:
     case CompositeHighlight:
         // unsupported
-        glDisable(GL_BLEND);
+        m_context->disable(GraphicsContext3D::BLEND);
         break;
     case CompositePlusLighter:
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_ONE, GL_ONE);
+        m_context->enable(GraphicsContext3D::BLEND);
+        m_context->blendFunc(GraphicsContext3D::ONE, GraphicsContext3D::ONE);
         break;
     }
     m_lastCompositeOp = op;
@@ -338,13 +325,14 @@ void GLES2Canvas::applyCompositeOperator(CompositeOperator op)
 unsigned GLES2Canvas::getQuadVertices()
 {
     if (!m_quadVertices) {
-        GLfloat vertices[] = { 0.0f, 0.0f, 1.0f,
-                               1.0f, 0.0f, 1.0f,
-                               1.0f, 1.0f, 1.0f,
-                               0.0f, 1.0f, 1.0f };
-        glGenBuffers(1, &m_quadVertices);
-        glBindBuffer(GL_ARRAY_BUFFER, m_quadVertices);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+        float vertices[] = { 0.0f, 0.0f, 1.0f,
+                             1.0f, 0.0f, 1.0f,
+                             1.0f, 1.0f, 1.0f,
+                             0.0f, 1.0f, 1.0f };
+        m_quadVertices = m_context->createBuffer();
+        RefPtr<Float32Array> vertexArray = Float32Array::create(vertices, sizeof(vertices) / sizeof(float));
+        m_context->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, m_quadVertices);
+        m_context->bufferData(GraphicsContext3D::ARRAY_BUFFER, vertexArray.get(), GraphicsContext3D::STATIC_DRAW);
     }
     return m_quadVertices;
 }
@@ -353,32 +341,31 @@ unsigned GLES2Canvas::getQuadVertices()
 unsigned GLES2Canvas::getQuadIndices()
 {
     if (!m_quadIndices) {
-        GLushort indices[] = { 0, 1, 2, 0, 2, 3};
+        unsigned short indices[] = { 0, 1, 2, 0, 2, 3};
 
-        glGenBuffers(1, &m_quadIndices);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_quadIndices);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+        m_quadIndices = m_context->createBuffer();
+        RefPtr<Uint16Array> indexArray = Uint16Array::create(indices, sizeof(indices) / sizeof(unsigned short));
+        m_context->bindBuffer(GraphicsContext3D::ELEMENT_ARRAY_BUFFER, m_quadIndices);
+        m_context->bufferData(GraphicsContext3D::ELEMENT_ARRAY_BUFFER, indexArray.get(), GraphicsContext3D::STATIC_DRAW);
     }
     return m_quadIndices;
 }
 
-static GLuint loadShader(GLenum type, const char* shaderSource)
+static unsigned loadShader(GraphicsContext3D* context, unsigned type, const char* shaderSource)
 {
-    GLuint shader = glCreateShader(type);
+    unsigned shader = context->createShader(type);
     if (!shader)
         return 0;
 
-    glShaderSource(shader, 1, &shaderSource, 0);
-    glCompileShader(shader);
-    GLint compileStatus;
-    glGetShaderiv(shader, GL_COMPILE_STATUS, &compileStatus);
+    String shaderSourceStr(shaderSource);
+    context->shaderSource(shader, shaderSourceStr);
+    context->compileShader(shader);
+    int compileStatus;
+    context->getShaderiv(shader, GraphicsContext3D::COMPILE_STATUS, &compileStatus);
     if (!compileStatus) {
-        int length;
-        glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
-        OwnArrayPtr<char> log(new char[length]);
-        glGetShaderInfoLog(shader, length, 0, log.get());
-        LOG_ERROR(log.get());
-        glDeleteShader(shader);
+        String infoLog = context->getShaderInfoLog(shader);
+        LOG_ERROR(infoLog.utf8().data());
+        context->deleteShader(shader);
         return 0;
     }
     return shader;
@@ -387,7 +374,7 @@ static GLuint loadShader(GLenum type, const char* shaderSource)
 unsigned GLES2Canvas::getSimpleProgram()
 {
     if (!m_simpleProgram) {
-        GLuint vertexShader = loadShader(GL_VERTEX_SHADER,
+        unsigned vertexShader = loadShader(m_context, GraphicsContext3D::VERTEX_SHADER,
             "uniform mat3 matrix;\n"
             "uniform vec4 color;\n"
             "attribute vec3 position;\n"
@@ -396,7 +383,7 @@ unsigned GLES2Canvas::getSimpleProgram()
             "}\n");
         if (!vertexShader)
             return 0;
-        GLuint fragmentShader = loadShader(GL_FRAGMENT_SHADER,
+        unsigned fragmentShader = loadShader(m_context, GraphicsContext3D::FRAGMENT_SHADER,
             "precision mediump float;\n"
             "uniform mat3 matrix;\n"
             "uniform vec4 color;\n"
@@ -405,23 +392,23 @@ unsigned GLES2Canvas::getSimpleProgram()
             "}\n");
         if (!fragmentShader)
             return 0;
-        m_simpleProgram = glCreateProgram();
+        m_simpleProgram = m_context->createProgram();
         if (!m_simpleProgram)
             return 0;
-        glAttachShader(m_simpleProgram, vertexShader);
-        glAttachShader(m_simpleProgram, fragmentShader);
-        glLinkProgram(m_simpleProgram);
-        GLint linkStatus;
-        glGetProgramiv(m_simpleProgram, GL_LINK_STATUS, &linkStatus);
+        m_context->attachShader(m_simpleProgram, vertexShader);
+        m_context->attachShader(m_simpleProgram, fragmentShader);
+        m_context->linkProgram(m_simpleProgram);
+        int linkStatus;
+        m_context->getProgramiv(m_simpleProgram, GraphicsContext3D::LINK_STATUS, &linkStatus);
         if (!linkStatus) {
-            glDeleteProgram(m_simpleProgram);
+            m_context->deleteProgram(m_simpleProgram);
             m_simpleProgram = 0;
         }
-        glDeleteShader(vertexShader);
-        glDeleteShader(fragmentShader);
-        m_simplePositionLocation = glGetAttribLocation(m_simpleProgram, "position");
-        m_simpleMatrixLocation = glGetUniformLocation(m_simpleProgram, "matrix");
-        m_simpleColorLocation = glGetUniformLocation(m_simpleProgram, "color");
+        m_context->deleteShader(vertexShader);
+        m_context->deleteShader(fragmentShader);
+        m_simplePositionLocation = m_context->getAttribLocation(m_simpleProgram, "position");
+        m_simpleMatrixLocation = m_context->getUniformLocation(m_simpleProgram, "matrix");
+        m_simpleColorLocation = m_context->getUniformLocation(m_simpleProgram, "color");
     }
     return m_simpleProgram;
 }
@@ -429,7 +416,7 @@ unsigned GLES2Canvas::getSimpleProgram()
 unsigned GLES2Canvas::getTexProgram()
 {
     if (!m_texProgram) {
-        GLuint vertexShader = loadShader(GL_VERTEX_SHADER,
+        unsigned vertexShader = loadShader(m_context, GraphicsContext3D::VERTEX_SHADER,
             "uniform mat3 matrix;\n"
             "uniform mat3 texMatrix;\n"
             "attribute vec3 position;\n"
@@ -440,7 +427,7 @@ unsigned GLES2Canvas::getTexProgram()
             "}\n");
         if (!vertexShader)
             return 0;
-        GLuint fragmentShader = loadShader(GL_FRAGMENT_SHADER,
+        unsigned fragmentShader = loadShader(m_context, GraphicsContext3D::FRAGMENT_SHADER,
             "precision mediump float;\n"
             "uniform sampler2D sampler;\n"
             "uniform float alpha;\n"
@@ -450,25 +437,25 @@ unsigned GLES2Canvas::getTexProgram()
             "}\n");
         if (!fragmentShader)
             return 0;
-        m_texProgram = glCreateProgram();
+        m_texProgram = m_context->createProgram();
         if (!m_texProgram)
             return 0;
-        glAttachShader(m_texProgram, vertexShader);
-        glAttachShader(m_texProgram, fragmentShader);
-        glLinkProgram(m_texProgram);
-        GLint linkStatus;
-        glGetProgramiv(m_texProgram, GL_LINK_STATUS, &linkStatus);
+        m_context->attachShader(m_texProgram, vertexShader);
+        m_context->attachShader(m_texProgram, fragmentShader);
+        m_context->linkProgram(m_texProgram);
+        int linkStatus;
+        m_context->getProgramiv(m_texProgram, GraphicsContext3D::LINK_STATUS, &linkStatus);
         if (!linkStatus) {
-            glDeleteProgram(m_texProgram);
+            m_context->deleteProgram(m_texProgram);
             m_texProgram = 0;
         }
-        glDeleteShader(vertexShader);
-        glDeleteShader(fragmentShader);
-        m_texMatrixLocation = glGetUniformLocation(m_texProgram, "matrix");
-        m_texSamplerLocation = glGetUniformLocation(m_texProgram, "sampler");
-        m_texTexMatrixLocation = glGetUniformLocation(m_texProgram, "texMatrix");
-        m_texPositionLocation = glGetAttribLocation(m_texProgram, "position");
-        m_texAlphaLocation = glGetUniformLocation(m_texProgram, "alpha");
+        m_context->deleteShader(vertexShader);
+        m_context->deleteShader(fragmentShader);
+        m_texMatrixLocation = m_context->getUniformLocation(m_texProgram, "matrix");
+        m_texSamplerLocation = m_context->getUniformLocation(m_texProgram, "sampler");
+        m_texTexMatrixLocation = m_context->getUniformLocation(m_texProgram, "texMatrix");
+        m_texPositionLocation = m_context->getAttribLocation(m_texProgram, "position");
+        m_texAlphaLocation = m_context->getUniformLocation(m_texProgram, "alpha");
     }
     return m_texProgram;
 }
@@ -479,7 +466,7 @@ GLES2Texture* GLES2Canvas::createTexture(NativeImagePtr ptr, GLES2Texture::Forma
     if (texture)
         return texture.get();
 
-    texture = GLES2Texture::create(format, width, height);
+    texture = GLES2Texture::create(m_context, format, width, height);
     GLES2Texture* t = texture.get();
     m_textures.set(ptr, texture);
     return t;
@@ -494,24 +481,24 @@ GLES2Texture* GLES2Canvas::getTexture(NativeImagePtr ptr)
 void GLES2Canvas::checkGLError(const char* header)
 {
 #ifndef NDEBUG
-    GLenum err;
-    while ((err = glGetError()) != GL_NO_ERROR) {
+    unsigned err;
+    while ((err = m_context->getError()) != GraphicsContext3D::NO_ERROR) {
         const char* errorStr = "*** UNKNOWN ERROR ***";
         switch (err) {
-        case GL_INVALID_ENUM:
-            errorStr = "GL_INVALID_ENUM";
+        case GraphicsContext3D::INVALID_ENUM:
+            errorStr = "GraphicsContext3D::INVALID_ENUM";
             break;
-        case GL_INVALID_VALUE:
-            errorStr = "GL_INVALID_VALUE";
+        case GraphicsContext3D::INVALID_VALUE:
+            errorStr = "GraphicsContext3D::INVALID_VALUE";
             break;
-        case GL_INVALID_OPERATION:
-            errorStr = "GL_INVALID_OPERATION";
+        case GraphicsContext3D::INVALID_OPERATION:
+            errorStr = "GraphicsContext3D::INVALID_OPERATION";
             break;
-        case GL_INVALID_FRAMEBUFFER_OPERATION:
-            errorStr = "GL_INVALID_FRAMEBUFFER_OPERATION";
+        case GraphicsContext3D::INVALID_FRAMEBUFFER_OPERATION:
+            errorStr = "GraphicsContext3D::INVALID_FRAMEBUFFER_OPERATION";
             break;
-        case GL_OUT_OF_MEMORY:
-            errorStr = "GL_OUT_OF_MEMORY";
+        case GraphicsContext3D::OUT_OF_MEMORY:
+            errorStr = "GraphicsContext3D::OUT_OF_MEMORY";
             break;
         }
         if (header)
