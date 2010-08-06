@@ -309,12 +309,6 @@ void WebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
     page->didReceiveMessage(connection, messageID, *arguments);    
 }
 
-void WebProcess::didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, CoreIPC::ArgumentEncoder*)
-{
-    // The web process should never ever get sync messages.
-    ASSERT_NOT_REACHED();
-}
-
 void WebProcess::didClose(CoreIPC::Connection*)
 {
     // When running in the same process the connection will never be closed.

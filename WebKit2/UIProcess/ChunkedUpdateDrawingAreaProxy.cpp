@@ -168,9 +168,4 @@ void ChunkedUpdateDrawingAreaProxy::didReceiveMessage(CoreIPC::Connection*, Core
     }
 }
 
-void ChunkedUpdateDrawingAreaProxy::didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder&, CoreIPC::ArgumentEncoder&)
-{
-    ASSERT_NOT_REACHED();
-}
-
 } // namespace WebKit

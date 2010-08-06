@@ -55,12 +55,20 @@ class MessageID;
     
 class Connection : public ThreadSafeShared<Connection> {
 public:
-    class Client {
+    class MessageReceiver {
+    protected:
+        virtual ~MessageReceiver() { }
+
     public:
-        virtual ~Client() { }
-        
         virtual void didReceiveMessage(Connection*, MessageID, ArgumentDecoder*) = 0;
-        virtual void didReceiveSyncMessage(Connection*, MessageID, ArgumentDecoder*, ArgumentEncoder*) = 0;
+        virtual void didReceiveSyncMessage(Connection*, MessageID, ArgumentDecoder*, ArgumentEncoder*) { ASSERT_NOT_REACHED(); }
+    };
+    
+    class Client : public MessageReceiver {
+    protected:
+        virtual ~Client() { }
+
+    public:        
         virtual void didClose(Connection*) = 0;
     };
 

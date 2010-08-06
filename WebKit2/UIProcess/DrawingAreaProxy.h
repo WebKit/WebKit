@@ -49,7 +49,7 @@ public:
     virtual ~DrawingAreaProxy();
 
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder&) = 0;
-    virtual void didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder&, CoreIPC::ArgumentEncoder&) = 0;
+    virtual void didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder&, CoreIPC::ArgumentEncoder&) { ASSERT_NOT_REACHED(); }
 
     virtual void paint(const WebCore::IntRect&, PlatformDrawingContext) = 0;
     virtual void setSize(const WebCore::IntSize&) = 0;

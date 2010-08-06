@@ -27,16 +27,11 @@
 #define DrawingAreaBase_h
 
 #include "ArgumentCoders.h"
+#include "Connection.h"
 
 namespace WebCore {
     class IntRect;
     class IntSize;
-}
-
-namespace CoreIPC {
-    class ArgumentDecoder;
-    class Connection;
-    class MessageID;
 }
 
 namespace WebKit {
