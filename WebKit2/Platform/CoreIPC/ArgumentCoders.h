@@ -59,6 +59,12 @@ template<typename T> struct ArgumentCoder<Vector<T> > {
         if (!decoder->decodeUInt64(size))
             return false;
 
+        // Before allocating the cector, make sure that the decoder buffer is big enough.
+        if (!decoder->bufferIsLargeEnoughtToContain<T>(size)) {
+            decoder->markInvalid();
+            return false;
+        }
+
         Vector<T> tmp;
         tmp.reserveCapacity(size);
 

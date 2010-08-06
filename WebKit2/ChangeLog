@@ -1,5 +1,25 @@
 2010-08-06  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Don't try to allocate a vector unless we know the buffer can contain it
+        https://bugs.webkit.org/show_bug.cgi?id=43647
+
+        * Platform/CoreIPC/ArgumentCoders.h:
+        (CoreIPC::):
+        Check that the argument decoder buffer actually can hold all the vector elements.
+
+        * Platform/CoreIPC/ArgumentDecoder.cpp:
+        (CoreIPC::ArgumentDecoder::bufferIsLargeEnoughtToContain):
+        Align the current position to the given alignment, add the size and check if the position is
+        past the end of the buffer.
+
+        * Platform/CoreIPC/ArgumentDecoder.h:
+        (CoreIPC::ArgumentDecoder::bufferIsLargeEnoughtToContain):
+        Get the size and alignment and call the other bufferIsLargeEnoughtToContain overload.
+
+2010-08-06  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Adam Roben.
 
         Detect invalid CoreIPC messages and call didReceiveInvalidMessage

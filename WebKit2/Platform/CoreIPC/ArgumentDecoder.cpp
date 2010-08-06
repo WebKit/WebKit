@@ -77,6 +77,11 @@ bool ArgumentDecoder::alignBufferPosition(unsigned alignment, size_t size)
     return true;
 }
 
+bool ArgumentDecoder::bufferIsLargeEnoughtToContain(unsigned alignment, size_t size) const
+{
+    return roundUpToAlignment(m_bufferPos, alignment) + size <= m_bufferEnd;
+}
+
 bool ArgumentDecoder::decodeBytes(Vector<uint8_t>& buffer)
 {
     uint64_t size;
