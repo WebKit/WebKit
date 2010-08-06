@@ -1,3 +1,14 @@
+2010-08-05  James Robinson  <jamesr@chromium.org>
+
+        Rubber stamped by Eric Seidel.
+
+        [SVG] SVGPathSeg.cpp needs an #if ENABLE(SVG) guard
+        https://bugs.webkit.org/show_bug.cgi?id=43599
+
+        Matches the rest of the .cpp files in this directory.
+
+        * svg/SVGPathSeg.cpp:
+
 2010-08-05  Erik Arvidsson  <arv@chromium.org>
 
         Reviewed by Kent Tamura.

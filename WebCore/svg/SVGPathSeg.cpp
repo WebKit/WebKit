@@ -24,6 +24,7 @@
  */
 
 #include "config.h"
+#if ENABLE(SVG)
 #include "SVGPathSeg.h"
 
 #include "SVGNames.h"
@@ -60,3 +61,4 @@ String SVGPathSegSingleCoord::toString() const
 }
 
 } // namespace WebCore
+#endif // ENABLE(SVG)
