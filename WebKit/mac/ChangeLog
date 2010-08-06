@@ -1,3 +1,17 @@
+2010-08-05  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by David Kilzer.
+
+        Remove Invalid Asserts for Application Cache Quotas
+        https://bugs.webkit.org/show_bug.cgi?id=43585
+
+        Removed Invalid ASSERTs that would always happen for quotas
+        that were not noQuota().
+
+        * WebView/WebPreferences.mm:
+        (-[WebPreferences applicationCacheTotalQuota]):
+        (-[WebPreferences applicationCacheDefaultOriginQuota]):
+
 2010-08-05  Gavin Barraclough  <barraclough@apple.com>
 
         Rubber stamped by Sam Weinig

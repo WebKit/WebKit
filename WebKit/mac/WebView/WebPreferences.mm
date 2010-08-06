@@ -998,7 +998,6 @@ static WebCacheModel cacheModelForMainBundle(void)
 
 - (int64_t)applicationCacheTotalQuota
 {
-    ASSERT([self _longLongValueForKey:WebKitApplicationCacheTotalQuota] == [WebApplicationCache maximumSize]);
     return [self _longLongValueForKey:WebKitApplicationCacheTotalQuota];
 }
 
@@ -1012,7 +1011,6 @@ static WebCacheModel cacheModelForMainBundle(void)
 
 - (int64_t)applicationCacheDefaultOriginQuota
 {
-    ASSERT([self _longLongValueForKey:WebKitApplicationCacheDefaultOriginQuota] == [WebApplicationCache defaultOriginQuota]);
     return [self _longLongValueForKey:WebKitApplicationCacheDefaultOriginQuota];
 }
 
