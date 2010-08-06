@@ -32,7 +32,6 @@
 
 namespace WebCore {
 
-class AtomicString;
 class Element;
 
 // This may end up merged into HTMLElementStack.

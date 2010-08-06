@@ -33,11 +33,11 @@
 
 #if ENABLE(WORKERS)
 
+#include <wtf/Forward.h>
+
 #include "Console.h"
 
 namespace WebCore {
-
-    class String;
 
     // APIs used by workers to report console activity.
     class WorkerReportingProxy {

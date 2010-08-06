@@ -26,11 +26,11 @@
 #include "JSDOMGlobalObject.h"
 #include "JSDOMWrapper.h"
 #include <runtime/WeakGCMap.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
 class ScriptController;
-class StringImpl;
 
 typedef JSC::WeakGCMap<void*, DOMObject*> DOMObjectWrapperMap;
 typedef JSC::WeakGCMap<StringImpl*, JSC::JSString*> JSStringCache; 

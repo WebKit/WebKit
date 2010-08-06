@@ -28,12 +28,11 @@
 #define CanvasGradient_h
 
 #include "Gradient.h"
+#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
-
-    class String;
 
     typedef int ExceptionCode;
 

@@ -31,11 +31,11 @@
 #include "SharedMemory.h"
 #include "VisitedLinkTable.h"
 #include <WebCore/LinkHash.h>
+#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 
 namespace WebCore {
     class IntSize;
-    class String;
 }
 
 namespace WebKit {

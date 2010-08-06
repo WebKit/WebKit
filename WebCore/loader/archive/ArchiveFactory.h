@@ -31,12 +31,12 @@
 
 #include "Archive.h"
 
+#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
 class SharedBuffer;
-class String;
 
 class ArchiveFactory {
 public:

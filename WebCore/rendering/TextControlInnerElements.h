@@ -29,11 +29,11 @@
 
 #include "HTMLDivElement.h"
 #include "SpeechInputListener.h"
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
 class SpeechInput;
-class String;
 
 class TextControlInnerElement : public HTMLDivElement {
 public:

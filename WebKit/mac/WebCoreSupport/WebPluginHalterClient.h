@@ -24,10 +24,10 @@
  */
 
 #import <WebCore/PluginHalterClient.h>
+#import <wtf/Forward.h>
 
 namespace WebCore {
     class Node;
-    class String;
 }
 
 @class WebView;

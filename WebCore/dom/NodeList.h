@@ -24,11 +24,11 @@
 #ifndef NodeList_h
 #define NodeList_h
 
+#include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-    class AtomicString;
     class Node;
 
     class NodeList : public RefCounted<NodeList> {

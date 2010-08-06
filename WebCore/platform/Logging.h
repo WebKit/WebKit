@@ -27,14 +27,13 @@
 #define Logging_h
 
 #include <wtf/Assertions.h>
+#include <wtf/Forward.h>
 
 #ifndef LOG_CHANNEL_PREFIX
 #define LOG_CHANNEL_PREFIX Log
 #endif
 
 namespace WebCore {
-
-    class String;
 
     extern WTFLogChannel LogNotYetImplemented;
     extern WTFLogChannel LogFrames;

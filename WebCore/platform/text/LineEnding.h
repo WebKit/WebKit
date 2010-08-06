@@ -32,24 +32,22 @@
 #ifndef LineEnding_h
 #define LineEnding_h
 
-namespace WTF {
-class CString;
-}
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
 // Normalize all line-endings in the given string to CRLF.
-WTF::CString normalizeLineEndingsToCRLF(const WTF::CString&);
+CString normalizeLineEndingsToCRLF(const CString&);
 
 // Normalize all line-endings in the given string to CR.
-WTF::CString normalizeLineEndingsToCR(const WTF::CString&);
+CString normalizeLineEndingsToCR(const CString&);
 
 // Normalize all line-endings in the given string to LF.
-WTF::CString normalizeLineEndingsToLF(const WTF::CString&);
+CString normalizeLineEndingsToLF(const CString&);
 
 // Normalize all line-endings in the given string to the native line-endings.
 // (Normalize to CRLF on Windows and normalize to LF on all other platforms.)
-WTF::CString normalizeLineEndingsToNative(const WTF::CString&);
+CString normalizeLineEndingsToNative(const CString&);
 
 } // namespace WebCore
 

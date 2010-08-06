@@ -29,10 +29,11 @@
 #ifndef StringTruncator_h
 #define StringTruncator_h
 
+#include <wtf/Forward.h>
+
 namespace WebCore {
     
     class Font;
-    class String;
     
     class StringTruncator {
     public:

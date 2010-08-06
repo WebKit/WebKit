@@ -29,12 +29,12 @@
 #include "WKBundlePage.h"
 #include <WebCore/EditorInsertAction.h>
 #include <WebCore/TextAffinity.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
     class CSSStyleDeclaration;
     class Node;
     class Range;
-    class StringImpl;
 }
 
 namespace WebKit {

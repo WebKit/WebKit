@@ -26,10 +26,9 @@
 
 #include "AtomicString.h"
 #include "DynamicNodeList.h"
+#include <wtf/Forward.h>
 
 namespace WebCore {
-
-    class String;
 
     // NodeList which lists all Nodes in a Element with a given "name" attribute
     class NameNodeList : public DynamicNodeList {

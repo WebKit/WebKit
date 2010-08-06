@@ -27,10 +27,10 @@
 #define RenderObjectChildList_h
 
 #include "RenderStyleConstants.h"
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
-class AtomicString;
 class RenderObject;
 
 class RenderObjectChildList {

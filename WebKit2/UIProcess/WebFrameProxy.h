@@ -30,16 +30,13 @@
 #include "WebFramePolicyListenerProxy.h"
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/PlatformString.h>
+#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 
 namespace CoreIPC {
     class ArgumentDecoder;
     class Connection;
     class MessageID;
-}
-
-namespace WebCore {
-    class String;
 }
 
 namespace WebKit {

@@ -27,10 +27,7 @@
 #define WebLoaderClient_h
 
 #include "WKPage.h"
-
-namespace WebCore {
-    class StringImpl;
-}
+#include <wtf/Forward.h>
 
 namespace WebKit {
 

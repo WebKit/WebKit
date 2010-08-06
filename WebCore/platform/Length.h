@@ -23,11 +23,10 @@
 
 #include <wtf/Assertions.h>
 #include <wtf/FastAllocBase.h>
+#include <wtf/Forward.h>
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
-
-class String;
 
 const int undefinedLength = -1;
 const int percentScaleFactor = 128;

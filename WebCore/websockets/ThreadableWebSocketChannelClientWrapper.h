@@ -35,13 +35,12 @@
 
 #include "PlatformString.h"
 #include "WebSocketChannelClient.h"
+#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
-
-class String;
 
 class ThreadableWebSocketChannelClientWrapper : public ThreadSafeShared<ThreadableWebSocketChannelClientWrapper> {
 public:

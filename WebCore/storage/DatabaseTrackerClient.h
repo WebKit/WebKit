@@ -30,10 +30,11 @@
 
 #if ENABLE(DATABASE)
 
+#include <wtf/Forward.h>
+
 namespace WebCore {
 
 class SecurityOrigin;
-class String;
 
 class DatabaseTrackerClient {
 public:

@@ -31,6 +31,7 @@
 
 #import "WebNetscapePluginPackage.h"
 #import "WebPluginContainerCheck.h"
+#import <wtf/Forward.h>
 #import <wtf/OwnPtr.h>
 #import <wtf/PassRefPtr.h>
 #import <wtf/RefPtr.h>
@@ -40,10 +41,6 @@
 @class WebDataSource;
 @class WebFrame;
 @class WebView;
-
-namespace WTF {
-    class CString;
-}
 
 namespace WebCore {
     class HTMLPlugInElement;

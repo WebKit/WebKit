@@ -30,6 +30,7 @@
 #if ENABLE(WORKERS)
 
 #include <runtime/Protect.h>
+#include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Threading.h>
 
@@ -42,7 +43,6 @@ namespace WebCore {
     class JSWorkerContext;
     class ScriptSourceCode;
     class ScriptValue;
-    class String;
     class WorkerContext;
 
     class WorkerScriptController : public Noncopyable {

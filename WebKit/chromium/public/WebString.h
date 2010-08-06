@@ -34,10 +34,7 @@
 #include "WebCommon.h"
 
 #if WEBKIT_IMPLEMENTATION
-namespace WebCore {
-class String;
-class AtomicString;
-}
+#include <wtf/Forward.h>
 #else
 #include <base/nullable_string16.h>
 #include <base/string16.h>

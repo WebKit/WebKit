@@ -35,6 +35,7 @@
 #if ENABLE(BLOB) || ENABLE(FILE_WRITER)
 
 #include "FileStreamClient.h"
+#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -45,7 +46,6 @@ class Blob;
 class FileStream;
 class FileThread;
 class ScriptExecutionContext;
-class String;
 
 // A proxy module that calls corresponding FileStream methods on the file thread.  Note: you must call stop() first and then release the reference to destruct the FileStreamProxy instance.
 class FileStreamProxy : public RefCounted<FileStreamProxy>, public FileStreamClient {

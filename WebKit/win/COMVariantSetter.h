@@ -29,10 +29,7 @@
 #include <WebCore/BString.h>
 #include <WebCore/COMPtr.h>
 #include <wtf/Assertions.h>
-
-namespace WebCore {
-    class String;
-}
+#include <wtf/Forward.h>
 
 template<typename T> struct COMVariantSetter {};
 

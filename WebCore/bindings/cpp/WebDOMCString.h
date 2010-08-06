@@ -22,11 +22,8 @@
 #define WebDOMCString_h
 
 #include <WebDOMObject.h>
+#include <wtf/Forward.h>
 #include <stddef.h> // For size_t
-
-namespace WTF {
-class CString;
-};
 
 // UTF-16 character type
 #if defined(WIN32)

@@ -63,11 +63,6 @@ typedef struct HWND__* HWND;
 #include "PasteboardPrivate.h"
 #endif
 
-namespace WTF {
-class CString;
-}
-using WTF::CString;
-
 namespace WebCore {
 
 #if PLATFORM(MAC)
@@ -84,7 +79,6 @@ class HitTestResult;
 class KURL;
 class Node;
 class Range;
-class String;
     
 class Pasteboard : public Noncopyable {
 public:

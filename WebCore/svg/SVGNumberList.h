@@ -23,11 +23,10 @@
 
 #if ENABLE(SVG)
 #include "SVGList.h"
+#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
-
-    class String;
 
     class SVGNumberList : public SVGPODList<float> {
     public:

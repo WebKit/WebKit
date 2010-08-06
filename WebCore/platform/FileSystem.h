@@ -47,6 +47,7 @@
 
 #include "PlatformString.h"
 #include <time.h>
+#include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
 typedef const struct __CFData* CFDataRef;
@@ -62,11 +63,6 @@ typedef HINSTANCE HMODULE;
 #if PLATFORM(BREWMP)
 typedef struct _IFile IFile;
 #endif
-
-namespace WTF {
-class CString;
-}
-using WTF::CString;
 
 namespace WebCore {
 
@@ -155,12 +151,12 @@ String directoryName(const String&);
 
 Vector<String> listDirectory(const String& path, const String& filter = String());
 
-WTF::CString fileSystemRepresentation(const String&);
+CString fileSystemRepresentation(const String&);
 
 inline bool isHandleValid(const PlatformFileHandle& handle) { return handle != invalidPlatformFileHandle; }
 
 // Prefix is what the filename should be prefixed with, not the full path.
-WTF::CString openTemporaryFile(const char* prefix, PlatformFileHandle&);
+CString openTemporaryFile(const char* prefix, PlatformFileHandle&);
 PlatformFileHandle openFile(const String& path, FileOpenMode);
 void closeFile(PlatformFileHandle&);
 // Returns the resulting offset from the beginning of the file if successful, -1 otherwise.

@@ -29,6 +29,7 @@
 #ifndef Location_h
 #define Location_h
 
+#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
@@ -36,7 +37,6 @@ namespace WebCore {
 
     class Frame;
     class KURL;
-    class String;
 
     class Location : public RefCounted<Location> {
     public:

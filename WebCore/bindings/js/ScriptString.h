@@ -35,10 +35,9 @@
 #include "PlatformString.h"
 #include <runtime/UString.h>
 #include <runtime/StringBuilder.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
-
-class String;
 
 class ScriptString {
 public:

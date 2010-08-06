@@ -29,6 +29,7 @@
 #include "RunLoop.h"
 #include <WebCore/FileSystem.h>
 #include <WebCore/npapi.h>
+#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -36,7 +37,6 @@
 
 namespace WebCore {
     class KURL;
-    class String;
 }
 
 namespace WebKit {

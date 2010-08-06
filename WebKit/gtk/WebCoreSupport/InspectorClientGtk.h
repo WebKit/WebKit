@@ -33,11 +33,11 @@
 #include "InspectorFrontendClientLocal.h"
 #include "webkitwebview.h"
 #include "webkitwebinspector.h"
+#include <wtf/Forward.h>
 
 namespace WebCore {
     class Node;
     class Page;
-    class String;
 }
 
 namespace WebKit {

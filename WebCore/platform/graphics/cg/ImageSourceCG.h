@@ -27,10 +27,9 @@
 #define ImageSourceCG_h
 
 #include "ImageSource.h"
+#include <wtf/Forward.h>
 
 namespace WebCore {
-
-class String;
 
 String preferredExtensionForImageSourceType(const String& type);
 

@@ -31,6 +31,8 @@
 #ifndef DOMUtilitiesPrivate_h
 #define DOMUtilitiesPrivate_h
 
+#include <wtf/Forward.h>
+
 namespace WebCore {
 class Element;
 class HTMLInputElement;
@@ -39,7 +41,6 @@ class HTMLMetaElement;
 class HTMLOptionElement;
 class Node;
 class QualifiedName;
-class String;
 }
 
 // This file is an aggregate of useful WebCore operations.

@@ -23,12 +23,12 @@
 #include "PlatformString.h"
 #include "JSDOMBinding.h"
 #include <runtime/Protect.h>
+#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
-    class AtomicString;
     class DOMWindow;
     class Event;
     class Frame;

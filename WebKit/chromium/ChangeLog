@@ -1,3 +1,20 @@
+2010-08-05  Gavin Barraclough  <barraclough@apple.com>
+
+        Rubber stamped by Sam Weinig
+
+        Bug 43594 - Add string forwards to Forward.h
+        This allows us to remove forward declarations for these classes from
+        WebCore/WebKit (a step in moving these class from WebCore:: to WTF::).
+
+        * public/WebCString.h:
+        * public/WebString.h:
+        * src/DOMUtilitiesPrivate.h:
+        * src/DebuggerAgentImpl.h:
+        * src/DebuggerAgentManager.h:
+        * src/WebDevToolsAgentImpl.h:
+        * src/WebDevToolsFrontendImpl.h:
+        * src/WebPageSerializerImpl.h:
+
 2010-08-05  Brett Wilson  <brettw@chromium.org>
 
         Reviewed by Nate Chapin.

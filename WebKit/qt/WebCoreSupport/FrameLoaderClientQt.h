@@ -40,6 +40,7 @@
 #include "ResourceResponse.h"
 #include <QUrl>
 #include <qobject.h>
+#include <wtf/Forward.h>
 class QWebFrame;
 
 namespace WebCore {
@@ -49,7 +50,6 @@ class DocumentLoader;
 class Element;
 class FormState;
 class NavigationAction;
-class String;
 class ResourceLoader;
 
 struct LoadErrorResetToken;

@@ -30,13 +30,13 @@
 
 #include "COMPtr.h"
 #include <CoreFoundation/CoreFoundation.h>
+#include <wtf/Forward.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/RetainPtr.h>
 
 namespace WebCore {
     class KURL;
     class PageGroup;
-    class String;
 }
 
 //-----------------------------------------------------------------------------

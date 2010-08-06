@@ -27,10 +27,10 @@
 #define WebPluginHalterClient_h
 
 #include <WebCore/PluginHalterClient.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
     class Node;
-    class String;
 }
 
 class WebView;

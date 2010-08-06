@@ -24,11 +24,10 @@
 #if ENABLE(SVG)
 #include "SVGList.h"
 #include "FloatPoint.h"
+#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
-
-    class String;
 
     class SVGPointList : public SVGPODList<FloatPoint> {
     public:

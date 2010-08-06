@@ -26,9 +26,9 @@
 #ifndef GraphicsTypes_h
 #define GraphicsTypes_h
 
-namespace WebCore {
+#include <wtf/Forward.h>
 
-    class String;
+namespace WebCore {
 
     // Note: These constants exactly match the NSCompositeOperator constants of
     // AppKit on Mac OS X Tiger. If these ever change, we'll need to change the

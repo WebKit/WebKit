@@ -31,14 +31,13 @@
 #ifndef CSSOMUtils_h
 #define CSSOMUtils_h
 
+#include <wtf/Forward.h>
 #include <wtf/Vector.h>
 #include <wtf/unicode/Unicode.h>
 
 // Utilities for CSSOM http://dev.w3.org/csswg/cssom/
 
 namespace WebCore {
-
-class String;
 
 // Common serializing methods. See: http://dev.w3.org/csswg/cssom/#common-serializing-idioms
 void serializeCharacter(UChar32, Vector<UChar>& appendTo);

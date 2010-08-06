@@ -27,10 +27,7 @@
 #define InjectedBundlePageUIClient_h
 
 #include "WKBundlePage.h"
-
-namespace WebCore {
-    class String;
-}
+#include <wtf/Forward.h>
 
 namespace WebKit {
 

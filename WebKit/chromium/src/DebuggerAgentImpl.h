@@ -32,6 +32,7 @@
 #define DebuggerAgentImpl_h
 
 #include <v8.h>
+#include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 
@@ -40,7 +41,6 @@ class Document;
 class Frame;
 class Node;
 class Page;
-class String;
 }
 
 namespace WebKit {

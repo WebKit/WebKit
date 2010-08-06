@@ -31,6 +31,7 @@
 
 #include "AccessibilityObject.h"
 #include "HTMLElement.h"
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
@@ -38,7 +39,6 @@ class AccessibilityListBox;
 class Element;
 class HTMLElement;
 class HTMLSelectElement;
-class String;
     
 class AccessibilityListBoxOption : public AccessibilityObject {
 

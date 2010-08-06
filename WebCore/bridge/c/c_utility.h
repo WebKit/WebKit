@@ -30,10 +30,7 @@
 
 #include "npruntime_internal.h"
 #include <runtime/JSValue.h>
-
-namespace WebCore {
-    class String;
-}
+#include <wtf/Forward.h>
 
 namespace JSC {
 

@@ -39,6 +39,7 @@
 
 #include <v8.h>
 
+#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -52,7 +53,6 @@ class Event;
 class Frame;
 class HTMLPlugInElement;
 class ScriptSourceCode;
-class String;
 class Widget;
 class XSSAuditor;
 

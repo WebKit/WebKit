@@ -47,7 +47,6 @@ class RenderObject;
 class RenderEmbeddedObject;
 class RenderScrollbarPart;
 struct ScheduledEvent;
-class String;
 
 template <typename T> class Timer;
 

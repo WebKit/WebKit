@@ -5,13 +5,13 @@
 
 #include "DataGridColumn.h"
 
+#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-class AtomicString;
 class HTMLDataGridElement;
 
 class DataGridColumnList : public RefCounted<DataGridColumnList> {

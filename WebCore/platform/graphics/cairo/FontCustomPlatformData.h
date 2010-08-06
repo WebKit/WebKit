@@ -22,6 +22,7 @@
 #define FontCustomPlatformData_h
 
 #include "FontRenderingMode.h"
+#include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 
 typedef struct _cairo_font_face cairo_font_face_t;
@@ -30,7 +31,6 @@ namespace WebCore {
 
 class FontPlatformData;
 class SharedBuffer;
-class String;
 
 struct FontCustomPlatformData : Noncopyable {
     FontCustomPlatformData(cairo_font_face_t* fontFace)

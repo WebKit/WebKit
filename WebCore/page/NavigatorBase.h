@@ -26,9 +26,9 @@
 #ifndef NavigatorBase_h
 #define NavigatorBase_h
 
-namespace WebCore {
+#include <wtf/Forward.h>
 
-    class String;
+namespace WebCore {
 
     class NavigatorBase {
     public:

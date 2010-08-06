@@ -26,9 +26,9 @@
 #ifndef DNS_h
 #define DNS_h
 
-namespace WebCore {
+#include <wtf/Forward.h>
 
-    class String;
+namespace WebCore {
 
 #if !USE(SOUP)
     void prefetchDNS(const String& hostname);

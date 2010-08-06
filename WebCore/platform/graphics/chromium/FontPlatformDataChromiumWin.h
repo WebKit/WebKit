@@ -35,6 +35,7 @@
 #include "config.h"
 
 #include "StringImpl.h"
+#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
@@ -45,7 +46,6 @@ typedef struct HFONT__ *HFONT;
 namespace WebCore {
 
 class FontDescription;
-class String;
 
 class FontPlatformData {
 public:

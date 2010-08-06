@@ -26,13 +26,12 @@
 #ifndef WCDataObject_h
 #define WCDataObject_h
 
+#include <wtf/Forward.h>
 #include <wtf/Vector.h>
 #include <ShlObj.h>
 #include <objidl.h>
 
 namespace WebCore {
-
-class String;
 
 class WCDataObject : public IDataObject {
 public:

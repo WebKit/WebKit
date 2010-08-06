@@ -26,12 +26,13 @@
 #ifndef RenderTreeAsText_h
 #define RenderTreeAsText_h
 
+#include <wtf/Forward.h>
+
 namespace WebCore {
 
 class Element;
 class Frame;
 class RenderObject;
-class String;
 class TextStream;
 
 enum RenderAsTextBehaviorFlags {

@@ -22,6 +22,7 @@
 #define SVGTests_h
 
 #if ENABLE(SVG)
+#include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -29,7 +30,6 @@ namespace WebCore {
     class Attribute;
     class QualifiedName;
     class SVGStringList;
-    class String;
 
     class SVGTests {
     public:

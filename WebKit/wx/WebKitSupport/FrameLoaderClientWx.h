@@ -34,6 +34,7 @@
 #include "PluginView.h"
 #include "ResourceResponse.h"
 #include "HTMLPlugInElement.h"
+#include <wtf/Forward.h>
 
 class wxWebFrame;
 class wxWebView;
@@ -45,7 +46,6 @@ namespace WebCore {
     class Element;
     class FormState;
     class NavigationAction;
-    class String;
     class ResourceLoader;
 
     struct LoadErrorResetToken;

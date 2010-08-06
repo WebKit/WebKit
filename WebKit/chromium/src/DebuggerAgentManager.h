@@ -34,6 +34,7 @@
 #include "WebCString.h"
 #include "WebDevToolsAgent.h"
 #include <v8-debug.h>
+#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
@@ -41,7 +42,6 @@
 namespace WebCore {
 class Page;
 class PageGroupLoadDeferrer;
-class String;
 }
 
 namespace WebKit {

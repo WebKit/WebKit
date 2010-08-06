@@ -31,6 +31,7 @@
 #include "GraphicsLayer.h"
 #include "MediaPlayerPrivate.h"
 #include "Timer.h"
+#include <wtf/Forward.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/RetainPtr.h>
 
@@ -47,7 +48,6 @@ namespace WebCore {
 class GraphicsContext;
 class IntSize;
 class IntRect;
-class String;
 
 #if USE(ACCELERATED_COMPOSITING)
 class WKCAImageQueue;

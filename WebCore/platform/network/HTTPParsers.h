@@ -30,9 +30,10 @@
 #ifndef HTTPParsers_h
 #define HTTPParsers_h
 
+#include <wtf/Forward.h>
+
 namespace WebCore {
 
-class String;
 class ResourceResponseBase;
 
 enum XSSProtectionDisposition {

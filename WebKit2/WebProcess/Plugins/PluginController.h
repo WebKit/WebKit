@@ -26,6 +26,8 @@
 #ifndef PluginController_h
 #define PluginController_h
 
+#include <wtf/Forward.h>
+
 struct NPObject;
 typedef struct _NPVariant NPVariant;
 
@@ -33,7 +35,6 @@ namespace WebCore {
     class HTTPHeaderMap;
     class IntRect;
     class KURL;
-    class String;
 }
 
 namespace WebKit {

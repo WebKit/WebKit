@@ -35,6 +35,7 @@
 #include "OwnPtr.h"
 #include "PassOwnPtr.h"
 #include <QtCore/QString>
+#include <wtf/Forward.h>
 
 class QWebPage;
 class QWebView;
@@ -42,7 +43,6 @@ class QWebView;
 namespace WebCore {
 class Node;
 class Page;
-class String;
 
 class InspectorClientQt : public InspectorClient {
 public:

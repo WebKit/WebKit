@@ -27,13 +27,13 @@
 #define CanvasPattern_h
 
 #include "Pattern.h"
+#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
     class Image;
-    class String;
 
     typedef int ExceptionCode;
 
