@@ -674,7 +674,6 @@ SET(WebCore_SOURCES
     bindings/js/JSXMLHttpRequestUploadCustom.cpp
     bindings/js/JSXSLTProcessorCustom.cpp
     bindings/js/ScheduledAction.cpp
-    bindings/js/ScriptArray.cpp
     bindings/js/ScriptCachedFrameData.cpp
     bindings/js/ScriptCallFrame.cpp
     bindings/js/ScriptCallStack.cpp
