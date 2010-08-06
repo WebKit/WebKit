@@ -27,6 +27,36 @@
 
         Reviewed by Anders Carlsson.
 
+        Add form client for injected bundle code
+        https://bugs.webkit.org/show_bug.cgi?id=43603
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageSetFormClient):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageFormClient.cpp: Added.
+        (WebKit::InjectedBundlePageFormClient::InjectedBundlePageFormClient):
+        (WebKit::InjectedBundlePageFormClient::initialize):
+        (WebKit::InjectedBundlePageFormClient::textFieldDidBeginEditing):
+        (WebKit::InjectedBundlePageFormClient::textFieldDidEndEditing):
+        (WebKit::InjectedBundlePageFormClient::textDidChangeInTextField):
+        (WebKit::InjectedBundlePageFormClient::textDidChangeInTextArea):
+        * WebProcess/InjectedBundle/InjectedBundlePageFormClient.h: Added.
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::textFieldDidBeginEditing):
+        (WebKit::WebEditorClient::textFieldDidEndEditing):
+        (WebKit::WebEditorClient::textDidChangeInTextField):
+        (WebKit::WebEditorClient::textDidChangeInTextArea):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::initializeInjectedBundleFormClient):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::injectedBundleFormClient):
+        * win/WebKit2.vcproj:
+
+2010-08-05  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
         Add ability to get a JSValueRef for a node handle and a world
         https://bugs.webkit.org/show_bug.cgi?id=43591
 

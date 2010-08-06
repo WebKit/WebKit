@@ -91,7 +91,6 @@ struct WKBundlePageUIClient {
 typedef struct WKBundlePageUIClient WKBundlePageUIClient;
 
 // Editor client
-// FIXME: Objective-C API provides a WebView pointer in callbacks, what should the injected bundle API do?
 typedef bool (*WKBundlePageShouldBeginEditingCallback)(WKBundlePageRef page, WKBundleRangeRef range, const void* clientInfo);
 typedef bool (*WKBundlePageShouldEndEditingCallback)(WKBundlePageRef page, WKBundleRangeRef range, const void* clientInfo);
 typedef bool (*WKBundlePageShouldInsertNodeCallback)(WKBundlePageRef page, WKBundleNodeRef node, WKBundleRangeRef rangeToReplace, WKInsertActionType action, const void* clientInfo);
@@ -118,9 +117,26 @@ struct WKBundlePageEditorClient {
 };
 typedef struct WKBundlePageEditorClient WKBundlePageEditorClient;
 
+// Form client
+typedef void (*WKBundlePageTextFieldDidBeginEditingCallback)(WKBundlePageRef page, WKBundleNodeHandleRef htmlInputElementHandle, WKBundleFrameRef frame, const void* clientInfo);
+typedef void (*WKBundlePageTextFieldDidEndEditingCallback)(WKBundlePageRef page, WKBundleNodeHandleRef htmlInputElementHandle, WKBundleFrameRef frame, const void* clientInfo);
+typedef void (*WKBundlePageTextDidChangeInTextFieldCallback)(WKBundlePageRef page, WKBundleNodeHandleRef htmlInputElementHandle, WKBundleFrameRef frame, const void* clientInfo);
+typedef void (*WKBundlePageTextDidChangeInTextAreaCallback)(WKBundlePageRef page, WKBundleNodeHandleRef htmlTextAreaElementHandle, WKBundleFrameRef frame, const void* clientInfo);
+
+struct WKBundlePageFormClient {
+    int                                                                 version;
+    const void *                                                        clientInfo;
+    WKBundlePageTextFieldDidBeginEditingCallback                        textFieldDidBeginEditing;
+    WKBundlePageTextFieldDidEndEditingCallback                          textFieldDidEndEditing;
+    WKBundlePageTextDidChangeInTextFieldCallback                        textDidChangeInTextField;
+    WKBundlePageTextDidChangeInTextAreaCallback                         textDidChangeInTextArea;
+};
+typedef struct WKBundlePageFormClient WKBundlePageFormClient;
+
 WK_EXPORT WKTypeID WKBundlePageGetTypeID();
 
 WK_EXPORT void WKBundlePageSetEditorClient(WKBundlePageRef page, WKBundlePageEditorClient* client);
+WK_EXPORT void WKBundlePageSetFormClient(WKBundlePageRef page, WKBundlePageFormClient* client);
 WK_EXPORT void WKBundlePageSetLoaderClient(WKBundlePageRef page, WKBundlePageLoaderClient* client);
 WK_EXPORT void WKBundlePageSetUIClient(WKBundlePageRef page, WKBundlePageUIClient* client);
 

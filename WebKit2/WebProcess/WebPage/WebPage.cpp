@@ -141,6 +141,11 @@ void WebPage::initializeInjectedBundleEditorClient(WKBundlePageEditorClient* cli
     m_editorClient.initialize(client);
 }
 
+void WebPage::initializeInjectedBundleFormClient(WKBundlePageFormClient* client)
+{
+    m_formClient.initialize(client);
+}
+
 void WebPage::initializeInjectedBundleLoaderClient(WKBundlePageLoaderClient* client)
 {
     m_loaderClient.initialize(client);
@@ -374,7 +379,6 @@ void WebPage::wheelEvent(const WebWheelEvent& wheelEvent)
     PlatformWheelEvent platformWheelEvent = platform(wheelEvent);
     m_mainFrame->coreFrame()->eventHandler()->handleWheelEvent(platformWheelEvent);
 }
-
 
 void WebPage::keyEvent(const WebKeyboardEvent& keyboardEvent)
 {
