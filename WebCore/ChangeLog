@@ -1,3 +1,78 @@
+2010-08-06  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        HTML5 "video" tag with poster frame defined "flashes" right before movie displays
+        https://bugs.webkit.org/show_bug.cgi?id=37591
+        <rdar://problem/5650561>
+
+        If a video element has a poster frame, display it until the playback is requested or the movie's
+        time is changed.
+
+        Test: compositing/video/video-poster.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Initialize m_displayMode.
+        (WebCore::HTMLMediaElement::prepareForLoad): Set m_displayMode to Unknown.
+        (WebCore::HTMLMediaElement::loadResource): Call updateDisplayState to let it set configure
+        the poster, if necessary.
+        (WebCore::HTMLMediaElement::noneSupported): updatePosterImage -> updateDisplayState.
+        (WebCore::HTMLMediaElement::setNetworkState): Ditto.
+        (WebCore::HTMLMediaElement::setReadyState): Ditto.
+        (WebCore::HTMLMediaElement::finishSeek): Set display mode to Video so a video frame will be
+        displayed if a poster is currently visible.
+        (WebCore::HTMLMediaElement::mediaPlayerRepaint): updatePosterImage -> updateDisplayState.
+        (WebCore::HTMLMediaElement::updatePlayState): Set display mode to Video.
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::displayMode): New.
+        (WebCore::HTMLMediaElement::setDisplayMode): Ditto.
+        (WebCore::HTMLMediaElement::updateDisplayState): Ditto.
+
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::HTMLVideoElement): Remove m_shouldDisplayPosterImage.
+        (WebCore::HTMLVideoElement::attach): Call shouldDisplayPosterImage instead of checking
+        m_shouldDisplayPosterImage directly.
+        (WebCore::HTMLVideoElement::detach): Ditto.
+        (WebCore::HTMLVideoElement::parseMappedAttribute): Set m_displayMode to Unknown before calling 
+        updateDisplayState so shouldDisplayPosterImage() will return the correct result. Remove the
+        PLUGIN_PROXY_FOR_VIDEO code, it is now in updateDisplayState.
+        (WebCore::HTMLVideoElement::setDisplayMode): Renamed from updatePosterImage and rework logic
+        so we tell the media engine it is OK to display video frames when there is no poster, or 
+        once the media engine has something to display and the movie has started or seeked.
+        (WebCore::HTMLVideoElement::updateDisplayState): New, manage display mode based on poster 
+        attribute.
+        * html/HTMLVideoElement.h:
+        (WebCore::HTMLVideoElement::shouldDisplayPosterImage):
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::prepareForRendering): New, call media engine's prepareForRendering.
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::prepareForRendering):
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::MediaPlayerPrivate): Initialize m_isAllowedToRender.
+        (WebCore::MediaPlayerPrivate::setUpVideoRendering):
+        (WebCore::MediaPlayerPrivate::isReadyForVideoSetup): Renamed from isReadyForRendering.
+        (WebCore::MediaPlayerPrivate::prepareForRendering): New, set m_isAllowedToRender and
+        inform the client that render tree should be updated so we correctly switch from showing
+        the poster, which often doens't use a layer, to showing video frames, which do.
+        (WebCore::MediaPlayerPrivate::updateStates): Don't call setUpVideoRendering until 
+        isReadyForVideoSetup() returns true.
+        (WebCore::MediaPlayerPrivate::supportsAcceleratedRendering): isReadyForRendering -> isReadyForVideoSetup
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::containsPaintedContent): Only consider video when displaying
+        video frames so a poster won't force compositing mode.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::requiresCompositingForVideo): Ditto.
+
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::shouldDisplayVideo): New, return true when not displaying a poster.
+        * rendering/RenderVideo.h:
+
 2010-08-06  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Simon Fraser.

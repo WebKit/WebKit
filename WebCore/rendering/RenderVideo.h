@@ -50,6 +50,8 @@ public:
     void acceleratedRenderingStateChanged();
 #endif
 
+    virtual bool shouldDisplayVideo() const;
+
 private:
     virtual void updateFromElement();
     inline HTMLVideoElement* videoElement() const;

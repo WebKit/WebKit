@@ -108,8 +108,9 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* doc)
 #endif
     , m_restrictions(NoRestrictions)
     , m_preload(MediaPlayer::Auto)
-    , m_playing(false)
+    , m_displayMode(Unknown)
     , m_processingMediaPlayerCallback(0)
+    , m_playing(false)
     , m_isWaitingUntilMediaCanStart(false)
     , m_processingLoad(false)
     , m_delayingTheLoadEvent(false)
@@ -494,6 +495,7 @@ void HTMLMediaElement::prepareForLoad()
     m_sentStalledEvent = false;
     m_haveFiredLoadedData = false;
     m_completelyLoaded = false;
+    m_displayMode = Unknown;
 
     // 1 - Abort any already-running instance of the resource selection algorithm for this element.
     m_currentSourceNode = 0;
@@ -533,7 +535,6 @@ void HTMLMediaElement::prepareForLoad()
     m_playedTimeRanges = TimeRanges::create();
     m_lastSeekTime = 0;
     m_closedCaptionsVisible = false;
-
 }
 
 void HTMLMediaElement::loadInternal()
@@ -665,11 +666,9 @@ void HTMLMediaElement::loadResource(const KURL& initialURL, ContentType& content
 
     m_player->load(m_currentSrc, contentType);
 
-    if (isVideo() && m_player->canLoadPoster()) {
-        KURL posterURL = getNonEmptyURLAttribute(posterAttr);
-        if (!posterURL.isEmpty())
-            m_player->setPoster(posterURL);
-    }
+    // If there is no poster to display, allow the media engine to render video frames as soon as
+    // they are available.
+    updateDisplayState();
 
     if (renderer())
         renderer()->updateFromElement();
@@ -740,7 +739,7 @@ void HTMLMediaElement::noneSupported()
 
     // 9 -Abort these steps. Until the load() method is invoked, the element won't attempt to load another resource.
 
-    updatePosterImage();
+    updateDisplayState();
 
     if (renderer())
         renderer()->updateFromElement();
@@ -829,7 +828,7 @@ void HTMLMediaElement::setNetworkState(MediaPlayer::NetworkState state)
         else if (state == MediaPlayer::FormatError && m_loadState == LoadingFromSrcAttr)
             noneSupported();
 
-        updatePosterImage();
+        updateDisplayState();
         return;
     }
 
@@ -921,7 +920,7 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
         m_player->seek(0);
     }
 
-    bool shouldUpdatePosterImage = false;
+    bool shouldUpdateDisplayState = false;
 
     // 4.8.10.7 says loadeddata is sent only when the new state *is* HAVE_CURRENT_DATA: "If the
     // previous ready state was HAVE_METADATA and the new ready state is HAVE_CURRENT_DATA", 
@@ -930,7 +929,7 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
     // We go with the later because it seems useful to count on getting this event
     if (m_readyState >= HAVE_CURRENT_DATA && oldState < HAVE_CURRENT_DATA && !m_haveFiredLoadedData) {
         m_haveFiredLoadedData = true;
-        shouldUpdatePosterImage = true;
+        shouldUpdateDisplayState = true;
         scheduleEvent(eventNames().loadeddataEvent);
     }
 
@@ -939,7 +938,7 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
         scheduleEvent(eventNames().canplayEvent);
         if (isPotentiallyPlaying)
             scheduleEvent(eventNames().playingEvent);
-        shouldUpdatePosterImage = true;
+        shouldUpdateDisplayState = true;
     }
 
     if (m_readyState == HAVE_ENOUGH_DATA && oldState < HAVE_ENOUGH_DATA) {
@@ -957,11 +956,11 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
             scheduleEvent(eventNames().playingEvent);
         }
 
-        shouldUpdatePosterImage = true;
+        shouldUpdateDisplayState = true;
     }
 
-    if (shouldUpdatePosterImage)
-        updatePosterImage();
+    if (shouldUpdateDisplayState)
+        updateDisplayState();
 
     updatePlayState();
 }
@@ -1065,7 +1064,6 @@ void HTMLMediaElement::seek(float time, ExceptionCode& ec)
     m_player->seek(time);
 
     // 10-15 are handled, if necessary, when the engine signals a readystate change.
-
 }
 
 void HTMLMediaElement::finishSeek()
@@ -1075,6 +1073,8 @@ void HTMLMediaElement::finishSeek()
 
     // 4.8.10.10 Seeking step 13
     scheduleEvent(eventNames().seekedEvent);
+
+    setDisplayMode(Video);
 }
 
 HTMLMediaElement::ReadyState HTMLMediaElement::readyState() const
@@ -1613,10 +1613,9 @@ void HTMLMediaElement::mediaPlayerSawUnsupportedTracks(MediaPlayer*)
 void HTMLMediaElement::mediaPlayerRepaint(MediaPlayer*)
 {
     beginProcessingMediaPlayerCallback();
+    updateDisplayState();
     if (renderer())
         renderer()->repaint();
-
-    updatePosterImage();
     endProcessingMediaPlayerCallback();
 }
 
@@ -1777,6 +1776,8 @@ void HTMLMediaElement::updatePlayState()
     bool shouldBePlaying = potentiallyPlaying();
     bool playerPaused = m_player->paused();
     if (shouldBePlaying && playerPaused) {
+        setDisplayMode(Video);
+
         // Set rate before calling play in case the rate was set before the media engine wasn't setup.
         // The media engine should just stash the rate since it isn't already playing.
         m_player->setRate(m_playbackRate);

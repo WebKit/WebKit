@@ -1,0 +1,13 @@
+A <video> should not have a layer until playback begins.
+This test can not be run manually, it requires layoutTestController.layerTreeAsText.
+
+No src, no poster 
+  PASS: wants layers = false, has layers = false
+
+Displaying poster 
+  PASS: wants layers = false, has layers = false
+
+Playing movie 
+  PASS: wants layers = true, has layers = true
+
+

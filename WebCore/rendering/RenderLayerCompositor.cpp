@@ -1163,7 +1163,7 @@ bool RenderLayerCompositor::requiresCompositingForVideo(RenderObject* renderer) 
 #if ENABLE(VIDEO)
     if (renderer->isVideo()) {
         RenderVideo* video = toRenderVideo(renderer);
-        return canAccelerateVideoRendering(video);
+        return video->shouldDisplayVideo() && canAccelerateVideoRendering(video);
     }
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     else if (renderer->isRenderPart()) {

@@ -155,7 +155,12 @@ IntRect RenderVideo::videoBox() const
 
     return renderBox;
 }
-    
+
+bool RenderVideo::shouldDisplayVideo() const
+{
+    return !videoElement()->shouldDisplayPosterImage();
+}
+
 void RenderVideo::paintReplaced(PaintInfo& paintInfo, int tx, int ty)
 {
     MediaPlayer* mediaPlayer = player();
@@ -174,6 +179,7 @@ void RenderVideo::paintReplaced(PaintInfo& paintInfo, int tx, int ty)
     if (rect.isEmpty())
         return;
     rect.move(tx, ty);
+
     if (displayingPoster)
         paintIntoRect(paintInfo.context, rect);
     else

@@ -55,10 +55,10 @@ public:
     void webkitEnterFullScreen(bool isUserGesture, ExceptionCode& ec) { webkitEnterFullscreen(isUserGesture, ec); }
     void webkitExitFullScreen() { webkitExitFullscreen(); }
 
-    bool shouldDisplayPosterImage() const { return m_shouldDisplayPosterImage; }
-
     // Used by canvas to gain raw pixel access
     void paintCurrentFrameInContext(GraphicsContext*, const IntRect&);
+
+    bool shouldDisplayPosterImage() const { return displayMode() == Poster; }
 
 private:
     HTMLVideoElement(const QualifiedName&, Document*);
@@ -78,11 +78,14 @@ private:
     virtual const QualifiedName& imageSourceAttributeName() const;
 
     virtual bool hasAvailableVideoFrame() const;
-    virtual void updatePosterImage();
+    virtual void updateDisplayState();
+
     virtual void willMoveToNewOwnerDocument();
 
+    virtual void setDisplayMode(DisplayMode);
+
     OwnPtr<HTMLImageLoader> m_imageLoader;
-    bool m_shouldDisplayPosterImage;
+
 };
 
 } //namespace

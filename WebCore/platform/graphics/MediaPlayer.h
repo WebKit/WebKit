@@ -246,6 +246,7 @@ public:
     MediaPlayerClient* mediaPlayerClient() const { return m_mediaPlayerClient; }
 
     bool hasAvailableVideoFrame() const;
+    void prepareForRendering();
 
     bool canLoadPoster() const;
     void setPoster(const String&);

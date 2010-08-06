@@ -47,7 +47,6 @@ using namespace HTMLNames;
 
 inline HTMLVideoElement::HTMLVideoElement(const QualifiedName& tagName, Document* document)
     : HTMLMediaElement(tagName, document)
-    , m_shouldDisplayPosterImage(false)
 {
     ASSERT(hasTagName(videoTag));
 }
@@ -74,8 +73,8 @@ void HTMLVideoElement::attach()
     HTMLMediaElement::attach();
 
 #if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    updatePosterImage();
-    if (m_shouldDisplayPosterImage) {
+    updateDisplayState();
+    if (shouldDisplayPosterImage()) {
         if (!m_imageLoader)
             m_imageLoader.set(new HTMLImageLoader(this));
         m_imageLoader->updateFromElement();
@@ -91,9 +90,8 @@ void HTMLVideoElement::detach()
 {
     HTMLMediaElement::detach();
     
-    if (!m_shouldDisplayPosterImage)
-        if (m_imageLoader)
-            m_imageLoader.clear();
+    if (!shouldDisplayPosterImage() && m_imageLoader)
+        m_imageLoader.clear();
 }
 
 void HTMLVideoElement::parseMappedAttribute(Attribute* attr)
@@ -101,15 +99,14 @@ void HTMLVideoElement::parseMappedAttribute(Attribute* attr)
     const QualifiedName& attrName = attr->name();
 
     if (attrName == posterAttr) {
-        updatePosterImage();
-        if (m_shouldDisplayPosterImage) {
+        // Force a poster recalc by setting m_displayMode to Unknown directly before calling updateDisplayState.
+        HTMLMediaElement::setDisplayMode(Unknown);
+        updateDisplayState();
+        if (shouldDisplayPosterImage()) {
 #if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
             if (!m_imageLoader)
                 m_imageLoader.set(new HTMLImageLoader(this));
             m_imageLoader->updateFromElementIgnoringPreviousError();
-#else
-            if (player())
-                player()->setPoster(getNonEmptyURLAttribute(posterAttr));
 #endif
         }
     } else if (attrName == widthAttr)
@@ -172,18 +169,40 @@ const QualifiedName& HTMLVideoElement::imageSourceAttributeName() const
     return posterAttr;
 }
 
-void HTMLVideoElement::updatePosterImage()
+void HTMLVideoElement::setDisplayMode(DisplayMode mode)
 {
-#if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    bool oldShouldShowPosterImage = m_shouldDisplayPosterImage;
-#endif
+    DisplayMode oldMode = displayMode();
+    KURL poster = getNonEmptyURLAttribute(posterAttr);
 
-    m_shouldDisplayPosterImage = !getAttribute(posterAttr).isEmpty() && !hasAvailableVideoFrame();
+    if (!poster.isEmpty()) {
+        // We have a poster path, but only show it until the user triggers display by playing or seeking and the
+        // media engine has something to display.
+        if (mode == Video) {
+            if (oldMode != Video && player())
+                player()->prepareForRendering();
+            if (!hasAvailableVideoFrame())
+                mode = Poster;
+        }
+    } else if (oldMode != Video && player())
+        player()->prepareForRendering();
+
+    HTMLMediaElement::setDisplayMode(mode);
+
+    if (player() && player()->canLoadPoster())
+        player()->setPoster(poster);
 
 #if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    if (renderer() && oldShouldShowPosterImage != m_shouldDisplayPosterImage)
+    if (renderer() && displayMode() != oldMode)
         renderer()->updateFromElement();
 #endif
+}
+
+void HTMLVideoElement::updateDisplayState()
+{
+    if (getNonEmptyURLAttribute(posterAttr).isEmpty())
+        setDisplayMode(Video);
+    else if (displayMode() < Poster)
+        setDisplayMode(Poster);
 }
 
 void HTMLVideoElement::paintCurrentFrameInContext(GraphicsContext* context, const IntRect& destRect)

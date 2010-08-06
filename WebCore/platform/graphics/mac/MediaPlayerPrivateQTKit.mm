@@ -217,6 +217,7 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
     , m_visible(false)
     , m_hasUnsupportedTracks(false)
     , m_videoFrameHasDrawn(false)
+    , m_isAllowedToRender(false)
 #if DRAW_FRAME_RATE
     , m_frameCountWhilePlaying(0)
     , m_timeStartedPlaying(0)
@@ -495,7 +496,7 @@ MediaPlayerPrivate::MediaRenderingMode MediaPlayerPrivate::preferredRenderingMod
 
 void MediaPlayerPrivate::setUpVideoRendering()
 {
-    if (!isReadyForRendering())
+    if (!isReadyForVideoSetup())
         return;
 
     MediaRenderingMode currentMode = currentRenderingMode();
@@ -519,10 +520,9 @@ void MediaPlayerPrivate::setUpVideoRendering()
         break;
     }
 
-#if USE(ACCELERATED_COMPOSITING)
+    // If using a movie layer, inform the client so the compositing tree is updated.
     if (currentMode == MediaRenderingMovieLayer || preferredMode == MediaRenderingMovieLayer)
         m_player->mediaPlayerClient()->mediaPlayerRenderingModeChanged(m_player);
-#endif
 }
 
 void MediaPlayerPrivate::tearDownVideoRendering()
@@ -915,9 +915,24 @@ void MediaPlayerPrivate::cacheMovieScale()
         m_scaleFactor.setHeight(initialSize.height / naturalSize.height);
 }
 
-bool MediaPlayerPrivate::isReadyForRendering() const
+bool MediaPlayerPrivate::isReadyForVideoSetup() const
 {
     return m_readyState >= MediaPlayer::HaveMetadata && m_player->visible();
+}
+
+void MediaPlayerPrivate::prepareForRendering()
+{
+    if (m_isAllowedToRender)
+        return;
+    m_isAllowedToRender = true;
+
+    if (!hasSetUpVideoRendering())
+        setUpVideoRendering();
+
+    // If using a movie layer, inform the client so the compositing tree is updated. This is crucial if the movie
+    // has a poster, as it will most likely not have a layer and we will now be rendering frames to the movie layer.
+    if (currentRenderingMode() == MediaRenderingMovieLayer || preferredRenderingMode() == MediaRenderingMovieLayer)
+        m_player->mediaPlayerClient()->mediaPlayerRenderingModeChanged(m_player);
 }
 
 void MediaPlayerPrivate::updateStates()
@@ -1009,7 +1024,7 @@ void MediaPlayerPrivate::updateStates()
         }
     }
 
-    if (!hasSetUpVideoRendering())
+    if (isReadyForVideoSetup() && !hasSetUpVideoRendering())
         setUpVideoRendering();
 
     if (seeking())
@@ -1443,8 +1458,9 @@ void MediaPlayerPrivate::sawUnsupportedTracks()
 #if USE(ACCELERATED_COMPOSITING)
 bool MediaPlayerPrivate::supportsAcceleratedRendering() const
 {
-    // When in the media document we render via QTMovieView, which is already accelerated.
-    return isReadyForRendering() && getQTMovieLayerClass() != Nil && !m_player->inMediaDocument();
+    // Also don't claim to support accelerated rendering when in the media document, as we will then render 
+    // via QTMovieView which is already accelerated.
+    return isReadyForVideoSetup() && getQTMovieLayerClass() != Nil && !m_player->inMediaDocument();
 }
 
 void MediaPlayerPrivate::acceleratedRenderingStateChanged()
