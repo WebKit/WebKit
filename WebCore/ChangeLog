@@ -1,3 +1,20 @@
+2010-08-05  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r63653.
+        http://trac.webkit.org/changeset/63653
+        https://bugs.webkit.org/show_bug.cgi?id=43592
+
+        regressed multiple background-images (Requested by smfr on
+        #webkit).
+
+        * manual-tests/css3-background-layer-count.html: Removed.
+        * rendering/style/FillLayer.cpp:
+        (WebCore::FillLayer::fillUnsetProperties):
+        (WebCore::FillLayer::cullEmptyLayers):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::adjustBackgroundLayers):
+        (WebCore::InheritedFlags::adjustMaskLayers):
+
 2010-08-05  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Jon Honeycutt.

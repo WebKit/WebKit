@@ -873,8 +873,8 @@ public:
     void adjustBackgroundLayers()
     {
         if (backgroundLayers()->next()) {
-            accessBackgroundLayers()->fillUnsetProperties();
             accessBackgroundLayers()->cullEmptyLayers();
+            accessBackgroundLayers()->fillUnsetProperties();
         }
     }
 
@@ -884,8 +884,8 @@ public:
     void adjustMaskLayers()
     {
         if (maskLayers()->next()) {
-            accessMaskLayers()->fillUnsetProperties();
             accessMaskLayers()->cullEmptyLayers();
+            accessMaskLayers()->fillUnsetProperties();
         }
     }
 
