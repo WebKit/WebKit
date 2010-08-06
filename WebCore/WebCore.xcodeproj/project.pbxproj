@@ -11375,6 +11375,7 @@
 		1AE82EC90CAAE177002237AE /* storage */ = {
 			isa = PBXGroup;
 			children = (
+
 				B5B5DC67119BB3D5002A8790 /* AbstractDatabase.cpp */,
 				B5B5DC68119BB3D5002A8790 /* AbstractDatabase.h */,
 				514185ED0CD65F0400763C99 /* ChangeVersionWrapper.cpp */,
@@ -11427,7 +11428,6 @@
 				C585A6A111D4FB3D004C3E4B /* IDBDatabaseBackendImpl.cpp */,
 				B61762611203490800EF9114 /* IDBDatabaseBackendImpl.h */,
 				B61762531203374F00EF9114 /* IDBDatabaseBackendInterface.h */,
-
 				C585A69D11D4FB3D004C3E4B /* IDBDatabaseError.h */,
 				C585A69E11D4FB3D004C3E4B /* IDBDatabaseError.idl */,
 				C585A69F11D4FB3D004C3E4B /* IDBDatabaseException.h */,
@@ -11470,10 +11470,10 @@
 				C585A6C211D4FB3D004C3E4B /* IDBSuccessEvent.cpp */,
 				C585A6C311D4FB3D004C3E4B /* IDBSuccessEvent.h */,
 				C585A6C411D4FB3D004C3E4B /* IDBSuccessEvent.idl */,
-				B656626D120B116B006EA85C /* IDBTransactionBackendInterface.h */,
 				B6566267120B115A006EA85C /* IDBTransaction.cpp */,
 				B6566268120B115A006EA85C /* IDBTransaction.h */,
 				B6566269120B115A006EA85C /* IDBTransaction.idl */,
+				B656626D120B116B006EA85C /* IDBTransactionBackendInterface.h */,
 				511F23130DC160DA004F0032 /* LocalStorageTask.cpp */,
 				511F23140DC160DA004F0032 /* LocalStorageTask.h */,
 				511F23150DC160DA004F0032 /* LocalStorageThread.cpp */,
@@ -14913,8 +14913,8 @@
 				C585A67911D4FB07004C3E4B /* JSIDBRequest.h */,
 				C585A67A11D4FB07004C3E4B /* JSIDBSuccessEvent.cpp */,
 				C585A67B11D4FB07004C3E4B /* JSIDBSuccessEvent.h */,
-				B656626E120B1227006EA85C /* JSIDBTransaction.h */,
 				B656626F120B1227006EA85C /* JSIDBTransaction.cpp */,
+				B656626E120B1227006EA85C /* JSIDBTransaction.h */,
 				514C76350CE9225E007EF3CD /* JSSQLError.cpp */,
 				BC8243250D0CE8A200460C8F /* JSSQLError.h */,
 				B525A96411CA2340003A23A8 /* JSSQLException.cpp */,
@@ -14984,7 +14984,6 @@
 		B22277CA0D00BF1E0071B782 /* svg */ = {
 			isa = PBXGroup;
 			children = (
-				A8BCFD04120A046100B5F122 /* SVGPathSeg.cpp */,
 				E46E97860DAAD61B0071E894 /* animation */,
 				B25598860D00D8B800BB825C /* graphics */,
 				B22277CB0D00BF1F0071B782 /* ColorDistance.cpp */,
@@ -15262,6 +15261,7 @@
 				B22278C40D00BF200071B782 /* SVGPathElement.idl */,
 				8476C9ED11DF6A5800555B02 /* SVGPathParser.cpp */,
 				8476C9EE11DF6A5800555B02 /* SVGPathParser.h */,
+				A8BCFD04120A046100B5F122 /* SVGPathSeg.cpp */,
 				B22278C50D00BF200071B782 /* SVGPathSeg.h */,
 				B22278C60D00BF200071B782 /* SVGPathSeg.idl */,
 				B22278C70D00BF200071B782 /* SVGPathSegArc.cpp */,
@@ -18630,6 +18630,9 @@
 				C585A6CD11D4FB3D004C3E4B /* IDBAny.h in Headers */,
 				C585A66311D4FAC5004C3E4B /* IDBBindingUtilities.h in Headers */,
 				C585A6CF11D4FB3D004C3E4B /* IDBCallbacks.h in Headers */,
+				81BE209711F4AB8D00915DFA /* IDBCursor.h in Headers */,
+				81BE209911F4AB8D00915DFA /* IDBCursorBackendImpl.h in Headers */,
+				81BE209B11F4AB8D00915DFA /* IDBCursorBackendInterface.h in Headers */,
 				C585A6D811D4FB3D004C3E4B /* IDBDatabase.h in Headers */,
 				B61762621203490800EF9114 /* IDBDatabaseBackendImpl.h in Headers */,
 				B61762541203374F00EF9114 /* IDBDatabaseBackendInterface.h in Headers */,
@@ -18651,6 +18654,7 @@
 				C585A6F111D4FB3D004C3E4B /* IDBObjectStoreBackendInterface.h in Headers */,
 				C585A6F411D4FB3D004C3E4B /* IDBRequest.h in Headers */,
 				C585A6F711D4FB3D004C3E4B /* IDBSuccessEvent.h in Headers */,
+				B656626B120B115A006EA85C /* IDBTransaction.h in Headers */,
 				1A71D57C0F33819000F9CE4E /* IdentifierRep.h in Headers */,
 				49E911C50EF86D47009D0CAF /* IdentityTransformOperation.h in Headers */,
 				C0C054CD1118C8E400CE2636 /* IDLParser.pm in Headers */,
@@ -18885,6 +18889,7 @@
 				1A85B2110A1B258700D8C87C /* JSHTMLUListElement.h in Headers */,
 				E44614170CD6826900FADA75 /* JSHTMLVideoElement.h in Headers */,
 				C585A67D11D4FB08004C3E4B /* JSIDBAny.h in Headers */,
+				81BE20D311F4BC3200915DFA /* JSIDBCursor.h in Headers */,
 				C585A68311D4FB08004C3E4B /* JSIDBDatabase.h in Headers */,
 				C585A67F11D4FB08004C3E4B /* JSIDBDatabaseError.h in Headers */,
 				C585A68111D4FB08004C3E4B /* JSIDBDatabaseException.h in Headers */,
@@ -18897,6 +18902,7 @@
 				C585A68F11D4FB08004C3E4B /* JSIDBObjectStore.h in Headers */,
 				C585A69111D4FB08004C3E4B /* JSIDBRequest.h in Headers */,
 				C585A69311D4FB08004C3E4B /* JSIDBSuccessEvent.h in Headers */,
+				B6566270120B1227006EA85C /* JSIDBTransaction.h in Headers */,
 				BC6C49F40D7DBA0500FFA558 /* JSImageConstructor.h in Headers */,
 				A77979290D6B9E64003851B9 /* JSImageData.h in Headers */,
 				7A0E76DB10BF059800A0276E /* JSInjectedScriptHost.h in Headers */,
@@ -20025,12 +20031,6 @@
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				97DD4D870FDF4D6E00ECF9A4 /* XSSAuditor.h in Headers */,
 				CE172E011136E8CE0062A533 /* ZoomMode.h in Headers */,
-				B656626B120B115A006EA85C /* IDBTransaction.h in Headers */,
-				B6566270120B1227006EA85C /* JSIDBTransaction.h in Headers */,
-				81BE209711F4AB8D00915DFA /* IDBCursor.h in Headers */,
-				81BE209911F4AB8D00915DFA /* IDBCursorBackendImpl.h in Headers */,
-				81BE209B11F4AB8D00915DFA /* IDBCursorBackendInterface.h in Headers */,
-				81BE20D311F4BC3200915DFA /* JSIDBCursor.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -21068,6 +21068,8 @@
 				51E1ECC00C91C90400DC255B /* IconRecord.cpp in Sources */,
 				C585A6CC11D4FB3D004C3E4B /* IDBAny.cpp in Sources */,
 				C585A66211D4FAC5004C3E4B /* IDBBindingUtilities.cpp in Sources */,
+				81BE209811F4AB8D00915DFA /* IDBCursor.cpp in Sources */,
+				81BE209811F4AB8D00915DFA /* IDBCursorBackendImpl.cpp in Sources */,
 				B691C1F91206D4A00025D980 /* IDBDatabase.cpp in Sources */,
 				C585A6D511D4FB3D004C3E4B /* IDBDatabaseBackendImpl.cpp in Sources */,
 				C585A6DA11D4FB3D004C3E4B /* IDBErrorEvent.cpp in Sources */,
@@ -21083,6 +21085,7 @@
 				C585A6EE11D4FB3D004C3E4B /* IDBObjectStoreBackendImpl.cpp in Sources */,
 				C585A6F311D4FB3D004C3E4B /* IDBRequest.cpp in Sources */,
 				C585A6F611D4FB3D004C3E4B /* IDBSuccessEvent.cpp in Sources */,
+				B656626A120B115A006EA85C /* IDBTransaction.cpp in Sources */,
 				1A71D57B0F33819000F9CE4E /* IdentifierRep.cpp in Sources */,
 				B275356F0B053814002CE64F /* Image.cpp in Sources */,
 				B2A10B940B3818D700099AA4 /* ImageBufferCG.cpp in Sources */,
@@ -21360,6 +21363,7 @@
 				E44614160CD6826900FADA75 /* JSHTMLVideoElement.cpp in Sources */,
 				C585A67C11D4FB08004C3E4B /* JSIDBAny.cpp in Sources */,
 				C585A65E11D4FAB2004C3E4B /* JSIDBAnyCustom.cpp in Sources */,
+				81BE20D211F4BC3200915DFA /* JSIDBCursor.cpp in Sources */,
 				C585A68211D4FB08004C3E4B /* JSIDBDatabase.cpp in Sources */,
 				C585A67E11D4FB08004C3E4B /* JSIDBDatabaseError.cpp in Sources */,
 				C585A68011D4FB08004C3E4B /* JSIDBDatabaseException.cpp in Sources */,
@@ -21373,6 +21377,7 @@
 				C585A68E11D4FB08004C3E4B /* JSIDBObjectStore.cpp in Sources */,
 				C585A69011D4FB08004C3E4B /* JSIDBRequest.cpp in Sources */,
 				C585A69211D4FB08004C3E4B /* JSIDBSuccessEvent.cpp in Sources */,
+				B6566271120B1227006EA85C /* JSIDBTransaction.cpp in Sources */,
 				BC6C49F30D7DBA0500FFA558 /* JSImageConstructor.cpp in Sources */,
 				A77979280D6B9E64003851B9 /* JSImageData.cpp in Sources */,
 				A7D0318E0E93540300E24ACD /* JSImageDataCustom.cpp in Sources */,
@@ -22187,6 +22192,7 @@
 				8476C9EA11DF6A2900555B02 /* SVGPathBuilder.cpp in Sources */,
 				B2227A580D00BF220071B782 /* SVGPathElement.cpp in Sources */,
 				8476C9EF11DF6A5800555B02 /* SVGPathParser.cpp in Sources */,
+				A8BCFD05120A046100B5F122 /* SVGPathSeg.cpp in Sources */,
 				B2227A5D0D00BF220071B782 /* SVGPathSegArc.cpp in Sources */,
 				B2227A610D00BF220071B782 /* SVGPathSegClosePath.cpp in Sources */,
 				B2227A640D00BF220071B782 /* SVGPathSegCurvetoCubic.cpp in Sources */,
@@ -22434,12 +22440,6 @@
 				93F19B0508245E59001E9ABC /* XSLTProcessorLibxslt.cpp in Sources */,
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				97DD4D860FDF4D6E00ECF9A4 /* XSSAuditor.cpp in Sources */,
-				A8BCFD05120A046100B5F122 /* SVGPathSeg.cpp in Sources */,
-				B656626A120B115A006EA85C /* IDBTransaction.cpp in Sources */,
-				B6566271120B1227006EA85C /* JSIDBTransaction.cpp in Sources */,
-				81BE209811F4AB8D00915DFA /* IDBCursor.cpp in Sources */,
-				81BE209811F4AB8D00915DFA /* IDBCursorBackendImpl.cpp in Sources */,
-				81BE20D211F4BC3200915DFA /* JSIDBCursor.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

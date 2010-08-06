@@ -1,5 +1,11 @@
 2010-08-06  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Sort XCode project file.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+2010-08-06  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Not reviewed. Fix warning, breaking win build.
 
         * svg/SVGLength.cpp:
