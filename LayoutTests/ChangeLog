@@ -1,3 +1,9 @@
+2010-08-05  Adam Barth  <abarth@webkit.org>
+
+        Update Qt result showing that we strip nulls in this case.
+
+        * platform/qt/fast/text/stripNullFromText-expected.txt:
+
 2010-08-05  Erik Arvidsson  <arv@chromium.org>
 
         Reviewed by Kent Tamura.
