@@ -216,6 +216,11 @@ void WebProcessProxy::addOrUpdateBackForwardListItem(uint64_t itemID, const Stri
     result.first->second->setTitle(title);
 }
 
+void WebProcessProxy::addVisitedLink(LinkHash linkHash)
+{
+    m_context->addVisitedLink(linkHash);
+}
+
 void WebProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
 {
     if (messageID.is<CoreIPC::MessageClassWebProcessProxy>()) {
@@ -228,6 +233,16 @@ void WebProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC
                 if (!arguments->decode(CoreIPC::Out(itemID, originalURL, url, title)))
                     return;
                 addOrUpdateBackForwardListItem(itemID, originalURL, url, title);
+                return;
+            }
+
+            case WebProcessProxyMessage::AddVisitedLink: {
+                LinkHash linkHash;
+
+                if (!arguments->decode(CoreIPC::Out(linkHash)))
+                    return;
+
+                addVisitedLink(linkHash);
                 return;
             }
 
@@ -290,10 +305,6 @@ void WebProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC
                 m_context->didUpdateHistoryTitle(page->webFrame(frameID), title, url);
                 break;
             }
-            case WebProcessProxyMessage::PopulateVisitedLinks: {
-                m_context->populateVisitedLinks();
-                break;
-            }
 
             // These are synchronous messages and should never be handled here.
             case WebProcessProxyMessage::GetPlugins:
@@ -354,8 +365,8 @@ void WebProcessProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, Cor
             case WebProcessProxyMessage::DidPerformClientRedirect:
             case WebProcessProxyMessage::DidPerformServerRedirect:
             case WebProcessProxyMessage::DidUpdateHistoryTitle:
-            case WebProcessProxyMessage::PopulateVisitedLinks:
             case WebProcessProxyMessage::AddBackForwardItem:
+            case WebProcessProxyMessage::AddVisitedLink:
                 ASSERT_NOT_REACHED();
                 break;
         }
@@ -415,7 +426,10 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher*, const CoreIPC::Connec
         m_connection->sendMessage(outgoingMessage.messageID(), adoptPtr(outgoingMessage.arguments()));
     }
 
-    m_pendingMessages.clear();    
+    m_pendingMessages.clear();
+
+    // Tell the context that we finished launching.
+    m_context->processDidFinishLaunching(this);
 }
 
 } // namespace WebKit

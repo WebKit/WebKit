@@ -33,6 +33,7 @@
 #include "ProcessModel.h"
 #include "ResponsivenessTimer.h"
 #include "WebPageProxy.h"
+#include <WebCore/LinkHash.h>
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -100,6 +101,7 @@ private:
     void getPluginHostConnection(const WebCore::String& mimeType, const WebCore::KURL& url, WebCore::String& pluginPath);
 
     void addOrUpdateBackForwardListItem(uint64_t itemID, const WebCore::String& originalURLString, const WebCore::String& urlString, const WebCore::String& title);
+    void addVisitedLink(WebCore::LinkHash);
 
     // CoreIPC::Connection::Client
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);

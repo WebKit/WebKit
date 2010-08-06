@@ -29,9 +29,11 @@
 #include "APIObject.h"
 #include "PluginInfoStore.h"
 #include "ProcessModel.h"
+#include "VisitedLinkProvider.h"
 #include "WebContextInjectedBundleClient.h"
 #include "WebHistoryClient.h"
 #include "WebProcessProxy.h"
+#include <WebCore/LinkHash.h>
 #include <WebCore/PlatformString.h>
 #include <WebCore/StringHash.h>
 #include <wtf/Forward.h>
@@ -54,10 +56,7 @@ public:
     static WebContext* sharedProcessContext();
     static WebContext* sharedThreadContext();
 
-    static PassRefPtr<WebContext> create(const WebCore::String& injectedBundlePath)
-    {
-        return adoptRef(new WebContext(ProcessModelSecondaryProcess, injectedBundlePath));
-    }
+    static PassRefPtr<WebContext> create(const WebCore::String& injectedBundlePath);
 
     ~WebContext();
 
@@ -66,6 +65,8 @@ public:
 
     ProcessModel processModel() const { return m_processModel; }
     WebProcessProxy* process() const { return m_process.get(); }
+
+    void processDidFinishLaunching(WebProcessProxy*);
 
     WebPageProxy* createWebPage(WebPageNamespace*);
 
@@ -101,6 +102,7 @@ public:
     void registerURLSchemeAsEmptyDocument(const WebCore::String&);
     
     void addVisitedLink(const WebCore::String&);
+    void addVisitedLink(WebCore::LinkHash);
 
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder&);
 
@@ -126,7 +128,8 @@ private:
     WebHistoryClient m_historyClient;
 
     PluginInfoStore m_pluginInfoStore;
-    
+    VisitedLinkProvider m_visitedLinkProvider;
+        
     HashSet<WebCore::String> m_schemesToRegisterAsEmptyDocument;
 };
 

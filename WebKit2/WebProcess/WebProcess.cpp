@@ -33,8 +33,10 @@
 #include "WebPage.h"
 #include "WebPlatformStrategies.h"
 #include "WebPreferencesStore.h"
+#include "WebProcessProxyMessageKinds.h"
 #include "WebProcessMessageKinds.h"
 #include <WebCore/ApplicationCacheStorage.h>
+#include <WebCore/Page.h>
 #include <WebCore/PageGroup.h>
 #include <WebCore/SchemeRegistry.h>
 #include <wtf/PassRefPtr.h>
@@ -110,15 +112,42 @@ void WebProcess::registerURLSchemeAsEmptyDocument(const WebCore::String& urlSche
     SchemeRegistry::registerURLSchemeAsEmptyDocument(urlScheme);
 }
 
-void WebProcess::addVisitedLinkHash(WebCore::LinkHash hash)
+void WebProcess::setVisitedLinkTable(const SharedMemory::Handle& handle)
 {
-    PageGroup* group = PageGroup::pageGroup("WebKit2Group");
-    ASSERT(group);
-    if (!group) {
-        printf("Cannot find PageGroup named 'WebKit2Group'\n");
+    RefPtr<SharedMemory> sharedMemory = SharedMemory::create(handle, SharedMemory::ReadOnly);
+    if (!sharedMemory)
         return;
-    }
-    group->addVisitedLinkHash(hash);
+
+    m_visitedLinkTable.setSharedMemory(sharedMemory.release());
+}
+
+static PageGroup* webKit2PageGroup()
+{
+    return PageGroup::pageGroup("WebKit2Group");
+}
+
+void WebProcess::visitedLinkStateChanged(const Vector<WebCore::LinkHash>& linkHashes)
+{
+    for (size_t i = 0; i < linkHashes.size(); ++i)
+        Page::visitedStateChanged(webKit2PageGroup(), linkHashes[i]);
+}
+
+void WebProcess::allVisitedLinkStateChanged()
+{
+    Page::allVisitedStateChanged(webKit2PageGroup());
+}
+
+bool WebProcess::isLinkVisited(LinkHash linkHash) const
+{
+    return m_visitedLinkTable.isLinkVisited(linkHash);
+}
+
+void WebProcess::addVisitedLink(WebCore::LinkHash linkHash)
+{
+    if (isLinkVisited(linkHash))
+        return;
+
+    m_connection->send(WebProcessProxyMessage::AddVisitedLink, 0, CoreIPC::In(linkHash));
 }
 
 WebPage* WebProcess::webPage(uint64_t pageID) const
@@ -177,20 +206,24 @@ void WebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
 {
     if (messageID.is<CoreIPC::MessageClassWebProcess>()) {
         switch (messageID.get<WebProcessMessage::Kind>()) {
-            case WebProcessMessage::SetVisitedLinkTable:
-            case WebProcessMessage::VisitedLinkStateChanged:
-            case WebProcessMessage::AllVisitedLinkStateChanged:
-                // FIXME: Implement.
-                return;
-            
-            case WebProcessMessage::AddVisitedLink: {
-                WebCore::LinkHash hash;
-                if (!arguments->decode(CoreIPC::Out(hash)))
+            case WebProcessMessage::SetVisitedLinkTable: {
+                SharedMemory::Handle handle;
+                if (!arguments->decode(CoreIPC::Out(handle)))
                     return;
-
-                addVisitedLinkHash(hash);
+                
+                setVisitedLinkTable(handle);
                 return;
             }
+            case WebProcessMessage::VisitedLinkStateChanged: {
+                Vector<LinkHash> linkHashes;
+                if (!arguments->decode(CoreIPC::Out(linkHashes)))
+                    return;
+                visitedLinkStateChanged(linkHashes);
+            }
+            case WebProcessMessage::AllVisitedLinkStateChanged:
+                allVisitedLinkStateChanged();
+                return;
+            
             case WebProcessMessage::LoadInjectedBundle: {
                 String path;
 

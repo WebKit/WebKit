@@ -174,19 +174,28 @@ static WTF::RefCountedLeakCounter webContextCounter("WebContext");
 
 WebContext* WebContext::sharedProcessContext()
 {
+    RunLoop::initializeMainRunLoop();
     static WebContext* context = adoptRef(new WebContext(ProcessModelSharedSecondaryProcess, String())).leakRef();
     return context;
 }
 
 WebContext* WebContext::sharedThreadContext()
 {
+    RunLoop::initializeMainRunLoop();
     static WebContext* context = adoptRef(new WebContext(ProcessModelSharedSecondaryThread, String())).leakRef();
     return context;
 }
 
+PassRefPtr<WebContext> WebContext::create(const String& injectedBundlePath)
+{
+    RunLoop::initializeMainRunLoop();
+    return adoptRef(new WebContext(ProcessModelSecondaryProcess, injectedBundlePath));
+}
+    
 WebContext::WebContext(ProcessModel processModel, const WebCore::String& injectedBundlePath)
     : m_processModel(processModel)
     , m_injectedBundlePath(injectedBundlePath)
+    , m_visitedLinkProvider(this)
 {
     RunLoop::initializeMainRunLoop();
 
@@ -234,6 +243,14 @@ void WebContext::ensureWebProcess()
 
     for (HashSet<String>::iterator it = m_schemesToRegisterAsEmptyDocument.begin(), end = m_schemesToRegisterAsEmptyDocument.end(); it != end; ++it)
         m_process->send(WebProcessMessage::RegisterURLSchemeAsEmptyDocument, 0, CoreIPC::In(*it));
+}
+
+void WebContext::processDidFinishLaunching(WebProcessProxy* process)
+{
+    // FIXME: Once we support multiple processes per context, this assertion won't hold.
+    ASSERT(process == m_process);
+
+    m_visitedLinkProvider.populateVisitedLinksIfNeeded();
 }
 
 WebPageProxy* WebContext::createWebPage(WebPageNamespace* pageNamespace)
@@ -371,10 +388,15 @@ void WebContext::addVisitedLink(const String& visitedURL)
     if (visitedURL.isEmpty())
         return;
 
-    WebCore::LinkHash hash = visitedLinkHash(visitedURL.characters(), visitedURL.length());
-    m_process->send(WebProcessMessage::AddVisitedLink, 0, CoreIPC::In(hash));
+    LinkHash linkHash = visitedLinkHash(visitedURL.characters(), visitedURL.length());
+    addVisitedLink(linkHash);
 }
 
+void WebContext::addVisitedLink(LinkHash linkHash)
+{
+    m_visitedLinkProvider.addVisitedLink(linkHash);
+}
+        
 void WebContext::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder& arguments)
 {
     switch (messageID.get<WebContextMessage::Kind>()) {

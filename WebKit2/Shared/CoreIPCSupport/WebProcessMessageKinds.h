@@ -37,8 +37,6 @@ enum Kind {
     VisitedLinkStateChanged,
     AllVisitedLinkStateChanged,
     
-    // FIXME: Remove AddVisitedLink.
-    AddVisitedLink,
     LoadInjectedBundle,
     SetApplicationCacheDirectory,
     SetShouldTrackVisitedLinks,

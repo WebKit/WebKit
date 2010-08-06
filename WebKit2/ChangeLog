@@ -1,3 +1,78 @@
+2010-08-05  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Use the visited link provider for visited links
+        https://bugs.webkit.org/show_bug.cgi?id=43583
+
+        * Shared/CoreIPCSupport/WebProcessMessageKinds.h:
+        (WebProcessMessage::):
+        Remove AddVisitedLink.
+
+        * Shared/CoreIPCSupport/WebProcessProxyMessageKinds.h:
+        (WebProcessProxyMessage::):
+        Remove PopulateVisitedLinks and add AddVisitedLink.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::sharedProcessContext):
+        Initialize the main run loop before creating the context.
+        
+        (WebKit::WebContext::sharedThreadContext):
+        Ditto.
+        
+        (WebKit::WebContext::create):
+        Ditto.
+
+        (WebKit::WebContext::WebContext):
+        Initialize the visited link provider.
+
+        (WebKit::WebContext::processDidFinishLaunching):
+        Ask the visited link provider to populate visited links.
+
+        (WebKit::WebContext::addVisitedLink):
+        Ask the visited link provider to add the visited link.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::addVisitedLink):
+        Call WebContext::addVisitedLink.
+
+        (WebKit::WebProcessProxy::didReceiveMessage):
+        Handle AddVisitedLink.
+
+        (WebKit::WebProcessProxy::didFinishLaunching):
+        Call WebContext::processdidFinishLaunching.
+
+        * UIProcess/WebProcessProxy.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::populateVisitedLinks):
+        Don't send the WebProcessProxyMessage::PopulateVisitedLinks message.
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::isLinkVisited):
+        Call WebProcess::isLinkVisited.
+        
+        (WebKit::WebPlatformStrategies::addVisitedLink):
+        Call WebProcess::addVisitedLink.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::setVisitedLinkTable):
+        Create a shared memory object and tell the visited link table about it.
+
+        (WebKit::WebProcess::visitedLinkStateChanged):
+        Go through the link hashes and call Page::visitedStateChanged.
+
+        (WebKit::WebProcess::allVisitedLinkStateChanged):
+        Call Page::allVisitedStateChanged.
+
+        (WebKit::WebProcess::isLinkVisited):
+        Call VisitedLinkTable::isLinkVisited.
+
+        (WebKit::WebProcess::addVisitedLink):
+        Inform the UI process about the added link.
+
+        (WebKit::WebProcess::didReceiveMessage):
+        Handle new messages.
+
 2010-08-05  Steve Falkenburg  <sfalken@apple.com>
 
         Windows build fix.
