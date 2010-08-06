@@ -1,3 +1,13 @@
+2010-08-05  François Sausset  <sausset@gmail.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Make STIX font the default one to render MathML
+        https://bugs.webkit.org/show_bug.cgi?id=41961
+
+        * css/mathml.css:
+        (math):
+
 2010-08-05  Cosmin Truta  <ctruta@chromium.org>
 
         Reviewed by Eric Seidel.

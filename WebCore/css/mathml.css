@@ -1,7 +1,7 @@
 @namespace "http://www.w3.org/1998/Math/MathML";
 
 math {
-    font-family: Symbol, "Times New Roman";
+    font-family: STIXGeneral, Symbol, "Times New Roman", sans-serif;
     display: inline-block;
     padding: 0px;
     margin: 0px;
@@ -173,9 +173,11 @@ mtable {
     text-align: center;
     vertical-align: -40%;
 }
+
 mtr {
     display: table-row;
 }
+
 mtd {
     display: table-cell;
     padding: 0 0.5ex;
@@ -188,33 +190,43 @@ mtable[columnalign="left"], mtr[columnalign="left"], mtd[columnalign="left"] {
 mtable[columnalign="right"], mtr[columnalign="right"], mtd[columnalign="right"] {
     text-align: right;
 }
+
 mtable[rowalign="top"] mtd, mtable mtr[rowalign="top"] mtd, mtable mtr mtd[rowalign="top"] {
     vertical-align: top;
 }
+
 mtable[rowalign="bottom"] mtd, mtable mtr[rowalign="bottom"] mtd, mtable mtr mtd[rowalign="bottom"] {
     vertical-align: bottom;
 }
+
 mtable[rowalign="center"] mtd, mtable mtr[rowalign="center"] mtd, mtable mtr mtd[rowalign="center"] {
     vertical-align: middle;
 }
+
 mtable[frame="solid"] {
     border: solid thin;
 }
+
 mtable[frame="dashed"] {
     border: dashed thin;
 }
+
 mtable[rowlines="solid"], mtable[rowlines="dashed"], mtable[columnlines="solid"], mtable[columnlines="dashed"] {
     border-collapse: collapse;
 }
+
 mtable[rowlines="solid"] > mtr + mtr {
     border-top: solid thin;
 }
+
 mtable[rowlines="dashed"] > mtr + mtr {
     border-top: dashed thin;
 }
+
 mtable[columnlines="solid"] > mtr > mtd + mtd {
     border-left: solid thin;
 }
+
 mtable[columnlines="dashed"] > mtr > mtd + mtd {
     border-left: dashed thin;
 }
