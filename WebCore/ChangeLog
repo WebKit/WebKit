@@ -1,3 +1,19 @@
+2010-08-06  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] Support for image drags
+        https://bugs.webkit.org/show_bug.cgi?id=40788
+
+        Add image drag-and-drop support for WebKit GTK+.
+
+        * platform/gtk/ClipboardGtk.cpp:
+        (WebCore::ClipboardGtk::setDragImage): Filled this stub.
+        (WebCore::ClipboardGtk::setDragImageElement): Filled this stub.
+        (WebCore::ClipboardGtk::createDragImage): Filled this stub.
+        (WebCore::ClipboardGtk::declareAndWriteDragImage): Write the image URL, markup, and image itself to the data object member.
+        * platform/gtk/ClipboardGtk.h: Brought method declarations into line with the parent class.
+
 2010-08-06  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
