@@ -1,5 +1,12 @@
 2010-08-06  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Rebaseline win specific getComputedStyle* results, after r64832.
+
+        * platform/win/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/win/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+
+2010-08-06  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Not reviewed. Rebaseline gtk specific getComputedStyle-basic.html result, after r64832.
 
         * platform/gtk/svg/css/getComputedStyle-basic-expected.txt:
