@@ -488,7 +488,7 @@ bool TextResourceDecoder::checkForCSSCharset(const char* data, size_t len, bool&
                 if (pos == dataEnd)
                     return false;
 
-                int encodingNameLength = pos - dataStart + 1;
+                int encodingNameLength = pos - dataStart;
                 
                 ++pos;
                 if (!skipWhitespace(pos, dataEnd))

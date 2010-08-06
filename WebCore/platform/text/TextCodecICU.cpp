@@ -70,10 +70,6 @@ void TextCodecICU::registerBaseCodecs(TextCodecRegistrar registrar)
     registrar("UTF-8", newTextCodecICU, 0);
 }
 
-// FIXME: Registering all the encodings we get from ucnv_getAvailableName
-// includes encodings we don't want or need. For example, all
-// the encodings with commas and version numbers.
-
 void TextCodecICU::registerExtendedEncodingNames(EncodingNameRegistrar registrar)
 {
     // We register Hebrew with logical ordering using a separate name.
@@ -136,41 +132,60 @@ void TextCodecICU::registerExtendedEncodingNames(EncodingNameRegistrar registrar
     // table in WebKit on Macintosh that don't seem to be present in ICU.
     // Perhaps we can prove these are not used on the web and remove them.
     // Or perhaps we can get them added to ICU.
-    registrar("xmacroman", "macintosh");
-    registrar("xmacukrainian", "x-mac-cyrillic");
-    registrar("cnbig5", "Big5");
-    registrar("xxbig5", "Big5");
-    registrar("cngb", "GBK");
+    registrar("x-mac-roman", "macintosh");
+    registrar("x-mac-ukrainian", "x-mac-cyrillic");
+    registrar("cn-big5", "Big5");
+    registrar("x-x-big5", "Big5");
+    registrar("cn-gb", "GBK");
     registrar("csgb231280", "GBK");
-    registrar("xeuccn", "GBK");
-    registrar("xgbk", "GBK");
-    registrar("csISO88598I", "ISO_8859-8-I");
+    registrar("x-euc-cn", "GBK");
+    registrar("x-gbk", "GBK");
+    registrar("csISO88598I", "ISO-8859-8-I");
     registrar("koi", "KOI8-R");
     registrar("logical", "ISO-8859-8-I");
     registrar("unicode11utf8", "UTF-8");
     registrar("unicode20utf8", "UTF-8");
-    registrar("xunicode20utf8", "UTF-8");
+    registrar("x-unicode20utf8", "UTF-8");
     registrar("visual", "ISO-8859-8");
     registrar("winarabic", "windows-1256");
     registrar("winbaltic", "windows-1257");
     registrar("wincyrillic", "windows-1251");
-    registrar("iso885911", "windows-874");
-    registrar("dos874", "windows-874");
+    registrar("iso-8859-11", "windows-874");
+    registrar("iso8859-11", "windows-874");
+    registrar("dos-874", "windows-874");
     registrar("wingreek", "windows-1253");
     registrar("winhebrew", "windows-1255");
     registrar("winlatin2", "windows-1250");
     registrar("winturkish", "windows-1254");
     registrar("winvietnamese", "windows-1258");
-    registrar("xcp1250", "windows-1250");
-    registrar("xcp1251", "windows-1251");
-    registrar("xeuc", "EUC-JP");
-    registrar("xwindows949", "windows-949");
-    registrar("xuhc", "windows-949");
+    registrar("x-cp1250", "windows-1250");
+    registrar("x-cp1251", "windows-1251");
+    registrar("x-euc", "EUC-JP");
+    registrar("x-windows-949", "windows-949");
+    registrar("x-uhc", "windows-949");
+    registrar("utf8", "UTF-8");
 
     // These aliases are present in modern versions of ICU, but use different codecs, and have no standard names.
     // They are not present in ICU 3.2.
-    registrar("dos720", "cp864");
+    registrar("dos-720", "cp864");
     registrar("jis7", "ISO-2022-JP");
+
+    // Alternative spelling of ISO encoding names.
+    registrar("ISO8859-1", "ISO-8859-1");
+    registrar("ISO8859-2", "ISO-8859-2");
+    registrar("ISO8859-3", "ISO-8859-3");
+    registrar("ISO8859-4", "ISO-8859-4");
+    registrar("ISO8859-5", "ISO-8859-5");
+    registrar("ISO8859-6", "ISO-8859-6");
+    registrar("ISO8859-7", "ISO-8859-7");
+    registrar("ISO8859-8", "ISO-8859-8");
+    registrar("ISO8859-8-I", "ISO-8859-8-I");
+    registrar("ISO8859-9", "ISO-8859-9");
+    registrar("ISO8859-10", "ISO-8859-10");
+    registrar("ISO8859-13", "ISO-8859-13");
+    registrar("ISO8859-14", "ISO-8859-14");
+    registrar("ISO8859-15", "ISO-8859-15");
+    registrar("ISO8859-16", "ISO-8859-16");
 }
 
 void TextCodecICU::registerExtendedCodecs(TextCodecRegistrar registrar)

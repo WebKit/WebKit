@@ -79,7 +79,6 @@ void TextCodecLatin1::registerEncodingNames(EncodingNameRegistrar registrar)
     registrar("ibm-1252", "windows-1252");
     registrar("ibm-1252_P100-2000", "windows-1252");
 
-    registrar("8859-1", "ISO-8859-1");
     registrar("CP819", "ISO-8859-1");
     registrar("IBM819", "ISO-8859-1");
     registrar("csISOLatin1", "ISO-8859-1");

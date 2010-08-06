@@ -61,10 +61,7 @@ namespace WebCore {
 
 const size_t maxEncodingNameLength = 63;
 
-// Hash for all-ASCII strings that does case folding and skips any characters
-// that are not alphanumeric. If passed any non-ASCII characters, depends on
-// the behavior of isalnum -- if that returns false as it does on OS X, then
-// it will properly skip those characters too.
+// Hash for all-ASCII strings that does case folding.
 struct TextEncodingNameHash {
 
     static bool equal(const char* s1, const char* s2)
@@ -72,12 +69,8 @@ struct TextEncodingNameHash {
         char c1;
         char c2;
         do {
-            do
-                c1 = *s1++;
-            while (c1 && !isASCIIAlphanumeric(c1));
-            do
-                c2 = *s2++;
-            while (c2 && !isASCIIAlphanumeric(c2));
+            c1 = *s1++;
+            c2 = *s2++;
             if (toASCIILower(c1) != toASCIILower(c2))
                 return false;
         } while (c1 && c2);
@@ -91,16 +84,13 @@ struct TextEncodingNameHash {
     {
         unsigned h = WTF::stringHashingStartValue;
         for (;;) {
-            char c;
-            do {
-                c = *s++;
-                if (!c) {
-                    h += (h << 3);
-                    h ^= (h >> 11);
-                    h += (h << 15);
-                    return h;
-                }
-            } while (!isASCIIAlphanumeric(c));
+            char c = *s++;
+            if (!c) {
+                h += (h << 3);
+                h ^= (h >> 11);
+                h += (h << 15);
+                return h;
+            }
             h += toASCIILower(c);
             h += (h << 10); 
             h ^= (h >> 6); 
@@ -154,15 +144,30 @@ static void checkExistingName(const char* alias, const char* atomicName)
             && strcmp(oldAtomicName, "ISO-8859-8-I") == 0
             && strcasecmp(atomicName, "iso-8859-8") == 0)
         return;
-    LOG_ERROR("alias %s maps to %s already, but someone is trying to make it map to %s",
-        alias, oldAtomicName, atomicName);
+    LOG_ERROR("alias %s maps to %s already, but someone is trying to make it map to %s", alias, oldAtomicName, atomicName);
 }
 
 #endif
 
+static bool isUndesiredAlias(const char* alias)
+{
+    // Reject aliases with version numbers that are supported by some back-ends (such as "ISO_2022,locale=ja,version=0" in ICU).
+    for (const char* p = alias; *p; ++p) {
+        if (*p == ',')
+            return true;
+    }
+    // 8859_1 is known to (at least) ICU, but other browsers don't support this name - and having it caused a compatibility
+    // problem, see bug 43554.
+    if (0 == strcmp(alias, "8859_1"))
+        return true;
+    return false;
+}
+
 static void addToTextEncodingNameMap(const char* alias, const char* name)
 {
     ASSERT(strlen(alias) <= maxEncodingNameLength);
+    if (isUndesiredAlias(alias))
+        return;
     const char* atomicName = textEncodingNameMap->get(name);
     ASSERT(strcmp(alias, name) == 0 || atomicName);
     if (!atomicName)
@@ -300,11 +305,9 @@ const char* atomicCanonicalTextEncodingName(const UChar* characters, size_t leng
     size_t j = 0;
     for (size_t i = 0; i < length; ++i) {
         UChar c = characters[i];
-        if (isASCIIAlphanumeric(c)) {
-            if (j == maxEncodingNameLength)
-                return 0;
-            buffer[j++] = c;
-        }
+        if (j == maxEncodingNameLength)
+            return 0;
+        buffer[j++] = c;
     }
     buffer[j] = 0;
     return atomicCanonicalTextEncodingName(buffer);

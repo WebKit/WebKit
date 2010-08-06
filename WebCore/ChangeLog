@@ -1,3 +1,39 @@
+2010-08-05  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=43554
+        Way too many encoding aliases are treated as valid
+
+        <rdar://problem/7863399> Garbage characters displayed in some yesky.com pages.
+
+        <rdar://problem/7859068> Garbage characters displayed for most text at ceping.zhaopin.com
+
+        Test: http/tests/misc/bad-charset-alias.html
+
+        * loader/TextResourceDecoder.cpp: (WebCore::TextResourceDecoder::checkForCSSCharset):
+        Fix encoding name length computation. Previously, a trailing quote was ignored by
+        TextEncodingRegistry.
+        
+        * platform/text/TextCodecICU.cpp: (WebCore::TextCodecICU::registerExtendedEncodingNames):
+        Added dashes to alias names that didn't have them. Added aliases prompted by regression tests.
+
+        * platform/text/TextCodecLatin1.cpp: (WebCore::TextCodecLatin1::registerEncodingNames):
+        Don't register 8859-1, other browsers do not support this encoding name.
+
+        * platform/text/TextEncoding.cpp: (WebCore::Latin1Encoding):
+        "Latin-1" is not a real encoding name, it's not known to Firefox or IE.
+
+        * platform/text/TextEncodingRegistry.cpp:
+        (WebCore::TextEncodingNameHash::equal): Changed to no longer ignore non-alphanumeric characters.
+        There is a good chance that we'll be missing support for some necessary alias names, but other
+        browsers don't ignore any characters when matching names.
+        (WebCore::TextEncodingNameHash::hash): Ditto.
+        (WebCore::checkExistingName): Re-formatted a line.
+        (WebCore::isUndesiredAlias): Added a filter to reject "8859_1" and any names containing commas.
+        (WebCore::addToTextEncodingNameMap): Used it.
+        (WebCore::atomicCanonicalTextEncodingName): Changed to no longer ignore non-alphanumeric characters.
+
 2010-08-05  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Laszlo Gombos.

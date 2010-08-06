@@ -25,12 +25,12 @@ testEncode("UTF-8", "U+00A0", "%C2%A0");
 //Yen symbol in gbk
 testEncode('GBK', 'U+00A5', '%A3%A4');
 testEncode('gb2312', 'U+00A5', '%A3%A4');
-testEncode('GB-2312-80', 'U+00A5', '%A3%A4');
+testEncode('GB_2312-80', 'U+00A5', '%A3%A4');
 testEncode('EUC-CN', 'U+00A5', '%A3%A4');
 //Euro symbol in gbk
 testEncode('GBK', 'U+20AC', '%80');
 testEncode('gb2312', 'U+20AC', '%80');
-testEncode('GB-2312-80', 'U+20AC', '%80');
+testEncode('GB_2312-80', 'U+20AC', '%80');
 testEncode('EUC-CN', 'U+20AC', '%80');
 //Misc symbols from TEC specific GBK translation 
 testEncode('GBK', 'U+01F9', '%A8%BF');
