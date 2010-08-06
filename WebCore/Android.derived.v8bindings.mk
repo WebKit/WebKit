@@ -353,7 +353,8 @@ GEN := \
     $(intermediates)/bindings/V8IDBKeyRange.h \
     $(intermediates)/bindings/V8IDBObjectStore.h \
     $(intermediates)/bindings/V8IDBRequest.h \
-    $(intermediates)/bindings/V8IDBSuccessEvent.h
+    $(intermediates)/bindings/V8IDBSuccessEvent.h \
+    $(intermediates)/bindings/V8IDBTransaction.h
 
 $(GEN): PRIVATE_PATH := $(LOCAL_PATH)
 $(GEN): PRIVATE_CUSTOM_TOOL = SOURCE_ROOT=$(PRIVATE_PATH) perl -I$(PRIVATE_PATH)/bindings/scripts $(PRIVATE_PATH)/bindings/scripts/generate-bindings.pl --defines "$(FEATURE_DEFINES) LANGUAGE_JAVASCRIPT" --generator V8 --include dom --include html --include storage --outputdir $(dir $@) $<

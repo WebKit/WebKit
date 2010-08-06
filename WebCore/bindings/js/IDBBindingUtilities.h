@@ -28,6 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "ScriptValue.h" 
 #include <wtf/Forward.h>
 
 namespace WebCore {

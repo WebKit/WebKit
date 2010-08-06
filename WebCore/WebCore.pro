@@ -2443,7 +2443,9 @@ contains(DEFINES, ENABLE_INDEXED_DATABASE=1) {
         storage/IDBObjectStoreBackendImpl.h \
         storage/IDBObjectStoreBackendInterface.h \
         storage/IDBRequest.h \
-        storage/IDBSuccessEvent.h
+        storage/IDBSuccessEvent.h \
+        storage/IDBTransaction.h \
+        storage/IDBTransactionBackendInterface.h
 
     SOURCES += \
         bindings/js/IDBBindingUtilities.cpp \
@@ -2464,7 +2466,8 @@ contains(DEFINES, ENABLE_INDEXED_DATABASE=1) {
         storage/IDBObjectStore.cpp \
         storage/IDBObjectStoreBackendImpl.cpp \
         storage/IDBRequest.cpp \
-        storage/IDBSuccessEvent.cpp
+        storage/IDBSuccessEvent.cpp \
+        storage/IDBTransaction.cpp
 }
 
 contains(DEFINES, ENABLE_DOM_STORAGE=1) {

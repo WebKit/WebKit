@@ -238,6 +238,7 @@ DOM_CLASSES = \
     IDBObjectStore \
     IDBRequest \
     IDBSuccessEvent \
+    IDBTransaction \
     ImageData \
     InjectedScriptHost \
     InspectorFrontendHost \

@@ -29,6 +29,7 @@
 #include "DOMStringList.h"
 #include "IDBCallbacks.h"
 #include "IDBObjectStoreProxy.h"
+#include "IDBTransactionBackendInterface.h"
 #include "WebFrameImpl.h"
 #include "WebIDBCallbacksImpl.h"
 #include "WebIDBDatabase.h"
@@ -89,6 +90,13 @@ PassRefPtr<IDBObjectStoreBackendInterface> IDBDatabaseProxy::objectStore(const S
 void IDBDatabaseProxy::removeObjectStore(const String& name, PassRefPtr<IDBCallbacks> callbacks)
 {
     m_webIDBDatabase->removeObjectStore(name, new WebIDBCallbacksImpl(callbacks));
+}
+
+PassRefPtr<IDBTransactionBackendInterface> IDBDatabaseProxy::transaction(DOMStringList* storeNames, unsigned short mode, unsigned long timeout)
+{
+    // FIXME: plumb to the browser process, etc etc.
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
 } // namespace WebCore

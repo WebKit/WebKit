@@ -42,6 +42,7 @@ namespace WebCore {
     macro(checking) \
     macro(click) \
     macro(close) \
+    macro(complete) \
     macro(compositionend) \
     macro(compositionstart) \
     macro(compositionupdate) \
@@ -149,6 +150,8 @@ namespace WebCore {
     macro(webkitTransitionEnd) \
     \
     macro(orientationchange) \
+    \
+    macro(timeout) \
     \
     macro(touchstart) \
     macro(touchmove) \

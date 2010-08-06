@@ -488,13 +488,14 @@ IDL_BINDINGS += \
     storage/IDBDatabase.idl \
     storage/IDBErrorEvent.idl \
     storage/IDBEvent.idl \
+    storage/IDBFactory.idl \
     storage/IDBIndex.idl \
     storage/IDBKey.idl \
     storage/IDBKeyRange.idl \
     storage/IDBObjectStore.idl \
     storage/IDBRequest.idl \
     storage/IDBSuccessEvent.idl \
-    storage/IDBFactory.idl \
+    storage/IDBTransaction.idl \
     storage/Storage.idl \
     storage/StorageEvent.idl \
     storage/SQLError.idl \

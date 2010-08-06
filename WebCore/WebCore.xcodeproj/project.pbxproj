@@ -4357,6 +4357,10 @@
 		B5D3601A112F8B560048DEA8 /* DatabaseCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = B5D36019112F8B560048DEA8 /* DatabaseCallback.h */; };
 		B61762541203374F00EF9114 /* IDBDatabaseBackendInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = B61762531203374F00EF9114 /* IDBDatabaseBackendInterface.h */; };
 		B61762621203490800EF9114 /* IDBDatabaseBackendImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = B61762611203490800EF9114 /* IDBDatabaseBackendImpl.h */; };
+		B656626A120B115A006EA85C /* IDBTransaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6566267120B115A006EA85C /* IDBTransaction.cpp */; };
+		B656626B120B115A006EA85C /* IDBTransaction.h in Headers */ = {isa = PBXBuildFile; fileRef = B6566268120B115A006EA85C /* IDBTransaction.h */; };
+		B6566270120B1227006EA85C /* JSIDBTransaction.h in Headers */ = {isa = PBXBuildFile; fileRef = B656626E120B1227006EA85C /* JSIDBTransaction.h */; };
+		B6566271120B1227006EA85C /* JSIDBTransaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B656626F120B1227006EA85C /* JSIDBTransaction.cpp */; };
 		B691C1F91206D4A00025D980 /* IDBDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A6A311D4FB3D004C3E4B /* IDBDatabase.cpp */; };
 		B71FE6DF11091CB300DAEF77 /* PrintContext.h in Headers */ = {isa = PBXBuildFile; fileRef = B776D43A1104525D00BEB0EC /* PrintContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B734B181119B9911006587BD /* FontTranscoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B734B180119B9911006587BD /* FontTranscoder.cpp */; };
@@ -10024,6 +10028,12 @@
 		B5D36019112F8B560048DEA8 /* DatabaseCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseCallback.h; sourceTree = "<group>"; };
 		B61762531203374F00EF9114 /* IDBDatabaseBackendInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBDatabaseBackendInterface.h; sourceTree = "<group>"; };
 		B61762611203490800EF9114 /* IDBDatabaseBackendImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBDatabaseBackendImpl.h; sourceTree = "<group>"; };
+		B6566267120B115A006EA85C /* IDBTransaction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBTransaction.cpp; sourceTree = "<group>"; };
+		B6566268120B115A006EA85C /* IDBTransaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBTransaction.h; sourceTree = "<group>"; };
+		B6566269120B115A006EA85C /* IDBTransaction.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBTransaction.idl; sourceTree = "<group>"; };
+		B656626D120B116B006EA85C /* IDBTransactionBackendInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBTransactionBackendInterface.h; sourceTree = "<group>"; };
+		B656626E120B1227006EA85C /* JSIDBTransaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSIDBTransaction.h; path = ../WebKitBuild/Debug/DerivedSources/WebCore/JSIDBTransaction.h; sourceTree = SOURCE_ROOT; };
+		B656626F120B1227006EA85C /* JSIDBTransaction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSIDBTransaction.cpp; path = ../WebKitBuild/Debug/DerivedSources/WebCore/JSIDBTransaction.cpp; sourceTree = SOURCE_ROOT; };
 		B734B180119B9911006587BD /* FontTranscoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FontTranscoder.cpp; path = transcoder/FontTranscoder.cpp; sourceTree = "<group>"; };
 		B734B182119B991D006587BD /* FontTranscoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FontTranscoder.h; path = transcoder/FontTranscoder.h; sourceTree = "<group>"; };
 		B776D43A1104525D00BEB0EC /* PrintContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintContext.h; sourceTree = "<group>"; };
@@ -11439,6 +11449,10 @@
 				C585A6C211D4FB3D004C3E4B /* IDBSuccessEvent.cpp */,
 				C585A6C311D4FB3D004C3E4B /* IDBSuccessEvent.h */,
 				C585A6C411D4FB3D004C3E4B /* IDBSuccessEvent.idl */,
+				B656626D120B116B006EA85C /* IDBTransactionBackendInterface.h */,
+				B6566267120B115A006EA85C /* IDBTransaction.cpp */,
+				B6566268120B115A006EA85C /* IDBTransaction.h */,
+				B6566269120B115A006EA85C /* IDBTransaction.idl */,
 				511F23130DC160DA004F0032 /* LocalStorageTask.cpp */,
 				511F23140DC160DA004F0032 /* LocalStorageTask.h */,
 				511F23150DC160DA004F0032 /* LocalStorageThread.cpp */,
@@ -14876,6 +14890,8 @@
 				C585A67911D4FB07004C3E4B /* JSIDBRequest.h */,
 				C585A67A11D4FB07004C3E4B /* JSIDBSuccessEvent.cpp */,
 				C585A67B11D4FB07004C3E4B /* JSIDBSuccessEvent.h */,
+				B656626E120B1227006EA85C /* JSIDBTransaction.h */,
+				B656626F120B1227006EA85C /* JSIDBTransaction.cpp */,
 				514C76350CE9225E007EF3CD /* JSSQLError.cpp */,
 				BC8243250D0CE8A200460C8F /* JSSQLError.h */,
 				B525A96411CA2340003A23A8 /* JSSQLException.cpp */,
@@ -19986,6 +20002,8 @@
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				97DD4D870FDF4D6E00ECF9A4 /* XSSAuditor.h in Headers */,
 				CE172E011136E8CE0062A533 /* ZoomMode.h in Headers */,
+				B656626B120B115A006EA85C /* IDBTransaction.h in Headers */,
+				B6566270120B1227006EA85C /* JSIDBTransaction.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -22391,6 +22409,8 @@
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				97DD4D860FDF4D6E00ECF9A4 /* XSSAuditor.cpp in Sources */,
 				A8BCFD05120A046100B5F122 /* SVGPathSeg.cpp in Sources */,
+				B656626A120B115A006EA85C /* IDBTransaction.cpp in Sources */,
+				B6566271120B1227006EA85C /* JSIDBTransaction.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

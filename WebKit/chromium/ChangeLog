@@ -1,3 +1,16 @@
+2010-08-05  Andrei Popescu  <andreip@dhcp-172-16-14-12.lon.corp.google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        [IndexedDB] IndexedDB is missing the Transaction interface.
+        https://bugs.webkit.org/show_bug.cgi?id=42970
+
+        Add IDBTransaction boilerplate.
+
+        * src/IDBDatabaseProxy.cpp:
+        (WebCore::IDBDatabaseProxy::transaction):
+        * src/IDBDatabaseProxy.h:
+
 2010-08-05  Gavin Barraclough  <barraclough@apple.com>
 
         Rubber stamped by Sam Weinig

@@ -346,6 +346,7 @@ SET(WebCore_IDL_FILES
     storage/IDBObjectStore.idl
     storage/IDBRequest.idl
     storage/IDBSuccessEvent.idl
+    storage/IDBTransaction.idl
     storage/SQLError.idl
     storage/SQLException.idl
     storage/SQLResultSet.idl

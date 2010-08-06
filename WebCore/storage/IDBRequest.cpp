@@ -49,7 +49,6 @@ IDBRequest::IDBRequest(ScriptExecutionContext* context, PassRefPtr<IDBAny> sourc
     , m_source(source)
     , m_result(IDBAny::create())
     , m_timer(this, &IDBRequest::timerFired)
-    , m_stopped(false)
     , m_aborted(false)
     , m_readyState(INITIAL)
 {
@@ -115,24 +114,11 @@ ScriptExecutionContext* IDBRequest::scriptExecutionContext() const
     return ActiveDOMObject::scriptExecutionContext();
 }
 
-void IDBRequest::stop()
+bool IDBRequest::canSuspend() const
 {
-    abort();
-    m_selfRef = 0; // Could trigger a delete.
-}
-
-void IDBRequest::suspend()
-{
-    m_timer.stop();
-    m_stopped = true;
-}
-
-void IDBRequest::resume()
-{
-    m_stopped = false;
-    // We only hold our self ref when we're waiting to dispatch an event.
-    if (m_selfRef && !m_aborted)
-        m_timer.startOneShot(0);
+    // IDBTransactions cannot be suspended at the moment. We therefore
+    // disallow the back/forward cache for pages that use IndexedDatabase.
+    return false;
 }
 
 EventTargetData* IDBRequest::eventTargetData()
@@ -149,7 +135,6 @@ void IDBRequest::timerFired(Timer<IDBRequest>*)
 {
     ASSERT(m_readyState == DONE);
     ASSERT(m_selfRef);
-    ASSERT(!m_stopped);
     ASSERT(!m_aborted);
 
     // We need to keep self-referencing ourself, otherwise it's possible we'll be deleted.
@@ -179,8 +164,7 @@ void IDBRequest::onEventCommon()
 
     m_readyState = DONE;
     m_selfRef = this;
-    if (!m_stopped)
-        m_timer.startOneShot(0);
+    m_timer.startOneShot(0);
 }
 
 } // namespace WebCore

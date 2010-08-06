@@ -23,23 +23,40 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module storage {
+#ifndef IDBTransactionBackendInterface_h
+#define IDBTransactionBackendInterface_h
 
-    interface [
-        Conditional=INDEXED_DATABASE
-    ] IDBDatabase {
-        readonly attribute DOMString name;
-        readonly attribute DOMString description;
-        readonly attribute DOMString version;
-        readonly attribute DOMStringList objectStores;
+#include "ExceptionCode.h"
+#include "IDBCallbacks.h"
+#include "PlatformString.h"
+#include "ScriptExecutionContext.h"
+#include <wtf/Threading.h>
 
-        // FIXME: Add setVersion.
+#if ENABLE(INDEXED_DATABASE)
 
-        [CallWith=ScriptExecutionContext] IDBRequest createObjectStore(in DOMString name, in [Optional, ConvertNullToNullString] DOMString keyPath, in [Optional] boolean autoIncrement);
-        // FIXME: objectStore needs to be able to raise an IDBDatabaseException.
-        IDBObjectStore objectStore(in DOMString name, in [Optional] unsigned short mode);
-        [CallWith=ScriptExecutionContext] IDBRequest removeObjectStore(in DOMString name);
-        [CallWith=ScriptExecutionContext] IDBTransaction transaction (in [Optional] DOMStringList storeNames, in [Optional] unsigned short mode, in [Optional] unsigned long timeout);
-    };
+namespace WebCore {
 
-}
+class IDBObjectStoreBackendInterface;
+class SQLiteDatabase;
+
+// This class is shared by IDBTransaction (async) and IDBTransactionSync (sync).
+// This is implemented by IDBTransactionBackendImpl and optionally others (in order to proxy
+// calls across process barriers). All calls to these classes should be non-blocking and
+// trigger work on a background thread if necessary.
+class IDBTransactionBackendInterface : public ThreadSafeShared<IDBTransactionBackendInterface> {
+public:
+    virtual ~IDBTransactionBackendInterface() { }
+
+    virtual PassRefPtr<IDBObjectStoreBackendInterface> objectStore(const String& name) = 0;
+    virtual unsigned short mode() const = 0;
+    virtual void scheduleTask(PassOwnPtr<ScriptExecutionContext::Task>) = 0;
+    virtual void abort() = 0;
+    virtual SQLiteDatabase* sqliteDatabase() = 0;
+};
+
+} // namespace WebCore
+
+#endif
+
+#endif // IDBTransactionBackendInterface_h
+

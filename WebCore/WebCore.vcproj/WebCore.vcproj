@@ -45308,6 +45308,62 @@
 					>
 				</File>
 				<File
+					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSIDBTransaction.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_Internal|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_Cairo|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release_Cairo|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_All|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSIDBTransaction.h"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\JSImageConstructor.cpp"
 					>
 					<FileConfiguration
@@ -50242,6 +50298,14 @@
 			</File>
 			<File
 				RelativePath="..\storage\IDBSuccessEvent.h"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\IDBTransaction.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\IDBTransaction.h"
 				>
 			</File>
 			<File

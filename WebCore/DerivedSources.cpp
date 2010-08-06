@@ -188,6 +188,7 @@
 #include "JSIDBObjectStore.cpp"
 #include "JSIDBRequest.cpp"
 #include "JSIDBSuccessEvent.cpp"
+#include "JSIDBTransaction.cpp"
 #include "JSImageData.cpp"
 #include "JSInjectedScriptHost.cpp"
 #include "JSInspectorFrontendHost.cpp"

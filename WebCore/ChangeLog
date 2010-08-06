@@ -1,3 +1,62 @@
+2010-08-05  Andrei Popescu  <andreip@dhcp-172-16-14-12.lon.corp.google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        [IndexedDB] IndexedDB is missing the Transaction interface.
+        https://bugs.webkit.org/show_bug.cgi?id=42970
+
+        Add IDBTransaction boilerplate.
+
+        No new tests, not functional yet.
+
+        * Android.derived.jscbindings.mk:
+        * Android.derived.v8bindings.mk:
+        * Android.mk:
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/EventNames.h:
+        * storage/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::transaction):
+        * storage/IDBDatabase.h:
+        * storage/IDBDatabase.idl:
+        * storage/IDBDatabaseBackendImpl.cpp:
+        (WebCore::IDBDatabaseBackendImpl::transaction):
+        * storage/IDBDatabaseBackendImpl.h:
+        * storage/IDBDatabaseBackendInterface.h:
+        * storage/IDBRequest.cpp:
+        (WebCore::IDBRequest::IDBRequest):
+        (WebCore::IDBRequest::canSuspend):
+        (WebCore::IDBRequest::timerFired):
+        (WebCore::IDBRequest::onEventCommon):
+        * storage/IDBRequest.h:
+        * storage/IDBTransaction.cpp: Added.
+        (WebCore::IDBTransaction::IDBTransaction):
+        (WebCore::IDBTransaction::~IDBTransaction):
+        (WebCore::IDBTransaction::mode):
+        (WebCore::IDBTransaction::db):
+        (WebCore::IDBTransaction::objectStore):
+        (WebCore::IDBTransaction::abort):
+        (WebCore::IDBTransaction::scriptExecutionContext):
+        (WebCore::IDBTransaction::canSuspend):
+        (WebCore::IDBTransaction::eventTargetData):
+        (WebCore::IDBTransaction::ensureEventTargetData):
+        * storage/IDBTransaction.h: Added.
+        (WebCore::IDBTransaction::create):
+        (WebCore::IDBTransaction::):
+        (WebCore::IDBTransaction::toIDBTransaction):
+        (WebCore::IDBTransaction::refEventTarget):
+        (WebCore::IDBTransaction::derefEventTarget):
+        * storage/IDBTransaction.idl: Added.
+        * storage/IDBTransactionBackendInterface.h: Added.
+        (WebCore::IDBTransactionBackendInterface::~IDBTransactionBackendInterface):
+
 2010-08-06  Rafael Antognolli  <antognolli@profusion.mobi>
 
         Unreviewed build fix.

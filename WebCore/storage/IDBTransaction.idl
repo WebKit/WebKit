@@ -1,4 +1,4 @@
-/*
+ /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,20 +26,32 @@
 module storage {
 
     interface [
-        Conditional=INDEXED_DATABASE
-    ] IDBDatabase {
-        readonly attribute DOMString name;
-        readonly attribute DOMString description;
-        readonly attribute DOMString version;
-        readonly attribute DOMStringList objectStores;
-
-        // FIXME: Add setVersion.
-
-        [CallWith=ScriptExecutionContext] IDBRequest createObjectStore(in DOMString name, in [Optional, ConvertNullToNullString] DOMString keyPath, in [Optional] boolean autoIncrement);
-        // FIXME: objectStore needs to be able to raise an IDBDatabaseException.
-        IDBObjectStore objectStore(in DOMString name, in [Optional] unsigned short mode);
-        [CallWith=ScriptExecutionContext] IDBRequest removeObjectStore(in DOMString name);
-        [CallWith=ScriptExecutionContext] IDBTransaction transaction (in [Optional] DOMStringList storeNames, in [Optional] unsigned short mode, in [Optional] unsigned long timeout);
+        Conditional=INDEXED_DATABASE,
+        EventTarget
+    ] IDBTransaction {
+        // Modes
+        const unsigned short READ_WRITE = 0;
+        const unsigned short READ_ONLY = 1;
+        const unsigned short SNAPSHOT_READ = 2;
+        // Properties
+        readonly attribute unsigned short mode;
+        readonly attribute IDBDatabase db;
+        // Methods
+        IDBObjectStore objectStore (in DOMString name)
+            raises (IDBDatabaseException);
+        void abort ();
+        // Events
+        attribute EventListener onabort;
+        attribute EventListener oncomplete;
+        attribute EventListener ontimeout;
+        // EventTarget interface
+        void addEventListener(in DOMString type,
+                              in EventListener listener,
+                              in boolean useCapture);
+        void removeEventListener(in DOMString type,
+                                 in EventListener listener,
+                                 in boolean useCapture);
+        boolean dispatchEvent(in Event evt) 
+            raises(EventException);
     };
-
 }

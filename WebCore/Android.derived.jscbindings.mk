@@ -372,7 +372,8 @@ GEN := \
     $(intermediates)/storage/JSIDBKeyRange.h \
     $(intermediates)/storage/JSIDBObjectStore.h \
     $(intermediates)/storage/JSIDBRequest.h \
-    $(intermediates)/storage/JSIDBSuccessEvent.h
+    $(intermediates)/storage/JSIDBSuccessEvent.h \
+    $(intermediates)/storage/JSIDBTransaction.h
 
 $(GEN): PRIVATE_PATH := $(LOCAL_PATH)
 $(GEN): PRIVATE_CUSTOM_TOOL = perl -I$(PRIVATE_PATH)/bindings/scripts $(PRIVATE_PATH)/bindings/scripts/generate-bindings.pl --defines "$(FEATURE_DEFINES) LANGUAGE_JAVASCRIPT" --generator JS --include dom --include html --include storage --outputdir $(dir $@) $<

@@ -30,6 +30,7 @@
 #include "IDBFactoryBackendInterface.h"
 #include "IDBObjectStore.h"
 #include "IDBRequest.h"
+#include "IDBTransaction.h"
 #include "ScriptExecutionContext.h"
 
 #if ENABLE(INDEXED_DATABASE)
@@ -66,6 +67,16 @@ PassRefPtr<IDBRequest> IDBDatabase::removeObjectStore(ScriptExecutionContext* co
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this));
     m_backend->removeObjectStore(name, request);
     return request;
+}
+
+PassRefPtr<IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext* context, DOMStringList* storeNames, unsigned short mode, unsigned long timeout)
+{
+    // We need to create a new transaction synchronously. Locks are acquired asynchronously. Operations
+    // can be queued against the transaction at any point. They will start executing as soon as the
+    // appropriate locks have been acquired.
+    RefPtr<IDBTransactionBackendInterface> transactionBackend = m_backend->transaction(storeNames, mode, timeout);
+    RefPtr<IDBTransaction> transaction = IDBTransaction::create(context, transactionBackend.release(), this);
+    return transaction.release();
 }
 
 } // namespace WebCore
