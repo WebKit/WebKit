@@ -21,14 +21,13 @@
 #ifndef SearchPopupMenuQt_h
 #define SearchPopupMenuQt_h
 
-#include "PopupMenuQt.h"
 #include "SearchPopupMenu.h"
 
 namespace WebCore {
 
 class SearchPopupMenuQt : public SearchPopupMenu {
 public:
-    SearchPopupMenuQt(PopupMenuClient*);
+    SearchPopupMenuQt(PassRefPtr<PopupMenu> popup);
 
     virtual PopupMenu* popupMenu();
     virtual void saveRecentSearches(const AtomicString& name, const Vector<String>& searchItems);
@@ -36,7 +35,7 @@ public:
     virtual bool enabled();
 
 private:
-    RefPtr<PopupMenuQt> m_popup;
+    RefPtr<PopupMenu> m_popup;
 };
 
 }

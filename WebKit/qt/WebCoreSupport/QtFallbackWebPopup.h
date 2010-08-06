@@ -20,7 +20,9 @@
 #ifndef QtFallbackWebPopup_h
 #define QtFallbackWebPopup_h
 
-#include "QtAbstractWebPopup.h"
+#include "Platform.h"
+#include "qwebkitplatformplugin.h"
+
 #include <QComboBox>
 
 #ifndef QT_NO_COMBOBOX
@@ -29,20 +31,29 @@ QT_BEGIN_NAMESPACE
 class QGraphicsProxyWidget;
 QT_END_NAMESPACE
 
+class QWebPageClient;
+
 namespace WebCore {
 
+class ChromeClientQt;
 class QtFallbackWebPopupCombo;
 
-class QtFallbackWebPopup : public QObject, public QtAbstractWebPopup {
+class QtFallbackWebPopup : public QWebSelectMethod {
     Q_OBJECT
 public:
-    QtFallbackWebPopup();
+    QtFallbackWebPopup(const ChromeClientQt*);
     ~QtFallbackWebPopup();
 
-    virtual void show();
+    virtual void show(const QWebSelectData&);
     virtual void hide();
 
     void destroyPopup();
+
+    void setGeometry(const QRect& rect) { m_geometry = rect; }
+    QRect geometry() const { return m_geometry; }
+
+    void setFont(const QFont& font) { m_font = font; }
+    QFont font() const { return m_font; }
 
 private slots:
     void activeChanged(int);
@@ -51,8 +62,13 @@ private:
     friend class QtFallbackWebPopupCombo;
     bool m_popupVisible;
     QtFallbackWebPopupCombo* m_combo;
+    const ChromeClientQt* m_chromeClient;
+    QRect m_geometry;
+    QFont m_font;
 
-    void populate();
+    QWebPageClient* pageClient() const;
+
+    void populate(const QWebSelectData&);
 #if ENABLE(SYMBIAN_DIALOG_PROVIDERS)
     void showS60BrowserDialog();
 #endif

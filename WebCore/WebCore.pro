@@ -1713,7 +1713,6 @@ HEADERS += \
     platform/PopupMenu.h \
     platform/qt/ClipboardQt.h \
     platform/qt/QWebPageClient.h \
-    platform/qt/QtAbstractWebPopup.h \
     platform/qt/QtStyleOptionWebComboBox.h \
     platform/qt/RenderThemeQt.h \
     platform/qt/ScrollbarThemeQt.h \
@@ -2150,6 +2149,8 @@ HEADERS += \
     $$PWD/../WebKit/qt/WebCoreSupport/NotificationPresenterClientQt.h \
     $$PWD/../WebKit/qt/WebCoreSupport/PageClientQt.h \
     $$PWD/../WebKit/qt/WebCoreSupport/QtPlatformPlugin.h \
+    $$PWD/../WebKit/qt/WebCoreSupport/PopupMenuQt.h \
+    $$PWD/../WebKit/qt/WebCoreSupport/SearchPopupMenuQt.h \
     $$PWD/platform/network/qt/DnsPrefetchHelper.h
 
 SOURCES += \
@@ -2212,13 +2213,10 @@ SOURCES += \
     platform/qt/PlatformScreenQt.cpp \
     platform/qt/PlatformTouchEventQt.cpp \
     platform/qt/PlatformTouchPointQt.cpp \
-    platform/qt/PopupMenuQt.cpp \
-    platform/qt/QtAbstractWebPopup.cpp \
     platform/qt/RenderThemeQt.cpp \
     platform/qt/ScrollbarQt.cpp \
     platform/qt/ScrollbarThemeQt.cpp \
     platform/qt/ScrollViewQt.cpp \
-    platform/qt/SearchPopupMenuQt.cpp \
     platform/qt/SharedTimerQt.cpp \
     platform/qt/SoundQt.cpp \
     platform/qt/LoggingQt.cpp \
@@ -2240,7 +2238,9 @@ SOURCES += \
     ../WebKit/qt/WebCoreSupport/InspectorClientQt.cpp \
     ../WebKit/qt/WebCoreSupport/NotificationPresenterClientQt.cpp \
     ../WebKit/qt/WebCoreSupport/PageClientQt.cpp \
+    ../WebKit/qt/WebCoreSupport/PopupMenuQt.cpp \
     ../WebKit/qt/WebCoreSupport/QtPlatformPlugin.cpp \
+    ../WebKit/qt/WebCoreSupport/SearchPopupMenuQt.cpp \
     ../WebKit/qt/Api/qwebframe.cpp \
     ../WebKit/qt/Api/qgraphicswebview.cpp \
     ../WebKit/qt/Api/qwebpage.cpp \

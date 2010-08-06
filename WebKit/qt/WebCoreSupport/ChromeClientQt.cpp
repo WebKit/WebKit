@@ -591,16 +591,16 @@ IntRect ChromeClientQt::visibleRectForTiledBackingStore() const
 }
 #endif
 
-QtAbstractWebPopup* ChromeClientQt::createSelectPopup()
+QWebSelectMethod* ChromeClientQt::createSelectPopup() const
 {
-    QtAbstractWebPopup* result = m_platformPlugin.createSelectInputMethod();
+    QWebSelectMethod* result = m_platformPlugin.createSelectInputMethod();
     if (result)
         return result;
 
 #if defined(Q_WS_MAEMO_5)
     return new QtMaemoWebPopup;
 #elif !defined(QT_NO_COMBOBOX)
-    return new QtFallbackWebPopup;
+    return new QtFallbackWebPopup(this);
 #else
     return 0;
 #endif
@@ -633,12 +633,12 @@ bool ChromeClientQt::selectItemWritingDirectionIsNatural()
 
 PassRefPtr<PopupMenu> ChromeClientQt::createPopupMenu(PopupMenuClient* client) const
 {
-    return adoptRef(new PopupMenuQt(client));
+    return adoptRef(new PopupMenuQt(client, this));
 }
 
 PassRefPtr<SearchPopupMenu> ChromeClientQt::createSearchPopupMenu(PopupMenuClient* client) const
 {
-    return adoptRef(new SearchPopupMenuQt(client));
+    return adoptRef(new SearchPopupMenuQt(createPopupMenu(client)));
 }
 
 } // namespace WebCore

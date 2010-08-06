@@ -23,8 +23,7 @@
 
 #ifndef QT_NO_COMBOBOX
 
-#include "HostWindow.h"
-#include "PopupMenuClient.h"
+#include "ChromeClientQt.h"
 #include "QWebPageClient.h"
 #include "qgraphicswebview.h"
 #include <QAbstractItemView>
@@ -79,7 +78,7 @@ void QtFallbackWebPopupCombo::hidePopup()
         return;
 
     m_ownerPopup.m_popupVisible = false;
-    m_ownerPopup.popupDidHide();
+    emit m_ownerPopup.didHide();
     m_ownerPopup.destroyPopup();
 }
 
@@ -97,10 +96,10 @@ bool QtFallbackWebPopupCombo::eventFilter(QObject* watched, QEvent* event)
 
 // QtFallbackWebPopup
 
-QtFallbackWebPopup::QtFallbackWebPopup()
-    : QtAbstractWebPopup()
-    , m_popupVisible(false)
+QtFallbackWebPopup::QtFallbackWebPopup(const ChromeClientQt* chromeClient)
+    : m_popupVisible(false)
     , m_combo(0)
+    , m_chromeClient(chromeClient)
 {
 }
 
@@ -109,7 +108,7 @@ QtFallbackWebPopup::~QtFallbackWebPopup()
     destroyPopup();
 }
 
-void QtFallbackWebPopup::show()
+void QtFallbackWebPopup::show(const QWebSelectData& data)
 {
     if (!pageClient())
         return;
@@ -123,8 +122,7 @@ void QtFallbackWebPopup::show()
     connect(m_combo, SIGNAL(activated(int)),
             SLOT(activeChanged(int)), Qt::QueuedConnection);
 
-    populate();
-    m_combo->setCurrentIndex(currentIndex());
+    populate(data);
 
     QRect rect = geometry();
     if (QGraphicsWebView *webView = qobject_cast<QGraphicsWebView*>(pageClient()->pluginParent())) {
@@ -212,7 +210,7 @@ void QtFallbackWebPopup::destroyPopup()
     }
 }
 
-void QtFallbackWebPopup::populate()
+void QtFallbackWebPopup::populate(const QWebSelectData& data)
 {
     QStandardItemModel* model = qobject_cast<QStandardItemModel*>(m_combo->model());
     Q_ASSERT(model);
@@ -220,21 +218,28 @@ void QtFallbackWebPopup::populate()
 #if !defined(Q_WS_S60)
     m_combo->setFont(font());
 #endif
-    for (int i = 0; i < itemCount(); ++i) {
-        switch (itemType(i)) {
-        case Separator:
+
+    int currentIndex = -1;
+    for (int i = 0; i < data.itemCount(); ++i) {
+        switch (data.itemType(i)) {
+        case QWebSelectData::Separator:
             m_combo->insertSeparator(i);
             break;
-        case Group:
-            m_combo->insertItem(i, itemText(i));
+        case QWebSelectData::Group:
+            m_combo->insertItem(i, data.itemText(i));
             model->item(i)->setEnabled(false);
             break;
-        case Option:
-            m_combo->insertItem(i, itemText(i));
-            model->item(i)->setEnabled(itemIsEnabled(i));
+        case QWebSelectData::Option:
+            m_combo->insertItem(i, data.itemText(i));
+            model->item(i)->setEnabled(data.itemIsEnabled(i));
+            if (data.itemIsSelected(i))
+                currentIndex = i;
             break;
         }
     }
+
+    if (currentIndex >= 0)
+        m_combo->setCurrentIndex(currentIndex);
 }
 
 void QtFallbackWebPopup::activeChanged(int index)
@@ -242,7 +247,12 @@ void QtFallbackWebPopup::activeChanged(int index)
     if (index < 0)
         return;
 
-    valueChanged(index);
+    emit selectItem(index, false, false);
+}
+
+QWebPageClient* QtFallbackWebPopup::pageClient() const
+{
+    return m_chromeClient->platformPageClient();
 }
 
 }

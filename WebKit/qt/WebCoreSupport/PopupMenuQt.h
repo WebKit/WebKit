@@ -1,5 +1,4 @@
 /*
- * Copyright C 2006 Zack Rusin <zack@kde.org>
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  *
  * This library is free software; you can redistribute it and/or
@@ -18,32 +17,43 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "config.h"
-#include "SearchPopupMenuQt.h"
+#ifndef PopupMenuQt_h
+#define PopupMenuQt_h
+
+#include "PopupMenu.h"
+#include <QObject>
+
+class QWebSelectData;
+class QWebSelectMethod;
 
 namespace WebCore {
 
-SearchPopupMenuQt::SearchPopupMenuQt(PopupMenuClient* client)
-    : m_popup(adoptRef(new PopupMenuQt(client)))
-{
+class ChromeClientQt;
+class FrameView;
+class PopupMenuClient;
+
+class PopupMenuQt : public QObject, public PopupMenu {
+    Q_OBJECT
+public:
+    PopupMenuQt(PopupMenuClient*, const ChromeClientQt*);
+    ~PopupMenuQt();
+
+    virtual void show(const IntRect&, FrameView*, int index);
+    virtual void hide();
+    virtual void updateFromElement();
+    virtual void disconnectClient();
+
+private slots:
+    void didHide();
+    void selectItem(int index, bool ctrl, bool shift);
+
+private:
+    PopupMenuClient* m_popupClient;
+    QWebSelectMethod* m_popup;
+    QWebSelectData* m_selectData;
+    const ChromeClientQt* m_chromeClient;
+};
+
 }
 
-PopupMenu* SearchPopupMenuQt::popupMenu()
-{
-    return m_popup.get();
-}
-
-void SearchPopupMenuQt::saveRecentSearches(const AtomicString&, const Vector<String>&)
-{
-}
-
-void SearchPopupMenuQt::loadRecentSearches(const AtomicString&, Vector<String>&)
-{
-}
-
-bool SearchPopupMenuQt::enabled()
-{
-    return true;
-}
-
-}
+#endif // PopupMenuQt_h

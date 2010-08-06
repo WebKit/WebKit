@@ -174,7 +174,7 @@ namespace WebCore {
         virtual PassRefPtr<PopupMenu> createPopupMenu(PopupMenuClient*) const;
         virtual PassRefPtr<SearchPopupMenu> createSearchPopupMenu(PopupMenuClient*) const;
 
-        QtAbstractWebPopup* createSelectPopup();
+        QWebSelectMethod* createSelectPopup() const;
 
         virtual void didReceiveViewportArguments(Frame*, const ViewportArguments&) const;
 
@@ -188,7 +188,7 @@ namespace WebCore {
         bool menuBarVisible;
         QEventLoop* m_eventLoop;
 
-        QtPlatformPlugin m_platformPlugin;
+        mutable QtPlatformPlugin m_platformPlugin;
     };
 }
 

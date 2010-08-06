@@ -1,4 +1,5 @@
 /*
+ * Copyright C 2006 Zack Rusin <zack@kde.org>
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  *
  * This library is free software; you can redistribute it and/or
@@ -17,33 +18,32 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef PopupMenuQt_h
-#define PopupMenuQt_h
-
-#include "PopupMenu.h"
+#include "config.h"
+#include "SearchPopupMenuQt.h"
 
 namespace WebCore {
 
-class FrameView;
-class QtAbstractWebPopup;
-class Scrollbar;
-class PopupMenuClient;
-
-class PopupMenuQt : public PopupMenu {
-public:
-    PopupMenuQt(PopupMenuClient*);
-    ~PopupMenuQt();
-
-    virtual void show(const IntRect&, FrameView*, int index);
-    virtual void hide();
-    virtual void updateFromElement();
-    virtual void disconnectClient();
-
-private:
-    PopupMenuClient* m_popupClient;
-    QtAbstractWebPopup* m_popup;
-};
-
+SearchPopupMenuQt::SearchPopupMenuQt(PassRefPtr<PopupMenu> popup)
+    : m_popup(popup)
+{
 }
 
-#endif // PopupMenuQt_h
+PopupMenu* SearchPopupMenuQt::popupMenu()
+{
+    return m_popup.get();
+}
+
+void SearchPopupMenuQt::saveRecentSearches(const AtomicString&, const Vector<String>&)
+{
+}
+
+void SearchPopupMenuQt::loadRecentSearches(const AtomicString&, Vector<String>&)
+{
+}
+
+bool SearchPopupMenuQt::enabled()
+{
+    return true;
+}
+
+}
