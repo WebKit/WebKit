@@ -717,6 +717,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\runtime\GCHandle.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\GCHandle.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\runtime\GetterSetter.cpp"
 				>
 			</File>
