@@ -96,6 +96,7 @@ LOCAL_SRC_FILES := \
 	runtime/Executable.cpp \
 	runtime/FunctionConstructor.cpp \
 	runtime/FunctionPrototype.cpp \
+	runtime/GCHandle.cpp \
 	runtime/GetterSetter.cpp \
 	runtime/GlobalEvalFunction.cpp \
 	runtime/Identifier.cpp \

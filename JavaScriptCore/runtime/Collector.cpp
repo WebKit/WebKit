@@ -170,6 +170,9 @@ void Heap::destroy()
 
     freeBlocks();
 
+    for (unsigned i = 0; i < m_weakGCHandlePools.size(); ++i)
+        m_weakGCHandlePools[i].deallocate();
+
 #if ENABLE(JSC_MULTIPLE_THREADS)
     if (m_currentThreadRegistrar) {
         int error = pthread_key_delete(m_currentThreadRegistrar);
@@ -189,7 +192,7 @@ void Heap::destroy()
 
 NEVER_INLINE CollectorBlock* Heap::allocateBlock()
 {
-    AlignedBlock allocation = m_blockallocator.allocate();
+    AlignedCollectorBlock allocation = m_blockallocator.allocate();
     CollectorBlock* block = static_cast<CollectorBlock*>(allocation.base());
     if (!block)
         CRASH();
@@ -207,12 +210,12 @@ NEVER_INLINE CollectorBlock* Heap::allocateBlock()
 
     size_t numBlocks = m_heap.numBlocks;
     if (m_heap.usedBlocks == numBlocks) {
-        static const size_t maxNumBlocks = ULONG_MAX / sizeof(AlignedBlock) / GROWTH_FACTOR;
+        static const size_t maxNumBlocks = ULONG_MAX / sizeof(AlignedCollectorBlock) / GROWTH_FACTOR;
         if (numBlocks > maxNumBlocks)
             CRASH();
         numBlocks = max(MIN_ARRAY_SIZE, numBlocks * GROWTH_FACTOR);
         m_heap.numBlocks = numBlocks;
-        m_heap.blocks = static_cast<AlignedBlock*>(fastRealloc(m_heap.blocks, numBlocks * sizeof(AlignedBlock)));
+        m_heap.blocks = static_cast<AlignedCollectorBlock*>(fastRealloc(m_heap.blocks, numBlocks * sizeof(AlignedCollectorBlock)));
     }
     m_heap.blocks[m_heap.usedBlocks++] = allocation;
 
@@ -235,7 +238,7 @@ NEVER_INLINE void Heap::freeBlock(size_t block)
 
     if (m_heap.numBlocks > MIN_ARRAY_SIZE && m_heap.usedBlocks < m_heap.numBlocks / LOW_WATER_FACTOR) {
         m_heap.numBlocks = m_heap.numBlocks / GROWTH_FACTOR; 
-        m_heap.blocks = static_cast<AlignedBlock*>(fastRealloc(m_heap.blocks, m_heap.numBlocks * sizeof(AlignedBlock)));
+        m_heap.blocks = static_cast<AlignedCollectorBlock*>(fastRealloc(m_heap.blocks, m_heap.numBlocks * sizeof(AlignedCollectorBlock)));
     }
 }
 
@@ -906,6 +909,36 @@ void Heap::markStackObjectsConservatively(MarkStack& markStack)
 #endif
 }
 
+void Heap::updateWeakGCHandles()
+{
+    for (unsigned i = 0; i < m_weakGCHandlePools.size(); ++i)
+        weakGCHandlePool(i)->update();
+}
+
+void WeakGCHandlePool::update()
+{
+    for (unsigned i = 1; i < WeakGCHandlePool::numPoolEntries; ++i) {
+        if (m_entries[i].isValidPtr()) {
+            JSCell* cell = m_entries[i].get();
+            if (!cell || !Heap::isCellMarked(cell))
+                m_entries[i].invalidate();
+        }
+    }
+}
+
+WeakGCHandle* Heap::addWeakGCHandle(JSCell* ptr)
+{
+    for (unsigned i = 0; i < m_weakGCHandlePools.size(); ++i)
+        if (!weakGCHandlePool(i)->isFull())
+            return weakGCHandlePool(i)->allocate(ptr);
+
+    AlignedMemory<WeakGCHandlePool::poolSize> allocation = m_weakGCHandlePoolAllocator.allocate();
+    m_weakGCHandlePools.append(allocation);
+
+    WeakGCHandlePool* pool = new (allocation) WeakGCHandlePool();
+    return pool->allocate(ptr);
+}
+
 void Heap::protect(JSValue k)
 {
     ASSERT(k);
@@ -1041,6 +1074,8 @@ void Heap::markRoots()
 
     markStack.drain();
     markStack.compact();
+
+    updateWeakGCHandles();
 
     m_heap.operationInProgress = NoOperation;
 }

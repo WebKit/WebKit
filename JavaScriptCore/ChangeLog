@@ -1,3 +1,53 @@
+2010-08-06  Nathan Lawrence  <nlawrence@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=43207
+
+        WeakGCPtr's should instead of directly pointing to the GC'd object
+        should be directed to an array of pointers that can be updated for
+        movable objects.
+
+        * Android.mk:
+        * GNUmakefile.am:
+        * JavaScriptCore.exp:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.pro:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/Collector.cpp:
+        (JSC::Heap::destroy):
+        (JSC::Heap::allocateBlock):
+        (JSC::Heap::freeBlock):
+        (JSC::Heap::updateWeakGCHandles):
+        (JSC::WeakGCHandlePool::update):
+        (JSC::Heap::addWeakGCHandle):
+        (JSC::Heap::markRoots):
+        * runtime/Collector.h:
+        (JSC::Heap::weakGCHandlePool):
+        * runtime/GCHandle.cpp: Added.
+        (JSC::WeakGCHandle::pool):
+        (JSC::WeakGCHandlePool::WeakGCHandlePool):
+        (JSC::WeakGCHandlePool::allocate):
+        (JSC::WeakGCHandlePool::free):
+        (JSC::WeakGCHandlePool::operator new):
+        * runtime/GCHandle.h: Added.
+        (JSC::WeakGCHandle::isValidPtr):
+        (JSC::WeakGCHandle::isPtr):
+        (JSC::WeakGCHandle::isNext):
+        (JSC::WeakGCHandle::invalidate):
+        (JSC::WeakGCHandle::get):
+        (JSC::WeakGCHandle::set):
+        (JSC::WeakGCHandle::getNextInFreeList):
+        (JSC::WeakGCHandle::setNextInFreeList):
+        (JSC::WeakGCHandlePool::isFull):
+        * runtime/WeakGCPtr.h:
+        (JSC::WeakGCPtr::WeakGCPtr):
+        (JSC::WeakGCPtr::~WeakGCPtr):
+        (JSC::WeakGCPtr::get):
+        (JSC::WeakGCPtr::clear):
+        (JSC::WeakGCPtr::assign):
+        (JSC::get):
+
 2010-08-06  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Antonio Gomes.

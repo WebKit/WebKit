@@ -217,6 +217,8 @@
             'runtime/FunctionPrototype.h',
             'runtime/GCActivityCallback.cpp',
             'runtime/GCActivityCallback.h',
+            'runtime/GCHandle.cpp',
+            'runtime/GCHandle.h',
             'runtime/GetterSetter.cpp',
             'runtime/GetterSetter.h',
             'runtime/GlobalEvalFunction.cpp',

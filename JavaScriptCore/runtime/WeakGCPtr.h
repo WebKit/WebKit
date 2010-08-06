@@ -27,6 +27,7 @@
 #define WeakGCPtr_h
 
 #include "Collector.h"
+#include "GCHandle.h"
 #include <wtf/Noncopyable.h>
 
 namespace JSC {
@@ -34,23 +35,34 @@ namespace JSC {
 // A smart pointer whose get() function returns 0 for cells awaiting destruction.
 template <typename T> class WeakGCPtr : Noncopyable {
 public:
-    WeakGCPtr() : m_ptr(0) { }
+    WeakGCPtr()
+        : m_ptr(0)
+    {
+    }
+
     WeakGCPtr(T* ptr) { assign(ptr); }
+
+    ~WeakGCPtr()
+    {
+        if (m_ptr)
+            m_ptr->pool()->free(m_ptr);
+    }
 
     T* get() const
     {
-        if (!m_ptr || !Heap::isCellMarked(m_ptr))
-            return 0;
-        return m_ptr;
+        if (m_ptr && m_ptr->isValidPtr())
+            return static_cast<T*>(m_ptr->get());
+        return 0;
     }
     
-    bool clear(JSCell* ptr)
+    bool clear(JSCell* p)
     {
-        if (ptr == m_ptr) {
-            m_ptr = 0;
-            return true;
-        }
-        return false;
+        if (!m_ptr || m_ptr->get() != p)
+            return false;
+
+        m_ptr->pool()->free(m_ptr);
+        m_ptr = 0;
+        return true;
     }
 
     T& operator*() const { return *get(); }
@@ -62,7 +74,7 @@ public:
 #if COMPILER(WINSCW)
     operator bool() const { return m_ptr; }
 #else
-    typedef T* WeakGCPtr::*UnspecifiedBoolType;
+    typedef WeakGCHandle* WeakGCPtr::*UnspecifiedBoolType;
     operator UnspecifiedBoolType() const { return get() ? &WeakGCPtr::m_ptr : 0; }
 #endif
 
@@ -73,14 +85,16 @@ public:
 #endif
 
 private:
-    void assign(T* ptr)
+    void assign(JSCell* ptr)
     {
         ASSERT(ptr);
-        Heap::markCell(ptr);
-        m_ptr = ptr;
+        if (m_ptr)
+            m_ptr->set(ptr);
+        else
+            m_ptr = Heap::heap(ptr)->addWeakGCHandle(ptr);
     }
 
-    T* m_ptr;
+    WeakGCHandle* m_ptr;
 };
 
 template <typename T> inline WeakGCPtr<T>& WeakGCPtr<T>::operator=(T* optr)
@@ -129,7 +143,7 @@ template <typename T, typename U> inline WeakGCPtr<T> const_pointer_cast(const W
     return WeakGCPtr<T>(const_cast<T*>(p.get())); 
 }
 
-template <typename T> inline T* getPtr(const WeakGCPtr<T>& p)
+template <typename T> inline T* get(const WeakGCPtr<T>& p)
 {
     return p.get();
 }

@@ -268,6 +268,8 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/FunctionPrototype.h \
 	JavaScriptCore/runtime/GCActivityCallback.cpp \
 	JavaScriptCore/runtime/GCActivityCallback.h \
+	JavaScriptCore/runtime/GCHandle.cpp \
+	JavaScriptCore/runtime/GCHandle.h \
 	JavaScriptCore/runtime/GetterSetter.cpp \
 	JavaScriptCore/runtime/GetterSetter.h \
 	JavaScriptCore/runtime/GlobalEvalFunction.cpp \
