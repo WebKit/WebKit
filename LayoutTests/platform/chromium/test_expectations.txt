@@ -3184,3 +3184,8 @@ BUGPFELDMAN WIN : http/tests/inspector-enabled/console-log-before-frame-navigati
 
 // Failure caused by r64749
 BUGSATISH: fast/speech/input-text-speechbutton.html = TIMEOUT
+
+// Need to support DeviceMotion.
+BUG51416 : fast/dom/DeviceMotion/create-event.html = TEXT
+BUG51416 : fast/dom/DeviceMotion/optional-event-properties.html = TEXT
+BUG51416 : fast/dom/DeviceMotion/window-property.html = TEXT

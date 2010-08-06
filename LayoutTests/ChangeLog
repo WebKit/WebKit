@@ -1,3 +1,20 @@
+2010-08-06  Jian Li  <jianli@chromium.org>
+
+        Update chromium test results.
+
+        * platform/chromium-linux/svg/custom/path-zero-strokewidth-expected.checksum: Added.
+        * platform/chromium-linux/svg/custom/path-zero-strokewidth-expected.png: Added.
+        * platform/chromium-mac/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/chromium-mac/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/chromium-mac/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/chromium-win/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/chromium-win/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-40-t-expected.txt:
+        * platform/chromium-win/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/chromium-win/svg/custom/path-zero-strokewidth-expected.checksum: Added.
+        * platform/chromium-win/svg/custom/path-zero-strokewidth-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-08-04  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Dimitri Glazkov.
