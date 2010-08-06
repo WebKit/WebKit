@@ -1,3 +1,21 @@
+2010-08-06  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        SVG - stroke-width:0 bug with stroke other than "none"
+        https://bugs.webkit.org/show_bug.cgi?id=42387
+
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-40-t-expected.checksum: Updated result, as fill="freeze" and stroke-width now works as expected.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-40-t-expected.png: Ditto.
+        * platform/mac/fast/css/getComputedStyle/computed-style-expected.txt: kerning reports 0, stroke-dashoffset 0, stroke-width 1 instead of empty values.
+        * platform/mac/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt: Ditto.
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-40-t-expected.txt: Updated result, as fill="freeze" and stroke-width now works as expected.
+        * platform/mac/svg/custom/path-zero-strokewidth-expected.checksum: Added.
+        * platform/mac/svg/custom/path-zero-strokewidth-expected.png: Added.
+        * platform/mac/svg/custom/path-zero-strokewidth-expected.txt: Added.
+        * svg/css/getComputedStyle-basic-expected.txt: An empty stroke-dasharray reports "none", as defined in the spec now.
+        * svg/custom/path-zero-strokewidth.svg: Added.
+
 2010-08-05  Marcus Bulach  <bulach@chromium.org>
 
         Reviewed by Jeremy Orlow.

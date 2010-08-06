@@ -37,16 +37,21 @@ namespace WebCore {
 // Helper function
 static float calculateBaselineShift(RenderObject* item)
 {
+    ASSERT(item);
+    ASSERT(item->style());
+    ASSERT(item->node());
+    ASSERT(item->node()->isSVGElement());
+
     const Font& font = item->style()->font();
     const SVGRenderStyle* svgStyle = item->style()->svgStyle();
 
     float baselineShift = 0.0f;
     if (svgStyle->baselineShift() == BS_LENGTH) {
-        CSSPrimitiveValue* primitive = static_cast<CSSPrimitiveValue*>(svgStyle->baselineShiftValue());
-        baselineShift = primitive->getFloatValue();
-
-        if (primitive->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
-            baselineShift = baselineShift / 100.0f * font.pixelSize();
+        SVGLength baselineShiftValueLength = svgStyle->baselineShiftValue();
+        if (baselineShiftValueLength.unitType() == LengthTypePercentage)
+            baselineShift = baselineShiftValueLength.valueAsPercentage() * font.pixelSize();
+        else 
+            baselineShift = baselineShiftValueLength.value(static_cast<SVGElement*>(item->node()));
     } else {
         float baselineAscent = font.ascent() + font.descent();
 

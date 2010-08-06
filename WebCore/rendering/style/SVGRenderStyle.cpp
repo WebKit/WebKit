@@ -211,26 +211,6 @@ StyleDifference SVGRenderStyle::diff(const SVGRenderStyle* other) const
     return StyleDifferenceEqual;
 }
 
-float SVGRenderStyle::cssPrimitiveToLength(const RenderObject* item, CSSValue* value, float defaultValue)
-{
-    CSSPrimitiveValue* primitive = static_cast<CSSPrimitiveValue*>(value);
-
-    unsigned short cssType = (primitive ? primitive->primitiveType() : (unsigned short) CSSPrimitiveValue::CSS_UNKNOWN);
-    if (!(cssType > CSSPrimitiveValue::CSS_UNKNOWN && cssType <= CSSPrimitiveValue::CSS_PC))
-        return defaultValue;
-
-    if (cssType == CSSPrimitiveValue::CSS_PERCENTAGE) {
-        SVGStyledElement* element = static_cast<SVGStyledElement*>(item->node());
-        SVGElement* viewportElement = (element ? element->viewportElement() : 0);
-        if (viewportElement) {
-            float result = primitive->getFloatValue() / 100.0f;
-            return SVGLength::PercentageOfViewport(result, element, LengthModeOther);
-        }
-    }
-
-    return primitive->computeLengthFloat(const_cast<RenderStyle*>(item->style()), item->document()->documentElement()->renderStyle());
-}
-
 static void getSVGShadowExtent(ShadowData* shadow, float& top, float& right, float& bottom, float& left)
 {
     top = 0.0f;

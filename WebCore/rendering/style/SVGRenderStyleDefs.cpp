@@ -73,8 +73,8 @@ StyleStrokeData::StyleStrokeData()
     , miterLimit(SVGRenderStyle::initialStrokeMiterLimit())
     , width(SVGRenderStyle::initialStrokeWidth())
     , dashOffset(SVGRenderStyle::initialStrokeDashOffset())
-    , paint(SVGRenderStyle::initialStrokePaint())
     , dashArray(SVGRenderStyle::initialStrokeDashArray())
+    , paint(SVGRenderStyle::initialStrokePaint())
 {
 }
 
@@ -84,8 +84,8 @@ StyleStrokeData::StyleStrokeData(const StyleStrokeData& other)
     , miterLimit(other.miterLimit)
     , width(other.width)
     , dashOffset(other.dashOffset)
-    , paint(other.paint)
     , dashArray(other.dashArray)
+    , paint(other.paint)
 {
 }
 

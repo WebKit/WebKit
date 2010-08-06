@@ -365,15 +365,23 @@ static void writeStyle(TextStream& ts, const RenderObject& object)
     writeIfNotDefault(ts, "opacity", style->opacity(), RenderStyle::initialOpacity());
     if (object.isRenderPath()) {
         const RenderPath& path = static_cast<const RenderPath&>(object);
+        ASSERT(path.node());
+        ASSERT(path.node()->isSVGElement());
 
         if (RenderSVGResource* strokePaintingResource = RenderSVGResource::strokePaintingResource(const_cast<RenderPath*>(&path), path.style())) {
             TextStreamSeparator s(" ");
             ts << " [stroke={" << s;
             writeSVGPaintingResource(ts, strokePaintingResource);
 
-            double dashOffset = SVGRenderStyle::cssPrimitiveToLength(&path, svgStyle->strokeDashOffset(), 0.0f);
-            const DashArray& dashArray = SVGRenderSupport::dashArrayFromRenderingStyle(style, object.document()->documentElement()->renderStyle());
-            double strokeWidth = SVGRenderStyle::cssPrimitiveToLength(&path, svgStyle->strokeWidth(), 1.0f);
+            SVGElement* element = static_cast<SVGElement*>(path.node());
+            double dashOffset = svgStyle->strokeDashOffset().value(element);
+            double strokeWidth = svgStyle->strokeWidth().value(element);
+            const Vector<SVGLength>& dashes = svgStyle->strokeDashArray();
+
+            DashArray dashArray;
+            const Vector<SVGLength>::const_iterator end = dashes.end();
+            for (Vector<SVGLength>::const_iterator it = dashes.begin(); it != end; ++it)
+                dashArray.append((*it).value(element));
 
             writeIfNotDefault(ts, "opacity", svgStyle->strokeOpacity(), 1.0f);
             writeIfNotDefault(ts, "stroke width", strokeWidth, 1.0);

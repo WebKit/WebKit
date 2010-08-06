@@ -78,17 +78,13 @@ public:
     static SVGPaint* initialFillPaint() { return SVGPaint::defaultFill(); }
     static float initialStrokeOpacity() { return 1.0f; }
     static SVGPaint* initialStrokePaint() { return SVGPaint::defaultStroke(); }
-    static CSSValueList* initialStrokeDashArray() { return 0; }
+    static Vector<SVGLength> initialStrokeDashArray() { return Vector<SVGLength>(); }
     static float initialStrokeMiterLimit() { return 4.0f; }
-    static CSSValue* initialStrokeWidth() { return 0; }
-    static CSSValue* initialStrokeDashOffset() { return 0; };
-    static CSSValue* initialKerning() { return 0; }
     static float initialStopOpacity() { return 1.0f; }
     static Color initialStopColor() { return Color(0, 0, 0); }
     static float initialFloodOpacity() { return 1.0f; }
     static Color initialFloodColor() { return Color(0, 0, 0); }
     static Color initialLightingColor() { return Color(255, 255, 255); }
-    static CSSValue* initialBaselineShiftValue() { return 0; }
     static ShadowData* initialShadow() { return 0; }
     static String initialClipperResource() { return String(); }
     static String initialFilterResource() { return String(); }
@@ -96,6 +92,34 @@ public:
     static String initialMarkerStartResource() { return String(); }
     static String initialMarkerMidResource() { return String(); }
     static String initialMarkerEndResource() { return String(); }
+
+    static SVGLength initialBaselineShiftValue()
+    {
+        SVGLength length;
+        length.newValueSpecifiedUnits(LengthTypeNumber, 0);
+        return length;
+    }
+
+    static SVGLength initialKerning()
+    {
+        SVGLength length;
+        length.newValueSpecifiedUnits(LengthTypeNumber, 0);
+        return length;
+    }
+
+    static SVGLength initialStrokeDashOffset()
+    {
+        SVGLength length;
+        length.newValueSpecifiedUnits(LengthTypeNumber, 0);
+        return length;
+    }
+
+    static SVGLength initialStrokeWidth()
+    {
+        SVGLength length;
+        length.newValueSpecifiedUnits(LengthTypeNumber, 1);
+        return length;
+    }
 
     // SVG CSS Property setters
     void setAlignmentBaseline(EAlignmentBaseline val) { svg_noninherited_flags.f._alignmentBaseline = val; }
@@ -140,7 +164,7 @@ public:
             stroke.access()->paint = obj;
     }
 
-    void setStrokeDashArray(PassRefPtr<CSSValueList> obj)
+    void setStrokeDashArray(const Vector<SVGLength>& obj)
     {
         if (!(stroke->dashArray == obj))
             stroke.access()->dashArray = obj;
@@ -152,19 +176,19 @@ public:
             stroke.access()->miterLimit = obj;
     }
 
-    void setStrokeWidth(PassRefPtr<CSSValue> obj)
+    void setStrokeWidth(const SVGLength& obj)
     {
         if (!(stroke->width == obj))
             stroke.access()->width = obj;
     }
 
-    void setStrokeDashOffset(PassRefPtr<CSSValue> obj)
+    void setStrokeDashOffset(const SVGLength& obj)
     {
         if (!(stroke->dashOffset == obj))
             stroke.access()->dashOffset = obj;
     }
 
-    void setKerning(PassRefPtr<CSSValue> obj)
+    void setKerning(const SVGLength& obj)
     {
         if (!(text->kerning == obj))
             text.access()->kerning = obj;
@@ -176,7 +200,7 @@ public:
             stops.access()->opacity = obj;
     }
 
-    void setStopColor(Color obj)
+    void setStopColor(const Color& obj)
     {
         if (!(stops->color == obj))
             stops.access()->color = obj;
@@ -188,60 +212,59 @@ public:
             misc.access()->floodOpacity = obj;
     }
 
-    void setFloodColor(Color obj)
+    void setFloodColor(const Color& obj)
     {
         if (!(misc->floodColor == obj))
             misc.access()->floodColor = obj;
     }
 
-    void setLightingColor(Color obj)
+    void setLightingColor(const Color& obj)
     {
         if (!(misc->lightingColor == obj))
             misc.access()->lightingColor = obj;
     }
 
-    void setBaselineShiftValue(PassRefPtr<CSSValue> obj)
+    void setBaselineShiftValue(const SVGLength& obj)
     {
         if (!(misc->baselineShiftValue == obj))
             misc.access()->baselineShiftValue = obj;
     }
 
-    void setShadow(PassOwnPtr<ShadowData> obj) { shadowSVG.access()->shadow = obj;
-    }
+    void setShadow(PassOwnPtr<ShadowData> obj) { shadowSVG.access()->shadow = obj; }
 
     // Setters for non-inherited resources
-    void setClipperResource(String obj)
+    void setClipperResource(const String& obj)
     {
         if (!(resources->clipper == obj))
             resources.access()->clipper = obj;
     }
 
-    void setFilterResource(String obj)
+    void setFilterResource(const String& obj)
     {
         if (!(resources->filter == obj))
             resources.access()->filter = obj;
     }
 
-    void setMaskerResource(String obj)
+    void setMaskerResource(const String& obj)
     {
         if (!(resources->masker == obj))
             resources.access()->masker = obj;
     }
 
     // Setters for inherited resources
-    void setMarkerStartResource(String obj)
+    void setMarkerStartResource(const String& obj)
     {
         if (!(inheritedResources->markerStart == obj))
             inheritedResources.access()->markerStart = obj;
     }
 
-    void setMarkerMidResource(String obj)
+    void setMarkerMidResource(const String& obj)
     {
         if (!(inheritedResources->markerMid == obj))
             inheritedResources.access()->markerMid = obj;
     }
 
-    void setMarkerEndResource(String obj)
+    void setMarkerEndResource(const String& obj)
     {
         if (!(inheritedResources->markerEnd == obj))
             inheritedResources.access()->markerEnd = obj;
@@ -269,17 +292,17 @@ public:
     SVGPaint* fillPaint() const { return fill->paint.get(); }
     float strokeOpacity() const { return stroke->opacity; }
     SVGPaint* strokePaint() const { return stroke->paint.get(); }
-    CSSValueList* strokeDashArray() const { return stroke->dashArray.get(); }
+    Vector<SVGLength> strokeDashArray() const { return stroke->dashArray; }
     float strokeMiterLimit() const { return stroke->miterLimit; }
-    CSSValue* strokeWidth() const { return stroke->width.get(); }
-    CSSValue* strokeDashOffset() const { return stroke->dashOffset.get(); }
-    CSSValue* kerning() const { return text->kerning.get(); }
+    SVGLength strokeWidth() const { return stroke->width; }
+    SVGLength strokeDashOffset() const { return stroke->dashOffset; }
+    SVGLength kerning() const { return text->kerning; }
     float stopOpacity() const { return stops->opacity; }
     Color stopColor() const { return stops->color; }
     float floodOpacity() const { return misc->floodOpacity; }
     Color floodColor() const { return misc->floodColor; }
     Color lightingColor() const { return misc->lightingColor; }
-    CSSValue* baselineShiftValue() const { return misc->baselineShiftValue.get(); }
+    SVGLength baselineShiftValue() const { return misc->baselineShiftValue; }
     ShadowData* shadow() const { return shadowSVG->shadow.get(); }
     String clipperResource() const { return resources->clipper; }
     String filterResource() const { return resources->filter; }
@@ -295,8 +318,6 @@ public:
     bool hasMarkers() const { return !markerStartResource().isEmpty() || !markerMidResource().isEmpty() || !markerEndResource().isEmpty(); }
     bool hasStroke() const { return strokePaint()->paintType() != SVGPaint::SVG_PAINTTYPE_NONE; }
     bool hasFill() const { return fillPaint()->paintType() != SVGPaint::SVG_PAINTTYPE_NONE; }
-
-    static float cssPrimitiveToLength(const RenderObject*, CSSValue*, float defaultValue = 0.0f);
 
 protected:
     // inherit

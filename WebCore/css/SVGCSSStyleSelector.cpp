@@ -153,7 +153,7 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
                 }
             } else {
                 svgstyle->setBaselineShift(BS_LENGTH);
-                svgstyle->setBaselineShiftValue(primitiveValue);
+                svgstyle->setBaselineShiftValue(SVGLength::fromCSSPrimitiveValue(primitiveValue));
             }
 
             break;
@@ -161,7 +161,7 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
         case CSSPropertyKerning:
         {
             HANDLE_INHERIT_AND_INITIAL(kerning, Kerning);
-            svgstyle->setKerning(primitiveValue);
+            svgstyle->setKerning(SVGLength::fromCSSPrimitiveValue(primitiveValue));
             break;
         }
         case CSSPropertyDominantBaseline:
@@ -247,21 +247,35 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
         {
             HANDLE_INHERIT_AND_INITIAL(strokeWidth, StrokeWidth)
             if (primitiveValue)
-                svgstyle->setStrokeWidth(primitiveValue);
+                svgstyle->setStrokeWidth(SVGLength::fromCSSPrimitiveValue(primitiveValue));
             break;
         }
         case CSSPropertyStrokeDasharray:
         {
             HANDLE_INHERIT_AND_INITIAL(strokeDashArray, StrokeDashArray)
-            if (value->isValueList())
-                svgstyle->setStrokeDashArray(static_cast<CSSValueList*>(value));
+            if (!value->isValueList())
+                break;
+
+            CSSValueList* dashes = static_cast<CSSValueList*>(value);
+
+            Vector<SVGLength> array;
+            size_t length = dashes->length();
+            for (size_t i = 0; i < length; ++i) {
+                CSSPrimitiveValue* dash = static_cast<CSSPrimitiveValue*>(dashes->itemWithoutBoundsCheck(i));
+                if (!dash)
+                    continue;
+
+                array.append(SVGLength::fromCSSPrimitiveValue(dash));
+            }
+
+            svgstyle->setStrokeDashArray(array);
             break;
         }
         case CSSPropertyStrokeDashoffset:
         {
             HANDLE_INHERIT_AND_INITIAL(strokeDashOffset, StrokeDashOffset)
             if (primitiveValue)
-                svgstyle->setStrokeDashOffset(primitiveValue);
+                svgstyle->setStrokeDashOffset(SVGLength::fromCSSPrimitiveValue(primitiveValue));
             break;
         }
         case CSSPropertyFillOpacity:

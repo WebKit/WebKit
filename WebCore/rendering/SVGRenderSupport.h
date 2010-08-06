@@ -26,7 +26,6 @@
 #define SVGRenderSupport_h
 
 #if ENABLE(SVG)
-#include "DashArray.h"
 #include "PaintInfo.h"
 
 namespace WebCore {
@@ -81,7 +80,6 @@ public:
 
     // FIXME: These methods do not belong here.
     static const RenderObject* findTextRootObject(const RenderObject* start);
-    static DashArray dashArrayFromRenderingStyle(const RenderStyle* style, RenderStyle* rootStyle);
 
 private:
     // This class is not constructable.

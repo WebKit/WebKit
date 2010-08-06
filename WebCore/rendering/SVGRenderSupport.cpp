@@ -320,41 +320,35 @@ bool SVGRenderSupport::pointInClippingArea(RenderObject* object, const FloatPoin
     return true;
 }
 
-DashArray SVGRenderSupport::dashArrayFromRenderingStyle(const RenderStyle* style, RenderStyle* rootStyle)
-{
-    DashArray array;
-    
-    CSSValueList* dashes = style->svgStyle()->strokeDashArray();
-    if (!dashes)
-        return array;
-
-    CSSPrimitiveValue* dash = 0;
-    unsigned long len = dashes->length();
-    for (unsigned long i = 0; i < len; ++i) {
-        dash = static_cast<CSSPrimitiveValue*>(dashes->itemWithoutBoundsCheck(i));
-        if (!dash)
-            continue;
-
-        array.append(dash->computeLengthFloat(const_cast<RenderStyle*>(style), rootStyle));
-    }
-
-    return array;
-}
-
 void SVGRenderSupport::applyStrokeStyleToContext(GraphicsContext* context, const RenderStyle* style, const RenderObject* object)
 {
-    context->setStrokeThickness(SVGRenderStyle::cssPrimitiveToLength(object, style->svgStyle()->strokeWidth(), 1.0f));
-    context->setLineCap(style->svgStyle()->capStyle());
-    context->setLineJoin(style->svgStyle()->joinStyle());
-    if (style->svgStyle()->joinStyle() == MiterJoin)
-        context->setMiterLimit(style->svgStyle()->strokeMiterLimit());
+    ASSERT(context);
+    ASSERT(style);
+    ASSERT(object);
+    ASSERT(object->node());
+    ASSERT(object->node()->isSVGElement());
 
-    const DashArray& dashes = dashArrayFromRenderingStyle(object->style(), object->document()->documentElement()->renderStyle());
-    float dashOffset = SVGRenderStyle::cssPrimitiveToLength(object, style->svgStyle()->strokeDashOffset(), 0.0f);
+    const SVGRenderStyle* svgStyle = style->svgStyle();
+    ASSERT(svgStyle);
+
+    SVGElement* lengthContext = static_cast<SVGElement*>(object->node());
+    context->setStrokeThickness(svgStyle->strokeWidth().value(lengthContext));
+    context->setLineCap(svgStyle->capStyle());
+    context->setLineJoin(svgStyle->joinStyle());
+    if (svgStyle->joinStyle() == MiterJoin)
+        context->setMiterLimit(svgStyle->strokeMiterLimit());
+
+    const Vector<SVGLength>& dashes = svgStyle->strokeDashArray();
     if (dashes.isEmpty())
         context->setStrokeStyle(SolidStroke);
-    else
-        context->setLineDash(dashes, dashOffset);
+    else {
+        DashArray dashArray;
+        const Vector<SVGLength>::const_iterator end = dashes.end();
+        for (Vector<SVGLength>::const_iterator it = dashes.begin(); it != end; ++it)
+            dashArray.append((*it).value(lengthContext));
+
+        context->setLineDash(dashArray, svgStyle->strokeDashOffset().value(lengthContext));
+    }
 }
 
 const RenderObject* SVGRenderSupport::findTextRootObject(const RenderObject* start)

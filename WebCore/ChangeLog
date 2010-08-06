@@ -1,3 +1,76 @@
+2010-08-06  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        SVG - stroke-width:0 bug with stroke other than "none"
+        https://bugs.webkit.org/show_bug.cgi?id=42387
+
+        Stop storing refcounted CSSValue/CSSValueList objects in SVGRenderStyle, replacing them with SVGLength types.
+        Allows us to directly specify default values for stroke-dashoffset/width in the SVGRenderStyle, fixing a problem
+        with stroke-width animations when resetting to the original stored baseVal, exposed in svg/W3C-1.1/animate-elem-40-t.svg
+        Originally discovered by Fady Samuel.
+
+        Test: svg/custom/path-zero-strokewidth.svg
+
+        * css/SVGCSSComputedStyleDeclaration.cpp:
+        (WebCore::strokeDashArrayToCSSValueList): New helper function converting from Vector<SVGLength> to CSSValueList.
+        (WebCore::CSSComputedStyleDeclaration::getSVGPropertyCSSValue): Convert SVGLength values to CSSPrimitiveValues.
+        * css/SVGCSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applySVGProperty): Convert CSSPrimitiveValues to SVGLength objects, for SVGRenderStyle storage.
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::calculateMarkerBoundsIfNeeded): Just grab strokeWidth SVGLength value from SVGRenderSTyle, no need to call cssPrimitiveToLength anymore.
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::strokeBoundingBox): Ditto.
+        * rendering/SVGCharacterLayoutInfo.cpp:
+        (WebCore::calculateBaselineShift): Ditto (for baseline-shift).
+        * rendering/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::buildLayoutInformation): Ditto (for kerning).
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::applyStrokeStyleToContext): Ditto (for stroke-width/stroke-dashoffset/stroke-dasharray).
+        * rendering/SVGRenderSupport.h:
+        * rendering/SVGRenderTreeAsText.cpp:
+        (WebCore::writeStyle): Ditto.
+        * rendering/SVGTextLayoutUtilities.cpp:
+        (WebCore::calculateCSSKerning): Ditto.
+        * rendering/SVGTextLayoutUtilities.h:
+        * rendering/style/SVGRenderStyle.cpp: Remove no longer needed cssPrimitiveToLength function.
+        * rendering/style/SVGRenderStyle.h: Stop storing RefPtr<CSSValue> / RefPtr<CSSValueList> but use SVGLength/Vector<SVGLength>.
+        (WebCore::SVGRenderStyle::initialStrokeDashArray): Allows us to specify correct default values, instead of null pointers.
+        (WebCore::SVGRenderStyle::initialBaselineShiftValue): Specify 0px default value.
+        (WebCore::SVGRenderStyle::initialKerning): Ditto.
+        (WebCore::SVGRenderStyle::initialStrokeDashOffset): Ditto.
+        (WebCore::SVGRenderStyle::initialStrokeWidth): Specify 1px default value.
+        (WebCore::SVGRenderStyle::setStrokeDashArray): Takes a Vector<SVGLength> now, not a PassRefPtr<CSSValueList>.
+        (WebCore::SVGRenderStyle::setStrokeWidth): Takes a SVGLength now, not a PassRefPtr<CSSValue>.
+        (WebCore::SVGRenderStyle::setStrokeDashOffset): Ditto.
+        (WebCore::SVGRenderStyle::setKerning): Ditto.
+        (WebCore::SVGRenderStyle::setStopColor): Pass Color as const-reference.
+        (WebCore::SVGRenderStyle::setFloodColor): Ditto.
+        (WebCore::SVGRenderStyle::setLightingColor): Ditto.
+        (WebCore::SVGRenderStyle::setBaselineShiftValue): Takes a SVGLength now, not a PassRefPtr<CSSValue>.
+        (WebCore::SVGRenderStyle::setShadow): Reformat, had wrong style.
+        (WebCore::SVGRenderStyle::setClipperResource): Pass String as const-reference.
+        (WebCore::SVGRenderStyle::setFilterResource): Ditto.
+        (WebCore::SVGRenderStyle::setMaskerResource): Ditto.
+        (WebCore::SVGRenderStyle::setMarkerStartResource): Ditto.
+        (WebCore::SVGRenderStyle::setMarkerMidResource): Ditto.
+        (WebCore::SVGRenderStyle::setMarkerEndResource): Ditto.
+        (WebCore::SVGRenderStyle::strokeDashArray): Return Vector<SVGLength>.
+        (WebCore::SVGRenderStyle::strokeWidth): Return SVGLength.
+        (WebCore::SVGRenderStyle::strokeDashOffset): Ditto.
+        (WebCore::SVGRenderStyle::kerning): Ditto.
+        (WebCore::SVGRenderStyle::baselineShiftValue): Ditto.
+        * rendering/style/SVGRenderStyleDefs.cpp:
+        (WebCore::StyleStrokeData::StyleStrokeData): Changed initialization order, to group stroke properties.
+        * rendering/style/SVGRenderStyleDefs.h: Store SVGLength values instead of reference counted CSS objects.
+        * svg/SVGLength.cpp:
+        (WebCore::SVGLength::SVGLength): Add copy constructor.
+        (WebCore::SVGLength::operator==): Add comparision operator.
+        (WebCore::SVGLength::operator!=): Ditto.
+        (WebCore::SVGLength::fromCSSPrimitiveValue): New static helper function to convert from a CSSPrimitiveValue.
+        (WebCore::SVGLength::toCSSPrimitiveValue): New static helper function to convert to a CSSPrimitiveValue.
+        * svg/SVGLength.h: Reindent.
+
 2010-08-06  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

@@ -163,10 +163,13 @@ void RenderSVGText::paint(PaintInfo& paintInfo, int, int)
 FloatRect RenderSVGText::strokeBoundingBox() const
 {
     FloatRect strokeBoundaries = objectBoundingBox();
-    if (!style()->svgStyle()->hasStroke())
+    const SVGRenderStyle* svgStyle = style()->svgStyle();
+    if (!svgStyle->hasStroke())
         return strokeBoundaries;
 
-    strokeBoundaries.inflate(SVGRenderStyle::cssPrimitiveToLength(this, style()->svgStyle()->strokeWidth(), 1.0f));
+    ASSERT(node());
+    ASSERT(node()->isSVGElement());
+    strokeBoundaries.inflate(svgStyle->strokeWidth().value(static_cast<SVGElement*>(node())));
     return strokeBoundaries;
 }
 

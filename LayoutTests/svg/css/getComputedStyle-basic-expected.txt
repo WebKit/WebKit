@@ -384,10 +384,10 @@ rect: style.getPropertyValue(shape-rendering) : auto
 rect: style.getPropertyCSSValue(shape-rendering) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(stroke) : #FFA500
 rect: style.getPropertyCSSValue(stroke) : [object SVGPaint]
-rect: style.getPropertyValue(stroke-dasharray) : 
-rect: style.getPropertyCSSValue(stroke-dasharray) : null
-rect: style.getPropertyValue(stroke-dashoffset) : 
-rect: style.getPropertyCSSValue(stroke-dashoffset) : null
+rect: style.getPropertyValue(stroke-dasharray) : none
+rect: style.getPropertyCSSValue(stroke-dasharray) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(stroke-dashoffset) : 0
+rect: style.getPropertyCSSValue(stroke-dashoffset) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(stroke-linecap) : butt
 rect: style.getPropertyCSSValue(stroke-linecap) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(stroke-linejoin) : miter
@@ -404,8 +404,8 @@ rect: style.getPropertyValue(baseline-shift) : baseline
 rect: style.getPropertyCSSValue(baseline-shift) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(dominant-baseline) : auto
 rect: style.getPropertyCSSValue(dominant-baseline) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(kerning) : 
-rect: style.getPropertyCSSValue(kerning) : null
+rect: style.getPropertyValue(kerning) : 0
+rect: style.getPropertyCSSValue(kerning) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(text-anchor) : start
 rect: style.getPropertyCSSValue(text-anchor) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(writing-mode) : lr-tb
@@ -804,10 +804,10 @@ g: style.getPropertyValue(shape-rendering) : auto
 g: style.getPropertyCSSValue(shape-rendering) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(stroke) : #FFA500
 g: style.getPropertyCSSValue(stroke) : [object SVGPaint]
-g: style.getPropertyValue(stroke-dasharray) : 
-g: style.getPropertyCSSValue(stroke-dasharray) : null
-g: style.getPropertyValue(stroke-dashoffset) : 
-g: style.getPropertyCSSValue(stroke-dashoffset) : null
+g: style.getPropertyValue(stroke-dasharray) : none
+g: style.getPropertyCSSValue(stroke-dasharray) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(stroke-dashoffset) : 0
+g: style.getPropertyCSSValue(stroke-dashoffset) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(stroke-linecap) : butt
 g: style.getPropertyCSSValue(stroke-linecap) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(stroke-linejoin) : miter
@@ -824,8 +824,8 @@ g: style.getPropertyValue(baseline-shift) : baseline
 g: style.getPropertyCSSValue(baseline-shift) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(dominant-baseline) : auto
 g: style.getPropertyCSSValue(dominant-baseline) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(kerning) : 
-g: style.getPropertyCSSValue(kerning) : null
+g: style.getPropertyValue(kerning) : 0
+g: style.getPropertyCSSValue(kerning) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(text-anchor) : start
 g: style.getPropertyCSSValue(text-anchor) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(writing-mode) : lr-tb

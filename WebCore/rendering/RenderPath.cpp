@@ -257,8 +257,7 @@ FloatRect RenderPath::calculateMarkerBoundsIfNeeded()
     if (!markerStart && !markerMid && !markerEnd)
         return FloatRect();
 
-    float strokeWidth = SVGRenderStyle::cssPrimitiveToLength(this, svgStyle->strokeWidth(), 1.0f);
-    return m_markerLayoutInfo.calculateBoundaries(markerStart, markerMid, markerEnd, strokeWidth, m_path);
+    return m_markerLayoutInfo.calculateBoundaries(markerStart, markerMid, markerEnd, svgStyle->strokeWidth().value(svgElement), m_path);
 }
 
 void RenderPath::styleWillChange(StyleDifference diff, const RenderStyle* newStyle)

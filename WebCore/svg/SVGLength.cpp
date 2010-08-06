@@ -118,6 +118,23 @@ SVGLength::SVGLength(SVGLengthMode mode, const String& valueAsString)
     setValueAsString(valueAsString);
 }
 
+SVGLength::SVGLength(const SVGLength& other)
+    : m_valueInSpecifiedUnits(other.m_valueInSpecifiedUnits)
+    , m_unit(other.m_unit)
+{
+}
+
+bool SVGLength::operator==(const SVGLength& other) const
+{
+    return m_unit == other.m_unit
+        && m_valueInSpecifiedUnits == other.m_valueInSpecifiedUnits;
+}
+
+bool SVGLength::operator!=(const SVGLength& other) const
+{
+    return !operator==(other);
+}
+
 SVGLengthType SVGLength::unitType() const
 {
     return extractType(m_unit);
@@ -317,6 +334,100 @@ float SVGLength::PercentageOfViewport(float value, const SVGElement* context, SV
         return value * sqrtf(powf(width, 2) + powf(height, 2)) / sqrtf(2.0f);
 
     return 0.0f;
+}
+
+SVGLength SVGLength::fromCSSPrimitiveValue(CSSPrimitiveValue* value)
+{
+    ASSERT(value);
+
+    SVGLengthType svgType;
+    switch (value->primitiveType()) {
+    case CSSPrimitiveValue::CSS_NUMBER:
+        svgType = LengthTypeNumber;
+        break;
+    case CSSPrimitiveValue::CSS_PERCENTAGE:
+        svgType = LengthTypePercentage;
+        break;
+    case CSSPrimitiveValue::CSS_EMS:
+        svgType = LengthTypeEMS;
+        break;
+    case CSSPrimitiveValue::CSS_EXS:
+        svgType = LengthTypeEXS;
+        break;
+    case CSSPrimitiveValue::CSS_PX:
+        svgType = LengthTypePX;
+        break;
+    case CSSPrimitiveValue::CSS_CM:
+        svgType = LengthTypeCM;
+        break;
+    case CSSPrimitiveValue::CSS_MM:
+        svgType = LengthTypeMM;
+        break;
+    case CSSPrimitiveValue::CSS_IN:
+        svgType = LengthTypeIN;
+        break;
+    case CSSPrimitiveValue::CSS_PT:
+        svgType = LengthTypePT;
+        break;
+    case CSSPrimitiveValue::CSS_PC:
+        svgType = LengthTypePC;
+        break;
+    case CSSPrimitiveValue::CSS_UNKNOWN:
+    default:
+        svgType = LengthTypeUnknown;
+        break;
+    };
+
+    if (svgType == LengthTypeUnknown)
+        return SVGLength();
+
+    SVGLength length;
+    length.newValueSpecifiedUnits(svgType, value->getFloatValue());
+    return length;
+}
+
+PassRefPtr<CSSPrimitiveValue> SVGLength::toCSSPrimitiveValue(const SVGLength& length)
+{
+    CSSPrimitiveValue::UnitTypes cssType;
+    switch (length.unitType()) {
+    case LengthTypeUnknown:
+        cssType = CSSPrimitiveValue::CSS_UNKNOWN;
+        break;
+    case LengthTypeNumber:
+        cssType = CSSPrimitiveValue::CSS_NUMBER;
+        break;
+    case LengthTypePercentage:
+        cssType = CSSPrimitiveValue::CSS_PERCENTAGE;
+        break;
+    case LengthTypeEMS:
+        cssType = CSSPrimitiveValue::CSS_EMS;
+        break;
+    case LengthTypeEXS:
+        cssType = CSSPrimitiveValue::CSS_EXS;
+        break;
+    case LengthTypePX:
+        cssType = CSSPrimitiveValue::CSS_PX;
+        break;
+    case LengthTypeCM:
+        cssType = CSSPrimitiveValue::CSS_CM;
+        break;
+    case LengthTypeMM:
+        cssType = CSSPrimitiveValue::CSS_MM;
+        break;
+    case LengthTypeIN:
+        cssType = CSSPrimitiveValue::CSS_IN;
+        break;
+    case LengthTypePT:
+        cssType = CSSPrimitiveValue::CSS_PT;
+        break;
+    case LengthTypePC:
+        cssType = CSSPrimitiveValue::CSS_PC;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    };
+
+    return CSSPrimitiveValue::create(length.valueInSpecifiedUnits(), cssType);
 }
 
 }

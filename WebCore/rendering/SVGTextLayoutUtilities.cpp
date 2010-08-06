@@ -315,20 +315,16 @@ TextRun svgTextRunForInlineTextBox(const UChar* characters, int length, const Re
     return run;
 }
 
-float calculateCSSKerning(const RenderStyle* style)
+float calculateCSSKerning(SVGElement* context, const RenderStyle* style)
 {
     const Font& font = style->font();
     const SVGRenderStyle* svgStyle = style->svgStyle();
 
-    float kerning = 0.0f;
-    if (CSSPrimitiveValue* primitive = static_cast<CSSPrimitiveValue*>(svgStyle->kerning())) {
-        kerning = primitive->getFloatValue();
+    SVGLength kerningLength = svgStyle->kerning();
+    if (kerningLength.unitType() == LengthTypePercentage)
+        return kerningLength.valueAsPercentage() * font.pixelSize();
 
-        if (primitive->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE && font.pixelSize())
-            kerning = kerning / 100.0f * font.pixelSize();
-    }
-
-    return kerning;
+    return kerningLength.value(context);
 }
 
 bool applySVGKerning(SVGCharacterLayoutInfo& info, const RenderStyle* style, SVGLastGlyphInfo& lastGlyph, const String& unicodeString, const String& glyphName, bool isVerticalText)

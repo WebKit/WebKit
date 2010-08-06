@@ -32,6 +32,7 @@ class Font;
 class InlineTextBox;
 class RenderObject;
 class RenderStyle;
+class SVGElement;
 class SVGRenderStyle;
 class TextRun;
 
@@ -60,7 +61,7 @@ float cummulatedWidthOfInlineBoxCharacterRange(SVGInlineBoxCharacterRange&);
 float cummulatedHeightOfInlineBoxCharacterRange(SVGInlineBoxCharacterRange&);
 TextRun svgTextRunForInlineTextBox(const UChar*, int length, const RenderStyle*, const InlineTextBox*);
 
-float calculateCSSKerning(const RenderStyle*);
+float calculateCSSKerning(SVGElement* context, const RenderStyle*);
 bool applySVGKerning(SVGCharacterLayoutInfo&, const RenderStyle*, SVGLastGlyphInfo&, const String& unicodeString, const String& glyphName, bool isVerticalText);
 
 }
