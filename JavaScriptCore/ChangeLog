@@ -1,3 +1,15 @@
+2010-08-05  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Fixed leak seen on buildbot.
+
+        * runtime/GCActivityCallbackCF.cpp:
+        (JSC::DefaultGCActivityCallback::DefaultGCActivityCallback):
+        (JSC::DefaultGCActivityCallback::~DefaultGCActivityCallback):
+        (JSC::DefaultGCActivityCallback::operator()): Make out timer a RetainPtr,
+        since anything less would be uncivilized.
+
 2010-08-05  Andy Estes  <aestes@apple.com>
 
         Reviewed by David Kilzer.

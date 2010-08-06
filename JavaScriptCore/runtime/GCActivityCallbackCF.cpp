@@ -31,6 +31,7 @@
 
 #include "Collector.h"
 #include "JSLock.h"
+#include <wtf/RetainPtr.h>
 #include <CoreFoundation/CoreFoundation.h>
 
 #if !PLATFORM(CF)
@@ -42,7 +43,7 @@ namespace JSC {
 struct DefaultGCActivityCallbackPlatformData {
     static void trigger(CFRunLoopTimerRef, void *info);
 
-    CFRunLoopTimerRef timer;
+    RetainPtr<CFRunLoopTimerRef> timer;
     CFRunLoopTimerContext context;
 };
 
@@ -62,21 +63,21 @@ DefaultGCActivityCallback::DefaultGCActivityCallback(Heap* heap)
 
     memset(&d->context, '\0', sizeof(CFRunLoopTimerContext));
     d->context.info = heap;
-    d->timer = CFRunLoopTimerCreate(0, decade, decade, 0, 0, DefaultGCActivityCallbackPlatformData::trigger, &d->context);
-    CFRunLoopAddTimer(CFRunLoopGetCurrent(), d->timer, kCFRunLoopCommonModes);
+    d->timer.adoptCF(CFRunLoopTimerCreate(0, decade, decade, 0, 0, DefaultGCActivityCallbackPlatformData::trigger, &d->context));
+    CFRunLoopAddTimer(CFRunLoopGetCurrent(), d->timer.get(), kCFRunLoopCommonModes);
 }
 
 DefaultGCActivityCallback::~DefaultGCActivityCallback()
 {
-    CFRunLoopRemoveTimer(CFRunLoopGetCurrent(), d->timer, kCFRunLoopCommonModes);
-    CFRunLoopTimerInvalidate(d->timer);
+    CFRunLoopRemoveTimer(CFRunLoopGetCurrent(), d->timer.get(), kCFRunLoopCommonModes);
+    CFRunLoopTimerInvalidate(d->timer.get());
     d->context.info = 0;
     d->timer = 0;
 }
 
 void DefaultGCActivityCallback::operator()()
 {
-    CFRunLoopTimerSetNextFireDate(d->timer, CFAbsoluteTimeGetCurrent() + 2);
+    CFRunLoopTimerSetNextFireDate(d->timer.get(), CFAbsoluteTimeGetCurrent() + 2);
 }
 
 }
