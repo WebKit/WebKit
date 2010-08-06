@@ -31,3 +31,7 @@ symbian {
 mac {
     LIBS_PRIVATE += -framework AppKit
 }
+
+# Prevent warnings about difference in visibility on Mac OS X
+contains(QT_CONFIG, reduce_exports):CONFIG += hide_symbols
+unix:contains(QT_CONFIG, reduce_relocations):CONFIG += bsymbolic_functions
