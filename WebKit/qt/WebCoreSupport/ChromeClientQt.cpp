@@ -620,6 +620,7 @@ void ChromeClientQt::didReceiveViewportArguments(Frame* frame, const ViewportArg
     hints.m_initialScaleFactor = arguments.initialScale;
     hints.m_minimumScaleFactor = arguments.minimumScale;
     hints.m_maximumScaleFactor = arguments.maximumScale;
+    hints.m_targetDensityDpi = arguments.targetDensityDpi;
     hints.m_isUserScalable = isUserScalable;
 
     emit m_webPage->viewportChangeRequested(hints);
