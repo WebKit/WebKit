@@ -7,3 +7,17 @@
 |   <body>
 |     <foo>
 |       bar="qux/"
+
+#data
+<p id="status"><noscript><strong>A</strong></noscript><span>B</span></p>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       id="status"
+|       <noscript>
+|         "<strong>A</strong>"
+|       <span>
+|         "B"
