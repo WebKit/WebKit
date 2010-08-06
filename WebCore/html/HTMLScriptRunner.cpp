@@ -105,7 +105,7 @@ ScriptSourceCode HTMLScriptRunner::sourceFromPendingScript(const PendingScript& 
         return ScriptSourceCode(script.cachedScript());
     }
     errorOccurred = false;
-    return ScriptSourceCode(script.element->textContent(), documentURLForScriptExecution(m_document), script.startingLineNumber);
+    return ScriptSourceCode(script.element()->textContent(), documentURLForScriptExecution(m_document), script.startingLineNumber());
 }
 
 bool HTMLScriptRunner::isPendingScriptReady(const PendingScript& script)
@@ -195,7 +195,7 @@ bool HTMLScriptRunner::execute(PassRefPtr<Element> scriptElement, int startLine)
 
 bool HTMLScriptRunner::haveParsingBlockingScript() const
 {
-    return !!m_parsingBlockingScript.element;
+    return !!m_parsingBlockingScript.element();
 }
 
 bool HTMLScriptRunner::executeParsingBlockingScripts()
@@ -230,7 +230,7 @@ bool HTMLScriptRunner::executeScriptsWaitingForStylesheets()
 
 void HTMLScriptRunner::requestScript(Element* script)
 {
-    ASSERT(!m_parsingBlockingScript.element);
+    ASSERT(!m_parsingBlockingScript.element());
     AtomicString srcValue = script->getAttribute(srcAttr);
     // Allow the host to disllow script loads (using the XSSAuditor, etc.)
     if (!m_host->shouldLoadExternalScriptFromSrc(srcValue))
@@ -238,7 +238,7 @@ void HTMLScriptRunner::requestScript(Element* script)
     // FIXME: We need to resolve the url relative to the element.
     if (!script->dispatchBeforeLoadEvent(srcValue))
         return;
-    m_parsingBlockingScript.element = script;
+    m_parsingBlockingScript.adoptElement(script);
     // This should correctly return 0 for empty or invalid srcValues.
     CachedScript* cachedScript = m_document->docLoader()->requestScript(srcValue, toScriptElement(script)->scriptCharset());
     if (!cachedScript) {
@@ -276,36 +276,6 @@ void HTMLScriptRunner::runScript(Element* script, int startingLineNumber)
             executeScript(script, sourceCode);
         }
     }
-}
-
-HTMLScriptRunner::PendingScript::~PendingScript()
-{
-    if (m_cachedScript)
-        m_cachedScript->removeClient(this);
-}
-
-PassRefPtr<Element> HTMLScriptRunner::PendingScript::releaseElementAndClear()
-{
-    setCachedScript(0);
-    startingLineNumber = 0;
-    m_watchingForLoad = false;
-    return element.release();
-}
-
-void HTMLScriptRunner::PendingScript::setCachedScript(CachedScript* cachedScript)
-{
-    if (m_cachedScript == cachedScript)
-        return;
-    if (m_cachedScript)
-        m_cachedScript->removeClient(this);
-    m_cachedScript = cachedScript;
-    if (m_cachedScript)
-        m_cachedScript->addClient(this);
-}
-
-CachedScript* HTMLScriptRunner::PendingScript::cachedScript() const
-{
-    return m_cachedScript.get();
 }
 
 }

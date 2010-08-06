@@ -1224,6 +1224,8 @@
             'dom/PopStateEvent.h',
             'dom/PageTransitionEvent.cpp',
             'dom/PageTransitionEvent.h',
+            'dom/PendingScript.cpp',
+            'dom/PendingScript.h',
             'dom/Position.cpp',
             'dom/Position.h',
             'dom/PositionIterator.cpp',

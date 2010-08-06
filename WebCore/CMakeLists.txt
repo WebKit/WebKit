@@ -837,6 +837,7 @@ SET(WebCore_SOURCES
     dom/OptionGroupElement.cpp
     dom/OverflowEvent.cpp
     dom/PageTransitionEvent.cpp
+    dom/PendingScript.cpp
     dom/PopStateEvent.cpp
     dom/Position.cpp
     dom/PositionIterator.cpp

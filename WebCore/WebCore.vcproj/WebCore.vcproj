@@ -33081,6 +33081,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\dom\PendingScript.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\PendingScript.h"
+				>
+			</File>
+			<File
 				RelativePath="..\dom\PageTransitionEvent.cpp"
 				>
 			</File>

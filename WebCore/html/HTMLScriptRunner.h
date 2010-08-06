@@ -26,14 +26,13 @@
 #ifndef HTMLScriptRunner_h
 #define HTMLScriptRunner_h
 
-#include "CachedResourceClient.h"
-#include "CachedResourceHandle.h"
+#include "PendingScript.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
-class CachedResourceClient;
+class CachedResource;
 class CachedScript;
 class Document;
 class Element;
@@ -56,45 +55,6 @@ public:
     bool isExecutingScript() { return !!m_scriptNestingLevel; }
 
 private:
-    // A container for an external script which may be loaded and executed.
-    //
-    // A CachedResourceHandle alone does not prevent the underlying CachedResource
-    // from purging its data buffer. This class holds a dummy client open for its
-    // lifetime in order to guarantee that the data buffer will not be purged.
-    //
-    // FIXME: Finish turning this into a proper class.
-    class PendingScript : public CachedResourceClient, Noncopyable {
-    public:
-        PendingScript()
-            : startingLineNumber(0)
-            , m_watchingForLoad(false)
-        {
-        }
-
-        ~PendingScript();
-
-        PassRefPtr<Element> releaseElementAndClear();
-
-        bool watchingForLoad() const { return m_watchingForLoad; }
-        void setWatchingForLoad(bool b) { m_watchingForLoad = b; }
-
-        CachedScript* cachedScript() const;
-        void setCachedScript(CachedScript*);
-
-        virtual void notifyFinished(CachedResource*)
-        {
-        }
-
-        RefPtr<Element> element;
-        int startingLineNumber; // Only used for inline script tags.
-        // HTML5 has an isReady parameter, however isReady ends up equivalent to
-        // m_document->haveStylesheetsLoaded() && cachedScript->isLoaded()
-
-    private:
-        bool m_watchingForLoad;
-        CachedResourceHandle<CachedScript> m_cachedScript;
-    };
-
     Frame* frame() const;
 
     bool haveParsingBlockingScript() const;

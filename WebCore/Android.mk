@@ -158,6 +158,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	dom/DeviceOrientationEvent.cpp \
 	dom/OverflowEvent.cpp \
 	dom/PageTransitionEvent.cpp \
+	dom/PendingScript.cpp \
 	dom/Position.cpp \
 	dom/PositionIterator.cpp \
 	dom/ProcessingInstruction.cpp \

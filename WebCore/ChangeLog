@@ -1,3 +1,41 @@
+2010-08-06  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Factor out PendingScript and protect its members
+        https://bugs.webkit.org/show_bug.cgi?id=43391
+
+        This will be shared by AsyncScriptRunner.
+
+        No new tests because no new functionality.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/PendingScript.cpp: Added.
+        (WebCore::PendingScript::~PendingScript):
+        (WebCore::PendingScript::element):
+        (WebCore::PendingScript::releaseElementAndClear):
+        (WebCore::PendingScript::setCachedScript):
+        (WebCore::PendingScript::cachedScript):
+        * dom/PendingScript.h: Added.
+        (WebCore::PendingScript::PendingScript):
+        (WebCore::PendingScript::startingLineNumber):
+        (WebCore::PendingScript::watchingForLoad):
+        (WebCore::PendingScript::setWatchingForLoad):
+        (WebCore::PendingScript::hasElement):
+        (WebCore::PendingScript::adoptElement):
+        (WebCore::PendingScript::notifyFinished):
+        * html/HTMLScriptRunner.cpp:
+        (WebCore::HTMLScriptRunner::sourceFromPendingScript):
+        (WebCore::HTMLScriptRunner::haveParsingBlockingScript):
+        (WebCore::HTMLScriptRunner::requestScript):
+        * html/HTMLScriptRunner.h:
+
 2010-08-06  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Reviewed by Darin Adler.

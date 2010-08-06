@@ -2356,6 +2356,8 @@
 		89CD029311C85B870070B791 /* JSBlobBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 89CD029111C85B870070B791 /* JSBlobBuilder.cpp */; };
 		89CD029411C85B870070B791 /* JSBlobBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 89CD029211C85B870070B791 /* JSBlobBuilder.h */; };
 		8A12E35D11FA33280025836A /* DocumentLoadTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A12E35C11FA33280025836A /* DocumentLoadTiming.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		8A7CC96B12076D73001D4588 /* PendingScript.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A7CC96A12076D73001D4588 /* PendingScript.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		8A7CC97012076F8A001D4588 /* PendingScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A7CC96F12076F8A001D4588 /* PendingScript.cpp */; };
 		8A81BF8511DCFD9000DA2B98 /* ResourceLoadTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A81BF8411DCFD9000DA2B98 /* ResourceLoadTiming.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8A844D0411D3C18E0014065C /* Performance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A844D0111D3C18E0014065C /* Performance.cpp */; };
 		8A844D0511D3C18E0014065C /* Performance.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A844D0211D3C18E0014065C /* Performance.h */; };
@@ -8157,6 +8159,8 @@
 		89CD029111C85B870070B791 /* JSBlobBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSBlobBuilder.cpp; sourceTree = "<group>"; };
 		89CD029211C85B870070B791 /* JSBlobBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSBlobBuilder.h; sourceTree = "<group>"; };
 		8A12E35C11FA33280025836A /* DocumentLoadTiming.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentLoadTiming.h; sourceTree = "<group>"; };
+		8A7CC96A12076D73001D4588 /* PendingScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PendingScript.h; sourceTree = "<group>"; };
+		8A7CC96F12076F8A001D4588 /* PendingScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PendingScript.cpp; sourceTree = "<group>"; };
 		8A81BF8411DCFD9000DA2B98 /* ResourceLoadTiming.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceLoadTiming.h; sourceTree = "<group>"; };
 		8A844D0111D3C18E0014065C /* Performance.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Performance.cpp; sourceTree = "<group>"; };
 		8A844D0211D3C18E0014065C /* Performance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Performance.h; sourceTree = "<group>"; };
@@ -17266,6 +17270,8 @@
 				E1284AE910447DEE00EAEB52 /* PageTransitionEvent.cpp */,
 				E1284AE010447D4500EAEB52 /* PageTransitionEvent.h */,
 				E1284AD910447AEB00EAEB52 /* PageTransitionEvent.idl */,
+				8A7CC96F12076F8A001D4588 /* PendingScript.cpp */,
+				8A7CC96A12076D73001D4588 /* PendingScript.h */,
 				41BF700D0FE86F61005E8DEC /* PlatformMessagePortChannel.cpp */,
 				41BF700E0FE86F61005E8DEC /* PlatformMessagePortChannel.h */,
 				5189F0DD10B46B0E00F3C739 /* PopStateEvent.cpp */,
@@ -20075,6 +20081,7 @@
 				31FB1A5B120A5D0600DC02A0 /* DeviceMotionData.h in Headers */,
 				31FB1A5D120A5D0600DC02A0 /* DeviceMotionEvent.h in Headers */,
 				31FB1A66120A5D3F00DC02A0 /* JSDeviceMotionEvent.h in Headers */,
+				8A7CC96B12076D73001D4588 /* PendingScript.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -22490,6 +22497,7 @@
 				31FB1A5C120A5D0600DC02A0 /* DeviceMotionEvent.cpp in Sources */,
 				31FB1A65120A5D3F00DC02A0 /* JSDeviceMotionEvent.cpp in Sources */,
 				31FB1A6C120A5D6900DC02A0 /* JSDeviceMotionEventCustom.cpp in Sources */,
+				8A7CC97012076F8A001D4588 /* PendingScript.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
