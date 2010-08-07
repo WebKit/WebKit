@@ -17099,8 +17099,8 @@
 			children = (
 				E1C4DE6D0EA75C650023CCD6 /* ActiveDOMObject.cpp */,
 				E1C4DE680EA75C1E0023CCD6 /* ActiveDOMObject.h */,
-				8A413ADE1207BBA50082016E /* AsyncScriptRunner.h */,
 				8A413ADF1207BBA50082016E /* AsyncScriptRunner.cpp */,
+				8A413ADE1207BBA50082016E /* AsyncScriptRunner.h */,
 				A8C4A7FC09D563270003AC8D /* Attr.cpp */,
 				A8C4A7FB09D563270003AC8D /* Attr.h */,
 				93EEC1E509C2877700C515D1 /* Attr.idl */,
@@ -17473,6 +17473,7 @@
 				49EECDE310503C2400099FAB /* ArrayBuffer.h in Headers */,
 				49EECDE010503C2400099FAB /* ArrayBufferView.h in Headers */,
 				B0149E7E11A4B21500196A7B /* AsyncImageResizer.h in Headers */,
+				8A413AE01207BBA50082016E /* AsyncScriptRunner.h in Headers */,
 				B2C3DA1F0D006C1D00EF6F26 /* AtomicString.h in Headers */,
 				0FC705210EB1815600B90AD8 /* AtomicStringHash.h in Headers */,
 				B2C3DA200D006C1D00EF6F26 /* AtomicStringImpl.h in Headers */,
@@ -20105,7 +20106,6 @@
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				97DD4D870FDF4D6E00ECF9A4 /* XSSAuditor.h in Headers */,
 				CE172E011136E8CE0062A533 /* ZoomMode.h in Headers */,
-				8A413AE01207BBA50082016E /* AsyncScriptRunner.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -20448,6 +20448,7 @@
 				49EECDE210503C2400099FAB /* ArrayBuffer.cpp in Sources */,
 				49EECDDF10503C2400099FAB /* ArrayBufferView.cpp in Sources */,
 				B0149E7D11A4B21500196A7B /* AsyncImageResizer.cpp in Sources */,
+				8A413AE11207BBA50082016E /* AsyncScriptRunner.cpp in Sources */,
 				A8C4A80E09D563270003AC8D /* Attr.cpp in Sources */,
 				A8C4A80C09D563270003AC8D /* Attribute.cpp in Sources */,
 				934F71380D5A6EFF00018D69 /* AuthenticationChallengeBase.cpp in Sources */,
@@ -22524,7 +22525,6 @@
 				93F19B0508245E59001E9ABC /* XSLTProcessorLibxslt.cpp in Sources */,
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				97DD4D860FDF4D6E00ECF9A4 /* XSSAuditor.cpp in Sources */,
-				8A413AE11207BBA50082016E /* AsyncScriptRunner.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
