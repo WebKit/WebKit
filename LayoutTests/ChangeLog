@@ -1,5 +1,23 @@
 2010-08-06  Alex Nicolaou  <anicolao@chromium.org>
 
+        Reviewed by Darin Adler.
+
+        recent colorspace changes have fixed svg/custom/grayscale-gradient-mask.svg
+        https://bugs.webkit.org/show_bug.cgi?id=43104
+
+        New baselines for windows and linux for two tests affected by the bug fix
+        for https://bugs.webkit.org/show_bug.cgi?id=42228 where I failed to rebaseline
+        them properly at that time.
+
+        * platform/chromium-linux/svg/custom/grayscale-gradient-mask-expected.checksum:
+        * platform/chromium-win/svg/custom/grayscale-gradient-mask-expected.checksum:
+        * platform/chromium-win/svg/custom/grayscale-gradient-mask-expected.png:
+        * platform/chromium-win/svg/custom/mask-colorspace-expected.checksum: Added.
+        * platform/chromium-win/svg/custom/mask-colorspace-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
+2010-08-06  Alex Nicolaou  <anicolao@chromium.org>
+
         Reviewed by Dirk Schulze.
 
         can't see anything wrong with the output for circle-in-mask-with-shadow.svg
