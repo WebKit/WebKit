@@ -99,6 +99,8 @@
 		516A4A5D120A2CCD00C05B7F /* WebError.h in Headers */ = {isa = PBXBuildFile; fileRef = 516A4A5B120A2CCD00C05B7F /* WebError.h */; };
 		5DAD729C116FF86200EE5396 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0867D6A5FE840307C02AAC07 /* AppKit.framework */; };
 		6D8A91A611F0EFD100DD01FE /* com.apple.WebProcess.sb in Resources */ = {isa = PBXBuildFile; fileRef = 6D8A91A511F0EFD100DD01FE /* com.apple.WebProcess.sb */; };
+		762B748D120BC75C00819339 /* WKPreferencesPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 762B7484120BBA2D00819339 /* WKPreferencesPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		762B74AF120BC94F00819339 /* WKPreferencesPrivate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 762B749D120BC8EA00819339 /* WKPreferencesPrivate.cpp */; };
 		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
 		8DC2EF570486A6940098B216 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
 		BC0092F7115837A300E0AE2A /* RunLoopMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC0092F5115837A300E0AE2A /* RunLoopMac.mm */; };
@@ -426,6 +428,9 @@
 		5DAD7294116FF70B00EE5396 /* WebProcess.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = WebProcess.xcconfig; sourceTree = "<group>"; };
 		5DAD73F1116FF90C00EE5396 /* BaseTarget.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = BaseTarget.xcconfig; sourceTree = "<group>"; };
 		6D8A91A511F0EFD100DD01FE /* com.apple.WebProcess.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = com.apple.WebProcess.sb; path = WebProcess/com.apple.WebProcess.sb; sourceTree = "<group>"; };
+		762B7481120BBA0100819339 /* FontSmoothingLevel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontSmoothingLevel.h; sourceTree = "<group>"; };
+		762B7484120BBA2D00819339 /* WKPreferencesPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPreferencesPrivate.h; sourceTree = "<group>"; };
+		762B749D120BC8EA00819339 /* WKPreferencesPrivate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKPreferencesPrivate.cpp; sourceTree = "<group>"; };
 		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8DC2EF5B0486A6940098B216 /* WebKit2.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WebKit2.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC0092F5115837A300E0AE2A /* RunLoopMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RunLoopMac.mm; sourceTree = "<group>"; };
@@ -822,6 +827,7 @@
 				0FB659A51208B9EE0044816C /* DrawingAreaBase.cpp */,
 				0FB659221208B4DB0044816C /* DrawingAreaBase.h */,
 				1A6F9F8E11E13EFC00DB1371 /* CommandLine.h */,
+				762B7481120BBA0100819339 /* FontSmoothingLevel.h */,
 				BC64696D11DBE603006455B0 /* ImmutableArray.cpp */,
 				BC64696E11DBE603006455B0 /* ImmutableArray.h */,
 				BCC57161115ADB42001CCAF9 /* NotImplemented.h */,
@@ -1054,6 +1060,8 @@
 				BC177464118B9FF4007D9E9A /* WKPagePrivate.h */,
 				BCD597CF112B56AC00EC8C23 /* WKPreferences.cpp */,
 				BCD597CE112B56AC00EC8C23 /* WKPreferences.h */,
+				762B749D120BC8EA00819339 /* WKPreferencesPrivate.cpp */,
+				762B7484120BBA2D00819339 /* WKPreferencesPrivate.h */,
 				BC20EBAF116EEB0800094A50 /* WKString.cpp */,
 				BC20EBAE116EEB0800094A50 /* WKString.h */,
 				BCDB85811200EC57007254BE /* WKType.cpp */,
@@ -1399,6 +1407,7 @@
 				BCEE98CD1133174C006BCC24 /* WKPageNamespace.h in Headers */,
 				BC177465118B9FF4007D9E9A /* WKPagePrivate.h in Headers */,
 				BCD597D0112B56AC00EC8C23 /* WKPreferences.h in Headers */,
+				762B748D120BC75C00819339 /* WKPreferencesPrivate.h in Headers */,
 				BC8A501511765F5600757573 /* WKRetainPtr.h in Headers */,
 				BC20EBB0116EEB0800094A50 /* WKString.h in Headers */,
 				BC20EC06116EF7FF00094A50 /* WKStringCF.h in Headers */,
@@ -1621,6 +1630,7 @@
 				BCD597D6112B56DC00EC8C23 /* WKPage.cpp in Sources */,
 				BCEE98CC1133174C006BCC24 /* WKPageNamespace.cpp in Sources */,
 				BCD597D1112B56AC00EC8C23 /* WKPreferences.cpp in Sources */,
+				762B74AF120BC94F00819339 /* WKPreferencesPrivate.cpp in Sources */,
 				BC20EBB1116EEB0800094A50 /* WKString.cpp in Sources */,
 				BC20EC07116EF7FF00094A50 /* WKStringCF.cpp in Sources */,
 				BC20EBB5116EEF7A00094A50 /* WKURL.cpp in Sources */,

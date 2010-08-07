@@ -1,3 +1,77 @@
+2010-08-05  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        WebKitTestRunner needs to be able to set the font smoothing type
+        https://bugs.webkit.org/show_bug.cgi?id=43406
+
+        Reviewed by Adam Roben.
+
+        * Shared/FontSmoothingLevel.h: Added.
+        (WebKit::):
+
+        * Shared/WebPreferencesStore.cpp:
+        (WebKit::WebPreferencesStore::WebPreferencesStore):
+        Initialize fontSmoothingLevel.
+        (WebKit::WebPreferencesStore::swap):
+        Copy fontSmoothingLevel.
+
+        * Shared/WebPreferencesStore.h:
+        (WebKit::WebPreferencesStore::encode):
+        Encode fontSmoothingLevel.
+        (WebKit::WebPreferencesStore::decode):
+        Decode it.
+
+        * UIProcess/API/C/WKPreferencesPrivate.cpp: Added.
+        (WKPreferencesSetFontSmoothingLevel):
+        Get the font smoothing level from the WKFontSmoothingLevel, and call
+        WebPreferences::setFontSmoothingLevel().
+        (WKPreferencesGetFontSmoothingLevel):
+        Get the font smoothing level from WebPreferences, and translate it to a
+        WKFontSmoothingLevel.
+
+        * UIProcess/API/C/WKPreferencesPrivate.h: Added.
+        Declare the font smoothing levels, and declare functions to get and set
+        the level.
+
+        * UIProcess/WebPreferences.cpp:
+        (WebKit::WebPreferences::setFontSmoothingLevel):
+        Set fontSmoothingLevel and call update().
+        (WebKit::WebPreferences::fontSmoothingLevel):
+        Return the level.
+
+        * UIProcess/WebPreferences.h:
+        Declare getter and setter for fontSmoothingLevel.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files to project.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::preferencesDidChange):
+        Call platformPreferencesDidChange().
+
+        * WebProcess/WebPage/WebPage.h:
+        Declare platformPreferencesDidChange().
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::platformPreferencesDidChange):
+        Stubbed.
+
+        * WebProcess/WebPage/qt/WebPageQt.cpp:
+        (WebKit::WebPage::platformPreferencesDidChange):
+        Stubbed.
+
+        * WebProcess/WebPage/win/WebPageWin.cpp:
+        (WebKit::WebPage::platformPreferencesDidChange):
+        On CG platforms, call wkSetFontSmoothingLevel(). This matches the code
+        in old WebKit's WebPreferences. Set the font rendering mode to either
+        normal (CG) or alternative (GDI) based on the font smoothing level. This
+        matches what was done in old WebKit's WebView.
+
+        * win/WebKit2.vcproj:
+        Add FontSmoothingLevel.h and WKPreferencesPrivate.{h,cpp} to project.
+
+        * win/WebKit2Generated.make:
+        Copy WKPreferencesPrivate.h.
+
 2010-08-06  Anders Carlsson  <andersca@apple.com>
 
         Build fixes.

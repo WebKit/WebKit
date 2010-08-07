@@ -174,4 +174,8 @@ const char* WebPage::interpretKeyEvent(const KeyboardEvent* evt)
     return mapKey ? keyPressCommandsMap->get(mapKey) : 0;
 }
 
+void WebPage::platformPreferencesDidChange(const WebPreferencesStore&)
+{
+}
+
 } // namespace WebKit

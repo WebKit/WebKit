@@ -405,6 +405,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\FontSmoothingLevel.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\ImmutableArray.cpp"
 				>
 			</File>
@@ -1260,6 +1264,14 @@
 					</File>
 					<File
 						RelativePath="..\UIProcess\API\C\WKPreferences.h"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKPreferencesPrivate.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKPreferencesPrivate.h"
 						>
 					</File>
 					<File

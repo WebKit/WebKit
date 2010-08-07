@@ -29,6 +29,7 @@
 #include "StringFunctions.h"
 #include "TestController.h"
 #include <WebKit2/WKContextPrivate.h>
+#include <WebKit2/WKPreferencesPrivate.h>
 #include <WebKit2/WKRetainPtr.h>
 #include <wtf/RetainPtr.h>
 
@@ -70,6 +71,7 @@ void TestInvocation::resetPreferencesToConsistentValues()
 {
     WKPreferencesRef preferences = WKContextGetPreferences(TestController::shared().context());
     WKPreferencesSetOfflineWebApplicationCacheEnabled(preferences, true);
+    WKPreferencesSetFontSmoothingLevel(preferences, kWKFontSmoothingLevelNoSubpixelAntiAliasing);
 }
 
 void TestInvocation::invoke()

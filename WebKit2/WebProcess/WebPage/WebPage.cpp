@@ -453,6 +453,8 @@ void WebPage::preferencesDidChange(const WebPreferencesStore& store)
     m_page->settings()->setLoadsImagesAutomatically(store.loadsImagesAutomatically);
     m_page->settings()->setOfflineWebApplicationCacheEnabled(store.offlineWebApplicationCacheEnabled);
     m_page->settings()->setLocalStorageEnabled(store.localStorageEnabled);
+
+    platformPreferencesDidChange(store);
 }
 
 bool WebPage::handleEditingKeyboardEvent(KeyboardEvent* evt)

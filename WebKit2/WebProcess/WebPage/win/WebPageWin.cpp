@@ -25,11 +25,14 @@
 
 #include "WebPage.h"
 
+#include "FontSmoothingLevel.h"
+#include "WebPreferencesStore.h"
 #include <WebCore/FontRenderingMode.h>
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/Page.h>
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/Settings.h>
+#include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <WinUser.h>
 
 using namespace WebCore;
@@ -159,6 +162,18 @@ const char* WebPage::interpretKeyEvent(const KeyboardEvent* evt)
 
     int mapKey = modifiers << 16 | evt->charCode();
     return mapKey ? keyPressCommandsMap->get(mapKey) : 0;
+}
+
+void WebPage::platformPreferencesDidChange(const WebPreferencesStore& store)
+{
+#if PLATFORM(CG)
+    FontSmoothingLevel adjustedLevel = static_cast<FontSmoothingLevel>(store.fontSmoothingLevel);
+    if (adjustedLevel == FontSmoothingLevelWindows)
+        adjustedLevel = FontSmoothingLevelMedium;
+    wkSetFontSmoothingLevel(adjustedLevel);
+#endif
+
+    m_page->settings()->setFontRenderingMode(store.fontSmoothingLevel == FontSmoothingLevelWindows ? AlternateRenderingMode : NormalRenderingMode);
 }
 
 } // namespace WebKit

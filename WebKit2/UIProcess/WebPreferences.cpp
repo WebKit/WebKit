@@ -108,4 +108,16 @@ bool WebPreferences::localStorageEnabled() const
     return m_store.localStorageEnabled;
 }
 
+void WebPreferences::setFontSmoothingLevel(FontSmoothingLevel level)
+{
+    m_store.fontSmoothingLevel = level;
+    update();
+}
+
+FontSmoothingLevel WebPreferences::fontSmoothingLevel() const
+{
+    return static_cast<FontSmoothingLevel>(m_store.fontSmoothingLevel);
+}
+
 } // namespace WebKit
+
