@@ -1,3 +1,15 @@
+2010-08-07  Balazs Kelemen  <kb@inf.u-szeged.hu>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] Build WebKit2 into a static lib
+
+        https://bugs.webkit.org/show_bug.cgi?id=43621
+
+        * WebKit2.pri: Added. Defined addWebKit2Lib function that defines how to link against the static lib.
+        * WebKit2.pro:  Build specification for the WebKit2 framework.
+        * WebProcess.pro: Copied from WebKit2/WebKit2.pro. Build specification for the WebProcess binary.
+
 2010-08-05  Jon Honeycutt  <jhoneycutt@apple.com>
 
         WebKitTestRunner needs to be able to set the font smoothing type
