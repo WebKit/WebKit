@@ -332,7 +332,7 @@ Expected:
 resources/adoption02.dat:
 2
 
-Test 2 of 2 in resources/adoption02.dat failed. Input:
+Test 2 of 3 in resources/adoption02.dat failed. Input:
 <b id="b">1<i id="i">2<p>3<script>document.getElementById("b").id = "c";document.getElementById("i").id = "j"</script></b>4
 Got:
 | <html>

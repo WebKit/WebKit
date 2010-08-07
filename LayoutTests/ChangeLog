@@ -1,3 +1,14 @@
+2010-08-07  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Regression: Memory corruption in tree builder
+        https://bugs.webkit.org/show_bug.cgi?id=43672
+
+        * html5lib/resources/adoption02.dat:
+        * html5lib/runner-expected-html5.txt:
+        * html5lib/runner-expected.txt:
+
 2010-08-07  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [Chromium]: Added port-specific expectations after http://trac.webkit.org/changeset/64901.

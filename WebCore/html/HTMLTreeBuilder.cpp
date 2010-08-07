@@ -1744,8 +1744,9 @@ void HTMLTreeBuilder::callTheAdoptionAgency(AtomicHTMLToken& token)
         //        be in HTMLConstructionSite.  My guess is that steps 8--12
         //        should all be in some HTMLConstructionSite function.
         furthestBlockElement->parserAddChild(newElement);
-        if (furthestBlockElement->attached()) {
-            ASSERT(!newElement->attached());
+        if (furthestBlockElement->attached() && !newElement->attached()) {
+            // Notice that newElement might already be attached if, for example, one of the reparented
+            // children is a style element, which attaches itself automatically.
             newElement->attach();
         }
         // 11

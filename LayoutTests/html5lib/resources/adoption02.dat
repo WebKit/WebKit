@@ -37,3 +37,18 @@
 |           <script>
 |             "document.getElementById("b").id = "c";document.getElementById("i").id = "j""
 |         "4"
+
+#data
+<a><div><style></style><address><a>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <a>
+|     <div>
+|       <a>
+|         <style>
+|       <address>
+|         <a>
+|         <a>
