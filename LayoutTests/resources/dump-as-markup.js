@@ -260,29 +260,33 @@ Markup._getMarkupForTextNode = function(node)
     var startOffset, endOffset, startText, endText;
 
     var sel = Markup._getSelectionFromNode(node);
-    if (node == sel.anchorNode && node == sel.focusNode) {
-        if (sel.isCollapsed) {
-            startOffset = sel.anchorOffset;
-            startText = Markup._SELECTION_CARET;
-        } else {
-            if (sel.focusOffset > sel.anchorOffset) {
+    // Firefox doesn't have a sel in a display:none iframe.
+    // https://bugs.webkit.org/show_bug.cgi?id=43655
+    if (sel) {
+        if (node == sel.anchorNode && node == sel.focusNode) {
+            if (sel.isCollapsed) {
                 startOffset = sel.anchorOffset;
-                endOffset = sel.focusOffset;
-                startText = Markup._SELECTION_ANCHOR;
-                endText = Markup._SELECTION_FOCUS;
+                startText = Markup._SELECTION_CARET;
             } else {
-                startOffset = sel.focusOffset;
-                endOffset = sel.anchorOffset;
-                startText = Markup._SELECTION_FOCUS;
-                endText = Markup._SELECTION_ANCHOR;
+                if (sel.focusOffset > sel.anchorOffset) {
+                    startOffset = sel.anchorOffset;
+                    endOffset = sel.focusOffset;
+                    startText = Markup._SELECTION_ANCHOR;
+                    endText = Markup._SELECTION_FOCUS;
+                } else {
+                    startOffset = sel.focusOffset;
+                    endOffset = sel.anchorOffset;
+                    startText = Markup._SELECTION_FOCUS;
+                    endText = Markup._SELECTION_ANCHOR;
+                }
             }
+        } else if (node == sel.focusNode) {
+            startOffset = sel.focusOffset;
+            startText = Markup._SELECTION_FOCUS;
+        } else if (node == sel.anchorNode) {
+            startOffset = sel.anchorOffset;
+            startText = Markup._SELECTION_ANCHOR;
         }
-    } else if (node == sel.focusNode) {
-        startOffset = sel.focusOffset;
-        startText = Markup._SELECTION_FOCUS;
-    } else if (node == sel.anchorNode) {
-        startOffset = sel.anchorOffset;
-        startText = Markup._SELECTION_ANCHOR;
     }
     
     if (startText && endText)
@@ -299,6 +303,12 @@ Markup._getSelectionMarker = function(node, index)
         return '';
 
     var sel = Markup._getSelectionFromNode(node);;
+
+    // Firefox doesn't have a sel in a display:none iframe.
+    // https://bugs.webkit.org/show_bug.cgi?id=43655
+    if (!sel)
+        return '';
+
     if (index == sel.anchorOffset && node == sel.anchorNode) {
         if (sel.isCollapsed)
             return Markup._SELECTION_CARET;
