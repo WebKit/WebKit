@@ -148,6 +148,13 @@ using namespace WebCore;
 
 // Events
 
+// Override this so that AppKit will send us arrow keys as key down events so we can
+// support them via the key bindings mechanism.
+- (BOOL)_wantsKeyDownForEvent:(NSEvent *)event
+{
+    return YES;
+}
+
 - (void)mouseDown:(NSEvent *)theEvent
 {
     WebMouseEvent mouseEvent = WebEventFactory::createWebMouseEvent(theEvent, self);

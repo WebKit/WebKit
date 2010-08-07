@@ -644,10 +644,23 @@ void WebPageProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIP
             reply->encode(CoreIPC::In(result));
             break;
         }
+
+        case WebPageProxyMessage::BackForwardBackItem: {
+            WebBackForwardListItem* backItem = m_backForwardList->backItem();
+            uint64_t backItemID = backItem ? backItem->itemID() : 0;
+            reply->encode(CoreIPC::In(backItemID));
+            break;
+        }
         case WebPageProxyMessage::BackForwardCurrentItem: {
             WebBackForwardListItem* currentItem = m_backForwardList->currentItem();
             uint64_t currentItemID = currentItem ? currentItem->itemID() : 0;
             reply->encode(CoreIPC::In(currentItemID));
+            break;
+        }
+        case WebPageProxyMessage::BackForwardForwardItem: {
+            WebBackForwardListItem* forwardItem = m_backForwardList->forwardItem();
+            uint64_t forwardItemID = forwardItem ? forwardItem->itemID() : 0;
+            reply->encode(CoreIPC::In(forwardItemID));
             break;
         }
         case WebPageProxyMessage::BackForwardItemAtIndex: {

@@ -140,7 +140,19 @@ void WebBackForwardListProxy::goToItem(HistoryItem* item)
 
 HistoryItem* WebBackForwardListProxy::backItem()
 {
-    return 0;
+    uint64_t backItemID = 0;
+    if (!WebProcess::shared().connection()->sendSync(WebPageProxyMessage::BackForwardBackItem,
+                                                     m_page->pageID(), CoreIPC::In(),
+                                                     CoreIPC::Out(backItemID),
+                                                     CoreIPC::Connection::NoTimeout)) {
+        return 0;
+    }
+
+    if (!backItemID)
+        return 0;
+
+    RefPtr<HistoryItem> item = idToHistoryItemMap().get(backItemID);
+    return item.get();
 }
 
 HistoryItem* WebBackForwardListProxy::currentItem()
@@ -162,7 +174,19 @@ HistoryItem* WebBackForwardListProxy::currentItem()
 
 HistoryItem* WebBackForwardListProxy::forwardItem()
 {
-    return 0;
+    uint64_t forwardItemID = 0;
+    if (!WebProcess::shared().connection()->sendSync(WebPageProxyMessage::BackForwardForwardItem,
+                                                     m_page->pageID(), CoreIPC::In(),
+                                                     CoreIPC::Out(forwardItemID),
+                                                     CoreIPC::Connection::NoTimeout)) {
+        return 0;
+    }
+
+    if (!forwardItemID)
+        return 0;
+
+    RefPtr<HistoryItem> item = idToHistoryItemMap().get(forwardItemID);
+    return item.get();
 }
 
 HistoryItem* WebBackForwardListProxy::itemAtIndex(int itemIndex)

@@ -44,7 +44,6 @@
 #include "WebPageProxyMessageKinds.h"
 #include "WebPreferencesStore.h"
 #include "WebProcess.h"
-#include <WebCore/BackForwardList.h>
 #include <WebCore/EventHandler.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/Frame.h>
@@ -57,7 +56,6 @@
 #include <WebCore/RenderTreeAsText.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/Settings.h>
-#include <WebCore/WindowsKeyboardCodes.h>
 #include <runtime/JSLock.h>
 #include <runtime/JSValue.h>
 
@@ -393,7 +391,9 @@ void WebPage::keyEvent(const WebKeyboardEvent& keyboardEvent)
     if (m_page->focusController()->focusedOrMainFrame()->eventHandler()->keyEvent(platformKeyboardEvent))
         return;
 
-    performDefaultBehaviorForKeyEvent(keyboardEvent);
+    bool handled = performDefaultBehaviorForKeyEvent(keyboardEvent);
+    // FIXME: Communicate back to the UI process that the event was handled.
+    (void)handled;
 }
 
 void WebPage::setActive(bool isActive)
@@ -485,63 +485,6 @@ bool WebPage::handleEditingKeyboardEvent(KeyboardEvent* evt)
         return false;
 
     return frame->editor()->insertText(evt->keyEvent()->text(), evt);
-}
-
-static bool getScrollMapping(const WebKeyboardEvent& event, ScrollDirection& direction, ScrollGranularity& granularity)
-{
-    if (event.type() != WebEvent::KeyDown && event.type() != WebEvent::RawKeyDown)
-        return false;
-
-    switch (event.windowsVirtualKeyCode()) {
-    case VK_SPACE:
-        granularity = ScrollByPage;
-        direction = event.shiftKey() ? ScrollUp : ScrollDown;
-        break;
-    case VK_LEFT:
-        granularity = ScrollByLine;
-        direction = ScrollLeft;
-        break;
-    case VK_RIGHT:
-        granularity = ScrollByLine;
-        direction = ScrollRight;
-        break;
-    case VK_UP:
-        granularity = ScrollByLine;
-        direction = ScrollUp;
-        break;
-    case VK_DOWN:
-        granularity = ScrollByLine;
-        direction = ScrollDown;
-        break;
-    case VK_HOME:
-        granularity = ScrollByDocument;
-        direction = ScrollUp;
-        break;
-    case VK_END:
-        granularity = ScrollByDocument;
-        direction = ScrollDown;
-        break;
-    case VK_PRIOR:
-        granularity = ScrollByPage;
-        direction = ScrollUp;
-        break;
-    case VK_NEXT:
-        granularity = ScrollByPage;
-        direction = ScrollDown;
-        break;
-    default:
-        return false;
-    }
-
-    return true;
-}
-
-void WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent& keyboardEvent)
-{
-    ScrollDirection direction;
-    ScrollGranularity granularity;
-    if (getScrollMapping(keyboardEvent, direction, granularity))
-        m_page->focusController()->focusedOrMainFrame()->eventHandler()->scrollRecursively(direction, granularity);
 }
 
 void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)

@@ -1,3 +1,40 @@
+2010-08-06  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Delete key doesn't go Back in WebKit2
+        <rdar://problem/8272978>
+        https://bugs.webkit.org/show_bug.cgi?id=43665
+
+        - Adds support for delete key going back (mac only for now)
+        - Adds support for command-left/command right going back/forward
+        - Flesh out scrolling due to arrow keys on the mac to match old webkit.
+        - Made performDefaultBehaviorForKeyEvent platform specific and added
+          a boolean return value which will be used later to inform the UI process
+          about what events have been processed.
+
+        * Shared/CoreIPCSupport/WebPageProxyMessageKinds.h:
+        (WebPageProxyMessage::):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _wantsKeyDownForEvent:]):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveSyncMessage):
+        * WebProcess/WebPage/WebBackForwardListProxy.cpp:
+        (WebKit::WebBackForwardListProxy::backItem):
+        (WebKit::WebBackForwardListProxy::forwardItem):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::keyEvent):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::scroll):
+        (WebKit::WebPage::performDefaultBehaviorForKeyEvent):
+        * WebProcess/WebPage/qt/WebPageQt.cpp:
+        (WebKit::scroll):
+        (WebKit::WebPage::performDefaultBehaviorForKeyEvent):
+        * WebProcess/WebPage/win/WebPageWin.cpp:
+        (WebKit::scroll):
+        (WebKit::WebPage::performDefaultBehaviorForKeyEvent):
+
 2010-08-07  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r64904.

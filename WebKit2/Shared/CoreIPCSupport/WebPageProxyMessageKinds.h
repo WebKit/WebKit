@@ -67,7 +67,9 @@ enum Kind {
     
     BackForwardAddItem,
     BackForwardGoToItem,
+    BackForwardBackItem,
     BackForwardCurrentItem,
+    BackForwardForwardItem,
     BackForwardItemAtIndex,
     BackForwardBackListCount,
     BackForwardForwardListCount,
