@@ -23,29 +23,33 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKBundlePrivate_h
-#define WKBundlePrivate_h
+#ifndef GCController_h
+#define GCController_h
 
-#include <WebKit2/WKBase.h>
-#include <WebKit2/WKBundleBase.h>
+#include "JSWrappable.h"
+#include <wtf/PassRefPtr.h>
 
-#ifndef __cplusplus
-#include <stdbool.h>
-#endif
+namespace WTR {
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+class GCController : public JSWrappable {
+public:
+    static PassRefPtr<GCController> create();
+    virtual ~GCController();
 
-WK_EXPORT void WKBundleSetShouldTrackVisitedLinks(WKBundleRef bundle, bool shouldTrackVisitedLinks);
-WK_EXPORT void WKBundleRemoveAllVisitedLinks(WKBundleRef bundle);
-WK_EXPORT void WKBundleActivateMacFontAscentHack(WKBundleRef bundle);
-WK_EXPORT void WKBundleGarbageCollectJavaScriptObjects(WKBundleRef bundle);
-WK_EXPORT void WKBundleGarbageCollectJavaScriptObjectsOnAlternateThreadForDebugging(WKBundleRef bundle, bool waitUntilDone);
-WK_EXPORT size_t WKBundleGetJavaScriptObjectsCount(WKBundleRef bundle);
+    // JSWrappable
+    virtual JSClassRef wrapperClass();
 
-#ifdef __cplusplus
-}
-#endif
+    void makeWindowObject(JSContextRef, JSObjectRef windowObject, JSValueRef* exception);
 
-#endif /* WKBundlePrivate_h */
+    // The basics.
+    void collect();
+    void collectOnAlternateThread(bool waitUntilDone);
+    size_t getJSObjectCount();
+
+private:
+    GCController();
+};
+
+} // namespace WTR
+
+#endif // GCController_h

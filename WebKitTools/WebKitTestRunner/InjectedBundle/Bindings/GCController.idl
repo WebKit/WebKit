@@ -23,29 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKBundlePrivate_h
-#define WKBundlePrivate_h
+module WTR {
 
-#include <WebKit2/WKBase.h>
-#include <WebKit2/WKBundleBase.h>
+    interface GCController {
+        void collect();
+        void collectOnAlternateThread(in boolean waitUntilDone);
+        unsigned long long getJSObjectCount();
+    };
 
-#ifndef __cplusplus
-#include <stdbool.h>
-#endif
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-WK_EXPORT void WKBundleSetShouldTrackVisitedLinks(WKBundleRef bundle, bool shouldTrackVisitedLinks);
-WK_EXPORT void WKBundleRemoveAllVisitedLinks(WKBundleRef bundle);
-WK_EXPORT void WKBundleActivateMacFontAscentHack(WKBundleRef bundle);
-WK_EXPORT void WKBundleGarbageCollectJavaScriptObjects(WKBundleRef bundle);
-WK_EXPORT void WKBundleGarbageCollectJavaScriptObjectsOnAlternateThreadForDebugging(WKBundleRef bundle, bool waitUntilDone);
-WK_EXPORT size_t WKBundleGetJavaScriptObjectsCount(WKBundleRef bundle);
-
-#ifdef __cplusplus
 }
-#endif
-
-#endif /* WKBundlePrivate_h */

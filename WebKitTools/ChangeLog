@@ -1,3 +1,38 @@
+2010-08-07  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        WebKitTestRunner needs GCController
+        <rdar://problem/8213834>
+        https://bugs.webkit.org/show_bug.cgi?id=42701
+
+        * WebKitTestRunner/DerivedSources.make:
+        * WebKitTestRunner/InjectedBundle/Bindings/GCController.idl: Added.
+        * WebKitTestRunner/InjectedBundle/Bindings/JSWrapper.h:
+        (WTR::setProperty):
+        * WebKitTestRunner/InjectedBundle/GCController.cpp: Added.
+        (WTR::GCController::create):
+        (WTR::GCController::GCController):
+        (WTR::GCController::~GCController):
+        (WTR::GCController::wrapperClass):
+        (WTR::GCController::collect):
+        (WTR::GCController::collectOnAlternateThread):
+        (WTR::GCController::getJSObjectCount):
+        (WTR::GCController::makeWindowObject):
+        * WebKitTestRunner/InjectedBundle/GCController.h: Added.
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::reset):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+        (WTR::InjectedBundle::bundle):
+        (WTR::InjectedBundle::gcController):
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::didClearWindowForFrame):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::LayoutTestController::keepWebHistory):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h:
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+        * WebKitTestRunner/win/InjectedBundle.vcproj:
+
 2010-08-05  Jon Honeycutt  <jhoneycutt@apple.com>
 
         WebKitTestRunner needs to be able to set the font smoothing type

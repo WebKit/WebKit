@@ -328,6 +328,7 @@ void InjectedBundlePage::didClearWindowForFrame(WKBundleFrameRef frame, JSGlobal
 {
     JSValueRef exception = 0;
     InjectedBundle::shared().layoutTestController()->makeWindowObject(context, window, &exception);
+    InjectedBundle::shared().gcController()->makeWindowObject(context, window, &exception);
 }
 
 // UI Client Callbacks

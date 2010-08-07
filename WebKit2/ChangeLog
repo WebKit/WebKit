@@ -1,3 +1,22 @@
+2010-08-07  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        WebKitTestRunner needs GCController
+        <rdar://problem/8213834>
+        https://bugs.webkit.org/show_bug.cgi?id=42701
+
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleGarbageCollectJavaScriptObjects):
+        (WKBundleGarbageCollectJavaScriptObjectsOnAlternateThreadForDebugging):
+        (WKBundleGetJavaScriptObjectsCount):
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::garbageCollectJavaScriptObjects):
+        (WebKit::InjectedBundle::garbageCollectJavaScriptObjectsOnAlternateThreadForDebugging):
+        (WebKit::InjectedBundle::javaScriptObjectsCount):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+
 2010-08-07  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

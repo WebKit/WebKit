@@ -23,57 +23,52 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WKBundle.h"
-#include "WKBundlePrivate.h"
+#include "GCController.h"
 
 #include "InjectedBundle.h"
-#include "WKAPICast.h"
-#include "WKBundleAPICast.h"
+#include "JSGCController.h"
+#include <WebKit2/WKBundlePrivate.h>
 
-using namespace WebKit;
+namespace WTR {
 
-WKTypeID WKBundleGetTypeID()
+PassRefPtr<GCController> GCController::create()
 {
-    return toRef(InjectedBundle::APIType);
+    return adoptRef(new GCController);
 }
 
-void WKBundleSetClient(WKBundleRef bundleRef, WKBundleClient * wkClient)
+GCController::GCController()
 {
-    if (wkClient && !wkClient->version)
-        toWK(bundleRef)->initializeClient(wkClient);
 }
 
-void WKBundlePostMessage(WKBundleRef bundleRef, WKStringRef messageNameRef, WKTypeRef messageBodyRef)
+GCController::~GCController()
 {
-    toWK(bundleRef)->postMessage(toWK(messageNameRef)->string(), toWK(messageBodyRef));
 }
 
-void WKBundleSetShouldTrackVisitedLinks(WKBundleRef bundleRef, bool shouldTrackVisitedLinks)
+JSClassRef GCController::wrapperClass()
 {
-    toWK(bundleRef)->setShouldTrackVisitedLinks(shouldTrackVisitedLinks);
+    return JSGCController::gCControllerClass();
 }
 
-void WKBundleRemoveAllVisitedLinks(WKBundleRef bundleRef)
+void GCController::collect()
 {
-    toWK(bundleRef)->removeAllVisitedLinks();
+    WKBundleGarbageCollectJavaScriptObjects(InjectedBundle::shared().bundle());
 }
 
-void WKBundleActivateMacFontAscentHack(WKBundleRef bundleRef)
+void GCController::collectOnAlternateThread(bool waitUntilDone)
 {
-    toWK(bundleRef)->activateMacFontAscentHack();
+    WKBundleGarbageCollectJavaScriptObjectsOnAlternateThreadForDebugging(InjectedBundle::shared().bundle(), waitUntilDone);
 }
 
-void WKBundleGarbageCollectJavaScriptObjects(WKBundleRef bundleRef)
+size_t GCController::getJSObjectCount()
 {
-    toWK(bundleRef)->garbageCollectJavaScriptObjects();
+    return WKBundleGetJavaScriptObjectsCount(InjectedBundle::shared().bundle());
 }
 
-void WKBundleGarbageCollectJavaScriptObjectsOnAlternateThreadForDebugging(WKBundleRef bundleRef, bool waitUntilDone)
+// Object Creation
+
+void GCController::makeWindowObject(JSContextRef context, JSObjectRef windowObject, JSValueRef* exception)
 {
-    toWK(bundleRef)->garbageCollectJavaScriptObjectsOnAlternateThreadForDebugging(waitUntilDone);
+    setProperty(context, windowObject, "GCController", this, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete, exception);
 }
 
-size_t WKBundleGetJavaScriptObjectsCount(WKBundleRef bundleRef)
-{
-    return toWK(bundleRef)->javaScriptObjectsCount();
-}
+} // namespace WTR

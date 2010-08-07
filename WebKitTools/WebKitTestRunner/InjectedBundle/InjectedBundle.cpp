@@ -134,14 +134,10 @@ void InjectedBundle::reset()
 {
     m_outputStream.str("");
     m_layoutTestController = LayoutTestController::create();
+    m_gcController = GCController::create();
     WKBundleSetShouldTrackVisitedLinks(m_bundle, false);
     WKBundleRemoveAllVisitedLinks(m_bundle);
     m_mainPage->reset();
-}
-
-void InjectedBundle::setShouldTrackVisitedLinks()
-{
-    WKBundleSetShouldTrackVisitedLinks(m_bundle, true);
 }
 
 void InjectedBundle::closeOtherPages()

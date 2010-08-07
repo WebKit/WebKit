@@ -1590,13 +1590,16 @@ fast/dom/Geolocation/callback-exception.html
 fast/dom/Geolocation/callback-to-deleted-context.html
 fast/dom/Geolocation/callback-to-remote-context.html
 fast/dom/Geolocation/callback-to-remote-context2.html
+fast/dom/Geolocation/delayed-permission-allowed.html
+fast/dom/Geolocation/delayed-permission-denied.html
 fast/dom/Geolocation/error.html
 fast/dom/Geolocation/multiple-requests.html
+fast/dom/Geolocation/notimer-after-unload.html
 fast/dom/Geolocation/permission-denied-already-clear-watch.html
 fast/dom/Geolocation/permission-denied-already-error.html
 fast/dom/Geolocation/permission-denied-already-success.html
-fast/dom/Geolocation/permission-denied.html
 fast/dom/Geolocation/permission-denied-stops-watches.html
+fast/dom/Geolocation/permission-denied.html
 fast/dom/Geolocation/position-string.html
 fast/dom/Geolocation/reentrant-error.html
 fast/dom/Geolocation/reentrant-permission-denied.html
@@ -1604,7 +1607,6 @@ fast/dom/Geolocation/reentrant-success.html
 fast/dom/Geolocation/success.html
 fast/dom/Geolocation/timeout.html
 fast/dom/Geolocation/watch.html
-fast/dom/Geolocation/notimer-after-unload.html
 
 # WebKitTestRunner needs layoutTestController.setMockGeolocationPosition
 fast/dom/Geolocation/timeout-clear-watch.html
@@ -1790,12 +1792,6 @@ fast/loader/non-deferred-substitute-load.html
 # <https://bugs.webkit.org/show_bug.cgi?id=42778>
 http/tests/cookies/third-party-cookie-relaxing.html
 http/tests/plugins/third-party-cookie-accept-policy.html
-
-# WebKitTestRunner needs GCController
-# <https://bugs.webkit.org/show_bug.cgi?id=42701>
-fast/dom/gc-10.html
-fast/dom/StyleSheet/ownerNode-lifetime-2.html
-fast/frames/removal-before-attach-crash.html
 
 # WebKitTestRunner needs to print onunload handler information
 # <https://bugs.webkit.org/show_bug.cgi?id=42703>
@@ -2119,6 +2115,7 @@ fast/loader/empty-embed-src-attribute.html
 fast/loader/empty-ref-versus-no-ref.html
 fast/loader/frame-creation-removal.html
 fast/overflow/scroll-vertical-not-horizontal.html
+fast/parser/entities-in-xhtml.xhtml
 http/tests/history/back-to-post.php
 http/tests/media/video-load-twice.html
 http/tests/misc/slow-loading-mask.html
@@ -2138,7 +2135,6 @@ media/video-played-reset.html
 media/video-preload.html
 media/video-src-change.html
 platform/mac/fast/loader/non-html-load-event.html
-
 
 ########################################
 

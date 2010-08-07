@@ -27,7 +27,6 @@
 #define LayoutTestController_h
 
 #include "JSWrappable.h"
-#include <JavaScriptCore/JavaScriptCore.h>
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RetainPtr.h>

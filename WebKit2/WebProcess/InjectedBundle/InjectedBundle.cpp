@@ -27,17 +27,21 @@
 
 #include "Arguments.h"
 #include "ImmutableArray.h"
-#include "WebContextMessageKinds.h"
 #include "InjectedBundleMessageKinds.h"
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
+#include "WebContextMessageKinds.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
 #include "WebProcess.h"
+#include <JavaScriptCore/JSLock.h>
+#include <WebCore/GCController.h>
+#include <WebCore/JSDOMWindow.h>
 #include <WebCore/PageGroup.h>
 #include <wtf/OwnArrayPtr.h>
 
 using namespace WebCore;
+using namespace JSC;
 
 namespace WebKit {
 
@@ -191,6 +195,22 @@ void InjectedBundle::setShouldTrackVisitedLinks(bool shouldTrackVisitedLinks)
 void InjectedBundle::removeAllVisitedLinks()
 {
     PageGroup::removeAllVisitedLinks();
+}
+
+void InjectedBundle::garbageCollectJavaScriptObjects()
+{
+    gcController().garbageCollectNow();
+}
+
+void InjectedBundle::garbageCollectJavaScriptObjectsOnAlternateThreadForDebugging(bool waitUntilDone)
+{
+    gcController().garbageCollectOnAlternateThreadForDebugging(waitUntilDone);
+}
+
+size_t InjectedBundle::javaScriptObjectsCount()
+{
+    JSLock lock(SilenceAssertionsOnly);
+    return JSDOMWindow::commonJSGlobalData()->heap.objectCount();
 }
 
 void InjectedBundle::didCreatePage(WebPage* page)

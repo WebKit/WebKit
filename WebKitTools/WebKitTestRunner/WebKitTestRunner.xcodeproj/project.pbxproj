@@ -33,6 +33,8 @@
 		6510A78B11EC643800410867 /* WebKitWeightWatcher800.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6510A78011EC643800410867 /* WebKitWeightWatcher800.ttf */; };
 		6510A78C11EC643800410867 /* WebKitWeightWatcher900.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6510A78111EC643800410867 /* WebKitWeightWatcher900.ttf */; };
 		65EB85A011EC67CC0034D300 /* ActivateFonts.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65EB859F11EC67CC0034D300 /* ActivateFonts.mm */; };
+		BC14E4DB120E02D000826C0C /* GCController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC14E4D9120E02D000826C0C /* GCController.cpp */; };
+		BC14E4EA120E03D800826C0C /* JSGCController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC14E4E8120E03D800826C0C /* JSGCController.cpp */; };
 		BC25193E11D15D8B002EBC01 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC7934A411906584005EA8E2 /* Cocoa.framework */; };
 		BC25193F11D15D8B002EBC01 /* WebKit2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC7934AB1190658C005EA8E2 /* WebKit2.framework */; };
 		BC25194011D15D8B002EBC01 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCDA2B991191051F00C3BC47 /* JavaScriptCore.framework */; };
@@ -85,6 +87,11 @@
 		65EB859D11EC67CC0034D300 /* ActivateFonts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActivateFonts.h; sourceTree = "<group>"; };
 		65EB859F11EC67CC0034D300 /* ActivateFonts.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ActivateFonts.mm; sourceTree = "<group>"; };
 		8DD76FA10486AA7600D96B5E /* WebKitTestRunner */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = WebKitTestRunner; sourceTree = BUILT_PRODUCTS_DIR; };
+		BC14E4D8120E02D000826C0C /* GCController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCController.h; sourceTree = "<group>"; };
+		BC14E4D9120E02D000826C0C /* GCController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GCController.cpp; sourceTree = "<group>"; };
+		BC14E4E1120E032000826C0C /* GCController.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GCController.idl; sourceTree = "<group>"; };
+		BC14E4E8120E03D800826C0C /* JSGCController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSGCController.cpp; path = ../../WebKitBuild/Debug/DerivedSources/WebKitTestRunner/JSGCController.cpp; sourceTree = SOURCE_ROOT; };
+		BC14E4E9120E03D800826C0C /* JSGCController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSGCController.h; path = ../../WebKitBuild/Debug/DerivedSources/WebKitTestRunner/JSGCController.h; sourceTree = SOURCE_ROOT; };
 		BC25184611D15767002EBC01 /* InjectedBundleMain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleMain.cpp; sourceTree = "<group>"; };
 		BC25186211D15D54002EBC01 /* InjectedBundle.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = InjectedBundle.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC25186311D15D54002EBC01 /* InjectedBundle-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "InjectedBundle-Info.plist"; sourceTree = "<group>"; };
@@ -202,11 +209,23 @@
 			path = mac;
 			sourceTree = "<group>";
 		};
+		BC14E4E0120E02F900826C0C /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				BC14E4D9120E02D000826C0C /* GCController.cpp */,
+				BC14E4D8120E02D000826C0C /* GCController.h */,
+				BCC9981711D3F51E0017BCA2 /* LayoutTestController.cpp */,
+				BCC9981611D3F51E0017BCA2 /* LayoutTestController.h */,
+			);
+			name = Controllers;
+			sourceTree = "<group>";
+		};
 		BC25183511D1571D002EBC01 /* InjectedBundle */ = {
 			isa = PBXGroup;
 			children = (
 				BC952D3A11F3BF1F003398B4 /* Derived Sources */,
 				BC952C0A11F3B939003398B4 /* Bindings */,
+				BC14E4E0120E02F900826C0C /* Controllers */,
 				65EB859E11EC67CC0034D300 /* mac */,
 				65EB859D11EC67CC0034D300 /* ActivateFonts.h */,
 				BCC997A011D3C8F60017BCA2 /* InjectedBundle.cpp */,
@@ -214,8 +233,6 @@
 				BC25184611D15767002EBC01 /* InjectedBundleMain.cpp */,
 				BCC997A211D3C8F60017BCA2 /* InjectedBundlePage.cpp */,
 				BCC997A311D3C8F60017BCA2 /* InjectedBundlePage.h */,
-				BCC9981711D3F51E0017BCA2 /* LayoutTestController.cpp */,
-				BCC9981611D3F51E0017BCA2 /* LayoutTestController.h */,
 			);
 			path = InjectedBundle;
 			sourceTree = "<group>";
@@ -268,6 +285,7 @@
 				BC952C0E11F3B97B003398B4 /* JSWrappable.h */,
 				BC952C0C11F3B965003398B4 /* JSWrapper.cpp */,
 				BC952C0B11F3B965003398B4 /* JSWrapper.h */,
+				BC14E4E1120E032000826C0C /* GCController.idl */,
 				BC952ED211F3C29F003398B4 /* LayoutTestController.idl */,
 			);
 			path = Bindings;
@@ -276,6 +294,8 @@
 		BC952D3A11F3BF1F003398B4 /* Derived Sources */ = {
 			isa = PBXGroup;
 			children = (
+				BC14E4E8120E03D800826C0C /* JSGCController.cpp */,
+				BC14E4E9120E03D800826C0C /* JSGCController.h */,
 				BC952F1D11F3C652003398B4 /* JSLayoutTestController.cpp */,
 				BC952F1E11F3C652003398B4 /* JSLayoutTestController.h */,
 			);
@@ -411,6 +431,8 @@
 				65EB85A011EC67CC0034D300 /* ActivateFonts.mm in Sources */,
 				BC952C0D11F3B965003398B4 /* JSWrapper.cpp in Sources */,
 				BC952F1F11F3C652003398B4 /* JSLayoutTestController.cpp in Sources */,
+				BC14E4DB120E02D000826C0C /* GCController.cpp in Sources */,
+				BC14E4EA120E03D800826C0C /* JSGCController.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
