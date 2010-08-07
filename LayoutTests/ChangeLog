@@ -1,3 +1,17 @@
+2010-08-07  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Daniel Bates.
+
+        Pattern fill with image not rendered after reload
+        https://bugs.webkit.org/show_bug.cgi?id=41596
+
+        Added test verifying that resources are properly updated, if an image child element has changed.
+
+        * http/tests/misc/slow-loading-image-in-pattern.html: Added.
+        * platform/mac/http/tests/misc/slow-loading-image-in-pattern-expected.checksum: Added.
+        * platform/mac/http/tests/misc/slow-loading-image-in-pattern-expected.png: Added.
+        * platform/mac/http/tests/misc/slow-loading-image-in-pattern-expected.txt: Added.
+
 2010-08-07  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, test expectation update.
