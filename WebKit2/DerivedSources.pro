@@ -8,8 +8,7 @@ WEBCORE_HEADERS_FOR_WEBKIT2 += \
     bindings/js/GCController.h \
     bindings/js/JSPluginElementFunctions.h \
     bridge/IdentifierRep.h \
-    bridge/npapi.h \
-    bridge/npruntime.h \
+    bridge/npruntime_internal.h \
     config.h \
     css/CSSComputedStyleDeclaration.h \
     dom/Event.h \

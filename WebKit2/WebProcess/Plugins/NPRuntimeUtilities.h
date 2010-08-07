@@ -26,7 +26,7 @@
 #ifndef NPRuntimeUtilities_h
 #define NPRuntimeUtilities_h
 
-#include <WebCore/npruntime.h>
+#include <WebCore/npruntime_internal.h>
 
 struct NPClass;
 struct NPObject;

@@ -2,6 +2,19 @@
 
         Reviewed by Eric Seidel.
 
+        NPAPI headers should be included through npruntime_internal.h
+
+        https://bugs.webkit.org/show_bug.cgi?id=43620
+
+        * DerivedSources.pro:
+        * WebProcess/Plugins/NPJSObject.h:
+        * WebProcess/Plugins/NPRuntimeUtilities.h:
+        * WebProcess/Plugins/Netscape/NetscapePluginStream.h:
+
+2010-08-07  Balazs Kelemen  <kb@inf.u-szeged.hu>
+
+        Reviewed by Eric Seidel.
+
         [Qt] Build WebKit2 into a static lib
 
         https://bugs.webkit.org/show_bug.cgi?id=43621

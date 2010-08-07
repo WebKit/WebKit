@@ -27,7 +27,7 @@
 #define NPJSObject_h
 
 #include <JavaScriptCore/Protect.h>
-#include <WebCore/npruntime.h>
+#include <WebCore/npruntime_internal.h>
 #include <wtf/Noncopyable.h>
 
 namespace JSC {
