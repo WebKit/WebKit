@@ -30,6 +30,5 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,144) size 784x20
         RenderText {#text} at (0,0) size 314x19
           text run at (0,0) width 314: "This sentence contains noembed tags and should be "
-        RenderInline {NOEMBED} at (0,0) size 0x0
         RenderText {#text} at (314,0) size 69x19
           text run at (314,0) width 69: "on one line."
