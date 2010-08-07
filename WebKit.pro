@@ -3,11 +3,9 @@ CONFIG += ordered
 
 include(WebKit.pri)
 
-SUBDIRS += JavaScriptCore
-webkit2 {
-    SUBDIRS += WebKit2
-}
-SUBDIRS += WebCore
+SUBDIRS += \
+        JavaScriptCore \
+        WebCore
 
 # If the source exists, built it
 exists($$PWD/WebKitTools/QtTestBrowser): SUBDIRS += WebKitTools/QtTestBrowser
@@ -31,7 +29,7 @@ build-qtscript {
 }
 
 webkit2 {
-    exists($$PWD/WebKit2/WebProcess.pro): SUBDIRS += WebKit2/WebProcess.pro
+    exists($$PWD/WebKit2/WebKit2.pro): SUBDIRS += WebKit2/WebKit2.pro
     exists($$PWD/WebKitTools/MiniBrowser/qt/MiniBrowser.pro): SUBDIRS += WebKitTools/MiniBrowser/qt/MiniBrowser.pro
 }
 

@@ -1,3 +1,16 @@
+2010-08-07  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r64904.
+        http://trac.webkit.org/changeset/64904
+        https://bugs.webkit.org/show_bug.cgi?id=43671
+
+        Broke the Qt Windows builders. (Requested by bbandix on
+        #webkit).
+
+        * WebKit2.pri: Removed.
+        * WebKit2.pro:
+        * WebProcess.pro: Removed.
+
 2010-08-07  Balazs Kelemen  <kb@inf.u-szeged.hu>
 
         Reviewed by Eric Seidel.
