@@ -104,7 +104,7 @@
 
 2010-08-07  Dirk Schulze  <krit@webkit.org>
 
-        Not reviewed. Sort XCode project file.
+        Not reviewed. Sort Xcode project file.
 
         * WebCore.xcodeproj/project.pbxproj:
 
@@ -692,7 +692,7 @@
 
 2010-08-06  Dirk Schulze  <krit@webkit.org>
 
-        Not reviewed. Sort XCode project file.
+        Not reviewed. Sort Xcode project file.
 
         * WebCore.xcodeproj/project.pbxproj:
 
@@ -1406,7 +1406,7 @@
 
 2010-08-06  Nikolas Zimmermann  <nzimmermann@rim.com>
 
-        Not reviewed. Sort XCode project file.
+        Not reviewed. Sort Xcode project file.
 
         * WebCore.xcodeproj/project.pbxproj:
 
@@ -1598,7 +1598,7 @@
 
         Unreviewed, release build fix.
 
-        Leopard relase build is broken due to absolute path to JSIDBTransaction.cpp file present in XCode project file.
+        Leopard relase build is broken due to absolute path to JSIDBTransaction.cpp file present in Xcode project file.
         https://bugs.webkit.org/show_bug.cgi?id=43616
 
         * WebCore.xcodeproj/project.pbxproj:
@@ -2197,7 +2197,7 @@
 
 2010-08-05  Dirk Schulze  <krit@webkit.org>
 
-        Unreviewed sort of XCode project file.
+        Unreviewed sort of Xcode project file.
 
         * WebCore.xcodeproj/project.pbxproj:
 
@@ -3480,7 +3480,7 @@
 
 2010-08-04  Dirk Schulze  <krit@webkit.org>
 
-        Unreviewed sort of XCode project file.
+        Unreviewed sort of Xcode project file.
 
         * WebCore.xcodeproj/project.pbxproj:
 
@@ -5197,7 +5197,7 @@
 
 2010-08-02  Dirk Schulze  <krit@webkit.org>
 
-        Unreviewed sort of XCode project file.
+        Unreviewed sort of Xcode project file.
 
         * WebCore.xcodeproj/project.pbxproj:
 
@@ -10070,7 +10070,7 @@
 
 2010-07-26  Dirk Schulze  <krit@webkit.org>
 
-        Unreviewed sort of XCode project file.
+        Unreviewed sort of Xcode project file.
 
         * WebCore.xcodeproj/project.pbxproj:
 
@@ -12453,7 +12453,7 @@
         Unreviewed, build fix.
 
         Forgot to update the role of HitTestRequest.h in
-        the xcode project after landing patch from
+        the Xcode project after landing patch from
         https://bugs.webkit.org/show_bug.cgi?id=39493
 
         * WebCore.xcodeproj/project.pbxproj: Make HitTestRequest.h
@@ -13499,7 +13499,7 @@
 
         Reviewed by Mark Rowe.
 
-        Web Inspector: Do Not Copy *.re2js Inspector Resources in XCode Build Phase
+        Web Inspector: Do Not Copy *.re2js Inspector Resources in Xcode Build Phase
         https://bugs.webkit.org/show_bug.cgi?id=42601
 
         Remove *.re2js files after copying them over in the Build Phase. We do
@@ -18603,7 +18603,7 @@
 
         Reviewed by Darin Adler.
 
-        Add missing derrived sources to xcode project
+        Add missing derrived sources to Xcode project
         https://bugs.webkit.org/show_bug.cgi?id=42034
 
         This allows --web-timing to work with build-webkit on OSX with JSC.
@@ -24227,7 +24227,7 @@
 
 2010-07-03  Dirk Schulze  <krit@webkit.org>
 
-        Unreviewed sort of XCode project file.
+        Unreviewed sort of Xcode project file.
 
         * WebCore.xcodeproj/project.pbxproj:
 
