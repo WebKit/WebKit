@@ -113,6 +113,15 @@ bool NetscapePlugin::platformPostInitialize()
         return false;
 #endif
 
+    if (m_drawingModel == NPDrawingModelCoreAnimation) {
+        void* value = 0;
+        // Get the Core Animation layer.
+        if (NPP_GetValue(NPPVpluginCoreAnimationLayer, &value) == NPERR_NO_ERROR && value) {
+            ASSERT(!m_pluginLayer);
+            m_pluginLayer = reinterpret_cast<CALayer*>(value);
+        }
+    }
+
     return true;
 }
 
@@ -130,6 +139,10 @@ void NetscapePlugin::platformPaint(GraphicsContext* context, const IntRect& dirt
 {
     switch (m_eventModel) {
         case NPEventModelCocoa: {
+            // Don't send draw events when we're using the Core Animation drawing model.
+            if (m_drawingModel == NPDrawingModelCoreAnimation)
+                return;
+
             NPCocoaEvent event = initializeEvent(NPCocoaEventDrawRect);
 
             event.data.draw.context = context->platformContext();
@@ -306,6 +319,11 @@ void NetscapePlugin::platformSetFocus(bool hasFocus)
         default:
             ASSERT_NOT_REACHED();
     }
+}
+
+PlatformLayer* NetscapePlugin::pluginLayer()
+{
+    return static_cast<PlatformLayer*>(m_pluginLayer.get());
 }
 
 } // namespace WebKit

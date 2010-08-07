@@ -74,6 +74,11 @@ public:
     // Set the statusbar text.
     virtual void setStatusbarText(const WebCore::String&) = 0;
 
+#if USE(ACCELERATED_COMPOSITING)
+    // Return whether accelerated compositing is enabled.
+    virtual bool isAcceleratedCompositingEnabled() = 0;
+#endif
+
 protected:
     virtual ~PluginController() { }
 };

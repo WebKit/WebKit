@@ -28,6 +28,7 @@
 
 #include "NetscapePluginModule.h"
 #include "Plugin.h"
+#include <WebCore/GraphicsLayer.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/StringHash.h>
 
@@ -70,6 +71,8 @@ public:
     void cancelStreamLoad(NetscapePluginStream*);
     void removePluginStream(NetscapePluginStream*);
 
+    bool isAcceleratedCompositingEnabled();
+
     // Member functions for calling into the plug-in.
     NPError NPP_New(NPMIMEType pluginType, uint16_t mode, int16_t argc, char* argn[], char* argv[], NPSavedData*);
     NPError NPP_Destroy(NPSavedData**);
@@ -105,6 +108,9 @@ private:
     virtual bool initialize(PluginController*, const Parameters&);
     virtual void destroy();
     virtual void paint(WebCore::GraphicsContext*, const WebCore::IntRect& dirtyRect);
+#if PLATFORM(MAC)
+    virtual PlatformLayer* pluginLayer();
+#endif
     virtual void geometryDidChange(const WebCore::IntRect& frameRect, const WebCore::IntRect& clipRect);
     virtual void frameDidFinishLoading(uint64_t requestID);
     virtual void frameDidFail(uint64_t requestID, bool wasCancelled);
@@ -155,6 +161,7 @@ private:
 #if PLATFORM(MAC)
     NPDrawingModel m_drawingModel;
     NPEventModel m_eventModel;
+    RetainPtr<PlatformLayer> m_pluginLayer;
 #endif
 };
 

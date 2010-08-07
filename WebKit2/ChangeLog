@@ -1,3 +1,48 @@
+2010-08-07  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        CA drawing model support for Mac Plugins
+        https://bugs.webkit.org/show_bug.cgi?id=43678
+        <rdar://problem/7929701>
+
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::NPN_GetValue):
+        Handle WKNVSupportsCompositingCoreAnimationPluginsBool and 
+        NPNVsupportsCoreAnimationBool and return true if accelerated compositing is enabled.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::isAcceleratedCompositingEnabled):
+        Call PluginController::isAcceleratedCompositingEnabled.
+
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::platformPostInitialize):
+        If the plug-in uses the Core Animation drawing model, ask it for its layer.
+
+        (WebKit::NetscapePlugin::platformPaint):
+        Don't send draw events if the Core Animation drawing model is used.
+
+        (WebKit::NetscapePlugin::pluginLayer):
+        Return the plug-in layer.
+
+        * WebProcess/Plugins/Plugin.h:
+        Add a pluginLayer pure virtual member function.
+
+        * WebProcess/Plugins/PluginController.h:
+        Add an isAcceleratedCompositingEnabled pure virtual member function.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::initializePlugin):
+        If the plug-in has a layer, enter compositing mode.
+
+        (WebKit::PluginView::platformLayer):
+        Ask the plug-in for its layer.
+
+        (WebKit::PluginView::isAcceleratedCompositingEnabled):
+        Call Settings::acceleratedCompositingEnabled.
+
+        * WebProcess/Plugins/PluginView.h:
+
 2010-08-06  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

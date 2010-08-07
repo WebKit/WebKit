@@ -394,6 +394,11 @@ static NPError NPN_PostURLNotify(NPP npp, const char* url, const char* target, u
     return NPERR_NO_ERROR;
 }
 
+#if PLATFORM(MAC)
+/* TRUE if the browser supports hardware compositing of Core Animation plug-ins  */
+static const unsigned WKNVSupportsCompositingCoreAnimationPluginsBool = 74656;
+#endif
+
 static NPError NPN_GetValue(NPP npp, NPNVariable variable, void *value)
 {
     switch (variable) {
@@ -417,11 +422,13 @@ static NPError NPN_GetValue(NPP npp, NPNVariable variable, void *value)
             *(NPBool*)value = true;
             break;
 
-        case NPNVsupportsCoreAnimationBool:
-            // FIXME: We should support the Core Animation drawing model.
-            *(NPBool*)value = false;
+        case WKNVSupportsCompositingCoreAnimationPluginsBool:
+        case NPNVsupportsCoreAnimationBool: {
+            RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
+            
+            *(NPBool*)value = plugin->isAcceleratedCompositingEnabled();
             break;
-
+        }
         case NPNVsupportsCocoaBool:
             // Always claim to support the Cocoa event model.
             *(NPBool*)value = true;
@@ -433,7 +440,6 @@ static NPError NPN_GetValue(NPP npp, NPNVariable variable, void *value)
             *(NPBool*)value = false;
             break;
 #endif
-
 #endif
         default:
             notImplemented();

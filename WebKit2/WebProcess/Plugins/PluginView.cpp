@@ -42,6 +42,7 @@
 #include <WebCore/NetscapePlugInStreamLoader.h>
 #include <WebCore/RenderLayer.h>
 #include <WebCore/ScrollView.h>
+#include <WebCore/Settings.h>
 
 using namespace JSC;
 using namespace WebCore;
@@ -327,6 +328,26 @@ void PluginView::initializePlugin()
     }
     
     m_isInitialized = true;
+
+#if PLATFORM(MAC)
+    if (!m_plugin->pluginLayer())
+        return;
+
+    if (!frame())
+        return;
+
+    frame()->view()->enterCompositingMode();
+    m_pluginElement->setNeedsStyleRecalc(SyntheticStyleChange);
+#endif
+}
+
+PlatformLayer* PluginView::platformLayer() const
+{
+#if PLATFORM(MAC)
+    return m_plugin->pluginLayer();
+#endif
+
+    return 0;
 }
 
 JSObject* PluginView::scriptObject(JSGlobalObject* globalObject)
@@ -724,6 +745,18 @@ void PluginView::setStatusbarText(const String& statusbarText)
         return;
 
     page->chrome()->setStatusbarText(frame(), statusbarText);
+}
+
+bool PluginView::isAcceleratedCompositingEnabled()
+{
+    if (!frame())
+        return false;
+    
+    Settings* settings = frame()->settings();
+    if (!settings)
+        return false;
+
+    return settings->acceleratedCompositingEnabled();
 }
 
 void PluginView::didFinishLoad(WebFrame* webFrame)
