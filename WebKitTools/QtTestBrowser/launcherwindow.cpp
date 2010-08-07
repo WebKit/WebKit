@@ -254,7 +254,7 @@ void LauncherWindow::createChrome()
 
     QAction* toggleTiledBackingStore = graphicsViewMenu->addAction("Toggle Tiled Backing Store", this, SLOT(toggleTiledBackingStore(bool)));
     toggleTiledBackingStore->setCheckable(true);
-    toggleResizesToContents->setChecked(m_windowOptions.useTiledBackingStore);
+    toggleTiledBackingStore->setChecked(m_windowOptions.useTiledBackingStore);
     toggleTiledBackingStore->setEnabled(isGraphicsBased());
     toggleTiledBackingStore->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
 
