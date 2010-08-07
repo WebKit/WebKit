@@ -341,14 +341,12 @@ void PluginView::initializePlugin()
 #endif
 }
 
+#if PLATFORM(MAC)
 PlatformLayer* PluginView::platformLayer() const
 {
-#if PLATFORM(MAC)
     return m_plugin->pluginLayer();
-#endif
-
-    return 0;
 }
+#endif
 
 JSObject* PluginView::scriptObject(JSGlobalObject* globalObject)
 {

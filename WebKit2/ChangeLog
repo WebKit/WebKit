@@ -1,5 +1,13 @@
 2010-08-07  Sam Weinig  <sam@webkit.org>
 
+        Fix windows build.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::platformLayer):
+        * WebProcess/Plugins/PluginView.h:
+
+2010-08-07  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Anders Carlsson.
 
         WebKitTestRunner needs GCController
