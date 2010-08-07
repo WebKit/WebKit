@@ -1,5 +1,12 @@
 2010-08-07  Sam Weinig  <sam@webkit.org>
 
+        Another fix for the windows build.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::isAcceleratedCompositingEnabled):
+
+2010-08-07  Sam Weinig  <sam@webkit.org>
+
         Fix windows build.
 
         * WebProcess/Plugins/PluginView.cpp:
