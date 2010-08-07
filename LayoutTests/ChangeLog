@@ -1,3 +1,16 @@
+2010-08-07  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium]: Added port-specific expectations after http://trac.webkit.org/changeset/64901.
+        https://bugs.webkit.org/show_bug.cgi?id=41596
+
+        * platform/chromium-linux/http/tests/misc/slow-loading-image-in-pattern-expected.checksum: Added.
+        * platform/chromium-linux/http/tests/misc/slow-loading-image-in-pattern-expected.png: Added.
+        * platform/chromium-mac/http/tests/misc/slow-loading-image-in-pattern-expected.checksum: Added.
+        * platform/chromium-mac/http/tests/misc/slow-loading-image-in-pattern-expected.png: Added.
+        * platform/chromium-win/http/tests/misc/slow-loading-image-in-pattern-expected.checksum: Added.
+        * platform/chromium-win/http/tests/misc/slow-loading-image-in-pattern-expected.png: Added.
+        * platform/chromium-win/http/tests/misc/slow-loading-image-in-pattern-expected.txt: Added.
+
 2010-08-07  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, test expectation update.
