@@ -32,6 +32,8 @@ private:
     typedef uint32_t WordType;
 
 public:
+    Bitmap();
+
     bool get(size_t) const;
     void set(size_t);
     void clear(size_t);
@@ -54,6 +56,12 @@ private:
 
     FixedArray<WordType, words> bits;
 };
+
+template<size_t size>
+inline Bitmap<size>::Bitmap()
+{
+    clearAll();
+}
 
 template<size_t size>
 inline bool Bitmap<size>::get(size_t n) const
