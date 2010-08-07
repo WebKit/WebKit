@@ -64,7 +64,7 @@ static void showGlyphsWithAdvances(const FontPlatformData& font, CGContextRef co
             positions[i].x = positions[i - 1].x + advance.width;
             positions[i].y = positions[i - 1].y + advance.height;
         }
-        CTFontDrawGlyphs(toCTFontRef(font.font()), glyphs, positions.data(), count, context);
+        CTFontDrawGlyphs(font.ctFont(), glyphs, positions.data(), count, context);
     }
 #endif
 }
