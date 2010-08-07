@@ -1,3 +1,15 @@
+2010-08-07  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        document->documentElement can always be null
+        https://bugs.webkit.org/show_bug.cgi?id=43677
+
+        This ASSERT is bogus.
+
+        * css/StyleMedia.cpp:
+        (WebCore::StyleMedia::matchMedium):
+
 2010-08-07  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson.

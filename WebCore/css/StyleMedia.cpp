@@ -56,7 +56,8 @@ bool StyleMedia::matchMedium(const String& query) const
     Document* document = m_frame->document();
     ASSERT(document);
     Element* documentElement = document->documentElement();
-    ASSERT(documentElement);
+    if (!documentElement)
+        return false;
 
     CSSStyleSelector* styleSelector = document->styleSelector();
     if (!styleSelector)
