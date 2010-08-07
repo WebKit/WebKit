@@ -1,5 +1,24 @@
 2010-08-07  Dirk Schulze  <krit@webkit.org>
 
+        Unreviewed build-fix.
+
+        Come up with a more efficient way to represent Path segments
+        https://bugs.webkit.org/show_bug.cgi?id=41159
+
+        Landed wrong version of the patch.
+
+        * svg/SVGPathByteStreamSource.cpp:
+        (WebCore::SVGPathByteStreamSource::SVGPathByteStreamSource):
+        (WebCore::SVGPathByteStreamSource::hasMoreData):
+        * svg/SVGPathByteStreamSource.h:
+        (WebCore::SVGPathByteStreamSource::moveToNextToken):
+        * svg/SVGPathParserFactory.cpp:
+        (WebCore::SVGPathParserFactory::buildSVGPathSegListFromByteStream):
+        (WebCore::SVGPathParserFactory::createSVGPathByteStreamFromString):
+        * svg/SVGPathParserFactory.h:
+
+2010-08-07  Dirk Schulze  <krit@webkit.org>
+
         Reviewed by Nikolas Zimmermann.
 
         Come up with a more efficient way to represent Path segments

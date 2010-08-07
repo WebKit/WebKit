@@ -26,7 +26,7 @@
 #include "SVGPathConsumer.h"
 #include "SVGPathSegList.h"
 #include "SVGPathByteStream.h"
-#include <OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
