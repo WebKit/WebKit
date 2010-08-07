@@ -49441,6 +49441,18 @@
 				>
 			</File>
 			<File
+				RelativePath="..\svg\SVGPathByteStream.h"
+				>
+			</File>
+			<File
+				RelativePath="..\svg\SVGPathByteStreamBuilder.h"
+				>
+			</File>
+			<File
+				RelativePath="..\svg\SVGPathByteStreamSource.h"
+				>
+			</File>
+			<File
 				RelativePath="..\svg\SVGPathConsumer.h"
 				>
 			</File>

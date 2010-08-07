@@ -1,5 +1,77 @@
 2010-08-07  Dirk Schulze  <krit@webkit.org>
 
+        Reviewed by Nikolas Zimmermann.
+
+        Come up with a more efficient way to represent Path segments
+        https://bugs.webkit.org/show_bug.cgi?id=41159
+
+        Introduce SVGPathByteStream as a fast and efficient way to organize the synchronization
+        of Path, SVG path data string and SVGPathSegList in normalized and unaltered modes.
+        Extended SVGPathParserFactory to accept SVGPathByteStreams as input source and to create
+        a SVGPathByteStream from a SVG path data string.
+
+        Doesn't affect any tests.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * svg/SVGAllInOne.cpp:
+        * svg/SVGPathByteStream.h: Added.
+        (WebCore::):
+        (WebCore::SVGPathByteStream::create):
+        (WebCore::SVGPathByteStream::data):
+        (WebCore::SVGPathByteStream::begin):
+        (WebCore::SVGPathByteStream::end):
+        (WebCore::SVGPathByteStream::append):
+        (WebCore::SVGPathByteStream::clear):
+        (WebCore::SVGPathByteStream::isEmpty):
+        (WebCore::SVGPathByteStream::SVGPathByteStream):
+        * svg/SVGPathByteStreamBuilder.cpp: Added.
+        (WebCore::SVGPathByteStreamBuilder::SVGPathByteStreamBuilder):
+        (WebCore::SVGPathByteStreamBuilder::moveTo):
+        (WebCore::SVGPathByteStreamBuilder::lineTo):
+        (WebCore::SVGPathByteStreamBuilder::lineToHorizontal):
+        (WebCore::SVGPathByteStreamBuilder::lineToVertical):
+        (WebCore::SVGPathByteStreamBuilder::curveToCubic):
+        (WebCore::SVGPathByteStreamBuilder::curveToCubicSmooth):
+        (WebCore::SVGPathByteStreamBuilder::curveToQuadratic):
+        (WebCore::SVGPathByteStreamBuilder::curveToQuadraticSmooth):
+        (WebCore::SVGPathByteStreamBuilder::arcTo):
+        (WebCore::SVGPathByteStreamBuilder::closePath):
+        * svg/SVGPathByteStreamBuilder.h: Added.
+        (WebCore::SVGPathByteStreamBuilder::setCurrentByteStream):
+        (WebCore::SVGPathByteStreamBuilder::writeType):
+        (WebCore::SVGPathByteStreamBuilder::writeFlag):
+        (WebCore::SVGPathByteStreamBuilder::writeFloat):
+        (WebCore::SVGPathByteStreamBuilder::writeFloatPoint):
+        (WebCore::SVGPathByteStreamBuilder::writeSegmentType):
+        * svg/SVGPathByteStreamSource.cpp: Added.
+        (WebCore::SVGPathByteStreamSource::SVGPathByteStreamSource):
+        (WebCore::SVGPathByteStreamSource::~SVGPathByteStreamSource):
+        (WebCore::SVGPathByteStreamSource::hasMoreData):
+        (WebCore::SVGPathByteStreamSource::parseFloat):
+        (WebCore::SVGPathByteStreamSource::parseFlag):
+        (WebCore::SVGPathByteStreamSource::parseSVGSegmentType):
+        (WebCore::SVGPathByteStreamSource::nextCommand):
+        * svg/SVGPathByteStreamSource.h: Added.
+        (WebCore::SVGPathByteStreamSource::create):
+        (WebCore::SVGPathByteStreamSource::readType):
+        (WebCore::SVGPathByteStreamSource::readFlag):
+        (WebCore::SVGPathByteStreamSource::readFloat):
+        (WebCore::SVGPathByteStreamSource::readSVGSegmentType):
+        (WebCore::SVGPathByteStreamSource::readFloatPoint):
+        * svg/SVGPathParserFactory.cpp:
+        (WebCore::globalSVGPathByteStreamBuilder):
+        (WebCore::SVGPathParserFactory::buildPathFromByteStream):
+        (WebCore::SVGPathParserFactory::buildSVGPathSegListFromByteStream):
+        (WebCore::SVGPathParserFactory::buildSVGPathByteStreamFromString):
+        * svg/SVGPathParserFactory.h:
+
+2010-08-07  Dirk Schulze  <krit@webkit.org>
+
         Not reviewed. Sort XCode project file.
 
         * WebCore.xcodeproj/project.pbxproj:

@@ -17,37 +17,55 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGPathParserFactory_h
-#define SVGPathParserFactory_h
+#include "config.h"
 
 #if ENABLE(SVG)
-#include "Path.h"
+#include "SVGPathByteStreamSource.h"
+
 #include "PlatformString.h"
-#include "SVGPathConsumer.h"
-#include "SVGPathSegList.h"
-#include "SVGPathByteStream.h"
-#include <OwnPtr.h>
 
 namespace WebCore {
 
-class SVGPathParserFactory {
-public:
-    static SVGPathParserFactory* self();
+SVGPathByteStreamSource::SVGPathByteStreamSource(SVGPathByteStream* stream)
+    : m_stream(stream)
+    , m_streamCurrent(stream->begin())
+    , m_streamEnd(stream->end())
+{
+    ASSERT(stream);
+}
 
-    bool buildPathFromString(const String&, Path&);
-    bool buildPathFromByteStream(SVGPathByteStream*, Path& result);
+SVGPathByteStreamSource::~SVGPathByteStreamSource()
+{
+}
 
-    bool buildSVGPathSegListFromString(const String&, SVGPathSegList*, PathParsingMode);
-    bool buildSVGPathSegListFromByteStream(SVGPathByteStream*, SVGPathSegList*, PathParsingMode);
+bool SVGPathByteStreamSource::hasMoreData() const
+{
+    return (m_streamCurrent < m_streamEnd);
+}
 
-    PassOwnPtr<SVGPathByteStream> createSVGPathByteStreamFromString(const String&, PathParsingMode, bool& ok);
+bool SVGPathByteStreamSource::parseFloat(float& result)
+{
+    result = readFloat();
+    return true;
+}
 
-private:
-    SVGPathParserFactory();
-    ~SVGPathParserFactory();
-};
+bool SVGPathByteStreamSource::parseFlag(bool& result)
+{
+    result = readFlag();
+    return true;
+}
 
-} // namespace WebCore
+bool SVGPathByteStreamSource::parseSVGSegmentType(SVGPathSegType& pathSegType)
+{
+    pathSegType = static_cast<SVGPathSegType>(readSVGSegmentType());
+    return true;
+}
+
+SVGPathSegType SVGPathByteStreamSource::nextCommand(SVGPathSegType)
+{
+    return static_cast<SVGPathSegType>(readSVGSegmentType());
+}
+
+}
 
 #endif // ENABLE(SVG)
-#endif // SVGPathParserFactory_h

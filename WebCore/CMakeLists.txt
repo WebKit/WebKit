@@ -1679,6 +1679,8 @@ IF (ENABLE_SVG)
         svg/SVGPaint.cpp
         svg/SVGParserUtilities.cpp
         svg/SVGPathBuilder.cpp
+        svg/SVGPathByteStreamBuilder.cpp
+        svg/SVGPathByteStreamSource.cpp
         svg/SVGPathElement.cpp
         svg/SVGPathParser.cpp
         svg/SVGPathParserFactory.cpp

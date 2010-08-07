@@ -108,6 +108,8 @@
 #include "SVGPaint.cpp"
 #include "SVGParserUtilities.cpp"
 #include "SVGPathBuilder.cpp"
+#include "SVGPathByteStreamBuilder.cpp"
+#include "SVGPathByteStreamSource.cpp"
 #include "SVGPathElement.cpp"
 #include "SVGPathParser.cpp"
 #include "SVGPathParserFactory.cpp"

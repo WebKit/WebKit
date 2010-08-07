@@ -4074,6 +4074,11 @@ webcore_sources += \
 	WebCore/svg/SVGParserUtilities.h \
 	WebCore/svg/SVGPathBuilder.cpp \
 	WebCore/svg/SVGPathBuilder.h \
+	WebCore/svg/SVGPathByteStream.h \
+	WebCore/svg/SVGPathByteStreamBuilder.cpp \
+	WebCore/svg/SVGPathByteStreamBuilder.h \
+	WebCore/svg/SVGPathByteStreamSource.cpp \
+	WebCore/svg/SVGPathByteStreamSource.h \
 	WebCore/svg/SVGPathConsumer.h \
 	WebCore/svg/SVGPathElement.cpp \
 	WebCore/svg/SVGPathElement.h \
