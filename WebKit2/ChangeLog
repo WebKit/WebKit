@@ -1,5 +1,31 @@
 2010-08-07  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Anders Carlsson.
+
+        Add additional loader client functions need to complete WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=43684
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp:
+        (WebKit::InjectedBundlePageLoaderClient::didCancelClientRedirectForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::willPerformClientRedirectForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didChangeLocationWithinPageForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didFinishDocumentLoadForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didHandleOnloadEventsForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didDisplayInsecureContentForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didRunInsecureContentForFrame):
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidHandleOnloadEvents):
+        (WebKit::WebFrameLoaderClient::dispatchDidCancelClientRedirect):
+        (WebKit::WebFrameLoaderClient::dispatchWillPerformClientRedirect):
+        (WebKit::WebFrameLoaderClient::dispatchDidChangeLocationWithinPage):
+        (WebKit::WebFrameLoaderClient::dispatchDidFinishDocumentLoad):
+        (WebKit::WebFrameLoaderClient::didDisplayInsecureContent):
+        (WebKit::WebFrameLoaderClient::didRunInsecureContent):
+
+2010-08-07  Sam Weinig  <sam@webkit.org>
+
         Another fix for the windows build.
 
         * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:

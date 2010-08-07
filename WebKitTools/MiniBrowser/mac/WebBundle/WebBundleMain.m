@@ -35,37 +35,9 @@
 
 static WKBundleRef globalBundle;
 
-// WKBundlePageClient
+// WKBundlePageClient functions
 
-void didStartProvisionalLoadForFrame(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo)
-{
-}
-
-void didReceiveServerRedirectForProvisionalLoadForFrame(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo)
-{
-}
-
-void didFailProvisionalLoadWithErrorForFrame(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo)
-{
-}
-
-void didCommitLoadForFrame(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo)
-{
-}
-
-void didFinishLoadForFrame(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo)
-{
-}
-
-void didFailLoadWithErrorForFrame(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo)
-{
-}
-
-void didReceiveTitleForFrame(WKBundlePageRef page, WKStringRef title, WKBundleFrameRef frame, const void *clientInfo)
-{
-}
-
-void didClearWindowForFrame(WKBundlePageRef page, WKBundleFrameRef frame, JSGlobalContextRef context, JSObjectRef window, const void *clientInfo)
+void didClearWindowObjectForFrame(WKBundlePageRef page, WKBundleFrameRef frame, JSGlobalContextRef context, JSObjectRef window, const void *clientInfo)
 {
     WKURLRef wkURL = WKBundleFrameCopyURL(WKBundlePageGetMainFrame(page));
     CFURLRef cfURL = WKURLCopyCFURL(0, wkURL);
@@ -88,18 +60,10 @@ void didCreatePage(WKBundleRef bundle, WKBundlePageRef page, const void* clientI
 {
     LOG(@"WKBundleClient - didCreatePage\n");
 
-    WKBundlePageLoaderClient client = {
-        0,
-        0,
-        didStartProvisionalLoadForFrame,
-        didReceiveServerRedirectForProvisionalLoadForFrame,
-        didFailProvisionalLoadWithErrorForFrame,
-        didCommitLoadForFrame,
-        didFinishLoadForFrame,
-        didFailLoadWithErrorForFrame,
-        didReceiveTitleForFrame,
-        didClearWindowForFrame
-    };
+    WKBundlePageLoaderClient client;
+    memset(&client, 0, sizeof(client));
+    client.didClearWindowObjectForFrame = didClearWindowObjectForFrame;
+
     WKBundlePageSetLoaderClient(page, &client);
 }
 

@@ -51,6 +51,13 @@ public:
     void didFailLoadWithErrorForFrame(WebPage*, WebFrame*);
     void didReceiveTitleForFrame(WebPage*, const WebCore::String&, WebFrame*);
     void didClearWindowObjectForFrame(WebPage*, WebFrame*, JSGlobalContextRef, JSObjectRef);
+    void didCancelClientRedirectForFrame(WebPage*, WebFrame*);
+    void willPerformClientRedirectForFrame(WebPage*, WebFrame*, const WebCore::String& url, double delay, double date);
+    void didChangeLocationWithinPageForFrame(WebPage*, WebFrame*);
+    void didFinishDocumentLoadForFrame(WebPage*, WebFrame*);
+    void didHandleOnloadEventsForFrame(WebPage*, WebFrame*);
+    void didDisplayInsecureContentForFrame(WebPage*, WebFrame*);
+    void didRunInsecureContentForFrame(WebPage*, WebFrame*);
 
 private:
     WKBundlePageLoaderClient m_client;

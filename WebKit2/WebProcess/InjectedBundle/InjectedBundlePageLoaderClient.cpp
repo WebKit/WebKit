@@ -94,4 +94,46 @@ void InjectedBundlePageLoaderClient::didClearWindowObjectForFrame(WebPage* page,
         m_client.didClearWindowObjectForFrame(toRef(page), toRef(frame), context, window, m_client.clientInfo);
 }
 
+void InjectedBundlePageLoaderClient::didCancelClientRedirectForFrame(WebPage* page, WebFrame* frame)
+{
+    if (m_client.didCancelClientRedirectForFrame)
+        m_client.didCancelClientRedirectForFrame(toRef(page), toRef(frame), m_client.clientInfo);
+}
+
+void InjectedBundlePageLoaderClient::willPerformClientRedirectForFrame(WebPage* page, WebFrame* frame, const WebCore::String& url, double delay, double date)
+{
+    if (m_client.willPerformClientRedirectForFrame)
+        m_client.willPerformClientRedirectForFrame(toRef(page), toRef(frame), toURLRef(url.impl()), delay, date, m_client.clientInfo);
+}
+
+void InjectedBundlePageLoaderClient::didChangeLocationWithinPageForFrame(WebPage* page, WebFrame* frame)
+{
+    if (m_client.didChangeLocationWithinPageForFrame)
+        m_client.didChangeLocationWithinPageForFrame(toRef(page), toRef(frame), m_client.clientInfo);
+}
+
+void InjectedBundlePageLoaderClient::didFinishDocumentLoadForFrame(WebPage* page, WebFrame* frame)
+{
+    if (m_client.didFinishDocumentLoadForFrame)
+        m_client.didFinishDocumentLoadForFrame(toRef(page), toRef(frame), m_client.clientInfo);
+}
+
+void InjectedBundlePageLoaderClient::didHandleOnloadEventsForFrame(WebPage* page, WebFrame* frame)
+{
+    if (m_client.didHandleOnloadEventsForFrame)
+        m_client.didHandleOnloadEventsForFrame(toRef(page), toRef(frame), m_client.clientInfo);
+}
+
+void InjectedBundlePageLoaderClient::didDisplayInsecureContentForFrame(WebPage* page, WebFrame* frame)
+{
+    if (m_client.didDisplayInsecureContentForFrame)
+        m_client.didDisplayInsecureContentForFrame(toRef(page), toRef(frame), m_client.clientInfo);
+}
+
+void InjectedBundlePageLoaderClient::didRunInsecureContentForFrame(WebPage* page, WebFrame* frame)
+{
+    if (m_client.didRunInsecureContentForFrame)
+        m_client.didRunInsecureContentForFrame(toRef(page), toRef(frame), m_client.clientInfo);
+}
+
 } // namespace WebKit

@@ -78,42 +78,49 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
     WKBundlePageLoaderClient loaderClient = {
         0,
         this,
-        _didStartProvisionalLoadForFrame,
-        _didReceiveServerRedirectForProvisionalLoadForFrame,
-        _didFailProvisionalLoadWithErrorForFrame,
-        _didCommitLoadForFrame,
-        _didFinishLoadForFrame,
-        _didFailLoadWithErrorForFrame,
-        _didReceiveTitleForFrame,
-        _didClearWindowForFrame
+        didStartProvisionalLoadForFrame,
+        didReceiveServerRedirectForProvisionalLoadForFrame,
+        didFailProvisionalLoadWithErrorForFrame,
+        didCommitLoadForFrame,
+        didFinishLoadForFrame,
+        didFailLoadWithErrorForFrame,
+        didReceiveTitleForFrame,
+        didClearWindowForFrame,
+        didCancelClientRedirectForFrame,
+        willPerformClientRedirectForFrame,
+        didChangeLocationWithinPageForFrame,
+        didFinishDocumentLoadForFrame,
+        didHandleOnloadEventsForFrame,
+        didDisplayInsecureContentForFrame,
+        didRunInsecureContentForFrame
     };
     WKBundlePageSetLoaderClient(m_page, &loaderClient);
 
     WKBundlePageUIClient uiClient = {
         0,
         this,
-        _willAddMessageToConsole,
-        _willSetStatusbarText,
-        _willRunJavaScriptAlert,
-        _willRunJavaScriptConfirm,
-        _willRunJavaScriptPrompt
+        willAddMessageToConsole,
+        willSetStatusbarText,
+        willRunJavaScriptAlert,
+        willRunJavaScriptConfirm,
+        willRunJavaScriptPrompt
     };
     WKBundlePageSetUIClient(m_page, &uiClient);
 
     WKBundlePageEditorClient editorClient = {
         0,
         this,
-        _shouldBeginEditing,
-        _shouldEndEditing,
-        _shouldInsertNode,
-        _shouldInsertText,
-        _shouldDeleteRange,
-        _shouldChangeSelectedRange,
-        _shouldApplyStyle,
-        _didBeginEditing,
-        _didEndEditing,
-        _didChange,
-        _didChangeSelection
+        shouldBeginEditing,
+        shouldEndEditing,
+        shouldInsertNode,
+        shouldInsertText,
+        shouldDeleteRange,
+        shouldChangeSelectedRange,
+        shouldApplyStyle,
+        didBeginEditing,
+        didEndEditing,
+        didChange,
+        didChangeSelection
     };
     WKBundlePageSetEditorClient(m_page, &editorClient);
 }
@@ -129,45 +136,81 @@ void InjectedBundlePage::reset()
 
 // Loader Client Callbacks
 
-void InjectedBundlePage::_didStartProvisionalLoadForFrame(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo)
+void InjectedBundlePage::didStartProvisionalLoadForFrame(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo)
 {
     static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didStartProvisionalLoadForFrame(frame);
 }
 
-void InjectedBundlePage::_didReceiveServerRedirectForProvisionalLoadForFrame(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo)
+void InjectedBundlePage::didReceiveServerRedirectForProvisionalLoadForFrame(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo)
 {
     static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didReceiveServerRedirectForProvisionalLoadForFrame(frame);
 }
 
-void InjectedBundlePage::_didFailProvisionalLoadWithErrorForFrame(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo)
+void InjectedBundlePage::didFailProvisionalLoadWithErrorForFrame(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo)
 {
     static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didFailProvisionalLoadWithErrorForFrame(frame);
 }
 
-void InjectedBundlePage::_didCommitLoadForFrame(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo)
+void InjectedBundlePage::didCommitLoadForFrame(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo)
 {
     static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didCommitLoadForFrame(frame);
 }
 
-void InjectedBundlePage::_didFinishLoadForFrame(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo)
+void InjectedBundlePage::didFinishLoadForFrame(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo)
 {
     static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didFinishLoadForFrame(frame);
 }
 
-void InjectedBundlePage::_didFailLoadWithErrorForFrame(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo)
+void InjectedBundlePage::didFailLoadWithErrorForFrame(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo)
 {
     static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didFailLoadWithErrorForFrame(frame);
 }
 
-void InjectedBundlePage::_didReceiveTitleForFrame(WKBundlePageRef page, WKStringRef title, WKBundleFrameRef frame, const void *clientInfo)
+void InjectedBundlePage::didReceiveTitleForFrame(WKBundlePageRef page, WKStringRef title, WKBundleFrameRef frame, const void *clientInfo)
 {
     static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didReceiveTitleForFrame(title, frame);
 }
 
-void InjectedBundlePage::_didClearWindowForFrame(WKBundlePageRef page, WKBundleFrameRef frame, JSGlobalContextRef context, JSObjectRef window, const void *clientInfo)
+void InjectedBundlePage::didClearWindowForFrame(WKBundlePageRef page, WKBundleFrameRef frame, JSGlobalContextRef context, JSObjectRef window, const void *clientInfo)
 {
     static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didClearWindowForFrame(frame, context, window);
 }
+
+void InjectedBundlePage::didCancelClientRedirectForFrame(WKBundlePageRef page, WKBundleFrameRef frame, const void* clientInfo)
+{
+    static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didCancelClientRedirectForFrame(frame);
+}
+
+void InjectedBundlePage::willPerformClientRedirectForFrame(WKBundlePageRef page, WKBundleFrameRef frame, WKURLRef url, double delay, double date, const void* clientInfo)
+{
+    static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->willPerformClientRedirectForFrame(frame, url, delay, date);
+}
+
+void InjectedBundlePage::didChangeLocationWithinPageForFrame(WKBundlePageRef page, WKBundleFrameRef frame, const void* clientInfo)
+{
+    static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didChangeLocationWithinPageForFrame(frame);
+}
+
+void InjectedBundlePage::didFinishDocumentLoadForFrame(WKBundlePageRef page, WKBundleFrameRef frame, const void* clientInfo)
+{
+    static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didFinishDocumentLoadForFrame(frame);
+}
+
+void InjectedBundlePage::didHandleOnloadEventsForFrame(WKBundlePageRef page, WKBundleFrameRef frame, const void* clientInfo)
+{
+    static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didHandleOnloadEventsForFrame(frame);
+}
+
+void InjectedBundlePage::didDisplayInsecureContentForFrame(WKBundlePageRef page, WKBundleFrameRef frame, const void* clientInfo)
+{
+    static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didDisplayInsecureContentForFrame(frame);
+}
+
+void InjectedBundlePage::didRunInsecureContentForFrame(WKBundlePageRef page, WKBundleFrameRef frame, const void* clientInfo)
+{
+    static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didRunInsecureContentForFrame(frame);
+}
+
 
 void InjectedBundlePage::didStartProvisionalLoadForFrame(WKBundleFrameRef frame)
 {
@@ -331,29 +374,57 @@ void InjectedBundlePage::didClearWindowForFrame(WKBundleFrameRef frame, JSGlobal
     InjectedBundle::shared().gcController()->makeWindowObject(context, window, &exception);
 }
 
+void InjectedBundlePage::didCancelClientRedirectForFrame(WKBundleFrameRef frame)
+{
+}
+
+void InjectedBundlePage::willPerformClientRedirectForFrame(WKBundleFrameRef frame, WKURLRef url, double delay, double date)
+{
+}
+
+void InjectedBundlePage::didChangeLocationWithinPageForFrame(WKBundleFrameRef frame)
+{
+}
+
+void InjectedBundlePage::didFinishDocumentLoadForFrame(WKBundleFrameRef frame)
+{
+}
+
+void InjectedBundlePage::didHandleOnloadEventsForFrame(WKBundleFrameRef frame)
+{
+}
+
+void InjectedBundlePage::didDisplayInsecureContentForFrame(WKBundleFrameRef frame)
+{
+}
+
+void InjectedBundlePage::didRunInsecureContentForFrame(WKBundleFrameRef frame)
+{
+}
+
 // UI Client Callbacks
 
-void InjectedBundlePage::_willAddMessageToConsole(WKBundlePageRef page, WKStringRef message, uint32_t lineNumber, const void *clientInfo)
+void InjectedBundlePage::willAddMessageToConsole(WKBundlePageRef page, WKStringRef message, uint32_t lineNumber, const void *clientInfo)
 {
     static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->willAddMessageToConsole(message, lineNumber);
 }
 
-void InjectedBundlePage::_willSetStatusbarText(WKBundlePageRef page, WKStringRef statusbarText, const void *clientInfo)
+void InjectedBundlePage::willSetStatusbarText(WKBundlePageRef page, WKStringRef statusbarText, const void *clientInfo)
 {
     static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->willSetStatusbarText(statusbarText);
 }
 
-void InjectedBundlePage::_willRunJavaScriptAlert(WKBundlePageRef page, WKStringRef message, WKBundleFrameRef frame, const void *clientInfo)
+void InjectedBundlePage::willRunJavaScriptAlert(WKBundlePageRef page, WKStringRef message, WKBundleFrameRef frame, const void *clientInfo)
 {
     static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->willRunJavaScriptAlert(message, frame);
 }
 
-void InjectedBundlePage::_willRunJavaScriptConfirm(WKBundlePageRef page, WKStringRef message, WKBundleFrameRef frame, const void *clientInfo)
+void InjectedBundlePage::willRunJavaScriptConfirm(WKBundlePageRef page, WKStringRef message, WKBundleFrameRef frame, const void *clientInfo)
 {
     return static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->willRunJavaScriptConfirm(message, frame);
 }
 
-void InjectedBundlePage::_willRunJavaScriptPrompt(WKBundlePageRef page, WKStringRef message, WKStringRef defaultValue, WKBundleFrameRef frame, const void *clientInfo)
+void InjectedBundlePage::willRunJavaScriptPrompt(WKBundlePageRef page, WKStringRef message, WKStringRef defaultValue, WKBundleFrameRef frame, const void *clientInfo)
 {
     static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->willRunJavaScriptPrompt(message, defaultValue, frame);
 }
@@ -389,57 +460,57 @@ void InjectedBundlePage::willRunJavaScriptPrompt(WKStringRef message, WKStringRe
 
 // Editor Client Callbacks
 
-bool InjectedBundlePage::_shouldBeginEditing(WKBundlePageRef page, WKBundleRangeRef range, const void* clientInfo)
+bool InjectedBundlePage::shouldBeginEditing(WKBundlePageRef page, WKBundleRangeRef range, const void* clientInfo)
 {
     return static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->shouldBeginEditing(range);
 }
 
-bool InjectedBundlePage::_shouldEndEditing(WKBundlePageRef page, WKBundleRangeRef range, const void* clientInfo)
+bool InjectedBundlePage::shouldEndEditing(WKBundlePageRef page, WKBundleRangeRef range, const void* clientInfo)
 {
     return static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->shouldEndEditing(range);
 }
 
-bool InjectedBundlePage::_shouldInsertNode(WKBundlePageRef page, WKBundleNodeRef node, WKBundleRangeRef rangeToReplace, WKInsertActionType action, const void* clientInfo)
+bool InjectedBundlePage::shouldInsertNode(WKBundlePageRef page, WKBundleNodeRef node, WKBundleRangeRef rangeToReplace, WKInsertActionType action, const void* clientInfo)
 {
     return static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->shouldInsertNode(node, rangeToReplace, action);
 }
 
-bool InjectedBundlePage::_shouldInsertText(WKBundlePageRef page, WKStringRef text, WKBundleRangeRef rangeToReplace, WKInsertActionType action, const void* clientInfo)
+bool InjectedBundlePage::shouldInsertText(WKBundlePageRef page, WKStringRef text, WKBundleRangeRef rangeToReplace, WKInsertActionType action, const void* clientInfo)
 {
     return static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->shouldInsertText(text, rangeToReplace, action);
 }
 
-bool InjectedBundlePage::_shouldDeleteRange(WKBundlePageRef page, WKBundleRangeRef range, const void* clientInfo)
+bool InjectedBundlePage::shouldDeleteRange(WKBundlePageRef page, WKBundleRangeRef range, const void* clientInfo)
 {
     return static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->shouldDeleteRange(range);
 }
 
-bool InjectedBundlePage::_shouldChangeSelectedRange(WKBundlePageRef page, WKBundleRangeRef fromRange, WKBundleRangeRef toRange, WKAffinityType affinity, bool stillSelecting, const void* clientInfo)
+bool InjectedBundlePage::shouldChangeSelectedRange(WKBundlePageRef page, WKBundleRangeRef fromRange, WKBundleRangeRef toRange, WKAffinityType affinity, bool stillSelecting, const void* clientInfo)
 {
     return static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->shouldChangeSelectedRange(fromRange, toRange, affinity, stillSelecting);
 }
 
-bool InjectedBundlePage::_shouldApplyStyle(WKBundlePageRef page, WKBundleCSSStyleDeclarationRef style, WKBundleRangeRef range, const void* clientInfo)
+bool InjectedBundlePage::shouldApplyStyle(WKBundlePageRef page, WKBundleCSSStyleDeclarationRef style, WKBundleRangeRef range, const void* clientInfo)
 {
     return static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->shouldApplyStyle(style, range);
 }
 
-void InjectedBundlePage::_didBeginEditing(WKBundlePageRef page, WKStringRef notificationName, const void* clientInfo)
+void InjectedBundlePage::didBeginEditing(WKBundlePageRef page, WKStringRef notificationName, const void* clientInfo)
 {
     static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didBeginEditing(notificationName);
 }
 
-void InjectedBundlePage::_didEndEditing(WKBundlePageRef page, WKStringRef notificationName, const void* clientInfo)
+void InjectedBundlePage::didEndEditing(WKBundlePageRef page, WKStringRef notificationName, const void* clientInfo)
 {
     static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didEndEditing(notificationName);
 }
 
-void InjectedBundlePage::_didChange(WKBundlePageRef page, WKStringRef notificationName, const void* clientInfo)
+void InjectedBundlePage::didChange(WKBundlePageRef page, WKStringRef notificationName, const void* clientInfo)
 {
     static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didChange(notificationName);
 }
 
-void InjectedBundlePage::_didChangeSelection(WKBundlePageRef page, WKStringRef notificationName, const void* clientInfo)
+void InjectedBundlePage::didChangeSelection(WKBundlePageRef page, WKStringRef notificationName, const void* clientInfo)
 {
     static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didChangeSelection(notificationName);
 }
