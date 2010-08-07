@@ -1,3 +1,116 @@
+2010-08-06  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Generalize SVGPathParser to allow more than just strings as input source
+        https://bugs.webkit.org/show_bug.cgi?id=43618
+
+        Generalize SVGPathParser, by allowing different parsing sources than just strings.
+        For now only a SVGPathStringSource is available, parsing from bytestreams follows soon.
+        Each client that wants to parse strings, like Path or SVGPathSegList objects, only
+        needs to use the new central SVGPathParserFactory, which glues consumer and sources together.
+        Moved the SVGPathSegType enum from SVGPathSeg class in WebCore namespace, for
+        easier access throughout the SVG code.
+
+        Doesn't affect any tests.
+
+        * Android.mk:
+        * CMakeLists.txt
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj
+        * svg/SVGAllInOne.cpp:
+        * svg/SVGAnimateElement.cpp:
+        (WebCore::SVGAnimateElement::calculateFromAndToValues):
+        * svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::parseMappedAttribute):
+        * svg/SVGGlyphElement.cpp:
+        (WebCore::parsePathData):
+        * svg/SVGPathBuilder.cpp:
+        (WebCore::SVGPathBuilder::SVGPathBuilder):
+        (WebCore::SVGPathBuilder::moveTo):
+        (WebCore::SVGPathBuilder::lineTo):
+        (WebCore::SVGPathBuilder::curveToCubic):
+        (WebCore::SVGPathBuilder::closePath):
+        * svg/SVGPathBuilder.h:
+        (WebCore::SVGPathBuilder::setCurrentPath):
+        (WebCore::SVGPathBuilder::arcTo):
+        * svg/SVGPathConsumer.h:
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::parseMappedAttribute):
+        * svg/SVGPathParser.cpp:
+        (WebCore::SVGPathParser::SVGPathParser):
+        (WebCore::SVGPathParser::parseClosePathSegment):
+        (WebCore::SVGPathParser::parseMoveToSegment):
+        (WebCore::SVGPathParser::parseLineToSegment):
+        (WebCore::SVGPathParser::parseLineToHorizontalSegment):
+        (WebCore::SVGPathParser::parseLineToVerticalSegment):
+        (WebCore::SVGPathParser::parseCurveToCubicSegment):
+        (WebCore::SVGPathParser::parseCurveToCubicSmoothSegment):
+        (WebCore::SVGPathParser::parseCurveToQuadraticSegment):
+        (WebCore::SVGPathParser::parseCurveToQuadraticSmoothSegment):
+        (WebCore::SVGPathParser::parseArcToSegment):
+        (WebCore::SVGPathParser::parsePathDataFromSource):
+        (WebCore::SVGPathParser::decomposeArcToCubic):
+        * svg/SVGPathParser.h:
+        (WebCore::SVGPathParser::setCurrentConsumer):
+        * svg/SVGPathParserFactory.cpp: Added.
+        (WebCore::globalSVGPathBuilder):
+        (WebCore::globalSVGPathSegListBuilder):
+        (WebCore::globalSVGPathParser):
+        (WebCore::SVGPathParserFactory::self):
+        (WebCore::SVGPathParserFactory::SVGPathParserFactory):
+        (WebCore::SVGPathParserFactory::~SVGPathParserFactory):
+        (WebCore::SVGPathParserFactory::buildPathFromString):
+        (WebCore::SVGPathParserFactory::buildSVGPathSegListFromString):
+        * svg/SVGPathParserFactory.h: Added.
+        * svg/SVGPathSeg.h:
+        (WebCore::):
+        (WebCore::SVGPathSeg::~SVGPathSeg):
+        (WebCore::SVGPathSeg::):
+        (WebCore::SVGPathSeg::pathSegType):
+        (WebCore::SVGPathSeg::pathSegTypeAsLetter):
+        (WebCore::SVGPathSeg::toString):
+        (WebCore::SVGPathSeg::associatedAttributeName):
+        (WebCore::SVGPathSeg::SVGPathSeg):
+        (WebCore::SVGPathSegSingleCoord::SVGPathSegSingleCoord):
+        (WebCore::SVGPathSegSingleCoord::setX):
+        (WebCore::SVGPathSegSingleCoord::x):
+        (WebCore::SVGPathSegSingleCoord::setY):
+        (WebCore::SVGPathSegSingleCoord::y):
+        (WebCore::SVGPathSegSingleCoord::toString):
+        * svg/SVGPathSegList.cpp:
+        (WebCore::SVGPathSegList::getPathSegAtLength):
+        (WebCore::SVGPathSegList::toPathData):
+        (WebCore::SVGPathSegList::createAnimated):
+        * svg/SVGPathSegListBuilder.cpp:
+        (WebCore::SVGPathSegListBuilder::SVGPathSegListBuilder):
+        (WebCore::SVGPathSegListBuilder::moveTo):
+        (WebCore::SVGPathSegListBuilder::lineTo):
+        (WebCore::SVGPathSegListBuilder::curveToCubic):
+        (WebCore::SVGPathSegListBuilder::curveToCubicSmooth):
+        (WebCore::SVGPathSegListBuilder::curveToQuadratic):
+        (WebCore::SVGPathSegListBuilder::curveToQuadraticSmooth):
+        (WebCore::SVGPathSegListBuilder::arcTo):
+        * svg/SVGPathSegListBuilder.h:
+        (WebCore::SVGPathSegListBuilder::setCurrentSVGPathSegList):
+        * svg/SVGPathSource.h: Added.
+        (WebCore::SVGPathSource::~SVGPathSource):
+        (WebCore::SVGPathSource::SVGPathSource):
+        * svg/SVGPathStringSource.cpp: Added.
+        (WebCore::SVGPathStringSource::SVGPathStringSource):
+        (WebCore::SVGPathStringSource::~SVGPathStringSource):
+        (WebCore::SVGPathStringSource::endOfStream):
+        (WebCore::SVGPathStringSource::parseFloat):
+        (WebCore::SVGPathStringSource::parseFlag):
+        (WebCore::SVGPathStringSource::skipSpaces):
+        (WebCore::SVGPathStringSource::parseSVGSegmentType):
+        (WebCore::SVGPathStringSource::hasRemainingCoordinatesInCurrentCommand):
+        * svg/SVGPathStringSource.h: Added.
+        (WebCore::SVGPathStringSource::create):
+
 2010-08-06  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Adam Barth.

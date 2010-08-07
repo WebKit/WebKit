@@ -873,6 +873,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	svg/SVGPathBuilder.cpp \
 	svg/SVGPathElement.cpp \
 	svg/SVGPathParser.cpp \
+	svg/SVGPathParserFactory.cpp \
 	svg/SVGPathSeg.cpp \
 	svg/SVGPathSegArc.cpp \
 	svg/SVGPathSegClosePath.cpp \
@@ -886,6 +887,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	svg/SVGPathSegList.cpp \
 	svg/SVGPathSegListBuilder.cpp \
 	svg/SVGPathSegMoveto.cpp \
+	svg/SVGPathStringSource.cpp \
 	svg/SVGPatternElement.cpp \
 	svg/SVGPointList.cpp \
 	svg/SVGPolyElement.cpp \

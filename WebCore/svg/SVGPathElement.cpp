@@ -27,6 +27,7 @@
 #include "RenderPath.h"
 #include "RenderSVGResource.h"
 #include "SVGNames.h"
+#include "SVGPathParserFactory.h"
 #include "SVGPathSegArc.h"
 #include "SVGPathSegClosePath.h"
 #include "SVGPathSegCurvetoCubic.h"
@@ -173,8 +174,8 @@ void SVGPathElement::parseMappedAttribute(Attribute* attr)
     if (attr->name() == SVGNames::dAttr) {
         ExceptionCode ec;
         pathSegList()->clear(ec);
-        SVGPathSegListBuilder parser(pathSegList());
-        if (!parser.build(attr->value(), NormalizedParsing))
+        SVGPathParserFactory* factory = SVGPathParserFactory::self();
+        if (!factory->buildSVGPathSegListFromString(attr->value(), pathSegList(), NormalizedParsing))
             document()->accessSVGExtensions()->reportError("Problem parsing d=\"" + attr->value() + "\"");
     } else if (attr->name() == SVGNames::pathLengthAttr) {
         setPathLengthBaseValue(attr->value().toFloat());

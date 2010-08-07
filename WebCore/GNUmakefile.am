@@ -4079,6 +4079,8 @@ webcore_sources += \
 	WebCore/svg/SVGPathElement.h \
 	WebCore/svg/SVGPathParser.cpp \
 	WebCore/svg/SVGPathParser.h \
+	WebCore/svg/SVGPathParserFactory.cpp \
+	WebCore/svg/SVGPathParserFactory.h \
 	WebCore/svg/SVGPathSeg.cpp \
 	WebCore/svg/SVGPathSeg.h \
 	WebCore/svg/SVGPathSegArc.cpp \
@@ -4105,6 +4107,9 @@ webcore_sources += \
 	WebCore/svg/SVGPathSegListBuilder.h \
 	WebCore/svg/SVGPathSegMoveto.cpp \
 	WebCore/svg/SVGPathSegMoveto.h \
+	WebCore/svg/SVGPathSource.h \
+	WebCore/svg/SVGPathStringSource.cpp \
+	WebCore/svg/SVGPathStringSource.h \
 	WebCore/svg/SVGPatternElement.cpp \
 	WebCore/svg/SVGPatternElement.h \
 	WebCore/svg/SVGPointList.cpp \

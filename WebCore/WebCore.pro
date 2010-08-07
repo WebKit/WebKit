@@ -2855,6 +2855,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         svg/SVGPathBuilder.cpp \
         svg/SVGPathElement.cpp \
         svg/SVGPathParser.cpp \
+        svg/SVGPathParserFactory.cpp \
         svg/SVGPathSeg.cpp \
         svg/SVGPathSegArc.cpp \
         svg/SVGPathSegClosePath.cpp \
@@ -2868,6 +2869,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         svg/SVGPathSegList.cpp \
         svg/SVGPathSegListBuilder.cpp \
         svg/SVGPathSegMoveto.cpp \
+        svg/SVGPathStringSource.cpp \
         svg/SVGPatternElement.cpp \
         svg/SVGPointList.cpp \
         svg/SVGPolyElement.cpp \

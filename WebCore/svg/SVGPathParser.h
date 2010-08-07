@@ -27,15 +27,21 @@
 #if ENABLE(SVG)
 #include "PlatformString.h"
 #include "SVGPathConsumer.h"
+#include "SVGPathSeg.h"
+#include "SVGPathSource.h"
+#include <wtf/Noncopyable.h>
+#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
-class SVGPathParser {
+class SVGPathParser : public Noncopyable {
 public:
-    SVGPathParser(SVGPathConsumer*);
+    SVGPathParser();
     ~SVGPathParser();
 
-    bool parsePathDataString(const String&, bool normalized = false);
+    bool parsePathDataFromSource(PathParsingMode pathParsingMode);
+    void setCurrentConsumer(SVGPathConsumer* consumer) { m_consumer = consumer; }
+    void setCurrentSource(SVGPathSource* source) { m_source = source; }
 
 private:
     bool decomposeArcToCubic(float, float, float, FloatPoint&, FloatPoint&, bool largeArcFlag, bool sweepFlag);
@@ -50,13 +56,12 @@ private:
     bool parseCurveToQuadraticSmoothSegment();
     bool parseArcToSegment();
 
+    SVGPathSource* m_source;
     SVGPathConsumer* m_consumer;
     PathCoordinateMode m_mode;
-    const UChar* m_ptr;
-    const UChar* m_end;
-    char m_lastCommand;
-    bool m_normalized;
-    bool m_pathClosed;
+    PathParsingMode m_pathParsingMode;
+    SVGPathSegType m_lastCommand;
+    bool m_closePath;
     FloatPoint m_controlPoint;
     FloatPoint m_currentPoint;
     FloatPoint m_subPathPoint;

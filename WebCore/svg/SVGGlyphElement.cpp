@@ -29,7 +29,7 @@
 #include "SVGFontElement.h"
 #include "SVGFontFaceElement.h"
 #include "SVGNames.h"
-#include "SVGPathBuilder.h"
+#include "SVGPathParserFactory.h"
 #include "SimpleFontData.h"
 #include "XMLNames.h"
 
@@ -102,10 +102,8 @@ static inline SVGGlyphIdentifier::Orientation parseOrientation(const AtomicStrin
 static inline Path parsePathData(const AtomicString& value)
 {
     Path result;
-    SVGPathBuilder builder(result);
-    // FIXME: We should analyse the returned value.
-    builder.build(value);
-
+    SVGPathParserFactory* factory = SVGPathParserFactory::self();
+    factory->buildPathFromString(value, result);
     return result;
 }
 

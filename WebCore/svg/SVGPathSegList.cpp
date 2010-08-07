@@ -64,19 +64,19 @@ unsigned SVGPathSegList::getPathSegAtLength(double length, ExceptionCode& ec)
             return 0;
         float segmentLength = 0;
         switch (segment->pathSegType()) {
-        case SVGPathSeg::PATHSEG_MOVETO_ABS:
+        case PathSegMoveToAbs:
         {
             SVGPathSegMovetoAbs* moveTo = static_cast<SVGPathSegMovetoAbs*>(segment);
             segmentLength = traversalState.moveTo(FloatPoint(moveTo->x(), moveTo->y()));
             break;
         }
-        case SVGPathSeg::PATHSEG_LINETO_ABS:
+        case PathSegLineToAbs:
         {
             SVGPathSegLinetoAbs* lineTo = static_cast<SVGPathSegLinetoAbs*>(segment);
             segmentLength = traversalState.lineTo(FloatPoint(lineTo->x(), lineTo->y()));
             break;
         }
-        case SVGPathSeg::PATHSEG_CURVETO_CUBIC_ABS:
+        case PathSegCurveToCubicAbs:
         {
             SVGPathSegCurvetoCubicAbs* curveTo = static_cast<SVGPathSegCurvetoCubicAbs*>(segment);
             segmentLength = traversalState.cubicBezierTo(FloatPoint(curveTo->x1(), curveTo->y1()),
@@ -84,7 +84,7 @@ unsigned SVGPathSegList::getPathSegAtLength(double length, ExceptionCode& ec)
                                       FloatPoint(curveTo->x(), curveTo->y()));
             break;
         }
-        case SVGPathSeg::PATHSEG_CLOSEPATH:
+        case PathSegClosePath:
             segmentLength = traversalState.closeSubpath();
             break;
         default:
@@ -116,48 +116,44 @@ Path SVGPathSegList::toPathData()
         if (ec)
             return Path();
         switch (segment->pathSegType()) {
-            case SVGPathSeg::PATHSEG_MOVETO_ABS:
-            {
-                SVGPathSegMovetoAbs* moveTo = static_cast<SVGPathSegMovetoAbs*>(segment);
-                FloatPoint endPoint(moveTo->x(), moveTo->y());
-                pathData.moveTo(endPoint);
-                previousEndPoint = endPoint;
-                break;
-            }
-            case SVGPathSeg::PATHSEG_LINETO_ABS:
-            {
-                SVGPathSegLinetoAbs* lineTo = static_cast<SVGPathSegLinetoAbs*>(segment);
-                FloatPoint endPoint(lineTo->x(), lineTo->y());
-                pathData.addLineTo(endPoint);
-                previousEndPoint = endPoint;
-                break;
-            }
-            case SVGPathSeg::PATHSEG_CURVETO_CUBIC_ABS:
-            {
-                SVGPathSegCurvetoCubicAbs* curveTo = static_cast<SVGPathSegCurvetoCubicAbs*>(segment);
-                FloatPoint endPoint(curveTo->x(), curveTo->y());
-                pathData.addBezierCurveTo(FloatPoint(curveTo->x1(), curveTo->y1()),
-                                          FloatPoint(curveTo->x2(), curveTo->y2()),
-                                          endPoint);
-                previousEndPoint = endPoint;
-                break;
-            }
-            case SVGPathSeg::PATHSEG_CURVETO_CUBIC_REL:
-            {
-                SVGPathSegCurvetoCubicRel* curveTo = static_cast<SVGPathSegCurvetoCubicRel*>(segment);
-                FloatSize endPoint(curveTo->x(), curveTo->y());
-                pathData.addBezierCurveTo(previousEndPoint + FloatSize(curveTo->x1(), curveTo->y1()),
-                                          previousEndPoint + FloatSize(curveTo->x2(), curveTo->y2()),
-                                          previousEndPoint + endPoint);
-                previousEndPoint += endPoint;
-                break;
-            }
-            case SVGPathSeg::PATHSEG_CLOSEPATH:
-                pathData.closeSubpath();
-                break;
-            default:
-                ASSERT(false); // FIXME: This only works with normalized/processed path data.
-                break;
+        case PathSegMoveToAbs: {
+            SVGPathSegMovetoAbs* moveTo = static_cast<SVGPathSegMovetoAbs*>(segment);
+            FloatPoint endPoint(moveTo->x(), moveTo->y());
+            pathData.moveTo(endPoint);
+            previousEndPoint = endPoint;
+            break;
+        }
+        case PathSegLineToAbs: {
+            SVGPathSegLinetoAbs* lineTo = static_cast<SVGPathSegLinetoAbs*>(segment);
+            FloatPoint endPoint(lineTo->x(), lineTo->y());
+            pathData.addLineTo(endPoint);
+            previousEndPoint = endPoint;
+            break;
+        }
+        case PathSegCurveToCubicAbs: {
+            SVGPathSegCurvetoCubicAbs* curveTo = static_cast<SVGPathSegCurvetoCubicAbs*>(segment);
+            FloatPoint endPoint(curveTo->x(), curveTo->y());
+            pathData.addBezierCurveTo(FloatPoint(curveTo->x1(), curveTo->y1()),
+                                      FloatPoint(curveTo->x2(), curveTo->y2()),
+                                      endPoint);
+            previousEndPoint = endPoint;
+            break;
+        }
+        case PathSegCurveToCubicRel: {
+            SVGPathSegCurvetoCubicRel* curveTo = static_cast<SVGPathSegCurvetoCubicRel*>(segment);
+            FloatSize endPoint(curveTo->x(), curveTo->y());
+            pathData.addBezierCurveTo(previousEndPoint + FloatSize(curveTo->x1(), curveTo->y1()),
+                                      previousEndPoint + FloatSize(curveTo->x2(), curveTo->y2()),
+                                      previousEndPoint + endPoint);
+            previousEndPoint += endPoint;
+            break;
+        }
+        case PathSegClosePath:
+            pathData.closeSubpath();
+            break;
+        default:
+            ASSERT(false); // FIXME: This only works with normalized/processed path data.
+            break;
         }
     }
     
@@ -213,68 +209,68 @@ PassRefPtr<SVGPathSegList> SVGPathSegList::createAnimated(const SVGPathSegList* 
         SVGPathSeg* to = toList->getItem(n, ec).get();
         if (ec)
             return 0;
-        if (from->pathSegType() == SVGPathSeg::PATHSEG_UNKNOWN || from->pathSegType() != to->pathSegType())
+        if (from->pathSegType() == PathSegUnknown || from->pathSegType() != to->pathSegType())
             return 0;
         RefPtr<SVGPathSeg> segment = 0;
-        switch (static_cast<SVGPathSeg::SVGPathSegType>(from->pathSegType())) {
-        case SVGPathSeg::PATHSEG_CLOSEPATH:
+        switch (static_cast<SVGPathSegType>(from->pathSegType())) {
+        case PathSegClosePath:
             segment = SVGPathSegClosePath::create();
             break;
-        case SVGPathSeg::PATHSEG_LINETO_HORIZONTAL_ABS:
+        case PathSegLineToHorizontalAbs:
             segment = BLENDPATHSEG1(SVGPathSegLinetoHorizontalAbs, x);
             break;
-        case SVGPathSeg::PATHSEG_LINETO_HORIZONTAL_REL:
+        case PathSegLineToHorizontalRel:
             segment = BLENDPATHSEG1(SVGPathSegLinetoHorizontalRel, x);
             break;   
-        case SVGPathSeg::PATHSEG_LINETO_VERTICAL_ABS:
+        case PathSegLineToVerticalAbs:
             segment = BLENDPATHSEG1(SVGPathSegLinetoVerticalAbs, y);
             break;
-        case SVGPathSeg::PATHSEG_LINETO_VERTICAL_REL:
+        case PathSegLineToVerticalRel:
             segment = BLENDPATHSEG1(SVGPathSegLinetoVerticalRel, y);
             break;        
-        case SVGPathSeg::PATHSEG_MOVETO_ABS:
+        case PathSegMoveToAbs:
             segment = BLENDPATHSEG2(SVGPathSegMovetoAbs, x, y);
             break;
-        case SVGPathSeg::PATHSEG_MOVETO_REL:
+        case PathSegMoveToRel:
             segment = BLENDPATHSEG2(SVGPathSegMovetoRel, x, y);
             break;
-        case SVGPathSeg::PATHSEG_LINETO_ABS:
+        case PathSegLineToAbs:
             segment = BLENDPATHSEG2(SVGPathSegLinetoAbs, x, y);
             break;
-        case SVGPathSeg::PATHSEG_LINETO_REL:
+        case PathSegLineToRel:
             segment = BLENDPATHSEG2(SVGPathSegLinetoRel, x, y);
             break;
-        case SVGPathSeg::PATHSEG_CURVETO_CUBIC_ABS:
+        case PathSegCurveToCubicAbs:
             segment = BLENDPATHSEG6(SVGPathSegCurvetoCubicAbs, x, y, x1, y1, x2, y2);
             break;
-        case SVGPathSeg::PATHSEG_CURVETO_CUBIC_REL:
+        case PathSegCurveToCubicRel:
             segment = BLENDPATHSEG6(SVGPathSegCurvetoCubicRel, x, y, x1, y1, x2, y2);
             break;
-        case SVGPathSeg::PATHSEG_CURVETO_CUBIC_SMOOTH_ABS:
+        case PathSegCurveToCubicSmoothAbs:
             segment = BLENDPATHSEG4(SVGPathSegCurvetoCubicSmoothAbs, x, y, x2, y2);
             break;
-        case SVGPathSeg::PATHSEG_CURVETO_CUBIC_SMOOTH_REL:
+        case PathSegCurveToCubicSmoothRel:
             segment = BLENDPATHSEG4(SVGPathSegCurvetoCubicSmoothRel, x, y, x2, y2);
             break;
-        case SVGPathSeg::PATHSEG_CURVETO_QUADRATIC_ABS:
+        case PathSegCurveToQuadraticAbs:
             segment = BLENDPATHSEG4(SVGPathSegCurvetoQuadraticAbs, x, y, x1, y1);
             break;
-        case SVGPathSeg::PATHSEG_CURVETO_QUADRATIC_REL:
+        case PathSegCurveToQuadraticRel:
             segment = BLENDPATHSEG4(SVGPathSegCurvetoQuadraticRel, x, y, x1, y1);
             break;
-        case SVGPathSeg::PATHSEG_CURVETO_QUADRATIC_SMOOTH_ABS:
+        case PathSegCurveToQuadraticSmoothAbs:
             segment = BLENDPATHSEG2(SVGPathSegCurvetoQuadraticSmoothAbs, x, y);
             break;
-        case SVGPathSeg::PATHSEG_CURVETO_QUADRATIC_SMOOTH_REL:
+        case PathSegCurveToQuadraticSmoothRel:
             segment = BLENDPATHSEG2(SVGPathSegCurvetoQuadraticSmoothRel, x, y);
             break;
-        case SVGPathSeg::PATHSEG_ARC_ABS:
+        case PathSegArcAbs:
             segment = BLENDPATHSEG7(SVGPathSegArcAbs, x, y, r1, r2, angle, largeArcFlag, sweepFlag);
             break;
-        case SVGPathSeg::PATHSEG_ARC_REL:
+        case PathSegArcRel:
             segment = BLENDPATHSEG7(SVGPathSegArcRel, x, y, r1, r2, angle, largeArcFlag, sweepFlag);
             break;
-        case SVGPathSeg::PATHSEG_UNKNOWN:
+        case PathSegUnknown:
             ASSERT_NOT_REACHED();
         }
         result->appendItem(segment, ec);

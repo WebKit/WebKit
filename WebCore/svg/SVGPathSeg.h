@@ -25,69 +25,94 @@
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
-    class String;
-    class SVGPathElement;
-    class SVGStyledElement;
-    class QualifiedName;
 
-    class SVGPathSeg : public RefCounted<SVGPathSeg> {
-    public:
-        virtual ~SVGPathSeg();
+enum SVGPathSegType {
+    PathSegUnknown = 0,
+    PathSegClosePath = 1,
+    PathSegMoveToAbs = 2,
+    PathSegMoveToRel = 3,
+    PathSegLineToAbs = 4,
+    PathSegLineToRel = 5,
+    PathSegCurveToCubicAbs = 6,
+    PathSegCurveToCubicRel = 7,
+    PathSegCurveToQuadraticAbs = 8,
+    PathSegCurveToQuadraticRel = 9,
+    PathSegArcAbs = 10,
+    PathSegArcRel = 11,
+    PathSegLineToHorizontalAbs = 12,
+    PathSegLineToHorizontalRel = 13,
+    PathSegLineToVerticalAbs = 14,
+    PathSegLineToVerticalRel = 15,
+    PathSegCurveToCubicSmoothAbs = 16,
+    PathSegCurveToCubicSmoothRel = 17,
+    PathSegCurveToQuadraticSmoothAbs = 18,
+    PathSegCurveToQuadraticSmoothRel = 19
+};
 
-        enum SVGPathSegType {
-            PATHSEG_UNKNOWN                         = 0,
-            PATHSEG_CLOSEPATH                       = 1,
-            PATHSEG_MOVETO_ABS                      = 2,
-            PATHSEG_MOVETO_REL                      = 3,
-            PATHSEG_LINETO_ABS                      = 4,
-            PATHSEG_LINETO_REL                      = 5,
-            PATHSEG_CURVETO_CUBIC_ABS               = 6,
-            PATHSEG_CURVETO_CUBIC_REL               = 7,
-            PATHSEG_CURVETO_QUADRATIC_ABS           = 8,
-            PATHSEG_CURVETO_QUADRATIC_REL           = 9,
-            PATHSEG_ARC_ABS                         = 10,
-            PATHSEG_ARC_REL                         = 11,
-            PATHSEG_LINETO_HORIZONTAL_ABS           = 12,
-            PATHSEG_LINETO_HORIZONTAL_REL           = 13,
-            PATHSEG_LINETO_VERTICAL_ABS             = 14,
-            PATHSEG_LINETO_VERTICAL_REL             = 15,
-            PATHSEG_CURVETO_CUBIC_SMOOTH_ABS        = 16,
-            PATHSEG_CURVETO_CUBIC_SMOOTH_REL        = 17,
-            PATHSEG_CURVETO_QUADRATIC_SMOOTH_ABS    = 18,
-            PATHSEG_CURVETO_QUADRATIC_SMOOTH_REL    = 19
-        };
+class String;
+class SVGPathElement;
+class SVGStyledElement;
+class QualifiedName;
 
-        virtual unsigned short pathSegType() const;
-        virtual String pathSegTypeAsLetter() const;
-        virtual String toString() const;
+class SVGPathSeg : public RefCounted<SVGPathSeg> {
+public:
+    virtual ~SVGPathSeg();
 
-        const QualifiedName& associatedAttributeName() const;
-        
-    protected:
-        SVGPathSeg() { }
+    // Forward declare these enums in the w3c naming scheme, for IDL generation
+    enum {
+        PATHSEG_UNKNOWN = PathSegUnknown,
+        PATHSEG_CLOSEPATH = PathSegClosePath,
+        PATHSEG_MOVETO_ABS = PathSegMoveToAbs,
+        PATHSEG_MOVETO_REL = PathSegMoveToRel,
+        PATHSEG_LINETO_ABS = PathSegLineToAbs,
+        PATHSEG_LINETO_REL = PathSegLineToRel,
+        PATHSEG_CURVETO_CUBIC_ABS = PathSegCurveToCubicAbs,
+        PATHSEG_CURVETO_CUBIC_REL = PathSegCurveToCubicRel,
+        PATHSEG_CURVETO_QUADRATIC_ABS = PathSegCurveToQuadraticAbs,
+        PATHSEG_CURVETO_QUADRATIC_REL = PathSegCurveToQuadraticRel,
+        PATHSEG_ARC_ABS = PathSegArcAbs,
+        PATHSEG_ARC_REL = PathSegArcRel,
+        PATHSEG_LINETO_HORIZONTAL_ABS = PathSegLineToHorizontalAbs,
+        PATHSEG_LINETO_HORIZONTAL_REL = PathSegLineToHorizontalRel,
+        PATHSEG_LINETO_VERTICAL_ABS = PathSegLineToVerticalAbs,
+        PATHSEG_LINETO_VERTICAL_REL = PathSegLineToVerticalRel,
+        PATHSEG_CURVETO_CUBIC_SMOOTH_ABS = PathSegCurveToCubicSmoothAbs,
+        PATHSEG_CURVETO_CUBIC_SMOOTH_REL = PathSegCurveToCubicSmoothRel,
+        PATHSEG_CURVETO_QUADRATIC_SMOOTH_ABS = PathSegCurveToQuadraticSmoothAbs,
+        PATHSEG_CURVETO_QUADRATIC_SMOOTH_REL = PathSegCurveToQuadraticSmoothRel
     };
 
-    class SVGPathSegSingleCoord : public SVGPathSeg { 
-    public:
-        SVGPathSegSingleCoord(float x, float y)
-            : SVGPathSeg()
-            , m_x(x)
-            , m_y(y)
-        {
-        }
 
-        void setX(float x) { m_x = x; }
-        float x() const { return m_x; }
+    virtual unsigned short pathSegType() const;
+    virtual String pathSegTypeAsLetter() const;
+    virtual String toString() const;
 
-        void setY(float y) { m_y = y; }
-        float y() const { return m_y; }
+    const QualifiedName& associatedAttributeName() const;
+    
+protected:
+    SVGPathSeg() { }
+};
 
-        virtual String toString() const;
+class SVGPathSegSingleCoord : public SVGPathSeg { 
+public:
+    SVGPathSegSingleCoord(float x, float y)
+        : m_x(x)
+        , m_y(y)
+    {
+    }
 
-    private:
-        float m_x;
-        float m_y;
-    };
+    void setX(float x) { m_x = x; }
+    float x() const { return m_x; }
+
+    void setY(float y) { m_y = y; }
+    float y() const { return m_y; }
+
+    virtual String toString() const;
+
+private:
+    float m_x;
+    float m_y;
+};
 
 } // namespace WebCore
 

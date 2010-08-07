@@ -49453,6 +49453,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\svg\SVGPathParserFactory.h"
+				>
+			</File>
+			<File
 				RelativePath="..\svg\SVGPathSeg.h"
 				>
 			</File>
@@ -49502,6 +49506,14 @@
 			</File>
 			<File
 				RelativePath="..\svg\SVGPathSegMoveto.h"
+				>
+			</File>
+			<File
+				RelativePath="..\svg\SVGPathSource.h"
+				>
+			</File>
+			<File
+				RelativePath="..\svg\SVGPathStringSource.h"
 				>
 			</File>
 			<File
