@@ -1,5 +1,19 @@
 2010-08-07  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Anders Carlsson.
+
+        <rdar://problem/8285090> First word on a line doesn’t hyphenate properly
+        https://bugs.webkit.org/show_bug.cgi?id=43679
+
+        Test: fast/text/hyphenate-first-word.html
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::tryHyphenating): The character at lastSpace is not necessarily a whitespace character
+        before the current word. It can also be part of the word, such as when the word is the first
+        one on the line. Include the charcater at lastSpace in the string passed to lastHyphenLocation().
+
+2010-08-07  Dan Bernstein  <mitz@apple.com>
+
         Build fix
 
         * platform/graphics/SimpleFontData.h:

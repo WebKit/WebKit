@@ -1,3 +1,18 @@
+2010-08-07  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        <rdar://problem/8285090> First word on a line doesn’t hyphenate properly
+        https://bugs.webkit.org/show_bug.cgi?id=43679
+
+        * fast/text/hyphenate-first-word.html: Added.
+        * platform/mac/fast/text/hyphenate-first-word-expected.checksum: Added.
+        * platform/mac/fast/text/hyphenate-first-word-expected.png: Added.
+        * platform/mac/fast/text/hyphenate-first-word-expected.txt: Added.
+        * platform/mac/fast/text/hyphenate-locale-expected.checksum:
+        * platform/mac/fast/text/hyphenate-locale-expected.png:
+        * platform/mac/fast/text/hyphenate-locale-expected.txt:
+
 2010-08-07  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Dimitri Glazkov.
