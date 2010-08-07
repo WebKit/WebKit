@@ -1,3 +1,13 @@
+2010-08-07  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Created a separate SimpleFontData constructor exclusively for SVG fonts and moved the CTFontRef
+        from SimpleFontData to FontPlatformData.
+        https://bugs.webkit.org/show_bug.cgi?id=43674
+
+        * wtf/Platform.h: Moved definitions of WTF_USE_CORE_TEXT and WTF_USE_ATSUI here from WebCore/config.h.
+
 2010-08-07  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Reviewed by Eric Seidel.

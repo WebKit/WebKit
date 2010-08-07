@@ -41,15 +41,6 @@ using namespace std;
 
 namespace WebCore {
 
-CTFontRef SimpleFontData::getCTFont() const
-{
-    if (getNSFont())
-        return toCTFontRef(getNSFont());
-    if (!m_CTFont)
-        m_CTFont.adoptCF(CTFontCreateWithGraphicsFont(m_platformData.cgFont(), m_platformData.size(), 0, 0));
-    return m_CTFont.get();
-}
-
 CFDictionaryRef SimpleFontData::getCFStringAttributes(TypesettingFeatures typesettingFeatures) const
 {
     unsigned key = typesettingFeatures + 1;
@@ -70,7 +61,7 @@ CFDictionaryRef SimpleFontData::getCFStringAttributes(TypesettingFeatures typese
         static const float kerningAdjustmentValue = 0;
         static CFNumberRef kerningAdjustment = CFNumberCreate(kCFAllocatorDefault, kCFNumberFloatType, &kerningAdjustmentValue);
         static const void* keysWithKerningDisabled[] = { kCTFontAttributeName, kCTKernAttributeName, kCTLigatureAttributeName };
-        const void* valuesWithKerningDisabled[] = { getCTFont(), kerningAdjustment, allowLigatures
+        const void* valuesWithKerningDisabled[] = { platformData().ctFont(), kerningAdjustment, allowLigatures
             ? ligaturesAllowed : ligaturesNotAllowed };
         attributesDictionary.adoptCF(CFDictionaryCreate(0, keysWithKerningDisabled, valuesWithKerningDisabled,
             sizeof(keysWithKerningDisabled) / sizeof(*keysWithKerningDisabled),
@@ -78,7 +69,7 @@ CFDictionaryRef SimpleFontData::getCFStringAttributes(TypesettingFeatures typese
     } else {
         // By omitting the kCTKernAttributeName attribute, we get Core Text's standard kerning.
         static const void* keysWithKerningEnabled[] = { kCTFontAttributeName, kCTLigatureAttributeName };
-        const void* valuesWithKerningEnabled[] = { getCTFont(), allowLigatures ? ligaturesAllowed : ligaturesNotAllowed };
+        const void* valuesWithKerningEnabled[] = { platformData().ctFont(), allowLigatures ? ligaturesAllowed : ligaturesNotAllowed };
         attributesDictionary.adoptCF(CFDictionaryCreate(0, keysWithKerningEnabled, valuesWithKerningEnabled,
             sizeof(keysWithKerningEnabled) / sizeof(*keysWithKerningEnabled),
             &kCFCopyStringDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));

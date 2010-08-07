@@ -61,6 +61,9 @@ FontPlatformData::FontPlatformData(const FontPlatformData& f)
     m_cgFont = f.m_cgFont;
     m_atsuFontID = f.m_atsuFontID;
     m_isColorBitmapFont = f.m_isColorBitmapFont;
+#if USE(CORE_TEXT)
+    m_CTFont = f.m_CTFont;
+#endif
 }
 
 FontPlatformData:: ~FontPlatformData()
@@ -84,6 +87,9 @@ const FontPlatformData& FontPlatformData::operator=(const FontPlatformData& f)
         CFRelease(m_font);
     m_font = f.m_font;
     m_isColorBitmapFont = f.m_isColorBitmapFont;
+#if USE(CORE_TEXT)
+    m_CTFont = f.m_CTFont;
+#endif
     return *this;
 }
 
@@ -107,6 +113,9 @@ void FontPlatformData::setFont(NSFont *font)
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
     m_isColorBitmapFont = CTFontGetSymbolicTraits(toCTFontRef(font)) & kCTFontColorGlyphsTrait;
 #endif
+#if USE(CORE_TEXT)
+    m_CTFont = 0;
+#endif
 }
 
 bool FontPlatformData::roundsGlyphAdvances() const
@@ -118,6 +127,17 @@ bool FontPlatformData::allowsLigatures() const
 {
     return ![[m_font coveredCharacterSet] characterIsMember:'a'];
 }
+
+#if USE(CORE_TEXT)
+CTFontRef FontPlatformData::ctFont() const
+{
+    if (m_font)
+        return toCTFontRef(m_font);
+    if (!m_CTFont)
+        m_CTFont.adoptCF(CTFontCreateWithGraphicsFont(m_cgFont.get(), m_size, 0, 0));
+    return m_CTFont.get();
+}
+#endif // USE(CORE_TEXT)
 
 #ifndef NDEBUG
 String FontPlatformData::description() const

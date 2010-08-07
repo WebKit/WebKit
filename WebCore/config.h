@@ -155,15 +155,6 @@
 #endif
 
 #if PLATFORM(MAC)
-// ATSUI vs. CoreText
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
-#define WTF_USE_ATSUI 0
-#define WTF_USE_CORE_TEXT 1
-#else
-#define WTF_USE_ATSUI 1
-#define WTF_USE_CORE_TEXT 0
-#endif
-
 // New theme
 #define WTF_USE_NEW_THEME 1
 #endif // PLATFORM(MAC)

@@ -2,7 +2,7 @@
  * This file is part of the internal font implementation.
  * It should not be included by source files outside of it.
  *
- * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -114,6 +114,10 @@ class FontPlatformData {
     NSFont *font() const { return m_font; }
     void setFont(NSFont *font);
 
+#if USE(CORE_TEXT)
+    CTFontRef ctFont() const;
+#endif
+
     bool roundsGlyphAdvances() const;
     bool allowsLigatures() const;
     bool isColorBitmapFont() const { return m_isColorBitmapFont; }
@@ -132,10 +136,15 @@ private:
     static NSFont *hashTableDeletedFontValue() { return reinterpret_cast<NSFont *>(-1); }
 
     NSFont *m_font;
+
 #ifndef BUILDING_ON_TIGER
     RetainPtr<CGFontRef> m_cgFont;
 #else
     CGFontRef m_cgFont; // It is not necessary to refcount this, since either an NSFont owns it or some CachedFont has it referenced.
+#endif
+
+#if USE(CORE_TEXT)
+    mutable RetainPtr<CTFontRef> m_CTFont;
 #endif
 
     bool m_isColorBitmapFont;

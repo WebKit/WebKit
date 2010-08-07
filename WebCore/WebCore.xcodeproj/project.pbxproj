@@ -1423,11 +1423,9 @@
 		7AED3E060FBB1EAA00D2B03C /* InspectorFrontend.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AED3E040FBB1EAA00D2B03C /* InspectorFrontend.h */; };
 		7AFD4A8B1131C2760035B883 /* ScriptBreakpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AFD4A8A1131C2760035B883 /* ScriptBreakpoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7AFD4FF4113277B60035B883 /* ScriptDebugListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AFD4FF3113277B60035B883 /* ScriptDebugListener.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		81BE209811F4AB8D00915DFA /* IDBCursor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 81BE209311F4AB8D00915DFA /* IDBCursor.cpp */; };
 		81BE209711F4AB8D00915DFA /* IDBCursor.h in Headers */ = {isa = PBXBuildFile; fileRef = 81BE209211F4AB8D00915DFA /* IDBCursor.h */; };
 		81BE209811F4AB8D00915DFA /* IDBCursorBackendImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 81BE209311F4AB8D00915DFA /* IDBCursorBackendImpl.cpp */; };
-		81BE209911F4AB8D00915DFA /* IDBCursorBackendImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 81BE209411F4AB8D00915DFA /* IDBCursorBackendImpl.h */; };
-		81BE209B11F4AB8D00915DFA /* IDBCursorBackendInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 81BE209611F4AB8D00915DFA /* IDBCursorBackendInterface.h */; };
+		81BE209911F4AB8D00915DFA /* IDBCursorBackendInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 81BE209411F4AB8D00915DFA /* IDBCursorBackendInterface.h */; };
 		81BE20D211F4BC3200915DFA /* JSIDBCursor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 81BE20A711F4B66F00915DFA /* JSIDBCursor.cpp */; };
 		81BE20D311F4BC3200915DFA /* JSIDBCursor.h in Headers */ = {isa = PBXBuildFile; fileRef = 81BE20A811F4B66F00915DFA /* JSIDBCursor.h */; };
 		82B658981189E39200E052A1 /* InspectorCSSStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 82B658971189E39200E052A1 /* InspectorCSSStore.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7259,7 +7257,6 @@
 		7AFD4FF3113277B60035B883 /* ScriptDebugListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptDebugListener.h; sourceTree = "<group>"; };
 		81BE209211F4AB8D00915DFA /* IDBCursor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBCursor.h; sourceTree = "<group>"; };
 		81BE209311F4AB8D00915DFA /* IDBCursorBackendImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBCursorBackendImpl.cpp; sourceTree = "<group>"; };
-		81BE209411F4AB8D00915DFA /* IDBCursorBackendImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBCursorBackendImpl.h; sourceTree = "<group>"; };
 		81BE209411F4AB8D00915DFA /* IDBCursorBackendInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBCursorBackendInterface.h; sourceTree = "<group>"; };
 		81BE209C11F4ABBD00915DFA /* IDBCursor.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBCursor.idl; sourceTree = "<group>"; };
 		81BE20A711F4B66F00915DFA /* JSIDBCursor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBCursor.cpp; sourceTree = "<group>"; };
@@ -10097,8 +10094,8 @@
 		B6566268120B115A006EA85C /* IDBTransaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBTransaction.h; sourceTree = "<group>"; };
 		B6566269120B115A006EA85C /* IDBTransaction.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBTransaction.idl; sourceTree = "<group>"; };
 		B656626D120B116B006EA85C /* IDBTransactionBackendInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBTransactionBackendInterface.h; sourceTree = "<group>"; };
-		B656626E120B1227006EA85C /* JSIDBTransaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSIDBTransaction.h; path = JSIDBTransaction.h; sourceTree = "<group>"; };
-		B656626F120B1227006EA85C /* JSIDBTransaction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSIDBTransaction.cpp; path = JSIDBTransaction.cpp; sourceTree = "<group>"; };
+		B656626E120B1227006EA85C /* JSIDBTransaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIDBTransaction.h; sourceTree = "<group>"; };
+		B656626F120B1227006EA85C /* JSIDBTransaction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBTransaction.cpp; sourceTree = "<group>"; };
 		B734B180119B9911006587BD /* FontTranscoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FontTranscoder.cpp; path = transcoder/FontTranscoder.cpp; sourceTree = "<group>"; };
 		B734B182119B991D006587BD /* FontTranscoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FontTranscoder.h; path = transcoder/FontTranscoder.h; sourceTree = "<group>"; };
 		B776D43A1104525D00BEB0EC /* PrintContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintContext.h; sourceTree = "<group>"; };
@@ -11468,12 +11465,11 @@
 				C585A69911D4FB3D004C3E4B /* IDBAny.h */,
 				C585A69A11D4FB3D004C3E4B /* IDBAny.idl */,
 				C585A69B11D4FB3D004C3E4B /* IDBCallbacks.h */,
-				81BE209211F4AB8D00915DFA /* IDBCursor.cpp */,
+				81BE209211F4AB8D00915DFA /* IDBCursor.h */,
 				81BE209211F4AB8D00915DFA /* IDBCursor.h */,
 				81BE209C11F4ABBD00915DFA /* IDBCursor.idl */,
 				81BE209311F4AB8D00915DFA /* IDBCursorBackendImpl.cpp */,
-				81BE209411F4AB8D00915DFA /* IDBCursorBackendImpl.h */,
-				81BE209511F4AB8D00915DFA /* IDBCursorBackendInterface.h */,
+				81BE209411F4AB8D00915DFA /* IDBCursorBackendInterface.h */,
 				C585A6A311D4FB3D004C3E4B /* IDBDatabase.cpp */,
 				C585A6A411D4FB3D004C3E4B /* IDBDatabase.h */,
 				C585A6A511D4FB3D004C3E4B /* IDBDatabase.idl */,
@@ -18715,8 +18711,7 @@
 				C585A66311D4FAC5004C3E4B /* IDBBindingUtilities.h in Headers */,
 				C585A6CF11D4FB3D004C3E4B /* IDBCallbacks.h in Headers */,
 				81BE209711F4AB8D00915DFA /* IDBCursor.h in Headers */,
-				81BE209911F4AB8D00915DFA /* IDBCursorBackendImpl.h in Headers */,
-				81BE209B11F4AB8D00915DFA /* IDBCursorBackendInterface.h in Headers */,
+				81BE209911F4AB8D00915DFA /* IDBCursorBackendInterface.h in Headers */,
 				C585A6D811D4FB3D004C3E4B /* IDBDatabase.h in Headers */,
 				B61762621203490800EF9114 /* IDBDatabaseBackendImpl.h in Headers */,
 				B61762541203374F00EF9114 /* IDBDatabaseBackendInterface.h in Headers */,
@@ -21165,7 +21160,7 @@
 				51E1ECC00C91C90400DC255B /* IconRecord.cpp in Sources */,
 				C585A6CC11D4FB3D004C3E4B /* IDBAny.cpp in Sources */,
 				C585A66211D4FAC5004C3E4B /* IDBBindingUtilities.cpp in Sources */,
-				81BE209811F4AB8D00915DFA /* IDBCursor.cpp in Sources */,
+				81BE209811F4AB8D00915DFA /* IDBCursorBackendImpl.cpp in Sources */,
 				81BE209811F4AB8D00915DFA /* IDBCursorBackendImpl.cpp in Sources */,
 				B691C1F91206D4A00025D980 /* IDBDatabase.cpp in Sources */,
 				C585A6D511D4FB3D004C3E4B /* IDBDatabaseBackendImpl.cpp in Sources */,

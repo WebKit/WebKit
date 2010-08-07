@@ -1,3 +1,30 @@
+2010-08-07  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Created a separate SimpleFontData constructor exclusively for SVG fonts and moved the CTFontRef
+        from SimpleFontData to FontPlatformData.
+        https://bugs.webkit.org/show_bug.cgi?id=43674
+
+        * config.h: Moved definitions of WTF_USE_CORE_TEXT and WTF_USE_ATSUI from here to wtf/Platform.h.
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::getFontData): Use new SimpleFontData constructor for SVG fonts.
+        * platform/graphics/SimpleFontData.cpp:
+        (WebCore::SimpleFontData::SimpleFontData): Separated into two constructors, one for
+        PlatformFontData-based fonts and one for SVG fonts.
+        * platform/graphics/SimpleFontData.h: Moved the m_CTFont member variable and the getCTFont()
+        accessor from here…
+        * platform/graphics/mac/FontPlatformData.h: …to here, renaming the latter ctFont().
+        * platform/graphics/mac/FontPlatformDataMac.mm:
+        (WebCore::FontPlatformData::FontPlatformData): Copy m_CTFont.
+        (WebCore::FontPlatformData::operator=): Copy m_CTFont.
+        (WebCore::FontPlatformData::setFont): Clear m_CTFont.
+        (WebCore::FontPlatformData::ctFont): Moved here from SimpleFontDataCoreText.cpp and renamed.
+        * platform/graphics/mac/SimpleFontDataCoreText.cpp:
+        (WebCore::SimpleFontData::getCFStringAttributes): Updated to use FontPlatformData::ctFont().
+        * svg/SVGFontData.cpp:
+        (WebCore::SVGFontData::SVGFontData): Added an assertion.
+
 2010-08-07  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Dimitri Glazkov.

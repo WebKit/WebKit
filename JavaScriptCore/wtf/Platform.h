@@ -1032,8 +1032,17 @@ on MinGW. See https://bugs.webkit.org/show_bug.cgi?id=29268 */
 #define WTF_USE_QXMLQUERY 1
 #endif
 
-/* Accelerated compositing */
 #if PLATFORM(MAC)
+/* Complex text framework */
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#define WTF_USE_ATSUI 0
+#define WTF_USE_CORE_TEXT 1
+#else
+#define WTF_USE_ATSUI 1
+#define WTF_USE_CORE_TEXT 0
+#endif
+
+/* Accelerated compositing */
 #if !defined(BUILDING_ON_TIGER)
 #define WTF_USE_ACCELERATED_COMPOSITING 1
 #endif
