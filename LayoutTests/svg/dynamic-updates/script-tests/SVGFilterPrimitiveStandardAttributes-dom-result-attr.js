@@ -9,13 +9,6 @@ pointLight.setAttribute("x", "100");
 pointLight.setAttribute("y", "100");
 pointLight.setAttribute("z", "30");
 
-// This dummy filter hides a bug on mac-leopard (works on Qt)
-// Should be removed when the bug is fixed
-var dummyElement = createSVGElement("feGaussianBlur");
-dummyElement.setAttribute("width", "200");
-dummyElement.setAttribute("height", "200");
-dummyElement.setAttribute("result", "res2");
-
 var gradientElement = createSVGElement("feDiffuseLighting");
 gradientElement.setAttribute("in", "SourceGraphic");
 gradientElement.setAttribute("diffuseConstant", "1");
@@ -37,7 +30,6 @@ filterElement.setAttribute("x", "0");
 filterElement.setAttribute("y", "0");
 filterElement.setAttribute("width", "200");
 filterElement.setAttribute("height", "200");
-filterElement.appendChild(dummyElement);
 filterElement.appendChild(gradientElement);
 filterElement.appendChild(offsetElement);
 

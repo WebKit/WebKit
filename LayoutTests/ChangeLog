@@ -1,5 +1,12 @@
 2010-08-07  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Remove workarounds in two dynamic-updates scripts, that now work without it.
+
+        * svg/dynamic-updates/script-tests/SVGFilterPrimitiveStandardAttributes-dom-result-attr.js:
+        * svg/dynamic-updates/script-tests/SVGFilterPrimitiveStandardAttributes-svgdom-result-prop.js:
+
+2010-08-07  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Reviewed by Daniel Bates.
 
         Pattern fill with image not rendered after reload
