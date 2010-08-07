@@ -1,5 +1,11 @@
 2010-08-07  Dan Bernstein  <mitz@apple.com>
 
+        Build fix
+
+        * platform/graphics/SimpleFontData.h:
+
+2010-08-07  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Anders Carlsson.
 
         Created a separate SimpleFontData constructor exclusively for SVG fonts and moved the CTFontRef

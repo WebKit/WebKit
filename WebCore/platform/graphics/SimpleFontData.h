@@ -32,10 +32,13 @@
 #include "TypesettingFeatures.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
-#include <wtf/RetainPtr.h>
 
 #if USE(ATSUI)
 typedef struct OpaqueATSUStyle* ATSUStyle;
+#endif
+
+#if USE(CORE_TEXT)
+#include <wtf/RetainPtr.h>
 #endif
 
 #if (PLATFORM(WIN) && !OS(WINCE)) \
