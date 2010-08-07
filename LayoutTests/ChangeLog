@@ -1,3 +1,10 @@
+2010-08-06  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Add missing files from last commit - per Alex request.
+
+        * platform/chromium-win/svg/custom/mask-colorspace-expected.checksum: Added.
+        * platform/chromium-win/svg/custom/mask-colorspace-expected.png: Added.
+
 2010-08-06  Alex Nicolaou  <anicolao@chromium.org>
 
         Reviewed by Darin Adler.
