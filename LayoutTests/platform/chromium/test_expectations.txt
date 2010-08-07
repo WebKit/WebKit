@@ -3096,7 +3096,6 @@ BUGWK42371 : ietestcenter/Javascript/15.3.4.5-8-2.html = FAIL
 BUGWK42371 : ietestcenter/Javascript/15.3.4.5-9-1.html = FAIL
 BUGWK42371 : ietestcenter/Javascript/15.3.4.5-9-2.html = FAIL
 
-BUGWK42403 LINUX WIN : svg/W3C-SVG-1.1/masking-intro-01-f.svg = IMAGE
 BUGWK42403 LINUX WIN : svg/css/circle-in-mask-with-shadow.svg = IMAGE
 BUGWK42403 LINUX WIN : svg/custom/grayscale-gradient-mask.svg = IMAGE
 BUGWK42403 WIN : svg/custom/mask-colorspace.svg = IMAGE

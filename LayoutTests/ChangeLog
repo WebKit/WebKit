@@ -1,3 +1,22 @@
+2010-08-06  Alex Nicolaou  <anicolao@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        rebaseline masking-intro-01-f.svg - diffs are in the antialiasing
+        https://bugs.webkit.org/show_bug.cgi?id=43107
+
+        After some investigation, the antialiasing diffs were 
+        definitely verified to be due to the colorspace change 
+        made for https://bugs.webkit.org/show_bug.cgi?id=42228
+        and I'm reasonably confident that these rebaselined 
+        outputs are good.
+
+        * platform/chromium-linux/svg/W3C-SVG-1.1/masking-intro-01-f-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/masking-intro-01-f-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/masking-intro-01-f-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1/masking-intro-01-f-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2010-08-06  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Ojan Vafai.
