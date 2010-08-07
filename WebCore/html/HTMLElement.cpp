@@ -986,7 +986,7 @@ bool HTMLElement::checkDTD(const Node* newChild)
         return true;
     return inEitherTagList(newChild);
 }
-    
+
 bool HTMLElement::rendererIsNeeded(RenderStyle *style)
 {
 #if !ENABLE(XHTMLMP)
@@ -994,11 +994,16 @@ bool HTMLElement::rendererIsNeeded(RenderStyle *style)
         Frame* frame = document()->frame();
         if (frame && frame->script()->canExecuteScripts(NotAboutToExecuteScript))
             return false;
-    }
+    } else
 #endif
+    if (hasLocalName(noembedTag)) {
+        Frame* frame = document()->frame();
+        if (frame && frame->loader()->subframeLoader()->allowPlugins(NotAboutToInstantiatePlugin))
+            return false;
+    }
     return StyledElement::rendererIsNeeded(style);
 }
-    
+
 RenderObject* HTMLElement::createRenderer(RenderArena* arena, RenderStyle* style)
 {
     if (hasLocalName(wbrTag))
