@@ -1,3 +1,15 @@
+2010-08-06  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Define setPrivateBrowsingEnabled()
+        https://bugs.webkit.org/show_bug.cgi?id=42283
+
+        Define the scope of 'private browsing' in WebKit
+        See also https://bugs.webkit.org/show_bug.cgi?id=41801
+
+        * page/Settings.h:
+
 2010-08-06  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

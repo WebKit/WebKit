@@ -140,6 +140,17 @@ namespace WebCore {
         unsigned sessionStorageQuota() const { return m_sessionStorageQuota; }
 #endif
 
+        // When this option is set, WebCore will avoid storing any record of browsing activity
+        // that may persist on disk or remain displayed when the option is reset.
+        // This option does not affect the storage of such information in RAM.
+        // The following functions respect this setting:
+        //  - HTML5/DOM Storage
+        //  - Icon Database
+        //  - Console Messages
+        //  - Cache
+        //  - Application Cache
+        //  - Back/Forward Page History
+        //  - Page Search Results
         void setPrivateBrowsingEnabled(bool);
         bool privateBrowsingEnabled() const { return m_privateBrowsingEnabled; }
 
