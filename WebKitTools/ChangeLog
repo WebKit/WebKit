@@ -1,3 +1,10 @@
+2010-08-07  Dan Bernstein  <mitz@apple.com>
+
+        Build fix.
+
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj: Made the references
+        to JSGCController.{cpp,h} relative to the build root.
+
 2010-08-07  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
