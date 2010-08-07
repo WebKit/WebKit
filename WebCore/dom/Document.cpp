@@ -79,10 +79,8 @@
 #include "HTMLMapElement.h"
 #include "HTMLNameCollection.h"
 #include "HTMLNames.h"
-#include "LegacyHTMLTreeBuilder.h"
 #include "HTMLStyleElement.h"
 #include "HTMLTitleElement.h"
-#include "LegacyHTMLDocumentParser.h"
 #include "HTTPParsers.h"
 #include "HistoryItem.h"
 #include "HitTestRequest.h"
@@ -91,6 +89,8 @@
 #include "InspectorController.h"
 #include "InspectorTimelineAgent.h"
 #include "KeyboardEvent.h"
+#include "LegacyHTMLDocumentParser.h"
+#include "LegacyHTMLTreeBuilder.h"
 #include "Logging.h"
 #include "MessageEvent.h"
 #include "MouseEvent.h"
@@ -136,10 +136,10 @@
 #include "WebKitAnimationEvent.h"
 #include "WebKitTransitionEvent.h"
 #include "WheelEvent.h"
+#include "XMLDocumentParser.h"
 #include "XMLHttpRequest.h"
 #include "XMLNSNames.h"
 #include "XMLNames.h"
-#include "XMLDocumentParser.h"
 #include "htmlediting.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/HashFunctions.h>
@@ -174,8 +174,8 @@
 #include "SVGDocumentExtensions.h"
 #include "SVGElementFactory.h"
 #include "SVGNames.h"
-#include "SVGZoomEvent.h"
 #include "SVGStyleElement.h"
+#include "SVGZoomEvent.h"
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
@@ -303,12 +303,12 @@ static Widget* widgetForNode(Node* focusedNode)
     return toRenderWidget(renderer)->widget();
 }
 
-static bool acceptsEditingFocus(Node *node)
+static bool acceptsEditingFocus(Node* node)
 {
     ASSERT(node);
     ASSERT(node->isContentEditable());
 
-    Node *root = node->rootEditableElement();
+    Node* root = node->rootEditableElement();
     Frame* frame = node->document()->frame();
     if (!frame || !root)
         return false;
@@ -360,7 +360,7 @@ private:
 
 Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     : ContainerNode(0)
-    , m_domtree_version(0)
+    , m_domTreeVersion(0)
     , m_styleSheets(StyleSheetList::create(this))
     , m_styleRecalcTimer(this, &Document::styleRecalcTimerFired)
     , m_frameElementsShouldIgnoreScrolling(false)
@@ -725,75 +725,75 @@ PassRefPtr<Node> Document::importNode(Node* importedNode, bool deep, ExceptionCo
     }
 
     switch (importedNode->nodeType()) {
-        case TEXT_NODE:
-            return createTextNode(importedNode->nodeValue());
-        case CDATA_SECTION_NODE:
-            return createCDATASection(importedNode->nodeValue(), ec);
-        case ENTITY_REFERENCE_NODE:
-            return createEntityReference(importedNode->nodeName(), ec);
-        case PROCESSING_INSTRUCTION_NODE:
-            return createProcessingInstruction(importedNode->nodeName(), importedNode->nodeValue(), ec);
-        case COMMENT_NODE:
-            return createComment(importedNode->nodeValue());
-        case ELEMENT_NODE: {
-            Element* oldElement = static_cast<Element*>(importedNode);
-            RefPtr<Element> newElement = createElementNS(oldElement->namespaceURI(), oldElement->tagQName().toString(), ec);
-                        
-            if (ec)
-                return 0;
+    case TEXT_NODE:
+        return createTextNode(importedNode->nodeValue());
+    case CDATA_SECTION_NODE:
+        return createCDATASection(importedNode->nodeValue(), ec);
+    case ENTITY_REFERENCE_NODE:
+        return createEntityReference(importedNode->nodeName(), ec);
+    case PROCESSING_INSTRUCTION_NODE:
+        return createProcessingInstruction(importedNode->nodeName(), importedNode->nodeValue(), ec);
+    case COMMENT_NODE:
+        return createComment(importedNode->nodeValue());
+    case ELEMENT_NODE: {
+        Element* oldElement = static_cast<Element*>(importedNode);
+        RefPtr<Element> newElement = createElementNS(oldElement->namespaceURI(), oldElement->tagQName().toString(), ec);
+                    
+        if (ec)
+            return 0;
 
-            NamedNodeMap* attrs = oldElement->attributes(true);
-            if (attrs) {
-                unsigned length = attrs->length();
-                for (unsigned i = 0; i < length; i++) {
-                    Attribute* attr = attrs->attributeItem(i);
-                    newElement->setAttribute(attr->name(), attr->value().impl(), ec);
-                    if (ec)
-                        return 0;
-                }
+        NamedNodeMap* attrs = oldElement->attributes(true);
+        if (attrs) {
+            unsigned length = attrs->length();
+            for (unsigned i = 0; i < length; i++) {
+                Attribute* attr = attrs->attributeItem(i);
+                newElement->setAttribute(attr->name(), attr->value().impl(), ec);
+                if (ec)
+                    return 0;
             }
-
-            newElement->copyNonAttributeProperties(oldElement);
-
-            if (deep) {
-                for (Node* oldChild = oldElement->firstChild(); oldChild; oldChild = oldChild->nextSibling()) {
-                    RefPtr<Node> newChild = importNode(oldChild, true, ec);
-                    if (ec)
-                        return 0;
-                    newElement->appendChild(newChild.release(), ec);
-                    if (ec)
-                        return 0;
-                }
-            }
-
-            return newElement.release();
         }
-        case ATTRIBUTE_NODE:
-            return Attr::create(0, this, static_cast<Attr*>(importedNode)->attr()->clone());
-        case DOCUMENT_FRAGMENT_NODE: {
-            DocumentFragment* oldFragment = static_cast<DocumentFragment*>(importedNode);
-            RefPtr<DocumentFragment> newFragment = createDocumentFragment();
-            if (deep) {
-                for (Node* oldChild = oldFragment->firstChild(); oldChild; oldChild = oldChild->nextSibling()) {
-                    RefPtr<Node> newChild = importNode(oldChild, true, ec);
-                    if (ec)
-                        return 0;
-                    newFragment->appendChild(newChild.release(), ec);
-                    if (ec)
-                        return 0;
-                }
+
+        newElement->copyNonAttributeProperties(oldElement);
+
+        if (deep) {
+            for (Node* oldChild = oldElement->firstChild(); oldChild; oldChild = oldChild->nextSibling()) {
+                RefPtr<Node> newChild = importNode(oldChild, true, ec);
+                if (ec)
+                    return 0;
+                newElement->appendChild(newChild.release(), ec);
+                if (ec)
+                    return 0;
             }
-            
-            return newFragment.release();
         }
-        case ENTITY_NODE:
-        case NOTATION_NODE:
-            // FIXME: It should be possible to import these node types, however in DOM3 the DocumentType is readonly, so there isn't much sense in doing that.
-            // Ability to add these imported nodes to a DocumentType will be considered for addition to a future release of the DOM.
-        case DOCUMENT_NODE:
-        case DOCUMENT_TYPE_NODE:
-        case XPATH_NAMESPACE_NODE:
-            break;
+
+        return newElement.release();
+    }
+    case ATTRIBUTE_NODE:
+        return Attr::create(0, this, static_cast<Attr*>(importedNode)->attr()->clone());
+    case DOCUMENT_FRAGMENT_NODE: {
+        DocumentFragment* oldFragment = static_cast<DocumentFragment*>(importedNode);
+        RefPtr<DocumentFragment> newFragment = createDocumentFragment();
+        if (deep) {
+            for (Node* oldChild = oldFragment->firstChild(); oldChild; oldChild = oldChild->nextSibling()) {
+                RefPtr<Node> newChild = importNode(oldChild, true, ec);
+                if (ec)
+                    return 0;
+                newFragment->appendChild(newChild.release(), ec);
+                if (ec)
+                    return 0;
+            }
+        }
+        
+        return newFragment.release();
+    }
+    case ENTITY_NODE:
+    case NOTATION_NODE:
+        // FIXME: It should be possible to import these node types, however in DOM3 the DocumentType is readonly, so there isn't much sense in doing that.
+        // Ability to add these imported nodes to a DocumentType will be considered for addition to a future release of the DOM.
+    case DOCUMENT_NODE:
+    case DOCUMENT_TYPE_NODE:
+    case XPATH_NAMESPACE_NODE:
+        break;
     }
 
     ec = NOT_SUPPORTED_ERR;
@@ -814,26 +814,26 @@ PassRefPtr<Node> Document::adoptNode(PassRefPtr<Node> source, ExceptionCode& ec)
     }
 
     switch (source->nodeType()) {
-        case ENTITY_NODE:
-        case NOTATION_NODE:
-        case DOCUMENT_NODE:
-        case DOCUMENT_TYPE_NODE:
-        case XPATH_NAMESPACE_NODE:
-            ec = NOT_SUPPORTED_ERR;
-            return 0;            
-        case ATTRIBUTE_NODE: {                   
-            Attr* attr = static_cast<Attr*>(source.get());
-            if (attr->ownerElement())
-                attr->ownerElement()->removeAttributeNode(attr, ec);
-            attr->setSpecified(true);
-            break;
-        }       
-        default:
-            if (source->hasTagName(iframeTag))
-                static_cast<HTMLIFrameElement*>(source.get())->setRemainsAliveOnRemovalFromTree(attached());
+    case ENTITY_NODE:
+    case NOTATION_NODE:
+    case DOCUMENT_NODE:
+    case DOCUMENT_TYPE_NODE:
+    case XPATH_NAMESPACE_NODE:
+        ec = NOT_SUPPORTED_ERR;
+        return 0;            
+    case ATTRIBUTE_NODE: {                   
+        Attr* attr = static_cast<Attr*>(source.get());
+        if (attr->ownerElement())
+            attr->ownerElement()->removeAttributeNode(attr, ec);
+        attr->setSpecified(true);
+        break;
+    }       
+    default:
+        if (source->hasTagName(iframeTag))
+            static_cast<HTMLIFrameElement*>(source.get())->setRemainsAliveOnRemovalFromTree(attached());
 
-            if (source->parentNode())
-                source->parentNode()->removeChild(source.get(), ec);
+        if (source->parentNode())
+            source->parentNode()->removeChild(source.get(), ec);
     }
                 
     for (Node* node = source.get(); node; node = node->traverseNextNode(source.get()))
@@ -923,7 +923,7 @@ Element* Document::getElementById(const AtomicString& elementId) const
 
     if (m_duplicateIds.contains(elementId.impl())) {
         // We know there's at least one node with this id, but we don't know what the first one is.
-        for (Node *n = traverseNextNode(); n != 0; n = n->traverseNextNode()) {
+        for (Node* n = traverseNextNode(); n; n = n->traverseNextNode()) {
             if (n->isElementNode()) {
                 element = static_cast<Element*>(n);
                 if (element->hasID() && element->getIdAttribute() == elementId) {
@@ -945,9 +945,9 @@ String Document::readyState() const
             return "complete";
         if (parsing()) 
             return "loading";
-      return "loaded";
-      // FIXME: What does "interactive" mean?
-      // FIXME: Missing support for "uninitialized".
+        return "loaded";
+        // FIXME: What does "interactive" mean?
+        // FIXME: Missing support for "uninitialized".
     }
     return String();
 }
@@ -1352,7 +1352,7 @@ PassRefPtr<NodeIterator> Document::createNodeIterator(Node* root, unsigned whatT
     return NodeIterator::create(root, whatToShow, filter, expandEntityReferences);
 }
 
-PassRefPtr<TreeWalker> Document::createTreeWalker(Node *root, unsigned whatToShow, 
+PassRefPtr<TreeWalker> Document::createTreeWalker(Node* root, unsigned whatToShow, 
     PassRefPtr<NodeFilter> filter, bool expandEntityReferences, ExceptionCode& ec)
 {
     if (!root) {
@@ -2048,8 +2048,8 @@ bool Document::shouldScheduleLayout()
     //    (a) Only schedule a layout once the stylesheets are loaded.
     //    (b) Only schedule layout once we have a body element.
 
-    return (haveStylesheetsLoaded() && body()) ||
-        (documentElement() && !documentElement()->hasTagName(htmlTag));
+    return (haveStylesheetsLoaded() && body())
+        || (documentElement() && !documentElement()->hasTagName(htmlTag));
 }
 
 int Document::minimumLayoutDelay()
@@ -2319,7 +2319,7 @@ Node* Document::nextFocusableNode(Node* start, KeyboardEvent* event)
         if (Node* winner = nextNodeWithExactTabIndex(start->traverseNextNode(), start->tabIndex(), event))
             return winner;
 
-        if (start->tabIndex() == 0)
+        if (!start->tabIndex())
             // We've reached the last node in the document with a tabindex of 0. This is the end of the tabbing order.
             return 0;
     }
@@ -2338,8 +2338,7 @@ Node* Document::nextFocusableNode(Node* start, KeyboardEvent* event)
 Node* Document::previousFocusableNode(Node* start, KeyboardEvent* event)
 {
     Node* last;
-    for (last = this; last->lastChild(); last = last->lastChild())
-        ; // Empty loop.
+    for (last = this; last->lastChild(); last = last->lastChild()) { }
 
     // First try to find the last node in the document that comes before start and has the same tabindex as start.
     // If start is null, find the last node in the document with a tabindex of 0.
@@ -2375,17 +2374,16 @@ int Document::nodeAbsIndex(Node *node)
     ASSERT(node->document() == this);
 
     int absIndex = 0;
-    for (Node *n = node; n && n != this; n = n->traversePreviousNode())
+    for (Node* n = node; n && n != this; n = n->traversePreviousNode())
         absIndex++;
     return absIndex;
 }
 
-Node *Document::nodeWithAbsIndex(int absIndex)
+Node* Document::nodeWithAbsIndex(int absIndex)
 {
-    Node *n = this;
-    for (int i = 0; n && (i < absIndex); i++) {
+    Node* n = this;
+    for (int i = 0; n && (i < absIndex); i++)
         n = n->traverseNextNode();
-    }
     return n;
 }
 
@@ -2530,27 +2528,27 @@ MouseEventWithHitTestResults Document::prepareMouseEvent(const HitTestRequest& r
 bool Document::childTypeAllowed(NodeType type)
 {
     switch (type) {
-        case ATTRIBUTE_NODE:
-        case CDATA_SECTION_NODE:
-        case DOCUMENT_FRAGMENT_NODE:
-        case DOCUMENT_NODE:
-        case ENTITY_NODE:
-        case ENTITY_REFERENCE_NODE:
-        case NOTATION_NODE:
-        case TEXT_NODE:
-        case XPATH_NAMESPACE_NODE:
-            return false;
-        case COMMENT_NODE:
-        case PROCESSING_INSTRUCTION_NODE:
-            return true;
-        case DOCUMENT_TYPE_NODE:
-        case ELEMENT_NODE:
-            // Documents may contain no more than one of each of these.
-            // (One Element and one DocumentType.)
-            for (Node* c = firstChild(); c; c = c->nextSibling())
-                if (c->nodeType() == type)
-                    return false;
-            return true;
+    case ATTRIBUTE_NODE:
+    case CDATA_SECTION_NODE:
+    case DOCUMENT_FRAGMENT_NODE:
+    case DOCUMENT_NODE:
+    case ENTITY_NODE:
+    case ENTITY_REFERENCE_NODE:
+    case NOTATION_NODE:
+    case TEXT_NODE:
+    case XPATH_NAMESPACE_NODE:
+        return false;
+    case COMMENT_NODE:
+    case PROCESSING_INSTRUCTION_NODE:
+        return true;
+    case DOCUMENT_TYPE_NODE:
+    case ELEMENT_NODE:
+        // Documents may contain no more than one of each of these.
+        // (One Element and one DocumentType.)
+        for (Node* c = firstChild(); c; c = c->nextSibling())
+            if (c->nodeType() == type)
+                return false;
+        return true;
     }
     return false;
 }
@@ -2574,14 +2572,14 @@ bool Document::canReplaceChild(Node* newChild, Node* oldChild)
             continue;
         
         switch (c->nodeType()) {
-            case DOCUMENT_TYPE_NODE:
-                numDoctypes++;
-                break;
-            case ELEMENT_NODE:
-                numElements++;
-                break;
-            default:
-                break;
+        case DOCUMENT_TYPE_NODE:
+            numDoctypes++;
+            break;
+        case ELEMENT_NODE:
+            numElements++;
+            break;
+        default:
+            break;
         }
     }
     
@@ -2589,29 +2587,6 @@ bool Document::canReplaceChild(Node* newChild, Node* oldChild)
     if (newChild->nodeType() == DOCUMENT_FRAGMENT_NODE) {
         for (Node* c = firstChild(); c; c = c->nextSibling()) {
             switch (c->nodeType()) {
-                case ATTRIBUTE_NODE:
-                case CDATA_SECTION_NODE:
-                case DOCUMENT_FRAGMENT_NODE:
-                case DOCUMENT_NODE:
-                case ENTITY_NODE:
-                case ENTITY_REFERENCE_NODE:
-                case NOTATION_NODE:
-                case TEXT_NODE:
-                case XPATH_NAMESPACE_NODE:
-                    return false;
-                case COMMENT_NODE:
-                case PROCESSING_INSTRUCTION_NODE:
-                    break;
-                case DOCUMENT_TYPE_NODE:
-                    numDoctypes++;
-                    break;
-                case ELEMENT_NODE:
-                    numElements++;
-                    break;
-            }
-        }
-    } else {
-        switch (newChild->nodeType()) {
             case ATTRIBUTE_NODE:
             case CDATA_SECTION_NODE:
             case DOCUMENT_FRAGMENT_NODE:
@@ -2624,13 +2599,36 @@ bool Document::canReplaceChild(Node* newChild, Node* oldChild)
                 return false;
             case COMMENT_NODE:
             case PROCESSING_INSTRUCTION_NODE:
-                return true;
+                break;
             case DOCUMENT_TYPE_NODE:
                 numDoctypes++;
                 break;
             case ELEMENT_NODE:
                 numElements++;
                 break;
+            }
+        }
+    } else {
+        switch (newChild->nodeType()) {
+        case ATTRIBUTE_NODE:
+        case CDATA_SECTION_NODE:
+        case DOCUMENT_FRAGMENT_NODE:
+        case DOCUMENT_NODE:
+        case ENTITY_NODE:
+        case ENTITY_REFERENCE_NODE:
+        case NOTATION_NODE:
+        case TEXT_NODE:
+        case XPATH_NAMESPACE_NODE:
+            return false;
+        case COMMENT_NODE:
+        case PROCESSING_INSTRUCTION_NODE:
+            return true;
+        case DOCUMENT_TYPE_NODE:
+            numDoctypes++;
+            break;
+        case ELEMENT_NODE:
+            numElements++;
+            break;
         }                
     }
         
@@ -2829,11 +2827,11 @@ void Document::recalcStyleSelector()
             bool enabledViaScript = false;
             if (e->hasLocalName(linkTag)) {
                 // <LINK> element
-                HTMLLinkElement* l = static_cast<HTMLLinkElement*>(n);
-                if (l->isDisabled())
+                HTMLLinkElement* linkElement = static_cast<HTMLLinkElement*>(n);
+                if (linkElement->isDisabled())
                     continue;
-                enabledViaScript = l->isEnabledViaScript();
-                if (l->isLoading()) {
+                enabledViaScript = linkElement->isEnabledViaScript();
+                if (linkElement->isLoading()) {
                     // it is loading but we should still decide which style sheet set to use
                     if (!enabledViaScript && !title.isEmpty() && m_preferredStylesheetSet.isEmpty()) {
                         const AtomicString& rel = e->getAttribute(relAttr);
@@ -2844,7 +2842,7 @@ void Document::recalcStyleSelector()
                     }
                     continue;
                 }
-                if (!l->sheet())
+                if (!linkElement->sheet())
                     title = nullAtom;
             }
 
@@ -3052,7 +3050,7 @@ bool Document::setFocusedNode(PassRefPtr<Node> newFocusedNode)
         // eww, I suck. set the qt focus correctly
         // ### find a better place in the code for this
         if (view()) {
-            Widget *focusWidget = widgetForNode(m_focusedNode.get());
+            Widget* focusWidget = widgetForNode(m_focusedNode.get());
             if (focusWidget) {
                 // Make sure a widget has the right size before giving it focus.
                 // Otherwise, we are testing edge cases of the Widget code.
@@ -3108,12 +3106,12 @@ void Document::setCSSTarget(Element* n)
         n->setNeedsStyleRecalc();
 }
 
-void Document::attachNodeIterator(NodeIterator *ni)
+void Document::attachNodeIterator(NodeIterator* ni)
 {
     m_nodeIterators.add(ni);
 }
 
-void Document::detachNodeIterator(NodeIterator *ni)
+void Document::detachNodeIterator(NodeIterator* ni)
 {
     m_nodeIterators.remove(ni);
 }
@@ -3563,7 +3561,7 @@ bool Document::parseQualifiedName(const String& qualifiedName, String& prefix, S
 {
     unsigned length = qualifiedName.length();
 
-    if (length == 0) {
+    if (!length) {
         ec = INVALID_CHARACTER_ERR;
         return false;
     }
@@ -3646,7 +3644,7 @@ void Document::removeImageMap(HTMLMapElement* imageMap)
         m_imageMapsByName.remove(it);
 }
 
-HTMLMapElement *Document::getImageMap(const String& url) const
+HTMLMapElement* Document::getImageMap(const String& url) const
 {
     if (url.isNull())
         return 0;
@@ -3682,13 +3680,13 @@ void Document::setInPageCache(bool flag)
 
     m_inPageCache = flag;
     if (flag) {
-        ASSERT(m_savedRenderer == 0);
+        ASSERT(!m_savedRenderer);
         m_savedRenderer = renderer();
         if (FrameView* v = view())
             v->resetScrollbars();
         unscheduleStyleRecalc();
     } else {
-        ASSERT(renderer() == 0 || renderer() == m_savedRenderer);
+        ASSERT(!renderer() || renderer() == m_savedRenderer);
         ASSERT(m_renderArena);
         setRenderer(m_savedRenderer);
         m_savedRenderer = 0;
@@ -3804,7 +3802,7 @@ static IntRect placeholderRectForMarker()
     return IntRect(-1, -1, -1, -1);
 }
 
-void Document::addMarker(Range *range, DocumentMarker::MarkerType type, String description)
+void Document::addMarker(Range* range, DocumentMarker::MarkerType type, String description)
 {
     // Use a TextIterator to visit the potentially multiple nodes the range covers.
     for (TextIterator markedText(range); !markedText.atEnd(); markedText.advance()) {
@@ -3901,7 +3899,7 @@ void Document::addMarker(Node* node, DocumentMarker newMarker)
 
 // copies markers from srcNode to dstNode, applying the specified shift delta to the copies.  The shift is
 // useful if, e.g., the caller has created the dstNode from a non-prefix substring of the srcNode.
-void Document::copyMarkers(Node *srcNode, unsigned startOffset, int length, Node *dstNode, int delta, DocumentMarker::MarkerType markerType)
+void Document::copyMarkers(Node* srcNode, unsigned startOffset, int length, Node* dstNode, int delta, DocumentMarker::MarkerType markerType)
 {
     if (length <= 0)
         return;
@@ -4206,7 +4204,7 @@ void Document::invalidateRenderedRectsForMarkersInRect(const IntRect& r)
     }
 }
 
-void Document::shiftMarkers(Node *node, unsigned startOffset, int delta, DocumentMarker::MarkerType markerType)
+void Document::shiftMarkers(Node* node, unsigned startOffset, int delta, DocumentMarker::MarkerType markerType)
 {
     MarkerMapVectorPair* vectorPair = m_markers.get(node);
     if (!vectorPair)
@@ -4218,7 +4216,7 @@ void Document::shiftMarkers(Node *node, unsigned startOffset, int delta, Documen
     
     bool docDirty = false;
     for (size_t i = 0; i != markers.size(); ++i) {
-        DocumentMarker &marker = markers[i];
+        DocumentMarker& marker = markers[i];
         if (marker.startOffset >= startOffset && (markerType == DocumentMarker::AllMarkers || marker.type == markerType)) {
             ASSERT((int)marker.startOffset + delta >= 0);
             marker.startOffset += delta;
@@ -4263,7 +4261,7 @@ void Document::setMarkersActive(Node* node, unsigned startOffset, unsigned endOf
 
     bool docDirty = false;
     for (size_t i = 0; i != markers.size(); ++i) {
-        DocumentMarker &marker = markers[i];
+        DocumentMarker& marker = markers[i];
 
         // Markers are returned in order, so stop if we are now past the specified range.
         if (marker.startOffset >= endOffset)
@@ -4325,21 +4323,21 @@ bool Document::inDesignMode() const
     return false;
 }
 
-Document *Document::parentDocument() const
+Document* Document::parentDocument() const
 {
-    Frame *childPart = frame();
+    Frame* childPart = frame();
     if (!childPart)
         return 0;
-    Frame *parent = childPart->tree()->parent();
+    Frame* parent = childPart->tree()->parent();
     if (!parent)
         return 0;
     return parent->document();
 }
 
-Document *Document::topDocument() const
+Document* Document::topDocument() const
 {
-    Document *doc = const_cast<Document *>(this);
-    Element *element;
+    Document* doc = const_cast<Document *>(this);
+    Element* element;
     while ((element = doc->ownerElement()))
         doc = element->document();
     
@@ -4654,7 +4652,7 @@ unsigned FormElementKeyHash::hash(const FormElementKey& k)
     // this avoids ever returning a hash code of 0, since that is used to
     // signal "hash not computed yet", using a value that is likely to be
     // effectively the same as 0 when the low bits are masked
-    if (hash == 0)
+    if (!hash)
         hash = 0x80000000;
 
     return hash;
@@ -4688,7 +4686,7 @@ bool Document::useSecureKeyboardEntryWhenActive() const
 void Document::initSecurityContext()
 {
     if (securityOrigin() && !securityOrigin()->isEmpty())
-        return;  // m_securityOrigin has already been initialized.
+        return; // m_securityOrigin has already been initialized.
 
     if (!m_frame) {
         // No source for a security context.
