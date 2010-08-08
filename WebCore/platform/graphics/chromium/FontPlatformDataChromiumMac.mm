@@ -436,6 +436,17 @@ bool FontPlatformData::allowsLigatures() const
     return ![[m_font coveredCharacterSet] characterIsMember:'a'];
 }
 
+#if USE(CORE_TEXT)
+CTFontRef FontPlatformData::ctFont() const
+{
+    if (m_font)
+        return toCTFontRef(m_font);
+    if (!m_CTFont)
+        m_CTFont.adoptCF(CTFontCreateWithGraphicsFont(m_cgFont.get(), m_size, 0, 0));
+    return m_CTFont.get();
+}
+#endif // USE(CORE_TEXT)
+
 #ifndef NDEBUG
 String FontPlatformData::description() const
 {

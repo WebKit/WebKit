@@ -1,3 +1,10 @@
+2010-08-08  Dan Bernstein  <mitz@apple.com>
+
+        Try to fix the Chromium Mac build after r64915.
+
+        * platform/graphics/chromium/FontPlatformDataChromiumMac.mm:
+        (WebCore::FontPlatformData::ctFont): Copied from mac/FontPlatformDataMac.mm.
+
 2010-08-08  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.
