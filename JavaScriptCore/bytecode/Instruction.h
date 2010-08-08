@@ -63,6 +63,10 @@ namespace JSC {
                 Structure* proto;
                 StructureChain* chain;
             } u;
+#if ENABLE(MOVABLE_GC_OBJECTS)
+            int count;
+            PropertySlot::CachedPropertyType propertyType;
+#endif
 
             void set(PolymorphicAccessStructureListStubRoutineType _stubRoutine, Structure* _base)
             {
@@ -72,20 +76,35 @@ namespace JSC {
                 isChain = false;
             }
             
+#if ENABLE(MOVABLE_GC_OBJECTS)
+            void set(PolymorphicAccessStructureListStubRoutineType _stubRoutine, Structure* _base, Structure* _proto, PropertySlot::CachedPropertyType _propertyType)
+#else
             void set(PolymorphicAccessStructureListStubRoutineType _stubRoutine, Structure* _base, Structure* _proto)
+#endif
             {
                 stubRoutine = _stubRoutine;
                 base = _base;
                 u.proto = _proto;
                 isChain = false;
+#if ENABLE(MOVABLE_GC_OBJECTS)
+                propertyType = _propertyType;
+#endif
             }
             
+#if ENABLE(MOVABLE_GC_OBJECTS)
+            void set(PolymorphicAccessStructureListStubRoutineType _stubRoutine, Structure* _base, StructureChain* _chain, int _count, PropertySlot::CachedPropertyType _propertyType)
+#else
             void set(PolymorphicAccessStructureListStubRoutineType _stubRoutine, Structure* _base, StructureChain* _chain)
+#endif
             {
                 stubRoutine = _stubRoutine;
                 base = _base;
                 u.chain = _chain;
                 isChain = true;
+#if ENABLE(MOVABLE_GC_OBJECTS)
+                count = _count;
+                propertyType = _propertyType;
+#endif
             }
         } list[POLYMORPHIC_LIST_CACHE_SIZE];
         
@@ -94,15 +113,29 @@ namespace JSC {
             list[0].set(stubRoutine, firstBase);
         }
 
+#if ENABLE(MOVABLE_GC_OBJECTS)
+        PolymorphicAccessStructureList(PolymorphicAccessStructureListStubRoutineType stubRoutine, Structure* firstBase, Structure* firstProto, PropertySlot::CachedPropertyType propertyType)
+        {
+            list[0].set(stubRoutine, firstBase, firstProto, propertyType);
+        }
+#else
         PolymorphicAccessStructureList(PolymorphicAccessStructureListStubRoutineType stubRoutine, Structure* firstBase, Structure* firstProto)
         {
             list[0].set(stubRoutine, firstBase, firstProto);
         }
+#endif
 
+#if ENABLE(MOVABLE_GC_OBJECTS)
+        PolymorphicAccessStructureList(PolymorphicAccessStructureListStubRoutineType stubRoutine, Structure* firstBase, StructureChain* firstChain, int count, PropertySlot::CachedPropertyType propertyType)
+        {
+            list[0].set(stubRoutine, firstBase, firstChain, count, propertyType);
+        }
+#else
         PolymorphicAccessStructureList(PolymorphicAccessStructureListStubRoutineType stubRoutine, Structure* firstBase, StructureChain* firstChain)
         {
             list[0].set(stubRoutine, firstBase, firstChain);
         }
+#endif
 
         void derefStructures(int count)
         {

@@ -26,6 +26,8 @@
 #include "config.h"
 #include "StructureStubInfo.h"
 
+#include "JIT.h"
+
 namespace JSC {
 
 #if ENABLE(JIT)
@@ -75,6 +77,39 @@ void StructureStubInfo::deref()
         ASSERT_NOT_REACHED();
     }
 }
+
+#if ENABLE(MOVABLE_GC_OBJECTS)
+void StructureStubInfo::markAggregate(MarkStack& markStack, CodeBlock* codeBlock)
+{
+    switch (accessType) {
+    case access_get_by_id_proto:
+        JIT::markGetByIdProto(markStack, codeBlock, this);
+        return;
+    case access_get_by_id_chain:
+        JIT::markGetByIdChain(markStack, codeBlock, this);
+        return;
+    case access_get_by_id_proto_list:
+        JIT::markGetByIdProtoList(markStack, codeBlock, this);
+        return;
+    case access_put_by_id_transition:
+        JIT::markPutByIdTransition(markStack, codeBlock, this);
+        return;
+    case access_get_by_id_self:
+    case access_get_by_id_self_list:
+    case access_put_by_id_replace:
+    case access_get_by_id:
+    case access_put_by_id:
+    case access_get_by_id_generic:
+    case access_put_by_id_generic:
+    case access_get_array_length:
+    case access_get_string_length:
+        return;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+}
+#endif
+
 #endif
 
 } // namespace JSC

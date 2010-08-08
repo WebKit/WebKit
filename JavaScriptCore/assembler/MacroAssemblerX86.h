@@ -82,9 +82,17 @@ public:
         m_assembler.subl_im(imm.m_value, address.m_ptr);
     }
 
-    void load32(void* address, RegisterID dest)
+    void load32WithPatch(void* address, RegisterID dest)
     {
         m_assembler.movl_mr(address, dest);
+    }
+
+    void load32(void* address, RegisterID dest)
+    {
+        if (dest == X86Registers::eax)
+            m_assembler.movl_mEAX(address);
+        else
+            m_assembler.movl_mr(address, dest);
     }
 
     void loadDouble(const void* address, FPRegisterID dest)
@@ -105,7 +113,10 @@ public:
 
     void store32(RegisterID src, void* address)
     {
-        m_assembler.movl_rm(src, address);
+        if (src == X86Registers::eax)
+            m_assembler.movl_EAXm(address);
+        else
+            m_assembler.movl_rm(src, address);
     }
 
     Jump branch32(Condition cond, AbsoluteAddress left, RegisterID right)

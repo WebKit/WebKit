@@ -118,6 +118,7 @@
             'jit/JITCall32_64.cpp',
             'jit/JITCode.h',
             'jit/JITInlineMethods.h',
+            'jit/JITMarkObjects.cpp',
             'jit/JITOpcodes.cpp',
             'jit/JITOpcodes32_64.cpp',
             'jit/JITPropertyAccess.cpp',

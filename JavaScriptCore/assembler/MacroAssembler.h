@@ -209,6 +209,10 @@ public:
         xor32(imm, srcDest);
     }
 
+    void loadPtrWithPatch(void* address, RegisterID dest)
+    {
+        load32WithPatch(address, dest);
+    }
 
     void loadPtr(ImplicitAddress address, RegisterID dest)
     {

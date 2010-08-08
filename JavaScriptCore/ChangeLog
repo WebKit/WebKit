@@ -1,3 +1,88 @@
+2010-08-07  Nathan Lawrence  <nlawrence@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        The JIT code contains a number of direct references to GC'd objects.
+        When we have movable objects, these references will need to be
+        updated.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.pro:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::int32AtLocation):
+        (JSC::AbstractMacroAssembler::pointerAtLocation):
+        (JSC::AbstractMacroAssembler::jumpTarget):
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::loadPtrWithPatch):
+            Normally, loadPtr will optimize when the register is eax.  Since
+            the slightly smaller instruction changes the offsets, it messes up
+            our ability to repatch the code.  We added this new instruction
+            that garuntees a constant size.
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::load32WithPatch):
+            Changed load32 in the same way described above.
+        (JSC::MacroAssemblerX86::load32):
+            Moved the logic to optimize laod32 from movl_mr to load32
+        (JSC::MacroAssemblerX86::store32):
+            Moved the logic to optimize store32 from movl_rm to store32
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::movl_rm):
+        (JSC::X86Assembler::movl_mr):
+        (JSC::X86Assembler::int32AtLocation):
+        (JSC::X86Assembler::pointerAtLocation):
+        (JSC::X86Assembler::jumpTarget):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::markAggregate):
+        * bytecode/Instruction.h:
+            As described in StructureStubInfo.h, we needed to add additional
+            fields to both StructureStubInfo and
+            PolymorphicAccessStructureList so that we can determine the
+            structure of the JITed code at patch time.
+        (JSC::PolymorphicAccessStructureList::PolymorphicStubInfo::set):
+        (JSC::PolymorphicAccessStructureList::PolymorphicAccessStructureList):
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::markAggregate):
+            Added this function to mark the JITed code that correosponds to
+            this structure stub info.
+        * bytecode/StructureStubInfo.h:
+        (JSC::StructureStubInfo::initGetByIdProto):
+        (JSC::StructureStubInfo::initGetByIdChain):
+        (JSC::StructureStubInfo::):
+        * jit/JIT.h:
+        * jit/JITMarkObjects.cpp: Added.
+        (JSC::JIT::patchPrototypeStructureAddress):
+        (JSC::JIT::patchGetDirectOffset):
+        (JSC::JIT::markGetByIdProto):
+        (JSC::JIT::markGetByIdChain):
+        (JSC::JIT::markGetByIdProtoList):
+        (JSC::JIT::markPutByIdTransition):
+        (JSC::JIT::markGlobalObjectReference):
+        * jit/JITPropertyAccess.cpp:
+            Added asserts for the patch offsets.
+        (JSC::JIT::compileGetDirectOffset):
+        (JSC::JIT::testPrototype):
+        (JSC::JIT::privateCompilePutByIdTransition):
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::compileGetDirectOffset):
+        (JSC::JIT::testPrototype):
+        (JSC::JIT::privateCompilePutByIdTransition):
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+        * jit/JITStubs.cpp:
+        (JSC::setupPolymorphicProtoList):
+        * wtf/Platform.h:
+            Added ENABLE_MOVABLE_GC_OBJECTS flag
+
 2010-08-07  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Geoffrey Garen.
