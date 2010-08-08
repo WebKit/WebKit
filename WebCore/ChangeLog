@@ -1,3 +1,18 @@
+2010-08-07  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        Empty strings can have more than one ref
+        https://bugs.webkit.org/show_bug.cgi?id=43666
+
+        These asserts are trying to say that we have a thread-safe copy of the
+        string, but they're not accurate for empty strings because we use a
+        special static empty string that magically has infinite refs.
+
+        * storage/OriginUsageRecord.cpp:
+        (WebCore::OriginUsageRecord::addDatabase):
+        (WebCore::OriginUsageRecord::markDatabase):
+
 2010-08-07  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
         Reviewed by Eric Seidel.
 
