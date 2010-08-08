@@ -1,3 +1,18 @@
+2010-08-07  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Allow custom memory allocation control for EventHandlingState struct
+        https://bugs.webkit.org/show_bug.cgi?id=43548
+
+        Inherits the following class from FastAllocBase because it is
+        instantiated by 'new':
+
+        struct name         - instantiated at: WebCore/
+        EventHandlingState  - html/HTMLInputElement.cpp:2051
+
+        * html/HTMLInputElement.cpp:
+
 2010-08-07  Jay Civelli  <jcivelli@chromium.org>
 
         Reviewed by Eric Seidel.
