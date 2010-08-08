@@ -2,6 +2,17 @@
 
         Reviewed by Eric Seidel.
 
+        [WML] Include FormDataBuilder.h in WMLGoElement.h
+        https://bugs.webkit.org/show_bug.cgi?id=43177
+
+        To fix build breaks in WMLGoElement.cpp, FormDataBuilder.h needs to be included.
+
+        * wml/WMLGoElement.cpp: Include FormDataBuilder.h
+
+2010-08-07  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Eric Seidel.
+
         [WML] Add dummy argument to SelectElement::defaultEventHandler() in WMLSelectElement
         https://bugs.webkit.org/show_bug.cgi?id=43176
 
