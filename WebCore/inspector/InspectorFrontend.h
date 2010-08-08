@@ -47,60 +47,8 @@ namespace WebCore {
         ~InspectorFrontend();
 
         void close();
-        void inspectedPageDestroyed();
-
-        void didCommitLoad();
-
-        void populateApplicationSettings(const String& settings);
-        void populateSessionSettings(const String& settings);
-
-        void updateFocusedNode(long nodeId);
         void showPanel(int panel);
-        void populateInterface();
-        void reset();
-        void resetProfilesPanel();
-
-        void bringToFront();
-        void inspectedURLChanged(const String&);
-
-        void resourceTrackingWasEnabled();
-        void resourceTrackingWasDisabled();
-
-        void searchingForNodeWasEnabled();
-        void searchingForNodeWasDisabled();
-
-        void monitoringXHRWasEnabled();
-        void monitoringXHRWasDisabled();
-
-        void updatePauseOnExceptionsState(long state);
-
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-        void attachDebuggerWhenShown();
-        void debuggerWasEnabled();
-        void debuggerWasDisabled();
-
-        void profilerWasEnabled();
-        void profilerWasDisabled();
-        void setRecordingProfile(bool isProfiling);
-#endif
-
-        void didPushNodeByPathToFrontend(long callId, long nodeId);
-
-        void timelineProfilerWasStarted();
-        void timelineProfilerWasStopped();
-
-#if ENABLE(WORKERS)
-        void didCreateWorker(const InspectorWorkerResource&);
-        void didDestroyWorker(const InspectorWorkerResource&);
-#endif // ENABLE(WORKER)
-
-        void contextMenuItemSelected(int itemId);
-        void contextMenuCleared();
-
         ScriptState* scriptState() const { return m_webInspector.scriptState(); }
-
-        void evaluateForTestInFrontend(long callId, const String& script);
-
     private:
         void callSimpleFunction(const String& functionName);
         ScriptObject m_webInspector;

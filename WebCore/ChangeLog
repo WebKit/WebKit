@@ -1,3 +1,51 @@
+2010-08-08  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        WebInspector: remove hand written InspectorFrontend from almost all places.
+        https://bugs.webkit.org/show_bug.cgi?id=43630
+
+        * inspector/ConsoleMessage.cpp:
+        * inspector/InjectedScriptHost.cpp:
+        (WebCore::InjectedScriptHost::pushNodePathToFrontend):
+        * inspector/InjectedScriptHost.h:
+        * inspector/Inspector.idl:
+        * inspector/InspectorBackend.cpp:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::inspectedPageDestroyed):
+        (WebCore::InspectorController::inspect):
+        (WebCore::InspectorController::focusNode):
+        (WebCore::InspectorController::windowVisible):
+        (WebCore::InspectorController::addConsoleMessage):
+        (WebCore::InspectorController::inspectedWindowScriptObjectCleared):
+        (WebCore::InspectorController::setSearchingForNode):
+        (WebCore::InspectorController::setMonitoringXHR):
+        (WebCore::InspectorController::connectFrontend):
+        (WebCore::InspectorController::show):
+        (WebCore::InspectorController::showPanel):
+        (WebCore::InspectorController::close):
+        (WebCore::InspectorController::disconnectFrontend):
+        (WebCore::InspectorController::populateScriptObjects):
+        (WebCore::InspectorController::didCommitLoad):
+        (WebCore::InspectorController::enableResourceTracking):
+        (WebCore::InspectorController::disableResourceTracking):
+        (WebCore::InspectorController::startTimelineProfiler):
+        (WebCore::InspectorController::stopTimelineProfiler):
+        (WebCore::InspectorController::postWorkerNotificationToFrontend):
+        (WebCore::InspectorController::didCreateWorker):
+        (WebCore::InspectorController::didDestroyWorker):
+        (WebCore::InspectorController::toggleRecordButton):
+        (WebCore::InspectorController::enableProfiler):
+        (WebCore::InspectorController::disableProfiler):
+        (WebCore::InspectorController::enableDebuggerFromFrontend):
+        (WebCore::InspectorController::enableDebugger):
+        (WebCore::InspectorController::disableDebugger):
+        (WebCore::InspectorController::evaluateForTestInFrontend):
+        * inspector/InspectorFrontend.cpp:
+        * inspector/InspectorFrontend.h:
+        * inspector/InspectorFrontendClientLocal.cpp:
+        * inspector/TimelineRecordFactory.cpp:
+
 2010-08-08  Dan Bernstein  <mitz@apple.com>
 
         Try to fix the Chromium Mac build after r64915.

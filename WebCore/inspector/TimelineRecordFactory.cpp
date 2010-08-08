@@ -34,7 +34,6 @@
 #if ENABLE(INSPECTOR)
 
 #include "Event.h"
-#include "InspectorFrontend.h"
 #include "InspectorValues.h"
 #include "IntRect.h"
 #include "ResourceRequest.h"

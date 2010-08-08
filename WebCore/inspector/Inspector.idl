@@ -36,24 +36,51 @@ module core {
         [notify] void addRecordToTimeline(out Object record);
         [notify] void addNodesToSearchResult(out Array nodeIds);
         [notify] void attributesUpdated(out long id, out Array attributes);
+        [notify] void bringToFront();
         [notify] void childNodeCountUpdated(out long id, out int newValue);
         [notify] void childNodeInserted(out long parentId, out long prevId, out Object node);
         [notify] void childNodeRemoved(out long parentId, out long id);
+        [notify] void close();
+        [notify] void didCommitLoad();
+        [notify] void evaluateForTestInFrontend(out long testCallId, out String script);
+        [notify] void inspectedPageDestroyed();
+        [notify] void inspectedURLChanged(out String url);
+        [notify] void monitoringXHRWasEnabled();
+        [notify] void monitoringXHRWasDisabled();
+        [notify] void populateApplicationSettings(out String settings);
+        [notify] void populateInterface();
+        [notify] void populateSessionSettings(out String settings);
+        [notify] void removeResource(out unsigned long identifier);
+        [notify] void reset();
+        [notify] void resetProfilesPanel();
+        [notify] void resourceTrackingWasEnabled();
+        [notify] void resourceTrackingWasDisabled();
+        [notify] void searchingForNodeWasEnabled();
+        [notify] void searchingForNodeWasDisabled();
         [notify] void setChildNodes(out long parentId, out Array nodes);
         [notify] void setDetachedRoot(out Object root);
         [notify] void setDocument(out Value root);
+        [notify] void timelineProfilerWasStarted();
+        [notify] void timelineProfilerWasStopped();
         [notify] void updateConsoleMessageExpiredCount(out unsigned long count);
         [notify] void updateConsoleMessageRepeatCount(out unsigned long count);
+        [notify] void updateFocusedNode(out long nodeId);
         [notify] void updateResource(out Value resource);
-        [notify] void removeResource(out unsigned long resourceId);
+
 #if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
-        [notify] void parsedScriptSource(out String sourceID, out String url, out String data, out int firstLine, out int scriptWorldType);
-        [notify] void failedToParseScriptSource(out String url, out String data, out int firstLine, out int errorLine, out String errorMessage);
-        [notify] void pausedScript(out Value callFrames);
-        [notify] void resumedScript();
-        [notify] void restoredBreakpoint(out String sourceID, out String url, out int line, out boolean enabled, out String condition);
-        [notify] void updatePauseOnExceptionsState(out long state);
         [notify] void addProfileHeader(out Object header);
+        [notify] void attachDebuggerWhenShown();
+        [notify] void debuggerWasEnabled();
+        [notify] void debuggerWasDisabled();
+        [notify] void failedToParseScriptSource(out String url, out String data, out int firstLine, out int errorLine, out String errorMessage);
+        [notify] void parsedScriptSource(out String sourceID, out String url, out String data, out int firstLine, out int scriptWorldType);
+        [notify] void pausedScript(out Value callFrames);
+        [notify] void profilerWasEnabled();
+        [notify] void profilerWasDisabled();
+        [notify] void restoredBreakpoint(out String sourceID, out String url, out int line, out boolean enabled, out String condition);
+        [notify] void resumedScript();
+        [notify] void setRecordingProfile(out boolean isProfiling);
+        [notify] void updatePauseOnExceptionsState(out long state);
 #endif
 #if defined(ENABLE_DATABASE) && ENABLE_DATABASE
         [notify] void addDatabase(out Object database);
@@ -67,6 +94,10 @@ module core {
 #if defined(ENABLE_OFFLINE_WEB_APPLICATIONS) && ENABLE_OFFLINE_WEB_APPLICATIONS
         [notify] void updateApplicationCacheStatus(out int status);
         [notify] void updateNetworkState(out boolean isNowOnline);
+#endif
+#if defined(ENABLE_WORKERS) && ENABLE_WORKERS
+        [notify] void didCreateWorker(out long id, out String url, out boolean isShared);
+        [notify] void didDestroyWorker(out long id);
 #endif
 
         [handler=Controller] void storeLastActivePanel(in String panelName);

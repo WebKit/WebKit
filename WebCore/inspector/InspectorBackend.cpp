@@ -40,7 +40,6 @@
 #include "InjectedScriptHost.h"
 #include "InspectorController.h"
 #include "InspectorDOMAgent.h"
-#include "InspectorFrontend.h"
 #include "RemoteInspectorFrontend.h"
 #include "ScriptBreakpoint.h"
 #include "ScriptProfiler.h"

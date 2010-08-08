@@ -39,7 +39,6 @@
 #include "FrameView.h"
 #include "InspectorBackendDispatcher.h"
 #include "InspectorController.h"
-#include "InspectorFrontend.h"
 #include "InspectorFrontendHost.h"
 #include "Page.h"
 #include "PlatformString.h"

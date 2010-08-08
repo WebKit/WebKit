@@ -33,7 +33,6 @@
 
 #include "InjectedScript.h"
 #include "InjectedScriptHost.h"
-#include "InspectorFrontend.h"
 #include "InspectorValues.h"
 #include "ScriptCallStack.h"
 #include "ScriptValue.h"
