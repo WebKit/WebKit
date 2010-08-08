@@ -61,8 +61,7 @@ fast/loader/null-request-after-willSendRequest.html
 
 # Support layoutTestController.layerTreeAsText in WebKitTestRunner
 # <https://bugs.webkit.org/show_bug.cgi?id=42145>
-# Get accelerated compositing working with webkit2
-# <https://bugs.webkit.org/show_bug.cgi?id=41084>
+compositing/video/video-poster.html
 compositing/animation/animation-compositing.html
 compositing/geometry/clip.html
 compositing/geometry/limit-layer-bounds-clipping-ancestor.html
@@ -119,6 +118,29 @@ editing/style/style-boundary-005.html
 
 # WebKitTestRunner needs an implementation of eventSender
 # <https://bugs.webkit.org/show_bug.cgi?id=42194>
+fast/selectors/unqualified-hover-strict.html
+fast/replaced/image-map-2.html 
+fast/forms/focus-selection-input.html
+fast/forms/focus-selection-textarea.html
+fast/events/5056619.html
+fast/events/dragging-mouse-moves.html
+fast/events/selectstart-during-autoscroll.html
+svg/dynamic-updates/SVGFESpotLightElement-dom-limitingConeAngle-attr.html
+svg/dynamic-updates/SVGFESpotLightElement-dom-pointsAtX-attr.html
+svg/dynamic-updates/SVGFESpotLightElement-dom-pointsAtY-attr.html
+svg/dynamic-updates/SVGFESpotLightElement-dom-pointsAtZ-attr.html
+svg/dynamic-updates/SVGFESpotLightElement-dom-specularExponent-attr.html
+svg/dynamic-updates/SVGFESpotLightElement-dom-x-attr.html
+svg/dynamic-updates/SVGFESpotLightElement-dom-y-attr.html
+svg/dynamic-updates/SVGFESpotLightElement-dom-z-attr.html
+svg/dynamic-updates/SVGFESpotLightElement-svgdom-limitingConeAngle-prop.html
+svg/dynamic-updates/SVGFESpotLightElement-svgdom-pointsAtX-prop.html
+svg/dynamic-updates/SVGFESpotLightElement-svgdom-pointsAtY-prop.html
+svg/dynamic-updates/SVGFESpotLightElement-svgdom-pointsAtZ-prop.html
+svg/dynamic-updates/SVGFESpotLightElement-svgdom-specularExponent-prop.html
+svg/dynamic-updates/SVGFESpotLightElement-svgdom-x-prop.html
+svg/dynamic-updates/SVGFESpotLightElement-svgdom-y-prop.html
+svg/dynamic-updates/SVGFESpotLightElement-svgdom-z-prop.html
 compositing/iframes/layout-on-compositing-change.html
 editing/deleting/5390681-2.html
 editing/deleting/5729680.html
@@ -1126,6 +1148,7 @@ platform/mac/editing/pasteboard/text-precomposed.html
 # <https://bugs.webkit.org/show_bug.cgi?id=42319>
 # Need Web Inspector in WebKit2
 # <https://bugs.webkit.org/show_bug.cgi?id=42318>
+inspector/debugger-cyclic-ref.html
 http/tests/inspector-enabled/console-log-before-frame-navigation.html
 http/tests/inspector/change-iframe-src.html
 http/tests/inspector/console-resource-errors.html
@@ -1502,6 +1525,7 @@ platform/mac/fast/text/justified-text-rect.html
 
 # WebKitTestRunner needs to support needsDeletionUI mechanism to show deletion UI
 # <https://bugs.webkit.org/show_bug.cgi?id=42535>
+fast/dom/Element/id-in-deletebutton.html
 editing/deleting/5408255.html
 editing/deleting/deletionUI-single-instance.html
 platform/mac/editing/deleting/deletionUI-borders.html
@@ -1815,6 +1839,36 @@ http/tests/loading/text-content-type-with-binary-extension.html
 
 # NOT YET TRACKED BY BUG REPORTS
 
+# WebKitTestrunner needs layoutTestController.dumpSourceAsWebArchive
+webarchive/doctype.html
+webarchive/archive-empty-frame-source.html
+
+# WebKitTestRunner needs layoutTestController.setIconDatabaseEnabled
+webarchive/test-link-rel-icon.html
+
+# WebKitTestRunner should dump text/plain content as text
+http/tests/incremental/slow-utf8-text.pl
+
+# WebKitTestRunner needs layoutTestController.workerThreadCount
+fast/workers/dedicated-worker-lifecycle.html
+fast/workers/shared-worker-frame-lifecycle.html
+fast/workers/shared-worker-lifecycle.html
+fast/workers/worker-lifecycle.html
+fast/workers/worker-close-more.html
+
+# null-page-show-modal-dialog test has extra trailing space in output
+fast/dom/null-page-show-modal-dialog-crash.html
+
+# WebKitTestRunner needs to clear caches (including app cache) at the start
+http/tests/appcache/empty-manifest.html
+http/tests/appcache/foreign-iframe-main.html
+http/tests/appcache/manifest-with-empty-file.html
+http/tests/appcache/progress-counter.html
+http/tests/appcache/update-cache.html
+
+# WebKitTestRunner needs layoutTestController.clearAllApplicationCaches
+http/tests/appcache/origin-quota.html
+
 # WebKitTestRunner needs layoutTestController.callShouldCloseOnWebView
 fast/events/onbeforeunload-focused-iframe.html
 
@@ -1902,6 +1956,8 @@ http/tests/misc/image-blocked-src-no-change.html
 http/tests/appcache/local-content.html
 
 # WebKit2 needs to support authentication
+http/tests/appcache/auth.html
+http/tests/security/credentials-in-referer.html
 http/tests/xmlhttprequest/basic-auth.html
 http/tests/xmlhttprequest/basic-auth-default.html
 http/tests/xmlhttprequest/logout.html
@@ -1912,6 +1968,8 @@ http/tests/xmlhttprequest/re-login.html
 fast/harness/show-modal-dialog.html
 
 # WebKit2 needs to support synchronous creation of about:blank/data:url frames'
+fast/dom/Window/BarInfo-after-frame-removed.html
+fast/dom/Window/window-collection-length-no-crash.html 
 editing/selection/DOMSelection-crossing-document.html
 fast/dom/Document/document-write-doctype.html
 fast/dom/prototype-inheritance-2.html
@@ -1936,6 +1994,10 @@ storage/domstorage/events/basic-setattribute.html
 storage/domstorage/events/basic.html
 storage/domstorage/events/case-sensitive.html
 storage/domstorage/events/documentURI.html
+http/tests/security/frameNavigation/context-for-location.html
+http/tests/security/frameNavigation/context-for-location-assign.html
+http/tests/security/frameNavigation/context-for-location-href.html
+http/tests/security/frameNavigation/context-for-window-open.html
 
 # WebKit2 doesn't have a missing plug-in delegate
 plugins/clicking-missing-plugin-fires-delegate.html
