@@ -1,3 +1,19 @@
+2010-08-08  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        WebKitTestRunner should add the QuickTime dir to the PATH environment
+        variable
+        https://bugs.webkit.org/show_bug.cgi?id=43686
+
+        Reviewed by Dan Bernstein.
+
+        * WebKitTestRunner/win/TestControllerWin.cpp:
+        (WTR::addQTDirToPATH):
+        Copied from DRT.
+        (WTR::TestController::platformInitialize):
+        Call addQTDirToPath().
+        * WebKitTestRunner/win/WebKitTestRunner.vcproj:
+        Link to shlwapi.lib for SHGetValue.
+
 2010-08-07  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Maciej Stachowiak.

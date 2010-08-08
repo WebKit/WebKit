@@ -27,8 +27,13 @@
 
 #include <fcntl.h>
 #include <io.h>
+#include <shlwapi.h>
+#include <string>
 #include <WebKit2/WKStringCF.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/Vector.h>
+
+using namespace std;
 
 namespace WTR {
 
@@ -38,10 +43,51 @@ const LPWSTR testPluginDirectoryName = L"TestNetscapePlugin_Debug";
 const LPWSTR testPluginDirectoryName = L"TestNetscapePlugin";
 #endif
 
+static void addQTDirToPATH()
+{
+    static LPCWSTR pathEnvironmentVariable = L"PATH";
+    static LPCWSTR quickTimeKeyName = L"Software\\Apple Computer, Inc.\\QuickTime";
+    static LPCWSTR quickTimeSysDir = L"QTSysDir";
+    static bool initialized;
+
+    if (initialized)
+        return;
+    initialized = true;
+
+    // Get the QuickTime dll directory from the registry. The key can be in either HKLM or HKCU.
+    WCHAR qtPath[MAX_PATH];
+    DWORD qtPathBufferLen = sizeof(qtPath);
+    DWORD keyType;
+    HRESULT result = ::SHGetValueW(HKEY_LOCAL_MACHINE, quickTimeKeyName, quickTimeSysDir, &keyType, (LPVOID)qtPath, &qtPathBufferLen);
+    if (result != ERROR_SUCCESS || !qtPathBufferLen || keyType != REG_SZ) {
+        qtPathBufferLen = sizeof(qtPath);
+        result = ::SHGetValueW(HKEY_CURRENT_USER, quickTimeKeyName, quickTimeSysDir, &keyType, (LPVOID)qtPath, &qtPathBufferLen);
+        if (result != ERROR_SUCCESS || !qtPathBufferLen || keyType != REG_SZ)
+            return;
+    }
+
+    // Read the current PATH.
+    DWORD pathSize = ::GetEnvironmentVariableW(pathEnvironmentVariable, 0, 0);
+    Vector<WCHAR> oldPath(pathSize);
+    if (!::GetEnvironmentVariableW(pathEnvironmentVariable, oldPath.data(), oldPath.size()))
+        return;
+
+    // And add the QuickTime dll.
+    wstring newPath;
+    newPath.append(qtPath);
+    newPath.append(L";");
+    newPath.append(oldPath.data(), oldPath.size());
+    ::SetEnvironmentVariableW(pathEnvironmentVariable, newPath.data());
+}
+
 void TestController::platformInitialize()
 {
     _setmode(1, _O_BINARY);
     _setmode(2, _O_BINARY);
+
+    // Add the QuickTime dll directory to PATH or QT 7.6 will fail to initialize on systems
+    // linked with older versions of qtmlclientlib.dll.
+    addQTDirToPATH();
 }
 
 void TestController::initializeInjectedBundlePath()
