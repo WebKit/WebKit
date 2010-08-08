@@ -26,7 +26,7 @@ LUT_FILES += \
 KEYWORDLUT_FILES += \
     parser/Keywords.table
 
-RVCT_STUB_FILES += \
+JIT_STUB_FILES += \
     jit/JITStubs.cpp
 
 defineTest(addExtraCompiler) {
@@ -65,14 +65,23 @@ keywordlut.commands = perl $$keywordlut.wkScript ${QMAKE_FILE_NAME} -i > ${QMAKE
 keywordlut.depends = ${QMAKE_FILE_NAME}
 addExtraCompiler(keywordlut)
 
-# GENERATOR 3: JIT Stub functions for RVCT
+# GENERATOR 2-A: JIT Stub functions for RVCT
 rvctstubs.output = $${JSC_GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}Generated${QMAKE_FILE_BASE}_RVCT.h
 rvctstubs.wkScript = $$PWD/create_jit_stubs
 rvctstubs.commands = perl -i $$rvctstubs.wkScript --prefix RVCT ${QMAKE_FILE_NAME} > ${QMAKE_FILE_OUT}
 rvctstubs.depends = ${QMAKE_FILE_NAME}
-rvctstubs.input = RVCT_STUB_FILES
+rvctstubs.input = JIT_STUB_FILES
 rvctstubs.CONFIG += no_link
 addExtraCompiler(rvctstubs)
+
+# GENERATOR 2-B: JIT Stub functions for MSVC
+msvcstubs.output = $${JSC_GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}Generated${QMAKE_FILE_BASE}_MSVC.asm
+msvcstubs.wkScript = $$PWD/create_jit_stubs
+msvcstubs.commands = perl -i $$msvcstubs.wkScript --prefix MSVC ${QMAKE_FILE_NAME} > ${QMAKE_FILE_OUT}
+msvcstubs.depends = ${QMAKE_FILE_NAME}
+msvcstubs.input = JIT_STUB_FILES
+msvcstubs.CONFIG += no_link
+addExtraCompiler(msvcstubs)
 
 # GENERATOR: "chartables.c": compile and execute the chartables generator (and add it to sources)
 win32-msvc*|wince*: PREPROCESSOR = "--preprocessor=\"$$QMAKE_CC /E\""
