@@ -43,9 +43,6 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,144) size 784x0
         RenderInline {FONT} at (0,0) size 0x0 [color=#FF0000]
           RenderInline {I} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,144) size 784x0 [color=#FF0000]
-      RenderBlock (anonymous) at (0,144) size 784x0
-        RenderInline {FONT} at (0,0) size 0x0 [color=#FF0000]
       RenderBlock {P} at (0,144) size 784x20
         RenderInline {FONT} at (0,0) size 123x19 [color=#FF0000]
           RenderInline {I} at (0,0) size 94x19
@@ -56,6 +53,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (123,0) size 122x19
           text run at (123,0) width 122: " I should not be red."
       RenderBlock (anonymous) at (0,180) size 784x20
+        RenderText {#text} at (0,0) size 0x0
         RenderInline {B} at (0,0) size 135x19
           RenderText {#text} at (0,0) size 35x19
             text run at (0,0) width 35: "Bold "

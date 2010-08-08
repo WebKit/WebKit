@@ -2354,7 +2354,6 @@ BUG29748 LINUX : tables/mozilla/marvin/x_table_bgcolor_rgb.xml = IMAGE
 BUG29748 LINUX : tables/mozilla/other/nestedTables.html = IMAGE
 BUG29748 LINUX : tables/mozilla/other/test3.html = IMAGE
 BUG29748 LINUX : tables/mozilla/other/wa_table_thtd_rowspan.html = IMAGE
-BUG29748 LINUX : tables/mozilla/other/wa_table_tr_align.html = IMAGE
 BUG29748 LINUX : tables/mozilla_expected_failures/bugs/bug10140.html = IMAGE
 BUG29748 LINUX : tables/mozilla_expected_failures/bugs/bug1055-2.html = IMAGE
 BUG29748 LINUX : tables/mozilla_expected_failures/bugs/bug106966.html = IMAGE
@@ -3172,14 +3171,6 @@ BUGWK43543 : http/tests/misc/isindex-formdata.html = TIMEOUT
 BUGWK43543 : http/tests/misc/isindex-with-no-form-base-href.html = TEXT TIMEOUT
 
 BUGPFELDMAN WIN : http/tests/inspector-enabled/console-log-before-frame-navigation.html = TEXT
-
-// Need rebaselines due to landing of bug 43610
-BUGJAMESR WIN LINUX : fast/forms/formmove3-expected.txt = TEXT
-BUGJAMESR WIN LINUX : fast/forms/preserveFormDuringResidualStyle-expected.txt = TEXT
-BUGJAMESR WIN LINUX : fast/invalid/003-expected.txt = TEXT
-BUGJAMESR WIN LINUX : fast/invalid/019-expected.txt = TEXT
-BUGJAMESR WIN LINUX : tables/mozilla/bugs/bug647-expected.txt = TEXT
-BUGJAMESR WIN LINUX : tables/mozilla/other/wa_table_tr_align-expected.txt = TEXT
 
 // Failure caused by r64749
 BUGSATISH: fast/speech/input-text-speechbutton.html = TIMEOUT

@@ -1,3 +1,16 @@
+2010-08-08  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed.  Rebaseline chromium results for r64954.
+
+        * platform/chromium-linux/fast/forms/formmove3-expected.txt:
+        * platform/chromium-win/fast/forms/formmove3-expected.txt:
+        * platform/chromium-win/fast/forms/preserveFormDuringResidualStyle-expected.txt:
+        * platform/chromium-win/fast/invalid/003-expected.txt:
+        * platform/chromium-win/fast/invalid/019-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug647-expected.txt:
+        * platform/chromium-win/tables/mozilla/other/wa_table_tr_align-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2010-08-07  Maciej Stachowiak  <mjs@apple.com>
 
         Rubber stamped by Sam Weinig.
