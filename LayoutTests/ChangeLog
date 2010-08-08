@@ -1,3 +1,18 @@
+2010-08-07  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        WebTiming does not take page cache into account
+        https://bugs.webkit.org/show_bug.cgi?id=42772
+        
+        Adds tests that simulates flow from a page that's in the page cache to
+        one that's not, and then back to the page cached page (where the
+        DocumentLoader is reused, but we should have a new DocumentLoadTiming
+        struct).
+
+        * fast/events/onunload-back-to-page-cache-expected.txt: Added.
+        * fast/events/onunload-back-to-page-cache.html: Added.
+
 2010-08-07  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Maciej Stachowiak.

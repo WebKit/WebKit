@@ -1,3 +1,22 @@
+2010-08-07  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        WebTiming does not take page cache into account
+        https://bugs.webkit.org/show_bug.cgi?id=42772
+
+        When restoring a page from the page cache, reset its DocumentLoadTiming
+        struct and record navigationStart.
+    
+        Test: fast/events/onunload-back-to-page-cache.html
+
+        * loader/DocumentLoadTiming.h: removed Noncopyable, since it's just a simple struct.
+        * loader/DocumentLoader.h:
+        (WebCore::DocumentLoader::resetTiming): Added method.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::stopLoading): Uncommented assert.
+        (WebCore::FrameLoader::loadProvisionalItemFromCachedPage): Added resetTiming() call.
+
 2010-08-07  Zoltan Horvath  <zoltan@webkit.org>
 
         Reviewed by Eric Seidel.

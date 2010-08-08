@@ -26,11 +26,9 @@
 #ifndef DocumentLoadTiming_h
 #define DocumentLoadTiming_h
 
-#include <wtf/Noncopyable.h>
-
 namespace WebCore {
 
-struct DocumentLoadTiming : public Noncopyable {
+struct DocumentLoadTiming {
     DocumentLoadTiming()
         : navigationStart(0.0)
         , unloadEventEnd(0.0)
