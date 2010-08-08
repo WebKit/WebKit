@@ -1,4 +1,18 @@
 2010-08-07  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+        Reviewed by Eric Seidel.
+
+        [WML] Add KURL parameter to WMLDocument::create() 
+        https://bugs.webkit.org/show_bug.cgi?id=43173
+
+        To fix build break in WML, url parameter is added. Because, 
+        Document class has url parameter.
+
+        * wml/WMLDocument.cpp:
+        (WebCore::WMLDocument::WMLDocument):
+        * wml/WMLDocument.h:
+        (WebCore::WMLDocument::create): Add an url parameter to create() method
+
+2010-08-07  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Reviewed by Eric Seidel.
 
