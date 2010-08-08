@@ -274,7 +274,8 @@ Element.prototype.query = function(query)
 
 Element.prototype.removeChildren = function()
 {
-    this.innerHTML = "";
+    if (this.firstChild)
+        this.textContent = "";
 }
 
 Element.prototype.isInsertionCaretInside = function()
