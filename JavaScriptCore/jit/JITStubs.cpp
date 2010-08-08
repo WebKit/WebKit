@@ -1597,17 +1597,9 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_self_fail)
 static void setupPolymorphicProtoList(StructureStubInfo* stubInfo)
 {
     if (stubInfo->accessType == access_get_by_id_proto)
-#if ENABLE(MOVABLE_GC_OBJECTS)
-        stubInfo->initGetByIdProtoList(new PolymorphicAccessStructureList(stubInfo->stubRoutine, stubInfo->u.getByIdProto.baseObjectStructure, stubInfo->u.getByIdProto.prototypeStructure, stubInfo->u.getByIdProto.propertyType));
-#else
         stubInfo->initGetByIdProtoList(new PolymorphicAccessStructureList(stubInfo->stubRoutine, stubInfo->u.getByIdProto.baseObjectStructure, stubInfo->u.getByIdProto.prototypeStructure));
-#endif
     else if (stubInfo->accessType == access_get_by_id_chain)
-#if ENABLE(MOVABLE_GC_OBJECTS)
-        stubInfo->initGetByIdProtoList(new PolymorphicAccessStructureList(stubInfo->stubRoutine, stubInfo->u.getByIdChain.baseObjectStructure, stubInfo->u.getByIdChain.chain, stubInfo->u.getByIdChain.count, stubInfo->u.getByIdChain.propertyType));
-#else
         stubInfo->initGetByIdProtoList(new PolymorphicAccessStructureList(stubInfo->stubRoutine, stubInfo->u.getByIdChain.baseObjectStructure, stubInfo->u.getByIdChain.chain));
-#endif
     ASSERT(stubInfo->accessType == access_get_by_id_proto_list);
 }
 

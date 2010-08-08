@@ -165,7 +165,6 @@ javascriptcore_sources += \
 	JavaScriptCore/jit/JIT.cpp \
 	JavaScriptCore/jit/JIT.h \
 	JavaScriptCore/jit/JITInlineMethods.h \
-	JavaScriptCore/jit/JITMarkObjects.cpp \
 	JavaScriptCore/jit/JITOpcodes32_64.cpp \
 	JavaScriptCore/jit/JITOpcodes.cpp \
 	JavaScriptCore/jit/JITPropertyAccess32_64.cpp \

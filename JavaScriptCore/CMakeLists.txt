@@ -55,7 +55,6 @@ SET(JavaScriptCore_SOURCES
     jit/JITCall32_64.cpp
     jit/JITCall.cpp
     jit/JIT.cpp
-    jit/JITMarkObjects.cpp
     jit/JITOpcodes32_64.cpp
     jit/JITOpcodes.cpp
     jit/JITPropertyAccess32_64.cpp

@@ -1520,14 +1520,6 @@ void CodeBlock::markAggregate(MarkStack& markStack)
     for (size_t i = 0; i < m_functionDecls.size(); ++i)
         m_functionDecls[i]->markAggregate(markStack);
     markStack.append(m_globalObject);
-#if ENABLE(MOVABLE_GC_OBJECTS)
-    // This is the code that is responsible for marking the actual pointers
-    // to JSCell*s in the JIT'ed code.  Normally, these pointers are marked
-    // elsewhere, however when we have movable objects, we will need to update
-    // all of the references.
-    for (size_t i = 0; i < m_structureStubInfos.size(); ++i)
-        m_structureStubInfos[i].markAggregate(markStack, this);
-#endif
 }
 
 bool CodeBlock::reparseForExceptionInfoIfNecessary(CallFrame* callFrame)

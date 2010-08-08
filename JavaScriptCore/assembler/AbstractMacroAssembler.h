@@ -521,21 +521,6 @@ protected:
         AssemblerType::relinkCall(nearCall.dataLocation(), destination.executableAddress());
     }
 
-    static int32_t int32AtLocation(CodeLocationDataLabel32 dataLabel32)
-    {
-        return AssemblerType::int32AtLocation(dataLabel32.dataLocation());
-    }
-
-    static void* pointerAtLocation(CodeLocationDataLabelPtr dataLabelPtr)
-    {
-        return AssemblerType::pointerAtLocation(dataLabelPtr.dataLocation());
-    }
-
-    static void* jumpTarget(CodeLocationJump jump)
-    {
-        return AssemblerType::jumpTarget(jump.dataLocation());
-    }
-
     static void repatchInt32(CodeLocationDataLabel32 dataLabel32, int32_t value)
     {
         AssemblerType::repatchInt32(dataLabel32.dataLocation(), value);

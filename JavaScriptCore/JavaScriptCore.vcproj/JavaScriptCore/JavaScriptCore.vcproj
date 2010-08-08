@@ -1689,9 +1689,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\jit\JITMarkObjects.cpp"
-				>
-			<File
 				RelativePath="..\..\jit\JITOpcodes.cpp"
 				>
 			</File>
