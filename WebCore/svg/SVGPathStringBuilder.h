@@ -1,8 +1,4 @@
 /*
- * Copyright (C) 2002, 2003 The Karbon Developers
- * Copyright (C) 2006 Alexander Kellett <lypanov@kde.org>
- * Copyright (C) 2006, 2007 Rob Buis <buis@kde.org>
- * Copyright (C) 2007, 2009 Apple Inc. All rights reserved.
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -21,25 +17,25 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGPathBuilder_h
-#define SVGPathBuilder_h
+#ifndef SVGPathStringBuilder_h
+#define SVGPathStringBuilder_h
 
 #if ENABLE(SVG)
 #include "FloatPoint.h"
-#include "Path.h"
 #include "SVGPathConsumer.h"
+#include "StringBuilder.h"
 
 namespace WebCore {
 
-class SVGPathBuilder : public SVGPathConsumer {
+class SVGPathStringBuilder : public SVGPathConsumer {
 public:
-    SVGPathBuilder();
+    SVGPathStringBuilder();
 
-    void setCurrentPath(Path* path) { m_path = path; }
-    virtual void cleanup() { m_path = 0; }
+    virtual void cleanup() { m_stringBuilder.clear(); }
+    String result() { return m_stringBuilder.toString(ConcatAddingSpacesBetweenIndividualStrings); }
 
 private:
-    // Used in UnalteredParisng/NormalizedParsing modes.
+    // Used in UnalteredParsing/NormalizedParsing modes.
     virtual void moveTo(const FloatPoint&, bool closed, PathCoordinateMode);
     virtual void lineTo(const FloatPoint&, PathCoordinateMode);
     virtual void curveToCubic(const FloatPoint&, const FloatPoint&, const FloatPoint&, PathCoordinateMode);
@@ -47,18 +43,17 @@ private:
 
 private:
     // Only used in UnalteredParsing mode.
-    virtual void lineToHorizontal(float, PathCoordinateMode) { ASSERT_NOT_REACHED(); }
-    virtual void lineToVertical(float, PathCoordinateMode) { ASSERT_NOT_REACHED(); }
-    virtual void curveToCubicSmooth(const FloatPoint&, const FloatPoint&, PathCoordinateMode) { ASSERT_NOT_REACHED(); }
-    virtual void curveToQuadratic(const FloatPoint&, const FloatPoint&, PathCoordinateMode) { ASSERT_NOT_REACHED(); }
-    virtual void curveToQuadraticSmooth(const FloatPoint&, PathCoordinateMode) { ASSERT_NOT_REACHED(); }
-    virtual void arcTo(float, float, float, bool, bool, const FloatPoint&, PathCoordinateMode) { ASSERT_NOT_REACHED(); }
+    virtual void lineToHorizontal(float, PathCoordinateMode);
+    virtual void lineToVertical(float, PathCoordinateMode);
+    virtual void curveToCubicSmooth(const FloatPoint&, const FloatPoint&, PathCoordinateMode);
+    virtual void curveToQuadratic(const FloatPoint&, const FloatPoint&, PathCoordinateMode);
+    virtual void curveToQuadraticSmooth(const FloatPoint&, PathCoordinateMode);
+    virtual void arcTo(float, float, float, bool largeArcFlag, bool sweepFlag, const FloatPoint&, PathCoordinateMode);
 
-    Path* m_path;
-    FloatPoint m_current;
+    StringBuilder m_stringBuilder;
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(SVG)
-#endif // SVGPathBuilder_h
+#endif // SVGPathStringBuilder_h

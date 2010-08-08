@@ -42,6 +42,7 @@ public:
     bool parsePathDataFromSource(PathParsingMode pathParsingMode);
     void setCurrentConsumer(SVGPathConsumer* consumer) { m_consumer = consumer; }
     void setCurrentSource(SVGPathSource* source) { m_source = source; }
+    void cleanup();
 
 private:
     bool decomposeArcToCubic(float, float, float, FloatPoint&, FloatPoint&, bool largeArcFlag, bool sweepFlag);

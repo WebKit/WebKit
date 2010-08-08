@@ -3867,6 +3867,8 @@
             'svg/SVGPathSegMoveto.cpp',
             'svg/SVGPathSegMoveto.h',
             'svg/SVGPathSource.h',
+            'svg/SVGPathStringBuilder.cpp',
+            'svg/SVGPathStringBuilder.h',
             'svg/SVGPathStringSource.cpp',
             'svg/SVGPathStringSource.h',
             'svg/SVGPatternElement.cpp',

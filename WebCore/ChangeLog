@@ -1,3 +1,71 @@
+2010-08-08  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Add missing String builder for SVGPathParser
+        https://bugs.webkit.org/show_bug.cgi?id=43682
+
+        Introduces SVGPathStringBuilder. SVGPathParser clients, like normalized and unaltered
+        SVGPathSegLists or SVGPathByteStreams, can be parsed and transformed to a string.
+        StringBuilder can create a string of individual strings, seperated by spaces now.
+        Share more code in SVGPathParserFactory and use a common general concept to manage SVG path
+        data parsing.
+
+        Doesn't affect any tests.
+
+        * Android.mk:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/text/StringBuilder.cpp:
+        (WebCore::StringBuilder::toString): Added possibility to use a space between individual strings. 
+        * platform/text/StringBuilder.h: Cleanup according to WebKit style.
+        (WebCore::):
+        (WebCore::StringBuilder::StringBuilder):
+        (WebCore::StringBuilder::setNonNull):
+        (WebCore::StringBuilder::isNull):
+        * svg/SVGAllInOne.cpp:
+        * svg/SVGPathBuilder.h:
+        (WebCore::SVGPathBuilder::cleanup): Clear all references.
+        * svg/SVGPathByteStreamBuilder.h:
+        (WebCore::SVGPathByteStreamBuilder::cleanup): dito.
+        * svg/SVGPathConsumer.h:
+        * svg/SVGPathParser.cpp:
+        (WebCore::SVGPathParser::cleanup): dito.
+        * svg/SVGPathParser.h:
+        * svg/SVGPathParserFactory.cpp: Cleanup of factory. More code get shared.
+        (WebCore::globalSVGPathBuilder):
+        (WebCore::globalSVGPathSegListBuilder):
+        (WebCore::globalSVGPathByteStreamBuilder):
+        (WebCore::globalSVGPathStringBuilder):
+        (WebCore::globalSVGPathParser):
+        (WebCore::SVGPathParserFactory::buildPathFromString):
+        (WebCore::SVGPathParserFactory::buildPathFromByteStream):
+        (WebCore::SVGPathParserFactory::buildSVGPathSegListFromString):
+        (WebCore::SVGPathParserFactory::buildSVGPathSegListFromByteStream):
+        (WebCore::SVGPathParserFactory::buildStringFromByteStream):
+        (WebCore::SVGPathParserFactory::buildSVGPathByteStreamFromString):
+        * svg/SVGPathParserFactory.h:
+        * svg/SVGPathSegListBuilder.h:
+        (WebCore::SVGPathSegListBuilder::cleanup):
+        * svg/SVGPathStringBuilder.cpp: Added. Build string from parsed SVG data.
+        (WebCore::SVGPathStringBuilder::SVGPathStringBuilder):
+        (WebCore::SVGPathStringBuilder::moveTo):
+        (WebCore::SVGPathStringBuilder::lineTo):
+        (WebCore::SVGPathStringBuilder::lineToHorizontal):
+        (WebCore::SVGPathStringBuilder::lineToVertical):
+        (WebCore::SVGPathStringBuilder::curveToCubic):
+        (WebCore::SVGPathStringBuilder::curveToCubicSmooth):
+        (WebCore::SVGPathStringBuilder::curveToQuadratic):
+        (WebCore::SVGPathStringBuilder::curveToQuadraticSmooth):
+        (WebCore::SVGPathStringBuilder::arcTo):
+        (WebCore::SVGPathStringBuilder::closePath):
+        * svg/SVGPathStringBuilder.h: Added.
+        (WebCore::SVGPathStringBuilder::cleanup):
+        (WebCore::SVGPathStringBuilder::result):
+
 2010-08-08  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

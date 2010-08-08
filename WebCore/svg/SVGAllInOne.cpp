@@ -126,6 +126,7 @@
 #include "SVGPathSegList.cpp"
 #include "SVGPathSegListBuilder.cpp"
 #include "SVGPathSegMoveto.cpp"
+#include "SVGPathStringBuilder.cpp"
 #include "SVGPathStringSource.cpp"
 #include "SVGPatternElement.cpp"
 #include "SVGPointList.cpp"

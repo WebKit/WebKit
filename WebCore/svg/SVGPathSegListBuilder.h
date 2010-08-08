@@ -36,6 +36,7 @@ public:
     SVGPathSegListBuilder();
 
     void setCurrentSVGPathSegList(SVGPathSegList* pathSegList) { m_pathSegList = pathSegList; }
+    virtual void cleanup() { m_pathSegList = 0; }
 
 private:
     // Used in UnalteredParisng/NormalizedParsing modes.

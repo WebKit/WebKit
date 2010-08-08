@@ -2871,6 +2871,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         svg/SVGPathSegList.cpp \
         svg/SVGPathSegListBuilder.cpp \
         svg/SVGPathSegMoveto.cpp \
+        svg/SVGPathStringBuilder.cpp \
         svg/SVGPathStringSource.cpp \
         svg/SVGPatternElement.cpp \
         svg/SVGPointList.cpp \

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -67,7 +68,7 @@ void StringBuilder::append(char c)
     m_strings.append(String(&c, 1));
 }
 
-String StringBuilder::toString() const
+String StringBuilder::toString(ConcatMode mode) const
 {
     if (isNull())
         return String();
@@ -80,17 +81,37 @@ String StringBuilder::toString() const
         return m_strings[0];
 
     UChar* buffer;
-    String result = String::createUninitialized(m_totalLength, buffer);
+    unsigned totalLength = m_totalLength;
+    if (mode == ConcatAddingSpacesBetweenIndividualStrings)
+        totalLength += count - 1;
+    String result = String::createUninitialized(totalLength, buffer);
 
     UChar* p = buffer;
-    for (unsigned i = 0; i < count; ++i) {
-        StringImpl* string = m_strings[i].impl();
-        unsigned length = string->length(); 
-        memcpy(p, string->characters(), length * 2);
-        p += length;
-    }
 
-    ASSERT(p == m_totalLength + buffer);
+    // We could handle both Concat modes in a single for loop, not doing that for performance reasons.
+    if (mode == ConcatUnaltered) {
+        for (unsigned i = 0; i < count; ++i) {
+            StringImpl* string = m_strings[i].impl();
+            unsigned length = string->length(); 
+            memcpy(p, string->characters(), length * 2);
+            p += length;
+        }
+    } else {
+        ASSERT(mode == ConcatAddingSpacesBetweenIndividualStrings);
+        for (unsigned i = 0; i < count; ++i) {
+            StringImpl* string = m_strings[i].impl();
+            unsigned length = string->length(); 
+            memcpy(p, string->characters(), length * 2);
+            p += length;
+
+            // Add space after string before the start of the next string, if we're not processing the last string.
+            if (i < count - 1) {
+                *p = ' ';
+                ++p;
+            }
+        }
+    }
+    ASSERT(p == totalLength + buffer);
 
     return result;
 }

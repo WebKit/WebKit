@@ -42,6 +42,9 @@ enum PathParsingMode {
 
 class SVGPathConsumer : public Noncopyable {
 public:
+    virtual void cleanup() = 0;
+
+public:
     // Used in UnalteredParisng/NormalizedParsing modes.
     virtual void moveTo(const FloatPoint&, bool closed, PathCoordinateMode) = 0;
     virtual void lineTo(const FloatPoint&, PathCoordinateMode) = 0;

@@ -33,27 +33,36 @@
 
 namespace WebCore {
 
-    class StringBuilder {
-    public:
-        StringBuilder() : m_totalLength(UINT_MAX) {}
+enum ConcatMode {
+    ConcatUnaltered,
+    ConcatAddingSpacesBetweenIndividualStrings
+};
 
-        void setNonNull() { if (m_totalLength == UINT_MAX) m_totalLength = 0; }
+class StringBuilder {
+public:
+    StringBuilder() : m_totalLength(UINT_MAX) {}
 
-        void append(const String&);
-        void append(UChar);
-        void append(char);
-        
-        void clear();
-        unsigned length() const;
+    void setNonNull()
+    {
+        if (m_totalLength == UINT_MAX)
+            m_totalLength = 0;
+    }
 
-        String toString() const;
+    void append(const String&);
+    void append(UChar);
+    void append(char);
+    
+    void clear();
+    unsigned length() const;
 
-    private:
-        bool isNull() const { return m_totalLength == UINT_MAX; }
+    String toString(ConcatMode mode = ConcatUnaltered) const;
 
-        unsigned m_totalLength;
-        Vector<String, 16> m_strings;
-    };
+private:
+    bool isNull() const { return m_totalLength == UINT_MAX; }
+
+    unsigned m_totalLength;
+    Vector<String, 16> m_strings;
+};
 
 }
 

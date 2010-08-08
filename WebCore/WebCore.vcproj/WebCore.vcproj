@@ -49525,6 +49525,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\svg\SVGPathStringBuilder.h"
+				>
+			</File>
+			<File
 				RelativePath="..\svg\SVGPathStringSource.h"
 				>
 			</File>

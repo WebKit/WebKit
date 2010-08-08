@@ -425,6 +425,16 @@ bool SVGPathParser::parsePathDataFromSource(PathParsingMode pathParsingMode)
     return false;
 }
 
+void SVGPathParser::cleanup()
+{
+    ASSERT(m_source);
+    ASSERT(m_consumer);
+
+    m_consumer->cleanup();
+    m_source = 0;
+    m_consumer = 0;
+}
+
 // This works by converting the SVG arc to "simple" beziers.
 // Partly adapted from Niko's code in kdelibs/kdecore/svgicons.
 // See also SVG implementation notes: http://www.w3.org/TR/SVG/implnote.html#ArcConversionEndpointToCenter
