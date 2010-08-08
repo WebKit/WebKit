@@ -383,6 +383,10 @@ void InjectedBundlePage::didFailLoadWithErrorForFrame(WKBundleFrameRef frame)
 
 void InjectedBundlePage::didReceiveTitleForFrame(WKStringRef title, WKBundleFrameRef frame)
 {
+    if (!InjectedBundle::shared().layoutTestController()->shouldDumpTitleChanges())
+        return;
+
+    InjectedBundle::shared().os() << "TITLE CHANGED: " << title << "\n";
 }
 
 void InjectedBundlePage::didClearWindowForFrame(WKBundleFrameRef frame, JSGlobalContextRef context, JSObjectRef window)
@@ -406,7 +410,6 @@ void InjectedBundlePage::didChangeLocationWithinPageForFrame(WKBundleFrameRef fr
 
 void InjectedBundlePage::didFinishDocumentLoadForFrame(WKBundleFrameRef frame)
 {
-    
     unsigned pendingFrameUnloadEvents = WKBundleFrameGetPendingUnloadCount(frame);
     if (pendingFrameUnloadEvents)
         InjectedBundle::shared().os() << frame << " - has " << pendingFrameUnloadEvents << " onunload handler(s)\n";

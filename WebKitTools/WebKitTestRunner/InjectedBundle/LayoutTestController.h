@@ -55,6 +55,7 @@ public:
     void dumpEditingCallbacks() { m_dumpEditingCallbacks = true; }
     void dumpSelectionRect() { } // Will need to do something when we support pixel tests.
     void dumpStatusCallbacks() { m_dumpStatusCallbacks = true; }
+    void dumpTitleChanges() { m_dumpTitleChanges = true; }
 
     // Special options.
     void keepWebHistory();
@@ -87,6 +88,7 @@ public:
     bool shouldDumpMainFrameScrollPosition() const { return m_whatToDump == RenderTree; }
 
     bool shouldDumpStatusCallbacks() const { return m_dumpStatusCallbacks; }
+    bool shouldDumpTitleChanges() const { return m_dumpTitleChanges; }
 
     bool waitToDump() const { return m_waitToDump; }
     void waitToDumpWatchdogTimerFired();
@@ -107,6 +109,7 @@ private:
 
     bool m_dumpEditingCallbacks;
     bool m_dumpStatusCallbacks;
+    bool m_dumpTitleChanges;
     bool m_waitToDump; // True if waitUntilDone() has been called, but notifyDone() has not yet been called.
     bool m_testRepaint;
     bool m_testRepaintSweepHorizontally;

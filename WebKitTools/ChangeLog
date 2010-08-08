@@ -1,5 +1,23 @@
 2010-08-07  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Maciej Stachowiak.
+
+        WebKitTestRunner needs layoutTestController.dumpTitleChanges
+        <rdar://problem/8213861>
+        https://bugs.webkit.org/show_bug.cgi?id=42683
+
+        * WebKitTestRunner/InjectedBundle/Bindings/LayoutTestController.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::didReceiveTitleForFrame):
+        (WTR::InjectedBundlePage::didFinishDocumentLoadForFrame):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::LayoutTestController::LayoutTestController):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h:
+        (WTR::LayoutTestController::dumpTitleChanges):
+        (WTR::LayoutTestController::shouldDumpTitleChanges):
+
+2010-08-07  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Anders Carlsson.
 
         WebKitTestRunner needs to print onunload handler information
