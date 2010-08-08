@@ -1,3 +1,20 @@
+2010-08-08  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        SVGLength uses ASSERTs to validate user input
+        https://bugs.webkit.org/show_bug.cgi?id=43680
+
+        ASSERTs aren't in release builds, so we can't use them to validate user
+        input!  We've seen a bunch of examples of this in SVG code.  It might
+        be worth auditing all the code to remove this misguided pattern.
+
+        Test: svg/dom/svg-length-units.html
+
+        * svg/SVGLength.cpp:
+        (WebCore::SVGLength::newValueSpecifiedUnits):
+        (WebCore::SVGLength::convertToSpecifiedUnits):
+
 2010-08-07  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Sam Weinig.

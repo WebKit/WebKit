@@ -275,7 +275,8 @@ String SVGLength::valueAsString() const
 
 void SVGLength::newValueSpecifiedUnits(unsigned short type, float value)
 {
-    ASSERT(type <= LengthTypePC);
+    if (type == LengthTypeUnknown || type > LengthTypePC)
+        return;
 
     m_unit = storeUnit(extractMode(m_unit), (SVGLengthType) type);
     m_valueInSpecifiedUnits = value;
@@ -283,7 +284,8 @@ void SVGLength::newValueSpecifiedUnits(unsigned short type, float value)
 
 void SVGLength::convertToSpecifiedUnits(unsigned short type, const SVGElement* context)
 {
-    ASSERT(type <= LengthTypePC);
+    if (type == LengthTypeUnknown || type > LengthTypePC)
+        return;
 
     float valueInUserUnits = value(context);
     m_unit = storeUnit(extractMode(m_unit), (SVGLengthType) type);

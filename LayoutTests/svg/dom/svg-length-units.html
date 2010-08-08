@@ -1,0 +1,32 @@
+<body>
+<svg id="foo">
+</svg>
+<pre>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+var elmt = document.getElementById('foo');
+var len = elmt.createSVGLength();
+document.writeln(len.unitType)
+len.newValueSpecifiedUnits(0, 42);
+document.writeln(len.unitType)
+len.value = 48;
+document.writeln(len.unitType)
+len.newValueSpecifiedUnits(51168, 42);
+document.writeln(len.unitType)
+len.value = 48;
+document.writeln(len.unitType)
+len.valueAsString = "32px"
+document.writeln(len.unitType)
+len.convertToSpecifiedUnits(0)
+document.writeln(len.unitType)
+len.valueAsString = "32px"
+document.writeln(len.unitType)
+len.convertToSpecifiedUnits(51168)
+document.writeln(len.unitType)
+len.value = 48;
+document.writeln(len.unitType)
+document.writeln("Done!")
+</script>
+</pre>

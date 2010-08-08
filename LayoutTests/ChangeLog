@@ -1,3 +1,15 @@
+2010-08-08  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        SVGLength uses ASSERTs to validate user input
+        https://bugs.webkit.org/show_bug.cgi?id=43680
+
+        Send invalid input to trigger old ASSERTs.
+
+        * svg/dom/svg-length-units-expected.txt: Added.
+        * svg/dom/svg-length-units.html: Added.
+
 2010-08-08  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Adam Barth.
