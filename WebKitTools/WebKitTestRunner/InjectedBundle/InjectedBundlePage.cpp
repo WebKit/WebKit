@@ -40,6 +40,24 @@ using namespace std;
 
 namespace WTR {
 
+static ostream& operator<<(ostream& out, WKBundleFrameRef frame)
+{
+    WKRetainPtr<WKStringRef> name(AdoptWK, WKBundleFrameCopyName(frame));
+    if (WKBundleFrameIsMainFrame(frame)) {
+        if (!WKStringIsEmpty(name.get()))
+            out << "main frame \"" << name << "\"";
+        else
+            out << "main frame";
+    } else {
+        if (!WKStringIsEmpty(name.get()))
+            out << "frame \"" << name << "\"";
+        else
+            out << "frame (anonymous)";
+    }
+
+    return out;
+}
+
 static string dumpPath(WKBundleNodeRef node)
 {
     if (!node)
@@ -388,6 +406,10 @@ void InjectedBundlePage::didChangeLocationWithinPageForFrame(WKBundleFrameRef fr
 
 void InjectedBundlePage::didFinishDocumentLoadForFrame(WKBundleFrameRef frame)
 {
+    
+    unsigned pendingFrameUnloadEvents = WKBundleFrameGetPendingUnloadCount(frame);
+    if (pendingFrameUnloadEvents)
+        InjectedBundle::shared().os() << frame << " - has " << pendingFrameUnloadEvents << " onunload handler(s)\n";
 }
 
 void InjectedBundlePage::didHandleOnloadEventsForFrame(WKBundleFrameRef frame)

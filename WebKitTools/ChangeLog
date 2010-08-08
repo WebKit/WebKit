@@ -2,6 +2,18 @@
 
         Reviewed by Anders Carlsson.
 
+        WebKitTestRunner needs to print onunload handler information
+        <rdar://problem/8213831>
+        https://bugs.webkit.org/show_bug.cgi?id=42703
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::operator<<):
+        (WTR::InjectedBundlePage::didFinishDocumentLoadForFrame):
+
+2010-08-07  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
         Add additional loader client functions need to complete WebKitTestRunner
         https://bugs.webkit.org/show_bug.cgi?id=43684
 

@@ -1793,38 +1793,6 @@ fast/loader/non-deferred-substitute-load.html
 http/tests/cookies/third-party-cookie-relaxing.html
 http/tests/plugins/third-party-cookie-accept-policy.html
 
-# WebKitTestRunner needs to print onunload handler information
-# <https://bugs.webkit.org/show_bug.cgi?id=42703>
-fast/events/onunload-clears-onbeforeunload.html
-fast/events/onunload-not-on-body.html
-fast/events/onunload.html
-fast/events/pageshow-pagehide-on-back-uncached.html
-fast/events/pageshow-pagehide.html
-fast/events/stop-load-in-unload-handler-using-document-write.html
-fast/events/stop-load-in-unload-handler-using-window-stop.html
-fast/forms/button-state-restore.html
-fast/frames/frame-unload-crash.html
-fast/loader/onunload-form-submit-crash-2.html
-fast/loader/onunload-form-submit-crash.html
-fast/loader/start-load-in-unload.html
-fast/loader/stateobjects/pushstate-in-iframe.html
-fast/loader/stateobjects/replacestate-in-iframe.html
-fast/loader/unload-form-about-blank.html
-fast/loader/unload-form-post-about-blank.html
-fast/loader/unload-form-post.html
-fast/loader/unload-form.html
-fast/loader/unload-hyperlink-targeted.html
-fast/loader/unload-hyperlink.html
-fast/loader/unload-javascript-url.html
-fast/loader/unload-reload.html
-fast/loader/unload-window-location.html
-http/tests/navigation/history-back-across-form-submission-to-fragment.html
-http/tests/security/window-events-pass.html
-http/tests/xmlhttprequest/frame-load-cancelled-abort.html
-http/tests/xmlhttprequest/frame-unload-abort-crash.html
-http/tests/xmlhttprequest/send-undefined-and-null.html
-http/tests/xmlhttprequest/xhr-onunload.html
-
 # WebKitTestRunner needs to print history delegate information
 # <https://bugs.webkit.org/show_bug.cgi?id=42704>
 http/tests/globalhistory/history-delegate-basic-title.html
@@ -1984,6 +1952,9 @@ plugins/iframe-shims.html
 # This test checks that NPN_GetURL with a blank target will return an error if the window isn't opened. This behavior doesn't
 # match Firefox or Chrome. We should either fix the test, or get rid of it.
 plugins/get-url-with-blank-target.html
+
+# Unexplained failures that were formerly in the WebKitTestRunner needs to print onunload handler list.
+fast/events/onunload-clears-onbeforeunload.html
 
 # Unexplained failures that were formerly in the dumpChildFramesAsText list.
 fast/frames/sandboxed-iframe-noscript.html

@@ -44,6 +44,7 @@ WK_EXPORT WKStringRef WKBundleFrameCopyMarkerText(WKBundleFrameRef frame, JSObje
 WK_EXPORT JSValueRef WKBundleFrameGetComputedStyleIncludingVisitedInfo(WKBundleFrameRef frame, JSObjectRef element);
 WK_EXPORT unsigned WKBundleFrameGetNumberOfActiveAnimations(WKBundleFrameRef frame);
 WK_EXPORT bool WKBundleFramePauseAnimationOnElementWithId(WKBundleFrameRef frame, WKStringRef name, WKStringRef elementID, double time);
+WK_EXPORT unsigned WKBundleFrameGetPendingUnloadCount(WKBundleFrameRef frame);
 
 #ifdef __cplusplus
 }

@@ -103,3 +103,8 @@ WKStringRef WKBundleFrameCopyInnerText(WKBundleFrameRef frameRef)
 {
     return toCopiedRef(toWK(frameRef)->innerText());
 }
+
+unsigned WKBundleFrameGetPendingUnloadCount(WKBundleFrameRef frameRef)
+{
+    return toWK(frameRef)->pendingUnloadCount();
+}

@@ -2,6 +2,16 @@
 
         Reviewed by Anders Carlsson.
 
+        WebKitTestRunner needs to print onunload handler information
+        <rdar://problem/8213831>
+        https://bugs.webkit.org/show_bug.cgi?id=42703
+
+        * platform/mac-wk2/Skipped:
+
+2010-08-07  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
         WebKitTestRunner needs GCController
         <rdar://problem/8213834>
         https://bugs.webkit.org/show_bug.cgi?id=42701
