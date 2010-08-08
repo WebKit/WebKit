@@ -287,7 +287,7 @@ WMLCardElement* WMLCardElement::findNamedCardInDocument(Document* doc, const Str
 
     for (unsigned i = 0; i < length; ++i) {
         WMLCardElement* card = static_cast<WMLCardElement*>(nodeList->item(i));
-        if (card->getIDAttribute() != cardName)
+        if (card->getIdAttribute() != cardName)
             continue;
 
         return card;

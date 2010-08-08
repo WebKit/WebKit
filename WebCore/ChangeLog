@@ -1,3 +1,16 @@
+2010-08-07  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Eric Seidel.
+
+        [WML] Change getIDAttribute() with getIdAttribute()
+        https://bugs.webkit.org/show_bug.cgi?id=43175
+
+        Change getIDAttribute() with getIdAttribute() because function 
+        name was changed.
+
+        * wml/WMLCardElement.cpp:
+        (WebCore::WMLCardElement::findNamedCardInDocument): Change getIDAttribute() with getIdAttribute().
+
 2010-08-07  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Adam Barth.
