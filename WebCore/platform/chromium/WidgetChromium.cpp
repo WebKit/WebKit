@@ -65,8 +65,6 @@ void Widget::paint(GraphicsContext*, const IntRect&)
 
 void Widget::setFocus(bool focused)
 {
-    if (focused)
-        ChromiumBridge::widgetSetFocus(this);
 }
 
 void Widget::setIsSelected(bool)

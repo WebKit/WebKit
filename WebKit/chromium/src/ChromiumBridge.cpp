@@ -862,13 +862,6 @@ void ChromiumBridge::widgetSetCursor(Widget* widget, const Cursor& cursor)
         client->setCursor(WebCursorInfo(cursor));
 }
 
-void ChromiumBridge::widgetSetFocus(Widget* widget)
-{
-    ChromeClientImpl* client = toChromeClientImpl(widget);
-    if (client)
-        client->focus();
-}
-
 WorkerContextProxy* WorkerContextProxy::create(Worker* worker)
 {
     return WebWorkerClientImpl::createWorkerContextProxy(worker);

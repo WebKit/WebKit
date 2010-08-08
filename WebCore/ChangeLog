@@ -1,3 +1,14 @@
+2010-08-07  Jay Civelli  <jcivelli@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [Chromium] Remove unecessary focus code.
+        https://bugs.webkit.org/show_bug.cgi?id=43542
+
+        * platform/chromium/ChromiumBridge.h:
+        * platform/chromium/WidgetChromium.cpp:
+        (WebCore::Widget::setFocus):
+
 2010-08-07  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Reviewed by Eric Seidel.
