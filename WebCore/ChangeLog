@@ -1,5 +1,17 @@
 2010-08-08  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        cross_fuzz WebCore::SelectionController::isFocusedAndActive ReadAV@NULL (9e865de49b1800ec790dcc35d8ebd069)
+        https://bugs.webkit.org/show_bug.cgi?id=43040
+
+        The pointer from Document to Frame can be null.  See http://webkit.org/coding/major-objects.html.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector):
+
+2010-08-08  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Dimitri Glazkov.
 
         frame()->selection() can't be null
