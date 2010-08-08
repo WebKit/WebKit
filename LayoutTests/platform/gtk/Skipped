@@ -5862,11 +5862,6 @@ inspector/debugger-breakpoints-not-activated-on-reload.html
 # outside of the double-click distance.
 editing/selection/5195166-1.html
 
-# Times out.  We need to figure out whether this is just caused by a slow bot
-# or if there's a real bug here.
-# https://bugs.webkit.org/show_bug.cgi?id=43540
-fast/parser/residual-style-hang.html
-
 # Remaining Sputnik failures
 # https://bugs.webkit.org/show_bug.cgi?id=43568
 fast/js/sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.12_Array_prototype_splice/S15.4.4.12_A2.1_T3.html

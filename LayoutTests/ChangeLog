@@ -1,3 +1,20 @@
+2010-08-08  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Set the shouldLazyAttach flag to true in the tree builder's adoption agency algorithm
+        https://bugs.webkit.org/show_bug.cgi?id=43610
+
+        New baselines for tests where the render tree depends on 0x0 render objects being
+        created/destroyed during adoption agency fixups.
+
+        * platform/mac/fast/forms/formmove3-expected.txt:
+        * platform/mac/fast/forms/preserveFormDuringResidualStyle-expected.txt:
+        * platform/mac/fast/invalid/003-expected.txt:
+        * platform/mac/fast/invalid/019-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug647-expected.txt:
+        * platform/mac/tables/mozilla/other/wa_table_tr_align-expected.txt:
+
 2010-08-08  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Adam Barth.

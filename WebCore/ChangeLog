@@ -1,3 +1,20 @@
+2010-08-08  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Set the shouldLazyAttach flag to true in the tree builder's adoption agency algorithm
+        https://bugs.webkit.org/show_bug.cgi?id=43610
+
+        Sets the shouldLazyAttach flag to true for appendChild() calls inside the HTML tree
+        builder's adoption agency flag.  This is a speedup assuming that nodes subjected
+        to the adoption agency are likely to be frequently reparented, and thus it is better
+        to delay creating the render tree until later (when hopefully the DOM is finalized).
+
+        On my mac pro this speeds up fast/parser/residual-style-hang.html by 2.6X.
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::callTheAdoptionAgency):
+
 2010-08-08  Nikita Vasilyev  <me@elv1s.ru>
 
         Reviewed by Pavel Feldman.
