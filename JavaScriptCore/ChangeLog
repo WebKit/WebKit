@@ -1,3 +1,14 @@
+2010-08-07  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Eric Seidel.
+
+        Add ENABLE(YARR) guard around JSGlobalData::m_regexAllocator
+        https://bugs.webkit.org/show_bug.cgi?id=43399
+
+        m_regexAllocator is used only by RegExp::compile which is guarded with ENABLE(YARR).
+
+        * runtime/JSGlobalData.h:
+
 2010-08-07  Patrick Roland Gansterer  <paroga@paroga.com>
 
         Reviewed by Eric Seidel.

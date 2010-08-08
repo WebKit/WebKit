@@ -220,7 +220,9 @@ namespace JSC {
 
         RegExpCache* m_regExpCache;
 
+#if ENABLE(YARR)
         BumpPointerAllocator m_regexAllocator;
+#endif
 
 #ifndef NDEBUG
         ThreadIdentifier exclusiveThread;
