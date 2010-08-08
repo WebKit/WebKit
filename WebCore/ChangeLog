@@ -2,6 +2,16 @@
 
         Reviewed by Eric Seidel.
 
+        [WML] Add dummy argument to SelectElement::defaultEventHandler() in WMLSelectElement
+        https://bugs.webkit.org/show_bug.cgi?id=43176
+
+        * wml/WMLSelectElement.cpp:
+        (WebCore::WMLSelectElement::defaultEventHandler): Sets NULL parameter to SelectElement::defaultEventHandler.
+
+2010-08-07  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Eric Seidel.
+
         [WML] Change DocumentParser with ScriptableDocumentParser in WMLDocument
         https://bugs.webkit.org/show_bug.cgi?id=43174
 

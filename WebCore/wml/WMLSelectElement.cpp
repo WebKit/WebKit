@@ -167,7 +167,7 @@ void WMLSelectElement::reset()
 
 void WMLSelectElement::defaultEventHandler(Event* event)
 {
-    SelectElement::defaultEventHandler(m_data, this, event);
+    SelectElement::defaultEventHandler(m_data, this, event, 0);
 
     // FIXME: There must be a better place to update the page variable state. Investigate.
     updateVariables();
