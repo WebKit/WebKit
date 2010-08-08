@@ -27,6 +27,36 @@
 
 #define VK_UNKNOWN 0
 
+// Undef macros which are also defined in MinGW/include/winuser.h to aviod gcc redefinition warning
+// https://bugs.webkit.org/show_bug.cgi?id=43360
+#if COMPILER(MINGW)
+#undef VK_BACK
+#undef VK_TAB
+#undef VK_CLEAR
+#undef VK_RETURN
+#undef VK_SHIFT
+#undef VK_CONTROL
+#undef VK_MENU
+#undef VK_PAUSE
+#undef VK_CAPITAL
+#undef VK_SPACE
+#undef VK_PRIOR
+#undef VK_NEXT
+#undef VK_END
+#undef VK_HOME
+#undef VK_LEFT
+#undef VK_UP
+#undef VK_RIGHT
+#undef VK_DOWN
+#undef VK_SELECT
+#undef VK_PRINT
+#undef VK_EXECUTE
+#undef VK_SNAPSHOT
+#undef VK_INSERT
+#undef VK_DELETE
+#undef VK_HELP
+#endif // COMPILER(MINGW)
+
 // Left mouse button
 // Right mouse button
 // Control-break processing

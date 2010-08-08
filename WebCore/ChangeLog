@@ -1,3 +1,12 @@
+2010-08-08  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] Fix warnings in WebCore/platform/WindowsKeyboardCodes.h
+        https://bugs.webkit.org/show_bug.cgi?id=43360
+
+        * platform/WindowsKeyboardCodes.h: Undef macros which are also defined in MinGW/include/winuser.h to aviod gcc redefinition warning
+
 2010-08-08  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Adam Barth.
