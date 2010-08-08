@@ -1,3 +1,18 @@
+2010-08-08  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Chromium: isindex tests timeout after r64712
+        https://bugs.webkit.org/show_bug.cgi?id=43543
+        
+        Update isindex tests/expectactions after r64712 so that even though they
+        stil fail, they fail immediately instead of timing out.
+
+        * http/tests/misc/isindex-formdata-expected.txt:
+        * http/tests/misc/isindex-formdata.html:
+        * http/tests/misc/isindex-with-no-form-base-href-expected.txt:
+        * http/tests/misc/resources/isindex-with-no-form-base-href.html:
+
 2010-08-07  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Adam Barth.
