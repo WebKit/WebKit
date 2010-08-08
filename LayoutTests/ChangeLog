@@ -1,3 +1,18 @@
+2010-08-08  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        fast/events/onunload-back-to-page-cache.html does not pass with GTK DRT
+        https://bugs.webkit.org/show_bug.cgi?id=43692
+        
+        Update onunload-back-to-page-cache.html to set the frame name later,
+        so that the onunload handler console message doesn't have it. Also 
+        include a message about what exactly we're testing.
+
+        * fast/events/onunload-back-to-page-cache-expected.txt:
+        * fast/events/script-tests/onunload-back-to-page-cache.js:
+        (onpageshow):
+
 2010-08-08  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Dimitri Glazkov.

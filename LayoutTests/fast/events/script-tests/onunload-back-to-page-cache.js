@@ -2,12 +2,12 @@ description('Simulates flow from a page that\'s in the page cache to one that\'s
 
 onpageshow = function(event) {
     if (window.name == 'navigated') {
+        testPassed('WebTiming asserts in FrameLoader.cpp did not fire');
         finishJSTest();
     } else {
         if (window.layoutTestController)
             layoutTestController.overridePreference('WebKitUsesPageCachePreferenceKey', 1);
-        window.name = 'navigated';
-        setTimeout(function() {location.href = 'data:text/html,<script>onunload=function() {},onload=function(){history.back();}<' + '/script>';}, 0);
+        setTimeout(function() {location.href = 'data:text/html,<script>onunload=function() {},onload=function(){window.name = \'navigated\';history.back();}<' + '/script>';}, 0);
     }
 }
 
