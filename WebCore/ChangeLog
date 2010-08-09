@@ -1,3 +1,13 @@
+2010-08-08  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Antonio Gomes.
+
+        Web Inspector: Fix warning in WebCore/inspector/InspectorDebuggerAgent.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=43698
+
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::editScriptSource): Add suggested parentheses.
+
 2010-08-05  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Tony Chang.

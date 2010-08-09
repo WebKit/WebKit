@@ -129,7 +129,7 @@ void InspectorDebuggerAgent::removeBreakpoint(const String& sourceID, unsigned l
 
 void InspectorDebuggerAgent::editScriptSource(long, const String& sourceID, const String& newContent, bool* success, String* result, RefPtr<InspectorValue>* newCallFrames)
 {
-    if (*success = ScriptDebugServer::shared().editScriptSource(sourceID, newContent, *result))
+    if ((*success = ScriptDebugServer::shared().editScriptSource(sourceID, newContent, *result)))
         *newCallFrames = currentCallFrames();
 }
 
