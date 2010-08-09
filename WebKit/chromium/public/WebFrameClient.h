@@ -90,6 +90,12 @@ public:
 
     // General notifications -----------------------------------------------
 
+    // This frame has been detached from the view.
+    //
+    // FIXME: Do not use this in new code. Currently this is used by code in
+    // Chromium that errantly caches WebKit objects.
+    virtual void frameDetached(WebFrame*) { }
+
     // This frame is about to be closed.
     virtual void willClose(WebFrame*) { }
 
