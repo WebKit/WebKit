@@ -1,3 +1,16 @@
+2010-08-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Justin Garcia.
+
+        Undo fails in RemoveCSSPropertyCommand when the corresponding style attribute is removed
+        https://bugs.webkit.org/show_bug.cgi?id=43639
+
+        Added a test to remove style attribute after removing a CSS property from the style.
+        Undo should restore both style attribute and the removed CSS property.
+
+        * editing/undo/remove-css-property-and-remove-style-expected.txt: Added.
+        * editing/undo/remove-css-property-and-remove-style.html: Added.
+
 2010-08-09  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

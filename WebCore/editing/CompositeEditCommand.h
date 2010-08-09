@@ -34,6 +34,7 @@ namespace WebCore {
 
 class CSSStyleDeclaration;
 class HTMLElement;
+class StyledElement;
 class Text;
 
 class CompositeEditCommand : public EditCommand {
@@ -68,7 +69,7 @@ protected:
     void rebalanceWhitespace();
     void rebalanceWhitespaceAt(const Position&);
     void prepareWhitespaceAtPositionForSplit(Position&);
-    void removeCSSProperty(PassRefPtr<CSSMutableStyleDeclaration>, CSSPropertyID);
+    void removeCSSProperty(PassRefPtr<StyledElement>, CSSPropertyID);
     void removeNodeAttribute(PassRefPtr<Element>, const QualifiedName& attribute);
     void removeChildrenInRange(PassRefPtr<Node>, unsigned from, unsigned to);
     virtual void removeNode(PassRefPtr<Node>);
