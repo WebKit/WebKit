@@ -69,10 +69,10 @@ DocumentParser* HTMLViewSourceDocument::createParser()
 void HTMLViewSourceDocument::createContainingTable()
 {
     RefPtr<HTMLHtmlElement> html = HTMLHtmlElement::create(this);
-    legacyParserAddChild(html);
+    parserAddChild(html);
     html->attach();
     RefPtr<HTMLBodyElement> body = HTMLBodyElement::create(this);
-    html->legacyParserAddChild(body);
+    html->parserAddChild(body);
     body->attach();
     
     // Create a line gutter div that can be used to make sure the gutter extends down the height of the whole
@@ -81,14 +81,14 @@ void HTMLViewSourceDocument::createContainingTable()
     RefPtr<NamedNodeMap> attrs = NamedNodeMap::create();
     attrs->addAttribute(Attribute::createMapped(classAttr, "webkit-line-gutter-backdrop"));
     div->setAttributeMap(attrs.release());
-    body->legacyParserAddChild(div);
+    body->parserAddChild(div);
     div->attach();
 
     RefPtr<HTMLTableElement> table = HTMLTableElement::create(this);
-    body->legacyParserAddChild(table);
+    body->parserAddChild(table);
     table->attach();
     m_tbody = HTMLTableSectionElement::create(tbodyTag, this);
-    table->legacyParserAddChild(m_tbody);
+    table->parserAddChild(m_tbody);
     m_tbody->attach();
     m_current = m_tbody;
 }
@@ -214,7 +214,7 @@ PassRefPtr<Element> HTMLViewSourceDocument::addSpanWithClassName(const String& c
     RefPtr<NamedNodeMap> attrs = NamedNodeMap::create();
     attrs->addAttribute(Attribute::createMapped(classAttr, className));
     span->setAttributeMap(attrs.release());
-    m_current->legacyParserAddChild(span);
+    m_current->parserAddChild(span);
     span->attach();
     return span.release();
 }
@@ -223,7 +223,7 @@ void HTMLViewSourceDocument::addLine(const String& className)
 {
     // Create a table row.
     RefPtr<HTMLTableRowElement> trow = HTMLTableRowElement::create(this);
-    m_tbody->legacyParserAddChild(trow);
+    m_tbody->parserAddChild(trow);
     trow->attach();
     
     // Create a cell that will hold the line number (it is generated in the stylesheet using counters).
@@ -231,7 +231,7 @@ void HTMLViewSourceDocument::addLine(const String& className)
     RefPtr<NamedNodeMap> attrs = NamedNodeMap::create();
     attrs->addAttribute(Attribute::createMapped(classAttr, "webkit-line-number"));
     td->setAttributeMap(attrs.release());
-    trow->legacyParserAddChild(td);
+    trow->parserAddChild(td);
     td->attach();
 
     // Create a second cell for the line contents
@@ -239,7 +239,7 @@ void HTMLViewSourceDocument::addLine(const String& className)
     attrs = NamedNodeMap::create();
     attrs->addAttribute(Attribute::createMapped(classAttr, "webkit-line-content"));
     td->setAttributeMap(attrs.release());
-    trow->legacyParserAddChild(td);
+    trow->parserAddChild(td);
     td->attach();
     m_current = m_td = td;
 
@@ -276,7 +276,7 @@ void HTMLViewSourceDocument::addText(const String& text, const String& className
         if (m_current == m_tbody)
             addLine(className);
         RefPtr<Text> t = Text::create(this, substring);
-        m_current->legacyParserAddChild(t);
+        m_current->parserAddChild(t);
         t->attach();
         if (i < size - 1)
             m_current = m_tbody;
@@ -304,7 +304,7 @@ PassRefPtr<Element> HTMLViewSourceDocument::addLink(const String& url, bool isAn
     attrs->addAttribute(Attribute::createMapped(targetAttr, "_blank"));
     attrs->addAttribute(Attribute::createMapped(hrefAttr, url));
     anchor->setAttributeMap(attrs.release());
-    m_current->legacyParserAddChild(anchor);
+    m_current->parserAddChild(anchor);
     anchor->attach();
     return anchor.release();
 }

@@ -1,3 +1,20 @@
+2010-08-09  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Move HTMLViewSourceDocument from legacyParserAddChild to parserAddChild
+        https://bugs.webkit.org/show_bug.cgi?id=43740
+
+        This removes the DTD checks, which aren't needed for view source
+        documents.
+
+        * html/HTMLViewSourceDocument.cpp:
+        (WebCore::HTMLViewSourceDocument::createContainingTable):
+        (WebCore::HTMLViewSourceDocument::addSpanWithClassName):
+        (WebCore::HTMLViewSourceDocument::addLine):
+        (WebCore::HTMLViewSourceDocument::addText):
+        (WebCore::HTMLViewSourceDocument::addLink):
+
 2010-08-09  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.
