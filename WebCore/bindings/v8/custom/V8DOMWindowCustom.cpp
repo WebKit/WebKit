@@ -82,10 +82,6 @@
 #endif
 #include "WindowFeatures.h"
 
-// Horizontal and vertical offset, from the parent content area, around newly
-// opened popups that don't specify a location.
-static const int popupTilePixels = 10;
-
 namespace WebCore {
 
 v8::Handle<v8::Value> WindowSetTimeoutImpl(const v8::Arguments& args, bool singleShot)
@@ -449,17 +445,6 @@ static bool canShowModalDialogNow(const Frame* frame)
     return frame->page()->chrome()->canRunModalNow();
 }
 
-static bool allowPopUp()
-{
-    Frame* frame = V8Proxy::retrieveFrameForEnteredContext();
-
-    ASSERT(frame);
-    if (frame->script()->processingUserGesture())
-        return true;
-    Settings* settings = frame->settings();
-    return settings && settings->javaScriptCanOpenWindowsAutomatically();
-}
-
 static HashMap<String, String> parseModalDialogFeatures(const String& featuresArg)
 {
     HashMap<String, String> map;
@@ -513,7 +498,7 @@ v8::Handle<v8::Value> V8DOMWindow::showModalDialogCallback(const v8::Arguments& 
     if (!enteredFrame)
         return v8::Undefined();
 
-    if (!canShowModalDialogNow(frame) || !allowPopUp())
+    if (!canShowModalDialogNow(frame) || !V8BindingSecurity::allowPopUp(V8BindingState::Only()))
         return v8::Undefined();
 
     const HashMap<String, String> features = parseModalDialogFeatures(featureArgs);
@@ -584,134 +569,16 @@ v8::Handle<v8::Value> V8DOMWindow::openCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.DOMWindow.open()");
 
+    DOMWindow* parent = V8DOMWindow::toNative(args.Holder());
     String urlString = toWebCoreStringWithNullOrUndefinedCheck(args[0]);
     AtomicString frameName = (args[1]->IsUndefined() || args[1]->IsNull()) ? "_blank" : AtomicString(toWebCoreString(args[1]));
-
-    DOMWindow* parent = V8DOMWindow::toNative(args.Holder());
-    Frame* frame = parent->frame();
-
-    if (!V8BindingSecurity::canAccessFrame(V8BindingState::Only(), frame, true))
-        return v8::Undefined();
-
-    Frame* enteredFrame = V8Proxy::retrieveFrameForEnteredContext();
-    if (!enteredFrame)
-        return v8::Undefined();
-
-    Frame* callingFrame = V8Proxy::retrieveFrameForCallingContext();
-    // We may not have a calling context if we are invoked by a plugin via NPAPI.
-    if (!callingFrame)
-        callingFrame = enteredFrame;
-
-    Page* page = frame->page();
-    if (!page)
-        return v8::Undefined();
-
-    // Because FrameTree::find() returns true for empty strings, we must check
-    // for empty framenames. Otherwise, illegitimate window.open() calls with
-    // no name will pass right through the popup blocker.
-    if (!allowPopUp() &&
-        (frameName.isEmpty() || !frame->tree()->find(frameName))) {
-        return v8::Undefined();
-    }
-
-    // Get the target frame for the special cases of _top and _parent.  In those
-    // cases, we can schedule a location change right now and return early.
-    bool topOrParent = false;
-    if (frameName == "_top") {
-        frame = frame->tree()->top();
-        topOrParent = true;
-    } else if (frameName == "_parent") {
-        if (Frame* parent = frame->tree()->parent())
-            frame = parent;
-        topOrParent = true;
-    }
-    if (topOrParent) {
-        if (!shouldAllowNavigation(frame))
-            return v8::Undefined();
-
-        String completedUrl;
-        if (!urlString.isEmpty())
-            completedUrl = completeURL(urlString);
-
-        if (!completedUrl.isEmpty() &&
-            (!protocolIsJavaScript(completedUrl) || ScriptController::isSafeScript(frame))) {
-            bool userGesture = processingUserGesture();
-
-            // For whatever reason, Firefox uses the entered frame to determine
-            // the outgoingReferrer.  We replicate that behavior here.
-            String referrer = enteredFrame->loader()->outgoingReferrer();
-
-            frame->redirectScheduler()->scheduleLocationChange(completedUrl, referrer, false, false, userGesture);
-        }
-        return toV8(frame->domWindow());
-    }
-
-    // In the case of a named frame or a new window, we'll use the
-    // createWindow() helper.
-
-    // Parse the values, and then work with a copy of the parsed values
-    // so we can restore the values we may not want to overwrite after
-    // we do the multiple monitor fixes.
     WindowFeatures rawFeatures(toWebCoreStringWithNullOrUndefinedCheck(args[2]));
-    WindowFeatures windowFeatures(rawFeatures);
-    FloatRect screenRect = screenAvailableRect(page->mainFrame()->view());
+    DOMWindow* child = V8BindingDOMWindow::open(V8BindingState::Only(), parent, urlString, frameName, rawFeatures);
 
-    // Set default size and location near parent window if none were specified.
-    // These may be further modified by adjustWindowRect, below.
-    if (!windowFeatures.xSet) {
-        windowFeatures.x = parent->screenX() - screenRect.x() + popupTilePixels;
-        windowFeatures.xSet = true;
-    }
-    if (!windowFeatures.ySet) {
-        windowFeatures.y = parent->screenY() - screenRect.y() + popupTilePixels;
-        windowFeatures.ySet = true;
-    }
-    if (!windowFeatures.widthSet) {
-        windowFeatures.width = parent->innerWidth();
-        windowFeatures.widthSet = true;
-    }
-    if (!windowFeatures.heightSet) {
-        windowFeatures.height = parent->innerHeight();
-        windowFeatures.heightSet = true;
-    }
-
-    FloatRect windowRect(windowFeatures.x, windowFeatures.y, windowFeatures.width, windowFeatures.height);
-
-    // The new window's location is relative to its current screen, so shift
-    // it in case it's on a secondary monitor. See http://b/viewIssue?id=967905.
-    windowRect.move(screenRect.x(), screenRect.y());
-    WebCore::DOMWindow::adjustWindowRect(screenRect, windowRect, windowRect);
-
-    windowFeatures.x = windowRect.x();
-    windowFeatures.y = windowRect.y();
-    windowFeatures.height = windowRect.height();
-    windowFeatures.width = windowRect.width();
-
-    // If either of the origin coordinates or dimensions weren't set in the original
-    // string, make sure they aren't set now.
-    if (!rawFeatures.xSet) {
-        windowFeatures.x = 0;
-        windowFeatures.xSet = false;
-    }
-    if (!rawFeatures.ySet) {
-        windowFeatures.y = 0;
-        windowFeatures.ySet = false;
-    }
-    if (!rawFeatures.widthSet) {
-      windowFeatures.width = 0;
-      windowFeatures.widthSet = false;
-    }
-    if (!rawFeatures.heightSet) {
-      windowFeatures.height = 0;
-      windowFeatures.heightSet = false;
-    }
-
-    frame = V8BindingDOMWindow::createWindow(V8BindingState::Only(), callingFrame, enteredFrame, frame, urlString, frameName, windowFeatures, v8::Local<v8::Value>());
-
-    if (!frame)
+    if (!child)
         return v8::Undefined();
 
-    return toV8(frame->domWindow());
+    return toV8(child);
 }
 
 

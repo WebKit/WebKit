@@ -34,14 +34,15 @@
 #include "BindingSecurityBase.h"
 #include "CSSHelper.h"
 #include "Element.h"
+#include "Frame.h"
 #include "GenericBinding.h"
 #include "HTMLFrameElementBase.h"
 #include "HTMLNames.h"
+#include "Settings.h"
 
 namespace WebCore {
 
 class DOMWindow;
-class Frame;
 class Node;
 
 // Security functions shared by various language bindings.
@@ -55,8 +56,11 @@ public:
     // current security context.
     static bool checkNodeSecurity(State<Binding>*, Node* target);
 
+    static bool allowPopUp(State<Binding>*);
     static bool allowSettingFrameSrcToJavascriptUrl(State<Binding>*, HTMLFrameElementBase*, String value);
     static bool allowSettingSrcToJavascriptURL(State<Binding>*, Element*, String name, String value);
+
+    static bool shouldAllowNavigation(State<Binding>*, Frame*);
 
 private:
     explicit BindingSecurity() {}
@@ -110,6 +114,18 @@ bool BindingSecurity<Binding>::checkNodeSecurity(State<Binding>* state, Node* no
 }
 
 template <class Binding>
+bool BindingSecurity<Binding>::allowPopUp(State<Binding>* state)
+{
+    if (state->processingUserGesture())
+        return true;
+
+    Frame* frame = state->getFirstFrame();
+    ASSERT(frame);
+    Settings* settings = frame->settings();
+    return settings && settings->javaScriptCanOpenWindowsAutomatically();
+}
+
+template <class Binding>
 bool BindingSecurity<Binding>::allowSettingFrameSrcToJavascriptUrl(State<Binding>* state, HTMLFrameElementBase* frame, String value)
 {
     if (protocolIsJavaScript(deprecatedParseURL(value))) {
@@ -126,6 +142,13 @@ bool BindingSecurity<Binding>::allowSettingSrcToJavascriptURL(State<Binding>* st
     if ((element->hasTagName(HTMLNames::iframeTag) || element->hasTagName(HTMLNames::frameTag)) && equalIgnoringCase(name, "src"))
         return allowSettingFrameSrcToJavascriptUrl(state, static_cast<HTMLFrameElementBase*>(element), value);
     return true;
+}
+
+template <class Binding>
+bool BindingSecurity<Binding>::shouldAllowNavigation(State<Binding>* state, Frame* frame)
+{
+    Frame* activeFrame = state->getActiveFrame();
+    return activeFrame && activeFrame->loader()->shouldAllowNavigation(frame);
 }
 
 }

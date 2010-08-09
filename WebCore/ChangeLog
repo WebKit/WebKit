@@ -1,3 +1,40 @@
+2010-08-09  Dominic Cooney  <dominicc@google.com>
+
+        Reviewed by Adam Barth.
+
+        Moves window.open logic into the generic bindings.
+
+        This patch moves window.open logic from V8 into the generic
+        bindings so it could be shared with JSC. JSC sharing is not in
+        this patch. This patch is of the same flavor/intent as 33201.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41392
+
+        * bindings/generic/BindingDOMWindow.h:
+        (WebCore::::createWindow):
+        (WebCore::::open):
+        (WebCore::::completeURL):
+        * bindings/generic/BindingSecurity.h:
+        (WebCore::::allowPopUp):
+        (WebCore::::shouldAllowNavigation):
+        * bindings/v8/V8Binding.h:
+        (WebCore::V8Binding::emptyScriptValue):
+        * bindings/v8/V8Utilities.cpp:
+        (WebCore::transferHiddenDependency):
+        (WebCore::processingUserGesture):
+        (WebCore::shouldAllowNavigation):
+        (WebCore::completeURL):
+        * bindings/v8/custom/V8ArrayBufferCustom.cpp:
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::V8DOMWindow::showModalDialogCallback):
+        (WebCore::V8DOMWindow::openCallback):
+        * bindings/v8/specialization/V8BindingState.cpp:
+        (WebCore::::getActiveFrame):
+        (WebCore::::getFirstFrame):
+        (WebCore::::processingUserGesture):
+        * bindings/v8/specialization/V8BindingState.h:
+        (WebCore::):
+
 2010-08-09  Marcus Bulach  <bulach@chromium.org>
 
         Reviewed by Darin Adler.

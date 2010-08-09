@@ -1,10 +1,10 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above
@@ -14,7 +14,7 @@
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -31,11 +31,17 @@
 #ifndef BindingDOMWindow_h
 #define BindingDOMWindow_h
 
+#include "DOMWindow.h"
 #include "Frame.h"
 #include "FrameLoadRequest.h"
+#include "FrameLoader.h"
+#include "FrameView.h"
 #include "GenericBinding.h"
 #include "Page.h"
+#include "PlatformScreen.h"
+#include "ScriptController.h"
 #include "SecurityOrigin.h"
+#include "WindowFeatures.h"
 
 namespace WebCore {
 
@@ -52,6 +58,20 @@ public:
                                const String& frameName,
                                const WindowFeatures& windowFeatures,
                                BindingValue dialogArgs);
+
+    static WebCore::DOMWindow* open(State<Binding>*,
+                                    WebCore::DOMWindow* parent,
+                                    const String& url,
+                                    const String& frameName,
+                                    const WindowFeatures& rawFeatures);
+
+    // FIXME: There should be a place for generic binding utilities.
+    static KURL completeURL(State<Binding>*, const String& relativeURL);
+
+private:
+    // Horizontal and vertical offset, from the parent content area,
+    // around newly opened popups that don't specify a location.
+    static const int popupTilePixels = 10;
 };
 
 // Implementations of templated methods must be in this file.
@@ -103,8 +123,8 @@ Frame* BindingDOMWindow<Binding>::createWindow(State<Binding>* state,
 
     if (!protocolIsJavaScript(url) || BindingSecurity<Binding>::canAccessFrame(state, newFrame, true)) {
         KURL completedUrl =
-            url.isEmpty() ? KURL(ParsedURLString, "") : completeURL(url);
-        bool userGesture = processingUserGesture();
+            url.isEmpty() ? KURL(ParsedURLString, "") : completeURL(state, url);
+        bool userGesture = state->processingUserGesture();
 
         if (created)
             newFrame->loader()->changeLocation(completedUrl, referrer, false, false, userGesture);
@@ -113,6 +133,153 @@ Frame* BindingDOMWindow<Binding>::createWindow(State<Binding>* state,
     }
 
     return newFrame;
+}
+
+template<class Binding>
+WebCore::DOMWindow* BindingDOMWindow<Binding>::open(State<Binding>* state,
+                                                    WebCore::DOMWindow* parent,
+                                                    const String& urlString,
+                                                    const String& frameName,
+                                                    const WindowFeatures& rawFeatures)
+{
+    Frame* frame = parent->frame();
+
+    if (!BindingSecurity<Binding>::canAccessFrame(state, frame, true))
+        return 0;
+
+    Frame* firstFrame = state->getFirstFrame();
+    if (!firstFrame)
+        return 0;
+
+    Frame* activeFrame = state->getActiveFrame();
+    // We may not have a calling context if we are invoked by a plugin
+    // via NPAPI.
+    if (!activeFrame)
+        activeFrame = firstFrame;
+
+    Page* page = frame->page();
+    if (!page)
+        return 0;
+
+    // Because FrameTree::find() returns true for empty strings, we must check
+    // for empty framenames. Otherwise, illegitimate window.open() calls with
+    // no name will pass right through the popup blocker.
+    if (!BindingSecurity<Binding>::allowPopUp(state)
+        && (frameName.isEmpty() || !frame->tree()->find(frameName))) {
+        return 0;
+    }
+
+    // Get the target frame for the special cases of _top and _parent.
+    // In those cases, we can schedule a location change right now and
+    // return early.
+    bool topOrParent = false;
+    if (frameName == "_top") {
+        frame = frame->tree()->top();
+        topOrParent = true;
+    } else if (frameName == "_parent") {
+        if (Frame* parent = frame->tree()->parent())
+            frame = parent;
+        topOrParent = true;
+    }
+    if (topOrParent) {
+        if (!BindingSecurity<Binding>::shouldAllowNavigation(state, frame))
+            return 0;
+
+        String completedUrl;
+        if (!urlString.isEmpty())
+            completedUrl = completeURL(state, urlString);
+
+        if (!completedUrl.isEmpty()
+            && (!protocolIsJavaScript(completedUrl)
+                || BindingSecurity<Binding>::canAccessFrame(state, frame, true))) {
+            bool userGesture = state->processingUserGesture();
+
+            // For whatever reason, Firefox uses the first frame to determine
+            // the outgoingReferrer.  We replicate that behavior here.
+            String referrer = firstFrame->loader()->outgoingReferrer();
+
+            frame->redirectScheduler()->scheduleLocationChange(completedUrl, referrer, false, false, userGesture);
+        }
+        return frame->domWindow();
+    }
+
+    // In the case of a named frame or a new window, we'll use the
+    // createWindow() helper.
+
+    // Work with a copy of the parsed values so we can restore the
+    // values we may not want to overwrite after we do the multiple
+    // monitor fixes.
+    WindowFeatures windowFeatures(rawFeatures);
+    FloatRect screenRect = screenAvailableRect(page->mainFrame()->view());
+
+    // Set default size and location near parent window if none were specified.
+    // These may be further modified by adjustWindowRect, below.
+    if (!windowFeatures.xSet) {
+        windowFeatures.x = parent->screenX() - screenRect.x() + popupTilePixels;
+        windowFeatures.xSet = true;
+    }
+    if (!windowFeatures.ySet) {
+        windowFeatures.y = parent->screenY() - screenRect.y() + popupTilePixels;
+        windowFeatures.ySet = true;
+    }
+    if (!windowFeatures.widthSet) {
+        windowFeatures.width = parent->innerWidth();
+        windowFeatures.widthSet = true;
+    }
+    if (!windowFeatures.heightSet) {
+        windowFeatures.height = parent->innerHeight();
+        windowFeatures.heightSet = true;
+    }
+
+    FloatRect windowRect(windowFeatures.x, windowFeatures.y, windowFeatures.width, windowFeatures.height);
+
+    // The new window's location is relative to its current screen, so shift
+    // it in case it's on a secondary monitor. See http://b/viewIssue?id=967905.
+    windowRect.move(screenRect.x(), screenRect.y());
+    WebCore::DOMWindow::adjustWindowRect(screenRect, windowRect, windowRect);
+
+    windowFeatures.x = windowRect.x();
+    windowFeatures.y = windowRect.y();
+    windowFeatures.height = windowRect.height();
+    windowFeatures.width = windowRect.width();
+
+    // If either of the origin coordinates or dimensions weren't set
+    // in the original string, make sure they aren't set now.
+    if (!rawFeatures.xSet) {
+        windowFeatures.x = 0;
+        windowFeatures.xSet = false;
+    }
+    if (!rawFeatures.ySet) {
+        windowFeatures.y = 0;
+        windowFeatures.ySet = false;
+    }
+    if (!rawFeatures.widthSet) {
+      windowFeatures.width = 0;
+      windowFeatures.widthSet = false;
+    }
+    if (!rawFeatures.heightSet) {
+      windowFeatures.height = 0;
+      windowFeatures.heightSet = false;
+    }
+
+    frame = createWindow(state, activeFrame, firstFrame, frame, urlString, frameName, windowFeatures, Binding::emptyScriptValue());
+
+    if (!frame)
+        return 0;
+
+    return frame->domWindow();
+}
+
+template <class Binding>
+KURL BindingDOMWindow<Binding>::completeURL(State<Binding>* state,
+                                            const String& relativeURL)
+{
+    // For historical reasons, we need to complete the URL using the
+    // dynamic frame.
+    Frame* frame = state->getFirstFrame();
+    if (!frame)
+        return KURL();
+    return frame->loader()->completeURL(relativeURL);
 }
 
 } // namespace WebCore

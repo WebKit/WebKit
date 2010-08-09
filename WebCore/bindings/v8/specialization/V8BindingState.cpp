@@ -1,10 +1,10 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above
@@ -14,7 +14,7 @@
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -31,6 +31,8 @@
 #include "config.h"
 #include "V8BindingState.h"
 
+#include "Frame.h"
+#include "ScriptController.h"
 #include "V8Proxy.h"
 #include <wtf/StdLibExtras.h>
 
@@ -53,9 +55,34 @@ DOMWindow* State<V8Binding>::getActiveWindow()
     return V8Proxy::retrieveWindow(activeContext);
 }
 
+Frame* State<V8Binding>::getActiveFrame()
+{
+    Frame* frame = V8Proxy::retrieveFrameForCallingContext();
+    if (!frame) {
+        // Unfortunately, when processing script from a plug-in, we might not
+        // have a calling context.  In those cases, we fall back to the
+        // entered context for security checks.
+        // FIXME: We need a better API for retrieving frames that abstracts
+        //        away this concern.
+        frame = V8Proxy::retrieveFrameForEnteredContext();
+    }
+    return frame;
+}
+
+Frame* State<V8Binding>::getFirstFrame()
+{
+    return V8Proxy::retrieveFrameForEnteredContext();
+}
+
 void State<V8Binding>::immediatelyReportUnsafeAccessTo(Frame* target)
 {
     V8Proxy::reportUnsafeAccessTo(target, V8Proxy::ReportNow);
+}
+
+bool State<V8Binding>::processingUserGesture()
+{
+    Frame* frame = V8Proxy::retrieveFrameForEnteredContext();
+    return frame && frame->script()->processingUserGesture();
 }
 
 } // namespace WebCore
