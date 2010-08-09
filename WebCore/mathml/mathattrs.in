@@ -3,9 +3,15 @@ namespaceURI="http://www.w3.org/1998/Math/MathML"
 guardFactoryWith="ENABLE(MATHML)"
 attrsNullNamespace
 
+background
 close
+color
 definitionURL
 denomalign
+fontfamily
+fontsize
+fontstyle
+fontweight
 linethickness
 mathbackground
 mathcolor

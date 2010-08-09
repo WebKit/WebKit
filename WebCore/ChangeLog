@@ -1,3 +1,17 @@
+2010-08-09  François Sausset  <sausset@gmail.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Implement MathML deprecated style attributes
+        https://bugs.webkit.org/show_bug.cgi?id=43503
+
+        Test: mathml/presentation/attributes.xhtml
+
+        * mathml/MathMLElement.cpp:
+        (WebCore::MathMLElement::mapToEntry):
+        (WebCore::MathMLElement::parseMappedAttribute):
+        * mathml/mathattrs.in:
+
 2010-08-09  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.

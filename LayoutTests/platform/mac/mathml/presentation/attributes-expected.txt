@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x163
-  RenderBlock {html} at (0,0) size 800x163
-    RenderBody {body} at (8,16) size 784x131
+layer at (0,0) size 800x216
+  RenderBlock {html} at (0,0) size 800x216
+    RenderBody {body} at (8,16) size 784x184
       RenderBlock {p} at (0,0) size 784x43
         RenderText {#text} at (0,13) size 432x18
           text run at (0,13) width 432: "following elements should appear in blue on an orange background: "
@@ -27,6 +27,18 @@ layer at (0,0) size 800x163
             RenderInline {mn} at (0,0) size 8x16
               RenderText {#text} at (12,3) size 8x16
                 text run at (12,3) width 8: "2"
+        RenderText {#text} at (486,13) size 4x18
+          text run at (486,13) width 4: " "
+        RenderBlock {math} at (490,3) size 15x40 [bgcolor=#FFA500]
+          RenderBlock {mfrac} at (1,0) size 13x40 [color=#0000FF]
+            RenderBlock {mfrac} at (0,0) size 13x19
+              RenderInline {mi} at (0,0) size 7x16
+                RenderText {#text} at (3,3) size 7x16
+                  text run at (3,3) width 7: "x"
+            RenderBlock {mfrac} at (0,19) size 13x21
+              RenderInline {mi} at (0,0) size 7x16
+                RenderText {#text} at (3,5) size 7x16
+                  text run at (3,5) width 7: "y"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {p} at (0,59) size 784x37
         RenderText {#text} at (0,13) size 348x18
@@ -61,4 +73,21 @@ layer at (0,0) size 800x163
           RenderInline {mi} at (0,0) size 11x16
             RenderText {#text} at (35,3) size 11x16
               text run at (35,3) width 11: "A"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {p} at (0,147) size 784x37
+        RenderText {#text} at (0,13) size 152x18
+          text run at (0,13) width 152: "test font style attributes: "
+        RenderBlock {math} at (152,0) size 58x37
+          RenderInline {mtext} at (0,0) size 23x32
+            RenderText {#text} at (1,5) size 23x32
+              text run at (1,5) width 23: "A"
+          RenderInline {mtext} at (0,0) size 11x18
+            RenderText {#text} at (24,13) size 11x18
+              text run at (24,13) width 11: "A"
+          RenderInline {mtext} at (0,0) size 10x16
+            RenderText {#text} at (35,16) size 10x16
+              text run at (35,16) width 10: "A"
+          RenderInline {mtext} at (0,0) size 12x16
+            RenderText {#text} at (45,16) size 12x16
+              text run at (45,16) width 12: "A"
         RenderText {#text} at (0,0) size 0x0

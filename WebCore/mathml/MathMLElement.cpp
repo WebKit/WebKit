@@ -50,7 +50,10 @@ PassRefPtr<MathMLElement> MathMLElement::create(const QualifiedName& tagName, Do
 
 bool MathMLElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
 {
-    if (attrName == MathMLNames::mathcolorAttr || attrName == MathMLNames::mathbackgroundAttr) {
+    if (attrName == mathcolorAttr || attrName == mathbackgroundAttr
+        || attrName == colorAttr || attrName == backgroundAttr
+        || attrName == fontsizeAttr || attrName == fontstyleAttr
+        || attrName == fontweightAttr || attrName == fontfamilyAttr) {
         result = eMathML;
         return false;
     }
@@ -59,15 +62,27 @@ bool MathMLElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEnt
 
 void MathMLElement::parseMappedAttribute(Attribute* attr)
 {
-    if (attr->name() == MathMLNames::mathbackgroundAttr)
+    if (attr->name() == mathbackgroundAttr)
         addCSSProperty(attr, CSSPropertyBackgroundColor, attr->value());
-    else if (attr->name() == MathMLNames::mathcolorAttr)
-        addCSSProperty(attr, CSSPropertyColor, attr->value());
-    else if (attr->name() == MathMLNames::mathsizeAttr) {
+    else if (attr->name() == mathsizeAttr) {
         // The following three values of mathsize are handled in WebCore/css/mathml.css
         if (attr->value() != "normal" && attr->value() != "small" && attr->value() != "big")
             addCSSProperty(attr, CSSPropertyFontSize, attr->value());
-    }
+    } else if (attr->name() == mathcolorAttr)
+        addCSSProperty(attr, CSSPropertyColor, attr->value());
+    // FIXME: deprecated attributes that should loose in a conflict with a non deprecated attribute
+    else if (attr->name() == fontsizeAttr)
+        addCSSProperty(attr, CSSPropertyFontSize, attr->value());
+    else if (attr->name() == backgroundAttr)
+        addCSSProperty(attr, CSSPropertyBackgroundColor, attr->value());
+    else if (attr->name() == colorAttr)
+        addCSSProperty(attr, CSSPropertyColor, attr->value());
+    else if (attr->name() == fontstyleAttr)
+        addCSSProperty(attr, CSSPropertyFontStyle, attr->value());
+    else if (attr->name() == fontweightAttr)
+        addCSSProperty(attr, CSSPropertyFontWeight, attr->value());
+    else if (attr->name() == fontfamilyAttr)
+        addCSSProperty(attr, CSSPropertyFontFamily, attr->value());
     else
         StyledElement::parseMappedAttribute(attr);
 }

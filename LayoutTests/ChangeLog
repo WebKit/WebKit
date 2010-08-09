@@ -1,3 +1,15 @@
+2010-08-09  François Sausset  <sausset@gmail.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add test for some deprecated MathML style attributes
+        https://bugs.webkit.org/show_bug.cgi?id=43503
+
+        * mathml/presentation/attributes.xhtml:
+        * platform/mac/mathml/presentation/attributes-expected.checksum:
+        * platform/mac/mathml/presentation/attributes-expected.png:
+        * platform/mac/mathml/presentation/attributes-expected.txt:
+
 2010-08-09  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed. Chromium expectations update.
