@@ -1,3 +1,17 @@
+2010-08-09  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Use the HTML5 TreeBuilder for Fragment Parsing
+        https://bugs.webkit.org/show_bug.cgi?id=43586
+
+        * html5lib/runner-expected.txt:
+         - We pass 2 more tests now that the tokenizer is set to
+           the right state before fragment parsing.
+        * html5lib/runner-expected-html5.txt:
+         - We pass 4 more tests now that HTML5 fragment parsing is
+           (partially) implemented behind the --html5-treebuilder flag.
+
 2010-08-09  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Adam Barth.

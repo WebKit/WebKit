@@ -17,29 +17,8 @@ resources/tests2.dat: PASS
 resources/tests3.dat: PASS
 
 resources/tests4.dat:
-3
-5
 6
 7
-
-Test 3 of 7 in resources/tests4.dat failed. Input:
-textarea content with <em>pseudo</em> <foo>markup
-Got:
-| "textarea content with "
-| <em>
-|   "pseudo"
-| " "
-| <foo>
-|   "markup"
-Expected:
-| "textarea content with <em>pseudo</em> <foo>markup"
-
-Test 5 of 7 in resources/tests4.dat failed. Input:
-</plaintext>
-Got:
-| 
-Expected:
-| "</plaintext>"
 
 Test 6 of 7 in resources/tests4.dat failed. Input:
 setting html's innerHTML
@@ -62,8 +41,6 @@ resources/tests5.dat: PASS
 resources/tests6.dat:
 27
 30
-37
-44
 45
 
 Test 27 of 51 in resources/tests6.dat failed. Input:
@@ -79,26 +56,6 @@ Got:
 | 
 Expected:
 | <frame>
-
-Test 37 of 51 in resources/tests6.dat failed. Input:
-<caption><col><colgroup><tbody><tfoot><thead><tr>
-Got:
-| <caption>
-| <colgroup>
-| <tbody>
-| <tfoot>
-| <thead>
-|   <tr>
-Expected:
-| <tr>
-
-Test 44 of 51 in resources/tests6.dat failed. Input:
-</table><tr>
-Got:
-| <tr>
-Expected:
-| <tbody>
-|   <tr>
 
 Test 45 of 51 in resources/tests6.dat failed. Input:
 <body></body></html>

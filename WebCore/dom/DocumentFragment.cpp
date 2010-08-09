@@ -82,16 +82,16 @@ bool DocumentFragment::shouldUseLegacyHTMLParser() const
         && !document()->page()->settings()->html5ParserEnabled();
 }
 
-void DocumentFragment::parseHTML(const String& source, FragmentScriptingPermission scriptingPermission)
+void DocumentFragment::parseHTML(const String& source, Element* contextElement, FragmentScriptingPermission scriptingPermission)
 {
     if (shouldUseLegacyHTMLParser())
         return LegacyHTMLDocumentParser::parseDocumentFragment(source, this, scriptingPermission);
-    HTMLDocumentParser::parseDocumentFragment(source, this, scriptingPermission);
+    HTMLDocumentParser::parseDocumentFragment(source, this, contextElement, scriptingPermission);
 }
 
-bool DocumentFragment::parseXML(const String& source, Element* parent, FragmentScriptingPermission scriptingPermission)
+bool DocumentFragment::parseXML(const String& source, Element* contextElement, FragmentScriptingPermission scriptingPermission)
 {
-    return XMLDocumentParser::parseDocumentFragment(source, this, parent, scriptingPermission);
+    return XMLDocumentParser::parseDocumentFragment(source, this, contextElement, scriptingPermission);
 }
 
 }

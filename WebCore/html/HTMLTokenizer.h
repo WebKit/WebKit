@@ -34,6 +34,7 @@
 
 namespace WebCore {
 
+class Element;
 class HTMLToken;
 
 class HTMLTokenizer : public Noncopyable {

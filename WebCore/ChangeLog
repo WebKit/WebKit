@@ -1,3 +1,91 @@
+2010-08-09  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Use the HTML5 TreeBuilder for Fragment Parsing
+        https://bugs.webkit.org/show_bug.cgi?id=43586
+
+        The bulk of this change is just a transcription of the HTML5 spec:
+        http://www.whatwg.org/specs/web-apps/current-work/multipage/the-end.html#fragment-case
+
+        DocumentParser() now sets the right tokenizer state before handling
+        fragments.  Since default code path uses the HTML5 tokenizer with the
+        legacy tree builder, this fixes 2 tokenizer-state tests for the html5lib.
+        This fixes 2 more tree-builder tests when the html5 treebuilder is enabled too.
+
+        * dom/DocumentFragment.cpp:
+        (WebCore::DocumentFragment::parseHTML):
+         - HTML5 implementation of fragment parsing requires the context element (parent)
+           pointer.  The legacy implementation handles all parsing branches which require
+           the context element outside of the parser itself, which likely produces "wrong"
+           results.  We'll remove those branches when we turn on the HMTL5 fragment parser.
+        (WebCore::DocumentFragment::parseXML):
+         - Rename "parent" to "contextElement" to match the HTML path (and the HTML5 spec).
+        * dom/DocumentFragment.h:
+        * dom/Element.cpp:
+        (WebCore::Element::createContextualFragment):
+         - Pass the contextElement (this).
+        * html/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::setForm):
+         - Needed by for the fragment case.
+        (WebCore::HTMLConstructionSite::insertHTMLBodyStartTagInBody):
+         - I'm not sure this method should exist, it only has one caller.
+           but for now, I've moved the fragment case FIXME out to the
+           one caller and implemented it.
+        * html/HTMLConstructionSite.h:
+        * html/HTMLDocumentParser.cpp:
+        (WebCore::HTMLNames::tokenizerStateForContextElement):
+         - Part of the fragment case handling for the HTML5 parser.
+        (WebCore::HTMLDocumentParser::HTMLDocumentParser):
+         - Set the Tokenizer state based on the contextElement.
+        (WebCore::HTMLDocumentParser::parseDocumentFragment):
+         - Take a contextElement argument.
+        * html/HTMLDocumentParser.h:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::setInnerHTML):
+         - Added a FIXME before the branches the old parser used to avoid ever needing
+           to pass a context element when parsing HTML fragments.
+        (WebCore::HTMLElement::insertAdjacentHTML):
+         - Pass the context element.
+        * html/HTMLTokenizer.h:
+        * html/HTMLTreeBuilder.cpp:
+         - I added a new helper class FragmentParsingContext to simplify the two
+           HTMLTreeBuilder constructors and hide the existence of m_dummyDocumentForFragmentParse.
+         - I also removed m_isParsingFragment and replaced it with an isParsingFragment() function.
+        (WebCore::HTMLTreeBuilder::HTMLTreeBuilder):
+        (WebCore::HTMLTreeBuilder::FragmentParsingContext::FragmentParsingContext):
+        (WebCore::HTMLTreeBuilder::FragmentParsingContext::document):
+        (WebCore::HTMLTreeBuilder::FragmentParsingContext::~FragmentParsingContext):
+        (WebCore::HTMLTreeBuilder::passTokenToLegacyParser):
+        (WebCore::HTMLTreeBuilder::processStartTagForInBody):
+         - I had to implement two notImplemented() states in order to get most of the
+           layout tests to pass when using the HTML5 parser fragment case.
+        (WebCore::HTMLTreeBuilder::processColgroupEndTagForInColumnGroup):
+        (WebCore::HTMLTreeBuilder::processStartTagForInTable):
+        (WebCore::HTMLTreeBuilder::processStartTag):
+        (WebCore::HTMLTreeBuilder::resetInsertionModeAppropriately):
+        (WebCore::HTMLTreeBuilder::processEndTagForInTableBody):
+        (WebCore::HTMLTreeBuilder::processEndTagForInRow):
+        (WebCore::HTMLTreeBuilder::processEndTagForInCell):
+        (WebCore::HTMLTreeBuilder::processCaptionEndTagForInCaption):
+        (WebCore::HTMLTreeBuilder::processTrEndTagForInRow):
+        (WebCore::HTMLTreeBuilder::processTableEndTagForInTable):
+        (WebCore::HTMLTreeBuilder::processEndTag):
+        (WebCore::HTMLTreeBuilder::processCharacterBuffer):
+        (WebCore::HTMLTreeBuilder::processEndOfFile):
+        (WebCore::HTMLTreeBuilder::finished):
+         - The HTML5 parsing algorithm fragment case uses a dummy document to handle all the parsing
+           and then moves all the children from the dummy document over into a DocumentFragment
+           when the parse is done.  We could avoid this adopt step by making the TreeBuilder a bit
+           more complicated, but I'm not sure that's necessary (yet).
+        * html/HTMLTreeBuilder.h:
+        (WebCore::HTMLTreeBuilder::isParsingFragment):
+        (WebCore::HTMLTreeBuilder::FragmentParsingContext::fragment):
+        (WebCore::HTMLTreeBuilder::FragmentParsingContext::contextElement):
+        (WebCore::HTMLTreeBuilder::FragmentParsingContext::scriptingPermission):
+        * xml/XSLTProcessor.cpp:
+        (WebCore::createFragmentFromSource):
+
 2010-08-09  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Adam Barth.

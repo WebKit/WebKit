@@ -16,29 +16,8 @@ resources/tests2.dat: PASS
 resources/tests3.dat: PASS
 
 resources/tests4.dat:
-3
-5
 6
 7
-
-Test 3 of 7 in resources/tests4.dat failed. Input:
-textarea content with <em>pseudo</em> <foo>markup
-Got:
-| "textarea content with "
-| <em>
-|   "pseudo"
-| " "
-| <foo>
-|   "markup"
-Expected:
-| "textarea content with <em>pseudo</em> <foo>markup"
-
-Test 5 of 7 in resources/tests4.dat failed. Input:
-</plaintext>
-Got:
-| 
-Expected:
-| "</plaintext>"
 
 Test 6 of 7 in resources/tests4.dat failed. Input:
 setting html's innerHTML

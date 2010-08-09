@@ -275,6 +275,7 @@ String HTMLElement::outerHTML() const
     return createMarkup(this);
 }
 
+// FIXME: This method is unecessary with the new HTMLDocumentParser.
 PassRefPtr<DocumentFragment> HTMLElement::createContextualFragment(const String& markup, FragmentScriptingPermission scriptingPermission)
 {
     // The following is in accordance with the definition as used by IE.
@@ -340,6 +341,7 @@ static void replaceChildrenWithText(HTMLElement* element, const String& text, Ex
 
 void HTMLElement::setInnerHTML(const String& html, ExceptionCode& ec)
 {
+    // FIXME: This code can be removed, it's handled by the HTMLDocumentParser correctly.
     if (hasLocalName(scriptTag) || hasLocalName(styleTag)) {
         // Script and CSS source shouldn't be parsed as HTML.
         removeChildren();
@@ -551,7 +553,7 @@ void HTMLElement::insertAdjacentHTML(const String& where, const String& markup, 
 {
     RefPtr<DocumentFragment> fragment = document()->createDocumentFragment();
     if (document()->isHTMLDocument())
-         fragment->parseHTML(markup);
+         fragment->parseHTML(markup, this);
     else {
         if (!fragment->parseXML(markup, this))
             // FIXME: We should propagate a syntax error exception out here.

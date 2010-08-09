@@ -29,6 +29,7 @@
 #include "DocumentFragment.h"
 #include "Element.h"
 #include "Frame.h"
+#include "HTMLNames.h"
 #include "HTMLParserScheduler.h"
 #include "HTMLTokenizer.h"
 #include "HTMLPreloadScanner.h"
@@ -43,6 +44,8 @@
 #endif
 
 namespace WebCore {
+
+using namespace HTMLNames;
 
 namespace {
 
@@ -63,6 +66,31 @@ private:
     int* m_counter;
 };
 
+// This is a direct transcription of step 4 from:
+// http://www.whatwg.org/specs/web-apps/current-work/multipage/the-end.html#fragment-case
+HTMLTokenizer::State tokenizerStateForContextElement(Element* contextElement, bool reportErrors)
+{
+    if (!contextElement)
+        return HTMLTokenizer::DataState;
+
+    const QualifiedName& contextTag = contextElement->tagQName();
+
+    if (contextTag.matches(titleTag) || contextTag.matches(textareaTag))
+        return HTMLTokenizer::RCDATAState;
+    if (contextTag.matches(styleTag)
+        || contextTag.matches(xmpTag)
+        || contextTag.matches(iframeTag)
+        || (contextTag.matches(noembedTag) && HTMLTreeBuilder::pluginsEnabled(contextElement->document()->frame()))
+        || (contextTag.matches(noscriptTag) && HTMLTreeBuilder::scriptEnabled(contextElement->document()->frame()))
+        || contextTag.matches(noframesTag))
+        return reportErrors ? HTMLTokenizer::RAWTEXTState : HTMLTokenizer::PLAINTEXTState;
+    if (contextTag.matches(scriptTag))
+        return reportErrors ? HTMLTokenizer::ScriptDataState : HTMLTokenizer::PLAINTEXTState;
+    if (contextTag.matches(plaintextTag))
+        return HTMLTokenizer::PLAINTEXTState;
+    return HTMLTokenizer::DataState;
+}
+
 } // namespace
 
 HTMLDocumentParser::HTMLDocumentParser(HTMLDocument* document, bool reportErrors)
@@ -74,19 +102,19 @@ HTMLDocumentParser::HTMLDocumentParser(HTMLDocument* document, bool reportErrors
     , m_endWasDelayed(false)
     , m_writeNestingLevel(0)
 {
-    begin();
 }
 
 // FIXME: Member variables should be grouped into self-initializing structs to
 // minimize code duplication between these constructors.
-HTMLDocumentParser::HTMLDocumentParser(DocumentFragment* fragment, FragmentScriptingPermission scriptingPermission)
+HTMLDocumentParser::HTMLDocumentParser(DocumentFragment* fragment, Element* contextElement, FragmentScriptingPermission scriptingPermission)
     : ScriptableDocumentParser(fragment->document())
     , m_tokenizer(new HTMLTokenizer)
-    , m_treeBuilder(new HTMLTreeBuilder(m_tokenizer.get(), fragment, scriptingPermission))
+    , m_treeBuilder(new HTMLTreeBuilder(m_tokenizer.get(), fragment, contextElement, scriptingPermission))
     , m_endWasDelayed(false)
     , m_writeNestingLevel(0)
 {
-    begin();
+    bool reportErrors = false; // For now document fragment parsing never reports errors.
+    m_tokenizer->setState(tokenizerStateForContextElement(contextElement, reportErrors));
 }
 
 HTMLDocumentParser::~HTMLDocumentParser()
@@ -95,11 +123,6 @@ HTMLDocumentParser::~HTMLDocumentParser()
     // out any delayed actions, but we can't because we're unceremoniously
     // deleted.  If there were a required call to some sort of cancel function,
     // then we could ASSERT some invariants here.
-}
-
-void HTMLDocumentParser::begin()
-{
-    // FIXME: Should we reset the tokenizer?
 }
 
 void HTMLDocumentParser::stopParsing()
@@ -413,9 +436,9 @@ ScriptController* HTMLDocumentParser::script() const
     return m_document->frame() ? m_document->frame()->script() : 0;
 }
 
-void HTMLDocumentParser::parseDocumentFragment(const String& source, DocumentFragment* fragment, FragmentScriptingPermission scriptingPermission)
+void HTMLDocumentParser::parseDocumentFragment(const String& source, DocumentFragment* fragment, Element* contextElement, FragmentScriptingPermission scriptingPermission)
 {
-    HTMLDocumentParser parser(fragment, scriptingPermission);
+    HTMLDocumentParser parser(fragment, contextElement, scriptingPermission);
     parser.insert(source); // Use insert() so that the parser will not yield.
     parser.finish();
     ASSERT(!parser.processingData()); // Make sure we're done. <rdar://problem/3963151>

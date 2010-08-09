@@ -84,6 +84,7 @@ public:
 
     Element* head() const { return m_head.get(); }
 
+    void setForm(HTMLFormElement*);
     HTMLFormElement* form() const { return m_form.get(); }
     PassRefPtr<HTMLFormElement> takeForm();
 

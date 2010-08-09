@@ -138,6 +138,23 @@ HTMLElementStack::~HTMLElementStack()
 {
 }
 
+bool HTMLElementStack::hasOnlyOneElement() const
+{
+    return !topRecord()->next();
+}
+
+bool HTMLElementStack::secondElementIsHTMLBodyElement() const
+{
+    // This is used the fragment case of <body> and <frameset> in the "in body"
+    // insertion mode.
+    // http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#parsing-main-inbody
+    ASSERT(m_htmlElement);
+    // If we have a body element, it must always be the second element on the
+    // stack, as we always start with an html element, and any other element
+    // would cause the implicit creation of a body element.
+    return !!m_bodyElement;
+}
+
 void HTMLElementStack::popHTMLHeadElement()
 {
     ASSERT(top() == m_headElement);

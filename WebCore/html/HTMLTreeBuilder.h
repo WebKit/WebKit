@@ -54,7 +54,7 @@ class HTMLTreeBuilder : public Noncopyable {
 public:
     // FIXME: Replace constructors with create() functions returning PassOwnPtrs
     HTMLTreeBuilder(HTMLTokenizer*, HTMLDocument*, bool reportErrors);
-    HTMLTreeBuilder(HTMLTokenizer*, DocumentFragment*, FragmentScriptingPermission);
+    HTMLTreeBuilder(HTMLTokenizer*, DocumentFragment*, Element* contextElement, FragmentScriptingPermission);
     ~HTMLTreeBuilder();
 
     void setPaused(bool paused) { m_isPaused = paused; }
@@ -73,6 +73,9 @@ public:
     // FIXME: This is a dirty, rotten hack to keep HTMLFormControlElement happy
     // until we stop using the legacy parser. DO NOT CALL THIS METHOD.
     LegacyHTMLTreeBuilder* legacyTreeBuilder() const { return m_legacyTreeBuilder.get(); }
+
+    static bool scriptEnabled(Frame*);
+    static bool pluginsEnabled(Frame*);
 
 private:
     class FakeInsertionMode;
@@ -104,6 +107,8 @@ private:
         AfterAfterBodyMode,
         AfterAfterFramesetMode,
     };
+
+    bool isParsingFragment() const { return !!m_fragmentContext.fragment(); }
 
     void passTokenToLegacyParser(HTMLToken&);
 
@@ -192,8 +197,31 @@ private:
     void setInsertionModeAndEnd(InsertionMode, bool foreign); // Helper for resetInsertionModeAppropriately
     void resetInsertionModeAppropriately();
 
-    static bool scriptEnabled(Frame* frame);
-    static bool pluginsEnabled(Frame* frame);
+    class FragmentParsingContext : public Noncopyable {
+    public:
+        FragmentParsingContext();
+        FragmentParsingContext(DocumentFragment*, Element* contextElement, FragmentScriptingPermission, bool usingLegacyTreeBuilder);
+        ~FragmentParsingContext();
+
+        Document* document() const;
+        DocumentFragment* fragment() const { return m_fragment; }
+        Element* contextElement() const { ASSERT(m_fragment); ASSERT(!m_usingLegacyTreeBuilder); return m_contextElement; }
+        FragmentScriptingPermission scriptingPermission() const { ASSERT(m_fragment); return m_scriptingPermission; }
+
+        void finished();
+
+    private:
+        RefPtr<Document> m_dummyDocumentForFragmentParsing;
+        DocumentFragment* m_fragment;
+        Element* m_contextElement;
+        bool m_usingLegacyTreeBuilder;
+
+        // FragmentScriptingNotAllowed causes the Parser to remove children
+        // from <script> tags (so javascript doesn't show up in pastes).
+        FragmentScriptingPermission m_scriptingPermission;
+    };
+
+    FragmentParsingContext m_fragmentContext;
 
     Document* m_document;
     HTMLConstructionSite m_tree;
@@ -226,12 +254,6 @@ private:
 
     RefPtr<Element> m_scriptToProcess; // <script> tag which needs processing before resuming the parser.
     int m_scriptToProcessStartLine; // Starting line number of the script tag needing processing.
-
-    // FIXME: FragmentScriptingPermission is a HACK for platform/Pasteboard.
-    // FragmentScriptingNotAllowed causes the Parser to remove children
-    // from <script> tags (so javascript doesn't show up in pastes).
-    FragmentScriptingPermission m_fragmentScriptingPermission;
-    bool m_isParsingFragment;
 };
 
 }
