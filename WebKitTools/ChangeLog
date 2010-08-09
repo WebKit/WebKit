@@ -1,5 +1,14 @@
 2010-08-08  Kent Tamura  <tkent@chromium.org>
 
+        Unreviewed, trivial fix.
+
+        Fix "WindowsError: [Error 32] The process cannot access the file
+        because it is being used by another process" introduced by r64959.
+
+        * BuildSlaveSupport/test-result-archive:
+
+2010-08-08  Kent Tamura  <tkent@chromium.org>
+
         Reviewed by Tony Chang.
 
         Chromium buildbot: Avoid "zip" command dependency

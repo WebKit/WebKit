@@ -76,8 +76,10 @@ def archiveTestResults(configuration, platform, layoutTestResultsDir):
         if subprocess.call(["zip", "-r", archiveFile, "."], cwd=layoutTestResultsDir):
             return 1
     elif platform == 'chromium':
+        cwd = os.getcwd()
         os.chdir(layoutTestResultsDir)
         zipFilesRecursively(archiveFile, ["."])
+        os.chdir(cwd)
 
     try:
         shutil.rmtree(layoutTestResultsDir)
