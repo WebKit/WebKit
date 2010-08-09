@@ -144,6 +144,26 @@ bool CanvasStyle::isEquivalentColor(const CanvasStyle& other) const
     return false;
 }
 
+bool CanvasStyle::isEquivalentColor(float r, float g, float b, float a) const
+{
+    if (m_type != RGBA)
+        return false;
+
+    return m_rgba == makeRGBA32FromFloats(r, g, b, a);
+}
+
+bool CanvasStyle::isEquivalentColor(float c, float m, float y, float k, float a) const
+{
+    if (m_type != CMYKA)
+        return false;
+
+    return c == m_cmyka.c
+        && m == m_cmyka.m
+        && y == m_cmyka.y
+        && k == m_cmyka.k
+        && a == m_cmyka.a;
+}
+
 void CanvasStyle::applyStrokeColor(GraphicsContext* context)
 {
     if (!context)

@@ -556,6 +556,8 @@ void CanvasRenderingContext2D::setStrokeColor(const String& color)
 
 void CanvasRenderingContext2D::setStrokeColor(float grayLevel)
 {
+    if (state().m_strokeStyle && state().m_strokeStyle->isEquivalentColor(grayLevel, grayLevel, grayLevel, 1.0f))
+        return;
     setStrokeStyle(CanvasStyle::create(grayLevel, 1));
 }
 
@@ -566,16 +568,22 @@ void CanvasRenderingContext2D::setStrokeColor(const String& color, float alpha)
 
 void CanvasRenderingContext2D::setStrokeColor(float grayLevel, float alpha)
 {
+    if (state().m_strokeStyle && state().m_strokeStyle->isEquivalentColor(grayLevel, grayLevel, grayLevel, alpha))
+        return;
     setStrokeStyle(CanvasStyle::create(grayLevel, alpha));
 }
 
 void CanvasRenderingContext2D::setStrokeColor(float r, float g, float b, float a)
 {
+    if (state().m_strokeStyle && state().m_strokeStyle->isEquivalentColor(r, g, b, a))
+        return;
     setStrokeStyle(CanvasStyle::create(r, g, b, a));
 }
 
 void CanvasRenderingContext2D::setStrokeColor(float c, float m, float y, float k, float a)
 {
+    if (state().m_strokeStyle && state().m_strokeStyle->isEquivalentColor(c, m, y, k, a))
+        return;
     setStrokeStyle(CanvasStyle::create(c, m, y, k, a));
 }
 
@@ -589,6 +597,8 @@ void CanvasRenderingContext2D::setFillColor(const String& color)
 
 void CanvasRenderingContext2D::setFillColor(float grayLevel)
 {
+    if (state().m_fillStyle && state().m_fillStyle->isEquivalentColor(grayLevel, grayLevel, grayLevel, 1.0f))
+        return;
     setFillStyle(CanvasStyle::create(grayLevel, 1));
 }
 
@@ -599,16 +609,22 @@ void CanvasRenderingContext2D::setFillColor(const String& color, float alpha)
 
 void CanvasRenderingContext2D::setFillColor(float grayLevel, float alpha)
 {
+    if (state().m_fillStyle && state().m_fillStyle->isEquivalentColor(grayLevel, grayLevel, grayLevel, alpha))
+        return;
     setFillStyle(CanvasStyle::create(grayLevel, alpha));
 }
 
 void CanvasRenderingContext2D::setFillColor(float r, float g, float b, float a)
 {
+    if (state().m_fillStyle && state().m_fillStyle->isEquivalentColor(r, g, b, a))
+        return;
     setFillStyle(CanvasStyle::create(r, g, b, a));
 }
 
 void CanvasRenderingContext2D::setFillColor(float c, float m, float y, float k, float a)
 {
+    if (state().m_fillStyle && state().m_fillStyle->isEquivalentColor(c, m, y, k, a))
+        return;
     setFillStyle(CanvasStyle::create(c, m, y, k, a));
 }
 
