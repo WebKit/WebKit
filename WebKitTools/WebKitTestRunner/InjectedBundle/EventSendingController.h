@@ -23,32 +23,40 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GCController_h
-#define GCController_h
+#ifndef EventSendingController_h
+#define EventSendingController_h
 
 #include "JSWrappable.h"
 #include <wtf/PassRefPtr.h>
 
 namespace WTR {
 
-class GCController : public JSWrappable {
+class EventSendingController : public JSWrappable {
 public:
-    static PassRefPtr<GCController> create();
-    virtual ~GCController();
+    static PassRefPtr<EventSendingController> create();
+    virtual ~EventSendingController();
 
     void makeWindowObject(JSContextRef, JSObjectRef windowObject, JSValueRef* exception);
 
     // JSWrappable
     virtual JSClassRef wrapperClass();
 
-    void collect();
-    void collectOnAlternateThread(bool waitUntilDone);
-    size_t getJSObjectCount();
+    void mouseDown(JSContextRef context, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    void mouseUp(JSContextRef context, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    void mouseMoveTo(JSContextRef context, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    void keyDown(JSContextRef context, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    void contextClick(JSContextRef context, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    void leapForward(JSContextRef context, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+
+    void textZoomIn(JSContextRef context, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    void textZoomOut(JSContextRef context, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    void zoomPageIn(JSContextRef context, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    void zoomPageOut(JSContextRef context, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
 
 private:
-    GCController();
+    EventSendingController();
 };
 
 } // namespace WTR
 
-#endif // GCController_h
+#endif // EventSendingController_h

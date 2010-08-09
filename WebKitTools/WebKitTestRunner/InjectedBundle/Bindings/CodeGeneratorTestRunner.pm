@@ -245,30 +245,31 @@ JSValueRef ${className}::@{[$function->signature->name]}(JSContextRef context, J
     ${implementationClassName}* impl = to${implementationClassName}(context, thisObject);
     if (!impl)
         return JSValueMakeUndefined(context);
+
 EOF
-            my @parameters = ();
-            my @specifiedParameters = @{$function->parameters};
+            my $functionCall;
+            if ($function->signature->extendedAttributes->{"CustomArgumentHandling"}) {
+                $functionCall = "impl->" . $function->signature->name . "(context, argumentCount, arguments, exception)";
+            } else {
+                my @parameters = ();
+                my @specifiedParameters = @{$function->parameters};
 
-            push(@contents, "\n") if scalar @specifiedParameters;
+                $self->_includeHeaders(\%contentsIncludes, $function->signature->type, $function->signature);
 
-            $self->_includeHeaders(\%contentsIncludes, $function->signature->type, $function->signature);
+                foreach my $i (0..$#specifiedParameters) {
+                    my $parameter = $specifiedParameters[$i];
 
-            foreach my $i (0..$#specifiedParameters) {
-                my $parameter = $specifiedParameters[$i];
+                    $self->_includeHeaders(\%contentsIncludes, $idlType, $parameter);
 
-                $self->_includeHeaders(\%contentsIncludes, $idlType, $parameter);
+                    push(@contents, "    " . $self->_platformTypeVariableDeclaration($parameter, $parameter->name, "arguments[$i]", "argumentCount > $i") . "\n");
+                    
+                    push(@parameters, $self->_parameterExpression($parameter));
+                }
 
-                push(@contents, "    " . $self->_platformTypeVariableDeclaration($parameter, $parameter->name, "arguments[$i]", "argumentCount > $i") . "\n");
-                
-                push(@parameters, $self->_parameterExpression($parameter));
+                $functionCall = "impl->" . $function->signature->name . "(" . join(", ", @parameters) . ")";
             }
-
-            my $isVoidReturn = $function->signature->type eq "void";
-            my $functionName = "impl->" . $function->signature->name;
-            my $functionCall = $functionName . "(" . join(", ", @parameters) . ")";
-
-            push(@contents, "\n") unless scalar @specifiedParameters == 1;
-            push(@contents, "    ${functionCall};\n\n") if $isVoidReturn;
+            
+            push(@contents, "    ${functionCall};\n\n") if $function->signature->type eq "void";
             push(@contents, "    return " . $self->_returnExpression($function->signature, $functionCall) . ";\n}\n");
         }
     }

@@ -133,10 +133,14 @@ void InjectedBundle::didReceiveMessage(WKStringRef messageName, WKTypeRef messag
 void InjectedBundle::reset()
 {
     m_outputStream.str("");
+
     m_layoutTestController = LayoutTestController::create();
     m_gcController = GCController::create();
+    m_eventSendingController = EventSendingController::create();
+
     WKBundleSetShouldTrackVisitedLinks(m_bundle, false);
     WKBundleRemoveAllVisitedLinks(m_bundle);
+
     m_mainPage->reset();
 }
 

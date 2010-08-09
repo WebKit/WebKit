@@ -23,32 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GCController_h
-#define GCController_h
+module WTR {
 
-#include "JSWrappable.h"
-#include <wtf/PassRefPtr.h>
+    interface EventSendingController {
+        [CustomArgumentHandling] void mouseDown();
+        [CustomArgumentHandling] void mouseUp();
+        [CustomArgumentHandling] void mouseMoveTo();
+        [CustomArgumentHandling] void keyDown();
+        [CustomArgumentHandling] void contextClick(); // CustomArgumentHandling only to throw exception while not implemented.
+        [CustomArgumentHandling] void leapForward(/*in unsigned long delay*/); // CustomArgumentHandling only to throw exception while not implemented.
 
-namespace WTR {
+        // Zoom functions.
+        [CustomArgumentHandling] void textZoomIn(); // CustomArgumentHandling only to throw exception while not implemented.
+        [CustomArgumentHandling] void textZoomOut(); // CustomArgumentHandling only to throw exception while not implemented.
+        [CustomArgumentHandling] void zoomPageIn(); // CustomArgumentHandling only to throw exception while not implemented.
+        [CustomArgumentHandling] void zoomPageOut(); // CustomArgumentHandling only to throw exception while not implemented.
+    };
 
-class GCController : public JSWrappable {
-public:
-    static PassRefPtr<GCController> create();
-    virtual ~GCController();
-
-    void makeWindowObject(JSContextRef, JSObjectRef windowObject, JSValueRef* exception);
-
-    // JSWrappable
-    virtual JSClassRef wrapperClass();
-
-    void collect();
-    void collectOnAlternateThread(bool waitUntilDone);
-    size_t getJSObjectCount();
-
-private:
-    GCController();
-};
-
-} // namespace WTR
-
-#endif // GCController_h
+}

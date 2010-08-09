@@ -45,6 +45,8 @@
 		BC7934AC1190658C005EA8E2 /* WebKit2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC7934AB1190658C005EA8E2 /* WebKit2.framework */; };
 		BC7934E811906846005EA8E2 /* PlatformWebViewMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC7934E711906846005EA8E2 /* PlatformWebViewMac.mm */; };
 		BC8C795C11D2785D004535A1 /* TestControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC8C795B11D2785D004535A1 /* TestControllerMac.mm */; };
+		BC8FD8CA120E527F00F3E71A /* EventSendingController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC8FD8C9120E527F00F3E71A /* EventSendingController.cpp */; };
+		BC8FD8D2120E545B00F3E71A /* JSEventSendingController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC8FD8D0120E545B00F3E71A /* JSEventSendingController.cpp */; };
 		BC952C0D11F3B965003398B4 /* JSWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC952C0C11F3B965003398B4 /* JSWrapper.cpp */; };
 		BC952F1F11F3C652003398B4 /* JSLayoutTestController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC952F1D11F3C652003398B4 /* JSLayoutTestController.cpp */; };
 		BCC997A411D3C8F60017BCA2 /* InjectedBundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC997A011D3C8F60017BCA2 /* InjectedBundle.cpp */; };
@@ -108,6 +110,11 @@
 		BC7934DD119066EC005EA8E2 /* PlatformWebView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformWebView.h; sourceTree = "<group>"; };
 		BC7934E711906846005EA8E2 /* PlatformWebViewMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformWebViewMac.mm; sourceTree = "<group>"; };
 		BC8C795B11D2785D004535A1 /* TestControllerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TestControllerMac.mm; sourceTree = "<group>"; };
+		BC8FD8C8120E527F00F3E71A /* EventSendingController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventSendingController.h; sourceTree = "<group>"; };
+		BC8FD8C9120E527F00F3E71A /* EventSendingController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventSendingController.cpp; sourceTree = "<group>"; };
+		BC8FD8CB120E52B000F3E71A /* EventSendingController.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = EventSendingController.idl; sourceTree = "<group>"; };
+		BC8FD8D0120E545B00F3E71A /* JSEventSendingController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSEventSendingController.cpp; path = DerivedSources/WebKitTestRunner/JSEventSendingController.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
+		BC8FD8D1120E545B00F3E71A /* JSEventSendingController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSEventSendingController.h; path = DerivedSources/WebKitTestRunner/JSEventSendingController.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC952C0B11F3B965003398B4 /* JSWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWrapper.h; sourceTree = "<group>"; };
 		BC952C0C11F3B965003398B4 /* JSWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWrapper.cpp; sourceTree = "<group>"; };
 		BC952C0E11F3B97B003398B4 /* JSWrappable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWrappable.h; sourceTree = "<group>"; };
@@ -212,6 +219,8 @@
 		BC14E4E0120E02F900826C0C /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				BC8FD8C9120E527F00F3E71A /* EventSendingController.cpp */,
+				BC8FD8C8120E527F00F3E71A /* EventSendingController.h */,
 				BC14E4D9120E02D000826C0C /* GCController.cpp */,
 				BC14E4D8120E02D000826C0C /* GCController.h */,
 				BCC9981711D3F51E0017BCA2 /* LayoutTestController.cpp */,
@@ -285,6 +294,7 @@
 				BC952C0E11F3B97B003398B4 /* JSWrappable.h */,
 				BC952C0C11F3B965003398B4 /* JSWrapper.cpp */,
 				BC952C0B11F3B965003398B4 /* JSWrapper.h */,
+				BC8FD8CB120E52B000F3E71A /* EventSendingController.idl */,
 				BC14E4E1120E032000826C0C /* GCController.idl */,
 				BC952ED211F3C29F003398B4 /* LayoutTestController.idl */,
 			);
@@ -294,6 +304,8 @@
 		BC952D3A11F3BF1F003398B4 /* Derived Sources */ = {
 			isa = PBXGroup;
 			children = (
+				BC8FD8D0120E545B00F3E71A /* JSEventSendingController.cpp */,
+				BC8FD8D1120E545B00F3E71A /* JSEventSendingController.h */,
 				BC14E4E8120E03D800826C0C /* JSGCController.cpp */,
 				BC14E4E9120E03D800826C0C /* JSGCController.h */,
 				BC952F1D11F3C652003398B4 /* JSLayoutTestController.cpp */,
@@ -433,6 +445,8 @@
 				BC952F1F11F3C652003398B4 /* JSLayoutTestController.cpp in Sources */,
 				BC14E4DB120E02D000826C0C /* GCController.cpp in Sources */,
 				BC14E4EA120E03D800826C0C /* JSGCController.cpp in Sources */,
+				BC8FD8CA120E527F00F3E71A /* EventSendingController.cpp in Sources */,
+				BC8FD8D2120E545B00F3E71A /* JSEventSendingController.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -288,6 +288,14 @@
 			Name="Derived Sources"
 			>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSEventSendingController.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSEventSendingController.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSGCController.cpp"
 				>
 			</File>
@@ -326,6 +334,14 @@
 		</File>
 		<File
 			RelativePath="..\InjectedBundle\InjectedBundlePage.h"
+			>
+		</File>
+		<File
+			RelativePath="..\InjectedBundle\EventSendingController.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\InjectedBundle\EventSendingController.h"
 			>
 		</File>
 		<File

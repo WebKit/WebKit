@@ -1,3 +1,48 @@
+2010-08-09  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Stub out EventSender for WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=43703
+
+        * WebKitTestRunner/DerivedSources.make:
+        * WebKitTestRunner/InjectedBundle/Bindings/CodeGeneratorTestRunner.pm:
+        Add ability to pass javascript arguments to the wrapped object.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/EventSendingController.idl: Added.
+        * WebKitTestRunner/InjectedBundle/EventSendingController.cpp: Added.
+        (WTR::EventSendingController::create):
+        (WTR::EventSendingController::EventSendingController):
+        (WTR::EventSendingController::~EventSendingController):
+        (WTR::EventSendingController::wrapperClass):
+        (WTR::setExceptionForString):
+        (WTR::EventSendingController::mouseDown):
+        (WTR::EventSendingController::mouseUp):
+        (WTR::EventSendingController::mouseMoveTo):
+        (WTR::EventSendingController::keyDown):
+        (WTR::EventSendingController::contextClick):
+        (WTR::EventSendingController::leapForward):
+        (WTR::EventSendingController::textZoomIn):
+        (WTR::EventSendingController::textZoomOut):
+        (WTR::EventSendingController::zoomPageIn):
+        (WTR::EventSendingController::zoomPageOut):
+        (WTR::EventSendingController::makeWindowObject):
+        * WebKitTestRunner/InjectedBundle/EventSendingController.h: Added.
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::reset):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+        (WTR::InjectedBundle::eventSendingController):
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::didClearWindowForFrame):
+        Add stubbed out EventSenderController.
+
+        * WebKitTestRunner/InjectedBundle/GCController.h:
+        Remove incorrect comment.
+
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+        * WebKitTestRunner/win/InjectedBundle.vcproj:
+        Add new files.
+
 2010-08-08  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, trivial fix.

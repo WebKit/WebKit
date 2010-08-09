@@ -26,8 +26,9 @@ VPATH = \
 #
 
 INTERFACES = \
-    LayoutTestController \
+    EventSendingController \
     GCController \
+    LayoutTestController \
 #
 
 SCRIPTS = \
