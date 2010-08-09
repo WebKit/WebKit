@@ -1,3 +1,16 @@
+2010-05-20  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Ojan Vafai.
+
+        <http://webkit.org/b/36360>
+        Double clicking page's first editable inline element cannot select a word. 
+        <http://webkit.org/b/36359>
+        Double clicking page's last editable inline element causes assertion failure.
+
+        * editing/selection/doubleclick-inline-first-last-contenteditable-expected.txt: Added.
+        * editing/selection/doubleclick-inline-first-last-contenteditable.html: Added.
+        * editing/selection/script-tests/doubleclick-inline-first-last-contenteditable.js: Added.  
+
 2010-08-09  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.

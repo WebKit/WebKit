@@ -272,6 +272,9 @@ TextIterator::TextIterator(const Range* r, TextIteratorBehavior behavior)
     , m_entersTextControls(behavior & TextIteratorEntersTextControls)
     , m_emitsTextWithoutTranscoding(behavior & TextIteratorEmitsTextsWithoutTranscoding)
 {
+    // FIXME: should support TextIteratorEndsAtEditingBoundary http://webkit.org/b/43609
+    ASSERT(behavior != TextIteratorEndsAtEditingBoundary);
+
     if (!r)
         return;
 
@@ -944,13 +947,19 @@ Node* TextIterator::node() const
 // --------
 
 SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator()
-    : m_positionNode(0)
+    : m_behavior(TextIteratorDefaultBehavior)
+    , m_node(0)
+    , m_positionNode(0)
 {
 }
 
-SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator(const Range* r)
-    : m_positionNode(0)
+SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator(const Range* r, TextIteratorBehavior behavior)
+    : m_behavior(behavior)
+    , m_node(0)
+    , m_positionNode(0)
 {
+    ASSERT(m_behavior == TextIteratorDefaultBehavior || m_behavior == TextIteratorEndsAtEditingBoundary);
+
     if (!r)
         return;
 
@@ -974,7 +983,7 @@ SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator(const Range* r)
         }
     }
 
-    m_node = endNode;
+    setCurrentNode(endNode);
     setUpFullyClippedStack(m_fullyClippedStack, m_node);    
     m_offset = endOffset;
     m_handledNode = false;
@@ -1038,12 +1047,9 @@ void SimplifiedBackwardsTextIterator::advance()
                 }            
             }
             // Exit all other containers.
-            next = m_node->previousSibling();
-            while (!next) {
-                Node* parentNode = parentCrossingShadowBoundaries(m_node);
-                if (!parentNode)
+            while (!m_node->previousSibling()) {
+                if (!setCurrentNode(parentCrossingShadowBoundaries(m_node)))
                     break;
-                m_node = parentNode;
                 m_fullyClippedStack.pop();
                 exitNode();
                 if (m_positionNode) {
@@ -1051,14 +1057,17 @@ void SimplifiedBackwardsTextIterator::advance()
                     m_handledChildren = true;
                     return;
                 }
-                next = m_node->previousSibling();
             }
+
+            next = m_node->previousSibling();
             m_fullyClippedStack.pop();
         }
         
-        m_node = next;
-        if (m_node)
+        if (m_node && setCurrentNode(next))
             pushFullyClippedState(m_fullyClippedStack, m_node);
+        else
+            clearCurrentNode();
+
         // For the purpose of word boundary detection,
         // we should iterate all visible text and trailing (collapsed) whitespaces. 
         m_offset = m_node ? maxOffsetIncludingCollapsedSpaces(m_node) : 0;
@@ -1135,6 +1144,26 @@ void SimplifiedBackwardsTextIterator::emitCharacter(UChar c, Node* node, int sta
     m_textCharacters = &m_singleCharacterBuffer;
     m_textLength = 1;
     m_lastCharacter = c;
+}
+
+bool SimplifiedBackwardsTextIterator::crossesEditingBoundary(Node* node) const
+{
+    return m_node && m_node->isContentEditable() != node->isContentEditable();
+}
+
+bool SimplifiedBackwardsTextIterator::setCurrentNode(Node* node)
+{
+    if (!node)
+        return false;
+    if (m_behavior == TextIteratorEndsAtEditingBoundary && crossesEditingBoundary(node))
+        return false;
+    m_node = node;
+    return true;
+}
+
+void SimplifiedBackwardsTextIterator::clearCurrentNode()
+{
+    m_node = 0;
 }
 
 PassRefPtr<Range> SimplifiedBackwardsTextIterator::range() const
@@ -1262,11 +1291,11 @@ BackwardsCharacterIterator::BackwardsCharacterIterator()
 {
 }
 
-BackwardsCharacterIterator::BackwardsCharacterIterator(const Range* range)
+BackwardsCharacterIterator::BackwardsCharacterIterator(const Range* range, TextIteratorBehavior behavior)
     : m_offset(0)
     , m_runOffset(0)
     , m_atBreak(true)
-    , m_textIterator(range)
+    , m_textIterator(range, behavior)
 {
     while (!atEnd() && !m_textIterator.length())
         m_textIterator.advance();

@@ -1,3 +1,40 @@
+2010-05-27  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Ojan Vafai.
+
+        <http://webkit.org/b/36359>
+        Double clicking page's last editable inline element causes assertion failure.
+        <http://webkit.org/b/36360>
+        Double clicking page's first editable inline element cannot select a word. 
+
+        nextBoundary() and previousBoundary() assumed that editable
+        boundaries are on block-level elements, But it can appear on
+        inline-level elements. So we start boundary look-up from the given
+        node, instead of the containingBlock of the given node.
+        Also, added TextIteratorEndsAtEditingBoundary to
+        BackwardsCharacterIterator, otherwise, the VisiblePosition
+        returned by BackwardsCharacterIterator might cross an editing
+        boundary.
+
+        Test: editing/selection/doubleclick-inline-first-last-contenteditable.html        
+
+        * dom/Position.cpp:
+        (WebCore::Position::parentEditingBoundary): Added.
+        * dom/Position.h:
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::TextIterator):
+        (WebCore::SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator):
+        (WebCore::SimplifiedBackwardsTextIterator::advance):
+        (WebCore::SimplifiedBackwardsTextIterator::crossesEditingBoundary): Added.
+        (WebCore::SimplifiedBackwardsTextIterator::setCurrentNode): Added.
+        (WebCore::SimplifiedBackwardsTextIterator::clearCurrentNode): Added.
+        (WebCore::BackwardsCharacterIterator::BackwardsCharacterIterator):
+        * editing/TextIterator.h:
+        (WebCore::):
+        * editing/visible_units.cpp:
+        (WebCore::previousBoundary):
+        (WebCore::nextBoundary):
+
 2010-08-09  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.

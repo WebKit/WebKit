@@ -328,6 +328,23 @@ bool Position::atEditingBoundary() const
         && prevPosition.isNotNull() && !prevPosition.node()->isContentEditable();
 }
 
+Node* Position::parentEditingBoundary() const
+{
+    if (!m_anchorNode || !m_anchorNode->document())
+        return 0;
+
+    Node* documentElement = m_anchorNode->document()->documentElement();
+    if (!documentElement)
+        return 0;
+
+    Node* boundary = m_anchorNode.get();
+    while (boundary != documentElement && boundary->parentNode() && m_anchorNode->isContentEditable() == boundary->parentNode()->isContentEditable())
+        boundary = boundary->parentNode();
+    
+    return boundary;
+}
+
+
 bool Position::atStartOfTree() const
 {
     if (isNull())

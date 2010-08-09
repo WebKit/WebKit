@@ -73,6 +73,7 @@ enum TextIteratorBehavior {
     TextIteratorEmitsCharactersBetweenAllVisiblePositions = 1 << 0,
     TextIteratorEntersTextControls = 1 << 1,
     TextIteratorEmitsTextsWithoutTranscoding = 1 << 2,
+    TextIteratorEndsAtEditingBoundary = 1 << 3
 };
 
 class TextIterator {
@@ -167,7 +168,7 @@ private:
 class SimplifiedBackwardsTextIterator {
 public:
     SimplifiedBackwardsTextIterator();
-    explicit SimplifiedBackwardsTextIterator(const Range*);
+    explicit SimplifiedBackwardsTextIterator(const Range*, TextIteratorBehavior = TextIteratorDefaultBehavior);
     
     bool atEnd() const { return !m_positionNode; }
     void advance();
@@ -183,7 +184,11 @@ private:
     bool handleReplacedElement();
     bool handleNonTextNode();
     void emitCharacter(UChar, Node*, int startOffset, int endOffset);
-    
+    bool crossesEditingBoundary(Node*) const;
+    bool setCurrentNode(Node*);
+    void clearCurrentNode();
+
+    TextIteratorBehavior m_behavior;
     // Current position, not necessarily of the text being returned, but position
     // as we walk through the DOM tree.
     Node* m_node;
@@ -247,7 +252,7 @@ private:
 class BackwardsCharacterIterator {
 public:
     BackwardsCharacterIterator();
-    explicit BackwardsCharacterIterator(const Range*);
+    explicit BackwardsCharacterIterator(const Range*, TextIteratorBehavior = TextIteratorDefaultBehavior);
 
     void advance(int);
 
@@ -256,6 +261,7 @@ public:
     PassRefPtr<Range> range() const;
 
 private:
+    TextIteratorBehavior m_behavior;
     int m_offset;
     int m_runOffset;
     bool m_atBreak;
