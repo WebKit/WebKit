@@ -1,5 +1,29 @@
 2010-08-09  Mark Rowe  <mrowe@apple.com>
 
+        Merge r64110.
+
+    2010-07-27  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Add a runtime setting for interactive form validation.
+        https://bugs.webkit.org/show_bug.cgi?id=40520
+
+        Remove the mode-specific tests and skip tests which don't work
+        without the interactive validation feature.
+
+        * fast/forms/interactive-validation-compat-mode-expected.txt: Removed.
+        * fast/forms/interactive-validation-compat-mode.html: Removed.
+        * fast/forms/interactive-validation-html4-expected.txt: Removed.
+        * fast/forms/interactive-validation-html4.html: Removed.
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
+2010-08-09  Mark Rowe  <mrowe@apple.com>
+
         Merge r64095.
 
     2010-07-26  Simon Fraser  <simon.fraser@apple.com>

@@ -44,10 +44,12 @@
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
-#include "ScriptEventListener.h"
 #include "MIMETypeRegistry.h"
 #include "MappedAttribute.h"
+#include "Page.h"
 #include "RenderTextControl.h"
+#include "ScriptEventListener.h"
+#include "Settings.h"
 #include "ValidityState.h"
 #include <limits>
 #include <wtf/CurrentTime.h>
@@ -235,7 +237,7 @@ static inline HTMLFormControlElement* submitElementFromEvent(const Event* event)
 bool HTMLFormElement::validateInteractively(Event* event)
 {
     ASSERT(event);
-    if (noValidate())
+    if (!document()->page() || !document()->page()->settings()->interactiveFormValidationEnabled() || noValidate())
         return true;
 
     HTMLFormControlElement* submitElement = submitElementFromEvent(event);

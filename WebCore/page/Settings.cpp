@@ -133,6 +133,7 @@ Settings::Settings(Page* page)
     , m_loadDeferringEnabled(true)
     , m_tiledBackingStoreEnabled(false)
     , m_dnsPrefetchingEnabled(true)
+    , m_interactiveFormValidation(false)
 {
     // A Frame may not have been created yet, so we initialize the AtomicString 
     // hash before trying to use it.
