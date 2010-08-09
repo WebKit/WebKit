@@ -1,3 +1,16 @@
+2010-08-09  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [gtk] gtk_im_context_focus_in() should only be called when an input-able element has focus
+        https://bugs.webkit.org/show_bug.cgi?id=43602
+
+        Only call gtk_im_context_focus_in() when we focus a frame which is currently in
+        an editable node. 
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_focus_in_event): Conditionalize call to gtk_im_context_focus_in().
+
 2010-08-06  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Xan Lopez.

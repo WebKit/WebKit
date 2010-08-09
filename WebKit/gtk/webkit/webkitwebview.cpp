@@ -797,7 +797,8 @@ static gboolean webkit_web_view_focus_in_event(GtkWidget* widget, GdkEventFocus*
         else
             focusController->setFocusedFrame(core(webView)->mainFrame());
 
-        gtk_im_context_focus_in(webView->priv->imContext);
+        if (focusController->focusedFrame()->editor()->canEdit())
+            gtk_im_context_focus_in(webView->priv->imContext);
     }
     return GTK_WIDGET_CLASS(webkit_web_view_parent_class)->focus_in_event(widget, event);
 }
