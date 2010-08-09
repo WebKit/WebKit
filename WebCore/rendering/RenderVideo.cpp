@@ -50,25 +50,7 @@ using namespace HTMLNames;
 RenderVideo::RenderVideo(HTMLVideoElement* video)
     : RenderMedia(video)
 {
-    if (video->player() && video->readyState() >= HTMLVideoElement::HAVE_METADATA)
-        setIntrinsicSize(video->player()->naturalSize());
-    else {
-        // When the natural size of the video is unavailable, we use the provided
-        // width and height attributes of the video element as the intrinsic size until
-        // better values become available. If these attributes are not set, we fall back
-        // to a default video size (300x150).
-        if (video->hasAttribute(widthAttr) && video->hasAttribute(heightAttr))
-            setIntrinsicSize(IntSize(video->width(), video->height()));
-        else if (video->ownerDocument() && video->ownerDocument()->isMediaDocument()) {
-            // Video in standalone media documents should not use the default 300x150
-            // size since they also have audio thrown at them. By setting the intrinsic
-            // size to 300x1 the video will resize itself in these cases, and audio will
-            // have the correct height (it needs to be > 0 for controls to render properly).
-            setIntrinsicSize(IntSize(defaultSize().width(), 1));
-        }
-        else
-            setIntrinsicSize(defaultSize());
-    }
+    setIntrinsicSize(calculateIntrinsicSize());
 }
 
 RenderVideo::~RenderVideo()
@@ -92,24 +74,59 @@ void RenderVideo::intrinsicSizeChanged()
 {
     if (videoElement()->shouldDisplayPosterImage())
         RenderMedia::intrinsicSizeChanged();
-    videoSizeChanged(); 
+    updateIntrinsicSize(); 
 }
 
-
-void RenderVideo::videoSizeChanged()
+void RenderVideo::updateIntrinsicSize()
 {
-    if (!player())
+    IntSize size = calculateIntrinsicSize();
+
+    // Never set the element size to zero when in a media document.
+    if (size.isEmpty() && node()->ownerDocument() && node()->ownerDocument()->isMediaDocument())
         return;
-    IntSize size = player()->naturalSize();
-    if (size.isEmpty()) {
-        if (node()->ownerDocument() && node()->ownerDocument()->isMediaDocument())
-            return;
-    }
-    if (size != intrinsicSize()) {
-        setIntrinsicSize(size);
-        setPrefWidthsDirty(true);
-        setNeedsLayout(true);
-    }
+
+    if (size == intrinsicSize())
+        return;
+
+    setIntrinsicSize(size);
+    setPrefWidthsDirty(true);
+    setNeedsLayout(true);
+}
+    
+IntSize RenderVideo::calculateIntrinsicSize()
+{
+    HTMLVideoElement* video = videoElement();
+    
+    // Spec text from 4.8.6
+    //
+    // The intrinsic width of a video element's playback area is the intrinsic width 
+    // of the video resource, if that is available; otherwise it is the intrinsic 
+    // width of the poster frame, if that is available; otherwise it is 300 CSS pixels.
+    //
+    // The intrinsic height of a video element's playback area is the intrinsic height 
+    // of the video resource, if that is available; otherwise it is the intrinsic 
+    // height of the poster frame, if that is available; otherwise it is 150 CSS pixels.
+    
+    if (player() && video->readyState() >= HTMLVideoElement::HAVE_METADATA)
+        return player()->naturalSize();
+
+    if (video->shouldDisplayPosterImage() && !m_cachedImageSize.isEmpty() && !errorOccurred())
+        return m_cachedImageSize;
+
+    // When the natural size of the video is unavailable, we use the provided
+    // width and height attributes of the video element as the intrinsic size until
+    // better values become available. 
+    if (video->hasAttribute(widthAttr) && video->hasAttribute(heightAttr))
+        return IntSize(video->width(), video->height());
+
+    // <video> in standalone media documents should not use the default 300x150
+    // size since they also have audio-only files. By setting the intrinsic
+    // size to 300x1 the video will resize itself in these cases, and audio will
+    // have the correct height (it needs to be > 0 for controls to render properly).
+    if (video->ownerDocument() && video->ownerDocument()->isMediaDocument())
+        return IntSize(defaultSize().width(), 1);
+
+    return defaultSize();
 }
 
 void RenderVideo::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
@@ -119,8 +136,11 @@ void RenderVideo::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
     // Cache the image intrinsic size so we can continue to use it to draw the image correctly
     // even after we know the video intrisic size but aren't able to draw video frames yet
     // (we don't want to scale the poster to the video size).
-    if (videoElement()->shouldDisplayPosterImage())
+    if (videoElement()->shouldDisplayPosterImage()) {
+        if (errorOccurred())
+            updateIntrinsicSize();
         m_cachedImageSize = intrinsicSize();
+    }
 }
 
 IntRect RenderVideo::videoBox() const
@@ -206,9 +226,12 @@ void RenderVideo::updateFromElement()
 
 void RenderVideo::updatePlayer()
 {
+    updateIntrinsicSize();
+
     MediaPlayer* mediaPlayer = player();
     if (!mediaPlayer)
         return;
+
     if (!videoElement()->inActiveDocument()) {
         mediaPlayer->setVisible(false);
         return;

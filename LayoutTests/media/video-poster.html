@@ -1,39 +1,102 @@
 <html>
     <head>
+        <title>&lt;video&gt; element with poster size test</title>
         <script src=video-test.js></script>
         <script>
-
-            function testPoster(url)
+            var posterInfo = 
             {
-                testExpected("video.getAttribute('poster')", url);
-                testExpected("relativeURL(video.poster)", url);
+                current:0,
+                posters: 
+                [ 
+                    {
+                        description:", with 'width' and 'height' attributes",
+                        url:null,
+                        reflectedUrl:"",
+                        width:320,
+                        height:240
+                    },
+                    {
+                        description:", size should equal image size",
+                        url:"content/greenbox.png",
+                        width:25,
+                        height:25
+                    },
+                    {
+                        description:", with NO 'width' or 'height' attributes so size should be &lt;video&gt; default",
+                        url:"",
+                        reflectedUrl:"video-poster.html",
+                        width:300,
+                        height:150
+                    },
+                    {
+                        description:", size should equal image size",
+                        url:"content/abe.png",
+                        width:76,
+                        height:103
+                    },
+                    {
+                        description:", invalid url so size should revert to &lt;video&gt; default",
+                        url:"content/bogus.png",
+                        width:300,
+                        height:150
+                    },
+                ]
+            };
+
+            function openNextPoster()
+            {
+                consoleWrite("");
+                if (posterInfo.current >= posterInfo.posters.length)
+                {
+                    endTest();
+                    return;
+                }
+
+                var url = posterInfo.posters[posterInfo.current].url;
+                var desc = "<b>Setting poster to <em>\""+ url + "\"</em></b>";
+                consoleWrite(desc);
+                video.poster = url;
+                setTimeout(testPoster, 100);
             }
-            
+
+            function testPoster()
+            {
+                var temp = document.body.offsetWidth;
+                var poster = posterInfo.posters[posterInfo.current];
+
+                var size = poster.url ? (" " + poster.width + "x" + poster.height) : "";
+                var urlStr = typeof(poster.url) == "string" ? ("'" + poster.url + "'") : 'null';
+                var desc = "<b>Testing" + size + " poster <em>"+ urlStr + "</em>" + poster.description + ".</b>";
+                consoleWrite(desc);
+
+                testExpected("video.getAttribute('poster')", poster.url);
+                testExpected("relativeURL(video.poster)", poster.hasOwnProperty("reflectedUrl") ? poster.reflectedUrl : poster.url);
+                testExpected("video.clientWidth", poster.width);
+                testExpected("video.clientHeight", poster.height);
+
+                // Remove width/height attributes if present
+                if (video.width)
+                    video.removeAttribute('width');
+                if (video.height)
+                    video.removeAttribute('height');
+
+                posterInfo.current++;
+                openNextPoster();
+            }
+
             function test()
             {
                 findMediaElement();
 
-                consoleWrite("<br><i>Set 'poster' to 'content/greenbox.png'.<" + "/i>");
-                testPoster('content/greenbox.png');
-
-                consoleWrite("<br><i>Set 'poster' to ''.<" + "/i>");
-                video.setAttribute('poster', '');
-                testExpected("video.getAttribute('poster')", '');
-                testExpected("relativeURL(video.poster)", 'video-poster.html');
-
-                consoleWrite("<br><i>Set 'poster' to 'content/abe.png'.<" + "/i>");
-                video.setAttribute('poster', 'content/abe.png');
-                testPoster('content/abe.png');
-
-                consoleWrite('');
-                endTest();
+                testPoster();
             }
         </script>
     </head>
 
     <body onload="setTimeout(test, 100)">
 
-        <video poster="content/greenbox.png" controls></video>
+        <video controls width=320 height=240></video>
+        <p>Test &lt;video&gt; element with and without a poster.</p>
 
     </body>
 </html>

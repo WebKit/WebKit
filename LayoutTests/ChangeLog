@@ -1,3 +1,15 @@
+2010-08-09  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=43702
+        <video> element does not resize correctly
+
+        * media/video-poster-expected.txt:
+        * media/video-poster.html:
+        * media/video-size-expected.txt:
+        * media/video-size.html:
+
 2010-08-09  Jian Li  <jianli@chromium.org>
 
         Update chromium test results.

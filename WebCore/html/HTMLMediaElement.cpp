@@ -910,12 +910,8 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
     if (m_readyState >= HAVE_METADATA && oldState < HAVE_METADATA) {
         scheduleEvent(eventNames().durationchangeEvent);
         scheduleEvent(eventNames().loadedmetadataEvent);
-
-#if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-        if (renderer() && renderer()->isVideo()) {
-            toRenderVideo(renderer())->videoSizeChanged();
-        }
-#endif        
+        if (renderer())
+            renderer()->updateFromElement();
         m_delayingTheLoadEvent = false;
         m_player->seek(0);
     }
@@ -1579,13 +1575,8 @@ void HTMLMediaElement::mediaPlayerDurationChanged(MediaPlayer*)
 {
     beginProcessingMediaPlayerCallback();
     scheduleEvent(eventNames().durationchangeEvent);
-#if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    if (renderer()) {
+    if (renderer())
         renderer()->updateFromElement();
-        if (renderer()->isVideo())
-            toRenderVideo(renderer())->videoSizeChanged();
-    }
-#endif        
     endProcessingMediaPlayerCallback();
 }
 
@@ -1622,10 +1613,8 @@ void HTMLMediaElement::mediaPlayerRepaint(MediaPlayer*)
 void HTMLMediaElement::mediaPlayerSizeChanged(MediaPlayer*)
 {
     beginProcessingMediaPlayerCallback();
-#if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    if (renderer() && renderer()->isVideo())
-        toRenderVideo(renderer())->videoSizeChanged();
-#endif        
+    if (renderer())
+        renderer()->updateFromElement();
     endProcessingMediaPlayerCallback();
 }
 

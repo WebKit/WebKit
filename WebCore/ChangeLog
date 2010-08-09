@@ -1,3 +1,30 @@
+2010-08-09  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=43702
+        <video> element does not resize correctly
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setReadyState): RenderVideo::videoSizeChanged is gone, just use
+        updateFromElement instead.
+        (WebCore::HTMLMediaElement::mediaPlayerDurationChanged): Ditto.
+        (WebCore::HTMLMediaElement::mediaPlayerSizeChanged): Ditto.
+
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::parseMappedAttribute): Clear the image loader and cached image when 
+        the 'poster' attribute is changed and we aren't displaying a poster.
+
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::RenderVideo):
+        (WebCore::RenderVideo::intrinsicSizeChanged): videoSizeChanged -> updateIntrinsicSize.
+        (WebCore::RenderVideo::updateIntrinsicSize): Renamed from videoSizeChanged, calculate initial 
+        intrinsic size with calculateIntrinsicSize
+        (WebCore::RenderVideo::calculateIntrinsicSize): New, calculate size according to current spec.
+        (WebCore::RenderVideo::imageChanged): Reset intrinsic size to default when poster fails to load.
+        (WebCore::RenderVideo::updatePlayer): Call updateIntrinsicSize.
+        * rendering/RenderVideo.h: Renamed videoSizeChanged to updateIntrinsicSize and make private.
+
 2010-08-09  Marcus Bulach  <bulach@chromium.org>
 
         Reviewed by Jeremy Orlow.

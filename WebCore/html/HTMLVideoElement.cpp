@@ -102,13 +102,18 @@ void HTMLVideoElement::parseMappedAttribute(Attribute* attr)
         // Force a poster recalc by setting m_displayMode to Unknown directly before calling updateDisplayState.
         HTMLMediaElement::setDisplayMode(Unknown);
         updateDisplayState();
-        if (shouldDisplayPosterImage()) {
 #if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+        if (shouldDisplayPosterImage()) {
             if (!m_imageLoader)
                 m_imageLoader.set(new HTMLImageLoader(this));
             m_imageLoader->updateFromElementIgnoringPreviousError();
-#endif
+        } else {
+            if (m_imageLoader)
+                m_imageLoader.clear();
+            if (renderer())
+                toRenderImage(renderer())->setCachedImage(0); 
         }
+#endif
     } else if (attrName == widthAttr)
         addCSSLength(attr, CSSPropertyWidth, attr->value());
     else if (attrName == heightAttr)
