@@ -239,8 +239,6 @@ bool WebRuntimeFeatures::isDeviceMotionEnabled()
 void WebRuntimeFeatures::enableDeviceOrientation(bool enable)
 {
     RuntimeEnabledFeatures::setDeviceOrientationEnabled(enable);
-    // TODO: fix once called downstream.
-    RuntimeEnabledFeatures::setDeviceMotionEnabled(false);
 }
 
 bool WebRuntimeFeatures::isDeviceOrientationEnabled()
