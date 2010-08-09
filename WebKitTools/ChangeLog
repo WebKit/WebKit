@@ -1,3 +1,15 @@
+2010-08-08  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Chromium buildbot: Avoid "zip" command dependency
+        https://bugs.webkit.org/show_bug.cgi?id=43470
+
+        * BuildSlaveSupport/test-result-archive:
+         For Chromium port, creates a zip archive with zipfile package of Python
+         instead of external "zip" command. We'd like to avoid additional
+         command installation.
+
 2010-08-08  Jon Honeycutt  <jhoneycutt@apple.com>
 
         WebKitTestRunner should add the QuickTime dir to the PATH environment
