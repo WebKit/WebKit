@@ -1,3 +1,22 @@
+2010-08-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Tony Chang.
+
+        Use getIdentifierValue to obtain direction and unicode-bidi properties in ApplyStyleCommand
+        https://bugs.webkit.org/show_bug.cgi?id=43699
+
+        Deployed getIdentifierValue in various parts of ApplyStyleCommand where
+        direction and unicode-bidi properties were obtained manually.
+
+        No new tests since this is a cleanup.
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::getIdentifierValue): Takes CSSStyleDeclaration instead of CSSMutableStyleDeclaration.
+        (WebCore::ApplyStyleCommand::splitAncestorsWithUnicodeBidi): Calls getIdentifierValue.
+        (WebCore::ApplyStyleCommand::removeEmbeddingUpToEnclosingBlock): Calls getIdentifierValue.
+        (WebCore::ApplyStyleCommand::applyInlineStyle): Calls getIdentifierValue.
+        * editing/ApplyStyleCommand.h:
+
 2010-08-09  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
