@@ -1,3 +1,17 @@
+2010-08-08  ryuan choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION(64898,64949) build break because of wrong filename
+        https://bugs.webkit.org/show_bug.cgi?id=43701
+
+        add SVGPathStringSource.cpp and modify SVGPathSourceString.cpp to
+        SVGPathStringSource.cpp
+
+        simple fixing build break, so No new tests.
+
+        * CMakeLists.txt:
+
 2010-08-08  Ariya Hidayat  <ariya@sencha.com>
 
         Reviewed by Antonio Gomes.
