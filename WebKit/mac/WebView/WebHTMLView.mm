@@ -849,11 +849,12 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     [webView _setInsertionPasteboard:pasteboard];
 
     DOMRange *range = [self _selectedRange];
+    Frame* coreFrame = core([self _frame]);
     
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
     DOMDocumentFragment *fragment = [self _documentFragmentFromPasteboard:pasteboard inContext:range allowPlainText:allowPlainText];
     if (fragment && [self _shouldInsertFragment:fragment replacingDOMRange:range givenAction:WebViewInsertActionPasted])
-        [[self _frame] _replaceSelectionWithFragment:fragment selectReplacement:NO smartReplace:[self _canSmartReplaceWithPasteboard:pasteboard] matchStyle:NO];
+        coreFrame->editor()->pasteAsFragment(core(fragment), [self _canSmartReplaceWithPasteboard:pasteboard], false);
 #else
     // Mail is ignoring the frament passed to the delegate and creates a new one.
     // We want to avoid creating the fragment twice.
@@ -861,12 +862,12 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
         if ([self _shouldInsertFragment:nil replacingDOMRange:range givenAction:WebViewInsertActionPasted]) {
             DOMDocumentFragment *fragment = [self _documentFragmentFromPasteboard:pasteboard inContext:range allowPlainText:allowPlainText];
             if (fragment)
-                [[self _frame] _replaceSelectionWithFragment:fragment selectReplacement:NO smartReplace:[self _canSmartReplaceWithPasteboard:pasteboard] matchStyle:NO];
+                coreFrame->editor()->pasteAsFragment(core(fragment), [self _canSmartReplaceWithPasteboard:pasteboard], false);
         }        
     } else {
         DOMDocumentFragment *fragment = [self _documentFragmentFromPasteboard:pasteboard inContext:range allowPlainText:allowPlainText];
         if (fragment && [self _shouldInsertFragment:fragment replacingDOMRange:range givenAction:WebViewInsertActionPasted])
-            [[self _frame] _replaceSelectionWithFragment:fragment selectReplacement:NO smartReplace:[self _canSmartReplaceWithPasteboard:pasteboard] matchStyle:NO];
+            coreFrame->editor()->pasteAsFragment(core(fragment), [self _canSmartReplaceWithPasteboard:pasteboard], false);
     }
 #endif
     [webView _setInsertionPasteboard:nil];

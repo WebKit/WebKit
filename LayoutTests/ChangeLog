@@ -1,3 +1,14 @@
+2010-08-04  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Tony Chang.
+
+        Pasting should fire textInput event.
+        https://bugs.webkit.org/show_bug.cgi?id=42958
+
+        * editing/pasteboard/paste-text-events-expected.txt: Added.
+        * editing/pasteboard/paste-text-events.html: Added.
+        * editing/pasteboard/script-tests/paste-text-events.js: Added.
+
 2010-08-05  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Tony Chang.

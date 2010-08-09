@@ -1,3 +1,16 @@
+2010-08-04  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Tony Chang.
+
+        Pasting should fire textInput event.
+        https://bugs.webkit.org/show_bug.cgi?id=42958
+
+        On paste, invoke Editor instead of direct command invocation,
+        which allows dispatching events before actual paste.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _pasteWithPasteboard:allowPlainText:]):
+
 2010-08-06  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         Reviewed by Eric Seidel.

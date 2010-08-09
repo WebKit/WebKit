@@ -1,3 +1,41 @@
+2010-08-05  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Tony Chang.
+
+        Pasting should fire textInput event.
+        https://bugs.webkit.org/show_bug.cgi?id=42958
+
+        - Extended TextEvents to hold paste-specific parameters
+        - Did fire TextEvents at where we originally did immediate pastes.
+        - Factored out TextEvent handling from EventHandler::defaultTextInputEventHandler()
+          to Editor::handleTextEvent() because it's solely done by the editor.
+        - move actual pasting logic to Editor::handleTextEvent() 
+
+        Test: editing/pasteboard/paste-text-events.html
+
+        * WebCore.exp.in:
+        * dom/TextEvent.cpp:
+        (WebCore::TextEvent::create):
+        (WebCore::TextEvent::createForPlainTextPaste):
+        (WebCore::TextEvent::createForFragmentPaste):
+        (WebCore::TextEvent::TextEvent):
+        * dom/TextEvent.h:
+        (WebCore::TextEvent::isPaste):
+        (WebCore::TextEvent::shouldSmartReplace):
+        (WebCore::TextEvent::shouldMatchStyle):
+        (WebCore::TextEvent::pastingFragment):
+        * editing/Editor.cpp:
+        (WebCore::Editor::handleTextEvent):
+        (WebCore::Editor::pasteAsPlainText):
+        (WebCore::Editor::pasteAsFragment):
+        (WebCore::Editor::pasteAsPlainTextWithPasteboard):
+        (WebCore::Editor::pasteWithPasteboard):
+        (WebCore::Editor::dispatchCPPEvent):
+        (WebCore::Editor::findEventTargetFromSelection):
+        * editing/Editor.h:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::defaultTextInputEventHandler):
+
 2010-08-08  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix, add member needed to compile Mac-specific font code.

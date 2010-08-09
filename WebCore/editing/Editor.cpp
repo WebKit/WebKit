@@ -66,6 +66,7 @@
 #include "Settings.h"
 #include "Sound.h"
 #include "Text.h"
+#include "TextEvent.h"
 #include "TextIterator.h"
 #include "TypingCommand.h"
 #include "UserTypingGestureIndicator.h"
@@ -125,6 +126,26 @@ void Editor::handleInputMethodKeydown(KeyboardEvent* event)
 {
     if (EditorClient* c = client())
         c->handleInputMethodKeydown(event);
+}
+
+bool Editor::handleTextEvent(TextEvent* event)
+{
+    if (event->isPaste()) {
+        if (event->pastingFragment())
+            replaceSelectionWithFragment(event->pastingFragment(), false, event->shouldSmartReplace(), event->shouldMatchStyle());
+        else 
+            replaceSelectionWithText(event->data(), false, event->shouldSmartReplace());
+        return true;
+    }
+
+    String data = event->data();
+    if (data == "\n") {
+        if (event->isLineBreak())
+            return insertLineBreak();
+        return insertParagraphSeparator();
+    }
+
+    return insertTextWithoutSendingTextEvent(data, false, event);
 }
 
 bool Editor::canEdit() const
@@ -282,11 +303,29 @@ void Editor::deleteSelectionWithSmartDelete(bool smartDelete)
     applyCommand(DeleteSelectionCommand::create(m_frame->document(), smartDelete));
 }
 
+void Editor::pasteAsPlainText(const String& pastingText, bool smartReplace)
+{
+    Node* target = findEventTargetFromSelection();
+    if (!target)
+        return;
+    ExceptionCode ec = 0;
+    target->dispatchEvent(TextEvent::createForPlainTextPaste(m_frame->domWindow(), pastingText, smartReplace), ec);
+}
+
+void Editor::pasteAsFragment(PassRefPtr<DocumentFragment> pastingFragment, bool smartReplace, bool matchStyle)
+{
+    Node* target = findEventTargetFromSelection();
+    if (!target)
+        return;
+    ExceptionCode ec = 0;
+    target->dispatchEvent(TextEvent::createForFragmentPaste(m_frame->domWindow(), pastingFragment, smartReplace, matchStyle), ec);
+}
+
 void Editor::pasteAsPlainTextWithPasteboard(Pasteboard* pasteboard)
 {
     String text = pasteboard->plainText(m_frame);
     if (client() && client()->shouldInsertText(text, selectedRange().get(), EditorInsertActionPasted))
-        replaceSelectionWithText(text, false, canSmartReplaceWithPasteboard(pasteboard));
+        pasteAsPlainText(text, canSmartReplaceWithPasteboard(pasteboard));
 }
 
 void Editor::pasteWithPasteboard(Pasteboard* pasteboard, bool allowPlainText)
@@ -295,7 +334,7 @@ void Editor::pasteWithPasteboard(Pasteboard* pasteboard, bool allowPlainText)
     bool chosePlainText;
     RefPtr<DocumentFragment> fragment = pasteboard->documentFragment(m_frame, range, allowPlainText, chosePlainText);
     if (fragment && shouldInsertFragment(fragment, range, EditorInsertActionPasted))
-        replaceSelectionWithFragment(fragment, false, canSmartReplaceWithPasteboard(pasteboard), chosePlainText);
+        pasteAsFragment(fragment, canSmartReplaceWithPasteboard(pasteboard), chosePlainText);
 }
 
 bool Editor::canSmartReplaceWithPasteboard(Pasteboard* pasteboard)
@@ -706,12 +745,9 @@ void Editor::clearLastEditCommand()
 // the event handler NOT setting the return value to false
 bool Editor::dispatchCPPEvent(const AtomicString &eventType, ClipboardAccessPolicy policy)
 {
-    Node* target = m_frame->selection()->start().element();
-    if (!target)
-        target = m_frame->document()->body();
+    Node* target = findEventTargetFromSelection();
     if (!target)
         return true;
-    target = target->shadowAncestorNode();
     
     RefPtr<Clipboard> clipboard = newGeneralClipboard(policy, m_frame);
 
@@ -724,6 +760,16 @@ bool Editor::dispatchCPPEvent(const AtomicString &eventType, ClipboardAccessPoli
     clipboard->setAccessPolicy(ClipboardNumb);
     
     return !noDefaultProcessing;
+}
+
+Node* Editor::findEventTargetFromSelection() const
+{
+    Node* target = m_frame->selection()->start().element();
+    if (!target)
+        target = m_frame->document()->body();
+    if (!target)
+        return 0;
+    return target->shadowAncestorNode();
 }
 
 void Editor::applyStyle(CSSStyleDeclaration* style, EditAction editingAction)

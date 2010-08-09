@@ -2674,19 +2674,8 @@ bool EventHandler::tabsToLinks(KeyboardEvent* event) const
 
 void EventHandler::defaultTextInputEventHandler(TextEvent* event)
 {
-    String data = event->data();
-    if (data == "\n") {
-        if (event->isLineBreak()) {
-            if (m_frame->editor()->insertLineBreak())
-                event->setDefaultHandled();
-        } else {
-            if (m_frame->editor()->insertParagraphSeparator())
-                event->setDefaultHandled();
-        }
-    } else {
-        if (m_frame->editor()->insertTextWithoutSendingTextEvent(data, false, event))
-            event->setDefaultHandled();
-    }
+    if (m_frame->editor()->handleTextEvent(event))
+        event->setDefaultHandled();
 }
 
 #if PLATFORM(QT) || PLATFORM(MAC)
