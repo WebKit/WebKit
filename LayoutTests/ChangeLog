@@ -1,3 +1,10 @@
+2010-08-08  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, test expectation update
+
+        * platform/chromium/drt_expectations.txt:
+        * platform/chromium/test_expectations.txt:
+
 2010-08-08  James Robinson  <jamesr@chromium.org>
 
         Unreviewed.  Rebaseline chromium results for r64954.

@@ -2837,6 +2837,7 @@ BUG47035 WIN DEBUG : fast/loader/stateobjects/document-destroyed-navigate-back-w
 BUG47083 : fast/text/hyphenate-character.html = IMAGE+TEXT
 BUG47083 : fast/text/hyphens.html = IMAGE+TEXT
 BUG47083 : fast/text/hyphenate-locale.html = IMAGE+TEXT
+BUG47083 : fast/text/hyphenate-first-word.html = IMAGE+TEXT
 
 // Related to https://bugs.webkit.org/show_bug.cgi?id=35350
 BUG45048 LINUX MAC : fast/events/show-modal-dialog-onblur-onfocus.html = FAIL
