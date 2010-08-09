@@ -1,3 +1,10 @@
+2010-08-08  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fix, add member needed to compile Mac-specific font code.
+
+        * platform/graphics/wx/FontPlatformData.h:
+        (WebCore::FontPlatformData::ctFont):
+
 2010-08-08  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Eric Seidel.
