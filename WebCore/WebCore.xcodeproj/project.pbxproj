@@ -21182,7 +21182,6 @@
 				C585A66211D4FAC5004C3E4B /* IDBBindingUtilities.cpp in Sources */,
 				81A73260121018A400FC0D9E /* IDBCursor.cpp in Sources */,
 				81BE209811F4AB8D00915DFA /* IDBCursorBackendImpl.cpp in Sources */,
-				81BE209811F4AB8D00915DFA /* IDBCursorBackendImpl.cpp in Sources */,
 				B691C1F91206D4A00025D980 /* IDBDatabase.cpp in Sources */,
 				C585A6D511D4FB3D004C3E4B /* IDBDatabaseBackendImpl.cpp in Sources */,
 				C585A6DA11D4FB3D004C3E4B /* IDBErrorEvent.cpp in Sources */,

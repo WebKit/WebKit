@@ -32,11 +32,13 @@
 #include "JSIDBAny.h"
 
 #include "IDBAny.h"
+#include "IDBCursor.h"
 #include "IDBDatabase.h"
 #include "IDBFactory.h"
 #include "IDBIndex.h"
 #include "IDBKey.h"
 #include "IDBObjectStore.h"
+#include "JSIDBCursor.h"
 #include "JSIDBDatabase.h"
 #include "JSIDBFactory.h"
 #include "JSIDBIndex.h"
@@ -58,6 +60,8 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, IDBAny* idbAny)
         return jsUndefined();
     case IDBAny::NullType:
         return jsNull();
+    case IDBAny::IDBCursorType:
+        return toJS(exec, globalObject, idbAny->idbCursor());
     case IDBAny::IDBDatabaseType:
         return toJS(exec, globalObject, idbAny->idbDatabase());
     case IDBAny::IDBIndexType:

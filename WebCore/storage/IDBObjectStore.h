@@ -27,6 +27,7 @@
 #define IDBObjectStore_h
 
 #include "IDBCursor.h"
+#include "IDBKeyRange.h"
 #include "IDBObjectStoreBackendInterface.h"
 #include "IDBRequest.h"
 #include "PlatformString.h"
@@ -41,7 +42,6 @@ namespace WebCore {
 class DOMStringList;
 class IDBAny;
 class IDBIndexRequest;
-class IDBKeyRange;
 class IDBKey;
 class SerializedScriptValue;
 
