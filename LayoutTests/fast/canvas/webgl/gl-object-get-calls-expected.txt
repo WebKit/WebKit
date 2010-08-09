@@ -75,7 +75,7 @@ PASS gl.getUniform(matProgram, mval4Loc) is [14, 15, 16, 17, 18, 19, 20, 21, 22,
 PASS gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_BUFFER_BINDING) is buffer
 PASS gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_ENABLED) is true
 PASS gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_SIZE) is 4
-PASS (gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_STRIDE) == 0) || (gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_STRIDE) == 4 * gl.sizeInBytes(gl.FLOAT)) is true
+PASS (gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_STRIDE) == 0) || (gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_STRIDE) == 4 * sizeInBytes(gl.FLOAT)) is true
 PASS gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_TYPE) is gl.FLOAT
 PASS gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_NORMALIZED) is false
 PASS gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_ENABLED) is false

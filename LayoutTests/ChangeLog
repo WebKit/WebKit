@@ -1,3 +1,14 @@
+2010-08-09  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by David Levin.
+
+        sizeInBytes should be removed
+        https://bugs.webkit.org/show_bug.cgi?id=43693
+
+        * fast/canvas/webgl/gl-object-get-calls-expected.txt: Define sizeInBytes and don't use the WebGL one (it's been removed).
+        * fast/canvas/webgl/gl-object-get-calls.html: Ditto.
+        * fast/canvas/webgl/index-validation.html: Ditto.
+
 2010-08-09  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Darin Adler.

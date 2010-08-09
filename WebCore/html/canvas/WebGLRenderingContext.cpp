@@ -195,14 +195,9 @@ void WebGLRenderingContext::reshape(int width, int height)
     m_context->reshape(width, height);
 }
 
-int WebGLRenderingContext::sizeInBytes(int type, ExceptionCode& ec)
+int WebGLRenderingContext::sizeInBytes(int type)
 {
-    UNUSED_PARAM(ec);
-    int result = m_context->sizeInBytes(type);
-    if (result <= 0)
-        m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
-
-    return result;
+    return m_context->sizeInBytes(type);
 }
 
 void WebGLRenderingContext::activeTexture(unsigned long texture, ExceptionCode& ec)
@@ -3021,6 +3016,7 @@ void WebGLRenderingContext::vertexAttrib4fv(unsigned long index, float* v, int s
 
 void WebGLRenderingContext::vertexAttribPointer(unsigned long index, long size, unsigned long type, bool normalized, long stride, long offset, ExceptionCode& ec)
 {
+    UNUSED_PARAM(ec);
     if (index >= m_maxVertexAttribs) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
         return;
@@ -3034,9 +3030,11 @@ void WebGLRenderingContext::vertexAttribPointer(unsigned long index, long size, 
         return;
     }
     // Determine the number of elements the bound buffer can hold, given the offset, size, type and stride
-    long bytesPerElement = size * sizeInBytes(type, ec);
-    if (bytesPerElement <= 0)
+    long bytesPerElement = size * sizeInBytes(type);
+    if (bytesPerElement <= 0) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
         return;
+    }
 
     if (index >= m_vertexAttribState.size())
         m_vertexAttribState.resize(index + 1);

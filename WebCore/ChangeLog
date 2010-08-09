@@ -1,3 +1,16 @@
+2010-08-09  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by David Levin.
+
+        sizeInBytes should be removed
+        https://bugs.webkit.org/show_bug.cgi?id=43693
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::sizeInBytes): Don't generate GL errors.  Generate them in the callers instead.
+        (WebCore::WebGLRenderingContext::vertexAttribPointer): Generate GL error if sizeInBytes fails.
+        * html/canvas/WebGLRenderingContext.h: Make sizeInBytes private helper.
+        * html/canvas/WebGLRenderingContext.idl: Remove sizeInBytes.
+
 2010-08-09  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Darin Adler.

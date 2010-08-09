@@ -464,8 +464,6 @@ module html {
         const unsigned int UNPACK_FLIP_Y_WEBGL            = 0x9240;
         const unsigned int UNPACK_PREMULTIPLY_ALPHA_WEBGL = 0x9241;
 
-        long sizeInBytes(in unsigned long type) raises(DOMException);
-
         void         activeTexture(in unsigned long texture) raises(DOMException);
         void         attachShader(in WebGLProgram program, in WebGLShader shader) raises(DOMException);
         void         bindAttribLocation(in WebGLProgram program, in unsigned long index, in DOMString name) raises(DOMException);

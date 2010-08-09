@@ -11,6 +11,23 @@
 <script>
 description("Test of get calls against GL objects like getBufferParameter, etc.");
 
+function sizeInBytes(type) {
+  switch (type) {
+  case gl.BYTE:
+  case gl.UNSIGNED_BYTE:
+    return 1;
+  case gl.SHORT:
+  case gl.UNSIGNED_SHORT:
+    return 2;
+  case gl.INT:
+  case gl.UNSIGNED_INT:
+  case gl.FLOAT:
+    return 4;
+  default:
+    throw "unknown type";
+  }
+}
+
 var gl = create3DContext();
 
 var standardVert = loadStandardVertexShader(gl);
@@ -197,7 +214,7 @@ gl.vertexAttribPointer(1, 4, gl.FLOAT, false, 0, 0);
 shouldBe('gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_BUFFER_BINDING)', 'buffer');
 shouldBe('gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_ENABLED)', 'true');
 shouldBe('gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_SIZE)', '4');
-shouldBe('(gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_STRIDE) == 0) || (gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_STRIDE) == 4 * gl.sizeInBytes(gl.FLOAT))', 'true');
+shouldBe('(gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_STRIDE) == 0) || (gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_STRIDE) == 4 * sizeInBytes(gl.FLOAT))', 'true');
 shouldBe('gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_TYPE)', 'gl.FLOAT');
 shouldBe('gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_NORMALIZED)', 'false');
 gl.disableVertexAttribArray(1);

@@ -60,10 +60,6 @@ public:
     virtual bool is3d() const { return true; }
     virtual bool isAccelerated() const { return true; }
 
-    // Helper to return the size in bytes of OpenGL data types
-    // like GL_FLOAT, GL_INT, etc.
-    int sizeInBytes(int type, ExceptionCode& ec);
-
     void activeTexture(unsigned long texture, ExceptionCode& ec);
     void attachShader(WebGLProgram*, WebGLShader*, ExceptionCode& ec);
     void bindAttribLocation(WebGLProgram*, unsigned long index, const String& name, ExceptionCode& ec);
@@ -335,6 +331,10 @@ public:
     }
 
     bool isGLES2Compliant();
+
+    // Helper to return the size in bytes of OpenGL data types
+    // like GL_FLOAT, GL_INT, etc.
+    int sizeInBytes(int type);
 
     // Basic validation of count and offset against number of elements in element array buffer
     bool validateElementArraySize(unsigned long count, unsigned long type, long offset);
