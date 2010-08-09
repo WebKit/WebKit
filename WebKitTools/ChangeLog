@@ -1,3 +1,13 @@
+2010-08-09  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium] DRT error print statement incorrectly tries to print a FILE*
+        https://bugs.webkit.org/show_bug.cgi?id=43747
+
+        * DumpRenderTree/chromium/ImageDiff.cpp:
+        (writeFile): pass the correct pointer.
+
 2010-08-09  Victor Wang  <victorw@chromium.org>
 
         Reviewed by Ojan Vafai.
