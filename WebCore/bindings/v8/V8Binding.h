@@ -220,7 +220,7 @@ namespace WebCore {
     template <V8ParameterMode MODE = DefaultMode>
     class V8Parameter {
     public:
-        V8Parameter (v8::Local<v8::Value> object) :m_v8Object(object) { }
+        V8Parameter(v8::Local<v8::Value> object = v8::Local<v8::Value>()) : m_v8Object(object) { }
         operator String();
         operator AtomicString();
     private:

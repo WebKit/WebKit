@@ -59,8 +59,8 @@ public:
     virtual String version() const;
     void changeVersion(const String& oldVersion, const String& newVersion, PassRefPtr<SQLTransactionCallback>,
                        PassRefPtr<SQLTransactionErrorCallback>, PassRefPtr<VoidCallback> successCallback);
-    void transaction(PassRefPtr<SQLTransactionCallback>, PassRefPtr<SQLTransactionErrorCallback>,
-                     PassRefPtr<VoidCallback> successCallback, bool readOnly);
+    void transaction(PassRefPtr<SQLTransactionCallback>, PassRefPtr<SQLTransactionErrorCallback>, PassRefPtr<VoidCallback> successCallback);
+    void readTransaction(PassRefPtr<SQLTransactionCallback>, PassRefPtr<SQLTransactionErrorCallback>, PassRefPtr<VoidCallback> successCallback);
 
     // Internal engine support
     Vector<String> tableNames();
@@ -90,6 +90,8 @@ private:
 
     Database(ScriptExecutionContext*, const String& name, const String& expectedVersion,
              const String& displayName, unsigned long estimatedSize);
+    void runTransaction(PassRefPtr<SQLTransactionCallback>, PassRefPtr<SQLTransactionErrorCallback>,
+                        PassRefPtr<VoidCallback> successCallback, bool readOnly);
 
     bool openAndVerifyVersion(bool setVersionInNewDatabase, ExceptionCode&);
     virtual bool performOpenAndVerify(bool setVersionInNewDatabase, ExceptionCode&);

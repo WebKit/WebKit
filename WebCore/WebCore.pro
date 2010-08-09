@@ -2425,8 +2425,6 @@ contains(DEFINES, ENABLE_DATABASE=1) {
         storage/SQLTransactionCoordinator.cpp \
         storage/SQLTransactionSync.cpp \
         bindings/js/JSCustomSQLStatementErrorCallback.cpp \
-        bindings/js/JSDatabaseCustom.cpp \
-        bindings/js/JSDatabaseSyncCustom.cpp \
         bindings/js/JSSQLResultSetRowListCustom.cpp \
         bindings/js/JSSQLTransactionCustom.cpp \
         bindings/js/JSSQLTransactionSyncCustom.cpp

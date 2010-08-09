@@ -34,9 +34,9 @@ module storage {
         NoStaticTables
     ] Database {
         readonly attribute DOMString version;
-        [Custom] void changeVersion(in DOMString oldVersion, in DOMString newVersion, in SQLTransactionCallback callback, in SQLTransactionErrorCallback errorCallback, in VoidCallback successCallback);
-        [Custom] void transaction(in SQLTransactionCallback callback, in SQLTransactionErrorCallback errorCallback, in VoidCallback successCallback);
-        [Custom] void readTransaction(in SQLTransactionCallback callback, in SQLTransactionErrorCallback errorCallback, in VoidCallback successCallback);
+        [RequiresAllArguments=Raise] void changeVersion(in DOMString oldVersion, in DOMString newVersion, in [Callback, Optional] SQLTransactionCallback callback, in [Callback, Optional] SQLTransactionErrorCallback errorCallback, in [Callback, Optional] VoidCallback successCallback);
+        [RequiresAllArguments=Raise] void transaction(in [Callback] SQLTransactionCallback callback, in [Callback, Optional] SQLTransactionErrorCallback errorCallback, in [Callback, Optional] VoidCallback successCallback);
+        [RequiresAllArguments=Raise] void readTransaction(in [Callback] SQLTransactionCallback callback, in [Callback, Optional] SQLTransactionErrorCallback errorCallback, in [Callback, Optional] VoidCallback successCallback);
     };
 
 }

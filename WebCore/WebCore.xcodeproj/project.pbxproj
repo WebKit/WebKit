@@ -4364,7 +4364,6 @@
 		B550B52611DC68A800923885 /* SQLStatementSync.h in Headers */ = {isa = PBXBuildFile; fileRef = B550B52211DC68A800923885 /* SQLStatementSync.h */; };
 		B55D5AA4119131FC00BCC315 /* JSSQLTransactionSyncCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = B55D5AA2119131FC00BCC315 /* JSSQLTransactionSyncCallback.h */; };
 		B55D5AA5119131FC00BCC315 /* JSSQLTransactionSyncCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B55D5AA3119131FC00BCC315 /* JSSQLTransactionSyncCallback.cpp */; };
-		B55D5AA81191325000BCC315 /* JSDatabaseSyncCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B55D5AA61191325000BCC315 /* JSDatabaseSyncCustom.cpp */; };
 		B55D5AA91191325000BCC315 /* JSSQLTransactionSyncCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B55D5AA71191325000BCC315 /* JSSQLTransactionSyncCustom.cpp */; };
 		B56EBA8511C9FF8100B04477 /* SQLException.h in Headers */ = {isa = PBXBuildFile; fileRef = B56EBA8311C9FF8100B04477 /* SQLException.h */; };
 		B58CEB6911913607002A6790 /* JSDatabaseSync.h in Headers */ = {isa = PBXBuildFile; fileRef = B58CEB6711913607002A6790 /* JSDatabaseSync.h */; };
@@ -4822,7 +4821,6 @@
 		BCCBE7B50E07166900EAFA8E /* CSSVariableDependentValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCCBE7B40E07166900EAFA8E /* CSSVariableDependentValue.cpp */; };
 		BCCD74DC0A4C8D35005FDA6D /* HTMLViewSourceDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = BCCD74DB0A4C8D35005FDA6D /* HTMLViewSourceDocument.h */; };
 		BCCD74E50A4C8DDF005FDA6D /* HTMLViewSourceDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCCD74E40A4C8DDF005FDA6D /* HTMLViewSourceDocument.cpp */; };
-		BCCE58AC1061E8CF008FB35A /* JSDatabaseCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCCE58AB1061E8CF008FB35A /* JSDatabaseCustom.cpp */; };
 		BCCFBAE80B5152ED0001F1D7 /* DocumentParser.h in Headers */ = {isa = PBXBuildFile; fileRef = BCCFBAE70B5152ED0001F1D7 /* DocumentParser.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCD0E0FA0E972C3500265DEA /* SecurityOrigin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD0E0F70E972C3500265DEA /* SecurityOrigin.cpp */; };
 		BCD0E0FB0E972C3500265DEA /* SecurityOrigin.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD0E0F80E972C3500265DEA /* SecurityOrigin.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -10065,7 +10063,6 @@
 		B550B52211DC68A800923885 /* SQLStatementSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLStatementSync.h; sourceTree = "<group>"; };
 		B55D5AA2119131FC00BCC315 /* JSSQLTransactionSyncCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSQLTransactionSyncCallback.h; sourceTree = "<group>"; };
 		B55D5AA3119131FC00BCC315 /* JSSQLTransactionSyncCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSQLTransactionSyncCallback.cpp; sourceTree = "<group>"; };
-		B55D5AA61191325000BCC315 /* JSDatabaseSyncCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDatabaseSyncCustom.cpp; sourceTree = "<group>"; };
 		B55D5AA71191325000BCC315 /* JSSQLTransactionSyncCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSQLTransactionSyncCustom.cpp; sourceTree = "<group>"; };
 		B55D5ABB1191327200BCC315 /* DatabaseSync.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DatabaseSync.idl; sourceTree = "<group>"; };
 		B55D5ABC1191327200BCC315 /* SQLTransactionSync.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SQLTransactionSync.idl; sourceTree = "<group>"; };
@@ -10560,7 +10557,6 @@
 		BCCBE7B40E07166900EAFA8E /* CSSVariableDependentValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSVariableDependentValue.cpp; sourceTree = "<group>"; };
 		BCCD74DB0A4C8D35005FDA6D /* HTMLViewSourceDocument.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLViewSourceDocument.h; sourceTree = "<group>"; };
 		BCCD74E40A4C8DDF005FDA6D /* HTMLViewSourceDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLViewSourceDocument.cpp; sourceTree = "<group>"; };
-		BCCE58AB1061E8CF008FB35A /* JSDatabaseCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDatabaseCustom.cpp; sourceTree = "<group>"; };
 		BCCFBAE70B5152ED0001F1D7 /* DocumentParser.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DocumentParser.h; sourceTree = "<group>"; };
 		BCD0E0F70E972C3500265DEA /* SecurityOrigin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SecurityOrigin.cpp; sourceTree = "<group>"; };
 		BCD0E0F80E972C3500265DEA /* SecurityOrigin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecurityOrigin.h; sourceTree = "<group>"; };
@@ -16026,8 +16022,6 @@
 				9392262E10321084006E7D5D /* JSCSSRuleListCustom.cpp */,
 				BC5825F20C0B89380053F1B5 /* JSCSSStyleDeclarationCustom.cpp */,
 				BC20FB7E0C0E8E6C00D1447F /* JSCSSValueCustom.cpp */,
-				BCCE58AB1061E8CF008FB35A /* JSDatabaseCustom.cpp */,
-				B55D5AA61191325000BCC315 /* JSDatabaseSyncCustom.cpp */,
 				BC77D1510FF19C730070887B /* JSDataGridColumnListCustom.cpp */,
 				4162A453101145E300DFF3ED /* JSDedicatedWorkerContextCustom.cpp */,
 				33503CBF10179C1A003B47E1 /* JSDesktopNotificationsCustom.cpp */,
@@ -21320,9 +21314,7 @@
 				E10B93C30B73C291003ED890 /* JSCustomXPathNSResolver.cpp in Sources */,
 				1AE82F8F0CAAFA9D002237AE /* JSDatabase.cpp in Sources */,
 				B59DD69A119029E5007E9684 /* JSDatabaseCallback.cpp in Sources */,
-				BCCE58AC1061E8CF008FB35A /* JSDatabaseCustom.cpp in Sources */,
 				B58CEB6A11913607002A6790 /* JSDatabaseSync.cpp in Sources */,
-				B55D5AA81191325000BCC315 /* JSDatabaseSyncCustom.cpp in Sources */,
 				BC77D1690FF19F560070887B /* JSDataGridColumn.cpp in Sources */,
 				BC77D16B0FF19F560070887B /* JSDataGridColumnList.cpp in Sources */,
 				BC77D1520FF19C730070887B /* JSDataGridColumnListCustom.cpp in Sources */,

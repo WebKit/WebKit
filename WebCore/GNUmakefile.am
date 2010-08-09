@@ -2743,8 +2743,6 @@ webcore_built_sources += \
 
 webcore_sources += \
 	WebCore/bindings/js/JSCustomSQLStatementErrorCallback.cpp \
-	WebCore/bindings/js/JSDatabaseCustom.cpp \
-	WebCore/bindings/js/JSDatabaseSyncCustom.cpp \
 	WebCore/bindings/js/JSSQLResultSetRowListCustom.cpp \
 	WebCore/bindings/js/JSSQLTransactionCustom.cpp \
 	WebCore/bindings/js/JSSQLTransactionSyncCustom.cpp \

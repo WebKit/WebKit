@@ -37,12 +37,13 @@
             return block.ReThrow();       \
     }
 
-#define TO_WEBCORE_STRING_EXCEPTION_BLOCK(var, value)                      \
-    String var;                                                            \
-    {                                                                      \
-        v8::TryCatch block;                                                \
-        v8::Handle<v8::String> v8String = (value)->ToString();             \
-        if (block.HasCaught())                                             \
-            return block.ReThrow();                                        \
-        var = v8StringToWebCoreString<String>(v8String, DoNotExternalize); \
+#define STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(type, var, value) \
+    type var;                                                   \
+    {                                                           \
+        v8::Local<v8::Value> v8Value = (value);                 \
+        v8::TryCatch block;                                     \
+        (value)->ToString();                                    \
+        if (block.HasCaught())                                  \
+            return block.ReThrow();                             \
+        var = v8Value;                                          \
     }

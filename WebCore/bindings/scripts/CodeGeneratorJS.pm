@@ -1853,12 +1853,20 @@ sub GenerateImplementation
 
                 my $requiresAllArguments = $function->signature->extendedAttributes->{"RequiresAllArguments"};
                 if ($requiresAllArguments) {
-                        push(@implContent, "    if (exec->argumentCount() < $numParameters)\n");
-                        if ($requiresAllArguments eq "Raise") {
-                            push(@implContent, "        return throwVMError(exec, createSyntaxError(exec, \"Not enough arguments\"));\n");
+                    my $numMandatoryParams = @{$function->parameters};
+                    foreach my $param (reverse(@{$function->parameters})) {
+                        if ($param->extendedAttributes->{"Optional"}) {
+                            $numMandatoryParams--;
                         } else {
-                            push(@implContent, "        return JSValue::encode(jsUndefined());\n");
+                            last;
                         }
+                    }
+                    push(@implContent, "    if (exec->argumentCount() < $numMandatoryParams)\n");
+                    if ($requiresAllArguments eq "Raise") {
+                        push(@implContent, "        return throwVMError(exec, createSyntaxError(exec, \"Not enough arguments\"));\n");
+                    } else {
+                        push(@implContent, "        return JSValue::encode(jsUndefined());\n");
+                    }
                 }
 
                 if (@{$function->raisesExceptions}) {
@@ -1908,14 +1916,18 @@ sub GenerateImplementation
                         $paramIndex++;
                     }
 
+                    $implIncludes{"ExceptionCode.h"} = 1;
+                    $implIncludes{"JSDOMBinding.h"} = 1;
                     foreach my $parameter (@{$function->parameters}) {
-                        if ($parameter->extendedAttributes->{"Optional"}) {
+                        # Optional callbacks should be treated differently, because they always have a default value (0),
+                        # and we can reduce the number of overloaded functions that take a different number of parameters.
+                        if ($parameter->extendedAttributes->{"Optional"} && !$parameter->extendedAttributes->{"Callback"}) {
                             # Generate early call if there are enough parameters.
                             if (!$hasOptionalArguments) {
                                 push(@implContent, "\n    int argsCount = exec->argumentCount();\n");
                                 $hasOptionalArguments = 1;
                             }
-                            push(@implContent, "    if (argsCount < " . ($argsIndex + 1) . ") {\n");
+                            push(@implContent, "    if (argsCount <= $argsIndex) {\n");
                             GenerateImplementationFunctionCall($function, $functionString, $paramIndex, "    " x 2, $podType, $implClassName);
                             push(@implContent, "    }\n\n");
                         }
@@ -1934,12 +1946,22 @@ sub GenerateImplementation
                         } elsif ($parameter->extendedAttributes->{"Callback"}) {
                             my $callbackClassName = GetCallbackClassName($parameter->type);
                             $implIncludes{"$callbackClassName.h"} = 1;
-                            $implIncludes{"ExceptionCode.h"} = 1;
-                            push(@implContent, "    if (exec->argumentCount() <= $argsIndex || !exec->argument($argsIndex).isObject()) {\n");
-                            push(@implContent, "        setDOMException(exec, TYPE_MISMATCH_ERR);\n");
-                            push(@implContent, "        return jsUndefined();\n");
-                            push(@implContent, "    }\n");
-                            push(@implContent, "    RefPtr<" . $parameter->type . "> $name = " . $callbackClassName . "::create(asObject(exec->argument($argsIndex)), castedThis->globalObject());\n");
+                            if ($parameter->extendedAttributes->{"Optional"}) {
+                                push(@implContent, "    RefPtr<" . $parameter->type. "> $name;\n");
+                                push(@implContent, "    if (exec->argumentCount() > $argsIndex && !exec->argument($argsIndex).isNull() && !exec->argument($argsIndex).isUndefined()) {\n");
+                                push(@implContent, "        if (!exec->argument($argsIndex).isObject()) {\n");
+                                push(@implContent, "            setDOMException(exec, TYPE_MISMATCH_ERR);\n");
+                                push(@implContent, "            return JSValue::encode(jsUndefined());\n");
+                                push(@implContent, "        }\n");
+                                push(@implContent, "        $name = ${callbackClassName}::create(asObject(exec->argument($argsIndex)), castedThis->globalObject());\n");
+                                push(@implContent, "    }\n");
+                            } else {
+                                push(@implContent, "    if (exec->argumentCount() <= $argsIndex || !exec->argument($argsIndex).isObject()) {\n");
+                                push(@implContent, "        setDOMException(exec, TYPE_MISMATCH_ERR);\n");
+                                push(@implContent, "        return JSValue::encode(jsUndefined());\n");
+                                push(@implContent, "    }\n");
+                                push(@implContent, "    RefPtr<" . $parameter->type . "> $name = ${callbackClassName}::create(asObject(exec->argument($argsIndex)), castedThis->globalObject());\n");
+                            }
                         } else {
                             push(@implContent, "    " . GetNativeTypeFromSignature($parameter) . " $name = " . JSValueToNative($parameter, "exec->argument($argsIndex)") . ";\n");
 
@@ -1947,12 +1969,15 @@ sub GenerateImplementation
                             # But this needs to be done in the bindings, because the type is unsigned and the fact that it
                             # was negative will be lost by the time we're inside the DOM.
                             if ($parameter->extendedAttributes->{"IsIndex"}) {
-                                $implIncludes{"ExceptionCode.h"} = 1;
                                 push(@implContent, "    if ($name < 0) {\n");
                                 push(@implContent, "        setDOMException(exec, INDEX_SIZE_ERR);\n");
                                 push(@implContent, "        return JSValue::encode(jsUndefined());\n");
                                 push(@implContent, "    }\n");
                             }
+
+                            # Check if the type conversion succeeded.
+                            push(@implContent, "    if (exec->hadException())\n");
+                            push(@implContent, "        return JSValue::encode(jsUndefined());\n");
                         }
 
                         $functionString .= ", " if $paramIndex;
@@ -2171,7 +2196,7 @@ sub GenerateCallbackImplementation
     push(@implContent, "{\n");
     push(@implContent, "    ScriptExecutionContext* context = scriptExecutionContext();\n");
     push(@implContent, "    // When the context is destroyed, all tasks with a reference to a callback\n");
-    push(@implContent, "    // should be deleted. So if the context is NULL, we are on the context thread.\n");
+    push(@implContent, "    // should be deleted. So if the context is 0, we are on the context thread.\n");
     push(@implContent, "    if (!context || context->isContextThread())\n");
     push(@implContent, "        delete m_data;\n");
     push(@implContent, "    else\n");
@@ -2343,7 +2368,8 @@ sub JSValueToNative
     return "$value.toBoolean(exec)" if $type eq "boolean";
     return "$value.toNumber(exec)" if $type eq "double";
     return "$value.toFloat(exec)" if $type eq "float" or $type eq "SVGNumber";
-    return "$value.toInt32(exec)" if $type eq "unsigned long" or $type eq "long" or $type eq "unsigned short";
+    return "$value.toInt32(exec)" if $type eq "long";
+    return "$value.toUInt32(exec)" if $type eq "unsigned long" or $type eq "unsigned short";
     return "static_cast<$type>($value.toInteger(exec))" if $type eq "long long" or $type eq "unsigned long long";
 
     return "valueToDate(exec, $value)" if $type eq "Date";

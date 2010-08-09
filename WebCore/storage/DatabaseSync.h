@@ -56,7 +56,8 @@ public:
     static PassRefPtr<DatabaseSync> openDatabaseSync(ScriptExecutionContext*, const String& name, const String& expectedVersion,
                                                      const String& displayName, unsigned long estimatedSize, PassRefPtr<DatabaseCallback>, ExceptionCode&);
     void changeVersion(const String& oldVersion, const String& newVersion, PassRefPtr<SQLTransactionSyncCallback>, ExceptionCode&);
-    void transaction(PassRefPtr<SQLTransactionSyncCallback>, bool readOnly, ExceptionCode&);
+    void transaction(PassRefPtr<SQLTransactionSyncCallback>, ExceptionCode&);
+    void readTransaction(PassRefPtr<SQLTransactionSyncCallback>, ExceptionCode&);
 
     virtual void markAsDeletedAndClose();
     virtual void closeImmediately();
@@ -64,6 +65,7 @@ public:
 private:
     DatabaseSync(ScriptExecutionContext*, const String& name, const String& expectedVersion,
                  const String& displayName, unsigned long estimatedSize);
+    void runTransaction(PassRefPtr<SQLTransactionSyncCallback>, bool readOnly, ExceptionCode&);
 };
 
 } // namespace WebCore

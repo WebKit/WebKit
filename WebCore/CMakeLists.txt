@@ -590,9 +590,6 @@ SET(WebCore_SOURCES
     bindings/js/JSCustomSQLStatementErrorCallback.cpp
     bindings/js/JSCustomVoidCallback.cpp
     bindings/js/JSCustomXPathNSResolver.cpp
-    bindings/js/JSDatabaseCustom.cpp
-    bindings/js/JSDatabaseCustom.cpp
-    bindings/js/JSDatabaseSyncCustom.cpp
     bindings/js/JSDataGridColumnListCustom.cpp
     bindings/js/JSDataGridDataSource.cpp
     bindings/js/JSDebugWrapperSet.cpp

@@ -50,9 +50,10 @@ module threads {
         [Custom] void importScripts(/*[Variadic] in DOMString urls */);
                  attribute [Replaceable] WorkerNavigator navigator;
 #if defined(ENABLE_DATABASE) && ENABLE_DATABASE
-        [EnabledAtRuntime, Custom] Database openDatabase(in DOMString name, in DOMString version, in DOMString displayName, in unsigned long estimatedSize, in DatabaseCallback creationCallback)
+        [EnabledAtRuntime, RequiresAllArguments=Raise] Database openDatabase(in DOMString name, in DOMString version, in DOMString displayName, in unsigned long estimatedSize, in [Callback, Optional] DatabaseCallback creationCallback)
             raises(DOMException);
-        [EnabledAtRuntime, Custom] DatabaseSync openDatabaseSync(in DOMString name, in DOMString version, in DOMString displayName, in unsigned long estimatedSize, in DatabaseCallback creationCallback);
+        [EnabledAtRuntime, RequiresAllArguments=Raise] DatabaseSync openDatabaseSync(in DOMString name, in DOMString version, in DOMString displayName, in unsigned long estimatedSize, in [Callback, Optional] DatabaseCallback creationCallback)
+            raises(DOMException);
 #endif
 
         // Timers
