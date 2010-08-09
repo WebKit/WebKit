@@ -168,6 +168,7 @@
 #endif
 
 #define INFNAN_CHECK
+#define No_Hex_NaN
 
 #if defined(IEEE_8087) + defined(IEEE_MC68k) + defined(IEEE_ARM) != 1
 Exactly one of IEEE_8087, IEEE_ARM or IEEE_MC68k should be defined.
