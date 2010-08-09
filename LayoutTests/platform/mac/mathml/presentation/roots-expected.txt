@@ -77,9 +77,9 @@ layer at (0,0) size 800x594
                     RenderText {#text} at (17,3) size 8x16
                       text run at (17,3) width 8: "2"
       RenderBlock {p} at (0,186) size 784x20
-        RenderText {#text} at (0,1) size 67x18
-          text run at (0,1) width 67: "cube root: "
-        RenderBlock {math} at (67,0) size 22x20
+        RenderText {#text} at (0,1) size 173x18
+          text run at (0,1) width 173: "cube root (should be blue): "
+        RenderBlock {math} at (173,0) size 22x20 [color=#0000FF]
       RenderBlock {p} at (0,222) size 784x24
         RenderText {#text} at (0,5) size 75x18
           text run at (0,5) width 75: "long index: "
@@ -168,14 +168,14 @@ layer at (0,0) size 800x594
           text run at (0,41) width 110: "Imbricated roots: "
         RenderBlock {math} at (110,0) size 340x81
         RenderText {#text} at (0,0) size 0x0
-layer at (76,202) size 20x20
+layer at (182,202) size 20x20
   RenderBlock (relative positioned) {mroot} at (1,0) size 20x20
     RenderBlock {mroot} at (12,15) size 0x0
     RenderBlock {mroot} at (12,4) size 8x16
       RenderInline {mn} at (0,0) size 8x16
         RenderText {#text} at (0,0) size 8x16
           text run at (0,0) width 8: "2"
-layer at (76,202) size 12x14
+layer at (182,202) size 12x14
   RenderBlock (positioned) {mn} at (0,0) size 12x14
     RenderText {#text} at (2,0) size 6x12
       text run at (2,0) width 6: "3"

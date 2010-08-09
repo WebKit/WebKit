@@ -2,6 +2,18 @@
 
         Reviewed by Kenneth Rohde Christiansen.
 
+        Take into account style color to draw MathML mroot radical.
+        https://bugs.webkit.org/show_bug.cgi?id=43628
+
+        Test: mathml/presentation/roots.xhtml
+
+        * mathml/RenderMathMLRoot.cpp:
+        (WebCore::RenderMathMLRoot::paint):
+
+2010-08-09  François Sausset  <sausset@gmail.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
         Implement MathML deprecated style attributes
         https://bugs.webkit.org/show_bug.cgi?id=43503
 
