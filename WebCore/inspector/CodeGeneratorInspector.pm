@@ -237,8 +237,10 @@ sub generateFrontendFunction
 {
     my $function = shift;
 
-    my $functionName;
     my $notify = $function->signature->extendedAttributes->{"notify"};
+    my $async = $function->signature->extendedAttributes->{"async"};
+    return if !$async && !$notify;
+    my $functionName;
     if ($notify) {
         $functionName = $function->signature->name;
     } else {
