@@ -1098,10 +1098,8 @@ WebInspector.showChanges = function()
 
 WebInspector.showPanel = function(panel)
 {
-    if (!(panel in this.panels)) {
-        console.error("Unable to show %s panel.", panel);
+    if (!(panel in this.panels))
         panel = "elements";
-    }
     this.currentPanel = this.panels[panel];
 }
 

@@ -1,3 +1,14 @@
+2010-08-09  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: restore original last panel restore logic.
+
+        https://bugs.webkit.org/show_bug.cgi?id=43719
+
+        * inspector/front-end/inspector.js:
+        (WebInspector.showPanel):
+
 2010-08-09  Dumitru Daniliuc  <dumi@chromium.org>
 
         Unreviewed, fixing the builds after r64967.
