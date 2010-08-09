@@ -691,7 +691,7 @@ WebInspector.documentClick = function(event)
             return;
         }
 
-        WebInspector.showResourcesPanel();
+        WebInspector.showPanel("resources");
     }
 
     if (WebInspector.followLinkTimeout)
@@ -1081,7 +1081,7 @@ WebInspector.elementDragEnd = function(event)
 WebInspector.toggleSearchingForNode = function()
 {
     if (this.panels.elements) {
-        this.showElementsPanel();
+        this.showPanel("elements");
         this.panels.elements.toggleSearchingForNode();
     }
 }
@@ -1096,55 +1096,24 @@ WebInspector.showChanges = function()
     this.drawer.showView(this.changes);
 }
 
-WebInspector.showElementsPanel = function()
+WebInspector.showPanel = function(panel)
 {
-    this.currentPanel = this.panels.elements;
-}
-
-WebInspector.showResourcesPanel = function()
-{
-    this.currentPanel = this.panels.resources;
-}
-
-WebInspector.showScriptsPanel = function()
-{
-    this.currentPanel = this.panels.scripts;
-}
-
-WebInspector.showTimelinePanel = function()
-{
-    this.currentPanel = this.panels.timeline;
-}
-
-WebInspector.showProfilesPanel = function()
-{
-    this.currentPanel = this.panels.profiles;
-}
-
-WebInspector.showStoragePanel = function()
-{
-    this.currentPanel = this.panels.storage;
-}
-
-WebInspector.showConsolePanel = function()
-{
-    this.currentPanel = this.panels.console;
-}
-
-WebInspector.showAuditsPanel = function()
-{
-    this.currentPanel = this.panels.audits;
+    if (!(panel in this.panels)) {
+        console.error("Unable to show %s panel.", panel);
+        panel = "elements";
+    }
+    this.currentPanel = this.panels[panel];
 }
 
 WebInspector.selectDatabase = function(o)
 {
-    WebInspector.showStoragePanel();
+    WebInspector.showPanel("storage");
     WebInspector.panels.storage.selectDatabase(o);
 }
 
 WebInspector.selectDOMStorage = function(o)
 {
-    WebInspector.showStoragePanel();
+    WebInspector.showPanel("storage");
     WebInspector.panels.storage.selectDOMStorage(o);
 }
 
@@ -1742,7 +1711,7 @@ WebInspector.linkifyStringAsFragment = function(string)
 
 WebInspector.showProfileForURL = function(url)
 {
-    WebInspector.showProfilesPanel();
+    WebInspector.showPanel("profiles");
     WebInspector.panels.profiles.showProfileForURL(url);
 }
 

@@ -683,7 +683,7 @@ WebInspector.ElementsTreeElement.prototype = {
             return;
 
         if (this.treeOutline.showInElementsPanelEnabled) {
-            WebInspector.showElementsPanel();
+            WebInspector.showPanel("elements");
             WebInspector.panels.elements.focusedDOMNode = this.representedObject;
         }
 

@@ -1,3 +1,36 @@
+2010-08-09  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        WebInspector: Current implementation of showPanel is a bit complicated.
+        It is using internal enum for all the panels and this is the problem because
+        we should change a lot of code for a new panel.
+        https://bugs.webkit.org/show_bug.cgi?id=43711
+
+        * WebCore.exp.in:
+        * inspector/Inspector.idl:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::storeLastActivePanel):
+        (WebCore::InspectorController::connectFrontend):
+        (WebCore::InspectorController::showPanel):
+        (WebCore::InspectorController::disconnectFrontend):
+        * inspector/InspectorController.h:
+        * inspector/InspectorFrontend.cpp:
+        * inspector/InspectorFrontend.h:
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype.selectOnMouseDown):
+        * inspector/front-end/ExtensionServer.js:
+        (WebInspector.ExtensionServer.prototype._onRevealAndSelectResource):
+        * inspector/front-end/inspector.js:
+        (WebInspector.documentClick.followLink):
+        (WebInspector.documentClick):
+        (WebInspector.toggleSearchingForNode):
+        (WebInspector.showPanel):
+        (WebInspector.selectDatabase):
+        (WebInspector.selectDOMStorage):
+        (WebInspector.showProfileForURL):
+
 2010-08-09  Ariya Hidayat  <ariya@sencha.com>
 
         Reviewed by Kenneth Rohde Christiansen.

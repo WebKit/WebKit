@@ -1,3 +1,21 @@
+2010-08-09  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        WebInspector: Current implementation of showPanel is a bit complicated.
+        It is using internal enum for all the panels and this is the problem because
+        we should change a lot of code for a new panel.
+        https://bugs.webkit.org/show_bug.cgi?id=43711
+
+        * inspector/debugger-breakpoints-not-activated-on-reload.html:
+        * inspector/debugger-cyclic-ref.html:
+        * inspector/debugger-eval-while-paused.html:
+        * inspector/debugger-no-nested-pause.html:
+        * inspector/debugger-pause-in-eval-script.html:
+        * inspector/debugger-pause-on-debugger-statement.html:
+        * inspector/debugger-proto-property.html:
+        * inspector/elements-panel-limited-children.html:
+
 2010-08-09  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Update chromium's expectation.

@@ -13,7 +13,7 @@ function frontend_testPauseOnDebuggerStatement(testController)
 {
     testController.waitUntilDone();
 
-    WebInspector.showScriptsPanel();
+    WebInspector.showPanel("scripts");
 
     var scriptToEvaluate = "function testFunction() {\n" +
                            "    debugger;\n" +

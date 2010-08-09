@@ -20,7 +20,7 @@ function frontend_testNoNestedPause(testController)
 {
     testController.waitUntilDone();
 
-    WebInspector.showScriptsPanel();
+    WebInspector.showPanel("scripts");
     frontend_ensureDebuggerEnabled(debuggerWasEnabledCallback);
 
     function debuggerWasEnabledCallback()

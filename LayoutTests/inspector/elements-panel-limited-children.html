@@ -125,6 +125,7 @@ function frontend_revealAndExpandDataNodeInElementsPanel(testController)
 
 function frontend_loadDOM(testController)
 {
+    WebInspector.showPanel("elements");
     testController.waitUntilDone();
     // Need test to be async to expand whole the tree first.
     try {

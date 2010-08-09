@@ -57,43 +57,6 @@ void InspectorFrontend::close()
     function.call();
 }
 
-void InspectorFrontend::showPanel(int panel)
-{
-    const char* showFunctionName;
-    switch (panel) {
-        case InspectorController::AuditsPanel:
-            showFunctionName = "showAuditsPanel";
-            break;
-        case InspectorController::ConsolePanel:
-            showFunctionName = "showConsolePanel";
-            break;
-        case InspectorController::ElementsPanel:
-            showFunctionName = "showElementsPanel";
-            break;
-        case InspectorController::ResourcesPanel:
-            showFunctionName = "showResourcesPanel";
-            break;
-        case InspectorController::TimelinePanel:
-            showFunctionName = "showTimelinePanel";
-            break;
-        case InspectorController::ProfilesPanel:
-            showFunctionName = "showProfilesPanel";
-            break;
-        case InspectorController::ScriptsPanel:
-            showFunctionName = "showScriptsPanel";
-            break;
-        case InspectorController::StoragePanel:
-            showFunctionName = "showStoragePanel";
-            break;
-        default:
-            ASSERT_NOT_REACHED();
-            showFunctionName = 0;
-    }
-
-    if (showFunctionName)
-        callSimpleFunction(showFunctionName);
-}
-
 void InspectorFrontend::callSimpleFunction(const String& functionName)
 {
     ScriptFunctionCall function(m_webInspector, "dispatch");

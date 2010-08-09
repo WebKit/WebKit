@@ -47,7 +47,6 @@ namespace WebCore {
         ~InspectorFrontend();
 
         void close();
-        void showPanel(int panel);
         ScriptState* scriptState() const { return m_webInspector.scriptState(); }
     private:
         void callSimpleFunction(const String& functionName);

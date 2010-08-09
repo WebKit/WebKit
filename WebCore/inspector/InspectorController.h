@@ -94,17 +94,10 @@ public:
     typedef HashMap<int, RefPtr<InspectorDatabaseResource> > DatabaseResourcesMap;
     typedef HashMap<int, RefPtr<InspectorDOMStorageResource> > DOMStorageResourcesMap;
 
-    typedef enum {
-        AuditsPanel,
-        CurrentPanel,
-        ConsolePanel,
-        ElementsPanel,
-        ResourcesPanel,
-        ScriptsPanel,
-        TimelinePanel,
-        ProfilesPanel,
-        StoragePanel
-    } SpecialPanels;
+    static const char* const ConsolePanel;
+    static const char* const ElementsPanel;
+    static const char* const ProfilesPanel;
+    static const char* const ScriptsPanel;
 
     InspectorController(Page*, InspectorClient*);
     ~InspectorController();
@@ -134,7 +127,7 @@ public:
     void hideDOMNodeHighlight() { hideHighlight(); }
 
     void show();
-    void showPanel(SpecialPanels);
+    void showPanel(const String&);
     void close();
 
     // We are in transition from JS transport via webInspector to native
@@ -323,8 +316,6 @@ private:
 
     bool isMainResourceLoader(DocumentLoader* loader, const KURL& requestUrl);
 
-    SpecialPanels specialPanelForJSName(const String& panelName);
-
     void didEvaluateForTestInFrontend(long callId, const String& jsonResult);
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
@@ -363,7 +354,7 @@ private:
 #if ENABLE(DOM_STORAGE)
     DOMStorageResourcesMap m_domStorageResources;
 #endif
-    SpecialPanels m_showAfterVisible;
+    String m_showAfterVisible;
     RefPtr<Node> m_highlightedNode;
 #if ENABLE(INSPECTOR)
     RefPtr<InspectorValue> m_sessionSettings;

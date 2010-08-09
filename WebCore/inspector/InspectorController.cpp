@@ -119,7 +119,12 @@ static const char* const resourceTrackingEnabledSettingName = "resourceTrackingE
 static const char* const debuggerEnabledSettingName = "debuggerEnabled";
 static const char* const profilerEnabledSettingName = "profilerEnabled";
 static const char* const inspectorAttachedHeightName = "inspectorAttachedHeight";
-static const char* const lastActivePanelSettingName = "lastActivePanel";
+static const char* const lastActivePanel = "lastActivePanel";
+const char* const InspectorController::ElementsPanel = "elements";
+const char* const InspectorController::ConsolePanel = "console";
+const char* const InspectorController::ScriptsPanel = "scripts";
+const char* const InspectorController::ProfilesPanel = "profiles";
+
 static const char* const monitoringXHRSettingName = "xhrMonitor";
 
 int connectedFrontendCount = 0;
@@ -150,7 +155,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* client)
     , m_openingFrontend(false)
     , m_cssStore(new InspectorCSSStore(this))
     , m_expiredConsoleMessageCount(0)
-    , m_showAfterVisible(CurrentPanel)
+    , m_showAfterVisible(lastActivePanel)
     , m_sessionSettings(InspectorObject::create())
     , m_groupLevel(0)
     , m_searchingForNode(false)
@@ -381,7 +386,7 @@ void InspectorController::markTimeline(const String& message)
 
 void InspectorController::storeLastActivePanel(const String& panelName)
 {
-    setSetting(lastActivePanelSettingName, panelName);
+    setSetting(lastActivePanel, panelName);
 }
 
 void InspectorController::mouseDidMoveOverElement(const HitTestResult& result, unsigned)
@@ -497,10 +502,8 @@ void InspectorController::connectFrontend(const ScriptObject& webInspector)
     }
 #endif
 
-    if (m_showAfterVisible == CurrentPanel) {
-        String lastActivePanelSetting = setting(lastActivePanelSettingName);
-        m_showAfterVisible = specialPanelForJSName(lastActivePanelSetting);
-    }
+    if (m_showAfterVisible == lastActivePanel)
+        m_showAfterVisible = setting(lastActivePanel);
 
     if (m_nodeToFocus)
         focusNode();
@@ -531,7 +534,7 @@ void InspectorController::show()
     }
 }
 
-void InspectorController::showPanel(SpecialPanels panel)
+void InspectorController::showPanel(const String& panel)
 {
     if (!enabled())
         return;
@@ -543,10 +546,10 @@ void InspectorController::showPanel(SpecialPanels panel)
         return;
     }
 
-    if (panel == CurrentPanel)
+    if (panel == lastActivePanel)
         return;
 
-    m_frontend->showPanel(panel);
+    m_remoteFrontend->showPanel(panel);
 }
 
 void InspectorController::close()
@@ -579,7 +582,7 @@ void InspectorController::disconnectFrontend()
     unbindAllResources();
     stopTimelineProfiler();
 
-    m_showAfterVisible = CurrentPanel;
+    m_showAfterVisible = lastActivePanel;
 
     hideHighlight();
 
@@ -1890,27 +1893,6 @@ bool InspectorController::stopTiming(const String& title, double& elapsed)
 
     elapsed = currentTime() * 1000 - startTime;
     return true;
-}
-
-InspectorController::SpecialPanels InspectorController::specialPanelForJSName(const String& panelName)
-{
-    if (panelName == "elements")
-        return ElementsPanel;
-    if (panelName == "resources")
-        return ResourcesPanel;
-    if (panelName == "scripts")
-        return ScriptsPanel;
-    if (panelName == "timeline")
-        return TimelinePanel;
-    if (panelName == "profiles")
-        return ProfilesPanel;
-    if (panelName == "storage" || panelName == "databases")
-        return StoragePanel;
-    if (panelName == "audits")
-        return AuditsPanel;
-    if (panelName == "console")
-        return ConsolePanel;
-    return ElementsPanel;
 }
 
 InjectedScript InspectorController::injectedScriptForNodeId(long id)
