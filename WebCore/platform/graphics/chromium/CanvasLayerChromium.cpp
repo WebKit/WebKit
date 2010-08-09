@@ -75,6 +75,8 @@ void CanvasLayerChromium::updateTextureContents(unsigned textureId)
     }
     // Update the contents of the texture used by the compositor.
     if (m_contentsDirty) {
+        if (m_prepareTextureCallback)
+            m_prepareTextureCallback->willPrepareTexture();
         m_context->prepareTexture();
         m_contentsDirty = false;
     }

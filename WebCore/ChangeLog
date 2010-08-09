@@ -1,3 +1,28 @@
+2010-08-09  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [chromium] Add a PrepareTextureCallback to the chromium canvas layer compositor to upload mixed-mode results before compositing
+        https://bugs.webkit.org/show_bug.cgi?id=43656
+
+        When compositing an accelerated canvas that is using both hardware and software drawing,
+        we need a callback before compositing the layer to make sure that we upload any software
+        drawn results to the texture.  This will go away as soon as implement all draw calls
+        in hardware.
+
+        To test, run any canvas demo that runs in mixed mode and verifies that the software results
+        always show up.
+
+        * platform/graphics/chromium/CanvasLayerChromium.cpp:
+        (WebCore::CanvasLayerChromium::updateTextureContents):
+        * platform/graphics/chromium/CanvasLayerChromium.h:
+        (WebCore::CanvasLayerChromium::setPrepareTextureCallback):
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PrepareTextureCallbackImpl::create):
+        (WebCore::PrepareTextureCallbackImpl::willPrepareTexture):
+        (WebCore::PrepareTextureCallbackImpl::PrepareTextureCallbackImpl):
+        (WebCore::PlatformContextSkia::setGraphicsContext3D):
+
 2010-08-09  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by David Levin.
