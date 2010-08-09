@@ -1,3 +1,19 @@
+2010-08-09  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Skip the slow software rendering path of GraphicsContext3D if accelerated
+        compositing is active. This fixes an issue with WebGL and the compositor
+        in which the software rendering of WebGL would cause the current GL context
+        to change while the compositor was processing layers. Tested by running
+        several WebGL samples both with the compositor enabled and disabled.
+        https://bugs.webkit.org/show_bug.cgi?id=43644
+
+        * src/GraphicsContext3D.cpp:
+        (WebCore::GraphicsContext3DInternal::GraphicsContext3DInternal):
+        (WebCore::GraphicsContext3DInternal::initialize):
+        (WebCore::GraphicsContext3DInternal::beginPaint):
+
 2010-08-06  James Hawkins  <jhawkins@chromium.org>
 
         Reviewed by Dimitri Glazkov.
