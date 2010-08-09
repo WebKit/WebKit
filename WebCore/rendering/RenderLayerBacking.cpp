@@ -152,19 +152,14 @@ static bool hasNonZeroTransformOrigin(const RenderObject* renderer)
         || (style->transformOriginY().type() == Fixed && style->transformOriginY().value());
 }
 
-static RenderLayer* enclosingOverflowClipAncestor(RenderLayer* layer, bool& crossesTransform)
+static bool layerOrAncestorIsTransformed(RenderLayer* layer)
 {
-    crossesTransform = false;
-
-    for (RenderLayer* curr = layer->parent(); curr; curr = curr->parent()) {
-        if (curr->renderer()->hasOverflowClip())
-            return curr;
-
+    for (RenderLayer* curr = layer; curr; curr = curr->parent()) {
         if (curr->hasTransform())
-            crossesTransform = true;
+            return true;
     }
     
-    return 0;
+    return false;
 }
 
 void RenderLayerBacking::updateCompositedBounds()
@@ -172,38 +167,24 @@ void RenderLayerBacking::updateCompositedBounds()
     IntRect layerBounds = compositor()->calculateCompositedBounds(m_owningLayer, m_owningLayer);
 
     // Clip to the size of the document or enclosing overflow-scroll layer.
-    if (compositor()->compositingConsultsOverlap() && !m_owningLayer->hasTransform()) {
-        bool crossesTransform;
-        RenderLayer* overflowAncestor = enclosingOverflowClipAncestor(m_owningLayer, crossesTransform);
-        // If an ancestor is transformed, we can't currently compute the correct rect to intersect with.
-        // We'd need RenderObject::convertContainerToLocalQuad(), which doesn't yet exist.
-        if (!crossesTransform) {
-            IntRect clippingBounds;
-            RenderLayer* boundsRelativeLayer;
+    // If this or an ancestor is transformed, we can't currently compute the correct rect to intersect with.
+    // We'd need RenderObject::convertContainerToLocalQuad(), which doesn't yet exist.
+    if (compositor()->compositingConsultsOverlap() && !layerOrAncestorIsTransformed(m_owningLayer)) {
+        RenderView* view = m_owningLayer->renderer()->view();
+        RenderLayer* rootLayer = view->layer();
 
-            if (overflowAncestor) {
-                RenderBox* overflowBox = toRenderBox(overflowAncestor->renderer());
-                // If scrollbars are visible, then constrain the layer to the scrollable area, so we can avoid redraws
-                // on scrolling. Otherwise just clip to the visible area (it can still be scrolled via JS, but we'll come
-                // back through this code when the scroll offset changes).
-                if (overflowBox->scrollsOverflow())
-                    clippingBounds = IntRect(-overflowAncestor->scrollXOffset(), -overflowAncestor->scrollYOffset(), overflowBox->scrollWidth(), overflowBox->scrollHeight());
-                else
-                    clippingBounds = clipBox(overflowBox);
+        // Start by clipping to the view's bounds.
+        IntRect clippingBounds = view->layoutOverflowRect();
 
-                boundsRelativeLayer = overflowAncestor;
-            } else {
-                RenderView* view = m_owningLayer->renderer()->view();
-                clippingBounds = view->layoutOverflowRect();
-                boundsRelativeLayer = view->layer();
-            }
-            
-            int deltaX = 0;
-            int deltaY = 0;
-            m_owningLayer->convertToLayerCoords(boundsRelativeLayer, deltaX, deltaY);
-            clippingBounds.move(-deltaX, -deltaY);
-            layerBounds.intersect(clippingBounds);
-        }
+        if (m_owningLayer != rootLayer)
+            clippingBounds.intersect(m_owningLayer->backgroundClipRect(rootLayer, true));
+
+        int deltaX = 0;
+        int deltaY = 0;
+        m_owningLayer->convertToLayerCoords(rootLayer, deltaX, deltaY);
+        clippingBounds.move(-deltaX, -deltaY);
+
+        layerBounds.intersect(clippingBounds);
     }
     
     // If the element has a transform-origin that has fixed lengths, and the renderer has zero size,
