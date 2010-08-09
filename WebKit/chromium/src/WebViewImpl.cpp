@@ -178,6 +178,7 @@ static const PopupContainerSettings autoFillPopupSettings = {
 WebView* WebView::create(WebViewClient* client, WebDevToolsAgentClient* devToolsClient)
 {
     // Keep runtime flag for device orientation turned off until it's implemented.
+    WebRuntimeFeatures::enableDeviceMotion(false);
     WebRuntimeFeatures::enableDeviceOrientation(false);
 
     // Pass the WebViewImpl's self-reference to the caller.
