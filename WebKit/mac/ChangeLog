@@ -1,3 +1,20 @@
+2010-08-09  Mark Rowe  <mrowe@apple.com>
+
+        Merge r62872.
+
+    2010-07-08  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        <rdar://problem/8136327> - Crash in Entourage calling WebCache method from background thread
+
+        * Misc/WebCache.mm:
+        (+[WebCache setDisabled:]): Forward the call to the main thread if called from a background thread.
+
+        * Misc/WebNSObjectExtras.h:
+        * Misc/WebNSObjectExtras.mm:
+        (+[NSObject _webkit_invokeOnMainThread]): Add a class version of the main thread invoker.
+
 2010-07-22  Mark Rowe  <mrowe@apple.com>
 
         Merge r63927.

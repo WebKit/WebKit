@@ -25,6 +25,7 @@
 
 #import "WebCache.h"
 
+#import "WebNSObjectExtras.h"
 #import "WebPreferences.h"
 #import "WebSystemInterface.h"
 #import "WebView.h"
@@ -126,6 +127,9 @@
 
 + (void)setDisabled:(BOOL)disabled
 {
+    if (!pthread_main_np())
+        return [[self _webkit_invokeOnMainThread] setDisabled:disabled];
+
     WebCore::cache()->setDisabled(disabled);
 }
 
