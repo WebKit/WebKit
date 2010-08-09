@@ -1,3 +1,19 @@
+2010-08-09  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by David Kilzer.
+
+        AX: Placeholder value for text fields not exposed like it should be
+        https://bugs.webkit.org/show_bug.cgi?id=43598
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::placeholderValue):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::title):
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper accessibilityAttributeNames]):
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:]):
+
 2010-08-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Justin Garcia.

@@ -1,3 +1,13 @@
+2010-08-09  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by David Kilzer.
+
+        AX: Placeholder value for text fields not exposed like it should be
+        https://bugs.webkit.org/show_bug.cgi?id=43598
+
+        * accessibility/placeholder-expected.txt:
+        * accessibility/placeholder.html:
+
 2010-08-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Justin Garcia.

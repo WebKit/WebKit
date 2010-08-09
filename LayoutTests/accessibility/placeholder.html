@@ -16,11 +16,11 @@ var successfullyParsed = false;
      
     <script>
         if (window.accessibilityController) {
-            description("This test makes sure that the AXTitle will fall back to placeholder text if nothing else is available");
+            description("This test makes sure that the placeholder is returned as the correct attribute");
 
             var field = document.getElementById("searchterm").focus();
             var fieldElement = accessibilityController.focusedElement;
-            shouldBe("fieldElement.title", "'AXTitle: search'");
+            shouldBe("fieldElement.stringAttributeValue('AXPlaceholderValue')", "'search'");
 
         }
         successfullyParsed = true;

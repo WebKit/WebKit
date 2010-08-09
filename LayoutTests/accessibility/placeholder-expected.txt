@@ -1,10 +1,10 @@
 
-This test makes sure that the AXTitle will fall back to placeholder text if nothing else is available
+This test makes sure that the placeholder is returned as the correct attribute
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS fieldElement.title is 'AXTitle: search'
+PASS fieldElement.stringAttributeValue('AXPlaceholderValue') is 'search'
 PASS successfullyParsed is true
 
 TEST COMPLETE

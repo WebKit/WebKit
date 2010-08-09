@@ -157,6 +157,10 @@ using namespace std;
 #define NSAccessibilityHasPopupAttribute @"AXHasPopup"
 #endif
 
+#ifndef NSAccessibilityPlaceholderValueAttribute
+#define NSAccessibilityPlaceholderValueAttribute @"AXPlaceholderValue"
+#endif
+
 #ifdef BUILDING_ON_TIGER
 typedef unsigned NSUInteger;
 #define NSAccessibilityValueDescriptionAttribute @"AXValueDescription"
@@ -731,6 +735,7 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
         [tempArray addObject:NSAccessibilityTitleUIElementAttribute];
         [tempArray addObject:NSAccessibilityAccessKeyAttribute];
         [tempArray addObject:NSAccessibilityRequiredAttribute];
+        [tempArray addObject:NSAccessibilityPlaceholderValueAttribute];
         textAttrs = [[NSArray alloc] initWithArray:tempArray];
         [tempArray release];
     }
@@ -1858,6 +1863,9 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             [dropEffectsArray addObject:dropEffects[i]];
         return dropEffectsArray;
     }
+    
+    if ([attributeName isEqualToString:NSAccessibilityPlaceholderValueAttribute])
+        return m_object->placeholderValue();
     
     if ([attributeName isEqualToString:NSAccessibilityHasPopupAttribute])
         return [NSNumber numberWithBool:m_object->ariaHasPopup()];
