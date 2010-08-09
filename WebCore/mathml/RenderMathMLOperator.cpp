@@ -38,19 +38,19 @@ namespace WebCore {
 using namespace MathMLNames;
 
 RenderMathMLOperator::RenderMathMLOperator(Node* container)
-    : RenderMathMLBlock(container),
-      m_stretchHeight(0),
-      m_operator(0)
+    : RenderMathMLBlock(container)
+    , m_stretchHeight(0)
+    , m_operator(0)
 {
 }
-    
+
 RenderMathMLOperator::RenderMathMLOperator(Node* container, UChar operatorChar)
-    : RenderMathMLBlock(container),
-      m_stretchHeight(0),
-      m_operator(operatorChar)
+    : RenderMathMLBlock(container)
+    , m_stretchHeight(0)
+    , m_operator(operatorChar)
 {
 }
-    
+
 bool RenderMathMLOperator::isChildAllowed(RenderObject*, RenderStyle*) const
 {
     return false;
@@ -59,7 +59,7 @@ bool RenderMathMLOperator::isChildAllowed(RenderObject*, RenderStyle*) const
 static const float gOperatorSpacer = 0.1f;
 static const float gOperatorExpansion = 1.2f;
 
-void  RenderMathMLOperator::stretchToHeight(int height)
+void RenderMathMLOperator::stretchToHeight(int height)
 {
     if (height == m_stretchHeight)
         return;
@@ -87,15 +87,20 @@ static struct StretchyCharacter {
     UChar extensionGlyph;
     UChar bottomGlyph;
     UChar middleGlyph;
-} stretchyCharacters[9] = {
-{ 0x28  , 0x239b, 0x239c, 0x239d, 0x0    }, // left parenthesis
-{ 0x29  , 0x239e, 0x239f, 0x23a0, 0x0    }, // right parenthesis
-{ 0x5b  , 0x23a1, 0x23a2, 0x23a3, 0x0    }, // left square bracket
-{ 0x5d  , 0x23a4, 0x23a5, 0x23a6, 0x0    }, // right square bracket
-{ 0x7b  , 0x23a7, 0x23aa, 0x23a9, 0x23a8 }, // left curly bracket
-{ 0x7c  , 0x23d0, 0x23d0, 0x23d0, 0x0    }, // vertical bar
-{ 0x7d  , 0x23ab, 0x23aa, 0x23ad, 0x23ac }, // right curly bracket
-{ 0x222b, 0x2320, 0x23ae, 0x2321, 0x0    } // integral sign
+} stretchyCharacters[13] = {
+    { 0x28  , 0x239b, 0x239c, 0x239d, 0x0    }, // left parenthesis
+    { 0x29  , 0x239e, 0x239f, 0x23a0, 0x0    }, // right parenthesis
+    { 0x5b  , 0x23a1, 0x23a2, 0x23a3, 0x0    }, // left square bracket
+    { 0x2308, 0x23a1, 0x23a2, 0x23a2, 0x0    }, // left ceiling
+    { 0x230a, 0x23a2, 0x23a2, 0x23a3, 0x0    }, // left floor
+    { 0x5d  , 0x23a4, 0x23a5, 0x23a6, 0x0    }, // right square bracket
+    { 0x2309, 0x23a4, 0x23a5, 0x23a5, 0x0    }, // right ceiling
+    { 0x230b, 0x23a5, 0x23a5, 0x23a6, 0x0    }, // right floor
+    { 0x7b  , 0x23a7, 0x23aa, 0x23a9, 0x23a8 }, // left curly bracket
+    { 0x7c  , 0x23d0, 0x23d0, 0x23d0, 0x0    }, // vertical bar
+    { 0x2016, 0x2016, 0x2016, 0x2016, 0x0    }, // double vertical line
+    { 0x7d  , 0x23ab, 0x23aa, 0x23ad, 0x23ac }, // right curly bracket
+    { 0x222b, 0x2320, 0x23ae, 0x2321, 0x0    } // integral sign
 };
 
 // We stack glyphs using a 14px height with a displayed glyph height
@@ -107,12 +112,14 @@ static struct StretchyCharacter {
 //
 // All of these settings are represented in the constants below.
 
+// FIXME: use fractions of style()->fontSize() for proper zooming/resizing.
 static const int gGlyphFontSize = 14;
-static const int gGlyphLineHeight = 12;
+static const int gGlyphLineHeight = 11;
 static const int gMinimumStretchHeight = 24;
 static const int gGlyphHeight = 10;
-static const int gMiddleGlyphTopAdjust = -2;
-static const int gBottomGlyphTopAdjust = -4;
+static const int gTopGlyphTopAdjust = 1;
+static const int gMiddleGlyphTopAdjust = -1;
+static const int gBottomGlyphTopAdjust = -3;
 static const float gMinimumRatioForStretch = 0.10f;
 
 void RenderMathMLOperator::updateFromElement()
@@ -141,7 +148,7 @@ void RenderMathMLOperator::updateFromElement()
                 String opText = mo->textContent();
                 for (unsigned int i = 0; !firstChar && i < opText.length(); i++) {
                     if (!isSpaceOrNewline(opText[i]))
-                       firstChar = opText[i];
+                        firstChar = opText[i];
                 }
             }
         }
@@ -176,7 +183,7 @@ void RenderMathMLOperator::updateFromElement()
         RefPtr<RenderStyle> newStyle = RenderStyle::create();
         newStyle->inheritFrom(style());
         newStyle->setDisplay(INLINE_BLOCK);
-
+        
         // Check for a stretchable character that is under the minimum height and use the
         // font size to adjust the glyph size.
         int currentFontSize = style()->fontSize();
@@ -203,7 +210,7 @@ void RenderMathMLOperator::updateFromElement()
 
         container->setStyle(newStyle.release());
         addChild(container);
-
+        
         // Build the text of the operator.
         RenderText* text = 0;
         if (m_operator) 
@@ -227,12 +234,12 @@ void RenderMathMLOperator::updateFromElement()
             int half = (m_stretchHeight - gGlyphHeight) / 2;
             if (half <= gGlyphHeight) {
                 // We only have enough space for a single middle glyph.
-                createGlyph(stretchyCharacters[index].topGlyph, half);
+                createGlyph(stretchyCharacters[index].topGlyph, half, gTopGlyphTopAdjust);
                 createGlyph(stretchyCharacters[index].middleGlyph, gGlyphHeight, gMiddleGlyphTopAdjust);
                 createGlyph(stretchyCharacters[index].bottomGlyph, 0, gBottomGlyphTopAdjust);
             } else {
                 // We have to extend both the top and bottom to the middle.
-                createGlyph(stretchyCharacters[index].topGlyph, gGlyphHeight);
+                createGlyph(stretchyCharacters[index].topGlyph, gGlyphHeight, gTopGlyphTopAdjust);
                 int remaining = half - gGlyphHeight;
                 while (remaining > 0) {
                     if (remaining < gGlyphHeight) {
@@ -270,7 +277,7 @@ void RenderMathMLOperator::updateFromElement()
         } else {
             // We do not have a middle glyph and so we just extend from the top to the bottom glyph.
             int remaining = m_stretchHeight - 2 * gGlyphHeight;
-            createGlyph(stretchyCharacters[index].topGlyph, gGlyphHeight);
+            createGlyph(stretchyCharacters[index].topGlyph, gGlyphHeight, gTopGlyphTopAdjust);
             while (remaining > 0) {
                 if (remaining < gGlyphHeight) {
                     createGlyph(stretchyCharacters[index].extensionGlyph, remaining);
@@ -290,7 +297,7 @@ RefPtr<RenderStyle> RenderMathMLOperator::createStackableStyle(int size, int top
     RefPtr<RenderStyle> newStyle = RenderStyle::create();
     newStyle->inheritFrom(style());
     newStyle->setDisplay(BLOCK);
-
+    
     FontDescription desc;
     desc.setIsAbsoluteSize(true);
     desc.setSpecifiedSize(gGlyphFontSize);
@@ -302,7 +309,7 @@ RefPtr<RenderStyle> RenderMathMLOperator::createStackableStyle(int size, int top
 
     if (size > 0)
         newStyle->setMaxHeight(Length(size, Fixed));
-
+    
     newStyle->setOverflowY(OHIDDEN);
     newStyle->setOverflowX(OHIDDEN);
     if (topRelative) {
@@ -330,7 +337,7 @@ RenderBlock* RenderMathMLOperator::createGlyph(UChar glyph, int size, int charRe
         parent->addChild(charBlock);
         parent = charBlock;
     }
-     
+    
     RenderText* text = new (renderArena()) RenderText(node(), StringImpl::create(&glyph, 1));
     text->setStyle(container->style());
     parent->addChild(text);
@@ -345,7 +352,7 @@ int RenderMathMLOperator::baselinePosition(bool firstLine, bool isRootLineBox) c
         return firstChild()->baselinePosition(firstLine, isRootLineBox);
     return RenderBlock::baselinePosition(firstLine, isRootLineBox);
 }
-
+    
 }
 
 #endif

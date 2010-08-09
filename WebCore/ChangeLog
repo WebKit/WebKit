@@ -1,3 +1,33 @@
+2010-08-09  François Sausset  <sausset@gmail.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Implement mfenced MathML element
+        Update stretchy operator code to take into account new brackets and to tune layout parameters
+        https://bugs.webkit.org/show_bug.cgi?id=42472
+
+        Test: mathml/presentation/fenced.xhtml
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * mathml/MathMLInlineContainerElement.cpp:
+        (WebCore::MathMLInlineContainerElement::MathMLInlineContainerElement):
+        (WebCore::MathMLInlineContainerElement::createRenderer):
+        * mathml/RenderMathMLFenced.cpp: Added.
+        (WebCore::RenderMathMLFenced::RenderMathMLFenced):
+        (WebCore::RenderMathMLFenced::updateFromElement):
+        (WebCore::RenderMathMLFenced::makeOperatorStyle):
+        (WebCore::RenderMathMLFenced::makeFences):
+        (WebCore::RenderMathMLFenced::addChild):
+        (WebCore::RenderMathMLFenced::layout):
+        * mathml/RenderMathMLFenced.h: Added.
+        * mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::RenderMathMLOperator):
+        (WebCore::RenderMathMLOperator::stretchToHeight):
+        (WebCore::):
+        (WebCore::RenderMathMLOperator::updateFromElement):
+        (WebCore::RenderMathMLOperator::createStackableStyle):
+        (WebCore::RenderMathMLOperator::createGlyph):
+
 2010-08-08  ryuan choi  <ryuan.choi@samsung.com>
 
         Reviewed by Darin Adler.

@@ -1,3 +1,30 @@
+2010-08-09  François Sausset  <sausset@gmail.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add a test for the mfenced MathML element and update tests with stretched parenthesis/brackets/operators
+        https://bugs.webkit.org/show_bug.cgi?id=42472
+
+        * mathml/presentation/fenced.xhtml: Added.
+        * mathml/presentation/row.xhtml:
+        * platform/mac/mathml/presentation/fenced-expected.checksum: Added.
+        * platform/mac/mathml/presentation/fenced-expected.png: Added.
+        * platform/mac/mathml/presentation/fenced-expected.txt: Added.
+        * platform/mac/mathml/presentation/mo-expected.checksum:
+        * platform/mac/mathml/presentation/mo-expected.png:
+        * platform/mac/mathml/presentation/mo-expected.txt:
+        * platform/mac/mathml/presentation/over-expected.checksum:
+        * platform/mac/mathml/presentation/over-expected.png:
+        * platform/mac/mathml/presentation/over-expected.txt:
+        * platform/mac/mathml/presentation/row-alignment-expected.checksum:
+        * platform/mac/mathml/presentation/row-alignment-expected.png:
+        * platform/mac/mathml/presentation/row-alignment-expected.txt:
+        * platform/mac/mathml/presentation/row-expected.checksum:
+        * platform/mac/mathml/presentation/row-expected.png:
+        * platform/mac/mathml/presentation/row-expected.txt:
+        * platform/mac/mathml/presentation/tables-expected.checksum:
+        * platform/mac/mathml/presentation/tables-expected.png:
+
 2010-08-04  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Tony Chang.
