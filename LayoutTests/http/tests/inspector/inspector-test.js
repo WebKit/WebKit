@@ -125,7 +125,7 @@ function frontend_dumpTreeItem(treeItem, result, prefix)
 
 function frontend_setupTestEnvironment()
 {
-   WebInspector.showElementsPanel();
+   WebInspector.showPanel("elements");
 }
 
 function frontend_addSniffer(receiver, methodName, override, opt_sticky)

@@ -1,3 +1,13 @@
+2010-08-09  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: Chromium tests fix.
+
+        Chromium: provisional interactive ui tests fix.
+
+        * http/tests/inspector/inspector-test.js:
+        (frontend_setupTestEnvironment):
+        * inspector/elements-panel-limited-children.html:
+
 2010-05-20  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Ojan Vafai.

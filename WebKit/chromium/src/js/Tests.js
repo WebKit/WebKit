@@ -1852,15 +1852,28 @@ uiTests.runTest = function(name)
 };
 
 (function() {
-var oldShowElementsPanel = WebInspector.showElementsPanel;
-WebInspector.showElementsPanel = function()
+
+function runTests()
 {
-    oldShowElementsPanel.call(this);
     uiTests._populatedInterface = true;
     var name = uiTests._pendingTestName;
     delete uiTests._pendingTestName;
     if (name)
         new TestSuite().runTest(name);
+}
+
+var oldShowElementsPanel = WebInspector.showElementsPanel;
+WebInspector.showElementsPanel = function()
+{
+    oldShowElementsPanel.call(this);
+    runTests();
+}
+
+var oldShowPanel = WebInspector.showPanel;
+WebInspector.showPanel = function(name)
+{
+    oldShowPanel.call(this, name);
+    runTests();
 }
 
 })();
