@@ -19,7 +19,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -74,7 +74,7 @@ void HTMLViewSourceDocument::createContainingTable()
     RefPtr<HTMLBodyElement> body = HTMLBodyElement::create(this);
     html->parserAddChild(body);
     body->attach();
-    
+
     // Create a line gutter div that can be used to make sure the gutter extends down the height of the whole
     // document.
     RefPtr<HTMLDivElement> div = HTMLDivElement::create(this);
@@ -137,7 +137,7 @@ void HTMLViewSourceDocument::addViewSourceToken(Token* token)
                 if (guide->at(i) == 'a' || guide->at(i) == 'x' || guide->at(i) == 'v') {
                     // Add in the string.
                     addText(String(static_cast<UChar*>(guide->data()) + begin, i - begin), classNameStr);
-                     
+
                     begin = i + 1;
 
                     if (guide->at(i) == 'a') {
@@ -149,7 +149,7 @@ void HTMLViewSourceDocument::addViewSourceToken(Token* token)
                     if (attr) {
                         if (guide->at(i) == 'a') {
                             String name = attr->name().toString();
-                            
+
                             m_current = addSpanWithClassName("webkit-html-attribute-name");
                             addText(name, "webkit-html-attribute-name");
                             if (m_current != m_tbody)
@@ -179,7 +179,7 @@ void HTMLViewSourceDocument::addViewSourceToken(Token* token)
                     }
                 }
             }
-            
+
             // Add in any string that might be left.
             if (begin < size)
                 addText(String(static_cast<UChar*>(guide->data()) + begin, size - begin), classNameStr);
@@ -187,7 +187,7 @@ void HTMLViewSourceDocument::addViewSourceToken(Token* token)
             // Add in the end tag.
             addText(">", classNameStr);
         }
-        
+
         m_current = m_td;
     }
 }
@@ -225,7 +225,7 @@ void HTMLViewSourceDocument::addLine(const String& className)
     RefPtr<HTMLTableRowElement> trow = HTMLTableRowElement::create(this);
     m_tbody->parserAddChild(trow);
     trow->attach();
-    
+
     // Create a cell that will hold the line number (it is generated in the stylesheet using counters).
     RefPtr<HTMLTableCellElement> td = HTMLTableCellElement::create(tdTag, this);
     RefPtr<NamedNodeMap> attrs = NamedNodeMap::create();
@@ -281,7 +281,7 @@ void HTMLViewSourceDocument::addText(const String& text, const String& className
         if (i < size - 1)
             m_current = m_tbody;
     }
-    
+
     // Set current to m_tbody if the last character was a newline.
     if (text[text.length() - 1] == '\n')
         m_current = m_tbody;
@@ -291,7 +291,7 @@ PassRefPtr<Element> HTMLViewSourceDocument::addLink(const String& url, bool isAn
 {
     if (m_current == m_tbody)
         addLine("webkit-html-tag");
-    
+
     // Now create a link for the attribute value instead of a span.
     RefPtr<HTMLAnchorElement> anchor = HTMLAnchorElement::create(this);
     RefPtr<NamedNodeMap> attrs = NamedNodeMap::create();
