@@ -1,3 +1,24 @@
+2010-08-09  Balazs Kelemen  <kb@inf.u-szeged.hu>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] No need for PageClientImpl
+
+        https://bugs.webkit.org/show_bug.cgi?id=43728
+
+        Remove PageClientImpl, take the implementation of WebKit::PageClient into QWKPagePrivate.
+
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPagePrivate::QWKPagePrivate):
+        (QWKPagePrivate::toolTipChanged):
+        * UIProcess/API/qt/qwkpage_p.h:
+        (QWKPagePrivate::pageDidEnterAcceleratedCompositing):
+        (QWKPagePrivate::pageDidLeaveAcceleratedCompositing):
+        (QWKPagePrivate::processDidExit):
+        (QWKPagePrivate::processDidRevive):
+        (QWKPagePrivate::setCursor):
+        (QWKPagePrivate::takeFocus):
+
 2010-08-07  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
