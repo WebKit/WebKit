@@ -1,3 +1,18 @@
+2010-08-09  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        EWS bots wait 2 minutes between patches
+        https://bugs.webkit.org/show_bug.cgi?id=43731
+
+        * Scripts/webkitpy/tool/bot/queueengine.py:
+         - Don't sleep after failures.  This was a hold-over from
+           an earlier design.
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+         - EWS bots were not properly reporting true/false from process_work_item.
+           They were always returning None, thus false, thus always logging
+           as a failure and sleeping 2 minutes after each patch.
+
 2010-08-09  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

@@ -152,8 +152,8 @@ class AbstractCommitterOnlyEWS(AbstractEarlyWarningSystem):
     def process_work_item(self, patch):
         if not self._committers.committer_by_email(patch.attacher_email()):
             self._did_error(patch, "%s cannot process patches from non-committers :(" % self.name)
-            return
-        AbstractEarlyWarningSystem.process_work_item(self, patch)
+            return False
+        return AbstractEarlyWarningSystem.process_work_item(self, patch)
 
 
 class MacEWS(AbstractCommitterOnlyEWS):
