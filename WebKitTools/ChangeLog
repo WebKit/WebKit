@@ -1,3 +1,13 @@
+2010-08-09  Victor Wang  <victorw@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Upload incremental test results json to server by default.
+
+        https://bugs.webkit.org/show_bug.cgi?id=43743
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
 2010-08-09  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
