@@ -61,7 +61,7 @@ void InspectorApplicationCacheAgent::updateNetworkState(bool isNowOnline)
     m_frontend->updateNetworkState(isNowOnline);
 }
 
-void InspectorApplicationCacheAgent::getApplicationCaches(long, RefPtr<InspectorValue>* applicationCaches)
+void InspectorApplicationCacheAgent::getApplicationCaches(RefPtr<InspectorValue>* applicationCaches)
 {
     DocumentLoader* documentLoader = m_inspectorController->inspectedPage()->mainFrame()->loader()->documentLoader();
     if (documentLoader) {

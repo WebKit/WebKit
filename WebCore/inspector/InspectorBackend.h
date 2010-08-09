@@ -62,18 +62,18 @@ public:
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     void enableDebugger(bool always);
     void takeHeapSnapshot();
-    void getProfilerLogLines(long callId, long position, long* outPosition, String* data);
+    void getProfilerLogLines(long position, long* outPosition, String* data);
 #endif
 
     void setInjectedScriptSource(const String& source);
     void dispatchOnInjectedScript(long callId, long injectedScriptId, const String& methodName, const String& arguments, bool async, RefPtr<InspectorValue>* result, bool* hadException);
-    void clearConsoleMessages(long callId);
+    void clearConsoleMessages();
 
     // Generic code called from custom implementations.
     void releaseWrapperObjectGroup(long injectedScriptId, const String& objectGroup);
 
 #if ENABLE(DATABASE)
-    void getDatabaseTableNames(long callId, long databaseId, RefPtr<InspectorArray>* names);
+    void getDatabaseTableNames(long databaseId, RefPtr<InspectorArray>* names);
 #endif
 
 private:

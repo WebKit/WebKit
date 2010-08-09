@@ -54,11 +54,11 @@ public:
 
     void activateBreakpoints();
     void deactivateBreakpoints();
-    void setBreakpoint(long callId, const String& sourceID, unsigned lineNumber, bool enabled, const String& condition, bool* success, unsigned int* actualLineNumber);
+    void setBreakpoint(const String& sourceID, unsigned lineNumber, bool enabled, const String& condition, bool* success, unsigned int* actualLineNumber);
     void removeBreakpoint(const String& sourceID, unsigned lineNumber);
 
-    void editScriptSource(long callId, const String& sourceID, const String& newContent, bool* success, String* result, RefPtr<InspectorValue>* newCallFrames);
-    void getScriptSource(long callId, const String& sourceID, String* scriptSource);
+    void editScriptSource(const String& sourceID, const String& newContent, bool* success, String* result, RefPtr<InspectorValue>* newCallFrames);
+    void getScriptSource(const String& sourceID, String* scriptSource);
 
     void pause();
     void resume();

@@ -72,7 +72,7 @@ void InspectorBackend::takeHeapSnapshot()
     ScriptProfiler::takeHeapSnapshot();
 }
 
-void InspectorBackend::getProfilerLogLines(long, long position, long* outPosition, String* data)
+void InspectorBackend::getProfilerLogLines(long position, long* outPosition, String* data)
 {
     // FIXME: we should make inspector dispatcher pluggable, so that embedders could contribute APIs instead of polluting the core one
     // https://bugs.webkit.org/show_bug.cgi?id=43357
@@ -108,7 +108,7 @@ void InspectorBackend::dispatchOnInjectedScript(long callId, long injectedScript
     remoteFrontend()->didDispatchOnInjectedScript(callId, (*result).get(), *hadException);
 }
 
-void InspectorBackend::clearConsoleMessages(long)
+void InspectorBackend::clearConsoleMessages()
 {
     m_inspectorController->clearConsoleMessages();
 }
@@ -119,7 +119,7 @@ void InspectorBackend::releaseWrapperObjectGroup(long injectedScriptId, const St
 }
 
 #if ENABLE(DATABASE)
-void InspectorBackend::getDatabaseTableNames(long, long databaseId, RefPtr<InspectorArray>* names)
+void InspectorBackend::getDatabaseTableNames(long databaseId, RefPtr<InspectorArray>* names)
 {
     Database* database = m_inspectorController->databaseForId(databaseId);
     if (database) {

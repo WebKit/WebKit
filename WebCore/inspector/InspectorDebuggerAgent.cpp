@@ -82,7 +82,7 @@ void InspectorDebuggerAgent::deactivateBreakpoints()
     ScriptDebugServer::shared().deactivateBreakpoints();
 }
 
-void InspectorDebuggerAgent::setBreakpoint(long, const String& sourceID, unsigned lineNumber, bool enabled, const String& condition, bool* success, unsigned int* actualLineNumber)
+void InspectorDebuggerAgent::setBreakpoint(const String& sourceID, unsigned lineNumber, bool enabled, const String& condition, bool* success, unsigned int* actualLineNumber)
 {
     ScriptBreakpoint breakpoint(enabled, condition);
     *success = ScriptDebugServer::shared().setBreakpoint(sourceID, breakpoint, lineNumber, actualLineNumber);
@@ -127,13 +127,13 @@ void InspectorDebuggerAgent::removeBreakpoint(const String& sourceID, unsigned l
     saveBreakpoints();
 }
 
-void InspectorDebuggerAgent::editScriptSource(long, const String& sourceID, const String& newContent, bool* success, String* result, RefPtr<InspectorValue>* newCallFrames)
+void InspectorDebuggerAgent::editScriptSource(const String& sourceID, const String& newContent, bool* success, String* result, RefPtr<InspectorValue>* newCallFrames)
 {
     if ((*success = ScriptDebugServer::shared().editScriptSource(sourceID, newContent, *result)))
         *newCallFrames = currentCallFrames();
 }
 
-void InspectorDebuggerAgent::getScriptSource(long, const String& sourceID, String* scriptSource)
+void InspectorDebuggerAgent::getScriptSource(const String& sourceID, String* scriptSource)
 {
     *scriptSource = m_scriptIDToContent.get(sourceID);
 }

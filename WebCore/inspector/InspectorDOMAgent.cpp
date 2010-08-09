@@ -384,7 +384,7 @@ Node* InspectorDOMAgent::nodeForId(long id)
     return 0;
 }
 
-void InspectorDOMAgent::getChildNodes(long, long nodeId)
+void InspectorDOMAgent::getChildNodes(long nodeId)
 {
     pushChildNodesToFrontend(nodeId);
 }
@@ -431,7 +431,7 @@ long InspectorDOMAgent::pushNodePathToFrontend(Node* nodeToPush)
     return map->get(nodeToPush);
 }
 
-void InspectorDOMAgent::setAttribute(long, long elementId, const String& name, const String& value, bool* success)
+void InspectorDOMAgent::setAttribute(long elementId, const String& name, const String& value, bool* success)
 {
     Node* node = nodeForId(elementId);
     if (node && (node->nodeType() == Node::ELEMENT_NODE)) {
@@ -442,7 +442,7 @@ void InspectorDOMAgent::setAttribute(long, long elementId, const String& name, c
     }
 }
 
-void InspectorDOMAgent::removeAttribute(long, long elementId, const String& name, bool* success)
+void InspectorDOMAgent::removeAttribute(long elementId, const String& name, bool* success)
 {
     Node* node = nodeForId(elementId);
     if (node && (node->nodeType() == Node::ELEMENT_NODE)) {
@@ -453,7 +453,7 @@ void InspectorDOMAgent::removeAttribute(long, long elementId, const String& name
     }
 }
 
-void InspectorDOMAgent::removeNode(long, long nodeId, long* outNodeId)
+void InspectorDOMAgent::removeNode(long nodeId, long* outNodeId)
 {
     Node* node = nodeForId(nodeId);
     if (!node)
@@ -471,7 +471,7 @@ void InspectorDOMAgent::removeNode(long, long nodeId, long* outNodeId)
     *outNodeId = nodeId;
 }
 
-void InspectorDOMAgent::changeTagName(long, long nodeId, const String& tagName, long* newId)
+void InspectorDOMAgent::changeTagName(long nodeId, const String& tagName, long* newId)
 {
     Node* oldNode = nodeForId(nodeId);
     if (!oldNode || !oldNode->isElementNode())
@@ -506,7 +506,7 @@ void InspectorDOMAgent::changeTagName(long, long nodeId, const String& tagName, 
         pushChildNodesToFrontend(*newId);
 }
 
-void InspectorDOMAgent::getOuterHTML(long, long nodeId, WebCore::String* outerHTML)
+void InspectorDOMAgent::getOuterHTML(long nodeId, WebCore::String* outerHTML)
 {
     Node* node = nodeForId(nodeId);
     if (!node || !node->isHTMLElement())
@@ -515,7 +515,7 @@ void InspectorDOMAgent::getOuterHTML(long, long nodeId, WebCore::String* outerHT
     *outerHTML = static_cast<HTMLElement*>(node)->outerHTML();
 }
 
-void InspectorDOMAgent::setOuterHTML(long, long nodeId, const String& outerHTML, long* newId)
+void InspectorDOMAgent::setOuterHTML(long nodeId, const String& outerHTML, long* newId)
 {
     Node* node = nodeForId(nodeId);
     if (!node || !node->isHTMLElement())
@@ -538,7 +538,7 @@ void InspectorDOMAgent::setOuterHTML(long, long nodeId, const String& outerHTML,
         pushChildNodesToFrontend(*newId);
 }
 
-void InspectorDOMAgent::setTextNodeValue(long, long nodeId, const String& value, bool* success)
+void InspectorDOMAgent::setTextNodeValue(long nodeId, const String& value, bool* success)
 {
     Node* node = nodeForId(nodeId);
     if (node && (node->nodeType() == Node::TEXT_NODE)) {
@@ -549,7 +549,7 @@ void InspectorDOMAgent::setTextNodeValue(long, long nodeId, const String& value,
     }
 }
 
-void InspectorDOMAgent::getEventListenersForNode(long, long nodeId, long* outNodeId, RefPtr<InspectorArray>* listenersArray)
+void InspectorDOMAgent::getEventListenersForNode(long nodeId, long* outNodeId, RefPtr<InspectorArray>* listenersArray)
 {
     Node* node = nodeForId(nodeId);
     *outNodeId = nodeId;
@@ -971,7 +971,7 @@ void InspectorDOMAgent::didModifyDOMAttr(Element* element)
     m_frontend->attributesUpdated(id, buildArrayForElementAttributes(element));
 }
 
-void InspectorDOMAgent::getStyles(long, long nodeId, bool authorOnly, RefPtr<InspectorValue>* styles)
+void InspectorDOMAgent::getStyles(long nodeId, bool authorOnly, RefPtr<InspectorValue>* styles)
 {
     Node* node = nodeForId(nodeId);
     if (!node || node->nodeType() != Node::ELEMENT_NODE)
@@ -1014,7 +1014,7 @@ void InspectorDOMAgent::getStyles(long, long nodeId, bool authorOnly, RefPtr<Ins
     *styles = result.release();
 }
 
-void InspectorDOMAgent::getAllStyles(long, RefPtr<InspectorArray>* styles)
+void InspectorDOMAgent::getAllStyles(RefPtr<InspectorArray>* styles)
 {
     for (ListHashSet<RefPtr<Document> >::iterator it = m_documents.begin(); it != m_documents.end(); ++it) {
         StyleSheetList* list = (*it)->styleSheets();
@@ -1026,14 +1026,14 @@ void InspectorDOMAgent::getAllStyles(long, RefPtr<InspectorArray>* styles)
     }
 }
 
-void InspectorDOMAgent::getStyleSheet(long, long styleSheetId, RefPtr<InspectorObject>* styleSheetObject)
+void InspectorDOMAgent::getStyleSheet(long styleSheetId, RefPtr<InspectorObject>* styleSheetObject)
 {
     CSSStyleSheet* styleSheet = cssStore()->styleSheetForId(styleSheetId);
     if (styleSheet && styleSheet->doc())
         *styleSheetObject = buildObjectForStyleSheet(styleSheet->doc(), styleSheet);
 }
 
-void InspectorDOMAgent::getRuleRanges(long, long styleSheetId, RefPtr<InspectorValue>* ruleRange)
+void InspectorDOMAgent::getRuleRanges(long styleSheetId, RefPtr<InspectorValue>* ruleRange)
 {
     CSSStyleSheet* styleSheet = cssStore()->styleSheetForId(styleSheetId);
     if (styleSheet && styleSheet->doc()) {
@@ -1055,7 +1055,7 @@ void InspectorDOMAgent::getRuleRanges(long, long styleSheetId, RefPtr<InspectorV
     }
 }
 
-void InspectorDOMAgent::getInlineStyle(long, long nodeId, RefPtr<InspectorValue>* style)
+void InspectorDOMAgent::getInlineStyle(long nodeId, RefPtr<InspectorValue>* style)
 {
     Node* node = nodeForId(nodeId);
     if (!node || node->nodeType() != Node::ELEMENT_NODE)
@@ -1063,7 +1063,7 @@ void InspectorDOMAgent::getInlineStyle(long, long nodeId, RefPtr<InspectorValue>
     *style = buildObjectForStyle(static_cast<Element*>(node)->style(), true);
 }
 
-void InspectorDOMAgent::getComputedStyle(long, long nodeId, RefPtr<InspectorValue>* style)
+void InspectorDOMAgent::getComputedStyle(long nodeId, RefPtr<InspectorValue>* style)
 {
     Node* node = nodeForId(nodeId);
     if (!node || node->nodeType() != Node::ELEMENT_NODE)
@@ -1120,7 +1120,7 @@ PassRefPtr<InspectorArray> InspectorDOMAgent::buildArrayForPseudoElements(Elemen
     return result.release();
 }
 
-void InspectorDOMAgent::applyStyleText(long, long styleId, const String& styleText, const String& propertyName, bool* success, RefPtr<InspectorValue>* styleObject, RefPtr<InspectorArray>* changedPropertiesArray)
+void InspectorDOMAgent::applyStyleText(long styleId, const String& styleText, const String& propertyName, bool* success, RefPtr<InspectorValue>* styleObject, RefPtr<InspectorArray>* changedPropertiesArray)
 {
     CSSStyleDeclaration* style = cssStore()->styleForId(styleId);
     if (!style)
@@ -1202,7 +1202,7 @@ void InspectorDOMAgent::applyStyleText(long, long styleId, const String& styleTe
     *changedPropertiesArray = toArray(changedProperties);
 }
 
-void InspectorDOMAgent::setStyleText(long, long styleId, const String& cssText, bool* success)
+void InspectorDOMAgent::setStyleText(long styleId, const String& cssText, bool* success)
 {
     CSSStyleDeclaration* style = cssStore()->styleForId(styleId);
     if (!style)
@@ -1212,7 +1212,7 @@ void InspectorDOMAgent::setStyleText(long, long styleId, const String& cssText, 
     *success = !ec;
 }
 
-void InspectorDOMAgent::setStyleProperty(long, long styleId, const String& name, const String& value, bool* success)
+void InspectorDOMAgent::setStyleProperty(long styleId, const String& name, const String& value, bool* success)
 {
     CSSStyleDeclaration* style = cssStore()->styleForId(styleId);
     if (!style)
@@ -1223,7 +1223,7 @@ void InspectorDOMAgent::setStyleProperty(long, long styleId, const String& name,
     *success = !ec;
 }
 
-void InspectorDOMAgent::toggleStyleEnabled(long, long styleId, const String& propertyName, bool disabled, RefPtr<InspectorValue>* styleObject)
+void InspectorDOMAgent::toggleStyleEnabled(long styleId, const String& propertyName, bool disabled, RefPtr<InspectorValue>* styleObject)
 {
     CSSStyleDeclaration* style = cssStore()->styleForId(styleId);
     if (!style)
@@ -1248,7 +1248,7 @@ void InspectorDOMAgent::toggleStyleEnabled(long, long styleId, const String& pro
     *styleObject = buildObjectForStyle(style, true);
 }
 
-void InspectorDOMAgent::setRuleSelector(long, long ruleId, const String& selector, long selectedNodeId, RefPtr<InspectorValue>* ruleObject, bool* selectorAffectsNode)
+void InspectorDOMAgent::setRuleSelector(long ruleId, const String& selector, long selectedNodeId, RefPtr<InspectorValue>* ruleObject, bool* selectorAffectsNode)
 {
     CSSStyleRule* rule = cssStore()->ruleForId(ruleId);
     if (!rule)
@@ -1277,7 +1277,7 @@ void InspectorDOMAgent::setRuleSelector(long, long ruleId, const String& selecto
     *ruleObject = buildObjectForRule(node->ownerDocument(), newRule);
 }
 
-void InspectorDOMAgent::addRule(long, const String& selector, long selectedNodeId, RefPtr<InspectorValue>* ruleObject, bool* selectorAffectsNode)
+void InspectorDOMAgent::addRule(const String& selector, long selectedNodeId, RefPtr<InspectorValue>* ruleObject, bool* selectorAffectsNode)
 {
     Node* node = nodeForId(selectedNodeId);
     if (!node)
@@ -1567,7 +1567,7 @@ void InspectorDOMAgent::copyNode(long nodeId)
     Pasteboard::generalPasteboard()->writePlainText(markup);
 }
 
-void InspectorDOMAgent::pushNodeByPathToFrontend(long, const String& path, long* nodeId)
+void InspectorDOMAgent::pushNodeByPathToFrontend(const String& path, long* nodeId)
 {
     if (Node* node = nodeForPath(path))
         *nodeId = pushNodePathToFrontend(node);

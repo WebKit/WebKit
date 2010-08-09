@@ -51,7 +51,7 @@ public:
     void updateNetworkState(bool isNowOnline);
 
     // From Frontend
-    void getApplicationCaches(long callId, RefPtr<InspectorValue>* applicationCaches);
+    void getApplicationCaches(RefPtr<InspectorValue>* applicationCaches);
 
 private:
     PassRefPtr<InspectorObject> buildObjectForApplicationCache(const ApplicationCacheHost::ResourceInfoList&, const ApplicationCacheHost::CacheInfo&);

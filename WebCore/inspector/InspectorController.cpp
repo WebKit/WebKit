@@ -1274,7 +1274,7 @@ void InspectorController::didOpenDatabase(PassRefPtr<Database> database, const S
 }
 #endif
 
-void InspectorController::getCookies(long, RefPtr<InspectorArray>* cookies, WebCore::String* cookiesString)
+void InspectorController::getCookies(RefPtr<InspectorArray>* cookies, WebCore::String* cookiesString)
 {
     // If we can get raw cookies.
     ListHashSet<Cookie> rawCookiesList;
@@ -1395,7 +1395,7 @@ void InspectorController::selectDOMStorage(Storage* storage)
         m_remoteFrontend->selectDOMStorage(storageResourceId);
 }
 
-void InspectorController::getDOMStorageEntries(long, long storageId, RefPtr<InspectorArray>* entries)
+void InspectorController::getDOMStorageEntries(long storageId, RefPtr<InspectorArray>* entries)
 {
     InspectorDOMStorageResource* storageResource = getDOMStorageResourceForId(storageId);
     if (storageResource) {
@@ -1412,7 +1412,7 @@ void InspectorController::getDOMStorageEntries(long, long storageId, RefPtr<Insp
     }
 }
 
-void InspectorController::setDOMStorageItem(long, long storageId, const String& key, const String& value, bool* success)
+void InspectorController::setDOMStorageItem(long storageId, const String& key, const String& value, bool* success)
 {
     InspectorDOMStorageResource* storageResource = getDOMStorageResourceForId(storageId);
     if (storageResource) {
@@ -1422,7 +1422,7 @@ void InspectorController::setDOMStorageItem(long, long storageId, const String& 
     }
 }
 
-void InspectorController::removeDOMStorageItem(long, long storageId, const String& key, bool* success)
+void InspectorController::removeDOMStorageItem(long storageId, const String& key, bool* success)
 {
     InspectorDOMStorageResource* storageResource = getDOMStorageResourceForId(storageId);
     if (storageResource) {
@@ -1490,14 +1490,14 @@ void InspectorController::clearProfiles()
     m_nextUserInitiatedProfileNumber = 1;
 }
 
-void InspectorController::getProfileHeaders(long, RefPtr<InspectorArray>* headers)
+void InspectorController::getProfileHeaders(RefPtr<InspectorArray>* headers)
 {
     ProfilesMap::iterator profilesEnd = m_profiles.end();
     for (ProfilesMap::iterator it = m_profiles.begin(); it != profilesEnd; ++it)
         (*headers)->push(createProfileHeader(*it->second));
 }
 
-void InspectorController::getProfile(long, unsigned uid, RefPtr<InspectorObject>* profileObject)
+void InspectorController::getProfile(unsigned uid, RefPtr<InspectorObject>* profileObject)
 {
     ProfilesMap::iterator it = m_profiles.find(uid);
     if (it != m_profiles.end()) {
@@ -1931,7 +1931,7 @@ void InspectorController::setInspectorExtensionAPI(const String& source)
     m_inspectorExtensionAPI = source;
 }
 
-void InspectorController::getResourceContent(long, unsigned long identifier, String* content)
+void InspectorController::getResourceContent(unsigned long identifier, String* content)
 {
     RefPtr<InspectorResource> resource = m_resources.get(identifier);
     *content = resource ? resource->sourceString() : String();

@@ -347,12 +347,12 @@ sub generateBackendFunction
         push(@function, "    " . $typeTransform{$_->type}->{"variable"} . " " . $_->name . "$initializer;");
     }
 
-
-    my $args = join(", ", (map($_->name, @inArgs), map("&" . $_->name, @outArgs)));
+    my $async = $function->signature->extendedAttributes->{"async"};
+    my $args = join(", ", (grep($async || !($_ eq "callId"), map($_->name, @inArgs)), map("&" . $_->name, @outArgs)));
     push(@function, "    $handlerAccessor->$functionName($args);");
 
     # The results of function call should be transfered back to frontend (except async methods - need to fix that).
-    if (scalar(grep($_->name eq "callId", @inArgs)) && !$function->signature->extendedAttributes->{"async"}) {
+    if (scalar(grep($_->name eq "callId", @inArgs)) && !$async) {
         my @pushArguments = map("        arguments->push" . $typeTransform{$_->type}->{"accessorSuffix"} . "(" . $_->name . ");", @outArgs);
         my $customResponse = $function->signature->extendedAttributes->{"customResponse"};
         my $didFunctionName = $customResponse ? $customResponse : "did" . ucfirst($function->signature->name);

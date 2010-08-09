@@ -1,3 +1,58 @@
+2010-08-09  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Remove callId argument from all backend agents' methods.
+        https://bugs.webkit.org/show_bug.cgi?id=43723
+
+        * inspector/CodeGeneratorInspector.pm:
+        * inspector/InspectorApplicationCacheAgent.cpp:
+        (WebCore::InspectorApplicationCacheAgent::getApplicationCaches):
+        * inspector/InspectorApplicationCacheAgent.h:
+        * inspector/InspectorBackend.cpp:
+        (WebCore::InspectorBackend::getProfilerLogLines):
+        (WebCore::InspectorBackend::clearConsoleMessages):
+        (WebCore::InspectorBackend::getDatabaseTableNames):
+        * inspector/InspectorBackend.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::getCookies):
+        (WebCore::InspectorController::getDOMStorageEntries):
+        (WebCore::InspectorController::setDOMStorageItem):
+        (WebCore::InspectorController::removeDOMStorageItem):
+        (WebCore::InspectorController::getProfileHeaders):
+        (WebCore::InspectorController::getProfile):
+        (WebCore::InspectorController::getResourceContent):
+        * inspector/InspectorController.h:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::getChildNodes):
+        (WebCore::InspectorDOMAgent::setAttribute):
+        (WebCore::InspectorDOMAgent::removeAttribute):
+        (WebCore::InspectorDOMAgent::removeNode):
+        (WebCore::InspectorDOMAgent::changeTagName):
+        (WebCore::InspectorDOMAgent::getOuterHTML):
+        (WebCore::InspectorDOMAgent::setOuterHTML):
+        (WebCore::InspectorDOMAgent::setTextNodeValue):
+        (WebCore::InspectorDOMAgent::getEventListenersForNode):
+        (WebCore::InspectorDOMAgent::getStyles):
+        (WebCore::InspectorDOMAgent::getAllStyles):
+        (WebCore::InspectorDOMAgent::getStyleSheet):
+        (WebCore::InspectorDOMAgent::getRuleRanges):
+        (WebCore::InspectorDOMAgent::getInlineStyle):
+        (WebCore::InspectorDOMAgent::getComputedStyle):
+        (WebCore::InspectorDOMAgent::applyStyleText):
+        (WebCore::InspectorDOMAgent::setStyleText):
+        (WebCore::InspectorDOMAgent::setStyleProperty):
+        (WebCore::InspectorDOMAgent::toggleStyleEnabled):
+        (WebCore::InspectorDOMAgent::setRuleSelector):
+        (WebCore::InspectorDOMAgent::addRule):
+        (WebCore::InspectorDOMAgent::pushNodeByPathToFrontend):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::setBreakpoint):
+        (WebCore::InspectorDebuggerAgent::editScriptSource):
+        (WebCore::InspectorDebuggerAgent::getScriptSource):
+        * inspector/InspectorDebuggerAgent.h:
+
 2010-08-09  François Sausset  <sausset@gmail.com>
 
         Reviewed by Kenneth Rohde Christiansen.
