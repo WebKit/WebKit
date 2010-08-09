@@ -349,7 +349,7 @@ void QWebViewPrivate::detachCurrentPage()
         return;
 
     if (page) {
-#if QT_VERSION >= 0x040600
+#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
         page->d->view.clear();
 #else
         page->d->view = 0;

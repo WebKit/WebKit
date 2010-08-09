@@ -595,7 +595,7 @@ void EditorClientQt::setInputMethodState(bool active)
 {
     QWebPageClient* webPageClient = m_page->d->client;
     if (webPageClient) {
-#if QT_VERSION >= 0x040600
+#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
         Qt::InputMethodHints hints;
 
         HTMLInputElement* inputElement = 0;

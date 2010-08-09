@@ -1,3 +1,31 @@
+2010-08-08  Ariya Hidayat  <ariya@sencha.com>
+
+        Reviewed by Antonio Gomes.
+
+        Inconsistent Qt version checks
+        https://bugs.webkit.org/show_bug.cgi?id=43695
+
+        Use QT_VERSION_CHECK macro instead of encoded hex.
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebView::QGraphicsWebView):
+        (QGraphicsWebViewPrivate::detachCurrentPage):
+        * Api/qwebframe.cpp:
+        (QWebFrame::load):
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+        (QWebPagePrivate::inputMethodEvent):
+        (QWebPage::inputMethodQuery):
+        (QWebPage::view):
+        * Api/qwebview.cpp:
+        (QWebViewPrivate::detachCurrentPage):
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::setInputMethodState):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::createPlugin):
+        * WebCoreSupport/PageClientQt.cpp:
+        * WebCoreSupport/PageClientQt.h:
+
 2010-08-06  Jessie Berlin  <jberlin@apple.com>
 
         Roll out http://trac.webkit.org/changeset/64801, which broke the Safari Windows Build.

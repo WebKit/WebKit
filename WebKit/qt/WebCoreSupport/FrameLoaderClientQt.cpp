@@ -1321,7 +1321,7 @@ private:
     }
 };
 
-#if QT_VERSION >= 0x040600
+#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
 class QtPluginGraphicsWidget: public Widget
 {
 public:
@@ -1439,7 +1439,7 @@ PassRefPtr<Widget> FrameLoaderClientQt::createPlugin(const IntSize& pluginSize, 
                 w->setFrameRect(IntRect(0, 0, 0, 0));
                 return w;
             }
-#if QT_VERSION >= 0x040600
+#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
             QGraphicsWidget* graphicsWidget = qobject_cast<QGraphicsWidget*>(object);
             if (graphicsWidget) {
                 QGraphicsObject* parentWidget = 0;

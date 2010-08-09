@@ -22,7 +22,7 @@
 
 #include <QObject>
 
-#if QT_VERSION < 0x040700
+#if QT_VERSION < QT_VERSION_CHECK(4, 7, 0)
 namespace QtMobility {
 class QNetworkConfigurationManager;
 }
@@ -46,7 +46,7 @@ public slots:
     void networkAccessPermissionChanged(bool);
 
 public:
-#if QT_VERSION < 0x040700
+#if QT_VERSION < QT_VERSION_CHECK(4, 7, 0)
     QtMobility::QNetworkConfigurationManager* m_configurationManager;
 #else
     QNetworkConfigurationManager* m_configurationManager;

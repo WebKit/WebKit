@@ -252,7 +252,7 @@ static inline Qt::DropAction dragOpToDropAction(unsigned actions)
 QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     : q(qq)
     , client(0)
-#if QT_VERSION < 0x040600
+#if QT_VERSION < QT_VERSION_CHECK(4, 6, 0)
     , view(0)
 #endif
     , clickCausedFocus(false)
@@ -1131,7 +1131,7 @@ void QWebPagePrivate::inputMethodEvent(QInputMethodEvent *ev)
 {
     WebCore::Frame *frame = page->focusController()->focusedOrMainFrame();
     WebCore::Editor *editor = frame->editor();
-#if QT_VERSION >= 0x040600
+#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
     QInputMethodEvent::Attribute selection(QInputMethodEvent::Selection, 0, 0, QVariant());
 #endif
 
@@ -1172,7 +1172,7 @@ void QWebPagePrivate::inputMethodEvent(QInputMethodEvent *ev)
             }
             break;
         }
-#if QT_VERSION >= 0x040600
+#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
         case QInputMethodEvent::Selection: {
             selection = a;
             hasSelection = true;
@@ -1190,7 +1190,7 @@ void QWebPagePrivate::inputMethodEvent(QInputMethodEvent *ev)
         // 3. populated preedit with a selection attribute, and start/end of 0 or non-0 updates selection of supplied preedit text
         // 4. otherwise event is updating supplied pre-edit text
         QString preedit = ev->preeditString();
-#if QT_VERSION >= 0x040600
+#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
         if (hasSelection) {
             QString text = (renderTextControl) ? QString(renderTextControl->text()) : QString();
             if (preedit.isEmpty() && selection.start + selection.length > 0)
@@ -1473,7 +1473,7 @@ QVariant QWebPage::inputMethodQuery(Qt::InputMethodQuery property) const
             return QVariant();
 
         }
-#if QT_VERSION >= 0x040600
+#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
         case Qt::ImAnchorPosition: {
             if (renderTextControl) {
                 if (editor->hasComposition()) {
@@ -1978,7 +1978,7 @@ void QWebPage::setView(QWidget* view)
 */
 QWidget *QWebPage::view() const
 {
-#if QT_VERSION < 0x040600
+#if QT_VERSION < QT_VERSION_CHECK(4, 6, 0)
     return d->view;
 #else
     return d->view.data();
