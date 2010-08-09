@@ -3184,3 +3184,6 @@ BUGSATISH: fast/speech/input-text-speechbutton.html = TIMEOUT
 BUG51416 : fast/dom/DeviceMotion/create-event.html = TEXT
 BUG51416 : fast/dom/DeviceMotion/optional-event-properties.html = TEXT
 BUG51416 : fast/dom/DeviceMotion/window-property.html = TEXT
+
+// Slow test introduced in r64817
+BUG51571 : http/tests/misc/bad-charset-alias.html = TIMEOUT
