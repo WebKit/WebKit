@@ -112,7 +112,7 @@ BUG34759 WIN DEBUG SLOW : inspector/console-log-before-inspector-open.html = PAS
 
 BUG36539 SLOW : http/tests/misc/uncacheable-script-repeated.html = PASS
 
-BUG47937 WIN DEBUG SLOW : fast/parser/residual-style-hang.html = PASS TIMEOUT
+BUG47937 WIN DEBUG : fast/parser/residual-style-hang.html = PASS TIMEOUT
 BUG47937 LINUX DEBUG SLOW : fast/parser/residual-style-hang.html = PASS
 BUG47937 MAC DEBUG : fast/parser/residual-style-hang.html = TIMEOUT
 

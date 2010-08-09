@@ -2,6 +2,12 @@
 
         Update chromium's expectation.
 
+        * platform/chromium/test_expectations.txt: Drop SLOW as SLOW and TIMEOUT isn't allowed.
+
+2010-08-09  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Update chromium's expectation.
+
         * platform/chromium/test_expectations.txt: Mark http/tests/misc/bad-charset-alias as a slow test.
 
 2010-08-09  Shinichiro Hamaji  <hamaji@chromium.org>
