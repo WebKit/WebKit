@@ -1,3 +1,9 @@
+2010-08-09  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Update chromium's expectation.
+
+        * platform/chromium/test_expectations.txt: Mark fast/parser/residual-style-hang as a slow test.
+
 2010-08-09  François Sausset  <sausset@gmail.com>
 
         Reviewed by Kenneth Rohde Christiansen.
