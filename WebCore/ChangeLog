@@ -1,3 +1,14 @@
+2010-08-09  Marcus Bulach  <bulach@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Fixes xcode project issues after r64828:
+        https://bugs.webkit.org/show_bug.cgi?id=43638
+
+        Build fix, no tests (sort-Xcode-project-file should not throw any warnings).
+
+        * WebCore.xcodeproj/project.pbxproj: fixed IDBCursor and related IndexedDB files, and re-ran sort-Xcode-project-file.
+
 2010-08-09  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.
