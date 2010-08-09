@@ -1573,6 +1573,7 @@ HEADERS += \
     mathml/MathMLMathElement.h \
     mathml/MathMLTextElement.h \
     mathml/RenderMathMLBlock.h \
+    mathml/RenderMathMLFenced.h \
     mathml/RenderMathMLFraction.h \
     mathml/RenderMathMLMath.h \
     mathml/RenderMathMLOperator.h \
@@ -2675,6 +2676,7 @@ contains(DEFINES, ENABLE_MATHML=1) {
         mathml/MathMLMathElement.cpp \
         mathml/MathMLTextElement.cpp \
         mathml/RenderMathMLBlock.cpp \
+        mathml/RenderMathMLFenced.cpp \
         mathml/RenderMathMLFraction.cpp \
         mathml/RenderMathMLMath.cpp \
         mathml/RenderMathMLOperator.cpp \

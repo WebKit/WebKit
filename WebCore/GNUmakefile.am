@@ -3439,6 +3439,8 @@ webcore_sources += \
 	WebCore/mathml/MathMLTextElement.h \
 	WebCore/mathml/RenderMathMLBlock.cpp \
 	WebCore/mathml/RenderMathMLBlock.h \
+	WebCore/mathml/RenderMathMLFenced.cpp \
+	WebCore/mathml/RenderMathMLFenced.h \
 	WebCore/mathml/RenderMathMLFraction.cpp \
 	WebCore/mathml/RenderMathMLFraction.h \
 	WebCore/mathml/RenderMathMLMath.cpp \

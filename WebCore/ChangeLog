@@ -1,3 +1,12 @@
+2010-08-09  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Unreviewed, fixing the builds after r64967.
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+
 2010-05-27  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Ojan Vafai.

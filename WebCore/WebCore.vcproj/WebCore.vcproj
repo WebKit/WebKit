@@ -52005,6 +52005,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\mathml\RenderMathMLFenced.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\mathml\RenderMathMLFenced.h"
+				>
+			</File>
+			<File
 				RelativePath="..\mathml\RenderMathMLFraction.cpp"
 				>
 			</File>

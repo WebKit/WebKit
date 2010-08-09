@@ -1138,6 +1138,7 @@ SET(WebCore_SOURCES
     mathml/MathMLMathElement.cpp
     mathml/MathMLTextElement.cpp
     mathml/RenderMathMLBlock.cpp
+    mathml/RenderMathMLFenced.cpp
     mathml/RenderMathMLFraction.cpp
     mathml/RenderMathMLMath.cpp
     mathml/RenderMathMLOperator.cpp
