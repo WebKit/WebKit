@@ -1,3 +1,11 @@
+2010-08-09  Jian Li  <jianli@chromium.org>
+
+        Update chromium test results.
+
+        * platform/chromium-mac/editing/selection/5076323-1-expected.checksum: Added.
+        * platform/chromium-mac/editing/selection/5076323-1-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-08-09  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson
