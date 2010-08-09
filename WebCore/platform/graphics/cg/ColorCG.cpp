@@ -66,6 +66,7 @@ Color::Color(CGColorRef color)
     }
 
     m_color = makeRGBA(r * 255, g * 255, b * 255, a * 255);
+    m_valid = true;
 }
 
 #if OS(WINDOWS)
