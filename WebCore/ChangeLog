@@ -1,3 +1,19 @@
+2010-08-09  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by David Levin.
+
+        Fix compilation of VideoLayerChromium on Mac OS X with compositor
+        https://bugs.webkit.org/show_bug.cgi?id=43757
+
+        No new tests; build fix only (associated functionality not implemented yet).
+
+        * platform/graphics/chromium/VideoLayerChromium.cpp:
+        (WebCore::VideoLayerChromium::VideoLayerChromium):
+        (WebCore::VideoLayerChromium::updateTextureContents):
+        (WebCore::VideoLayerChromium::createTextureRect):
+        (WebCore::VideoLayerChromium::updateTextureRect):
+        * platform/graphics/chromium/VideoLayerChromium.h:
+
 2010-08-09  Ariya Hidayat  <ariya@sencha.com>
 
         Reviewed by Kenneth Rohde Christiansen.
