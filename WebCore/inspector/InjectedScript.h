@@ -48,7 +48,7 @@ public:
 
     bool hasNoValue() const { return m_injectedScriptObject.hasNoValue(); }
 
-    void dispatch(long callId, const String& methodName, const String& arguments, bool async, RefPtr<InspectorValue>* result, bool* hadException);
+    void dispatch(const String& methodName, const String& arguments, RefPtr<InspectorValue>* result, bool* hadException);
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     PassRefPtr<InspectorValue> callFrames();
 #endif

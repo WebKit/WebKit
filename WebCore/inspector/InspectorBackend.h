@@ -66,7 +66,7 @@ public:
 #endif
 
     void setInjectedScriptSource(const String& source);
-    void dispatchOnInjectedScript(long callId, long injectedScriptId, const String& methodName, const String& arguments, bool async, RefPtr<InspectorValue>* result, bool* hadException);
+    void dispatchOnInjectedScript(long injectedScriptId, const String& methodName, const String& arguments, RefPtr<InspectorValue>* result, bool* hadException);
     void clearConsoleMessages();
 
     // Generic code called from custom implementations.
@@ -74,6 +74,7 @@ public:
 
 #if ENABLE(DATABASE)
     void getDatabaseTableNames(long databaseId, RefPtr<InspectorArray>* names);
+    void executeSQL(long databaseId, const String& query, bool* success, long* transactionId);
 #endif
 
 private:

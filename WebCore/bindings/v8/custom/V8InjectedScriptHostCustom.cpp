@@ -164,19 +164,6 @@ v8::Handle<v8::Value> V8InjectedScriptHost::currentCallFrameCallback(const v8::A
 #endif
 
 #if ENABLE(DATABASE)
-v8::Handle<v8::Value> V8InjectedScriptHost::databaseForIdCallback(const v8::Arguments& args)
-{
-    INC_STATS("InjectedScriptHost.databaseForId()");
-    if (args.Length() < 1)
-        return v8::Undefined();
-
-    InjectedScriptHost* host = V8InjectedScriptHost::toNative(args.Holder());
-    Database* database = host->databaseForId(args[0]->ToInt32()->Value());
-    if (!database)
-        return v8::Undefined();
-    return toV8(database);
-}
-
 v8::Handle<v8::Value> V8InjectedScriptHost::selectDatabaseCallback(const v8::Arguments& args)
 {
     INC_STATS("InjectedScriptHost.selectDatabase()");
@@ -207,19 +194,6 @@ v8::Handle<v8::Value> V8InjectedScriptHost::selectDOMStorageCallback(const v8::A
     return v8::Undefined();
 }
 #endif
-
-v8::Handle<v8::Value> V8InjectedScriptHost::reportDidDispatchOnInjectedScriptCallback(const v8::Arguments& args)
-{
-    INC_STATS("InjectedScriptHost.reportDidDispatchOnInjectedScript()");
-    if (args.Length() < 3)
-        return v8::Undefined();
-    InjectedScriptHost* host = V8InjectedScriptHost::toNative(args.Holder());
-    int callId = args[0]->ToInt32()->Value();
-    RefPtr<InspectorValue> result = ScriptValue(args[1]).toInspectorValue(ScriptState::current());
-    bool isException = args[2]->ToBoolean()->Value();
-    host->reportDidDispatchOnInjectedScript(callId, result, isException);
-    return v8::Undefined();
-}
 
 InjectedScript InjectedScriptHost::injectedScriptFor(ScriptState* inspectedScriptState)
 {

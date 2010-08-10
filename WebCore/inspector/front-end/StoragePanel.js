@@ -298,32 +298,28 @@ WebInspector.StoragePanel.prototype = {
         database.getTableNames(tableNamesCallback);
     },
 
-    dataGridForResult: function(rows)
+    dataGridForResult: function(columnNames, values)
     {
-        if (!rows.length)
+        var numColumns = columnNames.length;
+        if (!numColumns)
             return null;
 
         var columns = {};
-        var numColumns = 0;
 
-        for (var columnIdentifier in rows[0]) {
+        for (var i = 0; i < columnNames.length; ++i) {
             var column = {};
-            column.width = columnIdentifier.length;
-            column.title = columnIdentifier;
+            column.width = columnNames[i].length;
+            column.title = columnNames[i];
             column.sortable = true;
 
-            columns[columnIdentifier] = column;
-            ++numColumns;
+            columns[columnNames[i]] = column;
         }
 
         var nodes = [];
-        var length = rows.length;
-        for (var i = 0; i < length; ++i) {
+        for (var i = 0; i < values.length / numColumns; ++i) {
             var data = {};
-
-            var row = rows[i];
-            for (var columnIdentifier in row)
-                data[columnIdentifier] = row[columnIdentifier];
+            for (var j = 0; j < columnNames.length; ++j)
+                data[columnNames[j]] = values[numColumns * i + j];
 
             var node = new WebInspector.DataGridNode(data, false);
             node.selectable = false;

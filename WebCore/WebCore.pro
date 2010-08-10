@@ -758,6 +758,7 @@ SOURCES += \
     inspector/InspectorFrontendClientLocal.cpp \
     inspector/InspectorFrontendHost.cpp \
     inspector/InspectorResource.cpp \
+    inspector/InspectorStorageAgent.cpp \
     inspector/InspectorTimelineAgent.cpp \
     inspector/InspectorValues.cpp \
     inspector/ScriptBreakpoint.cpp \
@@ -1518,6 +1519,7 @@ HEADERS += \
     inspector/InspectorFrontendClientLocal.h \
     inspector/InspectorFrontendHost.h \
     inspector/InspectorResource.h \
+    inspector/InspectorStorageAgent.h \
     inspector/InspectorTimelineAgent.h \
     inspector/ScriptGCEventListener.h \
     inspector/TimelineRecordFactory.h \

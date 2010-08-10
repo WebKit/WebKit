@@ -142,12 +142,6 @@ void InjectedScriptHost::selectDOMStorage(Storage* storage)
 }
 #endif
 
-void InjectedScriptHost::reportDidDispatchOnInjectedScript(long callId, PassRefPtr<InspectorValue> result, bool isException)
-{
-    if (RemoteInspectorFrontend* frontend = remoteFrontend())
-        frontend->didDispatchOnInjectedScript(callId, result, isException);
-}
-
 InjectedScript InjectedScriptHost::injectedScriptForId(long id)
 {
     return m_idToInjectedScript.get(id);

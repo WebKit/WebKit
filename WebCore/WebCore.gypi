@@ -1761,6 +1761,8 @@
             'inspector/InspectorFrontendHost.h',
             'inspector/InspectorResource.cpp',
             'inspector/InspectorResource.h',
+            'inspector/InspectorStorageAgent.cpp',
+            'inspector/InspectorStorageAgent.h',
             'inspector/InspectorTimelineAgent.cpp',
             'inspector/InspectorTimelineAgent.h',
             'inspector/InspectorValues.cpp',

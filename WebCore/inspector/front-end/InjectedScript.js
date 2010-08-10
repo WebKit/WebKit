@@ -472,45 +472,6 @@ InjectedScript.CallFrameProxy.prototype = {
     }
 }
 
-InjectedScript.executeSql = function(callId, databaseId, query)
-{
-    function successCallback(tx, result)
-    {
-        var rows = result.rows;
-        var result = [];
-        var length = rows.length;
-        for (var i = 0; i < length; ++i) {
-            var data = {};
-            result.push(data);
-            var row = rows.item(i);
-            for (var columnIdentifier in row) {
-                // FIXME: (Bug 19439) We should specially format SQL NULL here
-                // (which is represented by JavaScript null here, and turned
-                // into the string "null" by the String() function).
-                var text = row[columnIdentifier];
-                data[columnIdentifier] = String(text);
-            }
-        }
-        InjectedScriptHost.reportDidDispatchOnInjectedScript(callId, result, false);
-    }
-
-    function errorCallback(tx, error)
-    {
-        InjectedScriptHost.reportDidDispatchOnInjectedScript(callId, error, false);
-    }
-
-    function queryTransaction(tx)
-    {
-        tx.executeSql(query, null, successCallback, errorCallback);
-    }
-
-    var database = InjectedScriptHost.databaseForId(databaseId);
-    if (!database)
-        errorCallback(null, { code : 2 });  // Return as unexpected version.
-    database.transaction(queryTransaction, errorCallback);
-    return true;
-}
-
 InjectedScript._isDefined = function(object)
 {
     return object || InjectedScript._isHTMLAllCollection(object);

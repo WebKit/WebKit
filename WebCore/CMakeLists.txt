@@ -1062,6 +1062,7 @@ SET(WebCore_SOURCES
     inspector/InspectorFrontendHost.cpp
     inspector/InspectorResource.cpp
     inspector/InspectorValues.cpp
+    inspector/InspectorStorageAgent.cpp
     inspector/InspectorTimelineAgent.cpp
     inspector/ScriptBreakpoint.cpp
     inspector/TimelineRecordFactory.cpp

@@ -44,7 +44,6 @@ module core {
 #endif
 
 #if defined(ENABLE_DATABASE) && ENABLE_DATABASE
-        [Custom] DOMObject databaseForId(in long databaseId);
         [Custom] void selectDatabase(in DOMObject database);
 #endif
 
@@ -57,6 +56,5 @@ module core {
         void didDestroyWorker(in long id);
         long nextWorkerId();
 #endif
-        [Custom] void reportDidDispatchOnInjectedScript(in long callId, in DOMObject result, in boolean isException);
     };
 }

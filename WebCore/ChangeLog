@@ -1,3 +1,57 @@
+2010-08-10  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: move database processing to native layer.
+
+        https://bugs.webkit.org/show_bug.cgi?id=43788
+
+        * English.lproj/localizedStrings.js:
+        * WebCore.gypi:
+        * bindings/js/JSInjectedScriptHostCustom.cpp:
+        * bindings/v8/custom/V8InjectedScriptHostCustom.cpp:
+        * inspector/CodeGeneratorInspector.pm:
+        * inspector/InjectedScript.cpp:
+        (WebCore::InjectedScript::dispatch):
+        * inspector/InjectedScript.h:
+        * inspector/InjectedScriptHost.cpp:
+        * inspector/InjectedScriptHost.h:
+        * inspector/InjectedScriptHost.idl:
+        * inspector/Inspector.idl:
+        * inspector/InspectorBackend.cpp:
+        (WebCore::InspectorBackend::dispatchOnInjectedScript):
+        (WebCore::InspectorBackend::executeSQL):
+        * inspector/InspectorBackend.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::connectFrontend):
+        (WebCore::InspectorController::releaseFrontendLifetimeAgents):
+        * inspector/InspectorController.h:
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/InspectorStorageAgent.cpp: Added.
+        (WebCore::):
+        (WebCore::InspectorStorageAgent::InspectorStorageAgent):
+        (WebCore::InspectorStorageAgent::~InspectorStorageAgent):
+        (WebCore::InspectorStorageAgent::executeSQL):
+        (WebCore::InspectorStorageAgent::clearFrontend):
+        * inspector/InspectorStorageAgent.h: Added.
+        (WebCore::InspectorStorageAgent::create):
+        (WebCore::InspectorStorageAgent::frontend):
+        * inspector/front-end/Database.js:
+        (WebInspector.Database.prototype.executeSql):
+        (WebInspector.sqlTransactionSucceeded):
+        (WebInspector.sqlTransactionFailed):
+        * inspector/front-end/DatabaseQueryView.js:
+        (WebInspector.DatabaseQueryView.prototype._queryFinished):
+        (WebInspector.DatabaseQueryView.prototype._queryError):
+        * inspector/front-end/DatabaseTableView.js:
+        (WebInspector.DatabaseTableView.prototype._queryFinished):
+        * inspector/front-end/InjectedScript.js:
+        * inspector/front-end/InjectedScriptAccess.js:
+        (InjectedScriptAccess._installHandler.InjectedScriptAccess.prototype.methodName):
+        (InjectedScriptAccess._installHandler):
+        * inspector/front-end/StoragePanel.js:
+        (WebInspector.StoragePanel.prototype.dataGridForResult):
+
 2010-08-10  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.

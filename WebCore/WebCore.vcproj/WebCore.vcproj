@@ -50989,6 +50989,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\inspector\InspectorStorageAgent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\InspectorStorageAgent.h"
+				>
+			</File>
+			<File
 				RelativePath="..\inspector\InspectorTimelineAgent.cpp"
 				>
 			</File>

@@ -63,9 +63,10 @@
 #include "InspectorDatabaseResource.h"
 #include "InspectorDebuggerAgent.h"
 #include "InspectorResource.h"
+#include "InspectorStorageAgent.h"
+#include "InspectorTimelineAgent.h"
 #include "InspectorValues.h"
 #include "InspectorWorkerResource.h"
-#include "InspectorTimelineAgent.h"
 #include "Page.h"
 #include "ProgressTracker.h"
 #include "Range.h"
@@ -477,6 +478,11 @@ void InspectorController::connectFrontend()
     releaseFrontendLifetimeAgents();
     m_remoteFrontend = new RemoteInspectorFrontend(m_client);
     m_domAgent = InspectorDOMAgent::create(m_cssStore.get(), m_remoteFrontend.get());
+
+#if ENABLE(DATABASE)
+    m_storageAgent = InspectorStorageAgent::create(m_remoteFrontend.get());
+#endif
+
     if (m_timelineAgent)
         m_timelineAgent->resetFrontendProxyObject(m_remoteFrontend.get());
 
@@ -598,6 +604,9 @@ void InspectorController::releaseFrontendLifetimeAgents()
     if (m_domAgent)
         m_domAgent->reset();
     m_domAgent.clear();
+    if (m_storageAgent)
+        m_storageAgent->clearFrontend();
+    m_storageAgent.clear();
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     m_applicationCacheAgent.clear();

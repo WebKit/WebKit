@@ -34,6 +34,9 @@ WebInspector.Database = function(id, domain, name, version)
     this._version = version;
 }
 
+WebInspector.Database.successCallbacks = {};
+WebInspector.Database.errorCallbacks = {};
+
 WebInspector.Database.prototype = {
     get id()
     {
@@ -87,16 +90,33 @@ WebInspector.Database.prototype = {
     
     executeSql: function(query, onSuccess, onError)
     {
-        function callback(result)
+        function callback(success, transactionId)
         {
-            if (!(result instanceof Array)) {
-                onError(result);
+            if (!success) {
+                onError(WebInspector.UIString("Database not found."));
                 return;
             }
-            onSuccess(result);
+            WebInspector.Database.successCallbacks[transactionId] = onSuccess;
+            WebInspector.Database.errorCallbacks[transactionId] = onError;
         }
-        // FIXME: execute the query in the frame the DB comes from.
-        InjectedScriptAccess.getDefault().executeSql(this._id, query, callback);
+        InspectorBackend.executeSQL(WebInspector.Callback.wrap(callback), this._id, query);
     }
 }
 
+WebInspector.sqlTransactionSucceeded = function(transactionId, columnNames, values)
+{
+    var callback = WebInspector.Database.successCallbacks[transactionId];
+    if (!callback)
+        return;
+    delete WebInspector.Database.successCallbacks[transactionId];
+    callback(columnNames, values);
+}
+
+WebInspector.sqlTransactionFailed = function(transactionId, errorObj)
+{
+    var callback = WebInspector.Database.errorCallbacks[transactionId];
+    if (!callback)
+        return;
+    delete WebInspector.Database.errorCallbacks[transactionId];
+    callback(errorObj);
+}

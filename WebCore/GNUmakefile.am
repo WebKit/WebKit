@@ -1622,6 +1622,8 @@ webcore_sources += \
 	WebCore/inspector/InspectorFrontendHost.h \
 	WebCore/inspector/InspectorResource.cpp \
 	WebCore/inspector/InspectorResource.h \
+	WebCore/inspector/InspectorStorageAgent.cpp \
+	WebCore/inspector/InspectorStorageAgent.h \
 	WebCore/inspector/InspectorTimelineAgent.cpp \
 	WebCore/inspector/InspectorTimelineAgent.h \
 	WebCore/inspector/InspectorValues.cpp \

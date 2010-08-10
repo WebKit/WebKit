@@ -66,7 +66,7 @@ InjectedScriptAccess._installHandler = function(methodName, async)
         }
         var callId = WebInspector.Callback.wrap(myCallback);
 
-        InspectorBackend.dispatchOnInjectedScript(callId, this._injectedScriptId, methodName, argsString, !!async);
+        InspectorBackend.dispatchOnInjectedScript(callId, this._injectedScriptId, methodName, argsString);
     };
 }
 
@@ -84,8 +84,3 @@ InjectedScriptAccess._installHandler("getPrototypes");
 InjectedScriptAccess._installHandler("openInInspectedWindow");
 InjectedScriptAccess._installHandler("pushNodeToFrontend");
 InjectedScriptAccess._installHandler("setPropertyValue");
-
-// Some methods can't run synchronously even on the injected script side (such as DB transactions).
-// Mark them as asynchronous here.
-InjectedScriptAccess._installHandler("executeSql", true);
-
