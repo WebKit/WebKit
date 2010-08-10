@@ -1,3 +1,14 @@
+2010-08-10  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        [Chromium/DRT] Enable saving layout test results.
+        https://bugs.webkit.org/show_bug.cgi?id=43796
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg: Added more
+            parameters to the new-run-webkit-tests, including the name
+            of the test results server.
+
 2010-08-10  Jian Li  <jianli@chromium.org>
 
         More chromium build fix.
