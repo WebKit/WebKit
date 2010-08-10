@@ -34,80 +34,15 @@
 
 #include "WebGraphicsContext3DDefaultImpl.h"
 
+#include "app/gfx/gl/gl_bindings.h"
+#include "app/gfx/gl/gl_context.h"
 #include "NotImplemented.h"
+#include <wtf/PassOwnPtr.h>
 
 #include <stdio.h>
 #include <string.h>
 
-#if OS(LINUX)
-#include <dlfcn.h>
-#endif
-
 namespace WebKit {
-
-// Uncomment this to render to a separate window for debugging
-// #define RENDER_TO_DEBUGGING_WINDOW
-
-#if OS(DARWIN)
-#define USE_TEXTURE_RECTANGLE_FOR_FRAMEBUFFER
-#endif
-
-bool WebGraphicsContext3DDefaultImpl::s_initializedGLEW = false;
-
-#if OS(LINUX)
-WebGraphicsContext3DDefaultImpl::GLConnection* WebGraphicsContext3DDefaultImpl::s_gl = 0;
-
-WebGraphicsContext3DDefaultImpl::GLConnection* WebGraphicsContext3DDefaultImpl::GLConnection::create()
-{
-    Display* dpy = XOpenDisplay(0);
-    if (!dpy) {
-        printf("GraphicsContext3D: error opening X display\n");
-        return 0;
-    }
-
-    // We use RTLD_GLOBAL semantics so that GLEW initialization works;
-    // GLEW expects to be able to open the current process's handle
-    // and do dlsym's of GL entry points from there.
-    void* libGL = dlopen("libGL.so.1", RTLD_LAZY | RTLD_GLOBAL);
-    if (!libGL) {
-        XCloseDisplay(dpy);
-        printf("GraphicsContext3D: error opening libGL.so.1: %s\n", dlerror());
-        return 0;
-    }
-
-    PFNGLXCHOOSEFBCONFIGPROC chooseFBConfig = (PFNGLXCHOOSEFBCONFIGPROC) dlsym(libGL, "glXChooseFBConfig");
-    PFNGLXCREATENEWCONTEXTPROC createNewContext = (PFNGLXCREATENEWCONTEXTPROC) dlsym(libGL, "glXCreateNewContext");
-    PFNGLXCREATEPBUFFERPROC createPbuffer = (PFNGLXCREATEPBUFFERPROC) dlsym(libGL, "glXCreatePbuffer");
-    PFNGLXDESTROYPBUFFERPROC destroyPbuffer = (PFNGLXDESTROYPBUFFERPROC) dlsym(libGL, "glXDestroyPbuffer");
-    PFNGLXMAKECURRENTPROC makeCurrent = (PFNGLXMAKECURRENTPROC) dlsym(libGL, "glXMakeCurrent");
-    PFNGLXDESTROYCONTEXTPROC destroyContext = (PFNGLXDESTROYCONTEXTPROC) dlsym(libGL, "glXDestroyContext");
-    PFNGLXGETCURRENTCONTEXTPROC getCurrentContext = (PFNGLXGETCURRENTCONTEXTPROC) dlsym(libGL, "glXGetCurrentContext");
-    if (!chooseFBConfig || !createNewContext || !createPbuffer
-        || !destroyPbuffer || !makeCurrent || !destroyContext
-        || !getCurrentContext) {
-        XCloseDisplay(dpy);
-        dlclose(libGL);
-        printf("GraphicsContext3D: error looking up bootstrapping entry points\n");
-        return 0;
-    }
-    return new GLConnection(dpy,
-                            libGL,
-                            chooseFBConfig,
-                            createNewContext,
-                            createPbuffer,
-                            destroyPbuffer,
-                            makeCurrent,
-                            destroyContext,
-                            getCurrentContext);
-}
-
-WebGraphicsContext3DDefaultImpl::GLConnection::~GLConnection()
-{
-    XCloseDisplay(m_display);
-    dlclose(m_libGL);
-}
-
-#endif // OS(LINUX)
 
 WebGraphicsContext3DDefaultImpl::VertexAttribPointerState::VertexAttribPointerState()
     : enabled(false)
@@ -134,20 +69,6 @@ WebGraphicsContext3DDefaultImpl::WebGraphicsContext3DDefaultImpl()
     , m_scanline(0)
 #endif
     , m_boundArrayBuffer(0)
-#if OS(WINDOWS)
-    , m_canvasWindow(0)
-    , m_canvasDC(0)
-    , m_contextObj(0)
-#elif PLATFORM(CG)
-    , m_pbuffer(0)
-    , m_contextObj(0)
-    , m_renderOutput(0)
-#elif OS(LINUX)
-    , m_contextObj(0)
-    , m_pbuffer(0)
-#else
-#error Must port to your platform
-#endif
 {
 }
 
@@ -155,7 +76,7 @@ WebGraphicsContext3DDefaultImpl::~WebGraphicsContext3DDefaultImpl()
 {
     if (m_initialized) {
         makeContextCurrent();
-#ifndef RENDER_TO_DEBUGGING_WINDOW
+
         if (m_attributes.antialias) {
             glDeleteRenderbuffersEXT(1, &m_multisampleColorBuffer);
             if (m_attributes.depth || m_attributes.stencil)
@@ -171,220 +92,19 @@ WebGraphicsContext3DDefaultImpl::~WebGraphicsContext3DDefaultImpl()
             delete[] m_scanline;
 #endif
         glDeleteFramebuffersEXT(1, &m_fbo);
-#endif // !RENDER_TO_DEBUGGING_WINDOW
-#if OS(WINDOWS)
-        wglewMakeCurrent(0, 0);
-        wglewDeleteContext(m_contextObj);
-        ReleaseDC(m_canvasWindow, m_canvasDC);
-        DestroyWindow(m_canvasWindow);
-#elif PLATFORM(CG)
-        CGLSetCurrentContext(0);
-        CGLDestroyContext(m_contextObj);
-        CGLDestroyPBuffer(m_pbuffer);
-        if (m_renderOutput)
-            delete[] m_renderOutput;
-#elif OS(LINUX)
-        s_gl->makeCurrent(0, 0);
-        s_gl->destroyContext(m_contextObj);
-        s_gl->destroyPbuffer(m_pbuffer);
-#else
-#error Must port to your platform
-#endif
-        m_contextObj = 0;
+
+        m_glContext->Destroy();
     }
 }
 
 bool WebGraphicsContext3DDefaultImpl::initialize(WebGraphicsContext3D::Attributes attributes, WebView* webView)
 {
-#if OS(WINDOWS)
-    if (!s_initializedGLEW) {
-        // Do this only the first time through.
-        if (!wglewInit()) {
-            printf("WebGraphicsContext3DDefaultImpl: wglewInit failed\n");
-            return false;
-        }
-    }
-
-    WNDCLASS wc;
-    if (!GetClassInfo(GetModuleHandle(0), L"CANVASGL", &wc)) {
-        ZeroMemory(&wc, sizeof(WNDCLASS));
-        wc.style = CS_OWNDC;
-        wc.hInstance = GetModuleHandle(0);
-        wc.lpfnWndProc = DefWindowProc;
-        wc.lpszClassName = L"CANVASGL";
-
-        if (!RegisterClass(&wc)) {
-            printf("WebGraphicsContext3DDefaultImpl: RegisterClass failed\n");
-            return false;
-        }
-    }
-
-    m_canvasWindow = CreateWindow(L"CANVASGL", L"CANVASGL",
-                                  WS_CAPTION,
-                                  CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
-                                  CW_USEDEFAULT, 0, 0, GetModuleHandle(0), 0);
-    if (!m_canvasWindow) {
-        printf("WebGraphicsContext3DDefaultImpl: CreateWindow failed\n");
+    if (!gfx::GLContext::InitializeOneOff())
         return false;
-    }
-
-    // get the device context
-    m_canvasDC = GetDC(m_canvasWindow);
-    if (!m_canvasDC) {
-        printf("WebGraphicsContext3DDefaultImpl: GetDC failed\n");
+        
+    m_glContext = WTF::adoptPtr(gfx::GLContext::CreateOffscreenGLContext(0));
+    if (!m_glContext)
         return false;
-    }
-
-    // find default pixel format
-    PIXELFORMATDESCRIPTOR pfd;
-    ZeroMemory(&pfd, sizeof(PIXELFORMATDESCRIPTOR));
-    pfd.nSize = sizeof(PIXELFORMATDESCRIPTOR);
-    pfd.nVersion = 1;
-#ifdef RENDER_TO_DEBUGGING_WINDOW
-    pfd.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
-#else
-    pfd.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL;
-#endif
-    int pixelformat = ChoosePixelFormat(m_canvasDC, &pfd);
-
-    // set the pixel format for the dc
-    if (!SetPixelFormat(m_canvasDC, pixelformat, &pfd)) {
-        printf("WebGraphicsContext3DDefaultImpl: SetPixelFormat failed\n");
-        return false;
-    }
-
-    // create rendering context
-    m_contextObj = wglewCreateContext(m_canvasDC);
-    if (!m_contextObj) {
-        printf("WebGraphicsContext3DDefaultImpl: wglCreateContext failed\n");
-        return false;
-    }
-
-    if (!wglewMakeCurrent(m_canvasDC, m_contextObj)) {
-        printf("WebGraphicsContext3DDefaultImpl: wglMakeCurrent failed\n");
-        return false;
-    }
-
-#ifdef RENDER_TO_DEBUGGING_WINDOW
-    typedef BOOL (WINAPI * PFNWGLSWAPINTERVALEXTPROC) (int interval);
-    PFNWGLSWAPINTERVALEXTPROC setSwapInterval = 0;
-    setSwapInterval = (PFNWGLSWAPINTERVALEXTPROC) wglewGetProcAddress("wglSwapIntervalEXT");
-    if (setSwapInterval)
-        setSwapInterval(1);
-#endif // RENDER_TO_DEBUGGING_WINDOW
-
-#elif PLATFORM(CG)
-    // Create a 1x1 pbuffer and associated context to bootstrap things
-    CGLPixelFormatAttribute attribs[] = {
-        (CGLPixelFormatAttribute) kCGLPFAPBuffer,
-        (CGLPixelFormatAttribute) 0
-    };
-    CGLPixelFormatObj pixelFormat;
-    GLint numPixelFormats;
-    if (CGLChoosePixelFormat(attribs, &pixelFormat, &numPixelFormats) != kCGLNoError) {
-        printf("WebGraphicsContext3DDefaultImpl: error choosing pixel format\n");
-        return false;
-    }
-    if (!pixelFormat) {
-        printf("WebGraphicsContext3DDefaultImpl: no pixel format selected\n");
-        return false;
-    }
-    CGLContextObj context;
-    CGLError res = CGLCreateContext(pixelFormat, 0, &context);
-    CGLDestroyPixelFormat(pixelFormat);
-    if (res != kCGLNoError) {
-        printf("WebGraphicsContext3DDefaultImpl: error creating context\n");
-        return false;
-    }
-    CGLPBufferObj pbuffer;
-    if (CGLCreatePBuffer(1, 1, GL_TEXTURE_2D, GL_RGBA, 0, &pbuffer) != kCGLNoError) {
-        CGLDestroyContext(context);
-        printf("WebGraphicsContext3DDefaultImpl: error creating pbuffer\n");
-        return false;
-    }
-    if (CGLSetPBuffer(context, pbuffer, 0, 0, 0) != kCGLNoError) {
-        CGLDestroyContext(context);
-        CGLDestroyPBuffer(pbuffer);
-        printf("WebGraphicsContext3DDefaultImpl: error attaching pbuffer to context\n");
-        return false;
-    }
-    if (CGLSetCurrentContext(context) != kCGLNoError) {
-        CGLDestroyContext(context);
-        CGLDestroyPBuffer(pbuffer);
-        printf("WebGraphicsContext3DDefaultImpl: error making context current\n");
-        return false;
-    }
-    m_pbuffer = pbuffer;
-    m_contextObj = context;
-#elif OS(LINUX)
-    if (!s_gl) {
-        s_gl = GLConnection::create();
-        if (!s_gl)
-            return false;
-    }
-
-    int configAttrs[] = {
-        GLX_DRAWABLE_TYPE,
-        GLX_PBUFFER_BIT,
-        GLX_RENDER_TYPE,
-        GLX_RGBA_BIT,
-        GLX_DOUBLEBUFFER,
-        0,
-        0
-    };
-    int nelements = 0;
-    GLXFBConfig* config = s_gl->chooseFBConfig(0, configAttrs, &nelements);
-    if (!config) {
-        printf("WebGraphicsContext3DDefaultImpl: glXChooseFBConfig failed\n");
-        return false;
-    }
-    if (!nelements) {
-        printf("WebGraphicsContext3DDefaultImpl: glXChooseFBConfig returned 0 elements\n");
-        XFree(config);
-        return false;
-    }
-    GLXContext context = s_gl->createNewContext(config[0], GLX_RGBA_TYPE, 0, True);
-    if (!context) {
-        printf("WebGraphicsContext3DDefaultImpl: glXCreateNewContext failed\n");
-        XFree(config);
-        return false;
-    }
-    int pbufferAttrs[] = {
-        GLX_PBUFFER_WIDTH,
-        1,
-        GLX_PBUFFER_HEIGHT,
-        1,
-        0
-    };
-    GLXPbuffer pbuffer = s_gl->createPbuffer(config[0], pbufferAttrs);
-    XFree(config);
-    if (!pbuffer) {
-        printf("WebGraphicsContext3DDefaultImpl: glxCreatePbuffer failed\n");
-        return false;
-    }
-    if (!s_gl->makeCurrent(pbuffer, context)) {
-        printf("WebGraphicsContext3DDefaultImpl: glXMakeCurrent failed\n");
-        return false;
-    }
-    m_contextObj = context;
-    m_pbuffer = pbuffer;
-#else
-#error Must port to your platform
-#endif
-
-    if (!s_initializedGLEW) {
-        // Initialize GLEW and check for GL 2.0 support by the drivers.
-        GLenum glewInitResult = glewInit();
-        if (glewInitResult != GLEW_OK) {
-            printf("WebGraphicsContext3DDefaultImpl: GLEW initialization failed\n");
-            return false;
-        }
-        if (!glewIsSupported("GL_VERSION_2_0")) {
-            printf("WebGraphicsContext3DDefaultImpl: OpenGL 2.0 not supported\n");
-            return false;
-        }
-        s_initializedGLEW = true;
-    }
 
     m_attributes = attributes;
     validateAttributes();
@@ -423,22 +143,7 @@ void WebGraphicsContext3DDefaultImpl::validateAttributes()
 
 bool WebGraphicsContext3DDefaultImpl::makeContextCurrent()
 {
-#if OS(WINDOWS)
-    if (wglewGetCurrentContext() != m_contextObj)
-        if (wglewMakeCurrent(m_canvasDC, m_contextObj))
-            return true;
-#elif PLATFORM(CG)
-    if (CGLGetCurrentContext() != m_contextObj)
-        if (CGLSetCurrentContext(m_contextObj) == kCGLNoError)
-            return true;
-#elif OS(LINUX)
-    if (s_gl->getCurrentContext() != m_contextObj)
-        if (s_gl->makeCurrent(m_pbuffer, m_contextObj))
-            return true;
-#else
-#error Must port to your platform
-#endif
-    return false;
+    return m_glContext->MakeCurrent();
 }
 
 int WebGraphicsContext3DDefaultImpl::width()
@@ -500,23 +205,12 @@ static int createTextureObject(GLenum target)
 
 void WebGraphicsContext3DDefaultImpl::reshape(int width, int height)
 {
-#ifdef RENDER_TO_DEBUGGING_WINDOW
-    SetWindowPos(m_canvasWindow, HWND_TOP, 0, 0, width, height,
-                 SWP_NOMOVE);
-    ShowWindow(m_canvasWindow, SW_SHOW);
-#endif
-
     m_cachedWidth = width;
     m_cachedHeight = height;
     makeContextCurrent();
 
-#ifndef RENDER_TO_DEBUGGING_WINDOW
-#ifdef USE_TEXTURE_RECTANGLE_FOR_FRAMEBUFFER
-    // GL_TEXTURE_RECTANGLE_ARB is the best supported render target on Mac OS X
-    GLenum target = GL_TEXTURE_RECTANGLE_ARB;
-#else
     GLenum target = GL_TEXTURE_2D;
-#endif
+
     if (!m_texture) {
         // Generate the texture object
         m_texture = createTextureObject(target);
@@ -658,7 +352,6 @@ void WebGraphicsContext3DDefaultImpl::reshape(int width, int height)
 
     if (mustRestoreFBO)
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_boundFBO);
-#endif // RENDER_TO_DEBUGGING_WINDOW
 
 #ifdef FLIP_FRAMEBUFFER_VERTICALLY
     if (m_scanline) {
@@ -700,9 +393,6 @@ bool WebGraphicsContext3DDefaultImpl::readBackFramebuffer(unsigned char* pixels,
 
     makeContextCurrent();
 
-#ifdef RENDER_TO_DEBUGGING_WINDOW
-    SwapBuffers(m_canvasDC);
-#else
     // Earlier versions of this code used the GPU to flip the
     // framebuffer vertically before reading it back for compositing
     // via software. This code was quite complicated, used a lot of
@@ -732,13 +422,9 @@ bool WebGraphicsContext3DDefaultImpl::readBackFramebuffer(unsigned char* pixels,
         mustRestorePackAlignment = true;
     }
 
-#if PLATFORM(SKIA)
+    // FIXME: OpenGL ES 2 does not support GL_BGRA so this fails when
+    // using that backend.
     glReadPixels(0, 0, m_cachedWidth, m_cachedHeight, GL_BGRA, GL_UNSIGNED_BYTE, pixels);
-#elif PLATFORM(CG)
-    glReadPixels(0, 0, m_cachedWidth, m_cachedHeight, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, pixels);
-#else
-#error Must port to your platform
-#endif
 
     if (mustRestorePackAlignment)
         glPixelStorei(GL_PACK_ALIGNMENT, packAlignment);
@@ -751,7 +437,6 @@ bool WebGraphicsContext3DDefaultImpl::readBackFramebuffer(unsigned char* pixels,
         flipVertically(pixels, m_cachedWidth, m_cachedHeight);
 #endif
 
-#endif // RENDER_TO_DEBUGGING_WINDOW
     return true;
 }
 
@@ -916,38 +601,36 @@ void WebGraphicsContext3DDefaultImpl::copyTexImage2D(unsigned long target, long 
                                                      long x, long y, unsigned long width, unsigned long height, long border)
 {
     makeContextCurrent();
-#ifndef RENDER_TO_DEBUGGING_WINDOW
+
     if (m_attributes.antialias && m_boundFBO == m_multisampleFBO) {
         glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, m_multisampleFBO);
         glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, m_fbo);
         glBlitFramebufferEXT(x, y, x + width, y + height, x, y, x + width, y + height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
     }
-#endif
+
     glCopyTexImage2D(target, level, internalformat, x, y, width, height, border);
-#ifndef RENDER_TO_DEBUGGING_WINDOW
+
     if (m_attributes.antialias && m_boundFBO == m_multisampleFBO)
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_boundFBO);
-#endif
 }
 
 void WebGraphicsContext3DDefaultImpl::copyTexSubImage2D(unsigned long target, long level, long xoffset, long yoffset,
                                                         long x, long y, unsigned long width, unsigned long height)
 {
     makeContextCurrent();
-#ifndef RENDER_TO_DEBUGGING_WINDOW
+
     if (m_attributes.antialias && m_boundFBO == m_multisampleFBO) {
         glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, m_multisampleFBO);
         glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, m_fbo);
         glBlitFramebufferEXT(x, y, x + width, y + height, x, y, x + width, y + height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
     }
-#endif
+
     glCopyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height);
-#ifndef RENDER_TO_DEBUGGING_WINDOW
+
     if (m_attributes.antialias && m_boundFBO == m_multisampleFBO)
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_boundFBO);
-#endif
 }
 
 DELEGATE_TO_GL_1(cullFace, CullFace, unsigned long)
@@ -1242,11 +925,11 @@ DELEGATE_TO_GL_1R(isBuffer, IsBuffer, WebGLId, bool)
 
 DELEGATE_TO_GL_1R(isEnabled, IsEnabled, unsigned long, bool)
 
-DELEGATE_TO_GL_1R(isFramebuffer, IsFramebuffer, WebGLId, bool)
+DELEGATE_TO_GL_1R(isFramebuffer, IsFramebufferEXT, WebGLId, bool)
 
 DELEGATE_TO_GL_1R(isProgram, IsProgram, WebGLId, bool)
 
-DELEGATE_TO_GL_1R(isRenderbuffer, IsRenderbuffer, WebGLId, bool)
+DELEGATE_TO_GL_1R(isRenderbuffer, IsRenderbufferEXT, WebGLId, bool)
 
 DELEGATE_TO_GL_1R(isShader, IsShader, WebGLId, bool)
 
@@ -1266,7 +949,6 @@ void WebGraphicsContext3DDefaultImpl::readPixels(long x, long y, unsigned long w
     // FIXME: remove the two glFlush calls when the driver bug is fixed, i.e.,
     // all previous rendering calls should be done before reading pixels.
     glFlush();
-#ifndef RENDER_TO_DEBUGGING_WINDOW
     if (m_attributes.antialias && m_boundFBO == m_multisampleFBO) {
         glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, m_multisampleFBO);
         glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, m_fbo);
@@ -1274,12 +956,11 @@ void WebGraphicsContext3DDefaultImpl::readPixels(long x, long y, unsigned long w
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
         glFlush();
     }
-#endif
+
     glReadPixels(x, y, width, height, format, type, pixels);
-#ifndef RENDER_TO_DEBUGGING_WINDOW
+
     if (m_attributes.antialias && m_boundFBO == m_multisampleFBO)
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_boundFBO);
-#endif
 }
 
 void WebGraphicsContext3DDefaultImpl::releaseShaderCompiler()
@@ -1431,7 +1112,7 @@ unsigned WebGraphicsContext3DDefaultImpl::createBuffer()
 {
     makeContextCurrent();
     GLuint o;
-    glGenBuffers(1, &o);
+    glGenBuffersARB(1, &o);
     return o;
 }
 
@@ -1470,7 +1151,7 @@ unsigned WebGraphicsContext3DDefaultImpl::createTexture()
 void WebGraphicsContext3DDefaultImpl::deleteBuffer(unsigned buffer)
 {
     makeContextCurrent();
-    glDeleteBuffers(1, &buffer);
+    glDeleteBuffersARB(1, &buffer);
 }
 
 void WebGraphicsContext3DDefaultImpl::deleteFramebuffer(unsigned framebuffer)

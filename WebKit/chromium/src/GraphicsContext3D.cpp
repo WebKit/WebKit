@@ -85,9 +85,6 @@ namespace WebCore {
 //----------------------------------------------------------------------
 // GraphicsContext3DInternal
 
-// Uncomment this to render to a separate window for debugging
-// #define RENDER_TO_DEBUGGING_WINDOW
-
 class GraphicsContext3DInternal {
 public:
     GraphicsContext3DInternal();

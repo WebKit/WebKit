@@ -1,3 +1,31 @@
+2010-08-10  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Use Chromium OpenGL bindings rather than GLEW in WebGraphicsContextDefaultImpl
+        https://bugs.webkit.org/show_bug.cgi?id=43754
+
+        Deleted per-platform OpenGL context management code, now
+        abstracted via GLContext. Built and tested in Chromium with
+        --in-process-webgl flag.
+
+        * WebKit.gyp:
+        * src/GraphicsContext3D.cpp:
+        * src/WebGraphicsContext3DDefaultImpl.cpp:
+        (WebKit::WebGraphicsContext3DDefaultImpl::WebGraphicsContext3DDefaultImpl):
+        (WebKit::WebGraphicsContext3DDefaultImpl::~WebGraphicsContext3DDefaultImpl):
+        (WebKit::WebGraphicsContext3DDefaultImpl::initialize):
+        (WebKit::WebGraphicsContext3DDefaultImpl::validateAttributes):
+        (WebKit::WebGraphicsContext3DDefaultImpl::makeContextCurrent):
+        (WebKit::WebGraphicsContext3DDefaultImpl::reshape):
+        (WebKit::WebGraphicsContext3DDefaultImpl::readBackFramebuffer):
+        (WebKit::WebGraphicsContext3DDefaultImpl::copyTexImage2D):
+        (WebKit::WebGraphicsContext3DDefaultImpl::copyTexSubImage2D):
+        (WebKit::WebGraphicsContext3DDefaultImpl::readPixels):
+        (WebKit::WebGraphicsContext3DDefaultImpl::createBuffer):
+        (WebKit::WebGraphicsContext3DDefaultImpl::deleteBuffer):
+        * src/WebGraphicsContext3DDefaultImpl.h:
+
 2010-08-10  Jian Li  <jianli@chromium.org>
 
         Another chromium build fix.

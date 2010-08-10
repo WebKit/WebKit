@@ -87,6 +87,7 @@
             'msvs_guid': '5ECEC9E5-8F23-47B6-93E0-C3B328B3BE65',
             'dependencies': [
                 '../../WebCore/WebCore.gyp/WebCore.gyp:webcore',
+                '<(chromium_src_dir)/app/app.gyp:app_base', # For GLContext
                 '<(chromium_src_dir)/skia/skia.gyp:skia',
                 '<(chromium_src_dir)/third_party/npapi/npapi.gyp:npapi',
             ],
@@ -317,6 +318,7 @@
                 'src/GLES2Context.cpp',
                 'src/GLES2ContextInternal.cpp',
                 'src/GLES2ContextInternal.h',
+                'src/GraphicsContext3D.cpp',
                 'src/gtk/WebFontInfo.cpp',
                 'src/gtk/WebFontInfo.h',
                 'src/gtk/WebInputEventFactory.cpp',
@@ -592,18 +594,6 @@
                     'sources/': [['exclude', '/win/']],
                 }],
                 ['"ENABLE_3D_CANVAS=1" in feature_defines', {
-                    # Conditionally compile in GLEW and our GraphicsContext3D implementation.
-                    'sources+': [
-                        'src/GraphicsContext3D.cpp',
-                        '<(chromium_src_dir)/third_party/glew/src/glew.c'
-                    ],
-                    'include_dirs+': [
-                        '<(chromium_src_dir)/third_party/glew/include'
-                    ],
-                    'defines+': [
-                        'GLEW_STATIC=1',
-                        'GLEW_NO_GLU=1',
-                    ],
                     'conditions': [
                         ['OS=="mac"', {
                             'link_settings': {

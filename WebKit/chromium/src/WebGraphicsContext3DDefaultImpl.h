@@ -36,25 +36,14 @@
 #include "WebGraphicsContext3D.h"
 
 #include <wtf/ListHashSet.h>
+#include <wtf/OwnPtr.h>
 
-#if OS(WINDOWS)
-#include <windows.h>
-#endif
-
-#include "GL/glew.h"
-#if OS(WINDOWS)
-#include "GL/wglew.h"
-#endif
-
-#if PLATFORM(CG)
-#include <OpenGL/OpenGL.h>
-#else
+#if !PLATFORM(CG)
 #define FLIP_FRAMEBUFFER_VERTICALLY
 #endif
-
-#if OS(LINUX)
-#include "GL/glxew.h"
-#endif
+namespace gfx {
+class GLContext;
+}
 
 namespace WebKit {
 
@@ -323,103 +312,7 @@ private:
     // Errors raised by synthesizeGLError().
     ListHashSet<unsigned long> m_syntheticErrors;
 
-    static bool s_initializedGLEW;
-#if OS(WINDOWS)
-    HWND m_canvasWindow;
-    HDC m_canvasDC;
-    HGLRC m_contextObj;
-#elif PLATFORM(CG)
-    CGLPBufferObj m_pbuffer;
-    CGLContextObj m_contextObj;
-    unsigned char* m_renderOutput;
-#elif OS(LINUX)
-    GLXContext m_contextObj;
-    GLXPbuffer m_pbuffer;
-
-    // In order to avoid problems caused by linking against libGL, we
-    // dynamically look up all the symbols we need.
-    // http://code.google.com/p/chromium/issues/detail?id=16800
-    class GLConnection {
-      public:
-        ~GLConnection();
-
-        static GLConnection* create();
-
-        GLXFBConfig* chooseFBConfig(int screen, const int *attrib_list, int *nelements)
-        {
-            return m_glXChooseFBConfig(m_display, screen, attrib_list, nelements);
-        }
-
-        GLXContext createNewContext(GLXFBConfig config, int renderType, GLXContext shareList, Bool direct)
-        {
-            return m_glXCreateNewContext(m_display, config, renderType, shareList, direct);
-        }
-
-        GLXPbuffer createPbuffer(GLXFBConfig config, const int *attribList)
-        {
-            return m_glXCreatePbuffer(m_display, config, attribList);
-        }
-
-        void destroyPbuffer(GLXPbuffer pbuf)
-        {
-            m_glXDestroyPbuffer(m_display, pbuf);
-        }
-
-        Bool makeCurrent(GLXDrawable drawable, GLXContext ctx)
-        {
-            return m_glXMakeCurrent(m_display, drawable, ctx);
-        }
-
-        void destroyContext(GLXContext ctx)
-        {
-            m_glXDestroyContext(m_display, ctx);
-        }
-
-        GLXContext getCurrentContext()
-        {
-            return m_glXGetCurrentContext();
-        }
-
-      private:
-        Display* m_display;
-        void* m_libGL;
-        PFNGLXCHOOSEFBCONFIGPROC m_glXChooseFBConfig;
-        PFNGLXCREATENEWCONTEXTPROC m_glXCreateNewContext;
-        PFNGLXCREATEPBUFFERPROC m_glXCreatePbuffer;
-        PFNGLXDESTROYPBUFFERPROC m_glXDestroyPbuffer;
-        typedef Bool (* PFNGLXMAKECURRENTPROC)(Display* dpy, GLXDrawable drawable, GLXContext ctx);
-        PFNGLXMAKECURRENTPROC m_glXMakeCurrent;
-        typedef void (* PFNGLXDESTROYCONTEXTPROC)(Display* dpy, GLXContext ctx);
-        PFNGLXDESTROYCONTEXTPROC m_glXDestroyContext;
-        typedef GLXContext (* PFNGLXGETCURRENTCONTEXTPROC)(void);
-        PFNGLXGETCURRENTCONTEXTPROC m_glXGetCurrentContext;
-
-        GLConnection(Display* display,
-                     void* libGL,
-                     PFNGLXCHOOSEFBCONFIGPROC chooseFBConfig,
-                     PFNGLXCREATENEWCONTEXTPROC createNewContext,
-                     PFNGLXCREATEPBUFFERPROC createPbuffer,
-                     PFNGLXDESTROYPBUFFERPROC destroyPbuffer,
-                     PFNGLXMAKECURRENTPROC makeCurrent,
-                     PFNGLXDESTROYCONTEXTPROC destroyContext,
-                     PFNGLXGETCURRENTCONTEXTPROC getCurrentContext)
-            : m_libGL(libGL)
-            , m_display(display)
-            , m_glXChooseFBConfig(chooseFBConfig)
-            , m_glXCreateNewContext(createNewContext)
-            , m_glXCreatePbuffer(createPbuffer)
-            , m_glXDestroyPbuffer(destroyPbuffer)
-            , m_glXMakeCurrent(makeCurrent)
-            , m_glXDestroyContext(destroyContext)
-            , m_glXGetCurrentContext(getCurrentContext)
-        {
-        }
-    };
-
-    static GLConnection* s_gl;
-#else
-    #error Must port WebGraphicsContext3DDefaultImpl to your platform
-#endif
+    OwnPtr<gfx::GLContext> m_glContext;
 };
 
 } // namespace WebKit
