@@ -346,7 +346,7 @@ LegacyHTMLDocumentParser::State LegacyHTMLDocumentParser::parseNonHTMLText(Segme
             if (state.inScript())
                 state = scriptHandler(state);
             else {
-                state = processListing(SegmentedString(m_scriptCode, m_scriptCodeSize), state);
+                state = processListing(SegmentedString(String(m_scriptCode, m_scriptCodeSize)), state);
                 processToken();
                 if (state.inStyle()) {
                     m_currentToken.tagName = styleTag.localName();
@@ -451,7 +451,7 @@ LegacyHTMLDocumentParser::State LegacyHTMLDocumentParser::scriptHandler(State st
         }
     }
 
-    state = processListing(SegmentedString(m_scriptCode, m_scriptCodeSize), state);
+    state = processListing(SegmentedString(String(m_scriptCode, m_scriptCodeSize)), state);
     RefPtr<Node> node = processToken();
 
     if (node && m_scriptingPermission == FragmentScriptingNotAllowed) {
@@ -625,7 +625,7 @@ LegacyHTMLDocumentParser::State LegacyHTMLDocumentParser::parseComment(Segmented
                     m_scriptCode[m_scriptCodeSize + 1] = 0;
                     m_currentToken.tagName = commentAtom;
                     m_currentToken.beginTag = true;
-                    state = processListing(SegmentedString(m_scriptCode, m_scriptCodeSize - endCharsCount), state);
+                    state = processListing(SegmentedString(String(m_scriptCode, m_scriptCodeSize - endCharsCount)), state);
                     processToken();
                     m_currentToken.tagName = commentAtom;
                     m_currentToken.beginTag = false;

@@ -150,7 +150,7 @@ static inline void documentWrite(ExecState* exec, HTMLDocument* document, Newlin
         }
     }
     if (addNewline)
-        segmentedString.append(SegmentedString(&newlineCharacter, 1));
+        segmentedString.append(SegmentedString(String(&newlineCharacter, 1)));
 
     Document* activeDocument = asJSDOMWindow(exec->lexicalGlobalObject())->impl()->document();
     document->write(segmentedString, activeDocument);

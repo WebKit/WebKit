@@ -1,3 +1,29 @@
+2010-08-09  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove error-prone external SegementedSubstring contructor
+        https://bugs.webkit.org/show_bug.cgi?id=43752
+
+        There's a lot of code that assumes that SegmentedString takes ownership
+        of its substrings.  For example, when the HTML parser pauses and
+        resumes asynchronously, it could explode if SegmentedString didn't own
+        its substrings.
+
+        Prior to this patch, there was a constructor that let
+        SegmentedSubstring use an external string buffer.  It turns out it was
+        only used in a handful of places, but I'd rather pay the memcpy of
+        these small strings than risk having them used after free.
+
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        (WebCore::documentWrite):
+        * html/LegacyHTMLDocumentParser.cpp:
+        (WebCore::LegacyHTMLDocumentParser::parseNonHTMLText):
+        (WebCore::LegacyHTMLDocumentParser::scriptHandler):
+        (WebCore::LegacyHTMLDocumentParser::parseComment):
+        * platform/text/SegmentedString.h:
+        (WebCore::SegmentedString::SegmentedString):
+
 2010-08-09  Gavin Barraclough  <barraclough@apple.com>
 
         Speculative Qt build fix.
