@@ -50,6 +50,7 @@ WebInspector.InspectorBackendStub = function()
     this._registerDelegate("getChildNodes");
     this._registerDelegate("getCookies");
     this._registerDelegate("getDatabaseTableNames");
+    this._registerDelegate("executeSQL");
     this._registerDelegate("getDOMStorageEntries");
     this._registerDelegate("getEventListenersForNode");
     this._registerDelegate("getOuterHTML");
