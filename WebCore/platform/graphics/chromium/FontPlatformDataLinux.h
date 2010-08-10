@@ -32,10 +32,10 @@
 #define FontPlatformDataLinux_h
 
 #include "FontRenderStyle.h"
-#include "StringImpl.h"
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringImpl.h>
 #include <SkPaint.h>
 
 class SkTypeface;

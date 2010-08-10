@@ -1,5 +1,11 @@
 2010-08-10  Gavin Barraclough  <barraclough@apple.com>
 
+        Chromium build fix
+
+        * platform/graphics/chromium/FontPlatformDataLinux.h:
+
+2010-08-10  Gavin Barraclough  <barraclough@apple.com>
+
         Rubber stamped by Sam Weinig.
 
         Bug 43786 - Move AtomicStringHash from WebCore to WTF
