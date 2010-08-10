@@ -3185,5 +3185,8 @@ BUG51416 : fast/dom/DeviceMotion/create-event.html = TEXT
 BUG51416 : fast/dom/DeviceMotion/optional-event-properties.html = TEXT
 BUG51416 : fast/dom/DeviceMotion/window-property.html = TEXT
 
+// Will need rebaseline.
+BUG_SENORBLANCO : fast/canvas/image-object-in-canvas.html = IMAGE
+
 // Slow test introduced in r64817
 BUG51571 : http/tests/misc/bad-charset-alias.html = TIMEOUT

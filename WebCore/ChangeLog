@@ -1,3 +1,18 @@
+2010-08-09  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by David Levin.
+
+        Prefer the medium-quality (bilinear) image resampling for 2D canvas on
+        Chromium.
+        https://bugs.webkit.org/show_bug.cgi?id=43646
+        
+        This is what the accelerated path is going to do,
+        so do it in the software path as well.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::createImageBuffer):
+        * platform/graphics/GraphicsContext.h:
+
 2010-08-10  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Dave Hyatt.
