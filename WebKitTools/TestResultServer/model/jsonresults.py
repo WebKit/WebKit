@@ -171,8 +171,6 @@ class JsonResults(object):
 
             # Merge this build into aggreagated results.
             cls._merge_one_build(aggregated_json, incremental_json, index)
-            logging.debug("Merged build %s, merged json: %s.",
-                build_number, aggregated_json)
 
         return True
 
@@ -210,18 +208,25 @@ class JsonResults(object):
             incremental_json: incremental json object.
         """
 
-        for test_name in incremental_json:
-            incremental_test = incremental_json[test_name]
+        all_tests = (set(aggregated_json.iterkeys()) |
+                     set(incremental_json.iterkeys()))
+        for test_name in all_tests:
             if test_name in aggregated_json:
                 aggregated_test = aggregated_json[test_name]
+                if test_name in incremental_json:
+                    incremental_test = incremental_json[test_name]
+                    results = incremental_test[JSON_RESULTS_RESULTS]
+                    times = incremental_test[JSON_RESULTS_TIMES]
+                else:
+                    results = [[1, "P"]]
+                    times = [[1, "0"]]
+
                 cls._insert_item_run_length_encoded(
-                    incremental_test[JSON_RESULTS_RESULTS],
-                    aggregated_test[JSON_RESULTS_RESULTS])
+                    results, aggregated_test[JSON_RESULTS_RESULTS])
                 cls._insert_item_run_length_encoded(
-                    incremental_test[JSON_RESULTS_TIMES],
-                    aggregated_test[JSON_RESULTS_TIMES])
+                    times, aggregated_test[JSON_RESULTS_TIMES])
             else:
-                aggregated_json[test_name] = incremental_test
+                aggregated_json[test_name] = incremental_json[test_name]
 
     @classmethod
     def _insert_item_run_length_encoded(cls, incremental_item, aggregated_item):

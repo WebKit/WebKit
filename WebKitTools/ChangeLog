@@ -1,3 +1,18 @@
+2010-08-10  Victor Wang  <victorw@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Update test results server merge logic so the aggregated
+        results and times are updated for tests that are
+        in aggragated json but not in incremental json.
+
+        Also update unittest to test this case.
+
+        https://bugs.webkit.org/show_bug.cgi?id=43769
+
+        * TestResultServer/model/jsonresults.py:
+        * TestResultServer/model/jsonresults_unittest.py:
+
 2010-08-09  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Ariya Hidayat.
