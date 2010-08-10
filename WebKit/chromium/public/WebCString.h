@@ -39,6 +39,10 @@
 #include <string>
 #endif
 
+namespace WTF {
+class CString;
+}
+
 namespace WebKit {
 
 class WebCStringPrivate;
