@@ -1,3 +1,13 @@
+2010-08-10  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Make sure NPAPI plugins get an initial setNPWindow on Mac
+
+        https://bugs.webkit.org/show_bug.cgi?id=43782
+
+        * plugins/mac/PluginViewMac.mm:
+
 2010-08-10  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

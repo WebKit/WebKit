@@ -227,7 +227,10 @@ bool PluginView::platformStart()
 #endif
     }
 
-    show();
+    updatePluginWidget();
+
+    if (!m_plugin->quirks().contains(PluginQuirkDeferFirstSetWindowCall))
+        setNPWindowIfNeeded();
 
     // TODO: Implement null timer throttling depending on plugin activation
     m_nullEventTimer.set(new Timer<PluginView>(this, &PluginView::nullEventTimerFired));
