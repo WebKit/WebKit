@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Apple Inc.  All rights reserved.
+ * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,7 +45,11 @@ void RenderObjectChildList::destroyLeftoverChildren()
     while (firstChild()) {
         if (firstChild()->isListMarker() || (firstChild()->style()->styleType() == FIRST_LETTER && !firstChild()->isText()))
             firstChild()->remove();  // List markers are owned by their enclosing list and so don't get destroyed by this container. Similarly, first letters are destroyed by their remaining text fragment.
-        else {
+        else if (firstChild()->isRunIn() && firstChild()->node()) {
+            firstChild()->node()->setRenderer(0);
+            firstChild()->node()->setNeedsStyleRecalc();
+            firstChild()->destroy();
+        } else {
             // Destroy any anonymous children remaining in the render tree, as well as implicit (shadow) DOM elements like those used in the engine-based text fields.
             if (firstChild()->node())
                 firstChild()->node()->setRenderer(0);

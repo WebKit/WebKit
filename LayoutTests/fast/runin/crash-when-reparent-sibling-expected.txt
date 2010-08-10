@@ -1,0 +1,5 @@
+PASS
+Output: 
+block sibling
+run-in
+block child
