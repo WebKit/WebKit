@@ -71,6 +71,7 @@ namespace WebKit {
 class AutocompletePopupMenuClient;
 class AutoFillPopupMenuClient;
 class ContextMenuClientImpl;
+class DeviceOrientationClientProxy;
 class DragScrollTimer;
 class WebAccessibilityObject;
 class WebDevToolsAgentClient;
@@ -519,6 +520,8 @@ private:
 #endif
 
     OwnPtr<WebGLES2Context> m_gles2Context;
+
+    OwnPtr<DeviceOrientationClientProxy> m_deviceOrientationClientProxy;
 };
 
 } // namespace WebKit

@@ -41,6 +41,7 @@
 #include "CSSStyleSelector.h"
 #include "CSSValueKeywords.h"
 #include "Cursor.h"
+#include "DeviceOrientationClientProxy.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "DOMUtilitiesPrivate.h"
@@ -177,9 +178,8 @@ static const PopupContainerSettings autoFillPopupSettings = {
 
 WebView* WebView::create(WebViewClient* client, WebDevToolsAgentClient* devToolsClient)
 {
-    // Keep runtime flag for device orientation turned off until it's implemented.
+    // Keep runtime flag for device motion turned off until it's implemented.
     WebRuntimeFeatures::enableDeviceMotion(false);
-    WebRuntimeFeatures::enableDeviceOrientation(false);
 
     // Pass the WebViewImpl's self-reference to the caller.
     return adoptRef(new WebViewImpl(client, devToolsClient)).leakRef();
@@ -267,6 +267,7 @@ WebViewImpl::WebViewImpl(WebViewClient* client, WebDevToolsAgentClient* devTools
     , m_speechInputClient(client)
 #endif
     , m_gles2Context(0)
+    , m_deviceOrientationClientProxy(new DeviceOrientationClientProxy(client ? client->deviceOrientationClient() : 0))
 {
     // WebKit/win/WebView.cpp does the same thing, except they call the
     // KJS specific wrapper around this method. We need to have threading
@@ -289,9 +290,9 @@ WebViewImpl::WebViewImpl(WebViewClient* client, WebDevToolsAgentClient* devTools
 #if ENABLE(INPUT_SPEECH)
     pageClients.speechInputClient = &m_speechInputClient;
 #endif
-    m_page.set(new Page(pageClients));
+    pageClients.deviceOrientationClient = m_deviceOrientationClientProxy.get();
 
-    // the page will take ownership of the various clients
+    m_page.set(new Page(pageClients));
 
     m_page->backForwardList()->setClient(&m_backForwardListClientImpl);
     m_page->setGroupName(pageGroupName);

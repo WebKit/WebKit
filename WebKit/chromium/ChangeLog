@@ -1,3 +1,56 @@
+2010-08-10  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Implement chromium WebDeviceOrientationClient wrapper and have WebViewImpl get it from WebViewClient.
+        https://bugs.webkit.org/show_bug.cgi?id=43258
+
+        Provide a DeviceOrientationClient to Page by means of a
+        DeviceOrientationClientProxy that proxies calls to
+        a WebDeviceOrientationClient, an interface that can be implemented
+        in the WebKit or Chromium layer. An implementation to be used for
+        layout tests, wrapping DeviceOrientationClientMock, is provided.
+
+
+        * WebKit.gyp:
+        * public/WebDeviceOrientation.h: Added.
+        (WebKit::WebDeviceOrientation::WebDeviceOrientation):
+        * public/WebDeviceOrientationClient.h: Added.
+        (WebKit::WebDeviceOrientationClient::~WebDeviceOrientationClient):
+        * public/WebDeviceOrientationClientMock.h: Added.
+        (WebKit::WebDeviceOrientationClientMock::WebDeviceOrientationClientMock):
+        (WebKit::WebDeviceOrientationClientMock::~WebDeviceOrientationClientMock):
+        * public/WebDeviceOrientationController.h: Added.
+        (WebKit::WebDeviceOrientationController::WebDeviceOrientationController):
+        * public/WebViewClient.h:
+        (WebKit::WebViewClient::deviceOrientationClient):
+        * src/DeviceOrientationClientProxy.cpp: Added.
+        (WebKit::DeviceOrientationClientProxy::setController):
+        (WebKit::DeviceOrientationClientProxy::startUpdating):
+        (WebKit::DeviceOrientationClientProxy::stopUpdating):
+        (WebKit::DeviceOrientationClientProxy::lastOrientation):
+        * src/DeviceOrientationClientProxy.h: Added.
+        (WebKit::DeviceOrientationClientProxy::DeviceOrientationClientProxy):
+        * src/WebDeviceOrientation.cpp: Added.
+        (WebKit::WebDeviceOrientation::WebDeviceOrientation):
+        (WebKit::WebDeviceOrientation::operator=):
+        (WebKit::WebDeviceOrientation::operator PassRefPtr<WebCore::DeviceOrientation>):
+        * src/WebDeviceOrientationClientMock.cpp: Added.
+        (WebKit::WebDeviceOrientationClientMock::setController):
+        (WebKit::WebDeviceOrientationClientMock::startUpdating):
+        (WebKit::WebDeviceOrientationClientMock::stopUpdating):
+        (WebKit::WebDeviceOrientationClientMock::lastOrientation):
+        (WebKit::WebDeviceOrientationClientMock::setOrientation):
+        (WebKit::WebDeviceOrientationClientMock::initialize):
+        (WebKit::WebDeviceOrientationClientMock::reset):
+        * src/WebDeviceOrientationController.cpp: Added.
+        (WebKit::WebDeviceOrientationController::didChangeDeviceOrientation):
+        (WebKit::WebDeviceOrientationController::controller):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebView::create):
+        (WebKit::WebViewImpl::WebViewImpl):
+        * src/WebViewImpl.h:
+
 2010-08-10  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r64988.
