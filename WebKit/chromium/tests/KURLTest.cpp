@@ -162,12 +162,12 @@ TEST(KURLTest, UTF8)
     // code depends on being able to compare the result of the .string()
     // getter with another String, and the isASCIIness of the two
     // strings must match for these functions (like equalIgnoringCase).
-    EXPECT_TRUE(WebCore::equalIgnoringCase(asciiKURL, WTF::String(asciiURL)));
+    EXPECT_TRUE(WTF::equalIgnoringCase(asciiKURL, WTF::String(asciiURL)));
 
     // Reproduce code path in FrameLoader.cpp -- equalIgnoringCase implicitly
     // expects gkurl.protocol() to have been created as ascii.
     WebCore::KURL mailto(WebCore::ParsedURLString, "mailto:foo@foo.com");
-    EXPECT_TRUE(WebCore::equalIgnoringCase(mailto.protocol(), "mailto"));
+    EXPECT_TRUE(WTF::equalIgnoringCase(mailto.protocol(), "mailto"));
 
     const char utf8URL[] = "http://foo/bar#\xe4\xbd\xa0\xe5\xa5\xbd";
     WebCore::KURL utf8KURL(WebCore::ParsedURLString, utf8URL);

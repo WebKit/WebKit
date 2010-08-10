@@ -1,5 +1,12 @@
 2010-08-09  Gavin Barraclough  <barraclough@apple.com>
 
+        Speculative chromium build fix V.
+
+        * tests/KURLTest.cpp:
+        (ComponentCase::TEST):
+
+2010-08-09  Gavin Barraclough  <barraclough@apple.com>
+
         Speculative chromium build fix IV.
 
         * src/WebPageSerializerImpl.h:
