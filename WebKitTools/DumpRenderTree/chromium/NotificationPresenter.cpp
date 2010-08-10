@@ -31,8 +31,8 @@
 #include "config.h"
 #include "NotificationPresenter.h"
 
-#include "PlatformString.h"
 #include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 #include "googleurl/src/gurl.h"
 #include "public/WebNotification.h"
@@ -41,28 +41,27 @@
 #include "public/WebString.h"
 #include "public/WebURL.h"
 
-using namespace WebCore;
 using namespace WebKit;
 
 void NotificationPresenter::grantPermission(const WebString& origin)
 {
     // Make sure it's in the form of an origin.
     GURL url(origin);
-    m_allowedOrigins.add(String(url.GetOrigin().spec().c_str()));
+    m_allowedOrigins.add(WTF::String(url.GetOrigin().spec().c_str()));
 }
 
 // The output from all these methods matches what DumpRenderTree produces.
 bool NotificationPresenter::show(const WebNotification& notification)
 {
     if (!notification.replaceId().isEmpty()) {
-        String replaceId(notification.replaceId().data(), notification.replaceId().length());
+        WTF::String replaceId(notification.replaceId().data(), notification.replaceId().length());
         if (m_replacements.find(replaceId) != m_replacements.end())
             printf("REPLACING NOTIFICATION %s\n",
                    m_replacements.find(replaceId)->second.utf8().data());
 
         WebString identifier = notification.isHTML() ?
             notification.url().spec().utf16() : notification.title();
-        m_replacements.set(replaceId, String(identifier.data(), identifier.length()));
+        m_replacements.set(replaceId, WTF::String(identifier.data(), identifier.length()));
     }
 
     if (notification.isHTML()) {
@@ -105,7 +104,7 @@ void NotificationPresenter::objectDestroyed(const WebKit::WebNotification& notif
 WebNotificationPresenter::Permission NotificationPresenter::checkPermission(const WebURL& url)
 {
     // Check with the layout test controller
-    String origin = String(static_cast<GURL>(url).GetOrigin().spec().c_str());
+    WTF::String origin = WTF::String(static_cast<GURL>(url).GetOrigin().spec().c_str());
     bool allowed = m_allowedOrigins.find(origin) != m_allowedOrigins.end();
     return allowed ? WebNotificationPresenter::PermissionAllowed
         : WebNotificationPresenter::PermissionDenied;

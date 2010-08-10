@@ -1,5 +1,17 @@
 2010-08-10  Jian Li  <jianli@chromium.org>
 
+        More chromium build fix.
+
+        * DumpRenderTree/chromium/MockSpellCheck.cpp:
+        (MockSpellCheck::spellCheckWord):
+        (MockSpellCheck::initializeIfNeeded):
+        * DumpRenderTree/chromium/NotificationPresenter.cpp:
+        (NotificationPresenter::grantPermission):
+        (NotificationPresenter::show):
+        (NotificationPresenter::checkPermission):
+
+2010-08-10  Jian Li  <jianli@chromium.org>
+
         Chromium build fix.
 
         * DumpRenderTree/chromium/MockSpellCheck.cpp:
