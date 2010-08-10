@@ -433,5 +433,6 @@ using WTF::charactersAreAllASCII;
 using WTF::charactersToInt;
 using WTF::charactersToFloat;
 using WTF::charactersToDouble;
+using WTF::operator+;
 
 #endif
