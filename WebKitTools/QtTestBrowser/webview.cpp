@@ -79,6 +79,18 @@ WebViewGraphicsBased::WebViewGraphicsBased(QWidget* parent)
     connect(m_updateTimer, SIGNAL(timeout()), this, SLOT(updateFrameRate()));
 }
 
+void WebViewGraphicsBased::setPage(QWebPage* page)
+{
+    connect(page->mainFrame(), SIGNAL(contentsSizeChanged(const QSize&)), SLOT(contentsSizeChanged(const QSize&)));
+    m_item->setPage(page);
+}
+
+void WebViewGraphicsBased::contentsSizeChanged(const QSize& size)
+{
+    if (m_resizesToContents)
+        scene()->setSceneRect(0, 0, size.width(), size.height());
+}
+
 void WebViewGraphicsBased::setResizesToContents(bool b)
 {
     if (b == m_resizesToContents)
@@ -105,8 +117,10 @@ void WebViewGraphicsBased::setResizesToContents(bool b)
     if (m_resizesToContents) {
         setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
         setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-        scene()->setSceneRect(QRectF());
         m_item->page()->setPreferredContentsSize(size());
+        QRectF itemRect(m_item->geometry().topLeft(), m_item->page()->mainFrame()->contentsSize());
+        m_item->setGeometry(itemRect);
+        scene()->setSceneRect(itemRect);
     } else {
         setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);

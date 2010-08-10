@@ -2,6 +2,25 @@
 
         Reviewed by Ariya Hidayat.
 
+        [Qt] QtTestBrowser: proper set scene rect
+
+        When resizesToContents is ON scene's rect is set to the boundary of
+        the mainFrame. However, navigating to other web page should keep resizing
+        scene's rect according to the new document loaded. Patch addresses this issue.
+
+        Now resizesToContents and scrolling properly work on QtTestBrowser.
+
+        * QtTestBrowser/webview.cpp:
+        (WebViewGraphicsBased::setPage):
+        (WebViewGraphicsBased::contentsSizeChanged):
+        (WebViewGraphicsBased::setResizesToContents):
+        (WebViewGraphicsBased::resizeEvent):
+        * QtTestBrowser/webview.h:
+
+2010-08-09  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Ariya Hidayat.
+
         [Qt] QtTestBrowser: Clean up LauncherWindow code.
 
         * QtTestBrowser/launcherwindow.cpp:
