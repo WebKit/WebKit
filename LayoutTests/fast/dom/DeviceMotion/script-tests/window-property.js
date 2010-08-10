@@ -10,6 +10,7 @@ function hasDeviceMotionEventProperty()
 }
 
 shouldBeTrue("typeof window.DeviceMotionEvent == 'object'");
+shouldBeFalse("typeof window.DeviceMotionEvent == 'function'");
 shouldBeTrue("hasDeviceMotionEventProperty()");
 shouldBeTrue("'DeviceMotionEvent' in window");
 shouldBeTrue("window.hasOwnProperty('DeviceMotionEvent')");

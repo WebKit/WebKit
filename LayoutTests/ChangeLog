@@ -1,3 +1,17 @@
+2010-08-09  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        Accelerometer tests need V8 results
+        https://bugs.webkit.org/show_bug.cgi?id=43443
+
+        This patch adds V8-specific results for Android for the existing window-property.html test.
+
+        * fast/dom/DeviceMotion/script-tests/window-property.js:
+        * fast/dom/DeviceMotion/window-property-expected.txt:
+        * platform/android-v8/fast/dom/DeviceMotion: Added.
+        * platform/android-v8/fast/dom/DeviceMotion/window-property-expected.txt: Added.
+
 2010-08-10  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r65056.
