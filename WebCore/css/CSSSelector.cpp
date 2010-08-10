@@ -746,8 +746,10 @@ String CSSSelector::selectorText() const
         } else if (cs->hasAttribute()) {
             str += "[";
             const AtomicString& prefix = cs->attribute().prefix();
-            if (!prefix.isNull())
-                str += prefix + "|";
+            if (!prefix.isNull()) {
+                str.append(prefix);
+                str.append("|");
+            }
             str += cs->attribute().localName();
             switch (cs->m_match) {
                 case CSSSelector::Exact:

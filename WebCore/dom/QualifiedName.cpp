@@ -88,8 +88,12 @@ void QualifiedName::deref()
 String QualifiedName::toString() const
 {
     String local = localName();
-    if (hasPrefix())
-        return prefix() + ":" + local;
+    if (hasPrefix()) {
+        String result(prefix());
+        result.append(":");
+        result.append(local);
+        return result;
+    }
     return local;
 }
 
