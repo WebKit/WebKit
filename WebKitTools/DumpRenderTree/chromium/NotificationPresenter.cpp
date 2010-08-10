@@ -31,13 +31,15 @@
 #include "config.h"
 #include "NotificationPresenter.h"
 
+#include "PlatformString.h"
+#include <wtf/text/CString.h>
+
 #include "googleurl/src/gurl.h"
 #include "public/WebNotification.h"
 #include "public/WebNotificationPermissionCallback.h"
 #include "public/WebSecurityOrigin.h"
 #include "public/WebString.h"
 #include "public/WebURL.h"
-#include <wtf/text/CString.h>
 
 using namespace WebCore;
 using namespace WebKit;

@@ -31,9 +31,11 @@
 #include "config.h"
 #include "MockSpellCheck.h"
 
-#include "public/WebString.h"
+#include "PlatformString.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/Assertions.h>
+
+#include "public/WebString.h"
 
 using namespace WebCore;
 using namespace WebKit;

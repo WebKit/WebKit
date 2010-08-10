@@ -1,3 +1,10 @@
+2010-08-10  Jian Li  <jianli@chromium.org>
+
+        Chromium build fix.
+
+        * DumpRenderTree/chromium/MockSpellCheck.cpp:
+        * DumpRenderTree/chromium/NotificationPresenter.cpp:
+
 2010-08-10  Victor Wang  <victorw@chromium.org>
 
         Reviewed by Ojan Vafai.
