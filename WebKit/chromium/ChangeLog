@@ -1,5 +1,11 @@
 2010-08-09  Gavin Barraclough  <barraclough@apple.com>
 
+        Speculative chromium build fix IV.
+
+        * src/WebPageSerializerImpl.h:
+
+2010-08-09  Gavin Barraclough  <barraclough@apple.com>
+
         Speculative chromium build fix II.
 
         * src/AssertMatchingEnums.cpp:
