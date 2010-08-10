@@ -1,3 +1,16 @@
+2010-08-10  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r65056.
+        http://trac.webkit.org/changeset/65056
+        https://bugs.webkit.org/show_bug.cgi?id=43773
+
+        "Clearly I missed something.  I'm too tired to try and fix
+        now.  Will re-land in the morning." (Requested by eseidel on
+        #webkit).
+
+        * fast/dom/HTMLElement/insertAdjacentHTML-errors-expected.txt: Removed.
+        * fast/dom/HTMLElement/insertAdjacentHTML-errors.html: Removed.
+
 2010-08-10  Yoshiki Hayashi  <yhayashi@google.com>
 
         Reviewed by Kent Tamura.
