@@ -35,7 +35,6 @@ namespace WebCore {
         virtual ~SVGPathSegList();
 
         unsigned getPathSegAtLength(double, ExceptionCode&);
-        Path toPathData();
         
         static PassRefPtr<SVGPathSegList> createAnimated(const SVGPathSegList* fromList, const SVGPathSegList* toList, float progress);
         

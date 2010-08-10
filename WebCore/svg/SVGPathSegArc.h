@@ -41,8 +41,6 @@ namespace WebCore {
         {
         }
 
-        virtual String toString() const;
-
         void setX(float x) { m_x = x; }
         float x() const { return m_x; }
 

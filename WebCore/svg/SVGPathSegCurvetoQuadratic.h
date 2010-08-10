@@ -33,8 +33,6 @@ namespace WebCore {
         SVGPathSegCurvetoQuadratic(float x, float y, float x1, float y1)
         : SVGPathSeg(), m_x(x), m_y(y), m_x1(x1), m_y1(y1) {}
 
-        virtual String toString() const { return pathSegTypeAsLetter() + String::format(" %.6lg %.6lg %.6lg %.6lg", m_x1, m_y1, m_x, m_y); }
-
         void setX(float x) { m_x = x; }
         float x() const { return m_x; }
 

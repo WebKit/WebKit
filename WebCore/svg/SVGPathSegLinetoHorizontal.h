@@ -32,8 +32,6 @@ namespace WebCore {
     public:
         SVGPathSegLinetoHorizontal(float x) : SVGPathSeg(), m_x(x) {}
 
-        virtual String toString() const { return pathSegTypeAsLetter() + String::format(" %.6lg", m_x); }
-
         void setX(float x) { m_x = x; }
         float x() const { return m_x; }
 

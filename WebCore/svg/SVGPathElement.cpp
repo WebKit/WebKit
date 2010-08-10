@@ -263,7 +263,10 @@ SVGPathSegList* SVGPathElement::animatedNormalizedPathSegList() const
 
 Path SVGPathElement::toPathData() const
 {
-    return pathSegList()->toPathData();
+    Path result;
+    SVGPathParserFactory* factory = SVGPathParserFactory::self();
+    factory->buildPathFromSVGPathSegList(pathSegList(), result);
+    return result;
 }
 
 }

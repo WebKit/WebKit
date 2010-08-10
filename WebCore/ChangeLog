@@ -1,3 +1,40 @@
+2010-08-10  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Use SVGPathParser to create SVG paths and to perform path animations
+        https://bugs.webkit.org/show_bug.cgi?id=43696
+
+        Removed toString() functions in all SVGPathSeg* objects as well as toPath() in SVGPathSegList.
+        These hacks were used to create a SVG path data string or a platform path from a SVGPathSegList.
+        Use the new SVGPathParser instead.
+
+        Doesn't affect any tests.
+
+        * svg/SVGAnimateElement.cpp:
+        (WebCore::SVGAnimateElement::applyResultsToTarget):
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::toPathData):
+        * svg/SVGPathParserFactory.cpp:
+        (WebCore::SVGPathParserFactory::buildPathFromSVGPathSegList):
+        (WebCore::SVGPathParserFactory::buildStringFromByteStream):
+        (WebCore::SVGPathParserFactory::buildStringFromSVGPathSegList):
+        * svg/SVGPathParserFactory.h:
+        * svg/SVGPathSeg.cpp:
+        * svg/SVGPathSeg.h:
+        * svg/SVGPathSegArc.cpp:
+        * svg/SVGPathSegArc.h:
+        * svg/SVGPathSegClosePath.h:
+        (WebCore::SVGPathSegClosePath::pathSegTypeAsLetter):
+        * svg/SVGPathSegCurvetoCubic.h:
+        * svg/SVGPathSegCurvetoCubicSmooth.h:
+        * svg/SVGPathSegCurvetoQuadratic.h:
+        * svg/SVGPathSegLinetoHorizontal.h:
+        * svg/SVGPathSegLinetoVertical.h:
+        * svg/SVGPathSegList.cpp:
+        (WebCore::SVGPathSegList::getPathSegAtLength):
+        * svg/SVGPathSegList.h:
+
 2010-08-10  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r65056.

@@ -45,19 +45,9 @@ String SVGPathSeg::pathSegTypeAsLetter() const
     return "";
 }
 
-String SVGPathSeg::toString() const
-{
-    return "";
-}
-
 const QualifiedName& SVGPathSeg::associatedAttributeName() const
 {
     return SVGNames::dAttr;
-}
-
-String SVGPathSegSingleCoord::toString() const
-{
-    return pathSegTypeAsLetter() + String::format(" %.6lg %.6lg", m_x, m_y);
 }
 
 } // namespace WebCore

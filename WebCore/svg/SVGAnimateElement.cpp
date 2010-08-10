@@ -279,12 +279,8 @@ void SVGAnimateElement::applyResultsToTarget()
             // "processed" paths where complex shapes are replaced with simpler ones. Path 
             // morphing needs to be done with unprocessed paths.
             // FIXME: This could be optimized if paths were not processed at parse time.
-            unsigned itemCount = m_animatedPath->numberOfItems();
-            ExceptionCode ec;
-            for (unsigned n = 0; n < itemCount; ++n) {
-                RefPtr<SVGPathSeg> segment = m_animatedPath->getItem(n, ec);
-                valueToApply.append(segment->toString() + " ");
-            }
+            SVGPathParserFactory* factory = SVGPathParserFactory::self();
+            factory->buildStringFromSVGPathSegList(m_animatedPath.get(), valueToApply, UnalteredParsing);
         }
     } else if (m_propertyType == PointsProperty) {
         if (!m_animatedPoints || !m_animatedPoints->numberOfItems())

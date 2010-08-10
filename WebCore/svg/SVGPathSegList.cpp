@@ -103,62 +103,6 @@ unsigned SVGPathSegList::getPathSegAtLength(double length, ExceptionCode& ec)
     // WebKit/Opera/FF all return the last path segment if the distance exceeds the actual path length:
     return traversalState.m_segmentIndex ? traversalState.m_segmentIndex - 1 : 0;
 }
-
-Path SVGPathSegList::toPathData()
-{
-    // FIXME : This should also support non-normalized PathSegLists
-    Path pathData;
-    int len = numberOfItems();
-    ExceptionCode ec = 0;
-    FloatPoint previousEndPoint(0, 0);
-    for (int i = 0; i < len; ++i) {
-        SVGPathSeg* segment = getItem(i, ec).get();
-        if (ec)
-            return Path();
-        switch (segment->pathSegType()) {
-        case PathSegMoveToAbs: {
-            SVGPathSegMovetoAbs* moveTo = static_cast<SVGPathSegMovetoAbs*>(segment);
-            FloatPoint endPoint(moveTo->x(), moveTo->y());
-            pathData.moveTo(endPoint);
-            previousEndPoint = endPoint;
-            break;
-        }
-        case PathSegLineToAbs: {
-            SVGPathSegLinetoAbs* lineTo = static_cast<SVGPathSegLinetoAbs*>(segment);
-            FloatPoint endPoint(lineTo->x(), lineTo->y());
-            pathData.addLineTo(endPoint);
-            previousEndPoint = endPoint;
-            break;
-        }
-        case PathSegCurveToCubicAbs: {
-            SVGPathSegCurvetoCubicAbs* curveTo = static_cast<SVGPathSegCurvetoCubicAbs*>(segment);
-            FloatPoint endPoint(curveTo->x(), curveTo->y());
-            pathData.addBezierCurveTo(FloatPoint(curveTo->x1(), curveTo->y1()),
-                                      FloatPoint(curveTo->x2(), curveTo->y2()),
-                                      endPoint);
-            previousEndPoint = endPoint;
-            break;
-        }
-        case PathSegCurveToCubicRel: {
-            SVGPathSegCurvetoCubicRel* curveTo = static_cast<SVGPathSegCurvetoCubicRel*>(segment);
-            FloatSize endPoint(curveTo->x(), curveTo->y());
-            pathData.addBezierCurveTo(previousEndPoint + FloatSize(curveTo->x1(), curveTo->y1()),
-                                      previousEndPoint + FloatSize(curveTo->x2(), curveTo->y2()),
-                                      previousEndPoint + endPoint);
-            previousEndPoint += endPoint;
-            break;
-        }
-        case PathSegClosePath:
-            pathData.closeSubpath();
-            break;
-        default:
-            ASSERT(false); // FIXME: This only works with normalized/processed path data.
-            break;
-        }
-    }
-    
-    return pathData;
-}
     
 float adjustAnimatedValue(float from, float to, float progress)
 {
