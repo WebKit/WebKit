@@ -1,5 +1,11 @@
 2010-08-09  Oliver Hunt  <oliver@apple.com>
 
+        Fix Qt/ARM again, this time including the other changed file.
+
+        * jit/JIT.h:
+
+2010-08-09  Oliver Hunt  <oliver@apple.com>
+
         Fix Qt/ARM
 
         C++ overload resolution I stab at thee

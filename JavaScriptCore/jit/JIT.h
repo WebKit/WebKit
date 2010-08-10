@@ -667,8 +667,8 @@ namespace JSC {
 #endif // USE(JSVALUE32_64)
 
 #if (defined(ASSEMBLER_HAS_CONSTANT_POOL) && ASSEMBLER_HAS_CONSTANT_POOL)
-#define BEGIN_UNINTERRUPTED_SEQUENCE(name) do { beginUninterruptedSequence(); beginUninterruptedSequence(name ## InstructionSpace, name ## ConstantSpace); } while (false)
-#define END_UNINTERRUPTED_SEQUENCE(name) do { endUninterruptedSequence(name ## InstructionSpace, name ## ConstantSpace); endUninterruptedSequence(); } while (false)
+#define BEGIN_UNINTERRUPTED_SEQUENCE(name) do { beginUninterruptedSequence(name ## InstructionSpace, name ## ConstantSpace); } while (false)
+#define END_UNINTERRUPTED_SEQUENCE(name) do { endUninterruptedSequence(name ## InstructionSpace, name ## ConstantSpace); } while (false)
 
         void beginUninterruptedSequence(int, int);
         void endUninterruptedSequence(int, int);
