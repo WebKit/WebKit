@@ -26,6 +26,7 @@
 #define CachedResourceClient_h
 
 #include <wtf/FastAllocBase.h>
+#include <wtf/Forward.h>
 
 #if ENABLE(XBL)
 namespace XBL {
@@ -39,7 +40,6 @@ namespace WebCore {
     class CachedFont;
     class CachedResource;
     class CachedImage;
-    class String;
     class Image;
     class IntRect;
     class KURL;

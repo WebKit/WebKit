@@ -45,15 +45,6 @@
 #include <wtf/Threading.h>
 #endif
 
-// FIXME: This is a temporary layering violation while we move more string code to WTF.
-namespace WebCore {
-class AtomicStringTable;
-class StringImpl;
-}
-using WebCore::StringImpl;
-
-typedef void (*AtomicStringTableDestructor)(WebCore::AtomicStringTable*);
-
 #if USE(JSC)
 // FIXME: This is a temporary layering violation while we move more string code to WTF.
 namespace JSC {
@@ -82,12 +73,16 @@ private:
 
 namespace WTF {
 
+class AtomicStringTable;
+
+typedef void (*AtomicStringTableDestructor)(AtomicStringTable*);
+
 class WTFThreadData : public Noncopyable {
 public:
     WTFThreadData();
     ~WTFThreadData();
 
-    WebCore::AtomicStringTable* atomicStringTable()
+    AtomicStringTable* atomicStringTable()
     {
         return m_atomicStringTable;
     }
@@ -118,7 +113,7 @@ public:
 #endif
 
 private:
-    WebCore::AtomicStringTable* m_atomicStringTable;
+    AtomicStringTable* m_atomicStringTable;
     AtomicStringTableDestructor m_atomicStringTableDestructor;
 
 #if USE(JSC)
@@ -132,7 +127,7 @@ private:
     static JS_EXPORTDATA WTFThreadData* staticData;
 #endif
     friend WTFThreadData& wtfThreadData();
-    friend class WebCore::AtomicStringTable;
+    friend class AtomicStringTable;
 };
 
 inline WTFThreadData& wtfThreadData()

@@ -470,7 +470,7 @@ sub printNamesHeaderFile
     my $lowerNamespace = lc($parameters{namespacePrefix});
     print F "#ifndef DOM_$parameters{namespace}NAMES_HIDE_GLOBALS\n";
     print F "// Namespace\n";
-    print F "extern const WebCore::AtomicString ${lowerNamespace}NamespaceURI;\n\n";
+    print F "extern const WTF::AtomicString ${lowerNamespace}NamespaceURI;\n\n";
 
     if (keys %allTags) {
         print F "// Tags\n";
@@ -770,13 +770,13 @@ sub printFactoryHeaderFile
 #ifndef $parameters{namespace}ElementFactory_h
 #define $parameters{namespace}ElementFactory_h
 
+#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
     class Element;
     class Document;
     class QualifiedName;
-    class AtomicString;
 }
 
 namespace WebCore {
@@ -970,7 +970,7 @@ END
         print F <<END
 JSNode* createJS$parameters{namespace}Wrapper(ExecState* exec, JSDOMGlobalObject* globalObject, PassRefPtr<$parameters{namespace}Element> element)
 {
-    typedef HashMap<WebCore::AtomicStringImpl*, Create$parameters{namespace}ElementWrapperFunction> FunctionMap;
+    typedef HashMap<WTF::AtomicStringImpl*, Create$parameters{namespace}ElementWrapperFunction> FunctionMap;
     DEFINE_STATIC_LOCAL(FunctionMap, map, ());
     if (map.isEmpty()) {
 END
@@ -979,7 +979,7 @@ END
         print F <<END
 v8::Handle<v8::Value> createV8$parameters{namespace}Wrapper($parameters{namespace}Element* element, bool forceNewObject)
 {
-    typedef HashMap<WebCore::AtomicStringImpl*, Create$parameters{namespace}ElementWrapperFunction> FunctionMap;
+    typedef HashMap<WTF::AtomicStringImpl*, Create$parameters{namespace}ElementWrapperFunction> FunctionMap;
     DEFINE_STATIC_LOCAL(FunctionMap, map, ());
     if (map.isEmpty()) {
 END

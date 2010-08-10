@@ -100,8 +100,8 @@ protected:
     AccessibleBase(WebCore::AccessibilityObject*);
     virtual ~AccessibleBase();
 
-    virtual WebCore::String name() const;
-    virtual WebCore::String value() const;
+    virtual WTF::String name() const;
+    virtual WTF::String value() const;
     virtual long role() const;
 
     HRESULT getAccessibilityObjectForChild(VARIANT vChild, WebCore::AccessibilityObject*&) const;

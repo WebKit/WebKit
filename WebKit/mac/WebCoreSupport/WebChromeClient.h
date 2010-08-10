@@ -75,16 +75,16 @@ public:
     
     virtual void setResizable(bool);
     
-    virtual void addMessageToConsole(WebCore::MessageSource source, WebCore::MessageType type, WebCore::MessageLevel level, const WebCore::String& message, unsigned int lineNumber, const WebCore::String& sourceURL);
+    virtual void addMessageToConsole(WebCore::MessageSource source, WebCore::MessageType type, WebCore::MessageLevel level, const WTF::String& message, unsigned int lineNumber, const WTF::String& sourceURL);
 
     virtual bool canRunBeforeUnloadConfirmPanel();
-    virtual bool runBeforeUnloadConfirmPanel(const WebCore::String& message, WebCore::Frame* frame);
+    virtual bool runBeforeUnloadConfirmPanel(const WTF::String& message, WebCore::Frame* frame);
 
     virtual void closeWindowSoon();
 
-    virtual void runJavaScriptAlert(WebCore::Frame*, const WebCore::String&);
-    virtual bool runJavaScriptConfirm(WebCore::Frame*, const WebCore::String&);
-    virtual bool runJavaScriptPrompt(WebCore::Frame*, const WebCore::String& message, const WebCore::String& defaultValue, WebCore::String& result);
+    virtual void runJavaScriptAlert(WebCore::Frame*, const WTF::String&);
+    virtual bool runJavaScriptConfirm(WebCore::Frame*, const WTF::String&);
+    virtual bool runJavaScriptPrompt(WebCore::Frame*, const WTF::String& message, const WTF::String& defaultValue, WTF::String& result);
     virtual bool shouldInterruptJavaScript();
 
     virtual bool tabsToLinks() const;
@@ -102,18 +102,18 @@ public:
     virtual void contentsSizeChanged(WebCore::Frame*, const WebCore::IntSize&) const;
     virtual void scrollRectIntoView(const WebCore::IntRect&, const WebCore::ScrollView*) const;
     
-    virtual void setStatusbarText(const WebCore::String&);
+    virtual void setStatusbarText(const WTF::String&);
 
     virtual void scrollbarsModeDidChange() const { }
     virtual bool shouldMissingPluginMessageBeButton() const;
     virtual void missingPluginButtonClicked(WebCore::Element*) const;
     virtual void mouseDidMoveOverElement(const WebCore::HitTestResult&, unsigned modifierFlags);
 
-    virtual void setToolTip(const WebCore::String&, WebCore::TextDirection);
+    virtual void setToolTip(const WTF::String&, WebCore::TextDirection);
 
     virtual void print(WebCore::Frame*);
 #if ENABLE(DATABASE)
-    virtual void exceededDatabaseQuota(WebCore::Frame*, const WebCore::String& databaseName);
+    virtual void exceededDatabaseQuota(WebCore::Frame*, const WTF::String& databaseName);
 #endif
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     virtual void reachedMaxAppCacheSize(int64_t spaceNeeded);
@@ -126,13 +126,13 @@ public:
 #endif
 
     virtual void runOpenPanel(WebCore::Frame*, PassRefPtr<WebCore::FileChooser>);
-    virtual void chooseIconForFiles(const Vector<WebCore::String>&, WebCore::FileChooser*);
+    virtual void chooseIconForFiles(const Vector<WTF::String>&, WebCore::FileChooser*);
 
     virtual void setCursor(const WebCore::Cursor&);
 
-    virtual WebCore::FloatRect customHighlightRect(WebCore::Node*, const WebCore::AtomicString& type,
+    virtual WebCore::FloatRect customHighlightRect(WebCore::Node*, const WTF::AtomicString& type,
         const WebCore::FloatRect& lineRect);
-    virtual void paintCustomHighlight(WebCore::Node*, const WebCore::AtomicString& type,
+    virtual void paintCustomHighlight(WebCore::Node*, const WTF::AtomicString& type,
         const WebCore::FloatRect& boxRect, const WebCore::FloatRect& lineRect,
         bool behindText, bool entireLine);
 
@@ -143,8 +143,8 @@ public:
 
     virtual void willPopUpMenu(NSMenu *);
     
-    virtual bool shouldReplaceWithGeneratedFileForUpload(const WebCore::String& path, WebCore::String &generatedFilename);
-    virtual WebCore::String generateReplacementFile(const WebCore::String& path);
+    virtual bool shouldReplaceWithGeneratedFileForUpload(const WTF::String& path, WTF::String &generatedFilename);
+    virtual WTF::String generateReplacementFile(const WTF::String& path);
 
     virtual void formStateDidChange(const WebCore::Node*) { }
 

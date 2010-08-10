@@ -27,11 +27,8 @@
 #define WebUIClient_h
 
 #include "WKPage.h"
+#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
-
-namespace WebCore {
-    class String;
-}
 
 namespace WebKit {
 
@@ -46,9 +43,9 @@ public:
     PassRefPtr<WebPageProxy> createNewPage(WebPageProxy*);
     void showPage(WebPageProxy*);
     void close(WebPageProxy*);
-    void runJavaScriptAlert(WebPageProxy*, const WebCore::String&, WebFrameProxy*);
-    bool runJavaScriptConfirm(WebPageProxy*, const WebCore::String&, WebFrameProxy*);
-    WebCore::String runJavaScriptPrompt(WebPageProxy*, const WebCore::String&, const WebCore::String&, WebFrameProxy*);
+    void runJavaScriptAlert(WebPageProxy*, const WTF::String&, WebFrameProxy*);
+    bool runJavaScriptConfirm(WebPageProxy*, const WTF::String&, WebFrameProxy*);
+    WTF::String runJavaScriptPrompt(WebPageProxy*, const WTF::String&, const WTF::String&, WebFrameProxy*);
 
 private:
     WKPageUIClient m_pageUIClient;

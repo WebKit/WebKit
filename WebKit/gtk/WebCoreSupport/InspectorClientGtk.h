@@ -33,11 +33,11 @@
 #include "InspectorFrontendClientLocal.h"
 #include "webkitwebview.h"
 #include "webkitwebinspector.h"
+#include <wtf/Forward.h>
 
 namespace WebCore {
     class Node;
     class Page;
-    class String;
 }
 
 namespace WebKit {
@@ -58,10 +58,10 @@ namespace WebKit {
         virtual void highlight(WebCore::Node*);
         virtual void hideHighlight();
 
-        virtual void populateSetting(const WebCore::String& key, WebCore::String* value);
-        virtual void storeSetting(const WebCore::String& key, const WebCore::String& value);
+        virtual void populateSetting(const WTF::String& key, WTF::String* value);
+        virtual void storeSetting(const WTF::String& key, const WTF::String& value);
 
-        virtual bool sendMessageToFrontend(const WebCore::String&);
+        virtual bool sendMessageToFrontend(const WTF::String&);
 
         void releaseFrontendPage();
 
@@ -79,9 +79,9 @@ namespace WebKit {
 
         void destroyInspectorWindow();
 
-        virtual WebCore::String localizedStringsURL();
+        virtual WTF::String localizedStringsURL();
 
-        virtual WebCore::String hiddenPanels();
+        virtual WTF::String hiddenPanels();
 
         virtual void bringToFront();
         virtual void closeWindow();
@@ -91,7 +91,7 @@ namespace WebKit {
 
         virtual void setAttachedWindowHeight(unsigned height);
 
-        virtual void inspectedURLChanged(const WebCore::String& newURL);
+        virtual void inspectedURLChanged(const WTF::String& newURL);
 
     private:
         virtual ~InspectorFrontendClient();

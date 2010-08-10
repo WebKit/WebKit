@@ -50,7 +50,7 @@ namespace WebKit {
         virtual void copyImageToClipboard(const WebCore::HitTestResult&);
         virtual void searchWithGoogle(const WebCore::Frame*);
         virtual void lookUpInDictionary(WebCore::Frame*);
-        virtual void speak(const WebCore::String&);
+        virtual void speak(const WTF::String&);
         virtual void stopSpeaking();
         virtual bool isSpeaking();
 

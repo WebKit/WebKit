@@ -369,7 +369,7 @@ sub GenerateProperty {
 
     my $convertFunction = "";
     if ($gtype eq "string") {
-        $convertFunction = "WebCore::String::fromUTF8";
+        $convertFunction = "WTF::String::fromUTF8";
     }
 
     my $getterExpressionPrefix = $codeGenerator->GetterExpressionPrefix(\%implIncludes, $interfaceName, $attribute);
@@ -902,7 +902,7 @@ sub GenerateFunction {
 
         my $paramIsGDOMType = IsGDOMClassType($paramIDLType);
         if ($paramIDLType eq "DOMString") {
-            push(@cBody, "    WebCore::String converted_${paramName} = WebCore::String::fromUTF8($paramName);\n");
+            push(@cBody, "    WTF::String converted_${paramName} = WTF::String::fromUTF8($paramName);\n");
         } elsif ($paramIDLType eq "CompareHow") {
             push(@cBody, "    WebCore::Range::CompareHow converted_${paramName} = static_cast<WebCore::Range::CompareHow>($paramName);\n");
         } elsif ($paramIsGDOMType) {

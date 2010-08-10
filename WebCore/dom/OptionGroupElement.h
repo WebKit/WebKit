@@ -21,10 +21,11 @@
 #ifndef OptionGroupElement_h
 #define OptionGroupElement_h
 
+#include <wtf/Forward.h>
+
 namespace WebCore {
 
 class Element;
-class String;
 
 class OptionGroupElement {
 public:

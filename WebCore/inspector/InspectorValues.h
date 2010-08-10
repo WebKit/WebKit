@@ -36,6 +36,7 @@
 #include "PlatformString.h"
 #include "StringHash.h"
 
+#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -44,7 +45,6 @@ namespace WebCore {
 
 class InspectorArray;
 class InspectorObject;
-class String;
 
 class InspectorValue : public RefCounted<InspectorValue> {
 public:

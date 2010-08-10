@@ -73,11 +73,11 @@ public:
     virtual void valueChanged(unsigned listIndex, bool fireEvents = true);
     virtual void selectionChanged(unsigned, bool);
     virtual void selectionCleared();
-    virtual WebCore::String itemText(unsigned listIndex) const;
-    virtual WebCore::String itemLabel(unsigned listIndex) const;
-    virtual WebCore::String itemIcon(unsigned listIndex) const;
-    virtual WebCore::String itemToolTip(unsigned lastIndex) const { return WebCore::String(); }
-    virtual WebCore::String itemAccessibilityText(unsigned lastIndex) const { return WebCore::String(); }
+    virtual WTF::String itemText(unsigned listIndex) const;
+    virtual WTF::String itemLabel(unsigned listIndex) const;
+    virtual WTF::String itemIcon(unsigned listIndex) const;
+    virtual WTF::String itemToolTip(unsigned lastIndex) const { return WTF::String(); }
+    virtual WTF::String itemAccessibilityText(unsigned lastIndex) const { return WTF::String(); }
     virtual bool itemIsEnabled(unsigned listIndex) const { return true; }
     virtual WebCore::PopupMenuStyle itemStyle(unsigned listIndex) const;
     virtual WebCore::PopupMenuStyle menuStyle() const;
@@ -131,9 +131,9 @@ private:
     void setSelectedIndex(int index) { m_selectedIndex = index; }
 
     // The names, labels and icons that make up the contents of the menu items.
-    Vector<WebCore::String> m_names;
-    Vector<WebCore::String> m_labels;
-    Vector<WebCore::String> m_icons;
+    Vector<WTF::String> m_names;
+    Vector<WTF::String> m_labels;
+    Vector<WTF::String> m_icons;
     Vector<int> m_uniqueIDs;
 
     // The index of the separator.  -1 if there is no separator.

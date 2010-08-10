@@ -22,6 +22,7 @@
 #define SVGPathSeg_h
 
 #if ENABLE(SVG)
+#include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -49,7 +50,6 @@ enum SVGPathSegType {
     PathSegCurveToQuadraticSmoothRel = 19
 };
 
-class String;
 class SVGPathElement;
 class SVGStyledElement;
 class QualifiedName;

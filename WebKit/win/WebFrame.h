@@ -299,9 +299,9 @@ public:
     virtual void didChangeTitle(WebCore::DocumentLoader*);
     virtual void didChangeIcons(WebCore::DocumentLoader*);
     virtual bool canHandleRequest(const WebCore::ResourceRequest&) const;
-    virtual bool canShowMIMEType(const WebCore::String& MIMEType) const;
-    virtual bool representationExistsForURLScheme(const WebCore::String& URLScheme) const;
-    virtual WebCore::String generatedMIMETypeForURLScheme(const WebCore::String& URLScheme) const;
+    virtual bool canShowMIMEType(const WTF::String& MIMEType) const;
+    virtual bool representationExistsForURLScheme(const WTF::String& URLScheme) const;
+    virtual WTF::String generatedMIMETypeForURLScheme(const WTF::String& URLScheme) const;
     virtual void frameLoadCompleted();
     virtual void restoreViewState();
     virtual void provisionalLoadStarted();
@@ -309,7 +309,7 @@ public:
     virtual void addHistoryItemForFragmentScroll();
     virtual void didFinishLoad();
     virtual void prepareForDataSourceReplacement();
-    virtual WebCore::String userAgent(const WebCore::KURL&);
+    virtual WTF::String userAgent(const WebCore::KURL&);
     virtual void saveViewStateToItem(WebCore::HistoryItem *);
     virtual WebCore::ResourceError cancelledError(const WebCore::ResourceRequest&);
     virtual WebCore::ResourceError blockedError(const WebCore::ResourceRequest&);
@@ -319,8 +319,8 @@ public:
     virtual WebCore::ResourceError fileDoesNotExistError(const WebCore::ResourceResponse&);
     virtual WebCore::ResourceError pluginWillHandleLoadError(const WebCore::ResourceResponse&);
     virtual bool shouldFallBack(const WebCore::ResourceError&);
-    virtual void dispatchDecidePolicyForMIMEType(WebCore::FramePolicyFunction, const WebCore::String& MIMEType, const WebCore::ResourceRequest&);
-    virtual void dispatchDecidePolicyForNewWindowAction(WebCore::FramePolicyFunction, const WebCore::NavigationAction&, const WebCore::ResourceRequest&, PassRefPtr<WebCore::FormState>, const WebCore::String& frameName);
+    virtual void dispatchDecidePolicyForMIMEType(WebCore::FramePolicyFunction, const WTF::String& MIMEType, const WebCore::ResourceRequest&);
+    virtual void dispatchDecidePolicyForNewWindowAction(WebCore::FramePolicyFunction, const WebCore::NavigationAction&, const WebCore::ResourceRequest&, PassRefPtr<WebCore::FormState>, const WTF::String& frameName);
     virtual void dispatchDecidePolicyForNavigationAction(WebCore::FramePolicyFunction, const WebCore::NavigationAction&, const WebCore::ResourceRequest&, PassRefPtr<WebCore::FormState>);
     virtual void dispatchUnableToImplementPolicy(const WebCore::ResourceError&);
     virtual void download(WebCore::ResourceHandle*, const WebCore::ResourceRequest&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
@@ -330,10 +330,10 @@ public:
     virtual void dispatchDidFailLoad(const WebCore::ResourceError&);
     virtual void startDownload(const WebCore::ResourceRequest&);
         
-    virtual PassRefPtr<WebCore::Widget> createJavaAppletWidget(const WebCore::IntSize&, WebCore::HTMLAppletElement*, const WebCore::KURL& baseURL, const Vector<WebCore::String>& paramNames, const Vector<WebCore::String>& paramValues);
+    virtual PassRefPtr<WebCore::Widget> createJavaAppletWidget(const WebCore::IntSize&, WebCore::HTMLAppletElement*, const WebCore::KURL& baseURL, const Vector<WTF::String>& paramNames, const Vector<WTF::String>& paramValues);
 
-    virtual WebCore::ObjectContentType objectContentType(const WebCore::KURL& url, const WebCore::String& mimeType);
-    virtual WebCore::String overrideMediaType() const;
+    virtual WebCore::ObjectContentType objectContentType(const WebCore::KURL& url, const WTF::String& mimeType);
+    virtual WTF::String overrideMediaType() const;
 
     virtual void dispatchDidClearWindowObjectInWorld(WebCore::DOMWrapperWorld*);
     virtual void documentElementAvailable();

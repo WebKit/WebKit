@@ -39,7 +39,7 @@ public:
     virtual WebCore::DragSourceAction dragSourceActionMaskForPoint(const WebCore::IntPoint&);
         
     virtual void startDrag(WebCore::DragImageRef dragImage, const WebCore::IntPoint& dragImageOrigin, const WebCore::IntPoint& eventPos, WebCore::Clipboard*, WebCore::Frame*, bool linkDrag = false);
-    virtual WebCore::DragImageRef createDragImageForLink(WebCore::KURL&, const WebCore::String& label, WebCore::Frame*);
+    virtual WebCore::DragImageRef createDragImageForLink(WebCore::KURL&, const WTF::String& label, WebCore::Frame*);
 };
 
 }

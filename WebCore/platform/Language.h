@@ -26,9 +26,9 @@
 #ifndef Language_h
 #define Language_h
 
-namespace WebCore {
+#include <wtf/Forward.h>
 
-    class String;
+namespace WebCore {
 
     String defaultLanguage();
 

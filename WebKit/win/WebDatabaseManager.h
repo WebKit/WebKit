@@ -79,7 +79,7 @@ public:
 
     // DatabaseTrackerClient
     virtual void dispatchDidModifyOrigin(WebCore::SecurityOrigin*);
-    virtual void dispatchDidModifyDatabase(WebCore::SecurityOrigin*, const WebCore::String& databaseName);
+    virtual void dispatchDidModifyDatabase(WebCore::SecurityOrigin*, const WTF::String& databaseName);
 
 private:
     WebDatabaseManager();

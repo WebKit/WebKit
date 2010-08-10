@@ -34,6 +34,7 @@
 #include "PlatformString.h"
 #include "WebDevToolsFrontend.h"
 #include <v8.h>
+#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
@@ -44,7 +45,6 @@ namespace WebCore {
 class ContextMenuItem;
 class Node;
 class Page;
-class String;
 }
 
 namespace WebKit {
@@ -53,7 +53,7 @@ class WebDevToolsClientDelegate;
 class WebViewImpl;
 struct WebDevToolsMessageData;
 
-using WebCore::String;
+using WTF::String;
 
 class WebDevToolsFrontendImpl : public WebKit::WebDevToolsFrontend
                               , public Noncopyable {

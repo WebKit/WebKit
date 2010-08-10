@@ -21,12 +21,12 @@
 #ifndef CollectionCache_h
 #define CollectionCache_h
 
+#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-class AtomicStringImpl;
 class Element;
 
 struct CollectionCache : FastAllocBase {

@@ -36,7 +36,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-NSString* nsStringFromWebCoreString(const WebCore::String& string)
+NSString* nsStringFromWebCoreString(const WTF::String& string)
 {
     return string.impl() ? HardAutorelease(WKStringCopyCFString(0, toRef(string.impl()))) : @"";
 }

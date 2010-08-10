@@ -97,9 +97,9 @@ void ewk_view_repaint(Evas_Object *o, Evas_Coord x, Evas_Coord y, Evas_Coord w, 
 void ewk_view_scroll(Evas_Object *o, Evas_Coord dx, Evas_Coord dy, Evas_Coord sx, Evas_Coord sy, Evas_Coord sw, Evas_Coord sh, Evas_Coord cx, Evas_Coord cy, Evas_Coord cw, Evas_Coord ch, Eina_Bool main_frame);
 WebCore::Page *ewk_view_core_page_get(const Evas_Object *o);
 
-WTF::PassRefPtr<WebCore::Frame> ewk_view_frame_create(Evas_Object *o, Evas_Object *frame, const WebCore::String& name, WebCore::HTMLFrameOwnerElement* ownerElement, const WebCore::KURL& url, const WebCore::String& referrer);
+WTF::PassRefPtr<WebCore::Frame> ewk_view_frame_create(Evas_Object *o, Evas_Object *frame, const WTF::String& name, WebCore::HTMLFrameOwnerElement* ownerElement, const WebCore::KURL& url, const WTF::String& referrer);
 
-WTF::PassRefPtr<WebCore::Widget> ewk_view_plugin_create(Evas_Object* o, Evas_Object* frame, const WebCore::IntSize& pluginSize, WebCore::HTMLPlugInElement* element, const WebCore::KURL& url, const WTF::Vector<WebCore::String>& paramNames, const WTF::Vector<WebCore::String>& paramValues, const WebCore::String& mimeType, bool loadManually);
+WTF::PassRefPtr<WebCore::Widget> ewk_view_plugin_create(Evas_Object* o, Evas_Object* frame, const WebCore::IntSize& pluginSize, WebCore::HTMLPlugInElement* element, const WebCore::KURL& url, const WTF::Vector<WTF::String>& paramNames, const WTF::Vector<WTF::String>& paramValues, const WTF::String& mimeType, bool loadManually);
 
 void ewk_view_popup_new(Evas_Object *o, WebCore::PopupMenuClient* client, int selected, const WebCore::IntRect& rect);
 void ewk_view_viewport_set(Evas_Object *o, float w, float h, float init_scale, float max_scale, float min_scale, float user_scalable);
@@ -119,7 +119,7 @@ Ewk_Window_Features *ewk_window_features_new_from_core(const WebCore::WindowFeat
 
 Evas_Object *ewk_frame_add(Evas *e);
 Eina_Bool ewk_frame_init(Evas_Object *o, Evas_Object *view, WebCore::Frame *frame);
-Evas_Object *ewk_frame_child_add(Evas_Object *o, WTF::PassRefPtr<WebCore::Frame> child, const WebCore::String& name, const WebCore::KURL& url, const WebCore::String& referrer);
+Evas_Object *ewk_frame_child_add(Evas_Object *o, WTF::PassRefPtr<WebCore::Frame> child, const WTF::String& name, const WebCore::KURL& url, const WTF::String& referrer);
 
 WebCore::Frame *ewk_frame_core_get(const Evas_Object *o);
 void ewk_frame_core_gone(Evas_Object *o);
@@ -146,7 +146,7 @@ void ewk_frame_view_create_for_view(Evas_Object *o, Evas_Object *view);
 Eina_Bool ewk_frame_uri_changed(Evas_Object *o);
 void ewk_frame_force_layout(Evas_Object *o);
 
-WTF::PassRefPtr<WebCore::Widget> ewk_frame_plugin_create(Evas_Object* o, const WebCore::IntSize& pluginSize, WebCore::HTMLPlugInElement* element, const WebCore::KURL& url, const WTF::Vector<WebCore::String>& paramNames, const WTF::Vector<WebCore::String>& paramValues, const WebCore::String& mimeType, bool loadManually);
+WTF::PassRefPtr<WebCore::Widget> ewk_frame_plugin_create(Evas_Object* o, const WebCore::IntSize& pluginSize, WebCore::HTMLPlugInElement* element, const WebCore::KURL& url, const WTF::Vector<WTF::String>& paramNames, const WTF::Vector<WTF::String>& paramValues, const WTF::String& mimeType, bool loadManually);
 
 #ifdef __cplusplus
 

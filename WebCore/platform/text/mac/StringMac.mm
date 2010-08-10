@@ -22,7 +22,7 @@
 #include "PlatformString.h"
 #include <CoreFoundation/CFString.h>
 
-namespace WebCore {
+namespace WTF {
 
 String::String(NSString* str)
 {

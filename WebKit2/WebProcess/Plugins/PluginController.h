@@ -26,6 +26,8 @@
 #ifndef PluginController_h
 #define PluginController_h
 
+#include <wtf/Forward.h>
+
 struct NPObject;
 typedef struct _NPVariant NPVariant;
 
@@ -33,7 +35,6 @@ namespace WebCore {
     class HTTPHeaderMap;
     class IntRect;
     class KURL;
-    class String;
 }
 
 namespace WebKit {
@@ -44,7 +45,7 @@ public:
     virtual void invalidate(const WebCore::IntRect&) = 0;
 
     // Returns the user agent string for the given URL.
-    virtual WebCore::String userAgent(const WebCore::KURL&) = 0;
+    virtual WTF::String userAgent(const WebCore::KURL&) = 0;
 
     // Loads the given URL and associates it with the request ID.
     // 
@@ -53,7 +54,7 @@ public:
     // fails to load, Plugin::frameDidFailToLoad will be called.
     //
     // If the URL is a JavaScript URL, the JavaScript code will be evaluated and the result sent back using Plugin::didEvaluateJavaScript.
-    virtual void loadURL(uint64_t requestID, const WebCore::String& method, const WebCore::String& urlString, const WebCore::String& target, 
+    virtual void loadURL(uint64_t requestID, const WTF::String& method, const WTF::String& urlString, const WTF::String& target, 
                          const WebCore::HTTPHeaderMap& headerFields, const Vector<char>& httpBody, bool allowPopups) = 0;
 
     /// Cancels the load of a stream that was requested by loadURL.
@@ -69,10 +70,10 @@ public:
     virtual NPObject* pluginElementNPObject() = 0;
 
     // Evaluates the given script string in the context of the given NPObject.
-    virtual bool evaluate(NPObject*, const WebCore::String&scriptString, NPVariant* result, bool allowPopups) = 0;
+    virtual bool evaluate(NPObject*, const WTF::String&scriptString, NPVariant* result, bool allowPopups) = 0;
 
     // Set the statusbar text.
-    virtual void setStatusbarText(const WebCore::String&) = 0;
+    virtual void setStatusbarText(const WTF::String&) = 0;
 
 #if USE(ACCELERATED_COMPOSITING)
     // Return whether accelerated compositing is enabled.

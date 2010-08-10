@@ -60,14 +60,14 @@ DEFINE_GUID(IID_DOMElement, 0x3b0c0eff, 0x478b, 0x4b0b, 0x82, 0x90, 0xd2, 0x32, 
 // "DOMObject" exists both in the WebCore namespace and unnamespaced in this
 // file, which leads to ambiguities if we say "using namespace WebCore".
 using namespace WebCore::HTMLNames;
-using WebCore::AtomicString;
+using WTF::AtomicString;
 using WebCore::BString;
 using WebCore::Element;
 using WebCore::ExceptionCode;
 using WebCore::FontDescription;
 using WebCore::Frame;
 using WebCore::IntRect;
-using WebCore::String;
+using WTF::String;
 
 // DOMObject - IUnknown -------------------------------------------------------
 
@@ -119,7 +119,7 @@ HRESULT STDMETHODCALLTYPE DOMNode::nodeValue(
 {
     if (!m_node)
         return E_FAIL;
-    WebCore::String nodeValueStr = m_node->nodeValue();
+    WTF::String nodeValueStr = m_node->nodeValue();
     *result = SysAllocStringLen(nodeValueStr.characters(), nodeValueStr.length());
     if (nodeValueStr.length() && !*result)
         return E_OUTOFMEMORY;
@@ -894,8 +894,8 @@ HRESULT STDMETHODCALLTYPE DOMElement::getAttribute(
 {
     if (!m_element)
         return E_FAIL;
-    WebCore::String nameString(name, SysStringLen(name));
-    WebCore::String& attrValueString = (WebCore::String&) m_element->getAttribute(nameString);
+    WTF::String nameString(name, SysStringLen(name));
+    WTF::String& attrValueString = (WTF::String&) m_element->getAttribute(nameString);
     *result = SysAllocStringLen(attrValueString.characters(), attrValueString.length());
     if (attrValueString.length() && !*result)
         return E_OUTOFMEMORY;
@@ -909,8 +909,8 @@ HRESULT STDMETHODCALLTYPE DOMElement::setAttribute(
     if (!m_element)
         return E_FAIL;
 
-    WebCore::String nameString(name, SysStringLen(name));
-    WebCore::String valueString(value, SysStringLen(value));
+    WTF::String nameString(name, SysStringLen(name));
+    WTF::String valueString(value, SysStringLen(value));
     WebCore::ExceptionCode ec = 0;
     m_element->setAttribute(nameString, valueString, ec);
     return ec ? E_FAIL : S_OK;

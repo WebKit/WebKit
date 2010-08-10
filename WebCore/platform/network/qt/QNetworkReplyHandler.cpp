@@ -294,9 +294,9 @@ void QNetworkReplyHandler::sendResponseIfNeeded()
     if (!client)
         return;
 
-    WebCore::String contentType = m_reply->header(QNetworkRequest::ContentTypeHeader).toString();
-    WebCore::String encoding = extractCharsetFromMediaType(contentType);
-    WebCore::String mimeType = extractMIMETypeFromMediaType(contentType);
+    WTF::String contentType = m_reply->header(QNetworkRequest::ContentTypeHeader).toString();
+    WTF::String encoding = extractCharsetFromMediaType(contentType);
+    WTF::String mimeType = extractMIMETypeFromMediaType(contentType);
 
     if (mimeType.isEmpty()) {
         // let's try to guess from the extension

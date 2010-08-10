@@ -42,8 +42,8 @@ public:
     }
     ~WebNavigationData();
 
-    WebCore::String title() const { return m_store.title; }
-    WebCore::String url() const { return m_store.url; }
+    WTF::String title() const { return m_store.title; }
+    WTF::String url() const { return m_store.url; }
 
 private:
     WebNavigationData(const WebNavigationDataStore&);

@@ -24,12 +24,12 @@
 #include "SVGFontElement.h"
 #include "SVGParserUtilities.h"
 #include "SVGStyledElement.h"
+#include <wtf/Forward.h>
 
 #include <limits>
 
 namespace WebCore {
 
-class AtomicString;
 class SVGFontData;
 
 class SVGVKernElement : public SVGElement {

@@ -21,11 +21,12 @@
 #ifndef WMLErrorHandling_h
 #define WMLErrorHandling_h
 
+#include <wtf/Forward.h>
+
 #if ENABLE(WML)
 namespace WebCore {
 
     class Document;
-    class String;
 
     enum WMLErrorCode {
         WMLErrorUnknown = 0,

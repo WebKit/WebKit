@@ -53,10 +53,10 @@ public:
     virtual void highlight(WebCore::Node*);
     virtual void hideHighlight();
 
-    virtual void populateSetting(const WebCore::String& key, WebCore::String* value);
-    virtual void storeSetting(const WebCore::String& key, const WebCore::String& value);
+    virtual void populateSetting(const WTF::String& key, WTF::String* value);
+    virtual void storeSetting(const WTF::String& key, const WTF::String& value);
 
-    virtual bool sendMessageToFrontend(const WebCore::String&);
+    virtual bool sendMessageToFrontend(const WTF::String&);
 
     virtual void resourceTrackingWasEnabled();
     virtual void resourceTrackingWasDisabled();

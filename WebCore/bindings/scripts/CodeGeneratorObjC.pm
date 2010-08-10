@@ -524,7 +524,7 @@ sub GetObjCTypeGetter
     
     if ($type eq "SerializedScriptValue") {
         $implIncludes{"SerializedScriptValue.h"} = 1;
-        return "WebCore::SerializedScriptValue::create(WebCore::String($argName))";
+        return "WebCore::SerializedScriptValue::create(WTF::String($argName))";
     }
     return "core($argName)";
 }
@@ -1242,7 +1242,7 @@ sub GenerateImplementation
                 }
                 $implIncludes{"DOMPrivate.h"} = 1;
             } elsif ($attribute->signature->extendedAttributes->{"ConvertToString"}) {
-                $getterContentHead = "WebCore::String::number(" . $getterContentHead;
+                $getterContentHead = "WTF::String::number(" . $getterContentHead;
                 $getterContentTail .= ")";
             } elsif ($codeGenerator->IsPodType($idlType) or $idlType eq "Date") {
                 $getterContentHead = "kit($getterContentHead";
@@ -1304,7 +1304,7 @@ sub GenerateImplementation
 
                 # The definition of ConvertToString is flipped for the setter
                 if ($attribute->signature->extendedAttributes->{"ConvertToString"}) {
-                    $arg = "WebCore::String($arg).toInt()";
+                    $arg = "WTF::String($arg).toInt()";
                 }
 
                 my $setterSig = "- (void)$setterName:($attributeType)$argName\n";

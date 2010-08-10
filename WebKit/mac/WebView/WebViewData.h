@@ -79,7 +79,7 @@ extern int pluginDatabaseClientCount;
     float zoomMultiplier;
 
     NSString *applicationNameForUserAgent;
-    WebCore::String userAgent;
+    WTF::String userAgent;
     BOOL userAgentOverridden;
     
     WebPreferences *preferences;

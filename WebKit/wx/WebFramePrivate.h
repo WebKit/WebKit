@@ -48,10 +48,10 @@ class WebViewFrameData
 {
 public:
     WebCore::KURL url;
-    WebCore::String name;
+    WTF::String name;
     WebCore::HTMLFrameOwnerElement* ownerElement;
     
-    WebCore::String referrer;
+    WTF::String referrer;
     bool allowsScrolling;
     int marginWidth;
     int marginHeight;    

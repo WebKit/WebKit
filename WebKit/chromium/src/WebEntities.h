@@ -59,12 +59,12 @@ public:
     // entity name. If yes, return the entity notation. If not, returns an
     // empty string. Parameter isHTML indicates check the code in html entity
     // map or in xml entity map.
-    WebCore::String entityNameByCode(int code) const;
+    WTF::String entityNameByCode(int code) const;
 
     // Returns a new string with corresponding entity names replaced.
-    WebCore::String convertEntitiesInString(const WebCore::String&) const;
+    WTF::String convertEntitiesInString(const WTF::String&) const;
 private:
-    typedef HashMap<int, WebCore::String> EntitiesMapType;
+    typedef HashMap<int, WTF::String> EntitiesMapType;
     // An internal object that maps the Unicode character to corresponding
     // entity notation.
     EntitiesMapType m_entitiesMap;

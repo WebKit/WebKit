@@ -39,7 +39,6 @@ namespace WebCore {
     class Frame;
     class Range;
     class Node;
-    class String;
     class VisibleSelection;
 
     typedef int ExceptionCode;

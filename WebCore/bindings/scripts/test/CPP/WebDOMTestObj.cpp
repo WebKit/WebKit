@@ -85,7 +85,7 @@ WebDOMString WebDOMTestObj::readOnlyStringAttr() const
     if (!impl())
         return WebDOMString();
 
-    return static_cast<const WebCore::String&>(impl()->readOnlyStringAttr());
+    return static_cast<const WTF::String&>(impl()->readOnlyStringAttr());
 }
 
 WebDOMTestObj WebDOMTestObj::readOnlyTestObjAttr() const
@@ -149,7 +149,7 @@ WebDOMString WebDOMTestObj::stringAttr() const
     if (!impl())
         return WebDOMString();
 
-    return static_cast<const WebCore::String&>(impl()->stringAttr());
+    return static_cast<const WTF::String&>(impl()->stringAttr());
 }
 
 void WebDOMTestObj::setStringAttr(const WebDOMString& newStringAttr)
@@ -213,7 +213,7 @@ WebDOMString WebDOMTestObj::reflectedStringAttr() const
     if (!impl())
         return WebDOMString();
 
-    return static_cast<const WebCore::String&>(impl()->getAttribute(WebCore::HTMLNames::reflectedstringattrAttr));
+    return static_cast<const WTF::String&>(impl()->getAttribute(WebCore::HTMLNames::reflectedstringattrAttr));
 }
 
 void WebDOMTestObj::setReflectedStringAttr(const WebDOMString& newReflectedStringAttr)
@@ -261,7 +261,7 @@ WebDOMString WebDOMTestObj::reflectedURLAttr() const
     if (!impl())
         return WebDOMString();
 
-    return static_cast<const WebCore::String&>(impl()->getURLAttribute(WebCore::HTMLNames::reflectedurlattrAttr));
+    return static_cast<const WTF::String&>(impl()->getURLAttribute(WebCore::HTMLNames::reflectedurlattrAttr));
 }
 
 void WebDOMTestObj::setReflectedURLAttr(const WebDOMString& newReflectedURLAttr)
@@ -277,7 +277,7 @@ WebDOMString WebDOMTestObj::reflectedNonEmptyURLAttr() const
     if (!impl())
         return WebDOMString();
 
-    return static_cast<const WebCore::String&>(impl()->getNonEmptyURLAttribute(WebCore::HTMLNames::reflectednonemptyurlattrAttr));
+    return static_cast<const WTF::String&>(impl()->getNonEmptyURLAttribute(WebCore::HTMLNames::reflectednonemptyurlattrAttr));
 }
 
 void WebDOMTestObj::setReflectedNonEmptyURLAttr(const WebDOMString& newReflectedNonEmptyURLAttr)
@@ -293,7 +293,7 @@ WebDOMString WebDOMTestObj::reflectedStringAttr() const
     if (!impl())
         return WebDOMString();
 
-    return static_cast<const WebCore::String&>(impl()->getAttribute(WebCore::HTMLNames::customContentStringAttrAttr));
+    return static_cast<const WTF::String&>(impl()->getAttribute(WebCore::HTMLNames::customContentStringAttrAttr));
 }
 
 void WebDOMTestObj::setReflectedStringAttr(const WebDOMString& newReflectedStringAttr)
@@ -341,7 +341,7 @@ WebDOMString WebDOMTestObj::reflectedCustomURLAttr() const
     if (!impl())
         return WebDOMString();
 
-    return static_cast<const WebCore::String&>(impl()->getURLAttribute(WebCore::HTMLNames::customContentURLAttrAttr));
+    return static_cast<const WTF::String&>(impl()->getURLAttribute(WebCore::HTMLNames::customContentURLAttrAttr));
 }
 
 void WebDOMTestObj::setReflectedCustomURLAttr(const WebDOMString& newReflectedCustomURLAttr)
@@ -357,7 +357,7 @@ WebDOMString WebDOMTestObj::reflectedCustomNonEmptyURLAttr() const
     if (!impl())
         return WebDOMString();
 
-    return static_cast<const WebCore::String&>(impl()->getNonEmptyURLAttribute(WebCore::HTMLNames::customContentNonEmptyURLAttrAttr));
+    return static_cast<const WTF::String&>(impl()->getNonEmptyURLAttribute(WebCore::HTMLNames::customContentNonEmptyURLAttrAttr));
 }
 
 void WebDOMTestObj::setReflectedCustomNonEmptyURLAttr(const WebDOMString& newReflectedCustomNonEmptyURLAttr)
@@ -415,7 +415,7 @@ WebDOMString WebDOMTestObj::stringAttrWithGetterException() const
     WebCore::ExceptionCode ec = 0;
     WebDOMString result = impl()->stringAttrWithGetterException(ec);
     webDOMRaiseError(static_cast<WebDOMExceptionCode>(ec));
-    return static_cast<const WebCore::String&>(result);
+    return static_cast<const WTF::String&>(result);
 }
 
 void WebDOMTestObj::setStringAttrWithGetterException(const WebDOMString& newStringAttrWithGetterException)
@@ -433,7 +433,7 @@ WebDOMString WebDOMTestObj::stringAttrWithSetterException() const
     if (!impl())
         return WebDOMString();
 
-    return static_cast<const WebCore::String&>(impl()->stringAttrWithSetterException());
+    return static_cast<const WTF::String&>(impl()->stringAttrWithSetterException());
 }
 
 void WebDOMTestObj::setStringAttrWithSetterException(const WebDOMString& newStringAttrWithSetterException)
@@ -451,7 +451,7 @@ WebDOMString WebDOMTestObj::scriptStringAttr() const
     if (!impl())
         return WebDOMString();
 
-    return static_cast<const WebCore::String&>(impl()->scriptStringAttr());
+    return static_cast<const WTF::String&>(impl()->scriptStringAttr());
 }
 
 #if ENABLE(Condition1)
@@ -537,7 +537,7 @@ WebDOMString WebDOMTestObj::hash() const
     if (!impl())
         return WebDOMString();
 
-    return static_cast<const WebCore::String&>(impl()->hash());
+    return static_cast<const WTF::String&>(impl()->hash());
 }
 
 void WebDOMTestObj::voidMethod()
@@ -612,7 +612,7 @@ void WebDOMTestObj::serializedValue(const WebDOMString& serializedArg)
     if (!impl())
         return;
 
-    impl()->serializedValue(WebCore::SerializedScriptValue::create(WebCore::String(serializedArg)));
+    impl()->serializedValue(WebCore::SerializedScriptValue::create(WTF::String(serializedArg)));
 }
 
 void WebDOMTestObj::idbKey(const WebDOMIDBKey& key)

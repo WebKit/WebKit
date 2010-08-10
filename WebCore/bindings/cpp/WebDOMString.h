@@ -22,11 +22,7 @@
 #define WebDOMString_h
 
 #include <WebDOMCString.h>
-
-namespace WebCore {
-class String;
-class AtomicString;
-}
+#include <wtf/Forward.h>
 
 class WebDOMStringPrivate;
 
@@ -81,13 +77,13 @@ public:
         return *this;
     }
 
-    WebDOMString(const WebCore::String&);
-    WebDOMString& operator=(const WebCore::String&);
-    operator WebCore::String() const;
+    WebDOMString(const WTF::String&);
+    WebDOMString& operator=(const WTF::String&);
+    operator WTF::String() const;
 
-    WebDOMString(const WebCore::AtomicString&);
-    WebDOMString& operator=(const WebCore::AtomicString&);
-    operator WebCore::AtomicString() const;
+    WebDOMString(const WTF::AtomicString&);
+    WebDOMString& operator=(const WTF::AtomicString&);
+    operator WTF::AtomicString() const;
 
     bool equals(const char* string) const;
 

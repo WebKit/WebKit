@@ -70,7 +70,7 @@ NetscapePluginHostManager::~NetscapePluginHostManager()
 {
 }
 
-NetscapePluginHostProxy* NetscapePluginHostManager::hostForPlugin(const WebCore::String& pluginPath, cpu_type_t pluginArchitecture, const String& bundleIdentifier, bool useProxiedOpenPanel)
+NetscapePluginHostProxy* NetscapePluginHostManager::hostForPlugin(const WTF::String& pluginPath, cpu_type_t pluginArchitecture, const String& bundleIdentifier, bool useProxiedOpenPanel)
 {
     pair<PluginHostMap::iterator, bool> result = m_pluginHosts.add(pluginPath, 0);
     

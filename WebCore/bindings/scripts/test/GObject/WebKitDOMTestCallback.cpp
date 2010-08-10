@@ -78,7 +78,7 @@ webkit_dom_test_callback_callback_with_class2param(WebKitDOMTestCallback* self, 
     g_return_val_if_fail(str_arg, 0);
     WebCore::Class2 * converted_class2param = WebKit::core(class2param);
     g_return_val_if_fail(converted_class2param, 0);
-    WebCore::String converted_str_arg = WebCore::String::fromUTF8(str_arg);
+    WTF::String converted_str_arg = WTF::String::fromUTF8(str_arg);
     gboolean res = item->callbackWithClass2Param(converted_class2param, converted_str_arg);
     return res;
 }

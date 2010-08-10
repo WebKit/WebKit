@@ -58,7 +58,7 @@ using WebCore::GeolocationServiceClient;
 using WebCore::Geoposition;
 using WebCore::PositionError;
 using WebCore::PositionOptions;
-using WebCore::String;
+using WTF::String;
 
 namespace WebKit {
 

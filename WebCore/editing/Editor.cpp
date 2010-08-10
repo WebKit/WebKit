@@ -2405,7 +2405,7 @@ bool Editor::spellCheckingEnabledInFocusedNode() const
     const Node* node = frame()->document()->focusedNode();
     while (node) {
         if (node->isElementNode()) {
-            const WebCore::AtomicString& value = static_cast<const Element*>(node)->getAttribute(spellcheckAttr);
+            const WTF::AtomicString& value = static_cast<const Element*>(node)->getAttribute(spellcheckAttr);
             if (equalIgnoringCase(value, "true"))
                 return true;
             if (equalIgnoringCase(value, "false"))

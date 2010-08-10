@@ -33,13 +33,13 @@
 #include <WebCore/FrameLoaderClient.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/PolicyChecker.h>
+#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
     class Frame;
     class HTMLFrameOwnerElement;
-    class String;
 }
 
 namespace WebKit {
@@ -53,7 +53,7 @@ public:
     static const Type APIType = TypeBundleFrame;
 
     static PassRefPtr<WebFrame> createMainFrame(WebPage*);
-    static PassRefPtr<WebFrame> createSubframe(WebPage*, const WebCore::String& frameName, WebCore::HTMLFrameOwnerElement*);
+    static PassRefPtr<WebFrame> createSubframe(WebPage*, const WTF::String& frameName, WebCore::HTMLFrameOwnerElement*);
     ~WebFrame();
 
     // Called when the FrameLoaderClient (and therefore the WebCore::Frame) is being torn down.
@@ -70,9 +70,9 @@ public:
 
     // WKBundleFrame API and SPI functions
     bool isMainFrame() const;
-    WebCore::String name() const;
-    WebCore::String url() const;
-    WebCore::String innerText() const;
+    WTF::String name() const;
+    WTF::String url() const;
+    WTF::String innerText() const;
     PassRefPtr<ImmutableArray> childFrames();
     JSValueRef computedStyleIncludingVisitedInfo(JSObjectRef element);
     JSGlobalContextRef jsContext();
@@ -80,11 +80,11 @@ public:
 
     JSValueRef jsWrapperForWorld(InjectedBundleNodeHandle*, InjectedBundleScriptWorld*);
 
-    static WebCore::String counterValue(JSObjectRef element);
-    static WebCore::String markerText(JSObjectRef element);
+    static WTF::String counterValue(JSObjectRef element);
+    static WTF::String markerText(JSObjectRef element);
 
     unsigned numberOfActiveAnimations();
-    bool pauseAnimationOnElementWithId(const WebCore::String& animationName, const WebCore::String& elementID, double time);
+    bool pauseAnimationOnElementWithId(const WTF::String& animationName, const WTF::String& elementID, double time);
 
     unsigned pendingUnloadCount();
 
@@ -100,8 +100,8 @@ public:
     LoadListener* loadListener() const { return m_loadListener; }
 
 private:
-    static PassRefPtr<WebFrame> create(WebPage*, const WebCore::String& frameName, WebCore::HTMLFrameOwnerElement*);
-    WebFrame(WebPage*, const WebCore::String& frameName, WebCore::HTMLFrameOwnerElement*);
+    static PassRefPtr<WebFrame> create(WebPage*, const WTF::String& frameName, WebCore::HTMLFrameOwnerElement*);
+    WebFrame(WebPage*, const WTF::String& frameName, WebCore::HTMLFrameOwnerElement*);
 
     virtual Type type() const { return APIType; }
 

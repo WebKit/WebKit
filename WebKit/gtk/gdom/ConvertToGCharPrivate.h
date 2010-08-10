@@ -25,7 +25,7 @@
 #include "PlatformString.h"
 #include <wtf/text/CString.h>
 
-inline gchar* copyAsGchar(WebCore::String const& s)
+inline gchar* copyAsGchar(WTF::String const& s)
 {
     return g_strdup(s.utf8().data());
 }
@@ -40,7 +40,7 @@ inline gchar* copyAsGchar(const JSC::UString& s)
     return g_strdup(s.UTF8String().c_str());
 }
 
-inline gchar* copyAsGchar(WebCore::AtomicString const& s)
+inline gchar* copyAsGchar(WTF::AtomicString const& s)
 {
     return g_strdup(s.string().utf8().data());
 }

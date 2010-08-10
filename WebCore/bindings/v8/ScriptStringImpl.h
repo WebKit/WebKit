@@ -41,7 +41,7 @@ namespace WebCore {
 // This class is used for strings that tend to be shared with JavaScript frequently.  The JSC implementation uses wtf::UString - see bindings/js/ScriptString.h
 // Currently XMLHttpRequest uses a ScriptString to build up the responseText attribute.  As data arrives from the network, it is appended to the ScriptString
 // via operator+= and a JavaScript readystatechange event is fired.  JavaScript can access the responseText attribute of the XMLHttpRequest object.  JavaScript
-// may also query the responseXML attribute of the XMLHttpRequest object which results in the responseText attribute being coerced into a WebCore::String and
+// may also query the responseXML attribute of the XMLHttpRequest object which results in the responseText attribute being coerced into a WTF::String and
 // then parsed as an XML document.
 // This implementation optimizes for the common case where the responseText is built up with many calls to operator+= before the actual text is queried.
 class ScriptStringImpl : public RefCounted<ScriptStringImpl> {

@@ -31,6 +31,8 @@
 #ifndef DOMUtilitiesPrivate_h
 #define DOMUtilitiesPrivate_h
 
+#include <wtf/Forward.h>
+
 namespace WebCore {
 class Element;
 class HTMLInputElement;
@@ -39,7 +41,6 @@ class HTMLMetaElement;
 class HTMLOptionElement;
 class Node;
 class QualifiedName;
-class String;
 }
 
 // This file is an aggregate of useful WebCore operations.
@@ -53,7 +54,7 @@ WebCore::HTMLMetaElement* toHTMLMetaElement(WebCore::Node*);
 WebCore::HTMLOptionElement* toHTMLOptionElement(WebCore::Node*);
 
 // FIXME: Deprecate. Use WebInputElement::nameForAutofill instead.
-WebCore::String nameOfInputElement(WebCore::HTMLInputElement*);
+WTF::String nameOfInputElement(WebCore::HTMLInputElement*);
 
 // For img, script, iframe, frame element, when attribute name is src,
 // for link, a, area element, when attribute name is href,

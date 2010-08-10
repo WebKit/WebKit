@@ -32,6 +32,8 @@
 #ifndef LineEnding_h
 #define LineEnding_h
 
+#include <wtf/Forward.h>
+
 namespace WTF {
 class CString;
 }

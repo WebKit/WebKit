@@ -22,6 +22,7 @@
 #define MediaList_h
 
 #include "StyleBase.h"
+#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
 
@@ -30,7 +31,6 @@ namespace WebCore {
 class CSSImportRule;
 class CSSStyleSheet;
 class MediaQuery;
-class String;
 
 typedef int ExceptionCode;
 

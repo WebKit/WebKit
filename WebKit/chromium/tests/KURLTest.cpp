@@ -40,7 +40,7 @@
 namespace {
 
 // Output stream operator so gTest's macros work with WebCore strings.
-std::ostream& operator<<(std::ostream& out, const WebCore::String& str)
+std::ostream& operator<<(std::ostream& out, const WTF::String& str)
 {
     return str.isEmpty() ? out : out << str.utf8().data();
 }
@@ -95,7 +95,7 @@ TEST(KURLTest, SameGetters)
         EXPECT_EQ(cases[i].hasRef, kurl.hasFragmentIdentifier());
 
         // UTF-16
-        WebCore::String utf16(cases[i].url);
+        WTF::String utf16(cases[i].url);
         kurl = WebCore::KURL(WebCore::ParsedURLString, utf16);
 
         EXPECT_EQ(cases[i].protocol, kurl.protocol());
@@ -144,7 +144,7 @@ TEST(KURLTest, DifferentGetters)
         EXPECT_EQ(cases[i].query, kurl.query());
         // Want to compare UCS-16 refs (or to null).
         if (cases[i].ref)
-            EXPECT_EQ(WebCore::String::fromUTF8(cases[i].ref), kurl.fragmentIdentifier());
+            EXPECT_EQ(WTF::String::fromUTF8(cases[i].ref), kurl.fragmentIdentifier());
         else
             EXPECT_TRUE(kurl.fragmentIdentifier().isNull());
     }
@@ -156,13 +156,13 @@ TEST(KURLTest, UTF8)
 {
     const char asciiURL[] = "http://foo/bar#baz";
     WebCore::KURL asciiKURL(WebCore::ParsedURLString, asciiURL);
-    EXPECT_TRUE(asciiKURL.string() == WebCore::String(asciiURL));
+    EXPECT_TRUE(asciiKURL.string() == WTF::String(asciiURL));
 
     // When the result is ASCII, we should get an ASCII String. Some
     // code depends on being able to compare the result of the .string()
     // getter with another String, and the isASCIIness of the two
     // strings must match for these functions (like equalIgnoringCase).
-    EXPECT_TRUE(WebCore::equalIgnoringCase(asciiKURL, WebCore::String(asciiURL)));
+    EXPECT_TRUE(WebCore::equalIgnoringCase(asciiKURL, WTF::String(asciiURL)));
 
     // Reproduce code path in FrameLoader.cpp -- equalIgnoringCase implicitly
     // expects gkurl.protocol() to have been created as ascii.
@@ -172,7 +172,7 @@ TEST(KURLTest, UTF8)
     const char utf8URL[] = "http://foo/bar#\xe4\xbd\xa0\xe5\xa5\xbd";
     WebCore::KURL utf8KURL(WebCore::ParsedURLString, utf8URL);
 
-    EXPECT_TRUE(utf8KURL.string() == WebCore::String::fromUTF8(utf8URL));
+    EXPECT_TRUE(utf8KURL.string() == WTF::String::fromUTF8(utf8URL));
 }
 
 TEST(KURLTest, Setters)
@@ -281,20 +281,20 @@ TEST(KURLTest, Decode)
     };
 
     for (size_t i = 0; i < ARRAYSIZE_UNSAFE(decodeCases); i++) {
-        WebCore::String input(decodeCases[i].input);
-        WebCore::String str = WebCore::decodeURLEscapeSequences(input);
+        WTF::String input(decodeCases[i].input);
+        WTF::String str = WebCore::decodeURLEscapeSequences(input);
         EXPECT_STREQ(decodeCases[i].output, str.utf8().data());
     }
 
     // Our decode should decode %00
-    WebCore::String zero = WebCore::decodeURLEscapeSequences("%00");
+    WTF::String zero = WebCore::decodeURLEscapeSequences("%00");
     EXPECT_STRNE("%00", zero.utf8().data());
 
     // Test the error behavior for invalid UTF-8 (we differ from WebKit here).
-    WebCore::String invalid = WebCore::decodeURLEscapeSequences(
+    WTF::String invalid = WebCore::decodeURLEscapeSequences(
         "%e4%a0%e5%a5%bd");
     char16 invalidExpectedHelper[4] = { 0x00e4, 0x00a0, 0x597d, 0 };
-    WebCore::String invalidExpected(
+    WTF::String invalidExpected(
         reinterpret_cast<const ::UChar*>(invalidExpectedHelper),
         3);
     EXPECT_EQ(invalidExpected, invalid);
@@ -305,20 +305,20 @@ TEST(KURLTest, Encode)
 {
     // Also test that it gets converted to UTF-8 properly.
     char16 wideInputHelper[3] = { 0x4f60, 0x597d, 0 };
-    WebCore::String wideInput(
+    WTF::String wideInput(
         reinterpret_cast<const ::UChar*>(wideInputHelper), 2);
-    WebCore::String wideReference("\xe4\xbd\xa0\xe5\xa5\xbd", 6);
-    WebCore::String wideOutput =
+    WTF::String wideReference("\xe4\xbd\xa0\xe5\xa5\xbd", 6);
+    WTF::String wideOutput =
         WebCore::encodeWithURLEscapeSequences(wideInput);
     EXPECT_EQ(wideReference, wideOutput);
 
     // Our encode only escapes NULLs for safety (see the implementation for
     // more), so we only bother to test a few cases.
-    WebCore::String input(
+    WTF::String input(
         "\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f", 16);
-    WebCore::String reference(
+    WTF::String reference(
         "%00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f", 18);
-    WebCore::String output = WebCore::encodeWithURLEscapeSequences(input);
+    WTF::String output = WebCore::encodeWithURLEscapeSequences(input);
     EXPECT_EQ(reference, output);
 }
 
@@ -395,7 +395,7 @@ TEST(KURLTest, Path)
     WebCore::KURL kurl(WebCore::ParsedURLString, initial);
 
     // Clear by setting a null string.
-    WebCore::String nullString;
+    WTF::String nullString;
     EXPECT_TRUE(nullString.isNull());
     kurl.setPath(nullString);
     EXPECT_STREQ("http://www.google.com/", kurl.string().utf8().data());
@@ -409,14 +409,14 @@ TEST(KURLTest, Query)
     WebCore::KURL kurl(WebCore::ParsedURLString, initial);
 
     // Clear by setting a null string.
-    WebCore::String nullString;
+    WTF::String nullString;
     EXPECT_TRUE(nullString.isNull());
     kurl.setQuery(nullString);
     EXPECT_STREQ("http://www.google.com/search", kurl.string().utf8().data());
 
     // Clear by setting an empty string.
     kurl = WebCore::KURL(WebCore::ParsedURLString, initial);
-    WebCore::String emptyString("");
+    WTF::String emptyString("");
     EXPECT_FALSE(emptyString.isNull());
     kurl.setQuery(emptyString);
     EXPECT_STREQ("http://www.google.com/search?", kurl.string().utf8().data());
@@ -456,10 +456,10 @@ TEST(KURLTest, Ref)
 
     // Setting the ref to the null string will clear it altogether.
     cur = WebCore::KURL(WebCore::ParsedURLString, "http://foo/bar");
-    cur.setFragmentIdentifier(WebCore::String());
+    cur.setFragmentIdentifier(WTF::String());
     EXPECT_STREQ("http://foo/bar", cur.string().utf8().data());
     cur = kurl;
-    cur.setFragmentIdentifier(WebCore::String());
+    cur.setFragmentIdentifier(WTF::String());
     EXPECT_STREQ("http://foo/bar", cur.string().utf8().data());
 }
 
@@ -485,7 +485,7 @@ TEST(KURLTest, Empty)
     EXPECT_TRUE(kurl2.string().isEmpty());
 
     // Resolve the null URL on a null string.
-    WebCore::KURL kurl22(kurl, WebCore::String());
+    WebCore::KURL kurl22(kurl, WTF::String());
     EXPECT_FALSE(kurl22.isNull());
     EXPECT_TRUE(kurl22.isEmpty());
     EXPECT_FALSE(kurl22.isValid());

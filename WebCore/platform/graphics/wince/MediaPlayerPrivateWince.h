@@ -29,6 +29,7 @@
 
 #if ENABLE(VIDEO)
 
+#include <wtf/Forward.h>
 #include "MediaPlayerPrivate.h"
 #include "Timer.h"
 #include <wtf/OwnPtr.h>
@@ -38,7 +39,6 @@ namespace WebCore {
     class GraphicsContext;
     class IntSize;
     class IntRect;
-    class String;
 
     class MediaPlayerPrivate : public MediaPlayerPrivateInterface {
     public:

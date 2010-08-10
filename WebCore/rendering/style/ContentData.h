@@ -26,13 +26,13 @@
 #define ContentData_h
 
 #include "RenderStyleConstants.h"
+#include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
 class CounterContent;
-class StringImpl;
 class StyleImage;
 
 struct ContentData : Noncopyable {

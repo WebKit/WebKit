@@ -26,12 +26,11 @@
 #ifndef TextStream_h
 #define TextStream_h
 
+#include <wtf/Forward.h>
 #include <wtf/Vector.h>
 #include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
-
-class String;
 
 class TextStream {
 public:

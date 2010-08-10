@@ -46,7 +46,7 @@ unsigned long long WebMemorySize()
 
 unsigned long long WebVolumeFreeSize(CFStringRef cfstringPath)
 {
-    WebCore::String path(cfstringPath);
+    WTF::String path(cfstringPath);
     ULARGE_INTEGER freeBytesToCaller;
     BOOL result = GetDiskFreeSpaceExW((LPCWSTR)path.charactersWithNullTermination(), &freeBytesToCaller, 0, 0);
     if (!result)

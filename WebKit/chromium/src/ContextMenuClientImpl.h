@@ -51,7 +51,7 @@ public:
     virtual void lookUpInDictionary(WebCore::Frame*) {}
     virtual void searchWithGoogle(const WebCore::Frame*) {}
     virtual bool shouldIncludeInspectElementItem() { return false; }
-    virtual void speak(const WebCore::String&) {}
+    virtual void speak(const WTF::String&) {}
     virtual void stopSpeaking() {}
 private:
     void populateCustomMenuItems(WebCore::ContextMenu*, WebContextMenuData*);

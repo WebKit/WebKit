@@ -32,8 +32,8 @@
 
 using namespace std;
 // We explicitly don't use the WebCore namespace here because CoreIPC should only use WTF types and
-// WebCore::String is really in WTF.
-using WebCore::String;
+// WTF::String is really in WTF.
+using WTF::String;
  
 namespace CoreIPC {
 

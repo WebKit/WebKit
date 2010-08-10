@@ -27,14 +27,11 @@
  */
 
 #import <WebCore/IconDatabaseClient.h>
-
-namespace WebCore {
-    class String;
-}
+#import <wtf/Forward.h>
 
 class WebIconDatabaseClient : public WebCore::IconDatabaseClient {
 public:
     virtual bool performImport();
     virtual void dispatchDidRemoveAllIcons();
-    virtual void dispatchDidAddIconForPageURL(const WebCore::String& pageURL);
+    virtual void dispatchDidAddIconForPageURL(const WTF::String& pageURL);
 };

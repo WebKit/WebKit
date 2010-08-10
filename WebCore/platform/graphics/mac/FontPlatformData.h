@@ -39,13 +39,12 @@ typedef const struct __CTFont* CTFontRef;
 
 #include <CoreFoundation/CFBase.h>
 #include <objc/objc-auto.h>
+#include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
 
 typedef UInt32 ATSUFontID;
 
 namespace WebCore {
-
-class String;
 
 #ifndef BUILDING_ON_TIGER
 inline CTFontRef toCTFontRef(NSFont *nsFont) { return reinterpret_cast<CTFontRef>(nsFont); }

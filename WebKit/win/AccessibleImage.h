@@ -35,7 +35,7 @@ public:
     virtual ~AccessibleImage() { }
 
 private:
-    virtual WebCore::String name() const;
+    virtual WTF::String name() const;
 };
 
 #endif // AccessibleImage_h

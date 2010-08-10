@@ -39,13 +39,13 @@ EXPORTS
     ??8WTF@@YA_NABVCString@0@0@Z
     ?NaN@JSC@@3NB
     ?UTF8String@UString@JSC@@QBE?AVCString@WTF@@_N@Z
-    ?add@Identifier@JSC@@SA?AV?$PassRefPtr@VStringImpl@WebCore@@@WTF@@PAVExecState@2@PBD@Z
-    ?add@PropertyNameArray@JSC@@QAEXPAVStringImpl@WebCore@@@Z
+    ?add@Identifier@JSC@@SA?AV?$PassRefPtr@VStringImpl@WTF@@@WTF@@PAVExecState@2@PBD@Z
+    ?add@PropertyNameArray@JSC@@QAEXPAVStringImpl@WTF@@@Z
     ?addBytes@MD5@WTF@@QAEXPBEI@Z
     ?addPropertyTransition@Structure@JSC@@SA?AV?$PassRefPtr@VStructure@JSC@@@WTF@@PAV12@ABVIdentifier@2@IPAVJSCell@2@AAI@Z
     ?addPropertyTransitionToExistingStructure@Structure@JSC@@SA?AV?$PassRefPtr@VStructure@JSC@@@WTF@@PAV12@ABVIdentifier@2@IPAVJSCell@2@AAI@Z
     ?addPropertyWithoutTransition@Structure@JSC@@QAEIABVIdentifier@2@IPAVJSCell@2@@Z
-    ?addSlowCase@Identifier@JSC@@CA?AV?$PassRefPtr@VStringImpl@WebCore@@@WTF@@PAVExecState@2@PAVStringImpl@WebCore@@@Z
+    ?addSlowCase@Identifier@JSC@@CA?AV?$PassRefPtr@VStringImpl@WTF@@@WTF@@PAVExecState@2@PAVStringImpl@4@@Z
     ?addWeakGCHandle@Heap@JSC@@QAEPAVWeakGCHandle@2@PAVJSCell@2@@Z
     ?allocate@Heap@JSC@@QAEPAXI@Z
     ?allocatePropertyStorage@JSObject@JSC@@QAEXII@Z
@@ -128,9 +128,9 @@ EXPORTS
     ?didTimeOut@TimeoutChecker@JSC@@QAE_NPAVExecState@2@@Z
     ?doubleToStringInJavaScriptFormat@WTF@@YAXNQADPAI@Z
     ?dumpSampleData@JSGlobalData@JSC@@QAEXPAVExecState@2@@Z
-    ?empty@StringImpl@WebCore@@SAPAV12@XZ
+    ?empty@StringImpl@WTF@@SAPAV12@XZ
     ?enumerable@PropertyDescriptor@JSC@@QBE_NXZ
-    ?equal@Identifier@JSC@@SA_NPBVStringImpl@WebCore@@PBD@Z
+    ?equal@Identifier@JSC@@SA_NPBVStringImpl@WTF@@PBD@Z
     ?evaluate@DebuggerCallFrame@JSC@@QBE?AVJSValue@2@ABVUString@2@AAV32@@Z
     ?evaluate@JSC@@YA?AVCompletion@1@PAVExecState@1@AAVScopeChain@1@ABVSourceCode@1@VJSValue@1@@Z
     ?exclude@Profile@JSC@@QAEXPBVProfileNode@2@@Z
@@ -151,7 +151,7 @@ EXPORTS
     ?from@UString@JSC@@SA?AV12@N@Z
     ?functionGetter@PropertySlot@JSC@@ABE?AVJSValue@2@PAVExecState@2@@Z
     ?functionName@DebuggerCallFrame@JSC@@QBEPBVUString@2@XZ
-    ?get@Structure@JSC@@QAEIPBVStringImpl@WebCore@@AAIAAPAVJSCell@2@@Z
+    ?get@Structure@JSC@@QAEIPBVStringImpl@WTF@@AAIAAPAVJSCell@2@@Z
     ?getCallData@JSCell@JSC@@UAE?AW4CallType@2@AATCallData@2@@Z
     ?getConstructData@JSCell@JSC@@UAE?AW4ConstructType@2@AATConstructData@2@@Z
     ?getJSNumber@JSCell@JSC@@UAE?AVJSValue@2@XZ
@@ -185,10 +185,10 @@ EXPORTS
     ?hasInstance@JSObject@JSC@@UAE_NPAVExecState@2@VJSValue@2@1@Z
     ?hasProperty@JSObject@JSC@@QBE_NPAVExecState@2@ABVIdentifier@2@@Z
     ?hasProperty@JSObject@JSC@@QBE_NPAVExecState@2@I@Z
-    ?hasTransition@Structure@JSC@@QAE_NPAVStringImpl@WebCore@@I@Z
+    ?hasTransition@Structure@JSC@@QAE_NPAVStringImpl@WTF@@I@Z
     ?heap@Heap@JSC@@SAPAV12@VJSValue@2@@Z
     ?increment@RefCountedLeakCounter@WTF@@QAEXXZ
-    ?init@AtomicString@WebCore@@SAXXZ
+    ?init@AtomicString@WTF@@SAXXZ
     ?init@JSGlobalObject@JSC@@AAEXPAVJSObject@2@@Z
     ?initializeMainThread@WTF@@YAXXZ
     ?initializeThreading@JSC@@YAXXZ

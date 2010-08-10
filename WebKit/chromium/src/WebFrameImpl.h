@@ -285,7 +285,7 @@ private:
     // It is not necessary if the frame is invisible, for example, or if this
     // is a repeat search that already returned nothing last time the same prefix
     // was searched.
-    bool shouldScopeMatches(const WebCore::String& searchText);
+    bool shouldScopeMatches(const WTF::String& searchText);
 
     // Queue up a deferred call to scopeStringMatches.
     void scopeStringMatchesSoon(
@@ -336,7 +336,7 @@ private:
     // short-circuiting searches in the following scenarios: When a frame has
     // been searched and returned 0 results, we don't need to search that frame
     // again if the user is just adding to the search (making it more specific).
-    WebCore::String m_lastSearchString;
+    WTF::String m_lastSearchString;
 
     // Keeps track of how many matches this frame has found so far, so that we
     // don't loose count between scoping efforts, and is also used (in conjunction

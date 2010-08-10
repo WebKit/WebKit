@@ -30,10 +30,7 @@
 
 #include "npruntime_internal.h"
 #include <runtime/JSValue.h>
-
-namespace WebCore {
-    class String;
-}
+#include <wtf/Forward.h>
 
 namespace JSC {
 
@@ -46,7 +43,7 @@ class RootObject;
     
 typedef uint16_t NPUTF16;
 
-WebCore::String convertNPStringToUTF16(const NPString *string);
+WTF::String convertNPStringToUTF16(const NPString *string);
 void convertValueToNPVariant(ExecState*, JSValue, NPVariant* result);
 JSValue convertNPVariantToValue(ExecState*, const NPVariant*, RootObject*);
 Identifier identifierFromNPIdentifier(ExecState*, const NPUTF8* name);

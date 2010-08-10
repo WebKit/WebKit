@@ -30,6 +30,7 @@
 #if ENABLE(XPATH)
 
 #include "XPathValue.h"
+#include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -38,7 +39,6 @@ namespace WebCore {
 
     class Document;
     class Node;
-    class String;
 
     class XPathResult : public RefCounted<XPathResult> {
     public:

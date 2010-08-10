@@ -26,6 +26,7 @@
 #include <limits.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/CrossThreadRefCounted.h>
+#include <wtf/Forward.h>
 #include <wtf/OwnFastMallocPtr.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/StringHashFunctions.h>
@@ -44,21 +45,14 @@ typedef const struct __CFString * CFStringRef;
 // FIXME: This is a temporary layering violation while we move string code to WTF.
 // Landing the file moves in one patch, will follow on with patches to change the namespaces.
 namespace JSC {
-
 struct IdentifierCStringTranslator;
 struct IdentifierUCharBufferTranslator;
-
 }
 
-// FIXME: This is a temporary layering violation while we move string code to WTF.
-// Landing the file moves in one patch, will follow on with patches to change the namespaces.
-namespace WebCore {
-
-class StringBuffer;
+namespace WTF {
 
 struct CStringTranslator;
 struct HashAndCharactersTranslator;
-struct StringHash;
 struct UCharBufferTranslator;
 
 enum TextCaseSensitivity { TextCaseSensitive, TextCaseInsensitive };
@@ -70,9 +64,9 @@ typedef bool (*CharacterMatchFunctionPtr)(UChar);
 class StringImpl : public StringImplBase {
     friend struct JSC::IdentifierCStringTranslator;
     friend struct JSC::IdentifierUCharBufferTranslator;
-    friend struct CStringTranslator;
-    friend struct HashAndCharactersTranslator;
-    friend struct UCharBufferTranslator;
+    friend struct WTF::CStringTranslator;
+    friend struct WTF::HashAndCharactersTranslator;
+    friend struct WTF::UCharBufferTranslator;
     friend class AtomicStringImpl;
 private:
     // Used to construct static strings, which have an special refCount that can never hit zero.
@@ -384,21 +378,23 @@ inline PassRefPtr<StringImpl> StringImpl::createStrippingNullCharacters(const UC
     return StringImpl::createStrippingNullCharactersSlowCase(characters, length);
 }
 
-}
+struct StringHash;
 
-using WebCore::equal;
-
-namespace WTF {
-
-    // WebCore::StringHash is the default hash for StringImpl* and RefPtr<StringImpl>
-    template<typename T> struct DefaultHash;
-    template<> struct DefaultHash<WebCore::StringImpl*> {
-        typedef WebCore::StringHash Hash;
-    };
-    template<> struct DefaultHash<RefPtr<WebCore::StringImpl> > {
-        typedef WebCore::StringHash Hash;
-    };
+// StringHash is the default hash for StringImpl* and RefPtr<StringImpl>
+template<typename T> struct DefaultHash;
+template<> struct DefaultHash<StringImpl*> {
+    typedef StringHash Hash;
+};
+template<> struct DefaultHash<RefPtr<StringImpl> > {
+    typedef StringHash Hash;
+};
 
 }
+
+using WTF::StringImpl;
+using WTF::equal;
+using WTF::TextCaseSensitivity;
+using WTF::TextCaseSensitive;
+using WTF::TextCaseInsensitive;
 
 #endif

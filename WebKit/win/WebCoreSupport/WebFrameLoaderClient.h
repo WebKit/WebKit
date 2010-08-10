@@ -70,7 +70,7 @@ public:
     virtual void dispatchWillClose();
     virtual void dispatchDidReceiveIcon();
     virtual void dispatchDidStartProvisionalLoad();
-    virtual void dispatchDidReceiveTitle(const WebCore::String&);
+    virtual void dispatchDidReceiveTitle(const WTF::String&);
     virtual void dispatchDidChangeIcons();
     virtual void dispatchDidCommitLoad();
     virtual void dispatchDidFinishDocumentLoad();
@@ -102,7 +102,7 @@ public:
     virtual void didRunInsecureContent(WebCore::SecurityOrigin*);
 
     virtual PassRefPtr<WebCore::DocumentLoader> createDocumentLoader(const WebCore::ResourceRequest&, const WebCore::SubstituteData&);
-    virtual void setTitle(const WebCore::String& title, const WebCore::KURL&);
+    virtual void setTitle(const WTF::String& title, const WebCore::KURL&);
 
     virtual void savePlatformDataToCachedFrame(WebCore::CachedFrame*);
     virtual void transitionToCommittedFromCachedFrame(WebCore::CachedFrame*);
@@ -110,13 +110,13 @@ public:
 
     virtual bool canCachePage() const;
 
-    virtual PassRefPtr<WebCore::Frame> createFrame(const WebCore::KURL& url, const WebCore::String& name, WebCore::HTMLFrameOwnerElement* ownerElement,
-                               const WebCore::String& referrer, bool allowsScrolling, int marginWidth, int marginHeight);
+    virtual PassRefPtr<WebCore::Frame> createFrame(const WebCore::KURL& url, const WTF::String& name, WebCore::HTMLFrameOwnerElement* ownerElement,
+                               const WTF::String& referrer, bool allowsScrolling, int marginWidth, int marginHeight);
     virtual void didTransferChildFrameToNewDocument();
-    virtual PassRefPtr<WebCore::Widget> createPlugin(const WebCore::IntSize&, WebCore::HTMLPlugInElement*, const WebCore::KURL&, const Vector<WebCore::String>&, const Vector<WebCore::String>&, const WebCore::String&, bool loadManually);
+    virtual PassRefPtr<WebCore::Widget> createPlugin(const WebCore::IntSize&, WebCore::HTMLPlugInElement*, const WebCore::KURL&, const Vector<WTF::String>&, const Vector<WTF::String>&, const WTF::String&, bool loadManually);
     virtual void redirectDataToPlugin(WebCore::Widget* pluginWidget);
 
-    virtual bool shouldUsePluginDocument(const WebCore::String& mimeType) const;
+    virtual bool shouldUsePluginDocument(const WTF::String& mimeType) const;
 
     virtual void dispatchDidFailToStartPlugin(const WebCore::PluginView*) const;
 
@@ -125,8 +125,8 @@ protected:
     ~WebFrameLoaderClient();
 
 private:
-    PassRefPtr<WebCore::Frame> createFrame(const WebCore::KURL&, const WebCore::String& name, WebCore::HTMLFrameOwnerElement*, const WebCore::String& referrer);
-    void receivedData(const char*, int, const WebCore::String&);
+    PassRefPtr<WebCore::Frame> createFrame(const WebCore::KURL&, const WTF::String& name, WebCore::HTMLFrameOwnerElement*, const WTF::String& referrer);
+    void receivedData(const char*, int, const WTF::String&);
     WebHistory* webHistory() const;
 
     WebFrame* m_webFrame;

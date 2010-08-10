@@ -34,7 +34,7 @@ namespace WebKit {
 
 // NOTE: This does not use String::operator NSString*() since that function
 // expects to be called on the thread running WebCore.
-NSString* nsStringFromWebCoreString(const WebCore::String&);
+NSString* nsStringFromWebCoreString(const WTF::String&);
 
 class PageClientImpl : public PageClient {
 public:
@@ -45,7 +45,7 @@ private:
     virtual void processDidExit();
     virtual void processDidRevive();
     virtual void takeFocus(bool direction);
-    virtual void toolTipChanged(const WebCore::String& oldToolTip, const WebCore::String& newToolTip);
+    virtual void toolTipChanged(const WTF::String& oldToolTip, const WTF::String& newToolTip);
     virtual void setCursor(const WebCore::Cursor&);
 
 #if USE(ACCELERATED_COMPOSITING)

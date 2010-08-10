@@ -48,7 +48,7 @@ extern "C" {
 
 extern ULONG gLockCount;
 extern ULONG gClassCount;
-extern HashCountedSet<WebCore::String> gClassNameCount;
+extern HashCountedSet<WTF::String> gClassNameCount;
 extern HINSTANCE gInstance;
 extern CLSID gRegCLSIDs[];
 

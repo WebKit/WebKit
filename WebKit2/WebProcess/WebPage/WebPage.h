@@ -34,6 +34,7 @@
 #include "InjectedBundlePageUIClient.h"
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/IntRect.h>
+#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
@@ -49,7 +50,6 @@ namespace WebCore {
     class GraphicsContext;
     class KeyboardEvent;
     class Page;
-    class String;
 }
 
 namespace WebKit {
@@ -108,9 +108,9 @@ public:
 
     WebFrame* mainFrame() const { return m_mainFrame.get(); }
 
-    WebCore::String renderTreeExternalRepresentation() const;
-    void executeEditingCommand(const WebCore::String& commandName, const WebCore::String& argument);
-    bool isEditingCommandEnabled(const WebCore::String& commandName);
+    WTF::String renderTreeExternalRepresentation() const;
+    void executeEditingCommand(const WTF::String& commandName, const WTF::String& argument);
+    bool isEditingCommandEnabled(const WTF::String& commandName);
     void clearMainFrameName();
     void sendClose();
 
@@ -133,7 +133,7 @@ private:
 
     // Actions
     void tryClose();
-    void loadURL(const WebCore::String&);
+    void loadURL(const WTF::String&);
     void stopLoading();
     void reload(bool reloadFromOrigin);
     void goForward(uint64_t);
@@ -145,7 +145,7 @@ private:
     void mouseEvent(const WebMouseEvent&);
     void wheelEvent(const WebWheelEvent&);
     void keyEvent(const WebKeyboardEvent&);
-    void runJavaScriptInMainFrame(const WebCore::String&, uint64_t callbackID);
+    void runJavaScriptInMainFrame(const WTF::String&, uint64_t callbackID);
     void getRenderTreeExternalRepresentation(uint64_t callbackID);
     void preferencesDidChange(const WebPreferencesStore&);
     void platformPreferencesDidChange(const WebPreferencesStore&);

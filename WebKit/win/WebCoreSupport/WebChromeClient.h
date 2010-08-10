@@ -78,17 +78,17 @@ public:
 
     virtual void setResizable(bool);
 
-    virtual void addMessageToConsole(WebCore::MessageSource source, WebCore::MessageType type, WebCore::MessageLevel level, const WebCore::String& message, unsigned line, const WebCore::String& url);
+    virtual void addMessageToConsole(WebCore::MessageSource source, WebCore::MessageType type, WebCore::MessageLevel level, const WTF::String& message, unsigned line, const WTF::String& url);
 
     virtual bool canRunBeforeUnloadConfirmPanel();
-    virtual bool runBeforeUnloadConfirmPanel(const WebCore::String& message, WebCore::Frame* frame);
+    virtual bool runBeforeUnloadConfirmPanel(const WTF::String& message, WebCore::Frame* frame);
 
     virtual void closeWindowSoon();
 
-    virtual void runJavaScriptAlert(WebCore::Frame*, const WebCore::String&);
-    virtual bool runJavaScriptConfirm(WebCore::Frame*, const WebCore::String&);
-    virtual bool runJavaScriptPrompt(WebCore::Frame*, const WebCore::String& message, const WebCore::String& defaultValue, WebCore::String& result);
-    virtual void setStatusbarText(const WebCore::String&);
+    virtual void runJavaScriptAlert(WebCore::Frame*, const WTF::String&);
+    virtual bool runJavaScriptConfirm(WebCore::Frame*, const WTF::String&);
+    virtual bool runJavaScriptPrompt(WebCore::Frame*, const WTF::String& message, const WTF::String& defaultValue, WTF::String& result);
+    virtual void setStatusbarText(const WTF::String&);
     virtual bool shouldInterruptJavaScript();
 
     virtual bool tabsToLinks() const;
@@ -109,12 +109,12 @@ public:
     virtual bool shouldMissingPluginMessageBeButton() const;
     virtual void missingPluginButtonClicked(WebCore::Element*) const;
 
-    virtual void setToolTip(const WebCore::String&, WebCore::TextDirection);
+    virtual void setToolTip(const WTF::String&, WebCore::TextDirection);
 
     virtual void print(WebCore::Frame*);
 
 #if ENABLE(DATABASE)
-    virtual void exceededDatabaseQuota(WebCore::Frame*, const WebCore::String&);
+    virtual void exceededDatabaseQuota(WebCore::Frame*, const WTF::String&);
 #endif
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
@@ -130,7 +130,7 @@ public:
     virtual bool paintCustomScrollCorner(WebCore::GraphicsContext*, const WebCore::FloatRect&);
 
     virtual void runOpenPanel(WebCore::Frame*, PassRefPtr<WebCore::FileChooser>);
-    virtual void chooseIconForFiles(const Vector<WebCore::String>&, WebCore::FileChooser*);
+    virtual void chooseIconForFiles(const Vector<WTF::String>&, WebCore::FileChooser*);
 
     virtual void setCursor(const WebCore::Cursor&);
     virtual void setLastSetCursorToCurrentCursor();

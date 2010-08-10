@@ -112,7 +112,7 @@ Eina_Bool ewk_context_menu_item_select(Ewk_Context_Menu* menu, Ewk_Context_Menu_
     WebCore::ContextMenuItemType type = static_cast<WebCore::ContextMenuItemType>(item->type);
 
     // Don't care about title and submenu as they're not used after this point.
-    WebCore::ContextMenuItem core(type, action, WebCore::String());
+    WebCore::ContextMenuItem core(type, action, WTF::String());
     menu->controller->contextMenuItemSelected(&core);
     return EINA_TRUE;
 }

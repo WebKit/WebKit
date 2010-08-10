@@ -42,6 +42,7 @@
 #include "V8Utilities.h"
 #include "WrapperTypeInfo.h"
 #include <v8.h>
+#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h> // so generated bindings don't have to
 #include <wtf/Vector.h>
 
@@ -59,7 +60,6 @@ namespace WebCore {
     class Node;
     class SVGElement;
     class ScriptExecutionContext;
-    class String;
     class V8EventListener;
     class V8IsolatedContext;
     class WorldContextHandle;

@@ -108,12 +108,12 @@ struct WebPreferencesStore {
     uint32_t minimumLogicalFontSize;
     uint32_t defaultFontSize;
     uint32_t defaultFixedFontSize;
-    WebCore::String standardFontFamily;
-    WebCore::String cursiveFontFamily;
-    WebCore::String fantasyFontFamily;
-    WebCore::String fixedFontFamily;
-    WebCore::String sansSerifFontFamily;
-    WebCore::String serifFontFamily;
+    WTF::String standardFontFamily;
+    WTF::String cursiveFontFamily;
+    WTF::String fantasyFontFamily;
+    WTF::String fixedFontFamily;
+    WTF::String sansSerifFontFamily;
+    WTF::String serifFontFamily;
 };
 
 } // namespace WebKit

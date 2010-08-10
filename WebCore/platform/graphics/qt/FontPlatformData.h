@@ -24,13 +24,13 @@
 #ifndef FontPlatformData_h
 #define FontPlatformData_h
 
+#include <wtf/Forward.h>
 #include "FontDescription.h"
 #include <QFont>
 #include <QHash>
 
 namespace WebCore {
 
-class String;
 class FontPlatformDataPrivate : public Noncopyable {
 public:
     FontPlatformDataPrivate()

@@ -23,11 +23,11 @@
 #ifndef StyleBase_h
 #define StyleBase_h
 
+#include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-    class String;
     class StyleSheet;
     class KURL;
 

@@ -806,7 +806,7 @@ public:
     virtual HRESULT STDMETHODCALLTYPE nextDisplayIsSynchronous();
 
     // WebView
-    bool shouldUseEmbeddedView(const WebCore::String& mimeType) const;
+    bool shouldUseEmbeddedView(const WTF::String& mimeType) const;
 
     WebCore::Page* page();
     bool handleMouseEvent(UINT, WPARAM, LPARAM);
@@ -859,11 +859,11 @@ public:
 
     // Convenient to be able to violate the rules of COM here for easy movement to the frame.
     WebFrame* topLevelFrame() const { return m_mainFrame; }
-    const WebCore::String& userAgentForKURL(const WebCore::KURL& url);
+    const WTF::String& userAgentForKURL(const WebCore::KURL& url);
 
     static bool canHandleRequest(const WebCore::ResourceRequest&);
 
-    static WebCore::String standardUserAgentWithApplicationName(const WebCore::String&);
+    static WTF::String standardUserAgentWithApplicationName(const WTF::String&);
 
     void setIsBeingDestroyed() { m_isBeingDestroyed = true; }
     bool isBeingDestroyed() const { return m_isBeingDestroyed; }
@@ -873,7 +873,7 @@ public:
 
     bool isPainting() const { return m_paintCount > 0; }
 
-    void setToolTip(const WebCore::String&);
+    void setToolTip(const WTF::String&);
 
     void registerForIconNotification(bool listen);
     void dispatchDidReceiveIconFromWebFrame(WebFrame*);
@@ -992,11 +992,11 @@ protected:
 
     bool m_userAgentOverridden;
     bool m_useBackForwardList;
-    WebCore::String m_userAgentCustom;
-    WebCore::String m_userAgentStandard;
+    WTF::String m_userAgentCustom;
+    WTF::String m_userAgentStandard;
     float m_zoomMultiplier;
-    WebCore::String m_overrideEncoding;
-    WebCore::String m_applicationName;
+    WTF::String m_overrideEncoding;
+    WTF::String m_applicationName;
     bool m_mouseActivated;
     // WebCore dragging logic needs to be able to inspect the drag data
     // this is updated in DragEnter/Leave/Drop
@@ -1012,7 +1012,7 @@ protected:
     bool m_hasCustomDropTarget;
     unsigned m_inIMEComposition;
     HWND m_toolTipHwnd;
-    WebCore::String m_toolTip;
+    WTF::String m_toolTip;
     bool m_deleteBackingStoreTimerActive;
 
     bool m_transparent;
@@ -1024,7 +1024,7 @@ protected:
 
     HWND m_topLevelParent;
 
-    OwnPtr<HashSet<WebCore::String> > m_embeddedViewMIMETypes;
+    OwnPtr<HashSet<WTF::String> > m_embeddedViewMIMETypes;
 
     //Variables needed to store gesture information
     RefPtr<WebCore::Node> m_gestureTargetNode;

@@ -90,7 +90,7 @@ private:
     void deliverDataToFile(NSData *data);
     void deliverData();
 
-    void startStream(NSURL *, long long expectedContentLength, NSDate *lastModifiedDate, const WebCore::String& mimeType, NSData *headers);
+    void startStream(NSURL *, long long expectedContentLength, NSDate *lastModifiedDate, const WTF::String& mimeType, NSData *headers);
     
     NSError *pluginCancelledConnectionError() const;
 

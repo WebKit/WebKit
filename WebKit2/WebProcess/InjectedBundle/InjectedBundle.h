@@ -53,7 +53,7 @@ class InjectedBundle : public APIObject {
 public:
     static const Type APIType = TypeBundle;
 
-    static PassRefPtr<InjectedBundle> create(const WebCore::String& path)
+    static PassRefPtr<InjectedBundle> create(const WTF::String& path)
     {
         return adoptRef(new InjectedBundle(path));
     }
@@ -62,12 +62,12 @@ public:
     bool load();
 
 #if ENABLE(WEB_PROCESS_SANDBOX)
-    void setSandboxToken(const WebCore::String& sandboxToken) { m_sandboxToken = sandboxToken; }
+    void setSandboxToken(const WTF::String& sandboxToken) { m_sandboxToken = sandboxToken; }
 #endif
 
     // API
     void initializeClient(WKBundleClient*);
-    void postMessage(const WebCore::String&, APIObject*);
+    void postMessage(const WTF::String&, APIObject*);
     void setShouldTrackVisitedLinks(bool);
     void removeAllVisitedLinks();
     void activateMacFontAscentHack();
@@ -80,20 +80,20 @@ public:
     // Callback hooks
     void didCreatePage(WebPage*);
     void willDestroyPage(WebPage*);
-    void didReceiveMessage(const WebCore::String&, APIObject*);
+    void didReceiveMessage(const WTF::String&, APIObject*);
 
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 
 private:
-    InjectedBundle(const WebCore::String&);
+    InjectedBundle(const WTF::String&);
 
     virtual Type type() const { return APIType; }
 
-    WebCore::String m_path;
+    WTF::String m_path;
     PlatformBundle m_platformBundle; // This is leaked right now, since we never unload the bundle/module.
 
 #if ENABLE(WEB_PROCESS_SANDBOX)
-    WebCore::String m_sandboxToken;
+    WTF::String m_sandboxToken;
 #endif
 
     WKBundleClient m_client;

@@ -48,7 +48,7 @@ void WebIconDatabaseClient::dispatchDidRemoveAllIcons()
     [pool drain];
 }
 
-void WebIconDatabaseClient::dispatchDidAddIconForPageURL(const WebCore::String& pageURL)
+void WebIconDatabaseClient::dispatchDidAddIconForPageURL(const WTF::String& pageURL)
 {
     // This is a quick notification that is likely to fire in a rapidly iterating loop
     // Therefore we let WebCore handle autorelease by draining its pool "from time to time"

@@ -33,13 +33,13 @@
 
 #include "InjectedScriptHost.h"
 #include "ScriptObject.h"
+#include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
 class InspectorValue;
-class String;
 
 class InjectedScript {
 public:

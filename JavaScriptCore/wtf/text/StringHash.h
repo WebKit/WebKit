@@ -24,13 +24,12 @@
 
 #include "AtomicString.h"
 #include "WTFString.h"
+#include <wtf/Forward.h>
 #include <wtf/HashTraits.h>
 #include <wtf/StringHashFunctions.h>
 #include <wtf/unicode/Unicode.h>
 
-// FIXME: This is a temporary layering violation while we move string code to WTF.
-// Landing the file moves in one patch, will follow on with patches to change the namespaces.
-namespace WebCore {
+namespace WTF {
 
     // The hash() functions on StringHash and CaseFoldingHash do not support
     // null strings. get(), contains(), and add() on HashMap<String,..., StringHash>
@@ -253,16 +252,16 @@ namespace WebCore {
         }
     };
 
-}
-
-namespace WTF {
-
-    template<> struct HashTraits<WebCore::String> : GenericHashTraits<WebCore::String> {
+    template<> struct HashTraits<String> : GenericHashTraits<String> {
         static const bool emptyValueIsZero = true;
-        static void constructDeletedValue(WebCore::String& slot) { new (&slot) WebCore::String(HashTableDeletedValue); }
-        static bool isDeletedValue(const WebCore::String& slot) { return slot.isHashTableDeletedValue(); }
+        static void constructDeletedValue(String& slot) { new (&slot) String(HashTableDeletedValue); }
+        static bool isDeletedValue(const String& slot) { return slot.isHashTableDeletedValue(); }
     };
 
 }
+
+using WTF::StringHash;
+using WTF::CaseFoldingHash;
+using WTF::AlreadyHashed;
 
 #endif

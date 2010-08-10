@@ -175,7 +175,7 @@ public:
     void stopTimelineProfiler();
     InspectorTimelineAgent* timelineAgent() { return m_timelineAgent.get(); }
 
-    void getCookies(RefPtr<InspectorArray>* cookies, WebCore::String* cookiesString);
+    void getCookies(RefPtr<InspectorArray>* cookies, WTF::String* cookiesString);
     void deleteCookie(const String& cookieName, const String& domain);
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)

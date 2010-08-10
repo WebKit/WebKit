@@ -26,6 +26,7 @@
 #ifndef HTMLElementStack_h
 #define HTMLElementStack_h
 
+#include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
@@ -33,7 +34,6 @@
 
 namespace WebCore {
 
-class AtomicString;
 class Element;
 class QualifiedName;
 

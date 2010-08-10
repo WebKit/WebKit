@@ -27,10 +27,7 @@
 #define WebLoaderClient_h
 
 #include "WKPage.h"
-
-namespace WebCore {
-    class StringImpl;
-}
+#include <wtf/Forward.h>
 
 namespace WebKit {
 
@@ -48,7 +45,7 @@ public:
     void didCommitLoadForFrame(WebPageProxy*, WebFrameProxy*);
     void didFinishLoadForFrame(WebPageProxy*, WebFrameProxy*);
     void didFailLoadWithErrorForFrame(WebPageProxy*, WebFrameProxy*);
-    void didReceiveTitleForFrame(WebPageProxy*, WebCore::StringImpl*, WebFrameProxy*);
+    void didReceiveTitleForFrame(WebPageProxy*, WTF::StringImpl*, WebFrameProxy*);
     void didFirstLayoutForFrame(WebPageProxy*, WebFrameProxy*);
     void didFirstVisuallyNonEmptyLayoutForFrame(WebPageProxy*, WebFrameProxy*);
     void didStartProgress(WebPageProxy*);

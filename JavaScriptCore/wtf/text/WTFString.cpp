@@ -32,10 +32,9 @@
 #include <wtf/unicode/UTF8.h>
 #include <wtf/unicode/Unicode.h>
 
-using namespace WTF;
-using namespace WTF::Unicode;
+namespace WTF {
 
-namespace WebCore {
+using namespace Unicode;
 
 String::String(const UChar* str)
 {
@@ -905,14 +904,14 @@ float charactersToFloat(const UChar* data, size_t length, bool* ok)
     return static_cast<float>(charactersToDouble(data, length, ok));
 }
 
-} // namespace WebCore
+} // namespace WTF
 
 #ifndef NDEBUG
 // For use in the debugger - leaks memory
-WebCore::String* string(const char*);
+String* string(const char*);
 
-WebCore::String* string(const char* s)
+String* string(const char* s)
 {
-    return new WebCore::String(s);
+    return new String(s);
 }
 #endif

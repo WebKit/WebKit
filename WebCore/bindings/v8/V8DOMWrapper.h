@@ -35,7 +35,7 @@
 #include "Event.h"
 #include "Node.h"
 #include "NodeFilter.h"
-#include "PlatformString.h" // for WebCore::String
+#include "PlatformString.h"
 #include "V8CustomXPathNSResolver.h"
 #include "V8DOMMap.h"
 #include "V8Event.h"

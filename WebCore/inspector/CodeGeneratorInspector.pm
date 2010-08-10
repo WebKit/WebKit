@@ -75,7 +75,7 @@ $typeTransform{"Value"} = {
 $typeTransform{"String"} = {
     "param" => "const String&",
     "variable" => "String",
-    "forward" => "String",
+    "forwardHeader" => "wtf/Forward.h",
     "header" => "PlatformString.h",
     "accessorSuffix" => "String"
 };

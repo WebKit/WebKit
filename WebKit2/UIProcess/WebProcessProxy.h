@@ -33,6 +33,7 @@
 #include "ProcessModel.h"
 #include "ResponsivenessTimer.h"
 #include "WebPageProxy.h"
+#include <wtf/Forward.h>
 #include <WebCore/LinkHash.h>
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
@@ -40,7 +41,6 @@
 
 namespace WebCore {
     class KURL;
-    class String;
 };
 
 namespace WebKit {
@@ -98,9 +98,9 @@ private:
     bool sendMessage(CoreIPC::MessageID, PassOwnPtr<CoreIPC::ArgumentEncoder>);
 
     void getPlugins(bool refresh, Vector<WebCore::PluginInfo>&);
-    void getPluginHostConnection(const WebCore::String& mimeType, const WebCore::KURL& url, WebCore::String& pluginPath);
+    void getPluginHostConnection(const WTF::String& mimeType, const WebCore::KURL& url, WTF::String& pluginPath);
 
-    void addOrUpdateBackForwardListItem(uint64_t itemID, const WebCore::String& originalURLString, const WebCore::String& urlString, const WebCore::String& title);
+    void addOrUpdateBackForwardListItem(uint64_t itemID, const WTF::String& originalURLString, const WTF::String& urlString, const WTF::String& title);
     void addVisitedLink(WebCore::LinkHash);
 
     // CoreIPC::Connection::Client

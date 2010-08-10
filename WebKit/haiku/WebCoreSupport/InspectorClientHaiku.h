@@ -31,12 +31,11 @@
 #define InspectorClientHaiku_h
 
 #include "InspectorClient.h"
-
+#include <wtf/Forward.h>
 
 namespace WebCore {
     class Node;
     class Page;
-    class String;
 
     class InspectorClientHaiku : public InspectorClient {
     public:
@@ -47,10 +46,10 @@ namespace WebCore {
         virtual void highlight(Node*);
         virtual void hideHighlight();
 
-        virtual void populateSetting(const WebCore::String& key, WebCore::String* value);
-        virtual void storeSetting(const WebCore::String& key, const WebCore::String& value);
+        virtual void populateSetting(const WTF::String& key, WTF::String* value);
+        virtual void storeSetting(const WTF::String& key, const WTF::String& value);
 
-        virtual bool sendMessageToFrontend(const WebCore::String&);
+        virtual bool sendMessageToFrontend(const WTF::String&);
     };
 } // namespace WebCore
 

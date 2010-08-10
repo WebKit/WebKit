@@ -40,7 +40,7 @@ void WebNativeEventListener::handleEvent(WebCore::ScriptExecutionContext*, WebCo
     m_listener->handleEvent(toWebKit(event));
 }
 
-bool WebNativeEventListener::reportError(WebCore::ScriptExecutionContext*, const WebCore::String&, const WebCore::String&, int)
+bool WebNativeEventListener::reportError(WebCore::ScriptExecutionContext*, const WTF::String&, const WTF::String&, int)
 {
     // FIXME: Implement error handling
     return false;

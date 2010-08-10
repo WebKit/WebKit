@@ -21,14 +21,15 @@
 #ifndef ConvertToUTF8String_h
 #define ConvertToUTF8String_h
 
+#include <wtf/Forward.h>
+
 namespace WebCore {
-class String;
 class KURL;
 }
 
 typedef char gchar;
 
-gchar* convertToUTF8String(WebCore::String const& s);
+gchar* convertToUTF8String(WTF::String const& s);
 gchar* convertToUTF8String(WebCore::KURL const& s);
 
 #endif /* ConvertToUTF8String_h */

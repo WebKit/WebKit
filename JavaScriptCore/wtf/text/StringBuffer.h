@@ -33,7 +33,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/unicode/Unicode.h>
 
-namespace WebCore {
+namespace WTF {
 
 class StringBuffer : public Noncopyable {
 public:
@@ -73,5 +73,7 @@ private:
 };
 
 }
+
+using WTF::StringBuffer;
 
 #endif

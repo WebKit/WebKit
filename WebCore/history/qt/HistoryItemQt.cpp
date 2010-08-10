@@ -30,26 +30,26 @@ bool WebCore::HistoryItem::restoreState(QDataStream& in, int version)
     if (version != 1)
         return false;
 
-    WebCore::String url;
-    WebCore::String title;
-    WebCore::String altTitle;
-    WebCore::String orginalUrl;
-    WebCore::String referrer;
-    WebCore::String target;
-    WebCore::String parrent;
+    WTF::String url;
+    WTF::String title;
+    WTF::String altTitle;
+    WTF::String orginalUrl;
+    WTF::String referrer;
+    WTF::String target;
+    WTF::String parrent;
     double lastVisitedTime;
     bool validUserData;
-    WebCore::String parent;
+    WTF::String parent;
     bool lastVisitWasHTTPNonGet;
     bool lastVisitWasFailure;
     bool isTargetItem;
     int visitCount;
-    WTF::Vector<WebCore::String> documentState;
+    WTF::Vector<WTF::String> documentState;
     WebCore::IntPoint scrollPoint;
     WTF::Vector<int> weeklyVisitCounts;
     WTF::Vector<int> dailyVisitCounts;
     // bool loadFormdata;
-    // WebCore::String formContentType;
+    // WTF::String formContentType;
     // WTF::Vector<char> formData;
 
     in >> url >> title >> altTitle >> lastVisitedTime >> orginalUrl >> referrer >> target >> parent;

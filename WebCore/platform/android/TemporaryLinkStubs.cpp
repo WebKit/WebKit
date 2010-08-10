@@ -313,12 +313,12 @@ void* WebCore::Frame::dragImageForSelection()
 }
 
 
-WebCore::String WebCore::MIMETypeRegistry::getMIMETypeForExtension(WebCore::String const&)
+WTF::String WebCore::MIMETypeRegistry::getMIMETypeForExtension(WTF::String const&)
 {
-    return WebCore::String();
+    return WTF::String();
 }
 
-void WebCore::Pasteboard::writeImage(WebCore::Node*, WebCore::KURL const&, WebCore::String const&) {}
+void WebCore::Pasteboard::writeImage(WebCore::Node*, WebCore::KURL const&, WTF::String const&) {}
 
 namespace WebCore {
 

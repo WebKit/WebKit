@@ -179,7 +179,7 @@ void QWEBKIT_EXPORT qtwebkit_webframe_scrollRecursively(QWebFrame* qFrame, int d
 
 QWebFrameData::QWebFrameData(WebCore::Page* parentPage, WebCore::Frame* parentFrame,
                              WebCore::HTMLFrameOwnerElement* ownerFrameElement,
-                             const WebCore::String& frameName)
+                             const WTF::String& frameName)
     : name(frameName)
     , ownerElement(ownerFrameElement)
     , page(parentPage)
@@ -809,7 +809,7 @@ void QWebFrame::setHtml(const QString &html, const QUrl &baseUrl)
     WebCore::ResourceRequest request(kurl);
     const QByteArray utf8 = html.toUtf8();
     WTF::RefPtr<WebCore::SharedBuffer> data = WebCore::SharedBuffer::create(utf8.constData(), utf8.length());
-    WebCore::SubstituteData substituteData(data, WebCore::String("text/html"), WebCore::String("utf-8"), KURL());
+    WebCore::SubstituteData substituteData(data, WTF::String("text/html"), WTF::String("utf-8"), KURL());
     d->frame->loader()->load(request, substituteData, false);
 }
 
@@ -832,14 +832,14 @@ void QWebFrame::setContent(const QByteArray &data, const QString &mimeType, cons
     WebCore::ResourceRequest request(kurl);
     WTF::RefPtr<WebCore::SharedBuffer> buffer = WebCore::SharedBuffer::create(data.constData(), data.length());
     QString actualMimeType;
-    WebCore::String encoding;
+    WTF::String encoding;
     if (mimeType.isEmpty())
         actualMimeType = QLatin1String("text/html");
     else {
         actualMimeType = extractMIMETypeFromMediaType(mimeType);
         encoding = extractCharsetFromMediaType(mimeType);
     }
-    WebCore::SubstituteData substituteData(buffer, WebCore::String(actualMimeType), encoding, KURL());
+    WebCore::SubstituteData substituteData(buffer, WTF::String(actualMimeType), encoding, KURL());
     d->frame->loader()->load(request, substituteData, false);
 }
 

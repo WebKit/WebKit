@@ -29,10 +29,7 @@
 #include <WebCore/BString.h>
 #include <WebCore/COMPtr.h>
 #include <wtf/Assertions.h>
-
-namespace WebCore {
-    class String;
-}
+#include <wtf/Forward.h>
 
 template<typename T> struct COMVariantSetter {};
 
@@ -44,11 +41,11 @@ template<typename T> struct COMVariantSetterBase
     }
 };
 
-template<> struct COMVariantSetter<WebCore::String> : COMVariantSetterBase<WebCore::String>
+template<> struct COMVariantSetter<WTF::String> : COMVariantSetterBase<WTF::String>
 {
     static const VARENUM VariantType = VT_BSTR;
 
-    static void setVariant(VARIANT* variant, const WebCore::String& value)
+    static void setVariant(VARIANT* variant, const WTF::String& value)
     {
         ASSERT(V_VT(variant) == VT_EMPTY);
 

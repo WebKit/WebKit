@@ -48,7 +48,7 @@ using WebCore::DOMWindow;
 using WebCore::Document;
 using WebCore::Frame;
 using WebCore::Page;
-using WebCore::String;
+using WTF::String;
 
 namespace WebKit {
 

@@ -52,7 +52,7 @@ namespace {
 
 namespace WebKit {
 
-void populateMap(WTF::HashMap<int, WebCore::String>& map,
+void populateMap(WTF::HashMap<int, WTF::String>& map,
                  const Entity* entities,
                  size_t entitiesCount,
                  bool standardHTML)

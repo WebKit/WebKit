@@ -51,7 +51,7 @@ public:
     // WebCore::SpeechInputListener methods.
     void didCompleteRecording();
     void didCompleteRecognition();
-    void setRecognitionResult(const WebCore::String& result);
+    void setRecognitionResult(const WTF::String& result);
 
     // WebSpeechInputController methods.
     bool startRecognition();

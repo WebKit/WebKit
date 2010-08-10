@@ -42,7 +42,7 @@ WKTypeID WKContextGetTypeID()
 
 WKContextRef WKContextCreate()
 {
-    RefPtr<WebContext> context = WebContext::create(WebCore::String());
+    RefPtr<WebContext> context = WebContext::create(WTF::String());
     return toRef(context.release().releaseRef());
 }
 

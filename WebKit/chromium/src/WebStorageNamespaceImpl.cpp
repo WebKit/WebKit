@@ -61,7 +61,7 @@ WebStorageNamespaceImpl::~WebStorageNamespaceImpl()
 
 WebStorageArea* WebStorageNamespaceImpl::createStorageArea(const WebString& originString)
 {
-    WebCore::String originWebCoreString = originString;
+    WTF::String originWebCoreString = originString;
     if (originWebCoreString == "file://") {
         // FIXME: We should really be passing around WebSecurityOrigin objects
         //        to represent security origins instead of strings.  One issue

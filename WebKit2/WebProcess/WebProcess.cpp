@@ -107,7 +107,7 @@ void WebProcess::setApplicationCacheDirectory(const String& directory)
     cacheStorage().setCacheDirectory(directory);
 }
 
-void WebProcess::registerURLSchemeAsEmptyDocument(const WebCore::String& urlScheme)
+void WebProcess::registerURLSchemeAsEmptyDocument(const WTF::String& urlScheme)
 {
     SchemeRegistry::registerURLSchemeAsEmptyDocument(urlScheme);
 }

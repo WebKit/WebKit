@@ -22,6 +22,7 @@
 #ifndef CounterNode_h
 #define CounterNode_h
 
+#include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 
 // This implements a counter tree that is used for finding parents in counters() lookup,
@@ -35,7 +36,6 @@
 
 namespace WebCore {
 
-class AtomicString;
 class RenderObject;
 
 class CounterNode : public Noncopyable {

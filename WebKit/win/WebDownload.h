@@ -122,15 +122,15 @@ public:
 #endif
 
 protected:
-    static CFDataRef extractResumeDataFromBundle(const WebCore::String&);
-    static HRESULT appendResumeDataToBundle(CFDataRef, const WebCore::String&);
-    static const WebCore::String& bundleExtension();
+    static CFDataRef extractResumeDataFromBundle(const WTF::String&);
+    static HRESULT appendResumeDataToBundle(CFDataRef, const WTF::String&);
+    static const WTF::String& bundleExtension();
     static UInt32 bundleMagicNumber();
 
     ULONG m_refCount;
 
-    WebCore::String m_destination;
-    WebCore::String m_bundlePath;
+    WTF::String m_destination;
+    WTF::String m_bundlePath;
 #if USE(CFNETWORK)
     RetainPtr<CFURLDownloadRef> m_download;
 #endif

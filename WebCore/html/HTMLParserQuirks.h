@@ -26,11 +26,11 @@
 #ifndef HTMLParserQuirks_h
 #define HTMLParserQuirks_h
 
+#include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
-class AtomicString;
 class Node;
 
 class HTMLParserQuirks : public Noncopyable {

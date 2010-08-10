@@ -33,11 +33,11 @@ WebCore::PopupMenu* WebSearchPopupMenu::popupMenu()
     return m_popup.get();
 }
 
-void WebSearchPopupMenu::saveRecentSearches(const WebCore::AtomicString&, const Vector<WebCore::String>&)
+void WebSearchPopupMenu::saveRecentSearches(const WTF::AtomicString&, const Vector<WTF::String>&)
 {
 }
 
-void WebSearchPopupMenu::loadRecentSearches(const WebCore::AtomicString&, Vector<WebCore::String>&)
+void WebSearchPopupMenu::loadRecentSearches(const WTF::AtomicString&, Vector<WTF::String>&)
 {
 }
 

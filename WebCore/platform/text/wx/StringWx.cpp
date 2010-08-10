@@ -32,7 +32,7 @@
 #include <wx/defs.h>
 #include <wx/string.h>
 
-namespace WebCore {
+namespace WTF {
 
 // String conversions
 String::String(const wxString& wxstr)

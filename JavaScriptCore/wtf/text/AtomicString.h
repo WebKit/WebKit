@@ -32,11 +32,13 @@
 #define ATOMICSTRING_CONVERSION
 #endif
 
-// FIXME: This is a temporary layering violation while we move string code to WTF.
-// Landing the file moves in one patch, will follow on with patches to change the namespaces.
+// FIXME: this should be in WTF, too!
 namespace WebCore {
-
 struct AtomicStringHash;
+}
+using WebCore::AtomicStringHash;
+
+namespace WTF {
 
 class AtomicString {
 public:
@@ -156,17 +158,23 @@ inline bool equalIgnoringCase(const String& a, const AtomicString& b) { return e
     extern const JS_EXPORTDATA AtomicString xmlnsAtom;
 #endif
 
-} // namespace WebCore
-
-
-namespace WTF {
-
     // AtomicStringHash is the default hash for AtomicString
     template<typename T> struct DefaultHash;
-    template<> struct DefaultHash<WebCore::AtomicString> {
-        typedef WebCore::AtomicStringHash Hash;
+    template<> struct DefaultHash<AtomicString> {
+        typedef AtomicStringHash Hash;
     };
 
 } // namespace WTF
+
+#ifndef ATOMICSTRING_HIDE_GLOBALS
+using WTF::AtomicString;
+using WTF::nullAtom;
+using WTF::emptyAtom;
+using WTF::textAtom;
+using WTF::commentAtom;
+using WTF::starAtom;
+using WTF::xmlAtom;
+using WTF::xmlnsAtom;
+#endif
 
 #endif // AtomicString_h

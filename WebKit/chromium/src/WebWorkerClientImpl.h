@@ -64,8 +64,8 @@ public:
     // process, this will be the main WebKit thread.  In the worker process, this
     // will be the thread of the executing worker (not the main WebKit thread).
     virtual void startWorkerContext(const WebCore::KURL&,
-                                    const WebCore::String&,
-                                    const WebCore::String&);
+                                    const WTF::String&,
+                                    const WTF::String&);
     virtual void terminateWorkerContext();
     virtual void postMessageToWorkerContext(
         PassRefPtr<WebCore::SerializedScriptValue> message,
@@ -108,14 +108,14 @@ private:
     // These tasks are dispatched on the WebKit thread.
     static void startWorkerContextTask(WebCore::ScriptExecutionContext* context,
                                        WebWorkerClientImpl* thisPtr,
-                                       const WebCore::String& scriptURL,
-                                       const WebCore::String& userAgent,
-                                       const WebCore::String& sourceCode);
+                                       const WTF::String& scriptURL,
+                                       const WTF::String& userAgent,
+                                       const WTF::String& sourceCode);
     static void terminateWorkerContextTask(WebCore::ScriptExecutionContext* context,
                                            WebWorkerClientImpl* thisPtr);
     static void postMessageToWorkerContextTask(WebCore::ScriptExecutionContext* context,
                                                WebWorkerClientImpl* thisPtr,
-                                               const WebCore::String& message,
+                                               const WTF::String& message,
                                                PassOwnPtr<WebCore::MessagePortChannelArray> channels);
     static void workerObjectDestroyedTask(WebCore::ScriptExecutionContext* context,
                                           WebWorkerClientImpl* thisPtr);
@@ -125,21 +125,21 @@ private:
     // worker process).
     static void postMessageToWorkerObjectTask(WebCore::ScriptExecutionContext* context,
                                               WebWorkerClientImpl* thisPtr,
-                                              const WebCore::String& message,
+                                              const WTF::String& message,
                                               PassOwnPtr<WebCore::MessagePortChannelArray> channels);
     static void postExceptionToWorkerObjectTask(WebCore::ScriptExecutionContext* context,
                                                 WebWorkerClientImpl* thisPtr,
-                                                const WebCore::String& message,
+                                                const WTF::String& message,
                                                 int lineNumber,
-                                                const WebCore::String& sourceURL);
+                                                const WTF::String& sourceURL);
     static void postConsoleMessageToWorkerObjectTask(WebCore::ScriptExecutionContext* context,
                                                      WebWorkerClientImpl* thisPtr,
                                                      int sourceId,
                                                      int messageType,
                                                      int messageLevel,
-                                                     const WebCore::String& message,
+                                                     const WTF::String& message,
                                                      int lineNumber,
-                                                     const WebCore::String& sourceURL);
+                                                     const WTF::String& sourceURL);
     static void confirmMessageFromWorkerObjectTask(WebCore::ScriptExecutionContext* context,
                                                    WebWorkerClientImpl* thisPtr);
     static void reportPendingActivityTask(WebCore::ScriptExecutionContext* context,

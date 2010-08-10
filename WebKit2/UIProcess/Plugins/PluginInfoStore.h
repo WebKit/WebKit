@@ -38,18 +38,18 @@ class PluginInfoStore {
 public:
     PluginInfoStore();
 
-    void setAdditionalPluginsDirectories(const Vector<WebCore::String>&);
+    void setAdditionalPluginsDirectories(const Vector<WTF::String>&);
 
     void refresh();
     void getPlugins(Vector<WebCore::PluginInfo>& plugins);
     
     // Represents a single plug-in.
     struct Plugin {
-        WebCore::String path;
+        WTF::String path;
         WebCore::PluginInfo info;
 #if PLATFORM(MAC)
         cpu_type_t pluginArchitecture;
-        WebCore::String bundleIdentifier;
+        WTF::String bundleIdentifier;
         unsigned versionNumber;
 #endif
     };
@@ -57,25 +57,25 @@ public:
     // Returns the info for a plug-in that can handle the given MIME type.
     // If the MIME type is null, the file extension of the given url will be used to infer the
     // plug-in type. In that case, mimeType will be filled in with the right MIME type.
-    Plugin findPlugin(WebCore::String& mimeType, const WebCore::KURL& url);
+    Plugin findPlugin(WTF::String& mimeType, const WebCore::KURL& url);
     
 private:
 
-    Plugin findPluginForMIMEType(const WebCore::String& mimeType);
-    Plugin findPluginForExtension(const WebCore::String& extension, WebCore::String& mimeType);
+    Plugin findPluginForMIMEType(const WTF::String& mimeType);
+    Plugin findPluginForExtension(const WTF::String& extension, WTF::String& mimeType);
 
     void loadPluginsIfNecessary();
-    void loadPluginsInDirectory(const WebCore::String& directory);
-    void loadPlugin(const WebCore::String& pluginPath);
+    void loadPluginsInDirectory(const WTF::String& directory);
+    void loadPlugin(const WTF::String& pluginPath);
     
     // Platform specific member functions.
-    static Vector<WebCore::String> pluginsDirectories();
-    static Vector<WebCore::String> pluginPathsInDirectory(const WebCore::String& directory);
-    static bool getPluginInfo(const WebCore::String& pluginPath, Plugin& plugin);
+    static Vector<WTF::String> pluginsDirectories();
+    static Vector<WTF::String> pluginPathsInDirectory(const WTF::String& directory);
+    static bool getPluginInfo(const WTF::String& pluginPath, Plugin& plugin);
     static bool shouldUsePlugin(const Plugin& plugin, const Vector<Plugin>& loadedPlugins);
-    static WebCore::String getMIMETypeForExtension(const WebCore::String& extension);
+    static WTF::String getMIMETypeForExtension(const WTF::String& extension);
 
-    Vector<WebCore::String> m_additionalPluginsDirectories;
+    Vector<WTF::String> m_additionalPluginsDirectories;
     Vector<Plugin> m_plugins;
     bool m_pluginListIsUpToDate;
 };

@@ -63,7 +63,7 @@ namespace WebCore {
     template <typename StringType>
     StringType v8StringToWebCoreString(v8::Handle<v8::String> v8String, ExternalMode external);
 
-    // Convert v8 types to a WebCore::String. If the V8 string is not already
+    // Convert v8 types to a WTF::String. If the V8 string is not already
     // an external string then it is transformed into an external string at this
     // point to avoid repeated conversions.
     inline String v8StringToWebCoreString(v8::Handle<v8::String> v8String)
@@ -73,7 +73,7 @@ namespace WebCore {
     String v8NonStringValueToWebCoreString(v8::Handle<v8::Value>);
     String v8ValueToWebCoreString(v8::Handle<v8::Value> value);
 
-    // Convert v8 types to a WebCore::AtomicString.
+    // Convert v8 types to a WTF::AtomicString.
     inline AtomicString v8StringToAtomicWebCoreString(v8::Handle<v8::String> v8String)
     {
         return v8StringToWebCoreString<AtomicString>(v8String, Externalize);
@@ -112,8 +112,8 @@ namespace WebCore {
         return v8ExternalString(string);
     }
 
-    // Enables caching v8 wrappers created for WebCore::StringImpl.  Currently this cache requires
-    // all the calls (both to convert WebCore::String to v8::String and to GC the handle)
+    // Enables caching v8 wrappers created for WTF::StringImpl.  Currently this cache requires
+    // all the calls (both to convert WTF::String to v8::String and to GC the handle)
     // to be performed on the main thread.
     void enableStringImplCache();
 

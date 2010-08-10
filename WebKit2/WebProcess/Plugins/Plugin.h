@@ -49,9 +49,9 @@ class Plugin : public RefCounted<Plugin> {
 public:
     struct Parameters {
         WebCore::KURL url;
-        Vector<WebCore::String> names;
-        Vector<WebCore::String> values;
-        WebCore::String mimeType;
+        Vector<WTF::String> names;
+        Vector<WTF::String> values;
+        WTF::String mimeType;
         bool loadManually;
     };
 
@@ -82,11 +82,11 @@ public:
 
     // Tells the plug-in that a request to evaluate JavaScript (using PluginController::loadURL) has been fulfilled and passes
     // back the result. If evaluating the script failed, result will be null.
-    virtual void didEvaluateJavaScript(uint64_t requestID, const WebCore::String& requestURLString, const WebCore::String& result) = 0;
+    virtual void didEvaluateJavaScript(uint64_t requestID, const WTF::String& requestURLString, const WTF::String& result) = 0;
 
     // Tells the plug-in that a stream has received its HTTP response.
     virtual void streamDidReceiveResponse(uint64_t streamID, const WebCore::KURL& responseURL, uint32_t streamLength, 
-                                          uint32_t lastModifiedTime, const WebCore::String& mimeType, const WebCore::String& headers) = 0;
+                                          uint32_t lastModifiedTime, const WTF::String& mimeType, const WTF::String& headers) = 0;
 
     // Tells the plug-in that a stream did receive data.
     virtual void streamDidReceiveData(uint64_t streamID, const char* bytes, int length) = 0;
@@ -99,7 +99,7 @@ public:
 
     // Tells the plug-in that the manual stream has received its HTTP response.
     virtual void manualStreamDidReceiveResponse(const WebCore::KURL& responseURL, uint32_t streamLength, 
-                                                uint32_t lastModifiedTime, const WebCore::String& mimeType, const WebCore::String& headers) = 0;
+                                                uint32_t lastModifiedTime, const WTF::String& mimeType, const WTF::String& headers) = 0;
 
     // Tells the plug-in that the manual stream did receive data.
     virtual void manualStreamDidReceiveData(const char* bytes, int length) = 0;

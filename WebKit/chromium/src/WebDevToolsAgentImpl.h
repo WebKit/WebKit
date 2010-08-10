@@ -36,6 +36,7 @@
 #include "WebDevToolsAgentPrivate.h"
 
 #include <v8.h>
+#include <wtf/Forward.h>
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
@@ -43,7 +44,6 @@ class Document;
 class InspectorClient;
 class InspectorController;
 class Node;
-class String;
 }
 
 namespace WebKit {
@@ -91,13 +91,13 @@ public:
     virtual void openInspectorFrontend(WebCore::InspectorController*);
     virtual void highlight(WebCore::Node*);
     virtual void hideHighlight();
-    virtual void populateSetting(const WebCore::String& key, WebCore::String* value);
-    virtual void storeSetting(const WebCore::String& key, const WebCore::String& value);
+    virtual void populateSetting(const WTF::String& key, WTF::String* value);
+    virtual void storeSetting(const WTF::String& key, const WTF::String& value);
     virtual void resourceTrackingWasEnabled();
     virtual void resourceTrackingWasDisabled();
     virtual void timelineProfilerWasStarted();
     virtual void timelineProfilerWasStopped();
-    virtual bool sendMessageToFrontend(const WebCore::String&);
+    virtual bool sendMessageToFrontend(const WTF::String&);
 
     void forceRepaint();
 

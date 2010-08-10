@@ -28,19 +28,18 @@
 
 #include "FontSelector.h"
 #include "StringHash.h"
+#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class AtomicString;
 class CSSFontFace;
 class CSSFontFaceRule;
 class CSSSegmentedFontFace;
 class Document;
 class DocLoader;
 class FontDescription;
-class String;
 
 class CSSFontSelector : public FontSelector {
 public:

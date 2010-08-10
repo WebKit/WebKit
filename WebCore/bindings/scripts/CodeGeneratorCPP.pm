@@ -261,7 +261,7 @@ sub GetCPPTypeGetter
 
     return $argName if $codeGenerator->IsPrimitiveType($type) or $codeGenerator->IsStringType($type);
     return "static_cast<WebCore::Range::CompareHow>($argName)" if $type eq "CompareHow";
-    return "WebCore::SerializedScriptValue::create(WebCore::String($argName))" if $type eq "SerializedScriptValue";
+    return "WebCore::SerializedScriptValue::create(WTF::String($argName))" if $type eq "SerializedScriptValue";
     return "toWebCore($argName)";
 }
 
@@ -559,7 +559,7 @@ sub AddReturnStatement
 
     # Used to invoke KURLs "const String&" operator
     if ($codeGenerator->IsStringType($typeInfo->signature->type)) {
-        return "    return static_cast<const WebCore::String&>($returnValue);\n";
+        return "    return static_cast<const WTF::String&>($returnValue);\n";
     }
 
     return "    return $returnValue;\n";
@@ -682,7 +682,7 @@ sub GenerateImplementation
             # Special cases
             my @customGetterContent = (); 
             if ($attribute->signature->extendedAttributes->{"ConvertToString"}) {
-                $getterContentHead = "WebCore::String::number(" . $getterContentHead;
+                $getterContentHead = "WTF::String::number(" . $getterContentHead;
                 $getterContentTail .= ")";
             } elsif ($attribute->signature->type eq "SerializedScriptValue") {
                 $getterContentHead = "$getterContentHead";
@@ -736,7 +736,7 @@ sub GenerateImplementation
 
                 # The definition of ConvertToString is flipped for the setter
                 if ($attribute->signature->extendedAttributes->{"ConvertToString"}) {
-                    $arg = "WebCore::String($arg).toInt()";
+                    $arg = "WTF::String($arg).toInt()";
                 }
 
                 my $attributeType = GetCPPType($attribute->signature->type, 1);

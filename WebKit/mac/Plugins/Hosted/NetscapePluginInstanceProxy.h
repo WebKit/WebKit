@@ -32,15 +32,12 @@
 #include <WebCore/Timer.h>
 #include <WebKit/npapi.h>
 #include <wtf/Deque.h>
+#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
 #include "WebKitPluginHostTypes.h"
-
-namespace WebCore {
-    class String;
-}
 
 namespace JSC {
     namespace Bindings {
@@ -112,7 +109,7 @@ public:
     bool getPluginElementNPObject(uint32_t& objectID);
     bool forgetBrowserObjectID(uint32_t objectID); // Will fail if the ID is being sent to plug-in right now (i.e., retain/release calls aren't balanced).
 
-    bool evaluate(uint32_t objectID, const WebCore::String& script, data_t& resultData, mach_msg_type_number_t& resultLength, bool allowPopups);
+    bool evaluate(uint32_t objectID, const WTF::String& script, data_t& resultData, mach_msg_type_number_t& resultLength, bool allowPopups);
     bool invoke(uint32_t objectID, const JSC::Identifier& methodName, data_t argumentsData, mach_msg_type_number_t argumentsLength, data_t& resultData, mach_msg_type_number_t& resultLength);
     bool invokeDefault(uint32_t objectID, data_t argumentsData, mach_msg_type_number_t argumentsLength, data_t& resultData, mach_msg_type_number_t& resultLength);
     bool construct(uint32_t objectID, data_t argumentsData, mach_msg_type_number_t argumentsLength, data_t& resultData, mach_msg_type_number_t& resultLength);
@@ -170,7 +167,7 @@ public:
     void didDraw();
     void privateBrowsingModeDidChange(bool isPrivateBrowsingEnabled);
     
-    static void setGlobalException(const WebCore::String&);
+    static void setGlobalException(const WTF::String&);
     static void moveGlobalExceptionToExecState(JSC::ExecState*);
 
     // Reply structs

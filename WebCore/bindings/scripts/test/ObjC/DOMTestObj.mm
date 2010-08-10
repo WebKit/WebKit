@@ -500,7 +500,7 @@
 - (void)serializedValue:(NSString *)serializedArg
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->serializedValue(WebCore::SerializedScriptValue::create(WebCore::String(serializedArg)));
+    IMPL->serializedValue(WebCore::SerializedScriptValue::create(WTF::String(serializedArg)));
 }
 
 - (void)idbKey:(DOMIDBKey *)key

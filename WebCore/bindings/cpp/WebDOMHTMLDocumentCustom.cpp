@@ -27,7 +27,7 @@
 
 static inline void documentWrite(const WebDOMString& text, WebCore::HTMLDocument* document, bool addNewline)
 {
-    WebCore::SegmentedString segmentedString = WebCore::String(text);
+    WebCore::SegmentedString segmentedString = WTF::String(text);
     if (addNewline)
         segmentedString.append(WebCore::SegmentedString(&WebCore::newlineCharacter, 1));
     document->write(segmentedString);

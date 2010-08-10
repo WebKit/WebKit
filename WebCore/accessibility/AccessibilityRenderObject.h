@@ -53,7 +53,6 @@ class RenderListBox;
 class RenderTextControl;
 class RenderView;
 class VisibleSelection;
-class String;
 class Widget;
     
 class AccessibilityRenderObject : public AccessibilityObject {

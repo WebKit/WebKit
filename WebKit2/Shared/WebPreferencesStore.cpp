@@ -89,12 +89,12 @@ void WebPreferencesStore::swap(WebPreferencesStore& other)
     std::swap(minimumLogicalFontSize, other.minimumLogicalFontSize);
     std::swap(defaultFontSize, other.defaultFontSize);
     std::swap(defaultFixedFontSize, other.defaultFixedFontSize);
-    WebCore::swap(standardFontFamily, other.standardFontFamily);
-    WebCore::swap(cursiveFontFamily, other.cursiveFontFamily);
-    WebCore::swap(fantasyFontFamily, other.fantasyFontFamily);
-    WebCore::swap(fixedFontFamily, other.fixedFontFamily);
-    WebCore::swap(sansSerifFontFamily, other.sansSerifFontFamily);
-    WebCore::swap(serifFontFamily, other.serifFontFamily);
+    WTF::swap(standardFontFamily, other.standardFontFamily);
+    WTF::swap(cursiveFontFamily, other.cursiveFontFamily);
+    WTF::swap(fantasyFontFamily, other.fantasyFontFamily);
+    WTF::swap(fixedFontFamily, other.fixedFontFamily);
+    WTF::swap(sansSerifFontFamily, other.sansSerifFontFamily);
+    WTF::swap(serifFontFamily, other.serifFontFamily);
 }
 
 } // namespace WebKit

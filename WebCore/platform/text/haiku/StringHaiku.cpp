@@ -29,7 +29,7 @@
 
 #include <String.h>
 
-namespace WebCore {
+namespace WTF {
 
 // String conversions
 String::String(const BString& string)

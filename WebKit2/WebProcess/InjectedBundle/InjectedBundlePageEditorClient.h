@@ -29,12 +29,12 @@
 #include "WKBundlePage.h"
 #include <WebCore/EditorInsertAction.h>
 #include <WebCore/TextAffinity.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
     class CSSStyleDeclaration;
     class Node;
     class Range;
-    class StringImpl;
 }
 
 namespace WebKit {
@@ -50,14 +50,14 @@ public:
     bool shouldBeginEditing(WebPage*, WebCore::Range*);
     bool shouldEndEditing(WebPage*, WebCore::Range*);
     bool shouldInsertNode(WebPage*, WebCore::Node*, WebCore::Range* rangeToReplace, WebCore::EditorInsertAction);
-    bool shouldInsertText(WebPage*, WebCore::StringImpl*, WebCore::Range* rangeToReplace, WebCore::EditorInsertAction);
+    bool shouldInsertText(WebPage*, WTF::StringImpl*, WebCore::Range* rangeToReplace, WebCore::EditorInsertAction);
     bool shouldDeleteRange(WebPage*, WebCore::Range*);
     bool shouldChangeSelectedRange(WebPage*, WebCore::Range* fromRange, WebCore::Range* toRange, WebCore::EAffinity affinity, bool stillSelecting);
     bool shouldApplyStyle(WebPage*, WebCore::CSSStyleDeclaration*, WebCore::Range*);
-    void didBeginEditing(WebPage*, WebCore::StringImpl* notificationName);
-    void didEndEditing(WebPage*, WebCore::StringImpl* notificationName);
-    void didChange(WebPage*, WebCore::StringImpl* notificationName);
-    void didChangeSelection(WebPage*, WebCore::StringImpl* notificationName);
+    void didBeginEditing(WebPage*, WTF::StringImpl* notificationName);
+    void didEndEditing(WebPage*, WTF::StringImpl* notificationName);
+    void didChange(WebPage*, WTF::StringImpl* notificationName);
+    void didChangeSelection(WebPage*, WTF::StringImpl* notificationName);
 
 private:
     WKBundlePageEditorClient m_client;

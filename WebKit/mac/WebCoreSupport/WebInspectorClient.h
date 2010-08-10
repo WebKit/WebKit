@@ -59,10 +59,10 @@ public:
     virtual void highlight(WebCore::Node*);
     virtual void hideHighlight();
 
-    virtual void populateSetting(const WebCore::String& key, WebCore::String* value);
-    virtual void storeSetting(const WebCore::String& key, const WebCore::String& value);
+    virtual void populateSetting(const WTF::String& key, WTF::String* value);
+    virtual void storeSetting(const WTF::String& key, const WTF::String& value);
 
-    virtual bool sendMessageToFrontend(const WebCore::String&);
+    virtual bool sendMessageToFrontend(const WTF::String&);
 
     void releaseFrontendPage();
 
@@ -79,8 +79,8 @@ public:
 
     virtual void frontendLoaded();
 
-    virtual WebCore::String localizedStringsURL();
-    virtual WebCore::String hiddenPanels();
+    virtual WTF::String localizedStringsURL();
+    virtual WTF::String hiddenPanels();
 
     virtual void bringToFront();
     virtual void closeWindow();
@@ -89,12 +89,12 @@ public:
     virtual void detachWindow();
 
     virtual void setAttachedWindowHeight(unsigned height);
-    virtual void inspectedURLChanged(const WebCore::String& newURL);
+    virtual void inspectedURLChanged(const WTF::String& newURL);
 
 private:
     void updateWindowTitle() const;
 
     WebView* m_inspectedWebView;
     RetainPtr<WebInspectorWindowController> m_windowController;
-    WebCore::String m_inspectedURL;
+    WTF::String m_inspectedURL;
 };

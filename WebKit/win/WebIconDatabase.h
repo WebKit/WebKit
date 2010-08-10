@@ -104,7 +104,7 @@ public:
 
     // IconDatabaseClient
     virtual void dispatchDidRemoveAllIcons();
-    virtual void dispatchDidAddIconForPageURL(const WebCore::String&);
+    virtual void dispatchDidAddIconForPageURL(const WTF::String&);
 
     static BSTR iconDatabaseDidAddIconNotification();
     static BSTR iconDatabaseDidRemoveAllIconsNotification();

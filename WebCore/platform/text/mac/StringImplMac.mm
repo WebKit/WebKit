@@ -23,7 +23,7 @@
 
 #include "FoundationExtras.h"
 
-namespace WebCore {
+namespace WTF {
 
 StringImpl::operator NSString *()
 {

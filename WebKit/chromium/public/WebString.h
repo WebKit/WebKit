@@ -34,10 +34,7 @@
 #include "WebCommon.h"
 
 #if WEBKIT_IMPLEMENTATION
-namespace WebCore {
-class String;
-class AtomicString;
-}
+#include <wtf/Forward.h>
 #else
 #include <base/nullable_string16.h>
 #include <base/string16.h>
@@ -102,13 +99,13 @@ public:
     }
 
 #if WEBKIT_IMPLEMENTATION
-    WebString(const WebCore::String&);
-    WebString& operator=(const WebCore::String&);
-    operator WebCore::String() const;
+    WebString(const WTF::String&);
+    WebString& operator=(const WTF::String&);
+    operator WTF::String() const;
 
-    WebString(const WebCore::AtomicString&);
-    WebString& operator=(const WebCore::AtomicString&);
-    operator WebCore::AtomicString() const;
+    WebString(const WTF::AtomicString&);
+    WebString& operator=(const WTF::AtomicString&);
+    operator WTF::AtomicString() const;
 #else
 
     WebString(const string16& s) : m_private(0)

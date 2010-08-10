@@ -26,6 +26,7 @@
 #ifndef NPJSObjectWrapperMap_h
 #define NPJSObjectWrapperMap_h
 
+#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 
 struct NPObject;
@@ -36,10 +37,6 @@ namespace JSC {
     class JSGlobalObject;
     class JSObject;
     class JSValue;
-}
-
-namespace WebCore {
-    class String;
 }
 
 namespace WebKit {
@@ -74,7 +71,7 @@ public:
     void convertJSValueToNPVariant(JSC::ExecState*, JSC::JSValue, NPVariant&);
     JSC::JSValue convertNPVariantToJSValue(JSC::ExecState*, JSC::JSGlobalObject*, const NPVariant&);
 
-    bool evaluate(NPObject*, const WebCore::String& scriptString, NPVariant* result);
+    bool evaluate(NPObject*, const WTF::String& scriptString, NPVariant* result);
 
     // Called when the plug-in is destroyed. Will invalidate all the NPObjects.
     void invalidate();
@@ -82,7 +79,7 @@ public:
     JSC::JSGlobalObject* globalObject() const;
     JSC::ExecState* globalExec() const;
 
-    static void setGlobalException(const WebCore::String& exceptionString);
+    static void setGlobalException(const WTF::String& exceptionString);
     static void moveGlobalExceptionToExecState(JSC::ExecState*);
 
 private:

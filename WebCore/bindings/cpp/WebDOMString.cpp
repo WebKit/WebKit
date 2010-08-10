@@ -26,7 +26,7 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
-class WebDOMStringPrivate : public WebCore::StringImpl {
+class WebDOMStringPrivate : public WTF::StringImpl {
 };
 
 void WebDOMString::reset()
@@ -45,7 +45,7 @@ void WebDOMString::assign(const WebDOMString& other)
 void WebDOMString::assign(const WebUChar* data, size_t length)
 {
     assign(static_cast<WebDOMStringPrivate*>(
-        WebCore::StringImpl::create(data, length).get()));
+        WTF::StringImpl::create(data, length).get()));
 }
 
 size_t WebDOMString::length() const
@@ -60,52 +60,52 @@ const WebUChar* WebDOMString::data() const
 
 WebDOMCString WebDOMString::utf8() const
 {
-    return WebCore::String(m_private).utf8();
+    return WTF::String(m_private).utf8();
 }
 
 WebDOMString WebDOMString::fromUTF8(const char* data, size_t length)
 {
-    return WebCore::String::fromUTF8(data, length);
+    return WTF::String::fromUTF8(data, length);
 }
 
 WebDOMString WebDOMString::fromUTF8(const char* data)
 {
-    return WebCore::String::fromUTF8(data);
+    return WTF::String::fromUTF8(data);
 }
 
-WebDOMString::WebDOMString(const WebCore::String& s)
+WebDOMString::WebDOMString(const WTF::String& s)
     : m_private(static_cast<WebDOMStringPrivate*>(s.impl()))
 {
     if (m_private)
         m_private->ref();
 }
 
-WebDOMString& WebDOMString::operator=(const WebCore::String& s)
+WebDOMString& WebDOMString::operator=(const WTF::String& s)
 {
     assign(static_cast<WebDOMStringPrivate*>(s.impl()));
     return *this;
 }
 
-WebDOMString::operator WebCore::String() const
+WebDOMString::operator WTF::String() const
 {
     return m_private;
 }
 
-WebDOMString::WebDOMString(const WebCore::AtomicString& s)
+WebDOMString::WebDOMString(const WTF::AtomicString& s)
     : m_private(0)
 {
     assign(s.string());
 }
 
-WebDOMString& WebDOMString::operator=(const WebCore::AtomicString& s)
+WebDOMString& WebDOMString::operator=(const WTF::AtomicString& s)
 {
     assign(s.string());
     return *this;
 }
 
-WebDOMString::operator WebCore::AtomicString() const
+WebDOMString::operator WTF::AtomicString() const
 {
-    return WebCore::AtomicString(static_cast<WebCore::StringImpl *>(m_private));
+    return WTF::AtomicString(static_cast<WTF::StringImpl *>(m_private));
 }
 
 bool WebDOMString::equals(const char* string) const

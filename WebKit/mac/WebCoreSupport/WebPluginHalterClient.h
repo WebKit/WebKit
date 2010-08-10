@@ -24,10 +24,10 @@
  */
 
 #import <WebCore/PluginHalterClient.h>
+#import <wtf/Forward.h>
 
 namespace WebCore {
     class Node;
-    class String;
 }
 
 @class WebView;
@@ -36,7 +36,7 @@ class WebPluginHalterClient : public WebCore::PluginHalterClient {
 public:
     WebPluginHalterClient(WebView *);
     
-    virtual bool shouldHaltPlugin(WebCore::Node*, bool, const WebCore::String&) const;
+    virtual bool shouldHaltPlugin(WebCore::Node*, bool, const WTF::String&) const;
     virtual bool enabled() const;
     
 private:

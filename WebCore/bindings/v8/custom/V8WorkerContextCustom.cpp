@@ -65,7 +65,7 @@ v8::Handle<v8::Value> SetTimeoutOrInterval(const v8::Arguments& args, bool singl
 
     v8::Handle<v8::Context> v8Context = proxy->context();
     if (function->IsString()) {
-        WebCore::String stringFunction = toWebCoreString(function);
+        WTF::String stringFunction = toWebCoreString(function);
         timerId = DOMTimer::install(workerContext, new ScheduledAction(v8Context, stringFunction, workerContext->url()), timeout, singleShot);
     } else if (function->IsFunction()) {
         size_t paramCount = argumentCount >= 2 ? argumentCount - 2 : 0;

@@ -1067,7 +1067,7 @@ WebCore::Frame* FrameLoaderClientQt::dispatchCreatePage()
     return newPage->mainFrame()->d->frame;
 }
 
-void FrameLoaderClientQt::dispatchDecidePolicyForMIMEType(FramePolicyFunction function, const WebCore::String& MIMEType, const WebCore::ResourceRequest&)
+void FrameLoaderClientQt::dispatchDecidePolicyForMIMEType(FramePolicyFunction function, const WTF::String& MIMEType, const WebCore::ResourceRequest&)
 {
     // we need to call directly here
     const ResourceResponse& response = m_frame->loader()->activeDocumentLoader()->response();
@@ -1079,7 +1079,7 @@ void FrameLoaderClientQt::dispatchDecidePolicyForMIMEType(FramePolicyFunction fu
         callPolicyFunction(function, PolicyDownload);
 }
 
-void FrameLoaderClientQt::dispatchDecidePolicyForNewWindowAction(FramePolicyFunction function, const WebCore::NavigationAction& action, const WebCore::ResourceRequest& request, PassRefPtr<WebCore::FormState>, const WebCore::String&)
+void FrameLoaderClientQt::dispatchDecidePolicyForNewWindowAction(FramePolicyFunction function, const WebCore::NavigationAction& action, const WebCore::ResourceRequest& request, PassRefPtr<WebCore::FormState>, const WTF::String&)
 {
     Q_ASSERT(m_webFrame);
     QNetworkRequest r(request.toNetworkRequest(m_webFrame));

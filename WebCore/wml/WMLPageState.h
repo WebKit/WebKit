@@ -25,12 +25,12 @@
 
 #if ENABLE(WML)
 #include "StringHash.h"
+#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 
 namespace WebCore {
 
 class Page;
-class String;
 class WMLCardElement;
 
 typedef HashMap<String, String> WMLVariableMap;

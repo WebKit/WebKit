@@ -70,7 +70,7 @@ public:
     virtual float volume() const;
 
     // MediaPlayerPrivateInterface methods:
-    virtual void load(const WebCore::String& url);
+    virtual void load(const WTF::String& url);
     virtual void cancelLoad();
 #if USE(ACCELERATED_COMPOSITING)
     virtual WebCore::PlatformLayer* platformLayer() const;
@@ -114,9 +114,9 @@ private:
     WebMediaPlayerClientImpl();
 
     static WebCore::MediaPlayerPrivateInterface* create(WebCore::MediaPlayer*);
-    static void getSupportedTypes(WTF::HashSet<WebCore::String>&);
+    static void getSupportedTypes(WTF::HashSet<WTF::String>&);
     static WebCore::MediaPlayer::SupportsType supportsType(
-        const WebCore::String& type, const WebCore::String& codecs);
+        const WTF::String& type, const WTF::String& codecs);
 
     WebCore::MediaPlayer* m_mediaPlayer;
     OwnPtr<WebMediaPlayer> m_webMediaPlayer;

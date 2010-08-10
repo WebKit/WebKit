@@ -30,13 +30,13 @@
 
 #include "COMPtr.h"
 #include <CoreFoundation/CoreFoundation.h>
+#include <wtf/Forward.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/RetainPtr.h>
 
 namespace WebCore {
     class KURL;
     class PageGroup;
-    class String;
 }
 
 //-----------------------------------------------------------------------------
@@ -121,10 +121,10 @@ public:
 
     // WebHistory
     static WebHistory* sharedHistory();
-    void visitedURL(const WebCore::KURL&, const WebCore::String& title, const WebCore::String& httpMethod, bool wasFailure, bool increaseVisitCount);
+    void visitedURL(const WebCore::KURL&, const WTF::String& title, const WTF::String& httpMethod, bool wasFailure, bool increaseVisitCount);
     void addVisitedLinksToPageGroup(WebCore::PageGroup&);
 
-    COMPtr<IWebHistoryItem> itemForURLString(const WebCore::String&) const;
+    COMPtr<IWebHistoryItem> itemForURLString(const WTF::String&) const;
 
     typedef int64_t DateKey;
     typedef HashMap<DateKey, RetainPtr<CFMutableArrayRef> > DateToEntriesMap;

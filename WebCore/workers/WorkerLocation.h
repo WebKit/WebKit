@@ -30,13 +30,12 @@
 #if ENABLE(WORKERS)
 
 #include "KURL.h"
+#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
-
-    class String;
 
     class WorkerLocation : public RefCounted<WorkerLocation> {
     public:

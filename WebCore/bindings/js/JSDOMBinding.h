@@ -30,6 +30,7 @@
 #include <runtime/Completion.h>
 #include <runtime/Lookup.h>
 #include <runtime/WeakGCMap.h>
+#include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 
 namespace JSC {
@@ -44,7 +45,6 @@ namespace WebCore {
     class JSNode;
     class KURL;
     class Node;
-    class String;
     class ScriptController;
     class ScriptCachedFrameData;
 

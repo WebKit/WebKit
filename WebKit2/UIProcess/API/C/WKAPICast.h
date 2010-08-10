@@ -119,29 +119,29 @@ inline typename WebKit::ImplTypeInfo<T>::APIType toRef(T t)
 
 /* Special cases. */
 
-inline WebKit::ProxyingRefPtr<WebKit::WebString> toRef(WebCore::StringImpl* string)
+inline WebKit::ProxyingRefPtr<WebKit::WebString> toRef(WTF::StringImpl* string)
 {
-    WebCore::StringImpl* impl = string ? string : WebCore::StringImpl::empty();
-    return WebKit::ProxyingRefPtr<WebKit::WebString>(WebKit::WebString::create(WebCore::String(impl)));
+    WTF::StringImpl* impl = string ? string : WTF::StringImpl::empty();
+    return WebKit::ProxyingRefPtr<WebKit::WebString>(WebKit::WebString::create(WTF::String(impl)));
 }
 
-inline WebKit::ProxyingRefPtr<WebKit::WebURL> toURLRef(WebCore::StringImpl* string)
+inline WebKit::ProxyingRefPtr<WebKit::WebURL> toURLRef(WTF::StringImpl* string)
 {
-    WebCore::StringImpl* impl = string ? string : WebCore::StringImpl::empty();
-    return WebKit::ProxyingRefPtr<WebKit::WebURL>(WebKit::WebURL::create(WebCore::String(impl)));
+    WTF::StringImpl* impl = string ? string : WTF::StringImpl::empty();
+    return WebKit::ProxyingRefPtr<WebKit::WebURL>(WebKit::WebURL::create(WTF::String(impl)));
 }
 
-inline WKStringRef toCopiedRef(const WebCore::String& string)
+inline WKStringRef toCopiedRef(const WTF::String& string)
 {
-    WebCore::StringImpl* impl = string.impl() ? string.impl() : WebCore::StringImpl::empty();
-    RefPtr<WebKit::WebString> webString = WebKit::WebString::create(WebCore::String(impl));
+    WTF::StringImpl* impl = string.impl() ? string.impl() : WTF::StringImpl::empty();
+    RefPtr<WebKit::WebString> webString = WebKit::WebString::create(WTF::String(impl));
     return toRef(webString.release().releaseRef());
 }
 
-inline WKURLRef toCopiedURLRef(const WebCore::String& string)
+inline WKURLRef toCopiedURLRef(const WTF::String& string)
 {
-    WebCore::StringImpl* impl = string.impl() ? string.impl() : WebCore::StringImpl::empty();
-    RefPtr<WebKit::WebURL> webURL = WebKit::WebURL::create(WebCore::String(impl));
+    WTF::StringImpl* impl = string.impl() ? string.impl() : WTF::StringImpl::empty();
+    RefPtr<WebKit::WebURL> webURL = WebKit::WebURL::create(WTF::String(impl));
     return toRef(webURL.release().releaseRef());
 }
 

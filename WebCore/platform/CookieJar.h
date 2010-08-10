@@ -26,13 +26,13 @@
 #ifndef CookieJar_h
 #define CookieJar_h
 
+#include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
     class Document;
     class KURL;
-    class String;
 
     struct Cookie;
 

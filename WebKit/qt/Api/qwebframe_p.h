@@ -44,16 +44,16 @@ class QWebFrameData {
 public:
     QWebFrameData(WebCore::Page*, WebCore::Frame* parentFrame = 0,
                   WebCore::HTMLFrameOwnerElement* = 0,
-                  const WebCore::String& frameName = WebCore::String());
+                  const WTF::String& frameName = WTF::String());
 
     WebCore::KURL url;
-    WebCore::String name;
+    WTF::String name;
     WebCore::HTMLFrameOwnerElement* ownerElement;
     WebCore::Page* page;
     RefPtr<WebCore::Frame> frame;
     WebCore::FrameLoaderClientQt* frameLoaderClient;
 
-    WebCore::String referrer;
+    WTF::String referrer;
     bool allowsScrolling;
     int marginWidth;
     int marginHeight;

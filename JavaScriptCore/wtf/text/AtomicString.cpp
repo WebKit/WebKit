@@ -27,7 +27,7 @@
 #include <wtf/Threading.h>
 #include <wtf/WTFThreadData.h>
 
-namespace WebCore {
+namespace WTF {
 
 COMPILE_ASSERT(sizeof(AtomicString) == sizeof(String), atomic_string_and_string_must_be_same_size);
 
@@ -164,7 +164,7 @@ struct UCharBufferTranslator {
 
     static bool equal(StringImpl* const& str, const UCharBuffer& buf)
     {
-        return WebCore::equal(str, buf.s, buf.length);
+        return WTF::equal(str, buf.s, buf.length);
     }
 
     static void translate(StringImpl*& location, const UCharBuffer& buf, unsigned hash)
@@ -190,7 +190,7 @@ struct HashAndCharactersTranslator {
 
     static bool equal(StringImpl* const& string, const HashAndCharacters& buffer)
     {
-        return WebCore::equal(string, buffer.characters, buffer.length);
+        return WTF::equal(string, buffer.characters, buffer.length);
     }
 
     static void translate(StringImpl*& location, const HashAndCharacters& buffer, unsigned hash)

@@ -30,20 +30,18 @@
 #include "RenderStyleConstants.h"
 #include "ScriptWrappable.h"
 #include "TreeShared.h"
+#include <wtf/Forward.h>
 #include <wtf/ListHashSet.h>
 
 #if USE(JSC)
 namespace JSC {
-
-    class JSGlobalData;
-    class MarkStack;
-
+class JSGlobalData;
+class MarkStack;
 }
 #endif
 
 namespace WebCore {
 
-class AtomicString;
 class Attribute;
 class ClassNodeList;
 class ContainerNode;

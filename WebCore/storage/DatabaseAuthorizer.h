@@ -36,8 +36,6 @@
 
 namespace WebCore {
 
-class String;
-
 extern const int SQLAuthAllow;
 extern const int SQLAuthIgnore;
 extern const int SQLAuthDeny;

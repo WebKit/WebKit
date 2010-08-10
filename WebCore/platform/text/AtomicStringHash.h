@@ -53,10 +53,10 @@ namespace WebCore {
 namespace WTF {
 
     // WebCore::AtomicStringHash is the default hash for AtomicString
-    template<> struct HashTraits<WebCore::AtomicString> : GenericHashTraits<WebCore::AtomicString> {
+    template<> struct HashTraits<WTF::AtomicString> : GenericHashTraits<WTF::AtomicString> {
         static const bool emptyValueIsZero = true;
-        static void constructDeletedValue(WebCore::AtomicString& slot) { new (&slot) WebCore::AtomicString(HashTableDeletedValue); }
-        static bool isDeletedValue(const WebCore::AtomicString& slot) { return slot.isHashTableDeletedValue(); }
+        static void constructDeletedValue(WTF::AtomicString& slot) { new (&slot) WTF::AtomicString(HashTableDeletedValue); }
+        static bool isDeletedValue(const WTF::AtomicString& slot) { return slot.isHashTableDeletedValue(); }
     };
 
 }

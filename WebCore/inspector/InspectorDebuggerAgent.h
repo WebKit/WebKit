@@ -35,6 +35,7 @@
 #include "ScriptDebugListener.h"
 #include "ScriptState.h"
 #include "StringHash.h"
+#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/PassOwnPtr.h>
 
@@ -43,7 +44,6 @@ class InjectedScriptHost;
 class InspectorController;
 class InspectorValue;
 class RemoteInspectorFrontend;
-class String;
 
 class InspectorDebuggerAgent : public ScriptDebugListener, public Noncopyable {
 public:

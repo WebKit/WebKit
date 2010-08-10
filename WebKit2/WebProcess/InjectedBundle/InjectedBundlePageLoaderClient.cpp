@@ -100,7 +100,7 @@ void InjectedBundlePageLoaderClient::didCancelClientRedirectForFrame(WebPage* pa
         m_client.didCancelClientRedirectForFrame(toRef(page), toRef(frame), m_client.clientInfo);
 }
 
-void InjectedBundlePageLoaderClient::willPerformClientRedirectForFrame(WebPage* page, WebFrame* frame, const WebCore::String& url, double delay, double date)
+void InjectedBundlePageLoaderClient::willPerformClientRedirectForFrame(WebPage* page, WebFrame* frame, const WTF::String& url, double delay, double date)
 {
     if (m_client.willPerformClientRedirectForFrame)
         m_client.willPerformClientRedirectForFrame(toRef(page), toRef(frame), toURLRef(url.impl()), delay, date, m_client.clientInfo);

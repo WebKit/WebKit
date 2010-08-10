@@ -26,12 +26,12 @@
 #ifndef MarshallingHelpers_H
 #define MarshallingHelpers_H
 
+#include <wtf/Forward.h>
 #include <CoreFoundation/CoreFoundation.h>
 
 namespace WebCore {
     class IntRect;
     class KURL;
-    class String;
 }
 
 class MarshallingHelpers
@@ -39,8 +39,8 @@ class MarshallingHelpers
 public:
     static WebCore::KURL BSTRToKURL(BSTR);
     static BSTR KURLToBSTR(const WebCore::KURL&);
-    static CFURLRef PathStringToFileCFURLRef(const WebCore::String&);
-    static WebCore::String FileCFURLRefToPathString(CFURLRef fileURL);
+    static CFURLRef PathStringToFileCFURLRef(const WTF::String&);
+    static WTF::String FileCFURLRefToPathString(CFURLRef fileURL);
     static CFURLRef BSTRToCFURLRef(BSTR);
     static CFStringRef BSTRToCFStringRef(BSTR);
     static CFStringRef LPCOLESTRToCFStringRef(LPCOLESTR);

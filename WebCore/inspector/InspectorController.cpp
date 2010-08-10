@@ -1274,7 +1274,7 @@ void InspectorController::didOpenDatabase(PassRefPtr<Database> database, const S
 }
 #endif
 
-void InspectorController::getCookies(RefPtr<InspectorArray>* cookies, WebCore::String* cookiesString)
+void InspectorController::getCookies(RefPtr<InspectorArray>* cookies, WTF::String* cookiesString)
 {
     // If we can get raw cookies.
     ListHashSet<Cookie> rawCookiesList;

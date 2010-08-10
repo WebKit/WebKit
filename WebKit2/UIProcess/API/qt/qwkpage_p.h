@@ -49,7 +49,7 @@ public:
     virtual void processDidRevive() { }
     virtual void setCursor(const WebCore::Cursor&) { }
     virtual void takeFocus(bool direction) { }
-    virtual void toolTipChanged(const WebCore::String&, const WebCore::String&);
+    virtual void toolTipChanged(const WTF::String&, const WTF::String&);
 
     void paint(QPainter* painter, QRect);
 

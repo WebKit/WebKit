@@ -35,7 +35,7 @@ namespace WebKit {
 
 class NetscapePluginModule : public RefCounted<NetscapePluginModule> {
 public:
-    static PassRefPtr<NetscapePluginModule> getOrCreate(const WebCore::String& pluginPath);
+    static PassRefPtr<NetscapePluginModule> getOrCreate(const WTF::String& pluginPath);
     ~NetscapePluginModule();
 
     const NPPluginFuncs& pluginFuncs() const { return m_pluginFuncs; }
@@ -44,7 +44,7 @@ public:
     void pluginDestroyed();
 
 private:
-    explicit NetscapePluginModule(const WebCore::String& pluginPath);
+    explicit NetscapePluginModule(const WTF::String& pluginPath);
 
     bool tryLoad();
     bool load();
@@ -52,7 +52,7 @@ private:
 
     void shutdown();
 
-    WebCore::String m_pluginPath;
+    WTF::String m_pluginPath;
     bool m_isInitialized;
     unsigned m_pluginCount;
 

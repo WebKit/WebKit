@@ -164,7 +164,7 @@ private:
 
     RefPtr<TextResourceDecoder> m_decoder;
 
-    // Unlike most strings in the DOM, we keep this as a ScriptString, not a WebCore::String.
+    // Unlike most strings in the DOM, we keep this as a ScriptString, not a WTF::String.
     // That's because these strings can easily get huge (they are filled from the network with
     // no parsing) and because JS can easily observe many intermediate states, so it's very useful
     // to be able to share the buffer with JavaScript versions of the whole or partial string.

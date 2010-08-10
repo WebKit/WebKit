@@ -42,22 +42,22 @@ template<> struct ArgumentCoder<WebCore::IntPoint> : SimpleArgumentCoder<WebCore
 template<> struct ArgumentCoder<WebCore::IntSize> : SimpleArgumentCoder<WebCore::IntSize> { };
 template<> struct ArgumentCoder<WebCore::IntRect> : SimpleArgumentCoder<WebCore::IntRect> { };
 
-template<> struct ArgumentCoder<WebCore::String> {
-    static void encode(ArgumentEncoder* encoder, const WebCore::String& string)
+template<> struct ArgumentCoder<WTF::String> {
+    static void encode(ArgumentEncoder* encoder, const WTF::String& string)
     {
         uint32_t length = string.length();
         encoder->encode(length);
         encoder->encodeBytes(reinterpret_cast<const uint8_t*>(string.characters()), length * sizeof(UChar));
     }
     
-    static bool decode(ArgumentDecoder* decoder, WebCore::String& s)
+    static bool decode(ArgumentDecoder* decoder, WTF::String& s)
     {
         uint32_t length;
         if (!decoder->decode(length))
             return false;
         
         UChar* buffer;
-        WebCore::String string = WebCore::String::createUninitialized(length, buffer);
+        WTF::String string = WTF::String::createUninitialized(length, buffer);
         if (!decoder->decodeBytes(reinterpret_cast<uint8_t*>(buffer), length * sizeof(UChar)))
             return false;
         

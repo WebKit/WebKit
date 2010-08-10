@@ -26,11 +26,11 @@
 #ifndef FontSelector_h
 #define FontSelector_h
 
+#include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class AtomicString;
 class FontData;
 class FontDescription;
 

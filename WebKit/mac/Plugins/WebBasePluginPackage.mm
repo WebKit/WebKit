@@ -303,7 +303,7 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
     return NO;
 }
 
-- (BOOL)supportsMIMEType:(const WebCore::String&)mimeType
+- (BOOL)supportsMIMEType:(const WTF::String&)mimeType
 {
     ASSERT(mimeType.lower() == mimeType);
     
@@ -445,7 +445,7 @@ static inline void swapIntsInHeader(uint8_t* bytes, unsigned length)
     [pluginDatabases removeObject:database];
 }
 
-- (WebCore::String)bundleIdentifier
+- (WTF::String)bundleIdentifier
 {
     return CFBundleGetIdentifier(cfBundle.get());
 }

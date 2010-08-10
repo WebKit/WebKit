@@ -20,6 +20,7 @@
 #ifndef DOMMimeType_h
 #define DOMMimeType_h
 
+#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RefCounted.h>
@@ -29,7 +30,6 @@
 namespace WebCore {
 
 class DOMPlugin;
-class String;
 
 class DOMMimeType : public RefCounted<DOMMimeType> {
 public:

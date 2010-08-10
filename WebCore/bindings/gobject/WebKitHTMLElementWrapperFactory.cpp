@@ -449,7 +449,7 @@ static gpointer createUListWrapper(PassRefPtr<HTMLElement> element)
 
 gpointer createHTMLElementWrapper(PassRefPtr<WebCore::HTMLElement> element)
 {
-    static HashMap<WebCore::AtomicStringImpl*, CreateHTMLElementWrapperFunction> map;
+    static HashMap<WTF::AtomicStringImpl*, CreateHTMLElementWrapperFunction> map;
     if (map.isEmpty()) {
        map.set(aTag.localName().impl(), createAnchorWrapper);
        map.set(appletTag.localName().impl(), createAppletWrapper);

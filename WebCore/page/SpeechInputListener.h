@@ -33,9 +33,9 @@
 
 #if ENABLE(INPUT_SPEECH)
 
-namespace WebCore {
+#include <wtf/Forward.h>
 
-class String;
+namespace WebCore {
 
 // Interface to be implemented by the element which invokes SpeechInput.
 class SpeechInputListener {

@@ -87,7 +87,7 @@ using WebCore::SafeAllocation;
 using WebCore::ScriptObject;
 using WebCore::ScriptState;
 using WebCore::ScriptValue;
-using WebCore::String;
+using WTF::String;
 using WebCore::V8DOMWrapper;
 using WebCore::V8Proxy;
 
@@ -347,7 +347,7 @@ void WebDevToolsAgentImpl::createInspectorFrontendProxy()
     initDevToolsAgentHost();
     WebCString debuggerScriptJs = m_client->debuggerScriptSource();
     WebCore::ScriptDebugServer::shared().setDebuggerScriptSource(
-        WebCore::String(debuggerScriptJs.data(), debuggerScriptJs.length()));
+        WTF::String(debuggerScriptJs.data(), debuggerScriptJs.length()));
 }
 
 void WebDevToolsAgentImpl::setApuAgentEnabled(bool enabled)
@@ -494,7 +494,7 @@ void WebDevToolsAgentImpl::storeSetting(const String& key, const String& value)
     m_webViewImpl->setInspectorSetting(key, value);
 }
 
-bool WebDevToolsAgentImpl::sendMessageToFrontend(const WebCore::String& message)
+bool WebDevToolsAgentImpl::sendMessageToFrontend(const WTF::String& message)
 {
     WebDevToolsAgentImpl* devToolsAgent = static_cast<WebDevToolsAgentImpl*>(m_webViewImpl->devToolsAgent());
     if (!devToolsAgent)

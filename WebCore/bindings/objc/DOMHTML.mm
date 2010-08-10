@@ -124,7 +124,7 @@
 {
     WebCore::HTMLInputElement* inputElement = core(self);
     if (inputElement) {
-        WebCore::String newValue = inputElement->value();
+        WTF::String newValue = inputElement->value();
         newValue.replace(targetRange.location, targetRange.length, replacementString);
         inputElement->setValue(newValue);
         inputElement->setSelectionRange(index, newValue.length());

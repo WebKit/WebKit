@@ -180,8 +180,8 @@ namespace WebCore {
 
         QWebPage* m_webPage;
         WebCore::KURL lastHoverURL;
-        WebCore::String lastHoverTitle;
-        WebCore::String lastHoverContent;
+        WTF::String lastHoverTitle;
+        WTF::String lastHoverContent;
 
         bool toolBarsVisible;
         bool statusBarVisible;

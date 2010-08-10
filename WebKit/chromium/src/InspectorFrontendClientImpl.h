@@ -56,8 +56,8 @@ public:
 
     virtual void moveWindowBy(float x, float y);
 
-    virtual WebCore::String localizedStringsURL();
-    virtual WebCore::String hiddenPanels();
+    virtual WTF::String localizedStringsURL();
+    virtual WTF::String hiddenPanels();
 
     virtual void bringToFront();
     virtual void closeWindow();
@@ -66,9 +66,9 @@ public:
     virtual void requestDetachWindow();
     virtual void changeAttachedWindowHeight(unsigned);
 
-    virtual void inspectedURLChanged(const WebCore::String&);
+    virtual void inspectedURLChanged(const WTF::String&);
 
-    virtual void sendMessageToBackend(const WebCore::String&);
+    virtual void sendMessageToBackend(const WTF::String&);
 private:
     WebCore::Page* m_frontendPage;
     WebDevToolsFrontendClient* m_client;

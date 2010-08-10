@@ -91,7 +91,7 @@ HRESULT STDMETHODCALLTYPE DOMCSSStyleDeclaration::cssText(
 HRESULT STDMETHODCALLTYPE DOMCSSStyleDeclaration::setCssText( 
     /* [in] */ BSTR cssText)
 {
-    WebCore::String cssTextString(cssText);
+    WTF::String cssTextString(cssText);
     // FIXME: <rdar://5148045> return DOM exception info
     WebCore::ExceptionCode ec;
     m_style->setCssText(cssTextString, ec);
@@ -102,8 +102,8 @@ HRESULT STDMETHODCALLTYPE DOMCSSStyleDeclaration::getPropertyValue(
     /* [in] */ BSTR propertyName,
     /* [retval][out] */ BSTR* result)
 {
-    WebCore::String propertyNameString(propertyName);
-    WebCore::String value = m_style->getPropertyValue(propertyNameString);
+    WTF::String propertyNameString(propertyName);
+    WTF::String value = m_style->getPropertyValue(propertyNameString);
     *result = SysAllocStringLen(value.characters(), value.length());
     if (value.length() && !*result)
         return E_OUTOFMEMORY;
@@ -139,9 +139,9 @@ HRESULT STDMETHODCALLTYPE DOMCSSStyleDeclaration::setProperty(
     /* [in] */ BSTR value,
     /* [in] */ BSTR priority)
 {
-    WebCore::String propertyNameString(propertyName);
-    WebCore::String valueString(value);
-    WebCore::String priorityString(priority);
+    WTF::String propertyNameString(propertyName);
+    WTF::String valueString(value);
+    WTF::String priorityString(priority);
     // FIXME: <rdar://5148045> return DOM exception info
     WebCore::ExceptionCode code;
     m_style->setProperty(propertyNameString, valueString, priorityString, code);

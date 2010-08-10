@@ -26,8 +26,9 @@
 #ifndef PageClient_h
 #define PageClient_h
 
+#include <wtf/Forward.h>
+
 namespace WebCore {
-    class String;
     class Cursor;
 }
 
@@ -41,7 +42,7 @@ public:
     virtual void processDidRevive() = 0;
 
     virtual void takeFocus(bool direction) = 0;
-    virtual void toolTipChanged(const WebCore::String&, const WebCore::String&) = 0;
+    virtual void toolTipChanged(const WTF::String&, const WTF::String&) = 0;
 
     virtual void setCursor(const WebCore::Cursor&) = 0;
 

@@ -67,7 +67,7 @@ uint64_t ewk_settings_web_database_default_quota_get()
 void ewk_settings_web_database_path_set(const char *path)
 {
 #if ENABLE(DATABASE)
-    WebCore::String corePath = WebCore::String::fromUTF8(path);
+    WTF::String corePath = WTF::String::fromUTF8(path);
     WebCore::DatabaseTracker::tracker().setDatabaseDirectoryPath(corePath);
 #endif
 }
@@ -82,7 +82,7 @@ void ewk_settings_web_database_path_set(const char *path)
 const char *ewk_settings_web_database_path_get()
 {
 #if ENABLE(DATABASE)
-    WebCore::String path = WebCore::DatabaseTracker::tracker().databaseDirectoryPath();
+    WTF::String path = WebCore::DatabaseTracker::tracker().databaseDirectoryPath();
     return strdup(path.utf8().data());
 #else
     return 0;
@@ -121,7 +121,7 @@ Eina_Bool ewk_settings_icon_database_path_set(const char *directory)
         }
 
         WebCore::iconDatabase()->setEnabled(true);
-        WebCore::iconDatabase()->open(WebCore::String::fromUTF8(directory));
+        WebCore::iconDatabase()->open(WTF::String::fromUTF8(directory));
     } else {
         WebCore::iconDatabase()->setEnabled(false);
         WebCore::iconDatabase()->close();
@@ -144,7 +144,7 @@ char* ewk_settings_icon_database_path_get(void)
     if (!WebCore::iconDatabase()->isOpen())
         return 0;
 
-    WebCore::String path = WebCore::iconDatabase()->databasePath();
+    WTF::String path = WebCore::iconDatabase()->databasePath();
     if (path.isEmpty())
         return 0;
     return strdup(path.utf8().data());
@@ -184,7 +184,7 @@ cairo_surface_t* ewk_settings_icon_database_icon_surface_get(const char *url)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(url, 0);
 
-    WebCore::KURL kurl(WebCore::KURL(), WebCore::String::fromUTF8(url));
+    WebCore::KURL kurl(WebCore::KURL(), WTF::String::fromUTF8(url));
     WebCore::Image *icon = WebCore::iconDatabase()->iconForPageURL(kurl.string(), WebCore::IntSize(16, 16));
 
     if (!icon) {
@@ -216,7 +216,7 @@ Evas_Object* ewk_settings_icon_database_icon_object_add(const char* url, Evas* c
     EINA_SAFETY_ON_NULL_RETURN_VAL(url, 0);
     EINA_SAFETY_ON_NULL_RETURN_VAL(canvas, 0);
 
-    WebCore::KURL kurl(WebCore::KURL(), WebCore::String::fromUTF8(url));
+    WebCore::KURL kurl(WebCore::KURL(), WTF::String::fromUTF8(url));
     WebCore::Image* icon = WebCore::iconDatabase()->iconForPageURL(kurl.string(), WebCore::IntSize(16, 16));
     cairo_surface_t* surface;
 

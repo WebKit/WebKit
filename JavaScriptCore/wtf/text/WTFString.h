@@ -51,16 +51,8 @@ class BString;
 #endif
 
 namespace WTF {
+
 class CString;
-}
-using WTF::CString;
-
-// FIXME: This is a temporary layering violation while we move string code to WTF.
-// Landing the file moves in one patch, will follow on with patches to change the namespaces.
-namespace WebCore {
-
-class SharedBuffer;
-struct StringHash;
 
 // Declarations of string operations
 
@@ -417,16 +409,29 @@ inline void appendNumber(Vector<UChar>& vector, unsigned char number)
     }
 }
 
-} // namespace WebCore
+struct StringHash;
 
-namespace WTF {
-
-    // StringHash is the default hash for String
-    template<typename T> struct DefaultHash;
-    template<> struct DefaultHash<WebCore::String> {
-        typedef WebCore::StringHash Hash;
-    };
+// StringHash is the default hash for String
+template<typename T> struct DefaultHash;
+template<> struct DefaultHash<String> {
+    typedef StringHash Hash;
+};
 
 }
+
+using WTF::CString;
+using WTF::String;
+
+using WTF::isSpaceOrNewline;
+using WTF::find;
+using WTF::reverseFind;
+using WTF::append;
+using WTF::appendNumber;
+using WTF::equal;
+using WTF::equalIgnoringCase;
+using WTF::charactersAreAllASCII;
+using WTF::charactersToInt;
+using WTF::charactersToFloat;
+using WTF::charactersToDouble;
 
 #endif

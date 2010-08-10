@@ -34,12 +34,12 @@
 #if ENABLE(WORKERS)
 
 #include "MessagePort.h"
+#include <wtf/Forward.h>
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
     class KURL;
-    class String;
     class Worker;
 
     // A proxy to talk to the worker context.

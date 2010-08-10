@@ -71,8 +71,8 @@ class WebProcessProxy;
 class WebWheelEvent;
 struct WebNavigationDataStore;
 
-typedef GenericCallback<WKStringRef, WebCore::StringImpl*> RenderTreeExternalRepresentationCallback;
-typedef GenericCallback<WKStringRef, WebCore::StringImpl*> ScriptReturnValueCallback;
+typedef GenericCallback<WKStringRef, WTF::StringImpl*> RenderTreeExternalRepresentationCallback;
+typedef GenericCallback<WKStringRef, WTF::StringImpl*> ScriptReturnValueCallback;
 
 class WebPageProxy : public APIObject {
 public:
@@ -105,7 +105,7 @@ public:
     bool tryClose();
     bool isClosed() const { return m_closed; }
 
-    void loadURL(const WebCore::String&);
+    void loadURL(const WTF::String&);
     void stopLoading();
     void reload(bool reloadFromOrigin);
 
@@ -125,8 +125,8 @@ public:
     void wheelEvent(const WebWheelEvent&);
     void keyEvent(const WebKeyboardEvent&);
 
-    const WebCore::String& pageTitle() const { return m_pageTitle; }
-    const WebCore::String& toolTip() const { return m_toolTip; }
+    const WTF::String& pageTitle() const { return m_pageTitle; }
+    const WTF::String& toolTip() const { return m_toolTip; }
 
     double estimatedProgress() const { return m_estimatedProgress; }
 
@@ -135,7 +135,7 @@ public:
     PassRefPtr<WebData> sessionState() const;
     void restoreFromSessionState(WebData*);
 
-    void runJavaScriptInMainFrame(const WebCore::String&, PassRefPtr<ScriptReturnValueCallback>);
+    void runJavaScriptInMainFrame(const WTF::String&, PassRefPtr<ScriptReturnValueCallback>);
     void getRenderTreeExternalRepresentation(PassRefPtr<RenderTreeExternalRepresentationCallback>);
 
     void receivedPolicyDecision(WebCore::PolicyAction, WebFrameProxy*, uint64_t listenerID);
@@ -159,7 +159,7 @@ public:
     bool isValid();
 
     // REMOVE: For demo purposes only.
-    const WebCore::String& urlAtProcessExit() const { return m_urlAtProcessExit; }
+    const WTF::String& urlAtProcessExit() const { return m_urlAtProcessExit; }
 
     void preferencesDidChange();
 
@@ -173,40 +173,40 @@ private:
     void didCreateMainFrame(uint64_t frameID);
     void didCreateSubFrame(uint64_t frameID);
 
-    void didStartProvisionalLoadForFrame(WebFrameProxy*, const WebCore::String&);
+    void didStartProvisionalLoadForFrame(WebFrameProxy*, const WTF::String&);
     void didReceiveServerRedirectForProvisionalLoadForFrame(WebFrameProxy*);
     void didFailProvisionalLoadForFrame(WebFrameProxy*);
     void didCommitLoadForFrame(WebFrameProxy*);
     void didFinishLoadForFrame(WebFrameProxy*);
     void didFailLoadForFrame(WebFrameProxy*);
-    void didReceiveTitleForFrame(WebFrameProxy*, const WebCore::String&);
+    void didReceiveTitleForFrame(WebFrameProxy*, const WTF::String&);
     void didFirstLayoutForFrame(WebFrameProxy*);
     void didFirstVisuallyNonEmptyLayoutForFrame(WebFrameProxy*);
     void didStartProgress();
     void didChangeProgress(double);
     void didFinishProgress();
     
-    void decidePolicyForNavigationAction(WebFrameProxy*, WebCore::NavigationType navigationType, const WebCore::String& url, uint64_t listenerID);
-    void decidePolicyForNewWindowAction(WebFrameProxy*, WebCore::NavigationType navigationType, const WebCore::String& url, uint64_t listenerID);
-    void decidePolicyForMIMEType(WebFrameProxy*, const WebCore::String& MIMEType, const WebCore::String& url, uint64_t listenerID);
+    void decidePolicyForNavigationAction(WebFrameProxy*, WebCore::NavigationType navigationType, const WTF::String& url, uint64_t listenerID);
+    void decidePolicyForNewWindowAction(WebFrameProxy*, WebCore::NavigationType navigationType, const WTF::String& url, uint64_t listenerID);
+    void decidePolicyForMIMEType(WebFrameProxy*, const WTF::String& MIMEType, const WTF::String& url, uint64_t listenerID);
 
     PassRefPtr<WebPageProxy> createNewPage();
     void showPage();
     void closePage();
-    void runJavaScriptAlert(WebFrameProxy*, const WebCore::String&);
-    bool runJavaScriptConfirm(WebFrameProxy* frame, const WebCore::String&);
-    WebCore::String runJavaScriptPrompt(WebFrameProxy* frame, const WebCore::String&, const WebCore::String&);
+    void runJavaScriptAlert(WebFrameProxy*, const WTF::String&);
+    bool runJavaScriptConfirm(WebFrameProxy* frame, const WTF::String&);
+    WTF::String runJavaScriptPrompt(WebFrameProxy* frame, const WTF::String&, const WTF::String&);
 
     void addItemToBackForwardList(WebBackForwardListItem*);
     void goToItemInBackForwardList(WebBackForwardListItem*);
 
     void takeFocus(bool direction);
-    void setToolTip(const WebCore::String&);
+    void setToolTip(const WTF::String&);
     void setCursor(const WebCore::Cursor&);
 
     void didReceiveEvent(WebEvent::Type);
-    void didRunJavaScriptInMainFrame(const WebCore::String&, uint64_t);
-    void didGetRenderTreeExternalRepresentation(const WebCore::String&, uint64_t);
+    void didRunJavaScriptInMainFrame(const WTF::String&, uint64_t);
+    void didGetRenderTreeExternalRepresentation(const WTF::String&, uint64_t);
 
 #if USE(ACCELERATED_COMPOSITING)
     void didChangeAcceleratedCompositing(bool compositing);
@@ -221,7 +221,7 @@ private:
     RefPtr<WebPageNamespace> m_pageNamespace;
     RefPtr<WebFrameProxy> m_mainFrame;
     HashMap<uint64_t, RefPtr<WebFrameProxy> > m_frameMap;
-    WebCore::String m_pageTitle;
+    WTF::String m_pageTitle;
 
     HashMap<uint64_t, RefPtr<ScriptReturnValueCallback> > m_scriptReturnValueCallbacks;
     HashMap<uint64_t, RefPtr<RenderTreeExternalRepresentationCallback> > m_renderTreeExternalRepresentationCallbacks;
@@ -235,10 +235,10 @@ private:
     bool m_canGoForward;
     RefPtr<WebBackForwardList> m_backForwardList;
 
-    WebCore::String m_toolTip;
+    WTF::String m_toolTip;
 
     // REMOVE: For demo purposes only.
-    WebCore::String m_urlAtProcessExit;
+    WTF::String m_urlAtProcessExit;
     
     bool m_valid;
     bool m_closed;

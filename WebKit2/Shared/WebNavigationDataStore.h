@@ -50,8 +50,8 @@ struct WebNavigationDataStore {
     }
 
     // FIXME: Add the remaining items we want to track for history.
-    WebCore::String url;
-    WebCore::String title;
+    WTF::String url;
+    WTF::String title;
 };
 
 } // namespace WebKit

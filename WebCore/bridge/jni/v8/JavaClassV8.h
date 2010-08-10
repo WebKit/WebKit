@@ -37,8 +37,8 @@ namespace JSC {
 namespace Bindings {
 
 typedef Vector<JavaMethod*> MethodList;
-typedef HashMap<WebCore::String, MethodList*> MethodListMap;
-typedef HashMap<WebCore::String, JavaField*> FieldMap;
+typedef HashMap<WTF::String, MethodList*> MethodListMap;
+typedef HashMap<WTF::String, JavaField*> FieldMap;
 
 class JavaClass {
 public:

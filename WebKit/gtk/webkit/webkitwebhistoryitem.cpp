@@ -301,7 +301,7 @@ WebKitWebHistoryItem* webkit_web_history_item_new_with_data(const gchar* uri, co
     WebKitWebHistoryItemPrivate* priv = webHistoryItem->priv;
 
     WebCore::KURL historyUri(WebCore::KURL(), uri);
-    WebCore::String historyTitle = WebCore::String::fromUTF8(title);
+    WTF::String historyTitle = WTF::String::fromUTF8(title);
     RefPtr<WebCore::HistoryItem> item = WebCore::HistoryItem::create(historyUri, historyTitle, 0);
     priv->historyItem = item.release().releaseRef();
     webkit_history_item_add(webHistoryItem, priv->historyItem);
@@ -365,7 +365,7 @@ void webkit_web_history_item_set_alternate_title(WebKitWebHistoryItem* webHistor
 
     WebCore::HistoryItem* item = core(webHistoryItem);
 
-    item->setAlternateTitle(WebCore::String::fromUTF8(title));
+    item->setAlternateTitle(WTF::String::fromUTF8(title));
     g_object_notify(G_OBJECT(webHistoryItem), "alternate-title");
 }
 

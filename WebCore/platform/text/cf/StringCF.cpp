@@ -25,7 +25,7 @@
 
 #include <CoreFoundation/CoreFoundation.h>
 
-namespace WebCore {
+namespace WTF {
 
 String::String(CFStringRef str)
 {

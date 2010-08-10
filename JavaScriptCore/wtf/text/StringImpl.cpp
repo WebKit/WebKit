@@ -31,10 +31,9 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/WTFThreadData.h>
 
-using namespace WTF;
-using namespace Unicode;
+namespace WTF {
 
-namespace WebCore {
+using namespace Unicode;
 
 static const unsigned minLengthToShare = 20;
 
@@ -535,12 +534,12 @@ int StringImpl::find(const char* chs, int index, bool caseSensitive)
 
 int StringImpl::find(UChar c, int start)
 {
-    return WebCore::find(m_data, m_length, c, start);
+    return WTF::find(m_data, m_length, c, start);
 }
 
 int StringImpl::find(CharacterMatchFunctionPtr matchFunction, int start)
 {
-    return WebCore::find(m_data, m_length, matchFunction, start);
+    return WTF::find(m_data, m_length, matchFunction, start);
 }
 
 int StringImpl::find(StringImpl* str, int index, bool caseSensitive)
@@ -601,7 +600,7 @@ int StringImpl::find(StringImpl* str, int index, bool caseSensitive)
 
 int StringImpl::reverseFind(UChar c, int index)
 {
-    return WebCore::reverseFind(m_data, m_length, c, index);
+    return WTF::reverseFind(m_data, m_length, c, index);
 }
 
 int StringImpl::reverseFind(StringImpl* str, int index, bool caseSensitive)
@@ -961,4 +960,4 @@ PassRefPtr<StringImpl> StringImpl::crossThreadString()
     return threadsafeCopy();
 }
 
-} // namespace WebCore
+} // namespace WTF

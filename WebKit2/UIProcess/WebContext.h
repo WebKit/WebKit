@@ -56,7 +56,7 @@ public:
     static WebContext* sharedProcessContext();
     static WebContext* sharedThreadContext();
 
-    static PassRefPtr<WebContext> create(const WebCore::String& injectedBundlePath);
+    static PassRefPtr<WebContext> create(const WTF::String& injectedBundlePath);
 
     ~WebContext();
 
@@ -79,35 +79,35 @@ public:
     WebPreferences* preferences() const;
     void preferencesDidChange();
 
-    const WebCore::String& injectedBundlePath() const { return m_injectedBundlePath; }
+    const WTF::String& injectedBundlePath() const { return m_injectedBundlePath; }
 
-    void postMessageToInjectedBundle(const WebCore::String&, APIObject*);
+    void postMessageToInjectedBundle(const WTF::String&, APIObject*);
 
     // InjectedBundle client
-    void didReceiveMessageFromInjectedBundle(const WebCore::String&, APIObject*);
+    void didReceiveMessageFromInjectedBundle(const WTF::String&, APIObject*);
 
     // History client
     void didNavigateWithNavigationData(WebFrameProxy*, const WebNavigationDataStore&); 
-    void didPerformClientRedirect(WebFrameProxy*, const WebCore::String& sourceURLString, const WebCore::String& destinationURLString);
-    void didPerformServerRedirect(WebFrameProxy*, const WebCore::String& sourceURLString, const WebCore::String& destinationURLString);
-    void didUpdateHistoryTitle(WebFrameProxy*, const WebCore::String& title, const WebCore::String& url);
+    void didPerformClientRedirect(WebFrameProxy*, const WTF::String& sourceURLString, const WTF::String& destinationURLString);
+    void didPerformServerRedirect(WebFrameProxy*, const WTF::String& sourceURLString, const WTF::String& destinationURLString);
+    void didUpdateHistoryTitle(WebFrameProxy*, const WTF::String& title, const WTF::String& url);
     void populateVisitedLinks();
     
     void getStatistics(WKContextStatistics* statistics);
-    void setAdditionalPluginsDirectory(const WebCore::String&);
+    void setAdditionalPluginsDirectory(const WTF::String&);
 
     PluginInfoStore* pluginInfoStore() { return &m_pluginInfoStore; }
-    WebCore::String applicationCacheDirectory();
+    WTF::String applicationCacheDirectory();
     
-    void registerURLSchemeAsEmptyDocument(const WebCore::String&);
+    void registerURLSchemeAsEmptyDocument(const WTF::String&);
     
-    void addVisitedLink(const WebCore::String&);
+    void addVisitedLink(const WTF::String&);
     void addVisitedLink(WebCore::LinkHash);
 
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 
 private:
-    WebContext(ProcessModel, const WebCore::String& injectedBundlePath);
+    WebContext(ProcessModel, const WTF::String& injectedBundlePath);
 
     virtual Type type() const { return APIType; }
 
@@ -122,7 +122,7 @@ private:
     HashSet<WebPageNamespace*> m_pageNamespaces;
     RefPtr<WebPreferences> m_preferences;
 
-    WebCore::String m_injectedBundlePath;
+    WTF::String m_injectedBundlePath;
     WebContextInjectedBundleClient m_injectedBundleClient;
 
     WebHistoryClient m_historyClient;
@@ -130,7 +130,7 @@ private:
     PluginInfoStore m_pluginInfoStore;
     VisitedLinkProvider m_visitedLinkProvider;
         
-    HashSet<WebCore::String> m_schemesToRegisterAsEmptyDocument;
+    HashSet<WTF::String> m_schemesToRegisterAsEmptyDocument;
 };
 
 } // namespace WebKit

@@ -27,7 +27,7 @@
 
 WKURLRef WKURLCreateWithQUrl(const QUrl& qURL)
 {
-    WebCore::String urlString(qURL.toString());
+    WTF::String urlString(qURL.toString());
     return toCopiedURLRef(urlString);
 }
 
@@ -35,6 +35,6 @@ QUrl WKURLCopyQUrl(WKURLRef urlRef)
 {
     if (!urlRef)
         return QUrl();
-    const WebCore::String& string = toWK(urlRef)->string();
+    const WTF::String& string = toWK(urlRef)->string();
     return QUrl(QString(reinterpret_cast<const QChar*>(string.characters()), string.length()));
 }

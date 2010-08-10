@@ -53,7 +53,7 @@ void ClipboardEfl::clearData(const String&)
     notImplemented();
 }
 
-void ClipboardEfl::writePlainText(const WebCore::String&)
+void ClipboardEfl::writePlainText(const WTF::String&)
 {
     notImplemented();
 }

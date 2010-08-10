@@ -34,6 +34,7 @@
 #include "WebCString.h"
 #include "WebDevToolsAgent.h"
 #include <v8-debug.h>
+#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
@@ -41,7 +42,6 @@
 namespace WebCore {
 class Page;
 class PageGroupLoadDeferrer;
-class String;
 }
 
 namespace WebKit {
@@ -68,7 +68,7 @@ public:
     static void debugAttach(DebuggerAgentImpl* debuggerAgent);
     static void debugDetach(DebuggerAgentImpl* debuggerAgent);
     static void pauseScript();
-    static void executeDebuggerCommand(const WebCore::String& command, int callerId);
+    static void executeDebuggerCommand(const WTF::String& command, int callerId);
     static void setMessageLoopDispatchHandler(WebDevToolsAgent::MessageLoopDispatchHandler handler);
     static void setExposeV8DebuggerProtocol(bool);
 
@@ -103,7 +103,7 @@ private:
 
     static void debugHostDispatchHandler();
     static void onV8DebugMessage(const v8::Debug::Message& message);
-    static void sendCommandToV8(const WebCore::String& cmd,
+    static void sendCommandToV8(const WTF::String& cmd,
                                 v8::Debug::ClientData* data);
     static void sendContinueCommandToV8();
 

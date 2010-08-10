@@ -335,7 +335,7 @@ void ewk_frame_theme_set(Evas_Object* o, const char* path)
     if (!eina_stringshare_replace(&sd->theme, path))
         return;
     if (sd->frame && sd->frame->view()) {
-        sd->frame->view()->setEdjeTheme(WebCore::String(path));
+        sd->frame->view()->setEdjeTheme(WTF::String(path));
         sd->frame->page()->theme()->themeChanged();
     }
 }
@@ -406,8 +406,8 @@ Evas_Object* ewk_frame_child_find(Evas_Object* o, const char* name)
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, 0);
     EINA_SAFETY_ON_NULL_RETURN_VAL(name, 0);
     EINA_SAFETY_ON_NULL_RETURN_VAL(sd->frame, 0);
-    WebCore::String s = WebCore::String::fromUTF8(name);
-    return kit(sd->frame->tree()->find(WebCore::AtomicString(s)));
+    WTF::String s = WTF::String::fromUTF8(name);
+    return kit(sd->frame->tree()->find(WTF::AtomicString(s)));
 }
 
 /**
@@ -419,7 +419,7 @@ Evas_Object* ewk_frame_child_find(Evas_Object* o, const char* name)
 Eina_Bool ewk_frame_uri_set(Evas_Object* o, const char* uri)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
-    WebCore::KURL kurl(WebCore::KURL(), WebCore::String::fromUTF8(uri));
+    WebCore::KURL kurl(WebCore::KURL(), WTF::String::fromUTF8(uri));
     WebCore::ResourceRequest req(kurl);
     WebCore::FrameLoader* loader = sd->frame->loader();
     loader->load(req, false);
@@ -474,7 +474,7 @@ const char* ewk_frame_name_get(const Evas_Object* o)
         return 0;
     }
 
-    WebCore::String s = sd->frame->tree()->name();
+    WTF::String s = sd->frame->tree()->name();
     WTF::CString cs = s.utf8();
     sd->name = eina_stringshare_add_length(cs.data(), cs.length());
     return sd->name;
@@ -515,18 +515,18 @@ static Eina_Bool _ewk_frame_contents_set_internal(Ewk_Frame_Smart_Data *sd, cons
     if (!base_uri)
         base_uri = "about:blank";
 
-    WebCore::KURL baseKURL(WebCore::KURL(), WebCore::String::fromUTF8(base_uri));
+    WebCore::KURL baseKURL(WebCore::KURL(), WTF::String::fromUTF8(base_uri));
     WebCore::KURL unreachableKURL;
     if (unreachable_uri)
-        unreachableKURL = WebCore::KURL(WebCore::KURL(), WebCore::String::fromUTF8(unreachable_uri));
+        unreachableKURL = WebCore::KURL(WebCore::KURL(), WTF::String::fromUTF8(unreachable_uri));
     else
         unreachableKURL = WebCore::KURL();
 
     WTF::RefPtr<WebCore::SharedBuffer> buffer = WebCore::SharedBuffer::create(contents, contents_size);
     WebCore::SubstituteData substituteData
         (buffer.release(),
-         WebCore::String::fromUTF8(mime_type),
-         WebCore::String::fromUTF8(encoding),
+         WTF::String::fromUTF8(mime_type),
+         WTF::String::fromUTF8(encoding),
          baseKURL, unreachableKURL);
     WebCore::ResourceRequest request(baseKURL);
 
@@ -601,7 +601,7 @@ Eina_Bool ewk_frame_script_execute(Evas_Object* o, const char* script)
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     EINA_SAFETY_ON_FALSE_RETURN_VAL(sd->frame, EINA_FALSE);
     EINA_SAFETY_ON_NULL_RETURN_VAL(script, EINA_FALSE);
-    sd->frame->script()->executeScript(WebCore::String::fromUTF8(script), true);
+    sd->frame->script()->executeScript(WTF::String::fromUTF8(script), true);
     return EINA_TRUE;
 }
 
@@ -658,7 +658,7 @@ char* ewk_frame_selection_get(const Evas_Object* o)
 
 static inline Eina_Bool _ewk_frame_editor_command(Ewk_Frame_Smart_Data* sd, const char* command)
 {
-    return sd->frame->editor()->command(WebCore::String::fromUTF8(command)).execute();
+    return sd->frame->editor()->command(WTF::String::fromUTF8(command)).execute();
 }
 
 /**
@@ -750,7 +750,7 @@ Eina_Bool ewk_frame_text_search(const Evas_Object* o, const char* string, Eina_B
     EINA_SAFETY_ON_NULL_RETURN_VAL(sd->frame, EINA_FALSE);
     EINA_SAFETY_ON_NULL_RETURN_VAL(string, EINA_FALSE);
 
-    return sd->frame->findString(WebCore::String::fromUTF8(string), forward, case_sensitive, wrap, true);
+    return sd->frame->findString(WTF::String::fromUTF8(string), forward, case_sensitive, wrap, true);
 }
 
 /**
@@ -771,7 +771,7 @@ unsigned int ewk_frame_text_matches_mark(Evas_Object* o, const char* string, Ein
     EINA_SAFETY_ON_NULL_RETURN_VAL(string, 0);
 
     sd->frame->setMarkedTextMatchesAreHighlighted(highlight);
-    return sd->frame->markAllMatchesForText(WebCore::String::fromUTF8(string), case_sensitive, limit);
+    return sd->frame->markAllMatchesForText(WTF::String::fromUTF8(string), case_sensitive, limit);
 }
 
 /**
@@ -1560,7 +1560,7 @@ Eina_Bool ewk_frame_init(Evas_Object* o, Evas_Object* view, WebCore::Frame* fram
     return EINA_FALSE;
 }
 
-Evas_Object* ewk_frame_child_add(Evas_Object* o, WTF::PassRefPtr<WebCore::Frame> child, const WebCore::String& name, const WebCore::KURL& url, const WebCore::String& referrer)
+Evas_Object* ewk_frame_child_add(Evas_Object* o, WTF::PassRefPtr<WebCore::Frame> child, const WTF::String& name, const WebCore::KURL& url, const WTF::String& referrer)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, 0);
     char buf[256];
@@ -1690,8 +1690,8 @@ void ewk_frame_view_state_save(Evas_Object *o, WebCore::HistoryItem* item)
     const char *title = ewk_frame_title_get(o);
     const char *uri = ewk_frame_uri_get(o);
 
-    item->setTitle(WebCore::String::fromUTF8(title));
-    item->setURLString(WebCore::String::fromUTF8(uri));
+    item->setTitle(WTF::String::fromUTF8(title));
+    item->setURLString(WTF::String::fromUTF8(uri));
 
     evas_object_smart_callback_call(o, "state,save", 0);
 }
@@ -1946,7 +1946,7 @@ void ewk_frame_force_layout(Evas_Object* o)
         view->forceLayout(true);
 }
 
-WTF::PassRefPtr<WebCore::Widget> ewk_frame_plugin_create(Evas_Object* o, const WebCore::IntSize& pluginSize, WebCore::HTMLPlugInElement* element, const WebCore::KURL& url, const WTF::Vector<WebCore::String>& paramNames, const WTF::Vector<WebCore::String>& paramValues, const WebCore::String& mimeType, bool loadManually)
+WTF::PassRefPtr<WebCore::Widget> ewk_frame_plugin_create(Evas_Object* o, const WebCore::IntSize& pluginSize, WebCore::HTMLPlugInElement* element, const WebCore::KURL& url, const WTF::Vector<WTF::String>& paramNames, const WTF::Vector<WTF::String>& paramValues, const WTF::StringWTF::String& mimeType, bool loadManually)
 {
     return 0;
 }

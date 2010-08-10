@@ -23,9 +23,7 @@
 
 #include "StringImpl.h"
 
-// FIXME: This is a temporary layering violation while we move string code to WTF.
-// Landing the file moves in one patch, will follow on with patches to change the namespaces.
-namespace WebCore {
+namespace WTF {
 
 class AtomicStringImpl : public StringImpl
 {
@@ -34,5 +32,7 @@ public:
 };
 
 }
+
+using WTF::AtomicStringImpl;
 
 #endif

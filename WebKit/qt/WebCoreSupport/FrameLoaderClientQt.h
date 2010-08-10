@@ -40,6 +40,7 @@
 #include "ResourceResponse.h"
 #include <QUrl>
 #include <qobject.h>
+#include <wtf/Forward.h>
 class QWebFrame;
 
 namespace WebCore {
@@ -49,7 +50,6 @@ class DocumentLoader;
 class Element;
 class FormState;
 class NavigationAction;
-class String;
 class ResourceLoader;
 
 struct LoadErrorResetToken;
@@ -121,8 +121,8 @@ public:
     virtual WebCore::Frame* dispatchCreatePage();
     virtual void dispatchShow();
 
-    virtual void dispatchDecidePolicyForMIMEType(FramePolicyFunction function, const WebCore::String&, const WebCore::ResourceRequest&);
-    virtual void dispatchDecidePolicyForNewWindowAction(FramePolicyFunction function, const WebCore::NavigationAction&, const WebCore::ResourceRequest&, PassRefPtr<FormState>, const WebCore::String&);
+    virtual void dispatchDecidePolicyForMIMEType(FramePolicyFunction function, const WTF::String&, const WebCore::ResourceRequest&);
+    virtual void dispatchDecidePolicyForNewWindowAction(FramePolicyFunction function, const WebCore::NavigationAction&, const WebCore::ResourceRequest&, PassRefPtr<FormState>, const WTF::String&);
     virtual void dispatchDecidePolicyForNavigationAction(FramePolicyFunction function, const WebCore::NavigationAction&, const WebCore::ResourceRequest&, PassRefPtr<FormState>);
     virtual void cancelPolicyCheck();
 

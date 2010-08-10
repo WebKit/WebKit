@@ -30,6 +30,7 @@
 #include "EventListener.h"
 #include "EventNames.h"
 #include "EventTarget.h"
+#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -38,7 +39,6 @@
 
 namespace WebCore {
 
-    class AtomicStringImpl;
     class ScriptExecutionContext;
     class XMLHttpRequest;
 

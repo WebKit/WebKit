@@ -30,16 +30,13 @@
 #include "WebFramePolicyListenerProxy.h"
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/PlatformString.h>
+#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 
 namespace CoreIPC {
     class ArgumentDecoder;
     class Connection;
     class MessageID;
-}
-
-namespace WebCore {
-    class String;
 }
 
 namespace WebKit {
@@ -70,13 +67,13 @@ public:
     bool isMainFrame() const;
     LoadState loadState() const { return m_loadState; }
 
-    const WebCore::String& url() const { return m_url; }
-    const WebCore::String& provisionalURL() const { return m_provisionalURL; }
+    const WTF::String& url() const { return m_url; }
+    const WTF::String& provisionalURL() const { return m_provisionalURL; }
 
-    void didStartProvisionalLoad(const WebCore::String& url);
+    void didStartProvisionalLoad(const WTF::String& url);
     void didCommitLoad();
     void didFinishLoad();
-    void didReceiveTitle(const WebCore::String&);
+    void didReceiveTitle(const WTF::String&);
 
     void receivedPolicyDecision(WebCore::PolicyAction, uint64_t listenerID);
     WebFramePolicyListenerProxy* setUpPolicyListenerProxy(uint64_t listenerID);
@@ -88,8 +85,8 @@ private:
 
     WebPageProxy* m_page;
     LoadState m_loadState;
-    WebCore::String m_url;
-    WebCore::String m_provisionalURL;
+    WTF::String m_url;
+    WTF::String m_provisionalURL;
     RefPtr<WebFramePolicyListenerProxy> m_policyListener;
     uint64_t m_frameID;
 };

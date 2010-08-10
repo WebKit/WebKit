@@ -30,6 +30,7 @@
 #define AccessibilityTable_h
 
 #include "AccessibilityRenderObject.h"
+#include <wtf/Forward.h>
 
 #if PLATFORM(MAC) && (defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD))
 #define ACCESSIBILITY_TABLES 0
@@ -39,7 +40,6 @@
 
 namespace WebCore {
 
-class String;
 class AccessibilityTableCell;
 class AccessibilityTableHeaderContainer;
     

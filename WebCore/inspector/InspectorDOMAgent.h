@@ -105,7 +105,7 @@ namespace WebCore {
         void removeAttribute(long elementId, const String& name, bool* success);
         void removeNode(long nodeId, long* outNodeId);
         void changeTagName(long nodeId, const String& tagName, long* newId);
-        void getOuterHTML(long nodeId, WebCore::String* outerHTML);
+        void getOuterHTML(long nodeId, WTF::String* outerHTML);
         void setOuterHTML(long nodeId, const String& outerHTML, long* newId);
         void setTextNodeValue(long nodeId, const String& value, bool* success);
         void getEventListenersForNode(long nodeId, long* outNodeId, RefPtr<InspectorArray>* listenersArray);

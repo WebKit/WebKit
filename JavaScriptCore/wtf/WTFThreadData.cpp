@@ -54,4 +54,4 @@ WTFThreadData::~WTFThreadData()
 #endif
 }
 
-} // namespace WebCore
+}

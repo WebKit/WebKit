@@ -30,12 +30,9 @@
 #include "PageClient.h"
 #include "WebPageProxy.h"
 #include <WebCore/WindowMessageListener.h>
+#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
-
-namespace WebCore {
-    class String;
-}
 
 namespace WebKit {
 
@@ -95,7 +92,7 @@ private:
     virtual void processDidExit();
     virtual void processDidRevive();
     virtual void takeFocus(bool direction);
-    virtual void toolTipChanged(const WebCore::String&, const WebCore::String&);
+    virtual void toolTipChanged(const WTF::String&, const WTF::String&);
     virtual void setCursor(const WebCore::Cursor&);
 #if USE(ACCELERATED_COMPOSITING)
     virtual void pageDidEnterAcceleratedCompositing();

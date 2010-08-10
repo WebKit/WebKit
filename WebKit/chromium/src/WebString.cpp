@@ -39,7 +39,7 @@
 
 namespace WebKit {
 
-class WebStringPrivate : public WebCore::StringImpl {
+class WebStringPrivate : public WTF::StringImpl {
 };
 
 void WebString::reset()
@@ -58,7 +58,7 @@ void WebString::assign(const WebString& other)
 void WebString::assign(const WebUChar* data, size_t length)
 {
     assign(static_cast<WebStringPrivate*>(
-        WebCore::StringImpl::create(data, length).get()));
+        WTF::StringImpl::create(data, length).get()));
 }
 
 size_t WebString::length() const
@@ -73,17 +73,17 @@ const WebUChar* WebString::data() const
 
 WebCString WebString::utf8() const
 {
-    return WebCore::String(m_private).utf8();
+    return WTF::String(m_private).utf8();
 }
 
 WebString WebString::fromUTF8(const char* data, size_t length)
 {
-    return WebCore::String::fromUTF8(data, length);
+    return WTF::String::fromUTF8(data, length);
 }
 
 WebString WebString::fromUTF8(const char* data)
 {
-    return WebCore::String::fromUTF8(data);
+    return WTF::String::fromUTF8(data);
 }
 
 bool WebString::equals(const WebString& s) const
@@ -91,39 +91,39 @@ bool WebString::equals(const WebString& s) const
     return equal(m_private, s.m_private);
 }
 
-WebString::WebString(const WebCore::String& s)
+WebString::WebString(const WTF::String& s)
     : m_private(static_cast<WebStringPrivate*>(s.impl()))
 {
     if (m_private)
         m_private->ref();
 }
 
-WebString& WebString::operator=(const WebCore::String& s)
+WebString& WebString::operator=(const WTF::String& s)
 {
     assign(static_cast<WebStringPrivate*>(s.impl()));
     return *this;
 }
 
-WebString::operator WebCore::String() const
+WebString::operator WTF::String() const
 {
     return m_private;
 }
 
-WebString::WebString(const WebCore::AtomicString& s)
+WebString::WebString(const WTF::AtomicString& s)
     : m_private(0)
 {
     assign(s.string());
 }
 
-WebString& WebString::operator=(const WebCore::AtomicString& s)
+WebString& WebString::operator=(const WTF::AtomicString& s)
 {
     assign(s.string());
     return *this;
 }
 
-WebString::operator WebCore::AtomicString() const
+WebString::operator WTF::AtomicString() const
 {
-    return WebCore::AtomicString(static_cast<WebCore::StringImpl *>(m_private));
+    return WTF::AtomicString(static_cast<WTF::StringImpl *>(m_private));
 }
 
 void WebString::assign(WebStringPrivate* p)

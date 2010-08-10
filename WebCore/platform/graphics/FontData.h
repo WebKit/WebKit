@@ -26,13 +26,13 @@
 #ifndef FontData_h
 #define FontData_h
 
+#include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
 
 class SimpleFontData;
-class String;
 
 class FontData : public Noncopyable {
 public:
