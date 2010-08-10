@@ -244,14 +244,26 @@ int ScriptController::eventHandlerLineNumber() const
     return 0;
 }
 
-bool ScriptController::processingUserGesture(DOMWrapperWorld* world) const
+bool ScriptController::processingUserGesture()
 {
-    if (m_allowPopupsFromPlugin || isJavaScriptAnchorNavigation())
+    ExecState* exec = JSMainThreadExecState::currentState();
+    Frame* frame = exec ? toDynamicFrame(exec) : 0;
+    // No script is running, so it is user-initiated unless the gesture stack
+    // explicitly says it is not.
+    if (!frame)
+        return UserGestureIndicator::getUserGestureState() != DefinitelyNotProcessingUserGesture;
+
+    // FIXME: We check the plugin popup flag and javascript anchor navigation
+    // from the dynamic frame becuase they should only be initiated on the
+    // dynamic frame in which execution began if they do happen.
+    ScriptController* scriptController = frame->script();
+    ASSERT(scriptController);
+    if (scriptController->allowPopupsFromPlugin() || scriptController->isJavaScriptAnchorNavigation())
         return true;
 
     // If a DOM event is being processed, check that it was initiated by the user
     // and that it is in the whitelist of event types allowed to generate pop-ups.
-    if (JSDOMWindowShell* shell = existingWindowShell(world))
+    if (JSDOMWindowShell* shell = scriptController->existingWindowShell(currentWorld(exec)))
         if (Event* event = shell->window()->currentEvent())
             return event->fromUserGesture();
 

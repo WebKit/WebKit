@@ -1,3 +1,44 @@
+2010-08-10  Johnny Ding  <jnd@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Change the ScriptController::processingUserGesture to static method
+        and use dynamic(JSC binding)/entered(V8 binding) frame to check the user gesture.
+        https://bugs.webkit.org/show_bug.cgi?id=42827.
+
+        Test: fast/events/popup-blocked-from-iframe-script.html
+
+        * WebCore.order:
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::processingUserGesture):
+        * bindings/js/JSDOMBinding.h:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::setLocation):
+        (WebCore::createWindow):
+        (WebCore::domWindowAllowPopUp):
+        (WebCore::JSDOMWindow::open):
+        (WebCore::JSDOMWindow::showModalDialog):
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::setLocation):
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::navigateIfAllowed):
+        (WebCore::JSLocation::reload):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::processingUserGesture):
+        * bindings/js/ScriptController.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionWithDynamicFrameAndUserGesture):
+        (WebCore::jsTestObjPrototypeFunctionWithDynamicFrameAndUserGestureASAD):
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::processingUserGesture):
+        (WebCore::ScriptController::anyPageIsProcessingUserGesture):
+        * bindings/v8/ScriptController.h:
+        * bindings/v8/specialization/V8BindingState.cpp:
+        (WebCore::::processingUserGesture):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::isProcessingUserGesture):
+
 2010-08-10  Gavin Barraclough  <barraclough@apple.com>
 
         Chromium build fix

@@ -110,7 +110,7 @@ public:
     int eventHandlerLineNumber() const;
     
     void setProcessingTimerCallback(bool b) { m_processingTimerCallback = b; }
-    bool processingUserGesture(DOMWrapperWorld*) const;
+    static bool processingUserGesture();
     bool anyPageIsProcessingUserGesture() const;
 
     static bool canAccessFromCurrentOrigin(Frame*);

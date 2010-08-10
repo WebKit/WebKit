@@ -1129,7 +1129,7 @@ bool FrameLoader::isProcessingUserGesture()
     Frame* frame = m_frame->tree()->top();
     if (!frame->script()->canExecuteScripts(NotAboutToExecuteScript))
         return true; // If JavaScript is disabled, a user gesture must have initiated the navigation.
-    return frame->script()->processingUserGesture(mainThreadNormalWorld()); // FIXME: Use pageIsProcessingUserGesture.
+    return ScriptController::processingUserGesture(); // FIXME: Use pageIsProcessingUserGesture.
 }
 
 void FrameLoader::resetMultipleFormSubmissionProtection()

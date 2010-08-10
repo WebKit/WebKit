@@ -160,15 +160,18 @@ void ScriptController::updatePlatformScriptObjects()
     notImplemented();
 }
 
-bool ScriptController::processingUserGesture(DOMWrapperWorld*) const
+bool ScriptController::processingUserGesture()
 {
+    Frame* activeFrame = V8Proxy::retrieveFrameForEnteredContext();
     // No script is running, so it is user-initiated unless the gesture stack
     // explicitly says it is not.
-    if (!m_proxy->executingScript())
+    if (!activeFrame)
         return UserGestureIndicator::getUserGestureState() != DefinitelyNotProcessingUserGesture;
 
+    V8Proxy* activeProxy = activeFrame->script()->proxy();
+
     v8::HandleScope handleScope;
-    v8::Handle<v8::Context> v8Context = m_proxy->mainWorldContext();
+    v8::Handle<v8::Context> v8Context = V8Proxy::mainWorldContext(activeFrame);
     // FIXME: find all cases context can be empty:
     //  1) JS is disabled;
     //  2) page is NULL;
@@ -188,7 +191,11 @@ bool ScriptController::processingUserGesture(DOMWrapperWorld*) const
         // Event::fromUserGesture will return false when UserGestureIndicator::processingUserGesture() returns false.
         return event->fromUserGesture();
     }
-    if (m_sourceURL && m_sourceURL->isNull() && !m_proxy->timerCallback()) {
+    // FIXME: We check the javascript anchor navigation from the last entered
+    // frame becuase it should only be initiated on the last entered frame in
+    // which execution began if it does happen.    
+    const String* sourceURL = activeFrame->script()->sourceURL();
+    if (sourceURL && sourceURL->isNull() && !activeProxy->timerCallback()) {
         // This is the <a href="javascript:window.open('...')> case -> we let it through.
         return true;
     }
@@ -201,7 +208,7 @@ bool ScriptController::processingUserGesture(DOMWrapperWorld*) const
 bool ScriptController::anyPageIsProcessingUserGesture() const
 {
     // FIXME: is this right?
-    return processingUserGesture();
+    return ScriptController::processingUserGesture();
 }
 
 void ScriptController::evaluateInIsolatedWorld(unsigned worldID, const Vector<ScriptSourceCode>& sources)

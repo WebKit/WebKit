@@ -512,7 +512,7 @@ void JSDOMWindow::setLocation(ExecState* exec, JSValue value)
 
     if (!protocolIsJavaScript(url) || allowsAccessFrom(exec)) {
         // We want a new history item if this JS was called via a user gesture
-        frame->redirectScheduler()->scheduleLocationChange(url, lexicalFrame->loader()->outgoingReferrer(), !lexicalFrame->script()->anyPageIsProcessingUserGesture(), false, processingUserGesture(exec));
+        frame->redirectScheduler()->scheduleLocationChange(url, lexicalFrame->loader()->outgoingReferrer(), !lexicalFrame->script()->anyPageIsProcessingUserGesture(), false, processingUserGesture());
     }
 }
 
@@ -742,7 +742,7 @@ static Frame* createWindow(ExecState* exec, Frame* lexicalFrame, Frame* dynamicF
 
     if (!protocolIsJavaScript(url) || newWindow->allowsAccessFrom(exec)) {
         KURL completedURL = url.isEmpty() ? KURL(ParsedURLString, "") : completeURL(exec, url);
-        bool userGesture = processingUserGesture(exec);
+        bool userGesture = processingUserGesture();
 
         if (created)
             newFrame->loader()->changeLocation(completedURL, referrer, false, false, userGesture);
@@ -753,10 +753,10 @@ static Frame* createWindow(ExecState* exec, Frame* lexicalFrame, Frame* dynamicF
     return newFrame;
 }
 
-static bool domWindowAllowPopUp(Frame* activeFrame, ExecState* exec)
+static bool domWindowAllowPopUp(Frame* activeFrame)
 {
     ASSERT(activeFrame);
-    if (activeFrame->script()->processingUserGesture(currentWorld(exec)))
+    if (ScriptController::processingUserGesture())
         return true;
     return DOMWindow::allowPopUp(activeFrame);
 }
@@ -781,7 +781,7 @@ JSValue JSDOMWindow::open(ExecState* exec)
 
     // Because FrameTree::find() returns true for empty strings, we must check for empty framenames.
     // Otherwise, illegitimate window.open() calls with no name will pass right through the popup blocker.
-    if (!domWindowAllowPopUp(dynamicFrame, exec) && (frameName.isEmpty() || !frame->tree()->find(frameName)))
+    if (!domWindowAllowPopUp(dynamicFrame) && (frameName.isEmpty() || !frame->tree()->find(frameName)))
         return jsUndefined();
 
     // Get the target frame for the special cases of _top and _parent.  In those
@@ -805,7 +805,7 @@ JSValue JSDOMWindow::open(ExecState* exec)
 
         const JSDOMWindow* targetedWindow = toJSDOMWindow(frame, currentWorld(exec));
         if (!completedURL.isEmpty() && (!protocolIsJavaScript(completedURL) || (targetedWindow && targetedWindow->allowsAccessFrom(exec)))) {
-            bool userGesture = processingUserGesture(exec);
+            bool userGesture = processingUserGesture();
 
             // For whatever reason, Firefox uses the dynamicGlobalObject to
             // determine the outgoingReferrer.  We replicate that behavior
@@ -851,7 +851,7 @@ JSValue JSDOMWindow::showModalDialog(ExecState* exec)
     if (!dynamicFrame)
         return jsUndefined();
 
-    if (!DOMWindow::canShowModalDialogNow(frame) || !domWindowAllowPopUp(dynamicFrame, exec))
+    if (!DOMWindow::canShowModalDialogNow(frame) || !domWindowAllowPopUp(dynamicFrame))
         return jsUndefined();
 
     HashMap<String, String> features;

@@ -81,8 +81,7 @@ void State<V8Binding>::immediatelyReportUnsafeAccessTo(Frame* target)
 
 bool State<V8Binding>::processingUserGesture()
 {
-    Frame* frame = V8Proxy::retrieveFrameForEnteredContext();
-    return frame && frame->script()->processingUserGesture();
+    return ScriptController::processingUserGesture();
 }
 
 } // namespace WebCore

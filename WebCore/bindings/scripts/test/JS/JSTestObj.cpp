@@ -1105,7 +1105,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithDynamicFrameAndUserGe
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
-    imp->withDynamicFrameAndUserGesture(dynamicFrame, intArg, processingUserGesture(exec));
+    imp->withDynamicFrameAndUserGesture(dynamicFrame, intArg, processingUserGesture());
     return JSValue::encode(jsUndefined());
 }
 
@@ -1133,7 +1133,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithDynamicFrameAndUserGe
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
-    imp->withDynamicFrameAndUserGestureASAD(dynamicFrame, intArg, optionalArg, processingUserGesture(exec));
+    imp->withDynamicFrameAndUserGestureASAD(dynamicFrame, intArg, optionalArg, processingUserGesture());
     return JSValue::encode(jsUndefined());
 }
 
