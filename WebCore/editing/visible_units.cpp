@@ -1001,7 +1001,7 @@ VisiblePosition startOfDocument(const VisiblePosition &c)
 
 VisiblePosition endOfDocument(const Node* node)
 {
-    if (!node || !node->document())
+    if (!node || !node->document() || !node->document()->documentElement())
         return VisiblePosition();
     
     Element* doc = node->document()->documentElement();

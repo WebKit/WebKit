@@ -1,3 +1,13 @@
+2010-08-10  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Fix crashes by SelectionController::modify().
+        https://bugs.webkit.org/show_bug.cgi?id=43032
+
+        * editing/selection/selection-modify-crash-expected.txt: Added.
+        * editing/selection/selection-modify-crash.html: Added.
+
 2010-08-09  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
