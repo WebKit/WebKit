@@ -1,3 +1,28 @@
+2010-08-10  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Removing an element from an anonymous block causes crash
+        https://bugs.webkit.org/show_bug.cgi?id=42309
+
+        There was a case where a continuation was added as a child, but if you asked
+        that child who is your parent, it would return the wrong answer.
+   
+        The specific scenario was when a sibling of an element who was the start of a 
+        continuation was present. Retrieving the parent object had then follow the sibling
+        chain and then follow the originating continuation chain.
+
+        Test: accessibility/removed-anonymous-block-child-causes-crash.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::nextSibling):
+            Fix erroneous comment
+        (WebCore::nextContinuation):
+        (WebCore::AccessibilityRenderObject::renderParentObject):
+            Handle unhandled continuation case.
+        (WebCore::AccessibilityRenderObject::addChildren):
+            ASSERT that the parentObject() is the same when adding a new child.
+
 2010-08-10  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by David Hyatt.
