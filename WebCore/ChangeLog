@@ -1,3 +1,14 @@
+2010-08-09  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: small refactoring for CodeGeneratorInspector.
+        A number of push calls were replaced by embedded text.
+        Just for improve code readability.
+        https://bugs.webkit.org/show_bug.cgi?id=43770
+
+        * inspector/CodeGeneratorInspector.pm:
+
 2010-08-09  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

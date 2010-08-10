@@ -386,54 +386,57 @@ sub generateBackendDispatcher
 {
     my @body;
     my @methods = map($backendMethods{$_}, keys %backendMethods);
-    my @mapEntries = map("dispatchMap.add(\"$_\", &${backendClassName}::$_);", @methods);
+    my @mapEntries = map("        dispatchMap.add(\"$_\", &${backendClassName}::$_);", @methods);
+    my $mapEntries = join("\n", @mapEntries);
 
-    push(@body, "void ${backendClassName}::dispatch(const String& message)");
-    push(@body, "{");
-    push(@body, "    typedef void (${backendClassName}::*CallHandler)(PassRefPtr<InspectorArray> args);");
-    push(@body, "    typedef HashMap<String, CallHandler> DispatchMap;");
-    push(@body, "    DEFINE_STATIC_LOCAL(DispatchMap, dispatchMap, );");
-    push(@body, "    if (dispatchMap.isEmpty()) {");
-    push(@body, map("        $_", @mapEntries));
-    push(@body, "    }");
-    push(@body, "");
-    push(@body, "    RefPtr<InspectorValue> parsedMessage = InspectorValue::parseJSON(message);");
-    push(@body, "    if (!parsedMessage) {");
-    push(@body, "        ASSERT_NOT_REACHED();");
-    push(@body, "        reportProtocolError(0, \"dispatch\", \"Error: Invalid message format. Message should be in JSON format.\");");
-    push(@body, "        return;");
-    push(@body, "    }");
-    push(@body, "");
-    push(@body, "    RefPtr<InspectorArray> messageArray = parsedMessage->asArray();");
-    push(@body, "    if (!messageArray) {");
-    push(@body, "        ASSERT_NOT_REACHED();");
-    push(@body, "        reportProtocolError(0, \"dispatch\", \"Error: Invalid message format. The message should be a JSONified array of arguments.\");");
-    push(@body, "        return;");
-    push(@body, "    }");
-    push(@body, "");
-    push(@body, "    if (!messageArray->length()) {");
-    push(@body, "        ASSERT_NOT_REACHED();");
-    push(@body, "        reportProtocolError(0, \"dispatch\", \"Error: Invalid message format. Empty message was received.\");");
-    push(@body, "        return;");
-    push(@body, "    }");
-    push(@body, "");
-    push(@body, "    String methodName;");
-    push(@body, "    if (!messageArray->get(0)->asString(&methodName)) {");
-    push(@body, "        ASSERT_NOT_REACHED();");
-    push(@body, "        reportProtocolError(0, \"dispatch\", \"Error: Invalid message format. The first element of the message should be method name.\");");
-    push(@body, "        return;");
-    push(@body, "    }");
-    push(@body, "");
-    push(@body, "    HashMap<String, CallHandler>::iterator it = dispatchMap.find(methodName);");
-    push(@body, "    if (it == dispatchMap.end()) {");
-    push(@body, "        ASSERT_NOT_REACHED();");
-    push(@body, "        reportProtocolError(0, \"dispatch\", String::format(\"Error: Invalid method name. '%s' wasn't found.\", methodName.utf8().data()));");
-    push(@body, "        return;");
-    push(@body, "    }");
-    push(@body, "");
-    push(@body, "    ((*this).*it->second)(messageArray);");
-    push(@body, "}");
-    return @body;
+    my $backendDispatcherBody = << "EOF";
+void ${backendClassName}::dispatch(const String& message)
+{
+    typedef void (${backendClassName}::*CallHandler)(PassRefPtr<InspectorArray> args);
+    typedef HashMap<String, CallHandler> DispatchMap;
+    DEFINE_STATIC_LOCAL(DispatchMap, dispatchMap, );
+    if (dispatchMap.isEmpty()) {
+$mapEntries
+    }
+
+    RefPtr<InspectorValue> parsedMessage = InspectorValue::parseJSON(message);
+    if (!parsedMessage) {
+        ASSERT_NOT_REACHED();
+        reportProtocolError(0, "dispatch", "Error: Invalid message format. Message should be in JSON format.");
+        return;
+    }
+
+    RefPtr<InspectorArray> messageArray = parsedMessage->asArray();
+    if (!messageArray) {
+        ASSERT_NOT_REACHED();
+        reportProtocolError(0, "dispatch", "Error: Invalid message format. The message should be a JSONified array of arguments.");
+        return;
+    }
+
+    if (!messageArray->length()) {
+        ASSERT_NOT_REACHED();
+        reportProtocolError(0, "dispatch", "Error: Invalid message format. Empty message was received.");
+        return;
+    }
+
+    String methodName;
+    if (!messageArray->get(0)->asString(&methodName)) {
+        ASSERT_NOT_REACHED();
+        reportProtocolError(0, "dispatch", "Error: Invalid message format. The first element of the message should be method name.");
+        return;
+    }
+
+    HashMap<String, CallHandler>::iterator it = dispatchMap.find(methodName);
+    if (it == dispatchMap.end()) {
+        ASSERT_NOT_REACHED();
+        reportProtocolError(0, "dispatch", String::format("Error: Invalid method name. '%s' wasn't found.", methodName.utf8().data()));
+        return;
+    }
+
+    ((*this).*it->second)(messageArray);
+}
+EOF
+    return split("\n", $backendDispatcherBody);
 }
 
 sub generateHeader
