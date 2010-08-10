@@ -1,3 +1,9 @@
+2010-08-10  Alice Liu  <alice.liu@apple.com>
+
+        Chromium build fix attempt.  not reviewed
+        
+        * platform/text/TextBoundaries.cpp: use correct stringimplh include
+
 2010-08-10  Jian Li  <jianli@chromium.org>
 
         Chromium build fix.

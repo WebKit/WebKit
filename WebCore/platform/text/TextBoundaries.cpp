@@ -27,8 +27,8 @@
 #include "config.h"
 #include "TextBoundaries.h"
 
-#include "StringImpl.h"
 #include "TextBreakIterator.h"
+#include <wtf/text/StringImpl.h>
 #include <wtf/unicode/Unicode.h>
 
 using namespace WTF;
