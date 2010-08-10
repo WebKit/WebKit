@@ -54,7 +54,6 @@ public:
     virtual void runtimeFeatureStateChanged(const WebString& feature, bool enabled) { }
 
     virtual WebCString injectedScriptSource() { return WebCString(); }
-    virtual WebCString injectedScriptDispatcherSource() { return WebCString(); }
     virtual WebCString debuggerScriptSource() { return WebCString(); }
 
     class WebKitClientMessageLoop {

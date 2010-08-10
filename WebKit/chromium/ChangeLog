@@ -2,6 +2,26 @@
 
         Reviewed by Pavel Feldman.
 
+        Web Inspector: get rid of utility context
+        https://bugs.webkit.org/show_bug.cgi?id=43787
+
+        * public/WebDevToolsAgentClient.h:
+        * src/DebuggerAgentImpl.cpp:
+        * src/DebuggerAgentImpl.h:
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::):
+        (WebKit::WebDevToolsAgentImpl::~WebDevToolsAgentImpl):
+        (WebKit::WebDevToolsAgentImpl::attach):
+        (WebKit::WebDevToolsAgentImpl::detach):
+        (WebKit::WebDevToolsAgentImpl::frontendLoaded):
+        (WebKit::WebDevToolsAgentImpl::setRuntimeFeatureEnabled):
+        (WebKit::WebDevToolsAgentImpl::setApuAgentEnabled):
+        * src/WebDevToolsAgentImpl.h:
+
+2010-08-10  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
         Web Inspector, Chromium: reloading of inspected page hits assert in InspectorController::enableDebuggerFromFrontend()
         https://bugs.webkit.org/show_bug.cgi?id=43780
 

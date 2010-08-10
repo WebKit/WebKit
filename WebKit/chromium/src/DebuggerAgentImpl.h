@@ -31,15 +31,9 @@
 #ifndef DebuggerAgentImpl_h
 #define DebuggerAgentImpl_h
 
-#include <v8.h>
 #include <wtf/Forward.h>
-#include <wtf/HashSet.h>
-#include <wtf/Noncopyable.h>
 
 namespace WebCore {
-class Document;
-class Frame;
-class Node;
 class Page;
 }
 
@@ -61,19 +55,6 @@ public:
     void setAutoContinueOnException(bool autoContinue) { m_autoContinueOnException = autoContinue; }
 
     bool autoContinueOnException() { return m_autoContinueOnException; }
-
-    // Executes function with the given name in the utility context. Passes node
-    // and json args as parameters. Note that the function called must be
-    // implemented in the inject_dispatch.js file.
-    WTF::String executeUtilityFunction(
-        v8::Handle<v8::Context> context,
-        int callId,
-        const char* object,
-        const WTF::String& functionName,
-        const WTF::String& jsonArgs,
-        bool async,
-        WTF::String* exception);
-
 
     WebCore::Page* page();
     WebDevToolsAgentImpl* webdevtoolsAgent() { return m_webdevtoolsAgent; }
