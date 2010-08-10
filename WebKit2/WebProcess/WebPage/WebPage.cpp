@@ -310,6 +310,29 @@ void WebPage::drawRect(GraphicsContext& graphicsContext, const IntRect& rect)
     graphicsContext.restore();
 }
 
+float WebPage::zoomFactor() const
+{
+    if (Frame* coreFrame = m_mainFrame->coreFrame()) {
+        if (FrameView* view = coreFrame->view())
+            return view->zoomFactor();
+    }
+    
+    return 1.0f;
+}
+
+void WebPage::setZoomFactor(float zoomFactor)
+{
+    if (Frame* coreFrame = m_mainFrame->coreFrame()) {
+        if (FrameView* view = coreFrame->view())
+            return view->setZoomFactor(zoomFactor, m_page->settings()->zoomMode());
+    }
+}
+
+void WebPage::setZoomMode(ZoomMode mode)
+{
+    m_page->settings()->setZoomMode(mode);
+}
+
 // Events 
 
 static const WebEvent* g_currentEvent = 0;

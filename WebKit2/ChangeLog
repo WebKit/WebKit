@@ -1,3 +1,25 @@
+2010-08-09  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Add zoom support for injected bundle
+        https://bugs.webkit.org/show_bug.cgi?id=43759
+
+        Add SPI to change the zoom factor for a page.
+
+        * WebProcess/InjectedBundle/API/c/WKBundleAPICast.h:
+        (toZoomMode):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageGetZoomFactor):
+        (WKBundlePageSetZoomFactor):
+        (WKBundlePageSetZoomMode):
+        * WebProcess/InjectedBundle/API/c/WKBundlePagePrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::zoomFactor):
+        (WebKit::WebPage::setZoomFactor):
+        (WebKit::WebPage::setZoomMode):
+        * WebProcess/WebPage/WebPage.h:
+
 2010-08-06  Gavin Barraclough  <barraclough@apple.com>
 
         Rubber stamped by Sam Weinig

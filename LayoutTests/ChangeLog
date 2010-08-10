@@ -1,3 +1,12 @@
+2010-08-09  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Add zoom support for injected bundle
+        https://bugs.webkit.org/show_bug.cgi?id=43759
+
+        * platform/mac-wk2/Skipped: Remove now passing tests.
+
 2010-08-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Justin Garcia.

@@ -34,6 +34,7 @@
 #include "InjectedBundlePageUIClient.h"
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/IntRect.h>
+#include <WebCore/ZoomMode.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
@@ -113,6 +114,10 @@ public:
     bool isEditingCommandEnabled(const WTF::String& commandName);
     void clearMainFrameName();
     void sendClose();
+    
+    float zoomFactor() const;
+    void setZoomFactor(float);
+    void setZoomMode(WebCore::ZoomMode);
 
 #if USE(ACCELERATED_COMPOSITING)
     void changeAcceleratedCompositingMode(WebCore::GraphicsLayer*);
@@ -150,7 +155,7 @@ private:
     void preferencesDidChange(const WebPreferencesStore&);
     void platformPreferencesDidChange(const WebPreferencesStore&);
     void didReceivePolicyDecision(WebFrame*, uint64_t listenerID, WebCore::PolicyAction policyAction);
-    
+
     WebCore::Page* m_page;
     RefPtr<WebFrame> m_mainFrame;
     HashMap<uint64_t, WebFrame*> m_frameMap;

@@ -28,8 +28,10 @@
 
 #include "WKBundleBase.h"
 #include "WKBundlePage.h"
+#include "WKBundlePagePrivate.h"
 #include <WebCore/EditorInsertAction.h>
 #include <WebCore/TextAffinity.h>
+#include <WebCore/ZoomMode.h>
 
 namespace WebCore {
     class CSSStyleDeclaration;
@@ -110,6 +112,19 @@ inline WKAffinityType toWK(WebCore::EAffinity affinity)
     }
     ASSERT_NOT_REACHED();
     return kWKAffinityUpstream;
+}
+
+inline WebCore::ZoomMode toZoomMode(WKBundlePageZoomMode wkZoomMode)
+{
+    switch (wkZoomMode) {
+    case kWKBundlePageZoomModeTextOnly:
+        return WebCore::ZoomTextOnly;
+    case kWKBundlePageZoomModePage:
+        return WebCore::ZoomPage;
+    }
+
+    ASSERT_NOT_REACHED();
+    return WebCore::ZoomTextOnly;
 }
 
 #endif // WKBundleAPICast_h

@@ -233,7 +233,6 @@ fast/css/first-letter-first-line-hover.html
 fast/css/first-letter-hover.html
 fast/css/hover-affects-child.html
 fast/css/hover-subselector.html
-fast/css/ignore-text-zoom.html
 fast/css/layerZOrderCrash.html
 fast/css/list-item-pseudo-nocrash.html
 fast/css/nested-layers-with-hover.html
@@ -242,10 +241,7 @@ fast/css/resize-corner-tracking.html
 fast/css/resize-single-axis.html
 fast/css/universal-hover-quirk.html
 fast/css/user-drag-none.html
-fast/css/zoom-body-scroll.html
 fast/dom/Document/CaretRangeFromPoint/caretRangeFromPoint-in-zoom-and-scroll.html
-fast/dom/Document/CaretRangeFromPoint/hittest-relative-to-viewport.html
-fast/dom/elementFromPoint-relative-to-viewport.html
 fast/dom/HTMLTableColElement/resize-table-using-col-width.html
 fast/dom/Node/mutation-blur.html
 fast/dom/replaced-image-map.html
@@ -515,8 +511,6 @@ platform/mac/fast/forms/input-appearance-spinbutton-up.html
 platform/mac/fast/forms/input-number-click.html
 platform/mac/fast/forms/listbox-scrollbar-hit-test.html
 platform/mac/fast/overflow/overflow-scrollbar-hit-test.html
-plugins/createScriptableObject-before-start.html
-plugins/destroy-during-npp-new.html
 plugins/resize-from-plugin.html
 scrollbars/overflow-custom-scrollbar-crash.html
 scrollbars/scrollbar-iframe-click-does-not-blur-content.html
@@ -579,7 +573,6 @@ svg/custom/resource-invalidate-on-target-update.svg
 svg/custom/scroll-hit-test.xhtml
 svg/custom/stroke-width-click.svg
 svg/custom/text-hit-test.svg
-svg/custom/text-zoom.xhtml
 svg/custom/use-clipped-hit.svg
 svg/custom/use-css-events.svg
 svg/custom/use-elementInstance-event-target.svg
@@ -806,24 +799,8 @@ svg/text/select-x-list-with-tspans-3.svg
 svg/text/select-x-list-with-tspans-4.svg
 svg/text/selection-doubleclick.svg
 svg/text/selection-tripleclick.svg
-svg/zoom/page/absolute-sized-document-no-scrollbars.svg
-svg/zoom/page/absolute-sized-document-scrollbars.svg
-svg/zoom/page/relative-sized-document-scrollbars.svg
 svg/zoom/page/zoom-coords-viewattr-01-b.svg
-svg/zoom/page/zoom-foreignObject.svg
-svg/zoom/page/zoom-hixie-mixed-008.xml
-svg/zoom/page/zoom-hixie-mixed-009.xml
-svg/zoom/page/zoom-hixie-rendering-model-004.xhtml
-svg/zoom/page/zoom-svg-float-border-padding.xml
-svg/zoom/text/absolute-sized-document-no-scrollbars.svg
-svg/zoom/text/absolute-sized-document-scrollbars.svg
-svg/zoom/text/relative-sized-document-scrollbars.svg
 svg/zoom/text/zoom-coords-viewattr-01-b.svg
-svg/zoom/text/zoom-foreignObject.svg
-svg/zoom/text/zoom-hixie-mixed-008.xml
-svg/zoom/text/zoom-hixie-mixed-009.xml
-svg/zoom/text/zoom-hixie-rendering-model-004.xhtml
-svg/zoom/text/zoom-svg-float-border-padding.xml
 
 # WebKitTestRunner needs to support layoutTestController.setXSSAuditorEnabled
 # <https://bugs.webkit.org/show_bug.cgi?id=42195>

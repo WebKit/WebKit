@@ -34,10 +34,10 @@ module WTR {
         [CustomArgumentHandling] void leapForward(/*in unsigned long delay*/); // CustomArgumentHandling only to throw exception while not implemented.
 
         // Zoom functions.
-        [CustomArgumentHandling] void textZoomIn(); // CustomArgumentHandling only to throw exception while not implemented.
-        [CustomArgumentHandling] void textZoomOut(); // CustomArgumentHandling only to throw exception while not implemented.
-        [CustomArgumentHandling] void zoomPageIn(); // CustomArgumentHandling only to throw exception while not implemented.
-        [CustomArgumentHandling] void zoomPageOut(); // CustomArgumentHandling only to throw exception while not implemented.
+        void textZoomIn();
+        void textZoomOut();
+        void zoomPageIn();
+        void zoomPageOut();
     };
 
 }

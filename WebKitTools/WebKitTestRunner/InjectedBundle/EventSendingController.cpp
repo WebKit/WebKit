@@ -26,10 +26,15 @@
 #include "EventSendingController.h"
 
 #include "InjectedBundle.h"
+#include "InjectedBundlePage.h"
 #include "JSEventSendingController.h"
+#include <WebKit2/WKBundlePage.h>
+#include <WebKit2/WKBundlePagePrivate.h>
 #include <WebKit2/WKBundlePrivate.h>
 
 namespace WTR {
+
+static const float ZoomMultiplierRatio = 1.2f;
 
 PassRefPtr<EventSendingController> EventSendingController::create()
 {
@@ -85,24 +90,32 @@ void EventSendingController::leapForward(JSContextRef context, size_t argumentCo
     setExceptionForString(context, exception, "EventSender.leapForward is not yet supported.");
 }
 
-void EventSendingController::textZoomIn(JSContextRef context, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+void EventSendingController::textZoomIn()
 {
-    setExceptionForString(context, exception, "EventSender.textZoomIn is not yet supported.");
+    WKBundlePageSetZoomMode(InjectedBundle::shared().page()->page(), kWKBundlePageZoomModeTextOnly);
+    float zoomFactor = WKBundlePageGetZoomFactor(InjectedBundle::shared().page()->page());
+    WKBundlePageSetZoomFactor(InjectedBundle::shared().page()->page(), zoomFactor * ZoomMultiplierRatio);
 }
 
-void EventSendingController::textZoomOut(JSContextRef context, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+void EventSendingController::textZoomOut()
 {
-    setExceptionForString(context, exception, "EventSender.textZoomOut is not yet supported.");
+    WKBundlePageSetZoomMode(InjectedBundle::shared().page()->page(), kWKBundlePageZoomModeTextOnly);
+    float zoomFactor = WKBundlePageGetZoomFactor(InjectedBundle::shared().page()->page());
+    WKBundlePageSetZoomFactor(InjectedBundle::shared().page()->page(), zoomFactor / ZoomMultiplierRatio);
 }
 
-void EventSendingController::zoomPageIn(JSContextRef context, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+void EventSendingController::zoomPageIn()
 {
-    setExceptionForString(context, exception, "EventSender.zoomPageIn is not yet supported.");
+    WKBundlePageSetZoomMode(InjectedBundle::shared().page()->page(), kWKBundlePageZoomModePage);
+    float zoomFactor = WKBundlePageGetZoomFactor(InjectedBundle::shared().page()->page());
+    WKBundlePageSetZoomFactor(InjectedBundle::shared().page()->page(), zoomFactor * ZoomMultiplierRatio);
 }
 
-void EventSendingController::zoomPageOut(JSContextRef context, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+void EventSendingController::zoomPageOut()
 {
-    setExceptionForString(context, exception, "EventSender.zoomPageOut is not yet supported.");
+    WKBundlePageSetZoomMode(InjectedBundle::shared().page()->page(), kWKBundlePageZoomModePage);
+    float zoomFactor = WKBundlePageGetZoomFactor(InjectedBundle::shared().page()->page());
+    WKBundlePageSetZoomFactor(InjectedBundle::shared().page()->page(), zoomFactor / ZoomMultiplierRatio);
 }
 
 // Object Creation
