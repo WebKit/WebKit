@@ -40,6 +40,7 @@
 #include "V8Clipboard.h"
 #include "V8CompositionEvent.h"
 #include "V8CustomEvent.h"
+#include "V8DeviceMotionEvent.h"
 #include "V8DeviceOrientationEvent.h"
 #include "V8ErrorEvent.h"
 #include "V8IDBErrorEvent.h"
@@ -155,6 +156,8 @@ v8::Handle<v8::Value> toV8(Event* impl)
     if (impl->isBeforeLoadEvent())
         return toV8(static_cast<BeforeLoadEvent*>(impl));
 #if ENABLE(DEVICE_ORIENTATION)
+    if (impl->isDeviceMotionEvent())
+        return toV8(static_cast<DeviceMotionEvent*>(impl));
     if (impl->isDeviceOrientationEvent())
         return toV8(static_cast<DeviceOrientationEvent*>(impl));
 #endif

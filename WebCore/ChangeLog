@@ -1,3 +1,16 @@
+2010-08-10  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        [V8] DeviceMotionEvent can not be used from JavaScript
+        https://bugs.webkit.org/show_bug.cgi?id=43785
+
+        This is tested by the existing tests fast/dom/DeviceMotion/create-event.html
+        and fast/dom/DeviceMotion/optional-event-properties.html.
+
+        * bindings/v8/custom/V8EventCustom.cpp:
+        (WebCore::toV8):
+
 2010-08-10  Balazs Kelemen  <kb@inf.u-szeged.hu>
 
         Reviewed by Antonio Gomes.
