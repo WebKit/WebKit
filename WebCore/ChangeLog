@@ -1,3 +1,9 @@
+2010-08-10  Ariya Hidayat  <ariya@sencha.com>
+
+        [Qt] Warning fix, remove reference to platform/text/StringImpl.h
+
+        * WebCore.pro:
+
 2010-08-10  Alice Liu  <alice.liu@apple.com>
 
         Chromium build fix attempt.  not reviewed

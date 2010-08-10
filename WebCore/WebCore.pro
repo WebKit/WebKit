@@ -1751,7 +1751,6 @@ HEADERS += \
     platform/text/RegularExpression.h \
     platform/text/SegmentedString.h \
     platform/text/StringBuilder.h \
-    platform/text/StringImpl.h \
     platform/text/TextCodec.h \
     platform/text/TextCodecLatin1.h \
     platform/text/TextCodecUserDefined.h \
