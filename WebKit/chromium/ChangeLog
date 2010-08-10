@@ -1,5 +1,11 @@
 2010-08-10  Yury Semikhatsky  <yurys@chromium.org>
 
+        Unreviewed. Remove references to deleted header InspectorFrontend.h
+
+        * src/WebDevToolsAgentImpl.cpp:
+
+2010-08-10  Yury Semikhatsky  <yurys@chromium.org>
+
         Unreviewed. Fix Chromium compilation.
 
         * src/WebDevToolsAgentImpl.cpp:

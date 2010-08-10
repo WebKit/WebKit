@@ -40,7 +40,6 @@
 #include "InspectorBackend.h"
 #include "InspectorBackendDispatcher.h"
 #include "InspectorController.h"
-#include "InspectorFrontend.h"
 #include "InspectorResource.h"
 #include "Node.h"
 #include "Page.h"
@@ -75,7 +74,6 @@ using WebCore::FrameLoader;
 using WebCore::InjectedScriptHost;
 using WebCore::InspectorBackend;
 using WebCore::InspectorController;
-using WebCore::InspectorFrontend;
 using WebCore::InspectorResource;
 using WebCore::Node;
 using WebCore::Page;
