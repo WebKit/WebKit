@@ -160,11 +160,9 @@ bool Path::hasCurrentPoint() const
     return !isEmpty();
 }
 
-FloatPoint Path::currentPoint() const 
+FloatPoint Path::currentPoint() const
 {
-    // FIXME: return current point of subpath.
-    float quietNaN = std::numeric_limits<float>::quiet_NaN();
-    return FloatPoint(quietNaN, quietNaN);
+    return m_path->lastPoint();
 }
 
-}
+} // namespace WebCore
