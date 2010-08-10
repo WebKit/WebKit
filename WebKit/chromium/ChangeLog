@@ -1,3 +1,10 @@
+2010-08-10  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Fix Chromium compilation.
+
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::WebDevToolsAgentImpl::frontendLoaded):
+
 2010-08-09  Gavin Barraclough  <barraclough@apple.com>
 
         Speculative chromium build fix V.

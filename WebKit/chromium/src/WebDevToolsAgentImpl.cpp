@@ -50,7 +50,6 @@
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "ScriptDebugServer.h"
-#include "ScriptObject.h"
 #include "ScriptState.h"
 #include "ScriptValue.h"
 #include "V8Binding.h"
@@ -84,7 +83,6 @@ using WebCore::ResourceError;
 using WebCore::ResourceRequest;
 using WebCore::ResourceResponse;
 using WebCore::SafeAllocation;
-using WebCore::ScriptObject;
 using WebCore::ScriptState;
 using WebCore::ScriptValue;
 using WTF::String;
@@ -265,11 +263,8 @@ void WebDevToolsAgentImpl::detach()
 
 void WebDevToolsAgentImpl::frontendLoaded()
 {
-    v8::HandleScope scope;
-    ScriptState* state = ScriptState::forContext(
-        v8::Local<v8::Context>::New(m_utilityContext));
     InspectorController* ic = inspectorController();
-    ic->connectFrontend(ScriptObject(state, m_utilityContext->Global()));
+    ic->connectFrontend();
     m_client->runtimeFeatureStateChanged(kFrontendConnectedFeatureName, true);
 }
 
