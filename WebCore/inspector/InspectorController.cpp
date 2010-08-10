@@ -604,9 +604,12 @@ void InspectorController::releaseFrontendLifetimeAgents()
     if (m_domAgent)
         m_domAgent->reset();
     m_domAgent.clear();
+
+#if ENABLE(DATABASE)
     if (m_storageAgent)
         m_storageAgent->clearFrontend();
     m_storageAgent.clear();
+#endif
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     m_applicationCacheAgent.clear();

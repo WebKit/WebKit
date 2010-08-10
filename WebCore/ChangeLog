@@ -1,5 +1,12 @@
 2010-08-10  Pavel Feldman  <pfeldman@chromium.org>
 
+        Not reviewed. Qt build fix, follow up for r65072.
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::releaseFrontendLifetimeAgents):
+
+2010-08-10  Pavel Feldman  <pfeldman@chromium.org>
+
         Reviewed by Yury Semikhatsky.
 
         Web Inspector: move database processing to native layer.
