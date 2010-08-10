@@ -61,10 +61,10 @@ private:
     TestShell* m_shell;
 
     // Set of allowed origins.
-    HashSet<WebCore::String> m_allowedOrigins;
+    HashSet<WTF::String> m_allowedOrigins;
 
     // Map of active replacement IDs to the titles of those notifications
-    HashMap<WebCore::String, WebCore::String> m_replacements;
+    HashMap<WTF::String, WTF::String> m_replacements;
 };
 
 #endif // NotificationPresenter_h

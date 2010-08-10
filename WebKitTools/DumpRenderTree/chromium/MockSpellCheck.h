@@ -73,7 +73,7 @@ private:
     bool initializeIfNeeded();
 
     // A table that consists of misspelled words.
-    HashMap<WebCore::String, bool> m_misspelledWords;
+    HashMap<WTF::String, bool> m_misspelledWords;
 
     // A flag representing whether or not this object is initialized.
     bool m_initialized;

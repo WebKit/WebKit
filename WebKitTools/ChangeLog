@@ -1,3 +1,13 @@
+2010-08-09  Gavin Barraclough  <barraclough@apple.com>
+
+        Speculative chromium build fix III.
+
+        * DumpRenderTree/chromium/MockSpellCheck.h:
+        * DumpRenderTree/chromium/NotificationPresenter.h:
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebViewHost::addClearHeader):
+        (WebViewHost::clearHeaders):
+
 2010-08-09  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Tony Chang.
