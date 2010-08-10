@@ -556,7 +556,7 @@ void PluginView::setParentVisible(bool visible)
 
 NPError PluginView::handlePostReadFile(Vector<char>& buffer, uint32_t len, const char* buf)
 {
-    String filename(buf, len);
+    WTF::String filename(buf, len);
 
     if (filename.startsWith("file:///"))
         filename = filename.substring(8);
