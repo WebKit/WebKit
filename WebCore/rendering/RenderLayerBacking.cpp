@@ -64,7 +64,6 @@ using namespace HTMLNames;
 static bool hasBorderOutlineOrShadow(const RenderStyle*);
 static bool hasBoxDecorationsOrBackground(const RenderObject*);
 static bool hasBoxDecorationsOrBackgroundImage(const RenderStyle*);
-static IntRect clipBox(RenderBox* renderer);
 
 static inline bool is3DCanvas(RenderObject* renderer)
 {
@@ -277,18 +276,6 @@ bool RenderLayerBacking::updateGraphicsLayerConfiguration()
         layerConfigChanged = RenderLayerCompositor::parentIFrameContentLayers(toRenderIFrame(renderer()));
 
     return layerConfigChanged;
-}
-
-static IntRect clipBox(RenderBox* renderer)
-{
-    IntRect result = ClipRects::infiniteRect();
-    if (renderer->hasOverflowClip())
-        result = renderer->overflowClipRect(0, 0);
-
-    if (renderer->hasClip())
-        result.intersect(renderer->clipRect(0, 0));
-
-    return result;
 }
 
 void RenderLayerBacking::updateGraphicsLayerGeometry()
