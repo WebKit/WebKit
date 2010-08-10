@@ -1,5 +1,14 @@
 2010-08-09  Gavin Barraclough  <barraclough@apple.com>
 
+        Qt build fix attempt VIII.
+
+        * dom/QualifiedName.cpp:
+        (WebCore::QualifiedName::toString):
+        * dom/XMLDocumentParserQt.cpp:
+        (WebCore::handleElementNamespaces):
+
+2010-08-09  Gavin Barraclough  <barraclough@apple.com>
+
         Qt build fix attempt VII.
 
         * dom/QualifiedName.cpp:
