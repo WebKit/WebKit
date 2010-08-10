@@ -1,3 +1,25 @@
+2010-08-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Justin Garcia.
+
+        fontColorChangesComputedStyle, fontSizeChangesComputedStyle, and fontFaceChangesComputedStyle should be removed
+        https://bugs.webkit.org/show_bug.cgi?id=43465
+
+        Removed fontColorChangesComputedStyle, fontSizeChangesComputedStyle, and fontFaceChangesComputedStyle
+        because StyleChange's applyFontColor, applyFontFace, and applyFontSize all return false
+        if there was no difference between the new font color, font size, font face and that of the computed style.
+
+        Also added a work-around for the bug 28282 in getPropertiesNotInComputedStyle with a test so that
+        the above change will not add a redundant font or span element.
+
+        Test: editing/style/fore-color-by-name.html
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::getRGBAFontColor): Added.
+        (WebCore::StyleChange::extractTextStyles): Calls getRGBAFontColor.
+        (WebCore::getPropertiesNotInComputedStyle): Removes color property manually by checking the RGBA values.
+        (WebCore::ApplyStyleCommand::addInlineStyleIfNeeded): See above.
+
 2010-08-09  Kenneth Russell  <kbr@google.com>
 
         Reviewed by David Levin.

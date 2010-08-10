@@ -51,6 +51,26 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+static RGBA32 getRGBAFontColor(CSSStyleDeclaration* style)
+{
+    RefPtr<CSSValue> colorValue = style->getPropertyCSSValue(CSSPropertyColor);
+    if (!colorValue)
+        return Color::transparent;
+
+    ASSERT(colorValue->isPrimitiveValue());
+
+    CSSPrimitiveValue* primitiveColor = static_cast<CSSPrimitiveValue*>(colorValue.get());
+    RGBA32 rgba = 0;
+    if (primitiveColor->primitiveType() != CSSPrimitiveValue::CSS_RGBCOLOR) {
+        CSSParser::parseColor(rgba, colorValue->cssText());
+        // Need to take care of named color such as green and black
+        // This code should be removed after https://bugs.webkit.org/show_bug.cgi?id=28282 is fixed.
+    } else
+        rgba = primitiveColor->getRGBA32Value();
+
+    return rgba;
+}
+
 class StyleChange {
 public:
     explicit StyleChange(CSSStyleDeclaration*, const Position&);
@@ -209,17 +229,8 @@ void StyleChange::extractTextStyles(CSSMutableStyleDeclaration* style)
         break;
     }
 
-    if (RefPtr<CSSValue> colorValue = style->getPropertyCSSValue(CSSPropertyColor)) {
-        ASSERT(colorValue->isPrimitiveValue());
-        CSSPrimitiveValue* primitiveColor = static_cast<CSSPrimitiveValue*>(colorValue.get());
-        RGBA32 rgba = 0;
-        if (primitiveColor->primitiveType() != CSSPrimitiveValue::CSS_RGBCOLOR) {
-            CSSParser::parseColor(rgba, colorValue->cssText());
-            // Need to take care of named color such as green and black
-            // This code should be removed after https://bugs.webkit.org/show_bug.cgi?id=28282 is fixed.
-        } else
-            rgba = primitiveColor->getRGBA32Value();
-        m_applyFontColor = Color(rgba).name();
+    if (style->getPropertyCSSValue(CSSPropertyColor)) {
+        m_applyFontColor = Color(getRGBAFontColor(style)).name();
         style->removeProperty(CSSPropertyColor);
     }
 
@@ -381,6 +392,9 @@ RefPtr<CSSMutableStyleDeclaration> getPropertiesNotInComputedStyle(CSSStyleDecla
 
     if (fontWeightIsBold(result.get()) == fontWeightIsBold(computedStyle))
         result->removeProperty(CSSPropertyFontWeight);
+
+    if (getRGBAFontColor(result.get()) == getRGBAFontColor(computedStyle))
+        result->removeProperty(CSSPropertyColor);
 
     return result;
 }
@@ -1729,33 +1743,6 @@ void ApplyStyleCommand::addBlockStyle(const StyleChange& styleChange, HTMLElemen
     setNodeAttribute(block, styleAttr, cssText);
 }
 
-static bool fontColorChangesComputedStyle(const Color& computedStyleColor, StyleChange styleChange)
-{
-    if (styleChange.applyFontColor()) {
-        if (Color(styleChange.fontColor()) != computedStyleColor)
-            return true;
-    }
-    return false;
-}
-
-static bool fontSizeChangesComputedStyle(RenderStyle* computedStyle, StyleChange styleChange)
-{
-    if (styleChange.applyFontSize()) {
-        if (styleChange.fontSize().toInt() != computedStyle->fontSize())
-            return true;
-    }
-    return false;
-}
-
-static bool fontFaceChangesComputedStyle(RenderStyle* computedStyle, StyleChange styleChange)
-{
-    if (styleChange.applyFontFace()) {
-        if (computedStyle->fontDescription().family().family().string() != styleChange.fontFace())
-            return true;
-    }
-    return false;
-}
-
 void ApplyStyleCommand::addInlineStyleIfNeeded(CSSMutableStyleDeclaration *style, Node *startNode, Node *endNode)
 {
     if (m_removeOnly)
@@ -1763,27 +1750,18 @@ void ApplyStyleCommand::addInlineStyleIfNeeded(CSSMutableStyleDeclaration *style
 
     StyleChange styleChange(style, Position(startNode, 0));
 
-    //
     // Font tags need to go outside of CSS so that CSS font sizes override leagcy font sizes.
-    //
     if (styleChange.applyFontColor() || styleChange.applyFontFace() || styleChange.applyFontSize()) {
         RefPtr<Element> fontElement = createFontElement(document());
-        RenderStyle* computedStyle = startNode->computedStyle();
 
-        // We only want to insert a font element if it will end up changing the style of the
-        // text somehow. Otherwise it will be a garbage node that will create problems for us
-        // most notably when we apply a blockquote style for a message reply.
-        if (fontColorChangesComputedStyle(computedStyle->color(), styleChange)
-                || fontFaceChangesComputedStyle(computedStyle, styleChange)
-                || fontSizeChangesComputedStyle(computedStyle, styleChange)) {
-            if (styleChange.applyFontColor())
-                fontElement->setAttribute(colorAttr, styleChange.fontColor());
-            if (styleChange.applyFontFace())
-                fontElement->setAttribute(faceAttr, styleChange.fontFace());
-            if (styleChange.applyFontSize())
-                fontElement->setAttribute(sizeAttr, styleChange.fontSize());
-            surroundNodeRangeWithElement(startNode, endNode, fontElement.get());
-        }
+        if (styleChange.applyFontColor())
+            fontElement->setAttribute(colorAttr, styleChange.fontColor());
+        if (styleChange.applyFontFace())
+            fontElement->setAttribute(faceAttr, styleChange.fontFace());
+        if (styleChange.applyFontSize())
+            fontElement->setAttribute(sizeAttr, styleChange.fontSize());
+
+        surroundNodeRangeWithElement(startNode, endNode, fontElement.get());
     }
 
     if (styleChange.cssStyle().length()) {

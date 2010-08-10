@@ -1,3 +1,16 @@
+2010-08-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Justin Garcia.
+
+        fontColorChangesComputedStyle, fontSizeChangesComputedStyle, and fontFaceChangesComputedStyle should be removed
+        https://bugs.webkit.org/show_bug.cgi?id=43465
+
+        Added a test for applying execCommand('foreColor') by color name. Because of the bug 28282, we have to manually
+        process color property in getPropertiesNotInComputedStyle to avoid adding a redundant font or span element.
+
+        * editing/style/fore-color-by-name-expected.txt: Added.
+        * editing/style/fore-color-by-name.html: Added.
+
 2010-08-09  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by David Kilzer.
