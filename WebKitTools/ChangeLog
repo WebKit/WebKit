@@ -1,3 +1,15 @@
+2010-08-09  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        increase the number of test results that we save
+        https://bugs.webkit.org/show_bug.cgi?id=43763
+
+        Now that we do incremental uploads, we can increase the number of
+        results that we save for http://test-results.appspot.com/dashboards/flakiness_dashboard.html.
+
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator.py:
+
 2010-08-09  Evan Martin  <evan@chromium.org>
 
         Reviewed by Tony Chang.
