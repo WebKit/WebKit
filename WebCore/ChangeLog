@@ -1,5 +1,11 @@
 2010-08-09  Gavin Barraclough  <barraclough@apple.com>
 
+        Speculative Qt build fix.
+
+        * css/CSSSelector.cpp:
+
+2010-08-09  Gavin Barraclough  <barraclough@apple.com>
+
         Speculative gtk build fix.
 
         * plugins/gtk/PluginViewGtk.cpp:
