@@ -1,3 +1,15 @@
+2010-08-10  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed test fix.
+
+        https://bugs.webkit.org/show_bug.cgi?id=43771
+        [Chromium] Test: editing/selection/doubleclick-inline-first-last-contenteditable fails on win
+        
+        Set platform selectTrailingWhitespaceEnabled false, which is true only on windows.
+
+        * editing/selection/script-tests/doubleclick-inline-first-last-contenteditable.js:
+        * platform/chromium/test_expectations.txt:
+
 2010-08-09  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
