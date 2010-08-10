@@ -29,7 +29,7 @@
 
 #include <QString>
 
-namespace WebCore {
+namespace WTF {
 
 // String conversions
 String::String(const QString& qstr)
