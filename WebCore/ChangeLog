@@ -1,3 +1,10 @@
+2010-08-10  Jian Li  <jianli@chromium.org>
+
+        Chromium build fix.
+
+        * platform/graphics/chromium/FontPlatformDataChromiumWin.h:
+        * platform/graphics/chromium/FontPlatformDataLinux.cpp:
+
 2010-08-10  Johnny Ding  <jnd@chromium.org>
 
         Reviewed by Adam Barth.

@@ -34,10 +34,10 @@
 
 #include "config.h"
 
-#include "StringImpl.h"
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/text/StringImpl.h> 
 
 #include <usp10.h>
 

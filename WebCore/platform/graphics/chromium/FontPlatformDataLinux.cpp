@@ -35,10 +35,11 @@
 #include "HarfbuzzSkia.h"
 #include "NotImplemented.h"
 #include "PlatformString.h"
-#include "StringImpl.h"
 
 #include "SkPaint.h"
 #include "SkTypeface.h"
+
+#include <wtf/text/StringImpl.h> 
 
 namespace WebCore {
 
