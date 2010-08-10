@@ -132,12 +132,12 @@ namespace JSC {
                     return *this;
                 }
 
-                UStringImpl* operator*()
+                StringImpl* operator*()
                 {
                     WorkItem& item = m_workQueue.last();
                     RopeImpl::Fiber fiber = item.fibers[item.i];
                     ASSERT(!RopeImpl::isRope(fiber));
-                    return static_cast<UStringImpl*>(fiber);
+                    return static_cast<StringImpl*>(fiber);
                 }
 
                 bool operator!=(const RopeIterator& other) const
@@ -203,7 +203,7 @@ namespace JSC {
         {
             ASSERT(!m_value.isNull());
         }
-        JSString(JSGlobalData* globalData, PassRefPtr<UStringImpl> value, HasOtherOwnerType)
+        JSString(JSGlobalData* globalData, PassRefPtr<StringImpl> value, HasOtherOwnerType)
             : JSCell(globalData->stringStructure.get())
             , m_length(value->length())
             , m_value(value)
@@ -359,7 +359,7 @@ namespace JSC {
 
         void appendStringInConstruct(unsigned& index, const UString& string)
         {
-            UStringImpl* impl = string.rep();
+            StringImpl* impl = string.rep();
             impl->ref();
             m_other.m_fibers[index++] = impl;
         }
@@ -386,7 +386,7 @@ namespace JSC {
                 m_length += s->length();
             } else {
                 UString u(v.toString(exec));
-                UStringImpl* impl = u.rep();
+                StringImpl* impl = u.rep();
                 impl->ref();
                 m_other.m_fibers[index++] = impl;
                 m_length += u.size();
@@ -474,7 +474,7 @@ namespace JSC {
         UChar c = s.data()[offset];
         if (c <= 0xFF)
             return globalData->smallStrings.singleCharacterString(globalData, c);
-        return fixupVPtr(globalData, new (globalData) JSString(globalData, UString(UStringImpl::create(s.rep(), offset, 1))));
+        return fixupVPtr(globalData, new (globalData) JSString(globalData, UString(StringImpl::create(s.rep(), offset, 1))));
     }
 
     inline JSString* jsNontrivialString(JSGlobalData* globalData, const char* s)
@@ -532,7 +532,7 @@ namespace JSC {
             if (c <= 0xFF)
                 return globalData->smallStrings.singleCharacterString(globalData, c);
         }
-        return fixupVPtr(globalData, new (globalData) JSString(globalData, UString(UStringImpl::create(s.rep(), offset, length)), JSString::HasOtherOwner));
+        return fixupVPtr(globalData, new (globalData) JSString(globalData, UString(StringImpl::create(s.rep(), offset, length)), JSString::HasOtherOwner));
     }
 
     inline JSString* jsOwnedString(JSGlobalData* globalData, const UString& s)

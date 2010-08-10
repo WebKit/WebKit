@@ -40,7 +40,7 @@ void RopeImpl::derefFibersNonRecursive(Vector<RopeImpl*, 32>& workQueue)
             else
                 nextRope->deref();
         } else
-            static_cast<UStringImpl*>(fiber)->deref();
+            static_cast<StringImpl*>(fiber)->deref();
     }
 }
 

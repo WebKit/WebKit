@@ -501,7 +501,7 @@ AtomicStringImpl* findAtomicString(const Identifier& identifier)
 {
     if (identifier.isNull())
         return 0;
-    UStringImpl* impl = identifier.ustring().rep();
+    StringImpl* impl = identifier.ustring().rep();
     ASSERT(impl->existingHash());
     return AtomicString::find(impl->characters(), impl->length(), impl->existingHash());
 }

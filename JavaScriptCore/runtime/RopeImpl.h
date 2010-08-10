@@ -26,14 +26,14 @@
 #ifndef RopeImpl_h
 #define RopeImpl_h
 
-#include "UStringImpl.h"
+#include <wtf/text/StringImpl.h>
 
 namespace JSC {
 
 class RopeImpl : public StringImplBase {
 public:
     // A RopeImpl is composed from a set of smaller strings called Fibers.
-    // Each Fiber in a rope is either UStringImpl or another RopeImpl.
+    // Each Fiber in a rope is either StringImpl or another RopeImpl.
     typedef StringImplBase* Fiber;
 
     // Creates a RopeImpl comprising of 'fiberCount' Fibers.
@@ -56,7 +56,7 @@ public:
         if (isRope(fiber))
             static_cast<RopeImpl*>(fiber)->deref();
         else
-            static_cast<UStringImpl*>(fiber)->deref();
+            static_cast<StringImpl*>(fiber)->deref();
     }
 
     void initializeFiber(unsigned &index, Fiber fiber)

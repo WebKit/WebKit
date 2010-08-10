@@ -1,3 +1,44 @@
+2010-08-10  Gavin Barraclough  <barraclough@apple.com>
+
+        Bug 43816 - Remove UStringImpl
+        The class was actually removed a long time ago, replaced by StringImpl.
+        UStringImpl is just a typedef onto StringImpl.  Remove this.
+
+        * API/JSClassRef.cpp:
+        (OpaqueJSClass::OpaqueJSClass):
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/JSString.cpp:
+        (JSC::JSString::resolveRope):
+        (JSC::JSString::replaceCharacter):
+        * runtime/JSString.h:
+        (JSC::RopeBuilder::RopeIterator::operator*):
+        (JSC::RopeBuilder::JSString):
+        (JSC::RopeBuilder::appendStringInConstruct):
+        (JSC::RopeBuilder::appendValueInConstructAndIncrementLength):
+        (JSC::jsSingleCharacterSubstring):
+        (JSC::jsSubstring):
+        * runtime/JSStringBuilder.h:
+        (JSC::jsMakeNontrivialString):
+        * runtime/RopeImpl.cpp:
+        (JSC::RopeImpl::derefFibersNonRecursive):
+        * runtime/RopeImpl.h:
+        (JSC::RopeImpl::deref):
+        * runtime/SmallStrings.cpp:
+        (JSC::SmallStringsStorage::SmallStringsStorage):
+        * runtime/StringConstructor.cpp:
+        (JSC::stringFromCharCodeSlowCase):
+        * runtime/StringPrototype.cpp:
+        (JSC::jsSpliceSubstringsWithSeparators):
+        (JSC::stringProtoFuncFontsize):
+        (JSC::stringProtoFuncLink):
+        * runtime/UString.cpp:
+        (JSC::initializeUString):
+        * runtime/UString.h:
+        (JSC::UString::adopt):
+        (JSC::tryMakeString):
+        (JSC::makeString):
+        * runtime/UStringImpl.h: Removed.
+
 2010-08-10  Patrick Gansterer  <paroga@paroga.com>
 
         Reviewed by Eric Seidel.

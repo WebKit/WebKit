@@ -34,7 +34,7 @@ static NEVER_INLINE JSValue stringFromCharCodeSlowCase(ExecState* exec)
 {
     unsigned length = exec->argumentCount();
     UChar* buf;
-    PassRefPtr<UStringImpl> impl = UStringImpl::createUninitialized(length, buf);
+    PassRefPtr<StringImpl> impl = StringImpl::createUninitialized(length, buf);
     for (unsigned i = 0; i < length; ++i)
         buf[i] = static_cast<UChar>(exec->argument(i).toUInt32(exec));
     return jsString(exec, impl);

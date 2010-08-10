@@ -1,3 +1,15 @@
+2010-08-10  Gavin Barraclough  <barraclough@apple.com>
+
+        Rubber stamped by Sam Weinig.
+        
+        Bug 43816 - Remove UStringImpl
+        The class was actually removed a long time ago, replaced by StringImpl.
+        UStringImpl is just a typedef onto StringImpl.  Remove this.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::findAtomicString):
+
 2010-08-09  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by David Levin.

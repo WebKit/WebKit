@@ -61,9 +61,9 @@ COMPILE_ASSERT(sizeof(UString) == sizeof(void*), UString_should_stay_small);
 
 void initializeUString()
 {
-    // UStringImpl::empty() does not construct its static string in a threadsafe fashion,
+    // StringImpl::empty() does not construct its static string in a threadsafe fashion,
     // so ensure it has been initialized from here.
-    UStringImpl::empty();
+    StringImpl::empty();
 
     UString::s_nullUString = new UString;
 }
