@@ -45,7 +45,6 @@
 #include "PasteboardPrivate.h"
 #include "PlatformCursor.h"
 #include "Settings.h"
-#include "StringImpl.h"
 #include "TextAffinity.h"
 #include "UserContentTypes.h"
 #include "UserScriptTypes.h"
@@ -65,6 +64,7 @@
 #include "WebTextCaseSensitivity.h"
 #include "WebView.h"
 #include <wtf/Assertions.h>
+#include <wtf/text/StringImpl.h>
 
 #define COMPILE_ASSERT_MATCHING_ENUM(webkit_name, webcore_name) \
     COMPILE_ASSERT(int(WebKit::webkit_name) == int(WebCore::webcore_name), mismatching_enums)

@@ -1,3 +1,9 @@
+2010-08-10  Jian Li  <jianli@chromium.org>
+
+        Another chromium build fix.
+
+        * src/AssertMatchingEnums.cpp:
+
 2010-08-10  Gavin Barraclough  <barraclough@apple.com>
 
         Rubber stamped by Sam Weinig.
