@@ -627,5 +627,3 @@ WebInspector.ProfileGroupSidebarTreeElement.prototype = {
 
 WebInspector.ProfileGroupSidebarTreeElement.prototype.__proto__ = WebInspector.SidebarTreeElement.prototype;
 
-WebInspector.didGetProfileHeaders = WebInspector.Callback.processCallback;
-WebInspector.didGetProfile = WebInspector.Callback.processCallback;

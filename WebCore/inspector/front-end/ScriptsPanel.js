@@ -1034,4 +1034,3 @@ WebInspector.ScriptsPanel.prototype = {
 
 WebInspector.ScriptsPanel.prototype.__proto__ = WebInspector.Panel.prototype;
 
-WebInspector.didEditScriptSource = WebInspector.Callback.processCallback;

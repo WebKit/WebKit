@@ -136,4 +136,3 @@ WebInspector.ScriptView.prototype = {
 
 WebInspector.ScriptView.prototype.__proto__ = WebInspector.View.prototype;
 
-WebInspector.didGetScriptSource = WebInspector.Callback.processCallback;

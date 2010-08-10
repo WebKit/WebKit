@@ -89,4 +89,3 @@ InjectedScriptAccess._installHandler("setPropertyValue");
 // Mark them as asynchronous here.
 InjectedScriptAccess._installHandler("executeSql", true);
 
-WebInspector.didDispatchOnInjectedScript = WebInspector.Callback.processCallback;

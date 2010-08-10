@@ -100,4 +100,3 @@ WebInspector.Database.prototype = {
     }
 }
 
-WebInspector.didGetDatabaseTableNames = WebInspector.Callback.processCallback;

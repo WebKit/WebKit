@@ -162,9 +162,9 @@ module core {
         [handler=Controller] void removeAllScriptsToEvaluateOnLoad();
 
         [handler=DOM] void getChildNodes(in long callId, in long nodeId);
-        [handler=DOM, customResponse=didApplyDomChange] void setAttribute(in long callId, in long elementId, in String name, in String value, out boolean success);
-        [handler=DOM, customResponse=didApplyDomChange] void removeAttribute(in long callId, in long elementId, in String name, out boolean success);
-        [handler=DOM, customResponse=didApplyDomChange] void setTextNodeValue(in long callId, in long nodeId, in String value, out boolean success);
+        [handler=DOM] void setAttribute(in long callId, in long elementId, in String name, in String value, out boolean success);
+        [handler=DOM] void removeAttribute(in long callId, in long elementId, in String name, out boolean success);
+        [handler=DOM] void setTextNodeValue(in long callId, in long nodeId, in String value, out boolean success);
         [handler=DOM] void getEventListenersForNode(in long callId, in long nodeId, out long outNodeId, out Array listenersArray);
         [handler=DOM] void copyNode(in long nodeId);
         [handler=DOM] void removeNode(in long callId, in long nodeId, out long outNodeId);

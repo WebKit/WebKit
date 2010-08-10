@@ -240,13 +240,7 @@ sub generateFrontendFunction
     my $notify = $function->signature->extendedAttributes->{"notify"};
     my $async = $function->signature->extendedAttributes->{"async"};
     return if !$async && !$notify;
-    my $functionName;
-    if ($notify) {
-        $functionName = $function->signature->name;
-    } else {
-        my $customResponse = $function->signature->extendedAttributes->{"customResponse"};
-        $functionName = $customResponse ? $customResponse : "did" . ucfirst($function->signature->name);
-    }
+    my $functionName = $notify ? $function->signature->name : "did" . ucfirst($function->signature->name);
 
     my @argsFiltered = grep($_->direction eq "out", @{$function->parameters}); # just keep only out parameters for frontend interface.
     unshift(@argsFiltered, $callId) if !$notify; # Add callId as the first argument for all frontend did* methods.
@@ -262,9 +256,10 @@ sub generateFrontendFunction
         push(@function, "void ${frontendClassName}::${functionName}(${arguments})");
         push(@function, "{");
         push(@function, "    RefPtr<InspectorArray> arguments = InspectorArray::create();");
-        push(@function, "    arguments->pushString(\"$functionName\");");
+        push(@function, "    arguments->pushString(\"" . ($notify ? $functionName : "processResponse") . "\");");
         push(@function, @pushArguments);
         push(@function, "    m_inspectorClient->sendMessageToFrontend(arguments->toJSONString());");
+
         push(@function, "}");
         push(@function, "");
         push(@frontendMethodsImpl, @function);
@@ -354,14 +349,12 @@ sub generateBackendFunction
     # The results of function call should be transfered back to frontend (except async methods - need to fix that).
     if (scalar(grep($_->name eq "callId", @inArgs)) && !$async) {
         my @pushArguments = map("        arguments->push" . $typeTransform{$_->type}->{"accessorSuffix"} . "(" . $_->name . ");", @outArgs);
-        my $customResponse = $function->signature->extendedAttributes->{"customResponse"};
-        my $didFunctionName = $customResponse ? $customResponse : "did" . ucfirst($function->signature->name);
 
         push(@function, "");
         push(@function, "    // use InspectorFrontend as a marker of WebInspector availability");
         push(@function, "    if (m_inspectorController->remoteInspectorFrontend()) {");
         push(@function, "        RefPtr<InspectorArray> arguments = InspectorArray::create();");
-        push(@function, "        arguments->pushString(\"$didFunctionName\");");
+        push(@function, "        arguments->pushString(\"processResponse\");");
         push(@function, "        arguments->pushNumber(callId);");
         push(@function, @pushArguments);
         push(@function, "        m_inspectorController->inspectorClient()->sendMessageToFrontend(arguments->toJSONString());");

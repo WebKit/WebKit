@@ -681,29 +681,3 @@ WebInspector.childNodeRemoved = function()
     this.domAgent._childNodeRemoved.apply(this.domAgent, arguments);
 }
 
-WebInspector.didGetApplicationCaches = WebInspector.Callback.processCallback;
-WebInspector.didGetCookies = WebInspector.Callback.processCallback;
-WebInspector.didGetChildNodes = WebInspector.Callback.processCallback;
-WebInspector.didPerformSearch = WebInspector.Callback.processCallback;
-WebInspector.didApplyDomChange = WebInspector.Callback.processCallback;
-WebInspector.didRemoveAttribute = WebInspector.Callback.processCallback;
-WebInspector.didSetTextNodeValue = WebInspector.Callback.processCallback;
-WebInspector.didRemoveNode = WebInspector.Callback.processCallback;
-WebInspector.didChangeTagName = WebInspector.Callback.processCallback;
-WebInspector.didGetOuterHTML = WebInspector.Callback.processCallback;
-WebInspector.didSetOuterHTML = WebInspector.Callback.processCallback;
-WebInspector.didPushNodeByPathToFrontend = WebInspector.Callback.processCallback;
-WebInspector.didGetEventListenersForNode = WebInspector.Callback.processCallback;
-
-WebInspector.didGetStyles = WebInspector.Callback.processCallback;
-WebInspector.didGetAllStyles = WebInspector.Callback.processCallback;
-WebInspector.didGetStyleSheet = WebInspector.Callback.processCallback;
-WebInspector.didGetRuleRanges = WebInspector.Callback.processCallback;
-WebInspector.didGetInlineStyle = WebInspector.Callback.processCallback;
-WebInspector.didGetComputedStyle = WebInspector.Callback.processCallback;
-WebInspector.didApplyStyleText = WebInspector.Callback.processCallback;
-WebInspector.didSetStyleText = WebInspector.Callback.processCallback;
-WebInspector.didSetStyleProperty = WebInspector.Callback.processCallback;
-WebInspector.didToggleStyleEnabled = WebInspector.Callback.processCallback;
-WebInspector.didSetRuleSelector = WebInspector.Callback.processCallback;
-WebInspector.didAddRule = WebInspector.Callback.processCallback;

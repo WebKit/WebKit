@@ -1,3 +1,26 @@
+2010-08-09  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Remove obsolete JS wrappers for did* methods.
+        https://bugs.webkit.org/show_bug.cgi?id=43738
+
+        * inspector/CodeGeneratorInspector.pm:
+        * inspector/Inspector.idl:
+        * inspector/front-end/BreakpointManager.js:
+        * inspector/front-end/Callback.js:
+        * inspector/front-end/ConsoleView.js:
+        * inspector/front-end/DOMAgent.js:
+        * inspector/front-end/DOMStorage.js:
+        * inspector/front-end/Database.js:
+        * inspector/front-end/InjectedScriptAccess.js:
+        * inspector/front-end/ProfilesPanel.js:
+        * inspector/front-end/ResourcesPanel.js:
+        * inspector/front-end/ScriptView.js:
+        * inspector/front-end/ScriptsPanel.js:
+        * inspector/front-end/inspector.js:
+        (WebInspector.reportProtocolError):
+
 2010-08-09  Gavin Barraclough  <barraclough@apple.com>
 
         Qt build fix attempt VIII.

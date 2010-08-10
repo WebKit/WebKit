@@ -213,4 +213,3 @@ WebInspector.Breakpoint.prototype = {
 
 WebInspector.Breakpoint.prototype.__proto__ = WebInspector.Object.prototype;
 
-WebInspector.didSetBreakpoint = WebInspector.Callback.processCallback;

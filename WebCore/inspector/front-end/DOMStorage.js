@@ -73,6 +73,3 @@ WebInspector.DOMStorage.prototype = {
     }
 }
 
-WebInspector.didGetDOMStorageEntries = WebInspector.Callback.processCallback;
-WebInspector.didSetDOMStorageItem = WebInspector.Callback.processCallback;
-WebInspector.didRemoveDOMStorageItem = WebInspector.Callback.processCallback;

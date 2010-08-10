@@ -1128,4 +1128,3 @@ WebInspector.ConsoleGroup.prototype = {
     }
 }
 
-WebInspector.didClearConsoleMessages = WebInspector.Callback.processCallback;
