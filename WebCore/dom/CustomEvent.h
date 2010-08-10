@@ -26,9 +26,9 @@
 #ifndef CustomEvent_h
 #define CustomEvent_h
 
-#include "AtomicString.h"
 #include "Event.h"
 #include "ScriptValue.h"
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 

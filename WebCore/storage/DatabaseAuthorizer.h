@@ -29,10 +29,10 @@
 #define DatabaseAuthorizer_h
 
 #include "PlatformString.h"
-#include "StringHash.h"
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 #include <wtf/ThreadSafeShared.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 

@@ -34,10 +34,10 @@
 #include "FontFallbackList.h"
 #include "FontPlatformData.h"
 #include "FontSelector.h"
-#include "StringHash.h"
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/StringHash.h>
 
 using namespace WTF;
 

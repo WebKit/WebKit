@@ -29,7 +29,7 @@
 #include "CSSRule.h"
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
-#include "AtomicString.h"
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 

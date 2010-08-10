@@ -29,7 +29,6 @@
 #ifndef AnimationControllerPrivate_h
 #define AnimationControllerPrivate_h
 
-#include "AtomicString.h"
 #include "CSSPropertyNames.h"
 #include "PlatformString.h"
 #include "Timer.h"
@@ -37,6 +36,7 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 

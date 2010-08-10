@@ -30,9 +30,9 @@
 #include "PasteboardHelper.h"
 #include "RenderImage.h"
 #include "ScriptExecutionContext.h"
-#include "StringHash.h"
 #include "markup.h"
 #include <wtf/text/CString.h>
+#include <wtf/text/StringHash.h>
 #include <gtk/gtk.h>
 
 namespace WebCore {

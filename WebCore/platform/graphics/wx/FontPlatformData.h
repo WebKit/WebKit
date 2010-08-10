@@ -30,10 +30,10 @@
 #define FontPlatformData_h
 
 #include "FontDescription.h"
-#include "AtomicString.h"
 #include "StringImpl.h"
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/AtomicString.h>
 #include <wtf/text/CString.h>
 
 #include <wx/defs.h>

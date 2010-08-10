@@ -30,9 +30,8 @@
 
 #include "PlatformString.h"
 #include "SQLiteDatabase.h"
-#include "StringHash.h"
-
 #include <wtf/HashCountedSet.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 

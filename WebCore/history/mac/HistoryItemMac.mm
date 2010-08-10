@@ -26,7 +26,7 @@
 #include "config.h"
 #include "HistoryItem.h"
 
-#include "StringHash.h"
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 

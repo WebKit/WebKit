@@ -27,13 +27,13 @@
 #ifndef HTTPHeaderMap_h
 #define HTTPHeaderMap_h
 
-#include "AtomicString.h"
-#include "AtomicStringHash.h"
-#include "StringHash.h"
 #include <utility>
 #include <wtf/HashMap.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomicStringHash.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 

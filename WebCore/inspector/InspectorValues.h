@@ -34,12 +34,12 @@
 #if ENABLE(INSPECTOR)
 
 #include "PlatformString.h"
-#include "StringHash.h"
 
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 

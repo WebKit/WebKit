@@ -31,7 +31,6 @@
 #include "config.h"
 #include "FontCache.h"
 
-#include "AtomicString.h"
 #include "ChromiumBridge.h"
 #include "Font.h"
 #include "FontDescription.h"
@@ -46,6 +45,7 @@
 
 #include <unicode/utf16.h>
 #include <wtf/Assertions.h>
+#include <wtf/text/AtomicString.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {

@@ -26,9 +26,9 @@
 #include "Length.h"
 
 #include "PlatformString.h"
-#include "StringBuffer.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/Assertions.h>
+#include <wtf/text/StringBuffer.h>
 
 using namespace WTF;
 

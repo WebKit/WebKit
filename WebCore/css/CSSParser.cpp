@@ -66,12 +66,12 @@
 #include "Pair.h"
 #include "Rect.h"
 #include "ShadowValue.h"
-#include "StringBuffer.h"
 #include "WebKitCSSKeyframeRule.h"
 #include "WebKitCSSKeyframesRule.h"
 #include "WebKitCSSTransformValue.h"
 #include <limits.h>
 #include <wtf/dtoa.h>
+#include <wtf/text/StringBuffer.h>
 
 #if ENABLE(DASHBOARD_SUPPORT)
 #include "DashboardRegion.h"

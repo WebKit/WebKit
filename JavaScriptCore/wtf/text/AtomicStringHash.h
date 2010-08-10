@@ -29,10 +29,10 @@
 #ifndef AtomicStringHash_h
 #define AtomicStringHash_h
 
-#include "AtomicString.h"
+#include <wtf/text/AtomicString.h>
 #include <wtf/HashTraits.h>
 
-namespace WebCore {
+namespace WTF {
 
     struct AtomicStringHash {
         static unsigned hash(const AtomicString& key)
@@ -48,11 +48,7 @@ namespace WebCore {
         static const bool safeToCompareToEmptyOrDeleted = false;
     };
 
-}
-
-namespace WTF {
-
-    // WebCore::AtomicStringHash is the default hash for AtomicString
+    // AtomicStringHash is the default hash for AtomicString
     template<> struct HashTraits<WTF::AtomicString> : GenericHashTraits<WTF::AtomicString> {
         static const bool emptyValueIsZero = true;
         static void constructDeletedValue(WTF::AtomicString& slot) { new (&slot) WTF::AtomicString(HashTableDeletedValue); }
@@ -60,5 +56,7 @@ namespace WTF {
     };
 
 }
+
+using WTF::AtomicStringHash;
 
 #endif

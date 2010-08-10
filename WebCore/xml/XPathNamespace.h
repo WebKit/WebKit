@@ -29,8 +29,8 @@
 
 #if ENABLE(XPATH)
 
-#include "AtomicString.h"
 #include "Node.h"
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 

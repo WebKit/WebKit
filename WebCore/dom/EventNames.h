@@ -22,8 +22,8 @@
 #ifndef EventNames_h
 #define EventNames_h
 
-#include "AtomicString.h"
 #include "ThreadGlobalData.h"
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 

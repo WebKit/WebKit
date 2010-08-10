@@ -34,12 +34,12 @@
 
 #include "Document.h"
 #include "IntRect.h"
-#include "StringHash.h"
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/text/StringHash.h>
 
 #if USE(ACCELERATED_COMPOSITING)
 #include "GraphicsLayer.h"

@@ -26,10 +26,10 @@
 #ifndef LegacyPreloadScanner_h
 #define LegacyPreloadScanner_h
 
-#include "AtomicString.h"
 #include "SegmentedString.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
     

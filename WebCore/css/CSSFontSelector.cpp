@@ -27,7 +27,6 @@
 #include "config.h"
 #include "CSSFontSelector.h"
 
-#include "AtomicString.h"
 #include "CachedFont.h"
 #include "CSSFontFace.h"
 #include "CSSFontFaceRule.h"
@@ -48,6 +47,7 @@
 #include "RenderObject.h"
 #include "Settings.h"
 #include "SimpleFontData.h"
+#include <wtf/text/AtomicString.h>
 
 #if ENABLE(SVG)
 #include "SVGFontFaceElement.h"

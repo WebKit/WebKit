@@ -26,9 +26,9 @@
 #import "config.h"
 #import "ThreadCheck.h"
 
-#import "StringHash.h"
 #import <wtf/HashSet.h>
 #import <wtf/StdLibExtras.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 

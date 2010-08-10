@@ -20,10 +20,10 @@
 #include "config.h"
 #include "WebDOMHTMLCollection.h"
 
-#include "AtomicString.h"
 #include "HTMLCollection.h"
 #include "WebDOMNode.h"
 #include <wtf/GetPtr.h>
+#include <wtf/text/AtomicString.h>
 
 WebDOMNode WebDOMHTMLCollection::item(unsigned index)
 {

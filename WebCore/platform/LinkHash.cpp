@@ -22,12 +22,12 @@
  */
 
 #include "config.h"
-#include "AtomicString.h"
 #include "KURL.h"
 #include "LinkHash.h"
 #include "PlatformString.h"
-#include "StringHash.h"
-#include "StringImpl.h"
+#include <wtf/text/AtomicString.h>
+#include <wtf/text/StringHash.h>
+#include <wtf/text/StringImpl.h>
 
 namespace WebCore {
 

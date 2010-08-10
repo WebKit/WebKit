@@ -28,7 +28,6 @@
 
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 
-#include "AtomicString.h"
 #include "AtomicStringKeyedMRUCache.h"
 #include "TextBreakIteratorInternalICU.h"
 #include <wtf/ListHashSet.h>

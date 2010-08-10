@@ -20,7 +20,7 @@
 #ifndef FrameTree_h
 #define FrameTree_h
 
-#include "AtomicString.h"
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 

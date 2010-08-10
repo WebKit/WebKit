@@ -33,10 +33,10 @@
 #include <wtf/RefCounted.h>
 #include "SharedBuffer.h"
 
+#include "PlatformString.h"
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
-#include "PlatformString.h"
-#include "StringHash.h"
+#include <wtf/text/StringHash.h>
 
 namespace WebCore { 
 

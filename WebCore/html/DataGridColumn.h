@@ -28,10 +28,10 @@
 
 #if ENABLE(DATAGRID)
 
-#include "AtomicString.h"
 #include "RenderStyle.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 

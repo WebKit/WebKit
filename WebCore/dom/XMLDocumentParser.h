@@ -30,9 +30,9 @@
 #include "FragmentScriptingPermission.h"
 #include "ScriptableDocumentParser.h"
 #include "SegmentedString.h"
-#include "StringHash.h"
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
+#include <wtf/text/StringHash.h>
 
 #if USE(QXMLSTREAM)
 #include <qxmlstream.h>

@@ -22,8 +22,6 @@
 #ifndef loader_h
 #define loader_h
 
-#include "AtomicString.h"
-#include "AtomicStringImpl.h"
 #include "FrameLoaderTypes.h"
 #include "PlatformString.h"
 #include "SubresourceLoaderClient.h"
@@ -31,6 +29,8 @@
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomicStringImpl.h>
 
 namespace WebCore {
 

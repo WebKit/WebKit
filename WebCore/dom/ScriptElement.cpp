@@ -39,9 +39,9 @@
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
 #include "Settings.h"
-#include "StringHash.h"
 #include "Text.h"
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/StringHash.h>
 
 #if ENABLE(SVG)
 #include "SVGNames.h"

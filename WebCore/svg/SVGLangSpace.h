@@ -22,7 +22,7 @@
 #define SVGLangSpace_h
 
 #if ENABLE(SVG)
-#include "AtomicString.h"
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 

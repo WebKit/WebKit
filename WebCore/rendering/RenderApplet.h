@@ -23,7 +23,7 @@
 #define RenderApplet_h
 
 #include "RenderWidget.h"
-#include "StringHash.h"
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 

@@ -26,7 +26,6 @@
 #include "config.h"
 #include "JSMessagePort.h"
 
-#include "AtomicString.h"
 #include "Event.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
@@ -36,6 +35,7 @@
 #include "JSMessagePortCustom.h"
 #include "MessagePort.h"
 #include <runtime/Error.h>
+#include <wtf/text/AtomicString.h>
 
 using namespace JSC;
 

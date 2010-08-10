@@ -122,7 +122,6 @@
 #include "SelectionController.h"
 #include "Settings.h"
 #include "StaticHashSetNodeList.h"
-#include "StringBuffer.h"
 #include "StyleSheetList.h"
 #include "TextEvent.h"
 #include "TextIterator.h"
@@ -146,6 +145,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/StringBuffer.h>
 
 #if ENABLE(SHARED_WORKERS)
 #include "SharedWorkerRepository.h"

@@ -450,9 +450,9 @@ sub GenerateGetOwnPropertySlotBody
         push(@getOwnPropertySlotImpl, "        return true;\n");
         push(@getOwnPropertySlotImpl, "    }\n");
         if ($inlined) {
-            $headerIncludes{"AtomicString.h"} = 1;
+            $headerIncludes{"wtf/text/AtomicString.h"} = 1;
         } else {
-            $implIncludes{"AtomicString.h"} = 1;
+            $implIncludes{"wtf/text/AtomicString.h"} = 1;
         }
     }
 
@@ -551,9 +551,9 @@ sub GenerateGetOwnPropertyDescriptorBody
         push(@getOwnPropertyDescriptorImpl, "        return true;\n");
         push(@getOwnPropertyDescriptorImpl, "    }\n");
         if ($inlined) {
-            $headerIncludes{"AtomicString.h"} = 1;
+            $headerIncludes{"wtf/text/AtomicString.h"} = 1;
         } else {
-            $implIncludes{"AtomicString.h"} = 1;
+            $implIncludes{"wtf/text/AtomicString.h"} = 1;
         }
     }
     

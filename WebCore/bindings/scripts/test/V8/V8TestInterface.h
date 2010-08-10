@@ -23,11 +23,11 @@
 #ifndef V8TestInterface_h
 #define V8TestInterface_h
 
-#include "StringHash.h"
 #include "TestInterface.h"
 #include "WrapperTypeInfo.h"
 #include <v8.h>
 #include <wtf/HashMap.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 

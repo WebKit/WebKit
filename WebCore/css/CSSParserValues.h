@@ -21,7 +21,7 @@
 #ifndef CSSParserValues_h
 #define CSSParserValues_h
 
-#include "AtomicString.h"
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 

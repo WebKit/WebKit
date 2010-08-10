@@ -29,10 +29,10 @@
 
 #include "JSDataGridColumnList.h"
 
-#include "AtomicString.h"
 #include "DataGridColumn.h"
 #include "DataGridColumnList.h"
 #include "JSDataGridColumn.h"
+#include <wtf/text/AtomicString.h>
 
 using namespace JSC;
 

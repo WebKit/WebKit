@@ -27,7 +27,6 @@
 #include "config.h"
 #include "MessagePort.h"
 
-#include "AtomicString.h"
 #include "DOMWindow.h"
 #include "Document.h"
 #include "EventException.h"
@@ -35,6 +34,7 @@
 #include "MessageEvent.h"
 #include "SecurityOrigin.h"
 #include "Timer.h"
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 

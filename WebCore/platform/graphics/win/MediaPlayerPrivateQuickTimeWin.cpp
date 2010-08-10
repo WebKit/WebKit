@@ -39,7 +39,6 @@
 #include "ScrollView.h"
 #include "SoftLinking.h"
 #include "StringBuilder.h"
-#include "StringHash.h"
 #include "TimeRanges.h"
 #include "Timer.h"
 #include <Wininet.h>
@@ -47,6 +46,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/StringHash.h>
 
 #if USE(ACCELERATED_COMPOSITING)
 #include "GraphicsLayerCACF.h"

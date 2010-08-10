@@ -1,3 +1,17 @@
+2010-08-10  Gavin Barraclough  <barraclough@apple.com>
+
+        Rubber stamped by Sam Weinig.
+
+        Bug 43786 - Move AtomicStringHash from WebCore to WTF
+        Also remove deprecated string headers from WebCore/platform/text.
+
+        * GNUmakefile.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * wtf/text/AtomicString.h:
+        * wtf/text/AtomicStringHash.h: Copied from WebCore/platform/text/AtomicStringHash.h.
+
 2010-08-09  Oliver Hunt  <oliver@apple.com>
 
         Fix Qt/ARM again, this time including the other changed file.

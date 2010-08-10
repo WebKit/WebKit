@@ -65,12 +65,12 @@
 #include "RenderTheme.h"
 #include "ScriptEventListener.h"
 #include "StepRange.h"
-#include "StringHash.h"
 #include "TextEvent.h"
 #include "WheelEvent.h"
 #include <wtf/HashMap.h>
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/StringHash.h>
 
 using namespace std;
 

@@ -28,7 +28,6 @@
 #include "config.h"
 #include "HTMLTokenizer.h"
 
-#include "AtomicString.h"
 #include "HTMLEntityParser.h"
 #include "HTMLToken.h"
 #include "HTMLNames.h"
@@ -36,6 +35,7 @@
 #include <wtf/ASCIICType.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/UnusedParam.h>
+#include <wtf/text/AtomicString.h>
 #include <wtf/text/CString.h>
 #include <wtf/unicode/Unicode.h>
 

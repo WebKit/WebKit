@@ -37,13 +37,13 @@
 #include "RenderBlock.h"
 #include "RenderLayer.h"
 #include "RenderView.h"
-#include "StringBuffer.h"
 #include "Text.h"
 #include "TextBreakIterator.h"
 #include "TextResourceDecoder.h"
 #include "VisiblePosition.h"
 #include "break_lines.h"
 #include <wtf/AlwaysInline.h>
+#include <wtf/text/StringBuffer.h>
 
 using namespace std;
 using namespace WTF;

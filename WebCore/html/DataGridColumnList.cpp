@@ -27,11 +27,11 @@
 
 #if ENABLE(DATAGRID)
 
-#include "AtomicString.h"
 #include "DataGridColumnList.h"
 #include "HTMLDataGridElement.h"
 #include "PlatformString.h"
 #include "RenderObject.h"
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 

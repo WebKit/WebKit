@@ -29,8 +29,8 @@
 #define IDBFactoryBackendImpl_h
 
 #include "IDBFactoryBackendInterface.h"
-#include "StringHash.h"
 #include <wtf/HashMap.h>
+#include <wtf/text/StringHash.h>
 
 #if ENABLE(INDEXED_DATABASE)
 

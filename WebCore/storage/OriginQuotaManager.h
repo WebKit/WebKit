@@ -31,10 +31,10 @@
 
 #if ENABLE(DATABASE)
 
-#include "StringHash.h"
 #include "SecurityOriginHash.h"
 #include <wtf/HashMap.h>
 #include <wtf/Threading.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 

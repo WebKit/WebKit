@@ -29,11 +29,11 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "GraphicsLayer.h"
-#include "StringHash.h"
 #include "WebLayer.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/text/StringHash.h>
 
 @class CABasicAnimation;
 @class CAKeyframeAnimation;

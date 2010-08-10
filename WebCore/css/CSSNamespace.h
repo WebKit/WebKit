@@ -22,7 +22,7 @@
 #ifndef CSSNamespace_h
 #define CSSNamespace_h
 
-#include "AtomicString.h"
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 

@@ -26,11 +26,11 @@
 #include "LinkHash.h"
 #include "MediaQueryExp.h"
 #include "RenderStyle.h"
-#include "StringHash.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 

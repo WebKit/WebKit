@@ -27,12 +27,12 @@
 #ifndef IconDatabase_h
 #define IconDatabase_h
 
-#include "StringHash.h"
 #include "Timer.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
+#include <wtf/text/StringHash.h>
 
 #if ENABLE(ICONDATABASE)
 #include "SQLiteDatabase.h"

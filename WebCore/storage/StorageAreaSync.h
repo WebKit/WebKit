@@ -29,9 +29,9 @@
 #if ENABLE(DOM_STORAGE)
 
 #include "SQLiteDatabase.h"
-#include "StringHash.h"
 #include "Timer.h"
 #include <wtf/HashMap.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 

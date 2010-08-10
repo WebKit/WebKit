@@ -34,7 +34,6 @@
 #if ENABLE(WEB_SOCKETS)
 
 #include "ActiveDOMObject.h"
-#include "AtomicStringHash.h"
 #include "EventListener.h"
 #include "EventNames.h"
 #include "EventTarget.h"
@@ -43,6 +42,7 @@
 #include <wtf/Forward.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/text/AtomicStringHash.h>
 
 namespace WebCore {
 

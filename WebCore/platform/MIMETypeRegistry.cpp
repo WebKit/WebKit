@@ -29,10 +29,10 @@
 
 #include "ArchiveFactory.h"
 #include "MediaPlayer.h"
-#include "StringHash.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/StringHash.h>
 
 #if PLATFORM(CG)
 #include "ImageSourceCG.h"

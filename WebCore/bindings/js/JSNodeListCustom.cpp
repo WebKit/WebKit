@@ -26,10 +26,10 @@
 #include "config.h"
 #include "JSNodeList.h"
 
-#include "AtomicString.h"
 #include "JSNode.h"
 #include "Node.h"
 #include "NodeList.h"
+#include <wtf/text/AtomicString.h>
 
 using namespace JSC;
 

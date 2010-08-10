@@ -34,7 +34,6 @@
 #include "PluginQuirkSet.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
-#include "StringHash.h"
 #include "Timer.h"
 #include "npruntime_internal.h"
 #include <wtf/HashMap.h>
@@ -42,6 +41,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
     class Frame;

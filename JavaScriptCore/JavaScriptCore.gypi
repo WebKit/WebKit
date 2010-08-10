@@ -445,6 +445,7 @@
             'wtf/TypeTraits.h',
             'wtf/text/AtomicString.cpp',
             'wtf/text/AtomicString.h',
+            'wtf/text/AtomicStringHash.h',
             'wtf/text/AtomicStringImpl.h',
             'wtf/text/CString.cpp',
             'wtf/text/CString.h',

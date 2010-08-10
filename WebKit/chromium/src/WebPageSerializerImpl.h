@@ -32,10 +32,10 @@
 #define WebPageSerializerImpl_h
 
 #include "PlatformString.h"
-#include "StringHash.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
+#include <wtf/text/StringHash.h>
 #include "StringBuilder.h"
 
 #include "WebEntities.h"

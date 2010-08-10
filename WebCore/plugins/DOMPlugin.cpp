@@ -19,9 +19,9 @@
 #include "config.h"
 #include "DOMPlugin.h"
 
-#include "AtomicString.h"
 #include "PluginData.h"
 #include "Frame.h"
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 

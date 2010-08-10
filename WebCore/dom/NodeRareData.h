@@ -26,11 +26,11 @@
 #include "DynamicNodeList.h"
 #include "NameNodeList.h"
 #include "QualifiedName.h"
-#include "StringHash.h"
 #include "TagNodeList.h"
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 

@@ -26,7 +26,6 @@
 #ifndef XMLHttpRequestUpload_h
 #define XMLHttpRequestUpload_h
 
-#include "AtomicStringHash.h"
 #include "EventListener.h"
 #include "EventNames.h"
 #include "EventTarget.h"
@@ -36,6 +35,7 @@
 #include <wtf/RefPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/text/AtomicStringHash.h>
 
 namespace WebCore {
 

@@ -33,7 +33,6 @@
 #define Notification_h
 
 #include "ActiveDOMObject.h"
-#include "AtomicStringHash.h"
 #include "Event.h"
 #include "EventListener.h"
 #include "EventNames.h"
@@ -51,6 +50,7 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/AtomicStringHash.h>
 
 #if ENABLE(NOTIFICATIONS)
 namespace WebCore {

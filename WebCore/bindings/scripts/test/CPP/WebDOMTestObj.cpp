@@ -21,7 +21,6 @@
 #include "config.h"
 #include "WebDOMTestObj.h"
 
-#include "AtomicString.h"
 #include "HTMLNames.h"
 #include "IDBKey.h"
 #include "KURL.h"
@@ -33,6 +32,7 @@
 #include "WebNativeEventListener.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/AtomicString.h>
 
 struct WebDOMTestObj::WebDOMTestObjPrivate {
     WebDOMTestObjPrivate(WebCore::TestObj* object = 0)

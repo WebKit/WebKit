@@ -22,13 +22,13 @@
 #define SVGDocumentExtensions_h
 
 #if ENABLE(SVG)
-#include "AtomicStringHash.h"
 #include "SVGResourcesCache.h"
-#include "StringImpl.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/text/AtomicStringHash.h>
+#include <wtf/text/StringImpl.h>
 
 namespace WebCore {
 

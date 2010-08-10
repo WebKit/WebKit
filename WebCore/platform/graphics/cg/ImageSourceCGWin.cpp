@@ -27,8 +27,8 @@
 #include "ImageSourceCG.h"
 
 #include "StdLibExtras.h" 
-#include "StringHash.h"
 #include <wtf/HashMap.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 

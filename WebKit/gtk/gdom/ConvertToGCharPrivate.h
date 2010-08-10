@@ -20,10 +20,10 @@
 #ifndef ConvertToGCharPrivate_h
 #define ConvertToGCharPrivate_h
 
-#include "AtomicString.h"
 #include "KURL.h"
 #include "PlatformString.h"
 #include <wtf/text/CString.h>
+#include <wtf/text/AtomicString.h>
 
 inline gchar* copyAsGchar(WTF::String const& s)
 {

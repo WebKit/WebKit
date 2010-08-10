@@ -29,7 +29,6 @@
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
 
 #include "ApplicationCacheHost.h"
-#include "AtomicStringHash.h"
 #include "EventListener.h"
 #include "EventNames.h"
 #include "EventTarget.h"
@@ -38,6 +37,7 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
+#include <wtf/text/AtomicStringHash.h>
 
 namespace WebCore {
 

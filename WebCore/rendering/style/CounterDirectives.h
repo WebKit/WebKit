@@ -25,9 +25,9 @@
 #ifndef CounterDirectives_h
 #define CounterDirectives_h
 
-#include "AtomicStringImpl.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/AtomicStringImpl.h>
 
 namespace WebCore {
 

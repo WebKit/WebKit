@@ -29,8 +29,8 @@
 #include "Credential.h"
 #include "KURL.h"
 #include "ProtectionSpaceHash.h"
-#include "StringHash.h"
 #include <wtf/text/CString.h>
+#include <wtf/text/StringHash.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/StdLibExtras.h>

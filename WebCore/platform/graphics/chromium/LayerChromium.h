@@ -38,12 +38,12 @@
 #include "GraphicsContext.h"
 #include "GraphicsLayerChromium.h"
 #include "PlatformString.h"
-#include "StringHash.h"
 #include "TransformationMatrix.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
+#include <wtf/text/StringHash.h>
 
 
 namespace skia {

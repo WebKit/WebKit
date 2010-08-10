@@ -31,11 +31,11 @@
 #ifndef V8Binding_h
 #define V8Binding_h
 
-#include "AtomicString.h"
 #include "BindingSecurity.h"
 #include "MathExtras.h"
 #include "PlatformString.h"
 #include "V8DOMWrapper.h"
+#include <wtf/text/AtomicString.h>
 
 #include <v8.h>
 

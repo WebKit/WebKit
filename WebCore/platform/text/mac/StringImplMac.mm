@@ -19,7 +19,7 @@
  */
 
 #include "config.h"
-#include "StringImpl.h"
+#include <wtf/text/StringImpl.h>
 
 #include "FoundationExtras.h"
 

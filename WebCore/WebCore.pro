@@ -1744,7 +1744,6 @@ HEADERS += \
     platform/sql/SQLiteStatement.h \
     platform/sql/SQLiteTransaction.h \
     platform/sql/SQLValue.h \
-    platform/text/AtomicString.h \
     platform/text/Base64.h \
     platform/text/BidiContext.h \
     platform/text/Hyphenation.h \

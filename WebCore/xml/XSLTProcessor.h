@@ -26,9 +26,9 @@
 #if ENABLE(XSLT)
 
 #include "Node.h"
-#include "StringHash.h"
 #include "XSLStyleSheet.h"
 #include <wtf/HashMap.h>
+#include <wtf/text/StringHash.h>
 
 #if !USE(QXMLQUERY)
 #include <libxml/parserInternals.h>

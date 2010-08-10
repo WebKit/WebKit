@@ -28,12 +28,12 @@
 #include "CachePolicy.h"
 #include "CachedResource.h"
 #include "PlatformString.h"
-#include "StringHash.h"
 #include "loader.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore  {
 

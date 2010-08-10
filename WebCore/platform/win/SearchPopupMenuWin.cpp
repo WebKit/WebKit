@@ -21,7 +21,7 @@
 #include "config.h"
 #include "SearchPopupMenuWin.h"
 
-#include "AtomicString.h"
+#include <wtf/text/AtomicString.h>
 
 #if PLATFORM(CF)
 #include <wtf/RetainPtr.h>

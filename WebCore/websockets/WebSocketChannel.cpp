@@ -41,11 +41,11 @@
 #include "ScriptExecutionContext.h"
 #include "SocketStreamError.h"
 #include "SocketStreamHandle.h"
-#include "StringHash.h"
 #include "WebSocketChannelClient.h"
 #include "WebSocketHandshake.h"
 
 #include <wtf/text/CString.h>
+#include <wtf/text/StringHash.h>
 #include <wtf/Deque.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>

@@ -35,13 +35,13 @@
 #include "PlatformString.h"
 #include "ScriptProfile.h"
 #include "ScriptState.h"
-#include "StringHash.h"
 #include "Timer.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 

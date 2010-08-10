@@ -29,7 +29,6 @@
 
 #if ENABLE(WORKERS)
 
-#include "AtomicStringHash.h"
 #include "EventListener.h"
 #include "EventNames.h"
 #include "EventTarget.h"
@@ -40,6 +39,7 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/AtomicStringHash.h>
 
 namespace WebCore {
 

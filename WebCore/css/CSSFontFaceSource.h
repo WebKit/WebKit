@@ -26,10 +26,10 @@
 #ifndef CSSFontFaceSource_h
 #define CSSFontFaceSource_h
 
-#include "AtomicString.h"
 #include "CachedResourceClient.h"
 #include "CachedResourceHandle.h"
 #include <wtf/HashMap.h>
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 

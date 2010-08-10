@@ -20,7 +20,7 @@
 #ifndef MediaFeatureNames_h
 #define MediaFeatureNames_h
 
-#include "AtomicString.h"
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
     namespace MediaFeatureNames {

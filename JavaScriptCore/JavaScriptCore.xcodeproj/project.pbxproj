@@ -255,6 +255,7 @@
 		86EAC49A0F93E8D1008EC948 /* RegexJIT.h in Headers */ = {isa = PBXBuildFile; fileRef = 86EAC4920F93E8D1008EC948 /* RegexJIT.h */; };
 		86EAC49B0F93E8D1008EC948 /* RegexParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 86EAC4930F93E8D1008EC948 /* RegexParser.h */; };
 		86EAC49C0F93E8D1008EC948 /* RegexPattern.h in Headers */ = {isa = PBXBuildFile; fileRef = 86EAC4940F93E8D1008EC948 /* RegexPattern.h */; };
+		86F38859121130CA007A7CE3 /* AtomicStringHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 86F38858121130CA007A7CE3 /* AtomicStringHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		905B02AE0E28640F006DF882 /* RefCountedLeakCounter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 905B02AD0E28640F006DF882 /* RefCountedLeakCounter.cpp */; };
 		90D3469C0E285280009492EE /* RefCountedLeakCounter.h in Headers */ = {isa = PBXBuildFile; fileRef = 90D3469B0E285280009492EE /* RefCountedLeakCounter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93052C340FB792190048FDC3 /* ParserArena.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93052C320FB792190048FDC3 /* ParserArena.cpp */; };
@@ -842,6 +843,7 @@
 		86EAC4920F93E8D1008EC948 /* RegexJIT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RegexJIT.h; path = yarr/RegexJIT.h; sourceTree = "<group>"; };
 		86EAC4930F93E8D1008EC948 /* RegexParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RegexParser.h; path = yarr/RegexParser.h; sourceTree = "<group>"; };
 		86EAC4940F93E8D1008EC948 /* RegexPattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RegexPattern.h; path = yarr/RegexPattern.h; sourceTree = "<group>"; };
+		86F38858121130CA007A7CE3 /* AtomicStringHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AtomicStringHash.h; path = text/AtomicStringHash.h; sourceTree = "<group>"; };
 		905B02AD0E28640F006DF882 /* RefCountedLeakCounter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RefCountedLeakCounter.cpp; sourceTree = "<group>"; };
 		90D3469B0E285280009492EE /* RefCountedLeakCounter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RefCountedLeakCounter.h; sourceTree = "<group>"; };
 		9303F567099118FA00AD71B8 /* OwnPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OwnPtr.h; sourceTree = "<group>"; };
@@ -1784,6 +1786,7 @@
 			children = (
 				868BFA00117CEFD100B908B1 /* AtomicString.cpp */,
 				868BFA01117CEFD100B908B1 /* AtomicString.h */,
+				86F38858121130CA007A7CE3 /* AtomicStringHash.h */,
 				868BFA02117CEFD100B908B1 /* AtomicStringImpl.h */,
 				86565740115BE3DA00291F40 /* CString.cpp */,
 				86565741115BE3DA00291F40 /* CString.h */,
@@ -2229,6 +2232,7 @@
 				DDF7ABD411F60ED200108E36 /* GCActivityCallback.h in Headers */,
 				DD2724691208D1FF00F9ABE7 /* AlignedMemoryAllocator.h in Headers */,
 				DDE82AD81209D955005C1756 /* GCHandle.h in Headers */,
+				86F38859121130CA007A7CE3 /* AtomicStringHash.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

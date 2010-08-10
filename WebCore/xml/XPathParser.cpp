@@ -31,12 +31,12 @@
 #if ENABLE(XPATH)
 
 #include "ExceptionCode.h"
-#include "StringHash.h"
 #include "XPathEvaluator.h"
 #include "XPathException.h"
 #include "XPathNSResolver.h"
 #include "XPathStep.h"
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/StringHash.h>
 
 int xpathyyparse(void*);
 

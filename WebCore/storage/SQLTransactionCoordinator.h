@@ -33,11 +33,11 @@
 
 #if ENABLE(DATABASE)
 
-#include "StringHash.h"
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 

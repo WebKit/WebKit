@@ -24,7 +24,6 @@
 #if ENABLE(SVG)
 #include "SVGDocumentExtensions.h"
 
-#include "AtomicString.h"
 #include "Console.h"
 #include "DOMWindow.h"
 #include "Document.h"
@@ -37,6 +36,7 @@
 #include "SVGSVGElement.h"
 #include "ScriptController.h"
 #include "ScriptableDocumentParser.h"
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 

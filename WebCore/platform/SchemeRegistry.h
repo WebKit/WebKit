@@ -27,8 +27,8 @@
 #define SchemeRegistry_h
 
 #include "PlatformString.h"
-#include "StringHash.h"
 #include <wtf/HashSet.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 

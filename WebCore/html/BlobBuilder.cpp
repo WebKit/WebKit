@@ -32,11 +32,11 @@
 
 #include "BlobBuilder.h"
 
-#include "AtomicString.h"
 #include "Blob.h"
 #include "ExceptionCode.h"
 #include "LineEnding.h"
 #include "TextEncoding.h"
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 

@@ -26,9 +26,9 @@
 #ifndef FontFamily_h
 #define FontFamily_h
 
-#include "AtomicString.h"
 #include <wtf/RefCounted.h>
 #include <wtf/ListRefPtr.h>
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 

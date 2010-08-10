@@ -172,7 +172,7 @@ sub AddIncludesForType
 
     if ($type eq "Plugin" or $type eq "PluginArray" or $type eq "MimeTypeArray") {
         # So we can get String -> AtomicString conversion for namedItem().
-        $implIncludes{"AtomicString.h"} = 1;
+        $implIncludes{"wtf/text/AtomicString.h"} = 1;
     }
 }
 
@@ -231,7 +231,7 @@ sub GenerateHeader
 
     my %headerInclues = ();
     $headerIncludes{"$podType.h"} = 1 if $podType and ($podType ne "double" and $podType ne "float" and $podType ne "RGBA32");
-    $headerIncludes{"StringHash.h"} = 1;
+    $headerIncludes{"wtf/text/StringHash.h"} = 1;
     $headerIncludes{"WrapperTypeInfo.h"} = 1;
     my $headerClassInclude = GetHeaderClassInclude($implClassName);
     $headerIncludes{$headerClassInclude} = 1 if $headerClassInclude ne "";

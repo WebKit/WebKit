@@ -29,10 +29,10 @@
 #include "CachedResource.h"
 #include "CachedResourceHandle.h"
 #include "CachePolicy.h"
-#include "StringHash.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/ListHashSet.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 

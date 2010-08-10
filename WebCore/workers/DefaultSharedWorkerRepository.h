@@ -34,7 +34,6 @@
 #if ENABLE(SHARED_WORKERS)
 
 #include "ExceptionCode.h"
-#include "StringHash.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
@@ -42,6 +41,7 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Threading.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 

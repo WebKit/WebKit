@@ -37,10 +37,10 @@
 #include "JSNode.h"
 #include "Node.h"
 #include "PlatformString.h"
-#include "StringHash.h"
 #include <runtime/ArrayPrototype.h>
 #include <runtime/Error.h>
 #include <wtf/HashSet.h>
+#include <wtf/text/StringHash.h>
 
 using namespace JSC;
 

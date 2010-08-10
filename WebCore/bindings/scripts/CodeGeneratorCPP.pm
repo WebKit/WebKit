@@ -284,7 +284,7 @@ sub AddIncludesForType
     return if $type =~ /Constructor/;
 
     if ($codeGenerator->IsStringType($type)) {
-        $implIncludes{"AtomicString.h"} = 1;
+        $implIncludes{"wtf/text/AtomicString.h"} = 1;
         $implIncludes{"KURL.h"} = 1;
         $implIncludes{"WebDOMString.h"} = 1;
         return;

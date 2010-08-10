@@ -26,7 +26,7 @@
 #define BindingURI_h
 #if ENABLE(XBL)
 
-#include "StringImpl.h"
+#include <wtf/text/StringImpl.h>
 
 namespace WebCore {
 

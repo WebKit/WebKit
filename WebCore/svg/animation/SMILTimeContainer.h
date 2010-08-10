@@ -30,12 +30,12 @@
 
 #include "PlatformString.h"
 #include "SMILTime.h"
-#include "StringHash.h"
 #include "Timer.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
     

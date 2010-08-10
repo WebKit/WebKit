@@ -23,9 +23,9 @@
 #ifndef ImageLoader_h
 #define ImageLoader_h
 
-#include "AtomicString.h"
 #include "CachedResourceClient.h"
 #include "CachedResourceHandle.h"
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 

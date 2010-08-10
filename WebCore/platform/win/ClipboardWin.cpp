@@ -49,7 +49,6 @@
 #include "RenderImage.h"
 #include "ResourceResponse.h"
 #include "SharedBuffer.h"
-#include "StringHash.h"
 #include "WCDataObject.h"
 #include "csshelper.h"
 #include "markup.h"
@@ -57,6 +56,7 @@
 #include <wininet.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringHash.h>
 
 using namespace std;
 

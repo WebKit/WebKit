@@ -23,10 +23,10 @@
 #ifndef HTMLDocument_h
 #define HTMLDocument_h
 
-#include "AtomicStringHash.h"
 #include "CachedResourceClient.h"
 #include "Document.h"
 #include <wtf/HashCountedSet.h>
+#include <wtf/text/AtomicStringHash.h>
 
 namespace WebCore {
 

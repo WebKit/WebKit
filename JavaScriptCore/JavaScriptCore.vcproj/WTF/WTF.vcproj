@@ -577,6 +577,10 @@
  			>
  		</File>
  		<File
+ 			RelativePath="..\..\wtf\text\AtomicStringHash.h"
+ 			>
+ 		</File>
+ 		<File
  			RelativePath="..\..\wtf\text\AtomicStringImpl.h"
  			>
  		</File>

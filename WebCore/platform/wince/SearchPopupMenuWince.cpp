@@ -20,8 +20,8 @@
 #include "config.h"
 #include "SearchPopupMenu.h"
 
-#include "AtomicString.h"
 #include "NotImplemented.h"
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 

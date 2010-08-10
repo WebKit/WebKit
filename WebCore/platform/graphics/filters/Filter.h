@@ -24,11 +24,11 @@
 #include "FloatRect.h"
 #include "FloatSize.h"
 #include "ImageBuffer.h"
-#include "StringHash.h"
 
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 

@@ -23,7 +23,6 @@
 #ifndef CSSParser_h
 #define CSSParser_h
 
-#include "AtomicString.h"
 #include "Color.h"
 #include "CSSParserValues.h"
 #include "CSSSelectorList.h"
@@ -31,6 +30,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 

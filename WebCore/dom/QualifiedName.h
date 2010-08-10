@@ -21,8 +21,8 @@
 #ifndef QualifiedName_h
 #define QualifiedName_h
 
-#include "AtomicString.h"
 #include <wtf/HashTraits.h>
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 

@@ -36,12 +36,12 @@
 #include "JavaScriptCallFrame.h"
 #include "PlatformString.h"
 #include "ScriptBreakpoint.h"
-#include "StringHash.h"
 #include "Timer.h"
 #include <v8-debug.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 

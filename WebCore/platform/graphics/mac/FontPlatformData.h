@@ -24,7 +24,7 @@
 #ifndef FontPlatformData_h
 #define FontPlatformData_h
 
-#include "StringImpl.h"
+#include <wtf/text/StringImpl.h>
 
 #ifdef __OBJC__
 @class NSFont;

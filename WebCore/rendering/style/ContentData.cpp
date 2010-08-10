@@ -23,8 +23,8 @@
 #include "ContentData.h"
 
 #include "CounterContent.h"
-#include "StringImpl.h"
 #include "StyleImage.h"
+#include <wtf/text/StringImpl.h>
 
 namespace WebCore {
 

@@ -33,7 +33,6 @@
 
 #if ENABLE(INSPECTOR)
 
-#include "AtomicString.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSMutableStyleDeclaration.h"
 #include "CSSRule.h"
@@ -78,6 +77,7 @@
 #include <wtf/ListHashSet.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 

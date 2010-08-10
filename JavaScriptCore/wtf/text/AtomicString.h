@@ -32,13 +32,9 @@
 #define ATOMICSTRING_CONVERSION
 #endif
 
-// FIXME: this should be in WTF, too!
-namespace WebCore {
-struct AtomicStringHash;
-}
-using WebCore::AtomicStringHash;
-
 namespace WTF {
+
+struct AtomicStringHash;
 
 class AtomicString {
 public:

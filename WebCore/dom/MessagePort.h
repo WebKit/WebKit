@@ -27,7 +27,6 @@
 #ifndef MessagePort_h
 #define MessagePort_h
 
-#include "AtomicStringHash.h"
 #include "EventListener.h"
 #include "EventTarget.h"
 #include "MessagePortChannel.h"
@@ -37,6 +36,7 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/text/AtomicStringHash.h>
 
 namespace WebCore {
 

@@ -34,10 +34,10 @@
 #include "ScriptBreakpoint.h"
 #include "ScriptDebugListener.h"
 #include "ScriptState.h"
-#include "StringHash.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 class InjectedScriptHost;

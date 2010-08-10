@@ -31,18 +31,18 @@
 #include "config.h"
 #include "V8Binding.h"
 
-#include "AtomicString.h"
 #include "Element.h"
 #include "MathExtras.h"
 #include "PlatformString.h"
 #include "QualifiedName.h"
 #include "StdLibExtras.h"
-#include "StringBuffer.h"
-#include "StringHash.h"
 #include "Threading.h"
 #include "V8Element.h"
 #include "V8Proxy.h"
+#include <wtf/text/AtomicString.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringBuffer.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 

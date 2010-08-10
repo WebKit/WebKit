@@ -28,7 +28,6 @@
 #include "config.h"
 #include "Editor.h"
 
-#include "AtomicString.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSMutableStyleDeclaration.h"
 #include "CSSPropertyNames.h"
@@ -58,6 +57,7 @@
 #include "UnlinkCommand.h"
 #include "htmlediting.h"
 #include "markup.h"
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 

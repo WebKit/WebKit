@@ -34,11 +34,11 @@
 #include <limits>
 
 #include "PlatformString.h"
-#include "StringHash.h"
 #include "UniscribeHelper.h"
 #include <unicode/locid.h>
 #include <unicode/uchar.h>
 #include <wtf/HashMap.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 

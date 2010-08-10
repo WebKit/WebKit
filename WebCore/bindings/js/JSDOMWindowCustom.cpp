@@ -20,7 +20,6 @@
 #include "config.h"
 #include "JSDOMWindowCustom.h"
 
-#include "AtomicString.h"
 #include "Chrome.h"
 #include "DOMWindow.h"
 #include "Document.h"
@@ -87,6 +86,7 @@
 #include <runtime/JSFunction.h>
 #include <runtime/JSObject.h>
 #include <runtime/PrototypeFunction.h>
+#include <wtf/text/AtomicString.h>
 
 using namespace JSC;
 

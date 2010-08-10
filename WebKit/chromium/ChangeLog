@@ -1,3 +1,14 @@
+2010-08-10  Gavin Barraclough  <barraclough@apple.com>
+
+        Rubber stamped by Sam Weinig.
+
+        Bug 43786 - Move AtomicStringHash from WebCore to WTF
+        Also remove deprecated string headers from WebCore/platform/text.
+
+        * src/WebKit.cpp:
+        * src/WebPageSerializerImpl.h:
+        * src/WebString.cpp:
+
 2010-08-10  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Dimitri Glazkov.

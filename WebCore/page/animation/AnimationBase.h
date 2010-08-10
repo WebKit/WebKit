@@ -29,8 +29,8 @@
 #ifndef AnimationBase_h
 #define AnimationBase_h
 
-#include "AtomicString.h"
 #include <wtf/HashMap.h>
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 

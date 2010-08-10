@@ -21,7 +21,7 @@
 #import "config.h"
 #import "SearchPopupMenuMac.h"
 
-#import "AtomicString.h"
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 

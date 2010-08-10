@@ -26,7 +26,6 @@
 #include "config.h"
 #include "JSCSSStyleDeclarationCustom.h"
 
-#include "AtomicString.h"
 #include "CSSMutableStyleDeclaration.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSValue.h"
@@ -34,6 +33,7 @@
 #include <runtime/StringObjectThatMasqueradesAsUndefined.h>
 #include <runtime/StringPrototype.h>
 #include <wtf/ASCIICType.h>
+#include <wtf/text/AtomicString.h>
 
 using namespace JSC;
 using namespace WTF;

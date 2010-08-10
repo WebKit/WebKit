@@ -26,7 +26,6 @@
 #include "config.h"
 #include "JSHTMLAllCollection.h"
 
-#include "AtomicString.h"
 #include "HTMLAllCollection.h"
 #include "JSDOMBinding.h"
 #include "JSHTMLAllCollection.h"
@@ -36,6 +35,7 @@
 #include "StaticNodeList.h"
 #include <runtime/JSValue.h>
 #include <wtf/Vector.h>
+#include <wtf/text/AtomicString.h>
 
 using namespace JSC;
 

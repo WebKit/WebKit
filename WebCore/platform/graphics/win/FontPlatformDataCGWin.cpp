@@ -25,12 +25,12 @@
 #include "FontPlatformData.h"
 
 #include "PlatformString.h"
-#include "StringHash.h"
 #include <ApplicationServices/ApplicationServices.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/text/StringHash.h>
 
 using std::min;
 

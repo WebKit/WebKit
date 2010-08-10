@@ -27,11 +27,11 @@
 #include "config.h"
 #include "CrossOriginAccessControl.h"
 
-#include "AtomicString.h"
 #include "HTTPParsers.h"
 #include "ResourceResponse.h"
 #include "SecurityOrigin.h"
 #include <wtf/Threading.h>
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 

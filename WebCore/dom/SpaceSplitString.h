@@ -21,10 +21,10 @@
 #ifndef SpaceSplitString_h
 #define SpaceSplitString_h
 
-#include "AtomicString.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 

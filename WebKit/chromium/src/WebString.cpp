@@ -31,9 +31,9 @@
 #include "config.h"
 #include "WebString.h"
 
-#include "AtomicString.h"
 #include "PlatformString.h"
 #include <wtf/text/CString.h>
+#include <wtf/text/AtomicString.h>
 
 #include "WebCString.h"
 

@@ -29,11 +29,11 @@
 
 #include "KURL.h"
 
-#include "StringHash.h"
 #include "TextEncoding.h"
 #include <wtf/text/CString.h>
 #include <wtf/HashMap.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/StringHash.h>
 
 #if USE(ICU_UNICODE)
 #include <unicode/uidna.h>

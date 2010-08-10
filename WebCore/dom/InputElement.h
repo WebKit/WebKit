@@ -21,8 +21,8 @@
 #ifndef InputElement_h
 #define InputElement_h
 
-#include "AtomicString.h"
 #include "PlatformString.h"
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 

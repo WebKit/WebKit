@@ -24,7 +24,7 @@
 #include "Editor.h"
 #include "FileList.h"
 #include "NotImplemented.h"
-#include "StringHash.h"
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 PassRefPtr<Clipboard> Editor::newGeneralClipboard(ClipboardAccessPolicy policy, Frame*)

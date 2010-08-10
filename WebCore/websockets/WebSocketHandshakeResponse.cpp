@@ -34,8 +34,8 @@
 
 #include "WebSocketHandshakeResponse.h"
 
-#include "AtomicString.h"
 #include <wtf/Assertions.h>
+#include <wtf/text/AtomicString.h>
 
 using namespace std;
 

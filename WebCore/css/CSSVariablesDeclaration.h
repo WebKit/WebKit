@@ -27,11 +27,11 @@
 #define CSSVariablesDeclaration_h
 
 #include "PlatformString.h"
-#include "StringHash.h"
 #include "StyleBase.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 

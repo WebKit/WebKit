@@ -29,12 +29,11 @@
 #ifndef CompositeAnimation_h
 #define CompositeAnimation_h
 
-#include "AtomicString.h"
-
 #include "ImplicitAnimation.h"
 #include "KeyframeAnimation.h"
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 

@@ -26,13 +26,13 @@
 #include "config.h"
 #include "XMLHttpRequestUpload.h"
 
-#include "AtomicString.h"
 #include "Event.h"
 #include "EventException.h"
 #include "EventNames.h"
 #include "XMLHttpRequest.h"
 #include "XMLHttpRequestProgressEvent.h"
 #include <wtf/Assertions.h>
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 

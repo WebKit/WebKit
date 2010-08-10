@@ -38,8 +38,8 @@
 #include "HashMap.h"
 #include "HashSet.h"
 #include "SimpleFontData.h"
-#include "StringHash.h"
 #include <unicode/uniset.h>
+#include <wtf/text/StringHash.h>
 
 #include <windows.h>
 #include <objidl.h>

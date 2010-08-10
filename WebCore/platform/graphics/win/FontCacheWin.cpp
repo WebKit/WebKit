@@ -31,11 +31,11 @@
 #include "FontCache.h"
 #include "Font.h"
 #include "SimpleFontData.h"
-#include "StringHash.h"
 #include "UnicodeRange.h"
 #include <mlang.h>
 #include <windows.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/StringHash.h>
 #if PLATFORM(CG)
 #include <ApplicationServices/ApplicationServices.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>

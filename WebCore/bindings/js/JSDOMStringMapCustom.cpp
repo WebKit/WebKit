@@ -26,8 +26,8 @@
 #include "config.h"
 #include "JSDOMStringMap.h"
 
-#include "AtomicString.h"
 #include "DOMStringMap.h"
+#include <wtf/text/AtomicString.h>
 
 using namespace JSC;
 

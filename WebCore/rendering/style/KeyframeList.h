@@ -25,10 +25,10 @@
 #ifndef KeyframeList_h
 #define KeyframeList_h
 
-#include "AtomicString.h"
 #include <wtf/Vector.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 

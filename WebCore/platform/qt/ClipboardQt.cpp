@@ -43,8 +43,8 @@
 #include "PlatformString.h"
 #include "Range.h"
 #include "RenderImage.h"
-#include "StringHash.h"
 #include "markup.h"
+#include <wtf/text/StringHash.h>
 
 #include <QApplication>
 #include <QClipboard>

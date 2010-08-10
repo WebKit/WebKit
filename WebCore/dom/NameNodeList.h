@@ -24,9 +24,9 @@
 #ifndef NameNodeList_h
 #define NameNodeList_h
 
-#include "AtomicString.h"
 #include "DynamicNodeList.h"
 #include <wtf/Forward.h>
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 

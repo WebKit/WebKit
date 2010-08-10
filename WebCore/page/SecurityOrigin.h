@@ -33,10 +33,10 @@
 #include <wtf/RefCounted.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/Threading.h>
+#include <wtf/text/StringHash.h>
 
 #include "FrameLoaderTypes.h"
 #include "PlatformString.h"
-#include "StringHash.h"
 
 namespace WebCore {
 

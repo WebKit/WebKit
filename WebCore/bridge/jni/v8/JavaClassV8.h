@@ -28,9 +28,9 @@
 
 #include "JNIBridgeV8.h"
 #include "PlatformString.h"
-#include "StringHash.h"
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
+#include <wtf/text/StringHash.h>
 
 namespace JSC {
 

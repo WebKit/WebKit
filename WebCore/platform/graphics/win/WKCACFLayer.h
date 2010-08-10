@@ -28,8 +28,6 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "StringHash.h"
-
 #include <wtf/RefCounted.h>
 
 #include <QuartzCore/CACFLayer.h>
@@ -37,6 +35,7 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/text/StringHash.h>
 
 #include "GraphicsContext.h"
 #include "PlatformString.h"

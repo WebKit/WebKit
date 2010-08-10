@@ -43,7 +43,6 @@
 #include "Settings.h"
 #include "SoftLinking.h"
 #include "StringBuilder.h"
-#include "StringHash.h"
 #include "TimeRanges.h"
 #include "Timer.h"
 #include <AssertMacros.h>
@@ -54,6 +53,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/StringHash.h>
 
 #if USE(ACCELERATED_COMPOSITING)
 #include "GraphicsLayerCACF.h"

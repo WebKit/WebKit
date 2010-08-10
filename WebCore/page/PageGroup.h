@@ -29,9 +29,9 @@
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include "LinkHash.h"
-#include "StringHash.h"
 #include "UserScript.h"
 #include "UserStyleSheet.h"
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 

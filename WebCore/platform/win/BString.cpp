@@ -26,9 +26,9 @@
 #include "config.h"
 #include "BString.h"
 
-#include "AtomicString.h"
 #include "KURL.h"
 #include "PlatformString.h"
+#include <wtf/text/AtomicString.h>
 #include <tchar.h>
 #include <windows.h>
 

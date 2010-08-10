@@ -21,8 +21,8 @@
 #include "config.h"
 #include "SearchPopupMenuHaiku.h"
 
-#include "AtomicString.h"
 #include "NotImplemented.h"
+#include <wtf/text/AtomicString.h>
 
 
 namespace WebCore {

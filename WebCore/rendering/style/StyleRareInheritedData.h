@@ -25,11 +25,11 @@
 #ifndef StyleRareInheritedData_h
 #define StyleRareInheritedData_h
 
-#include "AtomicString.h"
 #include "Color.h"
 #include "Length.h"
 #include <wtf/RefCounted.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 

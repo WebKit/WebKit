@@ -3,7 +3,6 @@
 #include "config.h"
 #include "WebEdit.h"
 
-#include "AtomicString.h"
 #include "CompositeEditCommand.h"
 #include "Document.h"
 #include "Frame.h"
@@ -13,6 +12,7 @@
 
 #include "WebFrame.h"
 #include "WebDOMElement.h"
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 

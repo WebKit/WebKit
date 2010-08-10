@@ -23,9 +23,9 @@
 #include "config.h"
 #include "Event.h"
 
-#include "AtomicString.h"
 #include "UserGestureIndicator.h"
 #include <wtf/CurrentTime.h>
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 

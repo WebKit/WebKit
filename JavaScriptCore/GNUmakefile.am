@@ -491,6 +491,7 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/TCSystemAlloc.h \
 	JavaScriptCore/wtf/text/AtomicString.cpp \
 	JavaScriptCore/wtf/text/AtomicString.h \
+	JavaScriptCore/wtf/text/AtomicStringHash.h \
 	JavaScriptCore/wtf/text/AtomicStringImpl.h \
 	JavaScriptCore/wtf/text/CString.cpp \
 	JavaScriptCore/wtf/text/CString.h \

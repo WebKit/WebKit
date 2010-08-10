@@ -23,9 +23,9 @@
 #define SVGAltGlyphElement_h
 
 #if ENABLE(SVG_FONTS)
-#include "AtomicString.h"
 #include "SVGTextPositioningElement.h"
 #include "SVGURIReference.h"
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 

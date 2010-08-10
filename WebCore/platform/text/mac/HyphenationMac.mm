@@ -28,7 +28,6 @@
 
 #if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD) || defined(BUILDING_ON_SNOW_LEOPARD)
 
-#import "AtomicString.h"
 #import "AtomicStringKeyedMRUCache.h"
 #import "TextBreakIteratorInternalICU.h"
 #import "WebCoreSystemInterface.h"

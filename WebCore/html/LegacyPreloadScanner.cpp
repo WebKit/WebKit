@@ -27,7 +27,6 @@
 #include "config.h"
 #include "LegacyPreloadScanner.h"
 
-#include "AtomicString.h"
 #include "CachedCSSStyleSheet.h"
 #include "CachedImage.h"
 #include "CachedResource.h"
@@ -42,6 +41,7 @@
 #include "HTMLNames.h"
 #include <wtf/text/CString.h>
 #include <wtf/CurrentTime.h>
+#include <wtf/text/AtomicString.h>
 #include <wtf/unicode/Unicode.h>
 
 // Use __GNUC__ instead of PLATFORM(GCC) to stay consistent with the gperf generated c file

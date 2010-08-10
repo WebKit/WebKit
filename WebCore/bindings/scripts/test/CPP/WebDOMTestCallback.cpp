@@ -24,7 +24,6 @@
 
 #include "WebDOMTestCallback.h"
 
-#include "AtomicString.h"
 #include "Class1.h"
 #include "Class2.h"
 #include "Class3.h"
@@ -37,6 +36,7 @@
 #include "WebExceptionHandler.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/AtomicString.h>
 
 struct WebDOMTestCallback::WebDOMTestCallbackPrivate {
     WebDOMTestCallbackPrivate(WebCore::TestCallback* object = 0)

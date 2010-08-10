@@ -26,6 +26,8 @@
 #ifndef AtomicStringKeyedMRUCache_h
 #define AtomicStringKeyedMRUCache_h
 
+#include <wtf/text/AtomicString.h>
+
 namespace WebCore {
 
 template<typename T, size_t capacity = 4>

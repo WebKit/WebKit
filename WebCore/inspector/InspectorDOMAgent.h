@@ -30,7 +30,6 @@
 #ifndef InspectorDOMAgent_h
 #define InspectorDOMAgent_h
 
-#include "AtomicString.h"
 #include "Document.h"
 #include "EventListener.h"
 #include "EventTarget.h"
@@ -46,6 +45,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
     class ContainerNode;

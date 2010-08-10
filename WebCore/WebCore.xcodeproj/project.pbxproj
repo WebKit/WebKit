@@ -237,7 +237,6 @@
 		0F69B9CA120FE1D6000E1FC7 /* RenderMathMLFenced.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F69B9C8120FE1D6000E1FC7 /* RenderMathMLFenced.h */; };
 		0F6ECD450F252F3700BDE271 /* CSSPropertyLonghand.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F6ECD430F252F3700BDE271 /* CSSPropertyLonghand.h */; };
 		0F6ECD460F252F3700BDE271 /* CSSPropertyLonghand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F6ECD440F252F3700BDE271 /* CSSPropertyLonghand.cpp */; };
-		0FC705210EB1815600B90AD8 /* AtomicStringHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC705200EB1815600B90AD8 /* AtomicStringHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FCF33240F2B9715004B6795 /* ColorCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FCF33230F2B9715004B6795 /* ColorCG.cpp */; };
 		0FCF332C0F2B9A25004B6795 /* WebTiledLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FCF33280F2B9A25004B6795 /* WebTiledLayer.mm */; };
 		0FCF332D0F2B9A25004B6795 /* WebTiledLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCF33290F2B9A25004B6795 /* WebTiledLayer.h */; };
@@ -4053,8 +4052,6 @@
 		B2B2645D0D00A77E000ACC1D /* StringImplCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2B2645B0D00A77E000ACC1D /* StringImplCF.cpp */; };
 		B2B33A5F0B887CEF00C15984 /* SVGCharacterLayoutInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2B33A5D0B887CEF00C15984 /* SVGCharacterLayoutInfo.cpp */; };
 		B2B33A600B887CEF00C15984 /* SVGCharacterLayoutInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = B2B33A5E0B887CEF00C15984 /* SVGCharacterLayoutInfo.h */; };
-		B2C3DA1F0D006C1D00EF6F26 /* AtomicString.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3D9EE0D006C1D00EF6F26 /* AtomicString.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		B2C3DA200D006C1D00EF6F26 /* AtomicStringImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3D9EF0D006C1D00EF6F26 /* AtomicStringImpl.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2C3DA210D006C1D00EF6F26 /* Base64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D9F00D006C1D00EF6F26 /* Base64.cpp */; };
 		B2C3DA220D006C1D00EF6F26 /* Base64.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3D9F10D006C1D00EF6F26 /* Base64.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2C3DA230D006C1D00EF6F26 /* BidiContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D9F20D006C1D00EF6F26 /* BidiContext.cpp */; };
@@ -4068,8 +4065,6 @@
 		B2C3DA2E0D006C1D00EF6F26 /* SegmentedString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D9FE0D006C1D00EF6F26 /* SegmentedString.cpp */; };
 		B2C3DA2F0D006C1D00EF6F26 /* SegmentedString.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3D9FF0D006C1D00EF6F26 /* SegmentedString.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2C3DA300D006C1D00EF6F26 /* String.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2C3DA000D006C1D00EF6F26 /* String.cpp */; };
-		B2C3DA310D006C1D00EF6F26 /* StringHash.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3DA010D006C1D00EF6F26 /* StringHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		B2C3DA330D006C1D00EF6F26 /* StringImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3DA030D006C1D00EF6F26 /* StringImpl.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2C3DA340D006C1D00EF6F26 /* TextBoundaries.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3DA040D006C1D00EF6F26 /* TextBoundaries.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2C3DA360D006C1D00EF6F26 /* TextBreakIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3DA060D006C1D00EF6F26 /* TextBreakIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2C3DA370D006C1D00EF6F26 /* TextBreakIteratorICU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2C3DA070D006C1D00EF6F26 /* TextBreakIteratorICU.cpp */; };
@@ -5943,7 +5938,6 @@
 		0F69B9C8120FE1D6000E1FC7 /* RenderMathMLFenced.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMathMLFenced.h; sourceTree = "<group>"; };
 		0F6ECD430F252F3700BDE271 /* CSSPropertyLonghand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSPropertyLonghand.h; sourceTree = "<group>"; };
 		0F6ECD440F252F3700BDE271 /* CSSPropertyLonghand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSPropertyLonghand.cpp; sourceTree = "<group>"; };
-		0FC705200EB1815600B90AD8 /* AtomicStringHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AtomicStringHash.h; sourceTree = "<group>"; };
 		0FCF33230F2B9715004B6795 /* ColorCG.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ColorCG.cpp; sourceTree = "<group>"; };
 		0FCF33280F2B9A25004B6795 /* WebTiledLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebTiledLayer.mm; sourceTree = "<group>"; };
 		0FCF33290F2B9A25004B6795 /* WebTiledLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebTiledLayer.h; sourceTree = "<group>"; };
@@ -9753,8 +9747,6 @@
 		B2B2645B0D00A77E000ACC1D /* StringImplCF.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StringImplCF.cpp; sourceTree = "<group>"; };
 		B2B33A5D0B887CEF00C15984 /* SVGCharacterLayoutInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGCharacterLayoutInfo.cpp; sourceTree = "<group>"; };
 		B2B33A5E0B887CEF00C15984 /* SVGCharacterLayoutInfo.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGCharacterLayoutInfo.h; sourceTree = "<group>"; };
-		B2C3D9EE0D006C1D00EF6F26 /* AtomicString.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = AtomicString.h; sourceTree = "<group>"; };
-		B2C3D9EF0D006C1D00EF6F26 /* AtomicStringImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = AtomicStringImpl.h; sourceTree = "<group>"; };
 		B2C3D9F00D006C1D00EF6F26 /* Base64.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Base64.cpp; sourceTree = "<group>"; };
 		B2C3D9F10D006C1D00EF6F26 /* Base64.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Base64.h; sourceTree = "<group>"; };
 		B2C3D9F20D006C1D00EF6F26 /* BidiContext.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = BidiContext.cpp; sourceTree = "<group>"; };
@@ -9768,8 +9760,6 @@
 		B2C3D9FE0D006C1D00EF6F26 /* SegmentedString.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SegmentedString.cpp; sourceTree = "<group>"; };
 		B2C3D9FF0D006C1D00EF6F26 /* SegmentedString.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SegmentedString.h; sourceTree = "<group>"; };
 		B2C3DA000D006C1D00EF6F26 /* String.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = String.cpp; sourceTree = "<group>"; };
-		B2C3DA010D006C1D00EF6F26 /* StringHash.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = StringHash.h; sourceTree = "<group>"; };
-		B2C3DA030D006C1D00EF6F26 /* StringImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = StringImpl.h; sourceTree = "<group>"; };
 		B2C3DA040D006C1D00EF6F26 /* TextBoundaries.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TextBoundaries.h; sourceTree = "<group>"; };
 		B2C3DA060D006C1D00EF6F26 /* TextBreakIterator.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TextBreakIterator.h; sourceTree = "<group>"; };
 		B2C3DA070D006C1D00EF6F26 /* TextBreakIteratorICU.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TextBreakIteratorICU.cpp; sourceTree = "<group>"; };
@@ -15751,9 +15741,6 @@
 				B2B264590D00A77E000ACC1D /* cf */,
 				B2C3D9F90D006C1D00EF6F26 /* mac */,
 				B734B17F119B98DB006587BD /* transcoder */,
-				B2C3D9EE0D006C1D00EF6F26 /* AtomicString.h */,
-				0FC705200EB1815600B90AD8 /* AtomicStringHash.h */,
-				B2C3D9EF0D006C1D00EF6F26 /* AtomicStringImpl.h */,
 				37C61F0012095C87007A3C67 /* AtomicStringKeyedMRUCache.h */,
 				B2C3D9F00D006C1D00EF6F26 /* Base64.cpp */,
 				B2C3D9F10D006C1D00EF6F26 /* Base64.h */,
@@ -15774,8 +15761,6 @@
 				939B3E4D0D3C1E8400B4A92B /* StringBuffer.h */,
 				E1A302C00DE8376900C52F2C /* StringBuilder.cpp */,
 				E1A302BB0DE8370300C52F2C /* StringBuilder.h */,
-				B2C3DA010D006C1D00EF6F26 /* StringHash.h */,
-				B2C3DA030D006C1D00EF6F26 /* StringImpl.h */,
 				97C0784F1165D5BE003A32EF /* SuffixTree.h */,
 				B2C3DA040D006C1D00EF6F26 /* TextBoundaries.h */,
 				B2C3DA060D006C1D00EF6F26 /* TextBreakIterator.h */,
@@ -17502,9 +17487,6 @@
 				49EECDE010503C2400099FAB /* ArrayBufferView.h in Headers */,
 				B0149E7E11A4B21500196A7B /* AsyncImageResizer.h in Headers */,
 				8A413AE01207BBA50082016E /* AsyncScriptRunner.h in Headers */,
-				B2C3DA1F0D006C1D00EF6F26 /* AtomicString.h in Headers */,
-				0FC705210EB1815600B90AD8 /* AtomicStringHash.h in Headers */,
-				B2C3DA200D006C1D00EF6F26 /* AtomicStringImpl.h in Headers */,
 				37C61F0112095C87007A3C67 /* AtomicStringKeyedMRUCache.h in Headers */,
 				A8C4A80D09D563270003AC8D /* Attr.h in Headers */,
 				A8C4A80B09D563270003AC8D /* Attribute.h in Headers */,
@@ -19688,8 +19670,6 @@
 				C5102D940FD9AA2D00FAFF04 /* StorageSyncManager.h in Headers */,
 				939B3E4E0D3C1E8400B4A92B /* StringBuffer.h in Headers */,
 				E1A302BC0DE8370300C52F2C /* StringBuilder.h in Headers */,
-				B2C3DA310D006C1D00EF6F26 /* StringHash.h in Headers */,
-				B2C3DA330D006C1D00EF6F26 /* StringImpl.h in Headers */,
 				65488D6B0DD5A83D009D83B2 /* StringSourceProvider.h in Headers */,
 				B23540F30D00782E002382FA /* StringTruncator.h in Headers */,
 				849F77760EFEC6200090849D /* StrokeStyleApplier.h in Headers */,
@@ -20199,7 +20179,6 @@
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
 			compatibilityVersion = "Xcode 2.4";
-			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,

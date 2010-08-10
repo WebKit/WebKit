@@ -27,13 +27,13 @@
 #include "ce_textcodecs.h"
 #include "FontCache.h"
 #include "PlatformString.h"
-#include "StringHash.h"
 #include <mlang.h>
 #include <winbase.h>
 #include <winnls.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringHash.h>
 #include <wtf/unicode/UTF8.h>
 
 namespace WebCore {

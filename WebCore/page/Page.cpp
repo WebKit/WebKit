@@ -65,12 +65,12 @@
 #include "SharedBuffer.h"
 #include "SpeechInput.h"
 #include "SpeechInputClient.h"
-#include "StringHash.h"
 #include "TextResourceDecoder.h"
 #include "Widget.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/StringHash.h>
 
 #if ENABLE(DOM_STORAGE)
 #include "StorageArea.h"

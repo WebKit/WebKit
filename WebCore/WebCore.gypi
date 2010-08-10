@@ -2854,8 +2854,6 @@
             'platform/text/transcoder/FontTranscoder.h',
             'platform/text/win/TextBreakIteratorInternalICUWin.cpp',
             'platform/text/wx/StringWx.cpp',
-            'platform/text/AtomicString.h',
-            'platform/text/AtomicStringHash.h',
             'platform/text/AtomicStringImpl.h',
             'platform/text/Base64.cpp',
             'platform/text/Base64.h',

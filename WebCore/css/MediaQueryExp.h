@@ -29,10 +29,10 @@
 #ifndef MediaQueryExp_h
 #define MediaQueryExp_h
 
-#include "AtomicString.h"
 #include "CSSValue.h"
 #include "MediaFeatureNames.h"
 #include <wtf/RefPtr.h>
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 class CSSParserValueList;

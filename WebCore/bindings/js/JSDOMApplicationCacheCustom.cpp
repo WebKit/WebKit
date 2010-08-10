@@ -28,7 +28,6 @@
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
 
-#include "AtomicString.h"
 #include "DOMApplicationCache.h"
 #include "DOMWindow.h"
 #include "Event.h"
@@ -37,6 +36,7 @@
 #include "JSDOMWindowCustom.h"
 #include "JSEvent.h"
 #include "JSEventListener.h"
+#include <wtf/text/AtomicString.h>
 
 using namespace JSC;
 

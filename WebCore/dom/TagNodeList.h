@@ -24,8 +24,8 @@
 #ifndef TagNodeList_h
 #define TagNodeList_h
 
-#include "AtomicString.h"
 #include "DynamicNodeList.h"
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 

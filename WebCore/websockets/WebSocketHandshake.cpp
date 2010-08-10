@@ -34,7 +34,6 @@
 
 #include "WebSocketHandshake.h"
 
-#include "AtomicString.h"
 #include "CharacterNames.h"
 #include "Cookie.h"
 #include "CookieJar.h"
@@ -51,6 +50,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/StringExtras.h>
 #include <wtf/Vector.h>
+#include <wtf/text/AtomicString.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {

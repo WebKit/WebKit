@@ -27,11 +27,11 @@
 #ifndef Settings_h
 #define Settings_h
 
-#include "AtomicString.h"
 #include "EditingBehaviorTypes.h"
 #include "FontRenderingMode.h"
 #include "KURL.h"
 #include "ZoomMode.h"
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 

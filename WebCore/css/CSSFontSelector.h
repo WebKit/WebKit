@@ -27,10 +27,10 @@
 #define CSSFontSelector_h
 
 #include "FontSelector.h"
-#include "StringHash.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 

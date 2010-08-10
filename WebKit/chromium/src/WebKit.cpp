@@ -31,7 +31,6 @@
 #include "config.h"
 #include "WebKit.h"
 
-#include "AtomicString.h"
 #include "DOMTimer.h"
 #include "Logging.h"
 #include "Page.h"
@@ -43,6 +42,7 @@
 
 #include <wtf/Assertions.h>
 #include <wtf/Threading.h>
+#include <wtf/text/AtomicString.h>
 
 namespace WebKit {
 
