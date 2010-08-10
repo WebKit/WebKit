@@ -128,6 +128,11 @@ public:
         return poolAllocate(n);
     }
     
+    void returnLastBytes(size_t count)
+    {
+        m_freePtr -= count;
+    }
+
     ~ExecutablePool()
     {
         AllocationList::iterator end = m_pools.end();

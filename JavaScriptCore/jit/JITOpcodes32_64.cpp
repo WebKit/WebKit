@@ -163,7 +163,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     // We can't run without the JIT trampolines!
     if (!*executablePool)
         CRASH();
-    LinkBuffer patchBuffer(this, *executablePool);
+    LinkBuffer patchBuffer(this, *executablePool, 0);
     // We can't run without the JIT trampolines!
     if (!patchBuffer.allocationSuccessful())
         CRASH();
@@ -182,19 +182,19 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
 
     CodeRef finalCode = patchBuffer.finalizeCode();
 
-    trampolines->ctiVirtualCall = trampolineAt(finalCode, virtualCallBegin);
-    trampolines->ctiVirtualConstruct = trampolineAt(finalCode, virtualConstructBegin);
-    trampolines->ctiNativeCall = trampolineAt(finalCode, nativeCallThunk);
-    trampolines->ctiNativeConstruct = trampolineAt(finalCode, nativeConstructThunk);
+    trampolines->ctiVirtualCall = patchBuffer.trampolineAt(virtualCallBegin);
+    trampolines->ctiVirtualConstruct = patchBuffer.trampolineAt(virtualConstructBegin);
+    trampolines->ctiNativeCall = patchBuffer.trampolineAt(nativeCallThunk);
+    trampolines->ctiNativeConstruct = patchBuffer.trampolineAt(nativeConstructThunk);
 #if ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
-    trampolines->ctiStringLengthTrampoline = trampolineAt(finalCode, stringLengthBegin);
+    trampolines->ctiStringLengthTrampoline = patchBuffer.trampolineAt(stringLengthBegin);
 #endif
 #if ENABLE(JIT_OPTIMIZE_CALL)
-    trampolines->ctiVirtualCallLink = trampolineAt(finalCode, virtualCallLinkBegin);
-    trampolines->ctiVirtualConstructLink = trampolineAt(finalCode, virtualConstructLinkBegin);
+    trampolines->ctiVirtualCallLink = patchBuffer.trampolineAt(virtualCallLinkBegin);
+    trampolines->ctiVirtualConstructLink = patchBuffer.trampolineAt(virtualConstructLinkBegin);
 #endif
 #if ENABLE(JIT_USE_SOFT_MODULO)
-    trampolines->ctiSoftModulo = trampolineAt(finalCode, softModBegin);
+    trampolines->ctiSoftModulo = patchBuffer.trampolineAt(softModBegin);
 #endif
 }
 
@@ -362,15 +362,15 @@ JIT::CodePtr JIT::privateCompileCTINativeCall(PassRefPtr<ExecutablePool> executa
     ret();
 
     // All trampolines constructed! copy the code, link up calls, and set the pointers on the Machine object.
-    LinkBuffer patchBuffer(this, executablePool);
+    LinkBuffer patchBuffer(this, executablePool, 0);
     // We can't continue if we can't call a function!
     if (!patchBuffer.allocationSuccessful())
         CRASH();
 
     patchBuffer.link(nativeCall, FunctionPtr(func));
+    patchBuffer.finalizeCode();
 
-    CodeRef finalCode = patchBuffer.finalizeCode();
-    return trampolineAt(finalCode, nativeCallThunk);
+    return patchBuffer.trampolineAt(nativeCallThunk);
 }
 
 void JIT::emit_op_mov(Instruction* currentInstruction)

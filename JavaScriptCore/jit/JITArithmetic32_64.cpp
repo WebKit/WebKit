@@ -1383,6 +1383,8 @@ void JIT::emit_op_mod(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_mod(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
+    UNUSED_PARAM(currentInstruction);
+    UNUSED_PARAM(iter);
 #if ENABLE(JIT_USE_SOFT_MODULO)
     unsigned result = currentInstruction[1].u.operand;
     unsigned op1 = currentInstruction[2].u.operand;

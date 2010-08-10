@@ -1,3 +1,134 @@
+2010-08-09  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Allow an assembler/macroassembler to compact branches to more concise forms when linking
+        https://bugs.webkit.org/show_bug.cgi?id=43745
+
+        This patch makes it possible for an assembler to convert jumps into a different
+        (presumably more efficient) form at link time.  Currently implemented in the
+        ARMv7 JIT as that already had logic to delay linking of jumps until the end of
+        compilation already.  The ARMv7 JIT chooses between either a 4 byte short jump
+        or a full 32-bit offset (and rewrites ITTT instructions as appropriate), so does
+        not yet produce the most compact form possible.  The general design of the linker
+        should make it relatively simple to introduce new branch types with little effort,
+        as the linker has no knowledge of the exact form of any of the branches.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/ARMv7Assembler.cpp: Added.
+        (JSC::):
+          Record jump sizes
+
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::LinkRecord::LinkRecord):
+        (JSC::ARMv7Assembler::LinkRecord::from):
+        (JSC::ARMv7Assembler::LinkRecord::setFrom):
+        (JSC::ARMv7Assembler::LinkRecord::to):
+        (JSC::ARMv7Assembler::LinkRecord::type):
+        (JSC::ARMv7Assembler::LinkRecord::linkType):
+        (JSC::ARMv7Assembler::LinkRecord::setLinkType):
+          Encapsulate LinkRecord fields so we can compress the values somewhat
+
+        (JSC::ARMv7Assembler::JmpSrc::JmpSrc):
+          Need to record the jump type now
+
+        (JSC::ARMv7Assembler::b):
+        (JSC::ARMv7Assembler::blx):
+        (JSC::ARMv7Assembler::bx):
+          Need to pass the jump types
+
+        (JSC::ARMv7Assembler::executableOffsetFor):
+        (JSC::ARMv7Assembler::jumpSizeDelta):
+        (JSC::ARMv7Assembler::linkRecordSourceComparator):
+        (JSC::ARMv7Assembler::computeJumpType):
+        (JSC::ARMv7Assembler::convertJumpTo):
+        (JSC::ARMv7Assembler::recordLinkOffsets):
+        (JSC::ARMv7Assembler::jumpsToLink):
+        (JSC::ARMv7Assembler::link):
+        (JSC::ARMv7Assembler::unlinkedCode):
+          Helper functions for the linker
+
+        (JSC::ARMv7Assembler::linkJump):
+        (JSC::ARMv7Assembler::canBeShortJump):
+        (JSC::ARMv7Assembler::linkLongJump):
+        (JSC::ARMv7Assembler::linkShortJump):
+        (JSC::ARMv7Assembler::linkJumpAbsolute):
+           Moving code around for the various jump linking functions
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::beginUninterruptedSequence):
+        (JSC::AbstractMacroAssembler::endUninterruptedSequence):
+          We have to track uninterrupted sequences in any assembler that compacts
+          branches as that's not something we're allowed to do in such sequences.
+          AbstractMacroAssembler has a nop version of these functions as it makes the
+          code elsewhere nicer.
+
+        * assembler/LinkBuffer.h:
+        (JSC::LinkBuffer::LinkBuffer):
+        (JSC::LinkBuffer::link):
+        (JSC::LinkBuffer::patch):
+        (JSC::LinkBuffer::locationOf):
+        (JSC::LinkBuffer::locationOfNearCall):
+        (JSC::LinkBuffer::returnAddressOffset):
+        (JSC::LinkBuffer::trampolineAt):
+          Updated these functions to adjust for any changed offsets in the linked code
+
+        (JSC::LinkBuffer::applyOffset):
+          A helper function to deal with the now potentially moved labels
+
+        (JSC::LinkBuffer::linkCode):
+          The new and mighty linker function
+
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::MacroAssemblerARMv7):
+        (JSC::MacroAssemblerARMv7::beginUninterruptedSequence):
+        (JSC::MacroAssemblerARMv7::endUninterruptedSequence):
+        (JSC::MacroAssemblerARMv7::jumpsToLink):
+        (JSC::MacroAssemblerARMv7::unlinkedCode):
+        (JSC::MacroAssemblerARMv7::computeJumpType):
+        (JSC::MacroAssemblerARMv7::convertJumpTo):
+        (JSC::MacroAssemblerARMv7::recordLinkOffsets):
+        (JSC::MacroAssemblerARMv7::jumpSizeDelta):
+        (JSC::MacroAssemblerARMv7::link):
+        (JSC::MacroAssemblerARMv7::jump):
+        (JSC::MacroAssemblerARMv7::branchMul32):
+        (JSC::MacroAssemblerARMv7::breakpoint):
+        (JSC::MacroAssemblerARMv7::nearCall):
+        (JSC::MacroAssemblerARMv7::call):
+        (JSC::MacroAssemblerARMv7::ret):
+        (JSC::MacroAssemblerARMv7::tailRecursiveCall):
+        (JSC::MacroAssemblerARMv7::executableOffsetFor):
+        (JSC::MacroAssemblerARMv7::inUninterruptedSequence):
+        (JSC::MacroAssemblerARMv7::makeJump):
+        (JSC::MacroAssemblerARMv7::makeBranch):
+           All branches need to pass on their type now
+
+        * jit/ExecutableAllocator.h:
+        (JSC::ExecutablePool::returnLastBytes):
+           We can't know ahead of time how much space will be necessary to
+           hold the linked code if we're compacting branches, this new
+           function allows us to return the unused bytes at the end of linking
+
+        * jit/JIT.cpp:
+        (JSC::JIT::JIT):
+        (JSC::JIT::privateCompile):
+        * jit/JIT.h:
+        (JSC::JIT::compile):
+           The JIT class now needs to take a linker offset so that recompilation
+           can generate the same jumps when using branch compaction.
+        * jit/JITArithmetic32_64.cpp:
+        (JSC::JIT::emitSlow_op_mod):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        (JSC::JIT::privateCompileCTINativeCall):
+          Update for new trampolineAt changes
+
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMallocStats::):
+        * wtf/Platform.h:
+
 2010-08-09  Gavin Barraclough  <barraclough@apple.com>
 
         Qt build fix III.

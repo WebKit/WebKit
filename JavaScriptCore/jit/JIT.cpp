@@ -71,7 +71,7 @@ void ctiPatchCallByReturnAddress(CodeBlock* codeblock, ReturnAddressPtr returnAd
     repatchBuffer.relinkCallerToFunction(returnAddress, newCalleeFunction);
 }
 
-JIT::JIT(JSGlobalData* globalData, CodeBlock* codeBlock)
+JIT::JIT(JSGlobalData* globalData, CodeBlock* codeBlock, void* linkerOffset)
     : m_interpreter(globalData->interpreter)
     , m_globalData(globalData)
     , m_codeBlock(codeBlock)
@@ -89,6 +89,7 @@ JIT::JIT(JSGlobalData* globalData, CodeBlock* codeBlock)
     , m_lastResultBytecodeRegister(std::numeric_limits<int>::max())
     , m_jumpTargetsPosition(0)
 #endif
+    , m_linkerOffset(linkerOffset)
 {
 }
 
@@ -511,7 +512,7 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
     RefPtr<ExecutablePool> executablePool = m_globalData->executableAllocator.poolForSize(m_assembler.size());
     if (!executablePool)
         return JITCode();
-    LinkBuffer patchBuffer(this, executablePool.release());
+    LinkBuffer patchBuffer(this, executablePool.release(), m_linkerOffset);
     if (!patchBuffer.allocationSuccessful())
         return JITCode();
 

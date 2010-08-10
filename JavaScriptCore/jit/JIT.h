@@ -178,9 +178,9 @@ namespace JSC {
         static const int patchGetByIdDefaultOffset = 256;
 
     public:
-        static JITCode compile(JSGlobalData* globalData, CodeBlock* codeBlock, CodePtr* functionEntryArityCheck = 0)
+        static JITCode compile(JSGlobalData* globalData, CodeBlock* codeBlock, CodePtr* functionEntryArityCheck = 0, void* offsetBase = 0)
         {
-            return JIT(globalData, codeBlock).privateCompile(functionEntryArityCheck);
+            return JIT(globalData, codeBlock, offsetBase).privateCompile(functionEntryArityCheck);
         }
 
         static bool compileGetByIdProto(JSGlobalData* globalData, CallFrame* callFrame, CodeBlock* codeBlock, StructureStubInfo* stubInfo, Structure* structure, Structure* prototypeStructure, const Identifier& ident, const PropertySlot& slot, size_t cachedOffset, ReturnAddressPtr returnAddress)
@@ -221,7 +221,7 @@ namespace JSC {
         {
             if (!globalData->canUseJIT())
                 return;
-            JIT jit(globalData);
+            JIT jit(globalData, 0, 0);
             jit.privateCompileCTIMachineTrampolines(executablePool, globalData, trampolines);
         }
 
@@ -229,7 +229,7 @@ namespace JSC {
         {
             if (!globalData->canUseJIT())
                 return CodePtr();
-            JIT jit(globalData);
+            JIT jit(globalData, 0, 0);
             return jit.privateCompileCTINativeCall(executablePool, globalData, func);
         }
 
@@ -259,7 +259,7 @@ namespace JSC {
             }
         };
 
-        JIT(JSGlobalData*, CodeBlock* = 0);
+        JIT(JSGlobalData*, CodeBlock* = 0, void* = 0);
 
         void privateCompileMainPass();
         void privateCompileLinkPass();
@@ -666,16 +666,16 @@ namespace JSC {
 #endif
 #endif // USE(JSVALUE32_64)
 
-#if defined(ASSEMBLER_HAS_CONSTANT_POOL) && ASSEMBLER_HAS_CONSTANT_POOL
-#define BEGIN_UNINTERRUPTED_SEQUENCE(name) beginUninterruptedSequence(name ## InstructionSpace, name ## ConstantSpace)
-#define END_UNINTERRUPTED_SEQUENCE(name) endUninterruptedSequence(name ## InstructionSpace, name ## ConstantSpace)
+#if (defined(ASSEMBLER_HAS_CONSTANT_POOL) && ASSEMBLER_HAS_CONSTANT_POOL)
+#define BEGIN_UNINTERRUPTED_SEQUENCE(name) do { beginUninterruptedSequence(); beginUninterruptedSequence(name ## InstructionSpace, name ## ConstantSpace); } while (false)
+#define END_UNINTERRUPTED_SEQUENCE(name) do { endUninterruptedSequence(name ## InstructionSpace, name ## ConstantSpace); endUninterruptedSequence(); } while (false)
 
         void beginUninterruptedSequence(int, int);
         void endUninterruptedSequence(int, int);
 
 #else
-#define BEGIN_UNINTERRUPTED_SEQUENCE(name)
-#define END_UNINTERRUPTED_SEQUENCE(name)
+#define BEGIN_UNINTERRUPTED_SEQUENCE(name)  do { beginUninterruptedSequence(); } while (false)
+#define END_UNINTERRUPTED_SEQUENCE(name)  do { endUninterruptedSequence(); } while (false)
 #endif
 
         void emit_op_add(Instruction*);
@@ -940,6 +940,7 @@ namespace JSC {
         int m_uninterruptedConstantSequenceBegin;
 #endif
 #endif
+        void* m_linkerOffset;
         static CodePtr stringGetByValStubGenerator(JSGlobalData* globalData, ExecutablePool* pool);
     } JIT_CLASS_ALIGNMENT;
 

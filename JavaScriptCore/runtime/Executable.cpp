@@ -304,7 +304,7 @@ PassOwnPtr<ExceptionInfo> FunctionExecutable::reparseExceptionInfo(JSGlobalData*
 
 #if ENABLE(JIT)
     if (globalData->canUseJIT()) {
-        JITCode newJITCode = JIT::compile(globalData, newCodeBlock.get());
+        JITCode newJITCode = JIT::compile(globalData, newCodeBlock.get(), 0, codeBlock->m_isConstructor ? generatedJITCodeForConstruct().start() : generatedJITCodeForCall().start());
         if (!newJITCode) {
             globalData->functionCodeBlockBeingReparsed = 0;
             return PassOwnPtr<ExceptionInfo>();
@@ -337,7 +337,7 @@ PassOwnPtr<ExceptionInfo> EvalExecutable::reparseExceptionInfo(JSGlobalData* glo
 
 #if ENABLE(JIT)
     if (globalData->canUseJIT()) {
-        JITCode newJITCode = JIT::compile(globalData, newCodeBlock.get());
+        JITCode newJITCode = JIT::compile(globalData, newCodeBlock.get(), 0, generatedJITCodeForCall().start());
         if (!newJITCode) {
             globalData->functionCodeBlockBeingReparsed = 0;
             return PassOwnPtr<ExceptionInfo>();

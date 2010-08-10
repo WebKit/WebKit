@@ -1094,4 +1094,8 @@ on MinGW. See https://bugs.webkit.org/show_bug.cgi?id=29268 */
 #define WTF_USE_PREEMPT_GEOLOCATION_PERMISSION 1
 #endif
 
+#if CPU(ARM_THUMB2)
+#define ENABLE_BRANCH_COMPACTION 1
+#endif
+
 #endif /* WTF_Platform_h */

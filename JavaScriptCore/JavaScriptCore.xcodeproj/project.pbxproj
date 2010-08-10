@@ -311,6 +311,7 @@
 		A7482B9411671147003B0712 /* JSWeakObjectMapRefPrivate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7482B7A1166CDEA003B0712 /* JSWeakObjectMapRefPrivate.cpp */; };
 		A7482E93116A7CAD003B0712 /* JSWeakObjectMapRefInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = A7482E37116A697B003B0712 /* JSWeakObjectMapRefInternal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A74B3499102A5F8E0032AB98 /* MarkStack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A74B3498102A5F8E0032AB98 /* MarkStack.cpp */; };
+		A74DE1D0120B875600D40D5B /* ARMv7Assembler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A74DE1CB120B86D600D40D5B /* ARMv7Assembler.cpp */; };
 		A75706DE118A2BCF0057F88F /* JITArithmetic32_64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A75706DD118A2BCF0057F88F /* JITArithmetic32_64.cpp */; };
 		A766B44F0EE8DCD1009518CA /* ExecutableAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = A7B48DB50EE74CFC00DCBDB6 /* ExecutableAllocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A76C51761182748D00715B05 /* JSInterfaceJIT.h in Headers */ = {isa = PBXBuildFile; fileRef = A76C51741182748D00715B05 /* JSInterfaceJIT.h */; };
@@ -927,6 +928,7 @@
 		A7482B7A1166CDEA003B0712 /* JSWeakObjectMapRefPrivate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWeakObjectMapRefPrivate.cpp; sourceTree = "<group>"; };
 		A7482E37116A697B003B0712 /* JSWeakObjectMapRefInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWeakObjectMapRefInternal.h; sourceTree = "<group>"; };
 		A74B3498102A5F8E0032AB98 /* MarkStack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MarkStack.cpp; sourceTree = "<group>"; };
+		A74DE1CB120B86D600D40D5B /* ARMv7Assembler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ARMv7Assembler.cpp; sourceTree = "<group>"; };
 		A75706DD118A2BCF0057F88F /* JITArithmetic32_64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITArithmetic32_64.cpp; sourceTree = "<group>"; };
 		A76C51741182748D00715B05 /* JSInterfaceJIT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSInterfaceJIT.h; sourceTree = "<group>"; };
 		A76EE6580FAE59D5003F069A /* NativeFunctionWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeFunctionWrapper.h; sourceTree = "<group>"; };
@@ -1848,6 +1850,7 @@
 				86D3B2BF10156BDE002865E7 /* ARMAssembler.cpp */,
 				86D3B2C010156BDE002865E7 /* ARMAssembler.h */,
 				86ADD1430FDDEA980006EEC2 /* ARMv7Assembler.h */,
+				A74DE1CB120B86D600D40D5B /* ARMv7Assembler.cpp */,
 				9688CB130ED12B4E001D649F /* AssemblerBuffer.h */,
 				86D3B2C110156BDE002865E7 /* AssemblerBufferWithConstantPool.h */,
 				86E116B00FE75AC800B512BC /* CodeLocation.h */,
@@ -2677,6 +2680,7 @@
 				DDF7ABD511F60ED200108E36 /* GCActivityCallbackCF.cpp in Sources */,
 				8627E5EB11F1281900A313B5 /* PageAllocation.cpp in Sources */,
 				DDE82AD71209D955005C1756 /* GCHandle.cpp in Sources */,
+				A74DE1D0120B875600D40D5B /* ARMv7Assembler.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
