@@ -21,6 +21,7 @@
 #define SVGPathStringSource_h
 
 #if ENABLE(SVG)
+#include "FloatPoint.h"
 #include "PlatformString.h"
 #include "SVGPathSource.h"
 #include <wtf/PassOwnPtr.h>
@@ -38,10 +39,18 @@ public:
 
     virtual bool hasMoreData() const;
     virtual bool moveToNextToken();
-    virtual bool parseFloat(float& result);
-    virtual bool parseFlag(bool& result);
     virtual bool parseSVGSegmentType(SVGPathSegType&);
     virtual SVGPathSegType nextCommand(SVGPathSegType previousCommand);
+
+    virtual bool parseMoveToSegment(FloatPoint&);
+    virtual bool parseLineToSegment(FloatPoint&);
+    virtual bool parseLineToHorizontalSegment(float&);
+    virtual bool parseLineToVerticalSegment(float&);
+    virtual bool parseCurveToCubicSegment(FloatPoint&, FloatPoint&, FloatPoint&);
+    virtual bool parseCurveToCubicSmoothSegment(FloatPoint&, FloatPoint&);
+    virtual bool parseCurveToQuadraticSegment(FloatPoint&, FloatPoint&);
+    virtual bool parseCurveToQuadraticSmoothSegment(FloatPoint&);
+    virtual bool parseArcToSegment(float&, float&, float&, bool&, bool&, FloatPoint&);
 
 private:
     SVGPathStringSource(const String&);

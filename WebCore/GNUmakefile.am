@@ -4108,6 +4108,8 @@ webcore_sources += \
 	WebCore/svg/SVGPathSegList.h \
 	WebCore/svg/SVGPathSegListBuilder.cpp \
 	WebCore/svg/SVGPathSegListBuilder.h \
+	WebCore/svg/SVGPathSegListSource.cpp \
+	WebCore/svg/SVGPathSegListSource.h \
 	WebCore/svg/SVGPathSegMoveto.cpp \
 	WebCore/svg/SVGPathSegMoveto.h \
 	WebCore/svg/SVGPathSource.h \

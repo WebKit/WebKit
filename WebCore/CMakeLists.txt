@@ -1693,6 +1693,7 @@ IF (ENABLE_SVG)
         svg/SVGPathSegLinetoVertical.cpp
         svg/SVGPathSegList.cpp
         svg/SVGPathSegListBuilder.cpp
+        svg/SVGPathSegListSource.cpp
         svg/SVGPathSegMoveto.cpp
         svg/SVGPathStringBuilder.cpp
         svg/SVGPathStringSource.cpp

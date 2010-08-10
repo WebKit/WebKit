@@ -888,6 +888,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	svg/SVGPathSegLinetoVertical.cpp \
 	svg/SVGPathSegList.cpp \
 	svg/SVGPathSegListBuilder.cpp \
+	svg/SVGPathSegListSource.cpp \
 	svg/SVGPathSegMoveto.cpp \
 	svg/SVGPathStringBuilder.cpp \
 	svg/SVGPathStringSource.cpp \

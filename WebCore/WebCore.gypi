@@ -3858,6 +3858,8 @@
             'svg/SVGPathSegList.h',
             'svg/SVGPathSegListBuilder.cpp',
             'svg/SVGPathSegListBuilder.h',
+            'svg/SVGPathSegListSource.cpp',
+            'svg/SVGPathSegListSource.h',
             'svg/SVGPathSegMoveto.cpp',
             'svg/SVGPathSegMoveto.h',
             'svg/SVGPathSource.h',

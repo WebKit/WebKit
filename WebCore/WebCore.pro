@@ -2868,6 +2868,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         svg/SVGPathSegLinetoVertical.cpp \
         svg/SVGPathSegList.cpp \
         svg/SVGPathSegListBuilder.cpp \
+        svg/SVGPathSegListSource.cpp \
         svg/SVGPathSegMoveto.cpp \
         svg/SVGPathStringBuilder.cpp \
         svg/SVGPathStringSource.cpp \

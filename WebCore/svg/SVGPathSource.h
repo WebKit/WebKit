@@ -31,10 +31,18 @@ public:
 
     virtual bool hasMoreData() const = 0;
     virtual bool moveToNextToken() = 0;
-    virtual bool parseFloat(float& result) = 0;
-    virtual bool parseFlag(bool& result) = 0;
     virtual bool parseSVGSegmentType(SVGPathSegType&) = 0;
     virtual SVGPathSegType nextCommand(SVGPathSegType previousCommand) = 0;
+
+    virtual bool parseMoveToSegment(FloatPoint&) = 0;
+    virtual bool parseLineToSegment(FloatPoint&) = 0;
+    virtual bool parseLineToHorizontalSegment(float&) = 0;
+    virtual bool parseLineToVerticalSegment(float&) = 0;
+    virtual bool parseCurveToCubicSegment(FloatPoint&, FloatPoint&, FloatPoint&) = 0;
+    virtual bool parseCurveToCubicSmoothSegment(FloatPoint&, FloatPoint&) = 0;
+    virtual bool parseCurveToQuadraticSegment(FloatPoint&, FloatPoint&) = 0;
+    virtual bool parseCurveToQuadraticSmoothSegment(FloatPoint&) = 0;
+    virtual bool parseArcToSegment(float&, float&, float&, bool&, bool&, FloatPoint&) = 0;
 
 public:
     SVGPathSource() { }

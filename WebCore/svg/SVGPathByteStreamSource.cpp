@@ -41,18 +41,6 @@ bool SVGPathByteStreamSource::hasMoreData() const
     return m_streamCurrent < m_streamEnd;
 }
 
-bool SVGPathByteStreamSource::parseFloat(float& result)
-{
-    result = readFloat();
-    return true;
-}
-
-bool SVGPathByteStreamSource::parseFlag(bool& result)
-{
-    result = readFlag();
-    return true;
-}
-
 bool SVGPathByteStreamSource::parseSVGSegmentType(SVGPathSegType& pathSegType)
 {
     pathSegType = static_cast<SVGPathSegType>(readSVGSegmentType());
@@ -62,6 +50,69 @@ bool SVGPathByteStreamSource::parseSVGSegmentType(SVGPathSegType& pathSegType)
 SVGPathSegType SVGPathByteStreamSource::nextCommand(SVGPathSegType)
 {
     return static_cast<SVGPathSegType>(readSVGSegmentType());
+}
+
+bool SVGPathByteStreamSource::parseMoveToSegment(FloatPoint& targetPoint)
+{
+    targetPoint = readFloatPoint();
+    return true;
+}
+
+bool SVGPathByteStreamSource::parseLineToSegment(FloatPoint& targetPoint)
+{
+    targetPoint = readFloatPoint();
+    return true;
+}
+
+bool SVGPathByteStreamSource::parseLineToHorizontalSegment(float& x)
+{
+    x = readFloat();
+    return true;
+}
+
+bool SVGPathByteStreamSource::parseLineToVerticalSegment(float& y)
+{
+    y = readFloat();
+    return true;
+}
+
+bool SVGPathByteStreamSource::parseCurveToCubicSegment(FloatPoint& point1, FloatPoint& point2, FloatPoint& targetPoint)
+{
+    point1 = readFloatPoint();
+    point2 = readFloatPoint();
+    targetPoint = readFloatPoint();
+    return true;
+}
+
+bool SVGPathByteStreamSource::parseCurveToCubicSmoothSegment(FloatPoint& point2, FloatPoint& targetPoint)
+{
+    point2 = readFloatPoint();
+    targetPoint = readFloatPoint();
+    return true;
+}
+
+bool SVGPathByteStreamSource::parseCurveToQuadraticSegment(FloatPoint& point1, FloatPoint& targetPoint)
+{
+    point1 = readFloatPoint();
+    targetPoint = readFloatPoint();
+    return true;
+}
+
+bool SVGPathByteStreamSource::parseCurveToQuadraticSmoothSegment(FloatPoint& targetPoint)
+{
+    targetPoint = readFloatPoint();
+    return true;
+}
+
+bool SVGPathByteStreamSource::parseArcToSegment(float& rx, float& ry, float& angle, bool& largeArc, bool& sweep, FloatPoint& targetPoint)
+{
+    rx = readFloat();
+    ry = readFloat();
+    angle = readFloat();
+    largeArc = readFlag();
+    sweep = readFlag();
+    targetPoint = readFloatPoint();
+    return true;
 }
 
 }

@@ -43,16 +43,6 @@ bool SVGPathStringSource::hasMoreData() const
     return m_current < m_end;
 }
 
-bool SVGPathStringSource::parseFloat(float& result)
-{
-    return parseNumber(m_current, m_end, result);
-}
-
-bool SVGPathStringSource::parseFlag(bool& result)
-{
-    return parseArcFlag(m_current, m_end, result);
-}
-
 bool SVGPathStringSource::moveToNextToken()
 {
     return skipOptionalSpaces(m_current, m_end);
@@ -140,6 +130,117 @@ SVGPathSegType SVGPathStringSource::nextCommand(SVGPathSegType previousCommand)
     parseSVGSegmentType(nextCommand);
     return nextCommand;
 }
+
+bool SVGPathStringSource::parseMoveToSegment(FloatPoint& targetPoint)
+{
+    float toX;
+    float toY;
+    if (!parseNumber(m_current, m_end, toX) || !parseNumber(m_current, m_end, toY))
+        return false;
+    targetPoint = FloatPoint(toX, toY);
+    return true;
+}
+
+bool SVGPathStringSource::parseLineToSegment(FloatPoint& targetPoint)
+{
+    float toX;
+    float toY;
+    if (!parseNumber(m_current, m_end, toX) || !parseNumber(m_current, m_end, toY))
+        return false;
+    targetPoint = FloatPoint(toX, toY);
+    return true;
+}
+
+bool SVGPathStringSource::parseLineToHorizontalSegment(float& x)
+{
+    return parseNumber(m_current, m_end, x);
+}
+
+bool SVGPathStringSource::parseLineToVerticalSegment(float& y)
+{
+    return parseNumber(m_current, m_end, y);
+}
+
+bool SVGPathStringSource::parseCurveToCubicSegment(FloatPoint& point1, FloatPoint& point2, FloatPoint& targetPoint)
+{
+    float x1;
+    float y1;
+    float x2;
+    float y2;
+    float toX;
+    float toY;
+    if (!parseNumber(m_current, m_end, x1)
+        || !parseNumber(m_current, m_end, y1)
+        || !parseNumber(m_current, m_end, x2)
+        || !parseNumber(m_current, m_end, y2)
+        || !parseNumber(m_current, m_end, toX)
+        || !parseNumber(m_current, m_end, toY))
+        return false;
+    point1 = FloatPoint(x1, y1);
+    point2 = FloatPoint(x2, y2);
+    targetPoint = FloatPoint(toX, toY);
+    return true;
+}
+
+bool SVGPathStringSource::parseCurveToCubicSmoothSegment(FloatPoint& point1, FloatPoint& targetPoint)
+{
+    float x1;
+    float y1;
+    float toX;
+    float toY;
+    if (!parseNumber(m_current, m_end, x1)
+        || !parseNumber(m_current, m_end, y1)
+        || !parseNumber(m_current, m_end, toX)
+        || !parseNumber(m_current, m_end, toY))
+        return false;
+    point1 = FloatPoint(x1, y1);
+    targetPoint = FloatPoint(toX, toY);
+    return true;
+}
+
+bool SVGPathStringSource::parseCurveToQuadraticSegment(FloatPoint& point2, FloatPoint& targetPoint)
+{
+    float x2;
+    float y2;
+    float toX;
+    float toY;
+    if (!parseNumber(m_current, m_end, x2)
+        || !parseNumber(m_current, m_end, y2)
+        || !parseNumber(m_current, m_end, toX)
+        || !parseNumber(m_current, m_end, toY))
+        return false;
+    point2 = FloatPoint(x2, y2);
+    targetPoint = FloatPoint(toX, toY);
+    return true;
+}
+
+bool SVGPathStringSource::parseCurveToQuadraticSmoothSegment(FloatPoint& targetPoint)
+{
+    float toX;
+    float toY;
+    if (!parseNumber(m_current, m_end, toX)
+        || !parseNumber(m_current, m_end, toY))
+        return false;
+    targetPoint = FloatPoint(toX, toY);
+    return true;
+}
+
+bool SVGPathStringSource::parseArcToSegment(float& rx, float& ry, float& angle, bool& largeArc, bool& sweep, FloatPoint& targetPoint)
+{
+    float toX;
+    float toY;
+    if (!parseNumber(m_current, m_end, rx)
+        || !parseNumber(m_current, m_end, ry)
+        || !parseNumber(m_current, m_end, angle)
+        || !parseArcFlag(m_current, m_end, largeArc)
+        || !parseArcFlag(m_current, m_end, sweep)
+        || !parseNumber(m_current, m_end, toX)
+        || !parseNumber(m_current, m_end, toY))
+        return false;
+    targetPoint = FloatPoint(toX, toY);
+    return true;
+}
+
 
 }
 

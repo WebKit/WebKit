@@ -17,25 +17,27 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGPathByteStreamSource_h
-#define SVGPathByteStreamSource_h
+#ifndef SVGPathSegListSource_h
+#define SVGPathSegListSource_h
 
 #if ENABLE(SVG)
 #include "FloatPoint.h"
-#include "SVGPathByteStream.h"
+#include "SVGPathSeg.h"
+#include "SVGPathSegList.h"
 #include "SVGPathSource.h"
 #include <wtf/PassOwnPtr.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class SVGPathByteStreamSource : public SVGPathSource {
+class SVGPathSegListSource : public SVGPathSource {
 public:
-    static PassOwnPtr<SVGPathByteStreamSource> create(SVGPathByteStream* stream)
+    static PassOwnPtr<SVGPathSegListSource> create(SVGPathSegList* pathSegList)
     {
-        return adoptPtr(new SVGPathByteStreamSource(stream));
+        return adoptPtr(new SVGPathSegListSource(pathSegList));
     }
 
-    virtual ~SVGPathByteStreamSource();
+    virtual ~SVGPathSegListSource();
 
     virtual bool hasMoreData() const;
     virtual bool moveToNextToken() { return true; }
@@ -53,54 +55,15 @@ public:
     virtual bool parseArcToSegment(float&, float&, float&, bool&, bool&, FloatPoint&);
 
 private:
-    SVGPathByteStreamSource(SVGPathByteStream*);
+    SVGPathSegListSource(SVGPathSegList*);
 
-#if COMPILER(MSVC)
-#pragma warning(disable: 4701)
-#endif
-    template<typename DataType, typename ByteType>
-    DataType readType()
-    {
-        ByteType data;
-        size_t typeSize = sizeof(ByteType);
-
-        for (size_t i = 0; i < typeSize; ++i) {
-            ASSERT(m_streamCurrent < m_streamEnd);
-            data.bytes[i] = *m_streamCurrent;
-            ++m_streamCurrent;
-        }
-
-        return data.value;
-    }
-
-    bool readFlag()
-    {
-        return readType<bool, BoolByte>();
-    }
-
-    float readFloat()
-    {
-        return readType<float, FloatByte>();
-    }
-
-    unsigned short readSVGSegmentType()
-    {
-        return readType<unsigned short, UnsignedShortByte>();
-    }
-
-    FloatPoint readFloatPoint()
-    {
-        float x = readType<float, FloatByte>();
-        float y = readType<float, FloatByte>();
-        return FloatPoint(x, y);
-    }
-
-    SVGPathByteStream* m_stream;
-    SVGPathByteStream::DataIterator m_streamCurrent;
-    SVGPathByteStream::DataIterator m_streamEnd;
+    SVGPathSegList* m_pathSegList;
+    RefPtr<SVGPathSeg> m_segment;
+    int m_itemCurrent;
+    int m_itemEnd;
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(SVG)
-#endif // SVGPathByteStreamSource_h
+#endif // SVGPathSegListSource_h

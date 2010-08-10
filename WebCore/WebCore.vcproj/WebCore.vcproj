@@ -49413,6 +49413,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\svg\SVGPathSegListSource.h"
+				>
+			</File>
+			<File
 				RelativePath="..\svg\SVGPathSegMoveto.h"
 				>
 			</File>

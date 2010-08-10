@@ -1,3 +1,82 @@
+2010-08-10  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Add missing SVGPathSegList source for SVGPathParser
+        https://bugs.webkit.org/show_bug.cgi?id=43691
+
+        Added SVGPathSegListSource to parse normalized or unaltered SVGPathSegLists and transform
+        them to either a SVG path string, or a SVGPathByteStream. This will be needed to synchronize
+        all SVGPathSegLists and the SVG path string of the 'd' attribute.
+        Refactored SVGPathSource code, to read concrete path segments instead of type/flag/coordinates
+        from the data sources. This is a further abstraction and seperates the reading of content from
+        the parsing and interpreting.
+
+        Doesn't affect any tests.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * svg/SVGAllInOne.cpp:
+        * svg/SVGPathByteStreamSource.cpp:
+        (WebCore::SVGPathByteStreamSource::parseSVGSegmentType):
+        (WebCore::SVGPathByteStreamSource::nextCommand):
+        (WebCore::SVGPathByteStreamSource::parseMoveToSegment):
+        (WebCore::SVGPathByteStreamSource::parseLineToSegment):
+        (WebCore::SVGPathByteStreamSource::parseLineToHorizontalSegment):
+        (WebCore::SVGPathByteStreamSource::parseLineToVerticalSegment):
+        (WebCore::SVGPathByteStreamSource::parseCurveToCubicSegment):
+        (WebCore::SVGPathByteStreamSource::parseCurveToCubicSmoothSegment):
+        (WebCore::SVGPathByteStreamSource::parseCurveToQuadraticSegment):
+        (WebCore::SVGPathByteStreamSource::parseCurveToQuadraticSmoothSegment):
+        (WebCore::SVGPathByteStreamSource::parseArcToSegment):
+        * svg/SVGPathByteStreamSource.h:
+        (WebCore::SVGPathByteStreamSource::moveToNextToken):
+        * svg/SVGPathParser.cpp:
+        (WebCore::SVGPathParser::parseMoveToSegment):
+        (WebCore::SVGPathParser::parseLineToSegment):
+        (WebCore::SVGPathParser::parseLineToHorizontalSegment):
+        (WebCore::SVGPathParser::parseLineToVerticalSegment):
+        (WebCore::SVGPathParser::parseCurveToCubicSegment):
+        (WebCore::SVGPathParser::parseCurveToCubicSmoothSegment):
+        (WebCore::SVGPathParser::parseCurveToQuadraticSegment):
+        (WebCore::SVGPathParser::parseCurveToQuadraticSmoothSegment):
+        (WebCore::SVGPathParser::parseArcToSegment):
+        * svg/SVGPathSegListSource.cpp: Added.
+        (WebCore::SVGPathSegListSource::SVGPathSegListSource):
+        (WebCore::SVGPathSegListSource::~SVGPathSegListSource):
+        (WebCore::SVGPathSegListSource::hasMoreData):
+        (WebCore::SVGPathSegListSource::parseSVGSegmentType):
+        (WebCore::SVGPathSegListSource::nextCommand):
+        (WebCore::SVGPathSegListSource::parseMoveToSegment):
+        (WebCore::SVGPathSegListSource::parseLineToSegment):
+        (WebCore::SVGPathSegListSource::parseLineToHorizontalSegment):
+        (WebCore::SVGPathSegListSource::parseLineToVerticalSegment):
+        (WebCore::SVGPathSegListSource::parseCurveToCubicSegment):
+        (WebCore::SVGPathSegListSource::parseCurveToCubicSmoothSegment):
+        (WebCore::SVGPathSegListSource::parseCurveToQuadraticSegment):
+        (WebCore::SVGPathSegListSource::parseCurveToQuadraticSmoothSegment):
+        (WebCore::SVGPathSegListSource::parseArcToSegment):
+        * svg/SVGPathSegListSource.h: Added.
+        (WebCore::SVGPathSegListSource::create):
+        (WebCore::SVGPathSegListSource::moveToNextToken):
+        * svg/SVGPathSource.h:
+        * svg/SVGPathStringSource.cpp:
+        (WebCore::SVGPathStringSource::parseMoveToSegment):
+        (WebCore::SVGPathStringSource::parseLineToSegment):
+        (WebCore::SVGPathStringSource::parseLineToHorizontalSegment):
+        (WebCore::SVGPathStringSource::parseLineToVerticalSegment):
+        (WebCore::SVGPathStringSource::parseCurveToCubicSegment):
+        (WebCore::SVGPathStringSource::parseCurveToCubicSmoothSegment):
+        (WebCore::SVGPathStringSource::parseCurveToQuadraticSegment):
+        (WebCore::SVGPathStringSource::parseCurveToQuadraticSmoothSegment):
+        (WebCore::SVGPathStringSource::parseArcToSegment):
+        * svg/SVGPathStringSource.h:
+
 2010-08-09  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.
