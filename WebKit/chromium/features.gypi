@@ -38,9 +38,10 @@
       # WARNING: build/features_override.gypi which is included in a full
       # chromium build, overrides this list with its own values. See
       # features_override.gypi inline documentation for more details.
-      'feature_defines%': [
+      'feature_defines': [
         'ENABLE_3D_CANVAS=1',
         'ENABLE_BLOB=1',
+        'ENABLE_BLOB_SLICE=1',
         'ENABLE_CHANNEL_MESSAGING=1',
         'ENABLE_DASHBOARD_SUPPORT=0',
         'ENABLE_DATABASE=1',
@@ -49,16 +50,15 @@
         'ENABLE_DIRECTORY_UPLOAD=1',
         'ENABLE_DOM_STORAGE=1',
         'ENABLE_EVENTSOURCE=1',
-        'ENABLE_FILE_WRITER=1',
-        'ENABLE_FILE_SYSTEM=1',
+        'ENABLE_FILE_READER=1',
         'ENABLE_FILTERS=1',
         'ENABLE_GEOLOCATION=1',
         'ENABLE_ICONDATABASE=0',
-        'ENABLE_IMAGE_RESIZER=0',
         'ENABLE_INDEXED_DATABASE=1',
         'ENABLE_INPUT_SPEECH=1',
         'ENABLE_JAVASCRIPT_DEBUGGER=1',
         'ENABLE_JSC_MULTIPLE_THREADS=0',
+        'ENABLE_LINK_PREFETCH=1',
         'ENABLE_METER_TAG=1',
         'ENABLE_NOTIFICATIONS=1',
         'ENABLE_OFFLINE_WEB_APPLICATIONS=1',
@@ -75,16 +75,24 @@
         'ENABLE_SVG_FOREIGN_OBJECT=1',
         'ENABLE_SVG_USE=1',
         'ENABLE_TOUCH_EVENTS=1',
+        'ENABLE_V8_SCRIPT_DEBUG_SERVER=1',
         'ENABLE_VIDEO=1',
         'ENABLE_WEB_SOCKETS=1',
         'ENABLE_WEB_TIMING=1',
         'ENABLE_WORKERS=1',
-        'ENABLE_XHTMLMP=0',
         'ENABLE_XPATH=1',
         'ENABLE_XSLT=1',
-        'WTF_USE_ACCELERATED_COMPOSITING=0',
       ],
-      
+
+      'conditions': [
+        ['OS=="win" or OS=="linux"', {
+          'feature_defines': [
+           'WTF_USE_ACCELERATED_COMPOSITING=1',
+           'ENABLE_3D_RENDERING=1',
+          ],
+        }],
+      ],
+
       'use_accelerated_compositing%': 0,
       'enable_svg%': 1,
     },

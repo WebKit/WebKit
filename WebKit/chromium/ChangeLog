@@ -1,3 +1,16 @@
+2010-08-10  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [chromium] Feature defines are out of sync between features.gypi and downstream feature_overrides.gypi
+        https://bugs.webkit.org/show_bug.cgi?id=43756
+
+        This synchronizes the feature defines to what's currently downstream (at r55468).
+        The difference between the build.webkit.org bots and the chromium bots has
+        caused strange compilation failures lately.
+
+        * features.gypi:
+
 2010-08-10  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
