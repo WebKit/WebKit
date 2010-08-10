@@ -1,3 +1,13 @@
+2010-08-10  Yoshiki Hayashi  <yhayashi@google.com>
+
+        Reviewed by Kent Tamura.
+
+        Iterate over :first-letter so that it will be included in innerText.
+        https://bugs.webkit.org/show_bug.cgi?id=39863
+
+        * fast/dom/inner-text-first-letter-expected.txt: Added.
+        * fast/dom/inner-text-first-letter.html: Added.
+
 2010-08-10  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.

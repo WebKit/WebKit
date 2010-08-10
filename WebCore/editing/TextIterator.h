@@ -32,6 +32,9 @@
 
 namespace WebCore {
 
+class RenderText;
+class RenderTextFragment;
+
 // FIXME: Can't really answer this question correctly without knowing the white-space mode.
 // FIXME: Move this somewhere else in the editing directory. It doesn't belong here.
 inline bool isCollapsibleWhitespace(UChar c)
@@ -103,7 +106,10 @@ private:
     bool handleReplacedElement();
     bool handleNonTextNode();
     void handleTextBox();
+    void handleTextNodeFirstLetter(RenderTextFragment*);
+    bool hasVisibleTextNode(RenderText*);
     void emitCharacter(UChar, Node* textNode, Node* offsetBaseNode, int textStartOffset, int textEndOffset);
+    void emitText(Node* textNode, RenderObject* renderObject, int textStartOffset, int textEndOffset);
     void emitText(Node* textNode, int textStartOffset, int textEndOffset);
     
     // Current position, not necessarily of the text being returned, but position
@@ -135,6 +141,11 @@ private:
     // are false and 0, we go back to normal iterating.
     bool m_needsAnotherNewline;
     InlineTextBox* m_textBox;
+    // Used when iteration over :first-letter text to save pointer to
+    // remaining text box.
+    InlineTextBox* m_remainingTextBox;
+    // Used to point to RenderText object for :first-letter.
+    RenderText *m_firstLetterText;
     
     // Used to do the whitespace collapsing logic.
     Node* m_lastTextNode;    
@@ -160,6 +171,8 @@ private:
 
     // Used when we want texts for copying, pasting, and transposing.
     bool m_emitsTextWithoutTranscoding;
+    // Used when deciding text fragment created by :first-letter should be looked into.
+    bool m_handledFirstLetter;
 };
 
 // Iterates through the DOM range, returning all the text, and 0-length boundaries
