@@ -58,7 +58,7 @@ void FontCache::platformInit()
 // FIXME: consider adding to WebKit String class
 static bool charactersAreAllASCII(const String& s)
 {
-    return charactersAreAllASCII(s.characters(), s.length());
+    return WTF::charactersAreAllASCII(s.characters(), s.length());
 }
 
 // When asked for a CJK font with a native name under a non-CJK locale or
