@@ -1,3 +1,32 @@
+2010-08-10  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        SegmentedString should keep track of how many characters it consumes
+        https://bugs.webkit.org/show_bug.cgi?id=43765
+
+        The easiest way to keep track of how many characters we've consumed
+        would be to increment a counter every time we advance, but that's too
+        slow.  Instead, we keep track lazily and update our summary durning the
+        slow case of advance (which is sufficiently rare).
+
+        There's some subtly to how this works w.r.t. "unconsuming" characters
+        by pushing them back on the front of the segmented string.  This isn't
+        really a "right answer" here because the notion of unconsuming input
+        isn't present in the API.  This patch makes some assumptions about how
+        clients of this class use its API.  In a future patch, we might want to
+        rename some of the method names to make this more explicit.
+
+        * platform/text/SegmentedString.cpp:
+        (WebCore::SegmentedString::operator=):
+        (WebCore::SegmentedString::append):
+        (WebCore::SegmentedString::prepend):
+        (WebCore::SegmentedString::advanceSubstring):
+        * platform/text/SegmentedString.h:
+        (WebCore::SegmentedSubstring::numberOfCharactersConsumed):
+        (WebCore::SegmentedString::SegmentedString):
+        (WebCore::SegmentedString::numberOfCharactersConsumed):
+
 2010-08-10  Gavin Barraclough  <barraclough@apple.com>
 
         Rubber stamped by Sam Weinig.

@@ -52,6 +52,7 @@ const SegmentedString& SegmentedString::operator=(const SegmentedString &other)
     else
         m_currentChar = other.m_currentChar;
     m_closed = other.m_closed;
+    m_numberOfCharactersConsumedPriorToCurrentString = other.m_numberOfCharactersConsumedPriorToCurrentString;
     return *this;
 }
 
@@ -99,6 +100,7 @@ void SegmentedString::append(const SegmentedSubstring &s)
     ASSERT(!m_closed);
     if (s.m_length) {
         if (!m_currentString.m_length) {
+            m_numberOfCharactersConsumedPriorToCurrentString += m_currentString.numberOfCharactersConsumed();
             m_currentString = s;
         } else {
             m_substrings.append(s);
@@ -110,7 +112,16 @@ void SegmentedString::append(const SegmentedSubstring &s)
 void SegmentedString::prepend(const SegmentedSubstring &s)
 {
     ASSERT(!escaped());
+    // FIXME: Add this ASSERT once we've deleted the LegacyHTMLDocumentParser.
+    // ASSERT(!s.numberOfCharactersConsumed());
     if (s.m_length) {
+        // FIXME: We're assuming that the prepend were originally consumed by
+        //        this SegmentedString.  We're also ASSERTing that s is a fresh
+        //        SegmentedSubstring.  These assumptions are sufficient for our
+        //        current use, but we might need to handle the more elaborate
+        //        cases in the future.
+        m_numberOfCharactersConsumedPriorToCurrentString += m_currentString.numberOfCharactersConsumed();
+        m_numberOfCharactersConsumedPriorToCurrentString -= s.m_length;
         if (!m_currentString.m_length)
             m_currentString = s;
         else {
@@ -160,7 +171,12 @@ void SegmentedString::prepend(const SegmentedString &s)
 void SegmentedString::advanceSubstring()
 {
     if (m_composite) {
+        m_numberOfCharactersConsumedPriorToCurrentString += m_currentString.numberOfCharactersConsumed();
         m_currentString = m_substrings.takeFirst();
+        // If we've previously consumed some characters of the non-current
+        // string, we now account for those characters as part of the current
+        // string, not as part of "prior to current string."
+        m_numberOfCharactersConsumedPriorToCurrentString -= m_currentString.numberOfCharactersConsumed();
         if (m_substrings.isEmpty())
             m_composite = false;
     } else {
