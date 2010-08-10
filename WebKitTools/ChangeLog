@@ -1,3 +1,14 @@
+2010-08-09  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] QtTestBrowser:: make m_zoomLevels a static member.
+
+        Not all instances of LauncherWindow need its own m_zoomLevel.
+
+        * QtTestBrowser/launcherwindow.cpp:
+        * QtTestBrowser/launcherwindow.h:
+
 2010-08-09  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoffrey Garen.

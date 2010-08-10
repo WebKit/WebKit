@@ -186,7 +186,7 @@ private:
     void applyZoom();
 
 private:
-    QVector<int> m_zoomLevels;
+    static QVector<int> m_zoomLevels;
     int m_currentZoom;
 
     QWidget* m_view;

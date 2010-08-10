@@ -33,6 +33,7 @@
 #include "launcherwindow.h"
 
 const int gExitClickArea = 80;
+QVector<int> LauncherWindow::m_zoomLevels;
 
 LauncherWindow::LauncherWindow(WindowOptions* data, QGraphicsScene* sharedScene)
     : MainWindow()
@@ -90,9 +91,11 @@ void LauncherWindow::init()
     connect(this, SIGNAL(destroyed()), m_inspector, SLOT(deleteLater()));
 
     // the zoom values are chosen to be like in Mozilla Firefox 3
-    m_zoomLevels << 30 << 50 << 67 << 80 << 90;
-    m_zoomLevels << 100;
-    m_zoomLevels << 110 << 120 << 133 << 150 << 170 << 200 << 240 << 300;
+    if (!m_zoomLevels.count()) {
+        m_zoomLevels << 30 << 50 << 67 << 80 << 90;
+        m_zoomLevels << 100;
+        m_zoomLevels << 110 << 120 << 133 << 150 << 170 << 200 << 240 << 300;
+    }
 
     grabZoomKeys(true);
 }
