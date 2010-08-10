@@ -49,7 +49,6 @@ LauncherWindow::LauncherWindow(WindowOptions* data, QGraphicsScene* sharedScene)
         m_windowOptions = *data;
 
     init();
-    applyPrefs();
     if (sharedScene && data->useGraphicsView)
         static_cast<QGraphicsView*>(m_view)->setScene(sharedScene);
 
@@ -80,6 +79,8 @@ void LauncherWindow::init()
     connect(page(), SIGNAL(linkHovered(const QString&, const QString&, const QString&)),
             this, SLOT(showLinkHover(const QString&, const QString&)));
     connect(this, SIGNAL(enteredFullScreenMode(bool)), this, SLOT(toggleFullScreenMode(bool)));
+
+    applyPrefs();
 
     m_inspector = new WebInspector(splitter);
 #ifndef QT_NO_PROPERTIES
@@ -132,6 +133,26 @@ void LauncherWindow::initializeView()
 #endif
 }
 
+void LauncherWindow::applyPrefs()
+{
+    QWebSettings* settings = page()->settings();
+    settings->setAttribute(QWebSettings::AcceleratedCompositingEnabled, m_windowOptions.useCompositing);
+    settings->setAttribute(QWebSettings::TiledBackingStoreEnabled, m_windowOptions.useTiledBackingStore);
+    settings->setAttribute(QWebSettings::FrameFlatteningEnabled, m_windowOptions.useFrameFlattening);
+    settings->setAttribute(QWebSettings::WebGLEnabled, m_windowOptions.useWebGL);
+
+    if (!isGraphicsBased())
+        return;
+
+    WebViewGraphicsBased* view = static_cast<WebViewGraphicsBased*>(m_view);
+    view->setViewportUpdateMode(m_windowOptions.viewportUpdateMode);
+    view->setFrameRateMeasurementEnabled(m_windowOptions.showFrameRate);
+    view->setItemCacheMode(m_windowOptions.cacheWebView ? QGraphicsItem::DeviceCoordinateCache : QGraphicsItem::NoCache);
+
+    if (m_windowOptions.resizesToContents)
+        toggleResizesToContents(m_windowOptions.resizesToContents);
+}
+
 void LauncherWindow::createChrome()
 {
     QMenu* fileMenu = menuBar()->addMenu("&File");
@@ -170,6 +191,10 @@ void LauncherWindow::createChrome()
     viewMenu->addAction("Dump HTML", this, SLOT(dumpHtml()));
     // viewMenu->addAction("Dump plugins", this, SLOT(dumpPlugins()));
 
+    zoomIn->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Plus));
+    zoomOut->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Minus));
+    resetZoom->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_0));
+
     QMenu* formatMenu = new QMenu("F&ormat", this);
     m_formatMenuAction = menuBar()->addMenu(formatMenu);
     m_formatMenuAction->setVisible(false);
@@ -181,23 +206,17 @@ void LauncherWindow::createChrome()
     writingMenu->addAction(page()->action(QWebPage::SetTextDirectionLeftToRight));
     writingMenu->addAction(page()->action(QWebPage::SetTextDirectionRightToLeft));
 
-    zoomIn->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Plus));
-    zoomOut->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Minus));
-    resetZoom->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_0));
-
     QMenu* windowMenu = menuBar()->addMenu("&Window");
     QAction* toggleFullScreen = windowMenu->addAction("Toggle FullScreen", this, SIGNAL(enteredFullScreenMode(bool)));
     toggleFullScreen->setCheckable(true);
     toggleFullScreen->setChecked(false);
-
-    // when exit fullscreen mode by clicking on the exit area (bottom right corner) we must
-    // uncheck the Toggle FullScreen action
+    // When exit fullscreen mode by clicking on the exit area (bottom right corner) we must
+    // uncheck the Toggle FullScreen action.
     toggleFullScreen->connect(this, SIGNAL(enteredFullScreenMode(bool)), SLOT(setChecked(bool)));
-
-    QMenu* toolsMenu = menuBar()->addMenu("&Develop");
 
     QWebSettings* settings = page()->settings();
 
+    QMenu* toolsMenu = menuBar()->addMenu("&Develop");
     QMenu* graphicsViewMenu = toolsMenu->addMenu("QGraphicsView");
     QAction* toggleGraphicsView = graphicsViewMenu->addAction("Toggle use of QGraphicsView", this, SLOT(initializeView()));
     toggleGraphicsView->setCheckable(true);
@@ -347,28 +366,6 @@ void LauncherWindow::createChrome()
 bool LauncherWindow::isGraphicsBased() const
 {
     return bool(qobject_cast<QGraphicsView*>(m_view));
-}
-
-void LauncherWindow::applyPrefs()
-{
-    QWebSettings* settings = page()->settings();
-    settings->setAttribute(QWebSettings::AcceleratedCompositingEnabled, m_windowOptions.useCompositing);
-    settings->setAttribute(QWebSettings::TiledBackingStoreEnabled, m_windowOptions.useTiledBackingStore);
-    settings->setAttribute(QWebSettings::FrameFlatteningEnabled, m_windowOptions.useFrameFlattening);
-    settings->setAttribute(QWebSettings::WebGLEnabled, m_windowOptions.useWebGL);
-
-    if (!isGraphicsBased())
-        return;
-
-    WebViewGraphicsBased* view = static_cast<WebViewGraphicsBased*>(m_view);
-    view->setViewportUpdateMode(m_windowOptions.viewportUpdateMode);
-    view->setFrameRateMeasurementEnabled(m_windowOptions.showFrameRate);
-    view->setItemCacheMode(m_windowOptions.cacheWebView ? QGraphicsItem::DeviceCoordinateCache : QGraphicsItem::NoCache);
-
-    if (m_windowOptions.resizesToContents) {
-        view->setCustomLayoutSize(size());
-        toggleResizesToContents(m_windowOptions.resizesToContents);
-    }
 }
 
 void LauncherWindow::keyPressEvent(QKeyEvent* event)

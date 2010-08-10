@@ -2,6 +2,18 @@
 
         Reviewed by Ariya Hidayat.
 
+        [Qt] QtTestBrowser: Clean up LauncherWindow code.
+
+        * QtTestBrowser/launcherwindow.cpp:
+        (LauncherWindow::LauncherWindow): Moves applyPrefs methods call from the constructor to init().
+        (LauncherWindow::init): Fixed comments.
+        (LauncherWindow::applyPrefs): Move the method around.
+        (LauncherWindow::createChrome): Move more code of this method around, for grouping, and fixing up comments.
+
+2010-08-09  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Ariya Hidayat.
+
         [Qt] QtTestBrowser: make reset-zooming to animate when tiled backing store is on.
 
         It gets control+0 the same visual effect as control++ or control-.
