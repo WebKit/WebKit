@@ -592,7 +592,7 @@ void LauncherWindow::zoomOut()
 void LauncherWindow::resetZoom()
 {
     m_currentZoom = 100;
-    page()->mainFrame()->setZoomFactor(1.0);
+    applyZoom();
 }
 
 void LauncherWindow::toggleZoomTextOnly(bool b)
