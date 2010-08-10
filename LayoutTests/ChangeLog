@@ -1,3 +1,15 @@
+2010-08-06  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        texture functions should gen INVALID_OPERATION if no texture is bound
+        https://bugs.webkit.org/show_bug.cgi?id=42907
+
+        * fast/canvas/webgl/gl-enum-tests-expected.txt: Need to bind a texture before testing tex-functions.
+        * fast/canvas/webgl/gl-enum-tests.html: Ditto.
+        * fast/canvas/webgl/null-object-behaviour-expected.txt: Test tex-functions when no texture is bound.
+        * fast/canvas/webgl/null-object-behaviour.html: Ditto.
+
 2010-08-10  Johnny Ding  <jnd@chromium.org>
 
         Reviewed by Adam Barth.

@@ -33,6 +33,7 @@ if (!gl) {
   var tex = gl.createTexture();
   gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
   shouldBe("gl.getError()", "gl.NO_ERROR");
+
   var tests = [
     "gl.bindTexture(desktopGL['TEXTURE_3D'], tex)",
     "gl.blendEquation(desktopGL['MIN'])",
@@ -45,21 +46,31 @@ if (!gl) {
     "gl.disable(desktopGL['CLIP_PLANE0'])",
     "gl.disable(desktopGL['POINT_SPRITE'])",
     "gl.getBufferParameter(gl.ARRAY_BUFFER, desktopGL['PIXEL_PACK_BUFFER'])",
-    "gl.getTexParameter(gl.TEXTURE_2D, desktopGL['GENERATE_MIPMAP'])",
-    "gl.getTexParameter(gl.TEXTURE_2D, desktopGL['GENERATE_MIPMAP'])",
     "gl.hint(desktopGL['PERSPECTIVE_CORRECTION_HINT'], gl.FASTEST)",
     "gl.isEnabled(desktopGL['CLIP_PLANE0'])",
     "gl.isEnabled(desktopGL['POINT_SPRITE'])",
     "gl.pixelStorei(desktopGL['PACK_SWAP_BYTES'], 1)",
     "gl.readPixels(0, 0, 1, 1, gl.ALPHA, gl.SHORT, buf)",
+  ];
+  for (var ii = 0; ii < tests.length; ++ii) {
+    eval(tests[ii]);
+    assertMsg(gl.getError() == gl.INVALID_ENUM,
+              tests[ii] + " should return INVALID_ENUM.");
+  }
+
+  gl.bindTexture(gl.TEXTURE_2D, tex);
+  shouldBe("gl.getError()", "gl.NO_ERROR");
+
+  tests = [
+    "gl.getTexParameter(gl.TEXTURE_2D, desktopGL['GENERATE_MIPMAP'])",
     "gl.texParameteri(desktopGL['TEXTURE_3D'], gl.TEXTURE_MAG_FILTER, gl.NEAREST)",
     "gl.texParameteri(gl.TEXTURE_2D, desktopGL['GENERATE_MIPMAP'], 1)"
-   ];
-   for (var ii = 0; ii < tests.length; ++ii) {
-     eval(tests[ii]);
-     assertMsg(gl.getError() == gl.INVALID_ENUM,
-               tests[ii] + " should return INVALID_ENUM.");
-   }
+  ];
+  for (var ii = 0; ii < tests.length; ++ii) {
+    eval(tests[ii]);
+    assertMsg(gl.getError() == gl.INVALID_ENUM,
+              tests[ii] + " should return INVALID_ENUM.");
+  }
 }
 
 debug("");

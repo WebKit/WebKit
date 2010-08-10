@@ -460,8 +460,10 @@ public:
     bool isTexInternalFormatColorBufferCombinationValid(unsigned long texInternalFormat,
                                                         unsigned long colorBufferFormat);
 
-    // Helper function to get the current bound texture.
-    WebGLTexture* getTextureBinding(unsigned long target);
+    // Helper function to check target and texture bound to the target.
+    // Generate GL errors and return 0 if target is invalid or texture bound is
+    // null.  Otherwise, return the texture bound to the target.
+    WebGLTexture* validateTextureBinding(unsigned long target, bool useSixEnumsForCubeMap);
 
     // Helper function to check input format/type for functions {copy}Tex{Sub}Image.
     // Generates GL error and returns false if parameters are invalid.

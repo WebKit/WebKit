@@ -1,3 +1,21 @@
+2010-08-06  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        texture functions should gen INVALID_OPERATION if no texture is bound
+        https://bugs.webkit.org/show_bug.cgi?id=42907
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::copyTexImage2D): Check if a texture is bound to target.
+        (WebCore::WebGLRenderingContext::copyTexSubImage2D): Ditto.
+        (WebCore::WebGLRenderingContext::generateMipmap): Ditto.
+        (WebCore::WebGLRenderingContext::getTexParameter): Ditto.
+        (WebCore::WebGLRenderingContext::texImage2DBase): Ditto.
+        (WebCore::WebGLRenderingContext::texParameter): Ditto.
+        (WebCore::WebGLRenderingContext::texSubImage2DBase): Ditto.
+        (WebCore::WebGLRenderingContext::validateTextureBinding): Check if target is valid and if a texture is bound to it.
+        * html/canvas/WebGLRenderingContext.h: Declare validateTextureBinding().
+
 2010-08-10  Patrick Gansterer  <paroga@paroga.com>
 
         Reviewed by Sam Weinig.
