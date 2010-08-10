@@ -1624,7 +1624,7 @@ void InspectorController::enableDebuggerFromFrontend(bool always)
 
     ASSERT(m_inspectedPage);
 
-    m_debuggerAgent = InspectorDebuggerAgent::create(this);
+    m_debuggerAgent = InspectorDebuggerAgent::create(this, m_remoteFrontend.get());
 
     m_remoteFrontend->debuggerWasEnabled();
 }

@@ -46,16 +46,17 @@ static String formatBreakpointId(const String& sourceID, unsigned lineNumber)
     return String::format("%s:%d", sourceID.utf8().data(), lineNumber);
 }
 
-PassOwnPtr<InspectorDebuggerAgent> InspectorDebuggerAgent::create(InspectorController* inspectorController)
+PassOwnPtr<InspectorDebuggerAgent> InspectorDebuggerAgent::create(InspectorController* inspectorController, RemoteInspectorFrontend* remoteFrontend)
 {
-    OwnPtr<InspectorDebuggerAgent> agent = adoptPtr(new InspectorDebuggerAgent(inspectorController));
+    OwnPtr<InspectorDebuggerAgent> agent = adoptPtr(new InspectorDebuggerAgent(inspectorController, remoteFrontend));
     ScriptDebugServer::shared().clearBreakpoints();
     ScriptDebugServer::shared().addListener(agent.get(), inspectorController->inspectedPage());
     return agent.release();
 }
 
-InspectorDebuggerAgent::InspectorDebuggerAgent(InspectorController* inspectorController)
+InspectorDebuggerAgent::InspectorDebuggerAgent(InspectorController* inspectorController, RemoteInspectorFrontend* remoteFrontend)
     : m_inspectorController(inspectorController)
+    , m_remoteFrontend(remoteFrontend)
     , m_pausedScriptState(0)
     , m_breakpointsLoaded(false)
 {
@@ -166,8 +167,7 @@ void InspectorDebuggerAgent::stepOutOfFunction()
 void InspectorDebuggerAgent::setPauseOnExceptionsState(long pauseState)
 {
     ScriptDebugServer::shared().setPauseOnExceptionsState(static_cast<ScriptDebugServer::PauseOnExceptionsState>(pauseState));
-    if (remoteFrontend())
-        remoteFrontend()->updatePauseOnExceptionsState(ScriptDebugServer::shared().pauseOnExceptionsState());
+    m_remoteFrontend->updatePauseOnExceptionsState(ScriptDebugServer::shared().pauseOnExceptionsState());
 }
 
 void InspectorDebuggerAgent::clearForPageNavigation()
@@ -246,7 +246,7 @@ void InspectorDebuggerAgent::saveBreakpoints()
 void InspectorDebuggerAgent::didParseSource(const String& sourceID, const String& url, const String& data, int firstLine, ScriptWorldType worldType)
 {
     // Don't send script content to the front end until it's really needed.
-    remoteFrontend()->parsedScriptSource(sourceID, url, "", firstLine, worldType);
+    m_remoteFrontend->parsedScriptSource(sourceID, url, "", firstLine, worldType);
 
     m_scriptIDToContent.set(sourceID, data);
 
@@ -264,7 +264,7 @@ void InspectorDebuggerAgent::didParseSource(const String& sourceID, const String
             bool success = ScriptDebugServer::shared().setBreakpoint(sourceID, breakpointIt->second, lineNumber, &actualLineNumber);
             if (!success)
                 continue;
-            remoteFrontend()->restoredBreakpoint(sourceID, url, actualLineNumber, breakpointIt->second.enabled, breakpointIt->second.condition);
+            m_remoteFrontend->restoredBreakpoint(sourceID, url, actualLineNumber, breakpointIt->second.enabled, breakpointIt->second.condition);
             String breakpointId = formatBreakpointId(sourceID, actualLineNumber);
             m_breakpointsMapping.set(breakpointId, lineNumber);
         }
@@ -274,7 +274,7 @@ void InspectorDebuggerAgent::didParseSource(const String& sourceID, const String
 
 void InspectorDebuggerAgent::failedToParseSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage)
 {
-    remoteFrontend()->failedToParseScriptSource(url, data, firstLine, errorLine, errorMessage);
+    m_remoteFrontend->failedToParseScriptSource(url, data, firstLine, errorLine, errorMessage);
 }
 
 void InspectorDebuggerAgent::didPause(ScriptState* scriptState)
@@ -282,18 +282,13 @@ void InspectorDebuggerAgent::didPause(ScriptState* scriptState)
     ASSERT(scriptState && !m_pausedScriptState);
     m_pausedScriptState = scriptState;
     RefPtr<InspectorValue> callFrames = currentCallFrames();
-    remoteFrontend()->pausedScript(callFrames.get());
+    m_remoteFrontend->pausedScript(callFrames.get());
 }
 
 void InspectorDebuggerAgent::didContinue()
 {
     m_pausedScriptState = 0;
-    remoteFrontend()->resumedScript();
-}
-
-RemoteInspectorFrontend* InspectorDebuggerAgent::remoteFrontend() const
-{
-    return m_inspectorController->remoteInspectorFrontend();
+    m_remoteFrontend->resumedScript();
 }
 
 } // namespace WebCore

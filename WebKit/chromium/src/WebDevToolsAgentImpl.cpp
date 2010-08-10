@@ -304,7 +304,7 @@ void WebDevToolsAgentImpl::setRuntimeFeatureEnabled(const WebString& feature, bo
           ic->enableResourceTracking(false /* not sticky */, false /* no reload */);
         else
           ic->disableResourceTracking(false /* not sticky */);
-    } else if (feature == kFrontendConnectedFeatureName && enabled)
+    } else if (feature == kFrontendConnectedFeatureName && enabled && !inspectorController()->hasFrontend())
         frontendLoaded();
 }
 

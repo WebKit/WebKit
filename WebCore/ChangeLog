@@ -1,3 +1,25 @@
+2010-08-10  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector, Chromium: reloading of inspected page hits assert in InspectorController::enableDebuggerFromFrontend()
+        https://bugs.webkit.org/show_bug.cgi?id=43780
+
+        * inspector/CodeGeneratorInspector.pm:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::enableDebuggerFromFrontend):
+        * inspector/InspectorController.h:
+        (WebCore::InspectorController::hasFrontend):
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::create):
+        (WebCore::InspectorDebuggerAgent::InspectorDebuggerAgent):
+        (WebCore::InspectorDebuggerAgent::setPauseOnExceptionsState):
+        (WebCore::InspectorDebuggerAgent::didParseSource):
+        (WebCore::InspectorDebuggerAgent::failedToParseSource):
+        (WebCore::InspectorDebuggerAgent::didPause):
+        (WebCore::InspectorDebuggerAgent::didContinue):
+        * inspector/InspectorDebuggerAgent.h:
+
 2010-08-10  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Simon Hausmann.

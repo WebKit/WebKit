@@ -206,7 +206,6 @@ sub GenerateInterface
     $backendClassName = $className . "BackendDispatcher";
     my @backendHead;
     push(@backendHead, "    ${backendClassName}(InspectorController* inspectorController) : m_inspectorController(inspectorController) { }");
-    push(@backendHead, "    RemoteInspectorFrontend* inspectorFrontend() const { return m_inspectorController->remoteInspectorFrontend(); }");
     push(@backendHead, "    void reportProtocolError(const long callId, const String& method, const String& errorText) const;");
     push(@backendHead, "    void dispatch(const String& message);");
     push(@backendHead, "private:");
@@ -352,7 +351,7 @@ sub generateBackendFunction
 
         push(@function, "");
         push(@function, "    // use InspectorFrontend as a marker of WebInspector availability");
-        push(@function, "    if (m_inspectorController->remoteInspectorFrontend()) {");
+        push(@function, "    if (m_inspectorController->hasFrontend()) {");
         push(@function, "        RefPtr<InspectorArray> arguments = InspectorArray::create();");
         push(@function, "        arguments->pushString(\"processResponse\");");
         push(@function, "        arguments->pushNumber(callId);");

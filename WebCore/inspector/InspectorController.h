@@ -207,7 +207,7 @@ public:
 
     const ResourcesMap& resources() const { return m_resources; }
     InspectorResource* resourceForURL(const String& url);
-    RemoteInspectorFrontend* remoteInspectorFrontend() { return m_remoteFrontend.get(); }
+    bool hasFrontend() const { return m_remoteFrontend; }
 
     void drawNodeHighlight(GraphicsContext&) const;
 
