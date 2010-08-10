@@ -1,3 +1,26 @@
+2010-08-09  Nat Duca  <nduca@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [chromium] Blue line visible at the right hand side of the window with accelerated compositor
+        https://bugs.webkit.org/show_bug.cgi?id=43748
+
+        Correct the ortho projection matrix for the root layer, which was
+        too large by 0.5px in both width and height. For even view sizes,
+        this would cause the viewport to appear 1 pixel too small.
+
+        Fixing this requires removal of several 0.5 correction factors
+        that were previously added to compensate for the too-large viewport.
+
+        Finally, compute the translation for the root layer quad using
+        floating point rather than integer arithmetic. This avoids us losing
+        a key half-pixel of translation when the width of the window is odd.
+
+        To test, size window to even/odd dimensions. No blue line should be visible.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::drawLayers):
+
 2010-08-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Justin Garcia.

@@ -333,7 +333,7 @@ void LayerRendererChromium::drawLayers(const IntRect& updateRect, const IntRect&
         m_rootLayerTextureWidth = visibleRect.width();
         m_rootLayerTextureHeight = visibleRect.height();
 
-        m_projectionMatrix = orthoMatrix(0, visibleRectWidth + 0.5, visibleRectHeight + 0.5, 0, -1000, 1000);
+        m_projectionMatrix = orthoMatrix(0, visibleRectWidth, visibleRectHeight, 0, -1000, 1000);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_rootLayerTextureWidth, m_rootLayerTextureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 
         checkGLError();
@@ -391,8 +391,8 @@ void LayerRendererChromium::drawLayers(const IntRect& updateRect, const IntRect&
 #error "Need to implement for your platform."
 #endif
 
-        scrolledLayerMatrix.translate3d((int)floorf(0.5 * visibleRect.width() + 0.5) - scrollDelta.x(),
-            (int)floorf(0.5 * visibleRect.height() + 0.5) + scaleFactor * scrollDelta.y(), 0);
+        scrolledLayerMatrix.translate3d((int)floorf(0.5 * visibleRect.width()) - scrollDelta.x(),
+            (int)floorf(0.5 * visibleRect.height()) + scaleFactor * scrollDelta.y(), 0);
         scrolledLayerMatrix.scale3d(1, -1, 1);
 
         // Switch shaders to avoid RGB swizzling.
@@ -457,7 +457,7 @@ void LayerRendererChromium::drawLayers(const IntRect& updateRect, const IntRect&
     glUniform1i(m_samplerLocation, 0);
     checkGLError();
     TransformationMatrix layerMatrix;
-    layerMatrix.translate3d(visibleRect.width() / 2, visibleRect.height() / 2, 0);
+    layerMatrix.translate3d(visibleRect.width() * 0.5f, visibleRect.height() * 0.5f, 0);
     drawTexturedQuad(layerMatrix, visibleRect.width(), visibleRect.height(), 1);
     checkGLError();
 
