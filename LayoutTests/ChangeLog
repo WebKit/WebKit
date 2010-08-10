@@ -1,3 +1,15 @@
+2010-08-10  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed; test expectations fix.
+        
+        Rebaselines a test for win & linux, removes it from test_expectations.
+
+        * platform/chromium-linux/fast/canvas/image-object-in-canvas-expected.checksum:
+        * platform/chromium-linux/fast/canvas/image-object-in-canvas-expected.png:
+        * platform/chromium-win/fast/canvas/image-object-in-canvas-expected.checksum:
+        * platform/chromium-win/fast/canvas/image-object-in-canvas-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2010-08-09  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by David Levin.
