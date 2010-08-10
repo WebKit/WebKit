@@ -415,16 +415,18 @@ extern "C" const int jscore_fastmalloc_introspection = 0;
 #include "TCSpinLock.h"
 #include "TCSystemAlloc.h"
 #include <algorithm>
-#include <errno.h>
 #include <limits>
 #include <pthread.h>
 #include <stdarg.h>
 #include <stddef.h>
 #include <stdio.h>
+#if HAVE(ERRNO_H)
+#include <errno.h>
+#endif
 #if OS(UNIX)
 #include <unistd.h>
 #endif
-#if COMPILER(MSVC)
+#if OS(WINDOWS)
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
@@ -2687,7 +2689,13 @@ ALWAYS_INLINE void TCMalloc_Central_FreeList::Populate() {
     if (span) pageheap->RegisterSizeClass(span, size_class_);
   }
   if (span == NULL) {
+#if HAVE(ERRNO_H)
     MESSAGE("allocation failed: %d\n", errno);
+#elif OS(WINDOWS)
+    MESSAGE("allocation failed: %d\n", ::GetLastError());
+#else
+    MESSAGE("allocation failed\n");
+#endif
     lock_.Lock();
     return;
   }
@@ -3054,7 +3062,7 @@ void TCMalloc_ThreadCache::BecomeIdle() {
   if (heap->in_setspecific_) return;    // Do not disturb the active caller
 
   heap->in_setspecific_ = true;
-  pthread_setspecific(heap_key, NULL);
+  setThreadHeap(NULL);
 #ifdef HAVE_TLS
   // Also update the copy in __thread
   threadlocal_heap = NULL;
