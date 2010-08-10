@@ -50957,14 +50957,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\inspector\InspectorFrontend.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\inspector\InspectorFrontend.h"
-				>
-			</File>
-			<File
 				RelativePath="..\inspector\InspectorFrontendClient.h"
 				>
 			</File>

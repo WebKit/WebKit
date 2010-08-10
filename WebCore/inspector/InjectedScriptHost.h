@@ -45,6 +45,7 @@ class InjectedScript;
 class InspectorDOMAgent;
 class Node;
 class RemoteInspectorFrontend;
+class ScriptObject;
 class Storage;
 
 class InjectedScriptHost : public RefCounted<InjectedScriptHost>

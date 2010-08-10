@@ -1,3 +1,13 @@
+2010-08-09  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: remove InspectorFrontend class and use RemoteInspectorFrontend instead.
+        https://bugs.webkit.org/show_bug.cgi?id=43726
+
+        * http/tests/inspector/inspector-test.js:
+        (notifyDone):
+
 2010-08-09  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoffrey Garen.

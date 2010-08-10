@@ -1421,8 +1421,6 @@
 		7A74ECBB101839A600BF939E /* InspectorBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A74ECB9101839A600BF939E /* InspectorBackend.h */; };
 		7A74ECBD101839DA00BF939E /* JSInspectorFrontendHostCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A74ECBC101839DA00BF939E /* JSInspectorFrontendHostCustom.cpp */; };
 		7ADE722610CBBB9B006B3B3A /* ContextMenuProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ADE722510CBBB9B006B3B3A /* ContextMenuProvider.h */; };
-		7AED3E050FBB1EAA00D2B03C /* InspectorFrontend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AED3E030FBB1EAA00D2B03C /* InspectorFrontend.cpp */; };
-		7AED3E060FBB1EAA00D2B03C /* InspectorFrontend.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AED3E040FBB1EAA00D2B03C /* InspectorFrontend.h */; };
 		7AFD4A8B1131C2760035B883 /* ScriptBreakpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AFD4A8A1131C2760035B883 /* ScriptBreakpoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7AFD4FF4113277B60035B883 /* ScriptDebugListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AFD4FF3113277B60035B883 /* ScriptDebugListener.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		81A7325E1210189B00FC0D9E /* IDBCursor.h in Headers */ = {isa = PBXBuildFile; fileRef = 81A7325D1210189B00FC0D9E /* IDBCursor.h */; };
@@ -7257,8 +7255,6 @@
 		7A74ECB9101839A600BF939E /* InspectorBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorBackend.h; sourceTree = "<group>"; };
 		7A74ECBC101839DA00BF939E /* JSInspectorFrontendHostCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSInspectorFrontendHostCustom.cpp; sourceTree = "<group>"; };
 		7ADE722510CBBB9B006B3B3A /* ContextMenuProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContextMenuProvider.h; sourceTree = "<group>"; };
-		7AED3E030FBB1EAA00D2B03C /* InspectorFrontend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorFrontend.cpp; sourceTree = "<group>"; };
-		7AED3E040FBB1EAA00D2B03C /* InspectorFrontend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorFrontend.h; sourceTree = "<group>"; };
 		7AFD4A8A1131C2760035B883 /* ScriptBreakpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptBreakpoint.h; sourceTree = "<group>"; };
 		7AFD4FF3113277B60035B883 /* ScriptDebugListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptDebugListener.h; sourceTree = "<group>"; };
 		81A7325D1210189B00FC0D9E /* IDBCursor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBCursor.h; sourceTree = "<group>"; };
@@ -11654,8 +11650,6 @@
 				7A24587A1021EAF4000A00AA /* InspectorDOMAgent.h */,
 				41F061730F5F00AC00A07EAC /* InspectorDOMStorageResource.cpp */,
 				41F061720F5F00AC00A07EAC /* InspectorDOMStorageResource.h */,
-				7AED3E030FBB1EAA00D2B03C /* InspectorFrontend.cpp */,
-				7AED3E040FBB1EAA00D2B03C /* InspectorFrontend.h */,
 				F344C7121125B82C00F26EEE /* InspectorFrontendClient.h */,
 				F344C75711294FF600F26EEE /* InspectorFrontendClientLocal.cpp */,
 				F344C75211294D9D00F26EEE /* InspectorFrontendClientLocal.h */,
@@ -18784,7 +18778,6 @@
 				F33F053E120B0DA500E5743A /* InspectorDebuggerAgent.h in Headers */,
 				7A24587C1021EAF4000A00AA /* InspectorDOMAgent.h in Headers */,
 				41F061740F5F00AC00A07EAC /* InspectorDOMStorageResource.h in Headers */,
-				7AED3E060FBB1EAA00D2B03C /* InspectorFrontend.h in Headers */,
 				F344C7141125B82C00F26EEE /* InspectorFrontendClient.h in Headers */,
 				F344C75311294D9D00F26EEE /* InspectorFrontendClientLocal.h in Headers */,
 				7A0E770F10C00A8800A0276E /* InspectorFrontendHost.h in Headers */,
@@ -21227,7 +21220,6 @@
 				F33F053D120B0DA500E5743A /* InspectorDebuggerAgent.cpp in Sources */,
 				7A24587B1021EAF4000A00AA /* InspectorDOMAgent.cpp in Sources */,
 				41F061750F5F00AC00A07EAC /* InspectorDOMStorageResource.cpp in Sources */,
-				7AED3E050FBB1EAA00D2B03C /* InspectorFrontend.cpp in Sources */,
 				F344C75811294FF600F26EEE /* InspectorFrontendClientLocal.cpp in Sources */,
 				7A0E770E10C00A8800A0276E /* InspectorFrontendHost.cpp in Sources */,
 				41F062020F5F0B6600A07EAC /* InspectorResource.cpp in Sources */,

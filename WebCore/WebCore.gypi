@@ -1756,8 +1756,6 @@
             'inspector/InspectorDOMAgent.h',
             'inspector/InspectorDOMStorageResource.cpp',
             'inspector/InspectorDOMStorageResource.h',
-            'inspector/InspectorFrontend.cpp',
-            'inspector/InspectorFrontend.h',
             'inspector/InspectorFrontendClient.h',
             'inspector/InspectorFrontendHost.cpp',
             'inspector/InspectorFrontendHost.h',

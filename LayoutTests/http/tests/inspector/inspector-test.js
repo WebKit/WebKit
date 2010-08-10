@@ -34,8 +34,11 @@ function notifyDone()
 {
     evaluateInWebInspector("true", function() {
         if (window.layoutTestController) {
-            layoutTestController.notifyDone();
             layoutTestController.closeWebInspector();
+            // Wait until Web Inspector actually closes before calling notifyDone.
+            setTimeout(function() {
+                layoutTestController.notifyDone();
+            }, 0);
         }
     });
 }

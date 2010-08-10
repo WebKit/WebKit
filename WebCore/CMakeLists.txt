@@ -1058,7 +1058,6 @@ SET(WebCore_SOURCES
     inspector/InspectorDOMStorageResource.cpp
     inspector/InspectorDatabaseResource.cpp
     inspector/InspectorDebuggerAgent.cpp
-    inspector/InspectorFrontend.cpp
     inspector/InspectorFrontendClientLocal.cpp
     inspector/InspectorFrontendHost.cpp
     inspector/InspectorResource.cpp

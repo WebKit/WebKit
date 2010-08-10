@@ -1,3 +1,24 @@
+2010-08-09  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: remove InspectorFrontend class and use RemoteInspectorFrontend instead.
+        https://bugs.webkit.org/show_bug.cgi?id=43726
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::connectFrontend):
+        (WebCore::InspectorController::close):
+        (WebCore::InspectorController::disconnectFrontend):
+        * inspector/InspectorController.h:
+        * inspector/InspectorFrontend.cpp: Removed.
+        * inspector/InspectorFrontend.h: Removed.
+
 2010-08-09  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.
