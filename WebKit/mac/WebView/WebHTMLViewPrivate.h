@@ -138,6 +138,10 @@ extern const float _WebHTMLViewPrintingMaximumShrinkFactor;
 - (BOOL)_beginPrintModeWithPageWidth:(float)pageWidth height:(float)pageHeight shrinkToFit:(BOOL)shrinkToFit;
 - (void)_endPrintMode;
 
+- (BOOL)_isInScreenPaginationMode;
+- (BOOL)_beginScreenPaginationModeWithPageSize:(CGSize)pageSize shrinkToFit:(BOOL)shrinkToFit;
+- (void)_endScreenPaginationMode;
+
 - (BOOL)_canSmartReplaceWithPasteboard:(NSPasteboard *)pasteboard;
 
 @end

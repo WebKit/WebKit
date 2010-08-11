@@ -157,7 +157,7 @@ void RenderView::paint(PaintInfo& paintInfo, int tx, int ty)
     ASSERT(!needsLayout());
 
     // Cache the print rect because the dirty rect could get changed during painting.
-    if (printing())
+    if (document()->paginated())
         setPrintRect(paintInfo.rect);
     else
         setPrintRect(IntRect());

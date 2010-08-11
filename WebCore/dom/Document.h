@@ -571,6 +571,11 @@ public:
     bool printing() const { return m_printing; }
     void setPrinting(bool p) { m_printing = p; }
 
+    bool paginatedForScreen() const { return m_paginatedForScreen; }
+    void setPaginatedForScreen(bool p) { m_paginatedForScreen = p; }
+    
+    bool paginated() const { return printing() || paginatedForScreen(); }
+
     enum ParseMode { Compat, AlmostStrict, Strict };
 
     void setParseMode(ParseMode m) { m_parseMode = m; }
@@ -1112,7 +1117,8 @@ private:
     mutable bool m_pageGroupUserSheetCacheValid;
 
     bool m_printing;
-    
+    bool m_paginatedForScreen;
+
     bool m_ignoreAutofocus;
 
     ParseMode m_parseMode;

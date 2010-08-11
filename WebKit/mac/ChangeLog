@@ -1,3 +1,27 @@
+2010-08-10  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=43806, add ability to paginate screen content.
+        
+        Add SPI for entering and exiting screen pagination mode.  This is similar to printing mode but it can be done for on-screen
+        content.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _web_setPrintingModeRecursive]):
+        (-[WebHTMLView _web_clearPrintingModeRecursive]):
+        (-[WebHTMLView _web_setPrintingModeRecursiveAndAdjustViewSize]):
+        (-[WebHTMLView _beginPrintModeWithPageWidth:height:shrinkToFit:]):
+        (-[WebHTMLView _endPrintMode]):
+        (-[WebHTMLView _isInScreenPaginationMode]):
+        (-[WebHTMLView _beginScreenPaginationModeWithPageSize:shrinkToFit:]):
+        (-[WebHTMLView _endScreenPaginationMode]):
+        (-[WebHTMLView reapplyStyles]):
+        (-[WebHTMLView _setPrinting:minimumPageWidth:height:maximumPageWidth:adjustViewSize:paginateScreenContent:]):
+        (-[WebHTMLView adjustPageHeightNew:top:bottom:limit:]):
+        (-[WebHTMLView setPageWidthForPrinting:]):
+        * WebView/WebHTMLViewPrivate.h:
+
 2010-08-10  Gavin Barraclough  <barraclough@apple.com>
 
         Build fix (update more includes)

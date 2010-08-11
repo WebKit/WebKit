@@ -1515,9 +1515,9 @@ void RenderBox::calcHeight()
     // is specified. When we're printing, we also need this quirk if the body or root has a percentage 
     // height since we don't set a height in RenderView when we're printing. So without this quirk, the 
     // height has nothing to be a percentage of, and it ends up being 0. That is bad.
-    bool printingNeedsBaseHeight = document()->printing() && h.isPercent()
+    bool paginatedContentNeedsBaseHeight = document()->paginated() && h.isPercent()
         && (isRoot() || (isBody() && document()->documentElement()->renderer()->style()->height().isPercent()));
-    if (stretchesToViewHeight() || printingNeedsBaseHeight) {
+    if (stretchesToViewHeight() || paginatedContentNeedsBaseHeight) {
         int margins = collapsedMarginTop() + collapsedMarginBottom();
         int visHeight = document()->printing() ? view()->frameView()->pageHeight() : view()->viewHeight();
         if (isRoot())

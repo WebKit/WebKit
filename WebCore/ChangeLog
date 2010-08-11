@@ -1,3 +1,26 @@
+2010-08-10  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=43806, add ability to paginate screen content.
+        
+        Add a new boolean to Document to indicate that content should be paginated.  This is checked when doing page breaks
+        and in a couple of other cases.
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        * dom/Document.h:
+        (WebCore::Document::paginatedForScreen):
+        (WebCore::Document::setPaginatedForScreen):
+        (WebCore::Document::paginated):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintChildren):
+        (WebCore::RenderBlock::calcColumnWidth):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::calcHeight):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::paint):
+
 2010-08-11  Adam Barth  <abarth@webkit.org>
 
         Windows build fix.  Turns out we need to unconditionally include
