@@ -1,3 +1,12 @@
+2010-08-11  Gavin Barraclough  <barraclough@apple.com>
+
+        Rubber stamp by sam weinig
+
+        Touch a file to stop the bot rolling a bit change out!
+
+        * runtime/UString.cpp:
+        (JSC::UString::ascii):
+
 2010-08-11  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix for wx and WebDOM bindings, add CString classes to the list of forwards.
