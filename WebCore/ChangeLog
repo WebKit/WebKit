@@ -1,3 +1,24 @@
+2010-08-11  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        Need EmptyDeviceOrientationClient and EmptyDeviceMotionClient for use with SVGImage
+        https://bugs.webkit.org/show_bug.cgi?id=43848
+
+        Tested by existing DeviceOrientation tests.
+
+        * loader/EmptyClients.h:
+        (WebCore::EmptyDeviceMotionClient::setController):
+        (WebCore::EmptyDeviceMotionClient::startUpdating):
+        (WebCore::EmptyDeviceMotionClient::stopUpdating):
+        (WebCore::EmptyDeviceMotionClient::currentDeviceMotion):
+        (WebCore::EmptyDeviceOrientationClient::setController):
+        (WebCore::EmptyDeviceOrientationClient::startUpdating):
+        (WebCore::EmptyDeviceOrientationClient::stopUpdating):
+        (WebCore::EmptyDeviceOrientationClient::lastOrientation):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::dataChanged):
+
 2010-08-10  Aaron Boodman  <aa@chromium.org>
 
         Reviewed by David Hyatt.

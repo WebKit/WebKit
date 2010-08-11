@@ -253,7 +253,13 @@ bool SVGImage::dataChanged(bool allDataReceived)
 #endif
         static InspectorClient* dummyInspectorClient = new EmptyInspectorClient;
         pageClients.inspectorClient = dummyInspectorClient;
-        
+#if ENABLE(DEVICE_ORIENTATION)
+        static DeviceMotionClient* dummyDeviceMotionClient = new EmptyDeviceMotionClient;
+        pageClients.deviceMotionClient = dummyDeviceMotionClient;
+        static DeviceOrientationClient* dummyDeviceOrientationClient = new EmptyDeviceOrientationClient;
+        pageClients.deviceOrientationClient = dummyDeviceOrientationClient;
+#endif
+
         // FIXME: If this SVG ends up loading itself, we might leak the world.
         // The comment said that the Cache code does not know about CachedImages
         // holding Frames and won't know to break the cycle. But 

@@ -31,6 +31,8 @@
 #include "ChromeClient.h"
 #include "Console.h"
 #include "ContextMenuClient.h"
+#include "DeviceMotionClient.h"
+#include "DeviceOrientationClient.h"
 #include "DocumentLoader.h"
 #include "DragClient.h"
 #include "EditCommand.h"
@@ -529,6 +531,22 @@ public:
     virtual void populateSetting(const String&, String*) { }
     virtual void storeSetting(const String&, const String&) { }
     virtual bool sendMessageToFrontend(const String&) { return false; }
+};
+
+class EmptyDeviceMotionClient : public DeviceMotionClient {
+public:
+    virtual void setController(DeviceMotionController*) { }
+    virtual void startUpdating() { }
+    virtual void stopUpdating() { }
+    virtual DeviceMotionData* currentDeviceMotion() const { return 0; }
+};
+
+class EmptyDeviceOrientationClient : public DeviceOrientationClient {
+public:
+    virtual void setController(DeviceOrientationController*) { }
+    virtual void startUpdating() { }
+    virtual void stopUpdating() { }
+    virtual DeviceOrientation* lastOrientation() const { return 0; }
 };
 
 }
