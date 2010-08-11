@@ -252,6 +252,15 @@ void LayoutTestController::setAlwaysAcceptCookies(bool alwaysAcceptCookies)
     SoupSession* session = webkit_get_default_session();
     SoupCookieJar* jar = reinterpret_cast<SoupCookieJar*>(soup_session_get_feature(session, SOUP_TYPE_COOKIE_JAR));
 
+    /* If the jar was not created - we create it on demand, i.e, just
+       in case we have HTTP requests - then we must create it here in
+       order to set the proper accept policy */
+    if (!jar) {
+        jar = soup_cookie_jar_new();
+        soup_session_add_feature(session, SOUP_SESSION_FEATURE(jar));
+        g_object_unref(jar);
+    }
+
     SoupCookieJarAcceptPolicy policy;
 
     if (alwaysAcceptCookies)
