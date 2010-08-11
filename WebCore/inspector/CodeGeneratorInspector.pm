@@ -225,8 +225,11 @@ sub generateFunctions
     my $interface = shift;
 
     foreach my $function (@{$interface->functions}) {
-        generateFrontendFunction($function);
-        generateBackendFunction($function);
+        if ($function->signature->extendedAttributes->{"notify"}) {
+            generateFrontendFunction($function);
+        } else {
+            generateBackendFunction($function);
+        }
     }
     push(@backendMethodsImpl, generateBackendDispatcher());
     push(@backendMethodsImpl, generateBackendReportProtocolError());
@@ -236,12 +239,9 @@ sub generateFrontendFunction
 {
     my $function = shift;
 
-    my $notify = $function->signature->extendedAttributes->{"notify"};
-    return if !$notify;
-    my $functionName = $notify ? $function->signature->name : "did" . ucfirst($function->signature->name);
+    my $functionName = $function->signature->name;
 
     my @argsFiltered = grep($_->direction eq "out", @{$function->parameters}); # just keep only out parameters for frontend interface.
-    unshift(@argsFiltered, $callId) if !$notify; # Add callId as the first argument for all frontend did* methods.
     map($frontendTypes{$_->type} = 1, @argsFiltered); # register required types.
     my $arguments = join(", ", map($typeTransform{$_->type}->{"param"} . " " . $_->name, @argsFiltered)); # prepare arguments for function signature.
     my @pushArguments = map("    arguments->push" . $typeTransform{$_->type}->{"accessorSuffix"} . "(" . $_->name . ");", @argsFiltered);
@@ -254,7 +254,7 @@ sub generateFrontendFunction
         push(@function, "void ${frontendClassName}::${functionName}(${arguments})");
         push(@function, "{");
         push(@function, "    RefPtr<InspectorArray> arguments = InspectorArray::create();");
-        push(@function, "    arguments->pushString(\"" . ($notify ? $functionName : "processResponse") . "\");");
+        push(@function, "    arguments->pushString(\"$functionName\");");
         push(@function, @pushArguments);
         push(@function, "    m_inspectorClient->sendMessageToFrontend(arguments->toJSONString());");
 
@@ -283,7 +283,6 @@ EOF
 sub generateBackendFunction
 {
     my $function = shift;
-    return if $function->signature->extendedAttributes->{"notify"};
 
     my $functionName = $function->signature->name;
 
