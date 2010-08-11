@@ -633,12 +633,12 @@ unsigned LayoutTestController::numberOfActiveAnimations() const
 
 void LayoutTestController::suspendAnimations() const
 {
-    return webkit_web_frame_suspend_animations(mainFrame);
+    webkit_web_frame_suspend_animations(mainFrame);
 }
 
 void LayoutTestController::resumeAnimations() const
 {
-    return webkit_web_frame_resume_animations(mainFrame);
+    webkit_web_frame_resume_animations(mainFrame);
 }
 
 void LayoutTestController::overridePreference(JSStringRef key, JSStringRef value)
