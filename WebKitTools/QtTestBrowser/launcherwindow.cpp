@@ -339,16 +339,12 @@ void LauncherWindow::createChrome()
     QAction* flipAnimated = graphicsViewMenu->addAction("Animated Flip");
     flipAnimated->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
     flipAnimated->setEnabled(isGraphicsBased());
+    connect(flipAnimated, SIGNAL(triggered()), SLOT(animatedFlip()));
 
     QAction* flipYAnimated = graphicsViewMenu->addAction("Animated Y-Flip");
     flipYAnimated->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
     flipYAnimated->setEnabled(isGraphicsBased());
-
-    if (isGraphicsBased()) {
-        WebViewGraphicsBased* view = static_cast<WebViewGraphicsBased*>(m_view);
-        connect(flipAnimated, SIGNAL(triggered()), view, SLOT(animatedFlip()));
-        connect(flipYAnimated, SIGNAL(triggered()), view, SLOT(animatedYFlip()));
-    }
+    connect(flipYAnimated, SIGNAL(triggered()), SLOT(animatedYFlip()));
 
     QAction* cloneWindow = graphicsViewMenu->addAction("Clone Window", this, SLOT(cloneWindow()));
     cloneWindow->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
@@ -698,6 +694,15 @@ void LauncherWindow::toggleWebGL(bool toggle)
     page()->settings()->setAttribute(QWebSettings::WebGLEnabled, toggle);
 }
 
+void LauncherWindow::animatedFlip()
+{
+    qobject_cast<WebViewGraphicsBased*>(m_view)->animatedFlip();
+}
+
+void LauncherWindow::animatedYFlip()
+{
+    qobject_cast<WebViewGraphicsBased*>(m_view)->animatedYFlip();
+}
 void LauncherWindow::toggleSpatialNavigation(bool b)
 {
     page()->settings()->setAttribute(QWebSettings::SpatialNavigationEnabled, b);

@@ -1,5 +1,23 @@
 2010-08-11  Antonio Gomes  <tonikitoo@webkit.org>
 
+        Reviewed by Ariya Hidayat.
+
+        [Qt] QtTestBrowser: after switching between QWebView and QGraphicsWebView, rotation actions get broken
+        https://bugs.webkit.org/show_bug.cgi?id=43853
+
+        LauncherWindow::createChrome is connecting menu itens to WebViewGraphicsBased's slots directly.
+        It behaviors badly when user launches the QtTestBrowser in QWebView mode, since then switching to
+        QGraphicsWebView mode, createChrome is not called again, and menu items end up not getting connected
+        to slots at all.
+
+        * QtTestBrowser/launcherwindow.cpp:
+        (LauncherWindow::createChrome):
+        (LauncherWindow::animatedFlip):
+        (LauncherWindow::animatedYFlip):
+        * QtTestBrowser/launcherwindow.h:
+
+2010-08-11  Antonio Gomes  <tonikitoo@webkit.org>
+
         Reviewed by Simon Hausmann.
 
         [Qt] QtTestBrowser: switching between QWebView and QGraphicsWebView modes is broken
