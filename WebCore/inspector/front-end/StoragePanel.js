@@ -259,7 +259,7 @@ WebInspector.StoragePanel.prototype = {
         this.storageViewStatusBarItemsContainer.removeChildren();
         var statusBarItems = view.statusBarItems || [];
         for (var i = 0; i < statusBarItems.length; ++i)
-            this.storageViewStatusBarItemsContainer.appendChild(statusBarItems[i].element);
+            this.storageViewStatusBarItemsContainer.appendChild(statusBarItems[i]);
     },
 
     closeVisibleView: function()

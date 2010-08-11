@@ -46,7 +46,7 @@ WebInspector.DatabaseTableView.prototype = {
 
     get statusBarItems()
     {
-        return [this.refreshButton];
+        return [this.refreshButton.element];
     },
 
     update: function()

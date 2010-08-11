@@ -1,3 +1,16 @@
+2010-08-11  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: apply correct fix to storage panel status bar buttons.
+
+        https://bugs.webkit.org/show_bug.cgi?id=43846
+
+        * inspector/front-end/DatabaseTableView.js:
+        (WebInspector.DatabaseTableView.prototype.get statusBarItems):
+        * inspector/front-end/StoragePanel.js:
+        (WebInspector.StoragePanel.prototype._genericViewSetup):
+
 2010-08-11  Kevin Ollivier  <kevino@theolliviers.com>
 
         Reviewed by Adam Barth.
