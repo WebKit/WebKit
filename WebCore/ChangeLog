@@ -1,5 +1,12 @@
 2010-08-11  Gavin Barraclough  <barraclough@apple.com>
 
+        Windows build fix.
+
+        * platform/win/BString.cpp:
+        (WebCore::BString::BString):
+
+2010-08-11  Gavin Barraclough  <barraclough@apple.com>
+
         Qt build fix II.
 
         * WebCore.xcodeproj/project.pbxproj:
