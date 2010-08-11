@@ -1,3 +1,15 @@
+2010-08-11  Nate Chapin  <japhet@chromium.org>
+
+        Unreviewed, Chromium rebaseline.
+
+        Tweak win pixel results for svg/batik/text/textFeatures.svg.
+
+        * platform/chromium-win-vista/svg/batik/text/textFeatures-expected.checksum:
+        * platform/chromium-win-vista/svg/batik/text/textFeatures-expected.png:
+        * platform/chromium-win-vista/svg/batik/text/textFeatures-expected.txt: Removed.
+        * platform/chromium-win-xp/svg/batik/text/textFeatures-expected.checksum:
+        * platform/chromium-win-xp/svg/batik/text/textFeatures-expected.png: Added.
+
 2010-08-11  Alejandro G. Castro  <alex@igalia.com>
 
         Unreviewed.
