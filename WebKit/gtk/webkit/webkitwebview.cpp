@@ -2395,10 +2395,12 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * @frame: the frame that requests permission
      * @policy_decision: a WebKitGeolocationPolicyDecision
      *
-     * When a @frame wants to get its geolocation permission.
-     * The receiver must reply with a boolean wether it handled or not the
-     * request. If the request is not handled, default behaviour is to deny
-     * geolocation.
+     * This signal is emitted when a @frame wants to obtain the user's
+     * location. The decision can be made asynchronously, but you must
+     * call g_object_ref() the @policy_decision, and return %TRUE if
+     * you are going to handle the request. To actually make the
+     * decision you need to call webkit_geolocation_policy_allow() or
+     * webkit_geolocation_policy_deny() on @policy_decision.
      *
      * Since: 1.1.23
      */
