@@ -1,3 +1,17 @@
+2010-08-11  Rafael Antognolli  <antognolli@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Add setting for enabling spatial navigation.
+        https://bugs.webkit.org/show_bug.cgi?id=43569
+
+        Adding api for enabling/disabling spatial navigation.
+
+        * ewk/ewk_view.cpp: Both functions below added.
+        (ewk_view_setting_spatial_navigation_get):
+        (ewk_view_setting_spatial_navigation_set):
+        * ewk/ewk_view.h: same as ewk_view.cpp.
+
 2010-08-11  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Reviewed by Antonio Gomes.

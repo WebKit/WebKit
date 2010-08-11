@@ -436,6 +436,9 @@ EAPI Eina_Bool    ewk_view_setting_font_serif_set(Evas_Object *o, const char *fa
 EAPI const char  *ewk_view_setting_font_sans_serif_get(const Evas_Object *o);
 EAPI Eina_Bool    ewk_view_setting_font_sans_serif_set(Evas_Object *o, const char *family);
 
+EAPI Eina_Bool    ewk_view_setting_spatial_navigation_get(Evas_Object* o);
+EAPI Eina_Bool    ewk_view_setting_spatial_navigation_set(Evas_Object* o, Eina_Bool enable);
+
 /* to be used by subclass implementations */
 EAPI Ewk_View_Smart_Data *ewk_view_smart_data_get(const Evas_Object *o);
 
