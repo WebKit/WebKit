@@ -51,6 +51,8 @@ public:
                                                   double time) = 0;
 
     WEBKIT_API virtual unsigned numberOfActiveAnimations() const = 0;
+    WEBKIT_API virtual void suspendAnimations() const = 0;
+    WEBKIT_API virtual void resumeAnimations() const = 0;
 protected:
     ~WebAnimationController() { }
 };

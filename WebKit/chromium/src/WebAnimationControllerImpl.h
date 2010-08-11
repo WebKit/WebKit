@@ -52,6 +52,8 @@ public:
                                        const WebString& propertyName,
                                        double time);
     virtual unsigned numberOfActiveAnimations() const;
+    virtual void suspendAnimations() const;
+    virtual void resumeAnimations() const;
 private:
     WebFrameImpl* m_frameImpl;
     WebCore::AnimationController* animationController() const;
