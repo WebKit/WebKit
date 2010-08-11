@@ -1,3 +1,14 @@
+2010-08-11  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by David Levin.
+
+        Include <wtf/UnusedParam.h> in GraphicsContextSkia.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=43843
+
+        wtf/UnusedParam.h must be included because UNUSED_PARAM macro is used.
+
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+
 2010-08-11  Nico Weber  <thakis@chromium.org>
 
         Reviewed by David Levin.

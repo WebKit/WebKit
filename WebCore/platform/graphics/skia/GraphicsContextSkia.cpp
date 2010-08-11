@@ -53,6 +53,7 @@
 #include <math.h>
 #include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>
+#include <wtf/UnusedParam.h>
 
 #if USE(GLES2_RENDERING)
 #include "GLES2Canvas.h"
