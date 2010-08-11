@@ -91,12 +91,10 @@ ScriptExecutionContext::~ScriptExecutionContext()
         m_fileThread = 0;
     }
 #endif
-#if ENABLE(BLOB)
     HashSet<String>::iterator blobURLsEnd = m_blobURLs.end();
     for (HashSet<String>::iterator iter = m_blobURLs.begin(); iter != blobURLsEnd; ++iter)
         // FIXME: implement thread-safe proxy to make it work with workers.
         BlobRegistry::instance().unregisterBlobURL(KURL(ParsedURLString, *iter));
-#endif
 }
 
 #if ENABLE(DATABASE)
@@ -246,7 +244,6 @@ DOMTimer* ScriptExecutionContext::findTimeout(int timeoutId)
     return m_timeouts.get(timeoutId);
 }
 
-#if ENABLE(BLOB)
 void ScriptExecutionContext::trackBlobURL(const String& url)
 {
     m_blobURLs.add(url);
@@ -260,7 +257,6 @@ void ScriptExecutionContext::revokeBlobURL(const String& url)
         m_blobURLs.remove(url);
     }
 }
-#endif
 
 #if ENABLE(BLOB) || ENABLE(FILE_WRITER)
 FileThread* ScriptExecutionContext::fileThread()

@@ -1,3 +1,17 @@
+2010-08-10  Jian Li  <jianli@chromium.org>
+
+        Fix more build break.
+
+        * bindings/v8/SerializedScriptValue.cpp:
+        (WebCore::ZigZag::Reader::readBlob):
+        (WebCore::ZigZag::Reader::readFile):
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::~ScriptExecutionContext):
+        (WebCore::ScriptExecutionContext::revokeBlobURL):
+        * dom/ScriptExecutionContext.h:
+        * html/Blob.cpp:
+        (WebCore::Blob::slice):
+
 2010-08-10  Gavin Barraclough  <barraclough@apple.com>
 
         Rubber stamped by Sam Weinig

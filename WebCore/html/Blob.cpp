@@ -141,7 +141,6 @@ PassRefPtr<Blob> Blob::slice(ScriptExecutionContext* scriptExecutionContext, lon
     }
     return Blob::create(scriptExecutionContext, contentType, items);
 }
-#endif // ENABLE(BLOB)
 
 KURL Blob::createPublicURL(ScriptExecutionContext* scriptExecutionContext) const
 {
@@ -155,5 +154,6 @@ KURL Blob::createPublicURL(ScriptExecutionContext* scriptExecutionContext) const
 
     return url;
 }
+#endif // ENABLE(BLOB)
 
 } // namespace WebCore

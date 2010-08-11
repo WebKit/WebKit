@@ -872,14 +872,14 @@ private:
     {
         String url;
         String type;
-        unsigned long long size;
+        uint64_t size;
         if (!readWebCoreString(&url))
             return false;
         if (!readWebCoreString(&type))
             return false;
         if (!doReadUint64(&size))
             return false;
-        RefPtr<Blob> blob = Blob::create(getScriptExecutionContext(), KURL(ParsedURLString, url), type, size);
+        PassRefPtr<Blob> blob = Blob::create(getScriptExecutionContext(), KURL(ParsedURLString, url), type, size);
         *value = toV8(blob);
         return true;
     }
@@ -895,7 +895,7 @@ private:
             return false;
         if (!readWebCoreString(&type))
             return false;
-        RefPtr<File> file = File::create(getScriptExecutionContext(), path, KURL(ParsedURLString, url), type);
+        PassRefPtr<File> file = File::create(getScriptExecutionContext(), path, KURL(ParsedURLString, url), type);
         *value = toV8(file);
         return true;
     }
