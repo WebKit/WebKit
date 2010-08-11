@@ -1,3 +1,23 @@
+2010-08-10  Aaron Boodman  <aa@chromium.org>
+
+        Reviewed by David Hyatt.
+
+        Make the cascade level of "user" styles configurable
+        https://bugs.webkit.org/show_bug.cgi?id=43457
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::CSSStyleSelector): Handle the case where user styles might have author level. Minor refactor.
+        * dom/Document.cpp:
+        (WebCore::Document::pageGroupUserSheets): Set isUserStyle on created stylesheet objects appropriately.
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::addUserStyleSheetToWorld): Add new optional "level" argument.
+        * page/PageGroup.h: Ditto.
+        * page/UserStyleSheet.h: Add level property.
+        (WebCore::UserStyleSheet::):
+        (WebCore::UserStyleSheet::UserStyleSheet):
+        (WebCore::UserStyleSheet::setLevel):
+        (WebCore::UserStyleSheet::level):
+
 2010-08-11  Rob Buis  <rwlbuis@gmail.com>
 
         Reviewed by Dan Bernstein.

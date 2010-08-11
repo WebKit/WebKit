@@ -460,32 +460,37 @@ CSSStyleSelector::CSSStyleSelector(Document* doc, StyleSheetList* styleSheets, C
         m_medium = new MediaQueryEvaluator(view->mediaType(), view->frame(), m_rootDefaultStyle.get());
     }
 
+    m_authorStyle = new CSSRuleSet();
+
     // FIXME: This sucks! The user sheet is reparsed every time!
-    if (pageUserSheet || pageGroupUserSheets) {
-        m_userStyle = new CSSRuleSet();
-        if (pageUserSheet)
-            m_userStyle->addRulesFromSheet(pageUserSheet, *m_medium, this);
-        if (pageGroupUserSheets) {
-            unsigned length = pageGroupUserSheets->size();
-            for (unsigned i = 0; i < length; i++)
-                m_userStyle->addRulesFromSheet(pageGroupUserSheets->at(i).get(), *m_medium, this);
+    OwnPtr<CSSRuleSet> tempUserStyle(new CSSRuleSet);
+    if (pageUserSheet)
+        tempUserStyle->addRulesFromSheet(pageUserSheet, *m_medium, this);
+    if (pageGroupUserSheets) {
+        unsigned length = pageGroupUserSheets->size();
+        for (unsigned i = 0; i < length; i++) {
+            if (pageGroupUserSheets->at(i)->isUserStyleSheet())
+                tempUserStyle->addRulesFromSheet(pageGroupUserSheets->at(i).get(), *m_medium, this);
+            else
+                m_authorStyle->addRulesFromSheet(pageGroupUserSheets->at(i).get(), *m_medium, this);
         }
     }
 
-    // add stylesheets from document
-    m_authorStyle = new CSSRuleSet();
-    
+    if (tempUserStyle->m_ruleCount > 0)
+        m_userStyle = tempUserStyle.leakPtr();
+
     // Add rules from elements like SVG's <font-face>
     if (mappedElementSheet)
         m_authorStyle->addRulesFromSheet(mappedElementSheet, *m_medium, this);
 
+    // add stylesheets from document
     unsigned length = styleSheets->length();
     for (unsigned i = 0; i < length; i++) {
         StyleSheet* sheet = styleSheets->item(i);
         if (sheet->isCSSStyleSheet() && !sheet->disabled())
             m_authorStyle->addRulesFromSheet(static_cast<CSSStyleSheet*>(sheet), *m_medium, this);
     }
-    
+
     if (doc->renderer() && doc->renderer()->style())
         doc->renderer()->style()->font().update(fontSelector());
 }

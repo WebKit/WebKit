@@ -2225,7 +2225,7 @@ const Vector<RefPtr<CSSStyleSheet> >* Document::pageGroupUserSheets() const
             if (!UserContentURLPattern::matchesPatterns(url(), sheet->whitelist(), sheet->blacklist()))
                 continue;
             RefPtr<CSSStyleSheet> parsedSheet = CSSStyleSheet::createInline(const_cast<Document*>(this), sheet->url());
-            parsedSheet->setIsUserStyleSheet(true);
+            parsedSheet->setIsUserStyleSheet(sheet->level() == UserStyleSheet::UserLevel);
             parsedSheet->parseString(sheet->source(), !inCompatMode());
             if (!m_pageGroupUserSheets)
                 m_pageGroupUserSheets.set(new Vector<RefPtr<CSSStyleSheet> >);

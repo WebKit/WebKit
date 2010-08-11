@@ -1949,8 +1949,14 @@ void WebView::addUserStyleSheet(const WebString& sourceCode,
 
     PageGroup* pageGroup = PageGroup::pageGroup(pageGroupName);
     RefPtr<DOMWrapperWorld> world(DOMWrapperWorld::create());
+
+    // FIXME: Current callers always want the level to be "author". It probably makes sense to let
+    // callers specify this though, since in other cases the caller will probably want "user" level.
+    //
+    // FIXME: It would be nice to populate the URL correctly, instead of passing an empty URL.
     pageGroup->addUserStyleSheetToWorld(world.get(), sourceCode, WebURL(), patterns.release(), 0,
-                                        static_cast<UserContentInjectedFrames>(injectIn));
+                                        static_cast<UserContentInjectedFrames>(injectIn),
+                                        UserStyleSheet::AuthorLevel);
 }
 
 void WebView::removeAllUserContent()
