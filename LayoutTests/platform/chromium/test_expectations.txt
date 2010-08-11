@@ -716,7 +716,6 @@ WONTFIX SKIP : storage/private-browsing-readonly.html = PASS
 
 // HTML5 datalist element. We don't enable it because WebKit implementation
 // is incomplete.
-BUG20226 DEFER : fast/forms/datalist-nonoption-child.html = TEXT
 BUG20226 DEFER : fast/forms/datalist.html = TEXT
 BUG20226 DEFER : fast/forms/input-list.html = FAIL
 BUG20226 DEFER : fast/forms/input-selectedoption.html = FAIL
@@ -1809,7 +1808,6 @@ BUG5737 LINUX : fast/forms/input-first-letter.html = FAIL
 
 // The (x) in type=search inputs appears to be slightly broken.  This test will also need a rebaseline.
 BUG20439 WIN LINUX : fast/forms/search-transformed.html = FAIL
-BUG50816 MAC : fast/forms/search-transformed.html = FAIL
 
 // Linux's rotated text output looks terrible.
 BUG10397 LINUX : fast/transforms/transformed-document-element.html = FAIL
@@ -2357,7 +2355,6 @@ BUG29748 LINUX : tables/mozilla/marvin/backgr_simple-table-row.html = IMAGE
 BUG29748 LINUX : tables/mozilla/marvin/x_table_bgcolor_rgb.xml = IMAGE
 BUG29748 LINUX : tables/mozilla/other/nestedTables.html = IMAGE
 BUG29748 LINUX : tables/mozilla/other/test3.html = IMAGE
-BUG29748 LINUX : tables/mozilla/other/wa_table_thtd_rowspan.html = IMAGE
 BUG29748 LINUX : tables/mozilla_expected_failures/bugs/bug10140.html = IMAGE
 BUG29748 LINUX : tables/mozilla_expected_failures/bugs/bug1055-2.html = IMAGE
 BUG29748 LINUX : tables/mozilla_expected_failures/bugs/bug106966.html = IMAGE
@@ -2755,9 +2752,6 @@ BUG43497 MAC WIN : svg/custom/repaint-stroke-width-changes.svg = IMAGE PASS
 // WebKit roll 58855:58878
 BUG43419: fast/wcss/wap-input-format.xhtml = TEXT
 BUG43419: fast/wcss/wap-input-required.xhtml = TEXT
-
-// WebKit r59064 changes the behavior of javascript regexp literals
-BUGJOHNNYG : fast/js/regexp-literals-arent-constants.html = TEXT
 
 // Flaky tests
 BUG43890 WIN : http/tests/loading/basic.html = TEXT PASS
@@ -3175,21 +3169,16 @@ BUG51161 LINUX DEBUG : svg/clip-path/clip-path-text.svg = CRASH
 // Fixed only on Mac
 BUG41968 LINUX WIN : svg/hittest/svg-rect-hit.html = TEXT
 
-BUGWK43543 : http/tests/misc/isindex-formdata.html = TIMEOUT
-BUGWK43543 : http/tests/misc/isindex-with-no-form-base-href.html = TEXT TIMEOUT
-
 BUGWK43720 WIN : http/tests/inspector-enabled/console-log-before-frame-navigation.html = TEXT
 
 // Failure caused by r64749
 BUGSATISH: fast/speech/input-text-speechbutton.html = TIMEOUT
 
 // Need to support DeviceMotion.
-BUG51416 : fast/dom/DeviceMotion/create-event.html = TEXT
-BUG51416 : fast/dom/DeviceMotion/optional-event-properties.html = TEXT
 BUG51416 : fast/dom/DeviceMotion/window-property.html = TEXT
 
 // Slow test introduced in r64817
-BUG51571 : http/tests/misc/bad-charset-alias.html = TIMEOUT
+BUG51571 WIN : http/tests/misc/bad-charset-alias.html = TIMEOUT
 
 // Failure from http://trac.webkit.org/changeset/65107
 BUG51757 : animations/suspend-resume-animation.html = TEXT

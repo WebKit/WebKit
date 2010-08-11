@@ -1,3 +1,14 @@
+2010-08-11  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [Chromium] Remove consistently passing tests
+        from test_expectations.txt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=43868
+
+        * platform/chromium/test_expectations.txt:
+
 2010-08-11  Fady Samuel  <fsamuel@chromium.org>
 
         Reviewed by Nikolas Zimmermann.
