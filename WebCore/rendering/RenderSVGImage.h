@@ -81,6 +81,21 @@ private:
     mutable FloatRect m_cachedLocalRepaintRect;
 };
 
+inline RenderSVGImage* toRenderSVGImage(RenderObject* object)
+{
+    ASSERT(!object || object->isSVGImage());
+    return static_cast<RenderSVGImage*>(object);
+}
+
+inline const RenderSVGImage* toRenderSVGImage(const RenderObject* object)
+{
+    ASSERT(!object || object->isSVGImage());
+    return static_cast<const RenderSVGImage*>(object);
+}
+
+// This will catch anyone doing an unnecessary cast.
+void toRenderSVGImage(const RenderSVGImage*);
+
 } // namespace WebCore
 
 #endif // ENABLE(SVG)

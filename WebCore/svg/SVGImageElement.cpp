@@ -171,7 +171,7 @@ void SVGImageElement::attach()
 {
     SVGStyledTransformableElement::attach();
 
-    if (RenderImage* imageObj = toRenderImage(renderer())) {
+    if (RenderSVGImage* imageObj = toRenderSVGImage(renderer())) {
         if (imageObj->hasImage())
             return;
 

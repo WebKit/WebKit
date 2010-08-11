@@ -43,6 +43,7 @@
 #include "RenderPath.h"
 #include "RenderSVGContainer.h"
 #include "RenderSVGGradientStop.h"
+#include "RenderSVGImage.h"
 #include "RenderSVGInlineText.h"
 #include "RenderSVGResourceClipper.h"
 #include "RenderSVGResourceFilter.h"
@@ -708,7 +709,7 @@ void writeSVGInlineText(TextStream& ts, const RenderText& text, int indent)
     writeSVGInlineTextBoxes(ts, text, indent);
 }
 
-void writeSVGImage(TextStream& ts, const RenderImage& image, int indent)
+void writeSVGImage(TextStream& ts, const RenderSVGImage& image, int indent)
 {
     writeStandardPrefix(ts, image, indent);
     writePositionAndStyle(ts, image);
