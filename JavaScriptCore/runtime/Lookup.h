@@ -55,7 +55,7 @@ namespace JSC {
 
     class HashEntry : public FastAllocBase {
     public:
-        void initialize(UString::Rep* key, unsigned char attributes, intptr_t v1, intptr_t v2
+        void initialize(StringImpl* key, unsigned char attributes, intptr_t v1, intptr_t v2
 #if ENABLE(JIT)
                         , ThunkGenerator generator = 0
 #endif
@@ -71,8 +71,8 @@ namespace JSC {
             m_next = 0;
         }
 
-        void setKey(UString::Rep* key) { m_key = key; }
-        UString::Rep* key() const { return m_key; }
+        void setKey(StringImpl* key) { m_key = key; }
+        StringImpl* key() const { return m_key; }
 
         unsigned char attributes() const { return m_attributes; }
 
@@ -91,7 +91,7 @@ namespace JSC {
         HashEntry* next() const { return m_next; }
 
     private:
-        UString::Rep* m_key;
+        StringImpl* m_key;
         unsigned char m_attributes; // JSObject attributes
 
         union {
@@ -159,13 +159,13 @@ namespace JSC {
         {
             ASSERT(table);
 
-            const HashEntry* entry = &table[identifier.ustring().rep()->existingHash() & compactHashSizeMask];
+            const HashEntry* entry = &table[identifier.impl()->existingHash() & compactHashSizeMask];
 
             if (!entry->key())
                 return 0;
 
             do {
-                if (entry->key() == identifier.ustring().rep())
+                if (entry->key() == identifier.impl())
                     return entry;
                 entry = entry->next();
             } while (entry);

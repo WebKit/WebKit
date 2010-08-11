@@ -106,7 +106,7 @@ void Profile::debugPrintData() const
     m_head->debugPrintData(0);
 }
 
-typedef pair<UString::Rep*, unsigned> NameCountPair;
+typedef pair<StringImpl*, unsigned> NameCountPair;
 
 static inline bool functionNameCountPairComparator(const NameCountPair& a, const NameCountPair& b)
 {

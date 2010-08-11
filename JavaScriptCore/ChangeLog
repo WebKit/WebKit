@@ -1,5 +1,187 @@
 2010-08-10  Gavin Barraclough  <barraclough@apple.com>
 
+        Rubber stamped by Sam Weinig
+
+        Bug 43817 - Remove UString::Rep
+        UString::Rep has for a long time been replaced by UStringImpl (Rep
+        remaining as a typedef).  UStringImpl has since been removed too
+        (unified with StringImpl). Remove Rep, rename rep() to impl() and
+        m_rep to m_impl.  Also add impl() method to Identifier, and rename
+        its UString member from _ustring to m_string.
+
+        * API/JSCallbackObject.h:
+        (JSC::JSCallbackObjectData::JSPrivatePropertyMap::getPrivateProperty):
+        (JSC::JSCallbackObjectData::JSPrivatePropertyMap::setPrivateProperty):
+        (JSC::JSCallbackObjectData::JSPrivatePropertyMap::deletePrivateProperty):
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::getOwnPropertySlot):
+        (JSC::::put):
+        (JSC::::deleteProperty):
+        (JSC::::getOwnPropertyNames):
+        (JSC::::staticValueGetter):
+        (JSC::::staticFunctionGetter):
+        * API/JSClassRef.cpp:
+        (tryCreateStringFromUTF8):
+        (OpaqueJSClass::OpaqueJSClass):
+        (OpaqueJSClass::~OpaqueJSClass):
+        (OpaqueJSClassContextData::OpaqueJSClassContextData):
+        * API/JSClassRef.h:
+        * API/OpaqueJSString.cpp:
+        (OpaqueJSString::ustring):
+        * bytecode/EvalCodeCache.h:
+        (JSC::EvalCodeCache::get):
+        * bytecode/JumpTable.h:
+        (JSC::StringJumpTable::offsetForValue):
+        (JSC::StringJumpTable::ctiForValue):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::addVar):
+        (JSC::BytecodeGenerator::addGlobalVar):
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::addParameter):
+        (JSC::BytecodeGenerator::registerFor):
+        (JSC::BytecodeGenerator::willResolveToArguments):
+        (JSC::BytecodeGenerator::uncheckedRegisterForArguments):
+        (JSC::BytecodeGenerator::constRegisterFor):
+        (JSC::BytecodeGenerator::isLocal):
+        (JSC::BytecodeGenerator::isLocalConstant):
+        (JSC::BytecodeGenerator::addConstant):
+        (JSC::BytecodeGenerator::emitLoad):
+        (JSC::BytecodeGenerator::findScopedProperty):
+        (JSC::keyForCharacterSwitch):
+        (JSC::prepareJumpTableForStringSwitch):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::processClauseList):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * parser/JSParser.cpp:
+        (JSC::JSParser::parseStrictObjectLiteral):
+        * pcre/pcre_exec.cpp:
+        (Histogram::add):
+        * profiler/CallIdentifier.h:
+        (JSC::CallIdentifier::Hash::hash):
+        * profiler/Profile.cpp:
+        * profiler/ProfileNode.cpp:
+        (JSC::ProfileNode::debugPrintDataSampleStyle):
+        * profiler/ProfileNode.h:
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncToString):
+        * runtime/Identifier.cpp:
+        (JSC::Identifier::equal):
+        (JSC::IdentifierCStringTranslator::hash):
+        (JSC::IdentifierCStringTranslator::equal):
+        (JSC::IdentifierCStringTranslator::translate):
+        (JSC::Identifier::add):
+        (JSC::IdentifierUCharBufferTranslator::hash):
+        (JSC::IdentifierUCharBufferTranslator::equal):
+        (JSC::IdentifierUCharBufferTranslator::translate):
+        (JSC::Identifier::addSlowCase):
+        * runtime/Identifier.h:
+        (JSC::Identifier::Identifier):
+        (JSC::Identifier::ustring):
+        (JSC::Identifier::impl):
+        (JSC::Identifier::data):
+        (JSC::Identifier::size):
+        (JSC::Identifier::ascii):
+        (JSC::Identifier::isNull):
+        (JSC::Identifier::isEmpty):
+        (JSC::Identifier::toUInt32):
+        (JSC::Identifier::toStrictUInt32):
+        (JSC::Identifier::toArrayIndex):
+        (JSC::Identifier::toDouble):
+        (JSC::Identifier::equal):
+        (JSC::Identifier::add):
+        * runtime/InitializeThreading.cpp:
+        (JSC::initializeThreadingOnce):
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::displayName):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::displayName):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::addStaticGlobals):
+        * runtime/JSStaticScopeObject.h:
+        (JSC::JSStaticScopeObject::JSStaticScopeObject):
+        * runtime/JSString.h:
+        (JSC::):
+        (JSC::RopeBuilder::appendStringInConstruct):
+        (JSC::RopeBuilder::appendValueInConstructAndIncrementLength):
+        (JSC::jsSingleCharacterSubstring):
+        (JSC::jsSubstring):
+        * runtime/JSVariableObject.cpp:
+        (JSC::JSVariableObject::deleteProperty):
+        (JSC::JSVariableObject::symbolTableGet):
+        * runtime/JSVariableObject.h:
+        (JSC::JSVariableObject::symbolTableGet):
+        (JSC::JSVariableObject::symbolTablePut):
+        (JSC::JSVariableObject::symbolTablePutWithAttributes):
+        * runtime/Lookup.cpp:
+        (JSC::HashTable::createTable):
+        (JSC::HashTable::deleteTable):
+        * runtime/Lookup.h:
+        (JSC::HashEntry::initialize):
+        (JSC::HashEntry::setKey):
+        (JSC::HashEntry::key):
+        (JSC::HashTable::entry):
+        * runtime/PropertyMapHashTable.h:
+        (JSC::PropertyMapEntry::PropertyMapEntry):
+        * runtime/PropertyNameArray.cpp:
+        (JSC::PropertyNameArray::add):
+        * runtime/PropertyNameArray.h:
+        (JSC::PropertyNameArray::add):
+        (JSC::PropertyNameArray::addKnownUnique):
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::match):
+        * runtime/RegExpCache.cpp:
+        (JSC::RegExpCache::create):
+        * runtime/RegExpKey.h:
+        (JSC::RegExpKey::RegExpKey):
+        * runtime/SmallStrings.cpp:
+        (JSC::SmallStringsStorage::rep):
+        (JSC::SmallStrings::singleCharacterStringRep):
+        * runtime/SmallStrings.h:
+        * runtime/StringPrototype.cpp:
+        (JSC::jsSpliceSubstringsWithSeparators):
+        (JSC::stringProtoFuncMatch):
+        (JSC::stringProtoFuncSearch):
+        * runtime/Structure.cpp:
+        (JSC::Structure::~Structure):
+        (JSC::Structure::despecifyDictionaryFunction):
+        (JSC::Structure::addPropertyTransitionToExistingStructure):
+        (JSC::Structure::addPropertyTransition):
+        (JSC::Structure::copyPropertyTable):
+        (JSC::Structure::get):
+        (JSC::Structure::despecifyFunction):
+        (JSC::Structure::put):
+        (JSC::Structure::hasTransition):
+        (JSC::Structure::remove):
+        (JSC::Structure::checkConsistency):
+        * runtime/Structure.h:
+        (JSC::Structure::get):
+        (JSC::Structure::hasTransition):
+        * runtime/StructureTransitionTable.h:
+        * runtime/SymbolTable.h:
+        * runtime/UString.cpp:
+        (JSC::UString::UString):
+        (JSC::UString::toStrictUInt32):
+        (JSC::UString::substr):
+        * runtime/UString.h:
+        (JSC::UString::UString):
+        (JSC::UString::adopt):
+        (JSC::UString::data):
+        (JSC::UString::size):
+        (JSC::UString::isNull):
+        (JSC::UString::isEmpty):
+        (JSC::UString::impl):
+        (JSC::UString::cost):
+        (JSC::operator==):
+        (JSC::codePointCompare):
+        (JSC::IdentifierRepHash::hash):
+        (WTF::):
+
+2010-08-10  Gavin Barraclough  <barraclough@apple.com>
+
         Bug 43816 - Remove UStringImpl
         The class was actually removed a long time ago, replaced by StringImpl.
         UStringImpl is just a typedef onto StringImpl.  Remove this.

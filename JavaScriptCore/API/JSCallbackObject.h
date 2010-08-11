@@ -80,7 +80,7 @@ struct JSCallbackObjectData {
     struct JSPrivatePropertyMap {
         JSValue getPrivateProperty(const Identifier& propertyName) const
         {
-            PrivatePropertyMap::const_iterator location = m_propertyMap.find(propertyName.ustring().rep());
+            PrivatePropertyMap::const_iterator location = m_propertyMap.find(propertyName.impl());
             if (location == m_propertyMap.end())
                 return JSValue();
             return location->second;
@@ -88,12 +88,12 @@ struct JSCallbackObjectData {
         
         void setPrivateProperty(const Identifier& propertyName, JSValue value)
         {
-            m_propertyMap.set(propertyName.ustring().rep(), value);
+            m_propertyMap.set(propertyName.impl(), value);
         }
         
         void deletePrivateProperty(const Identifier& propertyName)
         {
-            m_propertyMap.remove(propertyName.ustring().rep());
+            m_propertyMap.remove(propertyName.impl());
         }
 
         void markChildren(MarkStack& markStack)
@@ -105,7 +105,7 @@ struct JSCallbackObjectData {
         }
 
     private:
-        typedef HashMap<RefPtr<UString::Rep>, JSValue, IdentifierRepHash> PrivatePropertyMap;
+        typedef HashMap<RefPtr<StringImpl>, JSValue, IdentifierRepHash> PrivatePropertyMap;
         PrivatePropertyMap m_propertyMap;
     };
     OwnPtr<JSPrivatePropertyMap> m_privateProperties;

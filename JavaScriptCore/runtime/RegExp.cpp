@@ -105,7 +105,7 @@ int RegExp::match(const UString& s, int startOffset, Vector<int, 32>* ovector)
     
     // Perform check to see if this match call is the same as the last match invocation
     // and if it is return the prior result.
-    if ((startOffset == m_lastMatchStart) && (s.rep() == m_lastMatchString.rep())) {
+    if ((startOffset == m_lastMatchStart) && (s.impl() == m_lastMatchString.impl())) {
         if (ovector)
             *ovector = m_lastOVector;
         

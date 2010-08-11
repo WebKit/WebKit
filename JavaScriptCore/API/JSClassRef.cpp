@@ -45,13 +45,13 @@ const JSClassDefinition kJSClassDefinitionEmpty = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 static inline UString tryCreateStringFromUTF8(const char* string)
 {
     if (!string)
-        return UString::null();
+        return UString();
 
     size_t length = strlen(string);
     Vector<UChar, 1024> buffer(length);
     UChar* p = buffer.data();
     if (conversionOK != convertUTF8ToUTF16(&string, string + length, &p, p + length))
-        return UString::null();
+        return UString();
 
     return UString(buffer.data(), p - buffer.data());
 }
@@ -83,7 +83,7 @@ OpaqueJSClass::OpaqueJSClass(const JSClassDefinition* definition, OpaqueJSClass*
             if (!valueName.isNull()) {
                 // Use a local variable here to sidestep an RVCT compiler bug.
                 StaticValueEntry* entry = new StaticValueEntry(staticValue->getProperty, staticValue->setProperty, staticValue->attributes);
-                StringImpl* impl = valueName.rep();
+                StringImpl* impl = valueName.impl();
                 impl->ref();
                 m_staticValues->add(impl, entry);
             }
@@ -98,7 +98,7 @@ OpaqueJSClass::OpaqueJSClass(const JSClassDefinition* definition, OpaqueJSClass*
             if (!functionName.isNull()) {
                 // Use a local variable here to sidestep an RVCT compiler bug.
                 StaticFunctionEntry* entry = new StaticFunctionEntry(staticFunction->callAsFunction, staticFunction->attributes);
-                StringImpl* impl = functionName.rep();
+                StringImpl* impl = functionName.impl();
                 impl->ref();
                 m_staticFunctions->add(impl, entry);
             }
@@ -113,7 +113,7 @@ OpaqueJSClass::OpaqueJSClass(const JSClassDefinition* definition, OpaqueJSClass*
 OpaqueJSClass::~OpaqueJSClass()
 {
     // The empty string is shared across threads & is an identifier, in all other cases we should have done a deep copy in className(), below. 
-    ASSERT(!m_className.size() || !m_className.rep()->isIdentifier());
+    ASSERT(!m_className.size() || !m_className.impl()->isIdentifier());
 
     if (m_staticValues) {
         OpaqueJSClassStaticValuesTable::const_iterator end = m_staticValues->end();
@@ -173,7 +173,7 @@ OpaqueJSClassContextData::OpaqueJSClassContextData(OpaqueJSClass* jsClass)
             ASSERT(!it->first->isIdentifier());
             // Use a local variable here to sidestep an RVCT compiler bug.
             StaticValueEntry* entry = new StaticValueEntry(it->second->getProperty, it->second->setProperty, it->second->attributes);
-            staticValues->add(UString::Rep::create(it->first->characters(), it->first->length()), entry);
+            staticValues->add(StringImpl::create(it->first->characters(), it->first->length()), entry);
         }
     } else
         staticValues = 0;
@@ -185,7 +185,7 @@ OpaqueJSClassContextData::OpaqueJSClassContextData(OpaqueJSClass* jsClass)
             ASSERT(!it->first->isIdentifier());
             // Use a local variable here to sidestep an RVCT compiler bug.
             StaticFunctionEntry* entry = new StaticFunctionEntry(it->second->callAsFunction, it->second->attributes);
-            staticFunctions->add(UString::Rep::create(it->first->characters(), it->first->length()), entry);
+            staticFunctions->add(StringImpl::create(it->first->characters(), it->first->length()), entry);
         }
             
     } else

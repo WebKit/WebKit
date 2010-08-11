@@ -119,7 +119,7 @@ namespace JSC {
         static const bool needsDestruction = false;
     };
 
-    typedef HashMap<RefPtr<UString::Rep>, SymbolTableEntry, IdentifierRepHash, HashTraits<RefPtr<UString::Rep> >, SymbolTableIndexHashTraits> SymbolTable;
+    typedef HashMap<RefPtr<StringImpl>, SymbolTableEntry, IdentifierRepHash, HashTraits<RefPtr<StringImpl> >, SymbolTableIndexHashTraits> SymbolTable;
 
     class SharedSymbolTable : public SymbolTable, public RefCounted<SharedSymbolTable> {
     public:

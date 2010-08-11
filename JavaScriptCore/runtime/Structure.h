@@ -106,20 +106,20 @@ namespace JSC {
         bool isUsingInlineStorage() const;
 
         size_t get(const Identifier& propertyName);
-        size_t get(const UString::Rep* rep, unsigned& attributes, JSCell*& specificValue);
+        size_t get(const StringImpl* rep, unsigned& attributes, JSCell*& specificValue);
         size_t get(const Identifier& propertyName, unsigned& attributes, JSCell*& specificValue)
         {
             ASSERT(!propertyName.isNull());
-            return get(propertyName.ustring().rep(), attributes, specificValue);
+            return get(propertyName.impl(), attributes, specificValue);
         }
         bool transitionedFor(const JSCell* specificValue)
         {
             return m_specificValueInPrevious == specificValue;
         }
-        bool hasTransition(UString::Rep*, unsigned attributes);
+        bool hasTransition(StringImpl*, unsigned attributes);
         bool hasTransition(const Identifier& propertyName, unsigned attributes)
         {
-            return hasTransition(propertyName._ustring.rep(), attributes);
+            return hasTransition(propertyName.impl(), attributes);
         }
 
         bool hasGetterSetterProperties() const { return m_hasGetterSetterProperties; }
@@ -210,7 +210,7 @@ namespace JSC {
         mutable RefPtr<StructureChain> m_cachedPrototypeChain;
 
         RefPtr<Structure> m_previous;
-        RefPtr<UString::Rep> m_nameInPrevious;
+        RefPtr<StringImpl> m_nameInPrevious;
         JSCell* m_specificValueInPrevious;
 
         // 'm_isUsingSingleSlot' indicates whether we are using the single transition optimisation.
@@ -254,7 +254,7 @@ namespace JSC {
         if (!m_propertyTable)
             return WTF::notFound;
 
-        UString::Rep* rep = propertyName._ustring.rep();
+        StringImpl* rep = propertyName.impl();
 
         unsigned i = rep->existingHash();
 

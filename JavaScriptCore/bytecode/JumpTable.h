@@ -45,13 +45,13 @@ namespace JSC {
     };
 
     struct StringJumpTable {
-        typedef HashMap<RefPtr<UString::Rep>, OffsetLocation> StringOffsetTable;
+        typedef HashMap<RefPtr<StringImpl>, OffsetLocation> StringOffsetTable;
         StringOffsetTable offsetTable;
 #if ENABLE(JIT)
         CodeLocationLabel ctiDefault; // FIXME: it should not be necessary to store this.
 #endif
 
-        inline int32_t offsetForValue(UString::Rep* value, int32_t defaultOffset)
+        inline int32_t offsetForValue(StringImpl* value, int32_t defaultOffset)
         {
             StringOffsetTable::const_iterator end = offsetTable.end();
             StringOffsetTable::const_iterator loc = offsetTable.find(value);
@@ -61,7 +61,7 @@ namespace JSC {
         }
 
 #if ENABLE(JIT)
-        inline CodeLocationLabel ctiForValue(UString::Rep* value)
+        inline CodeLocationLabel ctiForValue(StringImpl* value)
         {
             StringOffsetTable::const_iterator end = offsetTable.end();
             StringOffsetTable::const_iterator loc = offsetTable.find(value);

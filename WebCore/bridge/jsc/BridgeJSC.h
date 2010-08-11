@@ -140,9 +140,9 @@ protected:
 
 const char* signatureForParameters(const ArgList&);
 
-typedef HashMap<RefPtr<UString::Rep>, MethodList*> MethodListMap;
-typedef HashMap<RefPtr<UString::Rep>, Method*> MethodMap;
-typedef HashMap<RefPtr<UString::Rep>, Field*> FieldMap;
+typedef HashMap<RefPtr<StringImpl>, MethodList*> MethodListMap;
+typedef HashMap<RefPtr<StringImpl>, Method*> MethodMap;
+typedef HashMap<RefPtr<StringImpl>, Field*> FieldMap;
 
 } // namespace Bindings
 

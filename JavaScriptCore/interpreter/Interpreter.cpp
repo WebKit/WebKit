@@ -3574,7 +3574,7 @@ skip_id_custom_self:
         if (!scrutinee.isString())
             vPC += defaultOffset;
         else {
-            UString::Rep* value = asString(scrutinee)->value(callFrame).rep();
+            StringImpl* value = asString(scrutinee)->value(callFrame).impl();
             if (value->length() != 1)
                 vPC += defaultOffset;
             else
@@ -3597,7 +3597,7 @@ skip_id_custom_self:
         if (!scrutinee.isString())
             vPC += defaultOffset;
         else 
-            vPC += codeBlock->stringSwitchJumpTable(tableIndex).offsetForValue(asString(scrutinee)->value(callFrame).rep(), defaultOffset);
+            vPC += codeBlock->stringSwitchJumpTable(tableIndex).offsetForValue(asString(scrutinee)->value(callFrame).impl(), defaultOffset);
         NEXT_INSTRUCTION();
     }
     DEFINE_OPCODE(op_new_func) {

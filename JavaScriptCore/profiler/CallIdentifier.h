@@ -56,11 +56,11 @@ namespace JSC {
             static unsigned hash(const CallIdentifier& key)
             {
                 unsigned hashCodes[3] = {
-                    key.m_name.rep()->hash(),
-                    key.m_url.rep()->hash(),
+                    key.m_name.impl()->hash(),
+                    key.m_url.impl()->hash(),
                     key.m_lineNumber
                 };
-                return UString::Rep::computeHash(reinterpret_cast<char*>(hashCodes), sizeof(hashCodes));
+                return StringImpl::computeHash(reinterpret_cast<char*>(hashCodes), sizeof(hashCodes));
             }
 
             static bool equal(const CallIdentifier& a, const CallIdentifier& b) { return a == b; }

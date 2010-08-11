@@ -1,3 +1,41 @@
+2010-08-10  Gavin Barraclough  <barraclough@apple.com>
+
+        Rubber stamped by Sam Weinig
+
+        Bug 43817 - Remove UString::Rep
+        UString::Rep has for a long time been replaced by UStringImpl (Rep
+        remaining as a typedef).  UStringImpl has since been removed too
+        (unified with StringImpl). Remove Rep, rename rep() to impl() and
+        m_rep to m_impl.  Also add impl() method to Identifier, and rename
+        its UString member from _ustring to m_string.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::findAtomicString):
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::ustringToString):
+        (WebCore::identifierToString):
+        (WebCore::ustringToAtomicString):
+        (WebCore::identifierToAtomicString):
+        * bindings/js/SerializedScriptValue.h:
+        (WebCore::SerializedScriptValueData::SerializedScriptValueData):
+        * bridge/IdentifierRep.cpp:
+        (WebCore::IdentifierRep::get):
+        * bridge/c/c_class.cpp:
+        (JSC::Bindings::CClass::methodsNamed):
+        (JSC::Bindings::CClass::fieldNamed):
+        * bridge/jni/jsc/JavaClassJSC.cpp:
+        (JavaClass::JavaClass):
+        (JavaClass::methodsNamed):
+        (JavaClass::fieldNamed):
+        * bridge/jni/jsc/JavaStringJSC.h:
+        (JSC::Bindings::JavaStringImpl::~JavaStringImpl):
+        (JSC::Bindings::JavaStringImpl::init):
+        (JSC::Bindings::JavaStringImpl::UTF8String):
+        (JSC::Bindings::JavaStringImpl::uchars):
+        (JSC::Bindings::JavaStringImpl::length):
+        (JSC::Bindings::JavaStringImpl::uString):
+        * bridge/jsc/BridgeJSC.h:
+
 2010-08-10  Jian Li  <jianli@chromium.org>
 
         Fix qt build break.

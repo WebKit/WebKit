@@ -1186,11 +1186,11 @@ template <class TreeBuilder> TreeExpression JSParser::parseStrictObjectLiteral(T
     TreeProperty property = parseProperty<true>(context);
     failIfFalse(property);
     
-    typedef HashMap<RefPtr<UString::Rep>, unsigned, IdentifierRepHash> ObjectValidationMap;
+    typedef HashMap<RefPtr<StringImpl>, unsigned, IdentifierRepHash> ObjectValidationMap;
     ObjectValidationMap objectValidator;
     // Add the first property
     if (!m_syntaxAlreadyValidated)
-        objectValidator.add(context.getName(property).ustring().rep(), context.getType(property));
+        objectValidator.add(context.getName(property).impl(), context.getType(property));
     
     TreePropertyList propertyList = context.createPropertyList(property);
     TreePropertyList tail = propertyList;
@@ -1202,7 +1202,7 @@ template <class TreeBuilder> TreeExpression JSParser::parseStrictObjectLiteral(T
         property = parseProperty<true>(context);
         failIfFalse(property);
         if (!m_syntaxAlreadyValidated) {
-            std::pair<ObjectValidationMap::iterator, bool> propertyEntryIter = objectValidator.add(context.getName(property).ustring().rep(), context.getType(property));
+            std::pair<ObjectValidationMap::iterator, bool> propertyEntryIter = objectValidator.add(context.getName(property).impl(), context.getType(property));
             if (!propertyEntryIter.second) {
                 if ((context.getType(property) & propertyEntryIter.first->second) != PropertyNode::Constant) {
                     // Can't have multiple getters or setters with the same name, nor can we define 

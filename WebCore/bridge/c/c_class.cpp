@@ -75,7 +75,7 @@ MethodList CClass::methodsNamed(const Identifier& identifier, Instance* instance
 {
     MethodList methodList;
 
-    Method* method = _methods.get(identifier.ustring().rep());
+    Method* method = _methods.get(identifier.ustring().impl());
     if (method) {
         methodList.append(method);
         return methodList;
@@ -88,7 +88,7 @@ MethodList CClass::methodsNamed(const Identifier& identifier, Instance* instance
         Method* aMethod = new CMethod(ident); // deleted in the CClass destructor
         {
             JSLock lock(SilenceAssertionsOnly);
-            _methods.set(identifier.ustring().rep(), aMethod);
+            _methods.set(identifier.ustring().impl(), aMethod);
         }
         methodList.append(aMethod);
     }
@@ -98,7 +98,7 @@ MethodList CClass::methodsNamed(const Identifier& identifier, Instance* instance
 
 Field* CClass::fieldNamed(const Identifier& identifier, Instance* instance) const
 {
-    Field* aField = _fields.get(identifier.ustring().rep());
+    Field* aField = _fields.get(identifier.ustring().impl());
     if (aField)
         return aField;
     
@@ -109,7 +109,7 @@ Field* CClass::fieldNamed(const Identifier& identifier, Instance* instance) cons
         aField = new CField(ident); // deleted in the CClass destructor
         {
             JSLock lock(SilenceAssertionsOnly);
-            _fields.set(identifier.ustring().rep(), aField);
+            _fields.set(identifier.ustring().impl(), aField);
         }
     }
     return aField;

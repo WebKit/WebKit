@@ -319,7 +319,7 @@ double ProfileNode::debugPrintDataSampleStyle(int indentLevel, FunctionCallHashC
         for (int i = 0; i < indentLevel; ++i)
             printf("  ");
 
-         countedFunctions.add(functionName().rep());
+         countedFunctions.add(functionName().impl());
 
         printf("%.0f %s\n", sampleCount ? sampleCount : 1, name);
     } else

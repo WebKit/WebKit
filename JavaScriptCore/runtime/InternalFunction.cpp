@@ -61,7 +61,7 @@ const UString InternalFunction::displayName(ExecState* exec)
     if (displayName && isJSString(&exec->globalData(), displayName))
         return asString(displayName)->tryGetValue();
     
-    return UString::null();
+    return UString();
 }
 
 const UString InternalFunction::calculatedDisplayName(ExecState* exec)

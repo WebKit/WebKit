@@ -1748,7 +1748,7 @@ static void processClauseList(ClauseListNode* list, Vector<ExpressionNode*, 8>& 
             }
             const UString& value = static_cast<StringNode*>(clauseExpression)->value().ustring();
             if (singleCharacterSwitch &= value.size() == 1) {
-                int32_t intVal = value.rep()->characters()[0];
+                int32_t intVal = value.impl()->characters()[0];
                 if (intVal < min_num)
                     min_num = intVal;
                 if (intVal > max_num)

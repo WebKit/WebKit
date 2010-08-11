@@ -436,9 +436,9 @@ namespace JSC {
             static const bool needsRef = false;
         };
 
-        typedef HashMap<RefPtr<UString::Rep>, int, IdentifierRepHash, HashTraits<RefPtr<UString::Rep> >, IdentifierMapIndexHashTraits> IdentifierMap;
+        typedef HashMap<RefPtr<StringImpl>, int, IdentifierRepHash, HashTraits<RefPtr<StringImpl> >, IdentifierMapIndexHashTraits> IdentifierMap;
         typedef HashMap<double, JSValue> NumberMap;
-        typedef HashMap<UString::Rep*, JSString*, IdentifierRepHash> IdentifierStringMap;
+        typedef HashMap<StringImpl*, JSString*, IdentifierRepHash> IdentifierStringMap;
         
         RegisterID* emitCall(OpcodeID, RegisterID* dst, RegisterID* func, CallArguments&, unsigned divot, unsigned startOffset, unsigned endOffset);
         
@@ -524,7 +524,7 @@ namespace JSC {
 
         // Some of these objects keep pointers to one another. They are arranged
         // to ensure a sane destruction order that avoids references to freed memory.
-        HashSet<RefPtr<UString::Rep>, IdentifierRepHash> m_functions;
+        HashSet<RefPtr<StringImpl>, IdentifierRepHash> m_functions;
         RegisterID m_ignoredResultRegister;
         RegisterID m_thisRegister;
         RegisterID* m_activationRegister;

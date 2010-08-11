@@ -353,7 +353,7 @@ namespace JSC {
             GlobalPropertyInfo& global = globals[i];
             ASSERT(global.attributes & DontDelete);
             SymbolTableEntry newEntry(index, global.attributes);
-            symbolTable().add(global.identifier.ustring().rep(), newEntry);
+            symbolTable().add(global.identifier.impl(), newEntry);
             registerAt(index) = global.value;
         }
     }

@@ -54,32 +54,20 @@ namespace JSC {
 extern const double NaN;
 extern const double Inf;
 
-// The null string is immutable, except for refCount.
-UString* UString::s_nullUString;
-
 COMPILE_ASSERT(sizeof(UString) == sizeof(void*), UString_should_stay_small);
 
-void initializeUString()
-{
-    // StringImpl::empty() does not construct its static string in a threadsafe fashion,
-    // so ensure it has been initialized from here.
-    StringImpl::empty();
-
-    UString::s_nullUString = new UString;
-}
-
 UString::UString(const char* c)
-    : m_rep(Rep::create(c))
+    : m_impl(StringImpl::create(c))
 {
 }
 
 UString::UString(const char* c, unsigned length)
-    : m_rep(Rep::create(c, length))
+    : m_impl(StringImpl::create(c, length))
 {
 }
 
 UString::UString(const UChar* c, unsigned length)
-    : m_rep(Rep::create(c, length))
+    : m_impl(StringImpl::create(c, length))
 {
 }
 
@@ -418,10 +406,10 @@ uint32_t UString::toStrictUInt32(bool* ok) const
         *ok = false;
 
     // Empty string is not OK.
-    unsigned len = m_rep->length();
+    unsigned len = m_impl->length();
     if (len == 0)
         return 0;
-    const UChar* p = m_rep->characters();
+    const UChar* p = m_impl->characters();
     unsigned short c = p[0];
 
     // If the first digit is 0, only 0 itself is OK.
@@ -552,7 +540,7 @@ UString UString::substr(unsigned pos, unsigned len) const
     if (pos == 0 && len == s)
         return *this;
 
-    return UString(Rep::create(m_rep, pos, len));
+    return UString(StringImpl::create(m_impl, pos, len));
 }
 
 bool operator==(const UString& s1, const char *s2)

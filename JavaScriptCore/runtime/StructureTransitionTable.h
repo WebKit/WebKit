@@ -38,7 +38,7 @@ namespace JSC {
     class Structure;
 
     struct StructureTransitionTableHash {
-        typedef std::pair<RefPtr<UString::Rep>, unsigned> Key;
+        typedef std::pair<RefPtr<StringImpl>, unsigned> Key;
         static unsigned hash(const Key& p)
         {
             return p.first->existingHash();
@@ -53,7 +53,7 @@ namespace JSC {
     };
 
     struct StructureTransitionTableHashTraits {
-        typedef WTF::HashTraits<RefPtr<UString::Rep> > FirstTraits;
+        typedef WTF::HashTraits<RefPtr<StringImpl> > FirstTraits;
         typedef WTF::GenericHashTraits<unsigned> SecondTraits;
         typedef std::pair<FirstTraits::TraitType, SecondTraits::TraitType > TraitType;
 

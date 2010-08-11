@@ -34,7 +34,7 @@ namespace JSC {
 
 struct RegExpKey {
     int flagsValue;
-    RefPtr<UString::Rep> pattern;
+    RefPtr<StringImpl> pattern;
 
     RegExpKey()
         : flagsValue(0)
@@ -48,18 +48,18 @@ struct RegExpKey {
 
     RegExpKey(int flags, const UString& pattern)
         : flagsValue(flags)
-        , pattern(pattern.rep())
+        , pattern(pattern.impl())
     {
     }
 
-    RegExpKey(int flags, const PassRefPtr<UString::Rep> pattern)
+    RegExpKey(int flags, const PassRefPtr<StringImpl> pattern)
         : flagsValue(flags)
         , pattern(pattern)
     {
     }
 
     RegExpKey(const UString& flags, const UString& pattern)
-        : pattern(pattern.rep())
+        : pattern(pattern.impl())
     {
         flagsValue = getFlagsValue(flags);
     }

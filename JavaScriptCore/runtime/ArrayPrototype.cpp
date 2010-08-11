@@ -166,7 +166,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState* exec)
 
     unsigned length = thisObj->get(exec, exec->propertyNames().length).toUInt32(exec);
     unsigned totalSize = length ? length - 1 : 0;
-    Vector<RefPtr<UString::Rep>, 256> strBuffer(length);
+    Vector<RefPtr<StringImpl>, 256> strBuffer(length);
     for (unsigned k = 0; k < length; k++) {
         JSValue element;
         if (isRealArray && thisObj->canGetIndex(k))
@@ -178,7 +178,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState* exec)
             continue;
         
         UString str = element.toString(exec);
-        strBuffer[k] = str.rep();
+        strBuffer[k] = str.impl();
         totalSize += str.size();
         
         if (!strBuffer.data()) {
@@ -199,7 +199,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState* exec)
     for (unsigned i = 0; i < length; i++) {
         if (i)
             buffer.append(',');
-        if (RefPtr<UString::Rep> rep = strBuffer[i])
+        if (RefPtr<StringImpl> rep = strBuffer[i])
             buffer.append(rep->characters(), rep->length());
     }
     ASSERT(buffer.size() == totalSize);

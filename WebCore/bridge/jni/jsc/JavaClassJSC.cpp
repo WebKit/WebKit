@@ -63,7 +63,7 @@ JavaClass::JavaClass(jobject anInstance)
             JavaField* aField = new JavaField(env, aJField); // deleted in the JavaClass destructor
             {
                 JSLock lock(SilenceAssertionsOnly);
-                m_fields.set(((UString)aField->name()).rep(), aField);
+                m_fields.set(((UString)aField->name()).impl(), aField);
             }
             env->DeleteLocalRef(aJField);
         }
@@ -80,10 +80,10 @@ JavaClass::JavaClass(jobject anInstance)
             {
                 JSLock lock(SilenceAssertionsOnly);
 
-                methodList = m_methods.get(((UString)aMethod->name()).rep());
+                methodList = m_methods.get(((UString)aMethod->name()).impl());
                 if (!methodList) {
                     methodList = new MethodList();
-                    m_methods.set(((UString)aMethod->name()).rep(), methodList);
+                    m_methods.set(((UString)aMethod->name()).impl(), methodList);
                 }
             }
             methodList->append(aMethod);
@@ -115,7 +115,7 @@ JavaClass::~JavaClass()
 
 MethodList JavaClass::methodsNamed(const Identifier& identifier, Instance*) const
 {
-    MethodList* methodList = m_methods.get(identifier.ustring().rep());
+    MethodList* methodList = m_methods.get(identifier.ustring().impl());
 
     if (methodList)
         return *methodList;
@@ -124,7 +124,7 @@ MethodList JavaClass::methodsNamed(const Identifier& identifier, Instance*) cons
 
 Field* JavaClass::fieldNamed(const Identifier& identifier, Instance*) const
 {
-    return m_fields.get(identifier.ustring().rep());
+    return m_fields.get(identifier.ustring().impl());
 }
 
 bool JavaClass::isNumberClass() const

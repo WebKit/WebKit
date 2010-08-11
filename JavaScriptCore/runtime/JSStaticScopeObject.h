@@ -47,7 +47,7 @@ namespace JSC{
             : JSVariableObject(exec->globalData().staticScopeStructure, new JSStaticScopeObjectData())
         {
             d()->registerStore = value;
-            symbolTable().add(ident.ustring().rep(), SymbolTableEntry(-1, attributes));
+            symbolTable().add(ident.impl(), SymbolTableEntry(-1, attributes));
         }
         virtual ~JSStaticScopeObject();
         virtual void markChildren(MarkStack&);

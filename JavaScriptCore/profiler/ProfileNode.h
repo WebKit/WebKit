@@ -39,7 +39,7 @@ namespace JSC {
     class ProfileNode;
 
     typedef Vector<RefPtr<ProfileNode> >::const_iterator StackIterator;
-    typedef HashCountedSet<UString::Rep*> FunctionCallHashCount;
+    typedef HashCountedSet<StringImpl*> FunctionCallHashCount;
 
     class ProfileNode : public RefCounted<ProfileNode> {
     public:

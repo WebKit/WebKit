@@ -68,9 +68,9 @@ namespace JSC {
 
         JSGlobalData* globalData() { return m_globalData; }
 
-        void add(const Identifier& identifier) { add(identifier.ustring().rep()); }
-        void add(UString::Rep*);
-        void addKnownUnique(UString::Rep* identifier) { m_data->propertyNameVector().append(Identifier(m_globalData, identifier)); }
+        void add(const Identifier& identifier) { add(identifier.impl()); }
+        void add(StringImpl*);
+        void addKnownUnique(StringImpl* identifier) { m_data->propertyNameVector().append(Identifier(m_globalData, identifier)); }
 
         Identifier& operator[](unsigned i) { return m_data->propertyNameVector()[i]; }
         const Identifier& operator[](unsigned i) const { return m_data->propertyNameVector()[i]; }
@@ -86,7 +86,7 @@ namespace JSC {
         const_iterator end() const { return m_data->propertyNameVector().end(); }
 
     private:
-        typedef HashSet<UString::Rep*, PtrHash<UString::Rep*> > IdentifierSet;
+        typedef HashSet<StringImpl*, PtrHash<StringImpl*> > IdentifierSet;
 
         RefPtr<PropertyNameArrayData> m_data;
         IdentifierSet m_set;

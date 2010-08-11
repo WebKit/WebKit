@@ -88,7 +88,7 @@ public:
     void add(const JSRegExp*, double);
 
 private:
-    typedef HashMap<RefPtr<UString::Rep>, double> Map;
+    typedef HashMap<RefPtr<StringImpl>, double> Map;
     Map times;
 };
 
@@ -2157,7 +2157,7 @@ void Histogram::add(const JSRegExp* re, double elapsedTime)
         if (re->options & MatchAcrossMultipleLinesOption)
             string += " (multi-line)";
     }
-    pair<Map::iterator, bool> result = times.add(string.rep(), elapsedTime);
+    pair<Map::iterator, bool> result = times.add(string.impl(), elapsedTime);
     if (!result.second)
         result.first->second += elapsedTime;
 }

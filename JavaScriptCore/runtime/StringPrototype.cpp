@@ -254,7 +254,7 @@ static ALWAYS_INLINE JSValue jsSpliceSubstringsWithSeparators(ExecState* exec, J
         if (position <= 0 && length >= sourceSize)
             return sourceVal;
         // We could call UString::substr, but this would result in redundant checks
-        return jsString(exec, StringImpl::create(source.rep(), max(0, position), min(sourceSize, length)));
+        return jsString(exec, StringImpl::create(source.impl(), max(0, position), min(sourceSize, length)));
     }
 
     int totalLength = 0;
@@ -597,7 +597,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncMatch(ExecState* exec)
          *  If regexp is not an object whose [[Class]] property is "RegExp", it is
          *  replaced with the result of the expression new RegExp(regexp).
          */
-        reg = exec->globalData().regExpCache()->lookupOrCreate(a0.toString(exec), UString::null());
+        reg = exec->globalData().regExpCache()->lookupOrCreate(a0.toString(exec), UString());
     }
     RegExpConstructor* regExpConstructor = exec->lexicalGlobalObject()->regExpConstructor();
     int pos;
@@ -650,7 +650,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSearch(ExecState* exec)
          *  If regexp is not an object whose [[Class]] property is "RegExp", it is
          *  replaced with the result of the expression new RegExp(regexp).
          */
-        reg = exec->globalData().regExpCache()->lookupOrCreate(a0.toString(exec), UString::null());
+        reg = exec->globalData().regExpCache()->lookupOrCreate(a0.toString(exec), UString());
     }
     RegExpConstructor* regExpConstructor = exec->lexicalGlobalObject()->regExpConstructor();
     int pos;

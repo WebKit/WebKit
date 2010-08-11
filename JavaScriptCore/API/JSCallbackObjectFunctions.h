@@ -146,14 +146,14 @@ bool JSCallbackObject<Base>::getOwnPropertySlot(ExecState* exec, const Identifie
         }
         
         if (OpaqueJSClassStaticValuesTable* staticValues = jsClass->staticValues(exec)) {
-            if (staticValues->contains(propertyName.ustring().rep())) {
+            if (staticValues->contains(propertyName.impl())) {
                 slot.setCustom(this, staticValueGetter);
                 return true;
             }
         }
         
         if (OpaqueJSClassStaticFunctionsTable* staticFunctions = jsClass->staticFunctions(exec)) {
-            if (staticFunctions->contains(propertyName.ustring().rep())) {
+            if (staticFunctions->contains(propertyName.impl())) {
                 slot.setCustom(this, staticFunctionGetter);
                 return true;
             }
@@ -213,7 +213,7 @@ void JSCallbackObject<Base>::put(ExecState* exec, const Identifier& propertyName
         }
         
         if (OpaqueJSClassStaticValuesTable* staticValues = jsClass->staticValues(exec)) {
-            if (StaticValueEntry* entry = staticValues->get(propertyName.ustring().rep())) {
+            if (StaticValueEntry* entry = staticValues->get(propertyName.impl())) {
                 if (entry->attributes & kJSPropertyAttributeReadOnly)
                     return;
                 if (JSObjectSetPropertyCallback setProperty = entry->setProperty) {
@@ -235,7 +235,7 @@ void JSCallbackObject<Base>::put(ExecState* exec, const Identifier& propertyName
         }
         
         if (OpaqueJSClassStaticFunctionsTable* staticFunctions = jsClass->staticFunctions(exec)) {
-            if (StaticFunctionEntry* entry = staticFunctions->get(propertyName.ustring().rep())) {
+            if (StaticFunctionEntry* entry = staticFunctions->get(propertyName.impl())) {
                 if (entry->attributes & kJSPropertyAttributeReadOnly)
                     return;
                 JSCallbackObject<Base>::putDirect(propertyName, value); // put as override property
@@ -271,7 +271,7 @@ bool JSCallbackObject<Base>::deleteProperty(ExecState* exec, const Identifier& p
         }
         
         if (OpaqueJSClassStaticValuesTable* staticValues = jsClass->staticValues(exec)) {
-            if (StaticValueEntry* entry = staticValues->get(propertyName.ustring().rep())) {
+            if (StaticValueEntry* entry = staticValues->get(propertyName.impl())) {
                 if (entry->attributes & kJSPropertyAttributeDontDelete)
                     return false;
                 return true;
@@ -279,7 +279,7 @@ bool JSCallbackObject<Base>::deleteProperty(ExecState* exec, const Identifier& p
         }
         
         if (OpaqueJSClassStaticFunctionsTable* staticFunctions = jsClass->staticFunctions(exec)) {
-            if (StaticFunctionEntry* entry = staticFunctions->get(propertyName.ustring().rep())) {
+            if (StaticFunctionEntry* entry = staticFunctions->get(propertyName.impl())) {
                 if (entry->attributes & kJSPropertyAttributeDontDelete)
                     return false;
                 return true;
@@ -417,7 +417,7 @@ void JSCallbackObject<Base>::getOwnPropertyNames(ExecState* exec, PropertyNameAr
             typedef OpaqueJSClassStaticValuesTable::const_iterator iterator;
             iterator end = staticValues->end();
             for (iterator it = staticValues->begin(); it != end; ++it) {
-                UString::Rep* name = it->first.get();
+                StringImpl* name = it->first.get();
                 StaticValueEntry* entry = it->second;
                 if (entry->getProperty && (!(entry->attributes & kJSPropertyAttributeDontEnum) || (mode == IncludeDontEnumProperties)))
                     propertyNames.add(Identifier(exec, name));
@@ -428,7 +428,7 @@ void JSCallbackObject<Base>::getOwnPropertyNames(ExecState* exec, PropertyNameAr
             typedef OpaqueJSClassStaticFunctionsTable::const_iterator iterator;
             iterator end = staticFunctions->end();
             for (iterator it = staticFunctions->begin(); it != end; ++it) {
-                UString::Rep* name = it->first.get();
+                StringImpl* name = it->first.get();
                 StaticFunctionEntry* entry = it->second;
                 if (!(entry->attributes & kJSPropertyAttributeDontEnum) || (mode == IncludeDontEnumProperties))
                     propertyNames.add(Identifier(exec, name));
@@ -528,7 +528,7 @@ JSValue JSCallbackObject<Base>::staticValueGetter(ExecState* exec, JSValue slotB
     
     for (JSClassRef jsClass = thisObj->classRef(); jsClass; jsClass = jsClass->parentClass)
         if (OpaqueJSClassStaticValuesTable* staticValues = jsClass->staticValues(exec))
-            if (StaticValueEntry* entry = staticValues->get(propertyName.ustring().rep()))
+            if (StaticValueEntry* entry = staticValues->get(propertyName.impl()))
                 if (JSObjectGetPropertyCallback getProperty = entry->getProperty) {
                     if (!propertyNameRef)
                         propertyNameRef = OpaqueJSString::create(propertyName.ustring());
@@ -561,7 +561,7 @@ JSValue JSCallbackObject<Base>::staticFunctionGetter(ExecState* exec, JSValue sl
     
     for (JSClassRef jsClass = thisObj->classRef(); jsClass; jsClass = jsClass->parentClass) {
         if (OpaqueJSClassStaticFunctionsTable* staticFunctions = jsClass->staticFunctions(exec)) {
-            if (StaticFunctionEntry* entry = staticFunctions->get(propertyName.ustring().rep())) {
+            if (StaticFunctionEntry* entry = staticFunctions->get(propertyName.impl())) {
                 if (JSObjectCallAsFunctionCallback callAsFunction = entry->callAsFunction) {
                     
                     JSObject* o = new (exec) JSCallbackFunction(exec, asGlobalObject(thisObj->getAnonymousValue(0)), callAsFunction, propertyName);

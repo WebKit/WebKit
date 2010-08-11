@@ -45,9 +45,6 @@ namespace JSC {
         friend class JIT;
 
     public:
-        typedef StringImpl Rep;
-    
-    public:
         UString() {}
         UString(const char*); // Constructor for null-terminated string.
         UString(const char*, unsigned length);
@@ -55,20 +52,20 @@ namespace JSC {
         UString(const Vector<UChar>& buffer);
 
         UString(const UString& s)
-            : m_rep(s.m_rep)
+            : m_impl(s.m_impl)
         {
         }
 
         // Special constructor for cases where we overwrite an object in place.
         UString(PlacementNewAdoptType)
-            : m_rep(PlacementNewAdopt)
+            : m_impl(PlacementNewAdopt)
         {
         }
 
         template<size_t inlineCapacity>
         static PassRefPtr<StringImpl> adopt(Vector<UChar, inlineCapacity>& vector)
         {
-            return Rep::adopt(vector);
+            return StringImpl::adopt(vector);
         }
 
         static UString from(int);
@@ -93,20 +90,20 @@ namespace JSC {
 
         const UChar* data() const
         {
-            if (!m_rep)
+            if (!m_impl)
                 return 0;
-            return m_rep->characters();
+            return m_impl->characters();
         }
 
         unsigned size() const
         {
-            if (!m_rep)
+            if (!m_impl)
                 return 0;
-            return m_rep->length();
+            return m_impl->length();
         }
 
-        bool isNull() const { return !m_rep; }
-        bool isEmpty() const { return !m_rep || !m_rep->length(); }
+        bool isNull() const { return !m_impl; }
+        bool isEmpty() const { return !m_impl || !m_impl->length(); }
 
         bool is8Bit() const;
 
@@ -130,36 +127,31 @@ namespace JSC {
 
         UString substr(unsigned pos = 0, unsigned len = 0xFFFFFFFF) const;
 
-        static const UString& null() { return *s_nullUString; }
+        StringImpl* impl() const { return m_impl.get(); }
 
-        Rep* rep() const { return m_rep.get(); }
-
-        UString(PassRefPtr<Rep> r)
-            : m_rep(r)
+        UString(PassRefPtr<StringImpl> r)
+            : m_impl(r)
         {
         }
 
         size_t cost() const
         {
-            if (!m_rep)
+            if (!m_impl)
                 return 0;
-            return m_rep->cost();
+            return m_impl->cost();
         }
 
         ALWAYS_INLINE ~UString() { }
     private:
-        RefPtr<Rep> m_rep;
+        RefPtr<StringImpl> m_impl;
 
-        static UString* s_nullUString;
-
-        friend void initializeUString();
         friend bool operator==(const UString&, const UString&);
     };
 
     ALWAYS_INLINE bool operator==(const UString& s1, const UString& s2)
     {
-        UString::Rep* rep1 = s1.rep();
-        UString::Rep* rep2 = s2.rep();
+        StringImpl* rep1 = s1.impl();
+        StringImpl* rep2 = s2.impl();
         unsigned size1 = 0;
         unsigned size2 = 0;
 
@@ -226,7 +218,7 @@ namespace JSC {
 
     inline int codePointCompare(const UString& s1, const UString& s2)
     {
-        return codePointCompare(s1.rep(), s2.rep());
+        return codePointCompare(s1.impl(), s2.impl());
     }
 
     // Rule from ECMA 15.2 about what an array index is.
@@ -244,12 +236,10 @@ namespace JSC {
     // huge buffer.
     static const unsigned minShareSize = Heap::minExtraCost / sizeof(UChar);
 
-    struct IdentifierRepHash : PtrHash<RefPtr<JSC::UString::Rep> > {
-        static unsigned hash(const RefPtr<JSC::UString::Rep>& key) { return key->existingHash(); }
-        static unsigned hash(JSC::UString::Rep* key) { return key->existingHash(); }
+    struct IdentifierRepHash : PtrHash<RefPtr<StringImpl> > {
+        static unsigned hash(const RefPtr<StringImpl>& key) { return key->existingHash(); }
+        static unsigned hash(StringImpl* key) { return key->existingHash(); }
     };
-
-    void initializeUString();
 
     template<typename StringType>
     class StringTypeAdapter {
@@ -651,19 +641,19 @@ namespace WTF {
     template<typename T> struct DefaultHash;
     template<typename T> struct StrHash;
 
-    template<> struct StrHash<JSC::UString::Rep*> {
-        static unsigned hash(const JSC::UString::Rep* key) { return key->hash(); }
-        static bool equal(const JSC::UString::Rep* a, const JSC::UString::Rep* b) { return ::equal(a, b); }
+    template<> struct StrHash<StringImpl*> {
+        static unsigned hash(const StringImpl* key) { return key->hash(); }
+        static bool equal(const StringImpl* a, const StringImpl* b) { return ::equal(a, b); }
         static const bool safeToCompareToEmptyOrDeleted = false;
     };
 
-    template<> struct StrHash<RefPtr<JSC::UString::Rep> > : public StrHash<JSC::UString::Rep*> {
-        using StrHash<JSC::UString::Rep*>::hash;
-        static unsigned hash(const RefPtr<JSC::UString::Rep>& key) { return key->hash(); }
-        using StrHash<JSC::UString::Rep*>::equal;
-        static bool equal(const RefPtr<JSC::UString::Rep>& a, const RefPtr<JSC::UString::Rep>& b) { return ::equal(a.get(), b.get()); }
-        static bool equal(const JSC::UString::Rep* a, const RefPtr<JSC::UString::Rep>& b) { return ::equal(a, b.get()); }
-        static bool equal(const RefPtr<JSC::UString::Rep>& a, const JSC::UString::Rep* b) { return ::equal(a.get(), b); }
+    template<> struct StrHash<RefPtr<StringImpl> > : public StrHash<StringImpl*> {
+        using StrHash<StringImpl*>::hash;
+        static unsigned hash(const RefPtr<StringImpl>& key) { return key->hash(); }
+        using StrHash<StringImpl*>::equal;
+        static bool equal(const RefPtr<StringImpl>& a, const RefPtr<StringImpl>& b) { return ::equal(a.get(), b.get()); }
+        static bool equal(const StringImpl* a, const RefPtr<StringImpl>& b) { return ::equal(a, b.get()); }
+        static bool equal(const RefPtr<StringImpl>& a, const StringImpl* b) { return ::equal(a.get(), b); }
 
         static const bool safeToCompareToEmptyOrDeleted = false;
     };

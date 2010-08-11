@@ -27,13 +27,13 @@
 namespace JSC {
 
     struct PropertyMapEntry {
-        UString::Rep* key;
+        StringImpl* key;
         unsigned offset;
         unsigned attributes;
         JSCell* specificValue;
         unsigned index;
 
-        PropertyMapEntry(UString::Rep* key, unsigned attributes, JSCell* specificValue)
+        PropertyMapEntry(StringImpl* key, unsigned attributes, JSCell* specificValue)
             : key(key)
             , offset(0)
             , attributes(attributes)
@@ -42,7 +42,7 @@ namespace JSC {
         {
         }
 
-        PropertyMapEntry(UString::Rep* key, unsigned offset, unsigned attributes, JSCell* specificValue, unsigned index)
+        PropertyMapEntry(StringImpl* key, unsigned offset, unsigned attributes, JSCell* specificValue, unsigned index)
             : key(key)
             , offset(offset)
             , attributes(attributes)

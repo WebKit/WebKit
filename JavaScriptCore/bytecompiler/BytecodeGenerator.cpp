@@ -165,7 +165,7 @@ bool BytecodeGenerator::addVar(const Identifier& ident, bool isConstant, Registe
 {
     int index = m_calleeRegisters.size();
     SymbolTableEntry newEntry(index, isConstant ? ReadOnly : 0);
-    pair<SymbolTable::iterator, bool> result = symbolTable().add(ident.ustring().rep(), newEntry);
+    pair<SymbolTable::iterator, bool> result = symbolTable().add(ident.impl(), newEntry);
 
     if (!result.second) {
         r0 = &registerFor(result.first->second.getIndex());
@@ -180,7 +180,7 @@ bool BytecodeGenerator::addGlobalVar(const Identifier& ident, bool isConstant, R
 {
     int index = m_nextGlobalIndex;
     SymbolTableEntry newEntry(index, isConstant ? ReadOnly : 0);
-    pair<SymbolTable::iterator, bool> result = symbolTable().add(ident.ustring().rep(), newEntry);
+    pair<SymbolTable::iterator, bool> result = symbolTable().add(ident.impl(), newEntry);
 
     if (!result.second)
         index = result.first->second.getIndex();
@@ -350,7 +350,7 @@ BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, const Debug
     for (size_t i = 0; i < functionStack.size(); ++i) {
         FunctionBodyNode* function = functionStack[i];
         const Identifier& ident = function->ident();
-        m_functions.add(ident.ustring().rep());
+        m_functions.add(ident.impl());
         emitNewFunction(addVar(ident, false), function);
     }
 
@@ -437,7 +437,7 @@ BytecodeGenerator::BytecodeGenerator(EvalNode* evalNode, const Debugger* debugge
 void BytecodeGenerator::addParameter(const Identifier& ident, int parameterIndex)
 {
     // Parameters overwrite var declarations, but not function declarations.
-    UString::Rep* rep = ident.ustring().rep();
+    StringImpl* rep = ident.impl();
     if (!m_functions.contains(rep)) {
         symbolTable().set(rep, parameterIndex);
         RegisterID& parameter = registerFor(parameterIndex);
@@ -457,7 +457,7 @@ RegisterID* BytecodeGenerator::registerFor(const Identifier& ident)
     if (!shouldOptimizeLocals())
         return 0;
 
-    SymbolTableEntry entry = symbolTable().get(ident.ustring().rep());
+    SymbolTableEntry entry = symbolTable().get(ident.impl());
     if (entry.isNull())
         return 0;
 
@@ -475,7 +475,7 @@ bool BytecodeGenerator::willResolveToArguments(const Identifier& ident)
     if (!shouldOptimizeLocals())
         return false;
     
-    SymbolTableEntry entry = symbolTable().get(ident.ustring().rep());
+    SymbolTableEntry entry = symbolTable().get(ident.impl());
     if (entry.isNull())
         return false;
     
@@ -489,7 +489,7 @@ RegisterID* BytecodeGenerator::uncheckedRegisterForArguments()
 {
     ASSERT(willResolveToArguments(propertyNames().arguments));
 
-    SymbolTableEntry entry = symbolTable().get(propertyNames().arguments.ustring().rep());
+    SymbolTableEntry entry = symbolTable().get(propertyNames().arguments.impl());
     ASSERT(!entry.isNull());
     return &registerFor(entry.getIndex());
 }
@@ -499,7 +499,7 @@ RegisterID* BytecodeGenerator::constRegisterFor(const Identifier& ident)
     if (m_codeType == EvalCode)
         return 0;
 
-    SymbolTableEntry entry = symbolTable().get(ident.ustring().rep());
+    SymbolTableEntry entry = symbolTable().get(ident.impl());
     if (entry.isNull())
         return 0;
 
@@ -511,12 +511,12 @@ bool BytecodeGenerator::isLocal(const Identifier& ident)
     if (ident == propertyNames().thisIdentifier)
         return true;
     
-    return shouldOptimizeLocals() && symbolTable().contains(ident.ustring().rep());
+    return shouldOptimizeLocals() && symbolTable().contains(ident.impl());
 }
 
 bool BytecodeGenerator::isLocalConstant(const Identifier& ident)
 {
-    return symbolTable().get(ident.ustring().rep()).isReadOnly();
+    return symbolTable().get(ident.impl()).isReadOnly();
 }
 
 RegisterID* BytecodeGenerator::newRegister()
@@ -829,7 +829,7 @@ PassRefPtr<Label> BytecodeGenerator::emitJumpIfNotFunctionApply(RegisterID* cond
 
 unsigned BytecodeGenerator::addConstant(const Identifier& ident)
 {
-    UString::Rep* rep = ident.ustring().rep();
+    StringImpl* rep = ident.impl();
     pair<IdentifierMap::iterator, bool> result = m_identifierMap.add(rep, m_codeBlock->numberOfIdentifiers());
     if (result.second) // new entry
         m_codeBlock->addIdentifier(Identifier(m_globalData, rep));
@@ -1001,7 +1001,7 @@ RegisterID* BytecodeGenerator::emitLoad(RegisterID* dst, double number)
 
 RegisterID* BytecodeGenerator::emitLoad(RegisterID* dst, const Identifier& identifier)
 {
-    JSString*& stringInMap = m_stringMap.add(identifier.ustring().rep(), 0).first->second;
+    JSString*& stringInMap = m_stringMap.add(identifier.impl(), 0).first->second;
     if (!stringInMap)
         stringInMap = jsOwnedString(globalData(), identifier.ustring());
     return emitLoad(dst, JSValue(stringInMap));
@@ -1039,7 +1039,7 @@ bool BytecodeGenerator::findScopedProperty(const Identifier& property, int& inde
         if (!currentScope->isVariableObject())
             break;
         JSVariableObject* currentVariableObject = static_cast<JSVariableObject*>(currentScope);
-        SymbolTableEntry entry = currentVariableObject->symbolTable().get(property.ustring().rep());
+        SymbolTableEntry entry = currentVariableObject->symbolTable().get(property.impl());
 
         // Found the property
         if (!entry.isNull()) {
@@ -1974,7 +1974,7 @@ static int32_t keyForCharacterSwitch(ExpressionNode* node, int32_t min, int32_t 
 {
     UNUSED_PARAM(max);
     ASSERT(node->isString());
-    UString::Rep* clause = static_cast<StringNode*>(node)->value().ustring().rep();
+    StringImpl* clause = static_cast<StringNode*>(node)->value().impl();
     ASSERT(clause->length() == 1);
     
     int32_t key = clause->characters()[0];
@@ -2004,7 +2004,7 @@ static void prepareJumpTableForStringSwitch(StringJumpTable& jumpTable, int32_t 
         ASSERT(!labels[i]->isForward());
         
         ASSERT(nodes[i]->isString());
-        UString::Rep* clause = static_cast<StringNode*>(nodes[i])->value().ustring().rep();
+        StringImpl* clause = static_cast<StringNode*>(nodes[i])->value().impl();
         OffsetLocation location;
         location.branchOffset = labels[i]->bind(switchAddress, switchAddress + 3);
         jumpTable.offsetTable.add(clause, location);

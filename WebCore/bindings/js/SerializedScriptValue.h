@@ -90,7 +90,7 @@ namespace WebCore {
 
         explicit SerializedScriptValueData(const String& string)
             : m_type(StringType)
-            , m_string(string.crossThreadString()) // FIXME: Should be able to just share the Rep
+            , m_string(string.crossThreadString()) // FIXME: Should be able to just share the StringImpl
         {
         }
 

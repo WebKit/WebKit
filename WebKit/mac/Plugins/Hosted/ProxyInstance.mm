@@ -329,7 +329,7 @@ MethodList ProxyInstance::methodsNamed(const Identifier& identifier)
         return MethodList();
     
     // If we already have an entry in the map, use it.
-    MethodMap::iterator existingMapEntry = m_methods.find(identifier.ustring().rep());
+    MethodMap::iterator existingMapEntry = m_methods.find(identifier.impl());
     if (existingMapEntry != m_methods.end()) {
         MethodList methodList;
         if (existingMapEntry->second)
@@ -353,7 +353,7 @@ MethodList ProxyInstance::methodsNamed(const Identifier& identifier)
         return MethodList();
 
     // Add a new entry to the map unless an entry was added while we were in waitForReply.
-    pair<MethodMap::iterator, bool> mapAddResult = m_methods.add(identifier.ustring().rep(), 0);
+    pair<MethodMap::iterator, bool> mapAddResult = m_methods.add(identifier.impl(), 0);
     if (mapAddResult.second && reply->m_result)
         mapAddResult.first->second = new ProxyMethod(methodName);
 
@@ -369,7 +369,7 @@ Field* ProxyInstance::fieldNamed(const Identifier& identifier)
         return 0;
     
     // If we already have an entry in the map, use it.
-    FieldMap::iterator existingMapEntry = m_fields.find(identifier.ustring().rep());
+    FieldMap::iterator existingMapEntry = m_fields.find(identifier.impl());
     if (existingMapEntry != m_fields.end())
         return existingMapEntry->second;
     
@@ -389,7 +389,7 @@ Field* ProxyInstance::fieldNamed(const Identifier& identifier)
         return 0;
     
     // Add a new entry to the map unless an entry was added while we were in waitForReply.
-    pair<FieldMap::iterator, bool> mapAddResult = m_fields.add(identifier.ustring().rep(), 0);
+    pair<FieldMap::iterator, bool> mapAddResult = m_fields.add(identifier.impl(), 0);
     if (mapAddResult.second && reply->m_result)
         mapAddResult.first->second = new ProxyField(propertyName);
     return mapAddResult.first->second;
