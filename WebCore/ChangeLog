@@ -1,3 +1,19 @@
+2010-08-11  Rob Buis  <rwlbuis@gmail.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=42042
+        An empty value for xml:lang isn't considered
+
+        Revert last line change of my patch ; it happens to
+        behave correctly and same as before, but makes the
+        use case of empty values unneededly slower.
+
+        No new tests. (No change in behavior)
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector):
+
 2010-08-11  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx, WebDOM] Build fix. Fix callback params and WebCore::String -> WTF::String fixes.

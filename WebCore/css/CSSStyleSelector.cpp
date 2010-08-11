@@ -2617,7 +2617,7 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
                     n = n->parent();
                 }
                 const AtomicString& argument = sel->argument();
-                if (value.isNull() || !value.startsWith(argument, false))
+                if (value.isEmpty() || !value.startsWith(argument, false))
                     break;
                 if (value.length() != argument.length() && value[argument.length()] != '-')
                     break;
