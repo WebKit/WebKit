@@ -67,6 +67,7 @@ public:
 
     bool hasHyphen() const { return m_hasEllipsisBoxOrHyphen; }
     void setHasHyphen(bool hasHyphen) { m_hasEllipsisBoxOrHyphen = hasHyphen; }
+    static inline bool compareByStart(const InlineTextBox* first, const InlineTextBox* second) { return first->start() < second->start(); }
 
 private:
     virtual int selectionTop();

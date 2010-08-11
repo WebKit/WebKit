@@ -1,3 +1,18 @@
+2010-08-11  Julie Parent  <jparent@chromium.org>
+
+        Reviewed by Justin Garcia.
+
+        Crash in replaceSelectionCommand with RTL text.
+        https://bugs.webkit.org/show_bug.cgi?id=41485
+
+        Adds tests for 4 cases: latin text plus space in RTL region and LTR region,
+        and hebrew text plus space in RTL region and LTR region.  Currently, the
+        latin text in RTL region case crashes.  Added all combinations of test since
+        earlier patch crashed with hebrew text in LTR region.
+        
+        * editing/execCommand/insert-image-on-top-of-directional-text-expected.txt: Added.
+        * editing/execCommand/insert-image-on-top-of-directional-text.html: Added.
+
 2010-08-11  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Dirk Schulze.

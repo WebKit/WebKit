@@ -442,11 +442,6 @@ void TextIterator::advance()
     }
 }
 
-static inline bool compareBoxStart(const InlineTextBox* first, const InlineTextBox* second)
-{
-    return first->start() < second->start();
-}
-
 bool TextIterator::handleTextNode()
 {
     if (m_fullyClippedStack.top())
@@ -507,7 +502,7 @@ bool TextIterator::handleTextNode()
         for (InlineTextBox* textBox = renderer->firstTextBox(); textBox; textBox = textBox->nextTextBox()) {
             m_sortedTextBoxes.append(textBox);
         }
-        std::sort(m_sortedTextBoxes.begin(), m_sortedTextBoxes.end(), compareBoxStart); 
+        std::sort(m_sortedTextBoxes.begin(), m_sortedTextBoxes.end(), InlineTextBox::compareByStart); 
         m_sortedTextBoxesPosition = 0;
     }
     
