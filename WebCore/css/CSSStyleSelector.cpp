@@ -1737,23 +1737,17 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, Element *e)
         style->hasTransformRelatedProperty() || style->hasMask() || style->boxReflect()))
         style->setZIndex(0);
     
-    // Button, legend, input, select and textarea all consider width values of 'auto' to be 'intrinsic'.
-    // This will be important when we use block flows for all form controls.
-    if (e && (e->hasTagName(legendTag) || e->hasTagName(buttonTag) || e->hasTagName(inputTag) ||
-              e->hasTagName(selectTag) || e->hasTagName(textareaTag) || e->hasTagName(datagridTag)
 #if ENABLE(WML)
-              || e->hasTagName(WMLNames::insertedLegendTag)
-              || e->hasTagName(WMLNames::inputTag)
+    if (e && (e->hasTagName(WMLNames::insertedLegendTag)
+              || e->hasTagName(WMLNames::inputTag))
+            && style->width().isAuto())
+        style->setWidth(Length(Intrinsic));
 #endif
-       )) {
-        if (style->width().isAuto())
-            style->setWidth(Length(Intrinsic));
 
-        // Textarea considers overflow visible as auto.
-        if (e && e->hasTagName(textareaTag)) {
-            style->setOverflowX(style->overflowX() == OVISIBLE ? OAUTO : style->overflowX());
-            style->setOverflowY(style->overflowY() == OVISIBLE ? OAUTO : style->overflowY());
-        }
+    // Textarea considers overflow visible as auto.
+    if (e && e->hasTagName(textareaTag)) {
+        style->setOverflowX(style->overflowX() == OVISIBLE ? OAUTO : style->overflowX());
+        style->setOverflowY(style->overflowY() == OVISIBLE ? OAUTO : style->overflowY());
     }
 
     // Finally update our text decorations in effect, but don't allow text-decoration to percolate through

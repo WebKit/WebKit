@@ -1412,6 +1412,12 @@ bool RenderBox::sizesToIntrinsicWidth(WidthType widthType) const
             && (parent()->style()->boxOrient() == HORIZONTAL || parent()->style()->boxAlign() != BSTRETCH))
         return true;
 
+    // Button, input, select, textarea, legend and datagrid treat
+    // width value of 'auto' as 'intrinsic' unless it's in a
+    // stretching vertical flexbox.
+    if (width.type() == Auto && !(parent()->isFlexibleBox() && parent()->style()->boxOrient() == VERTICAL && parent()->style()->boxAlign() == BSTRETCH) && node() && (node()->hasTagName(inputTag) || node()->hasTagName(selectTag) || node()->hasTagName(buttonTag) || node()->hasTagName(textareaTag) || node()->hasTagName(legendTag) || node()->hasTagName(datagridTag)))
+        return true;
+
     return false;
 }
 
