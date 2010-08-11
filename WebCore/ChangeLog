@@ -1,3 +1,15 @@
+2010-08-11  Kristian Monsen  <kristianm@google.com>
+
+        Reviewed by Steve Block.
+
+        Compile fix for Android, added include for <wtf/text/Cstring.h, this
+        did not get included in Android.
+        https://bugs.webkit.org/show_bug.cgi?id=41517
+        
+        Build fix only, no new tests.
+
+        * page/PrintContext.cpp:
+
 2010-08-11  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

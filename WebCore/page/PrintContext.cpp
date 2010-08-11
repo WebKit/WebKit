@@ -26,6 +26,7 @@
 #include "FrameView.h"
 #include "RenderLayer.h"
 #include "RenderView.h"
+#include <wtf/text/CString.h>
 
 using namespace WebCore;
 
