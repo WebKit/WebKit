@@ -1,0 +1,106 @@
+/*
+ * Copyright (C) 2010 Google, Inc. All Rights Reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "HTMLViewSourceParser.h"
+
+#include "HTMLNames.h"
+#include "HTMLTreeBuilder.h"
+#include "HTMLViewSourceDocument.h"
+
+namespace WebCore {
+
+HTMLViewSourceParser::~HTMLViewSourceParser()
+{
+}
+
+void HTMLViewSourceParser::insert(const SegmentedString&)
+{
+    ASSERT_NOT_REACHED();
+}
+
+void HTMLViewSourceParser::pumpTokenizer()
+{
+    while (m_tokenizer.nextToken(m_input.current(), m_token)) {
+        m_token.end(m_input.current().numberOfCharactersConsumed());
+        document()->addSource(sourceForToken(), m_token);
+        updateTokenizerState();
+        m_token.clear(m_input.current().numberOfCharactersConsumed());
+    }
+}
+
+void HTMLViewSourceParser::append(const SegmentedString& input)
+{
+    m_input.appendToEnd(input);
+    m_source.append(input);
+    pumpTokenizer();
+}
+
+String HTMLViewSourceParser::sourceForToken()
+{
+    if (m_token.type() == HTMLToken::EndOfFile)
+        return String();
+
+    ASSERT(m_source.numberOfCharactersConsumed() == m_token.startIndex());
+    UChar* data = 0;
+    int length = m_token.endIndex() - m_token.startIndex();
+    String source = String::createUninitialized(length, data);
+    for (int i = 0; i < length; ++i) {
+        data[i] = *m_source;
+        m_source.advance();
+    }
+    return source;
+}
+
+void HTMLViewSourceParser::updateTokenizerState()
+{
+    // FIXME: The tokenizer should do this work for us.
+    if (m_token.type() != HTMLToken::StartTag)
+        return;
+
+    AtomicString tagName(m_token.name().data(), m_token.name().size());
+    m_tokenizer.setState(HTMLTreeBuilder::adjustedLexerState(m_tokenizer.state(), tagName, m_document->frame()));
+    if (tagName == HTMLNames::scriptTag) {
+        // The tree builder handles scriptTag separately from the other tokenizer
+        // state adjustments, so we need to handle it separately too.
+        ASSERT(m_tokenizer.state() == HTMLTokenizer::DataState);
+        m_tokenizer.setState(HTMLTokenizer::ScriptDataState);
+    }
+}
+
+void HTMLViewSourceParser::finish()
+{
+    if (!m_input.haveSeenEndOfFile())
+        m_input.markEndOfFile();
+    pumpTokenizer();
+    document()->finishedParsing();
+}
+
+bool HTMLViewSourceParser::finishWasCalled()
+{
+    return m_input.haveSeenEndOfFile();
+}
+
+}

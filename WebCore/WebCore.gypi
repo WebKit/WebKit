@@ -1721,6 +1721,8 @@
             'html/HTMLVideoElement.h',
             'html/HTMLViewSourceDocument.cpp',
             'html/HTMLViewSourceDocument.h',
+            'html/HTMLViewSourceParser.cpp',
+            'html/HTMLViewSourceParser.h',
             'html/ImageData.cpp',
             'html/ImageData.h',
             'html/ImageResizerThread.cpp',

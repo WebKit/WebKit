@@ -64,10 +64,20 @@ public:
 
     HTMLToken() { clear(); }
 
-    void clear()
+    void clear(int startIndex = 0)
     {
         m_type = Uninitialized;
+        m_range.m_start = startIndex;
+        m_range.m_end = startIndex;
         m_data.clear();
+    }
+
+    int startIndex() const { return m_range.m_start; }
+    int endIndex() const { return m_range.m_end; }
+
+    void end(int endIndex)
+    {
+        m_range.m_end = endIndex;
     }
 
     void makeEndOfFile()
@@ -320,6 +330,9 @@ private:
     };
 
     Type m_type;
+
+    // Which characters from the input stream are represented by this token.
+    Range m_range;
 
     // "name" for DOCTYPE, StartTag, and EndTag
     // "characters" for Character

@@ -1,3 +1,72 @@
+2010-08-11  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Port view-source to new parser
+        https://bugs.webkit.org/show_bug.cgi?id=43746
+
+        This patch switches the view-source mode for frames over to using the
+        new HTML parsing infrastructure.  This patch is an architectural change
+        to how we parser view source documents.
+
+        Previously, the LegacyHTMLDocumentParser would output a "guide string"
+        that consided of the inter-attribute whitespace and various "control"
+        characters.  The HTMLViewSourceDocument would then interpret this guide
+        string to approximately reconstruct the source of the original document
+        and colorize various syntatic constructs.
+
+        Unfortunately, that approach is inherently low-fidelity.  It's not
+        really feasible to reconstruct the input document from the token
+        stream.  The old view source mode also had a number of hacks in the old
+        parser (e.g., to turn of decoding of HTML entities).
+
+        Instead of trying to reconstruct the original document from the token
+        stream, we use the segmentation information given by the tokens to
+        colorize the input document itself.  Each token now caries information
+        about where in the input stream it came from and where various
+        subcomponents (e.g., attribute names and values) are located.  This
+        approach is higher fidelity because we use this segmentation
+        information to colorize the original input instead of attempting to
+        reconstruct the original input.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLDocumentParser.cpp:
+        * html/HTMLToken.h:
+        (WebCore::HTMLToken::clear):
+        (WebCore::HTMLToken::startIndex):
+        (WebCore::HTMLToken::length):
+        (WebCore::HTMLToken::end):
+        * html/HTMLViewSourceDocument.cpp:
+        (WebCore::HTMLViewSourceDocument::createParser):
+        (WebCore::HTMLViewSourceDocument::addSource):
+        (WebCore::HTMLViewSourceDocument::processDoctypeToken):
+        (WebCore::HTMLViewSourceDocument::processTagToken):
+        (WebCore::HTMLViewSourceDocument::processCommentToken):
+        (WebCore::HTMLViewSourceDocument::processCharacterToken):
+        (WebCore::HTMLViewSourceDocument::addRange):
+        * html/HTMLViewSourceDocument.h:
+        * html/HTMLViewSourceParser.cpp: Added.
+        (WebCore::HTMLViewSourceParser::~HTMLViewSourceParser):
+        (WebCore::HTMLViewSourceParser::insert):
+        (WebCore::HTMLViewSourceParser::pumpTokenizer):
+        (WebCore::HTMLViewSourceParser::append):
+        (WebCore::HTMLViewSourceParser::sourceForToken):
+        (WebCore::HTMLViewSourceParser::updateTokenizerState):
+        (WebCore::HTMLViewSourceParser::finish):
+        (WebCore::HTMLViewSourceParser::finishWasCalled):
+        * html/HTMLViewSourceParser.h: Added.
+        (WebCore::HTMLViewSourceParser::HTMLViewSourceParser):
+        (WebCore::HTMLViewSourceParser::document):
+        * html/LegacyHTMLDocumentParser.cpp:
+        (WebCore::LegacyHTMLDocumentParser::processToken):
+        (WebCore::LegacyHTMLDocumentParser::processDoctypeToken):
+
 2010-08-11  Yoshiki Hayashi  <yhayashi@google.com>
 
         Reviewed by Shinichiro Hamaji.

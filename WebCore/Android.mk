@@ -285,6 +285,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	html/HTMLTableRowsCollection.cpp \
 	html/LegacyHTMLDocumentParser.cpp \
 	html/HTMLViewSourceDocument.cpp \
+	html/HTMLViewSourceParser.cpp \
 	html/ImageData.cpp \
 	html/ImageResizerThread.cpp \
 	html/LegacyPreloadScanner.cpp \

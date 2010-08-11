@@ -40897,6 +40897,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\HTMLViewSourceParser.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\HTMLViewSourceParser.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\ImageData.cpp"
 				>
 			</File>

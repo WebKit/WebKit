@@ -36,7 +36,9 @@
 #include "HTMLTableElement.h"
 #include "HTMLTableRowElement.h"
 #include "HTMLTableSectionElement.h"
-#include "LegacyHTMLDocumentParser.h"
+#include "HTMLToken.h"
+#include "HTMLViewSourceParser.h"
+#include "SegmentedString.h"
 #include "Text.h"
 #include "TextDocument.h"
 
@@ -58,10 +60,8 @@ DocumentParser* HTMLViewSourceDocument::createParser()
 #if ENABLE(XHTMLMP)
         || m_type == "application/vnd.wap.xhtml+xml"
 #endif
-        ) {
-        // FIXME: Should respect Settings::html5ParserEnabled()
-        return new LegacyHTMLDocumentParser(this);
-    }
+        )
+        return new HTMLViewSourceParser(this);
 
     return createTextDocumentParser(this);
 }
@@ -100,107 +100,91 @@ void HTMLViewSourceDocument::addViewSourceText(const String& text)
     addText(text, "");
 }
 
-void HTMLViewSourceDocument::addViewSourceToken(Token* token)
+void HTMLViewSourceDocument::addSource(const String& source, HTMLToken& token)
 {
     if (!m_current)
         createContainingTable();
 
-    if (token->tagName == textAtom)
-        addText(token->text.get(), "");
-    else if (token->tagName == commentAtom) {
-        if (token->beginTag) {
-            m_current = addSpanWithClassName("webkit-html-comment");
-            addText(String("<!--") + token->text.get() + "-->", "webkit-html-comment");
-        }
-    } else {
-        // Handle the tag.
-        String classNameStr = "webkit-html-tag";
-        m_current = addSpanWithClassName(classNameStr);
-
-        String text = "<";
-        if (!token->beginTag)
-            text += "/";
-        text += token->tagName;
-        Vector<UChar>* guide = token->m_sourceInfo.get();
-        if (!guide || !guide->size())
-            text += ">";
-
-        addText(text, classNameStr);
-
-        // Walk our guide string that tells us where attribute names/values should go.
-        if (guide && guide->size()) {
-            unsigned size = guide->size();
-            unsigned begin = 0;
-            unsigned currAttr = 0;
-            RefPtr<Attribute> attr = 0;
-            for (unsigned i = 0; i < size; i++) {
-                if (guide->at(i) == 'a' || guide->at(i) == 'x' || guide->at(i) == 'v') {
-                    // Add in the string.
-                    addText(String(static_cast<UChar*>(guide->data()) + begin, i - begin), classNameStr);
-
-                    begin = i + 1;
-
-                    if (guide->at(i) == 'a') {
-                        if (token->attrs && currAttr < token->attrs->length())
-                            attr = token->attrs->attributeItem(currAttr++);
-                        else
-                            attr = 0;
-                    }
-                    if (attr) {
-                        if (guide->at(i) == 'a') {
-                            String name = attr->name().toString();
-
-                            m_current = addSpanWithClassName("webkit-html-attribute-name");
-                            addText(name, "webkit-html-attribute-name");
-                            if (m_current != m_tbody)
-                                m_current = static_cast<Element*>(m_current->parent());
-                        } else {
-                            const String& value = attr->value().string();
-
-                            // Compare ignoring case since LegacyHTMLDocumentParser doesn't
-                            // lower names when passing in tokens to
-                            // HTMLViewSourceDocument.
-                            if (equalIgnoringCase(token->tagName, "base") && equalIgnoringCase(attr->name().localName(), "href")) {
-                                // Catch the href attribute in the base element.
-                                // It will be used for rendering anchors created
-                                // by addLink() below.
-                                setBaseElementURL(KURL(url(), value));
-                            }
-
-                            // FIXME: XML could use namespace prefixes and confuse us.
-                            if (equalIgnoringCase(attr->name().localName(), "src") || equalIgnoringCase(attr->name().localName(), "href"))
-                                m_current = addLink(value, equalIgnoringCase(token->tagName, "a"));
-                            else
-                                m_current = addSpanWithClassName("webkit-html-attribute-value");
-                            addText(value, "webkit-html-attribute-value");
-                            if (m_current != m_tbody)
-                                m_current = static_cast<Element*>(m_current->parent());
-                        }
-                    }
-                }
-            }
-
-            // Add in any string that might be left.
-            if (begin < size)
-                addText(String(static_cast<UChar*>(guide->data()) + begin, size - begin), classNameStr);
-
-            // Add in the end tag.
-            addText(">", classNameStr);
-        }
-
-        m_current = m_td;
+    switch (token.type()) {
+    case HTMLToken::Uninitialized:
+        ASSERT_NOT_REACHED();
+        break;
+    case HTMLToken::DOCTYPE:
+        processDoctypeToken(source, token);
+        break;
+    case HTMLToken::EndOfFile:
+        break;
+    case HTMLToken::StartTag:
+    case HTMLToken::EndTag:
+        processTagToken(source, token);
+        break;
+    case HTMLToken::Comment:
+        processCommentToken(source, token);
+        break;
+    case HTMLToken::Character:
+        processCharacterToken(source, token);
+        break;
     }
 }
 
-void HTMLViewSourceDocument::addViewSourceDoctypeToken(DoctypeToken* doctypeToken)
+void HTMLViewSourceDocument::processDoctypeToken(const String& source, HTMLToken&)
 {
     if (!m_current)
         createContainingTable();
     m_current = addSpanWithClassName("webkit-html-doctype");
-    String text = "<";
-    text += String::adopt(doctypeToken->m_source);
-    text += ">";
-    addText(text, "webkit-html-doctype");
+    addText(source, "webkit-html-doctype");
+    m_current = m_td;
+}
+
+void HTMLViewSourceDocument::processTagToken(const String& source, HTMLToken& token)
+{
+    String classNameStr = "webkit-html-tag";
+    m_current = addSpanWithClassName(classNameStr);
+
+    AtomicString tagName(token.name().data(), token.name().size());
+
+    unsigned index = 0;
+    HTMLToken::AttributeList::const_iterator iter = token.attributes().begin();
+    while (index < source.length()) {
+        if (iter == token.attributes().end()) {
+            // We want to show the remaining characters in the token.
+            index = addRange(source, index, source.length(), "");
+            ASSERT(index == source.length());
+            break;
+        }
+
+        AtomicString name(iter->m_name.data(), iter->m_name.size());
+        String value(iter->m_value.data(), iter->m_value.size()); 
+
+        index = addRange(source, index, iter->m_nameRange.m_start - token.startIndex(), "");
+        index = addRange(source, index, iter->m_nameRange.m_end - token.startIndex(), "webkit-html-attribute-name");
+
+        if (tagName == baseTag && name == hrefAttr) {
+            // Catch the href attribute in the base element. It will be used
+            // for rendering anchors created by addLink() below.
+            setBaseElementURL(KURL(url(), value));
+        }
+
+        index = addRange(source, index, iter->m_valueRange.m_start - token.startIndex(), "");
+
+        bool isLink = name == srcAttr || name == hrefAttr;
+        index = addRange(source, index, iter->m_valueRange.m_end - token.startIndex(), "webkit-html-attribute-value", isLink, tagName == aTag);
+
+        ++iter;
+    }
+    m_current = m_td;
+}
+
+void HTMLViewSourceDocument::processCommentToken(const String& source, HTMLToken&)
+{
+    m_current = addSpanWithClassName("webkit-html-comment");
+    addText(source, "webkit-html-comment");
+    m_current = m_td;
+}
+
+void HTMLViewSourceDocument::processCharacterToken(const String& source, HTMLToken&)
+{
+    addText(source, "");
 }
 
 PassRefPtr<Element> HTMLViewSourceDocument::addSpanWithClassName(const String& className)
@@ -285,6 +269,25 @@ void HTMLViewSourceDocument::addText(const String& text, const String& className
     // Set current to m_tbody if the last character was a newline.
     if (text[text.length() - 1] == '\n')
         m_current = m_tbody;
+}
+
+int HTMLViewSourceDocument::addRange(const String& source, int start, int end, const String& className, bool isLink, bool isAnchor)
+{
+    ASSERT(start <= end);
+    if (start == end)
+        return start;
+
+    String text = source.substring(start, end - start);
+    if (!className.isEmpty()) {
+        if (isLink)
+            m_current = addLink(text, isAnchor);
+        else
+            m_current = addSpanWithClassName(className);
+    }
+    addText(text, className);
+    if (!className.isEmpty() && m_current != m_tbody)
+        m_current = static_cast<Element*>(m_current->parent());
+    return end;
 }
 
 PassRefPtr<Element> HTMLViewSourceDocument::addLink(const String& url, bool isAnchor)

@@ -29,11 +29,9 @@
 
 namespace WebCore {
 
-class DoctypeToken;
 class HTMLTableCellElement;
 class HTMLTableSectionElement;
-
-struct Token;
+class HTMLToken;
 
 class HTMLViewSourceDocument : public HTMLDocument {
 public:
@@ -42,20 +40,27 @@ public:
         return adoptRef(new HTMLViewSourceDocument(frame, url, mimeType));
     }
 
-    void addViewSourceToken(Token*); // Used by the LegacyHTMLDocumentParser.
+    void addSource(const String&, HTMLToken&);
+
+    void addViewSourceToken(HTMLToken&); // Used by the HTMLDocumentParser.
     void addViewSourceText(const String&); // Used by the TextDocumentParser.
-    void addViewSourceDoctypeToken(DoctypeToken*);
 
 private:
     HTMLViewSourceDocument(Frame*, const KURL&, const String& mimeType);
 
-    // Returns LegacyHTMLDocumentParser or TextDocumentParser based on m_type.
+    // Returns HTMLViewSourceParser or TextDocumentParser based on m_type.
     virtual DocumentParser* createParser();
+
+    void processDoctypeToken(const String& source, HTMLToken&);
+    void processTagToken(const String& source, HTMLToken&);
+    void processCommentToken(const String& source, HTMLToken&);
+    void processCharacterToken(const String& source, HTMLToken&);
 
     void createContainingTable();
     PassRefPtr<Element> addSpanWithClassName(const String&);
     void addLine(const String& className);
     void addText(const String& text, const String& className);
+    int addRange(const String& source, int start, int end, const String& className, bool isLink = false, bool isAnchor = false);
     PassRefPtr<Element> addLink(const String& url, bool isAnchor);
 
     String m_type;

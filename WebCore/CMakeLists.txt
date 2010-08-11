@@ -1036,6 +1036,7 @@ SET(WebCore_SOURCES
     html/LegacyHTMLDocumentParser.cpp
     html/HTMLUListElement.cpp
     html/HTMLViewSourceDocument.cpp
+    html/HTMLViewSourceParser.cpp
     html/ImageData.cpp
     html/ImageResizerThread.cpp
     html/LabelsNodeList.cpp

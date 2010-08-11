@@ -1555,6 +1555,8 @@ webcore_sources += \
 	WebCore/html/HTMLUListElement.h \
 	WebCore/html/HTMLViewSourceDocument.cpp \
 	WebCore/html/HTMLViewSourceDocument.h \
+	WebCore/html/HTMLViewSourceParser.cpp \
+	WebCore/html/HTMLViewSourceParser.h \
 	WebCore/html/ImageData.cpp \
 	WebCore/html/ImageData.h \
 	WebCore/html/ImageResizerThread.cpp \
