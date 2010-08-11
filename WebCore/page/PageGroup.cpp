@@ -236,12 +236,11 @@ void PageGroup::addUserScriptToWorld(DOMWrapperWorld* world, const String& sourc
 
 void PageGroup::addUserStyleSheetToWorld(DOMWrapperWorld* world, const String& source, const KURL& url,
                                          PassOwnPtr<Vector<String> > whitelist, PassOwnPtr<Vector<String> > blacklist,
-                                         UserContentInjectedFrames injectedFrames,
-                                         UserStyleSheet::Level level)
+                                         UserContentInjectedFrames injectedFrames)
 {
     ASSERT_ARG(world, world);
 
-    OwnPtr<UserStyleSheet> userStyleSheet(new UserStyleSheet(source, url, whitelist, blacklist, injectedFrames, level));
+    OwnPtr<UserStyleSheet> userStyleSheet(new UserStyleSheet(source, url, whitelist, blacklist, injectedFrames));
     if (!m_userStyleSheets)
         m_userStyleSheets.set(new UserStyleSheetMap);
     UserStyleSheetVector*& styleSheetsInWorld = m_userStyleSheets->add(world, 0).first->second;
