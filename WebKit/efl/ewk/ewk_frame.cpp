@@ -1946,7 +1946,7 @@ void ewk_frame_force_layout(Evas_Object* o)
         view->forceLayout(true);
 }
 
-WTF::PassRefPtr<WebCore::Widget> ewk_frame_plugin_create(Evas_Object* o, const WebCore::IntSize& pluginSize, WebCore::HTMLPlugInElement* element, const WebCore::KURL& url, const WTF::Vector<WTF::String>& paramNames, const WTF::Vector<WTF::String>& paramValues, const WTF::StringWTF::String& mimeType, bool loadManually)
+WTF::PassRefPtr<WebCore::Widget> ewk_frame_plugin_create(Evas_Object* o, const WebCore::IntSize& pluginSize, WebCore::HTMLPlugInElement* element, const WebCore::KURL& url, const WTF::Vector<WTF::String>& paramNames, const WTF::Vector<WTF::String>& paramValues, const WTF::String& mimeType, bool loadManually)
 {
     return 0;
 }

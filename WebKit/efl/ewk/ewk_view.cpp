@@ -1318,13 +1318,13 @@ Eina_Bool ewk_view_text_search(const Evas_Object* o, const char* string, Eina_Bo
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     EINA_SAFETY_ON_NULL_RETURN_VAL(string, EINA_FALSE);
-    WebCore::TextCaseSensitivity sensitive;
+    WTF::TextCaseSensitivity sensitive;
     WebCore::FindDirection direction;
 
     if (case_sensitive)
-        sensitive = WebCore::TextCaseSensitive;
+        sensitive = WTF::TextCaseSensitive;
     else
-        sensitive = WebCore::TextCaseInsensitive;
+        sensitive = WTF::TextCaseInsensitive;
 
     if (forward)
         direction = WebCore::FindDirectionForward;
@@ -1350,12 +1350,12 @@ unsigned int ewk_view_text_matches_mark(Evas_Object* o, const char* string, Eina
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, 0);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, 0);
     EINA_SAFETY_ON_NULL_RETURN_VAL(string, 0);
-    WebCore::TextCaseSensitivity sensitive;
+    WTF::TextCaseSensitivity sensitive;
 
     if (case_sensitive)
-        sensitive = WebCore::TextCaseSensitive;
+        sensitive = WTF::TextCaseSensitive;
     else
-        sensitive = WebCore::TextCaseInsensitive;
+        sensitive = WTF::TextCaseInsensitive;
 
     return priv->page->markAllMatchesForText(WTF::String::fromUTF8(string), sensitive, highlight, limit);
 }
@@ -2528,7 +2528,7 @@ Eina_Bool ewk_view_setting_font_cursive_set(Evas_Object* o, const char* family)
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     if (eina_stringshare_replace(&priv->settings.font_cursive, family)) {
-        WTF::AtomicStringWTF::AtomicString s = WTF::String::fromUTF8(family);
+        WTF::AtomicString s = WTF::String::fromUTF8(family);
         priv->page_settings->setCursiveFontFamily(s);
     }
     return EINA_TRUE;
