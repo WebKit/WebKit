@@ -1,5 +1,14 @@
 2010-08-11  Gavin Barraclough  <barraclough@apple.com>
 
+        Windows & !JIT build fix.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::match):
+
+2010-08-11  Gavin Barraclough  <barraclough@apple.com>
+
         Rubber stamp by sam weinig
 
         Touch a file to stop the bot rolling a bit change out!
