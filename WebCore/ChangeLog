@@ -1,3 +1,17 @@
+2010-08-10  Matthew Delaney  <mdelaney@apple.com>
+
+        Reviewed by Darin Adler.
+
+        2d.path.clip.empty.html test is failing
+        https://bugs.webkit.org/show_bug.cgi?id=43161
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::clip):
+        Catching the empty path case from being sent directly to 
+        CGContextClip - which would ignore it. Instead, using 
+        CGContextClip with a CGRectZero to achieve the desired
+        behavior of reducing the clipping region to nothing.
+
 2010-08-10  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Reviewed by Antonio Gomes.

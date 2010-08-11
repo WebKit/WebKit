@@ -950,9 +950,17 @@ void GraphicsContext::clip(const Path& path)
     if (paintingDisabled())
         return;
     CGContextRef context = platformContext();
-    CGContextBeginPath(context);
-    CGContextAddPath(context, path.platformPath());
-    CGContextClip(context);
+
+    // CGContextClip does nothing if the path is empty, so in this case, we
+    // instead clip against a zero rect to reduce the clipping region to
+    // nothing - which is the intended behavior of clip() if the path is empty.    
+    if (path.isEmpty())
+        CGContextClipToRect(context, CGRectZero);
+    else {
+        CGContextBeginPath(context);
+        CGContextAddPath(context, path.platformPath());
+        CGContextClip(context);
+    }
     m_data->clip(path);
 }
 
