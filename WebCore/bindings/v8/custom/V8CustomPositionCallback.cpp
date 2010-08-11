@@ -26,6 +26,8 @@
 #include "config.h"
 #include "V8CustomPositionCallback.h"
 
+#if ENABLE(GEOLOCATION)
+
 #include "ScriptExecutionContext.h"
 #include "V8CustomVoidCallback.h"  // For invokeCallback
 #include "V8Geoposition.h"
@@ -76,3 +78,5 @@ void V8CustomPositionCallback::handleEvent(Geoposition* position)
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(GEOLOCATION)

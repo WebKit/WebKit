@@ -1,3 +1,19 @@
+2010-08-11  Steve Block  <steveblock@google.com>
+
+        Reviewed by David Levin.
+
+        [chromium] Geolocation breaks the compile if ENABLE_GEOLOCATION is set to 0
+        https://bugs.webkit.org/show_bug.cgi?id=43753
+
+        This change guards the entire contents of the V8 custom bindings files
+        with ENABLE(GEOLOCATION) to match JSC.
+
+        No new tests, build fix only.
+
+        * bindings/v8/custom/V8CustomPositionCallback.cpp:
+        * bindings/v8/custom/V8CustomPositionErrorCallback.cpp:
+        * bindings/v8/custom/V8GeolocationCustom.cpp:
+
 2010-08-11  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by David Levin.
