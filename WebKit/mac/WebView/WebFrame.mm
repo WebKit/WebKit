@@ -1193,6 +1193,32 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     return controller->numberOfActiveAnimations();
 }
 
+- (void) _suspendAnimations
+{
+    Frame* frame = core(self);
+    if (!frame)
+        return;
+
+    AnimationController* controller = frame->animation();
+    if (!controller)
+        return;
+
+    controller->suspendAnimations(frame->document());
+}
+
+- (void) _resumeAnimations
+{
+    Frame* frame = core(self);
+    if (!frame)
+        return;
+
+    AnimationController* controller = frame->animation();
+    if (!controller)
+        return;
+
+    controller->resumeAnimations(frame->document());
+}
+
 - (void)_replaceSelectionWithFragment:(DOMDocumentFragment *)fragment selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace matchStyle:(BOOL)matchStyle
 {
     if (_private->coreFrame->selection()->isNone() || !fragment)

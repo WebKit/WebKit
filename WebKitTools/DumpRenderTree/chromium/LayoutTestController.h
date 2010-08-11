@@ -207,6 +207,8 @@ public:
     void pauseTransitionAtTimeOnElementWithId(const CppArgumentList&, CppVariant*);
     void elementDoesAutoCompleteForElementWithId(const CppArgumentList&, CppVariant*);
     void numberOfActiveAnimations(const CppArgumentList&, CppVariant*);
+    void suspendAnimations(const CppArgumentList&, CppVariant*);
+    void resumeAnimations(const CppArgumentList&, CppVariant*);
 
     void disableImageLoading(const CppArgumentList&, CppVariant*);
 
@@ -395,6 +397,8 @@ private:
     bool pauseTransitionAtTimeOnElementWithId(const WebKit::WebString& propertyName, double time, const WebKit::WebString& elementId);
     bool elementDoesAutoCompleteForElementWithId(const WebKit::WebString&);
     int numberOfActiveAnimations();
+    void suspendAnimations();
+    void suspendAnimations();
 
     // Used for test timeouts.
     ScopedRunnableMethodFactory<LayoutTestController> m_timeoutFactory;

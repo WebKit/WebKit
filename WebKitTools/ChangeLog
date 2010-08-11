@@ -1,3 +1,42 @@
+2010-08-10  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Add suspendAnimations/resumeAnimation API to DRT
+        https://bugs.webkit.org/show_bug.cgi?id=43733
+        
+        Adds suspendAnimations() and resumeAnimations() to LayoutTestController.
+        Calls functions with the same names on AnimationController for the 
+        mainFrame.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/LayoutTestController.cpp:
+        (suspendAnimationsCallback):
+        (resumeAnimationsCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::suspendAnimations):
+        (LayoutTestController::resumeAnimations):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::suspendAnimations):
+        (LayoutTestController::resumeAnimations):
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::suspendAnimations):
+        (LayoutTestController::resumeAnimations):
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::suspendAnimations):
+        (LayoutTestController::resumeAnimations):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::suspendAnimations):
+        (LayoutTestController::resumeAnimations):
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::suspendAnimations):
+        (LayoutTestController::resumeAnimations):
+
 2010-08-10  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Ojan Vafai.

@@ -347,6 +347,12 @@ extern "C" {
     webkit_web_frame_number_of_active_animations(WebKitWebFrame* frame);
 
     WEBKIT_API void
+    webkit_web_frame_suspend_animations(WebKitWebFrame* frame);
+
+    WEBKIT_API void
+    webkit_web_frame_resume_animations(WebKitWebFrame* frame);
+
+    WEBKIT_API void
     webkit_web_frame_clear_main_frame_name(WebKitWebFrame* frame);
 
     WEBKIT_API AtkObject*

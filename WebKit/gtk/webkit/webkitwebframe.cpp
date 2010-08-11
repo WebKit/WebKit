@@ -1053,6 +1053,32 @@ unsigned int webkit_web_frame_number_of_active_animations(WebKitWebFrame* frame)
     return controller->numberOfActiveAnimations();
 }
 
+void webkit_web_frame_suspend_animations(WebKitWebFrame* frame)
+{
+    Frame* coreFrame = core(frame);
+    if (!coreFrame)
+        return;
+
+    AnimationController* controller = coreFrame->animation();
+    if (!controller)
+        return;
+
+    controller->suspendAnimations(coreFrame->document());
+}
+
+void webkit_web_frame_resume_animations(WebKitWebFrame* frame)
+{
+    Frame* coreFrame = core(frame);
+    if (!coreFrame)
+        return;
+
+    AnimationController* controller = coreFrame->animation();
+    if (!controller)
+        return;
+
+    controller->resumeAnimations(coreFrame->document());
+}
+
 gchar* webkit_web_frame_get_response_mime_type(WebKitWebFrame* frame)
 {
     Frame* coreFrame = core(frame);

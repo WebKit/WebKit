@@ -631,6 +631,16 @@ unsigned LayoutTestController::numberOfActiveAnimations() const
     return [mainFrame _numberOfActiveAnimations];
 }
 
+void LayoutTestController::suspendAnimations() const
+{
+    return [mainFrame _suspendAnimations];
+}
+
+void LayoutTestController::resumeAnimations() const
+{
+    return [mainFrame _resumeAnimations];
+}
+
 void LayoutTestController::waitForPolicyDelegate()
 {
     setWaitToDump(true);

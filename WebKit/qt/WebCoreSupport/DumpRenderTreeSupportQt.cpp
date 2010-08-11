@@ -262,6 +262,32 @@ int DumpRenderTreeSupportQt::numberOfActiveAnimations(QWebFrame *frame)
     return controller->numberOfActiveAnimations();
 }
 
+void DumpRenderTreeSupportQt::suspendAnimations(QWebFrame *frame)
+{
+    Frame* coreFrame = QWebFramePrivate::core(frame);
+    if (!coreFrame)
+        return;
+
+    AnimationController* controller = coreFrame->animation();
+    if (!controller)
+        return;
+
+    controller->suspendAnimations(coreFrame->document());
+}
+
+void DumpRenderTreeSupportQt::resumeAnimations(QWebFrame *frame)
+{
+    Frame* coreFrame = QWebFramePrivate::core(frame);
+    if (!coreFrame)
+        return;
+
+    AnimationController* controller = coreFrame->animation();
+    if (!controller)
+        return;
+
+    controller->resumeAnimations(coreFrame->document());
+}
+
 void DumpRenderTreeSupportQt::clearFrameName(QWebFrame* frame)
 {
     Frame* coreFrame = QWebFramePrivate::core(frame);

@@ -117,6 +117,8 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("pauseTransitionAtTimeOnElementWithId", &LayoutTestController::pauseTransitionAtTimeOnElementWithId);
     bindMethod("elementDoesAutoCompleteForElementWithId", &LayoutTestController::elementDoesAutoCompleteForElementWithId);
     bindMethod("numberOfActiveAnimations", &LayoutTestController::numberOfActiveAnimations);
+    bindMethod("suspendAnimations", &LayoutTestController::suspendAnimations);
+    bindMethod("resumeAnimations", &LayoutTestController::resumeAnimations);
     bindMethod("disableImageLoading", &LayoutTestController::disableImageLoading);
     bindMethod("setIconDatabaseEnabled", &LayoutTestController::setIconDatabaseEnabled);
     bindMethod("setCustomPolicyDelegate", &LayoutTestController::setCustomPolicyDelegate);
@@ -838,6 +840,32 @@ int LayoutTestController::numberOfActiveAnimations()
     return controller->numberOfActiveAnimations();
 }
 
+void LayoutTestController::suspendAnimations()
+{
+    WebFrame* webFrame = m_shell->webView()->mainFrame();
+    if (!webFrame)
+        return;
+
+    WebAnimationController* controller = webFrame->animationController();
+    if (!controller)
+        return;
+
+    controller->suspendAnimations(core(webFrame)->document());
+}
+
+void LayoutTestController::resumeAnimations()
+{
+    WebFrame* webFrame = m_shell->webView()->mainFrame();
+    if (!webFrame)
+        return;
+
+    WebAnimationController* controller = webFrame->animationController();
+    if (!controller)
+        return;
+
+    controller->resumeAnimations(core(webFrame)->document());
+}
+
 void LayoutTestController::pauseAnimationAtTimeOnElementWithId(const CppArgumentList& arguments, CppVariant* result)
 {
     result->set(false);
@@ -873,6 +901,18 @@ void LayoutTestController::elementDoesAutoCompleteForElementWithId(const CppArgu
 void LayoutTestController::numberOfActiveAnimations(const CppArgumentList&, CppVariant* result)
 {
     result->set(numberOfActiveAnimations());
+}
+
+void LayoutTestController::suspendAnimations(const CppArgumentList&, CppVariant* result)
+{
+    suspendAnimations();
+    result->setNull();
+}
+
+void LayoutTestController::resumeAnimations(const CppArgumentList&, CppVariant* result)
+{
+    resumeAnimations();
+    result->setNull();
 }
 
 void LayoutTestController::disableImageLoading(const CppArgumentList&, CppVariant* result)

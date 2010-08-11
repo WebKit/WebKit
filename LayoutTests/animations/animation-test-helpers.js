@@ -38,6 +38,8 @@ function isCloseEnough(actual, desired, tolerance)
 
 function matrixStringToArray(s)
 {
+    if (s == "none")
+        return [ 1, 0, 0, 1, 0, 0 ];
     var m = s.split("(");
     m = m[1].split(")");
     return m[0].split(",");

@@ -484,6 +484,20 @@ unsigned LayoutTestController::numberOfActiveAnimations() const
     return DumpRenderTreeSupportQt::numberOfActiveAnimations(frame);
 }
 
+void LayoutTestController::suspendAnimations() const
+{
+    QWebFrame* frame = m_drt->webPage()->mainFrame();
+    Q_ASSERT(frame);
+    DumpRenderTreeSupportQt::suspendAnimations(frame);
+}
+
+void LayoutTestController::resumeAnimations() const
+{
+    QWebFrame* frame = m_drt->webPage()->mainFrame();
+    Q_ASSERT(frame);
+    DumpRenderTreeSupportQt::resumeAnimations(frame);
+}
+
 void LayoutTestController::disableImageLoading()
 {
     m_drt->webPage()->settings()->setAttribute(QWebSettings::AutoLoadImages, false);

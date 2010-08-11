@@ -1060,6 +1060,24 @@ unsigned LayoutTestController::numberOfActiveAnimations() const
     return number;
 }
 
+void LayoutTestController::suspendAnimations() const
+{
+    COMPtr<IWebFramePrivate> framePrivate(Query, frame);
+    if (!framePrivate)
+        return;
+
+    framePrivate->suspendAnimations();
+}
+
+void LayoutTestController::resumeAnimations() const
+{
+    COMPtr<IWebFramePrivate> framePrivate(Query, frame);
+    if (!framePrivate)
+        return;
+
+    framePrivate->resumeAnimations();
+}
+
 static _bstr_t bstrT(JSStringRef jsString)
 {
     // The false parameter tells the _bstr_t constructor to adopt the BSTR we pass it.

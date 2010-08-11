@@ -1,3 +1,17 @@
+2010-08-10  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Add suspendAnimations/resumeAnimation API to DRT
+        https://bugs.webkit.org/show_bug.cgi?id=43733
+        
+        Mac specific API. Plumbs suspendAnimations/resumeAnimations down to WebCore.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _suspendAnimations]):
+        (-[WebFrame _resumeAnimations]):
+        * WebView/WebFramePrivate.h:
+
 2010-08-10  Gavin Barraclough  <barraclough@apple.com>
 
         Rubber stamped by Sam Weinig

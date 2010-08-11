@@ -113,6 +113,10 @@ typedef enum {
 // Returns the total number of currently running animations (includes both CSS transitions and CSS animations).
 - (unsigned) _numberOfActiveAnimations;
 
+// Suspend and resume animations (includes both CSS transitions and CSS animations).
+- (void) _suspendAnimations;
+- (void) _resumeAnimations;
+
 - (void)_replaceSelectionWithFragment:(DOMDocumentFragment *)fragment selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace matchStyle:(BOOL)matchStyle;
 - (void)_replaceSelectionWithText:(NSString *)text selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace;
 - (void)_replaceSelectionWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace;
