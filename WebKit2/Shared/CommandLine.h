@@ -27,8 +27,8 @@
 #define CommandLine_h
 
 #include <WebCore/PlatformString.h>
-#include <WebCore/StringHash.h>
 #include <wtf/HashMap.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebKit {
 

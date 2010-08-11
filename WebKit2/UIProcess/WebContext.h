@@ -35,11 +35,11 @@
 #include "WebProcessProxy.h"
 #include <WebCore/LinkHash.h>
 #include <WebCore/PlatformString.h>
-#include <WebCore/StringHash.h>
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/StringHash.h>
 
 struct WKContextStatistics;
 

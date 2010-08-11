@@ -30,7 +30,7 @@
 #include "Plugin.h"
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/IntRect.h>
-#include <WebCore/StringHash.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
     class HTTPHeaderMap;
