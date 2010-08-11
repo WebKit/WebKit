@@ -37,6 +37,7 @@
 #include "Logging.h"
 #include "SQLTransactionClient.h"
 #include "SQLTransactionCoordinator.h"
+#include <wtf/UnusedParam.h>
 
 namespace WebCore {
 
@@ -75,8 +76,15 @@ void DatabaseThread::requestTermination(DatabaseTaskSynchronizer *cleanupSync)
     m_queue.kill();
 }
 
-bool DatabaseThread::terminationRequested() const
+bool DatabaseThread::terminationRequested(DatabaseTaskSynchronizer* taskSynchronizer) const
 {
+#ifndef NDEBUG
+    if (taskSynchronizer)
+        taskSynchronizer->setHasCheckedForTermination();
+#else
+    UNUSED_PARAM(taskSynchronizer);
+#endif
+
     return m_queue.killed();
 }
 
@@ -148,11 +156,13 @@ void DatabaseThread::recordDatabaseClosed(Database* database)
 
 void DatabaseThread::scheduleTask(PassOwnPtr<DatabaseTask> task)
 {
+    ASSERT(!task->hasSynchronizer() || task->hasCheckedForTermination());
     m_queue.append(task);
 }
 
 void DatabaseThread::scheduleImmediateTask(PassOwnPtr<DatabaseTask> task)
 {
+    ASSERT(!task->hasSynchronizer() || task->hasCheckedForTermination());
     m_queue.prepend(task);
 }
 

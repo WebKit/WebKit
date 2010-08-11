@@ -1,3 +1,38 @@
+2010-08-10  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by David Levin.
+
+        Do not post a sync task to the DB thread if it's terminating.
+        https://bugs.webkit.org/show_bug.cgi?id=43676
+
+        * bindings/generic/ActiveDOMCallback.cpp: The context can
+        sometimes be NULL. Check if it's NULL instead of asserting that
+        it's not.
+        (WebCore::ActiveDOMCallback::ActiveDOMCallback):
+        * dom/ActiveDOMObject.cpp:
+        (WebCore::ActiveDOMObject::ActiveDOMObject):
+
+        * storage/Database.cpp: Do not post a sync task to the DB thread
+        if the DB thread is terminating. Also, when a task is destroyed,
+        ASSERT that it was completed, or that it had no synchronizer.
+        (WebCore::Database::openAndVerifyVersion):
+        (WebCore::Database::markAsDeletedAndClose):
+        (WebCore::Database::tableNames):
+        * storage/DatabaseTask.cpp:
+        (WebCore::DatabaseTaskSynchronizer::DatabaseTaskSynchronizer):
+        (WebCore::DatabaseTask::~DatabaseTask):
+        (WebCore::DatabaseTask::performTask):
+        * storage/DatabaseTask.h:
+        (WebCore::DatabaseTaskSynchronizer::hasCheckedForTermination):
+        (WebCore::DatabaseTaskSynchronizer::setHasCheckedForTermination):
+        (WebCore::DatabaseTask::hasSynchronizer):
+        (WebCore::DatabaseTask::hasCheckedForTermination):
+        * storage/DatabaseThread.cpp:
+        (WebCore::DatabaseThread::terminationRequested):
+        (WebCore::DatabaseThread::scheduleTask):
+        (WebCore::DatabaseThread::scheduleImmediateTask):
+        * storage/DatabaseThread.h:
+
 2010-08-10  Gavin Barraclough  <barraclough@apple.com>
 
         Qt build fix.

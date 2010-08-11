@@ -257,7 +257,7 @@ namespace JSC {
         
         // If we reach this point we've chopped down to one element, no need to check it matches
         ASSERT(size == 1);
-        ASSERT(key == valueAtPosition(&array[0]));
+        //ASSERT(key == valueAtPosition(&array[0]));
         return &array[0];
     }
 #endif

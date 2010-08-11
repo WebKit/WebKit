@@ -55,7 +55,7 @@ public:
 
     bool start();
     void requestTermination(DatabaseTaskSynchronizer* cleanupSync);
-    bool terminationRequested() const;
+    bool terminationRequested(DatabaseTaskSynchronizer* taskSynchronizer = 0) const;
 
     void scheduleTask(PassOwnPtr<DatabaseTask>);
     void scheduleImmediateTask(PassOwnPtr<DatabaseTask>); // This just adds the task to the front of the queue - the caller needs to be extremely careful not to create deadlocks when waiting for completion.

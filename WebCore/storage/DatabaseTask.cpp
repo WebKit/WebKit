@@ -37,6 +37,9 @@ namespace WebCore {
 
 DatabaseTaskSynchronizer::DatabaseTaskSynchronizer()
     : m_taskCompleted(false)
+#ifndef NDEBUG
+    , m_hasCheckedForTermination(false)
+#endif
 {
 }
 
@@ -67,6 +70,7 @@ DatabaseTask::DatabaseTask(Database* database, DatabaseTaskSynchronizer* synchro
 
 DatabaseTask::~DatabaseTask()
 {
+    ASSERT(m_complete || !m_synchronizer);
 }
 
 void DatabaseTask::performTask()
@@ -81,6 +85,10 @@ void DatabaseTask::performTask()
 
     if (m_synchronizer)
         m_synchronizer->taskCompleted();
+
+#ifndef NDEBUG
+    m_complete = true;
+#endif
 }
 
 // *** DatabaseOpenTask ***

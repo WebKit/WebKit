@@ -52,11 +52,19 @@ public:
 
     // Called by the task.
     void taskCompleted();
-private:
 
+#ifndef NDEBUG
+    bool hasCheckedForTermination() const { return m_hasCheckedForTermination; }
+    void setHasCheckedForTermination() { m_hasCheckedForTermination = true; }
+#endif
+
+private:
     bool m_taskCompleted;
     Mutex m_synchronousMutex;
     ThreadCondition m_synchronousCondition;
+#ifndef NDEBUG
+    bool m_hasCheckedForTermination;
+#endif
 };
 
 class DatabaseTask : public Noncopyable {
@@ -66,6 +74,10 @@ public:
     void performTask();
 
     Database* database() const { return m_database; }
+#ifndef NDEBUG
+    bool hasSynchronizer() const { return m_synchronizer; }
+    bool hasCheckedForTermination() const { return m_synchronizer->hasCheckedForTermination(); }
+#endif
 
 protected:
     DatabaseTask(Database*, DatabaseTaskSynchronizer*);
@@ -77,8 +89,8 @@ private:
     DatabaseTaskSynchronizer* m_synchronizer;
 
 #ifndef NDEBUG
-     virtual const char* debugTaskName() const = 0;
-     bool m_complete;
+    virtual const char* debugTaskName() const = 0;
+    bool m_complete;
 #endif
 };
 

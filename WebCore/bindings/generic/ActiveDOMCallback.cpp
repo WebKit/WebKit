@@ -123,7 +123,6 @@ static void destroyOnContextThread(PassOwnPtr<ActiveDOMObjectCallbackImpl> impl)
 ActiveDOMCallback::ActiveDOMCallback(ScriptExecutionContext* context)
     : m_impl(new ActiveDOMObjectCallbackImpl(context))
 {
-    ASSERT(context->isContextThread());
 }
 
 ActiveDOMCallback::~ActiveDOMCallback()

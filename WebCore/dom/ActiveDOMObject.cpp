@@ -37,8 +37,10 @@ ActiveDOMObject::ActiveDOMObject(ScriptExecutionContext* scriptExecutionContext,
     : m_scriptExecutionContext(scriptExecutionContext)
     , m_pendingActivityCount(0)
 {
-    ASSERT(m_scriptExecutionContext->isContextThread());
-    m_scriptExecutionContext->createdActiveDOMObject(this, upcastPointer);
+    if (m_scriptExecutionContext) {
+        ASSERT(m_scriptExecutionContext->isContextThread());
+        m_scriptExecutionContext->createdActiveDOMObject(this, upcastPointer);
+    }
 }
 
 ActiveDOMObject::~ActiveDOMObject()
