@@ -622,15 +622,6 @@ module html {
                                 in unsigned long format, in unsigned long type, in HTMLCanvasElement canvas) raises (DOMException);
         void         texImage2D(in unsigned long target, in long level, in unsigned long internalformat,
                                 in unsigned long format, in unsigned long type, in HTMLVideoElement video) raises (DOMException);
-        // Obsolete entry points -- to be removed shortly. (FIXME)
-        void         texImage2D(in unsigned long target, in long level, in ImageData pixels,
-                                in [Optional] boolean flipY, in [Optional] boolean premultiplyAlpha) raises (DOMException);
-        void         texImage2D(in unsigned long target, in long level, in HTMLImageElement image,
-                                in [Optional] boolean flipY, in [Optional] boolean premultiplyAlpha) raises (DOMException);
-        void         texImage2D(in unsigned long target, in long level, in HTMLCanvasElement canvas,
-                                in [Optional] boolean flipY, in [Optional] boolean premultiplyAlpha) raises (DOMException);
-        void         texImage2D(in unsigned long target, in long level, in HTMLVideoElement video,
-                                in [Optional] boolean flipY, in [Optional] boolean premultiplyAlpha) raises (DOMException);
 
         void         texSubImage2D(in unsigned long target, in long level, in long xoffset, in long yoffset, 
                                    in long width, in long height, 
@@ -643,15 +634,6 @@ module html {
                                    in unsigned long format, in unsigned long type, in HTMLCanvasElement canvas) raises (DOMException);
         void         texSubImage2D(in unsigned long target, in long level, in long xoffset, in long yoffset,
                                    in unsigned long format, in unsigned long type, in HTMLVideoElement video) raises (DOMException);
-        // Obsolete entry points -- to be removed shortly. (FIXME)
-        void         texSubImage2D(in unsigned long target, in long level, in long xoffset, in long yoffset,
-                                   in ImageData pixels, in [Optional] boolean flipY, in [Optional] boolean premultiplyAlpha) raises (DOMException);
-        void         texSubImage2D(in unsigned long target, in long level, in long xoffset, in long yoffset, 
-                                   in HTMLImageElement image, in [Optional] boolean flipY, in [Optional] boolean premultiplyAlpha) raises (DOMException);
-        void         texSubImage2D(in unsigned long target, in long level, in long xoffset, in long yoffset, 
-                                   in HTMLCanvasElement canvas, in [Optional] boolean flipY, in [Optional] boolean premultiplyAlpha) raises (DOMException);
-        void         texSubImage2D(in unsigned long target, in long level, in long xoffset, in long yoffset, 
-                                   in HTMLVideoElement video, in [Optional] boolean flipY, in [Optional] boolean premultiplyAlpha) raises (DOMException);
 
         void uniform1f(in WebGLUniformLocation location, in float x) raises(DOMException);
         [Custom] void uniform1fv(in WebGLUniformLocation location, in Float32Array v) raises(DOMException);

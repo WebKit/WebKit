@@ -206,19 +206,6 @@ public:
                     unsigned format, unsigned type, HTMLCanvasElement* canvas, ExceptionCode&);
     void texImage2D(unsigned target, unsigned level, unsigned internalformat,
                     unsigned format, unsigned type, HTMLVideoElement* video, ExceptionCode&);
-    // Obsolete entry points -- to be removed shortly. (FIXME)
-    void texImage2D(unsigned target, unsigned level, ImageData* pixels, ExceptionCode&);
-    void texImage2D(unsigned target, unsigned level, ImageData* pixels, bool flipY, ExceptionCode&);
-    void texImage2D(unsigned target, unsigned level, ImageData* pixels, bool flipY, bool premultiplyAlpha, ExceptionCode&);
-    void texImage2D(unsigned target, unsigned level, HTMLImageElement* image, ExceptionCode&);
-    void texImage2D(unsigned target, unsigned level, HTMLImageElement* image, bool flipY, ExceptionCode&);
-    void texImage2D(unsigned target, unsigned level, HTMLImageElement* image, bool flipY, bool premultiplyAlpha, ExceptionCode&);
-    void texImage2D(unsigned target, unsigned level, HTMLCanvasElement* canvas, ExceptionCode&);
-    void texImage2D(unsigned target, unsigned level, HTMLCanvasElement* canvas, bool flipY, ExceptionCode&);
-    void texImage2D(unsigned target, unsigned level, HTMLCanvasElement* canvas, bool flipY, bool premultiplyAlpha, ExceptionCode&);
-    void texImage2D(unsigned target, unsigned level, HTMLVideoElement* video, ExceptionCode&);
-    void texImage2D(unsigned target, unsigned level, HTMLVideoElement* video, bool flipY, ExceptionCode&);
-    void texImage2D(unsigned target, unsigned level, HTMLVideoElement* video, bool flipY, bool premultiplyAlpha, ExceptionCode&);
 
     void texParameterf(unsigned target, unsigned pname, float param);
     void texParameteri(unsigned target, unsigned pname, int param);
@@ -234,19 +221,6 @@ public:
                        unsigned format, unsigned type, HTMLCanvasElement* canvas, ExceptionCode&);
     void texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset,
                        unsigned format, unsigned type, HTMLVideoElement* video, ExceptionCode&);
-    // Obsolete entry points -- to be removed shortly. (FIXME)
-    void texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset, ImageData* pixels, ExceptionCode&);
-    void texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset, ImageData* pixels, bool flipY, ExceptionCode&);
-    void texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset, ImageData* pixels, bool flipY, bool premultiplyAlpha, ExceptionCode&);
-    void texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset, HTMLImageElement* image, ExceptionCode&);
-    void texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset, HTMLImageElement* image, bool flipY, ExceptionCode&);
-    void texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset, HTMLImageElement* image, bool flipY, bool premultiplyAlpha, ExceptionCode&);
-    void texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset, HTMLCanvasElement* canvas, ExceptionCode&);
-    void texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset, HTMLCanvasElement* canvas, bool flipY, ExceptionCode&);
-    void texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset, HTMLCanvasElement* canvas, bool flipY, bool premultiplyAlpha, ExceptionCode&);
-    void texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset, HTMLVideoElement* video, ExceptionCode&);
-    void texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset, HTMLVideoElement* video, bool flipY, ExceptionCode&);
-    void texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset, HTMLVideoElement* video, bool flipY, bool premultiplyAlpha, ExceptionCode&);
 
     void uniform1f(const WebGLUniformLocation* location, float x, ExceptionCode&);
     void uniform1fv(const WebGLUniformLocation* location, Float32Array* v, ExceptionCode&);

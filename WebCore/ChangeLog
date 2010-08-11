@@ -1,3 +1,16 @@
+2010-08-11  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Remove obsolete texImage2D and texSubImage2D entry points
+        https://bugs.webkit.org/show_bug.cgi?id=40320
+
+        No new tests; covered by existing WebGL tests.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        * html/canvas/WebGLRenderingContext.h:
+        * html/canvas/WebGLRenderingContext.idl:
+
 2010-08-11  Gavin Barraclough  <barraclough@apple.com>
 
         Windows build fix.
