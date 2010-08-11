@@ -1,3 +1,13 @@
+2010-08-11  Alejandro G. Castro  <alex@igalia.com>
+
+        Unreviewed.
+
+        New baselines for the mathml tests.
+
+        * platform/gtk/mathml/presentation/sub-expected.txt:
+        * platform/gtk/mathml/presentation/sup-expected.txt:
+        * platform/gtk/mathml/presentation/tables-expected.txt:
+
 2010-08-11  Nate Chapin  <japhet@chromium.org>
 
         Unreviewed, Chromium rebaseline.

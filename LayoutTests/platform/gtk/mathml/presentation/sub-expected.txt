@@ -1,19 +1,49 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x52
-  RenderBlock {html} at (0,0) size 800x52
-    RenderBody {body} at (8,16) size 784x20
-      RenderBlock {p} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 64x20
-          text run at (0,0) width 64: "subscript: "
-        RenderInline {math} at (0,0) size 16x20
-          RenderText {#text} at (0,0) size 0x0
-          RenderInline {msub} at (0,0) size 16x20
-            RenderInline {mi} at (0,0) size 8x20
-              RenderText {#text} at (64,0) size 8x20
-                text run at (64,0) width 8: "x"
-            RenderInline {mn} at (0,0) size 8x20
-              RenderText {#text} at (72,0) size 8x20
-                text run at (72,0) width 8: "1"
-          RenderText {#text} at (0,0) size 0x0
+layer at (0,0) size 800x127
+  RenderBlock {html} at (0,0) size 800x127
+    RenderBody {body} at (8,16) size 784x95
+      RenderBlock {p} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 27x20
+          text run at (0,0) width 27: "text "
+        RenderBlock {math} at (27,1) size 23x20
+          RenderBlock {msub} at (1,0) size 21x20
+            RenderInline {mi} at (0,0) size 9x21
+              RenderText {#text} at (0,-2) size 9x21
+                text run at (0,-2) width 9: "x"
+            RenderInline {mn} at (0,0) size 12x13
+              RenderText {#text} at (9,8) size 12x13
+                text run at (9,8) width 12: "1"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {p} at (0,37) size 784x21
+        RenderText {#text} at (0,0) size 27x20
+          text run at (0,0) width 27: "text "
+        RenderBlock {math} at (27,2) size 40x19
+          RenderBlock {msub} at (1,0) size 38x19
+            RenderBlock {mo} at (0,0) size 16x16
+              RenderBlock {mo} at (0,0) size 16x16
+                RenderText {mo} at (0,0) size 16x17
+                  text run at (0,0) width 16: "+"
+            RenderText {#text} at (16,0) size 16x17
+              text run at (16,0) width 16: " "
+            RenderInline {mi} at (0,0) size 6x16
+              RenderText {#text} at (32,5) size 6x16
+                text run at (32,5) width 6: "x"
+            RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {p} at (0,74) size 784x21
+        RenderText {#text} at (0,0) size 27x20
+          text run at (0,0) width 27: "text "
+        RenderBlock {math} at (27,2) size 42x19
+          RenderBlock {msub} at (1,0) size 40x19
+            RenderBlock {mo} at (0,0) size 16x16
+              RenderBlock {mo} at (0,0) size 16x16
+                RenderText {mo} at (0,0) size 16x17
+                  text run at (0,0) width 16: "\x{222B}"
+            RenderText {#text} at (16,0) size 16x17
+              text run at (16,0) width 16: " "
+            RenderInline {mi} at (0,0) size 8x16
+              RenderText {#text} at (32,5) size 8x16
+                text run at (32,5) width 8: "Y"
+            RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
