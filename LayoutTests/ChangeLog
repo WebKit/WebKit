@@ -1,3 +1,63 @@
+2010-08-11  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Dirk Schulze.
+
+        Fixes to the gaussian blur algorithm
+        https://bugs.webkit.org/show_bug.cgi?id=41605
+
+        Unskipped test and generated results.
+
+        * platform/gtk/Skipped:
+        * platform/gtk/svg/filters/feGaussianBlur-expected.txt: Added.
+
+        Updated pixel tests.
+
+        * platform/mac-leopard/svg/W3C-SVG-1.1/filters-gauss-01-b-expected.checksum:
+        * platform/mac-leopard/svg/W3C-SVG-1.1/filters-gauss-01-b-expected.png:
+        * platform/mac-leopard/svg/batik/text/textProperties-expected.checksum:
+        * platform/mac-leopard/svg/batik/text/textProperties-expected.png:
+        * platform/mac-leopard/svg/custom/mask-colorspace-expected.png:
+        * platform/mac-leopard/svg/filters/feGaussianBlur-expected.checksum:
+        * platform/mac-leopard/svg/filters/feGaussianBlur-expected.png:
+        * platform/mac-leopard/svg/filters/shadow-on-filter-expected.checksum:
+        * platform/mac-leopard/svg/filters/shadow-on-filter-expected.png:
+        * platform/mac-leopard/svg/filters/shadow-on-rect-with-filter-expected.checksum:
+        * platform/mac-leopard/svg/filters/shadow-on-rect-with-filter-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/filters-example-01-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/filters-example-01-b-expected.png:
+        * platform/mac/svg/batik/text/textEffect-expected.checksum:
+        * platform/mac/svg/batik/text/textEffect-expected.png:
+        * platform/mac/svg/batik/text/textEffect3-expected.checksum:
+        * platform/mac/svg/batik/text/textEffect3-expected.png:
+        * platform/mac/svg/batik/text/textFeatures-expected.checksum:
+        * platform/mac/svg/batik/text/textFeatures-expected.png:
+        * platform/mac/svg/custom/non-opaque-filters-expected.checksum:
+        * platform/mac/svg/custom/non-opaque-filters-expected.png:
+        * platform/mac/svg/custom/recursive-filter-expected.checksum:
+        * platform/mac/svg/custom/recursive-filter-expected.png:
+        * platform/mac/svg/custom/resource-invalidate-on-target-update-expected.checksum:
+        * platform/mac/svg/custom/resource-invalidate-on-target-update-expected.png:
+        * platform/mac/svg/custom/text-filter-expected.checksum:
+        * platform/mac/svg/custom/text-filter-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGFEDiffuseLightingElement-dom-diffuseConstant-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGFEDiffuseLightingElement-dom-diffuseConstant-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGFEDiffuseLightingElement-dom-in-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGFEDiffuseLightingElement-dom-in-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGFEDiffuseLightingElement-dom-lighting-color-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGFEDiffuseLightingElement-dom-lighting-color-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGFEDiffuseLightingElement-dom-surfaceScale-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGFEDiffuseLightingElement-dom-surfaceScale-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGFEDiffuseLightingElement-lighting-color-css-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGFEDiffuseLightingElement-lighting-color-css-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGFEDiffuseLightingElement-svgdom-diffuseConstant-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGFEDiffuseLightingElement-svgdom-diffuseConstant-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGFEDiffuseLightingElement-svgdom-in-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGFEDiffuseLightingElement-svgdom-in-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGFEDiffuseLightingElement-svgdom-surfaceScale-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGFEDiffuseLightingElement-svgdom-surfaceScale-prop-expected.png:
+        * platform/mac/svg/filters/filter-on-filter-for-text-expected.checksum:
+        * platform/mac/svg/filters/filter-on-filter-for-text-expected.png:
+
 2010-08-11  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

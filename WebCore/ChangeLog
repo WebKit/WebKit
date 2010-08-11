@@ -1,3 +1,29 @@
+2010-08-11  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Dirk Schulze.
+
+        Fixes to the gaussian blur algorithm
+        https://bugs.webkit.org/show_bug.cgi?id=41605
+
+        Added the recomendations of SVG regarding the kernel size
+        calculation for the approximation of the gaussian
+        blur. http://www.w3.org/TR/SVG/filters.html#feGaussianBlurElement.
+        Modified also some variable names to clarify algorithm, reviewed
+        the situation where both standard deviations are 0.
+
+        * platform/graphics/filters/FEGaussianBlur.cpp:
+        (WebCore::FEGaussianBlur::FEGaussianBlur):
+        (WebCore::FEGaussianBlur::stdDeviationX):
+        (WebCore::FEGaussianBlur::setStdDeviationX):
+        (WebCore::FEGaussianBlur::stdDeviationY):
+        (WebCore::FEGaussianBlur::setStdDeviationY):
+        (WebCore::boxBlur):
+        (WebCore::FEGaussianBlur::kernelPosition): Added the SVG kernel
+        position recomendation.
+        (WebCore::FEGaussianBlur::apply):
+        (WebCore::FEGaussianBlur::externalRepresentation):
+        * platform/graphics/filters/FEGaussianBlur.h:
+
 2010-08-11  Kristian Monsen  <kristianm@google.com>
 
         Reviewed by Steve Block.

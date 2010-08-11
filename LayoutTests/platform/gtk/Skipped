@@ -5145,7 +5145,6 @@ svg/custom/js-update-image-and-display.svg
 svg/custom/mask-with-default-value.svg
 svg/custom/outer-svg-unknown-feature.svg
 svg/filters/feComposite.svg
-svg/filters/feGaussianBlur.svg
 svg/filters/feMerge.svg
 svg/filters/feMerge-wrong-input.svg
 svg/filters/feOffset.svg

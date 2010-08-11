@@ -45,10 +45,11 @@ public:
 
 private:
     FEGaussianBlur(FilterEffect*, const float&, const float&);
+    static void kernelPosition(int boxBlur, unsigned& std, int& dLeft, int& dRight);
 
     RefPtr<FilterEffect> m_in;
-    float m_x;
-    float m_y;
+    float m_stdX;
+    float m_stdY;
 };
 
 } // namespace WebCore

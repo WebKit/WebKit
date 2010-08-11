@@ -3,6 +3,7 @@
                   2004, 2005 Rob Buis <buis@kde.org>
                   2005 Eric Seidel <eric@webkit.org>
                   2009 Dirk Schulze <krit@webkit.org>
+                  2010 Igalia, S.L.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -29,18 +30,19 @@
 #include "Filter.h"
 #include "GraphicsContext.h"
 #include "ImageData.h"
-#include <math.h>
 #include <wtf/MathExtras.h>
 
 using std::max;
+
+static const float gGaussianKernelFactor = (3 * sqrtf(2 * piFloat) / 4.f);
 
 namespace WebCore {
 
 FEGaussianBlur::FEGaussianBlur(FilterEffect* in, const float& x, const float& y)
     : FilterEffect()
     , m_in(in)
-    , m_x(x)
-    , m_y(y)
+    , m_stdX(x)
+    , m_stdY(y)
 {
 }
 
@@ -51,30 +53,27 @@ PassRefPtr<FEGaussianBlur> FEGaussianBlur::create(FilterEffect* in, const float&
 
 float FEGaussianBlur::stdDeviationX() const
 {
-    return m_x;
+    return m_stdX;
 }
 
 void FEGaussianBlur::setStdDeviationX(float x)
 {
-    m_x = x;
+    m_stdX = x;
 }
 
 float FEGaussianBlur::stdDeviationY() const
 {
-    return m_y;
+    return m_stdY;
 }
 
 void FEGaussianBlur::setStdDeviationY(float y)
 {
-    m_y = y;
+    m_stdY = y;
 }
 
 static void boxBlur(CanvasPixelArray*& srcPixelArray, CanvasPixelArray*& dstPixelArray,
-                 unsigned dx, int stride, int strideLine, int effectWidth, int effectHeight, bool alphaImage)
+                    unsigned dx, int dxLeft, int dxRight, int stride, int strideLine, int effectWidth, int effectHeight, bool alphaImage)
 {
-    int dxLeft = dx / 2;
-    int dxRight = dx - dxLeft;
-
     for (int y = 0; y < effectHeight; ++y) {
         int line = y * strideLine;
         for (int channel = 3; channel >= 0; --channel) {
@@ -99,6 +98,34 @@ static void boxBlur(CanvasPixelArray*& srcPixelArray, CanvasPixelArray*& dstPixe
     }
 }
 
+void FEGaussianBlur::kernelPosition(int boxBlur, unsigned& std, int& dLeft, int& dRight)
+{
+    // check http://www.w3.org/TR/SVG/filters.html#feGaussianBlurElement for details
+    switch (boxBlur) {
+    case 0:
+        if (!(std % 2)) {
+            dLeft = std / 2 - 1;
+            dRight = std - dLeft;
+        } else {
+            dLeft = std / 2;
+            dRight = std - dLeft;
+        }
+        break;
+    case 1:
+        if (!(std % 2)) {
+            dLeft++;
+            dRight--;
+        }
+        break;
+    case 2:
+        if (!(std % 2)) {
+            dRight++;
+            std++;
+        }
+        break;
+    }
+}
+
 void FEGaussianBlur::apply(Filter* filter)
 {
     m_in->apply(filter);
@@ -110,26 +137,47 @@ void FEGaussianBlur::apply(Filter* filter)
 
     setIsAlphaImage(m_in->isAlphaImage());
 
-    if (m_x == 0 || m_y == 0)
-        return;
-
-    unsigned sdx = static_cast<unsigned>(floor(m_x * filter->filterResolution().width() * 3 * sqrt(2 * piDouble) / 4.f + 0.5f));
-    unsigned sdy = static_cast<unsigned>(floor(m_y * filter->filterResolution().height() * 3 * sqrt(2 * piDouble) / 4.f + 0.5f));
-    sdx = max(sdx, static_cast<unsigned>(1));
-    sdy = max(sdy, static_cast<unsigned>(1));
-
     IntRect effectDrawingRect = calculateDrawingIntRect(m_in->scaledSubRegion());
     RefPtr<ImageData> srcImageData(m_in->resultImage()->getPremultipliedImageData(effectDrawingRect));
-    CanvasPixelArray* srcPixelArray(srcImageData->data());
-
     IntRect imageRect(IntPoint(), resultImage()->size());
+
+    if (!m_stdX && !m_stdY) {
+        resultImage()->putPremultipliedImageData(srcImageData.get(), imageRect, IntPoint());
+        return;
+    }
+
+    unsigned kernelSizeX = 0;
+    if (m_stdX)
+        kernelSizeX = max(2U, static_cast<unsigned>(floor(m_stdX * filter->filterResolution().width() * gGaussianKernelFactor + 0.5f)));
+
+    unsigned kernelSizeY = 0;
+    if (m_stdY)
+        kernelSizeY = max(2U, static_cast<unsigned>(floor(m_stdY * filter->filterResolution().height() * gGaussianKernelFactor + 0.5f)));
+
+    CanvasPixelArray* srcPixelArray(srcImageData->data());
     RefPtr<ImageData> tmpImageData = ImageData::create(imageRect.width(), imageRect.height());
     CanvasPixelArray* tmpPixelArray(tmpImageData->data());
 
     int stride = 4 * imageRect.width();
+    int dxLeft, dxRight, dyLeft, dyRight;
     for (int i = 0; i < 3; ++i) {
-        boxBlur(srcPixelArray, tmpPixelArray, sdx, 4, stride, imageRect.width(), imageRect.height(), isAlphaImage());
-        boxBlur(tmpPixelArray, srcPixelArray, sdy, stride, 4, imageRect.height(), imageRect.width(), isAlphaImage());
+        if (kernelSizeX) {
+            kernelPosition(i, kernelSizeX, dxLeft, dxRight);
+            boxBlur(srcPixelArray, tmpPixelArray, kernelSizeX, dxLeft, dxRight, 4, stride, imageRect.width(), imageRect.height(), isAlphaImage());
+        } else {
+            CanvasPixelArray* auxPixelArray = tmpPixelArray;
+            tmpPixelArray = srcPixelArray;
+            srcPixelArray = auxPixelArray;
+        }
+
+        if (kernelSizeY) {
+            kernelPosition(i, kernelSizeY, dyLeft, dyRight);
+            boxBlur(tmpPixelArray, srcPixelArray, kernelSizeY, dyLeft, dyRight, stride, 4, imageRect.height(), imageRect.width(), isAlphaImage());
+        } else {
+            CanvasPixelArray* auxPixelArray = tmpPixelArray;
+            tmpPixelArray = srcPixelArray;
+            srcPixelArray = auxPixelArray;
+        }
     }
 
     resultImage()->putPremultipliedImageData(srcImageData.get(), imageRect, IntPoint());
@@ -144,7 +192,7 @@ TextStream& FEGaussianBlur::externalRepresentation(TextStream& ts, int indent) c
     writeIndent(ts, indent);
     ts << "[feGaussianBlur";
     FilterEffect::externalRepresentation(ts);
-    ts << " stdDeviation=\"" << m_x << ", " << m_y << "\"]\n";
+    ts << " stdDeviation=\"" << m_stdX << ", " << m_stdY << "\"]\n";
     m_in->externalRepresentation(ts, indent + 1);
     return ts;
 }
