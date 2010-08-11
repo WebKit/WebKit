@@ -1,3 +1,32 @@
+2010-08-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add leakRef and clear to all RefPtr variants
+        https://bugs.webkit.org/show_bug.cgi?id=42389
+
+        * API/JSRetainPtr.h: Changed all uses of "template <...>" to instead do
+        "template<...>". We should probably put this in the style guide and do it
+        consitently. Fixed other minor style issues. Defined many of the inlined
+        functions outside the class definition, to avoid style checker warnings
+        about multiple statements on a single line and for slightly better clarity
+        of the class definition itself. Renamed releaseRef to leakRef. Added a
+        releaseRef that calls leakRef so we don't have to rename all callers oat
+        once. Added a clear function.
+
+        * wtf/PassRefPtr.h: Changed all uses of releaseRef to leakRef.
+
+        * wtf/RefPtr.h: Changed all uses of "template <...>" to instead do
+        "template<...>". Tidied up declarations and comments a bit.
+         Changed all uses of releaseRef to leakRef.
+
+        * wtf/RetainPtr.h: Changed all uses of "template <...>" to instead do
+        "template<...>". Defined many of the inlined functions outside the class
+        definition, to avoid style checker warnings about multiple statements on
+        a single line and for slightly better clarity of the class definition itself.
+        Renamed releaseRef to leakRef. Added a releaseRef that calls leakRef so we
+        don't have to rename all callers at once. Added a clear function.
+
 2010-08-10  Dumitru Daniliuc  <dumi@chromium.org>
 
         Unreviewed, reverting an unintentional change to a file submitted in r65108.

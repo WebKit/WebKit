@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,7 +44,7 @@ enum AdoptCOMTag { AdoptCOM };
 enum QueryTag { Query };
 enum CreateTag { Create };
 
-template <typename T> class COMPtr {
+template<typename T> class COMPtr {
 public:
     COMPtr() : m_ptr(0) { }
     COMPtr(T* ptr) : m_ptr(ptr) { if (m_ptr) m_ptr->AddRef(); }
@@ -52,7 +52,7 @@ public:
     COMPtr(const COMPtr& o) : m_ptr(o.m_ptr) { if (T* ptr = m_ptr) ptr->AddRef(); }
 
     COMPtr(QueryTag, IUnknown* ptr) : m_ptr(copyQueryInterfaceRef(ptr)) { }
-    template <typename U> COMPtr(QueryTag, const COMPtr<U>& ptr) : m_ptr(copyQueryInterfaceRef(ptr.get())) { }
+    template<typename U> COMPtr(QueryTag, const COMPtr<U>& ptr) : m_ptr(copyQueryInterfaceRef(ptr.get())) { }
 
     COMPtr(CreateTag, const IID& clsid) : m_ptr(createInstance(clsid)) { }
 
@@ -63,7 +63,9 @@ public:
     ~COMPtr() { if (m_ptr) m_ptr->Release(); }
 
     T* get() const { return m_ptr; }
-    T* releaseRef() { T* tmp = m_ptr; m_ptr = 0; return tmp; }
+
+    void clear();
+    T* leakRef();
 
     T& operator*() const { return *m_ptr; }
     T* operator->() const { return m_ptr; }
@@ -78,15 +80,18 @@ public:
 
     COMPtr& operator=(const COMPtr&);
     COMPtr& operator=(T*);
-    template <typename U> COMPtr& operator=(const COMPtr<U>&);
+    template<typename U> COMPtr& operator=(const COMPtr<U>&);
 
     void query(IUnknown* ptr) { adoptRef(copyQueryInterfaceRef(ptr)); }
-    template <typename U> void query(const COMPtr<U>& ptr) { query(ptr.get()); }
+    template<typename U> void query(const COMPtr<U>& ptr) { query(ptr.get()); }
 
     void create(const IID& clsid) { adoptRef(createInstance(clsid)); }
 
-    template <typename U> HRESULT copyRefTo(U**);
+    template<typename U> HRESULT copyRefTo(U**);
     void adoptRef(T*);
+
+    // FIXME: Remove releaseRef once we change all callers to call leakRef instead.
+    T* releaseRef() { return leakRef(); }
 
 private:
     static T* copyQueryInterfaceRef(IUnknown*);
@@ -96,7 +101,22 @@ private:
     T* m_ptr;
 };
 
-template <typename T> inline T* COMPtr<T>::createInstance(const IID& clsid)
+template<typename T> inline void COMPtr<T>::clear()
+{
+    if (T* ptr = m_ptr) {
+        m_ptr = 0;
+        ptr->Release();
+    }
+}
+
+template<typename T> inline T* COMPtr<T>::leakRef()
+{
+    T* ptr = m_ptr;
+    m_ptr = 0;
+    return ptr;
+}
+
+template<typename T> inline T* COMPtr<T>::createInstance(const IID& clsid)
 {
     T* result;
     if (FAILED(CoCreateInstance(clsid, 0, CLSCTX_ALL, __uuidof(result), reinterpret_cast<void**>(&result))))
@@ -104,7 +124,7 @@ template <typename T> inline T* COMPtr<T>::createInstance(const IID& clsid)
     return result;
 }
 
-template <typename T> inline T* COMPtr<T>::copyQueryInterfaceRef(IUnknown* ptr)
+template<typename T> inline T* COMPtr<T>::copyQueryInterfaceRef(IUnknown* ptr)
 {
     if (!ptr)
         return 0;
@@ -114,7 +134,7 @@ template <typename T> inline T* COMPtr<T>::copyQueryInterfaceRef(IUnknown* ptr)
     return result;
 }
 
-template <typename T> template <typename U> inline HRESULT COMPtr<T>::copyRefTo(U** ptr)
+template<typename T> template<typename U> inline HRESULT COMPtr<T>::copyRefTo(U** ptr)
 {
     if (!ptr)
         return E_POINTER;
@@ -124,14 +144,14 @@ template <typename T> template <typename U> inline HRESULT COMPtr<T>::copyRefTo(
     return S_OK;
 }
 
-template <typename T> inline void COMPtr<T>::adoptRef(T *ptr)
+template<typename T> inline void COMPtr<T>::adoptRef(T *ptr)
 {
     if (m_ptr)
         m_ptr->Release();
     m_ptr = ptr;
 }
 
-template <typename T> inline COMPtr<T>& COMPtr<T>::operator=(const COMPtr<T>& o)
+template<typename T> inline COMPtr<T>& COMPtr<T>::operator=(const COMPtr<T>& o)
 {
     T* optr = o.get();
     if (optr)
@@ -143,7 +163,7 @@ template <typename T> inline COMPtr<T>& COMPtr<T>::operator=(const COMPtr<T>& o)
     return *this;
 }
 
-template <typename T> template <typename U> inline COMPtr<T>& COMPtr<T>::operator=(const COMPtr<U>& o)
+template<typename T> template<typename U> inline COMPtr<T>& COMPtr<T>::operator=(const COMPtr<U>& o)
 {
     T* optr = o.get();
     if (optr)
@@ -155,7 +175,7 @@ template <typename T> template <typename U> inline COMPtr<T>& COMPtr<T>::operato
     return *this;
 }
 
-template <typename T> inline COMPtr<T>& COMPtr<T>::operator=(T* optr)
+template<typename T> inline COMPtr<T>& COMPtr<T>::operator=(T* optr)
 {
     if (optr)
         optr->AddRef();
@@ -166,32 +186,32 @@ template <typename T> inline COMPtr<T>& COMPtr<T>::operator=(T* optr)
     return *this;
 }
 
-template <typename T, typename U> inline bool operator==(const COMPtr<T>& a, const COMPtr<U>& b)
+template<typename T, typename U> inline bool operator==(const COMPtr<T>& a, const COMPtr<U>& b)
 {
     return a.get() == b.get();
 }
 
-template <typename T, typename U> inline bool operator==(const COMPtr<T>& a, U* b)
+template<typename T, typename U> inline bool operator==(const COMPtr<T>& a, U* b)
 {
     return a.get() == b;
 }
 
-template <typename T, typename U> inline bool operator==(T* a, const COMPtr<U>& b) 
+template<typename T, typename U> inline bool operator==(T* a, const COMPtr<U>& b) 
 {
     return a == b.get();
 }
 
-template <typename T, typename U> inline bool operator!=(const COMPtr<T>& a, const COMPtr<U>& b)
+template<typename T, typename U> inline bool operator!=(const COMPtr<T>& a, const COMPtr<U>& b)
 {
     return a.get() != b.get();
 }
 
-template <typename T, typename U> inline bool operator!=(const COMPtr<T>& a, U* b)
+template<typename T, typename U> inline bool operator!=(const COMPtr<T>& a, U* b)
 {
     return a.get() != b;
 }
 
-template <typename T, typename U> inline bool operator!=(T* a, const COMPtr<U>& b)
+template<typename T, typename U> inline bool operator!=(T* a, const COMPtr<U>& b)
 {
     return a != b.get();
 }
@@ -200,8 +220,8 @@ namespace WTF {
 
     template<typename P> struct HashTraits<COMPtr<P> > : GenericHashTraits<COMPtr<P> > {
         static const bool emptyValueIsZero = true;
-        static void constructDeletedValue(COMPtr<P>& slot) { slot.releaseRef(); *&slot = reinterpret_cast<P*>(-1); }
-        static bool isDeletedValue(const COMPtr<P>& value) { return value == reinterpret_cast<P*>(-1); }
+        static void constructDeletedValue(COMPtr<P>& slot) { new (&slot) COMPtr<P>(HashTableDeletedValueType); }
+        static bool isDeletedValue(const COMPtr<P>& value) { return value.isHashTableDeletedValue(); }
     };
 
     template<typename P> struct PtrHash<COMPtr<P> > : PtrHash<P*> {

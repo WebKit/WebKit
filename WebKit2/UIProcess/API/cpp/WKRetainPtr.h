@@ -82,6 +82,7 @@ public:
         if (ptr)
             WKRelease(ptr);
     }
+
     PtrType leakRef()
     {
         PtrType ptr = m_ptr;
@@ -97,9 +98,9 @@ public:
     operator UnspecifiedBoolType() const { return m_ptr ? &WKRetainPtr::m_ptr : 0; }
 
     WKRetainPtr& operator=(const WKRetainPtr&);
-    template <typename U> WKRetainPtr& operator=(const WKRetainPtr<U>&);
+    template<typename U> WKRetainPtr& operator=(const WKRetainPtr<U>&);
     WKRetainPtr& operator=(PtrType);
-    template <typename U> WKRetainPtr& operator=(U*);
+    template<typename U> WKRetainPtr& operator=(U*);
 
     void adopt(PtrType);
     void swap(WKRetainPtr&);
@@ -111,7 +112,7 @@ private:
     PtrType m_ptr;
 };
 
-template <typename T> inline WKRetainPtr<T>& WKRetainPtr<T>::operator=(const WKRetainPtr<T>& o)
+template<typename T> inline WKRetainPtr<T>& WKRetainPtr<T>::operator=(const WKRetainPtr<T>& o)
 {
     PtrType optr = o.get();
     if (optr)
@@ -123,7 +124,7 @@ template <typename T> inline WKRetainPtr<T>& WKRetainPtr<T>::operator=(const WKR
     return *this;
 }
 
-template <typename T> template <typename U> inline WKRetainPtr<T>& WKRetainPtr<T>::operator=(const WKRetainPtr<U>& o)
+template<typename T> template<typename U> inline WKRetainPtr<T>& WKRetainPtr<T>::operator=(const WKRetainPtr<U>& o)
 {
     PtrType optr = o.get();
     if (optr)
@@ -135,7 +136,7 @@ template <typename T> template <typename U> inline WKRetainPtr<T>& WKRetainPtr<T
     return *this;
 }
 
-template <typename T> inline WKRetainPtr<T>& WKRetainPtr<T>::operator=(PtrType optr)
+template<typename T> inline WKRetainPtr<T>& WKRetainPtr<T>::operator=(PtrType optr)
 {
     if (optr)
         WKRetain(optr);
@@ -146,7 +147,7 @@ template <typename T> inline WKRetainPtr<T>& WKRetainPtr<T>::operator=(PtrType o
     return *this;
 }
 
-template <typename T> inline void WKRetainPtr<T>::adopt(PtrType optr)
+template<typename T> inline void WKRetainPtr<T>::adopt(PtrType optr)
 {
     PtrType ptr = m_ptr;
     m_ptr = optr;
@@ -154,7 +155,7 @@ template <typename T> inline void WKRetainPtr<T>::adopt(PtrType optr)
         WKRelease(ptr);
 }
 
-template <typename T> template <typename U> inline WKRetainPtr<T>& WKRetainPtr<T>::operator=(U* optr)
+template<typename T> template<typename U> inline WKRetainPtr<T>& WKRetainPtr<T>::operator=(U* optr)
 {
     if (optr)
         WKRetain(optr);
@@ -165,42 +166,42 @@ template <typename T> template <typename U> inline WKRetainPtr<T>& WKRetainPtr<T
     return *this;
 }
 
-template <class T> inline void WKRetainPtr<T>::swap(WKRetainPtr<T>& o)
+template<typename T> inline void WKRetainPtr<T>::swap(WKRetainPtr<T>& o)
 {
     std::swap(m_ptr, o.m_ptr);
 }
 
-template <class T> inline void swap(WKRetainPtr<T>& a, WKRetainPtr<T>& b)
+template<typename T> inline void swap(WKRetainPtr<T>& a, WKRetainPtr<T>& b)
 {
     a.swap(b);
 }
 
-template <typename T, typename U> inline bool operator==(const WKRetainPtr<T>& a, const WKRetainPtr<U>& b)
+template<typename T, typename U> inline bool operator==(const WKRetainPtr<T>& a, const WKRetainPtr<U>& b)
 { 
     return a.get() == b.get(); 
 }
 
-template <typename T, typename U> inline bool operator==(const WKRetainPtr<T>& a, U* b)
+template<typename T, typename U> inline bool operator==(const WKRetainPtr<T>& a, U* b)
 { 
     return a.get() == b; 
 }
 
-template <typename T, typename U> inline bool operator==(T* a, const WKRetainPtr<U>& b) 
+template<typename T, typename U> inline bool operator==(T* a, const WKRetainPtr<U>& b) 
 {
     return a == b.get(); 
 }
 
-template <typename T, typename U> inline bool operator!=(const WKRetainPtr<T>& a, const WKRetainPtr<U>& b)
+template<typename T, typename U> inline bool operator!=(const WKRetainPtr<T>& a, const WKRetainPtr<U>& b)
 { 
     return a.get() != b.get(); 
 }
 
-template <typename T, typename U> inline bool operator!=(const WKRetainPtr<T>& a, U* b)
+template<typename T, typename U> inline bool operator!=(const WKRetainPtr<T>& a, U* b)
 {
     return a.get() != b; 
 }
 
-template <typename T, typename U> inline bool operator!=(T* a, const WKRetainPtr<U>& b)
+template<typename T, typename U> inline bool operator!=(T* a, const WKRetainPtr<U>& b)
 { 
     return a != b.get(); 
 }

@@ -1,3 +1,19 @@
+2010-08-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add leakRef and clear to all RefPtr variants
+        https://bugs.webkit.org/show_bug.cgi?id=42389
+
+        * platform/win/COMPtr.h: Changed all uses of "template <...>" to instead do
+        "template<...>". Defined many of the inlined functions outside the class
+        definition, to avoid style checker warnings about multiple statements on
+        a single line and for slightly better clarity of the class definition itself.
+        Renamed releaseRef to leakRef. Added a releaseRef that calls leakRef so we
+        don't have to rename all callers at once. Added a clear function. Changed
+        the hash table code so it doesn't need to call releaseRef, and so it uses
+        the hash table deleted value hooks already present within the class.
+
 2010-08-10  Ariya Hidayat  <ariya@sencha.com>
 
         [Qt] Fix build warning: remove reference to html/BlobRegistryImp.h

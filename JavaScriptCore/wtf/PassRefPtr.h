@@ -67,8 +67,8 @@ namespace WTF {
         // It somewhat breaks the type system to allow transfer of ownership out of
         // a const PassRefPtr. However, it makes it much easier to work with PassRefPtr
         // temporaries, and we don't have a need to use real const PassRefPtrs anyway.
-        PassRefPtr(const PassRefPtr& o) : m_ptr(o.releaseRef()) { }
-        template<typename U> PassRefPtr(const PassRefPtr<U>& o) : m_ptr(o.releaseRef()) { }
+        PassRefPtr(const PassRefPtr& o) : m_ptr(o.leakRef()) { }
+        template<typename U> PassRefPtr(const PassRefPtr<U>& o) : m_ptr(o.leakRef()) { }
 
         ALWAYS_INLINE ~PassRefPtr() { derefIfNotNull(m_ptr); }
 
@@ -106,7 +106,7 @@ namespace WTF {
     };
     
     // NonNullPassRefPtr: Optimized for passing non-null pointers. A NonNullPassRefPtr
-    // begins life non-null, and can only become null through a call to releaseRef()
+    // begins life non-null, and can only become null through a call to leakRef()
     // or clear().
 
     // FIXME: NonNullPassRefPtr could just inherit from PassRefPtr. However,
@@ -130,19 +130,19 @@ namespace WTF {
         }
 
         NonNullPassRefPtr(const NonNullPassRefPtr& o)
-            : m_ptr(o.releaseRef())
+            : m_ptr(o.leakRef())
         {
             ASSERT(m_ptr);
         }
 
         template<typename U> NonNullPassRefPtr(const NonNullPassRefPtr<U>& o)
-            : m_ptr(o.releaseRef())
+            : m_ptr(o.leakRef())
         {
             ASSERT(m_ptr);
         }
 
         template<typename U> NonNullPassRefPtr(const PassRefPtr<U>& o)
-            : m_ptr(o.releaseRef())
+            : m_ptr(o.leakRef())
         {
             ASSERT(m_ptr);
         }
@@ -207,7 +207,7 @@ namespace WTF {
     template<typename T> inline PassRefPtr<T>& PassRefPtr<T>::operator=(const PassRefPtr<T>& ref)
     {
         T* ptr = m_ptr;
-        m_ptr = ref.releaseRef();
+        m_ptr = ref.leakRef();
         derefIfNotNull(ptr);
         return *this;
     }
@@ -215,7 +215,7 @@ namespace WTF {
     template<typename T> template<typename U> inline PassRefPtr<T>& PassRefPtr<T>::operator=(const PassRefPtr<U>& ref)
     {
         T* ptr = m_ptr;
-        m_ptr = ref.releaseRef();
+        m_ptr = ref.leakRef();
         derefIfNotNull(ptr);
         return *this;
     }
@@ -278,12 +278,12 @@ namespace WTF {
 
     template<typename T, typename U> inline PassRefPtr<T> static_pointer_cast(const PassRefPtr<U>& p) 
     { 
-        return adoptRef(static_cast<T*>(p.releaseRef())); 
+        return adoptRef(static_cast<T*>(p.leakRef())); 
     }
 
     template<typename T, typename U> inline PassRefPtr<T> const_pointer_cast(const PassRefPtr<U>& p) 
     { 
-        return adoptRef(const_cast<T*>(p.releaseRef())); 
+        return adoptRef(const_cast<T*>(p.leakRef())); 
     }
 
     template<typename T> inline T* getPtr(const PassRefPtr<T>& p)
