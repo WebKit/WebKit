@@ -1,3 +1,21 @@
+2010-08-10  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Darin Adler.
+
+         fast/dom/Window/window-properties.html is pretty slow
+         https://bugs.webkit.org/show_bug.cgi?id=43755
+         
+         window-properties.html would take 5.9 seconds to run on my Mac Pro.
+         - Changing the order of checks in logValue to have more early returns
+           before we get value and valueType brings this down to 3.66 seconds
+         - Changing logBuffer to be a string that we append to instead of an
+           array that we push() to brings this to 0.7 seconds (string appends
+           are faster than array push()-es followed by a join('') in all
+           browsers except IE per 
+           http://closure-library.googlecode.com/svn/docs/closure_goog_string_stringbuffer.js.source.html
+
+        * fast/dom/Window/window-properties.html:
+
 2010-08-10  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Oliver Hunt.

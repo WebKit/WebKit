@@ -7,17 +7,16 @@ object, along with their types.</p>
 if (window.layoutTestController)
     layoutTestController.dumpAsText();
     
-var logBuffer = [];
+var logBuffer = '';
 function log(s)
 {
-    logBuffer.push(s);
+    logBuffer += s;
 }
 
 var pre = document.getElementById('pre');
 function flushLog()
 {
-    var logMessage = logBuffer.join("");
-    pre.appendChild(document.createTextNode(logMessage));
+    pre.appendChild(document.createTextNode(logBuffer));
 }
 
 function tryEval(string)
@@ -98,13 +97,6 @@ var __skip__ = {
 
 function logValue(valueName)
 {
-    var value = tryEval(valueName);
-    var valueType = typeOfNullAware(value);
-
-    // Don't taint the test with our own variables
-    if (value == logBuffer || value == pre)
-        return;
-
     // Don't taint the test with our own properties
     if (/__visitedByLogValue__/.test(valueName) || /__nameWhenVisitedByLogValue__/.test(valueName))
         return;
@@ -115,6 +107,14 @@ function logValue(valueName)
     // Work around Firefox infinite recursion
     if (/\.[0-9]/.test(valueName))
         return;
+
+    var value = tryEval(valueName);
+
+    // Don't taint the test with our own variables
+    if (value === logBuffer || value === pre)
+        return;
+
+    var valueType = typeOfNullAware(value);
 
     // Avoid infinite recursion
     if (valueType == "object" && value.__visitedByLogValue__) { //;
@@ -163,4 +163,5 @@ function logProperties(object, objectName)
 logValue('window');
 logValue('window.getSelection()');
 flushLog();
+
 </script>
