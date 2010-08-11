@@ -1,3 +1,11 @@
+2010-08-11  Gavin Barraclough  <barraclough@apple.com>
+
+        Qt build fix.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::convertValueToQVariant):
+
 2010-08-11  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.
