@@ -37,6 +37,7 @@
 #include "FormState.h"
 #include "FrameLoader.h"
 #include "FrameLoadRequest.h"
+#include "FrameView.h"
 #include "HTTPParsers.h"
 #include "HistoryItem.h"
 #include "HitTestResult.h"
@@ -49,6 +50,7 @@
 #include "PlatformString.h"
 #include "PluginData.h"
 #include "PluginDataChromium.h"
+#include "Settings.h"
 #include "StringExtras.h"
 #include "WebDataSourceImpl.h"
 #include "WebDevToolsAgentPrivate.h"
@@ -1389,6 +1391,14 @@ PassRefPtr<Widget> FrameLoaderClientImpl::createPlugin(
 
     if (!webPlugin->initialize(container.get()))
         return 0;
+
+    if (m_webFrame->frame()->view()->zoomFactor() != 1) {
+        // There's a saved zoom level, so tell the plugin about it since
+        // WebViewImpl::setZoomLevel was called before the plugin was created.
+        webPlugin->setZoomFactor(
+            m_webFrame->frame()->view()->zoomFactor(),
+            m_webFrame->frame()->page()->settings()->zoomMode() == ZoomTextOnly);
+    }
 
     // The element might have been removed during plugin initialization!
     if (!element->renderer())

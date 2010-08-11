@@ -1,3 +1,13 @@
+2010-08-11  John Abd-El-Malek  <jam@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] Inform a plugin about the zoom level when it's created
+        https://bugs.webkit.org/show_bug.cgi?id=42268
+
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::createPlugin):
+
 2010-08-11  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Fix Chromium compilation.
