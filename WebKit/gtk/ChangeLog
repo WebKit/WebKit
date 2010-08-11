@@ -1,3 +1,15 @@
+2010-08-11  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Geolocation policy decision object leaking
+        https://bugs.webkit.org/show_bug.cgi?id=43884
+
+        Use GRefPtr on the policy decision object to fix the leak.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::requestGeolocationPermissionForFrame):
+
 2010-08-10  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Oliver Hunt.
