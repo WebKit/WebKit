@@ -1,5 +1,13 @@
 2010-08-11  Nate Chapin  <japhet@chromium.org>
 
+        Unreviewed, Chromium expectations tweak.
+
+        Mark websocket/tests/frame-length-overflow.html as flaky.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-08-11  Nate Chapin  <japhet@chromium.org>
+
         Reviewed by Dimitri Glazkov.
 
         [Chromium] Remove consistently passing tests
