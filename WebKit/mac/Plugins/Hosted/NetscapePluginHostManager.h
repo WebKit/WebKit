@@ -29,9 +29,9 @@
 #define NetscapePluginHostManager_h
 
 #import <WebCore/PlatformString.h>
-#import <WebCore/StringHash.h>
 #import <wtf/HashMap.h>
 #import <wtf/PassRefPtr.h>
+#import <wtf/text/StringHash.h>
 
 @class WebHostedNetscapePluginView;
 

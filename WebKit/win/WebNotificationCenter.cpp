@@ -31,10 +31,10 @@
 #pragma warning(push, 0)
 #include <WebCore/COMPtr.h>
 #include <WebCore/PlatformString.h>
-#include <WebCore/StringHash.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashTraits.h>
 #include <wtf/Vector.h>
+#include <wtf/text/StringHash.h>
 #pragma warning(pop)
 #include <tchar.h>
 #include <utility>

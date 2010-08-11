@@ -32,10 +32,10 @@
 #include "WebNotificationCenter.h"
 #include "WebPreferenceKeysPrivate.h"
 
+#include <wtf/text/StringHash.h>
 #include <WebCore/FileSystem.h>
 #include <WebCore/Font.h>
 #include <WebCore/PlatformString.h>
-#include <WebCore/StringHash.h>
 #include <WebCore/WKCACFLayerRenderer.h>
 #include "WebLocalizableStrings.h"
 

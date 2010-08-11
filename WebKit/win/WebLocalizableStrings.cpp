@@ -30,8 +30,8 @@
 
 #pragma warning(push, 0)
 #include <WebCore/PlatformString.h>
-#include <WebCore/StringHash.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringHash.h>
 #pragma warning(pop)
 
 #include <wtf/Assertions.h>

@@ -1,3 +1,12 @@
+2010-08-10  Gavin Barraclough  <barraclough@apple.com>
+
+        Build fix (update more includes)
+
+        * WebKitDLL.h:
+        * WebLocalizableStrings.cpp:
+        * WebNotificationCenter.cpp:
+        * WebPreferences.cpp:
+
 2010-08-10  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Oliver Hunt.

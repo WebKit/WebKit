@@ -33,8 +33,8 @@
 #include <winsock2.h>
 #include <windows.h>
 #include <wtf/HashCountedSet.h>
+#include <wtf/text/StringHash.h>
 #include <WebCore/PlatformString.h>
-#include <WebCore/StringHash.h>
 
 #ifdef WEBKIT_EXPORTS
 #define WEBKIT_API __declspec(dllexport)
