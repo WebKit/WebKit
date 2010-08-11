@@ -58,6 +58,11 @@
 #define gtk_selection_data_get_data(data) (data)->data
 #define gtk_selection_data_get_target(data) (data)->target
 #define gtk_adjustment_set_page_size(adj, value) (adj)->page_size = value
+
+void gtk_adjustment_configure(GtkAdjustment* adjustment, gdouble value, gdouble lower, gdouble upper,
+                              gdouble stepIncrement, gdouble pageIncrement, gdouble pageSize);
+
+void gtk_adjustment_set_value(GtkAdjustment* adjusment, gdouble value);
 #endif // GTK_CHECK_VERSION(2, 14, 0)
 
 #endif // GtkVersioning_h

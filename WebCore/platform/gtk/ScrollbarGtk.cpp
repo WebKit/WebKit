@@ -1,6 +1,7 @@
 /*
  *  Copyright (C) 2007, 2009 Holger Hans Peter Freyther zecke@selfish.org
  *  Copyright (C) 2010 Gustavo Noronha Silva <gns@gnome.org>
+ *  Copyright (C) 2010 Collabora Ltd.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -20,10 +21,10 @@
 #include "config.h"
 #include "ScrollbarGtk.h"
 
+#include "FrameView.h"
+#include "GraphicsContext.h"
 #include "GtkVersioning.h"
 #include "IntRect.h"
-#include "GraphicsContext.h"
-#include "FrameView.h"
 #include "ScrollbarTheme.h"
 
 #include <gtk/gtk.h>
@@ -120,15 +121,8 @@ void ScrollbarGtk::detachAdjustment()
     // For the case where we only operate on the GtkAdjustment it is best to
     // reset the values so that the surrounding scrollbar gets updated, or
     // e.g. for a GtkScrolledWindow the scrollbar gets hidden.
-#if GTK_CHECK_VERSION(2, 14, 0)
     gtk_adjustment_configure(m_adjustment, 0, 0, 0, 0, 0, 0);
-#else
-    m_adjustment->lower = 0;
-    m_adjustment->upper = 0;
-    m_adjustment->value = 0;
-    gtk_adjustment_changed(m_adjustment);
-    gtk_adjustment_value_changed(m_adjustment);
-#endif
+
     g_object_unref(m_adjustment);
     m_adjustment = 0;
 }
@@ -162,19 +156,12 @@ void ScrollbarGtk::frameRectsChanged()
 
 void ScrollbarGtk::updateThumbPosition()
 {
-    if (gtk_adjustment_get_value(m_adjustment) != m_currentPos) {
-#if GTK_CHECK_VERSION(2, 14, 0)
+    if (gtk_adjustment_get_value(m_adjustment) != m_currentPos)
         gtk_adjustment_set_value(m_adjustment, m_currentPos);
-#else
-        m_adjustment->value = m_currentPos;
-        gtk_adjustment_value_changed(m_adjustment);
-#endif
-    }
 }
 
 void ScrollbarGtk::updateThumbProportion()
 {
-#if GTK_CHECK_VERSION(2, 14, 0)
     gtk_adjustment_configure(m_adjustment,
                              gtk_adjustment_get_value(m_adjustment),
                              gtk_adjustment_get_lower(m_adjustment),
@@ -182,13 +169,6 @@ void ScrollbarGtk::updateThumbProportion()
                              m_lineStep,
                              m_pageStep,
                              m_visibleSize);
-#else
-    m_adjustment->step_increment = m_lineStep;
-    m_adjustment->page_increment = m_pageStep;
-    m_adjustment->page_size = m_visibleSize;
-    m_adjustment->upper = m_totalSize;
-    gtk_adjustment_changed(m_adjustment);
-#endif
 }
 
 void ScrollbarGtk::setFrameRect(const IntRect& rect)
