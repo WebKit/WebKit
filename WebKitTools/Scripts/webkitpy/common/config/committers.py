@@ -224,7 +224,7 @@ reviewers_list = [
     Reviewer("Gavin Barraclough", "barraclough@apple.com", "gbarra"),
     Reviewer("Geoffrey Garen", "ggaren@apple.com", "ggaren"),
     Reviewer("George Staikos", ["staikos@kde.org", "staikos@webkit.org"]),
-    Reviewer("Gustavo Noronha Silva", ["gns@gnome.org", "kov@webkit.org"], "kov"),
+    Reviewer("Gustavo Noronha Silva", ["gns@gnome.org", "kov@webkit.org", "gustavo.noronha@collabora.co.uk"], "kov"),
     Reviewer("Holger Freyther", ["zecke@selfish.org", "zecke@webkit.org"], "zecke"),
     Reviewer("Jan Alonzo", ["jmalonzo@gmail.com", "jmalonzo@webkit.org"], "janm"),
     Reviewer("Jeremy Orlow", "jorlow@chromium.org", "jorlow"),
