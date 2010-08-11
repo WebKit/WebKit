@@ -1,3 +1,10 @@
+2010-08-10  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Unreviewed, reverting an unintentional change to a file submitted in r65108.
+
+        * bytecode/CodeBlock.h:
+        (JSC::binaryChop):
+
 2010-08-10  Gavin Barraclough  <barraclough@apple.com>
 
         Rubber stamped by Sam Weinig
