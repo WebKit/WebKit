@@ -1,3 +1,16 @@
+2010-08-11  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Improve vsprops copying for Windows build
+        https://bugs.webkit.org/show_bug.cgi?id=41982
+
+        When we detect a new SDK, always copy a new set of vsprops files.
+        Previously, if someone updated their SDK after updating their sources,
+        they could end up with out-of-date vsprops files.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGenerated.make:
+
 2010-08-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.
