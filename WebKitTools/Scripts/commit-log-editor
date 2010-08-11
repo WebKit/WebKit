@@ -65,26 +65,26 @@ my $editor = $ENV{SVN_LOG_EDITOR};
 $editor = $ENV{CVS_LOG_EDITOR} if !$editor;
 $editor = "" if isCommitLogEditor($editor);
 
-my $splitEditor = true;
+my $splitEditor = 1;
 if (!$editor) {
     my $builtEditorApplication = "$baseDir/Release/Commit Log Editor.app/Contents/MacOS/Commit Log Editor";
     if (-x $builtEditorApplication) {
         $editor = $builtEditorApplication;
-        $splitEditor = false;
+        $splitEditor = 0;
     }
 }
 if (!$editor) {
     my $builtEditorApplication = "$baseDir/Debug/Commit Log Editor.app/Contents/MacOS/Commit Log Editor";
     if (-x $builtEditorApplication) {
         $editor = $builtEditorApplication;
-        $splitEditor = false;
+        $splitEditor = 0;
     }
 }
 if (!$editor) {
-    my $installedEditorApplication = "$ENV{HOME}/Applications/Commit Log Editor.app/Contents/MacOS/Commit Log Editor";
+    my $builtEditorApplication = "$ENV{HOME}/Applications/Commit Log Editor.app/Contents/MacOS/Commit Log Editor";
     if (-x $builtEditorApplication) {
         $editor = $builtEditorApplication;
-        $splitEditor = false;
+        $splitEditor = 0;
     }
 }
 

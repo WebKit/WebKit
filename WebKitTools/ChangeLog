@@ -1,3 +1,19 @@
+2010-08-11  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Darin Adler.
+
+        Perl warnings when running commit-log-editor
+        https://bugs.webkit.org/show_bug.cgi?id=43856
+
+        Fixes Perl warnings introduced by the patch for Bug #40548.
+
+        Perl doesn't have symbolic names for True/False. Instead, we
+        should use boolean values. Moreover, the variable installedEditorApplication
+        is not be used and should be renamed builtEditorApplication so that it
+        uses the existing machinery to set the commit log editor application.
+
+        * Scripts/commit-log-editor:
+
 2010-08-11  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
