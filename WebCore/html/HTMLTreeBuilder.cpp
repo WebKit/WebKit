@@ -39,7 +39,6 @@
 #include "HTMLScriptElement.h"
 #include "HTMLToken.h"
 #include "HTMLTokenizer.h"
-#include "LegacyHTMLDocumentParser.h"
 #include "LegacyHTMLTreeBuilder.h"
 #include "LocalizedStrings.h"
 #include "MathMLNames.h"

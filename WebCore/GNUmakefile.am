@@ -1549,8 +1549,6 @@ webcore_sources += \
 	WebCore/html/HTMLTextAreaElement.h \
 	WebCore/html/HTMLTitleElement.cpp \
 	WebCore/html/HTMLTitleElement.h \
-	WebCore/html/LegacyHTMLDocumentParser.cpp \
-	WebCore/html/LegacyHTMLDocumentParser.h \
 	WebCore/html/HTMLUListElement.cpp \
 	WebCore/html/HTMLUListElement.h \
 	WebCore/html/HTMLViewSourceDocument.cpp \
@@ -1564,8 +1562,6 @@ webcore_sources += \
 	WebCore/html/LabelsNodeList.cpp \
 	WebCore/html/LabelsNodeList.h \
 	WebCore/html/MediaError.h \
-	WebCore/html/LegacyPreloadScanner.cpp \
-	WebCore/html/LegacyPreloadScanner.h \
 	WebCore/html/StepRange.cpp \
 	WebCore/html/StepRange.h \
 	WebCore/html/TextMetrics.h \

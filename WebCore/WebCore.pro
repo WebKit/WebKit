@@ -737,14 +737,12 @@ SOURCES += \
     html/HTMLTableSectionElement.cpp \
     html/HTMLTextAreaElement.cpp \
     html/HTMLTitleElement.cpp \
-    html/LegacyHTMLDocumentParser.cpp \
     html/HTMLUListElement.cpp \
     html/HTMLViewSourceDocument.cpp \
     html/HTMLViewSourceParser.cpp \
     html/ImageData.cpp \
     html/ImageResizerThread.cpp \
     html/LabelsNodeList.cpp \
-    html/LegacyPreloadScanner.cpp \
     html/StepRange.cpp \
     html/ValidityState.cpp \
     inspector/ConsoleMessage.cpp \
@@ -1501,7 +1499,6 @@ HEADERS += \
     html/HTMLTableSectionElement.h \
     html/HTMLTextAreaElement.h \
     html/HTMLTitleElement.h \
-    html/LegacyHTMLDocumentParser.h \
     html/HTMLUListElement.h \
     html/HTMLVideoElement.h \
     html/HTMLViewSourceDocument.h \
@@ -1509,7 +1506,6 @@ HEADERS += \
     html/ImageData.h \
     html/ImageResizerThread.h \
     html/LabelsNodeList.h \
-    html/LegacyPreloadScanner.h \
     html/StepRange.h \
     html/TimeRanges.h \
     html/ValidityState.h \

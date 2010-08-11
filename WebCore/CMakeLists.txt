@@ -1033,14 +1033,12 @@ SET(WebCore_SOURCES
     html/HTMLTableSectionElement.cpp
     html/HTMLTextAreaElement.cpp
     html/HTMLTitleElement.cpp
-    html/LegacyHTMLDocumentParser.cpp
     html/HTMLUListElement.cpp
     html/HTMLViewSourceDocument.cpp
     html/HTMLViewSourceParser.cpp
     html/ImageData.cpp
     html/ImageResizerThread.cpp
     html/LabelsNodeList.cpp
-    html/LegacyPreloadScanner.cpp
     html/StepRange.cpp
     html/ValidityState.cpp
     html/canvas/CanvasGradient.cpp
@@ -1858,7 +1856,6 @@ ADD_SOURCE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/css/CSSPrimitiveValueMappings.h C
 ADD_SOURCE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/HTMLDocument.cpp DocTypeStrings.cpp)
 ADD_SOURCE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/platform/graphics/Color.cpp ColorData.cpp)
 ADD_SOURCE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/css/CSSParser.cpp tokenizer.cpp)
-ADD_SOURCE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/LegacyPreloadScanner.cpp HTMLEntityNames.cpp)
 ADD_SOURCE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/HTMLEntityParser.cpp HTMLEntityNames.cpp)
 ADD_SOURCE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/HTMLTreeBuilder.cpp MathMLNames.cpp)
 ADD_SOURCE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/css/CSSStyleSelector.cpp UserAgentStyleSheetsData.cpp UserAgentStyleSheets.h)

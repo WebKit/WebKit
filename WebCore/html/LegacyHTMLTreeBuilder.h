@@ -26,6 +26,7 @@
 
 #include "FragmentScriptingPermission.h"
 #include "HTMLParserErrorCodes.h"
+#include "NamedNodeMap.h"
 #include "QualifiedName.h"
 #include <wtf/Forward.h>
 #include <wtf/OwnPtr.h>
@@ -44,7 +45,97 @@ class HTMLParserQuirks;
 class Node;
 
 struct HTMLStackElem;
-struct Token;
+
+/**
+ * @internal
+ * represents one HTML tag. Consists of a numerical id, and the list
+ * of attributes. Can also represent text. In this case the id = 0 and
+ * text contains the text.
+ */
+struct Token {
+    Token()
+        : beginTag(true)
+        , selfClosingTag(false)
+        , brokenXMLStyle(false)
+        , m_sourceInfo(0)
+    { }
+    ~Token() { }
+
+    void addAttribute(AtomicString& attrName, const AtomicString& v, bool viewSourceMode);
+
+    bool isOpenTag(const QualifiedName& fullName) const { return beginTag && fullName.localName() == tagName; }
+    bool isCloseTag(const QualifiedName& fullName) const { return !beginTag && fullName.localName() == tagName; }
+
+    void reset()
+    {
+        attrs = 0;
+        text = 0;
+        tagName = nullAtom;
+        beginTag = true;
+        selfClosingTag = false;
+        brokenXMLStyle = false;
+        if (m_sourceInfo)
+            m_sourceInfo->clear();
+    }
+
+    void addViewSourceChar(UChar c)
+    {
+        if (!m_sourceInfo.get())
+            m_sourceInfo.set(new Vector<UChar>);
+        m_sourceInfo->append(c);
+    }
+
+    RefPtr<NamedNodeMap> attrs;
+    RefPtr<StringImpl> text;
+    AtomicString tagName;
+    bool beginTag;
+    bool selfClosingTag;
+    bool brokenXMLStyle;
+    OwnPtr<Vector<UChar> > m_sourceInfo;
+};
+
+enum DoctypeState {
+    DoctypeBegin,
+    DoctypeBeforeName,
+    DoctypeName,
+    DoctypeAfterName,
+    DoctypeBeforePublicID,
+    DoctypePublicID,
+    DoctypeAfterPublicID,
+    DoctypeBeforeSystemID,
+    DoctypeSystemID,
+    DoctypeAfterSystemID,
+    DoctypeBogus
+};
+
+class DoctypeToken {
+public:
+    DoctypeToken() {}
+
+    void reset()
+    {
+        m_name.clear();
+        m_publicID.clear();
+        m_systemID.clear();
+        m_state = DoctypeBegin;
+        m_source.clear();
+        m_forceQuirks = false;
+    }
+
+    DoctypeState state() { return m_state; }
+    void setState(DoctypeState s) { m_state = s; }
+
+    Vector<UChar> m_name;
+    Vector<UChar> m_publicID;
+    Vector<UChar> m_systemID;
+    DoctypeState m_state;
+
+    Vector<UChar> m_source;
+
+    bool m_forceQuirks; // Used by the HTML5 parser.
+};
+
+//-----------------------------------------------------------------------------
 
 /**
  * The parser for HTML. It receives a stream of tokens from the LegacyHTMLDocumentParser, and

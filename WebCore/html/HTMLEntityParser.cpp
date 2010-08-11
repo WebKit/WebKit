@@ -247,4 +247,10 @@ unsigned consumeHTMLEntity(SegmentedString& source, bool& notEnoughCharacters, U
     return 0;
 }
 
+UChar decodeNamedEntity(const char* name)
+{
+    const Entity* e = findEntity(name, strlen(name));
+    return e ? e->code : 0;
+}
+
 } // namespace WebCore

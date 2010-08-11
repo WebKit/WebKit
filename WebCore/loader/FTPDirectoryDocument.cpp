@@ -27,9 +27,9 @@
 #include "FTPDirectoryDocument.h"
 
 #include "CharacterNames.h"
+#include "HTMLDocumentParser.h"
 #include "HTMLNames.h"
 #include "HTMLTableElement.h"
-#include "LegacyHTMLDocumentParser.h"
 #include "LocalizedStrings.h"
 #include "Logging.h"
 #include "FTPDirectoryParser.h"
@@ -48,13 +48,13 @@ namespace WebCore {
 
 using namespace HTMLNames;
     
-class FTPDirectoryDocumentParser : public LegacyHTMLDocumentParser {
+class FTPDirectoryDocumentParser : public HTMLDocumentParser {
 public:
     FTPDirectoryDocumentParser(HTMLDocument*);
 
     virtual void append(const SegmentedString&);
     virtual void finish();
-    
+
     virtual bool isWaitingForScripts() const { return false; }
 
     inline void checkBuffer(int len = 10)
@@ -79,7 +79,7 @@ private:
     void parseAndAppendOneLine(const String&);
     void appendEntry(const String& name, const String& size, const String& date, bool isDirectory);    
     PassRefPtr<Element> createTDForFilename(const String&);
-    
+
     RefPtr<HTMLTableElement> m_tableElement;
 
     bool m_skipLF;
@@ -94,14 +94,14 @@ private:
 };
 
 FTPDirectoryDocumentParser::FTPDirectoryDocumentParser(HTMLDocument* document)
-    : LegacyHTMLDocumentParser(document, false)
+    : HTMLDocumentParser(document, false)
     , m_skipLF(false)
     , m_parsedTemplate(false)
     , m_size(254)
     , m_buffer(static_cast<UChar*>(fastMalloc(sizeof(UChar) * m_size)))
     , m_dest(m_buffer)
 {
-}    
+}
 
 void FTPDirectoryDocumentParser::appendEntry(const String& filename, const String& size, const String& date, bool isDirectory)
 {
@@ -109,7 +109,7 @@ void FTPDirectoryDocumentParser::appendEntry(const String& filename, const Strin
 
     RefPtr<Element> rowElement = m_tableElement->insertRow(-1, ec);
     rowElement->setAttribute("class", "ftpDirectoryEntryRow", ec);
-   
+
     RefPtr<Element> element = document()->createElement(tdTag, false);
     element->appendChild(Text::create(document(), String(&noBreakSpace, 1)), ec);
     if (isDirectory)
@@ -117,16 +117,16 @@ void FTPDirectoryDocumentParser::appendEntry(const String& filename, const Strin
     else
         element->setAttribute("class", "ftpDirectoryIcon ftpDirectoryTypeFile", ec);
     rowElement->appendChild(element, ec);
-    
+
     element = createTDForFilename(filename);
     element->setAttribute("class", "ftpDirectoryFileName", ec);
     rowElement->appendChild(element, ec);
-    
+
     element = document()->createElement(tdTag, false);
     element->appendChild(Text::create(document(), date), ec);
     element->setAttribute("class", "ftpDirectoryFileDate", ec);
     rowElement->appendChild(element, ec);
-    
+
     element = document()->createElement(tdTag, false);
     element->appendChild(Text::create(document(), size), ec);
     element->setAttribute("class", "ftpDirectoryFileSize", ec);
@@ -136,7 +136,7 @@ void FTPDirectoryDocumentParser::appendEntry(const String& filename, const Strin
 PassRefPtr<Element> FTPDirectoryDocumentParser::createTDForFilename(const String& filename)
 {
     ExceptionCode ec;
-    
+
     String fullURL = document()->baseURL().string();
     if (fullURL[fullURL.length() - 1] == '/')
         fullURL.append(filename);
@@ -146,10 +146,10 @@ PassRefPtr<Element> FTPDirectoryDocumentParser::createTDForFilename(const String
     RefPtr<Element> anchorElement = document()->createElement(aTag, false);
     anchorElement->setAttribute("href", fullURL, ec);
     anchorElement->appendChild(Text::create(document(), filename), ec);
-    
+
     RefPtr<Element> tdElement = document()->createElement(tdTag, false);
     tdElement->appendChild(anchorElement, ec);
-    
+
     return tdElement.release();
 }
 
@@ -157,18 +157,18 @@ static String processFilesizeString(const String& size, bool isDirectory)
 {
     if (isDirectory)
         return "--";
-    
+
     bool valid;
     int64_t bytes = size.toUInt64(&valid);
     if (!valid)
         return unknownFileSizeText();
-     
+
     if (bytes < 1000000)
         return String::format("%.2f KB", static_cast<float>(bytes)/1000);
 
     if (bytes < 1000000000)
         return String::format("%.2f MB", static_cast<float>(bytes)/1000000);
-        
+
     return String::format("%.2f GB", static_cast<float>(bytes)/1000000000);
 }
 
@@ -177,19 +177,19 @@ static bool wasLastDayOfMonth(int year, int month, int day)
     static int lastDays[] = { 31, 0, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
     if (month < 0 || month > 11)
         return false;
-        
+
     if (month == 2) {
         if (year % 4 == 0 && (year % 100 || year % 400 == 0)) {
             if (day == 29)
                 return true;
             return false;
         }
-         
+
         if (day == 28)
             return true;
         return false;
     }
-    
+
     return lastDays[month] == day;
 }
 
@@ -198,11 +198,11 @@ static String processFileDateString(const FTPTime& fileTime)
     // FIXME: Need to localize this string?
 
     String timeOfDay;
-    
+
     if (!(fileTime.tm_hour == 0 && fileTime.tm_min == 0 && fileTime.tm_sec == 0)) {
         int hour = fileTime.tm_hour;
         ASSERT(hour >= 0 && hour < 24);
-        
+
         if (hour < 12) {
             if (hour == 0)
                 hour = 12;
@@ -214,15 +214,15 @@ static String processFileDateString(const FTPTime& fileTime)
             timeOfDay = String::format(", %i:%02i PM", hour, fileTime.tm_min);
         }
     }
-    
+
     // If it was today or yesterday, lets just do that - but we have to compare to the current time
     struct tm now;
     time_t now_t = time(NULL);
     getLocalTime(&now_t, &now);
-    
+
     // localtime does "year = current year - 1900", compensate for that for readability and comparison purposes
     now.tm_year += 1900;
-        
+
     if (fileTime.tm_year == now.tm_year) {
         if (fileTime.tm_mon == now.tm_mon) {
             if (fileTime.tm_mday == now.tm_mday)
@@ -235,23 +235,23 @@ static String processFileDateString(const FTPTime& fileTime)
             wasLastDayOfMonth(fileTime.tm_year, fileTime.tm_mon, fileTime.tm_mday))
                 return "Yesterday" + timeOfDay;
     }
-    
+
     if (fileTime.tm_year == now.tm_year - 1 && fileTime.tm_mon == 12 && fileTime.tm_mday == 31 && now.tm_mon == 1 && now.tm_mday == 1)
         return "Yesterday" + timeOfDay;
 
     static const char* months[] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "???" };
-    
+
     int month = fileTime.tm_mon;
     if (month < 0 || month > 11)
         month = 12;
-    
+
     String dateString;
-    
+
     if (fileTime.tm_year > -1)
         dateString = String::format("%s %i, %i", months[month], fileTime.tm_mday, fileTime.tm_year);
     else
         dateString = String::format("%s %i, %i", months[month], fileTime.tm_mday, now.tm_year);
-    
+
     return dateString + timeOfDay;
 }
 
@@ -261,22 +261,22 @@ void FTPDirectoryDocumentParser::parseAndAppendOneLine(const String& inputLine)
     CString latin1Input = inputLine.latin1();
 
     FTPEntryType typeResult = parseOneFTPLine(latin1Input.data(), m_listState, result);
-    
+
     // FTPMiscEntry is a comment or usage statistic which we don't care about, and junk is invalid data - bail in these 2 cases
     if (typeResult == FTPMiscEntry || typeResult == FTPJunkEntry)
         return;
-        
+
     String filename(result.filename, result.filenameLength);
     if (result.type == FTPDirectoryEntry) {
         filename.append("/");
-        
+
         // We have no interest in linking to "current directory"
         if (filename == "./")
             return;
     }
 
     LOG(FTP, "Appending entry - %s, %s", filename.ascii().data(), result.fileSize.ascii().data());
-        
+
     appendEntry(filename, processFilesizeString(result.fileSize, result.type == FTPDirectoryEntry), processFileDateString(result.modifiedTime), result.type == FTPDirectoryEntry);
 }
 
@@ -302,8 +302,8 @@ bool FTPDirectoryDocumentParser::loadDocumentTemplate()
         return false;
     }
 
-    LegacyHTMLDocumentParser::insert(String(templateDocumentData->data(), templateDocumentData->size()));
-    
+    HTMLDocumentParser::insert(String(templateDocumentData->data(), templateDocumentData->size()));
+
     RefPtr<Element> tableElement = document()->getElementById("ftpDirectoryTable");
     if (!tableElement)
         LOG_ERROR("Unable to find element by id \"ftpDirectoryTable\" in the template document.");
@@ -329,7 +329,7 @@ bool FTPDirectoryDocumentParser::loadDocumentTemplate()
         body->appendChild(m_tableElement, ec);
     else
         document()->appendChild(m_tableElement, ec);
-        
+
     return true;
 }
 
@@ -340,10 +340,10 @@ void FTPDirectoryDocumentParser::createBasicDocument()
     // FIXME: Make this "basic document" more acceptable
 
     RefPtr<Element> bodyElement = document()->createElement(bodyTag, false);
-                            
+
     ExceptionCode ec;
     document()->appendChild(bodyElement, ec);
-    
+
     RefPtr<Element> tableElement = document()->createElement(tableTag, false);
     m_tableElement = static_cast<HTMLTableElement*>(tableElement.get());
     m_tableElement->setAttribute("id", "ftpDirectoryTable", ec);
@@ -360,14 +360,14 @@ void FTPDirectoryDocumentParser::append(const SegmentedString& source)
             createBasicDocument();
         ASSERT(m_tableElement);
     }
-        
+
     bool foundNewLine = false;
-    
+
     m_dest = m_buffer;
     SegmentedString str = source;
     while (!str.isEmpty()) {
         UChar c = *str;
-        
+
         if (c == '\r') {
             *m_dest++ = '\n';
             foundNewLine = true;
@@ -382,13 +382,13 @@ void FTPDirectoryDocumentParser::append(const SegmentedString& source)
             *m_dest++ = c;
             m_skipLF = false;
         }
-        
+
         str.advance();
-        
+
         // Maybe enlarge the buffer
         checkBuffer();
     }
-    
+
     if (!foundNewLine) {
         m_dest = m_buffer;
         return;
@@ -396,7 +396,7 @@ void FTPDirectoryDocumentParser::append(const SegmentedString& source)
 
     UChar* start = m_buffer;
     UChar* cursor = start;
-    
+
     while (cursor < m_dest) {
         if (*cursor == '\n') {
             m_carryOver.append(String(start, cursor - start));
@@ -408,7 +408,7 @@ void FTPDirectoryDocumentParser::append(const SegmentedString& source)
         } else 
             cursor++;
     }
-    
+
     // Copy the partial line we have left to the carryover buffer
     if (cursor - start > 1)
         m_carryOver.append(String(start, cursor - start - 1));
@@ -421,11 +421,11 @@ void FTPDirectoryDocumentParser::finish()
         parseAndAppendOneLine(m_carryOver);
         m_carryOver = String();
     }
-    
+
     m_tableElement = 0;
     fastFree(m_buffer);
-        
-    LegacyHTMLDocumentParser::finish();
+
+    HTMLDocumentParser::finish();
 }
 
 FTPDirectoryDocument::FTPDirectoryDocument(Frame* frame, const KURL& url)

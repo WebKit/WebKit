@@ -33,6 +33,9 @@ namespace WebCore {
 
 unsigned consumeHTMLEntity(SegmentedString&, bool& notEnoughCharacters, UChar additionalAllowedCharacter = '\0');
 
+// Used by the XML parser.  Not suitable for use in HTML parsing.  Use consumeHTMLEntity instead.
+UChar decodeNamedEntity(const char*);
+
 }
 
 #endif

@@ -25,7 +25,6 @@
 
 #include "Document.h"
 #include "HTMLDocumentParser.h"
-#include "LegacyHTMLDocumentParser.h"
 #include "Page.h"
 #include "Settings.h"
 #include "XMLDocumentParser.h"
@@ -84,8 +83,6 @@ bool DocumentFragment::shouldUseLegacyHTMLParser() const
 
 void DocumentFragment::parseHTML(const String& source, Element* contextElement, FragmentScriptingPermission scriptingPermission)
 {
-    if (shouldUseLegacyHTMLParser())
-        return LegacyHTMLDocumentParser::parseDocumentFragment(source, this, scriptingPermission);
     HTMLDocumentParser::parseDocumentFragment(source, this, contextElement, scriptingPermission);
 }
 

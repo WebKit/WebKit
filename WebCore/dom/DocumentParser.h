@@ -58,8 +58,8 @@ public:
 
     virtual void stopParsing() { m_parserStopped = true; }
     // FIXME: processingData() is only used by DocumentLoader::isLoadingInAPISense
-    // and is very unclear as to what it actually means.  Only LegacyHTMLDocumentParser
-    // actually implements it.
+    // and is very unclear as to what it actually means.  The LegacyHTMLDocumentParser
+    // used to implements it.
     virtual bool processingData() const { return false; }
 
     // FIXME: Exposed for HTMLFormControlElement::removedFromTree.  HTML DOM

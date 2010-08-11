@@ -1,3 +1,63 @@
+2010-08-11  Adam Barth  <abarth@webkit.org>
+
+        Rubber-stamped by Eric Seidel.
+
+        Delete LegacyHTMLDocumentParser and LegacyPreloadScanner
+        https://bugs.webkit.org/show_bug.cgi?id=43836
+
+        These classes are bit-rotting disturbingly quickly.  We removed the
+        last dependencies on these classes and so we can remove them.
+
+        We might need to preserve some of their particular quirks to handle
+        some legacy applications, but our current thinking is to do that with
+        individual settings that affect the new parser.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        * dom/DocumentFragment.cpp:
+        (WebCore::DocumentFragment::parseHTML):
+        * dom/DocumentParser.h:
+        * dom/XMLDocumentParserLibxml2.cpp:
+        * dom/XMLDocumentParserQt.cpp:
+        * html/HTMLConstructionSite.cpp:
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::createParser):
+        * html/HTMLEntityParser.cpp:
+        (WebCore::decodeNamedEntity):
+        * html/HTMLEntityParser.h:
+        * html/HTMLFormControlElement.cpp:
+        * html/HTMLTreeBuilder.cpp:
+        * html/HTMLViewSourceDocument.cpp:
+        (WebCore::HTMLViewSourceDocument::createParser):
+        * html/LegacyHTMLDocumentParser.cpp: Removed.
+        * html/LegacyHTMLDocumentParser.h: Removed.
+        * html/LegacyHTMLTreeBuilder.cpp:
+        * html/LegacyPreloadScanner.cpp: Removed.
+        * html/LegacyPreloadScanner.h: Removed.
+        * loader/FTPDirectoryDocument.cpp:
+        (WebCore::FTPDirectoryDocumentParser::FTPDirectoryDocumentParser):
+        (WebCore::FTPDirectoryDocumentParser::appendEntry):
+        (WebCore::FTPDirectoryDocumentParser::createTDForFilename):
+        (WebCore::processFilesizeString):
+        (WebCore::wasLastDayOfMonth):
+        (WebCore::processFileDateString):
+        (WebCore::FTPDirectoryDocumentParser::parseAndAppendOneLine):
+        (WebCore::FTPDirectoryDocumentParser::loadDocumentTemplate):
+        (WebCore::FTPDirectoryDocumentParser::createBasicDocument):
+        (WebCore::FTPDirectoryDocumentParser::append):
+        (WebCore::FTPDirectoryDocumentParser::finish):
+        * page/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::decodeHTMLEntities):
+        * page/XSSAuditor.h:
+        * platform/text/SegmentedString.cpp:
+        (WebCore::SegmentedString::prepend):
+
 2010-08-11  Chris Jerdonek  <cjerdonek@webkit.org>
 
         Reviewed by Adam Barth.

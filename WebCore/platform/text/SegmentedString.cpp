@@ -112,8 +112,7 @@ void SegmentedString::append(const SegmentedSubstring &s)
 void SegmentedString::prepend(const SegmentedSubstring &s)
 {
     ASSERT(!escaped());
-    // FIXME: Add this ASSERT once we've deleted the LegacyHTMLDocumentParser.
-    // ASSERT(!s.numberOfCharactersConsumed());
+    ASSERT(!s.numberOfCharactersConsumed());
     if (s.m_length) {
         // FIXME: We're assuming that the prepend were originally consumed by
         //        this SegmentedString.  We're also ASSERTing that s is a fresh
