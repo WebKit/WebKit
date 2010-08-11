@@ -149,6 +149,7 @@ sub GetClassName
     return "WebDOMObject" if $name eq "DOMObject";
     return "bool" if $name eq "boolean";
     return $name if $codeGenerator->IsPrimitiveType($name);
+    return "WebDOMCustomVoidCallback" if $name eq "VoidCallback";
 
     return "WebDOM$name";
 }
@@ -302,6 +303,11 @@ sub AddIncludesForType
 
     if ($type eq "SerializedScriptValue") {
         $implIncludes{"SerializedScriptValue.h"} = 1;
+        return;
+    }
+    
+    if ($type eq "VoidCallback") {
+        $implIncludes{"WebDOMCustomVoidCallback.h"} = 1;
         return;
     }
 
@@ -781,9 +787,6 @@ sub GenerateImplementation
             my %needsCustom = ();
 
             my $parameterIndex = 0;
-
-            # FIXME: Handle Callback support, we're just passing 0 as ScriptExecutionContext for now.
-            push(@parameterNames, "0") if ($dataNode->extendedAttributes->{"Callback"});
 
             my $functionSig = "$returnType $className\:\:$functionName(";
             foreach my $param (@{$function->parameters}) {

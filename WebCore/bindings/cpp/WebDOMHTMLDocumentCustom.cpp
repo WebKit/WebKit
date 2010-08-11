@@ -25,11 +25,13 @@
 #include "SegmentedString.h"
 #include "WebExceptionHandler.h"
 
+#include <wtf/Forward.h>
+
 static inline void documentWrite(const WebDOMString& text, WebCore::HTMLDocument* document, bool addNewline)
 {
     WebCore::SegmentedString segmentedString = WTF::String(text);
     if (addNewline)
-        segmentedString.append(WebCore::SegmentedString(&WebCore::newlineCharacter, 1));
+        segmentedString.append(WebCore::SegmentedString(WTF::String(&WebCore::newlineCharacter)));
     document->write(segmentedString);
 }
 

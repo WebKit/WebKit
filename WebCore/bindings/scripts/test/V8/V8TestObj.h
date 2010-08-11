@@ -23,9 +23,9 @@
 
 #include "TestObj.h"
 #include "WrapperTypeInfo.h"
+#include "wtf/text/StringHash.h"
 #include <v8.h>
 #include <wtf/HashMap.h>
-#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 

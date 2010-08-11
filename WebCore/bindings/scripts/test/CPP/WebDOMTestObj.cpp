@@ -30,9 +30,9 @@
 #include "WebDOMString.h"
 #include "WebExceptionHandler.h"
 #include "WebNativeEventListener.h"
+#include "wtf/text/AtomicString.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
-#include <wtf/text/AtomicString.h>
 
 struct WebDOMTestObj::WebDOMTestObjPrivate {
     WebDOMTestObjPrivate(WebCore::TestObj* object = 0)

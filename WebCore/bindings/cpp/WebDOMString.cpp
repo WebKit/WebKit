@@ -110,7 +110,7 @@ WebDOMString::operator WTF::AtomicString() const
 
 bool WebDOMString::equals(const char* string) const
 {
-    return WebCore::equal(m_private, string);
+    return WTF::equal(m_private, string);
 }
 
 void WebDOMString::assign(WebDOMStringPrivate* p)

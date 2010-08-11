@@ -1,3 +1,10 @@
+2010-08-11  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fix. WebCore::String -> WTF::String fixes.
+
+        * WebEdit.cpp:
+        (wxWebEditCommand::SetNodeAttribute):
+
 2010-08-10  Gavin Barraclough  <barraclough@apple.com>
 
         Rubber stamped by Sam Weinig.

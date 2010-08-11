@@ -220,17 +220,12 @@ def build(bld):
         excludes.append('WebDOMEventTarget.cpp')
         excludes.append('WebDOMAbstractView.cpp')
         excludes.append('WebDOMBlobBuilder.cpp')
-        excludes.append('WebDOMDatabaseCallback.cpp')
         excludes.append('WebDOMEventListenerCustom.cpp')
         excludes.append('WebDOMElementTimeControl.cpp')
         excludes.append('WebDOMImageData.cpp')
         excludes.append('WebDOMInspectorBackend.cpp')
         excludes.append('WebDOMScriptProfile.cpp')
         excludes.append('WebDOMScriptProfileNode.cpp')
-        excludes.append('WebDOMSQLStatementCallback.cpp')
-        excludes.append('WebDOMSQLTransactionErrorCallback.cpp')
-        excludes.append('WebDOMSQLTransactionSyncCallback.cpp')
-        excludes.append('WebDOMSQLTransactionCallback.cpp')
         excludes.append('WebNativeEventListener.cpp')
         
         if building_on_win32:
