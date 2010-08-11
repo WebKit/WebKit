@@ -864,6 +864,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
             return emitAndResumeIn(source, DataState);
         else if (isASCIIUpper(cc)) {
             m_token->addNewAttribute();
+            m_token->beginAttributeName(source.numberOfCharactersConsumed());
             m_token->appendToAttributeName(toLowerCase(cc));
             ADVANCE_TO(AttributeNameState);
         } else if (cc == InputStreamPreprocessor::endOfFileMarker) {
@@ -873,6 +874,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
             if (cc == '"' || cc == '\'' || cc == '<' || cc == '=')
                 parseError();
             m_token->addNewAttribute();
+            m_token->beginAttributeName(source.numberOfCharactersConsumed());
             m_token->appendToAttributeName(cc);
             ADVANCE_TO(AttributeNameState);
         }
@@ -880,19 +882,24 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
     END_STATE()
 
     BEGIN_STATE(AttributeNameState) {
-        if (isTokenizerWhitespace(cc))
+        if (isTokenizerWhitespace(cc)) {
+            m_token->endAttributeName(source.numberOfCharactersConsumed());
             ADVANCE_TO(AfterAttributeNameState);
-        else if (cc == '/')
+        } else if (cc == '/') {
+            m_token->endAttributeName(source.numberOfCharactersConsumed());
             ADVANCE_TO(SelfClosingStartTagState);
-        else if (cc == '=')
+        } else if (cc == '=') {
+            m_token->endAttributeName(source.numberOfCharactersConsumed());
             ADVANCE_TO(BeforeAttributeValueState);
-        else if (cc == '>')
+        } else if (cc == '>') {
+            m_token->endAttributeName(source.numberOfCharactersConsumed());
             return emitAndResumeIn(source, DataState);
-        else if (isASCIIUpper(cc)) {
+        } else if (isASCIIUpper(cc)) {
             m_token->appendToAttributeName(toLowerCase(cc));
             ADVANCE_TO(AttributeNameState);
         } else if (cc == InputStreamPreprocessor::endOfFileMarker) {
             parseError();
+            m_token->endAttributeName(source.numberOfCharactersConsumed());
             RECONSUME_IN(DataState);
         } else {
             if (cc == '"' || cc == '\'' || cc == '<' || cc == '=')
@@ -914,6 +921,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
             return emitAndResumeIn(source, DataState);
         else if (isASCIIUpper(cc)) {
             m_token->addNewAttribute();
+            m_token->beginAttributeName(source.numberOfCharactersConsumed());
             m_token->appendToAttributeName(toLowerCase(cc));
             ADVANCE_TO(AttributeNameState);
         } else if (cc == InputStreamPreprocessor::endOfFileMarker) {
@@ -923,6 +931,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
             if (cc == '"' || cc == '\'' || cc == '<')
                 parseError();
             m_token->addNewAttribute();
+            m_token->beginAttributeName(source.numberOfCharactersConsumed());
             m_token->appendToAttributeName(cc);
             ADVANCE_TO(AttributeNameState);
         }
@@ -932,13 +941,16 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
     BEGIN_STATE(BeforeAttributeValueState) {
         if (isTokenizerWhitespace(cc))
             ADVANCE_TO(BeforeAttributeValueState);
-        else if (cc == '"')
+        else if (cc == '"') {
+            m_token->beginAttributeValue(source.numberOfCharactersConsumed() + 1);
             ADVANCE_TO(AttributeValueDoubleQuotedState);
-        else if (cc == '&')
+        } else if (cc == '&') {
+            m_token->beginAttributeValue(source.numberOfCharactersConsumed());
             RECONSUME_IN(AttributeValueUnquotedState);
-        else if (cc == '\'')
+        } else if (cc == '\'') {
+            m_token->beginAttributeValue(source.numberOfCharactersConsumed() + 1);
             ADVANCE_TO(AttributeValueSingleQuotedState);
-        else if (cc == '>') {
+        } else if (cc == '>') {
             parseError();
             return emitAndResumeIn(source, DataState);
         } else if (cc == InputStreamPreprocessor::endOfFileMarker) {
@@ -947,6 +959,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
         } else {
             if (cc == '<' || cc == '=' || cc == '`')
                 parseError();
+            m_token->beginAttributeValue(source.numberOfCharactersConsumed());
             m_token->appendToAttributeValue(cc);
             ADVANCE_TO(AttributeValueUnquotedState);
         }
@@ -954,13 +967,15 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
     END_STATE()
 
     BEGIN_STATE(AttributeValueDoubleQuotedState) {
-        if (cc == '"')
+        if (cc == '"') {
+            m_token->endAttributeValue(source.numberOfCharactersConsumed());
             ADVANCE_TO(AfterAttributeValueQuotedState);
-        else if (cc == '&') {
+        } else if (cc == '&') {
             m_additionalAllowedCharacter = '"';
             ADVANCE_TO(CharacterReferenceInAttributeValueState);
         } else if (cc == InputStreamPreprocessor::endOfFileMarker) {
             parseError();
+            m_token->endAttributeValue(source.numberOfCharactersConsumed());
             RECONSUME_IN(DataState);
         } else {
             m_token->appendToAttributeValue(cc);
@@ -970,13 +985,15 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
     END_STATE()
 
     BEGIN_STATE(AttributeValueSingleQuotedState) {
-        if (cc == '\'')
+        if (cc == '\'') {
+            m_token->endAttributeValue(source.numberOfCharactersConsumed());
             ADVANCE_TO(AfterAttributeValueQuotedState);
-        else if (cc == '&') {
+        } else if (cc == '&') {
             m_additionalAllowedCharacter = '\'';
             ADVANCE_TO(CharacterReferenceInAttributeValueState);
         } else if (cc == InputStreamPreprocessor::endOfFileMarker) {
             parseError();
+            m_token->endAttributeValue(source.numberOfCharactersConsumed());
             RECONSUME_IN(DataState);
         } else {
             m_token->appendToAttributeValue(cc);
@@ -986,15 +1003,18 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
     END_STATE()
 
     BEGIN_STATE(AttributeValueUnquotedState) {
-        if (isTokenizerWhitespace(cc))
+        if (isTokenizerWhitespace(cc)) {
+            m_token->endAttributeValue(source.numberOfCharactersConsumed());
             ADVANCE_TO(BeforeAttributeNameState);
-        else if (cc == '&') {
+        } else if (cc == '&') {
             m_additionalAllowedCharacter = '>';
             ADVANCE_TO(CharacterReferenceInAttributeValueState);
-        } else if (cc == '>')
+        } else if (cc == '>') {
+            m_token->endAttributeValue(source.numberOfCharactersConsumed());
             return emitAndResumeIn(source, DataState);
-        else if (cc == InputStreamPreprocessor::endOfFileMarker) {
+        } else if (cc == InputStreamPreprocessor::endOfFileMarker) {
             parseError();
+            m_token->endAttributeValue(source.numberOfCharactersConsumed());
             RECONSUME_IN(DataState);
         } else {
             if (cc == '"' || cc == '\'' || cc == '<' || cc == '=' || cc == '`')

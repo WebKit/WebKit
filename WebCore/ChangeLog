@@ -1,3 +1,27 @@
+2010-08-10  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Clients of HTMLTokenizer should be able to see where characters went in the token
+        https://bugs.webkit.org/show_bug.cgi?id=43766
+
+        When viewing the source of a document, we want to colorize different
+        parts of the input depending on how they were tokenized.  In this
+        patch, we expose the internal segmentation of a token by recording the
+        start and end offsets for each attribute name and each attribute value.
+
+        * html/HTMLToken.h:
+        (WebCore::HTMLToken::addNewAttribute):
+        (WebCore::HTMLToken::beginAttributeName):
+        (WebCore::HTMLToken::endAttributeName):
+        (WebCore::HTMLToken::beginAttributeValue):
+        (WebCore::HTMLToken::endAttributeValue):
+        (WebCore::HTMLToken::appendToAttributeName):
+        (WebCore::HTMLToken::appendToAttributeValue):
+        (WebCore::AtomicHTMLToken::AtomicHTMLToken):
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::nextToken):
+
 2010-08-10  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by David Levin.
