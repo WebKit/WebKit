@@ -1,3 +1,16 @@
+2010-08-11  Fady Samuel  <fsamuel@chromium.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        RenderSVGRoot::nodeAtPoint truncates translated mouse coordinates
+        https://bugs.webkit.org/show_bug.cgi?id=41968
+
+        New layout test checks for proper hit region.
+
+        * platform/chromium-mac/svg/hittest/svg-rect-hit-expected.txt: 
+        * platform/chromium/test_expectations.txt:
+        * svg/hittest/svg-rect-hit.html: Added.
+
 2010-08-11  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Darin Adler.

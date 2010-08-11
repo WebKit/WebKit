@@ -3172,6 +3172,9 @@ BUGWK43480 SKIP : fast/dom/Geolocation/delayed-permission-denied.html = TEXT TIM
 BUG51161 LINUX DEBUG : svg/W3C-SVG-1.1/masking-mask-01-b.svg = CRASH
 BUG51161 LINUX DEBUG : svg/clip-path/clip-path-text.svg = CRASH
 
+// Fixed only on Mac
+BUG41968 LINUX WIN : svg/hittest/svg-rect-hit.html = TEXT
+
 BUGWK43543 : http/tests/misc/isindex-formdata.html = TIMEOUT
 BUGWK43543 : http/tests/misc/isindex-with-no-form-base-href.html = TEXT TIMEOUT
 
