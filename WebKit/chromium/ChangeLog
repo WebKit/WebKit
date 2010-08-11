@@ -1,3 +1,9 @@
+2010-08-11  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Build fix, turn off yet-unbaked DEVICE_ORIENTATION stuff.
+
+        * features.gypi: Turned it off.
+
 2010-08-11  Evan Stade  <estade@chromium.org>
 
         Reviewed by David Levin.
