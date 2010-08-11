@@ -4,7 +4,7 @@
 <script src=video-test.js></script>
 <script>
     video.src = findMediaFile("video", "content/test");
-    testExpected("video.networkState", HTMLMediaElement.NETWORK_EMPTY);
+    testExpected("video.networkState", HTMLMediaElement.NETWORK_NO_SOURCE);
 
     waitForEvent("loadstart");
     waitForEvent("ratechange");

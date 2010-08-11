@@ -6,7 +6,7 @@
     didReceiveLoadStartEvent = false;
     video.addEventListener('loadstart', function() { didReceiveLoadStartEvent = true; });
     video.src = findMediaFile("video", "content/test");
-    testExpected("video.networkState", HTMLMediaElement.NETWORK_EMPTY);
+    testExpected("video.networkState", HTMLMediaElement.NETWORK_NO_SOURCE);
     run("document.body.removeChild(video)");
     testExpected("didReceiveLoadStartEvent", false);
     endTest();

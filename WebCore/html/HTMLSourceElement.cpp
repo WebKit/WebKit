@@ -52,9 +52,9 @@ PassRefPtr<HTMLSourceElement> HTMLSourceElement::create(const QualifiedName& tag
     return adoptRef(new HTMLSourceElement(tagName, document));
 }
 
-void HTMLSourceElement::insertedIntoDocument()
+void HTMLSourceElement::insertedIntoTree(bool deep)
 {
-    HTMLElement::insertedIntoDocument();
+    HTMLElement::insertedIntoTree(deep);
     if (parentNode() && (parentNode()->hasTagName(audioTag) ||  parentNode()->hasTagName(videoTag))) {
         HTMLMediaElement* media = static_cast<HTMLMediaElement*>(parentNode());
         if (media->networkState() == HTMLMediaElement::NETWORK_EMPTY)

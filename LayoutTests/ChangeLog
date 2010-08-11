@@ -1,3 +1,17 @@
+2010-08-11  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Inserting a <source> element should immediately set networkState to NETWORK_NO_SOURCE.
+        https://bugs.webkit.org/show_bug.cgi?id=42897
+
+        * media/remove-from-document-no-load-expected.txt:
+        * media/remove-from-document-no-load.html:
+        * media/video-pause-empty-events-expected.txt:
+        * media/video-pause-empty-events.html:
+        * media/video-source-inserted-expected.txt: Added.
+        * media/video-source-inserted.html: Added.
+
 2010-08-11  Nate Chapin  <japhet@chromium.org>
 
         Unreviewed, Chromium rebaseline.

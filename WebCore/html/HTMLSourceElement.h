@@ -52,7 +52,7 @@ private:
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
     virtual int tagPriority() const { return 0; }
     
-    virtual void insertedIntoDocument();
+    virtual void insertedIntoTree(bool);
     virtual bool isURLAttribute(Attribute*) const;
 
     void errorEventTimerFired(Timer<HTMLSourceElement>*);

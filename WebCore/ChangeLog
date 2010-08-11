@@ -1,3 +1,26 @@
+2010-08-11  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Inserting a <source> element should immediately set networkState to NETWORK_NO_SOURCE.
+        https://bugs.webkit.org/show_bug.cgi?id=42897
+
+        A <source> element inserted as a child of a media element with a networkState of NETWORK_EMPTY
+        should cause the networkState to immediately change to NETWORK_NO_SOURCE.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Remove unused variable m_processingLoad.
+        (WebCore::HTMLMediaElement::prepareForLoad): Set m_networkState to NETWORK_NO_SOURCE.
+        (WebCore::HTMLMediaElement::loadInternal): Remove unused variable m_processingLoad.
+        (WebCore::HTMLMediaElement::selectMediaResource): No need to change m_networkState, it was done in prepareForLoad.
+        * html/HTMLMediaElement.h:
+
+        * html/HTMLSourceElement.cpp:
+        (WebCore::HTMLSourceElement::insertedIntoTree): Renamed from insertedIntoDocument because we want
+        to do this setup whether or not the parent media element is in the document.
+        * html/HTMLSourceElement.h:
+
 2010-08-11  Adam Barth  <abarth@webkit.org>
 
         Rubber-stamped by Eric Seidel.

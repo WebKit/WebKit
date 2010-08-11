@@ -340,7 +340,6 @@ private:
 
     bool m_playing : 1;
     bool m_isWaitingUntilMediaCanStart : 1;
-    bool m_processingLoad : 1;
     bool m_delayingTheLoadEvent : 1;
     bool m_haveFiredLoadedData : 1;
     bool m_inActiveDocument : 1;
