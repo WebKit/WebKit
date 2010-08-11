@@ -1,3 +1,20 @@
+2010-08-11  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        Implementation dispatchDecidePolicyForNavigationAction
+        https://bugs.webkit.org/show_bug.cgi?id=43544
+
+        Add ewk_view_navigation_policy_decision to decide whether url which
+        user clicked will be loaded or not.
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::dispatchDecidePolicyForNavigationAction):
+        * ewk/ewk_private.h:
+        * ewk/ewk_view.cpp:
+        (ewk_view_navigation_policy_decision):
+        * ewk/ewk_view.h:
+
 2010-08-10  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed build fix.
