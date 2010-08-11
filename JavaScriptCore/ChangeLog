@@ -1,3 +1,20 @@
+2010-08-11  Nathan Lawrence  <nlawrence@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        At collection time, we frequently want to mark a cell, while checking
+        whether it was originally checked.  Previously, this was a get
+        operation follwed by a set operation.  Fusing the two saves
+        computation and gives a 0.5% sunspider speedup.
+
+        * runtime/Collector.h:
+        (JSC::CollectorBitmap::getset):
+        (JSC::Heap::checkMarkCell):
+        * runtime/JSArray.h:
+        (JSC::MarkStack::drain):
+        * runtime/JSCell.h:
+        (JSC::MarkStack::append):
+
 2010-08-11  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam Roben.

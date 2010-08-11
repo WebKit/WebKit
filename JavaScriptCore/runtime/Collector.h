@@ -130,6 +130,7 @@ namespace JSC {
         void registerThread(); // Only needs to be called by clients that can use the same heap from multiple threads.
 
         static bool isCellMarked(const JSCell*);
+        static bool checkMarkCell(const JSCell*);
         static void markCell(JSCell*);
 
         WeakGCHandle* addWeakGCHandle(JSCell*);
@@ -226,6 +227,14 @@ namespace JSC {
         FixedArray<uint32_t, BITMAP_WORDS> bits;
         bool get(size_t n) const { return !!(bits[n >> 5] & (1 << (n & 0x1F))); } 
         void set(size_t n) { bits[n >> 5] |= (1 << (n & 0x1F)); } 
+        bool getset(size_t n)
+        {
+            unsigned i = (1 << (n & 0x1F));
+            uint32_t& b = bits[n >> 5];
+            bool r = !!(b & i);
+            b |= i;
+            return r;
+        } 
         void clear(size_t n) { bits[n >> 5] &= ~(1 << (n & 0x1F)); } 
         void clearAll() { memset(bits.data(), 0, sizeof(bits)); }
         ALWAYS_INLINE void advanceToNextPossibleFreeCell(size_t& startCell)
@@ -286,6 +295,11 @@ namespace JSC {
     inline bool Heap::isCellMarked(const JSCell* cell)
     {
         return cellBlock(cell)->marked.get(cellOffset(cell));
+    }
+
+    inline bool Heap::checkMarkCell(const JSCell* cell)
+    {
+        return cellBlock(cell)->marked.getset(cellOffset(cell));
     }
 
     inline void Heap::markCell(JSCell* cell)

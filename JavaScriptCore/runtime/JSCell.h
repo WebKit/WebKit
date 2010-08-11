@@ -333,9 +333,8 @@ namespace JSC {
     {
         ASSERT(!m_isCheckingForDefaultMarkViolation);
         ASSERT(cell);
-        if (Heap::isCellMarked(cell))
+        if (Heap::checkMarkCell(cell))
             return;
-        Heap::markCell(cell);
         if (cell->structure()->typeInfo().type() >= CompoundType)
             m_values.append(cell);
     }

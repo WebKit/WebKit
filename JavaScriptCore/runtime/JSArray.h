@@ -236,7 +236,7 @@ namespace JSC {
                 current.m_values++;
 
                 JSCell* cell;
-                if (!value || !value.isCell() || Heap::isCellMarked(cell = value.asCell())) {
+                if (!value || !value.isCell() || Heap::checkMarkCell(cell = value.asCell())) {
                     if (current.m_values == end) {
                         m_markSets.removeLast();
                         continue;
@@ -244,7 +244,6 @@ namespace JSC {
                     goto findNextUnmarkedNullValue;
                 }
 
-                Heap::markCell(cell);
                 if (cell->structure()->typeInfo().type() < CompoundType) {
                     if (current.m_values == end) {
                         m_markSets.removeLast();
