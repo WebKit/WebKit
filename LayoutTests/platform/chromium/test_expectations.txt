@@ -3187,3 +3187,6 @@ BUG51416 : fast/dom/DeviceMotion/window-property.html = TEXT
 
 // Slow test introduced in r64817
 BUG51571 : http/tests/misc/bad-charset-alias.html = TIMEOUT
+
+// Failure from http://trac.webkit.org/changeset/65107
+BUG51757 : animations/suspend-resume-animation.html = TEXT
