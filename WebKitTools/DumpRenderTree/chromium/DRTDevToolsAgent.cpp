@@ -84,11 +84,6 @@ WebCString DRTDevToolsAgent::injectedScriptSource()
     return webkit_support::GetDevToolsInjectedScriptSource();
 }
 
-WebCString DRTDevToolsAgent::injectedScriptDispatcherSource()
-{
-    return webkit_support::GetDevToolsInjectedScriptDispatcherSource();
-}
-
 WebCString DRTDevToolsAgent::debuggerScriptSource()
 {
     return webkit_support::GetDevToolsDebuggerScriptSource();
