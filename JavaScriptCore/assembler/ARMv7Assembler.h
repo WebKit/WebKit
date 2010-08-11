@@ -462,8 +462,8 @@ public:
     typedef enum {
         ConditionEQ,
         ConditionNE,
-        ConditionHS,
-        ConditionLO,
+        ConditionHS, ConditionCS = ConditionHS,
+        ConditionLO, ConditionCC = ConditionLO,
         ConditionMI,
         ConditionPL,
         ConditionVS,
@@ -475,9 +475,7 @@ public:
         ConditionGT,
         ConditionLE,
         ConditionAL,
-        
-        ConditionCS = ConditionHS,
-        ConditionCC = ConditionLO,
+        ConditionInvalid
     } Condition;
 
     enum JumpType { JumpNoCondition, JumpCondition, JumpFullSize };
@@ -522,7 +520,7 @@ public:
     private:
         JmpSrc(int offset, JumpType type)
             : m_offset(offset)
-            , m_condition(0xffff)
+            , m_condition(ConditionInvalid)
             , m_type(type)
         {
             ASSERT(m_type != JumpCondition);

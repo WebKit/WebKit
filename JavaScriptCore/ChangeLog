@@ -1,3 +1,15 @@
+2010-08-11  Gabor Loki  <loki@webkit.org>
+
+        Qt build fix (ARMv7).
+
+        Fix invalid conversion from int to Condition.
+        Add ARMv7Assembler.cpp to JavaScriptCore.pro.
+
+        * JavaScriptCore.pro:
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::):
+        (JSC::ARMv7Assembler::JmpSrc::JmpSrc):
+
 2010-08-11  Nathan Lawrence  <nlawrence@apple.com>
 
         Reviewed by Geoffrey Garen.

@@ -79,6 +79,7 @@ SOURCES += \
     API/JSValueRef.cpp \
     API/OpaqueJSString.cpp \
     assembler/ARMAssembler.cpp \
+    assembler/ARMv7Assembler.cpp \
     assembler/MacroAssemblerARM.cpp \
     bytecode/CodeBlock.cpp \
     bytecode/JumpTable.cpp \
