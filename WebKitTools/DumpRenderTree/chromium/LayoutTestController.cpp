@@ -850,7 +850,7 @@ void LayoutTestController::suspendAnimations()
     if (!controller)
         return;
 
-    controller->suspendAnimations(core(webFrame)->document());
+    controller->suspendAnimations(webFrame->document());
 }
 
 void LayoutTestController::resumeAnimations()
@@ -863,7 +863,7 @@ void LayoutTestController::resumeAnimations()
     if (!controller)
         return;
 
-    controller->resumeAnimations(core(webFrame)->document());
+    controller->resumeAnimations(webFrame->document());
 }
 
 void LayoutTestController::pauseAnimationAtTimeOnElementWithId(const CppArgumentList& arguments, CppVariant* result)
