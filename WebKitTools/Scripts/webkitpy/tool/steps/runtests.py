@@ -57,6 +57,7 @@ class RunTests(AbstractStep):
         if self._options.non_interactive:
             args.append("--no-launch-safari")
             args.append("--exit-after-n-failures=1")
+            args.append("--wait-for-httpd")
             # FIXME: Hack to work around https://bugs.webkit.org/show_bug.cgi?id=38912
             # when running the commit-queue on a mac leopard machine since compositing
             # does not work reliably on Leopard due to various graphics driver/system bugs.

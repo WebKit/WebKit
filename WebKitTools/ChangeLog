@@ -1,3 +1,15 @@
+2010-08-11  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Trying waiting for httpd lock in the EWS
+        https://bugs.webkit.org/show_bug.cgi?id=43833
+
+        If this works, we can probably run the tests on the mac-ews, which
+        would be very exciting.  :)
+
+        * Scripts/webkitpy/tool/steps/runtests.py:
+
 2010-08-11  Marcus Bulach  <bulach@chromium.org>
 
         Reviewed by Eric Seidel.
