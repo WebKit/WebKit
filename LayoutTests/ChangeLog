@@ -1,3 +1,9 @@
+2010-08-11  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Rebaseline Chromium test.
+
+        * platform/chromium-win/http/tests/loading/bad-scheme-subframe-expected.txt:
+
 2010-08-11  Julie Parent  <jparent@chromium.org>
 
         Reviewed by Justin Garcia.
