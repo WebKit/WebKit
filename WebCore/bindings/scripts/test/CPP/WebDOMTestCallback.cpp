@@ -65,6 +65,13 @@ WebDOMTestCallback::WebDOMTestCallback(const WebDOMTestCallback& copy)
     m_impl = copy.impl() ? new WebDOMTestCallbackPrivate(copy.impl()) : 0;
 }
 
+WebDOMTestCallback& WebDOMTestCallback::operator=(const WebDOMTestCallback& copy)
+{
+    delete m_impl;
+    m_impl = copy.impl() ? new WebDOMTestCallbackPrivate(copy.impl()) : 0;
+    return *this;
+}
+
 WebCore::TestCallback* WebDOMTestCallback::impl() const
 {
     return m_impl ? m_impl->impl.get() : 0;

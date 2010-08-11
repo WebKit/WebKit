@@ -64,6 +64,7 @@ public:
     WebDOMNotification toNotification();
     WebDOMWebSocket toWebSocket();
 
+    WebDOMEventTarget& operator=(const WebDOMEventTarget&);
 protected:
     struct WebDOMEventTargetPrivate;
     WebDOMEventTargetPrivate* m_impl;

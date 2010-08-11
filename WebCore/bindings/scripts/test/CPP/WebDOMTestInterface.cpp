@@ -56,6 +56,13 @@ WebDOMTestInterface::WebDOMTestInterface(const WebDOMTestInterface& copy)
     m_impl = copy.impl() ? new WebDOMTestInterfacePrivate(copy.impl()) : 0;
 }
 
+WebDOMTestInterface& WebDOMTestInterface::operator=(const WebDOMTestInterface& copy)
+{
+    delete m_impl;
+    m_impl = copy.impl() ? new WebDOMTestInterfacePrivate(copy.impl()) : 0;
+    return *this;
+}
+
 WebCore::TestInterface* WebDOMTestInterface::impl() const
 {
     return m_impl ? m_impl->impl.get() : 0;

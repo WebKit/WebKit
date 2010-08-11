@@ -1,3 +1,25 @@
+2010-08-11  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Reviewed by Adam Barth.
+
+        Override operator= for C++ DOM binding classes with private structs
+        and update C++ DOM bindings test results.
+        https://bugs.webkit.org/show_bug.cgi?id=43735
+
+        * bindings/cpp/WebDOMEventTarget.cpp:
+        (WebDOMEventTarget::operator=):
+        * bindings/cpp/WebDOMEventTarget.h:
+        * bindings/scripts/CodeGeneratorCPP.pm:
+        * bindings/scripts/test/CPP/WebDOMTestCallback.cpp:
+        (WebDOMTestCallback::operator=):
+        * bindings/scripts/test/CPP/WebDOMTestCallback.h:
+        * bindings/scripts/test/CPP/WebDOMTestInterface.cpp:
+        (WebDOMTestInterface::operator=):
+        * bindings/scripts/test/CPP/WebDOMTestInterface.h:
+        * bindings/scripts/test/CPP/WebDOMTestObj.cpp:
+        (WebDOMTestObj::operator=):
+        * bindings/scripts/test/CPP/WebDOMTestObj.h:
+
 2010-08-11  Julie Parent  <jparent@chromium.org>
 
         Reviewed by Justin Garcia.

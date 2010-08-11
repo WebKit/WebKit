@@ -43,6 +43,7 @@ public:
     WebDOMTestCallback();
     explicit WebDOMTestCallback(WebCore::TestCallback*);
     WebDOMTestCallback(const WebDOMTestCallback&);
+    WebDOMTestCallback& operator=(const WebDOMTestCallback&);
     ~WebDOMTestCallback();
 
     bool callbackWithClass1Param(const WebDOMClass1& class1Param);

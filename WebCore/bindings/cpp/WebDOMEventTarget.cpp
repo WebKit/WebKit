@@ -197,3 +197,10 @@ WebDOMEventTarget toWebKit(WebCore::EventTarget* value)
     ASSERT_NOT_REACHED();
     return WebDOMEventTarget();
 }
+
+WebDOMEventTarget& WebDOMEventTarget::operator=(const WebDOMEventTarget& copy)
+{
+    delete m_impl;
+    m_impl = copy.impl() ? new WebDOMEventTargetPrivate(copy.impl()) : 0;
+    return *this;
+}

@@ -40,6 +40,7 @@ public:
     WebDOMTestObj();
     explicit WebDOMTestObj(WebCore::TestObj*);
     WebDOMTestObj(const WebDOMTestObj&);
+    WebDOMTestObj& operator=(const WebDOMTestObj&);
     ~WebDOMTestObj();
 
     enum {
@@ -104,12 +105,18 @@ public:
     int customAttr() const;
     void setCustomAttr(int);
     WebDOMString scriptStringAttr() const;
+#if ENABLE(Condition1)
     int conditionalAttr1() const;
     void setConditionalAttr1(int);
+#endif
+#if ENABLE(Condition1) && ENABLE(Condition2)
     int conditionalAttr2() const;
     void setConditionalAttr2(int);
+#endif
+#if ENABLE(Condition1) || ENABLE(Condition2)
     int conditionalAttr3() const;
     void setConditionalAttr3(int);
+#endif
     int description() const;
     int id() const;
     void setId(int);

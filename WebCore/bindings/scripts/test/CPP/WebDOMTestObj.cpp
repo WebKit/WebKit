@@ -61,6 +61,13 @@ WebDOMTestObj::WebDOMTestObj(const WebDOMTestObj& copy)
     m_impl = copy.impl() ? new WebDOMTestObjPrivate(copy.impl()) : 0;
 }
 
+WebDOMTestObj& WebDOMTestObj::operator=(const WebDOMTestObj& copy)
+{
+    delete m_impl;
+    m_impl = copy.impl() ? new WebDOMTestObjPrivate(copy.impl()) : 0;
+    return *this;
+}
+
 WebCore::TestObj* WebDOMTestObj::impl() const
 {
     return m_impl ? m_impl->impl.get() : 0;

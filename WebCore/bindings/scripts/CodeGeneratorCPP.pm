@@ -379,9 +379,10 @@ sub GenerateHeader
     push(@headerContent, "    $className();\n");
     push(@headerContent, "    explicit $className($implClassNameWithNamespace*);\n");
 
-    # Copy constructor on classes which have the d-ptr
+    # Copy constructor and assignment operator on classes which have the d-ptr
     if ($parentName eq "WebDOMObject") {
         push(@headerContent, "    $className(const $className&);\n");
+        push(@headerContent, "    ${className}& operator=(const $className&);\n");
     }
 
     # Destructor
@@ -632,6 +633,13 @@ sub GenerateImplementation
         push(@implContent, "    : ${baseClass}()\n");
         push(@implContent, "{\n");
         push(@implContent, "    m_impl = copy.impl() ? new ${className}Private(copy.impl()) : 0;\n");
+        push(@implContent, "}\n\n");
+
+        push(@implContent, "${className}& ${className}::operator\=(const ${className}& copy)\n");
+        push(@implContent, "{\n");
+        push(@implContent, "    delete m_impl;\n");
+        push(@implContent, "    m_impl = copy.impl() ? new ${className}Private(copy.impl()) : 0;\n");
+        push(@implContent, "    return *this;\n");
         push(@implContent, "}\n\n");
 
         push(@implContent, "$implClassNameWithNamespace* ${className}::impl() const\n");
