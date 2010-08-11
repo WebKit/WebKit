@@ -549,13 +549,35 @@ Element* HTMLElement::insertAdjacentElement(const String& where, Element* newChi
     return static_cast<Element*>(returnValue); 
 }
 
+// Step 3 of http://www.whatwg.org/specs/web-apps/current-work/multipage/apis-in-html-documents.html#insertadjacenthtml()
+static Element* contextElementForInsertion(const String& where, Element* element, ExceptionCode& ec)
+{
+    if (equalIgnoringCase(where, "beforeBegin") || equalIgnoringCase(where, "afterEnd")) {
+        Node* parent = element->parentNode();
+        if (parent && parent->isDocumentNode()) {
+            ec = NO_MODIFICATION_ALLOWED_ERR;
+            return 0;
+        }
+        ASSERT(!parent || parent->isElementNode());
+        return static_cast<Element*>(parent);
+    }
+    if (equalIgnoringCase(where, "afterBegin") || equalIgnoringCase(where, "beforeEnd"))
+        return element;
+    ec =  SYNTAX_ERR;
+    return 0;
+}
+
 void HTMLElement::insertAdjacentHTML(const String& where, const String& markup, ExceptionCode& ec)
 {
     RefPtr<DocumentFragment> fragment = document()->createDocumentFragment();
+    Element* contextElement = contextElementForInsertion(where, this, ec);
+    if (!contextElement)
+        return;
+
     if (document()->isHTMLDocument())
-         fragment->parseHTML(markup, this);
+         fragment->parseHTML(markup, contextElement);
     else {
-        if (!fragment->parseXML(markup, this))
+        if (!fragment->parseXML(markup, contextElement))
             // FIXME: We should propagate a syntax error exception out here.
             return;
     }

@@ -1,3 +1,17 @@
+2010-08-10  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Fix three ASSERTs hit with the HTML5 TreeBuilder in fragment mode
+        https://bugs.webkit.org/show_bug.cgi?id=43762
+
+        In order to fix the insertAdjacentHTML I had to some behavior.
+        The behavior I changed brings us closer to the HTML5 spec,
+        but since it was not previously tested, I added tests.
+
+        * fast/dom/HTMLElement/insertAdjacentHTML-errors-expected.txt: Added.
+        * fast/dom/HTMLElement/insertAdjacentHTML-errors.html: Added.
+
 2010-08-11  Yoshiki Hayashi  <yhayashi@google.com>
 
         Reviewed by Shinichiro Hamaji.
@@ -212,6 +226,10 @@
 
         * fast/dom/HTMLElement/insertAdjacentHTML-errors-expected.txt: Added.
         * fast/dom/HTMLElement/insertAdjacentHTML-errors.html: Added.
+        * fast/dom/HTMLElement/script-tests/TEMPLATE.html: Added.
+        * fast/dom/HTMLElement/script-tests/insertAdjacentHTML-errors.js: Added.
+        * fast/dynamic/insertAdjacentHTML-expected.txt:
+         - Updated to match HTML5's expected exception on error.
 
 2010-08-10  MORITA Hajime  <morrita@google.com>
 

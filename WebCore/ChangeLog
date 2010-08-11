@@ -1,3 +1,30 @@
+2010-08-10  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Fix three ASSERTs hit with the HTML5 TreeBuilder in fragment mode
+        https://bugs.webkit.org/show_bug.cgi?id=43762
+
+        In fixing the insertAdjacentHTML I had to make small changes to
+        the error logic, which ended up bringing us closer to HTML5.
+
+        Test: fast/dom/HTMLElement/insertAdjacentHTML-errors.html
+
+        * html/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::attach):
+         - This ASSERT was just wrong, the child should not be attached
+           in the case the parent is not attached.
+        * html/HTMLElement.cpp:
+        (WebCore::contextElementForInsertion):
+         - This is part of HTML5, needed to know what to call the
+           HTML or XML parsers with.  The previous code always passed
+           "this" which is wrong in the case of beforeBegin or afterEnd insertion.
+        (WebCore::HTMLElement::insertAdjacentHTML):
+         - Use the right contextElement now that we know how to compute it.
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processEndTagForInCell):
+         - This ASSERT is direct from the spec, but it's wrong, so I've filed a spec bug.
+
 2010-08-11  Adam Barth  <abarth@webkit.org>
 
         Attempt to fix Windows build.
