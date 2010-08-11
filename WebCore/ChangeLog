@@ -1,3 +1,20 @@
+2010-08-11  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fix length calculation to be more robust.
+        https://bugs.webkit.org/show_bug.cgi?id=43777
+
+        Test: websocket/tests/frame-length-overflow.html
+
+        * websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::appendToBuffer): len is size_t.
+         - add sanity check for integer wraps.
+        (WebCore::WebSocketChannel::skipBuffer): len is size_t.
+        (WebCore::WebSocketChannel::processBuffer): length is size_t.
+         - add sanity check for integer wraps.
+        * websockets/WebSocketChannel.h: change m_bufferSize and len to size_t.
+
 2010-08-10  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

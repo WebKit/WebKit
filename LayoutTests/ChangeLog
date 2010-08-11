@@ -1,3 +1,14 @@
+2010-08-11  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fix length calculation to be more robust.
+        https://bugs.webkit.org/show_bug.cgi?id=43777
+
+        * websocket/tests/frame-length-overflow-expected.txt: Added.
+        * websocket/tests/frame-length-overflow.html: Added.
+        * websocket/tests/frame-length-overflow_wsh.py: Added.
+
 2010-08-10  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
