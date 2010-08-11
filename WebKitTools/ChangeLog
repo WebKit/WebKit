@@ -1,3 +1,20 @@
+2010-08-11  Marcus Bulach  <bulach@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Check in a script to list redundant test outputs.
+        https://bugs.webkit.org/show_bug.cgi?id=37630
+
+        If e.g. platform/mac-leopard is missing an expected test output, we
+        fall back on platform/mac.  This means it's possible to grow redundant
+        test outputs, where we have the same expected data in both a platform
+        directory and another platform it falls back on.
+        (original patch by Evan Marting <evan@chromium.org> https://bugs.webkit.org/attachment.cgi?id=53398)
+
+        * Scripts/deduplicate-tests: Added.
+        * Scripts/webkitpy/layout_tests/deduplicate_tests.py: Added.
+        * Scripts/webkitpy/layout_tests/deduplicate_tests_unittest.py: Added.
+
 2010-08-11  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Ariya Hidayat.
