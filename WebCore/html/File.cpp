@@ -26,6 +26,7 @@
 #include "config.h"
 #include "File.h"
 
+#include "BlobData.h"
 #include "FileSystem.h"
 #include "MIMETypeRegistry.h"
 
@@ -35,6 +36,13 @@ File::File(ScriptExecutionContext* scriptExecutionContext, const String& path)
     : Blob(scriptExecutionContext, path)
 {
     Init();
+}
+
+File::File(ScriptExecutionContext* scriptExecutionContext, const String& path, const KURL& url, const String& type)
+    : Blob(scriptExecutionContext, url, type, BlobDataItem::toEndOfFile)
+{
+    // FIXME: To be removed when we switch to using BlobData.
+     m_items.append(FileBlobItem::create(path));
 }
 
 #if ENABLE(DIRECTORY_UPLOAD)

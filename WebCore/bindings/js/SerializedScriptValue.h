@@ -33,10 +33,13 @@ typedef const struct OpaqueJSContext* JSContextRef;
 typedef const struct OpaqueJSValue* JSValueRef;
 
 namespace WebCore {
+    class Blob;
     class File;
     class FileList;
     class ImageData;
     class SerializedArray;
+    class SerializedBlob;
+    class SerializedFile;
     class SerializedFileList;
     class SerializedImageData;
     class SerializedObject;
@@ -46,6 +49,8 @@ namespace WebCore {
         virtual ~SharedSerializedData() { }
         SerializedArray* asArray();
         SerializedObject* asObject();
+        SerializedBlob* asBlob();
+        SerializedFile* asFile();
         SerializedFileList* asFileList();
         SerializedImageData* asImageData();
     };
@@ -62,6 +67,7 @@ namespace WebCore {
             ObjectType,
             ArrayType,
             StringType,
+            BlobType,
             FileType,
             FileListType,
             ImageDataType
@@ -87,7 +93,8 @@ namespace WebCore {
             , m_string(string.crossThreadString()) // FIXME: Should be able to just share the Rep
         {
         }
-        
+
+        explicit SerializedScriptValueData(const Blob*);
         explicit SerializedScriptValueData(const File*);
         explicit SerializedScriptValueData(const FileList*);
         explicit SerializedScriptValueData(const ImageData*);
@@ -122,7 +129,7 @@ namespace WebCore {
 
         String asString() const
         {
-            ASSERT(m_type == StringType || m_type == FileType);
+            ASSERT(m_type == StringType);
             return m_string;
         }
 
@@ -138,6 +145,20 @@ namespace WebCore {
             ASSERT(m_type == ArrayType);
             ASSERT(m_sharedData);
             return m_sharedData->asArray();
+        }
+
+        SerializedBlob* asBlob() const
+        {
+            ASSERT(m_type == BlobType);
+            ASSERT(m_sharedData);
+            return m_sharedData->asBlob();
+        }
+
+        SerializedFile* asFile() const
+        {
+            ASSERT(m_type == FileType);
+            ASSERT(m_sharedData);
+            return m_sharedData->asFile();
         }
 
         SerializedFileList* asFileList() const

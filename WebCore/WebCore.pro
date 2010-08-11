@@ -625,6 +625,8 @@ SOURCES += \
     html/AsyncImageResizer.cpp \
     html/Blob.cpp \
     html/BlobBuilder.cpp \
+    html/BlobRegistryImpl.cpp \
+    html/BlobURL.cpp \
     html/canvas/CanvasGradient.cpp \
     html/canvas/CanvasPattern.cpp \
     html/canvas/CanvasPixelArray.cpp \
@@ -867,6 +869,7 @@ SOURCES += \
     platform/animation/Animation.cpp \
     platform/animation/AnimationList.cpp \
     platform/Arena.cpp \
+    platform/BlobData.cpp \
     platform/BlobItem.cpp \
     platform/text/Base64.cpp \
     platform/text/BidiContext.cpp \
@@ -1390,6 +1393,9 @@ HEADERS += \
     html/AsyncImageResizer.h \
     html/Blob.h \
     html/BlobBuilder.h \
+    html/BlobRegistryImp.h \
+    html/BlobStorageData.h \
+    html/BlobURL.h \
     html/canvas/CanvasGradient.h \
     html/canvas/CanvasPattern.h \
     html/canvas/CanvasPixelArray.h \
@@ -1641,7 +1647,9 @@ HEADERS += \
     platform/animation/Animation.h \
     platform/animation/AnimationList.h \
     platform/Arena.h \
+    platform/BlobData.h \
     platform/BlobItem.h \
+    platform/BlobRegistry.h \
     platform/ContentType.h \
     platform/ContextMenu.h \
     platform/CrossThreadCopier.h \

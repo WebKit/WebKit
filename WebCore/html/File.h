@@ -39,6 +39,12 @@ public:
         return adoptRef(new File(scriptExecutionContext, path));
     }
 
+    // For deserialization.
+    static PassRefPtr<File> create(ScriptExecutionContext* scriptExecutionContext, const String& path, const KURL& url, const String& type)
+    {
+        return adoptRef(new File(scriptExecutionContext, path, url, type));
+    }
+
 #if ENABLE(DIRECTORY_UPLOAD)
     static PassRefPtr<File> create(ScriptExecutionContext* scriptExecutionContext, const String& relativePath, const String& path)
     {
@@ -60,11 +66,15 @@ public:
 
 private:
     File(ScriptExecutionContext*, const String& path);
-    void Init();
+
+    // For deserialization.
+    File(ScriptExecutionContext*, const String& path, const KURL&, const String& type);
 
 #if ENABLE(DIRECTORY_UPLOAD)
     File(ScriptExecutionContext*, const String& relativePath, const String& path);
 #endif
+
+    void Init();
 };
 
 } // namespace WebCore

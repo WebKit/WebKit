@@ -1,3 +1,88 @@
+2010-08-10  Jian Li  <jianli@chromium.org>
+
+        Reviewed by David Levin.
+
+        Add the support to register the blob data.
+        https://bugs.webkit.org/show_bug.cgi?id=43600
+
+        This is the first step towards adding Blob URL support. The blob has
+        an internal URL (used by FileReader) and public URLs (used by Blob.url).
+        The URL and its associated data are managed by BlobRegistry interface.
+
+        This patch does not remove the usage of BlobItem. It will be removed
+        when all the blob data support is hooked up and the new tests will be
+        added then.
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::SerializedBlob::create):
+        (WebCore::SerializedBlob::url):
+        (WebCore::SerializedBlob::type):
+        (WebCore::SerializedBlob::size):
+        (WebCore::SerializedBlob::SerializedBlob):
+        (WebCore::SerializedFile::create):
+        (WebCore::SerializedFile::path):
+        (WebCore::SerializedFile::url):
+        (WebCore::SerializedFile::type):
+        (WebCore::SerializedFile::SerializedFile):
+        (WebCore::SerializedFileList::item):
+        (WebCore::SerializedFileList::SerializedFileList):
+        (WebCore::SerializedScriptValueData::SerializedScriptValueData):
+        (WebCore::SharedSerializedData::asBlob):
+        (WebCore::SharedSerializedData::asFile):
+        (WebCore::SerializingTreeWalker::convertIfTerminal):
+        (WebCore::DeserializingTreeWalker::convertIfTerminal):
+        (WebCore::TeardownTreeWalker::convertIfTerminal):
+        * bindings/js/SerializedScriptValue.h:
+        (WebCore::SerializedScriptValueData::):
+        (WebCore::SerializedScriptValueData::asString):
+        (WebCore::SerializedScriptValueData::asBlob):
+        (WebCore::SerializedScriptValueData::asFile):
+        * bindings/v8/SerializedScriptValue.cpp:
+        (WebCore::ZigZag::Writer::writeBlob):
+        (WebCore::ZigZag::Writer::writeFile):
+        (WebCore::ZigZag::Writer::writeFileList):
+        (WebCore::ZigZag::Writer::doWriteUintHelper):
+        (WebCore::ZigZag::Writer::doWriteUint32):
+        (WebCore::ZigZag::Writer::doWriteUint64):
+        (WebCore::ZigZag::Serializer::writeBlob):
+        (WebCore::ZigZag::Serializer::writeFile):
+        (WebCore::ZigZag::Reader::readBlob):
+        (WebCore::ZigZag::Reader::readFile):
+        (WebCore::ZigZag::Reader::readFileList):
+        (WebCore::ZigZag::Reader::doReadUintHelper):
+        (WebCore::ZigZag::Reader::doReadUint32):
+        (WebCore::ZigZag::Reader::doReadUint64):
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::~ScriptExecutionContext):
+        (WebCore::ScriptExecutionContext::trackBlobURL):
+        (WebCore::ScriptExecutionContext::revokeBlobURL):
+        * dom/ScriptExecutionContext.h:
+        * html/Blob.cpp:
+        (WebCore::Blob::Blob):
+        (WebCore::Blob::~Blob):
+        (WebCore::Blob::createPublicURL):
+        * html/Blob.h:
+        (WebCore::Blob::create):
+        (WebCore::Blob::url):
+        * html/BlobRegistryImpl.cpp: Added.
+        * html/BlobRegistryImpl.h: Added.
+        * html/BlobStorageData.h: Added.
+        * html/BlobURL.cpp: Added.
+        * html/BlobURL.h: Added.
+        * html/File.cpp:
+        (WebCore::File::File):
+        * html/File.h:
+        (WebCore::File::create):
+        * platform/BlobData.cpp: Added.
+        * platform/BlobData.h: Added.
+        * platform/BlobRegistry.h: Added.
+
 2010-08-10  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

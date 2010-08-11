@@ -36,6 +36,7 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Threading.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 
@@ -125,6 +126,11 @@ namespace WebCore {
         void removeTimeout(int timeoutId);
         DOMTimer* findTimeout(int timeoutId);
 
+#if ENABLE(BLOB)
+        void trackBlobURL(const String&);
+        void revokeBlobURL(const String&);
+#endif
+
 #if USE(JSC)
         JSC::JSGlobalData* globalData();
 #endif
@@ -151,6 +157,10 @@ namespace WebCore {
         HashMap<ActiveDOMObject*, void*> m_activeDOMObjects;
 
         HashMap<int, DOMTimer*> m_timeouts;
+
+#if ENABLE(BLOB)
+        HashSet<String> m_blobURLs;
+#endif
 
         virtual void refScriptExecutionContext() = 0;
         virtual void derefScriptExecutionContext() = 0;

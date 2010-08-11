@@ -931,6 +931,8 @@ SET(WebCore_SOURCES
     html/AsyncImageResizer.cpp
     html/Blob.cpp
     html/BlobBuilder.cpp
+    html/BlobRegistryImpl.cpp
+    html/BlobURL.cpp
     html/CollectionCache.cpp
     html/CSSPreloadScanner.cpp
     html/DOMDataGridDataSource.cpp
@@ -1194,6 +1196,7 @@ SET(WebCore_SOURCES
     page/animation/KeyframeAnimation.cpp
 
     platform/Arena.cpp
+    platform/BlobData.cpp
     platform/BlobItem.cpp
     platform/ContentType.cpp
     platform/ContextMenu.cpp

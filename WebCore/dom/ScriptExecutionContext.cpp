@@ -28,12 +28,11 @@
 #include "ScriptExecutionContext.h"
 
 #include "ActiveDOMObject.h"
+#include "BlobRegistry.h"
 #include "Database.h"
 #include "DatabaseTask.h"
 #include "DatabaseThread.h"
-#if ENABLE(BLOB) || ENABLE(FILE_WRITER)
 #include "FileThread.h"
-#endif
 #include "MessagePort.h"
 #include "SecurityOrigin.h"
 #include "WorkerContext.h"
@@ -91,6 +90,12 @@ ScriptExecutionContext::~ScriptExecutionContext()
         m_fileThread->stop();
         m_fileThread = 0;
     }
+#endif
+#if ENABLE(BLOB)
+    HashSet<String>::iterator blobURLsEnd = m_blobURLs.end();
+    for (HashSet<String>::iterator iter = m_blobURLs.begin(); iter != blobURLsEnd; ++iter)
+        // FIXME: implement thread-safe proxy to make it work with workers.
+        BlobRegistry::instance().unregisterBlobURL(KURL(ParsedURLString, *iter));
 #endif
 }
 
@@ -240,6 +245,22 @@ DOMTimer* ScriptExecutionContext::findTimeout(int timeoutId)
 {
     return m_timeouts.get(timeoutId);
 }
+
+#if ENABLE(BLOB)
+void ScriptExecutionContext::trackBlobURL(const String& url)
+{
+    m_blobURLs.add(url);
+}
+
+void ScriptExecutionContext::revokeBlobURL(const String& url)
+{
+    if (m_blobURLs.contains(url)) {
+        // FIXME: implement thread-safe proxy to make it work with workers.
+        BlobRegistry::instance().unregisterBlobURL(KURL(ParsedURLString, url));
+        m_blobURLs.remove(url);
+    }
+}
+#endif
 
 #if ENABLE(BLOB) || ENABLE(FILE_WRITER)
 FileThread* ScriptExecutionContext::fileThread()

@@ -31,27 +31,70 @@
 #include "config.h"
 #include "Blob.h"
 
+#include "BlobData.h"
 #include "BlobItem.h"
+#include "BlobRegistry.h"
+#include "BlobURL.h"
 #include "FileSystem.h"
+#include "ScriptExecutionContext.h"
 
 namespace WebCore {
 
+// FIXME: To be removed when we switch to using BlobData.
 Blob::Blob(ScriptExecutionContext*, const String& type, const BlobItemList& items)
     : m_type(type)
+    , m_size(0)
 {
     for (size_t i = 0; i < items.size(); ++i)
         m_items.append(items[i]);
 }
 
+// FIXME: To be removed when we switch to using BlobData.
 Blob::Blob(ScriptExecutionContext*, const PassRefPtr<BlobItem>& item)
+    : m_size(0)
 {
     m_items.append(item);
 }
 
+// FIXME: To be removed when we switch to using BlobData.
 Blob::Blob(ScriptExecutionContext*, const String& path)
+    : m_size(0)
 {
     // Note: this doesn't initialize the type unlike File(path).
     m_items.append(FileBlobItem::create(path));
+}
+
+Blob::Blob(ScriptExecutionContext* scriptExecutionContext, PassOwnPtr<BlobData> blobData, long long size)
+    : m_type(blobData->contentType())
+    , m_size(size)
+{
+    ASSERT(blobData.get() && !blobData->items().isEmpty());
+
+    // Create a new internal URL and register it with the provided blob data.
+    m_url = BlobURL::createURL(scriptExecutionContext);
+    // FIXME: implement thread-safe proxy to make it work with workers.
+    BlobRegistry::instance().registerBlobURL(m_url, blobData);
+}
+
+Blob::Blob(ScriptExecutionContext* scriptExecutionContext, const KURL& srcURL, const String& type, long long size)
+    : m_type(type)
+    , m_size(size)
+{
+    // FIXME: To be removed when we switch to using BlobData.
+    if (srcURL.isEmpty())
+        return;
+
+    // Create a new internal URL and register it with the same blob data as the source URL.
+    m_url = BlobURL::createURL(scriptExecutionContext);
+    // FIXME: implement thread-safe proxy to make it work with workers.
+    BlobRegistry::instance().registerBlobURL(m_url, srcURL);
+}
+
+Blob::~Blob()
+{
+    // The internal URL is only used to refer to the Blob object. So we need to unregister the URL when the object is GC-ed.
+    // FIXME: implement thread-safe proxy to make it work with workers.
+    BlobRegistry::instance().unregisterBlobURL(m_url);
 }
 
 unsigned long long Blob::size() const
@@ -64,6 +107,7 @@ unsigned long long Blob::size() const
     return size;
 }
 
+// FIXME: To be removed when we switch to using BlobData.
 const String& Blob::path() const
 {
     ASSERT(m_items.size() == 1 && m_items[0]->toFileBlobItem());
@@ -98,5 +142,18 @@ PassRefPtr<Blob> Blob::slice(ScriptExecutionContext* scriptExecutionContext, lon
     return Blob::create(scriptExecutionContext, contentType, items);
 }
 #endif // ENABLE(BLOB)
+
+KURL Blob::createPublicURL(ScriptExecutionContext* scriptExecutionContext) const
+{
+    KURL url = BlobURL::createURL(scriptExecutionContext);
+
+    // FIXME: implement thread-safe proxy to make it work with workers.
+    BlobRegistry::instance().registerBlobURL(url, m_url);
+
+    // Keep track of the new URL in the ScriptExecutionContext so that it will get unregistered when the context is gone.
+    scriptExecutionContext->trackBlobURL(url.string());
+
+    return url;
+}
 
 } // namespace WebCore

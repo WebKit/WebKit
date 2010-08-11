@@ -27,9 +27,11 @@
 #include "config.h"
 #include "SerializedScriptValue.h"
 
+#include "Blob.h"
 #include "File.h"
 #include "FileList.h"
 #include "ImageData.h"
+#include "JSBlob.h"
 #include "JSDOMGlobalObject.h"
 #include "JSFile.h"
 #include "JSFileList.h"
@@ -147,26 +149,86 @@ private:
     unsigned m_length;
 };
 
+class SerializedBlob : public SharedSerializedData {
+public:
+    static PassRefPtr<SerializedBlob> create(const Blob* blob)
+    {
+        return adoptRef(new SerializedBlob(blob));
+    }
+
+    const KURL& url() const { return m_url; }
+    const String& type() const { return m_type; }
+    unsigned long long size() const { return m_size; }
+
+private:
+    SerializedBlob(const Blob* blob)
+        : m_url(blob->url().copy())
+        , m_type(blob->type().crossThreadString())
+        , m_size(blob->size())
+    {
+    }
+
+    KURL m_url;
+    String m_type;
+    unsigned long long m_size;
+};
+
+class SerializedFile : public SharedSerializedData {
+public:
+    static PassRefPtr<SerializedFile> create(const File* file)
+    {
+        return adoptRef(new SerializedFile(file));
+    }
+
+    const String& path() const { return m_path; }
+    const KURL& url() const { return m_url; }
+    const String& type() const { return m_type; }
+
+private:
+    SerializedFile(const File* file)
+        : m_path(file->path().crossThreadString())
+        , m_url(file->url().copy())
+        , m_type(file->type().crossThreadString())
+    {
+    }
+
+    String m_path;
+    KURL m_url;
+    String m_type;
+};
+
 class SerializedFileList : public SharedSerializedData {
 public:
+    struct FileData {
+        String path;
+        KURL url;
+        String type;
+    };
+
     static PassRefPtr<SerializedFileList> create(const FileList* list)
     {
         return adoptRef(new SerializedFileList(list));
     }
 
     unsigned length() const { return m_files.size(); }
-    const String& item(unsigned idx) { return m_files[idx]; }
+    const FileData& item(unsigned idx) { return m_files[idx]; }
 
 private:
     SerializedFileList(const FileList* list)
     {
         unsigned length = list->length();
         m_files.reserveCapacity(length);
-        for (unsigned i = 0; i < length; i++)
-            m_files.append(list->item(i)->path().crossThreadString());
+        for (unsigned i = 0; i < length; i++) {
+            File* file = list->item(i);
+            FileData fileData;
+            fileData.path = file->path().crossThreadString();
+            fileData.url = file->url().copy();
+            fileData.type = file->type().crossThreadString();
+            m_files.append(fileData);
+        }
     }
 
-    Vector<String> m_files;
+    Vector<FileData> m_files;
 };
 
 class SerializedImageData : public SharedSerializedData {
@@ -217,9 +279,15 @@ SerializedScriptValueData::SerializedScriptValueData(const ImageData* imageData)
 {
 }
 
+SerializedScriptValueData::SerializedScriptValueData(const Blob* blob)
+    : m_type(BlobType)
+    , m_sharedData(SerializedBlob::create(blob))
+{
+}
+
 SerializedScriptValueData::SerializedScriptValueData(const File* file)
     : m_type(FileType)
-    , m_string(file->path().crossThreadString())
+    , m_sharedData(SerializedFile::create(file))
 {
 }
 
@@ -231,6 +299,16 @@ SerializedArray* SharedSerializedData::asArray()
 SerializedObject* SharedSerializedData::asObject()
 {
     return static_cast<SerializedObject*>(this);
+}
+
+SerializedBlob* SharedSerializedData::asBlob()
+{
+    return static_cast<SerializedBlob*>(this);
+}
+
+SerializedFile* SharedSerializedData::asFile()
+{
+    return static_cast<SerializedFile*>(this);
 }
 
 SerializedFileList* SharedSerializedData::asFileList()
@@ -570,6 +648,8 @@ struct SerializingTreeWalker : public BaseWalker {
             JSObject* obj = asObject(value);
             if (obj->inherits(&JSFile::s_info))
                 return SerializedScriptValueData(toFile(obj));
+            if (obj->inherits(&JSBlob::s_info))
+                return SerializedScriptValueData(toBlob(obj));
             if (obj->inherits(&JSFileList::s_info))
                 return SerializedScriptValueData(toFileList(obj));
             if (obj->inherits(&JSImageData::s_info))
@@ -736,12 +816,21 @@ struct DeserializingTreeWalker : public BaseWalker {
                 return jsNumber(m_exec, value.asDouble());
             case SerializedScriptValueData::DateType:
                 return new (m_exec) DateInstance(m_exec, m_globalObject->dateStructure(), value.asDouble());
+            case SerializedScriptValueData::BlobType: {
+                if (!m_isDOMGlobalObject)
+                    return jsNull();
+                SerializedBlob* serializedBlob = value.asBlob();
+                ScriptExecutionContext* scriptExecutionContext = static_cast<JSDOMGlobalObject*>(m_exec->lexicalGlobalObject())->scriptExecutionContext();
+                ASSERT(scriptExecutionContext);
+                return toJS(m_exec, static_cast<JSDOMGlobalObject*>(m_globalObject), Blob::create(scriptExecutionContext, serializedBlob->url(), serializedBlob->type(), serializedBlob->size()));
+            }
             case SerializedScriptValueData::FileType: {
                 if (!m_isDOMGlobalObject)
                     return jsNull();
+                SerializedFile* serializedFile = value.asFile();
                 ScriptExecutionContext* scriptExecutionContext = static_cast<JSDOMGlobalObject*>(m_exec->lexicalGlobalObject())->scriptExecutionContext();
                 ASSERT(scriptExecutionContext);
-                return toJS(m_exec, static_cast<JSDOMGlobalObject*>(m_globalObject), File::create(scriptExecutionContext, value.asString().crossThreadString()));
+                return toJS(m_exec, static_cast<JSDOMGlobalObject*>(m_globalObject), File::create(scriptExecutionContext, serializedFile->path(), serializedFile->url(), serializedFile->type()));
             }
             case SerializedScriptValueData::FileListType: {
                 if (!m_isDOMGlobalObject)
@@ -751,8 +840,10 @@ struct DeserializingTreeWalker : public BaseWalker {
                 unsigned length = serializedFileList->length();
                 ScriptExecutionContext* scriptExecutionContext = static_cast<JSDOMGlobalObject*>(m_exec->lexicalGlobalObject())->scriptExecutionContext();
                 ASSERT(scriptExecutionContext);
-                for (unsigned i = 0; i < length; i++)
-                    result->append(File::create(scriptExecutionContext, serializedFileList->item(i)));
+                for (unsigned i = 0; i < length; i++) {
+                    const SerializedFileList::FileData& fileData = serializedFileList->item(i);
+                    result->append(File::create(scriptExecutionContext, fileData.path, fileData.url, fileData.type));
+                }
                 return toJS(m_exec, static_cast<JSDOMGlobalObject*>(m_globalObject), result.get());
             }
             case SerializedScriptValueData::ImageDataType: {
@@ -920,6 +1011,7 @@ struct TeardownTreeWalker {
             case SerializedScriptValueData::NumberType:
             case SerializedScriptValueData::DateType:
             case SerializedScriptValueData::EmptyType:
+            case SerializedScriptValueData::BlobType:
             case SerializedScriptValueData::FileType:
             case SerializedScriptValueData::FileListType:
             case SerializedScriptValueData::ImageDataType:
