@@ -109,7 +109,7 @@ static PassRefPtr<InspectorValue> jsToInspectorValue(ScriptState* scriptState, J
         return InspectorBasicValue::create(value.uncheckedGetNumber());
     if (value.isString()) {
         UString s = value.getString(scriptState);
-        return InspectorString::create(String(s.data(), s.size()));
+        return InspectorString::create(String(s.characters(), s.length()));
     }
     if (value.isObject()) {
         if (isJSArray(&scriptState->globalData(), value)) {
@@ -139,7 +139,7 @@ static PassRefPtr<InspectorValue> jsToInspectorValue(ScriptState* scriptState, J
                 ASSERT_NOT_REACHED();
                 inspectorValue = InspectorValue::null();
             }
-            inspectorObject->set(String(name.data(), name.size()), inspectorValue);
+            inspectorObject->set(String(name.characters(), name.length()), inspectorValue);
         }
         return inspectorObject;
     }

@@ -268,7 +268,7 @@ void ScriptDebugServer::dispatchDidContinue(ScriptDebugListener* listener)
 
 void ScriptDebugServer::dispatchDidParseSource(const ListenerSet& listeners, const JSC::SourceCode& source, ScriptWorldType worldType)
 {
-    String sourceID = ustringToString(JSC::UString::from(source.provider()->asID()));
+    String sourceID = ustringToString(JSC::UString::number(source.provider()->asID()));
     String url = ustringToString(source.provider()->url());
     String data = ustringToString(JSC::UString(source.data(), source.length()));
     int firstLine = source.firstLine();

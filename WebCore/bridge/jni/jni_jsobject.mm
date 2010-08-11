@@ -500,7 +500,7 @@ jobject JavaJSObject::convertValueToJObject(JSValue value) const
     } else if (value.isString()) {
         UString stringValue = value.toString(exec);
         JNIEnv *env = getJNIEnv();
-        result = env->NewString ((const jchar *)stringValue.data(), stringValue.size());
+        result = env->NewString ((const jchar *)stringValue.characters(), stringValue.length());
     } else if (value.isBoolean()) {
         jclass JSObjectClass = env->FindClass ("java/lang/Boolean");
         jmethodID constructorID = env->GetMethodID (JSObjectClass, "<init>", "(Z)V");

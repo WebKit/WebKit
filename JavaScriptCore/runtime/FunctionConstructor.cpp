@@ -31,6 +31,7 @@
 #include "Nodes.h"
 #include "Parser.h"
 #include "StringBuilder.h"
+#include "StringConcatenate.h"
 
 namespace JSC {
 

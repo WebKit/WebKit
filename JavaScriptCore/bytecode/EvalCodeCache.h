@@ -47,7 +47,7 @@ namespace JSC {
         {
             RefPtr<EvalExecutable> evalExecutable;
 
-            if (evalSource.size() < maxCacheableSourceLength && (*scopeChain->begin())->isVariableObject())
+            if (evalSource.length() < maxCacheableSourceLength && (*scopeChain->begin())->isVariableObject())
                 evalExecutable = m_cacheMap.get(evalSource.impl());
 
             if (!evalExecutable) {
@@ -56,7 +56,7 @@ namespace JSC {
                 if (exceptionValue)
                     return 0;
 
-                if (evalSource.size() < maxCacheableSourceLength && (*scopeChain->begin())->isVariableObject() && m_cacheMap.size() < maxCacheEntries)
+                if (evalSource.length() < maxCacheableSourceLength && (*scopeChain->begin())->isVariableObject() && m_cacheMap.size() < maxCacheEntries)
                     m_cacheMap.set(evalSource.impl(), evalExecutable);
             }
 

@@ -42,6 +42,7 @@
 #include "RegExpCache.h"
 #include "RegExpObject.h"
 #include "SamplingTool.h"
+#include "StringConcatenate.h"
 #include <wtf/Assertions.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/Threading.h>
@@ -177,7 +178,7 @@ RegisterID* ResolveNode::emitBytecode(BytecodeGenerator& generator, RegisterID* 
         return generator.moveToDestinationIfNeeded(dst, local);
     }
     
-    generator.emitExpressionInfo(m_startOffset + m_ident.size(), m_ident.size(), 0);
+    generator.emitExpressionInfo(m_startOffset + m_ident.length(), m_ident.length(), 0);
     return generator.emitResolve(generator.finalDestination(dst), m_ident);
 }
 
@@ -381,7 +382,7 @@ RegisterID* FunctionCallResolveNode::emitBytecode(BytecodeGenerator& generator, 
     RefPtr<RegisterID> func = generator.newTemporary();
     CallArguments callArguments(generator, m_args);
     int identifierStart = divot() - startOffset();
-    generator.emitExpressionInfo(identifierStart + m_ident.size(), m_ident.size(), 0);
+    generator.emitExpressionInfo(identifierStart + m_ident.length(), m_ident.length(), 0);
     generator.emitResolveWithBase(callArguments.thisRegister(), func.get(), m_ident);
     return generator.emitCall(generator.finalDestinationOrIgnored(dst, func.get()), func.get(), callArguments, divot(), startOffset(), endOffset());
 }
@@ -1183,7 +1184,7 @@ RegisterID* ReadModifyResolveNode::emitBytecode(BytecodeGenerator& generator, Re
     }
 
     RefPtr<RegisterID> src1 = generator.tempDestination(dst);
-    generator.emitExpressionInfo(divot() - startOffset() + m_ident.size(), m_ident.size(), 0);
+    generator.emitExpressionInfo(divot() - startOffset() + m_ident.length(), m_ident.length(), 0);
     RefPtr<RegisterID> base = generator.emitResolveWithBase(generator.newTemporary(), src1.get(), m_ident);
     RegisterID* result = emitReadModifyAssignment(generator, generator.finalDestination(dst, src1.get()), src1.get(), m_right, m_operator, OperandTypes(ResultType::unknownType(), m_right->resultDescriptor()), this);
     return generator.emitPutById(base.get(), m_ident, result);
@@ -1747,7 +1748,7 @@ static void processClauseList(ClauseListNode* list, Vector<ExpressionNode*, 8>& 
                 break;
             }
             const UString& value = static_cast<StringNode*>(clauseExpression)->value().ustring();
-            if (singleCharacterSwitch &= value.size() == 1) {
+            if (singleCharacterSwitch &= value.length() == 1) {
                 int32_t intVal = value.impl()->characters()[0];
                 if (intVal < min_num)
                     min_num = intVal;

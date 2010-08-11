@@ -35,7 +35,7 @@ using namespace JSC;
 PassRefPtr<OpaqueJSString> OpaqueJSString::create(const UString& ustring)
 {
     if (!ustring.isNull())
-        return adoptRef(new OpaqueJSString(ustring.data(), ustring.size()));
+        return adoptRef(new OpaqueJSString(ustring.characters(), ustring.length()));
     return 0;
 }
 

@@ -170,7 +170,7 @@ static JSCell* formatLocaleDate(ExecState* exec, DateInstance*, double timeInMil
     CFRelease(locale);
 
     if (useCustomFormat) {
-        CFStringRef customFormatCFString = CFStringCreateWithCharacters(0, customFormatString.data(), customFormatString.size());
+        CFStringRef customFormatCFString = CFStringCreateWithCharacters(0, customFormatString.characters(), customFormatString.length());
         CFDateFormatterSetFormat(formatter, customFormatCFString);
         CFRelease(customFormatCFString);
     }

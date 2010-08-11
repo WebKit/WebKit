@@ -193,8 +193,8 @@ private:
         : m_delegate(delegate)
         , m_backReferenceLimit(backReferenceLimit)
         , m_err(NoError)
-        , m_data(pattern.data())
-        , m_size(pattern.size())
+        , m_data(pattern.characters())
+        , m_size(pattern.length())
         , m_index(0)
         , m_parenthesesNestingDepth(0)
     {

@@ -35,6 +35,7 @@
 #include "RegExpPrototype.h"
 #include "RegExp.h"
 #include "RegExpCache.h"
+#include "StringConcatenate.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace JSC {
@@ -185,7 +186,7 @@ JSValue RegExpConstructor::getLeftContext(ExecState* exec) const
 JSValue RegExpConstructor::getRightContext(ExecState* exec) const
 {
     if (!d->lastOvector().isEmpty())
-        return jsSubstring(exec, d->lastInput, d->lastOvector()[1], d->lastInput.size() - d->lastOvector()[1]);
+        return jsSubstring(exec, d->lastInput, d->lastOvector()[1], d->lastInput.length() - d->lastOvector()[1]);
     return jsEmptyString(exec);
 }
     

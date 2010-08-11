@@ -36,6 +36,7 @@
 #include "JSNotAnObject.h"
 #include "Interpreter.h"
 #include "Nodes.h"
+#include "StringConcatenate.h"
 
 namespace JSC {
 

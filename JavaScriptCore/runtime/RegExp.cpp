@@ -96,7 +96,7 @@ int RegExp::match(const UString& s, int startOffset, Vector<int, 32>* ovector)
     if (ovector)
         ovector->resize(0);
 
-    if (static_cast<unsigned>(startOffset) > s.size() || s.isNull()) {
+    if (static_cast<unsigned>(startOffset) > s.length() || s.isNull()) {
         m_lastMatchString = UString();
         m_lastMatchStart = -1;
         m_lastOVector.shrink(0);
@@ -136,9 +136,9 @@ int RegExp::match(const UString& s, int startOffset, Vector<int, 32>* ovector)
             offsetVector[j] = -1;
 
 #if ENABLE(YARR_JIT)
-        int result = Yarr::executeRegex(m_regExpJITCode, s.data(), startOffset, s.size(), offsetVector, offsetVectorSize);
+        int result = Yarr::executeRegex(m_regExpJITCode, s.characters(), startOffset, s.length(), offsetVector, offsetVectorSize);
 #else
-        int result = Yarr::interpretRegex(m_regExpBytecode.get(), s.data(), startOffset, s.size(), offsetVector);
+        int result = Yarr::interpretRegex(m_regExpBytecode.get(), s.characters(), startOffset, s.length(), offsetVector);
 #endif
 
         if (result < 0) {

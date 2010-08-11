@@ -50,8 +50,8 @@ namespace JSC {
         const UString& ustring() const { return m_string; }
         StringImpl* impl() const { return m_string.impl(); }
         
-        const UChar* data() const { return m_string.data(); }
-        int size() const { return m_string.size(); }
+        const UChar* characters() const { return m_string.characters(); }
+        int length() const { return m_string.length(); }
         
         const char* ascii() const { return m_string.ascii(); }
         

@@ -77,8 +77,8 @@ static JSValue decode(ExecState* exec, const char* doNotUnescape, bool strict)
     JSStringBuilder builder;
     UString str = exec->argument(0).toString(exec);
     int k = 0;
-    int len = str.size();
-    const UChar* d = str.data();
+    int len = str.length();
+    const UChar* d = str.characters();
     UChar u = 0;
     while (k < len) {
         const UChar* p = d + k;
@@ -220,8 +220,8 @@ double parseIntOverflow(const UChar* s, int length, int radix)
 
 static double parseInt(const UString& s, int radix)
 {
-    int length = s.size();
-    const UChar* data = s.data();
+    int length = s.length();
+    const UChar* data = s.characters();
     int p = 0;
 
     while (p < length && isStrWhiteSpace(data[p]))
@@ -280,8 +280,8 @@ static double parseFloat(const UString& s)
 {
     // Check for 0x prefix here, because toDouble allows it, but we must treat it as 0.
     // Need to skip any whitespace and then one + or - sign.
-    int length = s.size();
-    const UChar* data = s.data();
+    int length = s.length();
+    const UChar* data = s.characters();
     int p = 0;
     while (p < length && isStrWhiteSpace(data[p]))
         ++p;
@@ -404,8 +404,8 @@ EncodedJSValue JSC_HOST_CALL globalFuncEscape(ExecState* exec)
 
     JSStringBuilder builder;
     UString str = exec->argument(0).toString(exec);
-    const UChar* c = str.data();
-    for (unsigned k = 0; k < str.size(); k++, c++) {
+    const UChar* c = str.characters();
+    for (unsigned k = 0; k < str.length(); k++, c++) {
         int u = c[0];
         if (u > 255) {
             char tmp[7];
@@ -428,9 +428,9 @@ EncodedJSValue JSC_HOST_CALL globalFuncUnescape(ExecState* exec)
     StringBuilder builder;
     UString str = exec->argument(0).toString(exec);
     int k = 0;
-    int len = str.size();
+    int len = str.length();
     while (k < len) {
-        const UChar* c = str.data() + k;
+        const UChar* c = str.characters() + k;
         UChar u;
         if (c[0] == '%' && k <= len - 6 && c[1] == 'u') {
             if (isASCIIHexDigit(c[2]) && isASCIIHexDigit(c[3]) && isASCIIHexDigit(c[4]) && isASCIIHexDigit(c[5])) {

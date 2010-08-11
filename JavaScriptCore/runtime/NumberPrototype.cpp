@@ -179,7 +179,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToString(ExecState* exec)
     const char* lastCharInString = s + sizeof(s) - 1;
     double x = v.uncheckedGetNumber();
     if (isnan(x) || isinf(x))
-        return JSValue::encode(jsString(exec, UString::from(x)));
+        return JSValue::encode(jsString(exec, UString::number(x)));
 
     bool isNegative = x < 0.0;
     if (isNegative)
@@ -271,7 +271,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToFixed(ExecState* exec)
     }
 
     if (x >= pow(10.0, 21.0))
-        return JSValue::encode(jsString(exec, makeString(s, UString::from(x))));
+        return JSValue::encode(jsString(exec, makeString(s, UString::number(x))));
 
     const double tenToTheF = pow(10.0, f);
     double n = floor(x * tenToTheF);
@@ -280,7 +280,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToFixed(ExecState* exec)
 
     UString m = integerPartNoExp(n);
 
-    int k = m.size();
+    int k = m.length();
     if (k <= f) {
         StringBuilder z;
         for (int i = 0; i < f + 1 - k; i++)
@@ -288,11 +288,11 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToFixed(ExecState* exec)
         z.append(m);
         m = z.build();
         k = f + 1;
-        ASSERT(k == static_cast<int>(m.size()));
+        ASSERT(k == static_cast<int>(m.length()));
     }
     int kMinusf = k - f;
 
-    if (kMinusf < static_cast<int>(m.size()))
+    if (kMinusf < static_cast<int>(m.length()))
         return JSValue::encode(jsString(exec, makeString(s, m.substr(0, kMinusf), ".", m.substr(kMinusf))));
     return JSValue::encode(jsString(exec, makeString(s, m.substr(0, kMinusf))));
 }
@@ -345,7 +345,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToExponential(ExecState* exec)
     double x = v.uncheckedGetNumber();
 
     if (isnan(x) || isinf(x))
-        return JSValue::encode(jsString(exec, UString::from(x)));
+        return JSValue::encode(jsString(exec, UString::number(x)));
 
     JSValue fractionalDigitsValue = exec->argument(0);
     double df = fractionalDigitsValue.toInteger(exec);
@@ -455,11 +455,11 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToPrecision(ExecState* exec)
 
         m = integerPartNoExp(n);
         if (e < -6 || e >= precision) {
-            if (m.size() > 1)
+            if (m.length() > 1)
                 m = makeString(m.substr(0, 1), ".", m.substr(1));
             if (e >= 0)
-                return JSValue::encode(jsMakeNontrivialString(exec, s, m, "e+", UString::from(e)));
-            return JSValue::encode(jsMakeNontrivialString(exec, s, m, "e-", UString::from(-e)));
+                return JSValue::encode(jsMakeNontrivialString(exec, s, m, "e+", UString::number(e)));
+            return JSValue::encode(jsMakeNontrivialString(exec, s, m, "e-", UString::number(-e)));
         }
     } else {
         m = charSequence('0', precision);
@@ -469,7 +469,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToPrecision(ExecState* exec)
     if (e == precision - 1)
         return JSValue::encode(jsString(exec, makeString(s, m)));
     if (e >= 0) {
-        if (e + 1 < static_cast<int>(m.size()))
+        if (e + 1 < static_cast<int>(m.length()))
             return JSValue::encode(jsString(exec, makeString(s, m.substr(0, e + 1), ".", m.substr(e + 1))));
         return JSValue::encode(jsString(exec, makeString(s, m)));
     }

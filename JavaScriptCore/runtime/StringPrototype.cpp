@@ -156,14 +156,14 @@ static NEVER_INLINE UString substituteBackreferencesSlow(const UString& replacem
     Vector<UChar> substitutedReplacement;
     int offset = 0;
     do {
-        if (i + 1 == replacement.size())
+        if (i + 1 == replacement.length())
             break;
 
         UChar ref = replacement[i + 1];
         if (ref == '$') {
             // "$$" -> "$"
             ++i;
-            substitutedReplacement.append(replacement.data() + offset, i - offset);
+            substitutedReplacement.append(replacement.characters() + offset, i - offset);
             offset = i + 1;
             continue;
         }
@@ -179,13 +179,13 @@ static NEVER_INLINE UString substituteBackreferencesSlow(const UString& replacem
             backrefLength = ovector[0];
         } else if (ref == '\'') {
             backrefStart = ovector[1];
-            backrefLength = source.size() - backrefStart;
+            backrefLength = source.length() - backrefStart;
         } else if (reg && ref >= '0' && ref <= '9') {
             // 1- and 2-digit back references are allowed
             unsigned backrefIndex = ref - '0';
             if (backrefIndex > reg->numSubpatterns())
                 continue;
-            if (replacement.size() > i + 2) {
+            if (replacement.length() > i + 2) {
                 ref = replacement[i + 2];
                 if (ref >= '0' && ref <= '9') {
                     backrefIndex = 10 * backrefIndex + ref - '0';
@@ -203,14 +203,14 @@ static NEVER_INLINE UString substituteBackreferencesSlow(const UString& replacem
             continue;
 
         if (i - offset)
-            substitutedReplacement.append(replacement.data() + offset, i - offset);
+            substitutedReplacement.append(replacement.characters() + offset, i - offset);
         i += 1 + advance;
         offset = i + 1;
-        substitutedReplacement.append(source.data() + backrefStart, backrefLength);
+        substitutedReplacement.append(source.characters() + backrefStart, backrefLength);
     } while ((i = replacement.find('$', i + 1)) != UString::NotFound);
 
-    if (replacement.size() - offset)
-        substitutedReplacement.append(replacement.data() + offset, replacement.size() - offset);
+    if (replacement.length() - offset)
+        substitutedReplacement.append(replacement.characters() + offset, replacement.length() - offset);
 
     substitutedReplacement.shrinkToFit();
     return UString::adopt(substitutedReplacement);
@@ -226,7 +226,7 @@ static inline UString substituteBackreferences(const UString& replacement, const
 
 static inline int localeCompare(const UString& a, const UString& b)
 {
-    return Collator::userDefault()->collate(reinterpret_cast<const ::UChar*>(a.data()), a.size(), reinterpret_cast<const ::UChar*>(b.data()), b.size());
+    return Collator::userDefault()->collate(reinterpret_cast<const ::UChar*>(a.characters()), a.length(), reinterpret_cast<const ::UChar*>(b.characters()), b.length());
 }
 
 struct StringRange {
@@ -248,7 +248,7 @@ public:
 static ALWAYS_INLINE JSValue jsSpliceSubstringsWithSeparators(ExecState* exec, JSString* sourceVal, const UString& source, const StringRange* substringRanges, int rangeCount, const UString* separators, int separatorCount)
 {
     if (rangeCount == 1 && separatorCount == 0) {
-        int sourceSize = source.size();
+        int sourceSize = source.length();
         int position = substringRanges[0].position;
         int length = substringRanges[0].length;
         if (position <= 0 && length >= sourceSize)
@@ -261,7 +261,7 @@ static ALWAYS_INLINE JSValue jsSpliceSubstringsWithSeparators(ExecState* exec, J
     for (int i = 0; i < rangeCount; i++)
         totalLength += substringRanges[i].length;
     for (int i = 0; i < separatorCount; i++)
-        totalLength += separators[i].size();
+        totalLength += separators[i].length();
 
     if (totalLength == 0)
         return jsString(exec, "");
@@ -275,12 +275,12 @@ static ALWAYS_INLINE JSValue jsSpliceSubstringsWithSeparators(ExecState* exec, J
     int bufferPos = 0;
     for (int i = 0; i < maxCount; i++) {
         if (i < rangeCount) {
-            StringImpl::copyChars(buffer + bufferPos, source.data() + substringRanges[i].position, substringRanges[i].length);
+            StringImpl::copyChars(buffer + bufferPos, source.characters() + substringRanges[i].position, substringRanges[i].length);
             bufferPos += substringRanges[i].length;
         }
         if (i < separatorCount) {
-            StringImpl::copyChars(buffer + bufferPos, separators[i].data(), separators[i].size());
-            bufferPos += separators[i].size();
+            StringImpl::copyChars(buffer + bufferPos, separators[i].characters(), separators[i].length());
+            bufferPos += separators[i].length();
         }
     }
 
@@ -363,7 +363,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncReplace(ExecState* exec)
                 // special case of empty match
                 if (matchLen == 0) {
                     startPosition++;
-                    if (startPosition > source.size())
+                    if (startPosition > source.length())
                         break;
                 }
             }            
@@ -407,7 +407,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncReplace(ExecState* exec)
                 // special case of empty match
                 if (matchLen == 0) {
                     startPosition++;
-                    if (startPosition > source.size())
+                    if (startPosition > source.length())
                         break;
                 }
             } while (global);
@@ -416,8 +416,8 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncReplace(ExecState* exec)
         if (!lastIndex && replacements.isEmpty())
             return JSValue::encode(sourceVal);
 
-        if (static_cast<unsigned>(lastIndex) < source.size())
-            sourceRanges.append(StringRange(lastIndex, source.size() - lastIndex));
+        if (static_cast<unsigned>(lastIndex) < source.length())
+            sourceRanges.append(StringRange(lastIndex, source.length() - lastIndex));
 
         return JSValue::encode(jsSpliceSubstringsWithSeparators(exec, sourceVal, source, sourceRanges.data(), sourceRanges.size(), replacements.data(), replacements.size()));
     }
@@ -425,7 +425,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncReplace(ExecState* exec)
     // Not a regular expression, so treat the pattern as a string.
 
     UString patternString = pattern.toString(exec);
-    if (patternString.size() == 1 && callType == CallTypeNone)
+    if (patternString.length() == 1 && callType == CallTypeNone)
         return JSValue::encode(sourceVal->replaceCharacter(exec, patternString[0], replacementString));
     
     const UString& source = sourceVal->value(exec);
@@ -434,7 +434,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncReplace(ExecState* exec)
     if (matchPos == UString::NotFound)
         return JSValue::encode(sourceVal);
 
-    int matchLen = patternString.size();
+    int matchLen = patternString.length();
     if (callType != CallTypeNone) {
         MarkedArgumentBuffer args;
         args.append(jsSubstring(exec, source, matchPos, matchLen));
@@ -469,7 +469,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncCharAt(ExecState* exec)
     if (thisValue.isUndefinedOrNull()) // CheckObjectCoercible
         return throwVMTypeError(exec);
     UString s = thisValue.toThisString(exec);
-    unsigned len = s.size();
+    unsigned len = s.length();
     JSValue a0 = exec->argument(0);
     if (a0.isUInt32()) {
         uint32_t i = a0.asUInt32();
@@ -489,12 +489,12 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncCharCodeAt(ExecState* exec)
     if (thisValue.isUndefinedOrNull()) // CheckObjectCoercible
         return throwVMTypeError(exec);
     UString s = thisValue.toThisString(exec);
-    unsigned len = s.size();
+    unsigned len = s.length();
     JSValue a0 = exec->argument(0);
     if (a0.isUInt32()) {
         uint32_t i = a0.asUInt32();
         if (i < len)
-            return JSValue::encode(jsNumber(exec, s.data()[i]));
+            return JSValue::encode(jsNumber(exec, s.characters()[i]));
         return JSValue::encode(jsNaN(exec));
     }
     double dpos = a0.toInteger(exec);
@@ -523,7 +523,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncIndexOf(ExecState* exec)
     if (thisValue.isUndefinedOrNull()) // CheckObjectCoercible
         return throwVMTypeError(exec);
     UString s = thisValue.toThisString(exec);
-    int len = s.size();
+    int len = s.length();
 
     JSValue a0 = exec->argument(0);
     JSValue a1 = exec->argument(1);
@@ -554,7 +554,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncLastIndexOf(ExecState* exec)
     if (thisValue.isUndefinedOrNull()) // CheckObjectCoercible
         return throwVMTypeError(exec);
     UString s = thisValue.toThisString(exec);
-    int len = s.size();
+    int len = s.length();
 
     JSValue a0 = exec->argument(0);
     JSValue a1 = exec->argument(1);
@@ -665,7 +665,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSlice(ExecState* exec)
     if (thisValue.isUndefinedOrNull()) // CheckObjectCoercible
         return throwVMTypeError(exec);
     UString s = thisValue.toThisString(exec);
-    int len = s.size();
+    int len = s.length();
 
     JSValue a0 = exec->argument(0);
     JSValue a1 = exec->argument(1);
@@ -707,7 +707,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSplit(ExecState* exec)
             return JSValue::encode(result);
         }
         unsigned pos = 0;
-        while (i != limit && pos < s.size()) {
+        while (i != limit && pos < s.length()) {
             Vector<int, 32> ovector;
             int mpos = reg->match(s, pos, &ovector);
             if (mpos < 0)
@@ -733,21 +733,21 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSplit(ExecState* exec)
                 // empty separator matches empty string -> empty array
                 return JSValue::encode(result);
             }
-            while (i != limit && p0 < s.size() - 1)
+            while (i != limit && p0 < s.length() - 1)
                 result->put(exec, i++, jsSingleCharacterSubstring(exec, s, p0++));
         } else {
             unsigned pos;
             
             while (i != limit && (pos = s.find(u2, p0)) != UString::NotFound) {
                 result->put(exec, i++, jsSubstring(exec, s, p0, pos - p0));
-                p0 = pos + u2.size();
+                p0 = pos + u2.length();
             }
         }
     }
 
     // add remaining string
     if (i != limit)
-        result->put(exec, i++, jsSubstring(exec, s, p0, s.size() - p0));
+        result->put(exec, i++, jsSubstring(exec, s, p0, s.length() - p0));
 
     return JSValue::encode(result);
 }
@@ -758,7 +758,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSubstr(ExecState* exec)
     if (thisValue.isUndefinedOrNull()) // CheckObjectCoercible
         return throwVMTypeError(exec);
     UString s = thisValue.toThisString(exec);
-    int len = s.size();
+    int len = s.length();
 
     JSValue a0 = exec->argument(0);
     JSValue a1 = exec->argument(1);
@@ -783,7 +783,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSubstring(ExecState* exec)
     if (thisValue.isUndefinedOrNull()) // CheckObjectCoercible
         return throwVMTypeError(exec);
     UString s = thisValue.toThisString(exec);
-    int len = s.size();
+    int len = s.length();
 
     JSValue a0 = exec->argument(0);
     JSValue a1 = exec->argument(1);
@@ -819,11 +819,11 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncToLowerCase(ExecState* exec)
     JSString* sVal = thisValue.toThisJSString(exec);
     const UString& s = sVal->value(exec);
 
-    int sSize = s.size();
+    int sSize = s.length();
     if (!sSize)
         return JSValue::encode(sVal);
 
-    const UChar* sData = s.data();
+    const UChar* sData = s.characters();
     Vector<UChar> buffer(sSize);
 
     UChar ored = 0;
@@ -859,11 +859,11 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncToUpperCase(ExecState* exec)
     JSString* sVal = thisValue.toThisJSString(exec);
     const UString& s = sVal->value(exec);
 
-    int sSize = s.size();
+    int sSize = s.length();
     if (!sSize)
         return JSValue::encode(sVal);
 
-    const UChar* sData = s.data();
+    const UChar* sData = s.characters();
     Vector<UChar> buffer(sSize);
 
     UChar ored = 0;
@@ -984,7 +984,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncFontsize(ExecState* exec)
 
     uint32_t smallInteger;
     if (a0.getUInt32(smallInteger) && smallInteger <= 9) {
-        unsigned stringSize = s.size();
+        unsigned stringSize = s.length();
         unsigned bufferSize = 22 + stringSize;
         UChar* buffer;
         PassRefPtr<StringImpl> impl = StringImpl::tryCreateUninitialized(bufferSize, buffer);
@@ -1005,7 +1005,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncFontsize(ExecState* exec)
         buffer[12] = '0' + smallInteger;
         buffer[13] = '"';
         buffer[14] = '>';
-        memcpy(&buffer[15], s.data(), stringSize * sizeof(UChar));
+        memcpy(&buffer[15], s.characters(), stringSize * sizeof(UChar));
         buffer[15 + stringSize] = '<';
         buffer[16 + stringSize] = '/';
         buffer[17 + stringSize] = 'f';
@@ -1034,8 +1034,8 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncLink(ExecState* exec)
     JSValue a0 = exec->argument(0);
     UString linkText = a0.toString(exec);
 
-    unsigned linkTextSize = linkText.size();
-    unsigned stringSize = s.size();
+    unsigned linkTextSize = linkText.length();
+    unsigned stringSize = s.length();
     unsigned bufferSize = 15 + linkTextSize + stringSize;
     UChar* buffer;
     PassRefPtr<StringImpl> impl = StringImpl::tryCreateUninitialized(bufferSize, buffer);
@@ -1050,10 +1050,10 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncLink(ExecState* exec)
     buffer[6] = 'f';
     buffer[7] = '=';
     buffer[8] = '"';
-    memcpy(&buffer[9], linkText.data(), linkTextSize * sizeof(UChar));
+    memcpy(&buffer[9], linkText.characters(), linkTextSize * sizeof(UChar));
     buffer[9 + linkTextSize] = '"';
     buffer[10 + linkTextSize] = '>';
-    memcpy(&buffer[11 + linkTextSize], s.data(), stringSize * sizeof(UChar));
+    memcpy(&buffer[11 + linkTextSize], s.characters(), stringSize * sizeof(UChar));
     buffer[11 + linkTextSize + stringSize] = '<';
     buffer[12 + linkTextSize + stringSize] = '/';
     buffer[13 + linkTextSize + stringSize] = 'a';
@@ -1078,17 +1078,17 @@ static inline JSValue trimString(ExecState* exec, JSValue thisValue, int trimKin
     UString str = thisValue.toThisString(exec);
     unsigned left = 0;
     if (trimKind & TrimLeft) {
-        while (left < str.size() && isTrimWhitespace(str[left]))
+        while (left < str.length() && isTrimWhitespace(str[left]))
             left++;
     }
-    unsigned right = str.size();
+    unsigned right = str.length();
     if (trimKind & TrimRight) {
         while (right > left && isTrimWhitespace(str[right - 1]))
             right--;
     }
 
     // Don't gc allocate a new string if we don't have to.
-    if (left == 0 && right == str.size() && thisValue.isString())
+    if (left == 0 && right == str.length() && thisValue.isString())
         return thisValue;
 
     return jsString(exec, str.substr(left, right - left));

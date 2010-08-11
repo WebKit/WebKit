@@ -28,6 +28,7 @@
 
 #include "ExceptionHelpers.h"
 #include "JSString.h"
+#include "StringConcatenate.h"
 #include "Vector.h"
 
 namespace JSC {
@@ -65,7 +66,7 @@ public:
 
     void append(const UString& str)
     {
-        m_okay &= buffer.tryAppend(str.data(), str.size());
+        m_okay &= buffer.tryAppend(str.characters(), str.length());
     }
 
     JSValue build(ExecState* exec)

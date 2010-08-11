@@ -66,17 +66,17 @@ static bool hasCSSPropertyNamePrefix(const Identifier& propertyName, const char*
     ASSERT(*prefix);
     for (const char* p = prefix; *p; ++p)
         ASSERT(isASCIILower(*p));
-    ASSERT(propertyName.size());
+    ASSERT(propertyName.length());
 #endif
 
-    if (toASCIILower(propertyName.data()[0]) != prefix[0])
+    if (toASCIILower(propertyName.characters()[0]) != prefix[0])
         return false;
 
-    unsigned length = propertyName.size();
+    unsigned length = propertyName.length();
     for (unsigned i = 1; i < length; ++i) {
         if (!prefix[i])
-            return isASCIIUpper(propertyName.data()[i]);
-        if (propertyName.data()[i] != prefix[i])
+            return isASCIIUpper(propertyName.characters()[i]);
+        if (propertyName.characters()[i] != prefix[i])
             return false;
     }
     return false;
@@ -87,7 +87,7 @@ static String cssPropertyName(const Identifier& propertyName, bool* hadPixelOrPo
     if (hadPixelOrPosPrefix)
         *hadPixelOrPosPrefix = false;
 
-    unsigned length = propertyName.size();
+    unsigned length = propertyName.length();
     if (!length)
         return String();
 
@@ -111,14 +111,14 @@ static String cssPropertyName(const Identifier& propertyName, bool* hadPixelOrPo
             || hasCSSPropertyNamePrefix(propertyName, "apple"))
         name.append('-');
     else {
-        if (isASCIIUpper(propertyName.data()[0]))
+        if (isASCIIUpper(propertyName.characters()[0]))
             return String();
     }
 
-    name.append(toASCIILower(propertyName.data()[i++]));
+    name.append(toASCIILower(propertyName.characters()[i++]));
 
     for (; i < length; ++i) {
-        UChar c = propertyName.data()[i];
+        UChar c = propertyName.characters()[i];
         if (!isASCIIUpper(c))
             name.append(c);
         else {

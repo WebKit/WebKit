@@ -237,7 +237,7 @@ static EncodedJSValue JSC_HOST_CALL callObjCFallbackObject(ExecState* exec)
         ObjcClass* objcClass = static_cast<ObjcClass*>(objcInstance->getClass());
         OwnPtr<ObjcMethod> fallbackMethod(new ObjcMethod(objcClass->isa(), @selector(invokeUndefinedMethodFromWebScript:withArguments:)));
         const Identifier& nameIdentifier = static_cast<ObjcFallbackObjectImp*>(exec->callee())->propertyName();
-        RetainPtr<CFStringRef> name(AdoptCF, CFStringCreateWithCharacters(0, nameIdentifier.data(), nameIdentifier.size()));
+        RetainPtr<CFStringRef> name(AdoptCF, CFStringCreateWithCharacters(0, nameIdentifier.characters(), nameIdentifier.length()));
         fallbackMethod->setJavaScriptName(name.get());
         result = objcInstance->invokeObjcMethod(exec, fallbackMethod.get());
     }

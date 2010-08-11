@@ -1,3 +1,169 @@
+2010-08-11  Gavin Barraclough  <barraclough@apple.com>
+
+        Rubber stamps by Darin Adler & Sam Weinig.
+
+        Bug 43867 - Some UString cleanup
+
+        Change JSC::UString data(), size(), and from(), to characters(), length(), and number() to match WTF::String.
+        Move string concatenation methods to a new header to simplify down UString.h.  Remove is8Bit().
+
+        * API/JSClassRef.cpp:
+        (OpaqueJSClass::~OpaqueJSClass):
+        (OpaqueJSClass::className):
+        * API/OpaqueJSString.cpp:
+        (OpaqueJSString::create):
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        (JSC::constantName):
+        (JSC::idName):
+        (JSC::CodeBlock::registerName):
+        (JSC::regexpName):
+        * bytecode/EvalCodeCache.h:
+        (JSC::EvalCodeCache::get):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ResolveNode::emitBytecode):
+        (JSC::FunctionCallResolveNode::emitBytecode):
+        (JSC::ReadModifyResolveNode::emitBytecode):
+        (JSC::processClauseList):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createRegex):
+        * parser/ParserArena.h:
+        (JSC::IdentifierArena::makeNumericIdentifier):
+        * parser/SourceProvider.h:
+        (JSC::UStringSourceProvider::data):
+        (JSC::UStringSourceProvider::length):
+        * profiler/Profiler.cpp:
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::getOwnPropertySlot):
+        (JSC::Arguments::getOwnPropertyNames):
+        (JSC::Arguments::put):
+        (JSC::Arguments::deleteProperty):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncToString):
+        * runtime/DatePrototype.cpp:
+        (JSC::formatLocaleDate):
+        * runtime/ExceptionHelpers.cpp:
+        * runtime/FunctionConstructor.cpp:
+        * runtime/FunctionPrototype.cpp:
+        (JSC::insertSemicolonIfNeeded):
+        * runtime/Identifier.h:
+        (JSC::Identifier::characters):
+        (JSC::Identifier::length):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::decode):
+        (JSC::parseInt):
+        (JSC::parseFloat):
+        (JSC::globalFuncEscape):
+        (JSC::globalFuncUnescape):
+        * runtime/JSNumberCell.cpp:
+        (JSC::JSNumberCell::toString):
+        * runtime/JSONObject.cpp:
+        (JSC::gap):
+        (JSC::Stringifier::appendQuotedString):
+        (JSC::Stringifier::appendStringifiedValue):
+        (JSC::Stringifier::indent):
+        (JSC::Stringifier::unindent):
+        (JSC::Walker::walk):
+        * runtime/JSString.cpp:
+        (JSC::JSString::replaceCharacter):
+        (JSC::JSString::getIndexSlowCase):
+        * runtime/JSString.h:
+        (JSC::RopeBuilder::JSString):
+        (JSC::RopeBuilder::appendValueInConstructAndIncrementLength):
+        (JSC::RopeBuilder::fiberCount):
+        (JSC::jsSingleCharacterSubstring):
+        (JSC::jsNontrivialString):
+        (JSC::JSString::getIndex):
+        (JSC::jsString):
+        (JSC::jsStringWithFinalizer):
+        (JSC::jsSubstring):
+        (JSC::jsOwnedString):
+        * runtime/JSStringBuilder.h:
+        (JSC::JSStringBuilder::append):
+        * runtime/LiteralParser.h:
+        (JSC::LiteralParser::Lexer::Lexer):
+        * runtime/NumberPrototype.cpp:
+        (JSC::numberProtoFuncToString):
+        (JSC::numberProtoFuncToFixed):
+        (JSC::numberProtoFuncToExponential):
+        (JSC::numberProtoFuncToPrecision):
+        * runtime/NumericStrings.h:
+        (JSC::NumericStrings::add):
+        (JSC::NumericStrings::lookupSmallString):
+        * runtime/Operations.h:
+        (JSC::jsString):
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::match):
+        * runtime/RegExpCache.cpp:
+        (JSC::RegExpCache::lookupOrCreate):
+        (JSC::RegExpCache::create):
+        * runtime/RegExpConstructor.cpp:
+        (JSC::RegExpConstructor::getRightContext):
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::match):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::regExpProtoFuncToString):
+        * runtime/StringBuilder.h:
+        (JSC::StringBuilder::append):
+        * runtime/StringConcatenate.h: Copied from JavaScriptCore/runtime/UString.h.
+        (JSC::):
+        (JSC::sumWithOverflow):
+        (JSC::tryMakeString):
+        (JSC::makeString):
+        * runtime/StringObject.cpp:
+        (JSC::StringObject::getOwnPropertyNames):
+        * runtime/StringPrototype.cpp:
+        (JSC::substituteBackreferencesSlow):
+        (JSC::localeCompare):
+        (JSC::jsSpliceSubstringsWithSeparators):
+        (JSC::stringProtoFuncReplace):
+        (JSC::stringProtoFuncCharAt):
+        (JSC::stringProtoFuncCharCodeAt):
+        (JSC::stringProtoFuncIndexOf):
+        (JSC::stringProtoFuncLastIndexOf):
+        (JSC::stringProtoFuncSlice):
+        (JSC::stringProtoFuncSplit):
+        (JSC::stringProtoFuncSubstr):
+        (JSC::stringProtoFuncSubstring):
+        (JSC::stringProtoFuncToLowerCase):
+        (JSC::stringProtoFuncToUpperCase):
+        (JSC::stringProtoFuncFontsize):
+        (JSC::stringProtoFuncLink):
+        (JSC::trimString):
+        * runtime/UString.cpp:
+        (JSC::UString::number):
+        (JSC::UString::ascii):
+        (JSC::UString::operator[]):
+        (JSC::UString::toDouble):
+        (JSC::UString::find):
+        (JSC::UString::rfind):
+        (JSC::UString::substr):
+        (JSC::operator==):
+        (JSC::operator<):
+        (JSC::operator>):
+        (JSC::UString::UTF8String):
+        * runtime/UString.h:
+        (JSC::UString::UString):
+        (JSC::UString::adopt):
+        (JSC::UString::length):
+        (JSC::UString::characters):
+        (JSC::UString::isNull):
+        (JSC::UString::isEmpty):
+        (JSC::UString::impl):
+        (JSC::UString::cost):
+        (JSC::operator==):
+        (JSC::operator!=):
+        (JSC::codePointCompare):
+        (JSC::UString::toArrayIndex):
+        (JSC::IdentifierRepHash::hash):
+        (WTF::):
+        * yarr/RegexJIT.cpp:
+        (JSC::Yarr::jitCompileRegex):
+        * yarr/RegexParser.h:
+        (JSC::Yarr::Parser::Parser):
+
 2010-08-11  Gabor Loki  <loki@webkit.org>
 
         Qt build fix (ARMv7).

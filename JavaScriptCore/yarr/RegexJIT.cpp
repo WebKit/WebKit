@@ -1511,7 +1511,7 @@ void jitCompileRegex(JSGlobalData* globalData, RegexCodeBlock& jitObject, const 
 
     JSRegExpIgnoreCaseOption ignoreCaseOption = ignoreCase ? JSRegExpIgnoreCase : JSRegExpDoNotIgnoreCase;
     JSRegExpMultilineOption multilineOption = multiline ? JSRegExpMultiline : JSRegExpSingleLine;
-    jitObject.setFallback(jsRegExpCompile(reinterpret_cast<const UChar*>(patternString.data()), patternString.size(), ignoreCaseOption, multilineOption, &numSubpatterns, &error));
+    jitObject.setFallback(jsRegExpCompile(reinterpret_cast<const UChar*>(patternString.characters()), patternString.length(), ignoreCaseOption, multilineOption, &numSubpatterns, &error));
 }
 
 }}

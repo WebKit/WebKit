@@ -51,7 +51,7 @@ public:
     const JSC::UString& ustring() const { return m_str; }
 
     bool isNull() const { return m_str.isNull(); }
-    size_t size() const { return m_str.size(); }
+    size_t size() const { return m_str.length(); }
 
     ScriptString& operator=(const char* s)
     {

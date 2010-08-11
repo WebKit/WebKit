@@ -56,7 +56,7 @@ public:
 
     void append(const UString& str)
     {
-        buffer.append(str.data(), str.size());
+        buffer.append(str.characters(), str.length());
     }
 
     bool isEmpty() { return buffer.isEmpty(); }

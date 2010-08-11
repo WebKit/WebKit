@@ -40,7 +40,7 @@ namespace JSC {
             if (d == entry.key && !entry.value.isNull())
                 return entry.value;
             entry.key = d;
-            entry.value = UString::from(d);
+            entry.value = UString::number(d);
             return entry.value;
         }
 
@@ -52,7 +52,7 @@ namespace JSC {
             if (i == entry.key && !entry.value.isNull())
                 return entry.value;
             entry.key = i;
-            entry.value = UString::from(i);
+            entry.value = UString::number(i);
             return entry.value;
         }
 
@@ -64,7 +64,7 @@ namespace JSC {
             if (i == entry.key && !entry.value.isNull())
                 return entry.value;
             entry.key = i;
-            entry.value = UString::from(i);
+            entry.value = UString::number(i);
             return entry.value;
         }
     private:
@@ -83,7 +83,7 @@ namespace JSC {
         {
             ASSERT(i < cacheSize);
             if (smallIntCache[i].isNull())
-                smallIntCache[i] = UString::from(i);
+                smallIntCache[i] = UString::number(i);
             return smallIntCache[i];
         }
 

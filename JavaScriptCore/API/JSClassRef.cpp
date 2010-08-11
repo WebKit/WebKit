@@ -113,7 +113,7 @@ OpaqueJSClass::OpaqueJSClass(const JSClassDefinition* definition, OpaqueJSClass*
 OpaqueJSClass::~OpaqueJSClass()
 {
     // The empty string is shared across threads & is an identifier, in all other cases we should have done a deep copy in className(), below. 
-    ASSERT(!m_className.size() || !m_className.impl()->isIdentifier());
+    ASSERT(!m_className.length() || !m_className.impl()->isIdentifier());
 
     if (m_staticValues) {
         OpaqueJSClassStaticValuesTable::const_iterator end = m_staticValues->end();
@@ -216,7 +216,7 @@ OpaqueJSClassContextData& OpaqueJSClass::contextData(ExecState* exec)
 UString OpaqueJSClass::className()
 {
     // Make a deep copy, so that the caller has no chance to put the original into IdentifierTable.
-    return UString(m_className.data(), m_className.size());
+    return UString(m_className.characters(), m_className.length());
 }
 
 OpaqueJSClassStaticValuesTable* OpaqueJSClass::staticValues(JSC::ExecState* exec)

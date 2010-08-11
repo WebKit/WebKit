@@ -29,6 +29,7 @@
 #include "Lookup.h"
 #include "RegExpConstructor.h"
 #include "RegExpPrototype.h"
+#include "StringConcatenate.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace JSC {
@@ -156,7 +157,7 @@ bool RegExpObject::match(ExecState* exec)
         return position >= 0;
     }
 
-    if (d->lastIndex < 0 || d->lastIndex > input.size()) {
+    if (d->lastIndex < 0 || d->lastIndex > input.length()) {
         d->lastIndex = 0;
         return false;
     }

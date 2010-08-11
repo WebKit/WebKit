@@ -35,6 +35,7 @@
 #include "Lookup.h"
 #include "PropertyNameArray.h"
 #include "StringBuilder.h"
+#include "StringConcatenate.h"
 #include <wtf/MathExtras.h>
 
 namespace JSC {
@@ -163,7 +164,7 @@ static inline UString gap(ExecState* exec, JSValue space)
 
     // If the space value is a string, use it as the gap string, otherwise use no gap string.
     UString spaces = space.getString(exec);
-    if (spaces.size() > maxGapLength) {
+    if (spaces.length() > maxGapLength) {
         spaces = spaces.substr(0, maxGapLength);
     }
     return spaces;
@@ -280,14 +281,14 @@ JSValue Stringifier::stringify(JSValue value)
 
 void Stringifier::appendQuotedString(StringBuilder& builder, const UString& value)
 {
-    int length = value.size();
+    int length = value.length();
 
     // String length plus 2 for quote marks plus 8 so we can accomodate a few escaped characters.
     builder.reserveCapacity(builder.size() + length + 2 + 8);
 
     builder.append('"');
 
-    const UChar* data = value.data();
+    const UChar* data = value.characters();
     for (int i = 0; i < length; ++i) {
         int start = i;
         while (i < length && (data[i] > 0x1F && data[i] != '"' && data[i] != '\\'))
@@ -405,7 +406,7 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
         if (!isfinite(numericValue))
             builder.append("null");
         else
-            builder.append(UString::from(numericValue));
+            builder.append(UString::number(numericValue));
         return StringifySucceeded;
     }
 
@@ -463,17 +464,17 @@ inline bool Stringifier::willIndent() const
 inline void Stringifier::indent()
 {
     // Use a single shared string, m_repeatedGap, so we don't keep allocating new ones as we indent and unindent.
-    unsigned newSize = m_indent.size() + m_gap.size();
-    if (newSize > m_repeatedGap.size())
+    unsigned newSize = m_indent.length() + m_gap.length();
+    if (newSize > m_repeatedGap.length())
         m_repeatedGap = makeString(m_repeatedGap, m_gap);
-    ASSERT(newSize <= m_repeatedGap.size());
+    ASSERT(newSize <= m_repeatedGap.length());
     m_indent = m_repeatedGap.substr(0, newSize);
 }
 
 inline void Stringifier::unindent()
 {
-    ASSERT(m_indent.size() >= m_gap.size());
-    m_indent = m_repeatedGap.substr(0, m_indent.size() - m_gap.size());
+    ASSERT(m_indent.length() >= m_gap.length());
+    m_indent = m_repeatedGap.substr(0, m_indent.length() - m_gap.length());
 }
 
 inline void Stringifier::startNewLine(StringBuilder& builder) const
@@ -722,7 +723,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
             }
             case ArrayEndVisitMember: {
                 JSArray* array = arrayStack.last();
-                JSValue filteredValue = callReviver(array, jsString(m_exec, UString::from(indexStack.last())), outValue);
+                JSValue filteredValue = callReviver(array, jsString(m_exec, UString::number(indexStack.last())), outValue);
                 if (filteredValue.isUndefined())
                     array->deleteProperty(m_exec, indexStack.last());
                 else {

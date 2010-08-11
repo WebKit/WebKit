@@ -30,13 +30,14 @@
 #include "config.h"
 #include "CodeBlock.h"
 
-#include "JIT.h"
-#include "JSValue.h"
+#include "BytecodeGenerator.h"
+#include "Debugger.h"
 #include "Interpreter.h"
+#include "JIT.h"
 #include "JSFunction.h"
 #include "JSStaticScopeObject.h"
-#include "Debugger.h"
-#include "BytecodeGenerator.h"
+#include "JSValue.h"
+#include "StringConcatenate.h"
 #include <stdio.h>
 #include <wtf/StringExtras.h>
 
@@ -70,12 +71,12 @@ static UString valueToSourceString(ExecState* exec, JSValue val)
 
 static CString constantName(ExecState* exec, int k, JSValue value)
 {
-    return makeString(valueToSourceString(exec, value), "(@k", UString::from(k - FirstConstantRegisterIndex), ")").UTF8String();
+    return makeString(valueToSourceString(exec, value), "(@k", UString::number(k - FirstConstantRegisterIndex), ")").UTF8String();
 }
 
 static CString idName(int id0, const Identifier& ident)
 {
-    return makeString(ident.ustring(), "(@id", UString::from(id0), ")").UTF8String();
+    return makeString(ident.ustring(), "(@id", UString::number(id0), ")").UTF8String();
 }
 
 CString CodeBlock::registerName(ExecState* exec, int r) const
@@ -86,7 +87,7 @@ CString CodeBlock::registerName(ExecState* exec, int r) const
     if (isConstantRegisterIndex(r))
         return constantName(exec, r, getConstant(r));
 
-    return makeString("r", UString::from(r)).UTF8String();
+    return makeString("r", UString::number(r)).UTF8String();
 }
 
 static UString regexpToSourceString(RegExp* regExp)
@@ -105,7 +106,7 @@ static UString regexpToSourceString(RegExp* regExp)
 
 static CString regexpName(int re, RegExp* regexp)
 {
-    return makeString(regexpToSourceString(regexp), "(@re", UString::from(re), ")").UTF8String();
+    return makeString(regexpToSourceString(regexp), "(@re", UString::number(re), ")").UTF8String();
 }
 
 static UString pointerToSourceString(void* p)

@@ -71,13 +71,13 @@ CallType FunctionPrototype::getCallData(CallData& callData)
 static inline void insertSemicolonIfNeeded(UString& functionBody)
 {
     ASSERT(functionBody[0] == '{');
-    ASSERT(functionBody[functionBody.size() - 1] == '}');
+    ASSERT(functionBody[functionBody.length() - 1] == '}');
 
-    for (size_t i = functionBody.size() - 2; i > 0; --i) {
+    for (size_t i = functionBody.length() - 2; i > 0; --i) {
         UChar ch = functionBody[i];
         if (!Lexer::isWhiteSpace(ch) && !Lexer::isLineTerminator(ch)) {
             if (ch != ';' && ch != '}')
-                functionBody = makeString(functionBody.substr(0, i + 1), ";", functionBody.substr(i + 1, functionBody.size() - (i + 1)));
+                functionBody = makeString(functionBody.substr(0, i + 1), ";", functionBody.substr(i + 1, functionBody.length() - (i + 1)));
             return;
         }
     }

@@ -179,7 +179,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState* exec)
         
         UString str = element.toString(exec);
         strBuffer[k] = str.impl();
-        totalSize += str.size();
+        totalSize += str.length();
         
         if (!strBuffer.data()) {
             throwOutOfMemoryError(exec);

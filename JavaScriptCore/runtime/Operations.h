@@ -46,7 +46,7 @@ namespace JSC {
         if ((length1 + length2) < length1)
             return throwOutOfMemoryError(exec);
 
-        unsigned fiberCount = s1->size() + s2->size();
+        unsigned fiberCount = s1->fiberCount() + s2->fiberCount();
         JSGlobalData* globalData = &exec->globalData();
 
         if (fiberCount <= JSString::s_maxInternalRopeLength)
@@ -62,7 +62,7 @@ namespace JSC {
 
     ALWAYS_INLINE JSValue jsString(ExecState* exec, const UString& u1, JSString* s2)
     {
-        unsigned length1 = u1.size();
+        unsigned length1 = u1.length();
         if (!length1)
             return s2;
         unsigned length2 = s2->length();
@@ -71,7 +71,7 @@ namespace JSC {
         if ((length1 + length2) < length1)
             return throwOutOfMemoryError(exec);
 
-        unsigned fiberCount = 1 + s2->size();
+        unsigned fiberCount = 1 + s2->fiberCount();
         JSGlobalData* globalData = &exec->globalData();
 
         if (fiberCount <= JSString::s_maxInternalRopeLength)
@@ -90,13 +90,13 @@ namespace JSC {
         unsigned length1 = s1->length();
         if (!length1)
             return jsString(exec, u2);
-        unsigned length2 = u2.size();
+        unsigned length2 = u2.length();
         if (!length2)
             return s1;
         if ((length1 + length2) < length1)
             return throwOutOfMemoryError(exec);
 
-        unsigned fiberCount = s1->size() + 1;
+        unsigned fiberCount = s1->fiberCount() + 1;
         JSGlobalData* globalData = &exec->globalData();
 
         if (fiberCount <= JSString::s_maxInternalRopeLength)
@@ -112,10 +112,10 @@ namespace JSC {
 
     ALWAYS_INLINE JSValue jsString(ExecState* exec, const UString& u1, const UString& u2)
     {
-        unsigned length1 = u1.size();
+        unsigned length1 = u1.length();
         if (!length1)
             return jsString(exec, u2);
-        unsigned length2 = u2.size();
+        unsigned length2 = u2.length();
         if (!length2)
             return jsString(exec, u1);
         if ((length1 + length2) < length1)
@@ -127,9 +127,9 @@ namespace JSC {
 
     ALWAYS_INLINE JSValue jsString(ExecState* exec, const UString& u1, const UString& u2, const UString& u3)
     {
-        unsigned length1 = u1.size();
-        unsigned length2 = u2.size();
-        unsigned length3 = u3.size();
+        unsigned length1 = u1.length();
+        unsigned length2 = u2.length();
+        unsigned length3 = u3.length();
         if (!length1)
             return jsString(exec, u2, u3);
         if (!length2)
@@ -154,7 +154,7 @@ namespace JSC {
         for (unsigned i = 0; i < count; ++i) {
             JSValue v = strings[i].jsValue();
             if (LIKELY(v.isString()))
-                fiberCount += asString(v)->size();
+                fiberCount += asString(v)->fiberCount();
             else
                 ++fiberCount;
         }
@@ -193,13 +193,13 @@ namespace JSC {
     {
         unsigned fiberCount = 0;
         if (LIKELY(thisValue.isString()))
-            fiberCount += asString(thisValue)->size();
+            fiberCount += asString(thisValue)->fiberCount();
         else
             ++fiberCount;
         for (unsigned i = 0; i < exec->argumentCount(); ++i) {
             JSValue v = exec->argument(i);
             if (LIKELY(v.isString()))
-                fiberCount += asString(v)->size();
+                fiberCount += asString(v)->fiberCount();
             else
                 ++fiberCount;
         }

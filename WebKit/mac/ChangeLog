@@ -1,3 +1,15 @@
+2010-08-11  Gavin Barraclough  <barraclough@apple.com>
+
+        Rubber stamps by Darin Adler & Sam Weinig.
+
+        Bug 43867 - Some UString cleanup
+
+        Change JSC::UString data(), size(), and from(), to characters(), length(), and number() to match WTF::String.
+        Move string concatenation methods to a new header to simplify down UString.h.  Remove is8Bit().
+
+        * WebView/WebScriptDebugger.mm:
+        (toNSString):
+
 2010-08-10  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.

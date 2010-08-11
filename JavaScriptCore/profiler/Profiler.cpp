@@ -39,6 +39,7 @@
 #include "Profile.h"
 #include "ProfileGenerator.h"
 #include "ProfileNode.h"
+#include "StringConcatenate.h"
 #include <stdio.h>
 
 namespace JSC {

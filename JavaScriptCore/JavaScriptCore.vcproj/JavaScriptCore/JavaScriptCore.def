@@ -146,9 +146,9 @@ EXPORTS
     ?free@WeakGCHandlePool@JSC@@QAEXPAVWeakGCHandle@2@@Z
     ?from@Identifier@JSC@@SA?AV12@PAVExecState@2@H@Z
     ?from@Identifier@JSC@@SA?AV12@PAVExecState@2@I@Z
-    ?from@UString@JSC@@SA?AV12@H@Z
-    ?from@UString@JSC@@SA?AV12@I@Z
-    ?from@UString@JSC@@SA?AV12@N@Z
+    ?number@UString@JSC@@SA?AV12@H@Z
+    ?number@UString@JSC@@SA?AV12@I@Z
+    ?number@UString@JSC@@SA?AV12@N@Z
     ?functionGetter@PropertySlot@JSC@@ABE?AVJSValue@2@PAVExecState@2@@Z
     ?functionName@DebuggerCallFrame@JSC@@QBEPBVUString@2@XZ
     ?get@Structure@JSC@@QAEIPBVStringImpl@WTF@@AAIAAPAVJSCell@2@@Z

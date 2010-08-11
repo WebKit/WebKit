@@ -72,8 +72,8 @@ namespace JSC {
             Lexer(const UString& s, ParserMode mode)
                 : m_string(s)
                 , m_mode(mode)
-                , m_ptr(s.data())
-                , m_end(s.data() + s.size())
+                , m_ptr(s.characters())
+                , m_end(s.characters() + s.length())
             {
             }
             
