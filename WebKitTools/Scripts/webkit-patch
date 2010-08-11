@@ -38,6 +38,7 @@ import sys
 from webkitpy.common.system.logutils import configure_logging
 import webkitpy.python24.versioning as versioning
 
+_log = logging.getLogger("webkit-patch")
 
 def main():
     # This is a hack to let us enable DEBUG logging as early as possible.
@@ -50,6 +51,11 @@ def main():
     configure_logging(logging_level=logging_level)
 
     versioning.check_version()
+    
+    if sys.platform == "win32":
+        _log.fatal("webkit-patch is only supported under Cygwin Python, "
+                   "not Win32 Python")
+        sys.exit(1)
 
     # Import webkit-patch code only after version-checking so that
     # script doesn't error out before having a chance to report the
