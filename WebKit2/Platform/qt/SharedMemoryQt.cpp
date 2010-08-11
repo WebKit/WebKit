@@ -23,69 +23,61 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <wtf/Platform.h>
-#include <wtf/DisallowCType.h>
-#ifdef __cplusplus
-#include <wtf/FastMalloc.h>
-#endif
+#include "SharedMemory.h"
 
-#if defined(BUILDING_QT__)
+#include "NotImplemented.h"
 
-#define WTF_USE_JSC 1
-#define WTF_USE_V8 0
+namespace WebKit {
 
-#define JS_EXPORTDATA
-#define JS_EXPORTCLASS
+SharedMemory::Handle::Handle()
+{
+    notImplemented();
+}
 
-#elif defined(__APPLE__)
+SharedMemory::Handle::~Handle()
+{
+    notImplemented();
+}
 
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-#define ENABLE_WEB_PROCESS_SANDBOX 1
-#endif
+void SharedMemory::Handle::encode(CoreIPC::ArgumentEncoder* encoder) const
+{
+    notImplemented();
+}
 
-#import <CoreGraphics/CoreGraphics.h>
+bool SharedMemory::Handle::decode(CoreIPC::ArgumentDecoder* decoder, Handle& handle)
+{
+    notImplemented();
+    return false;
+}
 
-#ifdef __OBJC__
-#import <Cocoa/Cocoa.h>
-#endif
+PassRefPtr<SharedMemory> SharedMemory::create(size_t size)
+{
+    notImplemented();
+    return 0;
+}
 
-/* WebKit has no way to pull settings from WebCore/config.h for now */
-/* so we assume WebKit is always being compiled on top of JavaScriptCore */
-#define WTF_USE_JSC 1
-#define WTF_USE_V8 0
+PassRefPtr<SharedMemory> SharedMemory::create(const Handle& handle, Protection protection)
+{
+    notImplemented();
+    return 0;    
+}
 
-#define JS_EXPORTDATA
-#define JS_EXPORTCLASS
-#define WEBKIT_EXPORTDATA
+SharedMemory::~SharedMemory()
+{
+    notImplemented();
+}
+    
+bool SharedMemory::createHandle(Handle& handle, Protection protection)
+{
+    notImplemented();
+    return false;
+}
 
-#elif defined(WIN32) || defined(_WIN32)
+unsigned SharedMemory::systemPageSize()
+{
+    static unsigned pageSize = 0;
 
-#ifndef _WIN32_WINNT
-#define _WIN32_WINNT 0x0500
-#endif
+    return pageSize;
+}
 
-#ifndef WINVER
-#define WINVER 0x0500
-#endif
-
-/* If we don't define these, they get defined in windef.h. */
-/* We want to use std::min and std::max. */
-#ifndef max
-#define max max
-#endif
-#ifndef min
-#define min min
-#endif
-
-#ifndef _WINSOCKAPI_
-#define _WINSOCKAPI_ /* Prevent inclusion of winsock.h in windows.h */
-#endif
-
-#include <WebCore/config.h>
-#include <windows.h>
-
-#if PLATFORM(CG)
-#include <CoreGraphics/CoreGraphics.h>
-#endif
-
-#endif /* defined(WIN32) || defined(_WIN32) */
+} // namespace WebKit

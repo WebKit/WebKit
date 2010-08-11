@@ -7,6 +7,7 @@ WEBCORE_HEADERS_FOR_WEBKIT2 += \
     bindings/js/DOMWrapperWorld.h \
     bindings/js/GCController.h \
     bindings/js/JSPluginElementFunctions.h \
+    bindings/js/ScriptController.h \
     bridge/IdentifierRep.h \
     bridge/npruntime_internal.h \
     config.h \
@@ -15,15 +16,18 @@ WEBCORE_HEADERS_FOR_WEBKIT2 += \
     dom/KeyboardEvent.h \
     dom/Node.h \
     dom/Range.h \
+    dom/UserTypingGestureIndicator.h \
     editing/EditCommand.h \
     editing/EditorInsertAction.h \
     editing/TextAffinity.h \
     history/BackForwardControllerClient.h \
     history/BackForwardList.h \
     history/HistoryItem.h \
+    html/HTMLInputElement.h \
     html/HTMLFormElement.h \
     html/HTMLFrameOwnerElement.h \
     html/HTMLPlugInElement.h \
+    html/HTMLTextAreaElement.h \
     inspector/InspectorClient.h \
     loader/appcache/ApplicationCacheStorage.h \
     loader/Cache.h \
@@ -52,6 +56,7 @@ WEBCORE_HEADERS_FOR_WEBKIT2 += \
     page/SecurityOrigin.h \
     page/Settings.h \
     page/WindowFeatures.h \
+    page/ZoomMode.h \
     platform/Cursor.h \
     platform/FileChooser.h \
     platform/FileSystem.h \
@@ -65,6 +70,7 @@ WEBCORE_HEADERS_FOR_WEBKIT2 += \
     platform/graphics/IntSize.h \
     platform/HostWindow.h \
     platform/KURL.h \
+    platform/LinkHash.h \
     platform/LocalizationStrategy.h \
     platform/MIMETypeRegistry.h \
     platform/network/android/ResourceError.h \
@@ -82,7 +88,6 @@ WEBCORE_HEADERS_FOR_WEBKIT2 += \
     platform/SearchPopupMenu.h \
     platform/SharedBuffer.h \
     platform/text/PlatformString.h \
-    platform/text/StringHash.h \
     platform/Widget.h \
     platform/win/BitmapInfo.h \
     platform/WindowsKeyboardCodes.h \
@@ -97,8 +102,11 @@ WEBCORE_HEADERS_FOR_WEBKIT2 += \
     rendering/RenderTreeAsText.h \
 
 WEBCORE_GENERATED_HEADERS_FOR_WEBKIT2 += \
+    $$OUTPUT_DIR/WebCore/generated/HTMLNames.h \
+    $$OUTPUT_DIR/WebCore/generated/JSCSSStyleDeclaration.h \
+    $$OUTPUT_DIR/WebCore/generated/JSDOMWindow.h \
     $$OUTPUT_DIR/WebCore/generated/JSElement.h \
-    $$OUTPUT_DIR/WebCore/generated/JSCSSStyleDeclaration.h
+    $$OUTPUT_DIR/WebCore/generated/JSHTMLElement.h \
 
 JSC_HEADERS_FOR_WEBKIT2 += \
     API/APICast.h \
@@ -113,6 +121,7 @@ JSC_HEADERS_FOR_WEBKIT2 += \
     runtime/JSObjectWithGlobalObject.h \
     runtime/ObjectPrototype.h \
     runtime/Protect.h \
+    parser/SourceCode.h \
     wtf/Platform.h \
     wtf/text/StringHash.h \
 

@@ -1,3 +1,22 @@
+2010-08-11  Balazs Kelemen  <kb@inf.u-szeged.hu>
+
+        Unreviewed build fix.
+
+        [Qt] Update WebKit2 build environment, add stub implementation of SharedMemory.
+
+        * DerivedSources.pro:
+        * Platform/qt/SharedMemoryQt.cpp: Added.
+        (WebKit::SharedMemory::Handle::Handle):
+        (WebKit::SharedMemory::Handle::~Handle):
+        (WebKit::SharedMemory::Handle::encode):
+        (WebKit::SharedMemory::Handle::decode):
+        (WebKit::SharedMemory::create):
+        (WebKit::SharedMemory::~SharedMemory):
+        (WebKit::SharedMemory::createHandle):
+        (WebKit::SharedMemory::systemPageSize):
+        * WebKit2.pro:
+        * WebKit2Prefix.h:
+
 2010-08-11  Mark Rowe  <mrowe@apple.com>
 
         Build fix.  Update references to StringHash.h.

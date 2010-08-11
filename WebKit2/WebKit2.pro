@@ -17,6 +17,7 @@ QT += network
     OBJECTS_DIR = obj/debug
 } else { # Release
     OBJECTS_DIR = obj/release
+    DEFINES += NDEBUG
 }
 
 INCLUDEPATH = \
@@ -116,8 +117,10 @@ INCLUDEPATH = \
     UIProcess/qt \
     WebProcess \
     WebProcess/InjectedBundle \
+    WebProcess/InjectedBundle/DOM \
     WebProcess/InjectedBundle/API/c \
     WebProcess/Plugins \
+    WebProcess/Plugins/Netscape \
     WebProcess/WebCoreSupport \
     WebProcess/WebPage \
     $$INCLUDEPATH
@@ -140,8 +143,10 @@ HEADERS += \
     Platform/CoreIPC/Connection.h \
     Platform/CoreIPC/CoreIPCMessageKinds.h \
     Platform/CoreIPC/MessageID.h \
+    Platform/Module.h \
     Platform/PlatformProcessIdentifier.h \
     Platform/RunLoop.h \
+    Platform/SharedMemory.h \
     Platform/WorkItem.h \
     Platform/WorkQueue.h \
     Shared/CoreIPCSupport/DrawingAreaMessageKinds.h \
@@ -149,8 +154,10 @@ HEADERS += \
     Shared/CoreIPCSupport/WebPageMessageKinds.h \
     Shared/CoreIPCSupport/WebPageProxyMessageKinds.h \
     Shared/CoreIPCSupport/WebProcessMessageKinds.h \
+    Shared/DrawingAreaBase.h \
     Shared/NotImplemented.h \
     Shared/qt/WebEventFactoryQt.h \
+    Shared/VisitedLinkTable.h \
     Shared/WebEventConversion.h \
     Shared/WebEvent.h \
     Shared/WebNavigationDataStore.h \
@@ -184,6 +191,7 @@ HEADERS += \
     UIProcess/ProcessModel.h \
     UIProcess/API/qt/ClientImpl.h \
     UIProcess/ResponsivenessTimer.h \
+    UIProcess/VisitedLinkProvider.h \
     UIProcess/WebContext.h \
     UIProcess/WebContextInjectedBundleClient.h \
     UIProcess/WebFramePolicyListenerProxy.h \
@@ -200,8 +208,11 @@ HEADERS += \
     UIProcess/WebUIClient.h \
     WebProcess/InjectedBundle/API/c/WKBundleBase.h \
     WebProcess/InjectedBundle/API/c/WKBundlePage.h \
+    WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.h \
     WebProcess/InjectedBundle/InjectedBundle.h \
+    WebProcess/InjectedBundle/InjectedBundlePageFormClient.h \
     WebProcess/InjectedBundle/InjectedBundlePageUIClient.h \
+    WebProcess/InjectedBundle/InjectedBundleScriptWorld.h \
     WebProcess/Plugins/JSNPObject.h \
     WebProcess/Plugins/JSNPMethod.h \
     WebProcess/Plugins/NPJSObject.h \
@@ -210,6 +221,10 @@ HEADERS += \
     WebProcess/Plugins/Plugin.h \
     WebProcess/Plugins/PluginController.h \
     WebProcess/Plugins/PluginView.h \
+    WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp \
+    WebProcess/Plugins/Netscape/NetscapePlugin.h \
+    WebProcess/Plugins/Netscape/NetscapePluginModule.h \
+    WebProcess/Plugins/Netscape/NetscapePluginStream.h \
     WebProcess/WebCoreSupport/WebChromeClient.h \
     WebProcess/WebCoreSupport/WebContextMenuClient.h \
     WebProcess/WebCoreSupport/WebDragClient.h \
@@ -231,11 +246,16 @@ SOURCES += \
     Platform/CoreIPC/Attachment.cpp \
     Platform/CoreIPC/Connection.cpp \
     Platform/CoreIPC/qt/ConnectionQt.cpp \
+    Platform/Module.cpp \
     Platform/RunLoop.cpp \
     Platform/WorkQueue.cpp \
+    Platform/qt/ModuleQt.cpp \
     Platform/qt/RunLoopQt.cpp \
+    Platform/qt/SharedMemoryQt.cpp \
     Platform/qt/WorkQueueQt.cpp \
+    Shared/DrawingAreaBase.cpp \
     Shared/ImmutableArray.cpp \
+    Shared/VisitedLinkTable.cpp \
     Shared/WebEventConversion.cpp \
     Shared/WebPreferencesStore.cpp \
     Shared/qt/UpdateChunk.cpp \
@@ -261,6 +281,7 @@ SOURCES += \
     UIProcess/Launcher/ProcessLauncher.cpp \
     UIProcess/Launcher/qt/ProcessLauncherQt.cpp \
     UIProcess/ResponsivenessTimer.cpp \
+    UIProcess/VisitedLinkProvider.cpp \
     UIProcess/WebBackForwardList.cpp \
     UIProcess/WebBackForwardListItem.cpp \
     UIProcess/WebContext.cpp \
@@ -277,10 +298,13 @@ SOURCES += \
     UIProcess/WebProcessManager.cpp \
     UIProcess/WebProcessProxy.cpp \
     UIProcess/WebUIClient.cpp \
+    WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp \
     WebProcess/InjectedBundle/InjectedBundle.cpp \
     WebProcess/InjectedBundle/InjectedBundlePageEditorClient.cpp \
+    WebProcess/InjectedBundle/InjectedBundlePageFormClient.cpp \
     WebProcess/InjectedBundle/InjectedBundlePageUIClient.cpp \
     WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp \
+    WebProcess/InjectedBundle/InjectedBundleScriptWorld.cpp \
     WebProcess/InjectedBundle/qt/InjectedBundleQt.cpp \
     WebProcess/Plugins/JSNPObject.cpp \
     WebProcess/Plugins/JSNPMethod.cpp \
@@ -289,6 +313,10 @@ SOURCES += \
     WebProcess/Plugins/NPRuntimeUtilities.cpp \
     WebProcess/Plugins/Plugin.cpp \
     WebProcess/Plugins/PluginView.cpp \
+    WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp \
+    WebProcess/Plugins/Netscape/NetscapePlugin.cpp \
+    WebProcess/Plugins/Netscape/NetscapePluginModule.cpp \
+    WebProcess/Plugins/Netscape/NetscapePluginStream.cpp \
     WebProcess/WebCoreSupport/WebChromeClient.cpp \
     WebProcess/WebCoreSupport/WebContextMenuClient.cpp \
     WebProcess/WebCoreSupport/WebDragClient.cpp \
