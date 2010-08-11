@@ -31,8 +31,6 @@
 #ifndef BlobURL_h
 #define BlobURL_h
 
-#if ENABLE(BLOB)
-
 #include "KURL.h"
 
 namespace WebCore {
@@ -46,7 +44,5 @@ public:
 };
 
 }
-
-#endif // ENABLE(BLOB)
 
 #endif // BlobURL_h

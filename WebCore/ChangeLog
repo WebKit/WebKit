@@ -1,5 +1,15 @@
 2010-08-10  Jian Li  <jianli@chromium.org>
 
+        Fix qt build break.
+
+        * html/BlobRegistryImpl.cpp:
+        * html/BlobRegistryImpl.h:
+        * html/BlobURL.cpp:
+        * html/BlobURL.h:
+        * platform/BlobRegistry.h:
+
+2010-08-10  Jian Li  <jianli@chromium.org>
+
         Reviewed by David Levin.
 
         Add the support to register the blob data.

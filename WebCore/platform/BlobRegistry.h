@@ -31,8 +31,6 @@
 #ifndef BlobRegistry_h
 #define BlobRegistry_h
 
-#if ENABLE(BLOB)
-
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
@@ -62,7 +60,5 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(BLOB)
 
 #endif // BlobRegistry_h
