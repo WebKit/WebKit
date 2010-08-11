@@ -108,11 +108,9 @@ Frame* BindingDOMWindow<Binding>::createWindow(State<Binding>* state,
     // issues to pass the URL instead of "".
 
     bool created;
-    // We pass in the opener frame here so it can be used for looking up the
-    // frame name, in case the active frame is different from the opener frame,
-    // and the name references a frame relative to the opener frame, for example
-    // "_self" or "_parent".
-    Frame* newFrame = callingFrame->loader()->createWindow(openerFrame->loader(), frameRequest, windowFeatures, created);
+    // We pass the opener frame for the lookupFrame in case the active frame is different from
+    // the opener frame, and the name references a frame relative to the opener frame.
+    Frame* newFrame = WebCore::createWindow(callingFrame, openerFrame, frameRequest, windowFeatures, created);
     if (!newFrame)
         return 0;
 

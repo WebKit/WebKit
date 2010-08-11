@@ -1,3 +1,27 @@
+2010-08-11  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Refactored FrameLoader::createWindow() out of the FrameLoader class
+        since FrameLoader should not be responsible for creating windows.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39156
+
+        No new functionality, so no new tests.
+
+        * bindings/generic/BindingDOMWindow.h:
+        (WebCore::::createWindow):
+          - Updated the call to FrameLoader's createWindow().
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::createWindow):
+          - Updated the call to FrameLoader's createWindow().
+        * loader/FrameLoader.cpp:
+        (WebCore::createWindowFromFrameLoader):
+          - Made FrameLoader::createWindow() non-member, non-friend and changed it
+            to accept Frame* parameters instead of FrameLoader*.
+        * loader/FrameLoader.h:
+          - Updated the header file to reflect the above change to FrameLoader.cpp.
+
 2010-08-11  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.

@@ -724,10 +724,9 @@ static Frame* createWindow(ExecState* exec, Frame* lexicalFrame, Frame* dynamicF
     // We'd have to resolve all those issues to pass the URL instead of "".
 
     bool created;
-    // We pass in the opener frame here so it can be used for looking up the frame name, in case the active frame
-    // is different from the opener frame, and the name references a frame relative to the opener frame, for example
-    // "_self" or "_parent".
-    Frame* newFrame = lexicalFrame->loader()->createWindow(openerFrame->loader(), frameRequest, windowFeatures, created);
+    // We pass the opener frame for the lookupFrame in case the active frame is different from
+    // the opener frame, and the name references a frame relative to the opener frame.
+    Frame* newFrame = createWindow(lexicalFrame, openerFrame, frameRequest, windowFeatures, created);
     if (!newFrame)
         return 0;
 
