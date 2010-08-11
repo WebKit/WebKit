@@ -42,6 +42,7 @@ WebViewGraphicsBased::WebViewGraphicsBased(QWidget* parent)
     , m_numPaintsSinceLastMeasure(0)
     , m_measureFps(false)
     , m_resizesToContents(false)
+    , m_machine(0)
 {
     setScene(new QGraphicsScene(this));
     scene()->addItem(m_item);
@@ -49,30 +50,6 @@ WebViewGraphicsBased::WebViewGraphicsBased(QWidget* parent)
     setFrameShape(QFrame::NoFrame);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-
-#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
-    QStateMachine* machine = new QStateMachine(this);
-    QState* s0 = new QState(machine);
-    s0->assignProperty(this, "yRotation", 0);
-
-    QState* s1 = new QState(machine);
-    s1->assignProperty(this, "yRotation", 90);
-
-    QAbstractTransition* t1 = s0->addTransition(this, SIGNAL(yFlipRequest()), s1);
-    QPropertyAnimation* yRotationAnim = new QPropertyAnimation(this, "yRotation", this);
-    yRotationAnim->setDuration(1000);
-    t1->addAnimation(yRotationAnim);
-
-    QState* s2 = new QState(machine);
-    s2->assignProperty(this, "yRotation", -90);
-    s1->addTransition(s1, SIGNAL(propertiesAssigned()), s2);
-
-    QAbstractTransition* t2 = s2->addTransition(s0);
-    t2->addAnimation(yRotationAnim);
-
-    machine->setInitialState(s0);
-    machine->start();
-#endif
 
     m_updateTimer = new QTimer(this);
     m_updateTimer->setInterval(1000);
@@ -193,7 +170,39 @@ void WebViewGraphicsBased::animatedFlip()
 
 void WebViewGraphicsBased::animatedYFlip()
 {
-    emit yFlipRequest();
+#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
+    if (!m_machine) {
+        m_machine = new QStateMachine(this);
+
+        QState* s0 = new QState(m_machine);
+        s0->assignProperty(this, "yRotation", 0);
+
+        QState* s1 = new QState(m_machine);
+        s1->assignProperty(this, "yRotation", 90);
+
+        QAbstractTransition* t1 = s0->addTransition(s1);
+        QPropertyAnimation* yRotationAnim = new QPropertyAnimation(this, "yRotation", this);
+        t1->addAnimation(yRotationAnim);
+
+        QState* s2 = new QState(m_machine);
+        s2->assignProperty(this, "yRotation", -90);
+        s1->addTransition(s1, SIGNAL(propertiesAssigned()), s2);
+
+        QState* s3 = new QState(m_machine);
+        s3->assignProperty(this, "yRotation", 0);
+
+        QAbstractTransition* t2 = s2->addTransition(s3);
+        t2->addAnimation(yRotationAnim);
+
+        QFinalState* final = new QFinalState(m_machine);
+        s3->addTransition(s3, SIGNAL(propertiesAssigned()), final);
+
+        m_machine->setInitialState(s0);
+        yRotationAnim->setDuration(1000);
+    }
+
+    m_machine->start();
+#endif
 }
 
 void WebViewGraphicsBased::paintEvent(QPaintEvent* event)

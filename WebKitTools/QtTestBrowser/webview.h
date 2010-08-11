@@ -41,6 +41,8 @@
 #include <QGraphicsWidget>
 #include <QTime>
 
+class QStateMachine;
+
 class WebViewTraditional : public QWebView {
     Q_OBJECT
 
@@ -110,7 +112,6 @@ public slots:
     void contentsSizeChanged(const QSize&);
 
 signals:
-    void yFlipRequest();
     void currentFPSUpdated(int fps);
 
 private:
@@ -123,6 +124,7 @@ private:
     bool m_measureFps;
     qreal m_yRotation;
     bool m_resizesToContents;
+    QStateMachine* m_machine;
     FpsTimer m_fpsTimer;
 };
 

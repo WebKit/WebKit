@@ -1,3 +1,16 @@
+2010-08-10  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] QtTestBrowser: lazy instantiate "YRotation" state machine and related objects
+        https://bugs.webkit.org/show_bug.cgi?id=43831
+
+        Only instantiate QStateMachine and friends associated to the YRotation action on demand.
+
+        * QtTestBrowser/webview.cpp:
+        (WebViewGraphicsBased::WebViewGraphicsBased):
+        (WebViewGraphicsBased::animatedYFlip):
+
 2010-08-11  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.
