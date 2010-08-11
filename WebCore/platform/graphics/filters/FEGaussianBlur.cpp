@@ -159,7 +159,10 @@ void FEGaussianBlur::apply(Filter* filter)
     CanvasPixelArray* tmpPixelArray(tmpImageData->data());
 
     int stride = 4 * imageRect.width();
-    int dxLeft, dxRight, dyLeft, dyRight;
+    int dxLeft = 0;
+    int dxRight = 0;
+    int dyLeft = 0;
+    int dyRight = 0;
     for (int i = 0; i < 3; ++i) {
         if (kernelSizeX) {
             kernelPosition(i, kernelSizeX, dxLeft, dxRight);

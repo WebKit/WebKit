@@ -1,3 +1,10 @@
+2010-08-11  Nate Chapin  <japhet@chromium.org>
+
+        Chromium mac build fix (variables weren't being initialized).
+
+        * platform/graphics/filters/FEGaussianBlur.cpp: 
+        (WebCore::FEGaussianBlur::apply): Initalize dxLeft, dxRight, dyLeft, dyRight.
+
 2010-08-11  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.
