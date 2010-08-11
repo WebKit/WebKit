@@ -255,8 +255,7 @@ void LayerRendererChromium::setRootLayerCanvasSize(const IntSize& size)
     int rowBytes = 4 * size.width();
     m_rootLayerBackingStore.resize(rowBytes * size.height());
     memset(m_rootLayerBackingStore.data(), 0, m_rootLayerBackingStore.size());
-    // FIXME: unsure whether this is the best color space choice.
-    RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateWithName(kCGColorSpaceGenericRGBLinear));
+    RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
     m_rootLayerCGContext.adoptCF(CGBitmapContextCreate(m_rootLayerBackingStore.data(),
                                                        size.width(), size.height(), 8, rowBytes,
                                                        colorSpace.get(),

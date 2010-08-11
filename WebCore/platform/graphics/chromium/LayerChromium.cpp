@@ -180,8 +180,7 @@ void LayerChromium::updateTextureContents(unsigned textureId)
     int rowBytes = 4 * dirtyRect.width();
     tempVector.resize(rowBytes * dirtyRect.height());
     memset(tempVector.data(), 0, tempVector.size());
-    // FIXME: unsure whether this is the best color space choice.
-    RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateWithName(kCGColorSpaceGenericRGBLinear));
+    RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
     RetainPtr<CGContextRef> contextCG(AdoptCF, CGBitmapContextCreate(tempVector.data(),
                                                                      dirtyRect.width(), dirtyRect.height(), 8, rowBytes,
                                                                      colorSpace.get(),
