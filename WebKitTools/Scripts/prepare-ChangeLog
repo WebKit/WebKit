@@ -433,11 +433,16 @@ if ($spewDiff && @changed_files) {
 # Open ChangeLogs.
 if ($openChangeLogs && @logs) {
     print STDERR "  Opening the edited ChangeLog files.\n";
-    my $editor = $ENV{"CHANGE_LOG_EDIT_APPLICATION"};
+    my $editor = $ENV{CHANGE_LOG_EDITOR};
     if ($editor) {
-        system "open", "-a", $editor, @logs;
+        system ((split ' ', $editor), @logs);
     } else {
-        system "open", "-e", @logs;
+        $editor = $ENV{CHANGE_LOG_EDIT_APPLICATION};
+        if ($editor) {
+            system "open", "-a", $editor, @logs;
+        } else {
+            system "open", "-e", @logs;
+        }
     }
 }
 

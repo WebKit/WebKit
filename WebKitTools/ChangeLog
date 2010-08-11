@@ -1,3 +1,16 @@
+2010-08-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Improved editor options for prepare-ChangeLog and commit-log-editor
+        https://bugs.webkit.org/show_bug.cgi?id=40548
+
+        * Scripts/commit-log-editor: Split editor strings on spaces so EDITOR
+        values like "xed --launch --wait" work properly.
+
+        * Scripts/prepare-ChangeLog: Added a new CHANGE_LOG_EDITOR so we can
+        use a command line tool with the $openChangeLogs feature.
+
 2010-08-11  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

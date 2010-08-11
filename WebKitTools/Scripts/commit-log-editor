@@ -62,26 +62,40 @@ if (!$log) {
 my $baseDir = baseProductDir();
 
 my $editor = $ENV{SVN_LOG_EDITOR};
-if (!$editor || isCommitLogEditor($editor)) {
-    $editor = $ENV{CVS_LOG_EDITOR};
-}
-if (!$editor || isCommitLogEditor($editor)) {
+$editor = $ENV{CVS_LOG_EDITOR} if !$editor;
+$editor = "" if isCommitLogEditor($editor);
+
+my $splitEditor = true;
+if (!$editor) {
     my $builtEditorApplication = "$baseDir/Release/Commit Log Editor.app/Contents/MacOS/Commit Log Editor";
-    $editor = $builtEditorApplication if -x $builtEditorApplication;
+    if (-x $builtEditorApplication) {
+        $editor = $builtEditorApplication;
+        $splitEditor = false;
+    }
 }
-if (!$editor || isCommitLogEditor($editor)) {
+if (!$editor) {
     my $builtEditorApplication = "$baseDir/Debug/Commit Log Editor.app/Contents/MacOS/Commit Log Editor";
-    $editor = $builtEditorApplication if -x $builtEditorApplication;
+    if (-x $builtEditorApplication) {
+        $editor = $builtEditorApplication;
+        $splitEditor = false;
+    }
 }
-if (!$editor || isCommitLogEditor($editor)) {
+if (!$editor) {
     my $installedEditorApplication = "$ENV{HOME}/Applications/Commit Log Editor.app/Contents/MacOS/Commit Log Editor";
-    $editor = $installedEditorApplication if -x $installedEditorApplication;
+    if (-x $builtEditorApplication) {
+        $editor = $builtEditorApplication;
+        $splitEditor = false;
+    }
 }
-if (!$editor || isCommitLogEditor($editor)) {
-    $editor = $ENV{EDITOR};
-}
-if (!$editor || isCommitLogEditor($editor)) {
-    $editor = "/usr/bin/vi";
+
+$editor = $ENV{EDITOR} if !$editor;
+$editor = "/usr/bin/vi" if !$editor;
+
+my @editor;
+if ($splitEditor) {
+    @editor = split ' ', $editor;
+} else {
+    @editor = ($editor);
 }
 
 my $inChangesToBeCommitted = !isGit();
@@ -124,9 +138,8 @@ if ($regenerateLog && $existingLog && scalar(@changeLogs) > 0) {
     $keepExistingLog = 0 if ($key eq "r");
 }
 
-# Don't change anything if there's already a log message
-# (as can happen with git-commit --amend)
-exec $editor, @ARGV if $existingLog && $keepExistingLog;
+# Don't change anything if there's already a log message (as can happen with git-commit --amend).
+exec (@editor, @ARGV) if $existingLog && $keepExistingLog;
 
 my $topLevel = determineVCSRoot();
 
@@ -248,7 +261,7 @@ if (isGit() && scalar keys %changeLogSort == 0) {
 print NEWLOG $logContents;
 close NEWLOG;
 
-system $editor, "$log.edit";
+system (@editor, "$log.edit");
 
 open NEWLOG, "$log.edit" or exit;
 my $foundComment = 0;
