@@ -350,6 +350,26 @@ String imageTitle(const String& filename, const IntSize& size)
     return String();
 }
 
+#if ENABLE(VIDEO)
+String localizedMediaControlElementString(const String& name)
+{
+    notImplemented();
+    return String();
+}
+
+String localizedMediaControlElementHelpText(const String& name)
+{
+    notImplemented();
+    return String();
+}
+
+String localizedMediaTimeDescription(float time)
+{
+    notImplemented();
+    return String();
+}
+#endif
+
 String mediaElementLoadingStateText()
 {
     return String::fromUTF8("Loading...");

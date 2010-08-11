@@ -1762,6 +1762,22 @@ IF (ENABLE_SVG)
     )
 ENDIF()
 
+IF (ENABLE_VIDEO)
+    LIST(APPEND WebCore_SOURCES
+        ${DERIVED_SOURCES_DIR}/JSTimeRanges.cpp
+        bindings/js/JSAudioConstructor.cpp
+        html/HTMLAudioElement.cpp
+        html/HTMLMediaElement.cpp
+        html/HTMLSourceElement.cpp
+        html/HTMLVideoElement.cpp
+        html/TimeRanges.cpp
+        platform/graphics/MediaPlayer.cpp
+        rendering/MediaControlElements.cpp
+        rendering/RenderMedia.cpp
+        rendering/RenderVideo.cpp
+    )
+ENDIF()
+
 IF (ENABLE_WML)
     LIST(APPEND WebCore_SOURCES
         ${DERIVED_SOURCES_DIR}/WMLElementFactory.cpp

@@ -1,3 +1,22 @@
+2010-08-10  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Add video files to enable video in WebKit EFL
+        https://bugs.webkit.org/show_bug.cgi?id=43790
+
+        Add files regarding html5 video to CMakeList.txt for WebKit Efl.
+        But, this patch is not run html5 video on WebKit EFL yet.
+
+        * CMakeLists.txt: Add files related to html5video.
+        * platform/efl/LocalizedStringsEfl.cpp: Add functions for html5 video.
+        (WebCore::localizedMediaControlElementString):
+        (WebCore::localizedMediaControlElementHelpText):
+        (WebCore::localizedMediaTimeDescription):
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::installedMediaEngines): Disable MediaPlayerPrivate::r
+      egisterMediaEngine for WebKit EFL.
+
 2010-08-10  Patrick Gansterer  <paroga@paroga.com>
 
         Reviewed by Nikolas Zimmermann.

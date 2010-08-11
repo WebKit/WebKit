@@ -171,7 +171,7 @@ static Vector<MediaPlayerFactory*>& installedMediaEngines()
 
 #if PLATFORM(WIN)
         MediaPlayerPrivateQuickTimeVisualContext::registerMediaEngine(addMediaEngine);
-#elif !PLATFORM(GTK)
+#elif !PLATFORM(GTK) && !PLATFORM(EFL)
         // FIXME: currently all the MediaEngines are named
         // MediaPlayerPrivate. This code will need an update when bug
         // 36663 is adressed.
