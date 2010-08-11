@@ -1,3 +1,58 @@
+2010-08-11  Nate Chapin  <japhet@chromium.org>
+
+        Unreviewed, Chromium rebaseline.
+
+        New results and expectations tweak for http://trac.webkit.org/changeset/65138.
+
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-example-01-b-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-example-01-b-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-gauss-01-b-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-gauss-01-b-expected.png:
+        * platform/chromium-linux/svg/batik/text/textEffect-expected.checksum:
+        * platform/chromium-linux/svg/batik/text/textEffect-expected.png:
+        * platform/chromium-linux/svg/batik/text/textEffect3-expected.checksum:
+        * platform/chromium-linux/svg/batik/text/textEffect3-expected.png:
+        * platform/chromium-linux/svg/batik/text/textFeatures-expected.checksum:
+        * platform/chromium-linux/svg/batik/text/textFeatures-expected.png:
+        * platform/chromium-linux/svg/batik/text/textProperties-expected.checksum:
+        * platform/chromium-linux/svg/batik/text/textProperties-expected.png:
+        * platform/chromium-linux/svg/custom/non-opaque-filters-expected.checksum:
+        * platform/chromium-linux/svg/custom/non-opaque-filters-expected.png:
+        * platform/chromium-linux/svg/custom/recursive-filter-expected.checksum:
+        * platform/chromium-linux/svg/custom/recursive-filter-expected.png:
+        * platform/chromium-linux/svg/custom/text-filter-expected.checksum:
+        * platform/chromium-linux/svg/custom/text-filter-expected.png: Added.
+        * platform/chromium-linux/svg/filters/feGaussianBlur-expected.checksum: Removed.
+        * platform/chromium-linux/svg/filters/filter-on-filter-for-text-expected.checksum:
+        * platform/chromium-linux/svg/filters/filter-on-filter-for-text-expected.png: Added.
+        * platform/chromium-linux/svg/filters/shadow-on-filter-expected.checksum: Removed.
+        * platform/chromium-linux/svg/filters/shadow-on-filter-expected.png: Removed.
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-example-01-b-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-example-01-b-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-gauss-01-b-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-gauss-01-b-expected.png:
+        * platform/chromium-win/svg/batik/text/textEffect-expected.checksum:
+        * platform/chromium-win/svg/batik/text/textEffect-expected.png:
+        * platform/chromium-win/svg/batik/text/textEffect3-expected.checksum:
+        * platform/chromium-win/svg/batik/text/textEffect3-expected.png:
+        * platform/chromium-win/svg/batik/text/textFeatures-expected.checksum:
+        * platform/chromium-win/svg/batik/text/textFeatures-expected.png:
+        * platform/chromium-win/svg/batik/text/textProperties-expected.checksum:
+        * platform/chromium-win/svg/batik/text/textProperties-expected.png:
+        * platform/chromium-win/svg/custom/non-opaque-filters-expected.checksum:
+        * platform/chromium-win/svg/custom/non-opaque-filters-expected.png:
+        * platform/chromium-win/svg/custom/recursive-filter-expected.checksum:
+        * platform/chromium-win/svg/custom/recursive-filter-expected.png:
+        * platform/chromium-win/svg/custom/text-filter-expected.checksum:
+        * platform/chromium-win/svg/custom/text-filter-expected.png:
+        * platform/chromium-win/svg/filters/feGaussianBlur-expected.checksum:
+        * platform/chromium-win/svg/filters/feGaussianBlur-expected.png:
+        * platform/chromium-win/svg/filters/filter-on-filter-for-text-expected.checksum:
+        * platform/chromium-win/svg/filters/filter-on-filter-for-text-expected.png:
+        * platform/chromium-win/svg/filters/shadow-on-filter-expected.checksum:
+        * platform/chromium-win/svg/filters/shadow-on-filter-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2010-08-11  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Rebaseline Chromium test.
