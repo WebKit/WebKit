@@ -1,3 +1,13 @@
+2010-08-10  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, build fix.
+        
+        Chromium build fix for r65107.
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::suspendAnimations):
+        (LayoutTestController::resumeAnimations):
+
 2010-08-10  Sergio Villar Senin  <svillar@igalia.com>
 
         Reviewed by Xan Lopez.
