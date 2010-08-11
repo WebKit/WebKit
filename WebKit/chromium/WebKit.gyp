@@ -722,6 +722,14 @@
                                 'tests/DragImageTest.cpp',
                             ],
                         }],
+                        ['OS=="linux"', {
+                            'sources': [
+                                'tests/WebInputEventFactoryTestGtk.cpp',
+                            ],
+                            'include_dirs': [
+                                'public/gtk',
+                            ],
+                        }],
                     ],
                 }],
             ],

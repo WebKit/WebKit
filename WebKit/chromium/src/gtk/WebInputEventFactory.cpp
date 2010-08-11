@@ -45,12 +45,15 @@
 
 namespace {
 
-gint getDoubleClickTime()
+bool countsAsDoubleClick(gint timeDiff, gint xDiff, gint yDiff)
 {
     static GtkSettings* settings = gtk_settings_get_default();
     gint doubleClickTime = 250;
-    g_object_get(G_OBJECT(settings), "gtk-double-click-time", &doubleClickTime, NULL);
-    return doubleClickTime;
+    gint doubleClickDistance = 5;
+    g_object_get(G_OBJECT(settings),
+                 "gtk-double-click-time", &doubleClickTime,
+                 "gtk-double-click-distance", &doubleClickDistance, 0);
+    return timeDiff <= doubleClickTime && abs(xDiff) <= doubleClickDistance && abs(yDiff) <= doubleClickDistance;
 }
 
 }  // namespace
@@ -404,9 +407,13 @@ WebMouseEvent WebInputEventFactory::mouseEvent(const GdkEventButton* event)
         static int numClicks = 0;
         static GdkWindow* eventWindow = 0;
         static gint lastLeftClickTime = 0;
+        static gint lastLeftClickX = 0;
+        static gint lastLeftClickY = 0;
 
-        gint time_diff = event->time - lastLeftClickTime;
-        if (eventWindow == event->window && time_diff < getDoubleClickTime())
+        gint timeDiff = event->time - lastLeftClickTime;
+        gint xDiff = event->x - lastLeftClickX;
+        gint yDiff = event->y - lastLeftClickY;
+        if (eventWindow == event->window && countsAsDoubleClick(timeDiff, xDiff, yDiff))
             numClicks++;
         else
             numClicks = 1;
@@ -414,6 +421,8 @@ WebMouseEvent WebInputEventFactory::mouseEvent(const GdkEventButton* event)
         result.clickCount = numClicks;
         eventWindow = event->window;
         lastLeftClickTime = event->time;
+        lastLeftClickX = event->x;
+        lastLeftClickY = event->y;
     }
 
     result.button = WebMouseEvent::ButtonNone;

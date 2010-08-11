@@ -1,3 +1,16 @@
+2010-08-11  Evan Stade  <estade@chromium.org>
+
+        Reviewed by David Levin.
+
+        [chromium] linux chromium sends double clicks too often
+        https://bugs.webkit.org/show_bug.cgi?id=43096
+
+        * WebKit.gyp: add the test
+        * src/gtk/WebInputEventFactory.cpp:
+        (WebKit::WebInputEventFactory::mouseEvent): check the x/y coordinates of the
+        potential double click event
+        * tests/WebInputEventFactoryTestGtk.cpp: Added.
+
 2010-08-11  John Abd-El-Malek  <jam@chromium.org>
 
         Reviewed by Darin Fisher.
