@@ -220,7 +220,7 @@ namespace WTF {
 
     template<typename P> struct HashTraits<COMPtr<P> > : GenericHashTraits<COMPtr<P> > {
         static const bool emptyValueIsZero = true;
-        static void constructDeletedValue(COMPtr<P>& slot) { new (&slot) COMPtr<P>(HashTableDeletedValueType); }
+        static void constructDeletedValue(COMPtr<P>& slot) { new (&slot) COMPtr<P>(HashTableDeletedValue); }
         static bool isDeletedValue(const COMPtr<P>& value) { return value.isHashTableDeletedValue(); }
     };
 

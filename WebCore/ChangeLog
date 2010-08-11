@@ -1,5 +1,12 @@
 2010-08-11  Adam Barth  <abarth@webkit.org>
 
+        Attempt to fix Windows build.
+
+        * platform/win/COMPtr.h:
+        (WTF::):
+
+2010-08-11  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         Port view-source to new parser
