@@ -218,7 +218,7 @@ void LauncherWindow::createChrome()
 
     QMenu* toolsMenu = menuBar()->addMenu("&Develop");
     QMenu* graphicsViewMenu = toolsMenu->addMenu("QGraphicsView");
-    QAction* toggleGraphicsView = graphicsViewMenu->addAction("Toggle use of QGraphicsView", this, SLOT(initializeView()));
+    QAction* toggleGraphicsView = graphicsViewMenu->addAction("Toggle use of QGraphicsView", this, SLOT(toggleWebView(bool)));
     toggleGraphicsView->setCheckable(true);
     toggleGraphicsView->setChecked(isGraphicsBased());
 
@@ -667,6 +667,12 @@ void LauncherWindow::setTouchMocking(bool on)
 #if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
     m_touchMocking = on;
 #endif
+}
+
+void LauncherWindow::toggleWebView(bool graphicsBased)
+{
+    m_windowOptions.useGraphicsView = graphicsBased;
+    initializeView();
 }
 
 void LauncherWindow::toggleAcceleratedCompositing(bool toggle)

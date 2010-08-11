@@ -1,3 +1,23 @@
+2010-08-11  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] QtTestBrowser: switching between QWebView and QGraphicsWebView modes is broken
+        https://bugs.webkit.org/show_bug.cgi?id=43851
+
+        All window options data (including the bool holding if the view is either QWebView or
+        QGraphicsWebView based) is stored in m_windowOptions, a class member of LauncherWindow.
+        When toggle the view from QWebView to QGraphicsWebView based (and vice-versa), we were
+        not updating LauncherWindow::WindowOptions::m_useGraphicsView bit, and then things were
+        getting broken.
+
+        Patch addresses this issue.
+
+        * QtTestBrowser/launcherwindow.cpp:
+        (LauncherWindow::createChrome):
+        (LauncherWindow::toggleWebView):
+        (LauncherWindow::toggleAcceleratedCompositing):
+
 2010-08-10  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Ariya Hidayat.
