@@ -1,3 +1,13 @@
+2010-08-11  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Update the Symbian def files
+
+        Re-freeze with various QGraphicsWebView and DRT updates.
+        The uppper part of the diff is just whitespace, so 
+        diff -w will show the real diff.
+
+        * symbian/eabi/QtWebKitu.def:
+
 2010-08-10  Anders Bakken  <agbakken@gmail.com>
 
         Reviewed by Kenneth Rohde Christiansen.
