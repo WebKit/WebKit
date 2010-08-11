@@ -1393,7 +1393,6 @@ HEADERS += \
     html/AsyncImageResizer.h \
     html/Blob.h \
     html/BlobBuilder.h \
-    html/BlobRegistryImp.h \
     html/BlobStorageData.h \
     html/BlobURL.h \
     html/canvas/CanvasGradient.h \
