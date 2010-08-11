@@ -67,42 +67,46 @@ private:
     Vector<CSSSelector*, 16> m_stack;
 };
 
-unsigned int CSSSelector::specificity()
+unsigned CSSSelector::specificity() const
 {
-    if (m_isForPage)
-        return specificityForPage();
-
-    // FIXME: Pseudo-elements and pseudo-classes do not have the same specificity. This function
-    // isn't quite correct.
-    int s = (m_tag.localName() == starAtom ? 0 : 1);
-    switch (m_match) {
-        case Id:
-            s += 0x10000;
-            break;
-        case Exact:
-        case Class:
-        case Set:
-        case List:
-        case Hyphen:
-        case PseudoClass:
-        case PseudoElement:
-        case Contain:
-        case Begin:
-        case End:
-            s += 0x100;
-        case None:
-            break;
+    // make sure the result doesn't overflow
+    static const unsigned maxValueMask = 0xffffff;
+    unsigned total = 0;
+    for (const CSSSelector* selector = this; selector; selector = selector->tagHistory()) {
+        if (selector->m_isForPage)
+            return (total + selector->specificityForPage()) & maxValueMask;
+        total = (total + selector->specificityForOneSelector()) & maxValueMask;
     }
-
-    // FIXME: Avoid recursive calls to prevent possible stack overflow.
-    if (CSSSelector* tagHistory = this->tagHistory())
-        s += tagHistory->specificity();
-
-    // make sure it doesn't overflow
-    return s & 0xffffff;
+    return total;
 }
 
-unsigned CSSSelector::specificityForPage()
+inline unsigned CSSSelector::specificityForOneSelector() const
+{
+    // FIXME: Pseudo-elements and pseudo-classes do not have the same specificity. This function
+    // isn't quite correct.
+    unsigned s = (m_tag.localName() == starAtom ? 0 : 1);
+    switch (m_match) {
+    case Id:
+        s += 0x10000;
+        break;
+    case Exact:
+    case Class:
+    case Set:
+    case List:
+    case Hyphen:
+    case PseudoClass:
+    case PseudoElement:
+    case Contain:
+    case Begin:
+    case End:
+        s += 0x100;
+    case None:
+        break;
+    }
+    return s;
+}
+
+unsigned CSSSelector::specificityForPage() const
 {
     // See http://dev.w3.org/csswg/css3-page/#cascading-and-page-context
     unsigned s = (m_tag.localName() == starAtom ? 0 : 4);

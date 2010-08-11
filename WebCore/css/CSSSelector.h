@@ -85,7 +85,7 @@ namespace WebCore {
 
         // tag == -1 means apply to all elements (Selector = *)
 
-        unsigned specificity();
+        unsigned specificity() const;
 
         /* how the attribute value has to match.... Default is Exact */
         enum Match {
@@ -294,7 +294,8 @@ namespace WebCore {
         void releaseOwnedSelectorsToBag(CSSSelectorBag&);
         void deleteReachableSelectors();
 
-        unsigned specificityForPage();
+        unsigned specificityForOneSelector() const;
+        unsigned specificityForPage() const;
         void extractPseudoType() const;
 
         struct RareData : Noncopyable {

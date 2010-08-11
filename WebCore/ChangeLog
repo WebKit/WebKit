@@ -1,3 +1,21 @@
+2010-08-10  Hayato Ito  <hayato@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Make CSSSelector::specificity() non-recursive.
+        https://bugs.webkit.org/show_bug.cgi?id=43784
+
+        This change is one of the required changes to fix the following master bug:
+        https://bugs.webkit.org/show_bug.cgi?id=42806
+
+        No functional change, thus no tests.
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::specificity):
+        (WebCore::CSSSelector::specificityForOneSelector):
+        (WebCore::CSSSelector::specificityForPage):
+        * css/CSSSelector.h:
+
 2010-08-10  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by Darin Adler.
