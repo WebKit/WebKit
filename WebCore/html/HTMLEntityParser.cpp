@@ -30,18 +30,7 @@
 
 #include <wtf/Vector.h>
 
-// Use __GNUC__ instead of PLATFORM(GCC) to stay consistent with the gperf generated c file
-#ifdef __GNUC__
-// The main parser includes this too so we are getting two copies of the data. However, this way the code gets inlined.
 #include "HTMLEntityNames.cpp"
-#else
-// Not inlined for non-GCC compilers
-struct Entity {
-    const char* name;
-    int code;
-};
-const struct Entity* findEntity(register const char* str, register unsigned int len);
-#endif
 
 using namespace WTF;
 

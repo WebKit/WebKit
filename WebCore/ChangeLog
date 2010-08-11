@@ -1,3 +1,10 @@
+2010-08-11  Adam Barth  <abarth@webkit.org>
+
+        Windows build fix.  Turns out we need to unconditionally include
+        HTMLEntityNames.cpp now that LegacyHTMLDocumentParser doesn't exist.
+
+        * html/HTMLEntityParser.cpp:
+
 2010-08-11  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Darin Adler.
