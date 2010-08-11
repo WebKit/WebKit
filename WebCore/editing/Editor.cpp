@@ -1514,10 +1514,13 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
     if (!text.isEmpty()) {
         TypingCommand::insertText(m_frame->document(), text, true, true);
 
-        Node* baseNode = m_frame->selection()->base().node();
-        unsigned baseOffset = m_frame->selection()->base().deprecatedEditingOffset();
-        Node* extentNode = m_frame->selection()->extent().node();
-        unsigned extentOffset = m_frame->selection()->extent().deprecatedEditingOffset();
+        // Find out what node has the composition now.
+        Position base = m_frame->selection()->base().downstream();
+        Position extent = m_frame->selection()->extent();
+        Node* baseNode = base.node();
+        unsigned baseOffset = base.deprecatedEditingOffset();
+        Node* extentNode = extent.node();
+        unsigned extentOffset = extent.deprecatedEditingOffset();
 
         if (baseNode && baseNode == extentNode && baseNode->isTextNode() && baseOffset + text.length() == extentOffset) {
             m_compositionNode = static_cast<Text*>(baseNode);

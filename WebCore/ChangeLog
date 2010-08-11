@@ -1,3 +1,16 @@
+2010-08-10  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=43803
+        <rdar://problem/6988023> Only the last Korean character can be shown if font style is enabled while typing (43803)
+
+        Test: platform/mac/editing/input/bold-node.html
+
+        * editing/Editor.cpp: (WebCore::Editor::setComposition): It is not clear to me what the
+        "baseNode == extentNode" check is about in this function , but let's try to make it more
+        likely that it passes.
+
 2010-08-10  Hayato Ito  <hayato@chromium.org>
 
         Reviewed by Kent Tamura.
