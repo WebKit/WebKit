@@ -1,5 +1,12 @@
 2010-08-12  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
+        Really add a missing file. I wish I would remember running git add
+        on them after applying a patch =(.
+
+        * org.webkitgtk.gschema.xml.in: Added.
+
+2010-08-12  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
         Reviewed by Martin Robinson.
 
         [GTK] Use GSettings to save/restore Web Inspector settings
