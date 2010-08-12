@@ -28,8 +28,7 @@ module core {
         EventTarget,
         GenerateNativeConverter,
         InlineGetOwnPropertySlot,
-        Polymorphic,
-        DontCheckEnums
+        Polymorphic
     ] Node
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
         : Object, EventTarget

@@ -34,8 +34,7 @@ module html {
         CanBeConstructed,
         CallWith=ScriptExecutionContext,
         EventTarget,
-        NoStaticTables,
-        DontCheckEnums
+        NoStaticTables
     ] FileReader {
         // ready states
         const unsigned short EMPTY = 0;

@@ -1,80 +1,79 @@
 <html>
 <head>
-	<script>
-		function overflowChanged(event) {
-		    var result = [event.orient, event.horizontalOverflow, event.verticalOverflow];
+  <script>
+    function overflowChanged(event) {
+        var result = [event.orient, event.horizontalOverflow, event.verticalOverflow];
 
-            if ('' + result == testResults[currentTest++])
-                numSuccessful ++;
-            
-            if (testResults.length == numSuccessful)
-                document.getElementById('result').innerHTML = "SUCCESS";
-		}
-		
-		function forceLayout() {
-			document.body.offsetTop;		    
-		}
-		
-		function runTest() {
-		    if (window.layoutTestController)
-		        layoutTestController.dumpAsText();
-		        
-		    testResults = [[1, true, false],
-		                   [1, false, false],
-		                   [0, false, true],
-		                   [0, false, false],
-		                   [2, true, true],
-		                   [2, false, false],
-		                   [0, false, true],
-		                   [2, true, false],		                
-		                   [2, false, true]];
-		                   
-		    currentTest = 0;
-		    numSuccessful = 0;
-		    
-			var c = document.getElementById('container');
-			c.addEventListener('overflowchanged', overflowChanged, false);
-			
-			forceLayout();
-			document.getElementById('child').style.width='200px';
+        if ('' + result == testResults[currentTest++])
+            numSuccessful ++;
+        if (testResults.length == numSuccessful)
+            document.getElementById('result').innerHTML = "SUCCESS";
+    }
 
-			forceLayout();
-			document.getElementById('child').style.width='50px';
-			forceLayout();
+    function forceLayout() {
+        document.body.offsetTop;
+    }
 
-			document.getElementById('child').style.height='200px';
-			forceLayout();
-			document.getElementById('child').style.height='50px';
-			forceLayout();
+    function runTest() {
+        if (window.layoutTestController)
+            layoutTestController.dumpAsText();
 
-            forceLayout();
-			document.getElementById('child').style.width='200px';
-			document.getElementById('child').style.height='200px';
-			forceLayout();
+        testResults = [[OverflowEvent.HORIZONTAL, true, false],
+                       [OverflowEvent.HORIZONTAL, false, false],
+                       [OverflowEvent.VERTICAL, false, true],
+                       [OverflowEvent.VERTICAL, false, false],
+                       [OverflowEvent.BOTH, true, true],
+                       [OverflowEvent.BOTH, false, false],
+                       [OverflowEvent.VERTICAL, false, true],
+                       [OverflowEvent.BOTH, true, false],
+                       [OverflowEvent.BOTH, false, true]];
 
-			document.getElementById('child').style.width='50px';
-			document.getElementById('child').style.height='50px';
-			forceLayout();		
+        currentTest = 0;
+        numSuccessful = 0;
 
-			document.getElementById('child').style.height='200px';
-			forceLayout();		
+        var c = document.getElementById('container');
+        c.addEventListener('overflowchanged', overflowChanged, false);
 
-			document.getElementById('child').style.width='200px';
-			document.getElementById('child').style.height='50px';
-			forceLayout();		
+        forceLayout();
+        document.getElementById('child').style.width='200px';
 
-			document.getElementById('child').style.width='50px';
-			document.getElementById('child').style.height='200px';
-			forceLayout();		
+        forceLayout();
+        document.getElementById('child').style.width='50px';
+        forceLayout();
 
-		}
-	</script>
+        document.getElementById('child').style.height='200px';
+        forceLayout();
+        document.getElementById('child').style.height='50px';
+        forceLayout();
+
+        forceLayout();
+        document.getElementById('child').style.width='200px';
+        document.getElementById('child').style.height='200px';
+        forceLayout();
+
+        document.getElementById('child').style.width='50px';
+        document.getElementById('child').style.height='50px';
+        forceLayout();
+
+        document.getElementById('child').style.height='200px';
+        forceLayout();
+
+        document.getElementById('child').style.width='200px';
+        document.getElementById('child').style.height='50px';
+        forceLayout();
+
+        document.getElementById('child').style.width='50px';
+        document.getElementById('child').style.height='200px';
+        forceLayout();
+
+    }
+  </script>
 </head>
 <body onload="runTest()">
-	<div id="container" style="width:100; height:100px; border: solid red 2px; overflow: hidden">
-		<div id="child" style="margin-top: 30px; margin-left: 30px; width:50px; height:50px; border: solid blue 2px;"></div>
-	</div>
-	This tests that overflowchanged events are fired correctly. If the test is successful, the text "SUCCESS" should be shown below.
-	<div id="result">FAILURE</div>
+    <div id="container" style="width:100; height:100px; border: solid red 2px; overflow: hidden">
+        <div id="child" style="margin-top: 30px; margin-left: 30px; width:50px; height:50px; border: solid blue 2px;"></div>
+    </div>
+    This tests that overflowchanged events are fired correctly. If the test is successful, the text "SUCCESS" should be shown below.
+    <div id="result">FAILURE</div>
 </body>
 </html>

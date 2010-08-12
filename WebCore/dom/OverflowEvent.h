@@ -33,8 +33,8 @@ namespace WebCore {
     class OverflowEvent : public Event {
     public:
         enum orientType {
-            VERTICAL   = 0,
-            HORIZONTAL = 1,
+            HORIZONTAL = 0,
+            VERTICAL   = 1,
             BOTH       = 2
         };
 

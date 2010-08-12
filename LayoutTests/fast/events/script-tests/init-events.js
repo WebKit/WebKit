@@ -1,8 +1,14 @@
 description("This tests the init functions for all the event DOM classes that have them.");
 
-function testInitEvent(prefix, argumentString)
+function createEventHelper(prefix)
 {
     var event = document.createEvent(prefix + "Event");
+    return event;
+}
+
+function testInitEvent(prefix, argumentString)
+{
+    var event = createEventHelper(prefix);
     var initExpression = "event.init" + prefix + "Event(" + argumentString + ")";
     eval(initExpression);
     return event;
@@ -133,6 +139,7 @@ shouldBe("testInitEvent('Overflow', '1001, false, false').horizontalOverflow", "
 shouldBe("testInitEvent('Overflow', '1001, true, false').horizontalOverflow", "true");
 shouldBe("testInitEvent('Overflow', '1001, false, false').verticalOverflow", "false");
 shouldBe("testInitEvent('Overflow', '1001, false, true').verticalOverflow", "true");
+shouldBe("createEventHelper('Overflow').orient", "OverflowEvent.VERTICAL");
 
 shouldBe("testInitEvent('Progress', '\"a\", false, false, false, 1001, 1002').type", "'a'");
 shouldBe("testInitEvent('Progress', 'null, false, false, false, 1001, 1002').type", "'null'");

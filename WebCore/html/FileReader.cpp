@@ -240,15 +240,15 @@ FileReader::ReadyState FileReader::readyState() const
     switch (m_state) {
     case None:
     case Starting:
-        return Empty;
+        return EMPTY;
     case Opening:
     case Reading:
-        return Loading;
+        return LOADING;
     case Completed:
-        return Done;
+        return DONE;
     }
     ASSERT_NOT_REACHED();
-    return Empty;
+    return EMPTY;
 }
 
 const ScriptString& FileReader::result()
