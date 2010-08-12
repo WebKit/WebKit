@@ -28,7 +28,6 @@
 
 #include "CachedResourceClient.h"
 #include "CachedResourceHandle.h"
-#include <wtf/Noncopyable.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
@@ -41,7 +40,7 @@ class Element;
 // A CachedResourceHandle alone does not prevent the underlying CachedResource
 // from purging its data buffer. This class holds a dummy client open for its
 // lifetime in order to guarantee that the data buffer will not be purged.
-class PendingScript : public Noncopyable, CachedResourceClient {
+class PendingScript : public CachedResourceClient {
 public:
     PendingScript()
         : m_startingLineNumber(0)
@@ -49,7 +48,29 @@ public:
     {
     }
 
+    PendingScript(const PendingScript& other)
+        : CachedResourceClient(other)
+        , m_startingLineNumber(other.m_startingLineNumber)
+        , m_watchingForLoad(other.m_watchingForLoad)
+        , m_element(other.m_element)
+    {
+        setCachedScript(other.cachedScript());
+    }
+
     ~PendingScript();
+
+    PendingScript& operator=(const PendingScript& other)
+    {
+        if (this == &other)
+            return *this;
+
+        m_startingLineNumber = other.m_startingLineNumber;
+        m_watchingForLoad = other.m_watchingForLoad;
+        m_element = other.m_element;
+        setCachedScript(other.cachedScript());
+
+        return *this;
+    }
 
     // FIXME: No setter means this is never set to anything other than 0.
     // This is either unnecessary or incorrect.

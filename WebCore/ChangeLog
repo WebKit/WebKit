@@ -1,3 +1,19 @@
+2010-08-11  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Make PendingScript copyable so that it can be stored in containers
+        https://bugs.webkit.org/show_bug.cgi?id=43875
+
+        This will be useful for storing PendingScripts in a Vector or Deque for
+        async and defer scripts.
+
+        No new tests because no functional changes.
+
+        * dom/PendingScript.h:
+        (WebCore::PendingScript::PendingScript):
+        (WebCore::PendingScript::operator=):
+
 2010-08-11  Victoria Kirst  <vrk@google.com>
 
         Reviewed by David Levin.
