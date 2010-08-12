@@ -1,3 +1,21 @@
+2010-08-12  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Decode images directly to QPixmap
+        https://bugs.webkit.org/show_bug.cgi?id=40797
+
+        Use the new API of Qt 4.7 to decode data from the image
+        reader directly to QPixmap.
+
+        This allow us to use JDCT_IFAST when decoding jpeg images
+        to pixmap, and to decode animated GIF images, while still
+        using in-place conversion of color space.
+
+        * platform/graphics/qt/ImageDecoderQt.cpp:
+        (WebCore::ImageDecoderQt::setData):
+        (WebCore::ImageDecoderQt::internalHandleCurrentImage):
+
 2010-07-14  Marcus Bulach  <bulach@chromium.org>
 
         Reviewed by darin@apple.com.

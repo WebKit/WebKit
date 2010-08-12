@@ -78,6 +78,9 @@ void ImageDecoderQt::setData(SharedBuffer* data, bool allDataReceived)
     m_buffer->open(QIODevice::ReadOnly | QIODevice::Unbuffered);
     m_reader.set(new QImageReader(m_buffer.get(), m_format));
 
+    // This will force the JPEG decoder to use JDCT_IFAST
+    m_reader->setQuality(49);
+
     // QImageReader only allows retrieving the format before reading the image
     m_format = m_reader->format();
 }
@@ -186,20 +189,16 @@ void ImageDecoderQt::internalReadImage(size_t frameIndex)
 bool ImageDecoderQt::internalHandleCurrentImage(size_t frameIndex)
 {
     QPixmap pixmap;
-    bool pixmapLoaded;
-    const int imageCount = m_reader->imageCount();
-    if (imageCount == 0 || imageCount == 1)
-        pixmapLoaded = pixmap.loadFromData((const uchar*)(m_data->data()), m_data->size(), m_format);
-    else {
-        QImage img;
-        const bool imageLoaded = m_reader->read(&img);
-        if (imageLoaded) {
-            pixmap = QPixmap::fromImage(img);
-            pixmapLoaded = true;
-        }
-    }
 
-    if (!pixmapLoaded) {
+#if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
+    pixmap = QPixmap::fromImageReader(m_reader.get());
+#else
+    QImage img;
+    if (m_reader->read(&img))
+        pixmap = QPixmap::fromImage(img);
+#endif
+
+    if (pixmap.isNull()) {
         frameCount();
         repetitionCount();
         clearPointers();
