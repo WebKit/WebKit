@@ -490,7 +490,7 @@ JS_DOM_HEADERS=$(filter-out JSEventListener.h JSEventTarget.h,$(DOM_CLASSES:%=JS
 
 WEB_DOM_HEADERS :=
 ifeq ($(findstring BUILDING_WX,$(FEATURE_DEFINES)), BUILDING_WX)
-WEB_DOM_HEADERS := $(filter-out WebDOMXSLTProcessor.h,$(DOM_CLASSES:%=WebDOM%.h))
+WEB_DOM_HEADERS := $(filter-out WebDOMXSLTProcessor.h WebDOMEventTarget.h,$(DOM_CLASSES:%=WebDOM%.h))
 endif # BUILDING_WX
 
 all : \
