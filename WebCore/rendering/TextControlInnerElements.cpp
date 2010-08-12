@@ -345,6 +345,7 @@ void SpinButtonElement::setHovered(bool flag)
 inline InputFieldSpeechButtonElement::InputFieldSpeechButtonElement(Node* shadowParent)
     : TextControlInnerElement(shadowParent->document(), shadowParent)
     , m_capturing(false)
+    , m_state(Idle)
 {
 }
 
@@ -383,12 +384,31 @@ void InputFieldSpeechButtonElement::defaultEventHandler(Event* event)
     }
 
     if (event->type() == eventNames().clickEvent) {
-        speechInput()->startRecognition(this);
+        switch (m_state) {
+        case Idle:
+            if (speechInput()->startRecognition(this))
+                setState(Recording);
+            break;
+        case Recording:
+            speechInput()->stopRecording();
+            break;
+        case Recognizing:
+            // Nothing to do here, we will continue to wait for results.
+            break;
+        }
         event->setDefaultHandled();
     }
 
     if (!event->defaultHandled())
         HTMLDivElement::defaultEventHandler(event);
+}
+
+void InputFieldSpeechButtonElement::setState(SpeechInputState state)
+{
+    if (m_state != state) {
+        m_state = state;
+        shadowAncestorNode()->renderer()->repaint();
+    }
 }
 
 SpeechInput* InputFieldSpeechButtonElement::speechInput()
@@ -398,13 +418,12 @@ SpeechInput* InputFieldSpeechButtonElement::speechInput()
 
 void InputFieldSpeechButtonElement::didCompleteRecording()
 {
-    // FIXME: Add UI feedback here to indicate that audio recording stopped and recognition is
-    // in progress.
+    setState(Recognizing);
 }
 
 void InputFieldSpeechButtonElement::didCompleteRecognition()
 {
-    // FIXME: Add UI feedback here to indicate that audio recognition has ended.
+    setState(Idle);
 }
 
 void InputFieldSpeechButtonElement::setRecognitionResult(const String& result)

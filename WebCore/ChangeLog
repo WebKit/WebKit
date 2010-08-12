@@ -1,3 +1,22 @@
+2010-08-11  Satish Sampath  <satish@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Handle clicks and recognition events for the speech input button
+        https://bugs.webkit.org/show_bug.cgi?id=43857
+
+        * rendering/RenderInputSpeech.cpp:
+        (WebCore::RenderInputSpeech::paintInputFieldSpeechButton): Selects the image based on current state.
+        * rendering/TextControlInnerElements.cpp:
+        (WebCore::InputFieldSpeechButtonElement::InputFieldSpeechButtonElement):
+        (WebCore::InputFieldSpeechButtonElement::defaultEventHandler):
+        (WebCore::InputFieldSpeechButtonElement::set_state): Switch to a new state and update the UI.
+        (WebCore::InputFieldSpeechButtonElement::didCompleteRecording): 
+        (WebCore::InputFieldSpeechButtonElement::didCompleteRecognition):
+        * rendering/TextControlInnerElements.h:
+        (WebCore::InputFieldSpeechButtonElement::):
+        (WebCore::InputFieldSpeechButtonElement::state):
+
 2010-08-11  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

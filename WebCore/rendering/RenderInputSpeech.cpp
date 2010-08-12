@@ -36,6 +36,7 @@
 #include "GraphicsContext.h"
 #include "HTMLNames.h"
 #include "RenderBox.h"
+#include "TextControlInnerElements.h"
 
 namespace WebCore {
 
@@ -79,7 +80,16 @@ bool RenderInputSpeech::paintInputFieldSpeechButton(RenderObject* object, const 
     buttonRect.move(rect.x(), rect.y());
 
     DEFINE_STATIC_LOCAL(RefPtr<Image>, imageStateNormal, (Image::loadPlatformResource("inputSpeech")));
-    paintInfo.context->drawImage(imageStateNormal.get(), object->style()->colorSpace(), buttonRect);
+    DEFINE_STATIC_LOCAL(RefPtr<Image>, imageStateRecording, (Image::loadPlatformResource("inputSpeechRecording")));
+    DEFINE_STATIC_LOCAL(RefPtr<Image>, imageStateWaiting, (Image::loadPlatformResource("inputSpeechWaiting")));
+
+    InputFieldSpeechButtonElement* speechButton = reinterpret_cast<InputFieldSpeechButtonElement*>(object->node());
+    Image* image = imageStateNormal.get();
+    if (speechButton->state() == InputFieldSpeechButtonElement::Recording)
+        image = imageStateRecording.get();
+    else if (speechButton->state() == InputFieldSpeechButtonElement::Recognizing)
+        image = imageStateWaiting.get();
+    paintInfo.context->drawImage(image, object->style()->colorSpace(), buttonRect);
 
     return false;
 }
