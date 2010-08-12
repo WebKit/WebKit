@@ -104,7 +104,7 @@ group {
                 min: 36 20;
                 image {
                     normal: "widget/combo/combo_normal.png";
-                    border: 7 7 7 7;
+                    border: 15 0 8 11;
                 }
             }
             description {
@@ -117,7 +117,7 @@ group {
                inherit: "default" 0.0;
                image {
                   normal: "widget/combo/combo_hover.png";
-                  border: 7 7 7 7;
+                  border: 15 0 8 11;
                }
             }
             description {
@@ -125,7 +125,7 @@ group {
                inherit: "default" 0.0;
                image {
                   normal: "widget/combo/combo_focus.png";
-                  border: 7 7 7 7;
+                  border: 15 0 8 11;
                }
             }
             description {
@@ -133,7 +133,7 @@ group {
                inherit: "default" 0.0;
                image {
                   normal: "widget/combo/combo_press.png";
-                  border: 7 7 7 7;
+                  border: 15 0 8 11;
                }
             }
         }
@@ -165,7 +165,7 @@ group {
                 rel1.to: "bt_combo_clipper";
                 image {
                      normal: "widget/combo/combo_normal_button.png";
-                     border: 3 5 5 5;
+                     border: 1 15 8 10;
                }
             }
             description {
@@ -180,7 +180,7 @@ group {
                 rel1.to: "bt_combo_clipper";
                 image {
                     normal: "widget/combo/combo_hover_button.png";
-                    border: 3 5 5 5;
+                    border: 1 15 8 10;
                 }
             }
             description {
@@ -189,7 +189,7 @@ group {
                 rel1.to: "bt_combo_clipper";
                 image {
                     normal: "widget/combo/combo_focus_button.png";
-                    border: 6 7 7 7;
+                    border: 1 15 8 10;
                 }
             }
             description {
@@ -198,7 +198,7 @@ group {
                 rel1.to: "bt_combo_clipper";
                 image {
                     normal: "widget/combo/combo_press_button.png";
-                    border: 6 8 8 8;
+                    border: 1 15 8 10;
                 }
             }
         }
@@ -210,8 +210,8 @@ group {
             clip_to: "bt_combo_clipper";
             description {
                 state: "default" 0.0;
-                min: 17 13;
-                max: 17 13;
+                min: 12 10;
+                max: 12 10;
                 color: 255 255 255 150;
                 rel1 {
                     to: "bt_combo_clipper";
@@ -247,11 +247,11 @@ group {
                color: 0 0 0 0;
                rel1 {
                   to: "combo_clipper";
-                  offset: 10 5;
+                  offset: 15 10;
                }
                rel2 {
                   to: "combo_clipper";
-                  offset: -6 -6;
+                  offset: -11 -11;
                }
             }
          }

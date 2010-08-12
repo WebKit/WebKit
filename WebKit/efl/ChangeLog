@@ -1,3 +1,72 @@
+2010-08-11  Rafael Antognolli  <antognolli@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Adding new theme for widgets.
+        https://bugs.webkit.org/show_bug.cgi?id=43860
+
+        Original theme was there for a long time. This is a new
+        fresh one.
+
+        * DefaultTheme/default.edc:
+        * DefaultTheme/widget/button/button.edc:
+        * DefaultTheme/widget/button/img_button_focus.png:
+        * DefaultTheme/widget/button/img_button_hover.png:
+        * DefaultTheme/widget/button/img_button_normal.png:
+        * DefaultTheme/widget/button/img_button_press.png:
+        * DefaultTheme/widget/check/check.edc:
+        * DefaultTheme/widget/check/img_check_off.png:
+        * DefaultTheme/widget/check/img_check_off_focus.png:
+        * DefaultTheme/widget/check/img_check_off_hover.png:
+        * DefaultTheme/widget/check/img_check_on.png:
+        * DefaultTheme/widget/check/img_check_on_focus.png:
+        * DefaultTheme/widget/check/img_check_on_hover.png:
+        * DefaultTheme/widget/combo/combo.edc:
+        * DefaultTheme/widget/combo/combo_focus.png:
+        * DefaultTheme/widget/combo/combo_focus_button.png:
+        * DefaultTheme/widget/combo/combo_hover.png:
+        * DefaultTheme/widget/combo/combo_hover_button.png:
+        * DefaultTheme/widget/combo/combo_normal.png:
+        * DefaultTheme/widget/combo/combo_normal_button.png:
+        * DefaultTheme/widget/combo/combo_press.png:
+        * DefaultTheme/widget/combo/combo_press_button.png:
+        * DefaultTheme/widget/combo/icon.png:
+        * DefaultTheme/widget/entry/img_focused.png:
+        * DefaultTheme/widget/entry/img_hovered.png:
+        * DefaultTheme/widget/entry/img_normal.png:
+        * DefaultTheme/widget/file/file_focus.png:
+        * DefaultTheme/widget/file/file_hover.png:
+        * DefaultTheme/widget/file/file_normal.png:
+        * DefaultTheme/widget/file/file_press.png:
+        * DefaultTheme/widget/radio/img_radio_off.png:
+        * DefaultTheme/widget/radio/img_radio_off_focus.png:
+        * DefaultTheme/widget/radio/img_radio_off_hover.png:
+        * DefaultTheme/widget/radio/img_radio_on.png:
+        * DefaultTheme/widget/radio/img_radio_on_focus.png:
+        * DefaultTheme/widget/radio/img_radio_on_hover.png:
+        * DefaultTheme/widget/radio/radio.edc:
+        * DefaultTheme/widget/scrollbar/scrollbar.edc:
+        * DefaultTheme/widget/scrollbar/scrollbar_h.png:
+        * DefaultTheme/widget/scrollbar/scrollbar_hilight.png: Removed.
+        * DefaultTheme/widget/scrollbar/scrollbar_knob_h.png:
+        * DefaultTheme/widget/scrollbar/scrollbar_knob_v.png:
+        * DefaultTheme/widget/scrollbar/scrollbar_v.png:
+        * DefaultTheme/widget/search/cancel/cancel_normal_button2.png:
+        * DefaultTheme/widget/search/decoration/decoration_normal_button.png:
+        * DefaultTheme/widget/search/field/field_focused.png:
+        * DefaultTheme/widget/search/field/field_hovered.png:
+        * DefaultTheme/widget/search/field/field_normal.png:
+        * DefaultTheme/widget/slider/slider.edc:
+        * DefaultTheme/widget/slider/slider_fill_h.png: Added.
+        * DefaultTheme/widget/slider/slider_fill_v.png: Added.
+        * DefaultTheme/widget/slider/slider_h.png:
+        * DefaultTheme/widget/slider/slider_hilight.png: Removed.
+        * DefaultTheme/widget/slider/slider_knob_h.png:
+        * DefaultTheme/widget/slider/slider_knob_press_h.png: Added.
+        * DefaultTheme/widget/slider/slider_knob_press_v.png: Added.
+        * DefaultTheme/widget/slider/slider_knob_v.png:
+        * DefaultTheme/widget/slider/slider_v.png:
+
 2010-08-12  Rafael Antognolli  <antognolli@profusion.mobi>
 
         Reviewed by Kenneth Rohde Christiansen.

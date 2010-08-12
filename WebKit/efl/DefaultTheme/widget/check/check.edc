@@ -22,7 +22,7 @@
    group {
 
       name: "webkit/widget/checkbox";
-      min: 14 14;
+      min: 12 12;
 
       images {
          image: "widget/check/img_check_on.png" COMP;
@@ -71,8 +71,8 @@
             type: IMAGE;
             description {
                state: "default" 0.0;
-               min: 14 14;
-               max: 14 14;
+               min: 12 12;
+               max: 12 12;
                image {
                   normal: "widget/check/img_check_off.png";
                }

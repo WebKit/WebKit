@@ -23,16 +23,16 @@ color_classes {
    color_class {
       name: "webkit/selection/active";
       color: 255 255 255 255; /* foreground */
-      color2: 32 0 200 255; /* background */
+      color2: 86 86 209 255; /* background */
    }
    color_class {
       name: "webkit/selection/inactive";
       color: 255 255 255 255; /* foreground */
-      color2: 128 0 255 128; /* background */
+      color2: 0 0 128 128; /* background */
    }
    color_class {
       name: "webkit/focus_ring";
-      color: 26 182 240 255; /* foreground */
+      color: 26 26 226 255; /* foreground */
       /* no background, consider transparent */
    }
    color_class {

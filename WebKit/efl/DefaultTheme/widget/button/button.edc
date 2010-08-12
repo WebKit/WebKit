@@ -64,10 +64,10 @@
             type: IMAGE;
             description {
                state: "default" 0.0;
-               min: 25 10;
+               min: 25 25;
                image {
                   normal: "widget/button/img_button_normal.png";
-                  border: 6 6 6 6;
+                  border: 6 10 8 10;
                }
             }
             description {
@@ -75,7 +75,7 @@
                inherit: "default" 0.0;
                image {
                   normal: "widget/button/img_button_press.png";
-                  border: 8 8 8 8;
+                  border: 6 10 8 10;
                }
             }
             description {
@@ -88,7 +88,7 @@
                inherit: "default" 0.0;
                image {
                   normal: "widget/button/img_button_hover.png";
-                  border: 6 6 6 6;
+                  border: 6 10 8 10;
                }
             }
             description {
@@ -96,7 +96,7 @@
                inherit: "default" 0.0;
                image {
                   normal: "widget/button/img_button_focus.png";
-                  border: 6 6 6 6;
+                  border: 6 10 8 10;
                }
             }
          }
@@ -109,11 +109,11 @@
                color: 0 0 0 0;
                rel1 {
                   relative: 0.0 0.0;
-                  offset: 10 5;
+                  offset: 15 8;
                }
                rel2 {
                   relative: 1.0 1.0;
-                  offset: -11 -6;
+                  offset: -16 -11;
                }
             }
          }

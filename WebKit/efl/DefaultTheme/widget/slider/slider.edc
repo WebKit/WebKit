@@ -22,35 +22,65 @@
 group {
     name: "webkit/widget/slider/vertical";
 
-    min: 10 0; /* if > 0, this is the minimum size that will be allocated.
+    min: 11 0; /* if > 0, this is the minimum size that will be allocated.
                 * If wants to draw on top, just overflow usign edje's rel1/rel2
                 */
+    max: 11 999999;
 
     images {
         image: "widget/slider/slider_v.png" COMP;
         image: "widget/slider/slider_knob_v.png" COMP;
+        image: "widget/slider/slider_knob_press_v.png" COMP;
+        image: "widget/slider/slider_fill_v.png" COMP;
     }
 
     script {
-        public message(Msg_Type:type, id, ...) {
-            if ((id == 0) && (type == MSG_FLOAT_SET)) {
-                new Float:vy, Float:sy;
+       public isEnabled;
+       public isPressed;
+       public isChecked;
+       public isFocused;
+       public isHovered;
 
-                vy = getfarg(2);
-                sy = getfarg(3);
+       public show() {
 
-                if (vy >= 0.0) {
-                    set_drag_size(PART:"img.knob", 1.0, sy);
-                    set_drag(PART:"img.knob", 0.0, vy);
-                }
-            }
-        }
+           if (get_int(isEnabled) == 1) {
+               set_state(PART:"img.knob", "default", 0.0);
+               if (get_int(isFocused) == 1) {
+                   set_state(PART:"img.knob", "pressed", 0.0);
+                   if (get_int(isPressed) == 1)
+                       set_state(PART:"img.knob", "pressed", 0.0);
+                   }
+               else if (get_int(isHovered) == 1) {
+                   set_state(PART:"img.knob", "pressed", 0.0);
+                   if (get_int(isPressed) == 1)
+                       set_state(PART:"img.knob", "pressed", 0.0);
+               }
+           }
+           else
+               set_state(PART:"img.knob", "default", 0.0);
+       }
 
-        public update_drag_pos() {
-            new Float:x, Float:y;
-            get_drag(PART:"img.knob", x, y);
-            send_message(MSG_FLOAT, 1, y);
-        }
+       public message(Msg_Type:type, id, ...) {
+           if ((id == 0) && (type == MSG_FLOAT_SET)) {
+               new Float:vy, Float:sy;
+
+               vy = getfarg(2);
+               sy = getfarg(3);
+
+               if (vy >= 0.0) {
+                   set_drag_size(PART:"img.knob", 1.0, sy);
+                   set_drag(PART:"img.knob", 0.0, vy);
+                   run_program(PROGRAM:"show");
+               } else
+                   run_program(PROGRAM:"hide");
+           }
+       }
+
+       public update_drag_pos() {
+           new Float:x, Float:y;
+           get_drag(PART:"img.knob", x, y);
+           send_message(MSG_FLOAT, 1, y);
+       }
     }
 
     parts {
@@ -58,8 +88,8 @@ group {
             name: "rect.base";
             type: RECT;
             description {
-               min: 10 0;
-               max: 10 999999;
+               min: 11 29;
+               max: 11 999999;
                state: "default" 0.0;
                color: 255 255 255 0;
             }
@@ -71,6 +101,10 @@ group {
                state: "default" 0.0;
                color: 255 255 255 255;
             }
+            description {
+               state: "hidden" 0.0;
+               color: 255 255 255 128;
+            }
          }
 
          part {
@@ -80,9 +114,32 @@ group {
             clip_to: "rect.clipper";
             description {
                state: "default" 0.0;
+               min: 5 29;
+               max: 5 999999;
+               rel1.to: "rect.base";
+               rel2.to: "rect.base";
                image {
                   normal: "widget/slider/slider_v.png";
-                  border: 0 0 6 6;
+                  border: 0 0 5 5;
+               }
+           }
+         }
+
+         part {
+            name: "img.slider_fill";
+            type: IMAGE;
+            mouse_events: 0;
+            clip_to: "rect.clipper";
+            description {
+               state: "default" 0.0;
+               min: 5 29;
+               max: 5 999999;
+               rel1.to: "img.knob";
+               rel2.to: "rect.base";
+               align: 0.5 0.5;
+               image {
+                  normal: "widget/slider/slider_fill_v.png";
+                  border: 0 0 5 5;
                }
            }
          }
@@ -94,21 +151,45 @@ group {
             clip_to: "rect.clipper";
             dragable {
                 x: 0 0 0;
-                y: 1 1 0;
+                y: 1 1 1;
                 confine: "rect.base";
             }
             description {
                state: "default" 0.0;
-               min: 10 10;
-               max: 10 999999;
+               min: 11 29;
+               align: 0.5 0.5;
                image {
                   normal: "widget/slider/slider_knob_v.png";
                   border: 0 0 6 6;
                }
             }
+            description {
+               state: "pressed" 0.0;
+               inherit: "default" 0.0;
+               image.normal: "widget/slider/slider_knob_press_v.png";
+            }
          }
     }
     programs {
+        program {
+           name: "load";
+           signal: "load";
+           action: STATE_SET "hidden" 0.0;
+           target: "rect.clipper";
+        }
+        program {
+           name: "hide";
+           action: STATE_SET "hidden" 0.0;
+           transition: ACCELERATE 0.5;
+           target: "rect.clipper";
+        }
+
+        program {
+           name: "show";
+           action: STATE_SET "default" 0.0;
+           target: "rect.clipper";
+        }
+
         program {
            name: "dragged";
            signal: "drag";
@@ -117,41 +198,124 @@ group {
               update_drag_pos();
            }
         }
+
+        program {
+           name: "enabled";
+           signal: "enabled";
+           script {
+              set_int(isEnabled, 1);
+              show();
+           }
+        }
+        program {
+           name: "pressed";
+           signal: "pressed";
+           script {
+              set_int(isPressed, 1);
+              show();
+           }
+        }
+        program {
+           name: "checked";
+           signal: "checked";
+           script {
+              set_int(isChecked, 1);
+              show();
+           }
+        }
+        program {
+           name: "focused";
+           signal: "focused";
+           script {
+              set_int(isFocused, 1);
+              show();
+           }
+        }
+         program {
+           name: "hovered";
+           signal: "hovered";
+           script {
+              set_int(isHovered, 1);
+              show();
+           }
+        }
+        program {
+            name: "reset";
+            signal: "reset";
+            script {
+               set_int(isEnabled, 0);
+               set_int(isPressed, 0);
+               set_int(isChecked, 0);
+               set_int(isFocused, 0);
+               set_int(isHovered, 0);
+               show();
+            }
+        }
     }
 }
 
 group {
     name: "webkit/widget/slider/horizontal";
 
-    min: 0 10; /* if > 0, this is the minimum size that will be allocated.
+    min: 0 11; /* if > 0, this is the minimum size that will be allocated.
                 * If wants to draw on top, just overflow usign edje's rel1/rel2
                 */
+    max: 999999 11;
 
     images {
         image: "widget/slider/slider_h.png" COMP;
         image: "widget/slider/slider_knob_h.png" COMP;
+        image: "widget/slider/slider_knob_press_h.png" COMP;
+        image: "widget/slider/slider_fill_h.png" COMP;
     }
 
     script {
-        public message(Msg_Type:type, id, ...) {
-            if ((id == 0) && (type == MSG_FLOAT_SET)) {
-                new Float:vx, Float:sx;
+       public isEnabled;
+       public isPressed;
+       public isChecked;
+       public isFocused;
+       public isHovered;
 
-                vx = getfarg(2);
-                sx = getfarg(3);
+       public show() {
 
-                if (vx >= 0.0) {
-                    set_drag_size(PART:"img.knob", sx, 1.0);
-                    set_drag(PART:"img.knob", vx, 0.0);
-                }
-            }
-        }
+           if (get_int(isEnabled) == 1) {
+               set_state(PART:"img.knob", "default", 0.0);
+               if (get_int(isFocused) == 1) {
+                   set_state(PART:"img.knob", "pressed", 0.0);
+                   if (get_int(isPressed) == 1)
+                       set_state(PART:"img.knob", "pressed", 0.0);
+                   }
+               else if (get_int(isHovered) == 1) {
+                   set_state(PART:"img.knob", "pressed", 0.0);
+                   if (get_int(isPressed) == 1)
+                       set_state(PART:"img.knob", "pressed", 0.0);
+               }
+           }
+           else
+               set_state(PART:"img.knob", "default", 0.0);
+       }
 
-        public update_drag_pos() {
-            new Float:x, Float:y;
-            get_drag(PART:"img.knob", x, y);
-            send_message(MSG_FLOAT, 1, x);
-        }
+       public message(Msg_Type:type, id, ...) {
+           if ((id == 0) && (type == MSG_FLOAT_SET)) {
+               new Float:vx, Float:sx;
+
+               vx = getfarg(2);
+               sx = getfarg(3);
+
+               if (vx >= 0.0) {
+                   set_drag_size(PART:"img.knob", sx, 1.0);
+                   set_drag(PART:"img.knob", vx, 0.0);
+                   run_program(PROGRAM:"show");
+               } else
+                   run_program(PROGRAM:"hide");
+           }
+       }
+
+       public update_drag_pos() {
+           new Float:x, Float:y;
+           get_drag(PART:"img.knob", x, y);
+           send_message(MSG_FLOAT, 1, x);
+       }
     }
 
     parts {
@@ -160,8 +324,8 @@ group {
             type: RECT;
             description {
                state: "default" 0.0;
-               min: 0 10;
-               max: 999999 10;
+               min: 29 11;
+               max: 999999 11;
                color: 255 255 255 0;
             }
          }
@@ -172,6 +336,10 @@ group {
                state: "default" 0.0;
                color: 255 255 255 255;
             }
+            description {
+               state: "hidden" 0.0;
+               color: 255 255 255 128;
+            }
          }
 
          part {
@@ -181,9 +349,33 @@ group {
             clip_to: "rect.clipper";
             description {
                state: "default" 0.0;
+               min: 29 5;
+               max: 999999 5;
+               rel1.to: "rect.base";
+               rel2.to: "rect.base";
+               align: 0.5 0.5;
                image {
                   normal: "widget/slider/slider_h.png";
-                  border: 6 6 0 0;
+                  border: 5 5 0 0;
+               }
+           }
+         }
+
+         part {
+            name: "img.slider_fill";
+            type: IMAGE;
+            mouse_events: 0;
+            clip_to: "rect.clipper";
+            description {
+               state: "default" 0.0;
+               min: 29 5;
+               max: 999999 5;
+               rel1.to: "rect.base";
+               rel2.to: "img.knob";
+               align: 0.5 0.5;
+               image {
+                  normal: "widget/slider/slider_fill_h.png";
+                  border: 5 5 0 0;
                }
            }
          }
@@ -200,15 +392,40 @@ group {
             }
             description {
                state: "default" 0.0;
-               min: 10 10;
+               min: 29 11;
+               align: 0.5 0.5;
                image {
                   normal: "widget/slider/slider_knob_h.png";
                   border: 6 6 0 0;
                }
             }
+            description {
+               state: "pressed" 0.0;
+               inherit: "default" 0.0;
+               image.normal: "widget/slider/slider_knob_press_h.png";
+            }
          }
     }
     programs {
+        program {
+           name: "load";
+           signal: "load";
+           action: STATE_SET "hidden" 0.0;
+           target: "rect.clipper";
+        }
+        program {
+           name: "hide";
+           action: STATE_SET "hidden" 0.0;
+           transition: ACCELERATE 0.5;
+           target: "rect.clipper";
+        }
+
+        program {
+           name: "show";
+           action: STATE_SET "default" 0.0;
+           target: "rect.clipper";
+        }
+
         program {
            name: "dragged";
            signal: "drag";
@@ -216,6 +433,59 @@ group {
            script {
               update_drag_pos();
            }
+        }
+
+        program {
+           name: "enabled";
+           signal: "enabled";
+           script {
+              set_int(isEnabled, 1);
+              show();
+           }
+        }
+        program {
+           name: "pressed";
+           signal: "pressed";
+           script {
+              set_int(isPressed, 1);
+              show();
+           }
+        }
+        program {
+           name: "checked";
+           signal: "checked";
+           script {
+              set_int(isChecked, 1);
+              show();
+           }
+        }
+        program {
+           name: "focused";
+           signal: "focused";
+           script {
+              set_int(isFocused, 1);
+              show();
+           }
+        }
+         program {
+           name: "hovered";
+           signal: "hovered";
+           script {
+              set_int(isHovered, 1);
+              show();
+           }
+        }
+        program {
+            name: "reset";
+            signal: "reset";
+            script {
+               set_int(isEnabled, 0);
+               set_int(isPressed, 0);
+               set_int(isChecked, 0);
+               set_int(isFocused, 0);
+               set_int(isHovered, 0);
+               show();
+            }
         }
     }
 }

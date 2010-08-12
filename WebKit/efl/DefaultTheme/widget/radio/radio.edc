@@ -21,7 +21,7 @@
 
    group {
       name: "webkit/widget/radio";
-      min: 16 16;
+      min: 12 12;
 
       images {
          image: "widget/radio/img_radio_on.png" COMP;
@@ -70,8 +70,8 @@
             type: IMAGE;
             description {
                state: "default" 0.0;
-               min: 16 16;
-               max: 16 16;
+               min: 12 12;
+               max: 12 12;
                image {
                   normal: "widget/radio/img_radio_off.png";
                }
