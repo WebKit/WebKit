@@ -202,7 +202,7 @@ bool WebSocketChannel::appendToBuffer(const char* data, size_t len)
 {
     size_t newBufferSize = m_bufferSize + len;
     if (newBufferSize < m_bufferSize) {
-        LOG(Network, "WebSocket buffer overflow (%lu+%lu)", m_bufferSize, len);
+        LOG(Network, "WebSocket buffer overflow (%lu+%lu)", static_cast<unsigned long>(m_bufferSize), static_cast<unsigned long>(len));
         return false;
     }
     char* newBuffer = 0;
@@ -215,7 +215,7 @@ bool WebSocketChannel::appendToBuffer(const char* data, size_t len)
         m_bufferSize = newBufferSize;
         return true;
     }
-    m_context->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, String::format("WebSocket frame (at %lu bytes) is too long.", newBufferSize), 0, m_handshake.clientOrigin());
+    m_context->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, String::format("WebSocket frame (at %lu bytes) is too long.", static_cast<unsigned long>(newBufferSize)), 0, m_handshake.clientOrigin());
     return false;
 }
 
@@ -255,7 +255,7 @@ bool WebSocketChannel::processBuffer()
             LOG(Network, "WebSocketChannel %p connected", this);
             skipBuffer(headerLength);
             m_client->didConnect();
-            LOG(Network, "remaining in read buf %lu", m_bufferSize);
+            LOG(Network, "remaining in read buf %lu", static_cast<unsigned long>(m_bufferSize));
             return m_buffer;
         }
         LOG(Network, "WebSocketChannel %p connection failed", this);
@@ -277,7 +277,7 @@ bool WebSocketChannel::processBuffer()
         bool errorFrame = false;
         while (p < end) {
             if (length > std::numeric_limits<size_t>::max() / 128) {
-                LOG(Network, "frame length overflow %lu", length);
+                LOG(Network, "frame length overflow %lu", static_cast<unsigned long>(length));
                 errorFrame = true;
                 break;
             }
@@ -285,13 +285,13 @@ bool WebSocketChannel::processBuffer()
             unsigned char msgByte = static_cast<unsigned char>(*p);
             unsigned int lengthMsgByte = msgByte & 0x7f;
             if (newLength > std::numeric_limits<size_t>::max() - lengthMsgByte) {
-                LOG(Network, "frame length overflow %lu+%u", newLength, lengthMsgByte);
+                LOG(Network, "frame length overflow %lu+%u", static_cast<unsigned long>(newLength), lengthMsgByte);
                 errorFrame = true;
                 break;
             }
             newLength += lengthMsgByte;
             if (newLength < length) { // sanity check
-                LOG(Network, "frame length integer wrap %lu->%lu", length, newLength);
+                LOG(Network, "frame length integer wrap %lu->%lu", static_cast<unsigned long>(length), static_cast<unsigned long>(newLength));
                 errorFrame = true;
                 break;
             }
@@ -301,7 +301,7 @@ bool WebSocketChannel::processBuffer()
                 break;
         }
         if (p + length < p) {
-            LOG(Network, "frame buffer pointer wrap %p+%lu->%p", p, length, p + length);
+            LOG(Network, "frame buffer pointer wrap %p+%lu->%p", p, static_cast<unsigned long>(length), p + length);
             errorFrame = true;
         }
         if (errorFrame) {

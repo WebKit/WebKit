@@ -1,3 +1,14 @@
+2010-08-11  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        REGRESSION(65135): format specifier warnings
+        https://bugs.webkit.org/show_bug.cgi?id=43876
+
+        * websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::appendToBuffer): cast size_t to unsigned long for %lu.
+        (WebCore::WebSocketChannel::processBuffer): cast size_t to unsigned long for %lu.
+
 2010-08-11  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix, don't generate WebDOMEventTarget.h/.cpp as we use the ones in bindings/cpp.
