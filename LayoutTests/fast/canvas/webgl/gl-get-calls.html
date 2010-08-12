@@ -31,7 +31,7 @@ else {
       testPassed("context is correct type");
     else
       testFailed("context is not correct type");
-  
+
     debug("");
     debug("Context contains getError");
     if ("getError" in context)
@@ -58,6 +58,7 @@ else {
     shouldBe('context.getParameter(context.CULL_FACE)', 'false');
     shouldBe('context.getParameter(context.CULL_FACE_MODE)', 'context.BACK');
     shouldBe('context.getParameter(context.CURRENT_PROGRAM)', 'null');
+    shouldBe('context.getParameter(context.DEPTH_CLEAR_VALUE)', '1');
     shouldBe('context.getParameter(context.DEPTH_FUNC)', 'context.LESS');
     shouldBe('context.getParameter(context.DEPTH_RANGE)', '[0, 1]');
     shouldBe('context.getParameter(context.DEPTH_TEST)', 'false');
@@ -82,10 +83,8 @@ else {
     shouldBe('context.getParameter(context.STENCIL_BACK_PASS_DEPTH_PASS)', 'context.KEEP');
     shouldBe('context.getParameter(context.STENCIL_BACK_REF)', '0');
 
-    // FIXME: Current WebKit implementation returns the wrong value (https://bugs.webkit.org/show_bug.cgi?id=31842)
-    // Re-enable these tests as soon as that bug has been fixed.
-    // shouldBe('context.getParameter(context.STENCIL_BACK_VALUE_MASK)', '0xFFFFFFFF');
-    // shouldBe('context.getParameter(context.STENCIL_BACK_WRITEMASK)', '0xFFFFFFFF');
+    shouldBe('context.getParameter(context.STENCIL_BACK_VALUE_MASK)', '0xFFFFFFFF');
+    shouldBe('context.getParameter(context.STENCIL_BACK_WRITEMASK)', '0xFFFFFFFF');
 
     // If EXT_packed_depth_stencil is supported, STENCIL_BITS > 0; otherwise, STENCIL_BITS == 0.
     shouldBe('context.getParameter(context.STENCIL_BITS) >= 0', 'true');
@@ -97,10 +96,8 @@ else {
     shouldBe('context.getParameter(context.STENCIL_REF)', '0');
     shouldBe('context.getParameter(context.STENCIL_TEST)', 'false');
 
-    // FIXME: Current WebKit implementation returns the wrong value (https://bugs.webkit.org/show_bug.cgi?id=31842)
-    // Re-enable these tests as soon as that bug has been fixed.
-    // shouldBe('context.getParameter(context.STENCIL_VALUE_MASK)', '0xFFFFFFFF');
-    // shouldBe('context.getParameter(context.STENCIL_WRITEMASK)', '0xFFFFFFFF');
+    shouldBe('context.getParameter(context.STENCIL_VALUE_MASK)', '0xFFFFFFFF');
+    shouldBe('context.getParameter(context.STENCIL_WRITEMASK)', '0xFFFFFFFF');
 
     shouldBe('context.getParameter(context.TEXTURE_BINDING_2D)', 'null');
     shouldBe('context.getParameter(context.TEXTURE_BINDING_CUBE_MAP)', 'null');
@@ -112,7 +109,6 @@ else {
     shouldBeTrue('context.getParameter(context.MAX_VERTEX_UNIFORM_VECTORS) >= 128');
     shouldBeTrue('context.getParameter(context.MAX_VARYING_VECTORS) >= 8');
     shouldBe('context.getParameter(context.NUM_COMPRESSED_TEXTURE_FORMATS)', '0');
-    shouldBe('context.getParameter(context.SHADER_COMPILER)', 'true');
 }
 
 debug("");

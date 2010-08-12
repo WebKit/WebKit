@@ -2,6 +2,16 @@
 
         Reviewed by Dimitri Glazkov.
 
+        getParameter(STENCIL_VALUE_MASK) (and others) returns the wrong value
+        https://bugs.webkit.org/show_bug.cgi?id=31842
+
+        * fast/canvas/webgl/gl-get-calls-expected.txt: Bring back the commented out STENCIL tests.
+        * fast/canvas/webgl/gl-get-calls.html: Ditto.
+
+2010-08-12  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
         regression in generateMipmap
         https://bugs.webkit.org/show_bug.cgi?id=43873
 

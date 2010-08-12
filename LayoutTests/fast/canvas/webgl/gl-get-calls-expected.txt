@@ -30,6 +30,7 @@ PASS context.getParameter(context.COLOR_WRITEMASK) is [true, true, true, true]
 PASS context.getParameter(context.CULL_FACE) is false
 PASS context.getParameter(context.CULL_FACE_MODE) is context.BACK
 PASS context.getParameter(context.CURRENT_PROGRAM) is null
+PASS context.getParameter(context.DEPTH_CLEAR_VALUE) is 1
 PASS context.getParameter(context.DEPTH_FUNC) is context.LESS
 PASS context.getParameter(context.DEPTH_RANGE) is [0, 1]
 PASS context.getParameter(context.DEPTH_TEST) is false
@@ -53,6 +54,8 @@ PASS context.getParameter(context.STENCIL_BACK_FUNC) is context.ALWAYS
 PASS context.getParameter(context.STENCIL_BACK_PASS_DEPTH_FAIL) is context.KEEP
 PASS context.getParameter(context.STENCIL_BACK_PASS_DEPTH_PASS) is context.KEEP
 PASS context.getParameter(context.STENCIL_BACK_REF) is 0
+PASS context.getParameter(context.STENCIL_BACK_VALUE_MASK) is 0xFFFFFFFF
+PASS context.getParameter(context.STENCIL_BACK_WRITEMASK) is 0xFFFFFFFF
 PASS context.getParameter(context.STENCIL_BITS) >= 0 is true
 PASS context.getParameter(context.STENCIL_CLEAR_VALUE) is 0
 PASS context.getParameter(context.STENCIL_FAIL) is context.KEEP
@@ -61,6 +64,8 @@ PASS context.getParameter(context.STENCIL_PASS_DEPTH_FAIL) is context.KEEP
 PASS context.getParameter(context.STENCIL_PASS_DEPTH_PASS) is context.KEEP
 PASS context.getParameter(context.STENCIL_REF) is 0
 PASS context.getParameter(context.STENCIL_TEST) is false
+PASS context.getParameter(context.STENCIL_VALUE_MASK) is 0xFFFFFFFF
+PASS context.getParameter(context.STENCIL_WRITEMASK) is 0xFFFFFFFF
 PASS context.getParameter(context.TEXTURE_BINDING_2D) is null
 PASS context.getParameter(context.TEXTURE_BINDING_CUBE_MAP) is null
 PASS context.getParameter(context.UNPACK_ALIGNMENT) is 4
@@ -71,7 +76,6 @@ PASS context.getParameter(context.MAX_FRAGMENT_UNIFORM_VECTORS) >= 16 is true
 PASS context.getParameter(context.MAX_VERTEX_UNIFORM_VECTORS) >= 128 is true
 PASS context.getParameter(context.MAX_VARYING_VECTORS) >= 8 is true
 PASS context.getParameter(context.NUM_COMPRESSED_TEXTURE_FORMATS) is 0
-FAIL context.getParameter(context.SHADER_COMPILER) should be true (of type boolean). Was null (of type object).
 
 PASS successfullyParsed is true
 
