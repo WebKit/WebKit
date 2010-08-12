@@ -2,6 +2,29 @@
 
         Reviewed by Eric Seidel.
 
+        HTML TreeBuilder hits ASSERT in fragment case with insertAdjacentHTML and colgroup
+        https://bugs.webkit.org/show_bug.cgi?id=43758
+
+        This patch conditionalizes some LegacyHTMLTreeBuilder-specific code in
+        HTMLElement::createContextualFragment that interferes with the new
+        HTMLTreeBuilder.  Doing that exposes the above ASSERT, which I've fixed
+        in this patch too.  Fixing that ASSERT involved a small refactoring in
+        ExternalCharacterTokenBuffer.
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::createContextualFragment):
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::ExternalCharacterTokenBuffer::skipLeadingWhitespace):
+        (WebCore::HTMLTreeBuilder::ExternalCharacterTokenBuffer::takeLeadingWhitespace):
+        (WebCore::HTMLTreeBuilder::ExternalCharacterTokenBuffer::takeLeadingNonWhitespace):
+        (WebCore::HTMLTreeBuilder::ExternalCharacterTokenBuffer::skipLeading):
+        (WebCore::HTMLTreeBuilder::ExternalCharacterTokenBuffer::takeLeading):
+        (WebCore::HTMLTreeBuilder::processCharacterBuffer):
+
+2010-08-11  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Conditionalize wrong fragment parsing code to pass more HTML5lib tests
         https://bugs.webkit.org/show_bug.cgi?id=43877
 

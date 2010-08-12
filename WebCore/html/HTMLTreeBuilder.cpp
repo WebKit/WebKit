@@ -66,6 +66,11 @@ inline bool isTreeBuilderWhitepace(UChar c)
     return c == '\t' || c == '\x0A' || c == '\x0C' || c == '\x0D' || c == ' ';
 }
 
+inline bool isNotTreeBuilderWhitepace(UChar c)
+{
+    return !isTreeBuilderWhitepace(c);
+}
+
 inline bool isTreeBuilderWhitepaceOrReplacementCharacter(UChar c)
 {
     return isTreeBuilderWhitepace(c) || c == 0xFFFD;
@@ -302,21 +307,17 @@ public:
 
     void skipLeadingWhitespace()
     {
-        ASSERT(!isEmpty());
-        while (isTreeBuilderWhitepace(*m_current)) {
-            if (++m_current == m_end)
-                return;
-        }
+        skipLeading<isTreeBuilderWhitepace>();
     }
 
     String takeLeadingWhitespace()
     {
-        ASSERT(!isEmpty());
-        const UChar* start = m_current;
-        skipLeadingWhitespace();
-        if (start == m_current)
-            return String();
-        return String(start, m_current - start);
+        return takeLeading<isTreeBuilderWhitepace>();
+    }
+
+    String takeLeadingNonWhitespace()
+    {
+        return takeLeading<isNotTreeBuilderWhitepace>();
     }
 
     String takeRemaining()
@@ -351,6 +352,27 @@ public:
     }
 
 private:
+    template<bool characterPredicate(UChar)>
+    void skipLeading()
+    {
+        ASSERT(!isEmpty());
+        while (characterPredicate(*m_current)) {
+            if (++m_current == m_end)
+                return;
+        }
+    }
+
+    template<bool characterPredicate(UChar)>
+    String takeLeading()
+    {
+        ASSERT(!isEmpty());
+        const UChar* start = m_current;
+        skipLeading<characterPredicate>();
+        if (start == m_current)
+            return String();
+        return String(start, m_current - start);
+    }
+
     const UChar* m_current;
     const UChar* m_end;
 };
@@ -2629,7 +2651,10 @@ ReprocessBuffer:
             return;
         if (!processColgroupEndTagForInColumnGroup()) {
             ASSERT(isParsingFragment());
-            return;
+            // The spec tells us to drop these characters on the floor.
+            buffer.takeLeadingNonWhitespace();
+            if (buffer.isEmpty())
+                return;
         }
         goto ReprocessBuffer;
     }

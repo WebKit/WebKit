@@ -275,16 +275,18 @@ String HTMLElement::outerHTML() const
     return createMarkup(this);
 }
 
-// FIXME: This method is unecessary with the new HTMLDocumentParser.
+// FIXME: This method is unnecessary with the new HTMLDocumentParser.
 PassRefPtr<DocumentFragment> HTMLElement::createContextualFragment(const String& markup, FragmentScriptingPermission scriptingPermission)
 {
-    // The following is in accordance with the definition as used by IE.
-    if (endTagRequirement() == TagStatusForbidden)
-        return 0;
+    if (!document()->settings() || !document()->settings()->html5TreeBuilderEnabled()) {
+        // The following is in accordance with the definition as used by IE.
+        if (endTagRequirement() == TagStatusForbidden)
+            return 0;
 
-    if (hasLocalName(colTag) || hasLocalName(colgroupTag) || hasLocalName(framesetTag) ||
-        hasLocalName(headTag) || hasLocalName(styleTag) || hasLocalName(titleTag))
-        return 0;
+        if (hasLocalName(colTag) || hasLocalName(colgroupTag) || hasLocalName(framesetTag)
+            || hasLocalName(headTag) || hasLocalName(styleTag) || hasLocalName(titleTag))
+            return 0;
+    }
 
     return Element::createContextualFragment(markup, scriptingPermission);
 }

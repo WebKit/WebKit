@@ -16,35 +16,12 @@ resources/tests2.dat: PASS
 
 resources/tests3.dat: PASS
 
-resources/tests4.dat:
-7
+resources/tests4.dat: PASS
 
-Test 7 of 7 in resources/tests4.dat failed. Input:
-<title>setting head's innerHTML</title>
-Got:
-| 
-Expected:
-| <title>
-|   "setting head's innerHTML"
 resources/tests5.dat: PASS
 
-resources/tests6.dat:
-27
-30
+resources/tests6.dat: PASS
 
-Test 27 of 51 in resources/tests6.dat failed. Input:
-foo<col>
-Got:
-| 
-Expected:
-| <col>
-
-Test 30 of 51 in resources/tests6.dat failed. Input:
-</frameset><frame>
-Got:
-| 
-Expected:
-| <frame>
 resources/tests7.dat:
 30
 
