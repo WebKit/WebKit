@@ -185,7 +185,6 @@ void TestController::resetStateToConsistentValues()
 
     // Reset main page back to about:blank
     m_doneResetting = false;
-    m_resetResultedInError = false;
 
     WKRetainPtr<WKURLRef> url(AdoptWK, createWKURL("about:blank"));
     WKPageLoadURL(m_mainWebView->page(), url.get());

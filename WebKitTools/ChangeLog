@@ -1,3 +1,11 @@
+2010-08-12  David Levin  <levin@chromium.org>
+
+        Build break fix.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues): Removed usage
+        of a variable that doesn't exist in the class.
+
 2010-08-12  Jon Honeycutt  <jhoneycutt@apple.com>
 
         WebKitTestRunner needs to run tests without using native controls
