@@ -1,3 +1,20 @@
+2010-08-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] Fix warnings: unknown conversion type character 'l' in format
+        https://bugs.webkit.org/show_bug.cgi?id=43359
+
+        Qt port doesn't call any printf in String::format(...), consequently
+        using __attribute__((format(printf,m,n))) is incorrect and causes
+        false positive warnings on Windows if you build with MinGW.
+
+        Qt port calls QString::vsprintf(...) , which is platform
+        independent, and handles %lli, %llu and %llx on all platforms.
+        (http://trac.webkit.org/changeset/35712)
+
+        * wtf/text/WTFString.h:
+
 2010-08-12  Gabor Loki  <loki@webkit.org>
 
         Reviewed by Geoffrey Garen.
