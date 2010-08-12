@@ -32,8 +32,8 @@ layer at (45,277) size 183x24
     RenderBlock {DIV} at (3,-5) size 9x29
 layer at (294,270) size 34x32
   RenderButton {INPUT} at (286,0) size 34x32
-layer at (290,207) size 34x100
-  RenderBlock (positioned) {DIV} at (282,-63) size 34x100
-layer at (302,217) size 12x80
+layer at (294,170) size 34x100
+  RenderBlock (positioned) {DIV} at (286,-100) size 34x100
+layer at (306,180) size 12x80
   RenderSlider {INPUT} at (12,10) size 10x80
     RenderBlock {DIV} at (-2,22) size 14x7

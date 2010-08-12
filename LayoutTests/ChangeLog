@@ -1,3 +1,27 @@
+2010-08-12  Victoria Kirst  <vrk@google.com>
+
+        Reviewed by David Levin.
+
+        Rebaselining the test results for media controls on Mac to fix
+        a regression.
+
+        * platform/chromium-mac/media/audio-controls-rendering-expected.checksum:
+        * platform/chromium-mac/media/audio-controls-rendering-expected.png:
+        * platform/chromium-mac/media/controls-after-reload-expected.checksum:
+        * platform/chromium-mac/media/controls-after-reload-expected.png:
+        * platform/chromium-mac/media/controls-strict-expected.checksum:
+        * platform/chromium-mac/media/controls-strict-expected.png:
+        * platform/chromium-mac/media/video-controls-rendering-expected.checksum:
+        * platform/chromium-mac/media/video-controls-rendering-expected.png:
+        * platform/chromium-mac/media/video-display-toggle-expected.checksum:
+        * platform/chromium-mac/media/video-display-toggle-expected.png:
+        * platform/chromium-mac/media/video-no-audio-expected.checksum:
+        * platform/chromium-mac/media/video-no-audio-expected.png:
+        * platform/chromium-mac/media/video-volume-slider-expected.checksum:
+        * platform/chromium-mac/media/video-volume-slider-expected.png:
+        * platform/chromium-mac/media/video-volume-slider-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2010-08-12  Nate Chapin  <japhet@chromium.org>
 
         Unreviewed, Chromium expectations tweak.

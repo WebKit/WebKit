@@ -865,18 +865,6 @@ BUG31342 WIN RELEASE : security/block-test-no-port.html = TEXT PASS
 // starting with the 52554->52633 merge.
 BUG31363 DEBUG WIN LINUX : platform/chromium/fast/dom/interval.html = TEXT PASS
 
-// These tests are generating the correct output, but the output currently in
-// the repository is incorrect (regression).
-BUG43750 MAC: media/audio-controls-rendering.html = FAIL
-BUG43750 MAC: media/audio-no-installed-engines.html = FAIL
-BUG43750 MAC: media/controls-after-reload.html = FAIL
-BUG43750 MAC: media/controls-strict.html = FAIL
-BUG43750 MAC: media/video-aspect-ratio.html = FAIL
-BUG43750 MAC: media/video-controls-rendering.html = FAIL
-BUG43750 MAC: media/video-display-toggle.html = FAIL
-BUG43750 MAC: media/video-no-audio.html = FAIL
-BUG43750 MAC: media/video-volume-slider.html = FAIL
-
 // -----------------------------------------------------------------
 // SVG TESTS
 // -----------------------------------------------------------------
