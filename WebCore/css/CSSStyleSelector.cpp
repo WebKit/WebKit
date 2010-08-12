@@ -125,8 +125,6 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-// #define STYLE_SHARING_STATS 1
-
 #define HANDLE_INHERIT(prop, Prop) \
 if (isInherit) { \
     m_style->set##Prop(m_parentStyle->prop()); \
@@ -947,11 +945,6 @@ bool CSSStyleSelector::SelectorChecker::checkSelector(CSSSelector* sel, Element*
     PseudoId dynamicPseudo = NOPSEUDO;
     return checkSelector(sel, element, 0, dynamicPseudo, false, false) == SelectorMatches;
 }
-
-#ifdef STYLE_SHARING_STATS
-static int fraction = 0;
-static int total = 0;
-#endif
 
 static const unsigned cStyleSearchThreshold = 10;
 

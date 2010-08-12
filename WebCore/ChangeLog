@@ -1,3 +1,13 @@
+2010-08-11  Julien Chaffraix  <jchaffraix@codeaurora.org>
+
+        Reviewed by Ariya Hidayat.
+
+        Remove dead code in CSSStyleSelector.
+        https://bugs.webkit.org/show_bug.cgi?id=43805
+
+        * css/CSSStyleSelector.cpp: Remove some debugging code that
+        was compiled out.
+
 2010-08-11  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.
