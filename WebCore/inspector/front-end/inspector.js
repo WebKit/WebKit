@@ -1467,12 +1467,6 @@ WebInspector.log = function(message, messageLevel)
     // remember 'this' for setInterval() callback
     var self = this;
 
-    // return indication if we can actually log a message
-    function isLogAvailable()
-    {
-        return WebInspector.ConsoleMessage && WebInspector.ObjectProxy && self.console;
-    }
-
     // flush the queue of pending messages
     function flushQueue()
     {
@@ -1510,7 +1504,7 @@ WebInspector.log = function(message, messageLevel)
         WebInspector.log.repeatCount = repeatCount;
 
         // ConsoleMessage expects a proxy object
-        message = new WebInspector.ObjectProxy(null, null, [], message, false);
+        message = new WebInspector.RemoteObject.fromPrimitiveValue(message);
 
         // post the message
         var msg = new WebInspector.ConsoleMessage(

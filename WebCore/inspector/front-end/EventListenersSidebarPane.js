@@ -194,10 +194,10 @@ WebInspector.EventListenerBar.prototype = {
             // Just build properties in place - no need to reach out for injected script.
             var value = this.eventListener[propertyName];
             if (value instanceof WebInspector.DOMNode)
-                value = new WebInspector.ObjectProxy(value.injectedScriptId, value.id, [], appropriateSelectorForNode(value), true);
+                value = WebInspector.RemoteObject.fromNode(value);
             else
-                value = WebInspector.ObjectProxy.wrapPrimitiveValue(value);
-            properties.push(new WebInspector.ObjectPropertyProxy(propertyName, value));
+                value = WebInspector.RemoteObject.fromPrimitiveValue(value);
+            properties.push(new WebInspector.RemoteObjectProperty(propertyName, value));
         }
         this.updateProperties(properties);
     },

@@ -26,18 +26,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-Object.proxyType = function(objectProxy)
-{
-    if (objectProxy === null)
-        return "null";
-
-    var type = typeof objectProxy;
-    if (type !== "object" && type !== "function")
-        return type;
-
-    return objectProxy.type;
-}
-
 Object.properties = function(obj)
 {
     var properties = [];
@@ -847,7 +835,7 @@ String.tokenizeFormatString = function(format)
 String.standardFormatters = {
     d: function(substitution)
     {
-        if (typeof substitution == "object" && Object.proxyType(substitution) === "number")
+        if (typeof substitution == "object" && WebInspector.RemoteObject.type(substitution) === "number")
             substitution = substitution.description;
         substitution = parseInt(substitution);
         return !isNaN(substitution) ? substitution : 0;
@@ -855,7 +843,7 @@ String.standardFormatters = {
 
     f: function(substitution, token)
     {
-        if (typeof substitution == "object" && Object.proxyType(substitution) === "number")
+        if (typeof substitution == "object" && WebInspector.RemoteObject.type(substitution) === "number")
             substitution = substitution.description;
         substitution = parseFloat(substitution);
         if (substitution && token.precision > -1)
@@ -865,7 +853,7 @@ String.standardFormatters = {
 
     s: function(substitution)
     {
-        if (typeof substitution == "object" && Object.proxyType(substitution) !== "null")
+        if (typeof substitution == "object" && WebInspector.RemoteObject.type(substitution) !== "null")
             substitution = substitution.description;
         return substitution;
     },

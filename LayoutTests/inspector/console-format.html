@@ -64,14 +64,12 @@ function frontend_evaluateGlobal()
     frontend_evalExpression(expression);
 }
 
-function frontend_evalExpression(expression, isDate)
+function frontend_evalExpression(expression)
 {
     var self = WebInspector.console;
-    function printResult(result, exception)
+    function printResult(result)
     {
-        if (typeof result.description === "string")
-            result = result.description.replace(/\n/g, "<br>");
-        self.addMessage(new WebInspector.ConsoleCommandResult(result, exception, expression));
+        self.addMessage(new WebInspector.ConsoleCommandResult(result, expression));
     }
 
     self.evalInInspectedWindow(expression, "console", printResult);

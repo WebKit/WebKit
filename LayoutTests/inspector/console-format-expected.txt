@@ -39,13 +39,13 @@ console-format.html:13Message format for string
 console-format.html:14Object Object
 console-format.html:20["test", "test2", undefined, undefined, "test4"]
 console-format.html:21["test", "test2", undefined, undefined, "test4"]
-console-format.html:22Array
+console-format.html:22Array[5]
 console-format.html:52/^url\(\s*(?:(?:"(?:[^\\\"]|(?:\\[\da-f]{1,6}\s?|\.))*"|'(?:[^\\\']|(?:\\[\da-f]{1,6}\s?|\.))*')|(?:[!#$%&*-~\w]|(?:\\[\da-f]{1,6}\s?|\.))*)\s*\)/i
 console-format.html:53[/^url\(\s*(?:(?:"(?:[^\\\"]|(?:\\[\da-f]{1,6}\s?|\.))*"|'(?:[^\\\']|(?:\\[\da-f]{1,6}\s?|\.))*')|(?:[!#$%&*-~\w]|(?:\\[\da-f]{1,6}\s?|\.))*)\s*\)/i]
-"/^url\(\s*(?:(?:"(?:[^\\\"]|(?:\\[\da-f]{1,6}\s?|\.))*"|'(?:[^\\\']|(?:\\[\da-f]{1,6}\s?|\.))*')|(?:[!#$%&*-~\w]|(?:\\[\da-f]{1,6}\s?|\.))*)\s*\)/i"
+/^url\(\s*(?:(?:"(?:[^\\\"]|(?:\\[\da-f]{1,6}\s?|\.))*"|'(?:[^\\\']|(?:\\[\da-f]{1,6}\s?|\.))*')|(?:[!#$%&*-~\w]|(?:\\[\da-f]{1,6}\s?|\.))*)\s*\)/i
 console-format.html:52/foo\\bar\sbaz/i
 console-format.html:53[/foo\\bar\sbaz/i]
-"/foo\\bar\sbaz/i"
+/foo\\bar\sbaz/i
 console-format.html:52test
 console-format.html:53["test"]
 "test"
@@ -57,27 +57,29 @@ console-format.html:53[Error: Unknown error]
 Error: Unknown error
 console-format.html:52<body onload="onload()">…</body>
 console-format.html:53[<body onload="onload()">…</body>]
-"HTMLBodyElement"
+<body onload="onload()">…</body>
 console-format.html:52function () { return 1; }
 console-format.html:53[function () { return 1; }]
-"function () { return 1; }"
+function () { return 1; }
 console-format.html:52function () {
         return 2;
     }
 console-format.html:53[function () {
         return 2;
     }]
-"function () {<br>        return 2;<br>    }"
+function () {
+        return 2;
+    }
 console-format.html:520.12
 console-format.html:53[0.12]
-"0.12"
+0.12
 console-format.html:52http://webkit.org/
 console-format.html:53["http://webkit.org/"]
 "http://webkit.org/"
 console-format.html:52null
 console-format.html:53[null]
-"null"
+null
 console-format.html:52undefined
 console-format.html:53[undefined]
-"undefined"
+undefined
 
