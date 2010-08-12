@@ -170,14 +170,14 @@ function testDepth(depth)
 
     webGL.depthFunc(webGL.NEVER);
 
-    var vertices = new WebGLFloatArray([
+    var vertices = new Float32Array([
          1.0,  1.0, 0.0,
         -1.0,  1.0, 0.0,
         -1.0, -1.0, 0.0,
          1.0,  1.0, 0.0,
         -1.0, -1.0, 0.0,
          1.0, -1.0, 0.0]);
-    var colors = new WebGLUnsignedByteArray([
+    var colors = new Uint8Array([
         255, 0, 0, 255,
         255, 0, 0, 255,
         255, 0, 0, 255,
@@ -213,14 +213,14 @@ function testStencil(stencil)
     webGL.stencilFunc(webGL.NEVER, 1, 1);
     webGL.stencilOp(webGL.KEEP, webGL.KEEP, webGL.KEEP);
 
-    var vertices = new WebGLFloatArray([
+    var vertices = new Float32Array([
          1.0, 1.0, 0.0,
         -1.0, 1.0, 0.0,
         -1.0, -1.0, 0.0,
          1.0, 1.0, 0.0,
         -1.0, -1.0, 0.0,
          1.0, -1.0, 0.0]);
-    var colors = new WebGLUnsignedByteArray([
+    var colors = new Uint8Array([
         255, 0, 0, 255,
         255, 0, 0, 255,
         255, 0, 0, 255,
@@ -254,11 +254,11 @@ function testAntialias(antialias)
     shouldBe("contextAttribs.antialias == true || contextAttribs.antialias == false", "true");
     shouldBe("contextAttribs.premultipliedAlpha", "true");
 
-    var vertices = new WebGLFloatArray([
+    var vertices = new Float32Array([
          1.0, 1.0, 0.0,
         -1.0, 1.0, 0.0,
         -1.0, -1.0, 0.0]);
-    var colors = new WebGLUnsignedByteArray([
+    var colors = new Uint8Array([
         255, 0, 0, 255,
         255, 0, 0, 255,
         255, 0, 0, 255]);

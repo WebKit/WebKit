@@ -25,13 +25,13 @@ function negativeTestSet(typeName) {
     shouldThrow("webGLArray.set([4, 5, 6])");
 }
 
-negativeTestSet("WebGLByteArray");
-negativeTestSet("WebGLUnsignedByteArray");
-negativeTestSet("WebGLShortArray");
-negativeTestSet("WebGLUnsignedShortArray");
-negativeTestSet("WebGLIntArray");
-negativeTestSet("WebGLUnsignedIntArray");
-negativeTestSet("WebGLFloatArray");
+negativeTestSet("Int8Array");
+negativeTestSet("Uint8Array");
+negativeTestSet("Int16Array");
+negativeTestSet("Uint16Array");
+negativeTestSet("Int32Array");
+negativeTestSet("Uint32Array");
+negativeTestSet("Float32Array");
 
 successfullyParsed = true;
 

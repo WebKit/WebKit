@@ -24,7 +24,7 @@ function testConstructionWithNullBuffer(type, name) {
 
 
 function testConstructionWithOutOfRangeValues(type, name) {
-    var buffer = new WebGLArrayBuffer(4);
+    var buffer = new ArrayBuffer(4);
     var array;
     try {
         array = new type(buffer, 4, 0x3FFFFFFF);
@@ -35,7 +35,7 @@ function testConstructionWithOutOfRangeValues(type, name) {
 }
 
 function testConstructionWithNegativeOutOfRangeValues(type, name) {
-    var buffer = new WebGLArrayBuffer(4);
+    var buffer = new ArrayBuffer(4);
     var array;
     try {
         array = new type(buffer, 4, -2147483648);
@@ -65,7 +65,7 @@ var typeSize;
 function testSlicingWithOutOfRangeValues(type, name, sz) {
     debug("Testing slicing of " + name);
     try {
-        var buffer = new WebGLArrayBuffer(32);
+        var buffer = new ArrayBuffer(32);
         array = new type(buffer);
         typeSize = sz;
         shouldBe("array.length", "32 / typeSize");
@@ -120,13 +120,13 @@ function testSettingFromWebGLArrayWithOutOfRangeOffset(type, name) {
     }
 }
 
-var typeNames = [ "WebGLByteArray",
-                  "WebGLUnsignedByteArray",
-                  "WebGLShortArray",
-                  "WebGLUnsignedShortArray",
-                  "WebGLIntArray",
-                  "WebGLUnsignedIntArray",
-                  "WebGLFloatArray" ];
+var typeNames = [ "Int8Array",
+                  "Uint8Array",
+                  "Int16Array",
+                  "Uint16Array",
+                  "Int32Array",
+                  "Uint32Array",
+                  "Float32Array" ];
 
 var typeSizes = [ 1, 1, 2, 2, 4, 4, 4 ];
 

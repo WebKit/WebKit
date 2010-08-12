@@ -67,16 +67,6 @@
 #if ENABLE(WEB_SOCKETS)
 #include "WebSocket.h"
 #endif
-#if ENABLE(3D_CANVAS)
-#include "V8ArrayBuffer.h"
-#include "V8Int8Array.h"
-#include "V8Float32Array.h"
-#include "V8Int32Array.h"
-#include "V8Int16Array.h"
-#include "V8Uint8Array.h"
-#include "V8Uint32Array.h"
-#include "V8Uint16Array.h"
-#endif
 #include "WindowFeatures.h"
 
 namespace WebCore {
@@ -252,61 +242,6 @@ v8::Handle<v8::Value> V8DOMWindow::OptionAccessorGetter(v8::Local<v8::String> na
     DOMWindow* window = V8DOMWindow::toNative(info.Holder());
     return V8DOMWrapper::getConstructor(&V8HTMLOptionElementConstructor::info, window);
 }
-
-#if ENABLE(3D_CANVAS)
-
-// Temporary aliases to keep current WebGL content working during transition period to TypedArray spec.
-// To be removed before WebGL spec is finalized. (FIXME)
-v8::Handle<v8::Value> V8DOMWindow::WebGLArrayBufferAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
-{
-    DOMWindow* window = V8DOMWindow::toNative(info.Holder());
-    return V8DOMWrapper::getConstructor(&V8ArrayBuffer::info, window);
-}
-
-v8::Handle<v8::Value> V8DOMWindow::WebGLByteArrayAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
-{
-    DOMWindow* window = V8DOMWindow::toNative(info.Holder());
-    return V8DOMWrapper::getConstructor(&V8Int8Array::info, window);
-}
-
-v8::Handle<v8::Value> V8DOMWindow::WebGLUnsignedByteArrayAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
-{
-    DOMWindow* window = V8DOMWindow::toNative(info.Holder());
-    return V8DOMWrapper::getConstructor(&V8Uint8Array::info, window);
-}
-
-v8::Handle<v8::Value> V8DOMWindow::WebGLShortArrayAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
-{
-    DOMWindow* window = V8DOMWindow::toNative(info.Holder());
-    return V8DOMWrapper::getConstructor(&V8Int16Array::info, window);
-}
-
-v8::Handle<v8::Value> V8DOMWindow::WebGLUnsignedShortArrayAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
-{
-    DOMWindow* window = V8DOMWindow::toNative(info.Holder());
-    return V8DOMWrapper::getConstructor(&V8Uint16Array::info, window);
-}
-
-v8::Handle<v8::Value> V8DOMWindow::WebGLIntArrayAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
-{
-    DOMWindow* window = V8DOMWindow::toNative(info.Holder());
-    return V8DOMWrapper::getConstructor(&V8Int32Array::info, window);
-}
-
-v8::Handle<v8::Value> V8DOMWindow::WebGLUnsignedIntArrayAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
-{
-    DOMWindow* window = V8DOMWindow::toNative(info.Holder());
-    return V8DOMWrapper::getConstructor(&V8Uint32Array::info, window);
-}
-
-v8::Handle<v8::Value> V8DOMWindow::WebGLFloatArrayAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
-{
-    DOMWindow* window = V8DOMWindow::toNative(info.Holder());
-    return V8DOMWrapper::getConstructor(&V8Float32Array::info, window);
-}
-
-#endif
-
 
 v8::Handle<v8::Value> V8DOMWindow::addEventListenerCallback(const v8::Arguments& args)
 {

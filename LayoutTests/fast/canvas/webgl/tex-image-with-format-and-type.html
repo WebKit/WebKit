@@ -4,30 +4,10 @@
 <script src="../../js/resources/js-test-pre.js"></script>
 <script src="resources/pnglib.js"></script>
 <script src="resources/webgl-test.js"></script>
-<script id="vshader" type="x-shader/x-vertex">
-attribute vec3 g_Position;
-attribute vec2 g_TexCoord0;
-
-varying vec2 texCoord;
-
-void main()
-{
-    gl_Position = vec4(g_Position.x, g_Position.y, g_Position.z, 1.0);
-    texCoord = g_TexCoord0;
-}
-</script>
-
-<script id="fshader" type="x-shader/x-fragment">
-uniform sampler2D tex;
-varying vec2 texCoord;
-
-void main()
-{
-    gl_FragColor = texture2D(tex, texCoord);
-}
-</script>
+<script src="resources/webgl-test-utils.js"></script>
 
 <script>
+var wtu = WebGLTestUtils;
 var gl = null;
 var textureLoc = null;
 var successfullyParsed = false;
@@ -57,39 +37,15 @@ function init()
 
     description('Verify texImage2D and texSubImage2D code paths taking both HTML and user-specified data with all format/type combinations');
 
-    gl = initWebGL("example", "vshader", "fshader", [ "g_Position", "g_TexCoord0" ], [ 0, 0, 0, 1 ], 1);
+    var canvas = document.getElementById("example");
+    gl = wtu.create3DContext(canvas);
+    var program = wtu.setupTexturedQuad(gl);
+
+    gl.clearColor(0,0,0,1);
+    gl.clearDepth(1);
     gl.disable(gl.BLEND);
 
-    textureLoc = gl.getUniformLocation(gl.program, "tex");
-
-    var vertices = new WebGLFloatArray([
-         1.0,  1.0, 0.0,
-        -1.0,  1.0, 0.0,
-        -1.0, -1.0, 0.0,
-         1.0,  1.0, 0.0,
-        -1.0, -1.0, 0.0,
-         1.0, -1.0, 0.0]);
-    var texCoords = new WebGLFloatArray([
-        1.0, 1.0,
-        0.0, 1.0,
-        0.0, 0.0,
-        1.0, 1.0,
-        0.0, 0.0,
-        1.0, 0.0]);
-    var texCoordOffset = vertices.byteLength;
-
-    var vbo = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
-    gl.bufferData(gl.ARRAY_BUFFER,
-                  texCoordOffset + texCoords.byteLength,
-                  gl.STATIC_DRAW);
-    gl.bufferSubData(gl.ARRAY_BUFFER, 0, vertices);
-    gl.bufferSubData(gl.ARRAY_BUFFER, texCoordOffset, texCoords);
-
-    gl.enableVertexAttribArray(0);
-    gl.vertexAttribPointer(0, 3, gl.FLOAT, gl.FALSE, 0, 0);
-    gl.enableVertexAttribArray(1);
-    gl.vertexAttribPointer(1, 2, gl.FLOAT, gl.FALSE, 0, texCoordOffset);
+    textureLoc = gl.getUniformLocation(program, "tex");
 
     initializeTests();
 }

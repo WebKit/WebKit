@@ -2,81 +2,81 @@ Verifies that out-of-range parameters for creation, slicing and setting of WebGL
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
-PASS Construction of WebGLByteArray with null buffer threw exception
-PASS Construction of WebGLByteArray with out-of-range values threw exception
-PASS Construction of WebGLByteArray with negative out-of-range values threw exception
-Testing slicing of WebGLByteArray
+PASS Construction of Int8Array with null buffer threw exception
+PASS Construction of Int8Array with out-of-range values threw exception
+PASS Construction of Int8Array with negative out-of-range values threw exception
+Testing slicing of Int8Array
 PASS array.length is 32 / typeSize
 PASS array.slice(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
 PASS array.slice(4, -2147483648).length is 0
-PASS Setting WebGLByteArray from array with out-of-range offset was caught
-PASS Setting WebGLByteArray from fake array with invalid length was caught
-PASS Setting WebGLByteArray from WebGLByteArray with out-of-range offset was caught
-PASS Construction of WebGLUnsignedByteArray with null buffer threw exception
-PASS Construction of WebGLUnsignedByteArray with out-of-range values threw exception
-PASS Construction of WebGLUnsignedByteArray with negative out-of-range values threw exception
-Testing slicing of WebGLUnsignedByteArray
+PASS Setting Int8Array from array with out-of-range offset was caught
+PASS Setting Int8Array from fake array with invalid length was caught
+PASS Setting Int8Array from Int8Array with out-of-range offset was caught
+PASS Construction of Uint8Array with null buffer threw exception
+PASS Construction of Uint8Array with out-of-range values threw exception
+PASS Construction of Uint8Array with negative out-of-range values threw exception
+Testing slicing of Uint8Array
 PASS array.length is 32 / typeSize
 PASS array.slice(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
 PASS array.slice(4, -2147483648).length is 0
-PASS Setting WebGLUnsignedByteArray from array with out-of-range offset was caught
-PASS Setting WebGLUnsignedByteArray from fake array with invalid length was caught
-PASS Setting WebGLUnsignedByteArray from WebGLUnsignedByteArray with out-of-range offset was caught
-PASS Construction of WebGLShortArray with null buffer threw exception
-PASS Construction of WebGLShortArray with out-of-range values threw exception
-PASS Construction of WebGLShortArray with negative out-of-range values threw exception
-PASS Construction of huge WebGLShortArray threw exception
-Testing slicing of WebGLShortArray
+PASS Setting Uint8Array from array with out-of-range offset was caught
+PASS Setting Uint8Array from fake array with invalid length was caught
+PASS Setting Uint8Array from Uint8Array with out-of-range offset was caught
+PASS Construction of Int16Array with null buffer threw exception
+PASS Construction of Int16Array with out-of-range values threw exception
+PASS Construction of Int16Array with negative out-of-range values threw exception
+PASS Construction of huge Int16Array threw exception
+Testing slicing of Int16Array
 PASS array.length is 32 / typeSize
 PASS array.slice(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
 PASS array.slice(4, -2147483648).length is 0
-PASS Setting WebGLShortArray from array with out-of-range offset was caught
-PASS Setting WebGLShortArray from fake array with invalid length was caught
-PASS Setting WebGLShortArray from WebGLShortArray with out-of-range offset was caught
-PASS Construction of WebGLUnsignedShortArray with null buffer threw exception
-PASS Construction of WebGLUnsignedShortArray with out-of-range values threw exception
-PASS Construction of WebGLUnsignedShortArray with negative out-of-range values threw exception
-PASS Construction of huge WebGLUnsignedShortArray threw exception
-Testing slicing of WebGLUnsignedShortArray
+PASS Setting Int16Array from array with out-of-range offset was caught
+PASS Setting Int16Array from fake array with invalid length was caught
+PASS Setting Int16Array from Int16Array with out-of-range offset was caught
+PASS Construction of Uint16Array with null buffer threw exception
+PASS Construction of Uint16Array with out-of-range values threw exception
+PASS Construction of Uint16Array with negative out-of-range values threw exception
+PASS Construction of huge Uint16Array threw exception
+Testing slicing of Uint16Array
 PASS array.length is 32 / typeSize
 PASS array.slice(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
 PASS array.slice(4, -2147483648).length is 0
-PASS Setting WebGLUnsignedShortArray from array with out-of-range offset was caught
-PASS Setting WebGLUnsignedShortArray from fake array with invalid length was caught
-PASS Setting WebGLUnsignedShortArray from WebGLUnsignedShortArray with out-of-range offset was caught
-PASS Construction of WebGLIntArray with null buffer threw exception
-PASS Construction of WebGLIntArray with out-of-range values threw exception
-PASS Construction of WebGLIntArray with negative out-of-range values threw exception
-PASS Construction of huge WebGLIntArray threw exception
-Testing slicing of WebGLIntArray
+PASS Setting Uint16Array from array with out-of-range offset was caught
+PASS Setting Uint16Array from fake array with invalid length was caught
+PASS Setting Uint16Array from Uint16Array with out-of-range offset was caught
+PASS Construction of Int32Array with null buffer threw exception
+PASS Construction of Int32Array with out-of-range values threw exception
+PASS Construction of Int32Array with negative out-of-range values threw exception
+PASS Construction of huge Int32Array threw exception
+Testing slicing of Int32Array
 PASS array.length is 32 / typeSize
 PASS array.slice(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
 PASS array.slice(4, -2147483648).length is 0
-PASS Setting WebGLIntArray from array with out-of-range offset was caught
-PASS Setting WebGLIntArray from fake array with invalid length was caught
-PASS Setting WebGLIntArray from WebGLIntArray with out-of-range offset was caught
-PASS Construction of WebGLUnsignedIntArray with null buffer threw exception
-PASS Construction of WebGLUnsignedIntArray with out-of-range values threw exception
-PASS Construction of WebGLUnsignedIntArray with negative out-of-range values threw exception
-PASS Construction of huge WebGLUnsignedIntArray threw exception
-Testing slicing of WebGLUnsignedIntArray
+PASS Setting Int32Array from array with out-of-range offset was caught
+PASS Setting Int32Array from fake array with invalid length was caught
+PASS Setting Int32Array from Int32Array with out-of-range offset was caught
+PASS Construction of Uint32Array with null buffer threw exception
+PASS Construction of Uint32Array with out-of-range values threw exception
+PASS Construction of Uint32Array with negative out-of-range values threw exception
+PASS Construction of huge Uint32Array threw exception
+Testing slicing of Uint32Array
 PASS array.length is 32 / typeSize
 PASS array.slice(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
 PASS array.slice(4, -2147483648).length is 0
-PASS Setting WebGLUnsignedIntArray from array with out-of-range offset was caught
-PASS Setting WebGLUnsignedIntArray from fake array with invalid length was caught
-PASS Setting WebGLUnsignedIntArray from WebGLUnsignedIntArray with out-of-range offset was caught
-PASS Construction of WebGLFloatArray with null buffer threw exception
-PASS Construction of WebGLFloatArray with out-of-range values threw exception
-PASS Construction of WebGLFloatArray with negative out-of-range values threw exception
-PASS Construction of huge WebGLFloatArray threw exception
-Testing slicing of WebGLFloatArray
+PASS Setting Uint32Array from array with out-of-range offset was caught
+PASS Setting Uint32Array from fake array with invalid length was caught
+PASS Setting Uint32Array from Uint32Array with out-of-range offset was caught
+PASS Construction of Float32Array with null buffer threw exception
+PASS Construction of Float32Array with out-of-range values threw exception
+PASS Construction of Float32Array with negative out-of-range values threw exception
+PASS Construction of huge Float32Array threw exception
+Testing slicing of Float32Array
 PASS array.length is 32 / typeSize
 PASS array.slice(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
 PASS array.slice(4, -2147483648).length is 0
-PASS Setting WebGLFloatArray from array with out-of-range offset was caught
-PASS Setting WebGLFloatArray from fake array with invalid length was caught
-PASS Setting WebGLFloatArray from WebGLFloatArray with out-of-range offset was caught
+PASS Setting Float32Array from array with out-of-range offset was caught
+PASS Setting Float32Array from fake array with invalid length was caught
+PASS Setting Float32Array from Float32Array with out-of-range offset was caught
 PASS successfullyParsed is true
 
 TEST COMPLETE

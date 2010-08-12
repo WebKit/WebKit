@@ -3,30 +3,9 @@
 <link rel="stylesheet" href="../../js/resources/js-test-style.css"/>
 <script src="../../js/resources/js-test-pre.js"></script>
 <script src="resources/webgl-test.js"></script>
-<script id="vshader" type="x-shader/x-vertex">
-attribute vec3 g_Position;
-attribute vec2 g_TexCoord0;
-
-varying vec2 texCoord;
-
-void main()
-{
-    gl_Position = vec4(g_Position.x, g_Position.y, g_Position.z, 1.0);
-    texCoord = g_TexCoord0;
-}
-</script>
-
-<script id="fshader" type="x-shader/x-fragment">
-uniform sampler2D tex;
-varying vec2 texCoord;
-
-void main()
-{
-    gl_FragColor = texture2D(tex, texCoord);
-}
-</script>
-
+<script src="resources/webgl-test-utils.js"></script>
 <script>
+var wtu = WebGLTestUtils;
 var gl = null;
 var textureLoc = null;
 var successfullyParsed = false;
@@ -53,40 +32,15 @@ function init()
     data[6] = 0;
     data[7] = 0;
 
-    gl = initWebGL("example", "vshader", "fshader", [ "g_Position", "g_TexCoord0" ], [ 0, 0, 0, 1 ], 1);
-    gl.viewport(0, 0, 1, 2);
+    var canvas = document.getElementById("example");
+    gl = wtu.create3DContext(canvas);
+    var program = wtu.setupTexturedQuad(gl);
     gl.disable(gl.BLEND);
 
-    textureLoc = gl.getUniformLocation(gl.program, "tex");
+    gl.clearColor(0,0,0,1);
+    gl.clearDepth(1);
 
-    var vertices = new WebGLFloatArray([
-         1.0,  1.0, 0.0,
-        -1.0,  1.0, 0.0,
-        -1.0, -1.0, 0.0,
-         1.0,  1.0, 0.0,
-        -1.0, -1.0, 0.0,
-         1.0, -1.0, 0.0]);
-    var texCoords = new WebGLFloatArray([
-        1.0, 1.0,
-        0.0, 1.0,
-        0.0, 0.0,
-        1.0, 1.0,
-        0.0, 0.0,
-        1.0, 0.0]);
-    var texCoordOffset = vertices.byteLength;
-
-    var vbo = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
-    gl.bufferData(gl.ARRAY_BUFFER,
-                  texCoordOffset + texCoords.byteLength,
-                  gl.STATIC_DRAW);
-    gl.bufferSubData(gl.ARRAY_BUFFER, 0, vertices);
-    gl.bufferSubData(gl.ARRAY_BUFFER, texCoordOffset, texCoords);
-
-    gl.enableVertexAttribArray(0);
-    gl.vertexAttribPointer(0, 3, gl.FLOAT, gl.FALSE, 0, 0);
-    gl.enableVertexAttribArray(1);
-    gl.vertexAttribPointer(1, 2, gl.FLOAT, gl.FALSE, 0, texCoordOffset);
+    textureLoc = gl.getUniformLocation(program, "tex");
 
     runTest();
 }
@@ -194,7 +148,7 @@ function runOneIteration(useTexSubImage2D, type, unpackAlignment, flipY, premult
     // Point the uniform sampler to texture unit 0
     gl.uniform1i(textureLoc, 0);
     // Draw the triangles
-    gl.drawArrays(gl.TRIANGLES, 0, 6);
+    wtu.drawQuad(gl, [0, 0, 0, 255]);
 
     // Read back the rendering results
     buf = new Uint8Array(1 * 2 * 4);
@@ -202,21 +156,9 @@ function runOneIteration(useTexSubImage2D, type, unpackAlignment, flipY, premult
     // Check the top pixel and bottom pixel and make sure they have
     // the right color.
     debug("Checking bottom pixel");
-    correctColor = bottomColor;
-    idx = 0;
-    pixel[0] = buf[idx];
-    pixel[1] = buf[idx + 1];
-    pixel[2] = buf[idx + 2];
-    pixel[3] = buf[idx + 3];
-    shouldBe("pixel", "correctColor");
+    wtu.checkCanvasRect(gl, 0, 0, 1, 1, bottomColor, "shouldBe " + bottomColor);
     debug("Checking top pixel");
-    correctColor = topColor;
-    idx = 4;
-    pixel[0] = buf[idx];
-    pixel[1] = buf[idx + 1];
-    pixel[2] = buf[idx + 2];
-    pixel[3] = buf[idx + 3];
-    shouldBe("pixel", "correctColor");
+    wtu.checkCanvasRect(gl, 0, 1, 1, 1, topColor, "shouldBe " + topColor);
 }
 
 function runTest()

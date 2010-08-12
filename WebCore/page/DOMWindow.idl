@@ -477,17 +477,6 @@ module window {
         attribute [JSCCustomGetter,Conditional=3D_CANVAS,EnabledAtRuntime] Uint32ArrayConstructor Uint32Array; // Usable with new operator
         attribute [JSCCustomGetter,Conditional=3D_CANVAS,EnabledAtRuntime] Float32ArrayConstructor Float32Array; // Usable with new operator
 
-        // Temporary aliases to keep current WebGL content working during transition period to TypedArray spec.
-        // To be removed before WebGL spec is finalized. (FIXME)
-        attribute [CustomGetter,Conditional=3D_CANVAS,EnabledAtRuntime] ArrayBufferConstructor WebGLArrayBuffer; // Usable with new operator
-        attribute [CustomGetter,Conditional=3D_CANVAS,EnabledAtRuntime] Int8ArrayConstructor WebGLByteArray; // Usable with new operator
-        attribute [CustomGetter,Conditional=3D_CANVAS,EnabledAtRuntime] Uint8ArrayConstructor WebGLUnsignedByteArray; // Usable with new operator
-        attribute [CustomGetter,Conditional=3D_CANVAS,EnabledAtRuntime] Int16ArrayConstructor WebGLShortArray; // Usable with new operator
-        attribute [CustomGetter,Conditional=3D_CANVAS,EnabledAtRuntime] Uint16ArrayConstructor WebGLUnsignedShortArray; // Usable with new operator
-        attribute [CustomGetter,Conditional=3D_CANVAS,EnabledAtRuntime] Int32ArrayConstructor WebGLIntArray; // Usable with new operator
-        attribute [CustomGetter,Conditional=3D_CANVAS,EnabledAtRuntime] Uint32ArrayConstructor WebGLUnsignedIntArray; // Usable with new operator
-        attribute [CustomGetter,Conditional=3D_CANVAS,EnabledAtRuntime] Float32ArrayConstructor WebGLFloatArray; // Usable with new operator
-
         attribute EventConstructor Event;
         attribute BeforeLoadEventConstructor BeforeLoadEvent;
         attribute KeyboardEventConstructor KeyboardEvent;

@@ -25,13 +25,13 @@ function testGetWithOutOfRangeIndices(typeName) {
     shouldBeUndefined("webGLArray[0x20000000]");
 }
 
-testGetWithOutOfRangeIndices("WebGLByteArray");
-testGetWithOutOfRangeIndices("WebGLUnsignedByteArray");
-testGetWithOutOfRangeIndices("WebGLShortArray");
-testGetWithOutOfRangeIndices("WebGLUnsignedShortArray");
-testGetWithOutOfRangeIndices("WebGLIntArray");
-testGetWithOutOfRangeIndices("WebGLUnsignedIntArray");
-testGetWithOutOfRangeIndices("WebGLFloatArray");
+testGetWithOutOfRangeIndices("Int8Array");
+testGetWithOutOfRangeIndices("Uint8Array");
+testGetWithOutOfRangeIndices("Int16Array");
+testGetWithOutOfRangeIndices("Uint16Array");
+testGetWithOutOfRangeIndices("Int32Array");
+testGetWithOutOfRangeIndices("Uint32Array");
+testGetWithOutOfRangeIndices("Float32Array");
 
 successfullyParsed = true;
 

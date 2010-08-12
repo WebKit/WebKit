@@ -1,3 +1,50 @@
+2010-08-11  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by David Levin.
+
+        Remove obsolete WebGLArray type names
+        https://bugs.webkit.org/show_bug.cgi?id=43885
+
+        Deleted aliases to obsolete WebGLArray type names. Updated
+        affected layout tests, synchronizing them with the versions in the
+        Khronos repository where appropriate. Ran all layout tests.
+
+        * compositing/webgl/webgl-reflection.html:
+        * fast/canvas/webgl/array-get-and-set-method-removal.html:
+        * fast/canvas/webgl/array-get-out-of-bounds.html:
+        * fast/canvas/webgl/array-set-out-of-bounds-expected.txt:
+        * fast/canvas/webgl/array-set-out-of-bounds.html:
+        * fast/canvas/webgl/array-setters-expected.txt:
+        * fast/canvas/webgl/array-setters.html:
+        * fast/canvas/webgl/array-unit-tests-expected.txt:
+        * fast/canvas/webgl/array-unit-tests.html:
+        * fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias.html:
+        * fast/canvas/webgl/copy-tex-image-and-sub-image-2d.html:
+        * fast/canvas/webgl/null-uniform-location.html:
+        * fast/canvas/webgl/point-size.html:
+        * fast/canvas/webgl/resources/webgl-test-utils.js:
+        (WebGLTestUtils):
+        (WebGLTestUtils.):
+        * fast/canvas/webgl/script-tests/texImageTest.js:
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-array-buffer-view-expected.txt:
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-array-buffer-view.html:
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-expected.txt:
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data.html:
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-expected.txt:
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-image.html:
+        * fast/canvas/webgl/tex-image-with-format-and-type.html:
+        * fast/canvas/webgl/tex-input-validation.html:
+        * fast/canvas/webgl/tex-sub-image-2d-expected.txt:
+        * fast/canvas/webgl/tex-sub-image-2d.html:
+        * fast/canvas/webgl/texImage2DImageDataTest.html:
+        * fast/canvas/webgl/viewport-unchanged-upon-resize.html:
+        * fast/canvas/webgl/webgl-array-invalid-ranges-expected.txt:
+        * fast/canvas/webgl/webgl-array-invalid-ranges.html:
+        * fast/dom/Window/script-tests/window-property-descriptors.js:
+        * fast/dom/Window/window-properties.html:
+        * fast/dom/script-tests/prototype-inheritance.js:
+        * fast/js/script-tests/global-constructors.js:
+
 2010-08-11  Nate Chapin  <japhet@chromium.org>
 
         Unreviewed, Chromium expectations tweak.

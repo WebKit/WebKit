@@ -16,8 +16,8 @@ var program = loadStandardProgram(gl);
 
 shouldBe("gl.getError()", "gl.NO_ERROR");
 shouldBeUndefined("gl.useProgram(program)");
-var floatArray = new WebGLFloatArray([1, 2, 3, 4]);
-var intArray = new WebGLIntArray([1, 2, 3, 4]);
+var floatArray = new Float32Array([1, 2, 3, 4]);
+var intArray = new Int32Array([1, 2, 3, 4]);
 
 function callUniformFunction(name) {
   var isArrayVariant = (name.charAt(name.length - 1) == 'v');
@@ -35,7 +35,7 @@ function callUniformFunction(name) {
       size = size * size;
       args.push(false);
     }
-    var array = (isFloat ? new WebGLFloatArray(size) : new WebGLIntArray(size));
+    var array = (isFloat ? new Float32Array(size) : new Int32Array(size));
     for (var i = 0; i < size; i++) {
       array[i] = i;
     }

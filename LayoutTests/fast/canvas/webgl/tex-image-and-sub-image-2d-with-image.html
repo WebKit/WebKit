@@ -3,30 +3,9 @@
 <link rel="stylesheet" href="../../js/resources/js-test-style.css"/>
 <script src="../../js/resources/js-test-pre.js"></script>
 <script src="resources/webgl-test.js"></script>
-<script id="vshader" type="x-shader/x-vertex">
-attribute vec3 g_Position;
-attribute vec2 g_TexCoord0;
-
-varying vec2 texCoord;
-
-void main()
-{
-    gl_Position = vec4(g_Position.x, g_Position.y, g_Position.z, 1.0);
-    texCoord = g_TexCoord0;
-}
-</script>
-
-<script id="fshader" type="x-shader/x-fragment">
-uniform sampler2D tex;
-varying vec2 texCoord;
-
-void main()
-{
-    gl_FragColor = texture2D(tex, texCoord);
-}
-</script>
-
+<script src="resources/webgl-test-utils.js"></script>
 <script>
+var wtu = WebGLTestUtils;
 var gl = null;
 var textureLoc = null;
 var successfullyParsed = false;
@@ -39,56 +18,16 @@ function init()
 
     description('Verify texImage2D and texSubImage2D code paths taking Images');
 
-    gl = initWebGL("example", "vshader", "fshader", [ "g_Position", "g_TexCoord0" ], [ 0, 0, 0, 1 ], 1);
+    var canvas = document.getElementById("example");
+    gl = wtu.create3DContext(canvas);
+    var program = wtu.setupTexturedQuad(gl);
+
+    gl.clearColor(0,0,0,1);
+    gl.clearDepth(1);
 
     textureLoc = gl.getUniformLocation(gl.program, "tex");
 
-    var vertices = new WebGLFloatArray([
-         1.0,  1.0, 0.0,
-        -1.0,  1.0, 0.0,
-        -1.0, -1.0, 0.0,
-         1.0,  1.0, 0.0,
-        -1.0, -1.0, 0.0,
-         1.0, -1.0, 0.0]);
-    var texCoords = new WebGLFloatArray([
-        1.0, 1.0,
-        0.0, 1.0,
-        0.0, 0.0,
-        1.0, 1.0,
-        0.0, 0.0,
-        1.0, 0.0]);
-    var texCoordOffset = vertices.byteLength;
-
-    var vbo = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
-    gl.bufferData(gl.ARRAY_BUFFER,
-                  texCoordOffset + texCoords.byteLength,
-                  gl.STATIC_DRAW);
-    gl.bufferSubData(gl.ARRAY_BUFFER, 0, vertices);
-    gl.bufferSubData(gl.ARRAY_BUFFER, texCoordOffset, texCoords);
-
-    gl.enableVertexAttribArray(0);
-    gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0);
-    gl.enableVertexAttribArray(1);
-    gl.vertexAttribPointer(1, 2, gl.FLOAT, gl.FALSE, 0, texCoordOffset);
-
-    loadTexture("resources/red-green.png");
-}
-
-function loadTexture(src) {
-    var texture = gl.createTexture();
-    gl.bindTexture(gl.TEXTURE_2D, texture);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-    var image = new Image();
-    image.onload = function() {
-        gl.bindTexture(gl.TEXTURE_2D, texture);
-        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
-        runTest(image);
-    };
-    image.src = src;
-    return texture;
+    wtu.loadTexture(gl, "resources/red-green.png", runTest);
 }
 
 // These two declarations need to be global for "shouldBe" to see them
@@ -126,43 +65,15 @@ function runOneIteration(image, useTexSubImage2D, flipY, topColor, bottomColor)
     // Point the uniform sampler to texture unit 0
     gl.uniform1i(textureLoc, 0);
     // Draw the triangles
-    gl.drawArrays(gl.TRIANGLES, 0, 6);
-    // Read back the rendering results
-    var width = 32;
-    var height = 32;
-    buf = new Uint8Array(width * height * 4);
-    gl.readPixels(0, 0, width, height, gl.RGBA, gl.UNSIGNED_BYTE, buf);
+    wtu.drawQuad(gl, [0, 0, 0, 255]);
     // Check a few pixels near the top and bottom and make sure they have
     // the right color.
-    var queryWidth = 2;
-    var queryHeight = 2;
     debug("Checking lower left corner");
-    var xoff = 4;
-    var yoff = 4;
-    correctColor = bottomColor;
-    for (var y = 0; y < queryHeight; y++) {
-        for (var x = 0; x < queryWidth; x++) {
-            idx = ((yoff + y) * width * 4 +
-                   (xoff + x) * 4);
-            pixel[0] = buf[idx];
-            pixel[1] = buf[idx + 1];
-            pixel[2] = buf[idx + 2];
-            shouldBe("pixel", "correctColor");
-        }
-    }
+    wtu.checkCanvasRect(gl, 4, 4, 2, 2, bottomColor,
+                        "shouldBe " + bottomColor);
     debug("Checking upper left corner");
-    yoff = height - 8;
-    correctColor = topColor;
-    for (var y = 0; y < queryHeight; y++) {
-        for (var x = 0; x < queryWidth; x++) {
-            idx = ((yoff + y) * width * 4 +
-                   (xoff + x) * 4);
-            pixel[0] = buf[idx];
-            pixel[1] = buf[idx + 1];
-            pixel[2] = buf[idx + 2];
-            shouldBe("pixel", "correctColor");
-        }
-    }
+    wtu.checkCanvasRect(gl, 4, gl.canvas.height - 8, 2, 2, topColor,
+                        "shouldBe " + topColor);
 }
 
 function runTest(image)
@@ -194,3 +105,5 @@ function finish() {
 <div id="console"></div>
 </body>
 </html>
+
+

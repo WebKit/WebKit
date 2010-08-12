@@ -6,7 +6,7 @@ var video = document.createElement("video");
 var canvas2d = document.createElement("canvas");
 var context2d = canvas2d.getContext("2d");
 var imageData = context2d.createImageData(64, 64);
-var array = new WebGLUnsignedByteArray([ 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255 ]);
+var array = new Uint8Array([ 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255 ]);
 
 shouldThrow("context.texImage2D(context.TEXTURE_2D)");
 shouldBeUndefined("context.texImage2D(context.TEXTURE_2D, 0, context.RGBA, 64, 64, 0, context.RGBA, context.UNSIGNED_BYTE, null)");

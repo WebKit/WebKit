@@ -37,7 +37,7 @@
         var vertices = [ 0.0, 0.8, 0.0,
                         -0.8, -0.8, 0.0,
                          0.8, -0.8, 0.0 ]; 
-        gl.bufferData(gl.ARRAY_BUFFER, new WebGLFloatArray(vertices), gl.STATIC_DRAW);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
         gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0); // Load the vertex data
         gl.enableVertexAttribArray(0); 

@@ -31,7 +31,7 @@ function testTexSubImage2D(testCase)
     var yoffset = 0;
     var width = 16;
     var height = 16;
-    var array = new WebGLUnsignedByteArray(width * height * 4);
+    var array = new Uint8Array(width * height * 4);
     gl.texSubImage2D(testCase.target, level, xoffset, yoffset, width, height, testCase.format, testCase.type, array);
     error = testCase.expectedError;
     shouldBe("gl.getError()", "error");

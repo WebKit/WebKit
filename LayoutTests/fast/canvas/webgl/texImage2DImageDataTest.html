@@ -63,14 +63,14 @@
             
             var vertexObject = gl.createBuffer();
             gl.bindBuffer(gl.ARRAY_BUFFER, vertexObject);
-            var vertices = new WebGLFloatArray([
+            var vertices = new Float32Array([
                 -1,  1, 0,
                 -1, -1, 0,
                  1,  1, 0,
                  1, -1, 0,
                  1,  1, 0,
                 -1, -1, 0]);
-            var texCoords = new WebGLFloatArray([
+            var texCoords = new Float32Array([
                  0, 1,
                  0, 0,
                  1, 1,

@@ -606,47 +606,6 @@ JSValue JSDOMWindow::float32Array(ExecState* exec) const
     return getDOMConstructor<JSFloat32ArrayConstructor>(exec, this);
 }
 
-// Temporary aliases to keep current WebGL content working during transition period to TypedArray spec.
-// To be removed before WebGL spec is finalized. (FIXME)
-JSValue JSDOMWindow::webGLArrayBuffer(ExecState* exec) const
-{
-    return getDOMConstructor<JSArrayBufferConstructor>(exec, this);
-}
-
-JSValue JSDOMWindow::webGLByteArray(ExecState* exec) const
-{
-    return getDOMConstructor<JSInt8ArrayConstructor>(exec, this);
-}
-
-JSValue JSDOMWindow::webGLUnsignedByteArray(ExecState* exec) const
-{
-    return getDOMConstructor<JSUint8ArrayConstructor>(exec, this);
-}
-
-JSValue JSDOMWindow::webGLIntArray(ExecState* exec) const
-{
-    return getDOMConstructor<JSInt32ArrayConstructor>(exec, this);
-}
-
-JSValue JSDOMWindow::webGLUnsignedIntArray(ExecState* exec) const
-{
-    return getDOMConstructor<JSUint32ArrayConstructor>(exec, this);
-}
-
-JSValue JSDOMWindow::webGLShortArray(ExecState* exec) const
-{
-    return getDOMConstructor<JSInt16ArrayConstructor>(exec, this);
-}
-
-JSValue JSDOMWindow::webGLUnsignedShortArray(ExecState* exec) const
-{
-    return getDOMConstructor<JSUint16ArrayConstructor>(exec, this);
-}
-
-JSValue JSDOMWindow::webGLFloatArray(ExecState* exec) const
-{
-    return getDOMConstructor<JSFloat32ArrayConstructor>(exec, this);
-}
 #endif
  
 JSValue JSDOMWindow::xmlHttpRequest(ExecState* exec) const

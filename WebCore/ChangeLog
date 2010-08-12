@@ -1,3 +1,17 @@
+2010-08-11  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by David Levin.
+
+        Remove obsolete WebGLArray type names
+        https://bugs.webkit.org/show_bug.cgi?id=43885
+
+        Deleted aliases to obsolete WebGLArray type names. Updated
+        affected layout tests, synchronizing them with the versions in the
+        Khronos repository where appropriate. Ran all layout tests.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        * page/DOMWindow.idl:
+
 2010-08-11  Steve Block  <steveblock@google.com>
 
         Reviewed by David Levin.

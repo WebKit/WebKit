@@ -3,20 +3,11 @@
 <link rel="stylesheet" href="../../js/resources/js-test-style.css"/>
 <script src="../../js/resources/js-test-pre.js"></script>
 <script src="resources/webgl-test.js"></script>
-<script id="vshader" type="x-shader/x-vertex">
-attribute vec3 g_Position;
-attribute vec2 g_TexCoord0;
-
-varying vec2 texCoord;
-
-void main()
-{
-    gl_Position = vec4(g_Position.x, g_Position.y, g_Position.z, 1.0);
-    texCoord = g_TexCoord0;
-}
-</script>
-
+<script src="resources/webgl-test-utils.js"></script>
 <script id="fshader" type="x-shader/x-fragment">
+#ifdef GL_ES
+precision highp float;
+#endif
 uniform sampler2D tex;
 varying vec2 texCoord;
 
@@ -33,42 +24,21 @@ void main()
 <div id="description"></div>
 <div id="console"></div>
 <script>
-description('Tests texSubImage2D upload path from WebGLUnsignedByteArray');
+description('Tests texSubImage2D upload path from Uint8Array');
 
-var gl = initWebGL("example", "vshader", "fshader", [ "g_Position", "g_TexCoord0" ], [ 0, 0, 0, 1 ], 1);
+var wtu = WebGLTestUtils;
+var canvas = document.getElementById("example");
+var gl = wtu.create3DContext(canvas);
+var program = wtu.setupProgram(
+    gl,
+    [wtu.setupSimpleTextureVertexShader(gl),
+     wtu.loadShaderFromScript(gl, "fshader")],
+    ['vPosition', 'texCoord0']);
+wtu.setupUnitQuad(gl);
 var textureWidth = 256;
 var textureHeight = 1;
 
-textureLoc = gl.getUniformLocation(gl.program, "tex");
-
-var vertices = new WebGLFloatArray([
-     1.0,  1.0, 0.0,
-    -1.0,  1.0, 0.0,
-    -1.0, -1.0, 0.0,
-     1.0,  1.0, 0.0,
-    -1.0, -1.0, 0.0,
-     1.0, -1.0, 0.0]);
-var texCoords = new WebGLFloatArray([
-    1.0, 1.0,
-    0.0, 1.0,
-    0.0, 0.0,
-    1.0, 1.0,
-    0.0, 0.0,
-    1.0, 0.0]);
-var texCoordOffset = vertices.byteLength;
-
-var vbo = gl.createBuffer();
-gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
-gl.bufferData(gl.ARRAY_BUFFER,
-              texCoordOffset + texCoords.byteLength,
-              gl.STATIC_DRAW);
-gl.bufferSubData(gl.ARRAY_BUFFER, 0, vertices);
-gl.bufferSubData(gl.ARRAY_BUFFER, texCoordOffset, texCoords);
-
-gl.enableVertexAttribArray(0);
-gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0);
-gl.enableVertexAttribArray(1);
-gl.vertexAttribPointer(1, 2, gl.FLOAT, gl.FALSE, 0, texCoordOffset);
+textureLoc = gl.getUniformLocation(program, "tex");
 
 var texture = gl.createTexture();
 gl.bindTexture(gl.TEXTURE_2D, texture);
@@ -79,7 +49,7 @@ gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
 // Allocate the texture object
 gl.texImage2D(gl.TEXTURE_2D, 0, gl.ALPHA, textureWidth, textureHeight, 0, gl.ALPHA, gl.UNSIGNED_BYTE, null);
 // Prepare the image data
-var array = new WebGLUnsignedByteArray(textureWidth);
+var array = new Uint8Array(textureWidth);
 for (var i = 0; i < textureWidth; i++)
     array[i] = i;
 // Fill the texture object with data -- this is actually the code path being tested
@@ -88,7 +58,7 @@ gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, textureWidth, textureHeight, gl.ALPHA, 
 // Clear and set up
 gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 gl.bindTexture(gl.TEXTURE_2D, texture);
-gl.useProgram(gl.program);
+gl.useProgram(program);
 gl.uniform1i(textureLoc, 0);
 // Draw the texture to the frame buffer
 gl.drawArrays(gl.TRIANGLES, 0, 6);
