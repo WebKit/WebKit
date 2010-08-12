@@ -26,6 +26,27 @@ WebKitTools/DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.xcodeproj
 WebKit/chromium/.gclient
 WebKit/chromium/.gclient_entries
 
+# Ignore Chromium dependencies
+WebKit/chromium/base/
+WebKit/chromium/gfx/
+WebKit/chromium/googleurl/
+WebKit/chromium/net/
+WebKit/chromium/sdch/
+WebKit/chromium/skia/
+WebKit/chromium/testing/
+WebKit/chromium/third_party/
+WebKit/chromium/tools/
+WebKit/chromium/v8/
+WebKit/chromium/xcodebuild/
+WebKit/chromium/.gclient
+WebKit/chromium/.gclient_entries
+WebKit/chromium/app/
+WebKit/chromium/chromium_deps/
+WebKit/chromium/gpu/
+WebKit/chromium/media/
+WebKit/chromium/webkit/
+WebKit/chromium/printing/
+
 # Ignore compiled java tests:
 LayoutTests/java/*.class
 
