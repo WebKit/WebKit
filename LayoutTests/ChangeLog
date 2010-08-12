@@ -1,3 +1,11 @@
+2010-08-12  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed.
+
+        Media test baseline forgotten in r65224.
+
+        * platform/gtk/media/audio-no-installed-engines-expected.txt: Added.
+
 2010-08-12  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Update chromium's test_expectations.txt
