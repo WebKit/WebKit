@@ -3,6 +3,7 @@ This test case tests the Date constructor. In particular, it tests many cases of
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+PASS isNaN(new Date("")) is true
 PASS new Date(1111).getTime() is 1111
 PASS new Date(object).getTime() is 1111
 PASS new Date(new Date(1111)).getTime() is 1111

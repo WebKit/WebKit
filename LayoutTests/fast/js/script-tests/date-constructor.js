@@ -8,6 +8,8 @@ var object = new Object;
 object.valueOf = function() { return 1111; }
 object.toSTring = function() { return "2222"; }
 
+shouldBe('isNaN(new Date(""))', 'true');
+
 var timeZoneOffset = Date.parse("Dec 25 1995") - Date.parse("Dec 25 1995 GMT");
 
 shouldBe('new Date(1111).getTime()', '1111');
