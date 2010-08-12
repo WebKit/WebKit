@@ -591,52 +591,6 @@ static void appendEndMarkup(Vector<UChar>& result, const Node* node)
     result.append('>');
 }
 
-class MarkupAccumulator {
-public:
-    MarkupAccumulator(Node* nodeToSkip, Vector<Node*>* nodes)
-        : m_nodeToSkip(nodeToSkip)
-        , m_nodes(nodes)
-    {
-    }
-
-    void appendMarkup(Node* startNode, EChildrenOnly, EAbsoluteURLs, const HashMap<AtomicStringImpl*, AtomicStringImpl*>* namespaces = 0);
-
-    String takeResult() { return String::adopt(m_result); }
-
-private:
-    Vector<UChar> m_result;
-    Node* m_nodeToSkip;
-    Vector<Node*>* m_nodes;
-};
-
-// FIXME: Would be nice to do this in a non-recursive way.
-void MarkupAccumulator::appendMarkup(Node* startNode, EChildrenOnly childrenOnly, EAbsoluteURLs absoluteURLs, const HashMap<AtomicStringImpl*, AtomicStringImpl*>* namespaces)
-{
-    if (startNode == m_nodeToSkip)
-        return;
-
-    HashMap<AtomicStringImpl*, AtomicStringImpl*> namespaceHash;
-    if (namespaces)
-        namespaceHash = *namespaces;
-
-    // start tag
-    if (!childrenOnly) {
-        if (m_nodes)
-            m_nodes->append(startNode);
-        appendStartMarkup(m_result, startNode, 0, DoNotAnnotateForInterchange, absoluteURLs, false, &namespaceHash);
-    }
-
-    // children
-    if (!(startNode->document()->isHTMLDocument() && doesHTMLForbidEndTag(startNode))) {
-        for (Node* current = startNode->firstChild(); current; current = current->nextSibling())
-            appendMarkup(current, IncludeNode, absoluteURLs, &namespaceHash);
-    }
-
-    // end tag
-    if (!childrenOnly)
-        appendEndMarkup(m_result, startNode);
-}
-
 static void completeURLs(Node* node, const String& baseURL)
 {
     Vector<AttributeChange> changes;
@@ -737,7 +691,8 @@ static bool shouldIncludeWrapperForFullySelectedRoot(Node* fullySelectedRoot, CS
 
 class MarkupAccumulatorWrapper {
 public:
-    MarkupAccumulatorWrapper()
+    MarkupAccumulatorWrapper(Vector<Node*>* nodes)
+    : m_nodes(nodes)
     {
     }
 
@@ -746,11 +701,13 @@ public:
         postMarkups.append(s);
     }
 
-    void insertOpenTag(const Node* node, const Range* range, EAnnotateForInterchange annotate, EAbsoluteURLs absoluteURLs, bool convertBlocksToInlines = false, RangeFullySelectsNode rangeFullySelectsNode = DoesFullySelectNode)
+    void insertOpenTag(const Node* node, const Range* range, EAnnotateForInterchange annotate, EAbsoluteURLs absoluteURLs, bool convertBlocksToInlines = false, HashMap<AtomicStringImpl*, AtomicStringImpl*>* namespaces = 0, RangeFullySelectsNode rangeFullySelectsNode = DoesFullySelectNode)
     {
         Vector<UChar> result;
-        appendStartMarkup(result, node, range, annotate, absoluteURLs, convertBlocksToInlines, 0, rangeFullySelectsNode);
+        appendStartMarkup(result, node, range, annotate, absoluteURLs, convertBlocksToInlines, namespaces, rangeFullySelectsNode);
         postMarkups.append(String::adopt(result));
+        if (m_nodes)
+            m_nodes->append(const_cast<Node*>(node));
     }
 
     void insertEndTag(const Node* node)
@@ -760,12 +717,14 @@ public:
         postMarkups.append(String::adopt(result));
     }
 
-    void wrapWithNode(const Node* node, const Range* range, EAnnotateForInterchange annotate, EAbsoluteURLs absoluteURLs, bool convertBlocksToInlines = false, RangeFullySelectsNode rangeFullySelectsNode = DoesFullySelectNode)
+    void wrapWithNode(const Node* node, const Range* range, EAnnotateForInterchange annotate, EAbsoluteURLs absoluteURLs, bool convertBlocksToInlines = false, HashMap<AtomicStringImpl*, AtomicStringImpl*>* namespaces = 0, RangeFullySelectsNode rangeFullySelectsNode = DoesFullySelectNode)
     {
         Vector<UChar> result;
-        appendStartMarkup(result, node, range, annotate, absoluteURLs, convertBlocksToInlines, 0, rangeFullySelectsNode);
+        appendStartMarkup(result, node, range, annotate, absoluteURLs, convertBlocksToInlines, namespaces, rangeFullySelectsNode);
         preMarkups.append(String::adopt(result));
         insertEndTag(node);
+        if (m_nodes)
+            m_nodes->append(const_cast<Node*>(node));
     }
 
     void wrapWithStyleNode(CSSStyleDeclaration* style, Document* document, bool isBlock = false)
@@ -814,11 +773,12 @@ public:
     }
 
 private:
+    Vector<Node*>* m_nodes;
     Vector<String> preMarkups;
     Vector<String> postMarkups;
 };
 
-static Node* serializeNodes(MarkupAccumulatorWrapper& accumulator, Node* startNode, Node* pastEnd, Vector<Node*>* nodes, const Range* range, EAnnotateForInterchange annotate, EAbsoluteURLs absoluteURLs)
+static Node* serializeNodes(MarkupAccumulatorWrapper& accumulator, Node* startNode, Node* pastEnd, const Range* range, EAnnotateForInterchange annotate, EAbsoluteURLs absoluteURLs)
 {
     Vector<Node*> ancestorsToClose;
     Node* next;
@@ -847,8 +807,6 @@ static Node* serializeNodes(MarkupAccumulatorWrapper& accumulator, Node* startNo
         } else {
             // Add the node to the markup if we're not skipping the descendants
             accumulator.insertOpenTag(n, range, annotate, absoluteURLs);
-            if (nodes)
-                nodes->append(n);
 
             // If node has no children, close the tag now.
             if (!n->childNodeCount()) {
@@ -885,8 +843,6 @@ static Node* serializeNodes(MarkupAccumulatorWrapper& accumulator, Node* startNo
                     // or b) ancestors that we never encountered during a pre-order traversal starting at startNode:
                     ASSERT(startNode->isDescendantOf(parent));
                     accumulator.wrapWithNode(parent, range, annotate, absoluteURLs);
-                    if (nodes)
-                        nodes->append(parent);
                     lastClosed = parent;
                 }
             }
@@ -932,7 +888,7 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
 
     document->updateLayoutIgnorePendingStylesheets();
 
-    MarkupAccumulatorWrapper accumulator;
+    MarkupAccumulatorWrapper accumulator(nodes);
     Node* pastEnd = updatedRange->pastLastNode();
 
     Node* startNode = updatedRange->firstNode();
@@ -955,7 +911,7 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
         }
     }
 
-    Node* lastClosed = serializeNodes(accumulator, startNode, pastEnd, nodes, range, annotate, absoluteURLs);
+    Node* lastClosed = serializeNodes(accumulator, startNode, pastEnd, range, annotate, absoluteURLs);
 
     // Include ancestors that aren't completely inside the range but are required to retain 
     // the structure and appearance of the copied markup.
@@ -1030,7 +986,7 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
             } else {
                 // Since this node and all the other ancestors are not in the selection we want to set RangeFullySelectsNode to DoesNotFullySelectNode
                 // so that styles that affect the exterior of the node are not included.
-                accumulator.wrapWithNode(ancestor, updatedRange.get(), annotate, absoluteURLs, convertBlocksToInlines, DoesNotFullySelectNode);
+                accumulator.wrapWithNode(ancestor, updatedRange.get(), annotate, absoluteURLs, convertBlocksToInlines, 0, DoesNotFullySelectNode);
             }
             if (nodes)
                 nodes->append(ancestor);
@@ -1095,6 +1051,27 @@ PassRefPtr<DocumentFragment> createFragmentFromMarkup(Document* document, const 
     return fragment.release();
 }
 
+static void serializeNodesWithNamespaces(MarkupAccumulatorWrapper& accumulator, const Node* node, Node* nodeToSkip, EChildrenOnly childrenOnly, EAbsoluteURLs absoluteURLs, const HashMap<AtomicStringImpl*, AtomicStringImpl*>* namespaces)
+{
+    if (node == nodeToSkip)
+        return;
+
+    HashMap<AtomicStringImpl*, AtomicStringImpl*> namespaceHash;
+    if (namespaces)
+        namespaceHash = *namespaces;
+
+    if (!childrenOnly)
+        accumulator.insertOpenTag(node, 0, DoNotAnnotateForInterchange, absoluteURLs, false, &namespaceHash);
+
+    if (!(node->document()->isHTMLDocument() && doesHTMLForbidEndTag(node))) {
+        for (Node* current = node->firstChild(); current; current = current->nextSibling())
+            serializeNodesWithNamespaces(accumulator, current, nodeToSkip, IncludeNode, absoluteURLs, &namespaceHash);
+    }
+
+    if (!childrenOnly)
+        accumulator.insertEndTag(node);
+}
+
 String createMarkup(const Node* node, EChildrenOnly childrenOnly, Vector<Node*>* nodes, EAbsoluteURLs absoluteURLs)
 {
     if (!node)
@@ -1107,9 +1084,9 @@ String createMarkup(const Node* node, EChildrenOnly childrenOnly, Vector<Node*>*
             return "";
     }
 
-    MarkupAccumulator accumulator(deleteButtonContainerElement, nodes);
-    accumulator.appendMarkup(const_cast<Node*>(node), childrenOnly, absoluteURLs);
-    return accumulator.takeResult();
+    MarkupAccumulatorWrapper accumulator(nodes);
+    serializeNodesWithNamespaces(accumulator, node, deleteButtonContainerElement, childrenOnly, absoluteURLs, 0);
+    return accumulator.takeResults();
 }
 
 static void fillContainerFromString(ContainerNode* paragraph, const String& string)

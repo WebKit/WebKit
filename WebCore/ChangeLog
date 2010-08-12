@@ -1,3 +1,24 @@
+2010-08-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Kent Tamura.
+
+        merge MarkupAccumulator and MarkupAccumulatorWrapper
+        https://bugs.webkit.org/show_bug.cgi?id=43834
+
+        Removed MarkupAccumulator and added serializeNodesWithNamespaces to use MarkupAccumulatorWrapper
+        in both versions of createMarkup.  Accumulation of nodes done manually in serializeNodes is
+        now done by MarkupAccumulatorWrapper as done in the original MarkupAccumulator.
+
+        No new tests added since this is a cleanup.
+
+        * editing/markup.cpp:
+        (WebCore::MarkupAccumulatorWrapper::MarkupAccumulatorWrapper): Takes vector of nodes and set it to m_nodes.
+        (WebCore::MarkupAccumulatorWrapper::insertOpenTag): Adds node to m_nodes.
+        (WebCore::MarkupAccumulatorWrapper::wrapWithNode): Adds node to m_nodes.
+        (WebCore::serializeNodes): Adding node to nodes is moved into MarkupAccumulatorWrapper.
+        (WebCore::createMarkup): Instantiates MarkupAccumulatorWrapper.
+        (WebCore::serializeNodesWithNamespaces): Renamed from MarkupAccumulator::appendMarkup.
+
 2010-08-12  Dirk Schulze  <krit@webkit.org>
 
         Unreviewed sort of XCode project file.
