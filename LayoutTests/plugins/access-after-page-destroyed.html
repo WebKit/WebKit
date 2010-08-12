@@ -10,6 +10,10 @@ if (window.layoutTestController) {
 var w = open();
 var p = w.navigator.mimeTypes.item(0);
 w.close();
+w = open();
+p = w.navigator.mimeTypes.item(0);
+w.navigator.plugins.refresh();
+w.close();
 w = null;
 
 setTimeout(function(){

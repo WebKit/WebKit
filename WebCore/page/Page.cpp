@@ -427,7 +427,10 @@ void Page::refreshPlugins(bool reload)
         Page* page = *it;
         
         // Clear out the page's plug-in data.
-        page->m_pluginData = 0;
+        if (page->m_pluginData) {
+            page->m_pluginData->disconnectPage();
+            page->m_pluginData = 0;
+        }
 
         if (!reload)
             continue;

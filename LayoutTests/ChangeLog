@@ -1,3 +1,12 @@
+2010-08-12  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Dumitru Daniliuc.
+
+        Clear PluginData's page pointer on page refresh
+        https://bugs.webkit.org/show_bug.cgi?id=43888
+
+        * plugins/access-after-page-destroyed.html:
+
 2010-08-12  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Dimitri Glazkov.
