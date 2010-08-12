@@ -519,11 +519,14 @@ InjectedScript._type = function(obj)
         return "date";
     if (obj instanceof inspectedWindow.RegExp)
         return "regexp";
+    // FireBug's array detection.
+    if (isFinite(obj.length) && typeof obj.splice === "function")
+        return "array";
+    if (isFinite(obj.length) && typeof obj.callee === "function") // arguments.
+        return "array";
     if (obj instanceof inspectedWindow.NodeList)
         return "array";
     if (obj instanceof inspectedWindow.HTMLCollection)
-        return "array";
-    if (typeof inspectedWindow.jQuery === "function" && obj instanceof inspectedWindow.jQuery)
         return "array";
     if (obj instanceof inspectedWindow.Error)
         return "error";
