@@ -1,3 +1,10 @@
+2010-08-11  Gavin Barraclough  <barraclough@apple.com>
+
+        Windows build fix.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * wtf/Forward.h:
+
 2010-08-11  Leo Yang  <leo.yang@torchmobile.com.cn>
 
         Reviewed by Geoffrey Garen.
