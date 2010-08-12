@@ -1,3 +1,9 @@
+2010-08-12  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Update chromium's test_expectations.txt
+
+        * platform/chromium/test_expectations.txt: Two failing video related tests.
+
 2010-08-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.
