@@ -33,6 +33,10 @@ WebInspector.DOMNode = function(doc, payload) {
     this.ownerDocument = doc;
 
     this.id = payload.id;
+    // injectedScriptId is a node is for DOM nodes which should be converted
+    // to corresponding InjectedScript by the inspector backend. We indicate
+    // this by making injectedScriptId negative.
+    this.injectedScriptId = -payload.id;
     this.nodeType = payload.nodeType;
     this.nodeName = payload.nodeName;
     this.localName = payload.localName;

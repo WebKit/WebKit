@@ -26,10 +26,10 @@ function frontend_expandAndDumpConsoleMessages(testController)
 
     function evalCallback(result)
     {
-        if (result.type === "error")
-            testController.notifyDone("Exception:" + result);
-        var objectProxy = WebInspector.RemoteObject.fromPayload(result);
-        objectProxy.getProperties(false, true, getPropertiesCallback);
+        if (result.isException)
+            testController.notifyDone("Exception:" + result.value);
+        var objectProxy = result.value;
+        InjectedScriptAccess.getDefault().getProperties(objectProxy, false, true, getPropertiesCallback);
     }
 
     function getPropertiesCallback(properties)

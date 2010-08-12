@@ -511,7 +511,7 @@ WebInspector.ConsoleView.prototype = {
 
         function evalCallback(result)
         {
-            callback(WebInspector.RemoteObject.fromPayload(result));
+            callback(result.value, result.isException);
         };
         InjectedScriptAccess.getDefault().evaluate(expression, objectGroup, evalCallback);
     },
@@ -534,7 +534,7 @@ WebInspector.ConsoleView.prototype = {
         this.addMessage(commandMessage);
 
         var self = this;
-        function printResult(result)
+        function printResult(result, exception)
         {
             self.prompt.history.push(str);
             self.prompt.historyOffset = 0;
@@ -542,7 +542,7 @@ WebInspector.ConsoleView.prototype = {
 
             WebInspector.applicationSettings.consoleHistory = self.prompt.history.slice(-30);
 
-            self.addMessage(new WebInspector.ConsoleCommandResult(result, commandMessage));
+            self.addMessage(new WebInspector.ConsoleCommandResult(result, exception, commandMessage));
         }
         this.evalInInspectedWindow(str, "console", printResult);
     },
@@ -550,7 +550,7 @@ WebInspector.ConsoleView.prototype = {
     _format: function(output, forceObjectFormat)
     {
         var isProxy = (output != null && typeof output === "object");
-        var type = (forceObjectFormat ? "object" : WebInspector.RemoteObject.type(output));
+        var type = (forceObjectFormat ? "object" : Object.proxyType(output));
 
         var formatter = this._customFormatters[type];
         if (!formatter || !isProxy) {
@@ -589,12 +589,12 @@ WebInspector.ConsoleView.prototype = {
             elem.appendChild(treeOutline.element);
         }
 
-        InjectedScriptAccess.get(object.objectId.injectedScriptId).pushNodeToFrontend(object.objectId, printNode);
+        InjectedScriptAccess.get(object.injectedScriptId).pushNodeToFrontend(object, printNode);
     },
 
     _formatarray: function(arr, elem)
     {
-        arr.getOwnProperties(false, this._printArray.bind(this, elem));
+        InjectedScriptAccess.get(arr.injectedScriptId).getProperties(arr, false, false, this._printArray.bind(this, elem));
     },
 
     _formatstring: function(output, elem)
@@ -637,8 +637,9 @@ WebInspector.ConsoleView.prototype = {
 
     _formatAsArrayEntry: function(output)
     {
+        var type = Object.proxyType(output);
         // Prevent infinite expansion of cross-referencing arrays.
-        return this._format(output, WebInspector.RemoteObject.type(output) === "array");
+        return this._format(output, type === "array");
     }
 }
 
@@ -727,15 +728,12 @@ WebInspector.ConsoleMessage.prototype = {
 
         // Formatting code below assumes that parameters are all wrappers whereas frontend console
         // API allows passing arbitrary values as messages (strings, numbers, etc.). Wrap them here.
-        for (var i = 0; i < parameters.length; ++i) {
-            if (typeof parameters[i] === "object")
-                parameters[i] = WebInspector.RemoteObject.fromPayload(parameters[i]);
-            else
-                parameters[i] = WebInspector.RemoteObject.fromPrimitiveValue(parameters[i]);
-        }
+        for (var i = 0; i < parameters.length; ++i)
+            if (typeof parameters[i] !== "object" && typeof parameters[i] !== "function")
+                parameters[i] = WebInspector.ObjectProxy.wrapPrimitiveValue(parameters[i]);
 
         // There can be string log and string eval result. We distinguish between them based on message type.
-        var shouldFormatMessage = WebInspector.RemoteObject.type(parameters[0]) === "string" && this.type !== WebInspector.ConsoleMessage.MessageType.Result;
+        var shouldFormatMessage = Object.proxyType(parameters[0]) === "string" && this.type !== WebInspector.ConsoleMessage.MessageType.Result;
 
         // Multiple parameters with the first being a format string. Save unused substitutions.
         if (shouldFormatMessage) {
@@ -1050,11 +1048,21 @@ WebInspector.ConsoleCommand.prototype = {
     }
 }
 
-WebInspector.ConsoleCommandResult = function(result, originatingCommand)
+WebInspector.ConsoleCommandResult = function(result, exception, originatingCommand)
 {
-    var level = (result.isError() ? WebInspector.ConsoleMessage.MessageLevel.Error : WebInspector.ConsoleMessage.MessageLevel.Log);
+    var level = (exception ? WebInspector.ConsoleMessage.MessageLevel.Error : WebInspector.ConsoleMessage.MessageLevel.Log);
+    var message = result;
+    if (exception) {
+        // Distinguish between strings and errors (no need to quote latter).
+        message = WebInspector.ObjectProxy.wrapPrimitiveValue(result);
+        message.type = "error";
+    }
+    var line = (exception ? result.line : -1);
+    var url = (exception ? result.sourceURL : null);
+
     this.originatingCommand = originatingCommand;
-    WebInspector.ConsoleMessage.call(this, WebInspector.ConsoleMessage.MessageSource.JS, WebInspector.ConsoleMessage.MessageType.Result, level, -1, null, null, 1, null, [result]);
+
+    WebInspector.ConsoleMessage.call(this, WebInspector.ConsoleMessage.MessageSource.JS, WebInspector.ConsoleMessage.MessageType.Result, level, line, url, null, 1, null, [message]);
 }
 
 WebInspector.ConsoleCommandResult.prototype = {

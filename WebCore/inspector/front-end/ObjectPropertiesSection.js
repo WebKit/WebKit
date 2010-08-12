@@ -50,7 +50,7 @@ WebInspector.ObjectPropertiesSection.prototype = {
                 return;
             self.updateProperties(properties);
         };
-        this.object.getProperties(this.ignoreHasOwnProperty, true, callback);
+        InjectedScriptAccess.get(this.object.injectedScriptId).getProperties(this.object, this.ignoreHasOwnProperty, true, callback);
     },
 
     updateProperties: function(properties, rootTreeElementConstructor, rootPropertyComparer)
@@ -69,10 +69,8 @@ WebInspector.ObjectPropertiesSection.prototype = {
 
         this.propertiesTreeOutline.removeChildren();
 
-        for (var i = 0; i < properties.length; ++i) {
-            properties[i].parentObject = this.object;
+        for (var i = 0; i < properties.length; ++i)
             this.propertiesTreeOutline.appendChild(new rootTreeElementConstructor(properties[i]));
-        }
 
         if (!this.propertiesTreeOutline.children.length) {
             var title = "<div class=\"info\">" + this.emptyPlaceholder + "</div>";
@@ -154,7 +152,7 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
                 this.appendChild(new this.treeOutline.section.treeElementConstructor(properties[i]));
             }
         };
-        this.property.value.getOwnProperties(true, callback.bind(this));
+        InjectedScriptAccess.get(this.property.value.injectedScriptId).getProperties(this.property.value, false, true, callback.bind(this));
     },
 
     ondblclick: function(event)
@@ -180,9 +178,11 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
         this.valueElement = document.createElement("span");
         this.valueElement.className = "value";
         this.valueElement.textContent = this.property.value.description;
+        if (typeof this.property.value.propertyLength !== "undefined")
+            this.valueElement.textContent += " (" + this.property.value.propertyLength + ")";
         if (this.property.isGetter)
             this.valueElement.addStyleClass("dimmed");
-        if (this.property.value.isError())
+        if (this.property.isError)
             this.valueElement.addStyleClass("error");
 
         this.listItemElement.removeChildren();
@@ -260,7 +260,7 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
                 self.updateSiblings();
             }
         };
-        this.property.parentObject.setPropertyValue(this.property.name, expression.trim(), callback);
+        InjectedScriptAccess.get(this.property.parentObjectProxy.injectedScriptId).setPropertyValue(this.property.parentObjectProxy, this.property.name, expression.trim(), callback);
     }
 }
 

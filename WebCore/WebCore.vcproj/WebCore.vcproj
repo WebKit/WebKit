@@ -51260,6 +51260,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\ObjectProxy.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\Panel.js"
 					>
 				</File>
@@ -51297,10 +51301,6 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\PropertiesSidebarPane.js"
-					>
-				</File>
-				<File
-					RelativePath="..\inspector\front-end\RemoteObject.js"
 					>
 				</File>
 				<File

@@ -1,5 +1,9 @@
 2010-08-12  Pavel Feldman  <pfeldman@chromium.org>
 
+        Not reviewed. Rolling out r65241 and 65243 for breaking inspector tests.
+
+2010-08-12  Pavel Feldman  <pfeldman@chromium.org>
+
         Not reviewed. Adding the file missing in r65241.
 
         * inspector/front-end/RemoteObject.js: Added.

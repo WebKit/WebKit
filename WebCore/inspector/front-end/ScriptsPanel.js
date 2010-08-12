@@ -387,9 +387,9 @@ WebInspector.ScriptsPanel.prototype = {
             updateInterface = true;
 
         var self = this;
-        function updatingCallbackWrapper(result)
+        function updatingCallbackWrapper(result, exception)
         {
-            callback(result);
+            callback(result, exception);
             if (updateInterface)
                 self.sidebarPanes.scopechain.update(selectedCallFrame);
         }
@@ -401,7 +401,7 @@ WebInspector.ScriptsPanel.prototype = {
         function evalCallback(result)
         {
             if (result)
-                callback(WebInspector.RemoteObject.fromPayload(result));
+                callback(result.value, result.isException);
         }
         InjectedScriptAccess.get(callFrame.injectedScriptId).evaluateInCallFrame(callFrame.id, code, objectGroup, evalCallback);
     },

@@ -90,10 +90,24 @@ WebInspector.WatchExpressionsSection.NewWatchExpression = "\xA0";
 WebInspector.WatchExpressionsSection.prototype = {
     update: function()
     {
-        function appendResult(expression, watchIndex, result)
+        function appendResult(expression, watchIndex, result, exception)
         {
-            var property = new WebInspector.RemoteObjectProperty(expression, result);
+            if (exception) {
+                // Exception results are not wrappers, but text messages.
+                result = WebInspector.ObjectProxy.wrapPrimitiveValue(result);
+            } else if (result.type === "string") {
+                // Evaluation result is intentionally not abbreviated. However, we'd like to distinguish between null and "null"
+                result.description = "\"" + result.description + "\"";
+            }
+
+            var property = new WebInspector.ObjectPropertyProxy(expression, result);
             property.watchIndex = watchIndex;
+            property.isException = exception;
+
+            // For newly added, empty expressions, set description to "",
+            // since otherwise you get DOMWindow
+            if (property.name === WebInspector.WatchExpressionsSection.NewWatchExpression) 
+                property.value.description = "";
 
             // To clarify what's going on here: 
             // In the outer function, we calculate the number of properties
@@ -208,7 +222,7 @@ WebInspector.WatchExpressionTreeElement.prototype = {
     {
         WebInspector.ObjectPropertyTreeElement.prototype.update.call(this);
 
-        if (this.property.value.isError())
+        if (this.property.isException)
             this.valueElement.addStyleClass("watch-expressions-error-level");
 
         var deleteButton = document.createElement("input");

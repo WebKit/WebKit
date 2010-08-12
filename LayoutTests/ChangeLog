@@ -1,3 +1,7 @@
+2010-08-12  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed. Rolling out r65241 and 65243 for breaking inspector tests.
+
 2010-08-12  Nate Chapin  <japhet@chromium.org>
 
         Update chromium's test_expectations.txt and provide new baselines for

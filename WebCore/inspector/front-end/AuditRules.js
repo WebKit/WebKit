@@ -724,9 +724,9 @@ WebInspector.AuditRules.CssInHeadRule = function()
 WebInspector.AuditRules.CssInHeadRule.prototype = {
     doRun: function(resources, result, callback)
     {
-        function evalCallback(evalResult)
+        function evalCallback(evalResult, isException)
         {
-            if (!evalResult)
+            if (isException || !evalResult)
                 return callback(null);
 
             var summary = result.addChild("");
@@ -800,9 +800,9 @@ WebInspector.AuditRules.StylesScriptsOrderRule = function()
 WebInspector.AuditRules.StylesScriptsOrderRule.prototype = {
     doRun: function(resources, result, callback)
     {
-        function evalCallback(resultValue)
+        function evalCallback(resultValue, isException)
         {
-            if (!resultValue)
+            if (isException || !resultValue)
                 return callback(null);
 
             var lateCssUrls = resultValue[0];
