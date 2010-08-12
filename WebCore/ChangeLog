@@ -1,3 +1,21 @@
+2010-08-11  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        AX: isNativeCheckbox does not work as advertised
+        https://bugs.webkit.org/show_bug.cgi?id=43872
+
+        Test: platform/mac/accessibility/native-vs-nonnative-checkboxes.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::isInputImage):
+            Only say it's an input image if its role has not been overriden
+        (WebCore::AccessibilityRenderObject::isNativeCheckboxOrRadio):
+        * dom/InputElement.h:
+            Add methods to query if it's a checkbox or radio button type element.
+        * html/HTMLInputElement.h:
+        (WebCore::HTMLInputElement::isCheckbox):
+
 2010-08-11  Kenneth Russell  <kbr@google.com>
 
         Reviewed by David Levin.

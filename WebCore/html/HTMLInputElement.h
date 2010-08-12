@@ -101,6 +101,7 @@ public:
     virtual bool isSearchField() const { return m_type == SEARCH; }
     virtual bool isInputTypeHidden() const { return m_type == HIDDEN; }
     virtual bool isPasswordField() const { return m_type == PASSWORD; }
+    virtual bool isCheckbox() const { return m_type == CHECKBOX; }
     bool isTelephoneField() const { return m_type == TELEPHONE; }
     bool isNumberField() const { return m_type == NUMBER; }
     bool isEmailField() const { return m_type == EMAIL; }
