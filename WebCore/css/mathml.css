@@ -25,6 +25,9 @@ math > * {
 mrow, mfenced {
     display: inline-block;
     white-space: nowrap;
+}
+
+mfenced {
     padding-left: 1px;
     padding-right: 1px;
 }

@@ -1,3 +1,32 @@
+2010-08-12  François Sausset  <sausset@gmail.com>
+
+        Reviewed by Beth Dakin.
+
+        Update the tests to take into account padding changes for the mrow element.
+        https://bugs.webkit.org/show_bug.cgi?id=43908
+
+        * platform/mac/mathml/presentation/fractions-expected.checksum:
+        * platform/mac/mathml/presentation/fractions-expected.png:
+        * platform/mac/mathml/presentation/fractions-expected.txt:
+        * platform/mac/mathml/presentation/fractions-vertical-alignment-expected.checksum:
+        * platform/mac/mathml/presentation/fractions-vertical-alignment-expected.png:
+        * platform/mac/mathml/presentation/fractions-vertical-alignment-expected.txt:
+        * platform/mac/mathml/presentation/roots-expected.checksum:
+        * platform/mac/mathml/presentation/roots-expected.png:
+        * platform/mac/mathml/presentation/roots-expected.txt:
+        * platform/mac/mathml/presentation/row-alignment-expected.checksum:
+        * platform/mac/mathml/presentation/row-alignment-expected.png:
+        * platform/mac/mathml/presentation/row-alignment-expected.txt:
+        * platform/mac/mathml/presentation/row-expected.checksum:
+        * platform/mac/mathml/presentation/row-expected.png:
+        * platform/mac/mathml/presentation/row-expected.txt:
+        * platform/mac/mathml/presentation/subsup-expected.checksum:
+        * platform/mac/mathml/presentation/subsup-expected.png:
+        * platform/mac/mathml/presentation/subsup-expected.txt:
+        * platform/mac/mathml/presentation/underover-expected.checksum:
+        * platform/mac/mathml/presentation/underover-expected.png:
+        * platform/mac/mathml/presentation/underover-expected.txt:
+
 2010-08-12  Victoria Kirst  <vrk@google.com>
 
         Reviewed by David Levin.

@@ -128,9 +128,9 @@ layer at (0,0) size 800x256
       RenderBlock {p} at (0,192) size 784x32
         RenderText {#text} at (0,8) size 123x18
           text run at (0,8) width 123: "Wrapped in mrow: "
-        RenderBlock {math} at (123,0) size 18x32
-          RenderBlock {mrow} at (1,0) size 16x32
-            RenderBlock {msubsup} at (1,0) size 14x32
+        RenderBlock {math} at (123,0) size 16x32
+          RenderBlock {mrow} at (1,0) size 14x32
+            RenderBlock {msubsup} at (0,0) size 14x32
               RenderBlock {msubsup} at (0,8) size 7x19
                 RenderInline {mi} at (0,0) size 7x16
                   RenderText {#text} at (0,3) size 7x16
