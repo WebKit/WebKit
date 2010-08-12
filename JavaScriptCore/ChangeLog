@@ -1,3 +1,17 @@
+2010-08-12  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig
+
+        Revert changes to ALWAYS_INLINEness of a couple of functions in UString.
+        This appears to have degraded performance.
+
+        * runtime/UString.cpp:
+        (JSC::UString::ascii):
+        * runtime/UString.h:
+        (JSC::UString::length):
+        (JSC::UString::isEmpty):
+        (JSC::UString::~UString):
+
 2010-08-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Antonio Gomes.

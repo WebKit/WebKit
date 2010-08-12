@@ -197,7 +197,7 @@ char* UString::ascii() const
     delete[] asciiBuffer;
     asciiBuffer = new char[neededSize];
 
-    const UChar* p = characters(); // Don't roll me out!
+    const UChar* p = characters();
     char* q = asciiBuffer;
     const UChar* limit = p + len;
     while (p != limit) {
