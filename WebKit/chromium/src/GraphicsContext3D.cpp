@@ -297,7 +297,6 @@ public:
     void deleteTexture(unsigned);
 
     void synthesizeGLError(unsigned long error);
-    bool supportsBGRA();
 
 private:
     OwnPtr<WebKit::WebGraphicsContext3D> m_impl;
@@ -908,7 +907,6 @@ DELEGATE_TO_IMPL_1(deleteShader, unsigned)
 DELEGATE_TO_IMPL_1(deleteTexture, unsigned)
 
 DELEGATE_TO_IMPL_1(synthesizeGLError, unsigned long)
-DELEGATE_TO_IMPL_R(supportsBGRA, bool)
 
 //----------------------------------------------------------------------
 // GraphicsContext3D
@@ -1243,7 +1241,6 @@ DELEGATE_TO_INTERNAL_1(deleteShader, unsigned)
 DELEGATE_TO_INTERNAL_1(deleteTexture, unsigned)
 
 DELEGATE_TO_INTERNAL_1(synthesizeGLError, unsigned long)
-DELEGATE_TO_INTERNAL_R(supportsBGRA, bool)
 
 bool GraphicsContext3D::isGLES2Compliant() const
 {

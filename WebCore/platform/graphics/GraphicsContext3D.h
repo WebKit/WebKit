@@ -403,9 +403,7 @@ public:
 
         // WebGL-specific enums
         UNPACK_FLIP_Y_WEBGL = 0x9240,
-        UNPACK_PREMULTIPLY_ALPHA_WEBGL = 0x9241,
-
-        BGRA_EXT = 0x80E1
+        UNPACK_PREMULTIPLY_ALPHA_WEBGL = 0x9241
     };
 
     // Context creation attributes.
@@ -749,8 +747,6 @@ public:
     // instance of any given error, and returns them from calls to
     // getError in the order they were added.
     void synthesizeGLError(unsigned long error);
-
-    bool supportsBGRA();
 
   private:
     GraphicsContext3D(Attributes attrs, HostWindow* hostWindow);

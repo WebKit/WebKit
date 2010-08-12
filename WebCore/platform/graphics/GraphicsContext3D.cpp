@@ -816,21 +816,6 @@ bool GraphicsContext3D::packPixels(const uint8_t* sourceData,
     return true;
 }
 
-#if !PLATFORM(CHROMIUM)
-GraphicsContext3D::supportsBGRA()
-{
-    // For OpenGL ES2.0, this requires checking for
-    // GL_EXT_texture_format_BGRA8888 and GL_EXT_read_format_bgra.
-    // For desktop GL, BGRA has been supported since OpenGL 1.2.
-
-    // However, note that the GL ES2 extension requires the internalFormat to
-    // glTexImage2D() be GL_BGRA, while desktop GL will not accept GL_BGRA
-    // (must be GL_RGBA), so this must be checked on each platform.
-    // Returning false for now to be safe.
-    return false;
-}
-#endif
-
 } // namespace WebCore
 
 #endif // ENABLE(3D_CANVAS)
