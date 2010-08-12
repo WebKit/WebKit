@@ -136,7 +136,7 @@ class ImageDiff(test_type_base.TestTypeBase):
         # If we're generating a new baseline, we pass.
         if test_args.new_baseline or test_args.reset_results:
             self._save_baseline_files(filename, test_args.png_path,
-                                    test_args.hash, test_args.new_baseline)
+                                      test_args.hash, test_args.new_baseline)
             return failures
 
         # Compare hashes.

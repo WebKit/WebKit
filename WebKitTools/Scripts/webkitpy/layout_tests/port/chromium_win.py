@@ -69,9 +69,9 @@ class ChromiumWinPort(chromium.ChromiumPort):
 
     def baseline_search_path(self):
         port_names = []
-        if self._name == 'chromium-win-xp':
+        if self._name.endswith('-win-xp'):
             port_names.append("chromium-win-xp")
-        if self._name in ('chromium-win-xp', 'chromium-win-vista'):
+        if self._name.endswith('-win-xp') or self._name.endswith('-win-vista'):
             port_names.append("chromium-win-vista")
         # FIXME: This may need to include mac-snowleopard like win.py.
         port_names.extend(["chromium-win", "chromium", "win", "mac"])

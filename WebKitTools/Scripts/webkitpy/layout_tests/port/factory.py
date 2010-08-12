@@ -83,5 +83,8 @@ def get(port_name=None, options=None):
     elif port_to_use.startswith('chromium-win'):
         import chromium_win
         return chromium_win.ChromiumWinPort(port_name, options)
+    elif port_to_use.startswith('google-chrome'):
+        import google_chrome
+        return google_chrome.GetGoogleChromePort(port_name, options)
 
     raise NotImplementedError('unsupported port: %s' % port_to_use)

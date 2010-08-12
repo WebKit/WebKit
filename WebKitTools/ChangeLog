@@ -1,3 +1,15 @@
+2010-08-11  Tony Chang  <tony@chromium.org>
+
+        Reviewed by David Levin.
+
+        [chromium] add google-chrome layout test result directories
+        https://bugs.webkit.org/show_bug.cgi?id=43889
+
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+        * Scripts/webkitpy/layout_tests/port/factory.py:
+        * Scripts/webkitpy/layout_tests/port/google_chrome.py: Added.
+        * Scripts/webkitpy/layout_tests/test_types/image_diff.py:
+
 2010-08-11  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.
