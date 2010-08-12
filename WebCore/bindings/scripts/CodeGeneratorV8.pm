@@ -1230,6 +1230,7 @@ END
         } elsif ($nativeType =~ /^V8Parameter/) {
             my $value = JSValueToNative($parameter, "args[$paramIndex]", BasicTypeCanFailConversion($parameter) ?  "${parameterName}Ok" : undef);
             if ($parameter->type eq "DOMString") {
+                $implIncludes{"V8BindingMacros.h"} = 1;
                 push(@implContentDecls, "    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK($nativeType, $parameterName, $value);\n");
             } else {
                 # Don't know how to properly check for conversion exceptions when $parameter->type is "DOMUserData"

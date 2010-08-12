@@ -1,3 +1,17 @@
+2010-08-12  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Steve Block.
+
+        V8 code generator does not add V8BindingMacros.h include in all places it is needed
+        https://bugs.webkit.org/show_bug.cgi?id=43907
+
+        Adds the V8BindingMacros.h header before using the STRING_TO_V8PARAMETER_EXCEPTION_BLOCK
+        macro.
+
+        Build fix so no new tests.
+
+        * bindings/scripts/CodeGeneratorV8.pm: include the header at the right time.
+
 2010-08-12  Jeremy Orlow  <jorlow@chromium.org>
 
         Revert for now
