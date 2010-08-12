@@ -1,5 +1,11 @@
 2010-08-12  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Delete a test that slipped in by accident.
+
+        * svg/zoom/page/zoom-mask.svg: Removed.
+
+2010-08-12  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Reviewed by Dirk Schulze.
 
         SVG masking performance very slow
