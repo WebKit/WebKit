@@ -1,5 +1,12 @@
 2010-08-12  Jian Li  <jianli@chromium.org>
 
+        Fix qt build break.
+
+        * html/ThreadableBlobRegistry.cpp:
+        (WebCore::postTaskToMainThread):
+
+2010-08-12  Jian Li  <jianli@chromium.org>
+
         Reviewed by David Levin.
 
         Add ThreadableBlobRegistry to support calling BlobRegistry methods in

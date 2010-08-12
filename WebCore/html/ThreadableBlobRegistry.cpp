@@ -35,6 +35,7 @@
 #include "BlobData.h"
 #include "BlobRegistry.h"
 #include "CrossThreadTask.h"
+#include "NotImplemented.h"
 #include "ScriptExecutionContext.h"
 #include "WorkerContext.h"
 #include "WorkerLoaderProxy.h"
@@ -44,9 +45,13 @@ namespace WebCore {
 
 static void postTaskToMainThread(ScriptExecutionContext* scriptExecutionContext, PassOwnPtr<ScriptExecutionContext::Task> task)
 {
+#if ENABLE(WORKERS)
     ASSERT(scriptExecutionContext->isWorkerContext());
     WorkerLoaderProxy& proxy = static_cast<WorkerContext*>(scriptExecutionContext)->thread()->workerLoaderProxy();
     proxy.postTaskToLoader(task);
+#else
+    notImplemented();
+#endif
 }
 
 static void registerBlobURLTask(ScriptExecutionContext*, const KURL& url, PassOwnPtr<BlobData> blobData)
