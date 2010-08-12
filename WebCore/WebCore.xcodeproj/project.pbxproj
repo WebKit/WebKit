@@ -718,6 +718,8 @@
 		2EED575812109EE4007656BB /* BlobRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EED575712109EE4007656BB /* BlobRegistry.h */; };
 		2EED575B12109EF3007656BB /* BlobData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2EED575912109EF3007656BB /* BlobData.cpp */; };
 		2EED575C12109EF3007656BB /* BlobData.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EED575A12109EF3007656BB /* BlobData.h */; };
+		2EED57FD1214A9C2007656BB /* ThreadableBlobRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2EED57FB1214A9C2007656BB /* ThreadableBlobRegistry.cpp */; };
+		2EED57FE1214A9C2007656BB /* ThreadableBlobRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EED57FC1214A9C2007656BB /* ThreadableBlobRegistry.h */; };
 		31288E720E3005D6003619AE /* WebKitCSSKeyframeRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31288E6E0E3005D6003619AE /* WebKitCSSKeyframeRule.cpp */; };
 		31288E730E3005D6003619AE /* WebKitCSSKeyframeRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 31288E6F0E3005D6003619AE /* WebKitCSSKeyframeRule.h */; };
 		31288E740E3005D6003619AE /* WebKitCSSKeyframesRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31288E700E3005D6003619AE /* WebKitCSSKeyframesRule.cpp */; };
@@ -6475,6 +6477,8 @@
 		2EED575712109EE4007656BB /* BlobRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlobRegistry.h; sourceTree = "<group>"; };
 		2EED575912109EF3007656BB /* BlobData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BlobData.cpp; sourceTree = "<group>"; };
 		2EED575A12109EF3007656BB /* BlobData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlobData.h; sourceTree = "<group>"; };
+		2EED57FB1214A9C2007656BB /* ThreadableBlobRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadableBlobRegistry.cpp; sourceTree = "<group>"; };
+		2EED57FC1214A9C2007656BB /* ThreadableBlobRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadableBlobRegistry.h; sourceTree = "<group>"; };
 		31288E6E0E3005D6003619AE /* WebKitCSSKeyframeRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitCSSKeyframeRule.cpp; sourceTree = "<group>"; };
 		31288E6F0E3005D6003619AE /* WebKitCSSKeyframeRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitCSSKeyframeRule.h; sourceTree = "<group>"; };
 		31288E700E3005D6003619AE /* WebKitCSSKeyframesRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitCSSKeyframesRule.cpp; sourceTree = "<group>"; };
@@ -14188,6 +14192,8 @@
 				A5AFB34E115151A700B045CB /* StepRange.h */,
 				BCEF45E80E687767001C1287 /* TextMetrics.h */,
 				BCEF453F0E676AC1001C1287 /* TextMetrics.idl */,
+				2EED57FB1214A9C2007656BB /* ThreadableBlobRegistry.cpp */,
+				2EED57FC1214A9C2007656BB /* ThreadableBlobRegistry.h */,
 				E446139D0CD6331000FADA75 /* TimeRanges.cpp */,
 				E446139E0CD6331000FADA75 /* TimeRanges.h */,
 				E446139F0CD6331000FADA75 /* TimeRanges.idl */,
@@ -20149,6 +20155,7 @@
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				97DD4D870FDF4D6E00ECF9A4 /* XSSAuditor.h in Headers */,
 				CE172E011136E8CE0062A533 /* ZoomMode.h in Headers */,
+				2EED57FE1214A9C2007656BB /* ThreadableBlobRegistry.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -22574,6 +22581,7 @@
 				93F19B0508245E59001E9ABC /* XSLTProcessorLibxslt.cpp in Sources */,
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				97DD4D860FDF4D6E00ECF9A4 /* XSSAuditor.cpp in Sources */,
+				2EED57FD1214A9C2007656BB /* ThreadableBlobRegistry.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

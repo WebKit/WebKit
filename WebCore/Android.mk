@@ -255,6 +255,8 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	\
 	html/AsyncImageResizer.cpp \
 	html/Blob.cpp \
+	html/BlobRegistryImpl.cpp \
+	html/BlobURL.cpp \
 	html/CollectionCache.cpp \
 	html/CSSPreloadScanner.cpp \
 	html/DOMFormData.cpp \
@@ -287,6 +289,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	html/HTMLViewSourceParser.cpp \
 	html/ImageData.cpp \
 	html/ImageResizerThread.cpp \
+	html/ThreadableBlobRegistry.cpp \
 	html/TimeRanges.cpp \
 	html/ValidityState.cpp \
 	\
@@ -405,6 +408,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	page/animation/KeyframeAnimation.cpp \
 	\
 	platform/Arena.cpp \
+	platform/BlobData.cpp \
 	platform/ContentType.cpp \
 	platform/ContextMenu.cpp \
 	platform/CrossThreadCopier.cpp \

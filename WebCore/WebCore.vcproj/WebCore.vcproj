@@ -40949,6 +40949,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\ThreadableBlobRegistry.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\ThreadableBlobRegistry.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\TimeRanges.cpp"
 				>
 			</File>

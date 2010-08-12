@@ -41,6 +41,7 @@
 namespace WebCore {
 
     class ActiveDOMObject;
+    class Blob;
 #if ENABLE(DATABASE)
     class Database;
     class DatabaseTaskSynchronizer;
@@ -126,8 +127,12 @@ namespace WebCore {
         void removeTimeout(int timeoutId);
         DOMTimer* findTimeout(int timeoutId);
 
-        void trackBlobURL(const String&);
-        void revokeBlobURL(const String&);
+        void addBlob(Blob*);
+        void removeBlob(Blob*);
+#if ENABLE(BLOB)
+        KURL createPublicBlobURL(Blob*);
+        void revokePublicBlobURL(const KURL&);
+#endif
 
 #if USE(JSC)
         JSC::JSGlobalData* globalData();
@@ -156,7 +161,10 @@ namespace WebCore {
 
         HashMap<int, DOMTimer*> m_timeouts;
 
-        HashSet<String> m_blobURLs;
+        HashSet<Blob*> m_blobs;
+#if ENABLE(BLOB)
+        HashSet<String> m_publicBlobURLs;
+#endif
 
         virtual void refScriptExecutionContext() = 0;
         virtual void derefScriptExecutionContext() = 0;

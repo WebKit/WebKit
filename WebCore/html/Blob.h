@@ -60,6 +60,8 @@ public:
 
     virtual ~Blob();
 
+    void contextDestroyed();
+
     const KURL& url() const { return m_url; }
     unsigned long long size() const;
     const String& type() const { return m_type; }
@@ -73,8 +75,6 @@ public:
 
 #if ENABLE(BLOB)
     PassRefPtr<Blob> slice(ScriptExecutionContext*, long long start, long long length, const String& contentType = String()) const;
-
-    KURL createPublicURL(ScriptExecutionContext*) const;
 #endif
 
 protected:
@@ -95,6 +95,7 @@ protected:
     // It is only used by FileReader to read the blob data via loading from the blob URL resource.
     KURL m_url;
 
+    ScriptExecutionContext* m_scriptExecutionContext;
     String m_type;
     long long m_size;
 };

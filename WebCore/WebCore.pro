@@ -743,6 +743,7 @@ SOURCES += \
     html/ImageData.cpp \
     html/ImageResizerThread.cpp \
     html/LabelsNodeList.cpp \
+    html/ThreadableBlobRegistry.cpp \
     html/StepRange.cpp \
     html/ValidityState.cpp \
     inspector/ConsoleMessage.cpp \

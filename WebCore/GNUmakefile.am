@@ -1565,6 +1565,8 @@ webcore_sources += \
 	WebCore/html/StepRange.cpp \
 	WebCore/html/StepRange.h \
 	WebCore/html/TextMetrics.h \
+	WebCore/html/ThreadableBlobRegistry.cpp \
+	WebCore/html/ThreadableBlobRegistry.h \
 	WebCore/html/ValidityState.cpp \
 	WebCore/html/ValidityState.h \
 	WebCore/html/VoidCallback.h \

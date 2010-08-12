@@ -1040,6 +1040,7 @@ SET(WebCore_SOURCES
     html/ImageResizerThread.cpp
     html/LabelsNodeList.cpp
     html/StepRange.cpp
+    html/ThreadableBlobRegistry.cpp
     html/ValidityState.cpp
     html/canvas/CanvasGradient.cpp
     html/canvas/CanvasPattern.cpp

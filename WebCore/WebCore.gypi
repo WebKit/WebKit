@@ -1731,6 +1731,8 @@
             'html/StepRange.cpp',
             'html/StepRange.h',
             'html/TextMetrics.h',
+            'html/ThreadableBlobRegistry.cpp',
+            'html/ThreadableBlobRegistry.h',
             'html/TimeRanges.cpp',
             'html/TimeRanges.h',
             'html/ValidityState.cpp',
