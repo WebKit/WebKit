@@ -3188,4 +3188,4 @@ BUGJAPHET WIN : svg/custom/resource-invalidate-on-target-update.svg = IMAGE
 
 BUGJAPHET : websocket/tests/frame-length-overflow.html = TEXT PASS
 
-BUG51854 WIN : http/tests/storage/callbacks-are-called-in-correct-context.html = PASS TIMEOUT
+BUG51854 WIN SLOW : http/tests/storage/callbacks-are-called-in-correct-context.html = PASS

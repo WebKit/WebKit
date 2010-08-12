@@ -1,3 +1,9 @@
+2010-08-11  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Chromium test_expectations update.
+
+        * platform/chromium/test_expectations.txt: http/tests/storage/callbacks-are-called-in-correct-context.html is SLOW, not PASS TIMEOUT
+
 2010-08-11  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.
