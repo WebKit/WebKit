@@ -1,3 +1,14 @@
+2010-08-12  Rafael Antognolli  <antognolli@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Making CMake keep track of theme dependencies.
+        https://bugs.webkit.org/show_bug.cgi?id=43862
+
+        Adding theme source files and images as dependencies of the theme.
+
+        * CMakeListsEfl.txt:
+
 2010-08-11  Rafael Antognolli  <antognolli@profusion.mobi>
 
         Reviewed by Kenneth Rohde Christiansen.
