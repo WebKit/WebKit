@@ -1,3 +1,12 @@
+2010-08-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        generate-bindings.pl should generate warning free code
+        https://bugs.webkit.org/show_bug.cgi?id=43353
+
+        * bindings/scripts/CodeGeneratorJS.pm: Suggested parentheses added around && within ||
+
 2010-08-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Kent Tamura.

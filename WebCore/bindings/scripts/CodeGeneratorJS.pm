@@ -1135,7 +1135,7 @@ sub GenerateParametersCheckExpression
         # these are acceptable values for a DOMString argument (any Object can
         # be converted to a string via .toString).
         push(@andExpression, "(${value}.isNull() || ${value}.isUndefined() || ${value}.isString() || ${value}.isObject())") if $codeGenerator->IsStringType($type);
-        push(@andExpression, "(${value}.isNull() || ${value}.isObject() && asObject(${value})->inherits(&JS${type}::s_info))") unless IsNativeType($type);
+        push(@andExpression, "(${value}.isNull() || (${value}.isObject() && asObject(${value})->inherits(&JS${type}::s_info)))") unless IsNativeType($type);
 
         $parameterIndex++;
     }
