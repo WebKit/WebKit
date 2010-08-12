@@ -51,7 +51,6 @@ inline HTMLLinkElement::HTMLLinkElement(const QualifiedName& tagName, Document* 
     , m_disabledState(Unset)
     , m_loading(false)
     , m_createdByParser(createdByParser)
-    , m_shouldProcessAfterAttach(false)
 {
     ASSERT(hasTagName(linkTag));
 }
@@ -242,27 +241,11 @@ void HTMLLinkElement::process()
         document()->updateStyleSelector();
     }
 }
-    
-void HTMLLinkElement::processCallback(Node* node)
-{
-    ASSERT_ARG(node, node && node->hasTagName(linkTag));
-    static_cast<HTMLLinkElement*>(node)->process();
-}
 
 void HTMLLinkElement::insertedIntoDocument()
 {
     HTMLElement::insertedIntoDocument();
     document()->addStyleSheetCandidateNode(this, m_createdByParser);
-
-    // Since processing a stylesheet link causes a beforeload event
-    // to fire, it is possible for JavaScript to remove the element in the midst
-    // of it being inserted into the DOM, which can lead to assertion failures
-    // and crashes. Avoid this by postponing the beforeload/load until after
-    // attach if there are beforeload listeners.
-    if (document()->hasListenerType(Document::BEFORELOAD_LISTENER)) {
-        m_shouldProcessAfterAttach = true;
-        return;
-    }
 
     process();
 }
@@ -276,20 +259,8 @@ void HTMLLinkElement::removedFromDocument()
     // FIXME: It's terrible to do a synchronous update of the style selector just because a <style> or <link> element got removed.
     if (document()->renderer())
         document()->updateStyleSelector();
-    
-    m_shouldProcessAfterAttach = false;
 }
 
-void HTMLLinkElement::attach()
-{
-    if (m_shouldProcessAfterAttach) {
-        m_shouldProcessAfterAttach = false;
-        queuePostAttachCallback(&HTMLLinkElement::processCallback, this);
-    }
-
-    HTMLElement::attach();
-}
-    
 void HTMLLinkElement::finishParsingChildren()
 {
     m_createdByParser = false;

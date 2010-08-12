@@ -1,3 +1,18 @@
+2010-08-12  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Ensure that parser doesn't attach children that have been removed by JavaScript event handlers.
+        https://bugs.webkit.org/show_bug.cgi?id=43813
+
+        This patch re-fixes bug 40742 in a way that keeps allowing HTMLLinkElement
+        to lazy-attach.
+
+        * html/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::attach): Added parent check.
+        * html/HTMLLinkElement.cpp: Basically undoes changes introduced by r61424.
+        * html/HTMLLinkElement.h: Ditto.
+
 2010-08-12  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Dumitru Daniliuc.

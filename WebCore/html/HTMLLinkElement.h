@@ -73,9 +73,6 @@ public:
     bool isDisabled() const { return m_disabledState == Disabled; }
     bool isEnabledViaScript() const { return m_disabledState == EnabledViaScript; }
     bool isIcon() const { return m_relAttribute.m_isIcon; }
-    
-    virtual void attach();
-    virtual bool canLazyAttach() { return false; }
 
 private:
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
@@ -125,7 +122,6 @@ private:
     RelAttribute m_relAttribute;
     bool m_loading;
     bool m_createdByParser;
-    bool m_shouldProcessAfterAttach;
 };
 
 } //namespace
