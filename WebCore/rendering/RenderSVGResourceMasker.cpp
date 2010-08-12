@@ -105,7 +105,7 @@ bool RenderSVGResourceMasker::applyResource(RenderObject* object, RenderStyle*, 
         if (!maskElement)
             return false;
 
-        if (!SVGImageBufferTools::createImageBuffer(context, absoluteTransform, maskRect, maskerData->maskImage, LinearRGB))
+        if (!SVGImageBufferTools::createImageBuffer(absoluteTransform, maskRect, maskerData->maskImage, LinearRGB))
             return false;
 
         ASSERT(maskerData->maskImage);

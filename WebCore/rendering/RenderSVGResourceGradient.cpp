@@ -85,7 +85,7 @@ static inline bool createMaskAndSwapContextForTextGradient(GraphicsContext*& con
     FloatRect absoluteTargetRect = absoluteTransform.mapRect(textRootBlock->repaintRectInLocalCoordinates());
 
     OwnPtr<ImageBuffer> maskImage;
-    if (!SVGImageBufferTools::createImageBuffer(context, absoluteTransform, absoluteTargetRect, maskImage, DeviceRGB))
+    if (!SVGImageBufferTools::createImageBuffer(absoluteTransform, absoluteTargetRect, maskImage, DeviceRGB))
         return false;
 
     ASSERT(maskImage);

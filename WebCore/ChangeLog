@@ -1,3 +1,15 @@
+2010-08-12  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Follow up to Jeremys fix, just remove the context parameter, it's not needed anymore.
+
+        * rendering/RenderSVGResourceGradient.cpp:
+        (WebCore::createMaskAndSwapContextForTextGradient):
+        * rendering/RenderSVGResourceMasker.cpp:
+        (WebCore::RenderSVGResourceMasker::applyResource):
+        * rendering/SVGImageBufferTools.cpp:
+        (WebCore::SVGImageBufferTools::createImageBuffer):
+        * rendering/SVGImageBufferTools.h:
+
 2010-08-12  Jeremy Orlow  <jorlow@chromium.org>
 
         Build fix.
