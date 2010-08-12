@@ -1,3 +1,17 @@
+2010-08-11  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [DRT/Chromium] Disable accelerated compositing
+        https://bugs.webkit.org/show_bug.cgi?id=43894
+
+        Disable accelerated compositing because DRT is not ready for
+        it. This change fixes hundreds of test crashes on Windows and
+        Linux.
+
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::resetWebSettings):
+
 2010-08-11  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Unreviewed. Adding my Collabora personality to the list.

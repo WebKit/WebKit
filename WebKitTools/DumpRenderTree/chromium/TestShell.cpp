@@ -225,6 +225,8 @@ void TestShell::resetWebSettings(WebView& webView)
 #else
     settings->setEditingBehavior(WebSettings::EditingBehaviorWin);
 #endif
+    // FIXME: crbug.com/51879
+    settings->setAcceleratedCompositingEnabled(false);
 }
 
 void TestShell::runFileTest(const TestParams& params)
