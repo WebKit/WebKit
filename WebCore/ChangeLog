@@ -1,3 +1,10 @@
+2010-08-12  Jeremy Orlow  <jorlow@chromium.org>
+
+        Build fix.
+
+        * rendering/SVGImageBufferTools.cpp:
+        (WebCore::SVGImageBufferTools::createImageBuffer):
+
 2010-08-12  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.
