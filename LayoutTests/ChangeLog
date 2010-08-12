@@ -1,3 +1,23 @@
+2010-08-12  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] new media tests baselines needed
+        https://bugs.webkit.org/show_bug.cgi?id=42444
+
+        Visually check those tests, they seemed fine to me so I added
+        their baselines.
+
+        * platform/gtk/Skipped:
+        * platform/gtk/media/audio-controls-rendering-expected.txt: Added.
+        * platform/gtk/media/video-display-toggle-expected.txt: Added.
+        * platform/gtk/media/video-empty-source-expected.txt: Added.
+        * platform/gtk/media/video-layer-crash-expected.txt: Added.
+        * platform/gtk/media/video-no-audio-expected.txt: Added.
+        * platform/gtk/media/video-transformed-expected.txt: Added.
+        * platform/gtk/media/video-zoom-controls-expected.txt: Added.
+        * platform/gtk/media/video-zoom-expected.txt: Added.
+
 2010-08-11  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Jon Honeycutt.

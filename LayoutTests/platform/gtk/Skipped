@@ -3267,15 +3267,7 @@ media/video-seek-past-end-playing.html
 media/video-source-error.html
 
 #   Tests generating new results
-media/audio-controls-rendering.html
 media/video-aspect-ratio.html
-media/video-display-toggle.html
-media/video-empty-source.html
-media/video-layer-crash.html
-media/video-no-audio.html
-media/video-transformed.html
-media/video-zoom-controls.html
-media/video-zoom.html
 # This test requires media controls has a volume slider.
 media/video-volume-slider.html
 # Tests requiring fullscreen <video> support
@@ -5134,7 +5126,6 @@ fast/repaint/line-in-scrolled-clipped-block.html
 fast/repaint/positioned-document-element.html
 fast/text/international/khmer-selection.html
 fast/text/text-letter-spacing.html
-media/audio-no-installed-engines.html
 svg/batik/filters/feTile.svg
 svg/custom/createImageElement.svg
 svg/custom/createImageElement2.xhtml
