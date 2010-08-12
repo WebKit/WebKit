@@ -1,3 +1,11 @@
+2010-08-12  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Unreviewed.
+
+        Adding myself to the committers list.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2010-08-12  Hayato Ito  <hayato@chromium.org>
 
         Reviewed by Tony Chang.
