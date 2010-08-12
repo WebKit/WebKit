@@ -1,3 +1,17 @@
+2010-08-11  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Some settings are linked to the PageGroup not the Page.  Create a new class for those.
+        https://bugs.webkit.org/show_bug.cgi?id=43794
+
+        Change WebSettings to use the new GroupSettings class rather than Settings for the
+        settings that moved.  This is sub-optimal since the settings aren't really
+        per-view, but I don't see how we can change the API at this point.
+
+        * Api/qwebsettings.cpp:
+        (QWebSettingsPrivate::apply):
+
 2010-08-11  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Update the Symbian def files

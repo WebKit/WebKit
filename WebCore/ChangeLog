@@ -1,3 +1,36 @@
+2010-08-10  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Some settings are linked to the PageGroup not the Page.  Create a new class for those.
+        https://bugs.webkit.org/show_bug.cgi?id=43794
+
+        Since persistient storage is shared between pages, there's no way to modify
+        some settings related to it on a per page basis.  As such, it's not technically
+        correct for these settings to be on the Page's settings.  Create a new class
+        called GroupSettings, move the 2 group-wide local storage settings there, and
+        add a new setting for IndexedDB's path (which is prompting this change).
+
+        No behavior has changed, so no tests.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.exp.in:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::PageGroup):
+        (WebCore::PageGroup::localStorage):
+        * page/PageGroup.h:
+        (WebCore::PageGroup::groupSettings):
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::setSessionStorageQuota):
+        * page/Settings.h:
+
 2010-08-12  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Simon Hausmann.

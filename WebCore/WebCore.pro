@@ -839,6 +839,7 @@ SOURCES += \
     page/Geolocation.cpp \
     page/GeolocationController.cpp \
     page/GeolocationPositionCache.cpp \
+    page/GroupSettings.cpp \
     page/History.cpp \
     page/Location.cpp \
     page/MemoryInfo.cpp \
@@ -1618,6 +1619,7 @@ HEADERS += \
     page/Geolocation.h \
     page/GeolocationPositionCache.h \
     page/Geoposition.h \
+    page/GroupSettings.h \
     page/HaltablePlugin.h \
     page/History.h \
     page/Location.h \

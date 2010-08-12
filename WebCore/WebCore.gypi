@@ -2016,6 +2016,8 @@
             'page/GeolocationPositionCache.cpp',
             'page/GeolocationPositionCache.h',
             'page/Geoposition.h',
+            'page/GroupSettings.cpp',
+            'page/GroupSettings.h',
             'page/HaltablePlugin.h',
             'page/History.cpp',
             'page/History.h',
