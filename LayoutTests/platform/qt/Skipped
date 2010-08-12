@@ -5373,10 +5373,6 @@ fast/dom/Geolocation/callback-to-remote-context2.html
 # Link prefetch is disabled by default
 fast/dom/HTMLLinkElement/prefetch.html
 
-# Failing after enabling HTML5 parser in r61234
-# https://bugs.webkit.org/show_bug.cgi?id=40661
-fast/encoding/japanese-encoding-mix.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=35350
 fast/events/show-modal-dialog-onblur-onfocus.html
 fast/harness/show-modal-dialog.html

@@ -1,3 +1,22 @@
+2010-08-11  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        fast/encoding/japanese-encoding-mix.html fails on Tiger after enabling HTML5 Lexer
+        https://bugs.webkit.org/show_bug.cgi?id=40725
+
+        Qt and Tiger seem to have encoding problems that swallow the --
+        characters that terminate the comment.  We can avoid those problems by
+        inserting a space before the -->.  We're losing coverage of these
+        issues, but I'm not sure we should be in the business of debugging
+        these encoders unless there's a security problem.
+
+        Thanks to ap for investigating and finding this workaround.
+
+        * fast/encoding/japanese-encoding-mix.html:
+        * platform/mac-tiger/Skipped:
+        * platform/qt/Skipped:
+
 2010-08-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Tony Chang.
