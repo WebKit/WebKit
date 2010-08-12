@@ -255,7 +255,7 @@ WebInspector.ElementsPanel.prototype = {
         this._matchesCountUpdateTimeout = null;
         this._searchQuery = query;
 
-        InspectorBackend.performSearch(whitespaceTrimmedQuery);
+        InspectorBackend.performSearch(whitespaceTrimmedQuery, false);
     },
 
     searchingForNodeWasEnabled: function()

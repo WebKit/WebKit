@@ -20,7 +20,7 @@ function expandAndDumpConsoleMessages(noNotifyDone) {
             output(result[i].title);
             var properties = result[i].properties;
             for (var j = 0; properties && j < properties.length; ++j)
-                output(">>> " + properties[j].name + " = " + properties[j].value.description);
+                output("    " + properties[j].name + " = " + properties[j].value._description);
         }
         if (!noNotifyDone)
             notifyDone();

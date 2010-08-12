@@ -625,9 +625,9 @@ WebInspector.SourceFrame.prototype = {
             popupContentElement.addEventListener("mousemove", killHidePopupTimer.bind(this), true);
         }
 
-        function evaluateCallback(result, exception)
+        function evaluateCallback(result)
         {
-            if (exception)
+            if (result.isError())
                 return;
             if (!WebInspector.panels.scripts.paused)
                 return;
@@ -699,11 +699,11 @@ WebInspector.SourceFrame.prototype = {
             return;
 
         var expression = selection.getRangeAt(0).toString().trim();
-        WebInspector.panels.scripts.evaluateInSelectedCallFrame(expression, false, "console", function(result, exception) {
+        WebInspector.panels.scripts.evaluateInSelectedCallFrame(expression, false, "console", function(result) {
             WebInspector.showConsole();
             var commandMessage = new WebInspector.ConsoleCommand(expression);
             WebInspector.console.addMessage(commandMessage);
-            WebInspector.console.addMessage(new WebInspector.ConsoleCommandResult(result, exception, commandMessage));
+            WebInspector.console.addMessage(new WebInspector.ConsoleCommandResult(result, commandMessage));
         });
     },
 

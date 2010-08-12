@@ -1,3 +1,79 @@
+2010-08-12  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: brush up object proxies, introduce remote object model.
+        https://bugs.webkit.org/show_bug.cgi?id=43847
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/AuditRules.js:
+        (WebInspector.AuditRules.CssInHeadRule.prototype.doRun):
+        (WebInspector.AuditRules.StylesScriptsOrderRule.prototype.doRun):
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype.doEvalInWindow):
+        (WebInspector.ConsoleView.prototype._enterKeyPressed.printResult):
+        (WebInspector.ConsoleView.prototype._enterKeyPressed):
+        (WebInspector.ConsoleView.prototype._format):
+        (WebInspector.ConsoleView.prototype._formatnode):
+        (WebInspector.ConsoleView.prototype._formatarray):
+        (WebInspector.ConsoleView.prototype._formatAsArrayEntry):
+        (WebInspector.ConsoleMessage.prototype._format):
+        (WebInspector.ConsoleCommandResult):
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMNode):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype._createTooltipForNode):
+        * inspector/front-end/EventListenersSidebarPane.js:
+        * inspector/front-end/InjectedScript.js:
+        (injectedScriptConstructor):
+        (injectedScriptConstructor.):
+        * inspector/front-end/ObjectPropertiesSection.js:
+        (WebInspector.ObjectPropertiesSection.prototype.update):
+        (WebInspector.ObjectPropertiesSection.prototype.updateProperties):
+        (WebInspector.ObjectPropertyTreeElement.prototype.onpopulate):
+        (WebInspector.ObjectPropertyTreeElement.prototype.update):
+        (WebInspector.ObjectPropertyTreeElement.prototype.applyExpression):
+        * inspector/front-end/ObjectProxy.js: Removed.
+        * inspector/front-end/PropertiesSidebarPane.js:
+        (WebInspector.PropertiesSidebarPane.prototype.update.callback):
+        * inspector/front-end/RemoteObject.js: Added.
+        (WebInspector.RemoteObjectId):
+        (WebInspector.RemoteObject):
+        (WebInspector.RemoteObject.fromPrimitiveValue):
+        (WebInspector.RemoteObject.fromErrorMessage):
+        (WebInspector.RemoteObject.fromNode):
+        (WebInspector.RemoteObject.fromPayload):
+        (WebInspector.RemoteObject.type):
+        (WebInspector.RemoteObject.prototype.get objectId):
+        (WebInspector.RemoteObject.prototype.get type):
+        (WebInspector.RemoteObject.prototype.get description):
+        (WebInspector.RemoteObject.prototype.get hasChildren):
+        (WebInspector.RemoteObject.prototype.isError):
+        (WebInspector.RemoteObject.prototype.getPropertyValueDescriptions):
+        (WebInspector.RemoteObject.prototype.getOwnProperties):
+        (WebInspector.RemoteObject.prototype.getProperties.remoteObjectBinder):
+        (WebInspector.RemoteObjectProperty):
+        * inspector/front-end/ScopeChainSidebarPane.js:
+        (WebInspector.ScopeChainSidebarPane.prototype.update):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.evaluateInSelectedCallFrame.updatingCallbackWrapper):
+        (WebInspector.ScriptsPanel.prototype.evaluateInSelectedCallFrame):
+        (WebInspector.ScriptsPanel.prototype.doEvalInCallFrame):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._showPopup.evaluateCallback):
+        (WebInspector.SourceFrame.prototype._showPopup):
+        (WebInspector.SourceFrame.prototype._evalSelectionInCallFrame):
+        * inspector/front-end/WatchExpressionsSidebarPane.js:
+        (WebInspector.WatchExpressionsSection.prototype.update):
+        (WebInspector.WatchExpressionTreeElement.prototype.update):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+        (WebInspector.log.logMessage):
+        (WebInspector.log):
+        * inspector/front-end/utilities.js:
+
 2010-08-12  Ben Murdoch  <benm@google.com>
 
         Reviewed by Steve Block.

@@ -1,3 +1,16 @@
+2010-08-12  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: brush up object proxies, introduce remote object model.
+        https://bugs.webkit.org/show_bug.cgi?id=43847
+
+        * inspector/console-dir-expected.txt:
+        * inspector/console-dir-global.html:
+        * inspector/console-dir.html:
+        * inspector/console-format-collections-expected.txt:
+        * inspector/console-format-expected.txt:
+
 2010-08-12  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed.
