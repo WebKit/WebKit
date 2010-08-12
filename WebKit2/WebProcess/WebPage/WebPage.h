@@ -114,10 +114,12 @@ public:
     bool isEditingCommandEnabled(const WTF::String& commandName);
     void clearMainFrameName();
     void sendClose();
-    
+
     float zoomFactor() const;
     void setZoomFactor(float);
     void setZoomMode(WebCore::ZoomMode);
+
+    void stopLoading();
 
 #if USE(ACCELERATED_COMPOSITING)
     void changeAcceleratedCompositingMode(WebCore::GraphicsLayer*);
@@ -139,7 +141,6 @@ private:
     // Actions
     void tryClose();
     void loadURL(const WTF::String&);
-    void stopLoading();
     void reload(bool reloadFromOrigin);
     void goForward(uint64_t);
     void goBack(uint64_t);

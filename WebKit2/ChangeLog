@@ -2,6 +2,17 @@
 
         Reviewed by Gavin Barraclough.
 
+        Add SPI to stop loading from the InjectedBundle.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageStopLoading):
+        * WebProcess/InjectedBundle/API/c/WKBundlePagePrivate.h:
+        * WebProcess/WebPage/WebPage.h:
+
+2010-08-11  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin Barraclough.
+
         WKPageStopLoading always asserts
 
         * WebProcess/WebPage/WebPage.cpp:
