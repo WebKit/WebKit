@@ -120,6 +120,10 @@ namespace WebKit {
 extern "C" {
     void webkit_init();
 
+#if HAVE_GSETTINGS
+    GSettings* inspectorGSettings();
+#endif
+
 #define WEBKIT_PARAM_READABLE ((GParamFlags)(G_PARAM_READABLE|G_PARAM_STATIC_NAME|G_PARAM_STATIC_NICK|G_PARAM_STATIC_BLURB))
 #define WEBKIT_PARAM_READWRITE ((GParamFlags)(G_PARAM_READWRITE|G_PARAM_STATIC_NAME|G_PARAM_STATIC_NICK|G_PARAM_STATIC_BLURB))
 

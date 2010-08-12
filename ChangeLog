@@ -1,3 +1,14 @@
+2010-08-12  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Use GSettings to save/restore Web Inspector settings
+        https://bugs.webkit.org/show_bug.cgi?id=43512
+
+        * GNUmakefile.am: GSettings rules.
+        * configure.ac: GSettings infrastructure, and check if we should
+        use it by looking for an appropriate version of GIO.
+
 2010-08-12  Rafael Antognolli  <antognolli@profusion.mobi>
 
         Reviewed by Kenneth Rohde Christiansen.

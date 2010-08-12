@@ -260,6 +260,15 @@ ENCHANT_REQUIRED_VERSION=0.22
 # todo: webcore gtk
 WEBKIT_CHECK_DEPENDENCIES([glib unicode])
 
+# Check if we can use GSettings
+PKG_CHECK_MODULES([GSETTINGS],
+                  [gio-2.0 >= 2.25.0],
+                  [have_gsettings=yes],
+                  [have_gsettings=no])
+if test "$have_gsettings" = "yes"; then
+   AC_DEFINE([HAVE_GSETTINGS], 1, [Whether we can use GSettings])
+fi
+
 GETTEXT_PACKAGE=$PACKAGE-$GTK_API_VERSION
 AC_SUBST(GETTEXT_PACKAGE)
 AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE",
@@ -825,6 +834,9 @@ if test "$enable_geolocation" = "yes"; then
     AC_SUBST([GEOCLUE_LIBS])
 fi
 
+# GSettings
+GLIB_GSETTINGS
+
 # check if gstreamer is available
 if test "$enable_video" = "yes"; then
    PKG_CHECK_MODULES([GSTREAMER],
@@ -873,6 +885,9 @@ AM_CONDITIONAL([USE_GLIB_UNICODE], [test "$with_unicode_backend" = "glib"])
 # Font backend conditionals
 AM_CONDITIONAL([USE_FREETYPE], [test "$with_font_backend" = "freetype"])
 AM_CONDITIONAL([USE_PANGO], [test "$with_font_backend" = "pango"])
+
+# GLib/GIO feature conditionals
+AM_CONDITIONAL([USE_GSETTINGS], [test "$have_gsettings" = "yes"])
 
 # WebKit feature conditionals
 AM_CONDITIONAL([ENABLE_DEBUG],[test "$enable_debug" = "yes"])
@@ -934,7 +949,9 @@ WebKit/gtk/docs/version.xml
 
 AC_CONFIG_FILES([
 WebKit/gtk/${WEBKITGTK_PC_NAME}-${WEBKITGTK_API_VERSION}.pc:WebKit/gtk/webkit.pc.in
-WebKit/gtk/JSCore-${WEBKITGTK_API_VERSION}.gir:WebKit/gtk/JSCore.gir.in]
+WebKit/gtk/JSCore-${WEBKITGTK_API_VERSION}.gir:WebKit/gtk/JSCore.gir.in
+WebKit/gtk/org.webkitgtk-${WEBKITGTK_API_VERSION}.gschema.xml:WebKit/gtk/org.webkitgtk.gschema.xml.in
+]
 ,[WEBKITGTK_API_VERSION=$WEBKITGTK_API_VERSION,WEBKITGTK_PC_NAME=$WEBKITGTK_PC_NAME]
 )
 

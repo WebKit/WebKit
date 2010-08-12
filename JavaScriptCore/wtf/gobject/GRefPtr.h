@@ -25,11 +25,7 @@
 
 #include "AlwaysInline.h"
 #include <algorithm>
-
-typedef struct _GHashTable GHashTable;
-typedef void* gpointer;
-extern "C" void g_object_unref(gpointer object);
-extern "C" gpointer  g_object_ref_sink(gpointer object);
+#include <glib.h>
 
 namespace WTF {
 
@@ -40,6 +36,11 @@ template <typename T> class GRefPtr;
 template <typename T> GRefPtr<T> adoptGRef(T*);
 template <> GHashTable* refGPtr(GHashTable* ptr);
 template <> void derefGPtr(GHashTable* ptr);
+
+#if GLIB_CHECK_VERSION(2, 24, 0)
+template <> GVariant* refGPtr(GVariant* ptr);
+template <> void derefGPtr(GVariant* ptr);
+#endif
 
 template <typename T> class GRefPtr {
 public:

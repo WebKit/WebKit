@@ -35,4 +35,18 @@ template <> void derefGPtr(GHashTable* ptr)
     g_hash_table_unref(ptr);
 }
 
+#if GLIB_CHECK_VERSION(2, 24, 0)
+template <> GVariant* refGPtr(GVariant* ptr)
+{
+    if (ptr)
+        g_variant_ref(ptr);
+    return ptr;
+}
+
+template <> void derefGPtr(GVariant* ptr)
+{
+    g_variant_unref(ptr);
+}
+#endif
+
 } // namespace WTF

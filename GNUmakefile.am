@@ -924,6 +924,13 @@ WebKit/gtk/webkit/webkitenumtypes.cpp: $(webkitgtk_h_api) GNUmakefile
 	&& cp xgen-gtc $@ \
 	&& rm -f xgen-gtc
 
+# GSettings
+if USE_GSETTINGS
+gsettings_SCHEMAS = $(top_builddir)/WebKit/gtk/org.webkitgtk-@WEBKITGTK_API_VERSION@.gschema.xml
+
+@GSETTINGS_RULES@
+endif
+
 # Files that will be distributed
 EXTRA_DIST += \
 	$(srcdir)/gtk-doc.make \
@@ -940,7 +947,8 @@ EXTRA_DIST += \
 	$(srcdir)/WebKit/gtk/po/* \
 	$(srcdir)/WebKit/gtk/resources/* \
 	$(srcdir)/WebKit/gtk/tests/resources/* \
-	$(srcdir)/WebKit/gtk/tests/test_utils.h
+	$(srcdir)/WebKit/gtk/tests/test_utils.h \
+	$(srcdir)/WebKit/gtk/org.webkitgtk.gschema.xml.in
 
 # extra resource files
 resourcesdir = ${datadir}/webkit-@WEBKITGTK_API_VERSION@/resources
@@ -1145,7 +1153,8 @@ DISTCLEANFILES += \
 	$(top_builddir)/WebKit/gtk/docs/version.xml \
 	$(top_builddir)/WebKit/gtk/docs/GNUmakefile \
 	$(top_builddir)/WebKit/gtk/@WEBKITGTK_PC_NAME@-@WEBKITGTK_API_VERSION@.pc \
-	$(top_builddir)/WebKit/gtk/webkit/webkitversion.h
+	$(top_builddir)/WebKit/gtk/webkit/webkitversion.h \
+	$(top_builddir)/WebKit/gtk/org.webkitgtk-@WEBKITGTK_API_VERSION@.gschema.xml
 
 MAINTAINERCLEANFILES += \
 	$(CLEANFILES) \

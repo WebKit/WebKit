@@ -44,6 +44,7 @@
 #include "WebKitDOMBinding.h"
 #include "webkitnetworkresponse.h"
 #include "webkitsoupauthdialog.h"
+#include "webkitversion.h"
 #include <libintl.h>
 #include <runtime/InitializeThreading.h>
 #include <stdlib.h>
@@ -214,6 +215,45 @@ static void closeIconDatabaseOnExit()
     iconDatabase()->close();
 }
 
+#if HAVE_GSETTINGS
+static bool isSchemaAvailable(char* schemaID)
+{
+    const char* const* availableSchemas = g_settings_list_schemas();
+    char* const* iter = const_cast<char* const*>(availableSchemas);
+
+    while (*iter) {
+        if (g_str_equal(schemaID, *iter))
+            return true;
+        iter++;
+    }
+
+    return false;
+}
+
+GSettings* inspectorGSettings()
+{
+    static GSettings* settings = 0;
+
+    if (settings)
+        return settings;
+
+    GOwnPtr<gchar> schemaID(g_strdup_printf("org.webkitgtk-%.1f.inspector", WEBKITGTK_API_VERSION));
+
+    // Unfortunately GSettings will abort the process execution if the
+    // schema is not installed, which is the case for when running
+    // tests, or even the introspection dump at build time, so check
+    // if we have the schema before trying to initialize it.
+    if (!isSchemaAvailable(schemaID.get())) {
+        g_warning("GSettings schema not found - settings will not be used or saved.");
+        return 0;
+    }
+
+    settings = g_settings_new(schemaID.get());
+
+    return settings;
+}
+#endif
+
 void webkit_init()
 {
     static bool isInitialized = false;
@@ -237,6 +277,12 @@ void webkit_init()
     // (Research indicates that value / page drops substantially after 3 pages.)
     // FIXME: Expose this with an API and/or calculate based on available resources
     webkit_set_cache_model(WEBKIT_CACHE_MODEL_WEB_BROWSER);
+
+#if HAVE_GSETTINGS
+    // Initialize settings variables here to make sure this happens in
+    // the main thread.
+    inspectorGSettings();
+#endif
 
 #if ENABLE(DATABASE)
     gchar* databaseDirectory = g_build_filename(g_get_user_data_dir(), "webkit", "databases", NULL);
