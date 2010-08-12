@@ -129,6 +129,8 @@ public:
     // getError in the order they were added.
     virtual void synthesizeGLError(unsigned long error) = 0;
 
+    virtual bool supportsBGRA() = 0;
+
     // The entry points below map directly to the OpenGL ES 2.0 API.
     // See: http://www.khronos.org/registry/gles/
     // and: http://www.khronos.org/opengles/sdk/docs/man/

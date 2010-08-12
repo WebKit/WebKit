@@ -445,6 +445,14 @@ void WebGraphicsContext3DDefaultImpl::synthesizeGLError(unsigned long error)
     m_syntheticErrors.add(error);
 }
 
+bool WebGraphicsContext3DDefaultImpl::supportsBGRA()
+{
+    // Supported since OpenGL 1.2.  However, glTexImage2D() must be modified
+    // to translate the internalFormat from GL_BGRA to GL_RGBA, since the
+    // former is not accepted by desktop GL.  Return false until this is done.
+    return false;
+}
+
 // Helper macros to reduce the amount of code.
 
 #define DELEGATE_TO_GL(name, glname)                                           \
