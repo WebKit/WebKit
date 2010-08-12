@@ -1,3 +1,16 @@
+2010-08-11  Victoria Kirst  <vrk@google.com>
+
+        Reviewed by David Levin.
+
+        Fixing a regression in the UI for Mac default audio/video controls.
+        https://bugs.webkit.org/show_bug.cgi?id=43750
+
+        * rendering/RenderThemeChromiumMac.h:
+        * rendering/RenderThemeChromiumMac.mm:
+        (WebCore::RenderThemeChromiumMac::paintMediaVolumeSliderContainer):
+        (WebCore::RenderThemeChromiumMac::paintMediaSliderThumb):
+        (WebCore::RenderThemeChromiumMac::volumeSliderOffsetFromMuteButton):
+
 2010-08-11  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

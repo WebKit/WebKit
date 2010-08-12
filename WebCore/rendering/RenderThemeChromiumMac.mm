@@ -134,6 +134,11 @@ String RenderThemeChromiumMac::extraMediaControlsStyleSheet()
     return String(mediaControlsChromiumUserAgentStyleSheet, sizeof(mediaControlsChromiumUserAgentStyleSheet));
 }
 
+bool RenderThemeChromiumMac::paintMediaVolumeSliderContainer(RenderObject* object, const PaintInfo& paintInfo, const IntRect& rect)
+{
+    return true;
+}
+
 bool RenderThemeChromiumMac::paintMediaVolumeSliderTrack(RenderObject* object, const PaintInfo& paintInfo, const IntRect& rect)
 {
     return RenderMediaControlsChromium::paintMediaControlsPart(MediaVolumeSlider, object, paintInfo, rect);
@@ -144,6 +149,15 @@ bool RenderThemeChromiumMac::paintMediaVolumeSliderThumb(RenderObject* object, c
     return RenderMediaControlsChromium::paintMediaControlsPart(MediaVolumeSliderThumb, object, paintInfo, rect);
 }
 
+bool RenderThemeChromiumMac::paintMediaSliderThumb(RenderObject* object, const PaintInfo& paintInfo, const IntRect& rect)
+{
+    return RenderMediaControlsChromium::paintMediaControlsPart(MediaSliderThumb, object, paintInfo, rect);
+}
+
+IntPoint RenderThemeChromiumMac::volumeSliderOffsetFromMuteButton(Node* muteButton, const IntSize& size) const
+{
+    return RenderTheme::volumeSliderOffsetFromMuteButton(muteButton, size);
+}
 #endif
 
 } // namespace WebCore
