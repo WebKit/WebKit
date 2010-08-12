@@ -1,3 +1,72 @@
+2010-08-12  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        WebKitTestRunner should be more aggressive about ensuring consistent state between tests
+        https://bugs.webkit.org/show_bug.cgi?id=43653
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::InjectedBundle):
+        (WTR::InjectedBundle::didReceiveMessage):
+        (WTR::InjectedBundle::beginTesting):
+        (WTR::InjectedBundle::done):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+        (WTR::InjectedBundle::isTestRunning):
+        (WTR::InjectedBundle::):
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::stopLoading):
+        (WTR::InjectedBundlePage::didStartProvisionalLoadForFrame):
+        (WTR::InjectedBundlePage::dump):
+        (WTR::InjectedBundlePage::didFinishLoadForFrame):
+        (WTR::InjectedBundlePage::didFailLoadWithErrorForFrame):
+        (WTR::InjectedBundlePage::didReceiveTitleForFrame):
+        (WTR::InjectedBundlePage::didClearWindowForFrame):
+        (WTR::InjectedBundlePage::didFinishDocumentLoadForFrame):
+        (WTR::InjectedBundlePage::willAddMessageToConsole):
+        (WTR::InjectedBundlePage::willSetStatusbarText):
+        (WTR::InjectedBundlePage::willRunJavaScriptAlert):
+        (WTR::InjectedBundlePage::willRunJavaScriptConfirm):
+        (WTR::InjectedBundlePage::shouldBeginEditing):
+        (WTR::InjectedBundlePage::shouldEndEditing):
+        (WTR::InjectedBundlePage::shouldInsertNode):
+        (WTR::InjectedBundlePage::shouldInsertText):
+        (WTR::InjectedBundlePage::shouldDeleteRange):
+        (WTR::InjectedBundlePage::shouldChangeSelectedRange):
+        (WTR::InjectedBundlePage::shouldApplyStyle):
+        (WTR::InjectedBundlePage::didBeginEditing):
+        (WTR::InjectedBundlePage::didEndEditing):
+        (WTR::InjectedBundlePage::didChange):
+        (WTR::InjectedBundlePage::didChangeSelection):
+        Don't do any work if we are not currently running a test.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.h:
+        * WebKitTestRunner/StringFunctions.h:
+        (WTR::toCF):
+        Add conversion function for WKURLRef -> CFURLRef
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::TestController):
+        (WTR::TestController::initialize):
+        (WTR::TestController::resetStateToConsistentValues):
+        (WTR::TestController::runTest):
+        (WTR::TestController::didFinishLoadForFrame):
+        * WebKitTestRunner/TestController.h:
+        (WTR::TestController::):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::invoke):
+        * WebKitTestRunner/TestInvocation.h:
+        Move resetting code to TestController.
+
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::TestController::runUntil):
+        * WebKitTestRunner/mac/TestInvocationMac.mm: Removed.
+        * WebKitTestRunner/win/TestControllerWin.cpp:
+        (WTR::TestController::runUntil):
+        * WebKitTestRunner/win/TestInvocationWin.cpp: Removed.
+        * WebKitTestRunner/win/WebKitTestRunner.vcproj:
+        Move runUntil to TestController.
+
 2010-08-12  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
         Unreviewed.

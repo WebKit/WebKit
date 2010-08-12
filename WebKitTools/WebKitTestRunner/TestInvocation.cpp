@@ -29,7 +29,6 @@
 #include "StringFunctions.h"
 #include "TestController.h"
 #include <WebKit2/WKContextPrivate.h>
-#include <WebKit2/WKPreferencesPrivate.h>
 #include <WebKit2/WKRetainPtr.h>
 #include <wtf/RetainPtr.h>
 
@@ -67,23 +66,15 @@ static void sizeWebViewForCurrentTest(char* pathOrURL)
         TestController::shared().mainWebView()->resizeTo(normalWidth, normalHeight);
 }
 
-void TestInvocation::resetPreferencesToConsistentValues()
-{
-    WKPreferencesRef preferences = WKContextGetPreferences(TestController::shared().context());
-    WKPreferencesSetOfflineWebApplicationCacheEnabled(preferences, true);
-    WKPreferencesSetFontSmoothingLevel(preferences, kWKFontSmoothingLevelNoSubpixelAntiAliasing);
-}
-
 void TestInvocation::invoke()
 {
     sizeWebViewForCurrentTest(m_pathOrURL);
-    resetPreferencesToConsistentValues();
 
     WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithCFString(CFSTR("BeginTest")));
     WKRetainPtr<WKStringRef> messageBody(AdoptWK, WKStringCreateWithCFString(CFSTR("")));
     WKContextPostMessageToInjectedBundle(TestController::shared().context(), messageName.get(), messageBody.get());
 
-    runUntil(m_gotInitialResponse);
+    TestController::runUntil(m_gotInitialResponse);
     if (m_error) {
         dump("FAIL\n");
         return;
@@ -91,7 +82,7 @@ void TestInvocation::invoke()
 
     WKPageLoadURL(TestController::shared().mainWebView()->page(), m_url.get());
 
-    runUntil(m_gotFinalMessage);
+    TestController::runUntil(m_gotFinalMessage);
     if (m_error) {
         dump("FAIL\n");
         return;

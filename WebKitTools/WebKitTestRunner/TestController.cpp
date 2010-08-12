@@ -26,8 +26,10 @@
 #include "TestController.h"
 
 #include "PlatformWebView.h"
+#include "StringFunctions.h"
 #include "TestInvocation.h"
 #include <WebKit2/WKContextPrivate.h>
+#include <WebKit2/WKPreferencesPrivate.h>
 #include <wtf/PassOwnPtr.h>
 
 namespace WTR {
@@ -45,6 +47,8 @@ TestController::TestController(int argc, const char* argv[])
     , m_verbose(false)
     , m_printSeparators(false)
     , m_usingServerMode(false)
+    , m_state(Initial)
+    , m_doneResetting(false)
 {
     initialize(argc, argv);
     controller = this;
@@ -143,10 +147,55 @@ void TestController::initialize(int argc, const char* argv[])
         0
     };
     WKPageSetPageUIClient(m_mainWebView->page(), &pageUIClient);
+
+    WKPageLoaderClient pageLoaderClient = {
+        0,
+        this,
+        0,
+        0,
+        0,
+        0,
+        didFinishLoadForFrame,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+    };
+    WKPageSetPageLoaderClient(m_mainWebView->page(), &pageLoaderClient);
+}
+
+void TestController::resetStateToConsistentValues()
+{
+    m_state = Resetting;
+
+    // FIXME: This function should also ensure that there is only one page open.
+
+    // Reset preferences
+    WKPreferencesRef preferences = WKContextGetPreferences(m_context.get());
+    WKPreferencesSetOfflineWebApplicationCacheEnabled(preferences, true);
+    WKPreferencesSetFontSmoothingLevel(preferences, kWKFontSmoothingLevelNoSubpixelAntiAliasing);
+
+    // Reset main page back to about:blank
+    m_doneResetting = false;
+    m_resetResultedInError = false;
+
+    WKRetainPtr<WKURLRef> url(AdoptWK, createWKURL("about:blank"));
+    WKPageLoadURL(m_mainWebView->page(), url.get());
+    TestController::runUntil(m_doneResetting);
 }
 
 void TestController::runTest(const char* test)
 {
+    resetStateToConsistentValues();
+
+    m_state = RunningTest;
     m_currentInvocation.set(new TestInvocation(test));
     m_currentInvocation->invoke();
     m_currentInvocation.clear();
@@ -177,6 +226,8 @@ void TestController::run()
     }
 }
 
+// WKContextInjectedBundleClient
+
 void TestController::didReceiveMessageFromInjectedBundle(WKContextRef context, WKStringRef messageName, WKTypeRef messageBody, const void *clientInfo)
 {
     static_cast<TestController*>(const_cast<void*>(clientInfo))->didReceiveMessageFromInjectedBundle(messageName, messageBody);
@@ -185,6 +236,30 @@ void TestController::didReceiveMessageFromInjectedBundle(WKContextRef context, W
 void TestController::didReceiveMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody)
 {
     m_currentInvocation->didReceiveMessageFromInjectedBundle(messageName, messageBody);
+}
+
+// WKPageLoaderClient
+
+void TestController::didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, const void* clientInfo)
+{
+    static_cast<TestController*>(const_cast<void*>(clientInfo))->didFinishLoadForFrame(page, frame);
+}
+
+void TestController::didFinishLoadForFrame(WKPageRef page, WKFrameRef frame)
+{
+    if (m_state != Resetting)
+        return;
+
+    if (!WKFrameIsMainFrame(frame))
+        return;
+
+    WKRetainPtr<WKURLRef> wkURL(AdoptWK, WKFrameCopyURL(frame));
+    RetainPtr<CFURLRef> cfURL= toCF(wkURL);
+    CFStringRef cfURLString = CFURLGetString(cfURL.get());
+    if (!CFEqual(cfURLString, CFSTR("about:blank")))
+        return;
+
+    m_doneResetting = true;
 }
 
 } // namespace WTR

@@ -49,6 +49,7 @@ InjectedBundle& InjectedBundle::shared()
 InjectedBundle::InjectedBundle()
     : m_bundle(0)
     , m_mainPage(0)
+    , m_state(Idle)
 {
 }
 
@@ -84,17 +85,6 @@ void InjectedBundle::initialize(WKBundleRef bundle)
     WKBundleActivateMacFontAscentHack(m_bundle);
 }
 
-void InjectedBundle::done()
-{
-    WKRetainPtr<WKStringRef> doneMessageName(AdoptWK, WKStringCreateWithCFString(CFSTR("Done")));
-
-    std::string output = m_outputStream.str();
-    RetainPtr<CFStringRef> outputCFString(AdoptCF, CFStringCreateWithCString(0, output.c_str(), kCFStringEncodingUTF8));
-    WKRetainPtr<WKStringRef> doneMessageBody(AdoptWK, WKStringCreateWithCFString(outputCFString.get()));
-
-    WKBundlePostMessage(m_bundle, doneMessageName.get(), doneMessageBody.get());
-}
-
 void InjectedBundle::didCreatePage(WKBundlePageRef page)
 {
     // FIXME: we really need the main page ref to be sent over from the ui process
@@ -121,7 +111,7 @@ void InjectedBundle::didReceiveMessage(WKStringRef messageName, WKTypeRef messag
         WKRetainPtr<WKStringRef> ackMessageBody(AdoptWK, WKStringCreateWithCFString(CFSTR("BeginTest")));
         WKBundlePostMessage(m_bundle, ackMessageName.get(), ackMessageBody.get());
 
-        reset();
+        beginTesting();
         return;
     }
 
@@ -130,8 +120,10 @@ void InjectedBundle::didReceiveMessage(WKStringRef messageName, WKTypeRef messag
     WKBundlePostMessage(m_bundle, errorMessageName.get(), errorMessageBody.get());
 }
 
-void InjectedBundle::reset()
+void InjectedBundle::beginTesting()
 {
+    m_state = Testing;
+
     m_outputStream.str("");
 
     m_layoutTestController = LayoutTestController::create();
@@ -142,6 +134,21 @@ void InjectedBundle::reset()
     WKBundleRemoveAllVisitedLinks(m_bundle);
 
     m_mainPage->reset();
+}
+
+void InjectedBundle::done()
+{
+    m_mainPage->stopLoading();
+
+    WKRetainPtr<WKStringRef> doneMessageName(AdoptWK, WKStringCreateWithCFString(CFSTR("Done")));
+
+    std::string output = m_outputStream.str();
+    RetainPtr<CFStringRef> outputCFString(AdoptCF, CFStringCreateWithCString(0, output.c_str(), kCFStringEncodingUTF8));
+    WKRetainPtr<WKStringRef> doneMessageBody(AdoptWK, WKStringCreateWithCFString(outputCFString.get()));
+
+    WKBundlePostMessage(m_bundle, doneMessageName.get(), doneMessageBody.get());
+
+    m_state = Idle;
 }
 
 void InjectedBundle::closeOtherPages()

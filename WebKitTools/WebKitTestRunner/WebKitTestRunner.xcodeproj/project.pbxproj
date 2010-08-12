@@ -53,7 +53,6 @@
 		BCC997A511D3C8F60017BCA2 /* InjectedBundlePage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC997A211D3C8F60017BCA2 /* InjectedBundlePage.cpp */; };
 		BCC9981811D3F51E0017BCA2 /* LayoutTestController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC9981711D3F51E0017BCA2 /* LayoutTestController.cpp */; };
 		BCD7D2F811921278006DB7EE /* TestInvocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD7D2F711921278006DB7EE /* TestInvocation.cpp */; };
-		BCDA2ABF1190B51A00C3BC47 /* TestInvocationMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCDA2ABE1190B51A00C3BC47 /* TestInvocationMac.mm */; };
 		BCDA2B9A1191051F00C3BC47 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCDA2B991191051F00C3BC47 /* JavaScriptCore.framework */; };
 /* End PBXBuildFile section */
 
@@ -132,7 +131,6 @@
 		BCC9981711D3F51E0017BCA2 /* LayoutTestController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutTestController.cpp; sourceTree = "<group>"; };
 		BCD7D2F611921278006DB7EE /* TestInvocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestInvocation.h; sourceTree = "<group>"; };
 		BCD7D2F711921278006DB7EE /* TestInvocation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestInvocation.cpp; sourceTree = "<group>"; };
-		BCDA2ABE1190B51A00C3BC47 /* TestInvocationMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TestInvocationMac.mm; sourceTree = "<group>"; };
 		BCDA2B991191051F00C3BC47 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -270,7 +268,6 @@
 			children = (
 				BC7933FF118F7C84005EA8E2 /* main.mm */,
 				BC7934E711906846005EA8E2 /* PlatformWebViewMac.mm */,
-				BCDA2ABE1190B51A00C3BC47 /* TestInvocationMac.mm */,
 				BC8C795B11D2785D004535A1 /* TestControllerMac.mm */,
 			);
 			path = mac;
@@ -426,7 +423,6 @@
 				BC793400118F7C84005EA8E2 /* main.mm in Sources */,
 				BC793431118F7F19005EA8E2 /* TestController.cpp in Sources */,
 				BC7934E811906846005EA8E2 /* PlatformWebViewMac.mm in Sources */,
-				BCDA2ABF1190B51A00C3BC47 /* TestInvocationMac.mm in Sources */,
 				BCD7D2F811921278006DB7EE /* TestInvocation.cpp in Sources */,
 				BC8C795C11D2785D004535A1 /* TestControllerMac.mm in Sources */,
 			);

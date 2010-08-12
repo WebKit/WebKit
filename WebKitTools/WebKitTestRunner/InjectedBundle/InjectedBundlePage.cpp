@@ -147,6 +147,12 @@ InjectedBundlePage::~InjectedBundlePage()
 {
 }
 
+void InjectedBundlePage::stopLoading()
+{
+    WKBundlePageStopLoading(m_page);
+    m_isLoading = false;
+}
+
 void InjectedBundlePage::reset()
 {
     WKBundlePageClearMainFrameName(m_page);
@@ -235,6 +241,9 @@ void InjectedBundlePage::didRunInsecureContentForFrame(WKBundlePageRef page, WKB
 
 void InjectedBundlePage::didStartProvisionalLoadForFrame(WKBundleFrameRef frame)
 {
+    if (!InjectedBundle::shared().isTestRunning())
+        return;
+
     if (frame == WKBundlePageGetMainFrame(m_page))
         m_isLoading = true;
 }
@@ -331,6 +340,8 @@ void InjectedBundlePage::dumpAllFramesText()
 
 void InjectedBundlePage::dump()
 {
+    ASSERT(InjectedBundle::shared().isTestRunning());
+
     InjectedBundle::shared().layoutTestController()->invalidateWaitToDumpWatchdog();
 
     switch (InjectedBundle::shared().layoutTestController()->whatToDump()) {
@@ -357,6 +368,9 @@ void InjectedBundlePage::dump()
 
 void InjectedBundlePage::didFinishLoadForFrame(WKBundleFrameRef frame)
 {
+    if (!InjectedBundle::shared().isTestRunning())
+        return;
+
     if (!WKBundleFrameIsMainFrame(frame))
         return;
 
@@ -373,6 +387,9 @@ void InjectedBundlePage::didFinishLoadForFrame(WKBundleFrameRef frame)
 
 void InjectedBundlePage::didFailLoadWithErrorForFrame(WKBundleFrameRef frame)
 {
+    if (!InjectedBundle::shared().isTestRunning())
+        return;
+
     if (!WKBundleFrameIsMainFrame(frame))
         return;
 
@@ -386,6 +403,9 @@ void InjectedBundlePage::didFailLoadWithErrorForFrame(WKBundleFrameRef frame)
 
 void InjectedBundlePage::didReceiveTitleForFrame(WKStringRef title, WKBundleFrameRef frame)
 {
+    if (!InjectedBundle::shared().isTestRunning())
+        return;
+
     if (!InjectedBundle::shared().layoutTestController()->shouldDumpTitleChanges())
         return;
 
@@ -394,6 +414,9 @@ void InjectedBundlePage::didReceiveTitleForFrame(WKStringRef title, WKBundleFram
 
 void InjectedBundlePage::didClearWindowForFrame(WKBundleFrameRef frame, JSGlobalContextRef context, JSObjectRef window)
 {
+    if (!InjectedBundle::shared().isTestRunning())
+        return;
+
     JSValueRef exception = 0;
     InjectedBundle::shared().layoutTestController()->makeWindowObject(context, window, &exception);
     InjectedBundle::shared().gcController()->makeWindowObject(context, window, &exception);
@@ -414,6 +437,9 @@ void InjectedBundlePage::didChangeLocationWithinPageForFrame(WKBundleFrameRef fr
 
 void InjectedBundlePage::didFinishDocumentLoadForFrame(WKBundleFrameRef frame)
 {
+    if (!InjectedBundle::shared().isTestRunning())
+        return;
+
     unsigned pendingFrameUnloadEvents = WKBundleFrameGetPendingUnloadCount(frame);
     if (pendingFrameUnloadEvents)
         InjectedBundle::shared().os() << frame << " - has " << pendingFrameUnloadEvents << " onunload handler(s)\n";
@@ -460,12 +486,18 @@ void InjectedBundlePage::willRunJavaScriptPrompt(WKBundlePageRef page, WKStringR
 
 void InjectedBundlePage::willAddMessageToConsole(WKStringRef message, uint32_t lineNumber)
 {
+    if (!InjectedBundle::shared().isTestRunning())
+        return;
+
     // FIXME: Strip file: urls.
     InjectedBundle::shared().os() << "CONSOLE MESSAGE: line " << lineNumber << ": " << message << "\n";
 }
 
 void InjectedBundlePage::willSetStatusbarText(WKStringRef statusbarText)
 {
+    if (!InjectedBundle::shared().isTestRunning())
+        return;
+
     if (!InjectedBundle::shared().layoutTestController()->shouldDumpStatusCallbacks())
         return;
 
@@ -474,11 +506,17 @@ void InjectedBundlePage::willSetStatusbarText(WKStringRef statusbarText)
 
 void InjectedBundlePage::willRunJavaScriptAlert(WKStringRef message, WKBundleFrameRef)
 {
+    if (!InjectedBundle::shared().isTestRunning())
+        return;
+
     InjectedBundle::shared().os() << "ALERT: " << message << "\n";
 }
 
 void InjectedBundlePage::willRunJavaScriptConfirm(WKStringRef message, WKBundleFrameRef)
 {
+    if (!InjectedBundle::shared().isTestRunning())
+        return;
+
     InjectedBundle::shared().os() << "CONFIRM: " << message << "\n";
 }
 
@@ -546,6 +584,9 @@ void InjectedBundlePage::didChangeSelection(WKBundlePageRef page, WKStringRef no
 
 bool InjectedBundlePage::shouldBeginEditing(WKBundleRangeRef range)
 {
+    if (!InjectedBundle::shared().isTestRunning())
+        return true;
+
     if (InjectedBundle::shared().layoutTestController()->shouldDumpEditingCallbacks())
         InjectedBundle::shared().os() << "EDITING DELEGATE: shouldBeginEditingInDOMRange:" << range << "\n";
     return InjectedBundle::shared().layoutTestController()->shouldAllowEditing();
@@ -553,6 +594,9 @@ bool InjectedBundlePage::shouldBeginEditing(WKBundleRangeRef range)
 
 bool InjectedBundlePage::shouldEndEditing(WKBundleRangeRef range)
 {
+    if (!InjectedBundle::shared().isTestRunning())
+        return true;
+
     if (InjectedBundle::shared().layoutTestController()->shouldDumpEditingCallbacks())
         InjectedBundle::shared().os() << "EDITING DELEGATE: shouldEndEditingInDOMRange:" << range << "\n";
     return InjectedBundle::shared().layoutTestController()->shouldAllowEditing();
@@ -560,6 +604,9 @@ bool InjectedBundlePage::shouldEndEditing(WKBundleRangeRef range)
 
 bool InjectedBundlePage::shouldInsertNode(WKBundleNodeRef node, WKBundleRangeRef rangeToReplace, WKInsertActionType action)
 {
+    if (!InjectedBundle::shared().isTestRunning())
+        return true;
+
     static const char* insertactionstring[] = {
         "WebViewInsertActionTyped",
         "WebViewInsertActionPasted",
@@ -573,6 +620,9 @@ bool InjectedBundlePage::shouldInsertNode(WKBundleNodeRef node, WKBundleRangeRef
 
 bool InjectedBundlePage::shouldInsertText(WKStringRef text, WKBundleRangeRef rangeToReplace, WKInsertActionType action)
 {
+    if (!InjectedBundle::shared().isTestRunning())
+        return true;
+
     static const char *insertactionstring[] = {
         "WebViewInsertActionTyped",
         "WebViewInsertActionPasted",
@@ -586,6 +636,9 @@ bool InjectedBundlePage::shouldInsertText(WKStringRef text, WKBundleRangeRef ran
 
 bool InjectedBundlePage::shouldDeleteRange(WKBundleRangeRef range)
 {
+    if (!InjectedBundle::shared().isTestRunning())
+        return true;
+
     if (InjectedBundle::shared().layoutTestController()->shouldDumpEditingCallbacks())
         InjectedBundle::shared().os() << "EDITING DELEGATE: shouldDeleteDOMRange:" << range << "\n";
     return InjectedBundle::shared().layoutTestController()->shouldAllowEditing();
@@ -593,6 +646,9 @@ bool InjectedBundlePage::shouldDeleteRange(WKBundleRangeRef range)
 
 bool InjectedBundlePage::shouldChangeSelectedRange(WKBundleRangeRef fromRange, WKBundleRangeRef toRange, WKAffinityType affinity, bool stillSelecting)
 {
+    if (!InjectedBundle::shared().isTestRunning())
+        return true;
+
     static const char *affinitystring[] = {
         "NSSelectionAffinityUpstream",
         "NSSelectionAffinityDownstream"
@@ -609,6 +665,9 @@ bool InjectedBundlePage::shouldChangeSelectedRange(WKBundleRangeRef fromRange, W
 
 bool InjectedBundlePage::shouldApplyStyle(WKBundleCSSStyleDeclarationRef style, WKBundleRangeRef range)
 {
+    if (!InjectedBundle::shared().isTestRunning())
+        return true;
+
     if (InjectedBundle::shared().layoutTestController()->shouldDumpEditingCallbacks())
         InjectedBundle::shared().os() << "EDITING DELEGATE: shouldApplyStyle:" << style << " toElementsInDOMRange:" << range << "\n";
     return InjectedBundle::shared().layoutTestController()->shouldAllowEditing();
@@ -616,27 +675,38 @@ bool InjectedBundlePage::shouldApplyStyle(WKBundleCSSStyleDeclarationRef style, 
 
 void InjectedBundlePage::didBeginEditing(WKStringRef notificationName)
 {
+    if (!InjectedBundle::shared().isTestRunning())
+        return;
+
     if (InjectedBundle::shared().layoutTestController()->shouldDumpEditingCallbacks())
         InjectedBundle::shared().os() << "EDITING DELEGATE: webViewDidBeginEditing:" << notificationName << "\n";
 }
 
 void InjectedBundlePage::didEndEditing(WKStringRef notificationName)
 {
+    if (!InjectedBundle::shared().isTestRunning())
+        return;
+
     if (InjectedBundle::shared().layoutTestController()->shouldDumpEditingCallbacks())
         InjectedBundle::shared().os() << "EDITING DELEGATE: webViewDidEndEditing:" << notificationName << "\n";
 }
 
 void InjectedBundlePage::didChange(WKStringRef notificationName)
 {
+    if (!InjectedBundle::shared().isTestRunning())
+        return;
+
     if (InjectedBundle::shared().layoutTestController()->shouldDumpEditingCallbacks())
         InjectedBundle::shared().os() << "EDITING DELEGATE: webViewDidChange:" << notificationName << "\n";
 }
 
 void InjectedBundlePage::didChangeSelection(WKStringRef notificationName)
 {
+    if (!InjectedBundle::shared().isTestRunning())
+        return;
+
     if (InjectedBundle::shared().layoutTestController()->shouldDumpEditingCallbacks())
         InjectedBundle::shared().os() << "EDITING DELEGATE: webViewDidChangeSelection:" << notificationName << "\n";
 }
-
 
 } // namespace WTR

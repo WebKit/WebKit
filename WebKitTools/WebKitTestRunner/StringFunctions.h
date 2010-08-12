@@ -52,6 +52,16 @@ inline RetainPtr<CFStringRef> toCF(WKStringRef string)
     return RetainPtr<CFStringRef>(AdoptCF, WKStringCopyCFString(0, string));
 }
 
+inline RetainPtr<CFURLRef> toCF(WKURLRef url)
+{
+    return RetainPtr<CFURLRef>(AdoptCF, WKURLCopyCFURL(0, url));
+}
+
+inline RetainPtr<CFURLRef> toCF(const WKRetainPtr<WKURLRef>& url)
+{
+    return toCF(url.get());
+}
+
 inline WKRetainPtr<WKStringRef> toWK(JSStringRef string)
 {
     return WKRetainPtr<WKStringRef>(AdoptWK, WKStringCreateWithCFString(toCF(string).get()));

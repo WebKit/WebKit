@@ -42,11 +42,6 @@ public:
 private:
     void dump(const char*);
 
-    void resetPreferencesToConsistentValues();
-
-    // Helper
-    static void runUntil(bool& done);
-
     WKRetainPtr<WKURLRef> m_url;
     char* m_pathOrURL;
 
