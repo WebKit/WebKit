@@ -1,3 +1,25 @@
+2010-08-11  Joone Hur  <joone@kldp.org>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Last Hangul letter is typed again when a composition is finished with mouse press
+        https://bugs.webkit.org/show_bug.cgi?id=40518
+
+        When a mouse press fires during a IME composition, the current composition character   
+        can be entered twice at the previous editing position and a new editing position.
+        Because the IME commit signal is emitted after the mouse press event. 
+        This patch allows to prevent the commit signal during a composition when a mouse press fires.
+
+        * WebCoreSupport/EditorClientGtk.cpp: 
+        (WebKit::imContextCommitted):
+        (WebKit::EditorClient::handleInputMethodKeydown): Allow to accept the next composition commit.
+        (WebKit::EditorClient::handleInputMethodMousePress): Added for handling IME when a mouse press fires.
+        (WebKit::EditorClient::EditorClient):  Initialize m_preventNextCompositionCommit
+        * WebCoreSupport/EditorClientGtk.h:
+        (WebKit::EditorClient::preventNextCompositionCommit): Added for checking whether skipping a commit.
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_button_press_event): Call handleInputMethodMousePress() 
+
 2010-08-11  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Martin Robinson.

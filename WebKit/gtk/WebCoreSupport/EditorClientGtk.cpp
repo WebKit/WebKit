@@ -67,6 +67,11 @@ static void imContextCommitted(GtkIMContext* context, const gchar* compositionSt
         return;
     }
 
+    // If this signal fires during a mousepress event when we are in the middle
+    // of a composition, skip this 'commit' because the composition is already confirmed. 
+    if (client->preventNextCompositionCommit()) 
+        return;
+ 
     frame->editor()->confirmComposition(String::fromUTF8(compositionString));
     client->clearPendingComposition();
 }
@@ -670,6 +675,7 @@ void EditorClient::handleInputMethodKeydown(KeyboardEvent* event)
 
     WebKitWebViewPrivate* priv = m_webView->priv;
 
+    m_preventNextCompositionCommit = false;
 
     // Some IM contexts (e.g. 'simple') will act as if they filter every
     // keystroke and just issue a 'commit' signal during handling. In situations
@@ -711,9 +717,32 @@ void EditorClient::handleInputMethodKeydown(KeyboardEvent* event)
     m_treatContextCommitAsKeyEvent = false;
 }
 
+void EditorClient::handleInputMethodMousePress()
+{
+    Frame* targetFrame = core(m_webView)->focusController()->focusedOrMainFrame();
+
+    if (!targetFrame || !targetFrame->editor()->canEdit())
+        return;
+
+    WebKitWebViewPrivate* priv = m_webView->priv;
+
+    // When a mouse press fires, the commit signal happens during a composition.
+    // In this case, if the focused node is changed, the commit signal happens in a diffrent node.
+    // Therefore, we need to confirm the current compositon and ignore the next commit signal. 
+    GOwnPtr<gchar> newPreedit(0);
+    gtk_im_context_get_preedit_string(priv->imContext, &newPreedit.outPtr(), 0, 0);
+    
+    if (g_utf8_strlen(newPreedit.get(), -1)) {
+        targetFrame->editor()->confirmComposition();
+        m_preventNextCompositionCommit = true;
+        gtk_im_context_reset(priv->imContext);
+    } 
+}
+
 EditorClient::EditorClient(WebKitWebView* webView)
     : m_isInRedo(false)
     , m_webView(webView)
+    , m_preventNextCompositionCommit(false)
     , m_treatContextCommitAsKeyEvent(false)
     , m_nativeWidget(gtk_text_view_new())
 {

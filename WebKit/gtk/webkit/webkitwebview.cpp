@@ -665,8 +665,9 @@ static gboolean webkit_web_view_button_press_event(GtkWidget* widget, GdkEventBu
     if (!frame->view())
         return FALSE;
 
-
     gboolean result = frame->eventHandler()->handleMousePressEvent(platformEvent);
+    // Handle the IM context when a mouse press fires
+    static_cast<WebKit::EditorClient*>(core(webView)->editorClient())->handleInputMethodMousePress();
 
 #if PLATFORM(X11)
     /* Copy selection to the X11 selection clipboard */
