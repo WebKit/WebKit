@@ -647,12 +647,16 @@ printLicenseHeader($F);
 
 print F <<END
 #include "config.h"
-#include "$parameters{namespace}ElementFactory.h"
-#include "$parameters{namespace}Names.h"
 END
 ;
 
 print F "\n#if $parameters{guardFactoryWith}\n\n" if $parameters{guardFactoryWith};
+
+print F <<END
+#include "$parameters{namespace}ElementFactory.h"
+#include "$parameters{namespace}Names.h"
+END
+;
 
 printElementIncludes($F);
 
