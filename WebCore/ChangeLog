@@ -1,3 +1,16 @@
+2010-08-12  Ariya Hidayat  <ariya@sencha.com>
+
+        Reviewed by David Hyatt.
+
+        [Qt] Split TransparencyLayer into its own header file.
+        https://bugs.webkit.org/show_bug.cgi?id=43935
+
+        * WebCore.pro: Include TransparencyLayer.h.
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        * platform/graphics/qt/TransparencyLayer.h: Added.
+        (WebCore::TransparencyLayer::TransparencyLayer):
+        (WebCore::TransparencyLayer::operator=):
+
 2010-08-12  François Sausset  <sausset@gmail.com>
 
         Reviewed by Beth Dakin.

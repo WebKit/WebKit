@@ -1696,6 +1696,7 @@ HEADERS += \
     platform/graphics/qt/FontCustomPlatformData.h \
     platform/graphics/qt/ImageDecoderQt.h \
     platform/graphics/qt/StillImageQt.h \
+    platform/graphics/qt/TransparencyLayer.h \
     platform/graphics/SegmentedFontData.h \
     platform/graphics/SimpleFontData.h \
     platform/graphics/Tile.h \

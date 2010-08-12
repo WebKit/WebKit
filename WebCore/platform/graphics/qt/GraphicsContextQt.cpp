@@ -50,6 +50,7 @@
 #include "Path.h"
 #include "Pattern.h"
 #include "Pen.h"
+#include "TransparencyLayer.h"
 
 #include <QBrush>
 #include <QDebug>
@@ -165,48 +166,6 @@ static inline Qt::FillRule toQtFillRule(WindRule rule)
     qDebug("Qt: unrecognized wind rule!");
     return Qt::OddEvenFill;
 }
-
-struct TransparencyLayer : FastAllocBase {
-    TransparencyLayer(const QPainter* p, const QRect &rect, qreal opacity, QPixmap& alphaMask)
-        : pixmap(rect.width(), rect.height())
-        , opacity(opacity)
-        , alphaMask(alphaMask)
-        , saveCounter(1) // see the comment for saveCounter
-    {
-        offset = rect.topLeft();
-        pixmap.fill(Qt::transparent);
-        painter.begin(&pixmap);
-        painter.setRenderHint(QPainter::Antialiasing, p->testRenderHint(QPainter::Antialiasing));
-        painter.translate(-offset);
-        painter.setPen(p->pen());
-        painter.setBrush(p->brush());
-        painter.setTransform(p->transform(), true);
-        painter.setOpacity(p->opacity());
-        painter.setFont(p->font());
-        if (painter.paintEngine()->hasFeature(QPaintEngine::PorterDuff))
-            painter.setCompositionMode(p->compositionMode());
-        // if the path is an empty region, this assignment disables all painting
-        if (!p->clipPath().isEmpty())
-            painter.setClipPath(p->clipPath());
-    }
-
-    TransparencyLayer()
-    {
-    }
-
-    QPixmap pixmap;
-    QPoint offset;
-    QPainter painter;
-    qreal opacity;
-    // for clipToImageBuffer
-    QPixmap alphaMask;
-    // saveCounter is only used in combination with alphaMask
-    // otherwise, its value is unspecified
-    int saveCounter;
-private:
-    TransparencyLayer(const TransparencyLayer &) {}
-    TransparencyLayer & operator=(const TransparencyLayer &) { return *this; }
-};
 
 class GraphicsContextPlatformPrivate : public Noncopyable {
 public:
