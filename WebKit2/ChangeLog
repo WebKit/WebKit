@@ -1,3 +1,13 @@
+2010-08-11  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin Barraclough.
+
+        WKPageStopLoading always asserts
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didReceiveMessage): Switch break to return, break made us
+        hit the ASSERT_NOT_REACHED at the end of the function.
+
 2010-08-11  Balazs Kelemen  <kb@inf.u-szeged.hu>
 
         Unreviewed build fix.

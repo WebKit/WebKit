@@ -584,7 +584,7 @@ void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Messag
         }
         case WebPageMessage::StopLoading:
             stopLoading();
-            break;
+            return;
         case WebPageMessage::Reload: {
             bool reloadFromOrigin;
             if (!arguments->decode(CoreIPC::Out(reloadFromOrigin)))
