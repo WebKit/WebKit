@@ -1,5 +1,26 @@
 2010-08-12  Pavel Feldman  <pfeldman@chromium.org>
 
+        Not reviewed. Adding the file missing in r65241.
+
+        * inspector/front-end/RemoteObject.js: Added.
+        (WebInspector.RemoteObjectId):
+        (WebInspector.RemoteObject):
+        (WebInspector.RemoteObject.fromPrimitiveValue):
+        (WebInspector.RemoteObject.fromNode):
+        (WebInspector.RemoteObject.fromPayload):
+        (WebInspector.RemoteObject.type):
+        (WebInspector.RemoteObject.prototype.get objectId):
+        (WebInspector.RemoteObject.prototype.get type):
+        (WebInspector.RemoteObject.prototype.get description):
+        (WebInspector.RemoteObject.prototype.get hasChildren):
+        (WebInspector.RemoteObject.prototype.isError):
+        (WebInspector.RemoteObject.prototype.getPropertyValueDescriptions):
+        (WebInspector.RemoteObject.prototype.getOwnProperties):
+        (WebInspector.RemoteObject.prototype.getProperties.remoteObjectBinder):
+        (WebInspector.RemoteObjectProperty):
+
+2010-08-12  Pavel Feldman  <pfeldman@chromium.org>
+
         Reviewed by Yury Semikhatsky.
 
         Web Inspector: brush up object proxies, introduce remote object model.
