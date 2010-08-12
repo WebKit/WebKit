@@ -1,3 +1,25 @@
+2010-08-11  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by David Levin.
+
+        Add support for BGRA pixel format to GraphicsContext3D.
+        https://bugs.webkit.org/show_bug.cgi?id=43858
+
+        Although this has been standard in desktop GL since 1.2, it's an 
+        extension in GL ES 2.0, so a query function is provided to check
+        for support.  Since they differ on semantics (GL ES 2.0 requires 
+        TexImage2D()'s format and internalFormat to match, while desktop GL
+        will not accept BGRA as an internalFormat), the stub implementation
+        returns false until these quirks have been implemented and tested on
+        each port.
+
+        * platform/graphics/GraphicsContext3D.cpp:
+        (WebCore::GraphicsContext3D::supportsBGRA):
+        Add implementation for non-chromium platforms which returns false.
+        * platform/graphics/GraphicsContext3D.h:
+        (WebCore::GraphicsContext3D::):
+        Add query function (supportsBGRA()) and the BGRA_EXT token.
+
 2010-08-12  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed. Rolling out r65241 and 65243 for breaking inspector tests.
