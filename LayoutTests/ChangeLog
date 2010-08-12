@@ -1,3 +1,9 @@
+2010-08-11  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Chromium test_expectations update.
+
+        * platform/chromium/test_expectations.txt: Mark http/tests/storage/callbacks-are-called-in-correct-context.html as flaky.
+
 2010-08-11  Leo Yang  <leo.yang@torchmobile.com.cn>
 
         Reviewed by Geoffrey Garen.
