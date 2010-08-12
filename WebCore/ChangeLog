@@ -1,3 +1,42 @@
+2010-08-12  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        SVG masking performance very slow
+        https://bugs.webkit.org/show_bug.cgi?id=43622
+
+        Create ImageBuffers only as large as the final rendered size on screen. Only gradient on text on CG handled this correctly so far.
+        Refactored the code into a new SVGImageBufferTools class, and use the code from RenderSVGResourceMasker -> makes the IE9 demo SVG dice usable.
+        Clippers, Patterns and Filters remain to be converted.
+
+        Test: svg/zoom/page/zoom-mask-with-percentages.svg
+
+        * Android.mk: Add SVGImageBufferTools.* to build.
+        * CMakeLists.txt: Ditto.
+        * GNUmakefile.am: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * rendering/RenderSVGAllInOne.cpp: Ditto.
+        * rendering/RenderSVGResourceGradient.cpp: Refactored CG gradient specific "create image buffer in absolute coordinates" code into SVGImageBufferTools class.
+        (WebCore::createMaskAndSwapContextForTextGradient):
+        (WebCore::clipToTextMask):
+        (WebCore::RenderSVGResourceGradient::applyResource):
+        * rendering/RenderSVGResourceMasker.cpp: Use new SVGImageBufferTools class, to avoid pixelation when zooming and to create image buffers as big as the final rendered size on screen, not more.
+        (WebCore::RenderSVGResourceMasker::invalidateClients):
+        (WebCore::RenderSVGResourceMasker::applyResource):
+        (WebCore::RenderSVGResourceMasker::drawContentIntoMaskImage):
+        (WebCore::RenderSVGResourceMasker::calculateMaskContentRepaintRect):
+        (WebCore::RenderSVGResourceMasker::resourceBoundingBox):
+        * rendering/RenderSVGResourceMasker.h:
+        * rendering/SVGImageBufferTools.cpp: Added.
+        (WebCore::SVGImageBufferTools::absoluteTransformFromContext):
+        (WebCore::SVGImageBufferTools::createImageBuffer):
+        (WebCore::SVGImageBufferTools::clipToImageBuffer):
+        * rendering/SVGImageBufferTools.h: Added.
+        (WebCore::SVGImageBufferTools::SVGImageBufferTools):
+        (WebCore::SVGImageBufferTools::~SVGImageBufferTools):
+
 2010-08-10  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Adam Barth.

@@ -1918,6 +1918,7 @@ HEADERS += \
     rendering/style/SVGRenderStyle.h \
     rendering/SVGCharacterData.h \
     rendering/SVGCharacterLayoutInfo.h \
+    rendering/SVGImageBufferTools.h \
     rendering/SVGInlineFlowBox.h \
     rendering/SVGInlineTextBox.h \
     rendering/SVGMarkerData.h \
@@ -2971,6 +2972,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         rendering/RenderSVGViewportContainer.cpp \
         rendering/SVGCharacterData.cpp \
         rendering/SVGCharacterLayoutInfo.cpp \
+        rendering/SVGImageBufferTools.cpp \
         rendering/SVGInlineFlowBox.cpp \
         rendering/SVGInlineTextBox.cpp \
         rendering/SVGMarkerLayoutInfo.cpp \

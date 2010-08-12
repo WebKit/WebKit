@@ -28,6 +28,7 @@
 
 #include "GradientAttributes.h"
 #include "GraphicsContext.h"
+#include "SVGImageBufferTools.h"
 #include "SVGRenderSupport.h"
 #include <wtf/UnusedParam.h>
 
@@ -72,59 +73,43 @@ void RenderSVGResourceGradient::invalidateClient(RenderObject* client)
 }
 
 #if PLATFORM(CG)
-static inline AffineTransform absoluteTransformFromContext(GraphicsContext* context)
-{
-    // Extract current transformation matrix used in the original context. Note that this coordinate
-    // system is flipped compared to SVGs internal coordinate system, done in WebKit level. Fix
-    // this transformation by flipping the y component.
-    return context->getCTM() * AffineTransform().flipY();
-}
-
 static inline bool createMaskAndSwapContextForTextGradient(GraphicsContext*& context,
                                                            GraphicsContext*& savedContext,
                                                            OwnPtr<ImageBuffer>& imageBuffer,
                                                            const RenderObject* object)
 {
     const RenderObject* textRootBlock = SVGRenderSupport::findTextRootObject(object);
+    ASSERT(textRootBlock);
 
-    AffineTransform transform(absoluteTransformFromContext(context));
-    FloatRect maskAbsoluteBoundingBox = transform.mapRect(textRootBlock->repaintRectInLocalCoordinates());
+    AffineTransform absoluteTransform(SVGImageBufferTools::absoluteTransformFromContext(context));
+    FloatRect absoluteTargetRect = absoluteTransform.mapRect(textRootBlock->repaintRectInLocalCoordinates());
 
-    IntRect maskImageRect = enclosingIntRect(maskAbsoluteBoundingBox);
-    if (maskImageRect.isEmpty())
+    OwnPtr<ImageBuffer> maskImage;
+    if (!SVGImageBufferTools::createImageBuffer(context, absoluteTransform, absoluteTargetRect, maskImage, DeviceRGB))
         return false;
 
-    // Allocate an image buffer as big as the absolute unclipped size of the object
-    OwnPtr<ImageBuffer> maskImage = ImageBuffer::create(maskImageRect.size());
-    if (!maskImage)
-        return false;
-
-    GraphicsContext* maskImageContext = maskImage->context();
-
-    // Transform the mask image coordinate system to absolute screen coordinates
-    maskImageContext->translate(-maskAbsoluteBoundingBox.x(), -maskAbsoluteBoundingBox.y());
-    maskImageContext->concatCTM(transform);
-
-    imageBuffer = maskImage.release();
+    ASSERT(maskImage);
     savedContext = context;
-    context = maskImageContext;
-
+    context = maskImage->context();
+    imageBuffer = maskImage.release();
     return true;
 }
 
 static inline AffineTransform clipToTextMask(GraphicsContext* context,
                                              OwnPtr<ImageBuffer>& imageBuffer,
+                                             FloatRect& repaintRect,
                                              const RenderObject* object,
                                              GradientData* gradientData)
 {
     const RenderObject* textRootBlock = SVGRenderSupport::findTextRootObject(object);
+    ASSERT(textRootBlock);
 
-    // The mask image has been created in the device coordinate space, as the image should not be scaled.
-    // So the actual masking process has to be done in the device coordinate space as well.
-    AffineTransform transform(absoluteTransformFromContext(context));
-    context->concatCTM(transform.inverse());
-    context->clipToImageBuffer(transform.mapRect(textRootBlock->repaintRectInLocalCoordinates()), imageBuffer.get());
-    context->concatCTM(transform);
+    repaintRect = textRootBlock->repaintRectInLocalCoordinates();
+
+    AffineTransform absoluteTransform(SVGImageBufferTools::absoluteTransformFromContext(context));
+    FloatRect absoluteTargetRect = absoluteTransform.mapRect(repaintRect);
+
+    SVGImageBufferTools::clipToImageBuffer(context, absoluteTransform, absoluteTargetRect, imageBuffer.get());
 
     AffineTransform matrix;
     if (gradientData->boundingBoxMode) {
@@ -232,12 +217,11 @@ void RenderSVGResourceGradient::postApplyResource(RenderObject* object, Graphics
             context = m_savedContext;
             m_savedContext = 0;
 
-            gradientData->gradient->setGradientSpaceTransform(clipToTextMask(context, m_imageBuffer, object, gradientData));
+            FloatRect repaintRect;
+            gradientData->gradient->setGradientSpaceTransform(clipToTextMask(context, m_imageBuffer, repaintRect, object, gradientData));
             context->setFillGradient(gradientData->gradient);
 
-            const RenderObject* textRootBlock = SVGRenderSupport::findTextRootObject(object);
-            context->fillRect(textRootBlock->repaintRectInLocalCoordinates());
-
+            context->fillRect(repaintRect);
             m_imageBuffer.clear();
         }
 #else

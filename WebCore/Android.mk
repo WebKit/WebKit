@@ -690,6 +690,7 @@ ifeq ($(ENABLE_SVG), true)
 LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	rendering/SVGCharacterData.cpp \
 	rendering/SVGCharacterLayoutInfo.cpp \
+	rendering/SVGImageBufferTools.cpp \
 	rendering/SVGInlineFlowBox.cpp \
 	rendering/SVGInlineTextBox.cpp \
 	rendering/SVGMarkerLayoutInfo.cpp \

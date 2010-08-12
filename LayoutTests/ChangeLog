@@ -1,3 +1,24 @@
+2010-08-12  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        SVG masking performance very slow
+        https://bugs.webkit.org/show_bug.cgi?id=43622
+
+        Update mask results, now that mask image buffers are as big as the finaled rendered size on screen.
+        Add new test covering zooming into masks, to show that it doesn't pixelate anymore.
+
+        * platform/mac/svg/W3C-SVG-1.1/masking-intro-01-f-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/masking-intro-01-f-expected.png:
+        * platform/mac/svg/batik/masking/maskRegions-expected.checksum:
+        * platform/mac/svg/batik/masking/maskRegions-expected.png:
+        * platform/mac/svg/custom/grayscale-gradient-mask-expected.checksum:
+        * platform/mac/svg/custom/grayscale-gradient-mask-expected.png:
+        * platform/mac/svg/zoom/page/zoom-mask-with-percentages-expected.checksum: Added.
+        * platform/mac/svg/zoom/page/zoom-mask-with-percentages-expected.png: Added.
+        * platform/mac/svg/zoom/page/zoom-mask-with-percentages-expected.txt: Added.
+        * svg/zoom/page/zoom-mask-with-percentages.svg: Added.
+
 2010-07-14  Marcus Bulach  <bulach@chromium.org>
 
         Reviewed by darin@apple.com.

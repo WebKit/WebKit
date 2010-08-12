@@ -36,14 +36,7 @@
 namespace WebCore {
 
 struct MaskerData {
-    MaskerData()
-        : emptyMask(false)
-    {
-    }
-
     OwnPtr<ImageBuffer> maskImage;
-    FloatRect maskRect;
-    bool emptyMask;
 };
 
 class RenderSVGResourceMasker : public RenderSVGResourceContainer {
@@ -66,10 +59,10 @@ public:
     static RenderSVGResourceType s_resourceType;
 
 private:
-    void createMaskImage(MaskerData*, const SVGMaskElement*, RenderObject*);
+    void drawContentIntoMaskImage(const FloatRect& maskRect, MaskerData*, const SVGMaskElement*, RenderObject*);
     void calculateMaskContentRepaintRect();
 
-    FloatRect m_maskBoundaries;
+    FloatRect m_maskContentBoundaries;
     HashMap<RenderObject*, MaskerData*> m_masker;
 };
 

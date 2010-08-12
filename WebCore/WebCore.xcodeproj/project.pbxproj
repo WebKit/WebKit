@@ -179,6 +179,8 @@
 		08C34AF81179C057002D7456 /* RenderSVGResourceLinearGradient.h in Headers */ = {isa = PBXBuildFile; fileRef = 08C34AF41179C057002D7456 /* RenderSVGResourceLinearGradient.h */; };
 		08C34AFD1179C072002D7456 /* RenderSVGResourceRadialGradient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08C34AFB1179C072002D7456 /* RenderSVGResourceRadialGradient.cpp */; };
 		08C34AFE1179C072002D7456 /* RenderSVGResourceRadialGradient.h in Headers */ = {isa = PBXBuildFile; fileRef = 08C34AFC1179C072002D7456 /* RenderSVGResourceRadialGradient.h */; };
+		08C46B691212F15E0011AF40 /* SVGImageBufferTools.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08C46B671212F15D0011AF40 /* SVGImageBufferTools.cpp */; };
+		08C46B6A1212F15E0011AF40 /* SVGImageBufferTools.h in Headers */ = {isa = PBXBuildFile; fileRef = 08C46B681212F15D0011AF40 /* SVGImageBufferTools.h */; };
 		08C4C5180EF19A4000E4840F /* WMLImageElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08C4C5140EF19A4000E4840F /* WMLImageElement.cpp */; };
 		08C4C5190EF19A4000E4840F /* WMLImageElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 08C4C5150EF19A4000E4840F /* WMLImageElement.h */; };
 		08C4C51A0EF19A4000E4840F /* WMLImageLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08C4C5160EF19A4000E4840F /* WMLImageLoader.cpp */; };
@@ -5886,6 +5888,8 @@
 		08C34AF41179C057002D7456 /* RenderSVGResourceLinearGradient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGResourceLinearGradient.h; sourceTree = "<group>"; };
 		08C34AFB1179C072002D7456 /* RenderSVGResourceRadialGradient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGResourceRadialGradient.cpp; sourceTree = "<group>"; };
 		08C34AFC1179C072002D7456 /* RenderSVGResourceRadialGradient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGResourceRadialGradient.h; sourceTree = "<group>"; };
+		08C46B671212F15D0011AF40 /* SVGImageBufferTools.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGImageBufferTools.cpp; sourceTree = "<group>"; };
+		08C46B681212F15D0011AF40 /* SVGImageBufferTools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGImageBufferTools.h; sourceTree = "<group>"; };
 		08C4C5140EF19A4000E4840F /* WMLImageElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLImageElement.cpp; sourceTree = "<group>"; };
 		08C4C5150EF19A4000E4840F /* WMLImageElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLImageElement.h; sourceTree = "<group>"; };
 		08C4C5160EF19A4000E4840F /* WMLImageLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLImageLoader.cpp; sourceTree = "<group>"; };
@@ -17090,6 +17094,8 @@
 				0842BC711190144000C7D08F /* SVGCharacterData.h */,
 				B2B33A5D0B887CEF00C15984 /* SVGCharacterLayoutInfo.cpp */,
 				B2B33A5E0B887CEF00C15984 /* SVGCharacterLayoutInfo.h */,
+				08C46B671212F15D0011AF40 /* SVGImageBufferTools.cpp */,
+				08C46B681212F15D0011AF40 /* SVGImageBufferTools.h */,
 				853CA9E20AEEC608002372DC /* SVGInlineFlowBox.cpp */,
 				853CA9E30AEEC608002372DC /* SVGInlineFlowBox.h */,
 				AA0972CA0B6947A800A705E9 /* SVGInlineTextBox.cpp */,
@@ -20141,6 +20147,7 @@
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				97DD4D870FDF4D6E00ECF9A4 /* XSSAuditor.h in Headers */,
 				CE172E011136E8CE0062A533 /* ZoomMode.h in Headers */,
+				08C46B6A1212F15E0011AF40 /* SVGImageBufferTools.h in Headers */,
 				7AB0B1C11211A62200A76940 /* InspectorStorageAgent.h in Headers */,
 				2EED575312109ED0007656BB /* BlobRegistryImpl.h in Headers */,
 				2EED575412109ED0007656BB /* BlobStorageData.h in Headers */,
@@ -22568,6 +22575,7 @@
 				93F19B0508245E59001E9ABC /* XSLTProcessorLibxslt.cpp in Sources */,
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				97DD4D860FDF4D6E00ECF9A4 /* XSSAuditor.cpp in Sources */,
+				08C46B691212F15E0011AF40 /* SVGImageBufferTools.cpp in Sources */,
 				7AB0B1C01211A62200A76940 /* InspectorStorageAgent.cpp in Sources */,
 				2EED575212109ED0007656BB /* BlobRegistryImpl.cpp in Sources */,
 				2EED575512109ED0007656BB /* BlobURL.cpp in Sources */,

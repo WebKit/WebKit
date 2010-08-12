@@ -3446,6 +3446,8 @@
             'rendering/SVGCharacterLayoutInfo.h',
             'rendering/SVGInlineFlowBox.cpp',
             'rendering/SVGInlineFlowBox.h',
+            'rendering/SVGImageBufferTools.cpp',
+            'rendering/SVGImageBufferTools.h',
             'rendering/SVGInlineTextBox.cpp',
             'rendering/SVGInlineTextBox.h',
             'rendering/SVGMarkerData.h',

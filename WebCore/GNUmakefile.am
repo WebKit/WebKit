@@ -3872,6 +3872,8 @@ webcore_sources += \
 	WebCore/rendering/SVGCharacterLayoutInfo.h \
 	WebCore/rendering/SVGInlineFlowBox.cpp \
 	WebCore/rendering/SVGInlineFlowBox.h \
+	WebCore/rendering/SVGImageBufferTools.cpp \
+	WebCore/rendering/SVGImageBufferTools.h \
 	WebCore/rendering/SVGInlineTextBox.cpp \
 	WebCore/rendering/SVGInlineTextBox.h \
 	WebCore/rendering/SVGMarkerData.h \
