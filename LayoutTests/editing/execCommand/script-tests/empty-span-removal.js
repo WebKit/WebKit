@@ -30,7 +30,7 @@ function testDoubleToggle(toggleCommand, initialContents, expectedContents)
 }
 
 testSingleToggle("bold", "<span><span style='font-weight: bold'>test</span></span>", "<span>test</span>");
-testSingleToggle("bold", "<span style='font-weight: bold'><span>test</span></span>", "<span>test</span>");
+testSingleToggle("bold", "<span style='font-weight: bold'><span>test</span></span>", "test");
 testSingleToggle("bold", "<span style='font-weight: bold'><span style='font-weight: bold'>test</span></span>", "test");
 testSingleToggle("bold", "<span foo=\"bar\" style='font-weight: bold'>test</span>", "<span foo=\"bar\">test</span>");
 testDoubleToggle("bold", "<span>test</span>", "<span>test</span>");

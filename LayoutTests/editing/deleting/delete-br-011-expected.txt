@@ -26,16 +26,7 @@ after deletion:
 | <div>
 |   class="editing"
 |   id="test"
-|   <span>
-|     class="Apple-style-span"
-|     style="font-size: medium;"
-|     <font>
-|       class="Apple-style-span"
-|       size="6"
-|       <span>
-|         class="Apple-style-span"
-|         style="font-size: 24px;"
-|         <#selection-caret>
-|         <br>
+|   <#selection-caret>
+|   <br>
 | "
 "

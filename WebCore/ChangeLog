@@ -1,3 +1,31 @@
+2010-08-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Tony Chang.
+
+        Can't unbold text in div in font-weight span
+        https://bugs.webkit.org/show_bug.cgi?id=26871
+
+        The bug was caused by removeInlineStyle not being able to include styled inline nodes around the start.
+        Solved this problem by pushing down all inline styles instead of just text-decorations.
+        This approach allows removeInlineStyle to remove styled ancestors properly and generates compact markups.
+
+        Test: editing/style/push-down-inline-styles.html
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::removeCSSStyle): No longer removes attributes or node when mode == RemoveNone.
+        (WebCore::ApplyStyleCommand::highestAncestorWithConflictingInlineStyle): Calls shouldRemoveInlineStyleFromElement
+        to determine the highest ancestor whose style needs to be pushed down.
+        (WebCore::ApplyStyleCommand::extractInlineStyleToPushDown): Renamed from extractTextDecorationStyle.
+        Extracts all inline CSS properties specified instead of just text decorations.
+        (WebCore::ApplyStyleCommand::applyInlineStyleToPushDown): Renamed from applyTextDecorationStyle.
+        Applies inline styles using addInlineStyleIfNeeded or adds inline CSS values.
+        (WebCore::ApplyStyleCommand::pushDownInlineStyleAroundNode): Renamed from pushDownTextDecorationStyleAroundNode.
+        (WebCore::ApplyStyleCommand::removeInlineStyle): Calls pushDownTextDecorationStyleAroundNode.
+        * editing/ApplyStyleCommand.h:
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::mergeParagraphs): Prevents moveParagraph from preserving
+        the style of an empty paragraph when merged with the previous paragraph because we don't use that style anyways.
+
 2010-08-11  Julien Chaffraix  <jchaffraix@codeaurora.org>
 
         Reviewed by Ariya Hidayat.

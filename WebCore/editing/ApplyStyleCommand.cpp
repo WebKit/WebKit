@@ -1311,6 +1311,9 @@ bool ApplyStyleCommand::removeCSSStyle(CSSMutableStyleDeclaration* style, HTMLEl
         }
     }
 
+    if (mode == RemoveNone)
+        return removed;
+
     // No need to serialize <foo style=""> if we just removed the last css property
     if (decl->isEmpty())
         removeNodeAttribute(elem, styleAttr);
@@ -1321,24 +1324,17 @@ bool ApplyStyleCommand::removeCSSStyle(CSSMutableStyleDeclaration* style, HTMLEl
     return removed;
 }
 
-static bool hasTextDecorationProperty(Node *node)
+HTMLElement* ApplyStyleCommand::highestAncestorWithConflictingInlineStyle(CSSMutableStyleDeclaration* style, Node* node)
 {
-    if (!node->isElementNode())
-        return false;
+    if (!node)
+        return 0;
 
-    RefPtr<CSSValue> value = computedStyle(node)->getPropertyCSSValue(CSSPropertyTextDecoration, DoNotUpdateLayout);
-    return value && !equalIgnoringCase(value->cssText(), "none");
-}
-
-static Node* highestAncestorWithTextDecoration(Node *node)
-{
-    ASSERT(node);
-    Node* result = 0;
+    HTMLElement* result = 0;
     Node* unsplittableElement = unsplittableElementForPosition(Position(node, 0));
 
     for (Node *n = node; n; n = n->parentNode()) {
-        if (hasTextDecorationProperty(n))
-            result = n;
+        if (n->isHTMLElement() && shouldRemoveInlineStyleFromElement(style, static_cast<HTMLElement*>(n)))
+            result = static_cast<HTMLElement*>(n);
         // Should stop at the editable root (cannot cross editing boundary) and
         // also stop at the unsplittable element to be consistent with other UAs
         if (n == unsplittableElement)
@@ -1348,7 +1344,7 @@ static Node* highestAncestorWithTextDecoration(Node *node)
     return result;
 }
 
-PassRefPtr<CSSMutableStyleDeclaration> ApplyStyleCommand::extractTextDecorationStyle(Node* node)
+PassRefPtr<CSSMutableStyleDeclaration> ApplyStyleCommand::extractInlineStyleToPushDown(Node* node, const Vector<int>& properties)
 {
     ASSERT(node);
     ASSERT(node->isElementNode());
@@ -1362,72 +1358,108 @@ PassRefPtr<CSSMutableStyleDeclaration> ApplyStyleCommand::extractTextDecorationS
     if (!style)
         return 0;
 
-    int properties[1] = { CSSPropertyTextDecoration };
-    RefPtr<CSSMutableStyleDeclaration> textDecorationStyle = style->copyPropertiesInSet(properties, 1);
+    style = style->copyPropertiesInSet(properties.data(), properties.size());
 
-    RefPtr<CSSValue> property = style->getPropertyCSSValue(CSSPropertyTextDecoration);
-    if (property && !equalIgnoringCase(property->cssText(), "none"))
-        removeCSSProperty(element, CSSPropertyTextDecoration);
+    for (size_t i = 0; i < properties.size(); i++) {
+        RefPtr<CSSValue> property = style->getPropertyCSSValue(properties[i]);
+        if (property)
+            removeCSSProperty(element, static_cast<CSSPropertyID>(properties[i]));
+    }
 
-    return textDecorationStyle.release();
+    if (element->inlineStyleDecl() && element->inlineStyleDecl()->isEmpty())
+        removeNodeAttribute(element, styleAttr);
+
+    if (isSpanWithoutAttributesOrUnstyleStyleSpan(element))
+        removeNodePreservingChildren(element);
+
+    return style.release();
 }
 
-void ApplyStyleCommand::applyTextDecorationStyle(Node *node, CSSMutableStyleDeclaration *style)
+void ApplyStyleCommand::applyInlineStyleToPushDown(Node* node, CSSMutableStyleDeclaration* style)
 {
     ASSERT(node);
 
-    if (!style || style->cssText().isEmpty())
+    if (!style || !style->length() || !node->renderer())
         return;
 
-    StyleChange styleChange(style, Position(node, 0));
-    if (styleChange.cssStyle().length()) {
-        if (node->isTextNode()) {
-            RefPtr<HTMLElement> styleSpan = createStyleSpanElement(document());
-            surroundNodeRangeWithElement(node, node, styleSpan.get());
-            node = styleSpan.get();
-        }
+    // Since addInlineStyleIfNeeded can't add styles to block-flow render objects, add style attribute instead.
+    // FIXME: applyInlineStyleToRange should be used here instead.
+    if ((node->renderer()->isBlockFlow() || node->childNodeCount()) && node->isHTMLElement()) {
+        HTMLElement* element = static_cast<HTMLElement*>(node);
+        CSSMutableStyleDeclaration* existingInlineStyle = element->inlineStyleDecl();
 
-        if (!node->isElementNode())
-            return;
+        // Avoid overriding existing styles of node
+        if (existingInlineStyle) {
+            RefPtr<CSSMutableStyleDeclaration> newInlineStyle = existingInlineStyle->copy();
+            CSSMutableStyleDeclaration::const_iterator end = style->end();
+            for (CSSMutableStyleDeclaration::const_iterator it = style->begin(); it != end; ++it) {
+                ExceptionCode ec;
+                if (!existingInlineStyle->getPropertyCSSValue(it->id()))
+                    newInlineStyle->setProperty(it->id(), it->value()->cssText(), it->isImportant(), ec);
 
-        HTMLElement *element = static_cast<HTMLElement *>(node);
-        String cssText = styleChange.cssStyle();
-        CSSMutableStyleDeclaration *decl = element->inlineStyleDecl();
-        if (decl)
-            cssText += decl->cssText();
-        setNodeAttribute(element, styleAttr, cssText);
+                // text-decorations adds up
+                if (it->id() == CSSPropertyTextDecoration) {
+                    ASSERT(it->value()->isValueList());
+                    RefPtr<CSSValue> textDecoration = newInlineStyle->getPropertyCSSValue(CSSPropertyTextDecoration);
+                    if (textDecoration) {
+                        ASSERT(textDecoration->isValueList());
+                        CSSValueList* textDecorationOfInlineStyle = static_cast<CSSValueList*>(textDecoration.get());
+                        CSSValueList* textDecorationOfStyleApplied = static_cast<CSSValueList*>(it->value());
+
+                        DEFINE_STATIC_LOCAL(RefPtr<CSSPrimitiveValue>, underline, (CSSPrimitiveValue::createIdentifier(CSSValueUnderline)));
+                        DEFINE_STATIC_LOCAL(RefPtr<CSSPrimitiveValue>, lineThrough, (CSSPrimitiveValue::createIdentifier(CSSValueLineThrough)));
+                        
+                        if (textDecorationOfStyleApplied->hasValue(underline.get()) && !textDecorationOfInlineStyle->hasValue(underline.get()))
+                            textDecorationOfInlineStyle->append(underline.get());
+
+                        if (textDecorationOfStyleApplied->hasValue(lineThrough.get()) && !textDecorationOfInlineStyle->hasValue(lineThrough.get()))
+                            textDecorationOfInlineStyle->append(lineThrough.get());
+                    }
+                }
+            }
+
+            setNodeAttribute(element, styleAttr, newInlineStyle->cssText());
+        } else
+            setNodeAttribute(element, styleAttr, style->cssText());
+
+        return;
     }
 
-    if (styleChange.applyUnderline())
-        surroundNodeRangeWithElement(node, node, createHTMLElement(document(), uTag));
+    if (node->renderer()->isText() && static_cast<RenderText*>(node->renderer())->isAllCollapsibleWhitespace())
+        return;
 
-    if (styleChange.applyLineThrough())
-        surroundNodeRangeWithElement(node, node, createHTMLElement(document(), sTag));    
+    // FIXME: addInlineStyleIfNeeded may override the style of node
+    addInlineStyleIfNeeded(style, node, node);
 }
 
-void ApplyStyleCommand::pushDownTextDecorationStyleAroundNode(Node* targetNode)
+void ApplyStyleCommand::pushDownInlineStyleAroundNode(CSSMutableStyleDeclaration* style, Node* targetNode)
 {
-    ASSERT(targetNode);
-    Node* highestAncestor = highestAncestorWithTextDecoration(targetNode);
+    HTMLElement* highestAncestor = highestAncestorWithConflictingInlineStyle(style, targetNode);
     if (!highestAncestor)
         return;
+
+    Vector<int> properties;
+    CSSMutableStyleDeclaration::const_iterator end = style->end();
+    for (CSSMutableStyleDeclaration::const_iterator it = style->begin(); it != end; ++it)
+        properties.append(it->id());
 
     // The outer loop is traversing the tree vertically from highestAncestor to targetNode
     Node* current = highestAncestor;
     while (current != targetNode) {
         ASSERT(current);
+        ASSERT(current->isHTMLElement());
         ASSERT(current->contains(targetNode));
-        RefPtr<CSSMutableStyleDeclaration> decoration = extractTextDecorationStyle(current);
+        Node* child = current->firstChild();
+        RefPtr<CSSMutableStyleDeclaration> styleToPushDown = extractInlineStyleToPushDown(current, properties);
 
         // The inner loop will go through children on each level
-        Node* child = current->firstChild();
         while (child) {
             Node* nextChild = child->nextSibling();
 
             // Apply text decoration to all nodes containing targetNode and their siblings but NOT to targetNode
             if (child != targetNode)
-                applyTextDecorationStyle(child, decoration.get());
-            
+                applyInlineStyleToPushDown(child, styleToPushDown.get());
+
             // We found the next node for the outer loop (contains targetNode)
             // When reached targetNode, stop the outer loop upon the completion of the current inner loop
             if (child == targetNode || child->contains(targetNode))
@@ -1447,13 +1479,14 @@ void ApplyStyleCommand::removeInlineStyle(PassRefPtr<CSSMutableStyleDeclaration>
     ASSERT(comparePositions(start, end) <= 0);
     
     RefPtr<CSSValue> textDecorationSpecialProperty = style->getPropertyCSSValue(CSSPropertyWebkitTextDecorationsInEffect);
-
     if (textDecorationSpecialProperty) {
-        pushDownTextDecorationStyleAroundNode(start.downstream().node());
-        pushDownTextDecorationStyleAroundNode(end.upstream().node());
         style = style->copy();
         style->setProperty(CSSPropertyTextDecoration, textDecorationSpecialProperty->cssText(), style->getPropertyPriority(CSSPropertyWebkitTextDecorationsInEffect));
     }
+
+    RefPtr<Node> pushDownEnd = end.upstream().node();
+    pushDownInlineStyleAroundNode(style.get(), start.downstream().node());
+    pushDownInlineStyleAroundNode(style.get(), pushDownEnd.get());
 
     // The s and e variables store the positions used to set the ending selection after style removal
     // takes place. This will help callers to recognize when either the start node or the end node

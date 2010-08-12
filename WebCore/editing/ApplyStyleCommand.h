@@ -78,12 +78,13 @@ private:
     bool removeHTMLFontStyle(CSSMutableStyleDeclaration*, HTMLElement*, InlineStyleRemovalMode = RemoveAttributesAndElements);
     bool removeHTMLBidiEmbeddingStyle(CSSMutableStyleDeclaration*, HTMLElement*, InlineStyleRemovalMode = RemoveAttributesAndElements);
     bool removeCSSStyle(CSSMutableStyleDeclaration*, HTMLElement*, InlineStyleRemovalMode = RemoveAttributesAndElements);
+    HTMLElement* highestAncestorWithConflictingInlineStyle(CSSMutableStyleDeclaration*, Node*);
+    PassRefPtr<CSSMutableStyleDeclaration> extractInlineStyleToPushDown(Node*, const Vector<int>&);
+    void applyInlineStyleToPushDown(Node*, CSSMutableStyleDeclaration *style);
+    void pushDownInlineStyleAroundNode(CSSMutableStyleDeclaration*, Node*);
     void removeInlineStyle(PassRefPtr<CSSMutableStyleDeclaration>, const Position& start, const Position& end);
     bool nodeFullySelected(Node*, const Position& start, const Position& end) const;
     bool nodeFullyUnselected(Node*, const Position& start, const Position& end) const;
-    PassRefPtr<CSSMutableStyleDeclaration> extractTextDecorationStyle(Node*);
-    void applyTextDecorationStyle(Node*, CSSMutableStyleDeclaration *style);
-    void pushDownTextDecorationStyleAroundNode(Node*);
 
     // style-application helpers
     void applyBlockStyle(CSSMutableStyleDeclaration*);
