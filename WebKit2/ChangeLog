@@ -1,3 +1,53 @@
+2010-08-12  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        WebKitTestRunner needs to run tests without using native controls
+        https://bugs.webkit.org/show_bug.cgi?id=43772
+
+        Reviewed by Sam Weinig.
+
+        * Shared/CoreIPCSupport/WebProcessMessageKinds.h:
+        (WebProcessMessage::):
+        Add a new message.
+
+        * UIProcess/API/C/win/WKContextPrivateWin.h: Added.
+        Declare WKContextSetShouldPaintNativeControls().
+
+        * UIProcess/API/C/win/WKContextWin.cpp: Added.
+        (WKContextSetShouldPaintNativeControls):
+        Call the WebContext's setShouldPaintNativeControls().
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext):
+        Initialize m_shouldPaintNativeControls.
+        (WebKit::WebContext::ensureWebProcess):
+        If we created a web process, call platformSetUpWebProcess().
+
+        * UIProcess/WebContext.h:
+        Declare new functions and a member to store whether we should paint
+        native controls.
+
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::platformSetUpWebProcess):
+        Stubbed.
+
+        * UIProcess/win/WebContextWin.cpp:
+        (WebKit::WebContext::setShouldPaintNativeControls):
+        Set m_shouldPaintNativeControls. If we have a valid web process, send a
+        SetShouldPaintNativeControls message.
+        (WebKit::WebContext::platformSetUpWebProcess):
+        Send a SetShouldPaintNativeControls message.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::didReceiveMessage):
+        If this is a SetShouldPaintNativeControls message, decode the argument,
+        and call Settings::setShouldPaintNativeControls().
+
+        * win/WebKit2.vcproj:
+        Add WKContextPrivateWin.h and WKContextWin.cpp to project.
+
+        * win/WebKit2Generated.make:
+        Copy WKContextPrivateWin.h.
+
 2010-08-11  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Gavin Barraclough.

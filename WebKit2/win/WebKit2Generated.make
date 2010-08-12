@@ -22,6 +22,7 @@ all:
     xcopy /y /d "..\UIProcess\API\C\WKURL.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
     xcopy /y /d "..\UIProcess\API\C\cf\WKStringCF.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
     xcopy /y /d "..\UIProcess\API\C\cf\WKURLCF.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
+    xcopy /y /d "..\UIProcess\API\C\win\WKContextPrivateWin.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
     xcopy /y /d "..\UIProcess\API\cpp\WKRetainPtr.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
     xcopy /y /d "..\UIProcess\API\win\WKBaseWin.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
     xcopy /y /d "..\UIProcess\API\win\WKView.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"

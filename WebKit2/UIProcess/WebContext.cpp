@@ -196,6 +196,9 @@ WebContext::WebContext(ProcessModel processModel, const WTF::String& injectedBun
     : m_processModel(processModel)
     , m_injectedBundlePath(injectedBundlePath)
     , m_visitedLinkProvider(this)
+#if PLATFORM(WIN)
+    , m_shouldPaintNativeControls(true)
+#endif
 {
     RunLoop::initializeMainRunLoop();
 
@@ -243,6 +246,8 @@ void WebContext::ensureWebProcess()
 
     for (HashSet<String>::iterator it = m_schemesToRegisterAsEmptyDocument.begin(), end = m_schemesToRegisterAsEmptyDocument.end(); it != end; ++it)
         m_process->send(WebProcessMessage::RegisterURLSchemeAsEmptyDocument, 0, CoreIPC::In(*it));
+
+    platformSetUpWebProcess();
 }
 
 void WebContext::processDidFinishLaunching(WebProcessProxy* process)

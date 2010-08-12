@@ -23,45 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WebContext.h"
+#ifndef WKContextPrivateWin_h
+#define WKContextPrivateWin_h
 
-#include <sys/param.h>
+#include <WebKit2/WKBase.h>
+#include <WebKit2/WKContext.h>
 
-using namespace WebCore;
-
-NSString *WebKitLocalCacheDefaultsKey = @"WebKitLocalCache";
-
-namespace WebKit {
-
-String WebContext::applicationCacheDirectory()
-{
-    NSString *appName = [[NSBundle mainBundle] bundleIdentifier];
-    if (!appName)
-        appName = [[NSProcessInfo processInfo] processName];
-    
-    ASSERT(appName);
-    
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSString *cacheDir = [defaults objectForKey:WebKitLocalCacheDefaultsKey];
-
-    if (!cacheDir || ![cacheDir isKindOfClass:[NSString class]]) {
-#ifdef BUILDING_ON_TIGER
-        cacheDir = [NSHomeDirectory() stringByAppendingPathComponent:@"Library/Caches"];
-#else
-        char cacheDirectory[MAXPATHLEN];
-        size_t cacheDirectoryLen = confstr(_CS_DARWIN_USER_CACHE_DIR, cacheDirectory, MAXPATHLEN);
-    
-        if (cacheDirectoryLen)
-            cacheDir = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:cacheDirectory length:cacheDirectoryLen - 1];
+#ifndef __cplusplus
+#include <stdbool.h>
 #endif
-    }
 
-    return [cacheDir stringByAppendingPathComponent:appName];
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+// Defaults to true.
+WK_EXPORT void WKContextSetShouldPaintNativeControls(WKContextRef, bool);
+
+#ifdef __cplusplus
 }
+#endif
 
-void WebContext::platformSetUpWebProcess()
-{
-}
-
-} // namespace WebKit
-
+#endif /* WKContextPrivateWin_h */

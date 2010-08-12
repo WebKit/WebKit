@@ -39,6 +39,7 @@
 #include <WebCore/Page.h>
 #include <WebCore/PageGroup.h>
 #include <WebCore/SchemeRegistry.h>
+#include <WebCore/Settings.h>
 #include <wtf/PassRefPtr.h>
 
 #if PLATFORM(MAC)
@@ -285,6 +286,17 @@ void WebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
                     return;
 
                 m_compositingRenderServerPort = port.port();
+                return;
+            }
+#endif
+#if PLATFORM(WIN)
+            case WebProcessMessage::SetShouldPaintNativeControls: {
+                bool b;
+                if (!arguments->decode(b))
+                    return;
+#if USE(SAFARI_THEME)
+                Settings::setShouldPaintNativeControls(b);
+#endif
                 return;
             }
 #endif

@@ -1199,6 +1199,14 @@
 						>
 					</File>
 					<File
+						RelativePath="..\UIProcess\API\C\win\WKContextPrivateWin.h"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\win\WKContextWin.cpp"
+						>
+					</File>
+					<File
 						RelativePath="..\UIProcess\API\C\WKData.cpp"
 						>
 					</File>

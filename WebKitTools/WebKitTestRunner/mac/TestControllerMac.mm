@@ -51,4 +51,8 @@ void TestController::runUntil(bool& done)
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]];
 }
 
+void TestController::platformInitializeContext()
+{
+}
+
 } // namespace WTR

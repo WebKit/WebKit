@@ -23,45 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "WKContext.h"
+#include "WKContextPrivateWin.h"
+
+#include "WKAPICast.h"
 #include "WebContext.h"
 
-#include <sys/param.h>
+using namespace WebKit;
 
-using namespace WebCore;
-
-NSString *WebKitLocalCacheDefaultsKey = @"WebKitLocalCache";
-
-namespace WebKit {
-
-String WebContext::applicationCacheDirectory()
+void WKContextSetShouldPaintNativeControls(WKContextRef contextRef, bool b)
 {
-    NSString *appName = [[NSBundle mainBundle] bundleIdentifier];
-    if (!appName)
-        appName = [[NSProcessInfo processInfo] processName];
-    
-    ASSERT(appName);
-    
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSString *cacheDir = [defaults objectForKey:WebKitLocalCacheDefaultsKey];
-
-    if (!cacheDir || ![cacheDir isKindOfClass:[NSString class]]) {
-#ifdef BUILDING_ON_TIGER
-        cacheDir = [NSHomeDirectory() stringByAppendingPathComponent:@"Library/Caches"];
-#else
-        char cacheDirectory[MAXPATHLEN];
-        size_t cacheDirectoryLen = confstr(_CS_DARWIN_USER_CACHE_DIR, cacheDirectory, MAXPATHLEN);
-    
-        if (cacheDirectoryLen)
-            cacheDir = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:cacheDirectory length:cacheDirectoryLen - 1];
-#endif
-    }
-
-    return [cacheDir stringByAppendingPathComponent:appName];
+    toWK(contextRef)->setShouldPaintNativeControls(b);
 }
-
-void WebContext::platformSetUpWebProcess()
-{
-}
-
-} // namespace WebKit
-

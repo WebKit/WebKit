@@ -123,6 +123,7 @@ void TestController::initialize(int argc, const char* argv[])
     initializeTestPluginDirectory();
 
     m_context.adopt(WKContextCreateWithInjectedBundlePath(injectedBundlePath()));
+    platformInitializeContext();
 
     WKContextInjectedBundleClient injectedBundleClient = {
         0,
@@ -132,7 +133,7 @@ void TestController::initialize(int argc, const char* argv[])
     WKContextSetInjectedBundleClient(m_context.get(), &injectedBundleClient);
 
     _WKContextSetAdditionalPluginsDirectory(m_context.get(), testPluginDirectory());
-    
+
     m_pageNamespace.adopt(WKPageNamespaceCreate(m_context.get()));
     m_mainWebView = adoptPtr(new PlatformWebView(m_pageNamespace.get()));
 

@@ -25,6 +25,7 @@
 
 #include "WebContext.h"
 
+#include "WebProcessMessageKinds.h"
 #include <WebCore/FileSystem.h>
 
 using namespace WebCore;
@@ -34,6 +35,21 @@ namespace WebKit {
 String WebContext::applicationCacheDirectory()
 {
     return localUserSpecificStorageDirectory();
+}
+
+void WebContext::setShouldPaintNativeControls(bool b)
+{
+    m_shouldPaintNativeControls = b;
+
+    if (!hasValidProcess())
+        return;
+
+    m_process->send(WebProcessMessage::SetShouldPaintNativeControls, 0, CoreIPC::In(m_shouldPaintNativeControls));
+}
+
+void WebContext::platformSetUpWebProcess()
+{
+    m_process->send(WebProcessMessage::SetShouldPaintNativeControls, 0, CoreIPC::In(m_shouldPaintNativeControls));
 }
 
 } // namespace WebKit

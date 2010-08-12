@@ -29,6 +29,7 @@
 #include <io.h>
 #include <shlwapi.h>
 #include <string>
+#include <WebKit2/WKContextPrivateWin.h>
 #include <WebKit2/WKStringCF.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
@@ -123,6 +124,12 @@ void TestController::runUntil(bool& done)
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
+}
+
+void TestController::platformInitializeContext()
+{
+    // FIXME: Make DRT pass with Windows native controls. <http://webkit.org/b/25592>
+    WKContextSetShouldPaintNativeControls(m_context.get(), false);
 }
 
 } // namespace WTR

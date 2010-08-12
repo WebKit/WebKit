@@ -1,3 +1,26 @@
+2010-08-12  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        WebKitTestRunner needs to run tests without using native controls
+        https://bugs.webkit.org/show_bug.cgi?id=43772
+
+        Reviewed by Sam Weinig.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize):
+        Call platformInitializeContext().
+
+        * WebKitTestRunner/TestController.h:
+        Declare platformInitializeContext().
+
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::TestController::platformInitializeContext):
+        Stubbed.
+
+        * WebKitTestRunner/win/TestControllerWin.cpp:
+        (WTR::TestController::platformInitializeContext):
+        Call WKContextSetShouldPaintNativeControls() to disable native control
+        drawing.
+
 2010-08-12  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Alexey Proskuryakov.

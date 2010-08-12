@@ -43,7 +43,10 @@ enum Kind {
     Create,
     RegisterURLSchemeAsEmptyDocument,
 #if PLATFORM(MAC)
-    SetupAcceleratedCompositingPort
+    SetupAcceleratedCompositingPort,
+#endif
+#if PLATFORM(WIN)
+    SetShouldPaintNativeControls,
 #endif
 };
 

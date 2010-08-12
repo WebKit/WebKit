@@ -106,6 +106,10 @@ public:
 
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 
+#if PLATFORM(WIN)
+    void setShouldPaintNativeControls(bool);
+#endif
+
 private:
     WebContext(ProcessModel, const WTF::String& injectedBundlePath);
 
@@ -113,6 +117,7 @@ private:
 
     void ensureWebProcess();
     bool hasValidProcess() const { return m_process && m_process->isValid(); }
+    void platformSetUpWebProcess();
 
     ProcessModel m_processModel;
     
@@ -131,6 +136,10 @@ private:
     VisitedLinkProvider m_visitedLinkProvider;
         
     HashSet<WTF::String> m_schemesToRegisterAsEmptyDocument;
+
+#if PLATFORM(WIN)
+    bool m_shouldPaintNativeControls;
+#endif
 };
 
 } // namespace WebKit
