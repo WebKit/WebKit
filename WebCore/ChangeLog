@@ -1,3 +1,17 @@
+2010-08-11  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Conditionalize wrong fragment parsing code to pass more HTML5lib tests
+        https://bugs.webkit.org/show_bug.cgi?id=43877
+
+        This code exists to support the LegacyHTMLTreeBuilder.  Unfortunately,
+        it causes problems for the new HTMLTreeBuilder (which is more
+        self-contained).
+
+        * dom/Element.cpp:
+        (WebCore::Element::createContextualFragment):
+
 2010-08-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Tony Chang.

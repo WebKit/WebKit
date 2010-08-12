@@ -1,5 +1,16 @@
 2010-08-11  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        Conditionalize wrong fragment parsing code to pass more HTML5lib tests
+        https://bugs.webkit.org/show_bug.cgi?id=43877
+
+        Test progression.
+
+        * html5lib/runner-expected-html5.txt:
+
+2010-08-11  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Alexey Proskuryakov.
 
         fast/encoding/japanese-encoding-mix.html fails on Tiger after enabling HTML5 Lexer

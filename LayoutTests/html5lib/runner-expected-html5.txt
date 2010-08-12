@@ -17,17 +17,7 @@ resources/tests2.dat: PASS
 resources/tests3.dat: PASS
 
 resources/tests4.dat:
-6
 7
-
-Test 6 of 7 in resources/tests4.dat failed. Input:
-setting html's innerHTML
-Got:
-| "setting html's innerHTML"
-Expected:
-| <head>
-| <body>
-|   "setting html's innerHTML"
 
 Test 7 of 7 in resources/tests4.dat failed. Input:
 <title>setting head's innerHTML</title>
@@ -41,7 +31,6 @@ resources/tests5.dat: PASS
 resources/tests6.dat:
 27
 30
-45
 
 Test 27 of 51 in resources/tests6.dat failed. Input:
 foo<col>
@@ -56,26 +45,8 @@ Got:
 | 
 Expected:
 | <frame>
-
-Test 45 of 51 in resources/tests6.dat failed. Input:
-<body></body></html>
-Got:
-| 
-Expected:
-| <head>
-| <body>
 resources/tests7.dat:
-24
 30
-
-Test 24 of 30 in resources/tests7.dat failed. Input:
-<body>X</body></body>
-Got:
-| "X"
-Expected:
-| <head>
-| <body>
-|   "X"
 
 Test 30 of 30 in resources/tests7.dat failed. Input:
 <select><keygen>

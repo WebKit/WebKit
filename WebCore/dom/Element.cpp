@@ -50,6 +50,7 @@
 #include "RenderLayer.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
+#include "Settings.h"
 #include "TextIterator.h"
 #include "XMLNames.h"
 #include <wtf/text/CString.h>
@@ -102,36 +103,37 @@ PassRefPtr<DocumentFragment> Element::createContextualFragment(const String& mar
             return 0;
     }
     
-    // Exceptions are ignored because none ought to happen here.
-    ExceptionCode ignoredExceptionCode;
-    
-    // We need to pop <html> and <body> elements and remove <head> to
-    // accommodate folks passing complete HTML documents to make the
-    // child of an element.
-    
-    RefPtr<Node> nextNode;
-    for (RefPtr<Node> node = fragment->firstChild(); node; node = nextNode) {
-        nextNode = node->nextSibling();
-        if (node->hasTagName(htmlTag) || node->hasTagName(bodyTag)) {
-            Node* firstChild = node->firstChild();
-            if (firstChild)
-                nextNode = firstChild;
-            RefPtr<Node> nextChild;
-            for (RefPtr<Node> child = firstChild; child; child = nextChild) {
-                nextChild = child->nextSibling();
-                node->removeChild(child.get(), ignoredExceptionCode);
+    if (!document()->settings() || !document()->settings()->html5TreeBuilderEnabled()) {
+        // Exceptions are ignored because none ought to happen here.
+        ExceptionCode ignoredExceptionCode;
+        
+        // We need to pop <html> and <body> elements and remove <head> to
+        // accommodate folks passing complete HTML documents to make the
+        // child of an element.
+        
+        RefPtr<Node> nextNode;
+        for (RefPtr<Node> node = fragment->firstChild(); node; node = nextNode) {
+            nextNode = node->nextSibling();
+            if (node->hasTagName(htmlTag) || node->hasTagName(bodyTag)) {
+                Node* firstChild = node->firstChild();
+                if (firstChild)
+                    nextNode = firstChild;
+                RefPtr<Node> nextChild;
+                for (RefPtr<Node> child = firstChild; child; child = nextChild) {
+                    nextChild = child->nextSibling();
+                    node->removeChild(child.get(), ignoredExceptionCode);
+                    ASSERT(!ignoredExceptionCode);
+                    fragment->insertBefore(child, node.get(), ignoredExceptionCode);
+                    ASSERT(!ignoredExceptionCode);
+                }
+                fragment->removeChild(node.get(), ignoredExceptionCode);
                 ASSERT(!ignoredExceptionCode);
-                fragment->insertBefore(child, node.get(), ignoredExceptionCode);
+            } else if (node->hasTagName(headTag)) {
+                fragment->removeChild(node.get(), ignoredExceptionCode);
                 ASSERT(!ignoredExceptionCode);
             }
-            fragment->removeChild(node.get(), ignoredExceptionCode);
-            ASSERT(!ignoredExceptionCode);
-        } else if (node->hasTagName(headTag)) {
-            fragment->removeChild(node.get(), ignoredExceptionCode);
-            ASSERT(!ignoredExceptionCode);
         }
     }
-    
     return fragment.release();
 }
     
