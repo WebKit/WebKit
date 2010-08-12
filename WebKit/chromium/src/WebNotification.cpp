@@ -113,6 +113,11 @@ WebString WebNotification::replaceId() const
     return m_private->replaceId();
 }
 
+void WebNotification::detachPresenter()
+{
+    m_private->detachPresenter();
+}
+
 void WebNotification::dispatchDisplayEvent()
 {
     RefPtr<Event> event = Event::create("display", false, true);

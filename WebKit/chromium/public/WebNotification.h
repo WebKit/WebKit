@@ -83,6 +83,9 @@ public:
 
     WEBKIT_API WebString replaceId() const;
 
+    // Called if the presenter goes out of scope before the notification does.
+    WEBKIT_API void detachPresenter();
+
     // Called to indicate the notification has been displayed.
     WEBKIT_API void dispatchDisplayEvent();
 
