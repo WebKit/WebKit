@@ -1,3 +1,14 @@
+2010-08-12  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        InspectorController.h missing InspectorObject forward declaration
+        https://bugs.webkit.org/show_bug.cgi?id=43913
+
+        Build fix so no new tests.
+
+        * inspector/InspectorController.h: Adds the necessary forward declaration.
+
 2010-08-12  Hui Huang  <hui.2.huang@nokia.com>
 
         Reviewed by Eric Seidel.

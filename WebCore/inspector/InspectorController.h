@@ -64,6 +64,7 @@ class InspectorDOMStorageResource;
 class InspectorDatabaseResource;
 class InspectorDebuggerAgent;
 class InspectorFrontendClient;
+class InspectorObject;
 class InspectorResource;
 class InspectorStorageAgent;
 class InspectorTimelineAgent;
