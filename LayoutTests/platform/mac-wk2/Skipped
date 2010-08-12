@@ -118,6 +118,7 @@ editing/style/style-boundary-005.html
 
 # WebKitTestRunner needs an implementation of eventSender
 # <https://bugs.webkit.org/show_bug.cgi?id=42194>
+fast/events/inputText-never-fired-on-keydown-cancel.html
 compositing/iframes/layout-on-compositing-change.html
 editing/deleting/5390681-2.html
 editing/deleting/5729680.html
@@ -1009,6 +1010,7 @@ media/restore-from-page-cache.html
 
 # Pasteboard doesn't work in WebKit2
 # <https://bugs.webkit.org/show_bug.cgi?id=42317>
+editing/pasteboard/paste-text-events.html
 editing/execCommand/4128080-2.html
 editing/execCommand/5939887.html
 editing/execCommand/copy-without-selection.html
@@ -1901,9 +1903,13 @@ fast/events/popup-blocked-from-fake-button-click.html
 fast/events/popup-blocked-from-fake-focus.html
 fast/events/popup-blocked-from-fake-user-gesture.html
 fast/events/popup-blocked-to-post-blank.html
+fast/events/popup-blocked-from-iframe-script.html
 
 # WebKitTestRunner needs layoutTestController.addDisallowedURL
 plugins/get-url-that-the-resource-load-delegate-will-disallow.html
+
+# WebKitTestRunner needs layoutTestController.setSelectTrailingWhitespaceEnabled
+editing/selection/doubleclick-inline-first-last-contenteditable.html
 
 # WebKitTestRunner gets confused by location.href redirects.
 plugins/attach-during-destroy.html
@@ -1915,6 +1921,7 @@ fast/dom/Window/window-resize-and-move-arguments.html
 fast/dom/Window/window-resize.html
 
 # WebKit2 needs undo/redo support
+editing/undo/remove-css-property-and-remove-style.html
 editing/deleting/delete-and-undo.html
 editing/execCommand/convert-style-elements-to-spans.html
 editing/inserting/redo.html
@@ -2123,7 +2130,7 @@ fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Con
 fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T10.html
 fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T11.html
 
-# Unexplained failures that are causing additional failures
+# Unexplained failures
 animations/transition-and-animation-1.html
 compositing/images/direct-image-background-color.html
 compositing/masks/direct-image-mask.html
@@ -2131,29 +2138,64 @@ compositing/repaint/layer-repaint-rects.html
 dom/html/level2/html/HTMLBaseElement02.html
 dom/xhtml/level2/html/HTMLBaseElement02.xhtml
 dom/xhtml/level2/html/HTMLFormElement10.xhtml
+fast/css/counters/destroy-counter-crash.html
 fast/css/target-fragment-match.html
 fast/dom/beforeload/remove-frame-in-beforeload-listener.html
+fast/dom/Document/open-with-pending-load.html
 fast/dom/Window/window-appendages-cleared.html
 fast/dynamic/anchor-lock.html
+fast/encoding/percent-escaping.html
+fast/events/event-targets.html
+fast/events/onload-after-document-close-no-subresource.html
+fast/events/onload-after-document-close-with-subresource.html
+fast/events/simulated-key-state.html
+fast/forms/textarea-and-mutation-events.html
+fast/frames/crash-removed-iframe.html
 fast/frames/iframe-onload-remove-self-no-crash.html
+fast/frames/location-put-after-removal.html
+fast/history/multiple-classes-visited.html
+fast/history/nested-visited-test.html
 fast/history/saves-state-after-fragment-nav.html
 fast/html/empty-fragment-id-goto-top.html
 fast/images/move-image-to-new-document.html
 fast/loader/empty-embed-src-attribute.html
 fast/loader/empty-ref-versus-no-ref.html
 fast/loader/frame-creation-removal.html
+fast/loader/goto-anchor-infinite-layout.html
+fast/loader/hashchange-event-async.html
+fast/loader/hashchange-event.html
+fast/loader/onhashchange-attribute-listeners.html
+fast/overflow/overflow-y-scroll.html
+fast/overflow/overflow_hidden.html
 fast/overflow/scroll-vertical-not-horizontal.html
 fast/parser/entities-in-xhtml.xhtml
+fast/regex/test1.html
+fast/regex/test4.html
+fast/table/giantCellspacing.html
+fast/text/selection-hard-linebreak.html
+fast/workers/storage/change-version-handle-reuse-sync.html
+fast/workers/storage/multiple-databases-garbage-collection.html
+fast/workers/storage/open-database-creation-callback-sync.html
+fast/workers/storage/open-database-inputs-sync.html
+fast/workers/storage/sql-exception-codes-sync.html
+http/tests/appcache/different-https-origin-resource-main.html
+http/tests/appcache/fallback.html
+http/tests/cache/subresource-expiration.html
 http/tests/history/back-to-post.php
 http/tests/media/video-load-twice.html
+http/tests/misc/location-replace-crossdomain.html
+http/tests/misc/object-image-error-with-onload.html
 http/tests/misc/slow-loading-mask.html
 http/tests/multipart/invalid-image-data-standalone.html
 http/tests/multipart/multipart-wait-before-boundary.html
 http/tests/navigation/fallback-anchor-reload.html
+http/tests/security/xss-DENIED-mime-type-execute-as-html.html
 http/tests/ssl/referer-301.html
 http/tests/ssl/referer-303.html
 http/tests/ssl/verify-ssl-enabled.php
+http/tests/storage/callbacks-are-called-in-correct-context.html
 media/controls-after-reload.html
+media/controls-styling.html
 media/event-attributes.html
 media/media-captions.html
 media/media-document-audio-size.html
@@ -2162,7 +2204,14 @@ media/video-document-types.html
 media/video-played-reset.html
 media/video-preload.html
 media/video-src-change.html
+media/video-zoom-controls.html
 platform/mac/fast/loader/non-html-load-event.html
+storage/multiple-databases-garbage-collection.html
+storage/open-database-while-transaction-in-progress.html
+svg/custom/clip-path-referencing-use2.svg
+svg/hixie/cascade/002.xml
+transitions/font-family-during-transition.html
+websocket/tests/frame-lengths.html
 
 ########################################
 
@@ -2197,3 +2246,4 @@ platform/mac/fast/events/objc-event-api.html
 
 # WebKitTestRunner doesn't have eventSender.fireKeyboardEventsToElement
 platform/mac/fast/events/objc-keyboard-event-creation.html
+
