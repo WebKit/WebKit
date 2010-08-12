@@ -2,6 +2,14 @@
 
         Unreviewed, Chromium expectations tweak.
 
+        Remove a duplicate linux debug expectation.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-08-12  Nate Chapin  <japhet@chromium.org>
+
+        Unreviewed, Chromium expectations tweak.
+
         Comment out svg/hittest/svg-rect-hit.html, as the test
         was not landed with the relevant patch.
 

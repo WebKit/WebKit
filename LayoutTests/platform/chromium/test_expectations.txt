@@ -3205,7 +3205,8 @@ BUG51854 WIN SLOW : http/tests/storage/callbacks-are-called-in-correct-context.h
 
 // Regressions from r65229
 BUGWK43912 WIN LINUX : svg/W3C-SVG-1.1/masking-intro-01-f.svg = IMAGE
-BUGWK43912 WIN LINUX : svg/W3C-SVG-1.1/masking-mask-01-b.svg = IMAGE
+BUGWK43912 WIN : svg/W3C-SVG-1.1/masking-mask-01-b.svg = IMAGE
+BUGWK43912 LINUX RELEASE : svg/W3C-SVG-1.1/masking-mask-01-b.svg = IMAGE
 BUGWK43912 WIN LINUX : svg/batik/masking/maskRegions.svg = IMAGE
 BUGWK43912 WIN LINUX : svg/css/circle-in-mask-with-shadow.svg = IMAGE
 BUGWK43912 WIN LINUX : svg/css/mask-with-shadow.svg = IMAGE
