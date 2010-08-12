@@ -1,3 +1,30 @@
+2010-08-12  Jeremy Orlow  <jorlow@chromium.org>
+
+        Revert for now
+        https://bugs.webkit.org/show_bug.cgi?id=43794 
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.exp.in:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/GroupSettings.cpp: Removed.
+        * page/GroupSettings.h: Removed.
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::PageGroup):
+        (WebCore::PageGroup::localStorage):
+        * page/PageGroup.h:
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::setLocalStorageQuota):
+        (WebCore::Settings::setLocalStorageDatabasePath):
+        * page/Settings.h:
+        (WebCore::Settings::localStorageQuota):
+        (WebCore::Settings::localStorageDatabasePath):
+
 2010-08-12  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Follow up to Jeremys fix, just remove the context parameter, it's not needed anymore.

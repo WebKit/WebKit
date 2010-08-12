@@ -55,8 +55,6 @@ namespace WebCore {
     public:
         Settings(Page*);
 
-        Page* page() const { return m_page; }
-
         void setStandardFontFamily(const AtomicString&);
         const AtomicString& standardFontFamily() const { return m_standardFontFamily; }
 
@@ -131,11 +129,16 @@ namespace WebCore {
         void setLocalStorageEnabled(bool);
         bool localStorageEnabled() const { return m_localStorageEnabled; }
 
+#if ENABLE(DOM_STORAGE)        
+        void setLocalStorageQuota(unsigned);
+        unsigned localStorageQuota() const { return m_localStorageQuota; }
+
         // Allow clients concerned with memory consumption to set a quota on session storage
         // since the memory used won't be released until the Page is destroyed.
         // Default is noQuota.
         void setSessionStorageQuota(unsigned);
         unsigned sessionStorageQuota() const { return m_sessionStorageQuota; }
+#endif
 
         // When this option is set, WebCore will avoid storing any record of browsing activity
         // that may persist on disk or remain displayed when the option is reset.
@@ -236,6 +239,9 @@ namespace WebCore {
 
         void setLocalFileContentSniffingEnabled(bool);
         bool localFileContentSniffingEnabled() const { return m_localFileContentSniffingEnabled; }
+
+        void setLocalStorageDatabasePath(const String&);
+        const String& localStorageDatabasePath() const { return m_localStorageDatabasePath; }
         
         void setApplicationChromeMode(bool);
         bool inApplicationChromeMode() const { return m_inApplicationChromeMode; }
@@ -333,6 +339,7 @@ namespace WebCore {
         
         String m_defaultTextEncodingName;
         String m_ftpDirectoryTemplatePath;
+        String m_localStorageDatabasePath;
         KURL m_userStyleSheetLocation;
         AtomicString m_standardFontFamily;
         AtomicString m_fixedFontFamily;
@@ -347,7 +354,10 @@ namespace WebCore {
         int m_defaultFontSize;
         int m_defaultFixedFontSize;
         size_t m_maximumDecodedImageSize;
+#if ENABLE(DOM_STORAGE)        
+        unsigned m_localStorageQuota;
         unsigned m_sessionStorageQuota;
+#endif
         unsigned m_pluginAllowedRunTime;
         ZoomMode m_zoomMode;
         bool m_isSpatialNavigationEnabled : 1;

@@ -1,3 +1,11 @@
+2010-08-12  Jeremy Orlow  <jorlow@chromium.org>
+
+        Revert for now
+        https://bugs.webkit.org/show_bug.cgi?id=43794 
+
+        * Api/qwebsettings.cpp:
+        (QWebSettingsPrivate::apply):
+
 2010-08-11  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Adam Barth.

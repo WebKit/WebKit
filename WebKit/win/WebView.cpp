@@ -90,7 +90,6 @@
 #include <WebCore/FrameWin.h>
 #include <WebCore/GDIObjectCounter.h>
 #include <WebCore/GraphicsContext.h>
-#include <WebCore/GroupSettings.h>
 #include <WebCore/HTMLMediaElement.h>
 #include <WebCore/HTMLNames.h>
 #include <WebCore/HistoryItem.h>
@@ -2581,11 +2580,9 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
 #endif
     m_page = new Page(pageClients);
 
-    // FIXME: Whenever any future groupSettings need to be exposed to the embedder, they should NOT be exposed
-    //        via the WebView since they aren't actually per-view settings.
     BSTR localStoragePath;
     if (SUCCEEDED(m_preferences->localStorageDatabasePath(&localStoragePath))) {
-        m_page->group().groupSettings()->setLocalStorageDatabasePath(String(localStoragePath, SysStringLen(localStoragePath)));
+        m_page->settings()->setLocalStorageDatabasePath(String(localStoragePath, SysStringLen(localStoragePath)));
         SysFreeString(localStoragePath);
     }
 

@@ -126,7 +126,6 @@
 #import <WebCore/FrameTree.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/GCController.h>
-#import <WebCore/GroupSettings.h>
 #import <WebCore/HTMLMediaElement.h>
 #import <WebCore/HTMLNames.h>
 #import <WebCore/HistoryItem.h>
@@ -687,10 +686,7 @@ static bool shouldEnableLoadDeferring()
     _private->page = new Page(pageClients);
 
     _private->page->setCanStartMedia([self window]);
-
-    // FIXME: Whenever any future groupSettings need to be exposed to the embedder, they should NOT be exposed
-    //        via the WebView since they aren't actually per-view settings.
-    _private->page->group().groupSettings()->setLocalStorageDatabasePath([[self preferences] _localStorageDatabasePath]);
+    _private->page->settings()->setLocalStorageDatabasePath([[self preferences] _localStorageDatabasePath]);
 
     [WebFrame _createMainFrameWithPage:_private->page frameName:frameName frameView:frameView];
 
@@ -1368,11 +1364,7 @@ static bool fastDocumentTeardownEnabled()
         return;
     
     Settings* settings = _private->page->settings();
-
-    // FIXME: Whenever any future groupSettings need to be exposed to the embedder, they should NOT be exposed
-    //        via the WebView since they aren't actually per-view settings.
-    _private->page->group().groupSettings()->setLocalStorageDatabasePath([preferences _localStorageDatabasePath]);
-
+    
     settings->setCursiveFontFamily([preferences cursiveFontFamily]);
     settings->setDefaultFixedFontSize([preferences defaultFixedFontSize]);
     settings->setDefaultFontSize([preferences defaultFontSize]);
@@ -1382,6 +1374,7 @@ static bool fastDocumentTeardownEnabled()
     settings->setFixedFontFamily([preferences fixedFontFamily]);
     settings->setForceFTPDirectoryListings([preferences _forceFTPDirectoryListings]);
     settings->setFTPDirectoryTemplatePath([preferences _ftpDirectoryTemplatePath]);
+    settings->setLocalStorageDatabasePath([preferences _localStorageDatabasePath]);
     settings->setJavaEnabled([preferences isJavaEnabled]);
     settings->setJavaScriptEnabled([preferences isJavaScriptEnabled]);
     settings->setWebSecurityEnabled([preferences isWebSecurityEnabled]);

@@ -1,5 +1,13 @@
 2010-08-12  Jeremy Orlow  <jorlow@chromium.org>
 
+        Revert for now
+        https://bugs.webkit.org/show_bug.cgi?id=43794 
+
+        * WebView.cpp:
+        (WebView::initWithFrame):
+
+2010-08-12  Jeremy Orlow  <jorlow@chromium.org>
+
         Build fix.  Matches solutions in qt and mac ports for
         https://bugs.webkit.org/show_bug.cgi?id=43794 
 

@@ -1163,7 +1163,6 @@ SET(WebCore_SOURCES
     page/Geolocation.cpp
     page/GeolocationController.cpp
     page/GeolocationPositionCache.cpp
-    page/GroupSettings.cpp
     page/History.cpp
     page/Location.cpp
     page/MemoryInfo.cpp

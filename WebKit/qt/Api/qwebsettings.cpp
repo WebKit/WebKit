@@ -28,10 +28,8 @@
 #include "Cache.h"
 #include "CrossOriginPreflightResultCache.h"
 #include "FontCache.h"
-#include "GroupSettings.h"
 #include "Page.h"
 #include "PageCache.h"
-#include "PageGroup.h"
 #include "Settings.h"
 #include "KURL.h"
 #include "PlatformString.h"
@@ -215,10 +213,8 @@ void QWebSettingsPrivate::apply()
         QString encoding = !defaultTextEncoding.isEmpty() ? defaultTextEncoding: global->defaultTextEncoding;
         settings->setDefaultTextEncodingName(encoding);
 
-        // FIXME: Whenever any future groupSettings need to be exposed to the embedder, they should NOT be exposed
-        //        via this class since they aren't actually per-view settings.
         QString storagePath = !localStoragePath.isEmpty() ? localStoragePath : global->localStoragePath;
-        settings->page()->group().groupSettings()->setLocalStorageDatabasePath(storagePath);
+        settings->setLocalStorageDatabasePath(storagePath);
 
         value = attributes.value(QWebSettings::ZoomTextOnly,
                                  global->attributes.value(QWebSettings::ZoomTextOnly));

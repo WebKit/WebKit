@@ -30,7 +30,6 @@
 #include "ChromeClient.h"
 #include "Document.h"
 #include "Frame.h"
-#include "GroupSettings.h"
 #include "IDBFactoryBackendInterface.h"
 #include "Page.h"
 #include "Settings.h"
@@ -56,7 +55,6 @@ PageGroup::PageGroup(const String& name)
     : m_name(name)
     , m_visitedLinksPopulated(false)
     , m_identifier(getUniqueIdentifier())
-    , m_groupSettings(GroupSettings::create())
 {
 }
 
@@ -196,9 +194,16 @@ void PageGroup::setShouldTrackVisitedLinks(bool shouldTrack)
 StorageNamespace* PageGroup::localStorage()
 {
     if (!m_localStorage) {
-        m_localStorage = StorageNamespace::localStorageNamespace(m_groupSettings->localStorageDatabasePath(),
-                                                                 m_groupSettings->localStorageQuotaBytes());
+        // Need a page in this page group to query the settings for the local storage database path.
+        // Having these parameters attached to the page settings is unfortunate since these settings are
+        // not per-page (and, in fact, we simply grab the settings from some page at random), but
+        // at this point we're stuck with it.
+        Page* page = *m_pages.begin();
+        const String& path = page->settings()->localStorageDatabasePath();
+        unsigned quota = page->settings()->localStorageQuota();
+        m_localStorage = StorageNamespace::localStorageNamespace(path, quota);
     }
+
     return m_localStorage.get();
 }
 #endif

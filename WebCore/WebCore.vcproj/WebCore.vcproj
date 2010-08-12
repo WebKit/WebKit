@@ -22317,14 +22317,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\page\GroupSettings.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\page\GroupSettings.h"
-				>
-			</File>
-			<File
 				RelativePath="..\page\HaltablePlugin.h"
 				>
 			</File>
