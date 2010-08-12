@@ -268,4 +268,3 @@ template <> struct VectorTraits<JSC::UString> : SimpleClassVectorTraits
 
 #endif
 
-#include "StringConcatenate.h"

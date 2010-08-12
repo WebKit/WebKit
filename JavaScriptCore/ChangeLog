@@ -1,3 +1,9 @@
+2010-08-12  David Levin  <levin@chromium.org>
+
+        Reviewed by NOBODY (build fix).
+
+        * runtime/UString.h: Removed unneccessary #include.
+
 2010-08-12  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig
