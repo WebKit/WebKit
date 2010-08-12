@@ -1,3 +1,12 @@
+2010-08-12  Nate Chapin  <japhet@chromium.org>
+
+        Unreviewed, Chromium expectations tweak.
+
+        Comment out svg/hittest/svg-rect-hit.html, as the test
+        was not landed with the relevant patch.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-08-12  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed, re-apply r65241 and 65243.

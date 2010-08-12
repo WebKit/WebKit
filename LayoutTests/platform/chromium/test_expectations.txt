@@ -3179,7 +3179,8 @@ BUG51161 LINUX DEBUG : svg/W3C-SVG-1.1/masking-mask-01-b.svg = CRASH
 BUG51161 LINUX DEBUG : svg/clip-path/clip-path-text.svg = CRASH
 
 // Fixed only on Mac
-BUG41968 LINUX WIN : svg/hittest/svg-rect-hit.html = TEXT
+// This test has not landed yet, though the fix has.
+//BUG41968 LINUX WIN : svg/hittest/svg-rect-hit.html = TEXT
 
 BUGWK43720 WIN : http/tests/inspector-enabled/console-log-before-frame-navigation.html = TEXT
 
