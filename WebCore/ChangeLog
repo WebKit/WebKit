@@ -1,3 +1,13 @@
+2010-08-12  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        regression in generateMipmap
+        https://bugs.webkit.org/show_bug.cgi?id=43873
+
+        * html/canvas/WebGLTexture.cpp:
+        (WebCore::WebGLTexture::generateMipmapLevelInfo): should set m_needToUseBlackTexture to false if generateMipmapLevelInfo runs through successfully.
+
 2010-08-12  Ariya Hidayat  <ariya@sencha.com>
 
         Reviewed by David Hyatt.

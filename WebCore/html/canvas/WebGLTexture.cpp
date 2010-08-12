@@ -151,21 +151,22 @@ void WebGLTexture::generateMipmapLevelInfo()
         return;
     if (!canGenerateMipmaps())
         return;
-    if (m_isComplete)
-        return;
-    for (size_t ii = 0; ii < m_info.size(); ++ii) {
-        const LevelInfo& info0 = m_info[ii][0];
-        int width = info0.width;
-        int height = info0.height;
-        int levelCount = computeLevelCount(width, height);
-        for (int level = 1; level < levelCount; ++level) {
-            width = std::max(1, width >> 1);
-            height = std::max(1, height >> 1);
-            LevelInfo& info = m_info[ii][level];
-            info.setInfo(info0.internalFormat, width, height, info0.type);
+    if (!m_isComplete) {
+        for (size_t ii = 0; ii < m_info.size(); ++ii) {
+            const LevelInfo& info0 = m_info[ii][0];
+            int width = info0.width;
+            int height = info0.height;
+            int levelCount = computeLevelCount(width, height);
+            for (int level = 1; level < levelCount; ++level) {
+                width = std::max(1, width >> 1);
+                height = std::max(1, height >> 1);
+                LevelInfo& info = m_info[ii][level];
+                info.setInfo(info0.internalFormat, width, height, info0.type);
+            }
         }
+        m_isComplete = true;
     }
-    m_isComplete = true;
+    m_needToUseBlackTexture = false;
 }
 
 unsigned long WebGLTexture::getInternalFormat() const
