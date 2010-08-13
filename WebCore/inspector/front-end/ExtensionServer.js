@@ -193,7 +193,17 @@ WebInspector.ExtensionServer.prototype = {
 
     _onEvaluateOnInspectedPage: function(message, port)
     {
-        InjectedScriptAccess.getDefault().evaluateAndStringify(message.expression, this._dispatchCallback.bind(this, message.requestId, port));
+        var escapedMessage = escape(message.expression);
+        function callback(resultPayload)
+        {
+            var resultObject = WebInspector.RemoteObject.fromPayload(resultPayload);
+            var result = {};
+            if (resultObject.isError())
+                result.isException = true;
+            result.value = resultObject.description;
+            this._dispatchCallback(message.requestId, port, result);
+        }
+        InjectedScriptAccess.getDefault().evaluate("(function() { var a = window.eval(unescape(\"" + escapedMessage + "\")); return JSON.stringify(a); })();", "", callback.bind(this));
     },
 
     _onRevealAndSelect: function(message)

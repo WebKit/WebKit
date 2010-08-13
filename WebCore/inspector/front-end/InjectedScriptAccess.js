@@ -75,12 +75,10 @@ InjectedScriptAccess._installHandler = function(methodName, async)
 // - Make sure last parameter of all the InjectedSriptAccess.* calls is a callback function.
 // We keep these sorted.
 InjectedScriptAccess._installHandler("evaluate");
-InjectedScriptAccess._installHandler("evaluateAndStringify");
 InjectedScriptAccess._installHandler("evaluateInCallFrame");
 InjectedScriptAccess._installHandler("evaluateOnSelf");
 InjectedScriptAccess._installHandler("getCompletions");
 InjectedScriptAccess._installHandler("getProperties");
 InjectedScriptAccess._installHandler("getPrototypes");
-InjectedScriptAccess._installHandler("openInInspectedWindow");
 InjectedScriptAccess._installHandler("pushNodeToFrontend");
 InjectedScriptAccess._installHandler("setPropertyValue");

@@ -80,11 +80,9 @@ InjectedScript.releaseWrapperObjectGroup = function(objectGroupName) {
     delete InjectedScript.objectGroups[objectGroupName];
 };
 
-InjectedScript.dispatch = function(methodName, args, callId)
+InjectedScript.dispatch = function(methodName, args)
 {
     var argsArray = eval("(" + args + ")");
-    if (callId)
-        argsArray.splice(0, 0, callId);  // Methods that run asynchronously have a call back id parameter.
     var result = InjectedScript[methodName].apply(InjectedScript, argsArray);
     if (typeof result === "undefined") {
         inspectedWindow.console.error("Web Inspector error: InjectedScript.%s returns undefined", methodName);
@@ -236,19 +234,6 @@ InjectedScript.getCompletions = function(expression, includeInspectorCommandLine
     return props;
 }
 
-InjectedScript.evaluateAndStringify = function(expression)
-{
-    var result = {};
-    try {
-        var value = InjectedScript._evaluateOn(inspectedWindow.eval, inspectedWindow, expression, false);
-        result.value = JSON.stringify(value);
-    } catch (e) {
-        result.value = e.toString();
-        result.isException = true;
-    }
-    return result;
-}
-
 InjectedScript.evaluate = function(expression, objectGroup)
 {
     return InjectedScript._evaluateAndWrap(inspectedWindow.eval, inspectedWindow, expression, objectGroup);
@@ -290,14 +275,6 @@ InjectedScript._evaluateOn = function(evalFunction, object, expression, dontUseC
 InjectedScript.getNodeId = function(node)
 {
     return InjectedScriptHost.pushNodePathToFrontend(node, false, false);
-}
-
-InjectedScript.openInInspectedWindow = function(url)
-{
-    // Don't call window.open on wrapper - popup blocker mutes it.
-    // URIs should have no double quotes.
-    inspectedWindow.eval("window.open(\"" + url + "\")");
-    return true;
 }
 
 InjectedScript.callFrames = function()

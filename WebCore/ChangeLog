@@ -1,3 +1,25 @@
+2010-08-13  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: remove openInInspectorWindow and evaluateAndStringify from InjectedScript.
+        https://bugs.webkit.org/show_bug.cgi?id=43854
+
+        * inspector/Inspector.idl:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::openInInspectedWindow):
+        * inspector/InspectorController.h:
+        * inspector/front-end/ExtensionServer.js:
+        (WebInspector.ExtensionServer.prototype._onEvaluateOnInspectedPage.callback):
+        (WebInspector.ExtensionServer.prototype._onEvaluateOnInspectedPage):
+        * inspector/front-end/InjectedScript.js:
+        (injectedScriptConstructor):
+        * inspector/front-end/InjectedScriptAccess.js:
+        * inspector/front-end/InspectorBackendStub.js:
+        (WebInspector.InspectorBackendStub):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourceSidebarTreeElement.prototype.ondblclick):
+
 2010-08-13  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

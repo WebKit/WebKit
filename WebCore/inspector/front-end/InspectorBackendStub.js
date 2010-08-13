@@ -84,6 +84,7 @@ WebInspector.InspectorBackendStub = function()
     this._registerDelegate("storeLastActivePanel");
     this._registerDelegate("takeHeapSnapshot");
     this._registerDelegate("getProfilerLogLines");
+    this._registerDelegate("openInInspectedWindow");
 
     this._registerDelegate("getAllStyles");
     this._registerDelegate("getStyles");

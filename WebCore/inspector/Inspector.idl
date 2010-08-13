@@ -180,6 +180,7 @@ module core {
 
         [handler=Controller] void highlightDOMNode(in long nodeId);
         [handler=Controller] void hideDOMNodeHighlight();
+        [handler=Controller] void openInInspectedWindow(in String url);
 
         [handler=DOM] void getStyles(in long callId, in long nodeId, in boolean authOnly, out Value styles);
         [handler=DOM] void getAllStyles(in long callId, out Array styles);

@@ -46,6 +46,7 @@
 #include "FloatQuad.h"
 #include "FloatRect.h"
 #include "Frame.h"
+#include "FrameLoadRequest.h"
 #include "FrameLoader.h"
 #include "FrameTree.h"
 #include "FrameView.h"
@@ -86,6 +87,7 @@
 #include "SharedBuffer.h"
 #include "TextEncoding.h"
 #include "TextIterator.h"
+#include "WindowFeatures.h"
 #include <wtf/text/CString.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/ListHashSet.h>
@@ -1866,6 +1868,22 @@ void InspectorController::drawNodeHighlight(GraphicsContext& context) const
 
         drawHighlightForLineBoxesOrSVGRenderer(context, lineBoxQuads);
     }
+}
+
+void InspectorController::openInInspectedWindow(const String& url)
+{
+    ResourceRequest request;
+    FrameLoadRequest frameRequest(request, "_blank");
+    bool created;
+    Frame* mainFrame = m_inspectedPage->mainFrame();
+    WindowFeatures windowFeatures;
+    Frame* newFrame = WebCore::createWindow(mainFrame, mainFrame, frameRequest, windowFeatures, created);
+    if (!newFrame)
+        return;
+
+    newFrame->loader()->setOpener(mainFrame);
+    newFrame->page()->setOpenedByDOM();
+    newFrame->loader()->changeLocation(newFrame->loader()->completeURL(url), "", false, false, true);
 }
 
 void InspectorController::count(const String& title, unsigned lineNumber, const String& sourceID)

@@ -1186,7 +1186,7 @@ WebInspector.ResourceSidebarTreeElement.prototype = {
     
     ondblclick: function(event)
     {
-        InjectedScriptAccess.getDefault().openInInspectedWindow(this.resource.url, function() {});
+        InspectorBackend.openInInspectedWindow(this.resource.url);
     },
 
     ondragstart: function(event) {

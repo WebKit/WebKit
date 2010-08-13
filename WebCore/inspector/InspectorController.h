@@ -212,6 +212,7 @@ public:
     bool hasFrontend() const { return m_remoteFrontend; }
 
     void drawNodeHighlight(GraphicsContext&) const;
+    void openInInspectedWindow(const String& url);
 
     void count(const String& title, unsigned lineNumber, const String& sourceID);
 
@@ -252,6 +253,7 @@ public:
     void evaluateForTestInFrontend(long testCallId, const String& script);
 
     InjectedScript injectedScriptForNodeId(long id);
+
     void addScriptToEvaluateOnLoad(const String& source);
     void removeAllScriptsToEvaluateOnLoad();
     void setInspectorExtensionAPI(const String& source);
