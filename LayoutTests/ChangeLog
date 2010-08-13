@@ -1,3 +1,11 @@
+2010-08-13  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Beth Dakin and Ban Bernstein.
+
+        Add two more unsupported tests to the WebKit2 skipped list.
+
+        * platform/mac-wk2/Skipped:
+
 2010-08-13  Chris Fleizach  <cfleizach@apple.com>
 
         AX: isNativeCheckbox does not work as advertised
