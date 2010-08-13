@@ -171,7 +171,7 @@ void RenderSVGResource::markForLayoutAndParentResourceInvalidation(RenderObject*
     RenderObject* current = object->parent();
     while (current) {
         if (current->isSVGResourceContainer()) {
-            current->toRenderSVGResourceContainer()->invalidateClients();
+            current->toRenderSVGResourceContainer()->removeAllClientsFromCache();
             break;
         }
 

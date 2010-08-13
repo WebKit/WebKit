@@ -229,9 +229,20 @@ static inline RenderSVGRoot* svgRootTreeObject(RenderObject* start)
     return toRenderSVGRoot(start);
 }
 
+static inline void invalidateResourcesOfChildren(RenderObject* start)
+{
+    ASSERT(!start->needsLayout());
+    if (SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(start))
+        resources->removeClientFromCache(start, false);
+
+    for (RenderObject* child = start->firstChild(); child; child = child->nextSibling())
+        invalidateResourcesOfChildren(child);
+}
+
 void SVGRenderSupport::layoutChildren(RenderObject* start, bool selfNeedsLayout)
 {
     bool layoutSizeChanged = svgRootTreeObject(start)->isLayoutSizeChanged();
+    HashSet<RenderObject*> notlayoutedObjects;
 
     for (RenderObject* child = start->firstChild(); child; child = child->nextSibling()) {
         bool needsLayout = selfNeedsLayout;
@@ -252,11 +263,25 @@ void SVGRenderSupport::layoutChildren(RenderObject* start, bool selfNeedsLayout)
         if (needsLayout) {
             child->setNeedsLayout(true, false);
             child->layout();
-        } else
-            child->layoutIfNeeded();
+        } else {
+            if (child->needsLayout())
+                child->layout();
+            else if (layoutSizeChanged)
+                notlayoutedObjects.add(child);
+        }
 
         ASSERT(!child->needsLayout());
     }
+
+    if (!layoutSizeChanged) {
+        ASSERT(notlayoutedObjects.isEmpty());
+        return;
+    }
+
+    // If the layout size changed, invalidate all resources of all children that didn't go through the layout() code path.
+    HashSet<RenderObject*>::iterator end = notlayoutedObjects.end();
+    for (HashSet<RenderObject*>::iterator it = notlayoutedObjects.begin(); it != end; ++it)
+        invalidateResourcesOfChildren(*it);
 }
 
 bool SVGRenderSupport::isOverflowHidden(const RenderObject* object)

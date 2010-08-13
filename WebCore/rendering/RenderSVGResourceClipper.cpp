@@ -64,7 +64,7 @@ RenderSVGResourceClipper::~RenderSVGResourceClipper()
     m_clipper.clear();
 }
 
-void RenderSVGResourceClipper::invalidateClients()
+void RenderSVGResourceClipper::removeAllClientsFromCache(bool markForInvalidation)
 {
     if (m_invalidationBlocked)
         return;
@@ -75,20 +75,19 @@ void RenderSVGResourceClipper::invalidateClients()
         m_clipper.clear();
     }
 
-    markAllClientsForInvalidation(LayoutAndBoundariesInvalidation);
+    markAllClientsForInvalidation(markForInvalidation ? LayoutAndBoundariesInvalidation : ParentOnlyInvalidation);
 }
 
-void RenderSVGResourceClipper::invalidateClient(RenderObject* client)
+void RenderSVGResourceClipper::removeClientFromCache(RenderObject* client, bool markForInvalidation)
 {
     ASSERT(client);
     if (m_invalidationBlocked)
         return;
 
-    ASSERT(client->selfNeedsLayout());
     if (m_clipper.contains(client))
         delete m_clipper.take(client);
 
-    markClientForInvalidation(client, BoundariesInvalidation);
+    markClientForInvalidation(client, markForInvalidation ? BoundariesInvalidation : ParentOnlyInvalidation);
 }
 
 bool RenderSVGResourceClipper::applyResource(RenderObject* object, RenderStyle*, GraphicsContext*& context, unsigned short resourceMode)

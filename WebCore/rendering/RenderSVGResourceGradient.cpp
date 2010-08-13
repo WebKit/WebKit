@@ -51,25 +51,24 @@ RenderSVGResourceGradient::~RenderSVGResourceGradient()
     m_gradient.clear();
 }
 
-void RenderSVGResourceGradient::invalidateClients()
+void RenderSVGResourceGradient::removeAllClientsFromCache(bool markForInvalidation)
 {
     if (!m_gradient.isEmpty()) {
         deleteAllValues(m_gradient);
         m_gradient.clear();
     }
 
-    markAllClientsForInvalidation(RepaintInvalidation);
+    markAllClientsForInvalidation(markForInvalidation ? RepaintInvalidation : ParentOnlyInvalidation);
 }
 
-void RenderSVGResourceGradient::invalidateClient(RenderObject* client)
+void RenderSVGResourceGradient::removeClientFromCache(RenderObject* client, bool markForInvalidation)
 {
     ASSERT(client);
-    ASSERT(client->selfNeedsLayout());
 
     if (m_gradient.contains(client))
         delete m_gradient.take(client);
 
-    markClientForInvalidation(client, RepaintInvalidation);
+    markClientForInvalidation(client, markForInvalidation ? RepaintInvalidation : ParentOnlyInvalidation);
 }
 
 #if PLATFORM(CG)
@@ -131,7 +130,7 @@ bool RenderSVGResourceGradient::applyResource(RenderObject* object, RenderStyle*
 
     // Be sure to synchronize all SVG properties on the gradientElement _before_ processing any further.
     // Otherwhise the call to collectGradientAttributes() in createTileImage(), may cause the SVG DOM property
-    // synchronization to kick in, which causes invalidateClients() to be called, which in turn deletes our
+    // synchronization to kick in, which causes removeAllClientsFromCache() to be called, which in turn deletes our
     // GradientData object! Leaving out the line below will cause svg/dynamic-updates/SVG*GradientElement-svgdom* to crash.
     SVGGradientElement* gradientElement = static_cast<SVGGradientElement*>(node());
     if (!gradientElement)

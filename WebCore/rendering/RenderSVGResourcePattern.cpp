@@ -47,25 +47,24 @@ RenderSVGResourcePattern::~RenderSVGResourcePattern()
     m_pattern.clear();
 }
 
-void RenderSVGResourcePattern::invalidateClients()
+void RenderSVGResourcePattern::removeAllClientsFromCache(bool markForInvalidation)
 {
     if (!m_pattern.isEmpty()) {
         deleteAllValues(m_pattern);
         m_pattern.clear();
     }
 
-    markAllClientsForInvalidation(RepaintInvalidation);
+    markAllClientsForInvalidation(markForInvalidation ? RepaintInvalidation : ParentOnlyInvalidation);
 }
 
-void RenderSVGResourcePattern::invalidateClient(RenderObject* client)
+void RenderSVGResourcePattern::removeClientFromCache(RenderObject* client, bool markForInvalidation)
 {
     ASSERT(client);
-    ASSERT(client->selfNeedsLayout());
 
     if (m_pattern.contains(client))
         delete m_pattern.take(client);
 
-    markClientForInvalidation(client, RepaintInvalidation);
+    markClientForInvalidation(client, markForInvalidation ? RepaintInvalidation : ParentOnlyInvalidation);
 }
 
 bool RenderSVGResourcePattern::applyResource(RenderObject* object, RenderStyle* style, GraphicsContext*& context, unsigned short resourceMode)
@@ -77,7 +76,7 @@ bool RenderSVGResourcePattern::applyResource(RenderObject* object, RenderStyle* 
 
     // Be sure to synchronize all SVG properties on the patternElement _before_ processing any further.
     // Otherwhise the call to collectPatternAttributes() in createTileImage(), may cause the SVG DOM property
-    // synchronization to kick in, which causes invalidateClients() to be called, which in turn deletes our
+    // synchronization to kick in, which causes removeAllClientsFromCache() to be called, which in turn deletes our
     // PatternData object! Leaving out the line below will cause svg/dynamic-updates/SVGPatternElement-svgdom* to crash.
     SVGPatternElement* patternElement = static_cast<SVGPatternElement*>(node());
     if (!patternElement)

@@ -52,7 +52,7 @@ void RenderSVGResourceContainer::layout()
 {
     // Invalidate all resources if our layout changed.
     if (m_everHadLayout && selfNeedsLayout())
-        invalidateClients();
+        removeAllClientsFromCache();
 
     RenderSVGHiddenContainer::layout();
 }
@@ -76,7 +76,7 @@ void RenderSVGResourceContainer::styleDidChange(StyleDifference diff, const Rend
 void RenderSVGResourceContainer::idChanged()
 {
     // Invalidate all our current clients.
-    invalidateClients();
+    removeAllClientsFromCache();
 
     // Remove old id, that is guaranteed to be present in cache.
     SVGDocumentExtensions* extensions = svgExtensionsFromNode(node());
@@ -92,17 +92,32 @@ void RenderSVGResourceContainer::markAllClientsForInvalidation(InvalidationMode 
         return;
 
     bool needsLayout = mode == LayoutAndBoundariesInvalidation;
+    bool markForInvalidation = mode != ParentOnlyInvalidation;
 
     HashSet<RenderObject*>::iterator end = m_clients.end();
     for (HashSet<RenderObject*>::iterator it = m_clients.begin(); it != end; ++it) {
         RenderObject* client = *it;
         if (client->isSVGResourceContainer()) {
-            client->toRenderSVGResourceContainer()->invalidateClients();
+            client->toRenderSVGResourceContainer()->removeAllClientsFromCache(markForInvalidation);
             continue;
         }
 
-        markClientForInvalidation(client, mode);
-        RenderSVGResource::markForLayoutAndParentResourceInvalidation(client, needsLayout);
+        if (markForInvalidation)
+            markClientForInvalidation(client, mode);
+
+        if (needsLayout)
+            client->setNeedsLayout(true);
+
+        // Invalidate resources in ancestor chain, if needed.
+        RenderObject* current = client->parent();
+        while (current) {
+            if (current->isSVGResourceContainer()) {
+                current->toRenderSVGResourceContainer()->removeAllClientsFromCache(markForInvalidation);
+                break;
+            }
+
+            current = current->parent();
+        }
     }
 }
 
@@ -119,6 +134,8 @@ void RenderSVGResourceContainer::markClientForInvalidation(RenderObject* client,
     case RepaintInvalidation:
         if (client->view())
             client->repaint();
+        break;
+    case ParentOnlyInvalidation:
         break;
     }
 }

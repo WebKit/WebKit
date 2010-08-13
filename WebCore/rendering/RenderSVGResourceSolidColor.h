@@ -33,8 +33,8 @@ public:
     RenderSVGResourceSolidColor();
     virtual ~RenderSVGResourceSolidColor();
 
-    virtual void invalidateClients() { }
-    virtual void invalidateClient(RenderObject*) { }
+    virtual void removeAllClientsFromCache(bool = true) { }
+    virtual void removeClientFromCache(RenderObject*, bool = true) { }
 
     virtual bool applyResource(RenderObject*, RenderStyle*, GraphicsContext*&, unsigned short resourceMode);
     virtual void postApplyResource(RenderObject*, GraphicsContext*&, unsigned short resourceMode);

@@ -49,7 +49,8 @@ protected:
     enum InvalidationMode {
         LayoutAndBoundariesInvalidation,
         BoundariesInvalidation,
-        RepaintInvalidation
+        RepaintInvalidation,
+        ParentOnlyInvalidation
     };
 
     // Used from the invalidateClient/invalidateClients methods from classes, inheriting from us.

@@ -177,7 +177,7 @@ void RenderSVGImage::imageChanged(WrappedImagePtr image, const IntRect* rect)
     // The image resource defaults to nullImage until the resource arrives.
     // This empty image may be cached by SVG resources which must be invalidated.
     if (SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(this))
-        resources->invalidateClient(this);
+        resources->removeClientFromCache(this);
 
     // Eventually notify parent resources, that we've changed.
     RenderSVGResource::markForLayoutAndParentResourceInvalidation(this, false);

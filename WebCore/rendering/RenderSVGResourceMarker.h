@@ -41,8 +41,8 @@ public:
 
     virtual const char* renderName() const { return "RenderSVGResourceMarker"; }
 
-    virtual void invalidateClients();
-    virtual void invalidateClient(RenderObject*);
+    virtual void removeAllClientsFromCache(bool markForInvalidation = true);
+    virtual void removeClientFromCache(RenderObject*, bool markForInvalidation = true);
 
     void draw(PaintInfo&, const AffineTransform&);
 

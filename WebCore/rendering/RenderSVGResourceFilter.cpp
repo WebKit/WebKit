@@ -67,25 +67,24 @@ RenderSVGResourceFilter::~RenderSVGResourceFilter()
     m_filter.clear();
 }
 
-void RenderSVGResourceFilter::invalidateClients()
+void RenderSVGResourceFilter::removeAllClientsFromCache(bool markForInvalidation)
 {
     if (!m_filter.isEmpty()) {
         deleteAllValues(m_filter);
         m_filter.clear();
     }
 
-    markAllClientsForInvalidation(LayoutAndBoundariesInvalidation);
+    markAllClientsForInvalidation(markForInvalidation ? LayoutAndBoundariesInvalidation : ParentOnlyInvalidation);
 }
 
-void RenderSVGResourceFilter::invalidateClient(RenderObject* client)
+void RenderSVGResourceFilter::removeClientFromCache(RenderObject* client, bool markForInvalidation)
 {
     ASSERT(client);
-    ASSERT(client->selfNeedsLayout());
 
     if (m_filter.contains(client))
         delete m_filter.take(client);
 
-    markClientForInvalidation(client, BoundariesInvalidation);
+    markClientForInvalidation(client, markForInvalidation ? BoundariesInvalidation : ParentOnlyInvalidation);
 }
 
 PassRefPtr<SVGFilterBuilder> RenderSVGResourceFilter::buildPrimitives()
@@ -243,7 +242,7 @@ void RenderSVGResourceFilter::postApplyResource(RenderObject* object, GraphicsCo
     FilterData* filterData = m_filter.get(object);
     if (!filterData->builded) {
         if (!filterData->savedContext) {
-            invalidateClient(object);
+            removeClientFromCache(object);
             return;
         }
 

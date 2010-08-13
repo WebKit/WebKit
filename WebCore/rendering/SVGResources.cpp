@@ -279,7 +279,7 @@ bool SVGResources::buildCachedResources(const RenderObject* object, const SVGRen
     return foundResources;
 }
 
-void SVGResources::invalidateClient(RenderObject* object) const
+void SVGResources::removeClientFromCache(RenderObject* object, bool markForInvalidation) const
 {
     if (!m_clipperFilterMaskerData && !m_markerData && !m_fillStrokeData && !m_linkedResource)
         return;
@@ -288,35 +288,35 @@ void SVGResources::invalidateClient(RenderObject* object) const
         ASSERT(!m_clipperFilterMaskerData);
         ASSERT(!m_markerData);
         ASSERT(!m_fillStrokeData);
-        m_linkedResource->invalidateClient(object);
+        m_linkedResource->removeClientFromCache(object, markForInvalidation);
         return;
     }
 
     if (m_clipperFilterMaskerData) {
         if (m_clipperFilterMaskerData->clipper)
-            m_clipperFilterMaskerData->clipper->invalidateClient(object);
+            m_clipperFilterMaskerData->clipper->removeClientFromCache(object, markForInvalidation);
 #if ENABLE(FILTERS)
         if (m_clipperFilterMaskerData->filter)
-            m_clipperFilterMaskerData->filter->invalidateClient(object);
+            m_clipperFilterMaskerData->filter->removeClientFromCache(object, markForInvalidation);
 #endif
         if (m_clipperFilterMaskerData->masker)
-            m_clipperFilterMaskerData->masker->invalidateClient(object);
+            m_clipperFilterMaskerData->masker->removeClientFromCache(object, markForInvalidation);
     }
 
     if (m_markerData) {
         if (m_markerData->markerStart)
-            m_markerData->markerStart->invalidateClient(object);
+            m_markerData->markerStart->removeClientFromCache(object, markForInvalidation);
         if (m_markerData->markerMid)
-            m_markerData->markerMid->invalidateClient(object);
+            m_markerData->markerMid->removeClientFromCache(object, markForInvalidation);
         if (m_markerData->markerEnd)
-            m_markerData->markerEnd->invalidateClient(object);
+            m_markerData->markerEnd->removeClientFromCache(object, markForInvalidation);
     }
 
     if (m_fillStrokeData) {
         if (m_fillStrokeData->fill)
-            m_fillStrokeData->fill->invalidateClient(object);
+            m_fillStrokeData->fill->removeClientFromCache(object, markForInvalidation);
         if (m_fillStrokeData->stroke)
-            m_fillStrokeData->stroke->invalidateClient(object);
+            m_fillStrokeData->stroke->removeClientFromCache(object, markForInvalidation);
     }
 }
 
@@ -330,7 +330,7 @@ void SVGResources::resourceDestroyed(RenderSVGResourceContainer* resource)
         ASSERT(!m_clipperFilterMaskerData);
         ASSERT(!m_markerData);
         ASSERT(!m_fillStrokeData);
-        m_linkedResource->invalidateClients();
+        m_linkedResource->removeAllClientsFromCache();
         m_linkedResource = 0;
         return;
     }
@@ -340,7 +340,7 @@ void SVGResources::resourceDestroyed(RenderSVGResourceContainer* resource)
         if (!m_clipperFilterMaskerData)
             break;
         if (m_clipperFilterMaskerData->masker == resource) {
-            m_clipperFilterMaskerData->masker->invalidateClients();
+            m_clipperFilterMaskerData->masker->removeAllClientsFromCache();
             m_clipperFilterMaskerData->masker = 0;
         }
         break;
@@ -348,15 +348,15 @@ void SVGResources::resourceDestroyed(RenderSVGResourceContainer* resource)
         if (!m_markerData)
             break;
         if (m_markerData->markerStart == resource) {
-            m_markerData->markerStart->invalidateClients();
+            m_markerData->markerStart->removeAllClientsFromCache();
             m_markerData->markerStart = 0;
         }
         if (m_markerData->markerMid == resource) {
-            m_markerData->markerMid->invalidateClients();
+            m_markerData->markerMid->removeAllClientsFromCache();
             m_markerData->markerMid = 0;
         }
         if (m_markerData->markerEnd == resource) {
-            m_markerData->markerEnd->invalidateClients();
+            m_markerData->markerEnd->removeAllClientsFromCache();
             m_markerData->markerEnd = 0;
         }
         break;
@@ -366,11 +366,11 @@ void SVGResources::resourceDestroyed(RenderSVGResourceContainer* resource)
         if (!m_fillStrokeData)
             break;
         if (m_fillStrokeData->fill == resource) {
-            m_fillStrokeData->fill->invalidateClients();
+            m_fillStrokeData->fill->removeAllClientsFromCache();
             m_fillStrokeData->fill = 0;
         }
         if (m_fillStrokeData->stroke == resource) {
-            m_fillStrokeData->stroke->invalidateClients();
+            m_fillStrokeData->stroke->removeAllClientsFromCache();
             m_fillStrokeData->stroke = 0;
         }
         break;
@@ -379,7 +379,7 @@ void SVGResources::resourceDestroyed(RenderSVGResourceContainer* resource)
         if (!m_clipperFilterMaskerData)
             break;
         if (m_clipperFilterMaskerData->filter == resource) {
-            m_clipperFilterMaskerData->filter->invalidateClients();
+            m_clipperFilterMaskerData->filter->removeAllClientsFromCache();
             m_clipperFilterMaskerData->filter = 0;
         }
 #else
@@ -390,7 +390,7 @@ void SVGResources::resourceDestroyed(RenderSVGResourceContainer* resource)
         if (!m_clipperFilterMaskerData)
             break; 
         if (m_clipperFilterMaskerData->clipper == resource) {
-            m_clipperFilterMaskerData->clipper->invalidateClients();
+            m_clipperFilterMaskerData->clipper->removeAllClientsFromCache();
             m_clipperFilterMaskerData->clipper = 0;
         }
         break;

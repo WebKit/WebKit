@@ -121,7 +121,7 @@ void SVGResourcesCache::clientLayoutChanged(RenderObject* object)
     if (!resources)
         return;
 
-    resources->invalidateClient(object);
+    resources->removeClientFromCache(object);
 }
 
 void SVGResourcesCache::clientStyleChanged(RenderObject* renderer, StyleDifference diff, const RenderStyle* newStyle)

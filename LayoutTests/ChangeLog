@@ -1,3 +1,15 @@
+2010-08-12  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Window size changes + resources on absolute sized content leads to pixelation
+        https://bugs.webkit.org/show_bug.cgi?id=43921
+
+        * platform/mac/svg/custom/absolute-sized-content-with-resources-expected.checksum: Added.
+        * platform/mac/svg/custom/absolute-sized-content-with-resources-expected.png: Added.
+        * platform/mac/svg/custom/absolute-sized-content-with-resources-expected.txt: Added.
+        * svg/custom/absolute-sized-content-with-resources.xhtml: Added.
+
 2010-08-13  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

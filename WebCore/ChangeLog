@@ -1,3 +1,76 @@
+2010-08-12  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Window size changes + resources on absolute sized content leads to pixelation
+        https://bugs.webkit.org/show_bug.cgi?id=43921
+
+        Avoid pixelation when using resources on absolute sized objects. Be sure to invalidate the used resources if window size changes.
+        Otherwhise masks etc. will be scaled up and pixelate. As nice side-effect, this fixes run-webkit-tests --singly svg/W3C-SVG-1.1, which
+        used to produce wrong results for the gradient tests, as the window size change from 800x600 for 480x360 (svg/W3C-SVG-1.1 specific DRT quirk)
+        didn't invalidate the resources.
+
+        Renamed invalidateClient -> removeClientFromCache and invalidateClients -> removeAllClientsFromCache.
+        Add a boolean "markForInvalidation" parameter, that controls wheter the clients should be marked for repaint/boundaries invalidation/layout
+        or wheter we only want to notify the parents that the resource changed, to avoid doing unncessary work in SVGRenderSupport::layoutChildren.
+
+        Test: svg/custom/absolute-sized-content-with-resources.xhtml
+
+        * rendering/RenderSVGGradientStop.cpp:
+        (WebCore::RenderSVGGradientStop::styleDidChange): Don't do anything for StyleDifferenceEqual.
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::imageChanged):
+        * rendering/RenderSVGResource.cpp:
+        (WebCore::RenderSVGResource::markForLayoutAndParentResourceInvalidation):
+        * rendering/RenderSVGResource.h:
+        * rendering/RenderSVGResourceClipper.cpp:
+        (WebCore::RenderSVGResourceClipper::removeAllClientsFromCache):
+        (WebCore::RenderSVGResourceClipper::removeClientFromCache):
+        * rendering/RenderSVGResourceClipper.h:
+        * rendering/RenderSVGResourceContainer.cpp:
+        (WebCore::RenderSVGResourceContainer::layout):
+        (WebCore::RenderSVGResourceContainer::idChanged):
+        (WebCore::RenderSVGResourceContainer::markAllClientsForInvalidation):
+        (WebCore::RenderSVGResourceContainer::markClientForInvalidation):
+        * rendering/RenderSVGResourceContainer.h:
+        (WebCore::RenderSVGResourceContainer::):
+        * rendering/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::removeAllClientsFromCache):
+        (WebCore::RenderSVGResourceFilter::removeClientFromCache):
+        (WebCore::RenderSVGResourceFilter::postApplyResource):
+        * rendering/RenderSVGResourceFilter.h:
+        * rendering/RenderSVGResourceGradient.cpp:
+        (WebCore::RenderSVGResourceGradient::removeAllClientsFromCache):
+        (WebCore::RenderSVGResourceGradient::removeClientFromCache):
+        (WebCore::RenderSVGResourceGradient::applyResource):
+        * rendering/RenderSVGResourceGradient.h:
+        * rendering/RenderSVGResourceMarker.cpp:
+        (WebCore::RenderSVGResourceMarker::layout):
+        (WebCore::RenderSVGResourceMarker::removeAllClientsFromCache):
+        (WebCore::RenderSVGResourceMarker::removeClientFromCache):
+        * rendering/RenderSVGResourceMarker.h:
+        * rendering/RenderSVGResourceMasker.cpp:
+        (WebCore::RenderSVGResourceMasker::removeAllClientsFromCache):
+        (WebCore::RenderSVGResourceMasker::removeClientFromCache):
+        * rendering/RenderSVGResourceMasker.h:
+        * rendering/RenderSVGResourcePattern.cpp:
+        (WebCore::RenderSVGResourcePattern::removeAllClientsFromCache):
+        (WebCore::RenderSVGResourcePattern::removeClientFromCache):
+        (WebCore::RenderSVGResourcePattern::applyResource):
+        * rendering/RenderSVGResourcePattern.h:
+        * rendering/RenderSVGResourceSolidColor.h:
+        (WebCore::RenderSVGResourceSolidColor::removeAllClientsFromCache):
+        (WebCore::RenderSVGResourceSolidColor::removeClientFromCache):
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::invalidateResourcesOfChildren): Add new helper funtion recursively invalidating resources of a sub render tree.
+        (WebCore::SVGRenderSupport::layoutChildren): Keep track of all objects that didn't need layout, as we still have to invalidate their resources, if window size changes.
+        * rendering/SVGResources.cpp:
+        (WebCore::SVGResources::removeClientFromCache):
+        (WebCore::SVGResources::resourceDestroyed):
+        * rendering/SVGResources.h:
+        * rendering/SVGResourcesCache.cpp:
+        (WebCore::SVGResourcesCache::clientLayoutChanged):
+
 2010-08-13  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.
