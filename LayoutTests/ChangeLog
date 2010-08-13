@@ -1,3 +1,18 @@
+2010-08-13  Steve Block  <steveblock@google.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Need a LayoutTest to check that pages using Geolocation are not put in the page cache
+        https://bugs.webkit.org/show_bug.cgi?id=43957
+
+        * fast/dom/Geolocation/no-page-cache-expected.txt: Added.
+        * fast/dom/Geolocation/no-page-cache.html: Added.
+        * fast/dom/Geolocation/resources/cached-page-1.html: Added.
+        * fast/dom/Geolocation/resources/cached-page-2.html: Added.
+        * fast/dom/Geolocation/script-tests/no-page-cache.js: Added.
+        (reportPageOneOnload):
+        * platform/gtk/Skipped: Added new test to GTK skipped list
+
 2010-08-13  Nate Chapin  <japhet@chromium.org>
 
         Unreviewed, Chromium test_expectations.txt updates + a rebaseline

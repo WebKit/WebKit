@@ -1094,6 +1094,7 @@ fast/dom/Geolocation/delayed-permission-allowed.html
 fast/dom/Geolocation/delayed-permission-denied.html
 fast/dom/Geolocation/error.html
 fast/dom/Geolocation/multiple-requests.html
+fast/dom/Geolocation/no-page-cache.html
 fast/dom/Geolocation/permission-denied-already-clear-watch.html
 fast/dom/Geolocation/position-string.html
 fast/dom/Geolocation/reentrant-error.html
