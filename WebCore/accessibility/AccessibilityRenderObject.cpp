@@ -508,9 +508,8 @@ bool AccessibilityRenderObject::isFileUploadButton() const
     
 bool AccessibilityRenderObject::isInputImage() const
 {
-    Node* elementNode = node();
-    if (roleValue() == ButtonRole && elementNode && elementNode->hasTagName(inputTag)) {
-        HTMLInputElement* input = static_cast<HTMLInputElement*>(elementNode);
+    if (m_renderer && m_renderer->node() && m_renderer->node()->hasTagName(inputTag)) {
+        HTMLInputElement* input = static_cast<HTMLInputElement*>(m_renderer->node());
         return input->inputType() == HTMLInputElement::IMAGE;
     }
     
@@ -592,11 +591,8 @@ bool AccessibilityRenderObject::isIndeterminate() const
 bool AccessibilityRenderObject::isNativeCheckboxOrRadio() const
 {
     Node* elementNode = node();
-    if (elementNode && elementNode->isElementNode()) {
-        InputElement* input = toInputElement(static_cast<Element*>(elementNode));
-        if (input)
-            return input->isCheckbox() || input->isRadioButton();
-    }
+    if (elementNode && elementNode->isElementNode())
+        return toInputElement(static_cast<Element*>(elementNode));
     
     return false;
 }
