@@ -1,3 +1,10 @@
+2010-08-13  Nate Chapin  <japhet@chromium.org>
+
+        Unreviewed, Chromium test_expectations.txt updates + a rebaseline
+
+        * platform/chromium-linux/svg/custom/absolute-sized-content-with-resources-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-08-13  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r65204.

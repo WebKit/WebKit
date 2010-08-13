@@ -3194,6 +3194,10 @@ BUGWK43912 WIN LINUX : svg/custom/mask-with-all-units.svg = IMAGE
 BUGWK43912 WIN LINUX : svg/custom/mask-with-default-value.svg = IMAGE
 BUGWK43912 WIN LINUX : svg/zoom/page/zoom-mask-with-percentages.svg = IMAGE
 
+// Windows needs text-only rebasline
+BUGJAPHET WIN : svg/custom/absolute-sized-content-with-resources.xhtml = IMAGE+TEXT
+BUGWK43912 LINUX : svg/custom/absolute-sized-content-with-resources.xhtml = IMAGE
+
 // Crash reported by Japhet in Windows due to r65208
 BUG52014 WIN DEBUG : editing/pasteboard/smart-paste-003.html = PASS CRASH
 BUG52014 WIN DEBUG : editing/pasteboard/smart-paste-004.html = PASS CRASH
@@ -3201,4 +3205,6 @@ BUG52014 WIN DEBUG : editing/pasteboard/smart-paste-004.html = PASS CRASH
 // Times out frequently since the test was added
 BUG52017 MAC LINUX : http/tests/misc/isindex-with-no-form.html = PASS TIMEOUT
 
+// Probably due to http://trac.webkit.org/changeset/65279/
+BUGJAPHET MAC : fast/canvas/webgl/texture-npot.html = TEXT
 
