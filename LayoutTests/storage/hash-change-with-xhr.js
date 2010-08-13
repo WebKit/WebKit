@@ -81,6 +81,12 @@ function invokeBack()
 
 function runTest()
 {
+    // Location changes need to happen outside the onload handler to generate history entries.
+    setTimeout(runTestsInner, 0);
+}
+
+function runTestsInner()
+{
     backIterations = 10;
     consecutiveFailures = 0;
     successes = 0;

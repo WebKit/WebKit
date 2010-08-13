@@ -14,8 +14,10 @@ if (window.layoutTestController) {
 
 function log(message)
 {
-    var log = document.getElementById("log");
-    log.innerHTML += message + "\n";
+    // Logging to the console instead of the "log" DIV in the DOM because
+    // otherwise we trigger the assert mentioned at http://webkit.org/b/43152
+    // (since we log during pagehide)
+    console.log(message);
 }
 
 log("***Top level frame being parsed for the initial page load***");
@@ -31,7 +33,8 @@ window.onpageshow = function(evt) {
             layoutTestController.notifyDone();
     } else {
         log("***Navigating top-level frame to a page that will immediately navigate back to this one***");
-        window.location.href = "data:text/html,<script>history.back();</scr" + "ipt>";
+        // Location changes need to happen outside the onload handler to generate history entries.
+        setTimeout(function() {window.location.href = "data:text/html,<script>history.back();</scr" + "ipt>";}, 0);
     }
 }
 

@@ -175,15 +175,13 @@ public:
     ScheduledFormSubmission(PassRefPtr<FormSubmission> submission, bool lockBackForwardList, bool duringLoad)
         : ScheduledNavigation(0, submission->lockHistory(), lockBackForwardList, duringLoad, true)
         , m_submission(submission)
-        , m_wasProcessingUserGesture(UserGestureIndicator::processingUserGesture())
+        , m_haveToldClient(false)
     {
         ASSERT(m_submission->state());
     }
 
     virtual void fire(Frame* frame)
     {
-        UserGestureIndicator gestureIndicator(m_wasProcessingUserGesture ? DefinitelyProcessingUserGesture : DefinitelyNotProcessingUserGesture);
-
         // The submitForm function will find a target frame before using the redirection timer.
         // Now that the timer has fired, we need to repeat the security check which normally is done when
         // selecting a target, in case conditions have changed. Other code paths avoid this by targeting
@@ -194,15 +192,25 @@ public:
         m_submission->populateFrameLoadRequest(frameRequest);
         frame->loader()->loadFrameRequest(frameRequest, lockHistory(), lockBackForwardList(), m_submission->event(), m_submission->state(), SendReferrer);
     }
+    
+    virtual void didStartTimer(Frame* frame, Timer<RedirectScheduler>* timer)
+    {
+        if (m_haveToldClient)
+            return;
+        m_haveToldClient = true;
+        frame->loader()->clientRedirected(m_submission->requestURL(), delay(), currentTime() + timer->nextFireInterval(), lockBackForwardList());
+    }
 
-    // FIXME: Implement didStartTimer? It would make sense to report form
-    // submissions as client redirects too. But we didn't do that in the past
-    // when form submission used a separate delay mechanism, so doing it will
-    // be a behavior change.
+    virtual void didStopTimer(Frame* frame, bool newLoadInProgress)
+    {
+        if (!m_haveToldClient)
+            return;
+        frame->loader()->clientRedirectCancelledOrFinished(newLoadInProgress);
+    }
 
 private:
     RefPtr<FormSubmission> m_submission;
-    bool m_wasProcessingUserGesture;
+    bool m_haveToldClient;
 };
 
 RedirectScheduler::RedirectScheduler(Frame* frame)
@@ -240,17 +248,21 @@ void RedirectScheduler::scheduleRedirect(double delay, const String& url)
     if (url.isEmpty())
         return;
 
-    // We want a new history item if the refresh timeout is > 1 second.
+    // We want a new back/forward list item if the refresh timeout is > 1 second.
     if (!m_redirect || delay <= m_redirect->delay())
         schedule(new ScheduledRedirect(delay, url, true, delay <= 1, false));
 }
 
-bool RedirectScheduler::mustLockBackForwardList(Frame* targetFrame)
+bool RedirectScheduler::mustLockBackForwardList(Frame* targetFrame, bool wasUserGesture)
 {
+    // Non-user navigation before the page has loaded should not create a new back/forward item.
+    // See https://webkit.org/b/42861 for the original motivation for this.    
+    if (!wasUserGesture && targetFrame->loader()->documentLoader() && targetFrame->loader()->documentLoader()->isLoadingInAPISense())
+        return true;
+    
     // Navigation of a subframe during loading of an ancestor frame does not create a new back/forward item.
     // The definition of "during load" is any time before all handlers for the load event have been run.
     // See https://bugs.webkit.org/show_bug.cgi?id=14957 for the original motivation for this.
-
     for (Frame* ancestor = targetFrame->tree()->parent(); ancestor; ancestor = ancestor->tree()->parent()) {
         Document* document = ancestor->document();
         if (!ancestor->loader()->isComplete() || (document && document->processingLoadEvent()))
@@ -266,7 +278,7 @@ void RedirectScheduler::scheduleLocationChange(const String& url, const String& 
     if (url.isEmpty())
         return;
 
-    lockBackForwardList = lockBackForwardList || mustLockBackForwardList(m_frame);
+    lockBackForwardList = lockBackForwardList || mustLockBackForwardList(m_frame, wasUserGesture);
 
     FrameLoader* loader = m_frame->loader();
     
@@ -300,7 +312,7 @@ void RedirectScheduler::scheduleFormSubmission(PassRefPtr<FormSubmission> submis
     // to match IE and Opera.
     // See https://bugs.webkit.org/show_bug.cgi?id=32383 for the original motivation for this.
 
-    bool lockBackForwardList = mustLockBackForwardList(m_frame) || (submission->state()->formSubmissionTrigger() == SubmittedByJavaScript && m_frame->tree()->parent());
+    bool lockBackForwardList = mustLockBackForwardList(m_frame, UserGestureIndicator::processingUserGesture()) || (submission->state()->formSubmissionTrigger() == SubmittedByJavaScript && m_frame->tree()->parent());
 
     schedule(new ScheduledFormSubmission(submission, lockBackForwardList, duringLoad));
 }

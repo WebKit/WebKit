@@ -4,7 +4,7 @@
 
 <script>
 if (window.layoutTestController) {
-    layoutTestController.keepWebHistory();
+    layoutTestController.clearBackForwardList();
     layoutTestController.waitUntilDone();
 }
 document.location = "resources/redirect-target.html#1";

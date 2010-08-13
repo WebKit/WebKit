@@ -14,6 +14,13 @@ Getting an error page instead of login page navigating back in gmail.</p>
 <input id="mysubmit" type="submit" name="Submit" value="Submit">
 </form>
 <script>
+
+function submitForm()
+{
+    // Submit form in a timeout to make sure that we create a new back/forward list item.
+    setTimeout(function() {document.forms[0].submit()}, 0);
+}
+
 if (window.layoutTestController) {
     layoutTestController.dumpAsText();
     layoutTestController.waitUntilDone();
@@ -25,7 +32,7 @@ if (!window.layoutTestController)
 
 if (document.location.search == "") {
     window.name = ""; // Use window.name to communicate between steps.
-    document.forms[0].submit();
+    submitForm();
 } else if (document.location.search == "?1") {
     if (window.name == "finish") {
         window.name = "";
@@ -34,7 +41,7 @@ if (document.location.search == "") {
             layoutTestController.notifyDone();
     } else {
         document.forms[0].action = "?2";
-        document.forms[0].submit();
+        submitForm();
     }
 } else {
     // Test that going back to form submission result works.

@@ -87,8 +87,9 @@
         numErrors = 0;
         originalLocation = window.location.href;
         originalHistoryLength = window.history.length;
-     
-        step();
+
+        // Location changes need to happen outside the onload handler to generate history entries.
+        setTimeout(step, 0);
     }
     </script>
 </head>

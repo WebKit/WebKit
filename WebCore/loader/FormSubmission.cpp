@@ -179,6 +179,16 @@ PassRefPtr<FormSubmission> FormSubmission::create(HTMLFormElement* form, const A
     return adoptRef(new FormSubmission(attributes.method(), actionURL, targetOrBaseTarget, encodingType, formState.release(), formData.release(), boundary, lockHistory, event));
 }
 
+KURL FormSubmission::requestURL() const
+{
+    if (m_method == FormSubmission::PostMethod)
+        return m_action;
+
+    KURL requestURL(m_action);
+    requestURL.setQuery(m_formData->flattenToString());    
+    return requestURL;
+}
+
 void FormSubmission::populateFrameLoadRequest(FrameLoadRequest& frameRequest)
 {
     if (!m_target.isEmpty())
@@ -187,9 +197,7 @@ void FormSubmission::populateFrameLoadRequest(FrameLoadRequest& frameRequest)
     if (!m_referrer.isEmpty())
         frameRequest.resourceRequest().setHTTPReferrer(m_referrer);
 
-    if (m_method == FormSubmission::GetMethod)
-        m_action.setQuery(m_formData->flattenToString());
-    else {
+    if (m_method == FormSubmission::PostMethod) {
         frameRequest.resourceRequest().setHTTPMethod("POST");
         frameRequest.resourceRequest().setHTTPBody(m_formData);
 
@@ -200,7 +208,7 @@ void FormSubmission::populateFrameLoadRequest(FrameLoadRequest& frameRequest)
             frameRequest.resourceRequest().setHTTPContentType(m_contentType + "; boundary=" + m_boundary);
     }
 
-    frameRequest.resourceRequest().setURL(m_action);
+    frameRequest.resourceRequest().setURL(requestURL());
     FrameLoader::addHTTPOriginIfNeeded(frameRequest.resourceRequest(), m_origin);
 }
 

@@ -3,7 +3,8 @@ function loadNext() {
     var geolocation = navigator.geolocation;
     if (window.opener.reportPageOneOnload() == 1) {
         window.opener.debug('resources/cached-page-1.html about to navigate to resources/cached-page-2.html')
-        location.href = 'cached-page-2.html';
+        // Location changes need to happen outside the onload handler to generate history entries.
+        setTimeout(function() {location.href = 'cached-page-2.html';}, 0);
     }
 }
 </script>

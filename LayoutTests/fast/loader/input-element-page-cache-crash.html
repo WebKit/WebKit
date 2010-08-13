@@ -13,8 +13,9 @@ function runTest()
     var input = document.getElementById("testinput");
     input.setAttribute("autocomplete", "on");
     input.parentNode.removeChild(input);
-    
-    window.location = "data:text/html,<script>history.back();</scrip" + "t>";
+
+    // Location changes need to happen outside the onload handler to generate history entries.
+    setTimeout(function() {window.location = "data:text/html,<script>history.back();</scrip" + "t>";}, 0);
 }
 
 function pageHidden()

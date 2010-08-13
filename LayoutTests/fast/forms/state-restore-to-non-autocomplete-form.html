@@ -38,7 +38,8 @@ if (!state.value) {
     document.getElementById('input2').value = 'value2';
     document.getElementById('textarea2').value = 'good';
     document.getElementById('select2').value = 'BSD';
-    document.getElementById('form2').submit();
+    // Submit form in a timeout to make sure that we create a new back/forward list item.            
+    setTimeout(function() {document.getElementById('form2').submit();}, 0);
 } else {
     // Second visit.
     debug('Controls in the first form should have their default values:');

@@ -17,7 +17,8 @@ function loadNext() {
     intervalId = setInterval(endTest, 100);
 
     window.opener.log("page-1, about to navigate to page-2.")
-    location.href = "cached-page-2.html";
+    // Location changes need to happen outside the onload handler to generate history entries.
+    setTimeout(function() {location.href = "cached-page-2.html";}, 0);
 }
 
 // This unload handler exists just to make sure this page is not added

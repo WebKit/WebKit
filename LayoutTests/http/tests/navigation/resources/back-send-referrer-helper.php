@@ -18,8 +18,8 @@ window.name: <script>document.write(window.name)</script>
 
 <script>
     if (window.name == 1) {
-        // Navigate once more to add a history entry.
-        document.loopback.submit();
+        // Navigate once more (in a timeout) to add a history entry.
+        setTimeout(function() {document.loopback.submit();}, 0);
     } else if (window.name == 2) {
         history.go(-1);
     } else {

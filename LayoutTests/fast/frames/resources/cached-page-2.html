@@ -19,7 +19,8 @@ function loadNext() {
     intervalId = setInterval(goBack, 20);
 
     window.opener.log("page-2, about to navigate to page-3.")
-    location.href = "cached-page-3.html";
+    // Location changes need to happen outside the onload handler to generate history entries.
+    setTimeout(function() {location.href = "cached-page-3.html";}, 0);
 }
 </script>
 <body onload="loadNext()">

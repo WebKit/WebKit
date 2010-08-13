@@ -85,6 +85,8 @@ public:
     static PassRefPtr<FormSubmission> create(HTMLFormElement*, const Attributes&, PassRefPtr<Event> event, bool lockHistory, FormSubmissionTrigger);
 
     void populateFrameLoadRequest(FrameLoadRequest&);
+    
+    KURL requestURL() const;
 
     Method method() const { return m_method; }
     const KURL& action() const { return m_action; }

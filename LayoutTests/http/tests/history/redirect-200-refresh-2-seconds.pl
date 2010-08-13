@@ -12,7 +12,7 @@ print <<HERE_DOC_END
 <title>200 Refresh Redirect</title>
 <script>
 if (window.layoutTestController) {
-    layoutTestController.keepWebHistory();
+    layoutTestController.clearBackForwardList();
     layoutTestController.waitUntilDone();
 }
 </script>

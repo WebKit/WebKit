@@ -22,7 +22,8 @@ onload = function() {
   alert("stage: " + sessionStorage.stage);
   switch (sessionStorage.stage++) {
   case 1:
-    document.forms[0].submit();
+    // Submit form in a timeout to make sure that we create a new back/forward list item.
+    setTimeout(function() {document.forms[0].submit();}, 0);
     break;
   case 2:
     history.back();

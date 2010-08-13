@@ -31,7 +31,9 @@
             input.value = "FAIL";
 
             var form = document.getElementById("form");
-            form.submit();
+            
+            // Submit form in a timeout to make sure that we create a new back/forward list item.            
+            setTimeout(function() {form.submit();}, 0);
         }
     </script>
 </head>

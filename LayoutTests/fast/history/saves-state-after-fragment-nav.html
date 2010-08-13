@@ -30,8 +30,11 @@ function runTestStep() {
       layoutTestController.dumpAsText();
       layoutTestController.waitUntilDone();
     }
-    navigateToHash(field);
-    navigateAwayAndBack();
+    // Location changes need to happen outside the onload handler to generate history entries.
+    setTimeout(function() {
+      navigateToHash(field);
+      navigateAwayAndBack();
+    }, 0);
   } else {
     document.body.innerHTML = (field.value == '') ? 'FAIL' : 'PASS';
     if (window.layoutTestController)
