@@ -1,3 +1,14 @@
+2010-08-13  Leandro Pereira  <leandro@profusion.mobi>
+
+        [EFL] Unreviewed build fix.
+        These changes were supposed to be landed on r65319, but due to some
+        svn-apply/commit-queue bug it wasn't fully applied. A bug was filed
+        by Patrick Gansterer (author of the changes in this commit):
+        https://bugs.webkit.org/show_bug.cgi?id=43981
+
+        * CMakeLists.txt: Update calls to GENERATE_GPERF and
+        GENERATE_GRAMMAR macros.
+
 2010-08-13  Chris Fleizach  <cfleizach@apple.com>
 
         AX: isNativeCheckbox does not work as advertised

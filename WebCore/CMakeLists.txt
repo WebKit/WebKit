@@ -528,7 +528,6 @@ IF (ENABLE_SVG)
 ENDIF()
 
 SET(WebCore_SOURCES
-    ${DERIVED_SOURCES_DIR}/CSSGrammar.cpp
     ${DERIVED_SOURCES_DIR}/HTMLElementFactory.cpp
     ${DERIVED_SOURCES_DIR}/HTMLEntityNames.cpp
     ${DERIVED_SOURCES_DIR}/HTMLNames.cpp
@@ -538,7 +537,6 @@ SET(WebCore_SOURCES
     ${DERIVED_SOURCES_DIR}/UserAgentStyleSheetsData.cpp
     ${DERIVED_SOURCES_DIR}/XMLNames.cpp
     ${DERIVED_SOURCES_DIR}/XMLNSNames.cpp
-    ${DERIVED_SOURCES_DIR}/XPathGrammar.cpp
     ${DERIVED_SOURCES_DIR}/InspectorBackendDispatcher.cpp
 
     accessibility/AXObjectCache.cpp
@@ -1840,26 +1838,40 @@ GENERATE_INSPECTOR_FROM_IDL(inspector/Inspector.idl)
 
 LIST(APPEND WebCore_SOURCES ${JS_IDL_FILES} ${Inspector_IDL_FILES})
 
-GENERATE_GPERF(${WEBCORE_DIR}/html/HTMLEntityNames.gperf)
-GENERATE_GPERF(${WEBCORE_DIR}/platform/ColorData.gperf)
-GENERATE_GPERF(${WEBCORE_DIR}/html/DocTypeStrings.gperf)
+
+GENERATE_GPERF(${WEBCORE_DIR}/html/HTMLEntityNames.gperf ${DERIVED_SOURCES_DIR}/HTMLEntityNames.cpp findEntity "-c")
+ADD_SOURCE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/LegacyPreloadScanner.cpp HTMLEntityNames.cpp)
+ADD_SOURCE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/HTMLEntityParser.cpp HTMLEntityNames.cpp)
+
+
+GENERATE_GPERF(${WEBCORE_DIR}/platform/ColorData.gperf ${DERIVED_SOURCES_DIR}/ColorData.cpp findColor "")
+ADD_SOURCE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/platform/graphics/Color.cpp ColorData.cpp)
+
+
+GENERATE_GPERF(${WEBCORE_DIR}/html/DocTypeStrings.gperf ${DERIVED_SOURCES_DIR}/DocTypeStrings.cpp findDoctypeEntry "-F,PubIDInfo::eAlmostStandards,PubIDInfo::eAlmostStandards")
+ADD_SOURCE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/HTMLDocument.cpp DocTypeStrings.cpp)
+
 
 GENERATE_TOKENIZER()
 GENERATE_USER_AGENT_STYLES()
 
-GENERATE_GRAMMAR(cssyy ${WEBCORE_DIR}/css/CSSGrammar.y)
-GENERATE_GRAMMAR(xpathyy ${WEBCORE_DIR}/xml/XPathGrammar.y)
+
+GENERATE_GRAMMAR(cssyy ${WEBCORE_DIR}/css/CSSGrammar.y ${DERIVED_SOURCES_DIR}/CSSGrammar.h ${DERIVED_SOURCES_DIR}/CSSGrammar.cpp)
+LIST(APPEND WebCore_SOURCES ${DERIVED_SOURCES_DIR}/CSSGrammar.cpp)
+
+
+GENERATE_GRAMMAR(xpathyy ${WEBCORE_DIR}/xml/XPathGrammar.y ${DERIVED_SOURCES_DIR}/XPathGrammar.h ${DERIVED_SOURCES_DIR}/XPathGrammar.cpp)
+LIST(APPEND WebCore_SOURCES ${DERIVED_SOURCES_DIR}/XPathGrammar.cpp)
+
 
 GENERATE_CSS_PROPERTY_NAMES()
 GENERATE_CSS_VALUE_KEYWORDS()
 
+
 ADD_SOURCE_DERIVED_DEPENDENCIES(${DERIVED_SOURCES_DIR}/CSSGrammar.cpp CSSValueKeywords.h)
 ADD_SOURCE_DERIVED_DEPENDENCIES(${DERIVED_SOURCES_DIR}/CSSGrammar.cpp CSSPropertyNames.h)
 ADD_SOURCE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/css/CSSPrimitiveValueMappings.h CSSValueKeywords.h)
-ADD_SOURCE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/HTMLDocument.cpp DocTypeStrings.cpp)
-ADD_SOURCE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/platform/graphics/Color.cpp ColorData.cpp)
 ADD_SOURCE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/css/CSSParser.cpp tokenizer.cpp)
-ADD_SOURCE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/HTMLEntityParser.cpp HTMLEntityNames.cpp)
 ADD_SOURCE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/HTMLTreeBuilder.cpp MathMLNames.cpp)
 ADD_SOURCE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/css/CSSStyleSelector.cpp UserAgentStyleSheetsData.cpp UserAgentStyleSheets.h)
 
