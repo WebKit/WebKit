@@ -27,6 +27,7 @@ OPTION(PORT "choose which WebKit port to build (one of ${ALL_PORTS})" "NOPORT")
 # -----------------------------------------------------------------------------
 FIND_PACKAGE(BISON REQUIRED)
 FIND_PACKAGE(FLEX REQUIRED)
+FIND_PACKAGE(Gperf REQUIRED)
 FIND_PACKAGE(Perl REQUIRED)
 FIND_PACKAGE(PythonInterp REQUIRED)
 
