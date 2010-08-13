@@ -706,6 +706,7 @@ void PlatformContextSkia::setGraphicsContext3D(GraphicsContext3D* context, const
 {
     m_useGPU = true;
     m_gpuCanvas = new GLES2Canvas(context, size);
+    m_uploadTexture.clear();
 #if USE(ACCELERATED_COMPOSITING)
     CanvasLayerChromium* layer = static_cast<CanvasLayerChromium*>(context->platformLayer());
     layer->setPrepareTextureCallback(PrepareTextureCallbackImpl::create(this));
@@ -791,13 +792,13 @@ void PlatformContextSkia::uploadSoftwareToHardware(CompositeOperator op) const
 {
     const SkBitmap& bitmap = m_canvas->getDevice()->accessBitmap(false);
     SkAutoLockPixels lock(bitmap);
-    // FIXME: Keep a texture around for this rather than constantly creating/destroying one.
     GraphicsContext3D* context = m_gpuCanvas->context();
-    RefPtr<GLES2Texture> texture = GLES2Texture::create(context, GLES2Texture::BGRA8, bitmap.width(), bitmap.height());
-    texture->load(bitmap.getPixels());
+    if (!m_uploadTexture || m_uploadTexture->width() < bitmap.width() || m_uploadTexture->height() < bitmap.height())
+        m_uploadTexture = GLES2Texture::create(context, GLES2Texture::BGRA8, bitmap.width(), bitmap.height());
+    m_uploadTexture->load(bitmap.getPixels());
     IntRect rect(0, 0, bitmap.width(), bitmap.height());
     AffineTransform identity;
-    gpuCanvas()->drawTexturedRect(texture.get(), rect, rect, identity, 1.0, DeviceColorSpace, op);
+    gpuCanvas()->drawTexturedRect(m_uploadTexture.get(), rect, rect, identity, 1.0, DeviceColorSpace, op);
 }
 
 void PlatformContextSkia::readbackHardwareToSoftware() const
@@ -810,11 +811,15 @@ void PlatformContextSkia::readbackHardwareToSoftware() const
     // Flips the image vertically.
     for (int y = 0; y < height; ++y) {
         uint32_t* pixels = bitmap.getAddr32(0, y);
-        context->readPixels(0, height - 1 - y, width, 1, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, pixels);
-        for (int i = 0; i < width; ++i) {
-            uint32_t pixel = pixels[i];
-            // Swizzles from RGBA -> BGRA.
-            pixels[i] = pixel & 0xFF00FF00 | ((pixel & 0x00FF0000) >> 16) | ((pixel & 0x000000FF) << 16);
+        if (context->supportsBGRA())
+            context->readPixels(0, height - 1 - y, width, 1, GraphicsContext3D::BGRA_EXT, GraphicsContext3D::UNSIGNED_BYTE, pixels);
+        else {
+            context->readPixels(0, height - 1 - y, width, 1, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, pixels);
+            for (int i = 0; i < width; ++i) {
+                uint32_t pixel = pixels[i];
+                // Swizzles from RGBA -> BGRA.
+                pixels[i] = pixel & 0xFF00FF00 | ((pixel & 0x00FF0000) >> 16) | ((pixel & 0x000000FF) << 16);
+            }
         }
     }
 }

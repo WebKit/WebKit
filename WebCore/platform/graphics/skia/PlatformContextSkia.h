@@ -48,6 +48,7 @@ namespace WebCore {
 #if USE(GLES2_RENDERING)
 enum CompositeOperator;
 class GLES2Canvas;
+class GLES2Texture;
 class GraphicsContext3D;
 #endif
 
@@ -240,6 +241,7 @@ private:
     bool m_useGPU;
     OwnPtr<GLES2Canvas> m_gpuCanvas;
     mutable enum { None, Software, Mixed, Hardware } m_backingStoreState;
+    mutable RefPtr<GLES2Texture> m_uploadTexture;
 #endif
 };
 

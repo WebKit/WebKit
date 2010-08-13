@@ -54,6 +54,30 @@ GLES2Texture::~GLES2Texture()
     m_context->deleteTexture(m_textureId);
 }
 
+static void convertFormat(GraphicsContext3D* context, GLES2Texture::Format format, unsigned int* glFormat, unsigned int* glType, bool* swizzle)
+{
+    *swizzle = false;
+    switch (format) {
+    case GLES2Texture::RGBA8:
+        *glFormat = GraphicsContext3D::RGBA;
+        *glType = GraphicsContext3D::UNSIGNED_BYTE;
+        break;
+    case GLES2Texture::BGRA8:
+        if (context->supportsBGRA()) {
+            *glFormat = GraphicsContext3D::BGRA_EXT;
+            *glType = GraphicsContext3D::UNSIGNED_BYTE;
+        } else {
+            *glFormat = GraphicsContext3D::RGBA;
+            *glType = GraphicsContext3D::UNSIGNED_BYTE;
+            *swizzle = true;
+        }
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+}
+
 PassRefPtr<GLES2Texture> GLES2Texture::create(GraphicsContext3D* context, Format format, int width, int height)
 {
     int max;
@@ -67,38 +91,20 @@ PassRefPtr<GLES2Texture> GLES2Texture::create(GraphicsContext3D* context, Format
     if (!textureId)
         return 0;
 
+    unsigned int glFormat, glType;
+    bool swizzle;
+    convertFormat(context, format, &glFormat, &glType, &swizzle);
     context->bindTexture(GraphicsContext3D::TEXTURE_2D, textureId);
-    context->texImage2D(GraphicsContext3D::TEXTURE_2D, 0, GraphicsContext3D::RGBA, width, height, 0, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, 0);
+    context->texImage2D(GraphicsContext3D::TEXTURE_2D, 0, glFormat, width, height, 0, glFormat, glType, 0);
 
     return adoptRef(new GLES2Texture(context, textureId, format, width, height));
-}
-
-static void convertFormat(GLES2Texture::Format format, unsigned int* glFormat, unsigned int* glType, bool* swizzle)
-{
-    *swizzle = false;
-    switch (format) {
-    case GLES2Texture::RGBA8:
-        *glFormat = GraphicsContext3D::RGBA;
-        *glType = GraphicsContext3D::UNSIGNED_BYTE;
-        break;
-    case GLES2Texture::BGRA8:
-// FIXME:  Once we have support for extensions, we should check for EXT_texture_format_BGRA8888,
-// and use that if present.
-        *glFormat = GraphicsContext3D::RGBA;
-        *glType = GraphicsContext3D::UNSIGNED_BYTE;
-        *swizzle = true;
-        break;
-    default:
-        ASSERT(!"bad format");
-        break;
-    }
 }
 
 void GLES2Texture::load(void* pixels)
 {
     unsigned int glFormat, glType;
     bool swizzle;
-    convertFormat(m_format, &glFormat, &glType, &swizzle);
+    convertFormat(m_context, m_format, &glFormat, &glType, &swizzle);
     m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_textureId);
     if (swizzle) {
         ASSERT(glFormat == GraphicsContext3D::RGBA && glType == GraphicsContext3D::UNSIGNED_BYTE);
