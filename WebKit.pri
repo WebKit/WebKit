@@ -82,7 +82,7 @@ symbian {
 }
 
 ##### Defaults for some mobile platforms
-symbian|maemo5 {
+symbian|maemo5|maemo6 {
     CONFIG += disable_uitools
     CONFIG += enable_fast_mobile_scrolling
     CONFIG += use_qt_mobile_theme
