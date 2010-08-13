@@ -1,3 +1,33 @@
+2010-08-13  Ariya Hidayat  <ariya@sencha.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Canvas and CSS: blur option in shadow not working
+        https://bugs.webkit.org/show_bug.cgi?id=34479
+
+        Patch 1: Refactor shadow states handling.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContextPlatformPrivate::): Added shadow states as
+        member variables.
+        (WebCore::GraphicsContextPlatformPrivate::hasShadow): Convenient
+        function to check whether there is shadow or not.
+        (WebCore::GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate):
+        (WebCore::GraphicsContext::drawRect): Use shadow states instead of
+        calling getShadow.
+        (WebCore::GraphicsContext::drawLine): ditto.
+        (WebCore::GraphicsContext::strokeArc): ditto.
+        (WebCore::GraphicsContext::drawConvexPolygon): ditto.
+        (WebCore::GraphicsContext::fillPath): ditto.
+        (WebCore::GraphicsContext::strokePath): ditto.
+        (WebCore::GraphicsContext::fillRect): Removes the use of helper function
+        drawBorderlessRectShadow as the code already becomes a lot simpler.
+        (WebCore::GraphicsContext::fillRoundedRect): Removes the use of helper
+        function drawFilledShadowPath as the code already becomes a lot simpler.
+        (WebCore::GraphicsContext::setPlatformShadow): Store shadow states
+        and find out the shadow type (complexity) for future use.
+        (WebCore::GraphicsContext::clearPlatformShadow): Reset shadow states.
+
 2010-08-11  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Dimitri Glazkov.
