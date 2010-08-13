@@ -47,6 +47,7 @@ public:
     virtual bool isIndeterminate() const { return false; }
     virtual bool isTextFormControl() const { return true; }
     virtual bool isRadioButton() const { return false; }
+    virtual bool isCheckbox() const { return false; }
     virtual bool isTextField() const { return true; }
     virtual bool isSearchField() const { return false; }
     virtual bool isInputTypeHidden() const { return false; }

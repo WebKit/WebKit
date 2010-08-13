@@ -1,3 +1,13 @@
+2010-08-13  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: isNativeCheckbox does not work as advertised
+        https://bugs.webkit.org/show_bug.cgi?id=43872
+
+        Re-adding this patch after it was erroneously rolled out.
+
+        * platform/mac/accessibility/native-vs-nonnative-checkboxes-expected.txt: Added.
+        * platform/mac/accessibility/native-vs-nonnative-checkboxes.html: Added.
+
 2010-08-11  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Dimitri Glazkov.
