@@ -67,7 +67,6 @@ LOCAL_SRC_FILES += \
 	bindings/js/JSCSSStyleDeclarationCustom.cpp \
 	bindings/js/JSCSSValueCustom.cpp \
 	bindings/js/JSCallbackData.cpp \
-	bindings/js/JSCanvasNumberArrayCustom.cpp \
 	bindings/js/JSCanvasRenderingContext2DCustom.cpp \
 	bindings/js/JSCanvasRenderingContextCustom.cpp \
 	bindings/js/JSClipboardCustom.cpp \

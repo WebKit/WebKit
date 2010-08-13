@@ -1,3 +1,21 @@
+2010-08-12  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by David Levin.
+
+        Delete obsolete CanvasNumberArray
+        https://bugs.webkit.org/show_bug.cgi?id=38619
+
+        Deleted unreferenced code. Built WebKit and Chromium to test.
+
+        * Android.derived.jscbindings.mk:
+        * Android.derived.v8bindings.mk:
+        * Android.jscbindings.mk:
+        * Android.mk:
+        * bindings/js/JSCanvasNumberArrayCustom.cpp: Removed.
+        * html/canvas/CanvasNumberArray.cpp: Removed.
+        * html/canvas/CanvasNumberArray.h: Removed.
+        * html/canvas/CanvasNumberArray.idl: Removed.
+
 2010-08-12  Anton Muhin  <antonm@chromium.org>
 
         Reviewed by Nate Chapin.

@@ -294,7 +294,6 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	html/ValidityState.cpp \
 	\
 	html/canvas/CanvasGradient.cpp \
-	html/canvas/CanvasNumberArray.cpp \
 	html/canvas/WebGLObject.cpp \
 	html/canvas/CanvasPattern.cpp \
 	html/canvas/CanvasPixelArray.cpp \
