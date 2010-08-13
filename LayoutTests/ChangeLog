@@ -1,3 +1,12 @@
+2010-08-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed.
+
+        Added PASS CRASH expectation for editing/pasteboard/smart-paste-003.html and
+        editing/pasteboard/smart-paste-004.html reported by japhet.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-08-12  Tony Chang  <tony@chromium.org>
 
         Unreviewed, landing google-chrome linux 64 test results.
