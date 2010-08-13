@@ -254,7 +254,7 @@
 		BCB9F8B01124E07700A137E0 /* WebPolicyClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB9F8AE1124E07700A137E0 /* WebPolicyClient.h */; };
 		BCBCB0CB1215E32100DE59CA /* ImmutableDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = BCBCB0CA1215E32100DE59CA /* ImmutableDictionary.h */; };
 		BCBCB0CD1215E33A00DE59CA /* ImmutableDictionary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCBCB0CC1215E33A00DE59CA /* ImmutableDictionary.cpp */; };
-		BCBCB0E31215E54D00DE59CA /* WKDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = BCBCB0E11215E54D00DE59CA /* WKDictionary.h */; };
+		BCBCB0E31215E54D00DE59CA /* WKDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = BCBCB0E11215E54D00DE59CA /* WKDictionary.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BCBCB0E41215E54D00DE59CA /* WKDictionary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCBCB0E21215E54D00DE59CA /* WKDictionary.cpp */; };
 		BCC56F791159957D001CCAF9 /* MachPort.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC56F771159957D001CCAF9 /* MachPort.h */; };
 		BCC5715B115ADAEF001CCAF9 /* WebSystemInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC57159115ADAEF001CCAF9 /* WebSystemInterface.h */; };
