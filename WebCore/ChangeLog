@@ -1,3 +1,35 @@
+2010-08-11  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Regression in linking of programs
+        https://bugs.webkit.org/show_bug.cgi?id=43820
+
+        Shaders and programs shouldn't be deleted until their attachments are removed, therefore, we need to track the attach/detach/useProgram.
+
+        * html/canvas/WebGLObject.cpp: Track the object attachment count and whether it should really be deleted.
+        (WebCore::WebGLObject::WebGLObject):
+        (WebCore::WebGLObject::setObject):
+        (WebCore::WebGLObject::deleteObject):
+        * html/canvas/WebGLObject.h: Track the object attachment count and whether it should really be deleted.
+        (WebCore::WebGLObject::onAttached):
+        (WebCore::WebGLObject::onDetached):
+        (WebCore::WebGLObject::getAttachmentCount):
+        * html/canvas/WebGLProgram.cpp: Track the attached shaders.
+        (WebCore::WebGLProgram::WebGLProgram):
+        (WebCore::WebGLProgram::deleteObjectImpl):
+        (WebCore::WebGLProgram::getAttachedShader):
+        (WebCore::WebGLProgram::attachShader):
+        (WebCore::WebGLProgram::detachShader):
+        * html/canvas/WebGLProgram.h: Track the attached shaders.
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::attachShader): Track the attachment of a shader to a program.
+        (WebCore::WebGLRenderingContext::deleteProgram): Detach shaders.
+        (WebCore::WebGLRenderingContext::detachShader): Track the attachment of a shader to a program.
+        (WebCore::WebGLRenderingContext::validateWebGLObject): Also check if object == 0.
+        (WebCore::WebGLRenderingContext::linkProgram): Using the cached attached shaders instead of query from driver.
+        (WebCore::WebGLRenderingContext::useProgram): Track the attachment of a program to the current rendering pipeline.
+
 2010-08-13  Steve Block  <steveblock@google.com>
 
         Reviewed by Alexey Proskuryakov.

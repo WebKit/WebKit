@@ -217,7 +217,12 @@ void WebGLRenderingContext::attachShader(WebGLProgram* program, WebGLShader* sha
     UNUSED_PARAM(ec);
     if (!validateWebGLObject(program) || !validateWebGLObject(shader))
         return;
+    if (!program->attachShader(shader)) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
+        return;
+    }
     m_context->attachShader(objectOrZero(program), objectOrZero(shader));
+    shader->onAttached();
     cleanupAfterGraphicsCall(false);
 }
 
@@ -650,7 +655,12 @@ void WebGLRenderingContext::deleteProgram(WebGLProgram* program)
 {
     if (!program)
         return;
-    
+    if (program->context() != this) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
+        return;
+    }
+    if (!program->object())
+        return;
     program->deleteObject();
 }
 
@@ -705,7 +715,12 @@ void WebGLRenderingContext::detachShader(WebGLProgram* program, WebGLShader* sha
     UNUSED_PARAM(ec);
     if (!validateWebGLObject(program) || !validateWebGLObject(shader))
         return;
+    if (!program->detachShader(shader)) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
+        return;
+    }
     m_context->detachShader(objectOrZero(program), objectOrZero(shader));
+    shader->onDetached();
     cleanupAfterGraphicsCall(false);
 }
 
@@ -892,7 +907,7 @@ bool WebGLRenderingContext::validateRenderingState(long numElementsRequired)
 
 bool WebGLRenderingContext::validateWebGLObject(WebGLObject* object)
 {
-    if (!object) {
+    if (!object || !object->object()) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
         return false;
     }
@@ -1882,21 +1897,7 @@ void WebGLRenderingContext::linkProgram(WebGLProgram* program, ExceptionCode& ec
     if (!validateWebGLObject(program))
         return;
     if (!isGLES2Compliant()) {
-        Vector<WebGLShader*> shaders;
-        bool succeed = getAttachedShaders(program, shaders, ec);
-        if (succeed) {
-            bool vShader = false;
-            bool fShader = false;
-            for (size_t ii = 0; ii < shaders.size() && (!vShader || !fShader); ++ii) {
-                if (shaders[ii]->getType() == GraphicsContext3D::VERTEX_SHADER)
-                    vShader = true;
-                else if (shaders[ii]->getType() == GraphicsContext3D::FRAGMENT_SHADER)
-                    fShader = true;
-            }
-            if (!vShader || !fShader)
-                succeed = false;
-        }
-        if (!succeed) {
+        if (!program->getAttachedShader(GraphicsContext3D::VERTEX_SHADER) || !program->getAttachedShader(GraphicsContext3D::FRAGMENT_SHADER)) {
             program->setLinkFailureFlag(true);
             return;
         }
@@ -2701,13 +2702,23 @@ void WebGLRenderingContext::uniformMatrix4fv(const WebGLUniformLocation* locatio
 
 void WebGLRenderingContext::useProgram(WebGLProgram* program, ExceptionCode& ec)
 {
-    UNUSED_PARAM(ec);
     if (program && program->context() != this) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
         return;
     }
-    m_currentProgram = program;
-    m_context->useProgram(objectOrZero(program));
+    if (program && program->object() && !getProgramParameter(program, GraphicsContext3D::LINK_STATUS, ec).getBool()) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
+        cleanupAfterGraphicsCall(false);
+        return;
+    }
+    if (m_currentProgram != program) {
+        if (m_currentProgram)
+            m_currentProgram->onDetached();
+        m_currentProgram = program;
+        m_context->useProgram(objectOrZero(program));
+        if (program)
+            program->onAttached();
+    }
     cleanupAfterGraphicsCall(false);
 }
 

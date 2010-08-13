@@ -12,15 +12,17 @@ PASS bad vertex shader should fail to compile
 PASS good fragment shader should compile
 PASS good fragment shader #2 should compile
 PASS bad fragment shader should fail to compile
-PASS should be no errors at this point
-PASS attaching a vertex shader should succeed
-PASS attaching an already attached vertex shader should generate INVALID_OPERATION
-PASS attaching a fragment shader should succeed
-PASS attaching an already attached fragment shader should generate INVALID_OPERATION
-PASS detaching a vertex shader should succeed
-PASS detaching a not already attached vertex shader should generate INVALID_OPERATION
-PASS detaching a fragment shader should succeed
-PASS detaching a not already attached fragment shader should generate INVALID_OPERATION
+PASS getError was expected value: NO_ERROR : should be no errors at this point
+PASS getError was expected value: NO_ERROR : attaching a vertex shader should succeed
+PASS getError was expected value: INVALID_OPERATION : attaching an already attached vertex shader should generate INVALID_OPERATION
+PASS getError was expected value: NO_ERROR : attaching a fragment shader should succeed
+PASS getError was expected value: INVALID_OPERATION : attaching an already attached fragment shader should generate INVALID_OPERATION
+PASS getError was expected value: INVALID_OPERATION : attaching shaders of the same type to a program should generate INVALID_OPERATION
+PASS getError was expected value: INVALID_OPERATION : attaching shaders of the same type to a program should generate INVALID_OPERATION
+PASS getError was expected value: NO_ERROR : detaching a vertex shader should succeed
+PASS getError was expected value: INVALID_OPERATION : detaching a not already attached vertex shader should generate INVALID_OPERATION
+PASS getError was expected value: NO_ERROR : detaching a fragment shader should succeed
+PASS getError was expected value: INVALID_OPERATION : detaching a not already attached fragment shader should generate INVALID_OPERATION
 PASS getAttachedShaders should return an empty list by default
 PASS attaching a single shader should give the expected list
 PASS attaching some shaders should give the expected list
@@ -32,26 +34,38 @@ PASS attaching and detaching some shaders should leave the difference list
 PASS attaching a shader that failed to compile should still show it in the list
 PASS attaching shaders, including one that failed to compile, should still show the it in the list
 PASS valid program should link
-PASS using a valid program should succeed
+PASS getError was expected value: NO_ERROR : using a valid program should succeed
 PASS valid program #2 should link
-PASS using a valid program should succeed
+PASS getError was expected value: NO_ERROR : using a valid program should succeed
 PASS program with no fragment shader should fail to link
-PASS using an invalid program should generate INVALID_OPERATION
+PASS getError was expected value: INVALID_OPERATION : using an invalid program should generate INVALID_OPERATION
 PASS program with no vertex shader should fail to link
-PASS using an invalid program should generate INVALID_OPERATION
+PASS getError was expected value: INVALID_OPERATION : using an invalid program should generate INVALID_OPERATION
 PASS program with bad vertex shader should fail to link
-PASS using an invalid program should generate INVALID_OPERATION
+PASS getError was expected value: INVALID_OPERATION : using an invalid program should generate INVALID_OPERATION
 PASS program with bad fragment shader should fail to link
-PASS using an invalid program should generate INVALID_OPERATION
+PASS getError was expected value: INVALID_OPERATION : using an invalid program should generate INVALID_OPERATION
 PASS program with bad shaders should fail to link
-PASS using an invalid program should generate INVALID_OPERATION
-PASS using a valid program shouldn't generate a GL error
-PASS should be no errors at this point #2
-PASS drawing with a valid program shouldn't generate a GL error
-PASS using an invalid program should generate INVALID_OPERATION
-PASS drawing with an invalid program should generate some GL error XXX
+PASS getError was expected value: INVALID_OPERATION : using an invalid program should generate INVALID_OPERATION
+PASS getError was expected value: NO_ERROR : using a valid program shouldn't generate a GL error
+PASS getError was expected value: NO_ERROR : should be no errors at this point #2
+PASS getError was expected value: NO_ERROR : drawing with a valid program shouldn't generate a GL error
+PASS getError was expected value: INVALID_OPERATION : using an invalid program should generate INVALID_OPERATION
+PASS getError was expected value: NO_ERROR : Try to use an invalid program should not change the current rendering state
+PASS getError was expected value: NO_ERROR : drawing with a valid program shouldn't generate a GL error
 PASS linking should fail with in-use formerly good program, with new bad shader attached
-PASS drawing with a valid when last used program shouldn't generate a GL error
+PASS getError was expected value: NO_ERROR : drawing with a valid when last used program shouldn't generate a GL error
+PASS delete shaders after attaching them and before linking program should not affect linkProgram
+PASS getError was expected value: NO_ERROR : using a valid program should succeed
+PASS getError was expected value: NO_ERROR : drawing with a valid when last used program shouldn't generate a GL error
+PASS getError was expected value: NO_ERROR : delete the current program shouldn't change the current rendering state
+PASS getError was expected value: NO_ERROR : The current program shouldn't be deleted
+PASS good fragment shader should compile
+PASS getError was expected value: INVALID_VALUE : an unattached shader should be deleted immediately
+PASS good fragment shader should compile
+PASS an attached shader shouldn't be deleted
+PASS getError was expected value: INVALID_VALUE : a delete-marked program should be deleted once it's no longer the current program
+PASS getError was expected value: INVALID_VALUE : a delete-marked shader should be deleted once all its attachments are removed
 PASS successfullyParsed is true
 
 TEST COMPLETE

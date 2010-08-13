@@ -40,7 +40,7 @@ public:
     virtual ~WebGLObject();
 
     Platform3DObject object() const { return m_object; }
-    void setObject(Platform3DObject, bool shouldDeleteObject = true);
+    void setObject(Platform3DObject);
     void deleteObject();
 
     void detachContext()
@@ -58,20 +58,25 @@ public:
     virtual bool isShader() const { return false; }
     virtual bool isTexture() const { return false; }
 
+    void onAttached() { ++m_attachmentCount; }
+    void onDetached()
+    {
+        if (m_attachmentCount)
+            --m_attachmentCount;
+        if (!m_attachmentCount && m_deleted)
+            m_object = 0;
+    }
+    unsigned getAttachmentCount() { return m_attachmentCount; }
+
 protected:
     WebGLObject(WebGLRenderingContext*);
     virtual void deleteObjectImpl(Platform3DObject) = 0;
 
 private:
     Platform3DObject m_object;
-    // The shouldDeleteObject flag indicates whether this wrapper
-    // owns the underlying resource and should delete it when the
-    // wrapper is unreferenced for the last time and deleted. It
-    // is only set to false for certain objects returned from get
-    // queries. FIXME: should consider canonicalizing all of these
-    // objects in the future.
-    bool m_shouldDeleteObject;
     WebGLRenderingContext* m_context;
+    unsigned m_attachmentCount;
+    bool m_deleted;
 };
 
 } // namespace WebCore

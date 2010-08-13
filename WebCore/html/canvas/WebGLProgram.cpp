@@ -45,9 +45,15 @@ WebGLProgram::WebGLProgram(WebGLRenderingContext* ctx)
     setObject(context()->graphicsContext3D()->createProgram());
 }
 
-void WebGLProgram::deleteObjectImpl(Platform3DObject object)
+void WebGLProgram::deleteObjectImpl(Platform3DObject obj)
 {
-    context()->graphicsContext3D()->deleteProgram(object);
+    context()->graphicsContext3D()->deleteProgram(obj);
+    if (!object()) {
+        if (m_vertexShader)
+            m_vertexShader->onDetached();
+        if (m_fragmentShader)
+            m_fragmentShader->onDetached();
+    }
 }
 
 bool WebGLProgram::cacheActiveAttribLocations()
@@ -92,6 +98,58 @@ bool WebGLProgram::isUsingVertexAttrib0() const
             return true;
     }
     return false;
+}
+
+WebGLShader* WebGLProgram::getAttachedShader(GraphicsContext3D::WebGLEnumType type)
+{
+    switch (type) {
+    case GraphicsContext3D::VERTEX_SHADER:
+        return m_vertexShader.get();
+    case GraphicsContext3D::FRAGMENT_SHADER:
+        return m_fragmentShader.get();
+    default:
+        return 0;
+    }
+}
+
+bool WebGLProgram::attachShader(WebGLShader* shader)
+{
+    if (!shader || !shader->object())
+        return false;
+    switch (shader->getType()) {
+    case GraphicsContext3D::VERTEX_SHADER:
+        if (m_vertexShader)
+            return false;
+        m_vertexShader = shader;
+        return true;
+    case GraphicsContext3D::FRAGMENT_SHADER:
+        if (m_fragmentShader)
+            return false;
+        m_fragmentShader = shader;
+        return true;
+    default:
+        return false;
+    }
+}
+
+bool WebGLProgram::detachShader(WebGLShader* shader)
+{
+    if (!shader || !shader->object())
+        return false;
+    switch (shader->getType()) {
+    case GraphicsContext3D::VERTEX_SHADER:
+        if (m_vertexShader != shader)
+            return false;
+        m_vertexShader = 0;
+        return true;
+    case GraphicsContext3D::FRAGMENT_SHADER:
+        if (m_fragmentShader != shader)
+            return false;
+        m_fragmentShader = 0;
+        return true;
+    default:
+        return false;
+    }
 }
 
 }

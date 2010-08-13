@@ -28,6 +28,8 @@
 
 #include "WebGLObject.h"
 
+#include "WebGLShader.h"
+
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -54,6 +56,10 @@ public:
     bool isLinkFailureFlagSet() const { return m_linkFailure; }
     void setLinkFailureFlag(bool failed) { m_linkFailure = failed; }
 
+    WebGLShader* getAttachedShader(GraphicsContext3D::WebGLEnumType);
+    bool attachShader(WebGLShader*);
+    bool detachShader(WebGLShader*);
+
 protected:
     WebGLProgram(WebGLRenderingContext*);
 
@@ -65,6 +71,9 @@ private:
     Vector<int> m_activeAttribLocations;
 
     bool m_linkFailure;
+
+    RefPtr<WebGLShader> m_vertexShader;
+    RefPtr<WebGLShader> m_fragmentShader;
 };
 
 } // namespace WebCore

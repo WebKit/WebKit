@@ -1,3 +1,13 @@
+2010-08-11  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Regression in linking of programs
+        https://bugs.webkit.org/show_bug.cgi?id=43820
+
+        * fast/canvas/webgl/program-test-expected.txt: Fix the tests so a second shader of the same type attaching to a program will generate error; also, add tests for deleteShader/deleteProgram behavior.
+        * fast/canvas/webgl/program-test.html: Ditto.
+
 2010-08-13  Steve Block  <steveblock@google.com>
 
         Reviewed by Alexey Proskuryakov.

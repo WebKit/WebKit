@@ -35,8 +35,9 @@ namespace WebCore {
     
 WebGLObject::WebGLObject(WebGLRenderingContext* context)
     : m_object(0)
-    , m_shouldDeleteObject(true)
     , m_context(context)
+    , m_attachmentCount(0)
+    , m_deleted(false)
 {
 }
 
@@ -46,27 +47,26 @@ WebGLObject::~WebGLObject()
         m_context->removeObject(this);
 }
 
-void WebGLObject::setObject(Platform3DObject object, bool shouldDeleteObject)
+void WebGLObject::setObject(Platform3DObject object)
 {
     if (object == m_object)
         return;
         
     deleteObject();
     m_object = object;
-    m_shouldDeleteObject = shouldDeleteObject;
 }
 
 void WebGLObject::deleteObject()
 {
     if (m_object) {
-        if (m_shouldDeleteObject)
-            if (m_context) {
-                m_context->graphicsContext3D()->makeContextCurrent();
-                deleteObjectImpl(m_object);
-            }
-        m_object = 0;
+        if (m_context) {
+            m_context->graphicsContext3D()->makeContextCurrent();
+            deleteObjectImpl(m_object);
+        }
+        if (!m_attachmentCount)
+            m_object = 0;
+        m_deleted = true;
     }
-    m_shouldDeleteObject = true;
 }
 
 }
