@@ -5677,6 +5677,7 @@ storage/indexeddb
 fast/dom/Geolocation/callback-to-remote-context.html
 fast/dom/Geolocation/callback-to-remote-context2.html
 fast/dom/Geolocation/callback-to-deleted-context.html
+fast/dom/Geolocation/disconnected-frame-already.html
 
 # GTK+ theme-rendered widgets do not support CSS transforms
 # https://bugs.webkit.org/show_bug.cgi?id=40139

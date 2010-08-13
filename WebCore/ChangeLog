@@ -1,3 +1,20 @@
+2010-08-13  Steve Block  <steveblock@google.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Geolocation activity started after frame has been disconnected can cause crash
+        https://bugs.webkit.org/show_bug.cgi?id=39879
+
+        New requests started after the Frame has been disconnected are ignored. We do
+        not invoke the error callback as this would allow buggy or malicious pages to
+        hose the CPU. Such a page could hold a reference to a Geolocation object from
+        a since closed Page and register new requests from the error callback to
+        create an infinite loop.
+
+        Tests: fast/dom/Geolocation/disconnected-frame-already.html
+
+        * page/Geolocation.cpp:
+
 2010-08-13  Satish Sampath  <satish@chromium.org>
 
         Reviewed by Jeremy Orlow.

@@ -1,3 +1,19 @@
+2010-08-13  Steve Block  <steveblock@google.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Geolocation activity started after frame has been disconnected can cause crash
+        https://bugs.webkit.org/show_bug.cgi?id=39879
+
+        Added new tests to GTK skipped list.
+
+        * fast/dom/Geolocation/disconnected-frame-already.html: Added.
+        * fast/dom/Geolocation/disconnected-frame-already-expected.txt: Added.
+        * fast/dom/Geolocation/script-tests/disconnected-frame-already.js: Added.
+        * fast/dom/Geolocation/resources/disconnected-frame-already-inner1.html: Added.
+        * fast/dom/Geolocation/resources/disconnected-frame-already-inner2.html: Added.
+        * platform/gtk/Skipped:
+
 2010-08-13  Ariya Hidayat  <ariya@sencha.com>
 
         Rubber-stamped by Simon Hausmann.
