@@ -136,17 +136,11 @@ symbian {
 RESOURCES += \
     $$PWD/../WebCore/WebCore.qrc
 
-!symbian:!maemo5 {
-    RESOURCES += $$PWD/../WebCore/inspector/front-end/WebKit.qrc
-}
+include_webinspector: RESOURCES += $$PWD/../WebCore/inspector/front-end/WebKit.qrc
 
-maemo5|symbian|embedded {
-    DEFINES += ENABLE_FAST_MOBILE_SCROLLING=1
-}
+enable_fast_mobile_scrolling: DEFINES += ENABLE_FAST_MOBILE_SCROLLING=1
 
-maemo5|symbian {
-    DEFINES += WTF_USE_QT_MOBILE_THEME=1
-}
+use_qt_mobile_theme: DEFINES += WTF_USE_QT_MOBILE_THEME=1
 
 contains(DEFINES, WTF_USE_QT_MOBILE_THEME=1) {
     DEFINES += ENABLE_NO_LISTBOX_RENDERING=1

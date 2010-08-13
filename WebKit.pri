@@ -81,7 +81,20 @@ symbian {
     QMAKE_CXXFLAGS.ARMCC += $$RVCT_COMMON_CXXFLAGS
 }
 
-symbian|maemo5: DEFINES *= QT_NO_UITOOLS
+##### Defaults for some mobile platforms
+symbian|maemo5 {
+    CONFIG += disable_uitools
+    CONFIG += enable_fast_mobile_scrolling
+    CONFIG += use_qt_mobile_theme
+} else {
+    CONFIG += include_webinspector
+}
+
+embedded: CONFIG += enable_fast_mobile_scrolling
+
+####
+
+disable_uitools: DEFINES *= QT_NO_UITOOLS
 
 contains(DEFINES, QT_NO_UITOOLS): CONFIG -= uitools
 

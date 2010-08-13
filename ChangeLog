@@ -1,3 +1,12 @@
+2010-08-13  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Clean up mobile feature useage
+        https://bugs.webkit.org/show_bug.cgi?id=43968
+
+        * WebKit.pri: Set feature defaults here for some Nokia specific mobile platforms
+
 2010-08-13  Patrick Gansterer  <paroga@paroga.com>
 
         Reviewed by Nikolas Zimmermann.
