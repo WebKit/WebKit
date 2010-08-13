@@ -25,7 +25,7 @@
 import unittest
 
 from common import CarriageReturnChecker
-
+from common import TabChecker
 
 # FIXME: The unit tests for the cpp, text, and common checkers should
 #        share supporting test code. This can include, for example, the
@@ -92,3 +92,33 @@ class CarriageReturnCheckerTest(unittest.TestCase):
         self.assert_carriage_return(["line1", "line2\r", "line3\r"],
                                     ["line1", "line2", "line3"],
                                     [2, 3])
+
+
+class TabCheckerTest(unittest.TestCase):
+
+    """Tests for TabChecker."""
+
+    def assert_tab(self, input_lines, error_lines):
+        """Assert when the given lines contain tabs."""
+        self._error_lines = []
+
+        def style_error_handler(line_number, category, confidence, message):
+            self.assertEqual(category, 'whitespace/tab')
+            self.assertEqual(confidence, 5)
+            self.assertEqual(message, 'Line contains tab character.')
+            self._error_lines.append(line_number)
+
+        checker = TabChecker('', style_error_handler)
+        checker.check(input_lines)
+        self.assertEquals(self._error_lines, error_lines)
+
+    def test_notab(self):
+        self.assert_tab([''], [])
+        self.assert_tab(['foo', 'bar'], [])
+
+    def test_tab(self):
+        self.assert_tab(['\tfoo'], [1])
+        self.assert_tab(['line1', '\tline2', 'line3\t'], [2, 3])
+
+if __name__ == '__main__':
+    unittest.main()

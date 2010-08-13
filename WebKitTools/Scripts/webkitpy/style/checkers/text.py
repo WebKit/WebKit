@@ -29,6 +29,7 @@
 
 """Checks WebKit style for text files."""
 
+from common import TabChecker
 
 class TextChecker(object):
 
@@ -37,16 +38,10 @@ class TextChecker(object):
     def __init__(self, file_path, handle_style_error):
         self.file_path = file_path
         self.handle_style_error = handle_style_error
+        self._tab_checker = TabChecker(file_path, handle_style_error)
 
     def check(self, lines):
-        lines = (["// adjust line numbers to make the first line 1."] + lines)
-
-        # FIXME: share with cpp_style.
-        for line_number, line in enumerate(lines):
-            if "\t" in line:
-                self.handle_style_error(line_number,
-                                        "whitespace/tab", 5,
-                                        "Line contains tab character.")
+        self._tab_checker.check(lines)
 
 
 # FIXME: Remove this function (requires refactoring unit tests).

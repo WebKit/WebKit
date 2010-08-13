@@ -38,6 +38,7 @@ from checkers.common import categories as CommonCategories
 from checkers.common import CarriageReturnChecker
 from checkers.cpp import CppChecker
 from checkers.python import PythonChecker
+from checkers.test_expectations import TestExpectationsChecker
 from checkers.text import TextChecker
 from error_handlers import DefaultStyleErrorHandler
 from filter import FilterConfiguration
@@ -234,6 +235,7 @@ def _all_categories():
     """Return the set of all categories used by check-webkit-style."""
     # Take the union across all checkers.
     categories = CommonCategories.union(CppChecker.categories)
+    categories = categories.union(TestExpectationsChecker.categories)
 
     # FIXME: Consider adding all of the pep8 categories.  Since they
     #        are not too meaningful for documentation purposes, for
@@ -399,10 +401,15 @@ class CheckerDispatcher(object):
         # Since "LayoutTests" is in _SKIPPED_FILES_WITHOUT_WARNING, make
         # an exception to prevent files like "LayoutTests/ChangeLog" and
         # "LayoutTests/ChangeLog-2009-06-16" from being skipped.
+        # Files like 'test_expectations.txt' and 'drt_expectations.txt'
+        # are also should not be skipped.
         #
         # FIXME: Figure out a good way to avoid having to add special logic
         #        for this special case.
-        if os.path.basename(file_path).startswith('ChangeLog'):
+        basename = os.path.basename(file_path)
+        if basename.startswith('ChangeLog'):
+            return False
+        elif basename == 'test_expectations.txt' or basename == 'drt_expectations.txt':
             return False
         for skipped_file in _SKIPPED_FILES_WITHOUT_WARNING:
             if file_path.find(skipped_file) >= 0:
@@ -442,7 +449,11 @@ class CheckerDispatcher(object):
         elif file_type == FileType.PYTHON:
             checker = PythonChecker(file_path, handle_style_error)
         elif file_type == FileType.TEXT:
-            checker = TextChecker(file_path, handle_style_error)
+            basename = os.path.basename(file_path)
+            if basename == 'test_expectations.txt' or basename == 'drt_expectations.txt':
+                checker = TestExpectationsChecker(file_path, handle_style_error)
+            else:
+                checker = TextChecker(file_path, handle_style_error)
         else:
             raise ValueError('Invalid file type "%(file_type)s": the only valid file types '
                              "are %(NONE)s, %(CPP)s, and %(TEXT)s."

@@ -45,6 +45,8 @@ from webkitpy.common.system.logtesting import LogTesting
 from webkitpy.common.system.logtesting import TestLogStream
 from webkitpy.common.system.logutils import configure_logging
 from webkitpy.common.checkout.scm import detect_scm_system
+from webkitpy.layout_tests import port
+from webkitpy.layout_tests.layout_package import test_expectations
 from webkitpy.thirdparty.autoinstalled import pep8
 
 

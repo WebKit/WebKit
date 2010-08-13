@@ -460,6 +460,9 @@ class TestExpectationsFile:
         return ExpectationsJsonEncoder(separators=(',', ':')).encode(
             self._all_expectations)
 
+    def get_non_fatal_errors(self):
+        return self._non_fatal_errors
+
     def contains(self, test):
         return test in self._test_to_expectations
 

@@ -30,7 +30,7 @@
 #        into a shared location and refactoring appropriately.
 categories = set([
     "whitespace/carriage_return",
-])
+    "whitespace/tab"])
 
 
 class CarriageReturnChecker(object):
@@ -55,3 +55,20 @@ class CarriageReturnChecker(object):
             lines[line_number] = lines[line_number].rstrip("\r")
 
         return lines
+
+
+class TabChecker(object):
+
+    """Supports checking for and handling tabs."""
+
+    def __init__(self, file_path, handle_style_error):
+        self.file_path = file_path
+        self.handle_style_error = handle_style_error
+
+    def check(self, lines):
+        # FIXME: share with cpp_style.
+        for line_number, line in enumerate(lines):
+            if "\t" in line:
+                self.handle_style_error(line_number + 1,
+                                        "whitespace/tab", 5,
+                                        "Line contains tab character.")
