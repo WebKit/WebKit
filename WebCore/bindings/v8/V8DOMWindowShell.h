@@ -31,13 +31,13 @@
 #ifndef V8DOMWindowShell_h
 #define V8DOMWindowShell_h
 
-#include "AtomicString.h"
 #include "WrapperTypeInfo.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 

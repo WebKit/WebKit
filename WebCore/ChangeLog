@@ -1,3 +1,9 @@
+2010-08-12  Gavin Barraclough  <barraclough@apple.com>
+
+        Speculative build fix for chromium bindings (someone added the old include style!).
+
+        * bindings/v8/V8DOMWindowShell.h:
+
 2010-08-12  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Tony Chang.
