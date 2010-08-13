@@ -1,5 +1,11 @@
 2010-08-12  Gavin Barraclough  <barraclough@apple.com>
 
+        Windows build fix.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2010-08-12  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Sam Weinig
 
         Unify UString::UTF8String() & String::utf8() methods,
