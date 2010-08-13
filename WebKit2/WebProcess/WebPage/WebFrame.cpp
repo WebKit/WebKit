@@ -27,12 +27,15 @@
 
 #include "InjectedBundleNodeHandle.h"
 #include "InjectedBundleScriptWorld.h"
+#include "WebChromeClient.h"
 #include "WebPage.h"
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/JSLock.h>
 #include <WebCore/AnimationController.h>
 #include <WebCore/CSSComputedStyleDeclaration.h>
+#include <WebCore/Chrome.h>
 #include <WebCore/Frame.h>
+#include <WebCore/Page.h>
 #include <WebCore/HTMLFrameOwnerElement.h>
 #include <WebCore/JSCSSStyleDeclaration.h>
 #include <WebCore/JSElement.h>
@@ -84,15 +87,14 @@ PassRefPtr<WebFrame> WebFrame::create(WebPage* page, const String& frameName, HT
 }
 
 WebFrame::WebFrame(WebPage* page, const String& frameName, HTMLFrameOwnerElement* ownerElement)
-    : m_page(page)
-    , m_coreFrame(0)
+    : m_coreFrame(0)
     , m_policyListenerID(0)
     , m_policyFunction(0)
     , m_frameLoaderClient(this)
     , m_loadListener(0)
     , m_frameID(generateFrameID())
 {
-    m_page->addWebFrame(m_frameID, this);
+    page->addWebFrame(m_frameID, this);
 
     RefPtr<Frame> frame = Frame::create(page->corePage(), ownerElement, &m_frameLoaderClient);
     m_coreFrame = frame.get();
@@ -120,9 +122,21 @@ WebFrame::~WebFrame()
 #endif
 }
 
+WebPage* WebFrame::page() const
+{ 
+    if (!m_coreFrame)
+        return 0;
+    
+    if (WebCore::Page* page = m_coreFrame->page())
+        return static_cast<WebChromeClient*>(page->chrome()->client())->page();
+
+    return 0;
+}
+
 void WebFrame::invalidate()
 {
-    m_page->removeWebFrame(m_frameID);
+    if (WebPage* p = page())
+        p->removeWebFrame(m_frameID);
     m_coreFrame = 0;
 }
 
@@ -168,7 +182,10 @@ void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyAction action
 
 bool WebFrame::isMainFrame() const
 {
-    return m_page->mainFrame() == this;
+    if (WebPage* p = page())
+        return p->mainFrame() == this;
+
+    return false;
 }
 
 String WebFrame::name() const

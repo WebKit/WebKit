@@ -59,7 +59,7 @@ public:
     // Called when the FrameLoaderClient (and therefore the WebCore::Frame) is being torn down.
     void invalidate();
 
-    WebPage* page() const { return m_page; }
+    WebPage* page() const;
     WebCore::Frame* coreFrame() const { return m_coreFrame; }
 
     uint64_t frameID() const { return m_frameID; }
@@ -105,7 +105,6 @@ private:
 
     virtual Type type() const { return APIType; }
 
-    WebPage* m_page;
     WebCore::Frame* m_coreFrame;
 
     uint64_t m_policyListenerID;

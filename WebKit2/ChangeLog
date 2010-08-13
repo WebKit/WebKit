@@ -1,3 +1,21 @@
+2010-08-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WebKit2 crashes when WebFrame outlives WebPage
+        https://bugs.webkit.org/show_bug.cgi?id=43939
+
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        (WebKit::WebChromeClient::page): Add this method, to allow
+        WebFrame to retrieve its WebPage following WebCore pointers.
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::WebFrame): Do not initialize m_page (it's gone).
+        (WebKit::WebFrame::page): Don't use the data member, get it from
+        WebCore.
+        (WebKit::WebFrame::invalidate): Use method to get page() and null check.
+        (WebKit::WebFrame::isMainFrame): ditto
+        * WebProcess/WebPage/WebFrame.h:
+
 2010-08-12  Jon Honeycutt  <jhoneycutt@apple.com>
 
         WebKitTestRunner needs to run tests without using native controls
