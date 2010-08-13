@@ -543,10 +543,11 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
         case WebPageProxyMessage::WillSubmitForm: {
             uint64_t frameID;
             uint64_t sourceFrameID;
+            Vector<std::pair<String, String> > textFieldValues;
             uint64_t listenerID;
-            if (!arguments->decode(CoreIPC::Out(frameID, sourceFrameID, listenerID)))
+            if (!arguments->decode(CoreIPC::Out(frameID, sourceFrameID, textFieldValues, listenerID)))
                 return;
-            willSubmitForm(webFrame(frameID), webFrame(sourceFrameID), listenerID);
+            willSubmitForm(webFrame(frameID), webFrame(sourceFrameID), textFieldValues, listenerID);
             break;
         }
         
@@ -836,10 +837,10 @@ void WebPageProxy::decidePolicyForMIMEType(WebFrameProxy* frame, const String& M
 
 // FormClient
 
-void WebPageProxy::willSubmitForm(WebFrameProxy* frame, WebFrameProxy* sourceFrame, uint64_t listenerID)
+void WebPageProxy::willSubmitForm(WebFrameProxy* frame, WebFrameProxy* sourceFrame, Vector<std::pair<String, String> >& textFieldValues, uint64_t listenerID)
 {
     RefPtr<WebFormSubmissionListenerProxy> listener = frame->setUpFormSubmissionListenerProxy(listenerID);
-    if (!m_formClient.willSubmitForm(this, frame, sourceFrame, listener.get()))
+    if (!m_formClient.willSubmitForm(this, frame, sourceFrame, textFieldValues, listener.get()))
         listener->continueSubmission();
 }
 

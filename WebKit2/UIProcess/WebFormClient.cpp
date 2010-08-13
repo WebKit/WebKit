@@ -25,9 +25,10 @@
 
 #include "WebFormClient.h"
 
+#include "ImmutableDictionary.h"
 #include "WKAPICast.h"
-
-using namespace WebCore;
+#include "WebString.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
@@ -44,12 +45,17 @@ void WebFormClient::initialize(const WKPageFormClient* client)
         memset(&m_pageFormClient, 0, sizeof(m_pageFormClient));
 }
 
-bool WebFormClient::willSubmitForm(WebPageProxy* page, WebFrameProxy* frame, WebFrameProxy* sourceFrame, WebFormSubmissionListenerProxy* listener)
+bool WebFormClient::willSubmitForm(WebPageProxy* page, WebFrameProxy* frame, WebFrameProxy* sourceFrame, Vector<std::pair<String, String> >& textFieldValues, WebFormSubmissionListenerProxy* listener)
 {
     if (!m_pageFormClient.willSubmitForm)
         return false;
 
-    m_pageFormClient.willSubmitForm(toRef(page), toRef(frame), toRef(sourceFrame), toRef(listener), m_pageFormClient.clientInfo);
+    ImmutableDictionary::MapType map;
+    for (size_t i = 0; i < textFieldValues.size(); ++i)
+        map.set(textFieldValues[i].first, WebString::create(textFieldValues[i].second));
+
+    RefPtr<ImmutableDictionary> textFieldsMap = ImmutableDictionary::adopt(map);
+    m_pageFormClient.willSubmitForm(toRef(page), toRef(frame), toRef(sourceFrame), toRef(textFieldsMap.get()), toRef(listener), m_pageFormClient.clientInfo);
     return true;
 }
 

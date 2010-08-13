@@ -28,7 +28,7 @@
 
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
-
+#include <utility>
 #include <wtf/Vector.h>
 
 namespace CoreIPC {
@@ -42,6 +42,29 @@ template<typename T> struct SimpleArgumentCoder {
     static bool decode(ArgumentDecoder* decoder, T& t)
     {
         return decoder->decodeBytes(reinterpret_cast<uint8_t*>(&t), sizeof(T));
+    }
+};
+
+template<typename T, typename U> struct ArgumentCoder<std::pair<T, U> > {
+    static void encode(ArgumentEncoder* encoder, const std::pair<T, U>& pair)
+    {
+        encoder->encode(pair.first);
+        encoder->encode(pair.second);
+    }
+
+    static bool decode(ArgumentDecoder* decoder, std::pair<T, U>& pair)
+    {
+        T first;
+        if (!decoder->decode(first))
+            return false;
+
+        U second;
+        if (!decoder->decode(second))
+            return false;
+
+        pair.first = first;
+        pair.second = second;
+        return true;
     }
 };
 
@@ -59,7 +82,7 @@ template<typename T> struct ArgumentCoder<Vector<T> > {
         if (!decoder->decodeUInt64(size))
             return false;
 
-        // Before allocating the cector, make sure that the decoder buffer is big enough.
+        // Before allocating the vector, make sure that the decoder buffer is big enough.
         if (!decoder->bufferIsLargeEnoughtToContain<T>(size)) {
             decoder->markInvalid();
             return false;

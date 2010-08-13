@@ -2,6 +2,38 @@
 
         Reviewed by Brady Eidson.
 
+        Pass values map to willSubmitForm in WebKit2 API
+        Part of <rdar://problem/8255932>
+        https://bugs.webkit.org/show_bug.cgi?id=43995
+
+        * Platform/CoreIPC/ArgumentCoders.h:
+        (CoreIPC::):
+        Add overload for std::pair.
+
+        * Shared/ImmutableDictionary.h:
+        (WebKit::ImmutableDictionary::adopt):
+        Fix function signature by removing size parameter.
+
+        * UIProcess/API/C/WKPage.h:
+        Add dictionary parameter to callback.
+
+        * UIProcess/WebFormClient.cpp:
+        (WebKit::WebFormClient::willSubmitForm):
+        Create an ImmutableDictionary from the vector of string pairs.
+
+        * UIProcess/WebFormClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveMessage):
+        (WebKit::WebPageProxy::willSubmitForm):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchWillSubmitForm):
+        Plumb through the values vector.
+
+2010-08-13  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Brady Eidson.
+
         Add dictionary API type
         https://bugs.webkit.org/show_bug.cgi?id=43990
 

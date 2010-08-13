@@ -27,7 +27,9 @@
 #define WebFormClient_h
 
 #include "WKPage.h"
+#include <utility>
 #include <wtf/Forward.h>
+#include <wtf/Vector.h>
 
 namespace WebKit {
 
@@ -40,8 +42,8 @@ public:
     WebFormClient();
     void initialize(const WKPageFormClient*);
 
-    // FIXME: Add value dictionary and form element reference.
-    bool willSubmitForm(WebPageProxy*, WebFrameProxy*, WebFrameProxy*, WebFormSubmissionListenerProxy*); 
+    // FIXME: Add some type of form element reference or anotated user data.
+    bool willSubmitForm(WebPageProxy*, WebFrameProxy*, WebFrameProxy*, Vector<std::pair<String, String> >& textFieldValues, WebFormSubmissionListenerProxy*); 
 
 private:
     WKPageFormClient m_pageFormClient;

@@ -478,7 +478,7 @@ void WebFrameLoaderClient::dispatchWillSubmitForm(FramePolicyFunction function, 
     WebFrame* sourceFrame = static_cast<WebFrameLoaderClient*>(formState->sourceFrame()->loader()->client())->webFrame();    
 
     WebProcess::shared().connection()->send(WebPageProxyMessage::WillSubmitForm, webPage->pageID(),
-                                            CoreIPC::In(m_frame->frameID(), sourceFrame->frameID(), listenerID));
+                                            CoreIPC::In(m_frame->frameID(), sourceFrame->frameID(), formState->textFieldValues(), listenerID));
 }
 
 void WebFrameLoaderClient::dispatchDidLoadMainResource(DocumentLoader*)

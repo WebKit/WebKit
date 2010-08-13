@@ -46,7 +46,7 @@ public:
     {
         return adoptRef(new ImmutableDictionary);
     }
-    static PassRefPtr<ImmutableDictionary> adopt(MapType& map, size_t size)
+    static PassRefPtr<ImmutableDictionary> adopt(MapType& map)
     {
         return adoptRef(new ImmutableDictionary(map, Adopt));
     }
