@@ -1,3 +1,45 @@
+2010-08-13  Satish Sampath  <satish@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Support for multiple speech enabled elements in same page.
+        https://bugs.webkit.org/show_bug.cgi?id=43922
+
+        * page/SpeechInput.cpp: Generates request ids as necessary when each speech enabled input element gets
+        created/destroyed and multiplexes the listener callbacks to the appropriate input element based on the request id.
+        (WebCore::SpeechInput::SpeechInput):
+        (WebCore::SpeechInput::~SpeechInput):
+        (WebCore::SpeechInput::registerListener):
+        (WebCore::SpeechInput::unregisterListener):
+        (WebCore::SpeechInput::didCompleteRecording):
+        (WebCore::SpeechInput::didCompleteRecognition):
+        (WebCore::SpeechInput::setRecognitionResult):
+        (WebCore::SpeechInput::startRecognition):
+        (WebCore::SpeechInput::stopRecording):
+        (WebCore::SpeechInput::cancelRecognition):
+        * page/SpeechInput.h:
+        * page/SpeechInputClient.h: Now requires a one time set for the WebCore::SpeechInputListener and
+        takes in a 'requestId' for all calls.
+        * page/SpeechInputListener.h: Now returns the above mentioned requestId in all the listener callbacks for
+        identifying which input element the event goes to.
+        * platform/mock/SpeechInputClientMock.cpp:
+        (WebCore::SpeechInputClientMock::SpeechInputClientMock):
+        (WebCore::SpeechInputClientMock::setListener):
+        (WebCore::SpeechInputClientMock::startRecognition):
+        (WebCore::SpeechInputClientMock::stopRecording):
+        (WebCore::SpeechInputClientMock::cancelRecognition):
+        (WebCore::SpeechInputClientMock::timerFired):
+        * platform/mock/SpeechInputClientMock.h:
+        * rendering/TextControlInnerElements.cpp:
+        (WebCore::InputFieldSpeechButtonElement::InputFieldSpeechButtonElement):
+        (WebCore::InputFieldSpeechButtonElement::~InputFieldSpeechButtonElement):
+        (WebCore::InputFieldSpeechButtonElement::defaultEventHandler):
+        (WebCore::InputFieldSpeechButtonElement::speechInput):
+        (WebCore::InputFieldSpeechButtonElement::didCompleteRecording):
+        (WebCore::InputFieldSpeechButtonElement::didCompleteRecognition):
+        (WebCore::InputFieldSpeechButtonElement::setRecognitionResult):
+        * rendering/TextControlInnerElements.h:
+
 2010-08-13  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by David Kilzer.

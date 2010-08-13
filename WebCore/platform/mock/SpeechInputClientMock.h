@@ -49,9 +49,10 @@ public:
     void setRecognitionResult(const String& result);
 
     // SpeechInputClient methods.
-    bool startRecognition(SpeechInputListener*);
-    void stopRecording();
-    void cancelRecognition();
+    void setListener(SpeechInputListener*);
+    bool startRecognition(int);
+    void stopRecording(int);
+    void cancelRecognition(int);
 
 private:
     void timerFired(Timer<SpeechInputClientMock>*);
@@ -59,6 +60,7 @@ private:
     bool m_recording;
     Timer<SpeechInputClientMock> m_timer;
     SpeechInputListener* m_listener;
+    int m_requestId;
     String m_recognitionResult;
 };
 

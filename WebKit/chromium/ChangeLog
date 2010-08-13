@@ -1,3 +1,38 @@
+2010-08-13  Satish Sampath  <satish@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Support for multiple speech enabled elements in same page.
+        https://bugs.webkit.org/show_bug.cgi?id=43922
+
+        * public/WebSpeechInputController.h: Bubbles up the requestId given by webcore to the embedder.
+        (WebKit::WebSpeechInputController::startRecognition):
+        (WebKit::WebSpeechInputController::cancelRecognition):
+        (WebKit::WebSpeechInputController::stopRecording):
+        * public/WebSpeechInputListener.h: Passes down the requestId given by embedder to webcore.
+        (WebKit::WebSpeechInputListener::didCompleteRecording):
+        (WebKit::WebSpeechInputListener::setRecognitionResult):
+        (WebKit::WebSpeechInputListener::didCompleteRecognition):
+        * src/SpeechInputClientImpl.cpp:
+        (WebKit::SpeechInputClientImpl::setListener):
+        (WebKit::SpeechInputClientImpl::startRecognition):
+        (WebKit::SpeechInputClientImpl::stopRecording):
+        (WebKit::SpeechInputClientImpl::cancelRecognition):
+        (WebKit::SpeechInputClientImpl::didCompleteRecording):
+        (WebKit::SpeechInputClientImpl::didCompleteRecognition):
+        (WebKit::SpeechInputClientImpl::setRecognitionResult):
+        * src/SpeechInputClientImpl.h:
+        * src/WebSpeechInputControllerMockImpl.cpp:
+        (WebKit::WebSpeechInputControllerMockImpl::WebSpeechInputControllerMockImpl):
+        (WebKit::WebSpeechInputControllerMockImpl::~WebSpeechInputControllerMockImpl):
+        (WebKit::WebSpeechInputControllerMockImpl::didCompleteRecording):
+        (WebKit::WebSpeechInputControllerMockImpl::didCompleteRecognition):
+        (WebKit::WebSpeechInputControllerMockImpl::setRecognitionResult):
+        (WebKit::WebSpeechInputControllerMockImpl::startRecognition):
+        (WebKit::WebSpeechInputControllerMockImpl::cancelRecognition):
+        (WebKit::WebSpeechInputControllerMockImpl::stopRecording):
+        * src/WebSpeechInputControllerMockImpl.h:
+
 2010-08-12  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

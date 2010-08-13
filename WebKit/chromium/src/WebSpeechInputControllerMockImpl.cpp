@@ -46,6 +46,12 @@ WebSpeechInputControllerMockImpl::WebSpeechInputControllerMockImpl(
     : m_webcoreMock(new WebCore::SpeechInputClientMock())
     , m_listener(listener)
 {
+    m_webcoreMock->setListener(this);
+}
+
+WebSpeechInputControllerMockImpl::~WebSpeechInputControllerMockImpl()
+{
+    m_webcoreMock->setListener(0);
 }
 
 void WebSpeechInputControllerMockImpl::setMockRecognitionResult(const WebString& result)
@@ -53,34 +59,34 @@ void WebSpeechInputControllerMockImpl::setMockRecognitionResult(const WebString&
     m_webcoreMock->setRecognitionResult(result);
 }
 
-void WebSpeechInputControllerMockImpl::didCompleteRecording()
+void WebSpeechInputControllerMockImpl::didCompleteRecording(int requestId)
 {
-    m_listener->didCompleteRecording();
+    m_listener->didCompleteRecording(requestId);
 }
 
-void WebSpeechInputControllerMockImpl::didCompleteRecognition()
+void WebSpeechInputControllerMockImpl::didCompleteRecognition(int requestId)
 {
-    m_listener->didCompleteRecognition();
+    m_listener->didCompleteRecognition(requestId);
 }
 
-void WebSpeechInputControllerMockImpl::setRecognitionResult(const WTF::String& result)
+void WebSpeechInputControllerMockImpl::setRecognitionResult(int requestId, const WTF::String& result)
 {
-    m_listener->setRecognitionResult(result);
+    m_listener->setRecognitionResult(requestId, result);
 }
 
-bool WebSpeechInputControllerMockImpl::startRecognition()
+bool WebSpeechInputControllerMockImpl::startRecognition(int requestId)
 {
-    return m_webcoreMock->startRecognition(this);
+    return m_webcoreMock->startRecognition(requestId);
 }
 
-void WebSpeechInputControllerMockImpl::cancelRecognition()
+void WebSpeechInputControllerMockImpl::cancelRecognition(int requestId)
 {
-    m_webcoreMock->cancelRecognition();
+    m_webcoreMock->cancelRecognition(requestId);
 }
 
-void WebSpeechInputControllerMockImpl::stopRecording()
+void WebSpeechInputControllerMockImpl::stopRecording(int requestId)
 {
-    m_webcoreMock->stopRecording();
+    m_webcoreMock->stopRecording(requestId);
 }
 
 } // namespace WebKit

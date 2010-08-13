@@ -41,34 +41,42 @@ SpeechInputClientMock::SpeechInputClientMock()
     : m_recording(false)
     , m_timer(this, &SpeechInputClientMock::timerFired)
     , m_listener(0)
+    , m_requestId(0)
 {
 }
 
-bool SpeechInputClientMock::startRecognition(SpeechInputListener* listener)
+void SpeechInputClientMock::setListener(SpeechInputListener* listener)
+{
+    m_listener = listener;
+}
+
+bool SpeechInputClientMock::startRecognition(int requestId)
 {
     if (m_timer.isActive())
         return false;
-    m_listener = listener;
+    m_requestId = requestId;
     m_recording = true;
     m_timer.startOneShot(0);
     return true;
 }
 
-void SpeechInputClientMock::stopRecording()
+void SpeechInputClientMock::stopRecording(int requestId)
 {
+    ASSERT(requestId == m_requestId);
     if (m_timer.isActive() && m_recording) {
         m_timer.stop();
         timerFired(&m_timer);
     }
 }
 
-void SpeechInputClientMock::cancelRecognition()
+void SpeechInputClientMock::cancelRecognition(int requestId)
 {
+    ASSERT(requestId == m_requestId);
     if (m_timer.isActive()) {
         m_timer.stop();
         m_recording = false;
-        m_listener->didCompleteRecognition();
-        m_listener = 0;
+        m_listener->didCompleteRecognition(m_requestId);
+        m_requestId = 0;
     }
 }
 
@@ -81,12 +89,12 @@ void SpeechInputClientMock::timerFired(WebCore::Timer<SpeechInputClientMock>*)
 {
     if (m_recording) {
         m_recording = false;
-        m_listener->didCompleteRecording();
+        m_listener->didCompleteRecording(m_requestId);
         m_timer.startOneShot(0);
     } else {
-        m_listener->setRecognitionResult(m_recognitionResult);
-        m_listener->didCompleteRecognition();
-        m_listener = 0;
+        m_listener->setRecognitionResult(m_requestId, m_recognitionResult);
+        m_listener->didCompleteRecognition(m_requestId);
+        m_requestId = 0;
     }
 }
 

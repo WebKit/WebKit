@@ -41,46 +41,74 @@ namespace WebCore {
 
 SpeechInput::SpeechInput(SpeechInputClient* client)
     : m_client(client)
-    , m_listener(0)
+    , m_nextListenerId(1)
 {
+    m_client->setListener(this);
 }
 
-void SpeechInput::didCompleteRecording()
+SpeechInput::~SpeechInput()
 {
-    ASSERT(m_listener);
-    m_listener->didCompleteRecording();
+    m_client->setListener(0);
 }
 
-void SpeechInput::didCompleteRecognition()
+int SpeechInput::registerListener(SpeechInputListener* listener)
 {
-    ASSERT(m_listener);
-    m_listener->didCompleteRecognition();
-    m_listener = 0;
+#if defined(DEBUG)
+    // Check if already present.
+    for (HashMap<int, SpeechInputListener*>::iterator it = m_listeners.begin(); it != m_listeners.end(); ++it)
+      ASSERT(it->second != listener);
+#endif
+
+    m_listeners.add(m_nextListenerId, listener);
+    return m_nextListenerId++;
 }
 
-void SpeechInput::setRecognitionResult(const String& result)
+void SpeechInput::unregisterListener(int listenerId)
 {
-    ASSERT(m_listener);
-    m_listener->setRecognitionResult(result);
+    if (m_listeners.contains(listenerId))
+        m_listeners.remove(listenerId);
 }
 
-bool SpeechInput::startRecognition(SpeechInputListener* listener)
+void SpeechInput::didCompleteRecording(int listenerId)
 {
-    // Cancel any ongoing recognition first.
-    if (m_listener) {
-        m_listener->didCompleteRecognition();
-        m_listener = 0;
-        m_client->cancelRecognition();
-    }
-
-    m_listener = listener;
-    return m_client->startRecognition(this);
+    // Don't assert if not present as the element might have been removed by the page while
+    // this event was on the way.
+    if (m_listeners.contains(listenerId))
+        m_listeners.get(listenerId)->didCompleteRecording(listenerId);
 }
 
-void SpeechInput::stopRecording()
+void SpeechInput::didCompleteRecognition(int listenerId)
 {
-    ASSERT(m_listener);
-    m_client->stopRecording();
+    // Don't assert if not present as the element might have been removed by the page while
+    // this event was on the way.
+    if (m_listeners.contains(listenerId))
+        m_listeners.get(listenerId)->didCompleteRecognition(listenerId);
+}
+
+void SpeechInput::setRecognitionResult(int listenerId, const String& result)
+{
+    // Don't assert if not present as the element might have been removed by the page while
+    // this event was on the way.
+    if (m_listeners.contains(listenerId))
+        m_listeners.get(listenerId)->setRecognitionResult(listenerId, result);
+}
+
+bool SpeechInput::startRecognition(int listenerId)
+{
+    ASSERT(m_listeners.contains(listenerId));
+    return m_client->startRecognition(listenerId);
+}
+
+void SpeechInput::stopRecording(int listenerId)
+{
+    ASSERT(m_listeners.contains(listenerId));
+    m_client->stopRecording(listenerId);
+}
+
+void SpeechInput::cancelRecognition(int listenerId)
+{
+    ASSERT(m_listeners.contains(listenerId));
+    m_client->cancelRecognition(listenerId);
 }
 
 } // namespace WebCore

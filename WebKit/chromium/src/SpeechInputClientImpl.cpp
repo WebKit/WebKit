@@ -51,41 +51,45 @@ SpeechInputClientImpl::~SpeechInputClientImpl()
 {
 }
 
-bool SpeechInputClientImpl::startRecognition(WebCore::SpeechInputListener* listener)
+void SpeechInputClientImpl::setListener(WebCore::SpeechInputListener* listener)
 {
     m_listener = listener;
-    return m_controller->startRecognition();
 }
 
-void SpeechInputClientImpl::stopRecording()
+bool SpeechInputClientImpl::startRecognition(int requestId)
 {
     ASSERT(m_listener);
-    m_controller->stopRecording();
+    return m_controller->startRecognition(requestId);
 }
 
-void SpeechInputClientImpl::cancelRecognition()
+void SpeechInputClientImpl::stopRecording(int requestId)
 {
     ASSERT(m_listener);
-    m_controller->cancelRecognition();
+    m_controller->stopRecording(requestId);
 }
 
-void SpeechInputClientImpl::didCompleteRecording()
+void SpeechInputClientImpl::cancelRecognition(int requestId)
 {
     ASSERT(m_listener);
-    m_listener->didCompleteRecording();
+    m_controller->cancelRecognition(requestId);
 }
 
-void SpeechInputClientImpl::didCompleteRecognition()
+void SpeechInputClientImpl::didCompleteRecording(int requestId)
 {
     ASSERT(m_listener);
-    m_listener->didCompleteRecognition();
-    m_listener = 0;
+    m_listener->didCompleteRecording(requestId);
 }
 
-void SpeechInputClientImpl::setRecognitionResult(const WebString& result)
+void SpeechInputClientImpl::didCompleteRecognition(int requestId)
 {
     ASSERT(m_listener);
-    m_listener->setRecognitionResult(result);
+    m_listener->didCompleteRecognition(requestId);
+}
+
+void SpeechInputClientImpl::setRecognitionResult(int requestId, const WebString& result)
+{
+    ASSERT(m_listener);
+    m_listener->setRecognitionResult(requestId, result);
 }
 
 } // namespace WebKit

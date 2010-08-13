@@ -53,18 +53,19 @@ public:
     virtual ~SpeechInputClientImpl();
 
     // SpeechInputClient methods.
-    bool startRecognition(WebCore::SpeechInputListener*);
-    void stopRecording();
-    void cancelRecognition();
+    void setListener(WebCore::SpeechInputListener*);
+    bool startRecognition(int);
+    void stopRecording(int);
+    void cancelRecognition(int);
 
     // WebSpeechInputListener methods.
-    void didCompleteRecording();
-    void setRecognitionResult(const WebString&);
-    void didCompleteRecognition();
+    void didCompleteRecording(int);
+    void setRecognitionResult(int, const WebString&);
+    void didCompleteRecognition(int);
 
 private:
     WebSpeechInputController* m_controller; // To call into the embedder.
-    WebCore::SpeechInputListener* m_listener; // Valid when recognition is in progress.
+    WebCore::SpeechInputListener* m_listener;
 };
 
 } // namespace WebKit

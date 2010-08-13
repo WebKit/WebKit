@@ -41,14 +41,21 @@ public:
     // Starts speech recognition. Speech will get recorded until the endpointer detects silence,
     // runs to the limit or stopRecording is called. Progress indications and the recognized
     // text are returned via the listener interface.
+    virtual bool startRecognition(int)
+    {
+        return startRecognition();
+    }
+    // FIXME: Remove this once chromium has picked up this change.
     virtual bool startRecognition()
     {
-         WEBKIT_ASSERT_NOT_REACHED();
-         return false;
+        WEBKIT_ASSERT_NOT_REACHED();
+        return false;
     }
 
     // Cancels an ongoing recognition and discards any audio recorded so far. No partial
     // recognition results are returned to the listener.
+    virtual void cancelRecognition(int) { cancelRecognition(); }
+    // FIXME: Remove this once chromium has picked up this change.
     virtual void cancelRecognition() { WEBKIT_ASSERT_NOT_REACHED(); }
 
     // Stops audio recording and performs recognition with the audio recorded until now
@@ -56,6 +63,8 @@ public:
     // wants to stop recording audio as soon as they finished speaking. Otherwise, the speech
     // recording 'endpointer' should detect silence in the input and stop recording automatically.
     // Call startRecognition() to record audio and recognize speech again.
+    virtual void stopRecording(int) { stopRecording(); }
+    // FIXME: Remove this once chromium has picked up this change.
     virtual void stopRecording() { WEBKIT_ASSERT_NOT_REACHED(); }
 
 protected:

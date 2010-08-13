@@ -47,16 +47,17 @@ class WebSpeechInputControllerMockImpl : public WebCore::SpeechInputListener
                                        , public WebSpeechInputControllerMock {
 public:
     WebSpeechInputControllerMockImpl(WebSpeechInputListener*);
+    virtual ~WebSpeechInputControllerMockImpl();
 
     // WebCore::SpeechInputListener methods.
-    void didCompleteRecording();
-    void didCompleteRecognition();
-    void setRecognitionResult(const WTF::String& result);
+    void didCompleteRecording(int requestId);
+    void didCompleteRecognition(int requestId);
+    void setRecognitionResult(int requestId, const WTF::String& result);
 
     // WebSpeechInputController methods.
-    bool startRecognition();
-    void cancelRecognition();
-    void stopRecording();
+    bool startRecognition(int requestId);
+    void cancelRecognition(int requestId);
+    void stopRecording(int requestId);
 
     // WebSpeechInputControllerMock methods.
     void setMockRecognitionResult(const WebString& result);

@@ -35,6 +35,7 @@
 
 #include "SpeechInputListener.h"
 #include <wtf/Forward.h>
+#include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
@@ -48,20 +49,30 @@ class SpeechInputListener;
 class SpeechInput : public Noncopyable, public SpeechInputListener {
 public:
     SpeechInput(SpeechInputClient*);
-    virtual ~SpeechInput() { }
+    virtual ~SpeechInput();
+
+    // Generates a unique ID for the given listener to be used for speech requests.
+    // This should be the first call made by listeners before anything else.
+    int registerListener(SpeechInputListener*);
+
+    // Invoked when the listener is done with recording or getting destroyed.
+    // Failure to unregister may result in crashes if there were any pending speech events.
+    void unregisterListener(int);
 
     // Methods invoked by the input elements.
-    bool startRecognition(SpeechInputListener* listener);
-    void stopRecording();
+    bool startRecognition(int);
+    void stopRecording(int);
+    void cancelRecognition(int);
 
     // SpeechInputListener methods.
-    virtual void didCompleteRecording();
-    virtual void didCompleteRecognition();
-    virtual void setRecognitionResult(const String&);
+    virtual void didCompleteRecording(int);
+    virtual void didCompleteRecognition(int);
+    virtual void setRecognitionResult(int, const String&);
 
 private:
     SpeechInputClient* m_client;
-    SpeechInputListener* m_listener;
+    HashMap<int, SpeechInputListener*> m_listeners;
+    int m_nextListenerId;
 };
 
 } // namespace WebCore
