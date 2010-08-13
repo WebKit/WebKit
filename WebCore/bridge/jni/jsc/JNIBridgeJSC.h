@@ -45,7 +45,7 @@ public:
     virtual void setValueToInstance(ExecState*, const Instance*, JSValue) const;
 
     const JavaString& name() const { return m_name; }
-    virtual RuntimeType type() const { return m_type.utf8(); }
+    virtual RuntimeType type() const { return m_type.UTF8String(); }
 
     JNIType getJNIType() const { return m_JNIType; }
 

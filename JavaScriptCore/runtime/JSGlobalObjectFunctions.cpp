@@ -53,7 +53,7 @@ namespace JSC {
 static JSValue encode(ExecState* exec, const char* doNotEscape)
 {
     UString str = exec->argument(0).toString(exec);
-    CString cstr = str.utf8(true);
+    CString cstr = str.UTF8String(true);
     if (!cstr.data())
         return throwError(exec, createURIError(exec, "String contained an illegal UTF-16 sequence."));
 
@@ -265,9 +265,9 @@ static double parseInt(const UString& s, int radix)
 
     if (number >= mantissaOverflowLowerBound) {
         if (radix == 10)
-            number = WTF::strtod(s.substr(firstDigitPosition, p - firstDigitPosition).utf8().data(), 0);
+            number = WTF::strtod(s.substr(firstDigitPosition, p - firstDigitPosition).UTF8String().data(), 0);
         else if (radix == 2 || radix == 4 || radix == 8 || radix == 16 || radix == 32)
-            number = parseIntOverflow(s.substr(firstDigitPosition, p - firstDigitPosition).utf8().data(), p - firstDigitPosition, radix);
+            number = parseIntOverflow(s.substr(firstDigitPosition, p - firstDigitPosition).UTF8String().data(), p - firstDigitPosition, radix);
     }
 
     if (!sawDigit)
@@ -453,7 +453,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncUnescape(ExecState* exec)
 #ifndef NDEBUG
 EncodedJSValue JSC_HOST_CALL globalFuncJSCPrint(ExecState* exec)
 {
-    CString string = exec->argument(0).toString(exec).utf8();
+    CString string = exec->argument(0).toString(exec).UTF8String();
     puts(string.data());
     return JSValue::encode(jsUndefined());
 }

@@ -41,7 +41,7 @@ using namespace WebCore;
 JavaParameter::JavaParameter(JNIEnv* env, jstring type)
 {
     m_type = JavaString(env, type);
-    m_JNIType = JNITypeFromClassName(m_type.utf8());
+    m_JNIType = JNITypeFromClassName(m_type.UTF8String());
 }
 
 JavaMethod::JavaMethod(JNIEnv* env, jobject aMethod)
@@ -55,7 +55,7 @@ JavaMethod::JavaMethod(JNIEnv* env, jobject aMethod)
         env->DeleteLocalRef(returnType);
     }
     m_returnType = JavaString(env, returnTypeName);
-    m_JNIReturnType = JNITypeFromClassName(m_returnType.utf8());
+    m_JNIReturnType = JNITypeFromClassName(m_returnType.UTF8String());
     env->DeleteLocalRef(returnTypeName);
 
     // Get method name
@@ -148,7 +148,7 @@ const char* JavaMethod::signature() const
         }
         signatureBuilder.append(")");
 
-        const char* returnType = m_returnType.utf8();
+        const char* returnType = m_returnType.UTF8String();
         if (m_JNIReturnType == array_type)
             appendClassName(signatureBuilder, returnType);
         else {
@@ -174,7 +174,7 @@ JNIType JavaMethod::JNIReturnType() const
 jmethodID JavaMethod::methodID(jobject obj) const
 {
     if (!m_methodID)
-        m_methodID = getMethodID(obj, m_name.utf8(), signature());
+        m_methodID = getMethodID(obj, m_name.UTF8String(), signature());
     return m_methodID;
 }
 

@@ -1,3 +1,50 @@
+2010-08-12  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r65295.
+        http://trac.webkit.org/changeset/65295
+        https://bugs.webkit.org/show_bug.cgi?id=43950
+
+        It broke 4 sputnik tests (Requested by Ossy on #webkit).
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::getOwnPropertySlot):
+        (WebCore::JSDOMWindow::getOwnPropertyDescriptor):
+        * bridge/NP_jsobject.cpp:
+        (_NPN_Enumerate):
+        * bridge/c/c_utility.cpp:
+        (JSC::Bindings::convertValueToNPVariant):
+        * bridge/jni/JNIBridge.cpp:
+        (JavaParameter::JavaParameter):
+        (JavaMethod::JavaMethod):
+        (JavaMethod::signature):
+        (JavaMethod::methodID):
+        * bridge/jni/JNIBridge.h:
+        (JSC::Bindings::JavaString::UTF8String):
+        (JSC::Bindings::JavaParameter::type):
+        (JSC::Bindings::JavaMethod::returnType):
+        * bridge/jni/jni_jsobject.mm:
+        (JavaJSObject::call):
+        (JavaJSObject::eval):
+        (JavaJSObject::getMember):
+        (JavaJSObject::setMember):
+        (JavaJSObject::removeMember):
+        (JavaJSObject::convertJObjectToValue):
+        * bridge/jni/jsc/JNIBridgeJSC.cpp:
+        (JavaField::JavaField):
+        (JavaField::valueFromInstance):
+        (JavaField::setValueToInstance):
+        * bridge/jni/jsc/JNIBridgeJSC.h:
+        (JSC::Bindings::JavaField::type):
+        * bridge/jni/jsc/JavaInstanceJSC.cpp:
+        (JavaInstance::invokeMethod):
+        * bridge/jni/jsc/JavaStringJSC.h:
+        (JSC::Bindings::JavaStringImpl::UTF8String):
+        * bridge/runtime_array.cpp:
+        (JSC::RuntimeArray::getOwnPropertySlot):
+        (JSC::RuntimeArray::getOwnPropertyDescriptor):
+        (JSC::RuntimeArray::put):
+
 2010-08-12  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed. Fixed typo in inspector js.

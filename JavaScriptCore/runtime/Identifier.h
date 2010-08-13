@@ -44,6 +44,9 @@ namespace JSC {
         Identifier(JSGlobalData* globalData, StringImpl* rep) : m_string(add(globalData, rep)) { } 
         Identifier(JSGlobalData* globalData, const UString& s) : m_string(add(globalData, s.impl())) { }
 
+        // Special constructor for cases where we overwrite an object in place.
+        Identifier(PlacementNewAdoptType) : m_string(PlacementNewAdopt) { }
+        
         const UString& ustring() const { return m_string; }
         StringImpl* impl() const { return m_string.impl(); }
         
@@ -65,6 +68,7 @@ namespace JSC {
         uint32_t toUInt32(bool* ok) const { return m_string.toUInt32(ok); }
         uint32_t toUInt32(bool* ok, bool tolerateEmptyString) const { return m_string.toUInt32(ok, tolerateEmptyString); };
         uint32_t toStrictUInt32(bool* ok) const { return m_string.toStrictUInt32(ok); }
+        unsigned toArrayIndex(bool* ok) const { return m_string.toArrayIndex(ok); }
         double toDouble() const { return m_string.toDouble(); }
         
         friend bool operator==(const Identifier&, const Identifier&);

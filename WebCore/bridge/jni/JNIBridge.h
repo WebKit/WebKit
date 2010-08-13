@@ -61,7 +61,7 @@ public:
         m_impl.init(getJNIEnv(), s);
     }
 
-    const char* utf8() const { return m_impl.utf8(); }
+    const char* UTF8String() const { return m_impl.UTF8String(); }
     const jchar* uchars() const { return m_impl.uchars(); }
     int length() const { return m_impl.length(); }
 #if USE(JSC)
@@ -78,7 +78,7 @@ public:
     JavaParameter(JNIEnv*, jstring type);
     virtual ~JavaParameter() { }
 
-    RuntimeType type() const { return m_type.utf8(); }
+    RuntimeType type() const { return m_type.UTF8String(); }
     JNIType getJNIType() const { return m_JNIType; }
 
 private:
@@ -92,7 +92,7 @@ public:
     ~JavaMethod();
 
     const JavaString& name() const { return m_name; }
-    RuntimeType returnType() const { return m_returnType.utf8(); }
+    RuntimeType returnType() const { return m_returnType.UTF8String(); }
     JavaParameter* parameterAt(int i) const { return &m_parameters[i]; }
     int numParameters() const { return m_numParameters; }
 

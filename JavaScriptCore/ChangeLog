@@ -1,3 +1,81 @@
+2010-08-12  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r65295.
+        http://trac.webkit.org/changeset/65295
+        https://bugs.webkit.org/show_bug.cgi?id=43950
+
+        It broke 4 sputnik tests (Requested by Ossy on #webkit).
+
+        * JavaScriptCore.exp:
+        * bytecode/CodeBlock.cpp:
+        (JSC::constantName):
+        (JSC::idName):
+        (JSC::CodeBlock::registerName):
+        (JSC::regexpName):
+        (JSC::printGlobalResolveInfo):
+        (JSC::printStructureStubInfo):
+        (JSC::CodeBlock::printStructure):
+        (JSC::CodeBlock::printStructures):
+        * jsc.cpp:
+        (functionPrint):
+        (functionDebug):
+        (runInteractive):
+        (fillBufferWithContentsOfFile):
+        * pcre/pcre_exec.cpp:
+        (Histogram::~Histogram):
+        * profiler/CallIdentifier.h:
+        (JSC::CallIdentifier::c_str):
+        * profiler/Profile.cpp:
+        (JSC::Profile::debugPrintDataSampleStyle):
+        * profiler/ProfileGenerator.cpp:
+        (JSC::ProfileGenerator::willExecute):
+        (JSC::ProfileGenerator::didExecute):
+        * profiler/ProfileNode.cpp:
+        (JSC::ProfileNode::debugPrintData):
+        (JSC::ProfileNode::debugPrintDataSampleStyle):
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::getOwnPropertySlot):
+        (JSC::Arguments::getOwnPropertyDescriptor):
+        (JSC::Arguments::put):
+        (JSC::Arguments::deleteProperty):
+        * runtime/DateConversion.cpp:
+        (JSC::parseDate):
+        * runtime/Identifier.h:
+        (JSC::Identifier::Identifier):
+        (JSC::Identifier::toArrayIndex):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::getOwnPropertySlot):
+        (JSC::JSArray::getOwnPropertyDescriptor):
+        (JSC::JSArray::put):
+        (JSC::JSArray::deleteProperty):
+        * runtime/JSArray.h:
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::encode):
+        (JSC::parseInt):
+        (JSC::globalFuncJSCPrint):
+        * runtime/JSString.h:
+        (JSC::RopeBuilder::JSString):
+        * runtime/UString.cpp:
+        (JSC::UString::toDouble):
+        (JSC::UString::UTF8String):
+        * runtime/UString.h:
+        (JSC::UString::isNull):
+        (JSC::UString::isEmpty):
+        (JSC::UString::impl):
+        (JSC::UString::cost):
+        (JSC::UString::~UString):
+        (JSC::UString::toArrayIndex):
+        * wtf/text/WTFString.cpp:
+        (WTF::String::utf8):
+        * wtf/text/WTFString.h:
+        (WTF::String::String):
+        (WTF::String::isHashTableDeletedValue):
+        (WTF::String::length):
+        (WTF::String::operator[]):
+        (WTF::String::isNull):
+        (WTF::String::isEmpty):
+        (WTF::String::impl):
+
 2010-08-12  Gavin Barraclough  <barraclough@apple.com>
 
         Windows build fix.

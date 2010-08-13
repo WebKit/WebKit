@@ -276,7 +276,7 @@ RootObject* JavaJSObject::rootObject() const
 
 jobject JavaJSObject::call(jstring methodName, jobjectArray args) const
 {
-    LOG(LiveConnect, "JavaJSObject::call methodName = %s", JavaString(methodName).utf8());
+    LOG(LiveConnect, "JavaJSObject::call methodName = %s", JavaString(methodName).UTF8String());
 
     RootObject* rootObject = this->rootObject();
     if (!rootObject)
@@ -305,7 +305,7 @@ jobject JavaJSObject::call(jstring methodName, jobjectArray args) const
 
 jobject JavaJSObject::eval(jstring script) const
 {
-    LOG(LiveConnect, "JavaJSObject::eval script = %s", JavaString(script).utf8());
+    LOG(LiveConnect, "JavaJSObject::eval script = %s", JavaString(script).UTF8String());
     
     JSValue result;
 
@@ -332,7 +332,7 @@ jobject JavaJSObject::eval(jstring script) const
 
 jobject JavaJSObject::getMember(jstring memberName) const
 {
-    LOG(LiveConnect, "JavaJSObject::getMember (%p) memberName = %s", _imp, JavaString(memberName).utf8());
+    LOG(LiveConnect, "JavaJSObject::getMember (%p) memberName = %s", _imp, JavaString(memberName).UTF8String());
 
     RootObject* rootObject = this->rootObject();
     if (!rootObject)
@@ -348,7 +348,7 @@ jobject JavaJSObject::getMember(jstring memberName) const
 
 void JavaJSObject::setMember(jstring memberName, jobject value) const
 {
-    LOG(LiveConnect, "JavaJSObject::setMember memberName = %s, value = %p", JavaString(memberName).utf8(), value);
+    LOG(LiveConnect, "JavaJSObject::setMember memberName = %s, value = %p", JavaString(memberName).UTF8String(), value);
 
     RootObject* rootObject = this->rootObject();
     if (!rootObject)
@@ -364,7 +364,7 @@ void JavaJSObject::setMember(jstring memberName, jobject value) const
 
 void JavaJSObject::removeMember(jstring memberName) const
 {
-    LOG(LiveConnect, "JavaJSObject::removeMember memberName = %s", JavaString(memberName).utf8());
+    LOG(LiveConnect, "JavaJSObject::removeMember memberName = %s", JavaString(memberName).UTF8String());
 
     RootObject* rootObject = this->rootObject();
     if (!rootObject)
@@ -572,7 +572,7 @@ JSValue JavaJSObject::convertJObjectToValue(ExecState* exec, jobject theObject) 
     // created above to wrap internal browser objects. The constructor of this class takes the native
     // pointer and stores it in this object, so that it can be retrieved below.
     jstring className = (jstring)callJNIMethod<jobject>(classOfInstance, "getName", "()Ljava/lang/String;");
-    if (!className || (strcmp(JavaString(className).utf8(), "sun.plugin.javascript.webkit.JSObject") != 0)) {
+    if (!className || (strcmp(JavaString(className).UTF8String(), "sun.plugin.javascript.webkit.JSObject") != 0)) {
         JSLock lock(SilenceAssertionsOnly);
         return JavaInstance::create(theObject, _rootObject)->createRuntimeObject(exec);
     }

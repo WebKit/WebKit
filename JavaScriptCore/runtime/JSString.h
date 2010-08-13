@@ -191,7 +191,7 @@ namespace JSC {
             , m_fiberCount(0)
         {
             ASSERT(!m_value.isNull());
-            Heap::heap(this)->reportExtraMemoryCost(value.impl()->cost());
+            Heap::heap(this)->reportExtraMemoryCost(value.cost());
         }
 
         enum HasOtherOwnerType { HasOtherOwner };
@@ -308,7 +308,7 @@ namespace JSC {
             // nasty hack because we can't union non-POD types
             m_other.m_finalizerCallback = finalizer;
             m_other.m_finalizerContext = context;
-            Heap::heap(this)->reportExtraMemoryCost(value.impl()->cost());
+            Heap::heap(this)->reportExtraMemoryCost(value.cost());
         }
 
         ~JSString()

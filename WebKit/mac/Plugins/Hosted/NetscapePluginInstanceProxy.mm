@@ -1238,7 +1238,7 @@ bool NetscapePluginInstanceProxy::enumerate(uint32_t objectID, data_t& resultDat
 
     RetainPtr<NSMutableArray*> array(AdoptNS, [[NSMutableArray alloc] init]);
     for (unsigned i = 0; i < propertyNames.size(); i++) {
-        uint64_t methodName = reinterpret_cast<uint64_t>(_NPN_GetStringIdentifier(propertyNames[i].ustring().utf8().data()));
+        uint64_t methodName = reinterpret_cast<uint64_t>(_NPN_GetStringIdentifier(propertyNames[i].ustring().UTF8String().data()));
 
         [array.get() addObject:[NSNumber numberWithLongLong:methodName]];
     }

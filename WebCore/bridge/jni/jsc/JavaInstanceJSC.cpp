@@ -162,7 +162,7 @@ JSValue JavaInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMethod
     }
 
     const JavaMethod* jMethod = static_cast<const JavaMethod*>(method);
-    LOG(LiveConnect, "JavaInstance::invokeMethod call %s %s on %p", UString(jMethod->name()).utf8().data(), jMethod->signature(), m_instance->m_instance);
+    LOG(LiveConnect, "JavaInstance::invokeMethod call %s %s on %p", UString(jMethod->name()).UTF8String().data(), jMethod->signature(), m_instance->m_instance);
 
     Vector<jvalue> jArgs(count);
 
@@ -253,7 +253,7 @@ JSValue JavaInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMethod
                 else {
                     jobject classOfInstance = callJNIMethod<jobject>(result.l, "getClass", "()Ljava/lang/Class;");
                     jstring className = static_cast<jstring>(callJNIMethod<jobject>(classOfInstance, "getName", "()Ljava/lang/String;"));
-                    if (!strcmp(JavaString(className).utf8(), "sun.plugin.javascript.webkit.JSObject")) {
+                    if (!strcmp(JavaString(className).UTF8String(), "sun.plugin.javascript.webkit.JSObject")) {
                         // Pull the nativeJSObject value from the Java instance.  This is a pointer to the JSObject.
                         JNIEnv* env = getJNIEnv();
                         jfieldID fieldID = env->GetFieldID(static_cast<jclass>(classOfInstance), "nativeJSObject", "J");

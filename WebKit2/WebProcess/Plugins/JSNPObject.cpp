@@ -43,7 +43,7 @@ namespace WebKit {
 
 static NPIdentifier npIdentifierFromIdentifier(const Identifier& identifier)
 {
-    return static_cast<NPIdentifier>(IdentifierRep::get(identifier.ustring().utf8().data()));
+    return static_cast<NPIdentifier>(IdentifierRep::get(identifier.ustring().UTF8String().data()));
 }
 
 const ClassInfo JSNPObject::s_info = { "NPObject", 0, 0, 0 };

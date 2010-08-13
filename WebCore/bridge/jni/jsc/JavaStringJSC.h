@@ -60,11 +60,11 @@ public:
         releaseUCharactersForJStringInEnv(e, s, uc);
     }
 
-    const char* utf8() const
+    const char* UTF8String() const
     {
         if (!m_utf8String.data()) {
             JSLock lock(SilenceAssertionsOnly);
-            m_utf8String = UString(m_impl).utf8();
+            m_utf8String = UString(m_impl).UTF8String();
         }
         return m_utf8String.data();
     }
