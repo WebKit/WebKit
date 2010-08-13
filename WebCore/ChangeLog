@@ -1,3 +1,59 @@
+2010-08-13  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Use SVGPathByteStream to animate SVGPath
+        https://bugs.webkit.org/show_bug.cgi?id=43929
+
+        Use SVGPathByteStream to perform animations of Paths. SVGPathBlender blends
+        the starting point to the end point according to the current progress value.
+        Cleanup SVGPathSegList, by removing the unnecessary legacy blending code.
+
+        No new tests because no functional changes.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * svg/SVGAllInOne.cpp:
+        * svg/SVGAnimateElement.cpp:
+        (WebCore::SVGAnimateElement::SVGAnimateElement):
+        (WebCore::SVGAnimateElement::calculateAnimatedValue):
+        (WebCore::SVGAnimateElement::calculateFromAndToValues):
+        (WebCore::SVGAnimateElement::resetToBaseValue):
+        (WebCore::SVGAnimateElement::applyResultsToTarget):
+        * svg/SVGAnimateElement.h:
+        * svg/SVGPathBlender.cpp: Added.
+        (WebCore::SVGPathBlender::SVGPathBlender):
+        (WebCore::SVGPathBlender::~SVGPathBlender):
+        (WebCore::SVGPathBlender::blendAnimatedFloat):
+        (WebCore::SVGPathBlender::blendAnimatedFloatPoint):
+        (WebCore::SVGPathBlender::blendMoveToSegment):
+        (WebCore::SVGPathBlender::blendLineToSegment):
+        (WebCore::SVGPathBlender::blendLineToHorizontalSegment):
+        (WebCore::SVGPathBlender::blendLineToVerticalSegment):
+        (WebCore::SVGPathBlender::blendCurveToCubicSegment):
+        (WebCore::SVGPathBlender::blendCurveToCubicSmoothSegment):
+        (WebCore::SVGPathBlender::blendCurveToQuadraticSegment):
+        (WebCore::SVGPathBlender::blendCurveToQuadraticSmoothSegment):
+        (WebCore::SVGPathBlender::blendArcToSegment):
+        (WebCore::SVGPathBlender::blendAnimatedPath):
+        (WebCore::SVGPathBlender::cleanup):
+        * svg/SVGPathBlender.h: Added.
+        * svg/SVGPathParserFactory.cpp:
+        (WebCore::globalSVGPathBlender):
+        (WebCore::SVGPathParserFactory::buildAnimatedSVGPathByteStream):
+        * svg/SVGPathParserFactory.h:
+        * svg/SVGPathSegList.cpp:
+        (WebCore::SVGPathSegList::getPathSegAtLength):
+        * svg/SVGPathSegList.h:
+        (WebCore::SVGPathSegList::create):
+        * svg/SVGPointList.cpp:
+        (WebCore::adjustAnimatedValue):
+
 2010-08-12  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.
@@ -547,7 +603,7 @@
 
 2010-08-12  Dirk Schulze  <krit@webkit.org>
 
-        Unreviewed sort of XCode project file.
+        Unreviewed sort of Xcode project file.
 
         * WebCore.xcodeproj/project.pbxproj:
 

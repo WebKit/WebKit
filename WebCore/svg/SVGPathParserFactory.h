@@ -46,6 +46,8 @@ public:
 
     bool buildSVGPathByteStreamFromString(const String&, OwnPtr<SVGPathByteStream>&, PathParsingMode);
 
+    bool buildAnimatedSVGPathByteStream(SVGPathByteStream*, SVGPathByteStream*, OwnPtr<SVGPathByteStream>&, float);
+
 private:
     SVGPathParserFactory();
     ~SVGPathParserFactory();

@@ -107,6 +107,7 @@
 #include "SVGNumberList.cpp"
 #include "SVGPaint.cpp"
 #include "SVGParserUtilities.cpp"
+#include "SVGPathBlender.cpp"
 #include "SVGPathBuilder.cpp"
 #include "SVGPathByteStreamBuilder.cpp"
 #include "SVGPathByteStreamSource.cpp"

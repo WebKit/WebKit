@@ -22,7 +22,7 @@
 #if ENABLE(SVG)
 #include "SVGPathParserFactory.h"
 
-#include "StringBuilder.h"
+#include "SVGPathBlender.h"
 #include "SVGPathBuilder.h"
 #include "SVGPathByteStreamBuilder.h"
 #include "SVGPathByteStreamSource.h"
@@ -31,6 +31,7 @@
 #include "SVGPathSegListSource.h"
 #include "SVGPathStringBuilder.h"
 #include "SVGPathStringSource.h"
+#include "StringBuilder.h"
 
 namespace WebCore {
 
@@ -82,6 +83,15 @@ static SVGPathParser* globalSVGPathParser(SVGPathSource* source, SVGPathConsumer
     s_parser->setCurrentSource(source);
     s_parser->setCurrentConsumer(consumer);
     return s_parser;
+}
+
+static SVGPathBlender* globalSVGPathBlender()
+{
+    static SVGPathBlender* s_blender = 0;
+    if (!s_blender)
+        s_blender = new SVGPathBlender;
+
+    return s_blender;
 }
 
 SVGPathParserFactory* SVGPathParserFactory::self()
@@ -221,6 +231,25 @@ bool SVGPathParserFactory::buildSVGPathByteStreamFromString(const String& d, Own
     bool ok = parser->parsePathDataFromSource(parsingMode);
     result = stream.release();
     parser->cleanup();
+    return ok;
+}
+
+bool SVGPathParserFactory::buildAnimatedSVGPathByteStream(SVGPathByteStream* fromStream, SVGPathByteStream* toStream, OwnPtr<SVGPathByteStream>& result, float progress)
+{
+    ASSERT(fromStream);
+    ASSERT(toStream);
+    if (fromStream->isEmpty() || toStream->isEmpty())
+        return false;
+
+    OwnPtr<SVGPathByteStream> stream = SVGPathByteStream::create();
+    SVGPathByteStreamBuilder* builder = globalSVGPathByteStreamBuilder(stream.get());
+
+    OwnPtr<SVGPathByteStreamSource> fromSource = SVGPathByteStreamSource::create(fromStream);
+    OwnPtr<SVGPathByteStreamSource> toSource = SVGPathByteStreamSource::create(toStream);
+    SVGPathBlender* blender = globalSVGPathBlender();
+    bool ok = blender->blendAnimatedPath(progress, fromSource.get(), toSource.get(), builder);
+    result = stream.release();
+    blender->cleanup();
     return ok;
 }
 

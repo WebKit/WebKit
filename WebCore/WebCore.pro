@@ -2863,6 +2863,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         svg/SVGNumberList.cpp \
         svg/SVGPaint.cpp \
         svg/SVGParserUtilities.cpp \
+        svg/SVGPathBlender.cpp \
         svg/SVGPathBuilder.cpp \
         svg/SVGPathByteStreamBuilder.cpp \
         svg/SVGPathByteStreamSource.cpp \

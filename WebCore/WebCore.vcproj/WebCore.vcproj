@@ -49357,6 +49357,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\svg\SVGPathBlender.h"
+				>
+			</File>
+			<File
 				RelativePath="..\svg\SVGPathBuilder.h"
 				>
 			</File>

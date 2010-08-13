@@ -4081,6 +4081,8 @@ webcore_sources += \
 	WebCore/svg/SVGPaint.h \
 	WebCore/svg/SVGParserUtilities.cpp \
 	WebCore/svg/SVGParserUtilities.h \
+	WebCore/svg/SVGPathBlender.cpp \
+	WebCore/svg/SVGPathBlender.h \
 	WebCore/svg/SVGPathBuilder.cpp \
 	WebCore/svg/SVGPathBuilder.h \
 	WebCore/svg/SVGPathByteStream.h \

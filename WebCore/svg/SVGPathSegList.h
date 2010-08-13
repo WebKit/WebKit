@@ -26,23 +26,18 @@
 
 namespace WebCore {
 
-    class Path;
-    class SVGElement;
- 
-    class SVGPathSegList : public SVGList<RefPtr<SVGPathSeg> > {
-    public:
-        static PassRefPtr<SVGPathSegList> create(const QualifiedName& attributeName) { return adoptRef(new SVGPathSegList(attributeName)); }
-        virtual ~SVGPathSegList();
+class SVGElement;
 
-        unsigned getPathSegAtLength(double, ExceptionCode&);
-        
-        static PassRefPtr<SVGPathSegList> createAnimated(const SVGPathSegList* fromList, const SVGPathSegList* toList, float progress);
-        
-    private:
-        SVGPathSegList(const QualifiedName&);
-    };
+class SVGPathSegList : public SVGList<RefPtr<SVGPathSeg> > {
+public:
+    static PassRefPtr<SVGPathSegList> create(const QualifiedName& attributeName) { return adoptRef(new SVGPathSegList(attributeName)); }
+    virtual ~SVGPathSegList();
 
-    float adjustAnimatedValue(float from, float to, float progress);
+    unsigned getPathSegAtLength(double, ExceptionCode&);
+
+private:
+    SVGPathSegList(const QualifiedName&);
+};
 
 } // namespace WebCore
 

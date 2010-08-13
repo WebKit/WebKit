@@ -54,6 +54,11 @@ String SVGPointList::valueAsString() const
     return result;
 }
 
+float inline adjustAnimatedValue(float from, float to, float progress)
+{
+    return (to - from) * progress + from;
+}
+
 PassRefPtr<SVGPointList> SVGPointList::createAnimated(const SVGPointList* fromList, const SVGPointList* toList, float progress)
 {
     unsigned itemCount = fromList->numberOfItems();

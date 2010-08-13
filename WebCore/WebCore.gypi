@@ -3830,6 +3830,8 @@
             'svg/SVGPaint.h',
             'svg/SVGParserUtilities.cpp',
             'svg/SVGParserUtilities.h',
+            'svg/SVGPathBlender.cpp',
+            'svg/SVGPathBlender.h',
             'svg/SVGPathBuilder.cpp',
             'svg/SVGPathBuilder.h',
             'svg/SVGPathByteStream.h',
