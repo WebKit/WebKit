@@ -47,25 +47,16 @@ public:
     UString() { }
 
     // Construct a string with UTF-16 data.
-    UString(const UChar* characters, unsigned length)
-        : m_impl(characters ? StringImpl::create(characters, length) : 0)
-    {
-    }
+    UString(const UChar* characters, unsigned length);
 
     // Construct a string with UTF-16 data, from a null-terminated source.
     UString(const UChar*);
 
     // Construct a string with latin1 data.
-    UString(const char* characters)
-        : m_impl(characters ? StringImpl::create(characters) : 0)
-    {
-    }
+    UString(const char* characters);
 
     // Construct a string with latin1 data, from a null-terminated source.
-    UString(const char* characters, unsigned length)
-        : m_impl(characters ? StringImpl::create(characters, length) : 0)
-    {
-    }
+    UString(const char* characters, unsigned length);
 
     // Construct a string referencing an existing StringImpl.
     UString(StringImpl* impl) : m_impl(impl) { }

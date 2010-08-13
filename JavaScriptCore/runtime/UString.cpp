@@ -56,10 +56,13 @@ extern const double Inf;
 
 COMPILE_ASSERT(sizeof(UString) == sizeof(void*), UString_should_stay_small);
 
-//    UString::UString(const UChar* characters, unsigned length)
-//        : m_impl(characters ? StringImpl::create(characters, length) : 0)
-//    {
-//    }
+// Construct a string with UTF-16 data.
+UString::UString(const UChar* characters, unsigned length)
+    : m_impl(characters ? StringImpl::create(characters, length) : 0)
+{
+}
+
+// Construct a string with UTF-16 data, from a null-terminated source.
 UString::UString(const UChar* characters)
 {
     if (!characters)
@@ -71,14 +74,18 @@ UString::UString(const UChar* characters)
 
     m_impl = StringImpl::create(characters, length);
 }
-//    UString::UString(const char* characters)
-//        : m_impl(characters ? StringImpl::create(characters) : 0)
-//    {
-//    }
-//    UString::UString(const char* characters, unsigned length)
-//        : m_impl(characters ? StringImpl::create(characters, length) : 0)
-//    {
-//    }
+
+// Construct a string with latin1 data.
+UString::UString(const char* characters, unsigned length)
+    : m_impl(characters ? StringImpl::create(characters, length) : 0)
+{
+}
+
+// Construct a string with latin1 data, from a null-terminated source.
+UString::UString(const char* characters)
+    : m_impl(characters ? StringImpl::create(characters) : 0)
+{
+}
 
 UString UString::number(int i)
 {

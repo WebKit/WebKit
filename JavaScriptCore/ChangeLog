@@ -1,5 +1,14 @@
 2010-08-12  Gavin Barraclough  <barraclough@apple.com>
 
+        Eeerk! - revert accidentally committed changes in UString!
+
+        * JavaScriptCore.exp:
+        * runtime/UString.cpp:
+        (JSC::UString::UString):
+        * runtime/UString.h:
+
+2010-08-12  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Sam Weinig
 
         Change UString constructors to match those in WTF::String.
