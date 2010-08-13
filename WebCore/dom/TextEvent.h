@@ -34,8 +34,16 @@ namespace WebCore {
 
     class TextEvent : public UIEvent {
     public:
+        enum InputType {
+            InputTypeKeyboard, // any newline characters in the text are line breaks only, not paragraph separators.
+            InputTypeLineBreak, // any tab characters in the text are backtabs.
+            InputTypeBackTab,
+            InputTypePaste
+        };
+
+        static InputType selectInputType(bool isLineBreak, bool isBackTab);
         static PassRefPtr<TextEvent> create();
-        static PassRefPtr<TextEvent> create(PassRefPtr<AbstractView> view, const String& data);
+        static PassRefPtr<TextEvent> create(PassRefPtr<AbstractView> view, const String& data, InputType = InputTypeKeyboard);
         static PassRefPtr<TextEvent> createForPlainTextPaste(PassRefPtr<AbstractView> view, const String& data, bool shouldSmartReplace);
         static PassRefPtr<TextEvent> createForFragmentPaste(PassRefPtr<AbstractView> view, PassRefPtr<DocumentFragment> data, bool shouldSmartReplace, bool shouldMatchStyle);
 
@@ -47,30 +55,23 @@ namespace WebCore {
 
         virtual bool isTextEvent() const;
 
-        // If true, any newline characters in the text are line breaks only, not paragraph separators.
-        bool isLineBreak() const { return m_isLineBreak; }
-        void setIsLineBreak(bool isLineBreak) { m_isLineBreak = isLineBreak; }
+        bool isLineBreak() const { return m_inputType == InputTypeLineBreak; }
+        bool isBackTab() const { return m_inputType == InputTypeBackTab; }
+        bool isPaste() const { return m_inputType == InputTypePaste; }
 
-        // If true, any tab characters in the text are backtabs.
-        bool isBackTab() const { return m_isBackTab; }
-        void setIsBackTab(bool isBackTab) { m_isBackTab = isBackTab; }
-
-        bool isPaste() const { return m_isPaste; }
         bool shouldSmartReplace() const { return m_shouldSmartReplace; }
         bool shouldMatchStyle() const { return m_shouldMatchStyle; }
         DocumentFragment* pastingFragment() const { return m_pastingFragment.get(); }
 
     private:
         TextEvent();
-        TextEvent(PassRefPtr<AbstractView>, const String& data, PassRefPtr<DocumentFragment> = 0,
-                  bool isPaste = false, bool shouldSmartReplace = false, bool shouldMatchStyle = false);
-
+        TextEvent(PassRefPtr<AbstractView>, const String& data, InputType = InputTypeKeyboard);
+        TextEvent(PassRefPtr<AbstractView>, const String& data, PassRefPtr<DocumentFragment>,
+                  bool shouldSmartReplace, bool shouldMatchStyle);
+        InputType m_inputType;
         String m_data;
-        bool m_isLineBreak;
-        bool m_isBackTab;
 
         RefPtr<DocumentFragment> m_pastingFragment;
-        bool m_isPaste; // FIXME: Should use inputMode after it be available: http://webkit.org/b/42805
         bool m_shouldSmartReplace;
         bool m_shouldMatchStyle;
     };

@@ -1,3 +1,29 @@
+2010-08-12  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Tony Chang.
+
+        [Refactoring] TextEvent class has to many flags
+        https://bugs.webkit.org/show_bug.cgi?id=43893
+
+        Turned TextEvent::m_isLineBreak, TextEvent::m_isBacktab, TextEvent::m_isPaste 
+        into single TextEvent::m_inputType enumeration.
+        
+        No functional change. No new tests.
+
+        * dom/TextEvent.cpp:
+        (WebCore::TextEvent::selectInputType):
+        (WebCore::TextEvent::create):
+        (WebCore::TextEvent::createForPlainTextPaste):
+        (WebCore::TextEvent::createForFragmentPaste):
+        (WebCore::TextEvent::TextEvent):
+        * dom/TextEvent.h:
+        (WebCore::TextEvent::):
+        (WebCore::TextEvent::isLineBreak):
+        (WebCore::TextEvent::isBackTab):
+        (WebCore::TextEvent::isPaste):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleTextInputEvent):
+
 2010-08-12  Kenneth Russell  <kbr@google.com>
 
         Reviewed by David Levin.

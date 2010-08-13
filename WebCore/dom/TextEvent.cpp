@@ -31,43 +31,58 @@
 
 namespace WebCore {
 
+TextEvent::InputType TextEvent::selectInputType(bool isLineBreak, bool isBackTab)
+{
+    if (isLineBreak)
+        return TextEvent::InputTypeLineBreak;
+    if (isBackTab)
+        return TextEvent::InputTypeBackTab;
+    return TextEvent::InputTypeKeyboard;
+}
+
 PassRefPtr<TextEvent> TextEvent::create()
 {
     return adoptRef(new TextEvent);
 }
 
-PassRefPtr<TextEvent> TextEvent::create(PassRefPtr<AbstractView> view, const String& data)
+PassRefPtr<TextEvent> TextEvent::create(PassRefPtr<AbstractView> view, const String& data, TextEvent::InputType inputType)
 {
-    return adoptRef(new TextEvent(view, data));
+    return adoptRef(new TextEvent(view, data, inputType));
 }
 
 PassRefPtr<TextEvent> TextEvent::createForPlainTextPaste(PassRefPtr<AbstractView> view, const String& data, bool shouldSmartReplace)
 {
-    return adoptRef(new TextEvent(view, data, 0, true, shouldSmartReplace));
+    return adoptRef(new TextEvent(view, data, 0, shouldSmartReplace, false));
 }
 
 PassRefPtr<TextEvent> TextEvent::createForFragmentPaste(PassRefPtr<AbstractView> view, PassRefPtr<DocumentFragment> data, bool shouldSmartReplace, bool shouldMatchStyle)
 {
-    return adoptRef(new TextEvent(view, "", data, true, shouldSmartReplace, shouldMatchStyle));
+    return adoptRef(new TextEvent(view, "", data, shouldSmartReplace, shouldMatchStyle));
 }
 
 TextEvent::TextEvent()
-    : m_isLineBreak(false)
-    , m_isBackTab(false)
-    , m_isPaste(false)
+    : m_inputType(TextEvent::InputTypeKeyboard)
+    , m_shouldSmartReplace(false)
+    , m_shouldMatchStyle(false)
+{
+}
+
+TextEvent::TextEvent(PassRefPtr<AbstractView> view, const String& data, InputType inputType)
+    : UIEvent(eventNames().textInputEvent, true, true, view, 0)
+    , m_inputType(inputType)
+    , m_data(data)
+    , m_pastingFragment(0)
     , m_shouldSmartReplace(false)
     , m_shouldMatchStyle(false)
 {
 }
 
 TextEvent::TextEvent(PassRefPtr<AbstractView> view, const String& data, PassRefPtr<DocumentFragment> pastingFragment,
-                     bool isPaste, bool shouldSmartReplace, bool shouldMatchStyle)
+                     bool shouldSmartReplace, bool shouldMatchStyle)
     : UIEvent(eventNames().textInputEvent, true, true, view, 0)
+    , m_inputType(TextEvent::InputTypePaste)
     , m_data(data)
-    , m_isLineBreak(false)
-    , m_isBackTab(false)
     , m_pastingFragment(pastingFragment)
-    , m_isPaste(isPaste)
     , m_shouldSmartReplace(shouldSmartReplace)
     , m_shouldMatchStyle(shouldMatchStyle)
 {
