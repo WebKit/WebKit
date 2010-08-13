@@ -40,32 +40,54 @@ namespace JSC {
             r0 = 0,
             r1,
             r2,
-            r3,
-            S0 = r3,
+            r3, S0 = r3,
             r4,
             r5,
             r6,
             r7,
-            r8,
-            S1 = r8,
+            r8, S1 = r8,
             r9,
             r10,
             r11,
             r12,
-            r13,
-            sp = r13,
-            r14,
-            lr = r14,
-            r15,
-            pc = r15
+            r13, sp = r13,
+            r14, lr = r14,
+            r15, pc = r15
         } RegisterID;
 
         typedef enum {
             d0,
             d1,
             d2,
-            d3,
-            SD0 = d3
+            d3, SD0 = d3,
+            d4,
+            d5,
+            d6,
+            d7,
+            d8,
+            d9,
+            d10,
+            d11,
+            d12,
+            d13,
+            d14,
+            d15,
+            d16,
+            d17,
+            d18,
+            d19,
+            d20,
+            d21,
+            d22,
+            d23,
+            d24,
+            d25,
+            d26,
+            d27,
+            d28,
+            d29,
+            d30,
+            d31
         } FPRegisterID;
 
     } // namespace ARMRegisters
@@ -118,12 +140,12 @@ namespace JSC {
             MVN = (0xf << 21),
             MUL = 0x00000090,
             MULL = 0x00c00090,
-            FADDD = 0x0e300b00,
-            FDIVD = 0x0e800b00,
-            FSUBD = 0x0e300b40,
-            FMULD = 0x0e200b00,
-            FCMPD = 0x0eb40b40,
-            FSQRTD = 0x0eb10bc0,
+            VADD_F64 = 0x0e300b00,
+            VDIV_F64 = 0x0e800b00,
+            VSUB_F64 = 0x0e300b40,
+            VMUL_F64 = 0x0e200b00,
+            VCMP_F64 = 0x0eb40b40,
+            VSQRT_F64 = 0x0eb10bc0,
             DTR = 0x05000000,
             LDRH = 0x00100090,
             STRH = 0x00000090,
@@ -135,11 +157,11 @@ namespace JSC {
 #if WTF_ARM_ARCH_AT_LEAST(5) || defined(__ARM_ARCH_4T__)
             BX = 0x012fff10,
 #endif
-            FMSR = 0x0e000a10,
-            FMRS = 0x0e100a10,
-            FSITOD = 0x0eb80bc0,
-            FTOSID = 0x0ebd0b40,
-            FMSTAT = 0x0ef1fa10,
+            VMOV_VFP = 0x0e000a10,
+            VMOV_ARM = 0x0e100a10,
+            VCVT_F64_S32 = 0x0eb80bc0,
+            VCVT_S32_F64 = 0x0ebd0b40,
+            VMRS_APSR = 0x0ef1fa10,
 #if WTF_ARM_ARCH_AT_LEAST(5)
             CLZ = 0x016f0f10,
             BKPT = 0xe120070,
@@ -234,8 +256,24 @@ namespace JSC {
 
         void emitInst(ARMWord op, int rd, int rn, ARMWord op2)
         {
-            ASSERT ( ((op2 & ~OP2_IMM) <= 0xfff) || (((op2 & ~OP2_IMMh) <= 0xfff)) );
+            ASSERT(((op2 & ~OP2_IMM) <= 0xfff) || (((op2 & ~OP2_IMMh) <= 0xfff)));
             m_buffer.putInt(op | RN(rn) | RD(rd) | op2);
+        }
+
+        void emitDoublePrecisionInst(ARMWord op, int dd, int dn, int dm)
+        {
+            ASSERT((dd >= 0 && dd <= 31) && (dn >= 0 && dn <= 31) && (dm >= 0 && dm <= 31));
+            m_buffer.putInt(op | ((dd & 0xf) << 12) | ((dd & 0x10) << (22 - 4))
+                               | ((dn & 0xf) << 16) | ((dn & 0x10) << (7 - 4))
+                               | (dm & 0xf) | ((dm & 0x10) << (5 - 4)));
+        }
+
+        void emitSinglePrecisionInst(ARMWord op, int sd, int sn, int sm)
+        {
+            ASSERT((sd >= 0 && sd <= 31) && (sn >= 0 && sn <= 31) && (sm >= 0 && sm <= 31));
+            m_buffer.putInt(op | ((sd >> 1) << 12) | ((sd & 0x1) << 22)
+                               | ((sn >> 1) << 16) | ((sn & 0x1) << 7)
+                               | (sm >> 1) | ((sm & 0x1) << 5));
         }
 
         void and_r(int rd, int rn, ARMWord op2, Condition cc = AL)
@@ -402,34 +440,34 @@ namespace JSC {
             m_buffer.putInt(static_cast<ARMWord>(cc) | MULL | RN(rdhi) | RD(rdlo) | RS(rn) | RM(rm));
         }
 
-        void faddd_r(int dd, int dn, int dm, Condition cc = AL)
+        void vadd_f64_r(int dd, int dn, int dm, Condition cc = AL)
         {
-            emitInst(static_cast<ARMWord>(cc) | FADDD, dd, dn, dm);
+            emitDoublePrecisionInst(static_cast<ARMWord>(cc) | VADD_F64, dd, dn, dm);
         }
 
-        void fdivd_r(int dd, int dn, int dm, Condition cc = AL)
+        void vdiv_f64_r(int dd, int dn, int dm, Condition cc = AL)
         {
-            emitInst(static_cast<ARMWord>(cc) | FDIVD, dd, dn, dm);
+            emitDoublePrecisionInst(static_cast<ARMWord>(cc) | VDIV_F64, dd, dn, dm);
         }
 
-        void fsubd_r(int dd, int dn, int dm, Condition cc = AL)
+        void vsub_f64_r(int dd, int dn, int dm, Condition cc = AL)
         {
-            emitInst(static_cast<ARMWord>(cc) | FSUBD, dd, dn, dm);
+            emitDoublePrecisionInst(static_cast<ARMWord>(cc) | VSUB_F64, dd, dn, dm);
         }
 
-        void fmuld_r(int dd, int dn, int dm, Condition cc = AL)
+        void vmul_f64_r(int dd, int dn, int dm, Condition cc = AL)
         {
-            emitInst(static_cast<ARMWord>(cc) | FMULD, dd, dn, dm);
+            emitDoublePrecisionInst(static_cast<ARMWord>(cc) | VMUL_F64, dd, dn, dm);
         }
 
-        void fcmpd_r(int dd, int dm, Condition cc = AL)
+        void vcmp_f64_r(int dd, int dm, Condition cc = AL)
         {
-            emitInst(static_cast<ARMWord>(cc) | FCMPD, dd, 0, dm);
+            emitDoublePrecisionInst(static_cast<ARMWord>(cc) | VCMP_F64, dd, 0, dm);
         }
 
-        void fsqrtd_r(int dd, int dm, Condition cc = AL)
+        void vsqrt_f64_r(int dd, int dm, Condition cc = AL)
         {
-            emitInst(static_cast<ARMWord>(cc) | FSQRTD, dd, 0, dm);
+            emitDoublePrecisionInst(static_cast<ARMWord>(cc) | VSQRT_F64, dd, 0, dm);
         }
 
         void ldr_imm(int rd, ARMWord imm, Condition cc = AL)
@@ -516,29 +554,33 @@ namespace JSC {
             dtr_u(true, reg, ARMRegisters::sp, 0, cc);
         }
 
-        void fmsr_r(int dd, int rn, Condition cc = AL)
+        void vmov_vfp_r(int sn, int rt, Condition cc = AL)
         {
-            emitInst(static_cast<ARMWord>(cc) | FMSR, rn, dd, 0);
+            ASSERT(rt <= 15);
+            emitSinglePrecisionInst(static_cast<ARMWord>(cc) | VMOV_VFP, rt << 1, sn, 0);
         }
 
-        void fmrs_r(int rd, int dn, Condition cc = AL)
+        void vmov_arm_r(int rt, int sn, Condition cc = AL)
         {
-            emitInst(static_cast<ARMWord>(cc) | FMRS, rd, dn, 0);
+            ASSERT(rt <= 15);
+            emitSinglePrecisionInst(static_cast<ARMWord>(cc) | VMOV_ARM, rt << 1, sn, 0);
         }
 
-        void fsitod_r(int dd, int dm, Condition cc = AL)
+        void vcvt_f64_s32_r(int dd, int sm, Condition cc = AL)
         {
-            emitInst(static_cast<ARMWord>(cc) | FSITOD, dd, 0, dm);
+            ASSERT(!(sm & 0x1)); // sm must be divisible by 2
+            emitDoublePrecisionInst(static_cast<ARMWord>(cc) | VCVT_F64_S32, dd, 0, (sm >> 1));
         }
 
-        void ftosid_r(int fd, int dm, Condition cc = AL)
+        void vcvt_s32_f64_r(int sd, int dm, Condition cc = AL)
         {
-            emitInst(static_cast<ARMWord>(cc) | FTOSID, fd, 0, dm);
+            ASSERT(!(sd & 0x1)); // sd must be divisible by 2
+            emitDoublePrecisionInst(static_cast<ARMWord>(cc) | VCVT_S32_F64, (sd >> 1), 0, dm);
         }
 
-        void fmstat(Condition cc = AL)
+        void vmrs_apsr(Condition cc = AL)
         {
-            m_buffer.putInt(static_cast<ARMWord>(cc) | FMSTAT);
+            m_buffer.putInt(static_cast<ARMWord>(cc) | VMRS_APSR);
         }
 
 #if WTF_ARM_ARCH_AT_LEAST(5)

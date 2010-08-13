@@ -1,3 +1,41 @@
+2010-08-12  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Reviewed by Gavin Barraclough.
+
+        Refactoring the fpu code generator for the ARM port
+        https://bugs.webkit.org/show_bug.cgi?id=43842
+
+        Support up to 32 double precision registers, and the
+        recent VFP instruction formats. This patch is mainly
+        a style change which keeps the current functionality.
+
+        * assembler/ARMAssembler.h:
+        (JSC::ARMRegisters::):
+        (JSC::ARMAssembler::):
+        (JSC::ARMAssembler::emitInst):
+        (JSC::ARMAssembler::emitDoublePrecisionInst):
+        (JSC::ARMAssembler::emitSinglePrecisionInst):
+        (JSC::ARMAssembler::vadd_f64_r):
+        (JSC::ARMAssembler::vdiv_f64_r):
+        (JSC::ARMAssembler::vsub_f64_r):
+        (JSC::ARMAssembler::vmul_f64_r):
+        (JSC::ARMAssembler::vcmp_f64_r):
+        (JSC::ARMAssembler::vsqrt_f64_r):
+        (JSC::ARMAssembler::vmov_vfp_r):
+        (JSC::ARMAssembler::vmov_arm_r):
+        (JSC::ARMAssembler::vcvt_f64_s32_r):
+        (JSC::ARMAssembler::vcvt_s32_f64_r):
+        (JSC::ARMAssembler::vmrs_apsr):
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::addDouble):
+        (JSC::MacroAssemblerARM::divDouble):
+        (JSC::MacroAssemblerARM::subDouble):
+        (JSC::MacroAssemblerARM::mulDouble):
+        (JSC::MacroAssemblerARM::sqrtDouble):
+        (JSC::MacroAssemblerARM::convertInt32ToDouble):
+        (JSC::MacroAssemblerARM::branchDouble):
+        (JSC::MacroAssemblerARM::branchConvertDoubleToInt32):
+
 2010-08-12  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r65295.
