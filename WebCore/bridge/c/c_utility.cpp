@@ -74,7 +74,7 @@ void convertValueToNPVariant(ExecState* exec, JSValue value, NPVariant* result)
 
     if (value.isString()) {
         UString ustring = value.toString(exec);
-        CString cstring = ustring.UTF8String();
+        CString cstring = ustring.utf8();
         NPString string = { (const NPUTF8*)cstring.data(), static_cast<uint32_t>(cstring.length()) };
         NPN_InitializeVariantWithStringCopy(result, &string);
     } else if (value.isNumber()) {

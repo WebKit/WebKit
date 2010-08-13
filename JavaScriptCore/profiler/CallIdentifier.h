@@ -71,7 +71,7 @@ namespace JSC {
 
 #ifndef NDEBUG
         operator const char*() const { return c_str(); }
-        const char* c_str() const { return m_name.UTF8String().data(); }
+        const char* c_str() const { return m_name.utf8().data(); }
 #endif
     };
 

@@ -1,3 +1,17 @@
+2010-08-13  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig
+
+        Unify UString::UTF8String() & String::utf8() methods,
+        remove UString::cost() & make atArrayIndex a free function.
+
+        * WebProcess/Plugins/JSNPObject.cpp:
+        (WebKit::npIdentifierFromIdentifier):
+        * WebProcess/Plugins/NPJSObject.cpp:
+        (WebKit::NPJSObject::enumerate):
+        * WebProcess/Plugins/NPRuntimeObjectMap.cpp:
+        (WebKit::NPRuntimeObjectMap::convertJSValueToNPVariant):
+
 2010-08-12  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r65295.

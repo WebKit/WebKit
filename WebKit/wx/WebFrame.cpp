@@ -233,7 +233,7 @@ wxString wxWebFrame::RunScript(const wxString& javascript)
             if (jsEnabled) {
                 JSC::JSValue result = controller->executeScript(javascript, true).jsValue();
                 if (result)
-                    returnValue = wxString(result.toString(m_impl->frame->script()->globalObject(WebCore::mainThreadNormalWorld())->globalExec()).UTF8String().data(), wxConvUTF8);        
+                    returnValue = wxString(result.toString(m_impl->frame->script()->globalObject(WebCore::mainThreadNormalWorld())->globalExec()).utf8().data(), wxConvUTF8);        
             }
         }
     }

@@ -56,7 +56,7 @@ double parseDate(ExecState* exec, const UString &date)
 {
     if (date == exec->globalData().cachedDateString)
         return exec->globalData().cachedDateStringValue;
-    double value = parseDateFromNullTerminatedCharacters(exec, date.UTF8String().data());
+    double value = parseDateFromNullTerminatedCharacters(exec, date.utf8().data());
     exec->globalData().cachedDateString = date;
     exec->globalData().cachedDateStringValue = value;
     return value;
