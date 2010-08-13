@@ -96,10 +96,7 @@ BUG24182 WIN DEBUG SLOW: inspector/console-dirxml.html = PASS
 BUG24182 DEBUG SLOW : fast/dom/Window/window-function-frame-getter-precedence.html = PASS
 BUG24182 SLOW DEBUG : fast/frames/frame-limit.html = PASS
 BUG24182 SLOW : http/tests/cache/subresource-failover-to-network.html = PASS
-BUG24182 WIN DEBUG : animations/play-state.html = PASS TEXT
-BUG24182 SLOW WIN RELEASE : animations/play-state.html = PASS TEXT
-BUG24182 LINUX : animations/play-state.html = PASS TEXT
-BUG24182 MAC : animations/play-state.html = PASS TEXT
+BUG24182 SLOW : animations/play-state.html = PASS TEXT
 
 // Usually <1s in release, ~1s in debug, but occasionally >5s in release.
 BUG27335 WIN RELEASE : plugins/embed-attributes-setting.html = PASS TIMEOUT
@@ -3213,3 +3210,8 @@ BUGWK43912 WIN LINUX : svg/zoom/page/zoom-mask-with-percentages.svg = IMAGE
 // Crash reported by Japhet in Windows due to r65208
 BUG52014 WIN DEBUG : editing/pasteboard/smart-paste-003.html = PASS CRASH
 BUG52014 WIN DEBUG : editing/pasteboard/smart-paste-004.html = PASS CRASH
+
+// Times out frequently since the test was added
+BUG52017 MAC LINUX : http/tests/misc/isindex-with-no-form.html = PASS TIMEOUT
+
+

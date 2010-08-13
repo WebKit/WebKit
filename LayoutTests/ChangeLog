@@ -1,3 +1,9 @@
+2010-08-12  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed. Mark play-state.html and isindex-with-no-form.html as flaky because they are.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-08-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed, fixing the previous commit.
