@@ -1501,6 +1501,7 @@ fast/forms/input-maxlength-ime-completed.html
 fast/forms/input-maxlength-ime-preedit.html
 fast/text/international/thai-cursor-position.html
 platform/mac/editing/input/5576619.html
+platform/mac/editing/input/bold-node.html
 platform/mac/editing/input/caret-primary-bidi.html
 platform/mac/editing/input/firstrectforcharacterrange-plain.html
 platform/mac/editing/input/firstrectforcharacterrange-styled.html
@@ -1911,6 +1912,9 @@ plugins/get-url-that-the-resource-load-delegate-will-disallow.html
 # WebKitTestRunner needs layoutTestController.setSelectTrailingWhitespaceEnabled
 editing/selection/doubleclick-inline-first-last-contenteditable.html
 
+# WebKitTestRunner needs layoutTestController.suspendAnimations
+animations/suspend-resume-animation.html
+
 # WebKitTestRunner gets confused by location.href redirects.
 plugins/attach-during-destroy.html
 plugins/destroy-reentry.html
@@ -2141,6 +2145,7 @@ dom/xhtml/level2/html/HTMLFormElement10.xhtml
 fast/css/counters/destroy-counter-crash.html
 fast/css/target-fragment-match.html
 fast/dom/beforeload/remove-frame-in-beforeload-listener.html
+fast/dom/css-cached-import-rule.html
 fast/dom/Document/open-with-pending-load.html
 fast/dom/Window/window-appendages-cleared.html
 fast/dynamic/anchor-lock.html
@@ -2156,6 +2161,7 @@ fast/frames/location-put-after-removal.html
 fast/history/multiple-classes-visited.html
 fast/history/nested-visited-test.html
 fast/history/saves-state-after-fragment-nav.html
+fast/history/self-is-visited.html
 fast/html/empty-fragment-id-goto-top.html
 fast/images/move-image-to-new-document.html
 fast/loader/empty-embed-src-attribute.html
@@ -2189,11 +2195,14 @@ http/tests/misc/slow-loading-mask.html
 http/tests/multipart/invalid-image-data-standalone.html
 http/tests/multipart/multipart-wait-before-boundary.html
 http/tests/navigation/fallback-anchor-reload.html
+http/tests/security/originHeader/origin-header-for-https.html
 http/tests/security/xss-DENIED-mime-type-execute-as-html.html
 http/tests/ssl/referer-301.html
 http/tests/ssl/referer-303.html
 http/tests/ssl/verify-ssl-enabled.php
 http/tests/storage/callbacks-are-called-in-correct-context.html
+http/tests/xmlhttprequest/send-on-abort.html
+http/tests/xmlhttprequest/small-chunks-response-text.html
 media/controls-after-reload.html
 media/controls-styling.html
 media/event-attributes.html

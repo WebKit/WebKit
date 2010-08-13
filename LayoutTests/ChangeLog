@@ -1,3 +1,11 @@
+2010-08-12  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin Barraclough.
+
+        Add more files to the WebKit2 skipped list.
+
+        * platform/mac-wk2/Skipped:
+
 2010-08-12  James Robinson  <jamesr@chromium.org>
 
         Unreviewed. Mark play-state.html and isindex-with-no-form.html as flaky because they are.
