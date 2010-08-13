@@ -1470,7 +1470,7 @@ WebInspector.log = function(message, messageLevel)
     // return indication if we can actually log a message
     function isLogAvailable()
     {
-        return WebInspector.ConsoleMessage && WebInspector.ObjectProxy && self.console;
+        return WebInspector.ConsoleMessage && WebInspector.RemoteObject && self.console;
     }
 
     // flush the queue of pending messages

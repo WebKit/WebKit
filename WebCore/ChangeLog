@@ -1,5 +1,13 @@
 2010-08-12  Pavel Feldman  <pfeldman@chromium.org>
 
+        Not reviewed. Fixed typo in inspector js.
+        Follow up to r65300.
+
+        * inspector/front-end/inspector.js:
+        (WebInspector.log.isLogAvailable):
+
+2010-08-12  Pavel Feldman  <pfeldman@chromium.org>
+
         Reviewed by Yury Semikhatsky.
 
         Web Inspector: Make getPrototypes return objects, not names.
