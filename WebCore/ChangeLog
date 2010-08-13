@@ -1,3 +1,42 @@
+2010-08-13  Anton Muhin  <antonm@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        Reapplying http://trac.webkit.org/changeset/65284 after fixed include.
+
+        [v8] Create callbacks for named access of elements from document object on fly.
+        https://bugs.webkit.org/show_bug.cgi?id=43725
+
+        That should speed up access to methods on document as there is no need to
+        consult with interceptor before invoking the method.
+
+        This reapplies http://trac.webkit.org/changeset/60670 reverted with
+        http://trac.webkit.org/changeset/63845.  The main difference is in treatment
+        of removed named elements: we don't remove an accessor any more, but leave it.
+        Therefore any accessor should be able to treat the case when there is no
+        expando property.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::namedItemAdded):
+        (WebCore::ScriptController::namedItemRemoved):
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::checkDocumentWrapper):
+        (WebCore::V8DOMWindowShell::updateDocumentWrapperCache):
+        (WebCore::getter):
+        (WebCore::V8DOMWindowShell::namedItemAdded):
+        (WebCore::V8DOMWindowShell::namedItemRemoved):
+        * bindings/v8/V8DOMWindowShell.h:
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::instantiateV8Object):
+        * bindings/v8/custom/V8HTMLDocumentCustom.cpp:
+        (WebCore::V8HTMLDocument::WrapInShadowObject):
+        (WebCore::V8HTMLDocument::GetNamedProperty):
+        (WebCore::V8HTMLDocument::allAccessorSetter):
+        (WebCore::toV8):
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::removeItemFromMap):
+
 2010-08-13  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.
