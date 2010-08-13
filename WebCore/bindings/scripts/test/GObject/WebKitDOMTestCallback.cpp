@@ -56,7 +56,7 @@ gpointer kit(WebCore::TestCallback* obj)
 } // namespace WebKit //
 
 gboolean
-webkit_dom_test_callback_callback_with_class1param(WebKitDOMTestCallback* self, WebKitDOMClass1*  class1param)
+webkit_dom_test_callback_callback_with_class1param(WebKitDOMTestCallback* self, WebKitDOMClass1* class1param)
 {
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(self, 0);
@@ -69,7 +69,7 @@ webkit_dom_test_callback_callback_with_class1param(WebKitDOMTestCallback* self, 
 }
 
 gboolean
-webkit_dom_test_callback_callback_with_class2param(WebKitDOMTestCallback* self, WebKitDOMClass2*  class2param, gchar*  str_arg)
+webkit_dom_test_callback_callback_with_class2param(WebKitDOMTestCallback* self, WebKitDOMClass2* class2param, const gchar* str_arg)
 {
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(self, 0);
@@ -84,7 +84,7 @@ webkit_dom_test_callback_callback_with_class2param(WebKitDOMTestCallback* self, 
 }
 
 glong
-webkit_dom_test_callback_callback_with_non_bool_return_type(WebKitDOMTestCallback* self, WebKitDOMClass3*  class3param)
+webkit_dom_test_callback_callback_with_non_bool_return_type(WebKitDOMTestCallback* self, WebKitDOMClass3* class3param)
 {
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(self, 0);
