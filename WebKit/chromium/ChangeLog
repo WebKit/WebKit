@@ -1,3 +1,21 @@
+2010-08-12  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: allow interrupting long running JS to execute inspector command
+        https://bugs.webkit.org/show_bug.cgi?id=43900
+
+        * public/WebDevToolsAgent.h:
+        (WebKit::WebDevToolsAgent::MessageDescriptor::~MessageDescriptor):
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::WebDevToolsAgent::interruptAndDispatch):
+        (WebKit::WebDevToolsAgent::shouldInterruptForMessage):
+        (WebKit::WebDevToolsAgent::processPendingMessages):
+        * src/WebDevToolsFrontendImpl.cpp:
+        (WebKit::WebDevToolsFrontendImpl::WebDevToolsFrontendImpl):
+        * src/WebDevToolsFrontendImpl.h:
+        * src/js/DevTools.js:
+
 2010-08-12  Aaron Boodman  <aa@chromium.org>
 
         Reviewed by David Hyatt.

@@ -146,6 +146,8 @@ my %backendTypes;
 my %backendMethods;
 my @backendMethodsImpl;
 my $backendConstructor;
+my @backendConstantDeclarations;
+my @backendConstantDefinitions;
 my $backendFooter;
 
 my $frontendClassName;
@@ -153,6 +155,8 @@ my %frontendTypes;
 my %frontendMethods;
 my @frontendMethodsImpl;
 my $frontendConstructor;
+my @frontendConstantDeclarations;
+my @frontendConstantDefinitions;
 my $frontendFooter;
 
 my $callId = new domSignature(); # it is just structure for describing parameters from IDLStructure.pm.
@@ -208,7 +212,7 @@ sub GenerateInterface
     push(@backendHead, "    ${backendClassName}(InspectorController* inspectorController) : m_inspectorController(inspectorController) { }");
     push(@backendHead, "    void reportProtocolError(const long callId, const String& method, const String& errorText) const;");
     push(@backendHead, "    void dispatch(const String& message);");
-    push(@backendHead, "private:");
+    push(@backendHead, "    static bool getCommandName(const String& message, String* result);");
     $backendConstructor = join("\n", @backendHead);
     $backendFooter = "    InspectorController* m_inspectorController;";
     $backendTypes{"Controller"} = 1;
@@ -216,8 +220,13 @@ sub GenerateInterface
     $backendTypes{"PassRefPtr"} = 1;
     $backendTypes{"Array"} = 1;
 
-    generateBackendPrivateFunctions();
+    push(@backendMethodsImpl, generateBackendPrivateFunctions());
+    push(@backendMethodsImpl, generateBackendMessageParser());
     generateFunctions($interface);
+
+    # Make dispatcher methods private on the backend.
+    push(@backendConstantDeclarations, "");
+    push(@backendConstantDeclarations, "private:");
 }
 
 sub generateFunctions
@@ -277,7 +286,7 @@ static String formatWrongArgumentTypeMessage(unsigned position, const char* name
     return String::format("Failed to convert parameter %d (%s) to %s", position, name, expectedType);
 }
 EOF
-    push(@backendMethodsImpl, $privateFunctions);
+    return split("\n", $privateFunctions);
 }
 
 sub generateBackendFunction
@@ -285,6 +294,9 @@ sub generateBackendFunction
     my $function = shift;
 
     my $functionName = $function->signature->name;
+
+    push(@backendConstantDeclarations, "    static const char* ${functionName}Cmd;");
+    push(@backendConstantDefinitions, "const char* ${backendClassName}::${functionName}Cmd = \"${functionName}\";");
 
     map($backendTypes{$_->type} = 1, @{$function->parameters}); # register required types
     my @inArgs = grep($_->direction eq "in", @{$function->parameters});
@@ -297,7 +309,6 @@ sub generateBackendFunction
     my @function;
     push(@function, "void ${backendClassName}::${functionName}(PassRefPtr<InspectorArray> args)");
     push(@function, "{");
-    push(@function, "    DEFINE_STATIC_LOCAL(String, backendFunctionName, (\"$functionName\"));");
     push(@function, "    long callId = 0;");
     push(@function, "");
 
@@ -305,7 +316,7 @@ sub generateBackendFunction
     my $expectedParametersCountWithMethodName = scalar(@inArgs) + 1;
     push(@function, "    if (args->length() != $expectedParametersCountWithMethodName) {");
     push(@function, "        ASSERT_NOT_REACHED();");
-    push(@function, "        reportProtocolError(callId, backendFunctionName, formatWrongArgumentsCountMessage(args->length() - 1, $expectedParametersCount));");
+    push(@function, "        reportProtocolError(callId, ${functionName}Cmd, formatWrongArgumentsCountMessage(args->length() - 1, $expectedParametersCount));");
     push(@function, "        return;");
     push(@function, "    }");
     push(@function, "");
@@ -317,7 +328,7 @@ sub generateBackendFunction
         push(@function, "    $argumentType " . $parameter->name . ";") if !($parameter->name eq "callId");
         push(@function, "    if (!args->get($i)->as" . $typeTransform{$type}->{"accessorSuffix"} . "(&" . $parameter->name . ")) {");
         push(@function, "        ASSERT_NOT_REACHED();");
-        push(@function, "        reportProtocolError(callId, backendFunctionName, formatWrongArgumentTypeMessage($i, \"" . $parameter->name . "\", \"$type\"));");
+        push(@function, "        reportProtocolError(callId, ${functionName}Cmd, formatWrongArgumentTypeMessage($i, \"" . $parameter->name . "\", \"$type\"));");
         push(@function, "        return;");
         push(@function, "    }");
         push(@function, "");
@@ -328,7 +339,7 @@ sub generateBackendFunction
     my $handlerAccessor = $typeTransform{$handler}->{"handlerAccessor"};
     $backendTypes{$handler} = 1;
     push(@function, "    if (!$handlerAccessor) {");
-    push(@function, "        reportProtocolError(callId, backendFunctionName, \"Error: $handler handler is not available.\");");
+    push(@function, "        reportProtocolError(callId, ${functionName}Cmd, \"Error: $handler handler is not available.\");");
     push(@function, "        return;");
     push(@function, "    }");
     push(@function, "");
@@ -382,7 +393,7 @@ sub generateBackendDispatcher
 {
     my @body;
     my @methods = map($backendMethods{$_}, keys %backendMethods);
-    my @mapEntries = map("        dispatchMap.add(\"$_\", &${backendClassName}::$_);", @methods);
+    my @mapEntries = map("        dispatchMap.add(${_}Cmd, &${backendClassName}::$_);", @methods);
     my $mapEntries = join("\n", @mapEntries);
 
     my $backendDispatcherBody = << "EOF";
@@ -435,16 +446,38 @@ EOF
     return split("\n", $backendDispatcherBody);
 }
 
+sub generateBackendMessageParser
+{
+    my $messageParserBody = << "EOF";
+bool ${backendClassName}::getCommandName(const String& message, String* result)
+{
+    RefPtr<InspectorValue> value = InspectorValue::parseJSON(message);
+    if (!value)
+        return false;
+    RefPtr<InspectorArray> array = value->asArray();
+    if (!array)
+        return false;
+
+    if (!array->length())
+        return false;
+    return array->get(0)->asString(result);
+}
+EOF
+    return split("\n", $messageParserBody);
+}
+
 sub generateHeader
 {
     my $className = shift;
     my $types = shift;
     my $constructor = shift;
+    my $constants = shift;
     my $methods = shift;
     my $footer = shift;
 
     my $forwardHeaders = join("\n", sort(map("#include <" . $typeTransform{$_}->{"forwardHeader"} . ">", grep($typeTransform{$_}->{"forwardHeader"}, keys %{$types}))));
     my $forwardDeclarations = join("\n", sort(map("class " . $typeTransform{$_}->{"forward"} . ";", grep($typeTransform{$_}->{"forward"}, keys %{$types}))));
+    my $constantDeclarations = join("\n", @{$constants});
     my $methodsDeclarations = join("\n", keys %{$methods});
 
     my $headerBody = << "EOF";
@@ -464,6 +497,7 @@ class $className {
 public:
 $constructor
 
+$constantDeclarations
 $methodsDeclarations
 
 private:
@@ -481,6 +515,7 @@ sub generateSource
 {
     my $className = shift;
     my $types = shift;
+    my $constants = shift;
     my $methods = shift;
 
     my @sourceContent = split("\r", $licenseTemplate);
@@ -498,6 +533,8 @@ sub generateSource
     push(@sourceContent, "");
     push(@sourceContent, "namespace $namespace {");
     push(@sourceContent, "");
+    push (@sourceContent, join("\n", @{$constants}));
+    push(@sourceContent, "");
     push(@sourceContent, @{$methods});
     push(@sourceContent, "");
     push(@sourceContent, "} // namespace $namespace");
@@ -512,22 +549,22 @@ sub finish
     my $object = shift;
 
     open(my $SOURCE, ">$outputDir/$frontendClassName.cpp") || die "Couldn't open file $outputDir/$frontendClassName.cpp";
-    print $SOURCE join("\n", generateSource($frontendClassName, \%frontendTypes, \@frontendMethodsImpl));
+    print $SOURCE join("\n", generateSource($frontendClassName, \%frontendTypes, \@frontendConstantDefinitions, \@frontendMethodsImpl));
     close($SOURCE);
     undef($SOURCE);
 
     open(my $HEADER, ">$outputHeadersDir/$frontendClassName.h") || die "Couldn't open file $outputHeadersDir/$frontendClassName.h";
-    print $HEADER generateHeader($frontendClassName, \%frontendTypes, $frontendConstructor, \%frontendMethods, $frontendFooter);
+    print $HEADER generateHeader($frontendClassName, \%frontendTypes, $frontendConstructor, \@frontendConstantDeclarations, \%frontendMethods, $frontendFooter);
     close($HEADER);
     undef($HEADER);
 
     open($SOURCE, ">$outputDir/$backendClassName.cpp") || die "Couldn't open file $outputDir/$backendClassName.cpp";
-    print $SOURCE join("\n", generateSource($backendClassName, \%backendTypes, \@backendMethodsImpl));
+    print $SOURCE join("\n", generateSource($backendClassName, \%backendTypes, \@backendConstantDefinitions, \@backendMethodsImpl));
     close($SOURCE);
     undef($SOURCE);
 
     open($HEADER, ">$outputHeadersDir/$backendClassName.h") || die "Couldn't open file $outputHeadersDir/$backendClassName.h";
-    print $HEADER join("\n", generateHeader($backendClassName, \%backendTypes, $backendConstructor, \%backendMethods, $backendFooter));
+    print $HEADER join("\n", generateHeader($backendClassName, \%backendTypes, $backendConstructor, \@backendConstantDeclarations, \%backendMethods, $backendFooter));
     close($HEADER);
     undef($HEADER);
 }

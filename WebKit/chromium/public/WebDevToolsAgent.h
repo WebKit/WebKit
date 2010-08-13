@@ -73,6 +73,17 @@ public:
     // Asynchronously request debugger to pause immediately.
     WEBKIT_API static void debuggerPauseScript();
 
+    class MessageDescriptor {
+    public:
+        virtual ~MessageDescriptor() { }
+        virtual WebDevToolsAgent* agent() = 0;
+        virtual WebString message() = 0;
+    };
+    // Asynchronously request debugger to pause immediately and run the command.
+    WEBKIT_API static void interruptAndDispatch(MessageDescriptor*);
+    WEBKIT_API static bool shouldInterruptForMessage(const WebString&);
+    WEBKIT_API static void processPendingMessages();
+
     typedef void (*MessageLoopDispatchHandler)();
 
     // Installs dispatch handle that is going to be called periodically

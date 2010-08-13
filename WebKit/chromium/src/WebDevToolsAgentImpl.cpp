@@ -36,6 +36,7 @@
 #include "InjectedScriptHost.h"
 #include "InspectorBackendDispatcher.h"
 #include "InspectorController.h"
+#include "InspectorValues.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include "PlatformString.h"
@@ -63,7 +64,11 @@
 using WebCore::DocumentLoader;
 using WebCore::FrameLoader;
 using WebCore::InjectedScriptHost;
+using WebCore::InspectorArray;
+using WebCore::InspectorBackendDispatcher;
 using WebCore::InspectorController;
+using WebCore::InspectorObject;
+using WebCore::InspectorValue;
 using WebCore::Node;
 using WebCore::Page;
 using WebCore::ResourceError;
@@ -453,6 +458,43 @@ void WebDevToolsAgent::executeDebuggerCommand(const WebString& command, int call
 void WebDevToolsAgent::debuggerPauseScript()
 {
     DebuggerAgentManager::pauseScript();
+}
+
+void WebDevToolsAgent::interruptAndDispatch(MessageDescriptor* d)
+{
+    class DebuggerTask : public WebCore::ScriptDebugServer::Task {
+    public:
+        DebuggerTask(WebDevToolsAgent::MessageDescriptor* descriptor) : m_descriptor(descriptor) { }
+        virtual ~DebuggerTask() { }
+        virtual void run()
+        {
+            if (WebDevToolsAgent* webagent = m_descriptor->agent())
+                webagent->dispatchOnInspectorBackend(m_descriptor->message());
+        }
+    private:
+        OwnPtr<WebDevToolsAgent::MessageDescriptor> m_descriptor;
+    };
+    WebCore::ScriptDebugServer::interruptAndRun(new DebuggerTask(d));
+}
+
+bool WebDevToolsAgent::shouldInterruptForMessage(const WebString& message)
+{
+    String commandName;
+    if (!InspectorBackendDispatcher::getCommandName(message, &commandName))
+        return false;
+    return commandName == InspectorBackendDispatcher::pauseCmd
+        || commandName == InspectorBackendDispatcher::setBreakpointCmd
+        || commandName == InspectorBackendDispatcher::removeBreakpointCmd
+        || commandName == InspectorBackendDispatcher::activateBreakpointsCmd
+        || commandName == InspectorBackendDispatcher::deactivateBreakpointsCmd
+        || commandName == InspectorBackendDispatcher::startProfilingCmd
+        || commandName == InspectorBackendDispatcher::stopProfilingCmd
+        || commandName == InspectorBackendDispatcher::getProfileCmd;
+}
+
+void WebDevToolsAgent::processPendingMessages()
+{
+    WebCore::ScriptDebugServer::shared().runPendingTasks();
 }
 
 void WebDevToolsAgent::setMessageLoopDispatchHandler(MessageLoopDispatchHandler handler)

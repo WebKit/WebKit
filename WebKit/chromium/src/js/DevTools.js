@@ -243,10 +243,3 @@ WebInspector.resetToolbarColors = function()
 if (window.RemoteDebuggerAgent) {
     RemoteDebuggerAgent.setContextId = function() {};
 }
-
-
-// Support for pause while renderer is busy (is dispatched on IO thread).
-InspectorBackend.pause = function()
-{
-    RemoteDebuggerCommandExecutor.DebuggerPauseScript();
-};

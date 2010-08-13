@@ -70,7 +70,7 @@ public:
     PauseOnExceptionsState pauseOnExceptionsState();
     void setPauseOnExceptionsState(PauseOnExceptionsState pauseOnExceptionsState);
 
-    void pause() { }
+    void pause();
     void continueProgram();
     void stepIntoStatement();
     void stepOverStatement();
@@ -98,6 +98,14 @@ public:
 
     void setEnabled(bool);
     bool isDebuggerAlwaysEnabled();
+
+    class Task {
+    public:
+        virtual ~Task() { }
+        virtual void run() = 0;
+    };
+    static void interruptAndRun(PassOwnPtr<Task>);
+    void runPendingTasks();
 
 private:
     ScriptDebugServer();
