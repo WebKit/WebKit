@@ -1,3 +1,13 @@
+2010-08-13  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        We have to add the ACLOCAL_FLAGS in the env to the autogen.sh
+        ACLOCAL_FLAGS variable in order to honor the value already
+        defined, jhbuild uses it to pass parameters.
+
+        * autogen.sh:
+
 2010-08-13  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Ariya Hidayat.
