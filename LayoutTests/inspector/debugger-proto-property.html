@@ -14,11 +14,12 @@ function testFunction() {
     var o = new C();
     var d = document.documentElement;
     debugger;
+    notifyDone();
 }
 
 function doit()
 {
-    evaluateInWebInspector("frontend_testProtoPropertyOnPause", completeTest);
+    evaluateInWebInspector("frontend_testProtoPropertyOnPause", dumpArray);
 }
 
 function frontend_testProtoPropertyOnPause(testController)

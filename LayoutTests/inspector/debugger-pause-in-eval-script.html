@@ -6,7 +6,7 @@
 
 function doit()
 {
-    evaluateInWebInspector("frontend_testPauseOnDebuggerStatement", completeTest);
+    evaluateInWebInspector("frontend_testPauseOnDebuggerStatement", dumpArray);
 }
 
 function frontend_testPauseOnDebuggerStatement(testController)
@@ -17,6 +17,7 @@ function frontend_testPauseOnDebuggerStatement(testController)
 
     var scriptToEvaluate = "function testFunction() {\n" +
                            "    debugger;\n" +
+                           "    notifyDone();\n" +
                            "}\n" +
                            "setTimeout(testFunction, 0);\n";
     function debuggerWasEnabledCallback()

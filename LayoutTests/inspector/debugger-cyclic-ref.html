@@ -10,11 +10,12 @@ function testFunction()
 {
     var o = new Object();
     debugger;
+    notifyDone();
 }
 
 function doit()
 {
-    evaluateInWebInspector("frontend_testDebugObjectWithCyclicRef", completeTest);
+    evaluateInWebInspector("frontend_testDebugObjectWithCyclicRef", dumpArray);
 }
 
 function frontend_testDebugObjectWithCyclicRef(testController)

@@ -8,12 +8,15 @@ function testFunction()
 {
     testFunction.invocationCount++;
     debugger;
+    if (testFunction.didExitFromNestedCall)
+        notifyDone();
+    testFunction.didExitFromNestedCall = true;
 }
 testFunction.invocationCount = 0;
 
 function doit()
 {
-    evaluateInWebInspector("frontend_testNoNestedPause", completeTest);
+    evaluateInWebInspector("frontend_testNoNestedPause", dumpArray);
 }
 
 function frontend_testNoNestedPause(testController)

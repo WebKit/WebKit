@@ -9,6 +9,7 @@ var globalVar = { b: 1 };
 function slave(x) {
     var y = 20;
     debugger;
+    notifyDone();
 }
 
 function testFunction() {
@@ -18,7 +19,7 @@ function testFunction() {
 
 function doit()
 {
-    evaluateInWebInspector("frontend_testPauseOnDebuggerStatement", completeTest);
+    evaluateInWebInspector("frontend_testPauseOnDebuggerStatement", dumpArray);
 }
 
 function frontend_testPauseOnDebuggerStatement(testController)

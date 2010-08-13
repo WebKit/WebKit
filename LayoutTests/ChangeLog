@@ -1,3 +1,21 @@
+2010-08-13  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: DRT sometimes crashes on debugger tests
+        https://bugs.webkit.org/show_bug.cgi?id=43964
+        notifyDone() should be called only when debugger already resumed all active DOM objects,
+        otherwise we might accidentally call setTimeout in the inspected page and create
+        a new active DOM object while their set should remain unchanged when script execution
+        is paused.
+
+        * inspector/debugger-cyclic-ref.html:
+        * inspector/debugger-eval-while-paused.html:
+        * inspector/debugger-no-nested-pause.html:
+        * inspector/debugger-pause-in-eval-script.html:
+        * inspector/debugger-pause-on-debugger-statement.html:
+        * inspector/debugger-proto-property.html:
+
 2010-08-12  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.

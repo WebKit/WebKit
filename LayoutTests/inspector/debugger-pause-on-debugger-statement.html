@@ -6,11 +6,12 @@
 
 function testFunction() {
     debugger;
+    notifyDone();
 }
 
 function doit()
 {
-    evaluateInWebInspector("frontend_testPauseOnDebuggerStatement", completeTest);
+    evaluateInWebInspector("frontend_testPauseOnDebuggerStatement", dumpArray);
 }
 
 function frontend_testPauseOnDebuggerStatement(testController)
