@@ -64,6 +64,7 @@ enum Kind {
     SetCursor,
     SetToolTip,
     TakeFocus,
+    WillSubmitForm,
     
     BackForwardAddItem,
     BackForwardGoToItem,

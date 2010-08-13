@@ -23,27 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKit2_h
-#define WebKit2_h
+#ifndef WebFormClient_h
+#define WebFormClient_h
 
-#include <WebKit2/WKBase.h>
-#include <WebKit2/WKType.h>
+#include "WKPage.h"
+#include <wtf/Forward.h>
 
-#include <WebKit2/WKBackForwardList.h>
-#include <WebKit2/WKBackForwardListItem.h>
-#include <WebKit2/WKContext.h>
-#include <WebKit2/WKFormSubmissionListener.h>
-#include <WebKit2/WKFrame.h>
-#include <WebKit2/WKFramePolicyListener.h>
-#include <WebKit2/WKNavigationData.h>
-#include <WebKit2/WKPage.h>
-#include <WebKit2/WKPageNamespace.h>
-#include <WebKit2/WKPreferences.h>
-#include <WebKit2/WKString.h>
-#include <WebKit2/WKURL.h>
+namespace WebKit {
 
-#if !__APPLE__ || __OBJC__
-#include <WebKit2/WKView.h>
-#endif
+class WebPageProxy;
+class WebFrameProxy;
+class WebFormSubmissionListenerProxy;
 
-#endif /* WebKit2_h */
+class WebFormClient {
+public:
+    WebFormClient();
+    void initialize(const WKPageFormClient*);
+
+    // FIXME: Add value dictionary and form element reference.
+    bool willSubmitForm(WebPageProxy*, WebFrameProxy*, WebFrameProxy*, WebFormSubmissionListenerProxy*); 
+
+private:
+    WKPageFormClient m_pageFormClient;
+};
+
+} // namespace WebKit
+
+#endif // WebFormClient_h

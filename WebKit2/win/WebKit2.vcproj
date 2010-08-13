@@ -1049,11 +1049,35 @@
 				>
 			</File>
 			<File
+				RelativePath="..\UIProcess\WebFormClient.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebFormClient.h"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebFormSubmissionListenerProxy.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebFormSubmissionListenerProxy.h"
+				>
+			</File>
+			<File
 				RelativePath="..\UIProcess\WebFramePolicyListenerProxy.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\UIProcess\WebFramePolicyListenerProxy.h"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebFrameListenerProxy.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebFrameListenerProxy.h"
 				>
 			</File>
 			<File
@@ -1220,6 +1244,14 @@
 					</File>
 					<File
 						RelativePath="..\UIProcess\API\C\WKError.h"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKFormSubmissionListener.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKFormSubmissionListener.h"
 						>
 					</File>
 					<File

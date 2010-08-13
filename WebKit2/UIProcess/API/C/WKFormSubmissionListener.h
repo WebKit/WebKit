@@ -23,27 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKit2_h
-#define WebKit2_h
+#ifndef WKFormSubmissionListener_h
+#define WKFormSubmissionListener_h
 
 #include <WebKit2/WKBase.h>
-#include <WebKit2/WKType.h>
 
-#include <WebKit2/WKBackForwardList.h>
-#include <WebKit2/WKBackForwardListItem.h>
-#include <WebKit2/WKContext.h>
-#include <WebKit2/WKFormSubmissionListener.h>
-#include <WebKit2/WKFrame.h>
-#include <WebKit2/WKFramePolicyListener.h>
-#include <WebKit2/WKNavigationData.h>
-#include <WebKit2/WKPage.h>
-#include <WebKit2/WKPageNamespace.h>
-#include <WebKit2/WKPreferences.h>
-#include <WebKit2/WKString.h>
-#include <WebKit2/WKURL.h>
-
-#if !__APPLE__ || __OBJC__
-#include <WebKit2/WKView.h>
+#ifdef __cplusplus
+extern "C" {
 #endif
 
-#endif /* WebKit2_h */
+WK_EXPORT WKTypeID WKFormSubmissionListenerGetTypeID();
+
+WK_EXPORT void WKFormSubmissionListenerContinue(WKFormSubmissionListenerRef submissionListener);
+
+WK_EXPORT WKFormSubmissionListenerRef WKFormSubmissionListenerRetain(WKFormSubmissionListenerRef submissionListener);
+WK_EXPORT void WKFormSubmissionListenerRelease(WKFormSubmissionListenerRef submissionListener);
+
+#ifdef __cplusplus
+}
+#endif
+
+WK_DECLARE_RETAIN_RELEASE_OVERLOADS(WKFormSubmissionListener)
+
+#endif /* WKFormSubmissionListener_h */

@@ -23,27 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKit2_h
-#define WebKit2_h
+#include "WKFormSubmissionListener.h"
 
-#include <WebKit2/WKBase.h>
-#include <WebKit2/WKType.h>
+#include "WKAPICast.h"
+#include "WebFormSubmissionListenerProxy.h"
 
-#include <WebKit2/WKBackForwardList.h>
-#include <WebKit2/WKBackForwardListItem.h>
-#include <WebKit2/WKContext.h>
-#include <WebKit2/WKFormSubmissionListener.h>
-#include <WebKit2/WKFrame.h>
-#include <WebKit2/WKFramePolicyListener.h>
-#include <WebKit2/WKNavigationData.h>
-#include <WebKit2/WKPage.h>
-#include <WebKit2/WKPageNamespace.h>
-#include <WebKit2/WKPreferences.h>
-#include <WebKit2/WKString.h>
-#include <WebKit2/WKURL.h>
+using namespace WebKit;
 
-#if !__APPLE__ || __OBJC__
-#include <WebKit2/WKView.h>
-#endif
+WKTypeID WKFormSubmissionListenerGetTypeID()
+{
+    return toRef(WebFormSubmissionListenerProxy::APIType);
+}
 
-#endif /* WebKit2_h */
+void WKFormSubmissionListenerContinue(WKFormSubmissionListenerRef submissionListener)
+{
+    toWK(submissionListener)->continueSubmission();
+}
+
+WKFormSubmissionListenerRef WKFormSubmissionListenerRetain(WKFormSubmissionListenerRef submissionListenerRef)
+{
+    toWK(submissionListenerRef)->ref();
+    return submissionListenerRef;
+}
+
+void WKFormSubmissionListenerRelease(WKFormSubmissionListenerRef submissionListenerRef)
+{
+    toWK(submissionListenerRef)->deref();
+}

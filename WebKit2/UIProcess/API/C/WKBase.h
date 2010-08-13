@@ -35,20 +35,21 @@
 typedef uint32_t WKTypeID;
 typedef void* WKTypeRef;
 
-typedef struct OpaqueWKArrayRef* WKArrayRef;
-typedef struct OpaqueWKBackForwardListItemRef* WKBackForwardListItemRef;
-typedef struct OpaqueWKBackForwardListRef* WKBackForwardListRef;
+typedef struct OpaqueWKArray* WKArrayRef;
+typedef struct OpaqueWKBackForwardList* WKBackForwardListRef;
+typedef struct OpaqueWKBackForwardListItem* WKBackForwardListItemRef;
 typedef struct OpaqueWKContext* WKContextRef;
 typedef struct OpaqueWKData* WKDataRef;
 typedef struct OpaqueWKError* WKErrorRef;
+typedef struct OpaqueWKFormSubmissionListener* WKFormSubmissionListenerRef;
 typedef struct OpaqueWKFrame* WKFrameRef;
 typedef struct OpaqueWKFramePolicyListener* WKFramePolicyListenerRef;
-typedef struct OpaqueWKNavigationDataRef* WKNavigationDataRef;
+typedef struct OpaqueWKNavigationData* WKNavigationDataRef;
 typedef struct OpaqueWKPage* WKPageRef;
 typedef struct OpaqueWKPageNamespace* WKPageNamespaceRef;
-typedef struct OpaqueWKPreferencesRef* WKPreferencesRef;
-typedef struct OpaqueWKStringRef* WKStringRef;
-typedef struct OpaqueWKURLRef* WKURLRef;
+typedef struct OpaqueWKPreferences* WKPreferencesRef;
+typedef struct OpaqueWKString* WKStringRef;
+typedef struct OpaqueWKURL* WKURLRef;
 
 #undef WK_EXPORT
 #if defined(WK_NO_EXPORT)

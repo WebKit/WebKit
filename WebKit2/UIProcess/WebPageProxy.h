@@ -31,6 +31,7 @@
 #include "GenericCallback.h"
 #include "WKBase.h"
 #include "WebEvent.h"
+#include "WebFormClient.h"
 #include "WebFrameProxy.h"
 #include "WebHistoryClient.h"
 #include "WebLoaderClient.h"
@@ -94,6 +95,7 @@ public:
     void setPageClient(PageClient*);
     void initializeLoaderClient(const WKPageLoaderClient*);
     void initializePolicyClient(const WKPagePolicyClient*);
+    void initializeFormClient(const WKPageFormClient*);
     void initializeUIClient(const WKPageUIClient*);
 
     void revive();
@@ -190,6 +192,8 @@ private:
     void decidePolicyForNewWindowAction(WebFrameProxy*, WebCore::NavigationType navigationType, const WTF::String& url, uint64_t listenerID);
     void decidePolicyForMIMEType(WebFrameProxy*, const WTF::String& MIMEType, const WTF::String& url, uint64_t listenerID);
 
+    void willSubmitForm(WebFrameProxy* frame, WebFrameProxy* frameSource, uint64_t listenerID);
+
     PassRefPtr<WebPageProxy> createNewPage();
     void showPage();
     void closePage();
@@ -215,6 +219,7 @@ private:
     PageClient* m_pageClient;
     WebLoaderClient m_loaderClient;
     WebPolicyClient m_policyClient;
+    WebFormClient m_formClient;
     WebUIClient m_uiClient;
 
     OwnPtr<DrawingAreaProxy> m_drawingArea;

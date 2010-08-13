@@ -26,6 +26,8 @@
 #include "WebFrameProxy.h"
 
 #include "WebPageProxy.h"
+#include "WebFormSubmissionListenerProxy.h"
+#include "WebFramePolicyListenerProxy.h"
 #include <WebCore/PlatformString.h>
 
 using namespace WebCore;
@@ -46,9 +48,9 @@ WebFrameProxy::~WebFrameProxy()
 void WebFrameProxy::disconnect()
 {
     m_page = 0;
-    if (m_policyListener) {
-        m_policyListener->invalidate();
-        m_policyListener = 0;
+    if (m_activeListener) {
+        m_activeListener->invalidate();
+        m_activeListener = 0;
     }
 }
 
@@ -90,17 +92,25 @@ void WebFrameProxy::receivedPolicyDecision(WebCore::PolicyAction action, uint64_
     if (!m_page)
         return;
 
-    ASSERT(m_policyListener);
-    ASSERT(m_policyListener->listenerID() == listenerID);
+    ASSERT(m_activeListener);
+    ASSERT(m_activeListener->listenerID() == listenerID);
     m_page->receivedPolicyDecision(action, this, listenerID);
 }
 
 WebFramePolicyListenerProxy* WebFrameProxy::setUpPolicyListenerProxy(uint64_t listenerID)
 {
-    if (m_policyListener)
-        m_policyListener->invalidate();
-    m_policyListener = WebFramePolicyListenerProxy::create(this, listenerID);
-    return m_policyListener.get();
+    if (m_activeListener)
+        m_activeListener->invalidate();
+    m_activeListener = WebFramePolicyListenerProxy::create(this, listenerID);
+    return static_cast<WebFramePolicyListenerProxy*>(m_activeListener.get());
+}
+
+WebFormSubmissionListenerProxy* WebFrameProxy::setUpFormSubmissionListenerProxy(uint64_t listenerID)
+{
+    if (m_activeListener)
+        m_activeListener->invalidate();
+    m_activeListener = WebFormSubmissionListenerProxy::create(this, listenerID);
+    return static_cast<WebFormSubmissionListenerProxy*>(m_activeListener.get());
 }
 
 } // namespace WebKit

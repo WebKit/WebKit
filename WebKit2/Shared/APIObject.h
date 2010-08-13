@@ -44,6 +44,7 @@ public:
         TypeBackForwardList,
         TypeBackForwardListItem,
         TypeContext,
+        TypeFormSubmissionListener,
         TypeFrame,
         TypeFramePolicyListener,
         TypeNavigationData,

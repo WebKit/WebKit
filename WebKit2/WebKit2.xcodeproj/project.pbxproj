@@ -276,6 +276,14 @@
 		BCDB86C11200FB97007254BE /* WebURL.h in Headers */ = {isa = PBXBuildFile; fileRef = BCDB86C01200FB97007254BE /* WebURL.h */; };
 		BCDE059B11CDA8AE00E41AF1 /* WebContextInjectedBundleClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BCDE059911CDA8AE00E41AF1 /* WebContextInjectedBundleClient.h */; };
 		BCDE059C11CDA8AE00E41AF1 /* WebContextInjectedBundleClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCDE059A11CDA8AE00E41AF1 /* WebContextInjectedBundleClient.cpp */; };
+		BCE469531214E6CB000B98EB /* WebFormClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE4694F1214E6CB000B98EB /* WebFormClient.cpp */; };
+		BCE469541214E6CB000B98EB /* WebFormClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE469501214E6CB000B98EB /* WebFormClient.h */; };
+		BCE469551214E6CB000B98EB /* WebFormSubmissionListenerProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE469511214E6CB000B98EB /* WebFormSubmissionListenerProxy.cpp */; };
+		BCE469561214E6CB000B98EB /* WebFormSubmissionListenerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE469521214E6CB000B98EB /* WebFormSubmissionListenerProxy.h */; };
+		BCE469591214EDF4000B98EB /* WKFormSubmissionListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE469571214EDF4000B98EB /* WKFormSubmissionListener.cpp */; };
+		BCE4695A1214EDF4000B98EB /* WKFormSubmissionListener.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE469581214EDF4000B98EB /* WKFormSubmissionListener.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		BCE469771214F27B000B98EB /* WebFrameListenerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE469761214F27B000B98EB /* WebFrameListenerProxy.h */; };
+		BCE469791214F2B4000B98EB /* WebFrameListenerProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE469781214F2B4000B98EB /* WebFrameListenerProxy.cpp */; };
 		BCEE966C112FAF57006BCC24 /* Attachment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEE966A112FAF57006BCC24 /* Attachment.cpp */; };
 		BCEE966D112FAF57006BCC24 /* Attachment.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEE966B112FAF57006BCC24 /* Attachment.h */; };
 		BCEE98C6113314D7006BCC24 /* WebPageNamespace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEE98C4113314D7006BCC24 /* WebPageNamespace.cpp */; };
@@ -607,6 +615,14 @@
 		BCDB86C01200FB97007254BE /* WebURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebURL.h; sourceTree = "<group>"; };
 		BCDE059911CDA8AE00E41AF1 /* WebContextInjectedBundleClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebContextInjectedBundleClient.h; sourceTree = "<group>"; };
 		BCDE059A11CDA8AE00E41AF1 /* WebContextInjectedBundleClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebContextInjectedBundleClient.cpp; sourceTree = "<group>"; };
+		BCE4694F1214E6CB000B98EB /* WebFormClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebFormClient.cpp; sourceTree = "<group>"; };
+		BCE469501214E6CB000B98EB /* WebFormClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebFormClient.h; sourceTree = "<group>"; };
+		BCE469511214E6CB000B98EB /* WebFormSubmissionListenerProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebFormSubmissionListenerProxy.cpp; sourceTree = "<group>"; };
+		BCE469521214E6CB000B98EB /* WebFormSubmissionListenerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebFormSubmissionListenerProxy.h; sourceTree = "<group>"; };
+		BCE469571214EDF4000B98EB /* WKFormSubmissionListener.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKFormSubmissionListener.cpp; sourceTree = "<group>"; };
+		BCE469581214EDF4000B98EB /* WKFormSubmissionListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKFormSubmissionListener.h; sourceTree = "<group>"; };
+		BCE469761214F27B000B98EB /* WebFrameListenerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebFrameListenerProxy.h; sourceTree = "<group>"; };
+		BCE469781214F2B4000B98EB /* WebFrameListenerProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebFrameListenerProxy.cpp; sourceTree = "<group>"; };
 		BCEE966A112FAF57006BCC24 /* Attachment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Attachment.cpp; sourceTree = "<group>"; };
 		BCEE966B112FAF57006BCC24 /* Attachment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Attachment.h; sourceTree = "<group>"; };
 		BCEE98C4113314D7006BCC24 /* WebPageNamespace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPageNamespace.cpp; sourceTree = "<group>"; };
@@ -989,8 +1005,14 @@
 				BCB9E2411120DACA00A137E0 /* WebContext.h */,
 				BCDE059A11CDA8AE00E41AF1 /* WebContextInjectedBundleClient.cpp */,
 				BCDE059911CDA8AE00E41AF1 /* WebContextInjectedBundleClient.h */,
+				BCE4694F1214E6CB000B98EB /* WebFormClient.cpp */,
+				BCE469501214E6CB000B98EB /* WebFormClient.h */,
+				BCE469511214E6CB000B98EB /* WebFormSubmissionListenerProxy.cpp */,
+				BCE469521214E6CB000B98EB /* WebFormSubmissionListenerProxy.h */,
 				BCB9F69F1123A84B00A137E0 /* WebFramePolicyListenerProxy.cpp */,
 				BCB9F69E1123A84B00A137E0 /* WebFramePolicyListenerProxy.h */,
+				BCE469781214F2B4000B98EB /* WebFrameListenerProxy.cpp */,
+				BCE469761214F27B000B98EB /* WebFrameListenerProxy.h */,
 				BC111B0A112F5E4F00337BAB /* WebFrameProxy.cpp */,
 				BC9B389F10F538BE00443A15 /* WebFrameProxy.h */,
 				BCF69F841176CD6F00471A52 /* WebHistoryClient.cpp */,
@@ -1047,6 +1069,8 @@
 				514AF6C71209EE7300A26C97 /* WKData.h */,
 				516A4A58120A1AB500C05B7F /* WKError.cpp */,
 				516A4A57120A1AB500C05B7F /* WKError.h */,
+				BCE469571214EDF4000B98EB /* WKFormSubmissionListener.cpp */,
+				BCE469581214EDF4000B98EB /* WKFormSubmissionListener.h */,
 				BCD01398110FA420003B8A67 /* WKFrame.cpp */,
 				BCD01397110FA420003B8A67 /* WKFrame.h */,
 				BCB9F6A41123DD0D00A137E0 /* WKFramePolicyListener.cpp */,
@@ -1448,6 +1472,10 @@
 				BC14DF77120B5B7900826C0C /* InjectedBundleScriptWorld.h in Headers */,
 				BC14DF9F120B635F00826C0C /* WKBundleScriptWorld.h in Headers */,
 				BC14E10A120B905E00826C0C /* InjectedBundlePageFormClient.h in Headers */,
+				BCE469541214E6CB000B98EB /* WebFormClient.h in Headers */,
+				BCE469561214E6CB000B98EB /* WebFormSubmissionListenerProxy.h in Headers */,
+				BCE4695A1214EDF4000B98EB /* WKFormSubmissionListener.h in Headers */,
+				BCE469771214F27B000B98EB /* WebFrameListenerProxy.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1664,6 +1692,10 @@
 				BC14DF78120B5B7900826C0C /* InjectedBundleScriptWorld.cpp in Sources */,
 				BC14DF9E120B635F00826C0C /* WKBundleScriptWorld.cpp in Sources */,
 				BC14E109120B905E00826C0C /* InjectedBundlePageFormClient.cpp in Sources */,
+				BCE469531214E6CB000B98EB /* WebFormClient.cpp in Sources */,
+				BCE469551214E6CB000B98EB /* WebFormSubmissionListenerProxy.cpp in Sources */,
+				BCE469591214EDF4000B98EB /* WKFormSubmissionListener.cpp in Sources */,
+				BCE469791214F2B4000B98EB /* WebFrameListenerProxy.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

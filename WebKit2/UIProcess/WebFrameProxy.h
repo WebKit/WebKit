@@ -27,7 +27,7 @@
 #define WebFrameProxy_h
 
 #include "APIObject.h"
-#include "WebFramePolicyListenerProxy.h"
+#include "WebFrameListenerProxy.h"
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/PlatformString.h>
 #include <wtf/Forward.h>
@@ -42,6 +42,8 @@ namespace CoreIPC {
 namespace WebKit {
 
 class WebPageProxy;
+class WebFramePolicyListenerProxy;
+class WebFormSubmissionListenerProxy;
 
 class WebFrameProxy : public APIObject {
 public:
@@ -77,6 +79,7 @@ public:
 
     void receivedPolicyDecision(WebCore::PolicyAction, uint64_t listenerID);
     WebFramePolicyListenerProxy* setUpPolicyListenerProxy(uint64_t listenerID);
+    WebFormSubmissionListenerProxy* setUpFormSubmissionListenerProxy(uint64_t listenerID);
 
 private:
     WebFrameProxy(WebPageProxy* page, uint64_t frameID);
@@ -87,7 +90,7 @@ private:
     LoadState m_loadState;
     WTF::String m_url;
     WTF::String m_provisionalURL;
-    RefPtr<WebFramePolicyListenerProxy> m_policyListener;
+    RefPtr<WebFrameListenerProxy> m_activeListener;
     uint64_t m_frameID;
 };
 

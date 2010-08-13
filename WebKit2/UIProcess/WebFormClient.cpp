@@ -23,27 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKit2_h
-#define WebKit2_h
+#include "WebFormClient.h"
 
-#include <WebKit2/WKBase.h>
-#include <WebKit2/WKType.h>
+#include "WKAPICast.h"
 
-#include <WebKit2/WKBackForwardList.h>
-#include <WebKit2/WKBackForwardListItem.h>
-#include <WebKit2/WKContext.h>
-#include <WebKit2/WKFormSubmissionListener.h>
-#include <WebKit2/WKFrame.h>
-#include <WebKit2/WKFramePolicyListener.h>
-#include <WebKit2/WKNavigationData.h>
-#include <WebKit2/WKPage.h>
-#include <WebKit2/WKPageNamespace.h>
-#include <WebKit2/WKPreferences.h>
-#include <WebKit2/WKString.h>
-#include <WebKit2/WKURL.h>
+using namespace WebCore;
 
-#if !__APPLE__ || __OBJC__
-#include <WebKit2/WKView.h>
-#endif
+namespace WebKit {
 
-#endif /* WebKit2_h */
+WebFormClient::WebFormClient()
+{
+    initialize(0);
+}
+
+void WebFormClient::initialize(const WKPageFormClient* client)
+{
+    if (client && !client->version)
+        m_pageFormClient = *client;
+    else 
+        memset(&m_pageFormClient, 0, sizeof(m_pageFormClient));
+}
+
+bool WebFormClient::willSubmitForm(WebPageProxy* page, WebFrameProxy* frame, WebFrameProxy* sourceFrame, WebFormSubmissionListenerProxy* listener)
+{
+    if (!m_pageFormClient.willSubmitForm)
+        return false;
+
+    m_pageFormClient.willSubmitForm(toRef(page), toRef(frame), toRef(sourceFrame), toRef(listener), m_pageFormClient.clientInfo);
+    return true;
+}
+
+} // namespace WebKit

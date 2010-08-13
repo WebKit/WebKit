@@ -113,6 +113,16 @@ struct WKPagePolicyClient {
 };
 typedef struct WKPagePolicyClient WKPagePolicyClient;
 
+// Form Client.
+typedef void (*WKPageWillSubmitFormCallback)(WKPageRef page, WKFrameRef frame, WKFrameRef sourceFrame, WKFormSubmissionListenerRef listener, const void* clientInfo);
+
+struct WKPageFormClient {
+    int                                                                 version;
+    const void *                                                        clientInfo;
+    WKPageWillSubmitFormCallback                                        willSubmitForm;
+};
+typedef struct WKPageFormClient WKPageFormClient;
+
 // UI Client
 typedef WKPageRef (*WKPageCreateNewPageCallback)(WKPageRef page, const void *clientInfo);
 typedef void (*WKPageShowPageCallback)(WKPageRef page, const void *clientInfo);
@@ -165,6 +175,7 @@ WK_EXPORT void WKPageRestoreFromSessionState(WKPageRef page, WKDataRef sessionSt
 
 WK_EXPORT void WKPageSetPageLoaderClient(WKPageRef page, const WKPageLoaderClient* client);
 WK_EXPORT void WKPageSetPagePolicyClient(WKPageRef page, const WKPagePolicyClient* client);
+WK_EXPORT void WKPageSetPageFormClient(WKPageRef page, const WKPageFormClient* client);
 WK_EXPORT void WKPageSetPageUIClient(WKPageRef page, const WKPageUIClient* client);
 
 typedef void (*WKPageRunJavaScriptFunction)(WKStringRef, WKErrorRef, void*);

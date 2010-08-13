@@ -30,27 +30,8 @@
 namespace WebKit {
 
 WebFramePolicyListenerProxy::WebFramePolicyListenerProxy(WebFrameProxy* frame, uint64_t listenerID)
-    : m_frame(frame)
-    , m_listenerID(listenerID)
+    : WebFrameListenerProxy(frame, listenerID)
 {
-}
-
-WebFramePolicyListenerProxy::~WebFramePolicyListenerProxy()
-{
-}
-
-void WebFramePolicyListenerProxy::invalidate()
-{
-    m_frame = 0;
-}
-
-void WebFramePolicyListenerProxy::receivedPolicyDecision(WebCore::PolicyAction action)
-{
-    if (!m_frame)
-        return;
-
-    m_frame->receivedPolicyDecision(action, m_listenerID);
-    m_frame = 0;
 }
 
 void WebFramePolicyListenerProxy::use()

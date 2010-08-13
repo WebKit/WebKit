@@ -1,3 +1,95 @@
+2010-08-13  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Jon Honeycutt.
+
+        Add form submission listener to WebKit2
+        Part of <rdar://problem/8255932>
+        https://bugs.webkit.org/show_bug.cgi?id=43947
+
+        * Shared/APIObject.h:
+        Add TypeFormSubmissionListener APIType.
+        
+        * Shared/CoreIPCSupport/WebPageProxyMessageKinds.h:
+        Add WillSubmitForm message kind.
+
+        * UIProcess/API/C/WKAPICast.h:
+        Add new mappings for WKFormSubmissionListenerRef -> WebFormSubmissionListener
+
+        * UIProcess/API/C/WKBase.h:
+        Add OpaqueWKFormSubmissionListener and rename the other opaque types to match.
+
+        * UIProcess/API/C/WKFormSubmissionListener.cpp: Added.
+        (WKFormSubmissionListenerGetTypeID):
+        (WKFormSubmissionListenerContinue):
+        (WKFormSubmissionListenerRetain):
+        (WKFormSubmissionListenerRelease):
+        * UIProcess/API/C/WKFormSubmissionListener.h: Added.
+        Add C wrapper for WebFormSubmissionListener.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageFormClient):
+        * UIProcess/API/C/WKPage.h:
+        Add WKPageFormClient with willSubmitForm callback. Additional callbacks will be added as
+        needed.
+
+        * UIProcess/API/C/WebKit2.h:
+        Add include for WKFormSubmissionListener.h
+
+        * UIProcess/WebFormClient.cpp: Added.
+        (WebKit::WebFormClient::WebFormClient):
+        (WebKit::WebFormClient::initialize):
+        (WebKit::WebFormClient::willSubmitForm):
+        * UIProcess/WebFormClient.h: Added.
+        Add client for form related delagations.
+
+        * UIProcess/WebFormSubmissionListenerProxy.cpp: Added.
+        (WebKit::WebFormSubmissionListenerProxy::WebFormSubmissionListenerProxy):
+        (WebKit::WebFormSubmissionListenerProxy::continueSubmission):
+        * UIProcess/WebFormSubmissionListenerProxy.h: Added.
+        (WebKit::WebFormSubmissionListenerProxy::create):
+        (WebKit::WebFormSubmissionListenerProxy::type):
+        * UIProcess/WebFrameListenerProxy.cpp: Copied from UIProcess/WebFramePolicyListenerProxy.cpp.
+        Add new type of listener for form submissions. It inherits from the new base class
+        for listeners, WebFrameListenerProxy.
+
+        (WebKit::WebFrameListenerProxy::WebFrameListenerProxy):
+        (WebKit::WebFrameListenerProxy::~WebFrameListenerProxy):
+        (WebKit::WebFrameListenerProxy::invalidate):
+        (WebKit::WebFrameListenerProxy::receivedPolicyDecision):
+        * UIProcess/WebFrameListenerProxy.h: Copied from UIProcess/WebFramePolicyListenerProxy.h.
+        Move logic that would have to be shared between WebFramePolicyListenerProxy and
+        WebFormSubmissionListenerProxy into shared base class.
+
+        * UIProcess/WebFramePolicyListenerProxy.cpp:
+        (WebKit::WebFramePolicyListenerProxy::WebFramePolicyListenerProxy):
+        * UIProcess/WebFramePolicyListenerProxy.h:
+        (WebKit::WebFramePolicyListenerProxy::create):
+        (WebKit::WebFramePolicyListenerProxy::type):
+        Move to inheriting from WebFrameListenerProxy.
+
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::disconnect):
+        (WebKit::WebFrameProxy::receivedPolicyDecision):
+        (WebKit::WebFrameProxy::setUpPolicyListenerProxy):
+        (WebKit::WebFrameProxy::setUpFormSubmissionListenerProxy):
+        * UIProcess/WebFrameProxy.h:
+        Change listener functions to act on WebFrameListenerProxys and add setUpFormSubmissionListenerProxy.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::initializeFormClient):
+        (WebKit::WebPageProxy::didReceiveMessage):
+        (WebKit::WebPageProxy::willSubmitForm):
+        * UIProcess/WebPageProxy.h:
+        Plumb through willSubmitForm call as we do with the other listeners.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchWillSubmitForm):
+        Ditto.
+
+        * WebKit2.xcodeproj/project.pbxproj: Add new files.
+        * win/WebKit2.vcproj: Add new files.
+        * win/WebKit2Generated.make: Ditto.
+
 2010-08-13  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig

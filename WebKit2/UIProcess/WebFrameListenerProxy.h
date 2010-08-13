@@ -23,27 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKit2_h
-#define WebKit2_h
+#ifndef WebFrameListenerProxy_h
+#define WebFrameListenerProxy_h
 
-#include <WebKit2/WKBase.h>
-#include <WebKit2/WKType.h>
+#include "APIObject.h"
+#include <WebCore/FrameLoaderTypes.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 
-#include <WebKit2/WKBackForwardList.h>
-#include <WebKit2/WKBackForwardListItem.h>
-#include <WebKit2/WKContext.h>
-#include <WebKit2/WKFormSubmissionListener.h>
-#include <WebKit2/WKFrame.h>
-#include <WebKit2/WKFramePolicyListener.h>
-#include <WebKit2/WKNavigationData.h>
-#include <WebKit2/WKPage.h>
-#include <WebKit2/WKPageNamespace.h>
-#include <WebKit2/WKPreferences.h>
-#include <WebKit2/WKString.h>
-#include <WebKit2/WKURL.h>
+namespace WebKit {
 
-#if !__APPLE__ || __OBJC__
-#include <WebKit2/WKView.h>
-#endif
+class WebFrameProxy;
 
-#endif /* WebKit2_h */
+class WebFrameListenerProxy : public APIObject {
+public:
+    virtual ~WebFrameListenerProxy();
+
+    void invalidate();
+    uint64_t listenerID() const { return m_listenerID; }
+
+protected:
+    WebFrameListenerProxy(WebFrameProxy*, uint64_t listenerID);
+
+    void receivedPolicyDecision(WebCore::PolicyAction);
+
+private:
+    RefPtr<WebFrameProxy> m_frame;
+    uint64_t m_listenerID;
+};
+
+} // namespace WebKit
+
+#endif // WebFrameListenerProxy_h
