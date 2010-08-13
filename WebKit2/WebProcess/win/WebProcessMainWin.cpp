@@ -29,6 +29,7 @@
 #include "RunLoop.h"
 #include "WebProcess.h"
 #include <WebCore/PlatformString.h>
+#include <WebCore/SoftLinking.h>
 #include <runtime/InitializeThreading.h>
 #include <wtf/Threading.h>
 #include <wtf/text/StringHash.h>
@@ -37,9 +38,33 @@ using namespace WebCore;
 
 namespace WebKit {
 
+#if USE(SAFARI_THEME)
+#ifdef DEBUG_ALL
+SOFT_LINK_DEBUG_LIBRARY(SafariTheme)
+#else
+SOFT_LINK_LIBRARY(SafariTheme)
+#endif
+
+SOFT_LINK(SafariTheme, STInitialize, void, APIENTRY, (), ())
+
+static void initializeSafariTheme()
+{
+    static bool didInitializeSafariTheme;
+    if (!didInitializeSafariTheme) {
+        if (SafariThemeLibrary())
+            STInitialize();
+        didInitializeSafariTheme = true;
+    }
+}
+#endif // USE(SAFARI_THEME)
+
 int WebProcessMain(CommandLine* commandLine)
 {
     ::OleInitialize(0);
+
+#if USE(SAFARI_THEME)
+    initializeSafariTheme();
+#endif
 
     JSC::initializeThreading();
     WTF::initializeMainThread();
