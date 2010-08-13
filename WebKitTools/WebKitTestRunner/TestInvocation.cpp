@@ -58,7 +58,7 @@ static const unsigned normalHeight = 600;
 
 static void sizeWebViewForCurrentTest(char* pathOrURL)
 {
-    bool isSVGW3CTest = strstr(pathOrURL, "svg/W3C-SVG-1.1");
+    bool isSVGW3CTest = strstr(pathOrURL, "svg/W3C-SVG-1.1") || strstr(pathOrURL, "svg\\W3C-SVG-1.1");
 
     if (isSVGW3CTest)
         TestController::shared().mainWebView()->resizeTo(w3cSVGWidth, w3cSVGHeight);
