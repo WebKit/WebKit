@@ -61,6 +61,7 @@ WebSocketChannel::WebSocketChannel(ScriptExecutionContext* context, WebSocketCha
     , m_resumeTimer(this, &WebSocketChannel::resumeTimerFired)
     , m_suspended(false)
     , m_closed(false)
+    , m_shouldDiscardReceivedData(false)
     , m_unhandledBufferedAmount(0)
 {
 }
@@ -171,10 +172,14 @@ void WebSocketChannel::didReceiveData(SocketStreamHandle* handle, const char* da
         return;
     }
     if (!m_client) {
+        m_shouldDiscardReceivedData = true;
         handle->close();
         return;
     }
+    if (m_shouldDiscardReceivedData)
+        return;
     if (!appendToBuffer(data, len)) {
+        m_shouldDiscardReceivedData = true;
         handle->close();
         return;
     }
@@ -187,6 +192,7 @@ void WebSocketChannel::didFail(SocketStreamHandle* handle, const SocketStreamErr
 {
     LOG(Network, "WebSocketChannel %p didFail", this);
     ASSERT(handle == m_handle || !m_handle);
+    m_shouldDiscardReceivedData = true;
     handle->close();
 }
 
@@ -236,6 +242,8 @@ bool WebSocketChannel::processBuffer()
     ASSERT(!m_suspended);
     ASSERT(m_client);
     ASSERT(m_buffer);
+    if (m_shouldDiscardReceivedData)
+        return false;
 
     if (m_handshake.mode() == WebSocketHandshake::Incomplete) {
         int headerLength = m_handshake.readServerHandshake(m_buffer, m_bufferSize);
@@ -260,6 +268,7 @@ bool WebSocketChannel::processBuffer()
         }
         LOG(Network, "WebSocketChannel %p connection failed", this);
         skipBuffer(headerLength);
+        m_shouldDiscardReceivedData = true;
         if (!m_closed)
             m_handle->close();
         return false;
@@ -305,6 +314,8 @@ bool WebSocketChannel::processBuffer()
             errorFrame = true;
         }
         if (errorFrame) {
+            skipBuffer(m_bufferSize); // Save memory.
+            m_shouldDiscardReceivedData = true;
             m_client->didReceiveMessageError();
             if (!m_client)
                 return false;

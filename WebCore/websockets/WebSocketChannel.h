@@ -94,6 +94,7 @@ namespace WebCore {
         Timer<WebSocketChannel> m_resumeTimer;
         bool m_suspended;
         bool m_closed;
+        bool m_shouldDiscardReceivedData;
         unsigned long m_unhandledBufferedAmount;
     };
 
