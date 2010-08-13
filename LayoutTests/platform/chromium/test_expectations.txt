@@ -201,8 +201,6 @@ WONTFIX SKIP : http/tests/security/MessagePort/event-listener-context.html = FAI
 WONTFIX SKIP : inspector/extensions.html = FAIL
 WONTFIX SKIP : inspector/extensions-api.html = FAIL
 
-BUG43574 SKIP : inspector/debugger-breakpoints-not-activated-on-reload.html = CRASH
-
 // Implement java testing harness.
 BUG36681 DEFER SKIP : java = TEXT
 // Chrome does not support Java LiveConnect.
@@ -730,8 +728,6 @@ BUGWK40520 DEFER : fast/forms/interactive-validation-prevented.html = TEXT
 BUG26734 LINUX MAC SKIP : inspector = PASS
 BUG26734 LINUX MAC SKIP : http/tests/inspector = PASS
 BUG26734 LINUX MAC SKIP : http/tests/inspector-enabled = PASS
-BUG26734 SKIP : inspector/console-format-collections.html = TEXT
-BUG26734 SKIP : inspector/console-format.html = TEXT
 
 // These tests need to be changed to be platform independent.
 BUG13907 : http/tests/media/remove-while-loading.html = TIMEOUT
@@ -2482,11 +2478,9 @@ BUG32675 LINUX : fast/repaint/trailing-floats-root-line-box-overflow.html = IMAG
 // Flaky tests found during the roll.
 BUG32679 LINUX DEBUG : http/tests/navigation/lockedhistory-iframe.html = TEXT PASS
 BUG32684 WIN : inspector/timeline-layout.html = TEXT PASS
-BUG35519 WIN SKIP : http/tests/inspector/inspect-iframe-from-different-domain.html = PASS
 BUG32688 MAC DEBUG : fast/lists/inlineBoxWrapperNullCheck.html = TEXT PASS
 BUG32689 MAC LINUX DEBUG : http/tests/security/mixedContent/about-blank-iframe-in-main-frame.html = TEXT PASS
 BUG32693 MAC DEBUG : svg/dom/SVGRectElement/rect-modify-rx.svg = TEXT PASS
-BUG35773 WIN LINUX : inspector/console-dir.html = CRASH TEXT PASS
 
 BUG33293 SKIP : fast/media/lifetime.html = TIMEOUT
 
@@ -2553,9 +2547,6 @@ BUG36966 : fast/loader/about-blank-hash-kept.html = FAIL
 
 BUG37463 MAC DEBUG : svg/custom/transform-ignore-after-invalid.svg = PASS CRASH
 
-// WebKit roll 55512:55584
-BUG37540 MAC SKIP : inspector/console-dir.html = CRASH TEXT PASS
-
 // Bugs that went unreported when we upstreamed run_webkit_tests
 // New test, added http://trac.webkit.org/changeset/55737
 BUG37896 : fast/events/remove-child-onscroll.html = TIMEOUT
@@ -2572,7 +2563,6 @@ BUG37896 WIN DEBUG : fast/text/firstline/001.html = PASS CRASH
 BUG37896 LINUX MAC DEBUG : fast/text/firstline/001.html = PASS CRASH TIMEOUT
 // Added in http://trac.webkit.org/changeset/55587
 BUG37896 LINUX DEBUG : fast/images/svg-as-background.html = TIMEOUT
-BUG37869 MAC LINUX SKIP : inspector/timeline-network-resource.html = CRASH
 // Three flaky tests noticed during a sheriff rotation.
 BUG37962 MAC LINUX DEBUG : fast/dom/HTMLElement/bdo.html = CRASH PASS
 BUG37962 LINUX DEBUG : fast/forms/multiple-form-submission-protection-mouse.html = CRASH PASS
@@ -2821,9 +2811,6 @@ BUGWK35961 : printing/page-rule-selection.html = TEXT
 BUG46872 : fast/preloader = TEXT
 BUG46872 : fast/dom/HTMLLinkElement/prefetch.html = TIMEOUT
 BUG46872 : http/tests/loading/preload-slow-loading.php = TEXT
-
-// Became a flaky crash in http://trac.webkit.org/log/?verbose=on&rev=61417&stop_rev=61393
-BUG46974 WIN : inspector/audits-panel-functional.html = CRASH PASS
 
 BUG47035 WIN DEBUG : fast/loader/stateobjects/document-destroyed-navigate-back-with-fragment-scroll.html = PASS TEXT
 

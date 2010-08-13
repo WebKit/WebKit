@@ -1,0 +1,85 @@
+CONSOLE MESSAGE: line 12: Message format number %i, %d and %f
+CONSOLE MESSAGE: line 13: Message %s for %s
+CONSOLE MESSAGE: line 14: Object %o
+CONSOLE MESSAGE: line 20: test,test2,,,test4
+CONSOLE MESSAGE: line 21: %o
+CONSOLE MESSAGE: line 22: %O
+CONSOLE MESSAGE: line 52: /^url\(\s*(?:(?:"(?:[^\\\"]|(?:\\[\da-f]{1,6}\s?|\.))*"|'(?:[^\\\']|(?:\\[\da-f]{1,6}\s?|\.))*')|(?:[!#$%&*-~\w]|(?:\\[\da-f]{1,6}\s?|\.))*)\s*\)/i
+CONSOLE MESSAGE: line 53: /^url\(\s*(?:(?:"(?:[^\\\"]|(?:\\[\da-f]{1,6}\s?|\.))*"|'(?:[^\\\']|(?:\\[\da-f]{1,6}\s?|\.))*')|(?:[!#$%&*-~\w]|(?:\\[\da-f]{1,6}\s?|\.))*)\s*\)/i
+CONSOLE MESSAGE: line 52: /foo\\bar\sbaz/i
+CONSOLE MESSAGE: line 53: /foo\\bar\sbaz/i
+CONSOLE MESSAGE: line 52: test
+CONSOLE MESSAGE: line 53: test
+CONSOLE MESSAGE: line 52: test named "test"
+CONSOLE MESSAGE: line 53: test named "test"
+CONSOLE MESSAGE: line 52: Error
+CONSOLE MESSAGE: line 53: Error
+CONSOLE MESSAGE: line 52: [object HTMLBodyElement]
+CONSOLE MESSAGE: line 53: [object HTMLBodyElement]
+CONSOLE MESSAGE: line 52: function () { return 1; }
+CONSOLE MESSAGE: line 53: function () { return 1; }
+CONSOLE MESSAGE: line 52: function () {
+        return 2;
+    }
+CONSOLE MESSAGE: line 53: function () {
+        return 2;
+    }
+CONSOLE MESSAGE: line 52: 0.12
+CONSOLE MESSAGE: line 53: 0.12
+CONSOLE MESSAGE: line 52: http://webkit.org/
+CONSOLE MESSAGE: line 53: http://webkit.org/
+CONSOLE MESSAGE: line 52: null
+CONSOLE MESSAGE: line 53: 
+CONSOLE MESSAGE: line 52: undefined
+CONSOLE MESSAGE: line 53: 
+Tests that console logging dumps proper messages.
+
+console-format.html:12Message format number 1, 2 and 3.5
+console-format.html:13Message format for string
+console-format.html:14Object Object
+console-format.html:20["test", "test2", undefined, undefined, "test4"]
+console-format.html:21["test", "test2", undefined, undefined, "test4"]
+console-format.html:22Array[5]
+console-format.html:52/^url\(\s*(?:(?:"(?:[^\\\"]|(?:\\[\da-f]{1,6}\s?|\.))*"|'(?:[^\\\']|(?:\\[\da-f]{1,6}\s?|\.))*')|(?:[!#$%&*-~\w]|(?:\\[\da-f]{1,6}\s?|\.))*)\s*\)/i
+console-format.html:53[/^url\(\s*(?:(?:"(?:[^\\\"]|(?:\\[\da-f]{1,6}\s?|\.))*"|'(?:[^\\\']|(?:\\[\da-f]{1,6}\s?|\.))*')|(?:[!#$%&*-~\w]|(?:\\[\da-f]{1,6}\s?|\.))*)\s*\)/i]
+/^url\(\s*(?:(?:"(?:[^\\\"]|(?:\\[\da-f]{1,6}\s?|\.))*"|'(?:[^\\\']|(?:\\[\da-f]{1,6}\s?|\.))*')|(?:[!#$%&*-~\w]|(?:\\[\da-f]{1,6}\s?|\.))*)\s*\)/i
+console-format.html:52/foo\\bar\sbaz/i
+console-format.html:53[/foo\\bar\sbaz/i]
+/foo\\bar\sbaz/i
+console-format.html:52test
+console-format.html:53["test"]
+"test"
+console-format.html:52test named "test"
+console-format.html:53["test named "test""]
+"test named "test""
+console-format.html:52Error
+console-format.html:53[Error]
+Error
+console-format.html:52<body onload="onload()">…</body>
+console-format.html:53[<body onload="onload()">…</body>]
+<body onload="onload()">…</body>
+console-format.html:52function () { return 1; }
+console-format.html:53[function () { return 1; }]
+function () { return 1; }
+console-format.html:52function () {
+        return 2;
+    }
+console-format.html:53[function () {
+        return 2;
+    }]
+function () {
+        return 2;
+    }
+console-format.html:520.12
+console-format.html:53[0.12]
+0.12
+console-format.html:52http://webkit.org/
+console-format.html:53["http://webkit.org/"]
+"http://webkit.org/"
+console-format.html:52null
+console-format.html:53[null]
+null
+console-format.html:52undefined
+console-format.html:53[undefined]
+undefined
+

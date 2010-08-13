@@ -1,3 +1,19 @@
+2010-08-13  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Chromium DevTools: brush up test expectations.
+        https://bugs.webkit.org/show_bug.cgi?id=43959
+
+        * platform/chromium/inspector/console-dir-expected.txt: Added.
+        * platform/chromium/inspector/console-format-expected.txt: Added.
+        * platform/chromium/inspector/timeline-event-dispatch-expected.txt: Renamed from LayoutTests/platform/chromium-win/inspector/timeline-event-dispatch-expected.txt.
+        * platform/chromium/inspector/timeline-mark-timeline-expected.txt: Renamed from LayoutTests/platform/chromium-win/inspector/timeline-mark-timeline-expected.txt.
+        * platform/chromium/inspector/timeline-network-resource-expected.txt: Renamed from LayoutTests/platform/chromium-win/inspector/timeline-network-resource-expected.txt.
+        * platform/chromium/inspector/timeline-paint-expected.txt: Renamed from LayoutTests/platform/chromium-win/inspector/timeline-paint-expected.txt.
+        * platform/chromium/inspector/timeline-parse-html-expected.txt: Renamed from LayoutTests/platform/chromium-win/inspector/timeline-parse-html-expected.txt.
+        * platform/chromium/test_expectations.txt:
+
 2010-08-12  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Gavin Barraclough.
