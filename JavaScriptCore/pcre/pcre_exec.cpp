@@ -2143,7 +2143,7 @@ Histogram::~Histogram()
     size_t size = values.size();
     printf("Regular Expressions, sorted by time spent evaluating them:\n");
     for (size_t i = 0; i < size; ++i)
-        printf("    %f - %s\n", values[size - i - 1].second, values[size - i - 1].first.UTF8String().c_str());
+        printf("    %f - %s\n", values[size - i - 1].second, values[size - i - 1].first.utf8().c_str());
 }
 
 void Histogram::add(const JSRegExp* re, double elapsedTime)

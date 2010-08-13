@@ -1,3 +1,13 @@
+2010-08-12  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig
+
+        Unify UString::UTF8String() & String::utf8() methods,
+        remove UString::cost() & make atArrayIndex a free function.
+
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::enumerate):
+
 2010-08-12  Jeremy Orlow  <jorlow@chromium.org>
 
         Revert for now

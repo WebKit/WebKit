@@ -75,8 +75,8 @@ const UString& ProfileGenerator::title() const
 void ProfileGenerator::willExecute(const CallIdentifier& callIdentifier)
 {
     if (JAVASCRIPTCORE_PROFILE_WILL_EXECUTE_ENABLED()) {
-        CString name = callIdentifier.m_name.UTF8String();
-        CString url = callIdentifier.m_url.UTF8String();
+        CString name = callIdentifier.m_name.utf8();
+        CString url = callIdentifier.m_url.utf8();
         JAVASCRIPTCORE_PROFILE_WILL_EXECUTE(m_profileGroup, const_cast<char*>(name.data()), const_cast<char*>(url.data()), callIdentifier.m_lineNumber);
     }
 
@@ -90,8 +90,8 @@ void ProfileGenerator::willExecute(const CallIdentifier& callIdentifier)
 void ProfileGenerator::didExecute(const CallIdentifier& callIdentifier)
 {
     if (JAVASCRIPTCORE_PROFILE_DID_EXECUTE_ENABLED()) {
-        CString name = callIdentifier.m_name.UTF8String();
-        CString url = callIdentifier.m_url.UTF8String();
+        CString name = callIdentifier.m_name.utf8();
+        CString url = callIdentifier.m_url.utf8();
         JAVASCRIPTCORE_PROFILE_DID_EXECUTE(m_profileGroup, const_cast<char*>(name.data()), const_cast<char*>(url.data()), callIdentifier.m_lineNumber);
     }
 

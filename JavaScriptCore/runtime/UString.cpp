@@ -257,17 +257,6 @@ double UString::toDouble(bool tolerateTrailingJunk, bool tolerateEmptyString) co
         return NaN;
     }
 
-    // FIXME: If tolerateTrailingJunk is true, then we want to tolerate junk 
-    // after the number, even if it contains invalid UTF-16 sequences. So we
-    // shouldn't use the UTF8String function, which returns null when it
-    // encounters invalid UTF-16. Further, we have no need to convert the
-    // non-ASCII characters to UTF-8, so the UTF8String does quite a bit of
-    // unnecessary work.
-
-    // FIXME: The space skipping code below skips only ASCII spaces, but callers
-    // need to skip all StrWhiteSpace. The isStrWhiteSpace function does the
-    // right thing but requires UChar, not char, for its argument.
-
     const UChar* data = this->characters();
     const UChar* end = data + size;
 
@@ -594,20 +583,52 @@ bool operator>(const UString& s1, const UString& s2)
     return (l1 > l2);
 }
 
-CString UString::UTF8String(bool strict) const
+// Helper to write a three-byte UTF-8 code point to the buffer, caller must check room is available.
+static inline void putUTF8Triple(char*& buffer, UChar ch)
 {
-    // Allocate a buffer big enough to hold all the characters.
-    const unsigned len = length();
-    Vector<char, 1024> buffer(len * 3);
+    ASSERT(ch >= 0x0800);
+    *buffer++ = static_cast<char>(((ch >> 12) & 0x0F) | 0xE0);
+    *buffer++ = static_cast<char>(((ch >> 6) & 0x3F) | 0x80);
+    *buffer++ = static_cast<char>((ch & 0x3F) | 0x80);
+}
 
-    // Convert to runs of 8-bit characters.
-    char* p = buffer.data();
-    const UChar* d = reinterpret_cast<const UChar*>(&characters()[0]);
-    ConversionResult result = convertUTF16ToUTF8(&d, d + len, &p, p + buffer.size(), strict);
-    if (result != conversionOK)
+CString UString::utf8(bool strict) const
+{
+    unsigned length = this->length();
+    const UChar* characters = this->characters();
+
+    // Allocate a buffer big enough to hold all the characters
+    // (an individual UTF-16 UChar can only expand to 3 UTF-8 bytes).
+    // Optimization ideas, if we find this function is hot:
+    //  * We could speculatively create a CStringBuffer to contain 'length' 
+    //    characters, and resize if necessary (i.e. if the buffer contains
+    //    non-ascii characters). (Alternatively, scan the buffer first for
+    //    ascii characters, so we know this will be sufficient).
+    //  * We could allocate a CStringBuffer with an appropriate size to
+    //    have a good chance of being able to write the string into the
+    //    buffer without reallocing (say, 1.5 x length).
+    Vector<char, 1024> bufferVector(length * 3);
+
+    char* buffer = bufferVector.data();
+    ConversionResult result = convertUTF16ToUTF8(&characters, characters + length, &buffer, buffer + bufferVector.size(), strict);
+    ASSERT(result != targetExhausted); // (length * 3) should be sufficient for any conversion
+
+    if (result == sourceIllegal) // Only produced from strict conversion.
         return CString();
 
-    return CString(buffer.data(), p - buffer.data());
+    // If a high surrogate is left unconverted, treat it the same was as an unpaired high surrogate
+    // would have been handled in the middle of a string with non-strict conversion - which is to say,
+    // simply encode it to UTF-8.
+    if (result == sourceExhausted) {
+        // This should be one unpaired high surrogate.
+        ASSERT((characters + 1) == (this->characters() + length));
+        ASSERT((*characters >= 0xD800) && (*characters <= 0xDBFF));
+        // There should be room left, since one UChar hasn't been converted.
+        ASSERT((buffer + 3) <= (buffer + bufferVector.size()));
+        putUTF8Triple(buffer, *characters);
+    }
+
+    return CString(bufferVector.data(), buffer - bufferVector.data());
 }
 
 } // namespace JSC

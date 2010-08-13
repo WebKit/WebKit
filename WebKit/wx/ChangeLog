@@ -1,3 +1,13 @@
+2010-08-12  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig
+
+        Unify UString::UTF8String() & String::utf8() methods,
+        remove UString::cost() & make atArrayIndex a free function.
+
+        * WebFrame.cpp:
+        (wxWebFrame::RunScript):
+
 2010-08-11  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix. WebCore::String -> WTF::String fixes.

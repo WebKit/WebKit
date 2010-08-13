@@ -38,9 +38,6 @@
 
 namespace JSC {
 
-using WTF::PlacementNewAdoptType;
-using WTF::PlacementNewAdopt;
-
 class UString {
 public:
     // Construct a null string, distinguishable from an empty string.
@@ -63,30 +60,18 @@ public:
     UString(PassRefPtr<StringImpl> impl) : m_impl(impl) { }
     UString(RefPtr<StringImpl> impl) : m_impl(impl) { }
 
+    // Inline the destructor.
+    ALWAYS_INLINE ~UString() { }
+
     void swap(UString& o) { m_impl.swap(o.m_impl); }
 
     template<size_t inlineCapacity>
     static UString adopt(Vector<UChar, inlineCapacity>& vector) { return StringImpl::adopt(vector); }
 
-    static UString number(int);
-    static UString number(long long);
-    static UString number(unsigned);
-    static UString number(long);
-    static UString number(double);
+    bool isNull() const { return !m_impl; }
+    bool isEmpty() const { return !m_impl || !m_impl->length(); }
 
-    // NOTE: This method should only be used for *debugging* purposes as it
-    // is neither Unicode safe nor free from side effects nor thread-safe.
-    char* ascii() const;
-
-    /**
-     * Convert the string to UTF-8, assuming it is UTF-16 encoded.
-     * In non-strict mode, this function is tolerant of badly formed UTF-16, it
-     * can create UTF-8 strings that are invalid because they have characters in
-     * the range U+D800-U+DDFF, U+FFFE, or U+FFFF, but the UTF-8 string is
-     * guaranteed to be otherwise valid.
-     * In strict mode, error is returned as null CString.
-     */
-    CString UTF8String(bool strict = false) const;
+    StringImpl* impl() const { return m_impl.get(); }
 
     unsigned length() const
     {
@@ -102,12 +87,22 @@ public:
         return m_impl->characters();
     }
 
+    CString utf8(bool strict = false) const;
+
     UChar operator[](unsigned index) const
     {
         if (!m_impl || index >= m_impl->length())
             return 0;
         return m_impl->characters()[index];
     }
+
+    static UString number(int);
+    static UString number(unsigned);
+    static UString number(long);
+    static UString number(long long);
+    static UString number(double);
+
+
 
     double toDouble(bool tolerateTrailingJunk, bool tolerateEmptyString) const;
     double toDouble(bool tolerateTrailingJunk) const;
@@ -117,8 +112,6 @@ public:
     uint32_t toUInt32(bool* ok, bool tolerateEmptyString) const;
     uint32_t toStrictUInt32(bool* ok = 0) const;
 
-    unsigned toArrayIndex(bool* ok = 0) const;
-
     static const unsigned NotFound = 0xFFFFFFFFu;
     unsigned find(const UString& f, unsigned pos = 0) const;
     unsigned find(UChar, unsigned pos = 0) const;
@@ -127,19 +120,10 @@ public:
 
     UString substr(unsigned pos = 0, unsigned len = 0xFFFFFFFF) const;
 
-    bool isNull() const { return !m_impl; }
-    bool isEmpty() const { return !m_impl || !m_impl->length(); }
+    // NOTE: This method should only be used for *debugging* purposes as it
+    // is neither Unicode safe nor free from side effects nor thread-safe.
+    char* ascii() const;
 
-    StringImpl* impl() const { return m_impl.get(); }
-
-    size_t cost() const
-    {
-        if (!m_impl)
-            return 0;
-        return m_impl->cost();
-    }
-
-    ALWAYS_INLINE ~UString() { }
 private:
     RefPtr<StringImpl> m_impl;
 };
@@ -215,16 +199,6 @@ inline bool operator!=(const char *s1, const UString& s2)
 inline int codePointCompare(const UString& s1, const UString& s2)
 {
     return codePointCompare(s1.impl(), s2.impl());
-}
-
-// Rule from ECMA 15.2 about what an array index is.
-// Must exactly match string form of an unsigned integer, and be less than 2^32 - 1.
-inline unsigned UString::toArrayIndex(bool* ok) const
-{
-    unsigned i = toStrictUInt32(ok);
-    if (ok && i >= 0xFFFFFFFFU)
-        *ok = false;
-    return i;
 }
 
 // We'd rather not do shared substring append for small strings, since

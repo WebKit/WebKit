@@ -127,7 +127,7 @@ void Profile::debugPrintDataSampleStyle() const
 
     std::sort(sortedFunctions.begin(), sortedFunctions.end(), functionNameCountPairComparator);
     for (NameCountPairVector::iterator it = sortedFunctions.begin(); it != sortedFunctions.end(); ++it)
-        printf("        %-12d%s\n", (*it).second, UString((*it).first).UTF8String().data());
+        printf("        %-12d%s\n", (*it).second, UString((*it).first).utf8().data());
 
     printf("\nSort by top of stack, same collapsed (when >= 5):\n");
 }

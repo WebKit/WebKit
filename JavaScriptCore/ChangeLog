@@ -1,5 +1,82 @@
 2010-08-12  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by Sam Weinig
+
+        Unify UString::UTF8String() & String::utf8() methods,
+        remove UString::cost() & make atArrayIndex a free function.
+
+        * JavaScriptCore.exp:
+        * bytecode/CodeBlock.cpp:
+        (JSC::constantName):
+        (JSC::idName):
+        (JSC::CodeBlock::registerName):
+        (JSC::regexpName):
+        (JSC::printGlobalResolveInfo):
+        (JSC::printStructureStubInfo):
+        (JSC::CodeBlock::printStructure):
+        (JSC::CodeBlock::printStructures):
+        * jsc.cpp:
+        (functionPrint):
+        (functionDebug):
+        (runInteractive):
+        (fillBufferWithContentsOfFile):
+        * pcre/pcre_exec.cpp:
+        (Histogram::~Histogram):
+        * profiler/CallIdentifier.h:
+        (JSC::CallIdentifier::c_str):
+        * profiler/Profile.cpp:
+        (JSC::Profile::debugPrintDataSampleStyle):
+        * profiler/ProfileGenerator.cpp:
+        (JSC::ProfileGenerator::willExecute):
+        (JSC::ProfileGenerator::didExecute):
+        * profiler/ProfileNode.cpp:
+        (JSC::ProfileNode::debugPrintData):
+        (JSC::ProfileNode::debugPrintDataSampleStyle):
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::getOwnPropertySlot):
+        (JSC::Arguments::getOwnPropertyDescriptor):
+        (JSC::Arguments::put):
+        (JSC::Arguments::deleteProperty):
+        * runtime/DateConversion.cpp:
+        (JSC::parseDate):
+        * runtime/Identifier.h:
+        (JSC::Identifier::toStrictUInt32):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::getOwnPropertySlot):
+        (JSC::JSArray::getOwnPropertyDescriptor):
+        (JSC::JSArray::put):
+        (JSC::JSArray::deleteProperty):
+        * runtime/JSArray.h:
+        (JSC::toArrayIndex):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::encode):
+        (JSC::parseInt):
+        (JSC::globalFuncJSCPrint):
+        * runtime/JSString.h:
+        (JSC::RopeBuilder::JSString):
+        * runtime/UString.cpp:
+        (JSC::UString::toDouble):
+        (JSC::putUTF8Triple):
+        (JSC::UString::utf8):
+        * runtime/UString.h:
+        (JSC::UString::~UString):
+        (JSC::UString::isNull):
+        (JSC::UString::isEmpty):
+        (JSC::UString::impl):
+        * wtf/text/WTFString.cpp:
+        (WTF::String::utf8):
+        * wtf/text/WTFString.h:
+        (WTF::String::~String):
+        (WTF::String::swap):
+        (WTF::String::isNull):
+        (WTF::String::isEmpty):
+        (WTF::String::impl):
+        (WTF::String::length):
+        (WTF::String::String):
+        (WTF::String::isHashTableDeletedValue):
+
+2010-08-12  Gavin Barraclough  <barraclough@apple.com>
+
         Eeerk! - revert accidentally committed changes in UString!
 
         * JavaScriptCore.exp:
