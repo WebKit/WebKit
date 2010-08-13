@@ -59,7 +59,7 @@ InjectedScript.wrapObject = function(object, objectGroupName)
                 InjectedScript.objectGroups[objectGroupName] = group;
             }
             group.push(id);
-            objectId = new InjectedScript.RemoteObjectId("jsobject", id);
+            objectId = new InjectedScript.RemoteObjectId(InjectedScript.RemoteObjectId.Type.JsObject, id);
         }
         return InjectedScript.RemoteObject.fromObject(object, objectId);
     } catch (e) {
@@ -100,13 +100,14 @@ InjectedScript.getPrototypes = function(nodeId)
         return false;
 
     var result = [];
-    for (var prototype = node; prototype; prototype = prototype.__proto__) {
-        var title = InjectedScript._describe(prototype, true);
-        if (title.match(/Prototype$/)) {
-            title = title.replace(/Prototype$/, "");
-        }
-        result.push(title);
-    }
+    var prototype = node;
+    var prototypeId = new InjectedScript.RemoteObjectId(InjectedScript.RemoteObjectId.Type.Node, nodeId);
+    do {
+        result.push(InjectedScript.RemoteObject.fromObject(prototype, prototypeId));
+        prototype = prototype.__proto__;
+        prototypeId = InjectedScript.RemoteObjectId.deriveProperty(prototypeId, "__proto__");
+    } while (prototype)
+
     return result;
 }
 
@@ -131,9 +132,7 @@ InjectedScript.getProperties = function(objectId, ignoreHasOwnProperty, abbrevia
         if (!isGetter) {
             try {
                 var childObject = object[propertyName];
-                var path = objectId.path ? objectId.path.slice() : [];
-                path.push(propertyName);
-                var childObjectId = new InjectedScript.RemoteObjectId(objectId.type, objectId.value, path);
+                var childObjectId = InjectedScript.RemoteObjectId.deriveProperty(objectId, propertyName);
                 var childObjectProxy = new InjectedScript.RemoteObject.fromObject(childObject, childObjectId, abbreviate);
                 property.value = childObjectProxy;
             } catch(e) {
@@ -346,11 +345,11 @@ InjectedScript._objectForId = function(objectId)
     // - strings point to console objects cached in InspectorController for lazy evaluation upon them
     // - objects contain complex ids and are currently used for scoped objects
     var object;
-    if (objectId.type === "node")
+    if (objectId.type === InjectedScript.RemoteObjectId.Type.Node)
         object = InjectedScript._nodeForId(objectId.value);
-    else if (objectId.type === "jsobject")
+    else if (objectId.type === InjectedScript.RemoteObjectId.Type.JsObject)
         object = InjectedScript.unwrapObject(objectId.value);
-    else if (objectId.type === "scopeObject") {
+    else if (objectId.type === InjectedScript.RemoteObjectId.Type.ScopeObject) {
         var callFrame = InjectedScript._callFrameForId(objectId.value.callFrame);
         if (objectId.thisObject)
             object = callFrame.thisObject;
@@ -383,6 +382,19 @@ InjectedScript.RemoteObjectId = function(type, value, path)
     this.type = type;
     this.value = value;
     this.path = path || [];
+}
+
+InjectedScript.RemoteObjectId.Type = {
+    Node: "node",
+    JsObject: "jsObject",
+    ScopeObject: "scopeObject"
+}
+
+InjectedScript.RemoteObjectId.deriveProperty = function(objectId, propertyName)
+{
+    var path = objectId.path.slice() || [];
+    path.push(propertyName);
+    return new InjectedScript.RemoteObjectId(objectId.type, objectId.value, path);
 }
 
 InjectedScript.RemoteObject = function(objectId, type, description, hasChildren)
@@ -444,14 +456,14 @@ InjectedScript.CallFrameProxy.prototype = {
         for (var i = 0; i < scopeChain.length; i++) {
             var scopeType = callFrame.scopeType(i);
             var scopeObject = scopeChain[i];
-            var scopeObjectId = new InjectedScript.RemoteObjectId("scopeObject", { callFrame: this.id, chainIndex: i });
+            var scopeObjectId = new InjectedScript.RemoteObjectId(InjectedScript.RemoteObjectId.Type.ScopeObject, { callFrame: this.id, chainIndex: i });
             var scopeObjectProxy = InjectedScript.RemoteObject.fromObject(scopeObject, scopeObjectId, true);
 
             switch(scopeType) {
                 case LOCAL_SCOPE: {
                     foundLocalScope = true;
                     scopeObjectProxy.isLocal = true;
-                    var thisObjectId = new InjectedScript.RemoteObjectId("scopeObject", { callFrame: this.id, thisObject: true });
+                    var thisObjectId = new InjectedScript.RemoteObjectId(InjectedScript.RemoteObjectId.Type.ScopeObject, { callFrame: this.id, thisObject: true });
                     scopeObjectProxy.thisObject = InjectedScript.RemoteObject.fromObject(callFrame.thisObject, thisObjectId, true);
                     break;
                 }

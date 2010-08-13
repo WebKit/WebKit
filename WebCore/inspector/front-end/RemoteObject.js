@@ -146,6 +146,11 @@ WebInspector.RemoteObject.prototype = {
             return;
         }
         InjectedScriptAccess.get(this._objectId.injectedScriptId).setPropertyValue(this._objectId, name, value, callback);
+    },
+
+    pushNodeToFrontend: function(callback)
+    {
+        InjectedScriptAccess.get(this._objectId.injectedScriptId).pushNodeToFrontend(this._objectId, callback);
     }
 }
 

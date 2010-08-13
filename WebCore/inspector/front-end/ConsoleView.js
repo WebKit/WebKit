@@ -589,7 +589,7 @@ WebInspector.ConsoleView.prototype = {
             elem.appendChild(treeOutline.element);
         }
 
-        InjectedScriptAccess.get(object.objectId.injectedScriptId).pushNodeToFrontend(object.objectId, printNode);
+        object.pushNodeToFrontend(printNode);
     },
 
     _formatarray: function(arr, elem)
