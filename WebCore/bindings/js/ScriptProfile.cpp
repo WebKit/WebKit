@@ -84,8 +84,8 @@ static PassRefPtr<InspectorObject> buildInspectorObjectFor(const JSC::ProfileNod
     const ProfileNodesList& children = node->children();
     ProfileNodesList::const_iterator end = children.end();
     for (ProfileNodesList::const_iterator iter = children.begin(); iter != end; ++iter)
-        childrenArray->push(buildInspectorObjectFor(iter->get()));
-    result->set("children", childrenArray);
+        childrenArray->pushObject(buildInspectorObjectFor(iter->get()));
+    result->setArray("children", childrenArray);
 
     return result;
 }

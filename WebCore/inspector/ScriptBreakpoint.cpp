@@ -64,7 +64,7 @@ PassRefPtr<InspectorObject> ScriptBreakpoint::inspectorObjectFromSourceBreakpoin
         RefPtr<InspectorObject> breakpoint = InspectorObject::create();
         breakpoint->setBool("enabled", it->second.enabled);
         breakpoint->setString("condition", it->second.condition);
-        breakpoints->set(String::number(it->first), breakpoint);
+        breakpoints->setObject(String::number(it->first), breakpoint);
     }
     return breakpoints.release();
 }

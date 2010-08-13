@@ -63,7 +63,7 @@ void InspectorTimelineAgent::pushGCEventRecords()
     m_gcEvents.clear();
     for (GCEvents::iterator i = events.begin(); i != events.end(); ++i) {
         RefPtr<InspectorObject> record = TimelineRecordFactory::createGenericRecord(i->startTime);
-        record->set("data", TimelineRecordFactory::createGCEventData(i->collectedBytes));
+        record->setObject("data", TimelineRecordFactory::createGCEventData(i->collectedBytes));
         record->setNumber("endTime", i->endTime);
         addRecordToTimeline(record.release(), GCEventTimelineRecordType);
     }
@@ -150,7 +150,7 @@ void InspectorTimelineAgent::didInstallTimer(int timerId, int timeout, bool sing
 {
     pushGCEventRecords();
     RefPtr<InspectorObject> record = TimelineRecordFactory::createGenericRecord(WTF::currentTimeMS());
-    record->set("data", TimelineRecordFactory::createTimerInstallData(timerId, timeout, singleShot));
+    record->setObject("data", TimelineRecordFactory::createTimerInstallData(timerId, timeout, singleShot));
     addRecordToTimeline(record.release(), TimerInstallTimelineRecordType);
 }
 
@@ -158,7 +158,7 @@ void InspectorTimelineAgent::didRemoveTimer(int timerId)
 {
     pushGCEventRecords();
     RefPtr<InspectorObject> record = TimelineRecordFactory::createGenericRecord(WTF::currentTimeMS());
-    record->set("data", TimelineRecordFactory::createGenericTimerData(timerId));
+    record->setObject("data", TimelineRecordFactory::createGenericTimerData(timerId));
     addRecordToTimeline(record.release(), TimerRemoveTimelineRecordType);
 }
 
@@ -206,7 +206,7 @@ void InspectorTimelineAgent::didScheduleResourceRequest(const String& url)
 {
     pushGCEventRecords();
     RefPtr<InspectorObject> record = TimelineRecordFactory::createGenericRecord(WTF::currentTimeMS());
-    record->set("data", TimelineRecordFactory::createScheduleResourceRequestData(url));
+    record->setObject("data", TimelineRecordFactory::createScheduleResourceRequestData(url));
     record->setNumber("type", ScheduleResourceRequestTimelineRecordType);
     addRecordToTimeline(record.release(), ScheduleResourceRequestTimelineRecordType);
 }
@@ -216,7 +216,7 @@ void InspectorTimelineAgent::willSendResourceRequest(unsigned long identifier, b
 {
     pushGCEventRecords();
     RefPtr<InspectorObject> record = TimelineRecordFactory::createGenericRecord(WTF::currentTimeMS());
-    record->set("data", TimelineRecordFactory::createResourceSendRequestData(identifier, isMainResource, request));
+    record->setObject("data", TimelineRecordFactory::createResourceSendRequestData(identifier, isMainResource, request));
     record->setNumber("type", ResourceSendRequestTimelineRecordType);
     setHeapSizeStatistic(record.get());
     m_frontend->addRecordToTimeline(record.release());
@@ -246,7 +246,7 @@ void InspectorTimelineAgent::didFinishLoadingResource(unsigned long identifier, 
 {
     pushGCEventRecords();
     RefPtr<InspectorObject> record = TimelineRecordFactory::createGenericRecord(WTF::currentTimeMS());
-    record->set("data", TimelineRecordFactory::createResourceFinishData(identifier, didFail));
+    record->setObject("data", TimelineRecordFactory::createResourceFinishData(identifier, didFail));
     record->setNumber("type", ResourceFinishTimelineRecordType);
     setHeapSizeStatistic(record.get());
     m_frontend->addRecordToTimeline(record.release());
@@ -256,7 +256,7 @@ void InspectorTimelineAgent::didMarkTimeline(const String& message)
 {
     pushGCEventRecords();
     RefPtr<InspectorObject> record = TimelineRecordFactory::createGenericRecord(WTF::currentTimeMS());
-    record->set("data", TimelineRecordFactory::createMarkTimelineData(message));
+    record->setObject("data", TimelineRecordFactory::createMarkTimelineData(message));
     addRecordToTimeline(record.release(), MarkTimelineRecordType);
 }
 
@@ -295,7 +295,7 @@ void InspectorTimelineAgent::addRecordToTimeline(PassRefPtr<InspectorObject> prp
         m_frontend->addRecordToTimeline(record.release());
     else {
         TimelineRecordEntry parent = m_recordStack.last();
-        parent.children->push(record.release());
+        parent.children->pushObject(record.release());
     }
 }
 
@@ -317,8 +317,8 @@ void InspectorTimelineAgent::didCompleteCurrentRecord(TimelineRecordType type)
         TimelineRecordEntry entry = m_recordStack.last();
         m_recordStack.removeLast();
         ASSERT(entry.type == type);
-        entry.record->set("data", entry.data);
-        entry.record->set("children", entry.children);
+        entry.record->setObject("data", entry.data);
+        entry.record->setArray("children", entry.children);
         entry.record->setNumber("endTime", WTF::currentTimeMS());
         addRecordToTimeline(entry.record, type);
     }

@@ -189,7 +189,7 @@ void InspectorResource::updateScriptObject(RemoteInspectorFrontend* frontend)
         jsonObject->setString("path", m_requestURL.path());
         jsonObject->setString("lastPathComponent", m_requestURL.lastPathComponent());
         RefPtr<InspectorObject> requestHeaders = buildHeadersObject(m_requestHeaderFields);
-        jsonObject->set("requestHeaders", requestHeaders);
+        jsonObject->setObject("requestHeaders", requestHeaders);
         jsonObject->setBool("mainResource", m_isMainResource);
         jsonObject->setString("requestMethod", m_requestMethod);
         jsonObject->setString("requestFormData", m_requestFormData);
@@ -203,12 +203,12 @@ void InspectorResource::updateScriptObject(RemoteInspectorFrontend* frontend)
         jsonObject->setNumber("statusCode", m_responseStatusCode);
         jsonObject->setString("statusText", m_responseStatusText);
         RefPtr<InspectorObject> responseHeaders = buildHeadersObject(m_responseHeaderFields);
-        jsonObject->set("responseHeaders", responseHeaders);
+        jsonObject->setObject("responseHeaders", responseHeaders);
         jsonObject->setNumber("connectionID", m_connectionID);
         jsonObject->setBool("connectionReused", m_connectionReused);
         jsonObject->setBool("cached", m_cached);
         if (m_loadTiming && !m_cached)
-            jsonObject->set("timing", buildObjectForTiming(m_loadTiming.get()));
+            jsonObject->setObject("timing", buildObjectForTiming(m_loadTiming.get()));
         jsonObject->setBool("didResponseChange", true);
     }
 

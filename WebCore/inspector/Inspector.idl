@@ -217,6 +217,5 @@ module core {
         [handler=Controller] void setDOMStorageItem(in long callId, in long storageId, in String key, in String value, out boolean success);
         [handler=Controller] void removeDOMStorageItem(in long callId, in long storageId, in String key, out boolean success);
 #endif
-
     };
 }

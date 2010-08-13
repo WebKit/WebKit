@@ -72,9 +72,9 @@ static PassRefPtr<InspectorObject> buildInspectorObjectFor(const v8::CpuProfileN
     const int childrenCount = node->GetChildrenCount();
     for (int i = 0; i < childrenCount; i++) {
         const v8::CpuProfileNode* child = node->GetChild(i);
-        children->push(buildInspectorObjectFor(child));
+        children->pushObject(buildInspectorObjectFor(child));
     }
-    result->set("children", children);
+    result->setArray("children", children);
     return result;
 }
 

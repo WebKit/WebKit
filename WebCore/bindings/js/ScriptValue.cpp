@@ -123,7 +123,7 @@ static PassRefPtr<InspectorValue> jsToInspectorValue(ScriptState* scriptState, J
                     ASSERT_NOT_REACHED();
                     elementValue = InspectorValue::null();
                 }
-                inspectorArray->push(elementValue);
+                inspectorArray->pushValue(elementValue);
             }
             return inspectorArray;
         }
@@ -139,7 +139,7 @@ static PassRefPtr<InspectorValue> jsToInspectorValue(ScriptState* scriptState, J
                 ASSERT_NOT_REACHED();
                 inspectorValue = InspectorValue::null();
             }
-            inspectorObject->set(String(name.characters(), name.length()), inspectorValue);
+            inspectorObject->setValue(String(name.characters(), name.length()), inspectorValue);
         }
         return inspectorObject;
     }

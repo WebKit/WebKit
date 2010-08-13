@@ -600,7 +600,7 @@ void InspectorDOMAgent::getEventListenersForNode(long nodeId, long* outNodeId, R
         for (size_t j = 0; j < vector.size(); ++j) {
             const RegisteredEventListener& listener = vector[j];
             if (listener.useCapture)
-                (*listenersArray)->push(buildObjectForEventListener(listener, info.eventType, info.node));
+                (*listenersArray)->pushObject(buildObjectForEventListener(listener, info.eventType, info.node));
         }
     }
 
@@ -611,7 +611,7 @@ void InspectorDOMAgent::getEventListenersForNode(long nodeId, long* outNodeId, R
         for (size_t j = 0; j < vector.size(); ++j) {
             const RegisteredEventListener& listener = vector[j];
             if (!listener.useCapture)
-                (*listenersArray)->push(buildObjectForEventListener(listener, info.eventType, info.node));
+                (*listenersArray)->pushObject(buildObjectForEventListener(listener, info.eventType, info.node));
         }
     }
 }
@@ -766,11 +766,11 @@ PassRefPtr<InspectorObject> InspectorDOMAgent::buildObjectForNode(Node* node, in
         value->setNumber("childNodeCount", nodeCount);
         RefPtr<InspectorArray> children = buildArrayForContainerChildren(node, depth, nodesMap);
         if (children->length() > 0)
-            value->set("children", children.release());
+            value->setArray("children", children.release());
 
         if (node->nodeType() == Node::ELEMENT_NODE) {
             Element* element = static_cast<Element*>(node);
-            value->set("attributes", buildArrayForElementAttributes(element));
+            value->setArray("attributes", buildArrayForElementAttributes(element));
             if (node->isFrameOwnerElement()) {
                 HTMLFrameOwnerElement* frameOwner = static_cast<HTMLFrameOwnerElement*>(node);
                 value->setString("documentURL", documentURLString(frameOwner->contentDocument()));
@@ -813,7 +813,7 @@ PassRefPtr<InspectorArray> InspectorDOMAgent::buildArrayForContainerChildren(Nod
         if (innerChildNodeCount(container) == 1) {
             Node *child = innerFirstChild(container);
             if (child->nodeType() == Node::TEXT_NODE)
-                children->push(buildObjectForNode(child, 0, nodesMap));
+                children->pushObject(buildObjectForNode(child, 0, nodesMap));
         }
         return children.release();
     } else if (depth > 0) {
@@ -821,7 +821,7 @@ PassRefPtr<InspectorArray> InspectorDOMAgent::buildArrayForContainerChildren(Nod
     }
 
     for (Node *child = innerFirstChild(container); child; child = innerNextSibling(child))
-        children->push(buildObjectForNode(child, depth, nodesMap));
+        children->pushObject(buildObjectForNode(child, depth, nodesMap));
     return children.release();
 }
 
@@ -986,27 +986,27 @@ void InspectorDOMAgent::getStyles(long nodeId, bool authorOnly, RefPtr<Inspector
 
     RefPtr<InspectorObject> result = InspectorObject::create();
     if (element->style())
-        result->set("inlineStyle", buildObjectForStyle(element->style(), true));
-    result->set("computedStyle", buildObjectForStyle(computedStyleInfo.get(), false));
+        result->setObject("inlineStyle", buildObjectForStyle(element->style(), true));
+    result->setObject("computedStyle", buildObjectForStyle(computedStyleInfo.get(), false));
 
     CSSStyleSelector* selector = element->ownerDocument()->styleSelector();
     RefPtr<CSSRuleList> matchedRules = selector->styleRulesForElement(element, authorOnly);
-    result->set("matchedCSSRules", buildArrayForCSSRules(node->ownerDocument(), matchedRules.get()));
+    result->setArray("matchedCSSRules", buildArrayForCSSRules(node->ownerDocument(), matchedRules.get()));
 
-    result->set("styleAttributes", buildObjectForAttributeStyles(element));
-    result->set("pseudoElements", buildArrayForPseudoElements(element, authorOnly));
+    result->setObject("styleAttributes", buildObjectForAttributeStyles(element));
+    result->setArray("pseudoElements", buildArrayForPseudoElements(element, authorOnly));
 
     RefPtr<InspectorObject> currentStyle = result;
     Element* parentElement = element->parentElement();
     while (parentElement) {
         RefPtr<InspectorObject> parentStyle = InspectorObject::create();
-        currentStyle->set("parent", parentStyle);
+        currentStyle->setObject("parent", parentStyle);
         if (parentElement->style() && parentElement->style()->length())
-            parentStyle->set("inlineStyle", buildObjectForStyle(parentElement->style(), true));
+            parentStyle->setObject("inlineStyle", buildObjectForStyle(parentElement->style(), true));
 
         CSSStyleSelector* parentSelector = parentElement->ownerDocument()->styleSelector();
         RefPtr<CSSRuleList> parentMatchedRules = parentSelector->styleRulesForElement(parentElement, authorOnly);
-        parentStyle->set("matchedCSSRules", buildArrayForCSSRules(parentElement->ownerDocument(), parentMatchedRules.get()));
+        parentStyle->setArray("matchedCSSRules", buildArrayForCSSRules(parentElement->ownerDocument(), parentMatchedRules.get()));
 
         parentElement = parentElement->parentElement();
         currentStyle = parentStyle;
@@ -1021,7 +1021,7 @@ void InspectorDOMAgent::getAllStyles(RefPtr<InspectorArray>* styles)
         for (unsigned i = 0; i < list->length(); ++i) {
             StyleSheet* styleSheet = list->item(i);
             if (styleSheet->isCSSStyleSheet())
-                (*styles)->push(buildObjectForStyleSheet((*it).get(), static_cast<CSSStyleSheet*>(styleSheet)));
+                (*styles)->pushObject(buildObjectForStyleSheet((*it).get(), static_cast<CSSStyleSheet*>(styleSheet)));
         }
     }
 }
@@ -1044,9 +1044,9 @@ void InspectorDOMAgent::getRuleRanges(long styleSheetId, RefPtr<InspectorValue>*
         for (HashMap<long, SourceRange>::iterator it = ruleRanges.begin(); it != ruleRanges.end(); ++it) {
             if (it->second.second) {
                 RefPtr<InspectorObject> ruleRange = InspectorObject::create();
-                result->set(String::number(it->first).utf8().data(), ruleRange);
+                result->setObject(String::number(it->first).utf8().data(), ruleRange);
                 RefPtr<InspectorObject> bodyRange = InspectorObject::create();
-                ruleRange->set("bodyRange", bodyRange);
+                ruleRange->setObject("bodyRange", bodyRange);
                 bodyRange->setNumber("start", it->second.first);
                 bodyRange->setNumber("end", it->second.second);
             }
@@ -1085,7 +1085,7 @@ PassRefPtr<InspectorObject> InspectorDOMAgent::buildObjectForAttributeStyles(Ele
         Attribute* attribute = attributes->attributeItem(i);
         if (attribute->style()) {
             String attributeName = attribute->localName();
-            styleAttributes->set(attributeName.utf8().data(), buildObjectForStyle(attribute->style(), true));
+            styleAttributes->setObject(attributeName.utf8().data(), buildObjectForStyle(attribute->style(), true));
         }
     }
     return styleAttributes;
@@ -1097,7 +1097,7 @@ PassRefPtr<InspectorArray> InspectorDOMAgent::buildArrayForCSSRules(Document* ow
     for (unsigned i = 0; matchedRules && i < matchedRules->length(); ++i) {
         CSSRule* rule = matchedRules->item(i);
         if (rule->type() == CSSRule::STYLE_RULE)
-            matchedCSSRules->push(buildObjectForRule(ownerDocument, static_cast<CSSStyleRule*>(rule)));
+            matchedCSSRules->pushObject(buildObjectForRule(ownerDocument, static_cast<CSSStyleRule*>(rule)));
     }
     return matchedCSSRules.release();
 }
@@ -1113,8 +1113,8 @@ PassRefPtr<InspectorArray> InspectorDOMAgent::buildArrayForPseudoElements(Elemen
         if (matchedRules && matchedRules->length()) {
             RefPtr<InspectorObject> pseudoStyles = InspectorObject::create();
             pseudoStyles->setNumber("pseudoId", static_cast<int>(pseudoId));
-            pseudoStyles->set("rules", buildArrayForCSSRules(element->ownerDocument(), matchedRules.get()));
-            result->push(pseudoStyles.release());
+            pseudoStyles->setArray("rules", buildArrayForCSSRules(element->ownerDocument(), matchedRules.get()));
+            result->pushObject(pseudoStyles.release());
         }
     }
     return result.release();
@@ -1309,7 +1309,7 @@ PassRefPtr<InspectorObject> InspectorDOMAgent::buildObjectForStyle(CSSStyleDecla
 
         DisabledStyleDeclaration* disabledStyle = cssStore()->disabledStyleForId(styleId, false);
         if (disabledStyle)
-            result->set("disabled", buildArrayForDisabledStyleProperties(disabledStyle));
+            result->setArray("disabled", buildArrayForDisabledStyleProperties(disabledStyle));
     }
     result->setString("width", style->getPropertyValue("width"));
     result->setString("height", style->getPropertyValue("height"));
@@ -1336,10 +1336,10 @@ void InspectorDOMAgent::populateObjectWithStyleProperties(CSSStyleDeclaration* s
             shorthandValues->setString(shorthand, shorthandValue(style, shorthand));
         }
         property->setString("value", style->getPropertyValue(name));
-        properties->push(property.release());
+        properties->pushObject(property.release());
     }
-    result->set("properties", properties);
-    result->set("shorthandValues", shorthandValues);
+    result->setArray("properties", properties);
+    result->setObject("shorthandValues", shorthandValues);
 }
 
 PassRefPtr<InspectorArray> InspectorDOMAgent::buildArrayForDisabledStyleProperties(DisabledStyleDeclaration* declaration)
@@ -1350,7 +1350,7 @@ PassRefPtr<InspectorArray> InspectorDOMAgent::buildArrayForDisabledStyleProperti
         property->setString("name", it->first);
         property->setString("value", it->second.first);
         property->setString("priority", it->second.second);
-        properties->push(property.release());
+        properties->pushObject(property.release());
     }
     return properties.release();
 }
@@ -1370,10 +1370,10 @@ PassRefPtr<InspectorObject> InspectorDOMAgent::buildObjectForStyleSheet(Document
         for (unsigned i = 0; i < cssRuleList->length(); ++i) {
             CSSRule* rule = cssRuleList->item(i);
             if (rule->isStyleRule())
-                cssRules->push(buildObjectForRule(ownerDocument, static_cast<CSSStyleRule*>(rule)));
+                cssRules->pushObject(buildObjectForRule(ownerDocument, static_cast<CSSStyleRule*>(rule)));
         }
     }
-    result->set("cssRules", cssRules.release());
+    result->setArray("cssRules", cssRules.release());
     return result.release();
 }
 
@@ -1390,7 +1390,7 @@ PassRefPtr<InspectorObject> InspectorDOMAgent::buildObjectForRule(Document* owne
         RefPtr<InspectorObject> parentStyleSheetValue = InspectorObject::create();
         parentStyleSheetValue->setString("href", parentStyleSheet->href());
         parentStyleSheetValue->setNumber("id", cssStore()->bindStyleSheet(parentStyleSheet));
-        result->set("parentStyleSheet", parentStyleSheetValue.release());
+        result->setObject("parentStyleSheet", parentStyleSheetValue.release());
     }
     bool isUserAgent = parentStyleSheet && !parentStyleSheet->ownerNode() && parentStyleSheet->href().isEmpty();
     bool isUser = parentStyleSheet && parentStyleSheet->ownerNode() && parentStyleSheet->ownerNode()->nodeName() == "#document";
@@ -1400,7 +1400,7 @@ PassRefPtr<InspectorObject> InspectorDOMAgent::buildObjectForRule(Document* owne
 
     // Bind editable scripts only.
     bool bind = !isUserAgent && !isUser;
-    result->set("style", buildObjectForStyle(rule->style(), bind));
+    result->setObject("style", buildObjectForStyle(rule->style(), bind));
 
     if (bind)
         result->setNumber("id", cssStore()->bindRule(rule));

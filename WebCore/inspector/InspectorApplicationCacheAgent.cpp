@@ -82,7 +82,7 @@ PassRefPtr<InspectorObject> InspectorApplicationCacheAgent::buildObjectForApplic
     value->setString("lastPathComponent", applicationCacheInfo.m_manifest.lastPathComponent());
     value->setNumber("creationTime", applicationCacheInfo.m_creationTime);
     value->setNumber("updateTime", applicationCacheInfo.m_updateTime);
-    value->set("resources", buildArrayForApplicationCacheResources(applicationCacheResources));
+    value->setArray("resources", buildArrayForApplicationCacheResources(applicationCacheResources));
     return value;
 }
 
@@ -93,7 +93,7 @@ PassRefPtr<InspectorArray> InspectorApplicationCacheAgent::buildArrayForApplicat
     ApplicationCacheHost::ResourceInfoList::const_iterator end = applicationCacheResources.end();
     ApplicationCacheHost::ResourceInfoList::const_iterator it = applicationCacheResources.begin();
     for (int i = 0; it != end; ++it, i++)
-        resources->push(buildObjectForApplicationCacheResource(*it));
+        resources->pushObject(buildObjectForApplicationCacheResource(*it));
 
     return resources;
 }

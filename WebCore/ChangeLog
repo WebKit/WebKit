@@ -1,3 +1,87 @@
+2010-08-13  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: rename InspectorValue::push and set to
+        push{Value|Object|Array} and set{...}.
+        https://bugs.webkit.org/show_bug.cgi?id=43966
+
+        * bindings/js/ScriptProfile.cpp:
+        (WebCore::buildInspectorObjectFor):
+        * bindings/js/ScriptValue.cpp:
+        (WebCore::jsToInspectorValue):
+        * bindings/v8/ScriptCallStack.cpp:
+        (WebCore::ScriptCallStack::stackTrace):
+        * bindings/v8/ScriptProfile.cpp:
+        (WebCore::buildInspectorObjectFor):
+        * bindings/v8/ScriptValue.cpp:
+        (WebCore::v8ToInspectorValue):
+        * inspector/CodeGeneratorInspector.pm:
+        * inspector/ConsoleMessage.cpp:
+        (WebCore::ConsoleMessage::addToFrontend):
+        * inspector/Inspector.idl:
+        * inspector/InspectorApplicationCacheAgent.cpp:
+        (WebCore::InspectorApplicationCacheAgent::buildObjectForApplicationCache):
+        (WebCore::InspectorApplicationCacheAgent::buildArrayForApplicationCacheResources):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::buildArrayForCookies):
+        (WebCore::InspectorController::getDOMStorageEntries):
+        (WebCore::InspectorController::getProfileHeaders):
+        (WebCore::InspectorController::getProfile):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::getEventListenersForNode):
+        (WebCore::InspectorDOMAgent::buildObjectForNode):
+        (WebCore::InspectorDOMAgent::buildArrayForContainerChildren):
+        (WebCore::InspectorDOMAgent::getStyles):
+        (WebCore::InspectorDOMAgent::getAllStyles):
+        (WebCore::InspectorDOMAgent::getRuleRanges):
+        (WebCore::InspectorDOMAgent::buildObjectForAttributeStyles):
+        (WebCore::InspectorDOMAgent::buildArrayForCSSRules):
+        (WebCore::InspectorDOMAgent::buildArrayForPseudoElements):
+        (WebCore::InspectorDOMAgent::buildObjectForStyle):
+        (WebCore::InspectorDOMAgent::populateObjectWithStyleProperties):
+        (WebCore::InspectorDOMAgent::buildArrayForDisabledStyleProperties):
+        (WebCore::InspectorDOMAgent::buildObjectForStyleSheet):
+        (WebCore::InspectorDOMAgent::buildObjectForRule):
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::saveBreakpoints):
+        * inspector/InspectorResource.cpp:
+        (WebCore::InspectorResource::updateScriptObject):
+        * inspector/InspectorStorageAgent.cpp:
+        (WebCore::):
+        (WebCore::InspectorStorageAgent::executeSQL):
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::pushGCEventRecords):
+        (WebCore::InspectorTimelineAgent::didInstallTimer):
+        (WebCore::InspectorTimelineAgent::didRemoveTimer):
+        (WebCore::InspectorTimelineAgent::didScheduleResourceRequest):
+        (WebCore::InspectorTimelineAgent::willSendResourceRequest):
+        (WebCore::InspectorTimelineAgent::didFinishLoadingResource):
+        (WebCore::InspectorTimelineAgent::didMarkTimeline):
+        (WebCore::InspectorTimelineAgent::addRecordToTimeline):
+        (WebCore::InspectorTimelineAgent::didCompleteCurrentRecord):
+        * inspector/InspectorValues.cpp:
+        (WebCore::):
+        (WebCore::InspectorValue::asValue):
+        (WebCore::InspectorValue::asObject):
+        (WebCore::InspectorValue::asArray):
+        (WebCore::InspectorObject::asObject):
+        (WebCore::InspectorArray::asArray):
+        * inspector/InspectorValues.h:
+        (WebCore::InspectorObject::setBool):
+        (WebCore::InspectorObject::setNumber):
+        (WebCore::InspectorObject::setString):
+        (WebCore::InspectorObject::setValue):
+        (WebCore::InspectorObject::setObject):
+        (WebCore::InspectorObject::setArray):
+        (WebCore::InspectorArray::pushValue):
+        (WebCore::InspectorArray::pushObject):
+        (WebCore::InspectorArray::pushArray):
+        * inspector/ScriptBreakpoint.cpp:
+        (WebCore::ScriptBreakpoint::inspectorObjectFromSourceBreakpoints):
+        * inspector/TimelineRecordFactory.cpp:
+        (WebCore::TimelineRecordFactory::createGenericRecord):
+
 2010-08-13  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r65204.

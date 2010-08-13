@@ -73,6 +73,9 @@ public:
     virtual bool asNumber(unsigned long* output) const;
     virtual bool asNumber(unsigned int* output) const;
     virtual bool asString(String* output) const;
+    virtual bool asValue(RefPtr<InspectorValue>* output);
+    virtual bool asObject(RefPtr<InspectorObject>* output);
+    virtual bool asArray(RefPtr<InspectorArray>* output);
     virtual PassRefPtr<InspectorObject> asObject();
     virtual PassRefPtr<InspectorArray> asArray();
 
@@ -163,12 +166,15 @@ public:
     }
     ~InspectorObject() { }
 
+    virtual bool asObject(RefPtr<InspectorObject>* output);
     virtual PassRefPtr<InspectorObject> asObject();
 
     void setBool(const String& name, bool);
     void setNumber(const String& name, double);
     void setString(const String& name, const String&);
-    void set(const String& name, PassRefPtr<InspectorValue>);
+    void setValue(const String& name, PassRefPtr<InspectorValue>);
+    void setObject(const String& name, PassRefPtr<InspectorObject>);
+    void setArray(const String& name, PassRefPtr<InspectorArray>);
 
     bool getBool(const String& name, bool* output) const;
     bool getNumber(const String& name, double* output) const;
@@ -198,12 +204,15 @@ public:
     }
     ~InspectorArray() { }
 
+    virtual bool asArray(RefPtr<InspectorArray>* output);
     virtual PassRefPtr<InspectorArray> asArray();
 
     void pushBool(bool);
     void pushNumber(double);
     void pushString(const String&);
-    void push(PassRefPtr<InspectorValue>);
+    void pushValue(PassRefPtr<InspectorValue>);
+    void pushObject(PassRefPtr<InspectorObject>);
+    void pushArray(PassRefPtr<InspectorArray>);
     unsigned length() const { return m_data.size(); }
 
     PassRefPtr<InspectorValue> get(size_t index);
@@ -217,20 +226,32 @@ private:
 
 inline void InspectorObject::setBool(const String& name, bool value)
 {
-    set(name, InspectorBasicValue::create(value));
+    setValue(name, InspectorBasicValue::create(value));
 }
 
 inline void InspectorObject::setNumber(const String& name, double value)
 {
-    set(name, InspectorBasicValue::create(value));
+    setValue(name, InspectorBasicValue::create(value));
 }
 
 inline void InspectorObject::setString(const String& name, const String& value)
 {
-    set(name, InspectorString::create(value));
+    setValue(name, InspectorString::create(value));
 }
 
-inline void InspectorObject::set(const String& name, PassRefPtr<InspectorValue> value)
+inline void InspectorObject::setValue(const String& name, PassRefPtr<InspectorValue> value)
+{
+    if (m_data.set(name, value).second)
+        m_order.append(name);
+}
+
+inline void InspectorObject::setObject(const String& name, PassRefPtr<InspectorObject> value)
+{
+    if (m_data.set(name, value).second)
+        m_order.append(name);
+}
+
+inline void InspectorObject::setArray(const String& name, PassRefPtr<InspectorArray> value)
 {
     if (m_data.set(name, value).second)
         m_order.append(name);
@@ -251,7 +272,17 @@ inline void InspectorArray::pushString(const String& value)
     m_data.append(InspectorString::create(value));
 }
 
-inline void InspectorArray::push(PassRefPtr<InspectorValue> value)
+inline void InspectorArray::pushValue(PassRefPtr<InspectorValue> value)
+{
+    m_data.append(value);
+}
+
+inline void InspectorArray::pushObject(PassRefPtr<InspectorObject> value)
+{
+    m_data.append(value);
+}
+
+inline void InspectorArray::pushArray(PassRefPtr<InspectorArray> value)
 {
     m_data.append(value);
 }

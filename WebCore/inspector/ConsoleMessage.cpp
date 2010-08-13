@@ -134,15 +134,15 @@ void ConsoleMessage::addToFrontend(RemoteInspectorFrontend* frontend, InjectedSc
                 ASSERT_NOT_REACHED();
                 return;
             }
-            jsonArgs->push(inspectorValue);
+            jsonArgs->pushValue(inspectorValue);
         }
-        jsonObj->set("parameters", jsonArgs);
+        jsonObj->setArray("parameters", jsonArgs);
     }
     if (!m_frames.isEmpty()) {
         RefPtr<InspectorArray> frames = InspectorArray::create();
         for (unsigned i = 0; i < m_frames.size(); i++)
-            frames->push(m_frames.at(i).buildInspectorObject());
-        jsonObj->set("stackTrace", frames);
+            frames->pushObject(m_frames.at(i).buildInspectorObject());
+        jsonObj->setArray("stackTrace", frames);
     }
     frontend->addConsoleMessage(jsonObj);
 }

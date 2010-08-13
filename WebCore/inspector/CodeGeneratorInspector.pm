@@ -47,30 +47,27 @@ $typeTransform{"PassRefPtr"} = {
 };
 $typeTransform{"Object"} = {
     "param" => "PassRefPtr<InspectorObject>",
-    "retVal" => "PassRefPtr<InspectorObject>",
     "variable" => "RefPtr<InspectorObject>",
     "defaultValue" => "InspectorObject::create()",
     "forward" => "InspectorObject",
     "header" => "InspectorValues.h",
-    "accessorSuffix" => ""
+    "accessorSuffix" => "Object"
 };
 $typeTransform{"Array"} = {
     "param" => "PassRefPtr<InspectorArray>",
-    "retVal" => "PassRefPtr<InspectorArray>",
     "variable" => "RefPtr<InspectorArray>",
     "defaultValue" => "InspectorArray::create()",
     "forward" => "InspectorArray",
     "header" => "InspectorValues.h",
-    "accessorSuffix" => ""
+    "accessorSuffix" => "Array"
 };
 $typeTransform{"Value"} = {
     "param" => "PassRefPtr<InspectorValue>",
-    "retVal" => "PassRefPtr<InspectorValue>",
     "variable" => "RefPtr<InspectorValue>",
     "defaultValue" => "InspectorValue::null()",
     "forward" => "InspectorValue",
     "header" => "InspectorValues.h",
-    "accessorSuffix" => ""
+    "accessorSuffix" => "Value"
 };
 $typeTransform{"String"} = {
     "param" => "const String&",
@@ -120,7 +117,6 @@ $typeTransform{"boolean"} = {
     "accessorSuffix" => "Bool"
 };
 $typeTransform{"void"} = {
-    "retVal" => "void",
     "forward" => "",
     "header" => ""
 };
@@ -324,7 +320,7 @@ sub generateBackendFunction
     my $i = 1; # zero element is the method name.
     foreach my $parameter (@inArgs) {
         my $type = $parameter->type;
-        my $argumentType = $typeTransform{$type}->{$typeTransform{$type}->{"retVal"} ? "retVal" : "variable"};
+        my $argumentType = $typeTransform{$type}->{"variable"};
         push(@function, "    $argumentType " . $parameter->name . ";") if !($parameter->name eq "callId");
         push(@function, "    if (!args->get($i)->as" . $typeTransform{$type}->{"accessorSuffix"} . "(&" . $parameter->name . ")) {");
         push(@function, "        ASSERT_NOT_REACHED();");

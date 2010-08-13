@@ -366,7 +366,7 @@ PassRefPtr<InspectorValue> buildValue(const UChar* start, const UChar* end, cons
             RefPtr<InspectorValue> arrayNode = buildValue(start, end, &tokenEnd, depth + 1);
             if (!arrayNode)
                 return 0;
-            array->push(arrayNode);
+            array->pushValue(arrayNode);
 
             // After a list value, we expect a comma or the end of the list.
             start = tokenEnd;
@@ -406,7 +406,7 @@ PassRefPtr<InspectorValue> buildValue(const UChar* start, const UChar* end, cons
             RefPtr<InspectorValue> value = buildValue(start, end, &tokenEnd, depth + 1);
             if (!value)
                 return 0;
-            object->set(key, value);
+            object->setValue(key, value);
             start = tokenEnd;
 
             // After a key/value pair, we expect a comma or the end of the
@@ -500,6 +500,22 @@ bool InspectorValue::asNumber(unsigned int*) const
 }
 
 bool InspectorValue::asString(String*) const
+{
+    return false;
+}
+
+bool InspectorValue::asValue(RefPtr<InspectorValue>* output)
+{
+    *output = this;
+    return true;
+}
+
+bool InspectorValue::asObject(RefPtr<InspectorObject>*)
+{
+    return false;
+}
+
+bool InspectorValue::asArray(RefPtr<InspectorArray>*)
 {
     return false;
 }
@@ -606,6 +622,12 @@ void InspectorString::writeJSON(Vector<UChar>* output) const
     doubleQuoteString(m_stringValue, output);
 }
 
+bool InspectorObject::asObject(RefPtr<InspectorObject>* output)
+{
+    *output = this;
+    return true;
+}
+
 PassRefPtr<InspectorObject> InspectorObject::asObject()
 {
     return this;
@@ -672,6 +694,12 @@ void InspectorObject::writeJSON(Vector<UChar>* output) const
         it->second->writeJSON(output);
     }
     output->append('}');
+}
+
+bool InspectorArray::asArray(RefPtr<InspectorArray>* output)
+{
+    *output = this;
+    return true;
 }
 
 PassRefPtr<InspectorArray> InspectorArray::asArray()

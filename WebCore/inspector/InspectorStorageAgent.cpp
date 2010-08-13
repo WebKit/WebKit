@@ -92,7 +92,7 @@ public:
             switch (value.type()) {
                 case SQLValue::StringValue: values->pushString(value.string()); break;
                 case SQLValue::NumberValue: values->pushNumber(value.number()); break;
-                case SQLValue::NullValue: values->push(InspectorValue::null()); break;
+                case SQLValue::NullValue: values->pushValue(InspectorValue::null()); break;
             }
         }
         m_agent->frontend()->sqlTransactionSucceeded(m_transactionId, columnNames, values);
