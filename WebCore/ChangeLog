@@ -1,3 +1,14 @@
+2010-08-13  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by David Kilzer.
+
+        HTMLMediaElement::prepareForLoad should cancel current plug-in proxy media player
+        https://bugs.webkit.org/show_bug.cgi?id=43923
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::prepareForLoad): Tell mediaPlayer to cancel the current load
+        if it already exists.
+
 2010-08-12  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by David Levin.

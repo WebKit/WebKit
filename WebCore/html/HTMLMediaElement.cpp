@@ -511,7 +511,10 @@ void HTMLMediaElement::prepareForLoad()
 #if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     m_player = MediaPlayer::create(this);
 #else
-    createMediaPlayerProxy();
+    if (m_player)
+        m_player->cancelLoad();
+    else
+        createMediaPlayerProxy();
 #endif
 
     // 4 - If the media element's networkState is not set to NETWORK_EMPTY, then run these substeps
