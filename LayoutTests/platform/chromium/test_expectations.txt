@@ -3212,3 +3212,4 @@ BUGWK43912 WIN LINUX : svg/zoom/page/zoom-mask-with-percentages.svg = IMAGE
 
 // Crash reported by Japhet in Windows due to r65208
 BUG52014 WIN DEBUG : editing/pasteboard/smart-paste-003.html = PASS CRASH
+BUG52014 WIN DEBUG : editing/pasteboard/smart-paste-004.html = PASS CRASH

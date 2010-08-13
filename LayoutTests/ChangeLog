@@ -1,5 +1,13 @@
 2010-08-12  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Unreviewed, fixing the previous commit.
+
+        Added PASS CRASH expectation for editing/pasteboard/smart-paste-004.html.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-08-12  Ryosuke Niwa  <rniwa@webkit.org>
+
         Unreviewed.
 
         Added PASS CRASH expectation for editing/pasteboard/smart-paste-003.html and
