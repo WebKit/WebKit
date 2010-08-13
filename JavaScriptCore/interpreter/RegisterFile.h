@@ -166,7 +166,7 @@ namespace JSC {
         checkAllocatedOkay(base);
         size_t committedSize = roundUpAllocationSize(maxGlobals * sizeof(Register), commitSize);
         checkAllocatedOkay(m_reservation.commit(base, committedSize));
-        m_commitEnd = reinterpret_cast<Register*>(reinterpret_cast<char*>(base) + committedSize);
+        m_commitEnd = reinterpret_cast_ptr<Register*>(reinterpret_cast<char*>(base) + committedSize);
         m_start = static_cast<Register*>(base) + maxGlobals;
         m_end = m_start;
         m_maxUsed = m_end;
@@ -193,7 +193,7 @@ namespace JSC {
         if (newEnd > m_commitEnd) {
             size_t size = roundUpAllocationSize(reinterpret_cast<char*>(newEnd) - reinterpret_cast<char*>(m_commitEnd), commitSize);
             checkAllocatedOkay(m_reservation.commit(m_commitEnd, size));
-            m_commitEnd = reinterpret_cast<Register*>(reinterpret_cast<char*>(m_commitEnd) + size);
+            m_commitEnd = reinterpret_cast_ptr<Register*>(reinterpret_cast<char*>(m_commitEnd) + size);
         }
 
         if (newEnd > m_maxUsed)

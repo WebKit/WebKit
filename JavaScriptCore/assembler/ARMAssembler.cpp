@@ -357,11 +357,11 @@ void* ARMAssembler::executableCopy(ExecutablePool* allocator)
     for (Jumps::Iterator iter = m_jumps.begin(); iter != m_jumps.end(); ++iter) {
         // The last bit is set if the constant must be placed on constant pool.
         int pos = (*iter) & (~0x1);
-        ARMWord* ldrAddr = reinterpret_cast<ARMWord*>(data + pos);
+        ARMWord* ldrAddr = reinterpret_cast_ptr<ARMWord*>(data + pos);
         ARMWord* addr = getLdrImmAddress(ldrAddr);
         if (*addr != InvalidBranchTarget) {
             if (!(*iter & 1)) {
-                int diff = reinterpret_cast<ARMWord*>(data + *addr) - (ldrAddr + DefaultPrefetching);
+                int diff = reinterpret_cast_ptr<ARMWord*>(data + *addr) - (ldrAddr + DefaultPrefetching);
 
                 if ((diff <= BOFFSET_MAX && diff >= BOFFSET_MIN)) {
                     *ldrAddr = B | getConditionalField(*ldrAddr) | (diff & BRANCH_MASK);

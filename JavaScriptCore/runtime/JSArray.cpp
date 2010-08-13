@@ -441,7 +441,7 @@ NEVER_INLINE void JSArray::putSlowCase(ExecState* exec, unsigned i, JSValue valu
         return;
     }
 
-    m_storage = reinterpret_cast<ArrayStorage*>(static_cast<char*>(baseStorage) + m_indexBias * sizeof(JSValue));
+    m_storage = reinterpret_cast_ptr<ArrayStorage*>(static_cast<char*>(baseStorage) + m_indexBias * sizeof(JSValue));
     m_storage->m_allocBase = baseStorage;
     storage = m_storage;
     
@@ -591,7 +591,7 @@ bool JSArray::increaseVectorLength(unsigned newLength)
     if (!tryFastRealloc(baseStorage, storageSize(newVectorLength + m_indexBias)).getValue(baseStorage))
         return false;
 
-    storage = m_storage = reinterpret_cast<ArrayStorage*>(static_cast<char*>(baseStorage) + m_indexBias * sizeof(JSValue));
+    storage = m_storage = reinterpret_cast_ptr<ArrayStorage*>(static_cast<char*>(baseStorage) + m_indexBias * sizeof(JSValue));
     m_storage->m_allocBase = baseStorage;
 
     JSValue* vector = storage->m_vector;
@@ -623,7 +623,7 @@ bool JSArray::increaseVectorPrefixLength(unsigned newLength)
     
     m_indexBias += newVectorLength - newLength;
     
-    m_storage = reinterpret_cast<ArrayStorage*>(static_cast<char*>(newBaseStorage) + m_indexBias * sizeof(JSValue));
+    m_storage = reinterpret_cast_ptr<ArrayStorage*>(static_cast<char*>(newBaseStorage) + m_indexBias * sizeof(JSValue));
 
     memcpy(m_storage, storage, storageSize(0));
     memcpy(&m_storage->m_vector[newLength - m_vectorLength], &storage->m_vector[0], vectorLength * sizeof(JSValue));
@@ -802,7 +802,7 @@ void JSArray::shiftCount(ExecState* exec, int count)
         if (m_vectorLength) {
             char* newBaseStorage = reinterpret_cast<char*>(storage) + count * sizeof(JSValue);
             memmove(newBaseStorage, storage, storageSize(0));
-            m_storage = reinterpret_cast<ArrayStorage*>(newBaseStorage);
+            m_storage = reinterpret_cast_ptr<ArrayStorage*>(newBaseStorage);
 
             m_indexBias += count;
         }
@@ -839,7 +839,7 @@ void JSArray::unshiftCount(ExecState* exec, int count)
         m_indexBias -= count;
         char* newBaseStorage = reinterpret_cast<char*>(storage) - count * sizeof(JSValue);
         memmove(newBaseStorage, storage, storageSize(0));
-        m_storage = reinterpret_cast<ArrayStorage*>(newBaseStorage);
+        m_storage = reinterpret_cast_ptr<ArrayStorage*>(newBaseStorage);
         m_vectorLength += count;
     } else if (!increaseVectorPrefixLength(m_vectorLength + count)) {
         throwOutOfMemoryError(exec);

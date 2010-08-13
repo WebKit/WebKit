@@ -49,6 +49,7 @@ supporting internal functions that are not used by other modules. */
 #include <wtf/ASCIICType.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/FixedArray.h>
+#include <wtf/StdLibExtras.h>
 
 using namespace WTF;
 
@@ -2590,7 +2591,7 @@ JSRegExp* jsRegExpCompile(const UChar* pattern, int patternLength,
     size_t stringOffset = (size + sizeof(UChar) - 1) / sizeof(UChar) * sizeof(UChar);
     size = stringOffset + patternLength * sizeof(UChar);
 #endif
-    JSRegExp* re = reinterpret_cast<JSRegExp*>(new char[size]);
+    JSRegExp* re = reinterpret_cast_ptr<JSRegExp*>(new char[size]);
     
     if (!re)
         return returnError(ERR13, errorPtr);
