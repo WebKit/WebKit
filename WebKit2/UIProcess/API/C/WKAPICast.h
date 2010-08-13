@@ -39,6 +39,7 @@
 namespace WebKit {
 
 class ImmutableArray;
+class ImmutableDictionary;
 class WebBackForwardList;
 class WebBackForwardListItem;
 class WebContext;
@@ -60,6 +61,7 @@ template<> struct APITypeInfo<WKBackForwardListItemRef>         { typedef WebBac
 template<> struct APITypeInfo<WKBackForwardListRef>             { typedef WebBackForwardList* ImplType; };
 template<> struct APITypeInfo<WKContextRef>                     { typedef WebContext* ImplType; };
 template<> struct APITypeInfo<WKDataRef>                        { typedef WebData* ImplType; };
+template<> struct APITypeInfo<WKDictionaryRef>                  { typedef ImmutableDictionary* ImplType; };
 template<> struct APITypeInfo<WKFormSubmissionListenerRef>      { typedef WebFormSubmissionListenerProxy* ImplType; };
 template<> struct APITypeInfo<WKFramePolicyListenerRef>         { typedef WebFramePolicyListenerProxy* ImplType; };
 template<> struct APITypeInfo<WKFrameRef>                       { typedef WebFrameProxy* ImplType; };
@@ -74,6 +76,7 @@ template<> struct APITypeInfo<WKURLRef>                         { typedef WebURL
 template<typename ImplType> struct ImplTypeInfo { };
 template<> struct ImplTypeInfo<APIObject*>                      { typedef WKTypeRef APIType; };
 template<> struct ImplTypeInfo<ImmutableArray*>                 { typedef WKArrayRef APIType; };
+template<> struct ImplTypeInfo<ImmutableDictionary*>            { typedef WKDictionaryRef APIType; };
 template<> struct ImplTypeInfo<WebBackForwardList*>             { typedef WKBackForwardListRef APIType; };
 template<> struct ImplTypeInfo<WebBackForwardListItem*>         { typedef WKBackForwardListItemRef APIType; };
 template<> struct ImplTypeInfo<WebContext*>                     { typedef WKContextRef APIType; };

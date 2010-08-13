@@ -23,59 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIObject_h
-#define APIObject_h
-
-#include <wtf/RefCounted.h>
+#include "ImmutableDictionary.h"
 
 namespace WebKit {
 
-class APIObject : public RefCounted<APIObject> {
-public:
-    enum Type {
-        // Base types
-        TypeArray,
-        TypeDictionary,
-        TypeData,
-        TypeError,
-        TypeString,
-        TypeURL,
-        
-        // UIProcess types
-        TypeBackForwardList,
-        TypeBackForwardListItem,
-        TypeContext,
-        TypeFormSubmissionListener,
-        TypeFrame,
-        TypeFramePolicyListener,
-        TypeNavigationData,
-        TypePage,
-        TypePageNamespace,
-        TypePreferences,
+ImmutableDictionary::ImmutableDictionary()
+{
+}
 
-        // Bundle types
-        TypeBundle,
-        TypeBundleFrame,
-        TypeBundlePage,
-        TypeBundleScriptWorld,
-        TypeBundleNodeHandle,
+ImmutableDictionary::ImmutableDictionary(MapType& map, AdoptTag)
+{
+    m_map.swap(map);
+}
 
-        // Platform specific
-        TypeView
-    };
-
-    virtual ~APIObject()
-    {
-    }
-
-    virtual Type type() const = 0;
-
-protected:
-    APIObject()
-    {
-    }
-};
+ImmutableDictionary::~ImmutableDictionary()
+{
+}
 
 } // namespace WebKit
-
-#endif // APIObject_h

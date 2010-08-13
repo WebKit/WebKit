@@ -29,9 +29,13 @@
 #include <WebKit2/WKBase.h>
 #include <WebKit2/WKType.h>
 
+#include <WebKit2/WKArray.h>
 #include <WebKit2/WKBackForwardList.h>
 #include <WebKit2/WKBackForwardListItem.h>
 #include <WebKit2/WKContext.h>
+#include <WebKit2/WKData.h>
+#include <WebKit2/WKDictionary.h>
+#include <WebKit2/WKError.h>
 #include <WebKit2/WKFormSubmissionListener.h>
 #include <WebKit2/WKFrame.h>
 #include <WebKit2/WKFramePolicyListener.h>

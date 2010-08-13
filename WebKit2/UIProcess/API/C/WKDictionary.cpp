@@ -23,59 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIObject_h
-#define APIObject_h
+#include "WKDictionary.h"
 
-#include <wtf/RefCounted.h>
+#include "ImmutableDictionary.h"
+#include "WKAPICast.h"
 
-namespace WebKit {
+using namespace WebKit;
 
-class APIObject : public RefCounted<APIObject> {
-public:
-    enum Type {
-        // Base types
-        TypeArray,
-        TypeDictionary,
-        TypeData,
-        TypeError,
-        TypeString,
-        TypeURL,
-        
-        // UIProcess types
-        TypeBackForwardList,
-        TypeBackForwardListItem,
-        TypeContext,
-        TypeFormSubmissionListener,
-        TypeFrame,
-        TypeFramePolicyListener,
-        TypeNavigationData,
-        TypePage,
-        TypePageNamespace,
-        TypePreferences,
+WKTypeID WKDictionaryGetTypeID()
+{
+    return toRef(ImmutableDictionary::APIType);
+}
 
-        // Bundle types
-        TypeBundle,
-        TypeBundleFrame,
-        TypeBundlePage,
-        TypeBundleScriptWorld,
-        TypeBundleNodeHandle,
+WKTypeRef WKDictionaryGetItemForKey(WKDictionaryRef dictionaryRef, WKStringRef key)
+{
+    return toWK(dictionaryRef)->get(toWK(key)->string());
+}
 
-        // Platform specific
-        TypeView
-    };
+size_t WKDictionaryGetSize(WKDictionaryRef dictionaryRef)
+{
+    return toWK(dictionaryRef)->size();
+}
 
-    virtual ~APIObject()
-    {
-    }
+WKDictionaryRef WKDictionaryRetain(WKDictionaryRef dictionaryRef)
+{
+    toWK(dictionaryRef)->ref();
+    return dictionaryRef;
+}
 
-    virtual Type type() const = 0;
-
-protected:
-    APIObject()
-    {
-    }
-};
-
-} // namespace WebKit
-
-#endif // APIObject_h
+void WKDictionaryRelease(WKDictionaryRef dictionaryRef)
+{
+    toWK(dictionaryRef)->deref();
+}

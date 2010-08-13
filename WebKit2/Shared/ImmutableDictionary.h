@@ -23,59 +23,65 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIObject_h
-#define APIObject_h
+#ifndef ImmutableDictionary_h
+#define ImmutableDictionary_h
 
-#include <wtf/RefCounted.h>
+#include "APIObject.h"
+#include <wtf/HashMap.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/text/StringHash.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
-class APIObject : public RefCounted<APIObject> {
+// ImmutableDictionary - An immutable dictionary type suitable for vending to an API.
+
+class ImmutableDictionary : public APIObject {
 public:
-    enum Type {
-        // Base types
-        TypeArray,
-        TypeDictionary,
-        TypeData,
-        TypeError,
-        TypeString,
-        TypeURL,
-        
-        // UIProcess types
-        TypeBackForwardList,
-        TypeBackForwardListItem,
-        TypeContext,
-        TypeFormSubmissionListener,
-        TypeFrame,
-        TypeFramePolicyListener,
-        TypeNavigationData,
-        TypePage,
-        TypePageNamespace,
-        TypePreferences,
+    static const Type APIType = TypeDictionary;
 
-        // Bundle types
-        TypeBundle,
-        TypeBundleFrame,
-        TypeBundlePage,
-        TypeBundleScriptWorld,
-        TypeBundleNodeHandle,
+    typedef HashMap<WTF::String, RefPtr<APIObject> > MapType;
 
-        // Platform specific
-        TypeView
-    };
-
-    virtual ~APIObject()
+    static PassRefPtr<ImmutableDictionary> create()
     {
+        return adoptRef(new ImmutableDictionary);
+    }
+    static PassRefPtr<ImmutableDictionary> adopt(MapType& map, size_t size)
+    {
+        return adoptRef(new ImmutableDictionary(map, Adopt));
+    }
+    ~ImmutableDictionary();
+
+    template<typename T>
+    T* get(const WTF::String& key)
+    {
+        RefPtr<APIObject> item = m_map.get(key);
+        if (!item)
+            return 0;
+
+        if (item->type() != T::APIType)
+            return 0;
+
+        return static_cast<T*>(item.get());
     }
 
-    virtual Type type() const = 0;
-
-protected:
-    APIObject()
+    APIObject* get(const WTF::String& key)
     {
+        return m_map.get(key).get();
     }
+
+    size_t size() { return m_map.size(); }
+
+private:
+    ImmutableDictionary();
+    enum AdoptTag { Adopt };
+    ImmutableDictionary(MapType& map, AdoptTag);
+
+    virtual Type type() const { return APIType; }
+
+    MapType m_map;
 };
 
 } // namespace WebKit
 
-#endif // APIObject_h
+#endif // ImmutableDictionary_h

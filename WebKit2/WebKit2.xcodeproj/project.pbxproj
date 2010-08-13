@@ -252,6 +252,10 @@
 		BCB9F6A61123DD0D00A137E0 /* WKFramePolicyListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB9F6A41123DD0D00A137E0 /* WKFramePolicyListener.cpp */; };
 		BCB9F8AF1124E07700A137E0 /* WebPolicyClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB9F8AD1124E07700A137E0 /* WebPolicyClient.cpp */; };
 		BCB9F8B01124E07700A137E0 /* WebPolicyClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB9F8AE1124E07700A137E0 /* WebPolicyClient.h */; };
+		BCBCB0CB1215E32100DE59CA /* ImmutableDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = BCBCB0CA1215E32100DE59CA /* ImmutableDictionary.h */; };
+		BCBCB0CD1215E33A00DE59CA /* ImmutableDictionary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCBCB0CC1215E33A00DE59CA /* ImmutableDictionary.cpp */; };
+		BCBCB0E31215E54D00DE59CA /* WKDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = BCBCB0E11215E54D00DE59CA /* WKDictionary.h */; };
+		BCBCB0E41215E54D00DE59CA /* WKDictionary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCBCB0E21215E54D00DE59CA /* WKDictionary.cpp */; };
 		BCC56F791159957D001CCAF9 /* MachPort.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC56F771159957D001CCAF9 /* MachPort.h */; };
 		BCC5715B115ADAEF001CCAF9 /* WebSystemInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC57159115ADAEF001CCAF9 /* WebSystemInterface.h */; };
 		BCC5715C115ADAEF001CCAF9 /* WebSystemInterface.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCC5715A115ADAEF001CCAF9 /* WebSystemInterface.mm */; };
@@ -591,6 +595,10 @@
 		BCB9F6A41123DD0D00A137E0 /* WKFramePolicyListener.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKFramePolicyListener.cpp; sourceTree = "<group>"; };
 		BCB9F8AD1124E07700A137E0 /* WebPolicyClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPolicyClient.cpp; sourceTree = "<group>"; };
 		BCB9F8AE1124E07700A137E0 /* WebPolicyClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPolicyClient.h; sourceTree = "<group>"; };
+		BCBCB0CA1215E32100DE59CA /* ImmutableDictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImmutableDictionary.h; sourceTree = "<group>"; };
+		BCBCB0CC1215E33A00DE59CA /* ImmutableDictionary.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImmutableDictionary.cpp; sourceTree = "<group>"; };
+		BCBCB0E11215E54D00DE59CA /* WKDictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKDictionary.h; sourceTree = "<group>"; };
+		BCBCB0E21215E54D00DE59CA /* WKDictionary.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKDictionary.cpp; sourceTree = "<group>"; };
 		BCC56F771159957D001CCAF9 /* MachPort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MachPort.h; sourceTree = "<group>"; };
 		BCC57159115ADAEF001CCAF9 /* WebSystemInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSystemInterface.h; sourceTree = "<group>"; };
 		BCC5715A115ADAEF001CCAF9 /* WebSystemInterface.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebSystemInterface.mm; sourceTree = "<group>"; };
@@ -846,6 +854,8 @@
 				762B7481120BBA0100819339 /* FontSmoothingLevel.h */,
 				BC64696D11DBE603006455B0 /* ImmutableArray.cpp */,
 				BC64696E11DBE603006455B0 /* ImmutableArray.h */,
+				BCBCB0CC1215E33A00DE59CA /* ImmutableDictionary.cpp */,
+				BCBCB0CA1215E32100DE59CA /* ImmutableDictionary.h */,
 				BCC57161115ADB42001CCAF9 /* NotImplemented.h */,
 				1A0F29C9120B37160053D1B9 /* VisitedLinkTable.cpp */,
 				1A0F29CA120B37160053D1B9 /* VisitedLinkTable.h */,
@@ -1067,6 +1077,8 @@
 				BCC938E01180DE440085E5FE /* WKContextPrivate.h */,
 				514AF6C61209EE7300A26C97 /* WKData.cpp */,
 				514AF6C71209EE7300A26C97 /* WKData.h */,
+				BCBCB0E21215E54D00DE59CA /* WKDictionary.cpp */,
+				BCBCB0E11215E54D00DE59CA /* WKDictionary.h */,
 				516A4A58120A1AB500C05B7F /* WKError.cpp */,
 				516A4A57120A1AB500C05B7F /* WKError.h */,
 				BCE469571214EDF4000B98EB /* WKFormSubmissionListener.cpp */,
@@ -1476,6 +1488,8 @@
 				BCE469561214E6CB000B98EB /* WebFormSubmissionListenerProxy.h in Headers */,
 				BCE4695A1214EDF4000B98EB /* WKFormSubmissionListener.h in Headers */,
 				BCE469771214F27B000B98EB /* WebFrameListenerProxy.h in Headers */,
+				BCBCB0CB1215E32100DE59CA /* ImmutableDictionary.h in Headers */,
+				BCBCB0E31215E54D00DE59CA /* WKDictionary.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1696,6 +1710,8 @@
 				BCE469551214E6CB000B98EB /* WebFormSubmissionListenerProxy.cpp in Sources */,
 				BCE469591214EDF4000B98EB /* WKFormSubmissionListener.cpp in Sources */,
 				BCE469791214F2B4000B98EB /* WebFrameListenerProxy.cpp in Sources */,
+				BCBCB0CD1215E33A00DE59CA /* ImmutableDictionary.cpp in Sources */,
+				BCBCB0E41215E54D00DE59CA /* WKDictionary.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

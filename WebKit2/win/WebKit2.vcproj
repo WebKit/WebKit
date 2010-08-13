@@ -417,6 +417,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\ImmutableDictionary.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Shared\ImmutableDictionary.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\NotImplemented.h"
 				>
 			</File>
@@ -1236,6 +1244,14 @@
 					</File>
 					<File
 						RelativePath="..\UIProcess\API\C\WKData.h"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKDictionary.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKDictionary.h"
 						>
 					</File>
 					<File
