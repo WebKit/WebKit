@@ -50,7 +50,6 @@
 #include "V8DOMWindow.h"
 #include "V8Document.h"
 #include "V8GCForContextDispose.h"
-#include "V8HTMLDocument.h"
 #include "V8HiddenPropertyName.h"
 #include "V8History.h"
 #include "V8Location.h"
@@ -407,12 +406,6 @@ void V8DOMWindowShell::clearDocumentWrapper()
     }
 }
 
-static void checkDocumentWrapper(v8::Handle<v8::Object> wrapper, Document* document)
-{
-    ASSERT(V8Document::toNative(wrapper) == document);
-    ASSERT(!document->isHTMLDocument() || (V8Document::toNative(v8::Handle<v8::Object>::Cast(wrapper->GetPrototype())) == document));
-}
-
 void V8DOMWindowShell::updateDocumentWrapperCache()
 {
     v8::HandleScope handleScope;
@@ -431,10 +424,6 @@ void V8DOMWindowShell::updateDocumentWrapperCache()
     }
 
     v8::Handle<v8::Value> documentWrapper = toV8(m_frame->document());
-    ASSERT(documentWrapper == m_document || m_document.IsEmpty());
-    if (m_document.IsEmpty())
-        updateDocumentWrapper(v8::Handle<v8::Object>::Cast(documentWrapper));
-    checkDocumentWrapper(m_document, m_frame->document());
 
     // If instantiation of the document wrapper fails, clear the cache
     // and let the DOMWindow accessor handle access to the document.
@@ -510,37 +499,6 @@ void V8DOMWindowShell::updateDocument()
     updateDocumentWrapperCache();
 
     updateSecurityOrigin();
-}
-
-v8::Handle<v8::Value> getter(v8::Local<v8::String> property, const v8::AccessorInfo& info)
-{
-    // FIXME(antonm): consider passing AtomicStringImpl directly.
-    AtomicString name = v8StringToAtomicWebCoreString(property);
-    HTMLDocument* htmlDocument = V8HTMLDocument::toNative(info.Holder());
-    ASSERT(htmlDocument);
-    v8::Handle<v8::Value> result = V8HTMLDocument::GetNamedProperty(htmlDocument, name);
-    if (!result.IsEmpty())
-        return result;
-    v8::Handle<v8::Value> prototype = info.Holder()->GetPrototype();
-    if (prototype->IsObject())
-        return prototype.As<v8::Object>()->Get(property);
-    return v8::Undefined();
-}
-
-void V8DOMWindowShell::namedItemAdded(HTMLDocument* doc, const AtomicString& name)
-{
-    initContextIfNeeded();
-
-    v8::HandleScope handleScope;
-    v8::Context::Scope contextScope(m_context);
-
-    ASSERT(!m_document.IsEmpty());
-    checkDocumentWrapper(m_document, doc);
-    m_document->SetAccessor(v8String(name), getter);
-}
-
-void V8DOMWindowShell::namedItemRemoved(HTMLDocument* doc, const AtomicString& name)
-{
 }
 
 void V8DOMWindowShell::updateSecurityOrigin()

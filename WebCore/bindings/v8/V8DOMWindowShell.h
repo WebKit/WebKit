@@ -37,14 +37,11 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
-#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 
 class DOMWindow;
 class Frame;
-class HTMLDocument;
-class String;
 
 // V8WindowShell represents all the per-global object state for a Frame that
 // persist between navigations.
@@ -56,9 +53,6 @@ public:
 
     // Update document object of the frame.
     void updateDocument();
-
-    void namedItemAdded(HTMLDocument*, const AtomicString&);
-    void namedItemRemoved(HTMLDocument*, const AtomicString&);
 
     // Update the security origin of a document
     // (e.g., after setting docoument.domain).

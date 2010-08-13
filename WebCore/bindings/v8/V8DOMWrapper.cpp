@@ -284,8 +284,6 @@ v8::Local<v8::Object> V8DOMWrapper::instantiateV8Object(V8Proxy* proxy, WrapperT
     if (!instance.IsEmpty()) {
         // Avoid setting the DOM wrapper for failed allocations.
         setDOMWrapper(instance, type, impl);
-        if (type == &V8HTMLDocument::info)
-            instance = V8HTMLDocument::WrapInShadowObject(instance, static_cast<Node*>(impl));
     }
     return instance;
 }

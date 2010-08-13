@@ -49,38 +49,48 @@
 
 namespace WebCore {
 
-v8::Local<v8::Object> V8HTMLDocument::WrapInShadowObject(v8::Local<v8::Object> wrapper, Node* impl)
+v8::Handle<v8::Boolean> V8HTMLDocument::namedPropertyDeleter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    DEFINE_STATIC_LOCAL(v8::Persistent<v8::FunctionTemplate>, shadowTemplate, ());
-    if (shadowTemplate.IsEmpty()) {
-        shadowTemplate = v8::Persistent<v8::FunctionTemplate>::New(v8::FunctionTemplate::New());
-        if (shadowTemplate.IsEmpty())
-            return v8::Local<v8::Object>();
-        shadowTemplate->SetClassName(v8::String::New("HTMLDocument"));
-        shadowTemplate->Inherit(V8HTMLDocument::GetTemplate());
-        shadowTemplate->InstanceTemplate()->SetInternalFieldCount(V8HTMLDocument::internalFieldCount);
-    }
+    // Only handle document.all.  Insert the marker object into the
+    // shadow internal field to signal that document.all is no longer
+    // shadowed.
+    AtomicString key = v8StringToAtomicWebCoreString(name);
+    DEFINE_STATIC_LOCAL(const AtomicString, all, ("all"));
+    if (key != all)
+        return deletionNotHandledByInterceptor();
 
-    v8::Local<v8::Function> shadowConstructor = shadowTemplate->GetFunction();
-    if (shadowConstructor.IsEmpty())
-        return v8::Local<v8::Object>();
-
-    v8::Local<v8::Object> shadow = shadowConstructor->NewInstance();
-    if (shadow.IsEmpty())
-        return v8::Local<v8::Object>();
-    V8DOMWrapper::setDOMWrapper(shadow, &V8HTMLDocument::info, impl);
-    shadow->SetPrototype(wrapper);
-    return shadow;
+    ASSERT(info.Holder()->InternalFieldCount() == V8HTMLDocument::internalFieldCount);
+    v8::Local<v8::Value> marker = info.Holder()->GetInternalField(V8HTMLDocument::markerIndex);
+    info.Holder()->SetInternalField(V8HTMLDocument::shadowIndex, marker);
+    return v8::True();
 }
 
-v8::Handle<v8::Value> V8HTMLDocument::GetNamedProperty(HTMLDocument* htmlDocument, const AtomicString& key)
+v8::Handle<v8::Value> V8HTMLDocument::namedPropertyGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
+    INC_STATS("DOM.HTMLDocument.NamedPropertyGetter");
+    AtomicString key = v8StringToAtomicWebCoreString(name);
+
+    // Special case for document.all.  If the value in the shadow
+    // internal field is not the marker object, then document.all has
+    // been temporarily shadowed and we return the value.
+    DEFINE_STATIC_LOCAL(const AtomicString, all, ("all"));
+    if (key == all) {
+        ASSERT(info.Holder()->InternalFieldCount() == V8HTMLDocument::internalFieldCount);
+        v8::Local<v8::Value> marker = info.Holder()->GetInternalField(V8HTMLDocument::markerIndex);
+        v8::Local<v8::Value> value = info.Holder()->GetInternalField(V8HTMLDocument::shadowIndex);
+        if (marker != value)
+            return value;
+    }
+
+    HTMLDocument* htmlDocument = V8HTMLDocument::toNative(info.Holder());
+
+    // Fast case for named elements that are not there.
     if (!htmlDocument->hasNamedItem(key.impl()) && !htmlDocument->hasExtraNamedItem(key.impl()))
         return v8::Handle<v8::Value>();
 
     RefPtr<HTMLCollection> items = htmlDocument->documentNamedItems(key);
     if (!items->length())
-        return v8::Handle<v8::Value>();
+        return notHandledByInterceptor();
 
     if (items->length() == 1) {
         Node* node = items->firstItem();
@@ -92,6 +102,13 @@ v8::Handle<v8::Value> V8HTMLDocument::GetNamedProperty(HTMLDocument* htmlDocumen
     }
 
     return toV8(items.release());
+}
+
+v8::Handle<v8::Value> V8HTMLDocument::indexedPropertyGetter(uint32_t index, const v8::AccessorInfo &info) 
+{
+    INC_STATS("DOM.HTMLDocument.IndexedPropertyGetter");
+    v8::Local<v8::Integer> indexV8 = v8::Integer::NewFromUnsigned(index);
+    return namedPropertyGetter(indexV8->ToString(), info);
 }
 
 // HTMLDocument ----------------------------------------------------------------
@@ -176,8 +193,10 @@ v8::Handle<v8::Value> V8HTMLDocument::allAccessorGetter(v8::Local<v8::String> na
 
 void V8HTMLDocument::allAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
-    // Just emulate a normal JS behaviour---install a property on this.
-    info.This()->ForceSet(name, value);
+    INC_STATS("DOM.HTMLDocument.all._set");
+    v8::Handle<v8::Object> holder = info.Holder();
+    ASSERT(info.Holder()->InternalFieldCount() == V8HTMLDocument::internalFieldCount);
+    info.Holder()->SetInternalField(V8HTMLDocument::shadowIndex, value);
 }
 
 v8::Handle<v8::Value> toV8(HTMLDocument* impl, bool forceNewObject)
@@ -191,6 +210,12 @@ v8::Handle<v8::Value> toV8(HTMLDocument* impl, bool forceNewObject)
         if (V8Proxy* proxy = V8Proxy::retrieve(impl->frame()))
             proxy->windowShell()->updateDocumentWrapper(wrapper);
     }
+    // Create marker object and insert it in two internal fields.
+    // This is used to implement temporary shadowing of document.all.
+    ASSERT(wrapper->InternalFieldCount() == V8HTMLDocument::internalFieldCount);
+    v8::Local<v8::Object> marker = v8::Object::New();
+    wrapper->SetInternalField(V8HTMLDocument::markerIndex, marker);
+    wrapper->SetInternalField(V8HTMLDocument::shadowIndex, marker);
     return wrapper;
 }
 
