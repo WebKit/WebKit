@@ -1,3 +1,13 @@
+2010-08-13  Leandro Pereira  <leandro@profusion.mobi>
+
+        [EFL] Unreviewed build fix.
+
+        * cmake/FindGthread.cmake: Fix warnings about obsolete PKGCONFIG macro.
+        * cmake/WebKitGenerators.cmake: FLEX_EXECUTABLE was defined already
+        by the root CMakeLists.txt file, so remove relevant lines that
+        depends on FIND_PACKAGE_HANDLE_STANDARD_ARGS macro, which isn't
+        available anymore.
+
 2010-08-13  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Xan Lopez.
