@@ -56,20 +56,29 @@ extern const double Inf;
 
 COMPILE_ASSERT(sizeof(UString) == sizeof(void*), UString_should_stay_small);
 
-UString::UString(const char* c)
-    : m_impl(StringImpl::create(c))
+//    UString::UString(const UChar* characters, unsigned length)
+//        : m_impl(characters ? StringImpl::create(characters, length) : 0)
+//    {
+//    }
+UString::UString(const UChar* characters)
 {
-}
+    if (!characters)
+        return;
 
-UString::UString(const char* c, unsigned length)
-    : m_impl(StringImpl::create(c, length))
-{
-}
+    int length = 0;
+    while (characters[length] != UChar(0))
+        ++length;
 
-UString::UString(const UChar* c, unsigned length)
-    : m_impl(StringImpl::create(c, length))
-{
+    m_impl = StringImpl::create(characters, length);
 }
+//    UString::UString(const char* characters)
+//        : m_impl(characters ? StringImpl::create(characters) : 0)
+//    {
+//    }
+//    UString::UString(const char* characters, unsigned length)
+//        : m_impl(characters ? StringImpl::create(characters, length) : 0)
+//    {
+//    }
 
 UString UString::number(int i)
 {
@@ -208,13 +217,6 @@ char* UString::ascii() const
     *q = '\0';
 
     return asciiBuffer;
-}
-
-UChar UString::operator[](unsigned pos) const
-{
-    if (pos >= length())
-        return '\0';
-    return characters()[pos];
 }
 
 static inline bool isInfinity(double number)

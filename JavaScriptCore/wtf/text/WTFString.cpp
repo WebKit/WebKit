@@ -36,6 +36,13 @@ namespace WTF {
 
 using namespace Unicode;
 
+// Construct a string with UTF-16 data.
+String::String(const UChar* characters, unsigned length)
+    : m_impl(characters ? StringImpl::create(characters, length) : 0)
+{
+}
+
+// Construct a string with UTF-16 data, from a null-terminated source.
 String::String(const UChar* str)
 {
     if (!str)
@@ -46,6 +53,18 @@ String::String(const UChar* str)
         len++;
     
     m_impl = StringImpl::create(str, len);
+}
+
+// Construct a string with latin1 data.
+String::String(const char* characters, unsigned length)
+    : m_impl(characters ? StringImpl::create(characters, length) : 0)
+{
+}
+
+// Construct a string with latin1 data, from a null-terminated source.
+String::String(const char* characters)
+    : m_impl(characters ? StringImpl::create(characters) : 0)
+{
 }
 
 void String::append(const String& str)

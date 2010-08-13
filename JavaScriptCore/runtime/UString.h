@@ -43,28 +43,39 @@ using WTF::PlacementNewAdopt;
 
 class UString {
 public:
-    UString() {}
-    UString(const char*); // Constructor for null-terminated string.
-    UString(const char*, unsigned length);
-    UString(const UChar*, unsigned length);
-    UString(const Vector<UChar>& buffer);
+    // Construct a null string, distinguishable from an empty string.
+    UString() { }
 
-    UString(const UString& s)
-        : m_impl(s.m_impl)
+    // Construct a string with UTF-16 data.
+    UString(const UChar* characters, unsigned length)
+        : m_impl(characters ? StringImpl::create(characters, length) : 0)
     {
     }
 
-    // Special constructor for cases where we overwrite an object in place.
-    UString(PlacementNewAdoptType)
-        : m_impl(PlacementNewAdopt)
+    // Construct a string with UTF-16 data, from a null-terminated source.
+    UString(const UChar*);
+
+    // Construct a string with latin1 data.
+    UString(const char* characters)
+        : m_impl(characters ? StringImpl::create(characters) : 0)
     {
     }
+
+    // Construct a string with latin1 data, from a null-terminated source.
+    UString(const char* characters, unsigned length)
+        : m_impl(characters ? StringImpl::create(characters, length) : 0)
+    {
+    }
+
+    // Construct a string referencing an existing StringImpl.
+    UString(StringImpl* impl) : m_impl(impl) { }
+    UString(PassRefPtr<StringImpl> impl) : m_impl(impl) { }
+    UString(RefPtr<StringImpl> impl) : m_impl(impl) { }
+
+    void swap(UString& o) { m_impl.swap(o.m_impl); }
 
     template<size_t inlineCapacity>
-    static PassRefPtr<StringImpl> adopt(Vector<UChar, inlineCapacity>& vector)
-    {
-        return StringImpl::adopt(vector);
-    }
+    static UString adopt(Vector<UChar, inlineCapacity>& vector) { return StringImpl::adopt(vector); }
 
     static UString number(int);
     static UString number(long long);
@@ -100,7 +111,12 @@ public:
         return m_impl->characters();
     }
 
-    UChar operator[](unsigned pos) const;
+    UChar operator[](unsigned index) const
+    {
+        if (!m_impl || index >= m_impl->length())
+            return 0;
+        return m_impl->characters()[index];
+    }
 
     double toDouble(bool tolerateTrailingJunk, bool tolerateEmptyString) const;
     double toDouble(bool tolerateTrailingJunk) const;
@@ -124,11 +140,6 @@ public:
     bool isEmpty() const { return !m_impl || !m_impl->length(); }
 
     StringImpl* impl() const { return m_impl.get(); }
-
-    UString(PassRefPtr<StringImpl> r)
-        : m_impl(r)
-    {
-    }
 
     size_t cost() const
     {

@@ -58,6 +58,12 @@ struct RegExpKey {
     {
     }
 
+    RegExpKey(int flags, const RefPtr<StringImpl>& pattern)
+        : flagsValue(flags)
+        , pattern(pattern)
+    {
+    }
+
     RegExpKey(const UString& flags, const UString& pattern)
         : pattern(pattern.impl())
     {

@@ -1,3 +1,34 @@
+2010-08-12  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig
+
+        Change UString constructors to match those in WTF::String.
+        This changes behaviour of UString((char*)0) to create null
+        strings, akin to UString() rather than UString::empty().
+        (This matches String).  Remove unused constructors from
+        UString, and add null-terminated UTF-16 constructor, to
+        match String.  Move String's constructor into the .cpp to
+        match UString.
+
+        * JavaScriptCore.exp:
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::calculatedFunctionName):
+        * runtime/RegExpKey.h:
+        (JSC::RegExpKey::RegExpKey):
+        * runtime/SmallStrings.cpp:
+        (JSC::SmallStrings::createSingleCharacterString):
+        * runtime/UString.cpp:
+        (JSC::UString::UString):
+        * runtime/UString.h:
+        (JSC::UString::UString):
+        (JSC::UString::swap):
+        (JSC::UString::adopt):
+        (JSC::UString::operator[]):
+        * wtf/text/WTFString.h:
+        (WTF::String::String):
+        (WTF::String::adopt):
+        (WTF::String::operator[]):
+
 2010-08-12  David Levin  <levin@chromium.org>
 
         Reviewed by NOBODY (build fix).

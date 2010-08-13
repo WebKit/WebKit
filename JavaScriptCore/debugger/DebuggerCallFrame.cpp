@@ -57,7 +57,7 @@ UString DebuggerCallFrame::calculatedFunctionName() const
 
     JSObject* function = m_callFrame->callee();
     if (!function || !function->inherits(&JSFunction::info))
-        return 0;
+        return UString();
 
     return asFunction(function)->calculatedDisplayName(m_callFrame);
 }
