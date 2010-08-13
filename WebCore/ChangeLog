@@ -1,3 +1,27 @@
+2010-08-13  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r65331.
+        http://trac.webkit.org/changeset/65331
+        https://bugs.webkit.org/show_bug.cgi?id=43980
+
+        This patch breaks some shadow tests on Qt Linux release
+        (Requested by ariya on #webkit).
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate):
+        (WebCore::GraphicsContext::drawRect):
+        (WebCore::GraphicsContext::drawLine):
+        (WebCore::GraphicsContext::strokeArc):
+        (WebCore::GraphicsContext::drawConvexPolygon):
+        (WebCore::drawFilledShadowPath):
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::drawBorderlessRectShadow):
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::fillRoundedRect):
+        (WebCore::GraphicsContext::setPlatformShadow):
+        (WebCore::GraphicsContext::clearPlatformShadow):
+
 2010-08-13  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by David Levin.
