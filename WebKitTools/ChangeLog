@@ -1,3 +1,17 @@
+2010-08-14  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed.  Another fix to support python 2.3.
+
+        Add support for MathML entities
+        https://bugs.webkit.org/show_bug.cgi?id=43949
+
+        * Scripts/webkitpy/thirdparty/simplejson/decoder.py:
+         - It looks like our simplejson is version 1.7.3 which
+           should be python 2.3 compatible.  But someone modified
+           our copy slightly from the original source.
+           I've removed the relative import in hopes this fixes
+           the problem.
+
 2010-08-13  Eric Seidel  <eric@webkit.org>
 
         Unreviewed.  Build fix only.
