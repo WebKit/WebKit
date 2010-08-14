@@ -1,3 +1,12 @@
+2010-08-14  Patrick Gansterer  <paroga@paroga.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [CMake] Move SQL files into a IF (ENABLE_DATABASE) section
+        https://bugs.webkit.org/show_bug.cgi?id=43979
+
+        * CMakeLists.txt:
+
 2010-08-14  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by Kenneth Rohde Christiansen.

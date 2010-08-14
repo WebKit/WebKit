@@ -1303,13 +1303,6 @@ SET(WebCore_SOURCES
     platform/network/ResourceRequestBase.cpp
     platform/network/ResourceResponseBase.cpp
 
-    platform/sql/SQLValue.cpp
-    platform/sql/SQLiteAuthorizer.cpp
-    platform/sql/SQLiteDatabase.cpp
-    platform/sql/SQLiteFileSystem.cpp
-    platform/sql/SQLiteStatement.cpp
-    platform/sql/SQLiteTransaction.cpp
-
     platform/text/Base64.cpp
     platform/text/BidiContext.cpp
     platform/text/LineEnding.cpp
@@ -1535,6 +1528,18 @@ SET(WebCore_SOURCES
     xml/XSLTProcessorLibxslt.cpp
     xml/XSLTUnicodeSort.cpp
 )
+
+
+IF (ENABLE_DATABASE)
+    LIST(APPEND WebCore_SOURCES
+        platform/sql/SQLValue.cpp
+        platform/sql/SQLiteAuthorizer.cpp
+        platform/sql/SQLiteDatabase.cpp
+        platform/sql/SQLiteFileSystem.cpp
+        platform/sql/SQLiteStatement.cpp
+        platform/sql/SQLiteTransaction.cpp
+    )
+ENDIF ()
 
 IF (ENABLE_SVG)
     LIST(APPEND WebCore_SOURCES
