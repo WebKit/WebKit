@@ -15,7 +15,7 @@ var console = document.getElementById('console');
 function log(t)
 {
     var line = document.createElement('div');
-    line.innerText = t;
+    line.appendChild(document.createTextNode(t));
     console.appendChild(line);
 }
 

@@ -1,5 +1,19 @@
 2010-08-13  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        Make it easier to run LayoutTests in Firefox
+        https://bugs.webkit.org/show_bug.cgi?id=44002
+
+        Firefox doesn't seem to have innerText.  Instead, let's just use the
+        normal DOM operations.
+
+        * fast/parser/resources/p-in-scope.js:
+        * fast/table/incomplete-table-in-fragment-2.html:
+        * fast/table/incomplete-table-in-fragment-hang.html:
+
+2010-08-13  Adam Barth  <abarth@webkit.org>
+
         Update test expectations to account for the HTML5 entity parser.  There
         are two main differences:
 

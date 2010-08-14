@@ -126,12 +126,12 @@ for (var i = 0; i < leafTags.length; ++i) {
     var asChild = testAsChild(tag);
     var cell = row.appendChild(document.createElement("td"));
     cell.className = asChild;
-    cell.innerText = asChild == "allowed" ? "+" : asChild == "closed" ? "-" : "?";
+    cell.appendChild(document.createTextNode(asChild == "allowed" ? "+" : asChild == "closed" ? "-" : "?"));
     for (var j = 0; j < intermediateTags.length; ++j) {
         var intermediateTag = intermediateTags[j];
         var asGrandchild = testAsGrandchild(tag, intermediateTag);
         cell = row.appendChild(document.createElement("td"));
         cell.className = asGrandchild;
-        cell.innerText = asGrandchild == "allowed" ? "+" : asGrandchild == "closed" ? "-" : "?";
+        cell.appendChild(document.createTextNode(asGrandchild == "allowed" ? "+" : asGrandchild == "closed" ? "-" : "?"));
     }
 }
