@@ -1,3 +1,13 @@
+2010-08-13  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed.  Attempted build fix for Windows.
+
+        Add support for MathML entities
+        https://bugs.webkit.org/show_bug.cgi?id=43949
+
+        * DerivedSources.cpp:
+         - Add HTMLEntityTable.cpp
+
 2010-08-09  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
