@@ -1,3 +1,45 @@
+2010-08-09  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Add support for MathML entities
+        https://bugs.webkit.org/show_bug.cgi?id=43949
+
+        Implementing the HTML5 entity parsing algorithm require refactoring how
+        we search for entity names.  Instead of using a perfect hash, we now
+        use a sorted list.  As we advance through the input, we walk down a
+        binary search of the table looking for an entity.
+
+        Using this data structure lets us keep track of whether the current
+        string is a prefix of an existing entity, which we need for the
+        algorithm.  In a future patch, I plan to add some indices to the
+        table, which should let us narrow down the range of interesting entries
+        more quickly.
+
+        The one nasty piece of the algorithm is if we walk too far down the
+        input and we need to back up to a previous match.  In this patch, we
+        accomplish this by rewinding the input and consuming a known number of
+        characters to resync the source.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLEntityParser.cpp:
+        (WebCore::consumeHTMLEntity):
+        * html/HTMLEntitySearch.cpp: Added.
+        (WebCore::):
+        (WebCore::HTMLEntitySearch::HTMLEntitySearch):
+        (WebCore::HTMLEntitySearch::compare):
+        (WebCore::HTMLEntitySearch::findStart):
+        (WebCore::HTMLEntitySearch::findEnd):
+        (WebCore::HTMLEntitySearch::advance):
+        * html/HTMLEntitySearch.h: Added.
+        (WebCore::HTMLEntitySearch::isEntityPrefix):
+        (WebCore::HTMLEntitySearch::currentValue):
+        (WebCore::HTMLEntitySearch::lastMatch):
+        (WebCore::HTMLEntitySearch::):
+        (WebCore::HTMLEntitySearch::fail):
+        * html/HTMLEntityTable.h: Added.
+        (WebCore::HTMLEntityTableEntry::lastCharacter):
+
 2010-08-13  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Eric Seidel.

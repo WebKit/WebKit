@@ -505,7 +505,7 @@ all : \
     ColorData.cpp \
     DocTypeStrings.cpp \
     HTMLElementFactory.cpp \
-    HTMLEntityNames.cpp \
+    HTMLEntityTable.cpp \
     HTMLNames.cpp \
     WMLElementFactory.cpp \
     WMLNames.cpp \
@@ -600,8 +600,8 @@ DocTypeStrings.cpp : html/DocTypeStrings.gperf $(WebCore)/make-hash-tools.pl
 
 # HTML entity names
 
-HTMLEntityNames.cpp : html/HTMLEntityNames.gperf $(WebCore)/make-hash-tools.pl
-	perl $(WebCore)/make-hash-tools.pl . $(WebCore)/html/HTMLEntityNames.gperf
+HTMLEntityTable.cpp : html/HTMLEntityNames.json $(WebCore)/../WebKitTools/Scripts/create-html-entity-table
+	python $(WebCore)/../WebKitTools/Scripts/create-html-entity-table -o HTMLEntityTable.cpp $(WebCore)/html/HTMLEntityNames.json
 
 # --------
 

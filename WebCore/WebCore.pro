@@ -671,6 +671,7 @@ SOURCES += \
     html/HTMLDocument.cpp \
     html/HTMLElement.cpp \
     html/HTMLElementStack.cpp \
+    html/HTMLEntitySearch.cpp \
     html/HTMLEmbedElement.cpp \
     html/HTMLFieldSetElement.cpp \
     html/HTMLFontElement.cpp \

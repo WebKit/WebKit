@@ -1,3 +1,15 @@
+2010-08-12  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Add support for MathML entities
+        https://bugs.webkit.org/show_bug.cgi?id=43949
+
+        A script for generating the C++ state data structure describing all the
+        entities from a JSON description.
+
+        * Scripts/create-html-entity-table: Added.
+
 2010-08-13  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Eric Seidel.

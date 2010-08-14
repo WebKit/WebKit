@@ -1,3 +1,15 @@
+2010-08-12  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Add support for MathML entities
+        https://bugs.webkit.org/show_bug.cgi?id=43949
+
+        Test progression for proper entity support.
+
+        * html5lib/runner-expected-html5.txt:
+        * html5lib/runner-expected.txt:
+
 2010-08-13  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Dimitri Glazkov.

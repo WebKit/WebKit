@@ -92,7 +92,7 @@ webcore_built_sources += \
 	DerivedSources/WebCore/CSSValueKeywords.h \
 	DerivedSources/WebCore/HTMLElementFactory.cpp \
 	DerivedSources/WebCore/HTMLElementFactory.h \
-	DerivedSources/WebCore/HTMLEntityNames.cpp \
+	DerivedSources/WebCore/HTMLEntityTable.cpp \
 	DerivedSources/WebCore/HTMLNames.cpp \
 	DerivedSources/WebCore/HTMLNames.h \
 	DerivedSources/WebCore/InspectorBackendDispatcher.cpp \
@@ -1427,6 +1427,8 @@ webcore_sources += \
 	WebCore/html/HTMLElement.h \
 	WebCore/html/HTMLElementStack.cpp \
 	WebCore/html/HTMLElementStack.h \
+	WebCore/html/HTMLEntitySearch.cpp \
+	WebCore/html/HTMLEntitySearch.h \
 	WebCore/html/HTMLEmbedElement.cpp \
 	WebCore/html/HTMLEmbedElement.h \
 	WebCore/html/HTMLFieldSetElement.cpp \
@@ -4395,8 +4397,8 @@ DerivedSources/WebCore/DocTypeStrings.cpp : $(WebCore)/html/DocTypeStrings.gperf
 	$(PERL) $(WebCore)/make-hash-tools.pl $(GENSOURCES_WEBCORE) $(WebCore)/html/DocTypeStrings.gperf
 
 # HTML entity names
-DerivedSources/WebCore/HTMLEntityNames.cpp : $(WebCore)/html/HTMLEntityNames.gperf $(WebCore)/make-hash-tools.pl
-	$(PERL) $(WebCore)/make-hash-tools.pl $(GENSOURCES_WEBCORE) $(WebCore)/html/HTMLEntityNames.gperf
+DerivedSources/WebCore/HTMLEntityTable.cpp : $(WebCore)/html/HTMLEntityNames.json $(WebCore)/../WebKitTools/Scripts/create-html-entity-table
+	$(PYTHON) $(WebCore)/../WebKitTools/Scripts/create-html-entity-table -o $(GENSOURCES_WEBCORE)/HTMLEntityTable.cpp $(WebCore)/html/HTMLEntityNames.json
 
 # color names
 DerivedSources/WebCore/ColorData.cpp: $(WebCore)/platform/ColorData.gperf $(WebCore)/make-hash-tools.pl

@@ -1588,6 +1588,8 @@
             'html/HTMLElement.h',
             'html/HTMLElementStack.cpp',
             'html/HTMLElementStack.h',
+            'html/HTMLEntitySearch.cpp',
+            'html/HTMLEntitySearch.h',
             'html/HTMLEmbedElement.cpp',
             'html/HTMLEmbedElement.h',
             'html/HTMLFieldSetElement.cpp',

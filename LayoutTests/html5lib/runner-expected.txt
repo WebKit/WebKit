@@ -191,92 +191,10 @@ resources/doctype01.dat: PASS
 
 resources/scriptdata01.dat: PASS
 
-resources/html5test-com.dat:
-7
-9
-10
-11
+resources/html5test-com.dat: PASS
 
-Test 7 of 24 in resources/html5test-com.dat failed. Input:
-&lang;&rang;
-Got:
-| <html>
-|   <head>
-|   <body>
-|     "〈〉"
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     "⟨⟩"
+resources/entities01.dat: PASS
 
-Test 9 of 24 in resources/html5test-com.dat failed. Input:
-&ImaginaryI;
-Got:
-| <html>
-|   <head>
-|   <body>
-|     "&ImaginaryI;"
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     "ⅈ"
-
-Test 10 of 24 in resources/html5test-com.dat failed. Input:
-&Kopf;
-Got:
-| <html>
-|   <head>
-|   <body>
-|     "&Kopf;"
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     "𝕂"
-
-Test 11 of 24 in resources/html5test-com.dat failed. Input:
-&notinva;
-Got:
-| <html>
-|   <head>
-|   <body>
-|     "&notinva;"
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     "∉"
-resources/entities01.dat:
-2
-5
-
-Test 2 of 68 in resources/entities01.dat failed. Input:
-FOO&gtBAR
-Got:
-| <html>
-|   <head>
-|   <body>
-|     "FOO&gtBAR"
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     "FOO>BAR"
-
-Test 5 of 68 in resources/entities01.dat failed. Input:
-I'm &notit; I tell you
-Got:
-| <html>
-|   <head>
-|   <body>
-|     "I'm &notit; I tell you"
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     "I'm ¬it; I tell you"
 resources/entities02.dat: PASS
 
 resources/comments01.dat: PASS

@@ -29,16 +29,6 @@ my $option = basename($ARGV[0],".gperf");
 
 switch ($option) {
 
-case "HTMLEntityNames" {
-
-    my $htmlEntityNamesGenerated   = "$outdir/HTMLEntityNames.cpp";
-    my $htmlEntityNamesGperf       = $ARGV[0];
-    shift;
-
-    system("gperf --key-positions=\"*\" -D -s 2 $htmlEntityNamesGperf > $htmlEntityNamesGenerated") == 0 || die "calling gperf failed: $?";
-
-} # case "HTMLEntityNames"
-
 case "DocTypeStrings" {
 
     my $docTypeStringsGenerated    = "$outdir/DocTypeStrings.cpp";

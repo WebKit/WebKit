@@ -37637,6 +37637,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\HTMLEntitySearch.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\HTMLEntitySearch.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\HTMLEmbedElement.cpp"
 				>
 				<FileConfiguration
