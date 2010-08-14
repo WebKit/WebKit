@@ -50,6 +50,7 @@ EXPORTS
     ?allocate@Heap@JSC@@QAEPAXI@Z
     ?allocatePropertyStorage@JSObject@JSC@@QAEXII@Z
     ?allocateStack@MarkStack@JSC@@CAPAXI@Z
+    ?ascii@UString@JSC@@QBEPADXZ
     ?attach@Debugger@JSC@@QAEXPAVJSGlobalObject@2@@Z
     ?broadcast@ThreadCondition@WTF@@QAEXXZ
     ?calculatedFunctionName@DebuggerCallFrame@JSC@@QBE?AVUString@2@XZ
