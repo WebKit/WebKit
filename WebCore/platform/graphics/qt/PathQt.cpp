@@ -163,19 +163,17 @@ FloatRect Path::boundingRect() const
 FloatRect Path::strokeBoundingRect(StrokeStyleApplier* applier)
 {
     GraphicsContext* gc = scratchContext();
-    QPainterPathStroker stroke;
-    if (applier) {
+
+    if (applier)
         applier->strokeStyle(gc);
 
-        QPen pen = gc->pen();
-        stroke.setWidth(pen.widthF());
-        stroke.setCapStyle(pen.capStyle());
-        stroke.setJoinStyle(pen.joinStyle());
-        stroke.setMiterLimit(pen.miterLimit());
-        stroke.setDashPattern(pen.dashPattern());
-        stroke.setDashOffset(pen.dashOffset());
-    }
-    return stroke.createStroke(m_path).boundingRect();
+    QPen pen = gc->pen();
+
+    // Fast approximation of the stroke's bounding rect.
+    // This yields a slightly oversized rect but is very fast compared to QPainterPathStroker.
+    FloatRect rect = m_path.controlPointRect();
+    rect.inflate(pen.miterLimit() + pen.widthF());
+    return rect;
 }
 
 void Path::moveTo(const FloatPoint& point)

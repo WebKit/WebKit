@@ -1,3 +1,14 @@
+2010-08-14  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Path: Fast approximation of stroke bounding rects
+        https://bugs.webkit.org/show_bug.cgi?id=44014
+
+        * platform/graphics/qt/PathQt.cpp:
+        (WebCore::Path::strokeBoundingRect): Use QPainterPath::controlPointRect()
+        to calculate a slightly larger bounding rect in a fraction of the time.
+
 2010-08-14  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
