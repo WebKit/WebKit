@@ -1,3 +1,12 @@
+2010-08-14  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson in Sweden.
+
+        Clean build of WebKitTestRunner fails with “'size_t' has not been declared” in WKArray.h
+        https://bugs.webkit.org/show_bug.cgi?id=44005
+
+        * UIProcess/API/C/WKBase.h: Include ctype.h.
+
 2010-08-13  Sam Weinig  <sam@webkit.org>
 
         Fix build.

@@ -26,6 +26,7 @@
 #ifndef WKBase_h
 #define WKBase_h
 
+#include <ctype.h>
 #include <stdint.h>
 
 #if defined(WIN32) || defined(_WIN32)
