@@ -238,8 +238,11 @@ unsigned consumeHTMLEntity(SegmentedString& source, bool& notEnoughCharacters, U
 UChar decodeNamedEntity(const char* name)
 {
     HTMLEntitySearch search;
-    while (name && search.isEntityPrefix())
+    while (*name) {
         search.advance(*name++);
+        if (!search.isEntityPrefix())
+            return 0;
+    }
     search.advance(';');
     UChar32 entityValue = search.currentValue();
     if (U16_LENGTH(entityValue) != 1) {

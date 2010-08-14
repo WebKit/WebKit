@@ -1,3 +1,11 @@
+2010-08-13  Adam Barth  <abarth@webkit.org>
+
+        Fix ASSERT in XML entity parsing.  You can't advance the entity search
+        if you've already discovered that your string is not an entity.
+
+        * html/HTMLEntityParser.cpp:
+        (WebCore::decodeNamedEntity):
+
 2010-08-13  Eric Seidel  <eric@webkit.org>
 
         Unreviewed.  Attempt at fixing Chromium build.
