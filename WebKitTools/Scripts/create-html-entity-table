@@ -31,7 +31,13 @@ import os.path
 import string
 import sys
 
-import webkitpy.thirdparty.simplejson as simplejson
+# Hack sys.path to avoid executing webkitpy __init__.py code which may
+# use Python 2.5 features.  This code needs to run on Python 2.3 in order
+# to support Mac OS X Tiger.
+scripts_directory = sys.path[0]
+sys.path.append("%s/webkitpy/thirdparty" % scripts_directory)
+
+import simplejson
 
 
 def convert_entity_to_cpp_name(entity):

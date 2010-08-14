@@ -1,3 +1,14 @@
+2010-08-13  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed.  Build fix only.
+
+        Add support for MathML entities
+        https://bugs.webkit.org/show_bug.cgi?id=43949
+
+        * Scripts/create-html-entity-table:
+         - Hack sys.path to avoid executing 2.5 dependent python
+           on systems (like chromium-win and Tiger) which do not have 2.5 python.
+
 2010-08-13  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
