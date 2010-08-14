@@ -1043,7 +1043,8 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
 
 PassRefPtr<DocumentFragment> createFragmentFromMarkup(Document* document, const String& markup, const String& baseURL, FragmentScriptingPermission scriptingPermission)
 {
-    RefPtr<DocumentFragment> fragment = document->documentElement()->createContextualFragment(markup, scriptingPermission);
+    // FIXME: This should not use deprecatedCreateContextualFragment
+    RefPtr<DocumentFragment> fragment = document->documentElement()->deprecatedCreateContextualFragment(markup, scriptingPermission);
 
     if (fragment && !baseURL.isEmpty() && baseURL != blankURL() && baseURL != document->baseURL())
         completeURLs(fragment.get(), baseURL);

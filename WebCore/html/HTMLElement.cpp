@@ -275,20 +275,23 @@ String HTMLElement::outerHTML() const
     return createMarkup(this);
 }
 
-// FIXME: This method is unnecessary with the new HTMLDocumentParser.
-PassRefPtr<DocumentFragment> HTMLElement::createContextualFragment(const String& markup, FragmentScriptingPermission scriptingPermission)
+static bool useLegacyTreeBuilder(Document* document)
 {
-    if (!document()->settings() || !document()->settings()->html5TreeBuilderEnabled()) {
-        // The following is in accordance with the definition as used by IE.
-        if (endTagRequirement() == TagStatusForbidden)
-            return 0;
+    return !document || !document->settings() || !document->settings()->html5TreeBuilderEnabled();
+}
 
-        if (hasLocalName(colTag) || hasLocalName(colgroupTag) || hasLocalName(framesetTag)
-            || hasLocalName(headTag) || hasLocalName(styleTag) || hasLocalName(titleTag))
-            return 0;
-    }
+// FIXME: This logic should move into Range::createContextualFragment
+PassRefPtr<DocumentFragment> HTMLElement::deprecatedCreateContextualFragment(const String& markup, FragmentScriptingPermission scriptingPermission)
+{
+    // The following is in accordance with the definition as used by IE.
+    if (endTagRequirement() == TagStatusForbidden)
+        return 0;
 
-    return Element::createContextualFragment(markup, scriptingPermission);
+    if (hasLocalName(colTag) || hasLocalName(colgroupTag) || hasLocalName(framesetTag)
+        || hasLocalName(headTag) || hasLocalName(styleTag) || hasLocalName(titleTag))
+        return 0;
+
+    return Element::deprecatedCreateContextualFragment(markup, scriptingPermission);
 }
 
 static inline bool hasOneChild(ContainerNode* node)
@@ -341,23 +344,46 @@ static void replaceChildrenWithText(HTMLElement* element, const String& text, Ex
     element->appendChild(textNode.release(), ec);
 }
 
+// We may want to move a version of this function into DocumentFragment.h/cpp
+static PassRefPtr<DocumentFragment> createFragmentFromSource(const String& markup, Element* contextElement, ExceptionCode& ec)
+{
+    Document* document = contextElement->document();
+    RefPtr<DocumentFragment> fragment;
+
+    if (useLegacyTreeBuilder(document)) {
+        fragment = contextElement->deprecatedCreateContextualFragment(markup);
+        if (!fragment)
+            ec = NO_MODIFICATION_ALLOWED_ERR;
+        return fragment;
+    }
+
+    fragment = DocumentFragment::create(document);
+    if (document->isHTMLDocument()) {
+        fragment->parseHTML(markup, contextElement);
+        return fragment;
+    }
+
+    bool wasValid = fragment->parseXML(markup, contextElement);
+    if (!wasValid) {
+        ec = INVALID_STATE_ERR;
+        return 0;
+    }
+    return fragment;
+}
+
 void HTMLElement::setInnerHTML(const String& html, ExceptionCode& ec)
 {
     // FIXME: This code can be removed, it's handled by the HTMLDocumentParser correctly.
-    if (hasLocalName(scriptTag) || hasLocalName(styleTag)) {
+    if (useLegacyTreeBuilder(document()) && (hasLocalName(scriptTag) || hasLocalName(styleTag))) {
         // Script and CSS source shouldn't be parsed as HTML.
         removeChildren();
         appendChild(document()->createTextNode(html), ec);
         return;
     }
 
-    RefPtr<DocumentFragment> fragment = createContextualFragment(html);
-    if (!fragment) {
-        ec = NO_MODIFICATION_ALLOWED_ERR;
-        return;
-    }
-
-    replaceChildrenWithFragment(this, fragment.release(), ec);
+    RefPtr<DocumentFragment> fragment = createFragmentFromSource(html, this, ec);
+    if (fragment)
+        replaceChildrenWithFragment(this, fragment.release(), ec);
 }
 
 void HTMLElement::setOuterHTML(const String& html, ExceptionCode& ec)
@@ -367,17 +393,13 @@ void HTMLElement::setOuterHTML(const String& html, ExceptionCode& ec)
         ec = NO_MODIFICATION_ALLOWED_ERR;
         return;
     }
-
     HTMLElement* parent = static_cast<HTMLElement*>(p);
-    RefPtr<DocumentFragment> fragment = parent->createContextualFragment(html);
-    if (!fragment) {
-        ec = NO_MODIFICATION_ALLOWED_ERR;
-        return;
+
+    RefPtr<DocumentFragment> fragment = createFragmentFromSource(html, parent, ec);
+    if (fragment) {
+        // FIXME: Why doesn't this have code to merge neighboring text nodes the way setOuterText does?
+        parent->replaceChild(fragment.release(), this, ec);
     }
-
-    // FIXME: Why doesn't this have code to merge neighboring text nodes the way setOuterText does?
-
-    parent->replaceChild(fragment.release(), this, ec);
 }
 
 void HTMLElement::setInnerText(const String& text, ExceptionCode& ec)

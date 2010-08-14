@@ -1,3 +1,47 @@
+2010-08-14  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Move innerHTML off of Range::createContextualFragment
+        https://bugs.webkit.org/show_bug.cgi?id=44011
+
+        This makes all the editing tests stop failing under the
+        HTML5 TreeBuilder.
+
+        In a previous patch Adam disabled some of the (wrong) code
+        in createContextualFragment when in html5 treebuilder mode.
+        The problem is that the editing code depends on
+        createContextualFragment (as well as the Range DOM API),
+        so we have to leave this code in until we can figure
+        out if it's right or wrong behavior for the Range API.
+
+        This patch moves innerHTML/outerHTML off of using
+        createContextualFragment and instead calls
+        DocumentFragment::parseHTML directly (which is much simpler).
+
+        I expect Adam and I will end up turning on the HTML5 TreeBuilder
+        in the next couple days, and most of the if branches I added
+        here will go away for good.
+
+        I renamed Element::createContextualFragment to
+        deprecatedCreateContextualFragment, to indicate that it's a
+        dead API.  The editing code should move off of it and consider
+        using DocumentFragment::parseHTML instead.
+
+        * dom/Element.cpp:
+        (WebCore::Element::deprecatedCreateContextualFragment):
+        * dom/Element.h:
+        * dom/Range.cpp:
+        (WebCore::Range::createContextualFragment):
+        * editing/markup.cpp:
+        (WebCore::createFragmentFromMarkup):
+        * html/HTMLElement.cpp:
+        (WebCore::useLegacyTreeBuilder):
+        (WebCore::HTMLElement::deprecatedCreateContextualFragment):
+        (WebCore::HTMLElement::setInnerHTML):
+        (WebCore::HTMLElement::setOuterHTML):
+        * html/HTMLElement.h:
+
 2010-08-14  Tasuku Suzuki  <tasuku.suzuki@nokia.com>
 
         Reviewed by Antonio Gomes.
