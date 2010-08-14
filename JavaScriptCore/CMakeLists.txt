@@ -203,13 +203,10 @@ GENERATE_HASH_LUT(${JAVASCRIPTCORE_DIR}/parser/Keywords.table ${DERIVED_SOURCES_
 LIST(APPEND JavaScriptCore_HEADERS ${DERIVED_SOURCES_DIR}/Lexer.lut.h)
 
 # GENERATOR: "chartables.c": compile and execute the chartables generator (and add it to sources)
-IF (MSVC)
-    SET(JSC_DFTABLES_PREPROCESSOR --preprocessor=cl.exe)
-ENDIF ()
 ADD_CUSTOM_COMMAND(
     OUTPUT ${DERIVED_SOURCES_DIR}/chartables.c
     MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/pcre/dftables
-    COMMAND ${PERL_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/pcre/dftables ${JSC_DFTABLES_PREPROCESSOR} ${DERIVED_SOURCES_DIR}/chartables.c
+    COMMAND ${PERL_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/pcre/dftables --preprocessor "${CODE_GENERATOR_PREPROCESSOR}" ${DERIVED_SOURCES_DIR}/chartables.c
     VERBATIM)
 ADD_SOURCE_DEPENDENCIES(${JAVASCRIPTCORE_DIR}/pcre/pcre_tables.cpp ${DERIVED_SOURCES_DIR}/chartables.c)
 
