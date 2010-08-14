@@ -40,11 +40,11 @@ struct HTMLEntityTableEntry {
 
 class HTMLEntityTable {
 public:
-    static const HTMLEntityTableEntry* start();
-    static const HTMLEntityTableEntry* end();
+    static const HTMLEntityTableEntry* firstEntry();
+    static const HTMLEntityTableEntry* lastEntry();
 
-    static const HTMLEntityTableEntry* start(UChar);
-    static const HTMLEntityTableEntry* end(UChar);
+    static const HTMLEntityTableEntry* firstEntryStartingWith(UChar);
+    static const HTMLEntityTableEntry* lastEntryStartingWith(UChar);
 };
 
 }

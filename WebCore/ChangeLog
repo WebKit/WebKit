@@ -1,5 +1,28 @@
 2010-08-13  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        Rename some concepts in HTML entity search to be more self-documenting
+        https://bugs.webkit.org/show_bug.cgi?id=44004
+
+        Start and end are now first and last, which lets us use some better
+        names for the statics in HTMLEntityTable.
+
+        * html/HTMLEntityParser.cpp:
+        (WebCore::consumeHTMLEntity):
+        * html/HTMLEntitySearch.cpp:
+        (WebCore::HTMLEntitySearch::HTMLEntitySearch):
+        (WebCore::HTMLEntitySearch::findFirst):
+        (WebCore::HTMLEntitySearch::findLast):
+        (WebCore::HTMLEntitySearch::advance):
+        * html/HTMLEntitySearch.h:
+        (WebCore::HTMLEntitySearch::isEntityPrefix):
+        (WebCore::HTMLEntitySearch::mostRecentMatch):
+        (WebCore::HTMLEntitySearch::fail):
+        * html/HTMLEntityTable.h:
+
+2010-08-13  Adam Barth  <abarth@webkit.org>
+
         Fix ASSERT in XML entity parsing.  You can't advance the entity search
         if you've already discovered that your string is not an entity.
 

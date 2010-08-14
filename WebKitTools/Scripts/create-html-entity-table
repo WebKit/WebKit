@@ -145,7 +145,7 @@ print >> output_file, """};
 
 }
 
-const HTMLEntityTableEntry* HTMLEntityTable::start(UChar c)
+const HTMLEntityTableEntry* HTMLEntityTable::firstEntryStartingWith(UChar c)
 {
     if (c >= 'A' && c <= 'Z')
         return uppercaseOffset[c - 'A'];
@@ -154,7 +154,7 @@ const HTMLEntityTableEntry* HTMLEntityTable::start(UChar c)
     return 0;
 }
 
-const HTMLEntityTableEntry* HTMLEntityTable::end(UChar c)
+const HTMLEntityTableEntry* HTMLEntityTable::lastEntryStartingWith(UChar c)
 {
     if (c >= 'A' && c <= 'Z')
         return uppercaseOffset[c - 'A' + 1] - 1;
@@ -163,12 +163,12 @@ const HTMLEntityTableEntry* HTMLEntityTable::end(UChar c)
     return 0;
 }
 
-const HTMLEntityTableEntry* HTMLEntityTable::start()
+const HTMLEntityTableEntry* HTMLEntityTable::firstEntry()
 {
     return &staticEntityTable[0];
 }
 
-const HTMLEntityTableEntry* HTMLEntityTable::end()
+const HTMLEntityTableEntry* HTMLEntityTable::lastEntry()
 {
     return &staticEntityTable[%s - 1];
 }

@@ -42,9 +42,9 @@ const HTMLEntityTableEntry* halfway(const HTMLEntityTableEntry* left, const HTML
 HTMLEntitySearch::HTMLEntitySearch()
     : m_currentLength(0)
     , m_currentValue(0)
-    , m_lastMatch(0)
-    , m_start(HTMLEntityTable::start())
-    , m_end(HTMLEntityTable::end())
+    , m_mostRecentMatch(0)
+    , m_first(HTMLEntityTable::firstEntry())
+    , m_last(HTMLEntityTable::lastEntry())
 {
 }
 
@@ -58,10 +58,10 @@ HTMLEntitySearch::CompareResult HTMLEntitySearch::compare(const HTMLEntityTableE
     return entryNextCharacter < nextCharacter ? Before : After;
 }
 
-const HTMLEntityTableEntry* HTMLEntitySearch::findStart(UChar nextCharacter) const
+const HTMLEntityTableEntry* HTMLEntitySearch::findFirst(UChar nextCharacter) const
 {
-    const HTMLEntityTableEntry* left = m_start;
-    const HTMLEntityTableEntry* right = m_end;
+    const HTMLEntityTableEntry* left = m_first;
+    const HTMLEntityTableEntry* right = m_last;
     if (left == right)
         return left;
     CompareResult result = compare(left, nextCharacter);
@@ -83,10 +83,10 @@ const HTMLEntityTableEntry* HTMLEntitySearch::findStart(UChar nextCharacter) con
     return right;
 }
 
-const HTMLEntityTableEntry* HTMLEntitySearch::findEnd(UChar nextCharacter) const
+const HTMLEntityTableEntry* HTMLEntitySearch::findLast(UChar nextCharacter) const
 {
-    const HTMLEntityTableEntry* left = m_start;
-    const HTMLEntityTableEntry* right = m_end;
+    const HTMLEntityTableEntry* left = m_first;
+    const HTMLEntityTableEntry* right = m_last;
     if (left == right)
         return right;
     CompareResult result = compare(right, nextCharacter);
@@ -112,21 +112,21 @@ void HTMLEntitySearch::advance(UChar nextCharacter)
 {
     ASSERT(isEntityPrefix());
     if (!m_currentLength) {
-        m_start = HTMLEntityTable::start(nextCharacter);
-        m_end = HTMLEntityTable::end(nextCharacter);
+        m_first = HTMLEntityTable::firstEntryStartingWith(nextCharacter);
+        m_last = HTMLEntityTable::lastEntryStartingWith(nextCharacter);
     } else {
-        m_start = findStart(nextCharacter);
-        m_end = findEnd(nextCharacter);
-        if (m_start == m_end && compare(m_start, nextCharacter) != Prefix)
+        m_first = findFirst(nextCharacter);
+        m_last = findLast(nextCharacter);
+        if (m_first == m_last && compare(m_first, nextCharacter) != Prefix)
             return fail();
     }
     ++m_currentLength;
-    if (m_start->length != m_currentLength) {
+    if (m_first->length != m_currentLength) {
         m_currentValue = 0;
         return;
     }
-    m_lastMatch = m_start;
-    m_currentValue = m_lastMatch->value;
+    m_mostRecentMatch = m_first;
+    m_currentValue = m_mostRecentMatch->value;
 }
 
 }

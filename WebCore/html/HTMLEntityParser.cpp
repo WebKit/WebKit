@@ -196,19 +196,19 @@ unsigned consumeHTMLEntity(SegmentedString& source, bool& notEnoughCharacters, U
                 unconsumeCharacters(source, consumedCharacters);
                 return 0;
             }
-            if (!entitySearch.lastMatch()) {
+            if (!entitySearch.mostRecentMatch()) {
                 ASSERT(!entitySearch.currentValue());
                 unconsumeCharacters(source, consumedCharacters);
                 return 0;
             }
-            if (entitySearch.lastMatch()->length != entitySearch.currentLength()) {
+            if (entitySearch.mostRecentMatch()->length != entitySearch.currentLength()) {
                 // We've consumed too many characters.  We need to walk the
                 // source back to the point at which we had consumed an
                 // actual entity.
                 unconsumeCharacters(source, consumedCharacters);
                 consumedCharacters.clear();
-                const int length = entitySearch.lastMatch()->length;
-                const UChar* reference = entitySearch.lastMatch()->entity;
+                const int length = entitySearch.mostRecentMatch()->length;
+                const UChar* reference = entitySearch.mostRecentMatch()->entity;
                 for (int i = 0; i < length; ++i) {
                     cc = *source;
                     ASSERT_UNUSED(reference, cc == *reference++);
@@ -218,10 +218,10 @@ unsigned consumeHTMLEntity(SegmentedString& source, bool& notEnoughCharacters, U
                 }
                 cc = *source;
             }
-            if (entitySearch.lastMatch()->lastCharacter() == ';')
-                return entitySearch.lastMatch()->value;
+            if (entitySearch.mostRecentMatch()->lastCharacter() == ';')
+                return entitySearch.mostRecentMatch()->value;
             if (!additionalAllowedCharacter || !(isAlphaNumeric(cc) || cc == '='))
-                return entitySearch.lastMatch()->value;
+                return entitySearch.mostRecentMatch()->value;
             unconsumeCharacters(source, consumedCharacters);
             return 0;
         }

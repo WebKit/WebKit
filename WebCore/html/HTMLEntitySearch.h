@@ -38,11 +38,11 @@ public:
 
     void advance(UChar);
 
-    bool isEntityPrefix() const { return !!m_start; }
+    bool isEntityPrefix() const { return !!m_first; }
     int currentValue() const { return m_currentValue; }
     int currentLength() const { return m_currentLength; }
 
-    const HTMLEntityTableEntry* lastMatch() const { return m_lastMatch; }
+    const HTMLEntityTableEntry* mostRecentMatch() const { return m_mostRecentMatch; }
 
 private:
     enum CompareResult {
@@ -52,22 +52,22 @@ private:
     };
 
     CompareResult compare(const HTMLEntityTableEntry*, UChar) const;
-    const HTMLEntityTableEntry* findStart(UChar) const;
-    const HTMLEntityTableEntry* findEnd(UChar) const;
+    const HTMLEntityTableEntry* findFirst(UChar) const;
+    const HTMLEntityTableEntry* findLast(UChar) const;
 
     void fail()
     {
         m_currentValue = 0;
-        m_start = 0;
-        m_end = 0;
+        m_first = 0;
+        m_last = 0;
     }
 
     int m_currentLength;
     int m_currentValue;
 
-    const HTMLEntityTableEntry* m_lastMatch;
-    const HTMLEntityTableEntry* m_start;
-    const HTMLEntityTableEntry* m_end;
+    const HTMLEntityTableEntry* m_mostRecentMatch;
+    const HTMLEntityTableEntry* m_first;
+    const HTMLEntityTableEntry* m_last;
 };
 
 }

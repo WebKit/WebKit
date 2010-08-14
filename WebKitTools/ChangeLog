@@ -1,3 +1,14 @@
+2010-08-13  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Rename some concepts in HTML entity search to be more self-documenting
+        https://bugs.webkit.org/show_bug.cgi?id=44004
+
+        Reflect name change in generator script.
+
+        * Scripts/create-html-entity-table:
+
 2010-08-12  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
