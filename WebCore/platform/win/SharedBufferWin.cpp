@@ -29,6 +29,7 @@
 
 #include "config.h"
 #include "SharedBuffer.h"
+#include <wtf/text/CString.h>
 
 // INVALID_FILE_SIZE is not defined on WinCE.
 #ifndef INVALID_FILE_SIZE
