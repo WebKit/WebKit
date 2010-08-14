@@ -18676,6 +18676,7 @@
 				A8A563B411DB3D10003AC2F0 /* HTMLElementStack.h in Headers */,
 				A871D45C0A127CBC00B12A68 /* HTMLEmbedElement.h in Headers */,
 				976E896111C0CA3A00EA9CA9 /* HTMLEntityParser.h in Headers */,
+				A8BC044F1214EB2B00B5F122 /* HTMLEntitySearch.h in Headers */,
 				A81369D4097374F600D74463 /* HTMLFieldSetElement.h in Headers */,
 				A8CFF7A60A156978000A4234 /* HTMLFontElement.h in Headers */,
 				A8A564A511DC0E59003AC2F0 /* HTMLFormattingElementList.h in Headers */,
@@ -19983,6 +19984,7 @@
 				BCE658FF0EA9248A007E4533 /* Theme.h in Headers */,
 				BCE659E60EA92FB2007E4533 /* ThemeMac.h in Headers */,
 				BCE659A90EA927B9007E4533 /* ThemeTypes.h in Headers */,
+				2EED57FE1214A9C2007656BB /* ThreadableBlobRegistry.h in Headers */,
 				0B90561B0F2578BF0095FF6A /* ThreadableLoader.h in Headers */,
 				0B90561C0F2578BF0095FF6A /* ThreadableLoaderClient.h in Headers */,
 				5112247410CFB8D8008099D7 /* ThreadableWebSocketChannel.h in Headers */,
@@ -20173,8 +20175,6 @@
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				97DD4D870FDF4D6E00ECF9A4 /* XSSAuditor.h in Headers */,
 				CE172E011136E8CE0062A533 /* ZoomMode.h in Headers */,
-				2EED57FE1214A9C2007656BB /* ThreadableBlobRegistry.h in Headers */,
-				A8BC044F1214EB2B00B5F122 /* HTMLEntitySearch.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -21137,6 +21137,8 @@
 				A8A563B511DB3D10003AC2F0 /* HTMLElementStack.cpp in Sources */,
 				A871D45F0A127CBC00B12A68 /* HTMLEmbedElement.cpp in Sources */,
 				976E896011C0CA3A00EA9CA9 /* HTMLEntityParser.cpp in Sources */,
+				A8BC044E1214EB2A00B5F122 /* HTMLEntitySearch.cpp in Sources */,
+				A8BC04921214F69600B5F122 /* HTMLEntityTable.cpp in Sources */,
 				A81369D5097374F600D74463 /* HTMLFieldSetElement.cpp in Sources */,
 				A8CFF7A20A156978000A4234 /* HTMLFontElement.cpp in Sources */,
 				A8A564A611DC0E59003AC2F0 /* HTMLFormattingElementList.cpp in Sources */,
@@ -22441,6 +22443,7 @@
 				B2C3DA4A0D006C1D00EF6F26 /* TextStream.cpp in Sources */,
 				BCE65D320EAD1211007E4533 /* Theme.cpp in Sources */,
 				BCE659E90EA92FFA007E4533 /* ThemeMac.mm in Sources */,
+				2EED57FD1214A9C2007656BB /* ThreadableBlobRegistry.cpp in Sources */,
 				0B90561E0F257E930095FF6A /* ThreadableLoader.cpp in Sources */,
 				5112247210CFB8C6008099D7 /* ThreadableWebSocketChannel.cpp in Sources */,
 				51DF6D800B92A18E00C2DC85 /* ThreadCheck.mm in Sources */,
@@ -22601,9 +22604,6 @@
 				93F19B0508245E59001E9ABC /* XSLTProcessorLibxslt.cpp in Sources */,
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				97DD4D860FDF4D6E00ECF9A4 /* XSSAuditor.cpp in Sources */,
-				2EED57FD1214A9C2007656BB /* ThreadableBlobRegistry.cpp in Sources */,
-				A8BC044E1214EB2A00B5F122 /* HTMLEntitySearch.cpp in Sources */,
-				A8BC04921214F69600B5F122 /* HTMLEntityTable.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
