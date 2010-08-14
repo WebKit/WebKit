@@ -142,11 +142,11 @@ layer at (0,0) size 785x1308
                     text run at (109,11) width 602: "Table displaying Header \"CENTER \"& Data \"LEFT\" default horizontal row alignment"
                 RenderText {#text} at (711,11) size 4x18
                   text run at (711,11) width 4: " "
-                RenderInline {FONT} at (0,0) size 401x31
-                  RenderInline {I} at (0,0) size 401x31
-                    RenderText {#text} at (715,13) size 401x31
+                RenderInline {FONT} at (0,0) size 396x31
+                  RenderInline {I} at (0,0) size 396x31
+                    RenderText {#text} at (715,13) size 396x31
                       text run at (715,13) width 34: "(using"
-                      text run at (348,29) width 67: "&ltTR> tag)"
+                      text run at (353,29) width 56: "<TR> tag)"
                 RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,631) size 769x70
         RenderTable {TABLE} at (0,0) size 346x70 [bgcolor=#FFE4C4] [border: (1px outset #808080)]
@@ -188,11 +188,11 @@ layer at (0,0) size 785x1308
                     text run at (112,11) width 596: "Tables displaying Header & Data \"LEFT|CENTER|RIGHT\" horizontal row alignment"
                 RenderText {#text} at (708,11) size 4x18
                   text run at (708,11) width 4: " "
-                RenderInline {FONT} at (0,0) size 490x31
-                  RenderInline {I} at (0,0) size 490x31
-                    RenderText {#text} at (712,13) size 490x31
+                RenderInline {FONT} at (0,0) size 485x31
+                  RenderInline {I} at (0,0) size 485x31
+                    RenderText {#text} at (712,13) size 485x31
                       text run at (712,13) width 34: "(using"
-                      text run at (256,29) width 251: "&ltTR ALIGN=LEFT|CENTER|RIGHT> tag)"
+                      text run at (261,29) width 240: "<TR ALIGN=LEFT|CENTER|RIGHT> tag)"
                 RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,812) size 769x146
         RenderTable {TABLE} at (0,0) size 346x146 [bgcolor=#FFE4C4] [border: (1px outset #808080)]

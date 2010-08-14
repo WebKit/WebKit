@@ -259,8 +259,8 @@ decimal	hexadecimal	entity name	&#nnn;	&#xhhh;	&entity;
 8969	2309	rceil	⌉	⌉	⌉
 8970	230A	lfloor	⌊	⌊	⌊
 8971	230B	rfloor	⌋	⌋	⌋
-12296	3008	lang	〈	〈	〈
-12297	3009	rang	〉	〉	〉
+12296	3008	lang	〈	〈	⟨
+12297	3009	rang	〉	〉	⟩
 9674	25CA	loz	◊	◊	◊
 9824	2660	spades	♠	♠	♠
 9827	2663	clubs	♣	♣	♣
