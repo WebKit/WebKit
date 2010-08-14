@@ -1,3 +1,13 @@
+2010-08-14  Ariya Hidayat  <ariya@sencha.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Outdated pixel test reference for fast/box-shadow/transform-fringing.html
+        https://bugs.webkit.org/show_bug.cgi?id=44007
+
+        * platform/qt/fast/box-shadow/transform-fringing-expected.checksum:
+        * platform/qt/fast/box-shadow/transform-fringing-expected.png:
+
 2010-08-13  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
