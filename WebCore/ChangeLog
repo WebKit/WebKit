@@ -1,3 +1,14 @@
+2010-08-14  Tasuku Suzuki  <tasuku.suzuki@nokia.com>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] Fix compilation with QT_NO_LINEEDIT
+        https://bugs.webkit.org/show_bug.cgi?id=38324
+
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::convertValueToQVariant):
+        (JSC::Bindings::convertQVariantToValue):
+
 2010-08-14  Rob Buis  <rwlbuis@gmail.com>
 
         Reviewed by Dirk Schulze.
