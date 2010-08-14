@@ -52,25 +52,27 @@ public:
     bool hasScriptsWaitingForStylesheets() const { return m_hasScriptsWaitingForStylesheets; }
     bool executeScriptsWaitingForStylesheets();
 
-    bool isExecutingScript() { return !!m_scriptNestingLevel; }
+    bool isExecutingScript() const { return !!m_scriptNestingLevel; }
 
 private:
     Frame* frame() const;
 
+    void executeParsingBlockingScript();
+    void executePendingScriptAndDispatchEvent(PendingScript&);
+    void executeScript(Element*, const ScriptSourceCode&) const;
     bool haveParsingBlockingScript() const;
     bool executeParsingBlockingScripts();
-    void executePendingScript();
 
-    void requestScript(Element*);
+    void requestParsingBlockingScript(Element*);
+    bool requestPendingScript(PendingScript&, Element*) const;
+
     void runScript(Element*, int startingLineNumber);
 
     // Helpers for dealing with HTMLScriptRunnerHost
     void watchForLoad(PendingScript&);
     void stopWatchingForLoad(PendingScript&);
-    void executeScript(Element*, const ScriptSourceCode&);
-
     bool isPendingScriptReady(const PendingScript&);
-    ScriptSourceCode sourceFromPendingScript(const PendingScript&, bool& errorOccurred);
+    ScriptSourceCode sourceFromPendingScript(const PendingScript&, bool& errorOccurred) const;
 
     Document* m_document;
     HTMLScriptRunnerHost* m_host;

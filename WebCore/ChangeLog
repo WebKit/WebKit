@@ -1,3 +1,23 @@
+2010-08-13  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Refactor HTMLScriptRunner to allow deferred scripts to share code
+        https://bugs.webkit.org/show_bug.cgi?id=43736
+
+        No new tests because no functional change
+
+        * html/HTMLScriptRunner.cpp:
+        (WebCore::HTMLScriptRunner::sourceFromPendingScript): Make const to enforce the idea that it doesn't change m_parsingBlockingScript.
+        (WebCore::HTMLScriptRunner::executeParsingBlockingScript): Rename to make it clear this deals with the parsing blocking script and refactor to use executePendingScriptAndDispatchEvent.
+        (WebCore::HTMLScriptRunner::executePendingScriptAndDispatchEvent): Factored out of executePendingScript, this can be used for executing any external script.
+        (WebCore::HTMLScriptRunner::executeScript): This can be used for executing any inline or external script. ASSERTs moved to the two calling points.
+        (WebCore::HTMLScriptRunner::executeParsingBlockingScripts): Moved method.
+        (WebCore::HTMLScriptRunner::requestParsingBlockingScript): Factored out requestPendingScript.
+        (WebCore::HTMLScriptRunner::requestPendingScript): Factored out from reqeustParsingBlockingScript.
+        (WebCore::HTMLScriptRunner::runScript):
+        * html/HTMLScriptRunner.h:
+
 2010-08-13  Gavin Barraclough  <barraclough@apple.com>
 
         Windows build fix.
