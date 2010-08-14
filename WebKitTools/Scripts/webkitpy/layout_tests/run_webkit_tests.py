@@ -53,6 +53,7 @@ import logging
 import math
 import optparse
 import os
+import pdb
 import platform
 import Queue
 import random
@@ -629,35 +630,12 @@ class TestRunner:
         """Returns whether we should run all the tests in the main thread."""
         return int(self._options.child_processes) == 1
 
-    def _dump_thread_states(self):
-        for thread_id, stack in sys._current_frames().items():
-            # FIXME: Python 2.6 has thread.ident which we could
-            # use to map from thread_id back to thread.name
-            print "\n# Thread: %d" % thread_id
-            for filename, lineno, name, line in traceback.extract_stack(stack):
-                print 'File: "%s", line %d, in %s' % (filename, lineno, name)
-                if line:
-                    print "  %s" % (line.strip())
-
-    def _dump_thread_states_if_necessary(self):
-        # HACK: Dump thread states every minute to figure out what's
-        # hanging on the bots.
-        if not self._options.verbose:
-            return
-        dump_threads_every = 60  # Dump every minute
-        if not self._last_thread_dump:
-            self._last_thread_dump = time.time()
-        time_since_last_dump = time.time() - self._last_thread_dump
-        if  time_since_last_dump > dump_threads_every:
-            self._dump_thread_states()
-            self._last_thread_dump = time.time()
-
     def _run_tests(self, file_list, result_summary):
         """Runs the tests in the file_list.
 
-        Return: A tuple (failures, thread_timings, test_timings,
+        Return: A tuple (keyboard_interrupted, thread_timings, test_timings,
             individual_test_timings)
-            failures is a map from test to list of failure types
+            keyboard_interrupted is whether someone typed Ctrl^C
             thread_timings is a list of dicts with the total runtime
               of each thread with 'name', 'num_tests', 'total_time' properties
             test_timings is a list of timings for each sharded subdirectory
@@ -676,44 +654,55 @@ class TestRunner:
                                                              result_summary)
         self._printer.print_update("Starting testing ...")
 
-        # Wait for the threads to finish and collect test failures.
-        failures = {}
-        test_timings = {}
-        individual_test_timings = []
-        thread_timings = []
+        keyboard_interrupted = self._wait_for_threads_to_finish(threads,
+                                                                result_summary)
+        (thread_timings, test_timings, individual_test_timings) = \
+            self._collect_timing_info(threads)
+
+        return (keyboard_interrupted, thread_timings, test_timings,
+                individual_test_timings)
+
+    def _wait_for_threads_to_finish(self, threads, result_summary):
         keyboard_interrupted = False
         try:
             # Loop through all the threads waiting for them to finish.
-            for thread in threads:
-                # FIXME: We'll end up waiting on the first thread the whole
-                # time.  That means we won't notice exceptions on other
-                # threads until the first one exits.
-                # We should instead while True: in the outer loop
-                # and then loop through threads joining and checking
-                # isAlive and get_exception_info.  Exiting on any exception.
-                while thread.isAlive():
-                    # Wake the main thread every 0.1 seconds so we
-                    # can call update_summary in a timely fashion.
-                    thread.join(0.1)
-                    # HACK: Used for debugging threads on the bots.
-                    self._dump_thread_states_if_necessary()
-                    self.update_summary(result_summary)
+            some_thread_is_alive = True
+            while some_thread_is_alive:
+                some_thread_is_alive = False
+                t = time.time()
+                for thread in threads:
+                    exception_info = thread.exception_info()
+                    if exception_info is not None:
+                        # Re-raise the thread's exception here to make it
+                        # clear that testing was aborted. Otherwise,
+                        # the tests that did not run would be assumed
+                        # to have passed.
+                        raise (exception_info[0], exception_info[1],
+                               exception_info[2])
+
+                    if thread.isAlive():
+                        some_thread_is_alive = True
+                        next_timeout = thread.next_timeout()
+                        if (next_timeout and t > next_timeout):
+                            _log_wedged_thread(thread)
+                            thread.clear_next_timeout()
+
+                self.update_summary(result_summary)
+
+                if some_thread_is_alive:
+                    time.sleep(0.1)
 
         except KeyboardInterrupt:
             keyboard_interrupted = True
             for thread in threads:
                 thread.cancel()
 
-        if not keyboard_interrupted:
-            for thread in threads:
-                # Check whether a thread died before normal completion.
-                exception_info = thread.get_exception_info()
-                if exception_info is not None:
-                    # Re-raise the thread's exception here to make it clear
-                    # something went wrong. Otherwise, the tests that did not
-                    # run would be assumed to have passed.
-                    raise (exception_info[0], exception_info[1],
-                           exception_info[2])
+        return keyboard_interrupted
+
+    def _collect_timing_info(self, threads):
+        test_timings = {}
+        individual_test_timings = []
+        thread_timings = []
 
         for thread in threads:
             thread_timings.append({'name': thread.getName(),
@@ -721,8 +710,8 @@ class TestRunner:
                                    'total_time': thread.get_total_time()})
             test_timings.update(thread.get_directory_timing_stats())
             individual_test_timings.extend(thread.get_test_results())
-        return (keyboard_interrupted, thread_timings, test_timings,
-                individual_test_timings)
+
+        return (thread_timings, test_timings, individual_test_timings)
 
     def needs_http(self):
         """Returns whether the test runner needs an HTTP server."""
@@ -1678,6 +1667,34 @@ def parse_args(args=None):
         options.verbose = True
 
     return options, args
+
+
+def _find_thread_stack(id):
+    """Returns a stack object that can be used to dump a stack trace for
+    the given thread id (or None if the id is not found)."""
+    for thread_id, stack in sys._current_frames().items():
+        if thread_id == id:
+            return stack
+    return None
+
+
+def _log_stack(stack):
+    """Log a stack trace to log.error()."""
+    for filename, lineno, name, line in traceback.extract_stack(stack):
+        _log.error('File: "%s", line %d, in %s' % (filename, lineno, name))
+        if line:
+            _log.error('  %s' % line.strip())
+
+
+def _log_wedged_thread(thread):
+    """Log information about the given thread state."""
+    id = thread.id()
+    stack = _find_thread_stack(id)
+    assert(stack is not None)
+    _log.error("")
+    _log.error("thread %s (%d) is wedged" % (thread.getName(), id))
+    _log_stack(stack)
+    _log.error("")
 
 
 def main():

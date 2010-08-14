@@ -30,13 +30,20 @@
 """Unit tests for run_webkit_tests."""
 
 import codecs
+import logging
 import os
+import pdb
+import Queue
 import sys
+import thread
+import time
+import threading
 import unittest
 
 from webkitpy.common import array_stream
 from webkitpy.layout_tests import port
 from webkitpy.layout_tests import run_webkit_tests
+from webkitpy.layout_tests.layout_package import dump_render_tree_thread
 
 from webkitpy.thirdparty.mock import Mock
 
@@ -90,6 +97,7 @@ class MainTest(unittest.TestCase):
             ['--platform', 'test', '--print-last-failures'])
         self.assertEqual(regular_output.get(), ['\n\n'])
         self.assertEqual(buildbot_output.get(), [])
+
 
 
 def _mocked_open(original_open, file_list):
@@ -190,6 +198,111 @@ class DryrunTest(unittest.TestCase):
         self.assertTrue(passing_run(['--platform', 'dryrun-mac',
                                      'fast/html']))
 
+
+class TestThread(dump_render_tree_thread.WatchableThread):
+    def __init__(self, started_queue, stopping_queue):
+        dump_render_tree_thread.WatchableThread.__init__(self)
+        self._started_queue = started_queue
+        self._stopping_queue = stopping_queue
+        self._timeout = False
+        self._timeout_queue = Queue.Queue()
+
+    def run(self):
+        self._thread_id = thread.get_ident()
+        try:
+            self._started_queue.put('')
+            msg = self._stopping_queue.get()
+            if msg == 'KeyboardInterrupt':
+                raise KeyboardInterrupt
+            elif msg == 'Exception':
+                raise ValueError()
+            elif msg == 'Timeout':
+                self._timeout = True
+                self._timeout_queue.get()
+        except:
+            self._exception_info = sys.exc_info()
+
+    def next_timeout(self):
+        if self._timeout:
+            self._timeout_queue.put('done')
+            return time.time() - 10
+        return time.time()
+
+
+class TestHandler(logging.Handler):
+    def __init__(self, astream):
+        logging.Handler.__init__(self)
+        self._stream = astream
+
+    def emit(self, record):
+        self._stream.write(self.format(record))
+
+
+class WaitForThreadsToFinishTest(unittest.TestCase):
+    class MockTestRunner(run_webkit_tests.TestRunner):
+        def __init__(self):
+            pass
+
+        def __del__(self):
+            pass
+
+        def update_summary(self, result_summary):
+            pass
+
+    def run_one_thread(self, msg):
+        runner = self.MockTestRunner()
+        starting_queue = Queue.Queue()
+        stopping_queue = Queue.Queue()
+        child_thread = TestThread(starting_queue, stopping_queue)
+        child_thread.start()
+        started_msg = starting_queue.get()
+        stopping_queue.put(msg)
+        threads = [child_thread]
+        return runner._wait_for_threads_to_finish(threads, None)
+
+    def test_basic(self):
+        interrupted = self.run_one_thread('')
+        self.assertFalse(interrupted)
+
+    def test_interrupt(self):
+        interrupted = self.run_one_thread('KeyboardInterrupt')
+        self.assertTrue(interrupted)
+
+    def test_timeout(self):
+        interrupted = self.run_one_thread('Timeout')
+        self.assertFalse(interrupted)
+
+    def test_exception(self):
+        self.assertRaises(ValueError, self.run_one_thread, 'Exception')
+
+
+class StandaloneFunctionsTest(unittest.TestCase):
+    def test_log_wedged_thread(self):
+        logger = run_webkit_tests._log
+        astream = array_stream.ArrayStream()
+        handler = TestHandler(astream)
+        logger.addHandler(handler)
+
+        starting_queue = Queue.Queue()
+        stopping_queue = Queue.Queue()
+        child_thread = TestThread(starting_queue, stopping_queue)
+        child_thread.start()
+        msg = starting_queue.get()
+
+        run_webkit_tests._log_wedged_thread(child_thread)
+        stopping_queue.put('')
+        child_thread.join(timeout=1.0)
+
+        self.assertFalse(astream.empty())
+        self.assertFalse(child_thread.isAlive())
+
+    def test_find_thread_stack(self):
+        id, stack = sys._current_frames().items()[0]
+        found_stack = run_webkit_tests._find_thread_stack(id)
+        self.assertNotEqual(found_stack, None)
+
+        found_stack = run_webkit_tests._find_thread_stack(0)
+        self.assertEqual(found_stack, None)
 
 if __name__ == '__main__':
     unittest.main()

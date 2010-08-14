@@ -1,3 +1,23 @@
+2010-08-13  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Rewrite new-run-webkit-test's wait_for_threads_to_finish loop to
+        check for exceptions on all threads, not just the first thread.
+        
+        This change also changes the logging behavior for wedged threads
+        to only dump the stacks of threads that are actually wedged.
+
+        Refactor the thread classes in the dump_render_tree_thread module
+        to make the contract between TestRunner and TestShellThread clearer.
+
+        Added a bunch of unit tests.
+        https://bugs.webkit.org/show_bug.cgi?id=38561
+
+        * Scripts/webkitpy/layout_tests/layout_package/dump_render_tree_thread.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+
 2010-08-13  Kenichi Ishibashi  <bashi@google.com>
 
         Reviewed by Shinichiro Hamaji.
