@@ -1,3 +1,12 @@
+2010-08-14  Patrick Gansterer  <paroga@paroga.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [CMake] Set target properties only if available
+        https://bugs.webkit.org/show_bug.cgi?id=43978
+
+        * CMakeLists.txt:
+
 2010-08-14  Dirk Schulze  <krit@webkit.org>
 
         Unreviewed sort of Xcode project file.
