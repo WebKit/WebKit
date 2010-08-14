@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
 <script src="../../fast/js/resources/js-test-pre.js"></script>
 </head>
-<body>
+<body onload="runTest()">
 <p>Test to NOT save state for non-edited controls</p>
 <div id="console"></div>
 
@@ -27,34 +27,37 @@ function makeForm(parent, buttonValue, hiddenValue, imageValue, resetValue, subm
         + '</form>';
 }
 
-var parent = document.getElementById('parent');
-var state = document.getElementById('emptyOnFirstVisit');
-if (!state.value) {
-    // First visit.
-    if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
-    state.value = 'visited';
-    makeForm(parent, '1', '1', '1', '1', '1', '1', '1', '1');
-
-    document.getElementById('text1').value = 'edit';
-    // Submit form in a timeout to make sure that we create a new back/forward list item.            
-    setTimeout(function() {document.getElementById('form1').submit();}, 0);
-} else {
-    // Second visit.
-    makeForm(parent, '2', '2', '2', '2', '2', '2', '2', '2');
-
-    shouldBe('document.getElementById("button").value', '"2"');
-    shouldBe('document.getElementById("hidden").value', '"2"');
-    shouldBe('document.getElementById("image").value', '"2"');
-    shouldBe('document.getElementById("reset").value', '"2"');
-    shouldBe('document.getElementById("submit1").value', '"2"');
-    shouldBe('document.getElementById("text1").value', '"edit"');
-    shouldBe('document.getElementById("text2").value', '"2"');
-    shouldBe('document.getElementById("textarea").value', '"2"');
-
-    parent.innerHTML = '';
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+function runTest()
+{
+    var parent = document.getElementById('parent');
+    var state = document.getElementById('emptyOnFirstVisit');
+    if (!state.value) {
+        // First visit.
+        if (window.layoutTestController)
+            layoutTestController.waitUntilDone();
+        state.value = 'visited';
+        makeForm(parent, '1', '1', '1', '1', '1', '1', '1', '1');
+    
+        document.getElementById('text1').value = 'edit';
+        // Submit form in a timeout to make sure that we create a new back/forward list item.            
+        setTimeout(function() {document.getElementById('form1').submit();}, 0);
+    } else {
+        // Second visit.
+        makeForm(parent, '2', '2', '2', '2', '2', '2', '2', '2');
+    
+        shouldBe('document.getElementById("button").value', '"2"');
+        shouldBe('document.getElementById("hidden").value', '"2"');
+        shouldBe('document.getElementById("image").value', '"2"');
+        shouldBe('document.getElementById("reset").value', '"2"');
+        shouldBe('document.getElementById("submit1").value', '"2"');
+        shouldBe('document.getElementById("text1").value', '"edit"');
+        shouldBe('document.getElementById("text2").value', '"2"');
+        shouldBe('document.getElementById("textarea").value', '"2"');
+    
+        parent.innerHTML = '';
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }
 }
 </script>
 </body>
