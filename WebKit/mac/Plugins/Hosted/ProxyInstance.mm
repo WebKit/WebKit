@@ -337,7 +337,7 @@ MethodList ProxyInstance::methodsNamed(const Identifier& identifier)
         return methodList;
     }
     
-    uint64_t methodName = reinterpret_cast<uint64_t>(_NPN_GetStringIdentifier(identifier.ascii()));
+    uint64_t methodName = reinterpret_cast<uint64_t>(_NPN_GetStringIdentifier(identifier.ascii().data()));
     uint32_t requestID = m_instanceProxy->nextRequestID();
     
     if (_WKPHNPObjectHasMethod(m_instanceProxy->hostProxy()->port(),
@@ -373,7 +373,7 @@ Field* ProxyInstance::fieldNamed(const Identifier& identifier)
     if (existingMapEntry != m_fields.end())
         return existingMapEntry->second;
     
-    uint64_t propertyName = reinterpret_cast<uint64_t>(_NPN_GetStringIdentifier(identifier.ascii()));
+    uint64_t propertyName = reinterpret_cast<uint64_t>(_NPN_GetStringIdentifier(identifier.ascii().data()));
     uint32_t requestID = m_instanceProxy->nextRequestID();
     
     if (_WKPHNPObjectHasProperty(m_instanceProxy->hostProxy()->port(),

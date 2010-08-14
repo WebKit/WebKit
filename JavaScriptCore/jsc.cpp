@@ -392,9 +392,9 @@ static bool runWithScripts(GlobalObject* globalObject, const Vector<Script>& scr
         success = success && completion.complType() != Throw;
         if (dump) {
             if (completion.complType() == Throw)
-                printf("Exception: %s\n", completion.value().toString(globalObject->globalExec()).ascii());
+                printf("Exception: %s\n", completion.value().toString(globalObject->globalExec()).utf8().data());
             else
-                printf("End: %s\n", completion.value().toString(globalObject->globalExec()).ascii());
+                printf("End: %s\n", completion.value().toString(globalObject->globalExec()).utf8().data());
         }
 
         globalData->stopSampling();
@@ -440,7 +440,7 @@ static void runInteractive(GlobalObject* globalObject)
         Completion completion = evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), makeSource(line.data(), interpreterName));
 #endif
         if (completion.complType() == Throw)
-            printf("Exception: %s\n", completion.value().toString(globalObject->globalExec()).ascii());
+            printf("Exception: %s\n", completion.value().toString(globalObject->globalExec()).utf8().data());
         else
             printf("%s\n", completion.value().toString(globalObject->globalExec()).utf8().data());
 

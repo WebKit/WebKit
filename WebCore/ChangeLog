@@ -1,3 +1,28 @@
+2010-08-13  Gavin Barraclough  <barraclough@apple.com>
+
+        Rubber stamped by Sam Weinig.
+        Switch String::/UString::ascii() to return a CString.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/c/c_class.cpp:
+        (JSC::Bindings::CClass::methodsNamed):
+        (JSC::Bindings::CClass::fieldNamed):
+        * bridge/jni/jsc/JNIBridgeJSC.cpp:
+        (JavaField::valueFromInstance):
+        (JavaField::setValueToInstance):
+        * bridge/jni/jsc/JavaInstanceJSC.cpp:
+        (JavaInstance::invokeMethod):
+        * bridge/objc/objc_class.mm:
+        (JSC::Bindings::ObjcClass::methodsNamed):
+        (JSC::Bindings::ObjcClass::fieldNamed):
+        * bridge/objc/objc_instance.mm:
+        (ObjcInstance::setValueOfUndefinedField):
+        (ObjcInstance::getValueOfUndefinedField):
+        * loader/icon/IconRecord.cpp:
+        * platform/sql/SQLiteDatabase.cpp:
+        * platform/sql/SQLiteStatement.cpp:
+        * storage/SQLStatement.cpp:
+
 2010-08-13  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Dimitri Glazkov.

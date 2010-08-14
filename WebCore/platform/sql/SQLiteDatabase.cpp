@@ -33,6 +33,7 @@
 #include "SQLiteStatement.h"
 #include <sqlite3.h>
 #include <wtf/Threading.h>
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 

@@ -306,8 +306,6 @@ public:
     PassRefPtr<StringImpl> replace(StringImpl*, StringImpl*);
     PassRefPtr<StringImpl> replace(unsigned index, unsigned len, StringImpl*);
 
-    Vector<char> ascii();
-
     WTF::Unicode::Direction defaultWritingDirection();
 
 #if PLATFORM(CF)

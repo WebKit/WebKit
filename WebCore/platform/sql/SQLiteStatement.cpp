@@ -30,6 +30,7 @@
 #include "SQLValue.h"
 #include <sqlite3.h>
 #include <wtf/Assertions.h>
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 

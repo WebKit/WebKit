@@ -39,6 +39,7 @@
 #include "SQLStatementErrorCallback.h"
 #include "SQLTransaction.h"
 #include "SQLValue.h"
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 

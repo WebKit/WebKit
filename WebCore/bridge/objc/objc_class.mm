@@ -78,11 +78,11 @@ MethodList ObjcClass::methodsNamed(const Identifier& identifier, Instance*) cons
     MethodList methodList;
     char fixedSizeBuffer[1024];
     char* buffer = fixedSizeBuffer;
-    const char* JSName = identifier.ascii();
-    if (!convertJSMethodNameToObjc(JSName, buffer, sizeof(fixedSizeBuffer))) {
-        int length = strlen(JSName) + 1;
+    CString jsName = identifier.ascii();
+    if (!convertJSMethodNameToObjc(jsName.data(), buffer, sizeof(fixedSizeBuffer))) {
+        int length = jsName.length() + 1;
         buffer = new char[length];
-        if (!buffer || !convertJSMethodNameToObjc(JSName, buffer, length))
+        if (!buffer || !convertJSMethodNameToObjc(jsName.data(), buffer, length))
             return methodList;
     }
 
@@ -153,8 +153,8 @@ Field* ObjcClass::fieldNamed(const Identifier& identifier, Instance* instance) c
 {
     ClassStructPtr thisClass = _isa;
 
-    const char* name = identifier.ascii();
-    RetainPtr<CFStringRef> fieldName(AdoptCF, CFStringCreateWithCString(NULL, name, kCFStringEncodingASCII));
+    CString jsName = identifier.ascii();
+    RetainPtr<CFStringRef> fieldName(AdoptCF, CFStringCreateWithCString(NULL, jsName.data(), kCFStringEncodingASCII));
     Field* aField = (Field*)CFDictionaryGetValue(_fields.get(), fieldName.get());
     if (aField)
         return aField;
@@ -220,7 +220,7 @@ Field* ObjcClass::fieldNamed(const Identifier& identifier, Instance* instance) c
                     if ([thisClass respondsToSelector:@selector(webScriptNameForKey:)])
                         mappedName = [thisClass webScriptNameForKey:objcIvarName];
 
-                    if ((mappedName && [mappedName isEqual:(NSString*)fieldName.get()]) || strcmp(objcIvarName, name) == 0) {
+                    if ((mappedName && [mappedName isEqual:(NSString*)fieldName.get()]) || strcmp(objcIvarName, jsName.data()) == 0) {
                         aField = new ObjcField(objcIVar); // deleted when the dictionary is destroyed
                         CFDictionaryAddValue(_fields.get(), fieldName.get(), aField);
                         break;

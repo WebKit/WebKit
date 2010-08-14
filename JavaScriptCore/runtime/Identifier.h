@@ -50,7 +50,7 @@ namespace JSC {
         const UChar* characters() const { return m_string.characters(); }
         int length() const { return m_string.length(); }
         
-        const char* ascii() const { return m_string.ascii(); }
+        CString ascii() const { return m_string.ascii(); }
         
         static Identifier from(ExecState* exec, unsigned y);
         static Identifier from(ExecState* exec, int y);

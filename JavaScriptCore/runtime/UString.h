@@ -87,6 +87,8 @@ public:
         return m_impl->characters();
     }
 
+    CString ascii() const;
+    CString latin1() const;
     CString utf8(bool strict = false) const;
 
     UChar operator[](unsigned index) const
@@ -119,10 +121,6 @@ public:
     unsigned rfind(UChar, unsigned pos) const;
 
     UString substr(unsigned pos = 0, unsigned len = 0xFFFFFFFF) const;
-
-    // NOTE: This method should only be used for *debugging* purposes as it
-    // is neither Unicode safe nor free from side effects nor thread-safe.
-    char* ascii() const;
 
 private:
     RefPtr<StringImpl> m_impl;

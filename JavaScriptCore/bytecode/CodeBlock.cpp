@@ -353,7 +353,7 @@ void CodeBlock::dump(ExecState* exec) const
         printf("\nIdentifiers:\n");
         size_t i = 0;
         do {
-            printf("  id%u = %s\n", static_cast<unsigned>(i), m_identifiers[i].ascii());
+            printf("  id%u = %s\n", static_cast<unsigned>(i), m_identifiers[i].ustring().utf8().data());
             ++i;
         } while (i != m_identifiers.size());
     }
@@ -363,7 +363,7 @@ void CodeBlock::dump(ExecState* exec) const
         unsigned registerIndex = m_numVars;
         size_t i = 0;
         do {
-            printf("   k%u = %s\n", registerIndex, valueToSourceString(exec, m_constantRegisters[i].jsValue()).ascii());
+            printf("   k%u = %s\n", registerIndex, valueToSourceString(exec, m_constantRegisters[i].jsValue()).utf8().data());
             ++i;
             ++registerIndex;
         } while (i < m_constantRegisters.size());
@@ -373,7 +373,7 @@ void CodeBlock::dump(ExecState* exec) const
         printf("\nm_regexps:\n");
         size_t i = 0;
         do {
-            printf("  re%u = %s\n", static_cast<unsigned>(i), regexpToSourceString(m_rareData->m_regexps[i].get()).ascii());
+            printf("  re%u = %s\n", static_cast<unsigned>(i), regexpToSourceString(m_rareData->m_regexps[i].get()).utf8().data());
             ++i;
         } while (i < m_rareData->m_regexps.size());
     }
@@ -454,7 +454,7 @@ void CodeBlock::dump(ExecState* exec) const
                     continue;
                 ASSERT(!((i + m_rareData->m_characterSwitchJumpTables[i].min) & ~0xFFFF));
                 UChar ch = static_cast<UChar>(entry + m_rareData->m_characterSwitchJumpTables[i].min);
-                printf("\t\t\"%s\" => %04d\n", UString(&ch, 1).ascii(), *iter);
+                printf("\t\t\"%s\" => %04d\n", UString(&ch, 1).utf8().data(), *iter);
         }
             printf("      }\n");
             ++i;
@@ -468,7 +468,7 @@ void CodeBlock::dump(ExecState* exec) const
             printf("  %1d = {\n", i);
             StringJumpTable::StringOffsetTable::const_iterator end = m_rareData->m_stringSwitchJumpTables[i].offsetTable.end();
             for (StringJumpTable::StringOffsetTable::const_iterator iter = m_rareData->m_stringSwitchJumpTables[i].offsetTable.begin(); iter != end; ++iter)
-                printf("\t\t\"%s\" => %04d\n", UString(iter->first).ascii(), iter->second.branchOffset);
+                printf("\t\t\"%s\" => %04d\n", UString(iter->first).utf8().data(), iter->second.branchOffset);
             printf("      }\n");
             ++i;
         } while (i < m_rareData->m_stringSwitchJumpTables.size());
@@ -714,7 +714,7 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             int r0 = (++it)->u.operand;
             JSValue scope = JSValue((++it)->u.jsCell);
             int id0 = (++it)->u.operand;
-            printf("[%4d] resolve_global\t %s, %s, %s\n", location, registerName(exec, r0).data(), valueToSourceString(exec, scope).ascii(), idName(id0, m_identifiers[id0]).data());
+            printf("[%4d] resolve_global\t %s, %s, %s\n", location, registerName(exec, r0).data(), valueToSourceString(exec, scope).utf8().data(), idName(id0, m_identifiers[id0]).data());
             it += 2;
             break;
         }
@@ -723,7 +723,7 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             JSValue scope = JSValue((++it)->u.jsCell);
             int id0 = (++it)->u.operand;
             int depth = it[2].u.operand;
-            printf("[%4d] resolve_global_dynamic\t %s, %s, %s, %d\n", location, registerName(exec, r0).data(), valueToSourceString(exec, scope).ascii(), idName(id0, m_identifiers[id0]).data(), depth);
+            printf("[%4d] resolve_global_dynamic\t %s, %s, %s, %d\n", location, registerName(exec, r0).data(), valueToSourceString(exec, scope).utf8().data(), idName(id0, m_identifiers[id0]).data(), depth);
             it += 3;
             break;
         }
@@ -745,14 +745,14 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             int r0 = (++it)->u.operand;
             JSValue scope = JSValue((++it)->u.jsCell);
             int index = (++it)->u.operand;
-            printf("[%4d] get_global_var\t %s, %s, %d\n", location, registerName(exec, r0).data(), valueToSourceString(exec, scope).ascii(), index);
+            printf("[%4d] get_global_var\t %s, %s, %d\n", location, registerName(exec, r0).data(), valueToSourceString(exec, scope).utf8().data(), index);
             break;
         }
         case op_put_global_var: {
             JSValue scope = JSValue((++it)->u.jsCell);
             int index = (++it)->u.operand;
             int r0 = (++it)->u.operand;
-            printf("[%4d] put_global_var\t %s, %d, %s\n", location, valueToSourceString(exec, scope).ascii(), index, registerName(exec, r0).data());
+            printf("[%4d] put_global_var\t %s, %d, %s\n", location, valueToSourceString(exec, scope).utf8().data(), index, registerName(exec, r0).data());
             break;
         }
         case op_resolve_base: {

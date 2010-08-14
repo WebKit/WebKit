@@ -1,5 +1,14 @@
 2010-08-13  Gavin Barraclough  <barraclough@apple.com>
 
+        Rubber stamped by Sam Weinig.
+        Switch String::/UString::ascii() to return a CString.
+
+        * Plugins/Hosted/ProxyInstance.mm:
+        (WebKit::ProxyInstance::methodsNamed):
+        (WebKit::ProxyInstance::fieldNamed):
+
+2010-08-13  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Sam Weinig
 
         Unify UString::UTF8String() & String::utf8() methods,

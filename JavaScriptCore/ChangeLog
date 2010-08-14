@@ -1,3 +1,35 @@
+2010-08-13  Gavin Barraclough  <barraclough@apple.com>
+
+        Rubber stamped by Sam Weinig.
+        Switch String::/UString::ascii() to return a CString.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        * bytecode/SamplingTool.cpp:
+        (JSC::SamplingTool::dump):
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::dumpCaller):
+        * jsc.cpp:
+        (runWithScripts):
+        (runInteractive):
+        * runtime/Identifier.h:
+        (JSC::Identifier::ascii):
+        * runtime/ScopeChain.cpp:
+        (JSC::ScopeChainNode::print):
+        * runtime/UString.cpp:
+        (JSC::UString::ascii):
+        (JSC::UString::latin1):
+        * runtime/UString.h:
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::asciiOLD):
+        * wtf/text/StringImpl.h:
+        * wtf/text/WTFString.cpp:
+        (WTF::String::ascii):
+        (WTF::String::latin1):
+        * wtf/text/WTFString.h:
+
 2010-08-13  Gabor Loki  <loki@webkit.org>
 
         Reviewed by Gavin Barraclough.

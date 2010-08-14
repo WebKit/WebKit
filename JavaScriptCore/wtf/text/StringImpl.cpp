@@ -883,20 +883,6 @@ bool equalIgnoringNullity(StringImpl* a, StringImpl* b)
     return false;
 }
 
-Vector<char> StringImpl::ascii()
-{
-    Vector<char> buffer(m_length + 1);
-    for (unsigned i = 0; i != m_length; ++i) {
-        UChar c = m_data[i];
-        if ((c >= 0x20 && c < 0x7F) || c == 0x00)
-            buffer[i] = static_cast<char>(c);
-        else
-            buffer[i] = '?';
-    }
-    buffer[m_length] = '\0';
-    return buffer;
-}
-
 WTF::Unicode::Direction StringImpl::defaultWritingDirection()
 {
     for (unsigned i = 0; i < m_length; ++i) {

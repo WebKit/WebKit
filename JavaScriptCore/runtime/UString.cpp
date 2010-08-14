@@ -204,28 +204,6 @@ UString UString::number(double d)
     return UString(buffer, length);
 }
 
-char* UString::ascii() const
-{
-    static char* asciiBuffer = 0;
-
-    unsigned len = length();
-    unsigned neededSize = len + 1;
-    delete[] asciiBuffer;
-    asciiBuffer = new char[neededSize];
-
-    const UChar* p = characters();
-    char* q = asciiBuffer;
-    const UChar* limit = p + len;
-    while (p != limit) {
-        *q = static_cast<char>(p[0]);
-        ++p;
-        ++q;
-    }
-    *q = '\0';
-
-    return asciiBuffer;
-}
-
 static inline bool isInfinity(double number)
 {
     return number == Inf || number == -Inf;
@@ -581,6 +559,44 @@ bool operator>(const UString& s1, const UString& s2)
         return (c1[0] > c2[0]);
 
     return (l1 > l2);
+}
+
+CString UString::ascii() const
+{
+    // Basic Latin1 (ISO) encoding - Unicode characters 0..255 are
+    // preserved, characters outside of this range are converted to '?'.
+
+    unsigned length = this->length();
+    const UChar* characters = this->characters();
+
+    char* characterBuffer;
+    CString result = CString::newUninitialized(length, characterBuffer);
+
+    for (unsigned i = 0; i < length; ++i) {
+        UChar ch = characters[i];
+        characterBuffer[i] = ch && (ch < 0x20 || ch >= 0x7f) ? '?' : ch;
+    }
+
+    return result;
+}
+
+CString UString::latin1() const
+{
+    // Basic Latin1 (ISO) encoding - Unicode characters 0..255 are
+    // preserved, characters outside of this range are converted to '?'.
+
+    unsigned length = this->length();
+    const UChar* characters = this->characters();
+
+    char* characterBuffer;
+    CString result = CString::newUninitialized(length, characterBuffer);
+
+    for (unsigned i = 0; i < length; ++i) {
+        UChar ch = characters[i];
+        characterBuffer[i] = ch > 0xff ? '?' : ch;
+    }
+
+    return result;
 }
 
 // Helper to write a three-byte UTF-8 code point to the buffer, caller must check room is available.
