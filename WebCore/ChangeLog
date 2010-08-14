@@ -1,3 +1,20 @@
+2010-08-14  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        XSLTProcessor.transformToFragment should not pass contextElement to html/xml document parsers
+        https://bugs.webkit.org/show_bug.cgi?id=44017
+
+        This fixes two tests which otherwise would fail when the
+        HTML5 TreeBuilder is enabled for fragment parsing.
+
+        This revealed a bug in HTMLTreeBuilder() which I fixed as well.
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::HTMLTreeBuilder):
+        * xml/XSLTProcessor.cpp:
+        (WebCore::createFragmentFromSource):
+
 2010-08-14  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Ariya Hidayat.

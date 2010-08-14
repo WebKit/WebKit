@@ -412,13 +412,14 @@ HTMLTreeBuilder::HTMLTreeBuilder(HTMLTokenizer* tokenizer, DocumentFragment* fra
 {
     if (shouldUseLegacyTreeBuilder(fragment->document()))
         return;
-    // This is steps 2-6 of the HTML5 Fragment Case parsing algorithm:
-    // http://www.whatwg.org/specs/web-apps/current-work/multipage/the-end.html#fragment-case
-    if (contextElement)
+    if (contextElement) {
+        // Steps 4.2-4.6 of the HTML5 Fragment Case parsing algorithm:
+        // http://www.whatwg.org/specs/web-apps/current-work/multipage/the-end.html#fragment-case
         m_document->setParseMode(contextElement->document()->parseMode());
-    processFakeStartTag(htmlTag);
-    resetInsertionModeAppropriately();
-    m_tree.setForm(closestFormAncestor(contextElement));
+        processFakeStartTag(htmlTag);
+        resetInsertionModeAppropriately();
+        m_tree.setForm(closestFormAncestor(contextElement));
+    }
 }
 
 HTMLTreeBuilder::~HTMLTreeBuilder()
