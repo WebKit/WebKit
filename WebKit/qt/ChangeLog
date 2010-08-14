@@ -1,3 +1,15 @@
+2010-08-14  Adam Barth  <abarth@webkit.org>
+
+        Propagate name change to Qt.
+
+        * Api/qwebelement.cpp:
+        (QWebElement::appendInside):
+        (QWebElement::prependInside):
+        (QWebElement::prependOutside):
+        (QWebElement::appendOutside):
+        (QWebElement::encloseContentsWith):
+        (QWebElement::encloseWith):
+
 2010-08-12  Jeremy Orlow  <jorlow@chromium.org>
 
         Revert for now

@@ -970,7 +970,7 @@ void QWebElement::appendInside(const QString &markup)
         return;
 
     HTMLElement* htmlElement = static_cast<HTMLElement*>(m_element);
-    RefPtr<DocumentFragment> fragment = htmlElement->createContextualFragment(markup);
+    RefPtr<DocumentFragment> fragment = htmlElement->deprecatedCreateContextualFragment(markup);
 
     ExceptionCode exception = 0;
     m_element->appendChild(fragment, exception);
@@ -1016,7 +1016,7 @@ void QWebElement::prependInside(const QString &markup)
         return;
 
     HTMLElement* htmlElement = static_cast<HTMLElement*>(m_element);
-    RefPtr<DocumentFragment> fragment = htmlElement->createContextualFragment(markup);
+    RefPtr<DocumentFragment> fragment = htmlElement->deprecatedCreateContextualFragment(markup);
 
     ExceptionCode exception = 0;
 
@@ -1068,7 +1068,7 @@ void QWebElement::prependOutside(const QString &markup)
         return;
 
     HTMLElement* htmlElement = static_cast<HTMLElement*>(m_element);
-    RefPtr<DocumentFragment> fragment = htmlElement->createContextualFragment(markup);
+    RefPtr<DocumentFragment> fragment = htmlElement->deprecatedCreateContextualFragment(markup);
 
     ExceptionCode exception = 0;
     m_element->parent()->insertBefore(fragment, m_element, exception);
@@ -1118,7 +1118,7 @@ void QWebElement::appendOutside(const QString &markup)
         return;
 
     HTMLElement* htmlElement = static_cast<HTMLElement*>(m_element);
-    RefPtr<DocumentFragment> fragment = htmlElement->createContextualFragment(markup);
+    RefPtr<DocumentFragment> fragment = htmlElement->deprecatedCreateContextualFragment(markup);
 
     ExceptionCode exception = 0;
     if (!m_element->nextSibling())
@@ -1263,7 +1263,7 @@ void QWebElement::encloseContentsWith(const QString &markup)
         return;
 
     HTMLElement* htmlElement = static_cast<HTMLElement*>(m_element);
-    RefPtr<DocumentFragment> fragment = htmlElement->createContextualFragment(markup);
+    RefPtr<DocumentFragment> fragment = htmlElement->deprecatedCreateContextualFragment(markup);
 
     if (!fragment || !fragment->firstChild())
         return;
@@ -1338,7 +1338,7 @@ void QWebElement::encloseWith(const QString &markup)
         return;
 
     HTMLElement* htmlElement = static_cast<HTMLElement*>(m_element);
-    RefPtr<DocumentFragment> fragment = htmlElement->createContextualFragment(markup);
+    RefPtr<DocumentFragment> fragment = htmlElement->deprecatedCreateContextualFragment(markup);
 
     if (!fragment || !fragment->firstChild())
         return;
