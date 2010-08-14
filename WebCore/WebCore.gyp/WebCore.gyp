@@ -735,6 +735,9 @@
         '<(SHARED_INTERMEDIATE_DIR)/webkit/SVGNames.cpp',
         '<(SHARED_INTERMEDIATE_DIR)/webkit/MathMLNames.cpp',
 
+        # Generated from HTMLEntityNames.json
+        '<(SHARED_INTERMEDIATE_DIR)/webkit/HTMLEntityTable.cpp',
+
         # Additional .cpp files from the webcore_bindings_sources rules.
         '<(SHARED_INTERMEDIATE_DIR)/webkit/CSSGrammar.cpp',
         '<(SHARED_INTERMEDIATE_DIR)/webkit/XPathGrammar.cpp',
