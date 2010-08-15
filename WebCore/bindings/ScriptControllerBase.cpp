@@ -72,11 +72,18 @@ bool ScriptController::executeIfJavaScriptURL(const KURL& url, bool userGesture,
     if (!protocolIsJavaScript(url))
         return false;
 
-    if (m_frame->page() && !m_frame->page()->javaScriptURLsAreAllowed())
+    if (!m_frame->page())
+        return true;
+
+    if (!m_frame->page()->javaScriptURLsAreAllowed())
         return true;
 
     if (m_frame->inViewSourceMode())
         return true;
+
+    // We need to hold onto the Frame here because executing script can
+    // destroy the frame.
+    RefPtr<Frame> protector(m_frame);
 
     const int javascriptSchemeLength = sizeof("javascript:") - 1;
 
@@ -84,6 +91,11 @@ bool ScriptController::executeIfJavaScriptURL(const KURL& url, bool userGesture,
     ScriptValue result;
     if (xssAuditor()->canEvaluateJavaScriptURL(decodedURL))
         result = executeScript(decodedURL.substring(javascriptSchemeLength), userGesture, AllowXSS);
+
+    // If executing script caused this frame to be removed from the page, we
+    // don't want to try to replace its document!
+    if (!m_frame->page())
+        return true;
 
     String scriptResult;
 #if USE(JSC)

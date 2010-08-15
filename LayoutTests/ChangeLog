@@ -1,3 +1,16 @@
+2010-08-15  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Don't try to replace a non-existent document after executing JavaScript URLs
+        https://bugs.webkit.org/show_bug.cgi?id=44024
+
+        Test what happens if a JavaScript URL returns a value after deleting
+        the frame it was supposed to operate on.
+
+        * fast/frames/javascript-url-for-deleted-frame-expected.txt: Added.
+        * fast/frames/javascript-url-for-deleted-frame.html: Added.
+
 2010-08-14  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Some test results are one pixel different between the x86_64 and i386 bots

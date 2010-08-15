@@ -1,3 +1,19 @@
+2010-08-15  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Don't try to replace a non-existent document after executing JavaScript URLs
+        https://bugs.webkit.org/show_bug.cgi?id=44024
+
+        Synchronous JavaScript execution is evil.  Previously, the frame was
+        deleted after executing the JavaScript URL, so we'd get confused when
+        we tried to replace its document.
+
+        Test: fast/frames/javascript-url-for-deleted-frame.html
+
+        * bindings/ScriptControllerBase.cpp:
+        (WebCore::ScriptController::executeIfJavaScriptURL):
+
 2010-08-14  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r65374.
