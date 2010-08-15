@@ -1,3 +1,12 @@
+2010-08-15  Dan Bernstein  <mitz@apple.com>
+
+        Revised build fix from r65363 based on suggestion from Darin Adler.
+
+        * UIProcess/API/C/WKArray.h: Include stddef.h.
+        * UIProcess/API/C/WKBase.h: Uninclude ctype.h.
+        * UIProcess/API/C/WKData.h: Include stddef.h.
+        * UIProcess/API/C/WKDictionary.h: Ditto.
+
 2010-08-14  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson in Sweden.

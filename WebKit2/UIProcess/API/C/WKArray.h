@@ -28,6 +28,8 @@
 
 #include <WebKit2/WKBase.h>
 
+#include <stddef.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
