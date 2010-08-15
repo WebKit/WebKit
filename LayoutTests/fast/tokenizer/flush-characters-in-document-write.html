@@ -1,0 +1,16 @@
+<head>
+<script>
+if (window.layoutTestController) {
+  layoutTestController.dumpAsText();
+  layoutTestController.waitUntilDone();
+}
+
+function test() {
+  document.write("Should say SUCCESS:<p>SUCCESS");
+
+  setTimeout("layoutTestController.notifyDone()", 1);
+}
+</script>
+</head>
+<body onload="test()">
+</body>
