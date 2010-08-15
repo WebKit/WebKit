@@ -1,3 +1,13 @@
+2010-08-15  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Enable localStorage of HTML5 for WebKit EFL
+        https://bugs.webkit.org/show_bug.cgi?id=44020
+
+        * ewk/ewk_view.cpp: 
+        (_ewk_view_priv_new):
+
 2010-08-11  Rafael Antognolli  <antognolli@profusion.mobi>
 
         Reviewed by Kenneth Rohde Christiansen.

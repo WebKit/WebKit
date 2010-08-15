@@ -558,6 +558,7 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* sd)
     priv->page_settings->setStandardFontFamily("sans");
     priv->page_settings->setJavaScriptEnabled(true);
     priv->page_settings->setPluginsEnabled(true);
+    priv->page_settings->setLocalStorageEnabled(true);
 
     url = priv->page_settings->userStyleSheetLocation();
     priv->settings.user_stylesheet = eina_stringshare_add(url.prettyURL().utf8().data());
