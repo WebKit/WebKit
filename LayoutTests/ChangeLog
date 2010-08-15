@@ -1,3 +1,10 @@
+2010-08-14  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Some test results are one pixel different between the x86_64 and i386 bots
+        https://bugs.webkit.org/show_bug.cgi?id=39022
+
+        * platform/gtk/Skipped: Skip MathML tests which show 32-bit/64-bit rounding differences.
+
 2010-08-14  Rob Buis  <rwlbuis@gmail.com>
 
         Reviewed by Dirk Schulze.
