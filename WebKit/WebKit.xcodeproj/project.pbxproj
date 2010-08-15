@@ -329,6 +329,8 @@
 		ABDDF20D08EB0DDC001E1241 /* WebDownloadInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = ABDDF20C08EB0DDC001E1241 /* WebDownloadInternal.h */; };
 		B6CE5C24100BC5CE00219936 /* WebApplicationCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = B68049720FFBCEC1009F7F62 /* WebApplicationCache.mm */; };
 		B6CE5C25100BC5F500219936 /* WebApplicationCache.h in Headers */ = {isa = PBXBuildFile; fileRef = B68049710FFBCEC1009F7F62 /* WebApplicationCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		B804176F1217A83100466BAE /* WebInspectorFrontend.h in Headers */ = {isa = PBXBuildFile; fileRef = B804176D1217A83100466BAE /* WebInspectorFrontend.h */; };
+		B80417701217A83100466BAE /* WebInspectorFrontend.mm in Sources */ = {isa = PBXBuildFile; fileRef = B804176E1217A83100466BAE /* WebInspectorFrontend.mm */; };
 		BC26C69E10B743F400B687ED /* WebSerializedJSValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC26C69D10B743F400B687ED /* WebSerializedJSValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC26C6A510B7447A00B687ED /* WebSerializedJSValue.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC26C6A410B7447A00B687ED /* WebSerializedJSValue.mm */; };
 		BC2E464D0FD8A96800A9D9DE /* WebViewData.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2E464B0FD8A96800A9D9DE /* WebViewData.h */; };
@@ -625,6 +627,8 @@
 		ABDDF20C08EB0DDC001E1241 /* WebDownloadInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebDownloadInternal.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		B68049710FFBCEC1009F7F62 /* WebApplicationCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebApplicationCache.h; sourceTree = "<group>"; };
 		B68049720FFBCEC1009F7F62 /* WebApplicationCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebApplicationCache.mm; sourceTree = "<group>"; };
+		B804176D1217A83100466BAE /* WebInspectorFrontend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebInspectorFrontend.h; sourceTree = "<group>"; };
+		B804176E1217A83100466BAE /* WebInspectorFrontend.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebInspectorFrontend.mm; sourceTree = "<group>"; };
 		BC26C69D10B743F400B687ED /* WebSerializedJSValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSerializedJSValue.h; sourceTree = "<group>"; };
 		BC26C6A410B7447A00B687ED /* WebSerializedJSValue.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebSerializedJSValue.mm; sourceTree = "<group>"; };
 		BC2E464B0FD8A96800A9D9DE /* WebViewData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebViewData.h; sourceTree = "<group>"; };
@@ -871,6 +875,8 @@
 				5D7BF8120C2A1D90008CE06D /* WebInspector.h */,
 				5D7BF8130C2A1D90008CE06D /* WebInspector.mm */,
 				7A8FF0D01075024A00A80A08 /* WebInspectorPrivate.h */,
+				B804176D1217A83100466BAE /* WebInspectorFrontend.h */,
+				B804176E1217A83100466BAE /* WebInspectorFrontend.mm */,
 				1C68F663095B5FC100C2984E /* WebNodeHighlight.h */,
 				1C68F664095B5FC100C2984E /* WebNodeHighlight.mm */,
 				1C68F665095B5FC100C2984E /* WebNodeHighlightView.h */,
@@ -1575,6 +1581,7 @@
 				A5DEFC0F11D5343E00885273 /* WebDatabaseQuotaManager.h in Headers */,
 				A5DEFC1311D5344B00885273 /* WebApplicationCacheQuotaManager.h in Headers */,
 				A57E2F24120749E600048DF3 /* WebQuotaManager.h in Headers */,
+				B804176F1217A83100466BAE /* WebInspectorFrontend.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1937,6 +1944,7 @@
 				A5DEFC0A11D5331C00885273 /* WebSecurityOrigin.mm in Sources */,
 				A5DEFC1011D5343E00885273 /* WebDatabaseQuotaManager.mm in Sources */,
 				A5DEFC1411D5344B00885273 /* WebApplicationCacheQuotaManager.mm in Sources */,
+				B80417701217A83100466BAE /* WebInspectorFrontend.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -33,6 +33,8 @@
 #import "WebFrameInternal.h"
 #import "WebFrameView.h"
 #import "WebInspector.h"
+#import "WebInspectorPrivate.h"
+#import "WebInspectorFrontend.h"
 #import "WebLocalizableStrings.h"
 #import "WebNodeHighlight.h"
 #import "WebUIDelegate.h"
@@ -98,8 +100,12 @@ void WebInspectorClient::openInspectorFrontend(InspectorController* inspectorCon
 {
     RetainPtr<WebInspectorWindowController> windowController(AdoptNS, [[WebInspectorWindowController alloc] initWithInspectedWebView:m_webView]);
     [windowController.get() setInspectorClient:this];
+
     m_frontendPage = core([windowController.get() webView]);
-    m_frontendPage->inspectorController()->setInspectorFrontendClient(new WebInspectorFrontendClient(m_webView, windowController.get(), inspectorController, m_frontendPage));
+    WebInspectorFrontendClient* frontendClient = new WebInspectorFrontendClient(m_webView, windowController.get(), inspectorController, m_frontendPage);
+    m_frontendPage->inspectorController()->setInspectorFrontendClient(frontendClient);
+
+    [[m_webView inspector] setFrontend:[[WebInspectorFrontend alloc] initWithFrontendClient:frontendClient]];
 }
 
 void WebInspectorClient::highlight(Node* node)

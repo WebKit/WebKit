@@ -29,10 +29,12 @@
 #import <Foundation/NSObject.h>
 
 @class WebView;
+@class WebInspectorFrontend;
 
 @interface WebInspector : NSObject
 {
     WebView *_webView;
+    WebInspectorFrontend *_frontend;
 }
 - (id)initWithWebView:(WebView *)webView;
 - (void)webViewClosed;

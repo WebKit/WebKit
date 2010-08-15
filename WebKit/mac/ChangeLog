@@ -1,3 +1,30 @@
+2010-08-14  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: -[WebInspector attach] and detach should work
+        https://bugs.webkit.org/show_bug.cgi?id=43924
+
+        For actions that relate only to the Web Inspector's Frontend
+        window (actions on the InspectorFrontendClient) the new Obj-C
+        wrapper class WebInspectorFrontend can be used. For now, this
+        is just attach and detach.
+
+        * WebCoreSupport/WebInspectorClient.mm:
+        (WebInspectorClient::openInspectorFrontend): setup and attach the WebInspectorFrontend to the WebInspector.
+        * WebInspector/WebInspector.h:
+        * WebInspector/WebInspector.mm:
+        (-[WebInspector dealloc]):
+        (-[WebInspector attach:]): delegate to the frontend.
+        (-[WebInspector detach:]): delegate to the frontend.
+        (-[WebInspector setFrontend:]):
+        * WebInspector/WebInspectorFrontend.h: Added.
+        * WebInspector/WebInspectorFrontend.mm: Added.
+        (-[WebInspectorFrontend initWithFrontendClient:]):
+        (-[WebInspectorFrontend attach]):
+        (-[WebInspectorFrontend detach]):
+        * WebInspector/WebInspectorPrivate.h:
+
 2010-08-13  Gavin Barraclough  <barraclough@apple.com>
 
         Rubber stamped by Sam Weinig.

@@ -30,6 +30,7 @@
 
 #import "WebFrameInternal.h"
 #import "WebInspectorPrivate.h"
+#import "WebInspectorFrontend.h"
 
 #include <WebCore/Document.h>
 #include <WebCore/Frame.h>
@@ -45,6 +46,12 @@ using namespace WebCore;
         return nil;
     _webView = webView; // not retained to prevent a cycle
     return self;
+}
+
+- (void)dealloc
+{
+    [_frontend release];
+    [super dealloc];
 }
 
 - (void)webViewClosed
@@ -175,16 +182,24 @@ using namespace WebCore;
 
 - (void)attach:(id)sender
 {
+    [_frontend attach];
 }
 
 - (void)detach:(id)sender
 {
+    [_frontend detach];
 }
 
 - (void)evaluateInFrontend:(id)sender callId:(long)callId script:(NSString *)script
 {
     if (Page* page = core(_webView))
         page->inspectorController()->evaluateForTestInFrontend(callId, script);
+}
+
+- (void)setFrontend:(WebInspectorFrontend *)frontend
+{
+    [_frontend release];
+    _frontend = [frontend retain];
 }
 @end
 
