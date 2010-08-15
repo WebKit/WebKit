@@ -1,3 +1,9 @@
+2010-08-15  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fix, remove define always set to the correct value by wtf/Platform.h.
+
+        * wx/build/settings.py:
+
 2010-08-14  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
