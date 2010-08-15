@@ -1,3 +1,16 @@
+2010-08-14  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [GTK] autogen.sh not executed if build-webkit options change
+        https://bugs.webkit.org/show_bug.cgi?id=42266
+
+        Rerun autogen.sh in situations where the arguments to build-webkit have
+        changed since the previous build. This will fix some issues on the bots
+        where the build does not notice changes to default build-webkit arguments.
+
+        * Scripts/webkitdirs.pm: Add special logic for detecting changes to build-webkit arguments.
+
 2010-08-14  Eric Seidel  <eric@webkit.org>
 
         Unreviewed.  Another fix to support python 2.3.

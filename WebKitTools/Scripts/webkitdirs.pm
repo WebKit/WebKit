@@ -1302,6 +1302,21 @@ sub autotoolsFlag($$)
     return $prefix . '-' . $feature;
 }
 
+sub autogenArgumentsHaveChanged($@)
+{
+    my ($filename, @currentArguments) = @_;
+
+    if (! -e $filename) {
+        return 1;
+    }
+
+    open(AUTOTOOLS_ARGUMENTS, $filename);
+    chomp(my $previousArguments = <AUTOTOOLS_ARGUMENTS>);
+    close(AUTOTOOLS_ARGUMENTS);
+
+    return $previousArguments ne join(" ", @currentArguments);
+}
+
 sub buildAutotoolsProject($@)
 {
     my ($clean, @buildParams) = @_;
@@ -1357,8 +1372,16 @@ sub buildAutotoolsProject($@)
     # If GNUmakefile exists, don't run autogen.sh. The makefile should be
     # smart enough to track autotools dependencies and re-run autogen.sh
     # when build files change.
+    my $autogenArgumentsFile = "previous-autogen-arguments.txt";
     my $result;
-    if (! -e "GNUmakefile") {
+    if (!(-e "GNUmakefile") or autogenArgumentsHaveChanged($autogenArgumentsFile, @buildArgs)) {
+
+        # Write autogen.sh arguments to a file so that we can detect
+        # when they change and automatically re-run it.
+        open(AUTOTOOLS_ARGUMENTS, ">$autogenArgumentsFile");
+        print AUTOTOOLS_ARGUMENTS  join(" ", @buildArgs);
+        close(AUTOTOOLS_ARGUMENTS);
+
         print "Calling configure in " . $dir . "\n\n";
         print "Installation prefix directory: $prefix\n" if(defined($prefix));
 
