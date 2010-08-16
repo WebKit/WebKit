@@ -5498,3 +5498,7 @@ fast/dom/Geolocation/delayed-permission-denied.html
 
 # BlodBuilder is not enabled
 http/tests/local/blob/send-data-blob.html
+
+# [Qt] fast/dom/Geolocation/disconnected-frame-permission-denied.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=44059
+fast/dom/Geolocation/disconnected-frame-permission-denied.html
