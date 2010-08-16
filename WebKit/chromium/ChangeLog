@@ -1,3 +1,11 @@
+2010-08-16  Alex Milowski  <alex@milowski.com>
+
+        Reviewed by David Levin.
+
+        Added the ENABLE_MATHML=1 to the feature_defines.
+
+        * features.gypi:
+
 2010-08-16  Marcus Bulach  <bulach@chromium.org>
 
         Reviewed by Jeremy Orlow.

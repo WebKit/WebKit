@@ -127,6 +127,7 @@
       '../loader/appcache',
       '../loader/archive',
       '../loader/icon',
+      '../mathml',
       '../notifications',
       '../page',
       '../page/animation',
@@ -399,6 +400,8 @@
           'outputs': [
             '<(SHARED_INTERMEDIATE_DIR)/webkit/MathMLNames.cpp',
             '<(SHARED_INTERMEDIATE_DIR)/webkit/MathMLNames.h',
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/MathMLElementFactory.cpp',
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/MathMLElementFactory.h',
           ],
           'action': [
             'python',
@@ -407,6 +410,7 @@
             '--',
             '<@(_inputs)',
             '--',
+            '--factory',
             '--extraDefines', '<(feature_defines)'
           ],
         },
@@ -421,6 +425,7 @@
             '../css/themeWin.css',
             '../css/themeWinQuirks.css',
             '../css/svg.css',
+            '../css/mathml.css',
             '../css/mediaControls.css',
             '../css/mediaControlsChromium.css',
           ],
@@ -733,6 +738,7 @@
         '<(SHARED_INTERMEDIATE_DIR)/webkit/XMLNSNames.cpp',
         '<(SHARED_INTERMEDIATE_DIR)/webkit/XMLNames.cpp',
         '<(SHARED_INTERMEDIATE_DIR)/webkit/SVGNames.cpp',
+        '<(SHARED_INTERMEDIATE_DIR)/webkit/MathMLElementFactory.cpp',
         '<(SHARED_INTERMEDIATE_DIR)/webkit/MathMLNames.cpp',
 
         # Generated from HTMLEntityNames.json
