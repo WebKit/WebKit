@@ -1,3 +1,9 @@
+2010-08-16  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed; test expectations fix for Chromium.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-08-16  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Alexey Proskuryakov.
