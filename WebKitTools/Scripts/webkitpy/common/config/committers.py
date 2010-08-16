@@ -179,7 +179,7 @@ committers_unable_to_review = [
     Committer("Yuzo Fujishima", "yuzo@google.com", "yuzo"),
     Committer("Zhenyao Mo", "zmo@google.com", "zhenyao"),
     Committer("Zoltan Herczeg", "zherczeg@webkit.org", "zherczeg"),
-    Committer("Zoltan Horvath", "zoltan@webkit.org", "zoltan"),
+    Committer("Zoltan Horvath", ["zoltan@webkit.org", "hzoltan@inf.u-szeged.hu", "horvath.zoltan.6@stud.u-szeged.hu"], "zoltan"),
 ]
 
 

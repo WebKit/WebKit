@@ -1,3 +1,9 @@
+2010-08-16  Zoltan Horvath  <zoltan@webkit.org>
+
+        Add my old e-mail addresses to committers.py.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2010-08-15  Jon Honeycutt  <jhoneycutt@apple.com>
 
         WebEditorClient::didBeginEditing is never called in WebKit2
