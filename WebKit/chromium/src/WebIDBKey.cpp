@@ -30,7 +30,12 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBBindingUtilities.h"
 #include "IDBKey.h"
+#include "IDBKeyPath.h"
+#include "SerializedScriptValue.h"
+#include "WebIDBKeyPath.h"
+#include "WebSerializedScriptValue.h"
 
 using namespace WebCore;
 
@@ -48,6 +53,13 @@ WebIDBKey WebIDBKey::createInvalid()
     WebIDBKey key;
     key.assignInvalid();
     return key;
+}
+
+WebIDBKey WebIDBKey::createFromValueAndKeyPath(const WebSerializedScriptValue& serializedScriptValue, const WebIDBKeyPath& idbKeyPath)
+{
+    if (serializedScriptValue.isNull())
+        return WebIDBKey::createInvalid();
+    return WebCore::createIDBKeyFromSerializedValueAndKeyPath(serializedScriptValue, idbKeyPath);
 }
 
 void WebIDBKey::assign(const WebIDBKey& value)

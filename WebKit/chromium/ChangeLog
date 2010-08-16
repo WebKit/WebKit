@@ -1,3 +1,43 @@
+2010-08-16  Marcus Bulach  <bulach@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Implements IDBKeyPath extractor.
+        https://bugs.webkit.org/show_bug.cgi?id=43276
+
+        Unit-test IDBKeyPathExtractorTest.cpp.
+        LayoutTests will arrive as IndexedDB infrastructure is fleshed out.
+
+
+        * WebKit.gyp:
+        * public/WebIDBKey.h:
+        * public/WebIDBKeyPath.h: Added.
+        (WebKit::WebIDBKeyPath::WebIDBKeyPath):
+        (WebKit::WebIDBKeyPath::~WebIDBKeyPath):
+        * public/WebPrivateOwnPtr.h: Added.
+        (WebKit::WebPrivateOwnPtr::WebPrivateOwnPtr):
+        (WebKit::WebPrivateOwnPtr::~WebPrivateOwnPtr):
+        (WebKit::WebPrivateOwnPtr::reset):
+        (WebKit::WebPrivateOwnPtr::get):
+        (WebKit::WebPrivateOwnPtr::operator->):
+        * src/WebIDBKey.cpp:
+        (WebKit::WebIDBKey::createFromValueAndKeyPath):
+        * src/WebIDBKeyPath.cpp: Added.
+        (WebKit::WebIDBKeyPath::create):
+        (WebKit::WebIDBKeyPath::WebIDBKeyPath):
+        (WebKit::WebIDBKeyPath::parseError):
+        (WebKit::WebIDBKeyPath::assign):
+        (WebKit::WebIDBKeyPath::reset):
+        (WebKit::WebIDBKeyPath::operator const WTF::Vector<WebCore::IDBKeyPathElement, 0>&):
+        * tests/IDBBindingUtilitiesTest.cpp: Added.
+        (WebCore::LocalContext::LocalContext):
+        (WebCore::LocalContext::~LocalContext):
+        (WebCore::checkKeyFromValueAndKeyPathInternal):
+        (WebCore::checkKeyPathNullValue):
+        (WebCore::checkKeyPathStringValue):
+        (WebCore::checkKeyPathNumberValue):
+        (WebCore::TEST):
+
 2010-07-28  Marcus Bulach  <bulach@chromium.org>
 
         Reviewed by Adam Barth.

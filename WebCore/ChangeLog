@@ -1,3 +1,18 @@
+2010-08-16  Marcus Bulach  <bulach@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Implements IDBKeyPath extractor.
+        https://bugs.webkit.org/show_bug.cgi?id=43276
+
+        Unit-test IDBKeyPathExtractorTest.cpp.
+        LayoutTests will arrive as IndexedDB infrastructure is fleshed out.
+
+        * bindings/v8/IDBBindingUtilities.cpp:
+        (WebCore::getValueFrom):
+        (WebCore::createIDBKeyFromSerializedValueAndKeyPath):
+        * bindings/v8/IDBBindingUtilities.h:
+
 2010-08-13  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Kenneth Rohde Christiansen and Martin Robinson.

@@ -23,25 +23,53 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBBindingUtilities_h
-#define IDBBindingUtilities_h
+#ifndef WebPrivateOwnPtr_h
+#define WebPrivateOwnPtr_h
 
-#if ENABLE(INDEXED_DATABASE)
+#include "WebCommon.h"
 
-#include <v8.h>
-#include <wtf/Forward.h>
+namespace WebKit {
 
-namespace WebCore {
+// This class is an implementation detail of the WebKit API.  It exists
+// to help simplify the implementation of WebKit interfaces that merely
+// wrap a pointer to a WebCore class. It's similar to WebPrivatePtr, but it
+// wraps a naked pointer rather than a reference counted.
+// Note: you must call reset(0) on the implementation side in order to delete
+// the WebCore pointer.
+template <typename T>
+class WebPrivateOwnPtr {
+public:
+    WebPrivateOwnPtr() : m_ptr(0) {}
+    ~WebPrivateOwnPtr() { WEBKIT_ASSERT(!m_ptr); }
 
-class IDBKey;
-class SerializedScriptValue;
-struct IDBKeyPathElement;
+#if WEBKIT_IMPLEMENTATION
+    explicit WebPrivateOwnPtr(T* ptr)
+        : m_ptr(ptr)
+    {
+    }
 
-PassRefPtr<IDBKey> createIDBKeyFromValue(v8::Handle<v8::Value>);
-PassRefPtr<IDBKey> createIDBKeyFromSerializedValueAndKeyPath(PassRefPtr<SerializedScriptValue> value,  const Vector<IDBKeyPathElement, 0>& keyPath);
+    void reset(T* ptr)
+    {
+        delete m_ptr;
+        m_ptr = ptr;
+    }
 
-}
+    T* get() const { return m_ptr; }
 
-#endif // ENABLE(INDEXED_DATABASE)
+    T* operator->() const
+    {
+        WEBKIT_ASSERT(m_ptr);
+        return m_ptr;
+    }
+#endif // WEBKIT_IMPLEMENTATION
 
-#endif // IDBBindingUtilities_h
+private:
+    T* m_ptr;
+
+    WebPrivateOwnPtr(const WebPrivateOwnPtr&);
+    void operator=(const WebPrivateOwnPtr&);
+};
+
+} // namespace WebKit
+
+#endif

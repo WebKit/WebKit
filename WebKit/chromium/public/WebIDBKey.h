@@ -34,12 +34,16 @@ namespace WebCore { class IDBKey; }
 
 namespace WebKit {
 
+class WebIDBKeyPath;
+class WebSerializedScriptValue;
+
 class WebIDBKey {
 public:
     ~WebIDBKey() { reset(); }
   
     WEBKIT_API static WebIDBKey createNull();
     WEBKIT_API static WebIDBKey createInvalid();
+    WEBKIT_API static WebIDBKey createFromValueAndKeyPath(const WebSerializedScriptValue&, const WebIDBKeyPath&);
 
     WebIDBKey(const WebString& string) { assign(string); }
     WebIDBKey(int32_t number) { assign(number); }

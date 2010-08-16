@@ -23,25 +23,55 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBBindingUtilities_h
-#define IDBBindingUtilities_h
+#include "config.h"
+#include "WebIDBKeyPath.h"
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include <v8.h>
-#include <wtf/Forward.h>
+#include "IDBKeyPath.h"
+#include "WebString.h"
+#include "WebVector.h"
+#include <wtf/Vector.h>
 
-namespace WebCore {
+using namespace WebCore;
 
-class IDBKey;
-class SerializedScriptValue;
-struct IDBKeyPathElement;
+namespace WebKit {
 
-PassRefPtr<IDBKey> createIDBKeyFromValue(v8::Handle<v8::Value>);
-PassRefPtr<IDBKey> createIDBKeyFromSerializedValueAndKeyPath(PassRefPtr<SerializedScriptValue> value,  const Vector<IDBKeyPathElement, 0>& keyPath);
-
+WebIDBKeyPath WebIDBKeyPath::create(const WebString& keyPath)
+{
+    WTF::Vector<IDBKeyPathElement> idbElements;
+    IDBKeyPathParseError idbError;
+    IDBParseKeyPath(keyPath, idbElements, idbError);
+    return WebIDBKeyPath(idbElements, static_cast<int>(idbError));
 }
 
-#endif // ENABLE(INDEXED_DATABASE)
+WebIDBKeyPath::WebIDBKeyPath(const WTF::Vector<IDBKeyPathElement>& elements, int parseError)
+    : m_private(new WTF::Vector<IDBKeyPathElement>(elements))
+    , m_parseError(parseError)
+{
+}
 
-#endif // IDBBindingUtilities_h
+int WebIDBKeyPath::parseError() const
+{
+    return m_parseError;
+}
+
+void WebIDBKeyPath::assign(const WebIDBKeyPath& keyPath)
+{
+    m_parseError = keyPath.m_parseError;
+    m_private.reset(new WTF::Vector<IDBKeyPathElement>(keyPath));
+}
+
+void WebIDBKeyPath::reset()
+{
+    m_private.reset(0);
+}
+
+WebIDBKeyPath::operator const WTF::Vector<WebCore::IDBKeyPathElement, 0>&() const
+{
+    return *m_private.get();
+}
+
+} // namespace WebKit
+
+#endif // ENABLE(INDEXED_DATABASE)

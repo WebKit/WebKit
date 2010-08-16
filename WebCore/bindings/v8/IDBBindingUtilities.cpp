@@ -29,7 +29,10 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBKey.h"
+#include "IDBKeyPath.h"
+#include "SerializedScriptValue.h"
 #include "V8Binding.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -43,6 +46,37 @@ PassRefPtr<IDBKey> createIDBKeyFromValue(v8::Handle<v8::Value> value)
         return IDBKey::create(v8ValueToWebCoreString(value));
     // FIXME: Implement dates.
     return 0;
+}
+
+template<typename T>
+bool getValueFrom(T indexOrName, v8::Handle<v8::Value>& v8Value)
+{
+    v8::Local<v8::Object> object = v8Value->ToObject();
+    if (!object->Has(indexOrName))
+        return false;
+    v8Value = object->Get(indexOrName);
+    return true;
+}
+
+PassRefPtr<IDBKey> createIDBKeyFromSerializedValueAndKeyPath(PassRefPtr<SerializedScriptValue> value, const Vector<IDBKeyPathElement>& keyPath)
+{
+    v8::HandleScope scope;
+    v8::Handle<v8::Value> v8Value(value->deserialize());
+    for (size_t i = 0; i < keyPath.size(); ++i) {
+        switch (keyPath[i].type) {
+        case IDBKeyPathElement::IsIndexed:
+            if (!v8Value->IsArray() || !getValueFrom(keyPath[i].index, v8Value))
+                return 0;
+            break;
+        case IDBKeyPathElement::IsNamed:
+            if (!v8Value->IsObject() || !getValueFrom(v8String(keyPath[i].identifier), v8Value))
+                return 0;
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+        }
+    }
+    return createIDBKeyFromValue(v8Value);
 }
 
 } // namespace WebCore

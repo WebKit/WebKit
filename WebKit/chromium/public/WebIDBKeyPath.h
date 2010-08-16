@@ -23,25 +23,46 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBBindingUtilities_h
-#define IDBBindingUtilities_h
+#ifndef WebIDBKeyPath_h
+#define WebIDBKeyPath_h
 
-#if ENABLE(INDEXED_DATABASE)
+#include "WebCommon.h"
+#include "WebPrivateOwnPtr.h"
+#include "WebVector.h"
 
-#include <v8.h>
-#include <wtf/Forward.h>
+namespace WebCore { struct IDBKeyPathElement; }
 
-namespace WebCore {
+namespace WTF { template<typename T, size_t inlineCapacity> class Vector; }
 
-class IDBKey;
-class SerializedScriptValue;
-struct IDBKeyPathElement;
+namespace WebKit {
 
-PassRefPtr<IDBKey> createIDBKeyFromValue(v8::Handle<v8::Value>);
-PassRefPtr<IDBKey> createIDBKeyFromSerializedValueAndKeyPath(PassRefPtr<SerializedScriptValue> value,  const Vector<IDBKeyPathElement, 0>& keyPath);
+class WebString;
 
-}
+class WebIDBKeyPath {
+public:
+    static WebIDBKeyPath create(const WebString&);
+    WebIDBKeyPath(const WebIDBKeyPath& keyPath) { assign(keyPath); }
+    ~WebIDBKeyPath() { reset(); }
 
-#endif // ENABLE(INDEXED_DATABASE)
+    WEBKIT_API int parseError() const;
+    WEBKIT_API void assign(const WebIDBKeyPath&);
+    WEBKIT_API void reset();
 
-#endif // IDBBindingUtilities_h
+#if WEBKIT_IMPLEMENTATION
+    operator const WTF::Vector<WebCore::IDBKeyPathElement, 0>& () const;
+#endif
+
+private:
+    WebIDBKeyPath();
+
+#if WEBKIT_IMPLEMENTATION
+    WebIDBKeyPath(const WTF::Vector<WebCore::IDBKeyPathElement, 0>&, int parseError);
+#endif
+
+    WebPrivateOwnPtr<WTF::Vector<WebCore::IDBKeyPathElement, 0> > m_private;
+    int m_parseError;
+};
+
+} // namespace WebKit
+
+#endif // WebIDBKeyPath_h
