@@ -301,6 +301,8 @@ void GraphicsContext::restorePlatformState()
 }
 
 // Draws a filled rectangle with a stroked border.
+// This is only used to draw borders (real fill is done via fillRect), and
+// thus it must not cast any shadow.
 void GraphicsContext::drawRect(const IntRect& rect)
 {
     if (paintingDisabled())
@@ -310,19 +312,13 @@ void GraphicsContext::drawRect(const IntRect& rect)
     const bool antiAlias = p->testRenderHint(QPainter::Antialiasing);
     p->setRenderHint(QPainter::Antialiasing, m_data->antiAliasingForRectsAndLines);
 
-    if (m_data->hasShadow()) {
-        IntRect shadowRect = rect;
-        shadowRect.move(m_data->shadowOffset.x(), m_data->shadowOffset.y());
-        shadowRect.inflate(static_cast<int>(p->pen().widthF()));
-        p->fillRect(shadowRect, m_data->shadowColor);
-    }
-
     p->drawRect(rect);
 
     p->setRenderHint(QPainter::Antialiasing, antiAlias);
 }
 
 // This is only used to draw borders.
+// Must not cast any shadow.
 void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
 {
     if (paintingDisabled())
@@ -343,16 +339,6 @@ void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
     const bool antiAlias = p->testRenderHint(QPainter::Antialiasing);
     p->setRenderHint(QPainter::Antialiasing, m_data->antiAliasingForRectsAndLines);
     adjustLineToPixelBoundaries(p1, p2, width, style);
-
-    if (m_data->hasShadow()) {
-        if (textDrawingMode() == cTextFill) {
-            p->save();
-            p->translate(m_data->shadowOffset);
-            p->setPen(m_data->shadowColor);
-            p->drawLine(p1, p2);
-            p->restore();
-        }
-    }
 
     int patWidth = 0;
     switch (style) {

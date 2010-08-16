@@ -1,3 +1,15 @@
+2010-08-15  Ariya Hidayat  <ariya@sencha.com>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] Border should not cast shadows
+        https://bugs.webkit.org/show_bug.cgi?id=44015
+
+        Update pixel test reference.
+
+        * platform/qt/fast/box-shadow/basic-shadows-expected.checksum:
+        * platform/qt/fast/box-shadow/basic-shadows-expected.png:
+
 2010-08-15  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

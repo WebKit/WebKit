@@ -1,3 +1,17 @@
+2010-08-15  Ariya Hidayat  <ariya@sencha.com>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] Border should not cast shadows
+        https://bugs.webkit.org/show_bug.cgi?id=44015
+
+        Shadows should be not casted except for brush fill (which is not what
+        drawLine and drawRect are supposed to do).
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::drawRect): Remove shadow painting,
+        (WebCore::GraphicsContext::drawLine): ditto.
+
 2010-08-15  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Reviewed by Antonio Gomes.
