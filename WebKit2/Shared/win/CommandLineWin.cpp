@@ -25,8 +25,6 @@
 
 #include "CommandLine.h"
 
-using namespace WebCore;
-
 namespace WebKit {
 
 bool CommandLine::parse(LPTSTR commandLineString)

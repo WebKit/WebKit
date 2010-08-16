@@ -1,5 +1,11 @@
 2010-08-16  Sam Weinig  <sam@webkit.org>
 
+        Fix windows build.
+
+        * Shared/win/CommandLineWin.cpp:
+
+2010-08-16  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Gavin Barraclough.
 
         Remove #includes of <WebCore/PlatformString.h> in favor of <wtf/text/WTFString.h>
