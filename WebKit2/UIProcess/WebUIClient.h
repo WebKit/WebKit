@@ -30,6 +30,10 @@
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 
+namespace WebCore {
+class IntSize;
+}
+
 namespace WebKit {
 
 class WebFrameProxy;
@@ -46,6 +50,7 @@ public:
     void runJavaScriptAlert(WebPageProxy*, const WTF::String&, WebFrameProxy*);
     bool runJavaScriptConfirm(WebPageProxy*, const WTF::String&, WebFrameProxy*);
     WTF::String runJavaScriptPrompt(WebPageProxy*, const WTF::String&, const WTF::String&, WebFrameProxy*);
+    void contentsSizeChanged(WebPageProxy*, const WebCore::IntSize&, WebFrameProxy*);
 
 private:
     WKPageUIClient m_pageUIClient;

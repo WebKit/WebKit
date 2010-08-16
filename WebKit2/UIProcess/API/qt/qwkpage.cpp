@@ -227,7 +227,8 @@ QWKPage::QWKPage(WKPageNamespaceRef namespaceRef)
         qt_wk_close,
         qt_wk_runJavaScriptAlert,
         0,  /* runJavaScriptConfirm */
-        0   /* runJavaScriptPrompt */
+        0,  /* runJavaScriptPrompt */
+        0   /* contentsSizeChanged */
     };
     WKPageSetPageUIClient(pageRef(), &uiClient);
 }
