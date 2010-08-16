@@ -341,8 +341,8 @@ if (isGtk()) {
     # Apple builds JavaScriptGlue, and only on the Mac.
     splice @projects, 1, 0, "JavaScriptGlue";
 
-    # ANGLE is only supported in SnowLeopard and later at present, and must come before WebCore
-    splice @projects, 0, 0, "ANGLE" if osXVersion()->{"minor"} >= 6;
+    # ANGLE must come before WebCore
+    splice @projects, 0, 0, "ANGLE";
 
     # WebKit2 is only supported in SnowLeopard and later at present.
     push @projects, ("WebKit2", "WebKitTools/MiniBrowser") if osXVersion()->{"minor"} >= 6;
