@@ -26,6 +26,9 @@
 #ifndef ImageBufferData_h
 #define ImageBufferData_h
 
+#include "Image.h"
+#include <wtf/RefPtr.h>
+
 #include <QPainter>
 #include <QPixmap>
 
@@ -41,6 +44,7 @@ public:
 
     QPixmap m_pixmap;
     OwnPtr<QPainter> m_painter;
+    RefPtr<Image> m_image;
 };
 
 }  // namespace WebCore

@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-Pattern::Pattern(Image* image, bool repeatX, bool repeatY)
+Pattern::Pattern(PassRefPtr<Image> image, bool repeatX, bool repeatY)
     : m_tileImage(image)
     , m_repeatX(repeatX)
     , m_repeatY(repeatY)
@@ -39,7 +39,7 @@ Pattern::Pattern(Image* image, bool repeatX, bool repeatY)
     , m_pattern(0)
 #endif
 {
-    ASSERT(image);
+    ASSERT(m_tileImage);
 }
 
 Pattern::~Pattern()

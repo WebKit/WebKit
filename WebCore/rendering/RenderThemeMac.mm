@@ -963,7 +963,8 @@ bool RenderThemeMac::paintProgressBar(RenderObject* renderObject, const PaintInf
         paintInfo.context->translate(2 * rect.x() + rect.width(), 0);
         paintInfo.context->scale(FloatSize(-1, 1));
     }
-    paintInfo.context->drawImage(imageBuffer->image(), DeviceColorSpace, rect.location());
+    
+    paintInfo.context->drawImageBuffer(imageBuffer.get(), DeviceColorSpace, rect.location());
 
     paintInfo.context->restore();
     return false;

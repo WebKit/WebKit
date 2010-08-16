@@ -221,12 +221,13 @@ NativeImagePtr SVGImage::nativeImageForCurrentFrame()
     if (!m_frameCache) {
         if (!m_page)
             return 0;
-        m_frameCache = ImageBuffer::create(size());
-        if (!m_frameCache) // failed to allocate image
+        OwnPtr<ImageBuffer> buffer = ImageBuffer::create(size());
+        if (!buffer) // failed to allocate image
             return 0;
-        draw(m_frameCache->context(), rect(), rect(), DeviceColorSpace, CompositeSourceOver);
+        draw(buffer->context(), rect(), rect(), DeviceColorSpace, CompositeSourceOver);
+        m_frameCache = buffer->copyImage();
     }
-    return m_frameCache->image()->nativeImageForCurrentFrame();
+    return m_frameCache->nativeImageForCurrentFrame();
 }
 
 bool SVGImage::dataChanged(bool allDataReceived)

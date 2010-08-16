@@ -456,17 +456,6 @@ void GraphicsContext::clipPath(WindRule clipRule)
     platformContext()->clipPathAntiAliased(path);
 }
 
-void GraphicsContext::clipToImageBuffer(const FloatRect& rect,
-                                        const ImageBuffer* imageBuffer)
-{
-    if (paintingDisabled())
-        return;
-
-#if OS(LINUX) || OS(WINDOWS)
-    platformContext()->beginLayerClippedToImage(rect, imageBuffer);
-#endif
-}
-
 void GraphicsContext::concatCTM(const AffineTransform& affine)
 {
     if (paintingDisabled())

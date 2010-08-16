@@ -72,8 +72,8 @@ void FETile::apply(Filter* filter)
 
     OwnPtr<ImageBuffer> tileImage = ImageBuffer::create(tileRect.size());
     GraphicsContext* tileImageContext = tileImage->context();
-    tileImageContext->drawImage(m_in->resultImage()->image(), DeviceColorSpace, IntPoint());
-    RefPtr<Pattern> pattern = Pattern::create(tileImage->image(), true, true);
+    tileImageContext->drawImageBuffer(m_in->resultImage(), DeviceColorSpace, IntPoint());
+    RefPtr<Pattern> pattern = Pattern::create(tileImage->copyImage(), true, true);
 
     AffineTransform matrix;
     matrix.translate(m_in->scaledSubRegion().x() - scaledSubRegion().x(), m_in->scaledSubRegion().y() - scaledSubRegion().y());

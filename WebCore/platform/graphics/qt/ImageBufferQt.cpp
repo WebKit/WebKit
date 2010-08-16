@@ -33,6 +33,7 @@
 #include "ImageData.h"
 #include "MIMETypeRegistry.h"
 #include "StillImageQt.h"
+#include "TransparencyLayer.h"
 #include <wtf/text/CString.h>
 
 #include <QBuffer>
@@ -74,6 +75,8 @@ ImageBufferData::ImageBufferData(const IntSize& size)
     brush.setColor(Qt::black);
     painter->setBrush(brush);
     painter->setCompositionMode(QPainter::CompositionMode_SourceOver);
+    
+    m_data.m_image = StillImage::createForRendering(&m_data.m_pixmap);
 }
 
 ImageBuffer::ImageBuffer(const IntSize& size, ImageColorSpace, bool& success)
@@ -98,24 +101,50 @@ GraphicsContext* ImageBuffer::context() const
     return m_context.get();
 }
 
-Image* ImageBuffer::imageForRendering() const
+bool ImageBuffer::drawsUsingCopy() const
 {
-    if (!m_image)
-        m_image = StillImage::createForRendering(&m_data.m_pixmap);
-
-    return m_image.get();
+    return false;
 }
 
-Image* ImageBuffer::image() const
+PassRefPtr<Image> ImageBuffer::copyImage() const
 {
-    if (!m_image) {
-        // It's assumed that if image() is called, the actual rendering to the
-        // GraphicsContext must be done.
-        ASSERT(context());
-        m_image = StillImage::create(m_data.m_pixmap);
-    }
+    return StillImage::create(m_data.m_pixmap);
+}
 
-    return m_image.get();
+void ImageBuffer::draw(GraphicsContext* destContext, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect,
+                       CompositeOperator op, bool useLowQualityScale)
+{
+    if (destContext == context()) {
+        // We're drawing into our own buffer.  In order for this to work, we need to copy the source buffer first.
+        RefPtr<Image> copy = copyImage();
+        destContext->drawImage(copy.get(), DeviceColorSpace, destRect, srcRect, op, useLowQualityScale);
+    } else
+        destContext->drawImage(m_data.m_image.get(), styleColorSpace, destRect, srcRect, op, useLowQualityScale);
+}
+
+void ImageBuffer::drawPattern(GraphicsContext* destContext, const FloatRect& srcRect, const AffineTransform& patternTransform,
+                              const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator op, const FloatRect& destRect)
+{
+    if (destContext == context()) {
+        // We're drawing into our own buffer.  In order for this to work, we need to copy the source buffer first.
+        RefPtr<Image> copy = copyImage();
+        copy->drawPattern(destContext, srcRect, patternTransform, phase, styleColorSpace, op, destRect);
+    } else
+        m_data.m_image->drawPattern(destContext, srcRect, patternTransform, phase, styleColorSpace, op, destRect);
+}
+
+void ImageBuffer::clip(GraphicsContext* context, const FloatRect& floatRect)
+{
+    QPixmap* nativeImage = m_data.m_image->nativeImageForCurrentFrame();
+    if (!nativeImage)
+        return;
+
+    IntRect rect(floatRect);
+    QPixmap alphaMask = *nativeImage;
+    if (alphaMask.width() != rect.width() || alphaMask.height() != rect.height())
+        alphaMask = alphaMask.scaled(rect.width(), rect.height());
+
+    m_data->layers.push(new TransparencyLayer(m_data->p(), m_data->p()->transform().mapRect(rect), 1.0, alphaMask));
 }
 
 void ImageBuffer::platformTransformColorSpace(const Vector<int>& lookUpTable)

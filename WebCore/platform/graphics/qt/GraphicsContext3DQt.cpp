@@ -512,15 +512,6 @@ void GraphicsContext3D::makeContextCurrent()
     m_internal->m_glWidget->makeCurrent();
 }
 
-void GraphicsContext3D::beginPaint(CanvasRenderingContext* context)
-{
-    paintRenderingResultsToCanvas();
-}
-
-void GraphicsContext3D::endPaint()
-{
-}
-
 void GraphicsContext3D::paintRenderingResultsToCanvas(CanvasRenderingContext* context)
 {
     m_internal->m_glWidget->makeCurrent();

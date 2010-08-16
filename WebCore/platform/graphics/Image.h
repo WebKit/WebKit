@@ -150,6 +150,9 @@ public:
     static PassRefPtr<Image> loadPlatformThemeIcon(const char* name, int size);
 #endif
 
+    virtual void drawPattern(GraphicsContext*, const FloatRect& srcRect, const AffineTransform& patternTransform,
+                             const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator, const FloatRect& destRect);
+
 protected:
     Image(ImageObserver* = 0);
 
@@ -167,9 +170,6 @@ protected:
     virtual bool mayFillWithSolidColor() { return false; }
     virtual Color solidColor() const { return Color(); }
     
-    virtual void drawPattern(GraphicsContext*, const FloatRect& srcRect, const AffineTransform& patternTransform,
-                             const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator, const FloatRect& destRect);
-
 private:
     RefPtr<SharedBuffer> m_data; // The encoded raw data for the image. 
     ImageObserver* m_imageObserver;

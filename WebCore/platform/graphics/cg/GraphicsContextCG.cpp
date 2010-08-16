@@ -753,18 +753,6 @@ void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect, int thickness
     CGContextEOClip(context);
 }
 
-void GraphicsContext::clipToImageBuffer(const FloatRect& rect, const ImageBuffer* imageBuffer)
-{
-    if (paintingDisabled())
-        return;
-
-    CGContextTranslateCTM(platformContext(), rect.x(), rect.y() + rect.height());
-    CGContextScaleCTM(platformContext(), 1, -1);
-    CGContextClipToMask(platformContext(), FloatRect(FloatPoint(), rect.size()), imageBuffer->image()->getCGImageRef());
-    CGContextScaleCTM(platformContext(), 1, -1);
-    CGContextTranslateCTM(platformContext(), -rect.x(), -rect.y() - rect.height());
-}
-
 void GraphicsContext::beginTransparencyLayer(float opacity)
 {
     if (paintingDisabled())

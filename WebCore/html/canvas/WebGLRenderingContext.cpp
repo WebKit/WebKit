@@ -158,27 +158,11 @@ void WebGLRenderingContext::markContextChanged()
 
 void WebGLRenderingContext::paintRenderingResultsToCanvas()
 {
-    if (m_markedCanvasDirty) {
-        // FIXME: It should not be necessary to clear the image before doing a readback.
-        // Investigate why this is needed and remove if possible.
-        canvas()->buffer()->clearImage();
-        m_markedCanvasDirty = false;
-        m_context->paintRenderingResultsToCanvas(this);
-    }
-}
-
-void WebGLRenderingContext::beginPaint()
-{
-    if (m_markedCanvasDirty)
-        m_context->beginPaint(this);
-}
-
-void WebGLRenderingContext::endPaint()
-{
-    if (m_markedCanvasDirty) {
-        m_markedCanvasDirty = false;
-        m_context->endPaint();
-    }
+    if (!m_markedCanvasDirty)
+        return;
+    canvas()->clearCopiedImage();
+    m_markedCanvasDirty = false;
+    m_context->paintRenderingResultsToCanvas(this);
 }
 
 void WebGLRenderingContext::reshape(int width, int height)
@@ -191,7 +175,9 @@ void WebGLRenderingContext::reshape(int width, int height)
 #endif
         m_needsUpdate = false;
     }
-    
+
+    // We don't have to mark the canvas as dirty, since the newly created image buffer will also start off
+    // clear (and this matches what reshape will do).
     m_context->reshape(width, height);
 }
 
@@ -2197,7 +2183,8 @@ void WebGLRenderingContext::texImage2D(unsigned target, unsigned level, unsigned
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
         return;
     }
-    texImage2DImpl(target, level, internalformat, format, type, canvas->buffer()->image(),
+    
+    texImage2DImpl(target, level, internalformat, format, type, canvas->copiedImage(),
                    m_unpackFlipY, m_unpackPremultiplyAlpha, ec);
 }
 
@@ -2347,7 +2334,8 @@ void WebGLRenderingContext::texSubImage2D(unsigned target, unsigned level, unsig
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
         return;
     }
-    texSubImage2DImpl(target, level, xoffset, yoffset, format, type, canvas->buffer()->image(),
+    
+    texSubImage2DImpl(target, level, xoffset, yoffset, format, type, canvas->copiedImage(),
                       m_unpackFlipY, m_unpackPremultiplyAlpha, ec);
 }
 

@@ -307,15 +307,6 @@ void GraphicsContext3D::paintRenderingResultsToCanvas(CanvasRenderingContext* co
                   canvas->width(), canvas->height(), imageBuffer->context()->platformContext());
 }
 
-void GraphicsContext3D::beginPaint(CanvasRenderingContext* context)
-{
-    UNUSED_PARAM(context);
-}
-
-void GraphicsContext3D::endPaint()
-{
-}
-
 bool GraphicsContext3D::isGLES2Compliant() const
 {
     return false;

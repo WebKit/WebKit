@@ -30,6 +30,7 @@
 #include "Font.h"
 #include "Generator.h"
 #include "GraphicsContextPrivate.h"
+#include "ImageBuffer.h"
 
 using namespace std;
 
@@ -442,6 +443,57 @@ void GraphicsContext::drawTiledImage(Image* image, ColorSpace styleColorSpace, c
         restore();
 }
 
+void GraphicsContext::drawImageBuffer(ImageBuffer* image, ColorSpace styleColorSpace, const IntPoint& p, CompositeOperator op)
+{
+    drawImageBuffer(image, styleColorSpace, p, IntRect(0, 0, -1, -1), op);
+}
+
+void GraphicsContext::drawImageBuffer(ImageBuffer* image, ColorSpace styleColorSpace, const IntRect& r, CompositeOperator op, bool useLowQualityScale)
+{
+    drawImageBuffer(image, styleColorSpace, r, IntRect(0, 0, -1, -1), op, useLowQualityScale);
+}
+
+void GraphicsContext::drawImageBuffer(ImageBuffer* image, ColorSpace styleColorSpace, const IntPoint& dest, const IntRect& srcRect, CompositeOperator op)
+{
+    drawImageBuffer(image, styleColorSpace, IntRect(dest, srcRect.size()), srcRect, op);
+}
+
+void GraphicsContext::drawImageBuffer(ImageBuffer* image, ColorSpace styleColorSpace, const IntRect& dest, const IntRect& srcRect, CompositeOperator op, bool useLowQualityScale)
+{
+    drawImageBuffer(image, styleColorSpace, FloatRect(dest), srcRect, op, useLowQualityScale);
+}
+
+void GraphicsContext::drawImageBuffer(ImageBuffer* image, ColorSpace styleColorSpace, const FloatRect& dest, const FloatRect& src, CompositeOperator op, bool useLowQualityScale)
+{
+    if (paintingDisabled() || !image)
+        return;
+        
+    float tsw = src.width();
+    float tsh = src.height();
+    float tw = dest.width();
+    float th = dest.height();
+
+    if (tsw == -1)
+        tsw = image->width();
+    if (tsh == -1)
+        tsh = image->height();
+
+    if (tw == -1)
+        tw = image->width();
+    if (th == -1)
+        th = image->height();
+
+    if (useLowQualityScale) {
+        save();
+        setImageInterpolationQuality(InterpolationNone);
+    }
+
+    image->draw(this, styleColorSpace, dest, src, op, useLowQualityScale);
+    
+    if (useLowQualityScale)
+        restore();
+}
+
 void GraphicsContext::addRoundedRectClip(const IntRect& rect, const IntSize& topLeft, const IntSize& topRight,
     const IntSize& bottomLeft, const IntSize& bottomRight)
 {
@@ -458,6 +510,13 @@ void GraphicsContext::clipOutRoundedRect(const IntRect& rect, const IntSize& top
         return;
 
     clipOut(Path::createRoundedRectangle(rect, topLeft, topRight, bottomLeft, bottomRight));
+}
+
+void GraphicsContext::clipToImageBuffer(ImageBuffer* buffer, const FloatRect& rect)
+{
+    if (paintingDisabled())
+        return;
+    buffer->clip(this, rect);
 }
 
 int GraphicsContext::textDrawingMode()

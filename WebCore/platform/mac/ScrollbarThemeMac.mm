@@ -396,7 +396,7 @@ bool ScrollbarThemeMac::paint(Scrollbar* scrollbar, GraphicsContext* context, co
             return true;
         
         HIThemeDrawTrack(&trackInfo, 0, imageBuffer->context()->platformContext(), kHIThemeOrientationNormal);
-        context->drawImage(imageBuffer->image(), DeviceColorSpace, scrollbar->frameRect().location());
+        context->drawImageBuffer(imageBuffer.get(), DeviceColorSpace, scrollbar->frameRect().location());
     }
 
     return true;

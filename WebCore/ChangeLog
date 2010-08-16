@@ -1,3 +1,133 @@
+2010-08-16  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=43507, stop ImageBuffer from copying its data when rendering after canvas changes happen.
+        
+        This patch renames ImageBuffer::image() to ImageBuffer::copyImage(). The new method always returns a new copy that is a current
+        snapshot of the ImageBuffer.
+        
+        To draw an ImageBuffer, you now use new GraphicsContext calls: drawImageBuffer.  Platforms can then optimize these calls to draw
+        efficiently without having to copy the bits of the ImageBuffer into an Image.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSCanvasValue.cpp:
+        (WebCore::CSSCanvasValue::image):
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::willDraw):
+        (WebCore::HTMLCanvasElement::reset):
+        (WebCore::HTMLCanvasElement::paint):
+        (WebCore::HTMLCanvasElement::setSurfaceSize):
+        (WebCore::HTMLCanvasElement::copiedImage):
+        (WebCore::HTMLCanvasElement::clearCopiedImage):
+        * html/HTMLCanvasElement.h:
+        * html/canvas/CanvasPattern.cpp:
+        (WebCore::CanvasPattern::CanvasPattern):
+        * html/canvas/CanvasPattern.h:
+        (WebCore::CanvasPattern::create):
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawImage):
+        (WebCore::CanvasRenderingContext2D::createPattern):
+        (WebCore::CanvasRenderingContext2D::drawTextInternal):
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::paintRenderingResultsToCanvas):
+        (WebCore::WebGLRenderingContext::reshape):
+        (WebCore::WebGLRenderingContext::texImage2D):
+        (WebCore::WebGLRenderingContext::texSubImage2D):
+        * html/canvas/WebGLRenderingContext.h:
+        (WebCore::WebGLRenderingContext::paintsIntoCanvasBuffer):
+        * platform/graphics/GeneratedImage.cpp:
+        (WebCore::GeneratedImage::drawPattern):
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::drawImageBuffer):
+        (WebCore::GraphicsContext::clipToImageBuffer):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/GraphicsContext3D.h:
+        (WebCore::GraphicsContext3D::paintsIntoCanvasBuffer):
+        * platform/graphics/Image.h:
+        * platform/graphics/ImageBuffer.h:
+        (WebCore::ImageBuffer::width):
+        (WebCore::ImageBuffer::height):
+        * platform/graphics/Pattern.cpp:
+        (WebCore::Pattern::Pattern):
+        * platform/graphics/Pattern.h:
+        (WebCore::Pattern::create):
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBuffer::drawsUsingCopy):
+        (WebCore::ImageBuffer::copyImage):
+        (WebCore::ImageBuffer::clip):
+        (WebCore::ImageBuffer::draw):
+        (WebCore::ImageBuffer::drawPattern):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::ImageBuffer):
+        (WebCore::ImageBuffer::drawsUsingCopy):
+        (WebCore::ImageBuffer::copyImage):
+        (WebCore::ImageBuffer::draw):
+        (WebCore::ImageBuffer::drawPattern):
+        (WebCore::ImageBuffer::clip):
+        * platform/graphics/cg/ImageBufferData.h:
+        * platform/graphics/filters/FEColorMatrix.cpp:
+        (WebCore::FEColorMatrix::apply):
+        * platform/graphics/filters/FEComposite.cpp:
+        (WebCore::FEComposite::apply):
+        * platform/graphics/filters/SourceAlpha.cpp:
+        (WebCore::SourceAlpha::apply):
+        * platform/graphics/filters/SourceGraphic.cpp:
+        (WebCore::SourceGraphic::apply):
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        * platform/graphics/qt/ImageBufferData.h:
+        * platform/graphics/qt/ImageBufferQt.cpp:
+        (WebCore::ImageBufferData::ImageBufferData):
+        (WebCore::ImageBuffer::drawsUsingCopy):
+        (WebCore::ImageBuffer::copyImage):
+        (WebCore::ImageBuffer::draw):
+        (WebCore::ImageBuffer::drawPattern):
+        (WebCore::ImageBuffer::clip):
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::ImageBuffer::drawsUsingCopy):
+        (WebCore::ImageBuffer::copyImage):
+        (WebCore::ImageBuffer::clip):
+        (WebCore::):
+        * platform/graphics/wx/GraphicsContextWx.cpp:
+        * platform/graphics/wx/ImageBufferWx.cpp:
+        (WebCore::ImageBuffer::drawsUsingCopy):
+        (WebCore::ImageBuffer::copyImage):
+        (WebCore::ImageBuffer::clip):
+        (WebCore::ImageBuffer::draw):
+        (WebCore::ImageBuffer::drawPattern):
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::ScrollbarThemeMac::paint):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        * rendering/RenderSVGResourceClipper.cpp:
+        (WebCore::RenderSVGResourceClipper::applyClippingToContext):
+        * rendering/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::postApplyResource):
+        * rendering/RenderSVGResourceGradient.cpp:
+        (WebCore::clipToTextMask):
+        * rendering/RenderSVGResourceMasker.cpp:
+        (WebCore::RenderSVGResourceMasker::applyResource):
+        * rendering/RenderSVGResourcePattern.cpp:
+        (WebCore::RenderSVGResourcePattern::buildPattern):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintProgressBar):
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::build):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::nativeImageForCurrentFrame):
+        * svg/graphics/SVGImage.h:
+        * svg/graphics/filters/SVGFEMerge.cpp:
+        (WebCore::FEMerge::apply):
+        * svg/graphics/filters/SVGFEOffset.cpp:
+        (WebCore::FEOffset::apply):
+        * svg/graphics/filters/SVGFETile.cpp:
+        (WebCore::FETile::apply):
+
 2010-08-16  Paul Sawaya  <psawaya@apple.com>
 
         Reviewed by Chris Marrin.

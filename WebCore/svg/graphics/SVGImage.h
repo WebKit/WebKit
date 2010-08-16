@@ -33,7 +33,6 @@
 
 namespace WebCore {
 
-    class ImageBuffer;
     class Page;
     class SVGImageChromeClient;
     
@@ -72,7 +71,7 @@ namespace WebCore {
         
         OwnPtr<SVGImageChromeClient> m_chromeClient;
         OwnPtr<Page> m_page;
-        OwnPtr<ImageBuffer> m_frameCache;
+        RefPtr<Image> m_frameCache;
     };
 }
 

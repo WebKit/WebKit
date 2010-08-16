@@ -378,11 +378,6 @@ void GraphicsContext::canvasClip(const Path& path)
     clip(path);
 }
 
-void GraphicsContext::clipToImageBuffer(const FloatRect&, const ImageBuffer*)
-{
-    notImplemented();
-}
-
 AffineTransform GraphicsContext::getCTM() const
 { 
 #if USE(WXGC)

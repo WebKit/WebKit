@@ -63,11 +63,8 @@ void GeneratedImage::drawPattern(GraphicsContext* context, const FloatRect& srcR
     GraphicsContext* graphicsContext = imageBuffer->context();
     graphicsContext->fillRect(FloatRect(FloatPoint(), adjustedSize), *m_generator.get());
 
-    // Grab the final image from the image buffer.
-    Image* bitmap = imageBuffer->image();
-
-    // Now just call drawTiled on that image.
-    bitmap->drawPattern(context, adjustedSrcRect, patternTransform, phase, styleColorSpace, compositeOp, destRect);
+    // Tile the image buffer into the context.
+    imageBuffer->drawPattern(context, adjustedSrcRect, patternTransform, phase, styleColorSpace, compositeOp, destRect);
 }
 
 }

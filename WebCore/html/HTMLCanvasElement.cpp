@@ -209,8 +209,7 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type, Canvas
 
 void HTMLCanvasElement::willDraw(const FloatRect& rect)
 {
-    if (m_imageBuffer)
-        m_imageBuffer->clearImage();
+    m_copiedImage.clear(); // Clear our image snapshot if we have one.
 
     if (RenderBox* ro = renderBox()) {
         FloatRect destRect = ro->contentBoxRect();
@@ -242,10 +241,10 @@ void HTMLCanvasElement::reset()
         h = DefaultHeight;
 
     IntSize oldSize = size();
-    setSurfaceSize(IntSize(w, h));
+    setSurfaceSize(IntSize(w, h)); // The image buffer gets cleared here.
 
 #if ENABLE(3D_CANVAS)
-    if (m_context && m_context->is3d())
+    if (m_context && m_context->is3d() && oldSize != size())
         static_cast<WebGLRenderingContext*>(m_context.get())->reshape(width(), height());
 #endif
 
@@ -277,23 +276,21 @@ void HTMLCanvasElement::paint(GraphicsContext* context, const IntRect& r)
     WebGLRenderingContext* context3D = 0;
     if (m_context && m_context->is3d()) {
         context3D = static_cast<WebGLRenderingContext*>(m_context.get());
-        context3D->beginPaint();
+        if (!context3D->paintsIntoCanvasBuffer())
+            return;
+        context3D->paintRenderingResultsToCanvas();
     }
 #endif
 
     if (hasCreatedImageBuffer()) {
         ImageBuffer* imageBuffer = buffer();
         if (imageBuffer) {
-            Image* image = imageBuffer->imageForRendering();
-            if (image)
-                context->drawImage(image, DeviceColorSpace, r);
+            if (imageBuffer->drawsUsingCopy())
+                context->drawImage(copiedImage(), DeviceColorSpace, r);
+            else
+                context->drawImageBuffer(imageBuffer, DeviceColorSpace, r);
         }
     }
-
-#if ENABLE(3D_CANVAS)
-    if (context3D)
-        context3D->endPaint();
-#endif
 }
 
 #if ENABLE(3D_CANVAS)    
@@ -325,6 +322,7 @@ void HTMLCanvasElement::setSurfaceSize(const IntSize& size)
     m_size = size;
     m_hasCreatedImageBuffer = false;
     m_imageBuffer.clear();
+    m_copiedImage.clear();
 }
 
 String HTMLCanvasElement::toDataURL(const String& mimeType, const double* quality, ExceptionCode& ec)
@@ -418,6 +416,18 @@ ImageBuffer* HTMLCanvasElement::buffer() const
     if (!m_hasCreatedImageBuffer)
         createImageBuffer();
     return m_imageBuffer.get();
+}
+
+Image* HTMLCanvasElement::copiedImage() const
+{
+    if (!m_copiedImage && buffer())
+        m_copiedImage = buffer()->copyImage();
+    return m_copiedImage.get();
+}
+
+void HTMLCanvasElement::clearCopiedImage()
+{
+    m_copiedImage.clear();
 }
 
 AffineTransform HTMLCanvasElement::baseTransform() const

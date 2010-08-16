@@ -1213,23 +1213,6 @@ void GraphicsContext::clipOutEllipseInRect(const IntRect& rect)
     }
 }
 
-void GraphicsContext::clipToImageBuffer(const FloatRect& floatRect, const ImageBuffer* image)
-{
-    if (paintingDisabled())
-        return;
-
-    QPixmap* nativeImage = image->image()->nativeImageForCurrentFrame();
-    if (!nativeImage)
-        return;
-
-    IntRect rect(floatRect);
-    QPixmap alphaMask = *nativeImage;
-    if (alphaMask.width() != rect.width() || alphaMask.height() != rect.height())
-        alphaMask = alphaMask.scaled(rect.width(), rect.height());
-
-    m_data->layers.push(new TransparencyLayer(m_data->p(), m_data->p()->transform().mapRect(rect), 1.0, alphaMask));
-}
-
 void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect,
                                               int thickness)
 {

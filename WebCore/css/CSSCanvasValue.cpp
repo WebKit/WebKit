@@ -90,7 +90,7 @@ Image* CSSCanvasValue::image(RenderObject* renderer, const IntSize& /*size*/)
     HTMLCanvasElement* elt = element(renderer->document());
     if (!elt || !elt->buffer())
         return 0;
-    return elt->buffer()->image();
+    return elt->copiedImage();
 }
 
 } // namespace WebCore

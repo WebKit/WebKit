@@ -720,11 +720,11 @@ public:
 
     void paintRenderingResultsToCanvas(CanvasRenderingContext* context);
 
-    // Helpers for notification about paint events
-    void beginPaint(CanvasRenderingContext* context);
-    void endPaint();
 #if PLATFORM(QT)
     void paint(QPainter* painter, const QRect& rect) const;
+    bool paintsIntoCanvasBuffer() const { return true; }
+#else
+    bool paintsIntoCanvasBuffer() const { return false; }
 #endif
 
     // Support for buffer creation and deletion

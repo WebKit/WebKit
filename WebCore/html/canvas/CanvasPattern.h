@@ -41,7 +41,7 @@ namespace WebCore {
     public:
         static void parseRepetitionType(const String&, bool& repeatX, bool& repeatY, ExceptionCode&);
 
-        static PassRefPtr<CanvasPattern> create(Image* image, bool repeatX, bool repeatY, bool originClean)
+        static PassRefPtr<CanvasPattern> create(PassRefPtr<Image> image, bool repeatX, bool repeatY, bool originClean)
         {
             return adoptRef(new CanvasPattern(image, repeatX, repeatY, originClean));
         }
@@ -51,7 +51,7 @@ namespace WebCore {
         bool originClean() const { return m_originClean; }
 
     private:
-        CanvasPattern(Image*, bool repeatX, bool repeatY, bool originClean);
+        CanvasPattern(PassRefPtr<Image>, bool repeatX, bool repeatY, bool originClean);
 
         RefPtr<Pattern> m_pattern;
         bool m_originClean;

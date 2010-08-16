@@ -97,26 +97,34 @@ GraphicsContext* ImageBuffer::context() const
     return m_context.get();
 }
 
-Image* ImageBuffer::image() const
+bool ImageBuffer::drawsUsingCopy() const
 {
-    if (!m_image) {
-        // It's assumed that if image() is called, the actual rendering to the
-        // GraphicsContext must be done.
-        ASSERT(context());
+    return true;
+}
 
-        // This creates a COPY of the image and will cache that copy. This means
-        // that if subsequent operations take place on the context, neither the
-        // currently-returned image, nor the results of future image() calls,
-        // will contain that operation.
-        //
-        // This seems silly, but is the way the CG port works: image() is
-        // intended to be used only when rendering is "complete."
-        cairo_surface_t* newsurface = copySurface(m_data.m_surface);
+PassRefPtr<Image> ImageBuffer::copyImage() const
+{
+    // BitmapImage will release the passed in surface on destruction
+    return BitmapImage::create(copySurface(m_data.m_surface));
+}
 
-        // BitmapImage will release the passed in surface on destruction
-        m_image = BitmapImage::create(newsurface);
-    }
-    return m_image.get();
+void ImageBuffer::clip(GraphicsContext* context, const FloatRect&) const
+{
+    notImplemented();
+}
+
+void ImageBuffer::draw(GraphicsContext* context, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect,
+                       CompositeOperator op , bool useLowQualityScale)
+{
+    RefPtr<Image> imageCopy = copyImage();
+    context->drawImage(imageCopy.get(), styleColorSpace, destRect, srcRect, op, useLowQualityScale);
+}
+
+void ImageBuffer::drawPattern(GraphicsContext* context, const FloatRect& srcRect, const AffineTransform& patternTransform,
+                              const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator op, const FloatRect& destRect)
+{
+    RefPtr<Image> imageCopy = copyImage();
+    imageCopy->drawPattern(context, srcRect, patternTransform, phase, styleColorSpace, op, destRect);
 }
 
 void ImageBuffer::platformTransformColorSpace(const Vector<int>& lookUpTable)

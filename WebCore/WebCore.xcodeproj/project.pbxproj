@@ -4040,7 +4040,7 @@
 		B2A015A90AF6CD53006BCE0E /* GraphicsContext.h in Headers */ = {isa = PBXBuildFile; fileRef = B2A015930AF6CD53006BCE0E /* GraphicsContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2A015AA0AF6CD53006BCE0E /* GraphicsTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2A015940AF6CD53006BCE0E /* GraphicsTypes.cpp */; };
 		B2A015AB0AF6CD53006BCE0E /* GraphicsTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = B2A015950AF6CD53006BCE0E /* GraphicsTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		B2A10B920B3818BD00099AA4 /* ImageBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = B2A10B910B3818BD00099AA4 /* ImageBuffer.h */; };
+		B2A10B920B3818BD00099AA4 /* ImageBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = B2A10B910B3818BD00099AA4 /* ImageBuffer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2A10B940B3818D700099AA4 /* ImageBufferCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2A10B930B3818D700099AA4 /* ImageBufferCG.cpp */; };
 		B2A1F2AA0CEF0ABF00442F6A /* SVGFontElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2A1F2A10CEF0ABF00442F6A /* SVGFontElement.cpp */; };
 		B2A1F2AB0CEF0ABF00442F6A /* SVGFontElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B2A1F2A20CEF0ABF00442F6A /* SVGFontElement.h */; };
@@ -4772,6 +4772,7 @@
 		BCA8C83111E3D53200812FB7 /* BackForwardControllerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA8C83011E3D53200812FB7 /* BackForwardControllerClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCA8CA5F11E4E6D100812FB7 /* BackForwardListImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCA8CA5D11E4E6D100812FB7 /* BackForwardListImpl.cpp */; };
 		BCA8CA6011E4E6D100812FB7 /* BackForwardListImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA8CA5E11E4E6D100812FB7 /* BackForwardListImpl.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BCA979171215D055005C485C /* ImageBufferData.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA979161215D055005C485C /* ImageBufferData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCAA90C30A7EBA60008B1229 /* Scrollbar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCAA90C20A7EBA60008B1229 /* Scrollbar.cpp */; };
 		BCACF3BC1072921A00C0C8A3 /* UserContentURLPattern.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCACF3BA1072921A00C0C8A3 /* UserContentURLPattern.cpp */; };
 		BCACF3BD1072921A00C0C8A3 /* UserContentURLPattern.h in Headers */ = {isa = PBXBuildFile; fileRef = BCACF3BB1072921A00C0C8A3 /* UserContentURLPattern.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -10526,6 +10527,7 @@
 		BCA8C83011E3D53200812FB7 /* BackForwardControllerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackForwardControllerClient.h; sourceTree = "<group>"; };
 		BCA8CA5D11E4E6D100812FB7 /* BackForwardListImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BackForwardListImpl.cpp; sourceTree = "<group>"; };
 		BCA8CA5E11E4E6D100812FB7 /* BackForwardListImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackForwardListImpl.h; sourceTree = "<group>"; };
+		BCA979161215D055005C485C /* ImageBufferData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageBufferData.h; sourceTree = "<group>"; };
 		BCAA90C20A7EBA60008B1229 /* Scrollbar.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Scrollbar.cpp; path = platform/Scrollbar.cpp; sourceTree = SOURCE_ROOT; };
 		BCACF3BA1072921A00C0C8A3 /* UserContentURLPattern.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserContentURLPattern.cpp; sourceTree = "<group>"; };
 		BCACF3BB1072921A00C0C8A3 /* UserContentURLPattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserContentURLPattern.h; sourceTree = "<group>"; };
@@ -15615,6 +15617,7 @@
 				B2ED97700B1F55CE00257D0F /* GraphicsContextCG.cpp */,
 				A80D67070E9E9DEB00E420F0 /* GraphicsContextPlatformPrivateCG.h */,
 				B2A10B930B3818D700099AA4 /* ImageBufferCG.cpp */,
+				BCA979161215D055005C485C /* ImageBufferData.h */,
 				B27535300B053814002CE64F /* ImageCG.cpp */,
 				B27535310B053814002CE64F /* ImageSourceCG.cpp */,
 				4B3480920EEF50D400AC1B41 /* ImageSourceCG.h */,
@@ -20188,6 +20191,7 @@
 				97DD4D870FDF4D6E00ECF9A4 /* XSSAuditor.h in Headers */,
 				CE172E011136E8CE0062A533 /* ZoomMode.h in Headers */,
 				C50B561712119D23008B46E0 /* GroupSettings.h in Headers */,
+				BCA979171215D055005C485C /* ImageBufferData.h in Headers */,
 				490707E71219C04300D90E51 /* ANGLEWebKitBridge.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -20248,7 +20252,6 @@
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
 			compatibilityVersion = "Xcode 2.4";
-			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,

@@ -60,7 +60,7 @@ void SourceGraphic::apply(Filter* filter)
     if (!filterContext)
         return;
 
-    filterContext->drawImage(filter->sourceImage()->image(), DeviceColorSpace, IntPoint());
+    filterContext->drawImageBuffer(filter->sourceImage(), DeviceColorSpace, IntPoint());
 }
 
 void SourceGraphic::dump()

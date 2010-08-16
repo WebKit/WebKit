@@ -173,7 +173,7 @@ bool RenderSVGResourceClipper::applyClippingToContext(RenderObject* object, cons
     if (!clipperData->clipMaskImage)
         return false;
 
-    context->clipToImageBuffer(repaintRect, clipperData->clipMaskImage.get());
+    context->clipToImageBuffer(clipperData->clipMaskImage.get(), repaintRect);
     return true;
 }
 

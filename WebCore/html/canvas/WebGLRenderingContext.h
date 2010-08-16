@@ -279,11 +279,9 @@ public:
 
     virtual void paintRenderingResultsToCanvas();
 
-    // Helpers for notification about paint events.
-    void beginPaint();
-    void endPaint();
-
     void removeObject(WebGLObject*);
+
+    bool paintsIntoCanvasBuffer() const { return m_context->paintsIntoCanvasBuffer(); }
 
   private:
     friend class WebGLObject;

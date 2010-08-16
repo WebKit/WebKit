@@ -1264,7 +1264,7 @@ void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* sourceCanvas, const 
 
     sourceCanvas->makeRenderingResultsAvailable();
 
-    c->drawImage(buffer->image(), DeviceColorSpace, destRect, sourceRect, state().m_globalComposite);
+    c->drawImageBuffer(buffer, DeviceColorSpace, destRect, sourceRect, state().m_globalComposite);
     willDraw(destRect); // This call comes after drawImage, since the buffer we draw into may be our own, and we need to make sure it is dirty.
                         // FIXME: Arguably willDraw should become didDraw and occur after drawing calls and not before them to avoid problems like this.
 }
@@ -1464,7 +1464,7 @@ PassRefPtr<CanvasPattern> CanvasRenderingContext2D::createPattern(HTMLCanvasElem
     CanvasPattern::parseRepetitionType(repetitionType, repeatX, repeatY, ec);
     if (ec)
         return 0;
-    return CanvasPattern::create(canvas->buffer()->image(), repeatX, repeatY, canvas->originClean());
+    return CanvasPattern::create(canvas->copiedImage(), repeatX, repeatY, canvas->originClean());
 }
 
 void CanvasRenderingContext2D::willDraw(const FloatRect& r, unsigned options)
@@ -1820,7 +1820,7 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
         maskImageContext->drawBidiText(font, textRun, location);
 
         c->save();
-        c->clipToImageBuffer(maskRect, maskImage.get());
+        c->clipToImageBuffer(maskImage.get(), maskRect);
         drawStyle->applyFillColor(c);
         c->fillRect(maskRect);
         c->restore();

@@ -29,6 +29,7 @@
 #define ImageBuffer_h
 
 #include "AffineTransform.h"
+#include "FloatRect.h"
 #include "Image.h"
 #include "IntSize.h"
 #include "ImageBufferData.h"
@@ -71,16 +72,13 @@ namespace WebCore {
         ~ImageBuffer();
 
         const IntSize& size() const { return m_size; }
+        int width() const { return m_size.width(); }
+        int height() const { return m_size.height(); }
+        
         GraphicsContext* context() const;
 
-        Image* image() const;
-#if PLATFORM(QT)
-        Image* imageForRendering() const;
-#else
-        Image* imageForRendering() const { return image(); }
-#endif
-
-        void clearImage() { m_image.clear(); }
+        bool drawsUsingCopy() const; // If the image buffer has to render using a copied image, it will return true.
+        PassRefPtr<Image> copyImage() const; // Return a new image that is a copy of the buffer.
 
         PassRefPtr<ImageData> getUnmultipliedImageData(const IntRect&) const;
         PassRefPtr<ImageData> getPremultipliedImageData(const IntRect&) const;
@@ -96,12 +94,23 @@ namespace WebCore {
 #else
         AffineTransform baseTransform() const { return AffineTransform(1, 0, 0, -1, 0, m_size.height()); }
 #endif
+
+    private:
+        void clip(GraphicsContext*, const FloatRect&) const;
+
+        // The draw method draws the contents of the buffer without copying it.
+        void draw(GraphicsContext*, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect = FloatRect(0, 0, -1, -1),
+                             CompositeOperator = CompositeSourceOver, bool useLowQualityScale = false);
+        void drawPattern(GraphicsContext*, const FloatRect& srcRect, const AffineTransform& patternTransform,
+                         const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator, const FloatRect& destRect);
+        friend class GraphicsContext;
+        friend class GeneratedImage;
+
     private:
         ImageBufferData m_data;
 
         IntSize m_size;
         OwnPtr<GraphicsContext> m_context;
-        mutable RefPtr<Image> m_image;
 
 #if !PLATFORM(CG)
         Vector<int> m_linearRgbLUT;

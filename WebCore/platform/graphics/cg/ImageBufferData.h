@@ -26,6 +26,14 @@
 #ifndef ImageBufferData_h
 #define ImageBufferData_h
 
+#include "Image.h"
+#include <wtf/RefPtr.h>
+#include <wtf/RetainPtr.h>
+
+typedef struct CGColorSpace *CGColorSpaceRef;
+typedef struct CGDataProvider *CGDataProviderRef;
+typedef uint32_t CGBitmapInfo;
+
 namespace WebCore {
 
 class IntSize;
@@ -35,6 +43,12 @@ public:
     ImageBufferData(const IntSize&);
 
     void* m_data;
+    
+    RetainPtr<CGDataProviderRef> m_dataProvider;
+    CGBitmapInfo m_bitmapInfo;
+    bool m_grayScale;
+    unsigned m_bytesPerRow;
+    RetainPtr<CGColorSpaceRef> m_colorSpace;
 };
 
 }  // namespace WebCore

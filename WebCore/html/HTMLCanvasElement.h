@@ -38,6 +38,7 @@ class CanvasContextAttributes;
 class CanvasRenderingContext;
 class GraphicsContext;
 class HTMLCanvasElement;
+class Image;
 class ImageBuffer;
 class IntSize;
 
@@ -93,6 +94,8 @@ public:
     CanvasRenderingContext* renderingContext() const { return m_context.get(); }
 
     ImageBuffer* buffer() const;
+    Image* copiedImage() const;
+    void clearCopiedImage();
 
     IntRect convertLogicalToDevice(const FloatRect&) const;
     IntSize convertLogicalToDevice(const FloatSize&) const;
@@ -149,6 +152,8 @@ private:
     // m_createdImageBuffer means we tried to malloc the buffer.  We didn't necessarily get it.
     mutable bool m_hasCreatedImageBuffer;
     mutable OwnPtr<ImageBuffer> m_imageBuffer;
+    
+    mutable RefPtr<Image> m_copiedImage; // FIXME: This is temporary for platforms that have to copy the image buffer to render (and for CSSCanvasValue).
 };
 
 } //namespace
