@@ -149,7 +149,7 @@ my $root;
 my $runSample = 1;
 my $shouldCheckLeaks = 0;
 my $showHelp = 0;
-my $stripEditingCallbacks = isCygwin();
+my $stripEditingCallbacks;
 my $testHTTP = 1;
 my $testWebSocket = 1;
 my $testMedia = 1;
@@ -355,11 +355,13 @@ if ($useWebKitTestRunner) {
         $realPlatform = $platform;
         $platform = "mac-wk2";
     } elsif (isAppleWinWebKit()) {
+        $stripEditingCallbacks = 0 unless defined $stripEditingCallbacks;
         $realPlatform = $platform;
         $platform = "win-wk2";
     }
 }
 
+$stripEditingCallbacks = isCygwin() unless defined $stripEditingCallbacks;
 
 my $ignoreSkipped = $treatSkipped eq "ignore";
 my $skippedOnly = $treatSkipped eq "only";

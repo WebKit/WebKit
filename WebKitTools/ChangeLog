@@ -1,3 +1,17 @@
+2010-08-15  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        run-webkit-tests should not strip editing callbacks when using
+        WebKitTestRunner on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=44000
+
+        Reviewed by Mark Rowe.
+
+        * Scripts/old-run-webkit-tests:
+        Leave $stripEditingCallbacks undefined until we look for command-line
+        arguments. If using WebKit2, set it to 0 if not explicity set on the
+        command line. Later, set it to isCygwin() to match old behavior if it is
+        not yet defined.
+
 2010-08-15  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix, remove define always set to the correct value by wtf/Platform.h.
