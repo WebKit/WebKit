@@ -167,63 +167,6 @@ static inline Qt::FillRule toQtFillRule(WindRule rule)
     return Qt::OddEvenFill;
 }
 
-
-// This is to track and keep the shadow state. We use this rather than
-// using GraphicsContextState to allow possible optimizations (right now
-// only to determine the shadow type, but in future it might cover things
-// like cached scratch image, persistent shader, etc).
-
-class ContextShadowParameter {
-public:
-    enum {
-        NoShadow,
-        OpaqueSolidShadow,
-        AlphaSolidShadow,
-        BlurShadow
-    } type;
-
-    QColor color;
-    int blurRadius;
-    QPointF offset;
-
-    ContextShadowParameter()
-        : type(NoShadow)
-        , blurRadius(0)
-    {
-    }
-
-    ContextShadowParameter(const QColor& c, float r, qreal dx, qreal dy)
-        : color(c)
-        , blurRadius(qRound(r))
-        , offset(dx, dy)
-    {
-        // The type of shadow is decided by the blur radius, shadow offset, and shadow color.
-        if (!color.isValid() || !color.alpha()) {
-            // Can't paint the shadow with invalid or invisible color.
-            type = NoShadow;
-        } else if (r > 0) {
-            // Shadow is always blurred, even the offset is zero.
-            type = BlurShadow;
-        } else if (offset.isNull()) {
-            // Without blur and zero offset means the shadow is fully hidden.
-            type = NoShadow;
-        } else {
-            if (color.alpha() > 0)
-                type = AlphaSolidShadow;
-            else
-                type = OpaqueSolidShadow;
-        }
-    }
-
-    void clear()
-    {
-        type = NoShadow;
-        color = QColor();
-        blurRadius = 0;
-        offset = QPointF();
-    }
-};
-
 class GraphicsContextPlatformPrivate : public Noncopyable {
 public:
     GraphicsContextPlatformPrivate(QPainter* painter);
@@ -256,12 +199,19 @@ public:
     // Only used by SVG for now.
     QPainterPath currentPath;
 
-    ContextShadowParameter shadow;
-    QStack<ContextShadowParameter> shadowStack;
+    enum {
+        NoShadow,
+        OpaqueSolidShadow,
+        AlphaSolidShadow,
+        BlurShadow
+    } shadowType;
+    QColor shadowColor;
+    int shadowBlurRadius;
+    QPointF shadowOffset;
 
     bool hasShadow() const
     {
-        return shadow.type != ContextShadowParameter::NoShadow;
+        return shadowType != NoShadow;
     }
 
 private:
@@ -287,6 +237,9 @@ GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate(QPainter* p)
         painter->setRenderHint(QPainter::SmoothPixmapTransform, true);
     } else
         antiAliasingForRectsAndLines = false;
+
+    shadowType = NoShadow;
+    shadowBlurRadius = 0;
 }
 
 GraphicsContextPlatformPrivate::~GraphicsContextPlatformPrivate()
@@ -331,7 +284,6 @@ void GraphicsContext::savePlatformState()
     if (!m_data->layers.isEmpty() && !m_data->layers.top()->alphaMask.isNull())
         ++m_data->layers.top()->saveCounter;
     m_data->p()->save();
-    m_data->shadowStack.push(m_data->shadow);
 }
 
 void GraphicsContext::restorePlatformState()
@@ -346,11 +298,6 @@ void GraphicsContext::restorePlatformState()
         QTransform matrix = m_common->state.pathTransform;
         m_data->currentPath = m_data->currentPath * matrix;
     }
-
-    if (m_data->shadowStack.isEmpty())
-        m_data->shadow = ContextShadowParameter();
-    else
-        m_data->shadow = m_data->shadowStack.pop();
 }
 
 // Draws a filled rectangle with a stroked border.
@@ -489,9 +436,9 @@ void GraphicsContext::strokeArc(const IntRect& rect, int startAngle, int angleSp
 
     if (m_data->hasShadow()) {
         p->save();
-        p->translate(m_data->shadow.offset);
+        p->translate(m_data->shadowOffset);
         QPen pen(p->pen());
-        pen.setColor(m_data->shadow.color);
+        pen.setColor(m_data->shadowColor);
         p->setPen(pen);
         p->drawArc(rect, startAngle, angleSpan);
         p->restore();
@@ -519,12 +466,12 @@ void GraphicsContext::drawConvexPolygon(size_t npoints, const FloatPoint* points
     p->setRenderHint(QPainter::Antialiasing, shouldAntialias);
     if (m_data->hasShadow()) {
         p->save();
-        p->translate(m_data->shadow.offset);
+        p->translate(m_data->shadowOffset);
         if (p->brush().style() != Qt::NoBrush)
-            p->setBrush(QBrush(m_data->shadow.color));
+            p->setBrush(QBrush(m_data->shadowColor));
         QPen pen(p->pen());
         if (pen.style() != Qt::NoPen) {
-            pen.setColor(m_data->shadow.color);
+            pen.setColor(m_data->shadowColor);
             p->setPen(pen);
         }
         p->drawConvexPolygon(polygon);
@@ -568,9 +515,9 @@ void GraphicsContext::fillPath()
     path.setFillRule(toQtFillRule(fillRule()));
 
     if (m_data->hasShadow()) {
-        p->translate(m_data->shadow.offset);
-        p->fillPath(path, m_data->shadow.color);
-        p->translate(-m_data->shadow.offset);
+        p->translate(m_data->shadowOffset);
+        p->fillPath(path, m_data->shadowColor);
+        p->translate(-m_data->shadowOffset);
     }
     if (m_common->state.fillPattern) {
         AffineTransform affine;
@@ -596,11 +543,11 @@ void GraphicsContext::strokePath()
     path.setFillRule(toQtFillRule(fillRule()));
 
     if (m_data->hasShadow()) {
-        p->translate(m_data->shadow.offset);
+        p->translate(m_data->shadowOffset);
         QPen shadowPen(pen);
-        shadowPen.setColor(m_data->shadow.color);
+        shadowPen.setColor(m_data->shadowColor);
         p->strokePath(path, shadowPen);
-        p->translate(-m_data->shadow.offset);
+        p->translate(-m_data->shadowOffset);
     }
     if (m_common->state.strokePattern) {
         AffineTransform affine;
@@ -701,10 +648,10 @@ void GraphicsContext::fillRect(const FloatRect& rect)
         shadowImage = new QImage(roundedIntSize(normalizedRect.size()), QImage::Format_ARGB32_Premultiplied);
         pShadow = new QPainter(shadowImage);
         shadowDestRect = normalizedRect;
-        shadowDestRect.translate(m_data->shadow.offset);
+        shadowDestRect.translate(m_data->shadowOffset);
 
         pShadow->setCompositionMode(QPainter::CompositionMode_Source);
-        pShadow->fillRect(shadowImage->rect(), m_data->shadow.color);
+        pShadow->fillRect(shadowImage->rect(), m_data->shadowColor);
         pShadow->setCompositionMode(QPainter::CompositionMode_DestinationIn);
     }
 
@@ -753,7 +700,7 @@ void GraphicsContext::fillRect(const FloatRect& rect, const Color& color, ColorS
     QPainter* p = m_data->p();
 
     if (m_data->hasShadow())
-        p->fillRect(QRectF(rect).translated(m_data->shadow.offset), m_data->shadow.color);
+        p->fillRect(QRectF(rect).translated(m_data->shadowOffset), m_data->shadowColor);
 
     p->fillRect(rect, m_data->solidColor);
 }
@@ -766,9 +713,9 @@ void GraphicsContext::fillRoundedRect(const IntRect& rect, const IntSize& topLef
     Path path = Path::createRoundedRectangle(rect, topLeft, topRight, bottomLeft, bottomRight);
     QPainter* p = m_data->p();
     if (m_data->hasShadow()) {
-        p->translate(m_data->shadow.offset);
-        p->fillPath(path.platformPath(), m_data->shadow.color);
-        p->translate(-m_data->shadow.offset);
+        p->translate(m_data->shadowOffset);
+        p->fillPath(path.platformPath(), m_data->shadowColor);
+        p->translate(-m_data->shadowOffset);
     }
     p->fillPath(path.platformPath(), QColor(color));
 }
@@ -922,12 +869,38 @@ void GraphicsContext::setPlatformShadow(const FloatSize& size, float blur, const
         m_common->state.shadowSize = FloatSize(size.width(), -size.height());
     }
 
-    m_data->shadow = ContextShadowParameter(color, blur, size.width(), size.height());
+    // Here we just store important shadow states.
+
+    m_data->shadowBlurRadius = qRound(blur);
+    m_data->shadowOffset = QPointF(m_common->state.shadowSize.width(), m_common->state.shadowSize.height());
+    m_data->shadowColor = color;
+
+    // The type of shadow is decided by the blur radius, shadow offset, and shadow color.
+
+    if (!color.isValid() || !color.alpha()) {
+        // Can't paint the shadow with invalid or invisible color.
+        m_data->shadowType = GraphicsContextPlatformPrivate::NoShadow;
+    } else {
+        if (blur > 0) {
+            // Shadow is always blurred, even the offset is zero.
+            m_data->shadowType = GraphicsContextPlatformPrivate::BlurShadow;
+        } else {
+            if (m_data->shadowOffset.isNull()) {
+                // Without blur and zero offset means the shadow is fully hidden.
+                m_data->shadowType = GraphicsContextPlatformPrivate::NoShadow;
+            } else {
+                if (color.hasAlpha())
+                    m_data->shadowType = GraphicsContextPlatformPrivate::AlphaSolidShadow;
+                else
+                    m_data->shadowType = GraphicsContextPlatformPrivate::OpaqueSolidShadow;
+            }
+        }
+    }
 }
 
 void GraphicsContext::clearPlatformShadow()
 {
-    m_data->shadow.clear();
+    m_data->shadowType = GraphicsContextPlatformPrivate::NoShadow;
 }
 
 void GraphicsContext::beginTransparencyLayer(float opacity)

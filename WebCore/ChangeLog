@@ -1,5 +1,28 @@
 2010-08-15  Ariya Hidayat  <ariya@sencha.com>
 
+        Unreviewed, rolling out r65393.
+        http://trac.webkit.org/changeset/65393
+        https://bugs.webkit.org/show_bug.cgi?id=44031
+
+        Breaks some canvas tests.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContextPlatformPrivate::):
+        (WebCore::GraphicsContextPlatformPrivate::hasShadow):
+        (WebCore::GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate):
+        (WebCore::GraphicsContext::savePlatformState):
+        (WebCore::GraphicsContext::restorePlatformState):
+        (WebCore::GraphicsContext::strokeArc):
+        (WebCore::GraphicsContext::drawConvexPolygon):
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::fillRoundedRect):
+        (WebCore::GraphicsContext::setPlatformShadow):
+        (WebCore::GraphicsContext::clearPlatformShadow):
+
+2010-08-15  Ariya Hidayat  <ariya@sencha.com>
+
         Reviewed by Antonio Gomes.
 
         [Qt] Save and restore shadow state in GraphicsContextQt
