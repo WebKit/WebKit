@@ -36,6 +36,7 @@
 namespace WebCore {
 
     class KURL;
+    class GroupSettings;
     class IDBFactoryBackendInterface;
     class Page;
     class StorageNamespace;
@@ -94,6 +95,8 @@ namespace WebCore {
         const UserScriptMap* userScripts() const { return m_userScripts.get(); }
         const UserStyleSheetMap* userStyleSheets() const { return m_userStyleSheets.get(); }
 
+        GroupSettings* groupSettings() const { return m_groupSettings.get(); }
+
     private:
         void addVisitedLink(LinkHash stringHash);
         void resetUserStyleCacheInAllFrames();
@@ -115,6 +118,8 @@ namespace WebCore {
 
         OwnPtr<UserScriptMap> m_userScripts;
         OwnPtr<UserStyleSheetMap> m_userStyleSheets;
+
+        OwnPtr<GroupSettings> m_groupSettings;
     };
 
 } // namespace WebCore

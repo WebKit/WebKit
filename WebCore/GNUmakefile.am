@@ -1802,6 +1802,7 @@ webcore_sources += \
 	WebCore/page/GeolocationPositionCache.cpp \
 	WebCore/page/GeolocationPositionCache.h \
 	WebCore/page/Geoposition.h \
+	WebCore/page/GroupSettings.h \
 	WebCore/page/HaltablePlugin.h \
 	WebCore/page/History.cpp \
 	WebCore/page/History.h \
