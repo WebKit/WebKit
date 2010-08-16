@@ -1,5 +1,13 @@
 2010-08-16  Jeremy Orlow  <jorlow@chromium.org>
 
+        Ugh...another build fix.
+
+        * page/GroupSettings.cpp:
+        (WebCore::GroupSettings::GroupSettings):
+        * page/GroupSettings.h:
+
+2010-08-16  Jeremy Orlow  <jorlow@chromium.org>
+
         Build fix.
 
         * GNUmakefile.am:

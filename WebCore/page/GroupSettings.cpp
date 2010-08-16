@@ -29,14 +29,18 @@
 namespace WebCore {
 
 GroupSettings::GroupSettings()
+#if ENABLE(DOM_STORAGE)
     : m_localStorageQuotaBytes(5 * 1024 * 1024) // Suggested by the HTML5 spec.
+#endif
 {
 }
 
+#if ENABLE(DOM_STORAGE)
 void GroupSettings::setLocalStorageQuotaBytes(unsigned quota)
 {
     m_localStorageQuotaBytes = quota;
 }
+#endif
 
 void GroupSettings::setIndexedDBDatabasePath(const String& path)
 {
