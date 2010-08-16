@@ -28,7 +28,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-function preloadImages()
+(function preloadImages()
 {
     (new Image()).src = "Images/clearConsoleButtonGlyph.png";
     (new Image()).src = "Images/consoleButtonGlyph.png";
@@ -45,9 +45,7 @@ function preloadImages()
     (new Image()).src = "Images/recordToggledButtonGlyph.png";
     (new Image()).src = "Images/reloadButtonGlyph.png";
     (new Image()).src = "Images/undockButtonGlyph.png";
-}
-
-preloadImages();
+})();
 
 var WebInspector = {
     resources: {},
@@ -427,9 +425,38 @@ WebInspector.PlatformFlavor = {
     MacTiger: "mac-tiger",
     MacLeopard: "mac-leopard",
     MacSnowLeopard: "mac-snowleopard"
-}
+};
+
+(function parseQueryParameters()
+{
+    WebInspector.queryParamsObject = {};
+    var queryParams = window.location.search;
+    if (!queryParams)
+        return;
+    var params = queryParams.substring(1).split("&");
+    for (var i = 0; i < params.length; ++i) {
+        var pair = params[i].split("=");
+        WebInspector.queryParamsObject[pair[0]] = pair[1];
+    }
+})();
 
 WebInspector.loaded = function()
+{
+    if ("page" in WebInspector.queryParamsObject) {
+        WebInspector.socket = new WebSocket("ws://" + window.location.host + "/devtools/page/" + WebInspector.queryParamsObject.page);
+        WebInspector.socket.onmessage = function(message) { WebInspector_syncDispatch(message.data); }
+        WebInspector.socket.onerror = function(error) { console.error(error); }
+        WebInspector.socket.onopen = function() {
+            InspectorFrontendHost.sendMessageToBackend = WebInspector.socket.send.bind(WebInspector.socket);
+            InspectorFrontendHost.loaded = WebInspector.socket.send.bind(WebInspector.socket, "loaded");
+            WebInspector.doLoadedDone();
+        }
+        return;
+    }
+    WebInspector.doLoadedDone();
+}
+
+WebInspector.doLoadedDone = function()
 {
     InspectorBackend.setInjectedScriptSource("(" + injectedScriptConstructor + ");");
 
@@ -579,6 +606,15 @@ WebInspector.dispatch = function() {
     }
     WebInspector.pendingDispatches++;
     setTimeout(delayDispatch, 0);
+}
+
+// This function is purposely put into the global scope for easy access.
+WebInspector_syncDispatch = function(message)
+{
+    var args = JSON.parse(message);
+    var methodName = args[0];
+    var parameters = args.slice(1);
+    WebInspector[methodName].apply(WebInspector, parameters);
 }
 
 WebInspector.dispatchMessageFromBackend = function(arguments)

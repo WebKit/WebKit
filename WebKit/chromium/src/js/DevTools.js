@@ -34,22 +34,6 @@
  * DevTools frontend together. It is also responsible for overriding existing
  * WebInspector functionality while it is getting upstreamed into WebCore.
  */
-
-/**
- * Dispatches raw message from the host.
- * @param {string} remoteName
- * @prama {string} methodName
- * @param {string} param1, param2, param3 Arguments to dispatch.
- */
-devtools$$dispatch = function(message)
-{
-    var args = typeof message === "string" ? JSON.parse(message) : message;
-    var methodName = args[0];
-    var parameters = args.slice(1);
-    WebInspector[methodName].apply(WebInspector, parameters);
-};
-
-
 devtools.ToolsAgent = function()
 {
     this.profilerAgent_ = new devtools.ProfilerAgent();
@@ -75,30 +59,6 @@ devtools.tools = null;
 
 var context = {};  // Used by WebCore's inspector routines.
 
-(function() {
-    WebInspector._paramsObject = {};
-
-    var queryParams = window.location.search;
-    if (queryParams) {
-        var params = queryParams.substring(1).split("&");
-        for (var i = 0; i < params.length; ++i) {
-            var pair = params[i].split("=");
-            WebInspector._paramsObject[pair[0]] = pair[1];
-        }
-    }
-    if ("page" in WebInspector._paramsObject) {
-        WebInspector.socket = new WebSocket("ws://" + window.location.host + "/devtools/page/" + WebInspector._paramsObject.page);
-        WebInspector.socket.onmessage = function(message) { devtools$$dispatch(message.data); }
-        WebInspector.socket.onerror = function(error) { console.err(error); }
-        WebInspector.socket.onopen = function() {
-            WebInspector.socketOpened = true;
-            if (WebInspector.loadedDone)
-                WebInspector.doLoadedDone();
-        };
-        InspectorFrontendHost.sendMessageToBackend = WebInspector.socket.send.bind(WebInspector.socket);
-        InspectorFrontendHost.loaded = WebInspector.socket.send.bind(WebInspector.socket, "loaded");
-    }
-})();
 ///////////////////////////////////////////////////////////////////////////////
 // Here and below are overrides to existing WebInspector methods only.
 // TODO(pfeldman): Patch WebCore and upstream changes.
@@ -114,24 +74,15 @@ WebInspector.loaded = function()
     Preferences.profilerAlwaysEnabled = true;
     Preferences.canEditScriptSource = true;
     Preferences.onlineDetectionEnabled = false;
-    if ("page" in WebInspector._paramsObject) {
-        WebInspector.loadedDone = true;
-        if (WebInspector.socketOpened)
-            WebInspector.doLoadedDone();
-        return;
-    }
-    WebInspector.doLoadedDone();
-}
 
-WebInspector.doLoadedDone = function() {
-    oldLoaded.call(this);
+    oldLoaded.call(WebInspector);
 }
 
 devtools.domContentLoaded = function()
 {
-    WebInspector.setAttachedWindow(WebInspector._paramsObject.docked === "true");
-    if (WebInspector._paramsObject.toolbar_color && WebInspector._paramsObject.text_color)
-        WebInspector.setToolbarColors(WebInspector._paramsObject.toolbar_color, WebInspector._paramsObject.text_color);
+    WebInspector.setAttachedWindow(WebInspector.queryParamsObject.docked === "true");
+    if (WebInspector.queryParamsObject.toolbar_color && WebInspector.queryParamsObject.text_color)
+        WebInspector.setToolbarColors(WebInspector.queryParamsObject.toolbar_color, WebInspector.queryParamsObject.text_color);
 }
 document.addEventListener("DOMContentLoaded", devtools.domContentLoaded, false);
 

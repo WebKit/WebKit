@@ -112,7 +112,7 @@ void WebDevToolsFrontendImpl::dispatchOnInspectorFrontend(const WebString& messa
     v8::HandleScope scope;
     v8::Handle<v8::Context> frameContext = V8Proxy::context(frame->frame());
     v8::Context::Scope contextScope(frameContext);
-    v8::Handle<v8::Value> dispatchFunction = frameContext->Global()->Get(v8::String::New("devtools$$dispatch"));
+    v8::Handle<v8::Value> dispatchFunction = frameContext->Global()->Get(v8::String::New("WebInspector_syncDispatch"));
     ASSERT(dispatchFunction->IsFunction());
     v8::Handle<v8::Function> function = v8::Handle<v8::Function>::Cast(dispatchFunction);
     Vector< v8::Handle<v8::Value> > args;

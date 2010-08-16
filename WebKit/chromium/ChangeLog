@@ -1,3 +1,20 @@
+2010-08-16  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Joseph Pecoraro.
+
+        Web Inspector: upstream frontend-side WebSocket transport.
+        https://bugs.webkit.org/show_bug.cgi?id=43970
+
+        Chromium already has an alternate WebSocket-based communication channel with
+        the backend. Upstreaming it in this change. We will agree on the URI
+        of the remote service as the protocol matures.
+
+        * src/WebDevToolsFrontendImpl.cpp:
+        (WebKit::WebDevToolsFrontendImpl::dispatchOnInspectorFrontend):
+        * src/js/DevTools.js:
+        (WebInspector.loaded):
+        (devtools.domContentLoaded):
+
 2010-08-16  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
