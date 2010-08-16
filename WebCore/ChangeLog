@@ -1,3 +1,38 @@
+2010-07-28  Marcus Bulach  <bulach@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Implement IDBKeyPath parser.
+        https://bugs.webkit.org/show_bug.cgi?id=42976
+
+        IDBKeyPath is an internal class, exposed only for unit tests for now.
+        It'll allow indexed database implementation to traverse a given key path and obtain the corresponding properties
+        from a SerializedScriptValue.
+
+        * WebCore.gypi:
+        * storage/IDBKeyPath.cpp: Added.
+        (WebCore::IDBKeyPath::create):
+        (WebCore::IDBKeyPath::IDBKeyPath):
+        (WebCore::IDBKeyPath::~IDBKeyPath):
+        (WebCore::IDBKeyPath::hasNext):
+        (WebCore::IDBKeyPath::next):
+        (WebCore::IDBKeyPath::identifier):
+        (WebCore::IDBKeyPath::hasIndex):
+        (WebCore::IDBKeyPath::indexValue):
+        (WebCore::IDBKeyPath::parserError):
+        (WebCore::IDBKeyPath::parse):
+        (WebCore::IDBKeyPath::Lexer::lex):
+        (WebCore::isSafeIdentifierStartCharacter):
+        (WebCore::isSafeIdentifierCharacter):
+        (WebCore::IDBKeyPath::Lexer::lexIdentifier):
+        (WebCore::IDBKeyPath::Lexer::lexNumber):
+        * storage/IDBKeyPath.h: Added.
+        (WebCore::IDBKeyPath::Token::Token):
+        (WebCore::IDBKeyPath::):
+        (WebCore::IDBKeyPath::Lexer::Lexer):
+        (WebCore::IDBKeyPath::Lexer::next):
+        (WebCore::IDBKeyPath::Lexer::currentToken):
+
 2010-08-13  Steve Block  <steveblock@google.com>
 
         Reviewed by Alexey Proskuryakov.

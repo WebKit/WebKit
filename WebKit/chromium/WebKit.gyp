@@ -703,6 +703,7 @@
                     ],
                     'sources': [
                         'tests/DragImageTest.cpp',
+                        'tests/IDBKeyPathTest.cpp',
                         'tests/KeyboardTest.cpp',
                         'tests/KURLTest.cpp',
                         'tests/RunAllTests.cpp',

@@ -1,3 +1,20 @@
+2010-07-28  Marcus Bulach  <bulach@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Implement IDBKeyPath parser.
+        https://bugs.webkit.org/show_bug.cgi?id=42976
+
+        IDBKeyPath is an internal class, exposed only for unit tests for now.
+        It'll allow indexed database implementation to traverse a given key path and obtain the corresponding properties
+        from a SerializedScriptValue.
+
+        * WebKit.gyp:
+        * tests/IDBKeyPathTest.cpp: Added.
+        (WebCore::ExpectedToken::ExpectedToken):
+        (WebCore::checkKeyPath):
+        (WebCore::TEST):
+
 2010-08-16  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Joseph Pecoraro.

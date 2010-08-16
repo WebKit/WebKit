@@ -3548,6 +3548,8 @@
             'storage/IDBIndexBackendImpl.h',
             'storage/IDBKey.cpp',
             'storage/IDBKey.h',
+            'storage/IDBKeyPath.cpp',
+            'storage/IDBKeyPath.h',
             'storage/IDBKeyRange.cpp',
             'storage/IDBKeyRange.h',
             'storage/IDBKeyTree.h',
