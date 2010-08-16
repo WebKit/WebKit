@@ -30,6 +30,7 @@
 
 #include <wtf/Assertions.h>
 #include <wtf/CurrentTime.h>
+#include <gdk/gdk.h>
 #include <glib.h>
 
 namespace WebCore {
@@ -63,7 +64,7 @@ void setSharedTimerFireTime(double fireTime)
     }
 
     stopSharedTimer();
-    sharedTimer = g_timeout_add(intervalInMS, timeout_cb, NULL);
+    sharedTimer = g_timeout_add_full(GDK_PRIORITY_REDRAW, intervalInMS, timeout_cb, 0, 0);
 }
 
 void stopSharedTimer()

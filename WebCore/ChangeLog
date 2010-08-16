@@ -1,3 +1,16 @@
+2010-08-13  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Kenneth Rohde Christiansen and Martin Robinson.
+
+        [GTK] GTK+ drawing idle starved
+        https://bugs.webkit.org/show_bug.cgi?id=43994
+
+        Tune down the priority of the shared timers to guarantee GTK+ has
+        an opportunity to redraw.
+
+        * platform/gtk/SharedTimerGtk.cpp:
+        (WebCore::setSharedTimerFireTime):
+
 2010-08-16  Leandro Pereira  <leandro@profusion.mobi>
 
         [EFL] Build fix after r65366.
