@@ -76,7 +76,7 @@ ImageBufferData::ImageBufferData(const IntSize& size)
     painter->setBrush(brush);
     painter->setCompositionMode(QPainter::CompositionMode_SourceOver);
     
-    m_data.m_image = StillImage::createForRendering(&m_data.m_pixmap);
+    m_image = StillImage::createForRendering(&m_data.m_pixmap);
 }
 
 ImageBuffer::ImageBuffer(const IntSize& size, ImageColorSpace, bool& success)
@@ -133,7 +133,7 @@ void ImageBuffer::drawPattern(GraphicsContext* destContext, const FloatRect& src
         m_data.m_image->drawPattern(destContext, srcRect, patternTransform, phase, styleColorSpace, op, destRect);
 }
 
-void ImageBuffer::clip(GraphicsContext* context, const FloatRect& floatRect)
+void ImageBuffer::clip(GraphicsContext* context, const FloatRect& floatRect) const
 {
     QPixmap* nativeImage = m_data.m_image->nativeImageForCurrentFrame();
     if (!nativeImage)
