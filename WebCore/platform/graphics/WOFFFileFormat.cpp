@@ -31,6 +31,7 @@
 #include "SharedBuffer.h"
 
 #if !PLATFORM(WIN)
+#include <netinet/in.h>
 #include <zlib.h>
 #if PLATFORM(BREWMP)
 #include <AEEStdLib.h>

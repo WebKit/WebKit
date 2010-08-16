@@ -1,5 +1,11 @@
 2010-08-15  Kevin Ollivier  <kevino@theolliviers.com>
 
+        [wx] Build fix, add missing header.
+
+        * platform/graphics/WOFFFileFormat.cpp:
+
+2010-08-15  Kevin Ollivier  <kevino@theolliviers.com>
+
         [wx] Build fix, don't build PluginDataNone.cpp even on GTK as PluginDataWx.cpp compiles.
 
         * wscript:
