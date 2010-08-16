@@ -26,7 +26,9 @@
 #ifndef GraphicsContext3D_h
 #define GraphicsContext3D_h
 
+#if PLATFORM(MAC)
 #include "ANGLEWebKitBridge.h"
+#endif
 #include "GraphicsLayer.h"
 #include "PlatformString.h"
 
@@ -820,9 +822,9 @@ public:
     } ShaderSourceEntry;
     HashMap<Platform3DObject, ShaderSourceEntry> m_shaderSourceMap;
 
+#if PLATFORM(MAC)
     ANGLEWebKitBridge m_compiler;
 
-#if PLATFORM(MAC)
     Attributes m_attrs;
     Vector<Vector<float> > m_vertexArray;
 
