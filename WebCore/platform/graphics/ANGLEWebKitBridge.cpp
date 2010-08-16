@@ -61,7 +61,7 @@ bool ANGLEWebKitBridge::validateShaderSource(const char* shaderSource, ANGLEShad
 
     if (shaderType == SHADER_TYPE_VERTEX)
         compiler = m_vertexCompiler;
-    else if (shaderType == SHADER_TYPE_FRAGMENT)
+    else
         compiler = m_fragmentCompiler;
 
     const char* const shaderSourceStrings[] = { shaderSource };
