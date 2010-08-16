@@ -1,3 +1,10 @@
+2010-08-16  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wxMSW build fix. Don't build the Python DOM bindings until we get the export issues
+        sorted out.
+
+        * bindings/python/webview.i:
+
 2010-08-13  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig

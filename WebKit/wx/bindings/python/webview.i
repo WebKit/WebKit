@@ -50,6 +50,7 @@
 #include "WebDOMObject.h"
 #include "WebDOMRange.h"
 
+#ifndef __WXMSW__
 PyObject* createDOMNodeSubtype(WebDOMNode* ptr, bool setThisOwn)
 {
     //static wxPyTypeInfoHashMap* typeInfoCache = NULL;
@@ -86,6 +87,7 @@ PyObject* createDOMNodeSubtype(WebDOMNode* ptr, bool setThisOwn)
     
     return Py_None;
 }
+#endif
 
 %}
 //---------------------------------------------------------------------------
@@ -93,8 +95,12 @@ PyObject* createDOMNodeSubtype(WebDOMNode* ptr, bool setThisOwn)
 %import core.i
 %import windows.i
 
+#ifndef __WXMSW__
 %typemap(out) WebDOMNode*             { $result = createDOMNodeSubtype($1, (bool)$owner); }
 %typemap(out) WebDOMElement*             { $result = createDOMNodeSubtype($1, (bool)$owner); }
+%typemap(out) WebDOMNode             { $result = createDOMNodeSubtype(&$1, (bool)$owner); }
+%typemap(out) WebDOMElement             { $result = createDOMNodeSubtype(&$1, (bool)$owner); }
+#endif
 
 MAKE_CONST_WXSTRING(WebViewNameStr);
 
@@ -104,6 +110,7 @@ MustHaveApp(wxWebView);
 
 %include WebKitDefines.h
 
+#ifndef __WXMSW__
 %include WebDOMObject.h
 %include WebDOMNode.h
 
@@ -112,6 +119,7 @@ MustHaveApp(wxWebView);
 %include WebDOMElement.h
 %include WebDOMNodeList.h
 %include WebDOMRange.h
+#endif
 
 %include WebBrowserShell.h
 %include WebDOMSelection.h
