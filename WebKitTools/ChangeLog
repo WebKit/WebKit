@@ -1,3 +1,9 @@
+2010-08-16  Ariya Hidayat  <ariya@sencha.com>
+
+        Add my new email address to committers.py.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2010-08-16  Zoltan Horvath  <zoltan@webkit.org>
 
         Add my old e-mail addresses to committers.py.
