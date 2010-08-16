@@ -1,3 +1,18 @@
+2010-08-15  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Port Chromium's WebEntities to HTMLEntityTable
+        https://bugs.webkit.org/show_bug.cgi?id=44036
+
+        This code is wrong and needs to be removed.  However, at least after
+        this patch, it will compile.
+
+        * src/WebEntities.cpp:
+        (WebKit::):
+        (WebKit::WebEntities::WebEntities):
+        * src/WebEntities.h:
+
 2010-08-13  Satish Sampath  <satish@chromium.org>
 
         Reviewed by Jeremy Orlow.

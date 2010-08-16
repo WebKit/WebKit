@@ -33,6 +33,7 @@
 
 #include <string.h>
 
+#include "HTMLEntityTable.h"
 #include "PlatformString.h"
 #include "StringBuilder.h"
 #include <wtf/HashMap.h>
@@ -41,59 +42,51 @@
 
 using namespace WebCore;
 
-namespace {
-// Note that this file is also included by LegacyHTMLDocumentParser.cpp so we are getting
-// two copies of the data in memory.  We can fix this by changing the script
-// that generated the array to create a static const that is its length, but
-// this is low priority since the data is less than 4K. We use anonymous
-// namespace to prevent name collisions.
-#include "HTMLEntityNames.cpp" // NOLINT
-}
-
 namespace WebKit {
 
-void populateMap(WTF::HashMap<int, WTF::String>& map,
-                 const Entity* entities,
-                 size_t entitiesCount,
-                 bool standardHTML)
+namespace {
+
+void populateMapFromXMLEntities(WTF::HashMap<int, WTF::String>& map)
 {
     ASSERT(map.isEmpty());
-    const Entity* entity = &entities[0];
-    for (size_t i = 0; i < entitiesCount; i++, entity++) {
-        int code = entity->code;
-        String name = entity->name;
-        // For consistency, use the lowe case for entities that have both.
-        if (map.contains(code) && map.get(code) == name.lower())
-            continue;
-        // Don't register &percnt;, &nsup; and &supl;.
-        if (standardHTML && (code == '%' || code == 0x2285 || code == 0x00b9))
-            continue;
-        map.set(code, name);
-    }
-    if (standardHTML)
-        map.set(static_cast<int>(0x0027), String("#39"));
+    map.set(0x003c, "lt");
+    map.set(0x003e, "gt");
+    map.set(0x0026, "amp");
+    map.set(0x0027, "apos");
+    map.set(0x0022, "quot");
 }
 
-static const Entity xmlBuiltInEntityCodes[] = {
-    { "lt", 0x003c },
-    { "gt", 0x003e },
-    { "amp", 0x0026 },
-    { "apos", 0x0027 },
-    { "quot", 0x0022 }
-};
+void populateMapFromHTMLEntityTable(WTF::HashMap<int, WTF::String>& map)
+{
+    ASSERT(map.isEmpty());
+    const HTMLEntityTableEntry* entry = HTMLEntityTable::firstEntry();
+    const HTMLEntityTableEntry* end = HTMLEntityTable::lastEntry() + 1;
+    while (entry != end) {
+        String entity = entry->entity;
+        int value = entry->value;
+        ASSERT(value && !entity.isEmpty());
+        if (entity[entity.length() - 1] != ';')
+            continue; // We want the canonical version that ends in ;
+        // For consistency, use the lower case for entities that have both.
+        if (map.contains(value) && map.get(value) == entity.lower())
+            continue;
+        // Don't register &percnt;, &nsup; and &supl; for some unknown reason.
+        if (value == '%' || value == 0x2285 || value == 0x00b9)
+            continue;
+        map.set(value, entity);
+    }
+    // We add #39 for some unknown reason.
+    map.set(0x0027, String("#39"));
+}
+
+}
 
 WebEntities::WebEntities(bool xmlEntities)
 {
     if (xmlEntities)
-        populateMap(m_entitiesMap,
-                    xmlBuiltInEntityCodes,
-                    sizeof(xmlBuiltInEntityCodes) / sizeof(Entity),
-                    false);
+        populateMapFromXMLEntities(m_entitiesMap);
     else
-        populateMap(m_entitiesMap,
-                    wordlist,
-                    sizeof(wordlist) / sizeof(Entity),
-                    true);
+        populateMapFromHTMLEntityTable(m_entitiesMap);
 }
 
 String WebEntities::entityNameByCode(int code) const

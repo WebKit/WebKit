@@ -36,6 +36,7 @@
 
 namespace WebKit {
 
+// FIXME: This class is wrong and needs to be removed.
 class WebEntities {
 public:
     // &apos;, &percnt;, &nsup;, &supl; are not defined by the HTML standards.
