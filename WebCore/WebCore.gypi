@@ -2264,6 +2264,8 @@
             'platform/graphics/chromium/PlatformIcon.h',
             'platform/graphics/chromium/SimpleFontDataChromiumWin.cpp',
             'platform/graphics/chromium/SimpleFontDataLinux.cpp',
+            'platform/graphics/chromium/TilingData.h',
+            'platform/graphics/chromium/TilingData.cpp',
             'platform/graphics/chromium/TransformLayerChromium.cpp',
             'platform/graphics/chromium/TransformLayerChromium.h',
             'platform/graphics/chromium/TransparencyWin.cpp',

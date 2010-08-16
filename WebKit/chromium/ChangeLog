@@ -1,3 +1,16 @@
+2010-08-16  Vincent Scheib  <scheib@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Canvas2D does not support images larger than system's GPU max texture size
+        https://bugs.webkit.org/show_bug.cgi?id=43864
+
+        Unit tests for TilingData class.
+
+        * WebKit.gyp:
+        * tests/TilingDataTest.cpp: Added.
+        (WebCore::TEST):
+
 2010-08-16  Alex Milowski  <alex@milowski.com>
 
         Reviewed by David Levin.

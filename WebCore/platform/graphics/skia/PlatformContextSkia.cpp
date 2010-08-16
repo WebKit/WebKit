@@ -39,6 +39,7 @@
 #include "NativeImageSkia.h"
 #include "PlatformContextSkia.h"
 #include "SkiaUtils.h"
+#include "TilingData.h"
 
 #include "skia/ext/image_operations.h"
 #include "skia/ext/platform_canvas.h"
@@ -793,7 +794,7 @@ void PlatformContextSkia::uploadSoftwareToHardware(CompositeOperator op) const
     const SkBitmap& bitmap = m_canvas->getDevice()->accessBitmap(false);
     SkAutoLockPixels lock(bitmap);
     GraphicsContext3D* context = m_gpuCanvas->context();
-    if (!m_uploadTexture || m_uploadTexture->width() < bitmap.width() || m_uploadTexture->height() < bitmap.height())
+    if (!m_uploadTexture || m_uploadTexture->tiles().totalSizeX() < bitmap.width() || m_uploadTexture->tiles().totalSizeY() < bitmap.height())
         m_uploadTexture = GLES2Texture::create(context, GLES2Texture::BGRA8, bitmap.width(), bitmap.height());
     m_uploadTexture->load(bitmap.getPixels());
     IntRect rect(0, 0, bitmap.width(), bitmap.height());

@@ -711,6 +711,7 @@
                         'tests/KeyboardTest.cpp',
                         'tests/KURLTest.cpp',
                         'tests/RunAllTests.cpp',
+                        'tests/TilingDataTest.cpp',
                     ],
                     'conditions': [
                         ['OS=="win"', {

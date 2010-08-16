@@ -465,18 +465,18 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dstRect,
     if (!bm)
         return;  // It's too early and we don't have an image yet.
 
-#if  USE(GLES2_RENDERING)
-    if (ctxt->platformContext()->useGPU()) {
-        drawBitmapGLES2(ctxt, bm, srcRect, dstRect, colorSpace, compositeOp);
-        return;
-    }
-#endif
     FloatRect normDstRect = normalizeRect(dstRect);
     FloatRect normSrcRect = normalizeRect(srcRect);
 
     if (normSrcRect.isEmpty() || normDstRect.isEmpty())
         return;  // Nothing to draw.
 
+#if  USE(GLES2_RENDERING)
+    if (ctxt->platformContext()->useGPU()) {
+        drawBitmapGLES2(ctxt, bm, normSrcRect, normDstRect, colorSpace, compositeOp);
+        return;
+    }
+#endif
     ctxt->platformContext()->prepareForSoftwareDraw();
 
     paintSkBitmap(ctxt->platformContext(),

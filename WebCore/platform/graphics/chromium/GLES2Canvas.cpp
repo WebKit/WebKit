@@ -38,14 +38,15 @@
 #include "FloatRect.h"
 #include "GLES2Texture.h"
 #include "GraphicsContext3D.h"
+#include "IntRect.h"
 #include "PlatformString.h"
 #include "Uint16Array.h"
 
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-#include <wtf/text/CString.h>
 #include <wtf/OwnArrayPtr.h>
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 
@@ -221,7 +222,6 @@ void GLES2Canvas::drawTexturedRect(GLES2Texture* texture, const FloatRect& srcRe
     checkGLError("glUseProgram");
 
     m_context->activeTexture(GraphicsContext3D::TEXTURE0);
-    texture->bind();
 
     m_context->uniform1i(m_texSamplerLocation, 0);
     checkGLError("glUniform1i");
@@ -229,27 +229,51 @@ void GLES2Canvas::drawTexturedRect(GLES2Texture* texture, const FloatRect& srcRe
     m_context->uniform1f(m_texAlphaLocation, alpha);
     checkGLError("glUniform1f for alpha");
 
+    m_context->vertexAttribPointer(m_texPositionLocation, 3, GraphicsContext3D::FLOAT, false, 0, 0);
+
+    m_context->enableVertexAttribArray(m_texPositionLocation);
+
+    const TilingData& tiles = texture->tiles();
+    IntRect tileIdxRect = tiles.overlappedTileIndices(srcRect);
+
+    for (int y = tileIdxRect.y(); y <= tileIdxRect.bottom(); y++) {
+        for (int x = tileIdxRect.x(); x <= tileIdxRect.right(); x++)
+            drawTexturedRectTile(texture, tiles.tileIndex(x, y), srcRect, dstRect, transform);
+    }
+}
+
+void GLES2Canvas::drawTexturedRectTile(GLES2Texture* texture, int tile, const FloatRect& srcRect, const FloatRect& dstRect, const AffineTransform& transform)
+{
+    if (dstRect.isEmpty())
+        return;
+
+    const TilingData& tiles = texture->tiles();
+
+    texture->bindTile(tile);
+
+    FloatRect srcRectClippedInTileSpace;
+    FloatRect dstRectIntersected;
+    tiles.intersectDrawQuad(srcRect, dstRect, tile, &srcRectClippedInTileSpace, &dstRectIntersected);
+
+    IntRect tileBoundsWithBorder = tiles.tileBoundsWithBorder(tile);
+
     AffineTransform matrix(m_flipMatrix);
     matrix.multLeft(transform);
-    matrix.translate(dstRect.x(), dstRect.y());
-    matrix.scale(dstRect.width(), dstRect.height());
+    matrix.translate(dstRectIntersected.x(), dstRectIntersected.y());
+    matrix.scale(dstRectIntersected.width(), dstRectIntersected.height());
     float mat[9];
     affineTo3x3(matrix, mat);
     m_context->uniformMatrix3fv(m_texMatrixLocation, false /*transpose*/, mat, 1 /*count*/);
     checkGLError("glUniformMatrix3fv");
 
     AffineTransform texMatrix;
-    texMatrix.scale(1.0f / texture->width(), 1.0f / texture->height());
-    texMatrix.translate(srcRect.x(), srcRect.y());
-    texMatrix.scale(srcRect.width(), srcRect.height());
+    texMatrix.scale(1.0f / tileBoundsWithBorder.width(), 1.0f / tileBoundsWithBorder.height());
+    texMatrix.translate(srcRectClippedInTileSpace.x(), srcRectClippedInTileSpace.y());
+    texMatrix.scale(srcRectClippedInTileSpace.width(), srcRectClippedInTileSpace.height());
     float texMat[9];
     affineTo3x3(texMatrix, texMat);
     m_context->uniformMatrix3fv(m_texTexMatrixLocation, false /*transpose*/, texMat, 1 /*count*/);
     checkGLError("glUniformMatrix3fv");
-
-    m_context->vertexAttribPointer(m_texPositionLocation, 3, GraphicsContext3D::FLOAT, false, 0, 0);
-
-    m_context->enableVertexAttribArray(m_texPositionLocation);
 
     m_context->drawElements(GraphicsContext3D::TRIANGLES, 6, GraphicsContext3D::UNSIGNED_SHORT, 0);
     checkGLError("glDrawElements");

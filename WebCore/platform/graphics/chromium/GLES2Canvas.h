@@ -81,6 +81,7 @@ public:
     GLES2Texture* getTexture(NativeImagePtr);
 
 private:
+    void drawTexturedRectTile(GLES2Texture* texture, int tile, const FloatRect& srcRect, const FloatRect& dstRect, const AffineTransform&);
     void applyCompositeOperator(CompositeOperator);
     void checkGLError(const char* header);
     unsigned getQuadVertices();
