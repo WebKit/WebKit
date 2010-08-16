@@ -434,6 +434,8 @@ editing/pasteboard/emacs-ctrl-k-y-001.html
 editing/pasteboard/smart-drag-drop.html
 editing/pasteboard/subframe-dragndrop-1.html
 editing/pasteboard/get-data-text-plain-drop.html
+editing/pasteboard/drop-text-events.html
+editing/pasteboard/drop-text-events-sideeffect.html
 
 # =========================================================================== #
 #       Failing plugins tests.                                                #
