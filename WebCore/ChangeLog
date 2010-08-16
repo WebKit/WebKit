@@ -1,5 +1,17 @@
 2010-08-16  Jeremy Orlow  <jorlow@chromium.org>
 
+        Ugh, the #if ENABLE() was supposed to be added to Settings not GroupSettings.
+
+        * page/GroupSettings.cpp:
+        (WebCore::GroupSettings::GroupSettings):
+        (WebCore::GroupSettings::setLocalStorageQuotaBytes):
+        * page/GroupSettings.h:
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h:
+
+2010-08-16  Jeremy Orlow  <jorlow@chromium.org>
+
         Last build fix?
 
         * page/PageGroup.cpp:
