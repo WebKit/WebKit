@@ -200,6 +200,7 @@ private:
     void runJavaScriptAlert(WebFrameProxy*, const WTF::String&);
     bool runJavaScriptConfirm(WebFrameProxy* frame, const WTF::String&);
     WTF::String runJavaScriptPrompt(WebFrameProxy* frame, const WTF::String&, const WTF::String&);
+    void contentsSizeChanged(WebFrameProxy*, const WebCore::IntSize&);
 
     void addItemToBackForwardList(WebBackForwardListItem*);
     void goToItemInBackForwardList(WebBackForwardListItem*);

@@ -1,3 +1,16 @@
+2010-08-16  Balazs Kelemen  <kb@inf.u-szeged.hu>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Handle content size change in WebKit2
+
+        https://bugs.webkit.org/show_bug.cgi?id=43198
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController awakeFromNib]): Initialize WKPageUICallback::contetsSizeChanged to 0.
+        * MiniBrowser/win/BrowserView.cpp:
+        (BrowserView::create): Initialize WKPageUICallback::contetsSizeChanged to 0.
+
 2010-08-16  Ariya Hidayat  <ariya@sencha.com>
 
         Add my new email address to committers.py.

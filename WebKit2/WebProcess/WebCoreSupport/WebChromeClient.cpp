@@ -345,9 +345,11 @@ PlatformPageClient WebChromeClient::platformPageClient() const
     return 0;
 }
 
-void WebChromeClient::contentsSizeChanged(Frame*, const IntSize&) const
+void WebChromeClient::contentsSizeChanged(Frame* frame, const IntSize& size) const
 {
-    notImplemented();
+    WebFrame* webFrame =  static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame();
+    WebProcess::shared().connection()->send(WebPageProxyMessage::ContentsSizeChanged, m_page->pageID(),
+                                            CoreIPC::In(webFrame->frameID(), size));
 }
 
 void WebChromeClient::scrollRectIntoView(const IntRect&, const ScrollView*) const

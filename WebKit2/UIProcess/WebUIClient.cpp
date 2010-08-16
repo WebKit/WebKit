@@ -27,6 +27,7 @@
 
 #include "WKAPICast.h"
 #include "WebPageProxy.h"
+#include <WebCore/IntSize.h>
 #include <WebCore/PlatformString.h>
 #include <string.h>
 
@@ -100,6 +101,14 @@ String WebUIClient::runJavaScriptPrompt(WebPageProxy* page, const String& messag
     string->deref();
 
     return result;
+}
+
+void WebUIClient::contentsSizeChanged(WebPageProxy* page, const IntSize& size, WebFrameProxy* frame)
+{
+    if (!m_pageUIClient.contentsSizeChanged)
+        return;
+
+    m_pageUIClient.contentsSizeChanged(toRef(page), size.width(), size.height(), toRef(frame), m_pageUIClient.clientInfo);
 }
 
 } // namespace WebKit
