@@ -529,7 +529,7 @@ ENDIF()
 
 SET(WebCore_SOURCES
     ${DERIVED_SOURCES_DIR}/HTMLElementFactory.cpp
-    ${DERIVED_SOURCES_DIR}/HTMLEntityNames.cpp
+    ${DERIVED_SOURCES_DIR}/HTMLEntityTable.cpp
     ${DERIVED_SOURCES_DIR}/HTMLNames.cpp
     ${DERIVED_SOURCES_DIR}/JSHTMLElementWrapperFactory.cpp
     ${DERIVED_SOURCES_DIR}/MathMLElementFactory.cpp
@@ -1845,9 +1845,7 @@ GENERATE_INSPECTOR_FROM_IDL(inspector/Inspector.idl)
 LIST(APPEND WebCore_SOURCES ${JS_IDL_FILES} ${Inspector_IDL_FILES})
 
 
-GENERATE_GPERF(${WEBCORE_DIR}/html/HTMLEntityNames.gperf ${DERIVED_SOURCES_DIR}/HTMLEntityNames.cpp findEntity "-c")
-ADD_SOURCE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/LegacyPreloadScanner.cpp HTMLEntityNames.cpp)
-ADD_SOURCE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/HTMLEntityParser.cpp HTMLEntityNames.cpp)
+GENERATE_JSON(${WEBCORE_DIR}/html/HTMLEntityNames.json ${DERIVED_SOURCES_DIR}/HTMLEntityTable.cpp ${WEBCORE_DIR}/../WebKitTools/Scripts/create-html-entity-table)
 
 
 GENERATE_GPERF(${WEBCORE_DIR}/platform/ColorData.gperf ${DERIVED_SOURCES_DIR}/ColorData.cpp findColor "")

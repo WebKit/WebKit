@@ -1,3 +1,14 @@
+2010-08-15  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Build error on r65378
+        https://bugs.webkit.org/show_bug.cgi?id=44019
+
+        Change build script for HTMLEntityNames.json instead of HTMLEntityNames.gperf
+
+        * CMakeLists.txt:
+
 2010-08-15  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix, add missing header.

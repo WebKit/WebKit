@@ -110,3 +110,12 @@ MACRO (WEBKIT_WRAP_SOURCELIST _input)
         ENDFOREACH ()
     ENDIF ()
 ENDMACRO ()
+
+
+MACRO (GENERATE_JSON _json _output _script)
+    ADD_CUSTOM_COMMAND(
+        OUTPUT ${_output}
+        MAIN_DEPENDENCY ${_input} ${_script}
+        COMMAND ${PYTHON_EXECUTABLE} ${_script} -o ${_output} ${_json}
+        VERBATIM)
+ENDMACRO ()
