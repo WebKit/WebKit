@@ -450,17 +450,10 @@ void GraphicsContext3DInternal::paintRenderingResultsToCanvas(CanvasRenderingCon
 #endif
 }
 
-void GraphicsContext3DInternal::beginPaint(CanvasRenderingContext* context)
+bool GraphicsContext3DInternal::paintsIntoCanvasBuffer() const
 {
     // If the gpu compositor is on then skip the readback and software rendering path.
-    if (m_webViewImpl->isAcceleratedCompositingActive())
-        return;
-
-    paintRenderingResultsToCanvas(context);
-}
-
-void GraphicsContext3DInternal::endPaint()
-{
+    return !m_webViewImpl->isAcceleratedCompositingActive();
 }
 
 void GraphicsContext3DInternal::reshape(int width, int height)
@@ -1225,8 +1218,7 @@ DELEGATE_TO_INTERNAL_6(vertexAttribPointer, unsigned long, int, int, bool, unsig
 DELEGATE_TO_INTERNAL_4(viewport, long, long, unsigned long, unsigned long)
 
 DELEGATE_TO_INTERNAL_1(paintRenderingResultsToCanvas, CanvasRenderingContext*)
-DELEGATE_TO_INTERNAL_1(beginPaint, CanvasRenderingContext*)
-DELEGATE_TO_INTERNAL(endPaint)
+DELEGATE_TO_INTERNAL(paintsIntoCanvasBuffer)
 
 DELEGATE_TO_INTERNAL_R(createBuffer, unsigned)
 DELEGATE_TO_INTERNAL_R(createFramebuffer, unsigned)
