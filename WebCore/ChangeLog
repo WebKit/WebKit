@@ -1,3 +1,9 @@
+2010-08-16  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: fix Leopard Release inspector tests.
+
+        * inspector/front-end/inspector.js:
+
 2010-08-16  Marcus Bulach  <bulach@chromium.org>
 
         Reviewed by Jeremy Orlow.

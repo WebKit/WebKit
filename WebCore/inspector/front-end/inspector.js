@@ -28,7 +28,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-(function preloadImages()
+// Keep this ; so that concatenated version of the script worked.
+;(function preloadImages()
 {
     (new Image()).src = "Images/clearConsoleButtonGlyph.png";
     (new Image()).src = "Images/consoleButtonGlyph.png";
