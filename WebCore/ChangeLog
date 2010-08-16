@@ -1,3 +1,13 @@
+2010-08-16  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Fix warnings: unknown conversion type character 'l' in format
+        https://bugs.webkit.org/show_bug.cgi?id=43359
+
+        * loader/FTPDirectoryParser.cpp: Use %I64u format specifier instead of %llu on Windows.
+        (WebCore::parseOneFTPLine):
+
 2010-08-16  Ariya Hidayat  <ariya@sencha.com>
 
         Reviewed by Kenneth Rohde Christiansen.
