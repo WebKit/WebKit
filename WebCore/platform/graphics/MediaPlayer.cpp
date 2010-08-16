@@ -252,8 +252,8 @@ void MediaPlayer::load(const String& url, const ContentType& contentType)
 
     // if we don't know the MIME type, see if the extension can help
     if (type.isEmpty() || type == "application/octet-stream" || type == "text/plain") {
-        int pos = url.reverseFind('.');
-        if (pos >= 0) {
+        size_t pos = url.reverseFind('.');
+        if (pos != notFound) {
             String extension = url.substring(pos + 1);
             String mediaType = MIMETypeRegistry::getMediaMIMETypeForExtension(extension);
             if (!mediaType.isEmpty())

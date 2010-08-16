@@ -439,8 +439,8 @@ bool ResourceResponseBase::isAttachment() const
 
     DEFINE_STATIC_LOCAL(const AtomicString, headerName, ("content-disposition"));
     String value = m_httpHeaderFields.get(headerName);
-    int loc = value.find(';');
-    if (loc != -1)
+    size_t loc = value.find(';');
+    if (loc != notFound)
         value = value.left(loc);
     value = value.stripWhiteSpace();
     DEFINE_STATIC_LOCAL(const AtomicString, attachmentString, ("attachment"));
@@ -591,9 +591,9 @@ static void parseCacheHeader(const String& header, Vector<pair<String, String> >
     const String safeHeader = header.removeCharacters(isControlCharacter);
     unsigned max = safeHeader.length();
     for (unsigned pos = 0; pos < max; /* pos incremented in loop */) {
-        int nextCommaPosition = safeHeader.find(',', pos);
-        int nextEqualSignPosition = safeHeader.find('=', pos);
-        if (nextEqualSignPosition >= 0 && (nextEqualSignPosition < nextCommaPosition || nextCommaPosition < 0)) {
+        size_t nextCommaPosition = safeHeader.find(',', pos);
+        size_t nextEqualSignPosition = safeHeader.find('=', pos);
+        if (nextEqualSignPosition != notFound && (nextEqualSignPosition < nextCommaPosition || nextCommaPosition == notFound)) {
             // Get directive name, parse right hand side of equal sign, then add to map
             String directive = trimToNextSeparator(safeHeader.substring(pos, nextEqualSignPosition - pos).stripWhiteSpace());
             pos += nextEqualSignPosition - pos + 1;
@@ -601,14 +601,14 @@ static void parseCacheHeader(const String& header, Vector<pair<String, String> >
             String value = safeHeader.substring(pos, max - pos).stripWhiteSpace();
             if (value[0] == '"') {
                 // The value is a quoted string
-                int nextDoubleQuotePosition = value.find('"', 1);
-                if (nextDoubleQuotePosition >= 0) {
+                size_t nextDoubleQuotePosition = value.find('"', 1);
+                if (nextDoubleQuotePosition != notFound) {
                     // Store the value as a quoted string without quotes
                     result.append(pair<String, String>(directive, value.substring(1, nextDoubleQuotePosition - 1).stripWhiteSpace()));
                     pos += (safeHeader.find('"', pos) - pos) + nextDoubleQuotePosition + 1;
                     // Move past next comma, if there is one
-                    int nextCommaPosition2 = safeHeader.find(',', pos);
-                    if (nextCommaPosition2 >= 0)
+                    size_t nextCommaPosition2 = safeHeader.find(',', pos);
+                    if (nextCommaPosition2 != notFound)
                         pos += nextCommaPosition2 - pos + 1;
                     else
                         return; // Parse error if there is anything left with no comma
@@ -619,8 +619,8 @@ static void parseCacheHeader(const String& header, Vector<pair<String, String> >
                 }
             } else {
                 // The value is a token until the next comma
-                int nextCommaPosition2 = value.find(',', 0);
-                if (nextCommaPosition2 >= 0) {
+                size_t nextCommaPosition2 = value.find(',', 0);
+                if (nextCommaPosition2 != notFound) {
                     // The value is delimited by the next comma
                     result.append(pair<String, String>(directive, trimToNextSeparator(value.substring(0, nextCommaPosition2).stripWhiteSpace())));
                     pos += (safeHeader.find(',', pos) - pos) + 1;
@@ -630,7 +630,7 @@ static void parseCacheHeader(const String& header, Vector<pair<String, String> >
                     return;
                 }
             }
-        } else if (nextCommaPosition >= 0 && (nextCommaPosition < nextEqualSignPosition || nextEqualSignPosition < 0)) {
+        } else if (nextCommaPosition != notFound && (nextCommaPosition < nextEqualSignPosition || nextEqualSignPosition == notFound)) {
             // Add directive to map with empty string as value
             result.append(pair<String, String>(trimToNextSeparator(safeHeader.substring(pos, nextCommaPosition - pos).stripWhiteSpace()), ""));
             pos += nextCommaPosition - pos + 1;

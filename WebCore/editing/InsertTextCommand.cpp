@@ -109,7 +109,7 @@ bool InsertTextCommand::performTrivialReplace(const String& text, bool selectIns
 void InsertTextCommand::input(const String& text, bool selectInsertedText)
 {
     
-    ASSERT(text.find('\n') == -1);
+    ASSERT(text.find('\n') == notFound);
 
     if (endingSelection().isNone())
         return;

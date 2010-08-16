@@ -1101,7 +1101,7 @@ static void fillContainerFromString(ContainerNode* paragraph, const String& stri
         return;
     }
 
-    ASSERT(string.find('\n') == -1);
+    ASSERT(string.find('\n') == notFound);
 
     Vector<String> tabList;
     string.split('\t', true, tabList);
@@ -1184,7 +1184,7 @@ PassRefPtr<DocumentFragment> createFragmentFromText(Range* context, const String
     }
 
     // A string with no newlines gets added inline, rather than being put into a paragraph.
-    if (string.find('\n') == -1) {
+    if (string.find('\n') == notFound) {
         fillContainerFromString(fragment.get(), string);
         return fragment.release();
     }

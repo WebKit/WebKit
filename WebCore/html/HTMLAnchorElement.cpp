@@ -381,11 +381,11 @@ void HTMLAnchorElement::setHost(const String& value)
     if (!url.canSetHostOrPort())
         return;
 
-    int separator = value.find(':');
+    size_t separator = value.find(':');
     if (!separator)
         return;
 
-    if (separator == -1)
+    if (separator == notFound)
         url.setHostAndPort(value);
     else {
         unsigned portEnd;

@@ -477,9 +477,9 @@ Value FunSubstringBefore::evaluate() const
     if (s2.isEmpty())
         return "";
 
-    int i = s1.find(s2);
+    size_t i = s1.find(s2);
 
-    if (i == -1)
+    if (i == notFound)
         return "";
 
     return s1.left(i);
@@ -490,8 +490,8 @@ Value FunSubstringAfter::evaluate() const
     String s1 = arg(0)->evaluate().toString();
     String s2 = arg(1)->evaluate().toString();
 
-    int i = s1.find(s2);
-    if (i == -1)
+    size_t i = s1.find(s2);
+    if (i == notFound)
         return "";
 
     return s1.substring(i + s2.length());
@@ -556,11 +556,11 @@ Value FunTranslate::evaluate() const
     // FIXME: Building a String a character at a time is quite slow.
     for (unsigned i1 = 0; i1 < s1.length(); ++i1) {
         UChar ch = s1[i1];
-        int i2 = s2.find(ch);
+        size_t i2 = s2.find(ch);
         
-        if (i2 == -1)
+        if (i2 == notFound)
             newString += String(&ch, 1);
-        else if ((unsigned)i2 < s3.length()) {
+        else if (i2 < s3.length()) {
             UChar c2 = s3[i2];
             newString += String(&c2, 1);
         }
@@ -608,8 +608,8 @@ Value FunLang::evaluate() const
             return true;
 
         // Remove suffixes one by one.
-        int index = langValue.reverseFind('-');
-        if (index == -1)
+        size_t index = langValue.reverseFind('-');
+        if (index == notFound)
             break;
         langValue = langValue.left(index);
     }

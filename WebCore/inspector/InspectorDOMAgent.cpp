@@ -630,7 +630,7 @@ void InspectorDOMAgent::performSearch(const String& whitespaceTrimmedQuery, bool
     // 2) There is no need to push all search results to the front-end at a time, pushing next / previous result
     //    is sufficient.
 
-    int queryLength = whitespaceTrimmedQuery.length();
+    unsigned queryLength = whitespaceTrimmedQuery.length();
     bool startTagFound = !whitespaceTrimmedQuery.find('<');
     bool endTagFound = whitespaceTrimmedQuery.reverseFind('>') + 1 == queryLength;
 

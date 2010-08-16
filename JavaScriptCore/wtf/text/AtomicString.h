@@ -71,10 +71,10 @@ public:
     bool contains(const String& s, bool caseSensitive = true) const
         { return m_string.contains(s, caseSensitive); }
 
-    int find(UChar c, int start = 0) const { return m_string.find(c, start); }
-    int find(const char* s, int start = 0, bool caseSentitive = true) const
+    size_t find(UChar c, size_t start = 0) const { return m_string.find(c, start); }
+    size_t find(const char* s, size_t start = 0, bool caseSentitive = true) const
         { return m_string.find(s, start, caseSentitive); }
-    int find(const String& s, int start = 0, bool caseSentitive = true) const
+    size_t find(const String& s, size_t start = 0, bool caseSentitive = true) const
         { return m_string.find(s, start, caseSentitive); }
     
     bool startsWith(const String& s, bool caseSensitive = true) const

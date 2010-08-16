@@ -53,12 +53,11 @@ bool SVGURIReference::isKnownAttribute(const QualifiedName& attrName)
 String SVGURIReference::getTarget(const String& url)
 {
     if (url.startsWith("url(")) { // URI References, ie. fill:url(#target)
-        unsigned int start = url.find('#') + 1;
-        unsigned int end = url.reverseFind(')');
-
+        size_t start = url.find('#') + 1;
+        size_t end = url.reverseFind(')');
         return url.substring(start, end - start);
-    } else if (url.find('#') > -1) { // format is #target
-        unsigned int start = url.find('#') + 1;
+    } else if (url.find('#') != notFound) { // format is #target
+        size_t start = url.find('#') + 1;
         return url.substring(start, url.length() - start);
     } else // The url doesn't have any target.
         return String();

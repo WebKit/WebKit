@@ -377,8 +377,8 @@ static void initializeMIMETypeRegistry()
 
 String MIMETypeRegistry::getMIMETypeForPath(const String& path)
 {
-    int pos = path.reverseFind('.');
-    if (pos >= 0) {
+    size_t pos = path.reverseFind('.');
+    if (pos != notFound) {
         String extension = path.substring(pos + 1);
         String result = getMIMETypeForExtension(extension);
         if (result.length())

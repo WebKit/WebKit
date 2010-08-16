@@ -1,3 +1,137 @@
+2010-08-16  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig
+
+        Bug 44080 - String find/reverseFind methods need tidying up
+        These methods have a couple of problems with their interface, and implementation.
+
+        These methods take and int index, and return an int - however this is problematic
+        since on 64-bit string indices may have a full 32-bit range.  This spills out into
+        surrounding code, which unsafely casts string indices from unsigned to int. Code
+        checking the result of these methods check for a mix of "== -1", "< 0", and
+        "== notFound".  Clean this up by changing these methods to take an unsigned
+        starting index, and return a size_t. with a failed match indicated by notFound.
+        reverseFind also has a special meaning for the starting index argument, in that a
+        negative index is interpreted as an offset back from the end of the string. Remove
+        this functionality, in the (1!) case where it is used we should just calculate the
+        offset by subtracting from the string's length.
+
+        The implementation has a few problems too.  The code is not in webkit style, in
+        using assorted abbreviations in variable names, and implementations of similar
+        find methods with differing argument types were unnecessarily inconsistent. When
+        find is passed const char* data the string would be handled as latin1 (zero
+        extended to UTF-16) for all characters but the first; this is sign extended.
+        Case-insensitive find is broken for unicode strings; the hashing optimization is
+        not unicode safe, and could result in false negatives.
+
+        Unify UString find methods to match String.
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::RareData::parseNth):
+        * css/CSSStyleDeclaration.cpp:
+        (WebCore::CSSStyleDeclaration::setProperty):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector):
+        * dom/Document.cpp:
+        (WebCore::Document::getImageMap):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::inputText):
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::input):
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::handleTextBox):
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::insertText):
+        * editing/markup.cpp:
+        (WebCore::fillContainerFromString):
+        (WebCore::createFragmentFromText):
+        * html/File.cpp:
+        (WebCore::File::Init):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::setHost):
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::parseMappedAttribute):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::isPlaceholderEmpty):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::parseMappedAttribute):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::performSearch):
+        * loader/CrossOriginPreflightResultCache.cpp:
+        (WebCore::parseAccessControlAllowList):
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::substituteMIMETypeFromPluginDatabase):
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::parseHeader):
+        (WebCore::parseHeaders):
+        * loader/icon/IconFetcher.cpp:
+        (WebCore::parseIconLink):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::parseModalDialogFeatures):
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::createFromDatabaseIdentifier):
+        * page/UserContentURLPattern.cpp:
+        (WebCore::UserContentURLPattern::parse):
+        * page/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::findInRequest):
+        * platform/ContentType.cpp:
+        (WebCore::ContentType::parameter):
+        (WebCore::ContentType::type):
+        * platform/KURL.cpp:
+        (WebCore::KURL::lastPathComponent):
+        (WebCore::KURL::setProtocol):
+        (WebCore::decodeURLEscapeSequences):
+        (WebCore::substituteBackslashes):
+        (WebCore::mimeTypeFromDataURL):
+        * platform/Length.cpp:
+        (WebCore::newCoordsArray):
+        (WebCore::newLengthArray):
+        * platform/LinkHash.cpp:
+        (WebCore::findSlashDotDotSlash):
+        (WebCore::findSlashSlash):
+        (WebCore::findSlashDotSlash):
+        (WebCore::cleanPath):
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::MIMETypeRegistry::getMIMETypeForPath):
+        * platform/SchemeRegistry.cpp:
+        (WebCore::SchemeRegistry::shouldTreatURLAsLocal):
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::load):
+        * platform/mac/DragImageMac.mm:
+        (WebCore::createDragImageIconForCachedImage):
+        * platform/network/CredentialStorage.cpp:
+        (WebCore::protectionSpaceMapKeyFromURL):
+        (WebCore::findDefaultProtectionSpaceForURL):
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::skipWhiteSpace):
+        (WebCore::skipToken):
+        (WebCore::parseHTTPRefresh):
+        (WebCore::filenameFromHTTPContentDisposition):
+        (WebCore::findCharsetInMediaType):
+        (WebCore::parseXSSProtectionHeader):
+        (WebCore::extractReasonPhraseFromHTTPStatusLine):
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::isAttachment):
+        (WebCore::parseCacheHeader):
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::updateWidget):
+        * storage/Entry.cpp:
+        (WebCore::Entry::Entry):
+        * svg/SVGFont.cpp:
+        (WebCore::isCompatibleGlyph):
+        * svg/SVGURIReference.cpp:
+        (WebCore::SVGURIReference::getTarget):
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::parseClockValue):
+        (WebCore::SVGSMILElement::parseCondition):
+        * xml/XPathFunctions.cpp:
+        (WebCore::XPath::FunSubstringBefore::evaluate):
+        (WebCore::XPath::FunSubstringAfter::evaluate):
+        (WebCore::XPath::FunTranslate::evaluate):
+        (WebCore::XPath::FunLang::evaluate):
+        * xml/XPathParser.cpp:
+        (WebCore::XPath::Parser::expandQName):
+
 2010-08-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Tony Chang.

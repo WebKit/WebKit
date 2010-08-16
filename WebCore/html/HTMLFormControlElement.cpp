@@ -526,7 +526,7 @@ static bool isNotLineBreak(UChar ch) { return ch != newlineCharacter && ch != ca
 bool HTMLTextFormControlElement::isPlaceholderEmpty() const
 {
     const AtomicString& attributeValue = getAttribute(placeholderAttr);
-    return attributeValue.string().find(isNotLineBreak) == -1;
+    return attributeValue.string().find(isNotLineBreak) == notFound;
 }
 
 bool HTMLTextFormControlElement::placeholderShouldBeVisible() const

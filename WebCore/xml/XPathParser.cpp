@@ -453,8 +453,8 @@ int Parser::lex(void* data)
 
 bool Parser::expandQName(const String& qName, String& localName, String& namespaceURI)
 {
-    int colon = qName.find(':');
-    if (colon >= 0) {
+    size_t colon = qName.find(':');
+    if (colon != notFound) {
         if (!m_resolver)
             return false;
         namespaceURI = m_resolver->lookupNamespaceURI(qName.left(colon));

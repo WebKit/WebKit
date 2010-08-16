@@ -87,8 +87,8 @@ static void parseIconLink(HTMLLinkElement* link, Vector<IconLinkEntry>& entries)
     // Try to determine the file type.
     String path = url.path();
     
-    int pos = path.reverseFind('.');
-    if (pos >= 0) {
+    size_t pos = path.reverseFind('.');
+    if (pos != notFound) {
         String extension = path.substring(pos + 1);
         if (equalIgnoringCase(extension, "icns"))
             type = IconLinkEntry::ICNS;

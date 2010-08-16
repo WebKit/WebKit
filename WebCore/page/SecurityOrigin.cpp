@@ -367,13 +367,13 @@ static const char SeparatorCharacter = '_';
 PassRefPtr<SecurityOrigin> SecurityOrigin::createFromDatabaseIdentifier(const String& databaseIdentifier)
 { 
     // Make sure there's a first separator
-    int separator1 = databaseIdentifier.find(SeparatorCharacter);
-    if (separator1 == -1)
+    size_t separator1 = databaseIdentifier.find(SeparatorCharacter);
+    if (separator1 == notFound)
         return create(KURL());
         
     // Make sure there's a second separator
-    int separator2 = databaseIdentifier.reverseFind(SeparatorCharacter);
-    if (separator2 == -1)
+    size_t separator2 = databaseIdentifier.reverseFind(SeparatorCharacter);
+    if (separator2 == notFound)
         return create(KURL());
         
     // Ensure there were at least 2 separator characters. Some hostnames on intranets have
@@ -384,7 +384,7 @@ PassRefPtr<SecurityOrigin> SecurityOrigin::createFromDatabaseIdentifier(const St
     // Make sure the port section is a valid port number or doesn't exist
     bool portOkay;
     int port = databaseIdentifier.right(databaseIdentifier.length() - separator2 - 1).toInt(&portOkay);
-    bool portAbsent = (separator2 == static_cast<int>(databaseIdentifier.length()) - 1);
+    bool portAbsent = (separator2 == databaseIdentifier.length() - 1);
     if (!(portOkay || portAbsent))
         return create(KURL());
     

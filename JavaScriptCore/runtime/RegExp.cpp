@@ -56,11 +56,11 @@ inline RegExp::RegExp(JSGlobalData* globalData, const UString& pattern, const US
     // NOTE: The global flag is handled on a case-by-case basis by functions like
     // String::match and RegExpObject::match.
     if (!flags.isNull()) {
-        if (flags.find('g') != UString::NotFound)
+        if (flags.find('g') != notFound)
             m_flagBits |= Global;
-        if (flags.find('i') != UString::NotFound)
+        if (flags.find('i') != notFound)
             m_flagBits |= IgnoreCase;
-        if (flags.find('m') != UString::NotFound)
+        if (flags.find('m') != notFound)
             m_flagBits |= Multiline;
     }
     compile(globalData);

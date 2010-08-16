@@ -75,9 +75,9 @@ static String protectionSpaceMapKeyFromURL(const KURL& url)
     unsigned directoryURLPathStart = url.pathStart();
     ASSERT(directoryURL[directoryURLPathStart] == '/');
     if (directoryURL.length() > directoryURLPathStart + 1) {
-        int index = directoryURL.reverseFind('/');
-        ASSERT(index > 0);
-        directoryURL = directoryURL.substring(0, (static_cast<unsigned>(index) != directoryURLPathStart) ? static_cast<unsigned>(index) : directoryURLPathStart + 1);
+        size_t index = directoryURL.reverseFind('/');
+        ASSERT(index != notFound);
+        directoryURL = directoryURL.substring(0, (index != directoryURLPathStart) ? index : directoryURLPathStart + 1);
     }
     ASSERT(directoryURL.length() == directoryURLPathStart + 1 || directoryURL[directoryURL.length() - 1] != '/');
 
@@ -132,9 +132,9 @@ static PathToDefaultProtectionSpaceMap::iterator findDefaultProtectionSpaceForUR
         if (directoryURL.length() == directoryURLPathStart + 1)  // path is "/" already, cannot shorten it any more
             return map.end();
 
-        int index = directoryURL.reverseFind('/', -2);
-        ASSERT(index > 0);
-        directoryURL = directoryURL.substring(0, (static_cast<unsigned>(index) == directoryURLPathStart) ? index + 1 : index);
+        size_t index = directoryURL.reverseFind('/', directoryURL.length() - 2);
+        ASSERT(index != notFound);
+        directoryURL = directoryURL.substring(0, (index == directoryURLPathStart) ? index + 1 : index);
         ASSERT(directoryURL.length() > directoryURLPathStart);
         ASSERT(directoryURL.length() == directoryURLPathStart + 1 || directoryURL[directoryURL.length() - 1] != '/');
     }

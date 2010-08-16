@@ -78,8 +78,8 @@ namespace JSC {
 
 static void substitute(UString& string, const UString& substring)
 {
-    unsigned position = string.find("%s");
-    ASSERT(position != UString::NotFound);
+    size_t position = string.find("%s");
+    ASSERT(position != notFound);
     string = makeString(string.substr(0, position), substring, string.substr(position + 2));
 }
 

@@ -231,8 +231,8 @@ void RenderEmbeddedObject::updateWidget(bool onlyCreateNonNetscapePlugins)
                     url = p->value();
                 if (serviceType.isEmpty() && equalIgnoringCase(name, "type")) {
                     serviceType = p->value();
-                    int pos = serviceType.find(";");
-                    if (pos != -1)
+                    size_t pos = serviceType.find(";");
+                    if (pos != notFound)
                         serviceType = serviceType.left(pos);
                 }
                 if (!embed && !name.isEmpty()) {

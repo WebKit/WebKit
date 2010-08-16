@@ -405,10 +405,10 @@ bool XSSAuditor::findInRequest(Frame* frame, const FindTask& task) const
 
     String decodedPageURL = m_pageURLCache.canonicalizeURL(pageURL, frame->document()->decoder()->encoding(), task.decodeEntities, task.decodeURLEscapeSequencesTwice);
 
-    if (task.allowRequestIfNoIllegalURICharacters && !hasFormData && decodedPageURL.find(&isIllegalURICharacter, 0) == -1)
+    if (task.allowRequestIfNoIllegalURICharacters && !hasFormData && decodedPageURL.find(&isIllegalURICharacter, 0) == notFound)
         return false; // Injection is impossible because the request does not contain any illegal URI characters.
 
-    if (decodedPageURL.find(canonicalizedString, 0, false) != -1)
+    if (decodedPageURL.find(canonicalizedString, 0, false) != notFound)
         return true; // We've found the string in the GET data.
 
     if (hasFormData) {
@@ -423,7 +423,7 @@ bool XSSAuditor::findInRequest(Frame* frame, const FindTask& task) const
         if (m_formDataSuffixTree && !m_formDataSuffixTree->mightContain(canonicalizedString))
             return false;
 
-        if (decodedFormData.find(canonicalizedString, 0, false) != -1)
+        if (decodedFormData.find(canonicalizedString, 0, false) != notFound)
             return true; // We found the string in the POST data.
     }
 

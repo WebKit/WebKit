@@ -906,8 +906,8 @@ bool CSSSelector::RareData::parseNth()
         m_a = 2;
         m_b = 0;
     } else {
-        int n = argument.find('n');
-        if (n != -1) {
+        size_t n = argument.find('n');
+        if (n != notFound) {
             if (argument[0] == '-') {
                 if (n == 1)
                     m_a = -1; // -n == -1n
@@ -918,12 +918,12 @@ bool CSSSelector::RareData::parseNth()
             else
                 m_a = argument.substring(0, n).toInt();
             
-            int p = argument.find('+', n);
-            if (p != -1)
+            size_t p = argument.find('+', n);
+            if (p != notFound)
                 m_b = argument.substring(p + 1, argument.length() - p - 1).toInt();
             else {
                 p = argument.find('-', n);
-                if (p != -1)
+                if (p != notFound)
                     m_b = -argument.substring(p + 1, argument.length() - p - 1).toInt();
             }
         } else

@@ -82,8 +82,8 @@ bool CSSStyleDeclaration::isPropertyImplicit(const String& propertyName)
 
 void CSSStyleDeclaration::setProperty(const String& propertyName, const String& value, ExceptionCode& ec)
 {
-    int important = value.find("!important", 0, false);
-    if (important == -1)
+    size_t important = value.find("!important", 0, false);
+    if (important == notFound)
         setProperty(propertyName, value, "", ec);
     else
         setProperty(propertyName, value.left(important - 1), "important", ec);
@@ -96,7 +96,7 @@ void CSSStyleDeclaration::setProperty(const String& propertyName, const String& 
         // FIXME: Should we raise an exception here?
         return;
     }
-    bool important = priority.find("important", 0, false) != -1;
+    bool important = priority.find("important", 0, false) != notFound;
     setProperty(propID, value, important, ec);
 }
 

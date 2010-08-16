@@ -89,8 +89,8 @@ void HTMLEmbedElement::parseMappedAttribute(Attribute* attr)
   
     if (attr->name() == typeAttr) {
         m_serviceType = value.string().lower();
-        int pos = m_serviceType.find(";");
-        if (pos != -1)
+        size_t pos = m_serviceType.find(";");
+        if (pos != notFound)
             m_serviceType = m_serviceType.left(pos);
         if (!isImageType() && m_imageLoader)
             m_imageLoader.clear();

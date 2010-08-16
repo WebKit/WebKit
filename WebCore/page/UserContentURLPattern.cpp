@@ -63,14 +63,14 @@ bool UserContentURLPattern::parse(const String& pattern)
 {
     DEFINE_STATIC_LOCAL(const String, schemeSeparator, ("://"));
 
-    int schemeEndPos = pattern.find(schemeSeparator);
-    if (schemeEndPos == -1)
+    size_t schemeEndPos = pattern.find(schemeSeparator);
+    if (schemeEndPos == notFound)
         return false;
 
     m_scheme = pattern.left(schemeEndPos);
 
-    int hostStartPos = schemeEndPos + schemeSeparator.length();
-    if (hostStartPos >= static_cast<int>(pattern.length()))
+    unsigned hostStartPos = schemeEndPos + schemeSeparator.length();
+    if (hostStartPos >= pattern.length())
         return false;
 
     int pathStartPos = 0;
@@ -78,8 +78,8 @@ bool UserContentURLPattern::parse(const String& pattern)
     if (equalIgnoringCase(m_scheme, "file"))
         pathStartPos = hostStartPos;
     else {
-        int hostEndPos = pattern.find("/", hostStartPos);
-        if (hostEndPos == -1)
+        size_t hostEndPos = pattern.find("/", hostStartPos);
+        if (hostEndPos == notFound)
             return false;
 
         m_host = pattern.substring(hostStartPos, hostEndPos - hostStartPos);
@@ -96,7 +96,7 @@ bool UserContentURLPattern::parse(const String& pattern)
         }
 
         // No other '*' can occur in the host.
-        if (m_host.find("*") != -1)
+        if (m_host.find("*") != notFound)
             return false;
 
         pathStartPos = hostEndPos;

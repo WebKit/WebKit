@@ -72,9 +72,6 @@ intptr_t charactersToIntPtr(const UChar*, size_t, bool* ok = 0); // ignores trai
 double charactersToDouble(const UChar*, size_t, bool* ok = 0);
 float charactersToFloat(const UChar*, size_t, bool* ok = 0);
 
-int find(const UChar*, size_t, UChar, int startPosition = 0);
-int reverseFind(const UChar*, size_t, UChar, int startPosition = -1);
-
 class String {
 public:
     // Construct a null string, distinguishable from an empty string.
@@ -146,30 +143,46 @@ public:
     static String number(unsigned long long);
     static String number(double);
 
+    // Find a single character or string, also with match function & latin1 forms.
+    size_t find(UChar c, unsigned start = 0) const
+        { return m_impl ? m_impl->find(c, start) : notFound; }
+    size_t find(const String& str, unsigned start = 0) const
+        { return m_impl ? m_impl->find(str.impl(), start) : notFound; }
+    size_t find(CharacterMatchFunctionPtr matchFunction, unsigned start = 0) const
+        { return m_impl ? m_impl->find(matchFunction, start) : notFound; }
+    size_t find(const char* str, unsigned start = 0) const
+        { return m_impl ? m_impl->find(str, start) : notFound; }
 
+    // Find the last instance of a single character or string.
+    size_t reverseFind(UChar c, unsigned start = UINT_MAX) const
+        { return m_impl ? m_impl->reverseFind(c, start) : notFound; }
+    size_t reverseFind(const String& str, unsigned start = UINT_MAX) const
+        { return m_impl ? m_impl->reverseFind(str.impl(), start) : notFound; }
+
+    // Case insensitive string matching.
+    size_t findIgnoringCase(const char* str, unsigned start = 0) const
+        { return m_impl ? m_impl->findIgnoringCase(str, start) : notFound; }
+    size_t findIgnoringCase(const String& str, unsigned start = 0) const
+        { return m_impl ? m_impl->findIgnoringCase(str.impl(), start) : notFound; }
+    size_t reverseFindIgnoringCase(const String& str, unsigned start = UINT_MAX) const
+        { return m_impl ? m_impl->reverseFindIgnoringCase(str.impl(), start) : notFound; }
+
+    // Wrappers for find & reverseFind adding dynamic sensitivity check.
+    size_t find(const char* str, unsigned start, bool caseSensitive) const
+        { return caseSensitive ? find(str, start) : findIgnoringCase(str, start); }
+    size_t find(const String& str, unsigned start, bool caseSensitive) const
+        { return caseSensitive ? find(str, start) : findIgnoringCase(str, start); }
+    size_t reverseFind(const String& str, unsigned start, bool caseSensitive) const
+        { return caseSensitive ? reverseFind(str, start) : reverseFindIgnoringCase(str, start); }
 
     const UChar* charactersWithNullTermination();
     
     UChar32 characterStartingAt(unsigned) const; // Ditto.
     
-    bool contains(UChar c) const { return find(c) != -1; }
-    bool contains(const char* str, bool caseSensitive = true) const { return find(str, 0, caseSensitive) != -1; }
-    bool contains(const String& str, bool caseSensitive = true) const { return find(str, 0, caseSensitive) != -1; }
+    bool contains(UChar c) const { return find(c) != notFound; }
+    bool contains(const char* str, bool caseSensitive = true) const { return find(str, 0, caseSensitive) != notFound; }
+    bool contains(const String& str, bool caseSensitive = true) const { return find(str, 0, caseSensitive) != notFound; }
 
-    int find(UChar c, int start = 0) const
-        { return m_impl ? m_impl->find(c, start) : -1; }
-    int find(CharacterMatchFunctionPtr matchFunction, int start = 0) const
-        { return m_impl ? m_impl->find(matchFunction, start) : -1; }
-    int find(const char* str, int start = 0, bool caseSensitive = true) const
-        { return m_impl ? m_impl->find(str, start, caseSensitive) : -1; }
-    int find(const String& str, int start = 0, bool caseSensitive = true) const
-        { return m_impl ? m_impl->find(str.impl(), start, caseSensitive) : -1; }
-
-    int reverseFind(UChar c, int start = -1) const
-        { return m_impl ? m_impl->reverseFind(c, start) : -1; }
-    int reverseFind(const String& str, int start = -1, bool caseSensitive = true) const
-        { return m_impl ? m_impl->reverseFind(str.impl(), start, caseSensitive) : -1; }
-    
     bool startsWith(const String& s, bool caseSensitive = true) const
         { return m_impl ? m_impl->startsWith(s.impl(), caseSensitive) : s.isEmpty(); }
     bool endsWith(const String& s, bool caseSensitive = true) const
@@ -351,43 +364,37 @@ inline bool charactersAreAllASCII(const UChar* characters, size_t length)
 
 int codePointCompare(const String&, const String&);
 
-inline int find(const UChar* characters, size_t length, UChar character, int startPosition)
+inline size_t find(const UChar* characters, unsigned length, UChar matchCharacter, unsigned index = 0)
 {
-    if (startPosition >= static_cast<int>(length))
-        return -1;
-    for (size_t i = startPosition; i < length; ++i) {
-        if (characters[i] == character)
-            return static_cast<int>(i);
+    while (index < length) {
+        if (characters[index] == matchCharacter)
+            return index;
+        ++index;
     }
-    return -1;
+    return notFound;
 }
 
-inline int find(const UChar* characters, size_t length, CharacterMatchFunctionPtr matchFunction, int startPosition)
+inline size_t find(const UChar* characters, unsigned length, CharacterMatchFunctionPtr matchFunction, unsigned index = 0)
 {
-    if (startPosition >= static_cast<int>(length))
-        return -1;
-    for (size_t i = startPosition; i < length; ++i) {
-        if (matchFunction(characters[i]))
-            return static_cast<int>(i);
+    while (index < length) {
+        if (matchFunction(characters[index]))
+            return index;
+        ++index;
     }
-    return -1;
+    return notFound;
 }
 
-inline int reverseFind(const UChar* characters, size_t length, UChar character, int startPosition)
+inline size_t reverseFind(const UChar* characters, unsigned length, UChar matchCharacter, unsigned index = UINT_MAX)
 {
-    if (startPosition >= static_cast<int>(length) || !length)
-        return -1;
-    if (startPosition < 0)
-        startPosition += static_cast<int>(length);
-    while (true) {
-        if (characters[startPosition] == character)
-            return startPosition;
-        if (!startPosition)
-            return -1;
-        startPosition--;
+    if (!length)
+        return notFound;
+    if (index >= length)
+        index = length - 1;
+    while (characters[index] != matchCharacter) {
+        if (!index--)
+            return notFound;
     }
-    ASSERT_NOT_REACHED();
-    return -1;
+    return index;
 }
 
 inline void append(Vector<UChar>& vector, const String& string)

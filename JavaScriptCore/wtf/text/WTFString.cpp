@@ -576,14 +576,14 @@ void String::split(const String& separator, bool allowEmptyEntries, Vector<Strin
 {
     result.clear();
 
-    int startPos = 0;
-    int endPos;
-    while ((endPos = find(separator, startPos)) != -1) {
+    unsigned startPos = 0;
+    size_t endPos;
+    while ((endPos = find(separator, startPos)) != notFound) {
         if (allowEmptyEntries || startPos != endPos)
             result.append(substring(startPos, endPos - startPos));
         startPos = endPos + separator.length();
     }
-    if (allowEmptyEntries || startPos != static_cast<int>(length()))
+    if (allowEmptyEntries || startPos != length())
         result.append(substring(startPos));
 }
 
@@ -596,14 +596,14 @@ void String::split(UChar separator, bool allowEmptyEntries, Vector<String>& resu
 {
     result.clear();
 
-    int startPos = 0;
-    int endPos;
-    while ((endPos = find(separator, startPos)) != -1) {
+    unsigned startPos = 0;
+    size_t endPos;
+    while ((endPos = find(separator, startPos)) != notFound) {
         if (allowEmptyEntries || startPos != endPos)
             result.append(substring(startPos, endPos - startPos));
         startPos = endPos + 1;
     }
-    if (allowEmptyEntries || startPos != static_cast<int>(length()))
+    if (allowEmptyEntries || startPos != length())
         result.append(substring(startPos));
 }
 

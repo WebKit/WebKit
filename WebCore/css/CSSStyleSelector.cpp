@@ -2119,18 +2119,18 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
             if (sel->m_value.contains(' ') || sel->m_value.isEmpty())
                 return false;
 
-            int startSearchAt = 0;
+            unsigned startSearchAt = 0;
             while (true) {
-                int foundPos = value.find(sel->m_value, startSearchAt, caseSensitive);
-                if (foundPos == -1)
+                size_t foundPos = value.find(sel->m_value, startSearchAt, caseSensitive);
+                if (foundPos == notFound)
                     return false;
-                if (foundPos == 0 || value[foundPos-1] == ' ') {
+                if (foundPos == 0 || value[foundPos - 1] == ' ') {
                     unsigned endStr = foundPos + sel->m_value.length();
                     if (endStr == value.length() || value[endStr] == ' ')
                         break; // We found a match.
                 }
                 
-                // No match.  Keep looking.
+                // No match. Keep looking.
                 startSearchAt = foundPos + 1;
             }
             break;

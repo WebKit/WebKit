@@ -31,40 +31,40 @@
 
 namespace WebCore {
 
-static inline int findSlashDotDotSlash(const UChar* characters, size_t length)
+static inline size_t findSlashDotDotSlash(const UChar* characters, size_t length)
 {
     if (length < 4)
-        return -1;
+        return notFound;
     unsigned loopLimit = length - 3;
     for (unsigned i = 0; i < loopLimit; ++i) {
         if (characters[i] == '/' && characters[i + 1] == '.' && characters[i + 2] == '.' && characters[i + 3] == '/')
             return i;
     }
-    return -1;
+    return notFound;
 }
 
-static inline int findSlashSlash(const UChar* characters, size_t length, int position)
+static inline size_t findSlashSlash(const UChar* characters, size_t length, int position)
 {
     if (length < 2)
-        return -1;
+        return notFound;
     unsigned loopLimit = length - 1;
     for (unsigned i = position; i < loopLimit; ++i) {
         if (characters[i] == '/' && characters[i + 1] == '/')
             return i;
     }
-    return -1;
+    return notFound;
 }
 
-static inline int findSlashDotSlash(const UChar* characters, size_t length)
+static inline size_t findSlashDotSlash(const UChar* characters, size_t length)
 {
     if (length < 3)
-        return -1;
+        return notFound;
     unsigned loopLimit = length - 2;
     for (unsigned i = 0; i < loopLimit; ++i) {
         if (characters[i] == '/' && characters[i + 1] == '.' && characters[i + 2] == '/')
             return i;
     }
-    return -1;
+    return notFound;
 }
 
 static inline bool containsColonSlashSlash(const UChar* characters, unsigned length)
@@ -82,36 +82,32 @@ static inline bool containsColonSlashSlash(const UChar* characters, unsigned len
 static inline void cleanPath(Vector<UChar, 512>& path)
 {
     // FIXME: Should not do this in the query or anchor part.
-    int pos;
-    while ((pos = findSlashDotDotSlash(path.data(), path.size())) != -1) {
-        int prev = reverseFind(path.data(), path.size(), '/', pos - 1);
+    size_t pos;
+    while ((pos = findSlashDotDotSlash(path.data(), path.size())) != notFound) {
+        size_t prev = reverseFind(path.data(), path.size(), '/', pos - 1);
         // don't remove the host, i.e. http://foo.org/../foo.html
-        if (prev < 0 || (prev > 3 && path[prev - 2] == ':' && path[prev - 1] == '/'))
+        if (prev == notFound || (prev > 3 && path[prev - 2] == ':' && path[prev - 1] == '/'))
             path.remove(pos, 3);
         else
             path.remove(prev, pos - prev + 3);
     }
 
     // FIXME: Should not do this in the query part.
-    // Set refPos to -2 to mean "I haven't looked for the anchor yet".
-    // We don't want to waste a function call on the search for the the anchor
-    // in the vast majority of cases where there is no "//" in the path.
     pos = 0;
-    int refPos = -2;
-    while ((pos = findSlashSlash(path.data(), path.size(), pos)) != -1) {
-        if (refPos == -2)
-            refPos = find(path.data(), path.size(), '#');
-        if (refPos > 0 && pos >= refPos)
-            break;
-
-        if (pos == 0 || path[pos - 1] != ':')
-            path.remove(pos);
-        else
-            pos += 2;
+    if ((pos = findSlashSlash(path.data(), path.size(), pos)) != notFound) {
+        size_t refPos = find(path.data(), path.size(), '#');
+        while (refPos == 0 || refPos == notFound || pos < refPos) {
+            if (pos == 0 || path[pos - 1] != ':')
+                path.remove(pos);
+            else
+                pos += 2;
+            if ((pos = findSlashSlash(path.data(), path.size(), pos)) == notFound)
+                break;
+        }
     }
 
     // FIXME: Should not do this in the query or anchor part.
-    while ((pos = findSlashDotSlash(path.data(), path.size())) != -1)
+    while ((pos = findSlashDotSlash(path.data(), path.size())) != notFound)
         path.remove(pos, 2);
 }
 

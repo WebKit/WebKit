@@ -3648,8 +3648,8 @@ HTMLMapElement* Document::getImageMap(const String& url) const
 {
     if (url.isNull())
         return 0;
-    int hashPos = url.find('#');
-    String name = (hashPos < 0 ? url : url.substring(hashPos + 1)).impl();
+    size_t hashPos = url.find('#');
+    String name = (hashPos == notFound ? url : url.substring(hashPos + 1)).impl();
     AtomicString mapName = isHTMLDocument() ? name.lower() : name;
     m_imageMapsByName.checkConsistency();
     return m_imageMapsByName.get(mapName.impl());

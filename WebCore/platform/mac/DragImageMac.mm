@@ -87,9 +87,9 @@ RetainPtr<NSImage> createDragImageIconForCachedImage(CachedImage* image)
 {
     const String& filename = image->response().suggestedFilename();
     NSString *extension = nil;
-    int dotIndex = filename.reverseFind('.');
+    size_t dotIndex = filename.reverseFind('.');
     
-    if (dotIndex > 0 && dotIndex < (int)(filename.length() - 1)) // require that a . exists after the first character and before the last
+    if (dotIndex != notFound && dotIndex < (filename.length() - 1)) // require that a . exists after the first character and before the last
         extension = filename.substring(dotIndex + 1);
     else {
         // It might be worth doing a further lookup to pull the extension from the MIME type.

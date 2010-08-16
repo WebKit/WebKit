@@ -551,12 +551,12 @@ String KURL::lastPathComponent() const
     if (!hasPath())
         return String();
 
-    int end = m_pathEnd - 1;
+    unsigned end = m_pathEnd - 1;
     if (m_string[end] == '/')
         --end;
 
-    int start = m_string.reverseFind('/', end);
-    if (start < m_portEnd)
+    size_t start = m_string.reverseFind('/', end);
+    if (start < static_cast<unsigned>(m_portEnd))
         return String();
     ++start;
 
@@ -675,7 +675,7 @@ String KURL::path() const
 bool KURL::setProtocol(const String& s)
 {
     // Firefox and IE remove everything after the first ':'.
-    int separatorPosition = s.find(':');
+    size_t separatorPosition = s.find(':');
     String newProtocol = s.substring(0, separatorPosition);
 
     if (!isValidProtocol(newProtocol))
@@ -882,13 +882,13 @@ String decodeURLEscapeSequences(const String& str, const TextEncoding& encoding)
 
     CharBuffer buffer;
 
-    int length = str.length();
-    int decodedPosition = 0;
-    int searchPosition = 0;
-    int encodedRunPosition;
-    while ((encodedRunPosition = str.find('%', searchPosition)) >= 0) {
+    unsigned length = str.length();
+    unsigned decodedPosition = 0;
+    unsigned searchPosition = 0;
+    size_t encodedRunPosition;
+    while ((encodedRunPosition = str.find('%', searchPosition)) != notFound) {
         // Find the sequence of %-escape codes.
-        int encodedRunEnd = encodedRunPosition;
+        unsigned encodedRunEnd = encodedRunPosition;
         while (length - encodedRunEnd >= 3
                 && str[encodedRunEnd] == '%'
                 && isASCIIHexDigit(str[encodedRunEnd + 1])
@@ -1614,13 +1614,13 @@ static void encodeRelativeString(const String& rel, const TextEncoding& encoding
 
 static String substituteBackslashes(const String& string)
 {
-    int questionPos = string.find('?');
-    int hashPos = string.find('#');
-    int pathEnd;
+    size_t questionPos = string.find('?');
+    size_t hashPos = string.find('#');
+    unsigned pathEnd;
 
-    if (hashPos >= 0 && (questionPos < 0 || questionPos > hashPos))
+    if (hashPos != notFound && (questionPos == notFound || questionPos > hashPos))
         pathEnd = hashPos;
-    else if (questionPos >= 0)
+    else if (questionPos != notFound)
         pathEnd = questionPos;
     else
         pathEnd = string.length();
@@ -1799,13 +1799,12 @@ bool portAllowed(const KURL& url)
 String mimeTypeFromDataURL(const String& url)
 {
     ASSERT(protocolIs(url, "data"));
-    int index = url.find(';');
-    if (index == -1)
+    size_t index = url.find(';');
+    if (index == notFound)
         index = url.find(',');
-    if (index != -1) {
-        int len = index - 5;
-        if (len > 0)
-            return url.substring(5, len);
+    if (index != notFound) {
+        if (index > 5)
+            return url.substring(5, index - 5);
         return "text/plain"; // Data URLs with no MIME type are considered text/plain.
     }
     return "";

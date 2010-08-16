@@ -968,8 +968,8 @@ bool ApplicationCacheStorage::storeNewestCache(ApplicationCacheGroup* group)
 
 static inline void parseHeader(const UChar* header, size_t headerLength, ResourceResponse& response)
 {
-    int pos = find(header, headerLength, ':');
-    ASSERT(pos != -1);
+    size_t pos = find(header, headerLength, ':');
+    ASSERT(pos != notFound);
     
     AtomicString headerName = AtomicString(header, pos);
     String headerValue = String(header + pos + 1, headerLength - pos - 1);
@@ -979,9 +979,9 @@ static inline void parseHeader(const UChar* header, size_t headerLength, Resourc
 
 static inline void parseHeaders(const String& headers, ResourceResponse& response)
 {
-    int startPos = 0;
-    int endPos;
-    while ((endPos = headers.find('\n', startPos)) != -1) {
+    unsigned startPos = 0;
+    size_t endPos;
+    while ((endPos = headers.find('\n', startPos)) != notFound) {
         ASSERT(startPos != endPos);
 
         parseHeader(headers.characters() + startPos, endPos - startPos, response);
@@ -989,7 +989,7 @@ static inline void parseHeaders(const String& headers, ResourceResponse& respons
         startPos = endPos + 1;
     }
     
-    if (startPos != static_cast<int>(headers.length()))
+    if (startPos != headers.length())
         parseHeader(headers.characters(), headers.length(), response);
 }
     

@@ -70,11 +70,11 @@ RenderWidget* HTMLObjectElement::renderWidgetForJSBindings() const
 void HTMLObjectElement::parseMappedAttribute(Attribute* attr)
 {
     String val = attr->value();
-    int pos;
+    size_t pos;
     if (attr->name() == typeAttr) {
         m_serviceType = val.lower();
         pos = m_serviceType.find(";");
-        if (pos != -1)
+        if (pos != notFound)
           m_serviceType = m_serviceType.left(pos);
         if (renderer())
           m_needWidgetUpdate = true;

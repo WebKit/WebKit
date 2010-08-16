@@ -1,3 +1,75 @@
+2010-08-16  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig
+
+        Bug 44080 - String find/reverseFind methods need tidying up
+        These methods have a couple of problems with their interface, and implementation.
+
+        These methods take and int index, and return an int - however this is problematic
+        since on 64-bit string indices may have a full 32-bit range.  This spills out into
+        surrounding code, which unsafely casts string indices from unsigned to int. Code
+        checking the result of these methods check for a mix of "== -1", "< 0", and
+        "== notFound".  Clean this up by changing these methods to take an unsigned
+        starting index, and return a size_t. with a failed match indicated by notFound.
+        reverseFind also has a special meaning for the starting index argument, in that a
+        negative index is interpreted as an offset back from the end of the string. Remove
+        this functionality, in the (1!) case where it is used we should just calculate the
+        offset by subtracting from the string's length.
+
+        The implementation has a few problems too.  The code is not in webkit style, in
+        using assorted abbreviations in variable names, and implementations of similar
+        find methods with differing argument types were unnecessarily inconsistent. When
+        find is passed const char* data the string would be handled as latin1 (zero
+        extended to UTF-16) for all characters but the first; this is sign extended.
+        Case-insensitive find is broken for unicode strings; the hashing optimization is
+        not unicode safe, and could result in false negatives.
+
+        Unify UString find methods to match String.
+
+        * JavaScriptCore.exp:
+        * bytecode/CodeBlock.cpp:
+        (JSC::escapeQuotes):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::substitute):
+        * runtime/JSString.cpp:
+        (JSC::JSString::replaceCharacter):
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::RegExp):
+        * runtime/RegExpKey.h:
+        (JSC::RegExpKey::getFlagsValue):
+        * runtime/StringPrototype.cpp:
+        (JSC::substituteBackreferencesSlow):
+        (JSC::substituteBackreferences):
+        (JSC::stringProtoFuncReplace):
+        (JSC::stringProtoFuncIndexOf):
+        (JSC::stringProtoFuncLastIndexOf):
+        (JSC::stringProtoFuncSplit):
+        * runtime/UString.cpp:
+        * runtime/UString.h:
+        (JSC::UString::find):
+        (JSC::UString::reverseFind):
+        * wtf/text/AtomicString.h:
+        (WTF::AtomicString::find):
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::find):
+        (WTF::StringImpl::findCaseInsensitive):
+        (WTF::StringImpl::reverseFind):
+        (WTF::StringImpl::reverseFindCaseInsensitive):
+        (WTF::StringImpl::endsWith):
+        (WTF::StringImpl::replace):
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::startsWith):
+        * wtf/text/WTFString.cpp:
+        (WTF::String::split):
+        * wtf/text/WTFString.h:
+        (WTF::String::find):
+        (WTF::String::reverseFind):
+        (WTF::String::findCaseInsensitive):
+        (WTF::String::reverseFindCaseInsensitive):
+        (WTF::String::contains):
+        (WTF::find):
+        (WTF::reverseFind):
+
 2010-08-16  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix, do not build WebCore as a convenience library as this leads to

@@ -74,16 +74,16 @@ static void addToAccessControlAllowList(const String& string, unsigned start, un
 template<class HashType>
 static bool parseAccessControlAllowList(const String& string, HashSet<String, HashType>& set)
 {
-    int start = 0;
-    int end;
-    while ((end = string.find(',', start)) != -1) {
+    unsigned start = 0;
+    size_t end;
+    while ((end = string.find(',', start)) != notFound) {
         if (start == end)
             return false;
 
         addToAccessControlAllowList(string, start, end - 1, set);
         start = end + 1;
     }
-    if (start != static_cast<int>(string.length()))
+    if (start != string.length())
         addToAccessControlAllowList(string, start, string.length() - 1, set);
 
     return true;

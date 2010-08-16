@@ -45,8 +45,8 @@ Entry::Entry(PassRefPtr<DOMFileSystem> fileSystem, const String& fullPath, bool 
     , m_fullPath(fullPath)
     , m_isDirectory(isDirectory)
 {
-    int index = fullPath.reverseFind("/");
-    if (index != -1)
+    size_t index = fullPath.reverseFind("/");
+    if (index != notFound)
         m_name = fullPath.substring(index);
     else
         m_name = fullPath;

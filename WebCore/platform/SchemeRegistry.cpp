@@ -113,8 +113,8 @@ bool SchemeRegistry::shouldTreatURLAsLocal(const String& url)
             return true;
     }
 
-    int loc = url.find(':');
-    if (loc == -1)
+    size_t loc = url.find(':');
+    if (loc == notFound)
         return false;
 
     String scheme = url.left(loc);

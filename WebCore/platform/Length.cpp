@@ -103,10 +103,10 @@ Length* newCoordsArray(const String& string, int& len)
     Length* r = new Length[len];
 
     int i = 0;
-    int pos = 0;
-    int pos2;
+    unsigned pos = 0;
+    size_t pos2;
 
-    while ((pos2 = str->find(' ', pos)) != -1) {
+    while ((pos2 = str->find(' ', pos)) != notFound) {
         r[i++] = parseLength(str->characters() + pos, pos2 - pos);
         pos = pos2+1;
     }
@@ -129,10 +129,10 @@ Length* newLengthArray(const String& string, int& len)
     Length* r = new Length[len];
 
     int i = 0;
-    int pos = 0;
-    int pos2;
+    unsigned pos = 0;
+    size_t pos2;
 
-    while ((pos2 = str->find(',', pos)) != -1) {
+    while ((pos2 = str->find(',', pos)) != notFound) {
         r[i++] = parseLength(str->characters() + pos, pos2 - pos);
         pos = pos2+1;
     }

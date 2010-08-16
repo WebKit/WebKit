@@ -219,8 +219,8 @@ SMILTime SVGSMILElement::parseClockValue(const String& data)
 
     double result = 0;
     bool ok;
-    int doublePointOne = parse.find(':');
-    int doublePointTwo = parse.find(':', doublePointOne + 1);
+    size_t doublePointOne = parse.find(':');
+    size_t doublePointTwo = parse.find(':', doublePointOne + 1);
     if (doublePointOne == 2 && doublePointTwo == 5 && parse.length() >= 8) { 
         result += parse.substring(0, 2).toUIntStrict(&ok) * 60 * 60;
         if (!ok)
@@ -229,7 +229,7 @@ SMILTime SVGSMILElement::parseClockValue(const String& data)
         if (!ok)
             return SMILTime::unresolved();
         result += parse.substring(6).toDouble(&ok);
-    } else if (doublePointOne == 2 && doublePointTwo == -1 && parse.length() >= 5) { 
+    } else if (doublePointOne == 2 && doublePointTwo == notFound && parse.length() >= 5) { 
         result += parse.substring(0, 2).toUIntStrict(&ok) * 60;
         if (!ok)
             return SMILTime::unresolved();
@@ -253,15 +253,15 @@ bool SVGSMILElement::parseCondition(const String& value, BeginOrEnd beginOrEnd)
     
     double sign = 1.;
     bool ok;
-    int pos = parseString.find('+');
-    if (pos == -1) {
+    size_t pos = parseString.find('+');
+    if (pos == notFound) {
         pos = parseString.find('-');
-        if (pos != -1)
+        if (pos != notFound)
             sign = -1.;
     }
     String conditionString;
     SMILTime offset = 0;
-    if (pos == -1)
+    if (pos == notFound)
         conditionString = parseString;
     else {
         conditionString = parseString.left(pos).stripWhiteSpace();
@@ -277,7 +277,7 @@ bool SVGSMILElement::parseCondition(const String& value, BeginOrEnd beginOrEnd)
     
     String baseID;
     String nameString;
-    if (pos == -1)
+    if (pos == notFound)
         nameString = conditionString;
     else {
         baseID = conditionString.left(pos);

@@ -73,11 +73,11 @@ struct RegExpKey {
     int getFlagsValue(const UString flags) 
     {
         flagsValue = 0;
-        if (flags.find('g') != UString::NotFound)
+        if (flags.find('g') != notFound)
             flagsValue += 4;
-        if (flags.find('i') != UString::NotFound)
+        if (flags.find('i') != notFound)
             flagsValue += 2;
-        if (flags.find('m') != UString::NotFound)
+        if (flags.find('m') != notFound)
             flagsValue += 1;
         return flagsValue;
     }

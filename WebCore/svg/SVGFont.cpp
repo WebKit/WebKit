@@ -182,8 +182,8 @@ static inline bool isCompatibleGlyph(const SVGGlyphIdentifier& identifier, bool 
         // Split subcode from language, if existant.
         String languagePrefix;
 
-        int subCodeSeparator = language.find('-');
-        if (subCodeSeparator != -1)
+        size_t subCodeSeparator = language.find('-');
+        if (subCodeSeparator != notFound)
             languagePrefix = language.left(subCodeSeparator);
 
         Vector<String>::const_iterator it = identifier.languages.begin();

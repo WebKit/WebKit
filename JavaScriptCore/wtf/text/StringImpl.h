@@ -290,15 +290,18 @@ public:
 
     PassRefPtr<StringImpl> removeCharacters(CharacterMatchFunctionPtr);
 
-    int find(const char*, int index = 0, bool caseSensitive = true);
-    int find(UChar, int index = 0);
-    int find(CharacterMatchFunctionPtr, int index = 0);
-    int find(StringImpl*, int index, bool caseSensitive = true);
+    size_t find(UChar, unsigned index = 0);
+    size_t find(CharacterMatchFunctionPtr, unsigned index = 0);
+    size_t find(const char*, unsigned index = 0);
+    size_t find(StringImpl*, unsigned index = 0);
+    size_t findIgnoringCase(const char*, unsigned index = 0);
+    size_t findIgnoringCase(StringImpl*, unsigned index = 0);
 
-    int reverseFind(UChar, int index);
-    int reverseFind(StringImpl*, int index, bool caseSensitive = true);
-    
-    bool startsWith(StringImpl* str, bool caseSensitive = true) { return reverseFind(str, 0, caseSensitive) == 0; }
+    size_t reverseFind(UChar, unsigned index = UINT_MAX);
+    size_t reverseFind(StringImpl*, unsigned index = UINT_MAX);
+    size_t reverseFindIgnoringCase(StringImpl*, unsigned index = UINT_MAX);
+
+    bool startsWith(StringImpl* str, bool caseSensitive = true) { return (caseSensitive ? reverseFind(str, 0) : reverseFindIgnoringCase(str, 0)) == 0; }
     bool endsWith(StringImpl*, bool caseSensitive = true);
 
     PassRefPtr<StringImpl> replace(UChar, UChar);
