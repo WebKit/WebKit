@@ -1,3 +1,12 @@
+2010-08-16  Leandro Pereira  <leandro@profusion.mobi>
+
+        [EFL] Build fix after r65366.
+
+        * CMakeLists.txt: Use if (VAR) instead of if (${VAR}) to check if
+        they're empty.
+        * jsc/CMakeLists.txt: Ditto.
+        * wtf/CMakeLists.txt: Ditto.
+
 2010-08-15  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix, don't build intermediate source in DerivedSources dir.

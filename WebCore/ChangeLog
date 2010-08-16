@@ -1,3 +1,12 @@
+2010-08-16  Leandro Pereira  <leandro@profusion.mobi>
+
+        [EFL] Build fix after r65366.
+
+        EFL port does not support automated tests yet.
+
+        * CMakeLists.txt: Use if (VAR) instead of if (${VAR}) to check if
+        they're empty.
+
 2010-08-16  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.
