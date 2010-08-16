@@ -144,7 +144,7 @@ void ImageBuffer::clip(GraphicsContext* context, const FloatRect& floatRect) con
     if (alphaMask.width() != rect.width() || alphaMask.height() != rect.height())
         alphaMask = alphaMask.scaled(rect.width(), rect.height());
 
-    m_data.layers.push(new TransparencyLayer(m_data.p(), m_data.p()->transform().mapRect(rect), 1.0, alphaMask));
+    context->pushTransparencyLayerInternal(rect, 1.0, alphaMask);
 }
 
 void ImageBuffer::platformTransformColorSpace(const Vector<int>& lookUpTable)
