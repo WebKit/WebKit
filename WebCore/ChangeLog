@@ -1,3 +1,15 @@
+2010-08-16  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Adam Roben.
+
+        Current implementation of WebCore post-build step on windows platform is error prone.
+        It would be better to extract the script into external file.
+        https://bugs.webkit.org/show_bug.cgi?id=44058
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.vcproj/copyForwardingHeaders.cmd: Added.
+        * WebCore.vcproj/copyInspectorFiles.cmd: Added.
+
 2010-08-16  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Fix typo in previous build fix.
