@@ -60,6 +60,11 @@ PassRefPtr<TextEvent> TextEvent::createForFragmentPaste(PassRefPtr<AbstractView>
     return adoptRef(new TextEvent(view, "", data, shouldSmartReplace, shouldMatchStyle));
 }
 
+PassRefPtr<TextEvent> TextEvent::createForDrop(PassRefPtr<AbstractView> view, const String& data)
+{
+    return adoptRef(new TextEvent(view, data, TextEvent::InputTypeDrop));
+}
+
 TextEvent::TextEvent()
     : m_inputType(TextEvent::InputTypeKeyboard)
     , m_shouldSmartReplace(false)

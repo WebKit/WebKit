@@ -1,3 +1,17 @@
+2010-08-13  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Tony Chang.
+
+        https://bugs.webkit.org/show_bug.cgi?id=43778
+        Dropping should fire textInput event.
+
+        * editing/pasteboard/drop-text-events-expected.txt: Added.
+        * editing/pasteboard/drop-text-events-sideeffect-expected.txt: Added.
+        * editing/pasteboard/drop-text-events-sideeffect.html: Added.
+        * editing/pasteboard/drop-text-events.html: Added.
+        * editing/pasteboard/script-tests/drop-text-events-sideeffect.js: Added.
+        * editing/pasteboard/script-tests/drop-text-events.js: Added.
+
 2010-08-15  Ariya Hidayat  <ariya@sencha.com>
 
         Reviewed by Antonio Gomes.

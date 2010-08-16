@@ -38,7 +38,8 @@ namespace WebCore {
             InputTypeKeyboard, // any newline characters in the text are line breaks only, not paragraph separators.
             InputTypeLineBreak, // any tab characters in the text are backtabs.
             InputTypeBackTab,
-            InputTypePaste
+            InputTypePaste,
+            InputTypeDrop,
         };
 
         static InputType selectInputType(bool isLineBreak, bool isBackTab);
@@ -46,6 +47,7 @@ namespace WebCore {
         static PassRefPtr<TextEvent> create(PassRefPtr<AbstractView> view, const String& data, InputType = InputTypeKeyboard);
         static PassRefPtr<TextEvent> createForPlainTextPaste(PassRefPtr<AbstractView> view, const String& data, bool shouldSmartReplace);
         static PassRefPtr<TextEvent> createForFragmentPaste(PassRefPtr<AbstractView> view, PassRefPtr<DocumentFragment> data, bool shouldSmartReplace, bool shouldMatchStyle);
+        static PassRefPtr<TextEvent> createForDrop(PassRefPtr<AbstractView> view, const String& data);
 
         virtual ~TextEvent();
     
@@ -58,6 +60,7 @@ namespace WebCore {
         bool isLineBreak() const { return m_inputType == InputTypeLineBreak; }
         bool isBackTab() const { return m_inputType == InputTypeBackTab; }
         bool isPaste() const { return m_inputType == InputTypePaste; }
+        bool isDrop() const { return m_inputType == InputTypeDrop; }
 
         bool shouldSmartReplace() const { return m_shouldSmartReplace; }
         bool shouldMatchStyle() const { return m_shouldMatchStyle; }
@@ -65,9 +68,11 @@ namespace WebCore {
 
     private:
         TextEvent();
+
         TextEvent(PassRefPtr<AbstractView>, const String& data, InputType = InputTypeKeyboard);
         TextEvent(PassRefPtr<AbstractView>, const String& data, PassRefPtr<DocumentFragment>,
                   bool shouldSmartReplace, bool shouldMatchStyle);
+
         InputType m_inputType;
         String m_data;
 

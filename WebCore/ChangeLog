@@ -1,3 +1,33 @@
+2010-08-13  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Tony Chang.
+
+        https://bugs.webkit.org/show_bug.cgi?id=43778
+        Dropping should fire textInput event
+
+        This change:
+        - added TextEvent::m_isDrop to distinguish drop-initiated events.
+        - added to dispatch TextEvent from DragController before making a side effect
+          and cancel the side effect if the event prevents default
+
+        Tests: editing/pasteboard/drop-text-events-sideeffect.html
+               editing/pasteboard/drop-text-events.html
+
+        * dom/TextEvent.cpp:
+        (WebCore::TextEvent::createForDrop): Added.
+        (WebCore::TextEvent::TextEvent):
+        * dom/TextEvent.h:
+        (WebCore::TextEvent::isDrop): Added.
+        * editing/Editor.cpp:
+        (WebCore::Editor::handleTextEvent):
+        (WebCore::Editor::findEventTargetFrom): Extracted from findEventTargetFromSelection().
+        (WebCore::Editor::findEventTargetFromSelection): 
+        * editing/Editor.h:
+        * page/DragController.cpp:
+        (WebCore::DragController::dispatchTextInputEventFor): Added.
+        (WebCore::DragController::concludeEditDrag): Added an event dispatch path.
+        * page/DragController.h:
+
 2010-08-15  Ariya Hidayat  <ariya@sencha.com>
 
         Unreviewed, rolling out r65393.

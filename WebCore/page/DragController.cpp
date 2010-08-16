@@ -63,6 +63,7 @@
 #include "SelectionController.h"
 #include "Settings.h"
 #include "Text.h"
+#include "TextEvent.h"
 #include "htmlediting.h"
 #include "markup.h"
 #include <wtf/CurrentTime.h>
@@ -363,6 +364,15 @@ static bool setSelectionToDragCaret(Frame* frame, VisibleSelection& dragCaret, R
     return !frame->selection()->isNone() && frame->selection()->isContentEditable();
 }
 
+bool DragController::dispatchTextInputEventFor(Frame* innerFrame, DragData* dragData)
+{
+    VisibleSelection dragCaret(m_page->dragCaretController()->selection());
+    String text = dragCaret.isContentRichlyEditable() ? "" : dragData->asPlainText();
+    Node* target = innerFrame->editor()->findEventTargetFrom(dragCaret);
+    ExceptionCode ec = 0;
+    return target->dispatchEvent(TextEvent::createForDrop(innerFrame->domWindow(), text), ec);
+}
+
 bool DragController::concludeEditDrag(DragData* dragData)
 {
     ASSERT(dragData);
@@ -376,11 +386,12 @@ bool DragController::concludeEditDrag(DragData* dragData)
     Frame* innerFrame = element->ownerDocument()->frame();
     ASSERT(innerFrame);
 
+    if (!dispatchTextInputEventFor(innerFrame, dragData))
+        return true;
+
     if (dragData->containsColor()) {
         Color color = dragData->asColor();
         if (!color.isValid())
-            return false;
-        if (!innerFrame)
             return false;
         RefPtr<Range> innerRange = innerFrame->selection()->toNormalizedRange();
         RefPtr<CSSStyleDeclaration> style = m_documentUnderMouse->createCSSStyleDeclaration();
