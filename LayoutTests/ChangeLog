@@ -1,3 +1,14 @@
+2010-08-16  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        Some http/tests/history tests now pass on Chromium after r65340
+        https://bugs.webkit.org/show_bug.cgi?id=44033
+
+        Remove expected failures.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-08-16  Steve Block  <steveblock@google.com>
 
         Unreviewed build fix.

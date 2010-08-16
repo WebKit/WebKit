@@ -383,17 +383,6 @@ WONTFIX : fast/js/removing-Cf-characters.html = FAIL
 WONTFIX SKIP : fast/js/date-DST-time-cusps.html = PASS FAIL
 WONTFIX SKIP : fast/js/date-big-setdate.html = PASS FAIL
 
-// The following tests fail because of difference in how the test shell
-// navigation controller tracks navigations as compared to how the Mac
-// implementation does it.
-WONTFIX : http/tests/history/redirect-200-refresh-0-seconds.pl = FAIL
-WONTFIX : http/tests/history/redirect-js-location-replace-0-seconds.html = FAIL
-WONTFIX DEBUG : http/tests/history/redirect-js-location-replace-2-seconds.html = FAIL
-WONTFIX LINUX MAC RELEASE : http/tests/history/redirect-js-location-replace-2-seconds.html = FAIL
-WONTFIX SLOW WIN RELEASE : http/tests/history/redirect-js-location-replace-2-seconds.html = FAIL
-WONTFIX : http/tests/history/redirect-js-location-replace-before-load.html = FAIL
-WONTFIX : http/tests/history/redirect-meta-refresh-0-seconds.html = FAIL
-
 // This test expects weird behavior of __defineGetter__ on the
 // window object.  It expects variables introduced with 'var x = value'
 // to behave differently from variables introduced with 'y = value'.
