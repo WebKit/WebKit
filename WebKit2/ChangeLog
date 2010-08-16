@@ -2,6 +2,20 @@
 
         Reviewed by Gavin Barraclough.
 
+        Null CFURLRef returned from provisionalURL after searching on zillow.com
+        <rdar://problem/8261812>
+        https://bugs.webkit.org/show_bug.cgi?id=44072
+
+        Conversion from WKURLRef to CFRURLRef was breaking on URLs using characters
+        such as '{'.
+
+        * UIProcess/API/C/cf/WKURLCF.cpp:
+        (WKURLCopyCFURL): Use code similar to that found in KURLCFNet.cpp for conversion.
+
+2010-08-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin Barraclough.
+
         Remove unnecessary copy constructor, assignment operator and swap function.
         The defaults (for all except swap) should do just fine.
 
