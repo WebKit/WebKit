@@ -26,8 +26,8 @@
 #ifndef Module_h
 #define Module_h
 
-#include <WebCore/PlatformString.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/text/WTFString.h>
 
 #if PLATFORM(MAC)
 #include <wtf/RetainPtr.h>

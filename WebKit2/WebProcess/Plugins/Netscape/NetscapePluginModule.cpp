@@ -29,8 +29,6 @@
 #include "NetscapeBrowserFuncs.h"
 #include <wtf/PassOwnPtr.h>
 
-using namespace WebCore;
-
 namespace WebKit {
 
 static Vector<NetscapePluginModule*>& initializedNetscapePluginModules()

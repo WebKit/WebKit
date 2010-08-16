@@ -27,9 +27,9 @@
 #define NetscapePluginModule_h
 
 #include "Module.h"
-#include <WebCore/PlatformString.h>
 #include <WebCore/npfunctions.h>
 #include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebKit {
 

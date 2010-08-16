@@ -2,6 +2,58 @@
 
         Reviewed by Gavin Barraclough.
 
+        Remove #includes of <WebCore/PlatformString.h> in favor of <wtf/text/WTFString.h>
+
+        * Platform/Module.cpp:
+        * Platform/Module.h:
+        * Shared/CommandLine.h:
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/WebEvent.h:
+        * Shared/WebNavigationDataStore.h:
+        * Shared/WebPreferencesStore.h:
+        * Shared/WebString.h:
+        * Shared/WebURL.h:
+        * Shared/mac/CommandLineMac.cpp:
+        * Shared/qt/UpdateChunk.cpp:
+        * UIProcess/API/C/WKContext.cpp:
+        * UIProcess/API/C/cf/WKStringCF.cpp:
+        * UIProcess/API/C/cf/WKURLCF.cpp:
+        * UIProcess/API/cpp/qt/WKStringQt.cpp:
+        * UIProcess/API/cpp/qt/WKURLQt.cpp:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        * UIProcess/API/qt/qgraphicswkview.cpp:
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        * UIProcess/Launcher/qt/ProcessLauncherQt.cpp:
+        * UIProcess/Launcher/win/ProcessLauncherWin.cpp:
+        * UIProcess/WebBackForwardListItem.cpp:
+        * UIProcess/WebBackForwardListItem.h:
+        * UIProcess/WebContext.h:
+        * UIProcess/WebContextInjectedBundleClient.cpp:
+        * UIProcess/WebFrameProxy.cpp:
+        * UIProcess/WebFrameProxy.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPolicyClient.cpp:
+        * UIProcess/WebProcessProxy.cpp:
+        * UIProcess/WebUIClient.cpp:
+        * UIProcess/win/WebView.cpp:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageEditorClient.cpp:
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp:
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.cpp:
+        * WebProcess/InjectedBundle/mac/InjectedBundleMac.cpp:
+        * WebProcess/Plugins/JSNPObject.cpp:
+        * WebProcess/Plugins/NPJSObject.cpp:
+        * WebProcess/Plugins/Netscape/NetscapePluginModule.cpp:
+        * WebProcess/Plugins/Netscape/NetscapePluginModule.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebKitMain.cpp:
+        * WebProcess/win/WebProcessMainWin.cpp:
+
+2010-08-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin Barraclough.
+
         Null CFURLRef returned from provisionalURL after searching on zillow.com
         <rdar://problem/8261812>
         https://bugs.webkit.org/show_bug.cgi?id=44072

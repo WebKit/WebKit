@@ -34,7 +34,7 @@
 #include <JavaScriptCore/JSObject.h>
 #include <WebCore/Frame.h>  
 #include <WebCore/IdentifierRep.h>
-#include <WebCore/PlatformString.h>
+#include <wtf/text/WTFString.h>
 
 using namespace JSC;
 using namespace WebCore;

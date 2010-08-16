@@ -25,10 +25,10 @@
 
 #include "WebFrameProxy.h"
 
-#include "WebPageProxy.h"
 #include "WebFormSubmissionListenerProxy.h"
 #include "WebFramePolicyListenerProxy.h"
-#include <WebCore/PlatformString.h>
+#include "WebPageProxy.h"
+#include <wtf/text/WTFString.h>
 
 using namespace WebCore;
 

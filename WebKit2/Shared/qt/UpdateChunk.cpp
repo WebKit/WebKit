@@ -35,7 +35,7 @@
 #include <QImage>
 #include <QTemporaryFile>
 #include <WebCore/FloatRect.h>
-#include <WebCore/PlatformString.h>
+#include <wtf/text/WTFString.h>
 #include <wtf/Vector.h>
 
 using namespace WebCore;

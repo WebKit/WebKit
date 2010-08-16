@@ -30,7 +30,7 @@
 #import "WKViewInternal.h"
 #import <WebCore/Cursor.h>
 #import <WebCore/FoundationExtras.h>
-#import <WebCore/PlatformString.h>
+#import <wtf/text/WTFString.h>
 
 using namespace WebCore;
 

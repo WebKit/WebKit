@@ -27,8 +27,8 @@
 #define WebBackForwardListItem_h
 
 #include "APIObject.h"
-#include <WebCore/PlatformString.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebKit {
 

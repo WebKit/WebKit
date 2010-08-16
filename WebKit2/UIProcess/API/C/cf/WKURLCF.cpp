@@ -26,11 +26,11 @@
 #include "WKURLCF.h"
 
 #include "WKAPICast.h"
-#include <WebCore/PlatformString.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 using namespace WebCore;
 using namespace WebKit;

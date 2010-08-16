@@ -26,7 +26,7 @@
 #include "WebPolicyClient.h"
 
 #include "WKAPICast.h"
-#include <WebCore/PlatformString.h>
+#include <wtf/text/WTFString.h>
 
 using namespace WebCore;
 

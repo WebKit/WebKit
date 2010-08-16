@@ -25,8 +25,6 @@
 
 #include "Module.h"
 
-using namespace WebCore;
-
 namespace WebKit {
 
 Module::Module(const String& path)

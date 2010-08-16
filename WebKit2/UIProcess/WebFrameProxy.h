@@ -29,9 +29,9 @@
 #include "APIObject.h"
 #include "WebFrameListenerProxy.h"
 #include <WebCore/FrameLoaderTypes.h>
-#include <WebCore/PlatformString.h>
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace CoreIPC {
     class ArgumentDecoder;

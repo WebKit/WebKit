@@ -31,10 +31,10 @@
 #include "NPRuntimeUtilities.h"
 #include <JavaScriptCore/Error.h>
 #include <JavaScriptCore/JSGlobalObject.h>
-#include <JavaScriptCore/ObjectPrototype.h>
 #include <JavaScriptCore/JSLock.h>
+#include <JavaScriptCore/ObjectPrototype.h>
 #include <WebCore/IdentifierRep.h>
-#include <WebCore/PlatformString.h>
+#include <wtf/text/WTFString.h>
 
 using namespace JSC;
 using namespace WebCore;

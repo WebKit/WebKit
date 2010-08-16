@@ -29,7 +29,7 @@
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
 #include "WebCoreArgumentCoders.h"
-#include <WebCore/PlatformString.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebKit {
 

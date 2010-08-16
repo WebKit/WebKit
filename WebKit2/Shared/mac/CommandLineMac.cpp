@@ -25,8 +25,6 @@
 
 #include "CommandLine.h"
 
-using namespace WebCore;
-
 namespace WebKit {
 
 // FIXME: There's nothing Mac specific about this command line parser.

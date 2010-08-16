@@ -28,8 +28,8 @@
 #include "WKAPICast.h"
 #include "WebPageProxy.h"
 #include <WebCore/IntSize.h>
-#include <WebCore/PlatformString.h>
 #include <string.h>
+#include <wtf/text/WTFString.h>
 
 using namespace WebCore;
 

@@ -32,9 +32,9 @@
 #include "WebPageProxy.h"
 #include <Commctrl.h>
 #include <WebCore/IntRect.h>
-#include <WebCore/PlatformString.h>
 #include <WebCore/WebCoreInstanceHandle.h>
 #include <WebCore/WindowMessageBroadcaster.h>
+#include <wtf/text/WTFString.h>
 
 using namespace WebCore;
 

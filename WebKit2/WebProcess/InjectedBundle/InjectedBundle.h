@@ -28,8 +28,8 @@
 
 #include "APIObject.h"
 #include "WKBundle.h"
-#include <WebCore/PlatformString.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace CoreIPC {
     class ArgumentDecoder;

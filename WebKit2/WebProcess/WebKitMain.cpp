@@ -31,7 +31,6 @@
 #include <objc/objc-auto.h>
 #endif
 
-using namespace WebCore;
 using namespace WebKit;
 
 #if PLATFORM(MAC)

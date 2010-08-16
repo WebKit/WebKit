@@ -33,8 +33,8 @@
 #include <WebCore/Cursor.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/IntRect.h>
-#include <WebCore/PlatformString.h>
 #include <WebCore/PluginData.h>
+#include <wtf/text/WTFString.h>
 
 namespace CoreIPC {
 

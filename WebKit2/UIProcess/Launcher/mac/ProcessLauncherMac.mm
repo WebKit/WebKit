@@ -28,7 +28,6 @@
 #include "RunLoop.h"
 #include "WebProcess.h"
 #include "WebSystemInterface.h"
-#include <WebCore/PlatformString.h>
 #include <crt_externs.h>
 #include <runtime/InitializeThreading.h>
 #include <servers/bootstrap.h>
@@ -36,6 +35,7 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/Threading.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 using namespace WebCore;
 

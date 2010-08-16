@@ -36,8 +36,8 @@
 #include "WebProcessMessageKinds.h"
 #include "WebProcessProxyMessageKinds.h"
 #include <WebCore/KURL.h>
-#include <WebCore/PlatformString.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 #if ENABLE(WEB_PROCESS_SANDBOX)
 #include <sandbox.h>

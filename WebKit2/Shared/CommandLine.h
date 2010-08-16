@@ -26,9 +26,9 @@
 #ifndef CommandLine_h
 #define CommandLine_h
 
-#include <WebCore/PlatformString.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/StringHash.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebKit {
 

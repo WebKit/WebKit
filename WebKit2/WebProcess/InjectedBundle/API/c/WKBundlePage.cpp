@@ -29,7 +29,6 @@
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
 #include "WebPage.h"
-#include <WebCore/PlatformString.h>
 
 using namespace WebKit;
 

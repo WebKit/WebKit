@@ -33,9 +33,9 @@
 #include <QScrollBar>
 #include <QStyleOptionGraphicsItem>
 #include <QtDebug>
-#include <WebCore/PlatformString.h>
 #include <WebKit2/WKRetainPtr.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/WTFString.h>
 
 using namespace WebKit;
 using namespace WebCore;

@@ -28,13 +28,11 @@
 #include "CommandLine.h"
 #include "RunLoop.h"
 #include "WebProcess.h"
-#include <WebCore/PlatformString.h>
 #include <WebCore/SoftLinking.h>
 #include <runtime/InitializeThreading.h>
 #include <wtf/Threading.h>
 #include <wtf/text/StringHash.h>
-
-using namespace WebCore;
+#include <wtf/text/WTFString.h>
 
 namespace WebKit {
 

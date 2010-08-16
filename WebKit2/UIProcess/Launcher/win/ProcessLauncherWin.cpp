@@ -28,9 +28,9 @@
 #include "Connection.h"
 #include "RunLoop.h"
 #include "WebProcess.h"
-#include <WebCore/PlatformString.h>
 #include <runtime/InitializeThreading.h>
 #include <wtf/Threading.h>
+#include <wtf/text/WTFString.h>
 
 using namespace WebCore;
 

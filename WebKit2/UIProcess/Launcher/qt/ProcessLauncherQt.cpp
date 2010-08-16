@@ -29,11 +29,11 @@
 #include "Connection.h"
 #include "RunLoop.h"
 #include "WebProcess.h"
-#include <WebCore/PlatformString.h>
 #include <runtime/InitializeThreading.h>
 #include <string>
 #include <wtf/PassRefPtr.h>
 #include <wtf/Threading.h>
+#include <wtf/text/WTFString.h>
 
 #include <QApplication>
 #include <QDebug>

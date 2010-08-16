@@ -27,9 +27,9 @@
 
 #include "WKBundleAPICast.h"
 #include "WKBundleInitialize.h"
-#include <WebCore/PlatformString.h>
-#include <wtf/text/CString.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 #if ENABLE(WEB_PROCESS_SANDBOX)
 #include <sandbox.h>

@@ -27,7 +27,7 @@
 
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
-#include <WebCore/PlatformString.h>
+#include <wtf/text/WTFString.h>
 
 using namespace WebCore;
 
