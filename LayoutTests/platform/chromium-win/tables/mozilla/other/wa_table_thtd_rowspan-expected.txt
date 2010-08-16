@@ -1,8 +1,8 @@
-layer at (0,0) size 785x2481
+layer at (0,0) size 785x2464
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x2481
-  RenderBlock {HTML} at (0,0) size 785x2481
-    RenderBody {BODY} at (8,8) size 769x2457 [bgcolor=#FFDEAD]
+layer at (0,0) size 785x2464
+  RenderBlock {HTML} at (0,0) size 785x2464
+    RenderBody {BODY} at (8,8) size 769x2440 [bgcolor=#FFDEAD]
       RenderBlock {H1} at (0,0) size 769x74
         RenderInline {FONT} at (0,0) size 475x73 [color=#FF0000]
           RenderText {#text} at (0,0) size 295x36
@@ -136,11 +136,11 @@ layer at (0,0) size 785x2481
                     text run at (108,11) width 303: "table with header cells spanning multiple rows"
                 RenderText {#text} at (411,11) size 4x19
                   text run at (411,11) width 4: " "
-                RenderInline {FONT} at (0,0) size 589x32
-                  RenderInline {I} at (0,0) size 589x33
-                    RenderText {#text} at (415,14) size 589x33
-                      text run at (415,14) width 185: "(using &ltTH ROWSPAN=integer"
-                      text run at (11,31) width 62: "value> tag)"
+                RenderInline {FONT} at (0,0) size 618x32
+                  RenderInline {I} at (0,0) size 618x33
+                    RenderText {#text} at (415,14) size 618x33
+                      text run at (415,14) width 214: "(using <TH ROWSPAN=integer value>"
+                      text run at (11,31) width 22: "tag)"
                 RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,637) size 769x128
         RenderBlock (anonymous) at (0,0) size 769x20
@@ -483,11 +483,11 @@ layer at (0,0) size 785x2481
                   text run at (2,2) width 30: "col 9"
       RenderBlock {P} at (0,1137) size 769x0
       RenderBlock {HR} at (0,1137) size 769x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,1155) size 769x65
-        RenderTable {TABLE} at (0,0) size 653x65 [bgcolor=#F08080] [border: (1px outset #808080)]
-          RenderTableSection {TBODY} at (1,1) size 651x63
-            RenderTableRow {TR} at (0,2) size 651x59
-              RenderTableCell {TH} at (2,2) size 647x59 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+      RenderBlock {P} at (0,1155) size 769x48
+        RenderTable {TABLE} at (0,0) size 653x48 [bgcolor=#F08080] [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 651x46
+            RenderTableRow {TR} at (0,2) size 651x42
+              RenderTableCell {TH} at (2,2) size 647x42 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                 RenderInline {A} at (0,0) size 0x0
                 RenderText {#text} at (11,11) size 97x19
                   text run at (11,11) width 97: "Test Case #2: "
@@ -496,13 +496,12 @@ layer at (0,0) size 785x2481
                     text run at (108,11) width 286: "table with data cells spanning multiple rows"
                 RenderText {#text} at (394,11) size 4x19
                   text run at (394,11) width 4: " "
-                RenderInline {FONT} at (0,0) size 611x32
-                  RenderInline {I} at (0,0) size 611x33
-                    RenderText {#text} at (398,14) size 611x33
-                      text run at (398,14) width 224: "(using &ltTD ROWSPAN=integer value>"
-                      text run at (11,31) width 22: "tag)"
+                RenderInline {FONT} at (0,0) size 238x15
+                  RenderInline {I} at (0,0) size 238x16
+                    RenderText {#text} at (398,14) size 238x16
+                      text run at (398,14) width 238: "(using <TD ROWSPAN=integer value> tag)"
                 RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,1236) size 769x128
+      RenderBlock {P} at (0,1219) size 769x128
         RenderBlock (anonymous) at (0,0) size 769x20
           RenderBR {BR} at (0,0) size 0x19
         RenderTable {TABLE} at (0,20) size 692x108 [bgcolor=#FFD700] [border: (1px outset #808080)]
@@ -529,10 +528,10 @@ layer at (0,0) size 785x2481
                       text run at (11,51) width 551: "cell occupy the same vertical space as the integer number of cells specified in rows "
                       text run at (562,51) width 100: "above or below"
                       text run at (11,71) width 595: "it. The browser flows the contents of the spanning cell to occupy the entire spanned space."
-      RenderBlock {P} at (0,1380) size 769x40
+      RenderBlock {P} at (0,1363) size 769x40
         RenderBR {BR} at (0,0) size 0x19
         RenderBR {BR} at (0,20) size 0x19
-      RenderBlock {UL} at (0,1436) size 769x284
+      RenderBlock {UL} at (0,1419) size 769x284
         RenderTable {TABLE} at (40,0) size 473x284 [border: (1px outset #808080)]
           RenderBlock {CAPTION} at (0,0) size 471x20
             RenderText {#text} at (111,0) size 38x19
@@ -871,9 +870,9 @@ layer at (0,0) size 785x2481
               RenderTableCell {TD} at (433,236) size 36x24 [bgcolor=#ADD8E6] [border: (1px inset #808080)] [r=9 c=10 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 30x19
                   text run at (2,2) width 30: "col 9"
-      RenderBlock {P} at (0,1736) size 769x0
-      RenderBlock {HR} at (0,1736) size 769x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,1754) size 769x65
+      RenderBlock {P} at (0,1719) size 769x0
+      RenderBlock {HR} at (0,1719) size 769x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,1737) size 769x65
         RenderTable {TABLE} at (0,0) size 653x65 [bgcolor=#F08080] [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 651x63
             RenderTableRow {TR} at (0,2) size 651x59
@@ -886,16 +885,16 @@ layer at (0,0) size 785x2481
                     text run at (108,11) width 401: "table with nested header & data cells spanning multiple rows"
                 RenderText {#text} at (509,11) size 4x19
                   text run at (509,11) width 4: " "
-                RenderInline {FONT} at (0,0) size 575x32
-                  RenderInline {I} at (0,0) size 575x33
-                    RenderText {#text} at (513,14) size 575x33
-                      text run at (513,14) width 73: "(using &ltTH"
-                      text run at (11,31) width 364: "ROWSPAN=integer value> &ltTD ROWSPAN=integer value> tag)"
+                RenderInline {FONT} at (0,0) size 564x32
+                  RenderInline {I} at (0,0) size 564x33
+                    RenderText {#text} at (513,14) size 564x33
+                      text run at (513,14) width 62: "(using <TH"
+                      text run at (11,31) width 353: "ROWSPAN=integer value> <TD ROWSPAN=integer value> tag)"
                 RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,1835) size 769x40
+      RenderBlock {P} at (0,1818) size 769x40
         RenderBR {BR} at (0,0) size 0x19
         RenderBR {BR} at (0,20) size 0x19
-      RenderBlock {UL} at (0,1891) size 769x484
+      RenderBlock {UL} at (0,1874) size 769x484
         RenderTable {TABLE} at (40,0) size 473x484 [border: (1px outset #808080)]
           RenderBlock {CAPTION} at (0,0) size 471x20
             RenderText {#text} at (33,0) size 86x19
@@ -1316,9 +1315,9 @@ layer at (0,0) size 785x2481
                 RenderText {#text} at (2,2) size 18x39
                   text run at (2,2) width 18: "col"
                   text run at (2,22) width 8: "9"
-      RenderBlock {P} at (0,2391) size 769x0
-      RenderBlock {HR} at (0,2391) size 769x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,2401) size 769x20
+      RenderBlock {P} at (0,2374) size 769x0
+      RenderBlock {HR} at (0,2374) size 769x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,2384) size 769x20
         RenderImage {IMG} at (0,2) size 13x13
         RenderText {#text} at (13,0) size 128x19
           text run at (13,0) width 128: " Created 9/19/96 by "
@@ -1326,5 +1325,5 @@ layer at (0,0) size 785x2481
           RenderText {#text} at (141,0) size 77x19
             text run at (141,0) width 77: "Ronald Greti"
         RenderBR {BR} at (218,15) size 0x0
-      RenderBlock {P} at (0,2437) size 769x20
+      RenderBlock {P} at (0,2420) size 769x20
         RenderBR {BR} at (0,0) size 0x19

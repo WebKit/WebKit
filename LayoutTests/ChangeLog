@@ -1,3 +1,33 @@
+2010-08-16  Yuta Kitamura  <yutak@chromium.org>
+
+        Not reviewed. Chromium test expectations updates and rebaselines.
+
+        * platform/chromium-linux/fast/canvas/setWidthResetAfterForcedRender-expected.checksum: Added.
+        * platform/chromium-linux/fast/canvas/setWidthResetAfterForcedRender-expected.png: Added.
+        * platform/chromium-linux/fast/text/word-space-expected.checksum:
+        * platform/chromium-linux/fast/text/word-space-expected.png:
+        * platform/chromium-linux/tables/mozilla/other/wa_table_thtd_rowspan-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/other/wa_table_thtd_rowspan-expected.png:
+        * platform/chromium-mac/fast/canvas/setWidthResetAfterForcedRender-expected.checksum: Added.
+        * platform/chromium-mac/fast/canvas/setWidthResetAfterForcedRender-expected.png: Added.
+        * platform/chromium-mac/fast/text/word-space-expected.checksum: Added.
+        * platform/chromium-mac/fast/text/word-space-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/other/wa_table_thtd_rowspan-expected.checksum: Added.
+        * platform/chromium-mac/tables/mozilla/other/wa_table_thtd_rowspan-expected.png: Added.
+        * platform/chromium-win/fast/canvas/setWidthResetAfterForcedRender-expected.checksum: Added.
+        * platform/chromium-win/fast/canvas/setWidthResetAfterForcedRender-expected.png: Added.
+        * platform/chromium-win/fast/canvas/setWidthResetAfterForcedRender-expected.txt: Added.
+        * platform/chromium-win/fast/text/word-space-expected.checksum:
+        * platform/chromium-win/fast/text/word-space-expected.png:
+        * platform/chromium-win/fast/text/word-space-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-32-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/shapes-intro-01-t-expected.txt:
+        * platform/chromium-win/tables/mozilla/other/wa_table_thtd_rowspan-expected.checksum:
+        * platform/chromium-win/tables/mozilla/other/wa_table_thtd_rowspan-expected.png:
+        * platform/chromium-win/tables/mozilla/other/wa_table_thtd_rowspan-expected.txt:
+        * platform/chromium-win/tables/mozilla/other/wa_table_tr_align-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2010-08-16  MORITA Hajime <morrita@google.com>
 
         Unreviewd, added skip list entries.

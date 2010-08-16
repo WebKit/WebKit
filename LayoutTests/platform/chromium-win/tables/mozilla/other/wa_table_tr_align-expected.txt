@@ -143,11 +143,11 @@ layer at (0,0) size 785x1383
                     text run at (120,11) width 581: "Table displaying Header \"CENTER \"& Data \"LEFT\" default horizontal row alignment"
                 RenderText {#text} at (701,11) size 4x19
                   text run at (701,11) width 4: " "
-                RenderInline {FONT} at (0,0) size 391x32
-                  RenderInline {I} at (0,0) size 391x33
-                    RenderText {#text} at (705,14) size 391x33
+                RenderInline {FONT} at (0,0) size 386x32
+                  RenderInline {I} at (0,0) size 386x33
+                    RenderText {#text} at (705,14) size 386x33
                       text run at (705,14) width 34: "(using"
-                      text run at (348,31) width 67: "&ltTR> tag)"
+                      text run at (353,31) width 56: "<TR> tag)"
                 RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,662) size 769x76
         RenderTable {TABLE} at (0,0) size 346x76 [bgcolor=#FFE4C4] [border: (1px outset #808080)]
@@ -182,18 +182,18 @@ layer at (0,0) size 785x1383
             RenderTableRow {TR} at (0,2) size 767x59
               RenderTableCell {TH} at (2,2) size 763x59 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                 RenderInline {A} at (0,0) size 0x0
-                RenderText {#text} at (27,11) size 97x19
-                  text run at (27,11) width 97: "Test Case #2: "
+                RenderText {#text} at (13,11) size 97x19
+                  text run at (13,11) width 97: "Test Case #2: "
                 RenderInline {FONT} at (0,0) size 574x19 [color=#0000FF]
-                  RenderText {#text} at (124,11) size 574x19
-                    text run at (124,11) width 574: "Tables displaying Header & Data \"LEFT|CENTER|RIGHT\" horizontal row alignment"
-                RenderText {#text} at (698,11) size 4x19
-                  text run at (698,11) width 4: " "
-                RenderInline {FONT} at (0,0) size 480x32
-                  RenderInline {I} at (0,0) size 480x33
-                    RenderText {#text} at (702,14) size 480x33
-                      text run at (702,14) width 34: "(using"
-                      text run at (256,31) width 251: "&ltTR ALIGN=LEFT|CENTER|RIGHT> tag)"
+                  RenderText {#text} at (110,11) size 574x19
+                    text run at (110,11) width 574: "Tables displaying Header & Data \"LEFT|CENTER|RIGHT\" horizontal row alignment"
+                RenderText {#text} at (684,11) size 4x19
+                  text run at (684,11) width 4: " "
+                RenderInline {FONT} at (0,0) size 474x32
+                  RenderInline {I} at (0,0) size 474x33
+                    RenderText {#text} at (688,14) size 474x33
+                      text run at (688,14) width 61: "(using <TR"
+                      text run at (275,31) width 213: "ALIGN=LEFT|CENTER|RIGHT> tag)"
                 RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,853) size 769x158
         RenderTable {TABLE} at (0,0) size 346x158 [bgcolor=#FFE4C4] [border: (1px outset #808080)]
