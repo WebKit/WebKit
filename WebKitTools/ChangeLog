@@ -1,3 +1,11 @@
+2010-08-16  Dan Bernstein  <mitz@apple.com>
+
+        Build fix.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::createOtherPage): Initialize the contentsSizeChanged member.
+        (WTR::TestController::initialize): Ditto.
+
 2010-08-16  Balazs Kelemen  <kb@inf.u-szeged.hu>
 
         Reviewed by Kenneth Rohde Christiansen.
