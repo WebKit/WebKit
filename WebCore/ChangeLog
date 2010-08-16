@@ -2,6 +2,12 @@
 
         Build fix.
 
+        * GNUmakefile.am:
+
+2010-08-16  Jeremy Orlow  <jorlow@chromium.org>
+
+        Build fix.
+
         * page/PageGroup.cpp:
         (WebCore::PageGroup::localStorage):
 
