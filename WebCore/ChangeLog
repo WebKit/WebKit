@@ -1,3 +1,9 @@
+2010-08-16  James Robinson  <jamesr@chromium.org>
+
+        Compile fix. Remove ANGLEWebKitBridge classes from Chromium build.  They are unused.
+
+        * WebCore.gypi:
+
 2010-08-16  Vincent Scheib  <scheib@chromium.org>
 
         Reviewed by Dimitri Glazkov.

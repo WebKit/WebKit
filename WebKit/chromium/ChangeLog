@@ -1,3 +1,10 @@
+2010-08-16  James Robinson  <jamesr@chromium.org>
+
+        Compile fix.  Fix up paintsIntoCanvasBuffer impl.
+
+        * src/GraphicsContext3D.cpp:
+        (WebCore::GraphicsContext3D::paintsIntoCanvasBuffer):
+
 2010-08-16  Vincent Scheib  <scheib@chromium.org>
 
         Reviewed by Dimitri Glazkov.
