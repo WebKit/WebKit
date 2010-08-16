@@ -181,7 +181,7 @@ bool PluginPackage::fetchInfo()
 
     VS_FIXEDFILEINFO* info;
     UINT infoSize;
-    if (!VerQueryValue(versionInfoData.get(), TEXT("\\"), (LPVOID*) &info, &infoSize) || infoSize < sizeof(VS_FIXEDFILEINFO))
+    if (!VerQueryValueW(versionInfoData.get(), L"\\", (LPVOID*) &info, &infoSize) || infoSize < sizeof(VS_FIXEDFILEINFO))
         return false;
     m_moduleVersion.leastSig = info->dwFileVersionLS;
     m_moduleVersion.mostSig = info->dwFileVersionMS;

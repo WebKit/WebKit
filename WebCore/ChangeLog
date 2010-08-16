@@ -1,3 +1,13 @@
+2010-08-16  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Fix warning in WebCore/plugins/win/PluginPackageWin.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=43920
+
+        * plugins/win/PluginPackageWin.cpp:
+        (WebCore::PluginPackage::fetchInfo):
+
 2010-08-16  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed. Touch inspector file to force frontend deployment.
