@@ -2,6 +2,39 @@
 
         Reviewed by Antonio Gomes.
 
+        [Qt] Save and restore shadow state in GraphicsContextQt
+        https://bugs.webkit.org/show_bug.cgi?id=44031
+
+        This is needed after r65362.
+        Use a new class ContextShadowParameter to track and keep the shadow
+        state. We use this rather than using GraphicsContextState to allow
+        possible optimizations (right now only to determine the shadow type,
+        but in future it might cover things like cached scratch image,
+        persistent shader, etc).
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::ContextShadowParameter::):
+        (WebCore::ContextShadowParameter::ContextShadowParameter):
+        (WebCore::ContextShadowParameter::clear):
+        (WebCore::GraphicsContextPlatformPrivate::hasShadow):
+        (WebCore::GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate):
+        (WebCore::GraphicsContext::savePlatformState):
+        (WebCore::GraphicsContext::restorePlatformState):
+        (WebCore::GraphicsContext::drawRect):
+        (WebCore::GraphicsContext::drawLine):
+        (WebCore::GraphicsContext::strokeArc):
+        (WebCore::GraphicsContext::drawConvexPolygon):
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::fillRoundedRect):
+        (WebCore::GraphicsContext::setPlatformShadow):
+        (WebCore::GraphicsContext::clearPlatformShadow):
+
+2010-08-15  Ariya Hidayat  <ariya@sencha.com>
+
+        Reviewed by Antonio Gomes.
+
         [Qt] Border should not cast shadows
         https://bugs.webkit.org/show_bug.cgi?id=44015
 
