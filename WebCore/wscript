@@ -74,7 +74,6 @@ if build_port == "wx":
         ]
     else:
         webcore_sources['wx-gtk'] = [
-               'plugins/PluginDataNone.cpp',
                'plugins/PluginViewNone.cpp',
                'plugins/PluginPackageNone.cpp'
         ]
