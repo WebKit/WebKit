@@ -1,3 +1,21 @@
+2010-08-13  Steve Block  <steveblock@google.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Geolocation requests in progress when the frame is disconnected should invoke the error callback
+        https://bugs.webkit.org/show_bug.cgi?id=43974
+
+        Added new tests to GTK skipped list.
+
+        * fast/dom/Geolocation/disconnected-frame.html: Added.
+        * fast/dom/Geolocation/disconnected-frame-expected.txt: Added.
+        * fast/dom/Geolocation/script-tests/disconnected-frame.js: Added.
+        * fast/dom/Geolocation/resources/disconnected-frame-inner.html: Added.
+        * fast/dom/Geolocation/disconnected-frame-permission-denied.html: Added.
+        * fast/dom/Geolocation/disconnected-frame-permission-denied-expected.txt: Added.
+        * fast/dom/Geolocation/script-tests/disconnected-frame-permission-denied.js: Added.
+        * platform/gtk/Skipped:
+
 2010-08-16  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Joseph Pecoraro.

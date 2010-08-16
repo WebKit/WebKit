@@ -1,3 +1,32 @@
+2010-08-13  Steve Block  <steveblock@google.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Geolocation requests in progress when the frame is disconnected should invoke the error callback
+        https://bugs.webkit.org/show_bug.cgi?id=43974
+
+        If requests are ongoing when the Frame is disconnected, we abort them with a fatal error.
+        To do this, when Geolocation::disconnectFrame() is called we call cancelAllRequests() to
+        set a fatal error on all ongoing requests. Once the requests have made their error
+        callbacks, they are deleted. Note that we check at callback time that the script
+        execution context for the callback is still valid, so it's safe to attempt these
+        callbacks even after the Geolocation object's Frame has gone.
+
+        This requires a change to allow multiple calls to GeoNotifier::setFatalError().
+        For repeated calls, we do not replace the existing error. This ensures that when
+        permission has been denied and the frame is then disconnected, the error callback
+        reports the permission error, as required by the spec.
+
+        Tests: fast/dom/Geolocation/disconnected-frame.html
+               fast/dom/Geolocation/disconnected-frame-permission-denied.html
+
+        * page/Geolocation.cpp:
+        (WebCore::Geolocation::GeoNotifier::setFatalError):
+        (WebCore::Geolocation::disconnectFrame):
+        (WebCore::Geolocation::startRequest):
+        (WebCore::Geolocation::cancelAllRequests):
+        * page/Geolocation.h:
+
 2010-08-16  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Joseph Pecoraro.

@@ -1,0 +1,12 @@
+frame "<!--framePath //<!--frame0-->-->" - has 1 onunload handler(s)
+Tests that when a request is made on a Geolocation object and its Frame is disconnected before a callback is made, the error callback is invoked with the correct error message.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS error.code is 2
+PASS error.message is "Geolocation cannot be used in frameless documents"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -47,6 +47,7 @@ namespace WebCore {
 
 static const char permissionDeniedErrorMessage[] = "User denied Geolocation";
 static const char failedToStartServiceErrorMessage[] = "Failed to start Geolocation service";
+static const char framelessDocumentErrorMessage[] = "Geolocation cannot be used in frameless documents";
 
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
 
@@ -94,9 +95,15 @@ Geolocation::GeoNotifier::GeoNotifier(Geolocation* geolocation, PassRefPtr<Posit
 
 void Geolocation::GeoNotifier::setFatalError(PassRefPtr<PositionError> error)
 {
-    // This method is called at most once on a given GeoNotifier object.
-    ASSERT(!m_fatalError);
+    // If a fatal error has already been set, stick with it. This makes sure that
+    // when permission is denied, this is the error reported, as required by the
+    // spec.
+    if (m_fatalError)
+        return;
+
     m_fatalError = error;
+    // An existing timer may not have a zero timeout.
+    m_timer.stop();
     m_timer.startOneShot(0);
 }
 
@@ -130,6 +137,8 @@ void Geolocation::GeoNotifier::timerFired(Timer<GeoNotifier>*)
     // could be deleted by a call to clearWatch in a callback.
     RefPtr<GeoNotifier> protect(this);
 
+    // Test for fatal error first. This is required for the case where the Frame is
+    // disconnected and requests are cancelled.
     if (m_fatalError) {
         if (m_errorCallback)
             m_errorCallback->handleEvent(m_fatalError.get());
@@ -222,7 +231,7 @@ void Geolocation::disconnectFrame()
 {
     if (m_frame && m_frame->page() && m_allowGeolocation == InProgress)
         m_frame->page()->chrome()->cancelGeolocationPermissionRequestForFrame(m_frame, this);
-    stopTimers();
+    cancelAllRequests();
     stopUpdating();
     if (m_frame && m_frame->document())
         m_frame->document()->setUsingGeolocation(false);
@@ -501,6 +510,22 @@ void Geolocation::stopTimers()
 {
     stopTimersForOneShots();
     stopTimersForWatchers();
+}
+
+void Geolocation::cancelRequests(Vector<RefPtr<GeoNotifier> >& notifiers)
+{
+    Vector<RefPtr<GeoNotifier> >::const_iterator end = notifiers.end();
+    for (Vector<RefPtr<GeoNotifier> >::const_iterator it = notifiers.begin(); it != end; ++it)
+        (*it)->setFatalError(PositionError::create(PositionError::POSITION_UNAVAILABLE, framelessDocumentErrorMessage));
+}
+
+void Geolocation::cancelAllRequests()
+{
+    Vector<RefPtr<GeoNotifier> > copy;
+    copyToVector(m_oneShots, copy);
+    cancelRequests(copy);
+    m_watchers.getNotifiersVector(copy);
+    cancelRequests(copy);
 }
 
 void Geolocation::handleError(PositionError* error)
