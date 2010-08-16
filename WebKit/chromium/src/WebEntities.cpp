@@ -61,7 +61,7 @@ void populateMapFromHTMLEntityTable(WTF::HashMap<int, WTF::String>& map)
     ASSERT(map.isEmpty());
     const HTMLEntityTableEntry* entry = HTMLEntityTable::firstEntry();
     const HTMLEntityTableEntry* end = HTMLEntityTable::lastEntry() + 1;
-    while (entry != end) {
+    for (; entry != end; ++entry) {
         String entity = entry->entity;
         int value = entry->value;
         ASSERT(value && !entity.isEmpty());
