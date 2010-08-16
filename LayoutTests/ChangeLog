@@ -1,3 +1,10 @@
+2010-08-16  Nate Chapin  <japhet@chromium.org>
+
+        Chromium win rebaseline + test expectations tweaks.
+
+        * platform/chromium-win/svg/custom/absolute-sized-content-with-resources-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-08-16  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Chris Marrin.
