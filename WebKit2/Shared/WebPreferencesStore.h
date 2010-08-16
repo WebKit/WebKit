@@ -35,9 +35,6 @@ namespace WebKit {
 
 struct WebPreferencesStore {
     WebPreferencesStore();
-    WebPreferencesStore(const WebPreferencesStore&);
-    WebPreferencesStore& operator=(const WebPreferencesStore&);
-    void swap(WebPreferencesStore&);
 
     void encode(CoreIPC::ArgumentEncoder* encoder) const
     {

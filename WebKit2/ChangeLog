@@ -1,3 +1,13 @@
+2010-08-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin Barraclough.
+
+        Remove unnecessary copy constructor, assignment operator and swap function.
+        The defaults (for all except swap) should do just fine.
+
+        * Shared/WebPreferencesStore.cpp:
+        * Shared/WebPreferencesStore.h:
+
 2010-08-16  Balazs Kelemen  <kb@inf.u-szeged.hu>
 
         Reviewed by Kenneth Rohde Christiansen.
