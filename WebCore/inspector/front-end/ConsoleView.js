@@ -296,7 +296,7 @@ WebInspector.ConsoleView.prototype = {
 
     requestClearMessages: function()
     {
-        InspectorBackend.clearConsoleMessages(WebInspector.Callback.wrap(this.clearMessages.bind(this)));
+        InspectorBackend.clearConsoleMessages();
     },
 
     clearMessages: function()

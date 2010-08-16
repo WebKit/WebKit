@@ -1,3 +1,22 @@
+2010-08-16  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Joseph Pecoraro.
+
+        Web Inspector: [REGRESSION] console's clear command does not work.
+        https://bugs.webkit.org/show_bug.cgi?id=44027
+
+        Test: inspector/console-command-clear.html
+
+        * inspector/Inspector.idl:
+        * inspector/InspectorBackend.cpp:
+        * inspector/InspectorBackend.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::clearConsoleMessages):
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype.requestClearMessages):
+        * inspector/front-end/inspector.js:
+        (WebInspector.consoleMessagesCleared):
+
 2010-08-16  Jeremy Orlow  <jorlow@chromium.org>
 
         Ugh, the #if ENABLE() was supposed to be added to Settings not GroupSettings.

@@ -1109,6 +1109,11 @@ WebInspector.selectDatabase = function(o)
     WebInspector.panels.storage.selectDatabase(o);
 }
 
+WebInspector.consoleMessagesCleared = function()
+{
+    WebInspector.console.clearMessages();
+}
+
 WebInspector.selectDOMStorage = function(o)
 {
     WebInspector.showPanel("storage");

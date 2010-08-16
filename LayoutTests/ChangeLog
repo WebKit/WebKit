@@ -1,3 +1,14 @@
+2010-08-16  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Joseph Pecoraro.
+
+        Web Inspector: [REGRESSION] console's clear command does not work.
+        https://bugs.webkit.org/show_bug.cgi?id=44027
+
+        * inspector/console-clear.html:
+        * inspector/console-command-clear-expected.txt: Added.
+        * inspector/console-command-clear.html: Copied from LayoutTests/inspector/console-clear.html.
+
 2010-08-16  MORITA Hajime  <morrita@google.com>
 
         Unreviewed; test expectations fix for Chromium.

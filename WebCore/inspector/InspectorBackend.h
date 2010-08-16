@@ -67,7 +67,6 @@ public:
 
     void setInjectedScriptSource(const String& source);
     void dispatchOnInjectedScript(long injectedScriptId, const String& methodName, const String& arguments, RefPtr<InspectorValue>* result, bool* hadException);
-    void clearConsoleMessages();
 
     // Generic code called from custom implementations.
     void releaseWrapperObjectGroup(long injectedScriptId, const String& objectGroup);

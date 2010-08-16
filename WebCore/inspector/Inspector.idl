@@ -67,6 +67,7 @@ module core {
         [notify] void updateConsoleMessageRepeatCount(out unsigned long count);
         [notify] void updateFocusedNode(out long nodeId);
         [notify] void updateResource(out Value resource);
+        [notify] void consoleMessagesCleared();
 
 #if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
         [notify] void addProfileHeader(out Object header);
@@ -176,8 +177,7 @@ module core {
         [handler=DOM] void searchCanceled();
         [handler=DOM] void pushNodeByPathToFrontend(in long callId, in String path, out long nodeId);
 
-        [handler=Backend] void clearConsoleMessages(in long callId);
-
+        [handler=Controller] void clearConsoleMessages();
         [handler=Controller] void highlightDOMNode(in long nodeId);
         [handler=Controller] void hideDOMNodeHighlight();
         [handler=Controller] void openInInspectedWindow(in String url);

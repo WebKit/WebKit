@@ -1,0 +1,32 @@
+<html>
+<head>
+<script src="../http/tests/inspector/inspector-test.js"></script>
+<script src="../http/tests/inspector/console-tests.js"></script>
+<script>
+
+function doit()
+{
+    console.log("one");
+    console.log("two");
+    console.log("three");
+
+    output("=== Before clear ==="); 
+    dumpConsoleMessages(true);
+    function callback()
+    {
+        output("=== After clear ==="); 
+        dumpConsoleMessages();
+    }
+    evaluateInWebInspector("InjectedScriptAccess.getDefault().evaluate('clear()', '', function() {})", callback);
+}
+
+</script>
+</head>
+
+<body onload="onload()">
+<p>
+Tests that console is cleared upon clear() eval in console.
+</p>
+
+</body>
+</html>
