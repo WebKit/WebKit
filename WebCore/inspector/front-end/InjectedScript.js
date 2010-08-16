@@ -28,486 +28,329 @@
 
 var injectedScriptConstructor = (function (InjectedScriptHost, inspectedWindow, injectedScriptId, jsEngine) {
 
-var InjectedScript = function()
+var InjectedScript = {};
+
+InjectedScript.lastBoundObjectId = 1;
+InjectedScript.idToWrappedObject = {};
+InjectedScript.objectGroups = {};
+
+InjectedScript.wrapObjectForConsole = function(object, canAccessInspectedWindow)
 {
-    this._lastBoundObjectId = 1;
-    this._idToWrappedObject = {};
-    this._objectGroups = {};
+    if (canAccessInspectedWindow)
+        return InjectedScript.wrapObject(object, "console");
+    var result = {};
+    result.type = typeof object;
+    result.description = InjectedScript._toString(object);
+    return result;
 }
 
-InjectedScript.prototype = {
-    wrapObjectForConsole: function(object, canAccessInspectedWindow)
-    {
-        if (canAccessInspectedWindow)
-            return this._wrapObject(object, "console");
-        var result = {};
-        result.type = typeof object;
-        result.description = this._toString(object);
-        return result;
-    },
+InjectedScript.wrapObject = function(object, objectGroupName)
+{
+    try {
+        var objectId;
+        if (typeof object === "object" || typeof object === "function" || InjectedScript._isHTMLAllCollection(object)) {
+            var id = InjectedScript.lastBoundObjectId++;
+            objectId = id;
+            InjectedScript.idToWrappedObject[id] = object;
 
-    _wrapObject: function(object, objectGroupName)
-    {
-        try {
-            var objectId;
-            if (typeof object === "object" || typeof object === "function" || this._isHTMLAllCollection(object)) {
-                var id = this._lastBoundObjectId++;
-                objectId = id;
-                this._idToWrappedObject[id] = object;
-    
-                var group = this._objectGroups[objectGroupName];
-                if (!group) {
-                    group = [];
-                    this._objectGroups[objectGroupName] = group;
-                }
-                group.push(id);
-                objectId = new InjectedScript.RemoteObjectId(InjectedScript.RemoteObjectId.Type.JsObject, id);
+            var group = InjectedScript.objectGroups[objectGroupName];
+            if (!group) {
+                group = [];
+                InjectedScript.objectGroups[objectGroupName] = group;
             }
-            return InjectedScript.RemoteObject.fromObject(object, objectId);
-        } catch (e) {
-            return InjectedScript.RemoteObject.fromObject("[ Exception: " + e.toString() + " ]");
+            group.push(id);
+            objectId = new InjectedScript.RemoteObjectId(InjectedScript.RemoteObjectId.Type.JsObject, id);
         }
-    },
+        return InjectedScript.RemoteObject.fromObject(object, objectId);
+    } catch (e) {
+        return InjectedScript.RemoteObject.fromObject("[ Exception: " + e.toString() + " ]");
+    }
+};
 
-    releaseWrapperObjectGroup: function(objectGroupName)
-    {
-        var group = this._objectGroups[objectGroupName];
-        if (!group)
-            return;
-        for (var i = 0; i < group.length; i++)
-            delete this._idToWrappedObject[group[i]];
-        delete this._objectGroups[objectGroupName];
-    },
+InjectedScript.unwrapObject = function(objectId) {
+    return InjectedScript.idToWrappedObject[objectId];
+};
 
-    dispatch: function(methodName, args)
-    {
-        var argsArray = eval("(" + args + ")");
-        var result = this[methodName].apply(this, argsArray);
-        if (typeof result === "undefined") {
-            inspectedWindow.console.error("Web Inspector error: InjectedScript.%s returns undefined", methodName);
-            result = null;
-        }
-        return result;
-    },
+InjectedScript.releaseWrapperObjectGroup = function(objectGroupName) {
+    var group = InjectedScript.objectGroups[objectGroupName];
+    if (!group)
+        return;
+    for (var i = 0; i < group.length; i++)
+        delete InjectedScript.idToWrappedObject[group[i]];
+    delete InjectedScript.objectGroups[objectGroupName];
+};
 
-    getPrototypes: function(nodeId)
-    {
-        var node = this._nodeForId(nodeId);
-        if (!node)
-            return false;
-    
-        var result = [];
-        var prototype = node;
-        var prototypeId = new InjectedScript.RemoteObjectId(InjectedScript.RemoteObjectId.Type.Node, nodeId);
-        do {
-            result.push(InjectedScript.RemoteObject.fromObject(prototype, prototypeId));
-            prototype = prototype.__proto__;
-            prototypeId = InjectedScript.RemoteObjectId.deriveProperty(prototypeId, "__proto__");
-        } while (prototype)
-    
-        return result;
-    },
+InjectedScript.dispatch = function(methodName, args)
+{
+    var argsArray = eval("(" + args + ")");
+    var result = InjectedScript[methodName].apply(InjectedScript, argsArray);
+    if (typeof result === "undefined") {
+        inspectedWindow.console.error("Web Inspector error: InjectedScript.%s returns undefined", methodName);
+        result = null;
+    }
+    return result;
+}
 
-    getProperties: function(objectId, ignoreHasOwnProperty, abbreviate)
-    {
-        var object = this._objectForId(objectId);
-        if (!this._isDefined(object))
-            return false;
-        var properties = [];
-        
-        var propertyNames = ignoreHasOwnProperty ? this._getPropertyNames(object) : Object.getOwnPropertyNames(object);
-        if (!ignoreHasOwnProperty && object.__proto__)
-            propertyNames.push("__proto__");
+InjectedScript.getPrototypes = function(nodeId)
+{
+    var node = InjectedScript._nodeForId(nodeId);
+    if (!node)
+        return false;
+
+    var result = [];
+    var prototype = node;
+    var prototypeId = new InjectedScript.RemoteObjectId(InjectedScript.RemoteObjectId.Type.Node, nodeId);
+    do {
+        result.push(InjectedScript.RemoteObject.fromObject(prototype, prototypeId));
+        prototype = prototype.__proto__;
+        prototypeId = InjectedScript.RemoteObjectId.deriveProperty(prototypeId, "__proto__");
+    } while (prototype)
+
+    return result;
+}
+
+InjectedScript.getProperties = function(objectId, ignoreHasOwnProperty, abbreviate)
+{
+    var object = InjectedScript._objectForId(objectId);
+    if (!InjectedScript._isDefined(object))
+        return false;
+    var properties = [];
     
-        // Go over properties, prepare results.
-        for (var i = 0; i < propertyNames.length; ++i) {
-            var propertyName = propertyNames[i];
-    
-            var property = {};
-            property.name = propertyName + "";
-            var isGetter = object["__lookupGetter__"] && object.__lookupGetter__(propertyName);
-            if (!isGetter) {
-                try {
-                    var childObject = object[propertyName];
-                    var childObjectId = InjectedScript.RemoteObjectId.deriveProperty(objectId, propertyName);
-                    var childObjectProxy = new InjectedScript.RemoteObject.fromObject(childObject, childObjectId, abbreviate);
-                    property.value = childObjectProxy;
-                } catch(e) {
-                    property.value = new InjectedScript.RemoteObject.fromException(e);
-                }
-            } else {
-                // FIXME: this should show something like "getter" (bug 16734).
-                property.value = new InjectedScript.RemoteObject.fromObject("\u2014"); // em dash
-                property.isGetter = true;
+    var propertyNames = ignoreHasOwnProperty ? InjectedScript._getPropertyNames(object) : Object.getOwnPropertyNames(object);
+    if (!ignoreHasOwnProperty && object.__proto__)
+        propertyNames.push("__proto__");
+
+    // Go over properties, prepare results.
+    for (var i = 0; i < propertyNames.length; ++i) {
+        var propertyName = propertyNames[i];
+
+        var property = {};
+        property.name = propertyName + "";
+        var isGetter = object["__lookupGetter__"] && object.__lookupGetter__(propertyName);
+        if (!isGetter) {
+            try {
+                var childObject = object[propertyName];
+                var childObjectId = InjectedScript.RemoteObjectId.deriveProperty(objectId, propertyName);
+                var childObjectProxy = new InjectedScript.RemoteObject.fromObject(childObject, childObjectId, abbreviate);
+                property.value = childObjectProxy;
+            } catch(e) {
+                property.value = new InjectedScript.RemoteObject.fromException(e);
             }
-            properties.push(property);
+        } else {
+            // FIXME: this should show something like "getter" (bug 16734).
+            property.value = new InjectedScript.RemoteObject.fromObject("\u2014"); // em dash
+            property.isGetter = true;
         }
-        return properties;
-    },
+        properties.push(property);
+    }
+    return properties;
+}
 
-    setPropertyValue: function(objectId, propertyName, expression)
-    {
-        var object = this._objectForId(objectId);
-        if (!this._isDefined(object))
-            return false;
-    
-        var expressionLength = expression.length;
-        if (!expressionLength) {
-            delete object[propertyName];
-            return !(propertyName in object);
-        }
-    
+InjectedScript.setPropertyValue = function(objectId, propertyName, expression)
+{
+    var object = InjectedScript._objectForId(objectId);
+    if (!InjectedScript._isDefined(object))
+        return false;
+
+    var expressionLength = expression.length;
+    if (!expressionLength) {
+        delete object[propertyName];
+        return !(propertyName in object);
+    }
+
+    try {
+        // Surround the expression in parenthesis so the result of the eval is the result
+        // of the whole expression not the last potential sub-expression.
+
+        // There is a regression introduced here: eval is now happening against global object,
+        // not call frame while on a breakpoint.
+        // TODO: bring evaluation against call frame back.
+        var result = inspectedWindow.eval("(" + expression + ")");
+        // Store the result in the property.
+        object[propertyName] = result;
+        return true;
+    } catch(e) {
         try {
-            // Surround the expression in parenthesis so the result of the eval is the result
-            // of the whole expression not the last potential sub-expression.
-    
-            // There is a regression introduced here: eval is now happening against global object,
-            // not call frame while on a breakpoint.
-            // TODO: bring evaluation against call frame back.
-            var result = inspectedWindow.eval("(" + expression + ")");
-            // Store the result in the property.
+            var result = inspectedWindow.eval("\"" + expression.replace(/"/g, "\\\"") + "\"");
             object[propertyName] = result;
             return true;
         } catch(e) {
-            try {
-                var result = inspectedWindow.eval("\"" + expression.replace(/"/g, "\\\"") + "\"");
-                object[propertyName] = result;
-                return true;
-            } catch(e) {
-                return false;
-            }
-        }
-    },
-
-    _populatePropertyNames: function(object, resultSet)
-    {
-        for (var o = object; o; o = o.__proto__) {
-            try {
-                var names = Object.getOwnPropertyNames(o);
-                for (var i = 0; i < names.length; ++i)
-                    resultSet[names[i]] = true;
-            } catch (e) {
-            }
-        }
-    },
-
-    _getPropertyNames: function(object, resultSet)
-    {
-        var propertyNameSet = {};
-        this._populatePropertyNames(object, propertyNameSet);
-        return Object.keys(propertyNameSet);
-    },
-
-    getCompletions: function(expression, includeInspectorCommandLineAPI, callFrameId)
-    {
-        var props = {};
-        try {
-            var expressionResult;
-            // Evaluate on call frame if call frame id is available.
-            if (typeof callFrameId === "number") {
-                var callFrame = this._callFrameForId(callFrameId);
-                if (!callFrame)
-                    return props;
-                if (expression)
-                    expressionResult = this._evaluateOn(callFrame.evaluate, callFrame, expression, true);
-                else {
-                    // Evaluate into properties in scope of the selected call frame.
-                    var scopeChain = callFrame.scopeChain;
-                    for (var i = 0; i < scopeChain.length; ++i)
-                        this._populatePropertyNames(scopeChain[i], props);
-                }
-            } else {
-                if (!expression)
-                    expression = "this";
-                expressionResult = this._evaluateOn(inspectedWindow.eval, inspectedWindow, expression, false);
-            }
-            if (typeof expressionResult === "object")
-                this._populatePropertyNames(expressionResult, props);
-    
-            if (includeInspectorCommandLineAPI) {
-                for (var prop in this._commandLineAPI)
-                    props[prop] = true;
-            }
-        } catch(e) {
-        }
-        return props;
-    },
-
-    evaluate: function(expression, objectGroup)
-    {
-        return this._evaluateAndWrap(inspectedWindow.eval, inspectedWindow, expression, objectGroup);
-    },
-
-    _evaluateAndWrap: function(evalFunction, object, expression, objectGroup, dontUseCommandLineAPI)
-    {
-        try {
-            return this._wrapObject(this._evaluateOn(evalFunction, object, expression, dontUseCommandLineAPI), objectGroup);
-        } catch (e) {
-            return InjectedScript.RemoteObject.fromException(e);
-        }
-    },
-
-    _evaluateOn: function(evalFunction, object, expression, dontUseCommandLineAPI)
-    {
-        if (!dontUseCommandLineAPI) {
-            // Only install command line api object for the time of evaluation.
-    
-            // Surround the expression in with statements to inject our command line API so that
-            // the window object properties still take more precedent than our API functions.
-            inspectedWindow.console._commandLineAPI = this._commandLineAPI;
-    
-            expression = "with (window.console._commandLineAPI) { with (window) {\n" + expression + "\n} }";
-        }
-    
-        var value = evalFunction.call(object, expression);
-    
-        if (!dontUseCommandLineAPI)
-            delete inspectedWindow.console._commandLineAPI;
-    
-        // When evaluating on call frame error is not thrown, but returned as a value.
-        if (this._type(value) === "error")
-            throw value.toString();
-    
-        return value;
-    },
-
-    getNodeId: function(node)
-    {
-        return InjectedScriptHost.pushNodePathToFrontend(node, false, false);
-    },
-
-    callFrames: function()
-    {
-        var callFrame = InjectedScriptHost.currentCallFrame();
-        if (!callFrame)
             return false;
-    
-        var result = [];
-        var depth = 0;
-        do {
-            result.push(new InjectedScript.CallFrameProxy(depth++, callFrame));
-            callFrame = callFrame.caller;
-        } while (callFrame);
-        return result;
-    },
-
-    evaluateInCallFrame: function(callFrameId, code, objectGroup)
-    {
-        var callFrame = this._callFrameForId(callFrameId);
-        if (!callFrame)
-            return false;
-        return this._evaluateAndWrap(callFrame.evaluate, callFrame, code, objectGroup, true);
-    },
-
-    _callFrameForId: function(id)
-    {
-        var callFrame = InjectedScriptHost.currentCallFrame();
-        while (--id >= 0 && callFrame)
-            callFrame = callFrame.caller;
-        return callFrame;
-    },
-
-    _nodeForId: function(nodeId)
-    {
-        if (!nodeId)
-            return null;
-        return InjectedScriptHost.nodeForId(nodeId);
-    },
-
-    _objectForId: function(objectId)
-    {
-        // There are three types of object ids used:
-        // - numbers point to DOM Node via the InspectorDOMAgent mapping
-        // - strings point to console objects cached in InspectorController for lazy evaluation upon them
-        // - objects contain complex ids and are currently used for scoped objects
-        var object;
-        if (objectId.type === InjectedScript.RemoteObjectId.Type.Node)
-            object = this._nodeForId(objectId.value);
-        else if (objectId.type === InjectedScript.RemoteObjectId.Type.JsObject)
-            object = this._idToWrappedObject[objectId.value];
-        else if (objectId.type === InjectedScript.RemoteObjectId.Type.ScopeObject) {
-            var callFrame = this._callFrameForId(objectId.value.callFrame);
-            if (objectId.thisObject)
-                object = callFrame.thisObject;
-            else
-                object = callFrame.scopeChain[objectId.value.chainIndex];
-        } else
-            return objectId;
-    
-        var path = objectId.path;
-    
-        // Follow the property path.
-        for (var i = 0; this._isDefined(object) && path && i < path.length; ++i)
-            object = object[path[i]];
-    
-        return object;
-    },
-
-    pushNodeToFrontend: function(objectId)
-    {
-        var object = this._objectForId(objectId);
-        if (!object || this._type(object) !== "node")
-            return false;
-        return InjectedScriptHost.pushNodePathToFrontend(object, false, false);
-    },
-
-    evaluateOnSelf: function(funcBody, args)
-    {
-        var func = window.eval("(" + funcBody + ")");
-        return func.apply(this, args || []);
-    },
-
-    _isDefined: function(object)
-    {
-        return object || this._isHTMLAllCollection(object);
-    },
-
-    _isHTMLAllCollection: function(object)
-    {
-        // document.all is reported as undefined, but we still want to process it.
-        return (typeof object === "undefined") && inspectedWindow.HTMLAllCollection && object instanceof inspectedWindow.HTMLAllCollection;
-    },
-
-    _type: function(obj)
-    {
-        if (obj === null)
-            return "null";
-
-        var type = typeof obj;
-        if (type !== "object" && type !== "function") {
-            // FIXME(33716): typeof document.all is always 'undefined'.
-            if (this._isHTMLAllCollection(obj))
-                return "array";
-            return type;
         }
-
-        // If owning frame has navigated to somewhere else window properties will be undefined.
-        // In this case just return result of the typeof.
-        if (!inspectedWindow.document)
-            return type;
-
-        if (obj instanceof inspectedWindow.Node)
-            return (obj.nodeType === undefined ? type : "node");
-        if (obj instanceof inspectedWindow.String)
-            return "string";
-        if (obj instanceof inspectedWindow.Array)
-            return "array";
-        if (obj instanceof inspectedWindow.Boolean)
-            return "boolean";
-        if (obj instanceof inspectedWindow.Number)
-            return "number";
-        if (obj instanceof inspectedWindow.Date)
-            return "date";
-        if (obj instanceof inspectedWindow.RegExp)
-            return "regexp";
-        // FireBug's array detection.
-        if (isFinite(obj.length) && typeof obj.splice === "function")
-            return "array";
-        if (isFinite(obj.length) && typeof obj.callee === "function") // arguments.
-            return "array";
-        if (obj instanceof inspectedWindow.NodeList)
-            return "array";
-        if (obj instanceof inspectedWindow.HTMLCollection)
-            return "array";
-        if (obj instanceof inspectedWindow.Error)
-            return "error";
-        return type;
-    },
-
-    _describe: function(obj, abbreviated)
-    {
-        var type = this._type(obj);
-
-        switch (type) {
-        case "object":
-        case "node":
-        case "array":
-            var className = this._className(obj);
-            if (typeof obj.length === "number")
-                className += "[" + obj.length + "]";
-            return className;
-        case "string":
-            if (!abbreviated)
-                return obj;
-            if (obj.length > 100)
-                return "\"" + obj.substring(0, 100) + "\u2026\"";
-            return "\"" + obj + "\"";
-        case "function":
-            var objectText = this._toString(obj);
-            if (abbreviated)
-                objectText = /.*/.exec(objectText)[0].replace(/ +$/g, "");
-            return objectText;
-        default:
-            return this._toString(obj);
-        }
-    },
-
-    _toString: function(obj)
-    {
-        // We don't use String(obj) because inspectedWindow.String is undefined if owning frame navigated to another page.
-        return "" + obj;
-    },
-
-    _className: function(obj)
-    {
-        // We can't use the same code for fetching class names of the dom bindings prototype chain.
-        // Both of the methods below result in "Object" names on the foreign engine bindings.
-        // I gave up and am using a check below to distinguish between the egine bingings.
-
-        if (jsEngine == "JSC") {
-            var str = inspectedWindow.Object ? inspectedWindow.Object.prototype.toString.call(obj) : this._toString(obj);
-            return str.replace(/^\[object (.*)\]$/i, "$1");
-        } else {
-            // V8
-            return obj.constructor && obj.constructor.name || "Object";
-        }
-    },
-
-    _logEvent: function(event)
-    {
-        console.log(event.type, event);
-    },
-
-    _normalizeEventTypes: function(types)
-    {
-        if (typeof types === "undefined")
-            types = [ "mouse", "key", "load", "unload", "abort", "error", "select", "change", "submit", "reset", "focus", "blur", "resize", "scroll" ];
-        else if (typeof types === "string")
-            types = [ types ];
-
-        var result = [];
-        for (var i = 0; i < types.length; i++) {
-            if (types[i] === "mouse")
-                result.splice(0, 0, "mousedown", "mouseup", "click", "dblclick", "mousemove", "mouseover", "mouseout");
-            else if (types[i] === "key")
-                result.splice(0, 0, "keydown", "keyup", "keypress");
-            else
-                result.push(types[i]);
-        }
-        return result;
-    },
-
-    _inspectedNode: function(num)
-    {
-        var nodeId = InjectedScriptHost.inspectedNode(num);
-        return this._nodeForId(nodeId);
-    },
-
-    _bindToScript: function(func)
-    {
-        var args = Array.prototype.slice.call(arguments, 1);
-        function bound()
-        {
-            return func.apply(injectedScript, args.concat(Array.prototype.slice.call(arguments)));
-        }
-        bound.toString = function() {
-            return "bound: " + func;
-        };
-        return bound;
     }
 }
 
-var injectedScript = new InjectedScript();
+InjectedScript._populatePropertyNames = function(object, resultSet)
+{
+    for (var o = object; o; o = o.__proto__) {
+        try {
+            var names = Object.getOwnPropertyNames(o);
+            for (var i = 0; i < names.length; ++i)
+                resultSet[names[i]] = true;
+        } catch (e) {
+        }
+    }
+}
+
+InjectedScript._getPropertyNames = function(object, resultSet)
+{
+    var propertyNameSet = {};
+    InjectedScript._populatePropertyNames(object, propertyNameSet);
+    return Object.keys(propertyNameSet);
+}
+
+InjectedScript.getCompletions = function(expression, includeInspectorCommandLineAPI, callFrameId)
+{
+    var props = {};
+    try {
+        var expressionResult;
+        // Evaluate on call frame if call frame id is available.
+        if (typeof callFrameId === "number") {
+            var callFrame = InjectedScript._callFrameForId(callFrameId);
+            if (!callFrame)
+                return props;
+            if (expression)
+                expressionResult = InjectedScript._evaluateOn(callFrame.evaluate, callFrame, expression, true);
+            else {
+                // Evaluate into properties in scope of the selected call frame.
+                var scopeChain = callFrame.scopeChain;
+                for (var i = 0; i < scopeChain.length; ++i)
+                    InjectedScript._populatePropertyNames(scopeChain[i], props);
+            }
+        } else {
+            if (!expression)
+                expression = "this";
+            expressionResult = InjectedScript._evaluateOn(inspectedWindow.eval, inspectedWindow, expression, false);
+        }
+        if (typeof expressionResult === "object")
+            InjectedScript._populatePropertyNames(expressionResult, props);
+
+        if (includeInspectorCommandLineAPI) {
+            for (var prop in InjectedScript._commandLineAPI)
+                props[prop] = true;
+        }
+    } catch(e) {
+    }
+    return props;
+}
+
+InjectedScript.evaluate = function(expression, objectGroup)
+{
+    return InjectedScript._evaluateAndWrap(inspectedWindow.eval, inspectedWindow, expression, objectGroup);
+}
+
+InjectedScript._evaluateAndWrap = function(evalFunction, object, expression, objectGroup, dontUseCommandLineAPI)
+{
+    try {
+        return InjectedScript.wrapObject(InjectedScript._evaluateOn(evalFunction, object, expression, dontUseCommandLineAPI), objectGroup);
+    } catch (e) {
+        return InjectedScript.RemoteObject.fromException(e);
+    }
+}
+
+InjectedScript._evaluateOn = function(evalFunction, object, expression, dontUseCommandLineAPI)
+{
+    if (!dontUseCommandLineAPI) {
+        // Only install command line api object for the time of evaluation.
+
+        // Surround the expression in with statements to inject our command line API so that
+        // the window object properties still take more precedent than our API functions.
+        inspectedWindow.console._commandLineAPI = InjectedScript._commandLineAPI;
+
+        expression = "with (window.console._commandLineAPI) { with (window) {\n" + expression + "\n} }";
+    }
+
+    var value = evalFunction.call(object, expression);
+
+    if (!dontUseCommandLineAPI)
+        delete inspectedWindow.console._commandLineAPI;
+
+    // When evaluating on call frame error is not thrown, but returned as a value.
+    if (InjectedScript._type(value) === "error")
+        throw value.toString();
+
+    return value;
+}
+
+InjectedScript.getNodeId = function(node)
+{
+    return InjectedScriptHost.pushNodePathToFrontend(node, false, false);
+}
+
+InjectedScript.callFrames = function()
+{
+    var callFrame = InjectedScriptHost.currentCallFrame();
+    if (!callFrame)
+        return false;
+
+    var result = [];
+    var depth = 0;
+    do {
+        result.push(new InjectedScript.CallFrameProxy(depth++, callFrame));
+        callFrame = callFrame.caller;
+    } while (callFrame);
+    return result;
+}
+
+InjectedScript.evaluateInCallFrame = function(callFrameId, code, objectGroup)
+{
+    var callFrame = InjectedScript._callFrameForId(callFrameId);
+    if (!callFrame)
+        return false;
+    return InjectedScript._evaluateAndWrap(callFrame.evaluate, callFrame, code, objectGroup, true);
+}
+
+InjectedScript._callFrameForId = function(id)
+{
+    var callFrame = InjectedScriptHost.currentCallFrame();
+    while (--id >= 0 && callFrame)
+        callFrame = callFrame.caller;
+    return callFrame;
+}
+
+InjectedScript._nodeForId = function(nodeId)
+{
+    if (!nodeId)
+        return null;
+    return InjectedScriptHost.nodeForId(nodeId);
+}
+
+InjectedScript._objectForId = function(objectId)
+{
+    // There are three types of object ids used:
+    // - numbers point to DOM Node via the InspectorDOMAgent mapping
+    // - strings point to console objects cached in InspectorController for lazy evaluation upon them
+    // - objects contain complex ids and are currently used for scoped objects
+    var object;
+    if (objectId.type === InjectedScript.RemoteObjectId.Type.Node)
+        object = InjectedScript._nodeForId(objectId.value);
+    else if (objectId.type === InjectedScript.RemoteObjectId.Type.JsObject)
+        object = InjectedScript.unwrapObject(objectId.value);
+    else if (objectId.type === InjectedScript.RemoteObjectId.Type.ScopeObject) {
+        var callFrame = InjectedScript._callFrameForId(objectId.value.callFrame);
+        if (objectId.thisObject)
+            object = callFrame.thisObject;
+        else
+            object = callFrame.scopeChain[objectId.value.chainIndex];
+    } else
+        return objectId;
+
+    var path = objectId.path;
+
+    // Follow the property path.
+    for (var i = 0; InjectedScript._isDefined(object) && path && i < path.length; ++i)
+        object = object[path[i]];
+
+    return object;
+}
+
+InjectedScript.pushNodeToFrontend = function(objectId)
+{
+    var object = InjectedScript._objectForId(objectId);
+    if (!object || InjectedScript._type(object) !== "node")
+        return false;
+    return InjectedScriptHost.pushNodePathToFrontend(object, false, false);
+}
 
 // FIXME: RemoteObjectId and RemoteObject structs must match the WebInspector.* ones. Should reuse same file instead.
 InjectedScript.RemoteObjectId = function(type, value, path)
@@ -546,16 +389,22 @@ InjectedScript.RemoteObject.fromException = function(e)
 
 InjectedScript.RemoteObject.fromObject = function(object, objectId, abbreviate)
 {
-    var type = injectedScript._type(object);
+    var type = InjectedScript._type(object);
     var rawType = typeof object;
     var hasChildren = (rawType === "object" && object !== null && (Object.getOwnPropertyNames(object).length || !!object.__proto__)) || rawType === "function";
     var description = "";
     try {
-        var description = injectedScript._describe(object, abbreviate);
+        var description = InjectedScript._describe(object, abbreviate);
         return new InjectedScript.RemoteObject(objectId, type, description, hasChildren);
     } catch (e) {
         return InjectedScript.RemoteObject.fromException(e);
     }
+}
+
+InjectedScript.evaluateOnSelf = function(funcBody, args)
+{
+    var func = window.eval("(" + funcBody + ")");
+    return func.apply(this, args || []);
 }
 
 InjectedScript.CallFrameProxy = function(id, callFrame)
@@ -616,10 +465,144 @@ InjectedScript.CallFrameProxy.prototype = {
     }
 }
 
+InjectedScript._isDefined = function(object)
+{
+    return object || InjectedScript._isHTMLAllCollection(object);
+}
+
+InjectedScript._isHTMLAllCollection = function(object)
+{
+    // document.all is reported as undefined, but we still want to process it.
+    return (typeof object === "undefined") && inspectedWindow.HTMLAllCollection && object instanceof inspectedWindow.HTMLAllCollection;
+}
+
+InjectedScript._type = function(obj)
+{
+    if (obj === null)
+        return "null";
+
+    var type = typeof obj;
+    if (type !== "object" && type !== "function") {
+        // FIXME(33716): typeof document.all is always 'undefined'.
+        if (InjectedScript._isHTMLAllCollection(obj))
+            return "array";
+        return type;
+    }
+
+    // If owning frame has navigated to somewhere else window properties will be undefined.
+    // In this case just return result of the typeof.
+    if (!inspectedWindow.document)
+        return type;
+
+    if (obj instanceof inspectedWindow.Node)
+        return (obj.nodeType === undefined ? type : "node");
+    if (obj instanceof inspectedWindow.String)
+        return "string";
+    if (obj instanceof inspectedWindow.Array)
+        return "array";
+    if (obj instanceof inspectedWindow.Boolean)
+        return "boolean";
+    if (obj instanceof inspectedWindow.Number)
+        return "number";
+    if (obj instanceof inspectedWindow.Date)
+        return "date";
+    if (obj instanceof inspectedWindow.RegExp)
+        return "regexp";
+    // FireBug's array detection.
+    if (isFinite(obj.length) && typeof obj.splice === "function")
+        return "array";
+    if (isFinite(obj.length) && typeof obj.callee === "function") // arguments.
+        return "array";
+    if (obj instanceof inspectedWindow.NodeList)
+        return "array";
+    if (obj instanceof inspectedWindow.HTMLCollection)
+        return "array";
+    if (obj instanceof inspectedWindow.Error)
+        return "error";
+    return type;
+}
+
+InjectedScript._describe = function(obj, abbreviated)
+{
+    var type = InjectedScript._type(obj);
+
+    switch (type) {
+    case "object":
+    case "node":
+    case "array":
+        var className = InjectedScript._className(obj);
+        if (typeof obj.length === "number")
+            className += "[" + obj.length + "]";
+        return className;
+    case "string":
+        if (!abbreviated)
+            return obj;
+        if (obj.length > 100)
+            return "\"" + obj.substring(0, 100) + "\u2026\"";
+        return "\"" + obj + "\"";
+    case "function":
+        var objectText = InjectedScript._toString(obj);
+        if (abbreviated)
+            objectText = /.*/.exec(objectText)[0].replace(/ +$/g, "");
+        return objectText;
+    default:
+        return InjectedScript._toString(obj);
+    }
+}
+
+InjectedScript._toString = function(obj)
+{
+    // We don't use String(obj) because inspectedWindow.String is undefined if owning frame navigated to another page.
+    return "" + obj;
+}
+
+InjectedScript._className = function(obj)
+{
+    // We can't use the same code for fetching class names of the dom bindings prototype chain.
+    // Both of the methods below result in "Object" names on the foreign engine bindings.
+    // I gave up and am using a check below to distinguish between the egine bingings.
+
+    if (jsEngine == "JSC") {
+        var str = inspectedWindow.Object ? inspectedWindow.Object.prototype.toString.call(obj) : InjectedScript._toString(obj);
+        return str.replace(/^\[object (.*)\]$/i, "$1");
+    } else {
+        // V8
+        return obj.constructor && obj.constructor.name || "Object";
+    }
+}
+
+InjectedScript._logEvent = function(event)
+{
+    console.log(event.type, event);
+}
+
+InjectedScript._normalizeEventTypes = function(types)
+{
+    if (typeof types === "undefined")
+        types = [ "mouse", "key", "load", "unload", "abort", "error", "select", "change", "submit", "reset", "focus", "blur", "resize", "scroll" ];
+    else if (typeof types === "string")
+        types = [ types ];
+
+    var result = [];
+    for (var i = 0; i < types.length; i++) {
+        if (types[i] === "mouse")
+            result.splice(0, 0, "mousedown", "mouseup", "click", "dblclick", "mousemove", "mouseover", "mouseout");
+        else if (types[i] === "key")
+            result.splice(0, 0, "keydown", "keyup", "keypress");
+        else
+            result.push(types[i]);
+    }
+    return result;
+}
+
+InjectedScript._inspectedNode = function(num)
+{
+    var nodeId = InjectedScriptHost.inspectedNode(num);
+    return InjectedScript._nodeForId(nodeId);
+}
+
 function CommandLineAPI()
 {
-    for (var i = 0; i < 5; ++i)
-        this.__defineGetter__("$" + i, injectedScript._bindToScript(injectedScript._inspectedNode, i));
 }
 
 CommandLineAPI.prototype = {
@@ -686,10 +669,10 @@ CommandLineAPI.prototype = {
     {
         if (!object || !object.addEventListener || !object.removeEventListener)
             return;
-        types = injectedScript._normalizeEventTypes(types);
+        types = InjectedScript._normalizeEventTypes(types);
         for (var i = 0; i < types.length; ++i) {
-            object.removeEventListener(types[i], injectedScript._logEvent, false);
-            object.addEventListener(types[i], injectedScript._logEvent, false);
+            object.removeEventListener(types[i], InjectedScript._logEvent, false);
+            object.addEventListener(types[i], InjectedScript._logEvent, false);
         }
     },
 
@@ -697,9 +680,9 @@ CommandLineAPI.prototype = {
     {
         if (!object || !object.addEventListener || !object.removeEventListener)
             return;
-        types = injectedScript._normalizeEventTypes(types);
+        types = InjectedScript._normalizeEventTypes(types);
         for (var i = 0; i < types.length; ++i)
-            object.removeEventListener(types[i], injectedScript._logEvent, false);
+            object.removeEventListener(types[i], InjectedScript._logEvent, false);
     },
 
     inspect: function(object)
@@ -708,10 +691,10 @@ CommandLineAPI.prototype = {
             return;
 
         inspectedWindow.console.log(object);
-        if (injectedScript._type(object) === "node")
+        if (InjectedScript._type(object) === "node")
             InjectedScriptHost.pushNodePathToFrontend(object, false, true);
         else {
-            switch (injectedScript._describe(object)) {
+            switch (InjectedScript._describe(object)) {
                 case "Database":
                     InjectedScriptHost.selectDatabase(object);
                     break;
@@ -724,7 +707,7 @@ CommandLineAPI.prototype = {
 
     copy: function(object)
     {
-        if (injectedScript._type(object) === "node") {
+        if (InjectedScript._type(object) === "node") {
             var nodeId = InjectedScriptHost.pushNodePathToFrontend(object, false, false);
             InjectedScriptHost.copyNode(nodeId);
         } else
@@ -734,9 +717,35 @@ CommandLineAPI.prototype = {
     clear: function()
     {
         InjectedScriptHost.clearConsoleMessages();
+    },
+
+    get $0()
+    {
+        return InjectedScript._inspectedNode(0);
+    },
+
+    get $1()
+    {
+        return InjectedScript._inspectedNode(1);
+    },
+
+    get $2()
+    {
+        return InjectedScript._inspectedNode(2);
+    },
+
+    get $3()
+    {
+        return InjectedScript._inspectedNode(3);
+    },
+
+    get $4()
+    {
+        return InjectedScript._inspectedNode(4);
     }
 }
 
-injectedScript._commandLineAPI = new CommandLineAPI();
-return injectedScript;
+InjectedScript._commandLineAPI = new CommandLineAPI();
+
+return InjectedScript;
 });
