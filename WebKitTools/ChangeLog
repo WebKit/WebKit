@@ -1,5 +1,27 @@
 2010-08-15  Jon Honeycutt  <jhoneycutt@apple.com>
 
+        WebEditorClient::didBeginEditing is never called in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=42939
+
+        Reviewed by Sam Weinig.
+
+        * WebKitTestRunner/PlatformWebView.h:
+        Declare focus().
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+        Focus the PlatformWebView.
+
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (WTR::PlatformWebView::focus):
+        Stubbed.
+
+        * WebKitTestRunner/win/PlatformWebViewWin.cpp:
+        (WTR::PlatformWebView::focus):
+        Focus the view.
+
+2010-08-15  Jon Honeycutt  <jhoneycutt@apple.com>
+
         run-webkit-tests should not strip editing callbacks when using
         WebKitTestRunner on Windows
         https://bugs.webkit.org/show_bug.cgi?id=44000

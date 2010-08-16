@@ -51,6 +51,7 @@ public:
     WKPageRef page();
     PlatformWKView platformView() { return m_view; }
     void resizeTo(unsigned width, unsigned height);
+    void focus();
 
 private:
     PlatformWKView m_view;

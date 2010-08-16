@@ -58,4 +58,9 @@ WKPageRef PlatformWebView::page()
     return [m_view pageRef];
 }
 
+void PlatformWebView::focus()
+{
+    // Implement.
+}
+
 } // namespace WTR

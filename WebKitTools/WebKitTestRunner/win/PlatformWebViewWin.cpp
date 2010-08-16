@@ -73,4 +73,9 @@ WKPageRef PlatformWebView::page()
     return WKViewGetPage(m_view);
 }
 
+void PlatformWebView::focus()
+{
+    ::SetFocus(::WKViewGetWindow(m_view));
+}
+
 } // namespace WTR

@@ -183,6 +183,8 @@ void TestController::resetStateToConsistentValues()
     WKPreferencesSetOfflineWebApplicationCacheEnabled(preferences, true);
     WKPreferencesSetFontSmoothingLevel(preferences, kWKFontSmoothingLevelNoSubpixelAntiAliasing);
 
+    m_mainWebView->focus();
+
     // Reset main page back to about:blank
     m_doneResetting = false;
 
