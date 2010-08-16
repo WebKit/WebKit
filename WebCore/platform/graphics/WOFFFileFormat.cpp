@@ -31,7 +31,7 @@
 #include "SharedBuffer.h"
 
 #if !PLATFORM(WIN)
-#if PLATFORM(UNIX)
+#if OS(UNIX)
 #include <netinet/in.h>
 #endif
 #include <zlib.h>

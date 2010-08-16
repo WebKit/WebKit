@@ -1,3 +1,9 @@
+2010-08-16  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Fix typo in previous build fix.
+
+        * platform/graphics/WOFFFileFormat.cpp:
+
 2010-08-16  Alex Milowski  <alex@milowski.com>
 
         Reviewed by David Levin.
