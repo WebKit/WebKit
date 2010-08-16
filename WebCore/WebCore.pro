@@ -1690,6 +1690,7 @@ HEADERS += \
     platform/graphics/PathTraversalState.h \
     platform/graphics/Pattern.h \
     platform/graphics/Pen.h \
+    platform/graphics/qt/ContextShadow.h \
     platform/graphics/qt/FontCustomPlatformData.h \
     platform/graphics/qt/ImageDecoderQt.h \
     platform/graphics/qt/StillImageQt.h \
@@ -2186,6 +2187,7 @@ SOURCES += \
     page/qt/FrameQt.cpp \
     platform/graphics/qt/TransformationMatrixQt.cpp \
     platform/graphics/qt/ColorQt.cpp \
+    platform/graphics/qt/ContextShadow.cpp \
     platform/graphics/qt/FontQt.cpp \
     platform/graphics/qt/FontPlatformDataQt.cpp \
     platform/graphics/qt/FloatPointQt.cpp \

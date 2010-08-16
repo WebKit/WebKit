@@ -1,3 +1,15 @@
+2010-08-16  Ariya Hidayat  <ariya@sencha.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Shadow blur for rectangle fill
+        https://bugs.webkit.org/show_bug.cgi?id=44025
+
+        Update pixel test reference after the blur support.
+
+        * platform/qt/fast/box-shadow/basic-shadows-expected.checksum:
+        * platform/qt/fast/box-shadow/basic-shadows-expected.png:
+
 2010-08-13  Steve Block  <steveblock@google.com>
 
         Reviewed by Alexey Proskuryakov.
