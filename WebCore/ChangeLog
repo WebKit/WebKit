@@ -1,3 +1,21 @@
+2010-08-16  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        HTML5 fragment parsing doesn't load iframes
+        https://bugs.webkit.org/show_bug.cgi?id=44038
+
+        Previously, this code assumed that every source iframe was actually
+        attached to a render tree.  It tried to "keep the iframe alive" as it
+        moved documents.  However, if the iframe wasn't attached to begin with,
+        it was never "alive," so trying to keep a dead iframe alive lead to a
+        ...  zombie iframe.
+
+        Test: fast/frames/adopt-from-created-document.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::adoptNode):
+
 2010-08-13  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Tony Chang.

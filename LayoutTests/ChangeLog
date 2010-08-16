@@ -1,3 +1,17 @@
+2010-08-16  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        HTML5 fragment parsing doesn't load iframes
+        https://bugs.webkit.org/show_bug.cgi?id=44038
+
+        Test that iframes created in detached documents actually get loaded
+        when they're adopted into attached documents (or, rather, when they're
+        inserted into the DOM).
+
+        * fast/frames/adopt-from-created-document-expected.txt: Added.
+        * fast/frames/adopt-from-created-document.html: Added.
+
 2010-08-13  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Tony Chang.
