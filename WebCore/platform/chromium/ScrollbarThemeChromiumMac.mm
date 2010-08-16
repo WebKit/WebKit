@@ -452,9 +452,8 @@ bool ScrollbarThemeChromiumMac::paint(Scrollbar* scrollbar, GraphicsContext* con
         HIThemeDrawTrack(&trackInfo, 0, drawingContext->platformContext(), kHIThemeOrientationNormal);
     }
 
-    if (!canDrawDirectly) {
-        context->drawImage(imageBuffer->image(), DeviceColorSpace, scrollbar->frameRect().location());
-    }
+    if (!canDrawDirectly)
+        context->drawImageBuffer(imageBuffer, DeviceColorSpace, scrollbar->frameRect().location());
 
     return true;
 }

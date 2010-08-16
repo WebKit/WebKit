@@ -1,3 +1,10 @@
+2010-08-16  Nate Chapin  <japhet@chromium.org>
+
+        Unreviewed, Chromium mac build fix (with help from jamesr).
+
+        * platform/chromium/ScrollbarThemeChromiumMac.mm:
+        (WebCore::ScrollbarThemeChromiumMac::paint):
+
 2010-08-16  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig
