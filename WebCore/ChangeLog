@@ -1,3 +1,10 @@
+2010-08-16  Jeremy Orlow  <jorlow@chromium.org>
+
+        Build fix.
+
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::localStorage):
+
 2010-08-13  Jeremy Orlow  <jorlow@chromium.org>
 
         Some settings are linked to the PageGroup not the Page.  Create a new class for those.
