@@ -453,7 +453,7 @@ bool ScrollbarThemeChromiumMac::paint(Scrollbar* scrollbar, GraphicsContext* con
     }
 
     if (!canDrawDirectly)
-        context->drawImageBuffer(imageBuffer, DeviceColorSpace, scrollbar->frameRect().location());
+        context->drawImageBuffer(imageBuffer.get(), DeviceColorSpace, scrollbar->frameRect().location());
 
     return true;
 }

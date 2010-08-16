@@ -3182,6 +3182,10 @@ BUGWK43912 WIN LINUX : svg/custom/mask-with-all-units.svg = IMAGE
 BUGWK43912 WIN LINUX : svg/custom/mask-with-default-value.svg = IMAGE
 BUGWK43912 WIN LINUX : svg/zoom/page/zoom-mask-with-percentages.svg = IMAGE
 BUGWK43912 WIN LINUX : svg/custom/absolute-sized-content-with-resources.xhtml = IMAGE
+// Same symptoms, failing as of r65449
+BUGWK43912 WIN LINUX : svg/W3C-SVG-1.1/filters-color-01-b.svg = IMAGE
+BUGWK43912 WIN LINUX : svg/W3C-SVG-1.1/filters-composite-02-b.svg = IMAGE
+BUGWK43912 WIN LINUX : svg/W3C-SVG-1.1/filters-offset-01-b.svg = IMAGE
 
 // Times out frequently since the test was added
 BUG52017 MAC LINUX : http/tests/misc/isindex-with-no-form.html = PASS TIMEOUT
