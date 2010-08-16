@@ -35,6 +35,7 @@
 #include "GraphicsContext.h"
 #include "ImageData.h"
 #include "MIMETypeRegistry.h"
+#include "NotImplemented.h"
 #include "Pattern.h"
 #include "PlatformString.h"
 
@@ -108,7 +109,7 @@ PassRefPtr<Image> ImageBuffer::copyImage() const
     return BitmapImage::create(copySurface(m_data.m_surface));
 }
 
-void ImageBuffer::clip(GraphicsContext* context, const FloatRect&) const
+void ImageBuffer::clip(GraphicsContext*, const FloatRect&) const
 {
     notImplemented();
 }
