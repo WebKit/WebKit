@@ -5,6 +5,23 @@
         Fix warnings: unknown conversion type character 'l' in format
         https://bugs.webkit.org/show_bug.cgi?id=43359
 
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::performURLImport): Replace %zu with %lu, because Windows doesn't understand z modifier.
+        (WebCore::IconDatabase::pruneUnretainedIcons): Use %I64i intsead of %lli on Windows.
+        * platform/graphics/qt/MediaPlayerPrivatePhonon.cpp:
+        (WebCore::MediaPlayerPrivate::totalTimeChanged): Use %I64d intsead of %lld on Windows.
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::SQLiteDatabase::setMaximumSize): Use %I64i intsead of %lli on Windows.
+        * storage/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::setQuota): Use %I64u intsead of %llu on Windows.
+
+2010-08-16  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Fix warnings: unknown conversion type character 'l' in format
+        https://bugs.webkit.org/show_bug.cgi?id=43359
+
         * loader/FTPDirectoryParser.cpp: Use %I64u format specifier instead of %llu on Windows.
         (WebCore::parseOneFTPLine):
 

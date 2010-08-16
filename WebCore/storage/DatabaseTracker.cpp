@@ -686,7 +686,11 @@ void DatabaseTracker::setQuota(SecurityOrigin* origin, unsigned long long quota)
         }
 
         if (error)
+#if OS(WINDOWS)
+            LOG_ERROR("Failed to set quota %I64u in tracker database for origin %s", quota, origin->databaseIdentifier().ascii().data());
+#else
             LOG_ERROR("Failed to set quota %llu in tracker database for origin %s", quota, origin->databaseIdentifier().ascii().data());
+#endif
     }
 
     // FIXME: Is it really OK to update the quota in memory if we failed to update it on disk?

@@ -534,7 +534,11 @@ void MediaPlayerPrivate::aboutToFinish()
 
 void MediaPlayerPrivate::totalTimeChanged(qint64 totalTime)
 {
+#if OS(WINDOWS)
+    LOG(Media, "MediaPlayerPrivatePhonon::totalTimeChanged(%I64d)", totalTime);
+#else
     LOG(Media, "MediaPlayerPrivatePhonon::totalTimeChanged(%lld)", totalTime);
+#endif
     LOG_MEDIAOBJECT();
 }
 
