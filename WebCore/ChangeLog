@@ -1,3 +1,14 @@
+2010-08-16  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Make InjectedScript proto-based.
+        https://bugs.webkit.org/show_bug.cgi?id=44028
+
+        * inspector/front-end/InjectedScript.js:
+        (injectedScriptConstructor):
+        (injectedScriptConstructor.):
+
 2010-08-16  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Adam Roben.

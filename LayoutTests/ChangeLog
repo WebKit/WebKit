@@ -1,3 +1,15 @@
+2010-08-16  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Make InjectedScript proto-based.
+        https://bugs.webkit.org/show_bug.cgi?id=44028
+        Drive-by test fix.
+
+        * http/tests/inspector-enabled/console-log-before-frame-navigation.html:
+        * http/tests/inspector-enabled/resources/console-log-before-frame-navigation.js: Removed.
+        * http/tests/inspector-enabled/resources/console-log-frame-before-navigation.html:
+
 2010-08-16  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.

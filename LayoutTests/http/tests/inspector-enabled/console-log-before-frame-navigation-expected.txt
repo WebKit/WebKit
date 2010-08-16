@@ -2,10 +2,9 @@ CONSOLE MESSAGE: line 5: 2010
 Tests that Web Inspector won't crash if there are messages written to console from a frame which has already navigated to a page from a different domain.
 
 
-Showing Web Inspector...
 Received console messages:
 Message[0]:
 URL: http://127.0.0.1:8000/inspector-enabled/resources/console-log-frame-before-navigation.html
-Message: 2010 [object HTMLHtmlElement]
+Message: 2010 HTMLHtmlElement
 TEST COMPLETE.
 

@@ -1,17 +1,57 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<link rel="stylesheet" href="../../js-test-resources/js-test-style.css">
-<script src="../../js-test-resources/js-test-pre.js"></script>
 <script src="../inspector/inspector-test.js"></script>
-<script src="resources/console-log-before-frame-navigation.js"></script>
+<script>
+function doit()
+{
+    function callback(result)
+    {
+        output("Received console messages:");
+        for (var i = 0; i < result.length; ++i) {
+            var r = result[i];
+            output("Message[" + i + "]:");
+            output("URL: " + r.url);
+            output("Message: " + r.message);
+        }
+        notifyDone();
+        output("TEST COMPLETE.");
+    }
+    evaluateInWebInspector("frontend_dumpConsoleMessages", callback);
+}
+
+function receiveMessage(event) {
+    if (event.data != "frameReloaded") {
+        testFailed("Unexpected message: " + event.data);
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+        return;
+    }
+    if (window.layoutTestController)
+        layoutTestController.showWebInspector();
+    onload();
+}
+
+window.addEventListener("message", receiveMessage, false);
+// Frontend functions.
+
+function frontend_dumpConsoleMessages()
+{
+    var result = [];
+    var messages = WebInspector.console.messages;
+    for (var i = 0; i < messages.length; ++i) {
+        var m = messages[i];
+        result.push({ message: m.message, url: m.url});
+    }
+    return result;
+}
+</script>
+
 </head>
-<body onload="onload()">
+<body>
 <p>
 Tests that Web Inspector won't crash if there are messages written to console from a frame which has already navigated to a page from a different domain.
 </p>
 <iframe id="theFrame" src="resources/console-log-frame-before-navigation.html"></iframe>
-<p id="description"></p>
-<div id="console"></div>
 </body>
 </html>
