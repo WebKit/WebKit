@@ -1,4 +1,4 @@
-varying vec3 v_normal;
+varying highp vec3 v_normal;
 
 void main()
 {

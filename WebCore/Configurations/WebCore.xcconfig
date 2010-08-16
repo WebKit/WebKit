@@ -43,14 +43,14 @@ FRAMEWORK_SEARCH_PATHS_iphoneos_Production = $(PRODUCTION_FRAMEWORKS_DIR);
 FRAMEWORK_SEARCH_PATHS_iphonesimulator = $(FRAMEWORK_SEARCH_PATHS_iphoneos_$(CONFIGURATION));
 FRAMEWORK_SEARCH_PATHS_macosx = $(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Frameworks $(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks $(FRAMEWORK_SEARCH_PATHS);
 
-HEADER_SEARCH_PATHS = ForwardingHeaders icu /usr/include/libxslt /usr/include/libxml2 $(SQLITE3_HEADER_SEARCH_PATHS) "${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore" $(HEADER_SEARCH_PATHS);
+HEADER_SEARCH_PATHS = ForwardingHeaders icu /usr/include/libxslt /usr/include/libxml2 $(SQLITE3_HEADER_SEARCH_PATHS) "${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore" "${BUILT_PRODUCTS_DIR}/usr/local/include" $(HEADER_SEARCH_PATHS);
 INFOPLIST_FILE = Info.plist;
 INSTALL_PATH = $(INSTALL_PATH_$(REAL_PLATFORM_NAME));
 INSTALL_PATH_macosx = $(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks;
 INSTALLHDRS_COPY_PHASE = YES;
 INSTALLHDRS_SCRIPT_PHASE = YES;
 PRODUCT_NAME = WebCore;
-OTHER_LDFLAGS_BASE = -l$(SQLITE3_LIBRARY) -lobjc;
+OTHER_LDFLAGS_BASE = -l$(SQLITE3_LIBRARY) -lobjc -lANGLE;
 OTHER_LDFLAGS = $(OTHER_LDFLAGS_$(REAL_PLATFORM_NAME));
 OTHER_LDFLAGS_iphoneos = $(OTHER_LDFLAGS_BASE) -framework CFNetwork -framework CoreFoundation -framework CoreGraphics -framework CoreText -framework Foundation -framework GraphicsServices -framework ImageIO -framework QuartzCore;
 OTHER_LDFLAGS_iphonesimulator = $(OTHER_LDFLAGS_iphoneos);

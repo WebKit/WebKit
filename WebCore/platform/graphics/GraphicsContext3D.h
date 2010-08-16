@@ -26,9 +26,11 @@
 #ifndef GraphicsContext3D_h
 #define GraphicsContext3D_h
 
+#include "ANGLEWebKitBridge.h"
 #include "GraphicsLayer.h"
 #include "PlatformString.h"
 
+#include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
@@ -810,6 +812,15 @@ public:
 #endif
 
     int m_currentWidth, m_currentHeight;
+
+    typedef struct { 
+        String source; 
+        String log; 
+        bool isValid;
+    } ShaderSourceEntry;
+    HashMap<Platform3DObject, ShaderSourceEntry> m_shaderSourceMap;
+
+    ANGLEWebKitBridge m_compiler;
 
 #if PLATFORM(MAC)
     Attributes m_attrs;

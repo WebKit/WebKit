@@ -1,3 +1,32 @@
+2010-08-16  Paul Sawaya  <psawaya@apple.com>
+
+        Reviewed by Chris Marrin.
+
+        Added shader validation via ANGLE
+        https://bugs.webkit.org/show_bug.cgi?id=42405
+
+        Added validation to WebGL via ANGLE
+
+        * Configurations/WebCore.xcconfig:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/ANGLEWebKitBridge.cpp: Added.
+        (WebCore::ANGLEWebKitBridge::ANGLEWebKitBridge):
+        (WebCore::ANGLEWebKitBridge::~ANGLEWebKitBridge):
+        (WebCore::ANGLEWebKitBridge::validateShaderSource):
+        * platform/graphics/ANGLEWebKitBridge.h: Added.
+        (WebCore::):
+        (WebCore::ANGLEWebKitBridge::setResources):
+        * platform/graphics/GraphicsContext3D.h:
+        (WebCore::GraphicsContext3D::):
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        (WebCore::GraphicsContext3D::compileShader):
+        (WebCore::GraphicsContext3D::shaderSource):
+        (WebCore::GraphicsContext3D::getShaderiv):
+        (WebCore::GraphicsContext3D::getShaderInfoLog):
+        (WebCore::GraphicsContext3D::getShaderSource):
+
 2010-08-16  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix, do not build WebCore as a convenience library as this leads to

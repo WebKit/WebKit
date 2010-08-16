@@ -901,6 +901,8 @@
 		46F9D5DD0B0D60170028EE36 /* aliasCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 46F9D5DA0B0D60170028EE36 /* aliasCursor.png */; };
 		46F9D5DE0B0D60170028EE36 /* noDropCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 46F9D5DB0B0D60170028EE36 /* noDropCursor.png */; };
 		46F9D5DF0B0D60170028EE36 /* progressCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 46F9D5DC0B0D60170028EE36 /* progressCursor.png */; };
+		490707E61219C04300D90E51 /* ANGLEWebKitBridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 490707E41219C04300D90E51 /* ANGLEWebKitBridge.cpp */; };
+		490707E71219C04300D90E51 /* ANGLEWebKitBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 490707E51219C04300D90E51 /* ANGLEWebKitBridge.h */; };
 		492273A31083B3B100EE5C84 /* JSArrayBufferViewCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 492273A21083B3B100EE5C84 /* JSArrayBufferViewCustom.cpp */; };
 		49484FC1102CF23C00187DD3 /* CanvasGradient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49484FB3102CF23C00187DD3 /* CanvasGradient.cpp */; };
 		49484FC2102CF23C00187DD3 /* CanvasGradient.h in Headers */ = {isa = PBXBuildFile; fileRef = 49484FB4102CF23C00187DD3 /* CanvasGradient.h */; };
@@ -6683,6 +6685,8 @@
 		46F9D5DA0B0D60170028EE36 /* aliasCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = aliasCursor.png; sourceTree = "<group>"; };
 		46F9D5DB0B0D60170028EE36 /* noDropCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = noDropCursor.png; sourceTree = "<group>"; };
 		46F9D5DC0B0D60170028EE36 /* progressCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = progressCursor.png; sourceTree = "<group>"; };
+		490707E41219C04300D90E51 /* ANGLEWebKitBridge.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ANGLEWebKitBridge.cpp; sourceTree = "<group>"; };
+		490707E51219C04300D90E51 /* ANGLEWebKitBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ANGLEWebKitBridge.h; sourceTree = "<group>"; };
 		492273A21083B3B100EE5C84 /* JSArrayBufferViewCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSArrayBufferViewCustom.cpp; sourceTree = "<group>"; };
 		49484FB3102CF23C00187DD3 /* CanvasGradient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CanvasGradient.cpp; path = canvas/CanvasGradient.cpp; sourceTree = "<group>"; };
 		49484FB4102CF23C00187DD3 /* CanvasGradient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CanvasGradient.h; path = canvas/CanvasGradient.h; sourceTree = "<group>"; };
@@ -15675,6 +15679,8 @@
 		B2A015910AF6CD53006BCE0E /* graphics */ = {
 			isa = PBXGroup;
 			children = (
+				490707E41219C04300D90E51 /* ANGLEWebKitBridge.cpp */,
+				490707E51219C04300D90E51 /* ANGLEWebKitBridge.h */,
 				B27535290B053814002CE64F /* cg */,
 				A75E8B7F0E1DE2B0007F2481 /* filters */,
 				B27535490B053814002CE64F /* mac */,
@@ -20182,6 +20188,7 @@
 				97DD4D870FDF4D6E00ECF9A4 /* XSSAuditor.h in Headers */,
 				CE172E011136E8CE0062A533 /* ZoomMode.h in Headers */,
 				C50B561712119D23008B46E0 /* GroupSettings.h in Headers */,
+				490707E71219C04300D90E51 /* ANGLEWebKitBridge.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -20241,6 +20248,7 @@
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
 			compatibilityVersion = "Xcode 2.4";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -22612,6 +22620,7 @@
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				97DD4D860FDF4D6E00ECF9A4 /* XSSAuditor.cpp in Sources */,
 				C50B561612119D23008B46E0 /* GroupSettings.cpp in Sources */,
+				490707E61219C04300D90E51 /* ANGLEWebKitBridge.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

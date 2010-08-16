@@ -1,3 +1,21 @@
+2010-08-16  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Chris Marrin.
+
+        Added shader validation via ANGLE
+        https://bugs.webkit.org/show_bug.cgi?id=42405
+
+        Updated tests to pass with shader validation
+
+        * fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias.html:
+        * fast/canvas/webgl/gl-bind-attrib-location-test.html:
+        * fast/canvas/webgl/read-pixels-pack-alignment.html:
+        * fast/canvas/webgl/resources/fragmentShader.frag:
+        * fast/canvas/webgl/texImage2DImageDataTest.html:
+        * fast/canvas/webgl/texture-active-bind.html:
+        * fast/canvas/webgl/texture-complete.html:
+        * fast/canvas/webgl/texture-transparent-pixels-initialized.html:
+
 2010-08-16  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Nate Chapin.

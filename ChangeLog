@@ -1,3 +1,14 @@
+2010-08-16  Paul Sawaya  <psawaya@apple.com>
+
+        Reviewed by Chris Marrin.
+
+        Added shader validation via ANGLE
+        https://bugs.webkit.org/show_bug.cgi?id=42405
+
+        Added ANGLE build to Makefile
+
+        * Makefile:
+
 2010-08-16  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix, do not build WebCore as a convenience library as this leads to

@@ -2485,6 +2485,8 @@
             'platform/graphics/wx/PenWx.cpp',
             'platform/graphics/wx/SimpleFontDataWx.cpp',
             'platform/graphics/wx/TransformationMatrixWx.cpp',
+            'platform/graphics/ANGLEWebkitBridge.cpp',
+            'platform/graphics/ANGLEWebkitBridge.h',
             'platform/graphics/BitmapImage.cpp',
             'platform/graphics/BitmapImage.h',
             'platform/graphics/Color.cpp',

@@ -31,6 +31,7 @@
 
 #import "BlockExceptions.h"
 
+#include "ANGLE/ResourceLimits.h"
 #include "ArrayBuffer.h"
 #include "ArrayBufferView.h"
 #include "WebGLObject.h"
@@ -180,6 +181,30 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWi
         if (m_attrs.stencil || m_attrs.depth)
             ::glGenRenderbuffersEXT(1, &m_multisampleDepthStencilBuffer);
     }
+    
+    // ANGLE initialization.
+
+    TBuiltInResource ANGLEResources;
+
+    ANGLEResources.maxVertexAttribs = 0;
+    getIntegerv(GraphicsContext3D::MAX_VERTEX_ATTRIBS, &ANGLEResources.maxVertexAttribs);
+    ANGLEResources.maxVertexUniformVectors = 0;
+    getIntegerv(GraphicsContext3D::MAX_VERTEX_UNIFORM_VECTORS, &ANGLEResources.maxVertexUniformVectors);
+    ANGLEResources.maxVaryingVectors = 0;
+    getIntegerv(GraphicsContext3D::MAX_VARYING_VECTORS, &ANGLEResources.maxVaryingVectors);
+    ANGLEResources.maxVertexTextureImageUnits = 0;
+    getIntegerv(GraphicsContext3D::MAX_VERTEX_TEXTURE_IMAGE_UNITS, &ANGLEResources.maxVertexTextureImageUnits);
+    ANGLEResources.maxCombinedTextureImageUnits = 0;
+    getIntegerv(GraphicsContext3D::MAX_COMBINED_TEXTURE_IMAGE_UNITS, &ANGLEResources.maxCombinedTextureImageUnits);
+    ANGLEResources.maxTextureImageUnits = 0;
+    getIntegerv(GraphicsContext3D::MAX_TEXTURE_IMAGE_UNITS, &ANGLEResources.maxTextureImageUnits);
+    ANGLEResources.maxFragmentUniformVectors = 0;
+    getIntegerv(GraphicsContext3D::MAX_FRAGMENT_UNIFORM_VECTORS, &ANGLEResources.maxFragmentUniformVectors);
+
+    // Always set to 1 for OpenGL ES.
+    ANGLEResources.maxDrawBuffers = 1;
+    
+    m_compiler.setResources(ANGLEResources);
     
     ::glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
     ::glClearColor(0, 0, 0, 0);
@@ -617,7 +642,52 @@ void GraphicsContext3D::compileShader(Platform3DObject shader)
 {
     ASSERT(shader);
     ensureContext(m_contextObj);
+
+    int GLshaderType;
+    ANGLEShaderType shaderType;
+
+    glGetShaderiv(shader, SHADER_TYPE, &GLshaderType);
+    
+    if (GLshaderType == VERTEX_SHADER)
+        shaderType = SHADER_TYPE_VERTEX;
+    else if (GLshaderType == FRAGMENT_SHADER)
+        shaderType = SHADER_TYPE_FRAGMENT;
+    else
+        return; // Invalid shader type.
+
+    HashMap<Platform3DObject, ShaderSourceEntry>::iterator result = m_shaderSourceMap.find(shader);
+
+    if (result == m_shaderSourceMap.end())
+        return;
+
+    ShaderSourceEntry& entry = result->second;
+
+    String translatedShaderSource;
+    String shaderInfoLog;
+
+    bool isValid = m_compiler.validateShaderSource(entry.source.utf8().data(), shaderType, translatedShaderSource, shaderInfoLog);
+
+    entry.log = shaderInfoLog;
+    entry.isValid = isValid;
+
+    if (!isValid)
+        return; // Shader didn't validate, don't move forward with compiling translated source    
+
+    int translatedShaderLength = translatedShaderSource.length();
+
+    const CString& translatedShaderCString = translatedShaderSource.utf8();
+    const char* translatedShaderPtr = translatedShaderCString.data();
+    
+    ::glShaderSource((GLuint) shader, 1, &translatedShaderPtr, &translatedShaderLength);
+    
     ::glCompileShader((GLuint) shader);
+    
+    int GLCompileSuccess;
+    
+    ::glGetShaderiv((GLuint) shader, COMPILE_STATUS, &GLCompileSuccess);
+    
+    // ASSERT that ANGLE generated GLSL will be accepted by OpenGL
+    ASSERT(GLCompileSuccess == GL_TRUE);
 }
 
 void GraphicsContext3D::copyTexImage2D(unsigned long target, long level, unsigned long internalformat, long x, long y, unsigned long width, unsigned long height, long border)
@@ -998,11 +1068,12 @@ void GraphicsContext3D::shaderSource(Platform3DObject shader, const String& stri
     ASSERT(shader);
     
     ensureContext(m_contextObj);
-    const CString& cs = string.utf8();
-    const char* s = cs.data();
-    
-    int length = string.length();
-    ::glShaderSource((GLuint) shader, 1, &s, &length);
+
+    ShaderSourceEntry entry;
+
+    entry.source = string;
+
+    m_shaderSourceMap.set(shader, entry);
 }
 
 void GraphicsContext3D::stencilFunc(unsigned long func, long ref, unsigned long mask)
@@ -1346,26 +1417,77 @@ void GraphicsContext3D::getShaderiv(Platform3DObject shader, unsigned long pname
     ASSERT(shader);
     
     ensureContext(m_contextObj);
-    ::glGetShaderiv((GLuint) shader, pname, value);
+    
+    HashMap<Platform3DObject, ShaderSourceEntry>::iterator result = m_shaderSourceMap.find(shader);
+    
+    switch (pname) {
+        case DELETE_STATUS:
+        case SHADER_TYPE:
+            // Let OpenGL handle these.
+        
+            ::glGetShaderiv((GLuint) shader, pname, value);
+            break;
+
+        case COMPILE_STATUS:
+            if (result == m_shaderSourceMap.end()) {
+                (*value) = static_cast<int>(false);
+                return;
+            }
+                
+            (*value) = static_cast<int>(result->second.isValid);
+            break;
+            
+        case INFO_LOG_LENGTH:
+            if (result == m_shaderSourceMap.end()) {
+                (*value) = 0;
+                return;
+            }
+            
+            (*value) = getShaderInfoLog(shader).length();
+            break;
+            
+        case SHADER_SOURCE_LENGTH:
+            (*value) = getShaderSource(shader).length();
+            break;
+        
+        default:
+            synthesizeGLError(INVALID_ENUM);
+    }
 }
 
 String GraphicsContext3D::getShaderInfoLog(Platform3DObject shader)
 {
     ASSERT(shader);
-    
+
     ensureContext(m_contextObj);
     GLint length;
     ::glGetShaderiv((GLuint) shader, GL_INFO_LOG_LENGTH, &length);
-    
-    GLsizei size;
-    GLchar* info = (GLchar*) fastMalloc(length);
-    if (!info)
-        return "";
-        
-    ::glGetShaderInfoLog((GLuint) shader, length, &size, info);
-    String s(info);
-    fastFree(info);
-    return s;
+
+    HashMap<Platform3DObject, ShaderSourceEntry>::iterator result = m_shaderSourceMap.find(shader);
+
+    if (result == m_shaderSourceMap.end())
+         return "";
+
+     ShaderSourceEntry entry = result->second;
+
+     if (entry.isValid) {
+         GLint length;
+         ::glGetShaderiv((GLuint) shader, GL_INFO_LOG_LENGTH, &length);
+
+         GLsizei size;
+         GLchar* info = (GLchar*) fastMalloc(length);
+         if (!info)
+             return "";
+
+         ::glGetShaderInfoLog((GLuint) shader, length, &size, info);
+
+         String s(info);
+         fastFree(info);
+         return s;
+     }
+     else {
+         return entry.log;
+     }
 }
 
 String GraphicsContext3D::getShaderSource(Platform3DObject shader)
@@ -1373,18 +1495,13 @@ String GraphicsContext3D::getShaderSource(Platform3DObject shader)
     ASSERT(shader);
 
     ensureContext(m_contextObj);
-    GLint length;
-    ::glGetShaderiv((GLuint) shader, GL_SHADER_SOURCE_LENGTH, &length);
-    
-    GLsizei size;
-    GLchar* info = (GLchar*) fastMalloc(length);
-    if (!info)
+
+    HashMap<Platform3DObject, ShaderSourceEntry>::iterator result = m_shaderSourceMap.find(shader);
+
+    if (result == m_shaderSourceMap.end())
         return "";
-        
-    ::glGetShaderSource((GLuint) shader, length, &size, info);
-    String s(info);
-    fastFree(info);
-    return s;
+
+    return result->second.source;
 }
 
 
