@@ -1,3 +1,15 @@
+2010-08-16  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        document.write() isn't processed immediately before DOM access
+        https://bugs.webkit.org/show_bug.cgi?id=36881
+
+        Test that document.write gets flushed before DOM access takes place.
+
+        * fast/tokenizer/document-write-racing-dom-access-expected.txt: Added.
+        * fast/tokenizer/document-write-racing-dom-access.html: Added.
+
 2010-08-16  Yuta Kitamura  <yutak@chromium.org>
 
         Not reviewed. Chromium test expectations updates and rebaselines.
