@@ -50,10 +50,6 @@ bool DebuggerAgentManager::s_inHostDispatchHandler = false;
 
 DebuggerAgentManager::DeferrersMap DebuggerAgentManager::s_pageDeferrers;
 
-bool DebuggerAgentManager::s_inUtilityContext = false;
-
-bool DebuggerAgentManager::s_debugBreakDelayed = false;
-
 bool DebuggerAgentManager::s_exposeV8DebuggerProtocol = false;
 
 namespace {
@@ -208,28 +204,20 @@ void DebuggerAgentManager::onV8DebugMessage(const v8::Debug::Message& message)
         return;
     }
 
-    if (s_inUtilityContext && message.GetEvent() == v8::Break) {
-        // This may happen when two tabs are being debugged in the same process.
-        // Suppose that first debugger is pauesed on an exception. It will run
-        // nested MessageLoop which may process Break request from the second
-        // debugger.
-        s_debugBreakDelayed = true;
-    } else {
-        // If the context is from one of the inpected tabs or injected extension
-        // scripts it must have hostId in the data field.
-        int hostId = WebCore::V8Proxy::contextDebugId(context);
-        if (hostId != -1) {
-            DebuggerAgentImpl* agent = debuggerAgentForHostId(hostId);
-            if (agent) {
-                if (agent->autoContinueOnException()
-                    && message.GetEvent() == v8::Exception) {
-                    sendContinueCommandToV8();
-                    return;
-                }
-
-                agent->debuggerOutput(out);
+    // If the context is from one of the inpected tabs or injected extension
+    // scripts it must have hostId in the data field.
+    int hostId = WebCore::V8Proxy::contextDebugId(context);
+    if (hostId != -1) {
+        DebuggerAgentImpl* agent = debuggerAgentForHostId(hostId);
+        if (agent) {
+            if (agent->autoContinueOnException()
+                && message.GetEvent() == v8::Exception) {
+                sendContinueCommandToV8();
                 return;
             }
+
+            agent->debuggerOutput(out);
+            return;
         }
     }
 
@@ -242,10 +230,7 @@ void DebuggerAgentManager::onV8DebugMessage(const v8::Debug::Message& message)
 
 void DebuggerAgentManager::pauseScript()
 {
-    if (s_inUtilityContext)
-        s_debugBreakDelayed = true;
-    else
-        v8::Debug::DebugBreak();
+    v8::Debug::DebugBreak();
 }
 
 void DebuggerAgentManager::executeDebuggerCommand(const WTF::String& command, int callerId)

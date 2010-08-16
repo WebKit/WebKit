@@ -1,3 +1,15 @@
+2010-08-16  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: remove utility context related code from debugger agent
+        https://bugs.webkit.org/show_bug.cgi?id=44049
+
+        * src/DebuggerAgentManager.cpp:
+        (WebKit::DebuggerAgentManager::onV8DebugMessage):
+        (WebKit::DebuggerAgentManager::pauseScript):
+        * src/DebuggerAgentManager.h:
+
 2010-08-16  Yuta Kitamura  <yutak@chromium.org>
 
         Reviewed by Shinichiro Hamaji.
