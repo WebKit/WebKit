@@ -42,35 +42,6 @@ if building_on_win32:
 else:
     jscore_excludes.append('JSStringRefBSTR.cpp')
     jscore_excludes.extend(get_excludes(jscore_dir, ['*Win.cpp']))
-
-def generate_jscore_derived_sources():
-    # build the derived sources
-    js_dir = jscore_dir
-    if building_on_win32:
-        js_dir = get_output('cygpath --unix "%s"' % js_dir)
-    derived_sources_dir = os.path.join(jscore_dir, 'DerivedSources')
-    if not os.path.exists(derived_sources_dir):
-        os.mkdir(derived_sources_dir)
-
-    olddir = os.getcwd()
-    os.chdir(derived_sources_dir)
-
-    # DerivedSources.make expects Cygwin (i.e. Unix-style) python, so use that instead.
-    if building_on_win32:
-        oldpath = os.environ["PATH"]
-        os.environ["PATH"] = "/usr/bin" + os.pathsep + os.environ["PATH"]
-    command = 'make -f %s/DerivedSources.make JavaScriptCore=%s BUILT_PRODUCTS_DIR=%s all FEATURE_DEFINES="%s"' % (js_dir, js_dir, js_dir, ' '.join(feature_defines))
-    os.system(command)
-    if building_on_win32:
-        os.environ["PATH"] = oldpath
-    os.chdir(olddir)
-
-def set_options(opt):
-    common_set_options(opt)
-
-def configure(conf):
-    common_configure(conf)
-    generate_jscore_derived_sources()
     
 def build(bld):
     import Options
@@ -91,9 +62,8 @@ def build(bld):
         uselib_local = '',
         install_path = output_dir)
 
-    jscore.find_sources_in_dirs(full_dirs, excludes = jscore_excludes)  
-
-        
+    jscore.find_sources_in_dirs(full_dirs, excludes = jscore_excludes)
+    
     obj = bld.new_task_gen(
         features = 'cxx cprogram',
         includes = '. .. assembler DerivedSources ForwardingHeaders ' + ' '.join(includes),

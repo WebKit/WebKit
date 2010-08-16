@@ -97,56 +97,56 @@ jscore_dirs = [
 ]
 
 webcore_dirs = [
-    'accessibility',
-    'bindings',
-    'bindings/cpp',
-    'bindings/generic',
-    'bindings/js',
-    'bridge', 
-    'bridge/c',
-    'bridge/jsc',
-    'css',
-    'DerivedSources',
-    'dom',
-    'dom/default',
-    'editing', 
-    'history', 
-    'html',
-    'html/canvas',
-    'inspector', 
-    'loader', 
-    'loader/appcache', 
-    'loader/archive', 
-    'loader/icon',
-    'notifications',
-    'page',
-    'page/animation', 
-    'platform', 
-    'platform/animation', 
-    'platform/graphics',
-    'platform/graphics/filters',
-    'platform/graphics/transforms',
-    'platform/image-decoders',
-    'platform/image-decoders/bmp', 
-    'platform/image-decoders/gif', 
-    'platform/image-decoders/ico', 
-    'platform/image-decoders/jpeg', 
-    'platform/image-decoders/png',
-    'platform/mock',
-    'platform/network', 
-    'platform/sql', 
-    'platform/text',
-    'platform/text/transcoder',
-    'plugins', 
-    'rendering', 
-    'rendering/style', 
-    'storage',
-    'svg',
-    'svg/animation',
-    'svg/graphics',
-    'svg/graphics/filters',
-    'websockets', 
-    'xml'
+    'WebCore/accessibility',
+    'WebCore/bindings',
+    'WebCore/bindings/cpp',
+    'WebCore/bindings/generic',
+    'WebCore/bindings/js',
+    'WebCore/bridge', 
+    'WebCore/bridge/c',
+    'WebCore/bridge/jsc',
+    'WebCore/css',
+    'WebCore/DerivedSources',
+    'WebCore/dom',
+    'WebCore/dom/default',
+    'WebCore/editing', 
+    'WebCore/history', 
+    'WebCore/html',
+    'WebCore/html/canvas',
+    'WebCore/inspector', 
+    'WebCore/loader', 
+    'WebCore/loader/appcache', 
+    'WebCore/loader/archive', 
+    'WebCore/loader/icon',
+    'WebCore/notifications',
+    'WebCore/page',
+    'WebCore/page/animation', 
+    'WebCore/platform', 
+    'WebCore/platform/animation', 
+    'WebCore/platform/graphics',
+    'WebCore/platform/graphics/filters',
+    'WebCore/platform/graphics/transforms',
+    'WebCore/platform/image-decoders',
+    'WebCore/platform/image-decoders/bmp', 
+    'WebCore/platform/image-decoders/gif', 
+    'WebCore/platform/image-decoders/ico', 
+    'WebCore/platform/image-decoders/jpeg', 
+    'WebCore/platform/image-decoders/png',
+    'WebCore/platform/mock',
+    'WebCore/platform/network', 
+    'WebCore/platform/sql', 
+    'WebCore/platform/text',
+    'WebCore/platform/text/transcoder',
+    'WebCore/plugins', 
+    'WebCore/rendering', 
+    'WebCore/rendering/style', 
+    'WebCore/storage',
+    'WebCore/svg',
+    'WebCore/svg/animation',
+    'WebCore/svg/graphics',
+    'WebCore/svg/graphics/filters',
+    'WebCore/websockets', 
+    'WebCore/xml'
 ]
 
 config = get_config(wk_root)
@@ -289,9 +289,6 @@ def common_configure(conf):
     
         conf.env.append_value('CXXDEFINES', ['BUILDING_WX__=1', 'JS_NO_EXPORT'])
 
-        conf.env['LIB_WXWEBKIT'] = ['wxwebkit']
-        conf.env['CXXDEFINES_WXWEBKIT'] = ['WXUSINGDLL_WEBKIT']
-
         if building_on_win32:
             conf.env.append_value('LIBPATH', os.path.join(msvclibs_dir, 'lib'))
             # wx settings
@@ -303,22 +300,8 @@ def common_configure(conf):
             conf.env['LIB_WX'] = wxlibs
             conf.env['LIBPATH_WX'] = wxlibpaths
 
-    if building_on_win32:
-        conf.env['LIB_JSCORE'] = [libprefix + 'jscore']
-        conf.env['LIB_WEBCORE'] = [libprefix + 'webcore']
-    elif sys.platform.startswith('darwin'):
-        conf.env['LINKFLAGS_JSCORE'] = ['-Wl,-force_load,%s' % os.path.join(output_dir, 'libjscore.a')]
-        conf.env['LINKFLAGS_WEBCORE'] = ['-Wl,-force_load,%s' % os.path.join(output_dir, 'libwebcore.a')]
-    else:
-        conf.env['LINKFLAGS_JSCORE'] = ['-Wl,-whole-archive', '-ljscore', '-Wl,-no-whole-archive']
-        conf.env['LINKFLAGS_WEBCORE'] = ['-Wl,-whole-archive', '-lwebcore', '-Wl,-no-whole-archive']
-
     if sys.platform.startswith('darwin'):
         conf.env['LIB_ICU'] = ['icucore']
-        # Apple does not ship the ICU headers with Mac OS X, so WebKit includes a copy of 3.2 headers
-        conf.env.append_value('CPPPATH_JSCORE', os.path.join(jscore_dir, 'icu'))
-        
-        conf.env.append_value('CPPPATH_WEBCORE', os.path.join(webcore_dir, 'icu'))
     
         conf.env.append_value('CPPPATH', wklibs_dir)
         conf.env.append_value('LIBPATH', wklibs_dir)
@@ -340,12 +323,12 @@ def common_configure(conf):
         sdk_version = min_version
         if min_version == "10.4":
             sdk_version += "u"
-            conf.env.append_value('LIB_WEBCORE', ['WebKitSystemInterfaceTiger'])
+            conf.env.append_value('LIB_WKINTERFACE', ['WebKitSystemInterfaceTiger'])
         else:
             # NOTE: There is a WebKitSystemInterfaceSnowLeopard, but when we use that
             # on 10.6, we get a strange missing symbol error, and this library seems to
             # work fine for wx's purposes.
-            conf.env.append_value('LIB_WEBCORE', ['WebKitSystemInterfaceLeopard'])
+            conf.env.append_value('LIB_WKINTERFACE', ['WebKitSystemInterfaceLeopard'])
         
         sdkroot = '/Developer/SDKs/MacOSX%s.sdk' % sdk_version
         sdkflags = ['-arch', 'i386', '-isysroot', sdkroot]

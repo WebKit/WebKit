@@ -404,9 +404,13 @@ if (isInspectorFrontend()) {
 
 if (isWx()) {
     downloadWafIfNeeded();
-    push @projects, 'WebKitTools/DumpRenderTree';
-    push @projects, 'WebKitTools/wx/browser';
-    push @projects, 'WebKit/wx/bindings/python';
+    @options = ();
+    if (defined($makeArgs)) {
+        @options = split(/ /, $makeArgs);
+    }
+    @projects = ();
+    my $result = buildWafProject('.', $clean, @options);
+    exit exitStatus($result) if exitStatus($result);
 }
 
 if (isChromium()) {
@@ -439,16 +443,6 @@ for my $dir (@projects) {
         if ($dir eq "WebKit") {
             $result = buildVisualStudioProject("win/WebKit.vcproj/WebKit.sln", $clean);
         }
-    } elsif (isWx()) {
-        @options = ();
-        if (defined($makeArgs)) {
-            @options = split(/ /, $makeArgs);
-        }
-        if ($dir eq "WebKit" && isWx()) {
-            chdir 'wx' or die;
-        }
-            
-        $result = buildWafProject($dir, $clean, @options);
     }
 
     if (exitStatus($result)) {

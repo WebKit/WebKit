@@ -46,9 +46,9 @@ def build(bld):
         includes = ' '.join(include_paths),
         source = 'browser.cpp',
         target = 'wxBrowser',
-        uselib = 'WX CURL ICU XSLT XML WXWEBKIT ' + get_config(),
+        uselib = 'WX CURL ICU XSLT XML ' + get_config(),
         libpath = [output_dir],
-        uselib_local = '',
+        uselib_local = 'wxwebkit',
         install_path = output_dir)
         
     if sys.platform.startswith('darwin'):

@@ -34,7 +34,7 @@
 #define WXDLLIMPEXP_WEBKIT __attribute__ ((visibility("default")))
 #elif defined(WXMAKINGDLL_WEBKIT)
 #define WXDLLIMPEXP_WEBKIT WXEXPORT
-#elif defined(WXUSINGDLL_WEBKIT)
+#else
 #define WXDLLIMPEXP_WEBKIT WXIMPORT
 #endif
 

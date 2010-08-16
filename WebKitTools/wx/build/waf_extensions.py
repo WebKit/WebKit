@@ -35,7 +35,12 @@ def exec_command(s, **kw):
     if sys.platform.startswith('win') and len(' '.join(s)) > 32000:
         import tempfile
         (fd, filename) = tempfile.mkstemp()
-        os.write(fd, ' '.join(s[1:]))
+        t = []
+        for i in s:
+            if i.find(" ") != -1:
+                i = '"%s"' % i
+            t.append(i)
+        os.write(fd, ' '.join(t[1:]))
         os.close(fd)
         
         s = [s[0], '@' + filename]
