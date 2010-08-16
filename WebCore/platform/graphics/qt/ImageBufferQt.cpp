@@ -76,7 +76,7 @@ ImageBufferData::ImageBufferData(const IntSize& size)
     painter->setBrush(brush);
     painter->setCompositionMode(QPainter::CompositionMode_SourceOver);
     
-    m_image = StillImage::createForRendering(&m_data.m_pixmap);
+    m_image = StillImage::createForRendering(&m_pixmap);
 }
 
 ImageBuffer::ImageBuffer(const IntSize& size, ImageColorSpace, bool& success)
@@ -144,7 +144,7 @@ void ImageBuffer::clip(GraphicsContext* context, const FloatRect& floatRect) con
     if (alphaMask.width() != rect.width() || alphaMask.height() != rect.height())
         alphaMask = alphaMask.scaled(rect.width(), rect.height());
 
-    m_data->layers.push(new TransparencyLayer(m_data->p(), m_data->p()->transform().mapRect(rect), 1.0, alphaMask));
+    m_data.layers.push(new TransparencyLayer(m_data.p(), m_data.p()->transform().mapRect(rect), 1.0, alphaMask));
 }
 
 void ImageBuffer::platformTransformColorSpace(const Vector<int>& lookUpTable)
