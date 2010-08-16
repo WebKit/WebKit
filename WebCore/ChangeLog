@@ -1,3 +1,9 @@
+2010-08-16  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed. Touch inspector file to force frontend deployment.
+
+        * inspector/InspectorController.cpp:
+
 2010-08-16  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix for non-Win ports on Windows.
