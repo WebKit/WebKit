@@ -2,6 +2,18 @@
 
         Reviewed by Alexey Proskuryakov.
 
+        document.write causes the links to appear twice (noscript content is not ignored)
+        https://bugs.webkit.org/show_bug.cgi?id=16230
+
+        Add a test for this case.
+
+        * fast/parser/document-write-noscript-expected.txt: Added.
+        * fast/parser/document-write-noscript.html: Added.
+
+2010-08-16  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
         document.write() isn't processed immediately before DOM access
         https://bugs.webkit.org/show_bug.cgi?id=36881
 
