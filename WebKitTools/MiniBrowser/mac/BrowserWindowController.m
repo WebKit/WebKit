@@ -411,8 +411,7 @@ static WKStringRef runJavaScriptPrompt(WKPageRef page, WKStringRef message, WKSt
         closePage,
         runJavaScriptAlert,
         runJavaScriptConfirm,
-        runJavaScriptPrompt,
-        0           /* contentsSizeChanged */
+        runJavaScriptPrompt
     };
     WKPageSetPageUIClient(_webView.pageRef, &uiClient);
 }

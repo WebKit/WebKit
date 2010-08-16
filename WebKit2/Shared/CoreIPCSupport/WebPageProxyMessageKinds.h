@@ -38,9 +38,8 @@ enum Kind {
     RunJavaScriptAlert,
     RunJavaScriptConfirm,
     RunJavaScriptPrompt,
-
+    
     ClosePage,
-    ContentsSizeChanged,
     DecidePolicyForMIMEType,
     DecidePolicyForNavigationAction,
     DecidePolicyForNewWindowAction,

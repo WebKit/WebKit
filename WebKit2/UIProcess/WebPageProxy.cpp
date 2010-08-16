@@ -605,14 +605,6 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
             goToItemInBackForwardList(process()->webBackForwardItem(itemID));
             break;
         }
-        case WebPageProxyMessage::ContentsSizeChanged: {
-            IntSize size;
-            uint64_t frameID;
-            if (!arguments->decode(CoreIPC::Out(frameID, size)))
-                return;
-            contentsSizeChanged(webFrame(frameID), size);
-            break;
-        }
         default:
             ASSERT_NOT_REACHED();
             break;
@@ -882,11 +874,6 @@ bool WebPageProxy::runJavaScriptConfirm(WebFrameProxy* frame, const String& mess
 String WebPageProxy::runJavaScriptPrompt(WebFrameProxy* frame, const String& message, const String& defaultValue)
 {
     return m_uiClient.runJavaScriptPrompt(this, message, defaultValue, frame);
-}
-
-void WebPageProxy::contentsSizeChanged(WebFrameProxy* frame, const WebCore::IntSize& size)
-{
-    m_uiClient.contentsSizeChanged(this, size, frame);
 }
 
 // BackForwardList
