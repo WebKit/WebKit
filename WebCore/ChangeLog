@@ -1,3 +1,9 @@
+2010-08-16  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fix for non-Win ports on Windows.
+
+        * platform/graphics/WOFFFileFormat.cpp:
+
 2010-08-16  Adam Langley  <agl@chromium.org>
 
         Reviewed by Tony Chang.
