@@ -166,6 +166,9 @@ public:
         , m_offsetX(m_startingX)
         , m_run(getTextRun(run))
         , m_iterateBackwards(m_run.rtl())
+        , m_wordSpacingAdjustment(0)
+        , m_padding(0)
+        , m_padError(0)
     {
         // Do not use |run| inside this constructor. Use |m_run| instead.
 
@@ -205,6 +208,56 @@ public:
         delete[] m_item.log_clusters;
         if (m_item.item.bidiLevel)
             delete[] m_item.string;
+    }
+
+    // setWordSpacingAdjustment sets a delta (in pixels) which is applied at
+    // each word break in the TextRun.
+    void setWordSpacingAdjustment(int wordSpacingAdjustment)
+    {
+        m_wordSpacingAdjustment = wordSpacingAdjustment;
+    }
+
+    // setLetterSpacingAdjustment sets an additional number of pixels that is
+    // added to the advance after each output cluster. This matches the behaviour
+    // of WidthIterator::advance.
+    //
+    // (NOTE: currently does nothing because I don't know how to get the
+    // cluster information from Harfbuzz.)
+    void setLetterSpacingAdjustment(int letterSpacingAdjustment)
+    {
+        m_letterSpacing = letterSpacingAdjustment;
+    }
+
+    bool isWordBreak(unsigned i, bool isRTL)
+    {
+        if (!isRTL)
+            return i && isCodepointSpace(m_item.string[i]) && !isCodepointSpace(m_item.string[i - 1]);
+        return i != m_item.stringLength - 1 && isCodepointSpace(m_item.string[i]) && !isCodepointSpace(m_item.string[i + 1]);
+    }
+
+    // setPadding sets a number of pixels to be distributed across the TextRun.
+    // WebKit uses this to justify text.
+    void setPadding(int padding)
+    {
+        m_padding = padding;
+        if (!m_padding)
+            return;
+
+        // If we have padding to distribute, then we try to give an equal
+        // amount to each space. The last space gets the smaller amount, if
+        // any.
+        unsigned numWordBreaks = 0;
+        bool isRTL = m_iterateBackwards;
+
+        for (unsigned i = 0; i < m_item.stringLength; i++) {
+            if (isWordBreak(i, isRTL))
+                numWordBreaks++;
+        }
+
+        if (numWordBreaks)
+            m_padPerWordBreak = m_padding / numWordBreaks;
+        else
+            m_padPerWordBreak = 0;
     }
 
     void reset()
@@ -453,8 +506,15 @@ private:
     void setGlyphXPositions(bool isRTL)
     {
         double position = 0;
+        // logClustersIndex indexes logClusters for the first (or last when
+        // RTL) codepoint of the current glyph.  Each time we advance a glyph,
+        // we skip over all the codepoints that contributed to the current
+        // glyph.
+        unsigned logClustersIndex = isRTL ? m_item.num_glyphs - 1 : 0;
+
         for (int iter = 0; iter < m_item.num_glyphs; ++iter) {
-            // Glyphs are stored in logical order, but for layout purposes we always go left to right.
+            // Glyphs are stored in logical order, but for layout purposes we
+            // always go left to right.
             int i = isRTL ? m_item.num_glyphs - iter - 1 : iter;
 
             m_glyphs16[i] = m_item.glyphs[i];
@@ -462,10 +522,46 @@ private:
             m_xPositions[i] = m_offsetX + position + offsetX;
 
             double advance = truncateFixedPointToInteger(m_item.advances[i]);
+            unsigned glyphIndex = m_item.item.pos + logClustersIndex;
+            if (isWordBreak(glyphIndex, isRTL)) {
+                advance += m_wordSpacingAdjustment;
+
+                if (m_padding > 0) {
+                    unsigned toPad = roundf(m_padPerWordBreak + m_padError);
+                    m_padError += m_padPerWordBreak - toPad;
+
+                    if (m_padding < toPad)
+                        toPad = m_padding;
+                    m_padding -= toPad;
+                    advance += toPad;
+                }
+            }
+
+            // We would like to add m_letterSpacing after each cluster, but I
+            // don't know where the cluster information is. This is typically
+            // fine for Roman languages, but breaks more complex languages
+            // terribly.
+            // advance += m_letterSpacing;
+
+            if (isRTL) {
+                while (logClustersIndex > 0 && logClusters()[logClustersIndex] == i)
+                    logClustersIndex--;
+            } else {
+                while (logClustersIndex < m_item.num_glyphs && logClusters()[logClustersIndex] == i)
+                    logClustersIndex++;
+            }
+
             position += advance;
         }
+
         m_pixelWidth = position;
         m_offsetX += m_pixelWidth;
+    }
+
+    static bool isCodepointSpace(HB_UChar16 c)
+    {
+        // This matches the logic in RenderBlock::findNextLineBreak
+        return c == ' ' || c == '\t';
     }
 
     void mirrorCharacters(UChar* destination, const UChar* source, int length) const
@@ -498,6 +594,14 @@ private:
     OwnArrayPtr<UChar> m_normalizedBuffer; // A buffer for normalized run.
     const TextRun& m_run;
     bool m_iterateBackwards;
+    int m_wordSpacingAdjustment; // delta adjustment (pixels) for each word break.
+    float m_padding; // pixels to be distributed over the line at word breaks.
+    float m_padPerWordBreak; // pixels to be added to each word break.
+    float m_padError; // |m_padPerWordBreak| might have a fractional component.
+                      // Since we only add a whole number of padding pixels at
+                      // each word break we accumulate error. This is the
+                      // number of pixels that we are behind so far.
+    unsigned m_letterSpacing; // pixels to be added after each glyph.
 };
 
 static void setupForTextPainting(SkPaint* paint, SkColor color)
@@ -534,6 +638,9 @@ void Font::drawComplexText(GraphicsContext* gc, const TextRun& run,
 
     TextRunWalker walker(run, point.x(), this);
     bool haveMultipleLayers = isCanvasMultiLayered(canvas);
+    walker.setWordSpacingAdjustment(wordSpacing());
+    walker.setLetterSpacingAdjustment(letterSpacing());
+    walker.setPadding(run.padding());
 
     while (walker.nextScriptRun()) {
         if (fill) {
@@ -553,6 +660,8 @@ void Font::drawComplexText(GraphicsContext* gc, const TextRun& run,
 float Font::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFontData*>* /* fallbackFonts */, GlyphOverflow* /* glyphOverflow */) const
 {
     TextRunWalker walker(run, 0, this);
+    walker.setWordSpacingAdjustment(wordSpacing());
+    walker.setLetterSpacingAdjustment(letterSpacing());
     return walker.widthOfFullRun();
 }
 
@@ -588,6 +697,8 @@ int Font::offsetForPositionForComplexText(const TextRun& run, float xFloat,
     // (Mac code ignores includePartialGlyphs, and they don't know what it's
     // supposed to do, so we just ignore it as well.)
     TextRunWalker walker(run, 0, this);
+    walker.setWordSpacingAdjustment(wordSpacing());
+    walker.setLetterSpacingAdjustment(letterSpacing());
 
     // If this is RTL text, the first glyph from the left is actually the last
     // code point. So we need to know how many code points there are total in
@@ -664,6 +775,8 @@ FloatRect Font::selectionRectForComplexText(const TextRun& run,
 {
     int fromX = -1, toX = -1, fromAdvance = -1, toAdvance = -1;
     TextRunWalker walker(run, 0, this);
+    walker.setWordSpacingAdjustment(wordSpacing());
+    walker.setLetterSpacingAdjustment(letterSpacing());
 
     // Base will point to the x offset for the current script run. Note that, in
     // the LTR case, width will be 0.

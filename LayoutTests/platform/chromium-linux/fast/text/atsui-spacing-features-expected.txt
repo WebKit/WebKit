@@ -35,14 +35,14 @@ layer at (0,0) size 800x340
             RenderTableCell {TD} at (2,26) size 204x174 [r=1 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 202x172
                 RenderBlock {DIV} at (0,0) size 202x38 [border: (1px solid #0000FF)]
-                  RenderText {#text} at (63,1) size 151x37
-                    text run at (63,1) width 138 RTL: "\x{5D9}\x{5B0}\x{5D4}\x{5B4}\x{5D9}, \x{5D0}\x{5B8}\x{5D7}\x{5B4}\x{5D9}, \x{5DC}\x{5B0}\x{5DA}\x{5B8} \x{5E1}\x{5B5}\x{5E4}\x{5B6}\x{5E8} \x{5E9}\x{5C1}\x{5B0}\x{5DC}\x{5B7}\x{5D7}\x{5B0}\x{5EA}\x{5BC}\x{5B4}\x{5D9}\x{5D5}"
-                    text run at (50,19) width 104 RTL: "\x{5E6}\x{5B0}\x{5DE}\x{5B4}\x{5D9}\x{5EA}\x{5D5}\x{5BC}\x{5EA} \x{5DC}\x{5B8}\x{5DA}\x{5B0} \x{5DE}\x{5B0}\x{5DB}\x{5B7}\x{5E8}\x{5B0}\x{5EA}\x{5BC}\x{5B4}\x{5D9}\x{5D5}."
-                    text run at (154,19) width 47 RTL: "\x{5D5}\x{5BC}\x{5DE}\x{5B4}\x{5DE}\x{5B0}\x{5DB}\x{5BC}\x{5B6}\x{5E8}\x{5B6}\x{5EA} "
+                  RenderText {#text} at (13,1) size 191x37
+                    text run at (13,1) width 188 RTL: "\x{5D9}\x{5B0}\x{5D4}\x{5B4}\x{5D9}, \x{5D0}\x{5B8}\x{5D7}\x{5B4}\x{5D9}, \x{5DC}\x{5B0}\x{5DA}\x{5B8} \x{5E1}\x{5B5}\x{5E4}\x{5B6}\x{5E8} \x{5E9}\x{5C1}\x{5B0}\x{5DC}\x{5B7}\x{5D7}\x{5B0}\x{5EA}\x{5BC}\x{5B4}\x{5D9}\x{5D5}"
+                    text run at (10,19) width 134 RTL: "\x{5E6}\x{5B0}\x{5DE}\x{5B4}\x{5D9}\x{5EA}\x{5D5}\x{5BC}\x{5EA} \x{5DC}\x{5B8}\x{5DA}\x{5B0} \x{5DE}\x{5B0}\x{5DB}\x{5B7}\x{5E8}\x{5B0}\x{5EA}\x{5BC}\x{5B4}\x{5D9}\x{5D5}."
+                    text run at (144,19) width 57 RTL: "\x{5D5}\x{5BC}\x{5DE}\x{5B4}\x{5DE}\x{5B0}\x{5DB}\x{5BC}\x{5B6}\x{5E8}\x{5B6}\x{5EA} "
                 RenderBlock {DIV} at (0,43) size 202x62 [border: (1px solid #0000FF)]
-                  RenderText {#text} at (1,1) size 176x59
-                    text run at (1,1) width 132: "Lore\x{300}m ipsum dolor sit"
-                    text run at (1,21) width 176: "ame\x{300}t, consectetuer adipiscing"
+                  RenderText {#text} at (1,1) size 196x59
+                    text run at (1,1) width 162: "Lore\x{300}m ipsum dolor sit"
+                    text run at (1,21) width 196: "ame\x{300}t, consectetuer adipiscing"
                     text run at (1,41) width 21: "e\x{300}lit."
                 RenderBlock {DIV} at (0,110) size 202x62 [border: (1px solid #008000)]
                   RenderText {#text} at (1,1) size 196x59

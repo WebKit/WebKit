@@ -1,3 +1,29 @@
+2010-08-16  Adam Langley  <agl@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium] Improve spacing support for complex text on Linux
+
+        https://bugs.webkit.org/show_bug.cgi?id=39014
+
+        Previously, our complex text support ignored word-spacing,
+        justification and letter-spacing. This fixes the first two issues and
+        allows us to render Scribd's HTML5 documents much better.
+
+        Test: fast/text/atsui-spacing-features.html
+
+        * platform/graphics/chromium/FontLinux.cpp:
+        (WebCore::TextRunWalker::TextRunWalker):
+        (WebCore::TextRunWalker::setWordSpacingAdjustment):
+        (WebCore::TextRunWalker::setLetterSpacingAdjustment):
+        (WebCore::TextRunWalker::setPadding):
+        (WebCore::TextRunWalker::setGlyphXPositions):
+        (WebCore::TextRunWalker::isCodepointSpace):
+        (WebCore::Font::drawComplexText):
+        (WebCore::Font::floatWidthForComplexText):
+        (WebCore::Font::offsetForPositionForComplexText):
+        (WebCore::Font::selectionRectForComplexText):
+
 2010-08-16  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
