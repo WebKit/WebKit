@@ -1,5 +1,12 @@
 2010-08-16  Jeremy Orlow  <jorlow@chromium.org>
 
+        Last build fix?
+
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::PageGroup):
+
+2010-08-16  Jeremy Orlow  <jorlow@chromium.org>
+
         Ugh...another build fix.
 
         * page/GroupSettings.cpp:

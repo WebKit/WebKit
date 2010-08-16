@@ -63,6 +63,7 @@ PageGroup::PageGroup(const String& name)
 PageGroup::PageGroup(Page* page)
     : m_visitedLinksPopulated(false)
     , m_identifier(getUniqueIdentifier())
+    , m_groupSettings(GroupSettings::create())
 {
     ASSERT(page);
     addPage(page);
