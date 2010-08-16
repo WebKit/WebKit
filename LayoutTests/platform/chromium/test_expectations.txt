@@ -3183,10 +3183,6 @@ BUGWK43912 WIN LINUX : svg/custom/mask-with-default-value.svg = IMAGE
 BUGWK43912 WIN LINUX : svg/zoom/page/zoom-mask-with-percentages.svg = IMAGE
 BUGWK43912 WIN LINUX : svg/custom/absolute-sized-content-with-resources.xhtml = IMAGE
 
-// Crash due to r65208
-BUG52014 WIN DEBUG : editing/pasteboard/smart-paste-003.html = PASS CRASH
-BUG52014 WIN DEBUG : editing/pasteboard/smart-paste-004.html = PASS CRASH
-
 // Times out frequently since the test was added
 BUG52017 MAC LINUX : http/tests/misc/isindex-with-no-form.html = PASS TIMEOUT
 

@@ -1,3 +1,20 @@
+2010-08-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Tony Chang.
+
+        REGRESSION(r65208): editing/pasteboard/smart-paste-003.html and smart-paste-004.html crash on Windows Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=44070
+
+        The crash was caused by start or end node being removed in pushDownInlineStyleAroundNode.
+        It made start and end orphaned, and caused s.node() to be detached from the document.
+        Fixed the crash by using nodes passed to pushDownInlineStyleAroundNode for start and end if the original
+        start and end are orphaned because pushDownInlineStyleAroundNode won't prune targetNode.
+
+        Test: editing/pasteboard/smart-paste-003-trailing-whitespace.html
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::removeInlineStyle):
+
 2010-08-16  James Robinson  <jamesr@chromium.org>
 
         Compile fix. Remove ANGLEWebKitBridge classes from Chromium build.  They are unused.
