@@ -3,6 +3,7 @@
 CONFIG += building-libs
 CONFIG += depend_includepath
 
+include($$PWD/../WebKit.pri)
 include($$PWD/../common.pri)
 include($$PWD/../WebCore/features.pri)
 include(WebKit2.pri)
@@ -155,6 +156,8 @@ HEADERS += \
     Shared/CoreIPCSupport/WebPageProxyMessageKinds.h \
     Shared/CoreIPCSupport/WebProcessMessageKinds.h \
     Shared/DrawingAreaBase.h \
+    Shared/ImmutableArray.h \
+    Shared/ImmutableDictionary.h \
     Shared/NotImplemented.h \
     Shared/qt/WebEventFactoryQt.h \
     Shared/VisitedLinkTable.h \
@@ -194,6 +197,9 @@ HEADERS += \
     UIProcess/VisitedLinkProvider.h \
     UIProcess/WebContext.h \
     UIProcess/WebContextInjectedBundleClient.h \
+    UIProcess/WebFormClient.h \
+    UIProcess/WebFormSubmissionListenerProxy.h \
+    UIProcess/WebFrameListenerProxy.h \
     UIProcess/WebFramePolicyListenerProxy.h \
     UIProcess/WebFrameProxy.h \
     UIProcess/WebHistoryClient.h \
@@ -255,6 +261,7 @@ SOURCES += \
     Platform/qt/WorkQueueQt.cpp \
     Shared/DrawingAreaBase.cpp \
     Shared/ImmutableArray.cpp \
+    Shared/ImmutableDictionary.cpp \
     Shared/VisitedLinkTable.cpp \
     Shared/WebEventConversion.cpp \
     Shared/WebPreferencesStore.cpp \
@@ -286,6 +293,9 @@ SOURCES += \
     UIProcess/WebBackForwardListItem.cpp \
     UIProcess/WebContext.cpp \
     UIProcess/WebContextInjectedBundleClient.cpp \
+    UIProcess/WebFormClient.cpp \
+    UIProcess/WebFormSubmissionListenerProxy.cpp \
+    UIProcess/WebFrameListenerProxy.cpp \
     UIProcess/WebFramePolicyListenerProxy.cpp \
     UIProcess/WebFrameProxy.cpp \
     UIProcess/WebHistoryClient.cpp \

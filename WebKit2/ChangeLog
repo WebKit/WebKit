@@ -1,3 +1,11 @@
+2010-08-16  Balazs Kelemen  <kb@inf.u-szeged.hu>
+
+        Unreviewed Qt WebKit2 build fix.
+
+        * UIProcess/qt/WebContextQt.cpp:
+        (WebKit::WebContext::platformSetUpWebProcess): Added empty stub implementation.
+        * WebKit2.pro: Enumerate new files, include WebKit.pri for correct define macro set.
+
 2010-08-15  Dan Bernstein  <mitz@apple.com>
 
         Revised build fix from r65363 based on suggestion from Darin Adler.

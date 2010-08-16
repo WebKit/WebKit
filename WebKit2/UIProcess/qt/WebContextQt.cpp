@@ -35,4 +35,8 @@ WTF::String WebContext::applicationCacheDirectory()
     return WebCore::cacheStorage().cacheDirectory();
 }
 
+void WebContext::platformSetUpWebProcess()
+{
+}
+
 } // namespace WebKit
