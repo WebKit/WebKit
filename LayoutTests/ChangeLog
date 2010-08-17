@@ -1,3 +1,12 @@
+2010-08-17  John Gregg  <johnnyg@google.com>
+
+        Unreviewed, test expectations.
+
+        Skip the filltable-*.html tests on mac and windows.  They have no expectations, so expecting
+        them to FAIL is insufficient to make the bots happy.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-08-17  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by NOBODY.
