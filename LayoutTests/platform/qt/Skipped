@@ -5481,9 +5481,11 @@ fast/events/keydown-numpad-keys.html
 fast/events/special-key-events-in-input-text.html
 
 # [Qt] DumpRenderTree lacks functionality for new Geolocation delayed permission tests
-# https://bugs.webkit.org/show_bug.cgi?id=43478
+# https://bugs.webkit.org/show_bug.cgi?id=41364
 fast/dom/Geolocation/delayed-permission-allowed.html
 fast/dom/Geolocation/delayed-permission-denied.html
+fast/dom/Geolocation/delayed-permission-allowed-for-multiple-requests.html
+fast/dom/Geolocation/delayed-permission-denied-for-multiple-requests.html
 
 # BlodBuilder is not enabled
 http/tests/local/blob/send-data-blob.html

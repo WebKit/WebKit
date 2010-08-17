@@ -1,3 +1,28 @@
+2010-08-17  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
+
+        Reviewed by Steve Block.
+
+        Geolocation preemptive permissions policy is buggy
+        https://bugs.webkit.org/show_bug.cgi?id=42811
+
+        While waiting for permission, m_startRequestPermissionNotifier was 
+        used to consider only one pending request. This patch implements a set
+        m_pendingForPermissionNotifiers to maintain set of pending requests. 
+        When user grants/denies permission all listeners will be notified. 
+        Also fixed issue with hasZeroTimeout() where startTimerIfNeeded() has
+        to start irrespective of permission state
+
+        Tests: fast/dom/Geolocation/delayed-permission-allowed-for-multiple-requests.html
+               fast/dom/Geolocation/delayed-permission-denied-for-multiple-requests.html
+
+        * WebCore.pro:
+        * page/Geolocation.cpp:
+        (WebCore::Geolocation::startRequest):
+        (WebCore::Geolocation::setIsAllowed):
+        (WebCore::Geolocation::startUpdating):
+        (WebCore::Geolocation::handlePendingPermissionNotifiers):
+        * page/Geolocation.h:
+
 2010-08-11  Jeremy Orlow  <jorlow@chromium.org>
 
         Beginnings of IndexedDB persistance + IDBDatabase.description fleshed out

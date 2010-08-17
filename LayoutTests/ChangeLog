@@ -1,3 +1,27 @@
+2010-08-17  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
+
+        Reviewed by Steve Block.
+
+        Geolocation preemptive permissions policy is buggy
+        https://bugs.webkit.org/show_bug.cgi?id=42811
+
+        Adds cases where permission is niether denied or granted immediately and multiple
+        requests are waiting.
+
+        * fast/dom/Geolocation/delayed-permission-allowed-for-multiple-requests-expected.txt: Added.
+        * fast/dom/Geolocation/delayed-permission-allowed-for-multiple-requests.html: Added.
+        * fast/dom/Geolocation/delayed-permission-denied-for-multiple-requests-expected.txt: Added.
+        * fast/dom/Geolocation/delayed-permission-denied-for-multiple-requests.html: Added.
+        * fast/dom/Geolocation/script-tests/delayed-permission-allowed-for-multiple-requests.js: Added.
+        (allowPermission):
+        ():
+        (maybeFinishTest):
+        * fast/dom/Geolocation/script-tests/delayed-permission-denied-for-multiple-requests.js: Added.
+        (denyPermission):
+        (maybeFinishTest):
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+
 2010-08-09  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Steve Block.
