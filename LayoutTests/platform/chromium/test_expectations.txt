@@ -2703,10 +2703,6 @@ BUG41973 MAC : svg/text/text-text-05-t.svg = IMAGE PASS
 // in upstream.
 BUGEVAN : svg/clip-path/clip-path-child-clipped.svg = PASS FAIL
 
-// Failing maybe after http://trac.webkit.org/changeset/65215
-BUG43084 MAC : fast/layers/video-layer.html = IMAGE
-BUG43084 MAC : media/video-empty-source.html = IMAGE
-
 // WebKit roll 58626:58719
 BUG43963 WIN : fast/forms/searchfield-heights.html = IMAGE
 BUG43963 LINUX : fast/forms/searchfield-heights.html = IMAGE+TEXT TEXT
