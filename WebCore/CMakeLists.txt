@@ -334,6 +334,17 @@ SET(WebCore_IDL_FILES
     storage/Database.idl
     storage/DatabaseCallback.idl
     storage/DatabaseSync.idl
+    storage/DirectoryEntry.idl
+    storage/DirectoryReader.idl
+    storage/DOMFileSystem.idl
+    storage/EntriesCallback.idl
+    storage/Entry.idl
+    storage/EntryArray.idl
+    storage/EntryCallback.idl
+    storage/ErrorCallback.idl
+    storage/FileEntry.idl
+    storage/FileSystemCallback.idl
+    storage/Flags.idl
     storage/IDBAny.idl
     storage/IDBCursor.idl
     storage/IDBDatabaseError.idl
@@ -349,6 +360,8 @@ SET(WebCore_IDL_FILES
     storage/IDBRequest.idl
     storage/IDBSuccessEvent.idl
     storage/IDBTransaction.idl
+    storage/Metadata.idl
+    storage/MetadataCallback.idl
     storage/SQLError.idl
     storage/SQLException.idl
     storage/SQLResultSet.idl
@@ -1439,6 +1452,12 @@ SET(WebCore_SOURCES
     storage/DatabaseTask.cpp
     storage/DatabaseThread.cpp
     storage/DatabaseTracker.cpp
+    storage/DirectoryEntry.cpp
+    storage/DirectoryReader.cpp
+    storage/DOMFileSystem.cpp
+    storage/Entry.cpp
+    storage/EntryArray.cpp
+    storage/FileEntry.cpp
     storage/IDBAny.cpp
     storage/IDBDatabase.cpp
     storage/IDBDatabaseBackendImpl.cpp

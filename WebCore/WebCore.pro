@@ -2546,6 +2546,31 @@ contains(DEFINES, ENABLE_DOM_STORAGE=1) {
         storage/StorageSyncManager.cpp
 }
 
+contains(DEFINES, ENABLE_FILE_SYSTEM=1) {
+    HEADERS += \
+        storage/DirectoryEntry.h \
+        storage/DirectoryReader.h \
+        storage/DOMFileSystem.h \
+        storage/EntriesCallback.h \
+        storage/Entry.h \
+        storage/EntryArray.h \
+        storage/EntryCallback.h \
+        storage/ErrorCallback.h \
+        storage/FileEntry.h \
+        storage/FileSystemCallback.h \
+        storage/Flags.h \
+        storage/Metadata.h \
+        storage/MetadataCallback.h
+
+    SOURCES += \
+        storage/DirectoryEntry.cpp \
+        storage/DirectoryReader.cpp \
+        storage/DOMFileSystem.cpp \
+        storage/Entry.cpp \
+        storage/EntryArray.cpp \
+        storage/FileEntry.cpp
+}
+
 contains(DEFINES, ENABLE_ICONDATABASE=1) {
     SOURCES += \
         loader/icon/IconDatabase.cpp \

@@ -42,42 +42,35 @@ namespace WebCore {
 class EntryCallback;
 class ErrorCallback;
 class MetadataCallback;
-class ScriptExecutionContext;
 class VoidCallback;
 
 class Entry : public RefCounted<Entry> {
 public:
-    static PassRefPtr<Entry> create(PassRefPtr<DOMFileSystem> fileSystem, const String& fullPath, bool isDirectory = false)
-    {
-        return adoptRef(new Entry(fileSystem, fullPath, isDirectory));
-    }
-
     virtual ~Entry() { }
 
-    virtual bool isFile() const { return !m_isDirectory; }
-    virtual bool isDirectory() const { return m_isDirectory; }
+    virtual bool isFile() const { return false; }
+    virtual bool isDirectory() const { return false; }
 
     const String& fullPath() const { return m_fullPath; }
     const String& name() const { return m_name; }
 
     DOMFileSystem* filesystem() const { return m_fileSystem.get(); }
 
-    virtual void getMetadata(ScriptExecutionContext*, PassRefPtr<MetadataCallback> successCallback = 0, PassRefPtr<ErrorCallback> errorCallback = 0);
+    virtual void getMetadata(PassRefPtr<MetadataCallback> successCallback = 0, PassRefPtr<ErrorCallback> errorCallback = 0);
 
-    virtual void moveTo(ScriptExecutionContext*, PassRefPtr<Entry> parent, const String& name = String(), PassRefPtr<EntryCallback> successCallback = 0, PassRefPtr<ErrorCallback> errorCallback = 0);
-    virtual void copyTo(ScriptExecutionContext*, PassRefPtr<Entry> parent, const String& name = String(), PassRefPtr<EntryCallback> successCallback = 0, PassRefPtr<ErrorCallback> errorCallback = 0);
-    virtual void remove(ScriptExecutionContext*, PassRefPtr<VoidCallback> successCallback = 0, PassRefPtr<ErrorCallback> errorCallback = 0);
-    virtual void getParent(ScriptExecutionContext*, PassRefPtr<EntryCallback> successCallback = 0, PassRefPtr<ErrorCallback> errorCallback = 0);
+    virtual void moveTo(PassRefPtr<Entry> parent, const String& name = String(), PassRefPtr<EntryCallback> successCallback = 0, PassRefPtr<ErrorCallback> errorCallback = 0);
+    virtual void copyTo(PassRefPtr<Entry> parent, const String& name = String(), PassRefPtr<EntryCallback> successCallback = 0, PassRefPtr<ErrorCallback> errorCallback = 0);
+    virtual void remove(PassRefPtr<VoidCallback> successCallback = 0, PassRefPtr<ErrorCallback> errorCallback = 0);
+    virtual void getParent(PassRefPtr<EntryCallback> successCallback = 0, PassRefPtr<ErrorCallback> errorCallback = 0);
 
     virtual String toURI(const String& mimeType = String());
 
 protected:
-    Entry(PassRefPtr<DOMFileSystem> fileSystem, const String& fullPath, bool isDirectory);
+    Entry(PassRefPtr<DOMFileSystem> fileSystem, const String& fullPath);
 
     RefPtr<DOMFileSystem> m_fileSystem;
     String m_fullPath; // virtual path
     String m_name;
-    bool m_isDirectory;
 };
 
 } // namespace WebCore

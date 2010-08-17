@@ -129,6 +129,8 @@ DOM_CLASSES = \
     DatabaseSync \
     DeviceMotionEvent \
     DeviceOrientationEvent \
+    DirectoryEntry \
+    DirectoryReader \
     Document \
     DocumentFragment \
     DocumentType \
@@ -136,7 +138,9 @@ DOM_CLASSES = \
     ElementTimeControl \
     Entity \
     EntityReference \
+    EntriesCallback \
     Entry \
+    EntryArray \
     EntryCallback \
     ErrorCallback \
     ErrorEvent \
@@ -146,6 +150,7 @@ DOM_CLASSES = \
     EventSource \
     EventTarget \
     File \
+    FileEntry \
     FileError \
     FileList \
     FileReader \

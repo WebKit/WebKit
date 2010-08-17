@@ -2993,6 +2993,55 @@ FEATURE_DEFINES += ENABLE_FILE_SYSTEM=1
 webcore_cppflags += -DENABLE_FILE_SYSTEM=1
 endif # END ENABLE_FILE_SYSTEM
 
+webcore_built_sources += \
+       DerivedSources/WebCore/JSDirectoryEntry.cpp \
+       DerivedSources/WebCore/JSDirectoryEntry.h \
+       DerivedSources/WebCore/JSDirectoryReader.cpp \
+       DerivedSources/WebCore/JSDirectoryReader.h \
+       DerivedSources/WebCore/JSDOMFileSystem.cpp \
+       DerivedSources/WebCore/JSDOMFileSystem.h \
+       DerivedSources/WebCore/JSEntriesCallback.cpp \
+       DerivedSources/WebCore/JSEntriesCallback.h \
+       DerivedSources/WebCore/JSEntry.cpp \
+       DerivedSources/WebCore/JSEntry.h \
+       DerivedSources/WebCore/JSEntryArray.cpp \
+       DerivedSources/WebCore/JSEntryArray.h \
+       DerivedSources/WebCore/JSEntryCallback.cpp \
+       DerivedSources/WebCore/JSEntryCallback.h \
+       DerivedSources/WebCore/JSErrorCallback.cpp \
+       DerivedSources/WebCore/JSErrorCallback.h \
+       DerivedSources/WebCore/JSFileEntry.cpp \
+       DerivedSources/WebCore/JSFileEntry.h \
+       DerivedSources/WebCore/JSFileSystemCallback.cpp \
+       DerivedSources/WebCore/JSFileSystemCallback.h \
+       DerivedSources/WebCore/JSFlags.cpp \
+       DerivedSources/WebCore/JSFlags.h \
+       DerivedSources/WebCore/JSMetadata.cpp \
+       DerivedSources/WebCore/JSMetadata.h \
+       DerivedSources/WebCore/JSMetadataCallback.cpp \
+       DerivedSources/WebCore/JSMetadataCallback.h
+
+webcore_sources += \
+       WebCore/storage/DirectoryEntry.cpp \
+       WebCore/storage/DirectoryEntry.h \
+       WebCore/storage/DirectoryReader.cpp \
+       WebCore/storage/DirectoryReader.h \
+       WebCore/storage/DOMFileSystem.cpp \
+       WebCore/storage/DOMFileSystem.h \
+       WebCore/storage/EntriesCallback.h \
+       WebCore/storage/Entry.cpp \
+       WebCore/storage/Entry.h \
+       WebCore/storage/EntryArray.cpp \
+       WebCore/storage/EntryArray.h \
+       WebCore/storage/EntryCallback.h \
+       WebCore/storage/ErrorCallback.h \
+       WebCore/storage/FileEntry.cpp \
+       WebCore/storage/FileEntry.h \
+       WebCore/storage/FileSystemCallback.h \
+       WebCore/storage/Flags.h \
+       WebCore/storage/Metadata.h \
+       WebCore/storage/MetadataCallback.h
+
 # ----
 # Speech Input API support
 # ----

@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-class Entry;
+class DirectoryEntry;
 
 class DOMFileSystem : public RefCounted<DOMFileSystem> {
 public:
@@ -49,7 +49,7 @@ public:
     }
 
     const String& name() const { return m_name; }
-    PassRefPtr<Entry> root();
+    PassRefPtr<DirectoryEntry> root();
 
 private:
     DOMFileSystem(const String& name, const String& rootPath);

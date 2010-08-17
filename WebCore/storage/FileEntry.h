@@ -27,67 +27,35 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include "config.h"
-#include "Entry.h"
+
+#ifndef FileEntry_h
+#define FileEntry_h
 
 #if ENABLE(FILE_SYSTEM)
 
-#include "DOMFileSystem.h"
-#include "EntryCallback.h"
-#include "ErrorCallback.h"
-#include "MetadataCallback.h"
-#include "VoidCallback.h"
+#include "Entry.h"
+#include "PlatformString.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-Entry::Entry(PassRefPtr<DOMFileSystem> fileSystem, const String& fullPath)
-    : m_fileSystem(fileSystem)
-    , m_fullPath(fullPath)
-{
-    size_t index = fullPath.reverseFind("/");
-    if (index != notFound)
-        m_name = fullPath.substring(index);
-    else
-        m_name = fullPath;
-}
+class DOMFileSystem;
 
-void Entry::getMetadata(PassRefPtr<MetadataCallback>, PassRefPtr<ErrorCallback>)
-{
-    // FIXME: to be implemented.
-    ASSERT_NOT_REACHED();
-}
+class FileEntry : public Entry {
+public:
+    static PassRefPtr<FileEntry> create(PassRefPtr<DOMFileSystem> fileSystem, const String& fullPath)
+    {
+        return adoptRef(new FileEntry(fileSystem, fullPath));
+    }
+    virtual bool isFile() const { return true; }
 
-void Entry::moveTo(PassRefPtr<Entry>, const String&, PassRefPtr<EntryCallback>, PassRefPtr<ErrorCallback>)
-{
-    // FIXME: to be implemented.
-    ASSERT_NOT_REACHED();
-}
+private:
+    FileEntry(PassRefPtr<DOMFileSystem> fileSystem, const String& fullPath);
+};
 
-void Entry::copyTo(PassRefPtr<Entry>, const String&, PassRefPtr<EntryCallback>, PassRefPtr<ErrorCallback>)
-{
-    // FIXME: to be implemented.
-    ASSERT_NOT_REACHED();
-}
-
-void Entry::remove(PassRefPtr<VoidCallback>, PassRefPtr<ErrorCallback>)
-{
-    // FIXME: to be implemented.
-    ASSERT_NOT_REACHED();
-}
-
-void Entry::getParent(PassRefPtr<EntryCallback>, PassRefPtr<ErrorCallback>)
-{
-    // FIXME: to be implemented.
-    ASSERT_NOT_REACHED();
-}
-
-String Entry::toURI(const String&)
-{
-    // FIXME: to be implemented.
-    ASSERT_NOT_REACHED();
-    return String();
-}
-
-} // namespace WebCore
+} // namespace
 
 #endif // ENABLE(FILE_SYSTEM)
+
+#endif // FileEntry_h

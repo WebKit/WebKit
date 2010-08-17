@@ -27,67 +27,30 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #include "config.h"
-#include "Entry.h"
+#include "DirectoryReader.h"
 
 #if ENABLE(FILE_SYSTEM)
 
 #include "DOMFileSystem.h"
-#include "EntryCallback.h"
+#include "EntriesCallback.h"
 #include "ErrorCallback.h"
-#include "MetadataCallback.h"
-#include "VoidCallback.h"
 
 namespace WebCore {
 
-Entry::Entry(PassRefPtr<DOMFileSystem> fileSystem, const String& fullPath)
+DirectoryReader::DirectoryReader(PassRefPtr<DOMFileSystem> fileSystem, const String& path)
     : m_fileSystem(fileSystem)
-    , m_fullPath(fullPath)
+    , m_path(path)
 {
-    size_t index = fullPath.reverseFind("/");
-    if (index != notFound)
-        m_name = fullPath.substring(index);
-    else
-        m_name = fullPath;
 }
 
-void Entry::getMetadata(PassRefPtr<MetadataCallback>, PassRefPtr<ErrorCallback>)
+void DirectoryReader::readEntries(PassRefPtr<EntriesCallback>, PassRefPtr<ErrorCallback>)
 {
     // FIXME: to be implemented.
     ASSERT_NOT_REACHED();
 }
 
-void Entry::moveTo(PassRefPtr<Entry>, const String&, PassRefPtr<EntryCallback>, PassRefPtr<ErrorCallback>)
-{
-    // FIXME: to be implemented.
-    ASSERT_NOT_REACHED();
-}
-
-void Entry::copyTo(PassRefPtr<Entry>, const String&, PassRefPtr<EntryCallback>, PassRefPtr<ErrorCallback>)
-{
-    // FIXME: to be implemented.
-    ASSERT_NOT_REACHED();
-}
-
-void Entry::remove(PassRefPtr<VoidCallback>, PassRefPtr<ErrorCallback>)
-{
-    // FIXME: to be implemented.
-    ASSERT_NOT_REACHED();
-}
-
-void Entry::getParent(PassRefPtr<EntryCallback>, PassRefPtr<ErrorCallback>)
-{
-    // FIXME: to be implemented.
-    ASSERT_NOT_REACHED();
-}
-
-String Entry::toURI(const String&)
-{
-    // FIXME: to be implemented.
-    ASSERT_NOT_REACHED();
-    return String();
-}
-
-} // namespace WebCore
+} // namespace
 
 #endif // ENABLE(FILE_SYSTEM)

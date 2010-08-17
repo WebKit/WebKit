@@ -33,6 +33,6 @@ module storage {
         Conditional=FILE_SYSTEM
     ] DOMFileSystem {
         readonly attribute DOMString name;
-        readonly attribute Entry root;
+        readonly attribute DirectoryEntry root;
     };
 }

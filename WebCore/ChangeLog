@@ -1,3 +1,56 @@
+2010-08-16  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by Dumitru Daniliuc.
+
+        Add idl and mock classes for FileSystem API's {File,Directory}Entry and related interfaces
+        https://bugs.webkit.org/show_bug.cgi?id=43993
+
+        Adding DirectoryEntry, DirectoryReader, EntriesCallback and FileEntry as defined in HTML5 FileSystem API.
+        http://dev.w3.org/2009/dap/file-system/file-dir-sys.html
+
+        Also adding Makefile entries for idl and mock classes added in changeset 64414 (except for Android platforms).
+
+        Tests will be added when we add underlying implementation.
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * storage/DOMFileSystem.cpp:
+        (WebCore::DOMFileSystem::root):
+        * storage/DOMFileSystem.h:
+        * storage/DOMFileSystem.idl:
+        * storage/DirectoryEntry.cpp: Added.
+        * storage/DirectoryEntry.h: Added.
+        * storage/DirectoryEntry.idl: Added.
+        * storage/DirectoryReader.cpp: Added.
+        * storage/DirectoryReader.h: Added.
+        * storage/DirectoryReader.idl: Added.
+        * storage/EntriesCallback.h: Added.
+        * storage/EntriesCallback.idl: Added.
+        * storage/EntryArray.cpp: Added.
+        * storage/EntryArray.h: Added.
+        * storage/EntryArray.idl: Added.
+        * storage/Entry.cpp:
+        (WebCore::Entry::Entry):
+        (WebCore::Entry::getMetadata):
+        (WebCore::Entry::moveTo):
+        (WebCore::Entry::copyTo):
+        (WebCore::Entry::remove):
+        (WebCore::Entry::getParent):
+        * storage/Entry.h:
+        (WebCore::Entry::isFile):
+        (WebCore::Entry::isDirectory):
+        * storage/Entry.idl:
+        * storage/FileEntry.cpp: Added.
+        * storage/FileEntry.h: Added.
+        * storage/FileEntry.idl: Added.
+
 2010-08-16  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Ariya Hidayat.

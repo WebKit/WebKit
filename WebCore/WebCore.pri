@@ -291,6 +291,17 @@ IDL_BINDINGS += \
     storage/Database.idl \
     storage/DatabaseCallback.idl \
     storage/DatabaseSync.idl \
+    storage/DirectoryEntry.idl \
+    storage/DirectoryReader.idl \
+    storage/DOMFileSystem.idl \
+    storage/EntriesCallback.idl \
+    storage/Entry.idl \
+    storage/EntryArray.idl \
+    storage/EntryCallback.idl \
+    storage/ErrorCallback.idl \
+    storage/FileEntry.idl \
+    storage/FileSystemCallback.idl \
+    storage/Flags.idl \
     storage/IDBAny.idl \
     storage/IDBCursor.idl \
     storage/IDBDatabaseError.idl \
@@ -306,6 +317,8 @@ IDL_BINDINGS += \
     storage/IDBRequest.idl \
     storage/IDBSuccessEvent.idl \
     storage/IDBTransaction.idl \
+    storage/Metadata.idl \
+    storage/MetadataCallback.idl \
     storage/Storage.idl \
     storage/StorageEvent.idl \
     storage/SQLError.idl \

@@ -38,10 +38,10 @@ module storage {
         readonly attribute DOMString fullPath;
         readonly attribute DOMFileSystem filesystem;
 
-        [CallWith=ScriptExecutionContext] void moveTo(in Entry parent, in [Optional] DOMString name, in [Optional, Callback] EntryCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
-        [CallWith=ScriptExecutionContext] void copyTo(in Entry parent, in [Optional] DOMString name, in [Optional, Callback] EntryCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
+        void moveTo(in Entry parent, in [Optional] DOMString name, in [Optional, Callback] EntryCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
+        void copyTo(in Entry parent, in [Optional] DOMString name, in [Optional, Callback] EntryCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
+        void remove(in [Optional, Callback] VoidCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
+        void getParent(in [Optional, Callback] EntryCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
         DOMString toURI(in [Optional] DOMString mimeType);
-        [CallWith=ScriptExecutionContext] void remove(in [Optional, Callback] VoidCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
-        [CallWith=ScriptExecutionContext] void getParent(in [Optional, Callback] EntryCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
     };
 }
