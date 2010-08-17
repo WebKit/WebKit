@@ -2176,9 +2176,6 @@ editing/selection/drag-text-delay.html
 editing/selection/shift-click.html
 
 # -- pass with --platform mac --ignore-metrics
-# [Qt] REGRESSION: editing/selection/shrink-selection-after-shift-pagedown.html fails after 56567
-# https://bugs.webkit.org/show_bug.cgi?id=36628
-editing/selection/shrink-selection-after-shift-pagedown.html
 editing/selection/drag-start-event-client-x-y.html
 editing/selection/extend-selection-bidi.html
 editing/selection/user-drag-element-and-user-select-none.html

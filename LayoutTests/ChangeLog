@@ -2,6 +2,17 @@
 
         Reviewed by Ariya Hidayat.
 
+        [Qt] REGRESSION: editing/selection/shrink-selection-after-shift-pagedown.html fails after 56567
+        https://bugs.webkit.org/show_bug.cgi?id=36628
+
+        Just enabling the test, it's not failing anymore.
+
+        * platform/qt/Skipped:
+
+2010-08-16  Ademar de Souza Reis Jr  <ademar.reis@openbossa.org>
+
+        Reviewed by Ariya Hidayat.
+
         [Qt] qt/Skipped needs cleanup on outdaded comments
         https://bugs.webkit.org/show_bug.cgi?id=44066
 
