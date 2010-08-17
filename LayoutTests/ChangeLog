@@ -1,3 +1,17 @@
+2010-08-17  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        sputnik S15.9.3.1_A5_T1~T6 fail when run in timezone other than Pacific Time
+        https://bugs.webkit.org/show_bug.cgi?id=42625
+
+        * fast/js/sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T1.html-disabled: Renamed from LayoutTests/fast/js/sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T1.html.
+        * fast/js/sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T2.html-disabled: Renamed from LayoutTests/fast/js/sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T2.html.
+        * fast/js/sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T3.html-disabled: Renamed from LayoutTests/fast/js/sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T3.html.
+        * fast/js/sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T4.html-disabled: Renamed from LayoutTests/fast/js/sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T4.html.
+        * fast/js/sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T5.html-disabled: Renamed from LayoutTests/fast/js/sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T5.html.
+        * fast/js/sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T6.html-disabled: Renamed from LayoutTests/fast/js/sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T6.html.
+
 2010-08-17  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.
