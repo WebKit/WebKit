@@ -1,3 +1,11 @@
+2010-08-16  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Sam Weinig.
+
+        Add/correct a few items in the WebKitTestRunner Skipped list.
+
+        * platform/mac-wk2/Skipped:
+
 2010-08-17  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Martin Robinson.
