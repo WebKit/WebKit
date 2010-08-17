@@ -1,3 +1,19 @@
+2010-08-17  Ademar de Souza Reis Jr  <ademar.reis@openbossa.org>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] tests whose bug was closed but are still skipped
+        https://bugs.webkit.org/show_bug.cgi?id=44068
+
+        Enable tests whose bugs have been fixed already:
+
+          https://bugs.webkit.org/show_bug.cgi?id=35350 (fixed)
+          https://bugs.webkit.org/show_bug.cgi?id=28952 (fixed)
+          https://bugs.webkit.org/show_bug.cgi?id=38502 (see discussion at the end)
+          https://bugs.webkit.org/show_bug.cgi?id=38604 (fixed)
+
+        * platform/qt/Skipped:
+
 2010-08-16  Maciej Stachowiak  <mjs@apple.com>
 
         Rubber stamped by Sam Weinig.

@@ -2445,10 +2445,6 @@ fast/forms/textarea-scrollbar-height.html
 # https://bugs.webkit.org/show_bug.cgi?id=27914
 fast/css/positioned-overflow-scroll.html
 fast/dom/prototype-inheritance-2.html
-# DOM exceptions don't seem to have a custom toString() handler
-# https://bugs.webkit.org/show_bug.cgi?id=28952
-fast/workers/worker-multi-port.html
-fast/workers/worker-context-multi-port.html
 # This port doesn't support detecting slow unload handlers.
 fast/dom/Window/slow-unload-handler.html
 fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html
@@ -2478,11 +2474,6 @@ fast/css/namespaces/namespaces-comments.xml
 fast/css/namespaces/namespaces-empty.xml
 # eventSender missing touchCancel() and cancelTouchPoint()
 fast/events/touch/send-oncancel-event.html
-
-# r58712 made fast/workers/worker-gc2.html crash. It seems to be a DRT sideeffect,
-# skipping worker-event-listener.html solve the problem until we find a real fix.
-# https://bugs.webkit.org/show_bug.cgi?id=38502
-fast/workers/worker-event-listener.html
 
 # Relies on WebKit API [WebView _loadBackForwardListFromOtherView:]
 fast/loader/crash-copying-backforwardlist.html
@@ -5372,9 +5363,6 @@ fast/dom/Geolocation/callback-to-remote-context2.html
 # Link prefetch is disabled by default
 fast/dom/HTMLLinkElement/prefetch.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=35350
-fast/events/show-modal-dialog-onblur-onfocus.html
-fast/harness/show-modal-dialog.html
 fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T10.html
 fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T11.html
 fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T2.html
