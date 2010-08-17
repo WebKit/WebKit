@@ -619,7 +619,6 @@ SOURCES += \
     html/AsyncImageResizer.cpp \
     html/Blob.cpp \
     html/BlobBuilder.cpp \
-    html/BlobRegistryImpl.cpp \
     html/BlobURL.cpp \
     html/canvas/CanvasGradient.cpp \
     html/canvas/CanvasPattern.cpp \
@@ -865,7 +864,6 @@ SOURCES += \
     platform/animation/Animation.cpp \
     platform/animation/AnimationList.cpp \
     platform/Arena.cpp \
-    platform/BlobData.cpp \
     platform/BlobItem.cpp \
     platform/text/Base64.cpp \
     platform/text/BidiContext.cpp \
@@ -930,6 +928,8 @@ SOURCES += \
     platform/mock/GeolocationServiceMock.cpp \
     platform/mock/SpeechInputClientMock.cpp \
     platform/network/AuthenticationChallengeBase.cpp \
+    platform/network/BlobData.cpp \
+    platform/network/BlobRegistryImpl.cpp \
     platform/network/Credential.cpp \
     platform/network/FormData.cpp \
     platform/network/FormDataBuilder.cpp \
@@ -1393,7 +1393,6 @@ HEADERS += \
     html/AsyncImageResizer.h \
     html/Blob.h \
     html/BlobBuilder.h \
-    html/BlobStorageData.h \
     html/BlobURL.h \
     html/canvas/CanvasGradient.h \
     html/canvas/CanvasPattern.h \
@@ -1646,9 +1645,7 @@ HEADERS += \
     platform/animation/Animation.h \
     platform/animation/AnimationList.h \
     platform/Arena.h \
-    platform/BlobData.h \
     platform/BlobItem.h \
-    platform/BlobRegistry.h \
     platform/ContentType.h \
     platform/ContextMenu.h \
     platform/CrossThreadCopier.h \
@@ -1726,6 +1723,10 @@ HEADERS += \
     platform/MIMETypeRegistry.h \
     platform/network/AuthenticationChallengeBase.h \
     platform/network/AuthenticationClient.h \
+    platform/network/BlobData.h \
+    platform/network/BlobRegistry.h \
+    platform/network/BlobRegistryImpl.h \
+    platform/network/BlobStorageData.h \
     platform/network/Credential.h \
     platform/network/FormDataBuilder.h \
     platform/network/FormData.h \

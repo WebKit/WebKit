@@ -1,3 +1,27 @@
+2010-08-17  Jian Li  <jianli@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Move BlobRegistry interface and implementation to platform/network
+        https://bugs.webkit.org/show_bug.cgi?id=44116
+
+        Also move BlobData and BlobStorageData since they're part of BlobRegistry
+        implementation.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/network/BlobData.cpp: Renamed from WebCore/platform/BlobData.cpp.
+        * platform/network/BlobData.h: Renamed from WebCore/platform/BlobData.h.
+        * platform/network/BlobRegistry.h: Renamed from WebCore/platform/BlobRegistry.h.
+        * platform/network/BlobRegistryImpl.cpp: Renamed from WebCore/html/BlobRegistryImpl.cpp.
+        * platform/network/BlobRegistryImpl.h: Renamed from WebCore/html/BlobRegistryImpl.h.
+        * platform/network/BlobStorageData.h: Renamed from WebCore/html/BlobStorageData.h.
+
 2010-08-17  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Ariya Hidayat.

@@ -23921,23 +23921,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\platform\BlobData.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\platform\BlobData.h"
-				>
-			</File>
-			<File
 				RelativePath="..\platform\BlobItem.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\platform\BlobItem.h"
-				>
-			</File>
-			<File
-				RelativePath="..\platform\BlobRegistry.h"
 				>
 			</File>
 			<File
@@ -26785,6 +26773,30 @@
 				</File>
 				<File
 					RelativePath="..\platform\network\AuthenticationClient.h"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\network\BlobData.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\network\BlobData.h"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\network\BlobRegistry.h"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\network\BlobRegistryImpl.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\network\BlobRegistryImpl.h"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\network\BlobStorageData.h"
 					>
 				</File>
 				<File
@@ -36938,18 +36950,6 @@
 			</File>
 			<File
 				RelativePath="..\html\BlobBuilder.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\BlobRegistryImpl.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\BlobRegistryImpl.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\BlobStorageData.h"
 				>
 			</File>
 			<File

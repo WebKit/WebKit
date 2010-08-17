@@ -710,14 +710,14 @@
 		2ECF7AE210162B5800427DE7 /* ErrorEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 2ECF7ADF10162B5800427DE7 /* ErrorEvent.h */; };
 		2ED609BC1145B07100C8684E /* DOMFormData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2ED609BA1145B07100C8684E /* DOMFormData.cpp */; };
 		2ED609BD1145B07100C8684E /* DOMFormData.h in Headers */ = {isa = PBXBuildFile; fileRef = 2ED609BB1145B07100C8684E /* DOMFormData.h */; };
-		2EED575212109ED0007656BB /* BlobRegistryImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2EED574D12109ED0007656BB /* BlobRegistryImpl.cpp */; };
-		2EED575312109ED0007656BB /* BlobRegistryImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EED574E12109ED0007656BB /* BlobRegistryImpl.h */; };
-		2EED575412109ED0007656BB /* BlobStorageData.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EED574F12109ED0007656BB /* BlobStorageData.h */; };
+		2EDEF1F3121B0EFC00726DB2 /* BlobData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2EDEF1ED121B0EFC00726DB2 /* BlobData.cpp */; };
+		2EDEF1F4121B0EFC00726DB2 /* BlobData.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EDEF1EE121B0EFC00726DB2 /* BlobData.h */; };
+		2EDEF1F5121B0EFC00726DB2 /* BlobRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EDEF1EF121B0EFC00726DB2 /* BlobRegistry.h */; };
+		2EDEF1F6121B0EFC00726DB2 /* BlobRegistryImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2EDEF1F0121B0EFC00726DB2 /* BlobRegistryImpl.cpp */; };
+		2EDEF1F7121B0EFC00726DB2 /* BlobRegistryImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EDEF1F1121B0EFC00726DB2 /* BlobRegistryImpl.h */; };
+		2EDEF1F8121B0EFC00726DB2 /* BlobStorageData.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EDEF1F2121B0EFC00726DB2 /* BlobStorageData.h */; };
 		2EED575512109ED0007656BB /* BlobURL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2EED575012109ED0007656BB /* BlobURL.cpp */; };
 		2EED575612109ED0007656BB /* BlobURL.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EED575112109ED0007656BB /* BlobURL.h */; };
-		2EED575812109EE4007656BB /* BlobRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EED575712109EE4007656BB /* BlobRegistry.h */; };
-		2EED575B12109EF3007656BB /* BlobData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2EED575912109EF3007656BB /* BlobData.cpp */; };
-		2EED575C12109EF3007656BB /* BlobData.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EED575A12109EF3007656BB /* BlobData.h */; };
 		2EED57FD1214A9C2007656BB /* ThreadableBlobRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2EED57FB1214A9C2007656BB /* ThreadableBlobRegistry.cpp */; };
 		2EED57FE1214A9C2007656BB /* ThreadableBlobRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EED57FC1214A9C2007656BB /* ThreadableBlobRegistry.h */; };
 		31288E720E3005D6003619AE /* WebKitCSSKeyframeRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31288E6E0E3005D6003619AE /* WebKitCSSKeyframeRule.cpp */; };
@@ -6519,14 +6519,14 @@
 		2ECF7AE010162B5800427DE7 /* ErrorEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ErrorEvent.idl; sourceTree = "<group>"; };
 		2ED609BA1145B07100C8684E /* DOMFormData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMFormData.cpp; sourceTree = "<group>"; };
 		2ED609BB1145B07100C8684E /* DOMFormData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMFormData.h; sourceTree = "<group>"; };
-		2EED574D12109ED0007656BB /* BlobRegistryImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BlobRegistryImpl.cpp; sourceTree = "<group>"; };
-		2EED574E12109ED0007656BB /* BlobRegistryImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlobRegistryImpl.h; sourceTree = "<group>"; };
-		2EED574F12109ED0007656BB /* BlobStorageData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlobStorageData.h; sourceTree = "<group>"; };
+		2EDEF1ED121B0EFC00726DB2 /* BlobData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BlobData.cpp; sourceTree = "<group>"; };
+		2EDEF1EE121B0EFC00726DB2 /* BlobData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlobData.h; sourceTree = "<group>"; };
+		2EDEF1EF121B0EFC00726DB2 /* BlobRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlobRegistry.h; sourceTree = "<group>"; };
+		2EDEF1F0121B0EFC00726DB2 /* BlobRegistryImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BlobRegistryImpl.cpp; sourceTree = "<group>"; };
+		2EDEF1F1121B0EFC00726DB2 /* BlobRegistryImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlobRegistryImpl.h; sourceTree = "<group>"; };
+		2EDEF1F2121B0EFC00726DB2 /* BlobStorageData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlobStorageData.h; sourceTree = "<group>"; };
 		2EED575012109ED0007656BB /* BlobURL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BlobURL.cpp; sourceTree = "<group>"; };
 		2EED575112109ED0007656BB /* BlobURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlobURL.h; sourceTree = "<group>"; };
-		2EED575712109EE4007656BB /* BlobRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlobRegistry.h; sourceTree = "<group>"; };
-		2EED575912109EF3007656BB /* BlobData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BlobData.cpp; sourceTree = "<group>"; };
-		2EED575A12109EF3007656BB /* BlobData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlobData.h; sourceTree = "<group>"; };
 		2EED57FB1214A9C2007656BB /* ThreadableBlobRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadableBlobRegistry.cpp; sourceTree = "<group>"; };
 		2EED57FC1214A9C2007656BB /* ThreadableBlobRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadableBlobRegistry.h; sourceTree = "<group>"; };
 		31288E6E0E3005D6003619AE /* WebKitCSSKeyframeRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitCSSKeyframeRule.cpp; sourceTree = "<group>"; };
@@ -12431,6 +12431,12 @@
 				934F71370D5A6EFF00018D69 /* AuthenticationChallengeBase.cpp */,
 				934F71390D5A6F1000018D69 /* AuthenticationChallengeBase.h */,
 				E124748310AA161D00B79493 /* AuthenticationClient.h */,
+				2EDEF1ED121B0EFC00726DB2 /* BlobData.cpp */,
+				2EDEF1EE121B0EFC00726DB2 /* BlobData.h */,
+				2EDEF1EF121B0EFC00726DB2 /* BlobRegistry.h */,
+				2EDEF1F0121B0EFC00726DB2 /* BlobRegistryImpl.cpp */,
+				2EDEF1F1121B0EFC00726DB2 /* BlobRegistryImpl.h */,
+				2EDEF1F2121B0EFC00726DB2 /* BlobStorageData.h */,
 				514C76580CE923A1007EF3CD /* Credential.cpp */,
 				514C76590CE923A1007EF3CD /* Credential.h */,
 				51A052321058774F00CC9E95 /* CredentialStorage.cpp */,
@@ -13962,9 +13968,6 @@
 				89BED5E911BE11CE00448492 /* BlobBuilder.cpp */,
 				89BED5EA11BE11CE00448492 /* BlobBuilder.h */,
 				89CD027911C859A80070B791 /* BlobBuilder.idl */,
-				2EED574D12109ED0007656BB /* BlobRegistryImpl.cpp */,
-				2EED574E12109ED0007656BB /* BlobRegistryImpl.h */,
-				2EED574F12109ED0007656BB /* BlobStorageData.h */,
 				2EED575012109ED0007656BB /* BlobURL.cpp */,
 				2EED575112109ED0007656BB /* BlobURL.h */,
 				93C441ED0F813A1A00C1A634 /* CollectionCache.cpp */,
@@ -16555,11 +16558,8 @@
 				BCFB2F74097A2E1A00BA703D /* Arena.cpp */,
 				BCFB2F75097A2E1A00BA703D /* Arena.h */,
 				51E1ECB10C91C55600DC255B /* AutodrainedPool.h */,
-				2EED575912109EF3007656BB /* BlobData.cpp */,
-				2EED575A12109EF3007656BB /* BlobData.h */,
 				8988E10C11A3508B00DB732E /* BlobItem.cpp */,
 				8988E10D11A3508B00DB732E /* BlobItem.h */,
-				2EED575712109EE4007656BB /* BlobRegistry.h */,
 				BCC8CFCA0986CD2400140BF2 /* ColorData.gperf */,
 				41D015C90F4B5C71004A662F /* ContentType.cpp */,
 				41D015C80F4B5C71004A662F /* ContentType.h */,
@@ -17667,11 +17667,7 @@
 				A89943280B42338800D7C802 /* BitmapImage.h in Headers */,
 				2EAFAF0F10E2AF2D007ED3D6 /* Blob.h in Headers */,
 				89BED5EC11BE11CE00448492 /* BlobBuilder.h in Headers */,
-				2EED575C12109EF3007656BB /* BlobData.h in Headers */,
 				8988E10F11A3508B00DB732E /* BlobItem.h in Headers */,
-				2EED575812109EE4007656BB /* BlobRegistry.h in Headers */,
-				2EED575312109ED0007656BB /* BlobRegistryImpl.h in Headers */,
-				2EED575412109ED0007656BB /* BlobStorageData.h in Headers */,
 				2EED575612109ED0007656BB /* BlobURL.h in Headers */,
 				93F199BE08245E59001E9ABC /* BlockExceptions.h in Headers */,
 				BC5EB5E10E81BE8700B25965 /* BorderData.h in Headers */,
@@ -20305,6 +20301,10 @@
 				899ABCAA1215FA5500F9F219 /* FileSystemCallback.h in Headers */,
 				899ABCAB1215FA5A00F9F219 /* Flags.h in Headers */,
 				899ABCB91215FAB500F9F219 /* Entry.h in Headers */,
+				2EDEF1F4121B0EFC00726DB2 /* BlobData.h in Headers */,
+				2EDEF1F5121B0EFC00726DB2 /* BlobRegistry.h in Headers */,
+				2EDEF1F7121B0EFC00726DB2 /* BlobRegistryImpl.h in Headers */,
+				2EDEF1F8121B0EFC00726DB2 /* BlobStorageData.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -20670,9 +20670,7 @@
 				A89943290B42338800D7C802 /* BitmapImage.cpp in Sources */,
 				2EAFAF0E10E2AF2D007ED3D6 /* Blob.cpp in Sources */,
 				89BED5EB11BE11CE00448492 /* BlobBuilder.cpp in Sources */,
-				2EED575B12109EF3007656BB /* BlobData.cpp in Sources */,
 				8988E10E11A3508B00DB732E /* BlobItem.cpp in Sources */,
-				2EED575212109ED0007656BB /* BlobRegistryImpl.cpp in Sources */,
 				2EED575512109ED0007656BB /* BlobURL.cpp in Sources */,
 				93F19AE108245E59001E9ABC /* BlockExceptions.mm in Sources */,
 				BCEA4854097D93020094C9E4 /* break_lines.cpp in Sources */,
@@ -22754,6 +22752,8 @@
 				899ABC861215F0D800F9F219 /* DOMFileSystem.cpp in Sources */,
 				899ABCBA1215FAB800F9F219 /* Entry.cpp in Sources */,
 				C57FEDE11212EE9C0097BE65 /* FileSystem.cpp in Sources */,
+				2EDEF1F3121B0EFC00726DB2 /* BlobData.cpp in Sources */,
+				2EDEF1F6121B0EFC00726DB2 /* BlobRegistryImpl.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

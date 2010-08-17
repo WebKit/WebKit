@@ -1314,9 +1314,6 @@ webcore_sources += \
 	WebCore/html/Blob.h \
 	WebCore/html/BlobBuilder.cpp \
 	WebCore/html/BlobBuilder.h \
-	WebCore/html/BlobRegistryImpl.cpp \
-	WebCore/html/BlobRegistryImpl.h \
-	WebCore/html/BlobStorageData.h \
 	WebCore/html/BlobURL.cpp \
 	WebCore/html/BlobURL.h \
 	WebCore/html/canvas/CanvasContextAttributes.h \
@@ -1879,11 +1876,8 @@ webcore_sources += \
 	WebCore/platform/Arena.cpp \
 	WebCore/platform/Arena.h \
 	WebCore/platform/AutodrainedPool.h \
-	WebCore/platform/BlobData.cpp \
-	WebCore/platform/BlobData.h \
 	WebCore/platform/BlobItem.cpp \
 	WebCore/platform/BlobItem.h \
-	WebCore/platform/BlobRegistry.h \
 	WebCore/platform/ContentType.cpp \
 	WebCore/platform/ContentType.h \
 	WebCore/platform/ContextMenu.cpp \
@@ -2093,6 +2087,12 @@ webcore_sources += \
 	WebCore/platform/network/AuthenticationChallengeBase.cpp \
 	WebCore/platform/network/AuthenticationChallengeBase.h \
 	WebCore/platform/network/AuthenticationClient.h \
+	WebCore/platform/network/BlobData.cpp \
+	WebCore/platform/network/BlobData.h \
+	WebCore/platform/network/BlobRegistry.h \
+	WebCore/platform/network/BlobRegistryImpl.cpp \
+	WebCore/platform/network/BlobRegistryImpl.h \
+	WebCore/platform/network/BlobStorageData.h \
 	WebCore/platform/network/Credential.cpp \
 	WebCore/platform/network/Credential.h \
 	WebCore/platform/network/DNS.h \

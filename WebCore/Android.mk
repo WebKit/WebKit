@@ -255,7 +255,6 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	\
 	html/AsyncImageResizer.cpp \
 	html/Blob.cpp \
-	html/BlobRegistryImpl.cpp \
 	html/BlobURL.cpp \
 	html/CollectionCache.cpp \
 	html/CSSPreloadScanner.cpp \
@@ -408,7 +407,6 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	page/animation/KeyframeAnimation.cpp \
 	\
 	platform/Arena.cpp \
-	platform/BlobData.cpp \
 	platform/ContentType.cpp \
 	platform/ContextMenu.cpp \
 	platform/CrossThreadCopier.cpp \
@@ -530,6 +528,8 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	platform/mock/SpeechInputClientMock.cpp \
 	\
 	platform/network/AuthenticationChallengeBase.cpp \
+	platform/network/BlobData.cpp \
+	platform/network/BlobRegistryImpl.cpp \
 	platform/network/Credential.cpp \
 	platform/network/CredentialStorage.cpp \
 	platform/network/FormData.cpp \
