@@ -825,8 +825,16 @@ void CanvasRenderingContext2D::stroke()
         c->beginPath();
         c->addPath(m_path);
 
+#if PLATFORM(QT)
+        // Fast approximation of the stroke's bounding rect.
+        // This yields a slightly oversized rect but is very fast
+        // compared to Path::strokeBoundingRect().
+        FloatRect boundingRect = m_path.platformPath().controlPointRect();
+        boundingRect.inflate(state().m_miterLimit + state().m_lineWidth);
+#else
         CanvasStrokeStyleApplier strokeApplier(this);
         FloatRect boundingRect = m_path.strokeBoundingRect(&strokeApplier);
+#endif
         willDraw(boundingRect);
 
         c->strokePath();

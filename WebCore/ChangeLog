@@ -1,3 +1,16 @@
+2010-08-17  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Path: Fast approximation of stroke bounding rects
+        https://bugs.webkit.org/show_bug.cgi?id=44014
+
+        In canvas's stroke(), use QPainterPath::controlPointRect() to calculate
+        a slightly larger bounding rect in a fraction of the time.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::stroke):
+
 2010-08-17  Girish Ramakrishnan  <girish@forwardbias.in>
 
         Reviewed by Kenneth Rohde Christiansen.
