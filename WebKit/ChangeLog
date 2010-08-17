@@ -1,3 +1,11 @@
+2010-08-17  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Remove developmentRegion from the project file as it shouldn't have been checked in.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2010-08-16  Leandro Pereira  <leandro@profusion.mobi>
 
         [EFL] Build fix after r65366.

@@ -341,6 +341,9 @@ void Page::goBackOrForward(int distance)
 
 void Page::goToItem(HistoryItem* item, FrameLoadType type)
 {
+    if (defersLoading())
+        return;
+    
     // Abort any current load unless we're navigating the current document to a new state object
     HistoryItem* currentItem = m_mainFrame->loader()->history()->currentItem();
     if (!item->stateObject() || !currentItem || item->documentSequenceNumber() != currentItem->documentSequenceNumber() || item == currentItem) {

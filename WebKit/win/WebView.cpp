@@ -3694,7 +3694,7 @@ HRESULT STDMETHODCALLTYPE WebView::canGoBack(
         /* [in] */ IUnknown* /*sender*/,
         /* [retval][out] */ BOOL* result)
 {
-    *result = !!m_page->backForwardList()->backItem();
+    *result = !!(m_page->backForwardList()->backItem() && !m_page->defersLoading());
     return S_OK;
 }
     
@@ -3709,7 +3709,7 @@ HRESULT STDMETHODCALLTYPE WebView::canGoForward(
         /* [in] */ IUnknown* /*sender*/,
         /* [retval][out] */ BOOL* result)
 {
-    *result = !!m_page->backForwardList()->forwardItem();
+    *result = !!(m_page->backForwardList()->forwardItem() && !m_page->defersLoading());
     return S_OK;
 }
     

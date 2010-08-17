@@ -3908,7 +3908,7 @@ static WebFrame *incrementFrame(WebFrame *frame, BOOL forward, BOOL wrapFlag)
 
 - (BOOL)canGoBack
 {
-    if (!_private->page)
+    if (!_private->page || _private->page->defersLoading())
         return NO;
 
     return !!_private->page->backForwardList()->backItem();
@@ -3916,7 +3916,7 @@ static WebFrame *incrementFrame(WebFrame *frame, BOOL forward, BOOL wrapFlag)
 
 - (BOOL)canGoForward
 {
-    if (!_private->page)
+    if (!_private->page || _private->page->defersLoading())
         return NO;
 
     return !!_private->page->backForwardList()->forwardItem();

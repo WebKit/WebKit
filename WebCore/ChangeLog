@@ -1,3 +1,21 @@
+2010-08-17  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Navigating back/forward during a modal dialog causes a crash when the modal dialog is dismissed.
+        <rdar://problem/8313579> and https://bugs.webkit.org/show_bug.cgi?id=44131
+
+        No new tests. (Especially since DRT doesn't spin inner run loops at all, it would be a significant
+        effort to give it the ability to perform the back/forward navigation in the background to reproduce
+        this bug)
+
+        Manual tests in place of layout tests:
+        * manual-tests/back-forward-during-alert-1.html: Added.
+        * manual-tests/back-forward-during-alert-2.html: Added.
+
+        * page/Page.cpp:
+        (WebCore::Page::goToItem):
+
 2010-08-17  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Tony Chang.
