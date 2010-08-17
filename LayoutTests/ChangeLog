@@ -1,3 +1,17 @@
+2010-08-17  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        [Qt] fast/dom/Geolocation/disconnected-frame-permission-denied.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=44059
+
+        * fast/dom/Geolocation/disconnected-frame-permission-denied-expected.txt:
+        * fast/dom/Geolocation/script-tests/disconnected-frame-permission-denied.js:
+        (onIframeLoaded):
+        ():
+        * platform/chromium/test_expectations.txt:
+        * platform/qt/Skipped:
+
 2010-08-17  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
 
         Reviewed by Steve Block.

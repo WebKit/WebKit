@@ -3199,9 +3199,6 @@ BUGYUTAK WIN LINUX : svg/W3C-SVG-1.1/animate-elem-80-t.svg = TEXT
 // Due to http://trac.webkit.org/changeset/65395
 BUGWK44051 : editing/pasteboard/drop-text-events.html = TEXT
 
-// Due to http://trac.webkit.org/changeset/65416
-BUGWK44059 : fast/dom/Geolocation/disconnected-frame-permission-denied.html = FAIL
-
 // Probably http://trac.webkit.org/changeset/65381
 // This test causes the next one to run to ASSERT
 BUGWK44079 DEBUG SKIP : fast/events/popup-allowed-from-gesture-initiated-form-submit.html = PASS
