@@ -267,6 +267,7 @@ PKG_CHECK_MODULES([GSETTINGS],
                   [have_gsettings=no])
 if test "$have_gsettings" = "yes"; then
    AC_DEFINE([HAVE_GSETTINGS], 1, [Whether we can use GSettings])
+   GLIB_GSETTINGS
 fi
 
 GETTEXT_PACKAGE=$PACKAGE-$GTK_API_VERSION
@@ -833,9 +834,6 @@ if test "$enable_geolocation" = "yes"; then
     AC_SUBST([GEOCLUE_CFLAGS])
     AC_SUBST([GEOCLUE_LIBS])
 fi
-
-# GSettings
-GLIB_GSETTINGS
 
 # check if gstreamer is available
 if test "$enable_video" = "yes"; then

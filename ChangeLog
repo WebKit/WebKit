@@ -1,3 +1,9 @@
+2010-08-17  Martin Robinson  <mrobinson@igalia.com>
+
+        GTK+ Build fix for those having stable versions of GLib.
+
+        * configure.ac: Only invoke GLIB_GSETTINGS if we have the necessary gio version.
+
 2010-08-17  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r65500.
