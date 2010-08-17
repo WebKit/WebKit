@@ -2,6 +2,28 @@
 
         Reviewed by Pavel Feldman.
 
+        Web Inspector: upstream Chromium debugger step tests
+        https://bugs.webkit.org/show_bug.cgi?id=44106
+
+        * http/tests/inspector-enabled/console-log-before-frame-navigation.html:
+        * http/tests/inspector-enabled/resources/console-log-before-frame-navigation.js: Added.
+        (doit.callback):
+        (doit):
+        (receiveMessage):
+        (frontend_dumpConsoleMessages):
+        * http/tests/inspector/debugger-test.js:
+        (frontend_captureStackTrace):
+        * inspector/debugger-step-in-expected.txt: Added.
+        * inspector/debugger-step-in.html: Added.
+        * inspector/debugger-step-out-expected.txt: Added.
+        * inspector/debugger-step-out.html: Added.
+        * inspector/debugger-step-over-expected.txt: Added.
+        * inspector/debugger-step-over.html: Added.
+
+2010-08-17  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
         [Qt] Web Inspector: inspector/debugger-pause-on-debugger-statement.html times out on Qt
         https://bugs.webkit.org/show_bug.cgi?id=41142
 

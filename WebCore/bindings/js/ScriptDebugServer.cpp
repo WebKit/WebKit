@@ -497,6 +497,10 @@ void ScriptDebugServer::returnEvent(const DebuggerCallFrame& debuggerCallFrame, 
     m_currentCallFrame->update(debuggerCallFrame, sourceID, lineNumber);
     pauseIfNeeded(toPage(debuggerCallFrame.dynamicGlobalObject()));
 
+    // detach may have been called during pauseIfNeeded
+    if (!m_currentCallFrame)
+        return;
+
     // Treat stepping over a return statement like stepping out.
     if (m_currentCallFrame == m_pauseOnCallFrame)
         m_pauseOnCallFrame = m_currentCallFrame->caller();

@@ -1,0 +1,18 @@
+Tests "step in" functionality in debugger.
+
+Debugger was enabled.
+Set timer for test function.
+Script execution paused.
+Call stack:
+    0) testFunction (debugger-step-in.html:12)
+Stepping into...
+Script execution paused.
+Call stack:
+    0) testFunction (debugger-step-in.html:13)
+Stepping into...
+Script execution paused.
+Call stack:
+    0) d (debugger-step-in.html:8)
+    1) testFunction (debugger-step-in.html:13)
+Resumed script execution.
+Disabled debugger.

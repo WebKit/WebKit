@@ -99,3 +99,15 @@ function frontend_showScriptSource(scriptName, callback)
     var view = scriptsPanel.visibleView;
     frontend_ensureSourceFrameLoaded(view.sourceFrame, callback.bind(null, view));
 };
+
+function frontend_captureStackTrace(callFrames, testController)
+{
+    testController.results.push("Call stack:");
+    for (var i = 0; i < callFrames.length; i++) {
+        var frame = callFrames[i];
+        var scriptOrResource = WebInspector.panels.scripts._sourceIDMap[frame.sourceID];
+        var url = scriptOrResource && WebInspector.displayNameForURL(scriptOrResource.sourceURL || scriptOrResource.url);
+        var s = "    " + i + ") " + frame.functionName + " (" + url + ":" + frame.line + ")";
+        testController.results.push(s);
+    }
+}

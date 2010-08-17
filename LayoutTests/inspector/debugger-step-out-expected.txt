@@ -1,0 +1,15 @@
+Tests "step out" functionality in debugger.
+
+Debugger was enabled.
+Set timer for test function.
+Script execution paused.
+Call stack:
+    0) d (debugger-step-out.html:8)
+    1) testFunction (debugger-step-out.html:12)
+Stepping out...
+Script execution paused.
+Call stack:
+    0) testFunction (debugger-step-out.html:13)
+Resumed script execution.
+Disabled debugger.
+

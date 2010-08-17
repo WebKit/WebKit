@@ -1,3 +1,18 @@
+2010-08-17  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: upstream Chromium debugger step tests
+        https://bugs.webkit.org/show_bug.cgi?id=44106
+
+        Tests: inspector/debugger-step-in.html
+               inspector/debugger-step-out.html
+               inspector/debugger-step-over.html
+
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::returnEvent): check that debugger is still attached after continue to ensure
+        that current call frame is not 0.
+
 2010-08-17  Ademar de Souza Reis Jr  <ademar.reis@openbossa.org>
 
         Reviewed by David Levin.
