@@ -1,40 +1,29 @@
 /*
- *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
- *  Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009 Google Inc. All rights reserved.
  *
- *  This library is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU Library General Public
- *  License as published by the Free Software Foundation; either
- *  version 2 of the License, or (at your option) any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
  *
- *  This library is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *  Library General Public License for more details.
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
  *
- *  You should have received a copy of the GNU Library General Public License
- *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA 02110-1301, USA.
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
  *
  */
 
 #ifndef UString_h
 #define UString_h
 
-#include "Collector.h"
-#include <stdint.h>
-#include <string.h>
-#include <wtf/Assertions.h>
-#include <wtf/CrossThreadRefCounted.h>
-#include <wtf/OwnFastMallocPtr.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
-#include <wtf/Vector.h>
-#include <wtf/text/CString.h>
 #include <wtf/text/StringImpl.h>
-#include <wtf/unicode/Unicode.h>
 
 namespace JSC {
 
@@ -50,10 +39,10 @@ public:
     UString(const UChar*);
 
     // Construct a string with latin1 data.
-    UString(const char* characters);
+    UString(const char* characters, unsigned length);
 
     // Construct a string with latin1 data, from a null-terminated source.
-    UString(const char* characters, unsigned length);
+    UString(const char* characters);
 
     // Construct a string referencing an existing StringImpl.
     UString(StringImpl* impl) : m_impl(impl) { }
@@ -205,45 +194,15 @@ inline int codePointCompare(const UString& s1, const UString& s2)
     return codePointCompare(s1.impl(), s2.impl());
 }
 
-// We'd rather not do shared substring append for small strings, since
-// this runs too much risk of a tiny initial string holding down a
-// huge buffer.
-static const unsigned minShareSize = Heap::minExtraCost / sizeof(UChar);
-
-struct IdentifierRepHash : PtrHash<RefPtr<StringImpl> > {
-    static unsigned hash(const RefPtr<StringImpl>& key) { return key->existingHash(); }
-    static unsigned hash(StringImpl* key) { return key->existingHash(); }
-};
-
 } // namespace JSC
 
 namespace WTF {
-
-template<typename T> struct DefaultHash;
-template<typename T> struct StrHash;
-
-template<> struct StrHash<StringImpl*> {
-    static unsigned hash(const StringImpl* key) { return key->hash(); }
-    static bool equal(const StringImpl* a, const StringImpl* b) { return ::equal(a, b); }
-    static const bool safeToCompareToEmptyOrDeleted = false;
-};
-
-template<> struct StrHash<RefPtr<StringImpl> > : public StrHash<StringImpl*> {
-    using StrHash<StringImpl*>::hash;
-    static unsigned hash(const RefPtr<StringImpl>& key) { return key->hash(); }
-    using StrHash<StringImpl*>::equal;
-    static bool equal(const RefPtr<StringImpl>& a, const RefPtr<StringImpl>& b) { return ::equal(a.get(), b.get()); }
-    static bool equal(const StringImpl* a, const RefPtr<StringImpl>& b) { return ::equal(a, b.get()); }
-    static bool equal(const RefPtr<StringImpl>& a, const StringImpl* b) { return ::equal(a.get(), b); }
-
-    static const bool safeToCompareToEmptyOrDeleted = false;
-};
 
 template <> struct VectorTraits<JSC::UString> : SimpleClassVectorTraits
 {
     static const bool canInitializeWithMemset = true;
 };
-    
+
 } // namespace WTF
 
 #endif

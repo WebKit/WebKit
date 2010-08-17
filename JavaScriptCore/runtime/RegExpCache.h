@@ -28,6 +28,8 @@
 #include "RegExp.h"
 #include "RegExpKey.h"
 #include "UString.h"
+#include <wtf/FixedArray.h>
+#include <wtf/HashMap.h>
 
 #ifndef RegExpCache_h
 #define RegExpCache_h

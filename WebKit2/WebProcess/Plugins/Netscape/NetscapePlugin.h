@@ -30,6 +30,8 @@
 #include "Plugin.h"
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/IntRect.h>
+#include <wtf/HashMap.h>
+#include <wtf/text/CString.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {

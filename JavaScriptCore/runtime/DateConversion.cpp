@@ -47,6 +47,7 @@
 #include "UString.h"
 #include <wtf/DateMath.h>
 #include <wtf/StringExtras.h>
+#include <wtf/text/CString.h>
 
 using namespace WTF;
 

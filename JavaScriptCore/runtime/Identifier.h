@@ -24,6 +24,7 @@
 #include "JSGlobalData.h"
 #include "ThreadSpecific.h"
 #include "UString.h"
+#include <wtf/text/CString.h>
 
 namespace JSC {
 
@@ -137,6 +138,11 @@ namespace JSC {
 
     IdentifierTable* createIdentifierTable();
     void deleteIdentifierTable(IdentifierTable*);
+
+    struct IdentifierRepHash : PtrHash<RefPtr<StringImpl> > {
+        static unsigned hash(const RefPtr<StringImpl>& key) { return key->existingHash(); }
+        static unsigned hash(StringImpl* key) { return key->existingHash(); }
+    };
 
 } // namespace JSC
 

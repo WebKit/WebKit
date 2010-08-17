@@ -26,6 +26,7 @@
  */
 
 #include "UString.h"
+#include <wtf/text/StringHash.h>
 
 #ifndef RegExpKey_h
 #define RegExpKey_h

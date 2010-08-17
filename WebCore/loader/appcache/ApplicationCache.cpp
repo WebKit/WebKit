@@ -32,6 +32,7 @@
 #include "ApplicationCacheResource.h"
 #include "ApplicationCacheStorage.h"
 #include "ResourceRequest.h"
+#include <wtf/text/CString.h>
 #include <stdio.h>
 
 namespace WebCore {

@@ -415,6 +415,8 @@ uint32_t UString::toStrictUInt32(bool* ok) const
 
 UString UString::substr(unsigned pos, unsigned len) const
 {
+    // FIXME: We used to check against a limit of Heap::minExtraCost / sizeof(UChar).
+
     unsigned s = length();
 
     if (pos >= s)

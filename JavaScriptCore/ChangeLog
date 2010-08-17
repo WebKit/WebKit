@@ -1,5 +1,23 @@
 2010-08-16  Gavin Barraclough  <barraclough@apple.com>
 
+        Rubber stamped by Sam Weinig
+
+        Remove unnecessary includes from UString.h, add new includes as necessary.
+
+        * profiler/CallIdentifier.h:
+        * profiler/ProfileNode.h:
+        * runtime/DateConversion.cpp:
+        * runtime/Identifier.h:
+        (JSC::IdentifierRepHash::hash):
+        * runtime/RegExpCache.h:
+        * runtime/RegExpKey.h:
+        * runtime/UString.cpp:
+        (JSC::UString::substr):
+        * runtime/UString.h:
+        * wtf/text/WTFString.h:
+
+2010-08-16  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Sam Weinig
 
         Bug 44080 - String find/reverseFind methods need tidying up

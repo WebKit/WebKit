@@ -38,6 +38,10 @@
 #include <wtf/Threading.h>
 #include <wtf/text/StringHash.h>
 
+#if USE(JSC)
+#include <runtime/JSGlobalData.h>
+#endif
+
 namespace WebCore {
 
     class ActiveDOMObject;

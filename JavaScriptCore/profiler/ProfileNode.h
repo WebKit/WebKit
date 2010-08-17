@@ -30,9 +30,10 @@
 #define ProfileNode_h
 
 #include "CallIdentifier.h"
-#include <wtf/Vector.h>
+#include <wtf/HashCountedSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 
 namespace JSC {
 
