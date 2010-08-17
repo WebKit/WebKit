@@ -1,5 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-   "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 
 <html lang="en">
 <head>
@@ -23,6 +22,7 @@
     
     var result = "PASS";
     const defaultTolerance = 10;
+    var transitionStartTime;
     
     function isCloseEnough(actual, desired)
     {
@@ -44,19 +44,29 @@
         return t[4];
     }
     
-    function check1()
+    function checkIntermediateValue()
     {
-        var xPos = getXPosition();
-        if (!isCloseEnough(xPos, 50))
-            result = "FAIL(was:"+xPos+", s/b:50)";
+        // We should be roughly halfway in the transition from 0 to 100, but the
+        // timeout may not fire exactly then. Figure out where we should be 
+        // based on a linear interpolation of timestamps.
+        var actualXPos = getXPosition();
+        var expectedXPos = (new Date().getTime() - transitionStartTime)/1000 * 100;
+        if (!isCloseEnough(actualXPos, expectedXPos))
+            result = 'FAIL for intermediate value (was: ' + actualXPos + ', expected: ' + expectedXPos + ')';
     }
 
-    function check2()
+    function checkFinalValue()
     {
-        var xPos = getXPosition();
-        if (!isCloseEnough(xPos, 0))
-            result += "FAIL(was:"+xPos+", s/b:0)";
-            
+        var actualXPos = getXPosition();
+        var transitionFraction = (new Date().getTime() - transitionStartTime)/100;
+        var expectedXPos = 100 - Math.min(transitionFraction, 1) * 100;
+ 
+        if (!isCloseEnough(actualXPos, expectedXPos)) {
+            if (result == 'PASS')
+                result = '';
+            result += 'FAIL for final value (was: ' + actualXPos + ', expected: ' + expectedXPos + ')';
+        }
+        
         document.getElementById('result').innerText = result;
         if (window.layoutTestController)
             layoutTestController.notifyDone();
@@ -66,15 +76,17 @@
     {
         var box = document.getElementById('box');
         box.style.webkitTransform = 'translateX(0)';
+        transitionStartTime = new Date().getTime();
     }
 
     function start()
     {
         var box = document.getElementById('box');
-        setTimeout("changeValues()", 100);
-        setTimeout("check1()", 500);
-        setTimeout("check2()", 1300);
+        setTimeout(changeValues, 100);
+        setTimeout(checkIntermediateValue, 500);
+        setTimeout(checkFinalValue, 1300);
         box.style.webkitTransform = 'translateX(100px)';
+        transitionStartTime = new Date().getTime();
     }
     
     window.addEventListener('load', start, false);

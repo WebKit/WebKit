@@ -1,5 +1,20 @@
 2010-08-17  Mihai Parparita  <mihaip@chromium.org>
 
+        Reviewed by Dimitri Glazkov.
+
+        transitions/change-values-during-transition.html fails intermittently
+        https://bugs.webkit.org/show_bug.cgi?id=28461
+
+        Make test less flaky during high CPU usage by changing the expectation
+        from a hardcoded value to an interpolated one based on when the timeout
+        actually fires. Made the test much more reliable when running with
+        --iterations=100 while maxing out the CPU on my machine with a 
+        background process.
+
+        * transitions/change-values-during-transition.html:
+
+2010-08-17  Mihai Parparita  <mihaip@chromium.org>
+
         Reviewed by Darin Fisher.
 
         Back button after Google search result click broken
