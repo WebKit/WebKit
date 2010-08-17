@@ -1,3 +1,13 @@
+2010-08-17  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dave Hyatt.
+
+        Tests that removing an empty anonymous block does not result in crash.
+        https://bugs.webkit.org/show_bug.cgi?id=44035
+
+        * fast/block/basic/empty-anonymous-block-remove-crash-expected.txt: Added.
+        * fast/block/basic/empty-anonymous-block-remove-crash.html: Added.
+
 2010-08-17  John Gregg  <johnnyg@google.com>
 
         Unreviewed, test expectation.

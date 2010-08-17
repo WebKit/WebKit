@@ -1017,8 +1017,8 @@ void RenderBlock::removeChild(RenderObject* oldChild)
         // If this was our last child be sure to clear out our line boxes.
         if (childrenInline())
             lineBoxes()->deleteLineBoxes(renderArena());
-        // If we're now an empty anonymous block then go ahead and delete ourselves.
-        else if (isAnonymousBlock() && parent() && parent()->isRenderBlock() && !continuation())
+        // If we're now an empty anonymous columns or column span block, then go ahead and delete ourselves.
+        else if ((isAnonymousColumnsBlock() || isAnonymousColumnSpanBlock()) && parent() && parent()->isRenderBlock() && !continuation())
             destroy();
     }
 }
