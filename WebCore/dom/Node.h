@@ -317,7 +317,7 @@ public:
     void clearIsLink() { clearFlag(IsLinkFlag); }
 
     void lazyAttach();
-    virtual bool canLazyAttach();
+    virtual bool canLazyAttach() { return shadowAncestorNode() == this; }
 
     virtual void setFocus(bool b = true);
     virtual void setActive(bool f = true, bool /*pause*/ = false) { setFlag(f, IsActiveFlag); }

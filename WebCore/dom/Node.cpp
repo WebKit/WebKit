@@ -779,11 +779,6 @@ void Node::lazyAttach()
     }
 }
 
-bool Node::canLazyAttach()
-{
-    return shadowAncestorNode() == this;
-}
-    
 void Node::setFocus(bool b)
 { 
     if (b || hasRareData())
