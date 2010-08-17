@@ -1,5 +1,11 @@
 2010-08-17  Adam Roben  <aroben@apple.com>
 
+        Fix typo
+
+        * Scripts/old-run-webkit-tests:
+
+2010-08-17  Adam Roben  <aroben@apple.com>
+
         Don't hang when running run-webkit-tests as a non-Administrator on
         Vista/7
 
