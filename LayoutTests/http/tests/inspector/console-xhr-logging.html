@@ -1,0 +1,79 @@
+<html>
+<head>
+<script src="inspector-test.js"></script>
+<script src="console-tests.js"></script>
+<script>
+
+function doit()
+{
+    // Enable XMLHttpRequest Logging.
+    evaluateInWebInspector("frontend_enableXMLHttpRequestLogging", function(result) {
+        console.log(result);
+        makeRequests();
+        testDisabled();
+    });
+}
+
+function testDisabled()
+{
+    // Disable XMLHttpRequest Logging.
+    evaluateInWebInspector("frontend_disableXMLHttpRequestLogging", function(result) {
+        console.log(result);
+        makeRequests();
+        dumpConsoleMessages();
+    });
+}
+
+function makeRequests()
+{
+    // 1. Page that exists.
+    requestHelper("GET", "resources/xhr-exists.html");
+    // 2. Page that doesn't exist.
+    requestHelper("GET", "resources/xhr-does-not-exist.html");
+    // 3. POST to a page.
+    requestHelper("POST", "resources/xhr-exists.html");
+}
+
+function requestHelper(method, url)
+{
+    // Make synchronous requests for simplicity.
+    console.log("sending a %s request to %s", method, url);
+    var xhr = new XMLHttpRequest();
+    xhr.open(method, url, false);
+    xhr.send();
+}
+
+function frontend_enableXMLHttpRequestLogging(testController)
+{
+    InspectorBackend.enableMonitoringXHR();
+    if (WebInspector.monitoringXHREnabled)
+        return "enabled";
+
+    testController.waitUntilDone();
+    frontend_addSniffer(WebInspector, "monitoringXHRWasEnabled", function() {
+         testController.notifyDone("enabled");
+    });
+}
+
+function frontend_disableXMLHttpRequestLogging(testController)
+{
+    InspectorBackend.disableMonitoringXHR();
+    if (!WebInspector.monitoringXHREnabled)
+        return "disabled";
+
+    testController.waitUntilDone();
+    frontend_addSniffer(WebInspector, "monitoringXHRWasDisabled", function() {
+        testController.notifyDone("disabled");
+    });
+}
+
+</script>
+</head>
+
+<body onload="onload()">
+<p>
+Tests that XMLHttpRequest Logging works when Enabled and doesn't show logs when Disabled.
+</p>
+
+</body>
+</html>

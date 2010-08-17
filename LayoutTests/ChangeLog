@@ -1,3 +1,14 @@
+2010-08-17  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Add XMLHttpRequest Logging Tests
+        https://bugs.webkit.org/show_bug.cgi?id=44092
+
+        * http/tests/inspector/console-xhr-logging-expected.txt: Added.
+        * http/tests/inspector/console-xhr-logging.html: Added.
+        * http/tests/inspector/resources/xhr-exists.html: Added.
+
 2010-08-17  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Tony Chang.
