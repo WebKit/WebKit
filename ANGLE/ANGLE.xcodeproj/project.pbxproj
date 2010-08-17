@@ -557,7 +557,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5D7C59C61208C68B001C873E /* Base.xcconfig */;
 			buildSettings = {
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 			};
 			name = Production;
 		};
@@ -565,8 +564,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5D7C59C51208C68B001C873E /* ANGLE.xcconfig */;
 			buildSettings = {
-				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 			};
 			name = Production;
 		};
@@ -575,7 +572,6 @@
 			baseConfigurationReference = 5D7C59C71208C68B001C873E /* DebugRelease.xcconfig */;
 			buildSettings = {
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 			};
 			name = Debug;
 		};
@@ -583,7 +579,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5D7C59C71208C68B001C873E /* DebugRelease.xcconfig */;
 			buildSettings = {
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 			};
 			name = Release;
 		};
@@ -591,8 +586,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5D7C59C51208C68B001C873E /* ANGLE.xcconfig */;
 			buildSettings = {
-				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 			};
 			name = Debug;
 		};
@@ -600,8 +593,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5D7C59C51208C68B001C873E /* ANGLE.xcconfig */;
 			buildSettings = {
-				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 			};
 			name = Release;
 		};

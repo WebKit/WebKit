@@ -2,6 +2,15 @@
 
         Unreviewed.
 
+        Moved previous link error fix to Base.xcconfig.
+
+        * ANGLE.xcodeproj/project.pbxproj:
+        * Configurations/Base.xcconfig:
+
+2010-08-17  Chris Marrin  <cmarrin@apple.com>
+
+        Unreviewed.
+
         Got rid of link errors in WebCore.
 
         Changed GCC_INLINES_ARE_PRIVATE_EXTERN to YES and
