@@ -63,7 +63,19 @@ LayoutTests/java/*.class
 # a few files into the source tree.
 /aclocal.m4
 /autom4te.cache
-/autotools
+/autotools/compile
+/autotools/config.guess
+/autotools/config.sub
+/autotools/depcomp
+/autotools/gtk-doc.m4
+/autotools/install-sh
+/autotools/libtool.m4
+/autotools/ltmain.sh
+/autotools/ltoptions.m4
+/autotools/ltsugar.m4
+/autotools/ltversion.m4
+/autotools/lt~obsolete.m4
+/autotools/missing
 /autotoolsconfig.h.in
 /configure
 /GNUmakefile.in

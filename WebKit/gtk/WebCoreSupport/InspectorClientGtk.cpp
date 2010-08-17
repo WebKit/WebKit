@@ -119,7 +119,7 @@ void InspectorClient::hideHighlight()
     gtk_widget_queue_draw(GTK_WIDGET(m_inspectedWebView));
 }
 
-#if HAVE_GSETTINGS
+#ifdef HAVE_GSETTINGS
 static String toGSettingName(String inspectorSettingName)
 {
     if (inspectorSettingName == "resourceTrackingEnabled")
