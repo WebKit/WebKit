@@ -1,3 +1,46 @@
+2010-08-17  Adam Roben  <aroben@apple.com>
+
+        Teach run-webkit-tests, DumpRenderTree, and WebKitTestRunner how to
+        save crash logs on Windows
+
+        The crash logs are saved to /tmp/layout-test-results and have names
+        like CrashLog_02bc_2010-08-17_14-36-20-108.txt.
+
+        Unfortunately, crashes in the WebKit2 web process are recorded as
+        time-outs by run-webkit-tests. Fixing this is covered by
+        <http://webkit.org/b/44121>.
+
+        Fixes <http://webkit.org/b/37859> <rdar://problem/7883560>
+        DumpRenderTree should save a stack trace and/or dump file when it
+        crashes
+
+        Reviewed by Sam Weinig.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (exceptionFilter):
+        (main):
+        * WebKitTestRunner/win/TestControllerWin.cpp:
+        (WTR::exceptionFilter):
+        (WTR::TestController::platformInitialize):
+        These changes set up an exception filter that prints #CRASHED to
+        stderr, then lets the exception propagate normally. This allows
+        run-webkit-tests to detect when we've crashed even when a post-mortem
+        debugger attaches to the process.
+
+        * Scripts/old-run-webkit-tests:
+        (top level): Declared some variables used by the crash-log-saving
+        code.
+        (openDumpTool): Copy _NT_SYMBOL_PATH into the clean environment so
+        that the post-mortem debugger has access to it.
+        (toCygwinPath): Added. This is the opposite of toWindowsPath.
+        (readFromDumpToolWithTimer): If the dump tool prints #CRASHED to
+        stderr, consider it a crash.
+        (setUpWindowsCrashLogSaving): Added. Saves the current post-mortem
+        debugger, then sets ntsd as the post-mortem debugger. ntsd is
+        configured to save a crash log and then quit automatically.
+        (END): Added. Restores the previous post-mortem debugger when the
+        script exits.
+
 2010-08-17  Victor Wang  <victorw@chromium.org>
 
         Reviewed by ojan@chromium.org.

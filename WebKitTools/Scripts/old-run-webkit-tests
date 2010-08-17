@@ -105,12 +105,14 @@ sub readSkippedFiles($);
 sub recordActualResultsAndDiff($$);
 sub sampleDumpTool();
 sub setFileHandleNonBlocking(*$);
+sub setUpWindowsCrashLogSaving();
 sub slowestcmp($$);
 sub splitpath($);
 sub stopRunningTestsEarlyIfNeeded();
 sub stripExtension($);
 sub stripMetrics($$);
 sub testCrashedOrTimedOut($$$$$);
+sub toCygwinPath($);
 sub toURL($);
 sub toWindowsPath($);
 sub validateSkippedArg($$;$);
@@ -183,6 +185,12 @@ my $actualTag = "actual";
 my $prettyDiffTag = "pretty-diff";
 my $diffsTag = "diffs";
 my $errorTag = "stderr";
+
+# These are defined here instead of closer to where they are used so that they
+# will always be accessible from the END block that uses them, even if the user
+# presses Ctrl-C before Perl has finished evaluating this whole file.
+my $windowsPostMortemDebuggerKey = "/HKLM/SOFTWARE/Microsoft/Windows NT/CurrentVersion/AeDebug";
+my %previousWindowsPostMortemDebuggerValues;
 
 my $realPlatform;
 
@@ -381,6 +389,8 @@ $testMedia = 0 if $shouldCheckLeaks && isTiger();
 
 # Generating remote links causes a lot of unnecessary spew on GTK build bot
 $useRemoteLinksToTests = 0 if isGtk();
+
+setUpWindowsCrashLogSaving() if isCygwin();
 
 setConfigurationProductDir(Cwd::abs_path($root)) if (defined($root));
 my $productDir = productDir();
@@ -1399,6 +1409,7 @@ sub openDumpTool()
     } elsif (isCygwin()) {
         $CLEAN_ENV{HOMEDRIVE} = $ENV{'HOMEDRIVE'};
         $CLEAN_ENV{HOMEPATH} = $ENV{'HOMEPATH'};
+        $CLEAN_ENV{_NT_SYMBOL_PATH} = $ENV{_NT_SYMBOL_PATH};
 
         setPathForRunningWebKitApp(\%CLEAN_ENV);
     }
@@ -1719,6 +1730,14 @@ sub convertPathUsingCygpath($$)
 
     $convertedPath =~ s/\Q$spaceSubstitute\E/ /g;
     return $convertedPath;
+}
+
+sub toCygwinPath($)
+{
+    my ($path) = @_;
+    return unless isCygwin();
+
+    return convertPathUsingCygpath($path, "-u");
 }
 
 sub toWindowsPath($)
@@ -2071,6 +2090,10 @@ sub readFromDumpToolWithTimer(**)
             }
         }
         if (defined($lineError)) {
+            if ($lineError =~ /#CRASHED/) {
+                $status = "crashed";
+                last;
+            }
             if ($lineError =~ /#EOF/) {
                 $haveSeenEofError = 1;
             } else {
@@ -2346,4 +2369,45 @@ sub stopRunningTestsEarlyIfNeeded()
     }
 
     return 0;
+}
+
+sub setUpWindowsCrashLogSaving()
+{
+    return unless isCygwin();
+
+    unless (defined $ENV{_NT_SYMBOL_PATH}) {
+        print "The _NT_SYMBOL_PATH environment variable is not set. Crash logs will not be saved.\nSee <http://trac.webkit.org/wiki/BuildingOnWindows#GettingCrashLogs>.\n";
+        return;
+    }
+
+    my $ntsdPath = File::Spec->catfile(toCygwinPath($ENV{PROGRAMFILES}), "Debugging Tools for Windows (x86)", "ntsd.exe");
+    unless (-f $ntsdPath) {
+        $ntsdPath = File::Spec->catfile(toCygwinPath($ENV{SYSTEMROOT}), "system32", "ntsd.exe");
+        unless (-f $ntsdPath) {
+            print STDERR "Can't find ntsd.exe. Crash logs will not be saved.\nSee <http://trac.webkit.org/wiki/BuildingOnWindows#GettingCrashLogs>.\n";
+            return;
+        }
+    }
+
+    foreach my $value qw(Debugger Auto) {
+        chomp($previousWindowsPostMortemDebuggerValues{$value} = `regtool get "$windowsPostMortemDebuggerKey/$value"`);
+    }
+
+    my $result = system $ntsdPath, "-iaec", '-lines -c ".logopen /t \"' . toWindowsPath($testResultsDirectory) . '\CrashLog.txt\";!analyze -vv;~*kpn;q"';
+    if ($result) {
+        print "Failed to set nstd.exe as the post-mortem debugger. Crash logs will not be saved.\nSee <http://trac.webkit.org/wiki/BuildingOnWindows#GettingCrashLogs>.\n";
+        %previousWindowsPostMortemDebuggerValues = ();
+        return;
+    }
+
+    print "Crash logs will be saved to $testResultsDirectory.\n";
+}
+
+END {
+    return unless isCygwin();
+
+    foreach my $value (keys %previousWindowsPostMortemDebuggerValues) {
+        my $result = system "regtool", "set", "$windowsPostMortemDebuggerKey/$value", $previousWindowsPostMortemDebuggerValues{$value};
+        !$result or print "Failed to restore \"$windowsPostMortemDebuggerKey/$value\" to its previous value \"$previousWindowsPostMortemDebuggerValues{$value}\"\n.";
+    }
 }

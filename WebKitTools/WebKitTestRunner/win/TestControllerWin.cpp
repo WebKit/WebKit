@@ -81,8 +81,17 @@ static void addQTDirToPATH()
     ::SetEnvironmentVariableW(pathEnvironmentVariable, newPath.data());
 }
 
+static LONG WINAPI exceptionFilter(EXCEPTION_POINTERS*)
+{
+    fputs("#CRASHED\n", stderr);
+    fflush(stderr);
+    return EXCEPTION_CONTINUE_SEARCH;
+}
+
 void TestController::platformInitialize()
 {
+    ::SetUnhandledExceptionFilter(exceptionFilter);
+
     _setmode(1, _O_BINARY);
     _setmode(2, _O_BINARY);
 

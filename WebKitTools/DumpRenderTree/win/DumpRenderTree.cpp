@@ -1232,8 +1232,17 @@ RetainPtr<CFURLCacheRef> sharedCFURLCache()
 }
 #endif
 
+static LONG WINAPI exceptionFilter(EXCEPTION_POINTERS*)
+{
+    fputs("#CRASHED\n", stderr);
+    fflush(stderr);
+    return EXCEPTION_CONTINUE_SEARCH;
+}
+
 int main(int argc, char* argv[])
 {
+    ::SetUnhandledExceptionFilter(exceptionFilter);
+
     leakChecking = false;
 
     _setmode(1, _O_BINARY);
