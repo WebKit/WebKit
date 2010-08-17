@@ -1,3 +1,18 @@
+2010-08-17  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        [Chromium] REGRESSION: Incorrect repaint on scrolling with position:fixed elements
+        https://bugs.webkit.org/show_bug.cgi?id=42949
+
+        This is a partial revert of http://trac.webkit.org/changeset/63907
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollPositionChangedViaPlatformWidget):
+        (WebCore::FrameView::scrollPositionChanged):
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::valueChanged):
+
 2010-08-17  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r65528.

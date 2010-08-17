@@ -1121,13 +1121,13 @@ void FrameView::setScrollPosition(const IntPoint& scrollPoint)
 
 void FrameView::scrollPositionChangedViaPlatformWidget()
 {
+    repaintFixedElementsAfterScrolling();
     scrollPositionChanged();
 }
 
 void FrameView::scrollPositionChanged()
 {
     frame()->eventHandler()->sendScrollEvent();
-    repaintFixedElementsAfterScrolling();
 
 #if USE(ACCELERATED_COMPOSITING)
     if (RenderView* root = m_frame->contentRenderer()) {
