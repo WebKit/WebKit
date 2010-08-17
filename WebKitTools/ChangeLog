@@ -1,3 +1,12 @@
+2010-08-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Add WebKit2 Mac tester to buildbot.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+
 2010-08-16  Paul Sawaya  <psawaya@apple.com>
 
         Reviewed by Chris Marrin.

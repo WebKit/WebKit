@@ -8,6 +8,7 @@
                     { "name": "apple-xserve-4", "platform": "mac-snowleopard" },
                     { "name": "apple-xserve-5", "platform": "mac-snowleopard" },
                     { "name": "apple-xserve-6", "platform": "mac-snowleopard" },
+                    { "name": "apple-xserve-7", "platform": "mac-snowleopard" },
 
                     { "name": "apple-pixel-1", "platform": "mac-leopard" },
 
@@ -66,7 +67,7 @@
                     },
                     { "name": "SnowLeopard Intel Release (Build)", "type": "Build", "builddir": "snowleopard-intel-release",
                       "platform": "mac-snowleopard", "configuration": "release", "architectures": ["x86_64"],
-                      "triggers": ["snowleopard-intel-release-tests"],
+                      "triggers": ["snowleopard-intel-release-tests", "snowleopard-intel-release-tests-wk2"],
                       "slavenames": ["apple-xserve-4", "test-slave"]
                     },
                     { "name": "SnowLeopard Intel Release (Tests)", "type": "Test", "builddir": "snowleopard-intel-release-tests",
@@ -76,6 +77,10 @@
                     { "name": "SnowLeopard Intel Leaks", "type": "BuildAndTestLeaks", "builddir": "snowleopard-intel-leaks",
                       "platform": "mac-snowleopard", "configuration": "debug", "architectures": ["x86_64"],
                       "slavenames": ["apple-macpro-1", "apple-macpro-3", "test-slave"]
+                    },
+                    { "name": "SnowLeopard Intel Release (WebKit2 Tests)", "type": "TestWebKit2", "builddir": "snowleopard-intel-release-tests-wk2",
+                      "platform": "mac-snowleopard", "configuration": "release", "architectures": ["x86_64"],
+                      "slavenames": ["apple-xserve-7", "test-slave"]
                     },
                     {
                       "name": "Windows Release (Build)", "type": "Build", "builddir": "win-release",
@@ -204,6 +209,9 @@
                     },
                     { "type": "Triggerable", "name": "snowleopard-intel-release-tests",
                       "builderNames": ["SnowLeopard Intel Release (Tests)"]
+                    },
+                    { "type": "Triggerable", "name": "snowleopard-intel-release-tests-wk2",
+                      "builderNames": ["SnowLeopard Intel Release (WebKit2 Tests)"]
                     },
                     { "type": "Triggerable", "name": "win-release-tests",
                       "builderNames": ["Windows Release (Tests)"]
