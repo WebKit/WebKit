@@ -1,3 +1,13 @@
+2010-08-17  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by David Levin.
+
+        MessagePort.close() crashes if the owning context was destroyed.
+        https://bugs.webkit.org/show_bug.cgi?id=43140
+
+        * fast/events/message-port-context-destroyed-expected.txt: Added.
+        * fast/events/message-port-context-destroyed.html: Added.
+
 2010-08-17  Victoria Kirst  <vrk@google.com>
 
         Unreviewed. Build fix.

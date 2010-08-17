@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
 
@@ -227,6 +227,9 @@ void ScriptExecutionContext::stopActiveDOMObjects()
         ASSERT(iter->first->scriptExecutionContext() == this);
         iter->first->stop();
     }
+
+    // Also close MessagePorts. If they were ActiveDOMObjects (they could be) then they could be stopped instead.
+    closeMessagePorts();
 }
 
 void ScriptExecutionContext::createdActiveDOMObject(ActiveDOMObject* object, void* upcastPointer)
@@ -240,6 +243,14 @@ void ScriptExecutionContext::destroyedActiveDOMObject(ActiveDOMObject* object)
 {
     ASSERT(object);
     m_activeDOMObjects.remove(object);
+}
+
+void ScriptExecutionContext::closeMessagePorts() {
+    HashSet<MessagePort*>::iterator messagePortsEnd = m_messagePorts.end();
+    for (HashSet<MessagePort*>::iterator iter = m_messagePorts.begin(); iter != messagePortsEnd; ++iter) {
+        ASSERT((*iter)->scriptExecutionContext() == this);
+        (*iter)->close();
+    }
 }
 
 void ScriptExecutionContext::setSecurityOrigin(PassRefPtr<SecurityOrigin> securityOrigin)

@@ -1,3 +1,25 @@
+2010-08-17  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by David Levin.
+
+        MessagePort.close() crashes if the owning context was destroyed.
+        https://bugs.webkit.org/show_bug.cgi?id=43140
+
+        Test: fast/events/message-port-context-destroyed.html
+
+        * dom/MessagePort.cpp:
+        (WebCore::MessagePort::postMessage):
+        (WebCore::MessagePort::start):
+        (WebCore::MessagePort::close):
+        (WebCore::MessagePort::contextDestroyed):
+        Use isEntangled() method to gate various operations on MessagePort. This method also takes into account m_closed bit.
+
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::stopActiveDOMObjects):
+        (WebCore::ScriptExecutionContext::closeMessagePorts):
+        * dom/ScriptExecutionContext.h:
+        Add closeMessagePorts() method that closes message ports at the same moments when other ActiveDOMObjects are stopped.
+
 2010-08-17  Fady Samuel  <fsamuel@chromium.org>
 
         Reviewed by David Hyatt.
