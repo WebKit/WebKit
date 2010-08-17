@@ -33,15 +33,18 @@
 
 #include "WebKit.h"
 #include "WebKitClient.h"
-#include <webkit/support/webkit_support.h>
+
+// WebKitClient has a protected destructor, so we need to subclass.
+class DummyWebKitClient : public WebKit::WebKitClient {
+};
 
 int main(int argc, char** argv)
 {
-    TestSuite testSuite(argc, argv);
-    // TestSuite must be created before SetUpTestEnvironment so it performs
-    // initializations needed by WebKit support.
-    webkit_support::SetUpTestEnvironmentForUnitTests();
-    int result = testSuite.Run();
-    webkit_support::TearDownTestEnvironment();
+    DummyWebKitClient dummyClient;
+    WebKit::initialize(&dummyClient);
+
+    int result = TestSuite(argc, argv).Run();
+
+    WebKit::shutdown();
     return result;
 }

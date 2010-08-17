@@ -1,3 +1,19 @@
+2010-08-17  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r65516.
+        http://trac.webkit.org/changeset/65516
+        https://bugs.webkit.org/show_bug.cgi?id=44126
+
+        broke chromium unit tests on mac and linux (Requested by
+        johnny_g on #webkit).
+
+        * WebKit.gyp:
+        * src/WebFrameImpl.cpp:
+        (WebKit::frameContentAsPlainText):
+        * tests/RunAllTests.cpp:
+        (main):
+        * tests/WebFrameTest.cpp: Removed.
+
 2010-08-17  Jay Civelli  <jcivelli@chromium.org>
 
         Reviewed by Darin Fisher.

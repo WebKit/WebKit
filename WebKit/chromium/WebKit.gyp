@@ -700,7 +700,6 @@
                         '<(chromium_src_dir)/base/base.gyp:base_i18n',
                         '<(chromium_src_dir)/base/base.gyp:test_support_base',
                         '<(chromium_src_dir)/gpu/gpu.gyp:gles2_c_lib',
-                        '<(chromium_src_dir)/webkit/support/webkit_support.gyp:webkit_support',
                     ],
                     'include_dirs': [
                         'public',
@@ -719,11 +718,10 @@
                     'conditions': [
                         ['OS=="win"', {
                             'sources': [
-                                # FIXME: Port PopupMenuTest and WebFrameTest to Linux and Mac.
+                                # FIXME: Port PopupMenuTest to Linux and Mac.
                                 'tests/PopupMenuTest.cpp',
                                 'tests/TransparencyWinTest.cpp',
                                 'tests/UniscribeHelperTest.cpp',
-                                'tests/WebFrameTest.cpp',
                             ],
                         }],
                         ['OS=="mac"', {

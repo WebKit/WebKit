@@ -234,15 +234,6 @@ static void frameContentAsPlainText(size_t maxChars, Frame* frame,
     // Recursively walk the children.
     FrameTree* frameTree = frame->tree();
     for (Frame* curChild = frameTree->firstChild(); curChild; curChild = curChild->tree()->nextSibling()) {
-        // Ignore the text of non-visible frames.
-        RenderView* contentRenderer = curChild->contentRenderer();
-        RenderPart* ownerRenderer = curChild->ownerRenderer();        
-        if (!contentRenderer || !contentRenderer->width() || !contentRenderer->height()
-            || (contentRenderer->x() + contentRenderer->width() <= 0) || (contentRenderer->y() + contentRenderer->height() <= 0)
-            || (ownerRenderer && ownerRenderer->style() && ownerRenderer->style()->visibility() != VISIBLE)) {
-            continue;
-        }
-
         // Make sure the frame separator won't fill up the buffer, and give up if
         // it will. The danger is if the separator will make the buffer longer than
         // maxChars. This will cause the computation above:
