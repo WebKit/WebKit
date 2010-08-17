@@ -156,6 +156,10 @@ namespace WebCore {
 
     private:
         PlatformPathPtr m_path;
+
+#if PLATFORM(QT)
+        int m_lastMoveToIndex;
+#endif
     };
 
 }

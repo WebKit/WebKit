@@ -1,3 +1,16 @@
+2010-08-16  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Path::closeSubpath() should only close the last subpath if it has >1 point
+        https://bugs.webkit.org/show_bug.cgi?id=44061
+
+        Add a test to verify behavior of closePath() when path has only 1 point.
+
+        * fast/canvas/canvas-closePath-single-point-expected.txt: Added.
+        * fast/canvas/canvas-closePath-single-point.html: Added.
+        * fast/canvas/script-tests/canvas-closePath-single-point.js: Added.
+
 2010-08-16  Nate Chapin  <japhet@chromium.org>
 
         Unreviewed, Chromium expectations update.

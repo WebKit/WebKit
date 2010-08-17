@@ -1,3 +1,24 @@
+2010-08-16  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Path::closeSubpath() should only close the last subpath if it has >1 point
+        https://bugs.webkit.org/show_bug.cgi?id=44061
+
+        Spec link:
+        http://www.whatwg.org/specs/web-apps/current-work/#dom-context-2d-closepath
+
+        Test: fast/canvas/canvas-closePath-single-point.html
+
+        * platform/graphics/Path.h: Add a Qt-only member to track the last subpath.
+        * platform/graphics/qt/PathQt.cpp:
+        (WebCore::Path::closeSubpath): Only close the last subpath if it
+        has more than 1 point. Otherwise behave as moveTo(first point in last subpath)
+        (WebCore::Path::Path):
+        (WebCore::Path::operator=):
+        (WebCore::Path::moveTo):
+        (WebCore::Path::transform):
+
 2010-08-16  Nate Chapin  <japhet@chromium.org>
 
         Unreviewed, Chromium mac build fix (with help from jamesr).
