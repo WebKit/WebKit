@@ -1,3 +1,12 @@
+2010-08-17  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Eric Carlson.
+
+        Add testcase for r65514
+
+        * media/video-poster-delayed-expected.txt: Added.
+        * media/video-poster-delayed.html: Added.
+
 2010-08-17  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Anders Carlsson.
