@@ -36,6 +36,7 @@ import os
 import os.path
 import re
 import stat
+import sys
 import subprocess
 import tempfile
 import unittest
@@ -44,10 +45,11 @@ import shutil
 
 from datetime import date
 from webkitpy.common.checkout.api import Checkout
-from webkitpy.common.checkout.scm import detect_scm_system, SCM, SVN, CheckoutNeedsUpdate, commit_error_handler, AuthenticationError, AmbiguousCommitError
+from webkitpy.common.checkout.scm import detect_scm_system, SCM, SVN, CheckoutNeedsUpdate, commit_error_handler, AuthenticationError, AmbiguousCommitError, find_checkout_root, default_scm
 from webkitpy.common.config.committers import Committer  # FIXME: This should not be needed
 from webkitpy.common.net.bugzilla import Attachment # FIXME: This should not be needed
 from webkitpy.common.system.executive import Executive, run_command, ScriptError
+from webkitpy.common.system.outputcapture import OutputCapture
 
 # Eventually we will want to write tests which work for both scms. (like update_webkit, changed_files, etc.)
 # Perhaps through some SCMTest base-class which both SVNTest and GitTest inherit from.
@@ -173,6 +175,57 @@ class SVNTestRepository:
         # Now that we've deleted the checkout paths, cwddir may be invalid
         # Change back to a valid directory so that later calls to os.getcwd() do not fail.
         os.chdir(detect_scm_system(os.path.dirname(__file__)).checkout_root)
+
+
+class StandaloneFunctionsTest(unittest.TestCase):
+    """This class tests any standalone/top-level functions in the package."""
+    def setUp(self):
+        self.orig_cwd = os.path.abspath(os.getcwd())
+        self.orig_abspath = os.path.abspath
+
+        # We capture but ignore the output from stderr to reduce unwanted
+        # logging.
+        self.output = OutputCapture()
+        self.output.capture_output()
+
+    def tearDown(self):
+        os.chdir(self.orig_cwd)
+        os.path.abspath = self.orig_abspath
+        self.output.restore_output()
+
+    def test_find_checkout_root(self):
+        # Test from inside the tree.
+        os.chdir(sys.path[0])
+        dir = find_checkout_root()
+        self.assertNotEqual(dir, None)
+        self.assertTrue(os.path.exists(dir))
+
+        # Test from outside the tree.
+        os.chdir(os.path.expanduser("~"))
+        dir = find_checkout_root()
+        self.assertNotEqual(dir, None)
+        self.assertTrue(os.path.exists(dir))
+
+        # Mock out abspath() to test being not in a checkout at all.
+        os.path.abspath = lambda x: "/"
+        self.assertRaises(SystemExit, find_checkout_root)
+        os.path.abspath = self.orig_abspath
+
+    def test_default_scm(self):
+        # Test from inside the tree.
+        os.chdir(sys.path[0])
+        scm = default_scm()
+        self.assertNotEqual(scm, None)
+
+        # Test from outside the tree.
+        os.chdir(os.path.expanduser("~"))
+        dir = find_checkout_root()
+        self.assertNotEqual(dir, None)
+
+        # Mock out abspath() to test being not in a checkout at all.
+        os.path.abspath = lambda x: "/"
+        self.assertRaises(SystemExit, default_scm)
+        os.path.abspath = self.orig_abspath
 
 # For testing the SCM baseclass directly.
 class SCMClassTests(unittest.TestCase):

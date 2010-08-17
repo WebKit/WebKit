@@ -41,7 +41,6 @@ import webkitpy.common.system.logutils as logutils
 import webkitpy.layout_tests.port.factory as port_factory
 
 _log = logutils.get_logger(__file__)
-logutils.configure_logging()
 
 _BASE_PLATFORM = 'base'
 

@@ -84,5 +84,19 @@ class TestGetHostPortObject(unittest.TestCase):
         port.get = old_get
 
 
+class TestRebaseliner(unittest.TestCase):
+
+    def test_noop(self):
+        # this method tests that was can at least instantiate an object, even
+        # if there is nothing to do.
+        options = MockOptions()
+        host_port_obj = port.get('test', options)
+        target_options = options
+        target_port_obj = port.get('test', target_options)
+        platform = 'test'
+        rebaseliner = rebaseline_chromium_webkit_tests.Rebaseliner(
+            host_port_obj, target_port_obj, platform, options)
+        self.assertNotEqual(rebaseliner, None)
+
 if __name__ == '__main__':
     unittest.main()

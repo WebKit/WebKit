@@ -36,6 +36,7 @@ This command dumps out all such files.  You can use it like this:
 
 
 import optparse
+import webkitpy.common.system.logutils as logutils
 import webkitpy.layout_tests.deduplicate_tests as deduplicate_tests
 
 
@@ -62,6 +63,7 @@ def parse_args():
 
 
 def run(options):
+    logutils.configure_logging()
     if options.verbose:
         format = ("* %(test)s\n"
                   "\tredundantly on %(platform)s and %(fallback)s\n"

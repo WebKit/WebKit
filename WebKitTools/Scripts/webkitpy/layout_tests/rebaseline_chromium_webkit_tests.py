@@ -59,7 +59,6 @@ import webbrowser
 import zipfile
 
 from webkitpy.common.system.executive import run_command, ScriptError
-from webkitpy.common.checkout.scm import detect_scm_system
 import webkitpy.common.checkout.scm as scm
 
 import port
@@ -240,7 +239,7 @@ class Rebaseliner(object):
                                                self._platform,
                                                False,
                                                False)
-        self._scm = detect_scm_system(os.getcwd())
+        self._scm = scm.default_scm()
 
     def run(self, backup):
         """Run rebaseline process."""

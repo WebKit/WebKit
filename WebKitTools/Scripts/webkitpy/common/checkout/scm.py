@@ -38,6 +38,40 @@ from webkitpy.common.system.executive import Executive, run_command, ScriptError
 from webkitpy.common.system.deprecated_logging import error, log
 
 
+def find_checkout_root():
+    """Returns the current checkout root (as determined by default_scm().
+
+    Returns the absolute path to the top of the WebKit checkout, or None
+    if it cannot be determined.
+
+    """
+    scm_system = default_scm()
+    if scm_system:
+        return scm_system.checkout_root
+    return None
+
+
+def default_scm():
+    """Return the default SCM object as determined by the CWD and running code.
+
+    Returns the default SCM object for the current working directory; if the
+    CWD is not in a checkout, then we attempt to figure out if the SCM module
+    itself is part of a checkout, and return that one. If neither is part of
+    a checkout, None is returned.
+
+    """
+    cwd = os.getcwd()
+    scm_system = detect_scm_system(cwd)
+    if not scm_system:
+        script_directory = os.path.abspath(sys.path[0])
+        scm_system = detect_scm_system(script_directory)
+        if scm_system:
+            log("The current directory (%s) is not a WebKit checkout, using %s" % (cwd, scm_system.checkout_root))
+        else:
+            error("FATAL: Failed to determine the SCM system for either %s or %s" % (cwd, script_directory))
+    return scm_system
+
+
 def detect_scm_system(path):
     absolute_path = os.path.abspath(path)
 

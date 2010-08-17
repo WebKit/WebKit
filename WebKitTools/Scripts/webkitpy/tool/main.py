@@ -33,7 +33,7 @@ import os
 import threading
 
 from webkitpy.common.checkout.api import Checkout
-from webkitpy.common.checkout.scm import detect_scm_system
+from webkitpy.common.checkout.scm import default_scm
 from webkitpy.common.net.bugzilla import Bugzilla
 from webkitpy.common.net.buildbot import BuildBot
 from webkitpy.common.net.rietveld import Rietveld
@@ -79,18 +79,8 @@ class WebKitPatch(MultiCommandTool):
 
     def scm(self):
         # Lazily initialize SCM to not error-out before command line parsing (or when running non-scm commands).
-        original_cwd = os.path.abspath(".")
         if not self._scm:
-            self._scm = detect_scm_system(original_cwd)
-
-        if not self._scm:
-            script_directory = os.path.abspath(sys.path[0])
-            self._scm = detect_scm_system(script_directory)
-            if self._scm:
-                log("The current directory (%s) is not a WebKit checkout, using %s" % (original_cwd, self._scm.checkout_root))
-            else:
-                error("FATAL: Failed to determine the SCM system for either %s or %s" % (original_cwd, script_directory))
-
+            self._scm = default_scm()
         return self._scm
 
     def checkout(self):

@@ -1,3 +1,30 @@
+2010-08-17  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        fix test-webkitpy, add easy way to find a checkout root
+
+        test-webkitpy currently doesn't work right if run from someplace other
+        than the checkout root, and it spews a bunch of debug logging because
+        the deduplicate_tests tests contaminates the test environment.
+
+        This patch cleans up the deduplicate_tests unit tests, and creates
+        two new methods in scm.py: find_checkout_root() and default_scm(),
+        both of which use a single algorithm for guessing what checkout root
+        to use if you aren't explicitly told one from a path.
+
+        https://bugs.webkit.org/show_bug.cgi?id=44001
+
+        * Scripts/deduplicate-tests:
+        * Scripts/webkitpy/common/checkout/scm.py:
+        * Scripts/webkitpy/common/checkout/scm_unittest.py:
+        * Scripts/webkitpy/layout_tests/deduplicate_tests.py:
+        * Scripts/webkitpy/layout_tests/deduplicate_tests_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        * Scripts/webkitpy/layout_tests/rebaseline_chromium_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/rebaseline_chromium_webkit_tests_unittest.py:
+        * Scripts/webkitpy/tool/main.py:
+
 2010-08-17  Victor Wang  <victorw@chromium.org>
 
         Reviewed by Ojan Vafai.

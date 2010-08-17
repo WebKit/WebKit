@@ -27,6 +27,7 @@
 import deduplicate_tests
 import os
 import unittest
+import webkitpy.common.checkout.scm as scm
 
 
 class MockExecutive(object):
@@ -51,6 +52,13 @@ class ListDuplicatesTest(unittest.TestCase):
         MockExecutive.last_run_command = []
         MockExecutive.response = ''
         deduplicate_tests.executive = MockExecutive
+        self._original_cwd = os.getcwd()
+        checkout_root = scm.find_checkout_root()
+        self.assertNotEqual(checkout_root, None)
+        os.chdir(checkout_root)
+
+    def tearDown(self):
+        os.chdir(self._original_cwd)
 
     def test_parse_git_output(self):
         git_output = (

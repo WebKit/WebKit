@@ -124,6 +124,9 @@ class TestPort(base.Port):
     def test_platform_names(self):
         return self.test_base_platform_names()
 
+    def test_platform_name_to_name(self, test_platform_name):
+        return test_platform_name
+
     def version():
         return ''
 
