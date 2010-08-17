@@ -26,6 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import jsonresults
 import unittest
 
 from jsonresults import JsonResults
@@ -127,7 +128,7 @@ class JsonResultsTest(unittest.TestCase):
         # Nothing to merge.
         self._test_merge(
             # Aggregated results
-            (["2", "1"], [["001.html", "[200,\"P\"]", "[200,\"0\"]"]]),
+            (["2", "1"], [["001.html", "[200,\"F\"]", "[200,0]"]]),
             # Incremental results
             None,
             # Expect no merge happens.
@@ -137,7 +138,7 @@ class JsonResultsTest(unittest.TestCase):
         # Nothing to merge.
         self._test_merge(
             # Aggregated results
-            (["2", "1"], [["001.html", "[200,\"P\"]", "[200,\"0\"]"]]),
+            (["2", "1"], [["001.html", "[200,\"F\"]", "[200,0]"]]),
             # Incremental results
             ([], []),
             # Expected no merge happens.
@@ -149,9 +150,9 @@ class JsonResultsTest(unittest.TestCase):
             # Aggregated results
             None,
             # Incremental results
-            (["2", "1"], [["001.html", "[200,\"P\"]", "[200,\"0\"]"]]),
+            (["2", "1"], [["001.html", "[200,\"F\"]", "[200,0]"]]),
             # Expected results
-            (["2", "1"], [["001.html", "[200,\"P\"]", "[200,\"0\"]"]]))
+            (["2", "1"], [["001.html", "[200,\"F\"]", "[200,0]"]]))
 
         # Single test for single run.
         # Incremental results has the latest build and same test results for
@@ -160,11 +161,11 @@ class JsonResultsTest(unittest.TestCase):
         # of runs for "P" (200 + 1) to get merged results.
         self._test_merge(
             # Aggregated results
-            (["2", "1"], [["001.html", "[200,\"P\"]", "[200,\"0\"]"]]),
+            (["2", "1"], [["001.html", "[200,\"F\"]", "[200,0]"]]),
             # Incremental results
-            (["3"], [["001.html", "[1,\"P\"]", "[1,\"0\"]"]]),
+            (["3"], [["001.html", "[1,\"F\"]", "[1,0]"]]),
             # Expected results
-            (["3", "2", "1"], [["001.html", "[201,\"P\"]", "[201,\"0\"]"]]))
+            (["3", "2", "1"], [["001.html", "[201,\"F\"]", "[201,0]"]]))
 
         # Single test for single run.
         # Incremental results has the latest build but different test results
@@ -172,72 +173,68 @@ class JsonResultsTest(unittest.TestCase):
         # Insert the incremental results at the first place.
         self._test_merge(
             # Aggregated results
-            (["2", "1"], [["001.html", "[200,\"P\"]", "[200,\"0\"]"]]),
+            (["2", "1"], [["001.html", "[200,\"F\"]", "[200,0]"]]),
             # Incremental results
-            (["3"], [["001.html", "[1, \"I\"]", "[1,\"1\"]"]]),
+            (["3"], [["001.html", "[1, \"I\"]", "[1,1]"]]),
             # Expected results
-            (["3", "2", "1"], [["001.html", "[1,\"I\"],[200,\"P\"]", "[1,\"1\"],[200,\"0\"]"]]))
+            (["3", "2", "1"], [["001.html", "[1,\"I\"],[200,\"F\"]", "[1,1],[200,0]"]]))
 
         # Single test for single run.
         # Incremental results has the latest build but different test results
         # for that run.
-        # The test "results" and "times" need to be continuous, so the old
-        # [10,"I"] result should be dropped because a new result of same type [1,"I"]
-        # is inserted in front of [200,"P"].
         self._test_merge(
             # Aggregated results
-            (["2", "1"], [["001.html", "[200,\"P\"],[10,\"I\"]", "[200,\"0\"],[10,\"1\"]"]]),
+            (["2", "1"], [["001.html", "[200,\"F\"],[10,\"I\"]", "[200,0],[10,1]"]]),
             # Incremental results
-            (["3"], [["001.html", "[1,\"I\"]", "[1,\"1\"]"]]),
+            (["3"], [["001.html", "[1,\"I\"]", "[1,1]"]]),
             # Expected results
-            (["3", "2", "1"], [["001.html", "[1,\"I\"],[200,\"P\"]", "[1,\"1\"],[200,\"0\"]"]]))
+            (["3", "2", "1"], [["001.html", "[1,\"I\"],[200,\"F\"],[10,\"I\"]", "[1,1],[200,0],[10,1]"]]))
 
         # Multiple tests for single run.
         # All tests have incremental updates.
         self._test_merge(
             # Aggregated results
-            (["2", "1"], [["001.html", "[200,\"P\"]", "[200,\"0\"]"], ["002.html", "[100,\"I\"]", "[100,\"1\"]"]]),
+            (["2", "1"], [["001.html", "[200,\"F\"]", "[200,0]"], ["002.html", "[100,\"I\"]", "[100,1]"]]),
             # Incremental results
-            (["3"], [["001.html", "[1,\"P\"]", "[1,\"0\"]"], ["002.html", "[1,\"I\"]", "[1,\"1\"]"]]),
+            (["3"], [["001.html", "[1,\"F\"]", "[1,0]"], ["002.html", "[1,\"I\"]", "[1,1]"]]),
             # Expected results
-            (["3", "2", "1"], [["001.html", "[201,\"P\"]", "[201,\"0\"]"], ["002.html", "[101,\"I\"]", "[101,\"1\"]"]]))
+            (["3", "2", "1"], [["001.html", "[201,\"F\"]", "[201,0]"], ["002.html", "[101,\"I\"]", "[101,1]"]]))
 
         # Multiple tests for single run.
-        # Not all tests have update.
         self._test_merge(
             # Aggregated results
-            (["2", "1"], [["001.html", "[200,\"P\"]", "[200,\"0\"]"], ["002.html", "[100,\"I\"]", "[100,\"1\"]"], ["003.html", "[10,\"F\"]", "[10,\"0\"]"]]),
+            (["2", "1"], [["001.html", "[200,\"F\"]", "[200,0]"], ["002.html", "[100,\"I\"]", "[100,1]"]]),
             # Incremental results
-            (["3"], [["002.html", "[1,\"I\"]", "[1,\"1\"]"]]),
+            (["3"], [["002.html", "[1,\"I\"]", "[1,1]"]]),
             # Expected results
-            (["3", "2", "1"], [["001.html", "[201,\"P\"]", "[201,\"0\"]"], ["002.html", "[101,\"I\"]", "[101,\"1\"]"], ["003.html", "[1,\"P\"],[10,\"F\"]", "[11,\"0\"]"]]))
+            (["3", "2", "1"], [["001.html", "[1,\"P\"],[200,\"F\"]", "[201,0]"], ["002.html", "[101,\"I\"]", "[101,1]"]]))
 
         # Single test for multiple runs.
         self._test_merge(
             # Aggregated results
-            (["2", "1"], [["001.html", "[200,\"P\"]", "[200,\"0\"]"]]),
+            (["2", "1"], [["001.html", "[200,\"F\"]", "[200,0]"]]),
             # Incremental results
-            (["4", "3"], [["001.html", "[2, \"I\"]", "[2,\"2\"]"]]),
+            (["4", "3"], [["001.html", "[2, \"I\"]", "[2,2]"]]),
             # Expected results
-            (["4", "3", "2", "1"], [["001.html", "[2,\"I\"],[200,\"P\"]", "[2,\"2\"],[200,\"0\"]"]]))
+            (["4", "3", "2", "1"], [["001.html", "[2,\"I\"],[200,\"F\"]", "[2,2],[200,0]"]]))
 
         # Multiple tests for multiple runs.
         self._test_merge(
             # Aggregated results
-            (["2", "1"], [["001.html", "[200,\"P\"]", "[200,\"0\"]"], ["002.html", "[10,\"Z\"]", "[10,\"0\"]"]]),
+            (["2", "1"], [["001.html", "[200,\"F\"]", "[200,0]"], ["002.html", "[10,\"Z\"]", "[10,0]"]]),
             # Incremental results
-            (["4", "3"], [["001.html", "[2, \"I\"]", "[2,\"2\"]"], ["002.html", "[1,\"C\"]", "[1,\"1\"]"]]),
+            (["4", "3"], [["001.html", "[2, \"I\"]", "[2,2]"], ["002.html", "[1,\"C\"]", "[1,1]"]]),
             # Expected results
-            (["4", "3", "2", "1"], [["001.html", "[2,\"I\"],[200,\"P\"]", "[2,\"2\"],[200,\"0\"]"], ["002.html", "[1,\"C\"],[10,\"Z\"]", "[1,\"1\"],[10,\"0\"]"]]))
+            (["4", "3", "2", "1"], [["001.html", "[2,\"I\"],[200,\"F\"]", "[2,2],[200,0]"], ["002.html", "[1,\"C\"],[10,\"Z\"]", "[1,1],[10,0]"]]))
 
         # Test the build in incremental results is older than the most recent
         # build in aggregated results.
         # The incremental results should be dropped and no merge happens.
         self._test_merge(
             # Aggregated results
-            (["3", "1"], [["001.html", "[200,\"P\"]", "[200,\"0\"]"]]),
+            (["3", "1"], [["001.html", "[200,\"F\"]", "[200,0]"]]),
             # Incremental results
-            (["2"], [["001.html", "[1, \"P\"]", "[1,\"0\"]"]]),
+            (["2"], [["001.html", "[1, \"F\"]", "[1,0]"]]),
             # Expected no merge happens.
             None)
 
@@ -246,11 +243,49 @@ class JsonResultsTest(unittest.TestCase):
         # The incremental results should be dropped and no merge happens.
         self._test_merge(
             # Aggregated results
-            (["2", "1"], [["001.html", "[200,\"P\"]", "[200,\"0\"]"]]),
+            (["2", "1"], [["001.html", "[200,\"F\"]", "[200,0]"]]),
             # Incremental results
-            (["3", "2"], [["001.html", "[2, \"P\"]", "[2,\"0\"]"]]),
+            (["3", "2"], [["001.html", "[2, \"F\"]", "[2,0]"]]),
             # Expected no merge happens.
             None)
+
+        # Remove test where there is no data in all runs.
+        self._test_merge(
+            # Aggregated results
+            (["2", "1"], [["001.html", "[200,\"N\"]", "[200,0]"], ["002.html", "[10,\"F\"]", "[10,0]"]]),
+            # Incremental results
+            (["3"], [["001.html", "[1,\"N\"]", "[1,0]"], ["002.html", "[1,\"P\"]", "[1,0]"]]),
+            # Expected results
+            (["3", "2", "1"], [["002.html", "[1,\"P\"],[10,\"F\"]", "[11,0]"]]))
+
+        # Remove test where all run pass and max running time <= 1 seconds
+        self._test_merge(
+            # Aggregated results
+            (["2", "1"], [["001.html", "[200,\"P\"]", "[200,0]"], ["002.html", "[10,\"F\"]", "[10,0]"]]),
+            # Incremental results
+            (["3"], [["001.html", "[1,\"P\"]", "[1,1]"], ["002.html", "[1,\"P\"]", "[1,0]"]]),
+            # Expected results
+            (["3", "2", "1"], [["002.html", "[1,\"P\"],[10,\"F\"]", "[11,0]"]]))
+
+        # Do not remove test where all run pass but max running time > 1 seconds
+        self._test_merge(
+            # Aggregated results
+            (["2", "1"], [["001.html", "[200,\"P\"]", "[200,0]"], ["002.html", "[10,\"F\"]", "[10,0]"]]),
+            # Incremental results
+            (["3"], [["001.html", "[1,\"P\"]", "[1,2]"], ["002.html", "[1,\"P\"]", "[1,0]"]]),
+            # Expected results
+            (["3", "2", "1"], [["001.html", "[201,\"P\"]", "[1,2],[200,0]"], ["002.html", "[1,\"P\"],[10,\"F\"]", "[11,0]"]]))
+
+        # Remove items from test results and times that exceeds the max number
+        # of builds to track.
+        max_builds = str(jsonresults.JSON_RESULTS_MAX_BUILDS)
+        self._test_merge(
+            # Aggregated results
+            (["2", "1"], [["001.html", "[" + max_builds + ",\"F\"],[1,\"I\"]", "[" + max_builds + ",0],[1,1]"]]),
+            # Incremental results
+            (["3"], [["001.html", "[1,\"T\"]", "[1,1]"]]),
+            # Expected results
+            (["3", "2", "1"], [["001.html", "[1,\"T\"],[" + max_builds + ",\"F\"]", "[1,1],[" + max_builds + ",0]"]]))
 
 if __name__ == '__main__':
     unittest.main()

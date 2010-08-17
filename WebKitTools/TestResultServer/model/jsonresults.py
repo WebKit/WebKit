@@ -40,8 +40,11 @@ JSON_RESULTS_BUILD_NUMBERS = "buildNumbers"
 JSON_RESULTS_TESTS = "tests"
 JSON_RESULTS_RESULTS = "results"
 JSON_RESULTS_TIMES = "times"
+JSON_RESULTS_PASS = "P"
+JSON_RESULTS_NO_DATA = "N"
+JSON_RESULTS_MIN_TIME = 1
 JSON_RESULTS_VERSION = 3
-JSON_RESULTS_MAX_BUILDS = 750
+JSON_RESULTS_MAX_BUILDS = 1500
 
 
 class JsonResults(object):
@@ -218,13 +221,14 @@ class JsonResults(object):
                     results = incremental_test[JSON_RESULTS_RESULTS]
                     times = incremental_test[JSON_RESULTS_TIMES]
                 else:
-                    results = [[1, "P"]]
-                    times = [[1, "0"]]
+                    results = [[1, JSON_RESULTS_PASS]]
+                    times = [[1, 0]]
 
                 cls._insert_item_run_length_encoded(
                     results, aggregated_test[JSON_RESULTS_RESULTS])
                 cls._insert_item_run_length_encoded(
                     times, aggregated_test[JSON_RESULTS_TIMES])
+                cls._normalize_results_json(test_name, aggregated_json)
             else:
                 aggregated_json[test_name] = incremental_json[test_name]
 
@@ -243,15 +247,67 @@ class JsonResults(object):
                 aggregated_item[0][0] = min(
                     aggregated_item[0][0] + item[0], JSON_RESULTS_MAX_BUILDS)
             else:
-                # The test item values need to be summed from continuous runs.
-                # If there is an older item (not most recent one) whose value is
-                # same as the one to insert, then we should remove the old item
-                # from aggregated list.
-                for i in reversed(range(1, len(aggregated_item))):
-                    if item[1] == aggregated_item[i][1]:
-                        aggregated_item.pop(i)
-
                 aggregated_item.insert(0, item)
+
+    @classmethod
+    def _normalize_results_json(cls, test_name, aggregated_json):
+        """ Prune tests where all runs pass or tests that no longer exist and
+        truncate all results to JSON_RESULTS_MAX_BUILDS.
+
+        Args:
+          test_name: Name of the test.
+          aggregated_json: The JSON object with all the test results for
+                           this builder.
+        """
+
+        aggregated_test = aggregated_json[test_name]
+        aggregated_test[JSON_RESULTS_RESULTS] = \
+            cls._remove_items_over_max_number_of_builds(
+                aggregated_test[JSON_RESULTS_RESULTS])
+        aggregated_test[JSON_RESULTS_TIMES] = \
+            cls._remove_items_over_max_number_of_builds(
+                aggregated_test[JSON_RESULTS_TIMES])
+
+        is_all_pass = cls._is_results_all_of_type(
+            aggregated_test[JSON_RESULTS_RESULTS], JSON_RESULTS_PASS)
+        is_all_no_data = cls._is_results_all_of_type(
+            aggregated_test[JSON_RESULTS_RESULTS], JSON_RESULTS_NO_DATA)
+
+        max_time = max(
+            [time[1] for time in aggregated_test[JSON_RESULTS_TIMES]])
+        # Remove all passes/no-data from the results to reduce noise and
+        # filesize. If a test passes every run, but
+        # takes >= JSON_RESULTS_MIN_TIME to run, don't throw away the data.
+        if (is_all_no_data or
+           (is_all_pass and max_time < JSON_RESULTS_MIN_TIME)):
+            del aggregated_json[test_name]
+
+    @classmethod
+    def _remove_items_over_max_number_of_builds(cls, encoded_list):
+        """Removes items from the run-length encoded list after the final
+        item that exceeds the max number of builds to track.
+
+        Args:
+          encoded_results: run-length encoded results. An array of arrays, e.g.
+              [[3,'A'],[1,'Q']] encodes AAAQ.
+        """
+        num_builds = 0
+        index = 0
+        for result in encoded_list:
+            num_builds = num_builds + result[0]
+            index = index + 1
+            if num_builds > JSON_RESULTS_MAX_BUILDS:
+                return encoded_list[:index]
+
+        return encoded_list
+
+    @classmethod
+    def _is_results_all_of_type(cls, results, type):
+        """Returns whether all the results are of the given type
+        (e.g. all passes).
+        """
+
+        return len(results) == 1 and results[0][1] == type
 
     @classmethod
     def _check_json(cls, builder, json):

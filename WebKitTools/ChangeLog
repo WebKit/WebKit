@@ -1,3 +1,20 @@
+2010-08-17  Victor Wang  <victorw@chromium.org>
+
+        Reviewed by ojan@chromium.org.
+
+        Update test results server:
+        1. Normalize test results and times after merging (prune tests where
+           all runs pass or do not have data, truncate all test items to max
+           number of builds)
+        2. times should be int not string.
+        3. when inserting a new test item, should keep old data regardless
+           whether or not they have same item type with new one.
+
+        https://bugs.webkit.org/show_bug.cgi?id=43861
+
+        * TestResultServer/model/jsonresults.py:
+        * TestResultServer/model/jsonresults_unittest.py:
+
 2010-08-16  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.
