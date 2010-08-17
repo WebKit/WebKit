@@ -34,7 +34,6 @@
 
 #if ENABLE(BLOB) || ENABLE(FILE_WRITER)
 
-#include "FileStreamClient.h"
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -44,20 +43,22 @@ namespace WebCore {
 
 class Blob;
 class FileStream;
+class FileStreamClient;
 class FileThread;
 class ScriptExecutionContext;
 
-// A proxy module that calls corresponding FileStream methods on the file thread.  Note: you must call stop() first and then release the reference to destruct the FileStreamProxy instance.
-class FileStreamProxy : public RefCounted<FileStreamProxy>, public FileStreamClient {
+// A proxy module that asynchronously calls corresponding FileStream methods on the file thread.  Note: you must call stop() first and then release the reference to destruct the FileStreamProxy instance.
+class FileStreamProxy : public RefCounted<FileStreamProxy> {
 public:
     static PassRefPtr<FileStreamProxy> create(ScriptExecutionContext*, FileStreamClient*);
     virtual ~FileStreamProxy();
 
-    void openForRead(Blob* blob);
+    void getSize(const String& path, double expectedModificationTime);
+    void openForRead(const String& path, long long offset, long long length);
     void openForWrite(const String& path);
     void close();
     void read(char* buffer, int length);
-    void write(Blob* blob, long long position, int length);
+    void write(Blob*, long long position, int length);
     void truncate(long long position);
 
     // Stops the proxy and scedules it to be destructed.  All the pending tasks will be aborted and the file stream will be closed.
@@ -69,16 +70,18 @@ public:
 private:
     FileStreamProxy(ScriptExecutionContext*, FileStreamClient*);
 
-    // FileStreamClient methods.
-    virtual void didGetSize(long long);
-    virtual void didRead(const char*, int);
-    virtual void didWrite(int);
-    virtual void didFinish();
-    virtual void didFail(ExceptionCode);
-    virtual void didStart();
-    virtual void didStop();
-
     FileThread* fileThread();
+
+    // Called on File thread.
+    void startOnFileThread();
+    void stopOnFileThread();
+    void getSizeOnFileThread(const String& path, double expectedModificationTime);
+    void openForReadOnFileThread(const String& path, long long offset, long long length);
+    void openForWriteOnFileThread(const String& path);
+    void closeOnFileThread();
+    void readOnFileThread(char* buffer, int length);
+    void writeOnFileThread(Blob*, long long position, int length);
+    void truncateOnFileThread(long long position);
 
     RefPtr<ScriptExecutionContext> m_context;
     FileStreamClient* m_client;

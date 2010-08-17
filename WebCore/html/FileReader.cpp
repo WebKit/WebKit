@@ -160,33 +160,70 @@ void FileReader::terminate()
 void FileReader::didStart()
 {
     m_state = Opening;
-    m_streamProxy->openForRead(m_fileBlob.get());
+
+    ASSERT(m_fileBlob->items().size() == 1 && m_fileBlob->items().at(0)->toFileBlobItem());
+    const FileRangeBlobItem* fileRangeItem = m_fileBlob->items().at(0)->toFileRangeBlobItem();
+    double expectedModificationTime = fileRangeItem ? fileRangeItem->snapshotModificationTime() : 0;
+
+    m_streamProxy->getSize(m_fileBlob->path(), expectedModificationTime);
 }
 
 void FileReader::didGetSize(long long size)
 {
+    // If the size is -1, it means the file has been moved or changed. Fail now.
+    if (size == -1) {
+        didFail(NOT_FOUND_ERR);
+        return;
+    }
+
     m_state = Reading;
     fireEvent(eventNames().loadstartEvent);
 
-    m_totalBytes = size;
-    m_streamProxy->read(&m_buffer.at(0), m_buffer.size());
+    ASSERT(m_fileBlob->items().size() == 1 && m_fileBlob->items().at(0)->toFileBlobItem());
+    const FileRangeBlobItem* fileRangeItem = m_fileBlob->items().at(0)->toFileRangeBlobItem();
+    long long start = fileRangeItem ? fileRangeItem->start() : 0;
+
+    // The size passed back is the size of the whole file. If the underlying item is a sliced file, we need to use the slice length.
+    m_totalBytes = fileRangeItem ? fileRangeItem->size() : size;
+
+    m_streamProxy->openForRead(m_fileBlob->path(), start, m_totalBytes);
 }
 
-void FileReader::didRead(const char* data, int bytesRead)
+void FileReader::didOpen(ExceptionCode ec)
 {
-    ASSERT(data && bytesRead);
+    if (ec) {
+        didFail(ec);
+        return;
+    }
+    
+    m_streamProxy->read(m_buffer.data(), m_buffer.size());
+}
 
+void FileReader::didRead(int bytesRead)
+{
     // Bail out if we have aborted the reading.
     if (m_state == Completed)
-      return;
+        return;
+
+    // If bytesRead is -1, it means an error happens.
+    if (bytesRead == -1) {
+        didFail(NOT_READABLE_ERR);
+        return;
+    }
+
+    // If bytesRead is 0, it means the reading is done.
+    if (!bytesRead) {
+        didFinish();
+        return;
+    }
 
     switch (m_readType) {
     case ReadFileAsBinaryString:
-        m_result += String(data, static_cast<unsigned>(bytesRead));
+        m_result += String(m_buffer.data(), static_cast<unsigned>(bytesRead));
         break;
     case ReadFileAsText:
     case ReadFileAsDataURL:
-        m_rawData.append(data, static_cast<unsigned>(bytesRead));
+        m_rawData.append(m_buffer.data(), static_cast<unsigned>(bytesRead));
         m_isRawDataConverted = false;
         break;
     default:
@@ -205,7 +242,7 @@ void FileReader::didRead(const char* data, int bytesRead)
     }
 
     // Continue reading.
-    m_streamProxy->read(&m_buffer.at(0), m_buffer.size());
+    m_streamProxy->read(m_buffer.data(), m_buffer.size());
 }
 
 void FileReader::didFinish()

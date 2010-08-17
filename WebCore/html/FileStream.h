@@ -33,7 +33,7 @@
 
 #if ENABLE(BLOB) || ENABLE(FILE_WRITER)
 
-#include "FileStreamClient.h"
+#include "ExceptionCode.h"
 #include "FileSystem.h"
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
@@ -43,29 +43,52 @@ namespace WebCore {
 
 class Blob;
 
-// All methods are synchronous and should be called on File or Worker thread.
+// All methods are synchronous.
 class FileStream : public RefCounted<FileStream> {
 public:
-    static PassRefPtr<FileStream> create(FileStreamClient* client)
+    static PassRefPtr<FileStream> create()
     {
-        return adoptRef(new FileStream(client));
+        return adoptRef(new FileStream());
     }
     virtual ~FileStream();
 
+    // FIXME: To be removed when we switch to using BlobData.
     void start();
+
+    // Aborts the operation.
     void stop();
 
-    void openForRead(Blob*);
-    void openForWrite(const String& path);
+    // Gets the size of a file. Also validates if the file has been changed or not if the expected modification time is provided, i.e. non-zero.
+    // Returns total number of bytes if successful. -1 otherwise.
+    long long getSize(const String& path, double expectedModificationTime);
+
+    // Opens a file for reading. The reading starts at the specified offset and lasts till the specified length.
+    // Returns 0 on success. Exception code otherwise.
+    ExceptionCode openForRead(const String& path, long long offset, long long length);
+
+    // Opens a file for writing.
+    // Returns 0 on success. Exception code otherwise.
+    ExceptionCode openForWrite(const String& path);
+
+    // Closes the file.
     void close();
-    void read(char* buffer, int length);
-    void write(Blob* blob, long long position, int length);
-    void truncate(long long position);
+
+    // Reads a file into the provided data buffer.
+    // Returns number of bytes being read on success. -1 otherwise.
+    // If 0 is returned, it means that the reading is completed.
+    int read(char* buffer, int length);
+
+    // Writes a blob to the file.
+    // Returns number of bytes being written on success. -1 otherwise.
+    int write(Blob*, long long position, int length);
+
+    // Truncates the file to the specified position.
+    // Returns 0 on success. Exception code otherwise.
+    ExceptionCode truncate(long long position);
 
 private:
-    FileStream(FileStreamClient*);
+    FileStream();
 
-    FileStreamClient* m_client;
     PlatformFileHandle m_handle;
     long long m_bytesProcessed;
     long long m_totalBytesToRead;

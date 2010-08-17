@@ -89,9 +89,8 @@ public:
     // FileStreamClient
     virtual void didStart();
     virtual void didGetSize(long long);
-    virtual void didRead(const char*, int);
-    virtual void didFinish();
-    virtual void didFail(ExceptionCode);
+    virtual void didOpen(ExceptionCode);
+    virtual void didRead(int);
 
     using RefCounted<FileReader>::ref;
     using RefCounted<FileReader>::deref;
@@ -130,6 +129,8 @@ private:
     void fireEvent(const AtomicString& type);
     void convertToText();
     void convertToDataURL();
+    void didFinish();
+    void didFail(ExceptionCode);
 
     InternalState m_state;
     EventTargetData m_eventTargetData;

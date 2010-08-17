@@ -40,16 +40,18 @@ namespace WebCore {
 class FileStreamClient {
 public:
     // For reading.
-    virtual void didRead(const char*, int) { }
+    virtual void didRead(int) { }
 
     // For writing.
     virtual void didWrite(int) { }
+    virtual void didTruncate(ExceptionCode) { }
+
+    // FIXME: To be removed when we switch to using BlobData.
+    virtual void didStart() { }
 
     // For both reading and writing.
-    virtual void didStart() { }
+    virtual void didOpen(ExceptionCode) { }
     virtual void didStop() { }
-    virtual void didFinish() { }
-    virtual void didFail(ExceptionCode) { }
     virtual void didGetSize(long long) { }
 
 protected:

@@ -39,9 +39,8 @@
 
 namespace WebCore {
 
-FileStream::FileStream(FileStreamClient* client)
-    : m_client(client)
-    , m_handle(invalidPlatformFileHandle)
+FileStream::FileStream()
+    : m_handle(invalidPlatformFileHandle)
     , m_bytesProcessed(0)
     , m_totalBytesToRead(0)
 {
@@ -52,130 +51,99 @@ FileStream::~FileStream()
     ASSERT(!isHandleValid(m_handle));
 }
 
+// FIXME: To be removed when we switch to using BlobData.
 void FileStream::start()
 {
-    ASSERT(!isMainThread());
-    m_client->didStart();
 }
 
 void FileStream::stop()
 {
-    ASSERT(!isMainThread());
     close();
-    m_client->didStop();
 }
 
-void FileStream::openForRead(Blob* blob)
+long long FileStream::getSize(const String& path, double expectedModificationTime)
 {
-    ASSERT(!isMainThread());
+    // Check the modification time for the possible file change.
+    time_t modificationTime;
+    if (!getFileModificationTime(path, modificationTime))
+        return -1;
+    if (expectedModificationTime) {
+        if (static_cast<time_t>(expectedModificationTime) != modificationTime)
+            return -1;
+    }
 
+    // Now get the file size.
+    long long length;
+    if (!getFileSize(path, length))
+        return -1;
+
+    return length;
+}
+
+ExceptionCode FileStream::openForRead(const String& path, long long offset, long long length)
+{
     if (isHandleValid(m_handle))
-        return;
+        return 0;
 
-    // FIXME: Need to handle multiple items that may include non-file ones when BlobBuilder is introduced.
-    ASSERT(blob->items().size() >= 1);
-    const FileBlobItem* fileItem = blob->items().at(0)->toFileBlobItem();
-    if (!fileItem) {
-        ASSERT(false);
-        m_client->didFail(NOT_READABLE_ERR);
-        return;
+    // Open the file.
+    m_handle = openFile(path, OpenForRead);
+    if (!isHandleValid(m_handle))
+        return NOT_READABLE_ERR;
+
+    // Jump to the beginning position if the file has been sliced.
+    if (offset > 0) {
+        if (seekFile(m_handle, offset, SeekFromBeginning) < 0)
+            return NOT_READABLE_ERR;
     }
 
-    // Check if the file exists by querying its modification time. We choose not to call fileExists() in order to save an
-    // extra file system call when the modification time is needed to check the validity of the sliced file blob.
-    // Per the spec, we need to return different error codes to differentiate between non-existent file and permission error.
-    // openFile() could not tell use the failure reason.
-    time_t currentModificationTime;
-    if (!getFileModificationTime(fileItem->path(), currentModificationTime)) {
-        m_client->didFail(NOT_FOUND_ERR);
-        return;
-    }
+    m_totalBytesToRead = length;
+    m_bytesProcessed = 0;
 
-    // Open the file blob.
-    m_handle = openFile(fileItem->path(), OpenForRead);
-    if (!isHandleValid(m_handle)) {
-        m_client->didFail(NOT_READABLE_ERR);
-        return;
-    }
-
-    const FileRangeBlobItem* fileRangeItem = fileItem->toFileRangeBlobItem();
-    if (fileRangeItem) {
-        // Check the modificationt time for the possible file change.
-        if (static_cast<time_t>(fileRangeItem->snapshotModificationTime()) != currentModificationTime) {
-            m_client->didFail(NOT_READABLE_ERR);
-            return;
-        }
-
-        // Jump to the beginning position if the file has been sliced.
-        if (fileRangeItem->start() > 0) {
-            if (seekFile(m_handle, fileRangeItem->start(), SeekFromBeginning) < 0) {
-                m_client->didFail(NOT_READABLE_ERR);
-                return;
-            }
-        }
-    }
-
-    // Get the size.
-    m_totalBytesToRead = blob->size();
-    m_client->didGetSize(m_totalBytesToRead);
+    return 0;
 }
 
-void FileStream::openForWrite(const String&)
+ExceptionCode FileStream::openForWrite(const String&)
 {
-    ASSERT(!isMainThread());
     // FIXME: to be implemented.
+    return NOT_SUPPORTED_ERR;
 }
 
 void FileStream::close()
 {
-    ASSERT(!isMainThread());
     if (isHandleValid(m_handle)) {
         closeFile(m_handle);
         m_handle = invalidPlatformFileHandle;
     }
 }
 
-void FileStream::read(char* buffer, int length)
+int FileStream::read(char* buffer, int bufferSize)
 {
-    ASSERT(!isMainThread());
-
-    if (!isHandleValid(m_handle)) {
-        m_client->didFail(NOT_READABLE_ERR);
-        return;
-    }
-
-    if (m_bytesProcessed >= m_totalBytesToRead) {
-        m_client->didFinish();
-        return;
-    }
+    if (!isHandleValid(m_handle))
+        return -1;
 
     long long remaining = m_totalBytesToRead - m_bytesProcessed;
-    int bytesToRead = (remaining < length) ? static_cast<int>(remaining) : length;
-    int bytesRead = readFromFile(m_handle, buffer, bytesToRead);
-    if (bytesRead < 0) {
-        m_client->didFail(NOT_READABLE_ERR);
-        return;
-    }
+    int bytesToRead = (remaining < bufferSize) ? static_cast<int>(remaining) : bufferSize;
+    int bytesRead = 0;
+    if (bytesToRead > 0)
+        bytesRead = readFromFile(m_handle, buffer, bytesToRead);
+    if (bytesRead < 0)
+        return -1;
+    if (bytesRead > 0)
+        m_bytesProcessed += bytesRead;
 
-    if (!bytesRead) {
-        m_client->didFinish();
-        return;
-    }
-
-    m_bytesProcessed += bytesRead;
-    m_client->didRead(buffer, bytesRead);
+    return bytesRead;
 }
 
-void FileStream::write(Blob*, long long, int)
+int FileStream::write(Blob*, long long, int)
 {
-    ASSERT(!isMainThread());
     // FIXME: to be implemented.
+    return -1;
 }
 
-void FileStream::truncate(long long)
+ExceptionCode FileStream::truncate(long long)
 {
-    ASSERT(!isMainThread());
     // FIXME: to be implemented.
+    return NOT_SUPPORTED_ERR;
 }
 
 } // namespace WebCore
