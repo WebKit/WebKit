@@ -170,6 +170,9 @@ int readFromFile(PlatformFileHandle, char* data, int length);
 // Methods for dealing with loadable modules
 bool unloadModule(PlatformModule);
 
+// Encode a string for use within a file name.
+String encodeForFileName(const String&);
+
 #if PLATFORM(WIN)
 String localUserSpecificStorageDirectory();
 String roamingUserSpecificStorageDirectory();

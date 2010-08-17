@@ -877,6 +877,7 @@ SOURCES += \
     platform/DragData.cpp \
     platform/DragImage.cpp \
     platform/FileChooser.cpp \
+    platform/FileSystem.cpp \
     platform/GeolocationService.cpp \
     platform/image-decoders/qt/RGBA32BufferQt.cpp \
     platform/graphics/FontDescription.cpp \
@@ -1655,6 +1656,7 @@ HEADERS += \
     platform/DragData.h \
     platform/DragImage.h \
     platform/FileChooser.h \
+    platform/FileSystem.h \
     platform/GeolocationService.h \
     platform/image-decoders/ImageDecoder.h \
     platform/mock/DeviceOrientationClientMock.h \

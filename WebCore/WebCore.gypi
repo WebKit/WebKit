@@ -3058,6 +3058,7 @@
             'platform/EventLoop.h',
             'platform/FileChooser.cpp',
             'platform/FileChooser.h',
+            'platform/FileSystem.cpp',
             'platform/FileSystem.h',
             'platform/FloatConversion.h',
             'platform/GeolocationService.cpp',

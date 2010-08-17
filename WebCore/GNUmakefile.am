@@ -1905,6 +1905,7 @@ webcore_sources += \
 	WebCore/platform/EventLoop.h \
 	WebCore/platform/FileChooser.cpp \
 	WebCore/platform/FileChooser.h \
+	WebCore/platform/FileSystem.cpp \
 	WebCore/platform/FileSystem.h \
 	WebCore/platform/FloatConversion.h \
 	WebCore/platform/GeolocationService.cpp \

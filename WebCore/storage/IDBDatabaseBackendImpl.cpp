@@ -29,20 +29,87 @@
 #include "DOMStringList.h"
 #include "IDBDatabaseException.h"
 #include "IDBObjectStoreBackendImpl.h"
+#include "SQLiteDatabase.h"
+#include "SQLiteStatement.h"
 
 #if ENABLE(INDEXED_DATABASE)
 
 namespace WebCore {
 
-IDBDatabaseBackendImpl::IDBDatabaseBackendImpl(const String& name, const String& description, const String& version)
-    : m_name(name)
-    , m_description(description)
-    , m_version(version)
+static bool extractMetaData(SQLiteDatabase* sqliteDatabase, const String& expectedName, String& foundDescription, String& foundVersion)
 {
+    SQLiteStatement metaDataQuery(*sqliteDatabase, "SELECT name, description, version FROM MetaData");
+    if (metaDataQuery.prepare() != SQLResultOk || metaDataQuery.step() != SQLResultRow)
+        return false;
+
+    if (metaDataQuery.getColumnText(0) != expectedName) {
+        LOG_ERROR("Name in MetaData (%s) doesn't match expected (%s) for IndexedDB", metaDataQuery.getColumnText(0).utf8().data(), expectedName.utf8().data());
+        ASSERT_NOT_REACHED();
+    }
+    foundDescription = metaDataQuery.getColumnText(1);
+    foundVersion = metaDataQuery.getColumnText(2);
+
+    if (metaDataQuery.step() == SQLResultRow) {
+        LOG_ERROR("More than one row found in MetaData table");
+        ASSERT_NOT_REACHED();
+    }
+
+    return true;
+}
+
+static bool setMetaData(SQLiteDatabase* sqliteDatabase, const String& name, const String& description, const String& version)
+{
+    ASSERT(!name.isNull() && !description.isNull() && !version.isNull());
+
+    sqliteDatabase->executeCommand("DELETE FROM MetaData");
+
+    SQLiteStatement insert(*sqliteDatabase, "INSERT INTO MetaData (name, description, version) VALUES (?, ?, ?)");
+    if (insert.prepare() != SQLResultOk) {
+        LOG_ERROR("Failed to prepare MetaData insert statement for IndexedDB");
+        return false;
+    }
+
+    insert.bindText(1, name);
+    insert.bindText(2, description);
+    insert.bindText(3, version);
+
+    if (insert.step() != SQLResultDone) {
+        LOG_ERROR("Failed to insert row into MetaData for IndexedDB");
+        return false;
+    }
+
+    // FIXME: Should we assert there's only one row?
+
+    return true;
+}
+
+IDBDatabaseBackendImpl::IDBDatabaseBackendImpl(const String& name, const String& description, PassOwnPtr<SQLiteDatabase> sqliteDatabase)
+    : m_sqliteDatabase(sqliteDatabase)
+    , m_name(name)
+    , m_version("")
+{
+    ASSERT(!m_name.isNull());
+
+    // FIXME: The spec is in flux about how to handle description. Sync it up once a final decision is made.
+    String foundDescription = "";
+    bool result = extractMetaData(m_sqliteDatabase.get(), m_name, foundDescription, m_version);
+    m_description = description.isNull() ? foundDescription : description;
+
+    if (!result || m_description != foundDescription)
+        setMetaData(m_sqliteDatabase.get(), m_name, m_description, m_version);
 }
 
 IDBDatabaseBackendImpl::~IDBDatabaseBackendImpl()
 {
+}
+
+void IDBDatabaseBackendImpl::setDescription(const String& description)
+{
+    if (description == m_description)
+        return;
+
+    m_description = description;
+    setMetaData(m_sqliteDatabase.get(), m_name, m_description, m_version);
 }
 
 PassRefPtr<DOMStringList> IDBDatabaseBackendImpl::objectStores() const

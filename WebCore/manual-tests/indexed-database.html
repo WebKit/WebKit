@@ -1,0 +1,67 @@
+<html>
+<body>
+<p>This is a test that only applies to IndexedDB.  <span id=enabled>Our test for whether you have it enabled seems to have failed.</span></p>
+
+<p>This page opens up a database with the name "name" and a description of "description".  Result of open: <span id=result>Pending...</span></p>
+
+<p>The first time you open this page up, the message should be a success.  Now, lets make it fail.  Find where the associated .indexeddb file is
+   for this page, replace it with something that's not a sqlite database, and make it read only to your user.  Now close and re-open the browser.
+   When you re-open it, you should get an internal error from the page.</p>
+
+<p>Now delete all IndexedDB files (including the one you just made), restart the browser, and come back to this page.  It should start up fine again.</p>
+
+<p>Now click <a href="javascript:updateDescription()">here</a>, close the browser, come back, and click <a href="javascript:readDescription()">here</a>.  If everything worked well, this should be a success here: <span id=description>...</span></p>
+
+<p>That's it!</p>
+
+<script>
+
+    if (!('indexedDB' in window))
+        document.getElementById("enabled").innerHTML = "<font color=red>Your build does NOT seem to have it enabled.  So all code on this page is disabled.</font>";
+    else {
+        document.getElementById("enabled").innerHTML = "<font color=green>Your build seems to have it enabled.</font>";
+
+        request = indexedDB.open("name");
+        request.onsuccess = function() {
+            document.getElementById("result").innerHTML = "<font color=green>Success!</font>";
+            window.nameDB = event.result;
+        };
+        request.onerror = function() {
+            document.getElementById("result").innerHTML = "<font color=red>Error: " + event.message + ".</font>";
+        };
+
+        request = indexedDB.open("another", "test of the description attribute");
+        request.onsuccess = function() {
+            window.anotherDB = event.result;
+        };
+    }
+
+    function updateDescription()
+    {
+        indexedDB.open("name", "test of the description attribute");
+        indexedDB.open("another", "xyz");
+    }
+
+    function readDescription()
+    {
+        if (window.nameDB.description != "test of the description attribute") {
+            // Since we passed in nothing, the description should not be reset.
+            document.getElementById("description").innerHTML = "<font color=red>Failure: (Database 'name' was this: " + window.nameDB.description + ").</font>";
+        } else if (window.anotherDB.description != "test of the description attribute") {
+            // But in this case we did pass something in, so it should have been reset.
+            document.getElementById("description").innerHTML = "<font color=red>Failure: (Database 'another' was this: " + window.anotherDB.description + ").</font>";
+        } else {
+            request = indexedDB.open("another", "123");
+            request.onsuccess = function() {
+                // And here it should have been reset again.
+                if (event.result.description != "123")
+                    document.getElementById("description").innerHTML = "<font color=red>Failure: (Database 'another' was this: " + event.result.description + ").</font>";
+                else
+                    document.getElementById("description").innerHTML = "<font color=green>Success!</font>";
+            };
+        }
+    }
+
+</script>
+</body>
+</html>

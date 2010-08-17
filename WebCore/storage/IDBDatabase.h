@@ -52,7 +52,7 @@ public:
 
     // Implement the IDL
     String name() const { return m_backend->name(); }
-    String description() const { return m_backend->description(); }
+    String description() const { return m_description; }
     String version() const { return m_backend->version(); }
     PassRefPtr<DOMStringList> objectStores() const { return m_backend->objectStores(); }
 
@@ -65,6 +65,8 @@ private:
     IDBDatabase(PassRefPtr<IDBDatabaseBackendInterface>);
 
     RefPtr<IDBDatabaseBackendInterface> m_backend;
+
+    String m_description;
 };
 
 } // namespace WebCore

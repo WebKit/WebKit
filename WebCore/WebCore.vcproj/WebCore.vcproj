@@ -24021,6 +24021,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\FileSystem.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\FileSystem.h"
 				>
 			</File>

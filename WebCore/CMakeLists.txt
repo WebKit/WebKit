@@ -1218,6 +1218,7 @@ SET(WebCore_SOURCES
     platform/DragData.cpp
     platform/DragImage.cpp
     platform/FileChooser.cpp
+    platform/FileSystem.cpp
     platform/GeolocationService.cpp
     platform/KURL.cpp
     platform/KillRingNone.cpp

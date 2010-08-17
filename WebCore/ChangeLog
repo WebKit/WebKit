@@ -1,3 +1,51 @@
+2010-08-11  Jeremy Orlow  <jorlow@chromium.org>
+
+        Beginnings of IndexedDB persistance + IDBDatabase.description fleshed out
+        https://bugs.webkit.org/show_bug.cgi?id=43744
+
+        The beginnings of a SQLite backend for IndexedDB.  Right now, only persists
+        meta-data for the database.  The rest is coming in future patches.  Adds
+        a manual test to verify persistance.
+
+        Test: storage/indexeddb/database-description.html
+              + a manual test
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * manual-tests/indexed-database.html: Added.
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::databaseIdentifier):
+        * platform/FileSystem.cpp: Added.
+        (WebCore::):
+        (WebCore::shouldEscapeUChar):
+        (WebCore::encodeForFileName):
+        * platform/FileSystem.h:
+        * storage/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::IDBDatabase):
+        * storage/IDBDatabase.h:
+        (WebCore::IDBDatabase::description):
+        * storage/IDBDatabaseBackendImpl.cpp:
+        (WebCore::extractMetaData):
+        (WebCore::setMetaData):
+        (WebCore::IDBDatabaseBackendImpl::IDBDatabaseBackendImpl):
+        (WebCore::IDBDatabaseBackendImpl::setDescription):
+        * storage/IDBDatabaseBackendImpl.h:
+        (WebCore::IDBDatabaseBackendImpl::create):
+        * storage/IDBFactory.h:
+        * storage/IDBFactory.idl:
+        * storage/IDBFactoryBackendImpl.cpp:
+        (WebCore::IDBFactoryBackendImpl::IDBFactoryBackendImpl):
+        (WebCore::IDBFactoryBackendImpl::~IDBFactoryBackendImpl):
+        (WebCore::openSQLiteDatabase):
+        (WebCore::createTables):
+        (WebCore::IDBFactoryBackendImpl::open):
+        * storage/IDBFactoryBackendImpl.h:
+        (WebCore::IDBFactoryBackendImpl::create):
+
 2010-08-17  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Seidel.

@@ -54,7 +54,7 @@ public:
     }
     ~IDBFactory();
 
-    PassRefPtr<IDBRequest> open(ScriptExecutionContext*, const String& name, const String& description);
+    PassRefPtr<IDBRequest> open(ScriptExecutionContext*, const String& name, const String& description = String());
 
 private:
     IDBFactory(IDBFactoryBackendInterface*);

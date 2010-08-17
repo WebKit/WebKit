@@ -1,3 +1,20 @@
+2010-08-09  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Beginnings of IndexedDB persistance + IDBDatabase.description fleshed out
+        https://bugs.webkit.org/show_bug.cgi?id=43744
+
+        Add a layout test for IDBDatabase.description.
+
+        * storage/indexeddb/database-description-expected.txt: Added.
+        * storage/indexeddb/database-description.html: Added.
+        * storage/indexeddb/script-tests/database-description.js: Added.
+        (test):
+        (firstSuccess):
+        (secondSuccess):
+        (thirdSuccess):
+
 2010-08-17  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Revert r41142. Unskipped tests are still failing.
