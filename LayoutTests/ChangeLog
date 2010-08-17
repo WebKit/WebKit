@@ -1,3 +1,9 @@
+2010-08-17  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Revert r41142. Unskipped tests are still failing.
+
+        * platform/qt/Skipped:
+
 2010-08-17  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.
