@@ -255,9 +255,9 @@ void RedirectScheduler::scheduleRedirect(double delay, const String& url)
 
 bool RedirectScheduler::mustLockBackForwardList(Frame* targetFrame, bool wasUserGesture)
 {
-    // Non-user navigation before the page has loaded should not create a new back/forward item.
+    // Non-user navigation before the page has finished firing onload should not create a new back/forward item.
     // See https://webkit.org/b/42861 for the original motivation for this.    
-    if (!wasUserGesture && targetFrame->loader()->documentLoader() && targetFrame->loader()->documentLoader()->isLoadingInAPISense())
+    if (!wasUserGesture && targetFrame->loader()->documentLoader() && !targetFrame->loader()->documentLoader()->wasOnloadHandled())
         return true;
     
     // Navigation of a subframe during loading of an ancestor frame does not create a new back/forward item.

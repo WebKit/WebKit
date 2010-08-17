@@ -1,3 +1,23 @@
+2010-08-17  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Back button after Google search result click broken
+        https://bugs.webkit.org/show_bug.cgi?id=44086
+
+        Added a reduced test case of Google search result click behavior,
+        renamed gesture-before-onload-target.html to redirect-target.html
+        since it's useful for this test too.
+
+        * fast/history/gesture-before-onload-form-submit-expected.txt:
+        * fast/history/gesture-before-onload-form-submit.html:
+        * fast/history/gesture-before-onload-location-href-expected.txt:
+        * fast/history/gesture-before-onload-location-href.html:
+        * fast/history/redirect-via-iframe-expected.txt: Added.
+        * fast/history/redirect-via-iframe.html: Added.
+        * fast/history/resources/iframe-redirect.html: Added.
+        * fast/history/resources/redirect-target.html: Renamed from LayoutTests/fast/history/resources/gesture-before-onload-target.html.
+
 2010-08-17  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.

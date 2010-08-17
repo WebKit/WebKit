@@ -107,6 +107,8 @@ namespace WebCore {
         void prepareForLoadStart();
         bool isClientRedirect() const { return m_isClientRedirect; }
         void setIsClientRedirect(bool isClientRedirect) { m_isClientRedirect = isClientRedirect; }
+        void handledOnloadEvents() { m_wasOnloadHandled = true; }
+        bool wasOnloadHandled() { return m_wasOnloadHandled; }
         bool isLoadingInAPISense() const;
         void setPrimaryLoadComplete(bool);
         void setTitle(const String&);
@@ -265,6 +267,7 @@ namespace WebCore {
         bool m_gotFirstByte;
         bool m_primaryLoadComplete;
         bool m_isClientRedirect;
+        bool m_wasOnloadHandled;
 
         String m_pageTitle;
         String m_pageIconURL;

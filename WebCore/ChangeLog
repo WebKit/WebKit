@@ -1,3 +1,27 @@
+2010-08-17  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Back button after Google search result click broken
+        https://bugs.webkit.org/show_bug.cgi?id=44086
+
+        Test: fast/history/redirect-via-iframe.html
+        
+        isLoadingInAPISense doesn't quite map to onload (it also returns true
+        if frames are loading, even after the parent frame has fired its onload
+        handler). Instead, add a flag for the onload event being fired, and
+        use that.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::DocumentLoader):
+        * loader/DocumentLoader.h:
+        (WebCore::DocumentLoader::handledOnloadEvents):
+        (WebCore::DocumentLoader::wasOnloadHandled):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::handledOnloadEvents):
+        * loader/RedirectScheduler.cpp:
+        (WebCore::RedirectScheduler::mustLockBackForwardList):
+
 2010-08-17  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.

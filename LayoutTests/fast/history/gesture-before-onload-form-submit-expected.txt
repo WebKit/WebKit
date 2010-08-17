@@ -5,5 +5,5 @@ PASS: History item count should be 2 and is.
 
 ============== Back Forward List ==============
         (file test):fast/history/gesture-before-onload-form-submit.html  **nav target**
-curr->  (file test):fast/history/resources/gesture-before-onload-target.html?#2  **nav target**
+curr->  (file test):fast/history/resources/redirect-target.html?#2  **nav target**
 ===============================================
