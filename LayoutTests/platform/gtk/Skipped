@@ -44,7 +44,6 @@ http/tests/xmlhttprequest/XMLHttpRequestException.html
 http/tests/xmlhttprequest/connection-error-sync.html
 fast/xmlhttprequest/null-document-xmlhttprequest-open.html
 http/tests/misc/favicon-as-image.html
-media/invalid-media-url-crash.html
 media/unsupported-rtsp.html
 security/autocomplete-cleared-on-back.html
 http/tests/security/frameNavigation/cross-origin-opener.html

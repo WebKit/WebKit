@@ -1,3 +1,12 @@
+2010-08-17  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GStreamer] media/invalid-media-url-crash.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=42960
+
+        * platform/gtk/Skipped: Unskip fixed test
+
 2010-08-16  Yuta Kitamura  <yutak@chromium.org>
 
         Unreviewed test expectation update.

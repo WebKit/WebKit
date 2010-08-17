@@ -1,3 +1,18 @@
+2010-08-17  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GStreamer] media/invalid-media-url-crash.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=42960
+
+        Implemented two ResourceHandleClient callbacks that need to notify
+        downstream GStreamer elements of errors while accessing the
+        resource.
+
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (StreamingClient::wasBlocked):
+        (StreamingClient::cannotShowURL):
+
 2010-08-16  Gavin Barraclough  <barraclough@apple.com>
 
         Rubber stamped by Sam Weinig
