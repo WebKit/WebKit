@@ -1,3 +1,20 @@
+2010-08-17  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 44099 - REGRESSION(r65468): Crashes in StringImpl::find
+
+        Bug 44080 introuduced a couple of cases in which array bounds could be overrun.
+        One of these was fixed in r65493, this patch fixes the other and address the
+        concerns voiced in comment #6 by restructuring the loops to remove the code
+        dupliction without introducing an additional if check.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::find):
+        (WTF::StringImpl::findIgnoringCase):
+        (WTF::StringImpl::reverseFind):
+        (WTF::StringImpl::reverseFindIgnoringCase):
+
 2010-08-17  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Ariya Hidayat.
