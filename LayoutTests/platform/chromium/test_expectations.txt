@@ -3163,6 +3163,14 @@ BUG51869 : websocket/tests/frame-length-overflow.html = TEXT PASS
 
 BUG51854 WIN SLOW : http/tests/storage/callbacks-are-called-in-correct-context.html = PASS
 
+// Temporarily there until we baseline for Windows and Mac
+BUG43933 WIN MAC : tables/hittesting/filltable-stress.html = FAIL
+BUG43933 WIN MAC : tables/hittesting/filltable-rtl.html = FAIL
+BUG43933 WIN MAC : tables/hittesting/filltable-outline.html = FAIL
+BUG43933 WIN MAC : tables/hittesting/filltable-levels.html = FAIL
+BUG43933 WIN MAC : tables/hittesting/filltable-emptycells.html = FAIL
+BUG43933 WIN MAC : fast/table/simple_paint.html = FAIL
+
 // Regressions from r65229
 BUGWK43912 WIN LINUX : svg/W3C-SVG-1.1/masking-intro-01-f.svg = IMAGE
 BUGWK43912 WIN : svg/W3C-SVG-1.1/masking-mask-01-b.svg = IMAGE
@@ -3182,6 +3190,7 @@ BUGWK43912 WIN LINUX : svg/custom/mask-with-all-units.svg = IMAGE
 BUGWK43912 WIN LINUX : svg/custom/mask-with-default-value.svg = IMAGE
 BUGWK43912 WIN LINUX : svg/zoom/page/zoom-mask-with-percentages.svg = IMAGE
 BUGWK43912 WIN LINUX : svg/custom/absolute-sized-content-with-resources.xhtml = IMAGE
+
 // Same symptoms, failing as of r65449
 BUGWK43912 : svg/W3C-SVG-1.1/filters-color-01-b.svg = IMAGE
 BUGWK43912 : svg/W3C-SVG-1.1/filters-composite-02-b.svg = IMAGE

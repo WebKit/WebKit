@@ -1,3 +1,23 @@
+2010-08-17  Fady Samuel  <fsamuel@chromium.org>
+
+        Reviewed by David Hyatt.
+
+        Updated table cell hit testing and painting to use binary search instead of linear scan.
+
+        Improved Table Hit Testing and Painting Performance
+        https://bugs.webkit.org/show_bug.cgi?id=43933
+
+        Tests: fast/table/simple_paint.html
+               tables/hittesting/filltable-emptycells.html
+               tables/hittesting/filltable-levels.html
+               tables/hittesting/filltable-outline.html
+               tables/hittesting/filltable-rtl.html
+               tables/hittesting/filltable-stress.html
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::paintObject): Dirty rect determined using binary search.
+        (WebCore::RenderTableSection::nodeAtPoint): Cell hit determined using binary search
+
 2010-08-17  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Dave Hyatt.

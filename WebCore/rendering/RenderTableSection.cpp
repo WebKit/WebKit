@@ -25,7 +25,6 @@
 
 #include "config.h"
 #include "RenderTableSection.h"
-
 #include "CachedImage.h"
 #include "Document.h"
 #include "HitTestResult.h"
@@ -1012,38 +1011,43 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, int tx, int ty)
     
     // If some cell overflows, just paint all of them.
     if (!m_hasOverflowingCell) {
-        for (; startrow < totalRows; startrow++) {
-            if (ty + m_rowPos[startrow + 1] >= y - os)
-                break;
-        }
-        if (startrow == totalRows && ty + m_rowPos[totalRows] + table()->outerBorderBottom() >= y - os)
-            startrow--;
+        int relativeY = y - ty;
+        int top = relativeY - os;
+        // binary search to find a row
+        startrow = std::lower_bound(m_rowPos.begin(), m_rowPos.end(), top) - m_rowPos.begin();
 
-        for (; endrow > 0; endrow--) {
-            if (ty + m_rowPos[endrow - 1] <= y + h + os)
-                break;
-        }
+        // The binary search above gives us the first row with
+        // a y position >= the top of the paint rect. Thus, the previous
+        // may need to be repainted as well.
+        if (startrow == m_rowPos.size() || (startrow > 0 && (m_rowPos[startrow] >  top)))
+          --startrow;
+
+        int bottom = relativeY + h + os - 1;
+        endrow = std::lower_bound(m_rowPos.begin(), m_rowPos.end(), bottom) - m_rowPos.begin();
+        if ((endrow == m_rowPos.size()) || (endrow > 0 && m_rowPos[endrow - 1] == bottom))
+          --endrow;
+
         if (!endrow && ty + m_rowPos[0] - table()->outerBorderTop() <= y + h + os)
-            endrow++;
+            ++endrow;
     }
-
     unsigned startcol = 0;
     unsigned endcol = totalCols;
     // FIXME: Implement RTL.
     if (!m_hasOverflowingCell && style()->direction() == LTR) {
-        for (; startcol < totalCols; startcol++) {
-            if (tx + table()->columnPositions()[startcol + 1] >= x - os)
-                break;
-        }
-        if (startcol == totalCols && tx + table()->columnPositions()[totalCols] + table()->outerBorderRight() >= x - os)
-            startcol--;
+        int relativeX = x - tx;
+        int left = relativeX - os;
+        Vector<int>& columnPos = table()->columnPositions();
+        startcol = std::lower_bound(columnPos.begin(), columnPos.end(), left) - columnPos.begin();
+        if ((startcol == columnPos.size()) || (startcol > 0 && (columnPos[startcol] > left)))
+            --startcol;
 
-        for (; endcol > 0; endcol--) {
-            if (tx + table()->columnPositions()[endcol - 1] <= x + w + os)
-                break;
-        }
+        int right = relativeX + w + os - 1;
+        endcol = std::lower_bound(columnPos.begin(), columnPos.end(), right) - columnPos.begin();
+        if (endcol == columnPos.size() || (endcol > 0 && (columnPos[endcol - 1] == right)))
+            --endcol;
+
         if (!endcol && tx + table()->columnPositions()[0] - table()->outerBorderLeft() <= y + w + os)
-            endcol++;
+            ++endcol;
     }
     if (startcol < endcol) {
         if (!m_hasMultipleCellLevels) {
@@ -1173,6 +1177,10 @@ void RenderTableSection::splitColumn(int pos, int first)
 // Hit Testing
 bool RenderTableSection::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int xPos, int yPos, int tx, int ty, HitTestAction action)
 {
+    // If we have no children then we have nothing to do.
+    if (!firstChild())
+        return false;
+
     // Table sections cannot ever be hit tested.  Effectively they do not exist.
     // Just forward to our children always.
     tx += x();
@@ -1181,17 +1189,56 @@ bool RenderTableSection::nodeAtPoint(const HitTestRequest& request, HitTestResul
     if (hasOverflowClip() && !overflowClipRect(tx, ty).intersects(result.rectFromPoint(xPos, yPos)))
         return false;
 
-    for (RenderObject* child = lastChild(); child; child = child->previousSibling()) {
-        // FIXME: We have to skip over inline flows, since they can show up inside table rows
-        // at the moment (a demoted inline <form> for example). If we ever implement a
-        // table-specific hit-test method (which we should do for performance reasons anyway),
-        // then we can remove this check.
-        if (child->isBox() && !toRenderBox(child)->hasSelfPaintingLayer() && child->nodeAtPoint(request, result, xPos, yPos, tx, ty, action)) {
+    if (m_hasOverflowingCell) {
+        for (RenderObject* child = lastChild(); child; child = child->previousSibling()) {
+            // FIXME: We have to skip over inline flows, since they can show up inside table rows
+            // at the moment (a demoted inline <form> for example). If we ever implement a
+            // table-specific hit-test method (which we should do for performance reasons anyway),
+            // then we can remove this check.
+            if (child->isBox() && !toRenderBox(child)->hasSelfPaintingLayer() && child->nodeAtPoint(request, result, xPos, yPos, tx, ty, action)) {
+                updateHitTestResult(result, IntPoint(xPos - tx, yPos - ty));
+                return true;
+            }
+        }
+        return false;
+    }
+
+    int relativeY = yPos - ty;
+    // leftrow corresponds to the first row that starts after the y mouse position
+    unsigned leftrow = std::upper_bound(m_rowPos.begin(), m_rowPos.end(), relativeY) - m_rowPos.begin();
+    if (leftrow == m_rowPos.size())
+        return false;
+    // Grab the last row that starts before the y mouse position.
+    if (leftrow > 0)
+        --leftrow;
+
+    Vector<int>& columnPos = table()->columnPositions();
+    bool rtl = style()->direction() == RTL;
+    int relativeX = xPos - tx;
+    if (rtl)
+        relativeX = columnPos[columnPos.size() - 1] - relativeX;
+
+    unsigned leftcol = std::lower_bound(columnPos.begin(), columnPos.end(), relativeX) - columnPos.begin();
+    if (leftcol == columnPos.size())
+        return false;
+    if (leftcol > 0)
+        --leftcol;
+
+    CellStruct& current = cellAt(leftrow, leftcol);
+
+    // If the cell is empty, there's nothing to do
+    if (!current.hasCells())
+        return false;
+
+    for (int i = current.cells.size() - 1; i >= 0; --i) {
+        RenderTableCell* cell = current.cells[i];
+        if (static_cast<RenderObject*>(cell)->nodeAtPoint(request, result, xPos, yPos, tx, ty, action)) {
             updateHitTestResult(result, IntPoint(xPos - tx, yPos - ty));
             return true;
         }
     }
     return false;
+
 }
 
 } // namespace WebCore
