@@ -1,3 +1,16 @@
+2010-08-17  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        Geolocation clearWatch() needs to protect against invalid IDs
+        https://bugs.webkit.org/show_bug.cgi?id=44096
+
+        * fast/dom/Geolocation/clear-watch-invalid-id-crash-expected.txt: Added.
+        * fast/dom/Geolocation/clear-watch-invalid-id-crash.html: Added.
+        * fast/dom/Geolocation/script-tests/clear-watch-invalid-id-crash.js: Added.
+        * fast/dom/Geolocation/script-tests/notimer-after-unload.js:
+        (document.body.onload):
+
 2010-08-17  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Pavel Feldman.
