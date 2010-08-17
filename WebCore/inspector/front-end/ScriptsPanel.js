@@ -403,7 +403,7 @@ WebInspector.ScriptsPanel.prototype = {
             if (result)
                 callback(WebInspector.RemoteObject.fromPayload(result));
         }
-        InjectedScriptAccess.get(callFrame.injectedScriptId).evaluateInCallFrame(callFrame.id, code, objectGroup, evalCallback);
+        InjectedScriptAccess.get(callFrame.worldId).evaluateInCallFrame(callFrame.id, code, objectGroup, evalCallback);
     },
 
     debuggerPaused: function(callFrames)

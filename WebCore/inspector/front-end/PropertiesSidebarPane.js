@@ -59,7 +59,7 @@ WebInspector.PropertiesSidebarPane.prototype = {
                 body.appendChild(section.element);
             }
         };
-        InjectedScriptAccess.get(-node.id).getPrototypes(node.id, callback);
+        InjectedScriptAccess.getForNode(node).getPrototypes(node.id, callback);
     }
 }
 

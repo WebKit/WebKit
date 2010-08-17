@@ -342,7 +342,7 @@ WebInspector.ConsoleView.prototype = {
         var injectedScriptAccess;
         if (WebInspector.panels.scripts && WebInspector.panels.scripts.paused) {
             var selectedCallFrame = WebInspector.panels.scripts.sidebarPanes.callstack.selectedCallFrame;
-            injectedScriptAccess = InjectedScriptAccess.get(selectedCallFrame.injectedScriptId);
+            injectedScriptAccess = InjectedScriptAccess.get(selectedCallFrame.worldId);
         } else
             injectedScriptAccess = InjectedScriptAccess.getDefault();
         injectedScriptAccess.getCompletions(expressionString, includeInspectorCommandLineAPI, callFrameId, reportCompletions);

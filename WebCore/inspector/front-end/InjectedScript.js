@@ -46,7 +46,7 @@ InjectedScript.prototype = {
         return result;
     },
 
-    _wrapObject: function(object, objectGroupName)
+    _wrapObject: function(object, objectGroupName, abbreviate)
     {
         try {
             var objectId;
@@ -61,9 +61,9 @@ InjectedScript.prototype = {
                     this._objectGroups[objectGroupName] = group;
                 }
                 group.push(id);
-                objectId = new InjectedScript.RemoteObjectId(InjectedScript.RemoteObjectId.Type.JsObject, id);
+                objectId = new InjectedScript.RemoteObjectId(id, objectGroupName);
             }
-            return InjectedScript.RemoteObject.fromObject(object, objectId);
+            return InjectedScript.RemoteObject.fromObject(object, objectId, abbreviate);
         } catch (e) {
             return InjectedScript.RemoteObject.fromObject("[ Exception: " + e.toString() + " ]");
         }
@@ -92,19 +92,17 @@ InjectedScript.prototype = {
 
     getPrototypes: function(nodeId)
     {
+        this.releaseWrapperObjectGroup("prototypes");
         var node = this._nodeForId(nodeId);
         if (!node)
             return false;
-    
+
         var result = [];
         var prototype = node;
-        var prototypeId = new InjectedScript.RemoteObjectId(InjectedScript.RemoteObjectId.Type.Node, nodeId);
         do {
-            result.push(InjectedScript.RemoteObject.fromObject(prototype, prototypeId));
+            result.push(this._wrapObject(prototype, "prototypes"));
             prototype = prototype.__proto__;
-            prototypeId = InjectedScript.RemoteObjectId.deriveProperty(prototypeId, "__proto__");
         } while (prototype)
-    
         return result;
     },
 
@@ -114,7 +112,7 @@ InjectedScript.prototype = {
         if (!this._isDefined(object))
             return false;
         var properties = [];
-        
+
         var propertyNames = ignoreHasOwnProperty ? this._getPropertyNames(object) : Object.getOwnPropertyNames(object);
         if (!ignoreHasOwnProperty && object.__proto__)
             propertyNames.push("__proto__");
@@ -128,10 +126,7 @@ InjectedScript.prototype = {
             var isGetter = object["__lookupGetter__"] && object.__lookupGetter__(propertyName);
             if (!isGetter) {
                 try {
-                    var childObject = object[propertyName];
-                    var childObjectId = InjectedScript.RemoteObjectId.deriveProperty(objectId, propertyName);
-                    var childObjectProxy = new InjectedScript.RemoteObject.fromObject(childObject, childObjectId, abbreviate);
-                    property.value = childObjectProxy;
+                    property.value = this._wrapObject(object[propertyName], objectId.groupName, abbreviate);
                 } catch(e) {
                     property.value = new InjectedScript.RemoteObject.fromException(e);
                 }
@@ -209,7 +204,7 @@ InjectedScript.prototype = {
                 if (!callFrame)
                     return props;
                 if (expression)
-                    expressionResult = this._evaluateOn(callFrame.evaluate, callFrame, expression, true);
+                    expressionResult = this._evaluateOn(callFrame.evaluate, callFrame, expression);
                 else {
                     // Evaluate into properties in scope of the selected call frame.
                     var scopeChain = callFrame.scopeChain;
@@ -219,7 +214,7 @@ InjectedScript.prototype = {
             } else {
                 if (!expression)
                     expression = "this";
-                expressionResult = this._evaluateOn(inspectedWindow.eval, inspectedWindow, expression, false);
+                expressionResult = this._evaluateOn(inspectedWindow.eval, inspectedWindow, expression);
             }
             if (typeof expressionResult === "object")
                 this._populatePropertyNames(expressionResult, props);
@@ -238,31 +233,26 @@ InjectedScript.prototype = {
         return this._evaluateAndWrap(inspectedWindow.eval, inspectedWindow, expression, objectGroup);
     },
 
-    _evaluateAndWrap: function(evalFunction, object, expression, objectGroup, dontUseCommandLineAPI)
+    _evaluateAndWrap: function(evalFunction, object, expression, objectGroup)
     {
         try {
-            return this._wrapObject(this._evaluateOn(evalFunction, object, expression, dontUseCommandLineAPI), objectGroup);
+            return this._wrapObject(this._evaluateOn(evalFunction, object, expression), objectGroup);
         } catch (e) {
             return InjectedScript.RemoteObject.fromException(e);
         }
     },
 
-    _evaluateOn: function(evalFunction, object, expression, dontUseCommandLineAPI)
+    _evaluateOn: function(evalFunction, object, expression)
     {
-        if (!dontUseCommandLineAPI) {
-            // Only install command line api object for the time of evaluation.
+        // Only install command line api object for the time of evaluation.
+        // Surround the expression in with statements to inject our command line API so that
+        // the window object properties still take more precedent than our API functions.
+        inspectedWindow.console._commandLineAPI = this._commandLineAPI;
     
-            // Surround the expression in with statements to inject our command line API so that
-            // the window object properties still take more precedent than our API functions.
-            inspectedWindow.console._commandLineAPI = this._commandLineAPI;
-    
-            expression = "with (window.console._commandLineAPI) { with (window) {\n" + expression + "\n} }";
-        }
-    
+        expression = "with (window.console._commandLineAPI) { with (window) {\n" + expression + "\n} }";
         var value = evalFunction.call(object, expression);
     
-        if (!dontUseCommandLineAPI)
-            delete inspectedWindow.console._commandLineAPI;
+        delete inspectedWindow.console._commandLineAPI;
     
         // When evaluating on call frame error is not thrown, but returned as a value.
         if (this._type(value) === "error")
@@ -282,6 +272,7 @@ InjectedScript.prototype = {
         if (!callFrame)
             return false;
     
+        injectedScript.releaseWrapperObjectGroup("backtrace");
         var result = [];
         var depth = 0;
         do {
@@ -296,7 +287,7 @@ InjectedScript.prototype = {
         var callFrame = this._callFrameForId(callFrameId);
         if (!callFrame)
             return false;
-        return this._evaluateAndWrap(callFrame.evaluate, callFrame, code, objectGroup, true);
+        return this._evaluateAndWrap(callFrame.evaluate, callFrame, code, objectGroup);
     },
 
     _callFrameForId: function(id)
@@ -316,31 +307,27 @@ InjectedScript.prototype = {
 
     _objectForId: function(objectId)
     {
-        // There are three types of object ids used:
-        // - numbers point to DOM Node via the InspectorDOMAgent mapping
-        // - strings point to console objects cached in InspectorController for lazy evaluation upon them
-        // - objects contain complex ids and are currently used for scoped objects
-        var object;
-        if (objectId.type === InjectedScript.RemoteObjectId.Type.Node)
-            object = this._nodeForId(objectId.value);
-        else if (objectId.type === InjectedScript.RemoteObjectId.Type.JsObject)
-            object = this._idToWrappedObject[objectId.value];
-        else if (objectId.type === InjectedScript.RemoteObjectId.Type.ScopeObject) {
-            var callFrame = this._callFrameForId(objectId.value.callFrame);
-            if (objectId.thisObject)
-                object = callFrame.thisObject;
-            else
-                object = callFrame.scopeChain[objectId.value.chainIndex];
-        } else
-            return objectId;
-    
-        var path = objectId.path;
-    
-        // Follow the property path.
-        for (var i = 0; this._isDefined(object) && path && i < path.length; ++i)
-            object = object[path[i]];
-    
-        return object;
+        return this._idToWrappedObject[objectId.id];
+    },
+
+    resolveNode: function(nodeId)
+    {
+        var node = this._nodeForId(nodeId);
+        if (!node)
+            return false;
+        // FIXME: receive the object group from client.
+        return this._wrapObject(node, "prototype");
+    },
+
+    getNodeProperties: function(nodeId, properties)
+    {
+        var node = this._nodeForId(nodeId);
+        if (!node)
+            return false;
+        var result = {};
+        for (var i = 0; i < properties.length; ++i)
+            result[properties[i]] = node[properties[i]];
+        return result;
     },
 
     pushNodeToFrontend: function(objectId)
@@ -421,6 +408,7 @@ InjectedScript.prototype = {
         switch (type) {
         case "object":
         case "node":
+            return this._className(obj);
         case "array":
             var className = this._className(obj);
             if (typeof obj.length === "number")
@@ -510,25 +498,11 @@ InjectedScript.prototype = {
 var injectedScript = new InjectedScript();
 
 // FIXME: RemoteObjectId and RemoteObject structs must match the WebInspector.* ones. Should reuse same file instead.
-InjectedScript.RemoteObjectId = function(type, value, path)
+InjectedScript.RemoteObjectId = function(id, groupName)
 {
-    this.injectedScriptId = injectedScriptId;
-    this.type = type;
-    this.value = value;
-    this.path = path || [];
-}
-
-InjectedScript.RemoteObjectId.Type = {
-    Node: "node",
-    JsObject: "jsObject",
-    ScopeObject: "scopeObject"
-}
-
-InjectedScript.RemoteObjectId.deriveProperty = function(objectId, propertyName)
-{
-    var path = objectId.path.slice() || [];
-    path.push(propertyName);
-    return new InjectedScript.RemoteObjectId(objectId.type, objectId.value, path);
+    this.worldId = injectedScriptId;
+    this.id = id;
+    this.groupName = groupName;
 }
 
 InjectedScript.RemoteObject = function(objectId, type, description, hasChildren)
@@ -566,7 +540,7 @@ InjectedScript.CallFrameProxy = function(id, callFrame)
     this.sourceID = callFrame.sourceID;
     this.line = callFrame.line;
     this.scopeChain = this._wrapScopeChain(callFrame);
-    this.injectedScriptId = injectedScriptId;
+    this.worldId = injectedScriptId;
 }
 
 InjectedScript.CallFrameProxy.prototype = {
@@ -584,15 +558,13 @@ InjectedScript.CallFrameProxy.prototype = {
         for (var i = 0; i < scopeChain.length; i++) {
             var scopeType = callFrame.scopeType(i);
             var scopeObject = scopeChain[i];
-            var scopeObjectId = new InjectedScript.RemoteObjectId(InjectedScript.RemoteObjectId.Type.ScopeObject, { callFrame: this.id, chainIndex: i });
-            var scopeObjectProxy = InjectedScript.RemoteObject.fromObject(scopeObject, scopeObjectId, true);
+            var scopeObjectProxy = injectedScript._wrapObject(scopeObject, "backtrace", true);
 
             switch(scopeType) {
                 case LOCAL_SCOPE: {
                     foundLocalScope = true;
                     scopeObjectProxy.isLocal = true;
-                    var thisObjectId = new InjectedScript.RemoteObjectId(InjectedScript.RemoteObjectId.Type.ScopeObject, { callFrame: this.id, thisObject: true });
-                    scopeObjectProxy.thisObject = InjectedScript.RemoteObject.fromObject(callFrame.thisObject, thisObjectId, true);
+                    scopeObjectProxy.thisObject = injectedScript._wrapObject(callFrame.thisObject, "backtrace", true);
                     break;
                 }
                 case CLOSURE_SCOPE: {

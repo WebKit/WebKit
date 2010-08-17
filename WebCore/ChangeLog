@@ -1,3 +1,29 @@
+2010-08-17  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: get rid of node and scoped object-specific ids.
+        https://bugs.webkit.org/show_bug.cgi?id=44097
+
+        * inspector/front-end/ConsoleView.js:
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype._createTooltipForNode):
+        * inspector/front-end/EventListenersSidebarPane.js:
+        * inspector/front-end/InjectedScript.js:
+        (injectedScriptConstructor.):
+        (injectedScriptConstructor):
+        * inspector/front-end/InjectedScriptAccess.js:
+        (InjectedScriptAccess):
+        (InjectedScriptAccess.getForNode):
+        (InjectedScriptAccess._installHandler.InjectedScriptAccess.prototype.methodName):
+        (InjectedScriptAccess._installHandler):
+        * inspector/front-end/PropertiesSidebarPane.js:
+        (WebInspector.PropertiesSidebarPane.prototype.update):
+        * inspector/front-end/RemoteObject.js:
+        (WebInspector.RemoteObjectId):
+        (WebInspector.RemoteObject.resolveNode):
+        * inspector/front-end/ScriptsPanel.js:
+
 2010-08-17  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.

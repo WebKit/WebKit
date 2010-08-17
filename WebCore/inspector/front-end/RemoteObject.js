@@ -28,12 +28,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.RemoteObjectId = function(injectedScriptId, type, value, path)
+WebInspector.RemoteObjectId = function(worldId, id, groupName)
 {
-    this.injectedScriptId = injectedScriptId;
-    this.type = type;
-    this.value = value;
-    this.path = path || [];
+    this.worldId = worldId;
+    this.id = id;
+    this.groupName = groupName;
 }
 
 WebInspector.RemoteObject = function(objectId, type, description, hasChildren)
@@ -49,10 +48,13 @@ WebInspector.RemoteObject.fromPrimitiveValue = function(value)
     return new WebInspector.RemoteObject(null, typeof value, value);
 }
 
-WebInspector.RemoteObject.fromNode = function(node, path)
+WebInspector.RemoteObject.resolveNode = function(node, callback)
 {
-    var objectId = new WebInspector.RemoteObjectId(-node.id, "node", node.id, path);
-    return new WebInspector.RemoteObject(objectId, "node", appropriateSelectorForNode(node), true);
+    function mycallback(object)
+    {
+        callback(object ? WebInspector.RemoteObject.fromPayload(object) : null);
+    }
+    InjectedScriptAccess.getForNode(node).resolveNode(node.id, mycallback);
 }
 
 WebInspector.RemoteObject.fromPayload = function(payload)
@@ -101,24 +103,6 @@ WebInspector.RemoteObject.prototype = {
         return this._type === "error";
     },
 
-    getPropertyValueDescriptions: function(propertiesToQueryFor, callback)
-    {
-        function createPropertiesMapThenCallback(propertiesPayload)
-        {
-            if (!propertiesPayload) {
-                callback();
-                return;
-            }
-    
-            var result = {};
-            for (var i = 0; i < propertiesPayload.length; ++i)
-                if (propertiesToQueryFor.indexOf(propertiesPayload[i].name) !== -1)
-                    result[propertiesPayload[i].name] = propertiesPayload[i].value.description;
-            callback(result);
-        }
-        this.getProperties(true, false, createPropertiesMapThenCallback);
-    },
-
     getOwnProperties: function(abbreviate, callback)
     {
         this.getProperties(false, abbreviate, callback);
@@ -136,7 +120,7 @@ WebInspector.RemoteObject.prototype = {
                 properties[i].value = WebInspector.RemoteObject.fromPayload(properties[i].value);
             callback(properties);
         }
-        InjectedScriptAccess.get(this._objectId.injectedScriptId).getProperties(this._objectId, ignoreHasOwnProperty, abbreviate, remoteObjectBinder);
+        InjectedScriptAccess.get(this._objectId.worldId).getProperties(this._objectId, ignoreHasOwnProperty, abbreviate, remoteObjectBinder);
     },
 
     setPropertyValue: function(name, value, callback)
@@ -145,12 +129,12 @@ WebInspector.RemoteObject.prototype = {
             callback(false);
             return;
         }
-        InjectedScriptAccess.get(this._objectId.injectedScriptId).setPropertyValue(this._objectId, name, value, callback);
+        InjectedScriptAccess.get(this._objectId.worldId).setPropertyValue(this._objectId, name, value, callback);
     },
 
     pushNodeToFrontend: function(callback)
     {
-        InjectedScriptAccess.get(this._objectId.injectedScriptId).pushNodeToFrontend(this._objectId, callback);
+        InjectedScriptAccess.get(this._objectId.worldId).pushNodeToFrontend(this._objectId, callback);
     }
 }
 
