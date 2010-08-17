@@ -209,21 +209,42 @@ void ContextShadow::drawShadowRect(QPainter* p, const QRectF& rect)
         return;
 
     if (type == BlurShadow) {
+        QRectF shadowRect = rect.translated(offset);
+
         // We expand the area by the blur radius * 2 to give extra space
         // for the blur transition.
         int extra = blurRadius * 2;
-        QRect imageRect = rect.toAlignedRect().adjusted(-extra, -extra, extra, extra);
+        QRectF bufferRect = shadowRect.adjusted(-extra, -extra, extra, extra);
+        QRect alignedBufferRect = bufferRect.toAlignedRect();
 
-        QImage shadowImage(imageRect.size(), QImage::Format_ARGB32_Premultiplied);
+        QRect clipRect;
+        if (p->hasClipping())
+            clipRect = p->clipRegion().boundingRect();
+        else
+            clipRect = p->transform().inverted().mapRect(p->window());
+
+        if (!clipRect.contains(alignedBufferRect)) {
+
+            // No need to have the buffer larger that the clip.
+            alignedBufferRect = alignedBufferRect.intersected(clipRect);
+            if (alignedBufferRect.isEmpty())
+                return;
+
+            // We adjust again because the pixels at the borders are still
+            // potentially affected by the pixels outside the buffer.
+            alignedBufferRect.adjust(-extra, -extra, extra, extra);
+        }
+
+        QImage shadowImage(alignedBufferRect.size(), QImage::Format_ARGB32_Premultiplied);
         shadowImage.fill(Qt::transparent);
         QPainter shadowPainter(&shadowImage);
-        shadowPainter.fillRect(rect.x() - imageRect.x(), rect.y() - imageRect.y(),
-                               rect.width(), rect.height(), color);
+
+        shadowPainter.fillRect(shadowRect.translated(-alignedBufferRect.topLeft()), color);
         shadowPainter.end();
 
         shadowBlur(shadowImage, blurRadius, color);
 
-        p->drawImage(imageRect.topLeft() + offset, shadowImage);
+        p->drawImage(alignedBufferRect.topLeft(), shadowImage);
 
         return;
     }
