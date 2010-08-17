@@ -1,3 +1,15 @@
+2010-08-17  Chris Marrin  <cmarrin@apple.com>
+
+        Unreviewed.
+
+        Got rid of link errors in WebCore.
+
+        Changed GCC_INLINES_ARE_PRIVATE_EXTERN to YES and
+        GCC_SYMBOLS_PRIVATE_EXTERN to NO to match WebCore
+        flags.
+
+        * ANGLE.xcodeproj/project.pbxproj:
+
 2010-08-04  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Dimitri Glazkov.
