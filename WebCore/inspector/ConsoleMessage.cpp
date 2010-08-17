@@ -126,17 +126,19 @@ void ConsoleMessage::addToFrontend(RemoteInspectorFrontend* frontend, InjectedSc
     jsonObj->setNumber("repeatCount", static_cast<int>(m_repeatCount));
     jsonObj->setString("message", m_message);
     if (!m_arguments.isEmpty()) {
-        RefPtr<InspectorArray> jsonArgs = InspectorArray::create();
         InjectedScript injectedScript = injectedScriptHost->injectedScriptFor(m_scriptState.get());
-        for (unsigned i = 0; i < m_arguments.size(); ++i) {
-            RefPtr<InspectorValue> inspectorValue = injectedScript.wrapForConsole(m_arguments[i]);
-            if (!inspectorValue) {
-                ASSERT_NOT_REACHED();
-                return;
+        if (!injectedScript.hasNoValue()) {
+            RefPtr<InspectorArray> jsonArgs = InspectorArray::create();
+            for (unsigned i = 0; i < m_arguments.size(); ++i) {
+                RefPtr<InspectorValue> inspectorValue = injectedScript.wrapForConsole(m_arguments[i]);
+                if (!inspectorValue) {
+                    ASSERT_NOT_REACHED();
+                    return;
+                }
+                jsonArgs->pushValue(inspectorValue);
             }
-            jsonArgs->pushValue(inspectorValue);
+            jsonObj->setArray("parameters", jsonArgs);
         }
-        jsonObj->setArray("parameters", jsonArgs);
     }
     if (!m_frames.isEmpty()) {
         RefPtr<InspectorArray> frames = InspectorArray::create();

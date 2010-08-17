@@ -185,7 +185,7 @@ void Console::addMessage(MessageType type, MessageLevel level, ScriptCallStack* 
         page->chrome()->client()->addMessageToConsole(JSMessageSource, type, level, message, lastCaller.lineNumber(), lastCaller.sourceURL().prettyURL());
 
 #if ENABLE(INSPECTOR)
-    page->inspectorController()->addMessageToConsole(JSMessageSource, type, level, callStack);
+    page->inspectorController()->addMessageToConsole(JSMessageSource, type, level, callStack, message);
 #endif
 
     if (!Console::shouldPrintExceptions())
