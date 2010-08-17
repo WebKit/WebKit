@@ -43,11 +43,6 @@ class NativeImageSkia : public SkBitmap {
 public:
     NativeImageSkia();
 
-    // This constructor does a shallow copy of the passed-in SkBitmap (ie., it
-    // references the same pixel data and bumps the refcount).  Use only when
-    // you want sharing semantics.
-    explicit NativeImageSkia(const SkBitmap&);
-
     // Returns the number of bytes of image data. This includes the cached
     // resized version if there is one.
     int decodedSize() const;

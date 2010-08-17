@@ -1,3 +1,24 @@
+2010-08-17  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r65528.
+        http://trac.webkit.org/changeset/65528
+        https://bugs.webkit.org/show_bug.cgi?id=44123
+
+        "Broke a bunch of canvas tests on Chrome win/linux."
+        (Requested by senorblanco on #webkit).
+
+        * platform/graphics/skia/BitmapImageSingleFrameSkia.h:
+        (WebCore::BitmapImageSingleFrameSkia::BitmapImageSingleFrameSkia):
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::ImageBuffer::drawsUsingCopy):
+        (WebCore::ImageBuffer::copyImage):
+        (WebCore::ImageBuffer::draw):
+        (WebCore::ImageBuffer::drawPattern):
+        * platform/graphics/skia/ImageSkia.cpp:
+        (WebCore::BitmapImageSingleFrameSkia::create):
+        * platform/graphics/skia/NativeImageSkia.cpp:
+        * platform/graphics/skia/NativeImageSkia.h:
+
 2010-08-17  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by David Hyatt.
