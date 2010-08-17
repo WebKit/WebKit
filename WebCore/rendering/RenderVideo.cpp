@@ -134,13 +134,14 @@ void RenderVideo::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
     RenderMedia::imageChanged(newImage, rect);
 
     // Cache the image intrinsic size so we can continue to use it to draw the image correctly
-    // even after we know the video intrisic size but aren't able to draw video frames yet
-    // (we don't want to scale the poster to the video size).
-    if (videoElement()->shouldDisplayPosterImage()) {
-        if (errorOccurred())
-            updateIntrinsicSize();
+    // even if we know the video intrinsic size but aren't able to draw video frames yet
+    // (we don't want to scale the poster to the video size without keeping aspect ratio).
+    if (videoElement()->shouldDisplayPosterImage())
         m_cachedImageSize = intrinsicSize();
-    }
+
+    // The intrinsic size is now that of the image, but in case we already had the
+    // intrinsic size of the video we call this here to restore the video size.
+    updateIntrinsicSize();
 }
 
 IntRect RenderVideo::videoBox() const

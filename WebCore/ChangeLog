@@ -1,3 +1,14 @@
+2010-08-17  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Eric Carlson.
+
+        Restore intrinsic size of video elements after loading poster
+
+        The element might already have the instrinsic size of the video, in
+        which case we don't want to override it witht that of the image.
+
+        * rendering/RenderVideo.cpp: call updateIntrinsicSize() to restore size
+
 2010-08-17  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
 
         Reviewed by Steve Block.
