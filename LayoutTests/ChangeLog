@@ -1,3 +1,14 @@
+2010-08-17  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by NOBODY.
+
+        [Qt] Skip media/video-poster-delayed.html
+
+        The QtMultimedia backend has issues with video size hints, skip the test
+        until this is sorted out.
+
+        * platform/qt/Skipped:
+
 2010-08-17  Fady Samuel  <fsamuel@chromium.org>
 
         Reviewed by David Hyatt.
