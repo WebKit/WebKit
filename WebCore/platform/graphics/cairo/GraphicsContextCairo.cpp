@@ -928,8 +928,7 @@ void GraphicsContext::createPlatformShadow(PassOwnPtr<ImageBuffer> buffer, const
     // draw the shadow without blurring, if kernelSize is zero
     if (!kernelSize) {
         setColor(cr, shadowColor);
-        RefPtr<Image> copiedImage = buffer->copyImage(); // FIXME: Copying the image is wasteful.
-        cairo_mask_surface(cr, copiedImage->nativeImageForCurrentFrame(), shadowRect.x(), shadowRect.y());
+        cairo_mask_surface(cr, buffer->m_data.m_surface, shadowRect.x(), shadowRect.y());
         return;
     }
 
@@ -949,8 +948,7 @@ void GraphicsContext::createPlatformShadow(PassOwnPtr<ImageBuffer> buffer, const
     // Mask the filter with the shadow color and draw it to the context.
     // Masking makes it possible to just blur the alpha channel.
     setColor(cr, shadowColor);
-    RefPtr<Image> copiedImage = blur->resultImage()->copyImage(); // FIXME: Copying the image is wasteful.
-    cairo_mask_surface(cr, copiedImage->nativeImageForCurrentFrame(), shadowRect.x(), shadowRect.y());
+    cairo_mask_surface(cr, blur->resultImage()->m_data.m_surface, shadowRect.x(), shadowRect.y());
 #endif
 }
 

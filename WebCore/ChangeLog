@@ -1,5 +1,26 @@
 2010-08-17  Martin Robinson  <mrobinson@igalia.com>
 
+        Reviewed by David Hyatt.
+
+        [Cairo] Remove unnecessary full-surface copies from ImageCairo and GraphicsContextCairo
+        https://bugs.webkit.org/show_bug.cgi?id=44076
+
+        No new tests as functionality has not changed.
+
+        * GNUmakefile.am: Added GRefPtrCairo to the sources list.
+        * platform/graphics/cairo/GRefPtrCairo.cpp: Added.
+        (WTF::refGPtr): Added specializations for cairo_t and cairo_surface_t.
+        (WTF::derefGPtr):
+        * platform/graphics/cairo/GRefPtrCairo.h: Added.
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::createPlatformShadow): Access the image surface directly
+        from the ImageBuffer instead of wrapping it in an Image.
+        * platform/graphics/cairo/ImageCairo.cpp:
+        (WebCore::Image::drawPattern): Create the temporary surface using cairo primitives
+        instead of through the platform-independent WebCore code.
+
+2010-08-17  Martin Robinson  <mrobinson@igalia.com>
+
         [GTK] Clean up WebCore/platform/graphics/gtk/ImageGtk.cpp
         https://bugs.webkit.org/show_bug.cgi?id=44069
 
