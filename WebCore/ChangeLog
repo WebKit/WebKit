@@ -1,3 +1,24 @@
+2010-08-17  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by David Levin.
+
+        Allow non-Skia ports to compile with ENABLE(ACCELERATED_2D_CANVAS).
+        https://bugs.webkit.org/show_bug.cgi?id=44130
+
+        No tests; if it compiles, it's good.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::CanvasRenderingContext2D):
+        Fix a warning (treated as error).
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::setGraphicsContext3D):
+        (WebCore::GraphicsContext::syncSoftwareCanvas):
+        * platform/graphics/GraphicsContext.h:
+        Make setGraphicsContext3D() and syncSoftwareCanvas() stubbed out,
+        but still present in non-Skia ports.  This allows Chrome Mac to
+        compile with ENABLE(ACCELERATED_2D_CANVAS) (although it isn't hooked
+        up yet, it should at least compile).
+
 2010-08-17  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.
