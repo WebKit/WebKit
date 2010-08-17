@@ -1,5 +1,11 @@
 2010-08-17  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Returned WebCore.xcodeproj to default settings after http://trac.webkit.org/changeset/65468/trunk/WebCore/WebCore.xcodeproj/project.pbxproj.
+
+        * WebCore.xcodeproj/project.pbxproj: Removed developmentRegion = English line.
+
+2010-08-17  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Reviewed by Eric Seidel.
 
         Eliminate extra traversal of the tree when determining ability to lazy-attach a Node.
