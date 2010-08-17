@@ -1,3 +1,18 @@
+2010-08-17  Adam Roben  <aroben@apple.com>
+
+        Instruct developers to (optionally) install Debugging Tools for
+        Windows
+
+        These tools are used by some of our scripts, so are useful for
+        developers to have installed.
+
+        Fixes <http://webkit.org/b/44128> webkit.org building instructions
+        should recommend installing Debugging Tools for Windows
+
+        Reviewed by Sam Weinig.
+
+        * building/tools.html:
+
 2010-07-30  Renata Hodovan  <reni@inf.u-szeged.hu>
 
         Reviewed by Nikolas Zimmermann.
