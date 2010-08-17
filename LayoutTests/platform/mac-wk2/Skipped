@@ -313,6 +313,7 @@ fast/events/mousedown_in_scrollbar.html
 fast/events/mousemove-after-drag-over-scrollbar.html
 fast/events/mouseout-dead-node.html
 fast/events/mouseout-dead-subframe.html
+fast/events/mouseout-on-window.html
 fast/events/mouseover-mouseout.html
 fast/events/mouseover-mouseout2.html
 fast/events/mouseup-from-button2.html
@@ -327,6 +328,7 @@ fast/events/onchange-select-popup.html
 fast/events/onchange-textfield.html
 fast/events/onclick-list-marker.html
 fast/events/ondragenter.html
+fast/events/ondrop-text-html.html
 fast/events/onsearch-enter.html
 fast/events/open-window-from-another-frame.html
 fast/events/overflow-scroll-fake-mouse-move.html
@@ -413,6 +415,7 @@ fast/forms/search-cancel-button-events.html
 fast/forms/search-cancel-button-mouseup.html
 fast/forms/search-click-in-placeholder.html
 fast/forms/search-delete-while-cancel-button-clicked.html
+fast/forms/search-event-delay.html
 fast/forms/search-hidden-cancel-button.html
 fast/forms/search-rtl.html
 fast/forms/search-transformed.html
@@ -466,6 +469,7 @@ fast/loader/repeat-same-document-navigation.html
 fast/overflow/hit-test-overflow-controls.html
 fast/overflow/overflow-text-hit-testing.html
 fast/parser/tabindex-parsing.html
+fast/repaint/fixed-move-after-keyboard-scroll.html
 fast/replaced/image-map-2.html 
 fast/replaced/image-map-bug16782.html
 fast/replaced/image-map.html
@@ -502,8 +506,11 @@ http/tests/security/dataTransfer-set-data-file-url.html
 http/tests/security/drag-over-remote-content-iframe.html
 http/tests/security/listener/xss-window-onclick-addEventListener.html
 http/tests/security/listener/xss-window-onclick-shortcut.html
+media/audio-delete-while-slider-thumb-clicked.html
+media/controls-drag-timebar.html
 media/controls-right-click-on-timebar.html
 media/media-fullscreen-inline.html
+media/video-controls-visible-audio-only.html
 platform/mac/editing/deleting/backward-delete.html
 platform/mac/editing/pasteboard/dataTransfer-set-data-file-url.html
 platform/mac/editing/selection/doubleclick-should-not-expand-across-lines.html
@@ -514,6 +521,7 @@ platform/mac/fast/forms/listbox-scrollbar-hit-test.html
 platform/mac/fast/overflow/overflow-scrollbar-hit-test.html
 plugins/resize-from-plugin.html
 scrollbars/overflow-custom-scrollbar-crash.html
+scrollbars/scrollbar-click-does-not-blur-content.html
 scrollbars/scrollbar-iframe-click-does-not-blur-content.html
 scrollbars/scrollbar-middleclick-nopaste.html
 scrollbars/scrollbar-miss-mousemove-disabled.html
@@ -522,6 +530,7 @@ svg/animations/animate-gradient-transform.html
 svg/animations/animate-keySplines.html
 svg/animations/animate-points.html
 svg/animations/animVal-basics.html
+svg/custom/absolute-sized-content-with-resources.xhtml
 svg/custom/circle-move-invalidation.svg
 svg/custom/clip-path-child-changes.svg
 svg/custom/clip-path-href-changes.svg

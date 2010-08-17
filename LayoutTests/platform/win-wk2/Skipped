@@ -31,3 +31,102 @@
 # WebKitTestRunner needs to support accessibility-related DRT APIs
 # <https://bugs.webkit.org/show_bug.cgi?id=42131>
 platform/win/accessibility
+
+# WebKitTestRunner needs an implementation of layoutTestController.dumpIconChanges
+# <https://bugs.webkit.org/show_bug.cgi?id=44046>
+fast/dom/icon-url-property.html
+
+# WebKitTestRunner needs an implementation of layoutTestController.clearBackForwardList
+# <https://bugs.webkit.org/show_bug.cgi?id=42333>
+fast/history/gesture-before-onload-form-submit.html
+fast/history/gesture-before-onload-location-href.html
+
+# WebKitTestRunner needs an implementation of layoutTestController.setPrivateBrowsingEnabled
+# <https://bugs.webkit.org/show_bug.cgi?id=42697>
+plugins/private-browsing-mode-2.html
+plugins/private-browsing-mode.html
+
+# WebKitTestRunner needs an implementation of layoutTestController.clearAllDatabases
+# <https://bugs.webkit.org/show_bug.cgi?id=42540>
+storage/database-lock-after-reload.html
+
+# WebKitTestRunner needs an implementation of eventSender
+# <https://bugs.webkit.org/show_bug.cgi?id=42194>
+platform/win/editing/selection/shift-page-up-down.html
+platform/win/fast/events/alt-numpad.html
+platform/win/fast/events/alt-space-scroll.html
+platform/win/fast/events/context-click-events.html
+platform/win/fast/events/double-dead-char.html
+platform/win/fast/events/keyLocation-numpad.html
+platform/win/fast/events/panScroll-event-fired.html
+platform/win/fast/events/panScroll-image-no-scroll.html
+platform/win/fast/events/panScroll-imageMap-href-no-scroll.html
+platform/win/fast/events/panScroll-imageMap-noHref-scroll.html
+platform/win/fast/events/panScroll-nested-divs.html
+platform/win/fast/events/panScroll-no-iframe-jump.html
+platform/win/fast/events/panScroll-preventDefault.html
+
+# Storage tests fail in WebKitTestRunner
+# <https://bugs.webkit.org/show_bug.cgi?id=44084>
+fast/workers/storage
+storage
+
+# WebKit2 needs plugins support
+# <https://bugs.webkit.org/show_bug.cgi?id=42196>
+plugins
+platform/win/plugins
+dom/html/level2/html/AppletsCollection.html
+
+# Pasteboard doesn't work in WebKit2
+# <https://bugs.webkit.org/show_bug.cgi?id=42317>
+editing/pasteboard
+
+# Unexplained test failures.
+css2.1/t0805-c5518-brdr-t-01-e.html
+css2.1/t0805-c5519-brdr-r-00-a.html
+css2.1/t0805-c5519-brdr-r-01-e.html
+css2.1/t0805-c5520-brdr-b-01-e.html
+css2.1/t0805-c5521-brdr-l-00-a.html
+css2.1/t0805-c5521-brdr-l-01-e.html
+css2.1/t0805-c5521-ibrdr-l-00-a.html
+css2.1/t0905-c414-flt-02-c.html
+css2.1/t0905-c414-flt-03-c.html
+css2.1/t0905-c414-flt-04-c.html
+css2.1/t0905-c414-flt-fit-01-d-g.html
+css2.1/t0905-c5525-fltblck-00-d-ag.html
+css2.1/t0905-c5525-fltblck-01-d.html
+css2.1/t0905-c5525-fltcont-00-d-g.html
+css2.1/t0905-c5525-fltwidth-00-c-g.html
+css2.1/t0905-c5525-fltwidth-02-c-g.html
+css2.1/t0905-c5525-fltwidth-03-c-g.html
+css2.1/t0905-c5525-fltwrap-00-b.html
+css2.1/t1202-counter-03-b.html
+css2.1/t1202-counter-04-b.html
+css2.1/t1202-counters-03-b.html
+css2.1/t1202-counters-04-b.html
+css2.1/t1205-c566-list-stl-01-c-g.html
+css2.1/t090501-c414-flt-01-b.html
+css2.1/t090501-c414-flt-03-b-g.html
+css2.1/t090501-c414-flt-ln-01-d-g.html
+css2.1/t090501-c5525-flt-l-00-b-g.html
+css2.1/t090501-c5525-flt-r-00-b-g.html
+css2.1/t100304-c43-rpl-bbx-01-d-g.html
+fast/canvas/set-colors.html
+fast/forms/file-input-disabled.html
+fast/js/navigator-mimeTypes-length.html
+fast/lists/inlineBoxWrapperNullCheck.html
+fast/media/mq-transform-02.html
+fast/media/mq-transform-03.html
+fast/text/backslash-to-yen-sign-euc.html
+fast/text/hyphenate-first-word.html
+fast/text/hyphenate-locale.html
+fast/text/international/bidi-mirror-he-ar.html
+fast/text/international/bold-bengali.html
+media/video-zoom.html
+svg/W3C-SVG-1.1/text-tselect-02-f.svg
+svg/custom/scrolling-embedded-svg-file-image-repaint-problem.html
+tables/mozilla/bugs/bug30559.html
+transitions/color-transition-all.html
+
+# Unexplained test timeouts.
+fast/js/exceptions-thrown-in-callbacks.html

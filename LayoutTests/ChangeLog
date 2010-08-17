@@ -1,3 +1,12 @@
+2010-08-16  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Add some tests that fail in WebKitTestRunner to the Skipped lists.
+
+        Rubber-stamped by Sam Weinig.
+
+        * platform/mac-wk2/Skipped:
+        * platform/win-wk2/Skipped:
+
 2010-08-16  Ademar de Souza Reis Jr  <ademar.reis@openbossa.org>
 
         Reviewed by Ariya Hidayat.
