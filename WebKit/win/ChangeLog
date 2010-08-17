@@ -1,3 +1,9 @@
+2010-08-16  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Unreviewed; build fix attempt for Windows.
+
+        * DefaultDownloadDelegate.cpp:
+
 2010-08-12  Jeremy Orlow  <jorlow@chromium.org>
 
         Revert for now
