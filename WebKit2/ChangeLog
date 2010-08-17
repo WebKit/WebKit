@@ -1,3 +1,15 @@
+2010-08-16  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Allow some tests to pass in WebKitTestRunner before SharedMemory and
+        PluginInfoStore are implemented on Windows.
+
+        Reviewed by Sam Weinig.
+
+        * Platform/win/SharedMemoryWin.cpp:
+        Disable not implemented warnings.
+        * UIProcess/Plugins/win/PluginInfoStoreWin.cpp:
+        Ditto.
+
 2010-08-16  Gavin Barraclough  <barraclough@apple.com>
 
         Rubber stamped by Sam Weinig

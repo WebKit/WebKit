@@ -25,6 +25,7 @@
 
 #include "PluginInfoStore.h"
 
+#define DISABLE_NOT_IMPLEMENTED_WARNINGS 1
 #include "NotImplemented.h"
 #include <WebCore/FileSystem.h>
 #include <wtf/OwnArrayPtr.h>
