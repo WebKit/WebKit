@@ -846,7 +846,8 @@ $(WEBKIT_GIRSOURCES): $(G_IR_SCANNER) $(JSCORE_GIRSOURCES) libwebkitgtk-@WEBKITG
 	     -I$(top_builddir)/DerivedSources/webkit \
 	     -I$(top_srcdir)/JavaScriptCore/ForwardingHeaders \
 	     -I$(top_srcdir) \
-	     $(webkitgtk_h_api)
+	     $(webkitgtk_h_api) \
+	     $(top_srcdir)/WebKit/gtk/webkit/*.cpp
 
 girdir = $(datadir)/gir-1.0
 gir_DATA = $(WEBKIT_GIRSOURCES) $(JSCORE_GIRSOURCES)

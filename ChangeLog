@@ -1,3 +1,13 @@
+2010-08-17  Gustavo Noronha Silva  <gustavo.noronha@collabora.couk>
+
+        Reviewed by Martin Robinson.
+
+        WebBackForwardList.get_{back|forward}_list_with_limit not introspectable
+        https://bugs.webkit.org/show_bug.cgi?id=43054
+
+        * GNUmakefile.am: Give also API implementation files to the GIR
+        scanner.
+
 2010-08-17  Martin Robinson  <mrobinson@igalia.com>
 
         GTK+ Build fix for those having stable versions of GLib.

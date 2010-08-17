@@ -107,9 +107,11 @@ webkit_web_back_forward_list_get_limit                   (WebKitWebBackForwardLi
 WEBKIT_API void
 webkit_web_back_forward_list_set_limit                   (WebKitWebBackForwardList *web_back_forward_list,
                                                           gint                      limit);
+
 WEBKIT_API void
 webkit_web_back_forward_list_add_item                    (WebKitWebBackForwardList *web_back_forward_list,
                                                           WebKitWebHistoryItem     *history_item);
+
 WEBKIT_API void
 webkit_web_back_forward_list_clear                       (WebKitWebBackForwardList *web_back_forward_list);
 

@@ -96,7 +96,7 @@ static void webkit_web_back_forward_list_init(WebKitWebBackForwardList* webBackF
 }
 
 /**
- * webkit_web_back_forward_list_new_with_web_view:
+ * webkit_web_back_forward_list_new_with_web_view: (skip)
  * @web_view: the back forward list's #WebKitWebView
  *
  * Creates an instance of the back forward list with a controlling #WebKitWebView
@@ -151,11 +151,11 @@ void webkit_web_back_forward_list_go_back(WebKitWebBackForwardList* webBackForwa
 /**
  * webkit_web_back_forward_list_contains_item:
  * @web_back_forward_list: a #WebKitWebBackForwardList
- * @history_item: the #WebKitWebHistoryItem to check
+ * @history_item: (type WebKit.WebHistoryItem) (transfer none): the #WebKitWebHistoryItem to check
  *
  * Checks if @web_history_item is in the back forward list
  *
- * Return: %TRUE if @web_history_item is in the back forward list, %FALSE if it doesn't
+ * Return value: %TRUE if @web_history_item is in the back forward list, %FALSE if it doesn't
  */
 gboolean webkit_web_back_forward_list_contains_item(WebKitWebBackForwardList* webBackForwardList, WebKitWebHistoryItem* webHistoryItem)
 {
@@ -174,7 +174,7 @@ gboolean webkit_web_back_forward_list_contains_item(WebKitWebBackForwardList* we
 /**
  * webkit_web_back_forward_list_go_to_item:
  * @web_back_forward_list: a #WebKitWebBackForwardList
- * @history_item: the #WebKitWebHistoryItem to go to
+ * @history_item: (type WebKit.WebHistoryItem) (transfer none): the #WebKitWebHistoryItem to go to
  *
  * Go to the specified @web_history_item in the back forward list
  */
@@ -197,7 +197,7 @@ void webkit_web_back_forward_list_go_to_item(WebKitWebBackForwardList* webBackFo
  *
  * Returns a list of items that succeed the current item, limited by @limit
  *
- * Return value: a #GList of items succeeding the current item, limited by @limit
+ * Return value: (element-type WebKit.WebHistoryItem) (transfer container): a #GList of items succeeding the current item, limited by @limit
  */
 GList* webkit_web_back_forward_list_get_forward_list_with_limit(WebKitWebBackForwardList* webBackForwardList, gint limit)
 {
@@ -227,7 +227,7 @@ GList* webkit_web_back_forward_list_get_forward_list_with_limit(WebKitWebBackFor
  *
  * Returns a list of items that precede the current item, limited by @limit
  *
- * Return value: a #GList of items preceding the current item, limited by @limit
+ * Return value: (element-type WebKit.WebHistoryItem) (transfer container): a #GList of items preceding the current item, limited by @limit
  */
 GList* webkit_web_back_forward_list_get_back_list_with_limit(WebKitWebBackForwardList* webBackForwardList, gint limit)
 {
@@ -256,7 +256,7 @@ GList* webkit_web_back_forward_list_get_back_list_with_limit(WebKitWebBackForwar
  *
  * Returns the item that precedes the current item
  *
- * Return value: the #WebKitWebHistoryItem preceding the current item
+ * Return value: (type WebKit.WebHistoryItem) (transfer none): the #WebKitWebHistoryItem preceding the current item
  */
 WebKitWebHistoryItem* webkit_web_back_forward_list_get_back_item(WebKitWebBackForwardList* webBackForwardList)
 {
@@ -279,7 +279,7 @@ WebKitWebHistoryItem* webkit_web_back_forward_list_get_back_item(WebKitWebBackFo
  *
  * Returns a NULL value if the back forward list is empty
  *
- * Return value: a #WebKitWebHistoryItem
+ * Return value: (type WebKit.WebHistoryItem) (transfer none): a #WebKitWebHistoryItem
  */
 WebKitWebHistoryItem* webkit_web_back_forward_list_get_current_item(WebKitWebBackForwardList* webBackForwardList)
 {
@@ -302,7 +302,7 @@ WebKitWebHistoryItem* webkit_web_back_forward_list_get_current_item(WebKitWebBac
  *
  * Returns a NULL value if there nothing that succeeds the current item
  *
- * Return value: a #WebKitWebHistoryItem
+ * Return value: (type WebKit.WebHistoryItem) (transfer none): a #WebKitWebHistoryItem
  */
 WebKitWebHistoryItem* webkit_web_back_forward_list_get_forward_item(WebKitWebBackForwardList* webBackForwardList)
 {
@@ -324,7 +324,7 @@ WebKitWebHistoryItem* webkit_web_back_forward_list_get_forward_item(WebKitWebBac
  *
  * Returns the item at a given index relative to the current item.
  *
- * Return value: the #WebKitWebHistoryItem located at the specified index relative to the current item
+ * Return value: (type WebKit.WebHistoryItem) (transfer none): the #WebKitWebHistoryItem located at the specified index relative to the current item
  */
 WebKitWebHistoryItem* webkit_web_back_forward_list_get_nth_item(WebKitWebBackForwardList* webBackForwardList, gint index)
 {
@@ -417,7 +417,7 @@ void webkit_web_back_forward_list_set_limit(WebKitWebBackForwardList* webBackFor
 /**
  * webkit_web_back_forward_list_add_item:
  * @web_back_forward_list: a #WebKitWebBackForwardList
- * @history_item: the #WebKitWebHistoryItem to add
+ * @history_item: (type WebKit.WebHistoryItem) (transfer none): the #WebKitWebHistoryItem to add
  *
  * Adds the item to the #WebKitWebBackForwardList.
  *
@@ -440,7 +440,7 @@ void webkit_web_back_forward_list_add_item(WebKitWebBackForwardList *webBackForw
 
 /**
  * webkit_web_back_forward_list_clear:
- * @webBackForwardList:  a #WebKitWebBackForwardList
+ * @web_back_forward_list: the #WebKitWebBackForwardList to be cleared
  *
  * Clears the @webBackForwardList by removing all its elements. Note that not even
  * the current page is kept in list when cleared so you would have to add it later.
