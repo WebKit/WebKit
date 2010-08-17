@@ -1,3 +1,19 @@
+2010-08-17  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Eliminate extra traversal of the tree when determining ability to lazy-attach a Node.
+        https://bugs.webkit.org/show_bug.cgi?id=43749
+
+        Land the actual change that I intended to land in http://trac.webkit.org/changeset/65508.
+
+        Neither SVG nor inputs/counters shadow DOM are traveling down this path (they home-bake their attachment),
+        so the check for shadow tree existence isn't needed.
+        Gives a small, but consistent win in Dromaeo's DOM Modification test.
+
+        * dom/Node.h:
+        (WebCore::Node::canLazyAttach): Changed to always return true.
+
 2010-08-17  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Eric Carlson.
