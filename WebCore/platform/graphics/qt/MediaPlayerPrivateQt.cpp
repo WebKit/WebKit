@@ -96,6 +96,7 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
     , m_isSeeking(false)
     , m_composited(false)
     , m_queuedSeek(-1)
+    , m_preload(MediaPlayer::Auto)
 {
     m_mediaPlayer->bind(m_videoItem);
     m_videoScene->addItem(m_videoItem);
@@ -147,6 +148,20 @@ bool MediaPlayerPrivate::hasAudio() const
 }
 
 void MediaPlayerPrivate::load(const String& url)
+{
+    m_mediaUrl = url;
+
+    // QtMultimedia does not have an API to throttle loading
+    // so we handle this ourselves by delaying the load
+    if (m_preload == MediaPlayer::None) {
+        m_delayingLoad = true;
+        return;
+    }
+
+    commitLoad(url);
+}
+
+void MediaPlayerPrivate::commitLoad(const String& url)
 {
     // We are now loading
     if (m_networkState != MediaPlayer::Loading) {
@@ -220,10 +235,24 @@ void MediaPlayerPrivate::load(const String& url)
         m_mediaPlayer->play();
 }
 
+void MediaPlayerPrivate::resumeLoad()
+{
+    m_delayingLoad = false;
+
+    if (!m_mediaUrl.isNull())
+        commitLoad(m_mediaUrl);
+}
+
 void MediaPlayerPrivate::cancelLoad()
 {
     m_mediaPlayer->setMedia(QMediaContent());
     updateStates();
+}
+
+void MediaPlayerPrivate::prepareToPlay()
+{
+    if (m_mediaPlayer->media().isNull() || m_delayingLoad)
+        resumeLoad();
 }
 
 void MediaPlayerPrivate::play()
@@ -345,6 +374,13 @@ unsigned MediaPlayerPrivate::totalBytes() const
         return m_mediaPlayer->metaData(QtMultimediaKit::Size).toInt();
 
     return 100;
+}
+
+void MediaPlayerPrivate::setPreload(MediaPlayer::Preload preload)
+{
+    m_preload = preload;
+    if (m_delayingLoad && m_preload != MediaPlayer::None)
+        resumeLoad();
 }
 
 void MediaPlayerPrivate::setRate(float rate)
