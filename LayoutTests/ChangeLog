@@ -1,3 +1,12 @@
+2010-08-17  John Gregg  <johnnyg@google.com>
+
+        Unreviewed, test expectation.
+
+        Excluding the new geolocation multiple-requests layout tests from chromium.
+        See https://bugs.webkit.org/show_bug.cgi?id=44118
+
+        * platform/chromium/test_expectations.txt:
+
 2010-08-17  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Eric Carlson.

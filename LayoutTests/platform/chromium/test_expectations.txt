@@ -3221,3 +3221,7 @@ BUGWK44087 MAC : fast/canvas/webgl/texture-complete.html = TEXT
 BUGWK44087 MAC : fast/canvas/webgl/draw-elements-out-of-bounds.html = CRASH
 BUGWK44087 MAC : fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias.html = TIMEOUT
 BUGWK44087 MAC : fast/canvas/webgl/texture-transparent-pixels-initialized.html = TIMEOUT
+
+// Due to http://trac.webkit.org/changeset/65511
+BUGWK44118 : fast/dom/Geolocation/delayed-permission-allowed-for-multiple-requests.html = TEXT
+BUGWK44118 : fast/dom/Geolocation/delayed-permission-denied-for-multiple-requests.html = TIMEOUT
