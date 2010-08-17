@@ -1,3 +1,18 @@
+2010-08-16  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        CSS: Add fast-path for rgba() color parsing
+        https://bugs.webkit.org/show_bug.cgi?id=42965
+
+        Test: fast/canvas/rgba-parsing.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseColor): Extended with support for rgba().
+        (WebCore::parseAlphaValue): Added, parses an alpha value using
+        WTF::strtod() (if necessary) and clamps between 0 and 1.
+        (WebCore::isTenthAlpha):
+
 2010-08-16  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by Dumitru Daniliuc.

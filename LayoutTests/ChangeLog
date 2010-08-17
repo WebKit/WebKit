@@ -1,5 +1,18 @@
 2010-08-16  Andreas Kling  <andreas.kling@nokia.com>
 
+        Reviewed by Darin Adler.
+
+        CSS: Add fast-path for rgba() color parsing
+        https://bugs.webkit.org/show_bug.cgi?id=42965
+
+        Add a test of rgba() color parsing.
+
+        * fast/canvas/rgba-parsing-expected.txt: Added.
+        * fast/canvas/rgba-parsing.html: Added.
+        * fast/canvas/script-tests/rgba-parsing.js: Added.
+
+2010-08-16  Andreas Kling  <andreas.kling@nokia.com>
+
         Reviewed by Ariya Hidayat.
 
         [Qt] Path::closeSubpath() should only close the last subpath if it has >1 point
