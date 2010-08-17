@@ -2390,7 +2390,7 @@ sub setUpWindowsCrashLogSaving()
     }
 
     my %values = (
-        Debugger => '"' . $ntsdPath . '" -p %ld -e %ld -g -lines -c ".logopen /t \"' . toWindowsPath($testResultsDirectory) . '\CrashLog.txt\";!analyze -vv;~*kpn;q"',
+        Debugger => '"' . toWindowsPath($ntsdPath) . '" -p %ld -e %ld -g -lines -c ".logopen /t \"' . toWindowsPath($testResultsDirectory) . '\CrashLog.txt\";!analyze -vv;~*kpn;q"',
         Auto => 1
     );
 

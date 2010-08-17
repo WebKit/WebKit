@@ -1,5 +1,11 @@
 2010-08-17  Adam Roben  <aroben@apple.com>
 
+        Use the right path style
+
+        * Scripts/old-run-webkit-tests:
+
+2010-08-17  Adam Roben  <aroben@apple.com>
+
         Fix typo
 
         * Scripts/old-run-webkit-tests:
