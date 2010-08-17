@@ -3516,6 +3516,8 @@ webcore_sources += \
 	WebCore/mathml/RenderMathMLUnderOver.cpp \
 	WebCore/mathml/RenderMathMLUnderOver.h
 
+endif # END ENABLE_MATHML
+
 webcore_built_sources += \
 	DerivedSources/WebCore/MathMLElementFactory.cpp \
 	DerivedSources/WebCore/MathMLElementFactory.h \
@@ -3529,8 +3531,6 @@ DerivedSources/WebCore/MathMLNames.h: DerivedSources/WebCore/MathMLNames.cpp
 
 DerivedSources/WebCore/MathMLElementFactory.cpp DerivedSources/WebCore/MathMLNames.cpp: $(WebCore)/dom/make_names.pl $(WebCore)/mathml/mathtags.in $(WebCore)/mathml/mathattrs.in
 	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --tags $(WebCore)/mathml/mathtags.in --attrs $(WebCore)/mathml/mathattrs.in --factory --wrapperFactory --outputDir "$(GENSOURCES_WEBCORE)"
-
-endif # END ENABLE_MATHML
 
 # ----
 # Notifications support

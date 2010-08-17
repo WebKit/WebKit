@@ -1,3 +1,12 @@
+2010-08-17  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Revert supposed build-fix which was in fact reverting a previous
+        build fix which was correct (oh dear).
+
+        * GNUmakefile.am:
+
 2010-08-17  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Antonio Gomes.
