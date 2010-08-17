@@ -25,6 +25,7 @@
 #include "GraphicsContext.h"
 #include "HTMLMediaElement.h"
 #include "HTMLVideoElement.h"
+#include "NotImplemented.h"
 #include "TimeRanges.h"
 #include "Widget.h"
 #include "qwebframe.h"
@@ -106,6 +107,8 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
             this, SLOT(stateChanged(QMediaPlayer::State)));
     connect(m_mediaPlayer, SIGNAL(error(QMediaPlayer::Error)),
             this, SLOT(handleError(QMediaPlayer::Error)));
+    connect(m_mediaPlayer, SIGNAL(bufferStatusChanged(int)),
+            this, SLOT(bufferStatusChanged(int)));
     connect(m_mediaPlayer, SIGNAL(durationChanged(qint64)),
             this, SLOT(durationChanged(qint64)));
     connect(m_mediaPlayer, SIGNAL(positionChanged(qint64)),
@@ -208,6 +211,13 @@ void MediaPlayerPrivate::load(const String& url)
     // engine which does.
     m_mediaPlayer->setMuted(element->muted());
     m_mediaPlayer->setVolume(static_cast<int>(element->volume() * 100.0));
+
+    // Setting a media source will start loading the media, but we need
+    // to pre-roll as well to get video size-hints and buffer-status
+    if (element->paused())
+        m_mediaPlayer->pause();
+    else
+        m_mediaPlayer->play();
 }
 
 void MediaPlayerPrivate::cancelLoad()
@@ -322,24 +332,11 @@ float MediaPlayerPrivate::maxTimeSeekable() const
 
 unsigned MediaPlayerPrivate::bytesLoaded() const
 {
-    unsigned percentage = m_mediaPlayer->bufferStatus();
-
-    if (percentage == 100) {
-        if (m_networkState != MediaPlayer::Idle) {
-            m_networkState = MediaPlayer::Idle;
-            m_player->networkStateChanged();
-        }
-        if (m_readyState != MediaPlayer::HaveEnoughData) {
-            m_readyState = MediaPlayer::HaveEnoughData;
-            m_player->readyStateChanged();
-        }
-    }
-
     QLatin1String bytesLoadedKey("bytes-loaded");
     if (m_mediaPlayer->availableExtendedMetaData().contains(bytesLoadedKey))
         return m_mediaPlayer->extendedMetaData(bytesLoadedKey).toInt();
 
-    return percentage;
+    return m_mediaPlayer->bufferStatus();
 }
 
 unsigned MediaPlayerPrivate::totalBytes() const
@@ -437,6 +434,11 @@ void MediaPlayerPrivate::positionChanged(qint64)
         m_player->timeChanged();
         m_isSeeking = false;
     }
+}
+
+void MediaPlayerPrivate::bufferStatusChanged(int)
+{
+    notImplemented();
 }
 
 void MediaPlayerPrivate::durationChanged(qint64)

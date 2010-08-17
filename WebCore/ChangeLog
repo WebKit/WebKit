@@ -1,3 +1,16 @@
+2010-08-17  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] Pre-roll media when loading media elements
+
+        This ensures we get correct size-hints from QtMultimedia, as well as
+        the media states Buffering and Buffered instead of Loading and Loaded,
+        which we use to transition into MediaPlayer::HaveEnoughData.
+
+        * platform/graphics/qt/MediaPlayerPrivateQt.cpp:
+        * platform/graphics/qt/MediaPlayerPrivateQt.h:
+
 2010-08-16  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
