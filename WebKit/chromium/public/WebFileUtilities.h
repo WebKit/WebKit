@@ -35,6 +35,10 @@
 #include "WebString.h"
 #include "WebURL.h"
 
+#ifdef WIN32
+typedef void *HANDLE;
+#endif
+
 namespace WebKit {
 
 class WebFileUtilities {

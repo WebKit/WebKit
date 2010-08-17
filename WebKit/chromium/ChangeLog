@@ -1,5 +1,11 @@
 2010-08-16  Kinuko Yasuda  <kinuko@chromium.org>
 
+        Unreviewed; attempt to fix Chromium Windows build.
+
+        * public/WebFileUtilities.h:
+
+2010-08-16  Kinuko Yasuda  <kinuko@chromium.org>
+
         Reviewed by Jian Li.
 
         [chromium] Prepare to rename WebFileSystem interface to WebFileUtilities
