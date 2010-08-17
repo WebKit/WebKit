@@ -410,14 +410,31 @@ void ChromeClientQt::scroll(const IntSize& delta, const IntRect& scrollViewRect,
 
 IntRect ChromeClientQt::windowToScreen(const IntRect& rect) const
 {
-    notImplemented();
-    return rect;
+    QWebPageClient* pageClient = platformPageClient();
+    if (!pageClient)
+        return rect;
+
+    QWidget* ownerWidget = pageClient->ownerWidget();
+    if (!ownerWidget)
+       return rect;
+
+    QRect screenRect(rect);
+    screenRect.translate(ownerWidget->mapToGlobal(QPoint(0, 0)));
+
+    return screenRect;
 }
 
 IntPoint ChromeClientQt::screenToWindow(const IntPoint& point) const
 {
-    notImplemented();
-    return point;
+    QWebPageClient* pageClient = platformPageClient();
+    if (!pageClient)
+        return point;
+
+    QWidget* ownerWidget = pageClient->ownerWidget();
+    if (!ownerWidget)
+        return point;
+
+    return ownerWidget->mapFromGlobal(point);
 }
 
 PlatformPageClient ChromeClientQt::platformPageClient() const
