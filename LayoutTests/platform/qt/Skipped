@@ -331,8 +331,6 @@ http/tests/xmlhttprequest/access-control-preflight-sync-not-supported.html
 http/tests/xmlhttprequest/access-control-response-with-body-sync.html
 http/tests/xmlhttprequest/cache-override.html
 http/tests/xmlhttprequest/simple-cross-origin-progress-events.html
-# --- http://bugreports.qt.nokia.com/browse/QTBUG-9618
-http/tests/xmlhttprequest/cookies.html
 http/tests/xmlhttprequest/methods-lower-case.html
 http/tests/xmlhttprequest/methods.html
 http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html
@@ -340,6 +338,10 @@ http/tests/xmlhttprequest/state-after-network-error.html
 http/tests/xmlhttprequest/workers/methods-async.html
 http/tests/xmlhttprequest/workers/methods.html
 http/tests/xmlhttprequest/workers/shared-worker-methods-async.html
+
+# --- http://bugreports.qt.nokia.com/browse/QTBUG-9618
+# (fixed in qt-4.7)
+http/tests/xmlhttprequest/cookies.html
 
 # Caused by the way Qt caches network connections using user@hostname as the key
 # See https://bugs.webkit.org/show_bug.cgi?id=37084 and http://bugreports.qt.nokia.com/browse/QTBUG-9619
@@ -594,7 +596,6 @@ http/tests/cookies/simple-cookies-max-age.html
 http/tests/cookies/simple-cookies-expired.html
 http/tests/xmlhttprequest/workers/close.html
 http/tests/xmlhttprequest/workers/shared-worker-close.html
-inspector/timeline-paint.html
 
 storage/database-lock-after-reload.html
 storage/empty-statement.html
@@ -616,8 +617,6 @@ fast/workers/shared-worker-frame-lifecycle.html
 # ------- works on 64 bit but not on 32 bit
 svg/custom/path-getTotalLength.svg
 svg/custom/glyph-setting-d-attribute.svg
-
-# ---- crashes - https://bugs.webkit.org/show_bug.cgi?id=32922
 
 # Tests that currently fail but perhaps used to work at some point.
 fast/dom/open-and-close-by-DOM.html
@@ -2142,8 +2141,6 @@ editing/selection/fake-drag.html
 editing/selection/inline-closest-leaf-child.html
 editing/selection/mixed-editability-1.html
 editing/selection/select-from-textfield-outwards.html
-editing/selection/extend-selection.html
-editing/selection/extend-after-mouse-selection.html
 editing/selection/4983858.html
 editing/selection/end-of-document.html
 editing/selection/move-left-right.html
@@ -2165,6 +2162,11 @@ editing/selection/replace-selection-1.html
 editing/selection/select-all-005.html
 editing/selection/select-all-006.html
 editing/selection/select-box.html
+
+# [Qt] editing tests fails after r54980
+# https://bugs.webkit.org/show_bug.cgi?id=35145
+editing/selection/extend-selection.html
+editing/selection/extend-after-mouse-selection.html
 
 # stderr
 editing/selection/editable-links.html
@@ -2198,8 +2200,6 @@ editing/selection/5109817.html
 editing/selection/5354455-1.html
 editing/selection/5354455-2.html
 editing/selection/caret-and-focus-ring.html
-# [Qt] editing tests fails after r54980
-# https://bugs.webkit.org/show_bug.cgi?id=35145
 editing/selection/5136696.html
 editing/selection/after-line-wrap.html
 editing/selection/13804.html
@@ -5428,6 +5428,7 @@ fast/dom/beforeload/remove-video-in-beforeload-listener.html
 
 # [Qt] Some inspector test fail intermittently
 # https://bugs.webkit.org/show_bug.cgi?id=42090
+inspector/timeline-paint.html
 inspector/timeline-layout.html
 inspector/timeline-parse-html.html
 inspector/timeline-recalculate-styles.html

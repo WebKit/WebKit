@@ -1,3 +1,19 @@
+2010-08-16  Ademar de Souza Reis Jr  <ademar.reis@openbossa.org>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] qt/Skipped needs cleanup on outdaded comments
+        https://bugs.webkit.org/show_bug.cgi?id=44066
+
+        Minor improvements/fixes to the list of Skipped Qt tests
+
+         - move bug reference to the right place (#35145)
+         - remove outdated bug reference (#32922)
+         - move inspector testcase to the right place
+         - add reference to bug closed on qt-4.7 (QTBUG-9618)
+
+        * platform/qt/Skipped: cleanups only, no logical changes
+
 2010-08-16  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Darin Adler.
