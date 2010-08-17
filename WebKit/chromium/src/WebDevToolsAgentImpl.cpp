@@ -287,6 +287,8 @@ void WebDevToolsAgentImpl::setApuAgentEnabled(bool enabled)
     m_apuAgentEnabled = enabled;
     InspectorController* ic = inspectorController();
     if (enabled) {
+        if (!ic->hasFrontend())
+            frontendLoaded();
         m_resourceTrackingWasEnabled = ic->resourceTrackingEnabled();
         ic->startTimelineProfiler();
         if (!m_resourceTrackingWasEnabled) {
