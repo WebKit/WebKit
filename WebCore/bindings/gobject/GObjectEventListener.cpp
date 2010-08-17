@@ -21,6 +21,7 @@
 
 #include "Event.h"
 #include "EventListener.h"
+#include "webkit/WebKitDOMEvent.h"
 #include "webkit/WebKitDOMEventPrivate.h"
 #include <wtf/HashMap.h>
 #include <wtf/text/CString.h>
@@ -30,7 +31,7 @@ namespace WebCore {
 void GObjectEventListener::handleEvent(ScriptExecutionContext*, Event* event)
 {
     gboolean handled = FALSE;
-    WebKitDOMEvent* gobjectEvent = WebKit::wrapEvent(event);
+    WebKitDOMEvent* gobjectEvent = WEBKIT_DOM_EVENT(WebKit::kit(event));
     g_signal_emit_by_name(m_object, m_signalName.utf8().data(), gobjectEvent, &handled);
 }
 

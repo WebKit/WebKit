@@ -32,6 +32,7 @@
 #include "UIEvent.h"
 #include "WebKitDOMDOMWindowPrivate.h"
 #include "WebKitDOMElementPrivate.h"
+#include "WebKitDOMEventPrivate.h"
 #include "WebKitDOMNode.h"
 #include "WebKitDOMNodePrivate.h"
 #include "WebKitHTMLElementWrapperFactory.h"
@@ -140,7 +141,7 @@ gpointer kit(Event* event)
     else if (event->isUIEvent())
         wrappedEvent = wrapUIEvent(static_cast<UIEvent*>(event));
     else
-        wrappedEvent = 0;
+        wrappedEvent = wrapEvent(event);
 
     return DOMObjectCache::put(event, wrappedEvent);
 }

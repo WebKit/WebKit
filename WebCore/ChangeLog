@@ -2,6 +2,21 @@
 
         Reviewed by Gustavo Noronha.
 
+        [GTK] Fix wrapping of core Events in the bindings
+        https://bugs.webkit.org/show_bug.cgi?id=44095
+
+        Return the proper GObject type instead of hardcoding
+        WebKitDOMEvent for all Event types.
+
+        * bindings/gobject/GObjectEventListener.cpp:
+        (WebCore::GObjectEventListener::handleEvent):
+        * bindings/gobject/WebKitDOMBinding.cpp:
+        (WebKit::kit):
+
+2010-08-17  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
         Revert supposed build-fix which was in fact reverting a previous
         build fix which was correct (oh dear).
 
