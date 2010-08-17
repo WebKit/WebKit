@@ -1,5 +1,16 @@
 2010-08-17  Adam Roben  <aroben@apple.com>
 
+        Don't hang when running run-webkit-tests as a non-Administrator on
+        Vista/7
+
+        * Scripts/old-run-webkit-tests:
+        (setUpWindowsCrashLogSaving): Use regtool to set NTSD as the
+        post-mortem debugger, rather than using NTSD itself. The latter waits
+        for user input when it fails to set the registry values; the former
+        does not.
+
+2010-08-17  Adam Roben  <aroben@apple.com>
+
         Teach run-webkit-tests, DumpRenderTree, and WebKitTestRunner how to
         save crash logs on Windows
 

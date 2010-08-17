@@ -2389,14 +2389,17 @@ sub setUpWindowsCrashLogSaving()
         }
     }
 
-    foreach my $value qw(Debugger Auto) {
-        chomp($previousWindowsPostMortemDebuggerValues{$value} = `regtool get "$windowsPostMortemDebuggerKey/$value"`);
-    }
+    my %values = (
+        Debugger => '"$ntsdPath" -p %ld -e %ld -g -lines -c ".logopen /t \"' . toWindowsPath($testResultsDirectory) . '\CrashLog.txt\";!analyze -vv;~*kpn;q"',
+        Auto => 1
+    );
 
-    my $result = system $ntsdPath, "-iaec", '-lines -c ".logopen /t \"' . toWindowsPath($testResultsDirectory) . '\CrashLog.txt\";!analyze -vv;~*kpn;q"';
-    if ($result) {
-        print "Failed to set nstd.exe as the post-mortem debugger. Crash logs will not be saved.\nSee <http://trac.webkit.org/wiki/BuildingOnWindows#GettingCrashLogs>.\n";
-        %previousWindowsPostMortemDebuggerValues = ();
+    foreach my $value (keys %values) {
+        chomp($previousWindowsPostMortemDebuggerValues{$value} = `regtool get "$windowsPostMortemDebuggerKey/$value"`);
+        my $result = system "regtool", "set", "$windowsPostMortemDebuggerKey/$value", $values{$value};
+        next unless $result;
+
+        print "Failed to set \"$windowsPostMortemDebuggerKey/$value\". Crash logs will not be saved.\nSee <http://trac.webkit.org/wiki/BuildingOnWindows#GettingCrashLogs>.\n";
         return;
     }
 
