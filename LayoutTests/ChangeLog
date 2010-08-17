@@ -1,3 +1,16 @@
+2010-08-17  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: upstream Chromium console tests
+        https://bugs.webkit.org/show_bug.cgi?id=44057
+
+        * inspector/console-eval-expected.txt: Added.
+        * inspector/console-eval-global-expected.txt: Added.
+        * inspector/console-eval-global.html: Added.
+        * inspector/console-eval.html: Added.
+        * platform/chromium/inspector/console-eval-global-expected.txt: Added.
+
 2010-08-17  Ademar de Souza Reis Jr  <ademar.reis@openbossa.org>
 
         Reviewed by Ariya Hidayat.

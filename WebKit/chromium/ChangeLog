@@ -1,3 +1,16 @@
+2010-08-17  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: upstream Chromium console tests and remove a couple
+        of tests that have already been covered with layout tests.
+        https://bugs.webkit.org/show_bug.cgi?id=44057
+
+        * src/js/Tests.js:
+        (.TestSuite.prototype.testConsoleEval):
+        (.TestSuite.prototype.testConsoleLog):
+        (.TestSuite.prototype.testEvalGlobal):
+
 2010-08-16  Kinuko Yasuda  <kinuko@chromium.org>
 
         Unreviewed; attempt to fix Chromium Windows build.
