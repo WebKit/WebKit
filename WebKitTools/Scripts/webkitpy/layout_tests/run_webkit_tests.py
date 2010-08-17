@@ -879,7 +879,8 @@ class TestRunner:
             self._options.build_number, self._options.results_directory,
             BUILDER_BASE_URL, individual_test_timings,
             self._expectations, result_summary, self._test_files_list,
-            not self._options.upload_full_results)
+            not self._options.upload_full_results,
+            self._options.test_results_server)
 
         _log.debug("Finished writing JSON files.")
 

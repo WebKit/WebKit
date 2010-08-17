@@ -1,3 +1,16 @@
+2010-08-17  Victor Wang  <victorw@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Update json results generator to have incremental json including
+        results for tests that pass in current run but failed before.
+
+        https://bugs.webkit.org/show_bug.cgi?id=44119
+
+        * Scripts/webkitpy/layout_tests/layout_package/json_layout_results_generator.py:
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
 2010-08-17  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Eric Seidel.
