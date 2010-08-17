@@ -43,6 +43,7 @@ PARAM_NAME = "name"
 PARAM_KEY = "key"
 PARAM_TEST_TYPE = "testtype"
 PARAM_INCREMENTAL = "incremental"
+PARAM_TEST_LIST_JSON = "testlistjson"
 
 
 class DeleteFile(webapp.RequestHandler):
@@ -109,16 +110,31 @@ class GetFile(webapp.RequestHandler):
         if not files:
             logging.info("File not found, builder: %s, test_type: %s, name: %s.",
                          builder, test_type, name)
-            return
+            return None
 
-        self.response.headers["Content-Type"] = "text/plain; charset=utf-8"
-        self.response.out.write(files[0].data)
+        return files[0].data
+
+    def _get_test_list_json(self, builder, test_type):
+        """Return json file with test name list only, do not include test
+           results and other non-test-data .
+
+        Args:
+            builder: builder name.
+            test_type: type of test results.
+        """
+
+        json = self._get_file_content(builder, test_type, "results.json")
+        if not json:
+            return None
+
+        return JsonResults.get_test_list(builder, json)
 
     def get(self):
         builder = self.request.get(PARAM_BUILDER)
         test_type = self.request.get(PARAM_TEST_TYPE)
         name = self.request.get(PARAM_NAME)
         dir = self.request.get(PARAM_DIR)
+        test_list_json = self.request.get(PARAM_TEST_LIST_JSON)
 
         logging.debug(
             "Getting files, builder: %s, test_type: %s, name: %s.",
@@ -129,8 +145,15 @@ class GetFile(webapp.RequestHandler):
         # file content.
         if dir or not builder or not name:
             return self._get_file_list(builder, test_type, name)
+
+        if name == "results.json" and test_list_json:
+            json = self._get_test_list_json(builder, test_type)
         else:
-            return self._get_file_content(builder, test_type, name)
+            json = self._get_file_content(builder, test_type, name)
+
+        if json:
+            self.response.headers["Content-Type"] = "text/plain; charset=utf-8"
+            self.response.out.write(json)
 
 
 class Upload(webapp.RequestHandler):

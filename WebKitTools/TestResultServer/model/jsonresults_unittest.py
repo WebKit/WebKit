@@ -66,6 +66,9 @@ JSON_RESULTS_TESTS_TEMPLATE = (
 JSON_RESULTS_PREFIX = "ADD_RESULTS("
 JSON_RESULTS_SUFFIX = ");"
 
+JSON_RESULTS_TEST_LIST_TEMPLATE = (
+    '{"Webkit":{"tests":{[TESTDATA_TESTS]}}}')
+
 
 class JsonResultsTest(unittest.TestCase):
     def setUp(self):
@@ -122,6 +125,21 @@ class JsonResultsTest(unittest.TestCase):
             self.assertEquals(merged_results, expected_results)
         else:
             self.assertFalse(merged_results)
+
+    def _test_get_test_list(self, input_data, expected_data):
+        input_results = self._make_test_json(input_data)
+
+        json_tests = []
+        for test in expected_data:
+            json_tests.append("\"" + test + "\":{}")
+
+        expected_results = JSON_RESULTS_PREFIX + \
+            JSON_RESULTS_TEST_LIST_TEMPLATE.replace(
+                "[TESTDATA_TESTS]", ",".join(json_tests)) + \
+            JSON_RESULTS_SUFFIX
+
+        actual_results = JsonResults.get_test_list(self._builder, input_results)
+        self.assertEquals(actual_results, expected_results)
 
     def test(self):
         # Empty incremental results json.
@@ -207,7 +225,7 @@ class JsonResultsTest(unittest.TestCase):
             # Incremental results
             (["3"], [["002.html", "[1,\"I\"]", "[1,1]"]]),
             # Expected results
-            (["3", "2", "1"], [["001.html", "[1,\"P\"],[200,\"F\"]", "[201,0]"], ["002.html", "[101,\"I\"]", "[101,1]"]]))
+            (["3", "2", "1"], [["001.html", "[1,\"N\"],[200,\"F\"]", "[201,0]"], ["002.html", "[101,\"I\"]", "[101,1]"]]))
 
         # Single test for multiple runs.
         self._test_merge(
@@ -258,23 +276,23 @@ class JsonResultsTest(unittest.TestCase):
             # Expected results
             (["3", "2", "1"], [["002.html", "[1,\"P\"],[10,\"F\"]", "[11,0]"]]))
 
-        # Remove test where all run pass and max running time <= 1 seconds
+        # Remove test where all run pass and max running time < 1 seconds
+        self._test_merge(
+            # Aggregated results
+            (["2", "1"], [["001.html", "[200,\"P\"]", "[200,0]"], ["002.html", "[10,\"F\"]", "[10,0]"]]),
+            # Incremental results
+            (["3"], [["001.html", "[1,\"P\"]", "[1,0]"], ["002.html", "[1,\"P\"]", "[1,0]"]]),
+            # Expected results
+            (["3", "2", "1"], [["002.html", "[1,\"P\"],[10,\"F\"]", "[11,0]"]]))
+
+        # Do not remove test where all run pass but max running time >= 1 seconds
         self._test_merge(
             # Aggregated results
             (["2", "1"], [["001.html", "[200,\"P\"]", "[200,0]"], ["002.html", "[10,\"F\"]", "[10,0]"]]),
             # Incremental results
             (["3"], [["001.html", "[1,\"P\"]", "[1,1]"], ["002.html", "[1,\"P\"]", "[1,0]"]]),
             # Expected results
-            (["3", "2", "1"], [["002.html", "[1,\"P\"],[10,\"F\"]", "[11,0]"]]))
-
-        # Do not remove test where all run pass but max running time > 1 seconds
-        self._test_merge(
-            # Aggregated results
-            (["2", "1"], [["001.html", "[200,\"P\"]", "[200,0]"], ["002.html", "[10,\"F\"]", "[10,0]"]]),
-            # Incremental results
-            (["3"], [["001.html", "[1,\"P\"]", "[1,2]"], ["002.html", "[1,\"P\"]", "[1,0]"]]),
-            # Expected results
-            (["3", "2", "1"], [["001.html", "[201,\"P\"]", "[1,2],[200,0]"], ["002.html", "[1,\"P\"],[10,\"F\"]", "[11,0]"]]))
+            (["3", "2", "1"], [["001.html", "[201,\"P\"]", "[1,1],[200,0]"], ["002.html", "[1,\"P\"],[10,\"F\"]", "[11,0]"]]))
 
         # Remove items from test results and times that exceeds the max number
         # of builds to track.
@@ -286,6 +304,14 @@ class JsonResultsTest(unittest.TestCase):
             (["3"], [["001.html", "[1,\"T\"]", "[1,1]"]]),
             # Expected results
             (["3", "2", "1"], [["001.html", "[1,\"T\"],[" + max_builds + ",\"F\"]", "[1,1],[" + max_builds + ",0]"]]))
+
+        # Get test name list only. Don't include non-test-list data and
+        # of test result details.
+        self._test_get_test_list(
+            # Input results
+            (["3", "2", "1"], [["001.html", "[200,\"P\"]", "[200,0]"], ["002.html", "[10,\"F\"]", "[10,0]"]]),
+            # Expected results
+            ["001.html", "002.html"])
 
 if __name__ == '__main__':
     unittest.main()

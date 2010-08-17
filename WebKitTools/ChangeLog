@@ -1,3 +1,23 @@
+2010-08-17  Victor Wang  <victorw@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Add support to the test results server for downloading json that
+        contains test list only.
+
+        This is for json results generator to generate incremental json
+        results so that it includes results not only for tests failed in
+        current run, but also tests failed before.
+
+        Also set the results type to "N" (no data) instead of "P" (pass)
+        if test results cannot be found in incremental json file.
+
+        https://bugs.webkit.org/show_bug.cgi?id=44117
+
+        * TestResultServer/handlers/testfilehandler.py:
+        * TestResultServer/model/jsonresults.py:
+        * TestResultServer/model/jsonresults_unittest.py:
+
 2010-08-17  Adam Roben  <aroben@apple.com>
 
         Use the right path style

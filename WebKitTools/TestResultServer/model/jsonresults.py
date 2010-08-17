@@ -221,7 +221,7 @@ class JsonResults(object):
                     results = incremental_test[JSON_RESULTS_RESULTS]
                     times = incremental_test[JSON_RESULTS_TIMES]
                 else:
-                    results = [[1, JSON_RESULTS_PASS]]
+                    results = [[1, JSON_RESULTS_NO_DATA]]
                     times = [[1, 0]]
 
                 cls._insert_item_run_length_encoded(
@@ -424,3 +424,33 @@ class JsonResults(object):
             return None
 
         return file
+
+    @classmethod
+    def get_test_list(cls, builder, json_file_data):
+        """Get list of test names from aggregated json file data.
+
+        Args:
+            json_file_data: json file data that has all test-data and
+                            non-test-data.
+
+        Returns:
+            json file with test name list only. The json format is the same
+            as the one saved in datastore, but all non-test-data and test detail
+            results are removed.
+        """
+
+        logging.debug("Loading test results json...")
+        json = cls._load_json(json_file_data)
+        if not json:
+            return None
+
+        logging.debug("Checking test results json...")
+        if not cls._check_json(builder, json):
+            return None
+
+        test_list_json = {}
+        tests = json[builder][JSON_RESULTS_TESTS]
+        test_list_json[builder] = {
+            "tests": dict.fromkeys(tests, {})}
+
+        return cls._generate_file_data(test_list_json)
