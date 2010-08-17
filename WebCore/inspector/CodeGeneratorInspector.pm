@@ -138,7 +138,6 @@ my $verbose;
 my $namespace;
 
 my $backendClassName;
-my $backendJSStubName;
 my %backendTypes;
 my %backendMethods;
 my @backendMethodsImpl;
@@ -146,7 +145,6 @@ my $backendConstructor;
 my @backendConstantDeclarations;
 my @backendConstantDefinitions;
 my $backendFooter;
-my @backendStubJS;
 
 my $frontendClassName;
 my %frontendTypes;
@@ -206,7 +204,6 @@ sub GenerateInterface
     $frontendTypes{"PassRefPtr"} = 1;
 
     $backendClassName = $className . "BackendDispatcher";
-    $backendJSStubName = $className . "BackendStub";
     my @backendHead;
     push(@backendHead, "    ${backendClassName}(InspectorController* inspectorController) : m_inspectorController(inspectorController) { }");
     push(@backendHead, "    void reportProtocolError(const long callId, const String& method, const String& errorText) const;");
@@ -241,8 +238,6 @@ sub generateFunctions
     }
     push(@backendMethodsImpl, generateBackendDispatcher());
     push(@backendMethodsImpl, generateBackendReportProtocolError());
-
-    @backendStubJS = generateBackendStubJS($interface);
 }
 
 sub generateFrontendFunction
@@ -467,40 +462,6 @@ EOF
     return split("\n", $messageParserBody);
 }
 
-sub generateBackendStubJS
-{
-    my $interface = shift;
-    my @backendFunctions = grep(!$_->signature->extendedAttributes->{"notify"}, @{$interface->functions});
-    my @JSStubs = map("    this._registerDelegate(\"" . $_->signature->name . "\");", @backendFunctions);
-
-    my $JSStubs = join("\n", @JSStubs);
-    my $inspectorBackendStubJS = << "EOF";
-$licenseTemplate
-
-WebInspector.InspectorBackendStub = function()
-{
-$JSStubs
-}
-
-WebInspector.InspectorBackendStub.prototype = {
-    _registerDelegate: function(methodName)
-    {
-        this[methodName] = this.sendMessageToBackend.bind(this, methodName);
-    },
-
-    sendMessageToBackend: function()
-    {
-        var message = JSON.stringify(Array.prototype.slice.call(arguments));
-        InspectorFrontendHost.sendMessageToBackend(message);
-    }
-}
-
-InspectorBackend = new WebInspector.InspectorBackendStub();
-
-EOF
-    return split("\n", $inspectorBackendStubJS);
-}
-
 sub generateHeader
 {
     my $className = shift;
@@ -602,11 +563,6 @@ sub finish
     print $HEADER join("\n", generateHeader($backendClassName, \%backendTypes, $backendConstructor, \@backendConstantDeclarations, \%backendMethods, $backendFooter));
     close($HEADER);
     undef($HEADER);
-
-    open(my $JS_STUB, ">$outputDir/$backendJSStubName.js") || die "Couldn't open file $outputDir/$backendJSStubName.js";
-    print $JS_STUB join("\n", @backendStubJS);
-    close($JS_STUB);
-    undef($JS_STUB);
 }
 
 1;

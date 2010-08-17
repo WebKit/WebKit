@@ -82,10 +82,9 @@ void InspectorClient::openInspectorFrontend(InspectorController* controller)
     GOwnPtr<gchar> inspectorURI;
 
     // Make the Web Inspector work when running tests
-    // FixMe: it is not working. It should be not the subdirectory of the current directory, but a subdirectory of $(WEBKITOUTPUTDIR).
-    if (g_file_test("resources/inspector/inspector.html", G_FILE_TEST_EXISTS)) {
+    if (g_file_test("WebCore/inspector/front-end/inspector.html", G_FILE_TEST_EXISTS)) {
         GOwnPtr<gchar> currentDirectory(g_get_current_dir());
-        GOwnPtr<gchar> fullPath(g_strdup_printf("%s/resources/inspector/inspector.html", currentDirectory.get()));
+        GOwnPtr<gchar> fullPath(g_strdup_printf("%s/WebCore/inspector/front-end/inspector.html", currentDirectory.get()));
         inspectorURI.set(g_filename_to_uri(fullPath.get(), NULL, NULL));
     } else {
         GOwnPtr<gchar> dataPath(g_strdup_printf(DATA_DIR"/webkitgtk-%.1f/webinspector/inspector.html", WEBKITGTK_API_VERSION));
