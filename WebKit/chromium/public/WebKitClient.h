@@ -33,6 +33,7 @@
 
 #include "WebCommon.h"
 #include "WebData.h"
+#include "WebFileSystem.h"
 #include "WebLocalizedString.h"
 #include "WebString.h"
 #include "WebURL.h"
@@ -49,7 +50,7 @@ class WebApplicationCacheHost;
 class WebApplicationCacheHostClient;
 class WebClipboard;
 class WebCookieJar;
-class WebFileSystem;
+class WebFileUtilities;
 class WebGLES2Context;
 class WebGraphicsContext3D;
 class WebIDBFactory;
@@ -72,7 +73,12 @@ public:
     virtual WebMimeRegistry* mimeRegistry() { return 0; }
 
     // Must return non-null.
+    // FIXME: Clean up this one once the renaming to WebFileUtilities is done.
     virtual WebFileSystem* fileSystem() { return 0; }
+
+    // Must return non-null.
+    // FIXME: Clean up this one once the renaming from WebFileSystem is done.
+    virtual WebFileUtilities* fileUtilities() { return fileSystem(); }
 
     // May return null if sandbox support is not necessary
     virtual WebSandboxSupport* sandboxSupport() { return 0; }

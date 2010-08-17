@@ -1,3 +1,41 @@
+2010-08-16  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by Jian Li.
+
+        [chromium] Prepare to rename WebFileSystem interface to WebFileUtilities
+        https://bugs.webkit.org/show_bug.cgi?id=44077
+
+        We are going to have an implementation for HTML5 FileSystem API and
+        it would probably be less confusing to use the name "WebFileSystem"
+        for an WebKit API for the HTML5 API.
+
+        This patch adds WebFileUtilities interface that is meant to replace
+        the existing WebFileSystem.
+
+        * WebKit.gyp:
+        * public/WebFileSystem.h:
+        * public/WebFileUtilities.h: Added.
+        * public/WebKitClient.h:
+        (WebKit::WebKitClient::fileUtilities): Added.
+        * src/ChromiumBridge.cpp:
+        (WebCore::ChromiumBridge::fileExists):
+        (WebCore::ChromiumBridge::deleteFile):
+        (WebCore::ChromiumBridge::deleteEmptyDirectory):
+        (WebCore::ChromiumBridge::getFileSize):
+        (WebCore::ChromiumBridge::getFileModificationTime):
+        (WebCore::ChromiumBridge::directoryName):
+        (WebCore::ChromiumBridge::pathByAppendingComponent):
+        (WebCore::ChromiumBridge::makeAllDirectories):
+        (WebCore::ChromiumBridge::getAbsolutePath):
+        (WebCore::ChromiumBridge::isDirectory):
+        (WebCore::ChromiumBridge::filePathToURL):
+        (WebCore::ChromiumBridge::openFile):
+        (WebCore::ChromiumBridge::closeFile):
+        (WebCore::ChromiumBridge::seekFile):
+        (WebCore::ChromiumBridge::truncateFile):
+        (WebCore::ChromiumBridge::readFromFile):
+        (WebCore::ChromiumBridge::writeToFile):
+
 2010-08-16  Nate Chapin  <japhet@chromium.org>
 
         Unreviewed, build fix.

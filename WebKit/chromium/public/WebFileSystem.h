@@ -31,41 +31,12 @@
 #ifndef WebFileSystem_h
 #define WebFileSystem_h
 
-#include "WebCommon.h"
-#include "WebString.h"
-#include "WebURL.h"
+#include "WebFileUtilities.h"
 
 namespace WebKit {
 
-class WebFileSystem {
-public:
-#ifdef WIN32
-    typedef HANDLE FileHandle;
-#else
-    typedef int FileHandle;
-#endif
-
-    virtual bool fileExists(const WebString& path) { return false; }
-    virtual bool deleteFile(const WebString& path) { return false; }
-    virtual bool deleteEmptyDirectory(const WebString& path) { return false; }
-    virtual bool getFileSize(const WebString& path, long long& result) { return false; }
-    virtual bool getFileModificationTime(const WebString& path, double& result) { return false; }
-    virtual WebString directoryName(const WebString& path)  { return WebString(); }
-    virtual WebString pathByAppendingComponent(const WebString& path, const WebString& component)  { return WebString(); }
-    virtual bool makeAllDirectories(const WebString& path) { return false; }
-    virtual WebString getAbsolutePath(const WebString& path)  { return WebString(); }
-    virtual bool isDirectory(const WebString& path) { return false; }
-    virtual WebURL filePathToURL(const WebString& path)  { return WebURL(); }
-    virtual FileHandle openFile(const WebString& path, int mode)  { return FileHandle(); }
-    // Should set the FileHandle to a invalid value if the file is closed successfully.
-    virtual void closeFile(FileHandle&) { }
-    virtual long long seekFile(FileHandle, long long offset, int origin) { return 0; }
-    virtual bool truncateFile(FileHandle, long long offset) { return false; }
-    virtual int readFromFile(FileHandle, char* data, int length) { return 0; }
-    virtual int writeToFile(FileHandle, const char* data, int length) { return 0; }
-
-protected:
-    ~WebFileSystem() {}
+// FIXME: Clean up this class once the renaming to WebFileUtilities is done.
+class WebFileSystem : public WebFileUtilities {
 };
 
 } // namespace WebKit

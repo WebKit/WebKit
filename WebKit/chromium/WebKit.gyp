@@ -158,6 +158,7 @@
                 'public/WebFileChooserParams.h',
                 'public/WebFileInfo.h',
                 'public/WebFileSystem.h',
+                'public/WebFileUtilities.h',
                 'public/WebFindOptions.h',
                 'public/WebFloatPoint.h',
                 'public/WebFloatRect.h',

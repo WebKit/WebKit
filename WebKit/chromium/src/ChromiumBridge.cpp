@@ -41,7 +41,7 @@
 #include "WebCursorInfo.h"
 #include "WebData.h"
 #include "WebDragData.h"
-#include "WebFileSystem.h"
+#include "WebFileUtilities.h"
 #include "WebFrameClient.h"
 #include "WebFrameImpl.h"
 #include "WebImage.h"
@@ -320,28 +320,28 @@ void ChromiumBridge::prefetchDNS(const String& hostname)
 
 bool ChromiumBridge::fileExists(const String& path)
 {
-    return webKitClient()->fileSystem()->fileExists(path);
+    return webKitClient()->fileUtilities()->fileExists(path);
 }
 
 bool ChromiumBridge::deleteFile(const String& path)
 {
-    return webKitClient()->fileSystem()->deleteFile(path);
+    return webKitClient()->fileUtilities()->deleteFile(path);
 }
 
 bool ChromiumBridge::deleteEmptyDirectory(const String& path)
 {
-    return webKitClient()->fileSystem()->deleteEmptyDirectory(path);
+    return webKitClient()->fileUtilities()->deleteEmptyDirectory(path);
 }
 
 bool ChromiumBridge::getFileSize(const String& path, long long& result)
 {
-    return webKitClient()->fileSystem()->getFileSize(path, result);
+    return webKitClient()->fileUtilities()->getFileSize(path, result);
 }
 
 bool ChromiumBridge::getFileModificationTime(const String& path, time_t& result)
 {
     double modificationTime;
-    if (!webKitClient()->fileSystem()->getFileModificationTime(path, modificationTime))
+    if (!webKitClient()->fileUtilities()->getFileModificationTime(path, modificationTime))
         return false;
     result = static_cast<time_t>(modificationTime);
     return true;
@@ -349,62 +349,62 @@ bool ChromiumBridge::getFileModificationTime(const String& path, time_t& result)
 
 String ChromiumBridge::directoryName(const String& path)
 {
-    return webKitClient()->fileSystem()->directoryName(path);
+    return webKitClient()->fileUtilities()->directoryName(path);
 }
 
 String ChromiumBridge::pathByAppendingComponent(const String& path, const String& component)
 {
-    return webKitClient()->fileSystem()->pathByAppendingComponent(path, component);
+    return webKitClient()->fileUtilities()->pathByAppendingComponent(path, component);
 }
 
 bool ChromiumBridge::makeAllDirectories(const String& path)
 {
-    return webKitClient()->fileSystem()->makeAllDirectories(path);
+    return webKitClient()->fileUtilities()->makeAllDirectories(path);
 }
 
 String ChromiumBridge::getAbsolutePath(const String& path)
 {
-    return webKitClient()->fileSystem()->getAbsolutePath(path);
+    return webKitClient()->fileUtilities()->getAbsolutePath(path);
 }
 
 bool ChromiumBridge::isDirectory(const String& path)
 {
-    return webKitClient()->fileSystem()->isDirectory(path);
+    return webKitClient()->fileUtilities()->isDirectory(path);
 }
 
 KURL ChromiumBridge::filePathToURL(const String& path)
 {
-    return webKitClient()->fileSystem()->filePathToURL(path);
+    return webKitClient()->fileUtilities()->filePathToURL(path);
 }
 
 PlatformFileHandle ChromiumBridge::openFile(const String& path, FileOpenMode mode)
 {
-    return webKitClient()->fileSystem()->openFile(path, mode);
+    return webKitClient()->fileUtilities()->openFile(path, mode);
 }
 
 void ChromiumBridge::closeFile(PlatformFileHandle& handle)
 {
-    webKitClient()->fileSystem()->closeFile(handle);
+    webKitClient()->fileUtilities()->closeFile(handle);
 }
 
 long long ChromiumBridge::seekFile(PlatformFileHandle handle, long long offset, FileSeekOrigin origin)
 {
-    return webKitClient()->fileSystem()->seekFile(handle, offset, origin);
+    return webKitClient()->fileUtilities()->seekFile(handle, offset, origin);
 }
 
 bool ChromiumBridge::truncateFile(PlatformFileHandle handle, long long offset)
 {
-    return webKitClient()->fileSystem()->truncateFile(handle, offset);
+    return webKitClient()->fileUtilities()->truncateFile(handle, offset);
 }
 
 int ChromiumBridge::readFromFile(PlatformFileHandle handle, char* data, int length)
 {
-    return webKitClient()->fileSystem()->readFromFile(handle, data, length);
+    return webKitClient()->fileUtilities()->readFromFile(handle, data, length);
 }
 
 int ChromiumBridge::writeToFile(PlatformFileHandle handle, const char* data, int length)
 {
-    return webKitClient()->fileSystem()->writeToFile(handle, data, length);
+    return webKitClient()->fileUtilities()->writeToFile(handle, data, length);
 }
 
 // Font -----------------------------------------------------------------------
