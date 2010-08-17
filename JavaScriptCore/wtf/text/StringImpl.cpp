@@ -542,12 +542,14 @@ size_t StringImpl::find(const char* matchString, unsigned index)
         matchHash += matchCharacters[i];
     }
 
-    for (unsigned i = 0; i <= delta; ++i) {
+    for (unsigned i = 0; i < delta; ++i) {
         if (searchHash == matchHash && equal(searchCharacters + i, matchString, matchLength))
             return index + i;
         searchHash += searchCharacters[i + matchLength];
         searchHash -= searchCharacters[i];
     }
+    if (searchHash == matchHash && equal(searchCharacters + delta, matchString, matchLength))
+        return index + delta;
     return notFound;
 }
 

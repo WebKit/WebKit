@@ -1,3 +1,15 @@
+2010-08-17  Yuta Kitamura  <yutak@chromium.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Avoid uninitialized memory read in StringImpl::find().
+
+        REGRESSION(r65468): Crashes in StringImpl::find
+        https://bugs.webkit.org/show_bug.cgi?id=44099
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::find):
+
 2010-08-16  Gavin Barraclough  <barraclough@apple.com>
 
         Rubber stamped by Sam Weinig
