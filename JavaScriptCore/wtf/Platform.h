@@ -1052,6 +1052,10 @@ on MinGW. See https://bugs.webkit.org/show_bug.cgi?id=29268 */
 #define WTF_USE_ACCELERATED_COMPOSITING 1
 #endif
 
+#if PLATFORM(QT)
+#define WTF_USE_ACCELERATED_COMPOSITING 1
+#endif
+
 /* FIXME: Defining ENABLE_3D_RENDERING here isn't really right, but it's always used with
    with WTF_USE_ACCELERATED_COMPOSITING, and it allows the feature to be turned on and
    off in one place. */

@@ -895,6 +895,7 @@ SOURCES += \
     platform/graphics/GeneratedImage.cpp \
     platform/graphics/Gradient.cpp \
     platform/graphics/GraphicsContext.cpp \
+    platform/graphics/GraphicsLayer.cpp \
     platform/graphics/GraphicsTypes.cpp \
     platform/graphics/Image.cpp \
     platform/graphics/ImageBuffer.cpp \
@@ -1003,6 +1004,8 @@ SOURCES += \
     rendering/RenderIndicator.cpp \
     rendering/RenderInline.cpp \
     rendering/RenderLayer.cpp \
+    rendering/RenderLayerBacking.cpp \
+    rendering/RenderLayerCompositor.cpp \
     rendering/RenderLineBoxList.cpp \
     rendering/RenderListBox.cpp \
     rendering/RenderListItem.cpp \
@@ -1679,6 +1682,8 @@ HEADERS += \
     platform/graphics/GeneratedImage.h \
     platform/graphics/Gradient.h \
     platform/graphics/GraphicsContext.h \
+    platform/graphics/GraphicsLayer.h \
+    platform/graphics/GraphicsLayerClient.h \
     platform/graphics/GraphicsTypes.h \
     platform/graphics/Image.h \
     platform/graphics/ImageSource.h \
@@ -1692,6 +1697,7 @@ HEADERS += \
     platform/graphics/Pen.h \
     platform/graphics/qt/ContextShadow.h \
     platform/graphics/qt/FontCustomPlatformData.h \
+    platform/graphics/qt/GraphicsLayerQt.h \
     platform/graphics/qt/ImageDecoderQt.h \
     platform/graphics/qt/StillImageQt.h \
     platform/graphics/qt/TransparencyLayer.h \
@@ -1820,6 +1826,8 @@ HEADERS += \
     rendering/RenderInline.h \
     rendering/RenderInputSpeech.h \
     rendering/RenderLayer.h \
+    rendering/RenderLayerBacking.h \
+    rendering/RenderLayerCompositor.h \
     rendering/RenderLineBoxList.h \
     rendering/RenderListBox.h \
     rendering/RenderListItem.h \
@@ -2194,6 +2202,7 @@ SOURCES += \
     platform/graphics/qt/FloatRectQt.cpp \
     platform/graphics/qt/GradientQt.cpp \
     platform/graphics/qt/GraphicsContextQt.cpp \
+    platform/graphics/qt/GraphicsLayerQt.cpp \
     platform/graphics/qt/IconQt.cpp \
     platform/graphics/qt/ImageBufferQt.cpp \
     platform/graphics/qt/ImageDecoderQt.cpp \
@@ -3244,19 +3253,6 @@ win32:!win32-g++*:contains(QMAKE_HOST.arch, x86_64):{
         SOURCES += \
             plugins/win/PaintHooks.asm
     }
-}
-contains(DEFINES, WTF_USE_ACCELERATED_COMPOSITING) {
-HEADERS += \
-    rendering/RenderLayerBacking.h \
-    rendering/RenderLayerCompositor.h \
-    platform/graphics/GraphicsLayer.h \
-    platform/graphics/GraphicsLayerClient.h \
-    platform/graphics/qt/GraphicsLayerQt.h
-SOURCES += \
-    platform/graphics/GraphicsLayer.cpp \
-    platform/graphics/qt/GraphicsLayerQt.cpp \
-    rendering/RenderLayerBacking.cpp \
-    rendering/RenderLayerCompositor.cpp
 }
 
 symbian {

@@ -1,3 +1,14 @@
+2010-08-17  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Move the accelerated compositing build flag to the right place
+        https://bugs.webkit.org/show_bug.cgi?id=43882
+
+        No new tests: build fix.
+
+        * WebCore.pro:
+
 2010-08-17  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r65500.
