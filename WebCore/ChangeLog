@@ -1,3 +1,15 @@
+2010-08-17  Ademar de Souza Reis Jr  <ademar.reis@openbossa.org>
+
+        Reviewed by David Levin.
+
+        Trivial fix removing the self-inclusion of a couple of header files.
+
+        Self inclusion in Document.h and RenderTheme.h
+        https://bugs.webkit.org/show_bug.cgi?id=44065
+
+        * dom/Document.h:
+        * rendering/RenderTheme.h:
+
 2010-08-17  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Ariya Hidayat.

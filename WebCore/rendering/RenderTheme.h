@@ -29,7 +29,6 @@
 #include "ThemeTypes.h"
 #endif
 #include "RenderObject.h"
-#include "RenderTheme.h"
 #include "ScrollTypes.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>

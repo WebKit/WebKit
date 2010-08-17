@@ -32,7 +32,6 @@
 #include "CollectionType.h"
 #include "Color.h"
 #include "ContainerNode.h"
-#include "Document.h"
 #include "DocumentMarker.h"
 #include "QualifiedName.h"
 #include "ScriptExecutionContext.h"
