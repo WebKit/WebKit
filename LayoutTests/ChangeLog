@@ -1,3 +1,11 @@
+2010-08-17  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Anders Carlsson.
+
+        Add a few items in the WebKitTestRunner Skipped list.
+
+        * platform/mac-wk2/Skipped:
+
 2010-08-17  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Alexey Proskuryakov.

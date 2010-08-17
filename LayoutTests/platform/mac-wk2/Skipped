@@ -1020,7 +1020,6 @@ media/restore-from-page-cache.html
 
 # Pasteboard doesn't work in WebKit2
 # <https://bugs.webkit.org/show_bug.cgi?id=42317>
-editing/pasteboard/paste-text-events.html
 editing/execCommand/4128080-2.html
 editing/execCommand/5939887.html
 editing/execCommand/copy-without-selection.html
@@ -1067,6 +1066,8 @@ editing/pasteboard/drag-drop-dead-frame.html
 editing/pasteboard/drag-drop-modifies-page.html
 editing/pasteboard/drag-selected-image-to-contenteditable.html
 editing/pasteboard/drop-link.html
+editing/pasteboard/drop-text-events-sideeffect.html
+editing/pasteboard/drop-text-events.html
 editing/pasteboard/drop-text-without-selection.html
 editing/pasteboard/emacs-ctrl-a-k-y.html
 editing/pasteboard/emacs-ctrl-k-y-001.html
@@ -1127,6 +1128,7 @@ editing/pasteboard/paste-text-019.html
 editing/pasteboard/paste-text-at-tabspan-001.html
 editing/pasteboard/paste-text-at-tabspan-002.html
 editing/pasteboard/paste-text-at-tabspan-003.html
+editing/pasteboard/paste-text-events.html
 editing/pasteboard/paste-TIFF.html
 editing/pasteboard/paste-unrendered-select.html 
 editing/pasteboard/paste-visible-script.html
@@ -1136,6 +1138,7 @@ editing/pasteboard/select-element-1.html
 editing/pasteboard/smart-drag-drop.html
 editing/pasteboard/smart-paste-001.html
 editing/pasteboard/smart-paste-002.html
+editing/pasteboard/smart-paste-003-trailing-whitespace.html
 editing/pasteboard/smart-paste-003.html
 editing/pasteboard/smart-paste-004.html
 editing/pasteboard/smart-paste-005.html
@@ -1159,7 +1162,6 @@ platform/mac/editing/pasteboard/text-precomposed.html
 # <https://bugs.webkit.org/show_bug.cgi?id=42319>
 # Need Web Inspector in WebKit2
 # <https://bugs.webkit.org/show_bug.cgi?id=42318>
-inspector/debugger-cyclic-ref.html
 http/tests/inspector-enabled/console-log-before-frame-navigation.html
 http/tests/inspector/change-iframe-src.html
 http/tests/inspector/console-resource-errors.html
@@ -1169,9 +1171,12 @@ http/tests/inspector/resource-parameters.html
 inspector/audits-panel-functional.html
 inspector/console-assert.html
 inspector/console-clear.html
+inspector/console-command-clear.html
 inspector/console-dir-global.html
 inspector/console-dir.html
 inspector/console-dirxml.html
+inspector/console-eval-global.html
+inspector/console-eval.html
 inspector/console-format-collections.html
 inspector/console-format.html
 inspector/console-log-before-inspector-open.html
@@ -1180,11 +1185,15 @@ inspector/console-tests.html
 inspector/console-trace.html
 inspector/cookie-resource-match.html
 inspector/debugger-breakpoints-not-activated-on-reload.html
+inspector/debugger-cyclic-ref.html
 inspector/debugger-eval-while-paused.html
 inspector/debugger-no-nested-pause.html
 inspector/debugger-pause-in-eval-script.html
 inspector/debugger-pause-on-debugger-statement.html
 inspector/debugger-proto-property.html
+inspector/debugger-step-in.html
+inspector/debugger-step-out.html
+inspector/debugger-step-over.html
 inspector/elements-img-tooltip.html
 inspector/elements-panel-limited-children.html
 inspector/elements-panel-rewrite-href.html
@@ -1632,6 +1641,8 @@ fast/dom/Geolocation/callback-to-remote-context2.html
 fast/dom/Geolocation/delayed-permission-allowed.html
 fast/dom/Geolocation/delayed-permission-denied.html
 fast/dom/Geolocation/disconnected-frame-already.html
+fast/dom/Geolocation/disconnected-frame-permission-denied.html
+fast/dom/Geolocation/disconnected-frame.html
 fast/dom/Geolocation/error.html
 fast/dom/Geolocation/multiple-requests.html
 fast/dom/Geolocation/notimer-after-unload.html
@@ -2176,6 +2187,7 @@ fast/history/multiple-classes-visited.html
 fast/history/nested-visited-test.html
 fast/history/saves-state-after-fragment-nav.html
 fast/history/self-is-visited.html
+fast/history/sibling-visited-test.html
 fast/html/empty-fragment-id-goto-top.html
 fast/images/move-image-to-new-document.html
 fast/loader/empty-embed-src-attribute.html
@@ -2185,6 +2197,7 @@ fast/loader/goto-anchor-infinite-layout.html
 fast/loader/hashchange-event-async.html
 fast/loader/hashchange-event.html
 fast/loader/onhashchange-attribute-listeners.html
+fast/loader/submit-form-while-parsing-2.html
 fast/overflow/overflow-y-scroll.html
 fast/overflow/overflow_hidden.html
 fast/overflow/scroll-vertical-not-horizontal.html
@@ -2201,6 +2214,7 @@ fast/workers/storage/sql-exception-codes-sync.html
 http/tests/appcache/different-https-origin-resource-main.html
 http/tests/appcache/fallback.html
 http/tests/cache/subresource-expiration.html
+http/tests/eventsource/eventsource-status-code-states.html
 http/tests/history/back-to-post.php
 http/tests/media/video-load-twice.html
 http/tests/misc/location-replace-crossdomain.html
@@ -2208,7 +2222,9 @@ http/tests/misc/object-image-error-with-onload.html
 http/tests/misc/slow-loading-mask.html
 http/tests/multipart/invalid-image-data-standalone.html
 http/tests/multipart/multipart-wait-before-boundary.html
+http/tests/navigation/back-send-referrer.html
 http/tests/navigation/fallback-anchor-reload.html
+http/tests/navigation/history-back-across-form-submission-to-fragment.html
 http/tests/security/originHeader/origin-header-for-https.html
 http/tests/security/xss-DENIED-mime-type-execute-as-html.html
 http/tests/ssl/referer-301.html
@@ -2233,7 +2249,10 @@ storage/multiple-databases-garbage-collection.html
 storage/open-database-while-transaction-in-progress.html
 svg/custom/clip-path-referencing-use2.svg
 svg/hixie/cascade/002.xml
+transitions/color-transition-all.html
 transitions/font-family-during-transition.html
+transitions/min-max-width-height-transitions.html
+transitions/text-indent-transition.html
 websocket/tests/frame-lengths.html
 
 ########################################
