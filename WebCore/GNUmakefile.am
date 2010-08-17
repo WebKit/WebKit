@@ -69,6 +69,7 @@ webcore_cppflags += \
 	-DDATA_DIR=\"${datadir}\"
 
 webcoregtk_cppflags += \
+	-DWEBKITGTK_API_VERSION_STRING=\"@WEBKITGTK_API_VERSION@\" \
 	-DWTF_USE_SOUP=1 \
 	-DWTF_USE_GSTREAMER=1 \
 	-I$(srcdir)/WebCore/accessibility/gtk \
@@ -4622,7 +4623,7 @@ dist_webinspectorimages_DATA = \
 	$(shell ls $(WebCore)/inspector/front-end/Images/*.gif) \
 	$(shell ls $(WebCore)/inspector/front-end/Images/*.png)
 
-webresourcesdir = ${datadir}/webkit-@WEBKITGTK_API_VERSION@/images
+webresourcesdir = ${datadir}/webkitgtk-@WEBKITGTK_API_VERSION@/images
 dist_webresources_DATA = \
 	$(WebCore)/Resources/textAreaResizeCorner.png \
 	$(WebCore)/Resources/nullPlugin.png \

@@ -237,18 +237,18 @@ GSettings* inspectorGSettings()
     if (settings)
         return settings;
 
-    GOwnPtr<gchar> schemaID(g_strdup_printf("org.webkitgtk-%.1f.inspector", WEBKITGTK_API_VERSION));
+    const gchar* schemaID = "org.webkitgtk-"WEBKITGTK_API_VERSION_STRING".inspector"
 
     // Unfortunately GSettings will abort the process execution if the
     // schema is not installed, which is the case for when running
     // tests, or even the introspection dump at build time, so check
     // if we have the schema before trying to initialize it.
-    if (!isSchemaAvailable(schemaID.get())) {
+    if (!isSchemaAvailable(schemaID)) {
         g_warning("GSettings schema not found - settings will not be used or saved.");
         return 0;
     }
 
-    settings = g_settings_new(schemaID.get());
+    settings = g_settings_new(schemaID);
 
     return settings;
 }

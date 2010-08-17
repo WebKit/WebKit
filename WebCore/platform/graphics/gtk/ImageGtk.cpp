@@ -27,81 +27,60 @@
 
 #include "BitmapImage.h"
 #include "CairoUtilities.h"
-#include "GOwnPtr.h"
+#include "GOwnPtrGtk.h"
 #include "SharedBuffer.h"
 #include <wtf/text/CString.h>
 #include <cairo.h>
 #include <gtk/gtk.h>
 
-#ifdef _WIN32
-#  include <mbstring.h>
-#  include <shlobj.h>
-/* search for data relative to where we are installed */
+#if PLATFORM(WIN)
+#include <mbstring.h>
+#include <shlobj.h>
 
 static HMODULE hmodule;
 
-#ifdef __cplusplus
 extern "C" {
-#endif
-BOOL WINAPI
-DllMain(HINSTANCE hinstDLL,
-    DWORD     fdwReason,
-    LPVOID    lpvReserved)
+BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 {
-    switch (fdwReason) {
-    case DLL_PROCESS_ATTACH:
+    if (fdwReason == DLL_PROCESS_ATTACH)
         hmodule = hinstDLL;
-        break;
-    }
-
     return TRUE;
 }
-#ifdef __cplusplus
 }
-#endif
 
-static char *
-get_webkit_datadir(void)
+static const char* getWebKitDataDirectory()
 {
-    static char retval[1000];
-    static int beenhere = 0;
+    static char* dataDirectory = 0;
+    if (dataDirectory)
+        return dataDirectory;
 
-    unsigned char *p;
-
-    if (beenhere)
-        return retval;
-
-    if (!GetModuleFileName (hmodule, (CHAR *) retval, sizeof(retval) - 10))
+    dataDirectory = new char[PATH_MAX];
+    if (!GetModuleFileName(hmodule, static_cast<CHAR*>(dataDirectory), sizeof(dataDirectory) - 10))
         return DATA_DIR;
 
-    p = _mbsrchr((const unsigned char *) retval, '\\');
+    // FIXME: This is pretty ugly. Ideally we should be using Windows API
+    // functions or GLib methods to calculate paths.
+    unsigned char *p;
+    p = _mbsrchr(static_cast<const unsigned char *>(dataDirectory), '\\');
     *p = '\0';
-    p = _mbsrchr((const unsigned char *) retval, '\\');
+    p = _mbsrchr(static_cast<const unsigned char *>(dataDirectory), '\\');
     if (p) {
         if (!stricmp((const char *) (p+1), "bin"))
             *p = '\0';
     }
-    strcat(retval, "\\share");
+    strcat(dataDirectory, "\\share");
 
-    beenhere = 1;
-
-    return retval;
+    return dataDirectory;
 }
 
-#undef DATA_DIR
-#define DATA_DIR get_webkit_datadir ()
-#endif
+#else
 
-
-namespace WTF {
-
-template <> void freeOwnedGPtr<GtkIconInfo>(GtkIconInfo* info)
+static const char* getWebKitDataDirectory()
 {
-    if (info)
-        gtk_icon_info_free(info);
+    return DATA_DIR;
 }
 
-}
+#endif
 
 namespace WebCore {
 
@@ -158,11 +137,9 @@ PassRefPtr<Image> Image::loadPlatformResource(const char* name)
     if (!strcmp("missingImage", name))
         fileName = getThemeIconFileName(GTK_STOCK_MISSING_IMAGE, 16);
     if (fileName.isNull()) {
-        gchar* imagename = g_strdup_printf("%s.png", name);
-        gchar* glibFileName = g_build_filename(DATA_DIR, "webkit-1.0", "images", imagename, NULL);
-        fileName = glibFileName;
-        g_free(imagename);
-        g_free(glibFileName);
+        GOwnPtr<gchar> imageName(g_strdup_printf("%s.png", name));
+        GOwnPtr<gchar> glibFileName(g_build_filename(getWebKitDataDirectory(), "webkitgtk-"WEBKITGTK_API_VERSION_STRING, "images", imageName.get(), NULL));
+        fileName = glibFileName.get();
     }
 
     return loadImageFromFile(fileName);

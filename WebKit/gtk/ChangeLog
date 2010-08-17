@@ -1,3 +1,15 @@
+2010-08-17  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] Clean up WebCore/platform/graphics/gtk/ImageGtk.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=44069
+
+        * WebCoreSupport/InspectorClientGtk.cpp:
+        (WebKit::InspectorClient::openInspectorFrontend): Switched to using the new WEBKITGTK_API_VERSION_STRING define.
+        * webkit/webkitprivate.cpp:
+        (inspectorGSettings): Ditto.
+
 2010-08-17  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r65500.
