@@ -1,3 +1,12 @@
+2010-08-17  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        [Qt] Web Inspector: inspector/debugger-pause-on-debugger-statement.html times out on Qt
+        https://bugs.webkit.org/show_bug.cgi?id=41142
+
+        * platform/qt/Skipped: the tests should pass after r65315
+
 2010-08-17  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r65500.
