@@ -1,3 +1,24 @@
+2010-08-17  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: replace hand written InspectorBackendStub.js by generated one.
+        New command-line flag was added to combine-javascript-resources.
+        It specifies the location of generated scripts.
+        https://bugs.webkit.org/show_bug.cgi?id=43791
+
+        * GNUmakefile.am:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * combine-javascript-resources:
+        * inspector/CodeGeneratorInspector.pm:
+        * inspector/front-end/InspectorBackendStub.js: Removed.
+        * inspector/front-end/WebKit.qrc:
+
 2010-08-17  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Pavel Feldman.

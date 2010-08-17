@@ -1,3 +1,12 @@
+2010-08-17  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: replace hand written InspectorBackendStub.js by generated one.
+        https://bugs.webkit.org/show_bug.cgi?id=43791
+
+        * GNUmakefile.am:
+
 2010-08-17  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Martin Robinson.
