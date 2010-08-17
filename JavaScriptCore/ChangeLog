@@ -2,6 +2,19 @@
 
         Rubber stamped by Sam Weinig
 
+        Add VectorTraits to String & DefaultHash traits to UString to unify behaviour.
+
+        * runtime/UString.h:
+        (JSC::UStringHash::hash):
+        (JSC::UStringHash::equal):
+        (WTF::):
+        * wtf/text/WTFString.h:
+        (WTF::):
+
+2010-08-16  Gavin Barraclough  <barraclough@apple.com>
+
+        Rubber stamped by Sam Weinig
+
         Remove unnecessary includes from UString.h, add new includes as necessary.
 
         * profiler/CallIdentifier.h:

@@ -194,9 +194,71 @@ inline int codePointCompare(const UString& s1, const UString& s2)
     return codePointCompare(s1.impl(), s2.impl());
 }
 
+struct UStringHash {
+    static unsigned hash(StringImpl* key) { return key->hash(); }
+    static bool equal(const StringImpl* a, const StringImpl* b)
+    {
+        if (a == b)
+            return true;
+        if (!a || !b)
+            return false;
+
+        unsigned aLength = a->length();
+        unsigned bLength = b->length();
+        if (aLength != bLength)
+            return false;
+
+        // FIXME: perhaps we should have a more abstract macro that indicates when
+        // going 4 bytes at a time is unsafe
+#if CPU(ARM) || CPU(SH4)
+        const UChar* aChars = a->characters();
+        const UChar* bChars = b->characters();
+        for (unsigned i = 0; i != aLength; ++i) {
+            if (*aChars++ != *bChars++)
+                return false;
+        }
+        return true;
+#else
+        /* Do it 4-bytes-at-a-time on architectures where it's safe */
+        const uint32_t* aChars = reinterpret_cast<const uint32_t*>(a->characters());
+        const uint32_t* bChars = reinterpret_cast<const uint32_t*>(b->characters());
+
+        unsigned halfLength = aLength >> 1;
+        for (unsigned i = 0; i != halfLength; ++i)
+            if (*aChars++ != *bChars++)
+                return false;
+
+        if (aLength & 1 && *reinterpret_cast<const uint16_t*>(aChars) != *reinterpret_cast<const uint16_t*>(bChars))
+            return false;
+
+        return true;
+#endif
+    }
+
+    static unsigned hash(const RefPtr<StringImpl>& key) { return key->hash(); }
+    static bool equal(const RefPtr<StringImpl>& a, const RefPtr<StringImpl>& b)
+    {
+        return equal(a.get(), b.get());
+    }
+
+    static unsigned hash(const UString& key) { return key.impl()->hash(); }
+    static bool equal(const UString& a, const UString& b)
+    {
+        return equal(a.impl(), b.impl());
+    }
+
+    static const bool safeToCompareToEmptyOrDeleted = false;
+};
+
 } // namespace JSC
 
 namespace WTF {
+
+// UStringHash is the default hash for UString
+template<typename T> struct DefaultHash;
+template<> struct DefaultHash<JSC::UString> {
+    typedef JSC::UStringHash Hash;
+};
 
 template <> struct VectorTraits<JSC::UString> : SimpleClassVectorTraits
 {
