@@ -1121,7 +1121,7 @@ void FrameLoaderClientQt::dispatchDecidePolicyForNavigationAction(FramePolicyFun
 
         printf("Policy delegate: attempt to load %s with navigation type '%s'%s\n",
                qPrintable(drtDescriptionSuitableForTestResult(request.url())), navigationTypeToString(action.type()),
-               (node) ? qPrintable(" originating from " + drtDescriptionSuitableForTestResult(node, 0)) : "");
+               (node) ? qPrintable(QString(" originating from " + drtDescriptionSuitableForTestResult(node, 0))) : "");
 
         if (policyDelegatePermissive)
             result = PolicyUse;
