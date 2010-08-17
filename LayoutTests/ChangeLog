@@ -1,3 +1,13 @@
+2010-08-17  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        selectionStart clobbered if textarea isn't focused
+        https://bugs.webkit.org/show_bug.cgi?id=43814
+
+        * fast/forms/text-control-select-blurred-expected.txt: Added.
+        * fast/forms/text-control-select-blurred.html: Added.
+
 2010-08-17  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by David Levin.

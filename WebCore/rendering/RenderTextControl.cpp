@@ -29,6 +29,7 @@
 #include "EventNames.h"
 #include "Frame.h"
 #include "HTMLBRElement.h"
+#include "HTMLFormControlElement.h"
 #include "HTMLNames.h"
 #include "HitTestResult.h"
 #include "RenderLayer.h"
@@ -217,12 +218,14 @@ int RenderTextControl::selectionEnd()
 
 void RenderTextControl::setSelectionStart(int start)
 {
-    setSelectionRange(start, max(start, selectionEnd()));
+    HTMLTextFormControlElement* element = static_cast<HTMLTextFormControlElement*>(node());
+    setSelectionRange(start, max(start, element->selectionEnd()));
 }
 
 void RenderTextControl::setSelectionEnd(int end)
 {
-    setSelectionRange(min(end, selectionStart()), end);
+    HTMLTextFormControlElement* element = static_cast<HTMLTextFormControlElement*>(node());
+    setSelectionRange(min(end, element->selectionStart()), end);
 }
 
 void RenderTextControl::select()

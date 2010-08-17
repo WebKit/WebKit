@@ -1,3 +1,20 @@
+2010-08-17  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        selectionStart clobbered if textarea isn't focused
+        https://bugs.webkit.org/show_bug.cgi?id=43814
+
+        If a text control is blurred, setting selectionStart/end should use
+        the cached selection value, which is currently stored on the form
+        control element.
+
+        Test: fast/forms/text-control-select-blurred.html
+
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::setSelectionStart):
+        (WebCore::RenderTextControl::setSelectionEnd):
+
 2010-08-17  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by David Levin.
