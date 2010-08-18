@@ -285,8 +285,8 @@ class JSONResultsGeneratorBase(object):
                     return {}, None
 
                 results_file_url = (self.URL_FOR_TEST_LIST_JSON %
-                    (self._test_results_server,
-                     self._builder_name,
+                    (urllib2.quote(self._test_results_server),
+                     urllib2.quote(self._builder_name),
                      self.RESULTS_FILENAME))
             else:
                 # Check if we have the archived JSON file on the buildbot
