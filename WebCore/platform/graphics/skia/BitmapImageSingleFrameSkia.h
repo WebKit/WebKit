@@ -46,9 +46,10 @@ namespace WebCore {
 // is that NativeImagePtr = NativeImageSkia, yet callers have SkBitmap.
 class BitmapImageSingleFrameSkia : public Image {
 public:
-    // Creates a new Image, by copying the pixel values out of |bitmap|.
-    // If creation failed, returns null.
-    static PassRefPtr<BitmapImageSingleFrameSkia> create(const SkBitmap&);
+    // Creates a new Image from the given SkBitmap.  If "copyPixels" is true, a
+    // deep copy is done.  Otherwise, a shallow copy is done (pixel data is
+    // ref'ed).
+    static PassRefPtr<BitmapImageSingleFrameSkia> create(const SkBitmap&, bool copyPixels);
 
     virtual bool isBitmapImage() const { return true; }
 
@@ -77,8 +78,8 @@ protected:
 private:
     NativeImageSkia m_nativeImage;
 
-    // Use create().
-    BitmapImageSingleFrameSkia() { }
+    // Creates a new Image from the given SkBitmap, using a shallow copy.
+    explicit BitmapImageSingleFrameSkia(const SkBitmap&);
 };
 
 } // namespace WebCore

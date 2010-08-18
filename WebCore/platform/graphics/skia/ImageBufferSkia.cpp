@@ -89,12 +89,12 @@ GraphicsContext* ImageBuffer::context() const
 
 bool ImageBuffer::drawsUsingCopy() const
 {
-    return true;
+    return false;
 }
 
 PassRefPtr<Image> ImageBuffer::copyImage() const
 {
-    return BitmapImageSingleFrameSkia::create(*m_data.m_platformContext.bitmap());
+    return BitmapImageSingleFrameSkia::create(*m_data.m_platformContext.bitmap(), true);
 }
 
 void ImageBuffer::clip(GraphicsContext* context, const FloatRect& rect) const
@@ -107,15 +107,15 @@ void ImageBuffer::clip(GraphicsContext* context, const FloatRect& rect) const
 void ImageBuffer::draw(GraphicsContext* context, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect,
                        CompositeOperator op, bool useLowQualityScale)
 {
-    RefPtr<Image> imageCopy = copyImage();
-    context->drawImage(imageCopy.get(), styleColorSpace, destRect, srcRect, op, useLowQualityScale);
+    RefPtr<Image> image = BitmapImageSingleFrameSkia::create(*m_data.m_platformContext.bitmap(), context == m_context);
+    context->drawImage(image.get(), styleColorSpace, destRect, srcRect, op, useLowQualityScale);
 }
 
 void ImageBuffer::drawPattern(GraphicsContext* context, const FloatRect& srcRect, const AffineTransform& patternTransform,
                               const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator op, const FloatRect& destRect)
 {
-    RefPtr<Image> imageCopy = copyImage();
-    imageCopy->drawPattern(context, srcRect, patternTransform, phase, styleColorSpace, op, destRect);
+    RefPtr<Image> image = BitmapImageSingleFrameSkia::create(*m_data.m_platformContext.bitmap(), context == m_context);
+    image->drawPattern(context, srcRect, patternTransform, phase, styleColorSpace, op, destRect);
 }
 
 void ImageBuffer::platformTransformColorSpace(const Vector<int>& lookUpTable)
