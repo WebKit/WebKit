@@ -230,15 +230,15 @@ SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
 
 #elif COMPILER(GCC) && CPU(ARM_THUMB2)
 
-#define THUNK_RETURN_ADDRESS_OFFSET      0x3C
-#define PRESERVED_RETURN_ADDRESS_OFFSET  0x40
-#define PRESERVED_R4_OFFSET              0x44
-#define PRESERVED_R5_OFFSET              0x48
-#define PRESERVED_R6_OFFSET              0x4C
-#define REGISTER_FILE_OFFSET             0x50
-#define CALLFRAME_OFFSET                 0x54
-#define EXCEPTION_OFFSET                 0x58
-#define ENABLE_PROFILER_REFERENCE_OFFSET 0x60
+#define THUNK_RETURN_ADDRESS_OFFSET      0x40
+#define PRESERVED_RETURN_ADDRESS_OFFSET  0x44
+#define PRESERVED_R4_OFFSET              0x48
+#define PRESERVED_R5_OFFSET              0x4C
+#define PRESERVED_R6_OFFSET              0x50
+#define REGISTER_FILE_OFFSET             0x54
+#define CALLFRAME_OFFSET                 0x58
+#define EXCEPTION_OFFSET                 0x5C
+#define ENABLE_PROFILER_REFERENCE_OFFSET 0x64
 
 #elif (COMPILER(GCC) || COMPILER(RVCT)) && CPU(ARM_TRADITIONAL)
 
