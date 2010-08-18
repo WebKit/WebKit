@@ -1,3 +1,16 @@
+2010-08-17  Ademar de Souza Reis Jr  <ademar.reis@openbossa.org>
+
+        Reviewed by Ariya Hidayat.
+
+        Enable http/tests/security/cross-frame-access-name-getter.html
+
+        [Qt] http/tests/security/cross-frame-access-name-getter.html timed out
+        https://bugs.webkit.org/show_bug.cgi?id=38540
+
+        Test works with qt-4.7 and qt-4.6.
+
+        * platform/qt/Skipped:
+
 2010-08-17  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Dimitri Glazkov.
