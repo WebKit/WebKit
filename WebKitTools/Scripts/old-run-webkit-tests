@@ -2396,7 +2396,7 @@ sub setUpWindowsCrashLogSaving()
 
     foreach my $value (keys %values) {
         chomp($previousWindowsPostMortemDebuggerValues{$value} = `regtool get "$windowsPostMortemDebuggerKey/$value"`);
-        my $result = system "regtool", "set", "$windowsPostMortemDebuggerKey/$value", $values{$value};
+        my $result = system "regtool", "set", "-s", "$windowsPostMortemDebuggerKey/$value", $values{$value};
         next unless $result;
 
         print "Failed to set \"$windowsPostMortemDebuggerKey/$value\". Crash logs will not be saved.\nSee <http://trac.webkit.org/wiki/BuildingOnWindows#GettingCrashLogs>.\n";
@@ -2410,7 +2410,7 @@ END {
     return unless isCygwin();
 
     foreach my $value (keys %previousWindowsPostMortemDebuggerValues) {
-        my $result = system "regtool", "set", "$windowsPostMortemDebuggerKey/$value", $previousWindowsPostMortemDebuggerValues{$value};
+        my $result = system "regtool", "set", "-s", "$windowsPostMortemDebuggerKey/$value", $previousWindowsPostMortemDebuggerValues{$value};
         !$result or print "Failed to restore \"$windowsPostMortemDebuggerKey/$value\" to its previous value \"$previousWindowsPostMortemDebuggerValues{$value}\"\n.";
     }
 }

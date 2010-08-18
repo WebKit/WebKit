@@ -1,3 +1,14 @@
+2010-08-18  Adam Roben  <aroben@apple.com>
+
+        Fix hang when saving crash logs on Windows
+
+        * Scripts/old-run-webkit-tests:
+        (setUpWindowsCrashLogSaving):
+        (END):
+        Pass -s to regtool so it will write the Auto value as a string instead
+        of as a number. This was causing a "do you want to debug?" dialog to
+        appear.
+
 2010-08-17  Victor Wang  <victorw@chromium.org>
 
         Unreviewed. Fixed chromium incremental test json upload.
