@@ -81,7 +81,7 @@ void Widget::setCursor(const Cursor& cursor)
     QWebPageClient* pageClient = root()->hostWindow()->platformPageClient();
 
     if (pageClient)
-        pageClient->setCursor(cursor.impl());
+        pageClient->setCursor(*cursor.platformCursor());
 #endif
 }
 

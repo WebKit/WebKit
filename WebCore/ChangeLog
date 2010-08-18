@@ -1,3 +1,27 @@
+2010-08-18  Balazs Kelemen  <kb@inf.u-szeged.hu>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] Use LAZY_NATIVE_CURSOR
+        https://bugs.webkit.org/show_bug.cgi?id=44062
+
+        No functional change so new tests.
+
+        Change Cursor behaviour to match the LAZY_NATIVE_CURSOR policy.
+
+        * platform/Cursor.h: Typedef PlatformCursor to be a QCursor* to be able create it dynamically.
+        (WebCore::Cursor::Cursor): Remove the ifdef for Qt.
+        * platform/qt/CursorQt.cpp: Remove the Cursors class since we have the static cursor instances
+        for the common cursor types in Cursor.cpp. Move the logic that maps the cursor types to
+        QCursor instances into ensurePlatformCursor.
+        (WebCore::Cursor::Cursor):
+        (WebCore::Cursor::~Cursor):
+        (WebCore::Cursor::operator=):
+        (WebCore::createCustomCursor):
+        (WebCore::Cursor::ensurePlatformCursor):
+        * platform/qt/WidgetQt.cpp:
+        (WebCore::Widget::setCursor): Adjust to the PlatformCursor change.
+
 2010-08-18  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Darin Adler.
