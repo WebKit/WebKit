@@ -5,6 +5,13 @@
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
         * JavaScriptCore.xcodeproj/project.pbxproj:
 
+2010-08-18  Gavin Barraclough  <barraclough@apple.com>
+
+        Windows build fix.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2010-08-17  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.
