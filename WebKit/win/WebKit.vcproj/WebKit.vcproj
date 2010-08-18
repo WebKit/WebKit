@@ -1296,6 +1296,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\WebCoreSupport\WebFrameNetworkingContext.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\WebCoreSupport\WebFrameNetworkingContext.h"
+				>
+			</File>
+			<File
 				RelativePath="..\WebCoreSupport\WebGeolocationControllerClient.cpp"
 				>
 			</File>

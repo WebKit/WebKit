@@ -139,6 +139,8 @@
 		934C4AA00F0141F7009372C0 /* WebResourceInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 934C4A9F0F0141F7009372C0 /* WebResourceInternal.h */; };
 		936A2DE80FD2D08000D312DB /* WebTextCompletionController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 936A2DE70FD2D08000D312DB /* WebTextCompletionController.mm */; };
 		936A2DEA0FD2D08400D312DB /* WebTextCompletionController.h in Headers */ = {isa = PBXBuildFile; fileRef = 936A2DE90FD2D08400D312DB /* WebTextCompletionController.h */; };
+		9391F275121B38BD00EBF7E8 /* WebFrameNetworkingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 9391F273121B38BD00EBF7E8 /* WebFrameNetworkingContext.h */; };
+		9391F276121B38BD00EBF7E8 /* WebFrameNetworkingContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9391F274121B38BD00EBF7E8 /* WebFrameNetworkingContext.mm */; };
 		939810110824BF01008DF038 /* WebBackForwardList.h in Headers */ = {isa = PBXBuildFile; fileRef = 3944607D020F50ED0ECA1767 /* WebBackForwardList.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		939810120824BF01008DF038 /* WebHistory.h in Headers */ = {isa = PBXBuildFile; fileRef = F520FB190221DEFD01C1A525 /* WebHistory.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		939810130824BF01008DF038 /* WebHistoryItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 3944607F020F50ED0ECA1767 /* WebHistoryItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -598,6 +600,8 @@
 		934C4A9F0F0141F7009372C0 /* WebResourceInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebResourceInternal.h; sourceTree = "<group>"; };
 		936A2DE70FD2D08000D312DB /* WebTextCompletionController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebTextCompletionController.mm; sourceTree = "<group>"; };
 		936A2DE90FD2D08400D312DB /* WebTextCompletionController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebTextCompletionController.h; sourceTree = "<group>"; };
+		9391F273121B38BD00EBF7E8 /* WebFrameNetworkingContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebFrameNetworkingContext.h; sourceTree = "<group>"; };
+		9391F274121B38BD00EBF7E8 /* WebFrameNetworkingContext.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebFrameNetworkingContext.mm; sourceTree = "<group>"; };
 		939811320824BF01008DF038 /* Info.plist */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = mac/Info.plist; sourceTree = SOURCE_ROOT; tabWidth = 8; usesTabs = 1; };
 		939811330824BF01008DF038 /* WebKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WebKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		93AEB17D032C1735008635CE /* WebKitLogging.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebKitLogging.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -1260,6 +1264,8 @@
 				4BF99F8F0AE050BC00815C2B /* WebEditorClient.mm */,
 				931633EA0AEDFF930062B92D /* WebFrameLoaderClient.h */,
 				931633EE0AEDFFAE0062B92D /* WebFrameLoaderClient.mm */,
+				9391F273121B38BD00EBF7E8 /* WebFrameNetworkingContext.h */,
+				9391F274121B38BD00EBF7E8 /* WebFrameNetworkingContext.mm */,
 				BC7F884910C8775A00D6133D /* WebGeolocationControllerClient.h */,
 				BC7F884A10C8775A00D6133D /* WebGeolocationControllerClient.mm */,
 				51494CD40C7EBDE0004178C5 /* WebIconDatabaseClient.h */,
@@ -1582,6 +1588,7 @@
 				A5DEFC1311D5344B00885273 /* WebApplicationCacheQuotaManager.h in Headers */,
 				A57E2F24120749E600048DF3 /* WebQuotaManager.h in Headers */,
 				B804176F1217A83100466BAE /* WebInspectorFrontend.h in Headers */,
+				9391F275121B38BD00EBF7E8 /* WebFrameNetworkingContext.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1944,6 +1951,7 @@
 				A5DEFC1011D5343E00885273 /* WebDatabaseQuotaManager.mm in Sources */,
 				A5DEFC1411D5344B00885273 /* WebApplicationCacheQuotaManager.mm in Sources */,
 				B80417701217A83100466BAE /* WebInspectorFrontend.mm in Sources */,
+				9391F276121B38BD00EBF7E8 /* WebFrameNetworkingContext.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,3 +1,17 @@
+2010-08-17  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        Reviewed by Darin Adler.
+
+        Add NetworkingContext to avoid layer violations
+        https://bugs.webkit.org/show_bug.cgi?id=42292
+
+        Preparation: Just add the files to the build system.
+
+        * WebKit.gyp: Added new files.
+        * src/FrameNetworkingContextImpl.h: Added.
+        Placeholder with tentative code that might be changed when landing
+        the rest of it.
+
 2010-08-17  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r65516.

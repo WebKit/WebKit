@@ -1690,6 +1690,7 @@ webcore_sources += \
 	WebCore/loader/FrameLoaderStateMachine.cpp \
 	WebCore/loader/FrameLoaderStateMachine.h \
 	WebCore/loader/FrameLoaderTypes.h \
+	WebCore/loader/FrameNetworkingContext.h \
 	WebCore/loader/HistoryController.cpp \
 	WebCore/loader/HistoryController.h \
 	WebCore/loader/ImageDocument.cpp \
@@ -2107,6 +2108,7 @@ webcore_sources += \
 	WebCore/platform/network/HTTPParsers.h \
 	WebCore/platform/network/NetworkStateNotifier.cpp \
 	WebCore/platform/network/NetworkStateNotifier.h \
+	WebCore/platform/network/NetworkingContext.h \
 	WebCore/platform/network/ProtectionSpace.cpp \
 	WebCore/platform/network/ProtectionSpace.h \
 	WebCore/platform/network/ResourceErrorBase.cpp \

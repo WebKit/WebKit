@@ -23513,6 +23513,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\loader\FrameNetworkingContext.h"
+				>
+			</File>
+			<File
 				RelativePath="..\loader\FTPDirectoryDocument.cpp"
 				>
 			</File>
@@ -26853,6 +26857,10 @@
 				</File>
 				<File
 					RelativePath="..\platform\network\NetworkStateNotifier.h"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\network\NetworkingContext.h"
 					>
 				</File>
 				<File

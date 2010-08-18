@@ -318,6 +318,7 @@
                 'src/EventListenerWrapper.h',
                 'src/FrameLoaderClientImpl.cpp',
                 'src/FrameLoaderClientImpl.h',
+                'src/FrameNetworkingContextImpl.h',
                 'src/GLES2Context.cpp',
                 'src/GLES2ContextInternal.cpp',
                 'src/GLES2ContextInternal.h',

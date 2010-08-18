@@ -747,6 +747,7 @@ webkitgtk_sources += \
 	WebKit/gtk/WebCoreSupport/EditorClientGtk.h \
 	WebKit/gtk/WebCoreSupport/FrameLoaderClientGtk.cpp \
 	WebKit/gtk/WebCoreSupport/FrameLoaderClientGtk.h \
+	WebKit/gtk/WebCoreSupport/FrameNetworkingContextGtk.h \
 	WebKit/gtk/WebCoreSupport/InspectorClientGtk.cpp \
 	WebKit/gtk/WebCoreSupport/InspectorClientGtk.h \
 	WebKit/gtk/WebCoreSupport/PasteboardHelperGtk.cpp \
