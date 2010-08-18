@@ -248,7 +248,12 @@ void FrameLoaderClientImpl::detachedFromParent3()
     // go to a page and then navigate to a new page without getting any asserts
     // or crashes.
     m_webFrame->frame()->script()->proxy()->clearForClose();
-    
+
+    // Alert the client that the frame is being detached. This is the last
+    // chance we have to communicate with the client.
+    if (m_webFrame->client())
+        m_webFrame->client()->frameDetached(m_webFrame);
+
     // Stop communicating with the WebFrameClient at this point since we are no
     // longer associated with the Page.
     m_webFrame->setClient(0);
