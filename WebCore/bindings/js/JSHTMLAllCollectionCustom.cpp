@@ -74,7 +74,7 @@ static EncodedJSValue JSC_HOST_CALL callHTMLAllCollection(ExecState* exec)
         // Support for document.all(<index>) etc.
         bool ok;
         UString string = exec->argument(0).toString(exec);
-        unsigned index = string.toUInt32(&ok, false);
+        unsigned index = Identifier::toUInt32(string, ok);
         if (ok)
             return JSValue::encode(toJS(exec, jsCollection->globalObject(), collection->item(index)));
 
@@ -85,7 +85,7 @@ static EncodedJSValue JSC_HOST_CALL callHTMLAllCollection(ExecState* exec)
     // The second arg, if set, is the index of the item we want
     bool ok;
     UString string = exec->argument(0).toString(exec);
-    unsigned index = exec->argument(1).toString(exec).toUInt32(&ok, false);
+    unsigned index = Identifier::toUInt32(exec->argument(1).toString(exec), ok);
     if (ok) {
         String pstr = ustringToString(string);
         Node* node = collection->namedItem(pstr);
@@ -122,7 +122,7 @@ JSValue JSHTMLAllCollection::nameGetter(ExecState* exec, JSValue slotBase, const
 JSValue JSHTMLAllCollection::item(ExecState* exec)
 {
     bool ok;
-    uint32_t index = exec->argument(0).toString(exec).toUInt32(&ok, false);
+    uint32_t index = Identifier::toUInt32(exec->argument(0).toString(exec), ok);
     if (ok)
         return toJS(exec, globalObject(), impl()->item(index));
     return getNamedItems(exec, this, Identifier(exec, exec->argument(0).toString(exec)));

@@ -82,7 +82,7 @@ bool RuntimeArray::getOwnPropertySlot(ExecState* exec, const Identifier& propert
     }
     
     bool ok;
-    unsigned index = toArrayIndex(propertyName.ustring(), &ok);
+    unsigned index = propertyName.toArrayIndex(ok);
     if (ok) {
         if (index < getLength()) {
             slot.setCustomIndex(this, index, indexGetter);
@@ -103,7 +103,7 @@ bool RuntimeArray::getOwnPropertyDescriptor(ExecState* exec, const Identifier& p
     }
     
     bool ok;
-    unsigned index = toArrayIndex(propertyName.ustring(), &ok);
+    unsigned index = propertyName.toArrayIndex(ok);
     if (ok) {
         if (index < getLength()) {
             PropertySlot slot;
@@ -134,7 +134,7 @@ void RuntimeArray::put(ExecState* exec, const Identifier& propertyName, JSValue 
     }
     
     bool ok;
-    unsigned index = toArrayIndex(propertyName.ustring(), &ok);
+    unsigned index = propertyName.toArrayIndex(ok);
     if (ok) {
         getConcreteArray()->setValueAt(exec, index, value);
         return;

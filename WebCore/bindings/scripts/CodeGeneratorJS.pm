@@ -426,7 +426,7 @@ sub GenerateGetOwnPropertySlotBody
 
     if ($dataNode->extendedAttributes->{"HasIndexGetter"} || $dataNode->extendedAttributes->{"HasCustomIndexGetter"} || $dataNode->extendedAttributes->{"HasNumericIndexGetter"}) {
         push(@getOwnPropertySlotImpl, "    bool ok;\n");
-        push(@getOwnPropertySlotImpl, "    unsigned index = propertyName.toUInt32(&ok, false);\n");
+        push(@getOwnPropertySlotImpl, "    unsigned index = propertyName.toUInt32(ok);\n");
 
         # If the item function returns a string then we let the ConvertNullStringTo handle the cases
         # where the index is out of range.
@@ -520,7 +520,7 @@ sub GenerateGetOwnPropertyDescriptorBody
     
     if ($dataNode->extendedAttributes->{"HasIndexGetter"} || $dataNode->extendedAttributes->{"HasCustomIndexGetter"} || $dataNode->extendedAttributes->{"HasNumericIndexGetter"}) {
         push(@getOwnPropertyDescriptorImpl, "    bool ok;\n");
-        push(@getOwnPropertyDescriptorImpl, "    unsigned index = propertyName.toUInt32(&ok, false);\n");
+        push(@getOwnPropertyDescriptorImpl, "    unsigned index = propertyName.toUInt32(ok);\n");
         push(@getOwnPropertyDescriptorImpl, "    if (ok && index < static_cast<$implClassName*>(impl())->length()) {\n");
         if ($dataNode->extendedAttributes->{"HasCustomIndexGetter"} || $dataNode->extendedAttributes->{"HasNumericIndexGetter"}) {
             # Assume that if there's a setter, the index will be writable
@@ -1648,7 +1648,7 @@ sub GenerateImplementation
                 push(@implContent, "{\n");
                 if ($dataNode->extendedAttributes->{"HasCustomIndexSetter"}) {
                     push(@implContent, "    bool ok;\n");
-                    push(@implContent, "    unsigned index = propertyName.toUInt32(&ok, false);\n");
+                    push(@implContent, "    unsigned index = propertyName.toUInt32(ok);\n");
                     push(@implContent, "    if (ok) {\n");
                     push(@implContent, "        indexSetter(exec, index, value);\n");
                     push(@implContent, "        return;\n");

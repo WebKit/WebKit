@@ -88,21 +88,6 @@
  * #define Bad_float_h if your system lacks a float.h or if it does not
  *    define some or all of DBL_DIG, DBL_MAX_10_EXP, DBL_MAX_EXP,
  *    FLT_RADIX, FLT_ROUNDS, and DBL_MAX.
- * #define INFNAN_CHECK on IEEE systems to cause strtod to check for
- *    Infinity and NaN (case insensitively).  On some systems (e.g.,
- *    some HP systems), it may be necessary to #define NAN_WORD0
- *    appropriately -- to the most significant word of a quiet NaN.
- *    (On HP Series 700/800 machines, -DNAN_WORD0=0x7ff40000 works.)
- *    When INFNAN_CHECK is #defined and No_Hex_NaN is not #defined,
- *    strtod also accepts (case insensitively) strings of the form
- *    NaN(x), where x is a string of hexadecimal digits and spaces;
- *    if there is only one string of hexadecimal digits, it is taken
- *    for the 52 fraction bits of the resulting NaN; if there are two
- *    or more strings of hex digits, the first is for the high 20 bits,
- *    the second and subsequent for the low 32 bits, with intervening
- *    white space ignored; but if this results in none of the 52
- *    fraction bits being on (an IEEE Infinity symbol), then NAN_WORD0
- *    and NAN_WORD1 are used instead.
  * #define NO_IEEE_Scale to disable new (Feb. 1997) logic in strtod that
  *    avoids underflows on inputs whose result does not underflow.
  *    If you #define NO_IEEE_Scale on a machine that uses IEEE-format
@@ -165,9 +150,6 @@
 #else
 #define IEEE_8087
 #endif
-
-#define INFNAN_CHECK
-#define No_Hex_NaN
 
 #if defined(IEEE_8087) + defined(IEEE_MC68k) + defined(IEEE_ARM) != 1
 Exactly one of IEEE_8087, IEEE_ARM or IEEE_MC68k should be defined.
@@ -1040,78 +1022,6 @@ static const double tinytens[] = { 1e-16, 1e-32, 1e-64, 1e-128,
 #define Scale_Bit 0x10
 #define n_bigtens 5
 
-#if defined(INFNAN_CHECK)
-
-#ifndef NAN_WORD0
-#define NAN_WORD0 0x7ff80000
-#endif
-
-#ifndef NAN_WORD1
-#define NAN_WORD1 0
-#endif
-
-static int match(const char** sp, const char* t)
-{
-    int c, d;
-    const char* s = *sp;
-
-    while ((d = *t++)) {
-        if ((c = *++s) >= 'A' && c <= 'Z')
-            c += 'a' - 'A';
-        if (c != d)
-            return 0;
-    }
-    *sp = s + 1;
-    return 1;
-}
-
-#ifndef No_Hex_NaN
-static void hexnan(U* rvp, const char** sp)
-{
-    uint32_t c, x[2];
-    const char* s;
-    int havedig, udx0, xshift;
-
-    x[0] = x[1] = 0;
-    havedig = xshift = 0;
-    udx0 = 1;
-    s = *sp;
-    while ((c = *(const unsigned char*)++s)) {
-        if (c >= '0' && c <= '9')
-            c -= '0';
-        else if (c >= 'a' && c <= 'f')
-            c += 10 - 'a';
-        else if (c >= 'A' && c <= 'F')
-            c += 10 - 'A';
-        else if (c <= ' ') {
-            if (udx0 && havedig) {
-                udx0 = 0;
-                xshift = 1;
-            }
-            continue;
-        } else if (/*(*/ c == ')' && havedig) {
-            *sp = s + 1;
-            break;
-        } else
-            return;    /* invalid form: don't change *sp */
-        havedig = 1;
-        if (xshift) {
-            xshift = 0;
-            x[0] = x[1];
-            x[1] = 0;
-        }
-        if (udx0)
-            x[0] = (x[0] << 4) | (x[1] >> 28);
-        x[1] = (x[1] << 4) | c;
-    }
-    if ((x[0] &= 0xfffff) || x[1]) {
-        word0(rvp) = Exp_mask | x[0];
-        word1(rvp) = x[1];
-    }
-}
-#endif /*No_Hex_NaN*/
-#endif /* INFNAN_CHECK */
-
 double strtod(const char* s00, char** se)
 {
 #ifdef Avoid_Underflow
@@ -1236,33 +1146,6 @@ digDone:
     }
     if (!nd) {
         if (!nz && !nz0) {
-#ifdef INFNAN_CHECK
-            /* Check for Nan and Infinity */
-            switch (c) {
-            case 'i':
-            case 'I':
-                if (match(&s, "nf")) {
-                    --s;
-                    if (!match(&s, "inity"))
-                        ++s;
-                    word0(&rv) = 0x7ff00000;
-                    word1(&rv) = 0;
-                    goto ret;
-                }
-                break;
-            case 'n':
-            case 'N':
-                if (match(&s, "an")) {
-                    word0(&rv) = NAN_WORD0;
-                    word1(&rv) = NAN_WORD1;
-#ifndef No_Hex_NaN
-                    if (*s == '(') /*)*/
-                        hexnan(&rv, &s);
-#endif
-                    goto ret;
-                }
-            }
-#endif /* INFNAN_CHECK */
 ret0:
             s = s00;
             sign = 0;

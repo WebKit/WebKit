@@ -264,11 +264,11 @@ namespace JSC {
 
     // Rule from ECMA 15.2 about what an array index is.
     // Must exactly match string form of an unsigned integer, and be less than 2^32 - 1.
-    inline unsigned toArrayIndex(const UString& string, bool* ok)
+    inline unsigned Identifier::toArrayIndex(bool& ok) const
     {
-        unsigned i = string.toStrictUInt32(ok);
+        unsigned i = toUInt32(ok);
         if (ok && i >= 0xFFFFFFFFU)
-            *ok = false;
+            ok = false;
         return i;
     }
 

@@ -276,23 +276,161 @@ static double parseInt(const UString& s, int radix)
     return sign * number;
 }
 
+static const int SizeOfInfinity = 8;
+
+static bool isInfinity(const UChar* data, const UChar* end)
+{
+    return (end - data) >= SizeOfInfinity
+        && data[0] == 'I'
+        && data[1] == 'n'
+        && data[2] == 'f'
+        && data[3] == 'i'
+        && data[4] == 'n'
+        && data[5] == 'i'
+        && data[6] == 't'
+        && data[7] == 'y';
+}
+
+// See ecma-262 9.3.1
+static double jsHexIntegerLiteral(const UChar*& data, const UChar* end)
+{
+    // Hex number.
+    data += 2;
+    const UChar* firstDigitPosition = data;
+    double number = 0;
+    while (true) {
+        number = number * 16 + toASCIIHexValue(*data);
+        ++data;
+        if (data == end)
+            break;
+        if (!isASCIIHexDigit(*data))
+            break;
+    }
+    if (number >= mantissaOverflowLowerBound)
+        number = parseIntOverflow(firstDigitPosition, data - firstDigitPosition, 16);
+
+    return number;
+}
+
+// See ecma-262 9.3.1
+static double jsStrDecimalLiteral(const UChar*& data, const UChar* end)
+{
+    ASSERT(data < end);
+
+    // Copy the sting into a null-terminated byte buffer, and call strtod.
+    Vector<char, 32> byteBuffer;
+    for (const UChar* characters = data; characters < end; ++characters) {
+        UChar character = *characters;
+        byteBuffer.append(isASCII(character) ? character : 0);
+    }
+    byteBuffer.append(0);
+    char* endOfNumber;
+    double number = WTF::strtod(byteBuffer.data(), &endOfNumber);
+
+    // Check if strtod found a number; if so return it.
+    ptrdiff_t consumed = endOfNumber - byteBuffer.data();
+    if (consumed) {
+        data += consumed;
+        return number;
+    }
+
+    // Check for [+-]?Infinity
+    switch (*data) {
+    case 'I':
+        if (isInfinity(data, end)) {
+            data += SizeOfInfinity;
+            return Inf;
+        }
+        break;
+
+    case '+':
+        if (isInfinity(data + 1, end)) {
+            data += SizeOfInfinity + 1;
+            return Inf;
+        }
+        break;
+
+    case '-':
+        if (isInfinity(data + 1, end)) {
+            data += SizeOfInfinity + 1;
+            return -Inf;
+        }
+        break;
+    }
+
+    // Not a number.
+    return NaN;
+}
+
+// See ecma-262 9.3.1
+double jsToNumber(const UString& s)
+{
+    unsigned size = s.length();
+
+    if (size == 1) {
+        UChar c = s.characters()[0];
+        if (isASCIIDigit(c))
+            return c - '0';
+        if (isStrWhiteSpace(c))
+            return 0;
+        return NaN;
+    }
+
+    const UChar* data = s.characters();
+    const UChar* end = data + size;
+
+    // Skip leading white space.
+    for (; data < end; ++data) {
+        if (!isStrWhiteSpace(*data))
+            break;
+    }
+
+    // Empty string.
+    if (data == end)
+        return 0.0;
+
+    double number;
+    if (data[0] == '0' && data + 2 < end && (data[1] | 0x20) == 'x' && isASCIIHexDigit(data[2]))
+        number = jsHexIntegerLiteral(data, end);
+    else
+        number = jsStrDecimalLiteral(data, end);
+
+    // Allow trailing white space.
+    for (; data < end; ++data) {
+        if (!isStrWhiteSpace(*data))
+            break;
+    }
+    if (data != end)
+        return NaN;
+
+    return number;
+}
+
 static double parseFloat(const UString& s)
 {
-    // Check for 0x prefix here, because toDouble allows it, but we must treat it as 0.
-    // Need to skip any whitespace and then one + or - sign.
-    int length = s.length();
+    unsigned size = s.length();
+
+    if (size == 1) {
+        UChar c = s.characters()[0];
+        if (isASCIIDigit(c))
+            return c - '0';
+        return NaN;
+    }
+
     const UChar* data = s.characters();
-    int p = 0;
-    while (p < length && isStrWhiteSpace(data[p]))
-        ++p;
+    const UChar* end = data + size;
 
-    if (p < length && (data[p] == '+' || data[p] == '-'))
-        ++p;
+    // Skip leading white space.
+    for (; data < end; ++data) {
+        if (!isStrWhiteSpace(*data))
+            break;
+    }
 
-    if (length - p >= 2 && data[p] == '0' && (data[p + 1] == 'x' || data[p + 1] == 'X'))
-        return 0;
+    // Empty string.
+    if (data == end)
+        return NaN;
 
-    return s.toDouble(true /*tolerant*/, false /* NaN for empty string */);
+    return jsStrDecimalLiteral(data, end);
 }
 
 EncodedJSValue JSC_HOST_CALL globalFuncEval(ExecState* exec)

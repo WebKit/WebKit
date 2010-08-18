@@ -45,6 +45,7 @@
 #include "JSArray.h"
 #include "JSByteArray.h"
 #include "JSFunction.h"
+#include "JSGlobalObjectFunctions.h"
 #include "JSNotAnObject.h"
 #include "JSPropertyNameIterator.h"
 #include "JSStaticScopeObject.h"
@@ -2814,16 +2815,16 @@ DEFINE_STUB_FUNCTION(int, op_eq)
 
     if (cell1->isString()) {
         if (src2.isInt32())
-            return static_cast<JSString*>(cell1)->value(stackFrame.callFrame).toDouble() == src2.asInt32();
+            return jsToNumber(static_cast<JSString*>(cell1)->value(stackFrame.callFrame)) == src2.asInt32();
             
         if (src2.isDouble())
-            return static_cast<JSString*>(cell1)->value(stackFrame.callFrame).toDouble() == src2.asDouble();
+            return jsToNumber(static_cast<JSString*>(cell1)->value(stackFrame.callFrame)) == src2.asDouble();
 
         if (src2.isTrue())
-            return static_cast<JSString*>(cell1)->value(stackFrame.callFrame).toDouble() == 1.0;
+            return jsToNumber(static_cast<JSString*>(cell1)->value(stackFrame.callFrame)) == 1.0;
 
         if (src2.isFalse())
-            return static_cast<JSString*>(cell1)->value(stackFrame.callFrame).toDouble() == 0.0;
+            return jsToNumber(static_cast<JSString*>(cell1)->value(stackFrame.callFrame)) == 0.0;
 
         JSCell* cell2 = asCell(src2);
         if (cell2->isString())

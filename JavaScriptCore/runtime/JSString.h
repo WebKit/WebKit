@@ -564,7 +564,7 @@ namespace JSC {
         }
 
         bool isStrictUInt32;
-        unsigned i = propertyName.toStrictUInt32(&isStrictUInt32);
+        unsigned i = propertyName.toUInt32(isStrictUInt32);
         if (isStrictUInt32 && i < m_length) {
             slot.setValue(getIndex(exec, i));
             return true;

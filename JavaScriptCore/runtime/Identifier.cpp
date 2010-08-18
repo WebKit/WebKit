@@ -168,6 +168,49 @@ struct IdentifierUCharBufferTranslator {
     }
 };
 
+uint32_t Identifier::toUInt32(const UString& string, bool& ok)
+{
+    ok = false;
+
+    unsigned length = string.length();
+    const UChar* characters = string.characters();
+
+    // An empty string is not a number.
+    if (!length)
+        return 0;
+
+    // Get the first character, turning it into a digit.
+    uint32_t value = characters[0] - '0';
+    if (value > 9)
+        return 0;
+
+    // Check for leading zeros. If the first characher is 0, then the
+    // length of the string must be one - e.g. "042" is not equal to "42".
+    if (!value && length > 1)
+        return 0;
+
+    while (--length) {
+        // Multiply value by 10, checking for overflow out of 32 bits.
+        if (value > 0xFFFFFFFFU / 10)
+            return 0;
+        value *= 10;
+
+        // Get the next character, turning it into a digit.
+        uint32_t newValue = *(++characters) - '0';
+        if (newValue > 9)
+            return 0;
+
+        // Add in the old value, checking for overflow out of 32 bits.
+        newValue += value;
+        if (newValue < value)
+            return 0;
+        value = newValue;
+    }
+
+    ok = true;
+    return value;
+}
+
 PassRefPtr<StringImpl> Identifier::add(JSGlobalData* globalData, const UChar* s, int length)
 {
     if (length == 1) {

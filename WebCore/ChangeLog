@@ -1,3 +1,58 @@
+2010-08-17  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 44146 - Remove toDouble/toUInt32 methods from UString.
+
+        These methods all implement JavaScript language specific behaviour, and as such
+        are not suited to being on a generic string object.  They are also inefficient
+        and incorrectly used, refactor & cleanup.  Uses of these methods really divide
+        out into two cases.
+
+        ToNumber:
+        Uses of toDouble from JSString and from parseFloat are implementing ecma's
+        ToNumber conversion from strings (see ecma-262 9.3.1), so UString::toDouble
+        should largely just be moved out to a global jsToNumber function.  ToNumber is
+        capable of recognizing either decimal or hexadecimal numbers, but parseFloat
+        should only recognize decimal values.  This is currently handled by testing for
+        hexadecimal before calling toDouble, which should unnecessary - instead we can
+        just split out the two parts to the grammar into separate functions. Also,
+        strtod recognizes a set of literals (nan, inf, and infinity - all with any
+        capitalization) - which are not defined by any of the specs we are implementing.
+        To handle this we need to perform additional work in toDouble to convert the
+        unsupported cases of infinities back to NaNs.  Instead we should simply remove
+        support for this literals from strtod.  This should provide a more desirable
+        behaviour for all clients of strtod.
+
+        Indexed properties:
+        Uses of the toStrictUInt32 methods are were all converting property names to
+        indices, and all uses of toUInt32 were incorrect; in all cases we should have
+        been calling toUInt32.  This error results in some incorrect behaviour in the
+        DOM (accessing property "0 " of a NodeList should fail; it currently does not).
+        Move this method onto Identifier (our canonical property name), and make it
+        always perform a strict conversion. Add a layout test to check NodeList does
+        convert indexed property names correctly.
+
+        Test: fast/dom/NodeList/nodelist-item-with-index.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::getOwnPropertySlot):
+        (WebCore::JSDOMWindow::getOwnPropertyDescriptor):
+        * bindings/js/JSHTMLAllCollectionCustom.cpp:
+        (WebCore::callHTMLAllCollection):
+        (WebCore::JSHTMLAllCollection::item):
+        * bindings/js/JSHTMLCollectionCustom.cpp:
+        (WebCore::callHTMLCollection):
+        (WebCore::JSHTMLCollection::item):
+        * bindings/js/JSNodeListCustom.cpp:
+        (WebCore::callNodeList):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bridge/runtime_array.cpp:
+        (JSC::RuntimeArray::getOwnPropertySlot):
+        (JSC::RuntimeArray::getOwnPropertyDescriptor):
+        (JSC::RuntimeArray::put):
+
 2010-08-18  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Adele Peterson.

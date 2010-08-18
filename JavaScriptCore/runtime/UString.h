@@ -107,14 +107,6 @@ public:
     size_t reverseFind(const UString& str, unsigned start = UINT_MAX) const
         { return m_impl ? m_impl->reverseFind(str.impl(), start) : notFound; }
 
-    double toDouble(bool tolerateTrailingJunk, bool tolerateEmptyString) const;
-    double toDouble(bool tolerateTrailingJunk) const;
-    double toDouble() const;
-
-    uint32_t toUInt32(bool* ok = 0) const;
-    uint32_t toUInt32(bool* ok, bool tolerateEmptyString) const;
-    uint32_t toStrictUInt32(bool* ok = 0) const;
-
     UString substr(unsigned pos = 0, unsigned len = UINT_MAX) const;
 
 private:

@@ -24,6 +24,7 @@
 #include "JSString.h"
 
 #include "JSGlobalObject.h"
+#include "JSGlobalObjectFunctions.h"
 #include "JSObject.h"
 #include "Operations.h"
 #include "StringObject.h"
@@ -177,7 +178,7 @@ JSValue JSString::toPrimitive(ExecState*, PreferredPrimitiveType) const
 bool JSString::getPrimitiveNumber(ExecState* exec, double& number, JSValue& result)
 {
     result = this;
-    number = value(exec).toDouble();
+    number = jsToNumber(value(exec));
     return false;
 }
 
@@ -188,7 +189,7 @@ bool JSString::toBoolean(ExecState*) const
 
 double JSString::toNumber(ExecState* exec) const
 {
-    return value(exec).toDouble();
+    return jsToNumber(value(exec));
 }
 
 UString JSString::toString(ExecState* exec) const
@@ -240,7 +241,7 @@ bool JSString::getStringPropertyDescriptor(ExecState* exec, const Identifier& pr
     }
     
     bool isStrictUInt32;
-    unsigned i = propertyName.toStrictUInt32(&isStrictUInt32);
+    unsigned i = propertyName.toUInt32(isStrictUInt32);
     if (isStrictUInt32 && i < m_length) {
         descriptor.setDescriptor(getIndex(exec, i), DontDelete | ReadOnly);
         return true;

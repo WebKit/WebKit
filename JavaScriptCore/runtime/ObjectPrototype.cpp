@@ -65,7 +65,7 @@ void ObjectPrototype::put(ExecState* exec, const Identifier& propertyName, JSVal
 
     if (m_hasNoPropertiesWithUInt32Names) {
         bool isUInt32;
-        propertyName.toStrictUInt32(&isUInt32);
+        propertyName.toUInt32(isUInt32);
         m_hasNoPropertiesWithUInt32Names = !isUInt32;
     }
 }

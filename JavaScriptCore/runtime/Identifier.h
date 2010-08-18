@@ -59,14 +59,13 @@ namespace JSC {
         static Identifier from(JSGlobalData*, unsigned y);
         static Identifier from(JSGlobalData*, int y);
         static Identifier from(JSGlobalData*, double y);
-        
+
+        static uint32_t toUInt32(const UString&, bool& ok);
+        uint32_t toUInt32(bool& ok) const { return toUInt32(m_string, ok); }
+        unsigned toArrayIndex(bool& ok) const;
+
         bool isNull() const { return m_string.isNull(); }
         bool isEmpty() const { return m_string.isEmpty(); }
-        
-        uint32_t toUInt32(bool* ok) const { return m_string.toUInt32(ok); }
-        uint32_t toUInt32(bool* ok, bool tolerateEmptyString) const { return m_string.toUInt32(ok, tolerateEmptyString); };
-        uint32_t toStrictUInt32(bool* ok) const { return m_string.toStrictUInt32(ok); }
-        double toDouble() const { return m_string.toDouble(); }
         
         friend bool operator==(const Identifier&, const Identifier&);
         friend bool operator!=(const Identifier&, const Identifier&);

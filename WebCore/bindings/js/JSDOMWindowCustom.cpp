@@ -271,7 +271,7 @@ bool JSDOMWindow::getOwnPropertySlot(ExecState* exec, const Identifier& property
 
     // allow window[1] or parent[1] etc. (#56983)
     bool ok;
-    unsigned i = toArrayIndex(propertyName.ustring(), &ok);
+    unsigned i = propertyName.toArrayIndex(ok);
     if (ok && i < impl()->frame()->tree()->childCount()) {
         slot.setCustomIndex(this, i, indexGetter);
         return true;
@@ -345,7 +345,7 @@ bool JSDOMWindow::getOwnPropertyDescriptor(ExecState* exec, const Identifier& pr
     }
     
     bool ok;
-    unsigned i = toArrayIndex(propertyName.ustring(), &ok);
+    unsigned i = propertyName.toArrayIndex(ok);
     if (ok && i < impl()->frame()->tree()->childCount()) {
         PropertySlot slot;
         slot.setCustomIndex(this, i, indexGetter);

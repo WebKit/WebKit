@@ -39,7 +39,7 @@ namespace WebCore {
 static EncodedJSValue JSC_HOST_CALL callNodeList(ExecState* exec)
 {
     bool ok;
-    unsigned index = exec->argument(0).toString(exec).toUInt32(&ok);
+    unsigned index = Identifier::toUInt32(exec->argument(0).toString(exec), ok);
     if (!ok)
         return JSValue::encode(jsUndefined());
     return JSValue::encode(toJS(exec, static_cast<JSNodeList*>(exec->callee())->impl()->item(index)));

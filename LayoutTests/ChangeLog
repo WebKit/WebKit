@@ -1,3 +1,15 @@
+2010-08-17  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 44146 - Remove toDouble/toUInt32 methods from UString.
+
+        Test that indexing into nodelists works correctly, particularly
+        wrt indices passed as strings that contain whitespace.
+
+        * fast/dom/NodeList/nodelist-item-with-index-expected.txt: Added.
+        * fast/dom/NodeList/nodelist-item-with-index.html: Added.
+
 2010-08-17  Ademar de Souza Reis Jr  <ademar.reis@openbossa.org>
 
         Reviewed by Daniel Bates.

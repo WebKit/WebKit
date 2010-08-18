@@ -55,6 +55,7 @@ namespace JSC {
     double parseIntOverflow(const char*, int length, int radix);
     double parseIntOverflow(const UChar*, int length, int radix);
     bool isStrWhiteSpace(UChar);
+    double jsToNumber(const UString& s);
 
 } // namespace JSC
 
