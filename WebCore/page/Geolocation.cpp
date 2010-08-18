@@ -678,6 +678,14 @@ void Geolocation::stopUpdating()
 #if USE(PREEMPT_GEOLOCATION_PERMISSION)
 void Geolocation::handlePendingPermissionNotifiers()
 {
+#if ENABLE(CLIENT_BASED_GEOLOCATION)
+    if (!m_frame)
+        return;
+    Page* page = m_frame->page();
+    if (!page)
+        return;
+#endif
+
     // While we iterate through the list, we need not worry about list being modified as the permission 
     // is already set to Yes/No and no new listeners will be added to the pending list
     GeoNotifierSet::const_iterator end = m_pendingForPermissionNotifiers.end();
@@ -687,10 +695,12 @@ void Geolocation::handlePendingPermissionNotifiers()
         if (isAllowed()) {
             // start all pending notification requests as permission granted.
             // The notifier is always ref'ed by m_oneShots or m_watchers.
-            if (startUpdating(notifier))
-                notifier->startTimerIfNeeded();
-            else
-                notifier->setFatalError(PositionError::create(PositionError::POSITION_UNAVAILABLE, failedToStartServiceErrorMessage));
+#if ENABLE(CLIENT_BASED_GEOLOCATION)
+            notifier->startTimerIfNeeded();
+            page->geolocationController()->addObserver(this, notifier->m_options->enableHighAccuracy());
+#else
+            // TODO: Handle startUpdate() for non-client based implementations using pre-emptive policy
+#endif
         } else
             notifier->setFatalError(PositionError::create(PositionError::PERMISSION_DENIED, permissionDeniedErrorMessage));
     }

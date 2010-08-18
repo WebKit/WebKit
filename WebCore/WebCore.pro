@@ -2796,7 +2796,6 @@ contains(DEFINES, ENABLE_QT_BEARER=1) {
 }
 
 contains(DEFINES, ENABLE_GEOLOCATION=1) {
-    DEFINES += WTF_USE_PREEMPT_GEOLOCATION_PERMISSION
     HEADERS += \
         platform/qt/GeolocationServiceQt.h
     SOURCES += \
