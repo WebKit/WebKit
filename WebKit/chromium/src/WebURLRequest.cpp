@@ -55,6 +55,8 @@ public:
         : m_resourceRequestAllocation(*p->m_resourceRequest)
     {
         m_resourceRequest = &m_resourceRequestAllocation;
+        m_allowStoredCredentials = p->m_allowStoredCredentials;
+        m_downloadToFile = p->m_downloadToFile;
     }
 
     virtual void dispose() { delete this; }

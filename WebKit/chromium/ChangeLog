@@ -1,3 +1,15 @@
+2010-08-18  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Propagate the m_downloadFilePath correctly.
+        https://bugs.webkit.org/show_bug.cgi?id=44198
+
+        * src/WebURLRequest.cpp:
+        (WebKit::WebURLRequestPrivateImpl::WebURLRequestPrivateImpl):
+        * src/WebURLResponse.cpp:
+        (WebKit::WebURLResponsePrivateImpl::WebURLResponsePrivateImpl):
+
 2010-08-18  Victor Wang  <victorw@chromium.org>
 
         Unreviewed. Fix chromium multi dll build.
