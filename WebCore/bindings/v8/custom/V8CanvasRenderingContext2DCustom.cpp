@@ -63,13 +63,13 @@ static v8::Handle<v8::Value> toV8Object(CanvasStyle* style)
 static PassRefPtr<CanvasStyle> toCanvasStyle(v8::Handle<v8::Value> value)
 {
     if (value->IsString())
-        return CanvasStyle::create(toWebCoreString(value));
+        return CanvasStyle::createFromString(toWebCoreString(value));
 
     if (V8CanvasGradient::HasInstance(value))
-        return CanvasStyle::create(V8CanvasGradient::toNative(v8::Handle<v8::Object>::Cast(value)));
+        return CanvasStyle::createFromGradient(V8CanvasGradient::toNative(v8::Handle<v8::Object>::Cast(value)));
 
     if (V8CanvasPattern::HasInstance(value))
-        return CanvasStyle::create(V8CanvasPattern::toNative(v8::Handle<v8::Object>::Cast(value)));
+        return CanvasStyle::createFromPattern(V8CanvasPattern::toNative(v8::Handle<v8::Object>::Cast(value)));
 
     return 0;
 }

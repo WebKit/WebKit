@@ -167,8 +167,8 @@ void CanvasRenderingContext2D::reset()
 }
 
 CanvasRenderingContext2D::State::State()
-    : m_strokeStyle(CanvasStyle::create(Color::black))
-    , m_fillStyle(CanvasStyle::create(Color::black))
+    : m_strokeStyle(CanvasStyle::createFromRGBA(Color::black))
+    , m_fillStyle(CanvasStyle::createFromRGBA(Color::black))
     , m_lineWidth(1)
     , m_lineCap(ButtCap)
     , m_lineJoin(MiterJoin)
@@ -550,82 +550,82 @@ void CanvasRenderingContext2D::setStrokeColor(const String& color)
 {
     if (color == state().m_unparsedStrokeColor)
         return;
-    setStrokeStyle(CanvasStyle::create(color));
+    setStrokeStyle(CanvasStyle::createFromString(color));
     state().m_unparsedStrokeColor = color;
 }
 
 void CanvasRenderingContext2D::setStrokeColor(float grayLevel)
 {
-    if (state().m_strokeStyle && state().m_strokeStyle->isEquivalentColor(grayLevel, grayLevel, grayLevel, 1.0f))
+    if (state().m_strokeStyle && state().m_strokeStyle->isEquivalentRGBA(grayLevel, grayLevel, grayLevel, 1.0f))
         return;
-    setStrokeStyle(CanvasStyle::create(grayLevel, 1));
+    setStrokeStyle(CanvasStyle::createFromGrayLevelWithAlpha(grayLevel, 1.0f));
 }
 
 void CanvasRenderingContext2D::setStrokeColor(const String& color, float alpha)
 {
-    setStrokeStyle(CanvasStyle::create(color, alpha));
+    setStrokeStyle(CanvasStyle::createFromStringWithOverrideAlpha(color, alpha));
 }
 
 void CanvasRenderingContext2D::setStrokeColor(float grayLevel, float alpha)
 {
-    if (state().m_strokeStyle && state().m_strokeStyle->isEquivalentColor(grayLevel, grayLevel, grayLevel, alpha))
+    if (state().m_strokeStyle && state().m_strokeStyle->isEquivalentRGBA(grayLevel, grayLevel, grayLevel, alpha))
         return;
-    setStrokeStyle(CanvasStyle::create(grayLevel, alpha));
+    setStrokeStyle(CanvasStyle::createFromGrayLevelWithAlpha(grayLevel, alpha));
 }
 
 void CanvasRenderingContext2D::setStrokeColor(float r, float g, float b, float a)
 {
-    if (state().m_strokeStyle && state().m_strokeStyle->isEquivalentColor(r, g, b, a))
+    if (state().m_strokeStyle && state().m_strokeStyle->isEquivalentRGBA(r, g, b, a))
         return;
-    setStrokeStyle(CanvasStyle::create(r, g, b, a));
+    setStrokeStyle(CanvasStyle::createFromRGBAChannels(r, g, b, a));
 }
 
 void CanvasRenderingContext2D::setStrokeColor(float c, float m, float y, float k, float a)
 {
-    if (state().m_strokeStyle && state().m_strokeStyle->isEquivalentColor(c, m, y, k, a))
+    if (state().m_strokeStyle && state().m_strokeStyle->isEquivalentCMYKA(c, m, y, k, a))
         return;
-    setStrokeStyle(CanvasStyle::create(c, m, y, k, a));
+    setStrokeStyle(CanvasStyle::createFromCMYKAChannels(c, m, y, k, a));
 }
 
 void CanvasRenderingContext2D::setFillColor(const String& color)
 {
     if (color == state().m_unparsedFillColor)
         return;
-    setFillStyle(CanvasStyle::create(color));
+    setFillStyle(CanvasStyle::createFromString(color));
     state().m_unparsedFillColor = color;
 }
 
 void CanvasRenderingContext2D::setFillColor(float grayLevel)
 {
-    if (state().m_fillStyle && state().m_fillStyle->isEquivalentColor(grayLevel, grayLevel, grayLevel, 1.0f))
+    if (state().m_fillStyle && state().m_fillStyle->isEquivalentRGBA(grayLevel, grayLevel, grayLevel, 1.0f))
         return;
-    setFillStyle(CanvasStyle::create(grayLevel, 1));
+    setFillStyle(CanvasStyle::createFromGrayLevelWithAlpha(grayLevel, 1.0f));
 }
 
 void CanvasRenderingContext2D::setFillColor(const String& color, float alpha)
 {
-    setFillStyle(CanvasStyle::create(color, alpha));
+    setFillStyle(CanvasStyle::createFromStringWithOverrideAlpha(color, alpha));
 }
 
 void CanvasRenderingContext2D::setFillColor(float grayLevel, float alpha)
 {
-    if (state().m_fillStyle && state().m_fillStyle->isEquivalentColor(grayLevel, grayLevel, grayLevel, alpha))
+    if (state().m_fillStyle && state().m_fillStyle->isEquivalentRGBA(grayLevel, grayLevel, grayLevel, alpha))
         return;
-    setFillStyle(CanvasStyle::create(grayLevel, alpha));
+    setFillStyle(CanvasStyle::createFromGrayLevelWithAlpha(grayLevel, alpha));
 }
 
 void CanvasRenderingContext2D::setFillColor(float r, float g, float b, float a)
 {
-    if (state().m_fillStyle && state().m_fillStyle->isEquivalentColor(r, g, b, a))
+    if (state().m_fillStyle && state().m_fillStyle->isEquivalentRGBA(r, g, b, a))
         return;
-    setFillStyle(CanvasStyle::create(r, g, b, a));
+    setFillStyle(CanvasStyle::createFromRGBAChannels(r, g, b, a));
 }
 
 void CanvasRenderingContext2D::setFillColor(float c, float m, float y, float k, float a)
 {
-    if (state().m_fillStyle && state().m_fillStyle->isEquivalentColor(c, m, y, k, a))
+    if (state().m_fillStyle && state().m_fillStyle->isEquivalentCMYKA(c, m, y, k, a))
         return;
-    setFillStyle(CanvasStyle::create(c, m, y, k, a));
+    setFillStyle(CanvasStyle::createFromCMYKAChannels(c, m, y, k, a));
 }
 
 void CanvasRenderingContext2D::beginPath()

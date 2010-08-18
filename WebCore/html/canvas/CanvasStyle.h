@@ -38,15 +38,14 @@ namespace WebCore {
 
     class CanvasStyle : public RefCounted<CanvasStyle> {
     public:
-        static PassRefPtr<CanvasStyle> create(RGBA32 rgba) { return adoptRef(new CanvasStyle(rgba)); }
-        static PassRefPtr<CanvasStyle> create(const String& color);
-        static PassRefPtr<CanvasStyle> create(const String& color, float alpha);
-        static PassRefPtr<CanvasStyle> create(float grayLevel) { return adoptRef(new CanvasStyle(grayLevel)); }
-        static PassRefPtr<CanvasStyle> create(float grayLevel, float alpha) { return adoptRef(new CanvasStyle(grayLevel, alpha)); }
-        static PassRefPtr<CanvasStyle> create(float r, float g, float b, float a) { return adoptRef(new CanvasStyle(r, g, b, a)); }
-        static PassRefPtr<CanvasStyle> create(float c, float m, float y, float k, float a) { return adoptRef(new CanvasStyle(c, m, y, k, a)); }
-        static PassRefPtr<CanvasStyle> create(PassRefPtr<CanvasGradient> gradient);
-        static PassRefPtr<CanvasStyle> create(PassRefPtr<CanvasPattern> pattern);
+        static PassRefPtr<CanvasStyle> createFromRGBA(RGBA32 rgba) { return adoptRef(new CanvasStyle(rgba)); }
+        static PassRefPtr<CanvasStyle> createFromString(const String& color);
+        static PassRefPtr<CanvasStyle> createFromStringWithOverrideAlpha(const String& color, float alpha);
+        static PassRefPtr<CanvasStyle> createFromGrayLevelWithAlpha(float grayLevel, float alpha) { return adoptRef(new CanvasStyle(grayLevel, alpha)); }
+        static PassRefPtr<CanvasStyle> createFromRGBAChannels(float r, float g, float b, float a) { return adoptRef(new CanvasStyle(r, g, b, a)); }
+        static PassRefPtr<CanvasStyle> createFromCMYKAChannels(float c, float m, float y, float k, float a) { return adoptRef(new CanvasStyle(c, m, y, k, a)); }
+        static PassRefPtr<CanvasStyle> createFromGradient(PassRefPtr<CanvasGradient>);
+        static PassRefPtr<CanvasStyle> createFromPattern(PassRefPtr<CanvasPattern>);
 
         String color() const { return Color(m_rgba).serialized(); }
         CanvasGradient* canvasGradient() const { return m_gradient.get(); }
@@ -56,12 +55,11 @@ namespace WebCore {
         void applyStrokeColor(GraphicsContext*);
 
         bool isEquivalentColor(const CanvasStyle&) const;
-        bool isEquivalentColor(float r, float g, float b, float a) const;
-        bool isEquivalentColor(float c, float m, float y, float k, float a) const;
+        bool isEquivalentRGBA(float r, float g, float b, float a) const;
+        bool isEquivalentCMYKA(float c, float m, float y, float k, float a) const;
 
     private:
         CanvasStyle(RGBA32 rgba);
-        CanvasStyle(float grayLevel);
         CanvasStyle(float grayLevel, float alpha);
         CanvasStyle(float r, float g, float b, float a);
         CanvasStyle(float c, float m, float y, float k, float a);

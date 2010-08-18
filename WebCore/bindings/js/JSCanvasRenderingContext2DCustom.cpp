@@ -57,9 +57,9 @@ static PassRefPtr<CanvasStyle> toHTMLCanvasStyle(ExecState*, JSValue value)
         return 0;
     JSObject* object = asObject(value);
     if (object->inherits(&JSCanvasGradient::s_info))
-        return CanvasStyle::create(static_cast<JSCanvasGradient*>(object)->impl());
+        return CanvasStyle::createFromGradient(static_cast<JSCanvasGradient*>(object)->impl());
     if (object->inherits(&JSCanvasPattern::s_info))
-        return CanvasStyle::create(static_cast<JSCanvasPattern*>(object)->impl());
+        return CanvasStyle::createFromPattern(static_cast<JSCanvasPattern*>(object)->impl());
     return 0;
 }
 

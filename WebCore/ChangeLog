@@ -1,3 +1,39 @@
+2010-08-18  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        CanvasStyle method naming cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=44184
+
+        Renamed the various create() overloads to reflect what they're
+        constructing the CanvasStyle from.
+
+        The unused CanvasStyle::create(grayLevel) and accompanying constructor
+        were removed.
+
+        Also renamed the isEquivalentColor overloads to isEquivalent{RGBA,CMYKA}
+
+        * bindings/js/JSCanvasRenderingContext2DCustom.cpp:
+        (WebCore::toHTMLCanvasStyle):
+        * bindings/v8/custom/V8CanvasRenderingContext2DCustom.cpp:
+        (WebCore::toCanvasStyle):
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::State::State):
+        (WebCore::CanvasRenderingContext2D::setStrokeColor):
+        (WebCore::CanvasRenderingContext2D::setFillColor):
+        * html/canvas/CanvasStyle.cpp:
+        (WebCore::CanvasStyle::createFromString):
+        (WebCore::CanvasStyle::createFromStringWithOverrideAlpha):
+        (WebCore::CanvasStyle::createFromGradient):
+        (WebCore::CanvasStyle::createFromPattern):
+        (WebCore::CanvasStyle::isEquivalentRGBA):
+        (WebCore::CanvasStyle::isEquivalentCMYKA):
+        * html/canvas/CanvasStyle.h:
+        (WebCore::CanvasStyle::createFromRGBA):
+        (WebCore::CanvasStyle::createFromGrayLevelWithAlpha):
+        (WebCore::CanvasStyle::createFromRGBAChannels):
+        (WebCore::CanvasStyle::createFromCMYKAChannels):
+
 2010-08-18  Girish Ramakrishnan  <girish@forwardbias.in>
 
         Reviewed by Kenneth Rohde Christiansen.
