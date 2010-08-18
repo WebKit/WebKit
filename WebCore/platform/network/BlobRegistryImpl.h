@@ -63,8 +63,8 @@ public:
 
 private:
     bool shouldLoadResource(const ResourceRequest& request) const;
-    void appendStorageItems(BlobStorageData*, const BlobStorageDataItemList&);
-    void appendStorageItems(BlobStorageData*, const BlobStorageDataItemList&, long long offset, long long length);
+    void appendStorageItems(BlobStorageData*, const BlobDataItemList&);
+    void appendStorageItems(BlobStorageData*, const BlobDataItemList&, long long offset, long long length);
 
     HashMap<String, RefPtr<BlobStorageData> > m_blobs;
 };

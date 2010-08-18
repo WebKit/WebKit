@@ -31,76 +31,33 @@
 #ifndef BlobStorageData_h
 #define BlobStorageData_h
 
-#include "PlatformString.h"
+#include "BlobData.h"
 #include <wtf/PassRefPtr.h>
-#include <wtf/Vector.h>
-#include <wtf/text/CString.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-struct BlobStorageDataItem {
-    enum BlobStoreDataItemType { Data, File };
-    BlobStoreDataItemType type;
-    long long offset;
-    long long length;
-
-    // For string data.
-    CString data;
-
-    // For file data.
-    String path;
-    double expectedModificationTime;
-
-    BlobStorageDataItem(const CString& data, long long offset, long long length)
-        : type(Data)
-        , offset(offset)
-        , length(length)
-        , data(data)
-        , expectedModificationTime(0)
-    {
-    }
-
-    BlobStorageDataItem(const String& path, long long offset, long long length, double expectedModificationTime)
-        : type(File)
-        , offset(offset)
-        , length(length)
-        , path(path)
-        , expectedModificationTime(expectedModificationTime)
-    {
-    }
-};
-
-typedef Vector<BlobStorageDataItem> BlobStorageDataItemList;
-
 class BlobStorageData : public RefCounted<BlobStorageData> {
 public:
-    static PassRefPtr<BlobStorageData> create()
+    static PassRefPtr<BlobStorageData> create(const String& contentType, const String& contentDisposition)
     {
-        return adoptRef(new BlobStorageData());
+        return adoptRef(new BlobStorageData(contentType, contentDisposition));
     }
 
-    const String& contentType() const { return m_contentType; }
-    void setContentType(const String& contentType) { m_contentType = contentType; }
-
-    const String& contentDisposition() const { return m_contentDisposition; }
-    void setContentDisposition(const String& contentDisposition) { m_contentDisposition = contentDisposition; }
-    
-    const BlobStorageDataItemList& items() const { return m_items; }
-
-    void appendData(const CString& data, long long offset, long long length)
-    {
-        m_items.append(BlobStorageDataItem(data, offset, length));
-    }
-
-    void appendFile(const String& path, long long offset, long long length, double expectedModificationTime)
-    {
-        m_items.append(BlobStorageDataItem(path, offset, length, expectedModificationTime));
-    }
+    const String& contentType() const { return m_data.contentType(); }
+    const String& contentDisposition() const { return m_data.contentDisposition(); }    
+    const BlobDataItemList& items() const { return m_data.items(); }
 
 private:
-    String m_contentType;
-    String m_contentDisposition;
-    BlobStorageDataItemList m_items;
+    friend class BlobRegistryImpl;
+
+    BlobStorageData(const String& contentType, const String& contentDisposition)
+    {
+        m_data.setContentType(contentType);
+        m_data.setContentDisposition(contentDisposition);
+    }
+
+    BlobData m_data;
 };
 
 } // namespace WebCore

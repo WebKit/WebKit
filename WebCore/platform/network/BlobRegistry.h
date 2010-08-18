@@ -38,6 +38,7 @@
 namespace WebCore {
 
 class BlobData;
+class BlobRegistry;
 class KURL;
 class ResourceError;
 class ResourceHandle;
@@ -45,17 +46,23 @@ class ResourceHandleClient;
 class ResourceRequest;
 class ResourceResponse;
 
+// Returns a single instance of BlobRegistry.
+BlobRegistry& blobRegistry(); 
+
 // BlobRegistry is not thread-safe. It should only be called from main thread.
 class BlobRegistry {
 public:
-    static BlobRegistry& instance();
-
+    // Registers a blob URL referring to the specified blob data.
     virtual void registerBlobURL(const KURL&, PassOwnPtr<BlobData>) = 0;
+    
+    // Registers a blob URL referring to the blob data identified by the specified srcURL.
     virtual void registerBlobURL(const KURL&, const KURL& srcURL) = 0;
+
     virtual void unregisterBlobURL(const KURL&) = 0;
     virtual PassRefPtr<ResourceHandle> createResourceHandle(const ResourceRequest&, ResourceHandleClient*) = 0;
     virtual bool loadResourceSynchronously(const ResourceRequest&, ResourceError&, ResourceResponse&, Vector<char>& data) = 0;
 
+protected:
     virtual ~BlobRegistry() { }
 };
 

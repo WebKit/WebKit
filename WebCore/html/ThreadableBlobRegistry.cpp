@@ -56,7 +56,7 @@ static void postTaskToMainThread(ScriptExecutionContext* scriptExecutionContext,
 
 static void registerBlobURLTask(ScriptExecutionContext*, const KURL& url, PassOwnPtr<BlobData> blobData)
 {
-    BlobRegistry::instance().registerBlobURL(url, blobData);
+    blobRegistry().registerBlobURL(url, blobData);
 }
 
 void ThreadableBlobRegistry::registerBlobURL(ScriptExecutionContext* scriptExecutionContext, const KURL& url, PassOwnPtr<BlobData> blobData)
@@ -69,7 +69,7 @@ void ThreadableBlobRegistry::registerBlobURL(ScriptExecutionContext* scriptExecu
 
 static void registerBlobURLFromTask(ScriptExecutionContext*, const KURL& url, const KURL& srcURL)
 {
-    BlobRegistry::instance().registerBlobURL(url, srcURL);
+    blobRegistry().registerBlobURL(url, srcURL);
 }
 
 void ThreadableBlobRegistry::registerBlobURL(ScriptExecutionContext* scriptExecutionContext, const KURL& url, const KURL& srcURL)
@@ -82,7 +82,7 @@ void ThreadableBlobRegistry::registerBlobURL(ScriptExecutionContext* scriptExecu
 
 static void unregisterBlobURLTask(ScriptExecutionContext*, const KURL& url)
 {
-    BlobRegistry::instance().unregisterBlobURL(url);
+    blobRegistry().unregisterBlobURL(url);
 }
 
 void ThreadableBlobRegistry::unregisterBlobURL(ScriptExecutionContext* scriptExecutionContext, const KURL& url)

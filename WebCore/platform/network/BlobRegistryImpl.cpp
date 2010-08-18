@@ -32,9 +32,6 @@
 
 #include "BlobRegistryImpl.h"
 
-#include "FileStream.h"
-#include "FileStreamProxy.h"
-#include "FileSystem.h"
 #include "ResourceError.h"
 #include "ResourceHandle.h"
 #include "ResourceLoader.h"
@@ -44,6 +41,13 @@
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
+
+BlobRegistry& blobRegistry()
+{
+    ASSERT(isMainThread());
+    DEFINE_STATIC_LOCAL(BlobRegistryImpl, instance, ());
+    return instance;
+}
 
 bool BlobRegistryImpl::shouldLoadResource(const ResourceRequest& request) const
 {
@@ -72,30 +76,23 @@ bool BlobRegistryImpl::loadResourceSynchronously(const ResourceRequest& request,
     return false;
 }
 
-BlobRegistry& BlobRegistry::instance()
+void BlobRegistryImpl::appendStorageItems(BlobStorageData* blobStorageData, const BlobDataItemList& items)
 {
-    ASSERT(isMainThread());
-    DEFINE_STATIC_LOCAL(BlobRegistryImpl, instance, ());
-    return instance;
-}
-
-void BlobRegistryImpl::appendStorageItems(BlobStorageData* blobStorageData, const BlobStorageDataItemList& items)
-{
-    for (BlobStorageDataItemList::const_iterator iter = items.begin(); iter != items.end(); ++iter) {
-        if (iter->type == BlobStorageDataItem::Data)
-            blobStorageData->appendData(iter->data, iter->offset, iter->length);
+    for (BlobDataItemList::const_iterator iter = items.begin(); iter != items.end(); ++iter) {
+        if (iter->type == BlobDataItem::Data)
+            blobStorageData->m_data.appendData(iter->data, iter->offset, iter->length);
         else {
-            ASSERT(iter->type == BlobStorageDataItem::File);
-            blobStorageData->appendFile(iter->path, iter->offset, iter->length, iter->expectedModificationTime);
+            ASSERT(iter->type == BlobDataItem::File);
+            blobStorageData->m_data.appendFile(iter->path, iter->offset, iter->length, iter->expectedModificationTime);
         }
     }
 }
 
-void BlobRegistryImpl::appendStorageItems(BlobStorageData* blobStorageData, const BlobStorageDataItemList& items, long long offset, long long length)
+void BlobRegistryImpl::appendStorageItems(BlobStorageData* blobStorageData, const BlobDataItemList& items, long long offset, long long length)
 {
     ASSERT(length != BlobDataItem::toEndOfFile);
 
-    BlobStorageDataItemList::const_iterator iter = items.begin();
+    BlobDataItemList::const_iterator iter = items.begin();
     if (offset) {
         for (; iter != items.end(); ++iter) {
             if (offset >= iter->length)
@@ -108,11 +105,11 @@ void BlobRegistryImpl::appendStorageItems(BlobStorageData* blobStorageData, cons
     for (; iter != items.end() && length > 0; ++iter) {
         long long currentLength = iter->length - offset;
         long long newLength = currentLength > length ? length : currentLength;
-        if (iter->type == BlobStorageDataItem::Data)
-            blobStorageData->appendData(iter->data, iter->offset + offset, newLength);
+        if (iter->type == BlobDataItem::Data)
+            blobStorageData->m_data.appendData(iter->data, iter->offset + offset, newLength);
         else {
-            ASSERT(iter->type == BlobStorageDataItem::File);
-            blobStorageData->appendFile(iter->path, iter->offset + offset, newLength, iter->expectedModificationTime);
+            ASSERT(iter->type == BlobDataItem::File);
+            blobStorageData->m_data.appendFile(iter->path, iter->offset + offset, newLength, iter->expectedModificationTime);
         }
         offset = 0;
     }
@@ -122,17 +119,20 @@ void BlobRegistryImpl::registerBlobURL(const KURL& url, PassOwnPtr<BlobData> blo
 {
     ASSERT(isMainThread());
 
-    RefPtr<BlobStorageData> blobStorageData = BlobStorageData::create();
-    blobStorageData->setContentType(blobData->contentType());
-    blobStorageData->setContentDisposition(blobData->contentDisposition());
+    RefPtr<BlobStorageData> blobStorageData = BlobStorageData::create(blobData->contentType(), blobData->contentDisposition());
+
+    // The blob data is stored in the "canonical" way. That is, it only contains a list of Data and File items.
+    // 1) The Data item is denoted by the raw data and the range.
+    // 2) The File item is denoted by the file path, the range and the expected modification time.
+    // All the Blob items in the passing blob data are resolved and expanded into a set of Data and File items.
 
     for (BlobDataItemList::const_iterator iter = blobData->items().begin(); iter != blobData->items().end(); ++iter) {
         switch (iter->type) {
         case BlobDataItem::Data:
-            blobStorageData->appendData(iter->data, 0, iter->data.length());
+            blobStorageData->m_data.appendData(iter->data, 0, iter->data.length());
             break;
         case BlobDataItem::File:
-            blobStorageData->appendFile(iter->path, iter->offset, iter->length, iter->expectedModificationTime);
+            blobStorageData->m_data.appendFile(iter->path, iter->offset, iter->length, iter->expectedModificationTime);
             break;
         case BlobDataItem::Blob:
             if (m_blobs.contains(iter->url.string()))
@@ -140,7 +140,6 @@ void BlobRegistryImpl::registerBlobURL(const KURL& url, PassOwnPtr<BlobData> blo
             break;
         }
     }
-
 
     m_blobs.set(url.string(), blobStorageData);
 }
@@ -154,9 +153,7 @@ void BlobRegistryImpl::registerBlobURL(const KURL& url, const KURL& srcURL)
     if (!src)
         return;
 
-    RefPtr<BlobStorageData> blobStorageData = BlobStorageData::create();
-    blobStorageData->setContentType(src->contentType());
-    blobStorageData->setContentDisposition(src->contentDisposition());
+    RefPtr<BlobStorageData> blobStorageData = BlobStorageData::create(src->contentType(), src->contentDisposition());
     appendStorageItems(blobStorageData.get(), src->items());
     
     m_blobs.set(url.string(), blobStorageData);

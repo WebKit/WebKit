@@ -45,14 +45,15 @@ struct BlobDataItem {
 
     // Default constructor.
     BlobDataItem()
-        : offset(0)
+        : type(Data)
+        , offset(0)
         , length(toEndOfFile)
         , expectedModificationTime(doNotCheckFileChange)
     {
     }
 
-    // Constructor for String type.
-    BlobDataItem(const CString& data)
+    // Constructor for String type (complete string).
+    explicit BlobDataItem(const CString& data)
         : type(Data)
         , data(data)
         , offset(0)
@@ -61,8 +62,18 @@ struct BlobDataItem {
     {
     }
 
+    // Constructor for String type (partial string).
+    BlobDataItem(const CString& data, long long offset, long long length)
+        : type(Data)
+        , data(data)
+        , offset(offset)
+        , length(length)
+        , expectedModificationTime(doNotCheckFileChange)
+    {
+    }
+
     // Constructor for File type (complete file).
-    BlobDataItem(const String& path)
+    explicit BlobDataItem(const String& path)
         : type(File)
         , path(path)
         , offset(0)
@@ -105,11 +116,8 @@ struct BlobDataItem {
     // For Blob type.
     KURL url;
 
-    // For File and Blob type.
     long long offset;
     long long length;
-
-    // For File type only.
     double expectedModificationTime;
 };
 
@@ -140,7 +148,13 @@ public:
     void appendBlob(const KURL&, long long offset, long long length);
 
 private:
+    friend class BlobRegistryImpl;
+    friend class BlobStorageData;
+
     BlobData() { }
+
+    // This is only exposed to BlobStorageData.
+    void appendData(const CString&, long long offset, long long length);
 
     String m_contentType;
     String m_contentDisposition;

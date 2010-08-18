@@ -64,6 +64,11 @@ void BlobData::appendData(const CString& data)
     m_items.append(BlobDataItem(data));
 }
 
+void BlobData::appendData(const CString& data, long long offset, long long length)
+{
+    m_items.append(BlobDataItem(data, offset, length));
+}
+
 void BlobData::appendFile(const String& path)
 {
     m_items.append(BlobDataItem(path));
