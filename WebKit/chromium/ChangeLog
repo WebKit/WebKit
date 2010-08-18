@@ -1,3 +1,9 @@
+2010-08-18  Victor Wang  <victorw@chromium.org>
+
+        Unreviewed. Fix chromium multi dll build.
+
+        * public/WebIDBKeyPath.h:
+
 2010-08-18  Jay Civelli  <jcivelli@chromium.org>
 
         Reviewed by Darin Fisher.

@@ -40,7 +40,7 @@ class WebString;
 
 class WebIDBKeyPath {
 public:
-    static WebIDBKeyPath create(const WebString&);
+    WEBKIT_API static WebIDBKeyPath create(const WebString&);
     WebIDBKeyPath(const WebIDBKeyPath& keyPath) { assign(keyPath); }
     ~WebIDBKeyPath() { reset(); }
 
