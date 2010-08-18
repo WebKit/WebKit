@@ -29,33 +29,33 @@
  */
 
 #include "config.h"
-#include "WebEventListenerPrivate.h"
+#include "WebDOMEventListenerPrivate.h"
 
 #include "EventListenerWrapper.h"
-#include "WebEventListener.h"
+#include "WebDOMEventListener.h"
 
 namespace WebKit {
 
-WebEventListenerPrivate::WebEventListenerPrivate(WebEventListener* webEventListener)
-    : m_webEventListener(webEventListener)
+WebDOMEventListenerPrivate::WebDOMEventListenerPrivate(WebDOMEventListener* webDOMEventListener)
+    : m_webDOMEventListener(webDOMEventListener)
 {
 }
 
-WebEventListenerPrivate::~WebEventListenerPrivate()
+WebDOMEventListenerPrivate::~WebDOMEventListenerPrivate()
 {
 }
 
-DeprecatedEventListenerWrapper* WebEventListenerPrivate::createEventListenerWrapper(const WebString& eventType, bool useCapture, Node* node)
+EventListenerWrapper* WebDOMEventListenerPrivate::createEventListenerWrapper(const WebString& eventType, bool useCapture, Node* node)
 {
-    DeprecatedEventListenerWrapper* listenerWrapper = new DeprecatedEventListenerWrapper(m_webEventListener);
-    WebEventListenerPrivate::ListenerInfo listenerInfo(eventType, useCapture, listenerWrapper, node);
+    EventListenerWrapper* listenerWrapper = new EventListenerWrapper(m_webDOMEventListener);
+    WebDOMEventListenerPrivate::ListenerInfo listenerInfo(eventType, useCapture, listenerWrapper, node);
     m_listenerWrappers.append(listenerInfo);
     return listenerWrapper;
 }
 
-DeprecatedEventListenerWrapper* WebEventListenerPrivate::getEventListenerWrapper(const WebString& eventType, bool useCapture, Node* node)
+EventListenerWrapper* WebDOMEventListenerPrivate::getEventListenerWrapper(const WebString& eventType, bool useCapture, Node* node)
 {
-    Vector<WebEventListenerPrivate::ListenerInfo>::const_iterator iter;
+    Vector<WebDOMEventListenerPrivate::ListenerInfo>::const_iterator iter;
     for (iter = m_listenerWrappers.begin(); iter != m_listenerWrappers.end(); ++iter) {
         if (iter->node == node)
           return iter->eventListenerWrapper;
@@ -64,16 +64,16 @@ DeprecatedEventListenerWrapper* WebEventListenerPrivate::getEventListenerWrapper
     return 0;
 }
 
-void WebEventListenerPrivate::webEventListenerDeleted()
+void WebDOMEventListenerPrivate::webDOMEventListenerDeleted()
 {
-    // Notifies all WebEventListenerWrappers that we are going away so they can
+    // Notifies all WebDOMEventListenerWrappers that we are going away so they can
     // invalidate their pointer to us.
-    Vector<WebEventListenerPrivate::ListenerInfo>::const_iterator iter;
+    Vector<WebDOMEventListenerPrivate::ListenerInfo>::const_iterator iter;
     for (iter = m_listenerWrappers.begin(); iter != m_listenerWrappers.end(); ++iter)
-        iter->eventListenerWrapper->webEventListenerDeleted();
+        iter->eventListenerWrapper->webDOMEventListenerDeleted();
 }
 
-void WebEventListenerPrivate::eventListenerDeleted(DeprecatedEventListenerWrapper* eventListener)
+void WebDOMEventListenerPrivate::eventListenerDeleted(EventListenerWrapper* eventListener)
 {
     for (size_t i = 0; i < m_listenerWrappers.size(); ++i) {
         if (m_listenerWrappers[i].eventListenerWrapper == eventListener) {

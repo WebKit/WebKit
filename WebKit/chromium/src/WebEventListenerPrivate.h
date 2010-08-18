@@ -43,7 +43,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-class EventListenerWrapper;
+class DeprecatedEventListenerWrapper;
 class WebEventListener;
 
 class WebEventListenerPrivate {
@@ -51,23 +51,23 @@ public:
     WebEventListenerPrivate(WebEventListener* webEventListener);
     ~WebEventListenerPrivate();
 
-    EventListenerWrapper* createEventListenerWrapper(
+    DeprecatedEventListenerWrapper* createEventListenerWrapper(
         const WebString& eventType, bool useCapture, Node* node);
 
-    // Gets the ListenerEventWrapper for a specific node.
+    // Gets the DeprecatedEventListenerWrapper for a specific node.
     // Used by WebNode::removeEventListener().
-    EventListenerWrapper* getEventListenerWrapper(
+    DeprecatedEventListenerWrapper* getEventListenerWrapper(
         const WebString& eventType, bool useCapture, Node* node);
 
     // Called by the WebEventListener when it is about to be deleted.
     void webEventListenerDeleted();
 
-    // Called by the EventListenerWrapper when it is about to be deleted.
-    void eventListenerDeleted(EventListenerWrapper* eventListener);
+    // Called by the DeprecatedEventListenerWrapper when it is about to be deleted.
+    void eventListenerDeleted(DeprecatedEventListenerWrapper* eventListener);
 
     struct ListenerInfo {
         ListenerInfo(const WebString& eventType, bool useCapture,
-                     EventListenerWrapper* eventListenerWrapper,
+                     DeprecatedEventListenerWrapper* eventListenerWrapper,
                      Node* node)
             : eventType(eventType)
             , useCapture(useCapture)
@@ -78,7 +78,7 @@ public:
 
         WebString eventType;
         bool useCapture;
-        EventListenerWrapper* eventListenerWrapper;
+        DeprecatedEventListenerWrapper* eventListenerWrapper;
         Node* node;
     };
 

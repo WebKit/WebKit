@@ -27,38 +27,32 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+#ifndef WebDOMMutationEvent_h
+#define WebDOMMutationEvent_h
 
-#include "config.h"
-#include "WebEventListener.h"
+#include "WebDOMEvent.h"
 
-#include "WebEventListenerPrivate.h"
+#if WEBKIT_IMPLEMENTATION
+namespace WebCore { class Event; }
+#endif
 
 namespace WebKit {
 
-WebEventListener::WebEventListener()
-    : m_private(new WebEventListenerPrivate(this))
-{
-}
+class WebDOMMutationEvent : public WebDOMEvent {
+public:
+    enum AttrChangeType {
+        Modification    = 1,
+        Addition        = 2,
+        Removal         = 3
+    };
 
-WebEventListener::~WebEventListener()
-{
-    m_private->webEventListenerDeleted();
-    delete m_private;
-}
-
-void WebEventListener::notifyEventListenerDeleted(DeprecatedEventListenerWrapper* wrapper)
-{
-    m_private->eventListenerDeleted(wrapper);
-}
-
-DeprecatedEventListenerWrapper* WebEventListener::createEventListenerWrapper(const WebString& eventType, bool useCapture, Node* node)
-{
-    return m_private->createEventListenerWrapper(eventType, useCapture, node);
-}
-
-DeprecatedEventListenerWrapper* WebEventListener::getEventListenerWrapper(const WebString& eventType, bool useCapture, Node* node)
-{
-    return m_private->getEventListenerWrapper(eventType, useCapture, node);
-}
+    WEBKIT_API WebNode relatedNode() const;
+    WEBKIT_API WebString prevValue() const;
+    WEBKIT_API WebString newValue() const;
+    WEBKIT_API WebString attrName() const;
+    WEBKIT_API AttrChangeType attrChange() const;
+};
 
 } // namespace WebKit
+
+#endif

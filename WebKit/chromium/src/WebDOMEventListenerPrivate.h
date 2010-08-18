@@ -28,52 +28,67 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef EventListenerWrapper_h
-#define EventListenerWrapper_h
+#ifndef WebDOMEventListenerPrivate_h
+#define WebDOMEventListenerPrivate_h
 
-#include "EventListener.h"
+#include "WebString.h"
+
+#include <wtf/Vector.h>
 
 namespace WebCore {
-class ScriptExecutionContext;
+class Node;
 }
 
 using namespace WebCore;
 
 namespace WebKit {
 
+class EventListenerWrapper;
 class WebDOMEventListener;
-class WebEventListener;
 
-// FIXME: Remove the DeprecatedEventListenerWrapper class below once Chromium
-// switched to using WebDOMEvent.
-class EventListenerWrapper : public EventListener {
+class WebDOMEventListenerPrivate {
 public:
-    EventListenerWrapper(WebDOMEventListener*);
-    ~EventListenerWrapper();
+    WebDOMEventListenerPrivate(WebDOMEventListener* webDOMEventListener);
+    ~WebDOMEventListenerPrivate();
 
-    virtual bool operator==(const EventListener&);
-    virtual void handleEvent(ScriptExecutionContext*, Event*);
+    EventListenerWrapper* createEventListenerWrapper(
+        const WebString& eventType, bool useCapture, Node* node);
 
+    // Gets the ListenerEventWrapper for a specific node.
+    // Used by WebNode::removeDOMEventListener().
+    EventListenerWrapper* getEventListenerWrapper(
+        const WebString& eventType, bool useCapture, Node* node);
+
+    // Called by the WebDOMEventListener when it is about to be deleted.
     void webDOMEventListenerDeleted();
+
+    // Called by the EventListenerWrapper when it is about to be deleted.
+    void eventListenerDeleted(EventListenerWrapper* eventListener);
+
+    struct ListenerInfo {
+        ListenerInfo(const WebString& eventType, bool useCapture,
+                     EventListenerWrapper* eventListenerWrapper,
+                     Node* node)
+            : eventType(eventType)
+            , useCapture(useCapture)
+            , eventListenerWrapper(eventListenerWrapper)
+            , node(node)
+        {
+        }
+
+        WebString eventType;
+        bool useCapture;
+        EventListenerWrapper* eventListenerWrapper;
+        Node* node;
+    };
 
 private:
     WebDOMEventListener* m_webDOMEventListener;
+
+    // We keep a list of the wrapper for the WebKit EventListener, it is needed
+    // to implement WebNode::removeEventListener().
+    Vector<ListenerInfo> m_listenerWrappers;
 };
-
-class DeprecatedEventListenerWrapper : public EventListener {
-public:
-    DeprecatedEventListenerWrapper(WebEventListener*);
-    ~DeprecatedEventListenerWrapper();
-
-    virtual bool operator==(const EventListener&);
-    virtual void handleEvent(ScriptExecutionContext*, Event*);
-
-    void webEventListenerDeleted();
-
-private:
-    WebEventListener* m_webEventListener;
-};
-
 
 } // namespace WebKit
 

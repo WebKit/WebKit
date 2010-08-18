@@ -27,38 +27,36 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+#ifndef WebDOMMouseEvent_h
+#define WebDOMMouseEvent_h
 
-#include "config.h"
-#include "WebEventListener.h"
+#include "WebDOMEvent.h"
 
-#include "WebEventListenerPrivate.h"
+#if WEBKIT_IMPLEMENTATION
+namespace WebCore { class Event; }
+#endif
 
 namespace WebKit {
 
-WebEventListener::WebEventListener()
-    : m_private(new WebEventListenerPrivate(this))
-{
-}
+class WebDOMMouseEvent : public WebDOMEvent {
+public:
+    WEBKIT_API int screenX() const;
+    WEBKIT_API int screenY() const;
+    WEBKIT_API int clientX() const;
+    WEBKIT_API int clientY() const;
+    WEBKIT_API int layerX() const;
+    WEBKIT_API int layerY() const;
+    WEBKIT_API int offsetX() const;
+    WEBKIT_API int offsetY() const;
+    WEBKIT_API int pageX() const;
+    WEBKIT_API int pageY() const;
+    WEBKIT_API int x() const;
+    WEBKIT_API int y() const;
 
-WebEventListener::~WebEventListener()
-{
-    m_private->webEventListenerDeleted();
-    delete m_private;
-}
-
-void WebEventListener::notifyEventListenerDeleted(DeprecatedEventListenerWrapper* wrapper)
-{
-    m_private->eventListenerDeleted(wrapper);
-}
-
-DeprecatedEventListenerWrapper* WebEventListener::createEventListenerWrapper(const WebString& eventType, bool useCapture, Node* node)
-{
-    return m_private->createEventListenerWrapper(eventType, useCapture, node);
-}
-
-DeprecatedEventListenerWrapper* WebEventListener::getEventListenerWrapper(const WebString& eventType, bool useCapture, Node* node)
-{
-    return m_private->getEventListenerWrapper(eventType, useCapture, node);
-}
+    WEBKIT_API int button() const;
+    WEBKIT_API bool buttonDown() const;
+};
 
 } // namespace WebKit
+
+#endif

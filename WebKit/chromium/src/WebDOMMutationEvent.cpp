@@ -29,36 +29,37 @@
  */
 
 #include "config.h"
-#include "WebEventListener.h"
+#include "WebDOMMutationEvent.h"
 
-#include "WebEventListenerPrivate.h"
+#include "MutationEvent.h"
+
+using namespace WebCore;
 
 namespace WebKit {
 
-WebEventListener::WebEventListener()
-    : m_private(new WebEventListenerPrivate(this))
+WebNode WebDOMMutationEvent::relatedNode() const
 {
+    return WebNode(constUnwrap<MutationEvent>()->relatedNode());
 }
 
-WebEventListener::~WebEventListener()
+WebString WebDOMMutationEvent::prevValue() const
 {
-    m_private->webEventListenerDeleted();
-    delete m_private;
+    return WebString(constUnwrap<MutationEvent>()->prevValue());
 }
 
-void WebEventListener::notifyEventListenerDeleted(DeprecatedEventListenerWrapper* wrapper)
+WebString WebDOMMutationEvent::newValue() const
 {
-    m_private->eventListenerDeleted(wrapper);
+    return WebString(constUnwrap<MutationEvent>()->newValue());
 }
 
-DeprecatedEventListenerWrapper* WebEventListener::createEventListenerWrapper(const WebString& eventType, bool useCapture, Node* node)
+WebString WebDOMMutationEvent::attrName() const
 {
-    return m_private->createEventListenerWrapper(eventType, useCapture, node);
+    return WebString(constUnwrap<MutationEvent>()->attrName());
 }
 
-DeprecatedEventListenerWrapper* WebEventListener::getEventListenerWrapper(const WebString& eventType, bool useCapture, Node* node)
+WebDOMMutationEvent::AttrChangeType WebDOMMutationEvent::attrChange() const
 {
-    return m_private->getEventListenerWrapper(eventType, useCapture, node);
+    return static_cast<AttrChangeType>(constUnwrap<MutationEvent>()->attrChange());
 }
 
 } // namespace WebKit

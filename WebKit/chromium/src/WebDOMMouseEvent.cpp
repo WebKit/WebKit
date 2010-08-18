@@ -29,36 +29,82 @@
  */
 
 #include "config.h"
-#include "WebEventListener.h"
+#include "WebDOMMouseEvent.h"
 
-#include "WebEventListenerPrivate.h"
+#include "MouseEvent.h"
+
+using namespace WebCore;
 
 namespace WebKit {
 
-WebEventListener::WebEventListener()
-    : m_private(new WebEventListenerPrivate(this))
+int WebDOMMouseEvent::screenX() const
 {
+    return constUnwrap<MouseEvent>()->screenX();
 }
 
-WebEventListener::~WebEventListener()
+int WebDOMMouseEvent::screenY() const
 {
-    m_private->webEventListenerDeleted();
-    delete m_private;
+    return constUnwrap<MouseEvent>()->screenY();
 }
 
-void WebEventListener::notifyEventListenerDeleted(DeprecatedEventListenerWrapper* wrapper)
+int WebDOMMouseEvent::clientX() const
 {
-    m_private->eventListenerDeleted(wrapper);
+    return constUnwrap<MouseEvent>()->clientX();
 }
 
-DeprecatedEventListenerWrapper* WebEventListener::createEventListenerWrapper(const WebString& eventType, bool useCapture, Node* node)
+int WebDOMMouseEvent::clientY() const
 {
-    return m_private->createEventListenerWrapper(eventType, useCapture, node);
+    return constUnwrap<MouseEvent>()->clientY();
 }
 
-DeprecatedEventListenerWrapper* WebEventListener::getEventListenerWrapper(const WebString& eventType, bool useCapture, Node* node)
+int WebDOMMouseEvent::layerX() const
 {
-    return m_private->getEventListenerWrapper(eventType, useCapture, node);
+    return constUnwrap<MouseEvent>()->layerX();
+}
+
+int WebDOMMouseEvent::layerY() const
+{
+    return constUnwrap<MouseEvent>()->layerY();
+}
+
+int WebDOMMouseEvent::offsetX() const
+{
+    return constUnwrap<MouseEvent>()->offsetX();
+}
+
+int WebDOMMouseEvent::offsetY() const
+{
+    return constUnwrap<MouseEvent>()->offsetY();
+}
+
+int WebDOMMouseEvent::pageX() const
+{
+    return constUnwrap<MouseEvent>()->pageX();
+}
+
+int WebDOMMouseEvent::pageY() const
+{
+    return constUnwrap<MouseEvent>()->pageY();
+}
+
+int WebDOMMouseEvent::x() const
+{
+    return constUnwrap<MouseEvent>()->x();
+}
+
+int WebDOMMouseEvent::y() const
+{
+    return constUnwrap<MouseEvent>()->y();
+}
+
+int WebDOMMouseEvent::button() const
+{
+    return constUnwrap<MouseEvent>()->button();
+}
+
+bool WebDOMMouseEvent::buttonDown() const
+{
+    return constUnwrap<MouseEvent>()->buttonDown();
 }
 
 } // namespace WebKit

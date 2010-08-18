@@ -29,34 +29,34 @@
  */
 
 #include "config.h"
-#include "WebEventListener.h"
+#include "WebDOMEventListener.h"
 
-#include "WebEventListenerPrivate.h"
+#include "WebDOMEventListenerPrivate.h"
 
 namespace WebKit {
 
-WebEventListener::WebEventListener()
-    : m_private(new WebEventListenerPrivate(this))
+WebDOMEventListener::WebDOMEventListener()
+    : m_private(new WebDOMEventListenerPrivate(this))
 {
 }
 
-WebEventListener::~WebEventListener()
+WebDOMEventListener::~WebDOMEventListener()
 {
-    m_private->webEventListenerDeleted();
+    m_private->webDOMEventListenerDeleted();
     delete m_private;
 }
 
-void WebEventListener::notifyEventListenerDeleted(DeprecatedEventListenerWrapper* wrapper)
+void WebDOMEventListener::notifyEventListenerDeleted(EventListenerWrapper* wrapper)
 {
     m_private->eventListenerDeleted(wrapper);
 }
 
-DeprecatedEventListenerWrapper* WebEventListener::createEventListenerWrapper(const WebString& eventType, bool useCapture, Node* node)
+EventListenerWrapper* WebDOMEventListener::createEventListenerWrapper(const WebString& eventType, bool useCapture, Node* node)
 {
     return m_private->createEventListenerWrapper(eventType, useCapture, node);
 }
 
-DeprecatedEventListenerWrapper* WebEventListener::getEventListenerWrapper(const WebString& eventType, bool useCapture, Node* node)
+EventListenerWrapper* WebDOMEventListener::getEventListenerWrapper(const WebString& eventType, bool useCapture, Node* node)
 {
     return m_private->getEventListenerWrapper(eventType, useCapture, node);
 }

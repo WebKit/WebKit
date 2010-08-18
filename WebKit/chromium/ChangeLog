@@ -1,3 +1,31 @@
+2010-08-18  Jay Civelli  <jcivelli@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Renaming the WebEvent to WebDOMEvent and adding a new event class
+        for mouse events so that the event listener API can be used to listen
+        to them.  The renaming is needed as there already is a WebMouseEvent class.
+        https://bugs.webkit.org/show_bug.cgi?id=43453
+
+        * WebKit.gyp:
+        * public/WebDOMEvent.h: Added.
+        * public/WebDOMEventListener.h: Added.
+        * public/WebDOMMouseEvent.h: Added.
+        * public/WebDOMMutationEvent.h: Added.
+        * public/WebNode.h:
+        * src/EventListenerWrapper.cpp:
+        * src/EventListenerWrapper.h:
+        * src/WebDOMEvent.cpp: Added.
+        * src/WebDOMEventListener.cpp: Added.
+        * src/WebDOMEventListenerPrivate.cpp: Added.
+        * src/WebDOMEventListenerPrivate.h: Added.
+        * src/WebDOMMouseEvent.cpp: Added.
+        * src/WebDOMMutationEvent.cpp: Added.
+        * src/WebNode.cpp:
+        (WebKit::WebNode::isElementNode):
+        (WebKit::WebNode::addDOMEventListener):
+        (WebKit::WebNode::removeDOMEventListener):
+
 2010-08-17  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.

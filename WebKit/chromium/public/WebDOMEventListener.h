@@ -28,37 +28,41 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebEventListener.h"
+#ifndef WebDOMEventListener_h
+#define WebDOMEventListener_h
 
-#include "WebEventListenerPrivate.h"
+#include "WebCommon.h"
+
+#if WEBKIT_IMPLEMENTATION
+namespace WebCore { class Node; }
+#endif
 
 namespace WebKit {
 
-WebEventListener::WebEventListener()
-    : m_private(new WebEventListenerPrivate(this))
-{
-}
+class EventListenerWrapper;
+class WebDOMEvent;
+class WebDOMEventListenerPrivate;
+class WebNode;
+class WebString;
 
-WebEventListener::~WebEventListener()
-{
-    m_private->webEventListenerDeleted();
-    delete m_private;
-}
+class WebDOMEventListener {
+public:
+    WEBKIT_API WebDOMEventListener();
+    WEBKIT_API virtual ~WebDOMEventListener();
 
-void WebEventListener::notifyEventListenerDeleted(DeprecatedEventListenerWrapper* wrapper)
-{
-    m_private->eventListenerDeleted(wrapper);
-}
+    // Called when an event is received.
+    virtual void handleEvent(const WebDOMEvent&) = 0;
 
-DeprecatedEventListenerWrapper* WebEventListener::createEventListenerWrapper(const WebString& eventType, bool useCapture, Node* node)
-{
-    return m_private->createEventListenerWrapper(eventType, useCapture, node);
-}
+#if WEBKIT_IMPLEMENTATION
+    void notifyEventListenerDeleted(EventListenerWrapper*);
+    EventListenerWrapper* createEventListenerWrapper(const WebString& eventType, bool useCapture, WebCore::Node* node);
+    EventListenerWrapper* getEventListenerWrapper(const WebString& eventType, bool useCapture, WebCore::Node* node);
+#endif
 
-DeprecatedEventListenerWrapper* WebEventListener::getEventListenerWrapper(const WebString& eventType, bool useCapture, Node* node)
-{
-    return m_private->getEventListenerWrapper(eventType, useCapture, node);
-}
+private:
+    WebDOMEventListenerPrivate* m_private;
+};
 
 } // namespace WebKit
+
+#endif
