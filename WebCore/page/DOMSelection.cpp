@@ -427,6 +427,8 @@ void DOMSelection::deleteFromDocument()
         selection->modify(SelectionController::AlterationExtend, SelectionController::DirectionBackward, CharacterGranularity);
 
     RefPtr<Range> selectedRange = selection->selection().toNormalizedRange();
+    if (!selectedRange)
+        return;
 
     ExceptionCode ec = 0;
     selectedRange->deleteContents(ec);
