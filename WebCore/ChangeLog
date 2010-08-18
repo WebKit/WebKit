@@ -1,3 +1,14 @@
+2010-08-18  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: extension panels do not occupy entire panel client area.
+        https://bugs.webkit.org/show_bug.cgi?id=44167
+
+        * inspector/front-end/ExtensionServer.js:
+        (WebInspector.ExtensionServer.prototype._onCreatePanel):
+        (WebInspector.ExtensionServer.prototype._createClientIframe):
+
 2010-08-18  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

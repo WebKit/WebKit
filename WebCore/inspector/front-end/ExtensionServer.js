@@ -139,7 +139,8 @@ WebInspector.ExtensionServer.prototype = {
         var lastToolbarItem = WebInspector.panelOrder[WebInspector.panelOrder.length - 1].toolbarItem;
         WebInspector.addPanelToolbarIcon(toolbarElement, panel, lastToolbarItem);
         WebInspector.panels[id] = panel;
-        this._createClientIframe(panel.element, message.url);
+        var iframe = this._createClientIframe(panel.element, message.url);
+        iframe.style.height = "100%";
         return this._status.OK();
     },
 
@@ -165,6 +166,7 @@ WebInspector.ExtensionServer.prototype = {
         iframe.src = url;
         iframe.style.width = "100%";
         parent.appendChild(iframe);
+        return iframe;
     },
 
     _onSetSidebarHeight: function(message)
