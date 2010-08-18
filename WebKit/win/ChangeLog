@@ -1,3 +1,19 @@
+2010-08-18  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Bug 44180 - WebView::paint fails to paint a child WebView of a Layered Window.
+        https://bugs.webkit.org/show_bug.cgi?id=44180
+        
+        Decide to end painting if the m_backingStoreBitmap is null after the call to
+        ensureBackingStore() instead of when the rcPaint rect filled by BeginPaint is empty.
+        The rcPaint rect filled by BeginPaint is always empty for a child WebView of a Layered 
+        Window, even if GetUpdateRect and GetUpdateRgn report a non-empty region that needs
+        painting.
+
+        * WebView.cpp:
+        (WebView::paint):
+
 2010-08-17  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         Reviewed by Darin Adler.
