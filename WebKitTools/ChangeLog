@@ -1,3 +1,11 @@
+2010-08-18  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Make it so the WebKit2 test slave runs the WebKit2 tests
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+
 2010-08-18  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.
