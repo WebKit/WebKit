@@ -615,10 +615,7 @@
         {
             'target_name': 'inspector_resources',
             'type': 'none',
-            'dependencies': [
-                'devtools_html',
-                '../../WebCore/WebCore.gyp/WebCore.gyp:inspector_protocol_sources',
-            ],
+            'dependencies': ['devtools_html'],
             'conditions': [
                 ['debug_devtools==0', {
                     'dependencies': ['concatenated_devtools_js'],
@@ -630,7 +627,6 @@
                     'files': [
                         '<@(devtools_files)',
                         '<@(webinspector_files)',
-                        '<(SHARED_INTERMEDIATE_DIR)/webcore/InspectorBackendStub.js',
                     ],
                     'conditions': [
                         ['debug_devtools==0', {
@@ -677,12 +673,10 @@
                     '<@(_input_page)',
                     '<@(webinspector_files)',
                     '<@(devtools_files)',
-                    '<(SHARED_INTERMEDIATE_DIR)/webcore/InspectorBackendStub.js',
                 ],
                 'search_path': [
                     '../../WebCore/inspector/front-end',
                     'src/js',
-                    '<(SHARED_INTERMEDIATE_DIR)/webcore',
                     '<(chromium_src_dir)/v8/tools',
                 ],
                 'outputs': ['<(PRODUCT_DIR)/resources/inspector/DevTools.js'],

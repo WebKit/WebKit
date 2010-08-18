@@ -1,3 +1,27 @@
+2010-08-18  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r65595.
+        http://trac.webkit.org/changeset/65595
+        https://bugs.webkit.org/show_bug.cgi?id=44161
+
+        qt build failed (Requested by loislo on #webkit).
+
+        * GNUmakefile.am:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.pro:
+        * WebCore.vcproj/copyInspectorFiles.cmd:
+        * WebCore.xcodeproj/project.pbxproj:
+        * combine-javascript-resources:
+        * inspector/CodeGeneratorInspector.pm:
+        * inspector/front-end/InspectorBackendStub.js: Added.
+        (WebInspector.InspectorBackendStub):
+        (WebInspector.InspectorBackendStub.prototype._registerDelegate):
+        (WebInspector.InspectorBackendStub.prototype.sendMessageToBackend):
+        * inspector/front-end/InspectorBackendStub.qrc: Removed.
+        * inspector/front-end/WebKit.qrc:
+
 2010-08-18  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

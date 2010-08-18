@@ -490,7 +490,6 @@ IDL_BINDINGS += \
 
 
 INSPECTOR_INTERFACES = inspector/Inspector.idl
-INSPECTOR_BACKEND_STUB_QRC = inspector/front-end/InspectorBackendStub.qrc
 
 mathmlnames.output = $${WC_GENERATED_SOURCES_DIR}/MathMLNames.cpp
 mathmlnames.input = MATHML_NAMES
@@ -564,12 +563,6 @@ inspectorIDL.depends = $$PWD/bindings/scripts/CodeGenerator.pm \
               $$PWD/bindings/scripts/IDLStructure.pm \
               $$PWD/bindings/scripts/InFilesParser.pm
 addExtraCompiler(inspectorIDL)
-
-inspectorBackendStub.wkAddOutputToSources = false
-inspectorBackendStub.output = generated/InspectorBackendStub.qrc
-inspectorBackendStub.input = INSPECTOR_BACKEND_STUB_QRC
-inspectorBackendStub.commands = $$QMAKE_COPY $$PWD/$$INSPECTOR_BACKEND_STUB_QRC $${WC_GENERATED_SOURCES_DIR}/InspectorBackendStub.qrc
-addExtraCompiler(inspectorBackendStub)
 
 # GENERATOR 3: tokenizer (flex)
 tokenizer.output = $${WC_GENERATED_SOURCES_DIR}/${QMAKE_FILE_BASE}.cpp

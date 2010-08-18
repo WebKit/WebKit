@@ -136,7 +136,7 @@ symbian {
 RESOURCES += \
     $$PWD/../WebCore/WebCore.qrc
 
-include_webinspector: RESOURCES += $$PWD/../WebCore/inspector/front-end/WebKit.qrc $$WC_GENERATED_SOURCES_DIR/InspectorBackendStub.qrc
+include_webinspector: RESOURCES += $$PWD/../WebCore/inspector/front-end/WebKit.qrc
 
 enable_fast_mobile_scrolling: DEFINES += ENABLE_FAST_MOBILE_SCROLLING=1
 

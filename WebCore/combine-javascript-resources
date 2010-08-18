@@ -31,14 +31,12 @@ use Getopt::Long;
 use File::Basename;
 use File::Path;
 
-my $generatedScriptsDirectory;
 my $outputDirectory;
 my $scriptName;
 my $htmlFile;
 
 GetOptions('output-dir=s' => \$outputDirectory,
            'output-script-name=s' => \$scriptName,
-           'generated-scripts-dir=s' => \$generatedScriptsDirectory,
            'input-html=s' => \$htmlFile);
 
 unless (defined $htmlFile and defined $scriptName and defined $outputDirectory) {
@@ -64,7 +62,7 @@ open SCRIPT_OUT, ">", "$outputDirectory/$scriptName" or die "Can't open $outputD
 
 while ($headContents =~ m/<script.*src="([^"]*)"[^>]*>/gi) {
     local $/;
-    open SCRIPT_IN, "$generatedScriptsDirectory/$1" or open SCRIPT_IN, "$htmlDirectory/$1" or die "Can't open $htmlDirectory/$1: $!";
+    open SCRIPT_IN, "$htmlDirectory/$1" or die "Can't open $htmlDirectory/$1: $!";
     print SCRIPT_OUT "/* $1 */\n\n";
     print SCRIPT_OUT <SCRIPT_IN>;
     close SCRIPT_IN;

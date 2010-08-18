@@ -4162,6 +4162,7 @@
             'inspector/front-end/HAREntry.js',
             'inspector/front-end/HelpScreen.js',
             'inspector/front-end/ImageView.js',
+            'inspector/front-end/InspectorBackendStub.js',
             'inspector/front-end/InspectorFrontendHostStub.js',
             'inspector/front-end/InjectedFakeWorker.js',
             'inspector/front-end/InjectedScript.js',
