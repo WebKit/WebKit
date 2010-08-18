@@ -1,3 +1,13 @@
+2010-08-18  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Make run-webkit-tests --webkit-test-runner build DumpRenderTree
+        in addition to WebKitTestRunner to get the DumpRenderTreeSupport
+        module and the TestNetscapePlugin.
+
+        * Scripts/old-run-webkit-tests:
+
 2010-08-18  Adam Roben  <aroben@apple.com>
 
         Fix hang when saving crash logs on Windows

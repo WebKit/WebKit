@@ -94,6 +94,7 @@ sub launchWithEnv(\@\%);
 sub resolveAndMakeTestResultsDirectory();
 sub numericcmp($$);
 sub openDiffTool();
+sub buildDumpTool($);
 sub openDumpTool();
 sub parseLeaksandPrintUniqueLeaks();
 sub openWebSocketServerIfNeeded();
@@ -399,39 +400,17 @@ $productDir .= "/Programs" if isGtk();
 
 chdirWebKit();
 
-my $dumpToolName = $useWebKitTestRunner ? "WebKitTestRunner" : "DumpRenderTree";
-
 if (!defined($root)) {
-    my $dumpToolBuildScript =  "build-" . lc($dumpToolName);
-    print STDERR "Running $dumpToolBuildScript\n";
-
-    local *DEVNULL;
-    my ($childIn, $childOut, $childErr);
-    if ($quiet) {
-        open(DEVNULL, ">", File::Spec->devnull()) or die "Failed to open /dev/null";
-        $childOut = ">&DEVNULL";
-        $childErr = ">&DEVNULL";
-    } else {
-        # When not quiet, let the child use our stdout/stderr.
-        $childOut = ">&STDOUT";
-        $childErr = ">&STDERR";
-    }
-
-    my @args = argumentsForConfiguration();
-    my $buildProcess = open3($childIn, $childOut, $childErr, "WebKitTools/Scripts/$dumpToolBuildScript", @args) or die "Failed to run build-dumprendertree";
-    close($childIn);
-    waitpid $buildProcess, 0;
-    my $buildResult = $?;
-    close($childOut);
-    close($childErr);
-
-    close DEVNULL if ($quiet);
-
-    if ($buildResult) {
-        print STDERR "Compiling $dumpToolName failed!\n";
-        exit exitStatus($buildResult);
-    }
+    # FIXME: We build both DumpRenderTree and WebKitTestRunner for
+    # WebKitTestRunner runs becuase DumpRenderTree still includes
+    # the DumpRenderTreeSupport module and the TestNetscapePlugin.
+    # These two projects should be factored out into their own
+    # projects.
+    buildDumpTool("DumpRenderTree");
+    buildDumpTool("WebKitTestRunner") if $useWebKitTestRunner;
 }
+
+my $dumpToolName = $useWebKitTestRunner ? "WebKitTestRunner" : "DumpRenderTree";
 
 $dumpToolName .= "_debug" if isCygwin() && configurationForVisualStudio() !~ /^Release|Debug_Internal$/;
 my $dumpTool = "$productDir/$dumpToolName";
@@ -1363,6 +1342,41 @@ sub openDiffTool()
     $CLEAN_ENV{MallocStackLogging} = 1 if $shouldCheckLeaks;
     $imageDiffToolPID = open2(\*DIFFIN, \*DIFFOUT, $imageDiffTool, launchWithEnv(@diffToolArgs, %CLEAN_ENV)) or die "unable to open $imageDiffTool\n";
     $isDiffToolOpen = 1;
+}
+
+sub buildDumpTool($)
+{
+    my ($dumpToolName) = @_;
+
+    my $dumpToolBuildScript =  "build-" . lc($dumpToolName);
+    print STDERR "Running $dumpToolBuildScript\n";
+
+    local *DEVNULL;
+    my ($childIn, $childOut, $childErr);
+    if ($quiet) {
+        open(DEVNULL, ">", File::Spec->devnull()) or die "Failed to open /dev/null";
+        $childOut = ">&DEVNULL";
+        $childErr = ">&DEVNULL";
+    } else {
+        # When not quiet, let the child use our stdout/stderr.
+        $childOut = ">&STDOUT";
+        $childErr = ">&STDERR";
+    }
+
+    my @args = argumentsForConfiguration();
+    my $buildProcess = open3($childIn, $childOut, $childErr, "WebKitTools/Scripts/$dumpToolBuildScript", @args) or die "Failed to run build-dumprendertree";
+    close($childIn);
+    waitpid $buildProcess, 0;
+    my $buildResult = $?;
+    close($childOut);
+    close($childErr);
+
+    close DEVNULL if ($quiet);
+
+    if ($buildResult) {
+        print STDERR "Compiling $dumpToolName failed!\n";
+        exit exitStatus($buildResult);
+    }
 }
 
 sub openDumpTool()
