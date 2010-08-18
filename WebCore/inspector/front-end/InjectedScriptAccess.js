@@ -47,6 +47,13 @@ InjectedScriptAccess.getForNode = function(node)
     return InjectedScriptAccess.get(-node.id);
 }
 
+InjectedScriptAccess.getForObjectId = function(objectId)
+{
+    // FIXME: move to native layer.
+    var tokens = objectId.split(":");
+    return InjectedScriptAccess.get(parseInt(tokens[0]));
+}
+
 InjectedScriptAccess.getDefault = function()
 {
     return InjectedScriptAccess.get(0);

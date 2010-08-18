@@ -61,12 +61,26 @@ InjectedScript.prototype = {
                     this._objectGroups[objectGroupName] = group;
                 }
                 group.push(id);
-                objectId = new InjectedScript.RemoteObjectId(id, objectGroupName);
+                objectId = this._serializeObjectId(id, objectGroupName);
             }
             return InjectedScript.RemoteObject.fromObject(object, objectId, abbreviate);
         } catch (e) {
             return InjectedScript.RemoteObject.fromObject("[ Exception: " + e.toString() + " ]");
         }
+    },
+
+    _serializeObjectId: function(id, groupName)
+    {
+        return injectedScriptId + ":" + id + ":" + groupName;
+    },
+
+    _parseObjectId: function(objectId)
+    {
+        var tokens = objectId.split(":");
+        var parsedObjectId = {};
+        parsedObjectId.id = parseInt(tokens[1]);
+        parsedObjectId.groupName = tokens[2];
+        return parsedObjectId;
     },
 
     releaseWrapperObjectGroup: function(objectGroupName)
@@ -108,7 +122,8 @@ InjectedScript.prototype = {
 
     getProperties: function(objectId, ignoreHasOwnProperty, abbreviate)
     {
-        var object = this._objectForId(objectId);
+        var parsedObjectId = this._parseObjectId(objectId);
+        var object = this._objectForId(parsedObjectId);
         if (!this._isDefined(object))
             return false;
         var properties = [];
@@ -126,7 +141,7 @@ InjectedScript.prototype = {
             var isGetter = object["__lookupGetter__"] && object.__lookupGetter__(propertyName);
             if (!isGetter) {
                 try {
-                    property.value = this._wrapObject(object[propertyName], objectId.groupName, abbreviate);
+                    property.value = this._wrapObject(object[propertyName], parsedObjectId.groupName, abbreviate);
                 } catch(e) {
                     property.value = new InjectedScript.RemoteObject.fromException(e);
                 }
@@ -142,7 +157,8 @@ InjectedScript.prototype = {
 
     setPropertyValue: function(objectId, propertyName, expression)
     {
-        var object = this._objectForId(objectId);
+        var parsedObjectId = this._parseObjectId(objectId);
+        var object = this._objectForId(parsedObjectId);
         if (!this._isDefined(object))
             return false;
     
@@ -305,9 +321,9 @@ InjectedScript.prototype = {
         return InjectedScriptHost.nodeForId(nodeId);
     },
 
-    _objectForId: function(objectId)
+    _objectForId: function(parsedObjectId)
     {
-        return this._idToWrappedObject[objectId.id];
+        return this._idToWrappedObject[parsedObjectId.id];
     },
 
     resolveNode: function(nodeId)
@@ -332,7 +348,8 @@ InjectedScript.prototype = {
 
     pushNodeToFrontend: function(objectId)
     {
-        var object = this._objectForId(objectId);
+        var parsedObjectId = this._parseObjectId(objectId);
+        var object = this._objectForId(parsedObjectId);
         if (!object || this._type(object) !== "node")
             return false;
         return InjectedScriptHost.pushNodePathToFrontend(object, false, false);
@@ -496,14 +513,6 @@ InjectedScript.prototype = {
 }
 
 var injectedScript = new InjectedScript();
-
-// FIXME: RemoteObjectId and RemoteObject structs must match the WebInspector.* ones. Should reuse same file instead.
-InjectedScript.RemoteObjectId = function(id, groupName)
-{
-    this.worldId = injectedScriptId;
-    this.id = id;
-    this.groupName = groupName;
-}
 
 InjectedScript.RemoteObject = function(objectId, type, description, hasChildren)
 {

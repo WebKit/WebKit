@@ -28,13 +28,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.RemoteObjectId = function(worldId, id, groupName)
-{
-    this.worldId = worldId;
-    this.id = id;
-    this.groupName = groupName;
-}
-
 WebInspector.RemoteObject = function(objectId, type, description, hasChildren)
 {
     this._objectId = objectId;
@@ -120,7 +113,7 @@ WebInspector.RemoteObject.prototype = {
                 properties[i].value = WebInspector.RemoteObject.fromPayload(properties[i].value);
             callback(properties);
         }
-        InjectedScriptAccess.get(this._objectId.worldId).getProperties(this._objectId, ignoreHasOwnProperty, abbreviate, remoteObjectBinder);
+        InjectedScriptAccess.getForObjectId(this._objectId).getProperties(this._objectId, ignoreHasOwnProperty, abbreviate, remoteObjectBinder);
     },
 
     setPropertyValue: function(name, value, callback)
@@ -129,12 +122,12 @@ WebInspector.RemoteObject.prototype = {
             callback(false);
             return;
         }
-        InjectedScriptAccess.get(this._objectId.worldId).setPropertyValue(this._objectId, name, value, callback);
+        InjectedScriptAccess.getForObjectId(this._objectId).setPropertyValue(this._objectId, name, value, callback);
     },
 
     pushNodeToFrontend: function(callback)
     {
-        InjectedScriptAccess.get(this._objectId.worldId).pushNodeToFrontend(this._objectId, callback);
+        InjectedScriptAccess.getForObjectId(this._objectId).pushNodeToFrontend(this._objectId, callback);
     }
 }
 
