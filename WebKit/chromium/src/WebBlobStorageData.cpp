@@ -62,18 +62,16 @@ bool WebBlobStorageData::itemAt(size_t index, WebBlobData::Item& result) const
     result.offset = item.offset;
     result.length = item.length;
     result.expectedModificationTime = item.expectedModificationTime;
-    switch (item.type) {
-    case BlobDataItem::Data:
+    if (item.type == BlobDataItem::Data) {
         result.type = WebBlobData::Item::TypeData;
         result.data.assign(item.data.data(), static_cast<size_t>(item.data.length()));
         return true;
-    case BlobDataItem::File:
+    } else {
+        ASSERT(item.type == BlobDataItem::File);
         result.type = WebBlobData::Item::TypeFile;
         result.pathOrURL = item.path;
         return true;
     }
-    ASSERT_NOT_REACHED();
-    return false;
 }
 
 WebString WebBlobStorageData::contentType() const
