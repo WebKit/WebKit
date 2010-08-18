@@ -250,15 +250,6 @@ class FailureImageHashMismatch(FailureWithType):
         return "Image mismatch"
 
 
-class FailureFuzzyFailure(FailureWithType):
-    """Image hashes didn't match."""
-    OUT_FILENAMES = ["-actual.png", "-expected.png"]
-
-    @staticmethod
-    def message():
-        return "Fuzzy image match also failed"
-
-
 class FailureImageHashIncorrect(FailureWithType):
     """Actual result hash is incorrect."""
     # Chrome doesn't know to display a .checksum file as text, so don't bother

@@ -71,7 +71,6 @@ from layout_package import test_expectations
 from layout_package import test_failures
 from layout_package import test_files
 from layout_package import test_results_uploader
-from test_types import fuzzy_image_diff
 from test_types import image_diff
 from test_types import text_diff
 from test_types import test_type_base
@@ -1430,8 +1429,6 @@ def run(port_obj, options, args, regular_output=sys.stderr,
     test_runner.add_test_type(text_diff.TestTextDiff)
     if options.pixel_tests:
         test_runner.add_test_type(image_diff.ImageDiff)
-        if options.fuzzy_pixel_tests:
-            test_runner.add_test_type(fuzzy_image_diff.FuzzyImageDiff)
 
     num_unexpected_results = test_runner.run(result_summary)
 
@@ -1514,9 +1511,6 @@ def parse_args(args=None):
             dest="pixel_tests", help="Enable pixel-to-pixel PNG comparisons"),
         optparse.make_option("--no-pixel-tests", action="store_false",
             dest="pixel_tests", help="Disable pixel-to-pixel PNG comparisons"),
-        optparse.make_option("--fuzzy-pixel-tests", action="store_true",
-            default=False,
-            help="Also use fuzzy matching to compare pixel test outputs."),
         # old-run-webkit-tests allows a specific tolerance: --tolerance t
         # Ignore image differences less than this percentage (default: 0.1)
         optparse.make_option("--results-directory",
