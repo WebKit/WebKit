@@ -81,8 +81,10 @@ ScrollbarGtk::ScrollbarGtk(ScrollbarClient* client, ScrollbarOrientation orienta
     : Scrollbar(client, orientation, RegularScrollbar)
     , m_adjustment(adjustment)
 {
-    g_object_ref(m_adjustment);
-    g_signal_connect(m_adjustment, "value-changed", G_CALLBACK(ScrollbarGtk::gtkValueChanged), this);
+    if (m_adjustment) {
+        g_object_ref(m_adjustment);
+        g_signal_connect(m_adjustment, "value-changed", G_CALLBACK(ScrollbarGtk::gtkValueChanged), this);
+    }
 
     // We have nothing to show as we are solely operating on the GtkAdjustment
     resize(0, 0);
@@ -104,8 +106,10 @@ void ScrollbarGtk::attachAdjustment(GtkAdjustment* adjustment)
 
     m_adjustment = adjustment;
 
-    g_object_ref(m_adjustment);
-    g_signal_connect(m_adjustment, "value-changed", G_CALLBACK(ScrollbarGtk::gtkValueChanged), this);
+    if (m_adjustment) {
+        g_object_ref(m_adjustment);
+        g_signal_connect(m_adjustment, "value-changed", G_CALLBACK(ScrollbarGtk::gtkValueChanged), this);
+    }
 
     updateThumbProportion();
     updateThumbPosition();
@@ -156,12 +160,18 @@ void ScrollbarGtk::frameRectsChanged()
 
 void ScrollbarGtk::updateThumbPosition()
 {
+    if (!m_adjustment)
+        return;
+
     if (gtk_adjustment_get_value(m_adjustment) != m_currentPos)
         gtk_adjustment_set_value(m_adjustment, m_currentPos);
 }
 
 void ScrollbarGtk::updateThumbProportion()
 {
+    if (!m_adjustment)
+        return;
+
     gtk_adjustment_configure(m_adjustment,
                              gtk_adjustment_get_value(m_adjustment),
                              gtk_adjustment_get_lower(m_adjustment),

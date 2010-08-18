@@ -65,12 +65,20 @@ void ScrollView::platformDestroy()
 
 PassRefPtr<Scrollbar> ScrollView::createScrollbar(ScrollbarOrientation orientation)
 {
-    if (orientation == HorizontalScrollbar && m_horizontalAdjustment)
-        return ScrollbarGtk::createScrollbar(this, orientation, m_horizontalAdjustment);
-    else if (orientation == VerticalScrollbar && m_verticalAdjustment)
-        return ScrollbarGtk::createScrollbar(this, orientation, m_verticalAdjustment);
-    else
+    // If this is an interior frame scrollbar, we want to create a scrollbar without
+    // passing a GtkAdjustment. This will cause the Scrollbar to create a native GTK+
+    // scrollbar.
+    if (parent())
         return Scrollbar::createNativeScrollbar(this, orientation, RegularScrollbar);
+
+    // If this is the main frame, we want to create a Scrollbar that does no  painting
+    // and defers to our GtkAdjustment for all of its state. Note that the GtkAdjustment
+    // may be null here.
+    if (orientation == HorizontalScrollbar)
+        return ScrollbarGtk::createScrollbar(this, orientation, m_horizontalAdjustment);
+
+    // VerticalScrollbar
+    return ScrollbarGtk::createScrollbar(this, orientation, m_verticalAdjustment);
 }
 
 /*

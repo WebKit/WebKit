@@ -1,3 +1,27 @@
+2010-08-18  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] Bots are showing lots of GTK_IS_CONTAINER critical warnings
+        https://bugs.webkit.org/show_bug.cgi?id=40990
+
+        Instead of relying on the ScrollView's adjustment members to determine if a
+        Scrollbar should be native or just a shell of the parent's scrollbar (main frame
+        scrollbar), just check if this ScrollView has a parent. This will ensure the
+        correct behavior when main frame scrollbar's are created after the ScrollView's
+        containing adjustments go away.
+
+        Lack of warnings during tests are the test for this fix.
+
+        * platform/gtk/ScrollViewGtk.cpp:
+        (WebCore::ScrollView::createScrollbar): Decide what type of scrollbar to make based
+        on the result of the parent() method.
+        * platform/gtk/ScrollbarGtk.cpp:
+        (ScrollbarGtk::ScrollbarGtk): Allow for an m_adjustment which is null.
+        (ScrollbarGtk::attachAdjustment): Ditto.
+        (ScrollbarGtk::updateThumbPosition): Ditto.
+        (ScrollbarGtk::updateThumbProportion): Ditto.
+
 2010-08-18  Adam Barth  <abarth@webkit.org>
 
         Reviewed by David Levin.
