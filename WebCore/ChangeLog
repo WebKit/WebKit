@@ -1,3 +1,16 @@
+2010-08-18  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by David Levin.
+
+        NOT_REACHED is reachable in SVGLength
+        https://bugs.webkit.org/show_bug.cgi?id=44150
+
+        The author of this code was confused.  This code is reachable.  We just
+        haven't implemented it yet.
+
+        * svg/SVGLength.cpp:
+        (WebCore::SVGLength::setValue):
+
 2010-08-18  Balazs Kelemen  <kb@inf.u-szeged.hu>
 
         Reviewed by Antonio Gomes.

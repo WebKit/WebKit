@@ -27,6 +27,7 @@
 #include "CSSHelper.h"
 #include "FloatConversion.h"
 #include "FrameView.h"
+#include "NotImplemented.h"
 #include "RenderObject.h"
 #include "RenderView.h"
 #include "SVGParserUtilities.h"
@@ -203,7 +204,7 @@ void SVGLength::setValue(float value)
     case LengthTypePercentage:
     case LengthTypeEMS:
     case LengthTypeEXS:
-        ASSERT_NOT_REACHED();
+        notImplemented();
         break;
     case LengthTypePX:
         m_valueInSpecifiedUnits = value;
