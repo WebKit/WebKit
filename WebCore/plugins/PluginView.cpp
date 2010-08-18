@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Collabora Ltd. All rights reserved.
+ * Copyright (C) 2010 Girish Ramakrishnan <girish@forwardbias.in>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -673,6 +674,12 @@ NPError PluginView::setValue(NPPVariable variable, void* value)
     }
 #endif // defined(XP_MACOSX)
 
+#if PLATFORM(QT) && defined(MOZ_PLATFORM_MAEMO) && (MOZ_PLATFORM_MAEMO == 5)
+    case NPPVpluginWindowlessLocalBool:
+        m_renderToImage = true;
+        return NPERR_NO_ERROR;
+#endif
+
     default:
         notImplemented();
         return NPERR_GENERIC_ERROR;
@@ -848,6 +855,9 @@ PluginView::PluginView(Frame* parentFrame, const IntSize& size, PluginPackage* p
     , m_visual(0)
     , m_colormap(0)
     , m_pluginDisplay(0)
+#endif
+#if PLATFORM(QT) && defined(MOZ_PLATFORM_MAEMO) && (MOZ_PLATFORM_MAEMO == 5)
+    , m_renderToImage(false)
 #endif
     , m_loadManually(loadManually)
     , m_manualStream(0)

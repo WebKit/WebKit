@@ -2362,6 +2362,9 @@ contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
                     CONFIG += x11
                     LIBS += -lXrender
                 }
+                maemo5 {
+                    DEFINES += MOZ_PLATFORM_MAEMO=5
+                }
                 SOURCES += \
                     plugins/qt/PluginContainerQt.cpp \
                     plugins/qt/PluginPackageQt.cpp \

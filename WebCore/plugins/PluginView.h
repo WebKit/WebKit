@@ -54,6 +54,10 @@ typedef PlatformWidget PlatformPluginWidget;
 #include <QPixmap>
 #endif
 #endif
+#if PLATFORM(QT) && defined(MOZ_PLATFORM_MAEMO) && (MOZ_PLATFORM_MAEMO == 5)
+#include <QImage>
+class QPainter;
+#endif
 
 #if USE(JSC)
 namespace JSC {
@@ -372,6 +376,12 @@ private:
         Display* m_pluginDisplay;
 
         void initXEvent(XEvent* event);
+#endif
+
+#if PLATFORM(QT) && defined(MOZ_PLATFORM_MAEMO) && (MOZ_PLATFORM_MAEMO == 5)
+        QImage m_image;
+        bool m_renderToImage;
+        void paintUsingImageSurfaceExtension(QPainter* painter, const IntRect& exposedRect);
 #endif
 
         IntRect m_clipRect; // The clip rect to apply to a windowed plug-in

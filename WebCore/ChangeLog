@@ -1,3 +1,30 @@
+2010-08-18  Girish Ramakrishnan  <girish@forwardbias.in>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Implement Maemo5 local rendering NPAPI extension. See 
+        https://wiki.mozilla.org/Plugins:NokiaMaemoImageSurface for details.
+
+        With the local rendering extension, Flash will paint into a 16-bit surface.
+        For wmode=transparent, Flash expects the surface to contain the contents
+        beneath it. As it is tricky to implement the content propagation across all
+        graphics systems, transparent Flash is not supported. We just fill the surface 
+        with white and wmode=transparent behaves the same as wmode=opaque with a white 
+        background.
+
+        https://bugs.webkit.org/show_bug.cgi?id=44043
+
+        * WebCore.pro:
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::setValue):
+        (WebCore::PluginView::PluginView):
+        * plugins/PluginView.h:
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::updatePluginWidget):
+        (WebCore::PluginView::paintUsingImageSurfaceExtension):
+        (WebCore::PluginView::paint):
+        (WebCore::PluginView::platformGetValueStatic):
+
 2010-08-18  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r65603.
