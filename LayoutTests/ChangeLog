@@ -1,3 +1,12 @@
+2010-08-18  Fady Samuel  <fsamuel@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Updated Test Expectations for Table Hit Testing Layout Tests to Produce Results from Canaries
+        https://bugs.webkit.org/show_bug.cgi?id=44177
+
+        * platform/chromium/test_expectations.txt:
+
 2010-08-18  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Tony Chang.
