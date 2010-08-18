@@ -1,3 +1,15 @@
+2010-08-17  Girish Ramakrishnan  <girish@forwardbias.in>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] On Maemo5, there is no libgdk-x11-2.0.so symlink. Look for 
+        libgdk-x11-2.0.so.0 instead on X11 and Maemo5.
+
+        https://bugs.webkit.org/show_bug.cgi?id=44043
+
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::getPluginDisplay):
+
 2010-08-17  Ariya Hidayat  <ariya@sencha.com>
 
         Reviewed by Antonio Gomes.
