@@ -46,6 +46,7 @@ enum Kind {
     Reload,
     RunJavaScriptInMainFrame,
     SetActive,
+    SetCustomUserAgent,
     SetFocused,
     SetIsInWindow,
     StopLoading,

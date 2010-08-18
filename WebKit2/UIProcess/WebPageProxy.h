@@ -132,6 +132,8 @@ public:
 
     double estimatedProgress() const { return m_estimatedProgress; }
 
+    void setCustomUserAgent(const String&);
+
     void terminateProcess();
     
     PassRefPtr<WebData> sessionState() const;

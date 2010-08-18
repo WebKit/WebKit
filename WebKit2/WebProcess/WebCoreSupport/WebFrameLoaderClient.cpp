@@ -804,8 +804,11 @@ void WebFrameLoaderClient::setTitle(const String& title, const KURL& url)
 
 String WebFrameLoaderClient::userAgent(const KURL&)
 {
-    notImplemented();
-    return "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6; en-us) AppleWebKit/531.4 (KHTML, like Gecko) Version/4.0.3 Safari/531.4";
+    WebPage* webPage = m_frame->page();
+    if (!webPage)
+        return String();
+
+    return webPage->userAgent();
 }
 
 void WebFrameLoaderClient::savePlatformDataToCachedFrame(CachedFrame*)

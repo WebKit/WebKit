@@ -35,11 +35,11 @@
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/ZoomMode.h>
-#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace CoreIPC {
     class ArgumentDecoder;
@@ -92,6 +92,7 @@ public:
     // -- Called from WebCore clients.
     bool handleEditingKeyboardEvent(WebCore::KeyboardEvent*);
     void show();
+    String userAgent() const;
 
     // -- Called from WebProcess.
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
@@ -109,7 +110,7 @@ public:
 
     WebFrame* mainFrame() const { return m_mainFrame.get(); }
 
-    WTF::String renderTreeExternalRepresentation() const;
+    String renderTreeExternalRepresentation() const;
     void executeEditingCommand(const WTF::String& commandName, const WTF::String& argument);
     bool isEditingCommandEnabled(const WTF::String& commandName);
     void clearMainFrameName();
@@ -156,10 +157,13 @@ private:
     void preferencesDidChange(const WebPreferencesStore&);
     void platformPreferencesDidChange(const WebPreferencesStore&);
     void didReceivePolicyDecision(WebFrame*, uint64_t listenerID, WebCore::PolicyAction policyAction);
+    void setCustomUserAgent(const WTF::String&);
 
     WebCore::Page* m_page;
     RefPtr<WebFrame> m_mainFrame;
     HashMap<uint64_t, WebFrame*> m_frameMap;
+
+    String m_customUserAgent;
 
     WebCore::IntSize m_viewSize;
     RefPtr<DrawingArea> m_drawingArea;

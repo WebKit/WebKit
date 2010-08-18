@@ -127,6 +127,11 @@ double WKPageGetEstimatedProgress(WKPageRef pageRef)
     return toWK(pageRef)->estimatedProgress();
 }
 
+void WKPageSetCustomUserAgent(WKPageRef pageRef, WKStringRef userAgentRef)
+{
+    toWK(pageRef)->setCustomUserAgent(toWK(userAgentRef)->string());
+}
+
 void WKPageTerminate(WKPageRef pageRef)
 {
     toWK(pageRef)->terminateProcess();

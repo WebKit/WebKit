@@ -169,7 +169,9 @@ WK_EXPORT WKStringRef WKPageCopyTitle(WKPageRef page);
 
 WK_EXPORT WKFrameRef WKPageGetMainFrame(WKPageRef page);
 WK_EXPORT double WKPageGetEstimatedProgress(WKPageRef page);
-    
+
+WK_EXPORT void WKPageSetCustomUserAgent(WKPageRef page, WKStringRef userAgent);
+
 WK_EXPORT void WKPageTerminate(WKPageRef page);
 
 WK_EXPORT WKDataRef WKPageCopySessionState(WKPageRef page);

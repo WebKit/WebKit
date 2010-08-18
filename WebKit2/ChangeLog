@@ -1,5 +1,28 @@
 2010-08-18  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Jon Honeycutt.
+
+        Add ability to set custom userAgent for WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=44215
+
+        * Shared/CoreIPCSupport/WebPageMessageKinds.h:
+        (WebPageMessage::):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetCustomUserAgent):
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setCustomUserAgent):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::userAgent):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setCustomUserAgent):
+        (WebKit::WebPage::userAgent):
+        (WebKit::WebPage::didReceiveMessage):
+        * WebProcess/WebPage/WebPage.h:
+
+2010-08-18  Sam Weinig  <sam@webkit.org>
+
         Rubber-stamped by John Sullivan.
 
         Make WKBundleNodeHandleRef usable from WKRetainPtr.

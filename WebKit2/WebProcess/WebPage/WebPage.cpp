@@ -452,6 +452,20 @@ void WebPage::show()
     WebProcess::shared().connection()->send(WebPageProxyMessage::ShowPage, m_pageID, CoreIPC::In());
 }
 
+void WebPage::setCustomUserAgent(const String& customUserAgent)
+{
+    m_customUserAgent = customUserAgent;
+}
+
+String WebPage::userAgent() const
+{
+    if (!m_customUserAgent.isNull())
+        return m_customUserAgent;
+
+    // FIXME: This should be based on an application name.
+    return "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6; en-us) AppleWebKit/531.4 (KHTML, like Gecko) Version/4.0.3 Safari/531.4";
+}
+
 void WebPage::runJavaScriptInMainFrame(const WTF::String& script, uint64_t callbackID)
 {
     // NOTE: We need to be careful when running scripts that the objects we depend on don't
@@ -644,6 +658,13 @@ void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Messag
         }
         case WebPageMessage::TryClose: {
             tryClose();
+            return;
+        }
+        case WebPageMessage::SetCustomUserAgent: {
+            String customUserAgent;
+            if (!arguments->decode(CoreIPC::Out(customUserAgent)))
+                return;
+            setCustomUserAgent(customUserAgent);
             return;
         }
     }
