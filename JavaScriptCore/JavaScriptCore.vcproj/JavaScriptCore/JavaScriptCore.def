@@ -310,7 +310,6 @@ EXPORTS
     ?toObjectSlowCase@JSValue@JSC@@ABEPAVJSObject@2@PAVExecState@2@@Z
     ?toPrimitive@JSCell@JSC@@UBE?AVJSValue@2@PAVExecState@2@W4PreferredPrimitiveType@2@@Z
     ?toPrimitive@JSString@JSC@@EBE?AVJSValue@2@PAVExecState@2@W4PreferredPrimitiveType@2@@Z
-    ?toStrictUInt32@UString@JSC@@QBEIPA_N@Z
     ?toString@JSCell@JSC@@UBE?AVUString@2@PAVExecState@2@@Z
     ?toString@JSObject@JSC@@UBE?AVUString@2@PAVExecState@2@@Z
     ?toString@JSString@JSC@@EBE?AVUString@2@PAVExecState@2@@Z
@@ -318,8 +317,6 @@ EXPORTS
     ?toThisObject@JSObject@JSC@@UBEPAV12@PAVExecState@2@@Z
     ?toThisObject@JSString@JSC@@EBEPAVJSObject@2@PAVExecState@2@@Z
     ?toThisObjectSlowCase@JSValue@JSC@@ABEPAVJSObject@2@PAVExecState@2@@Z
-    ?toUInt32@UString@JSC@@QBEIPA_N@Z
-    ?toUInt32@UString@JSC@@QBEIPA_N_N@Z
     ?toUInt32SlowCase@JSC@@YAINAA_N@Z
     ?tryFastCalloc@WTF@@YA?AUTryMallocReturnValue@1@II@Z
     ?tryFastMalloc@WTF@@YA?AUTryMallocReturnValue@1@I@Z
