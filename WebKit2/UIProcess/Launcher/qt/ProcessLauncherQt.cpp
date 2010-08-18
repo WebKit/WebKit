@@ -68,6 +68,7 @@ void ProcessLauncherHelper::launch(WebKit::ProcessLauncher* launcher)
     QString program("QtWebProcess " + m_server.serverName());
 
     QProcess* webProcess = new QProcess();
+    webProcess->setProcessChannelMode(QProcess::ForwardedChannels);
     webProcess->start(program);
 
     if (!webProcess->waitForStarted()) {
