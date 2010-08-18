@@ -44,7 +44,6 @@
 #include "qwebframe_p.h"
 #include "qwebkitglobal.h"
 #include "qwebpage.h"
-#include <QtGui>
 
 namespace WebCore {
 
