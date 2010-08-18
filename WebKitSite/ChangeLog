@@ -1,3 +1,13 @@
+2010-08-17  Beth Dakin  <bdakin@apple.com>
+
+        Rubber-stamped by Adele.
+
+        Adding a MathML Demo and screenshot.
+
+        * blog-files/riemann-screenshot.png: Added.
+        * demos/mathml: Added.
+        * demos/mathml/MathMLDemo.xhtml: Added.
+
 2010-08-17  Adam Roben  <aroben@apple.com>
 
         Instruct developers to (optionally) install Debugging Tools for
