@@ -51,7 +51,7 @@ public:
     virtual int hostIdentifier() { return -1; }
 
     // Notifies host upon runtime feature being enabled/disabled.
-    virtual void runtimeFeatureStateChanged(const WebString& feature, bool enabled) { }
+    virtual void runtimePropertyChanged(const WebString& name, const WebString& value) { }
 
     virtual WebCString injectedScriptSource() { return WebCString(); }
     virtual WebCString debuggerScriptSource() { return WebCString(); }

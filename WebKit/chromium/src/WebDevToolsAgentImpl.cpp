@@ -237,7 +237,7 @@ void WebDevToolsAgentImpl::detach()
 void WebDevToolsAgentImpl::frontendLoaded()
 {
     inspectorController()->connectFrontend();
-    m_client->runtimeFeatureStateChanged(kFrontendConnectedFeatureName, true);
+    m_client->runtimePropertyChanged(kFrontendConnectedFeatureName, "true");
 }
 
 void WebDevToolsAgentImpl::didNavigate()
@@ -268,17 +268,22 @@ void WebDevToolsAgentImpl::inspectElementAt(const WebPoint& point)
 
 void WebDevToolsAgentImpl::setRuntimeFeatureEnabled(const WebString& feature, bool enabled)
 {
-    if (feature == kApuAgentFeatureName)
-        setApuAgentEnabled(enabled);
-    else if (feature == kTimelineFeatureName)
-        setTimelineProfilingEnabled(enabled);
-    else if (feature == kResourceTrackingFeatureName) {
+    setRuntimeProperty(feature, enabled ? String("true") : String("false"));
+}
+
+void WebDevToolsAgentImpl::setRuntimeProperty(const WebString& name, const WebString& value)
+{
+    if (name == kApuAgentFeatureName)
+        setApuAgentEnabled(value == "true");
+    else if (name == kTimelineFeatureName)
+        setTimelineProfilingEnabled(value == "true");
+    else if (name == kResourceTrackingFeatureName) {
         InspectorController* ic = inspectorController();
-        if (enabled)
+        if (value == "true")
           ic->enableResourceTracking(false /* not sticky */, false /* no reload */);
         else
           ic->disableResourceTracking(false /* not sticky */);
-    } else if (feature == kFrontendConnectedFeatureName && enabled && !inspectorController()->hasFrontend())
+    } else if (name == kFrontendConnectedFeatureName && value == "true" && !inspectorController()->hasFrontend())
         frontendLoaded();
 }
 
@@ -303,9 +308,9 @@ void WebDevToolsAgentImpl::setApuAgentEnabled(bool enabled)
           ic->disableResourceTracking(false);
       m_resourceTrackingWasEnabled = false;
     }
-    m_client->runtimeFeatureStateChanged(
+    m_client->runtimePropertyChanged(
         kApuAgentFeatureName,
-        enabled);
+        enabled ? String("true") : String("false"));
 }
 
 WebCore::InspectorController* WebDevToolsAgentImpl::inspectorController()
@@ -419,22 +424,22 @@ bool WebDevToolsAgentImpl::sendMessageToFrontend(const WTF::String& message)
 
 void WebDevToolsAgentImpl::resourceTrackingWasEnabled()
 {
-    m_client->runtimeFeatureStateChanged(kResourceTrackingFeatureName, true);
+    m_client->runtimePropertyChanged(kResourceTrackingFeatureName, "true");
 }
 
 void WebDevToolsAgentImpl::resourceTrackingWasDisabled()
 {
-    m_client->runtimeFeatureStateChanged(kResourceTrackingFeatureName, false);
+    m_client->runtimePropertyChanged(kResourceTrackingFeatureName, "false");
 }
 
 void WebDevToolsAgentImpl::timelineProfilerWasStarted()
 {
-    m_client->runtimeFeatureStateChanged(kTimelineFeatureName, true);
+    m_client->runtimePropertyChanged(kTimelineFeatureName, "true");
 }
 
 void WebDevToolsAgentImpl::timelineProfilerWasStopped()
 {
-    m_client->runtimeFeatureStateChanged(kTimelineFeatureName, false);
+    m_client->runtimePropertyChanged(kTimelineFeatureName, "false");
 }
 
 void WebDevToolsAgentImpl::evaluateInWebInspector(long callId, const WebString& script)

@@ -77,6 +77,7 @@ public:
     virtual void inspectElementAt(const WebPoint& point);
     virtual void evaluateInWebInspector(long callId, const WebString& script);
     virtual void setRuntimeFeatureEnabled(const WebString& feature, bool enabled);
+    virtual void setRuntimeProperty(const WebString& name, const WebString& value);
     virtual void setTimelineProfilingEnabled(bool enable);
 
     virtual void identifierForInitialRequest(unsigned long, WebFrame*, const WebURLRequest&);

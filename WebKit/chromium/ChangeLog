@@ -1,3 +1,19 @@
+2010-08-17  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Chromium DevTools: Support runtime property name/value pairs
+        instead of feature names as navigation state.
+        https://bugs.webkit.org/show_bug.cgi?id=44054
+
+        * public/WebDevToolsAgent.h:
+        * public/WebDevToolsAgentClient.h:
+        (WebKit::WebDevToolsAgentClient::runtimePropertyChanged):
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::WebDevToolsAgentImpl::setRuntimeProperty):
+        (WebKit::WebDevToolsAgentImpl::setApuAgentEnabled):
+        * src/WebDevToolsAgentImpl.h:
+
 2010-08-17  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         Reviewed by Darin Adler.
