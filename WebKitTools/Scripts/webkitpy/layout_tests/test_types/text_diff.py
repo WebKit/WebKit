@@ -48,25 +48,22 @@ _log = logging.getLogger("webkitpy.layout_tests.test_types.text_diff")
 
 class TestTextDiff(test_type_base.TestTypeBase):
 
-    def get_normalized_output_text(self, output):
+    def _get_normalized_output_text(self, output):
         # Some tests produce "\r\n" explicitly.  Our system (Python/Cygwin)
         # helpfully changes the "\n" to "\r\n", resulting in "\r\r\n".
         norm = output.replace("\r\r\n", "\r\n").strip("\r\n").replace(
              "\r\n", "\n")
         return norm + "\n"
 
-    def get_normalized_expected_text(self, filename, show_sources):
+    def _get_normalized_expected_text(self, filename):
         """Given the filename of the test, read the expected output from a file
         and normalize the text.  Returns a string with the expected text, or ''
         if the expected output file was not found."""
         # Read the port-specific expected text.
         expected_filename = self._port.expected_filename(filename, '.txt')
-        if show_sources:
-            _log.debug('Using %s' % expected_filename)
+        return self._get_normalized_text(expected_filename)
 
-        return self.get_normalized_text(expected_filename)
-
-    def get_normalized_text(self, filename):
+    def _get_normalized_text(self, filename):
         # FIXME: We repeat this pattern often, we should share code.
         try:
             # NOTE: -expected.txt files are ALWAYS utf-8.  However,
@@ -94,13 +91,12 @@ class TestTextDiff(test_type_base.TestTypeBase):
             # we do not ever decode it inside run-webkit-tests.  For some tests
             # DumpRenderTree may not output utf-8 text (e.g. webarchives).
             self._save_baseline_data(filename, output, ".txt", encoding=None,
-                generate_new_baseline=test_args.new_baseline)
+                                     generate_new_baseline=test_args.new_baseline)
             return failures
 
         # Normalize text to diff
-        output = self.get_normalized_output_text(output)
-        expected = self.get_normalized_expected_text(filename,
-                                                     test_args.show_sources)
+        output = self._get_normalized_output_text(output)
+        expected = self._get_normalized_expected_text(filename)
 
         # Write output files for new tests, too.
         if port.compare_text(output, expected):
@@ -127,5 +123,5 @@ class TestTextDiff(test_type_base.TestTypeBase):
           False otherwise.
         """
 
-        return port.compare_text(self.get_normalized_text(file1),
-                                     self.get_normalized_text(file2))
+        return port.compare_text(self._get_normalized_text(file1),
+                                 self._get_normalized_text(file2))

@@ -58,9 +58,6 @@ class TestArguments(object):
     # Whether to use wdiff to generate by-word diffs.
     wdiff = False
 
-    # Whether to report the locations of the expected result files used.
-    show_sources = False
-
 # Python bug workaround.  See the wdiff code in WriteOutputFiles for an
 # explanation.
 _wdiff_available = True

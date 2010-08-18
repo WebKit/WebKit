@@ -578,8 +578,6 @@ class TestRunner:
         test_args.new_baseline = self._options.new_baseline
         test_args.reset_results = self._options.reset_results
 
-        test_args.show_sources = self._options.sources
-
         if self._options.startup_dialog:
             shell_args.append('--testshell-startup-dialog')
 
@@ -1658,8 +1656,6 @@ def parse_args(args=None):
     option_parser = optparse.OptionParser(option_list=option_list)
 
     options, args = option_parser.parse_args(args)
-    if options.sources:
-        options.verbose = True
 
     return options, args
 

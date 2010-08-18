@@ -144,10 +144,6 @@ class ImageDiff(test_type_base.TestTypeBase):
                                                           '.checksum')
         expected_png_file = self._port.expected_filename(filename, '.png')
 
-        if test_args.show_sources:
-            _log.debug('Using %s' % expected_hash_file)
-            _log.debug('Using %s' % expected_png_file)
-
         # FIXME: We repeat this pattern often, we should share code.
         try:
             with codecs.open(expected_hash_file, "r", "ascii") as file:

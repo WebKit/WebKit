@@ -2,6 +2,26 @@
 
         Reviewed by David Levin.
 
+        new-run-webkit-tests: remove --show-sources option
+
+        --show-sources is pretty much obsolete with --trace everything, so
+        I'm removing it.
+
+        Also rename a couple of methods in the TestTextDiff class to make their
+        intended visibility (private) more obvious.
+
+        https://bugs.webkit.org/show_bug.cgi?id=44143
+
+        * Scripts/webkitpy/layout_tests/layout_package/printing.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/test_types/image_diff.py:
+        * Scripts/webkitpy/layout_tests/test_types/test_type_base.py:
+        * Scripts/webkitpy/layout_tests/test_types/text_diff.py:
+
+2010-08-17  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by David Levin.
+
         remove --fuzzy-image-diff in new-run-webkit-tests (it doesn't work)
 
         This code bit-rotted at some point more than a year ago, and nobody seems

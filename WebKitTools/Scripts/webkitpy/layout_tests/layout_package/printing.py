@@ -123,12 +123,6 @@ def print_options():
             help="show detailed help on controlling print output"),
         optparse.make_option("-v", "--verbose", action="store_true",
             default=False, help="include debug-level logging"),
-
-        # FIXME: we should remove this; it's pretty much obsolete with the
-        # --print trace-everything option.
-        optparse.make_option("--sources", action="store_true",
-            help=("show expected result file path for each test "
-                 "(implies --verbose)")),
     ]
 
 
