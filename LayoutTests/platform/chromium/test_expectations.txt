@@ -3198,6 +3198,10 @@ BUG52017 MAC LINUX : http/tests/misc/isindex-with-no-form.html = PASS TIMEOUT
 // Probably due to http://trac.webkit.org/changeset/65279/
 BUGJAPHET MAC : fast/canvas/webgl/texture-npot.html = TEXT
 
+// WebKit merge 65318:65411
+// r65381 is suspected. This test causes the next one to crash.
+BUGJAPHET SKIP : fast/events/popup-allowed-from-gesture-initiated-form-submit.html = PASS
+
 // Fails since r65370. Render tree output is different from upstream's one.
 BUGYUTAK WIN LINUX : svg/W3C-SVG-1.1/animate-elem-80-t.svg = TEXT
 
@@ -3230,3 +3234,13 @@ BUGWK44087 MAC : fast/canvas/webgl/texture-transparent-pixels-initialized.html =
 // Due to http://trac.webkit.org/changeset/65511
 BUGWK44118 : fast/dom/Geolocation/delayed-permission-allowed-for-multiple-requests.html = TEXT
 BUGWK44118 : fast/dom/Geolocation/delayed-permission-denied-for-multiple-requests.html = TIMEOUT
+
+// Flaky. Not sure when it started to fail.
+BUG52572 WIN LINUX DEBUG : http/tests/misc/image-blocked-src-change.html = PASS TEXT
+
+// Started to crash around Chromium r56408.
+BUG52573 LINUX RELEASE : fast/js/array-every.html = PASS CRASH
+
+// Just needs a new baseline.
+BUGYUTAK WIN LINUX : svg/W3C-SVG-1.1/filters-turb-01-f.svg = IMAGE
+BUGYUTAK WIN LINUX : svg/W3C-SVG-1.1/filters-turb-02-f.svg = IMAGE+TEXT
