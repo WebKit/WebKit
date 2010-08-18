@@ -80,7 +80,7 @@ static void substitute(UString& string, const UString& substring)
 {
     size_t position = string.find("%s");
     ASSERT(position != notFound);
-    string = makeString(string.substr(0, position), substring, string.substr(position + 2));
+    string = makeString(string.substringSharingImpl(0, position), substring, string.substringSharingImpl(position + 2));
 }
 
 RegisterID* ThrowableExpressionData::emitThrowError(BytecodeGenerator& generator, bool isReferenceError, const char* message)

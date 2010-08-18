@@ -165,7 +165,7 @@ static inline UString gap(ExecState* exec, JSValue space)
     // If the space value is a string, use it as the gap string, otherwise use no gap string.
     UString spaces = space.getString(exec);
     if (spaces.length() > maxGapLength) {
-        spaces = spaces.substr(0, maxGapLength);
+        spaces = spaces.substringSharingImpl(0, maxGapLength);
     }
     return spaces;
 }
@@ -468,13 +468,13 @@ inline void Stringifier::indent()
     if (newSize > m_repeatedGap.length())
         m_repeatedGap = makeString(m_repeatedGap, m_gap);
     ASSERT(newSize <= m_repeatedGap.length());
-    m_indent = m_repeatedGap.substr(0, newSize);
+    m_indent = m_repeatedGap.substringSharingImpl(0, newSize);
 }
 
 inline void Stringifier::unindent()
 {
     ASSERT(m_indent.length() >= m_gap.length());
-    m_indent = m_repeatedGap.substr(0, m_indent.length() - m_gap.length());
+    m_indent = m_repeatedGap.substringSharingImpl(0, m_indent.length() - m_gap.length());
 }
 
 inline void Stringifier::startNewLine(StringBuilder& builder) const

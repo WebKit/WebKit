@@ -52,7 +52,7 @@ static UString escapeQuotes(const UString& str)
     UString result = str;
     size_t pos = 0;
     while ((pos = result.find('\"', pos)) != notFound) {
-        result = makeString(result.substr(0, pos), "\"\\\"\"", result.substr(pos + 1));
+        result = makeString(result.substringSharingImpl(0, pos), "\"\\\"\"", result.substringSharingImpl(pos + 1));
         pos += 4;
     }
     return result;

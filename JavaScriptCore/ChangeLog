@@ -1,5 +1,42 @@
 2010-08-18  Gavin Barraclough  <barraclough@apple.com>
 
+        Rubber stamped by Sam Weinig.
+
+        Rename UString::substr to substringSharingImpl, add to WTF::String.
+        Now WTF::String can do everything that JSC::UString can do!
+
+        * JavaScriptCore.exp:
+        * bytecode/CodeBlock.cpp:
+        (JSC::escapeQuotes):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::substitute):
+        * parser/SourceProvider.h:
+        (JSC::UStringSourceProvider::getRange):
+        * runtime/FunctionPrototype.cpp:
+        (JSC::insertSemicolonIfNeeded):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::parseInt):
+        * runtime/JSONObject.cpp:
+        (JSC::gap):
+        (JSC::Stringifier::indent):
+        (JSC::Stringifier::unindent):
+        * runtime/JSString.cpp:
+        (JSC::JSString::replaceCharacter):
+        * runtime/NumberPrototype.cpp:
+        (JSC::numberProtoFuncToFixed):
+        (JSC::numberProtoFuncToPrecision):
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncReplace):
+        (JSC::trimString):
+        * runtime/UString.cpp:
+        (JSC::UString::substringSharingImpl):
+        * runtime/UString.h:
+        * wtf/text/WTFString.cpp:
+        (WTF::String::substringSharingImpl):
+        * wtf/text/WTFString.h:
+
+2010-08-18  Gavin Barraclough  <barraclough@apple.com>
+
         Windows build fix.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:

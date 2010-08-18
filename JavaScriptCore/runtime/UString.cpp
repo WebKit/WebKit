@@ -204,22 +204,17 @@ UString UString::number(double d)
     return UString(buffer, length);
 }
 
-UString UString::substr(unsigned pos, unsigned len) const
+UString UString::substringSharingImpl(unsigned offset, unsigned length) const
 {
     // FIXME: We used to check against a limit of Heap::minExtraCost / sizeof(UChar).
 
-    unsigned s = length();
+    unsigned stringLength = this->length();
+    offset = min(offset, stringLength);
+    length = min(length, stringLength - offset);
 
-    if (pos >= s)
-        pos = s;
-    unsigned limit = s - pos;
-    if (len > limit)
-        len = limit;
-
-    if (pos == 0 && len == s)
+    if (!offset && length == stringLength)
         return *this;
-
-    return UString(StringImpl::create(m_impl, pos, len));
+    return UString(StringImpl::create(m_impl, offset, length));
 }
 
 bool operator==(const UString& s1, const char *s2)

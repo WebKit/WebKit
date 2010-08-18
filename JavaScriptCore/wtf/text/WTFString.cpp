@@ -245,6 +245,19 @@ String String::substring(unsigned pos, unsigned len) const
     return m_impl->substring(pos, len);
 }
 
+String String::substringSharingImpl(unsigned offset, unsigned length) const
+{
+    // FIXME: We used to check against a limit of Heap::minExtraCost / sizeof(UChar).
+
+    unsigned stringLength = this->length();
+    offset = min(offset, stringLength);
+    length = min(length, stringLength - offset);
+
+    if (!offset && length == stringLength)
+        return *this;
+    return String(StringImpl::create(m_impl, offset, length));
+}
+
 String String::lower() const
 {
     if (!m_impl)

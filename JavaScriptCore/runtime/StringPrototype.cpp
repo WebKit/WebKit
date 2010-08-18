@@ -446,7 +446,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncReplace(ExecState* exec)
     
     size_t matchEnd = matchPos + matchLen;
     int ovector[2] = { matchPos, matchEnd };
-    return JSValue::encode(jsString(exec, source.substr(0, matchPos), substituteBackreferences(replacementString, source, ovector, 0), source.substr(matchEnd)));
+    return JSValue::encode(jsString(exec, source.substringSharingImpl(0, matchPos), substituteBackreferences(replacementString, source, ovector, 0), source.substringSharingImpl(matchEnd)));
 }
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncToString(ExecState* exec)
@@ -1090,7 +1090,7 @@ static inline JSValue trimString(ExecState* exec, JSValue thisValue, int trimKin
     if (left == 0 && right == str.length() && thisValue.isString())
         return thisValue;
 
-    return jsString(exec, str.substr(left, right - left));
+    return jsString(exec, str.substringSharingImpl(left, right - left));
 }
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncTrim(ExecState* exec)
