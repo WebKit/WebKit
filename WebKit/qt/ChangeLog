@@ -1,3 +1,17 @@
+2010-08-17  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] [Symbian] Consistently use Q_OS_SYMBIAN to guard all Symbian platform dependencies
+        https://bugs.webkit.org/show_bug.cgi?id=44124
+
+        Q_WS_S60 is not defined for Symbian^4 devices as Q_WS_S60 used to guard
+        Avkon UI framework dependencies. Use Q_OS_SYMBIAN everywhere to mark
+        Symbian dependencies.
+
+        * WebCoreSupport/QtFallbackWebPopup.cpp:
+        (WebCore::QtFallbackWebPopup::populate):
+
 2010-08-17  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         Reviewed by Darin Adler.

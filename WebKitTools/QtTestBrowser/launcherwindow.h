@@ -82,7 +82,7 @@ public:
         , useCompositing(true)
         , useTiledBackingStore(false)
         , useWebGL(false)
-#if defined(Q_WS_MAEMO_5) || defined(Q_WS_S60)
+#if defined(Q_WS_MAEMO_5) || defined(Q_OS_SYMBIAN)
         , useFrameFlattening(true)
 #else
         , useFrameFlattening(false)

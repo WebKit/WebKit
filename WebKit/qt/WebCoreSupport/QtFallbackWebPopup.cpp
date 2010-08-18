@@ -215,7 +215,7 @@ void QtFallbackWebPopup::populate(const QWebSelectData& data)
     QStandardItemModel* model = qobject_cast<QStandardItemModel*>(m_combo->model());
     Q_ASSERT(model);
 
-#if !defined(Q_WS_S60)
+#if !defined(Q_OS_SYMBIAN)
     m_combo->setFont(font());
 #endif
 

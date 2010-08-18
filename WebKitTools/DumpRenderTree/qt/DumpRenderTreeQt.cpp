@@ -571,7 +571,7 @@ void DumpRenderTree::open(const QUrl& url)
     m_page->event(&ev);
 
     QWebSettings::clearMemoryCaches();
-#if !(defined(Q_WS_S60) && QT_VERSION <= QT_VERSION_CHECK(4, 6, 2))
+#if !(defined(Q_OS_SYMBIAN) && QT_VERSION <= QT_VERSION_CHECK(4, 6, 2))
     QFontDatabase::removeAllApplicationFonts();
 #endif
 #if defined(Q_WS_X11)

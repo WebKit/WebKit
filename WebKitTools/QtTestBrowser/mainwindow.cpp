@@ -48,7 +48,7 @@ MainWindow::MainWindow(const QString& url)
 void MainWindow::buildUI()
 {
     QToolBar* bar = addToolBar("Navigation");
-#if defined(Q_WS_S60)
+#if defined(Q_OS_SYMBIAN)
     bar->setIconSize(QSize(16, 16));
 #endif
     QAction* reloadAction = page()->action(QWebPage::Reload);
@@ -65,7 +65,7 @@ void MainWindow::buildUI()
     QCompleter* completer = new QCompleter(this);
     urlEdit->setCompleter(completer);
     completer->setModel(&urlModel);
-#if defined(Q_WS_S60)
+#if defined(Q_OS_SYMBIAN)
     addToolBarBreak();
     addToolBar("Location")->addWidget(urlEdit);
 #else
