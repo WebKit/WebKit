@@ -1,3 +1,9 @@
+2010-08-18  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed qt build fix.
+
+        * WebCore.pri:
+
 2010-08-17  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.

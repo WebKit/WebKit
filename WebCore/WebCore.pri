@@ -568,8 +568,8 @@ addExtraCompiler(inspectorIDL)
 inspectorBackendStub.wkAddOutputToSources = false
 inspectorBackendStub.output = generated/InspectorBackendStub.qrc
 inspectorBackendStub.input = INSPECTOR_BACKEND_STUB_QRC
-# standard QMAKE_COPY and COPY_FILE are failing because copy/xcopy doesn't work with back slashes and windows doesn't have cp.
-inspectorBackendStub.commands = perl -e\"use File::Copy; copy(\$$ARGV[0], \$$ARGV[1]) or die;\" $$PWD/$$INSPECTOR_BACKEND_STUB_QRC $${WC_GENERATED_SOURCES_DIR}/InspectorBackendStub.qrc
+inspectorBackendStub.tempNames = $$PWD/$$INSPECTOR_BACKEND_STUB_QRC $${WC_GENERATED_SOURCES_DIR}/InspectorBackendStub.qrc
+inspectorBackendStub.commands = $$QMAKE_COPY $$replace(inspectorBackendStub.tempNames, "/", $$QMAKE_DIR_SEP)
 addExtraCompiler(inspectorBackendStub)
 
 # GENERATOR 3: tokenizer (flex)
