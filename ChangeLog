@@ -1,3 +1,12 @@
+2010-08-17  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: replace hand written InspectorBackendStub.js with generated one.
+        https://bugs.webkit.org/show_bug.cgi?id=43791
+
+        * GNUmakefile.am:
+
 2010-08-18  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r65595.

@@ -490,6 +490,7 @@ IDL_BINDINGS += \
 
 
 INSPECTOR_INTERFACES = inspector/Inspector.idl
+INSPECTOR_BACKEND_STUB_QRC = inspector/front-end/InspectorBackendStub.qrc
 
 mathmlnames.output = $${WC_GENERATED_SOURCES_DIR}/MathMLNames.cpp
 mathmlnames.input = MATHML_NAMES
@@ -563,6 +564,13 @@ inspectorIDL.depends = $$PWD/bindings/scripts/CodeGenerator.pm \
               $$PWD/bindings/scripts/IDLStructure.pm \
               $$PWD/bindings/scripts/InFilesParser.pm
 addExtraCompiler(inspectorIDL)
+
+inspectorBackendStub.wkAddOutputToSources = false
+inspectorBackendStub.output = generated/InspectorBackendStub.qrc
+inspectorBackendStub.input = INSPECTOR_BACKEND_STUB_QRC
+# standard QMAKE_COPY and COPY_FILE are failing because copy/xcopy doesn't work with back slashes and windows doesn't have cp.
+inspectorBackendStub.commands = perl -e\"use File::Copy; copy(\$$ARGV[0], \$$ARGV[1]) or die;\" $$PWD/$$INSPECTOR_BACKEND_STUB_QRC $${WC_GENERATED_SOURCES_DIR}/InspectorBackendStub.qrc
+addExtraCompiler(inspectorBackendStub)
 
 # GENERATOR 3: tokenizer (flex)
 tokenizer.output = $${WC_GENERATED_SOURCES_DIR}/${QMAKE_FILE_BASE}.cpp

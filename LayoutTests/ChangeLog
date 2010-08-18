@@ -1,3 +1,14 @@
+2010-08-17  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        WebInspector: inspector tests for GTK were added to Skip list.
+        They should be enabled later.
+        Bug for GTK https://bugs.webkit.org/show_bug.cgi?id=43977
+        https://bugs.webkit.org/show_bug.cgi?id=43791
+
+        * platform/gtk/Skipped:
+
 2010-08-18  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
