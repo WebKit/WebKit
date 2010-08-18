@@ -1,3 +1,15 @@
+2010-08-17  Ariya Hidayat  <ariya@sencha.com>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] Remove unused ContextShadowParameter class in GraphicsContextQt
+        https://bugs.webkit.org/show_bug.cgi?id=44142
+
+        The class is not needed anymore after r65425.
+        We know have dedicated ContextShadow in its own file.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+
 2010-08-17  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         Reviewed by Darin Adler.

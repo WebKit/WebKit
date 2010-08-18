@@ -169,63 +169,6 @@ static inline Qt::FillRule toQtFillRule(WindRule rule)
     return Qt::OddEvenFill;
 }
 
-
-// This is to track and keep the shadow state. We use this rather than
-// using GraphicsContextState to allow possible optimizations (right now
-// only to determine the shadow type, but in future it might cover things
-// like cached scratch image, persistent shader, etc).
-
-class ContextShadowParameter {
-public:
-    enum {
-        NoShadow,
-        OpaqueSolidShadow,
-        AlphaSolidShadow,
-        BlurShadow
-    } type;
-
-    QColor color;
-    int blurRadius;
-    QPointF offset;
-
-    ContextShadowParameter()
-        : type(NoShadow)
-        , blurRadius(0)
-    {
-    }
-
-    ContextShadowParameter(const QColor& c, float r, qreal dx, qreal dy)
-        : color(c)
-        , blurRadius(qRound(r))
-        , offset(dx, dy)
-    {
-        // The type of shadow is decided by the blur radius, shadow offset, and shadow color.
-        if (!color.isValid() || !color.alpha()) {
-            // Can't paint the shadow with invalid or invisible color.
-            type = NoShadow;
-        } else if (r > 0) {
-            // Shadow is always blurred, even the offset is zero.
-            type = BlurShadow;
-        } else if (offset.isNull()) {
-            // Without blur and zero offset means the shadow is fully hidden.
-            type = NoShadow;
-        } else {
-            if (color.alpha() > 0)
-                type = AlphaSolidShadow;
-            else
-                type = OpaqueSolidShadow;
-        }
-    }
-
-    void clear()
-    {
-        type = NoShadow;
-        color = QColor();
-        blurRadius = 0;
-        offset = QPointF();
-    }
-};
-
 class GraphicsContextPlatformPrivate : public Noncopyable {
 public:
     GraphicsContextPlatformPrivate(QPainter* painter);
