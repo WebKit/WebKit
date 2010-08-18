@@ -1,3 +1,21 @@
+2010-08-18  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: inspector tests should be frontend-driven
+
+        * http/tests/inspector/inspector-test2.js: Added.
+        (initializeInspectorTest):
+        (initializeInspectorTest.):
+        ():
+        (completeTest):
+        (dumpArray):
+        (dumpObject):
+        (output):
+        (didEvaluateForTestInFrontend):
+        * inspector/debugger-breakpoints-not-activated-on-reload-expected.txt:
+        * inspector/debugger-breakpoints-not-activated-on-reload.html:
+
 2010-08-18  Yuta Kitamura  <yutak@chromium.org>
 
         Unreviewed, test expectation update.
