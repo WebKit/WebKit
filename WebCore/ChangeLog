@@ -1,3 +1,25 @@
+2010-08-18  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
+
+        Reviewed by Steve Block.
+
+        [Qt] Request for permission before starting Geolocation service
+        https://bugs.webkit.org/show_bug.cgi?id=42027
+
+        Handles starting location acquisition when request is granted for ports using 
+        "!CLIENT_BASED_GEOLOCATION and PREEMPT_GEOLOCATION_PERMISSION" policy
+        Only Qt port as of today uses the above combination. Enable 
+        PREEMPT_GEOLOCATION_PERMISSION for qt port. 
+
+        Below tests cover these changes on platform using PREEMPT_GEOLOCATION_PERMISSION
+        - fast/dom/Geolocation/delayed-permission-allowed.html
+        - fast/dom/Geolocation/delayed-permission-denied.html
+        - fast/dom/Geolocation/delayed-permission-allowed-for-multiple-requests.html
+        - fast/dom/Geolocation/delayed-permission-denied-for-multiple-requests.html
+
+        * WebCore.pro:
+        * page/Geolocation.cpp:
+        (WebCore::Geolocation::handlePendingPermissionNotifiers):
+
 2010-08-18  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Darin Adler.
