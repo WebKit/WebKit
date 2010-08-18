@@ -42,12 +42,14 @@
 
 namespace WebCore {
 
+#if !PLATFORM(CHROMIUM)
 BlobRegistry& blobRegistry()
 {
     ASSERT(isMainThread());
     DEFINE_STATIC_LOCAL(BlobRegistryImpl, instance, ());
     return instance;
 }
+#endif
 
 bool BlobRegistryImpl::shouldLoadResource(const ResourceRequest& request) const
 {

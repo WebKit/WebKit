@@ -48,6 +48,7 @@ namespace WebKit {
 
 class WebApplicationCacheHost;
 class WebApplicationCacheHostClient;
+class WebBlobRegistry;
 class WebClipboard;
 class WebCookieJar;
 class WebFileUtilities;
@@ -88,6 +89,11 @@ public:
 
     // May return null.
     virtual WebCookieJar* cookieJar() { return 0; }
+
+    // Blob ----------------------------------------------------------------
+
+    // Must return non-null.
+    virtual WebBlobRegistry* blobRegistry() { return 0; }
 
     // DOM Storage --------------------------------------------------
 
