@@ -1,3 +1,18 @@
+2010-08-18  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed.  Move some test expectations that are not platform specific to the right place.
+
+        * platform/chromium-linux/tables/hittesting/filltable-emptycells-expected.txt: Removed.
+        * platform/chromium-linux/tables/hittesting/filltable-levels-expected.txt: Removed.
+        * platform/chromium-linux/tables/hittesting/filltable-outline-expected.txt: Removed.
+        * platform/chromium-linux/tables/hittesting/filltable-rtl-expected.txt: Removed.
+        * platform/chromium-linux/tables/hittesting/filltable-stress-expected.txt: Removed.
+        * tables/hittesting/filltable-emptycells-expected.txt: Copied from LayoutTests/platform/chromium-linux/tables/hittesting/filltable-emptycells-expected.txt.
+        * tables/hittesting/filltable-levels-expected.txt: Copied from LayoutTests/platform/chromium-linux/tables/hittesting/filltable-levels-expected.txt.
+        * tables/hittesting/filltable-outline-expected.txt: Copied from LayoutTests/platform/chromium-linux/tables/hittesting/filltable-outline-expected.txt.
+        * tables/hittesting/filltable-rtl-expected.txt: Copied from LayoutTests/platform/chromium-linux/tables/hittesting/filltable-rtl-expected.txt.
+        * tables/hittesting/filltable-stress-expected.txt: Copied from LayoutTests/platform/chromium-linux/tables/hittesting/filltable-stress-expected.txt.
+
 2010-08-13  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Darin Adler.
