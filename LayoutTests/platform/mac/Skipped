@@ -281,6 +281,10 @@ fast/dom/webtiming-navigate-within-document.html
 http/tests/misc/webtiming-one-redirect.php
 http/tests/misc/webtiming-two-redirects.php
 
+# Still working out flakiness issues with the perf tests.
+# https://bugs.webkit.org/show_bug.cgi?id=44199
+perf/
+
 # This test appears to be flakey on all platforms, especially
 # Mac-Leopard after r63862.  Skipping for now.
 # https://bugs.webkit.org/show_bug.cgi?id=42821

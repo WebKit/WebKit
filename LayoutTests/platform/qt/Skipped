@@ -5483,5 +5483,9 @@ fast/dom/Geolocation/delayed-permission-denied.html
 fast/dom/Geolocation/delayed-permission-allowed-for-multiple-requests.html
 fast/dom/Geolocation/delayed-permission-denied-for-multiple-requests.html
 
+# Still working out flakiness issues with the perf tests.
+# https://bugs.webkit.org/show_bug.cgi?id=44199
+perf/
+
 # BlodBuilder is not enabled
 http/tests/local/blob/send-data-blob.html

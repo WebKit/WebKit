@@ -3237,6 +3237,8 @@ BUG52572 WIN LINUX DEBUG : http/tests/misc/image-blocked-src-change.html = PASS 
 // Started to crash around Chromium r56408.
 BUG52573 LINUX RELEASE : fast/js/array-every.html = PASS CRASH
 
+BUGWK44199 : perf = PASS TEXT
+
 // Just needs a new baseline.
 BUGYUTAK WIN LINUX : svg/W3C-SVG-1.1/filters-turb-01-f.svg = IMAGE
 BUGYUTAK WIN LINUX : svg/W3C-SVG-1.1/filters-turb-02-f.svg = IMAGE+TEXT

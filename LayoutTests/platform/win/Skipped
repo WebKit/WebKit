@@ -958,6 +958,10 @@ fast/dom/webtiming-navigate-within-document.html
 http/tests/misc/webtiming-one-redirect.php
 http/tests/misc/webtiming-two-redirects.php
 
+# Still working out flakiness issues with the perf tests.
+# https://bugs.webkit.org/show_bug.cgi?id=44199
+perf/
+
 # Application Cache Quotas
 # https://bugs.webkit.org/show_bug.cgi?id=43458
 http/tests/appcache/origin-quota.html

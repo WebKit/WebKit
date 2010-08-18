@@ -5911,6 +5911,10 @@ fast/js/sputnik/Unicode/Unicode_510/S7.6_A3.2.html
 fast/js/sputnik/Unicode/Unicode_510/S7.6_A5.3_T1.html
 fast/js/sputnik/Unicode/Unicode_510/S7.6_A5.3_T2.html
 
+# Still working out flakiness issues with the perf tests.
+# https://bugs.webkit.org/show_bug.cgi?id=44199
+perf/
+
 # Inspector's tests were disabled.
 # https://bugs.webkit.org/show_bug.cgi?id=43977
 inspector/
