@@ -366,6 +366,9 @@ bool SVGPathParser::parsePathDataFromSource(PathParsingMode pathParsingMode)
         default:
             return false;
         }
+        if (!m_consumer->continueConsuming())
+            return true;
+
         m_lastCommand = command;
 
         if (!m_source->hasMoreData())
@@ -382,6 +385,8 @@ bool SVGPathParser::parsePathDataFromSource(PathParsingMode pathParsingMode)
             && m_lastCommand != PathSegCurveToQuadraticSmoothAbs
             && m_lastCommand != PathSegCurveToQuadraticSmoothRel)
             m_controlPoint = m_currentPoint;
+
+        m_consumer->incrementPathSegmentCount();
     }
 
     return false;

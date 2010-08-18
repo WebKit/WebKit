@@ -50161,6 +50161,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\svg\SVGPathTraversalStateBuilder.h"
+				>
+			</File>
+			<File
 				RelativePath="..\svg\SVGPatternElement.h"
 				>
 			</File>

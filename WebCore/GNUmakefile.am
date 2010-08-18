@@ -4188,6 +4188,8 @@ webcore_sources += \
 	WebCore/svg/SVGPathStringBuilder.h \
 	WebCore/svg/SVGPathStringSource.cpp \
 	WebCore/svg/SVGPathStringSource.h \
+	WebCore/svg/SVGPathTraversalStateBuilder.cpp \
+	WebCore/svg/SVGPathTraversalStateBuilder.h \
 	WebCore/svg/SVGPatternElement.cpp \
 	WebCore/svg/SVGPatternElement.h \
 	WebCore/svg/SVGPointList.cpp \

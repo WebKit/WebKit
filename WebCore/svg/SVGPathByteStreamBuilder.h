@@ -34,6 +34,8 @@ public:
     SVGPathByteStreamBuilder();
 
     void setCurrentByteStream(SVGPathByteStream* byteStream) { m_byteStream = byteStream; }
+    virtual void incrementPathSegmentCount() { }
+    virtual bool continueConsuming() { return true; }
     virtual void cleanup() { m_byteStream = 0; }
 
 private:

@@ -33,8 +33,6 @@ public:
     static PassRefPtr<SVGPathSegList> create(const QualifiedName& attributeName) { return adoptRef(new SVGPathSegList(attributeName)); }
     virtual ~SVGPathSegList();
 
-    unsigned getPathSegAtLength(double, ExceptionCode&);
-
 private:
     SVGPathSegList(const QualifiedName&);
 };

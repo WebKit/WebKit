@@ -1,3 +1,70 @@
+2010-08-18  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Use SVGPathParser logic to traverse states of a Path
+        https://bugs.webkit.org/show_bug.cgi?id=44009
+
+        Move the getPathSegAtLength logic from SVGPathSegList into a new SVGPathConsumer
+        class: SVGPathTraversalStateBuilder.
+        This allows us to get a SVGPathSeg at a given length for SVGPathByteStreams and SVGPathSegLists.
+        It is also possible to use unaltered SVG path data, instead of just normalized path data.
+        This is the final preparation to provide normalized and unaltered SVGPathSegLists
+        on SVGPathElement.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * svg/SVGAllInOne.cpp:
+        * svg/SVGPathBuilder.h:
+        (WebCore::SVGPathBuilder::nextPathSegment):
+        (WebCore::SVGPathBuilder::quitEarlier):
+        * svg/SVGPathByteStreamBuilder.h:
+        (WebCore::SVGPathByteStreamBuilder::nextPathSegment):
+        (WebCore::SVGPathByteStreamBuilder::quitEarlier):
+        * svg/SVGPathConsumer.h:
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::getPathSegAtLength):
+        * svg/SVGPathElement.h:
+        * svg/SVGPathElement.idl:
+        * svg/SVGPathParser.cpp:
+        (WebCore::SVGPathParser::parsePathDataFromSource):
+        * svg/SVGPathParserFactory.cpp:
+        (WebCore::globalSVGPathTraversalStateBuilder):
+        (WebCore::SVGPathParserFactory::getSVGPathSegAtLengthFromSVGPathSegList):
+        * svg/SVGPathParserFactory.h:
+        * svg/SVGPathSegList.cpp:
+        * svg/SVGPathSegList.h:
+        * svg/SVGPathSegListBuilder.h:
+        (WebCore::SVGPathSegListBuilder::nextPathSegment):
+        (WebCore::SVGPathSegListBuilder::quitEarlier):
+        * svg/SVGPathStringBuilder.h:
+        (WebCore::SVGPathStringBuilder::nextPathSegment):
+        (WebCore::SVGPathStringBuilder::quitEarlier):
+        * svg/SVGPathTraversalStateBuilder.cpp: Added. New Consumer for SVGPathParser.
+        (WebCore::SVGPathTraversalStateBuilder::SVGPathTraversalStateBuilder):
+        (WebCore::SVGPathTraversalStateBuilder::moveTo):
+        (WebCore::SVGPathTraversalStateBuilder::lineTo):
+        (WebCore::SVGPathTraversalStateBuilder::curveToCubic):
+        (WebCore::SVGPathTraversalStateBuilder::closePath):
+        (WebCore::SVGPathTraversalStateBuilder::setDesiredLength):
+        (WebCore::SVGPathTraversalStateBuilder::quitEarlier):
+        (WebCore::SVGPathTraversalStateBuilder::nextPathSegment):
+        (WebCore::SVGPathTraversalStateBuilder::pathSegmentIndex):
+        * svg/SVGPathTraversalStateBuilder.h: Added.
+        (WebCore::SVGPathTraversalStateBuilder::setCurrentTraversalState):
+        (WebCore::SVGPathTraversalStateBuilder::cleanup):
+        (WebCore::SVGPathTraversalStateBuilder::lineToHorizontal):
+        (WebCore::SVGPathTraversalStateBuilder::lineToVertical):
+        (WebCore::SVGPathTraversalStateBuilder::curveToCubicSmooth):
+        (WebCore::SVGPathTraversalStateBuilder::curveToQuadratic):
+        (WebCore::SVGPathTraversalStateBuilder::curveToQuadraticSmooth):
+        (WebCore::SVGPathTraversalStateBuilder::arcTo):
+
 2010-08-18  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
 
         Reviewed by Steve Block.

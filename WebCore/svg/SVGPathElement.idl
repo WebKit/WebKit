@@ -37,8 +37,7 @@ module svg {
 
         float getTotalLength();
         SVGPoint getPointAtLength(in float distance);
-        unsigned long getPathSegAtLength(in float distance)
-            raises(DOMException, SVGException);
+        unsigned long getPathSegAtLength(in float distance);
 
         SVGPathSegClosePath createSVGPathSegClosePath();
 

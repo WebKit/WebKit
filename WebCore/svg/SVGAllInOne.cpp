@@ -130,6 +130,7 @@
 #include "SVGPathSegMoveto.cpp"
 #include "SVGPathStringBuilder.cpp"
 #include "SVGPathStringSource.cpp"
+#include "SVGPathTraversalStateBuilder.cpp"
 #include "SVGPatternElement.cpp"
 #include "SVGPointList.cpp"
 #include "SVGPolyElement.cpp"

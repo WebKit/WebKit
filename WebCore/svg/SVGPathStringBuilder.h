@@ -32,6 +32,8 @@ public:
     SVGPathStringBuilder();
 
     virtual void cleanup() { m_stringBuilder.clear(); }
+    virtual void incrementPathSegmentCount() { }
+    virtual bool continueConsuming() { return true; }
     String result() { return m_stringBuilder.toString(ConcatAddingSpacesBetweenIndividualStrings); }
 
 private:

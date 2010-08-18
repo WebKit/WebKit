@@ -1728,6 +1728,7 @@ IF (ENABLE_SVG)
         svg/SVGPathSegMoveto.cpp
         svg/SVGPathStringBuilder.cpp
         svg/SVGPathStringSource.cpp
+        svg/SVGPathTraversalStateBuilder.cpp
         svg/SVGPatternElement.cpp
         svg/SVGPointList.cpp
         svg/SVGPolyElement.cpp

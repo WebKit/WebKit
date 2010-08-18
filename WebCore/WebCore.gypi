@@ -3933,6 +3933,8 @@
             'svg/SVGPathStringBuilder.h',
             'svg/SVGPathStringSource.cpp',
             'svg/SVGPathStringSource.h',
+            'svg/SVGPathTraversalStateBuilder.cpp',
+            'svg/SVGPathTraversalStateBuilder.h',
             'svg/SVGPatternElement.cpp',
             'svg/SVGPatternElement.h',
             'svg/SVGPointList.cpp',

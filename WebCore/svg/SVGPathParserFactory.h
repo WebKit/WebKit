@@ -48,6 +48,8 @@ public:
 
     bool buildAnimatedSVGPathByteStream(SVGPathByteStream*, SVGPathByteStream*, OwnPtr<SVGPathByteStream>&, float);
 
+    bool getSVGPathSegAtLengthFromSVGPathSegList(SVGPathSegList*, float, unsigned long&);
+
 private:
     SVGPathParserFactory();
     ~SVGPathParserFactory();

@@ -1,8 +1,5 @@
 /*
- * Copyright (C) 2002, 2003 The Karbon Developers
- * Copyright (C) 2006 Alexander Kellett <lypanov@kde.org>
- * Copyright (C) 2006, 2007 Rob Buis <buis@kde.org>
- * Copyright (C) 2007, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -21,24 +18,26 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGPathBuilder_h
-#define SVGPathBuilder_h
+#ifndef SVGPathTraversalStateBuilder_h
+#define SVGPathTraversalStateBuilder_h
 
 #if ENABLE(SVG)
 #include "FloatPoint.h"
-#include "Path.h"
+#include "PathTraversalState.h"
 #include "SVGPathConsumer.h"
 
 namespace WebCore {
 
-class SVGPathBuilder : public SVGPathConsumer {
+class SVGPathTraversalStateBuilder : public SVGPathConsumer {
 public:
-    SVGPathBuilder();
+    SVGPathTraversalStateBuilder();
 
-    void setCurrentPath(Path* path) { m_path = path; }
-    virtual void incrementPathSegmentCount() { }
-    virtual bool continueConsuming() { return true; }
-    virtual void cleanup() { m_path = 0; }
+    unsigned long pathSegmentIndex();
+    void setCurrentTraversalState(PathTraversalState* traversalState) { m_traversalState = traversalState; }
+    void setDesiredLength(float);
+    virtual void incrementPathSegmentCount();
+    virtual bool continueConsuming();
+    virtual void cleanup() { m_traversalState = 0; }
 
 private:
     // Used in UnalteredParisng/NormalizedParsing modes.
@@ -48,7 +47,7 @@ private:
     virtual void closePath();
 
 private:
-    // Only used in UnalteredParsing mode.
+    // Not used for PathTraversalState.
     virtual void lineToHorizontal(float, PathCoordinateMode) { ASSERT_NOT_REACHED(); }
     virtual void lineToVertical(float, PathCoordinateMode) { ASSERT_NOT_REACHED(); }
     virtual void curveToCubicSmooth(const FloatPoint&, const FloatPoint&, PathCoordinateMode) { ASSERT_NOT_REACHED(); }
@@ -56,11 +55,11 @@ private:
     virtual void curveToQuadraticSmooth(const FloatPoint&, PathCoordinateMode) { ASSERT_NOT_REACHED(); }
     virtual void arcTo(float, float, float, bool, bool, const FloatPoint&, PathCoordinateMode) { ASSERT_NOT_REACHED(); }
 
-    Path* m_path;
-    FloatPoint m_current;
+    PathTraversalState* m_traversalState;
+    float m_desiredLength;
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(SVG)
-#endif // SVGPathBuilder_h
+#endif // SVGPathTraversalStateBuilder_h

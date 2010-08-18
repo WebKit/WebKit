@@ -1503,6 +1503,8 @@
 		84B6B978120F13E500B8EFAF /* SVGPathSegListSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 84B6B976120F13E500B8EFAF /* SVGPathSegListSource.h */; };
 		84BDA16B11358D2A00DBF64C /* RenderSVGResourceClipper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84BDA16911358D2A00DBF64C /* RenderSVGResourceClipper.cpp */; };
 		84BDA16C11358D2A00DBF64C /* RenderSVGResourceClipper.h in Headers */ = {isa = PBXBuildFile; fileRef = 84BDA16A11358D2A00DBF64C /* RenderSVGResourceClipper.h */; };
+		84C5B2FA1216DC810088B53A /* SVGPathTraversalStateBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C5B2F81216DC810088B53A /* SVGPathTraversalStateBuilder.cpp */; };
+		84C5B2FB1216DC810088B53A /* SVGPathTraversalStateBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C5B2F91216DC810088B53A /* SVGPathTraversalStateBuilder.h */; };
 		84C6784C1214814700A92902 /* SVGPathBlender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C6784A1214814700A92902 /* SVGPathBlender.cpp */; };
 		84C6784D1214814700A92902 /* SVGPathBlender.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C6784B1214814700A92902 /* SVGPathBlender.h */; };
 		84D0C4041115F1D40018AA34 /* AffineTransform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84D0C4031115F1D40018AA34 /* AffineTransform.cpp */; };
@@ -7404,6 +7406,8 @@
 		84B6B976120F13E500B8EFAF /* SVGPathSegListSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGPathSegListSource.h; sourceTree = "<group>"; };
 		84BDA16911358D2A00DBF64C /* RenderSVGResourceClipper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGResourceClipper.cpp; sourceTree = "<group>"; };
 		84BDA16A11358D2A00DBF64C /* RenderSVGResourceClipper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGResourceClipper.h; sourceTree = "<group>"; };
+		84C5B2F81216DC810088B53A /* SVGPathTraversalStateBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGPathTraversalStateBuilder.cpp; sourceTree = "<group>"; };
+		84C5B2F91216DC810088B53A /* SVGPathTraversalStateBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGPathTraversalStateBuilder.h; sourceTree = "<group>"; };
 		84C6784A1214814700A92902 /* SVGPathBlender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGPathBlender.cpp; sourceTree = "<group>"; };
 		84C6784B1214814700A92902 /* SVGPathBlender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGPathBlender.h; sourceTree = "<group>"; };
 		84D0C4031115F1D40018AA34 /* AffineTransform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AffineTransform.cpp; path = transforms/AffineTransform.cpp; sourceTree = "<group>"; };
@@ -15528,6 +15532,8 @@
 				8419D2B8120E0C7600141F8F /* SVGPathStringBuilder.h */,
 				84300BD9120C9AED0021954A /* SVGPathStringSource.cpp */,
 				84300BD5120C9AAC0021954A /* SVGPathStringSource.h */,
+				84C5B2F81216DC810088B53A /* SVGPathTraversalStateBuilder.cpp */,
+				84C5B2F91216DC810088B53A /* SVGPathTraversalStateBuilder.h */,
 				B22278F10D00BF210071B782 /* SVGPatternElement.cpp */,
 				B22278F20D00BF210071B782 /* SVGPatternElement.h */,
 				B22278F30D00BF210071B782 /* SVGPatternElement.idl */,
@@ -20006,6 +20012,7 @@
 				84300BD8120C9AD40021954A /* SVGPathSource.h in Headers */,
 				8419D2BA120E0C7600141F8F /* SVGPathStringBuilder.h in Headers */,
 				84300BD6120C9AAC0021954A /* SVGPathStringSource.h in Headers */,
+				84C5B2FB1216DC810088B53A /* SVGPathTraversalStateBuilder.h in Headers */,
 				B2227A880D00BF220071B782 /* SVGPatternElement.h in Headers */,
 				B25599950D00D8BA00BB825C /* SVGPointLightSource.h in Headers */,
 				B2227A8C0D00BF220071B782 /* SVGPointList.h in Headers */,
@@ -22505,6 +22512,7 @@
 				B2227A830D00BF220071B782 /* SVGPathSegMoveto.cpp in Sources */,
 				8419D2B9120E0C7600141F8F /* SVGPathStringBuilder.cpp in Sources */,
 				84300BDA120C9AED0021954A /* SVGPathStringSource.cpp in Sources */,
+				84C5B2FA1216DC810088B53A /* SVGPathTraversalStateBuilder.cpp in Sources */,
 				B2227A870D00BF220071B782 /* SVGPatternElement.cpp in Sources */,
 				B2227A8B0D00BF220071B782 /* SVGPointList.cpp in Sources */,
 				B2227A8E0D00BF220071B782 /* SVGPolyElement.cpp in Sources */,
