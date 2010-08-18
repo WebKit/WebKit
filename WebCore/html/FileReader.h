@@ -89,7 +89,7 @@ public:
     // FileStreamClient
     virtual void didStart();
     virtual void didGetSize(long long);
-    virtual void didOpen(ExceptionCode);
+    virtual void didOpen(bool);
     virtual void didRead(int);
 
     using RefCounted<FileReader>::ref;

@@ -24013,6 +24013,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\FileStream.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\FileStream.h"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\FileSystem.cpp"
 				>
 			</File>
@@ -37114,14 +37122,6 @@
 			</File>
 			<File
 				RelativePath="..\html\FileReader.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\FileStream.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\FileStream.h"
 				>
 			</File>
 			<File

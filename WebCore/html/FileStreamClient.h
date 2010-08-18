@@ -33,8 +33,6 @@
 
 #if ENABLE(BLOB) || ENABLE(FILE_WRITER)
 
-#include "ExceptionCode.h"
-
 namespace WebCore {
 
 class FileStreamClient {
@@ -44,13 +42,13 @@ public:
 
     // For writing.
     virtual void didWrite(int) { }
-    virtual void didTruncate(ExceptionCode) { }
+    virtual void didTruncate(bool) { }
 
     // FIXME: To be removed when we switch to using BlobData.
     virtual void didStart() { }
 
     // For both reading and writing.
-    virtual void didOpen(ExceptionCode) { }
+    virtual void didOpen(bool) { }
     virtual void didStop() { }
     virtual void didGetSize(long long) { }
 

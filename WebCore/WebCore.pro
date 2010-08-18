@@ -636,7 +636,6 @@ SOURCES += \
     html/File.cpp \
     html/FileList.cpp \
     html/FileReader.cpp \
-    html/FileStream.cpp \
     html/FileStreamProxy.cpp \
     html/FileThread.cpp \
     html/FormDataList.cpp \
@@ -875,6 +874,7 @@ SOURCES += \
     platform/DragData.cpp \
     platform/DragImage.cpp \
     platform/FileChooser.cpp \
+    platform/FileStream.cpp \
     platform/FileSystem.cpp \
     platform/GeolocationService.cpp \
     platform/image-decoders/qt/RGBA32BufferQt.cpp \
@@ -1410,7 +1410,6 @@ HEADERS += \
     html/FileError.h \
     html/FileList.h \
     html/FileReader.h \
-    html/FileStream.h \
     html/FileStreamClient.h \
     html/FileStreamProxy.h \
     html/FileThread.h \
@@ -1653,6 +1652,7 @@ HEADERS += \
     platform/DragData.h \
     platform/DragImage.h \
     platform/FileChooser.h \
+    platform/FileStream.h \
     platform/FileSystem.h \
     platform/GeolocationService.h \
     platform/image-decoders/ImageDecoder.h \

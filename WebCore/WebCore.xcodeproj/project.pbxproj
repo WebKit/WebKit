@@ -720,6 +720,8 @@
 		2EED575612109ED0007656BB /* BlobURL.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EED575112109ED0007656BB /* BlobURL.h */; };
 		2EED57FD1214A9C2007656BB /* ThreadableBlobRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2EED57FB1214A9C2007656BB /* ThreadableBlobRegistry.cpp */; };
 		2EED57FE1214A9C2007656BB /* ThreadableBlobRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EED57FC1214A9C2007656BB /* ThreadableBlobRegistry.h */; };
+		2EF1BFEA121C9F4200C27627 /* FileStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2EF1BFE8121C9F4200C27627 /* FileStream.cpp */; };
+		2EF1BFEB121C9F4200C27627 /* FileStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EF1BFE9121C9F4200C27627 /* FileStream.h */; };
 		31288E720E3005D6003619AE /* WebKitCSSKeyframeRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31288E6E0E3005D6003619AE /* WebKitCSSKeyframeRule.cpp */; };
 		31288E730E3005D6003619AE /* WebKitCSSKeyframeRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 31288E6F0E3005D6003619AE /* WebKitCSSKeyframeRule.h */; };
 		31288E740E3005D6003619AE /* WebKitCSSKeyframesRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31288E700E3005D6003619AE /* WebKitCSSKeyframesRule.cpp */; };
@@ -2376,8 +2378,6 @@
 		86243D0111BC31F700CC006A /* JSArrayBufferViewHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 86243D0011BC31F700CC006A /* JSArrayBufferViewHelper.h */; };
 		8952535211641B3400CABF00 /* FileThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8952535011641B3400CABF00 /* FileThread.cpp */; };
 		8952535311641B3400CABF00 /* FileThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 8952535111641B3400CABF00 /* FileThread.h */; };
-		895253D7116C4C6800CABF00 /* FileStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 895253D4116C4C6800CABF00 /* FileStream.cpp */; };
-		895253D8116C4C6800CABF00 /* FileStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 895253D5116C4C6800CABF00 /* FileStream.h */; };
 		895253D9116C4C6800CABF00 /* FileStreamClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 895253D6116C4C6800CABF00 /* FileStreamClient.h */; };
 		895253DC116C4EF500CABF00 /* FileStreamProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 895253DA116C4EF500CABF00 /* FileStreamProxy.cpp */; };
 		895253DD116C4EF500CABF00 /* FileStreamProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 895253DB116C4EF500CABF00 /* FileStreamProxy.h */; };
@@ -6533,6 +6533,8 @@
 		2EED575112109ED0007656BB /* BlobURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlobURL.h; sourceTree = "<group>"; };
 		2EED57FB1214A9C2007656BB /* ThreadableBlobRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadableBlobRegistry.cpp; sourceTree = "<group>"; };
 		2EED57FC1214A9C2007656BB /* ThreadableBlobRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadableBlobRegistry.h; sourceTree = "<group>"; };
+		2EF1BFE8121C9F4200C27627 /* FileStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileStream.cpp; sourceTree = "<group>"; };
+		2EF1BFE9121C9F4200C27627 /* FileStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileStream.h; sourceTree = "<group>"; };
 		31288E6E0E3005D6003619AE /* WebKitCSSKeyframeRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitCSSKeyframeRule.cpp; sourceTree = "<group>"; };
 		31288E6F0E3005D6003619AE /* WebKitCSSKeyframeRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitCSSKeyframeRule.h; sourceTree = "<group>"; };
 		31288E700E3005D6003619AE /* WebKitCSSKeyframesRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitCSSKeyframesRule.cpp; sourceTree = "<group>"; };
@@ -8224,8 +8226,6 @@
 		86243D0011BC31F700CC006A /* JSArrayBufferViewHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSArrayBufferViewHelper.h; sourceTree = "<group>"; };
 		8952535011641B3400CABF00 /* FileThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileThread.cpp; sourceTree = "<group>"; };
 		8952535111641B3400CABF00 /* FileThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileThread.h; sourceTree = "<group>"; };
-		895253D4116C4C6800CABF00 /* FileStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileStream.cpp; sourceTree = "<group>"; };
-		895253D5116C4C6800CABF00 /* FileStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileStream.h; sourceTree = "<group>"; };
 		895253D6116C4C6800CABF00 /* FileStreamClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileStreamClient.h; sourceTree = "<group>"; };
 		895253DA116C4EF500CABF00 /* FileStreamProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileStreamProxy.cpp; sourceTree = "<group>"; };
 		895253DB116C4EF500CABF00 /* FileStreamProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileStreamProxy.h; sourceTree = "<group>"; };
@@ -14009,8 +14009,6 @@
 				2E94F3CB118B908E00B7F75D /* FileReader.cpp */,
 				2E94F3CC118B908E00B7F75D /* FileReader.h */,
 				2E94F427119205B300B7F75D /* FileReader.idl */,
-				895253D4116C4C6800CABF00 /* FileStream.cpp */,
-				895253D5116C4C6800CABF00 /* FileStream.h */,
 				895253D6116C4C6800CABF00 /* FileStreamClient.h */,
 				895253DA116C4EF500CABF00 /* FileStreamProxy.cpp */,
 				895253DB116C4EF500CABF00 /* FileStreamProxy.h */,
@@ -16594,6 +16592,8 @@
 				1CA19E150DC255CA0065A994 /* EventLoop.h */,
 				934FE9E40B5CA539003E4A73 /* FileChooser.cpp */,
 				066C772A0AB603B700238CC4 /* FileChooser.h */,
+				2EF1BFE8121C9F4200C27627 /* FileStream.cpp */,
+				2EF1BFE9121C9F4200C27627 /* FileStream.h */,
 				C57FEDE01212EE9C0097BE65 /* FileSystem.cpp */,
 				514B3F720C722047000530DF /* FileSystem.h */,
 				BC073BA90C399B1F000F5979 /* FloatConversion.h */,
@@ -18673,7 +18673,6 @@
 				2E3BC0BD117D3A4F00B9409A /* FileError.h in Headers */,
 				BCDBB8AC0E088CA500C60FF6 /* FileList.h in Headers */,
 				2E94F4511192096A00B7F75D /* FileReader.h in Headers */,
-				895253D8116C4C6800CABF00 /* FileStream.h in Headers */,
 				895253D9116C4C6800CABF00 /* FileStreamClient.h in Headers */,
 				895253DD116C4EF500CABF00 /* FileStreamProxy.h in Headers */,
 				514B3F730C722047000530DF /* FileSystem.h in Headers */,
@@ -20320,6 +20319,7 @@
 				2EDEF1F5121B0EFC00726DB2 /* BlobRegistry.h in Headers */,
 				2EDEF1F7121B0EFC00726DB2 /* BlobRegistryImpl.h in Headers */,
 				2EDEF1F8121B0EFC00726DB2 /* BlobStorageData.h in Headers */,
+				2EF1BFEB121C9F4200C27627 /* FileStream.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -20379,7 +20379,6 @@
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
 			compatibilityVersion = "Xcode 2.4";
-			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -21175,7 +21174,6 @@
 				066C772D0AB603D200238CC4 /* FileChooserMac.mm in Sources */,
 				BCDBB8AD0E088CA500C60FF6 /* FileList.cpp in Sources */,
 				2E94F4501192096400B7F75D /* FileReader.cpp in Sources */,
-				895253D7116C4C6800CABF00 /* FileStream.cpp in Sources */,
 				895253DC116C4EF500CABF00 /* FileStreamProxy.cpp in Sources */,
 				5160306C0CC4362300C8AC25 /* FileSystemCF.cpp in Sources */,
 				514B3F760C722055000530DF /* FileSystemMac.mm in Sources */,
@@ -22771,6 +22769,7 @@
 				C57FEDE11212EE9C0097BE65 /* FileSystem.cpp in Sources */,
 				2EDEF1F3121B0EFC00726DB2 /* BlobData.cpp in Sources */,
 				2EDEF1F6121B0EFC00726DB2 /* BlobRegistryImpl.cpp in Sources */,
+				2EF1BFEA121C9F4200C27627 /* FileStream.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

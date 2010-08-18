@@ -1,5 +1,42 @@
 2010-08-18  Jian Li  <jianli@chromium.org>
 
+        Reviewed by David Levin.
+
+        Move FileStream to platform.
+        https://bugs.webkit.org/show_bug.cgi?id=44213
+
+        In addition to moving files over, FileStream has been changed to remove
+        ExceptionCode dependency. Also update FileStreamProxy and FileRead to
+        account for this change.
+
+        * Android.mk:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/FileReader.cpp:
+        (WebCore::FileReader::didOpen):
+        * html/FileReader.h:
+        * html/FileStream.cpp: Removed.
+        * html/FileStream.h: Removed.
+        * html/FileStreamClient.h:
+        (WebCore::FileStreamClient::didTruncate):
+        (WebCore::FileStreamClient::didOpen):
+        * html/FileStreamProxy.cpp:
+        (WebCore::didOpen):
+        (WebCore::FileStreamProxy::openForReadOnFileThread):
+        (WebCore::FileStreamProxy::openForWriteOnFileThread):
+        (WebCore::FileStreamProxy::write):
+        (WebCore::FileStreamProxy::writeOnFileThread):
+        (WebCore::didTruncate):
+        (WebCore::FileStreamProxy::truncateOnFileThread):
+        * html/FileStreamProxy.h:
+        * platform/FileStream.cpp: Renamed from WebCore/FileStream.cpp and updated.
+        * platform/FileStream.h: Renamed from WebCore/FileStream.h and updated.
+
+2010-08-18  Jian Li  <jianli@chromium.org>
+
         Reviewed by Darin Fisher.
 
         Chromium side implementation of blob data and blob registry.

@@ -189,10 +189,10 @@ void FileReader::didGetSize(long long size)
     m_streamProxy->openForRead(m_fileBlob->path(), start, m_totalBytes);
 }
 
-void FileReader::didOpen(ExceptionCode ec)
+void FileReader::didOpen(bool success)
 {
-    if (ec) {
-        didFail(ec);
+    if (!success) {
+        didFail(NOT_READABLE_ERR);
         return;
     }
     

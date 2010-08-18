@@ -34,7 +34,6 @@
 
 #include "FileStream.h"
 
-#include "Blob.h"
 #include "PlatformString.h"
 
 namespace WebCore {
@@ -80,32 +79,32 @@ long long FileStream::getSize(const String& path, double expectedModificationTim
     return length;
 }
 
-ExceptionCode FileStream::openForRead(const String& path, long long offset, long long length)
+bool FileStream::openForRead(const String& path, long long offset, long long length)
 {
     if (isHandleValid(m_handle))
-        return 0;
+        return true;
 
     // Open the file.
     m_handle = openFile(path, OpenForRead);
     if (!isHandleValid(m_handle))
-        return NOT_READABLE_ERR;
+        return false;
 
     // Jump to the beginning position if the file has been sliced.
     if (offset > 0) {
         if (seekFile(m_handle, offset, SeekFromBeginning) < 0)
-            return NOT_READABLE_ERR;
+            return false;
     }
 
     m_totalBytesToRead = length;
     m_bytesProcessed = 0;
 
-    return 0;
+    return true;
 }
 
-ExceptionCode FileStream::openForWrite(const String&)
+bool FileStream::openForWrite(const String&)
 {
     // FIXME: to be implemented.
-    return NOT_SUPPORTED_ERR;
+    return false;
 }
 
 void FileStream::close()
@@ -134,16 +133,16 @@ int FileStream::read(char* buffer, int bufferSize)
     return bytesRead;
 }
 
-int FileStream::write(Blob*, long long, int)
+int FileStream::write(const KURL&, long long, int)
 {
     // FIXME: to be implemented.
     return -1;
 }
 
-ExceptionCode FileStream::truncate(long long)
+bool FileStream::truncate(long long)
 {
     // FIXME: to be implemented.
-    return NOT_SUPPORTED_ERR;
+    return false;
 }
 
 } // namespace WebCore

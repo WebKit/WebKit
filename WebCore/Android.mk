@@ -414,6 +414,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	platform/DragData.cpp \
 	platform/DragImage.cpp \
 	platform/FileChooser.cpp \
+	platform/FileStream.cpp \
 	platform/FileSystem.cpp \
 	platform/GeolocationService.cpp \
 	platform/KURL.cpp \

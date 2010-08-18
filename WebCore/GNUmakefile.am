@@ -1353,8 +1353,6 @@ webcore_sources += \
 	WebCore/html/FileList.h \
 	WebCore/html/FileReader.cpp \
 	WebCore/html/FileReader.h \
-	WebCore/html/FileStream.cpp \
-	WebCore/html/FileStream.h \
 	WebCore/html/FileStreamClient.h \
 	WebCore/html/FileStreamProxy.cpp \
 	WebCore/html/FileStreamProxy.h \
@@ -1901,6 +1899,8 @@ webcore_sources += \
 	WebCore/platform/EventLoop.h \
 	WebCore/platform/FileChooser.cpp \
 	WebCore/platform/FileChooser.h \
+	WebCore/platform/FileStream.cpp \
+	WebCore/platform/FileStream.h \
 	WebCore/platform/FileSystem.cpp \
 	WebCore/platform/FileSystem.h \
 	WebCore/platform/FloatConversion.h \
