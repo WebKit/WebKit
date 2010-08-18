@@ -39,6 +39,7 @@ GENSOURCES_JAVASCRIPTCORE := $(top_builddir)/DerivedSources/JavaScriptCore
 GENSOURCES_WEBCORE := $(top_builddir)/DerivedSources/WebCore
 GENSOURCES_WEBKIT := $(top_builddir)/DerivedSources/webkit
 GENPROGRAMS := $(top_builddir)/Programs
+GENSOURCES_INSPECTOR := $(GENPROGRAMS)/resources/inspector
 WebCore := $(srcdir)/WebCore
 
 # Programs to run the WebKitGtk unit tests

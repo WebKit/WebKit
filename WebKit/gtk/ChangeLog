@@ -1,3 +1,13 @@
+2010-08-17  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: replace hand written InspectorBackendStub.js by generated one.
+        https://bugs.webkit.org/show_bug.cgi?id=43791
+
+        * WebCoreSupport/InspectorClientGtk.cpp:
+        (WebKit::InspectorClient::openInspectorFrontend):
+
 2010-08-17  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.
