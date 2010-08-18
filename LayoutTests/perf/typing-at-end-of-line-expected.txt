@@ -1,0 +1,3 @@
+Tests that typing at the end of a line where the line-breaks are all BRs is linear in the number of lines.
+PASS
+

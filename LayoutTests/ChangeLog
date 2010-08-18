@@ -1,3 +1,44 @@
+2010-08-13  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        add ability to test order-of-magnitude in layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=43997
+
+        Uses the R^2 value to determine likelihood the performance
+        is linear and then logs the x and y axis appropriately to determine
+        log n and n^2 cases. These are all estimates though, so we try
+        up to three times if we don't get the correct expected result.
+
+        In practice, with the tests below, we almost always get the correct
+        result, but sometimes the O(1) tests get registered as O(n) or indeterminate.
+
+        * perf/array-binary-search-expected.txt: Added.
+        * perf/array-binary-search.html: Added.
+        * perf/array-nested-loop-expected.txt: Added.
+        * perf/array-nested-loop.html: Added.
+        * perf/array-push-pop-expected.txt: Added.
+        * perf/array-push-pop.html: Added.
+        * perf/array-reverse-expected.txt: Added.
+        * perf/array-reverse.html: Added.
+        * perf/object-keys-expected.txt: Added.
+        * perf/object-keys.html: Added.
+        * perf/set-attribute-expected.txt: Added.
+        * perf/set-attribute.html: Added.
+        * perf/typing-at-end-of-line-expected.txt: Added.
+        * perf/typing-at-end-of-line.html: Added.
+        * resources/magnitude-perf.js: Added.
+        (Magnitude.description):
+        (Magnitude._log):
+        (Magnitude._debug):
+        (Magnitude.run):
+        (Magnitude._run):
+        (Magnitude._rSquared):
+        (Magnitude._logIterationInfo):
+        (Magnitude._bigOGuess):
+        (Magnitude._runIteration):
+        (Magnitude):
+
 2010-08-17  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.
