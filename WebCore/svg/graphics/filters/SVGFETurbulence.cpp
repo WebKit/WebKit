@@ -181,7 +181,7 @@ inline void FETurbulence::initPaint(PaintingData& paintingData)
             gradient[1] /= normalizationFactor;
         }
     }
-    for (int i = s_blockSize - 1; i >= 0; --i) {
+    for (int i = s_blockSize - 1; i > 0; --i) {
         int k = paintingData.latticeSelector[i];
         int j = paintingData.random() % s_blockSize;
         ASSERT(j >= 0);
@@ -311,10 +311,12 @@ unsigned char FETurbulence::calculateTurbulenceValueForPoint(PaintingData& paint
         }
     }
 
-    // Clamp result
-    turbulenceFunctionResult = std::max(std::min(turbulenceFunctionResult, 255.f), 0.f);
+    // The value of turbulenceFunctionResult comes from ((turbulenceFunctionResult * 255) + 255) / 2 by fractalNoise
+    // and (turbulenceFunctionResult * 255) by turbulence.
     if (m_type == FETURBULENCE_TYPE_FRACTALNOISE)
-        return static_cast<unsigned char>(turbulenceFunctionResult * 127.5f + 127.5f); // It comes form (turbulenceFunctionResult * 255 + 255) / 2
+        turbulenceFunctionResult = turbulenceFunctionResult * 0.5f + 0.5f;
+    // Clamp result
+    turbulenceFunctionResult = std::max(std::min(turbulenceFunctionResult, 1.f), 0.f);
     return static_cast<unsigned char>(turbulenceFunctionResult * 255);
 }
 
@@ -328,7 +330,7 @@ void FETurbulence::apply(Filter* filter)
         return;
 
     RefPtr<ImageData> imageData = ImageData::create(imageRect.width(), imageRect.height());
-    PaintingData paintingData(floorf(fabsf(m_seed)), imageRect.size());
+    PaintingData paintingData(m_seed, imageRect.size());
     initPaint(paintingData);
 
     FloatRect filterRegion = filter->filterRegion();

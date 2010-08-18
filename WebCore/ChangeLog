@@ -1,3 +1,21 @@
+2010-08-18  Renata Hodovan  <reni@inf.u-szeged.hu>
+
+        Reviewed by Dirk Schulze.
+
+        Fix displaying problem of feTurbulence.
+        https://bugs.webkit.org/show_bug.cgi?id=44111
+
+        Change the order of calculating turbulenceFunctionResult
+        and clamping it. Furthermore remove the unnecessary rounding of m_seed.
+        Add a new test for checking the change of seed's value.
+
+        Test: svg/W3C-SVG-1.1/filters-turb-02-f.svg
+
+        * svg/graphics/filters/SVGFETurbulence.cpp:
+        (WebCore::FETurbulence::initPaint):
+        (WebCore::FETurbulence::calculateTurbulenceValueForPoint):
+        (WebCore::FETurbulence::apply):
+
 2010-08-17  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.
