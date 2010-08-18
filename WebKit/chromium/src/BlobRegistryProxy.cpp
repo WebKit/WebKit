@@ -64,18 +64,22 @@ BlobRegistryProxy::BlobRegistryProxy()
 
 void BlobRegistryProxy::registerBlobURL(const KURL& url, PassOwnPtr<BlobData> blobData)
 {
-    WebBlobData webBlobData(blobData);
-    m_webBlobRegistry->registerBlobURL(url, webBlobData);
+    if (m_webBlobRegistry) {
+        WebBlobData webBlobData(blobData);
+        m_webBlobRegistry->registerBlobURL(url, webBlobData);
+    }
 }
 
 void BlobRegistryProxy::registerBlobURL(const KURL& url, const KURL& srcURL)
 {
-    m_webBlobRegistry->registerBlobURL(url, srcURL);
+    if (m_webBlobRegistry)
+        m_webBlobRegistry->registerBlobURL(url, srcURL);
 }
 
 void BlobRegistryProxy::unregisterBlobURL(const KURL& url)
 {
-    m_webBlobRegistry->unregisterBlobURL(url);
+    if (m_webBlobRegistry)
+        m_webBlobRegistry->unregisterBlobURL(url);
 }
 
 } // namespace WebCore

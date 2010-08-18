@@ -1,5 +1,13 @@
 2010-08-18  Jian Li  <jianli@chromium.org>
 
+        Fix layout test crashes in chromium.
+
+        * src/BlobRegistryProxy.cpp:
+        (WebCore::BlobRegistryProxy::registerBlobURL):
+        (WebCore::BlobRegistryProxy::unregisterBlobURL):
+
+2010-08-18  Jian Li  <jianli@chromium.org>
+
         Fix chromium build break.
 
         * src/WebBlobStorageData.cpp:
