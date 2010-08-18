@@ -1,5 +1,17 @@
 2010-08-17  Ademar de Souza Reis Jr  <ademar.reis@openbossa.org>
 
+        Reviewed by Daniel Bates.
+
+        REGRESSION(53060): http/tests/security/xssAuditor/malformed-HTML.html timed out on Qt Linux Release Bot
+        https://bugs.webkit.org/show_bug.cgi?id=33460
+
+        Enable http/tests/security/xssAuditor/malformed-HTML.html
+        tested with qt-4.7 and qt-4.6.
+
+        * platform/qt/Skipped:
+
+2010-08-17  Ademar de Souza Reis Jr  <ademar.reis@openbossa.org>
+
         Reviewed by Ariya Hidayat.
 
         Enable http/tests/security/cross-frame-access-name-getter.html
