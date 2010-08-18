@@ -102,6 +102,9 @@ static void webkit_web_back_forward_list_init(WebKitWebBackForwardList* webBackF
  * Creates an instance of the back forward list with a controlling #WebKitWebView
  *
  * Return value: a #WebKitWebBackForwardList
+ *
+ * Deprecated: 1.3.4: Instances of #WebKitWebBackForwardList are
+ * created and owned by #WebKitWebView instances only.
  */
 WebKitWebBackForwardList* webkit_web_back_forward_list_new_with_web_view(WebKitWebView* webView)
 {
