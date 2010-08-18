@@ -1,3 +1,12 @@
+2010-08-18  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by John Sullivan.
+
+        Make WKBundleNodeHandleRef usable from WKRetainPtr.
+
+        * WebKit2.xcodeproj/project.pbxproj: Make WKBundleNodeHandle.h public.
+        * WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.h: Add WKRetain/WKRelease overloads.
+
 2010-08-18  Zoltan Horvath  <zoltan@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

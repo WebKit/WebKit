@@ -196,7 +196,7 @@
 		BC2E6E8E1141971500A63B1E /* WorkQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2E6E7E1141970C00A63B1E /* WorkQueue.h */; };
 		BC4BEEAB120A0A5F00FBA0C7 /* InjectedBundleNodeHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4BEEA9120A0A5E00FBA0C7 /* InjectedBundleNodeHandle.h */; };
 		BC4BEEAC120A0A5F00FBA0C7 /* InjectedBundleNodeHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC4BEEAA120A0A5F00FBA0C7 /* InjectedBundleNodeHandle.cpp */; };
-		BC4BEFE1120A1A4C00FBA0C7 /* WKBundleNodeHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4BEFDF120A1A4C00FBA0C7 /* WKBundleNodeHandle.h */; };
+		BC4BEFE1120A1A4C00FBA0C7 /* WKBundleNodeHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4BEFDF120A1A4C00FBA0C7 /* WKBundleNodeHandle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BC4BEFE2120A1A4C00FBA0C7 /* WKBundleNodeHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC4BEFE0120A1A4C00FBA0C7 /* WKBundleNodeHandle.cpp */; };
 		BC59534210FC04520098F82D /* WebLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BC59534010FC04520098F82D /* WebLoaderClient.h */; };
 		BC597075116591D000551FCA /* ProcessModel.h in Headers */ = {isa = PBXBuildFile; fileRef = BC597074116591D000551FCA /* ProcessModel.h */; };
