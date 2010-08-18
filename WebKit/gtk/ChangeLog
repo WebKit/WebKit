@@ -1,3 +1,13 @@
+2010-08-17  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Fix the builds when HAVE_GSETTINGS is defined.
+
+        * webkit/webkitprivate.cpp:
+        (isSchemaAvailable):
+        (inspectorGSettings):
+
 2010-08-17  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         Reviewed by Darin Adler.

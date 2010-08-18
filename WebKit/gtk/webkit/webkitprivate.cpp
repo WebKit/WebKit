@@ -216,7 +216,7 @@ static void closeIconDatabaseOnExit()
 }
 
 #ifdef HAVE_GSETTINGS
-static bool isSchemaAvailable(char* schemaID)
+static bool isSchemaAvailable(const char* schemaID)
 {
     const char* const* availableSchemas = g_settings_list_schemas();
     char* const* iter = const_cast<char* const*>(availableSchemas);
@@ -237,7 +237,7 @@ GSettings* inspectorGSettings()
     if (settings)
         return settings;
 
-    const gchar* schemaID = "org.webkitgtk-"WEBKITGTK_API_VERSION_STRING".inspector"
+    const gchar* schemaID = "org.webkitgtk-"WEBKITGTK_API_VERSION_STRING".inspector";
 
     // Unfortunately GSettings will abort the process execution if the
     // schema is not installed, which is the case for when running
