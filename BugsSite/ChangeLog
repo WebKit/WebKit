@@ -1,5 +1,9 @@
 2010-08-19  Tony Chang  <tony@chromium.org>
 
+        Unreviewed, setting svn:eol-style native on ChangeLog.
+
+2010-08-19  Tony Chang  <tony@chromium.org>
+
         Unreviewed.  Just removing \r's from ChangeLog.
 
 2010-08-02  Adam Roben  <aroben@apple.com>
