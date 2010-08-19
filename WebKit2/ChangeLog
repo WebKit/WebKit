@@ -1,3 +1,36 @@
+2010-08-19  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Add modifier key info to policy client functions in WebKit2
+        <rdar://problem/8185298>
+        https://bugs.webkit.org/show_bug.cgi?id=44280
+
+        * UIProcess/API/C/WKAPICast.h:
+        Add conversion function for modifiers and rename an incorrectly named
+        toWK to toRef.
+
+        * UIProcess/API/C/WKPage.h:
+        Add WKEventModifiers enum.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveMessage):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::decidePolicyForNewWindowAction):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPolicyClient.cpp:
+        (WebKit::WebPolicyClient::decidePolicyForNavigationAction):
+        (WebKit::WebPolicyClient::decidePolicyForNewWindowAction):
+        * UIProcess/WebPolicyClient.h:
+        Pipe through modifier info.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::modifiersForNavigationAction):
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction):
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        Get modifier info out of the NavigationInfo class in the same manner as
+        WebKit1.
+
 2010-08-18  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Roben.

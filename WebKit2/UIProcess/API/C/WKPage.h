@@ -48,6 +48,14 @@ enum {
 };
 typedef uint32_t WKFrameNavigationType;
 
+enum {
+    kWKEventModifiersShiftKey = 1 << 0,
+    kWKEventModifiersControlKey = 1 << 1,
+    kWKEventModifiersAltKey = 1 << 2,
+    kWKEventModifiersMetaKey = 1 << 3
+};
+typedef uint32_t WKEventModifiers;
+
 // FrameLoad Client
 typedef void (*WKPageDidStartProvisionalLoadForFrameCallback)(WKPageRef page, WKFrameRef frame, const void *clientInfo);
 typedef void (*WKPageDidReceiveServerRedirectForProvisionalLoadForFrameCallback)(WKPageRef page, WKFrameRef frame, const void *clientInfo);
@@ -100,8 +108,8 @@ struct WKPageLoaderClient {
 typedef struct WKPageLoaderClient WKPageLoaderClient;
 
 // Policy Client.
-typedef void (*WKPageDecidePolicyForNavigationActionCallback)(WKPageRef page, WKFrameNavigationType navigationType, WKURLRef url, WKFrameRef frame, WKFramePolicyListenerRef listener, const void *clientInfo);
-typedef void (*WKPageDecidePolicyForNewWindowActionCallback)(WKPageRef page, WKFrameNavigationType navigationType, WKURLRef url, WKFrameRef frame, WKFramePolicyListenerRef listener, const void *clientInfo);
+typedef void (*WKPageDecidePolicyForNavigationActionCallback)(WKPageRef page, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKURLRef url, WKFrameRef frame, WKFramePolicyListenerRef listener, const void *clientInfo);
+typedef void (*WKPageDecidePolicyForNewWindowActionCallback)(WKPageRef page, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKURLRef url, WKFrameRef frame, WKFramePolicyListenerRef listener, const void *clientInfo);
 typedef void (*WKPageDecidePolicyForMIMETypeCallback)(WKPageRef page, WKStringRef MIMEType, WKURLRef url, WKFrameRef frame, WKFramePolicyListenerRef listener, const void *clientInfo);
 
 struct WKPagePolicyClient {

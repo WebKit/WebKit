@@ -27,6 +27,7 @@
 #define WebPolicyClient_h
 
 #include "WKPage.h"
+#include "WebEvent.h"
 #include <WebCore/FrameLoaderTypes.h>
 #include <wtf/Forward.h>
 
@@ -41,8 +42,8 @@ public:
     WebPolicyClient();
     void initialize(const WKPagePolicyClient*);
 
-    bool decidePolicyForNavigationAction(WebPageProxy*, WebCore::NavigationType, const WTF::String& url, WebFrameProxy*, WebFramePolicyListenerProxy*);
-    bool decidePolicyForNewWindowAction(WebPageProxy*, WebCore::NavigationType, const WTF::String& url, WebFrameProxy*, WebFramePolicyListenerProxy*);
+    bool decidePolicyForNavigationAction(WebPageProxy*, WebCore::NavigationType, WebEvent::Modifiers, const WTF::String& url, WebFrameProxy*, WebFramePolicyListenerProxy*);
+    bool decidePolicyForNewWindowAction(WebPageProxy*, WebCore::NavigationType, WebEvent::Modifiers, const WTF::String& url, WebFrameProxy*, WebFramePolicyListenerProxy*);
     bool decidePolicyForMIMEType(WebPageProxy*, const WTF::String&, const WTF::String& url, WebFrameProxy*, WebFramePolicyListenerProxy*);
 
 private:

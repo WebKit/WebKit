@@ -32,12 +32,13 @@
 #include "PluginView.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
+#include "WebEvent.h"
 #include "WebFrame.h"
 #include "WebNavigationDataStore.h"
 #include "WebPage.h"
 #include "WebPageProxyMessageKinds.h"
-#include "WebProcessProxyMessageKinds.h"
 #include "WebProcess.h"
+#include "WebProcessProxyMessageKinds.h"
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/JSObject.h>
 #include <WebCore/Chrome.h>
@@ -53,6 +54,7 @@
 #include <WebCore/PluginData.h>
 #include <WebCore/ProgressTracker.h>
 #include <WebCore/ResourceError.h>
+#include <WebCore/UIEventWithKeyState.h>
 #include <WebCore/Widget.h>
 #include <WebCore/WindowFeatures.h>
 
@@ -411,6 +413,23 @@ void WebFrameLoaderClient::dispatchShow()
     webPage->show();
 }
 
+static uint32_t modifiersForNavigationAction(const NavigationAction& navigationAction)
+{
+    uint32_t modifiers = 0;
+    if (const UIEventWithKeyState* keyStateEvent = findEventWithKeyState(const_cast<Event*>(navigationAction.event()))) {
+        if (keyStateEvent->shiftKey())
+            modifiers |= WebEvent::ShiftKey;
+        if (keyStateEvent->ctrlKey())
+            modifiers |= WebEvent::ControlKey;
+        if (keyStateEvent->altKey())
+            modifiers |= WebEvent::AltKey;
+        if (keyStateEvent->metaKey())
+            modifiers |= WebEvent::MetaKey;
+    }
+
+    return modifiers;
+}
+
 void WebFrameLoaderClient::dispatchDecidePolicyForMIMEType(FramePolicyFunction function, const String& MIMEType, const ResourceRequest& request)
 {
     WebPage* webPage = m_frame->page();
@@ -436,8 +455,10 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(FramePolicyFun
     // FIXME: Pass the frame name.
     const String& url = request.url().string(); // FIXME: Pass entire request.
 
+    uint32_t modifiers = modifiersForNavigationAction(navigationAction);
+
     WebProcess::shared().connection()->send(WebPageProxyMessage::DecidePolicyForNewWindowAction, webPage->pageID(),
-                                            CoreIPC::In(m_frame->frameID(), (uint32_t)navigationAction.type(), url, listenerID));
+                                            CoreIPC::In(m_frame->frameID(), (uint32_t)navigationAction.type(), modifiers, url, listenerID));
 }
 
 void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(FramePolicyFunction function, const NavigationAction& navigationAction, const ResourceRequest& request, PassRefPtr<FormState>)
@@ -451,8 +472,10 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(FramePolicyFu
     // FIXME: Pass more than just the navigation action type.
     const String& url = request.url().string(); // FIXME: Pass entire request.
 
+    uint32_t modifiers = modifiersForNavigationAction(navigationAction);
+
     WebProcess::shared().connection()->send(WebPageProxyMessage::DecidePolicyForNavigationAction, webPage->pageID(),
-                                            CoreIPC::In(m_frame->frameID(), (uint32_t)navigationAction.type(), url, listenerID));
+                                            CoreIPC::In(m_frame->frameID(), (uint32_t)navigationAction.type(), modifiers, url, listenerID));
 }
 
 void WebFrameLoaderClient::cancelPolicyCheck()

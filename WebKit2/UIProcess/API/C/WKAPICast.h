@@ -28,6 +28,7 @@
 
 #include "WKBase.h"
 #include "WKPage.h"
+#include "WebEvent.h"
 #include "WebString.h"
 #include "WebURL.h"
 #include <WebCore/FrameLoaderTypes.h>
@@ -151,12 +152,14 @@ inline WKURLRef toCopiedURLRef(const WTF::String& string)
     return toRef(webURL.release().releaseRef());
 }
 
+/* Enum conversions */
+
 inline WKTypeID toRef(WebKit::APIObject::Type type)
 {
     return static_cast<WKTypeID>(type);
 }
 
-inline WKFrameNavigationType toWK(WebCore::NavigationType type)
+inline WKFrameNavigationType toRef(WebCore::NavigationType type)
 {
     WKFrameNavigationType wkType = kWKFrameNavigationTypeOther;
 
@@ -182,6 +185,20 @@ inline WKFrameNavigationType toWK(WebCore::NavigationType type)
     }
     
     return wkType;
+}
+
+inline WKEventModifiers toRef(WebKit::WebEvent::Modifiers modifiers)
+{
+    WKEventModifiers wkModifiers = 0;
+    if (modifiers & WebKit::WebEvent::ShiftKey)
+        wkModifiers |= kWKEventModifiersShiftKey;
+    if (modifiers & WebKit::WebEvent::ControlKey)
+        wkModifiers |= kWKEventModifiersControlKey;
+    if (modifiers & WebKit::WebEvent::AltKey)
+        wkModifiers |= kWKEventModifiersAltKey;
+    if (modifiers & WebKit::WebEvent::MetaKey)
+        wkModifiers |= kWKEventModifiersMetaKey;
+    return wkModifiers;
 }
 
 #endif // WKAPICast_h
