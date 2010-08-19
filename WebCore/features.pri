@@ -4,6 +4,10 @@ CONFIG(minimal) {
     DEFINES += ENABLE_NETSCAPE_PLUGIN_API=0
 }
 
+CONFIG(production) {
+    DEFINES += ENABLE_XSLT=0
+}
+
 ## load mobilityconfig if mobility is available
 load(mobilityconfig, true)
 
