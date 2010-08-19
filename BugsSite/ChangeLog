@@ -1,5 +1,14 @@
 2010-08-19  Tony Chang  <tony@chromium.org>
 
+        Reviewed by Adam Barth.
+
+        webkit-patch barfed on upload with a new image test result
+        https://bugs.webkit.org/show_bug.cgi?id=39097
+
+        * PrettyPatch/PrettyPatch.rb: don't use full path to git
+
+2010-08-19  Tony Chang  <tony@chromium.org>
+
         Unreviewed, setting svn:eol-style native on ChangeLog.
 
 2010-08-19  Tony Chang  <tony@chromium.org>

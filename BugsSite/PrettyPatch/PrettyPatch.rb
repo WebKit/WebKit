@@ -9,7 +9,7 @@ module PrettyPatch
 
 public
 
-    GIT_PATH = "/opt/local/bin/git"
+    GIT_PATH = "git"
 
     def self.prettify(string)
         fileDiffs = FileDiff.parse(string)
