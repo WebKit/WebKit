@@ -154,6 +154,7 @@ DOM_CLASSES = \
     FileError \
     FileList \
     FileReader \
+    FileWriter \
     FileSystemCallback \
     Flags \
     Geolocation \

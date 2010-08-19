@@ -162,6 +162,12 @@ FileReader* EventTarget::toFileReader()
     return 0;
 }
 #endif
+#if ENABLE(FILE_WRITER)
+FileWriter* EventTarget::toFileWriter()
+{
+    return 0;
+}
+#endif
 
 #if ENABLE(INDEXED_DATABASE)
 IDBRequest* EventTarget::toIDBRequest()

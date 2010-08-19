@@ -198,6 +198,7 @@ SET(WebCore_IDL_FILES
     html/File.idl
     html/FileList.idl
     html/FileReader.idl
+    html/FileWriter.idl
     html/HTMLAllCollection.idl
     html/HTMLAnchorElement.idl
     html/HTMLAppletElement.idl

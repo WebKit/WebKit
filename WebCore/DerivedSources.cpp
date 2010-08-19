@@ -110,6 +110,7 @@
 #include "JSFileList.cpp"
 #include "JSFileReader.cpp"
 #include "JSFileSystemCallback.cpp"
+#include "JSFileWriter.cpp"
 #include "JSFlags.cpp"
 #include "JSGeolocation.cpp"
 #include "JSGeoposition.cpp"

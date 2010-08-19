@@ -179,6 +179,7 @@ IDL_BINDINGS += \
     html/FileError.idl \
     html/FileList.idl \
     html/FileReader.idl \
+    html/FileWriter.idl \
     html/HTMLAllCollection.idl \
     html/HTMLAudioElement.idl \
     html/HTMLAnchorElement.idl \

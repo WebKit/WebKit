@@ -103,6 +103,9 @@ namespace WebCore {
     macro(textInput) \
     macro(unload) \
     macro(updateready) \
+    macro(write) \
+    macro(writeend) \
+    macro(writestart) \
     macro(zoom) \
     \
     macro(DOMActivate) \

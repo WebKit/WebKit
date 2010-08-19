@@ -48,6 +48,7 @@ namespace WebCore {
     class EventListener;
     class EventSource;
     class FileReader;
+    class FileWriter;
     class IDBRequest;
     class MessagePort;
     class Node;
@@ -121,6 +122,9 @@ namespace WebCore {
 #endif
 #if ENABLE(BLOB)
         virtual FileReader* toFileReader();
+#endif
+#if ENABLE(FILE_WRITER)
+        virtual FileWriter* toFileWriter();
 #endif
 
 #if ENABLE(INDEXED_DATABASE)

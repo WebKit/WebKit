@@ -638,6 +638,7 @@ SOURCES += \
     html/FileReader.cpp \
     html/FileStreamProxy.cpp \
     html/FileThread.cpp \
+    html/FileWriter.cpp \
     html/FormDataList.cpp \
     html/HTMLEntityParser.cpp \
     html/HTMLTokenizer.cpp \
@@ -1414,6 +1415,7 @@ HEADERS += \
     html/FileStreamProxy.h \
     html/FileThread.h \
     html/FileThreadTask.h \
+    html/FileWriter.h \
     html/FormDataList.h \
     html/HTMLAllCollection.h \
     html/HTMLAnchorElement.h \

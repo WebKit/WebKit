@@ -238,6 +238,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSFileList.h \
 	DerivedSources/WebCore/JSFileReader.cpp \
 	DerivedSources/WebCore/JSFileReader.h \
+	DerivedSources/WebCore/JSFileWriter.cpp \
+	DerivedSources/WebCore/JSFileWriter.h \
 	DerivedSources/WebCore/JSFloat32Array.cpp \
 	DerivedSources/WebCore/JSFloat32Array.h \
 	DerivedSources/WebCore/JSGeolocation.cpp \
@@ -1353,6 +1355,8 @@ webcore_sources += \
 	WebCore/html/FileList.h \
 	WebCore/html/FileReader.cpp \
 	WebCore/html/FileReader.h \
+	WebCore/html/FileWriter.cpp \
+	WebCore/html/FileWriter.h \
 	WebCore/html/FileStreamClient.h \
 	WebCore/html/FileStreamProxy.cpp \
 	WebCore/html/FileStreamProxy.h \
