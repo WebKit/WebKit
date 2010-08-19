@@ -1,3 +1,14 @@
+2010-08-19  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Avoid unnecessary string copy in TextCodecQt::decode()
+        https://bugs.webkit.org/show_bug.cgi?id=44232
+
+        * platform/text/qt/TextCodecQt.cpp:
+        (WebCore::TextCodecQt::decode): Use String::append(const UChar*, int)
+        to avoid creating a temporary string.
+
 2010-08-19  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.
