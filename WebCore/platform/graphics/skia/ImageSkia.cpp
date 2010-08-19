@@ -419,8 +419,9 @@ static void drawBitmapGLES2(GraphicsContext* ctxt, NativeImageSkia* bitmap, cons
         ASSERT(bitmap->config() == SkBitmap::kARGB_8888_Config);
         ASSERT(bitmap->rowBytes() == bitmap->width() * 4);
         texture = gpuCanvas->createTexture(bitmap, GLES2Texture::BGRA8, bitmap->width(), bitmap->height());
-        ASSERT(bitmap->pixelRef());
-        texture->load(bitmap->pixelRef()->pixels());
+        SkAutoLockPixels lock(*bitmap);
+        ASSERT(bitmap->getPixels());
+        texture->load(bitmap->getPixels());
     }
     gpuCanvas->drawTexturedRect(texture, srcRect, dstRect, styleColorSpace, compositeOp);
 }

@@ -1,3 +1,30 @@
+2010-08-19  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [CHROMIUM] Assert w/canvas image draw
+        https://bugs.webkit.org/show_bug.cgi?id=44279
+
+        Don't use bitmap->pixelRef()->getPixels() directly; prefer
+        bitmap->pixels() and an SkAutoLockPixels.  Also, make sure to set
+        the backing store state to Software when it was None.  This handles
+        missing draws when the first call is software.  Finally, remove some
+        spurious prepareForSoftwareDraw() calls in addPath() and beginPath().
+        It's really the fillPath() or strokePath() that matters.
+
+        Covered by LayoutTests/fast/canvas/arc360.html and others.
+
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::addPath):
+        (WebCore::GraphicsContext::beginPath):
+        Remove spurious prepareForSoftwareDraw() calls.
+        * platform/graphics/skia/ImageSkia.cpp:
+        (WebCore::drawBitmapGLES2):
+        Lock SkBitmap's pixels, and use ->getPixels().
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::prepareForSoftwareDraw):
+        Switch backing store state to Software when it was None.
+
 2010-08-19  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/44285> Fix compilation with NETSCAPE_PLUGIN_API disabled

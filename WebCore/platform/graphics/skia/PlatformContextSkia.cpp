@@ -753,6 +753,8 @@ void PlatformContextSkia::prepareForSoftwareDraw() const
             readbackHardwareToSoftware();
             m_backingStoreState = Software;
         }
+    } else if (m_backingStoreState == None) {
+        m_backingStoreState = Software;
     }
 }
 
