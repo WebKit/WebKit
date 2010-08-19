@@ -551,7 +551,7 @@ class MockRietveld():
     def __init__(self, executive, dryrun=False):
         pass
 
-    def post(self, diff, message=None, codereview_issue=None, cc=None):
+    def post(self, diff, patch_id, codereview_issue, message=None, cc=None):
         log("MOCK: Uploading patch to rietveld")
 
 

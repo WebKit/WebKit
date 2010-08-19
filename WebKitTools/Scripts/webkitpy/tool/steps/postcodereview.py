@@ -64,6 +64,7 @@ class PostCodeReview(AbstractStep):
         created_issue = self._tool.codereview.post(diff=self.cached_lookup(state, "diff"),
                                                    message=message,
                                                    codereview_issue=bug_id,
-                                                   cc=self._options.cc)
+                                                   cc=self._options.cc,
+                                                   patch_id=patch.id())
 
         self._tool.bugs.set_flag_on_attachment(patch.id(), 'in-rietveld', '+')

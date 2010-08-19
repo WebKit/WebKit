@@ -47,7 +47,7 @@ class Rietveld(object):
             return None
         return "%s%s" % (config.codereview_server_url, codereview_issue)
 
-    def post(self, diff, message=None, codereview_issue=None, cc=None):
+    def post(self, diff, patch_id, codereview_issue, message=None, cc=None):
         if not message:
             raise ScriptError("Rietveld requires a message.")
 
@@ -61,6 +61,7 @@ class Rietveld(object):
             "--assume_yes",
             "--server=%s" % config.codereview_server_host,
             "--message=%s" % message,
+            "--webkit_patch_id=%s" % patch_id,
         ]
         if codereview_issue:
             args.append("--issue=%s" % codereview_issue)
