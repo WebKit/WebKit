@@ -159,13 +159,6 @@ http/tests/misc/bubble-drag-events.html
 # [Qt] http/tests/misc/slow-loading-mask.html timed out.
 http/tests/misc/slow-loading-mask.html
 
-# skip failing history tests
-# https://bugs.webkit.org/show_bug.cgi?id=34167
-http/tests/history/redirect-301.pl
-http/tests/history/redirect-302.pl
-http/tests/history/redirect-303.pl
-http/tests/history/redirect-307.pl
-
 # Qt may want to follow GTK+ in adding a default Accept header for
 # subresources. See https://bugs.webkit.org/show_bug.cgi?id=33242.
 http/tests/misc/image-checks-for-accept.html

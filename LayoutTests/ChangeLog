@@ -1,3 +1,19 @@
+2010-08-19  Ademar de Souza Reis Jr  <ademar.reis@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Remove outdated reference to http/tests/history/redirect-*.pl tests
+
+        [Qt] DRT keepWebHistory is not being called in redirect-30*.pl tests
+        https://bugs.webkit.org/show_bug.cgi?id=34212
+
+        Those tests have been renamed on
+        http://trac.webkit.org/changeset/65340
+
+        And are passing on the bot since then.
+
+        * platform/qt/Skipped:
+
 2010-08-19  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, skip crashing test.
