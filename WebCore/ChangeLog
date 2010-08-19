@@ -1,3 +1,43 @@
+2010-08-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Group functions in markup.cpp into MarkupAccumulatorWrapper
+        https://bugs.webkit.org/show_bug.cgi?id=43936
+
+        Renamed MarkupAccumulatorWrapper to MarkupAccumulator and moved the MarkupAccumulatorWrapper
+        to the top of markup.cpp. Made various functions private member functions of MarkupAccumulator.
+
+        No new tests are added since this is a cleanup.
+
+        * editing/markup.cpp:
+        (WebCore::MarkupAccumulator::):
+        (WebCore::MarkupAccumulator::MarkupAccumulator):
+        (WebCore::MarkupAccumulator::appendString):
+        (WebCore::MarkupAccumulator::appendStartTag):
+        (WebCore::MarkupAccumulator::appendEndTag):
+        (WebCore::MarkupAccumulator::wrapWithNode):
+        (WebCore::MarkupAccumulator::wrapWithStyleNode):
+        (WebCore::MarkupAccumulator::takeResults):
+        (WebCore::MarkupAccumulator::appendAttributeValue):
+        (WebCore::MarkupAccumulator::escapeContentText):
+        (WebCore::MarkupAccumulator::appendQuotedURLAttributeValue):
+        (WebCore::MarkupAccumulator::stringValueForRange):
+        (WebCore::MarkupAccumulator::ucharRange):
+        (WebCore::MarkupAccumulator::appendUCharRange):
+        (WebCore::MarkupAccumulator::renderedText):
+        (WebCore::MarkupAccumulator::shouldAddNamespaceElement):
+        (WebCore::MarkupAccumulator::shouldAddNamespaceAttribute):
+        (WebCore::MarkupAccumulator::appendNamespace):
+        (WebCore::MarkupAccumulator::appendDocumentType):
+        (WebCore::MarkupAccumulator::removeExteriorStyles):
+        (WebCore::MarkupAccumulator::appendStartMarkup):
+        (WebCore::MarkupAccumulator::shouldSelfClose):
+        (WebCore::MarkupAccumulator::appendEndMarkup):
+        (WebCore::serializeNodes):
+        (WebCore::createMarkup):
+        (WebCore::serializeNodesWithNamespaces):
+
 2010-08-18  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Sam Weinig.
