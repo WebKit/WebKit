@@ -1,5 +1,13 @@
 2010-08-19  John Gregg  <johnnyg@google.com>
 
+        Unreviewed, chromium test expectations.
+
+        Add expected failures for caret-based pixel tests.  See bug 44290.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-08-19  John Gregg  <johnnyg@google.com>
+
         Unreviewed, chromium rebaselines.
 
         Add new baselines after http://trac.webkit.org/changeset/65665/ 

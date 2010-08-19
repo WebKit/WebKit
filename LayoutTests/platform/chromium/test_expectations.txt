@@ -3248,3 +3248,7 @@ BUGWK44278 WIN LINUX : svg/custom/non-scaling-stroke.svg = IMAGE
 BUGWK44278 WIN LINUX : svg/custom/pattern-no-pixelation.svg = IMAGE
 BUGWK44278 WIN LINUX : svg/custom/stroked-pattern.svg = IMAGE
 
+// Tests are failing after http://trac.webkit.org/changeset/65681/
+// due to pixel results not having a caret visible.
+BUGWK44290 WIN LINUX : editing/selection/drag-in-iframe.html = IMAGE
+BUGWK44290 WIN MAC : fast/forms/input-text-scroll-left-on-blur.html = IMAGE
