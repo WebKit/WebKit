@@ -8,10 +8,11 @@ function toStringLiteral(str)
 var willCancelTextInput = false;
 var textInputCount = 0;
 var expectedTextEventData = "";
+var actualTextEventData = null;
 
 function droppingTextInputHandler(evt)
 {
-    shouldBe("event.data", toStringLiteral(expectedTextEventData));
+    actualTextEventData = evt.data;
     textInputCount++;
     if (willCancelTextInput)
         evt.preventDefault();
@@ -40,6 +41,7 @@ function clearTargets()
     testTargetEditable.innerHTML = "placeholder"; // give some text to have an area to drop
     testTargetInput.value = "";
     testTargetTextarea.value = "";
+    actualTextEventData = null;
 }
 
 function dragFrom(element)
@@ -149,6 +151,7 @@ function runSingleTest(caseData)
     clearTargets();
     drag();
     drop();
+    shouldBe("actualTextEventData", toStringLiteral(expectedTextEventData));
     verifyFunction(verifyParameter);
 }
 

@@ -3201,9 +3201,6 @@ BUGJAPHET MAC : fast/canvas/webgl/texture-npot.html = TEXT
 // Fails since r65370. Render tree output is different from upstream's one.
 BUGYUTAK WIN LINUX : svg/W3C-SVG-1.1/animate-elem-80-t.svg = TEXT
 
-// Due to http://trac.webkit.org/changeset/65395
-BUGWK44051 : editing/pasteboard/drop-text-events.html = TEXT
-
 // Probably http://trac.webkit.org/changeset/65381
 // This test causes the next one to run to ASSERT
 BUGWK44079 DEBUG SKIP : fast/events/popup-allowed-from-gesture-initiated-form-submit.html = PASS

@@ -1,3 +1,14 @@
+2010-08-17  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Tony Chang.
+
+        [Chromium] editing/pasteboard/drop-text-events.html failed.
+        https://bugs.webkit.org/show_bug.cgi?id=44051
+
+        * editing/pasteboard/drop-text-events-expected.txt:
+        * editing/pasteboard/script-tests/drop-text-events.js: Supressed side effect during a drag.
+        * platform/chromium/test_expectations.txt:
+
 2010-08-18  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Sam Weinig.
