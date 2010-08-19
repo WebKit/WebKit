@@ -1,3 +1,13 @@
+2010-08-19  John Gregg  <johnnyg@google.com>
+
+        Unreviewed; test expectations.
+
+        Update chromium-mac expectations for zoom-mask-with-percentages.svg after
+        http://trac.webkit.org/changeset/65665/
+
+        * platform/chromium-mac/svg/zoom/page/zoom-mask-with-percentages-expected.checksum:
+        * platform/chromium-mac/svg/zoom/page/zoom-mask-with-percentages-expected.png:
+
 2010-08-19  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.
