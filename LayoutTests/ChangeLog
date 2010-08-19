@@ -1,3 +1,24 @@
+2010-08-19  John Gregg  <johnnyg@google.com>
+
+        Unreviewed, chromium rebaselines.
+
+        Add new baselines after http://trac.webkit.org/changeset/65665/ 
+
+        * platform/chromium-linux/svg/custom/pattern-rotate-expected.checksum: Added.
+        * platform/chromium-linux/svg/custom/pattern-rotate-expected.png: Added.
+        * platform/chromium-linux/svg/transforms: Added.
+        * platform/chromium-linux/svg/transforms/text-with-pattern-inside-transformed-html-expected.checksum: Added.
+        * platform/chromium-linux/svg/transforms/text-with-pattern-inside-transformed-html-expected.png: Added.
+        * platform/chromium-linux/svg/transforms/text-with-pattern-with-svg-transform-expected.checksum: Added.
+        * platform/chromium-linux/svg/transforms/text-with-pattern-with-svg-transform-expected.png: Added.
+        * platform/chromium-win/svg/custom/pattern-rotate-expected.checksum:
+        * platform/chromium-win/svg/custom/pattern-rotate-expected.png:
+        * platform/chromium-win/svg/transforms/text-with-pattern-inside-transformed-html-expected.checksum:
+        * platform/chromium-win/svg/transforms/text-with-pattern-inside-transformed-html-expected.png:
+        * platform/chromium-win/svg/transforms/text-with-pattern-with-svg-transform-expected.checksum:
+        * platform/chromium-win/svg/transforms/text-with-pattern-with-svg-transform-expected.png:
+        * platform/chromium/test_expectations.txt
+
 2010-08-16  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

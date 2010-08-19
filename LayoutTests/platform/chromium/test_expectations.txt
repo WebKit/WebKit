@@ -930,8 +930,6 @@ BUG3244 WIN LINUX : fast/backgrounds/svg-as-background-6.html = FAIL
 
 BUG10302 LINUX : svg/W3C-SVG-1.1/pservers-grad-10-b.svg = FAIL
 
-BUG10303 LINUX : svg/custom/pattern-rotate.svg = FAIL
-
 // I find it hard to care too much about SVG failures.
 BUG10304 LINUX : svg/W3C-SVG-1.1/animate-elem-04-t.svg = FAIL
 BUG10304 LINUX : svg/W3C-SVG-1.1/animate-elem-05-t.svg = FAIL
@@ -1995,8 +1993,6 @@ BUG11483 LINUX : svg/text/foreignObject-repaint.xml = FAIL
 // Regressions from WebKit merge 43242:43321.  These just need to re-baselining:
 BUG24229 LINUX : fast/forms/select-dirty-parent-pref-widths.html = FAIL
 BUG24229 LINUX : svg/transforms/animated-path-inside-transformed-html.xhtml = FAIL
-BUG24229 LINUX : svg/transforms/text-with-pattern-inside-transformed-html.xhtml = FAIL
-BUG24229 LINUX : svg/transforms/text-with-pattern-with-svg-transform.svg = FAIL
 
 // TODO(erg): Attempted to rebaseline these tests as part of the above
 // 43346:43361 rebaseling from http://trac.webkit.org/changeset/43355. Turned
@@ -3251,3 +3247,4 @@ BUGWK44278 WIN LINUX : svg/custom/js-late-pattern-creation.svg = IMAGE
 BUGWK44278 WIN LINUX : svg/custom/non-scaling-stroke.svg = IMAGE
 BUGWK44278 WIN LINUX : svg/custom/pattern-no-pixelation.svg = IMAGE
 BUGWK44278 WIN LINUX : svg/custom/stroked-pattern.svg = IMAGE
+
