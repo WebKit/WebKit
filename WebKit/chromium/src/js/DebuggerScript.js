@@ -32,7 +32,6 @@
 
 var DebuggerScript = {};
 DebuggerScript._breakpoints = {};
-DebuggerScript._breakpointsActivated = true;
 
 DebuggerScript.PauseOnExceptionsState = {
     DontPauseOnExceptions : 0,
@@ -95,7 +94,7 @@ DebuggerScript.setBreakpoint = function(execState, args)
 {
     args.lineNumber = DebuggerScript._webkitToV8LineNumber(args.lineNumber);
     var breakId = Debug.setScriptBreakPointById(args.scriptId, args.lineNumber, 0 /* column */, args.condition);
-    if (!args.enabled || !DebuggerScript._breakpointsActivated)
+    if (!args.enabled)
         Debug.disableScriptBreakPoint(breakId);
 
     var locations = Debug.findBreakPointActualLocations(breakId);
@@ -198,14 +197,7 @@ DebuggerScript.clearBreakpoints = function(execState, args)
 
 DebuggerScript.setBreakpointsActivated = function(execState, args)
 {
-    for (var key in DebuggerScript._breakpoints) {
-        var breakId = DebuggerScript._breakpoints[key];
-        if (args.enabled)
-            Debug.enableScriptBreakPoint(breakId);
-        else
-            Debug.disableScriptBreakPoint(breakId);
-    }
-    DebuggerScript._breakpointsActivated = args.enabled;
+    Debug.debuggerFlags().breakPointsActive.setValue(args.enabled);
 }
 
 DebuggerScript._frameMirrorToJSCallFrame = function(frameMirror, callerFrame)

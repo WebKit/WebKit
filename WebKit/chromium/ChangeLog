@@ -1,3 +1,13 @@
+2010-08-19  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: activate/deactivate breakpoints using v8 debugger flag.
+        https://bugs.webkit.org/show_bug.cgi?id=44112
+
+        * src/js/DebuggerScript.js:
+        ():
+
 2010-08-19  Andrei Popescu  <andreip@google.com>
 
         Reviewed by Jeremy Orlow.
