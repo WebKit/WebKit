@@ -47,6 +47,8 @@
 #define gtk_widget_set_visible(widget, FALSE) GTK_WIDGET_UNSET_FLAGS((widget), GTK_VISIBLE)
 #define gtk_widget_set_window(widget, new_window) (widget)->window = (new_window)
 #define gtk_widget_set_can_focus(widget, TRUE) GTK_WIDGET_SET_FLAGS((widget), GTK_CAN_FOCUS)
+#define gtk_widget_get_allocation(widget, alloc) (*(alloc) = (widget)->allocation)
+#define gtk_widget_set_allocation(widget, alloc) ((widget)->allocation = *(alloc))
 #endif // GTK_CHECK_VERSION(2, 18, 0)
 
 #if !GTK_CHECK_VERSION(2, 14, 0)

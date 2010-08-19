@@ -1,3 +1,20 @@
+2010-08-18  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] Since the GSEAL changes moz_gtk_scrollbar_button_paint fiddles the widget allocation but doesn't preserve it
+        https://bugs.webkit.org/show_bug.cgi?id=44211
+
+        No new tests as we do not currently use the scrollbar button painting
+        code. Tests for this issue will be enabled when we have pixel tests
+        for WebCore-drawn interior frame scrollbars.
+
+        * platform/gtk/GtkVersioning.h: Add backward-compatible functions for getting
+        and setting the widget allocation.
+        * platform/gtk/gtk2drawing.c:
+        (moz_gtk_scrollbar_button_paint): Use new backward-compatible functions for getting
+        and setting the widget allocation.
+
 2010-08-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.

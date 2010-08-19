@@ -1124,11 +1124,7 @@ moz_gtk_scrollbar_button_paint(GdkDrawable* drawable, GdkRectangle* rect,
        to determine where it should paint rounded corners on the buttons.
        We need to trick them into drawing the buttons the way we want them. */
 
-#if GTK_CHECK_VERSION(2, 18, 0)
     gtk_widget_get_allocation(scrollbar, &allocation);
-#else
-    allocation = scrollbar->allocation;
-#endif
     allocation.x = rect->x;
     allocation.y = rect->y;
     allocation.width = rect->width;
@@ -1163,6 +1159,7 @@ moz_gtk_scrollbar_button_paint(GdkDrawable* drawable, GdkRectangle* rect,
         }
     }
 
+    gtk_widget_set_allocation(scrollbar, &allocation);
     style = gtk_widget_get_style(scrollbar);
 
     TSOffsetStyleGCs(style, rect->x, rect->y);
