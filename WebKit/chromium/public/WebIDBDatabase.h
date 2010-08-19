@@ -34,6 +34,7 @@ namespace WebKit {
 class WebFrame;
 class WebIDBCallbacks;
 class WebIDBObjectStore;
+class WebIDBTransaction;
 
 // See comment in WebIndexedDatabase for a high level overview of these classes.
 class WebIDBDatabase {
@@ -74,6 +75,13 @@ public:
     {
         WEBKIT_ASSERT_NOT_REACHED();
     }
+    // Transfers ownership of the WebIDBTransaction to the caller.
+    virtual WebIDBTransaction* transaction(const WebDOMStringList& names, unsigned short mode, unsigned long timeout)
+    {
+        WEBKIT_ASSERT_NOT_REACHED();
+        return 0;
+    }
+
 };
 
 } // namespace WebKit

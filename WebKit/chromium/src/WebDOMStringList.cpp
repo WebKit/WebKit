@@ -60,6 +60,8 @@ void WebDOMStringList::append(const WebString& string)
 
 unsigned WebDOMStringList::length() const
 {
+    if (m_private.isNull())
+        return 0;
     return m_private->length();
 }
 

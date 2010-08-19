@@ -74,6 +74,7 @@ namespace WebCore {
 #endif
 #if ENABLE(INDEXED_DATABASE)
         IDBFactoryBackendInterface* idbFactory();
+        bool hasIDBFactory() { return m_factoryBackend; }
 #endif
 
         void addUserScriptToWorld(DOMWrapperWorld*, const String& source, const KURL&,

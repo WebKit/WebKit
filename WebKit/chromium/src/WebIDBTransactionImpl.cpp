@@ -10,9 +10,6 @@
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
  *     documentation and/or other materials provided with the distribution.
- * 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
- *     its contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -27,53 +24,57 @@
  */
 
 #include "config.h"
-#include "IDBFactoryBackendProxy.h"
-
-#include "DOMStringList.h"
-#include "IDBDatabaseError.h"
-#include "IDBDatabaseProxy.h"
-#include "WebFrameImpl.h"
-#include "WebIDBCallbacksImpl.h"
-#include "WebIDBDatabase.h"
-#include "WebIDBDatabaseError.h"
-#include "WebIDBFactory.h"
-#include "WebKit.h"
-#include "WebKitClient.h"
-#include "WebVector.h"
+#include "WebIDBTransactionImpl.h"
 
 #if ENABLE(INDEXED_DATABASE)
 
-namespace WebCore {
+#include "IDBTransaction.h"
+#include "IDBTransactionCallbacksProxy.h"
+#include "WebIDBObjectStoreImpl.h"
+#include "WebIDBTransactionCallbacks.h"
 
-PassRefPtr<IDBFactoryBackendInterface> IDBFactoryBackendProxy::create()
-{
-    return adoptRef(new IDBFactoryBackendProxy());
-}
+using namespace WebCore;
 
-IDBFactoryBackendProxy::IDBFactoryBackendProxy()
-    : m_webIDBFactory(WebKit::webKitClient()->idbFactory())
-{
-}
+namespace WebKit {
 
-IDBFactoryBackendProxy::~IDBFactoryBackendProxy()
+WebIDBTransactionImpl::WebIDBTransactionImpl(PassRefPtr<IDBTransactionBackendInterface> backend)
+    : m_backend(backend)
 {
 }
 
-void IDBFactoryBackendProxy::open(const String& name, const String& description, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> origin, Frame* frame)
+WebIDBTransactionImpl::~WebIDBTransactionImpl()
 {
-    WebKit::WebFrame* webFrame = WebKit::WebFrameImpl::fromFrame(frame);
-    m_webIDBFactory->open(name, description, new WebIDBCallbacksImpl(callbacks), origin, webFrame);
 }
 
-void IDBFactoryBackendProxy::abortPendingTransactions(const Vector<int>& pendingIDs)
+int WebIDBTransactionImpl::mode() const
 {
-    ASSERT(pendingIDs.size());
-    WebKit::WebVector<int> ids = pendingIDs;
-
-    m_webIDBFactory->abortPendingTransactions(ids);
+    return m_backend->mode();
 }
 
-} // namespace WebCore
+WebIDBObjectStore* WebIDBTransactionImpl::objectStore(const WebString& name)
+{
+    RefPtr<IDBObjectStoreBackendInterface> objectStore = m_backend->objectStore(name);
+    if (!objectStore)
+        return 0;
+    return new WebIDBObjectStoreImpl(objectStore);
+}
+
+void WebIDBTransactionImpl::abort()
+{
+    m_backend->abort();
+}
+
+int WebIDBTransactionImpl::id() const
+{
+    return m_backend->id();
+}
+
+void WebIDBTransactionImpl::setCallbacks(WebIDBTransactionCallbacks* callbacks)
+{
+    RefPtr<IDBTransactionCallbacks> idbCallbacks = IDBTransactionCallbacksProxy::create(callbacks);
+    m_backend->setCallbacks(idbCallbacks.get());
+}
+
+} // namespace WebKit
 
 #endif // ENABLE(INDEXED_DATABASE)
-

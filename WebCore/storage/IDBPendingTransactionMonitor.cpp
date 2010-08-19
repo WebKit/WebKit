@@ -10,9 +10,6 @@
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
  *     documentation and/or other materials provided with the distribution.
- * 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
- *     its contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -27,53 +24,49 @@
  */
 
 #include "config.h"
-#include "IDBFactoryBackendProxy.h"
-
-#include "DOMStringList.h"
-#include "IDBDatabaseError.h"
-#include "IDBDatabaseProxy.h"
-#include "WebFrameImpl.h"
-#include "WebIDBCallbacksImpl.h"
-#include "WebIDBDatabase.h"
-#include "WebIDBDatabaseError.h"
-#include "WebIDBFactory.h"
-#include "WebKit.h"
-#include "WebKitClient.h"
-#include "WebVector.h"
+#include "IDBPendingTransactionMonitor.h"
 
 #if ENABLE(INDEXED_DATABASE)
 
 namespace WebCore {
 
-PassRefPtr<IDBFactoryBackendInterface> IDBFactoryBackendProxy::create()
+Vector<int>* IDBPendingTransactionMonitor::m_ids = 0;
+
+bool IDBPendingTransactionMonitor::hasPendingTransactions()
 {
-    return adoptRef(new IDBFactoryBackendProxy());
+    return m_ids && m_ids->size();
 }
 
-IDBFactoryBackendProxy::IDBFactoryBackendProxy()
-    : m_webIDBFactory(WebKit::webKitClient()->idbFactory())
+void IDBPendingTransactionMonitor::addPendingTransaction(int id)
 {
+    if (!m_ids)
+        m_ids = new Vector<int>();
+    m_ids->append(id);
 }
 
-IDBFactoryBackendProxy::~IDBFactoryBackendProxy()
+void IDBPendingTransactionMonitor::removePendingTransaction(int id)
 {
+    m_ids->remove(id);
+    if (!m_ids->size()) {
+        delete m_ids;
+        m_ids = 0;
+    }
 }
 
-void IDBFactoryBackendProxy::open(const String& name, const String& description, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> origin, Frame* frame)
+void IDBPendingTransactionMonitor::clearPendingTransactions()
 {
-    WebKit::WebFrame* webFrame = WebKit::WebFrameImpl::fromFrame(frame);
-    m_webIDBFactory->open(name, description, new WebIDBCallbacksImpl(callbacks), origin, webFrame);
+    if (!m_ids)
+        return;
+
+    m_ids->clear();
+    delete m_ids;
+    m_ids = 0;
 }
 
-void IDBFactoryBackendProxy::abortPendingTransactions(const Vector<int>& pendingIDs)
+const Vector<int>& IDBPendingTransactionMonitor::pendingTransactions()
 {
-    ASSERT(pendingIDs.size());
-    WebKit::WebVector<int> ids = pendingIDs;
-
-    m_webIDBFactory->abortPendingTransactions(ids);
+    return *m_ids;
 }
 
-} // namespace WebCore
-
+};
 #endif // ENABLE(INDEXED_DATABASE)
-

@@ -33,6 +33,7 @@
 #include "FileSystem.h"
 #include "IDBDatabaseBackendImpl.h"
 #include "IDBDatabaseException.h"
+#include "IDBTransactionCoordinator.h"
 #include "SQLiteDatabase.h"
 #include "SecurityOrigin.h"
 #include <wtf/Threading.h>
@@ -42,7 +43,8 @@
 
 namespace WebCore {
 
-IDBFactoryBackendImpl::IDBFactoryBackendImpl()
+IDBFactoryBackendImpl::IDBFactoryBackendImpl() 
+    : m_transactionCoordinator(IDBTransactionCoordinator::create())
 {
 }
 
@@ -124,9 +126,15 @@ void IDBFactoryBackendImpl::open(const String& name, const String& description, 
         return;
     }
 
-    RefPtr<IDBDatabaseBackendImpl> databaseBackend = IDBDatabaseBackendImpl::create(name, description, sqliteDatabase.release());
+    RefPtr<IDBDatabaseBackendImpl> databaseBackend = IDBDatabaseBackendImpl::create(name, description, sqliteDatabase.release(), m_transactionCoordinator.get());
     callbacks->onSuccess(databaseBackend.get());
     m_databaseBackendMap.set(name, databaseBackend.release());
+}
+
+void IDBFactoryBackendImpl::abortPendingTransactions(const Vector<int>& pendingIDs)
+{
+    for (size_t i = 0; i < pendingIDs.size(); ++i)
+        m_transactionCoordinator->abort(pendingIDs.at(i));
 }
 
 } // namespace WebCore

@@ -27,53 +27,39 @@
  */
 
 #include "config.h"
-#include "IDBFactoryBackendProxy.h"
+#include "IDBTransactionCallbacksProxy.h"
 
-#include "DOMStringList.h"
-#include "IDBDatabaseError.h"
-#include "IDBDatabaseProxy.h"
-#include "WebFrameImpl.h"
-#include "WebIDBCallbacksImpl.h"
-#include "WebIDBDatabase.h"
-#include "WebIDBDatabaseError.h"
-#include "WebIDBFactory.h"
-#include "WebKit.h"
-#include "WebKitClient.h"
-#include "WebVector.h"
+#include "WebIDBTransactionCallbacks.h"
 
 #if ENABLE(INDEXED_DATABASE)
 
 namespace WebCore {
 
-PassRefPtr<IDBFactoryBackendInterface> IDBFactoryBackendProxy::create()
+PassRefPtr<IDBTransactionCallbacksProxy> IDBTransactionCallbacksProxy::create(PassOwnPtr<WebKit::WebIDBTransactionCallbacks> callbacks)
 {
-    return adoptRef(new IDBFactoryBackendProxy());
+    return adoptRef(new IDBTransactionCallbacksProxy(callbacks));
 }
 
-IDBFactoryBackendProxy::IDBFactoryBackendProxy()
-    : m_webIDBFactory(WebKit::webKitClient()->idbFactory())
-{
-}
-
-IDBFactoryBackendProxy::~IDBFactoryBackendProxy()
+IDBTransactionCallbacksProxy::IDBTransactionCallbacksProxy(PassOwnPtr<WebKit::WebIDBTransactionCallbacks> callbacks)
+    : m_callbacks(callbacks)
 {
 }
 
-void IDBFactoryBackendProxy::open(const String& name, const String& description, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> origin, Frame* frame)
+IDBTransactionCallbacksProxy::~IDBTransactionCallbacksProxy()
 {
-    WebKit::WebFrame* webFrame = WebKit::WebFrameImpl::fromFrame(frame);
-    m_webIDBFactory->open(name, description, new WebIDBCallbacksImpl(callbacks), origin, webFrame);
 }
 
-void IDBFactoryBackendProxy::abortPendingTransactions(const Vector<int>& pendingIDs)
+void IDBTransactionCallbacksProxy::onAbort()
 {
-    ASSERT(pendingIDs.size());
-    WebKit::WebVector<int> ids = pendingIDs;
+    m_callbacks->onAbort();
+    m_callbacks.clear();
+}
 
-    m_webIDBFactory->abortPendingTransactions(ids);
+int IDBTransactionCallbacksProxy::id() const
+{
+    return m_callbacks->id();
 }
 
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)
-

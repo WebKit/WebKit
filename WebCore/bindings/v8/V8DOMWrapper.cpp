@@ -51,6 +51,7 @@
 #include "V8HTMLCollection.h"
 #include "V8HTMLDocument.h"
 #include "V8IDBRequest.h"
+#include "V8IDBTransaction.h"
 #include "V8IsolatedContext.h"
 #include "V8Location.h"
 #include "V8MessageChannel.h"
@@ -382,6 +383,8 @@ v8::Handle<v8::Value> V8DOMWrapper::convertEventTargetToV8Object(EventTarget* ta
 #if ENABLE(INDEXED_DATABASE)
     if (IDBRequest* idbRequest = target->toIDBRequest())
         return toV8(idbRequest);
+    if (IDBTransaction* idbTransaction = target->toIDBTransaction())
+        return toV8(idbTransaction);
 #endif
 
 #if ENABLE(WEB_SOCKETS)

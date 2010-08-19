@@ -26,54 +26,38 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "IDBFactoryBackendProxy.h"
+#ifndef IDBTransactionCallbacksProxy_h
+#define IDBTransactionCallbacksProxy_h
 
-#include "DOMStringList.h"
-#include "IDBDatabaseError.h"
-#include "IDBDatabaseProxy.h"
-#include "WebFrameImpl.h"
-#include "WebIDBCallbacksImpl.h"
-#include "WebIDBDatabase.h"
-#include "WebIDBDatabaseError.h"
-#include "WebIDBFactory.h"
-#include "WebKit.h"
-#include "WebKitClient.h"
-#include "WebVector.h"
+#include "IDBTransactionCallbacks.h"
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include <wtf/PassOwnPtr.h>
+#include <wtf/PassRefPtr.h>
+
+namespace WebKit { class WebIDBTransactionCallbacks; }
+
 namespace WebCore {
 
-PassRefPtr<IDBFactoryBackendInterface> IDBFactoryBackendProxy::create()
-{
-    return adoptRef(new IDBFactoryBackendProxy());
-}
+class IDBTransactionCallbacksProxy : public IDBTransactionCallbacks {
+public:
+    static PassRefPtr<IDBTransactionCallbacksProxy> create(PassOwnPtr<WebKit::WebIDBTransactionCallbacks>);
+    virtual ~IDBTransactionCallbacksProxy();
 
-IDBFactoryBackendProxy::IDBFactoryBackendProxy()
-    : m_webIDBFactory(WebKit::webKitClient()->idbFactory())
-{
-}
+    virtual void onAbort();
+    virtual int id() const;
+    // FIXME: implement onComplete().
 
-IDBFactoryBackendProxy::~IDBFactoryBackendProxy()
-{
-}
+private:
+    IDBTransactionCallbacksProxy(PassOwnPtr<WebKit::WebIDBTransactionCallbacks>);
 
-void IDBFactoryBackendProxy::open(const String& name, const String& description, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> origin, Frame* frame)
-{
-    WebKit::WebFrame* webFrame = WebKit::WebFrameImpl::fromFrame(frame);
-    m_webIDBFactory->open(name, description, new WebIDBCallbacksImpl(callbacks), origin, webFrame);
-}
+    OwnPtr<WebKit::WebIDBTransactionCallbacks> m_callbacks;
+};
 
-void IDBFactoryBackendProxy::abortPendingTransactions(const Vector<int>& pendingIDs)
-{
-    ASSERT(pendingIDs.size());
-    WebKit::WebVector<int> ids = pendingIDs;
-
-    m_webIDBFactory->abortPendingTransactions(ids);
-}
 
 } // namespace WebCore
 
-#endif // ENABLE(INDEXED_DATABASE)
+#endif
 
+#endif // IDBTransactionCallbacksProxy_h

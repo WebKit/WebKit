@@ -10,9 +10,6 @@
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
  *     documentation and/or other materials provided with the distribution.
- * 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
- *     its contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -26,54 +23,41 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "IDBFactoryBackendProxy.h"
-
-#include "DOMStringList.h"
-#include "IDBDatabaseError.h"
-#include "IDBDatabaseProxy.h"
-#include "WebFrameImpl.h"
-#include "WebIDBCallbacksImpl.h"
-#include "WebIDBDatabase.h"
-#include "WebIDBDatabaseError.h"
-#include "WebIDBFactory.h"
-#include "WebKit.h"
-#include "WebKitClient.h"
-#include "WebVector.h"
+#ifndef IDBPendingTransactionMonitor_h
+#define IDBPendingTransactionMonitor_h
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include <wtf/Noncopyable.h>
+#include <wtf/Vector.h>
+
 namespace WebCore {
 
-PassRefPtr<IDBFactoryBackendInterface> IDBFactoryBackendProxy::create()
-{
-    return adoptRef(new IDBFactoryBackendProxy());
-}
+// This class keeps track of the transactions created during the current
+// Javascript execution context. A transaction is 'pending' if no asynchronous
+// operation is currently queued for it (e.g. an IDBObjectStore::put() or similar).
+// All pending transactions are aborted as soon as execution returns from
+// the script engine.
+//
+// FIXME: move the vector of transaction IDs to TLS. Keeping it static
+// will not work once we add support for workers. Another possible
+// solution is to keep the vector in the ScriptExecutionContext.
+class IDBPendingTransactionMonitor : public Noncopyable {
+public:
+    static bool hasPendingTransactions();
+    static void addPendingTransaction(int id);
+    static void removePendingTransaction(int id);
+    static void clearPendingTransactions();
+    static const Vector<int>& pendingTransactions();
 
-IDBFactoryBackendProxy::IDBFactoryBackendProxy()
-    : m_webIDBFactory(WebKit::webKitClient()->idbFactory())
-{
-}
+private:
+    IDBPendingTransactionMonitor();
 
-IDBFactoryBackendProxy::~IDBFactoryBackendProxy()
-{
-}
-
-void IDBFactoryBackendProxy::open(const String& name, const String& description, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> origin, Frame* frame)
-{
-    WebKit::WebFrame* webFrame = WebKit::WebFrameImpl::fromFrame(frame);
-    m_webIDBFactory->open(name, description, new WebIDBCallbacksImpl(callbacks), origin, webFrame);
-}
-
-void IDBFactoryBackendProxy::abortPendingTransactions(const Vector<int>& pendingIDs)
-{
-    ASSERT(pendingIDs.size());
-    WebKit::WebVector<int> ids = pendingIDs;
-
-    m_webIDBFactory->abortPendingTransactions(ids);
-}
+    static Vector<int>* m_ids;
+};
 
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)
 
+#endif // IDBPendingTransactionMonitor_h

@@ -23,42 +23,38 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBTransactionBackendInterface_h
-#define IDBTransactionBackendInterface_h
-
-#include "ExceptionCode.h"
-#include "IDBCallbacks.h"
-#include "PlatformString.h"
-#include "ScriptExecutionContext.h"
-#include <wtf/Threading.h>
+#ifndef WebIDBTransactionImpl_h
+#define WebIDBTransactionImpl_h
 
 #if ENABLE(INDEXED_DATABASE)
 
-namespace WebCore {
+#include "WebCommon.h"
+#include "WebIDBTransaction.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 
-class IDBObjectStoreBackendInterface;
-class IDBTransactionCallbacks;
-class SQLiteDatabase;
+namespace WebCore { class IDBTransactionBackendInterface; }
 
-// This class is shared by IDBTransaction (async) and IDBTransactionSync (sync).
-// This is implemented by IDBTransactionBackendImpl and optionally others (in order to proxy
-// calls across process barriers). All calls to these classes should be non-blocking and
-// trigger work on a background thread if necessary.
-class IDBTransactionBackendInterface : public ThreadSafeShared<IDBTransactionBackendInterface> {
+namespace WebKit {
+
+// See comment in WebIndexedDatabase for a high level overview these classes.
+class WebIDBTransactionImpl: public WebIDBTransaction {
 public:
-    virtual ~IDBTransactionBackendInterface() { }
+    WebIDBTransactionImpl(WTF::PassRefPtr<WebCore::IDBTransactionBackendInterface>);
+    virtual ~WebIDBTransactionImpl();  
 
-    virtual PassRefPtr<IDBObjectStoreBackendInterface> objectStore(const String& name) = 0;
-    virtual unsigned short mode() const = 0;
-    virtual void scheduleTask(PassOwnPtr<ScriptExecutionContext::Task>) = 0;
-    virtual void abort() = 0;
-    virtual int id() const = 0;
-    virtual void setCallbacks(IDBTransactionCallbacks*) = 0;
+    virtual int mode() const;
+    virtual WebIDBObjectStore* objectStore(const WebString& name);
+    virtual void abort();
+    virtual int id() const;
+    virtual void setCallbacks(WebIDBTransactionCallbacks*);
+
+private:
+    WTF::RefPtr<WebCore::IDBTransactionBackendInterface> m_backend;
 };
 
-} // namespace WebCore
+} // namespace WebKit
 
-#endif
+#endif // ENABLE(INDEXED_DATABASE)
 
-#endif // IDBTransactionBackendInterface_h
-
+#endif // WebIDBTransactionImpl_h

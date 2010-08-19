@@ -29,12 +29,14 @@
 #include "DOMStringList.h"
 #include "IDBCallbacks.h"
 #include "IDBObjectStoreProxy.h"
-#include "IDBTransactionBackendInterface.h"
+#include "IDBTransactionBackendProxy.h"
+#include "WebDOMStringList.h"
 #include "WebFrameImpl.h"
 #include "WebIDBCallbacksImpl.h"
 #include "WebIDBDatabase.h"
 #include "WebIDBDatabaseError.h"
 #include "WebIDBObjectStore.h"
+#include "WebIDBTransaction.h"
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -94,9 +96,9 @@ void IDBDatabaseProxy::removeObjectStore(const String& name, PassRefPtr<IDBCallb
 
 PassRefPtr<IDBTransactionBackendInterface> IDBDatabaseProxy::transaction(DOMStringList* storeNames, unsigned short mode, unsigned long timeout)
 {
-    // FIXME: plumb to the browser process, etc etc.
-    ASSERT_NOT_REACHED();
-    return 0;
+    WebKit::WebDOMStringList names(storeNames);
+    WebKit::WebIDBTransaction* transaction = m_webIDBDatabase->transaction(names, mode, timeout);
+    return IDBTransactionBackendProxy::create(transaction);
 }
 
 } // namespace WebCore

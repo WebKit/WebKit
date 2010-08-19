@@ -32,6 +32,7 @@
 #include "IDBCallbacks.h"
 #include "PlatformString.h"
 #include <wtf/Threading.h>
+#include <wtf/Vector.h>
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -51,6 +52,7 @@ public:
     virtual ~IDBFactoryBackendInterface() { }
 
     virtual void open(const String& name, const String& description, PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, Frame*) = 0;
+    virtual void abortPendingTransactions(const Vector<int>& ids) = 0;
 };
 
 } // namespace WebCore

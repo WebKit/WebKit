@@ -29,8 +29,10 @@
 #include "DOMStringList.h"
 #include "IDBCallbacksProxy.h"
 #include "IDBDatabaseBackendInterface.h"
+#include "IDBTransactionBackendInterface.h"
 #include "WebIDBCallbacks.h"
 #include "WebIDBObjectStoreImpl.h"
+#include "WebIDBTransactionImpl.h"
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -83,6 +85,15 @@ WebIDBObjectStore* WebIDBDatabaseImpl::objectStore(const WebString& name, unsign
 void WebIDBDatabaseImpl::removeObjectStore(const WebString& name, WebIDBCallbacks* callbacks)
 {
     m_databaseBackend->removeObjectStore(name, IDBCallbacksProxy::create(callbacks));
+}
+
+WebIDBTransaction* WebIDBDatabaseImpl::transaction(const WebDOMStringList& names, unsigned short mode, unsigned long timeout)
+{
+    RefPtr<DOMStringList> nameList = PassRefPtr<DOMStringList>(names);
+    RefPtr<IDBTransactionBackendInterface> transaction = m_databaseBackend->transaction(nameList.get(), mode, timeout);
+    if (!transaction)
+        return 0;
+    return new WebIDBTransactionImpl(transaction);
 }
 
 } // namespace WebCore

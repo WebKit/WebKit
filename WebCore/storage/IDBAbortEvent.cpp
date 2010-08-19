@@ -27,53 +27,29 @@
  */
 
 #include "config.h"
-#include "IDBFactoryBackendProxy.h"
-
-#include "DOMStringList.h"
-#include "IDBDatabaseError.h"
-#include "IDBDatabaseProxy.h"
-#include "WebFrameImpl.h"
-#include "WebIDBCallbacksImpl.h"
-#include "WebIDBDatabase.h"
-#include "WebIDBDatabaseError.h"
-#include "WebIDBFactory.h"
-#include "WebKit.h"
-#include "WebKitClient.h"
-#include "WebVector.h"
+#include "IDBAbortEvent.h"
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "EventNames.h"
+#include "IDBAny.h"
+
 namespace WebCore {
 
-PassRefPtr<IDBFactoryBackendInterface> IDBFactoryBackendProxy::create()
+PassRefPtr<IDBAbortEvent> IDBAbortEvent::create()
 {
-    return adoptRef(new IDBFactoryBackendProxy());
+    return adoptRef(new IDBAbortEvent());
 }
 
-IDBFactoryBackendProxy::IDBFactoryBackendProxy()
-    : m_webIDBFactory(WebKit::webKitClient()->idbFactory())
-{
-}
-
-IDBFactoryBackendProxy::~IDBFactoryBackendProxy()
+IDBAbortEvent::IDBAbortEvent()
+    : IDBEvent(eventNames().abortEvent, 0) // FIXME: set the source to the transaction
 {
 }
 
-void IDBFactoryBackendProxy::open(const String& name, const String& description, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> origin, Frame* frame)
+IDBAbortEvent::~IDBAbortEvent()
 {
-    WebKit::WebFrame* webFrame = WebKit::WebFrameImpl::fromFrame(frame);
-    m_webIDBFactory->open(name, description, new WebIDBCallbacksImpl(callbacks), origin, webFrame);
-}
-
-void IDBFactoryBackendProxy::abortPendingTransactions(const Vector<int>& pendingIDs)
-{
-    ASSERT(pendingIDs.size());
-    WebKit::WebVector<int> ids = pendingIDs;
-
-    m_webIDBFactory->abortPendingTransactions(ids);
 }
 
 } // namespace WebCore
 
-#endif // ENABLE(INDEXED_DATABASE)
-
+#endif

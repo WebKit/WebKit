@@ -26,54 +26,32 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "IDBFactoryBackendProxy.h"
-
-#include "DOMStringList.h"
-#include "IDBDatabaseError.h"
-#include "IDBDatabaseProxy.h"
-#include "WebFrameImpl.h"
-#include "WebIDBCallbacksImpl.h"
-#include "WebIDBDatabase.h"
-#include "WebIDBDatabaseError.h"
-#include "WebIDBFactory.h"
-#include "WebKit.h"
-#include "WebKitClient.h"
-#include "WebVector.h"
+#ifndef IDBAbortEvent_h
+#define IDBAbortEvent_h
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBEvent.h"
+#include "PlatformString.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
+
 namespace WebCore {
 
-PassRefPtr<IDBFactoryBackendInterface> IDBFactoryBackendProxy::create()
-{
-    return adoptRef(new IDBFactoryBackendProxy());
-}
+class IDBAbortEvent : public IDBEvent {
+public:
+    static PassRefPtr<IDBAbortEvent> create();
+    // FIXME: Need to allow creation of these events from JS.
+    virtual ~IDBAbortEvent();
 
-IDBFactoryBackendProxy::IDBFactoryBackendProxy()
-    : m_webIDBFactory(WebKit::webKitClient()->idbFactory())
-{
-}
+    virtual bool isIDBAbortEvent() const { return true; }
 
-IDBFactoryBackendProxy::~IDBFactoryBackendProxy()
-{
-}
-
-void IDBFactoryBackendProxy::open(const String& name, const String& description, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> origin, Frame* frame)
-{
-    WebKit::WebFrame* webFrame = WebKit::WebFrameImpl::fromFrame(frame);
-    m_webIDBFactory->open(name, description, new WebIDBCallbacksImpl(callbacks), origin, webFrame);
-}
-
-void IDBFactoryBackendProxy::abortPendingTransactions(const Vector<int>& pendingIDs)
-{
-    ASSERT(pendingIDs.size());
-    WebKit::WebVector<int> ids = pendingIDs;
-
-    m_webIDBFactory->abortPendingTransactions(ids);
-}
+private:
+    IDBAbortEvent();
+};
 
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)
 
+#endif // IDBAbortEvent_h

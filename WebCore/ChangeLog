@@ -1,3 +1,82 @@
+2010-08-19  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        [IndexedDB] Abort idle IDBTransactions when the JS context they were created in finishes execution.
+        https://bugs.webkit.org/show_bug.cgi?id=44101
+
+        This change also introduces the TransactionCoordinator, which will be used
+        to schedule transactions for execution.
+
+        Test: storage/indexeddb/transaction-basics.html
+
+        * WebCore.gypi:
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::convertEventTargetToV8Object):
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::runScript):
+        (WebCore::V8Proxy::callFunction):
+        (WebCore::V8Proxy::didLeaveScriptContext):
+        * bindings/v8/V8Proxy.h:
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::toIDBTransaction):
+        * dom/EventTarget.h:
+        * page/PageGroup.h:
+        (WebCore::PageGroup::hasIDBFactory):
+        * storage/IDBAbortEvent.cpp: Added.
+        (WebCore::IDBAbortEvent::create):
+        (WebCore::IDBAbortEvent::IDBAbortEvent):
+        (WebCore::IDBAbortEvent::~IDBAbortEvent):
+        * storage/IDBAbortEvent.h: Added.
+        (WebCore::IDBAbortEvent::isIDBAbortEvent):
+        * storage/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::transaction):
+        * storage/IDBDatabaseBackendImpl.cpp:
+        (WebCore::IDBDatabaseBackendImpl::IDBDatabaseBackendImpl):
+        (WebCore::IDBDatabaseBackendImpl::transaction):
+        * storage/IDBDatabaseBackendImpl.h:
+        (WebCore::IDBDatabaseBackendImpl::create):
+        * storage/IDBDatabaseBackendInterface.h:
+        * storage/IDBFactoryBackendImpl.cpp:
+        (WebCore::IDBFactoryBackendImpl::IDBFactoryBackendImpl):
+        (WebCore::IDBFactoryBackendImpl::open):
+        (WebCore::IDBFactoryBackendImpl::abortPendingTransactions):
+        * storage/IDBFactoryBackendImpl.h:
+        * storage/IDBFactoryBackendInterface.h:
+        * storage/IDBPendingTransactionMonitor.cpp: Added.
+        (WebCore::IDBPendingTransactionMonitor::addPendingTransaction):
+        (WebCore::IDBPendingTransactionMonitor::removePendingTransaction):
+        (WebCore::IDBPendingTransactionMonitor::clearPendingTransactions):
+        (WebCore::IDBPendingTransactionMonitor::pendingTransactions):
+        * storage/IDBPendingTransactionMonitor.h: Added.
+        * storage/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::IDBTransaction):
+        (WebCore::IDBTransaction::onAbort):
+        (WebCore::IDBTransaction::id):
+        (WebCore::IDBTransaction::stop):
+        (WebCore::IDBTransaction::timerFired):
+        * storage/IDBTransaction.h:
+        * storage/IDBTransactionBackendInterface.h:
+        * storage/IDBTransactionCallbacks.h: Added.
+        (WebCore::IDBTransactionCallbacks::~IDBTransactionCallbacks):
+        * storage/IDBTransactionCoordinator.cpp: Added.
+        (WebCore::IDBTransactionBackendImpl::~IDBTransactionBackendImpl):
+        (WebCore::IDBTransactionBackendImpl::create):
+        (WebCore::IDBTransactionBackendImpl::IDBTransactionBackendImpl):
+        (WebCore::IDBTransactionBackendImpl::objectStore):
+        (WebCore::IDBTransactionBackendImpl::mode):
+        (WebCore::IDBTransactionBackendImpl::scheduleTask):
+        (WebCore::IDBTransactionBackendImpl::abort):
+        (WebCore::IDBTransactionBackendImpl::sqliteDatabase):
+        (WebCore::IDBTransactionBackendImpl::id):
+        (WebCore::IDBTransactionBackendImpl::setCallbacks):
+        (WebCore::IDBTransactionCoordinator::IDBTransactionCoordinator):
+        (WebCore::IDBTransactionCoordinator::~IDBTransactionCoordinator):
+        (WebCore::IDBTransactionCoordinator::createTransaction):
+        (WebCore::IDBTransactionCoordinator::abort):
+        * storage/IDBTransactionCoordinator.h: Added.
+        (WebCore::IDBTransactionCoordinator::create):
+
 2010-08-19  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

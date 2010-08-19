@@ -39,6 +39,7 @@ class Frame;
 class IDBCallbacks;
 class IDBObjectStoreBackendInterface;
 class IDBTransactionBackendInterface;
+class IDBTransactionCallbacks;
 
 // This class is shared by IDBDatabase (async) and IDBDatabaseSync (sync).
 // This is implemented by IDBDatabaseBackendImpl and optionally others (in order to proxy

@@ -1,3 +1,75 @@
+2010-08-19  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        [IndexedDB] Abort idle IDBTransactions when the JS context they were created in finishes execution.
+        https://bugs.webkit.org/show_bug.cgi?id=44101
+
+        * WebKit.gyp:
+        * public/WebIDBDatabase.h:
+        (WebKit::WebIDBDatabase::transaction):
+        * public/WebIDBFactory.h:
+        (WebKit::WebIDBFactory::abortPendingTransactions):
+        * public/WebIDBTransaction.h: Added.
+        (WebKit::WebIDBTransaction::~WebIDBTransaction):
+        (WebKit::WebIDBTransaction::mode):
+        (WebKit::WebIDBTransaction::objectStore):
+        (WebKit::WebIDBTransaction::abort):
+        (WebKit::WebIDBTransaction::id):
+        (WebKit::WebIDBTransaction::setCallbacks):
+        * public/WebIDBTransactionCallbacks.h: Added.
+        (WebKit::WebIDBTransactionCallbacks::~WebIDBTransactionCallbacks):
+        (WebKit::WebIDBTransactionCallbacks::onAbort):
+        (WebKit::WebIDBTransactionCallbacks::id):
+        * src/IDBDatabaseProxy.cpp:
+        (WebCore::IDBDatabaseProxy::transaction):
+        * src/IDBFactoryBackendProxy.cpp:
+        (WebCore::IDBFactoryBackendProxy::abortPendingTransactions):
+        * src/IDBFactoryBackendProxy.h:
+        * src/IDBTransactionBackendProxy.cpp: Added.
+        (WebCore::IDBTransactionBackendProxy::create):
+        (WebCore::IDBTransactionBackendProxy::IDBTransactionBackendProxy):
+        (WebCore::IDBTransactionBackendProxy::~IDBTransactionBackendProxy):
+        (WebCore::IDBTransactionBackendProxy::objectStore):
+        (WebCore::IDBTransactionBackendProxy::mode):
+        (WebCore::IDBTransactionBackendProxy::abort):
+        (WebCore::IDBTransactionBackendProxy::scheduleTask):
+        (WebCore::IDBTransactionBackendProxy::sqliteDatabase):
+        (WebCore::IDBTransactionBackendProxy::id):
+        (WebCore::IDBTransactionBackendProxy::setCallbacks):
+        * src/IDBTransactionBackendProxy.h: Added.
+        * src/IDBTransactionCallbacksProxy.cpp: Added.
+        (WebCore::IDBTransactionCallbacksProxy::create):
+        (WebCore::IDBTransactionCallbacksProxy::IDBTransactionCallbacksProxy):
+        (WebCore::IDBTransactionCallbacksProxy::~IDBTransactionCallbacksProxy):
+        (WebCore::IDBTransactionCallbacksProxy::onAbort):
+        (WebCore::IDBTransactionCallbacksProxy::id):
+        * src/IDBTransactionCallbacksProxy.h: Added.
+        * src/WebDOMStringList.cpp:
+        (WebKit::WebDOMStringList::length):
+        * src/WebIDBDatabaseImpl.cpp:
+        (WebKit::WebIDBDatabaseImpl::transaction):
+        * src/WebIDBDatabaseImpl.h:
+        * src/WebIDBFactoryImpl.cpp:
+        (WebKit::WebIDBFactoryImpl::abortPendingTransactions):
+        * src/WebIDBFactoryImpl.h:
+        * src/WebIDBTransactionCallbacksImpl.cpp: Added.
+        (WebCore::WebIDBTransactionCallbacksImpl::WebIDBTransactionCallbacksImpl):
+        (WebCore::WebIDBTransactionCallbacksImpl::~WebIDBTransactionCallbacksImpl):
+        (WebCore::WebIDBTransactionCallbacksImpl::onAbort):
+        (WebCore::WebIDBTransactionCallbacksImpl::id):
+        * src/WebIDBTransactionCallbacksImpl.h: Added.
+        * src/WebIDBTransactionImpl.cpp: Added.
+        (WebKit::WebIDBTransactionImpl::WebIDBTransactionImpl):
+        (WebKit::WebIDBTransactionImpl::~WebIDBTransactionImpl):
+        (WebKit::WebIDBTransactionImpl::mode):
+        (WebKit::WebIDBTransactionImpl::objectStore):
+        (WebKit::WebIDBTransactionImpl::abort):
+        (WebKit::WebIDBTransactionImpl::id):
+        (WebKit::WebIDBTransactionImpl::setCallbacks):
+        * src/WebIDBTransactionImpl.h: Added.
+        (WebKit::):
+
 2010-08-19  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

@@ -75,8 +75,10 @@ PassRefPtr<IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext* cont
     // We need to create a new transaction synchronously. Locks are acquired asynchronously. Operations
     // can be queued against the transaction at any point. They will start executing as soon as the
     // appropriate locks have been acquired.
+    // Also note that each backend object corresponds to exactly one IDBTransaction object.
     RefPtr<IDBTransactionBackendInterface> transactionBackend = m_backend->transaction(storeNames, mode, timeout);
-    RefPtr<IDBTransaction> transaction = IDBTransaction::create(context, transactionBackend.release(), this);
+    RefPtr<IDBTransaction> transaction = IDBTransaction::create(context, transactionBackend, this);
+    transactionBackend->setCallbacks(transaction.get());
     return transaction.release();
 }
 

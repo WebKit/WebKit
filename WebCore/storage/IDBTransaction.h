@@ -34,13 +34,16 @@
 #include "EventNames.h"
 #include "EventTarget.h"
 #include "IDBTransactionBackendInterface.h"
+#include "IDBTransactionCallbacks.h"
+#include "Timer.h"
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
 class IDBDatabase;
 class IDBObjectStore;
 
-class IDBTransaction : public EventTarget, public ActiveDOMObject {
+class IDBTransaction : public IDBTransactionCallbacks, public EventTarget, public ActiveDOMObject {
 public:
     static PassRefPtr<IDBTransaction> create(ScriptExecutionContext* context, PassRefPtr<IDBTransactionBackendInterface> backend, IDBDatabase* db)
     { 
@@ -63,12 +66,20 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(complete);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(timeout);
 
+    // IDBTransactionCallbacks
+    virtual void onAbort();
+    virtual int id() const;
+
     // EventTarget
     virtual IDBTransaction* toIDBTransaction() { return this; }
 
     // ActiveDOMObject
     virtual ScriptExecutionContext* scriptExecutionContext() const;
     virtual bool canSuspend() const;
+    virtual void stop();
+
+    using RefCounted<IDBTransactionCallbacks>::ref;
+    using RefCounted<IDBTransactionCallbacks>::deref;
 
 private:
     IDBTransaction(ScriptExecutionContext*, PassRefPtr<IDBTransactionBackendInterface>, IDBDatabase*);
@@ -79,9 +90,15 @@ private:
     virtual EventTargetData* eventTargetData();
     virtual EventTargetData* ensureEventTargetData();
 
+    void timerFired(Timer<IDBTransaction>*);
+
     EventTargetData m_eventTargetData;
     RefPtr<IDBTransactionBackendInterface> m_backend;
     RefPtr<IDBDatabase> m_database;
+
+    bool m_stopped;
+    Timer<IDBTransaction> m_timer;
+    RefPtr<IDBTransaction> m_selfRef; // This is set to us iff there's an event pending.
 };
 
 } // namespace WebCore

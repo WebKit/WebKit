@@ -23,42 +23,24 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBTransactionBackendInterface_h
-#define IDBTransactionBackendInterface_h
+#ifndef WebIDBTransactionCallbacks_h
+#define WebIDBTransactionCallbacks_h
 
-#include "ExceptionCode.h"
-#include "IDBCallbacks.h"
-#include "PlatformString.h"
-#include "ScriptExecutionContext.h"
-#include <wtf/Threading.h>
+#include "WebCommon.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
-namespace WebCore {
-
-class IDBObjectStoreBackendInterface;
-class IDBTransactionCallbacks;
-class SQLiteDatabase;
-
-// This class is shared by IDBTransaction (async) and IDBTransactionSync (sync).
-// This is implemented by IDBTransactionBackendImpl and optionally others (in order to proxy
-// calls across process barriers). All calls to these classes should be non-blocking and
-// trigger work on a background thread if necessary.
-class IDBTransactionBackendInterface : public ThreadSafeShared<IDBTransactionBackendInterface> {
+namespace WebKit {
+class WebIDBTransactionCallbacks {
 public:
-    virtual ~IDBTransactionBackendInterface() { }
+    virtual ~WebIDBTransactionCallbacks() { }
 
-    virtual PassRefPtr<IDBObjectStoreBackendInterface> objectStore(const String& name) = 0;
-    virtual unsigned short mode() const = 0;
-    virtual void scheduleTask(PassOwnPtr<ScriptExecutionContext::Task>) = 0;
-    virtual void abort() = 0;
-    virtual int id() const = 0;
-    virtual void setCallbacks(IDBTransactionCallbacks*) = 0;
+    virtual void onAbort() { WEBKIT_ASSERT_NOT_REACHED(); }
+    virtual int id() const
+    { 
+        WEBKIT_ASSERT_NOT_REACHED();
+        return 0;
+    }
 };
 
-} // namespace WebCore
+} // namespace WebKit
 
-#endif
-
-#endif // IDBTransactionBackendInterface_h
-
+#endif // WebIDBTransactionCallbacks_h

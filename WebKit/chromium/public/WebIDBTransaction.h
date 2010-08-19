@@ -23,42 +23,40 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBTransactionBackendInterface_h
-#define IDBTransactionBackendInterface_h
+#ifndef WebIDBTransaction_h
+#define WebIDBTransaction_h
 
-#include "ExceptionCode.h"
-#include "IDBCallbacks.h"
-#include "PlatformString.h"
-#include "ScriptExecutionContext.h"
-#include <wtf/Threading.h>
+#include "WebString.h"
 
-#if ENABLE(INDEXED_DATABASE)
+namespace WebKit {
 
-namespace WebCore {
+class WebIDBObjectStore;
+class WebIDBTransactionCallbacks;
 
-class IDBObjectStoreBackendInterface;
-class IDBTransactionCallbacks;
-class SQLiteDatabase;
-
-// This class is shared by IDBTransaction (async) and IDBTransactionSync (sync).
-// This is implemented by IDBTransactionBackendImpl and optionally others (in order to proxy
-// calls across process barriers). All calls to these classes should be non-blocking and
-// trigger work on a background thread if necessary.
-class IDBTransactionBackendInterface : public ThreadSafeShared<IDBTransactionBackendInterface> {
+// See comment in WebIndexedDatabase for a high level overview of these classes.
+class WebIDBTransaction {
 public:
-    virtual ~IDBTransactionBackendInterface() { }
+    virtual ~WebIDBTransaction() { }
 
-    virtual PassRefPtr<IDBObjectStoreBackendInterface> objectStore(const String& name) = 0;
-    virtual unsigned short mode() const = 0;
-    virtual void scheduleTask(PassOwnPtr<ScriptExecutionContext::Task>) = 0;
-    virtual void abort() = 0;
-    virtual int id() const = 0;
-    virtual void setCallbacks(IDBTransactionCallbacks*) = 0;
+    virtual int mode() const
+    {
+        WEBKIT_ASSERT_NOT_REACHED();
+        return 0;
+    }
+    virtual WebIDBObjectStore* objectStore(const WebString& name)
+    {
+        WEBKIT_ASSERT_NOT_REACHED();
+        return 0;
+    }
+    virtual void abort() { WEBKIT_ASSERT_NOT_REACHED(); }
+    virtual int id() const
+    {
+        WEBKIT_ASSERT_NOT_REACHED();
+        return 0;
+    }
+    virtual void setCallbacks(WebIDBTransactionCallbacks*) { WEBKIT_ASSERT_NOT_REACHED(); }
 };
 
-} // namespace WebCore
+} // namespace WebKit
 
-#endif
-
-#endif // IDBTransactionBackendInterface_h
-
+#endif // WebIDBTransaction_h

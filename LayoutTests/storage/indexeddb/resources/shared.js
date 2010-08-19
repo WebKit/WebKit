@@ -35,6 +35,12 @@ function verifySuccessEvent(event)
     verifyEventCommon(event);
 }
 
+function verifyAbortEvent(event)
+{
+    debug("Abort event fired:");
+    shouldBeEqualToString("event.type", "abort");
+}
+
 function verifyResult(result)
 {
     shouldBeTrue("'onsuccess' in result");
@@ -59,4 +65,3 @@ function deleteAllObjectStores(db)
     for (var i = 0; i < objectStores.length; ++i)
         db.removeObjectStore(objectStores[i]);
 }
-

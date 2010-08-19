@@ -36,6 +36,7 @@ namespace WebCore { class IDBDatabaseBackendInterface; }
 namespace WebKit {
 
 class WebIDBObjectStore;
+class WebIDBTransaction;
 
 // See comment in WebIndexedDatabase for a high level overview these classes.
 class WebIDBDatabaseImpl : public WebIDBDatabase {
@@ -51,6 +52,7 @@ public:
     virtual void createObjectStore(const WebString& name, const WebString& keyPath, bool autoIncrement, WebIDBCallbacks* callbacks);
     virtual WebIDBObjectStore* objectStore(const WebString& name, unsigned short mode);
     virtual void removeObjectStore(const WebString& name, WebIDBCallbacks* callbacks);
+    virtual WebIDBTransaction* transaction(const WebDOMStringList& names, unsigned short mode, unsigned long timeout);
 
 private:
     WTF::RefPtr<WebCore::IDBDatabaseBackendInterface> m_databaseBackend;

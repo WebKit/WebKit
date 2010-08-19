@@ -1,3 +1,19 @@
+2010-08-19  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        [IndexedDB] Abort idle IDBTransactions when the JS context they were created in finishes execution.
+        https://bugs.webkit.org/show_bug.cgi?id=44101
+
+        * storage/indexeddb/resources/shared.js:
+        (unexpectedErrorCallback):
+        * storage/indexeddb/script-tests/transaction-basics.js: Added.
+        (abortCallback):
+        (createTransactionCallback):
+        (test):
+        * storage/indexeddb/transaction-basics-expected.txt: Added.
+        * storage/indexeddb/transaction-basics.html: Added.
+
 2010-08-18  Jeremy Orlow  <jorlow@chromium.org>
 
         Implement persistance for IndexedDB ObjectStores

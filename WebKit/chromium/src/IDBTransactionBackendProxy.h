@@ -23,42 +23,40 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBTransactionBackendInterface_h
-#define IDBTransactionBackendInterface_h
+#ifndef IDBTransactionBackendProxy_h
+#define IDBTransactionBackendProxy_h
 
-#include "ExceptionCode.h"
-#include "IDBCallbacks.h"
-#include "PlatformString.h"
-#include "ScriptExecutionContext.h"
-#include <wtf/Threading.h>
+#include "IDBTransactionBackendInterface.h"
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
+
+namespace WebKit { class WebIDBTransaction; }
+
 namespace WebCore {
 
-class IDBObjectStoreBackendInterface;
-class IDBTransactionCallbacks;
-class SQLiteDatabase;
-
-// This class is shared by IDBTransaction (async) and IDBTransactionSync (sync).
-// This is implemented by IDBTransactionBackendImpl and optionally others (in order to proxy
-// calls across process barriers). All calls to these classes should be non-blocking and
-// trigger work on a background thread if necessary.
-class IDBTransactionBackendInterface : public ThreadSafeShared<IDBTransactionBackendInterface> {
+class IDBTransactionBackendProxy : public IDBTransactionBackendInterface {
 public:
-    virtual ~IDBTransactionBackendInterface() { }
+    static PassRefPtr<IDBTransactionBackendInterface> create(PassOwnPtr<WebKit::WebIDBTransaction>);
+    virtual ~IDBTransactionBackendProxy();
 
-    virtual PassRefPtr<IDBObjectStoreBackendInterface> objectStore(const String& name) = 0;
-    virtual unsigned short mode() const = 0;
-    virtual void scheduleTask(PassOwnPtr<ScriptExecutionContext::Task>) = 0;
-    virtual void abort() = 0;
-    virtual int id() const = 0;
-    virtual void setCallbacks(IDBTransactionCallbacks*) = 0;
+    virtual PassRefPtr<IDBObjectStoreBackendInterface> objectStore(const String& name);
+    virtual unsigned short mode() const;
+    virtual void abort();
+    virtual void scheduleTask(PassOwnPtr<ScriptExecutionContext::Task>);
+    virtual int id() const;
+    virtual void setCallbacks(IDBTransactionCallbacks*);
+
+private:
+    IDBTransactionBackendProxy(PassOwnPtr<WebKit::WebIDBTransaction>);
+
+    OwnPtr<WebKit::WebIDBTransaction> m_webIDBTransaction;
 };
 
 } // namespace WebCore
 
 #endif
 
-#endif // IDBTransactionBackendInterface_h
-
+#endif // IDBTransactionBackendProxy_h
