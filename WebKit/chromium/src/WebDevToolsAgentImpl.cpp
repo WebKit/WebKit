@@ -266,11 +266,6 @@ void WebDevToolsAgentImpl::inspectElementAt(const WebPoint& point)
     m_webViewImpl->inspectElementAt(point);
 }
 
-void WebDevToolsAgentImpl::setRuntimeFeatureEnabled(const WebString& feature, bool enabled)
-{
-    setRuntimeProperty(feature, enabled ? String("true") : String("false"));
-}
-
 void WebDevToolsAgentImpl::setRuntimeProperty(const WebString& name, const WebString& value)
 {
     if (name == kApuAgentFeatureName)
