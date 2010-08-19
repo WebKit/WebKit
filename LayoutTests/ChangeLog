@@ -1,3 +1,18 @@
+2010-08-18  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        fast/text/hyphenate-character.html is failing on the Leopard Commit Bot
+        https://bugs.webkit.org/show_bug.cgi?id=41093
+        -and some of-
+        fast/text/hyphen* tests have different results on Leopard
+        https://bugs.webkit.org/show_bug.cgi?id=43296
+
+        * fast/text/hyphenate-character.html: Specify the hyphenation locale, which removes the
+        dependency on user preferences.
+        * fast/text/hyphens.html: Ditto.
+        * platform/mac-leopard/Skipped: Don’t skip the above tests.
+
 2010-08-17  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Tony Chang.

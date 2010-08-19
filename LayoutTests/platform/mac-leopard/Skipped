@@ -82,10 +82,8 @@ fast/canvas/webgl/texture-npot.html
 # https://bugs.webkit.org/show_bug.cgi?id=41808
 svg/filters/filter-empty-g.svg
 
-# Results differ between Leopard and Snow Leopard, needs investigation.
+# Results depend on user defaults.
 # https://bugs.webkit.org/show_bug.cgi?id=43296
-fast/text/hyphens.html
-fast/text/hyphenate-character.html
 fast/text/hyphenate-locale.html
 
 # Disable media test which fails on the Leopard Commit Bot
