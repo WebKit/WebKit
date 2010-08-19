@@ -1,3 +1,21 @@
+2010-08-18  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Implement GraphicsContext::clipOut more efficiently
+        https://bugs.webkit.org/show_bug.cgi?id=43416
+
+        The current implementation of clipOut uses QPainter::clipRegion().boundingRect(),
+        which is a very slow function because it converts the entire clip region - which
+        may potentially contain a complex path - into a set of QRegion rectangles, just
+        to throw away all that information and use the bounding rect.
+
+        QTBUG-12618 implements a faster function in QPainter: QPainter::clipBoundingRect().
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::clipOut): Use QPainter::clipBoundingRect() with Qt >= 4.8.
+        (WebCore::GraphicsContext::clipOutEllipseInRect): Ditto.
+
 2010-08-18  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.
