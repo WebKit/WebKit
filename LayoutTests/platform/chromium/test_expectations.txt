@@ -2934,7 +2934,6 @@ BUG48859 WIN : fast/inline/continuation-outlines-with-layers-2.html = IMAGE+TEXT
 BUGWK38016 WIN : svg/custom/foreign-object-skew.svg = FAIL
 
 BUG49031 WIN LINUX MAC : http/tests/mime/uppercase-mime-type.html = MISSING
-BUG24233 WIN : editing/selection/drag-in-iframe.html = IMAGE+TEXT PASS
 
 BUG49021 : userscripts/simple-stylesheet.html = TEXT
 BUG49021 : userscripts/user-style-all-frames.html = TEXT

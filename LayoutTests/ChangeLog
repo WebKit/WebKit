@@ -10,6 +10,14 @@
 
         Unreviewed, chromium test expectations.
 
+        Removing stale duplicate expectation for drag-in-iframe.html
+
+        * platform/chromium/test_expectations.txt:
+
+2010-08-19  John Gregg  <johnnyg@google.com>
+
+        Unreviewed, chromium test expectations.
+
         Add expected failures for caret-based pixel tests.  See bug 44290.
 
         * platform/chromium/test_expectations.txt:
