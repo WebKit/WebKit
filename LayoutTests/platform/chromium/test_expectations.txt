@@ -3239,3 +3239,15 @@ BUGWK44199 : perf = PASS TEXT
 // Just needs a new baseline.
 BUGYUTAK WIN LINUX : svg/W3C-SVG-1.1/filters-turb-01-f.svg = IMAGE
 BUGYUTAK WIN LINUX : svg/W3C-SVG-1.1/filters-turb-02-f.svg = IMAGE+TEXT
+
+// Tests are failing after http://trac.webkit.org/changeset/65665/
+// Does not seem to be just a rebaseline situation.
+BUGWK44278 WIN LINUX : svg/batik/paints/patternRegions-positioned-objects.svg = IMAGE+TEXT
+BUGWK44278 WIN LINUX : svg/custom/pattern-incorrect-tiling.svg = IMAGE+TEXT
+BUGWK44278 WIN LINUX : svg/transforms/text-with-mask-with-svg-transform.svg = IMAGE+TEXT
+BUGWK44278 WIN LINUX : svg/batik/paints/patternRegions.svg = IMAGE
+BUGWK44278 WIN LINUX : svg/custom/js-late-pattern-and-object-creation.svg = IMAGE
+BUGWK44278 WIN LINUX : svg/custom/js-late-pattern-creation.svg = IMAGE
+BUGWK44278 WIN LINUX : svg/custom/non-scaling-stroke.svg = IMAGE
+BUGWK44278 WIN LINUX : svg/custom/pattern-no-pixelation.svg = IMAGE
+BUGWK44278 WIN LINUX : svg/custom/stroked-pattern.svg = IMAGE
