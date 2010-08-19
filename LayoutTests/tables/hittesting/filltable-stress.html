@@ -19,8 +19,7 @@
         window.layoutTestController.waitUntilDone();
     }
 
-    function cellMouseMove(cell) {
-      cell.style.backgroundColor = "green";
+    function cellHit(cell) {
       var cellId = 24 * cell.parentNode.rowIndex  + cell.cellIndex;
       lastSuccess = cellId;
     }
@@ -32,7 +31,8 @@
         for (var col = 0; col < 19; col++) {
           var cellId = 24 * row + col;
           logMsg += "Attempting to hit cell at row: " + row + ", column: " + col + ": ";
-          eventSender.mouseMoveTo(xpos, ypos);
+          var elem = document.elementFromPoint(xpos, ypos);
+          if (elem) elem.onmousemove();
           var success = lastSuccess == cellId;
           if (!success) failed = true;
           logMsg += (success ? "SUCCESS" : "FAIL") + "<br />";
@@ -54,7 +54,7 @@
         var rowstr = "<tr height=\"20\">";
         for (var col = 0; col < colcount; col++) {
           var cellId = "r" + row + "c" + col;
-          var colstr = "<td width=\"" +  cellwidth + "\" id=\"" + cellId + "\" onmousemove=\"cellMouseMove(this)\"></td>";
+          var colstr = "<td width=\"" +  cellwidth + "\" id=\"" + cellId + "\" onmousemove=\"cellHit(this)\"></td>";
           rowstr += colstr;
         }
         rowstr += "</tr>";

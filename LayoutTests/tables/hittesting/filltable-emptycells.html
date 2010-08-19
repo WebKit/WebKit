@@ -22,21 +22,20 @@
       return row == 0 && col > 0;
     }
 
-    function cellMouseMove(cell) {
+    function cellHit(cell) {
       var cellId = 3 * cell.parentNode.rowIndex  + cell.cellIndex;
-      cell.style.backgroundColor = "green";
       // If we see an even number of moves then the cell's bit is 1 else 0
       lastSuccess = cellId;
     }
 
     function doTest() {
-      if (!window.layoutTestController) return;
       var ypos = cellHeight / 2;
       for (var row = 0; row < 2; row++) {
         var xpos = cellWidth / 2;
         for (var col = 0; col < 3; col++) {
           var oldLastSuccess = lastSuccess;
-          eventSender.mouseMoveTo(xpos, ypos);
+          var elem = document.elementFromPoint(xpos, ypos);
+          if (elem && elem.onmousemove) elem.onmousemove();
           var cellId = 3 * row + col;
           logMsg += "Hit cell at row: " + row + ", column: " + col + ": ";     
           var success = lastSuccess == cellId;
@@ -58,15 +57,15 @@
 
     <table class="testtable">
       <tr>
-        <td align="right" id="r1c1" onmousemove="cellMouseMove(this)">
+        <td align="right" onmousemove="cellHit(this)">
         </td>
       </tr>
       <tr>
-        <td id="r2c1" onmousemove="cellMouseMove(this)">
+        <td onmousemove="cellHit(this)">
         </td>
-        <td id="r2c2" onmousemove="cellMouseMove(this)">
+        <td onmousemove="cellHit(this)">
         </td>
-        <td id="r2c3" onmousemove="cellMouseMove(this)">
+        <td onmousemove="cellHit(this)">
         </td>
       </tr>
     </table>

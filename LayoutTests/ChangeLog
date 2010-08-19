@@ -1,3 +1,30 @@
+2010-08-19  Fady Samuel  <fsamuel@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Fixed table hit testing layout test issues
+        https://bugs.webkit.org/show_bug.cgi?id=44204
+
+        Moved expectations to the same directory as tests.
+        Expectations were failing due to inconsistent eventSender behavior:
+        Switched to using elementFromPoint
+
+        * platform/gtk/tables/hittesting/filltable-emptycells-expected.txt: Removed.
+        * platform/gtk/tables/hittesting/filltable-levels-expected.txt: Removed.
+        * platform/gtk/tables/hittesting/filltable-outline-expected.txt: Removed.
+        * platform/gtk/tables/hittesting/filltable-rtl-expected.txt: Removed.
+        * platform/gtk/tables/hittesting/filltable-stress-expected.txt: Removed.
+        * tables/hittesting/filltable-emptycells-expected.txt: Renamed from LayoutTests/platform/chromium-linux/tables/hittesting/filltable-emptycells-expected.txt.
+        * tables/hittesting/filltable-emptycells.html:
+        * tables/hittesting/filltable-levels-expected.txt: Renamed from LayoutTests/platform/chromium-linux/tables/hittesting/filltable-levels-expected.txt.
+        * tables/hittesting/filltable-levels.html:
+        * tables/hittesting/filltable-outline-expected.txt: Renamed from LayoutTests/platform/chromium-linux/tables/hittesting/filltable-outline-expected.txt.
+        * tables/hittesting/filltable-outline.html:
+        * tables/hittesting/filltable-rtl-expected.txt: Renamed from LayoutTests/platform/chromium-linux/tables/hittesting/filltable-rtl-expected.txt.
+        * tables/hittesting/filltable-rtl.html:
+        * tables/hittesting/filltable-stress-expected.txt: Renamed from LayoutTests/platform/chromium-linux/tables/hittesting/filltable-stress-expected.txt.
+        * tables/hittesting/filltable-stress.html:
+
 2010-08-19  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Alexey Proskuryakov.

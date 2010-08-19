@@ -30,44 +30,39 @@
       }
     }
 
-    function cellMouseMove_r1c1(cell) {
+    function cellHit_r1c1(cell) {
       hitArray[0][0] = true;
-      cell.style.backgroundColor = "green";
-    }
-    function cellMouseMove_r1c2(cell) {
-      hitArray[0][1] = true;
-      cell.style.backgroundColor = "green";
-    }
-    function cellMouseMove_r1c3(cell) {
-      hitArray[0][2] = true;
-      cell.style.backgroundColor = "green";
-    }
-    function cellMouseMove_r2c1(cell) {
-      hitArray[1][0] = true;
-      cell.style.backgroundColor = "green";
     }
 
-    function cellMouseMove_r2c2(cell) {
+    function cellHit_r1c2(cell) {
+      hitArray[0][1] = true;
+    }
+
+    function cellHit_r1c3(cell) {
+      hitArray[0][2] = true;
+    }
+    
+    function cellHit_r2c1(cell) {
+      hitArray[1][0] = true;
+    }
+
+    function cellHit_r2c2(cell) {
       hitArray[1][1] = true;
       // The second grid slot that this cell occupies is obscured by another cell.
       //hitArray[2][1] = true;
-      cell.style.backgroundColor = "green";
     }
 
-    function cellMouseMove_r2c3(cell) {
+    function cellHit_r2c3(cell) {
       hitArray[1][2] = true;
-      cell.style.backgroundColor = "green";
     }
 
-    function cellMouseMove_r3c1(cell) {
+    function cellHit_r3c1(cell) {
       hitArray[2][0] = true;
       hitArray[2][1] = true;
-      cell.style.backgroundColor = "green";
     }
 
-    function cellMouseMove_r3c3(cell) {
+    function cellHit_r3c3(cell) {
       hitArray[2][2] = true;
-      cell.style.backgroundColor = "green";
     }
 
     function doTest() {
@@ -76,7 +71,8 @@
         var xpos = cellWidth / 2;
         for (var col = 0; col < 3; col++) {
           logMsg += "Hit cell at row: " + row + ", column: " + col + ": ";
-          eventSender.mouseMoveTo(xpos, ypos);
+          var elem = document.elementFromPoint(xpos, ypos);
+          if (elem) elem.onmousemove();
           if (!hitArray[row][col]) failed = true;
           logMsg += (hitArray[row][col] ? "SUCCESS" : "FAIL") + "<br />";
           clearHitArray();
@@ -94,18 +90,18 @@
 <body onload="doTest()">
   <table class="testtable"> 
     <tr>
-      <td id="r1c1" onmousemove="cellMouseMove_r1c1(this)"></td>
-      <td id="r1c2" onmousemove="cellMouseMove_r1c2(this)"></td>
-      <td id="r1c3" onmousemove="cellMouseMove_r1c3(this)"></td>
+      <td onmousemove="cellHit_r1c1(this)"></td>
+      <td onmousemove="cellHit_r1c2(this)"></td>
+      <td onmousemove="cellHit_r1c3(this)"></td>
     </tr>
     <tr>
-    <td id="r2c1" onmousemove="cellMouseMove_r2c1(this)"></td>
-    <td id="r2c2" onmousemove="cellMouseMove_r2c2(this)" rowspan="2"></td>
-    <td id="r2c3" onmousemove="cellMouseMove_r2c3(this)"></td>
+    <td onmousemove="cellHit_r2c1(this)"></td>
+    <td onmousemove="cellHit_r2c2(this)" rowspan="2"></td>
+    <td onmousemove="cellHit_r2c3(this)"></td>
     </tr>
     <tr>
-      <td id="r3c1" onmousemove="cellMouseMove_r3c1(this)" colspan="2"></td> 
-      <td id="r3c3" onmousemove="cellMouseMove_r3c3(this)"></td> 
+      <td onmousemove="cellHit_r3c1(this)" colspan="2"></td> 
+      <td onmousemove="cellHit_r3c3(this)"></td> 
     </tr>
   </table>
 </body>

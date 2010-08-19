@@ -28,37 +28,31 @@
           }
       }
 
-      function cellMouseMove_r1c1(cell) {
+      function cellHit_r1c1(cell) {
           hitArray[0][0] = true;
           hitArray[0][1] = true;
           hitArray[0][2] = true;
-          cell.style.backgroundColor = "green";
       }
 
-      function cellMouseMove_r2c1(cell) {
+      function cellHit_r2c1(cell) {
           hitArray[1][0] = true;
-          cell.style.backgroundColor = "green";
       }
 
-      function cellMouseMove_r2c2(cell) {
+      function cellHit_r2c2(cell) {
           hitArray[1][1] = true;
           hitArray[2][1] = true;
-          cell.style.backgroundColor = "green";
       }
 
-      function cellMouseMove_r2c3(cell) {
+      function cellHit_r2c3(cell) {
           hitArray[1][2] = true;
-          cell.style.backgroundColor = "green";
       }
 
-      function cellMouseMove_r3c1(cell) {
+      function cellHit_r3c1(cell) {
           hitArray[2][0] = true;
-          cell.style.backgroundColor = "green";
       }
 
-      function cellMouseMove_r3c3(cell) {
+      function cellHit_r3c3(cell) {
           hitArray[2][2] = true;
-          cell.style.backgroundColor = "green";
       }
 
     function doTest() {
@@ -67,7 +61,8 @@
         var xpos = cellWidth / 2;
         for (var col = 0; col < 3; col++) {
           logMsg += "Hit cell at row: " + row + ", column: " + col + ": ";
-          eventSender.mouseMoveTo(xpos, ypos);
+          var elem = document.elementFromPoint(xpos, ypos);
+          if (elem) elem.onmousemove();
           if (!hitArray[row][col]) failed = true;
           logMsg += (hitArray[row][col] ? "SUCCESS" : "FAIL") + "<br />";
           clearHitArray();
@@ -86,16 +81,16 @@
   <body onload="doTest()">
     <table class="testtable">
       <tr>
-        <td colspan="3" align="right" onmousemove="cellMouseMove_r1c1(this)"></td>
+        <td colspan="3" align="right" onmousemove="cellHit_r1c1(this)"></td>
       </tr>
       <tr>
-        <td onmousemove="cellMouseMove_r2c1(this)"></td>
-        <td rowspan="2" onmousemove="cellMouseMove_r2c2(this)"></td>
-        <td onmousemove="cellMouseMove_r2c3(this)"></td>
+        <td onmousemove="cellHit_r2c1(this)"></td>
+        <td rowspan="2" onmousemove="cellHit_r2c2(this)"></td>
+        <td onmousemove="cellHit_r2c3(this)"></td>
       </tr>
       <tr>
-        <td onmousemove="cellMouseMove_r3c1(this)"></td>
-        <td onmousemove="cellMouseMove_r3c3(this)"></td>
+        <td onmousemove="cellHit_r3c1(this)"></td>
+        <td onmousemove="cellHit_r3c3(this)"></td>
       </tr>
     </table>
   </body>
