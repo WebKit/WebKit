@@ -1,3 +1,15 @@
+2010-08-19  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33671
+        media/video-loop.html fails intermittently on GTK and Chromium bots
+
+        Rewrite test to make it less timing dependent.
+
+        * media/video-loop-expected.txt:
+        * media/video-loop.html:
+
 2010-08-19  John Gregg  <johnnyg@google.com>
 
         Unreviewed; test expectations.
