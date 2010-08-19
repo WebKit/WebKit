@@ -106,10 +106,10 @@ Markup.notifyDone = function()
     // In non-layout test mode, append the results in a pre so that we don't
     // clobber the test itself. But when in layout test mode, we don't want
     // side effects from the test to be included in the results.
-    if (window.layoutTestController) {
+    if (window.layoutTestController)
         document.body.innerHTML = '';
-        document.body.appendChild(Markup._container);
-    }
+
+    document.body.appendChild(Markup._container);
 
     if (window.layoutTestController)
         layoutTestController.notifyDone();
