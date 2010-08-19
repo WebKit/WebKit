@@ -5745,6 +5745,9 @@ fast/text/fake-italic.html
 # https://bugs.webkit.org/show_bug.cgi?id=40859
 media/video-controls-rendering.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=44235
+media/video-layer-crash.html
+
 # Need to implement inner-spin-button or outer-spin-button
 fast/forms/input-appearance-spinbutton-disabled-readonly.html
 fast/forms/input-number-events.html

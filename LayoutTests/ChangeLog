@@ -1,5 +1,14 @@
 2010-08-19  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, skip crashing test.
+
+        [GStreamer] multiple <video> elements + PulseAudio are crash-prone
+        https://bugs.webkit.org/show_bug.cgi?id=44235
+
+        * platform/gtk/Skipped: Skip media/video-layer-crash.html
+
+2010-08-19  Philippe Normand  <pnormand@igalia.com>
+
         Reviewed by Gustavo Noronha Silva.
 
         [GStreamer] GTK XOverlay support in GStreamerGWorld
