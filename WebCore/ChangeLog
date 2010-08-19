@@ -1,3 +1,24 @@
+2010-08-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Range, EAnnotateForInterchange, and EAbsoluteURLs should be member variables of MarkupAccumulator
+        https://bugs.webkit.org/show_bug.cgi?id=44229
+
+        No new tests are added since this is a clean up.
+
+        * editing/markup.cpp:
+        (WebCore::MarkupAccumulator::MarkupAccumulator): Added shouldResolveURLs, shouldAnnotate, and range.
+        (WebCore::MarkupAccumulator::shouldResolveURLs): Private inline accessor for m_shouldResolveURLs.
+        (WebCore::MarkupAccumulator::shouldAnnotate): Private inline accessor for m_shouldAnnotate.
+        (WebCore::MarkupAccumulator::appendEndTag): Renamed local variable result to markup.
+        (WebCore::MarkupAccumulator::appendStartTag): Removed range, annotate, shouldResolveURLs from the function arguments.
+        (WebCore::MarkupAccumulator::wrapWithNode): Ditto.
+        (WebCore::MarkupAccumulator::appendStartMarkup): Ditto.
+        (WebCore::serializeNodes): Ditto and uses MarkupAccumulator.
+        (WebCore::createMarkup): Uses MarkupAccumulator.
+        (WebCore::serializeNodesWithNamespaces): Ditto.
+
 2010-08-19  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

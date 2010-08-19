@@ -97,14 +97,17 @@ class MarkupAccumulator {
 public:
     enum RangeFullySelectsNode { DoesFullySelectNode, DoesNotFullySelectNode };
 
-    MarkupAccumulator(Vector<Node*>* nodes)
+    MarkupAccumulator(Vector<Node*>* nodes, EAbsoluteURLs shouldResolveURLs, EAnnotateForInterchange shouldAnnotate, const Range* range = 0)
         : m_nodes(nodes)
+        , m_shouldResolveURLs(shouldResolveURLs)
+        , m_shouldAnnotate(shouldAnnotate)
+        , m_range(range)
     {
     }
     void appendString(const String&);
-    void appendStartTag(Node*, const Range*, EAnnotateForInterchange, EAbsoluteURLs, bool convertBlocksToInlines = false, Namespaces* namespaces = 0, RangeFullySelectsNode = DoesFullySelectNode);
+    void appendStartTag(Node*, Namespaces* = 0);
     void appendEndTag(Node*);
-    void wrapWithNode(Node*, const Range*, EAnnotateForInterchange, EAbsoluteURLs, bool convertBlocksToInlines = false, Namespaces* namespaces = 0, RangeFullySelectsNode = DoesFullySelectNode);
+    void wrapWithNode(Node*, bool convertBlocksToInlines = false, RangeFullySelectsNode = DoesFullySelectNode);
     void wrapWithStyleNode(CSSStyleDeclaration*, Document*, bool isBlock = false);
     String takeResults();
 
@@ -117,15 +120,21 @@ private:
     void appendUCharRange(Vector<UChar>& result, const pair<const UChar*, size_t>& range);
     String renderedText(const Node*, const Range*);
     bool shouldAddNamespaceElement(const Element*);
-    bool shouldAddNamespaceAttribute(const Attribute*, Namespaces& namespaces);
-    void appendNamespace(Vector<UChar>& result, const AtomicString& prefix, const AtomicString& namespaceURI, Namespaces& namespaces);
+    bool shouldAddNamespaceAttribute(const Attribute*, Namespaces&);
+    void appendNamespace(Vector<UChar>& result, const AtomicString& prefix, const AtomicString& namespaceURI, Namespaces&);
     void appendDocumentType(Vector<UChar>& result, const DocumentType*);
     void removeExteriorStyles(CSSMutableStyleDeclaration*);
-    void appendStartMarkup(Vector<UChar>& result, const Node*, const Range*, EAnnotateForInterchange, EAbsoluteURLs, bool convertBlocksToInlines, Namespaces* namespaces, RangeFullySelectsNode);
+    void appendStartMarkup(Vector<UChar>& result, const Node*, bool convertBlocksToInlines, Namespaces*, RangeFullySelectsNode);
     bool shouldSelfClose(const Node*);
     void appendEndMarkup(Vector<UChar>& result, const Node*);
 
-    Vector<Node*>* m_nodes;
+    bool shouldResolveURLs() { return m_shouldResolveURLs == AbsoluteURLs; }
+    bool shouldAnnotate() { return m_shouldAnnotate == AnnotateForInterchange; }
+
+    Vector<Node*>* const m_nodes;
+    const bool m_shouldResolveURLs;
+    const EAnnotateForInterchange m_shouldAnnotate;
+    const Range* const m_range;
     Vector<String> m_reversedPrecedingMarkup;
     Vector<String> m_succeedingMarkup;
 };
@@ -135,27 +144,27 @@ void MarkupAccumulator::appendString(const String& string)
     m_succeedingMarkup.append(string);
 }
 
-void MarkupAccumulator::appendStartTag(Node* node, const Range* range, EAnnotateForInterchange annotate, EAbsoluteURLs shouldResolveURLs, bool convertBlocksToInlines, Namespaces* namespaces, RangeFullySelectsNode rangeFullySelectsNode)
+void MarkupAccumulator::appendStartTag(Node* node, Namespaces* namespaces)
 {
-    Vector<UChar> result;
-    appendStartMarkup(result, node, range, annotate, shouldResolveURLs, convertBlocksToInlines, namespaces, rangeFullySelectsNode);
-    m_succeedingMarkup.append(String::adopt(result));
+    Vector<UChar> markup;
+    appendStartMarkup(markup, node, false, namespaces, DoesFullySelectNode);
+    m_succeedingMarkup.append(String::adopt(markup));
     if (m_nodes)
         m_nodes->append(node);
 }
 
 void MarkupAccumulator::appendEndTag(Node* node)
 {
-    Vector<UChar> result;
-    appendEndMarkup(result, node);
-    m_succeedingMarkup.append(String::adopt(result));
+    Vector<UChar> markup;
+    appendEndMarkup(markup, node);
+    m_succeedingMarkup.append(String::adopt(markup));
 }
 
-void MarkupAccumulator::wrapWithNode(Node* node, const Range* range, EAnnotateForInterchange annotate, EAbsoluteURLs shouldResolveURLs, bool convertBlocksToInlines, Namespaces* namespaces, RangeFullySelectsNode rangeFullySelectsNode)
+void MarkupAccumulator::wrapWithNode(Node* node, bool convertBlocksToInlines, RangeFullySelectsNode rangeFullySelectsNode)
 {
-    Vector<UChar> result;
-    appendStartMarkup(result, node, range, annotate, shouldResolveURLs, convertBlocksToInlines, namespaces, rangeFullySelectsNode);
-    m_reversedPrecedingMarkup.append(String::adopt(result));
+    Vector<UChar> markup;
+    appendStartMarkup(markup, node, convertBlocksToInlines, 0, rangeFullySelectsNode);
+    m_reversedPrecedingMarkup.append(String::adopt(markup));
     appendEndTag(node);
     if (m_nodes)
         m_nodes->append(node);
@@ -505,7 +514,7 @@ void MarkupAccumulator::removeExteriorStyles(CSSMutableStyleDeclaration* style)
     style->removeProperty(CSSPropertyFloat);
 }
 
-void MarkupAccumulator::appendStartMarkup(Vector<UChar>& result, const Node* node, const Range* range, EAnnotateForInterchange annotate, EAbsoluteURLs absoluteURLs, bool convertBlocksToInlines, Namespaces* namespaces, RangeFullySelectsNode rangeFullySelectsNode)
+void MarkupAccumulator::appendStartMarkup(Vector<UChar>& result, const Node* node, bool convertBlocksToInlines, Namespaces* namespaces, RangeFullySelectsNode rangeFullySelectsNode)
 {
     if (namespaces)
         namespaces->checkConsistency();
@@ -517,20 +526,20 @@ void MarkupAccumulator::appendStartMarkup(Vector<UChar>& result, const Node* nod
                 if (parent->hasTagName(scriptTag)
                     || parent->hasTagName(styleTag)
                     || parent->hasTagName(xmpTag)) {
-                    appendUCharRange(result, ucharRange(node, range));
+                    appendUCharRange(result, ucharRange(node, m_range));
                     break;
                 } else if (parent->hasTagName(textareaTag)) {
-                    appendEscapedContent(result, ucharRange(node, range), documentIsHTML);                    
+                    appendEscapedContent(result, ucharRange(node, m_range), documentIsHTML);                    
                     break;
                 }
             }
-            if (!annotate) {
-                appendEscapedContent(result, ucharRange(node, range), documentIsHTML);
+            if (!shouldAnnotate()) {
+                appendEscapedContent(result, ucharRange(node, m_range), documentIsHTML);
                 break;
             }
             
             bool useRenderedText = !enclosingNodeWithTag(Position(const_cast<Node*>(node), 0), selectTag);
-            String markup = escapeContentText(useRenderedText ? renderedText(node, range) : stringValueForRange(node, range), false);
+            String markup = escapeContentText(useRenderedText ? renderedText(node, m_range) : stringValueForRange(node, m_range), false);
             markup = convertHTMLTextToInterchangeFormat(markup, static_cast<const Text*>(node));
             append(result, markup);
             break;
@@ -570,7 +579,7 @@ void MarkupAccumulator::appendStartMarkup(Vector<UChar>& result, const Node* nod
             for (unsigned int i = 0; i < length; i++) {
                 Attribute *attr = attrs->attributeItem(i);
                 // We'll handle the style attribute separately, below.
-                if (attr->name() == styleAttr && el->isHTMLElement() && (annotate || convert))
+                if (attr->name() == styleAttr && el->isHTMLElement() && (shouldAnnotate() || convert))
                     continue;
                 result.append(' ');
 
@@ -584,7 +593,7 @@ void MarkupAccumulator::appendStartMarkup(Vector<UChar>& result, const Node* nod
                 if (el->isURLAttribute(attr)) {
                     // We don't want to complete file:/// URLs because it may contain sensitive information
                     // about the user's system.
-                    if (absoluteURLs == AbsoluteURLs && !node->document()->url().isLocalFile())
+                    if (shouldResolveURLs() && !node->document()->url().isLocalFile())
                         appendQuotedURLAttributeValue(result, node->document()->completeURL(attr->value()).string());
                     else
                         appendQuotedURLAttributeValue(result, attr->value().string());
@@ -598,10 +607,10 @@ void MarkupAccumulator::appendStartMarkup(Vector<UChar>& result, const Node* nod
                     appendNamespace(result, attr->prefix(), attr->namespaceURI(), *namespaces);
             }
             
-            if (el->isHTMLElement() && (annotate || convert)) {
+            if (el->isHTMLElement() && (shouldAnnotate() || convert)) {
                 Element* element = const_cast<Element*>(el);
                 RefPtr<CSSMutableStyleDeclaration> style = static_cast<HTMLElement*>(element)->getInlineStyleDecl()->copy();
-                if (annotate) {
+                if (shouldAnnotate()) {
                     RefPtr<CSSMutableStyleDeclaration> styleFromMatchedRules = styleFromMatchedRulesForElement(const_cast<Element*>(el));
                     // Styles from the inline style declaration, held in the variable "style", take precedence 
                     // over those from matched rules.
@@ -802,7 +811,7 @@ static bool shouldIncludeWrapperForFullySelectedRoot(Node* fullySelectedRoot, CS
            style->getPropertyCSSValue(CSSPropertyBackgroundColor);
 }
 
-static Node* serializeNodes(MarkupAccumulator& accumulator, Node* startNode, Node* pastEnd, const Range* range, EAnnotateForInterchange annotate, EAbsoluteURLs absoluteURLs)
+static Node* serializeNodes(MarkupAccumulator& accumulator, Node* startNode, Node* pastEnd)
 {
     Vector<Node*> ancestorsToClose;
     Node* next;
@@ -830,7 +839,7 @@ static Node* serializeNodes(MarkupAccumulator& accumulator, Node* startNode, Nod
                 next = pastEnd;
         } else {
             // Add the node to the markup if we're not skipping the descendants
-            accumulator.appendStartTag(n, range, annotate, absoluteURLs);
+            accumulator.appendStartTag(n);
 
             // If node has no children, close the tag now.
             if (!n->childNodeCount()) {
@@ -866,7 +875,7 @@ static Node* serializeNodes(MarkupAccumulator& accumulator, Node* startNode, Nod
                         continue;
                     // or b) ancestors that we never encountered during a pre-order traversal starting at startNode:
                     ASSERT(startNode->isDescendantOf(parent));
-                    accumulator.wrapWithNode(parent, range, annotate, absoluteURLs);
+                    accumulator.wrapWithNode(parent);
                     lastClosed = parent;
                 }
             }
@@ -878,7 +887,7 @@ static Node* serializeNodes(MarkupAccumulator& accumulator, Node* startNode, Nod
 
 // FIXME: Shouldn't we omit style info when annotate == DoNotAnnotateForInterchange? 
 // FIXME: At least, annotation and style info should probably not be included in range.markupString()
-String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterchange annotate, bool convertBlocksToInlines, EAbsoluteURLs absoluteURLs)
+String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterchange shouldAnnotate, bool convertBlocksToInlines, EAbsoluteURLs shouldResolveURLs)
 {
     DEFINE_STATIC_LOCAL(const String, interchangeNewlineString, ("<br class=\"" AppleInterchangeNewline "\">"));
 
@@ -912,13 +921,13 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
 
     document->updateLayoutIgnorePendingStylesheets();
 
-    MarkupAccumulator accumulator(nodes);
+    MarkupAccumulator accumulator(nodes, shouldResolveURLs, shouldAnnotate, updatedRange.get());
     Node* pastEnd = updatedRange->pastLastNode();
 
     Node* startNode = updatedRange->firstNode();
     VisiblePosition visibleStart(updatedRange->startPosition(), VP_DEFAULT_AFFINITY);
     VisiblePosition visibleEnd(updatedRange->endPosition(), VP_DEFAULT_AFFINITY);
-    if (annotate && needInterchangeNewlineAfter(visibleStart)) {
+    if (shouldAnnotate == AnnotateForInterchange && needInterchangeNewlineAfter(visibleStart)) {
         if (visibleStart == visibleEnd.previous()) {
             if (deleteButton)
                 deleteButton->enable();
@@ -935,13 +944,13 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
         }
     }
 
-    Node* lastClosed = serializeNodes(accumulator, startNode, pastEnd, range, annotate, absoluteURLs);
+    Node* lastClosed = serializeNodes(accumulator, startNode, pastEnd);
 
     // Include ancestors that aren't completely inside the range but are required to retain 
     // the structure and appearance of the copied markup.
     Node* specialCommonAncestor = 0;
     Node* commonAncestorBlock = commonAncestor ? enclosingBlock(commonAncestor) : 0;
-    if (annotate && commonAncestorBlock) {
+    if (shouldAnnotate == AnnotateForInterchange && commonAncestorBlock) {
         if (commonAncestorBlock->hasTagName(tbodyTag) || commonAncestorBlock->hasTagName(trTag)) {
             Node* table = commonAncestorBlock->parentNode();
             while (table && !table->hasTagName(tableTag))
@@ -953,7 +962,7 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
     }
                                       
     // Retain the Mail quote level by including all ancestor mail block quotes.
-    if (lastClosed && annotate) {
+    if (lastClosed && shouldAnnotate == AnnotateForInterchange) {
         for (Node *ancestor = lastClosed->parentNode(); ancestor; ancestor = ancestor->parentNode())
             if (isMailBlockquote(ancestor))
                 specialCommonAncestor = ancestor;
@@ -982,7 +991,7 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
     // FIXME: Do this for all fully selected blocks, not just the body.
     Node* fullySelectedRoot = body && areRangesEqual(VisibleSelection::selectionFromContentsOfNode(body).toNormalizedRange().get(), updatedRange.get()) ? body : 0;
     RefPtr<CSSMutableStyleDeclaration> fullySelectedRootStyle = fullySelectedRoot ? styleFromMatchedRulesAndInlineDecl(fullySelectedRoot) : 0;
-    if (annotate && fullySelectedRoot) {
+    if (shouldAnnotate == AnnotateForInterchange && fullySelectedRoot) {
         if (shouldIncludeWrapperForFullySelectedRoot(fullySelectedRoot, fullySelectedRootStyle.get()))
             specialCommonAncestor = fullySelectedRoot;
     }
@@ -1010,7 +1019,7 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
             } else {
                 // Since this node and all the other ancestors are not in the selection we want to set RangeFullySelectsNode to DoesNotFullySelectNode
                 // so that styles that affect the exterior of the node are not included.
-                accumulator.wrapWithNode(ancestor, updatedRange.get(), annotate, absoluteURLs, convertBlocksToInlines, 0, MarkupAccumulator::DoesNotFullySelectNode);
+                accumulator.wrapWithNode(ancestor, convertBlocksToInlines, MarkupAccumulator::DoesNotFullySelectNode);
             }
             if (nodes)
                 nodes->append(ancestor);
@@ -1056,7 +1065,7 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
     }
 
     // FIXME: The interchange newline should be placed in the block that it's in, not after all of the content, unconditionally.
-    if (annotate && needInterchangeNewlineAfter(visibleEnd.previous()))
+    if (shouldAnnotate == AnnotateForInterchange && needInterchangeNewlineAfter(visibleEnd.previous()))
         accumulator.appendString(interchangeNewlineString);
 
     if (deleteButton)
@@ -1076,7 +1085,7 @@ PassRefPtr<DocumentFragment> createFragmentFromMarkup(Document* document, const 
     return fragment.release();
 }
 
-static void serializeNodesWithNamespaces(MarkupAccumulator& accumulator, Node* node, Node* nodeToSkip, EChildrenOnly childrenOnly, EAbsoluteURLs absoluteURLs, const Namespaces* namespaces)
+static void serializeNodesWithNamespaces(MarkupAccumulator& accumulator, Node* node, Node* nodeToSkip, EChildrenOnly childrenOnly, const Namespaces* namespaces)
 {
     if (node == nodeToSkip)
         return;
@@ -1086,18 +1095,18 @@ static void serializeNodesWithNamespaces(MarkupAccumulator& accumulator, Node* n
         namespaceHash = *namespaces;
 
     if (!childrenOnly)
-        accumulator.appendStartTag(node, 0, DoNotAnnotateForInterchange, absoluteURLs, false, &namespaceHash);
+        accumulator.appendStartTag(node, &namespaceHash);
 
     if (!(node->document()->isHTMLDocument() && doesHTMLForbidEndTag(node))) {
         for (Node* current = node->firstChild(); current; current = current->nextSibling())
-            serializeNodesWithNamespaces(accumulator, current, nodeToSkip, IncludeNode, absoluteURLs, &namespaceHash);
+            serializeNodesWithNamespaces(accumulator, current, nodeToSkip, IncludeNode, &namespaceHash);
     }
 
     if (!childrenOnly)
         accumulator.appendEndTag(node);
 }
 
-String createMarkup(const Node* node, EChildrenOnly childrenOnly, Vector<Node*>* nodes, EAbsoluteURLs absoluteURLs)
+String createMarkup(const Node* node, EChildrenOnly childrenOnly, Vector<Node*>* nodes, EAbsoluteURLs shouldResolveURLs)
 {
     if (!node)
         return "";
@@ -1109,8 +1118,8 @@ String createMarkup(const Node* node, EChildrenOnly childrenOnly, Vector<Node*>*
             return "";
     }
 
-    MarkupAccumulator accumulator(nodes);
-    serializeNodesWithNamespaces(accumulator, const_cast<Node*>(node), deleteButtonContainerElement, childrenOnly, absoluteURLs, 0);
+    MarkupAccumulator accumulator(nodes, shouldResolveURLs, DoNotAnnotateForInterchange);
+    serializeNodesWithNamespaces(accumulator, const_cast<Node*>(node), deleteButtonContainerElement, childrenOnly, 0);
     return accumulator.takeResults();
 }
 
