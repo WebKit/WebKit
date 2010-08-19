@@ -946,6 +946,7 @@ fast/canvas/webgl/array-get-out-of-bounds.html
 fast/canvas/webgl/array-set-out-of-bounds.html
 fast/canvas/webgl/array-setters.html
 fast/canvas/webgl/array-unit-tests.html
+fast/canvas/webgl/bad-arguments-test.html
 fast/canvas/webgl/buffer-bind-test.html
 fast/canvas/webgl/buffer-data-array-buffer.html
 fast/canvas/webgl/canvas-test.html
@@ -1165,6 +1166,7 @@ platform/mac/editing/pasteboard/text-precomposed.html
 http/tests/inspector-enabled/console-log-before-frame-navigation.html
 http/tests/inspector/change-iframe-src.html
 http/tests/inspector/console-resource-errors.html
+http/tests/inspector/console-xhr-logging.html
 http/tests/inspector/inspect-iframe-from-different-domain.html
 http/tests/inspector/resource-har-conversion.html
 http/tests/inspector/resource-parameters.html
@@ -1492,6 +1494,7 @@ webarchive/loading/test-loading-archive.html
 
 # WebKitTestRunner needs layoutTestController.clearBackForwardList
 # <https://bugs.webkit.org/show_bug.cgi?id=42333>
+fast/history/redirect-via-iframe.html
 fast/dom/location-hash.html
 fast/history/history-length.html
 fast/loader/location-port.html
@@ -1638,7 +1641,10 @@ fast/dom/Geolocation/callback-exception.html
 fast/dom/Geolocation/callback-to-deleted-context.html
 fast/dom/Geolocation/callback-to-remote-context.html
 fast/dom/Geolocation/callback-to-remote-context2.html
+fast/dom/Geolocation/clear-watch-invalid-id-crash.html
+fast/dom/Geolocation/delayed-permission-allowed-for-multiple-requests.html
 fast/dom/Geolocation/delayed-permission-allowed.html
+fast/dom/Geolocation/delayed-permission-denied-for-multiple-requests.html
 fast/dom/Geolocation/delayed-permission-denied.html
 fast/dom/Geolocation/disconnected-frame-already.html
 fast/dom/Geolocation/disconnected-frame-permission-denied.html
@@ -2181,6 +2187,8 @@ fast/events/onload-after-document-close-with-subresource.html
 fast/events/simulated-key-state.html
 fast/forms/textarea-and-mutation-events.html
 fast/frames/crash-removed-iframe.html
+fast/frames/document-write-in-iframe-onload-2.html
+fast/frames/document-write-in-iframe-onload.html
 fast/frames/iframe-onload-remove-self-no-crash.html
 fast/frames/location-put-after-removal.html
 fast/history/multiple-classes-visited.html
@@ -2201,6 +2209,8 @@ fast/loader/submit-form-while-parsing-2.html
 fast/overflow/overflow-y-scroll.html
 fast/overflow/overflow_hidden.html
 fast/overflow/scroll-vertical-not-horizontal.html
+fast/parser/document-close-iframe-load.html
+fast/parser/document-close-nested-iframe-load.html
 fast/parser/entities-in-xhtml.xhtml
 fast/regex/test1.html
 fast/regex/test4.html
@@ -2248,6 +2258,7 @@ platform/mac/fast/loader/non-html-load-event.html
 storage/multiple-databases-garbage-collection.html
 storage/open-database-while-transaction-in-progress.html
 svg/custom/clip-path-referencing-use2.svg
+svg/custom/scrolling-embedded-svg-file-image-repaint-problem.html
 svg/hixie/cascade/002.xml
 transitions/color-transition-all.html
 transitions/font-family-during-transition.html

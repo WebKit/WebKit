@@ -1,3 +1,11 @@
+2010-08-19  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Jon Honeycutt.
+
+        Add a few items in the WebKitTestRunner Skipped list.
+
+        * platform/mac-wk2/Skipped:
+
 2010-08-19  John Gregg  <johnnyg@google.com>
 
         Unreviewed, chromium test expectations.
