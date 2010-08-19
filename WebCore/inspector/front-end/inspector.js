@@ -625,7 +625,7 @@ WebInspector.dispatchMessageFromBackend = function(arguments)
 
 WebInspector.reportProtocolError = function(callId, methodName, errorText)
 {
-    WebInspector.log("InspectorBackend." + methodName + " failed with error text: '" + errorText + "'");
+    console.error("InspectorBackend." + methodName + " failed with error text: '" + errorText + "'");
     WebInspector.removeResponseCallbackEntry(callId);
 }
 
