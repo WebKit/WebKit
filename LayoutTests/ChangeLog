@@ -1,3 +1,43 @@
+2010-08-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        [Qt] Add platform specific expected results for new passing tests.
+        Compared to Mac png files and Mac expected files.
+
+        * platform/qt/fast/canvas/setWidthResetAfterForcedRender-expected.checksum: Added.
+        * platform/qt/fast/canvas/setWidthResetAfterForcedRender-expected.png: Added.
+        * platform/qt/fast/canvas/setWidthResetAfterForcedRender-expected.txt: Added.
+        * platform/qt/fast/table/early-table-layout-expected.checksum: Added.
+        * platform/qt/fast/table/early-table-layout-expected.png: Added.
+        * platform/qt/fast/table/early-table-layout-expected.txt: Added.
+        * platform/qt/http/tests/misc/slow-loading-image-in-pattern-expected.checksum: Added.
+        * platform/qt/http/tests/misc/slow-loading-image-in-pattern-expected.png: Added.
+        * platform/qt/http/tests/misc/slow-loading-image-in-pattern-expected.txt: Added.
+        * platform/qt/svg/W3C-SVG-1.1/filters-turb-02-f-expected.checksum: Added.
+        * platform/qt/svg/W3C-SVG-1.1/filters-turb-02-f-expected.png: Added.
+        * platform/qt/svg/W3C-SVG-1.1/filters-turb-02-f-expected.txt: Added.
+        * platform/qt/svg/custom/absolute-sized-content-with-resources-expected.checksum: Added.
+        * platform/qt/svg/custom/absolute-sized-content-with-resources-expected.png: Added.
+        * platform/qt/svg/custom/absolute-sized-content-with-resources-expected.txt: Added.
+        * platform/qt/svg/custom/js-update-stop-linked-gradient-expected.checksum: Added.
+        * platform/qt/svg/custom/js-update-stop-linked-gradient-expected.png: Added.
+        * platform/qt/svg/custom/js-update-stop-linked-gradient-expected.txt: Added.
+        * platform/qt/svg/in-html: Added.
+        * platform/qt/svg/in-html/circle-expected.checksum: Added.
+        * platform/qt/svg/in-html/circle-expected.png: Added.
+        * platform/qt/svg/in-html/circle-expected.txt: Added.
+        * platform/qt/svg/zoom/page/zoom-mask-with-percentages-expected.checksum: Added.
+        * platform/qt/svg/zoom/page/zoom-mask-with-percentages-expected.png: Added.
+        * platform/qt/svg/zoom/page/zoom-mask-with-percentages-expected.txt: Added.
+        * platform/qt/tables/layering: Added.
+        * platform/qt/tables/layering/paint-test-layering-1-expected.checksum: Added.
+        * platform/qt/tables/layering/paint-test-layering-1-expected.png: Added.
+        * platform/qt/tables/layering/paint-test-layering-1-expected.txt: Added.
+        * platform/qt/tables/layering/paint-test-layering-2-expected.checksum: Added.
+        * platform/qt/tables/layering/paint-test-layering-2-expected.png: Added.
+        * platform/qt/tables/layering/paint-test-layering-2-expected.txt: Added.
+
 2010-08-19  Ademar de Souza Reis Jr  <ademar.reis@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

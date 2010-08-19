@@ -1,0 +1,32 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x235
+  RenderBlock {HTML} at (0,0) size 800x235
+    RenderBody {BODY} at (8,16) size 784x211
+      RenderBlock {P} at (0,0) size 784x42
+        RenderInline {B} at (0,0) size 62x21
+          RenderText {#text} at (0,0) size 62x21
+            text run at (0,0) width 62: "BUG ID:"
+        RenderText {#text} at (62,0) size 4x21
+          text run at (62,0) width 4: " "
+        RenderInline {A} at (0,0) size 129x21 [color=#0000EE]
+          RenderText {#text} at (66,0) size 129x21
+            text run at (66,0) width 129: "Bugzilla bug 43341"
+        RenderText {#text} at (195,0) size 773x42
+          text run at (195,0) width 578: " Setting canvas width after canvas already rendered resets canvas data appropriately,"
+          text run at (0,21) width 218: "but doesn't repaint immediately."
+      RenderBlock {P} at (0,58) size 784x27 [bgcolor=#98FB98]
+        RenderInline {B} at (0,0) size 91x21
+          RenderText {#text} at (3,3) size 91x21
+            text run at (3,3) width 91: "TEST PASS:"
+        RenderText {#text} at (94,3) size 430x21
+          text run at (94,3) width 4: " "
+          text run at (98,3) width 426: "The canvas should go blank due to setting on the canvas width."
+      RenderBlock {HR} at (0,101) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,119) size 784x21
+        RenderText {#text} at (0,0) size 202x21
+          text run at (0,0) width 202: "Actual output: (blank canvas)"
+      RenderBlock (anonymous) at (0,156) size 784x55
+        RenderHTMLCanvas {CANVAS} at (0,0) size 100x50
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
