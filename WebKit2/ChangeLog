@@ -1,5 +1,26 @@
 2010-08-19  Adam Roben  <aroben@apple.com>
 
+        Send mouse events to windowless plugins on Windows
+
+        This seems to have been the last issue blocking us from playing videos
+        on vimeo.com.
+
+        Fixes <http://webkit.org/b/44276> <rdar://problem/8330398> Can't click
+        play button in vimeo.com Flash video player in WebKit2 on Windows
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/Plugins/Netscape/win/NetscapePluginWin.cpp:
+        (WebKit::toNP): Added. Converts a WebMouseEvent to an NPEvent. Code
+        was adapted from WebCore's PluginViewWin.cpp.
+
+        (WebKit::NetscapePlugin::platformHandleMouseEvent):
+        (WebKit::NetscapePlugin::platformHandleMouseEnterEvent):
+        (WebKit::NetscapePlugin::platformHandleMouseLeaveEvent):
+        Convert the WebMouseEvent to an NPEvent and send it to the plugin.
+
+2010-08-19  Adam Roben  <aroben@apple.com>
+
         Add support for painting windowless plugins on Windows
 
         This gets the video on the front page of vimeo.com painting (though

@@ -26,6 +26,7 @@
 #include "NetscapePlugin.h"
 
 #include "NotImplemented.h"
+#include "WebEvent.h"
 #include <WebCore/GraphicsContext.h>
 
 using namespace WebCore;
@@ -81,10 +82,83 @@ void NetscapePlugin::platformPaint(GraphicsContext* context, const IntRect& dirt
     context->releaseWindowsContext(hdc, dirtyRect, false);
 }
 
-bool NetscapePlugin::platformHandleMouseEvent(const WebMouseEvent&)
+NPEvent toNP(const WebMouseEvent& event)
 {
-    notImplemented();
-    return false;
+    NPEvent npEvent;
+
+    npEvent.wParam = 0;
+    if (event.controlKey())
+        npEvent.wParam |= MK_CONTROL;
+    if (event.shiftKey())
+        npEvent.wParam |= MK_SHIFT;
+
+    npEvent.lParam = MAKELPARAM(event.positionX(), event.positionY());
+
+    switch (event.type()) {
+    case WebEvent::MouseMove:
+        npEvent.event = WM_MOUSEMOVE;
+        switch (event.button()) {
+        case WebMouseEvent::LeftButton:
+            npEvent.wParam |= MK_LBUTTON;
+            break;
+        case WebMouseEvent::MiddleButton:
+            npEvent.wParam |= MK_MBUTTON;
+            break;
+        case WebMouseEvent::RightButton:
+            npEvent.wParam |= MK_RBUTTON;
+            break;
+        case WebMouseEvent::NoButton:
+            break;
+        }
+        break;
+    case WebEvent::MouseDown:
+        switch (event.button()) {
+        case WebMouseEvent::LeftButton:
+            npEvent.event = WM_LBUTTONDOWN;
+            break;
+        case WebMouseEvent::MiddleButton:
+            npEvent.event = WM_MBUTTONDOWN;
+            break;
+        case WebMouseEvent::RightButton:
+            npEvent.event = WM_RBUTTONDOWN;
+            break;
+        case WebMouseEvent::NoButton:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+        break;
+    case WebEvent::MouseUp:
+        switch (event.button()) {
+        case WebMouseEvent::LeftButton:
+            npEvent.event = WM_LBUTTONUP;
+            break;
+        case WebMouseEvent::MiddleButton:
+            npEvent.event = WM_MBUTTONUP;
+            break;
+        case WebMouseEvent::RightButton:
+            npEvent.event = WM_RBUTTONUP;
+            break;
+        case WebMouseEvent::NoButton:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+
+    return npEvent;
+}
+
+bool NetscapePlugin::platformHandleMouseEvent(const WebMouseEvent& event)
+{
+    if (m_isWindowed)
+        return false;
+
+    NPEvent npEvent = toNP(event);
+    NPP_HandleEvent(&npEvent);
+    return true;
 }
 
 bool NetscapePlugin::platformHandleWheelEvent(const WebWheelEvent&)
@@ -98,16 +172,24 @@ void NetscapePlugin::platformSetFocus(bool)
     notImplemented();
 }
 
-bool NetscapePlugin::platformHandleMouseEnterEvent(const WebMouseEvent&)
+bool NetscapePlugin::platformHandleMouseEnterEvent(const WebMouseEvent& event)
 {
-    notImplemented();
-    return false;
+    if (m_isWindowed)
+        return false;
+
+    NPEvent npEvent = toNP(event);
+    NPP_HandleEvent(&npEvent);
+    return true;
 }
 
-bool NetscapePlugin::platformHandleMouseLeaveEvent(const WebMouseEvent&)
+bool NetscapePlugin::platformHandleMouseLeaveEvent(const WebMouseEvent& event)
 {
-    notImplemented();
-    return false;
+    if (m_isWindowed)
+        return false;
+
+    NPEvent npEvent = toNP(event);
+    NPP_HandleEvent(&npEvent);
+    return true;
 }
 
 } // namespace WebKit
