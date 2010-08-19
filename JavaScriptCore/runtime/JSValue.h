@@ -397,16 +397,28 @@ namespace JSC {
     {
         if (isInt32())
             return asInt32();
+
+        double val = toNumber(exec);
+
+        if (val >= -2147483648.0 && val < 2147483648.0)
+            return static_cast<int32_t>(val);
+
         bool ignored;
-        return toInt32SlowCase(toNumber(exec), ignored);
+        return toInt32SlowCase(val, ignored);
     }
 
     inline uint32_t JSValue::toUInt32(ExecState* exec) const
     {
         if (isUInt32())
             return asInt32();
+
+        double val = toNumber(exec);
+
+        if (val >= 0.0 && val < 4294967296.0)
+            return static_cast<uint32_t>(val);
+
         bool ignored;
-        return toUInt32SlowCase(toNumber(exec), ignored);
+        return toUInt32SlowCase(val, ignored);
     }
 
     inline int32_t JSValue::toInt32(ExecState* exec, bool& ok) const
@@ -415,7 +427,15 @@ namespace JSC {
             ok = true;
             return asInt32();
         }
-        return toInt32SlowCase(toNumber(exec), ok);
+
+        double val = toNumber(exec);
+
+        if (val >= -2147483648.0 && val < 2147483648.0) {
+            ok = true;
+            return static_cast<int32_t>(val);
+        }
+
+        return toInt32SlowCase(val, ok);
     }
 
     inline uint32_t JSValue::toUInt32(ExecState* exec, bool& ok) const
@@ -424,7 +444,15 @@ namespace JSC {
             ok = true;
             return asInt32();
         }
-        return toUInt32SlowCase(toNumber(exec), ok);
+
+        double val = toNumber(exec);
+
+        if (val >= 0.0 && val < 4294967296.0) {
+            ok = true;
+            return static_cast<uint32_t>(val);
+        }
+
+        return toUInt32SlowCase(val, ok);
     }
 
 #if USE(JSVALUE32_64)
