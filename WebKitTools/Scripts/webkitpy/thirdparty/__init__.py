@@ -79,7 +79,7 @@ installer.install(url="http://www.adambarth.com/webkit/eliza",
 
 rietveld_dir = os.path.join(autoinstalled_dir, "rietveld")
 installer = AutoInstaller(target_dir=rietveld_dir)
-installer.install(url="http://webkit-rietveld.googlecode.com/svn/trunk/upload.py",
+installer.install(url="http://webkit-rietveld.googlecode.com/svn/trunk/upload_v26/upload.py",
                   target_name="upload.py")
 
 
