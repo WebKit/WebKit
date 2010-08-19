@@ -79,11 +79,6 @@ void DRTDevToolsAgent::runtimePropertyChanged(const WebKit::WebString& name, con
     // FIXME: Implement.
 }
 
-WebCString DRTDevToolsAgent::injectedScriptSource()
-{
-    return webkit_support::GetDevToolsInjectedScriptSource();
-}
-
 WebCString DRTDevToolsAgent::debuggerScriptSource()
 {
     return webkit_support::GetDevToolsDebuggerScriptSource();
