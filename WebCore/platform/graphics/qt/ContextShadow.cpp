@@ -28,7 +28,71 @@
 #include "config.h"
 #include "ContextShadow.h"
 
+#include "Timer.h"
+#include <wtf/Noncopyable.h>
+
 namespace WebCore {
+
+// ContextShadow needs a scratch image as the buffer for the blur filter.
+// Instead of creating and destroying the buffer for every operation,
+// we create a buffer which will be automatically purged via a timer.
+
+class ShadowBuffer: public Noncopyable {
+public:
+    ShadowBuffer();
+
+    QImage* scratchImage(const QSize& size);
+
+    void schedulePurge();
+
+private:
+    QImage image;
+    void purgeBuffer(Timer<ShadowBuffer>*);
+    Timer<ShadowBuffer> purgeTimer;
+};
+
+ShadowBuffer::ShadowBuffer()
+    : purgeTimer(this, &ShadowBuffer::purgeBuffer)
+{
+}
+
+QImage* ShadowBuffer::scratchImage(const QSize& size)
+{
+    int width = size.width();
+    int height = size.height();
+
+    // We do not need to recreate the buffer if the buffer is reasonably
+    // larger than the requested size. However, if the requested size is
+    // much smaller than our buffer, reduce our buffer so that we will not
+    // keep too many allocated pixels for too long.
+    if (!image.isNull() && (image.width() > width) && (image.height() > height))
+        if (((2 * width) > image.width()) && ((2 * height) > image.height())) {
+            image.fill(Qt::transparent);
+            return &image;
+        }
+
+    // Round to the nearest 32 pixels so we do not grow the buffer everytime
+    // there is larger request by 1 pixel.
+    width = (1 + (width >> 5)) << 5;
+    height = (1 + (height >> 5)) << 5;
+
+    image = QImage(width, height, QImage::Format_ARGB32_Premultiplied);
+    image.fill(Qt::transparent);
+    return &image;
+}
+
+void ShadowBuffer::schedulePurge()
+{
+    static const double BufferPurgeDelay = 2; // seconds
+    purgeTimer.startOneShot(BufferPurgeDelay);
+}
+
+void ShadowBuffer::purgeBuffer(Timer<ShadowBuffer>*)
+{
+    image = QImage();
+}
+
+Q_GLOBAL_STATIC(ShadowBuffer, scratchShadowBuffer)
 
 ContextShadow::ContextShadow()
     : type(NoShadow)
@@ -235,16 +299,18 @@ void ContextShadow::drawShadowRect(QPainter* p, const QRectF& rect)
             alignedBufferRect.adjust(-extra, -extra, extra, extra);
         }
 
-        QImage shadowImage(alignedBufferRect.size(), QImage::Format_ARGB32_Premultiplied);
-        shadowImage.fill(Qt::transparent);
-        QPainter shadowPainter(&shadowImage);
+        ShadowBuffer* shadowBuffer = scratchShadowBuffer();
+        QImage* shadowImage = shadowBuffer->scratchImage(alignedBufferRect.size());
+        QPainter shadowPainter(shadowImage);
 
         shadowPainter.fillRect(shadowRect.translated(-alignedBufferRect.topLeft()), color);
         shadowPainter.end();
 
-        shadowBlur(shadowImage, blurRadius, color);
+        shadowBlur(*shadowImage, blurRadius, color);
 
-        p->drawImage(alignedBufferRect.topLeft(), shadowImage);
+        p->drawImage(alignedBufferRect.topLeft(), *shadowImage);
+
+        shadowBuffer->schedulePurge();
 
         return;
     }
