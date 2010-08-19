@@ -61,6 +61,8 @@
 #include "GraphicsContextPlatformPrivateCairo.h"
 #include "GraphicsContextPrivate.h"
 
+using namespace std;
+
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
@@ -173,18 +175,17 @@ static void addConvexPolygonToContext(cairo_t* context, size_t numPoints, const 
     cairo_close_path(context);
 }
 
-void GraphicsContext::calculateShadowBufferDimensions(IntSize& shadowBufferSize, FloatRect& shadowRect, float& kernelSize, const FloatRect& sourceRect, const FloatSize& shadowSize, float shadowBlur)
+void GraphicsContext::calculateShadowBufferDimensions(IntSize& shadowBufferSize, FloatRect& shadowRect, float& radius, const FloatRect& sourceRect, const FloatSize& shadowSize, float shadowBlur)
 {
 #if ENABLE(FILTERS)
-    // calculate the kernel size according to the HTML5 canvas shadow specification
-    kernelSize = (shadowBlur < 8 ? shadowBlur / 2.f : sqrt(shadowBlur * 2.f));
-    int blurRadius = ceil(kernelSize);
+    // limit radius to 128
+    radius = min(128.f, max(shadowBlur, 0.f));
 
-    shadowBufferSize = IntSize(sourceRect.width() + blurRadius * 2, sourceRect.height() + blurRadius * 2);
+    shadowBufferSize = IntSize(sourceRect.width() + radius * 2, sourceRect.height() + radius * 2);
 
     // determine dimensions of shadow rect
     shadowRect = FloatRect(sourceRect.location(), shadowBufferSize);
-    shadowRect.move(shadowSize.width() - kernelSize, shadowSize.height() - kernelSize);
+    shadowRect.move(shadowSize.width() - radius, shadowSize.height() - radius);
 #endif
 }
 
@@ -209,8 +210,8 @@ static inline void drawPathShadow(GraphicsContext* context, GraphicsContextPriva
 
     IntSize shadowBufferSize;
     FloatRect shadowRect;
-    float kernelSize = 0;
-    GraphicsContext::calculateShadowBufferDimensions(shadowBufferSize, shadowRect, kernelSize, rect, shadowSize, shadowBlur);
+    float radius = 0;
+    GraphicsContext::calculateShadowBufferDimensions(shadowBufferSize, shadowRect, radius, rect, shadowSize, shadowBlur);
 
     // Create suitably-sized ImageBuffer to hold the shadow.
     OwnPtr<ImageBuffer> shadowBuffer = ImageBuffer::create(shadowBufferSize);
@@ -218,7 +219,7 @@ static inline void drawPathShadow(GraphicsContext* context, GraphicsContextPriva
     // Draw shadow into a new ImageBuffer.
     cairo_t* shadowContext = shadowBuffer->context()->platformContext();
     copyContextProperties(cr, shadowContext);
-    cairo_translate(shadowContext, -rect.x() + kernelSize, -rect.y() + kernelSize);
+    cairo_translate(shadowContext, -rect.x() + radius, -rect.y() + radius);
     cairo_new_path(shadowContext);
     cairo_append_path(shadowContext, path);
 
@@ -227,7 +228,7 @@ static inline void drawPathShadow(GraphicsContext* context, GraphicsContextPriva
     if (strokeShadow)
         setPlatformStroke(context, shadowContext, gcp);
 
-    context->createPlatformShadow(shadowBuffer.release(), shadowColor, shadowRect, kernelSize);
+    context->createPlatformShadow(shadowBuffer.release(), shadowColor, shadowRect, radius);
 #endif
 }
 
@@ -631,15 +632,15 @@ static void drawBorderlessRectShadow(GraphicsContext* context, const FloatRect& 
 
     IntSize shadowBufferSize;
     FloatRect shadowRect;
-    float kernelSize = 0;
-    GraphicsContext::calculateShadowBufferDimensions(shadowBufferSize, shadowRect, kernelSize, rect, shadowSize, shadowBlur);
+    float radius = 0;
+    GraphicsContext::calculateShadowBufferDimensions(shadowBufferSize, shadowRect, radius, rect, shadowSize, shadowBlur);
 
     // Draw shadow into a new ImageBuffer
     OwnPtr<ImageBuffer> shadowBuffer = ImageBuffer::create(shadowBufferSize);
     GraphicsContext* shadowContext = shadowBuffer->context();
-    shadowContext->fillRect(FloatRect(FloatPoint(kernelSize, kernelSize), rect.size()), rectColor, DeviceColorSpace);
+    shadowContext->fillRect(FloatRect(FloatPoint(radius, radius), rect.size()), rectColor, DeviceColorSpace);
 
-    context->createPlatformShadow(shadowBuffer.release(), shadowColor, shadowRect, kernelSize);
+    context->createPlatformShadow(shadowBuffer.release(), shadowColor, shadowRect, radius);
 #endif
 }
 
@@ -920,20 +921,20 @@ void GraphicsContext::setPlatformShadow(FloatSize const& size, float, Color cons
     }
 }
 
-void GraphicsContext::createPlatformShadow(PassOwnPtr<ImageBuffer> buffer, const Color& shadowColor, const FloatRect& shadowRect, float kernelSize)
+void GraphicsContext::createPlatformShadow(PassOwnPtr<ImageBuffer> buffer, const Color& shadowColor, const FloatRect& shadowRect, float radius)
 {
 #if ENABLE(FILTERS)
     cairo_t* cr = m_data->cr;
 
-    // draw the shadow without blurring, if kernelSize is zero
-    if (!kernelSize) {
+    // calculate the standard deviation
+    float sd = FEGaussianBlur::calculateStdDeviation(radius);
+
+    // draw the shadow without blurring, if radius is zero
+    if (!radius || !sd) {
         setColor(cr, shadowColor);
         cairo_mask_surface(cr, buffer->m_data.m_surface, shadowRect.x(), shadowRect.y());
         return;
     }
-
-    // limit kernel size to 1000, this is what CG is doing.
-    kernelSize = std::min(1000.f, kernelSize);
 
     // create filter
     RefPtr<Filter> filter = ImageBufferFilter::create();
@@ -941,7 +942,7 @@ void GraphicsContext::createPlatformShadow(PassOwnPtr<ImageBuffer> buffer, const
     RefPtr<FilterEffect> source = SourceGraphic::create();
     source->setScaledSubRegion(FloatRect(FloatPoint(), shadowRect.size()));
     source->setIsAlphaImage(true);
-    RefPtr<FilterEffect> blur = FEGaussianBlur::create(source.get(), kernelSize, kernelSize);
+    RefPtr<FilterEffect> blur = FEGaussianBlur::create(source.get(), sd, sd);
     blur->setScaledSubRegion(FloatRect(FloatPoint(), shadowRect.size()));
     blur->apply(filter.get());
 

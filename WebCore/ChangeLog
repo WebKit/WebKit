@@ -1,3 +1,39 @@
+2010-08-19  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Dirk Schulze.
+
+        [GTK] The size of the shadow image uses the standard deviation
+        size instead of the blur radius
+        https://bugs.webkit.org/show_bug.cgi?id=40793
+
+        The kernelSize variable was renamed to radius and recalculated
+        considering the CSS3 specification
+        http://www.w3.org/TR/css3-background/#the-box-shadow, and the
+        visual result of other browsers. The HTML5 canvas shadow standard
+        deviation calculation that was used, was not appropiate for the
+        blur distance specified in the CSS3.
+
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cairo/FontCairo.cpp:
+        (WebCore::Font::drawGlyphs):
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::calculateShadowBufferDimensions):
+        Changed the calculation, now we use the parameter in the style
+        directly as recomended in the CSS3 standard.
+        (WebCore::drawPathShadow):
+        (WebCore::drawBorderlessRectShadow):
+        (WebCore::GraphicsContext::createPlatformShadow): We get the
+        standard deviation from the radius using the new function and we
+        create the filter with that deviation.
+        * platform/graphics/cairo/ImageCairo.cpp:
+        (WebCore::BitmapImage::draw):
+        * platform/graphics/filters/FEGaussianBlur.cpp:
+        (WebCore::FEGaussianBlur::calculateStdDeviation):  Added this
+        function that gets the standard deviation from the blur
+        radius. Required in the CSS3 case where we have this radio and we
+        need the deviation to initialize the algorithm.
+        * platform/graphics/filters/FEGaussianBlur.h:
+
 2010-08-19  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

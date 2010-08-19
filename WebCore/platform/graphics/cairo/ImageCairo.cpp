@@ -141,8 +141,8 @@ void BitmapImage::draw(GraphicsContext* context, const FloatRect& dst, const Flo
     if (context->getShadow(shadowSize, shadowBlur, shadowColor)) {
         IntSize shadowBufferSize;
         FloatRect shadowRect;
-        float kernelSize (0.0);
-        GraphicsContext::calculateShadowBufferDimensions(shadowBufferSize, shadowRect, kernelSize, dstRect, shadowSize, shadowBlur);
+        float radius = 0;
+        context->calculateShadowBufferDimensions(shadowBufferSize, shadowRect, radius, dstRect, shadowSize, shadowBlur);
         shadowColor = colorWithOverrideAlpha(shadowColor.rgb(), (shadowColor.alpha() *  context->getAlpha()) / 255.f);
 
         //draw shadow into a new ImageBuffer
@@ -153,7 +153,7 @@ void BitmapImage::draw(GraphicsContext* context, const FloatRect& dst, const Flo
         cairo_rectangle(shadowContext, 0, 0, dstRect.width(), dstRect.height());
         cairo_fill(shadowContext);
 
-        context->createPlatformShadow(shadowBuffer.release(), shadowColor, shadowRect, kernelSize);
+        context->createPlatformShadow(shadowBuffer.release(), shadowColor, shadowRect, radius);
     }
 #endif
 
