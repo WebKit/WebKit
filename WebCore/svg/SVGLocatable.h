@@ -40,10 +40,12 @@ public:
     virtual SVGElement* nearestViewportElement() const = 0;
     virtual SVGElement* farthestViewportElement() const = 0;
 
-    virtual FloatRect getBBox() const = 0;
-    virtual AffineTransform getCTM() const = 0;
-    virtual AffineTransform getScreenCTM() const = 0;
-    AffineTransform getTransformToElement(SVGElement*, ExceptionCode&) const;
+    enum StyleUpdateStrategy { AllowStyleUpdate, DisallowStyleUpdate };
+    
+    virtual FloatRect getBBox(StyleUpdateStrategy) const = 0;
+    virtual AffineTransform getCTM(StyleUpdateStrategy) const = 0;
+    virtual AffineTransform getScreenCTM(StyleUpdateStrategy) const = 0;
+    AffineTransform getTransformToElement(SVGElement*, ExceptionCode&, StyleUpdateStrategy = AllowStyleUpdate) const;
 
     static SVGElement* nearestViewportElement(const SVGElement*);
     static SVGElement* farthestViewportElement(const SVGElement*);
@@ -56,8 +58,8 @@ public:
 protected:
     virtual AffineTransform localCoordinateSpaceTransform(SVGLocatable::CTMScope) const { return AffineTransform(); }
 
-    static FloatRect getBBox(const SVGElement*);
-    static AffineTransform computeCTM(const SVGElement*, CTMScope);
+    static FloatRect getBBox(const SVGElement*, StyleUpdateStrategy);
+    static AffineTransform computeCTM(const SVGElement*, CTMScope, StyleUpdateStrategy);
 };
 
 } // namespace WebCore

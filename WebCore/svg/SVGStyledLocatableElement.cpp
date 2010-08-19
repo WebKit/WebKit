@@ -50,19 +50,19 @@ SVGElement* SVGStyledLocatableElement::farthestViewportElement() const
     return SVGLocatable::farthestViewportElement(this);
 }
 
-FloatRect SVGStyledLocatableElement::getBBox() const
+FloatRect SVGStyledLocatableElement::getBBox(StyleUpdateStrategy styleUpdateStrategy) const
 {
-    return SVGLocatable::getBBox(this);
+    return SVGLocatable::getBBox(this, styleUpdateStrategy);
 }
 
-AffineTransform SVGStyledLocatableElement::getCTM() const
+AffineTransform SVGStyledLocatableElement::getCTM(StyleUpdateStrategy styleUpdateStrategy) const
 {
-    return SVGLocatable::computeCTM(this, SVGLocatable::NearestViewportScope);
+    return SVGLocatable::computeCTM(this, SVGLocatable::NearestViewportScope, styleUpdateStrategy);
 }
 
-AffineTransform SVGStyledLocatableElement::getScreenCTM() const
+AffineTransform SVGStyledLocatableElement::getScreenCTM(StyleUpdateStrategy styleUpdateStrategy) const
 {
-    return SVGLocatable::computeCTM(this, SVGLocatable::ScreenScope);
+    return SVGLocatable::computeCTM(this, SVGLocatable::ScreenScope, styleUpdateStrategy);
 }
 
 }

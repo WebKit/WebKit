@@ -1,3 +1,84 @@
+2010-08-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        HTMLElement::isContentEditable() can cause an updateStyleIfNeeded() to happen in the middle of layout
+        https://bugs.webkit.org/show_bug.cgi?id=21834
+        <rdar://problem/8093653&8261394>
+        
+        If we're in the middle of layout, or painting, and something causes updateStyleIfNeeded() to
+        get called, then we can end up entering recalcStyle() during layout or painting. This is bad
+        because it can create/destry the renderers and RenderLayers which are in use by layout/painting.
+        This is the cause of a number of random crashers, some of which show up more frequently
+        in content which uses accelerated compositing.
+        
+        The changes here:
+        1. Add an assertion in Document::updateStyleIfNeeded() that we are not laying out or painting.
+        2. Remove calls to updateStyleIfNeeded() in editing and caret painting code
+        3. Pass along information to CTM and BBox-related SVG methods to indicate whether it's safe
+           to update style.
+
+        Tested by new assertions and existing tests.
+
+        * dom/Document.cpp:
+        (WebCore::Document::updateStyleIfNeeded): New assertion that we are not mid-layout or painting.
+        (WebCore::command): Call updateStyleIfNeeded() to ensure that subsequent calls to isContentEditable()
+        return the correct result.
+
+        * dom/Element.cpp:
+        (WebCore::Element::focus): Move the supportsFocus() call to after style has been updated.
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::localCaretRect):
+        (WebCore::SelectionController::caretRepaintRect):
+        (WebCore::SelectionController::paintCaret):
+        * editing/SelectionController.h:
+        (WebCore::SelectionController::localCaretRectForPainting): When painting, use localCaretRectForPainting()
+        which does not update style. Make localCaretRect() non-const so allowing it to update style without ugly casts.
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::isContentEditable): Don't call updateStyleIfNeeded() here.
+        (WebCore::HTMLElement::isContentRichlyEditable): Ditto.
+        (WebCore::HTMLElement::contentEditable): Ditto.
+
+        * page/FrameView.h:
+        (WebCore::FrameView::isMidLayout): New accessor, used for asserting.
+
+        * rendering/RenderPath.cpp:
+        (WebCore::fillAndStrokePath): Pass DisallowStyleUpdate to getScreenCTM since we are painting.
+        * rendering/RenderSVGResourceContainer.cpp:
+        (WebCore::RenderSVGResourceContainer::transformOnNonScalingStroke): This is only called when
+        painting, so use DisallowStyleUpdate.
+
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::attributeChanged): Changes to the style attribute should not have
+        side effects, since a call to Element::getAttribute() is allowed to result in a call to
+        setAttribute() for the style attribute. To avoid updateStyleIfNeeded() during painting,
+        this must not cause SVG to do extra work.
+
+        * svg/SVGLocatable.cpp: Pass StyleUpdateStrategy down to these methods to indicate
+        whether it's OK to update style.
+        (WebCore::SVGLocatable::getBBox):
+        (WebCore::SVGLocatable::computeCTM):
+        (WebCore::SVGLocatable::getTransformToElement):
+        * svg/SVGLocatable.h:
+        (WebCore::SVGLocatable::):
+        * svg/SVGStyledLocatableElement.cpp:
+        (WebCore::SVGStyledLocatableElement::getBBox):
+        (WebCore::SVGStyledLocatableElement::getCTM):
+        (WebCore::SVGStyledLocatableElement::getScreenCTM):
+        * svg/SVGStyledLocatableElement.h:
+        * svg/SVGStyledTransformableElement.cpp:
+        (WebCore::SVGStyledTransformableElement::getCTM):
+        (WebCore::SVGStyledTransformableElement::getScreenCTM):
+        (WebCore::SVGStyledTransformableElement::getBBox):
+        * svg/SVGStyledTransformableElement.h:
+        * svg/SVGTextElement.cpp:
+        (WebCore::SVGTextElement::getBBox):
+        (WebCore::SVGTextElement::getCTM):
+        (WebCore::SVGTextElement::getScreenCTM):
+        * svg/SVGTextElement.h:
+
 2010-08-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.

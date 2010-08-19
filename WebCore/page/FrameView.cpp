@@ -203,7 +203,7 @@ void FrameView::reset()
     m_delayedLayout = false;
     m_doFullRepaint = true;
     m_layoutSchedulingEnabled = true;
-    m_midLayout = false;
+    m_inLayout = false;
     m_layoutCount = 0;
     m_nestedLayoutCount = 0;
     m_postLayoutTasksTimer.stop();
@@ -600,7 +600,7 @@ RenderObject* FrameView::layoutRoot(bool onlyDuringLayout) const
 
 void FrameView::layout(bool allowSubtree)
 {
-    if (m_midLayout)
+    if (m_inLayout)
         return;
 
     m_layoutTimer.stop();
@@ -772,11 +772,11 @@ void FrameView::layout(bool allowSubtree)
             view->disableLayoutState();
     }
         
-    m_midLayout = true;
+    m_inLayout = true;
     beginDeferredRepaints();
     root->layout();
     endDeferredRepaints();
-    m_midLayout = false;
+    m_inLayout = false;
 
     if (subtree) {
         RenderView* view = root->view();
