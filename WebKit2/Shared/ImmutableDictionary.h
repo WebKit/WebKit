@@ -34,6 +34,8 @@
 
 namespace WebKit {
 
+class ImmutableArray;
+
 // ImmutableDictionary - An immutable dictionary type suitable for vending to an API.
 
 class ImmutableDictionary : public APIObject {
@@ -69,6 +71,8 @@ public:
     {
         return m_map.get(key).get();
     }
+
+    PassRefPtr<ImmutableArray> keys() const;
 
     size_t size() { return m_map.size(); }
 

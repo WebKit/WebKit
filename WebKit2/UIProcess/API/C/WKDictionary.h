@@ -39,6 +39,8 @@ WK_EXPORT WKTypeID WKDictionaryGetTypeID();
 WK_EXPORT WKTypeRef WKDictionaryGetItemForKey(WKDictionaryRef dictionary, WKStringRef key);
 WK_EXPORT size_t WKDictionaryGetSize(WKDictionaryRef dictionary);
 
+WK_EXPORT WKArrayRef WKDictionaryCopyKeys(WKDictionaryRef dictionary);
+
 WK_EXPORT WKDictionaryRef WKDictionaryRetain(WKDictionaryRef dictionary);
 WK_EXPORT void WKDictionaryRelease(WKDictionaryRef dictionary);
 
