@@ -695,7 +695,10 @@
         {
             'target_name': 'concatenated_devtools_js',
             'type': 'none',
-            'dependencies': ['devtools_html'],
+            'dependencies': [
+                'devtools_html',
+                '../../WebCore/WebCore.gyp/WebCore.gyp:inspector_protocol_sources'
+            ],
             'sources': ['<(PRODUCT_DIR)/resources/inspector/DevTools.js'],
             'actions': [{
                 'action_name': 'concatenate_devtools_js',
