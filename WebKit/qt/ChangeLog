@@ -1,3 +1,15 @@
+2010-08-19  Girish Ramakrishnan  <girish@forwardbias.in>
+
+        Reviewed by Kenneth Christiansen.
+
+        [Qt] Inject wmode=opaque for both QWebView and QGraphicsWebView on Maemo5
+        as Flash XEmbed support is flaky.
+
+        https://bugs.webkit.org/show_bug.cgi?id=44043
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::createPlugin):
+
 2010-08-18  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Unreviewed, trivial Symbian build fix.

@@ -1461,7 +1461,11 @@ PassRefPtr<Widget> FrameLoaderClientQt::createPlugin(const IntSize& pluginSize, 
         Vector<String> values = paramValues;
         if (mimeType == "application/x-shockwave-flash") {
             QWebPageClient* client = m_webFrame->page()->d->client;
+#if defined(MOZ_PLATFORM_MAEMO) && (MOZ_PLATFORM_MAEMO == 5)
+            if (true) {
+#else
             if (!client || !qobject_cast<QWidget*>(client->pluginParent())) {
+#endif
                 // inject wmode=opaque when there is no client or the client is not a QWebView
                 size_t wmodeIndex = params.find("wmode");
                 if (wmodeIndex == -1) {
