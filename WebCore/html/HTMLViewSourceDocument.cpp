@@ -53,7 +53,7 @@ HTMLViewSourceDocument::HTMLViewSourceDocument(Frame* frame, const KURL& url, co
     setUsesBeforeAfterRules(true);
 }
 
-DocumentParser* HTMLViewSourceDocument::createParser()
+PassRefPtr<DocumentParser> HTMLViewSourceDocument::createParser()
 {
     // Use HTMLDocumentParser if applicable, otherwise use TextDocumentParser.
     if (m_type == "text/html" || m_type == "application/xhtml+xml" || m_type == "image/svg+xml" || DOMImplementation::isXMLMIMEType(m_type)
@@ -61,7 +61,7 @@ DocumentParser* HTMLViewSourceDocument::createParser()
         || m_type == "application/vnd.wap.xhtml+xml"
 #endif
         )
-        return new HTMLViewSourceParser(this);
+        return HTMLViewSourceParser::create(this);
 
     return createTextDocumentParser(this);
 }

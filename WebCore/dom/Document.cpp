@@ -498,7 +498,7 @@ void Document::removedLastRef()
         deleteAllValues(m_markers);
         m_markers.clear();
 
-        m_parser.clear();
+        detachParser();
 
         m_cssCanvasElements.clear();
 
@@ -531,7 +531,14 @@ Document::~Document()
     destroyAllWrapperCaches();
 #endif
 
-    m_parser.clear();
+    // Currently we believe that Document can never outlive the parser.
+    // Although the Document may be replaced synchronously, DocumentParsers
+    // generally keep at least one reference to an Element which would in turn
+    // has a reference to the Document.  If you hit this ASSERT, then that
+    // assumption is wrong.  DocumentParser::detach() should ensure that even
+    // if the DocumentParser outlives the Document it won't cause badness.
+    ASSERT(!m_parser || m_parser->refCount() == 1);
+    detachParser();
     m_document = 0;
     m_docLoader.clear();
 
@@ -1778,10 +1785,10 @@ void Document::setVisuallyOrdered()
         renderer()->style()->setVisuallyOrdered(true);
 }
 
-DocumentParser* Document::createParser()
+PassRefPtr<DocumentParser> Document::createParser()
 {
     // FIXME: this should probably pass the frame instead
-    return new XMLDocumentParser(this, view());
+    return XMLDocumentParser::create(this, view());
 }
 
 ScriptableDocumentParser* Document::scriptableDocumentParser() const
@@ -1815,6 +1822,14 @@ void Document::open(Document* ownerDocument)
         m_frame->loader()->didExplicitOpen();
 }
 
+void Document::detachParser()
+{
+    if (!m_parser)
+        return;
+    m_parser->detach();
+    m_parser.clear();
+}
+
 void Document::cancelParsing()
 {
     if (m_parser) {
@@ -1822,7 +1837,7 @@ void Document::cancelParsing()
         // the onload handler when closing as a side effect of a cancel-style
         // change, such as opening a new document or closing the window while
         // still parsing
-        m_parser.clear();
+        detachParser();
         close();
     }
 }
@@ -1830,8 +1845,6 @@ void Document::cancelParsing()
 void Document::implicitOpen()
 {
     cancelParsing();
-
-    m_parser.clear();
 
     removeChildren();
 
@@ -1930,7 +1943,7 @@ void Document::implicitClose()
 
     // We have to clear the parser, in case someone document.write()s from the
     // onLoad event handler, as in Radar 3206524.
-    m_parser.clear();
+    detachParser();
 
     // Parser should have picked up all preloads by now
     m_docLoader->clearPreloads();

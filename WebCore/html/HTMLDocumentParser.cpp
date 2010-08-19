@@ -119,10 +119,21 @@ HTMLDocumentParser::HTMLDocumentParser(DocumentFragment* fragment, Element* cont
 
 HTMLDocumentParser::~HTMLDocumentParser()
 {
-    // FIXME: We'd like to ASSERT that normal operation of this class clears
-    // out any delayed actions, but we can't because we're unceremoniously
-    // deleted.  If there were a required call to some sort of cancel function,
-    // then we could ASSERT some invariants here.
+    ASSERT(!m_parserScheduler);
+    ASSERT(!m_writeNestingLevel);
+    ASSERT(!m_preloadScanner);
+}
+
+void HTMLDocumentParser::detach()
+{
+    DocumentParser::detach();
+    if (m_scriptRunner)
+        m_scriptRunner->detach();
+    m_treeBuilder->detach();
+    // FIXME: It seems wrong that we would have a preload scanner here.
+    // Yet during fast/dom/HTMLScriptElement/script-load-events.html we do.
+    m_preloadScanner.clear();
+    m_parserScheduler.clear(); // Deleting the scheduler will clear any timers.
 }
 
 void HTMLDocumentParser::stopParsing()
@@ -158,6 +169,10 @@ bool HTMLDocumentParser::isScheduledForResume() const
 // Used by HTMLParserScheduler
 void HTMLDocumentParser::resumeParsingAfterYield()
 {
+    // pumpTokenizer can cause this parser to be detached from the Document,
+    // but we need to ensure it isn't deleted yet.
+    RefPtr<HTMLDocumentParser> protect(this);
+
     // We should never be here unless we can pump immediately.  Call pumpTokenizer()
     // directly so that ASSERTS will fire if we're wrong.
     pumpTokenizer(AllowYield);
@@ -178,9 +193,12 @@ bool HTMLDocumentParser::runScriptsForPausedTreeBuilder()
 
 void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
 {
+    ASSERT(m_document);
     ASSERT(!m_parserStopped);
     ASSERT(!m_treeBuilder->isPaused());
     ASSERT(!isScheduledForResume());
+    // ASSERT that this object is both attached to the Document and protected.
+    ASSERT(refCount() >= 2);
 
     // We tell the InspectorTimelineAgent about every pump, even if we
     // end up pumping nothing.  It can filter out empty pumps itself.
@@ -188,12 +206,16 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
 
     HTMLParserScheduler::PumpSession session;
     // FIXME: This loop body has is now too long and needs cleanup.
-    while (mode == ForceSynchronous || (!m_parserStopped && m_parserScheduler->shouldContinueParsing(session))) {
+    while (mode == ForceSynchronous || m_parserScheduler->shouldContinueParsing(session)) {
         if (!m_tokenizer->nextToken(m_input.current(), m_token))
             break;
 
         m_treeBuilder->constructTreeFromToken(m_token);
         m_token.clear();
+
+        // JavaScript may have stopped or detached the parser.
+        if (!m_document || m_parserStopped)
+            return;
 
         // The parser will pause itself when waiting on a script to load or run.
         if (!m_treeBuilder->isPaused())
@@ -202,9 +224,18 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
         // If we're paused waiting for a script, we try to execute scripts before continuing.
         bool shouldContinueParsing = runScriptsForPausedTreeBuilder();
         m_treeBuilder->setPaused(!shouldContinueParsing);
+
+        // JavaScript may have stopped or detached the parser.
+        if (!m_document || m_parserStopped)
+            return;
+
         if (!shouldContinueParsing)
             break;
     }
+
+    // Ensure we haven't been totally deref'ed after pumping. Any caller of this
+    // function should be holding a RefPtr to this to ensure we weren't deleted.
+    ASSERT(refCount() >= 1);
 
     if (isWaitingForScripts()) {
         ASSERT(m_tokenizer->state() == HTMLTokenizer::DataState);
@@ -247,6 +278,10 @@ void HTMLDocumentParser::insert(const SegmentedString& source)
     if (m_parserStopped)
         return;
 
+    // pumpTokenizer can cause this parser to be detached from the Document,
+    // but we need to ensure it isn't deleted yet.
+    RefPtr<HTMLDocumentParser> protect(this);
+
     {
         NestingLevelIncrementer nestingLevelIncrementer(m_writeNestingLevel);
 
@@ -263,6 +298,10 @@ void HTMLDocumentParser::append(const SegmentedString& source)
 {
     if (m_parserStopped)
         return;
+
+    // pumpTokenizer can cause this parser to be detached from the Document,
+    // but we need to ensure it isn't deleted yet.
+    RefPtr<HTMLDocumentParser> protect(this);
 
     {
         NestingLevelIncrementer nestingLevelIncrementer(m_writeNestingLevel);
@@ -286,7 +325,13 @@ void HTMLDocumentParser::append(const SegmentedString& source)
 
 void HTMLDocumentParser::end()
 {
+    ASSERT(m_document);
     ASSERT(!isScheduledForResume());
+
+    // pumpTokenizer can cause this parser to be detached from the Document,
+    // but we need to ensure it isn't deleted yet.
+    RefPtr<HTMLDocumentParser> protect(this);
+
     // NOTE: This pump should only ever emit buffered character tokens,
     // so ForceSynchronous vs. AllowYield should be meaningless.
     pumpTokenizerIfPossible(ForceSynchronous);
@@ -309,6 +354,10 @@ void HTMLDocumentParser::attemptToEnd()
 
 void HTMLDocumentParser::endIfDelayed()
 {
+    // If we've already been detached, don't bother ending.
+    if (!m_document)
+        return;
+
     if (!m_endWasDelayed || shouldDelayEnd())
         return;
 
@@ -318,6 +367,11 @@ void HTMLDocumentParser::endIfDelayed()
 
 void HTMLDocumentParser::finish()
 {
+    // FIXME: We should ASSERT(!m_parserStopped) here, since it does not
+    // makes sense to call any methods on DocumentParser once it's been stopped.
+    // However, FrameLoader::stop calls Document::finishParsing unconditionally
+    // which in turn calls m_parser->finish().
+
     // We're not going to get any more data off the network, so we tell the
     // input stream we've reached the end of file.  finish() can be called more
     // than once, if the first time does not call end().
@@ -398,6 +452,10 @@ bool HTMLDocumentParser::shouldLoadExternalScriptFromSrc(const AtomicString& src
 
 void HTMLDocumentParser::notifyFinished(CachedResource* cachedResource)
 {
+    // pumpTokenizer can cause this parser to be detached from the Document,
+    // but we need to ensure it isn't deleted yet.
+    RefPtr<HTMLDocumentParser> protect(this);
+
     ASSERT(m_scriptRunner);
     ASSERT(!inScriptExecution());
     ASSERT(m_treeBuilder->isPaused());
@@ -420,6 +478,11 @@ void HTMLDocumentParser::executeScriptsWaitingForStylesheets()
     // is a re-entrant call from encountering a </ style> tag.
     if (!m_scriptRunner->hasScriptsWaitingForStylesheets())
         return;
+
+    // pumpTokenizer can cause this parser to be detached from the Document,
+    // but we need to ensure it isn't deleted yet.
+    RefPtr<HTMLDocumentParser> protect(this);
+
     ASSERT(!m_scriptRunner->isExecutingScript());
     ASSERT(m_treeBuilder->isPaused());
     // Note: We only ever wait on one script at a time, so we always know this
@@ -438,10 +501,11 @@ ScriptController* HTMLDocumentParser::script() const
 
 void HTMLDocumentParser::parseDocumentFragment(const String& source, DocumentFragment* fragment, Element* contextElement, FragmentScriptingPermission scriptingPermission)
 {
-    HTMLDocumentParser parser(fragment, contextElement, scriptingPermission);
-    parser.insert(source); // Use insert() so that the parser will not yield.
-    parser.finish();
-    ASSERT(!parser.processingData()); // Make sure we're done. <rdar://problem/3963151>
+    RefPtr<HTMLDocumentParser> parser = HTMLDocumentParser::create(fragment, contextElement, scriptingPermission);
+    parser->insert(source); // Use insert() so that the parser will not yield.
+    parser->finish();
+    ASSERT(!parser->processingData()); // Make sure we're done. <rdar://problem/3963151>
+    parser->detach(); // Allows ~DocumentParser to assert it was detached before destruction.
 }
 
 }

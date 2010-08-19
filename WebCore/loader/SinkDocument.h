@@ -40,7 +40,7 @@ public:
 private:
     SinkDocument(Frame*, const KURL&);
     
-    virtual DocumentParser* createParser();
+    virtual PassRefPtr<DocumentParser> createParser();
 };
 
 

@@ -1,3 +1,147 @@
+2010-08-17  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Make DocumentParser safer to use
+        https://bugs.webkit.org/show_bug.cgi?id=43055
+
+        Make DocumentParser and its subclasses RefCounted, and protect
+        HTMLDocumentParser during parsing. It's possible for a parser to
+        get deleted if certain actions (e.g., a document.write()) occur
+        synchronously.
+
+        The original version of this patch was written by Nate Chapin.
+
+        DocumentParser doesn't actually have to be fully RefCounted, since
+        the only two things which should ever hold a reference to it are
+        Document and DocumentParser itself.  However using RefCounted and
+        RefPtr was easier/cleaner than inventing a custom ref() scheme.
+
+        This deploys a new "detach()" method throughout the parsing
+        framework.  detach() causes the parser to disconnect from the
+        document so that no further modifications will be made to the
+        document while any possible DocumentParser stacks are unwound.
+
+        The irony of this patch is that the new detach() system is never
+        used, since Document always outlives the DocumentParser in all of
+        our layout tests.  There is an ASSERT in ~Document() to verify
+        that the DocumentParser will not outlive the Document.
+
+        However I expect that we will soon either find new test cases, or change
+        the architecture in such a way that DocumentParser will outlive
+        Document.  At which point, the detach() plumbing will be crucial.
+        Right now detach() serves as a safe-guard against use-after-free bugs
+        for any case where DocumentParser does outlive the Document.
+
+        This also fixes test cases attached to:
+        https://bugs.webkit.org/show_bug.cgi?id=42099
+
+        Tests: fast/frames/document-write-in-iframe-onload.html
+               fast/frames/set-parent-src-synchronously.html
+               fast/parser/document-close-iframe-load.html
+               fast/parser/document-close-nested-iframe-load.html
+               fast/parser/iframe-sets-parent-to-javascript-url.html
+
+        * dom/Document.cpp:
+         - Added a new detachParser() call to be used anywhere we
+           used to call m_parser.clear().
+           There is an ASSERT in ~DocumentParser which ensures that
+           we get this right.
+        (WebCore::Document::removedLastRef):
+        (WebCore::Document::~Document):
+        (WebCore::Document::createParser):
+        (WebCore::Document::detachParser):
+        (WebCore::Document::cancelParsing):
+        (WebCore::Document::implicitOpen):
+         - removed redundant m_parser.clear()
+        (WebCore::Document::implicitClose):
+        * dom/Document.h:
+        * dom/DocumentParser.cpp:
+        (WebCore::DocumentParser::~DocumentParser):
+         - ASSERT that callers always call detach() before destruction.
+         - This ASSERT might prove too cumbersome, but for now it's useful.
+        (WebCore::DocumentParser::detach):
+        * dom/DocumentParser.h:
+        * dom/RawDataDocumentParser.h:
+        * dom/XMLDocumentParser.cpp:
+        (WebCore::XMLDocumentParser::finish):
+         - Add a FIXME explaining part of the reason why
+           stopParsing() and detach() are separate concepts.
+        * dom/XMLDocumentParser.h:
+        (WebCore::XMLDocumentParser::create):
+        * dom/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::parseDocumentFragment):
+        * dom/XMLDocumentParserQt.cpp:
+        (WebCore::XMLDocumentParser::parseDocumentFragment):
+        * html/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::detach):
+        (WebCore::HTMLConstructionSite::dispatchDocumentElementAvailableIfNeeded):
+        * html/HTMLConstructionSite.h:
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::createParser):
+        * html/HTMLDocument.h:
+        * html/HTMLDocumentParser.cpp:
+         - We need to protect(this) before calling into any code
+           which might cause the parser to be destroyed.
+        (WebCore::HTMLDocumentParser::~HTMLDocumentParser):
+        (WebCore::HTMLDocumentParser::detach):
+        (WebCore::HTMLDocumentParser::resumeParsingAfterYield):
+        (WebCore::HTMLDocumentParser::pumpTokenizer):
+        (WebCore::HTMLDocumentParser::insert):
+        (WebCore::HTMLDocumentParser::append):
+        (WebCore::HTMLDocumentParser::end):
+        (WebCore::HTMLDocumentParser::finish):
+        (WebCore::HTMLDocumentParser::notifyFinished):
+        (WebCore::HTMLDocumentParser::executeScriptsWaitingForStylesheets):
+        (WebCore::HTMLDocumentParser::parseDocumentFragment):
+        * html/HTMLDocumentParser.h:
+        (WebCore::HTMLDocumentParser::create):
+        * html/HTMLScriptRunner.cpp:
+        (WebCore::HTMLScriptRunner::detach):
+        (WebCore::HTMLScriptRunner::executeParsingBlockingScript):
+        (WebCore::HTMLScriptRunner::executeScript):
+        (WebCore::HTMLScriptRunner::executeScriptsWaitingForStylesheets):
+        (WebCore::HTMLScriptRunner::runScript):
+        * html/HTMLScriptRunner.h:
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::detach):
+        (WebCore::HTMLTreeBuilder::passTokenToLegacyParser):
+        (WebCore::HTMLTreeBuilder::finished):
+        * html/HTMLTreeBuilder.h:
+        * html/HTMLViewSourceDocument.cpp:
+        (WebCore::HTMLViewSourceDocument::createParser):
+        * html/HTMLViewSourceDocument.h:
+        * html/HTMLViewSourceParser.cpp:
+        (WebCore::HTMLViewSourceParser::HTMLViewSourceParser):
+        * html/HTMLViewSourceParser.h:
+        (WebCore::HTMLViewSourceParser::create):
+        * loader/FTPDirectoryDocument.cpp:
+        (WebCore::FTPDirectoryDocumentParser::create):
+        (WebCore::FTPDirectoryDocument::createParser):
+        * loader/FTPDirectoryDocument.h:
+        * loader/ImageDocument.cpp:
+        (WebCore::ImageDocumentParser::create):
+        (WebCore::ImageDocumentParser::ImageDocumentParser):
+        (WebCore::ImageDocument::createParser):
+        * loader/ImageDocument.h:
+        * loader/MediaDocument.cpp:
+        (WebCore::MediaDocumentParser::create):
+        (WebCore::MediaDocument::createParser):
+        * loader/MediaDocument.h:
+        * loader/PluginDocument.cpp:
+        (WebCore::PluginDocumentParser::create):
+        (WebCore::PluginDocument::createParser):
+        * loader/PluginDocument.h:
+        * loader/SinkDocument.cpp:
+        (WebCore::SinkDocumentParser::create):
+        (WebCore::SinkDocument::createParser):
+        * loader/SinkDocument.h:
+        * loader/TextDocument.cpp:
+        (WebCore::TextDocumentParser::create):
+        (WebCore::TextDocument::createParser):
+        (WebCore::createTextDocumentParser):
+        * loader/TextDocument.h:
+
 2010-08-19  David Kilzer  <ddkilzer@apple.com>
 
         Fix compilation of SelectElement.cpp with ARROW_KEYS_POP_MENU == 0

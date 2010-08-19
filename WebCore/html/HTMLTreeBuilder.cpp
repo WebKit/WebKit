@@ -426,6 +426,16 @@ HTMLTreeBuilder::~HTMLTreeBuilder()
 {
 }
 
+void HTMLTreeBuilder::detach()
+{
+    // This call makes little sense in fragment mode, but for consistency
+    // DocumentParser expects detach() to always be called before it's destroyed.
+    m_document = 0;
+    // HTMLConstructionSite might be on the callstack when detach() is called
+    // otherwise we'd just call m_tree.clear() here instead.
+    m_tree.detach();
+}
+
 HTMLTreeBuilder::FragmentParsingContext::FragmentParsingContext()
     : m_fragment(0)
     , m_contextElement(0)
@@ -538,6 +548,7 @@ HTMLTokenizer::State HTMLTreeBuilder::adjustedLexerState(HTMLTokenizer::State st
 
 void HTMLTreeBuilder::passTokenToLegacyParser(HTMLToken& token)
 {
+    ASSERT(m_document);
     if (token.type() == HTMLToken::DOCTYPE) {
         DoctypeToken doctypeToken;
         doctypeToken.m_name.append(token.name().data(), token.name().size());
@@ -2935,6 +2946,7 @@ void HTMLTreeBuilder::processScriptStartTag(AtomicHTMLToken& token)
 
 void HTMLTreeBuilder::finished()
 {
+    ASSERT(m_document);
     // We should call m_document->finishedParsing() here, except
     // m_legacyTreeBuilder->finished() does it for us.
     if (m_legacyTreeBuilder) {
@@ -2947,7 +2959,7 @@ void HTMLTreeBuilder::finished()
         return;
     }
 
-    // Warning, this may delete the parser, so don't try to do anything else after this.
+    // Warning, this may detach the parser. Do not do anything else after this.
     m_document->finishedParsing();
 }
 

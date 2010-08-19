@@ -1,3 +1,28 @@
+2010-08-16  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Make DocumentParser safer to use
+        https://bugs.webkit.org/show_bug.cgi?id=43055
+
+        This also includes a test from
+        https://bugs.webkit.org/show_bug.cgi?id=42099
+
+        These tests were kindly provided by Nate Chapin and Adam Barth.
+
+        * fast/frames/document-write-in-iframe-onload-expected.txt: Copied from LayoutTests/editing/selection/5136696-expected.txt.
+        * fast/frames/document-write-in-iframe-onload.html: Added.
+        * fast/frames/resources/set-src-to-javascript-url.html: Added.
+        * fast/frames/set-parent-src-synchronously-expected.txt: Added.
+        * fast/frames/set-parent-src-synchronously.html: Added.
+        * fast/parser/document-close-iframe-load-expected.txt: Added.
+        * fast/parser/document-close-iframe-load.html: Added.
+        * fast/parser/document-close-nested-iframe-load-expected.txt: Added.
+        * fast/parser/document-close-nested-iframe-load.html: Added.
+        * fast/parser/iframe-sets-parent-to-javascript-url-expected.txt: Added.
+        * fast/parser/iframe-sets-parent-to-javascript-url.html: Added.
+        * fast/parser/resources/set-parent-to-javascript-url.html: Added.
+
 2010-08-18  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.

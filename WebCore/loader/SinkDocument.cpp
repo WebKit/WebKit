@@ -32,12 +32,17 @@ namespace WebCore {
 
 class SinkDocumentParser : public RawDataDocumentParser {
 public:
+    static PassRefPtr<SinkDocumentParser> create(SinkDocument* document)
+    {
+        return adoptRef(new SinkDocumentParser(document));
+    }
+    
+private:
     SinkDocumentParser(SinkDocument* document)
         : RawDataDocumentParser(document)
     {
     }
 
-private:
     // Ignore all data.
     virtual void appendBytes(DocumentWriter*, const char*, int, bool) { }
 };
@@ -48,9 +53,9 @@ SinkDocument::SinkDocument(Frame* frame, const KURL& url)
     setParseMode(Compat);
 }
 
-DocumentParser* SinkDocument::createParser()
+PassRefPtr<DocumentParser> SinkDocument::createParser()
 {
-    return new SinkDocumentParser(this);
+    return SinkDocumentParser::create(this);
 }
 
 } // namespace WebCore

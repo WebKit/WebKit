@@ -57,6 +57,8 @@ public:
     HTMLTreeBuilder(HTMLTokenizer*, DocumentFragment*, Element* contextElement, FragmentScriptingPermission);
     ~HTMLTreeBuilder();
 
+    void detach();
+
     void setPaused(bool paused) { m_isPaused = paused; }
     bool isPaused() const { return m_isPaused; }
 

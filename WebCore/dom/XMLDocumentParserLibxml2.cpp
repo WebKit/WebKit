@@ -1378,22 +1378,24 @@ bool XMLDocumentParser::parseDocumentFragment(const String& chunk, DocumentFragm
     if (!chunk.length())
         return true;
 
-    XMLDocumentParser parser(fragment, parent, scriptingPermission);
+    RefPtr<XMLDocumentParser> parser = XMLDocumentParser::create(fragment, parent, scriptingPermission);
 
     CString chunkAsUtf8 = chunk.utf8();
-    parser.initializeParserContext(chunkAsUtf8.data());
+    parser->initializeParserContext(chunkAsUtf8.data());
 
-    xmlParseContent(parser.context());
+    xmlParseContent(parser->context());
 
-    parser.endDocument();
+    parser->endDocument();
 
     // Check if all the chunk has been processed.
-    long bytesProcessed = xmlByteConsumed(parser.context());
+    long bytesProcessed = xmlByteConsumed(parser->context());
     if (bytesProcessed == -1 || ((unsigned long)bytesProcessed) != chunkAsUtf8.length())
         return false;
 
+    parser->detach(); // Allows ~DocumentParser to assert it was detached before destruction.
+
     // No error if the chunk is well formed or it is not but we have no error.
-    return parser.context()->wellFormed || xmlCtxtGetLastError(parser.context()) == 0;
+    return parser->context()->wellFormed || !xmlCtxtGetLastError(parser->context());
 }
 
 // --------------------------------

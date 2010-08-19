@@ -40,7 +40,7 @@ public:
 
 private:
     FTPDirectoryDocument(Frame*, const KURL&);
-    virtual DocumentParser* createParser();
+    virtual PassRefPtr<DocumentParser> createParser();
 };
     
 } // namespace WebCore

@@ -46,7 +46,7 @@ public:
 private:
     PluginDocument(Frame*, const KURL&);
 
-    virtual DocumentParser* createParser();
+    virtual PassRefPtr<DocumentParser> createParser();
 };
     
 }

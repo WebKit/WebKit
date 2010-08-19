@@ -45,15 +45,15 @@ class ScriptSourceCode;
 
 class HTMLViewSourceParser :  public DecodedDataDocumentParser {
 public:
-    // FIXME: Make private with a create method.
-    HTMLViewSourceParser(HTMLViewSourceDocument* document)
-        : DecodedDataDocumentParser(document)
+    static PassRefPtr<HTMLViewSourceParser> create(HTMLViewSourceDocument* document)
     {
+        return adoptRef(new HTMLViewSourceParser(document));
     }
-
     virtual ~HTMLViewSourceParser();
 
 private:
+    HTMLViewSourceParser(HTMLViewSourceDocument*);
+
     // DocumentParser
     virtual void insert(const SegmentedString&);
     virtual void append(const SegmentedString&);

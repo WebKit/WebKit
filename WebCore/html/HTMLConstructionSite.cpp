@@ -146,6 +146,11 @@ HTMLConstructionSite::~HTMLConstructionSite()
 {
 }
 
+void HTMLConstructionSite::detach()
+{
+    m_document = 0;
+}
+
 void HTMLConstructionSite::setForm(HTMLFormElement* form)
 {
     // This method should only be needed for HTMLTreeBuilder in the fragment case.
@@ -160,6 +165,7 @@ PassRefPtr<HTMLFormElement> HTMLConstructionSite::takeForm()
 
 void HTMLConstructionSite::dispatchDocumentElementAvailableIfNeeded()
 {
+    ASSERT(m_document);
     if (m_document->frame() && !m_isParsingFragment)
         m_document->frame()->loader()->dispatchDocumentElementAvailable();
 }

@@ -42,11 +42,22 @@ using namespace HTMLNames;
 // which started the Tokenizer in the PlainText state.
 class TextDocumentParser : public DecodedDataDocumentParser {
 public:
-    TextDocumentParser(Document*);
+    static PassRefPtr<TextDocumentParser> create(Document* document)
+    {
+        return adoptRef(new TextDocumentParser(document));
+    }
+
+    static PassRefPtr<TextDocumentParser> create(HTMLViewSourceDocument* document)
+    {
+        return adoptRef(new TextDocumentParser(document));
+    }
+
     virtual ~TextDocumentParser();
+    
+private:
+    TextDocumentParser(Document*);
     TextDocumentParser(HTMLViewSourceDocument*);
 
-private:
     virtual void insert(const SegmentedString&);
     virtual void append(const SegmentedString&);
     virtual void finish();
@@ -193,14 +204,14 @@ TextDocument::TextDocument(Frame* frame, const KURL& url)
 {
 }
 
-DocumentParser* TextDocument::createParser()
+PassRefPtr<DocumentParser> TextDocument::createParser()
 {
-    return new TextDocumentParser(this);
+    return TextDocumentParser::create(this);
 }
 
-DocumentParser* createTextDocumentParser(HTMLViewSourceDocument* document)
+PassRefPtr<DocumentParser> createTextDocumentParser(HTMLViewSourceDocument* document)
 {
-    return new TextDocumentParser(document);
+    return TextDocumentParser::create(document);
 }
 
 }

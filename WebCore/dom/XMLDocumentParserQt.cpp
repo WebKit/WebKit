@@ -259,13 +259,14 @@ bool XMLDocumentParser::parseDocumentFragment(const String& chunk, DocumentFragm
     if (!chunk.length())
         return true;
 
-    XMLDocumentParser parser(fragment, parent, scriptingPermission);
+    RefPtr<XMLDocumentParser> parser = XMLDocumentParser::create(fragment, parent, scriptingPermission);
 
-    parser.append(String("<qxmlstreamdummyelement>"));
-    parser.append(chunk);
-    parser.append(String("</qxmlstreamdummyelement>"));
-    parser.finish();
-    return !parser.hasError();
+    parser->append(String("<qxmlstreamdummyelement>"));
+    parser->append(chunk);
+    parser->append(String("</qxmlstreamdummyelement>"));
+    parser->finish();
+    parser->detach(); // Allows ~DocumentParser to assert it was detached before destruction.
+    return !parser->hasError();
 }
 
 // --------------------------------

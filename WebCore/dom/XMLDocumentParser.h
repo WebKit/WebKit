@@ -72,8 +72,15 @@ namespace WebCore {
 
     class XMLDocumentParser : public ScriptableDocumentParser, public CachedResourceClient {
     public:
-        XMLDocumentParser(Document*, FrameView* = 0);
-        XMLDocumentParser(DocumentFragment*, Element*, FragmentScriptingPermission);
+        static PassRefPtr<XMLDocumentParser> create(Document* document, FrameView* view)
+        {
+            return adoptRef(new XMLDocumentParser(document, view));
+        }
+        static PassRefPtr<XMLDocumentParser> create(DocumentFragment* fragment, Element* element, FragmentScriptingPermission permission)
+        {
+            return adoptRef(new XMLDocumentParser(fragment, element, permission));
+        }
+
         ~XMLDocumentParser();
 
         // Exposed for callbacks:
@@ -98,6 +105,9 @@ namespace WebCore {
         virtual int columnNumber() const;
 
     private:
+        XMLDocumentParser(Document*, FrameView* = 0);
+        XMLDocumentParser(DocumentFragment*, Element*, FragmentScriptingPermission);
+
         // From DocumentParser
         virtual void insert(const SegmentedString&);
         virtual void append(const SegmentedString&);

@@ -45,6 +45,8 @@ public:
     HTMLScriptRunner(Document*, HTMLScriptRunnerHost*);
     ~HTMLScriptRunner();
 
+    void detach();
+
     // Processes the passed in script and any pending scripts if possible.
     bool execute(PassRefPtr<Element> scriptToProcess, int scriptStartLine);
 

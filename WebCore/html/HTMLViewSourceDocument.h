@@ -49,7 +49,7 @@ private:
     HTMLViewSourceDocument(Frame*, const KURL&, const String& mimeType);
 
     // Returns HTMLViewSourceParser or TextDocumentParser based on m_type.
-    virtual DocumentParser* createParser();
+    virtual PassRefPtr<DocumentParser> createParser();
 
     void processDoctypeToken(const String& source, HTMLToken&);
     void processTagToken(const String& source, HTMLToken&);

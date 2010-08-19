@@ -233,6 +233,11 @@ void XMLDocumentParser::end()
 
 void XMLDocumentParser::finish()
 {
+    // FIXME: We should ASSERT(!m_parserStopped) here, since it does not
+    // makes sense to call any methods on DocumentParser once it's been stopped.
+    // However, FrameLoader::stop calls Document::finishParsing unconditionally
+    // which in turn calls m_parser->finish().
+
     if (m_parserPaused)
         m_finishCalled = true;
     else

@@ -41,10 +41,10 @@ public:
 private:
     TextDocument(Frame*, const KURL&);
     
-    virtual DocumentParser* createParser();
+    virtual PassRefPtr<DocumentParser> createParser();
 };
 
-DocumentParser* createTextDocumentParser(HTMLViewSourceDocument*);
+PassRefPtr<DocumentParser> createTextDocumentParser(HTMLViewSourceDocument*);
 
 }
 

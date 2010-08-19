@@ -32,6 +32,11 @@
 
 namespace WebCore {
 
+HTMLViewSourceParser::HTMLViewSourceParser(HTMLViewSourceDocument* document)
+    : DecodedDataDocumentParser(document)
+{
+}
+
 HTMLViewSourceParser::~HTMLViewSourceParser()
 {
 }

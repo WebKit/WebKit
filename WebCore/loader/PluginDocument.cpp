@@ -43,15 +43,20 @@ using namespace HTMLNames;
 // FIXME: Share more code with MediaDocumentParser.
 class PluginDocumentParser : public RawDataDocumentParser {
 public:
+    static PassRefPtr<PluginDocumentParser> create(PluginDocument* document)
+    {
+        return adoptRef(new PluginDocumentParser(document));
+    }
+
+    static Widget* pluginWidgetFromDocument(Document*);
+    
+private:
     PluginDocumentParser(Document* document)
         : RawDataDocumentParser(document)
         , m_embedElement(0)
     {
     }
 
-    static Widget* pluginWidgetFromDocument(Document*);
-
-private:
     virtual void appendBytes(DocumentWriter*, const char*, int, bool);
 
     void createDocumentStructure();
@@ -130,9 +135,9 @@ PluginDocument::PluginDocument(Frame* frame, const KURL& url)
     setParseMode(Compat);
 }
     
-DocumentParser* PluginDocument::createParser()
+PassRefPtr<DocumentParser> PluginDocument::createParser()
 {
-    return new PluginDocumentParser(this);
+    return PluginDocumentParser::create(this);
 }
 
 Widget* PluginDocument::pluginWidget()
