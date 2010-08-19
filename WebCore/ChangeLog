@@ -1,3 +1,22 @@
+2010-08-19  Jeremy Orlow  <jorlow@chromium.org>
+
+        Chromium build fix.
+
+        Use ASSERT_UNUSED on variables that aren't used besides by the ASSERT.
+
+        * storage/IDBDatabaseBackendImpl.cpp:
+        (WebCore::IDBDatabaseBackendImpl::createObjectStore):
+        (WebCore::IDBDatabaseBackendImpl::removeObjectStore):
+        (WebCore::IDBDatabaseBackendImpl::loadObjectStores):
+        * storage/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::get):
+        (WebCore::IDBObjectStoreBackendImpl::put):
+        (WebCore::IDBObjectStoreBackendImpl::remove):
+        (WebCore::IDBObjectStoreBackendImpl::createIndex):
+        (WebCore::IDBObjectStoreBackendImpl::removeIndex):
+        (WebCore::IDBObjectStoreBackendImpl::openCursor):
+        (WebCore::IDBObjectStoreBackendImpl::loadIndexes):
+
 2010-08-19  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.

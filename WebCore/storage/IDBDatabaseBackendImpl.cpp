@@ -133,12 +133,12 @@ void IDBDatabaseBackendImpl::createObjectStore(const String& name, const String&
 
     SQLiteStatement insert(sqliteDatabase(), "INSERT INTO ObjectStores (name, keyPath, doAutoIncrement) VALUES (?, ?, ?)");
     bool ok = insert.prepare() == SQLResultOk;
-    ASSERT(ok); // FIXME: Better error handling.
+    ASSERT_UNUSED(ok, ok); // FIXME: Better error handling.
     insert.bindText(1, name);
     insert.bindText(2, keyPath);
     insert.bindInt(3, static_cast<int>(autoIncrement));
     ok = insert.step() == SQLResultDone;
-    ASSERT(ok); // FIXME: Better error handling.
+    ASSERT_UNUSED(ok, ok); // FIXME: Better error handling.
     int64_t id = sqliteDatabase().lastInsertRowID();
 
     RefPtr<IDBObjectStoreBackendInterface> objectStore = IDBObjectStoreBackendImpl::create(this, id, name, keyPath, autoIncrement);
@@ -163,10 +163,10 @@ void IDBDatabaseBackendImpl::removeObjectStore(const String& name, PassRefPtr<ID
 
     SQLiteStatement deleteQuery(sqliteDatabase(), "DELETE FROM ObjectStores WHERE name = ?");
     bool ok = deleteQuery.prepare() == SQLResultOk;
-    ASSERT(ok); // FIXME: Better error handling.
+    ASSERT_UNUSED(ok, ok); // FIXME: Better error handling.
     deleteQuery.bindText(1, name);
     ok = deleteQuery.step() == SQLResultDone;
-    ASSERT(ok); // FIXME: Better error handling.
+    ASSERT_UNUSED(ok, ok); // FIXME: Better error handling.
 
     m_objectStores.remove(name);
     callbacks->onSuccess();
@@ -181,7 +181,7 @@ void IDBDatabaseBackendImpl::loadObjectStores()
 {
     SQLiteStatement objectStoresQuery(sqliteDatabase(), "SELECT id, name, keyPath, doAutoIncrement FROM ObjectStores");
     bool ok = objectStoresQuery.prepare() == SQLResultOk;
-    ASSERT(ok); // FIXME: Better error handling?
+    ASSERT_UNUSED(ok, ok); // FIXME: Better error handling?
 
     while (objectStoresQuery.step() == SQLResultRow) {
         int64_t id = objectStoresQuery.getColumnInt64(0);
