@@ -30,7 +30,8 @@
 
 #include "config.h"
 
-#include "GLES2Texture.h"
+#include "TilingData.h"
+
 #include <gtest/gtest.h>
 
 using namespace WebCore;

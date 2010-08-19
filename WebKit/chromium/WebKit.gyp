@@ -751,8 +751,7 @@
                         'tests/KeyboardTest.cpp',
                         'tests/KURLTest.cpp',
                         'tests/RunAllTests.cpp',
-                        # FIXME: This test is compile failing on mac.
-                        # 'tests/TilingDataTest.cpp',
+                        'tests/TilingDataTest.cpp',
                     ],
                     'conditions': [
                         ['OS=="win"', {
