@@ -26,6 +26,7 @@
 #include "NetscapePlugin.h"
 
 #include "NotImplemented.h"
+#include <WebCore/GraphicsContext.h>
 
 using namespace WebCore;
 
@@ -37,9 +38,47 @@ bool NetscapePlugin::platformPostInitialize()
     return true;
 }
 
-void NetscapePlugin::platformPaint(GraphicsContext*, const IntRect&)
+void NetscapePlugin::platformPaint(GraphicsContext* context, const IntRect& dirtyRect)
 {
-    notImplemented();
+    // FIXME: Call SetWindow here if we haven't called it yet (see r59904).
+
+    if (m_isWindowed) {
+        // FIXME: Paint windowed plugins into context if context->shouldIncludeChildWindows() is true.
+        return;
+    }
+
+    // FIXME: Support transparent plugins.
+    HDC hdc = context->getWindowsContext(dirtyRect, false);
+
+    m_npWindow.type = NPWindowTypeDrawable;
+    m_npWindow.window = hdc;
+
+    WINDOWPOS windowpos = { 0, 0, 0, 0, 0, 0, 0 };
+
+    windowpos.x = m_frameRect.x();
+    windowpos.y = m_frameRect.y();
+    windowpos.cx = m_frameRect.width();
+    windowpos.cy = m_frameRect.height();
+
+    NPEvent npEvent;
+    npEvent.event = WM_WINDOWPOSCHANGED;
+    npEvent.wParam = 0;
+    npEvent.lParam = reinterpret_cast<uintptr_t>(&windowpos);
+
+    NPP_HandleEvent(&npEvent);
+
+    callSetWindow();
+
+    RECT dirtyWinRect = dirtyRect;
+
+    npEvent.event = WM_PAINT;
+    npEvent.wParam = reinterpret_cast<uintptr_t>(hdc);
+    npEvent.lParam = reinterpret_cast<uintptr_t>(&dirtyWinRect);
+
+    NPP_HandleEvent(&npEvent);
+
+    // FIXME: Support transparent plugins.
+    context->releaseWindowsContext(hdc, dirtyRect, false);
 }
 
 bool NetscapePlugin::platformHandleMouseEvent(const WebMouseEvent&)

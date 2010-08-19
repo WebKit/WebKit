@@ -137,6 +137,9 @@ static inline NPCocoaEvent initializeEvent(NPCocoaEventType type)
 
 void NetscapePlugin::platformPaint(GraphicsContext* context, const IntRect& dirtyRect)
 {
+    // Translate the context so that the origin is at the top left corner of the plug-in view.
+    context->translate(frameRect().x(), frameRect().y());
+
     switch (m_eventModel) {
         case NPEventModelCocoa: {
             // Don't send draw events when we're using the Core Animation drawing model.

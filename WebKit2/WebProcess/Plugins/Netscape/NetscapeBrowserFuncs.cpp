@@ -440,6 +440,10 @@ static NPError NPN_GetValue(NPP npp, NPNVariable variable, void *value)
             *(NPBool*)value = false;
             break;
 #endif
+#elif PLATFORM(WIN)
+       case NPNVSupportsWindowless:
+           *(NPBool*)value = true;
+           break;
 #endif
         default:
             notImplemented();
@@ -468,7 +472,12 @@ static NPError NPN_SetValue(NPP npp, NPPVariable variable, void *value)
         }
 #endif
 
-        case NPPVpluginWindowBool:
+        case NPPVpluginWindowBool: {
+            RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
+            plugin->setIsWindowed(value);
+            return NPERR_NO_ERROR;
+        }
+
         case NPPVpluginTransparentBool:
         default:
             notImplemented();

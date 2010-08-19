@@ -62,6 +62,7 @@ public:
     void loadURL(const WTF::String& method, const WTF::String& urlString, const WTF::String& target, const WebCore::HTTPHeaderMap& headerFields,
                  const Vector<char>& httpBody, bool sendNotification, void* notificationData);
     NPError destroyStream(NPStream*, NPReason);
+    void setIsWindowed(bool windowed) { m_isWindowed = windowed; }
     void setStatusbarText(const WTF::String&);
     static void setException(const WTF::String&);
     bool evaluate(NPObject*, const WTF::String&scriptString, NPVariant* result);
@@ -156,6 +157,7 @@ private:
     CString m_userAgent;
 
     bool m_isStarted;
+    bool m_isWindowed;
     bool m_inNPPNew;
     bool m_loadManually;
     RefPtr<NetscapePluginStream> m_manualStream;

@@ -374,19 +374,20 @@ void PluginView::paint(GraphicsContext* context, const IntRect& dirtyRect)
 {
     if (context->paintingDisabled() || !m_plugin || !m_isInitialized)
         return;
-    
+
     IntRect dirtyRectInWindowCoordinates = parent()->contentsToWindow(dirtyRect);
     
     IntRect paintRectInWindowCoordinates = intersection(dirtyRectInWindowCoordinates, clipRectInWindowCoordinates());
     if (paintRectInWindowCoordinates.isEmpty())
         return;
 
+    // context is in document coordinates. Translate it to window coordinates.
+    IntPoint documentOriginInWindowCoordinates = parent()->contentsToWindow(IntPoint());
     context->save();
-
-    // Translate the context so that the origin is at the top left corner of the plug-in view.
-    context->translate(frameRect().x(), frameRect().y());
+    context->translate(-documentOriginInWindowCoordinates.x(), -documentOriginInWindowCoordinates.y());
 
     m_plugin->paint(context, paintRectInWindowCoordinates);
+
     context->restore();
 }
 

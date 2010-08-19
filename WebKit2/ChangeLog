@@ -1,5 +1,51 @@
 2010-08-19  Adam Roben  <aroben@apple.com>
 
+        Add support for painting windowless plugins on Windows
+
+        This gets the video on the front page of vimeo.com painting (though
+        you can't make it play because we don't support mouse events yet).
+
+        Fixes <http://webkit.org/b/44274> <rdar://problem/8330395> Windowless
+        plugins don't paint in WebKit2 on Windows
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::NPN_GetValue): Tell the plugin that we support windowless
+        mode on Windows.
+        (WebKit::NPN_SetValue): Implemented handling of NPPVpluginWindowBool
+        by calling through to NetscapePlugin::setIsWindowed.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::NetscapePlugin): Added initialization of
+        m_isWindowed. It defaults to false on Mac and true on other platforms,
+        matching WebCore's PluginView.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h: Added m_isWindowed.
+        (WebKit::NetscapePlugin::setIsWindowed): Added standard setter.
+
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::platformPaint): Moved Mac-specific context
+        translation code here from PluginView::paint.
+
+        * WebProcess/Plugins/Netscape/win/NetscapePluginWin.cpp:
+        (WebKit::NetscapePlugin::platformPaint): Implemented. Code was ported
+        from WebCore's PluginViewWin.cpp.
+
+        * WebProcess/Plugins/Plugin.h: Updated the comment for Plugin::paint
+        to explain the coordinate system of the context.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::paint): Changed to translate the context from
+        document to window coordinates. We were previously trying to translate
+        to plugin-local coordinates, but this only worked for documents whose
+        origin was the same as the window's origin (i.e., the main frame). The
+        plugin takes care of any further translations needed. (Mac translates
+        the context into plugin-local coordinates, and Windows leaves it in
+        window coordinates.)
+
+2010-08-19  Adam Roben  <aroben@apple.com>
+
         Implement PluginInfoStore::pluginsDirectories
 
         This makes WebKit2 able to find and load Flash on Windows.
