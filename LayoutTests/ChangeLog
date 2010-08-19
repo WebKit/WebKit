@@ -1,3 +1,19 @@
+2010-08-19  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        <style> inside <noscript> is parsed when JavaScript is enabled.
+        https://bugs.webkit.org/show_bug.cgi?id=44021
+
+        More random bugs fixed by the HTML5 parser.  Time to document with a
+        couple tests.  I added both these tests because <noscript> in <body> is
+        slightly different than <noscript> before <body>.
+
+        * fast/parser/no-style-in-noscript-expected.txt: Added.
+        * fast/parser/no-style-in-noscript-with-body-expected.txt: Added.
+        * fast/parser/no-style-in-noscript-with-body.html: Added.
+        * fast/parser/no-style-in-noscript.html: Added.
+
 2010-08-19  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Jon Honeycutt.
