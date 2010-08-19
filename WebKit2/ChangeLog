@@ -1,5 +1,32 @@
 2010-08-19  Adam Roben  <aroben@apple.com>
 
+        Implement PluginInfoStore::pluginsDirectories
+
+        This makes WebKit2 able to find and load Flash on Windows.
+
+        Note that we aren't yet respecting the MozillaPlugins registry key.
+        That's covered by <http://webkit.org/b/44271>.
+
+        Fixes <http://webkit.org/b/43510> <rdar://problem/8273827> WebKit2
+        should load plugins from the same directories as old-WebKit
+
+        Reviewed by Jon Honeycutt and Ada Chan.
+
+        * UIProcess/Plugins/win/PluginInfoStoreWin.cpp:
+        (WebKit::parseVersionString):
+        (WebKit::compareVersions):
+        (WebKit::safariPluginsDirectory):
+        (WebKit::addMozillaPluginDirectories):
+        (WebKit::addWindowsMediaPlayerPluginDirectory):
+        (WebKit::addQuickTimePluginDirectory):
+        (WebKit::addAdobeAcrobatPluginDirectory):
+        (WebKit::addMacromediaPluginDirectories):
+        (WebKit::PluginInfoStore::pluginsDirectories):
+        Ported (and ever-so-slightly cleaned up) code from WebCore's
+        PluginDatabaseWin.cpp.
+
+2010-08-19  Adam Roben  <aroben@apple.com>
+
         Call NP_GetEntryPoints before NP_Initialize on Windows
 
         Doing otherwise will cause Flash and QuickTime to crash inside

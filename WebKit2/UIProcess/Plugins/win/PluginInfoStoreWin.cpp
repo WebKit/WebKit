@@ -28,17 +28,232 @@
 #define DISABLE_NOT_IMPLEMENTED_WARNINGS 1
 #include "NotImplemented.h"
 #include <WebCore/FileSystem.h>
+#include <shlwapi.h>
 #include <wtf/OwnArrayPtr.h>
 
 using namespace WebCore;
 
 namespace WebKit {
 
+static inline Vector<int> parseVersionString(const String& versionString)
+{
+    Vector<int> version;
+
+    unsigned startPos = 0;
+    unsigned endPos;
+    
+    while (startPos < versionString.length()) {
+        for (endPos = startPos; endPos < versionString.length(); ++endPos)
+            if (versionString[endPos] == '.' || versionString[endPos] == '_')
+                break;
+
+        int versionComponent = versionString.substring(startPos, endPos - startPos).toInt();
+        version.append(versionComponent);
+
+        startPos = endPos + 1;
+    }
+
+    return version;
+}
+
+// This returns whether versionA is higher than versionB
+static inline bool compareVersions(const Vector<int>& versionA, const Vector<int>& versionB)
+{
+    for (unsigned i = 0; i < versionA.size(); i++) {
+        if (i >= versionB.size())
+            return true;
+
+        if (versionA[i] > versionB[i])
+            return true;
+        else if (versionA[i] < versionB[i])
+            return false;
+    }
+
+    // If we come here, the versions are either the same or versionB has an extra component, just return false
+    return false;
+}
+
+static inline String safariPluginsDirectory()
+{
+    static String pluginsDirectory;
+    static bool cachedPluginDirectory = false;
+
+    if (!cachedPluginDirectory) {
+        cachedPluginDirectory = true;
+
+        WCHAR moduleFileNameStr[MAX_PATH];
+        int moduleFileNameLen = ::GetModuleFileNameW(0, moduleFileNameStr, _countof(moduleFileNameStr));
+
+        if (!moduleFileNameLen || moduleFileNameLen == _countof(moduleFileNameStr))
+            return pluginsDirectory;
+
+        if (!::PathRemoveFileSpecW(moduleFileNameStr))
+            return pluginsDirectory;
+
+        pluginsDirectory = String(moduleFileNameStr) + "\\Plugins";
+    }
+
+    return pluginsDirectory;
+}
+
+static inline void addMozillaPluginDirectories(Vector<String>& directories)
+{
+    // Enumerate all Mozilla plugin directories in the registry
+    HKEY key;
+    LONG result = ::RegOpenKeyExW(HKEY_LOCAL_MACHINE, L"Software\\Mozilla", 0, KEY_READ, &key);
+    if (result != ERROR_SUCCESS)
+        return;
+
+    WCHAR name[128];
+    FILETIME lastModified;
+
+    // Enumerate subkeys
+    for (int i = 0;; i++) {
+        DWORD nameLen = _countof(name);
+        result = ::RegEnumKeyExW(key, i, name, &nameLen, 0, 0, 0, &lastModified);
+
+        if (result != ERROR_SUCCESS)
+            break;
+
+        String extensionsPath = String(name, nameLen) + "\\Extensions";
+        HKEY extensionsKey;
+
+        // Try opening the key
+        result = ::RegOpenKeyExW(key, extensionsPath.charactersWithNullTermination(), 0, KEY_READ, &extensionsKey);
+
+        if (result == ERROR_SUCCESS) {
+            // Now get the plugins directory
+            WCHAR pluginsDirectoryStr[MAX_PATH];
+            DWORD pluginsDirectorySize = sizeof(pluginsDirectoryStr);
+            DWORD type;
+
+            result = ::RegQueryValueExW(extensionsKey, L"Plugins", 0, &type, reinterpret_cast<LPBYTE>(&pluginsDirectoryStr), &pluginsDirectorySize);
+
+            if (result == ERROR_SUCCESS && type == REG_SZ)
+                directories.append(String(pluginsDirectoryStr, pluginsDirectorySize / sizeof(WCHAR) - 1));
+
+            ::RegCloseKey(extensionsKey);
+        }
+    }
+
+    ::RegCloseKey(key);
+}
+
+static inline void addWindowsMediaPlayerPluginDirectory(Vector<String>& directories)
+{
+    // The new WMP Firefox plugin is installed in \PFiles\Plugins if it can't find any Firefox installs
+    WCHAR pluginDirectoryStr[MAX_PATH + 1];
+    DWORD pluginDirectorySize = ::ExpandEnvironmentStringsW(L"%SYSTEMDRIVE%\\PFiles\\Plugins", pluginDirectoryStr, _countof(pluginDirectoryStr));
+
+    if (pluginDirectorySize > 0 && pluginDirectorySize <= _countof(pluginDirectoryStr))
+        directories.append(String(pluginDirectoryStr, pluginDirectorySize - 1));
+
+    DWORD type;
+    WCHAR installationDirectoryStr[MAX_PATH];
+    DWORD installationDirectorySize = sizeof(installationDirectoryStr);
+
+    HRESULT result = ::SHGetValueW(HKEY_LOCAL_MACHINE, L"Software\\Microsoft\\MediaPlayer", L"Installation Directory", &type, reinterpret_cast<LPBYTE>(&installationDirectoryStr), &installationDirectorySize);
+
+    if (result == ERROR_SUCCESS && type == REG_SZ)
+        directories.append(String(installationDirectoryStr, installationDirectorySize / sizeof(WCHAR) - 1));
+}
+
+static inline void addQuickTimePluginDirectory(Vector<String>& directories)
+{
+    DWORD type;
+    WCHAR installationDirectoryStr[MAX_PATH];
+    DWORD installationDirectorySize = sizeof(installationDirectoryStr);
+
+    HRESULT result = ::SHGetValueW(HKEY_LOCAL_MACHINE, L"Software\\Apple Computer, Inc.\\QuickTime", L"InstallDir", &type, reinterpret_cast<LPBYTE>(&installationDirectoryStr), &installationDirectorySize);
+
+    if (result == ERROR_SUCCESS && type == REG_SZ) {
+        String pluginDir = String(installationDirectoryStr, installationDirectorySize / sizeof(WCHAR) - 1) + "\\plugins";
+        directories.append(pluginDir);
+    }
+}
+
+static inline void addAdobeAcrobatPluginDirectory(Vector<String>& directories)
+{
+    HKEY key;
+    HRESULT result = ::RegOpenKeyExW(HKEY_LOCAL_MACHINE, L"Software\\Adobe\\Acrobat Reader", 0, KEY_READ, &key);
+    if (result != ERROR_SUCCESS)
+        return;
+
+    WCHAR name[128];
+    FILETIME lastModified;
+
+    Vector<int> latestAcrobatVersion;
+    String latestAcrobatVersionString;
+
+    // Enumerate subkeys
+    for (int i = 0;; i++) {
+        DWORD nameLen = _countof(name);
+        result = ::RegEnumKeyExW(key, i, name, &nameLen, 0, 0, 0, &lastModified);
+
+        if (result != ERROR_SUCCESS)
+            break;
+
+        Vector<int> acrobatVersion = parseVersionString(String(name, nameLen));
+        if (compareVersions(acrobatVersion, latestAcrobatVersion)) {
+            latestAcrobatVersion = acrobatVersion;
+            latestAcrobatVersionString = String(name, nameLen);
+        }
+    }
+
+    if (!latestAcrobatVersionString.isNull()) {
+        DWORD type;
+        WCHAR acrobatInstallPathStr[MAX_PATH];
+        DWORD acrobatInstallPathSize = sizeof(acrobatInstallPathStr);
+
+        String acrobatPluginKeyPath = "Software\\Adobe\\Acrobat Reader\\" + latestAcrobatVersionString + "\\InstallPath";
+        result = ::SHGetValueW(HKEY_LOCAL_MACHINE, acrobatPluginKeyPath.charactersWithNullTermination(), 0, &type, reinterpret_cast<LPBYTE>(acrobatInstallPathStr), &acrobatInstallPathSize);
+
+        if (result == ERROR_SUCCESS) {
+            String acrobatPluginDirectory = String(acrobatInstallPathStr, acrobatInstallPathSize / sizeof(WCHAR) - 1) + "\\browser";
+            directories.append(acrobatPluginDirectory);
+        }
+    }
+
+    ::RegCloseKey(key);
+}
+
+static inline void addMacromediaPluginDirectories(Vector<String>& directories)
+{
+#if !OS(WINCE)
+    WCHAR systemDirectoryStr[MAX_PATH];
+
+    if (!::GetSystemDirectoryW(systemDirectoryStr, _countof(systemDirectoryStr)))
+        return;
+
+    WCHAR macromediaDirectoryStr[MAX_PATH];
+
+    if (!::PathCombineW(macromediaDirectoryStr, systemDirectoryStr, L"macromed\\Flash"))
+        return;
+
+    directories.append(macromediaDirectoryStr);
+
+    if (!::PathCombineW(macromediaDirectoryStr, systemDirectoryStr, L"macromed\\Shockwave 10"))
+        return;
+
+    directories.append(macromediaDirectoryStr);
+#endif
+}
+
 Vector<String> PluginInfoStore::pluginsDirectories()
 {
-    // FIXME: <http://webkit.org/b/43510> Migrate logic here from PluginDatabase::defaultPluginDirectories.
-    notImplemented();
-    return Vector<String>();
+    Vector<String> directories;
+
+    String ourDirectory = safariPluginsDirectory();
+    if (!ourDirectory.isNull())
+        directories.append(ourDirectory);
+
+    addQuickTimePluginDirectory(directories);
+    addAdobeAcrobatPluginDirectory(directories);
+    addMozillaPluginDirectories(directories);
+    addWindowsMediaPlayerPluginDirectory(directories);
+    addMacromediaPluginDirectories(directories);
+
+    return directories;
 }
 
 class PathWalker : public Noncopyable {
