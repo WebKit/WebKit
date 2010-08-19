@@ -58,6 +58,7 @@ public:
 
     ~InjectedScriptHost();
 
+    String injectedScriptSource() { return m_injectedScriptSource; }
     void setInjectedScriptSource(const String& source) { m_injectedScriptSource = source; }
 
     InspectorController* inspectorController() { return m_inspectorController; }

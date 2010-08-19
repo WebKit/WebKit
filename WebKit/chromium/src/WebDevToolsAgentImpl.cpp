@@ -206,19 +206,6 @@ void WebDevToolsAgentImpl::attach()
     WebCString debuggerScriptJs = m_client->debuggerScriptSource();
     WebCore::ScriptDebugServer::shared().setDebuggerScriptSource(
         WTF::String(debuggerScriptJs.data(), debuggerScriptJs.length()));
-
-    // TODO(yurys): the source should have already been pushed by the frontend.
-    WebCString injectedScriptJs = m_client->injectedScriptSource();
-    String injectedScriptSource = String::fromUTF8(injectedScriptJs.data(), injectedScriptJs.length());
-    const char* varDefinition = "var injectedScriptConstructor = ";
-    int pos = injectedScriptSource.find(varDefinition);
-    if (pos == -1) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-    pos += String(varDefinition).length();
-    injectedScriptSource = injectedScriptSource.substring(pos);
-    inspectorController()->injectedScriptHost()->setInjectedScriptSource(injectedScriptSource);
     m_attached = true;
 }
 
@@ -237,7 +224,8 @@ void WebDevToolsAgentImpl::detach()
 void WebDevToolsAgentImpl::frontendLoaded()
 {
     inspectorController()->connectFrontend();
-    m_client->runtimePropertyChanged(kFrontendConnectedFeatureName, "true");
+    // We know that by this time injected script has already been pushed to the backend.
+    m_client->runtimePropertyChanged(kFrontendConnectedFeatureName, inspectorController()->injectedScriptHost()->injectedScriptSource());
 }
 
 void WebDevToolsAgentImpl::didNavigate()
@@ -278,8 +266,10 @@ void WebDevToolsAgentImpl::setRuntimeProperty(const WebString& name, const WebSt
           ic->enableResourceTracking(false /* not sticky */, false /* no reload */);
         else
           ic->disableResourceTracking(false /* not sticky */);
-    } else if (name == kFrontendConnectedFeatureName && value == "true" && !inspectorController()->hasFrontend())
+    } else if (name == kFrontendConnectedFeatureName && !inspectorController()->hasFrontend()) {
+        inspectorController()->injectedScriptHost()->setInjectedScriptSource(value);
         frontendLoaded();
+    }
 }
 
 void WebDevToolsAgentImpl::setApuAgentEnabled(bool enabled)
