@@ -390,8 +390,8 @@ void LayerRendererChromium::drawLayers(const IntRect& updateRect, const IntRect&
 #error "Need to implement for your platform."
 #endif
 
-        scrolledLayerMatrix.translate3d((int)floorf(0.5 * visibleRect.width()) - scrollDelta.x(),
-            (int)floorf(0.5 * visibleRect.height()) + scaleFactor * scrollDelta.y(), 0);
+        scrolledLayerMatrix.translate3d(0.5 * visibleRect.width() - scrollDelta.x(),
+            0.5 * visibleRect.height() + scaleFactor * scrollDelta.y(), 0);
         scrolledLayerMatrix.scale3d(1, -1, 1);
 
         // Switch shaders to avoid RGB swizzling.
@@ -405,6 +405,10 @@ void LayerRendererChromium::drawLayers(const IntRect& updateRect, const IntRect&
         glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, contentRect.width(), contentRect.height());
 
         checkGLError();
+        m_scrollPosition = scrollPosition;
+    } else if (abs(scrollDelta.y()) > contentRect.height() || abs(scrollDelta.x()) > contentRect.width()) {
+        // Scrolling larger than the contentRect size does not preserve any of the pixels, so there is
+        // no need to copy framebuffer pixels back into the texture.
         m_scrollPosition = scrollPosition;
     }
 

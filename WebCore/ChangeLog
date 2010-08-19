@@ -1,3 +1,25 @@
+2010-08-18  Alexey Marinichev  <amarinichev@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] scrolling issues when accelerated compositor is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=43992
+
+        Corrected scroll position not being updated, and an off-by-half error.
+        Int cast and floorf are taken out because they produce incorrect
+        transformation matrix.  The information lost there is not immediately
+        obvious because of rounding that happens when texture is mapped with
+        GL_NEAREST filtering mode.  These errors accumulate, and after some
+        scrolling it becomes more apparent.
+
+        To test the former, follow instructions in the bug.  To test the
+        latter, change GL_NEAREST to GL_LINEAR in LayerRendererChromium.cpp.
+        Scrolling should work properly for all window sizes, without blurring
+        images and shifting them to the left.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::drawLayers):
+
 2010-08-18  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Ariya Hidayat.
