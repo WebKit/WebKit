@@ -160,7 +160,6 @@ Panels.prototype = {
 function PanelImpl(id)
 {
     this._id = id;
-    this.onSelectionChanged = new EventSink("panel-objectSelected-" + id);
 }
 
 PanelImpl.prototype = {
@@ -182,6 +181,7 @@ function Panel(id)
 {
     var impl = new PanelImpl(id);
     this.createSidebarPane = bind(impl.createSidebarPane, impl);
+    this.onSelectionChanged = new EventSink("panel-objectSelected-" + id);
 }
 
 function ExtensionPanel(id)

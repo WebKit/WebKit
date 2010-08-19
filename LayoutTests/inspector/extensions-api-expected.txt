@@ -23,9 +23,17 @@ RUNNING TEST: extension_testAPI
     panels : {
         elements : {
             createSidebarPane : <function>
+            onSelectionChanged : {
+                addListener : <function>
+                removeListener : <function>
+            }
         }
         scripts : {
             createSidebarPane : <function>
+            onSelectionChanged : {
+                addListener : <function>
+                removeListener : <function>
+            }
         }
         create : <function>
     }

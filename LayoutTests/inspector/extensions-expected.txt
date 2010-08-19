@@ -7,6 +7,10 @@ done createPanel
 Panel created
 {
     createSidebarPane : <function>
+    onSelectionChanged : {
+        addListener : <function>
+        removeListener : <function>
+    }
     onSearch : {
         addListener : <function>
         removeListener : <function>
