@@ -1,3 +1,13 @@
+2010-08-19  David Kilzer  <ddkilzer@apple.com>
+
+        BUILD FIX: <http://webkit.org/b/44285> Fix compilation with NETSCAPE_PLUGIN_API disabled
+
+        Reviewed by Joseph Pecoraro.
+
+        * plugins/PluginView.cpp: Added #if ENABLE(NETSCAPE_PLUGIN_API)
+        and #endif macros around the source to fix the Qt Linux Release
+        Minimal build.
+
 2010-08-19  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by Kenneth Russell.

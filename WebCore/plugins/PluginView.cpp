@@ -81,6 +81,8 @@ using JSC::JSValue;
 using JSC::UString;
 #endif
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
+
 using std::min;
 
 using namespace WTF;
@@ -1393,3 +1395,5 @@ void PluginView::privateBrowsingStateChanged(bool privateBrowsingEnabled)
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
