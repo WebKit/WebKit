@@ -1,3 +1,14 @@
+2010-08-19  Adam Roben  <aroben@apple.com>
+
+        Make build-webkittestrunner build TestNetscapePlugIn on Windows
+
+        Fixes <http://webkit.org/b/44268> <rdar://problem/8330388>
+
+        Reviewed by Sam Weinig.
+
+        * WebKitTestRunner/WebKitTestRunner.sln: Added TestNetscapePlugIn.
+        Threaded it in between ImageDiff and InjectedBundleGenerated.
+
 2010-08-19  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Adam Barth.
