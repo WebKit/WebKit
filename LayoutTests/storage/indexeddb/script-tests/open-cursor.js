@@ -60,6 +60,9 @@ function openSuccess()
 {
     verifySuccessEvent(event);
     var db = evalAndLog("db = event.result");
+
+    deleteAllObjectStores(db);
+
     result = evalAndLog("db.createObjectStore('test')");
     verifyResult(result);
     result.onsuccess = createObjectStoreSuccess;

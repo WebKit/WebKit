@@ -16,6 +16,8 @@
 
 <script>
 
+    readyCount = 0;
+
     if (!('indexedDB' in window))
         document.getElementById("enabled").innerHTML = "<font color=red>Your build does NOT seem to have it enabled.  So all code on this page is disabled.</font>";
     else {
@@ -25,6 +27,7 @@
         request.onsuccess = function() {
             document.getElementById("result").innerHTML = "<font color=green>Success!</font>";
             window.nameDB = event.result;
+            ++readyCount;
         };
         request.onerror = function() {
             document.getElementById("result").innerHTML = "<font color=red>Error: " + event.message + ".</font>";
@@ -33,17 +36,28 @@
         request = indexedDB.open("another", "test of the description attribute");
         request.onsuccess = function() {
             window.anotherDB = event.result;
+            ++readyCount;
         };
     }
 
     function updateDescription()
     {
+        if (readCount < 2) {
+            alert("The page has not finished loading.  Hold on a sec...");
+            return;
+        }
+
         indexedDB.open("name", "test of the description attribute");
         indexedDB.open("another", "xyz");
     }
 
     function readDescription()
     {
+        if (readCount < 2) {
+            alert("The page has not finished loading.  Hold on a sec...");
+            return;
+        }
+
         if (window.nameDB.description != "test of the description attribute") {
             // Since we passed in nothing, the description should not be reset.
             document.getElementById("description").innerHTML = "<font color=red>Failure: (Database 'name' was this: " + window.nameDB.description + ").</font>";

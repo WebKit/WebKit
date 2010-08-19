@@ -192,6 +192,14 @@ int SQLiteStatement::bindText(int index, const String& text)
     return sqlite3_bind_text16(m_statement, index, characters, sizeof(UChar) * text.length(), SQLITE_TRANSIENT);
 }
 
+int SQLiteStatement::bindInt(int index, int integer)
+{
+    ASSERT(m_isPrepared);
+    ASSERT(index > 0);
+    ASSERT(static_cast<unsigned>(index) <= bindParameterCount());
+
+    return sqlite3_bind_int(m_statement, index, integer);
+}
 
 int SQLiteStatement::bindInt64(int index, int64_t integer)
 {
@@ -249,6 +257,18 @@ int SQLiteStatement::columnCount()
     if (!m_statement)
         return 0;
     return sqlite3_data_count(m_statement);
+}
+
+bool SQLiteStatement::isColumnNull(int col)
+{
+    ASSERT(col >= 0);
+    if (!m_statement)
+        if (prepareAndStep() != SQLITE_ROW)
+            return false;
+    if (columnCount() <= col)
+        return false;
+
+    return sqlite3_column_type(m_statement, col) == SQLITE_NULL;
 }
 
 String SQLiteStatement::getColumnName(int col)

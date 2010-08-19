@@ -34,13 +34,14 @@
 
 namespace WebCore {
 
-template <typename ValueType> class IDBKeyTree;
+class IDBDatabaseBackendImpl;
+class SQLiteDatabase;
 
 class IDBObjectStoreBackendImpl : public IDBObjectStoreBackendInterface {
 public:
-    static PassRefPtr<IDBObjectStoreBackendInterface> create(const String& name, const String& keyPath, bool autoIncrement)
+    static PassRefPtr<IDBObjectStoreBackendInterface> create(IDBDatabaseBackendImpl* database, int64_t id, const String& name, const String& keyPath, bool autoIncrement)
     {
-        return adoptRef(new IDBObjectStoreBackendImpl(name, keyPath, autoIncrement));
+        return adoptRef(new IDBObjectStoreBackendImpl(database, id, name, keyPath, autoIncrement));
     }
     ~IDBObjectStoreBackendImpl();
 
@@ -58,18 +59,23 @@ public:
 
     void openCursor(PassRefPtr<IDBKeyRange> range, unsigned short direction, PassRefPtr<IDBCallbacks>);
 
-private:
-    IDBObjectStoreBackendImpl(const String& name, const String& keyPath, bool autoIncrement);
+    IDBDatabaseBackendImpl* database() const { return m_database.get(); }
 
+private:
+    IDBObjectStoreBackendImpl(IDBDatabaseBackendImpl*, int64_t id, const String& name, const String& keyPath, bool autoIncrement);
+
+    void loadIndexes();
+    SQLiteDatabase& sqliteDatabase() const;
+
+    RefPtr<IDBDatabaseBackendImpl> m_database;
+
+    int64_t m_id;
     String m_name;
     String m_keyPath;
     bool m_autoIncrement;
 
     typedef HashMap<String, RefPtr<IDBIndexBackendInterface> > IndexMap;
     IndexMap m_indexes;
-
-    typedef IDBKeyTree<SerializedScriptValue> Tree;
-    RefPtr<Tree> m_tree;
 };
 
 } // namespace WebCore

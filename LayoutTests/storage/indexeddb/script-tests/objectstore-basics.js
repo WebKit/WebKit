@@ -16,8 +16,7 @@ function openSuccess()
     verifySuccessEvent(event);
     db = evalAndLog("db = event.result");
 
-    // FIXME: remove any previously created object stores.
-    // This requires IDBDatabaseRequest::removeObjectStore to be implemented.
+    deleteAllObjectStores(db);
 
     result = evalAndLog("db.createObjectStore('storeName', null)");
     verifyResult(result);

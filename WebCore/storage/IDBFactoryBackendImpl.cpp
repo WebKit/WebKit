@@ -75,8 +75,25 @@ static PassOwnPtr<SQLiteDatabase> openSQLiteDatabase(SecurityOrigin* securityOri
 
 static bool createTables(SQLiteDatabase* sqliteDatabase)
 {
+    // FIXME: Remove all the drop table commands once the on disk structure stabilizes.
     static const char* commands[] = {
-        "CREATE TABLE IF NOT EXISTS MetaData (name TEXT, description TEXT, version TEXT)"
+        "DROP TABLE IF EXISTS MetaData",
+        "CREATE TABLE IF NOT EXISTS MetaData (id INTEGER PRIMARY KEY, name TEXT NOT NULL, description TEXT NOT NULL, version TEXT NOT NULL)",
+
+        "DROP TABLE IF EXISTS ObjectStores",
+        "CREATE TABLE IF NOT EXISTS ObjectStores (id INTEGER PRIMARY KEY, name TEXT NOT NULL, keyPath TEXT, doAutoIncrement INTEGER NOT NULL)",
+        "DROP INDEX IF EXISTS ObjectStores_name",
+        "CREATE UNIQUE INDEX IF NOT EXISTS ObjectStores_name ON ObjectStores(name)",
+
+        "DROP TABLE IF EXISTS Indexes",
+        "CREATE TABLE IF NOT EXISTS Indexes (id INTEGER PRIMARY KEY, objectStoreId INTEGER NOT NULL REFERENCES ObjectStore(id) ON DELETE CASCADE, name TEXT NOT NULL, keyPath TEXT, isUnique INTEGER NOT NULL)",
+        "DROP INDEX IF EXISTS Indexes_composit",
+        "CREATE UNIQUE INDEX IF NOT EXISTS Indexes_composit ON Indexes(objectStoreId, name)",
+
+        "DROP TABLE IF EXISTS ObjectStoreData",
+        "CREATE TABLE IF NOT EXISTS ObjectStoreData (id INTEGER PRIMARY KEY, objectStoreId INTEGER NOT NULL REFERENCES ObjectStore(id) ON DELETE CASCADE, keyString TEXT, keyDate INTEGER, keyNumber INTEGER, value TEXT NOT NULL)",
+        "DROP INDEX IF EXISTS ObjectStoreData_composit",
+        "CREATE UNIQUE INDEX IF NOT EXISTS ObjectStoreData_composit ON ObjectStoreData(keyString, keyDate, keyNumber, objectStoreId)"
         };
 
     for (size_t i = 0; i < arraysize(commands); ++i) {

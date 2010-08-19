@@ -53,3 +53,10 @@ function unexpectedErrorCallback()
     done();
 }
 
+function deleteAllObjectStores(db)
+{
+    objectStores = db.objectStores;
+    for (var i = 0; i < objectStores.length; ++i)
+        db.removeObjectStore(objectStores[i]);
+}
+

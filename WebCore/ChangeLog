@@ -1,3 +1,52 @@
+2010-08-18  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Implement persistance for IndexedDB ObjectStores
+        https://bugs.webkit.org/show_bug.cgi?id=44164
+
+        Get rid of the in-memory storage of ObjectStores and instead
+        use SQL backed memory.
+
+        Existing tests give most of the coverage.  Will update the manual
+        test in the next patch (which will also re-work database.description).
+
+        * manual-tests/indexed-database.html: Get rid of race where you can click before the page loads.
+        * platform/sql/SQLiteStatement.cpp: Add two helper functions
+        (WebCore::SQLiteStatement::bindInt):
+        (WebCore::SQLiteStatement::isColumnNull):
+        * platform/sql/SQLiteStatement.h:
+        * storage/IDBCursorBackendImpl.cpp: 
+        * storage/IDBDatabaseBackendImpl.cpp:
+        (WebCore::IDBDatabaseBackendImpl::IDBDatabaseBackendImpl):
+        (WebCore::IDBDatabaseBackendImpl::createObjectStore):
+        (WebCore::IDBDatabaseBackendImpl::removeObjectStore):
+        (WebCore::IDBDatabaseBackendImpl::importObjectStores):
+        * storage/IDBDatabaseBackendImpl.h:
+        (WebCore::IDBDatabaseBackendImpl::sqliteDatabase):
+        * storage/IDBFactoryBackendImpl.cpp:
+        (WebCore::createTables):
+        * storage/IDBIndexBackendImpl.cpp:
+        (WebCore::IDBIndexBackendImpl::IDBIndexBackendImpl):
+        (WebCore::IDBIndexBackendImpl::sqliteDatabase):
+        * storage/IDBIndexBackendImpl.h:
+        (WebCore::IDBIndexBackendImpl::create):
+        * storage/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::IDBObjectStoreBackendImpl):
+        (WebCore::whereClause):
+        (WebCore::bindKey):
+        (WebCore::IDBObjectStoreBackendImpl::get):
+        (WebCore::IDBObjectStoreBackendImpl::put):
+        (WebCore::IDBObjectStoreBackendImpl::remove):
+        (WebCore::IDBObjectStoreBackendImpl::createIndex):
+        (WebCore::IDBObjectStoreBackendImpl::removeIndex):
+        (WebCore::IDBObjectStoreBackendImpl::openCursor):
+        (WebCore::IDBObjectStoreBackendImpl::importIndexes):
+        (WebCore::IDBObjectStoreBackendImpl::sqliteDatabase):
+        * storage/IDBObjectStoreBackendImpl.h:
+        (WebCore::IDBObjectStoreBackendImpl::create):
+        (WebCore::IDBObjectStoreBackendImpl::database):
+
 2010-08-19  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.

@@ -33,6 +33,7 @@
 #include "IDBKeyRange.h"
 #include "IDBObjectStoreBackendImpl.h"
 #include "IDBRequest.h"
+#include "SQLiteDatabase.h"
 #include "SerializedScriptValue.h"
 
 namespace WebCore {

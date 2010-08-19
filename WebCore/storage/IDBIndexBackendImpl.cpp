@@ -28,10 +28,16 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBDatabaseBackendImpl.h"
+#include "IDBObjectStoreBackendImpl.h"
+#include "SQLiteDatabase.h"
+
 namespace WebCore {
 
-IDBIndexBackendImpl::IDBIndexBackendImpl(const String& name, const String& keyPath, bool unique)
-    : m_name(name)
+IDBIndexBackendImpl::IDBIndexBackendImpl(IDBObjectStoreBackendImpl* objectStore, int64_t id, const String& name, const String& keyPath, bool unique)
+    : m_objectStore(objectStore)
+    , m_id(id)
+    , m_name(name)
     , m_keyPath(keyPath)
     , m_unique(unique)
 {
@@ -39,6 +45,11 @@ IDBIndexBackendImpl::IDBIndexBackendImpl(const String& name, const String& keyPa
 
 IDBIndexBackendImpl::~IDBIndexBackendImpl()
 {
+}
+
+SQLiteDatabase& IDBIndexBackendImpl::sqliteDatabase() const
+{
+    return m_objectStore->database()->sqliteDatabase();
 }
 
 } // namespace WebCore
