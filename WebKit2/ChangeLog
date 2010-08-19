@@ -1,3 +1,11 @@
+2010-08-19  David Kilzer  <ddkilzer@apple.com>
+
+        BUILD FIX: Fix Mac build after Windows WebKit2 changes for Netscape Plug-ins
+
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::platformPaint): Changed frameRect() to
+        m_frameRect.
+
 2010-08-19  Adam Roben  <aroben@apple.com>
 
         Send mouse events to windowless plugins on Windows

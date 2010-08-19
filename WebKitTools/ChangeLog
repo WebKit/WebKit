@@ -1,3 +1,11 @@
+2010-08-19  David Kilzer  <ddkilzer@apple.com>
+
+        BUILD FIX: Fix Mac build after Windows WebKit2 changes for Netscape Plug-ins
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (decidePolicyForNavigationAction): Updated method signature.
+        (decidePolicyForNewWindowAction): Updated method signature.
+
 2010-08-19  Adam Roben  <aroben@apple.com>
 
         Test that NP_Initialize and NP_GetEntryPoints are called in the

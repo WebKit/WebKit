@@ -1,5 +1,12 @@
 2010-08-19  David Kilzer  <ddkilzer@apple.com>
 
+        BUILD FIX: Fix Mac build after Windows WebKit2 changes for Netscape Plug-ins
+
+        * WebCore.exp.in:
+        (WebCore::ScrollView::contentsToWindow): Added export.
+
+2010-08-19  David Kilzer  <ddkilzer@apple.com>
+
         BUILD FIX #3: <http://webkit.org/b/44285> Fix compilation with NETSCAPE_PLUGIN_API disabled
 
         Still trying to make Qt Linux Release minimal buildbot happy.
