@@ -167,43 +167,6 @@ private:
 #endif
 };
 
-// Move these functions to NetscapePluginWin.cpp
-#if !PLATFORM(MAC)
-inline bool NetscapePlugin::platformPostInitialize()
-{
-    return true;
-}
-
-inline void NetscapePlugin::platformPaint(WebCore::GraphicsContext*, const WebCore::IntRect&)
-{
-}
-
-inline bool NetscapePlugin::platformHandleMouseEvent(const WebMouseEvent&)
-{
-    return false;
-}
-
-inline bool NetscapePlugin::platformHandleWheelEvent(const WebWheelEvent&)
-{
-    return false;
-}
-
-inline void NetscapePlugin::platformSetFocus(bool)
-{
-}
-
-inline bool NetscapePlugin::platformHandleMouseEnterEvent(const WebMouseEvent&)
-{
-    return false;
-}
-
-inline bool NetscapePlugin::platformHandleMouseLeaveEvent(const WebMouseEvent&)
-{
-    return false;
-}
-
-#endif
-
 } // namespace WebKit
 
 #endif // NetscapePlugin_h

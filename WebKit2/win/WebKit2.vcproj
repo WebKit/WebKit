@@ -966,6 +966,14 @@
 						RelativePath="..\WebProcess\Plugins\Netscape\NetscapePluginStream.h"
 						>
 					</File>
+					<Filter
+						Name="win"
+						>
+						<File
+							RelativePath="..\WebProcess\Plugins\Netscape\win\NetscapePluginWin.cpp"
+							>
+						</File>
+					</Filter>
 				</Filter>
 			</Filter>
 		</Filter>
@@ -1073,19 +1081,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\UIProcess\WebFramePolicyListenerProxy.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\UIProcess\WebFramePolicyListenerProxy.h"
-				>
-			</File>
-			<File
 				RelativePath="..\UIProcess\WebFrameListenerProxy.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\UIProcess\WebFrameListenerProxy.h"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebFramePolicyListenerProxy.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebFramePolicyListenerProxy.h"
 				>
 			</File>
 			<File
