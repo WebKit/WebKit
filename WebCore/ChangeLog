@@ -1,3 +1,21 @@
+2010-08-19  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/44285> Fix compilation with NETSCAPE_PLUGIN_API disabled
+
+        Reviewed by Joseph Pecoraro.
+
+        * WebCore.exp.in:
+        (WebCore::HTMLPlugInElement::getNPObject): Moved from general
+        section into ENABLE(NETSCAPE_PLUGIN_API) section.
+        (WebCore::FrameView::windowClipRectForLayer): Moved from
+        ENABLE(NETSCAPE_PLUGIN_API) section to general section since
+        it's used by WebKit2.
+        * plugins/PluginView.h: Added #if ENABLE(NETSCAPE_PLUGIN_API)
+        and #endif macros as needed to make iOS WebKit build with
+        NETSCAPE_PLUGIN_API disabled.
+        * plugins/PluginViewNone.cpp: Ditto.
+        (WebCore::PluginView::platformGetValueStatic):
+
 2010-08-17  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

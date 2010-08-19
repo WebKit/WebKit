@@ -127,7 +127,7 @@
 #import "WebJavaPlugIn.h"
 #endif
 
-#if USE(PLUGIN_HOST_PROCESS)
+#if USE(PLUGIN_HOST_PROCESS) && ENABLE(NETSCAPE_PLUGIN_API)
 #import "NetscapePluginHostManager.h"
 #import "WebHostedNetscapePluginView.h"
 #endif
@@ -706,7 +706,7 @@ Frame* WebFrameLoaderClient::dispatchCreatePage()
                                                           windowFeatures:features];
     [features release];
     
-#if USE(PLUGIN_HOST_PROCESS)
+#if USE(PLUGIN_HOST_PROCESS) && ENABLE(NETSCAPE_PLUGIN_API)
     if (newWebView)
         WebKit::NetscapePluginHostManager::shared().didCreateWindow();
 #endif
@@ -1552,13 +1552,13 @@ public:
     
 };
 
-#endif // ENABLE(NETSCAPE_PLUGIN_API)
-
 #if USE(PLUGIN_HOST_PROCESS)
 #define NETSCAPE_PLUGIN_VIEW WebHostedNetscapePluginView
 #else
 #define NETSCAPE_PLUGIN_VIEW WebNetscapePluginView
 #endif
+
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
 
 PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize& size, HTMLPlugInElement* element, const KURL& url,
     const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)

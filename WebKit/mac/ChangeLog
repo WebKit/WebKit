@@ -1,3 +1,29 @@
+2010-08-19  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/44285> Fix compilation with NETSCAPE_PLUGIN_API disabled
+
+        Reviewed by Joseph Pecoraro.
+
+        * Plugins/Hosted/HostedNetscapePluginStream.mm: Changed
+        USE(PLUGIN_HOST_PROCESS) to
+        USE(PLUGIN_HOST_PROCESS) && ENABLE(NETSCAPE_PLUGIN_API).
+        * Plugins/Hosted/NetscapePluginHostManager.mm: Ditto.
+        * Plugins/Hosted/NetscapePluginHostProxy.mm: Ditto.
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm: Ditto.
+        * Plugins/Hosted/ProxyInstance.mm: Ditto.
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm: Ditto.
+        * WebCoreSupport/WebChromeClient.mm: Ditto.
+        (WebChromeClient::createWindow):
+        * WebCoreSupport/WebFrameLoaderClient.mm: Ditto.
+        (WebFrameLoaderClient::dispatchCreatePage):
+        * WebView/WebHTMLView.mm:
+        (needsCursorRectsSupportAtPoint): Added #if
+        ENABLE(NETSCAPE_PLUGIN_API) and #endif macros as needed.
+        * WebView/WebView.mm:
+        (+[WebView _isNodeHaltedPlugin:]): Ditto.
+        (+[WebView _hasPluginForNodeBeenHalted:]): Ditto.
+        (+[WebView _restartHaltedPluginForNode:]): Ditto.
+
 2010-08-17  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         Reviewed by Darin Adler.

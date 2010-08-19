@@ -32,11 +32,9 @@
 #include "HaltablePlugin.h"
 #include "IntRect.h"
 #include "MediaCanStartListener.h"
-#include "PluginStream.h"
 #include "ResourceRequest.h"
 #include "Timer.h"
 #include "Widget.h"
-#include "npruntime_internal.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
@@ -44,6 +42,11 @@
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>
+
+#if ENABLE(NETSCAPE_PLUGIN_API)
+#include "PluginStream.h"
+#include "npruntime_internal.h"
+#endif
 
 #if OS(WINDOWS) && (PLATFORM(QT) || PLATFORM(WX))
 typedef struct HWND__* HWND;
@@ -117,13 +120,21 @@ namespace WebCore {
         virtual void didFail(const ResourceError&) = 0;
     };
 
-    class PluginView : public Widget, private PluginStreamClient, public PluginManualLoader, private HaltablePlugin, private MediaCanStartListener {
+    class PluginView : public Widget
+#if ENABLE(NETSCAPE_PLUGIN_API)
+                     , private PluginStreamClient
+#endif
+                     , public PluginManualLoader
+                     , private HaltablePlugin
+                     , private MediaCanStartListener {
     public:
         static PassRefPtr<PluginView> create(Frame* parentFrame, const IntSize&, Element*, const KURL&, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually);
         virtual ~PluginView();
 
         PluginPackage* plugin() const { return m_plugin.get(); }
+#if ENABLE(NETSCAPE_PLUGIN_API)
         NPP instance() const { return m_instance; }
+#endif
 
         void setNPWindowRect(const IntRect&);
         static PluginView* currentPluginView();
@@ -134,6 +145,7 @@ namespace WebCore {
 
         PluginStatus status() const { return m_status; }
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
         // NPN functions
         NPError getURLNotify(const char* url, const char* target, void* notifyData);
         NPError getURL(const char* url, const char* target);
@@ -142,6 +154,7 @@ namespace WebCore {
         NPError newStream(NPMIMEType type, const char* target, NPStream** stream);
         int32_t write(NPStream* stream, int32_t len, void* buffer);
         NPError destroyStream(NPStream* stream, NPReason reason);
+#endif
         const char* userAgent();
 #if ENABLE(NETSCAPE_PLUGIN_API)
         static const char* userAgentStatic();
@@ -151,10 +164,10 @@ namespace WebCore {
 #if ENABLE(NETSCAPE_PLUGIN_API)
         NPError getValue(NPNVariable variable, void* value);
         static NPError getValueStatic(NPNVariable variable, void* value);
-#endif
         NPError setValue(NPPVariable variable, void* value);
         void invalidateRect(NPRect*);
         void invalidateRegion(NPRegion);
+#endif
         void forceRedraw();
         void pushPopupsEnabledState(bool state);
         void popPopupsEnabledState();
@@ -238,9 +251,11 @@ namespace WebCore {
         void stop();
         void platformDestroy();
         static void setCurrentPluginView(PluginView*);
+#if ENABLE(NETSCAPE_PLUGIN_API)
         NPError load(const FrameLoadRequest&, bool sendNotification, void* notifyData);
         NPError handlePost(const char* url, const char* target, uint32_t len, const char* buf, bool file, void* notifyData, bool sendNotification, bool allowHeaders);
         NPError handlePostReadFile(Vector<char>& buffer, uint32_t len, const char* buf);
+#endif
         static void freeStringArray(char** stringArray, int length);
         void setCallingPlugin(bool) const;
 
@@ -254,8 +269,10 @@ namespace WebCore {
         static BOOL WINAPI hookedEndPaint(HWND, const PAINTSTRUCT*);
 #endif
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
         static bool platformGetValueStatic(NPNVariable variable, void* value, NPError* result);
         bool platformGetValue(NPNVariable variable, void* value, NPError* result);
+#endif
 
         RefPtr<Frame> m_parentFrame;
         RefPtr<PluginPackage> m_plugin;
@@ -280,7 +297,9 @@ namespace WebCore {
         Timer<PluginView> m_lifeSupportTimer;
 
 #ifndef NP_NO_CARBON
+#if ENABLE(NETSCAPE_PLUGIN_API)
         bool dispatchNPEvent(NPEvent&);
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
 #endif
         void updatePluginWidget();
         void paintMissingPluginIcon(GraphicsContext*, const IntRect&);
@@ -306,9 +325,11 @@ namespace WebCore {
         String m_mimeType;
         WTF::CString m_userAgent;
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
         NPP m_instance;
         NPP_t m_instanceStruct;
         NPWindow m_npWindow;
+#endif
 
         Vector<bool, 4> m_popupStateStack;
 

@@ -167,9 +167,11 @@ static bool needsCursorRectsSupportAtPoint(NSWindow* window, NSPoint point)
     if ([view isKindOfClass:[WebHTMLView class]])
         return false;
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
     // Neither do NPAPI plug-ins.
     if ([view isKindOfClass:[WebBaseNetscapePluginView class]])
         return false;
+#endif
 
     // Non-Web content, WebPDFView, and WebKit plug-ins use normal cursor handling.
     return true;

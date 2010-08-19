@@ -66,12 +66,12 @@ void PluginView::setNPWindowRect(const IntRect&)
 {
 }
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
 NPError PluginView::handlePostReadFile(Vector<char>&, uint32_t, const char*)
 {
     return 0;
 }
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
 bool PluginView::platformGetValue(NPNVariable, void*, NPError*)
 {
     return false;
@@ -81,19 +81,21 @@ bool PluginView::platformGetValueStatic(NPNVariable, void*, NPError*)
 {
     return false;
 }
-#endif
 
 void PluginView::invalidateRect(NPRect*)
 {
 }
+#endif
 
 void PluginView::invalidateRect(const IntRect&)
 {
 }
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
 void PluginView::invalidateRegion(NPRegion)
 {
 }
+#endif
 
 void PluginView::forceRedraw()
 {
