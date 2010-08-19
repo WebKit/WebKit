@@ -1963,6 +1963,20 @@ sub GenerateImplementation
                                 push(@implContent, "    RefPtr<" . $parameter->type . "> $name = ${callbackClassName}::create(asObject(exec->argument($argsIndex)), castedThis->globalObject());\n");
                             }
                         } else {
+                            # For functions with "StrictTypeChecking", if an input parameter's type does not match the signature,
+                            # a TypeError is thrown instead of casting to null.
+                            if ($function->signature->extendedAttributes->{"StrictTypeChecking"}) {
+                                my $argValue = "exec->argument($argsIndex)";
+                                my $argType = $codeGenerator->StripModule($parameter->type);
+                                if (!IsNativeType($argType)) {
+                                    push(@implContent, "    if (exec->argumentCount() > $argsIndex && !${argValue}.isUndefinedOrNull() && !${argValue}.inherits(&JS${argType}::s_info))\n");
+                                    push(@implContent, "        return throwVMTypeError(exec);\n");
+                                } elsif ($codeGenerator->IsStringType($argType)) {
+                                    push(@implContent, "    if (exec->argumentCount() > $argsIndex && !${argValue}.isUndefinedOrNull() && !${argValue}.isString() && !${argValue}.isObject())\n");
+                                    push(@implContent, "        return throwVMTypeError(exec);\n");
+                                }
+                            }
+
                             push(@implContent, "    " . GetNativeTypeFromSignature($parameter) . " $name = " . JSValueToNative($parameter, "exec->argument($argsIndex)") . ";\n");
 
                             # If a parameter is "an index" and it's negative it should throw an INDEX_SIZE_ERR exception.

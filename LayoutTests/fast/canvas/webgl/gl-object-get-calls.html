@@ -39,11 +39,11 @@ gl.linkProgram(standardProgram);
 var shaders = gl.getAttachedShaders(standardProgram);
 shouldBe('shaders.length', '2');
 shouldBeTrue('shaders[0] == standardVert && shaders[1] == standardFrag || shaders[1] == standardVert && shaders[0] == standardFrag');
-shouldBe('gl.getError()', 'gl.NO_ERROR');
+glErrorShouldBe(gl, gl.NO_ERROR);
 shouldBeUndefined('gl.getAttachedShaders(null)');
-shouldBe('gl.getError()', 'gl.INVALID_VALUE');
-shouldBeUndefined('gl.getAttachedShaders(standardVert)');
-shouldBe('gl.getError()', 'gl.INVALID_VALUE');
+glErrorShouldBe(gl, gl.INVALID_VALUE);
+shouldThrow('gl.getAttachedShaders(standardVert)');
+glErrorShouldBe(gl, gl.NO_ERROR);
 
 // Test getBufferParameter
 var buffer = gl.createBuffer();
@@ -214,9 +214,13 @@ gl.vertexAttribPointer(1, 4, gl.FLOAT, false, 0, 0);
 shouldBe('gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_BUFFER_BINDING)', 'buffer');
 shouldBe('gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_ENABLED)', 'true');
 shouldBe('gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_SIZE)', '4');
-shouldBe('(gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_STRIDE) == 0) || (gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_STRIDE) == 4 * sizeInBytes(gl.FLOAT))', 'true');
+// Stride MUST be the value the user put in.
+shouldBe('gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_STRIDE)', '0');
 shouldBe('gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_TYPE)', 'gl.FLOAT');
 shouldBe('gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_NORMALIZED)', 'false');
+gl.vertexAttribPointer(1, 4, gl.FLOAT, false, 36, 12);
+shouldBe('gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_STRIDE)', '36');
+shouldBe('gl.getVertexAttribOffset(1, gl.VERTEX_ATTRIB_ARRAY_POINTER)', '12');
 gl.disableVertexAttribArray(1);
 shouldBe('gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_ENABLED)', 'false');
 gl.vertexAttrib4f(1, 5, 6, 7, 8);

@@ -1,3 +1,32 @@
+2010-08-18  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Implement strict type checking in js bindings for WebGL functions
+        https://bugs.webkit.org/show_bug.cgi?id=44202
+
+        Test: fast/canvas/webgl/bad-arguments-test.html
+
+        * bindings/js/JSWebGLRenderingContextCustom.cpp: Add type check for wrapper types and DOMString and throw error in case of mismatch.
+        (WebCore::JSWebGLRenderingContext::getAttachedShaders):
+        (WebCore::JSWebGLRenderingContext::getProgramParameter):
+        (WebCore::JSWebGLRenderingContext::getShaderParameter):
+        (WebCore::JSWebGLRenderingContext::getUniform):
+        (WebCore::dataFunctionf):
+        (WebCore::dataFunctioni):
+        (WebCore::dataFunctionMatrix):
+        * bindings/scripts/CodeGeneratorJS.pm: Ditto.
+        * bindings/scripts/CodeGeneratorV8.pm: Ditto.
+        * bindings/v8/custom/V8WebGLRenderingContextCustom.cpp: Ditto.
+        (WebCore::V8WebGLRenderingContext::getAttachedShadersCallback):
+        (WebCore::V8WebGLRenderingContext::getProgramParameterCallback):
+        (WebCore::V8WebGLRenderingContext::getShaderParameterCallback):
+        (WebCore::V8WebGLRenderingContext::getUniformCallback):
+        (WebCore::vertexAttribAndUniformHelperf):
+        (WebCore::uniformHelperi):
+        (WebCore::uniformMatrixHelper):
+        * html/canvas/WebGLRenderingContext.idl: Add attribute StrictTypeChecking for WebGL functions.
+
 2010-08-19  Simon Fraser  <simon.fraser@apple.com>
 
         Fix Chromium build.

@@ -4,11 +4,11 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS shaders.length is 2
 PASS shaders[0] == standardVert && shaders[1] == standardFrag || shaders[1] == standardVert && shaders[0] == standardFrag is true
-PASS gl.getError() is gl.NO_ERROR
+PASS getError was expected value: NO_ERROR : 
 PASS gl.getAttachedShaders(null) is undefined.
-PASS gl.getError() is gl.INVALID_VALUE
-PASS gl.getAttachedShaders(standardVert) is undefined.
-PASS gl.getError() is gl.INVALID_VALUE
+PASS getError was expected value: INVALID_VALUE : 
+PASS gl.getAttachedShaders(standardVert) threw exception TypeError: Type error.
+PASS getError was expected value: NO_ERROR : 
 PASS gl.getBufferParameter(gl.ARRAY_BUFFER, gl.BUFFER_SIZE) is 16
 PASS gl.getBufferParameter(gl.ARRAY_BUFFER, gl.BUFFER_USAGE) is gl.DYNAMIC_DRAW
 PASS getError was expected value: NO_ERROR : 
@@ -75,9 +75,11 @@ PASS gl.getUniform(matProgram, mval4Loc) is [14, 15, 16, 17, 18, 19, 20, 21, 22,
 PASS gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_BUFFER_BINDING) is buffer
 PASS gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_ENABLED) is true
 PASS gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_SIZE) is 4
-PASS (gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_STRIDE) == 0) || (gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_STRIDE) == 4 * sizeInBytes(gl.FLOAT)) is true
+PASS gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_STRIDE) is 0
 PASS gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_TYPE) is gl.FLOAT
 PASS gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_NORMALIZED) is false
+PASS gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_STRIDE) is 36
+PASS gl.getVertexAttribOffset(1, gl.VERTEX_ATTRIB_ARRAY_POINTER) is 12
 PASS gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_ENABLED) is false
 PASS gl.getVertexAttrib(1, gl.CURRENT_VERTEX_ATTRIB) is [5, 6, 7, 8]
 PASS getError was expected value: NO_ERROR : 

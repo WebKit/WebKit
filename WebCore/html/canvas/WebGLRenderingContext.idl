@@ -464,213 +464,210 @@ module html {
         const unsigned int UNPACK_FLIP_Y_WEBGL            = 0x9240;
         const unsigned int UNPACK_PREMULTIPLY_ALPHA_WEBGL = 0x9241;
 
-        void         activeTexture(in unsigned long texture) raises(DOMException);
-        void         attachShader(in WebGLProgram program, in WebGLShader shader) raises(DOMException);
-        void         bindAttribLocation(in WebGLProgram program, in unsigned long index, in DOMString name) raises(DOMException);
-        void         bindBuffer(in unsigned long target, in WebGLBuffer buffer) raises(DOMException);
-        void         bindFramebuffer(in unsigned long target, in WebGLFramebuffer framebuffer) raises(DOMException);
-        void         bindRenderbuffer(in unsigned long target, in WebGLRenderbuffer renderbuffer) raises(DOMException);
-        void         bindTexture(in unsigned long target, in WebGLTexture texture) raises(DOMException);
-        void         blendColor(in double red, in double green, in double blue, in double alpha);
-        void         blendEquation( in unsigned long mode );
-        void         blendEquationSeparate(in unsigned long modeRGB, in unsigned long modeAlpha);
-        void         blendFunc(in unsigned long sfactor, in unsigned long dfactor);
-        void         blendFuncSeparate(in unsigned long srcRGB, in unsigned long dstRGB, in unsigned long srcAlpha, in unsigned long dstAlpha);
-        void         bufferData(in unsigned long target, in ArrayBuffer data, in unsigned long usage) raises (DOMException);
-        void         bufferData(in unsigned long target, in ArrayBufferView data, in unsigned long usage) raises (DOMException);
-        void         bufferData(in unsigned long target, in long size, in unsigned long usage) raises (DOMException);
-        void         bufferSubData(in unsigned long target, in long offset, in ArrayBuffer data) raises (DOMException);
-        void         bufferSubData(in unsigned long target, in long offset, in ArrayBufferView data) raises (DOMException);
+        [StrictTypeChecking] void         activeTexture(in unsigned long texture) raises(DOMException);
+        [StrictTypeChecking] void         attachShader(in WebGLProgram program, in WebGLShader shader) raises(DOMException);
+        [StrictTypeChecking] void         bindAttribLocation(in WebGLProgram program, in unsigned long index, in DOMString name) raises(DOMException);
+        [StrictTypeChecking] void         bindBuffer(in unsigned long target, in WebGLBuffer buffer) raises(DOMException);
+        [StrictTypeChecking] void         bindFramebuffer(in unsigned long target, in WebGLFramebuffer framebuffer) raises(DOMException);
+        [StrictTypeChecking] void         bindRenderbuffer(in unsigned long target, in WebGLRenderbuffer renderbuffer) raises(DOMException);
+        [StrictTypeChecking] void         bindTexture(in unsigned long target, in WebGLTexture texture) raises(DOMException);
+        [StrictTypeChecking] void         blendColor(in double red, in double green, in double blue, in double alpha);
+        [StrictTypeChecking] void         blendEquation( in unsigned long mode );
+        [StrictTypeChecking] void         blendEquationSeparate(in unsigned long modeRGB, in unsigned long modeAlpha);
+        [StrictTypeChecking] void         blendFunc(in unsigned long sfactor, in unsigned long dfactor);
+        [StrictTypeChecking] void         blendFuncSeparate(in unsigned long srcRGB, in unsigned long dstRGB, in unsigned long srcAlpha, in unsigned long dstAlpha);
+        [StrictTypeChecking] void         bufferData(in unsigned long target, in ArrayBuffer data, in unsigned long usage) raises (DOMException);
+        [StrictTypeChecking] void         bufferData(in unsigned long target, in ArrayBufferView data, in unsigned long usage) raises (DOMException);
+        [StrictTypeChecking] void         bufferData(in unsigned long target, in long size, in unsigned long usage) raises (DOMException);
+        [StrictTypeChecking] void         bufferSubData(in unsigned long target, in long offset, in ArrayBuffer data) raises (DOMException);
+        [StrictTypeChecking] void         bufferSubData(in unsigned long target, in long offset, in ArrayBufferView data) raises (DOMException);
 
-        unsigned long checkFramebufferStatus(in unsigned long target);
-        void         clear(in unsigned long mask);
-        void         clearColor(in double red, in double green, in double blue, in double alpha);
-        void         clearDepth(in double depth);
-        void         clearStencil(in long s);
-        void         colorMask(in boolean red, in boolean green, in boolean blue, in boolean alpha);
-        void         compileShader(in WebGLShader shader) raises(DOMException);
+        [StrictTypeChecking] unsigned long checkFramebufferStatus(in unsigned long target);
+        [StrictTypeChecking] void         clear(in unsigned long mask);
+        [StrictTypeChecking] void         clearColor(in double red, in double green, in double blue, in double alpha);
+        [StrictTypeChecking] void         clearDepth(in double depth);
+        [StrictTypeChecking] void         clearStencil(in long s);
+        [StrictTypeChecking] void         colorMask(in boolean red, in boolean green, in boolean blue, in boolean alpha);
+        [StrictTypeChecking] void         compileShader(in WebGLShader shader) raises(DOMException);
         
         //void         compressedTexImage2D(in unsigned long target, in long level, in unsigned long internalformat, in unsigned long width, in unsigned long height, in long border, in unsigned long imageSize, const void* data);
         //void         compressedTexSubImage2D(in unsigned long target, in long level, in long xoffset, in long yoffset, in unsigned long width, in unsigned long height, in unsigned long format, in unsigned long imageSize, const void* data);
         
-        void         copyTexImage2D(in unsigned long target, in long level, in unsigned long internalformat, in long x, in long y, in unsigned long width, in unsigned long height, in long border);
-        void         copyTexSubImage2D(in unsigned long target, in long level, in long xoffset, in long yoffset, in long x, in long y, in unsigned long width, in unsigned long height);
+        [StrictTypeChecking] void         copyTexImage2D(in unsigned long target, in long level, in unsigned long internalformat, in long x, in long y, in unsigned long width, in unsigned long height, in long border);
+        [StrictTypeChecking] void         copyTexSubImage2D(in unsigned long target, in long level, in long xoffset, in long yoffset, in long x, in long y, in unsigned long width, in unsigned long height);
 
-        WebGLBuffer createBuffer();
-        WebGLFramebuffer createFramebuffer();
-        WebGLProgram createProgram();
-        WebGLRenderbuffer createRenderbuffer();
-        WebGLShader createShader(in unsigned long type) raises(DOMException);
-        WebGLTexture createTexture();
+        [StrictTypeChecking] WebGLBuffer createBuffer();
+        [StrictTypeChecking] WebGLFramebuffer createFramebuffer();
+        [StrictTypeChecking] WebGLProgram createProgram();
+        [StrictTypeChecking] WebGLRenderbuffer createRenderbuffer();
+        [StrictTypeChecking] WebGLShader createShader(in unsigned long type) raises(DOMException);
+        [StrictTypeChecking] WebGLTexture createTexture();
 
-        void         cullFace(in unsigned long mode);
+        [StrictTypeChecking] void         cullFace(in unsigned long mode);
 
-        void         deleteBuffer(in WebGLBuffer buffer);
-        void         deleteFramebuffer(in WebGLFramebuffer framebuffer);
-        void         deleteProgram(in WebGLProgram program);
-        void         deleteRenderbuffer(in WebGLRenderbuffer renderbuffer);
-        void         deleteShader(in WebGLShader shader);
-        void         deleteTexture(in WebGLTexture texture);
+        [StrictTypeChecking] void         deleteBuffer(in WebGLBuffer buffer);
+        [StrictTypeChecking] void         deleteFramebuffer(in WebGLFramebuffer framebuffer);
+        [StrictTypeChecking] void         deleteProgram(in WebGLProgram program);
+        [StrictTypeChecking] void         deleteRenderbuffer(in WebGLRenderbuffer renderbuffer);
+        [StrictTypeChecking] void         deleteShader(in WebGLShader shader);
+        [StrictTypeChecking] void         deleteTexture(in WebGLTexture texture);
 
-        void         depthFunc(in unsigned long func);
-        void         depthMask(in boolean flag);
+        [StrictTypeChecking] void         depthFunc(in unsigned long func);
+        [StrictTypeChecking] void         depthMask(in boolean flag);
         // FIXME: this differs from the current WebGL spec (depthRangef)
-        void         depthRange(in double zNear, in double zFar);
-        void         detachShader(in WebGLProgram program, in WebGLShader shader) raises(DOMException);
-        void         disable(in unsigned long cap);
-        void         disableVertexAttribArray(in unsigned long index) raises(DOMException);
-        void         drawArrays(in unsigned long mode, in long first, in long count) raises(DOMException);
-        void         drawElements(in unsigned long mode, in long count, in unsigned long type, in long offset) raises(DOMException);
+        [StrictTypeChecking] void         depthRange(in double zNear, in double zFar);
+        [StrictTypeChecking] void         detachShader(in WebGLProgram program, in WebGLShader shader) raises(DOMException);
+        [StrictTypeChecking] void         disable(in unsigned long cap);
+        [StrictTypeChecking] void         disableVertexAttribArray(in unsigned long index) raises(DOMException);
+        [StrictTypeChecking] void         drawArrays(in unsigned long mode, in long first, in long count) raises(DOMException);
+        [StrictTypeChecking] void         drawElements(in unsigned long mode, in long count, in unsigned long type, in long offset) raises(DOMException);
 
-        void         enable(in unsigned long cap);
-        void         enableVertexAttribArray(in unsigned long index) raises(DOMException);
-        void         finish();
-        void         flush();
-        void         framebufferRenderbuffer(in unsigned long target, in unsigned long attachment, in unsigned long renderbuffertarget, in WebGLRenderbuffer renderbuffer) raises(DOMException);
-        void         framebufferTexture2D(in unsigned long target, in unsigned long attachment, in unsigned long textarget, in WebGLTexture texture, in long level) raises(DOMException);
-        void         frontFace(in unsigned long mode);
-        void         generateMipmap(in unsigned long target);
+        [StrictTypeChecking] void         enable(in unsigned long cap);
+        [StrictTypeChecking] void         enableVertexAttribArray(in unsigned long index) raises(DOMException);
+        [StrictTypeChecking] void         finish();
+        [StrictTypeChecking] void         flush();
+        [StrictTypeChecking] void         framebufferRenderbuffer(in unsigned long target, in unsigned long attachment, in unsigned long renderbuffertarget, in WebGLRenderbuffer renderbuffer) raises(DOMException);
+        [StrictTypeChecking] void         framebufferTexture2D(in unsigned long target, in unsigned long attachment, in unsigned long textarget, in WebGLTexture texture, in long level) raises(DOMException);
+        [StrictTypeChecking] void         frontFace(in unsigned long mode);
+        [StrictTypeChecking] void         generateMipmap(in unsigned long target);
         
-        WebGLActiveInfo getActiveAttrib(in WebGLProgram program, in unsigned long index)
-            raises (DOMException);
-        WebGLActiveInfo getActiveUniform(in WebGLProgram program, in unsigned long index)
-            raises (DOMException);
+        [StrictTypeChecking] WebGLActiveInfo getActiveAttrib(in WebGLProgram program, in unsigned long index) raises (DOMException);
+        [StrictTypeChecking] WebGLActiveInfo getActiveUniform(in WebGLProgram program, in unsigned long index) raises (DOMException);
 
-        [Custom] void getAttachedShaders(in WebGLProgram program)
-            raises (DOMException);
+        [StrictTypeChecking, Custom] void getAttachedShaders(in WebGLProgram program) raises (DOMException);
 
-        int          getAttribLocation(in WebGLProgram program, in DOMString name);
+        [StrictTypeChecking] int          getAttribLocation(in WebGLProgram program, in DOMString name);
 
         // any getBufferParameter(in unsigned long target, in unsigned long pname) raises(DOMException);
-        [Custom] void getBufferParameter();
+        [StrictTypeChecking, Custom] void getBufferParameter();
 
-        WebGLContextAttributes getContextAttributes();
+        [StrictTypeChecking] WebGLContextAttributes getContextAttributes();
 
-        unsigned long getError();
+        [StrictTypeChecking] unsigned long getError();
 
         // any getFramebufferAttachmentParameter(in unsigned long target, in unsigned long attachment, in unsigned long pname) raises(DOMException);
-        [Custom] void getFramebufferAttachmentParameter();
+        [StrictTypeChecking, Custom] void getFramebufferAttachmentParameter();
         // any getParameter(in unsigned long pname) raises(DOMException);
-        [Custom] void getParameter();
+        [StrictTypeChecking, Custom] void getParameter();
         // any getProgramParameter(in WebGLProgram program, in unsigned long pname) raises(DOMException);
-        [Custom] void getProgramParameter();
-        DOMString getProgramInfoLog(in WebGLProgram program) raises(DOMException);
+        [StrictTypeChecking, Custom] void getProgramParameter();
+        [StrictTypeChecking] DOMString getProgramInfoLog(in WebGLProgram program) raises(DOMException);
         // any getRenderbufferParameter(in unsigned long target, in unsigned long pname) raises(DOMException);
-        [Custom] void getRenderbufferParameter();
+        [StrictTypeChecking, Custom] void getRenderbufferParameter();
         // any getShaderParameter(in WebGLShader shader, in unsigned long pname) raises(DOMException);
-        [Custom] void getShaderParameter() raises(DOMException);
+        [StrictTypeChecking, Custom] void getShaderParameter() raises(DOMException);
 
-        DOMString    getShaderInfoLog(in WebGLShader shader) raises(DOMException);
+        [StrictTypeChecking] DOMString    getShaderInfoLog(in WebGLShader shader) raises(DOMException);
 
         // TBD
         // void glGetShaderPrecisionFormat (GLenum shadertype, GLenum precisiontype, GLint* range, GLint* precision);
 
-        DOMString    getShaderSource(in WebGLShader shader) raises(DOMException);
-        DOMString    getString(in unsigned long name);
+        [StrictTypeChecking] DOMString    getShaderSource(in WebGLShader shader) raises(DOMException);
+        [StrictTypeChecking] DOMString    getString(in unsigned long name);
 
         // any getTexParameter(in unsigned long target, in unsigned long pname) raises(DOMException);
-        [Custom] void getTexParameter();
+        [StrictTypeChecking, Custom] void getTexParameter();
 
         // any getUniform(in WebGLProgram program, in WebGLUniformLocation location) raises(DOMException);
-        [Custom] void getUniform();
+        [StrictTypeChecking, Custom] void getUniform();
 
-        WebGLUniformLocation getUniformLocation(in WebGLProgram program, in DOMString name) raises(DOMException);
+        [StrictTypeChecking] WebGLUniformLocation getUniformLocation(in WebGLProgram program, in DOMString name) raises(DOMException);
 
         // any getVertexAttrib(in unsigned long index, in unsigned long pname) raises(DOMException);
-        [Custom] void getVertexAttrib();
+        [StrictTypeChecking, Custom] void getVertexAttrib();
 
-        long getVertexAttribOffset(in unsigned long index, in unsigned long pname);
+        [StrictTypeChecking] long getVertexAttribOffset(in unsigned long index, in unsigned long pname);
 
-        void         hint(in unsigned long target, in unsigned long mode);
-        boolean      isBuffer(in WebGLBuffer buffer);
-        boolean      isEnabled(in unsigned long cap);
-        boolean      isFramebuffer(in WebGLFramebuffer framebuffer);
-        boolean      isProgram(in WebGLProgram program);
-        boolean      isRenderbuffer(in WebGLRenderbuffer renderbuffer);
-        boolean      isShader(in WebGLShader shader);
-        boolean      isTexture(in WebGLTexture texture);
-        void         lineWidth(in double width);
-        void         linkProgram(in WebGLProgram program) raises(DOMException);
-        void         pixelStorei(in unsigned long pname, in long param);
-        void         polygonOffset(in double factor, in double units);
+        [StrictTypeChecking] void         hint(in unsigned long target, in unsigned long mode);
+        [StrictTypeChecking] boolean      isBuffer(in WebGLBuffer buffer);
+        [StrictTypeChecking] boolean      isEnabled(in unsigned long cap);
+        [StrictTypeChecking] boolean      isFramebuffer(in WebGLFramebuffer framebuffer);
+        [StrictTypeChecking] boolean      isProgram(in WebGLProgram program);
+        [StrictTypeChecking] boolean      isRenderbuffer(in WebGLRenderbuffer renderbuffer);
+        [StrictTypeChecking] boolean      isShader(in WebGLShader shader);
+        [StrictTypeChecking] boolean      isTexture(in WebGLTexture texture);
+        [StrictTypeChecking] void         lineWidth(in double width);
+        [StrictTypeChecking] void         linkProgram(in WebGLProgram program) raises(DOMException);
+        [StrictTypeChecking] void         pixelStorei(in unsigned long pname, in long param);
+        [StrictTypeChecking] void         polygonOffset(in double factor, in double units);
 
-        void         readPixels(in long x, in long y, in long width, in long height, in unsigned long format, in unsigned long type, in ArrayBufferView pixels);
+        [StrictTypeChecking] void         readPixels(in long x, in long y, in long width, in long height, in unsigned long format, in unsigned long type, in ArrayBufferView pixels);
         
-        void         releaseShaderCompiler();
-        void         renderbufferStorage(in unsigned long target, in unsigned long internalformat, in unsigned long width, in unsigned long height);
-        void         sampleCoverage(in double value, in boolean invert);
-        void         scissor(in long x, in long y, in unsigned long width, in unsigned long height);
-        void         shaderSource(in WebGLShader shader, in DOMString string) raises(DOMException);
-        void         stencilFunc(in unsigned long func, in long ref, in unsigned long mask);
-        void         stencilFuncSeparate(in unsigned long face, in unsigned long func, in long ref, in unsigned long mask);
-        void         stencilMask(in unsigned long mask);
-        void         stencilMaskSeparate(in unsigned long face, in unsigned long mask);
-        void         stencilOp(in unsigned long fail, in unsigned long zfail, in unsigned long zpass);
-        void         stencilOpSeparate(in unsigned long face, in unsigned long fail, in unsigned long zfail, in unsigned long zpass);
+        [StrictTypeChecking] void         releaseShaderCompiler();
+        [StrictTypeChecking] void         renderbufferStorage(in unsigned long target, in unsigned long internalformat, in unsigned long width, in unsigned long height);
+        [StrictTypeChecking] void         sampleCoverage(in double value, in boolean invert);
+        [StrictTypeChecking] void         scissor(in long x, in long y, in unsigned long width, in unsigned long height);
+        [StrictTypeChecking] void         shaderSource(in WebGLShader shader, in DOMString string) raises(DOMException);
+        [StrictTypeChecking] void         stencilFunc(in unsigned long func, in long ref, in unsigned long mask);
+        [StrictTypeChecking] void         stencilFuncSeparate(in unsigned long face, in unsigned long func, in long ref, in unsigned long mask);
+        [StrictTypeChecking] void         stencilMask(in unsigned long mask);
+        [StrictTypeChecking] void         stencilMaskSeparate(in unsigned long face, in unsigned long mask);
+        [StrictTypeChecking] void         stencilOp(in unsigned long fail, in unsigned long zfail, in unsigned long zpass);
+        [StrictTypeChecking] void         stencilOpSeparate(in unsigned long face, in unsigned long fail, in unsigned long zfail, in unsigned long zpass);
 
-        void         texParameterf(in unsigned long target, in unsigned long pname, in float param);
-        void         texParameteri(in unsigned long target, in unsigned long pname, in long param);
+        [StrictTypeChecking] void         texParameterf(in unsigned long target, in unsigned long pname, in float param);
+        [StrictTypeChecking] void         texParameteri(in unsigned long target, in unsigned long pname, in long param);
 
         // Supported forms:
-        void         texImage2D(in unsigned long target, in long level, in unsigned long internalformat, in long width, in long height, 
-                                in long border, in unsigned long format, in unsigned long type, in ArrayBufferView pixels) raises (DOMException);
-        void         texImage2D(in unsigned long target, in long level, in unsigned long internalformat,
-                                in unsigned long format, in unsigned long type, in ImageData pixels) raises (DOMException);
-        void         texImage2D(in unsigned long target, in long level, in unsigned long internalformat,
-                                in unsigned long format, in unsigned long type, in HTMLImageElement image) raises (DOMException);
-        void         texImage2D(in unsigned long target, in long level, in unsigned long internalformat,
-                                in unsigned long format, in unsigned long type, in HTMLCanvasElement canvas) raises (DOMException);
-        void         texImage2D(in unsigned long target, in long level, in unsigned long internalformat,
-                                in unsigned long format, in unsigned long type, in HTMLVideoElement video) raises (DOMException);
+        [StrictTypeChecking] void         texImage2D(in unsigned long target, in long level, in unsigned long internalformat, in long width, in long height, 
+                                                     in long border, in unsigned long format, in unsigned long type, in ArrayBufferView pixels) raises (DOMException);
+        [StrictTypeChecking] void         texImage2D(in unsigned long target, in long level, in unsigned long internalformat,
+                                                     in unsigned long format, in unsigned long type, in ImageData pixels) raises (DOMException);
+        [StrictTypeChecking] void         texImage2D(in unsigned long target, in long level, in unsigned long internalformat,
+                                                     in unsigned long format, in unsigned long type, in HTMLImageElement image) raises (DOMException);
+        [StrictTypeChecking] void         texImage2D(in unsigned long target, in long level, in unsigned long internalformat,
+                                                     in unsigned long format, in unsigned long type, in HTMLCanvasElement canvas) raises (DOMException);
+        [StrictTypeChecking] void         texImage2D(in unsigned long target, in long level, in unsigned long internalformat,
+                                                     in unsigned long format, in unsigned long type, in HTMLVideoElement video) raises (DOMException);
 
-        void         texSubImage2D(in unsigned long target, in long level, in long xoffset, in long yoffset, 
-                                   in long width, in long height, 
-                                   in unsigned long format, in unsigned long type, in ArrayBufferView pixels) raises (DOMException);
-        void         texSubImage2D(in unsigned long target, in long level, in long xoffset, in long yoffset,
-                                   in unsigned long format, in unsigned long type, in ImageData pixels) raises (DOMException);
-        void         texSubImage2D(in unsigned long target, in long level, in long xoffset, in long yoffset,
-                                   in unsigned long format, in unsigned long type, in HTMLImageElement image) raises (DOMException);
-        void         texSubImage2D(in unsigned long target, in long level, in long xoffset, in long yoffset,
-                                   in unsigned long format, in unsigned long type, in HTMLCanvasElement canvas) raises (DOMException);
-        void         texSubImage2D(in unsigned long target, in long level, in long xoffset, in long yoffset,
-                                   in unsigned long format, in unsigned long type, in HTMLVideoElement video) raises (DOMException);
+        [StrictTypeChecking] void         texSubImage2D(in unsigned long target, in long level, in long xoffset, in long yoffset, 
+                                                        in long width, in long height, 
+                                                        in unsigned long format, in unsigned long type, in ArrayBufferView pixels) raises (DOMException);
+        [StrictTypeChecking] void         texSubImage2D(in unsigned long target, in long level, in long xoffset, in long yoffset,
+                                                        in unsigned long format, in unsigned long type, in ImageData pixels) raises (DOMException);
+        [StrictTypeChecking] void         texSubImage2D(in unsigned long target, in long level, in long xoffset, in long yoffset,
+                                                        in unsigned long format, in unsigned long type, in HTMLImageElement image) raises (DOMException);
+        [StrictTypeChecking] void         texSubImage2D(in unsigned long target, in long level, in long xoffset, in long yoffset,
+                                                        in unsigned long format, in unsigned long type, in HTMLCanvasElement canvas) raises (DOMException);
+        [StrictTypeChecking] void         texSubImage2D(in unsigned long target, in long level, in long xoffset, in long yoffset,
+                                                        in unsigned long format, in unsigned long type, in HTMLVideoElement video) raises (DOMException);
 
-        void uniform1f(in WebGLUniformLocation location, in float x) raises(DOMException);
-        [Custom] void uniform1fv(in WebGLUniformLocation location, in Float32Array v) raises(DOMException);
-        void uniform1i(in WebGLUniformLocation location, in long x) raises(DOMException);
-        [Custom] void uniform1iv(in WebGLUniformLocation location, in Int32Array v) raises(DOMException);
-        void uniform2f(in WebGLUniformLocation location, in float x, in float y) raises(DOMException);
-        [Custom] void uniform2fv(in WebGLUniformLocation location, in Float32Array v) raises(DOMException);
-        void uniform2i(in WebGLUniformLocation location, in long x, in long y) raises(DOMException);
-        [Custom] void uniform2iv(in WebGLUniformLocation location, in Int32Array v) raises(DOMException);
-        void uniform3f(in WebGLUniformLocation location, in float x, in float y, in float z) raises(DOMException);
-        [Custom] void uniform3fv(in WebGLUniformLocation location, in Float32Array v) raises(DOMException);
-        void uniform3i(in WebGLUniformLocation location, in long x, in long y, in long z) raises(DOMException);
-        [Custom] void uniform3iv(in WebGLUniformLocation location, in Int32Array v) raises(DOMException);
-        void uniform4f(in WebGLUniformLocation location, in float x, in float y, in float z, in float w) raises(DOMException);
-        [Custom] void uniform4fv(in WebGLUniformLocation location, in Float32Array v) raises(DOMException);
-        void uniform4i(in WebGLUniformLocation location, in long x, in long y, in long z, in long w) raises(DOMException);
-        [Custom] void uniform4iv(in WebGLUniformLocation location, in Int32Array v) raises(DOMException);
+        [StrictTypeChecking] void uniform1f(in WebGLUniformLocation location, in float x) raises(DOMException);
+        [StrictTypeChecking, Custom] void uniform1fv(in WebGLUniformLocation location, in Float32Array v) raises(DOMException);
+        [StrictTypeChecking] void uniform1i(in WebGLUniformLocation location, in long x) raises(DOMException);
+        [StrictTypeChecking, Custom] void uniform1iv(in WebGLUniformLocation location, in Int32Array v) raises(DOMException);
+        [StrictTypeChecking] void uniform2f(in WebGLUniformLocation location, in float x, in float y) raises(DOMException);
+        [StrictTypeChecking, Custom] void uniform2fv(in WebGLUniformLocation location, in Float32Array v) raises(DOMException);
+        [StrictTypeChecking] void uniform2i(in WebGLUniformLocation location, in long x, in long y) raises(DOMException);
+        [StrictTypeChecking, Custom] void uniform2iv(in WebGLUniformLocation location, in Int32Array v) raises(DOMException);
+        [StrictTypeChecking] void uniform3f(in WebGLUniformLocation location, in float x, in float y, in float z) raises(DOMException);
+        [StrictTypeChecking, Custom] void uniform3fv(in WebGLUniformLocation location, in Float32Array v) raises(DOMException);
+        [StrictTypeChecking] void uniform3i(in WebGLUniformLocation location, in long x, in long y, in long z) raises(DOMException);
+        [StrictTypeChecking, Custom] void uniform3iv(in WebGLUniformLocation location, in Int32Array v) raises(DOMException);
+        [StrictTypeChecking] void uniform4f(in WebGLUniformLocation location, in float x, in float y, in float z, in float w) raises(DOMException);
+        [StrictTypeChecking, Custom] void uniform4fv(in WebGLUniformLocation location, in Float32Array v) raises(DOMException);
+        [StrictTypeChecking] void uniform4i(in WebGLUniformLocation location, in long x, in long y, in long z, in long w) raises(DOMException);
+        [StrictTypeChecking, Custom] void uniform4iv(in WebGLUniformLocation location, in Int32Array v) raises(DOMException);
 
-        [Custom] void uniformMatrix2fv(in WebGLUniformLocation location, in boolean transpose, in Float32Array array) raises(DOMException);
-        [Custom] void uniformMatrix3fv(in WebGLUniformLocation location, in boolean transpose, in Float32Array array) raises(DOMException);
-        [Custom] void uniformMatrix4fv(in WebGLUniformLocation location, in boolean transpose, in Float32Array array) raises(DOMException);
+        [StrictTypeChecking, Custom] void uniformMatrix2fv(in WebGLUniformLocation location, in boolean transpose, in Float32Array array) raises(DOMException);
+        [StrictTypeChecking, Custom] void uniformMatrix3fv(in WebGLUniformLocation location, in boolean transpose, in Float32Array array) raises(DOMException);
+        [StrictTypeChecking, Custom] void uniformMatrix4fv(in WebGLUniformLocation location, in boolean transpose, in Float32Array array) raises(DOMException);
 
-        void         useProgram(in WebGLProgram program) raises(DOMException);
-        void         validateProgram(in WebGLProgram program) raises(DOMException);
+        [StrictTypeChecking] void         useProgram(in WebGLProgram program) raises(DOMException);
+        [StrictTypeChecking] void         validateProgram(in WebGLProgram program) raises(DOMException);
 
-        void         vertexAttrib1f(in unsigned long indx, in float x);
-        [Custom] void         vertexAttrib1fv(in unsigned long indx, in Float32Array values);
-        void         vertexAttrib2f(in unsigned long indx, in float x, in float y);
-        [Custom] void         vertexAttrib2fv(in unsigned long indx, in Float32Array values);
-        void         vertexAttrib3f(in unsigned long indx, in float x, in float y, in float z);
-        [Custom] void         vertexAttrib3fv(in unsigned long indx, in Float32Array values);
-        void         vertexAttrib4f(in unsigned long indx, in float x, in float y, in float z, in float w);
-        [Custom] void         vertexAttrib4fv(in unsigned long indx, in Float32Array values);
-        void         vertexAttribPointer(in unsigned long indx, in long size, in unsigned long type, in boolean normalized, 
-                                         in long stride, in unsigned long offset) raises(DOMException);
+        [StrictTypeChecking] void         vertexAttrib1f(in unsigned long indx, in float x);
+        [StrictTypeChecking, Custom] void         vertexAttrib1fv(in unsigned long indx, in Float32Array values);
+        [StrictTypeChecking] void         vertexAttrib2f(in unsigned long indx, in float x, in float y);
+        [StrictTypeChecking, Custom] void         vertexAttrib2fv(in unsigned long indx, in Float32Array values);
+        [StrictTypeChecking] void         vertexAttrib3f(in unsigned long indx, in float x, in float y, in float z);
+        [StrictTypeChecking, Custom] void         vertexAttrib3fv(in unsigned long indx, in Float32Array values);
+        [StrictTypeChecking] void         vertexAttrib4f(in unsigned long indx, in float x, in float y, in float z, in float w);
+        [StrictTypeChecking, Custom] void         vertexAttrib4fv(in unsigned long indx, in Float32Array values);
+        [StrictTypeChecking] void         vertexAttribPointer(in unsigned long indx, in long size, in unsigned long type, in boolean normalized, 
+                                                              in long stride, in unsigned long offset) raises(DOMException);
 
-        void         viewport(in long x, in long y, in unsigned long width, in unsigned long height);
+        [StrictTypeChecking] void         viewport(in long x, in long y, in unsigned long width, in unsigned long height);
     };
 }
 

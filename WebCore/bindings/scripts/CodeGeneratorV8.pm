@@ -1245,6 +1245,23 @@ END
             }
         } else {
             $implIncludes{"V8BindingMacros.h"} = 1;
+            # For functions with "StrictTypeChecking", if an input parameter's type does not match the signature,
+            # a TypeError is thrown instead of casting to null.
+            if ($function->signature->extendedAttributes->{"StrictTypeChecking"}) {
+                my $argValue = "args[$paramIndex]";
+                my $argType = GetTypeFromSignature($parameter);
+                if (IsWrapperType($argType)) {
+                    push(@implContentDecls, "    if (args.Length() > $paramIndex && !isUndefinedOrNull($argValue) && !V8${argType}::HasInstance($argValue)) {\n");
+                    push(@implContentDecls, "        V8Proxy::throwTypeError();\n");
+                    push(@implContentDecls, "        return notHandledByInterceptor();\n");
+                    push(@implContentDecls, "    }\n");
+                } elsif ($codeGenerator->IsStringType($argType)) {
+                    push(@implContentDecls, "    if (args.Length() > $paramIndex && !isUndefinedOrNull($argValue) && !${argValue}->IsString() && !${argValue}->IsObject()) {\n");
+                    push(@implContentDecls, "        V8Proxy::throwTypeError();\n");
+                    push(@implContentDecls, "        return notHandledByInterceptor();\n");
+                    push(@implContentDecls, "    }\n");
+                }
+            }
             push(@implContentDecls, "    EXCEPTION_BLOCK($nativeType, $parameterName, " .
                  JSValueToNative($parameter, "args[$paramIndex]", BasicTypeCanFailConversion($parameter) ?  "${parameterName}Ok" : undef) . ");\n");
         }
@@ -2988,7 +3005,10 @@ sub RequiresCustomSignature
     if (@{$function->{overloads}} > 1) {
         return 0;
     }
-
+    # Type checking is performed in the generated code
+    if ($function->signature->extendedAttributes->{"StrictTypeChecking"}) {
+      return 0;
+    }
     foreach my $parameter (@{$function->parameters}) {
         if ($parameter->extendedAttributes->{"Optional"} || $parameter->extendedAttributes->{"Callback"}) {
             return 0;

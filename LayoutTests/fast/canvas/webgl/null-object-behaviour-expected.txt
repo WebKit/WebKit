@@ -14,10 +14,10 @@ PASS context.detachShader(undefined, shader) was expected value: INVALID_VALUE.
 PASS context.shaderSource() was expected value: INVALID_VALUE.
 PASS context.shaderSource(undefined, 'foo') was expected value: INVALID_VALUE.
 PASS context.bindAttribLocation(undefined, 0, 'foo') was expected value: INVALID_VALUE.
-PASS context.bindBuffer(context.ARRAY_BUFFER, 0) was expected value: NO_ERROR.
-PASS context.bindFramebuffer(context.FRAMEBUFFER, 0) was expected value: NO_ERROR.
-PASS context.bindRenderbuffer(context.RENDERBUFFER, 0) was expected value: NO_ERROR.
-PASS context.bindTexture(context.TEXTURE_2D, 0) was expected value: NO_ERROR.
+PASS context.bindBuffer(context.ARRAY_BUFFER, 0) threw exception TypeError: Type error.
+PASS context.bindFramebuffer(context.FRAMEBUFFER, 0) threw exception TypeError: Type error.
+PASS context.bindRenderbuffer(context.RENDERBUFFER, 0) threw exception TypeError: Type error.
+PASS context.bindTexture(context.TEXTURE_2D, 0) threw exception TypeError: Type error.
 PASS context.bindBuffer(context.ARRAY_BUFFER, null) was expected value: NO_ERROR.
 PASS context.bindFramebuffer(context.FRAMEBUFFER, null) was expected value: NO_ERROR.
 PASS context.bindRenderbuffer(context.RENDERBUFFER, null) was expected value: NO_ERROR.
@@ -26,14 +26,14 @@ PASS context.bindBuffer(context.ARRAY_BUFFER, undefined) was expected value: NO_
 PASS context.bindFramebuffer(context.FRAMEBUFFER, undefined) was expected value: NO_ERROR.
 PASS context.bindRenderbuffer(context.RENDERBUFFER, undefined) was expected value: NO_ERROR.
 PASS context.bindTexture(context.TEXTURE_2D, undefined) was expected value: NO_ERROR.
-PASS context.framebufferRenderbuffer(context.FRAMEBUFFER, context.DEPTH_ATTACHMENT, context.RENDERBUFFER, 0) was expected value: INVALID_OPERATION.
-PASS context.framebufferTexture2D(context.FRAMEBUFFER, context.COLOR_ATTACHMENT0, context.TEXTURE_2D, 0, 0) was expected value: INVALID_OPERATION.
+PASS context.framebufferRenderbuffer(context.FRAMEBUFFER, context.DEPTH_ATTACHMENT, context.RENDERBUFFER, null) was expected value: INVALID_OPERATION.
+PASS context.framebufferTexture2D(context.FRAMEBUFFER, context.COLOR_ATTACHMENT0, context.TEXTURE_2D, null, 0) was expected value: INVALID_OPERATION.
 PASS context.getProgramParameter(undefined, 0) was expected value: INVALID_VALUE.
 PASS context.getProgramInfoLog(undefined, 0) was expected value: INVALID_VALUE.
 PASS context.getShaderParameter(undefined, 0) was expected value: INVALID_VALUE.
 PASS context.getShaderInfoLog(undefined, 0) was expected value: INVALID_VALUE.
 PASS context.getShaderSource(undefined) was expected value: INVALID_VALUE.
-PASS context.getUniform(undefined, 0) was expected value: INVALID_VALUE.
+PASS context.getUniform(undefined, null) was expected value: INVALID_VALUE.
 PASS context.getUniformLocation(undefined, 'foo') was expected value: INVALID_VALUE.
 
 check with bindings

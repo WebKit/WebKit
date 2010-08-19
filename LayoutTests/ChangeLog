@@ -1,3 +1,19 @@
+2010-08-18  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Implement strict type checking in js bindings for WebGL functions
+        https://bugs.webkit.org/show_bug.cgi?id=44202
+
+        * fast/canvas/webgl/bad-arguments-test-expected.txt: Added.
+        * fast/canvas/webgl/bad-arguments-test.html: Added.
+        * fast/canvas/webgl/error-reporting-expected.txt: Fix bugs due to strict type checking in the js bindings.
+        * fast/canvas/webgl/error-reporting.html: ditto.
+        * fast/canvas/webgl/gl-object-get-calls-expected.txt: ditto.
+        * fast/canvas/webgl/gl-object-get-calls.html: ditto.
+        * fast/canvas/webgl/null-object-behaviour-expected.txt: ditto.
+        * fast/canvas/webgl/null-object-behaviour.html: ditto.
+
 2010-08-19  John Gregg  <johnnyg@google.com>
 
         Unreviewed, test expectations.
