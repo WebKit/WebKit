@@ -86,9 +86,15 @@ struct PaintInfo {
             return;
 
         context->concatCTM(localToAncestorTransform);
+
+        if (rect == infiniteRect())
+            return;
+
         rect = localToAncestorTransform.inverse().mapRect(rect);
     }
 #endif
+
+    static IntRect infiniteRect() { return IntRect(INT_MIN / 2, INT_MIN / 2, INT_MAX, INT_MAX); }
 
     // FIXME: Introduce setters/getters at some point. Requires a lot of changes throughout rendering/.
     GraphicsContext* context;

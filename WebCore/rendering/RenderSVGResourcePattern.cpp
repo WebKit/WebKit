@@ -27,6 +27,8 @@
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "PatternAttributes.h"
+#include "RenderSVGRoot.h"
+#include "SVGImageBufferTools.h"
 #include "SVGRenderSupport.h"
 
 namespace WebCore {
@@ -75,7 +77,7 @@ bool RenderSVGResourcePattern::applyResource(RenderObject* object, RenderStyle* 
     ASSERT(resourceMode != ApplyToDefaultMode);
 
     // Be sure to synchronize all SVG properties on the patternElement _before_ processing any further.
-    // Otherwhise the call to collectPatternAttributes() in createTileImage(), may cause the SVG DOM property
+    // Otherwhise the call to collectPatternAttributes() below, may cause the SVG DOM property
     // synchronization to kick in, which causes removeAllClientsFromCache() to be called, which in turn deletes our
     // PatternData object! Leaving out the line below will cause svg/dynamic-updates/SVGPatternElement-svgdom* to crash.
     SVGPatternElement* patternElement = static_cast<SVGPatternElement*>(node());
@@ -89,16 +91,40 @@ bool RenderSVGResourcePattern::applyResource(RenderObject* object, RenderStyle* 
 
     PatternData* patternData = m_pattern.get(object);
     if (!patternData->pattern) {
-        // Create tile image
-        OwnPtr<ImageBuffer> tileImage = createTileImage(patternData, patternElement, object);
+        PatternAttributes attributes = patternElement->collectPatternProperties();
+
+        // If we couldn't determine the pattern content element root, stop here.
+        if (!attributes.patternContentElement())
+            return false;
+
+        // Compute all necessary transformations to build the tile image & the pattern.
+        FloatRect tileBoundaries;
+        AffineTransform tileImageTransform = buildTileImageTransform(object, attributes, patternElement, tileBoundaries);
+
+        AffineTransform absoluteTransform(SVGImageBufferTools::transformationToOutermostSVGCoordinateSystem(object));
+        FloatRect absoluteTileBoundaries = absoluteTransform.mapRect(tileBoundaries);
+
+        // Build tile image.
+        OwnPtr<ImageBuffer> tileImage = createTileImage(object, attributes, tileBoundaries, absoluteTileBoundaries, tileImageTransform);
         if (!tileImage)
             return false;
 
-        // Create pattern object
-        buildPattern(patternData, tileImage.release());
+        RefPtr<Image> copiedImage = tileImage->copyImage();
+        if (!copiedImage)
+            return false;
 
+        // Build pattern.
+        patternData->pattern = Pattern::create(copiedImage, true, true);
         if (!patternData->pattern)
             return false;
+
+        // Compute pattern space transformation.
+        patternData->transform.translate(tileBoundaries.x(), tileBoundaries.y());
+        patternData->transform.scale(tileBoundaries.width() / absoluteTileBoundaries.width(), tileBoundaries.height() / absoluteTileBoundaries.height());
+
+        AffineTransform patternTransform = attributes.patternTransform();
+        if (!patternTransform.isIdentity())
+            patternData->transform.multiply(patternTransform);
 
         patternData->pattern->setPatternSpaceTransform(patternData->transform);
     }
@@ -155,13 +181,15 @@ void RenderSVGResourcePattern::postApplyResource(RenderObject*, GraphicsContext*
     context->restore();
 }
 
-static inline FloatRect calculatePatternBoundaries(PatternAttributes& attributes,
+static inline FloatRect calculatePatternBoundaries(const PatternAttributes& attributes,
                                                    const FloatRect& objectBoundingBox,
                                                    const SVGPatternElement* patternElement)
 {
+    ASSERT(patternElement);
+
     if (attributes.boundingBoxMode())
-        return FloatRect(attributes.x().valueAsPercentage() * objectBoundingBox.width(),
-                         attributes.y().valueAsPercentage() * objectBoundingBox.height(),
+        return FloatRect(attributes.x().valueAsPercentage() * objectBoundingBox.width() + objectBoundingBox.x(),
+                         attributes.y().valueAsPercentage() * objectBoundingBox.height() + objectBoundingBox.y(),
                          attributes.width().valueAsPercentage() * objectBoundingBox.width(),
                          attributes.height().valueAsPercentage() * objectBoundingBox.height());
 
@@ -171,173 +199,78 @@ static inline FloatRect calculatePatternBoundaries(PatternAttributes& attributes
                      attributes.height().value(patternElement));
 }
 
-FloatRect RenderSVGResourcePattern::calculatePatternBoundariesIncludingOverflow(PatternAttributes& attributes,
-                                                                                const FloatRect& objectBoundingBox,
-                                                                                const AffineTransform& viewBoxCTM,
-                                                                                const FloatRect& patternBoundaries) const
-{
-    // Eventually calculate the pattern content boundaries (only needed with overflow="visible").
-    FloatRect patternContentBoundaries;
-
-    const RenderStyle* style = this->style();
-    if (style->overflowX() == OVISIBLE && style->overflowY() == OVISIBLE) {
-        for (Node* node = attributes.patternContentElement()->firstChild(); node; node = node->nextSibling()) {
-            if (!node->isSVGElement() || !static_cast<SVGElement*>(node)->isStyledTransformable() || !node->renderer())
-                continue;
-            patternContentBoundaries.unite(node->renderer()->repaintRectInLocalCoordinates());
-        }
-    }
-
-    if (patternContentBoundaries.isEmpty())
-        return patternBoundaries;
-
-    FloatRect patternBoundariesIncludingOverflow = patternBoundaries;
-
-    // Respect objectBoundingBoxMode for patternContentUnits, if viewBox is not set.
-    if (!viewBoxCTM.isIdentity())
-        patternContentBoundaries = viewBoxCTM.mapRect(patternContentBoundaries);
-    else if (attributes.boundingBoxModeContent())
-        patternContentBoundaries = FloatRect(patternContentBoundaries.x() * objectBoundingBox.width(),
-                                             patternContentBoundaries.y() * objectBoundingBox.height(),
-                                             patternContentBoundaries.width() * objectBoundingBox.width(),
-                                             patternContentBoundaries.height() * objectBoundingBox.height());
-
-    patternBoundariesIncludingOverflow.unite(patternContentBoundaries);
-    return patternBoundariesIncludingOverflow;
-}
-
-// FIXME: This method should be removed. RenderSVGResourcePatterns usage of it is just wrong.
-static inline void clampImageBufferSizeToViewport(FrameView* frameView, IntSize& size)
-{
-    if (!frameView)
-        return;
-
-    int viewWidth = frameView->visibleWidth();
-    int viewHeight = frameView->visibleHeight();
-
-    if (size.width() > viewWidth)
-        size.setWidth(viewWidth);
-
-    if (size.height() > viewHeight)
-        size.setHeight(viewHeight);
-}
-
-PassOwnPtr<ImageBuffer> RenderSVGResourcePattern::createTileImage(PatternData* patternData,
+AffineTransform RenderSVGResourcePattern::buildTileImageTransform(RenderObject* renderer,
+                                                                  const PatternAttributes& attributes,
                                                                   const SVGPatternElement* patternElement,
-                                                                  RenderObject* object) const
+                                                                  FloatRect& patternBoundaries) const
 {
-    PatternAttributes attributes = patternElement->collectPatternProperties();
+    ASSERT(renderer);
+    ASSERT(patternElement);
 
-    // If we couldn't determine the pattern content element root, stop here.
-    if (!attributes.patternContentElement())
-        return 0;
+    FloatRect objectBoundingBox = renderer->objectBoundingBox();    
+    patternBoundaries = calculatePatternBoundaries(attributes, objectBoundingBox, patternElement); 
 
-    FloatRect objectBoundingBox = object->objectBoundingBox();    
-    FloatRect patternBoundaries = calculatePatternBoundaries(attributes, objectBoundingBox, patternElement); 
-    AffineTransform patternTransform = attributes.patternTransform();
+    AffineTransform viewBoxCTM = patternElement->viewBoxToViewTransform(patternElement->viewBox(), patternElement->preserveAspectRatio(), patternBoundaries.width(), patternBoundaries.height());
+    AffineTransform tileImageTransform;
 
-    AffineTransform viewBoxCTM = patternElement->viewBoxToViewTransform(patternElement->viewBox(),
-                                                                        patternElement->preserveAspectRatio(),
-                                                                        patternBoundaries.width(),
-                                                                        patternBoundaries.height());
-
-    FloatRect patternBoundariesIncludingOverflow = calculatePatternBoundariesIncludingOverflow(attributes,
-                                                                                               objectBoundingBox,
-                                                                                               viewBoxCTM,
-                                                                                               patternBoundaries);
-
-    IntSize imageSize(lroundf(patternBoundariesIncludingOverflow.width()), lroundf(patternBoundariesIncludingOverflow.height()));
-
-    // FIXME: We should be able to clip this more, needs investigation
-    clampImageBufferSizeToViewport(object->document()->view(), imageSize);
-
-    // Don't create ImageBuffers with image size of 0
-    if (imageSize.isEmpty())
-        return 0;
-
-    OwnPtr<ImageBuffer> tileImage = ImageBuffer::create(imageSize);
-
-    GraphicsContext* context = tileImage->context();
-    ASSERT(context);
-
-    context->save();
-
-    // Translate to pattern start origin
-    if (patternBoundariesIncludingOverflow.location() != patternBoundaries.location()) {
-        context->translate(patternBoundaries.x() - patternBoundariesIncludingOverflow.x(),
-                           patternBoundaries.y() - patternBoundariesIncludingOverflow.y());
-
-        patternBoundaries.setLocation(patternBoundariesIncludingOverflow.location());
-    }
-
-    // Process viewBox or boundingBoxModeContent correction
+    // Apply viewBox/objectBoundingBox transformations.
     if (!viewBoxCTM.isIdentity())
-        context->concatCTM(viewBoxCTM);
+        tileImageTransform = viewBoxCTM;
     else if (attributes.boundingBoxModeContent()) {
-        context->translate(objectBoundingBox.x(), objectBoundingBox.y());
-        context->scale(FloatSize(objectBoundingBox.width(), objectBoundingBox.height()));
+        tileImageTransform.translate(objectBoundingBox.x(), objectBoundingBox.y());
+        tileImageTransform.scale(objectBoundingBox.width(), objectBoundingBox.height());
     }
 
-    // Render subtree into ImageBuffer
+    return tileImageTransform;
+}
+
+PassOwnPtr<ImageBuffer> RenderSVGResourcePattern::createTileImage(RenderObject* object,
+                                                                  const PatternAttributes& attributes,
+                                                                  const FloatRect& tileBoundaries,
+                                                                  const FloatRect& absoluteTileBoundaries,
+                                                                  const AffineTransform& tileImageTransform) const
+{
+    ASSERT(object);
+
+    // Clamp tile image size against SVG viewport size, as last resort, to avoid allocating huge image buffers.
+    FloatRect contentBoxRect = SVGRenderSupport::findTreeRootObject(object)->contentBoxRect();
+
+    FloatRect clampedAbsoluteTileBoundaries = absoluteTileBoundaries;
+    if (clampedAbsoluteTileBoundaries.width() > contentBoxRect.width())
+        clampedAbsoluteTileBoundaries.setWidth(contentBoxRect.width());
+
+    if (clampedAbsoluteTileBoundaries.height() > contentBoxRect.height())
+        clampedAbsoluteTileBoundaries.setHeight(contentBoxRect.height());
+
+    OwnPtr<ImageBuffer> tileImage;
+
+    if (!SVGImageBufferTools::createImageBuffer(clampedAbsoluteTileBoundaries, tileImage, DeviceRGB))
+        return PassOwnPtr<ImageBuffer>();
+
+    GraphicsContext* tileImageContext = tileImage->context();
+    ASSERT(tileImageContext);
+
+    // Compensate rounding effects, as the absolute target rect is using floating-point numbers and the image buffer size is integer.
+    IntSize unclampedImageSize(SVGImageBufferTools::roundedImageBufferSize(absoluteTileBoundaries.size()));
+    tileImageContext->scale(FloatSize(unclampedImageSize.width() / absoluteTileBoundaries.width(),
+                                      unclampedImageSize.height() / absoluteTileBoundaries.height()));
+
+    // The image buffer represents the final rendered size, so the content has to be scaled (to avoid pixelation).
+    tileImageContext->scale(FloatSize(absoluteTileBoundaries.width() / tileBoundaries.width(),
+                                      absoluteTileBoundaries.height() / tileBoundaries.height()));
+
+    // Apply tile image transformations.
+    if (!tileImageTransform.isIdentity())
+        tileImageContext->concatCTM(tileImageTransform);
+
+    // Draw the content into the ImageBuffer.
     for (Node* node = attributes.patternContentElement()->firstChild(); node; node = node->nextSibling()) {
         if (!node->isSVGElement() || !static_cast<SVGElement*>(node)->isStyled() || !node->renderer())
             continue;
         SVGRenderSupport::renderSubtreeToImage(tileImage.get(), node->renderer());
     }
 
-    patternData->boundaries = patternBoundaries;
-
-    // Compute pattern transformation
-    patternData->transform.translate(patternBoundaries.x(), patternBoundaries.y());
-    patternData->transform.multiply(patternTransform);
-
-    context->restore();
     return tileImage.release();
-}
-
-void RenderSVGResourcePattern::buildPattern(PatternData* patternData, PassOwnPtr<ImageBuffer> tileImage) const
-{
-    RefPtr<Image> copiedImage = tileImage->copyImage();
-    if (!copiedImage) {
-        patternData->pattern = 0;
-        return;
-    }
-    
-    IntRect tileRect = copiedImage->rect();
-    if (tileRect.width() <= patternData->boundaries.width() && tileRect.height() <= patternData->boundaries.height()) {
-        patternData->pattern = Pattern::create(copiedImage, true, true);
-        return;
-    }
-
-    // Draw the first cell of the pattern manually to support overflow="visible" on all platforms.
-    int tileWidth = static_cast<int>(patternData->boundaries.width() + 0.5f);
-    int tileHeight = static_cast<int>(patternData->boundaries.height() + 0.5f);
-
-    // Don't create ImageBuffers with image size of 0
-    if (!tileWidth || !tileHeight) {
-        patternData->pattern = 0;
-        return;
-    }
-
-    OwnPtr<ImageBuffer> newTileImage = ImageBuffer::create(IntSize(tileWidth, tileHeight));
-    GraphicsContext* newTileImageContext = newTileImage->context();
-
-    int numY = static_cast<int>(ceilf(tileRect.height() / tileHeight)) + 1;
-    int numX = static_cast<int>(ceilf(tileRect.width() / tileWidth)) + 1;
-
-    newTileImageContext->save();
-    newTileImageContext->translate(-patternData->boundaries.width() * numX, -patternData->boundaries.height() * numY);
-    for (int i = numY; i > 0; --i) {
-        newTileImageContext->translate(0, patternData->boundaries.height());
-        for (int j = numX; j > 0; --j) {
-            newTileImageContext->translate(patternData->boundaries.width(), 0);
-            newTileImageContext->drawImage(copiedImage.get(), style()->colorSpace(), tileRect, tileRect);
-        }
-        newTileImageContext->translate(-patternData->boundaries.width() * numX, 0);
-    }
-    newTileImageContext->restore();
-
-    patternData->pattern = Pattern::create(newTileImage->copyImage(), true, true);
 }
 
 }

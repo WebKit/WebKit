@@ -272,7 +272,7 @@ bool RenderLayerBacking::updateGraphicsLayerConfiguration()
 
 static IntRect clipBox(RenderBox* renderer)
 {
-    IntRect result = ClipRects::infiniteRect();
+    IntRect result = PaintInfo::infiniteRect();
     if (renderer->hasOverflowClip())
         result = renderer->overflowClipRect(0, 0);
 

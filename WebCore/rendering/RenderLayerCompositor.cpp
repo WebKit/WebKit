@@ -1138,7 +1138,7 @@ bool RenderLayerCompositor::clippedByAncestor(RenderLayer* layer) const
         return false;
 
     IntRect backgroundRect = layer->backgroundClipRect(computeClipRoot, true);
-    return backgroundRect != ClipRects::infiniteRect();
+    return backgroundRect != PaintInfo::infiniteRect();
 }
 
 // Return true if the given layer is a stacking context and has compositing child

@@ -22,41 +22,49 @@
 #if ENABLE(SVG)
 #include "SVGImageBufferTools.h"
 
+#include "FrameView.h"
 #include "GraphicsContext.h"
 #include "RenderObject.h"
+#include "RenderSVGRoot.h"
 
 namespace WebCore {
 
-AffineTransform SVGImageBufferTools::absoluteTransformFromContext(GraphicsContext* context)
+AffineTransform SVGImageBufferTools::transformationToOutermostSVGCoordinateSystem(const RenderObject* renderer)
 {
-    // Extract current transformation matrix used in the original context. Note that this coordinate
-    // system is flipped compared to SVGs internal coordinate system, done in WebKit level. Fix
-    // this transformation by flipping the y component.
-    return context->getCTM() * AffineTransform().flipY();
+    ASSERT(renderer);
+
+    const RenderObject* current = renderer;
+    ASSERT(current);
+
+    AffineTransform ctm;
+    while (current) {
+        ctm.multiply(current->localToParentTransform());
+        if (current->isSVGRoot())
+            break;
+
+        current = current->parent();
+    }
+
+    return ctm;
 }
 
-bool SVGImageBufferTools::createImageBuffer(const AffineTransform& absoluteTransform, const FloatRect& absoluteTargetRect, OwnPtr<ImageBuffer>& imageBuffer, ImageColorSpace colorSpace)
+bool SVGImageBufferTools::createImageBuffer(const FloatRect& clampedAbsoluteTargetRect, OwnPtr<ImageBuffer>& imageBuffer, ImageColorSpace colorSpace)
 {
-    IntRect imageRect = enclosingIntRect(absoluteTargetRect);
-    if (imageRect.isEmpty())
+    IntSize imageSize(roundedImageBufferSize(clampedAbsoluteTargetRect.size()));
+
+    // Don't create empty ImageBuffers.
+    if (imageSize.isEmpty())
         return false;
 
-    // Allocate an image buffer as big as the absolute unclipped size of the object
-    OwnPtr<ImageBuffer> image = ImageBuffer::create(imageRect.size(), colorSpace);
+    OwnPtr<ImageBuffer> image = ImageBuffer::create(imageSize, colorSpace);
     if (!image)
         return false;
-
-    GraphicsContext* imageContext = image->context();
-
-    // Transform the mask image coordinate system to absolute screen coordinates
-    imageContext->translate(-absoluteTargetRect.x(), -absoluteTargetRect.y());
-    imageContext->concatCTM(absoluteTransform);
 
     imageBuffer = image.release();
     return true;
 }
 
-void SVGImageBufferTools::clipToImageBuffer(GraphicsContext* context, const AffineTransform& absoluteTransform, const FloatRect& absoluteTargetRect, ImageBuffer* imageBuffer)
+void SVGImageBufferTools::clipToImageBuffer(GraphicsContext* context, const AffineTransform& absoluteTransform, const FloatRect& clampedAbsoluteTargetRect, ImageBuffer* imageBuffer)
 {
     ASSERT(context);
     ASSERT(imageBuffer);
@@ -64,8 +72,23 @@ void SVGImageBufferTools::clipToImageBuffer(GraphicsContext* context, const Affi
     // The mask image has been created in the device coordinate space, as the image should not be scaled.
     // So the actual masking process has to be done in the device coordinate space as well.
     context->concatCTM(absoluteTransform.inverse());
-    context->clipToImageBuffer(imageBuffer, absoluteTargetRect);
+    context->clipToImageBuffer(imageBuffer, clampedAbsoluteTargetRect);
     context->concatCTM(absoluteTransform);
+}
+
+IntSize SVGImageBufferTools::roundedImageBufferSize(const FloatSize& size)
+{
+    return IntSize(static_cast<int>(lroundf(size.width())), static_cast<int>(lroundf(size.height())));
+}
+
+FloatRect SVGImageBufferTools::clampedAbsoluteTargetRectForRenderer(const RenderObject* renderer, const AffineTransform& absoluteTransform, const FloatRect& targetRect)
+{
+    ASSERT(renderer);
+
+    const RenderSVGRoot* svgRoot = SVGRenderSupport::findTreeRootObject(renderer);
+    FloatRect clampedAbsoluteTargetRect = absoluteTransform.mapRect(targetRect);
+    clampedAbsoluteTargetRect.intersect(svgRoot->contentBoxRect());
+    return clampedAbsoluteTargetRect;
 }
 
 }

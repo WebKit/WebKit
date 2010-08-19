@@ -1,3 +1,69 @@
+2010-08-19  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Pattern is rasterized
+        https://bugs.webkit.org/show_bug.cgi?id=41396
+
+        SVG pattern size changed when resizing browser
+        https://bugs.webkit.org/show_bug.cgi?id=38704
+
+        Incorrect pattern tilling
+        https://bugs.webkit.org/show_bug.cgi?id=41603
+
+        Apply same fixes to <pattern> that <mask> recently received. Build the tile image in absolute coordinates,
+        to avoid pixelation, when the target element is scaled. Also fixes problems when zooming into patterns.
+
+        Clamp ImageBuffer sizes to RenderSVGRoots viewport, now that gradient/pattern and mask buffers are created
+        in absolute coordinates -> no more huge image buffer allocations, that could fail.
+
+        Drop overflow="visible" support for <pattern>, which complicates the code a lot. Neither Opera nor Firefox
+        support this, and SVG 1.1 2nd Edition says that the rendering behaviour is "undefined".
+
+        Tests: svg/batik/paints/patternRegions-positioned-objects.svg
+               svg/custom/pattern-incorrect-tiling.svg
+               svg/custom/pattern-no-pixelation.svg
+               svg/transforms/text-with-mask-with-svg-transform.svg
+
+        * rendering/PaintInfo.h:
+        (WebCore::PaintInfo::applyTransform): Don't alter the repaint rect if it's infinite (only affects SVG).
+        (WebCore::PaintInfo::infiniteRect): Moved from RenderLayer into PaintInfo, as applyTransform() needs it.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects): s/ClipRects::infiniteRect/PaintInfo::infiniteRect/
+        * rendering/RenderLayer.h: Moved infiniteRect() to PaintInfo.
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::clipBox): s/ClipRects::infiniteRect/PaintInfo::infiniteRect/
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::clippedByAncestor): Ditto.
+        * rendering/RenderSVGResourceGradient.cpp:
+        (WebCore::createMaskAndSwapContextForTextGradient): Clamp image buffer size, use new SVGImageBufferTools helper methods for that.
+        (WebCore::clipToTextMask): Adapt to renames/code changes in SVGImageBufferTools. 
+        (WebCore::RenderSVGResourceGradient::applyResource): Ditto.
+        * rendering/RenderSVGResourceMasker.cpp:
+        (WebCore::RenderSVGResourceMasker::applyResource): lamp image buffer size, use new SVGImageBufferTools helper methods for that.
+        (WebCore::RenderSVGResourceMasker::drawContentIntoMaskImage): Adapt to renames/code changes in SVGImageBufferTools.
+        * rendering/RenderSVGResourceMasker.h:
+        * rendering/RenderSVGResourcePattern.cpp:
+        (WebCore::RenderSVGResourcePattern::applyResource): Rewrite to create tile image buffers in absolute coordinates, avoids pixelation artefacts.
+        (WebCore::calculatePatternBoundaries):
+        (WebCore::RenderSVGResourcePattern::buildTileImageTransform):
+        (WebCore::RenderSVGResourcePattern::createTileImage):
+        * rendering/RenderSVGResourcePattern.h:
+        * rendering/SVGImageBufferTools.cpp:
+        (WebCore::SVGImageBufferTools::transformationToOutermostSVGCoordinateSystem): Helper method, concating all localToParentTransforms() up until RenderSVGRoot is reached.
+        (WebCore::SVGImageBufferTools::createImageBuffer): Simplified.
+        (WebCore::SVGImageBufferTools::clipToImageBuffer): Rename absoluteTargetRect to clampedAbsoluteTargetRect.
+        (WebCore::SVGImageBufferTools::roundedImageBufferSize): New helper method to centralize FloatSize -> IntSize rounding, when creating image buffers.
+        (WebCore::SVGImageBufferTools::clampedAbsoluteTargetRectForRenderer): New helper methods to clamp an image buffer rect against the viewport.
+        * rendering/SVGImageBufferTools.h:
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::renderSubtreeToImage): Use PaintInfo::infiniteRect() as repaint rect, to avoid any culling. 
+        (WebCore::SVGRenderSupport::findTreeRootObject): Renamed from svgRootTreeObject, and expose it.
+        (WebCore::SVGRenderSupport::layoutChildren): s/svgRootTreeObject/findTreeRootObject/.
+        * rendering/SVGRenderSupport.h:
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::setCurrentTranslate): Be sure to relayout on invalidation, otherwhise resources are not updated, and we have to update them, as they depend on the absolute transform.
+
 2010-08-19  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Dirk Schulze.

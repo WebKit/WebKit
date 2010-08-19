@@ -58,7 +58,7 @@ public:
     static RenderSVGResourceType s_resourceType;
 
 private:
-    void drawContentIntoMaskImage(const FloatRect& maskRect, MaskerData*, const SVGMaskElement*, RenderObject*);
+    void drawContentIntoMaskImage(MaskerData*, const SVGMaskElement*, RenderObject*);
     void calculateMaskContentRepaintRect();
 
     FloatRect m_maskContentBoundaries;

@@ -169,13 +169,7 @@ void SVGRenderSupport::renderSubtreeToImage(ImageBuffer* image, RenderObject* it
     ASSERT(image);
     ASSERT(image->context());
 
-    // FIXME: This sets the rect to the viewable area of the current frame. This
-    // is used to support text drawings to the ImageBuffer. See bug 30399.
-    IntRect rect;
-    FrameView* frameView = item->document()->view();
-    if (frameView)
-        rect = IntRect(0, 0, frameView->visibleWidth(), frameView->visibleHeight());
-    PaintInfo info(image->context(), rect, PaintPhaseForeground, 0, 0, 0);
+    PaintInfo info(image->context(), PaintInfo::infiniteRect(), PaintPhaseForeground, 0, 0, 0);
 
     // FIXME: isSVGContainer returns true for RenderSVGViewportContainer, so if this is ever
     // called with one of those, we will read from the wrong offset in an object due to a bad cast.
@@ -219,7 +213,7 @@ FloatRect SVGRenderSupport::computeContainerBoundingBox(const RenderObject* cont
     return boundingBox;
 }
 
-static inline RenderSVGRoot* svgRootTreeObject(RenderObject* start)
+const RenderSVGRoot* SVGRenderSupport::findTreeRootObject(const RenderObject* start)
 {
     while (start && !start->isSVGRoot())
         start = start->parent();
@@ -241,7 +235,7 @@ static inline void invalidateResourcesOfChildren(RenderObject* start)
 
 void SVGRenderSupport::layoutChildren(RenderObject* start, bool selfNeedsLayout)
 {
-    bool layoutSizeChanged = svgRootTreeObject(start)->isLayoutSizeChanged();
+    bool layoutSizeChanged = findTreeRootObject(start)->isLayoutSizeChanged();
     HashSet<RenderObject*> notlayoutedObjects;
 
     for (RenderObject* child = start->firstChild(); child; child = child->nextSibling()) {

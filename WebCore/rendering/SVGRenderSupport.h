@@ -36,6 +36,7 @@ class ImageBuffer;
 class RenderBoxModelObject;
 class RenderObject;
 class RenderStyle;
+class RenderSVGRoot;
 class TransformState;
 
 // SVGRendererSupport is a helper class sharing code between all SVG renderers.
@@ -80,6 +81,7 @@ public:
 
     // FIXME: These methods do not belong here.
     static const RenderObject* findTextRootObject(const RenderObject* start);
+    static const RenderSVGRoot* findTreeRootObject(const RenderObject* start);
 
 private:
     // This class is not constructable.

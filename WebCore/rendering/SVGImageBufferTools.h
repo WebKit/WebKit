@@ -28,15 +28,18 @@ namespace WebCore {
 
 class AffineTransform;
 class FloatRect;
+class FloatSize;
 class GraphicsContext;
 class RenderObject;
 
 class SVGImageBufferTools : public Noncopyable {
 public:
-    static bool createImageBuffer(const AffineTransform& absoluteTransform, const FloatRect& absoluteTargetRect, OwnPtr<ImageBuffer>&, ImageColorSpace);
-    static void clipToImageBuffer(GraphicsContext*, const AffineTransform& absoluteTransform, const FloatRect& absoluteTargetRect, ImageBuffer*);
+    static bool createImageBuffer(const FloatRect& clampedAbsoluteTargetRect, OwnPtr<ImageBuffer>&, ImageColorSpace);
+    static void clipToImageBuffer(GraphicsContext*, const AffineTransform& absoluteTransform, const FloatRect& clampedAbsoluteTargetRect, ImageBuffer*);
 
-    static AffineTransform absoluteTransformFromContext(GraphicsContext*);
+    static AffineTransform transformationToOutermostSVGCoordinateSystem(const RenderObject*);
+    static FloatRect clampedAbsoluteTargetRectForRenderer(const RenderObject*, const AffineTransform& absouteTransform, const FloatRect& targetRect);
+    static IntSize roundedImageBufferSize(const FloatSize&);
 
 private:
     SVGImageBufferTools() { }
