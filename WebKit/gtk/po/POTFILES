@@ -1,6 +1,7 @@
 # List of source files which contain translatable strings.
 WebKit/gtk/WebCoreSupport/ChromeClientGtk.cpp
 WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp
+WebKit/gtk/WebCoreSupport/FullscreenVideoController.cpp
 WebKit/gtk/webkit/webkitdownload.cpp
 WebKit/gtk/webkit/webkitsoupauthdialog.c
 WebKit/gtk/webkit/webkitwebframe.cpp

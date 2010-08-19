@@ -15,8 +15,9 @@ layer at (8,44) size 352x288
 layer at (8,312) size 352x20
   RenderFlexibleBox (positioned) {DIV} at (0,268) size 352x20
     RenderButton {INPUT} at (0,0) size 20x20
-    RenderFlexibleBox {DIV} at (20,0) size 292x20 [border: (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
-      RenderSlider {INPUT} at (1,0) size 290x20
+    RenderFlexibleBox {DIV} at (20,0) size 272x20 [border: (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
+      RenderSlider {INPUT} at (1,0) size 270x20
         RenderBlock {DIV} at (2,4) size 12x12
+    RenderButton {INPUT} at (292,0) size 20x20
     RenderButton {INPUT} at (312,0) size 20x20
     RenderButton {INPUT} at (332,0) size 20x20

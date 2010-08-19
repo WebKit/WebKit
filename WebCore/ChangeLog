@@ -1,3 +1,33 @@
+2010-08-19  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GStreamer] GTK XOverlay support in GStreamerGWorld
+        https://bugs.webkit.org/show_bug.cgi?id=39474
+
+        GStreamerGWorld now catches synchronous messages coming from the
+        sinks and creates a GTK window where the video can be overlayed if
+        fullscreen display is requested using enterFullscreen.
+
+        * GNUmakefile.am:
+        * platform/graphics/gstreamer/GStreamerGWorld.cpp:
+        (WebCore::gstGWorldSyncMessageCallback):
+        (WebCore::GStreamerGWorld::GStreamerGWorld):
+        (WebCore::GStreamerGWorld::~GStreamerGWorld):
+        (WebCore::GStreamerGWorld::enterFullscreen):
+        (WebCore::GStreamerGWorld::exitFullscreen):
+        (WebCore::GStreamerGWorld::setWindowOverlay):
+        * platform/graphics/gstreamer/GStreamerGWorld.h:
+        (WebCore::GStreamerGWorld::pipeline):
+        (WebCore::GStreamerGWorld::platformVideoWindow):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        * platform/graphics/gstreamer/PlatformVideoWindow.h: Added.
+        (WebCore::PlatformVideoWindow::createWindow):
+        (WebCore::PlatformVideoWindow::window):
+        (WebCore::PlatformVideoWindow::videoWindowId):
+        * platform/graphics/gstreamer/PlatformVideoWindowGtk.cpp: Added.
+        (PlatformVideoWindow::PlatformVideoWindow):
+
 2010-08-19  Eric Uhrhane  <ericu@chromium.org>
 
         Reviewed by David Levin.

@@ -3170,6 +3170,8 @@ webcoregtk_sources += \
 	WebCore/platform/graphics/gstreamer/GStreamerGWorld.h \
 	WebCore/platform/graphics/gstreamer/ImageGStreamer.h \
 	WebCore/platform/graphics/gstreamer/ImageGStreamerCairo.cpp \
+	WebCore/platform/graphics/gstreamer/PlatformVideoWindow.h \
+	WebCore/platform/graphics/gstreamer/PlatformVideoWindowGtk.cpp \
 	WebCore/platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp \
 	WebCore/platform/graphics/gstreamer/WebKitWebSourceGStreamer.h
 

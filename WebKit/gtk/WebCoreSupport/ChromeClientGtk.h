@@ -133,6 +133,11 @@ namespace WebKit {
         virtual bool selectItemWritingDirectionIsNatural();
         virtual PassRefPtr<WebCore::PopupMenu> createPopupMenu(WebCore::PopupMenuClient*) const;
         virtual PassRefPtr<WebCore::SearchPopupMenu> createSearchPopupMenu(WebCore::PopupMenuClient*) const;
+#if ENABLE(VIDEO)
+        virtual bool supportsFullscreenForNode(const WebCore::Node*);
+        virtual void enterFullscreenForNode(WebCore::Node*);
+        virtual void exitFullscreenForNode(WebCore::Node*);
+#endif
 
     private:
         WebKitWebView* m_webView;

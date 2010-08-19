@@ -54,7 +54,6 @@
 #include <GOwnPtr.h>
 #include <gst/gst.h>
 #include <gst/interfaces/mixer.h>
-#include <gst/interfaces/xoverlay.h>
 #include <gst/video/video.h>
 #include <limits>
 #include <math.h>

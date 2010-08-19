@@ -28,6 +28,8 @@
 #include "FrameLoader.h"
 #include "FrameLoaderClientGtk.h"
 #include "GtkVersioning.h"
+#include "HTMLMediaElement.h"
+#include "HTMLNames.h"
 #include "HitTestResult.h"
 #include "IconDatabase.h"
 #include "Logging.h"
@@ -49,6 +51,10 @@
 #include <runtime/InitializeThreading.h>
 #include <stdlib.h>
 #include <wtf/Threading.h>
+
+#if ENABLE(VIDEO)
+#include "FullscreenVideoController.h"
+#endif
 
 #if ENABLE(DATABASE)
 #include "DatabaseTracker.h"
@@ -327,3 +333,33 @@ void webkit_reset_origin_access_white_lists()
 {
     SecurityOrigin::resetOriginAccessWhitelists();
 }
+
+
+void webkitWebViewEnterFullscreen(WebKitWebView* webView, Node* node)
+{
+    if (!node->hasTagName(HTMLNames::videoTag))
+        return;
+
+#if ENABLE(VIDEO)
+    HTMLMediaElement* videoElement = static_cast<HTMLMediaElement*>(node);
+    WebKitWebViewPrivate* priv = webView->priv;
+
+    // First exit Fullscreen for the old mediaElement.
+    if (priv->fullscreenVideoController)
+        priv->fullscreenVideoController->exitFullscreen();
+
+    priv->fullscreenVideoController = new FullscreenVideoController;
+    priv->fullscreenVideoController->setMediaElement(videoElement);
+    priv->fullscreenVideoController->enterFullscreen();
+#endif
+}
+
+void webkitWebViewExitFullscreen(WebKitWebView* webView)
+{
+#if ENABLE(VIDEO)
+    WebKitWebViewPrivate* priv = webView->priv;
+    if (priv->fullscreenVideoController)
+        priv->fullscreenVideoController->exitFullscreen();
+#endif
+}
+

@@ -1,3 +1,12 @@
+2010-08-19  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GStreamer] GTK XOverlay support in GStreamerGWorld
+        https://bugs.webkit.org/show_bug.cgi?id=39474
+
+        * POTFILES: Added new file that contains strings to extract.
+
 2010-08-03 Jorge González  <aloriel@gmail.com>
 
         Reviewed by Gustavo Noronha.

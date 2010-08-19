@@ -4,10 +4,10 @@ RUN(video.autoplay = true)
 RUN(video.src = 'content/test.mp4')
 EVENT(playing)
 EVENT(seeked)
-Time: 2.1
+Time: 2.4
 EVENT(seeked)
-Time: 2.7
+Time: 3.0
 EVENT(seeked)
-Time: 3.2
+Time: 3.6
 END OF TEST
 

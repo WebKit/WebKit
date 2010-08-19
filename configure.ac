@@ -841,6 +841,7 @@ if test "$enable_video" = "yes"; then
                      [gstreamer-0.10 >= $GSTREAMER_REQUIRED_VERSION
                      gstreamer-app-0.10
                      gstreamer-base-0.10
+                     gstreamer-interfaces-0.10
                      gstreamer-pbutils-0.10
                      gstreamer-plugins-base-0.10 >= $GSTREAMER_PLUGINS_BASE_REQUIRED_VERSION
                      gstreamer-video-0.10])

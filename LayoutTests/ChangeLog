@@ -1,3 +1,19 @@
+2010-08-19  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GStreamer] GTK XOverlay support in GStreamerGWorld
+        https://bugs.webkit.org/show_bug.cgi?id=39474
+
+        Rebaselined tests showing the video controls containing the new
+        fullscreen button.
+
+        * platform/gtk/media/controls-after-reload-expected.txt:
+        * platform/gtk/media/controls-drag-timebar-expected.txt:
+        * platform/gtk/media/controls-strict-expected.txt:
+        * platform/gtk/media/controls-styling-expected.txt:
+        * platform/gtk/media/video-controls-rendering-expected.txt:
+
 2010-08-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Tony Chang.

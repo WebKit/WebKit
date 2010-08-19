@@ -56,6 +56,8 @@
 #include "InspectorClientGtk.h"
 #include "IntPoint.h"
 #include "FrameLoaderClient.h"
+#include "FullscreenVideoController.h"
+#include "Node.h"
 #include "Page.h"
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"
@@ -160,6 +162,8 @@ extern "C" {
 
         gboolean disposing;
         gboolean usePrimaryForPaste;
+
+        FullscreenVideoController* fullscreenVideoController;
 
         // These are hosted here because the DataSource object is
         // created too late in the frame loading process.
@@ -410,6 +414,9 @@ extern "C" {
 
     WEBKIT_API void
     webkit_web_frame_layout(WebKitWebFrame* frame);
+
+    void webkitWebViewEnterFullscreen(WebKitWebView* webView, WebCore::Node* node);
+    void webkitWebViewExitFullscreen(WebKitWebView* webView);
 }
 
 #endif

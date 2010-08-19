@@ -1,3 +1,76 @@
+2010-08-19  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GStreamer] GTK XOverlay support in GStreamerGWorld
+        https://bugs.webkit.org/show_bug.cgi?id=39474
+
+        New FullscreenVideoController object, private in the webview. It
+        is created when the user presses the fullscreen button of the
+        video controls. Video is displayed in fullscreen, controls are
+        displayed when the user moves the mouse and when the video is
+        paused. There's also basic keyboard shortcuts support: F/f to
+        leave fullscreen, space to toggle play/pause and up/down to
+        control volume.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::supportsFullscreenForNode):
+        (WebKit::ChromeClient::enterFullscreenForNode):
+        (WebKit::ChromeClient::exitFullscreenForNode):
+        * WebCoreSupport/ChromeClientGtk.h:
+        * WebCoreSupport/FullscreenVideoController.cpp: Added.
+        (hideHudCallback):
+        (onFullscreenGtkMotionNotifyEvent):
+        (onFullscreenGtkActiveNotification):
+        (onFullscreenGtkConfigureEvent):
+        (onFullscreenGtkDestroy):
+        (togglePlayPauseActivated):
+        (exitFullscreenActivated):
+        (progressBarUpdateCallback):
+        (timeScaleButtonPressed):
+        (timeScaleButtonReleased):
+        (timeScaleValueChanged):
+        (volumeValueChanged):
+        (playerVolumeChangedCallback):
+        (playerMuteChangedCallback):
+        (FullscreenVideoController::FullscreenVideoController):
+        (FullscreenVideoController::~FullscreenVideoController):
+        (FullscreenVideoController::setMediaElement):
+        (FullscreenVideoController::gtkConfigure):
+        (FullscreenVideoController::showHud):
+        (FullscreenVideoController::hideHud):
+        (onFullscreenGtkKeyPressEvent):
+        (FullscreenVideoController::enterFullscreen):
+        (FullscreenVideoController::updateHudPosition):
+        (FullscreenVideoController::exitOnUserRequest):
+        (FullscreenVideoController::exitFullscreen):
+        (FullscreenVideoController::canPlay):
+        (FullscreenVideoController::play):
+        (FullscreenVideoController::pause):
+        (FullscreenVideoController::playStateChanged):
+        (FullscreenVideoController::togglePlay):
+        (FullscreenVideoController::volume):
+        (FullscreenVideoController::muted):
+        (FullscreenVideoController::setVolume):
+        (FullscreenVideoController::volumeChanged):
+        (FullscreenVideoController::muteChanged):
+        (FullscreenVideoController::currentTime):
+        (FullscreenVideoController::setCurrentTime):
+        (FullscreenVideoController::duration):
+        (FullscreenVideoController::percentLoaded):
+        (FullscreenVideoController::beginSeek):
+        (FullscreenVideoController::doSeek):
+        (FullscreenVideoController::endSeek):
+        (timeToString):
+        (FullscreenVideoController::updateHudProgressBar):
+        (FullscreenVideoController::createHud):
+        * WebCoreSupport/FullscreenVideoController.h: Added.
+        (FullscreenVideoController::mediaElement):
+        * webkit/webkitprivate.cpp:
+        (webkit_web_view_enter_fullscreen):
+        (webkit_web_view_exit_fullscreen):
+        * webkit/webkitprivate.h:
+
 2010-08-18  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Martin Robinson.
