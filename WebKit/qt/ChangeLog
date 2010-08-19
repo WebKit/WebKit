@@ -1,5 +1,16 @@
 2010-08-19  David Kilzer  <ddkilzer@apple.com>
 
+        BUILD FIX #3: <http://webkit.org/b/44285> Fix compilation with NETSCAPE_PLUGIN_API disabled
+
+        Still trying to make Qt Linux Release minimal buildbot happy.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::createPlugin): Wrap code that
+        handles Netscape plugins in #if ENABLE(NETSCAPE_PLUGIN_API)
+        and #endif.
+
+2010-08-19  David Kilzer  <ddkilzer@apple.com>
+
         BUILD FIX: FrameLoaderClientQt.h should include ResourceError.h
 
         * WebCoreSupport/FrameLoaderClientQt.h: Include ResourceError.h.

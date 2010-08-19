@@ -1,5 +1,13 @@
 2010-08-19  David Kilzer  <ddkilzer@apple.com>
 
+        BUILD FIX #3: <http://webkit.org/b/44285> Fix compilation with NETSCAPE_PLUGIN_API disabled
+
+        Still trying to make Qt Linux Release minimal buildbot happy.
+
+        * plugins/PluginViewNone.cpp: Compile missing methods for Qt.
+
+2010-08-19  David Kilzer  <ddkilzer@apple.com>
+
         BUILD FIX: <http://webkit.org/b/44285> Fix compilation with NETSCAPE_PLUGIN_API disabled
 
         Reviewed by Joseph Pecoraro.
