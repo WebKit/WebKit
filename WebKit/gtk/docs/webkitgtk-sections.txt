@@ -419,6 +419,7 @@ WebKitNetworkResponseClass
 <FILE>webkitwebview</FILE>
 WebKitNavigationResponse
 WebKitWebViewTargetInfo
+WebKitWebViewViewMode
 <TITLE>WebKitWebView</TITLE>
 WebKitWebView
 webkit_web_view_can_copy_clipboard
@@ -453,6 +454,7 @@ webkit_web_view_get_settings
 webkit_web_view_get_title
 webkit_web_view_get_transparent
 webkit_web_view_get_uri
+webkit_web_view_get_view_mode
 webkit_web_view_get_view_source_mode
 webkit_web_view_get_zoom_level
 webkit_web_view_go_back
@@ -481,6 +483,7 @@ webkit_web_view_set_highlight_text_matches
 webkit_web_view_set_maintains_back_forward_list
 webkit_web_view_set_settings
 webkit_web_view_set_transparent
+webkit_web_view_set_view_mode
 webkit_web_view_set_view_source_mode
 webkit_web_view_set_zoom_level
 webkit_web_view_stop_loading

@@ -353,6 +353,27 @@ void LayoutTestController::setUserStyleSheetLocation(JSStringRef path)
         setUserStyleSheetEnabled(true);
 }
 
+void LayoutTestController::setViewModeMediaFeature(JSStringRef mode)
+{
+    WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
+    ASSERT(view);
+
+    char* viewMode = JSStringCopyUTF8CString(mode);
+
+    if (!g_strcmp0(viewMode, "windowed"))
+        webkit_web_view_set_view_mode(view, WEBKIT_WEB_VIEW_VIEW_MODE_WINDOWED);
+    else if (!g_strcmp0(viewMode, "floating"))
+        webkit_web_view_set_view_mode(view, WEBKIT_WEB_VIEW_VIEW_MODE_FLOATING);
+    else if (!g_strcmp0(viewMode, "fullscreen"))
+        webkit_web_view_set_view_mode(view, WEBKIT_WEB_VIEW_VIEW_MODE_FULLSCREEN);
+    else if (!g_strcmp0(viewMode, "maximized"))
+        webkit_web_view_set_view_mode(view, WEBKIT_WEB_VIEW_VIEW_MODE_MAXIMIZED);
+    else if (!g_strcmp0(viewMode, "minimized"))
+        webkit_web_view_set_view_mode(view, WEBKIT_WEB_VIEW_VIEW_MODE_MINIMIZED);
+
+    g_free(viewMode);
+}
+
 void LayoutTestController::setWindowIsKey(bool windowIsKey)
 {
     // FIXME: implement

@@ -104,6 +104,7 @@ public:
     void setUseDashboardCompatibilityMode(bool flag);
     void setUserStyleSheetEnabled(bool flag);
     void setUserStyleSheetLocation(JSStringRef path);
+    void setViewModeMediaFeature(JSStringRef mode);
     void setXSSAuditorEnabled(bool flag);
     void setFrameFlatteningEnabled(bool enable);
     void setSpatialNavigationEnabled(bool enable);

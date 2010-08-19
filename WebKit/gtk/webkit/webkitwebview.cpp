@@ -195,7 +195,8 @@ enum {
     PROP_ENCODING,
     PROP_CUSTOM_ENCODING,
     PROP_ICON_URI,
-    PROP_IM_CONTEXT
+    PROP_IM_CONTEXT,
+    PROP_VIEW_MODE
 };
 
 static guint webkit_web_view_signals[LAST_SIGNAL] = { 0, };
@@ -449,6 +450,9 @@ static void webkit_web_view_get_property(GObject* object, guint prop_id, GValue*
     case PROP_IM_CONTEXT:
         g_value_set_object(value, webkit_web_view_get_im_context(webView));
         break;
+    case PROP_VIEW_MODE:
+        g_value_set_enum(value, webkit_web_view_get_view_mode(webView));
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
     }
@@ -479,6 +483,9 @@ static void webkit_web_view_set_property(GObject* object, guint prop_id, const G
         break;
     case PROP_CUSTOM_ENCODING:
         webkit_web_view_set_custom_encoding(webView, g_value_get_string(value));
+        break;
+    case PROP_VIEW_MODE:
+        webkit_web_view_set_view_mode(webView, static_cast<WebKitWebViewViewMode>(g_value_get_enum(value)));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -2859,6 +2866,32 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
                                                         GTK_TYPE_IM_CONTEXT,
                                                         WEBKIT_PARAM_READABLE));
 
+    /**
+    * WebKitWebView:view-mode:
+    *
+    * The "view-mode" media feature for the #WebKitWebView.
+    *
+    * The "view-mode" media feature is additional information for web
+    * applications about how the application is running, when it comes
+    * to user experience. Whether the application is running inside a
+    * regular browser window, in a dedicated window, fullscreen, for
+    * instance.
+    *
+    * This property stores a %WebKitWebViewViewMode value that matches
+    * the "view-mode" media feature the web application will see.
+    *
+    * See http://www.w3.org/TR/view-mode/ for more information.
+    *
+    * Since: 1.3.4
+    */
+    g_object_class_install_property(objectClass, PROP_VIEW_MODE,
+                                    g_param_spec_enum("view-mode",
+                                                      "View Mode",
+                                                      "The view-mode media feature for the #WebKitWebView.",
+                                                      WEBKIT_TYPE_WEB_VIEW_VIEW_MODE,
+                                                      WEBKIT_WEB_VIEW_VIEW_MODE_WINDOWED,
+                                                      WEBKIT_PARAM_READWRITE));
+
     g_type_class_add_private(webViewClass, sizeof(WebKitWebViewPrivate));
 }
 
@@ -4249,6 +4282,76 @@ const char* webkit_web_view_get_custom_encoding(WebKitWebView* webView)
         return priv->customEncoding;
     } else
       return NULL;
+}
+
+/**
+ * webkit_web_view_set_view_mode:
+ * @web_view: the #WebKitWebView that will have its view mode set
+ * @mode: the %WebKitWebViewViewMode to be set
+ *
+ * Sets the view-mode property of the #WebKitWebView. Check the
+ * property's documentation for more information.
+ *
+ * Since: 1.3.4
+ */
+void webkit_web_view_set_view_mode(WebKitWebView* webView, WebKitWebViewViewMode mode)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+
+    Page* page = core(webView);
+
+    switch (mode) {
+    case WEBKIT_WEB_VIEW_VIEW_MODE_FLOATING:
+        page->setViewMode(Page::ViewModeFloating);
+        break;
+    case WEBKIT_WEB_VIEW_VIEW_MODE_FULLSCREEN:
+        page->setViewMode(Page::ViewModeFullscreen);
+        break;
+    case WEBKIT_WEB_VIEW_VIEW_MODE_MAXIMIZED:
+        page->setViewMode(Page::ViewModeMaximized);
+        break;
+    case WEBKIT_WEB_VIEW_VIEW_MODE_MINIMIZED:
+        page->setViewMode(Page::ViewModeMinimized);
+        break;
+    default:
+        page->setViewMode(Page::ViewModeWindowed);
+        break;
+    }
+}
+
+/**
+ * webkit_web_view_get_view_mode:
+ * @web_view: the #WebKitWebView to obtain the view mode from
+ *
+ * Gets the value of the view-mode property of the
+ * #WebKitWebView. Check the property's documentation for more
+ * information.
+ *
+ * Return value: the %WebKitWebViewViewMode currently set for the
+ * #WebKitWebView.
+ *
+ * Since: 1.3.4
+ */
+WebKitWebViewViewMode webkit_web_view_get_view_mode(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), WEBKIT_WEB_VIEW_VIEW_MODE_WINDOWED);
+
+    Page* page = core(webView);
+    Page::ViewMode mode = page->viewMode();
+
+    if (mode == Page::ViewModeFloating)
+        return WEBKIT_WEB_VIEW_VIEW_MODE_FLOATING;
+
+    if (mode == Page::ViewModeFullscreen)
+        return WEBKIT_WEB_VIEW_VIEW_MODE_FULLSCREEN;
+
+    if (mode == Page::ViewModeMaximized)
+        return WEBKIT_WEB_VIEW_VIEW_MODE_MAXIMIZED;
+
+    if (mode == Page::ViewModeMinimized)
+        return WEBKIT_WEB_VIEW_VIEW_MODE_MINIMIZED;
+
+    return WEBKIT_WEB_VIEW_VIEW_MODE_WINDOWED;
 }
 
 /**

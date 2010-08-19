@@ -5510,9 +5510,6 @@ fast/runin/generated2.html
 fast/runin/generated3.html
 fast/runin/generated4.html
 
-# view mode media feature
-fast/media/view-mode-media-feature.html
-
 # MediaPlayerPrivateGStreamer doesn't return to NETWORK_IDLE and hence doesn't fire a suspend event
 # https://bugs.webkit.org/show_bug.cgi?id=37034
 http/tests/media/video-play-suspend.html

@@ -1,3 +1,21 @@
+2010-08-19  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Gtk] Enable view mode media feature layout test
+        https://bugs.webkit.org/show_bug.cgi?id=43278
+
+        Add the view-mode property, to control the WebCore page's viewMode.
+
+        * docs/webkitgtk-sections.txt:
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_get_property):
+        (webkit_web_view_set_property):
+        (webkit_web_view_class_init):
+        (webkit_web_view_set_view_mode):
+        (webkit_web_view_get_view_mode):
+        * webkit/webkitwebview.h:
+
 2010-08-19  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.

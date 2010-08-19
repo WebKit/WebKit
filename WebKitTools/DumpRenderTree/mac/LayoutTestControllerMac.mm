@@ -468,6 +468,11 @@ void LayoutTestController::setUserStyleSheetLocation(JSStringRef path)
     [[WebPreferences standardPreferences] setUserStyleSheetLocation:url];
 }
 
+void LayoutTestController::setViewModeMediaFeature(JSStringRef mode)
+{
+    // FIXME: implement
+}
+
 void LayoutTestController::disableImageLoading()
 {
     [[WebPreferences standardPreferences] setLoadsImagesAutomatically:NO];

@@ -1,3 +1,27 @@
+2010-08-19  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Gtk] Enable view mode media feature layout test
+        https://bugs.webkit.org/show_bug.cgi?id=43278
+
+        Add view mode media feature testing infrastructure, and add
+        placeholder methods for the other platforms'
+        LayoutTestControllers.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (setViewModeMediaFeatureCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::setViewModeMediaFeature):
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::setViewModeMediaFeature):
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::setViewModeMediaFeature):
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::setViewModeMediaFeature):
+
 2010-08-18  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Sam Weinig.

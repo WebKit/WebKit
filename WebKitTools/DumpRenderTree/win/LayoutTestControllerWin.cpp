@@ -751,6 +751,11 @@ void LayoutTestController::setUserStyleSheetLocation(JSStringRef jsURL)
     SysFreeString(resultPathBSTR);
 }
 
+void LayoutTestController::setViewModeMediaFeature(JSStringRef mode)
+{
+    // FIXME: implement
+}
+
 void LayoutTestController::setPersistentUserStyleSheetLocation(JSStringRef jsURL)
 {
     RetainPtr<CFStringRef> urlString(AdoptCF, JSStringCopyCFString(0, jsURL));

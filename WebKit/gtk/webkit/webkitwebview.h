@@ -64,6 +64,15 @@ typedef enum
     WEBKIT_WEB_VIEW_TARGET_INFO_NETSCAPE_URL
 } WebKitWebViewTargetInfo;
 
+typedef enum
+{
+    WEBKIT_WEB_VIEW_VIEW_MODE_WINDOWED,
+    WEBKIT_WEB_VIEW_VIEW_MODE_FLOATING,
+    WEBKIT_WEB_VIEW_VIEW_MODE_FULLSCREEN,
+    WEBKIT_WEB_VIEW_VIEW_MODE_MAXIMIZED,
+    WEBKIT_WEB_VIEW_VIEW_MODE_MINIMIZED
+} WebKitWebViewViewMode;
+
 struct _WebKitWebView {
     GtkContainer parent_instance;
 
@@ -338,6 +347,13 @@ webkit_web_view_set_custom_encoding             (WebKitWebView        * webView,
 
 WEBKIT_API const char*
 webkit_web_view_get_custom_encoding             (WebKitWebView        * webView);
+
+WEBKIT_API void
+webkit_web_view_set_view_mode                   (WebKitWebView        *web_view,
+                                                 WebKitWebViewViewMode mode);
+
+WEBKIT_API WebKitWebViewViewMode
+webkit_web_view_get_view_mode                   (WebKitWebView        *web_view);
 
 WEBKIT_API void
 webkit_web_view_move_cursor                     (WebKitWebView        * webView,
