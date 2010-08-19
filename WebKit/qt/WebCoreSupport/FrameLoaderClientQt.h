@@ -37,6 +37,7 @@
 #include "KURL.h"
 #include "PluginView.h"
 #include "RefCounted.h"
+#include "ResourceError.h"
 #include "ResourceResponse.h"
 #include <QUrl>
 #include <qobject.h>

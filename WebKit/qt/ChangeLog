@@ -1,3 +1,9 @@
+2010-08-19  David Kilzer  <ddkilzer@apple.com>
+
+        BUILD FIX: FrameLoaderClientQt.h should include ResourceError.h
+
+        * WebCoreSupport/FrameLoaderClientQt.h: Include ResourceError.h.
+
 2010-08-19  Girish Ramakrishnan  <girish@forwardbias.in>
 
         Reviewed by Kenneth Christiansen.
