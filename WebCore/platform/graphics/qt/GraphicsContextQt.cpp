@@ -655,7 +655,6 @@ void GraphicsContext::fillRect(const FloatRect& rect)
 
     if (m_common->state.fillPattern) {
         AffineTransform affine;
-        FloatRect rectM(rect);
         QBrush brush(m_common->state.fillPattern->createPlatformPattern(affine));
         QPixmap* image = m_common->state.fillPattern->tileImage()->nativeImageForCurrentFrame();
 
