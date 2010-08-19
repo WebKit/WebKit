@@ -236,35 +236,35 @@ void RenderMathMLUnderOver::layout()
 
 int RenderMathMLUnderOver::baselinePosition(bool firstLine, bool isRootLineBox) const
 {
+    RenderObject* current = firstChild();
+    if (!current)
+        return RenderBlock::baselinePosition(firstLine, isRootLineBox);
+
     int baseline = 0;
-    RenderObject* current = 0;
     switch (m_kind) {
     case UnderOver:
     case Over:
-        current = firstChild();
         baseline += getOffsetHeight(current);
         current = current->nextSibling();
         if (current) {
             // actual base
             RenderObject* base = current->firstChild();
+            if (!base)
+                break;
             baseline += base->baselinePosition(firstLine, isRootLineBox);
             // added the negative top margin
             baseline += current->style()->marginTop().value();
-            // FIXME: Where is the extra 2-3px adjusted for zoom coming from?
-            float zoomFactor = style()->effectiveZoom();
-            baseline += static_cast<int>((zoomFactor > 1.25 ? 2 : 3) * zoomFactor);
         }
         break;
     case Under:
-        current = firstChild();
-        if (current) {
-            RenderObject* base = current->firstChild();
+        RenderObject* base = current->firstChild();
+        if (base)
             baseline += base->baselinePosition(true);
-            // FIXME: Where is the extra 2-3px adjusted for zoom coming from?
-            float zoomFactor = style()->effectiveZoom();
-            baseline += static_cast<int>((zoomFactor > 1.25 ? 2 : 3) * zoomFactor);
-        }
     }
+
+    // FIXME: Where is the extra 2-3px adjusted for zoom coming from?
+    float zoomFactor = style()->effectiveZoom();
+    baseline += static_cast<int>((zoomFactor > 1.25 ? 2 : 3) * zoomFactor);
     return baseline;
 }
 

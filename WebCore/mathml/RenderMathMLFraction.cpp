@@ -176,7 +176,7 @@ void RenderMathMLFraction::paint(PaintInfo& info, int tx, int ty)
 
 int RenderMathMLFraction::baselinePosition(bool firstLine, bool isRootLineBox) const
 {
-    if (firstChild()->isRenderMathMLBlock()) {
+    if (firstChild() && firstChild()->isRenderMathMLBlock()) {
         RenderMathMLBlock* numerator = toRenderMathMLBlock(firstChild());
         // FIXME: the baseline should adjust so the fraction line aligns
         // relative certain operators (e.g. aligns with the horizontal
