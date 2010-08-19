@@ -1,5 +1,12 @@
 2010-08-19  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix Chromium build.
+        
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::attributeChanged):
+
+2010-08-19  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Nikolas Zimmermann.
 
         HTMLElement::isContentEditable() can cause an updateStyleIfNeeded() to happen in the middle of layout

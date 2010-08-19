@@ -314,7 +314,7 @@ void SVGElement::attributeChanged(Attribute* attr, bool preserveDecls)
 
     // Changes to the style attribute are processed lazily (see Element::getAttribute() and related methods),
     // so we don't want changes to the style attribute to result in extra work here.
-    if (attr->name() != styleAttr)
+    if (attr->name() != HTMLNames::styleAttr)
         svgAttributeChanged(attr->name());
 }
 
