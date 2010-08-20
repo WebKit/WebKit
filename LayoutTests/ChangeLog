@@ -1,3 +1,22 @@
+2010-08-19  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Fix failing WebGL tests in Chromium in-process-webgl port
+        https://bugs.webkit.org/show_bug.cgi?id=44305
+
+        * fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias.html: Add "#ifdef GLES" around precision keywords. 
+        * fast/canvas/webgl/gl-bind-attrib-location-test-expected.txt: Re-enable the failing tests.
+        * fast/canvas/webgl/gl-bind-attrib-location-test.html: Add "#ifdef GLES" around precision keywords.
+        * fast/canvas/webgl/read-pixels-pack-alignment-expected.txt: Ditto.
+        * fast/canvas/webgl/read-pixels-pack-alignment.html: Ditto.
+        * fast/canvas/webgl/resources/fragmentShader.frag: Ditto.
+        * fast/canvas/webgl/texImage2DImageDataTest.html: Ditto.
+        * fast/canvas/webgl/texture-active-bind.html: Ditto.
+        * fast/canvas/webgl/texture-complete.html: Ditto.
+        * fast/canvas/webgl/texture-transparent-pixels-initialized.html: Ditto.
+        * platform/chromium/test_expectations.txt: Ditto.
+
 2010-08-20  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Inspector extensions tests fail on GTK+ bots because onSelectionChanged is missing

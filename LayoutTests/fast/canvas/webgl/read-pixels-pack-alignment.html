@@ -16,7 +16,10 @@ void main()
 </script>
 
 <script id="fshader" type="x-shader/x-fragment">
-varying highp vec4 color;
+#ifdef GL_ES
+precision mediump float;
+#endif
+varying vec4 color;
 
 void main()
 {
@@ -156,7 +159,7 @@ function runTestIteration(format, type, packAlignment, width, height)
     gl.clearColor(1, 0.4, 0, 1);
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.pixelStorei(gl.PACK_ALIGNMENT, packAlignment);
-    shouldBe("gl.getError()", "gl.NO_ERROR");
+    glErrorShouldBe(gl, gl.NO_ERROR);
     var bytesPerPixel = calculatePixelBytes(format, type);
     var padding = calculatePaddingBytes(bytesPerPixel, packAlignment, width);
     var size = bytesPerPixel * width * height + padding * (height - 1);
@@ -177,10 +180,10 @@ function runTestIteration(format, type, packAlignment, width, height)
         array = new Uint16Array(size);
     gl.readPixels(0, 0, width, height, format, type, array);
     if (width < 0 || height < 0) {
-        shouldBe("gl.getError()", "gl.INVALID_VALUE");
+        glErrorShouldBe(gl, gl.INVALID_VALUE);
         return;
     } else {
-        shouldBe("gl.getError()", "gl.NO_ERROR");
+        glErrorShouldBe(gl, gl.NO_ERROR);
         if (!array.length)
             return;
     }
@@ -204,10 +207,10 @@ function runTestIteration(format, type, packAlignment, width, height)
 function checkSupportedPixelFormatAndType()
 {
     debug("Check supported pixel format/type besides RGBA/UNSIGNED_BYTE");
-    shouldBe("gl.getError()", "gl.NO_ERROR");
+    glErrorShouldBe(gl, gl.NO_ERROR);
     pixelFormat = gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT);
     pixelType = gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE);
-    shouldBe("gl.getError()", "gl.NO_ERROR");
+    glErrorShouldBe(gl, gl.NO_ERROR);
     shouldBeFalse("pixelFormat == gl.RGBA && pixelType == gl.UNSIGNED_BYTE");
 }
 

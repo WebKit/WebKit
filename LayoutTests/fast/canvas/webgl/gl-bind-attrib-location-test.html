@@ -23,7 +23,10 @@ void main()
 }
 </script>
 <script id="fshader" type="text/something-not-javascript">
-varying highp vec4 color;
+#ifdef GL_ES
+precision highp float;
+#endif
+varying vec4 color;
 void main()
 {
   gl_FragColor = color;
@@ -84,11 +87,11 @@ debug("Checking gl.bindAttribLocation.");
 
 var program = gl.createProgram();
 gl.bindAttribLocation(program, 0, "gl_foo");
-assertMsg(gl.getError() == gl.INVALID_OPERATION,
-          "bindAttribLocation should return INVALID_OPERATION if name starts with 'gl_'");
+glErrorShouldBe(gl, gl.INVALID_OPERATION,
+    "bindAttribLocation should return INVALID_OPERATION if name starts with 'gl_'");
 gl.bindAttribLocation(program, 0, "gl_TexCoord0");
-assertMsg(gl.getError() == gl.INVALID_OPERATION,
-          "bindAttribLocation should return INVALID_OPERATION if name starts with 'gl_'");
+glErrorShouldBe(gl, gl.INVALID_OPERATION,
+    "bindAttribLocation should return INVALID_OPERATION if name starts with 'gl_'");
 
 var vs = loadShader(gl.VERTEX_SHADER, "vshader");
 var fs = loadShader(gl.FRAGMENT_SHADER, "fshader");
@@ -183,7 +186,7 @@ gl.disableVertexAttribArray(0);
 gl.vertexAttrib4f(0, 1, 0, 0, 1);
 checkDraw(0, 3, 255, 0, 0, 255);
 
-shouldBe("gl.getError()", "gl.NO_ERROR");
+glErrorShouldBe(gl, gl.NO_ERROR);
 
 debug("");
 successfullyParsed = true;

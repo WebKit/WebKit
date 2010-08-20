@@ -1,3 +1,13 @@
+2010-08-19  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Fix failing WebGL tests in Chromium in-process-webgl port
+        https://bugs.webkit.org/show_bug.cgi?id=44305
+
+        * src/WebGraphicsContext3DDefaultImpl.cpp:
+        (WebKit::WebGraphicsContext3DDefaultImpl::getVertexAttribOffset): Add implementation.
+
 2010-08-19  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

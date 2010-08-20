@@ -3194,25 +3194,6 @@ BUGYUTAK WIN LINUX : svg/W3C-SVG-1.1/animate-elem-80-t.svg = TEXT
 // This test causes the next one to run to ASSERT
 BUGWK44079 DEBUG SKIP : fast/events/popup-allowed-from-gesture-initiated-form-submit.html = PASS
 
-// Probably due to r65449 or r65455.
-BUGWK44087 MAC : fast/canvas/webgl/draw-arrays-out-of-bounds.html = TEXT
-BUGWK44087 MAC : fast/canvas/webgl/error-reporting.html = TEXT
-BUGWK44087 MAC : fast/canvas/webgl/get-active-test.html = TEXT
-BUGWK44087 MAC : fast/canvas/webgl/gl-bind-attrib-location-test.html = TEXT
-BUGWK44087 MAC : fast/canvas/webgl/gl-object-get-calls.html = TEXT
-BUGWK44087 MAC : fast/canvas/webgl/incorrect-context-object-behaviour.html = TEXT
-BUGWK44087 MAC : fast/canvas/webgl/index-validation-copies-indices.html = TEXT
-BUGWK44087 MAC : fast/canvas/webgl/index-validation-verifies-too-many-indices.html = TEXT
-BUGWK44087 MAC : fast/canvas/webgl/index-validation.html = TEXT
-BUGWK44087 MAC : fast/canvas/webgl/null-uniform-location.html = TEXT
-BUGWK44087 MAC : fast/canvas/webgl/read-pixels-pack-alignment.html = TEXT
-BUGWK44087 MAC : fast/canvas/webgl/texImage2DImageDataTest.html = TEXT
-BUGWK44087 MAC : fast/canvas/webgl/texture-active-bind.html = TEXT
-BUGWK44087 MAC : fast/canvas/webgl/texture-complete.html = TEXT
-BUGWK44087 MAC : fast/canvas/webgl/draw-elements-out-of-bounds.html = CRASH
-BUGWK44087 MAC : fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias.html = TIMEOUT
-BUGWK44087 MAC : fast/canvas/webgl/texture-transparent-pixels-initialized.html = TIMEOUT
-
 // Due to http://trac.webkit.org/changeset/65511
 BUGWK44118 : fast/dom/Geolocation/delayed-permission-allowed-for-multiple-requests.html = TEXT
 BUGWK44118 : fast/dom/Geolocation/delayed-permission-denied-for-multiple-requests.html = TIMEOUT

@@ -7,8 +7,8 @@ Canvas.getContext
 PASS [object WebGLRenderingContext] is non-null.
 
 Checking gl.bindAttribLocation.
-PASS bindAttribLocation should return INVALID_OPERATION if name starts with 'gl_'
-PASS bindAttribLocation should return INVALID_OPERATION if name starts with 'gl_'
+PASS getError was expected value: INVALID_OPERATION : bindAttribLocation should return INVALID_OPERATION if name starts with 'gl_'
+PASS getError was expected value: INVALID_OPERATION : bindAttribLocation should return INVALID_OPERATION if name starts with 'gl_'
 PASS program linked successfully
 vPosition:3
 vColor   :2
@@ -21,7 +21,7 @@ vColor   :0
 PASS location of vPositon should be 3
 PASS location of vColor should be 0
 PASS drawing is correct
-PASS gl.getError() is gl.NO_ERROR
+PASS getError was expected value: NO_ERROR : 
 
 PASS successfullyParsed is true
 

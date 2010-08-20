@@ -16,7 +16,10 @@ void main()
 </script>
 
 <script id="fshader" type="x-shader/x-fragment">
-varying highp vec4 color;
+#ifdef GL_ES
+precision highp float;
+#endif
+varying vec4 color;
 
 void main()
 {
