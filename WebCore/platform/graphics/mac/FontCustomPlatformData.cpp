@@ -31,8 +31,10 @@ namespace WebCore {
 
 FontCustomPlatformData::~FontCustomPlatformData()
 {
+#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
     if (m_atsContainer)
         ATSFontDeactivate(m_atsContainer, NULL, kATSOptionFlagsDefault);
+#endif
     CGFontRelease(m_cgFont);
 }
 
