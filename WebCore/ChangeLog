@@ -1,3 +1,22 @@
+2010-08-20  Adrienne Walker  <enne@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Implement HTMLVideoElement support for texImage2D and texSubImage2D
+        https://bugs.webkit.org/show_bug.cgi?id=33852
+
+        Test: fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::WebGLRenderingContext):
+        (WebCore::WebGLRenderingContext::videoFrameToImage):
+        (WebCore::WebGLRenderingContext::texImage2D):
+        (WebCore::WebGLRenderingContext::texSubImage2D):
+        (WebCore::WebGLRenderingContext::LRUImageBufferCache::LRUImageBufferCache):
+        (WebCore::WebGLRenderingContext::LRUImageBufferCache::imageBuffer):
+        (WebCore::WebGLRenderingContext::LRUImageBufferCache::bubbleToFront):
+        * html/canvas/WebGLRenderingContext.h:
+
 2010-08-20  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Adam Barth.

@@ -1,0 +1,39 @@
+ 
+Verify texImage2D and texSubImage2D code paths taking Videos
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+Testing texImage2D with flipY=false
+PASS pixelAt(0, 0) is red
+PASS pixelAt(bufWidth-1, 0) is green
+PASS pixelAt(0, bufHeight-1) is yellow
+PASS pixelAt(bufWidth-1, bufHeight-1) is blue
+Testing texImage2D with flipY=true
+PASS pixelAt(0, 0) is yellow
+PASS pixelAt(bufWidth-1, 0) is blue
+PASS pixelAt(0, bufHeight-1) is red
+PASS pixelAt(bufWidth-1, bufHeight-1) is green
+Testing TexSubImage2D with flipY=false, scale=2, ox=0, oy=0
+PASS pixelAt(0, 0) is red
+PASS pixelAt(bufWidth-1, 0) is black
+PASS pixelAt(0, bufHeight-1) is black
+PASS pixelAt(bufWidth-1, bufHeight-1) is black
+Testing TexSubImage2D with flipY=true, scale=2, ox=0, oy=0
+PASS pixelAt(0, 0) is yellow
+PASS pixelAt(bufWidth-1, 0) is black
+PASS pixelAt(0, bufHeight-1) is black
+PASS pixelAt(bufWidth-1, bufHeight-1) is black
+Testing TexSubImage2D with flipY=false, scale=2, ox=0.5, oy=0.5
+PASS pixelAt(0, 0) is black
+PASS pixelAt(bufWidth-1, 0) is black
+PASS pixelAt(0, bufHeight-1) is black
+PASS pixelAt(bufWidth-1, bufHeight-1) is blue
+Testing TexSubImage2D with flipY=true, scale=2, ox=0.5, oy=0.5
+PASS pixelAt(0, 0) is black
+PASS pixelAt(bufWidth-1, 0) is black
+PASS pixelAt(0, bufHeight-1) is black
+PASS pixelAt(bufWidth-1, bufHeight-1) is green
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

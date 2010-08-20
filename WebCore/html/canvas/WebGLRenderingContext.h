@@ -35,6 +35,8 @@
 #include "Uint8Array.h"
 #include "WebGLGetInfo.h"
 
+#include <wtf/OwnArrayPtr.h>
+
 namespace WebCore {
 
 class WebGLActiveInfo;
@@ -49,6 +51,7 @@ class WebGLTexture;
 class WebGLUniformLocation;
 class HTMLImageElement;
 class HTMLVideoElement;
+class ImageBuffer;
 class ImageData;
 class WebKitCSSMatrix;
 
@@ -320,6 +323,8 @@ public:
 
     bool validateWebGLObject(WebGLObject* object);
 
+    PassRefPtr<Image> videoFrameToImage(HTMLVideoElement* video);
+
     OwnPtr<GraphicsContext3D> m_context;
     bool m_needsUpdate;
     bool m_markedCanvasDirty;
@@ -386,6 +391,19 @@ public:
 
     RefPtr<WebGLTexture> m_blackTexture2D;
     RefPtr<WebGLTexture> m_blackTextureCubeMap;
+
+    // Fixed-size cache of reusable image buffers for video texImage2D calls.
+    class LRUImageBufferCache {
+    public:
+        LRUImageBufferCache(int capacity);
+        // The pointer returned is owned by the image buffer map.
+        ImageBuffer* imageBuffer(const IntSize& size);
+    private:
+        void bubbleToFront(int idx);
+        OwnArrayPtr<OwnPtr<ImageBuffer> > m_buffers;
+        int m_capacity;
+    };
+    LRUImageBufferCache m_videoCache;
 
     int m_maxTextureSize;
     int m_maxCubeMapTextureSize;

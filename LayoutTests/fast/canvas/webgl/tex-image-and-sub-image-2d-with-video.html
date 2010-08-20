@@ -1,0 +1,154 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css"/>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/webgl-test.js"></script>
+<script src="resources/webgl-test-utils.js"></script>
+<script src="../../../media/media-file.js"></script>
+<script>
+var wtu = WebGLTestUtils;
+var gl = null;
+var textureLoc = null;
+var successfullyParsed = false;
+
+function init()
+{
+    if (window.initNonKhronosFramework) {
+        window.initNonKhronosFramework(true);
+    }
+
+    description('Verify texImage2D and texSubImage2D code paths taking Videos');
+
+    var canvas = document.getElementById("example");
+    gl = wtu.create3DContext(canvas);
+    var program = wtu.setupTexturedQuad(gl);
+
+    gl.clearColor(0,0,0,1);
+    gl.clearDepth(1);
+
+    textureLoc = gl.getUniformLocation(gl.program, "tex");
+
+    var mediaFile = findMediaFile("video", "resources/quadrants");
+    loadVideo(mediaFile);
+}
+
+function loadVideo(src) {
+    var video = document.getElementsByTagName('video')[0];
+
+    function startVideo() {
+        // Resize canvas to fit video.
+        var canvas = document.getElementsByTagName('canvas')[0];
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        runTest(video);
+    };
+    video.addEventListener("canplay", startVideo);
+    video.src = src;
+}
+
+// These declarations need to be global for "shouldBe" to see them
+var buf = null;
+var bufWidth;
+var bufHeight;
+var red = [255, 0, 0, 255];
+var green = [0, 255, 0, 255];
+var blue = [0, 0, 255, 255];
+var yellow = [255, 255, 0, 255];
+var black = [0, 0, 0, 255];
+var clear = [127, 127, 127, 255];
+function pixelAt(x, y) {
+    var index = y * bufWidth * 4 + x * 4;
+    return [buf[index], buf[index+1], buf[index+2], buf[index+3]];
+}
+
+function runOneIteration(video, flipY, useTexSubImage2D, ulColor, urColor, blColor, brColor, ox, oy, scale) {
+    var canvas = document.getElementsByTagName('canvas')[0];
+    gl.viewport(0, 0, canvas.width, canvas.height);
+
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    // Disable any writes to the alpha channel
+    gl.colorMask(1, 1, 1, 0);
+
+    var texture = gl.createTexture();
+    // Bind the texture to texture unit 0
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    // Set up texture parameters
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    // Set up pixel store parameters
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, flipY);
+    gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
+    // Upload the image into the texture
+    if (useTexSubImage2D) {
+        // Fill initial texture with black.
+        var texWidth = scale * canvas.width;
+        var texHeight = scale * canvas.height;
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, texWidth, texHeight, 0,
+                      gl.RGBA, gl.UNSIGNED_BYTE, null);
+
+        gl.texSubImage2D(gl.TEXTURE_2D, 0, ox * texWidth, oy * texHeight, gl.RGBA, gl.UNSIGNED_BYTE, video);
+        debug('Testing TexSubImage2D with flipY=' + flipY +', scale=' + scale + ', ox=' + ox + ', oy=' + oy);
+    } else {
+        debug('Testing texImage2D with flipY=' + flipY);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, video);
+    }
+
+    // Point the uniform sampler to texture unit 0
+    gl.uniform1i(textureLoc, 0);
+    // Draw the triangles
+    wtu.drawQuad(gl, clear);
+    // Read back the rendering results
+    bufWidth = canvas.width;
+    bufHeight = canvas.height;
+    buf = new Uint8Array(bufWidth * bufHeight * 4);
+    gl.readPixels(0, 0, bufWidth, bufHeight, gl.RGBA, gl.UNSIGNED_BYTE, buf);
+
+    shouldBe("pixelAt(0, 0)", ulColor);
+    shouldBe("pixelAt(bufWidth-1, 0)", urColor);
+    shouldBe("pixelAt(0, bufHeight-1)", blColor);
+    shouldBe("pixelAt(bufWidth-1, bufHeight-1)", brColor);
+}
+
+function runTest(video)
+{
+    // Original square should have red, green, yellow, blue quadrants,
+    // with a cross in the middle:
+    //
+    // R|G
+    // -+-
+    // Y|B
+
+    // texImage2D the whole texture
+    runOneIteration(video, false, false, "red", "green", "yellow", "blue");
+    runOneIteration(video, true, false, "yellow", "blue", "red", "green");
+
+    // texSubImage2D upper left
+    runOneIteration(video, false, true, "red", "black", "black", "black", 0, 0, 2);
+    runOneIteration(video, true, true, "yellow", "black", "black", "black", 0, 0, 2);
+
+    // texSubImage2D lower right
+    runOneIteration(video, false, true, "black", "black", "black", "blue", 0.5, 0.5, 2);
+    runOneIteration(video, true, true, "black", "black", "black", "green", 0.5, 0.5, 2);
+
+    successfullyParsed = true;
+    var epilogue = document.createElement("script");
+    epilogue.onload = finish;
+    epilogue.src = "../../js/resources/js-test-post.js";
+    document.body.appendChild(epilogue);
+}
+
+function finish() {
+    if (window.nonKhronosFrameworkNotifyDone) {
+        window.nonKhronosFrameworkNotifyDone();
+    }
+}
+</script>
+</head>
+<body onload="init()">
+<video id="sourcevideo"></video>
+<canvas id="example"></canvas>
+<div id="description"></div>
+<div id="console"></div>
+</body>
+</html>
