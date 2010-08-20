@@ -1,3 +1,20 @@
+2010-08-20  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Clippers are rasterized, when applied to scaled target object
+        https://bugs.webkit.org/show_bug.cgi?id=44325
+
+        Use SVGImageBufferTools logic for RenderSVGResourceClipper, just like RenderSVGResourceMasker/Gradient,
+        to avoid pixelation, when the clipper is applied to a scaled target object, or when the document is scaled.
+
+        Test: svg/clip-path/clip-path-pixelation.svg
+
+        * rendering/RenderSVGResourceClipper.cpp:
+        (WebCore::RenderSVGResourceClipper::applyClippingToContext):
+        (WebCore::RenderSVGResourceClipper::createClipData):
+        * rendering/RenderSVGResourceClipper.h:
+
 2010-08-20  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

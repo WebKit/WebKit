@@ -65,7 +65,8 @@ private:
     // applyResource directly and use the rects from the object, since they are empty for RenderSVGResources
     bool applyClippingToContext(RenderObject*, const FloatRect&, const FloatRect&, GraphicsContext*);
     bool pathOnlyClipping(GraphicsContext*, const FloatRect&);
-    bool createClipData(ClipperData*, const FloatRect&, const FloatRect&);
+    bool createClipData(ClipperData*, const FloatRect& objectBoundingBox, const FloatRect& repaintRect, const FloatRect& clampedAbsoluteTargetRect, const AffineTransform& absoluteTransform);
+
     void calculateClipContentRepaintRect();
 
     bool m_invalidationBlocked;
