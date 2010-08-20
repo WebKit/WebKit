@@ -1,3 +1,14 @@
+2010-08-20  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Unreviewed build fix.
+
+        As opposed to WebCore, JavascriptCore and wtf, webkit is always a
+        shared library. After r65366, libewebkit.so was not being installed
+        anymore when building with SHARED_CORE=0 (which is the default). This
+        partially reverts that revision in order to fix this issue.
+
+        * CMakeLists.txt: always install webkit library.
+
 2010-08-17  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         Reviewed by Darin Adler.
