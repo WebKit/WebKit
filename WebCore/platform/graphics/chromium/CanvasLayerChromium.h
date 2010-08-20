@@ -45,14 +45,29 @@ class CanvasLayerChromium : public LayerChromium {
 public:
     static PassRefPtr<CanvasLayerChromium> create(GraphicsLayerChromium* owner = 0);
     virtual bool drawsContent() { return m_context; }
-    virtual bool ownsTexture() { return true; }
-    virtual void updateTextureContents(unsigned);
-    virtual unsigned textureId();
-    virtual unsigned shaderProgramId() { return m_shaderProgramId; }
+    virtual void updateContents();
+    virtual void draw();
 
     void setContext(const GraphicsContext3D* context);
 
-    static void setShaderProgramId(unsigned shaderProgramId) { m_shaderProgramId = shaderProgramId; }
+    class SharedValues {
+    public:
+        SharedValues();
+        ~SharedValues();
+
+        unsigned canvasShaderProgram() const { return m_canvasShaderProgram; }
+        int shaderSamplerLocation() const { return m_shaderSamplerLocation; }
+        int shaderMatrixLocation() const { return m_shaderMatrixLocation; }
+        int shaderAlphaLocation() const { return m_shaderAlphaLocation; }
+        bool initialized() const { return m_initialized; }
+
+    private:
+        unsigned m_canvasShaderProgram;
+        int m_shaderSamplerLocation;
+        int m_shaderMatrixLocation;
+        int m_shaderAlphaLocation;
+        bool m_initialized;
+    };
 
     class PrepareTextureCallback : public Noncopyable {
     public:
@@ -66,8 +81,6 @@ private:
     unsigned m_textureId;
     bool m_textureChanged;
     OwnPtr<PrepareTextureCallback> m_prepareTextureCallback;
-
-    static unsigned m_shaderProgramId;
 };
 
 }

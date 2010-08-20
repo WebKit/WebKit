@@ -35,11 +35,63 @@
 #include "CanvasLayerChromium.h"
 
 #include "GraphicsContext3D.h"
+#include "LayerRendererChromium.h"
 #include <GLES2/gl2.h>
 
 namespace WebCore {
 
-unsigned CanvasLayerChromium::m_shaderProgramId = 0;
+CanvasLayerChromium::SharedValues::SharedValues()
+    : m_canvasShaderProgram(0)
+    , m_shaderSamplerLocation(-1)
+    , m_shaderMatrixLocation(-1)
+    , m_shaderAlphaLocation(-1)
+    , m_initialized(false)
+{
+    char vertexShaderString[] =
+        "attribute vec4 a_position;   \n"
+        "attribute vec2 a_texCoord;   \n"
+        "uniform mat4 matrix;         \n"
+        "varying vec2 v_texCoord;     \n"
+        "void main()                  \n"
+        "{                            \n"
+        "  gl_Position = matrix * a_position; \n"
+        "  v_texCoord = a_texCoord;   \n"
+        "}                            \n";
+
+    // Canvas layers need to be flipped vertically and their colors shouldn't be
+    // swizzled.
+    char fragmentShaderString[] =
+        "precision mediump float;                            \n"
+        "varying vec2 v_texCoord;                            \n"
+        "uniform sampler2D s_texture;                        \n"
+        "uniform float alpha;                                \n"
+        "void main()                                         \n"
+        "{                                                   \n"
+        "  vec4 texColor = texture2D(s_texture, vec2(v_texCoord.x, 1.0 - v_texCoord.y)); \n"
+        "  gl_FragColor = vec4(texColor.x, texColor.y, texColor.z, texColor.w) * alpha; \n"
+        "}                                                   \n";
+
+    m_canvasShaderProgram = createShaderProgram(vertexShaderString, fragmentShaderString);
+    if (!m_canvasShaderProgram) {
+        LOG_ERROR("CanvasLayerChromium: Failed to create shader program");
+        return;
+    }
+
+    m_shaderSamplerLocation = glGetUniformLocation(m_canvasShaderProgram, "s_texture");
+    m_shaderMatrixLocation = glGetUniformLocation(m_canvasShaderProgram, "matrix");
+    m_shaderAlphaLocation = glGetUniformLocation(m_canvasShaderProgram, "alpha");
+    ASSERT(m_shaderSamplerLocation != -1);
+    ASSERT(m_shaderMatrixLocation != -1);
+    ASSERT(m_shaderAlphaLocation != -1);
+
+    m_initialized = true;
+}
+
+CanvasLayerChromium::SharedValues::~SharedValues()
+{
+    if (m_canvasShaderProgram)
+        GLC(glDeleteProgram(m_canvasShaderProgram));
+}
 
 PassRefPtr<CanvasLayerChromium> CanvasLayerChromium::create(GraphicsLayerChromium* owner)
 {
@@ -54,14 +106,8 @@ CanvasLayerChromium::CanvasLayerChromium(GraphicsLayerChromium* owner)
 {
 }
 
-unsigned CanvasLayerChromium::textureId()
+void CanvasLayerChromium::updateContents()
 {
-    return m_textureId;
-}
-
-void CanvasLayerChromium::updateTextureContents(unsigned textureId)
-{
-    ASSERT(textureId == m_textureId);
     ASSERT(m_context);
     if (m_textureChanged) {
         glBindTexture(GL_TEXTURE_2D, m_textureId);
@@ -90,6 +136,20 @@ void CanvasLayerChromium::setContext(const GraphicsContext3D* context)
     if (textureId != m_textureId)
         m_textureChanged = true;
     m_textureId = textureId;
+}
+
+void CanvasLayerChromium::draw()
+{
+    ASSERT(layerRenderer());
+    const CanvasLayerChromium::SharedValues* sv = layerRenderer()->canvasLayerSharedValues();
+    ASSERT(sv && sv->initialized());
+    GLC(glActiveTexture(GL_TEXTURE0));
+    GLC(glBindTexture(GL_TEXTURE_2D, m_textureId));
+    layerRenderer()->useShader(sv->canvasShaderProgram());
+    GLC(glUniform1i(sv->shaderSamplerLocation(), 0));
+    drawTexturedQuad(layerRenderer()->projectionMatrix(), drawTransform(),
+                     bounds().width(), bounds().height(), drawOpacity(),
+                     sv->shaderMatrixLocation(), sv->shaderAlphaLocation());
 }
 
 }

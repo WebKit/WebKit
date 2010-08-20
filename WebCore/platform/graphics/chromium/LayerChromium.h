@@ -55,19 +55,24 @@ namespace WebCore {
 class GraphicsContext3D;
 class LayerRendererChromium;
 
-// Base class for composited layers. The implementation covers layers that require
-// a GraphicsContext to render their contents. Special layer types are derived from
+// Base class for composited layers. Special layer types are derived from
 // this class.
 class LayerChromium : public RefCounted<LayerChromium> {
+    friend class LayerRendererChromium;
 public:
     static PassRefPtr<LayerChromium> create(GraphicsLayerChromium* owner = 0);
 
     ~LayerChromium();
 
+    const LayerChromium* rootLayer() const;
+    LayerChromium* superlayer() const;
     void addSublayer(PassRefPtr<LayerChromium>);
     void insertSublayer(PassRefPtr<LayerChromium>, size_t index);
     void replaceSublayer(LayerChromium* reference, PassRefPtr<LayerChromium> newLayer);
     void removeFromSuperlayer();
+    void removeAllSublayers();
+    void setSublayers(const Vector<RefPtr<LayerChromium> >&);
+    const Vector<RefPtr<LayerChromium> >& getSublayers() const { return m_sublayers; }
 
     void setAnchorPoint(const FloatPoint& anchorPoint) { m_anchorPoint = anchorPoint; setNeedsCommit(); }
     FloatPoint anchorPoint() const { return m_anchorPoint; }
@@ -93,9 +98,6 @@ public:
     void setDoubleSided(bool doubleSided) { m_doubleSided = doubleSided; setNeedsCommit(); }
     bool doubleSided() const { return m_doubleSided; }
 
-    void setEdgeAntialiasingMask(uint32_t mask) { m_edgeAntialiasingMask = mask; setNeedsCommit(); }
-    uint32_t edgeAntialiasingMask() const { return m_edgeAntialiasingMask; }
-
     void setFrame(const FloatRect&);
     FloatRect frame() const { return m_frame; }
 
@@ -120,34 +122,20 @@ public:
     bool opaque() const { return m_opaque; }
 
     void setPosition(const FloatPoint& position) { m_position = position;  setNeedsCommit(); }
-
     FloatPoint position() const { return m_position; }
 
     void setZPosition(float zPosition) { m_zPosition = zPosition; setNeedsCommit(); }
     float zPosition() const {  return m_zPosition; }
 
-    const LayerChromium* rootLayer() const;
-
-    void removeAllSublayers();
-
-    void setSublayers(const Vector<RefPtr<LayerChromium> >&);
-
-    const Vector<RefPtr<LayerChromium> >& getSublayers() const { return m_sublayers; }
-
     void setSublayerTransform(const TransformationMatrix& transform) { m_sublayerTransform = transform; setNeedsCommit(); }
     const TransformationMatrix& sublayerTransform() const { return m_sublayerTransform; }
-
-    LayerChromium* superlayer() const;
-
 
     void setTransform(const TransformationMatrix& transform) { m_transform = transform; setNeedsCommit(); }
     const TransformationMatrix& transform() const { return m_transform; }
 
+    // FIXME: This setting is currently ignored.
     void setGeometryFlipped(bool flipped) { m_geometryFlipped = flipped; setNeedsCommit(); }
     bool geometryFlipped() const { return m_geometryFlipped; }
-
-    virtual void updateTextureContents(unsigned textureId);
-    bool contentsDirty() { return m_contentsDirty; }
 
     void setDrawTransform(const TransformationMatrix& transform) { m_drawTransform = transform; }
     const TransformationMatrix& drawTransform() const { return m_drawTransform; }
@@ -155,40 +143,77 @@ public:
     void setDrawOpacity(float opacity) { m_drawOpacity = opacity; }
     float drawOpacity() const { return m_drawOpacity; }
 
-    virtual bool drawsContent() { return m_owner && m_owner->drawsContent(); }
-
-    // Return true if the layer has its own GL texture and false if the texture
-    // needs to be allocated by the compositor.
-    virtual bool ownsTexture() { return false; }
-
-    // Returns the id of the GL texture that stores the contents of this layer.
-    // Derived layer classes that own their own textures should overwrite this method.
-    virtual unsigned textureId() { return m_allocatedTextureId; }
-
     bool preserves3D() { return m_owner && m_owner->preserves3D(); }
 
     void setLayerRenderer(LayerRendererChromium*);
 
-    static void setShaderProgramId(unsigned shaderProgramId) { m_shaderProgramId = shaderProgramId; }
-    virtual unsigned shaderProgramId() { return m_shaderProgramId; }
-
     void setOwner(GraphicsLayerChromium* owner) { m_owner = owner; }
+
+    bool contentsDirty() { return m_contentsDirty; }
+
+    // These methods typically need to be overwritten by derived classes.
+    virtual bool drawsContent() { return false; }
+    virtual void updateContents() { };
+    virtual void draw() { };
+
+    void drawDebugBorder();
+
+    // Stores values that are shared between instances of this class that are
+    // associated with the same LayerRendererChromium (and hence the same GL
+    // context).
+    class SharedValues {
+    public:
+        SharedValues();
+        ~SharedValues();
+
+        unsigned quadVerticesVbo() const { return m_quadVerticesVbo; }
+        unsigned quadElementsVbo() const { return m_quadElementsVbo; }
+        int maxTextureSize() const { return m_maxTextureSize; }
+        unsigned borderShaderProgram() const { return m_borderShaderProgram; }
+        int borderShaderMatrixLocation() const { return m_borderShaderMatrixLocation; }
+        int borderShaderColorLocation() const { return m_borderShaderColorLocation; }
+        bool initialized() const { return m_initialized; }
+
+    private:
+        unsigned m_quadVerticesVbo;
+        unsigned m_quadElementsVbo;
+        int m_maxTextureSize;
+        unsigned m_borderShaderProgram;
+        int m_borderShaderMatrixLocation;
+        int m_borderShaderColorLocation;
+        bool m_initialized;
+    };
+
+    static void prepareForDraw(const SharedValues*);
 
 protected:
     GraphicsLayerChromium* m_owner;
     LayerChromium(GraphicsLayerChromium* owner);
-    void updateTextureRect(void* pixels, const IntSize& bitmapSize, const IntSize& requiredTextureSize, const IntRect& dirtyRect, unsigned textureId);
+
+    LayerRendererChromium* layerRenderer() const { return m_layerRenderer; }
+
+    static void drawTexturedQuad(const TransformationMatrix& projectionMatrix, const TransformationMatrix& layerMatrix,
+                                 float width, float height, float opacity,
+                                 int matrixLocation, int alphaLocation);
+
+    static void toGLMatrix(float*, const TransformationMatrix&);
+
+    static unsigned createShaderProgram(const char* vertexShaderSource, const char* fragmentShaderSource);
 
     IntSize m_bounds;
     FloatRect m_dirtyRect;
     bool m_contentsDirty;
 
+    // All layer shaders share the same attribute locations for the vertex positions
+    // and texture coordinates. This allows switching shaders without rebinding attribute
+    // arrays.
+    static const unsigned s_positionAttribLocation;
+    static const unsigned s_texCoordAttribLocation;
+
 private:
     void setNeedsCommit();
 
     void setSuperlayer(LayerChromium* superlayer) { m_superlayer = superlayer; }
-
-    void paintMe();
 
     size_t numSublayers() const
     {
@@ -204,35 +229,17 @@ private:
     Vector<RefPtr<LayerChromium> > m_sublayers;
     LayerChromium* m_superlayer;
 
+    // Layer properties.
     IntSize m_backingStoreSize;
     FloatPoint m_position;
     FloatPoint m_anchorPoint;
     Color m_backgroundColor;
     Color m_borderColor;
-
-    LayerRendererChromium* m_layerRenderer;
-
-    FloatRect m_frame;
-    TransformationMatrix m_transform;
-    TransformationMatrix m_sublayerTransform;
-
-    TransformationMatrix m_drawTransform;
-
-    uint32_t m_edgeAntialiasingMask;
     float m_opacity;
     float m_zPosition;
     float m_anchorPointZ;
     float m_borderWidth;
-
     float m_drawOpacity;
-
-    unsigned m_allocatedTextureId;
-    IntSize m_allocatedTextureSize;
-
-    // The shader program used by all layers of this type is the same.
-    // This static can be shadowed by derived classes to use a special shader.
-    static unsigned m_shaderProgramId;
-
     bool m_clearsContext;
     bool m_doubleSided;
     bool m_hidden;
@@ -240,6 +247,14 @@ private:
     bool m_opaque;
     bool m_geometryFlipped;
     bool m_needsDisplayOnBoundsChange;
+
+    // Points to the layer renderer that updates and draws this layer.
+    LayerRendererChromium* m_layerRenderer;
+
+    FloatRect m_frame;
+    TransformationMatrix m_transform;
+    TransformationMatrix m_sublayerTransform;
+    TransformationMatrix m_drawTransform;
 
     String m_name;
 };

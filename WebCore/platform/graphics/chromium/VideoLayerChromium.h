@@ -34,16 +34,16 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "LayerChromium.h"
+#include "ContentLayerChromium.h"
 
 namespace WebCore {
 
 // A Layer that contains a Video element.
-class VideoLayerChromium : public LayerChromium {
+class VideoLayerChromium : public ContentLayerChromium {
 public:
     static PassRefPtr<VideoLayerChromium> create(GraphicsLayerChromium* owner = 0);
     virtual bool drawsContent() { return true; }
-    virtual void updateTextureContents(unsigned textureId);
+    virtual void updateContents();
 
 private:
     VideoLayerChromium(GraphicsLayerChromium* owner);
@@ -51,8 +51,6 @@ private:
     void updateTextureRect(const IntRect& updateRect, unsigned textureId);
     void updateCompleted();
 
-    unsigned m_allocatedTextureId;
-    IntSize m_allocatedTextureSize;
 #if PLATFORM(SKIA)
     OwnPtr<skia::PlatformCanvas> m_canvas;
     OwnPtr<PlatformContextSkia> m_skiaContext;

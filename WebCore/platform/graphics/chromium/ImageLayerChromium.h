@@ -34,16 +34,18 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "LayerChromium.h"
+#include "ContentLayerChromium.h"
 
 namespace WebCore {
 
 // A Layer that contains only an Image element.
-class ImageLayerChromium : public LayerChromium {
+class ImageLayerChromium : public ContentLayerChromium {
 public:
     static PassRefPtr<ImageLayerChromium> create(GraphicsLayerChromium* owner = 0);
+
+    virtual void updateContents();
     virtual bool drawsContent() { return m_contents; }
-    virtual void updateTextureContents(unsigned textureId);
+
     void setContents(NativeImagePtr);
 
 private:

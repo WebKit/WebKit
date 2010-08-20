@@ -1,3 +1,125 @@
+2010-08-19  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Rearranging the accelerated compositing code such that the
+        layer rendering logic now lives in the layer classes rather than the
+        compositor. This lifts the restriction of having one texture per layer
+        and significantly cleans up the compositor code. This change mostly
+        resulted in a lot of code moving around files. Noteworthy changes
+        include:
+        * Made LayerChromium a proper based class for layers that mostly handles
+          the updates to the layer properties and superlayer / sublayer updates.
+        * Introduced a new layer type, ContentLayerChromium, which handles
+          layers that require a GraphicsContext to render their content.
+        * ImageLayerChromium and VideoLayerChromium now derive from
+          ContentLayerChromium as they share the same shader and draw function.
+        * Removed TransformLayerChromium as its functionality is now replaced by
+          the base LayerChromium class.
+        * Re-arranged the order in which the members of LayerChromium are defined
+          in the header file to form a more reasonable logical grouping.
+        * Changed LayerRendererChromium to use the shader creation and drawing
+          methods defined in the layer classes. As a result, a lot of GL code was
+          removed from the implementation file.
+        * Eliminated randomly dispersed calls to check for GL errors by a macro (GLC)
+          which allows turning error testing on/off with a single define (DEBUG_GL_CALLS
+          defined in LayerRendererChromium.h)
+        * Replaced the previous layer render loop with two traversals of the layer
+          hierarchy, the first to update transforms and opacity values and the
+          second to render the layers. Eliminated global Z sorting of all layers as
+          it was wrong.
+        https://bugs.webkit.org/show_bug.cgi?id=44148
+
+        Test: Verified that pages using the compositor and compositor
+              layout tests have not regressed.
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/CanvasLayerChromium.cpp:
+        (WebCore::CanvasLayerChromium::SharedValues::SharedValues):
+        (WebCore::CanvasLayerChromium::SharedValues::~SharedValues):
+        (WebCore::CanvasLayerChromium::updateContents):
+        (WebCore::CanvasLayerChromium::draw):
+        * platform/graphics/chromium/CanvasLayerChromium.h:
+        (WebCore::CanvasLayerChromium::SharedValues::canvasShaderProgram):
+        (WebCore::CanvasLayerChromium::SharedValues::shaderSamplerLocation):
+        (WebCore::CanvasLayerChromium::SharedValues::shaderMatrixLocation):
+        (WebCore::CanvasLayerChromium::SharedValues::shaderAlphaLocation):
+        (WebCore::CanvasLayerChromium::SharedValues::initialized):
+        * platform/graphics/chromium/ContentLayerChromium.cpp: Added.
+        (WebCore::ContentLayerChromium::SharedValues::SharedValues):
+        (WebCore::ContentLayerChromium::SharedValues::~SharedValues):
+        (WebCore::ContentLayerChromium::create):
+        (WebCore::ContentLayerChromium::ContentLayerChromium):
+        (WebCore::ContentLayerChromium::~ContentLayerChromium):
+        (WebCore::ContentLayerChromium::updateContents):
+        (WebCore::ContentLayerChromium::updateTextureRect):
+        (WebCore::ContentLayerChromium::draw):
+        * platform/graphics/chromium/ContentLayerChromium.h: Added.
+        (WebCore::ContentLayerChromium::drawsContent):
+        (WebCore::ContentLayerChromium::SharedValues::contentShaderProgram):
+        (WebCore::ContentLayerChromium::SharedValues::shaderSamplerLocation):
+        (WebCore::ContentLayerChromium::SharedValues::shaderMatrixLocation):
+        (WebCore::ContentLayerChromium::SharedValues::shaderAlphaLocation):
+        (WebCore::ContentLayerChromium::SharedValues::initialized):
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        (WebCore::GraphicsLayerChromium::GraphicsLayerChromium):
+        (WebCore::GraphicsLayerChromium::updateLayerPreserves3D):
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        (WebCore::ImageLayerChromium::ImageLayerChromium):
+        (WebCore::ImageLayerChromium::updateContents):
+        * platform/graphics/chromium/ImageLayerChromium.h:
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::loadShader):
+        (WebCore::LayerChromium::SharedValues::SharedValues):
+        (WebCore::LayerChromium::SharedValues::~SharedValues):
+        (WebCore::LayerChromium::LayerChromium):
+        (WebCore::LayerChromium::~LayerChromium):
+        (WebCore::LayerChromium::createShaderProgram):
+        (WebCore::LayerChromium::toGLMatrix):
+        (WebCore::LayerChromium::drawTexturedQuad):
+        (WebCore::LayerChromium::drawDebugBorder):
+        (WebCore::LayerChromium::prepareForDraw):
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore::LayerChromium::getSublayers):
+        (WebCore::LayerChromium::setPosition):
+        (WebCore::LayerChromium::contentsDirty):
+        (WebCore::LayerChromium::drawsContent):
+        (WebCore::LayerChromium::updateContents):
+        (WebCore::LayerChromium::draw):
+        (WebCore::LayerChromium::SharedValues::quadVerticesVbo):
+        (WebCore::LayerChromium::SharedValues::quadElementsVbo):
+        (WebCore::LayerChromium::SharedValues::maxTextureSize):
+        (WebCore::LayerChromium::SharedValues::borderShaderProgram):
+        (WebCore::LayerChromium::SharedValues::borderShaderMatrixLocation):
+        (WebCore::LayerChromium::SharedValues::borderShaderColorLocation):
+        (WebCore::LayerChromium::SharedValues::initialized):
+        (WebCore::LayerChromium::layerRenderer):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::LayerRendererChromium):
+        (WebCore::LayerRendererChromium::~LayerRendererChromium):
+        (WebCore::LayerRendererChromium::debugGLCall):
+        (WebCore::LayerRendererChromium::useShader):
+        (WebCore::LayerRendererChromium::drawLayers):
+        (WebCore::LayerRendererChromium::createLayerTexture):
+        (WebCore::LayerRendererChromium::updateLayersRecursive):
+        (WebCore::LayerRendererChromium::drawLayersRecursive):
+        (WebCore::LayerRendererChromium::drawLayer):
+        (WebCore::LayerRendererChromium::checkTextureSize):
+        (WebCore::LayerRendererChromium::initializeSharedObjects):
+        (WebCore::LayerRendererChromium::cleanupSharedObjects):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        (WebCore::LayerRendererChromium::projectionMatrix):
+        (WebCore::LayerRendererChromium::layerSharedValues):
+        (WebCore::LayerRendererChromium::contentLayerSharedValues):
+        (WebCore::LayerRendererChromium::canvasLayerSharedValues):
+        * platform/graphics/chromium/TransformLayerChromium.cpp: Removed.
+        * platform/graphics/chromium/TransformLayerChromium.h: Removed.
+        * platform/graphics/chromium/VideoLayerChromium.cpp:
+        (WebCore::VideoLayerChromium::VideoLayerChromium):
+        (WebCore::VideoLayerChromium::updateContents):
+        (WebCore::VideoLayerChromium::createTextureRect):
+        * platform/graphics/chromium/VideoLayerChromium.h:
+
 2010-08-19  David Kilzer  <ddkilzer@apple.com>
 
         BUILD FIX: Fix Mac build after Windows WebKit2 changes for Netscape Plug-ins

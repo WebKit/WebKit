@@ -34,6 +34,8 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
+#include "CanvasLayerChromium.h"
+#include "ContentLayerChromium.h"
 #include "IntRect.h"
 #include "LayerChromium.h"
 #include "SkBitmap.h"
@@ -50,16 +52,6 @@
 namespace WebCore {
 
 class GLES2Context;
-
-class ShaderProgram {
-public:
-    ShaderProgram();
-
-    unsigned m_shaderProgramId;
-    int m_samplerLocation;
-    int m_matrixLocation;
-    int m_alphaLocation;
-};
 
 // Class that handles drawing of composited render layers using GL.
 class LayerRendererChromium : public Noncopyable {
@@ -78,73 +70,58 @@ public:
 
     void setNeedsDisplay() { m_needsDisplay = true; }
 
-    // Frees the texture associated with the given layer.
-    bool freeLayerTexture(LayerChromium*);
-
     bool hardwareCompositing() const { return m_hardwareCompositing; }
 
     void setRootLayerCanvasSize(const IntSize&);
 
     GraphicsContext* rootLayerGraphicsContext() const { return m_rootLayerGraphicsContext.get(); }
 
-private:
-    enum ShaderProgramType { DebugBorderProgram, ScrollLayerProgram, ContentLayerProgram, CanvasLayerProgram, NumShaderProgramTypes };
+    unsigned createLayerTexture();
 
-    void updateLayersRecursive(LayerChromium* layer, const TransformationMatrix& parentMatrix, float opacity, const IntRect& visibleRect);
+    static void debugGLCall(const char* command, const char* file, int line);
+
+    const TransformationMatrix& projectionMatrix() const { return m_projectionMatrix; }
+
+    void useShader(unsigned);
+
+    bool checkTextureSize(const IntSize&);
+
+    const LayerChromium::SharedValues* layerSharedValues() const { return m_layerSharedValues.get(); }
+    const ContentLayerChromium::SharedValues* contentLayerSharedValues() const { return m_contentLayerSharedValues.get(); }
+    const CanvasLayerChromium::SharedValues* canvasLayerSharedValues() const { return m_canvasLayerSharedValues.get(); }
+
+private:
+    void updateLayersRecursive(LayerChromium* layer, const TransformationMatrix& parentMatrix, float opacity);
+
+    void drawLayersRecursive(LayerChromium*);
 
     void drawLayer(LayerChromium*);
 
-    void drawDebugBorder(LayerChromium*, const TransformationMatrix&);
-
-    void drawTexturedQuad(const TransformationMatrix& matrix, float width, float height, float opacity);
-
     bool isLayerVisible(LayerChromium*, const TransformationMatrix&, const IntRect& visibleRect);
 
-    bool createLayerShader(ShaderProgramType, const char* vertexShaderSource, const char* fragmentShaderSource);
-
-    void useShaderProgram(ShaderProgramType);
-
-    void bindCommonAttribLocations(ShaderProgramType);
-
-    enum VboIds { Vertices, LayerElements };
-
-    // These are here only temporarily and should be removed once we switch over to GGL
     bool makeContextCurrent();
 
-    bool initializeSharedGLObjects();
-    int getTextureId(LayerChromium*);
-    int assignTextureForLayer(LayerChromium*);
-
-    ShaderProgram m_shaderPrograms[NumShaderProgramTypes];
+    bool initializeSharedObjects();
+    void cleanupSharedObjects();
 
     unsigned m_rootLayerTextureId;
     int m_rootLayerTextureWidth;
     int m_rootLayerTextureHeight;
 
-    // Shader uniform and attribute locations.
-    const int m_positionLocation;
-    const int m_texCoordLocation;
-    int m_samplerLocation;
-    int m_matrixLocation;
-    int m_alphaLocation;
-    int m_borderColorLocation;
+    // Scroll shader uniform locations.
+    unsigned m_scrollShaderProgram;
+    int m_scrollShaderSamplerLocation;
+    int m_scrollShaderMatrixLocation;
 
-    unsigned m_quadVboIds[3];
     TransformationMatrix m_projectionMatrix;
 
     RefPtr<LayerChromium> m_rootLayer;
-
-    Vector<LayerChromium*> m_layerList;
 
     bool m_needsDisplay;
     IntPoint m_scrollPosition;
     bool m_hardwareCompositing;
 
-    ShaderProgramType m_currentShaderProgramType;
-
-    // Map associating layers with textures ids used by the GL compositor.
-    typedef HashMap<LayerChromium*, unsigned> TextureIdMap;
-    TextureIdMap m_textureIdMap;
+    unsigned int m_currentShader;
 
 #if PLATFORM(SKIA)
     OwnPtr<skia::PlatformCanvas> m_rootLayerCanvas;
@@ -158,8 +135,32 @@ private:
 
     IntSize m_rootLayerCanvasSize;
 
+    IntRect m_visibleRect;
+
+    int m_maxTextureSize;
+
+    // Store values that are shared between instances of each layer type
+    // associated with this instance of the compositor. Since there can be
+    // multiple instances of the compositor running in the same renderer process
+    // we cannot store these values in static variables.
+    OwnPtr<LayerChromium::SharedValues> m_layerSharedValues;
+    OwnPtr<ContentLayerChromium::SharedValues> m_contentLayerSharedValues;
+    OwnPtr<CanvasLayerChromium::SharedValues> m_canvasLayerSharedValues;
+
     OwnPtr<GLES2Context> m_gles2Context;
 };
+
+// Setting DEBUG_GL_CALLS to 1 will call glGetError() after almost every GL
+// call made by the compositor. Useful for debugging rendering issues but
+// will significantly degrade performance.
+#define DEBUG_GL_CALLS 0
+
+#if DEBUG_GL_CALLS && !defined ( NDEBUG )
+#define GLC(x) { (x), LayerRendererChromium::debugGLCall(#x, __FILE__, __LINE__); }
+#else
+#define GLC(x) (x)
+#endif
+
 
 }
 

@@ -34,6 +34,8 @@
 
 #include "ImageLayerChromium.h"
 
+#include "LayerRendererChromium.h"
+
 #if PLATFORM(SKIA)
 #include "NativeImageSkia.h"
 #include "PlatformContextSkia.h"
@@ -54,7 +56,7 @@ PassRefPtr<ImageLayerChromium> ImageLayerChromium::create(GraphicsLayerChromium*
 }
 
 ImageLayerChromium::ImageLayerChromium(GraphicsLayerChromium* owner)
-    : LayerChromium(owner)
+    : ContentLayerChromium(owner)
     , m_contents(0)
 {
 }
@@ -68,8 +70,10 @@ void ImageLayerChromium::setContents(NativeImagePtr contents)
     setNeedsDisplay();
 }
 
-void ImageLayerChromium::updateTextureContents(unsigned textureId)
+void ImageLayerChromium::updateContents()
 {
+    ASSERT(layerRenderer());
+
     void* pixels = 0;
     IntRect dirtyRect(m_dirtyRect);
     IntSize requiredTextureSize;
@@ -129,6 +133,17 @@ void ImageLayerChromium::updateTextureContents(unsigned textureId)
 #else
 #error "Need to implement for your platform."
 #endif
+    // FIXME: Remove this test when tiled layers are implemented.
+    m_skipsDraw = false;
+    if (!layerRenderer()->checkTextureSize(requiredTextureSize)) {
+        m_skipsDraw = true;
+        return;
+    }
+
+    unsigned textureId = m_contentsTexture;
+    if (!textureId)
+        textureId = layerRenderer()->createLayerTexture();
+
     if (pixels)
         updateTextureRect(pixels, bitmapSize, requiredTextureSize,  dirtyRect, textureId);
 }
