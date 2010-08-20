@@ -1,3 +1,54 @@
+2010-08-20  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] WebKit does not compile with --3d-canvas
+        https://bugs.webkit.org/show_bug.cgi?id=44335
+
+        - PlatformGLObject => Platform3DObject
+        - Implemented getAttachedShaders()
+        - Implemented bufferData() and bufferSubData() for ArrayBuffer*
+        - Removed reference to nonexistent variable in getImageData()
+
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3DInternal::GraphicsContext3DInternal):
+        (WebCore::GraphicsContext3D::attachShader):
+        (WebCore::GraphicsContext3D::getAttachedShaders):
+        (WebCore::GraphicsContext3D::bindAttribLocation):
+        (WebCore::GraphicsContext3D::bindBuffer):
+        (WebCore::GraphicsContext3D::bindFramebuffer):
+        (WebCore::GraphicsContext3D::bindRenderbuffer):
+        (WebCore::GraphicsContext3D::bindTexture):
+        (WebCore::GraphicsContext3D::bufferData):
+        (WebCore::GraphicsContext3D::bufferSubData):
+        (WebCore::GraphicsContext3D::compileShader):
+        (WebCore::GraphicsContext3D::detachShader):
+        (WebCore::GraphicsContext3D::framebufferRenderbuffer):
+        (WebCore::GraphicsContext3D::framebufferTexture2D):
+        (WebCore::GraphicsContext3D::getActiveAttrib):
+        (WebCore::GraphicsContext3D::getActiveUniform):
+        (WebCore::GraphicsContext3D::getAttribLocation):
+        (WebCore::GraphicsContext3D::isBuffer):
+        (WebCore::GraphicsContext3D::isFramebuffer):
+        (WebCore::GraphicsContext3D::isProgram):
+        (WebCore::GraphicsContext3D::isRenderbuffer):
+        (WebCore::GraphicsContext3D::isShader):
+        (WebCore::GraphicsContext3D::isTexture):
+        (WebCore::GraphicsContext3D::linkProgram):
+        (WebCore::GraphicsContext3D::shaderSource):
+        (WebCore::GraphicsContext3D::useProgram):
+        (WebCore::GraphicsContext3D::validateProgram):
+        (WebCore::GraphicsContext3D::getProgramiv):
+        (WebCore::GraphicsContext3D::getProgramInfoLog):
+        (WebCore::GraphicsContext3D::getShaderiv):
+        (WebCore::GraphicsContext3D::getShaderInfoLog):
+        (WebCore::GraphicsContext3D::getShaderSource):
+        (WebCore::GraphicsContext3D::getUniformfv):
+        (WebCore::GraphicsContext3D::getUniformiv):
+        (WebCore::GraphicsContext3D::getUniformLocation):
+        (WebCore::GraphicsContext3D::getImageData):
+        * platform/graphics/qt/GraphicsLayerQt.h:
+
 2010-08-20  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Kilzer.

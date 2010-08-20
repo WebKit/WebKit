@@ -89,6 +89,7 @@ typedef void (APIENTRY* glGenFramebuffersType) (GLsizei, GLuint*);
 typedef void (APIENTRY* glGenRenderbuffersType) (GLsizei, GLuint*);
 typedef void (APIENTRY* glGetActiveAttribType) (GLuint, GLuint, GLsizei, GLsizei*, GLint*, GLenum*, GLchar*);
 typedef void (APIENTRY* glGetActiveUniformType) (GLuint, GLuint, GLsizei, GLsizei*, GLint*, GLenum*, GLchar*);
+typedef void (APIENTRY* glGetAttachedShadersType) (GLuint, GLsizei, GLsizei*, GLuint*);
 typedef GLint (APIENTRY* glGetAttribLocationType) (GLuint, const char*);
 typedef void (APIENTRY* glGetBufferParameterivType) (GLenum, GLenum, GLint*);
 typedef void (APIENTRY* glGetFramebufferAttachmentParameterivType) (GLenum, GLenum, GLenum, GLint* params);
@@ -187,6 +188,7 @@ public:
     glGenRenderbuffersType genRenderbuffers;
     glGetActiveAttribType getActiveAttrib;
     glGetActiveUniformType getActiveUniform;
+    glGetAttachedShadersType getAttachedShaders;
     glGetAttribLocationType getAttribLocation;
     glGetBufferParameterivType getBufferParameteriv;
     glGetFramebufferAttachmentParameterivType getFramebufferAttachmentParameteriv;
@@ -349,6 +351,7 @@ GraphicsContext3DInternal::GraphicsContext3DInternal(GraphicsContext3D::Attribut
     genRenderbuffers = GET_PROC_ADDRESS(glGenRenderbuffers);
     getActiveAttrib = GET_PROC_ADDRESS(glGetActiveAttrib);
     getActiveUniform = GET_PROC_ADDRESS(glGetActiveUniform);
+    getAttachedShaders = GET_PROC_ADDRESS(glGetAttachedShaders);
     getAttribLocation = GET_PROC_ADDRESS(glGetAttribLocation);
     getBufferParameteriv = GET_PROC_ADDRESS(glGetBufferParameteriv);
     getFramebufferAttachmentParameteriv = GET_PROC_ADDRESS(glGetFramebufferAttachmentParameteriv);
@@ -582,7 +585,7 @@ void GraphicsContext3D::activeTexture(unsigned long texture)
     m_internal->activeTexture(texture);
 }
 
-void GraphicsContext3D::attachShader(PlatformGLObject program, PlatformGLObject shader)
+void GraphicsContext3D::attachShader(Platform3DObject program, Platform3DObject shader)
 {
     ASSERT(program);
     ASSERT(shader);
@@ -590,33 +593,44 @@ void GraphicsContext3D::attachShader(PlatformGLObject program, PlatformGLObject 
     m_internal->attachShader((GLuint) program, (GLuint) shader);
 }
 
-void GraphicsContext3D::bindAttribLocation(PlatformGLObject program, unsigned long index, const String& name)
+void GraphicsContext3D::getAttachedShaders(Platform3DObject program, int maxCount, int* count, unsigned int* shaders)
+{
+    if (!program) {
+        synthesizeGLError(INVALID_VALUE);
+        return;
+    }
+
+    m_internal->m_glWidget->makeCurrent();
+    getAttachedShaders((GLuint) program, maxCount, count, shaders);
+}
+
+void GraphicsContext3D::bindAttribLocation(Platform3DObject program, unsigned long index, const String& name)
 {
     ASSERT(program);
     m_internal->m_glWidget->makeCurrent();
     m_internal->bindAttribLocation((GLuint) program, index, name.utf8().data());
 }
 
-void GraphicsContext3D::bindBuffer(unsigned long target, PlatformGLObject buffer)
+void GraphicsContext3D::bindBuffer(unsigned long target, Platform3DObject buffer)
 {
     m_internal->m_glWidget->makeCurrent();
-    m_internal->bindBuffer(target, (GLuint) buffer->object());
+    m_internal->bindBuffer(target, (GLuint) buffer);
 }
 
-void GraphicsContext3D::bindFramebuffer(unsigned long target, PlatformGLObject buffer)
+void GraphicsContext3D::bindFramebuffer(unsigned long target, Platform3DObject buffer)
 {
     m_internal->m_glWidget->makeCurrent();
     m_internal->m_currentFbo = buffer ? (GLuint) buffer : m_internal->m_mainFbo;
     m_internal->bindFramebuffer(target, m_internal->m_currentFbo);
 }
 
-void GraphicsContext3D::bindRenderbuffer(unsigned long target, PlatformGLObject renderbuffer)
+void GraphicsContext3D::bindRenderbuffer(unsigned long target, Platform3DObject renderbuffer)
 {
     m_internal->m_glWidget->makeCurrent();
     m_internal->bindRenderbuffer(target, (GLuint) renderbuffer);
 }
 
-void GraphicsContext3D::bindTexture(unsigned long target, PlatformGLObject texture)
+void GraphicsContext3D::bindTexture(unsigned long target, Platform3DObject texture)
 {
     m_internal->m_glWidget->makeCurrent();
     glBindTexture(target, (GLuint) texture);
@@ -658,6 +672,15 @@ void GraphicsContext3D::bufferData(unsigned long target, int size, unsigned long
     m_internal->bufferData(target, size, /* data */ 0, usage);
 }
 
+void GraphicsContext3D::bufferData(unsigned long target, ArrayBuffer* array, unsigned long usage)
+{
+    if (!array || !array->byteLength())
+        return;
+
+    m_internal->m_glWidget->makeCurrent();
+    m_internal->bufferData(target, array->byteLength(), array->data(), usage);
+}
+
 void GraphicsContext3D::bufferData(unsigned long target, ArrayBufferView* array, unsigned long usage)
 {
     if (!array || !array->length())
@@ -665,6 +688,15 @@ void GraphicsContext3D::bufferData(unsigned long target, ArrayBufferView* array,
     
     m_internal->m_glWidget->makeCurrent();
     m_internal->bufferData(target, array->byteLength(), array->baseAddress(), usage);
+}
+
+void GraphicsContext3D::bufferSubData(unsigned long target, long offset, ArrayBuffer* array)
+{
+    if (!array || !array->byteLength())
+        return;
+
+    m_internal->m_glWidget->makeCurrent();
+    m_internal->bufferSubData(target, offset, array->byteLength(), array->data());
 }
 
 void GraphicsContext3D::bufferSubData(unsigned long target, long offset, ArrayBufferView* array)
@@ -716,7 +748,7 @@ void GraphicsContext3D::colorMask(bool red, bool green, bool blue, bool alpha)
     glColorMask(red, green, blue, alpha);
 }
 
-void GraphicsContext3D::compileShader(PlatformGLObject shader)
+void GraphicsContext3D::compileShader(Platform3DObject shader)
 {
     ASSERT(shader);
     m_internal->m_glWidget->makeCurrent();
@@ -763,7 +795,7 @@ void GraphicsContext3D::depthRange(double zNear, double zFar)
 #endif
 }
 
-void GraphicsContext3D::detachShader(PlatformGLObject program, PlatformGLObject shader)
+void GraphicsContext3D::detachShader(Platform3DObject program, Platform3DObject shader)
 {
     ASSERT(program);
     ASSERT(shader);
@@ -819,13 +851,13 @@ void GraphicsContext3D::flush()
     glFlush();
 }
 
-void GraphicsContext3D::framebufferRenderbuffer(unsigned long target, unsigned long attachment, unsigned long renderbuffertarget, PlatformGLObject buffer)
+void GraphicsContext3D::framebufferRenderbuffer(unsigned long target, unsigned long attachment, unsigned long renderbuffertarget, Platform3DObject buffer)
 {
     m_internal->m_glWidget->makeCurrent();
     m_internal->framebufferRenderbuffer(target, attachment, renderbuffertarget, (GLuint) buffer);
 }
 
-void GraphicsContext3D::framebufferTexture2D(unsigned long target, unsigned long attachment, unsigned long textarget, PlatformGLObject texture, long level)
+void GraphicsContext3D::framebufferTexture2D(unsigned long target, unsigned long attachment, unsigned long textarget, Platform3DObject texture, long level)
 {
     m_internal->m_glWidget->makeCurrent();
     m_internal->framebufferTexture2D(target, attachment, textarget, (GLuint) texture, level);
@@ -843,7 +875,7 @@ void GraphicsContext3D::generateMipmap(unsigned long target)
     m_internal->generateMipmap(target);
 }
 
-bool GraphicsContext3D::getActiveAttrib(PlatformGLObject program, unsigned long index, ActiveInfo& info)
+bool GraphicsContext3D::getActiveAttrib(Platform3DObject program, unsigned long index, ActiveInfo& info)
 {
     if (!program) {
         synthesizeGLError(INVALID_VALUE);
@@ -875,7 +907,7 @@ bool GraphicsContext3D::getActiveAttrib(PlatformGLObject program, unsigned long 
     return true;
 }
     
-bool GraphicsContext3D::getActiveUniform(PlatformGLObject program, unsigned long index, ActiveInfo& info)
+bool GraphicsContext3D::getActiveUniform(Platform3DObject program, unsigned long index, ActiveInfo& info)
 {
     if (!program) {
         synthesizeGLError(INVALID_VALUE);
@@ -907,7 +939,7 @@ bool GraphicsContext3D::getActiveUniform(PlatformGLObject program, unsigned long
     return true;
 }
 
-int GraphicsContext3D::getAttribLocation(PlatformGLObject program, const String& name)
+int GraphicsContext3D::getAttribLocation(Platform3DObject program, const String& name)
 {
     if (!program)
         return -1;
@@ -946,7 +978,7 @@ void GraphicsContext3D::hint(unsigned long target, unsigned long mode)
     glHint(target, mode);
 }
 
-bool GraphicsContext3D::isBuffer(PlatformGLObject buffer)
+bool GraphicsContext3D::isBuffer(Platform3DObject buffer)
 {
     if (!buffer)
         return false;
@@ -961,7 +993,7 @@ bool GraphicsContext3D::isEnabled(unsigned long cap)
     return glIsEnabled(cap);
 }
 
-bool GraphicsContext3D::isFramebuffer(PlatformGLObject framebuffer)
+bool GraphicsContext3D::isFramebuffer(Platform3DObject framebuffer)
 {
     if (!framebuffer)
         return false;
@@ -970,7 +1002,7 @@ bool GraphicsContext3D::isFramebuffer(PlatformGLObject framebuffer)
     return m_internal->isFramebuffer((GLuint) framebuffer);
 }
 
-bool GraphicsContext3D::isProgram(PlatformGLObject program)
+bool GraphicsContext3D::isProgram(Platform3DObject program)
 {
     if (!program)
         return false;
@@ -979,7 +1011,7 @@ bool GraphicsContext3D::isProgram(PlatformGLObject program)
     return m_internal->isProgram((GLuint) program);
 }
 
-bool GraphicsContext3D::isRenderbuffer(PlatformGLObject renderbuffer)
+bool GraphicsContext3D::isRenderbuffer(Platform3DObject renderbuffer)
 {
     if (!renderbuffer)
         return false;
@@ -988,7 +1020,7 @@ bool GraphicsContext3D::isRenderbuffer(PlatformGLObject renderbuffer)
     return m_internal->isRenderbuffer((GLuint) renderbuffer);
 }
 
-bool GraphicsContext3D::isShader(PlatformGLObject shader)
+bool GraphicsContext3D::isShader(Platform3DObject shader)
 {
     if (!shader)
         return false;
@@ -997,7 +1029,7 @@ bool GraphicsContext3D::isShader(PlatformGLObject shader)
     return m_internal->isShader((GLuint) shader);
 }
 
-bool GraphicsContext3D::isTexture(PlatformGLObject texture)
+bool GraphicsContext3D::isTexture(Platform3DObject texture)
 {
     if (!texture)
         return false;
@@ -1012,7 +1044,7 @@ void GraphicsContext3D::lineWidth(double width)
     glLineWidth(static_cast<float>(width));
 }
 
-void GraphicsContext3D::linkProgram(PlatformGLObject program)
+void GraphicsContext3D::linkProgram(Platform3DObject program)
 {
     ASSERT(program);
     m_internal->m_glWidget->makeCurrent();
@@ -1065,7 +1097,7 @@ void GraphicsContext3D::scissor(long x, long y, unsigned long width, unsigned lo
     glScissor(x, y, width, height);
 }
 
-void GraphicsContext3D::shaderSource(PlatformGLObject shader, const String& source)
+void GraphicsContext3D::shaderSource(Platform3DObject shader, const String& source)
 {
     ASSERT(shader);
 
@@ -1247,7 +1279,7 @@ void GraphicsContext3D::uniformMatrix4fv(long location, bool transpose, float* a
     m_internal->uniformMatrix4fv(location, size, transpose, array);
 }
 
-void GraphicsContext3D::useProgram(PlatformGLObject program)
+void GraphicsContext3D::useProgram(Platform3DObject program)
 {
     ASSERT(program);
     
@@ -1255,7 +1287,7 @@ void GraphicsContext3D::useProgram(PlatformGLObject program)
     m_internal->useProgram((GLuint) program);
 }
 
-void GraphicsContext3D::validateProgram(PlatformGLObject program)
+void GraphicsContext3D::validateProgram(Platform3DObject program)
 {
     ASSERT(program);
     
@@ -1353,13 +1385,13 @@ void GraphicsContext3D::getIntegerv(unsigned long paramName, int* value)
     glGetIntegerv(paramName, value);
 }
 
-void GraphicsContext3D::getProgramiv(PlatformGLObject program, unsigned long paramName, int* value)
+void GraphicsContext3D::getProgramiv(Platform3DObject program, unsigned long paramName, int* value)
 {
     m_internal->m_glWidget->makeCurrent();
     m_internal->getProgramiv((GLuint) program, paramName, value);
 }
 
-String GraphicsContext3D::getProgramInfoLog(PlatformGLObject program)
+String GraphicsContext3D::getProgramInfoLog(Platform3DObject program)
 {
     m_internal->m_glWidget->makeCurrent();
 
@@ -1386,14 +1418,14 @@ void GraphicsContext3D::getRenderbufferParameteriv(unsigned long target, unsigne
     m_internal->getRenderbufferParameteriv(target, paramName, value);
 }
 
-void GraphicsContext3D::getShaderiv(PlatformGLObject shader, unsigned long paramName, int* value)
+void GraphicsContext3D::getShaderiv(Platform3DObject shader, unsigned long paramName, int* value)
 {
     ASSERT(shader);
     m_internal->m_glWidget->makeCurrent();
     m_internal->getShaderiv((GLuint) shader, paramName, value);
 }
 
-String GraphicsContext3D::getShaderInfoLog(PlatformGLObject shader)
+String GraphicsContext3D::getShaderInfoLog(Platform3DObject shader)
 {
     m_internal->m_glWidget->makeCurrent();
 
@@ -1413,7 +1445,7 @@ String GraphicsContext3D::getShaderInfoLog(PlatformGLObject shader)
     return result;
 }
 
-String GraphicsContext3D::getShaderSource(PlatformGLObject shader)
+String GraphicsContext3D::getShaderSource(Platform3DObject shader)
 {
     m_internal->m_glWidget->makeCurrent();
 
@@ -1445,19 +1477,19 @@ void GraphicsContext3D::getTexParameteriv(unsigned long target, unsigned long pa
     glGetTexParameteriv(target, paramName, value);
 }
 
-void GraphicsContext3D::getUniformfv(PlatformGLObject program, long location, float* value)
+void GraphicsContext3D::getUniformfv(Platform3DObject program, long location, float* value)
 {
     m_internal->m_glWidget->makeCurrent();
     m_internal->getUniformfv((GLuint) program, location, value);
 }
 
-void GraphicsContext3D::getUniformiv(PlatformGLObject program, long location, int* value)
+void GraphicsContext3D::getUniformiv(Platform3DObject program, long location, int* value)
 {
     m_internal->m_glWidget->makeCurrent();
     m_internal->getUniformiv((GLuint) program, location, value);
 }
 
-long GraphicsContext3D::getUniformLocation(PlatformGLObject program, const String& name)
+long GraphicsContext3D::getUniformLocation(Platform3DObject program, const String& name)
 {
     ASSERT(program);
     
@@ -1621,7 +1653,7 @@ bool GraphicsContext3D::getImageData(Image* image,
         return false;
 
     AlphaOp neededAlphaOp = kAlphaDoNothing;
-    if (!premultiplyAlpha && *hasAlphaChannel)
+    if (!premultiplyAlpha)
         // FIXME: must fetch the image data before the premultiplication step
         neededAlphaOp = kAlphaDoUnmultiply;
     QImage nativeImage = nativePixmap->toImage().convertToFormat(QImage::Format_ARGB32);
