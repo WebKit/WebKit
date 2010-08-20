@@ -1,3 +1,10 @@
+2010-08-19  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] r65681 broke a couple GTK+ a11y tests
+        https://bugs.webkit.org/show_bug.cgi?id=44316
+
+        * platform/gtk/Skipped: Skip some newly failing tests.
+
 2010-08-19  James Robinson  <jamesr@chromium.org>
 
         Unreviewed. Clean up test_expectations now that tables/hittesting/filltable-* pass on Chromium.

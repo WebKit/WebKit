@@ -5920,3 +5920,8 @@ perf/
 inspector/
 http/tests/inspector/
 http/tests/inspector-enabled/
+
+# [GTK] r65681 broke a couple GTK+ a11y tests
+# https://bugs.webkit.org/show_bug.cgi?id=44316
+platform/gtk/accessibility/object-attributes.html
+platform/gtk/accessibility/title-and-alt.html
