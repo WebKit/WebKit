@@ -1,3 +1,12 @@
+2010-08-19  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, test expectation update.
+
+        Update for r65723.
+
+        * platform/chromium-win/fast/forms/listbox-selection-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+
 2010-08-19  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Brady Eidson.
