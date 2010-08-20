@@ -1349,7 +1349,7 @@ void RenderLayer::scrollToOffset(int x, int y, bool updateScrollbars, bool repai
     Frame* frame = renderer()->frame();
     if (frame) {
         // The caret rect needs to be invalidated after scrolling
-        frame->selection()->setNeedsLayout();
+        frame->selection()->setCaretRectNeedsUpdate();
 
         FloatQuad quadForFakeMouseMoveEvent = FloatQuad(rectForRepaint);
         if (repaintContainer)

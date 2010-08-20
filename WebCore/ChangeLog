@@ -269,6 +269,40 @@
 
 2010-08-19  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Clean up some selection code
+        https://bugs.webkit.org/show_bug.cgi?id=44314
+        
+        Change the concept of "layout" in SelectionController to "updateCaretRect", renaming
+        methods accordingly.
+        
+        Move selection and printing methods in RenderView.h into groups.
+
+        No behavioral changes.
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::SelectionController):
+        (WebCore::SelectionController::setSelection):
+        (WebCore::SelectionController::modify):
+        (WebCore::SelectionController::setCaretRectNeedsUpdate):
+        (WebCore::SelectionController::updateCaretRect):
+        (WebCore::SelectionController::localCaretRect):
+        (WebCore::SelectionController::recomputeCaretRect): Test m_caretRectNeedsUpdate first.
+        (WebCore::SelectionController::invalidateCaretRect):
+        * editing/SelectionController.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollToOffset):
+        * rendering/RenderView.h:
+        (WebCore::RenderView::selectionStart):
+        (WebCore::RenderView::selectionEnd):
+        (WebCore::RenderView::printRect):
+        (WebCore::RenderView::setPrintRect):
+
+2010-08-19  Simon Fraser  <simon.fraser@apple.com>
+
         Fix Chromium build.
         
         * svg/SVGElement.cpp:

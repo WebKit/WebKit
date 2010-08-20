@@ -105,7 +105,7 @@ public:
 
     // Bounds of (possibly transformed) caret in absolute coords
     IntRect absoluteCaretBounds();
-    void setNeedsLayout(bool flag = true);
+    void setCaretRectNeedsUpdate(bool flag = true);
 
     void setIsDirectional(bool);
     void willBeModified(EAlteration, EDirection);
@@ -169,7 +169,7 @@ private:
     VisiblePosition modifyMovingLeft(TextGranularity);
     VisiblePosition modifyMovingBackward(TextGranularity);
 
-    void layout();
+    void updateCaretRect();
     IntRect caretRepaintRect() const;
     bool shouldRepaintCaret(const RenderView* view) const;
 
@@ -199,7 +199,7 @@ private:
     IntRect m_absCaretBounds; // absolute bounding rect for the caret
     IntRect m_absoluteCaretRepaintBounds;
     
-    bool m_needsLayout; // true if m_caretRect and m_absCaretBounds need to be calculated
+    bool m_caretRectNeedsUpdate; // true if m_caretRect and m_absCaretBounds need to be calculated
     bool m_absCaretBoundsDirty;
     bool m_isDirectional;
     bool m_isDragCaretController;
