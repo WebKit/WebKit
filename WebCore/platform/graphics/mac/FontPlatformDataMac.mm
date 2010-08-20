@@ -39,9 +39,10 @@ FontPlatformData::FontPlatformData(NSFont *nsFont, bool syntheticBold, bool synt
     , m_isColorBitmapFont(false)
 #endif
 {
-    if (nsFont)
-        CFRetain(nsFont);
-    m_size = nsFont ? [nsFont pointSize] : 0.0f;
+    ASSERT_ARG(nsFont, nsFont);
+
+    CFRetain(nsFont);
+    m_size = [nsFont pointSize];
 #ifndef BUILDING_ON_TIGER
     m_cgFont.adoptCF(CTFontCopyGraphicsFont(toCTFontRef(nsFont), 0));
     m_atsuFontID = CTFontGetPlatformFont(toCTFontRef(nsFont), 0);
@@ -95,14 +96,17 @@ const FontPlatformData& FontPlatformData::operator=(const FontPlatformData& f)
 
 void FontPlatformData::setFont(NSFont *font)
 {
+    ASSERT_ARG(font, font);
+    ASSERT(m_font != reinterpret_cast<NSFont *>(-1));
+
     if (m_font == font)
         return;
-    if (font)
-        CFRetain(font);
-    if (m_font && m_font != reinterpret_cast<NSFont *>(-1))
+
+    CFRetain(font);
+    if (m_font)
         CFRelease(m_font);
     m_font = font;
-    m_size = font ? [font pointSize] : 0.0f;
+    m_size = [font pointSize];
 #ifndef BUILDING_ON_TIGER
     m_cgFont.adoptCF(CTFontCopyGraphicsFont(toCTFontRef(font), 0));
     m_atsuFontID = CTFontGetPlatformFont(toCTFontRef(font), 0);

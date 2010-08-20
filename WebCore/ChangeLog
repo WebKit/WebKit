@@ -1,3 +1,17 @@
+2010-08-20  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Follow-up to r41020.
+
+        No change in behavior, thus no new tests.
+
+        * platform/graphics/mac/FontPlatformDataMac.mm:
+        (WebCore::FontPlatformData::FontPlatformData): Asserted that the NSFont parameter is not nil,
+        and removed nil check.
+        (WebCore::FontPlatformData::setFont): Asserted that the NSFont parameter is not nil and that
+        this is not the deleted value, and removed code to handle those cases.
+
 2010-08-19  Vincent Scheib  <scheib@chromium.org>
 
         Reviewed by David Levin.
