@@ -104,6 +104,44 @@ undef],
 },
 {
     # New test
+    diffName => "SVN: binary file (isBinary true) using Windows line endings",
+    inputText => toWindowsLineEndings(<<'END',
+Index: test_file.swf
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+
+Property changes on: test_file.swf
+___________________________________________________________________
+Name: svn:mime-type
+   + application/octet-stream
+
+
+Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==
+END
+),
+    expectedReturn => [
+[{
+    svnConvertedText =>  toWindowsLineEndings(<<'END', # Same as input text
+Index: test_file.swf
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+
+
+
+Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==
+END
+),
+    indexPath => "test_file.swf",
+    isBinary => 1,
+    isSvn => 1,
+}],
+undef],
+    expectedNextLine => undef,
+},
+{
+    # New test
     diffName => "SVN: leading junk",
     inputText => <<'END',
 
@@ -344,6 +382,34 @@ END
 },
 {
     # New test
+    diffName => "SVN: property diff, followed by file change diff using Windows line endings",
+    inputText => toWindowsLineEndings(<<'END',
+Property changes on: Makefile
+___________________________________________________________________
+Deleted: svn:executable
+   - *
+
+Index: Makefile.shared
+===================================================================
+--- Makefile.shared	(revision 60021)
++++ Makefile.shared	(working copy)
+@@ -1,3 +1,4 @@
++
+SCRIPTS_PATH ?= ../WebKitTools/Scripts
+XCODE_OPTIONS = `perl -I$(SCRIPTS_PATH) -Mwebkitdirs -e 'print XcodeOptionString()'` $(ARGS)
+END
+),
+    expectedReturn => [
+[{
+    executableBitDelta => -1,
+    indexPath => "Makefile",
+    isSvn => 1,
+}],
+"Index: Makefile.shared\r\n"],
+    expectedNextLine => "===================================================================\r\n",
+},
+{
+    # New test
     diffName => "SVN: copied file with property change",
     inputText => <<'END',
 Index: NMakefile
@@ -392,6 +458,31 @@ END
 "Property changes on: Makefile.shared\n"],
     expectedNextLine => "___________________________________________________________________\n",
 },
+{
+    # New test
+    diffName => "SVN: two consecutive property diffs using Windows line endings",
+    inputText => toWindowsLineEndings(<<'END',
+Property changes on: Makefile
+___________________________________________________________________
+Added: svn:executable
+   + *
+
+
+Property changes on: Makefile.shared
+___________________________________________________________________
+Added: svn:executable
+   + *
+END
+),
+    expectedReturn => [
+[{
+    executableBitDelta => 1,
+    indexPath => "Makefile",
+    isSvn => 1,
+}],
+"Property changes on: Makefile.shared\r\n"],
+    expectedNextLine => "___________________________________________________________________\r\n",
+},
 ####
 # Property Changes: Binary files
 ##
@@ -426,6 +517,47 @@ svn:mime-type = application/octet-stream
 
 Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==
 END
+    executableBitDelta => 1,
+    indexPath => "test_file.swf",
+    isBinary => 1,
+    isSvn => 1,
+}],
+undef],
+    expectedNextLine => undef,
+},
+{
+    # New test
+    diffName => "SVN: binary file with executable bit change usng Windows line endings",
+    inputText => toWindowsLineEndings(<<'END',
+Index: test_file.swf
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+
+Property changes on: test_file.swf
+___________________________________________________________________
+Name: svn:mime-type
+   + application/octet-stream
+Name: svn:executable
+   + *
+
+
+Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==
+END
+),
+    expectedReturn => [
+[{
+    svnConvertedText =>  toWindowsLineEndings(<<'END', # Same as input text
+Index: test_file.swf
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+
+
+
+Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==
+END
+),
     executableBitDelta => 1,
     indexPath => "test_file.swf",
     isBinary => 1,
@@ -478,6 +610,50 @@ END
 },
 {
     # New test
+    diffName => "SVN: binary file followed by property change on different file using Windows line endings",
+    inputText => toWindowsLineEndings(<<'END',
+Index: test_file.swf
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+
+Property changes on: test_file.swf
+___________________________________________________________________
+Name: svn:mime-type
+   + application/octet-stream
+
+
+Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==
+
+Property changes on: Makefile
+___________________________________________________________________
+Added: svn:executable
+   + *
+END
+),
+    expectedReturn => [
+[{
+    svnConvertedText =>  toWindowsLineEndings(<<'END', # Same as input text
+Index: test_file.swf
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+
+
+
+Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==
+
+END
+),
+    indexPath => "test_file.swf",
+    isBinary => 1,
+    isSvn => 1,
+}],
+"Property changes on: Makefile\r\n"],
+    expectedNextLine => "___________________________________________________________________\r\n",
+},
+{
+    # New test
     diffName => "SVN: binary file followed by file change on different file",
     inputText => <<'END',
 Index: test_file.swf
@@ -522,6 +698,55 @@ END
 }],
 "Index: Makefile\n"],
     expectedNextLine => "===================================================================\n",
+},
+{
+    # New test
+    diffName => "SVN: binary file followed by file change on different file using Windows line endings",
+    inputText => toWindowsLineEndings(<<'END',
+Index: test_file.swf
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+
+Property changes on: test_file.swf
+___________________________________________________________________
+Name: svn:mime-type
+   + application/octet-stream
+
+
+Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==
+
+Index: Makefile
+===================================================================
+--- Makefile	(revision 60021)
++++ Makefile	(working copy)
+@@ -1,3 +1,4 @@
++
+ MODULES = JavaScriptCore JavaScriptGlue WebCore WebKit WebKit2 WebKitTools 
+
+ all:
+END
+),
+    expectedReturn => [
+[{
+    svnConvertedText =>  toWindowsLineEndings(<<'END', # Same as input text
+Index: test_file.swf
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+
+
+
+Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==
+
+END
+),
+    indexPath => "test_file.swf",
+    isBinary => 1,
+    isSvn => 1,
+}],
+"Index: Makefile\r\n"],
+    expectedNextLine => "===================================================================\r\n",
 },
 ####
 # Property Changes: File change with property change
@@ -577,6 +802,57 @@ END
 },
 {
     # New test
+    diffName => "SVN: file change diff with property change, followed by property change diff using Windows line endings",
+    inputText => toWindowsLineEndings(<<'END',
+Index: Makefile
+===================================================================
+--- Makefile	(revision 60021)
++++ Makefile	(working copy)
+@@ -1,3 +1,4 @@
++
+ MODULES = JavaScriptCore JavaScriptGlue WebCore WebKit WebKit2 WebKitTools 
+
+ all:
+
+Property changes on: Makefile
+___________________________________________________________________
+Added: svn:executable
+   + *
+
+
+Property changes on: Makefile.shared
+___________________________________________________________________
+Deleted: svn:executable
+   - *
+END
+),
+    expectedReturn => [
+[{
+    svnConvertedText =>  toWindowsLineEndings(<<'END', # Same as input text
+Index: Makefile
+===================================================================
+--- Makefile	(revision 60021)
++++ Makefile	(working copy)
+@@ -1,3 +1,4 @@
++
+ MODULES = JavaScriptCore JavaScriptGlue WebCore WebKit WebKit2 WebKitTools 
+
+ all:
+
+
+
+END
+),
+    executableBitDelta => 1,
+    indexPath => "Makefile",
+    isSvn => 1,
+    sourceRevision => "60021",
+}],
+"Property changes on: Makefile.shared\r\n"],
+    expectedNextLine => "___________________________________________________________________\r\n",
+},
+{
+    # New test
     diffName => "SVN: file change diff with property change, followed by file change diff",
     inputText => <<'END',
 Index: Makefile
@@ -625,6 +901,59 @@ END
 }],
 "Index: Makefile.shared\n"],
     expectedNextLine => "===================================================================\n",
+},
+{
+    # New test
+    diffName => "SVN: file change diff with property change, followed by file change diff using Windows line endings",
+    inputText => toWindowsLineEndings(<<'END',
+Index: Makefile
+===================================================================
+--- Makefile	(revision 60021)
++++ Makefile	(working copy)
+@@ -1,3 +1,4 @@
++
+ MODULES = JavaScriptCore JavaScriptGlue WebCore WebKit WebKit2 WebKitTools 
+
+ all:
+
+Property changes on: Makefile
+___________________________________________________________________
+Name: svn:executable
+   - *
+
+Index: Makefile.shared
+===================================================================
+--- Makefile.shared	(revision 60021)
++++ Makefile.shared	(working copy)
+@@ -1,3 +1,4 @@
++
+SCRIPTS_PATH ?= ../WebKitTools/Scripts
+XCODE_OPTIONS = `perl -I$(SCRIPTS_PATH) -Mwebkitdirs -e 'print XcodeOptionString()'` $(ARGS)
+END
+),
+    expectedReturn => [
+[{
+    svnConvertedText =>  toWindowsLineEndings(<<'END', # Same as input text
+Index: Makefile
+===================================================================
+--- Makefile	(revision 60021)
++++ Makefile	(working copy)
+@@ -1,3 +1,4 @@
++
+ MODULES = JavaScriptCore JavaScriptGlue WebCore WebKit WebKit2 WebKitTools 
+
+ all:
+
+
+END
+),
+    executableBitDelta => -1,
+    indexPath => "Makefile",
+    isSvn => 1,
+    sourceRevision => "60021",
+}],
+"Index: Makefile.shared\r\n"],
+    expectedNextLine => "===================================================================\r\n",
 },
 ####
 #    Git test cases

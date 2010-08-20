@@ -58,12 +58,23 @@ END
 },
 {
     # New test
-    diffName => "single-line '-' change followed by empty line",
+    diffName => "single-line '-' change followed by empty line with Unix line endings",
     inputText => <<'END',
    - *
 
 END
     expectedReturn => ["*", "\n"],
+    expectedNextLine => undef,
+},
+{
+    # New test
+    diffName => "single-line '-' change followed by empty line with Windows line endings",
+    inputText => toWindowsLineEndings(<<'END',
+   - *
+
+END
+),
+    expectedReturn => ["*", "\r\n"],
     expectedNextLine => undef,
 },
 {
@@ -88,6 +99,20 @@ Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==
 END
     expectedReturn => ["A\nlong sentence that spans\nmultiple lines.", "\n"],
     expectedNextLine => "Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==\n",
+},
+{
+    # New test
+    diffName => "multi-line '+' change and start of binary patch with Windows line endings",
+    inputText => toWindowsLineEndings(<<'END',
+   + A
+long sentence that spans
+multiple lines.
+
+Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==
+END
+),
+    expectedReturn => ["A\r\nlong sentence that spans\r\nmultiple lines.", "\r\n"],
+    expectedNextLine => "Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==\r\n",
 },
 {
     # New test
