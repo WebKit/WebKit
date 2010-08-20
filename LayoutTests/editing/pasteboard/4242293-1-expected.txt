@@ -14,36 +14,20 @@ EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range fr
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 3 of #text > DIV > BODY > HTML > #document to 3 of #text > DIV > BODY > HTML > #document toDOMRange:range from 3 of #text > DIV > DIV > BODY > HTML > #document to 3 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 777x36
-          text run at (0,0) width 777: "This tests to make sure that createMarkup puts an interchange newline on the pasteboard for a selection ending at the end of"
-          text run at (0,18) width 54: "a block. "
-          text run at (54,18) width 371: "Both regions below should have contents that are identical."
-      RenderBlock {DIV} at (0,52) size 784x54
-        RenderBlock {DIV} at (0,0) size 784x36
-          RenderBlock {DIV} at (0,0) size 784x18
-            RenderText {#text} at (0,0) size 21x18
-              text run at (0,0) width 21: "foo"
-          RenderBlock (anonymous) at (0,18) size 784x18
-            RenderText {#text} at (0,0) size 20x18
-              text run at (0,0) width 20: "bar"
-        RenderBlock (anonymous) at (0,36) size 784x18
-          RenderText {#text} at (0,0) size 22x18
-            text run at (0,0) width 22: "baz"
-      RenderBlock {DIV} at (0,106) size 784x54
-        RenderBlock (anonymous) at (0,0) size 784x18
-          RenderText {#text} at (0,0) size 21x18
-            text run at (0,0) width 21: "foo"
-        RenderBlock {DIV} at (0,18) size 784x36
-          RenderBlock {DIV} at (0,0) size 784x18
-            RenderText {#text} at (0,0) size 20x18
-              text run at (0,0) width 20: "bar"
-          RenderBlock (anonymous) at (0,18) size 784x18
-            RenderText {#text} at (0,0) size 22x18
-              text run at (0,0) width 22: "baz"
-caret: position 3 of child 1 {#text} of child 1 {DIV} of child 4 {DIV} of body
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
+This test ensures that createMarkup puts an interchange newline on the pasteboard for a selection ending at the end of a block.  Both regions below should be visually identical.
+
+first region (bar and baz are copied):
+| <div>
+|   <div>
+|     "foo"
+|   "bar"
+| "baz"
+
+second region (bar and baz are pasted):
+| "foo"
+| <div>
+|   <div>
+|     "bar"
+|   "baz<#selection-caret>"

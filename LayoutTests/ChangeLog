@@ -1,3 +1,39 @@
+2010-08-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Tony Chang.
+
+        dumpAsMarkup conversion: editing/pasteboard/4242293-1.html and editing/pasteboard/copy-paste-bidi.html
+        https://bugs.webkit.org/show_bug.cgi?id=44220
+
+        Converted the tests.
+
+        * editing/pasteboard/4242293-1-expected.txt: Added.
+        * editing/pasteboard/4242293-1.html:
+        * editing/pasteboard/copy-paste-bidi-expected.txt: Added.
+        * editing/pasteboard/copy-paste-bidi.html:
+        * platform/chromium-linux/editing/pasteboard/4242293-1-expected.checksum: Removed.
+        * platform/chromium-linux/editing/pasteboard/4242293-1-expected.png: Removed.
+        * platform/chromium-linux/editing/pasteboard/copy-paste-bidi-expected.checksum: Removed.
+        * platform/chromium-linux/editing/pasteboard/copy-paste-bidi-expected.png: Removed.
+        * platform/chromium-win/editing/pasteboard/4242293-1-expected.checksum: Removed.
+        * platform/chromium-win/editing/pasteboard/4242293-1-expected.png: Removed.
+        * platform/chromium-win/editing/pasteboard/4242293-1-expected.txt: Removed.
+        * platform/chromium-win/editing/pasteboard/copy-paste-bidi-expected.checksum: Removed.
+        * platform/chromium-win/editing/pasteboard/copy-paste-bidi-expected.png: Removed.
+        * platform/chromium-win/editing/pasteboard/copy-paste-bidi-expected.txt: Removed.
+        * platform/mac-leopard/editing/pasteboard/4242293-1-expected.checksum: Removed.
+        * platform/mac-leopard/editing/pasteboard/4242293-1-expected.png: Removed.
+        * platform/mac-leopard/editing/pasteboard/copy-paste-bidi-expected.checksum: Removed.
+        * platform/mac-leopard/editing/pasteboard/copy-paste-bidi-expected.png: Removed.
+        * platform/mac/editing/pasteboard/4242293-1-expected.checksum: Removed.
+        * platform/mac/editing/pasteboard/4242293-1-expected.png: Removed.
+        * platform/mac/editing/pasteboard/4242293-1-expected.txt: Removed.
+        * platform/mac/editing/pasteboard/copy-paste-bidi-expected.checksum: Removed.
+        * platform/mac/editing/pasteboard/copy-paste-bidi-expected.png: Removed.
+        * platform/mac/editing/pasteboard/copy-paste-bidi-expected.txt: Removed.
+        * platform/qt/editing/pasteboard/4242293-1-expected.txt: Removed.
+        * platform/qt/editing/pasteboard/copy-paste-bidi-expected.txt: Removed.
+
 2010-08-19  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] r65681 broke a couple GTK+ a11y tests
