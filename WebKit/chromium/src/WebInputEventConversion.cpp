@@ -332,6 +332,11 @@ WebKeyboardEventBuilder::WebKeyboardEventBuilder(const KeyboardEvent& event)
     modifiers = getWebInputModifiers(event);
     timeStampSeconds = event.timeStamp() * 1.0e-3;
     windowsKeyCode = event.keyCode();
+
+    // The platform keyevent does not exist if the event was created using
+    // initKeyboardEvent.
+    if (!event.keyEvent())
+        return;
     nativeKeyCode = event.keyEvent()->nativeVirtualKeyCode();
     unsigned int numChars = std::min(event.keyEvent()->text().length(),
         static_cast<unsigned int>(WebKeyboardEvent::textLengthCap));
