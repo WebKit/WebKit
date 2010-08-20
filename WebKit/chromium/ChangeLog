@@ -1,3 +1,15 @@
+2010-08-19  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by Jian Li.
+
+        [Chromium] Rolls Chromium DEPS forward to 56564
+        https://bugs.webkit.org/show_bug.cgi?id=44281
+
+        Roll Chromium DEPS forward to 56564 to include WebFileSystem
+        implementation changes.
+
+        * DEPS:
+
 2010-08-19  Vincent Scheib  <scheib@chromium.org>
 
         Reviewed by David Levin.
