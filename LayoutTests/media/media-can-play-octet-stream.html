@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <style>
+            video { background-color: yellow; width: 320px; height: 240px;}
+        </style>
+        <script src=video-test.js></script>
+        <script>
+            function test()
+            {
+                testExpected("mediaElement.canPlayType('application/octet-stream')", "maybe");
+                testExpected("mediaElement.canPlayType('application/octet-stream;codecs=theora')", "");
+                testExpected("mediaElement.canPlayType('application/octet-stream;codecs=mp4')", "");
+             }
+
+            function start()
+            {
+                consoleWrite("<em>++ Test with &lt;video&gt; element.</em>");
+                mediaElement = document.getElementsByTagName('video')[0];
+                test();
+
+                consoleWrite("<br><em>++ Test with &lt;audio&gt; element.</em>");
+                mediaElement = new Audio();
+                test();
+
+                endTest();
+            }
+        </script>
+
+    </head>
+    <body onload="start()">
+
+        <video controls ></video>
+
+        <p>Test HTMLMediaElement <em>canPlayType()</em> method with "application/octet-stream".</p>
+
+    </body>
+</html>

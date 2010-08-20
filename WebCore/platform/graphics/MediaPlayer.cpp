@@ -192,6 +192,24 @@ static void addMediaEngine(CreateMediaEnginePlayer constructor, MediaEngineSuppo
     installedMediaEngines().append(new MediaPlayerFactory(constructor, getSupportedTypes, supportsType));
 }
 
+static const AtomicString& applicationOctetStream()
+{
+    DEFINE_STATIC_LOCAL(const AtomicString, applicationOctetStream, ("application/octet-stream"));
+    return applicationOctetStream;
+}
+
+static const AtomicString& textPlain()
+{
+    DEFINE_STATIC_LOCAL(const AtomicString, textPlain, ("text/plain"));
+    return textPlain;
+}
+
+static const AtomicString& codecs()
+{
+    DEFINE_STATIC_LOCAL(const AtomicString, codecs, ("codecs"));
+    return codecs;
+}
+
 static MediaPlayerFactory* chooseBestEngineForTypeAndCodecs(const String& type, const String& codecs)
 {
     Vector<MediaPlayerFactory*>& engines = installedMediaEngines();
@@ -199,6 +217,14 @@ static MediaPlayerFactory* chooseBestEngineForTypeAndCodecs(const String& type, 
     if (engines.isEmpty())
         return 0;
 
+    // 4.8.10.3 MIME types - In the absence of a specification to the contrary, the MIME type "application/octet-stream" 
+    // when used with parameters, e.g. "application/octet-stream;codecs=theora", is a type that the user agent knows 
+    // it cannot render.
+    if (type == applicationOctetStream()) {
+        if (!codecs.isEmpty())
+            return 0;
+    }
+    
     MediaPlayerFactory* engine = 0;
     MediaPlayer::SupportsType supported = MediaPlayer::IsNotSupported;
 
@@ -248,10 +274,10 @@ MediaPlayer::~MediaPlayer()
 void MediaPlayer::load(const String& url, const ContentType& contentType)
 {
     String type = contentType.type();
-    String codecs = contentType.parameter("codecs");
+    String typeCodecs = contentType.parameter(codecs());
 
-    // if we don't know the MIME type, see if the extension can help
-    if (type.isEmpty() || type == "application/octet-stream" || type == "text/plain") {
+    // If the MIME type is unhelpful, see if the type registry has a match for the file extension.
+    if (type.isEmpty() || type == applicationOctetStream() || type == textPlain()) {
         size_t pos = url.reverseFind('.');
         if (pos != notFound) {
             String extension = url.substring(pos + 1);
@@ -263,7 +289,7 @@ void MediaPlayer::load(const String& url, const ContentType& contentType)
 
     MediaPlayerFactory* engine = 0;
     if (!type.isEmpty())
-        engine = chooseBestEngineForTypeAndCodecs(type, codecs);
+        engine = chooseBestEngineForTypeAndCodecs(type, typeCodecs);
 
     // if we didn't find an engine that claims the MIME type, just use the first engine
     if (!engine && !installedMediaEngines().isEmpty())
@@ -528,13 +554,26 @@ void MediaPlayer::paintCurrentFrameInContext(GraphicsContext* p, const IntRect& 
 MediaPlayer::SupportsType MediaPlayer::supportsType(ContentType contentType)
 {
     String type = contentType.type();
-    String codecs = contentType.parameter("codecs");
-    MediaPlayerFactory* engine = chooseBestEngineForTypeAndCodecs(type, codecs);
+    String typeCodecs = contentType.parameter(codecs());
+
+    // 4.8.10.3 MIME types - In the absence of a specification to the contrary, the MIME type "application/octet-stream" 
+    // when used with parameters, e.g. "application/octet-stream;codecs=theora", is a type that the user agent knows 
+    // it cannot render.
+    if (type == applicationOctetStream()) {
+        if (!typeCodecs.isEmpty())
+            return IsNotSupported;
+        
+        // The MIME type "application/octet-stream" with no parameters is never a type that the user agent knows it 
+        // cannot render.
+        return MayBeSupported;
+    }
+
+    MediaPlayerFactory* engine = chooseBestEngineForTypeAndCodecs(type, typeCodecs);
 
     if (!engine)
         return IsNotSupported;
 
-    return engine->supportsTypeAndCodecs(type, codecs);
+    return engine->supportsTypeAndCodecs(type, typeCodecs);
 }
 
 void MediaPlayer::getSupportedTypes(HashSet<String>& types)
