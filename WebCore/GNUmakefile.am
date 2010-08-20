@@ -1357,7 +1357,6 @@ webcore_sources += \
 	WebCore/html/FileReader.h \
 	WebCore/html/FileWriter.cpp \
 	WebCore/html/FileWriter.h \
-	WebCore/html/FileStreamClient.h \
 	WebCore/html/FileStreamProxy.cpp \
 	WebCore/html/FileStreamProxy.h \
 	WebCore/html/FileThread.cpp \
@@ -1879,6 +1878,7 @@ webcore_sources += \
 	WebCore/page/animation/KeyframeAnimation.h \
 	WebCore/platform/Arena.cpp \
 	WebCore/platform/Arena.h \
+	WebCore/platform/AsyncFileStream.h \
 	WebCore/platform/AutodrainedPool.h \
 	WebCore/platform/BlobItem.cpp \
 	WebCore/platform/BlobItem.h \
@@ -1905,6 +1905,7 @@ webcore_sources += \
 	WebCore/platform/FileChooser.h \
 	WebCore/platform/FileStream.cpp \
 	WebCore/platform/FileStream.h \
+	WebCore/platform/FileStreamClient.h \
 	WebCore/platform/FileSystem.cpp \
 	WebCore/platform/FileSystem.h \
 	WebCore/platform/FloatConversion.h \

@@ -721,7 +721,9 @@
 		2EED57FD1214A9C2007656BB /* ThreadableBlobRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2EED57FB1214A9C2007656BB /* ThreadableBlobRegistry.cpp */; };
 		2EED57FE1214A9C2007656BB /* ThreadableBlobRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EED57FC1214A9C2007656BB /* ThreadableBlobRegistry.h */; };
 		2EF1BFEA121C9F4200C27627 /* FileStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2EF1BFE8121C9F4200C27627 /* FileStream.cpp */; };
-		2EF1BFEB121C9F4200C27627 /* FileStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EF1BFE9121C9F4200C27627 /* FileStream.h */; };
+		2EF1BFEB121C9F4200C27627 /* FileStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EF1BFE9121C9F4200C27627 /* FileStream.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		2EF1BFF7121CB0BD00C27627 /* AsyncFileStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EF1BFF6121CB0BD00C27627 /* AsyncFileStream.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		2EF1BFF9121CB0CE00C27627 /* FileStreamClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EF1BFF8121CB0CE00C27627 /* FileStreamClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		31288E720E3005D6003619AE /* WebKitCSSKeyframeRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31288E6E0E3005D6003619AE /* WebKitCSSKeyframeRule.cpp */; };
 		31288E730E3005D6003619AE /* WebKitCSSKeyframeRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 31288E6F0E3005D6003619AE /* WebKitCSSKeyframeRule.h */; };
 		31288E740E3005D6003619AE /* WebKitCSSKeyframesRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31288E700E3005D6003619AE /* WebKitCSSKeyframesRule.cpp */; };
@@ -2380,7 +2382,6 @@
 		86243D0111BC31F700CC006A /* JSArrayBufferViewHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 86243D0011BC31F700CC006A /* JSArrayBufferViewHelper.h */; };
 		8952535211641B3400CABF00 /* FileThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8952535011641B3400CABF00 /* FileThread.cpp */; };
 		8952535311641B3400CABF00 /* FileThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 8952535111641B3400CABF00 /* FileThread.h */; };
-		895253D9116C4C6800CABF00 /* FileStreamClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 895253D6116C4C6800CABF00 /* FileStreamClient.h */; };
 		895253DC116C4EF500CABF00 /* FileStreamProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 895253DA116C4EF500CABF00 /* FileStreamProxy.cpp */; };
 		895253DD116C4EF500CABF00 /* FileStreamProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 895253DB116C4EF500CABF00 /* FileStreamProxy.h */; };
 		895253DF116C4F0600CABF00 /* FileThreadTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 895253DE116C4F0600CABF00 /* FileThreadTask.h */; };
@@ -6537,6 +6538,8 @@
 		2EED57FC1214A9C2007656BB /* ThreadableBlobRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadableBlobRegistry.h; sourceTree = "<group>"; };
 		2EF1BFE8121C9F4200C27627 /* FileStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileStream.cpp; sourceTree = "<group>"; };
 		2EF1BFE9121C9F4200C27627 /* FileStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileStream.h; sourceTree = "<group>"; };
+		2EF1BFF6121CB0BD00C27627 /* AsyncFileStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncFileStream.h; sourceTree = "<group>"; };
+		2EF1BFF8121CB0CE00C27627 /* FileStreamClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileStreamClient.h; sourceTree = "<group>"; };
 		31288E6E0E3005D6003619AE /* WebKitCSSKeyframeRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitCSSKeyframeRule.cpp; sourceTree = "<group>"; };
 		31288E6F0E3005D6003619AE /* WebKitCSSKeyframeRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitCSSKeyframeRule.h; sourceTree = "<group>"; };
 		31288E700E3005D6003619AE /* WebKitCSSKeyframesRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitCSSKeyframesRule.cpp; sourceTree = "<group>"; };
@@ -8231,7 +8234,6 @@
 		86243D0011BC31F700CC006A /* JSArrayBufferViewHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSArrayBufferViewHelper.h; sourceTree = "<group>"; };
 		8952535011641B3400CABF00 /* FileThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileThread.cpp; sourceTree = "<group>"; };
 		8952535111641B3400CABF00 /* FileThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileThread.h; sourceTree = "<group>"; };
-		895253D6116C4C6800CABF00 /* FileStreamClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileStreamClient.h; sourceTree = "<group>"; };
 		895253DA116C4EF500CABF00 /* FileStreamProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileStreamProxy.cpp; sourceTree = "<group>"; };
 		895253DB116C4EF500CABF00 /* FileStreamProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileStreamProxy.h; sourceTree = "<group>"; };
 		895253DE116C4F0600CABF00 /* FileThreadTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileThreadTask.h; sourceTree = "<group>"; };
@@ -14014,7 +14016,6 @@
 				2E94F3CB118B908E00B7F75D /* FileReader.cpp */,
 				2E94F3CC118B908E00B7F75D /* FileReader.h */,
 				2E94F427119205B300B7F75D /* FileReader.idl */,
-				895253D6116C4C6800CABF00 /* FileStreamClient.h */,
 				895253DA116C4EF500CABF00 /* FileStreamProxy.cpp */,
 				895253DB116C4EF500CABF00 /* FileStreamProxy.h */,
 				8952535011641B3400CABF00 /* FileThread.cpp */,
@@ -16575,6 +16576,7 @@
 				B2C3D9EC0D006C1D00EF6F26 /* text */,
 				BCFB2F74097A2E1A00BA703D /* Arena.cpp */,
 				BCFB2F75097A2E1A00BA703D /* Arena.h */,
+				2EF1BFF6121CB0BD00C27627 /* AsyncFileStream.h */,
 				51E1ECB10C91C55600DC255B /* AutodrainedPool.h */,
 				8988E10C11A3508B00DB732E /* BlobItem.cpp */,
 				8988E10D11A3508B00DB732E /* BlobItem.h */,
@@ -16602,6 +16604,7 @@
 				066C772A0AB603B700238CC4 /* FileChooser.h */,
 				2EF1BFE8121C9F4200C27627 /* FileStream.cpp */,
 				2EF1BFE9121C9F4200C27627 /* FileStream.h */,
+				2EF1BFF8121CB0CE00C27627 /* FileStreamClient.h */,
 				C57FEDE01212EE9C0097BE65 /* FileSystem.cpp */,
 				514B3F720C722047000530DF /* FileSystem.h */,
 				BC073BA90C399B1F000F5979 /* FloatConversion.h */,
@@ -18681,7 +18684,6 @@
 				2E3BC0BD117D3A4F00B9409A /* FileError.h in Headers */,
 				BCDBB8AC0E088CA500C60FF6 /* FileList.h in Headers */,
 				2E94F4511192096A00B7F75D /* FileReader.h in Headers */,
-				895253D9116C4C6800CABF00 /* FileStreamClient.h in Headers */,
 				895253DD116C4EF500CABF00 /* FileStreamProxy.h in Headers */,
 				514B3F730C722047000530DF /* FileSystem.h in Headers */,
 				8952535311641B3400CABF00 /* FileThread.h in Headers */,
@@ -20329,6 +20331,8 @@
 				2EDEF1F8121B0EFC00726DB2 /* BlobStorageData.h in Headers */,
 				2EF1BFEB121C9F4200C27627 /* FileStream.h in Headers */,
 				46A26906121B6B4300C41F3A /* FileWriter.h in Headers */,
+				2EF1BFF7121CB0BD00C27627 /* AsyncFileStream.h in Headers */,
+				2EF1BFF9121CB0CE00C27627 /* FileStreamClient.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

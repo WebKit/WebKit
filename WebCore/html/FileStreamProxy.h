@@ -34,6 +34,7 @@
 
 #if ENABLE(BLOB) || ENABLE(FILE_WRITER)
 
+#include "AsyncFileStream.h"
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -42,30 +43,27 @@
 namespace WebCore {
 
 class FileStream;
-class FileStreamClient;
 class FileThread;
 class KURL;
 class ScriptExecutionContext;
 
 // A proxy module that asynchronously calls corresponding FileStream methods on the file thread.  Note: you must call stop() first and then release the reference to destruct the FileStreamProxy instance.
-class FileStreamProxy : public RefCounted<FileStreamProxy> {
+class FileStreamProxy : public AsyncFileStream {
 public:
     static PassRefPtr<FileStreamProxy> create(ScriptExecutionContext*, FileStreamClient*);
     virtual ~FileStreamProxy();
 
-    void getSize(const String& path, double expectedModificationTime);
-    void openForRead(const String& path, long long offset, long long length);
-    void openForWrite(const String& path);
-    void close();
-    void read(char* buffer, int length);
-    void write(const KURL& blobURL, long long position, int length);
-    void truncate(long long position);
+    virtual void getSize(const String& path, double expectedModificationTime);
+    virtual void openForRead(const String& path, long long offset, long long length);
+    virtual void openForWrite(const String& path);
+    virtual void close();
+    virtual void read(char* buffer, int length);
+    virtual void write(const KURL& blobURL, long long position, int length);
+    virtual void truncate(long long position);
 
     // Stops the proxy and scedules it to be destructed.  All the pending tasks will be aborted and the file stream will be closed.
     // Note: the caller should deref the instance immediately after calling stop().
-    void stop();
-
-    FileStreamClient* client() const { return m_client; }
+    virtual void stop();
 
 private:
     FileStreamProxy(ScriptExecutionContext*, FileStreamClient*);
@@ -84,7 +82,6 @@ private:
     void truncateOnFileThread(long long position);
 
     RefPtr<ScriptExecutionContext> m_context;
-    FileStreamClient* m_client;
     RefPtr<FileStream> m_stream;
 };
 

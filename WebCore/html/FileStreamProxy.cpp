@@ -37,7 +37,6 @@
 #include "Blob.h"
 #include "CrossThreadTask.h"
 #include "FileStream.h"
-#include "FileStreamClient.h"
 #include "FileThread.h"
 #include "FileThreadTask.h"
 #include "PlatformString.h"
@@ -46,8 +45,8 @@
 namespace WebCore {
 
 inline FileStreamProxy::FileStreamProxy(ScriptExecutionContext* context, FileStreamClient* client)
-    : m_context(context)
-    , m_client(client)
+    : AsyncFileStream(client)
+    , m_context(context)
     , m_stream(FileStream::create())
 {
 }
@@ -91,7 +90,7 @@ void FileStreamProxy::startOnFileThread()
 void FileStreamProxy::stop()
 {
     // Clear the client so that we won't be calling callbacks on the client.
-    m_client = 0;
+    setClient(0);
 
     fileThread()->unscheduleTasks(m_stream.get());
     fileThread()->postTask(createFileThreadTask(this, &FileStreamProxy::stopOnFileThread));

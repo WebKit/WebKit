@@ -23977,6 +23977,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\AsyncFileStream.h"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\AutodrainedPool.h"
 				>
 			</File>
@@ -24074,6 +24078,10 @@
 			</File>
 			<File
 				RelativePath="..\platform\FileStream.h"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\FileStreamClient.h"
 				>
 			</File>
 			<File
@@ -37178,10 +37186,6 @@
 			</File>
 			<File
 				RelativePath="..\html\FileReader.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\FileStreamClient.h"
 				>
 			</File>
 			<File

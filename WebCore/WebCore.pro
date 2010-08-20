@@ -1411,7 +1411,6 @@ HEADERS += \
     html/FileError.h \
     html/FileList.h \
     html/FileReader.h \
-    html/FileStreamClient.h \
     html/FileStreamProxy.h \
     html/FileThread.h \
     html/FileThreadTask.h \
@@ -1646,6 +1645,7 @@ HEADERS += \
     platform/animation/Animation.h \
     platform/animation/AnimationList.h \
     platform/Arena.h \
+    platform/AsyncFileStream.h \
     platform/BlobItem.h \
     platform/ContentType.h \
     platform/ContextMenu.h \
@@ -1655,6 +1655,7 @@ HEADERS += \
     platform/DragImage.h \
     platform/FileChooser.h \
     platform/FileStream.h \
+    platform/FileStreamClient.h \
     platform/FileSystem.h \
     platform/GeolocationService.h \
     platform/image-decoders/ImageDecoder.h \
