@@ -8,7 +8,15 @@ meegotouch {
 
 symbian: {
     TARGET.EPOCALLOWDLLDATA=1
-    TARGET.CAPABILITY = All -Tcb
+    # DRM and Allfiles capabilites need to be audited to be signed on Symbian
+    # For regular users that is not possible, so use the CONFIG(production) flag is added
+    # To use all capabilies add CONFIG+=production
+    # If building from QT source tree, also add CONFIG-=QTDIR_build as qbase.pri defaults capabilities to All -Tcb.    
+    CONFIG(production) {
+        TARGET.CAPABILITY = All -Tcb
+    } else {
+        TARGET.CAPABILITY = All -Tcb -DRM -AllFiles
+    }
     isEmpty(QT_LIBINFIX) {
         TARGET.UID3 = 0x200267C2
     } else {

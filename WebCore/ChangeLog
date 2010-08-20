@@ -1,3 +1,17 @@
+2010-08-20  David Leong  <david.leong@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] Update Symbian capabilities to remove AllFiles and DRM
+        
+        Add CONFIG(production) variation for set of DLL capabilities.
+        DRM and AllFiles capabilities need to be audited for the sis
+        package to be signed.
+        
+        No new tests.
+
+        * WebCore.pro: Updated Symbian Capabilities. 
+
 2010-08-20  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by David Kilzer.
