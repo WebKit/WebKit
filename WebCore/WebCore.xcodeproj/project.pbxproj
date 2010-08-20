@@ -20492,7 +20492,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Copy all the Inspector front-end resources.\nditto \"${SRCROOT}/inspector/front-end\" \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/inspector\"\nditto \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore/InspectorBackendStub.js\" \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/inspector\"\n\n# Remove the WebKit.qrc file since it is not used on the Mac (this file is for Qt)\nrm -f \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/inspector/WebKit.qrc\"\n\n# Remove *.re2js files, they are only used to generate some .js files.\nrm -f \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/inspector/\"*.re2js\n";
+			shellScript = "# Copy all the Inspector front-end resources.\nditto \"${SRCROOT}/inspector/front-end\" \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/inspector\"\nditto \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore/InspectorBackendStub.js\" \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/inspector\"\n\n# Remove the WebKit.qrc file since it is not used on the Mac (this file is for Qt).\nrm -f \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/inspector/WebKit.qrc\"\n\n# Remove *.re2js files, they are only used to generate some .js files.\nrm -f \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/inspector/\"*.re2js\n\n# Remove any .svn directories that may have been copied over.\nfind \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/inspector\" -name \".svn\" -type d | xargs rm -rf\n";
 		};
 		5D0D540D0E9862F60029E223 /* Check For Weak VTables and Externals */ = {
 			isa = PBXShellScriptBuildPhase;
