@@ -326,6 +326,8 @@ WebInspector.ElementsTreeElement.EditTagBlacklist = [
     "html", "head", "body"
 ].keySet();
 
+WebInspector.ElementsTreeElement.DOMBreakpointTypeSubtreeModified = 0;
+
 WebInspector.ElementsTreeElement.prototype = {
     highlightSearchResults: function(searchQuery)
     {
@@ -761,6 +763,15 @@ WebInspector.ElementsTreeElement.prototype = {
         contextMenu.appendItem(WebInspector.UIString("Edit as HTML"), this._editAsHTML.bind(this));
         contextMenu.appendItem(WebInspector.UIString("Copy as HTML"), this._copyHTML.bind(this));
         contextMenu.appendItem(WebInspector.UIString("Delete Node"), this.remove.bind(this));
+
+        if (Preferences.domBreakpointsEnabled) {
+            // Add debbuging-related actions
+            contextMenu.appendSeparator();
+            contextMenu.appendItem(WebInspector.UIString("Stop on subtree modifications"),
+                InspectorBackend.setDOMBreakpoint.bind(InspectorBackend, this.representedObject.id, WebInspector.ElementsTreeElement.DOMBreakpointTypeSubtreeModified));
+            contextMenu.appendItem(WebInspector.UIString("Remove Breakpoints"),
+                InspectorBackend.removeDOMBreakpoint.bind(InspectorBackend, this.representedObject.id, WebInspector.ElementsTreeElement.DOMBreakpointTypeSubtreeModified));
+        }
     },
 
     _populateTextContextMenu: function(contextMenu, textNode)

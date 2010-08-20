@@ -205,6 +205,11 @@ void ScriptDebugServer::pause()
     m_pauseOnNextStatement = true;
 }
 
+void ScriptDebugServer::breakProgram()
+{
+    // FIXME(WK43332): implement this.
+}
+
 void ScriptDebugServer::continueProgram()
 {
     if (!m_paused)

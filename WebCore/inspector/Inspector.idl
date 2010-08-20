@@ -176,6 +176,8 @@ module core {
         [handler=DOM] void performSearch(in String query, in boolean runSynchronously);
         [handler=DOM] void searchCanceled();
         [handler=DOM] void pushNodeByPathToFrontend(in long callId, in String path, out long nodeId);
+        [handler=DOM] void setDOMBreakpoint(in long nodeId, in long type);
+        [handler=DOM] void removeDOMBreakpoint(in long nodeId, in long type);
 
         [handler=Controller] void clearConsoleMessages();
         [handler=Controller] void highlightDOMNode(in long nodeId);

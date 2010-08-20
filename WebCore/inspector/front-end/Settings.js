@@ -43,7 +43,8 @@ var Preferences = {
     debuggerAlwaysEnabled: false,
     profilerAlwaysEnabled: false,
     auditsPanelEnabled: true,
-    onlineDetectionEnabled: true
+    onlineDetectionEnabled: true,
+    domBreakpointsEnabled: false
 }
 
 WebInspector.populateApplicationSettings = function(settingsString)

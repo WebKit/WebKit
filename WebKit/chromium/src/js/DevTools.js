@@ -74,6 +74,7 @@ WebInspector.loaded = function()
     Preferences.profilerAlwaysEnabled = true;
     Preferences.canEditScriptSource = true;
     Preferences.onlineDetectionEnabled = false;
+    Preferences.domBreakpointsEnabled = true;
 
     oldLoaded.call(WebInspector);
 }

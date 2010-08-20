@@ -79,6 +79,7 @@ public:
     void setPauseOnExceptionsState(PauseOnExceptionsState);
 
     void pause();
+    void breakProgram();
     void continueProgram();
     void stepIntoStatement();
     void stepOverStatement();

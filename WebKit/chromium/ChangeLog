@@ -1,3 +1,13 @@
+2010-08-19  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: enable DOM breakpoints for chromium
+        https://bugs.webkit.org/show_bug.cgi?id=42886
+
+        * src/js/DevTools.js:
+        (WebInspector.loaded):
+
 2010-08-19  Vincent Scheib  <scheib@chromium.org>
 
         Reviewed by David Levin.

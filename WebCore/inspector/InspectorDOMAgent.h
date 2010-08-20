@@ -112,6 +112,8 @@ namespace WebCore {
         void addInspectedNode(long nodeId);
         void performSearch(const String& whitespaceTrimmedQuery, bool runSynchronously);
         void searchCanceled();
+        void setDOMBreakpoint(long nodeId, long type);
+        void removeDOMBreakpoint(long nodeId, long type);
 
         // Methods called from the frontend for CSS styles inspection.
         void getStyles(long nodeId, bool authorOnly, RefPtr<InspectorValue>* styles);
@@ -155,6 +157,10 @@ namespace WebCore {
         void unbind(Node* node, NodeToIdMap* nodesMap);
 
         bool pushDocumentToFrontend();
+
+        bool hasBreakpoint(Node* node, long type);
+        bool pauseOnBreakpoint();
+        void updateSubtreeBreakpoints(Node* root, uint32_t rootMask, bool value);
 
         PassRefPtr<InspectorObject> buildObjectForAttributeStyles(Element* element);
         PassRefPtr<InspectorArray> buildArrayForCSSRules(Document* ownerDocument, CSSRuleList*);
@@ -209,6 +215,9 @@ namespace WebCore {
         Timer<InspectorDOMAgent> m_matchJobsTimer;
         HashSet<RefPtr<Node> > m_searchResults;
         Vector<long> m_inspectedNodes;
+        HashMap<Node*, uint32_t> m_breakpoints;
+
+        static InspectorDOMAgent* s_domAgentOnBreakpoint;
     };
 
 #endif
