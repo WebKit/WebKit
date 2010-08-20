@@ -1,3 +1,48 @@
+2010-08-20  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Eric Seidel.
+
+        svn-apply doesn't detect empty line with Windows line endings
+        after property value
+        https://bugs.webkit.org/show_bug.cgi?id=43981
+
+        Fixes an issue where an empty line following the property value
+        in an SVN property change diff would not be detected if it had
+        Windows line endings (i.e. ended in CRLF). Hence it was consumed
+        as if it was part of a multi-line property value. 
+
+        * Scripts/VCSUtils.pm:
+          - Modified parseSvnPropertyValue() to detect empty line
+            with Windows line endings.
+          - Added toWindowsLineEndings().
+        * Scripts/webkitperl/VCSUtils_unittest/parseDiff.pl:
+          - Added the following test cases:
+            "SVN: binary file (isBinary true) using Windows line endings"
+            "SVN: property diff, followed by file change diff using Windows line endings"
+            "SVN: two consecutive property diffs using Windows line endings"
+            "SVN: binary file with executable bit change usng Windows line endings"
+            "SVN: binary file followed by property change on different file using Windows line endings"
+            "SVN: binary file followed by file change on different file using Windows line endings"
+            "SVN: file change diff with property change, followed by property change diff using Windows line endings"
+            "SVN: file change diff with property change, followed by file change diff using Windows line endings"
+        * Scripts/webkitperl/VCSUtils_unittest/parseSvnProperty.pl:
+          - Added the following test cases:
+            "add svn:executable, followed by empty line and start of next diff using Windows line endings"
+            "add svn:executable, followed by empty line and start of next property diff using Windows line endings"
+            "multi-line '+' change, followed by empty line and start of next diff using Windows line endings"
+            "multi-line '+' change, followed by empty line and start of next property diff using Windows line endings"
+            "add svn:executable, followed by empty line and start of binary patch using Windows line endings"
+            "multi-line '+' change, followed by empty line and start of binary patch using Windows line endings"
+            "multi-line '-' change, followed by multi-line '+' change, empty line, and start of binary patch using Windows line endings"
+            "single-line '+' with trailing new line using Windows line endings"
+            "single-line '+' with trailing new line, followed by empty line and start of binary patch using Windows line endings"
+            "single-line '-' change with trailing new line, and single-line '+' change using Windows line endings"
+            "multi-line '-' change with trailing new line, and multi-line '+' change using Windows line endings"
+        * Scripts/webkitperl/VCSUtils_unittest/parseSvnPropertyValue.pl:
+          - Added the following test cases:
+            "single-line '-' change followed by empty line with Windows line endings"
+            "multi-line '+' change and start of binary patch with Windows line endings"
+
 2010-08-19  David Kilzer  <ddkilzer@apple.com>
 
         BUILD FIX: Fix Mac build after Windows WebKit2 changes for Netscape Plug-ins

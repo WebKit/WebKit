@@ -72,6 +72,7 @@ BEGIN {
         &setChangeLogDateAndReviewer
         &svnRevisionForDirectory
         &svnStatus
+        &toWindowsLineEndings
     );
     %EXPORT_TAGS = ( );
     @EXPORT_OK   = ();
@@ -126,6 +127,13 @@ sub callSilently($@) {
     close(OLDERR);
 
     return @returnValue;
+}
+
+sub toWindowsLineEndings
+{
+    my ($text) = @_;
+    $text =~ s/\n/\r\n/g;
+    return $text;
 }
 
 # Note, this method will not error if the file corresponding to the path does not exist.
@@ -1089,7 +1097,7 @@ sub parseSvnPropertyValue($$)
     }
 
     while (<$fileHandle>) {
-        if (/^$/ || /$svnPropertyValueStartRegEx/ || /$svnPropertyStartRegEx/) {
+        if (/^[\r\n]+$/ || /$svnPropertyValueStartRegEx/ || /$svnPropertyStartRegEx/) {
             # Note, we may encounter an empty line before the contents of a binary patch.
             # Also, we check for $svnPropertyValueStartRegEx because a '-' property may be
             # followed by a '+' property in the case of a "Modified" or "Name" property.
