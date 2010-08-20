@@ -38,7 +38,6 @@
 namespace WebCore {
 
 class Entry;
-class ScriptExecutionContext;
 
 class EntryCallback : public RefCounted<EntryCallback> {
 public:

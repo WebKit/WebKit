@@ -2587,6 +2587,7 @@ contains(DEFINES, ENABLE_FILE_SYSTEM=1) {
         storage/ErrorCallback.h \
         storage/FileEntry.h \
         storage/FileSystemCallback.h \
+        storage/FileSystemCallbacks.h \
         storage/Flags.h \
         storage/Metadata.h \
         storage/MetadataCallback.h
@@ -2597,7 +2598,8 @@ contains(DEFINES, ENABLE_FILE_SYSTEM=1) {
         storage/DOMFileSystem.cpp \
         storage/Entry.cpp \
         storage/EntryArray.cpp \
-        storage/FileEntry.cpp
+        storage/FileEntry.cpp \
+        storage/FileSystemCallbacks.cpp
 }
 
 contains(DEFINES, ENABLE_ICONDATABASE=1) {

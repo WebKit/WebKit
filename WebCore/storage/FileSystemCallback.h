@@ -38,7 +38,6 @@
 namespace WebCore {
 
 class DOMFileSystem;
-class ScriptExecutionContext;
 
 class FileSystemCallback : public RefCounted<FileSystemCallback> {
 public:

@@ -3567,6 +3567,8 @@
             'storage/FileEntry.cpp',
             'storage/FileEntry.h',
             'storage/FileSystemCallback.h',
+            'storage/FileSystemCallbacks.cpp',
+            'storage/FileSystemCallbacks.h',
             'storage/Flags.h',
             'storage/IDBAbortEvent.cpp',
             'storage/IDBAbortEvent.h',

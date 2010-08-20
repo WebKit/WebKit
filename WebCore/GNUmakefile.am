@@ -3049,6 +3049,8 @@ webcore_sources += \
        WebCore/storage/FileEntry.cpp \
        WebCore/storage/FileEntry.h \
        WebCore/storage/FileSystemCallback.h \
+       WebCore/storage/FileSystemCallbacks.cpp \
+       WebCore/storage/FileSystemCallbacks.h \
        WebCore/storage/Flags.h \
        WebCore/storage/Metadata.h \
        WebCore/storage/MetadataCallback.h

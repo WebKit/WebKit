@@ -1460,6 +1460,7 @@ SET(WebCore_SOURCES
     storage/Entry.cpp
     storage/EntryArray.cpp
     storage/FileEntry.cpp
+    storage/FileSystemCallbacks.cpp
     storage/IDBAny.cpp
     storage/IDBDatabase.cpp
     storage/IDBDatabaseBackendImpl.cpp
