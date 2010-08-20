@@ -32,6 +32,7 @@
 #define WebFrameClient_h
 
 #include "WebCommon.h"
+#include "WebFileSystem.h"
 #include "WebNavigationPolicy.h"
 #include "WebNavigationType.h"
 #include "WebURLError.h"
@@ -332,6 +333,19 @@ public:
     // where on the screen the selection rect is currently located.
     virtual void reportFindInPageSelection(
         int identifier, int activeMatchOrdinal, const WebRect& selection) { }
+
+    // FileSystem ----------------------------------------------------
+
+    // Requests to open a FileSystem.
+    // |size| indicates how much storage space (in bytes) the caller expects
+    // to need.
+    // WebFileSystemCallbacks::didOpenFileSystem() must be called with
+    // a name and root path for the requested FileSystem when the operation
+    // is completed successfully. WebFileSystemCallbacks::didFail() must be
+    // called otherwise.
+    virtual void openFileSystem(
+        WebFrame*, WebFileSystem::Type, long long size,
+        WebFileSystemCallbacks*) { }
 
 protected:
     ~WebFrameClient() { }

@@ -1,5 +1,26 @@
 2010-08-19  Kinuko Yasuda  <kinuko@chromium.org>
 
+        Reviewed by Darin Fisher.
+
+        Add WebKit API for FileSystem API
+        https://bugs.webkit.org/show_bug.cgi?id=43151
+
+        Add asynchronous FileSystem interface to WebKit API for
+        FileSystem API.
+        http://dev.w3.org/2009/dap/file-system/file-dir-sys.html
+
+        * WebKit.gyp:
+        * public/WebFileError.h: Added.
+        * public/WebFileSystem.h: Added.
+        * public/WebFileSystemEntry.h: Added.
+        * public/WebFileSystemCallbacks.h: Added.
+        * public/WebKitClient.h:
+        (WebKit::WebKitClient::fileSystem):
+        * public/WebFrameClient.h:
+        (WebKit::WebFrameClient::openFileSystem):
+
+2010-08-19  Kinuko Yasuda  <kinuko@chromium.org>
+
         Reviewed by Jian Li.
 
         [Chromium] Rolls Chromium DEPS forward to 56564
