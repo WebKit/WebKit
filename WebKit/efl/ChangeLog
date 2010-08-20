@@ -1,3 +1,12 @@
+2010-08-20  Leandro Pereira  <leandro@profusion.mobi>
+
+        [EFL] Unreviewed. Fix build when using GNU gold.
+        When linking with GNU gold, some symbols are not found: explicitly
+        link with the required libraries.
+
+        * CMakeListsEfl.txt: Depend on Fontconfig, PNG, JPEG and dl
+        libraries.
+
 2010-08-15  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Reviewed by Antonio Gomes.

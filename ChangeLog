@@ -1,3 +1,12 @@
+2010-08-20  Leandro Pereira  <leandro@profusion.mobi>
+
+        [EFL] Unreviewed. Fix build when using GNU gold.
+        When linking with GNU gold, some symbols are not found: explicitly
+        link with the required libraries.
+
+        * cmake/FindFontconfig.cmake: Added.
+        * cmake/OptionsEfl.cmake: Find Fontconfig, JPEG, and PNG libraries.
+
 2010-08-19  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.
