@@ -2745,7 +2745,6 @@ BUGWK39655 : fast/dom/prototype-property.html = FAIL
 
 // These SVG tests have been flaky on Win from quite some time.
 // Hard to pin down which roll introduced the flakiness.
-BUG45106 WIN : svg/clip-path/clip-path-childs-clipped.svg = PASS CRASH
 BUG45106 WIN : svg/clip-path/clip-path-evenodd-nonzero.svg = PASS CRASH
 BUG45106 WIN : svg/text/text-text-05-t.svg = PASS CRASH
 
@@ -3250,3 +3249,8 @@ BUG52810 WIN LINUX : fast/forms/listbox-selection.html = TEXT
 // due to pixel results not having a caret visible.
 BUGWK44290 WIN LINUX : editing/selection/drag-in-iframe.html = IMAGE
 BUGWK44290 WIN MAC : fast/forms/input-text-scroll-left-on-blur.html = IMAGE
+
+// Clip paths aren't working after http://trac.webkit.org/changeset/65729
+BUGWK44341 WIN LINUX : svg/clip-path/clip-path-pixelation.svg = IMAGE+TEXT
+BUGWK44341 WIN LINUX : svg/batik/text/textProperties.svg = IMAGE
+BUGWK44341 WIN LINUX : svg/clip-path/clip-path-childs-clipped.svg = IMAGE
