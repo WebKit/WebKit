@@ -1,3 +1,17 @@
+2010-08-19  Balazs Kelemen  <kb@inf.u-szeged.hu>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] Fix cursor change propagation
+        https://bugs.webkit.org/show_bug.cgi?id=44250
+
+        No functional change so new tests.
+
+        Propagate the setCursor callback to the PageClient via the HostWindow instead of preassuming
+        the concrete type of the ChromeClient (what was generally wrong and actually incompatible with WebKit2).
+        * platform/qt/WidgetQt.cpp:
+        (WebCore::Widget::setCursor):
+
 2010-08-19  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Reviewed by Kenneth Russell.

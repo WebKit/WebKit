@@ -78,10 +78,10 @@ void Widget::setFocus(bool focused)
 void Widget::setCursor(const Cursor& cursor)
 {
 #ifndef QT_NO_CURSOR
-    QWebPageClient* pageClient = root()->hostWindow()->platformPageClient();
-
-    if (pageClient)
-        pageClient->setCursor(*cursor.platformCursor());
+    ScrollView* view = root();
+    if (!view)
+        return;
+    view->hostWindow()->setCursor(cursor);
 #endif
 }
 

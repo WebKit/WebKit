@@ -1,3 +1,13 @@
+2010-08-19  Balazs Kelemen  <kb@inf.u-szeged.hu>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] Fix cursor change propagation
+        https://bugs.webkit.org/show_bug.cgi?id=44250
+
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::setCursor): Implemented. Propagete the callback forward to the PageClient.
+
 2010-08-19  David Kilzer  <ddkilzer@apple.com>
 
         BUILD FIX #3: <http://webkit.org/b/44285> Fix compilation with NETSCAPE_PLUGIN_API disabled

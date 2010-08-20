@@ -554,9 +554,16 @@ void ChromeClientQt::chooseIconForFiles(const Vector<String>& filenames, FileCho
     chooser->iconLoaded(Icon::createIconForFiles(filenames));
 }
 
-void ChromeClientQt::setCursor(const Cursor&)
+void ChromeClientQt::setCursor(const Cursor& cursor)
 {
-    notImplemented();
+#ifndef QT_NO_CURSOR
+    QWebPageClient* pageClient = platformPageClient();
+    if (!pageClient)
+        return;
+    pageClient->setCursor(*cursor.platformCursor());
+#else
+    UNUSED_PARAM(cursor)
+#endif
 }
 
 void ChromeClientQt::requestGeolocationPermissionForFrame(Frame* frame, Geolocation* geolocation)
