@@ -1,3 +1,11 @@
+2010-08-20  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed, speculative Chromium build fix. Forward declare
+        IntSize in WebGLRenderingContext.h and include IntSize.h in .cpp.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        * html/canvas/WebGLRenderingContext.h:
+
 2010-08-20  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Dan Bernstein.

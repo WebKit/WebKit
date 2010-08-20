@@ -39,6 +39,7 @@
 #include "HTMLVideoElement.h"
 #include "ImageBuffer.h"
 #include "ImageData.h"
+#include "IntSize.h"
 #include "NotImplemented.h"
 #include "RenderBox.h"
 #include "RenderLayer.h"
