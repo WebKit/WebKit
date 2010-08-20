@@ -1,3 +1,20 @@
+2010-08-19  Kenichi Ishibashi  <bashi@google.com>
+
+        Reviewed by Kent Tamura.
+
+        Improve portability of fast/forms/listbox-selection.html
+        https://bugs.webkit.org/show_bug.cgi?id=35786
+
+        Changed to use script-tests style for improving portability.
+        - For sending mouse events to the target element, calculating the
+        item height at runtime instead using Mac-specific metrics.
+        - Using mouseDown(), mouseUp(), and keyDown() to send events with
+        modifier keys in a platform-independent way.
+
+        * fast/forms/listbox-selection-expected.txt: Updated to match with new test.
+        * fast/forms/listbox-selection.html: Modified to use script-tests style.
+        * fast/forms/script-tests/listbox-selection.js: Added.
+
 2010-08-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Tony Chang.
