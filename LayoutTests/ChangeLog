@@ -1,3 +1,9 @@
+2010-08-19  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed. Clean up test_expectations now that tables/hittesting/filltable-* pass on Chromium.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-08-19  Fady Samuel  <fsamuel@chromium.org>
 
         Reviewed by Dimitri Glazkov.
