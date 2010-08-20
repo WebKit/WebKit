@@ -1,3 +1,25 @@
+2010-08-20  Jay Civelli  <jcivelli@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Removing the deprecated class WebEvent and friends.
+        https://bugs.webkit.org/show_bug.cgi?id=44296
+
+        * WebKit.gyp:
+        * public/WebEvent.h: Removed.
+        * public/WebEventListener.h: Removed.
+        * public/WebMutationEvent.h: Removed.
+        * public/WebNode.h:
+        * src/EventListenerWrapper.cpp:
+        (WebKit::EventListenerWrapper::webDOMEventListenerDeleted):
+        * src/EventListenerWrapper.h:
+        * src/WebEvent.cpp: Removed.
+        * src/WebEventListener.cpp: Removed.
+        * src/WebEventListenerPrivate.cpp: Removed.
+        * src/WebEventListenerPrivate.h: Removed.
+        * src/WebNode.cpp:
+        (WebKit::WebNode::removeEventListener):
+
 2010-08-19  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.

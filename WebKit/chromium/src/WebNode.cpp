@@ -41,8 +41,6 @@
 #include "WebDOMEvent.h"
 #include "WebDOMEventListener.h"
 #include "WebDocument.h"
-#include "WebEvent.h"
-#include "WebEventListener.h"
 #include "WebFrameImpl.h"
 #include "WebNodeList.h"
 #include "WebString.h"
@@ -164,24 +162,6 @@ void WebNode::addEventListener(const WebString& eventType, WebDOMEventListener* 
 void WebNode::removeEventListener(const WebString& eventType, WebDOMEventListener* listener, bool useCapture)
 {
     EventListenerWrapper* listenerWrapper =
-        listener->getEventListenerWrapper(eventType, useCapture, m_private.get());
-    m_private->removeEventListener(eventType, listenerWrapper, useCapture);
-    // listenerWrapper is now deleted.
-}
-
-void WebNode::addEventListener(const WebString& eventType, WebEventListener* listener, bool useCapture)
-{
-    DeprecatedEventListenerWrapper* listenerWrapper =
-        listener->createEventListenerWrapper(eventType, useCapture, m_private.get());
-    // The listenerWrapper is only referenced by the actual Node.  Once it goes
-    // away, the wrapper notifies the WebEventListener so it can clear its
-    // pointer to it.
-    m_private->addEventListener(eventType, adoptRef(listenerWrapper), useCapture);
-}
-
-void WebNode::removeEventListener(const WebString& eventType, WebEventListener* listener, bool useCapture)
-{
-    DeprecatedEventListenerWrapper* listenerWrapper =
         listener->getEventListenerWrapper(eventType, useCapture, m_private.get());
     m_private->removeEventListener(eventType, listenerWrapper, useCapture);
     // listenerWrapper is now deleted.

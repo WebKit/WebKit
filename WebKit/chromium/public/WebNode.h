@@ -41,8 +41,6 @@ namespace WebKit {
 class WebDOMEventListener;
 class WebDOMEventListenerPrivate;
 class WebDocument;
-class WebEventListener;
-class WebEventListenerPrivate;
 class WebFrame;
 class WebNodeList;
 
@@ -101,8 +99,6 @@ public:
     WEBKIT_API bool isElementNode() const;
     WEBKIT_API void addEventListener(const WebString& eventType, WebDOMEventListener* listener, bool useCapture);
     WEBKIT_API void removeEventListener(const WebString& eventType, WebDOMEventListener* listener, bool useCapture);
-    WEBKIT_API void addEventListener(const WebString& eventType, WebEventListener* listener, bool useCapture);
-    WEBKIT_API void removeEventListener(const WebString& eventType, WebEventListener* listener, bool useCapture);
     WEBKIT_API void simulateClick();
     WEBKIT_API WebNodeList getElementsByTagName(const WebString&) const;
 
