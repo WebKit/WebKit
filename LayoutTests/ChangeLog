@@ -1,3 +1,13 @@
+2010-08-20  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Check that a failure in the preflight step of a transaction wrapper does not trigger any assertion.
+        https://bugs.webkit.org/show_bug.cgi?id=44151
+
+        * storage/change-version-no-crash-on-preflight-failure-expected.txt: Added.
+        * storage/change-version-no-crash-on-preflight-failure.html: Added.
+
 2010-08-20  John Gregg  <johnnyg@google.com>
 
         Unreviewed, chromium rebaseline.
