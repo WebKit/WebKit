@@ -117,18 +117,22 @@ int TilingData::tilePositionX(int xIndex) const
 {
     ASSERT(xIndex >= 0 && xIndex < numTilesX());
 
-    if (!xIndex)
-        return 0;
-    return tilePositionX(xIndex - 1) + tileSizeX(xIndex - 1);
+    int pos = 0;
+    for (int i = 0; i < xIndex; i++)
+        pos += tileSizeX(i);
+
+    return pos;
 }
 
 int TilingData::tilePositionY(int yIndex) const
 {
     ASSERT(yIndex >= 0 && yIndex < numTilesY());
 
-    if (!yIndex)
-        return 0;
-    return tilePositionX(yIndex - 1) + tileSizeY(yIndex - 1);
+    int pos = 0;
+    for (int i = 0; i < yIndex; i++)
+        pos += tileSizeY(i);
+
+    return pos;
 }
 
 int TilingData::tileSizeX(int xIndex) const

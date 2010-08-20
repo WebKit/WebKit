@@ -1,3 +1,18 @@
+2010-08-19  Vincent Scheib  <scheib@chromium.org>
+
+        Reviewed by David Levin.
+
+        [chromium] TilingData::tilePositionY has typo of X where Y should be used
+        https://bugs.webkit.org/show_bug.cgi?id=44195
+
+        Corrected error, and rewrote functions to use for loop instead of recursion.
+
+        Unit Tests added to WebKit/chromium/tests/TilingDataTest.cpp
+
+        * platform/graphics/chromium/TilingData.cpp:
+        (WebCore::TilingData::tilePositionX):
+        (WebCore::TilingData::tilePositionY):
+
 2010-08-19  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Brady Eidson.

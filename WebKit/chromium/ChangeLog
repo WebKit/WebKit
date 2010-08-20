@@ -1,3 +1,15 @@
+2010-08-19  Vincent Scheib  <scheib@chromium.org>
+
+        Reviewed by David Levin.
+
+        [chromium] TilingData::tilePositionY has typo of X where Y should be used
+        https://bugs.webkit.org/show_bug.cgi?id=44195
+
+        Unit tests added for tileSize and tilePosition.
+
+        * tests/TilingDataTest.cpp:
+        (WebCore::TEST):
+
 2010-08-19  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by Darin Fisher.
