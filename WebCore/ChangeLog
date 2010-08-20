@@ -1,5 +1,24 @@
 2010-08-20  Martin Robinson  <mrobinson@igalia.com>
 
+        Reviewed by Xan Lopez.
+
+        r64526 broke the GTK+-3 build
+        https://bugs.webkit.org/show_bug.cgi?id=44254
+
+        No new tests, as this is covered by manual-tests/cursor.html.
+
+        * platform/gtk/CursorGtk.cpp:
+        (WebCore::createPixmapFromBits): Added this method which turns the inline data
+        structures into GdkPixmaps using Cairo and GDK-Cairo.
+        (WebCore::createNamedCursor): Modified this method to use the new helper.
+        * platform/gtk/CursorGtk.h: Changed all inline data structures to be unsigned
+        char arrays (which Cairo requires). The progress cursor is known in X11 icon themes
+        as "left_ptr_watch." This change to the name preserves the old behavior of taking this
+        icon from the theme when available. It seems that this worked in the past due to a fluke
+        or failure of the previous code.
+
+2010-08-20  Martin Robinson  <mrobinson@igalia.com>
+
         Reviewed by Dirk Schulze.
 
         [Cairo] Eliminate full-surface copy from canvas.drawImage(...)

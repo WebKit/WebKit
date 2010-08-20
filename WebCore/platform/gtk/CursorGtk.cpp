@@ -37,6 +37,19 @@
 
 namespace WebCore {
 
+static GdkPixmap* createPixmapFromBits(const unsigned char* bits, const IntSize& size)
+{
+    cairo_surface_t* dataSurface = cairo_image_surface_create_for_data(const_cast<unsigned char*>(bits), CAIRO_FORMAT_A1, size.width(), size.height(), size.width() / 8);
+    GdkPixmap* pixmap = gdk_pixmap_new(0, size.width(), size.height(), 1);
+    cairo_t* cr = gdk_cairo_create(pixmap);
+    cairo_set_source_surface(cr, dataSurface, 0, 0);
+    cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
+    cairo_paint(cr);
+    cairo_destroy(cr);
+    cairo_surface_destroy(dataSurface);
+    return pixmap;
+}
+
 static GRefPtr<GdkCursor> createNamedCursor(CustomCursorType cursorType)
 {
     CustomCursor cursor = CustomCursors[cursorType];
@@ -46,8 +59,9 @@ static GRefPtr<GdkCursor> createNamedCursor(CustomCursorType cursorType)
 
     const GdkColor fg = { 0, 0, 0, 0 };
     const GdkColor bg = { 65535, 65535, 65535, 65535 };
-    GRefPtr<GdkPixmap> source = adoptGRef(gdk_bitmap_create_from_data(0, cursor.bits, 32, 32));
-    GRefPtr<GdkPixmap> mask = adoptGRef(gdk_bitmap_create_from_data(0, cursor.mask_bits, 32, 32));
+    IntSize cursorSize = IntSize(32, 32);
+    GRefPtr<GdkPixmap> source = adoptGRef(createPixmapFromBits(cursor.bits, cursorSize));
+    GRefPtr<GdkPixmap> mask = adoptGRef(createPixmapFromBits(cursor.mask_bits, cursorSize));
     return adoptGRef(gdk_cursor_new_from_pixmap(source.get(), mask.get(), &fg, &bg, cursor.hot_x, cursor.hot_y));
 }
 
