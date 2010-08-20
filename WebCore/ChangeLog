@@ -38,6 +38,23 @@
 
         Reviewed by Dan Bernstein.
 
+        <rdar://problem/8245719> backface-visibility and reflections don't play nicely together.
+        
+        On elements with a reflection and backface-visibility: hidden, set the doubleSided property on the 
+        reflection flattening layer so that backface-visibility works in all configurations.
+
+        Test: compositing/reflections/backface-hidden-reflection.html
+
+        * platform/graphics/mac/GraphicsLayerCA.mm:
+        (WebCore::GraphicsLayerCA::updateBackfaceVisibility): Call setDoubleSided: on the structural
+        layer for reflections.
+        (WebCore::GraphicsLayerCA::ensureStructuralLayer): Fix a comment typo, and call updateBackfaceVisibility()
+        when we gain a structural layer.
+
+2010-08-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
         Slider labels do not update as you move the sliders on this page
         https://bugs.webkit.org/show_bug.cgi?id=41020
         

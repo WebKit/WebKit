@@ -1213,6 +1213,18 @@ void GraphicsLayerCA::updateContentsOpaque()
 
 void GraphicsLayerCA::updateBackfaceVisibility()
 {
+    if (m_structuralLayer && structuralLayerPurpose() == StructuralLayerForReplicaFlattening) {
+        [m_structuralLayer.get() setDoubleSided:m_backfaceVisibility];
+
+        if (LayerMap* layerCloneMap = m_structuralLayerClones.get()) {
+            LayerMap::const_iterator end = layerCloneMap->end();
+            for (LayerMap::const_iterator it = layerCloneMap->begin(); it != end; ++it) {
+                CALayer *currLayer = it->second.get();
+                [currLayer setDoubleSided:m_backfaceVisibility];
+            }
+        }
+    }
+
     [m_layer.get() setDoubleSided:m_backfaceVisibility];
 
     if (LayerMap* layerCloneMap = m_layerClones.get()) {
@@ -1243,7 +1255,7 @@ void GraphicsLayerCA::ensureStructuralLayer(StructuralLayerPurpose purpose)
             // Release the structural layer.
             m_structuralLayer = 0;
 
-            // Update the properties of m_layer now that we no loner have a structural layer.
+            // Update the properties of m_layer now that we no longer have a structural layer.
             updateLayerPosition();
             updateLayerSize();
             updateAnchorPoint();
@@ -1294,6 +1306,7 @@ void GraphicsLayerCA::ensureStructuralLayer(StructuralLayerPurpose purpose)
     updateAnchorPoint();
     updateTransform();
     updateChildrenTransform();
+    updateBackfaceVisibility();
     
     // Set properties of m_layer to their default values, since these are expressed on on the structural layer.
     CGPoint point = CGPointMake(m_size.width() / 2.0f, m_size.height() / 2.0f);
