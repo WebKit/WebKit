@@ -1,3 +1,13 @@
+2010-08-20  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Inspector tests were disabled for GTK.
+        https://bugs.webkit.org/show_bug.cgi?id=43977
+
+        * Scripts/old-run-webkit-tests: Set the WEBKIT_INSPECTOR_PATH to the appropriate
+        path before running tests.
+
 2010-08-20  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Eric Seidel.

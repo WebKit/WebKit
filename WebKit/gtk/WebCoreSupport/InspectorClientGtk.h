@@ -29,6 +29,7 @@
 #ifndef InspectorClientGtk_h
 #define InspectorClientGtk_h
 
+#include "GOwnPtr.h"
 #include "InspectorClient.h"
 #include "InspectorFrontendClientLocal.h"
 #include "webkitwebview.h"
@@ -64,11 +65,13 @@ namespace WebKit {
         virtual bool sendMessageToFrontend(const WTF::String&);
 
         void releaseFrontendPage();
+        const char* inspectorFilesPath();
 
     private:
         WebKitWebView* m_inspectedWebView;
         WebCore::Page* m_frontendPage;
         InspectorFrontendClient* m_frontendClient;
+        GOwnPtr<gchar> m_inspectorFilesPath;
     };
 
     class InspectorFrontendClient : public WebCore::InspectorFrontendClientLocal {

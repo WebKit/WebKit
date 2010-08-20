@@ -79,18 +79,8 @@ void InspectorClient::openInspectorFrontend(InspectorController* controller)
 
     webkit_web_inspector_set_web_view(webInspector, inspectorWebView);
 
-    GOwnPtr<gchar> inspectorURI;
-
-    // Make the Web Inspector work when running tests
-    // FixMe: it is not working. It should be not the subdirectory of the current directory, but a subdirectory of $(WEBKITOUTPUTDIR).
-    if (g_file_test("resources/inspector/inspector.html", G_FILE_TEST_EXISTS)) {
-        GOwnPtr<gchar> currentDirectory(g_get_current_dir());
-        GOwnPtr<gchar> fullPath(g_strdup_printf("%s/resources/inspector/inspector.html", currentDirectory.get()));
-        inspectorURI.set(g_filename_to_uri(fullPath.get(), NULL, NULL));
-    } else {
-        inspectorURI.set(g_filename_to_uri(DATA_DIR"/webkitgtk-"WEBKITGTK_API_VERSION_STRING"/webinspector/inspector.html", NULL, NULL));
-    }
-
+    GOwnPtr<gchar> inspectorPath(g_build_filename(inspectorFilesPath(), "inspector.html", NULL));
+    GOwnPtr<gchar> inspectorURI(g_filename_to_uri(inspectorPath.get(), 0, 0));
     webkit_web_view_load_uri(inspectorWebView, inspectorURI.get());
 
     gtk_widget_show(GTK_WIDGET(inspectorWebView));
@@ -250,7 +240,19 @@ bool InspectorClient::sendMessageToFrontend(const String& message)
     return true;
 }
 
-bool destroyed = TRUE;
+const char* InspectorClient::inspectorFilesPath()
+{
+    if (m_inspectorFilesPath)
+        m_inspectorFilesPath.get();
+
+    const char* environmentPath = getenv("WEBKIT_INSPECTOR_PATH");
+    if (environmentPath && g_file_test(environmentPath, G_FILE_TEST_IS_DIR))
+        m_inspectorFilesPath.set(g_strdup(environmentPath));
+    else
+        m_inspectorFilesPath.set(g_build_filename(DATA_DIR, "webkitgtk-"WEBKITGTK_API_VERSION_STRING, "webinspector", NULL));
+
+    return m_inspectorFilesPath.get();
+}
 
 InspectorFrontendClient::InspectorFrontendClient(WebKitWebView* inspectedWebView, WebKitWebView* inspectorWebView, WebKitWebInspector* webInspector, Page* inspectorPage, InspectorClient* inspectorClient)
     : InspectorFrontendClientLocal(core(inspectedWebView)->inspectorController(), inspectorPage)
@@ -300,20 +302,11 @@ void InspectorFrontendClient::destroyInspectorWindow()
 
 String InspectorFrontendClient::localizedStringsURL()
 {
-    GOwnPtr<gchar> URL;
-
-    // Make the Web Inspector work when running tests
-    if (g_file_test("WebCore/English.lproj/localizedStrings.js", G_FILE_TEST_EXISTS)) {
-        GOwnPtr<gchar> currentDirectory(g_get_current_dir());
-        GOwnPtr<gchar> fullPath(g_strdup_printf("%s/WebCore/English.lproj/localizedStrings.js", currentDirectory.get()));
-        URL.set(g_filename_to_uri(fullPath.get(), NULL, NULL));
-    } else {
-        GOwnPtr<gchar> localizedStringsPath(g_strdup_printf(DATA_DIR"/webkitgtk-%.1f/webinspector/localizedStrings.js", WEBKITGTK_API_VERSION));
-        URL.set(g_filename_to_uri(localizedStringsPath.get(), NULL, NULL));
-    }
+    GOwnPtr<gchar> stringsPath(g_build_filename(m_inspectorClient->inspectorFilesPath(), "localizedStrings.js", NULL));
+    GOwnPtr<gchar> stringsURI(g_filename_to_uri(stringsPath.get(), 0, 0));
 
     // FIXME: support l10n of localizedStrings.js
-    return String::fromUTF8(URL.get());
+    return String::fromUTF8(stringsURI.get());
 }
 
 String InspectorFrontendClient::hiddenPanels()

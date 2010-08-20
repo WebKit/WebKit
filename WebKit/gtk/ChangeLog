@@ -1,3 +1,21 @@
+2010-08-20  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Inspector tests were disabled for GTK.
+        https://bugs.webkit.org/show_bug.cgi?id=43977
+
+        Allow setting the inspector resources path via an environment variables
+        and add a method, inspectorFilesPath, to the WebKit InspectorClient that
+        encapsulates this logic.
+
+        * WebCoreSupport/InspectorClientGtk.cpp:
+        (WebKit::InspectorClient::openInspectorFrontend): Use the new inspectorFilesPath method to
+        get the path to the resource.
+        (WebKit::InspectorClient::inspectorFilesPath): Added.
+        (WebKit::InspectorFrontendClient::localizedStringsURL): Use inspectorFilesPath method.
+        * WebCoreSupport/InspectorClientGtk.h: Add method and member variables for caching the result.
+
 2010-08-19  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Kenneth Rohde Christiansen.
