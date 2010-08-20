@@ -58,7 +58,7 @@ namespace WebCore {
                 ec = SYNTAX_ERR;
                 return 0;
             }
-            return Notification::create(m_scriptExecutionContext->completeURL(URI), context(), ec, presenter());
+            return Notification::create(m_scriptExecutionContext->completeURL(URI), context(), ec, this);
         }
 
         PassRefPtr<Notification> createNotification(const String& iconURI, const String& title, const String& body, ExceptionCode& ec)
@@ -68,7 +68,7 @@ namespace WebCore {
                 return 0;
             }
             NotificationContents contents(iconURI.isEmpty() ? KURL() : m_scriptExecutionContext->completeURL(iconURI), title, body);
-            return Notification::create(contents, context(), ec, presenter());
+            return Notification::create(contents, context(), ec, this);
         }
 
         ScriptExecutionContext* context() const { return m_scriptExecutionContext; }

@@ -1,3 +1,28 @@
+2010-08-20  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Prevent use of stale notification presenter pointer in notifications by instead using
+        a notification center pointer and deriving the presenter from it. Notification presenter
+        gets properly destroyed using disconnectFrame function inside notification center. Add
+        null checks for notification presenter.
+        https://bugs.webkit.org/show_bug.cgi?id=43645
+
+        Test: fast/notifications/notifications-window-close-crash.html
+
+        * notifications/Notification.cpp:
+        (WebCore::Notification::Notification):
+        (WebCore::Notification::create):
+        (WebCore::Notification::show):
+        (WebCore::Notification::cancel):
+        (WebCore::Notification::contextDestroyed):
+        (WebCore::Notification::finishLoading):
+        * notifications/Notification.h:
+        (WebCore::Notification::detachPresenter):
+        * notifications/NotificationCenter.h:
+        (WebCore::NotificationCenter::createHTMLNotification):
+        (WebCore::NotificationCenter::createNotification):
+
 2010-08-20  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

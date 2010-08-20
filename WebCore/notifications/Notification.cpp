@@ -34,6 +34,7 @@
 #if ENABLE(NOTIFICATIONS)
 
 #include "Notification.h"
+#include "NotificationCenter.h"
 #include "NotificationContents.h"
 
 #include "Document.h"
@@ -45,14 +46,14 @@
 
 namespace WebCore {
 
-Notification::Notification(const KURL& url, ScriptExecutionContext* context, ExceptionCode& ec, NotificationPresenter* provider)
+Notification::Notification(const KURL& url, ScriptExecutionContext* context, ExceptionCode& ec, PassRefPtr<NotificationCenter> provider)
     : ActiveDOMObject(context, this)
     , m_isHTML(true)
     , m_state(Idle)
-    , m_presenter(provider)
+    , m_notificationCenter(provider)
 {
-    ASSERT(m_presenter);
-    if (m_presenter->checkPermission(context) != NotificationPresenter::PermissionAllowed) {
+    ASSERT(m_notificationCenter->presenter());
+    if (m_notificationCenter->presenter()->checkPermission(context) != NotificationPresenter::PermissionAllowed) {
         ec = SECURITY_ERR;
         return;
     }
@@ -65,15 +66,15 @@ Notification::Notification(const KURL& url, ScriptExecutionContext* context, Exc
     m_notificationURL = url;
 }
 
-Notification::Notification(const NotificationContents& contents, ScriptExecutionContext* context, ExceptionCode& ec, NotificationPresenter* provider)
+Notification::Notification(const NotificationContents& contents, ScriptExecutionContext* context, ExceptionCode& ec, PassRefPtr<NotificationCenter> provider)
     : ActiveDOMObject(context, this)
     , m_isHTML(false)
     , m_contents(contents)
     , m_state(Idle)
-    , m_presenter(provider)
+    , m_notificationCenter(provider)
 {
-    ASSERT(m_presenter);
-    if (m_presenter->checkPermission(context) != NotificationPresenter::PermissionAllowed) {
+    ASSERT(m_notificationCenter->presenter());
+    if (m_notificationCenter->presenter()->checkPermission(context) != NotificationPresenter::PermissionAllowed) {
         ec = SECURITY_ERR;
         return;
     }
@@ -92,6 +93,16 @@ Notification::~Notification()
     }
 }
 
+PassRefPtr<Notification> Notification::create(const KURL& url, ScriptExecutionContext* context, ExceptionCode& ec, PassRefPtr<NotificationCenter> provider) 
+{ 
+    return adoptRef(new Notification(url, context, ec, provider));
+}
+
+PassRefPtr<Notification> Notification::create(const NotificationContents& contents, ScriptExecutionContext* context, ExceptionCode& ec, PassRefPtr<NotificationCenter> provider) 
+{ 
+    return adoptRef(new Notification(contents, context, ec, provider));
+}
+
 void Notification::show() 
 {
 #if PLATFORM(QT)
@@ -100,13 +111,14 @@ void Notification::show()
         // handling of ondisplay may rely on that.
         if (m_state == Idle) {
             m_state = Showing;
-            m_presenter->show(this);
+            if (m_notificationCenter->presenter())
+                m_notificationCenter->presenter()->show(this);
         }
     } else
         startLoading();
 #else
     // prevent double-showing
-    if (m_state == Idle && m_presenter->show(this))
+    if (m_state == Idle && m_notificationCenter->presenter() && m_notificationCenter->presenter()->show(this))
         m_state = Showing;
 #endif
 }
@@ -121,7 +133,8 @@ void Notification::cancel()
         stopLoading();
         break;
     case Showing:
-        m_presenter->cancel(this);
+        if (m_notificationCenter->presenter())
+            m_notificationCenter->presenter()->cancel(this);
         break;
     case Cancelled:
         break;
@@ -141,8 +154,8 @@ EventTargetData* Notification::ensureEventTargetData()
 void Notification::contextDestroyed()
 {
     ActiveDOMObject::contextDestroyed();
-    if (m_presenter)
-        m_presenter->notificationObjectDestroyed(this);
+    if (m_notificationCenter->presenter())
+        m_notificationCenter->presenter()->notificationObjectDestroyed(this);
 }
 
 void Notification::startLoading()
@@ -205,7 +218,7 @@ void Notification::didReceiveAuthenticationCancellation(const ResourceResponse&)
 void Notification::finishLoading()
 {
     if (m_state == Loading) {
-        if (m_presenter->show(this))
+        if (m_notificationCenter->presenter() && m_notificationCenter->presenter()->show(this))
             m_state = Showing;
     }
     unsetPendingActivity(this);

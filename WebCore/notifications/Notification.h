@@ -55,12 +55,13 @@
 #if ENABLE(NOTIFICATIONS)
 namespace WebCore {
 
+    class NotificationCenter;
     class WorkerContext;
 
     class Notification : public RefCounted<Notification>, public ActiveDOMObject, public ThreadableLoaderClient, public EventTarget {
     public:
-        static PassRefPtr<Notification> create(const KURL& url, ScriptExecutionContext* context, ExceptionCode& ec, NotificationPresenter* provider) { return adoptRef(new Notification(url, context, ec, provider)); }
-        static PassRefPtr<Notification> create(const NotificationContents& contents, ScriptExecutionContext* context, ExceptionCode& ec, NotificationPresenter* provider) { return adoptRef(new Notification(contents, context, ec, provider)); }
+        static PassRefPtr<Notification> create(const KURL& url, ScriptExecutionContext* context, ExceptionCode& ec, PassRefPtr<NotificationCenter> provider);
+        static PassRefPtr<Notification> create(const NotificationContents& contents, ScriptExecutionContext* context, ExceptionCode& ec, PassRefPtr<NotificationCenter> provider);
         
         virtual ~Notification();
 
@@ -98,8 +99,8 @@ namespace WebCore {
         SharedBuffer* iconData() { return m_iconData.get(); }
         void releaseIconData() { m_iconData = 0; }
 
-        // Called if the presenter is deleted before the notification is GC'd
-        void detachPresenter() { m_presenter = 0; }
+        // Deprecated. Use functions from NotificationCenter.
+        void detachPresenter() { }
 
         virtual void didReceiveResponse(const ResourceResponse&);
         virtual void didReceiveData(const char* data, int lengthReceived);
@@ -109,8 +110,8 @@ namespace WebCore {
         virtual void didReceiveAuthenticationCancellation(const ResourceResponse&);
 
     private:
-        Notification(const KURL&, ScriptExecutionContext*, ExceptionCode&, NotificationPresenter*);
-        Notification(const NotificationContents&, ScriptExecutionContext*, ExceptionCode&, NotificationPresenter*);
+        Notification(const KURL&, ScriptExecutionContext*, ExceptionCode&, PassRefPtr<NotificationCenter>);
+        Notification(const NotificationContents&, ScriptExecutionContext*, ExceptionCode&, PassRefPtr<NotificationCenter>);
 
         // EventTarget interface
         virtual void refEventTarget() { ref(); }
@@ -137,7 +138,7 @@ namespace WebCore {
 
         NotificationState m_state;
 
-        NotificationPresenter* m_presenter;
+        RefPtr<NotificationCenter> m_notificationCenter;
         
         EventTargetData m_eventTargetData;
 
