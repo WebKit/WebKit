@@ -1,3 +1,15 @@
+2010-08-20  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [REGRESSION] r65608 broke gtk distcheck
+        https://bugs.webkit.org/show_bug.cgi?id=44333
+
+        Define the inspector.html as a noinst_DATA intead of using the dir
+        suffix, which is used for installation.
+
+        * GNUmakefile.am:
+
 2010-08-19  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

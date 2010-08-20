@@ -4636,9 +4636,8 @@ dist_webinspectorimages_DATA = \
 	$(shell ls $(WebCore)/inspector/front-end/Images/*.gif) \
 	$(shell ls $(WebCore)/inspector/front-end/Images/*.png)
 
-noinst_webinspectordir = ${GENSOURCES_INSPECTOR}
-noinst_webinspector_SCRIPTS = ${GENSOURCES_INSPECTOR}/inspector.html
-${GENSOURCES_INSPECTOR}/inspector.html :
+noinst_DATA = ${GENSOURCES_INSPECTOR}/inspector.html
+${GENSOURCES_INSPECTOR}/inspector.html:
 	mkdir -p ${GENSOURCES_INSPECTOR}/images
 	cp ${dist_webinspector_DATA} ${GENSOURCES_INSPECTOR}
 	cp ${dist_webinspectorimages_DATA} ${GENSOURCES_INSPECTOR}/images
