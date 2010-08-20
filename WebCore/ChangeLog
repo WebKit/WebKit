@@ -1,3 +1,25 @@
+2010-08-20  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: discard InjectedScript reference on ScriptState when clearing injected scripts
+        https://bugs.webkit.org/show_bug.cgi?id=44328
+
+        Otherwise if the reference is not cleared we may remove InjectedScript from the
+        map on InjectedScriptHost but keep it on ScriptState and try to reuse it later.
+
+        * bindings/js/JSInjectedScriptHostCustom.cpp:
+        (WebCore::InjectedScriptHost::discardInjectedScript):
+        * bindings/v8/V8HiddenPropertyName.h:
+        * bindings/v8/custom/V8InjectedScriptHostCustom.cpp:
+        (WebCore::InjectedScriptHost::discardInjectedScript):
+        (WebCore::InjectedScriptHost::injectedScriptFor):
+        * inspector/InjectedScript.h:
+        (WebCore::InjectedScript::scriptState):
+        * inspector/InjectedScriptHost.cpp:
+        (WebCore::InjectedScriptHost::discardInjectedScripts):
+        * inspector/InjectedScriptHost.h:
+
 2010-08-20  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.

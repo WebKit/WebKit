@@ -149,6 +149,9 @@ InjectedScript InjectedScriptHost::injectedScriptForId(long id)
 
 void InjectedScriptHost::discardInjectedScripts()
 {
+    IdToInjectedScriptMap::iterator end = m_idToInjectedScript.end();
+    for (IdToInjectedScriptMap::iterator it = m_idToInjectedScript.begin(); it != end; ++it)
+        discardInjectedScript(it->second.scriptState());
     m_idToInjectedScript.clear();
 }
 

@@ -54,6 +54,7 @@ public:
 #endif
     PassRefPtr<InspectorValue> wrapForConsole(ScriptValue);
     void releaseWrapperObjectGroup(const String&);
+    ScriptState* scriptState() const { return m_injectedScriptObject.scriptState(); }
 
 private:
     friend InjectedScript InjectedScriptHost::injectedScriptFor(ScriptState*);
