@@ -1,3 +1,26 @@
+2010-08-19  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Brady Eidson.
+
+        Assertion failure when going back inside frame during onload
+        https://bugs.webkit.org/show_bug.cgi?id=44217
+
+        Adds a test that does a history.back() within the main frame during
+        onload of a child frame. If HISTORY_ALWAYS_ASYNC was set to 0, this
+        would crash the DRT with an assertion failure, since we hadn't called
+        updateForFrameLoadCompleted in the main frame yet.
+
+        (renames history-back-within-subframe to history-back-within-subframe-hash
+        to differentiate between the two otherwise similar tests)
+
+        * fast/history/history-back-within-subframe-hash-expected.txt: Renamed from LayoutTests/fast/history/history-back-within-subframe-expected.txt.
+        * fast/history/history-back-within-subframe-hash.html: Renamed from LayoutTests/fast/history/history-back-within-subframe.html.
+        * fast/history/history-back-within-subframe-url-expected.txt: Added
+        * fast/history/history-back-within-subframe-url.html: Added.
+        * fast/history/resources/history-back-within-subframe-hash-2.html: Renamed from LayoutTests/fast/history/resources/history-back-within-subframe-2.html.
+        * fast/history/resources/history-back-within-subframe-url-2.html: Added.
+        * fast/history/resources/history-back-within-subframe-url-3.html: Added.
+
 2010-08-19  Kenichi Ishibashi  <bashi@google.com>
 
         Reviewed by Kent Tamura.

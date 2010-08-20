@@ -480,6 +480,22 @@ void HistoryItem::clearChildren()
     m_children.clear();
 }
 
+bool HistoryItem::hasSameDocuments(HistoryItem* otherItem)
+{
+    if (documentSequenceNumber() != otherItem->documentSequenceNumber())
+        return false;
+        
+    if (children().size() != otherItem->children().size())
+        return false;
+    
+    for (size_t i = 0; i < children().size(); i++) {
+        if (!children()[i]->hasSameDocuments(otherItem->children()[i].get()))
+            return false;
+    }
+    
+    return true;
+}
+
 String HistoryItem::formContentType() const
 {
     return m_formContentType;

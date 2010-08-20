@@ -1,3 +1,24 @@
+2010-08-19  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Brady Eidson.
+
+        Assertion failure when going back inside frame during onload
+        https://bugs.webkit.org/show_bug.cgi?id=44217
+
+        Fix assertion failure when doing a history.back() within the main frame
+        during onload of a child frame. This would happen when
+        HISTORY_ALWAYS_ASYNC was set to 0, because we would only compare the
+        current frame document sequence numbers when determining if we're in the
+        same document, instead of also recursing over child frames.
+
+        Test: fast/history/history-back-within-subframe-hash.html
+
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::hasSameDocuments):
+        * history/HistoryItem.h:
+        * loader/RedirectScheduler.cpp:
+        (WebCore::RedirectScheduler::scheduleHistoryNavigation):
+
 2010-08-19  Balazs Kelemen  <kb@inf.u-szeged.hu>
 
         Reviewed by Antonio Gomes.

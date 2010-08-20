@@ -159,6 +159,8 @@ public:
     const HistoryItemVector& children() const;
     bool hasChildren() const;
     void clearChildren();
+    
+    bool hasSameDocuments(HistoryItem* otherItem);
 
     // This should not be called directly for HistoryItems that are already included
     // in GlobalHistory. The WebKit api for this is to use -[WebHistory setLastVisitedTimeInterval:forItem:] instead.
