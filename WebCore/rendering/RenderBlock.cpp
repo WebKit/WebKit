@@ -1257,8 +1257,8 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
         int repaintRight = max(rightVisualOverflow(), rightLayoutOverflow());
         IntRect repaintRect(repaintLeft, repaintTop, repaintRight - repaintLeft, repaintBottom - repaintTop);
 
-        // FIXME: Deal with multiple column repainting.  We have to split the repaint
-        // rect up into multiple rects if it spans columns.
+        // The repaint rect may be split across columns, in which case adjustRectForColumns() will return the union.
+        adjustRectForColumns(repaintRect);
 
         repaintRect.inflate(maximalOutlineSize(PaintPhaseOutline));
         
