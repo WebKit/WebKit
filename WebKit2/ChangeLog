@@ -1,3 +1,20 @@
+2010-08-20  Balazs Kelemen  <kb@inf.u-szeged.hu>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] Implement cursor change in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=44263
+
+        Implemented PageClient::setCursor.
+        * UIProcess/API/qt/qgraphicswkview.cpp: Added updateCursor slot to be connected to the QWKPage::setCursor signal.
+        (QGraphicsWKView::QGraphicsWKView):
+        (QGraphicsWKView::updateCursor): Sets the cursor of the widget.
+        * UIProcess/API/qt/qgraphicswkview.h:
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPagePrivate::setCursor): Added implementation for PageClient::setCursor. Emitting singal through the QWKPage.
+        * UIProcess/API/qt/qwkpage.h: Added setCursor signal.
+        * UIProcess/API/qt/qwkpage_p.h:
+
 2010-08-19  David Kilzer  <ddkilzer@apple.com>
 
         BUILD FIX: Fix Mac build after Windows WebKit2 changes for Netscape Plug-ins

@@ -7,6 +7,10 @@
 #include <QGraphicsWidget>
 #include "qwkpage.h"
 
+QT_BEGIN_NAMESPACE
+class QCursor;
+QT_END_NAMESPACE
+
 class QGraphicsWKViewPrivate;
 
 WKStringRef WKStringCreateWithQString(QString qString);
@@ -68,6 +72,8 @@ protected:
     virtual void wheelEvent(QGraphicsSceneWheelEvent*);
 
     virtual void hoverMoveEvent(QGraphicsSceneHoverEvent*);
+
+    Q_SLOT void updateCursor(const QCursor&);
 
 private:
     QGraphicsWKViewPrivate* d;

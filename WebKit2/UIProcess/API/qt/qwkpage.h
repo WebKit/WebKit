@@ -12,6 +12,7 @@
 #include <WebKit2/WKPage.h>
 #include <WebKit2/WKPageNamespace.h>
 
+class QCursor;
 class QWKGraphicsWidget;
 class QWKPagePrivate;
 
@@ -60,6 +61,7 @@ public:
     Q_SIGNAL void initialLayoutCompleted();
     Q_SIGNAL void urlChanged(const QUrl&);
     Q_SIGNAL void contentsSizeChanged(const QSize&);
+    Q_SIGNAL void cursorChanged(const QCursor&);
 
 protected:
     void timerEvent(QTimerEvent*);

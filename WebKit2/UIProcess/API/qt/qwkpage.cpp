@@ -56,6 +56,13 @@ void QWKPagePrivate::init(const QSize& viewportSize, DrawingAreaProxy* proxy)
     page->initializeWebPage(IntSize(viewportSize), proxy);
 }
 
+void QWKPagePrivate::setCursor(const WebCore::Cursor& cursor)
+{
+#ifndef QT_NO_CURSOR
+    emit q->cursorChanged(*cursor.platformCursor());
+#endif
+}
+
 void QWKPagePrivate::toolTipChanged(const String&, const String& newTooltip)
 {
     emit q->statusBarMessage(QString(newTooltip));

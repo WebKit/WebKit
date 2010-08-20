@@ -47,7 +47,7 @@ public:
 #endif // USE(ACCELERATED_COMPOSITING)
     virtual void processDidExit() { }
     virtual void processDidRevive() { }
-    virtual void setCursor(const WebCore::Cursor&) { }
+    virtual void setCursor(const WebCore::Cursor&);
     virtual void takeFocus(bool direction) { }
     virtual void toolTipChanged(const WTF::String&, const WTF::String&);
 
