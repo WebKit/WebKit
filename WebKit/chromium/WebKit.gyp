@@ -426,6 +426,8 @@
                 'src/WebEntities.h',
                 'src/WebFileChooserCompletionImpl.cpp',
                 'src/WebFileChooserCompletionImpl.h',
+                'src/WebFileSystemCallbacksImpl.cpp',
+                'src/WebFileSystemCallbacksImpl.h',
                 'src/WebFontCache.cpp',
                 'src/WebFontDescription.cpp',
                 'src/WebFontImpl.cpp',
