@@ -1,3 +1,15 @@
+2010-08-20  Ademar de Souza Reis Jr  <ademar.reis@openbossa.org>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Enable some http/ tests which are passing for some time
+        https://bugs.webkit.org/show_bug.cgi?id=44366
+
+        These are reported as "passing, require confirmation on bot". Some of them
+        fail on my machines, so I'm enabling only the ones which pass.
+
+        * platform/qt/Skipped: enable several http tests
+
 2010-08-20  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Adam Barth.

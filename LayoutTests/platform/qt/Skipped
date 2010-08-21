@@ -109,17 +109,7 @@ fast/text/hyphens.html
 #       Passing HTTP tests - require confirmation on bot.                     #
 # =========================================================================== #
 
-http/tests/cache/subresource-failover-to-network.html
-
-http/tests/security/host-compare-case-insensitive.html
-http/tests/security/xss-DENIED-xsl-document-redirect.xml
 http/tests/security/cross-frame-access-put.html
-http/tests/security/aboutBlank/security-context-alias.html
-http/tests/security/aboutBlank/security-context-window-open.html
-http/tests/security/aboutBlank/xss-DENIED-navigate-opener-javascript-url.html
-http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html
-http/tests/security/frameNavigation/xss-DENIED-targeted-link-navigation.html
-
 http/tests/misc/isindex-with-no-form-base-href.html
 http/tests/misc/isindex-with-no-form.html
 http/tests/misc/timer-vs-loading.html
@@ -129,19 +119,11 @@ http/tests/appcache/auth.html
 # Our expected results are out-of-date - need to be updated first.
 http/tests/loading/bad-scheme-subframe.html
 
-http/tests/navigation/metaredirect-subframeload.html
 http/tests/navigation/onload-navigation-iframe-2.html
 http/tests/navigation/onload-navigation-iframe-timeout.html
 http/tests/navigation/onload-navigation-iframe.html
-http/tests/navigation/success200-frames-loadsame.html
-http/tests/navigation/success200-frames.html
-http/tests/navigation/success200-subframeload.html
-http/tests/navigation/timerredirect-subframeload.html
-http/tests/navigation/back-to-slow-frame.html
-http/tests/navigation/javascriptlink-subframeload.html
 http/tests/navigation/lockedhistory-iframe.html
 
-http/tests/loading/gmail-assert-on-load.html
 
 # =========================================================================== #
 #       Failing HTTP tests.                                                   #
