@@ -45,7 +45,7 @@ public:
             item->deref();
     }
 
-    static WebCore::HistoryItem* core(QWebHistoryItem* q);
+    static WebCore::HistoryItem* core(const QWebHistoryItem* q);
 
     WebCore::HistoryItem* item;
 };

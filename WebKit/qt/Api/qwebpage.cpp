@@ -322,7 +322,7 @@ QWebPagePrivate::~QWebPagePrivate()
 #endif
 }
 
-WebCore::Page* QWebPagePrivate::core(QWebPage* page)
+WebCore::Page* QWebPagePrivate::core(const QWebPage* page)
 {
     return page->d->page;
 }

@@ -554,7 +554,7 @@ QWebPagePrivate* QWebHistoryPrivate::page()
     return QWebFramePrivate::kit(static_cast<WebCore::BackForwardListImpl*>(lst)->page()->mainFrame())->page()->handle();
 }
 
-WebCore::HistoryItem* QWebHistoryItemPrivate::core(QWebHistoryItem* q)
+WebCore::HistoryItem* QWebHistoryItemPrivate::core(const QWebHistoryItem* q)
 {
     return q->d->item;
 }

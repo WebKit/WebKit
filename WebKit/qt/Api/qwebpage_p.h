@@ -72,7 +72,7 @@ public:
     QWebPagePrivate(QWebPage*);
     ~QWebPagePrivate();
 
-    static WebCore::Page* core(QWebPage*);
+    static WebCore::Page* core(const QWebPage*);
     static QWebPagePrivate* priv(QWebPage*);
 
     void createMainFrame();
