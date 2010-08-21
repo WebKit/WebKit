@@ -1,3 +1,7 @@
+2010-08-20  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Unreviewed; build fix for chromium (and remove duplicated ChangeLog entry).
+
 2010-08-20  James Robinson  <jamesr@chromium.org>
 
         Synchronize default of use_accelerated_compositing gyp variable with downstream.  Unreviewed.
@@ -12,16 +16,6 @@
         https://bugs.webkit.org/show_bug.cgi?id=44350
 
         Add WebFileSystemCallbacks that calls back the WebCore's implementation.
-
-        * WebKit.gyp:
-        * src/WebFileSystemCallbacksImpl.cpp: Added.
-        * src/WebFileSystemCallbacksImpl.h: Added.
-
-2010-08-20  Kinuko Yasuda  <kinuko@chromium.org>
-
-        Reviewed by Darin Fisher.
-
-        Add chromium-side callback implementation for FileSystem API.
 
         * WebKit.gyp:
         * src/WebFileSystemCallbacksImpl.cpp: Added.

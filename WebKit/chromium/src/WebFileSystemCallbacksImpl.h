@@ -42,7 +42,8 @@ class FileSystemCallbacksBase;
 
 namespace WebKit {
 
-class WebFileInfo;
+struct WebFileInfo;
+class WebFileSystemEntry;
 class WebString;
 
 class WebFileSystemCallbacksImpl : public WebFileSystemCallbacks {
@@ -52,7 +53,7 @@ public:
 
     virtual void didSucceed();
     virtual void didReadMetadata(const WebFileInfo& info);
-    virtual void didReadDirectory(const WebVector<WebFileEntry>& entries, bool hasMore);
+    virtual void didReadDirectory(const WebVector<WebFileSystemEntry>& entries, bool hasMore);
     virtual void didOpenFileSystem(const WebString& name, const WebString& rootPath);
     virtual void didFail(WebFileError error);
 
