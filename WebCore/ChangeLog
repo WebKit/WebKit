@@ -1,3 +1,7 @@
+2010-08-20  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Unreviewed; build fix.  Had included wrong version of build file.
+
 2010-08-20  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Joseph Pecoraro.
