@@ -94,7 +94,7 @@
         }],
       ],
 
-      'use_accelerated_compositing%': 0,
+      'use_accelerated_compositing%': 1,
       'enable_svg%': 1,
     },
 
