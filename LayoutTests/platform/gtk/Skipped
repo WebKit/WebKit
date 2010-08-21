@@ -5919,8 +5919,3 @@ perf/
 # https://bugs.webkit.org/show_bug.cgi?id=44316
 platform/gtk/accessibility/object-attributes.html
 platform/gtk/accessibility/title-and-alt.html
-
-# [GTK] Inspector extensions tests fail on GTK+ bots because onSelectionChanged is missing
-# https://bugs.webkit.org/show_bug.cgi?id=44342
-inspector/extensions-api.html
-inspector/extensions.html

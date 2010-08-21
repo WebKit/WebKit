@@ -4531,8 +4531,8 @@ DerivedSources/WebCore/XMLNSNames.cpp DerivedSources/WebCore/XMLNSNames.h: $(Web
 DerivedSources/WebCore/XMLNames.cpp DerivedSources/WebCore/XMLNames.h: $(WebCore)/dom/make_names.pl $(WebCore)/xml/xmlattrs.in
 	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --attrs $(WebCore)/xml/xmlattrs.in --outputDir "$(GENSOURCES_WEBCORE)"
 
-# RemoteInspectorFrontend and InspectorBackendDispatcher
-DerivedSources/WebCore/RemoteInspectorFrontend.cpp DerivedSources/WebCore/RemoteInspectorFrontend.h DerivedSources/WebCore/InspectorBackendDispatcher.cpp DerivedSources/WebCore/InspectorBackendDispatcher.h: $(WebCore)/inspector/Inspector.idl $(SCRIPTS_BINDINGS) $(WebCore)/inspector/CodeGeneratorInspector.pm
+# All Web Inspector generated files are created with this one call to CodeGeneratorInspector.pm
+DerivedSources/WebCore/RemoteInspectorFrontend.cpp DerivedSources/WebCore/RemoteInspectorFrontend.h DerivedSources/WebCore/InspectorBackendDispatcher.cpp DerivedSources/WebCore/InspectorBackendDispatcher.h DerivedSources/WebCore/InspectorBackendStub.js: $(WebCore)/inspector/Inspector.idl $(SCRIPTS_BINDINGS) $(WebCore)/inspector/CodeGeneratorInspector.pm
 	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts -I$(WebCore)/inspector $(WebCore)/bindings/scripts/generate-bindings.pl $(IDL_PATH:%=--include "%") --outputDir "$(GENSOURCES_WEBCORE)" --defines "LANGUAGE_JAVASCRIPT=1 $(FEATURE_DEFINES)" --generator Inspector $<
 
 IDL_PATH := \
@@ -4639,8 +4639,15 @@ dist_webinspectorimages_DATA = \
 	$(shell ls $(WebCore)/inspector/front-end/Images/*.gif) \
 	$(shell ls $(WebCore)/inspector/front-end/Images/*.png)
 
+# It seems that $(shell) does not expand when it is a rule dependency, so
+# we must redefine this list of copied files with traditional dependency wildcards.
 noinst_DATA = ${GENSOURCES_INSPECTOR}/inspector.html
-${GENSOURCES_INSPECTOR}/inspector.html:
+${GENSOURCES_INSPECTOR}/inspector.html: $(WebCore)/inspector/front-end/*.html \
+		$(WebCore)/inspector/front-end/*.js \
+		$(WebCore)/inspector/front-end/*.css \
+		$(WebCore)/inspector/front-end/Images/* \
+		DerivedSources/WebCore/InspectorBackendStub.js \
+		$(WebCore)/English.lproj/localizedStrings.js
 	mkdir -p ${GENSOURCES_INSPECTOR}/images
 	cp ${dist_webinspector_DATA} ${GENSOURCES_INSPECTOR}
 	cp ${dist_webinspectorimages_DATA} ${GENSOURCES_INSPECTOR}/images
