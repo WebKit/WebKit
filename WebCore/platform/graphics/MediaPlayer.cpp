@@ -291,12 +291,15 @@ void MediaPlayer::load(const String& url, const ContentType& contentType)
     if (!type.isEmpty())
         engine = chooseBestEngineForTypeAndCodecs(type, typeCodecs);
 
-    // if we didn't find an engine that claims the MIME type, just use the first engine
-    if (!engine && !installedMediaEngines().isEmpty())
+    // If we didn't find an engine and no MIME type is specified, just use the first engine.
+    if (!engine && type.isEmpty() && !installedMediaEngines().isEmpty())
         engine = installedMediaEngines()[0];
     
-    // don't delete and recreate the player unless it comes from a different engine
-    if (engine && m_currentMediaEngine != engine) {
+    // Don't delete and recreate the player unless it comes from a different engine
+    if (!engine) {
+        m_currentMediaEngine = engine;
+        m_private.clear();
+    } else if (m_currentMediaEngine != engine) {
         m_currentMediaEngine = engine;
         m_private.clear();
         m_private.set(engine->constructor(this));

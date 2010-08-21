@@ -1,3 +1,14 @@
+2010-08-21  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Media engine should not be asked to open all urls
+        https://bugs.webkit.org/show_bug.cgi?id=44370
+
+        * media/video-source-none-supported-expected.txt:
+        * media/video-source-none-supported.html:
+        * media/video-source-type.html:
+
 2010-08-21  Ademar de Souza Reis Jr  <ademar.reis@openbossa.org>
 
         Reviewed by Ariya Hidayat.

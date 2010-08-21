@@ -1,3 +1,14 @@
+2010-08-21  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Media engine should not be asked to open all urls
+        https://bugs.webkit.org/show_bug.cgi?id=44370
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::load): Do nothing with urls with a type attribute that would be
+        rejected by canPlayType().
+
 2010-08-21  Ariya Hidayat  <ariya@sencha.com>
 
         Reviewed by Kenneth Rohde Christiansen.
