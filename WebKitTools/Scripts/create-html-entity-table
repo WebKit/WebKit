@@ -73,7 +73,7 @@ html_entity_names_file = open(input_path)
 entries = simplejson.load(html_entity_names_file)
 html_entity_names_file.close()
 
-entries = sorted(entries, key=lambda entry: entry['entity'])
+entries.sort(lambda a, b: cmp(a['entity'], b['entity']))
 entity_count = len(entries)
 
 output_file = open(output_path, "w")
