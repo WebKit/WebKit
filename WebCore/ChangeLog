@@ -1,3 +1,15 @@
+2010-08-20  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38428
+        HTTP code 500 (and other non-4xx codes) wrongfully treated as success for subresources
+
+        Test: http/tests/misc/script-500.html
+
+        * loader/loader.cpp: (WebCore::Loader::Host::didReceiveData): Treat all HTTP codes >= 400 as
+        error ones, since they are.
+
 2010-08-20  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Adam Barth.
