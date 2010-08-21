@@ -184,12 +184,14 @@ http/tests/security/xssAuditor/embed-tag-null-char.html
 http/tests/security/xssAuditor/object-embed-tag-null-char.html
 
 # Disabled HTTP subdirs for now, needs investigation.
-http/tests/incremental
 http/tests/media
 http/tests/wml
 
 # not utf8-encoding urls as expected
 http/tests/uri/escaped-entity.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=44282
+http/tests/incremental/slow-utf8-text.pl
 
 # webkit.org/b/41571
 http/tests/loading/redirect-methods.html
@@ -5440,3 +5442,4 @@ perf/
 
 # BlodBuilder is not enabled
 http/tests/local/blob/send-data-blob.html
+

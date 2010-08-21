@@ -2,6 +2,15 @@
 
         Reviewed by Ariya Hidayat.
 
+        [Qt] http/tests/incremental should be enabled
+        https://bugs.webkit.org/show_bug.cgi?id=44284
+
+        * platform/qt/Skipped: Enable http/tests/incremental, disabling only one failing test (#44282)
+
+2010-08-21  Ademar de Souza Reis Jr  <ademar.reis@openbossa.org>
+
+        Reviewed by Ariya Hidayat.
+
         [Qt] All sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/ tests can be re-enabled
         https://bugs.webkit.org/show_bug.cgi?id=44192
 
