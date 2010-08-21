@@ -267,6 +267,8 @@ public:
     // addChild is tied into the logic of the LegacyHTMLTreeBuilder.  We need
     // a "clean" version to use for the HTML5 version of the HTMLTreeBuilder.
     virtual void parserAddChild(PassRefPtr<Node>);
+    virtual void parserRemoveChild(PassRefPtr<Node>);
+    virtual void parserInsertBefore(PassRefPtr<Node> newChild, Node* nextChild);
 
     // Called by the parser when this element's close tag is reached,
     // signaling that all child tags have been parsed and added.

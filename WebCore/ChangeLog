@@ -1,3 +1,33 @@
+2010-08-20  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Crash in WebCore::Node::createRendererIfNeeded()
+        https://bugs.webkit.org/show_bug.cgi?id=44129
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::insertBefore): Factor out core bit to insertBetween.
+        (WebCore::ContainerNode::insertBetween): Factored out of insertBefore.
+        (WebCore::ContainerNode::parserInsertBefore): Similar to insertBefore, but doesn't handle reparenting or dispatch DOM mutation events.
+        (WebCore::ContainerNode::removeChild): Factor out core bit to removeBetween.
+        (WebCore::ContainerNode::removeBetween): Facotred out of removeChild.
+        (WebCore::ContainerNode::parserRemoveChild): Similar to removeChild, but doesn't handle reparenting or dispatch DOM mutation events.
+        (WebCore::ContainerNode::addChildCommon):
+        (WebCore::ContainerNode::parserAddChild):
+        (WebCore::ContainerNode::legacyParserAddChild):
+        * dom/ContainerNode.h:
+        * dom/Node.cpp:
+        (WebCore::Node::parserRemoveChild):
+        (WebCore::Node::parserInsertBefore):
+        * dom/Node.h:
+        * html/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::attach):
+        (WebCore::HTMLConstructionSite::attachAtSite): Use new parserInsertBefore.
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::passTokenToLegacyParser):
+        (WebCore::HTMLTreeBuilder::reparentChildren):
+        (WebCore::HTMLTreeBuilder::callTheAdoptionAgency): Was missing a key bit from the spec about removing the old parent if it exists.
+
 2010-08-20  Kinuko Yasuda  <kinuko@chromium.org>
 
         Unreviewed; build fix.  Had included wrong version of build file.

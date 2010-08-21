@@ -134,31 +134,12 @@ bool ContainerNode::insertBefore(PassRefPtr<Node> newChild, Node* refChild, Exce
         if (child->parentNode())
             break;
 
-        ASSERT(!child->nextSibling());
-        ASSERT(!child->previousSibling());
-
-        // Add child before "next".
-        forbidEventDispatch();
-        Node* prev = next->previousSibling();
-        ASSERT(m_lastChild != prev);
-        next->setPreviousSibling(child);
-        if (prev) {
-            ASSERT(m_firstChild != next);
-            ASSERT(prev->nextSibling() == next);
-            prev->setNextSibling(child);
-        } else {
-            ASSERT(m_firstChild == next);
-            m_firstChild = child;
-        }
-        child->setParent(this);
-        child->setPreviousSibling(prev);
-        child->setNextSibling(next.get());
-        allowEventDispatch();
+        insertBeforeCommon(next.get(), child);
 
         // Send notification about the children change.
         childrenChanged(false, refChildPreviousSibling.get(), next.get(), 1);
         notifyChildInserted(child);
-                
+
         // Add child to the rendering tree.
         if (attached() && !child->attached() && child->parent() == this) {
             if (shouldLazyAttach)
@@ -174,6 +155,57 @@ bool ContainerNode::insertBefore(PassRefPtr<Node> newChild, Node* refChild, Exce
 
     dispatchSubtreeModifiedEvent();
     return true;
+}
+
+void ContainerNode::insertBeforeCommon(Node* nextChild, Node* newChild)
+{
+    ASSERT(newChild);
+    ASSERT(!newChild->parent()); // Use insertBefore if you need to handle reparenting (and want DOM mutation events).
+    ASSERT(!newChild->nextSibling());
+    ASSERT(!newChild->previousSibling());
+
+    forbidEventDispatch();
+    Node* prev = nextChild->previousSibling();
+    ASSERT(m_lastChild != prev);
+    nextChild->setPreviousSibling(newChild);
+    if (prev) {
+        ASSERT(m_firstChild != nextChild);
+        ASSERT(prev->nextSibling() == nextChild);
+        prev->setNextSibling(newChild);
+    } else {
+        ASSERT(m_firstChild == nextChild);
+        m_firstChild = newChild;
+    }
+    newChild->setParent(this);
+    newChild->setPreviousSibling(prev);
+    newChild->setNextSibling(nextChild);
+    allowEventDispatch();
+}
+
+void ContainerNode::parserInsertBefore(PassRefPtr<Node> newChild, Node* nextChild)
+{
+    ASSERT(newChild);
+    ASSERT(nextChild);
+    ASSERT(nextChild->parentNode() == this);
+
+    NodeVector targets;
+    collectTargetNodes(newChild.get(), targets);
+    if (targets.isEmpty())
+        return;
+
+    if (nextChild->previousSibling() == newChild || nextChild == newChild) // nothing to do
+        return;
+
+    RefPtr<Node> next = nextChild;
+    RefPtr<Node> nextChildPreviousSibling = nextChild->previousSibling();
+    for (NodeVector::const_iterator it = targets.begin(); it != targets.end(); ++it) {
+        Node* child = it->get();
+
+        insertBeforeCommon(next.get(), child);
+
+        childrenChanged(true, nextChildPreviousSibling.get(), nextChild, 1);
+        notifyChildInserted(child);
+    }
 }
 
 bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, ExceptionCode& ec, bool shouldLazyAttach)
@@ -367,31 +399,9 @@ bool ContainerNode::removeChild(Node* oldChild, ExceptionCode& ec)
     // that no callers call with ref count == 0 and parent = 0 (as of this
     // writing, there are definitely callers who call that way).
 
-    forbidEventDispatch();
-
-    // Remove from rendering tree
-    if (child->attached())
-        child->detach();
-
-    // Remove the child
-    Node *prev, *next;
-    prev = child->previousSibling();
-    next = child->nextSibling();
-
-    if (next)
-        next->setPreviousSibling(prev);
-    if (prev)
-        prev->setNextSibling(next);
-    if (m_firstChild == child)
-        m_firstChild = next;
-    if (m_lastChild == child)
-        m_lastChild = prev;
-
-    child->setPreviousSibling(0);
-    child->setNextSibling(0);
-    child->setParent(0);
-
-    allowEventDispatch();
+    Node* prev = child->previousSibling();
+    Node* next = child->nextSibling();
+    removeBetween(prev, next, child.get());
 
     // Dispatch post-removal mutation events
     childrenChanged(false, prev, next, -1);
@@ -403,6 +413,50 @@ bool ContainerNode::removeChild(Node* oldChild, ExceptionCode& ec)
         child->removedFromTree(true);
 
     return child;
+}
+
+void ContainerNode::removeBetween(Node* previousChild, Node* nextChild, Node* oldChild)
+{
+    ASSERT(oldChild);
+    ASSERT(oldChild->parentNode() == this);
+
+    forbidEventDispatch();
+
+    // Remove from rendering tree
+    if (oldChild->attached())
+        oldChild->detach();
+
+    if (nextChild)
+        nextChild->setPreviousSibling(previousChild);
+    if (previousChild)
+        previousChild->setNextSibling(nextChild);
+    if (m_firstChild == oldChild)
+        m_firstChild = nextChild;
+    if (m_lastChild == oldChild)
+        m_lastChild = previousChild;
+
+    oldChild->setPreviousSibling(0);
+    oldChild->setNextSibling(0);
+    oldChild->setParent(0);
+
+    allowEventDispatch();
+}
+
+void ContainerNode::parserRemoveChild(Node* oldChild)
+{
+    ASSERT(oldChild);
+    ASSERT(oldChild->parentNode() == this);
+
+    Node* prev = oldChild->previousSibling();
+    Node* next = oldChild->nextSibling();
+
+    removeBetween(prev, next, oldChild);
+
+    childrenChanged(true, prev, next, -1);
+    if (oldChild->inDocument())
+        oldChild->removedFromDocument();
+    else
+        oldChild->removedFromTree(true);
 }
 
 // this differs from other remove functions because it forcibly removes all the children,
@@ -536,13 +590,16 @@ bool ContainerNode::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec, bo
 
 void ContainerNode::addChildCommon(Node* newChild)
 {
-    ASSERT(!newChild->parent()); // Use appendChild if you need to handle reparenting.
+    ASSERT(newChild);
+    ASSERT(!newChild->parent()); // Use appendChild if you need to handle reparenting (and want DOM mutation events).
+
     forbidEventDispatch();
     Node* last = m_lastChild;
     // FIXME: This method should take a PassRefPtr.
     appendChildToContainer<Node, ContainerNode>(newChild, this);
     allowEventDispatch();
 
+    // FIXME: Why doesn't this use notifyChildInserted(newChild) instead?
     document()->incDOMTreeVersion();
     if (inDocument())
         newChild->insertedIntoDocument();
@@ -552,17 +609,12 @@ void ContainerNode::addChildCommon(Node* newChild)
 void ContainerNode::parserAddChild(PassRefPtr<Node> newChild)
 {
     ASSERT(newChild);
-    // This function is only used during parsing.
-    // It does not send any DOM mutation events or handle reparenting.
-
     addChildCommon(newChild.get());
 }
 
 ContainerNode* ContainerNode::legacyParserAddChild(PassRefPtr<Node> newChild)
 {
     ASSERT(newChild);
-    // This function is only used during parsing.
-    // It does not send any DOM mutation events.
 
     // Check for consistency with DTD, but only when parsing HTML.
     if (document()->isHTMLDocument() && !childAllowed(newChild.get()))

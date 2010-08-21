@@ -181,3 +181,17 @@
 |         <tr>
 |           <td>
 |             "B"
+
+#data
+<a><svg><tr><input></a>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <a>
+|       <svg svg>
+|     <svg tr>
+|       <a>
+|   <svg input>
+|     <a>

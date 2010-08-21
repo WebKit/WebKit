@@ -202,7 +202,7 @@ resources/comments01.dat: PASS
 resources/adoption01.dat:
 12
 
-Test 12 of 12 in resources/adoption01.dat failed. Input:
+Test 12 of 13 in resources/adoption01.dat failed. Input:
 <table>A<td>B</td>C</table>
 Got:
 | <html>

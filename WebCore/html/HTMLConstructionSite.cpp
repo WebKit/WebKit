@@ -92,7 +92,7 @@ PassRefPtr<ChildType> HTMLConstructionSite::attach(Node* parent, PassRefPtr<Chil
     // doesn't.  It feels like we're missing a concept somehow.
     if (shouldFosterParent()) {
         fosterParent(child.get());
-        ASSERT(child->attached() || !child->parent()->attached());
+        ASSERT(child->attached() || !child->parent() || !child->parent()->attached());
         return child.release();
     }
 
@@ -118,10 +118,7 @@ void HTMLConstructionSite::attachAtSite(const AttachmentSite& site, PassRefPtr<N
     RefPtr<Node> child = prpChild;
 
     if (site.nextChild) {
-        // FIXME: We need an insertElement which does not send mutation events.
-        ExceptionCode ec = 0;
-        site.parent->insertBefore(child, site.nextChild, ec);
-        ASSERT(!ec);
+        site.parent->parserInsertBefore(child, site.nextChild);
         if (site.parent->attached() && !child->attached())
             child->attach();
         return;
