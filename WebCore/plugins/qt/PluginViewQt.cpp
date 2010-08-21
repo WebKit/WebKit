@@ -171,27 +171,49 @@ void PluginView::hide()
 #if defined(MOZ_PLATFORM_MAEMO) && (MOZ_PLATFORM_MAEMO == 5)
 void PluginView::paintUsingImageSurfaceExtension(QPainter* painter, const IntRect& exposedRect)
 {
-    if (m_isTransparent) {
-        // On Maemo5, Flash expects the buffer to contain the contents that are below it.
-        // We don't support transparency, so clean the image before giving to Flash.
-        QPainter imagePainter(&m_image);
-        imagePainter.fillRect(exposedRect, Qt::white);
-    }
-
     NPImageExpose imageExpose;
-    imageExpose.data = reinterpret_cast<char*>(m_image.bits());
-    imageExpose.stride = m_image.bytesPerLine();
-    imageExpose.depth = m_image.depth();
+    QPoint offset;
+    QWebPageClient* client = m_parentFrame->view()->hostWindow()->platformPageClient();
+    const bool surfaceHasUntransformedContents = client && qobject_cast<QWidget*>(client->pluginParent());
+
+    QPaintDevice* surface =  QPainter::redirected(painter->device(), &offset);
+
+    // If the surface is a QImage, we can render directly into it
+    if (surfaceHasUntransformedContents && surface && surface->devType() == QInternal::Image) {
+        QImage* image = static_cast<QImage*>(surface);
+        offset = -offset; // negating the offset gives us the offset of the view within the surface
+        imageExpose.data = reinterpret_cast<char*>(image->bits());
+        imageExpose.dataSize.width = image->width();
+        imageExpose.dataSize.height = image->height();
+        imageExpose.stride = image->bytesPerLine();
+        imageExpose.depth = image->depth(); // this is guaranteed to be 16 on Maemo5
+        imageExpose.translateX = offset.x() + m_windowRect.x();
+        imageExpose.translateY = offset.y() + m_windowRect.y();
+        imageExpose.scaleX = 1;
+        imageExpose.scaleY = 1;
+    } else {
+        if (m_isTransparent) {
+            // On Maemo5, Flash expects the buffer to contain the contents that are below it.
+            // We don't support transparency for non-raster graphicssystem, so clean the image 
+            // before giving to Flash.
+            QPainter imagePainter(&m_image);
+            imagePainter.fillRect(exposedRect, Qt::white);
+        }
+
+        imageExpose.data = reinterpret_cast<char*>(m_image.bits());
+        imageExpose.dataSize.width = m_image.width();
+        imageExpose.dataSize.height = m_image.height();
+        imageExpose.stride = m_image.bytesPerLine();
+        imageExpose.depth = m_image.depth();
+        imageExpose.translateX = 0;
+        imageExpose.translateY = 0;
+        imageExpose.scaleX = 1;
+        imageExpose.scaleY = 1;
+    }
     imageExpose.x = exposedRect.x();
     imageExpose.y = exposedRect.y();
     imageExpose.width = exposedRect.width();
     imageExpose.height = exposedRect.height();
-    imageExpose.dataSize.width = m_image.width();
-    imageExpose.dataSize.height = m_image.height();
-    imageExpose.translateX = 0;
-    imageExpose.translateY = 0;
-    imageExpose.scaleX = 1;
-    imageExpose.scaleY = 1;
 
     XEvent xevent;
     memset(&xevent, 0, sizeof(XEvent));
@@ -206,7 +228,8 @@ void PluginView::paintUsingImageSurfaceExtension(QPainter* painter, const IntRec
 
     dispatchNPEvent(xevent);
 
-    painter->drawImage(QPoint(frameRect().x() + exposedRect.x(), frameRect().y() + exposedRect.y()), m_image, exposedRect);
+    if (!surfaceHasUntransformedContents || !surface || surface->devType() != QInternal::Image)
+        painter->drawImage(QPoint(frameRect().x() + exposedRect.x(), frameRect().y() + exposedRect.y()), m_image, exposedRect);
 }
 #endif
 

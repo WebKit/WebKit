@@ -1,3 +1,16 @@
+2010-08-20  Girish Ramakrishnan  <girish@forwardbias.in>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] When using the raster graphics system on Maemo5, allow
+        Flash to render directly into the raster window surface.
+        wmode=transparent is now supported as a result of this change.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=44043
+        
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::paintUsingImageSurfaceExtension):
+
 2010-08-20  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Brady Eidson.
