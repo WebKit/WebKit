@@ -1,3 +1,13 @@
+2010-08-22  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Gradient: Support inner radius larger than outer radius
+        https://bugs.webkit.org/show_bug.cgi?id=44392
+
+        * platform/graphics/qt/GradientQt.cpp:
+        (WebCore::Gradient::platformGradient): Reverse the (radial) gradient if r0 > r1.
+
 2010-08-22  Ariya Hidayat  <ariya@sencha.com>
 
         Reviewed by Dirk Schulze.

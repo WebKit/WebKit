@@ -1,3 +1,16 @@
+2010-08-22  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Gradient: Support inner radius larger than outer radius
+        https://bugs.webkit.org/show_bug.cgi?id=44392
+
+        Unskip two tests that now pass:
+        - canvas/philip/tests/2d.gradient.radial.outside2.html
+        - canvas/philip/tests/2d.gradient.radial.outside3.html
+
+        * platform/qt/Skipped:
+
 2010-08-21  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Dan Bernstein.

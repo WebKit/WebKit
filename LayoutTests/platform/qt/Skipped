@@ -5230,8 +5230,6 @@ canvas/philip/tests/2d.gradient.radial.cone.cylinder.html
 canvas/philip/tests/2d.gradient.radial.cone.shape2.html
 canvas/philip/tests/2d.gradient.radial.cone.top.html
 canvas/philip/tests/2d.gradient.radial.negative.html
-canvas/philip/tests/2d.gradient.radial.outside2.html
-canvas/philip/tests/2d.gradient.radial.outside3.html
 canvas/philip/tests/2d.gradient.radial.touch1.html
 canvas/philip/tests/2d.gradient.radial.touch2.html
 canvas/philip/tests/2d.gradient.radial.touch3.html

@@ -46,8 +46,15 @@ QGradient* Gradient::platformGradient()
     if (m_gradient)
         return m_gradient;
 
+    bool reversed = m_r0 > m_r1;
+
+    qreal innerRadius = reversed ? m_r1 : m_r0;
+    qreal outerRadius = reversed ? m_r0 : m_r1;
+    QPointF center = reversed ? m_p0 : m_p1;
+    QPointF focalPoint = reversed ? m_p1 : m_p0;
+
     if (m_radial)
-        m_gradient = new QRadialGradient(m_p1.x(), m_p1.y(), m_r1, m_p0.x(), m_p0.y());
+        m_gradient = new QRadialGradient(center, outerRadius, focalPoint);
     else
         m_gradient = new QLinearGradient(m_p0.x(), m_p0.y(), m_p1.x(), m_p1.y());
 
@@ -65,9 +72,19 @@ QGradient* Gradient::platformGradient()
             lastStop = stopIterator->stop + lastStopDiff;
         else
             lastStop = stopIterator->stop;
-        if (m_radial && m_r0)
-            lastStop = m_r0 / m_r1 + lastStop * (1.0f - m_r0 / m_r1);
-        m_gradient->setColorAt(qMin(lastStop, qreal(1.0f)), stopColor);
+
+        if (m_radial && !qFuzzyCompare(1 + outerRadius, qreal(1))) {
+            lastStop = lastStop * (1.0f - innerRadius / outerRadius);
+            if (!reversed)
+                lastStop += innerRadius / outerRadius;
+        }
+
+        qreal stopPosition = qMin(lastStop, qreal(1.0f));
+
+        if (m_radial && reversed)
+            stopPosition = 1 - stopPosition;
+
+        m_gradient->setColorAt(stopPosition, stopColor);
         // Keep the lastStop as orginal value, since the following stopColor depend it
         lastStop = stopIterator->stop;
         ++stopIterator;
