@@ -2,6 +2,17 @@
 
         Reviewed by Ariya Hidayat.
 
+        [Qt] TransparencyLayer: Always use anti-aliasing and smooth pixmap transform
+        https://bugs.webkit.org/show_bug.cgi?id=44394
+
+        * platform/graphics/qt/TransparencyLayer.h:
+        (WebCore::TransparencyLayer::TransparencyLayer): Set the Antialiasing
+        and SmoothPixmapTransforms render hints for all TransparencyLayers.
+
+2010-08-22  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
         [Qt] Gradient: Support inner radius larger than outer radius
         https://bugs.webkit.org/show_bug.cgi?id=44392
 
