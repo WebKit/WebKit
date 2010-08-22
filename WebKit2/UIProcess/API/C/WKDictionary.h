@@ -41,13 +41,8 @@ WK_EXPORT size_t WKDictionaryGetSize(WKDictionaryRef dictionary);
 
 WK_EXPORT WKArrayRef WKDictionaryCopyKeys(WKDictionaryRef dictionary);
 
-WK_EXPORT WKDictionaryRef WKDictionaryRetain(WKDictionaryRef dictionary);
-WK_EXPORT void WKDictionaryRelease(WKDictionaryRef dictionary);
-
 #ifdef __cplusplus
 }
 #endif
-
-WK_DECLARE_RETAIN_RELEASE_OVERLOADS(WKDictionary)
 
 #endif /* WKDictionary_h */

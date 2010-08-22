@@ -41,13 +41,8 @@ WK_EXPORT WKDataRef WKDataCreate(const unsigned char* bytes, size_t size);
 WK_EXPORT const unsigned char* WKDataGetBytes(WKDataRef data);
 WK_EXPORT size_t WKDataGetSize(WKDataRef data);
 
-WK_EXPORT WKDataRef WKDataRetain(WKDataRef data);
-WK_EXPORT void WKDataRelease(WKDataRef data);
-
 #ifdef __cplusplus
 }
 #endif
-
-WK_DECLARE_RETAIN_RELEASE_OVERLOADS(WKData)
 
 #endif // WKData_h

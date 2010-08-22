@@ -209,14 +209,3 @@ void WKPageRenderTreeExternalRepresentation_b(WKPageRef pageRef, WKPageRenderTre
     WKPageRenderTreeExternalRepresentation(pageRef, Block_copy(block), callRenderTreeExternalRepresentationBlockAndDispose);
 }
 #endif
-
-WKPageRef WKPageRetain(WKPageRef pageRef)
-{
-    toWK(pageRef)->ref();
-    return pageRef;
-}
-
-void WKPageRelease(WKPageRef pageRef)
-{
-    toWK(pageRef)->deref();
-}

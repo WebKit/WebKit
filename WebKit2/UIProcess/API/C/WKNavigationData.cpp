@@ -44,14 +44,3 @@ WKURLRef WKNavigationDataCopyURL(WKNavigationDataRef navigationDataRef)
 {
     return toCopiedURLRef(toWK(navigationDataRef)->url());
 }
-
-WKNavigationDataRef WKNavigationDataRetain(WKNavigationDataRef navigationDataRef)
-{
-    toWK(navigationDataRef)->ref();
-    return navigationDataRef;
-}
-
-void WKNavigationDataRelease(WKNavigationDataRef navigationDataRef)
-{
-    toWK(navigationDataRef)->deref();
-}

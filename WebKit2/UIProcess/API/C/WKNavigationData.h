@@ -37,13 +37,8 @@ WK_EXPORT WKTypeID WKNavigationDataGetTypeID();
 WK_EXPORT WKStringRef WKNavigationDataCopyTitle(WKNavigationDataRef navigationData);
 WK_EXPORT WKURLRef WKNavigationDataCopyURL(WKNavigationDataRef navigationData);
 
-WK_EXPORT WKNavigationDataRef WKNavigationDataRetain(WKNavigationDataRef navigationData);
-WK_EXPORT void WKNavigationDataRelease(WKNavigationDataRef navigationData);
-
 #ifdef __cplusplus
 }
 #endif
-
-WK_DECLARE_RETAIN_RELEASE_OVERLOADS(WKNavigationData)
 
 #endif /* WKNavigationData_h */

@@ -1,3 +1,35 @@
+2010-08-21  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Remove specialized retain/release functions in favor of a single one for WKTypeRefs
+        https://bugs.webkit.org/show_bug.cgi?id=44386
+
+        * MiniBrowser/mac/AppDelegate.m:
+        (didRecieveMessageFromInjectedBundle):
+        (didNavigateWithNavigationData):
+        (-[BrowserAppDelegate init]):
+        (-[BrowserAppDelegate applicationWillTerminate:]):
+        * MiniBrowser/mac/BrowserStatisticsWindowController.m:
+        (-[BrowserStatisticsWindowController initWithThreadedWKContextRef:processWKContextRef:]):
+        (-[BrowserStatisticsWindowController dealloc]):
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController initWithPageNamespace:]):
+        (-[BrowserWindowController fetch:]):
+        (-[BrowserWindowController windowWillClose:]):
+        (-[BrowserWindowController applicationTerminating]):
+        (closePage):
+        (runJavaScriptAlert):
+        (runJavaScriptConfirm):
+        (runJavaScriptPrompt):
+        (-[BrowserWindowController updateProvisionalURLForFrame:]):
+        * MiniBrowser/mac/WebBundle/WebBundleMain.m:
+        (didClearWindowObjectForFrame):
+        * MiniBrowser/win/BrowserView.cpp:
+        (BrowserView::goToURL):
+        * WebKitTestRunner/win/PlatformWebViewWin.cpp:
+        (WTR::PlatformWebView::~PlatformWebView):
+
 2010-08-20  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

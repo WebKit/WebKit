@@ -38,13 +38,8 @@ WK_EXPORT WKPageNamespaceRef WKPageNamespaceCreate(WKContextRef ownerContext);
 
 WK_EXPORT WKContextRef WKPageNamespaceGetContext(WKPageNamespaceRef pageNamespace);
 
-WK_EXPORT WKPageNamespaceRef WKPageNamespaceRetain(WKPageNamespaceRef pageNamespace);
-WK_EXPORT void WKPageNamespaceRelease(WKPageNamespaceRef pageNamespace);
-
 #ifdef __cplusplus
 }
 #endif
-
-WK_DECLARE_RETAIN_RELEASE_OVERLOADS(WKPageNamespace)
 
 #endif /* WKPageNamespace_h */

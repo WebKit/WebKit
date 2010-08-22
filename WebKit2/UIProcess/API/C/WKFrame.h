@@ -52,13 +52,8 @@ WK_EXPORT WKURLRef WKFrameCopyURL(WKFrameRef frame);
 
 WK_EXPORT WKPageRef WKFrameGetPage(WKFrameRef frame);
 
-WK_EXPORT WKFrameRef WKFrameRetain(WKFrameRef frame);
-WK_EXPORT void WKFrameRelease(WKFrameRef frame);
-
 #ifdef __cplusplus
 }
 #endif
-
-WK_DECLARE_RETAIN_RELEASE_OVERLOADS(WKFrame)
 
 #endif /* WKFrame_h */

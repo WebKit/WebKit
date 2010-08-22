@@ -197,14 +197,8 @@ typedef void (^WKPageRunJavaScriptBlock)(WKStringRef, WKErrorRef);
 WK_EXPORT void WKPageRunJavaScriptInMainFrame_b(WKPageRef page, WKStringRef script, WKPageRunJavaScriptBlock block);
 #endif
 
-
-WK_EXPORT WKPageRef WKPageRetain(WKPageRef page);
-WK_EXPORT void WKPageRelease(WKPageRef page);
-
 #ifdef __cplusplus
 }
 #endif
-
-WK_DECLARE_RETAIN_RELEASE_OVERLOADS(WKPage)
 
 #endif /* WKPage_h */

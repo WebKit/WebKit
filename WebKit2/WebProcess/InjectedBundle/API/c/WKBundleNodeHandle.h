@@ -36,13 +36,8 @@ extern "C" {
 
 WK_EXPORT WKTypeID WKBundleNodeHandleGetTypeID();
 
-WK_EXPORT WKBundleNodeHandleRef WKBundleNodeHandleRetain(WKBundleNodeHandleRef nodeHandle);
-WK_EXPORT void WKBundleNodeHandleRelease(WKBundleNodeHandleRef nodeHandle);
-
 #ifdef __cplusplus
 }
 #endif
-
-WK_DECLARE_RETAIN_RELEASE_OVERLOADS(WKBundleNodeHandle)
 
 #endif /* WKBundleNodeHandle_h */

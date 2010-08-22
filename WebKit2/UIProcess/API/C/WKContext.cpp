@@ -99,17 +99,6 @@ void WKContextAddVisitedLink(WKContextRef contextRef, WKStringRef visitedURL)
     toWK(contextRef)->addVisitedLink(toWK(visitedURL)->string());
 }
 
-WKContextRef WKContextRetain(WKContextRef contextRef)
-{
-    toWK(contextRef)->ref();
-    return contextRef;
-}
-
-void WKContextRelease(WKContextRef contextRef)
-{
-    toWK(contextRef)->deref();
-}
-
 void _WKContextSetAdditionalPluginsDirectory(WKContextRef contextRef, WKStringRef pluginsDirectory)
 {
     toWK(contextRef)->setAdditionalPluginsDirectory(toWK(pluginsDirectory)->string());

@@ -42,13 +42,8 @@ WK_EXPORT WKArrayRef WKArrayCreateAdoptingValues(WKTypeRef* values, size_t numbe
 WK_EXPORT WKTypeRef WKArrayGetItemAtIndex(WKArrayRef array, size_t index);
 WK_EXPORT size_t WKArrayGetSize(WKArrayRef array);
 
-WK_EXPORT WKArrayRef WKArrayRetain(WKArrayRef array);
-WK_EXPORT void WKArrayRelease(WKArrayRef array);
-
 #ifdef __cplusplus
 }
 #endif
-
-WK_DECLARE_RETAIN_RELEASE_OVERLOADS(WKArray)
 
 #endif // WKArray_h

@@ -38,15 +38,10 @@ extern "C" {
 
 WK_EXPORT WKTypeID WKStringGetTypeID();
 
-WK_EXPORT WKStringRef WKStringRetain(WKStringRef string);
-WK_EXPORT void WKStringRelease(WKStringRef string);
-
 WK_EXPORT bool WKStringIsEmpty(WKStringRef string);
 
 #ifdef __cplusplus
 }
 #endif
-
-WK_DECLARE_RETAIN_RELEASE_OVERLOADS(WKString)
 
 #endif /* WKString_h */

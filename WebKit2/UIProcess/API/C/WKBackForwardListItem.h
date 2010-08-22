@@ -38,13 +38,8 @@ WK_EXPORT WKURLRef WKBackForwardListItemCopyOriginalURL(WKBackForwardListItemRef
 WK_EXPORT WKURLRef WKBackForwardListItemCopyURL(WKBackForwardListItemRef item);
 WK_EXPORT WKStringRef WKBackForwardListItemCopyTitle(WKBackForwardListItemRef item);
 
-WK_EXPORT WKBackForwardListItemRef WKBackForwardListItemRetain(WKBackForwardListItemRef item);
-WK_EXPORT void WKBackForwardListItemRelease(WKBackForwardListItemRef item);
-
 #ifdef __cplusplus
 }
 #endif
-
-WK_DECLARE_RETAIN_RELEASE_OVERLOADS(WKBackForwardListItem)
 
 #endif /* WKBackForwardListItem_h */

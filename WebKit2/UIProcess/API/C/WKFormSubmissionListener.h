@@ -36,13 +36,8 @@ WK_EXPORT WKTypeID WKFormSubmissionListenerGetTypeID();
 
 WK_EXPORT void WKFormSubmissionListenerContinue(WKFormSubmissionListenerRef submissionListener);
 
-WK_EXPORT WKFormSubmissionListenerRef WKFormSubmissionListenerRetain(WKFormSubmissionListenerRef submissionListener);
-WK_EXPORT void WKFormSubmissionListenerRelease(WKFormSubmissionListenerRef submissionListener);
-
 #ifdef __cplusplus
 }
 #endif
-
-WK_DECLARE_RETAIN_RELEASE_OVERLOADS(WKFormSubmissionListener)
 
 #endif /* WKFormSubmissionListener_h */

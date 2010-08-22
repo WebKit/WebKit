@@ -38,9 +38,6 @@ WK_EXPORT WKTypeID WKBundleScriptWorldGetTypeID();
 WK_EXPORT WKBundleScriptWorldRef WKBundleScriptWorldCreateWorld();
 WK_EXPORT WKBundleScriptWorldRef WKBundleScriptWorldNormalWorld();
 
-WK_EXPORT WKBundleScriptWorldRef WKBundleScriptWorldRetain(WKBundleScriptWorldRef scriptWorld);
-WK_EXPORT void WKBundleScriptWorldRelease(WKBundleScriptWorldRef scriptWorld);
-
 #ifdef __cplusplus
 }
 #endif

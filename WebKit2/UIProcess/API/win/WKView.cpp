@@ -56,17 +56,6 @@ WKPageRef WKViewGetPage(WKViewRef viewRef)
     return toRef(toWK(viewRef)->page());
 }
 
-WKViewRef WKViewRetain(WKViewRef viewRef)
-{
-    toWK(viewRef)->ref();
-    return viewRef;
-}
-
-void WKViewRelease(WKViewRef viewRef)
-{
-    toWK(viewRef)->deref();
-}
-
 void WKViewSetHostWindow(WKViewRef viewRef, HWND hostWindow)
 {
     toWK(viewRef)->setHostWindow(hostWindow);

@@ -34,13 +34,8 @@ extern "C" {
 
 WK_EXPORT WKTypeID WKURLGetTypeID();
 
-WK_EXPORT WKURLRef WKURLRetain(WKURLRef URL);
-WK_EXPORT void WKURLRelease(WKURLRef URL);
-
 #ifdef __cplusplus
 }
 #endif
-
-WK_DECLARE_RETAIN_RELEASE_OVERLOADS(WKURL)
 
 #endif /* WKURL_h */

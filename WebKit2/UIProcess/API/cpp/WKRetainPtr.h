@@ -26,6 +26,7 @@
 #ifndef WKRetainPtr_h
 #define WKRetainPtr_h
 
+#include <WebKit2/WKType.h>
 #include <algorithm>
 
 namespace WebKit {
@@ -104,9 +105,6 @@ public:
 
     void adopt(PtrType);
     void swap(WKRetainPtr&);
-
-    // FIXME: Remove once all callers are calling leakRef.
-    PtrType releaseRef() { leakRef(); }
 
 private:
     PtrType m_ptr;

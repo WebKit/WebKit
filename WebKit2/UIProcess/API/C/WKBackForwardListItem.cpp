@@ -49,14 +49,3 @@ WKStringRef WKBackForwardListItemCopyTitle(WKBackForwardListItemRef itemRef)
 {
     return toCopiedRef(toWK(itemRef)->title());
 }
-
-WKBackForwardListItemRef WKBackForwardListItemRetain(WKBackForwardListItemRef itemRef)
-{
-    toWK(itemRef)->ref();
-    return itemRef;
-}
-
-void WKBackForwardListItemRelease(WKBackForwardListItemRef itemRef)
-{
-    toWK(itemRef)->deref();
-}

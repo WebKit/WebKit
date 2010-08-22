@@ -38,13 +38,8 @@ WK_EXPORT void WKFramePolicyListenerUse(WKFramePolicyListenerRef policyListener)
 WK_EXPORT void WKFramePolicyListenerDownload(WKFramePolicyListenerRef policyListener);
 WK_EXPORT void WKFramePolicyListenerIgnore(WKFramePolicyListenerRef policyListener);
 
-WK_EXPORT WKFramePolicyListenerRef WKFramePolicyListenerRetain(WKFramePolicyListenerRef policyListener);
-WK_EXPORT void WKFramePolicyListenerRelease(WKFramePolicyListenerRef policyListener);
-
 #ifdef __cplusplus
 }
 #endif
-
-WK_DECLARE_RETAIN_RELEASE_OVERLOADS(WKFramePolicyListener)
 
 #endif /* WKFramePolicyListener_h */

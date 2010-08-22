@@ -46,14 +46,3 @@ WKBundleScriptWorldRef WKBundleScriptWorldNormalWorld()
 {
     return toRef(InjectedBundleScriptWorld::normalWorld());
 }
-
-WKBundleScriptWorldRef WKBundleScriptWorldRetain(WKBundleScriptWorldRef scriptWorldRef)
-{
-    toWK(scriptWorldRef)->ref();
-    return scriptWorldRef;
-}
-
-void WKBundleScriptWorldRelease(WKBundleScriptWorldRef scriptWorldRef)
-{
-    toWK(scriptWorldRef)->deref();
-}

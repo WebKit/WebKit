@@ -44,13 +44,8 @@ WK_EXPORT unsigned WKBackForwardListGetForwardListCount(WKBackForwardListRef lis
 WK_EXPORT WKArrayRef WKBackForwardListCopyBackListWithLimit(WKBackForwardListRef list, unsigned limit);
 WK_EXPORT WKArrayRef WKBackForwardListCopyForwardListWithLimit(WKBackForwardListRef list, unsigned limit);
 
-WK_EXPORT WKBackForwardListRef WKBackForwardListRetain(WKBackForwardListRef list);
-WK_EXPORT void WKBackForwardListRelease(WKBackForwardListRef list);
-
 #ifdef __cplusplus
 }
 #endif
-
-WK_DECLARE_RETAIN_RELEASE_OVERLOADS(WKBackForwardList)
 
 #endif // WKBackForwardList_h

@@ -67,14 +67,4 @@ typedef struct OpaqueWKURL* WKURLRef;
 #define WK_EXPORT
 #endif
 
-#ifdef __cplusplus
-#define WK_DECLARE_RETAIN_RELEASE_OVERLOADS(WKType) \
-    inline void WKRetain(WKType##Ref p) { WKType##Retain(p); } \
-    inline void WKRelease(WKType##Ref p) { WKType##Release(p); } \
-    // end of macro
-#else
-#define WK_DECLARE_RETAIN_RELEASE_OVERLOADS(WKType)
-#endif
-
-
 #endif /* WKBase_h */

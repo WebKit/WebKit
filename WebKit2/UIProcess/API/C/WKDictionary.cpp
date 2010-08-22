@@ -51,14 +51,3 @@ WKArrayRef WKDictionaryCopyKeys(WKDictionaryRef dictionaryRef)
     RefPtr<ImmutableArray> keys = toWK(dictionaryRef)->keys();
     return toRef(keys.release().releaseRef());
 }
-
-WKDictionaryRef WKDictionaryRetain(WKDictionaryRef dictionaryRef)
-{
-    toWK(dictionaryRef)->ref();
-    return dictionaryRef;
-}
-
-void WKDictionaryRelease(WKDictionaryRef dictionaryRef)
-{
-    toWK(dictionaryRef)->deref();
-}

@@ -34,6 +34,9 @@ extern "C" {
 
 WK_EXPORT WKTypeID WKGetTypeID(WKTypeRef type);
 
+WK_EXPORT WKTypeRef WKRetain(WKTypeRef type);
+WK_EXPORT void WKRelease(WKTypeRef type);
+
 #ifdef __cplusplus
 }
 #endif

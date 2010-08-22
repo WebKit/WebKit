@@ -42,16 +42,11 @@ WK_EXPORT HWND WKViewGetHostWindow(WKViewRef view);
 
 WK_EXPORT WKPageRef WKViewGetPage(WKViewRef view);
 
-WK_EXPORT WKViewRef WKViewRetain(WKViewRef view);
-WK_EXPORT void WKViewRelease(WKViewRef view);
-
 WK_EXPORT void WKViewSetHostWindow(WKViewRef view, HWND hostWindow);
 WK_EXPORT void WKViewWindowAncestryDidChange(WKViewRef view);
 
 #ifdef __cplusplus
 }
 #endif
-
-WK_DECLARE_RETAIN_RELEASE_OVERLOADS(WKView)
 
 #endif /* WKView_h */

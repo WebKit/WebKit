@@ -76,13 +76,8 @@ WK_EXPORT void WKContextPostMessageToInjectedBundle(WKContextRef context, WKStri
 
 WK_EXPORT void WKContextAddVisitedLink(WKContextRef context, WKStringRef visitedURL);
 
-WK_EXPORT WKContextRef WKContextRetain(WKContextRef context);
-WK_EXPORT void WKContextRelease(WKContextRef context);
-
 #ifdef __cplusplus
 }
 #endif
-
-WK_DECLARE_RETAIN_RELEASE_OVERLOADS(WKContext)
 
 #endif /* WKContext_h */

@@ -34,13 +34,8 @@ extern "C" {
 
 WK_EXPORT WKTypeID WKErrorGetTypeID();
 
-WK_EXPORT WKErrorRef WKErrorRetain(WKErrorRef error);
-WK_EXPORT void WKErrorRelease(WKErrorRef error);
-
 #ifdef __cplusplus
 }
 #endif
-
-WK_DECLARE_RETAIN_RELEASE_OVERLOADS(WKError)
 
 #endif // WKError_h
