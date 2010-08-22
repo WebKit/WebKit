@@ -15,8 +15,8 @@
 - (id)initWithThreadedWKContextRef:(WKContextRef)threadContext processWKContextRef:(WKContextRef)processContext
 {
     if ((self = [super initWithWindowNibName:@"BrowserStatisticsWindow"])) {
-        _threadContext = WKContextRetain(threadContext);
-        _processContext = WKContextRetain(processContext);
+        _threadContext = WKRetain(threadContext);
+        _processContext = WKRetain(processContext);
     }
 
     return self;
@@ -24,10 +24,10 @@
 
 - (void)dealloc
 {
-    WKContextRelease(_threadContext);
+    WKRelease(_threadContext);
     _threadContext = 0;
 
-    WKContextRelease(_processContext);
+    WKRelease(_processContext);
     _processContext = 0;
     
     [super dealloc];

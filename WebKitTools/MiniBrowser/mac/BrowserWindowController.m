@@ -45,7 +45,7 @@
 - (id)initWithPageNamespace:(WKPageNamespaceRef)pageNamespace
 {
     if ((self = [super initWithWindowNibName:@"BrowserWindow"]))
-        _pageNamespace = WKPageNamespaceRetain(pageNamespace);
+        _pageNamespace = WKRetain(pageNamespace);
     
     return self;
 }
@@ -63,7 +63,7 @@
     CFRelease(cfURL);
 
     WKPageLoadURL(_webView.pageRef, url);
-    WKURLRelease(url);
+    WKRelease(url);
 }
 
 - (IBAction)showHideWebView:(id)sender
@@ -140,14 +140,14 @@
 
 - (void)windowWillClose:(NSNotification *)notification
 {
-    WKPageNamespaceRelease(_pageNamespace);
+    WKRelease(_pageNamespace);
     _pageNamespace = 0;
 }
 
 - (void)applicationTerminating
 {
     WKPageClose(_webView.pageRef);
-    WKPageRelease(_webView.pageRef);
+    WKRelease(_webView.pageRef);
 }
 
 #pragma mark Loader Client Callbacks
@@ -275,7 +275,7 @@ static void closePage(WKPageRef page, const void *clientInfo)
     LOG(@"closePage");
     WKPageClose(page);
     [[(BrowserWindowController *)clientInfo window] close];
-    WKPageRelease(page);
+    WKRelease(page);
 }
 
 static void runJavaScriptAlert(WKPageRef page, WKStringRef message, WKFrameRef frame, const void* clientInfo)
@@ -284,7 +284,7 @@ static void runJavaScriptAlert(WKPageRef page, WKStringRef message, WKFrameRef f
 
     WKURLRef wkURL = WKFrameCopyURL(frame);
     CFURLRef cfURL = WKURLCopyCFURL(0, wkURL);
-    WKURLRelease(wkURL);
+    WKRelease(wkURL);
 
     [alert setMessageText:[NSString stringWithFormat:@"JavaScript alert dialog from %@.", [(NSURL *)cfURL absoluteString]]];
     CFRelease(cfURL);
@@ -305,7 +305,7 @@ static bool runJavaScriptConfirm(WKPageRef page, WKStringRef message, WKFrameRef
 
     WKURLRef wkURL = WKFrameCopyURL(frame);
     CFURLRef cfURL = WKURLCopyCFURL(0, wkURL);
-    WKURLRelease(wkURL);
+    WKRelease(wkURL);
 
     [alert setMessageText:[NSString stringWithFormat:@"JavaScript confirm dialog from %@.", [(NSURL *)cfURL absoluteString]]];
     CFRelease(cfURL);
@@ -329,7 +329,7 @@ static WKStringRef runJavaScriptPrompt(WKPageRef page, WKStringRef message, WKSt
 
     WKURLRef wkURL = WKFrameCopyURL(frame);
     CFURLRef cfURL = WKURLCopyCFURL(0, wkURL);
-    WKURLRelease(wkURL);
+    WKRelease(wkURL);
 
     [alert setMessageText:[NSString stringWithFormat:@"JavaScript prompt dialog from %@.", [(NSURL *)cfURL absoluteString]]];
     CFRelease(cfURL);
@@ -441,7 +441,7 @@ static WKStringRef runJavaScriptPrompt(WKPageRef page, WKStringRef message, WKSt
         return;
 
     CFURLRef cfSourceURL = WKURLCopyCFURL(0, url);
-    WKURLRelease(url);
+    WKRelease(url);
 
     [urlText setStringValue:(NSString*)CFURLGetString(cfSourceURL)];
     CFRelease(cfSourceURL);

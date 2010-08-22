@@ -106,5 +106,5 @@ void BrowserView::goToURL(const std::wstring& urlString)
 
     WKPageRef page = WKViewGetPage(m_webView);
     WKPageLoadURL(page, url);
-    WKURLRelease(url);
+    WKRelease(url);
 }

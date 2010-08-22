@@ -41,7 +41,7 @@ void didClearWindowObjectForFrame(WKBundlePageRef page, WKBundleFrameRef frame, 
 {
     WKURLRef wkURL = WKBundleFrameCopyURL(WKBundlePageGetMainFrame(page));
     CFURLRef cfURL = WKURLCopyCFURL(0, wkURL);
-    WKURLRelease(wkURL);
+    WKRelease(wkURL);
 
     LOG(@"WKBundlePageClient - didClearWindowForFrame %@", [(NSURL *)cfURL absoluteString]);
     CFRelease(cfURL);
@@ -49,8 +49,8 @@ void didClearWindowObjectForFrame(WKBundlePageRef page, WKBundleFrameRef frame, 
     WKStringRef messageName = WKStringCreateWithCFString(CFSTR("Callback"));
     WKStringRef messageBody = WKStringCreateWithCFString(CFSTR("Window was cleared"));
     WKBundlePostMessage(globalBundle, messageName, messageBody);
-    WKStringRelease(messageName);
-    WKStringRelease(messageBody);
+    WKRelease(messageName);
+    WKRelease(messageBody);
 }
 
 

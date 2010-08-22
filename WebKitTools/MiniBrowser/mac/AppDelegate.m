@@ -56,8 +56,8 @@ void didRecieveMessageFromInjectedBundle(WKContextRef context, WKStringRef messa
 
     WKContextPostMessageToInjectedBundle(context, newMessageName, newMessageBody);
     
-    WKStringRelease(newMessageName);
-    WKStringRelease(newMessageBody);
+    WKRelease(newMessageName);
+    WKRelease(newMessageBody);
 }
 
 #pragma mark History Client Callbacks
@@ -66,11 +66,11 @@ static void didNavigateWithNavigationData(WKContextRef context, WKPageRef page, 
 {
     WKStringRef wkTitle = WKNavigationDataCopyTitle(navigationData);
     CFStringRef title = WKStringCopyCFString(0, wkTitle);
-    WKStringRelease(wkTitle);
+    WKRelease(wkTitle);
 
     WKURLRef wkURL = WKNavigationDataCopyURL(navigationData);
     CFURLRef url = WKURLCopyCFURL(0, wkURL);
-    WKURLRelease(wkURL);
+    WKRelease(wkURL);
 
     LOG(@"HistoryClient - didNavigateWithNavigationData - title: %@ - url: %@", title, url);
     CFRelease(title);
@@ -131,7 +131,7 @@ static void populateVisitedLinks(WKContextRef context, const void *clientInfo)
         WKContextSetHistoryClient(threadContext, &historyClient);
     
         threadPageNamespace = WKPageNamespaceCreate(threadContext);
-        WKContextRelease(threadContext);
+        WKRelease(threadContext);
 
         CFStringRef bundlePathCF = (CFStringRef)[[NSBundle mainBundle] pathForAuxiliaryExecutable:@"WebBundle.bundle"];
         WKStringRef bundlePath = WKStringCreateWithCFString(bundlePathCF);
@@ -147,9 +147,9 @@ static void populateVisitedLinks(WKContextRef context, const void *clientInfo)
         WKContextSetHistoryClient(processContext, &historyClient);
         
         processPageNamespace = WKPageNamespaceCreate(processContext);
-        WKContextRelease(processContext);
+        WKRelease(processContext);
 
-        WKStringRelease(bundlePath);
+        WKRelease(bundlePath);
     }
 
     return self;
@@ -221,10 +221,10 @@ static void populateVisitedLinks(WKContextRef context, const void *clientInfo)
         }
     }
     
-    WKPageNamespaceRelease(threadPageNamespace);
+    WKRelease(threadPageNamespace);
     threadPageNamespace = 0;
 
-    WKPageNamespaceRelease(processPageNamespace);
+    WKRelease(processPageNamespace);
     processPageNamespace = 0;
 }
 
