@@ -60,7 +60,7 @@ void SplitTextNodeCommand::doApply()
 
     m_text1 = Text::create(document(), prefixText);
     ASSERT(m_text1);
-    document()->copyMarkers(m_text2.get(), 0, m_offset, m_text1.get(), 0);
+    document()->markers()->copyMarkers(m_text2.get(), 0, m_offset, m_text1.get(), 0);
 
     insertText1AndTrimText2();
 }
@@ -78,7 +78,7 @@ void SplitTextNodeCommand::doUnapply()
     m_text2->insertData(0, prefixText, ec);
     ASSERT(!ec);
 
-    document()->copyMarkers(m_text1.get(), 0, prefixText.length(), m_text2.get(), 0);
+    document()->markers()->copyMarkers(m_text1.get(), 0, prefixText.length(), m_text2.get(), 0);
     m_text1->remove(ec);
 }
 

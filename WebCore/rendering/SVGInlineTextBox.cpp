@@ -408,7 +408,7 @@ void SVGInlineTextBox::computeTextMatchMarkerRect(RenderStyle* style)
         return;
 
     Document* document = renderer()->document();
-    Vector<DocumentMarker> markers = document->markersForNode(renderer()->node());
+    Vector<DocumentMarker> markers = document->markers()->markersForNode(renderer()->node());
 
     Vector<DocumentMarker>::iterator markerEnd = markers.end();
     for (Vector<DocumentMarker>::iterator markerIt = markers.begin(); markerIt != markerEnd; ++markerIt) {
@@ -430,7 +430,7 @@ void SVGInlineTextBox::computeTextMatchMarkerRect(RenderStyle* style)
         if (!m_chunkTransformation.isIdentity())
             markerRect = m_chunkTransformation.mapRect(markerRect);
 
-        document->setRenderedRectForMarker(node, marker, renderer()->localToAbsoluteQuad(markerRect).enclosingBoundingBox());
+        document->markers()->setRenderedRectForMarker(node, marker, renderer()->localToAbsoluteQuad(markerRect).enclosingBoundingBox());
     }
 }
 

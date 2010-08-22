@@ -1042,11 +1042,13 @@ webcore_sources += \
 	WebCore/dom/DeviceOrientationEvent.cpp \
 	WebCore/dom/DeviceOrientationEvent.h \
 	WebCore/dom/Document.cpp \
-	WebCore/dom/DocumentParser.cpp \
 	WebCore/dom/Document.h \
 	WebCore/dom/DocumentFragment.cpp \
 	WebCore/dom/DocumentFragment.h \
 	WebCore/dom/DocumentMarker.h \
+	WebCore/dom/DocumentMarkerController.cpp \
+	WebCore/dom/DocumentMarkerController.h \
+	WebCore/dom/DocumentParser.cpp \
 	WebCore/dom/DocumentType.cpp \
 	WebCore/dom/DocumentType.h \
 	WebCore/dom/DynamicNodeList.cpp \

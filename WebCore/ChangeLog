@@ -1,3 +1,80 @@
+2010-08-22  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Eric Seidel.
+
+        Encapsulate document marker management into DocumentMarkerController
+        https://bugs.webkit.org/show_bug.cgi?id=44383
+
+        Moves the document marker management code in Document.cpp into its own
+        class called DocumentMarkerController.
+
+        No functionality was changed, so no new tests.
+
+        * Android.mk: Added DocumentMarkerController.cpp 
+        * CMakeLists.txt: Ditto.
+        * GNUmakefile.am: Added DocumentMarkerController.cpp and DocumentMarkerController.h.
+        * WebCore.exp.in: Substituted symbols __ZN7WebCore24DocumentMarkerController13removeMarkersENS_14DocumentMarker10MarkerTypeE
+        and __ZN7WebCore24DocumentMarkerController23renderedRectsForMarkersENS_14DocumentMarker10MarkerTypeE for
+        __ZN7WebCore8Document13removeMarkersENS_14DocumentMarker10MarkerTypeE and 
+        __ZN7WebCore8Document23renderedRectsForMarkersENS_14DocumentMarker10MarkerTypeE, respectively.
+        * WebCore.gypi: Added DocumentMarkerController.cpp and DocumentMarkerController.h.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * dom/Document.cpp:
+        (WebCore::Document::removedLastRef): Modified to call DocumentMarkerController::detach().
+        (WebCore::Document::~Document): Removed "deleteAllValues(m_markers)" as DocumentMarkerController
+        is stored in OwnPtr; so it will be destroyed automatically on Document destruction.
+        (WebCore::Document::textInserted): Modified to use marker controller.
+        (WebCore::Document::textRemoved): Ditto.
+        * dom/Document.h:
+        (WebCore::Document::markers): Added.
+        * dom/DocumentMarkerController.cpp: Added.
+        (WebCore::placeholderRectForMarker):
+        (WebCore::DocumentMarkerController::detach):
+        (WebCore::DocumentMarkerController::addMarker):
+        (WebCore::DocumentMarkerController::removeMarkers):
+        (WebCore::DocumentMarkerController::copyMarkers):
+        (WebCore::DocumentMarkerController::markerContainingPoint):
+        (WebCore::DocumentMarkerController::markersForNode):
+        (WebCore::DocumentMarkerController::renderedRectsForMarkers):
+        (WebCore::DocumentMarkerController::repaintMarkers):
+        (WebCore::DocumentMarkerController::setRenderedRectForMarker):
+        (WebCore::DocumentMarkerController::invalidateRenderedRectsForMarkersInRect):
+        (WebCore::DocumentMarkerController::shiftMarkers):
+        (WebCore::DocumentMarkerController::setMarkersActive):
+        * dom/DocumentMarkerController.h: Added.
+        (WebCore::DocumentMarkerController::~DocumentMarkerController):
+        * editing/Editor.cpp:
+        (WebCore::Editor::ignoreSpelling): Modified to use marker controller.
+        (WebCore::findFirstMisspellingInRange): Ditto.
+        (WebCore::findFirstGrammarDetailInRange): Ditto.
+        (WebCore::Editor::advanceToNextMisspelling): Ditto.
+        (WebCore::Editor::markAllMisspellingsAndBadGrammarInRanges): Ditto.
+        (WebCore::Editor::changeBackToReplacedString): Ditto.
+        * editing/SplitTextNodeCommand.cpp:
+        (WebCore::SplitTextNodeCommand::doApply): Ditto.
+        (WebCore::SplitTextNodeCommand::doUnapply): Ditto.
+        * page/Frame.cpp:
+        (WebCore::Frame::markAllMatchesForText): Ditto.
+        (WebCore::Frame::setMarkedTextMatchesAreHighlighted): Ditto.
+        (WebCore::Frame::respondToChangedSelection): Ditto.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::getTickmarks): Ditto.
+        (WebCore::FrameView::paintContents): Ditto.
+        * page/Page.cpp:
+        (WebCore::Page::unmarkAllTextMatches): Ditto.
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::spellingToolTip): Ditto.
+        (WebCore::HitTestResult::replacedString): Ditto.
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintSpellingOrGrammarMarker): Ditto.
+        (WebCore::InlineTextBox::paintTextMatchMarker): Ditto.
+        (WebCore::InlineTextBox::computeRectForReplacementMarker): Ditto.
+        (WebCore::InlineTextBox::paintDocumentMarkers): Ditto.
+        * rendering/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::computeTextMatchMarkerRect): Ditto.
+
 2010-08-22  Jian Li  <jianli@chromium.org>
 
         Reviewed by Darin Fisher.

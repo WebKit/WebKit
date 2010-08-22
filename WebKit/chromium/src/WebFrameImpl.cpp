@@ -1429,7 +1429,7 @@ void WebFrameImpl::stopFinding(bool clearSelection)
     cancelPendingScopingEffort();
 
     // Remove all markers for matches found and turn off the highlighting.
-    frame()->document()->removeMarkers(DocumentMarker::TextMatch);
+    frame()->document()->markers()->removeMarkers(DocumentMarker::TextMatch);
     frame()->setMarkedTextMatchesAreHighlighted(false);
 
     // Let the frame know that we don't want tickmarks or highlighting anymore.
@@ -2060,14 +2060,14 @@ void WebFrameImpl::addMarker(Range* range, bool activeMatch)
         if (marker.endOffset > marker.startOffset) {
             // Find the node to add a marker to and add it.
             Node* node = textPiece->startContainer(exception);
-            frame()->document()->addMarker(node, marker);
+            frame()->document()->markers()->addMarker(node, marker);
 
             // Rendered rects for markers in WebKit are not populated until each time
             // the markers are painted. However, we need it to happen sooner, because
             // the whole purpose of tickmarks on the scrollbar is to show where
             // matches off-screen are (that haven't been painted yet).
-            Vector<DocumentMarker> markers = frame()->document()->markersForNode(node);
-            frame()->document()->setRenderedRectForMarker(
+            Vector<DocumentMarker> markers = frame()->document()->markers()->markersForNode(node);
+            frame()->document()->markers()->setRenderedRectForMarker(
                 textPiece->startContainer(exception),
                 markers[markers.size() - 1],
                 range->boundingBox());
@@ -2081,7 +2081,7 @@ void WebFrameImpl::setMarkerActive(Range* range, bool active)
     if (!range || range->collapsed(ec))
         return;
 
-    frame()->document()->setMarkersActive(range, active);
+    frame()->document()->markers()->setMarkersActive(range, active);
 }
 
 int WebFrameImpl::ordinalOfFirstMatchForFrame(WebFrameImpl* frame) const

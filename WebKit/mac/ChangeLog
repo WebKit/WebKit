@@ -1,3 +1,21 @@
+2010-08-22  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Eric Seidel.
+
+        Encapsulate document marker management into DocumentMarkerController
+        https://bugs.webkit.org/show_bug.cgi?id=44383
+
+        Modify call sites in the Apple Mac port to use DocumentMarkerController.
+
+        No functionality was changed, so no new tests.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _unmarkAllBadGrammar]):
+        (-[WebFrame _unmarkAllMisspellings]):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView unmarkAllTextMatches]):
+        (-[WebHTMLView rectsForTextMatches]):
+
 2010-08-19  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/44285> Fix compilation with NETSCAPE_PLUGIN_API disabled

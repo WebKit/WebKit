@@ -123,6 +123,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	dom/DeviceMotionEvent.cpp \
 	dom/Document.cpp \
 	dom/DocumentFragment.cpp \
+	dom/DocumentMarkerController.cpp \
 	dom/DocumentParser.cpp \
 	dom/DocumentType.cpp \
 	dom/DynamicNodeList.cpp \

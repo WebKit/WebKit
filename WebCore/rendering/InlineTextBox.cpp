@@ -810,7 +810,7 @@ void InlineTextBox::paintSpellingOrGrammarMarker(GraphicsContext* pt, int tx, in
         if (grammar) {
             markerRect.move(-tx, -ty);
             markerRect = renderer()->localToAbsoluteQuad(FloatRect(markerRect)).enclosingBoundingBox();
-            renderer()->document()->setRenderedRectForMarker(renderer()->node(), marker, markerRect);
+            renderer()->document()->markers()->setRenderedRectForMarker(renderer()->node(), marker, markerRect);
         }
     }
     
@@ -848,7 +848,7 @@ void InlineTextBox::paintTextMatchMarker(GraphicsContext* pt, int tx, int ty, co
     // Always compute and store the rect associated with this marker. The computed rect is in absolute coordinates.
     IntRect markerRect = enclosingIntRect(font.selectionRectForText(run, IntPoint(m_x, y), h, sPos, ePos));
     markerRect = renderer()->localToAbsoluteQuad(FloatRect(markerRect)).enclosingBoundingBox();
-    renderer()->document()->setRenderedRectForMarker(renderer()->node(), marker, markerRect);
+    renderer()->document()->markers()->setRenderedRectForMarker(renderer()->node(), marker, markerRect);
      
     // Optionally highlight the text
     if (renderer()->frame()->markedTextMatchesAreHighlighted()) {
@@ -877,7 +877,7 @@ void InlineTextBox::computeRectForReplacementMarker(int /*tx*/, int /*ty*/, cons
     // Compute and store the rect associated with this marker.
     IntRect markerRect = enclosingIntRect(font.selectionRectForText(run, startPoint, h, sPos, ePos));
     markerRect = renderer()->localToAbsoluteQuad(FloatRect(markerRect)).enclosingBoundingBox();
-    renderer()->document()->setRenderedRectForMarker(renderer()->node(), marker, markerRect);
+    renderer()->document()->markers()->setRenderedRectForMarker(renderer()->node(), marker, markerRect);
 }
     
 void InlineTextBox::paintDocumentMarkers(GraphicsContext* pt, int tx, int ty, RenderStyle* style, const Font& font, bool background)
@@ -885,7 +885,7 @@ void InlineTextBox::paintDocumentMarkers(GraphicsContext* pt, int tx, int ty, Re
     if (!renderer()->node())
         return;
 
-    Vector<DocumentMarker> markers = renderer()->document()->markersForNode(renderer()->node());
+    Vector<DocumentMarker> markers = renderer()->document()->markers()->markersForNode(renderer()->node());
     Vector<DocumentMarker>::iterator markerIt = markers.begin();
 
     // Give any document markers that touch this run a chance to draw before the text has been drawn.

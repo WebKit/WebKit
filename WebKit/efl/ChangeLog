@@ -1,3 +1,17 @@
+2010-08-22  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Eric Seidel.
+
+        Encapsulate document marker management into DocumentMarkerController
+        https://bugs.webkit.org/show_bug.cgi?id=44383
+
+        Modify call sites in the EFL port to use DocumentMarkerController.
+
+        No functionality was changed, so no new tests.
+
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_text_matches_unmark_all):
+
 2010-08-20  Leandro Pereira  <leandro@profusion.mobi>
 
         [EFL] Unreviewed. Fix build when using GNU gold.

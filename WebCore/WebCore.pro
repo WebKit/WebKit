@@ -495,6 +495,7 @@ SOURCES += \
     dom/DeviceOrientationEvent.cpp \
     dom/Document.cpp \
     dom/DocumentFragment.cpp \
+    dom/DocumentMarkerController.cpp \
     dom/DocumentParser.cpp \
     dom/DocumentType.cpp \
     dom/DOMImplementation.cpp \
@@ -1266,15 +1267,17 @@ HEADERS += \
     dom/CustomEvent.h \
     dom/default/PlatformMessagePortChannel.h \
     dom/DeviceMotionClient.h \
-    dom/DeviceMotionData.h \
     dom/DeviceMotionController.h \
+    dom/DeviceMotionData.h \
     dom/DeviceMotionEvent.h \
     dom/DeviceOrientation.h \
     dom/DeviceOrientationClient.h \
     dom/DeviceOrientationController.h \
     dom/DeviceOrientationEvent.h \
-    dom/DocumentFragment.h \
     dom/Document.h \
+    dom/DocumentFragment.h \
+    dom/DocumentMarker.h \
+    dom/DocumentMarkerController.h \
     dom/DocumentType.h \
     dom/DOMImplementation.h \
     dom/DOMStringList.h \

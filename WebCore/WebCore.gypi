@@ -1151,6 +1151,8 @@
             'dom/DocumentFragment.cpp',
             'dom/DocumentFragment.h',
             'dom/DocumentMarker.h',
+            'dom/DocumentMarkerController.cpp',
+            'dom/DocumentMarkerController.h',
             'dom/DocumentParser.cpp',
             'dom/DocumentParser.h',
             'dom/DocumentType.cpp',

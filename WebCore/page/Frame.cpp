@@ -1277,7 +1277,7 @@ unsigned Frame::markAllMatchesForText(const String& target, bool caseFlag, unsig
         // Only treat the result as a match if it is visible
         if (editor()->insideVisibleArea(resultRange.get())) {
             ++matchCount;
-            document()->addMarker(resultRange.get(), DocumentMarker::TextMatch);
+            document()->markers()->addMarker(resultRange.get(), DocumentMarker::TextMatch);
         }
 
         // Stop looking if we hit the specified limit. A limit of 0 means no limit.
@@ -1317,7 +1317,7 @@ void Frame::setMarkedTextMatchesAreHighlighted(bool flag)
         return;
 
     m_highlightTextMatches = flag;
-    document()->repaintMarkers(DocumentMarker::TextMatch);
+    document()->markers()->repaintMarkers(DocumentMarker::TextMatch);
 }
 
 void Frame::setDOMWindow(DOMWindow* domWindow)
@@ -1463,16 +1463,16 @@ void Frame::respondToChangedSelection(const VisibleSelection& oldSelection, bool
         // This only erases markers that are in the first unit (word or sentence) of the selection.
         // Perhaps peculiar, but it matches AppKit.
         if (RefPtr<Range> wordRange = newAdjacentWords.toNormalizedRange())
-            document()->removeMarkers(wordRange.get(), DocumentMarker::Spelling);
+            document()->markers()->removeMarkers(wordRange.get(), DocumentMarker::Spelling);
         if (RefPtr<Range> sentenceRange = newSelectedSentence.toNormalizedRange())
-            document()->removeMarkers(sentenceRange.get(), DocumentMarker::Grammar);
+            document()->markers()->removeMarkers(sentenceRange.get(), DocumentMarker::Grammar);
     }
 
     // When continuous spell checking is off, existing markers disappear after the selection changes.
     if (!isContinuousSpellCheckingEnabled)
-        document()->removeMarkers(DocumentMarker::Spelling);
+        document()->markers()->removeMarkers(DocumentMarker::Spelling);
     if (!isContinuousGrammarCheckingEnabled)
-        document()->removeMarkers(DocumentMarker::Grammar);
+        document()->markers()->removeMarkers(DocumentMarker::Grammar);
 
     editor()->respondToChangedSelection(oldSelection);
 }

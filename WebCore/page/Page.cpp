@@ -540,7 +540,7 @@ void Page::unmarkAllTextMatches()
 
     Frame* frame = mainFrame();
     do {
-        frame->document()->removeMarkers(DocumentMarker::TextMatch);
+        frame->document()->markers()->removeMarkers(DocumentMarker::TextMatch);
         frame = incrementFrame(frame, true, false);
     } while (frame);
 }

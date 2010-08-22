@@ -395,7 +395,7 @@ WebView *getWebView(WebFrame *webFrame)
     Frame* coreFrame = _private->coreFrame;
     for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame)) {
         if (Document* document = frame->document())
-            document->removeMarkers(DocumentMarker::Grammar);
+            document->markers()->removeMarkers(DocumentMarker::Grammar);
     }
 }
 #endif
@@ -405,7 +405,7 @@ WebView *getWebView(WebFrame *webFrame)
     Frame* coreFrame = _private->coreFrame;
     for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame)) {
         if (Document* document = frame->document())
-            document->removeMarkers(DocumentMarker::Spelling);
+            document->markers()->removeMarkers(DocumentMarker::Spelling);
     }
 }
 
