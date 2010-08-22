@@ -419,6 +419,20 @@ void WebPage::keyEvent(const WebKeyboardEvent& keyboardEvent)
     (void)handled;
 }
 
+#if ENABLE(TOUCH_EVENTS)
+void WebPage::touchEvent(const WebTouchEvent& touchEvent)
+{
+    CurrentEvent currentEvent(touchEvent);
+    WebProcess::shared().connection()->send(WebPageProxyMessage::DidReceiveEvent, m_pageID, CoreIPC::In(static_cast<uint32_t>(touchEvent.type())));
+            
+    if (!m_mainFrame->coreFrame()->view())
+        return;
+
+    PlatformTouchEvent platformTouchEvent = platform(touchEvent);
+    m_mainFrame->coreFrame()->eventHandler()->handleTouchEvent(platformTouchEvent);
+}
+#endif
+
 void WebPage::setActive(bool isActive)
 {
     m_page->focusController()->setActive(isActive);
@@ -588,6 +602,14 @@ void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Messag
             keyEvent(event);
             return;
         }
+#if ENABLE(TOUCH_EVENTS)
+        case WebPageMessage::TouchEvent: {
+            WebTouchEvent event;
+            if (!arguments->decode(event))
+                return;
+            touchEvent(event);
+        }
+#endif
         case WebPageMessage::LoadURL: {
             String url;
             if (!arguments->decode(url))

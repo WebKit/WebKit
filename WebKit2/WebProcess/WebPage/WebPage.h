@@ -40,6 +40,9 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
+#if ENABLE(TOUCH_EVENTS)
+#include <WebCore/PlatformTouchEvent.h>
+#endif
 
 namespace CoreIPC {
     class ArgumentDecoder;
@@ -61,6 +64,9 @@ class WebFrame;
 class WebKeyboardEvent;
 class WebMouseEvent;
 class WebWheelEvent;
+#if ENABLE(TOUCH_EVENTS)
+class WebTouchEvent;
+#endif
 struct WebPreferencesStore;
 
 class WebPage : public APIObject {
@@ -152,6 +158,9 @@ private:
     void mouseEvent(const WebMouseEvent&);
     void wheelEvent(const WebWheelEvent&);
     void keyEvent(const WebKeyboardEvent&);
+#if ENABLE(TOUCH_EVENTS)
+    void touchEvent(const WebTouchEvent&);
+#endif
     void runJavaScriptInMainFrame(const WTF::String&, uint64_t callbackID);
     void getRenderTreeExternalRepresentation(uint64_t callbackID);
     void preferencesDidChange(const WebPreferencesStore&);

@@ -52,6 +52,13 @@ public:
         KeyUp,
         RawKeyDown,
         Char
+#if ENABLE(TOUCH_EVENTS)
+        ,
+        TouchStart,
+        TouchMove,
+        TouchEnd,
+        TouchCancel
+#endif
     };
 
     enum Modifiers {
@@ -326,6 +333,114 @@ private:
     bool m_isKeypad;
     bool m_isSystemKey;
 };
+
+#if ENABLE(TOUCH_EVENTS)
+
+class WebPlatformTouchPoint {
+public:
+    enum TouchPointState {
+        TouchReleased,
+        TouchPressed,
+        TouchMoved,
+        TouchStationary,
+        TouchCancelled
+    };
+
+    WebPlatformTouchPoint()
+    {
+    }
+
+    WebPlatformTouchPoint(unsigned id, TouchPointState state, int screenPosX, int screenPosY, int posX, int posY)
+        : m_id(id)
+        , m_state(state)
+        , m_screenPosX(screenPosX)
+        , m_screenPosY(screenPosY)
+        , m_posX(posX)
+        , m_posY(posY)
+    {
+    }
+
+    unsigned id() const { return m_id; }
+    TouchPointState state() const { return m_state; }
+
+    int screenPosX() const { return m_screenPosX; }
+    int screenPosY() const { return m_screenPosY; }
+    int32_t posX() const { return m_posX; }
+    int32_t posY() const { return m_posY; }
+          
+    void setState(TouchPointState state) { m_state = state; }
+
+    void encode(CoreIPC::ArgumentEncoder* encoder) const
+    {
+        encoder->encodeBytes(reinterpret_cast<const uint8_t*>(this), sizeof(*this));
+    }
+
+    static bool decode(CoreIPC::ArgumentDecoder* decoder, WebPlatformTouchPoint& t)
+    {
+        return decoder->decodeBytes(reinterpret_cast<uint8_t*>(&t), sizeof(t));
+    }
+
+private:
+    unsigned m_id;
+    TouchPointState m_state;
+    int m_screenPosX, m_screenPosY;
+    int32_t m_posX, m_posY;
+
+};
+
+class WebTouchEvent : public WebEvent {
+public:
+
+    WebTouchEvent()
+    {
+    }
+ 
+    WebTouchEvent(WebEvent::Type type, Vector<WebPlatformTouchPoint> touchPoints, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, Modifiers modifiers, double timestamp)
+        : WebEvent(type, modifiers, timestamp)
+        , m_type(type)
+        , m_touchPoints(touchPoints)
+        , m_ctrlKey(ctrlKey)
+        , m_altKey(altKey)
+        , m_shiftKey(shiftKey)
+        , m_metaKey(metaKey)
+    {
+        ASSERT(isTouchEventType(type));
+    }
+
+    const Vector<WebPlatformTouchPoint> touchPoints() const { return m_touchPoints; }
+
+    void encode(CoreIPC::ArgumentEncoder* encoder) const
+    {
+        WebEvent::encode(encoder);
+        encoder->encode(m_touchPoints);
+    }
+
+    static bool decode(CoreIPC::ArgumentDecoder* decoder, WebTouchEvent& t)
+    {
+        if (!WebEvent::decode(decoder, t))
+            return false;
+
+        if (!decoder->decode(t.m_touchPoints))
+             return false;
+
+        return true;
+    }
+  
+private:
+    static bool isTouchEventType(Type type)
+    {
+        return type == TouchStart || type == TouchMove || type == TouchEnd;
+    }
+
+    Type m_type;
+    Vector<WebPlatformTouchPoint> m_touchPoints;
+    bool m_ctrlKey;
+    bool m_altKey;
+    bool m_shiftKey;
+    bool m_metaKey;
+    double m_timestamp;
+};
+#endif
 
 } // namespace WebKit
 

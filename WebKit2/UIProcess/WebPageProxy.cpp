@@ -332,6 +332,15 @@ void WebPageProxy::keyEvent(const WebKeyboardEvent& event)
     process()->send(WebPageMessage::KeyEvent, m_pageID, CoreIPC::In(event));
 }
 
+#if ENABLE(TOUCH_EVENTS)
+void WebPageProxy::touchEvent(const WebTouchEvent& event)
+{
+    if (!isValid())
+        return;
+    process()->send(WebPageMessage::TouchEvent, m_pageID, CoreIPC::In(event)); 
+}
+#endif
+
 void WebPageProxy::receivedPolicyDecision(WebCore::PolicyAction action, WebFrameProxy* frame, uint64_t listenerID)
 {
     if (!isValid())

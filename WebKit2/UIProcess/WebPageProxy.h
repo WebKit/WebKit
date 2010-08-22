@@ -126,6 +126,9 @@ public:
     void mouseEvent(const WebMouseEvent&);
     void wheelEvent(const WebWheelEvent&);
     void keyEvent(const WebKeyboardEvent&);
+#if ENABLE(TOUCH_EVENTS)
+    void touchEvent(const WebTouchEvent&);
+#endif
 
     const WTF::String& pageTitle() const { return m_pageTitle; }
     const WTF::String& toolTip() const { return m_toolTip; }

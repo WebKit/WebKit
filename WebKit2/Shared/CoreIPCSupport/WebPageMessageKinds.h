@@ -52,6 +52,9 @@ enum Kind {
     StopLoading,
     TryClose,
     WheelEvent
+#if ENABLE(TOUCH_EVENTS)
+    , TouchEvent
+#endif
 };
 
 }

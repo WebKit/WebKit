@@ -25,7 +25,6 @@
  */
 
 #include "WebEventFactoryQt.h"
-
 #include <qgraphicssceneevent.h>
 #include <QApplication>
 #include <QKeyEvent>
@@ -64,6 +63,14 @@ static WebEvent::Type webEventTypeForEvent(QEvent* event)
             return WebEvent::KeyDown;
         case QEvent::KeyRelease:
             return WebEvent::KeyUp;
+#if ENABLE(TOUCH_EVENTS)
+        case QEvent::TouchBegin:
+            return WebEvent::TouchStart;
+        case QEvent::TouchUpdate:
+            return WebEvent::TouchMove;
+        case QEvent::TouchEnd:
+            return WebEvent::TouchEnd;
+#endif
         default:
             // assert
             return WebEvent::MouseMove;
@@ -160,5 +167,50 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(QKeyEvent* event)
 
     return WebKeyboardEvent(type, text, unmodifiedText, keyIdentifier, windowsVirtualKeyCode, nativeVirtualKeyCode, isAutoRepeat, isKeypad, isSystemKey, modifiers, timestamp);
 }
+
+#if ENABLE(TOUCH_EVENTS)
+
+WebTouchEvent WebEventFactory::createWebTouchEvent(QTouchEvent* event)
+{
+    WebEvent::Type type  = webEventTypeForEvent(event);
+    WebPlatformTouchPoint::TouchPointState state;
+    unsigned int id;
+    WebEvent::Modifiers modifiers   = modifiersForEvent(event->modifiers());
+    double timestamp                = WTF::currentTime();
+
+    const QList<QTouchEvent::TouchPoint>& points = event->touchPoints();
+    
+    Vector<WebPlatformTouchPoint> m_touchPoints;
+    for (int i = 0; i < points.count(); ++i) {
+        id = static_cast<unsigned>(points.at(i).id());
+        switch (points.at(i).state()) {
+        case Qt::TouchPointReleased: 
+            state = WebPlatformTouchPoint::TouchReleased; 
+            break;
+        case Qt::TouchPointMoved: 
+            state = WebPlatformTouchPoint::TouchMoved; 
+            break;
+        case Qt::TouchPointPressed: 
+            state = WebPlatformTouchPoint::TouchPressed; 
+            break;
+        case Qt::TouchPointStationary: 
+            state = WebPlatformTouchPoint::TouchStationary; 
+            break;
+        }
+
+        m_touchPoints.append(WebPlatformTouchPoint(id, state, points.at(i).screenPos().toPoint().x(),
+            points.at(i).screenPos().toPoint().y(),
+            points.at(i).pos().toPoint().x(),
+            points.at(i).pos().toPoint().y()));
+        }
+
+    bool m_ctrlKey = (event->modifiers() & Qt::ControlModifier);
+    bool m_altKey = (event->modifiers() & Qt::AltModifier);
+    bool m_shiftKey = (event->modifiers() & Qt::ShiftModifier);
+    bool m_metaKey = (event->modifiers() & Qt::MetaModifier);
+
+    return WebTouchEvent(type, m_touchPoints, m_ctrlKey, m_altKey, m_shiftKey, m_metaKey, modifiers, timestamp);
+}
+#endif
 
 } // namespace WebKit

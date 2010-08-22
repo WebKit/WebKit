@@ -151,4 +151,70 @@ WebCore::PlatformKeyboardEvent platform(const WebKeyboardEvent& webEvent)
     return WebKit2PlatformKeyboardEvent(webEvent);
 }
 
+#if ENABLE(TOUCH_EVENTS)
+class WebKit2PlatformTouchPoint : public WebCore::PlatformTouchPoint {
+public:
+    WebKit2PlatformTouchPoint(const WebPlatformTouchPoint& webTouchPoint)
+    {
+        m_id = webTouchPoint.id();
+
+        switch (webTouchPoint.state()) {
+        case WebPlatformTouchPoint::TouchReleased:
+            m_state = PlatformTouchPoint::TouchReleased;
+            break;
+        case WebPlatformTouchPoint::TouchPressed:
+            m_state = PlatformTouchPoint::TouchPressed;
+            break;
+        case WebPlatformTouchPoint::TouchMoved:
+            m_state = PlatformTouchPoint::TouchMoved;
+            break;
+        case WebPlatformTouchPoint::TouchStationary:
+            m_state = PlatformTouchPoint::TouchStationary;
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+        }
+
+        WebCore::IntPoint screen(webTouchPoint.screenPosX(), webTouchPoint.screenPosY());
+        WebCore::IntPoint position(webTouchPoint.posX(), webTouchPoint.posY());
+
+        m_screenPos = screen;
+        m_pos = position;
+    }
+};
+
+class WebKit2PlatformTouchEvent : public WebCore::PlatformTouchEvent {
+public:
+    WebKit2PlatformTouchEvent(const WebTouchEvent& webEvent)
+    {
+        switch (webEvent.type()) {
+        case WebEvent::TouchStart: 
+            m_type = WebCore::TouchStart; 
+            break;
+        case WebEvent::TouchMove: 
+            m_type = WebCore::TouchMove; 
+            break;
+        case WebEvent::TouchEnd: 
+            m_type = WebCore::TouchEnd; 
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+        }
+
+        for (int i = 0; i < webEvent.touchPoints().size(); ++i)
+            m_touchPoints.append(WebKit2PlatformTouchPoint(webEvent.touchPoints().at(i)));
+
+        m_ctrlKey = webEvent.controlKey();
+        m_altKey = webEvent.altKey();
+        m_shiftKey = webEvent.shiftKey();
+        m_metaKey = webEvent.metaKey();
+    }
+};
+
+WebCore::PlatformTouchEvent platform(const WebTouchEvent& webEvent)
+{
+    return WebKit2PlatformTouchEvent(webEvent);
+}
+#endif
+
 } // namespace WebKit

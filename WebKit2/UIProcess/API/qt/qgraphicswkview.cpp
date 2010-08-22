@@ -155,6 +155,13 @@ QVariant QGraphicsWKView::itemChange(GraphicsItemChange change, const QVariant& 
 */
 bool QGraphicsWKView::event(QEvent* event)
 {
+#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
+    if (event->type() == QEvent::TouchBegin || event->type() == QEvent::TouchEnd || event->type() == QEvent::TouchUpdate) {
+        touchEvent(static_cast<QTouchEvent*>(event));
+        return true;
+    }
+#endif 
+
     // Here so that it can be reimplemented without breaking ABI.
     return QGraphicsWidget::event(event);
 }
@@ -236,6 +243,13 @@ void QGraphicsWKView::wheelEvent(QGraphicsSceneWheelEvent* ev)
     if (!ev->isAccepted())
         QGraphicsItem::wheelEvent(ev);
 }
+
+#if ENABLE(TOUCH_EVENTS)
+void QGraphicsWKView::touchEvent(QTouchEvent* ev)
+{
+    page()->d->touchEvent(ev);
+}
+#endif
 
 QGraphicsWKViewPrivate::QGraphicsWKViewPrivate(QGraphicsWKView* view)
     : q(view)

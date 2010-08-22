@@ -80,6 +80,8 @@ WEBCORE_HEADERS_FOR_WEBKIT2 += \
     platform/PlatformKeyboardEvent.h \
     platform/PlatformMouseEvent.h \
     platform/PlatformStrategies.h \
+    platform/PlatformTouchPoint.h \
+    platform/PlatformTouchEvent.h \
     platform/PlatformWheelEvent.h \
     platform/PopupMenu.h \
     platform/PopupMenuClient.h \

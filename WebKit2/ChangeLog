@@ -1,3 +1,62 @@
+2010-08-22  Juha Savolainen  <juha.savolainen@weego.fi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Add QTouchEvents support for WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=44330
+
+        This patch adds support for QTouchEvents in WebKit2. A new WebEvent-class
+        is created for touchevents, WebTouchEvent. Also touchpoints needed a new
+        class, WebPlatformTouchPoint. This is similar solution like in other
+        events(like MouseEvent) on WebKit2. These classes are introduced in WebEvent.h 
+        Also there was a need to create an empty constructor to PlatformTouchPoint-class.
+
+        * DerivedSources.pro:
+        * Shared/CoreIPCSupport/WebPageMessageKinds.h:
+        (WebPageMessage::):
+        * Shared/WebEvent.h:
+        (WebKit::WebEvent::):
+        (WebKit::WebTouchPoint::):
+        (WebKit::WebTouchPoint::WebTouchPoint):
+        (WebKit::WebTouchPoint::id):
+        (WebKit::WebTouchPoint::state):
+        (WebKit::WebTouchPoint::screenPosX):
+        (WebKit::WebTouchPoint::screenPosY):
+        (WebKit::WebTouchPoint::posX):
+        (WebKit::WebTouchPoint::posY):
+        (WebKit::WebTouchPoint::setState):
+        (WebKit::WebTouchPoint::encode):
+        (WebKit::WebTouchPoint::decode):
+        (WebKit::WebTouchEvent::WebTouchEvent):
+        (WebKit::WebTouchEvent::type):
+        (WebKit::WebTouchEvent::touchPoints):
+        (WebKit::WebTouchEvent::encode):
+        (WebKit::WebTouchEvent::decode):
+        (WebKit::WebTouchEvent::isTouchEventType):
+        * Shared/WebEventConversion.cpp:
+        (WebKit::WebKit2PlatformTouchPoint::WebKit2PlatformTouchPoint):
+        (WebKit::WebKit2PlatformTouchEvent::WebKit2PlatformTouchEvent):
+        (WebKit::platform):
+        * Shared/WebEventConversion.h:
+        * Shared/qt/WebEventFactoryQt.cpp:
+        (WebKit::webEventTypeForEvent):
+        (WebKit::WebEventFactory::createWebTouchEvent):
+        * Shared/qt/WebEventFactoryQt.h:
+        * UIProcess/API/qt/qgraphicswkview.cpp:
+        (QGraphicsWKView::event):
+        (QGraphicsWKView::touchEvent):
+        * UIProcess/API/qt/qgraphicswkview.h:
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPagePrivate::touchEvent):
+        * UIProcess/API/qt/qwkpage_p.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::touchEvent):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::touchEvent):
+        (WebKit::WebPage::didReceiveMessage):
+        * WebProcess/WebPage/WebPage.h:
+
 2010-08-21  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.

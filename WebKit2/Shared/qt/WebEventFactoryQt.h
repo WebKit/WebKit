@@ -29,6 +29,10 @@
 
 #include "WebEvent.h"
 
+#if ENABLE(TOUCH_EVENTS)
+class QTouchEvent;
+#endif
+
 class QGraphicsSceneMouseEvent;
 class QGraphicsSceneWheelEvent;
 class QKeyEvent;
@@ -40,6 +44,9 @@ public:
     static WebMouseEvent createWebMouseEvent(QGraphicsSceneMouseEvent* event, int eventClickCount);
     static WebWheelEvent createWebWheelEvent(QGraphicsSceneWheelEvent* event);
     static WebKeyboardEvent createWebKeyboardEvent(QKeyEvent* event);
+#if ENABLE(TOUCH_EVENTS)
+    static WebTouchEvent createWebTouchEvent(QTouchEvent* event);
+#endif
 };
 
 } // namespace WebKit
