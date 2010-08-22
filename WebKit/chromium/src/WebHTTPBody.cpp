@@ -74,31 +74,33 @@ bool WebHTTPBody::elementAt(size_t index, Element& result) const
 
     const FormDataElement& element = m_private->elements()[index];
 
+    result.data.reset();
+    result.filePath.reset();
+    result.fileStart = 0;
+    result.fileLength = 0;
+    result.fileInfo.modificationTime = 0.0;
+    result.blobURL = KURL();
+
     switch (element.m_type) {
     case FormDataElement::data:
         result.type = Element::TypeData;
         result.data.assign(element.m_data.data(), element.m_data.size());
-        result.filePath.reset();
-#if ENABLE(BLOB)
-        result.fileStart = 0;
-        result.fileLength = 0;
-        result.fileInfo.modificationTime = 0.0;
-#endif
         break;
     case FormDataElement::encodedFile:
         result.type = Element::TypeFile;
-        result.data.reset();
         result.filePath = element.m_filename;
 #if ENABLE(BLOB)
         result.fileStart = element.m_fileStart;
         result.fileLength = element.m_fileLength;
         result.fileInfo.modificationTime = element.m_expectedFileModificationTime;
-#else
-        result.fileStart = 0;
-        result.fileLength = -1;
-        result.fileInfo.modificationTime = 0.0;
 #endif
         break;
+#if ENABLE(BLOB)
+    case FormDataElement::encodedBlob:
+        result.type = Element::TypeBlob;
+        result.blobURL = element.m_blobURL;
+        break;
+#endif
     default:
         ASSERT_NOT_REACHED();
         return false;
@@ -126,6 +128,14 @@ void WebHTTPBody::appendFileRange(const WebString& filePath, long long fileStart
 #if ENABLE(BLOB)
     ensureMutable();
     m_private->appendFileRange(filePath, fileStart, fileLength, fileInfo.modificationTime);
+#endif
+}
+
+void WebHTTPBody::appendBlob(const WebURL& blobURL)
+{
+#if ENABLE(BLOB)
+    ensureMutable();
+    m_private->appendBlob(blobURL);
 #endif
 }
 

@@ -139,6 +139,11 @@ PassRefPtr<FormData> FormData::deepCopy() const
             formData->m_elements.append(FormDataElement(e.m_filename, e.m_shouldGenerateFile));
 #endif
             break;
+#if ENABLE(BLOB)
+        case FormDataElement::encodedBlob:
+            formData->m_elements.append(FormDataElement(e.m_blobURL));
+            break;
+#endif
         }
     }
     return formData.release();
@@ -199,6 +204,11 @@ void FormData::appendItem(const BlobItem* item, bool shouldGenerateFile)
 void FormData::appendFileRange(const String& filename, long long start, long long length, double expectedModificationTime, bool shouldGenerateFile)
 {
     m_elements.append(FormDataElement(filename, start, length, expectedModificationTime, shouldGenerateFile));
+}
+
+void FormData::appendBlob(const KURL& blobURL)
+{
+    m_elements.append(FormDataElement(blobURL));
 }
 #endif
 

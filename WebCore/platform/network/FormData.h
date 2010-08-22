@@ -20,6 +20,7 @@
 #ifndef FormData_h
 #define FormData_h
 
+#include "KURL.h"
 #include "PlatformString.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
@@ -39,17 +40,25 @@ public:
 
 #if ENABLE(BLOB)
     FormDataElement(const String& filename, long long fileStart, long long fileLength, double expectedFileModificationTime, bool shouldGenerateFile) : m_type(encodedFile), m_filename(filename), m_fileStart(fileStart), m_fileLength(fileLength), m_expectedFileModificationTime(expectedFileModificationTime), m_shouldGenerateFile(shouldGenerateFile) { }
+    FormDataElement(const KURL& blobURL) : m_type(encodedBlob), m_blobURL(blobURL) { }
 #else
     FormDataElement(const String& filename, bool shouldGenerateFile) : m_type(encodedFile), m_filename(filename), m_shouldGenerateFile(shouldGenerateFile) { }
 #endif
 
-    enum { data, encodedFile } m_type;
+    enum {
+        data,
+        encodedFile
+#if ENABLE(BLOB)
+        , encodedBlob
+#endif
+    } m_type;
     Vector<char> m_data;
     String m_filename;
 #if ENABLE(BLOB)
     long long m_fileStart;
     long long m_fileLength;
     double m_expectedFileModificationTime;
+    KURL m_blobURL;
 #endif
     String m_generatedFilename;
     bool m_shouldGenerateFile;
@@ -67,14 +76,16 @@ inline bool operator==(const FormDataElement& a, const FormDataElement& b)
 
     if (a.m_type != b.m_type)
         return false;
-    if (a.m_data != b.m_data)
-        return false;
+    if (a.m_type == FormDataElement::data)
+        return a.m_data == b.m_data;
+    if (a.m_type == FormDataElement::encodedFile)
 #if ENABLE(BLOB)
-    if (a.m_filename != b.m_filename || a.m_fileStart != b.m_fileStart || a.m_fileLength != b.m_fileLength || a.m_expectedFileModificationTime != b.m_expectedFileModificationTime)
+        return a.m_filename == b.m_filename && a.m_fileStart == b.m_fileStart && a.m_fileLength == b.m_fileLength && a.m_expectedFileModificationTime == b.m_expectedFileModificationTime;
+    if (a.m_type == FormDataElement::encodedBlob)
+        return a.m_blobURL == b.m_blobURL;
 #else
-    if (a.m_filename != b.m_filename)
+        return a.m_filename == b.m_filename;
 #endif
-        return false;
 
     return true;
 }
@@ -101,6 +112,7 @@ public:
     void appendFile(const String& filename, bool shouldGenerateFile = false);
 #if ENABLE(BLOB)
     void appendFileRange(const String& filename, long long start, long long length, double expectedModificationTime, bool shouldGenerateFile = false);
+    void appendBlob(const KURL& blobURL);
 #endif
 
     void flatten(Vector<char>&) const; // omits files
