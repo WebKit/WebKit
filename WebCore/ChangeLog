@@ -1,3 +1,25 @@
+2010-08-22  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        HTML5 TreeBuilder builds wrong DOM for <a><svg><tr><input></a>
+        https://bugs.webkit.org/show_bug.cgi?id=44390
+
+        The HTML5 spec has changed since Adam and I original wrote
+        the HTMLTreeBuilder.  Most important for this change was resolution of:
+        http://www.w3.org/Bugs/Public/show_bug.cgi?id=9580
+
+        I also removed our "phrasing" tag support since that was also removed
+        from the spec as part of other bug fixes.
+
+        This is tested by tonyg's <a><svg><tr><input></a> test in adoption01.dat.
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processCloseWhenNestedTag):
+        (WebCore::HTMLTreeBuilder::processAnyOtherEndTagForInBody):
+        (WebCore::HTMLTreeBuilder::furthestBlockForFormattingElement):
+        (WebCore::HTMLTreeBuilder::processEndTag):
+
 2010-08-22  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Ariya Hidayat.
