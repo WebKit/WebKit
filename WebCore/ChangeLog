@@ -1,3 +1,25 @@
+2010-08-22  Ariya Hidayat  <ariya@sencha.com>
+
+        Reviewed by Dirk Schulze.
+
+        [Qt] Layer approach to support generic shadow handling
+        https://bugs.webkit.org/show_bug.cgi?id=44380
+
+        The pair beginShadowLayer and endShadowLayer creates a temporary image
+        where the caller can draw onto, using the returned QPainter. When
+        endShadowLayer is called, the temporary image will be filtered, using
+        the specified shadow color and blur radius, and drawn to the graphics
+        context.
+
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/qt/ContextShadow.cpp:
+        (WebCore::ContextShadow::beginShadowLayer):
+        (WebCore::ContextShadow::endShadowLayer):
+        * platform/graphics/qt/ContextShadow.h:
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::contextShadow):
+
 2010-08-21  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Dan Bernstein.

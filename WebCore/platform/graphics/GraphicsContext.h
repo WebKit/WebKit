@@ -48,6 +48,9 @@ class SurfaceOpenVG;
 typedef class WebCore::SurfaceOpenVG PlatformGraphicsContext;
 #elif PLATFORM(QT)
 #include <QPainter>
+namespace WebCore {
+class ContextShadow;
+}
 typedef QPainter PlatformGraphicsContext;
 #elif PLATFORM(WX)
 class wxGCDC;
@@ -396,6 +399,7 @@ namespace WebCore {
         void pushTransparencyLayerInternal(const QRect &rect, qreal opacity, QPixmap& alphaMask);
         QPen pen();
         static QPainter::CompositionMode toQtCompositionMode(CompositeOperator op);
+        ContextShadow* contextShadow();
 #endif
 
 #if PLATFORM(GTK)

@@ -58,12 +58,35 @@ public:
 
     void clear();
 
-    // Draws the shadow for colored rectangle (can't be filled with pattern
-    // or gradient) according to the shadow parameters.
-    // Note: 'rect' specifies the rectangle which casts the shadow,
-    // NOT the bounding box of the shadow.
-    void drawShadowRect(QPainter* p, const QRectF& rect);
+    // The pair beginShadowLayer and endShadowLayer creates a temporary image
+    // where the caller can draw onto, using the returned QPainter. This
+    // QPainter instance must be used only to draw between the call to
+    // beginShadowLayer and endShadowLayer.
+    //
+    // Note: multiple/nested shadow layer is NOT allowed.
+    //
+    // The current clip region will be used to optimize the size of the
+    // temporary image. Thus, the original painter should not change any
+    // clipping until endShadowLayer.
+    // If the shadow will be completely outside the clipping region,
+    // beginShadowLayer will return 0.
+    //
+    // The returned QPainter will have the transformation matrix and clipping
+    // properly initialized to start doing the painting (no need to account
+    // for the shadow offset), however it will not have the same render hints,
+    // pen, brush, etc as the passed QPainter. This is intentional, usually
+    // shadow has different properties than the shape which casts the shadow.
+    //
+    // Once endShadowLayer is called, the temporary image will be drawn
+    // with the original painter. If blur radius is specified, the shadow
+    // will be filtered first.
+    QPainter* beginShadowLayer(QPainter* p, const QRectF& rect);
+    void endShadowLayer(QPainter* p);
 
+private:
+    QRect m_layerRect;
+    QImage m_layerImage;
+    QPainter* m_layerPainter;
 };
 
 } // namespace WebCore

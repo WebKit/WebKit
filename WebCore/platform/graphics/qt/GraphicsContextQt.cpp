@@ -695,11 +695,25 @@ void GraphicsContext::fillRect(const FloatRect& rect, const Color& color, ColorS
 
     m_data->solidColor.setColor(color);
     QPainter* p = m_data->p();
+    QRectF normalizedRect = rect.normalized();
 
-    if (m_data->hasShadow())
-        m_data->shadow.drawShadowRect(p, rect);
+    if (m_data->hasShadow()) {
+        ContextShadow* shadow = contextShadow();
 
-    p->fillRect(rect, m_data->solidColor);
+        if (shadow->type != ContextShadow::BlurShadow) {
+            // We do not need any layer for simple shadow.
+            p->fillRect(normalizedRect.translated(shadow->offset), shadow->color);
+        } else {
+            QPainter* shadowPainter = shadow->beginShadowLayer(p, normalizedRect);
+            if (shadowPainter) {
+                shadowPainter->setCompositionMode(QPainter::CompositionMode_Source);
+                shadowPainter->fillRect(normalizedRect, shadow->color);
+                shadow->endShadowLayer(p);
+            }
+        }
+    }
+
+    p->fillRect(normalizedRect, m_data->solidColor);
 }
 
 void GraphicsContext::fillRoundedRect(const IntRect& rect, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight, const Color& color, ColorSpace colorSpace)
@@ -739,6 +753,11 @@ bool GraphicsContext::inTransparencyLayer() const
 PlatformPath* GraphicsContext::currentPath()
 {
     return &m_data->currentPath;
+}
+
+ContextShadow* GraphicsContext::contextShadow()
+{
+    return &m_data->shadow;
 }
 
 void GraphicsContext::clip(const FloatRect& rect)
