@@ -213,6 +213,10 @@ void XMLDocumentParser::exitText()
 
 void XMLDocumentParser::end()
 {
+    // XMLDocumentParserLibxml2 will do bad things to the document if doEnd() is called.
+    // I don't believe XMLDocumentParserQt needs doEnd called in the fragment case.
+    ASSERT(!m_parsingFragment);
+
     doEnd();
 
     // doEnd() could process a script tag, thus pausing parsing.
@@ -227,8 +231,7 @@ void XMLDocumentParser::end()
     }
 
     clearCurrentNodeStack();
-    if (!m_parsingFragment)
-        document()->finishedParsing();
+    document()->finishedParsing();
 }
 
 void XMLDocumentParser::finish()
@@ -369,4 +372,25 @@ void XMLDocumentParser::pauseParsing()
     m_parserPaused = true;
 }
 
+bool XMLDocumentParser::parseDocumentFragment(const String& chunk, DocumentFragment* fragment, Element* contextElement, FragmentScriptingPermission scriptingPermission)
+{
+    if (!chunk.length())
+        return true;
+
+    // FIXME: We need to implement the HTML5 XML Fragment parsing algorithm:
+    // http://www.whatwg.org/specs/web-apps/current-work/multipage/the-xhtml-syntax.html#xml-fragment-parsing-algorithm
+    // For now we have a hack for script/style innerHTML support:
+    if (contextElement && (contextElement->hasLocalName(HTMLNames::scriptTag) || contextElement->hasLocalName(HTMLNames::styleTag))) {
+        fragment->parserAddChild(fragment->document()->createTextNode(chunk));
+        return true;
+    }
+
+    RefPtr<XMLDocumentParser> parser = XMLDocumentParser::create(fragment, contextElement, scriptingPermission);
+    bool wellFormed = parser->appendFragmentSource(chunk);
+    // Do not call finish().  Current finish() and doEnd() implementations touch the main Document/loader
+    // and can cause crashes in the fragment case.
+    parser->detach(); // Allows ~DocumentParser to assert it was detached before destruction.
+    return wellFormed; // appendFragmentSource()'s wellFormed is more permissive than wellFormed().
 }
+
+} // namespace WebCore

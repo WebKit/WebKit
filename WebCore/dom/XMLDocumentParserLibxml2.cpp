@@ -1274,8 +1274,10 @@ void XMLDocumentParser::initializeParserContext(const char* chunk)
     XMLDocumentParserScope scope(document()->docLoader());
     if (m_parsingFragment)
         m_context = XMLParserContext::createMemoryParser(&sax, this, chunk);
-    else
+    else {
+        ASSERT(!chunk);
         m_context = XMLParserContext::createStringParser(&sax, this);
+    }
 }
 
 void XMLDocumentParser::doEnd()
@@ -1371,31 +1373,29 @@ void XMLDocumentParser::resumeParsing()
         end();
 }
 
-// FIXME: This method should be possible to implement using the DocumentParser
-// API, instead of needing to grab at libxml2 state directly.
-bool XMLDocumentParser::parseDocumentFragment(const String& chunk, DocumentFragment* fragment, Element* parent, FragmentScriptingPermission scriptingPermission)
+bool XMLDocumentParser::appendFragmentSource(const String& chunk)
 {
-    if (!chunk.length())
-        return true;
-
-    RefPtr<XMLDocumentParser> parser = XMLDocumentParser::create(fragment, parent, scriptingPermission);
+    ASSERT(!m_context);
+    ASSERT(m_parsingFragment);
 
     CString chunkAsUtf8 = chunk.utf8();
-    parser->initializeParserContext(chunkAsUtf8.data());
+    initializeParserContext(chunkAsUtf8.data());
+    xmlParseContent(context());
+    endDocument(); // Close any open text nodes.
 
-    xmlParseContent(parser->context());
-
-    parser->endDocument();
-
+    // FIXME: If this code is actually needed, it should probably move to finish()
+    // XMLDocumentParserQt has a similar check (m_stream.error() == QXmlStreamReader::PrematureEndOfDocumentError) in doEnd().
     // Check if all the chunk has been processed.
-    long bytesProcessed = xmlByteConsumed(parser->context());
-    if (bytesProcessed == -1 || ((unsigned long)bytesProcessed) != chunkAsUtf8.length())
+    long bytesProcessed = xmlByteConsumed(context());
+    if (bytesProcessed == -1 || ((unsigned long)bytesProcessed) != chunkAsUtf8.length()) {
+        // FIXME: I don't believe we can hit this case without also having seen an error.
+        // If we hit this ASSERT, we've found a test case which demonstrates the need for this code.
+        ASSERT(m_sawError);
         return false;
-
-    parser->detach(); // Allows ~DocumentParser to assert it was detached before destruction.
+    }
 
     // No error if the chunk is well formed or it is not but we have no error.
-    return parser->context()->wellFormed || !xmlCtxtGetLastError(parser->context());
+    return context()->wellFormed || !xmlCtxtGetLastError(context());
 }
 
 // --------------------------------

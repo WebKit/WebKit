@@ -97,7 +97,7 @@ namespace WebCore {
         bool isWMLDocument() const;
 #endif
 
-    static bool parseDocumentFragment(const String&, DocumentFragment*, Element* parent = 0, FragmentScriptingPermission = FragmentScriptingAllowed);
+        static bool parseDocumentFragment(const String&, DocumentFragment*, Element* parent = 0, FragmentScriptingPermission = FragmentScriptingAllowed);
 
         // WMLErrorHandling uses these functions.
         virtual bool wellFormed() const { return !m_sawError; }
@@ -123,6 +123,8 @@ namespace WebCore {
 
         void pauseParsing();
         void resumeParsing();
+
+        bool appendFragmentSource(const String&);
 
 #if USE(QXMLSTREAM)
 private:
