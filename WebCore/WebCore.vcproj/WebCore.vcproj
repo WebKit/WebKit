@@ -51873,6 +51873,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\inspector\InspectorProfilerAgent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\InspectorProfilerAgent.h"
+				>
+			</File>
+			<File
 				RelativePath="..\inspector\InspectorResource.cpp"
 				>
 			</File>

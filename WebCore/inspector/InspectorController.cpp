@@ -63,6 +63,7 @@
 #include "InspectorDOMStorageResource.h"
 #include "InspectorDatabaseResource.h"
 #include "InspectorDebuggerAgent.h"
+#include "InspectorProfilerAgent.h"
 #include "InspectorResource.h"
 #include "InspectorStorageAgent.h"
 #include "InspectorTimelineAgent.h"
@@ -115,8 +116,6 @@ using namespace std;
 
 namespace WebCore {
 
-static const char* const UserInitiatedProfileName = "org.webkit.profiles.user-initiated";
-static const char* const CPUProfileType = "CPU";
 static const char* const resourceTrackingEnabledSettingName = "resourceTrackingEnabled";
 static const char* const debuggerEnabledSettingName = "debuggerEnabled";
 static const char* const profilerEnabledSettingName = "profilerEnabled";
@@ -170,11 +169,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* client)
     , m_injectedScriptHost(InjectedScriptHost::create(this))
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     , m_attachDebuggerWhenShown(false)
-    , m_profilerEnabled(!WTF_USE_JSC)
-    , m_recordingUserInitiatedProfile(false)
-    , m_currentUserInitiatedProfileNumber(-1)
-    , m_nextUserInitiatedProfileNumber(1)
-    , m_startProfiling(this, &InspectorController::startUserInitiatedProfiling)
+    , m_profilerAgent(InspectorProfilerAgent::create(this))
 #endif
 {
     ASSERT_ARG(page, page);
@@ -504,8 +499,11 @@ void InspectorController::connectFrontend()
         String debuggerEnabled = setting(debuggerEnabledSettingName);
         if (debuggerEnabled == "true" || m_attachDebuggerWhenShown)
             enableDebugger();
-        String profilerEnabled = setting(profilerEnabledSettingName);
-        if (profilerEnabled == "true")
+    }
+    m_profilerAgent->setRemoteFrontend(m_remoteFrontend.get());
+    if (!ScriptProfiler::isProfilerAlwaysEnabled()) {
+        String profilerEnabledSetting = setting(profilerEnabledSettingName);
+        if (profilerEnabledSetting == "true")
             enableProfiler();
     }
 #endif
@@ -594,7 +592,8 @@ void InspectorController::disconnectFrontend()
     hideHighlight();
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    stopUserInitiatedProfiling();
+    m_profilerAgent->setRemoteFrontend(0);
+    m_profilerAgent->stopUserInitiatedProfiling();
 #endif
 
     releaseFrontendLifetimeAgents();
@@ -638,7 +637,7 @@ void InspectorController::populateScriptObjects()
         m_remoteFrontend->monitoringXHRWasEnabled();
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    if (m_profilerEnabled)
+    if (m_profilerAgent->enabled())
         m_remoteFrontend->profilerWasEnabled();
 #endif
 
@@ -745,11 +744,7 @@ void InspectorController::didCommitLoad(DocumentLoader* loader)
             m_debuggerAgent->clearForPageNavigation();
 #endif
 #if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
-        m_profiles.clear();
-        m_currentUserInitiatedProfileNumber = 1;
-        m_nextUserInitiatedProfileNumber = 1;
-        if (m_remoteFrontend)
-            m_remoteFrontend->resetProfilesPanel();
+        m_profilerAgent->resetState();
 #endif
         // unbindAllResources should be called before database and DOM storage
         // resources are cleared so that it has a chance to unbind them.
@@ -1458,176 +1453,61 @@ void InspectorController::addProfile(PassRefPtr<ScriptProfile> prpProfile, unsig
 {
     if (!enabled())
         return;
-
-    RefPtr<ScriptProfile> profile = prpProfile;
-    m_profiles.add(profile->uid(), profile);
-
-    if (m_remoteFrontend) {
-        m_remoteFrontend->addProfileHeader(createProfileHeader(*profile));
-    }
-
-    addProfileFinishedMessageToConsole(profile, lineNumber, sourceURL);
+    m_profilerAgent->addProfile(prpProfile, lineNumber, sourceURL);
 }
 
 void InspectorController::addProfileFinishedMessageToConsole(PassRefPtr<ScriptProfile> prpProfile, unsigned lineNumber, const String& sourceURL)
 {
-    RefPtr<ScriptProfile> profile = prpProfile;
-
-    String title = profile->title();
-    String message = String::format("Profile \"webkit-profile://%s/%s#%d\" finished.", CPUProfileType, encodeWithURLEscapeSequences(title).utf8().data(), profile->uid());
-    addMessageToConsole(JSMessageSource, LogMessageType, LogMessageLevel, message, lineNumber, sourceURL);
+    m_profilerAgent->addProfileFinishedMessageToConsole(prpProfile, lineNumber, sourceURL);
 }
 
 void InspectorController::addStartProfilingMessageToConsole(const String& title, unsigned lineNumber, const String& sourceURL)
 {
-    String message = String::format("Profile \"webkit-profile://%s/%s#0\" started.", CPUProfileType, encodeWithURLEscapeSequences(title).utf8().data());
-    addMessageToConsole(JSMessageSource, LogMessageType, LogMessageLevel, message, lineNumber, sourceURL);
+    m_profilerAgent->addStartProfilingMessageToConsole(title, lineNumber, sourceURL);
 }
 
-void InspectorController::removeProfile(unsigned uid)
+
+bool InspectorController::isRecordingUserInitiatedProfile() const
+{
+    return m_profilerAgent->isRecordingUserInitiatedProfile();
+}
+
+String InspectorController::getCurrentUserInitiatedProfileName(bool incrementProfileNumber)
+{
+    return m_profilerAgent->getCurrentUserInitiatedProfileName(incrementProfileNumber);
+}
+
+void InspectorController::startUserInitiatedProfiling()
 {
     if (!enabled())
         return;
-
-    if (m_profiles.contains(uid))
-        m_profiles.remove(uid);
-}
-
-void InspectorController::clearProfiles()
-{
-    if (!enabled())
-        return;
-
-    m_profiles.clear();
-    m_currentUserInitiatedProfileNumber = 1;
-    m_nextUserInitiatedProfileNumber = 1;
-}
-
-void InspectorController::getProfileHeaders(RefPtr<InspectorArray>* headers)
-{
-    ProfilesMap::iterator profilesEnd = m_profiles.end();
-    for (ProfilesMap::iterator it = m_profiles.begin(); it != profilesEnd; ++it)
-        (*headers)->pushObject(createProfileHeader(*it->second));
-}
-
-void InspectorController::getProfile(unsigned uid, RefPtr<InspectorObject>* profileObject)
-{
-    ProfilesMap::iterator it = m_profiles.find(uid);
-    if (it != m_profiles.end()) {
-        *profileObject = createProfileHeader(*it->second);
-        (*profileObject)->setObject("head", it->second->buildInspectorObjectForHead());
-    }
-}
-
-PassRefPtr<InspectorObject> InspectorController::createProfileHeader(const ScriptProfile& profile)
-{
-    RefPtr<InspectorObject> header = InspectorObject::create();
-    header->setString("title", profile.title());
-    header->setNumber("uid", profile.uid());
-    header->setString("typeId", String(CPUProfileType));
-    return header;
-}
-
-String InspectorController::getCurrentUserInitiatedProfileName(bool incrementProfileNumber = false)
-{
-    if (incrementProfileNumber)
-        m_currentUserInitiatedProfileNumber = m_nextUserInitiatedProfileNumber++;
-
-    return String::format("%s.%d", UserInitiatedProfileName, m_currentUserInitiatedProfileNumber);
-}
-
-void InspectorController::startUserInitiatedProfilingSoon()
-{
-    m_startProfiling.startOneShot(0);
-}
-
-void InspectorController::startUserInitiatedProfiling(Timer<InspectorController>*)
-{
-    if (!enabled())
-        return;
-
-    if (!profilerEnabled()) {
-        enableProfiler(false, true);
-        ScriptDebugServer::shared().recompileAllJSFunctions();
-    }
-
-    m_recordingUserInitiatedProfile = true;
-
-    String title = getCurrentUserInitiatedProfileName(true);
-
-#if USE(JSC)
-    JSC::ExecState* scriptState = toJSDOMWindow(m_inspectedPage->mainFrame(), debuggerWorld())->globalExec();
-#else
-    ScriptState* scriptState = 0;
-#endif
-    ScriptProfiler::start(scriptState, title);
-
-    addStartProfilingMessageToConsole(title, 0, String());
-
-    toggleRecordButton(true);
+    m_profilerAgent->startUserInitiatedProfiling();
 }
 
 void InspectorController::stopUserInitiatedProfiling()
 {
     if (!enabled())
         return;
-
-    m_recordingUserInitiatedProfile = false;
-
-    String title = getCurrentUserInitiatedProfileName();
-
-#if USE(JSC)
-    JSC::ExecState* scriptState = toJSDOMWindow(m_inspectedPage->mainFrame(), debuggerWorld())->globalExec();
-#else
-    // Use null script state to avoid filtering by context security token.
-    // All functions from all iframes should be visible from Inspector UI.
-    ScriptState* scriptState = 0;
-#endif
-    RefPtr<ScriptProfile> profile = ScriptProfiler::stop(scriptState, title);
-    if (profile)
-        addProfile(profile, 0, String());
-
-    toggleRecordButton(false);
+    m_profilerAgent->stopUserInitiatedProfiling();
 }
 
-void InspectorController::toggleRecordButton(bool isProfiling)
+bool InspectorController::profilerEnabled() const
 {
-    if (!m_remoteFrontend)
-        return;
-    m_remoteFrontend->setRecordingProfile(isProfiling);
+    return enabled() && m_profilerAgent->enabled();
 }
 
 void InspectorController::enableProfiler(bool always, bool skipRecompile)
 {
     if (always)
         setSetting(profilerEnabledSettingName, "true");
-
-    if (m_profilerEnabled)
-        return;
-
-    m_profilerEnabled = true;
-
-    if (!skipRecompile)
-        ScriptDebugServer::shared().recompileAllJSFunctionsSoon();
-
-    if (m_remoteFrontend)
-        m_remoteFrontend->profilerWasEnabled();
+    m_profilerAgent->enable(skipRecompile);
 }
 
 void InspectorController::disableProfiler(bool always)
 {
     if (always)
         setSetting(profilerEnabledSettingName, "false");
-
-    if (!m_profilerEnabled)
-        return;
-
-    m_profilerEnabled = false;
-
-    ScriptDebugServer::shared().recompileAllJSFunctionsSoon();
-
-    if (m_remoteFrontend)
-        m_remoteFrontend->profilerWasDisabled();
+    m_profilerAgent->disable();
 }
 #endif
 

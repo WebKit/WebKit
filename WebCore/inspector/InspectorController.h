@@ -33,9 +33,7 @@
 #include "Cookie.h"
 #include "InspectorDOMAgent.h"
 #include "PlatformString.h"
-#include "ScriptProfile.h"
 #include "ScriptState.h"
-#include "Timer.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/ListHashSet.h>
@@ -65,6 +63,7 @@ class InspectorDatabaseResource;
 class InspectorDebuggerAgent;
 class InspectorFrontendClient;
 class InspectorObject;
+class InspectorProfilerAgent;
 class InspectorResource;
 class InspectorStorageAgent;
 class InspectorTimelineAgent;
@@ -78,6 +77,7 @@ class ResourceRequest;
 class ResourceResponse;
 class ResourceError;
 class ScriptCallStack;
+class ScriptProfile;
 class ScriptString;
 class SharedBuffer;
 class Storage;
@@ -228,20 +228,14 @@ public:
     void addProfile(PassRefPtr<ScriptProfile>, unsigned lineNumber, const String& sourceURL);
     void addProfileFinishedMessageToConsole(PassRefPtr<ScriptProfile>, unsigned lineNumber, const String& sourceURL);
     void addStartProfilingMessageToConsole(const String& title, unsigned lineNumber, const String& sourceURL);
-    void removeProfile(unsigned);
-    void clearProfiles();
-
-    bool isRecordingUserInitiatedProfile() const { return m_recordingUserInitiatedProfile; }
-
-    String getCurrentUserInitiatedProfileName(bool incrementProfileNumber);
-    void startUserInitiatedProfiling(Timer<InspectorController>* = 0);
+    bool isRecordingUserInitiatedProfile() const;
+    String getCurrentUserInitiatedProfileName(bool incrementProfileNumber = false);
+    void startUserInitiatedProfiling();
     void stopUserInitiatedProfiling();
-    void startProfiling() { startUserInitiatedProfiling(); }
-    void stopProfiling() { stopUserInitiatedProfiling(); }
-
     void enableProfiler(bool always = false, bool skipRecompile = false);
     void disableProfiler(bool always = false);
-    bool profilerEnabled() const { return enabled() && m_profilerEnabled; }
+    bool profilerEnabled() const;
+    InspectorProfilerAgent* profilerAgent() const { return m_profilerAgent.get(); }
 
     void enableDebugger();
     void disableDebugger(bool always = false);
@@ -283,14 +277,9 @@ private:
     void releaseFrontendLifetimeAgents();
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    typedef HashMap<unsigned int, RefPtr<ScriptProfile> > ProfilesMap;
 
-    void startUserInitiatedProfilingSoon();
     void toggleRecordButton(bool);
     void enableDebuggerFromFrontend(bool always);
-    void getProfileHeaders(RefPtr<InspectorArray>* headers);
-    void getProfile(unsigned uid, RefPtr<InspectorObject>* profileObject);
-    PassRefPtr<InspectorObject> createProfileHeader(const ScriptProfile& profile);
 #endif
 #if ENABLE(DATABASE)
     void selectDatabase(Database* database);
@@ -380,12 +369,7 @@ private:
     bool m_attachDebuggerWhenShown;
     OwnPtr<InspectorDebuggerAgent> m_debuggerAgent;
 
-    bool m_profilerEnabled;
-    bool m_recordingUserInitiatedProfile;
-    int m_currentUserInitiatedProfileNumber;
-    unsigned m_nextUserInitiatedProfileNumber;
-    Timer<InspectorController> m_startProfiling;
-    ProfilesMap m_profiles;
+    OwnPtr<InspectorProfilerAgent> m_profilerAgent;
 #endif
 #if ENABLE(WORKERS)
     typedef HashMap<intptr_t, RefPtr<InspectorWorkerResource> > WorkersMap;

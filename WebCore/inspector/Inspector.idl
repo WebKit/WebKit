@@ -145,14 +145,14 @@ module core {
         [handler=Controller] void enableProfiler(in boolean always);
         [handler=Controller] void disableProfiler(in boolean always);
 
-        [handler=Controller] void startProfiling();
-        [handler=Controller] void stopProfiling();
+        [handler=Profiler] void startProfiling();
+        [handler=Profiler] void stopProfiling();
 
-        [handler=Controller] void getProfileHeaders(in long callId, out Array headers);
-        [handler=Controller] void getProfile(in long callId, in unsigned long uid, out Object profile);
+        [handler=Profiler] void getProfileHeaders(in long callId, out Array headers);
+        [handler=Profiler] void getProfile(in long callId, in unsigned long uid, out Object profile);
 
-        [handler=Controller] void removeProfile(in unsigned long uid);
-        [handler=Controller] void clearProfiles();
+        [handler=Profiler] void removeProfile(in unsigned long uid);
+        [handler=Profiler] void clearProfiles();
 
         [handler=Backend] void takeHeapSnapshot();
         [handler=Backend] void getProfilerLogLines(in long callId, in long inPosition, out long outPosition, out String log);

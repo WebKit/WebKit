@@ -38,6 +38,11 @@ $typeTransform{"ApplicationCache"} = {
     "header" => "InspectorApplicationCacheAgent.h",
     "handlerAccessor" => "m_inspectorController->applicationCacheAgent()",
 };
+$typeTransform{"Profiler"} = {
+    "forward" => "InspectorProfilerAgent",
+    "header" => "InspectorProfilerAgent.h",
+    "handlerAccessor" => "m_inspectorController->profilerAgent()",
+};
 $typeTransform{"Frontend"} = {
     "forward" => "RemoteInspectorFrontend",
     "header" => "RemoteInspectorFrontend.h",

@@ -2745,6 +2745,8 @@
 		97EF561011E40783007E026F /* HTMLConstructionSite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97EF560E11E40783007E026F /* HTMLConstructionSite.cpp */; };
 		97EF561111E40783007E026F /* HTMLConstructionSite.h in Headers */ = {isa = PBXBuildFile; fileRef = 97EF560F11E40783007E026F /* HTMLConstructionSite.h */; };
 		97EF7DFE107E55B700D7C49C /* ScriptControllerBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97EF7DFD107E55B700D7C49C /* ScriptControllerBase.cpp */; };
+		9F0D6B2E121BFEBA006C0288 /* InspectorProfilerAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F0D6B2C121BFEBA006C0288 /* InspectorProfilerAgent.cpp */; };
+		9F0D6B2F121BFEBA006C0288 /* InspectorProfilerAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F0D6B2D121BFEBA006C0288 /* InspectorProfilerAgent.h */; };
 		9F6FC1961122E82A00E80196 /* ScriptDebugServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F6FC1941122E82A00E80196 /* ScriptDebugServer.cpp */; };
 		9F6FC1971122E82A00E80196 /* ScriptDebugServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F6FC1951122E82A00E80196 /* ScriptDebugServer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9F72304F11184B4100AD0126 /* ScriptProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F72304C11184B4100AD0126 /* ScriptProfile.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8605,6 +8607,8 @@
 		97EF560E11E40783007E026F /* HTMLConstructionSite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLConstructionSite.cpp; sourceTree = "<group>"; };
 		97EF560F11E40783007E026F /* HTMLConstructionSite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLConstructionSite.h; sourceTree = "<group>"; };
 		97EF7DFD107E55B700D7C49C /* ScriptControllerBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptControllerBase.cpp; sourceTree = "<group>"; };
+		9F0D6B2C121BFEBA006C0288 /* InspectorProfilerAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorProfilerAgent.cpp; sourceTree = "<group>"; };
+		9F0D6B2D121BFEBA006C0288 /* InspectorProfilerAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorProfilerAgent.h; sourceTree = "<group>"; };
 		9F6FC1941122E82A00E80196 /* ScriptDebugServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptDebugServer.cpp; sourceTree = "<group>"; };
 		9F6FC1951122E82A00E80196 /* ScriptDebugServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptDebugServer.h; sourceTree = "<group>"; };
 		9F72304C11184B4100AD0126 /* ScriptProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptProfile.h; sourceTree = "<group>"; };
@@ -11799,6 +11803,8 @@
 				7A0E770B10C00A8800A0276E /* InspectorFrontendHost.cpp */,
 				7A0E770C10C00A8800A0276E /* InspectorFrontendHost.h */,
 				7A0E770D10C00A8800A0276E /* InspectorFrontendHost.idl */,
+				9F0D6B2C121BFEBA006C0288 /* InspectorProfilerAgent.cpp */,
+				9F0D6B2D121BFEBA006C0288 /* InspectorProfilerAgent.h */,
 				41F062000F5F0B6600A07EAC /* InspectorResource.cpp */,
 				41F061FF0F5F0B6600A07EAC /* InspectorResource.h */,
 				7AB0B1BE1211A62200A76940 /* InspectorStorageAgent.cpp */,
@@ -20347,6 +20353,7 @@
 				2EF1BFF9121CB0CE00C27627 /* FileStreamClient.h in Headers */,
 				89C0DD7B121F0C69009E17CA /* FileSystemCallbacks.h in Headers */,
 				CE057FA61220731100A476D5 /* DocumentMarkerController.h in Headers */,
+				9F0D6B2F121BFEBA006C0288 /* InspectorProfilerAgent.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -22800,6 +22807,7 @@
 				46A26905121B6B4300C41F3A /* FileWriter.cpp in Sources */,
 				89C0DD7A121F0C69009E17CA /* FileSystemCallbacks.cpp in Sources */,
 				CE057FA51220731100A476D5 /* DocumentMarkerController.cpp in Sources */,
+				9F0D6B2E121BFEBA006C0288 /* InspectorProfilerAgent.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

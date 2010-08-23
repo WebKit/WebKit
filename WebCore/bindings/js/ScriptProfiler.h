@@ -41,6 +41,7 @@ public:
     static PassRefPtr<ScriptProfile> stop(ScriptState* state, const String& title);
     static void takeHeapSnapshot() { }
     static long getProfilerLogLines(long, String*) { return 0; }
+    static bool isProfilerAlwaysEnabled();
 };
 
 } // namespace WebCore

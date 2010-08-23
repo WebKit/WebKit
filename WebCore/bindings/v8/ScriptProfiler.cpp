@@ -69,4 +69,9 @@ long ScriptProfiler::getProfilerLogLines(long position, String* data)
     return position;
 }
 
+bool ScriptProfiler::isProfilerAlwaysEnabled()
+{
+    return true;
+}
+
 } // namespace WebCore
