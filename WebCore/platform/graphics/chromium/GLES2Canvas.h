@@ -85,7 +85,6 @@ private:
     void applyCompositeOperator(CompositeOperator);
     void checkGLError(const char* header);
     unsigned getQuadVertices();
-    unsigned getQuadIndices();
     unsigned getSimpleProgram();
     unsigned getTexProgram();
 
@@ -94,7 +93,6 @@ private:
     WTF::Vector<State> m_stateStack;
     State* m_state;
     unsigned m_quadVertices;
-    unsigned m_quadIndices;
     unsigned m_simpleProgram;
     unsigned m_texProgram;
     int m_simpleMatrixLocation;

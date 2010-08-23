@@ -1,3 +1,45 @@
+2010-08-20  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [CHROMIUM] Fix some failing layout tests w/ACCELERATED_2D_CANVAS
+        https://bugs.webkit.org/show_bug.cgi?id=44346
+
+        LayoutTests/fast/canvas/canvas-incremental-repaint.html (top middle
+        pane).
+        Failing because we were not applying the CTM in clearRect().  Now using
+        the fast path when the CTM is identity, and a fillRect() for the rest.
+        LayoutTests/fast/canvas/canvas-strokeRect.html
+        LayoutTests/fast/canvas/shadow-offset-[1-7].html
+        Failing because we weren't switching to the software path when a 
+        shadow is present.
+        Also refactor the two versions of fillRect(), and use TRIANGLE_STRIP
+        strip instead of TRIANGLES, which lets us get rid of the element array
+        and use drawArrays() instead of drawElements().
+
+        Covered by the above layout tests.
+
+        * platform/graphics/chromium/GLES2Canvas.cpp:
+        (WebCore::GLES2Canvas::GLES2Canvas):
+        (WebCore::GLES2Canvas::~GLES2Canvas):
+        Remove m_quadIndices (now unused).
+        (WebCore::GLES2Canvas::clearRect):
+        Use a glClear() fast path for the identity-CTM clear, and fillRect()
+        for the rest.
+        (WebCore::GLES2Canvas::fillRect):
+        Refactor the two versions of fillRect().
+        (WebCore::GLES2Canvas::drawTexturedRect):
+        (WebCore::GLES2Canvas::drawTexturedRectTile):
+        Get rid of the ELEMENT_ARRAY_BUFFER bind.  Use drawArrays() instead of
+        drawElements().
+        (WebCore::GLES2Canvas::getQuadVertices):
+        Re-order the vertices so they form a triangle strip.
+        * platform/graphics/chromium/GLES2Canvas.h:
+        Remove m_quadIndices (now unused).
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::fillRect):
+        Check for a draw looper (shadow), and drop to the software path.
+
 2010-08-23  Patrick Gansterer  <paroga@paroga.com>
 
         Reviewed by Adam Roben.

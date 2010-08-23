@@ -79,7 +79,6 @@ struct GLES2Canvas::State {
 GLES2Canvas::GLES2Canvas(GraphicsContext3D* context, const IntSize& size)
     : m_context(context)
     , m_quadVertices(0)
-    , m_quadIndices(0)
     , m_simpleProgram(0)
     , m_texProgram(0)
     , m_simpleMatrixLocation(-1)
@@ -111,40 +110,33 @@ GLES2Canvas::~GLES2Canvas()
     m_context->deleteProgram(m_simpleProgram);
     m_context->deleteProgram(m_texProgram);
     m_context->deleteBuffer(m_quadVertices);
-    m_context->deleteBuffer(m_quadIndices);
 }
 
 void GLES2Canvas::clearRect(const FloatRect& rect)
 {
-    m_context->scissor(rect.x(), rect.y(), rect.width(), rect.height());
-    m_context->enable(GraphicsContext3D::SCISSOR_TEST);
-    m_context->clear(GraphicsContext3D::COLOR_BUFFER_BIT);
-    m_context->disable(GraphicsContext3D::SCISSOR_TEST);
+    if (m_state->m_ctm.isIdentity()) {
+        m_context->scissor(rect.x(), rect.y(), rect.width(), rect.height());
+        m_context->enable(GraphicsContext3D::SCISSOR_TEST);
+        m_context->clear(GraphicsContext3D::COLOR_BUFFER_BIT);
+        m_context->disable(GraphicsContext3D::SCISSOR_TEST);
+    } else {
+        save();
+        setCompositeOperation(CompositeClear);
+        fillRect(rect, Color(RGBA32(0)), DeviceColorSpace);
+        restore();
+    }
 }
 
 void GLES2Canvas::fillRect(const FloatRect& rect, const Color& color, ColorSpace colorSpace)
 {
-    m_context->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, getQuadVertices());
-    m_context->bindBuffer(GraphicsContext3D::ELEMENT_ARRAY_BUFFER, getQuadIndices());
-
-    float rgba[4];
-    color.getRGBA(rgba[0], rgba[1], rgba[2], rgba[3]);
-    m_context->uniform4f(m_simpleColorLocation, rgba[0] * rgba[3], rgba[1] * rgba[3], rgba[2] * rgba[3], rgba[3]);
-
-    m_context->drawElements(GraphicsContext3D::TRIANGLES, 6, GraphicsContext3D::UNSIGNED_SHORT, 0);
-}
-
-void GLES2Canvas::fillRect(const FloatRect& rect)
-{
     applyCompositeOperator(m_state->m_compositeOp);
 
     m_context->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, getQuadVertices());
-    m_context->bindBuffer(GraphicsContext3D::ELEMENT_ARRAY_BUFFER, getQuadIndices());
 
     m_context->useProgram(getSimpleProgram());
 
     float rgba[4];
-    m_state->m_fillColor.getRGBA(rgba[0], rgba[1], rgba[2], rgba[3]);
+    color.getRGBA(rgba[0], rgba[1], rgba[2], rgba[3]);
     m_context->uniform4f(m_simpleColorLocation, rgba[0] * rgba[3], rgba[1] * rgba[3], rgba[2] * rgba[3], rgba[3]);
 
     AffineTransform matrix(m_flipMatrix);
@@ -159,7 +151,12 @@ void GLES2Canvas::fillRect(const FloatRect& rect)
 
     m_context->enableVertexAttribArray(m_simplePositionLocation);
 
-    m_context->drawElements(GraphicsContext3D::TRIANGLES, 6, GraphicsContext3D::UNSIGNED_SHORT, 0);
+    m_context->drawArrays(GraphicsContext3D::TRIANGLE_STRIP, 0, 4);
+}
+
+void GLES2Canvas::fillRect(const FloatRect& rect)
+{
+    fillRect(rect, m_state->m_fillColor, DeviceColorSpace);
 }
 
 void GLES2Canvas::setFillColor(const Color& color, ColorSpace colorSpace)
@@ -215,7 +212,6 @@ void GLES2Canvas::drawTexturedRect(GLES2Texture* texture, const FloatRect& srcRe
     applyCompositeOperator(compositeOp);
 
     m_context->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, getQuadVertices());
-    m_context->bindBuffer(GraphicsContext3D::ELEMENT_ARRAY_BUFFER, getQuadIndices());
     checkGLError("glBindBuffer");
 
     m_context->useProgram(getTexProgram());
@@ -275,8 +271,8 @@ void GLES2Canvas::drawTexturedRectTile(GLES2Texture* texture, int tile, const Fl
     m_context->uniformMatrix3fv(m_texTexMatrixLocation, false /*transpose*/, texMat, 1 /*count*/);
     checkGLError("glUniformMatrix3fv");
 
-    m_context->drawElements(GraphicsContext3D::TRIANGLES, 6, GraphicsContext3D::UNSIGNED_SHORT, 0);
-    checkGLError("glDrawElements");
+    m_context->drawArrays(GraphicsContext3D::TRIANGLE_STRIP, 0, 4);
+    checkGLError("glDrawArrays");
 }
 
 void GLES2Canvas::setCompositeOperation(CompositeOperator op)
@@ -351,8 +347,8 @@ unsigned GLES2Canvas::getQuadVertices()
     if (!m_quadVertices) {
         float vertices[] = { 0.0f, 0.0f, 1.0f,
                              1.0f, 0.0f, 1.0f,
-                             1.0f, 1.0f, 1.0f,
-                             0.0f, 1.0f, 1.0f };
+                             0.0f, 1.0f, 1.0f,
+                             1.0f, 1.0f, 1.0f };
         m_quadVertices = m_context->createBuffer();
         RefPtr<Float32Array> vertexArray = Float32Array::create(vertices, sizeof(vertices) / sizeof(float));
         m_context->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, m_quadVertices);
@@ -361,19 +357,6 @@ unsigned GLES2Canvas::getQuadVertices()
     return m_quadVertices;
 }
 
-
-unsigned GLES2Canvas::getQuadIndices()
-{
-    if (!m_quadIndices) {
-        unsigned short indices[] = { 0, 1, 2, 0, 2, 3};
-
-        m_quadIndices = m_context->createBuffer();
-        RefPtr<Uint16Array> indexArray = Uint16Array::create(indices, sizeof(indices) / sizeof(unsigned short));
-        m_context->bindBuffer(GraphicsContext3D::ELEMENT_ARRAY_BUFFER, m_quadIndices);
-        m_context->bufferData(GraphicsContext3D::ELEMENT_ARRAY_BUFFER, indexArray.get(), GraphicsContext3D::STATIC_DRAW);
-    }
-    return m_quadIndices;
-}
 
 static unsigned loadShader(GraphicsContext3D* context, unsigned type, const char* shaderSource)
 {
