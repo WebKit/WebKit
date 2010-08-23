@@ -32,6 +32,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameView.h"
+#include "HTMLBodyElement.h"
 #include "HTMLDocument.h"
 #include "Page.h"
 #include "Text.h"
@@ -99,9 +100,16 @@ static inline RefPtr<DocumentFragment> createFragmentFromSource(const String& so
 {
     RefPtr<DocumentFragment> fragment = outputDoc->createDocumentFragment();
 
-    if (sourceMIMEType == "text/html")
-        fragment->parseHTML(sourceString, 0);
-    else if (sourceMIMEType == "text/plain")
+    if (sourceMIMEType == "text/html") {
+        // As far as I can tell, there isn't a spec for how transformToFragment
+        // is supposed to work.  Based on the documentation I can find, it looks
+        // like we want to start parsing the fragment in the InBody insertion
+        // mode.  Unfortunately, that's an implementation detail of the parser.
+        // We achieve that effect here by passing in a fake body element as
+        // context for the fragment.
+        RefPtr<HTMLBodyElement> fakeBody = HTMLBodyElement::create(outputDoc);
+        fragment->parseHTML(sourceString, fakeBody.get());
+    } else if (sourceMIMEType == "text/plain")
         fragment->parserAddChild(Text::create(outputDoc, sourceString));
     else {
         bool successfulParse = fragment->parseXML(sourceString, 0);

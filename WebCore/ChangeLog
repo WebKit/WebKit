@@ -2,6 +2,21 @@
 
         Reviewed by Eric Seidel.
 
+        fast/xsl/default-html.html fails with HTML5 fragment parsing
+        https://bugs.webkit.org/show_bug.cgi?id=44450
+
+        This patch is a step down a trail of tears.  As far as I can tell,
+        there's no spec for XSLTProcessor.transformToFragment.  This patch
+        attempts to infer the proper behavior from test cases and the Mozilla
+        wiki.
+
+        * xml/XSLTProcessor.cpp:
+        (WebCore::createFragmentFromSource):
+
+2010-08-23  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         editing/pasteboard/paste-visible-script.html is broken with --html5-treebuilder
         https://bugs.webkit.org/show_bug.cgi?id=44457
 
