@@ -4652,9 +4652,9 @@ ${GENSOURCES_INSPECTOR}/inspector.html: $(WebCore)/inspector/front-end/*.html \
 		$(WebCore)/inspector/front-end/Images/* \
 		DerivedSources/WebCore/InspectorBackendStub.js \
 		$(WebCore)/English.lproj/localizedStrings.js
-	mkdir -p ${GENSOURCES_INSPECTOR}/images
-	cp ${dist_webinspector_DATA} ${GENSOURCES_INSPECTOR}
-	cp ${dist_webinspectorimages_DATA} ${GENSOURCES_INSPECTOR}/images
+	$(AM_V_GEN)mkdir -p ${GENSOURCES_INSPECTOR}/images
+	$(AM_V_at)cp ${dist_webinspector_DATA} ${GENSOURCES_INSPECTOR}
+	$(AM_V_at)cp ${dist_webinspectorimages_DATA} ${GENSOURCES_INSPECTOR}/images
 
 webresourcesdir = ${datadir}/webkitgtk-@WEBKITGTK_API_VERSION@/images
 dist_webresources_DATA = \

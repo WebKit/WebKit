@@ -1,3 +1,11 @@
+2010-08-23  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        Make the copy of the inspector files silent.
+
+        * GNUmakefile.am:
+
 2010-08-23  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
