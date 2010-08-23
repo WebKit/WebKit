@@ -1,3 +1,15 @@
+2010-08-23  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Tests that calling getImageData(), toDataURL() on a canvas tainted by
+        a createPattern of a different origin image using redirects from same origin
+        is not allowed.
+        https://bugs.webkit.org/show_bug.cgi?id=44399
+
+        * http/tests/security/canvas-remote-read-remote-image-redirect-expected.txt: Added.
+        * http/tests/security/canvas-remote-read-remote-image-redirect.html: Added.
+
 2010-08-23  Simon Fraser  <simon.fraser@apple.com>
 
         Add missing test result.
