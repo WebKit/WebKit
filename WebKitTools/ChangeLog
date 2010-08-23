@@ -1,3 +1,14 @@
+2010-08-23  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Layout tests do not run when using WebKitTestRunner in a Debug build.
+        https://bugs.webkit.org/show_bug.cgi?id=44409
+
+        Reviewed by Dan Bernstein.
+
+        * WebKitTestRunner/win/TestControllerWin.cpp:
+        (WTR::TestController::initializeInjectedBundlePath):
+        Use InjectedBundle_debug.dll when building Debug.
+
 2010-08-23  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Martin Robinson.

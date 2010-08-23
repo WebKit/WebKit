@@ -34,6 +34,12 @@
 
 using namespace WebCore;
 
+#if !defined(NDEBUG) && (!defined(DEBUG_INTERNAL) || defined(DEBUG_ALL))
+const LPCWSTR webProcessName = L"WebKit2WebProcess_debug.exe";
+#else
+const LPCWSTR webProcessName = L"WebKit2WebProcess.exe";
+#endif
+
 namespace WebKit {
 
 void ProcessLauncher::launchProcess()
@@ -51,12 +57,8 @@ void ProcessLauncher::launchProcess()
     Vector<UChar> commandLineVector;
 
     // FIXME: We would like to pass a full path to the .exe here.
-#ifndef DEBUG_ALL
-    String commandLine(L"WebKit2WebProcess.exe");
-#else
-    String commandLine(L"WebKit2WebProcess_debug.exe");
-#endif
 
+    String commandLine(webProcessName);
     append(commandLineVector, commandLine);
     append(commandLineVector, " -mode webprocess");
     append(commandLineVector, " -clientIdentifier ");

@@ -40,8 +40,10 @@ namespace WTR {
 
 #if !defined(NDEBUG) && (!defined(DEBUG_INTERNAL) || defined(DEBUG_ALL))
 const LPWSTR testPluginDirectoryName = L"TestNetscapePlugin_Debug";
+const char* injectedBundleDLL = "\\InjectedBundle_debug.dll";
 #else
 const LPWSTR testPluginDirectoryName = L"TestNetscapePlugin";
+const char* injectedBundleDLL = "\\InjectedBundle.dll";
 #endif
 
 static void addQTDirToPATH()
@@ -104,12 +106,7 @@ void TestController::initializeInjectedBundlePath()
 {
     CFStringRef exeContainerPath = CFURLCopyFileSystemPath(CFURLCreateCopyDeletingLastPathComponent(0, CFBundleCopyExecutableURL(CFBundleGetMainBundle())), kCFURLWindowsPathStyle);
     CFMutableStringRef bundlePath = CFStringCreateMutableCopy(0, 0, exeContainerPath);
-#ifdef DEBUG_ALL
-    CFStringAppendCString(bundlePath, "\\InjectedBundle_debug.dll", kCFStringEncodingWindowsLatin1);
-#else
-    CFStringAppendCString(bundlePath, "\\InjectedBundle.dll", kCFStringEncodingWindowsLatin1);
-#endif
-    
+    CFStringAppendCString(bundlePath, injectedBundleDLL, kCFStringEncodingWindowsLatin1);
     m_injectedBundlePath.adopt(WKStringCreateWithCFString(bundlePath));
 }
 
