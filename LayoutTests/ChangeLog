@@ -1,5 +1,11 @@
 2010-08-23  Dumitru Daniliuc  <dumi@chromium.org>
 
+        Unreviewed, updating Chromium expectations.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-08-23  Dumitru Daniliuc  <dumi@chromium.org>
+
         Unreviewed, updating some Chromium expectations.
 
         * platform/chromium/test_expectations.txt:
