@@ -8,7 +8,6 @@ function openSuccess()
 
     var db = evalAndLog("db = event.result");
     shouldBeEqualToString("db.name", "name");
-    shouldBeEqualToString("db.description", "description");
     shouldBeEqualToString("db.version", "");
     shouldBe("db.objectStores", "[]");
     shouldBe("db.objectStores.length", "0");
