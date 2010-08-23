@@ -1,3 +1,18 @@
+2010-08-23  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Many LayoutTests crash when run with --html5-treebuilder
+        https://bugs.webkit.org/show_bug.cgi?id=44440
+
+        Our list of special tags is out of sync with the HTML5 spec.  This
+        patch adds HTML to the list, which fixs a ton of crashers when parsing
+        fragments.  We neet to sync up the list at some point, but we want to
+        make sure we have test coverage for all those changes, so I've left
+        that for a future patch.
+
+        * html/HTMLTreeBuilder.cpp:
+
 2010-08-23  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.

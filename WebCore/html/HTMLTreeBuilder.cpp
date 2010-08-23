@@ -137,6 +137,7 @@ bool isSpecialNode(Node* node)
 {
     if (node->namespaceURI() != xhtmlNamespaceURI)
         return false;
+    // FIXME: This list is out of sync with the spec.
     const AtomicString& tagName = node->localName();
     return tagName == addressTag
         || tagName == articleTag
@@ -170,6 +171,7 @@ bool isSpecialNode(Node* node)
         || tagName == headerTag
         || tagName == hgroupTag
         || tagName == hrTag
+        || tagName == htmlTag
         || tagName == iframeTag
         || tagName == imgTag
         || tagName == inputTag
