@@ -26,6 +26,7 @@
 #include "config.h"
 #include "RenderThemeEfl.h"
 
+#include "CSSValueKeywords.h"
 #include "FileSystem.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -631,6 +632,8 @@ void RenderThemeEfl::themeChanged()
     applyPartDescriptions();
 }
 
+float RenderThemeEfl::defaultFontSize = 16.0f;
+
 RenderThemeEfl::RenderThemeEfl(Page* page)
     : RenderTheme()
     , m_page(page)
@@ -985,10 +988,24 @@ bool RenderThemeEfl::paintSearchField(RenderObject* o, const PaintInfo& i, const
     return paintThemePart(o, SearchField, i, rect);
 }
 
-void RenderThemeEfl::systemFont(int, FontDescription&) const
+void RenderThemeEfl::setDefaultFontSize(int size)
 {
-    // If you remove this notImplemented(), replace it with an comment that explains why.
-    notImplemented();
+    defaultFontSize = size;
+}
+
+void RenderThemeEfl::systemFont(int propId, FontDescription& fontDescription) const
+{
+    // It was called by RenderEmbeddedObject::paintReplaced to render alternative string.
+    // To avoid cairo_error while rendering, fontDescription should be passed.
+    DEFINE_STATIC_LOCAL(String, fontFace, ("Sans"));
+    float fontSize = defaultFontSize;
+
+    fontDescription.firstFamily().setFamily(fontFace);
+    fontDescription.setSpecifiedSize(fontSize);
+    fontDescription.setIsAbsoluteSize(true);
+    fontDescription.setGenericFamily(FontDescription::NoFamily);
+    fontDescription.setWeight(FontWeightNormal);
+    fontDescription.setItalic(false);
 }
 
 }

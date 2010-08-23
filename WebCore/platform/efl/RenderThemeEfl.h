@@ -142,6 +142,12 @@ public:
 
     virtual void adjustSliderThumbStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
     virtual bool paintSliderThumb(RenderObject*, const PaintInfo&, const IntRect&);
+
+    static void setDefaultFontSize(int size);
+
+protected:
+    static float defaultFontSize;
+
 private:
     void createCanvas();
     void createEdje();
