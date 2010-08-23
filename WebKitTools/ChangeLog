@@ -1,3 +1,18 @@
+2010-08-23  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] The 64-bit Release bot is showing crashes on tests that use mouse buttons
+        https://bugs.webkit.org/show_bug.cgi?id=44465
+
+        Initialize the axes field of mouse button and motion events to null.
+        This is the value that should be used for events originating from the
+        mouse device.
+
+        * DumpRenderTree/gtk/EventSender.cpp:
+        (prepareMouseButtonEvent): Initalize button event axes field to null.
+        (mouseMoveToCallback): Initialize motion event axes field to null.
+
 2010-08-23  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r65703.
