@@ -1,3 +1,11 @@
+2010-08-23  Leandro Pereira  <leandro@profusion.mobi>
+
+        [EFL] Build fix for platforms that do not require linking with "dl".
+        CMake includes the variable CMAKE_DL_LIBS that evaluates to the
+        platform-specific libraries.
+
+        * CMakeListsEfl.txt: Use ${CMAKE_DL_LIBS} instead of dl.
+
 2010-08-22  Rafael Antognolli  <antognolli@profusion.mobi>
 
         Reviewed by Antonio Gomes.
