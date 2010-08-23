@@ -415,6 +415,8 @@ void QWebView::setPage(QWebPage* page)
                 this, SIGNAL(statusBarMessage(QString)));
         connect(d->page, SIGNAL(linkClicked(QUrl)),
                 this, SIGNAL(linkClicked(QUrl)));
+        connect(d->page, SIGNAL(selectionChanged()),
+                this, SIGNAL(selectionChanged()));
 
         connect(d->page, SIGNAL(microFocusChanged()),
                 this, SLOT(updateMicroFocus()));
