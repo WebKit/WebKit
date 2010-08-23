@@ -38,7 +38,7 @@ public:
     JavaField(JNIEnv*, jobject aField);
 
     const JavaString& name() const { return m_name; }
-    const char* type() const { return m_type.UTF8String(); }
+    const char* type() const { return m_type.utf8(); }
 
     JNIType getJNIType() const { return m_JNIType; }
 

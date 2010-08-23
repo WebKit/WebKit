@@ -34,7 +34,7 @@ JavaField::JavaField(JNIEnv* env, jobject aField)
     jobject fieldType = callJNIMethod<jobject>(aField, "getType", "()Ljava/lang/Class;");
     jstring fieldTypeName = static_cast<jstring>(callJNIMethod<jobject>(fieldType, "getName", "()Ljava/lang/String;"));
     m_type = JavaString(env, fieldTypeName);
-    m_JNIType = JNITypeFromClassName(m_type.UTF8String());
+    m_JNIType = JNITypeFromClassName(m_type.utf8());
 
     // Get field name
     jstring fieldName = static_cast<jstring>(callJNIMethod<jobject>(aField, "getName", "()Ljava/lang/String;"));
