@@ -1309,6 +1309,7 @@ SET(WebCore_SOURCES
     platform/network/AuthenticationChallengeBase.cpp
     platform/network/BlobData.cpp
     platform/network/BlobRegistryImpl.cpp
+    platform/network/BlobResourceHandle.cpp
     platform/network/Credential.cpp
     platform/network/FormData.cpp
     platform/network/FormDataBuilder.cpp

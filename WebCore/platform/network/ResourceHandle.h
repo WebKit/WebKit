@@ -98,9 +98,10 @@ class ResourceHandle : public RefCounted<ResourceHandle>
     , public AuthenticationClient
 #endif
     {
-private:
+protected:
     ResourceHandle(const ResourceRequest&, ResourceHandleClient*, bool defersLoading, bool shouldContentSniff);
 
+private:
     enum FailureType {
         NoFailure,
         BlockedFailure,

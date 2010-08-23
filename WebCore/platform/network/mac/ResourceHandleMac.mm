@@ -29,6 +29,7 @@
 #import "AuthenticationChallenge.h"
 #import "AuthenticationMac.h"
 #import "Base64.h"
+#import "BlobRegistry.h"
 #import "BlockExceptions.h"
 #import "CredentialStorage.h"
 #import "DocLoader.h"
@@ -463,6 +464,12 @@ bool ResourceHandle::willLoadFromCache(ResourceRequest& request, Frame*)
 void ResourceHandle::loadResourceSynchronously(const ResourceRequest& request, StoredCredentials storedCredentials, ResourceError& error, ResourceResponse& response, Vector<char>& data, Frame* frame)
 {
     LOG(Network, "ResourceHandle::loadResourceSynchronously:%@ allowStoredCredentials:%u", request.nsURLRequest(), storedCredentials);
+
+#if ENABLE(BLOB)
+    if (request.url().protocolIs("blob"))
+        if (blobRegistry().loadResourceSynchronously(request, error, response, data))
+            return;
+#endif
 
     NSError *nsError = nil;
     NSURLResponse *nsURLResponse = nil;

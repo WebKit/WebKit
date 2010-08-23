@@ -532,6 +532,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	platform/network/AuthenticationChallengeBase.cpp \
 	platform/network/BlobData.cpp \
 	platform/network/BlobRegistryImpl.cpp \
+	platform/network/BlobResourceHandle.cpp \
 	platform/network/Credential.cpp \
 	platform/network/CredentialStorage.cpp \
 	platform/network/FormData.cpp \

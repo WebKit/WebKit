@@ -315,4 +315,61 @@ String extractReasonPhraseFromHTTPStatusLine(const String& statusLine)
     return statusLine.substring(spacePos + 1);
 }
 
+bool parseRange(const String& range, long long& rangeOffset, long long& rangeEnd, long long& rangeSuffixLength)
+{
+    // The format of "Range" header is defined in RFC 2616 Section 14.35.1.
+    // http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.35.1
+    // We don't support multiple range requests.
+
+    rangeOffset = rangeEnd = rangeSuffixLength = -1;
+
+    // The "bytes" unit identifier should be present.
+    static const char bytesStart[] = "bytes="; 
+    if (!range.startsWith(bytesStart, false))
+        return false;
+    String byteRange = range.substring(sizeof(bytesStart) - 1);
+
+    // The '-' character needs to be present.
+    int index = byteRange.find('-');
+    if (index == -1)
+        return false;
+
+    // If the '-' character is at the beginning, the suffix length, which specifies the last N bytes, is provided.
+    // Example:
+    //     -500
+    if (!index) {
+        String suffixLengthString = byteRange.substring(index + 1).stripWhiteSpace();
+        bool ok;
+        long long value = suffixLengthString.toInt64Strict(&ok);
+        if (ok)
+            rangeSuffixLength = value;
+        return true;
+    }
+
+    // Otherwise, the first-byte-position and the last-byte-position are provied.
+    // Examples:
+    //     0-499
+    //     500-
+    String firstBytePosStr = byteRange.left(index).stripWhiteSpace();
+    bool ok;
+    long long firstBytePos = firstBytePosStr.toInt64Strict(&ok);
+    if (!ok)
+        return false;
+
+    String lastBytePosStr = byteRange.substring(index + 1).stripWhiteSpace();
+    long long lastBytePos = -1;
+    if (!lastBytePosStr.isEmpty()) {
+        lastBytePos = lastBytePosStr.toInt64Strict(&ok);
+        if (!ok)
+            return false;
+    }
+
+    if (firstBytePos < 0 || !(lastBytePos == -1 || lastBytePos >= firstBytePos))
+        return false;
+
+    rangeOffset = firstBytePos;
+    rangeEnd = lastBytePos;
+    return true;
+}
+
 }

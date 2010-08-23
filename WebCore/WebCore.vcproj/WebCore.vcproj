@@ -26872,6 +26872,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\network\BlobResourceHandle.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\network\BlobResourceHandle.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\network\BlobStorageData.h"
 					>
 				</File>

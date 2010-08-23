@@ -113,6 +113,7 @@ void BlobRegistryImpl::appendStorageItems(BlobStorageData* blobStorageData, cons
             ASSERT(iter->type == BlobDataItem::File);
             blobStorageData->m_data.appendFile(iter->path, iter->offset + offset, newLength, iter->expectedModificationTime);
         }
+        length -= newLength;
         offset = 0;
     }
 }

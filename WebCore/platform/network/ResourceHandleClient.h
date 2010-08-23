@@ -44,8 +44,10 @@ class NSCachedURLResponse;
 #endif
 
 namespace WebCore {
+    class AsyncFileStream;
     class AuthenticationChallenge;
     class Credential;
+    class FileStreamClient;
     class KURL;
     class ProtectionSpace;
     class ResourceHandle;
@@ -91,6 +93,9 @@ namespace WebCore {
 #endif
 #if USE(CFNETWORK)
         virtual bool shouldCacheResponse(ResourceHandle*, CFCachedURLResponseRef response) { return true; }
+#endif
+#if ENABLE(BLOB)
+        virtual AsyncFileStream* createAsyncFileStream(FileStreamClient*) { return 0; }
 #endif
     };
 

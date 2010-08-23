@@ -2103,6 +2103,8 @@ webcore_sources += \
 	WebCore/platform/network/BlobRegistry.h \
 	WebCore/platform/network/BlobRegistryImpl.cpp \
 	WebCore/platform/network/BlobRegistryImpl.h \
+	WebCore/platform/network/BlobResourceHandle.cpp \
+	WebCore/platform/network/BlobResourceHandle.h \
 	WebCore/platform/network/BlobStorageData.h \
 	WebCore/platform/network/Credential.cpp \
 	WebCore/platform/network/Credential.h \

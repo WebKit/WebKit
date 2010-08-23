@@ -941,6 +941,7 @@ SOURCES += \
     platform/network/AuthenticationChallengeBase.cpp \
     platform/network/BlobData.cpp \
     platform/network/BlobRegistryImpl.cpp \
+    platform/network/BlobResourceHandle.cpp \
     platform/network/Credential.cpp \
     platform/network/FormData.cpp \
     platform/network/FormDataBuilder.cpp \
@@ -1742,6 +1743,7 @@ HEADERS += \
     platform/network/BlobData.h \
     platform/network/BlobRegistry.h \
     platform/network/BlobRegistryImpl.h \
+    platform/network/BlobResourceHandle.h \
     platform/network/BlobStorageData.h \
     platform/network/Credential.h \
     platform/network/FormDataBuilder.h \

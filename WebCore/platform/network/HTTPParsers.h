@@ -59,6 +59,9 @@ void findCharsetInMediaType(const String& mediaType, unsigned int& charsetPos, u
 XSSProtectionDisposition parseXSSProtectionHeader(const String&);
 String extractReasonPhraseFromHTTPStatusLine(const String&);
 
+// -1 could be set to one of the return parameters to indicate the value is not specified.
+bool parseRange(const String&, long long& rangeOffset, long long& rangeEnd, long long& rangeSuffixLength);
+
 }
 
 #endif

@@ -27,6 +27,7 @@
 #include "ResourceHandle.h"
 #include "ResourceHandleInternal.h"
 
+#include "BlobRegistry.h"
 #include "DNS.h"
 #include "Logging.h"
 #include "ResourceHandleClient.h"
@@ -54,6 +55,14 @@ ResourceHandle::ResourceHandle(const ResourceRequest& request, ResourceHandleCli
 PassRefPtr<ResourceHandle> ResourceHandle::create(const ResourceRequest& request, ResourceHandleClient* client,
     Frame* frame, bool defersLoading, bool shouldContentSniff)
 {
+#if ENABLE(BLOB)
+    if (request.url().protocolIs("blob")) {
+        PassRefPtr<ResourceHandle> handle = blobRegistry().createResourceHandle(request, client);
+        if (handle)
+            return handle;
+    }
+#endif
+
     RefPtr<ResourceHandle> newHandle(adoptRef(new ResourceHandle(request, client, defersLoading, shouldContentSniff)));
 
     if (newHandle->d->m_scheduledFailureType != NoFailure)

@@ -32,6 +32,7 @@
 
 #include "ApplicationCacheHost.h"
 #include "DocumentLoader.h"
+#include "FileStreamProxy.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "InspectorTimelineAgent.h"
@@ -510,5 +511,13 @@ void ResourceLoader::willCacheResponse(ResourceHandle*, CacheStoragePolicy& poli
     if (policy == StorageAllowed && m_frame->settings() && m_frame->settings()->privateBrowsingEnabled())
         policy = StorageAllowedInMemoryOnly;    
 }
+
+#if ENABLE(BLOB)
+AsyncFileStream* ResourceLoader::createAsyncFileStream(FileStreamClient* client)
+{
+    // It is OK to simply return a pointer since FileStreamProxy::create adds an extra ref.
+    return FileStreamProxy::create(m_frame->document()->scriptExecutionContext(), client).get();
+}
+#endif
 
 }
