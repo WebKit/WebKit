@@ -1,3 +1,37 @@
+2010-08-23  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: remove javascript breakpoint specific code from BreakpointSidebarPane
+        https://bugs.webkit.org/show_bug.cgi?id=44327
+
+        * inspector/front-end/BreakpointManager.js:
+        (WebInspector.BreakpointManager.prototype.setBreakpoint):
+        (WebInspector.BreakpointManager.prototype.restoredBreakpoint):
+        (WebInspector.BreakpointManager.prototype._setBreakpoint):
+        (WebInspector.BreakpointManager.prototype._removeBreakpoint):
+        (WebInspector.BreakpointManager.prototype._setBreakpointOnBackend):
+        (WebInspector.Breakpoint):
+        * inspector/front-end/BreakpointsSidebarPane.js:
+        (WebInspector.BreakpointsSidebarPane):
+        (WebInspector.BreakpointsSidebarPane.prototype.addBreakpoint):
+        (WebInspector.BreakpointsSidebarPane.prototype._breakpointRemoved):
+        (WebInspector.JSBreakpointItem):
+        (WebInspector.JSBreakpointItem.prototype.compareTo):
+        (WebInspector.JSBreakpointItem.prototype.element):
+        (WebInspector.JSBreakpointItem.prototype._breakpointClicked):
+        (WebInspector.JSBreakpointItem.prototype._checkboxClicked):
+        (WebInspector.JSBreakpointItem.prototype._enableChanged):
+        (WebInspector.JSBreakpointItem.prototype._textChanged):
+        (WebInspector.JSBreakpointItem.prototype._removed):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel):
+        (WebInspector.ScriptsPanel.prototype._breakpointAdded):
+        (WebInspector.ScriptsPanel.prototype._breakpointRemoved):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype.addBreakpoint):
+        (WebInspector.SourceFrame.prototype._addBreakpointToSource):
+
 2010-08-23  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.

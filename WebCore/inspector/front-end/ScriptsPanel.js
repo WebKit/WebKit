@@ -171,7 +171,6 @@ WebInspector.ScriptsPanel = function()
     this._debuggerEnabled = Preferences.debuggerAlwaysEnabled;
 
     WebInspector.breakpointManager.addEventListener("breakpoint-added", this._breakpointAdded, this);
-    WebInspector.breakpointManager.addEventListener("breakpoint-removed", this._breakpointRemoved, this);
 
     this.reset();
 }
@@ -296,6 +295,9 @@ WebInspector.ScriptsPanel.prototype = {
     {
         var breakpoint = event.data;
 
+        breakpoint.addEventListener("removed", this._breakpointRemoved, this);
+        this.sidebarPanes.breakpoints.addBreakpoint(new WebInspector.JSBreakpointItem(event.data));
+
         var sourceFrame;
         if (breakpoint.url) {
             var resource = WebInspector.resourceURLMap[breakpoint.url];
@@ -314,7 +316,7 @@ WebInspector.ScriptsPanel.prototype = {
 
     _breakpointRemoved: function(event)
     {
-        var breakpoint = event.data;
+        var breakpoint = event.target;
 
         var sourceFrame;
         if (breakpoint.url) {

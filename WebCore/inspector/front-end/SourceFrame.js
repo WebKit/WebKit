@@ -99,9 +99,6 @@ WebInspector.SourceFrame.prototype = {
     addBreakpoint: function(breakpoint)
     {
         this.breakpoints.push(breakpoint);
-        breakpoint.addEventListener("enabled", this._breakpointChanged, this);
-        breakpoint.addEventListener("disabled", this._breakpointChanged, this);
-        breakpoint.addEventListener("condition-changed", this._breakpointChanged, this);
         if (this._textViewer)
             this._addBreakpointToSource(breakpoint);
     },
@@ -384,6 +381,10 @@ WebInspector.SourceFrame.prototype = {
 
     _addBreakpointToSource: function(breakpoint)
     {
+        breakpoint.addEventListener("enabled", this._breakpointChanged, this);
+        breakpoint.addEventListener("disabled", this._breakpointChanged, this);
+        breakpoint.addEventListener("condition-changed", this._breakpointChanged, this);
+
         var lineNumber = breakpoint.line - 1;
         if (lineNumber >= this._textModel.linesCount)
             return;
