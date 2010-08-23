@@ -2106,7 +2106,7 @@ BUG21958 MAC : svg/hixie/error/012.xml = FAIL
 // WebKit merge 48500:48585, newly implemented Object.defineProperty.
 BUG22526 WIN MAC: fast/js/Object-create.html = FAIL
 BUG22526 : fast/js/Object-defineProperties.html = FAIL CRASH
-BUG22526 : fast/js/Object-defineProperty.html = FAIL
+BUG22526 : fast/js/Object-defineProperty.html = FAIL CRASH
 BUG22526 : http/tests/security/xss-DENIED-defineProperty.html = FAIL
 
 // WebKit merge 48500:48585, due to newly added support for MathML.
@@ -3235,3 +3235,6 @@ BUGWK44290 WIN MAC : fast/forms/input-text-scroll-left-on-blur.html = IMAGE
 BUGWK44341 WIN LINUX : svg/clip-path/clip-path-pixelation.svg = IMAGE+TEXT
 BUGWK44341 WIN LINUX : svg/batik/text/textProperties.svg = IMAGE
 BUGWK44341 WIN LINUX : svg/clip-path/clip-path-childs-clipped.svg = IMAGE
+
+// Flaky on Linux
+BUG53131 LINUX : fast/js/array-iterate-backwards.html = CRASH PASS
