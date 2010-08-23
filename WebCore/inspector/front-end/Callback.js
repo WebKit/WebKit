@@ -42,8 +42,9 @@ WebInspector.Callback.prototype = {
         return callbackId;
     },
 
-    processResponse: function(callbackId, args)
+    processResponse: function(callbackId, opt_vararg)
     {
+        var args = Array.prototype.slice.call(arguments, 1);
         var callback = this._callbacks[callbackId];
         callback.apply(null, args);
         delete this._callbacks[callbackId];

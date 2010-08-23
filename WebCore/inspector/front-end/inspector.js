@@ -589,12 +589,20 @@ var windowLoaded = function()
 
 window.addEventListener("load", windowLoaded, false);
 
-WebInspector.dispatch = function(message) {
+WebInspector.dispatch = function() {
+    var methodName = arguments[0];
+    var parameters = Array.prototype.slice.call(arguments, 1);
+
     // We'd like to enforce asynchronous interaction between the inspector controller and the frontend.
     // This is important to LayoutTests.
     function delayDispatch()
     {
-        WebInspector_syncDispatch(message);
+        if (!(methodName in WebInspector)) {
+            console.error("Attempted to dispatch unimplemented WebInspector method: %s", methodName);
+            return;
+        }
+
+        WebInspector[methodName].apply(WebInspector, parameters);
         WebInspector.pendingDispatches--;
     }
     WebInspector.pendingDispatches++;
@@ -604,41 +612,21 @@ WebInspector.dispatch = function(message) {
 // This function is purposely put into the global scope for easy access.
 WebInspector_syncDispatch = function(message)
 {
-    var messageObject = (typeof message === "string") ? JSON.parse(message) : message;
-    if (messageObject.type === "response" && !messageObject.success) {
-        WebInspector.removeResponseCallbackEntry(messageObject.seq)
-        WebInspector.reportProtocolError(messageObject);
-        return;
-    }
-
-    var arguments = [];
-    if (messageObject.data)
-        for (var key in messageObject.data)
-            arguments.push(messageObject.data[key]);
-
-    if (messageObject.type === "event") {
-        if (!messageObject.event in WebInspector) {
-            console.error("Attempted to dispatch unimplemented WebInspector method: %s", messageObject.event);
-            return;
-        }
-        WebInspector[messageObject.event].apply(WebInspector, arguments);
-    }
-
-    if (messageObject.type === "response")
-        WebInspector.processResponse(messageObject.seq, arguments);
+    var args = JSON.parse(message);
+    var methodName = args[0];
+    var parameters = args.slice(1);
+    WebInspector[methodName].apply(WebInspector, parameters);
 }
 
-WebInspector.dispatchMessageFromBackend = function(messageObject)
+WebInspector.dispatchMessageFromBackend = function(arguments)
 {
-    WebInspector.dispatch(messageObject);
+    WebInspector.dispatch.apply(this, arguments);
 }
 
-WebInspector.reportProtocolError = function(messageObject)
+WebInspector.reportProtocolError = function(callId, methodName, errorText)
 {
-    console.error("Error: InspectorBackend." + messageObject.command + " failed.");
-    for (var error in messageObject.errors)
-        console.error("    " + error);
-    WebInspector.removeResponseCallbackEntry(messageObject.seq);
+    console.error("InspectorBackend." + methodName + " failed with error text: '" + errorText + "'");
+    WebInspector.removeResponseCallbackEntry(callId);
 }
 
 WebInspector.windowResize = function(event)

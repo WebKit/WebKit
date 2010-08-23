@@ -1,3 +1,27 @@
+2010-08-23  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r65803.
+        http://trac.webkit.org/changeset/65803
+        https://bugs.webkit.org/show_bug.cgi?id=44416
+
+        windows build failed (Requested by loislo on #webkit).
+
+        * inspector/CodeGeneratorInspector.pm:
+        * inspector/Inspector.idl:
+        * inspector/InspectorController.cpp:
+        * inspector/InspectorController.h:
+        * inspector/InspectorFrontendClientLocal.cpp:
+        (WebCore::InspectorFrontendClientLocal::setAttachedWindow):
+        * inspector/InspectorValues.h:
+        * inspector/front-end/Callback.js:
+        (WebInspector.Callback.prototype.processResponse):
+        * inspector/front-end/inspector.js:
+        (WebInspector.dispatch.delayDispatch):
+        (WebInspector.dispatch):
+        (WebInspector_syncDispatch):
+        (WebInspector.dispatchMessageFromBackend):
+        (WebInspector.reportProtocolError):
+
 2010-08-23  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.

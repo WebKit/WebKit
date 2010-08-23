@@ -121,7 +121,15 @@ void InspectorFrontendClientLocal::moveWindowBy(float x, float y)
 
 void InspectorFrontendClientLocal::setAttachedWindow(bool attached)
 {
-    m_inspectorController->setAttachedWindow(attached);
+    ScriptObject webInspectorObj;
+    if (!ScriptGlobalObject::get(m_frontendScriptState, "WebInspector", webInspectorObj)) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    ScriptFunctionCall function(webInspectorObj, "dispatch"); 
+    function.appendArgument("setAttachedWindow");
+    function.appendArgument(attached);
+    function.call();
 }
 
 void InspectorFrontendClientLocal::restoreAttachedWindowHeight()
