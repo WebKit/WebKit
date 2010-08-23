@@ -2,6 +2,29 @@
 
         Reviewed by Eric Seidel.
 
+        editing/pasteboard/bad-placeholder.html fails with --html5-treebuilder
+        https://bugs.webkit.org/show_bug.cgi?id=44463
+
+        The problem here is that using the documentElement as the context puts
+        the tree builder into the BeforeHead insertion mode, which strips
+        leading spaces.  This code is confused about what it wants, but it
+        certainly doesn't want to be in that insertion mode.  Looking through
+        the callers, they'd much rather be in the InBody insertion mode.  We
+        can get them there by creating a fake body element as the context
+        element.
+
+        In the long term, all this code needs to be changed to move away from
+        deprecatedCreateContextualFragment, which does a bunch of nasty stuff
+        like removing certain kinds of elements.  However, that's a battle for
+        another day.
+
+        * editing/markup.cpp:
+        (WebCore::createFragmentFromMarkup):
+
+2010-08-23  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         fast/xsl/default-html.html fails with HTML5 fragment parsing
         https://bugs.webkit.org/show_bug.cgi?id=44450
 
