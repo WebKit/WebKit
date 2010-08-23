@@ -2224,6 +2224,7 @@ fast/workers/storage/sql-exception-codes-sync.html
 http/tests/appcache/different-https-origin-resource-main.html
 http/tests/appcache/fallback.html
 http/tests/cache/subresource-expiration.html
+http/tests/eventsource/eventsource-reconnect.html
 http/tests/eventsource/eventsource-status-code-states.html
 http/tests/history/back-to-post.php
 http/tests/media/video-load-twice.html
