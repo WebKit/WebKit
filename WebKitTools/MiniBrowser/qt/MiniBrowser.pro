@@ -13,7 +13,11 @@ CONFIG += uitools
 isEmpty(OUTPUT_DIR): OUTPUT_DIR = ../../..
 include(../../../WebKit.pri)
 
-INCLUDEPATH += $$OUTPUT_DIR/include
+INCLUDEPATH += \
+    $$PWD/../../../WebKit2/UIProcess/API/C \
+    $$PWD/../../../WebKit2/UIProcess/API/qt \
+    $$OUTPUT_DIR/include
+
 
 DESTDIR = $$OUTPUT_DIR/bin
 !CONFIG(standalone_package): CONFIG -= app_bundle

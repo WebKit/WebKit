@@ -1,3 +1,18 @@
+2010-08-23  Balazs Kelemen  <kb@inf.u-szeged.hu>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Find needed forwarding headers for WebKit2 automatically
+        https://bugs.webkit.org/show_bug.cgi?id=44336
+
+        * MiniBrowser/qt/BrowserWindow.cpp: Use normal (not framework style) includes here.
+        The new script does not satisfy the needs of this file however using normal includes
+        is generally better here.
+        * MiniBrowser/qt/MiniBrowser.pro: Added include paths.
+        * Scripts/enumerate-included-framework-headers: Enumerates headers included from the 
+        given frameworks by files in the current directory (and subdirectories).
+        In the future this needs to be rewritten in perl for being able to use on Windows.
+
 2010-08-22  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Ariya Hidayat.

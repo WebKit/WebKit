@@ -27,8 +27,8 @@
  */
 
 #include "BrowserWindow.h"
-#include <WebKit2/WKPageNamespace.h>
-#include <WebKit2/qwkpage.h>
+#include "WKPageNamespace.h"
+#include "qwkpage.h"
 
 static QWKPage* createNewPage(QWKPage* page)
 {

@@ -1,3 +1,13 @@
+2010-08-23  Balazs Kelemen  <kb@inf.u-szeged.hu>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Find needed forwarding headers for WebKit2 automatically
+        https://bugs.webkit.org/show_bug.cgi?id=44336
+
+        * DerivedSources.pro: Use the new enumerate-included-framework-headers script for generating
+        the list of forwarding headers we want to create.
+
 2010-08-23  Zoltan Horvath  <zoltan@webkit.org>
 
         [Qt] Build fix.
