@@ -1,3 +1,14 @@
+2010-08-20  Girish Ramakrishnan  <girish@forwardbias.in>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Allow wmode=transparent in QWebView on Maemo5 after r65775.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=44043
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::createPlugin):
+
 2010-08-22  Marc Mutz  <marc.mutz@kdab.com>
 
         Reviewed by Antonio Gomes.
