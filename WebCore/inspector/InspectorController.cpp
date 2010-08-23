@@ -420,6 +420,15 @@ void InspectorController::setInspectorFrontendClient(PassOwnPtr<InspectorFronten
     m_inspectorFrontendClient = client;
 }
 
+void InspectorController::setAttachedWindow(bool attached)
+{
+    if (!m_remoteFrontend) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    m_remoteFrontend->setAttachedWindow(attached);
+}
+
 void InspectorController::inspectedWindowScriptObjectCleared(Frame* frame)
 {
     // If the page is supposed to serve as InspectorFrontend notify inspetor frontend
