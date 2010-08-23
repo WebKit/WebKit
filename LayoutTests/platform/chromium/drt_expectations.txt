@@ -292,6 +292,7 @@ BUG_DRT MAC : fast/canvas/webgl/renderbuffer-initialization.html = TEXT PASS
 BUG_DRT MAC : fast/canvas/webgl/tex-image-and-sub-image-2d-with-array-buffer-view.html = TEXT PASS
 BUG_DRT MAC : fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data.html = TEXT PASS
 BUG_DRT MAC : fast/canvas/webgl/tex-image-and-sub-image-2d-with-image.html = TEXT PASS
+BUG_DRT MAC : fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html = TEXT PASS
 BUG_DRT MAC : fast/canvas/webgl/tex-image-and-uniform-binding-bugs.html = TEXT PASS
 BUG_DRT MAC : fast/canvas/webgl/tex-image-with-format-and-type.html = TEXT PASS
 BUG_DRT MAC : fast/canvas/webgl/tex-input-validation.html = TEXT PASS

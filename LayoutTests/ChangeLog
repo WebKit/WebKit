@@ -1,3 +1,11 @@
+2010-08-23  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Unreviewed change to drt_expectations.txt.
+
+        Add new entry to platform/chromium/drt_expectations.txt
+
+        * platform/chromium/drt_expectations.txt:
+
 2010-08-23  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
