@@ -1,3 +1,13 @@
+2010-08-23  David Kilzer  <ddkilzer@apple.com>
+
+        Clean up some HTML typos in crashlogs.html
+
+        Rubber-stamped by Maciej Stachowiak.
+
+        * quality/crashlogs.html: Fixed "</code>>" typos added in
+        r56300.  Changed "<tt>" tag with style attribute to "<code>"
+        that was missed in r56300.
+
 2010-08-17  Beth Dakin  <bdakin@apple.com>
 
         Rubber-stamped by Adele.

@@ -20,10 +20,10 @@
             <img src="mac_viewtrace.jpg" alt="Mac OS X Crash log">
         </li>
         <li>
-            <p>If the crash report dialog does not appear or the crash is hard to reproduce, crash logs can be retrieved from the <code>~/Library/Logs/CrashReporter</code>> folder.</p>
+            <p>If the crash report dialog does not appear or the crash is hard to reproduce, crash logs can be retrieved from the <code>~/Library/Logs/CrashReporter</code> folder.</p>
             <p>On Leopard (Mac OS X 10.5), crash logs are stored as individually dated and time stamped files. Despite having a &ldquo;.crash&rdquo;
                 extension, they are plain text files and can be attached directly to a bug report.</p>
-            <p>On Tiger (Mac OS X 10.4), all crashes are logged to <code>Safari.crash.log</code>>. This is a plain text file and can
+            <p>On Tiger (Mac OS X 10.4), all crashes are logged to <code>Safari.crash.log</code>. This is a plain text file and can
                 be viewed in the default Console.app or your favorite text editor. <strong>All</strong> of Safari's crashes are logged
                 to this file so please only attach the last crash in it. Crashes are separated by a series of asterisks
                 (&lowast;&lowast;&lowast;&lowast;&lowast;&lowast;&lowast;&lowast;&lowast;&lowast;) for easy identification.</p>
@@ -37,7 +37,7 @@
         configured to log them.</p>
     <ol>
         <li>
-            <p>In the Start menu's Run box or from a DOS or Cygwin prompt, enter the command <code>drwtsn32 -i</code>>.</p>
+            <p>In the Start menu's Run box or from a DOS or Cygwin prompt, enter the command <code>drwtsn32 -i</code>.</p>
             <img src="win_installwatson.jpg" alt="Dr Watson install command">
         </li>
         <li>
@@ -45,16 +45,16 @@
             <img src="win_watsoninstalled.jpg" alt="Dr Watson was installed box">
         </li>
         <li>
-            <p>Crash information will now be logged to the <code>user.dmp</code>> file in
-            <code>C:\Documents and Settings\All Users\Application Data\Microsoft\Dr Watson\</code>>.</p>
+            <p>Crash information will now be logged to the <code>user.dmp</code> file in
+            <code>C:\Documents and Settings\All Users\Application Data\Microsoft\Dr Watson\</code>.</p>
 
-            <p>Dr. Watson will create a <code>user.dmp</code>> file that records what WebKit was doing when it crashed.
+            <p>Dr. Watson will create a <code>user.dmp</code> file that records what WebKit was doing when it crashed.
                 Be careful as it is overwritten with every crash.</p>
 
-            <p>When reporting a WebKit bug, please upload the <code>user.dmp</code>> file if possible.</p>
+            <p>When reporting a WebKit bug, please upload the <code>user.dmp</code> file if possible.</p>
         </li>
         <li>
-            <p>Running <code>drwtsn32</code>> without any options or switches will bring up a window that allows you to change various
+            <p>Running <code>drwtsn32</code> without any options or switches will bring up a window that allows you to change various
                 setting such as moving the log folder to a more easily accessible location or throwing a visual alert letting
                 you know it caught the crash.</p>
             <img src="win_watsongui.jpg" alt="Dr Watson window">
@@ -65,26 +65,26 @@
        By default, Vista uploads the crash logs to Microsoft, but does not save a local copy. This is configurable via the registry.</p>
     <ol>
         <li>
-            <p>Save the following text to a file named <code>wer.reg</code>>:</p><tt style="white-space:pre">Windows Registry Editor Version 5.00
+            <p>Save the following text to a file named <code>wer.reg</code>:</p><code style="white-space:pre;">Windows Registry Editor Version 5.00
 
 [HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\Windows Error Reporting]
 "ForceQueue"=dword:00000001
-</code>>
+</code>
         </li>
         <li><p>Double-click the file from Windows Explorer and respond affirmatively to any prompts.</p></li>
         <li><p>Reboot</p></li>        
     </ol>
     <p>
-        The next time Safari (or any other application) crashes, the crash information will be written into a folder located inside <code>%LOCALAPPDATA%\Microsoft\Windows\WER\ReportQueue</code>>.
+        The next time Safari (or any other application) crashes, the crash information will be written into a folder located inside <code>%LOCALAPPDATA%\Microsoft\Windows\WER\ReportQueue</code>.
         Check the modification date to make sure you are using the correct file.
     </p>
     <p>Be sure to include the following files in your bug report:</p>
     <dl style="margin-left:2em">
-        <dt><code>WER<em>xxxx</em>.tmp.mdmp</code>></dt>
+        <dt><code>WER<em>xxxx</em>.tmp.mdmp</code></dt>
         <dd>This is the most important file. It contains the crash dump that can be opened inside Visual Studio or other Windows debuggers.</dd>
-        <dt><code>WER<em>xxxx</em>.tmp.version.txt</code>></dt>
+        <dt><code>WER<em>xxxx</em>.tmp.version.txt</code></dt>
         <dd>Contains the operating system version and other hardware information.</dd>
-        <dt><code>WER<em>xxxx</em>.tmp.appcompat.txt</code>></dt>
+        <dt><code>WER<em>xxxx</em>.tmp.appcompat.txt</code></dt>
         <dd>Lists all of the DLLs loaded at the time of the crash with their version information.</dd>
     </dl>
 </div>
