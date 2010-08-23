@@ -20,18 +20,14 @@
 
 #include "GraphicsContext3D.h"
 
-#include "ArrayBufferView.h"
 #include "WebGLObject.h"
 #include "CanvasRenderingContext.h"
-#include "Float32Array.h"
 #include "GraphicsContext.h"
 #include "HTMLCanvasElement.h"
 #include "HostWindow.h"
 #include "ImageBuffer.h"
-#include "Int32Array.h"
 #include "NotImplemented.h"
 #include "QWebPageClient.h"
-#include "Uint8Array.h"
 #include <QAbstractScrollArea>
 #include <QGLContext>
 #include <wtf/UnusedParam.h>
@@ -672,40 +668,16 @@ void GraphicsContext3D::bufferData(unsigned long target, int size, unsigned long
     m_internal->bufferData(target, size, /* data */ 0, usage);
 }
 
-void GraphicsContext3D::bufferData(unsigned long target, ArrayBuffer* array, unsigned long usage)
+void GraphicsContext3D::bufferData(unsigned long target, int size, const void* data, unsigned long usage)
 {
-    if (!array || !array->byteLength())
-        return;
-
     m_internal->m_glWidget->makeCurrent();
-    m_internal->bufferData(target, array->byteLength(), array->data(), usage);
+    m_internal->bufferData(target, size, data, usage);
 }
 
-void GraphicsContext3D::bufferData(unsigned long target, ArrayBufferView* array, unsigned long usage)
+void GraphicsContext3D::bufferSubData(unsigned long target, long offset, int size, const void* data)
 {
-    if (!array || !array->length())
-        return;
-    
     m_internal->m_glWidget->makeCurrent();
-    m_internal->bufferData(target, array->byteLength(), array->baseAddress(), usage);
-}
-
-void GraphicsContext3D::bufferSubData(unsigned long target, long offset, ArrayBuffer* array)
-{
-    if (!array || !array->byteLength())
-        return;
-
-    m_internal->m_glWidget->makeCurrent();
-    m_internal->bufferSubData(target, offset, array->byteLength(), array->data());
-}
-
-void GraphicsContext3D::bufferSubData(unsigned long target, long offset, ArrayBufferView* array)
-{
-    if (!array || !array->length())
-        return;
-    
-    m_internal->m_glWidget->makeCurrent();
-    m_internal->bufferSubData(target, offset, array->byteLength(), array->baseAddress());
+    m_internal->bufferSubData(target, offset, size, data);
 }
 
 unsigned long GraphicsContext3D::checkFramebufferStatus(unsigned long target)

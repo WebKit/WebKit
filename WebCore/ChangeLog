@@ -1,3 +1,36 @@
+2010-08-23  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Remove references to ArrayBuffer and ArrayBufferView from GraphicsContext3D
+        https://bugs.webkit.org/show_bug.cgi?id=44455
+
+        Updated Safari, Qt and Chromium WebGL ports to avoid referencing
+        ArrayBuffer and ArrayBufferView types from GraphicsContext3D.
+
+        Ran all WebGL layout tests; no new regressions. Built and tested
+        WebKit on Mac OS X; built Chromium on Mac OS X and Linux.
+
+        * html/canvas/WebGLBuffer.cpp:
+        * html/canvas/WebGLBuffer.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::bufferData):
+        (WebCore::WebGLRenderingContext::bufferSubData):
+        (WebCore::WebGLRenderingContext::texImage2D):
+        (WebCore::WebGLRenderingContext::texSubImage2D):
+        (WebCore::WebGLRenderingContext::simulateVertexAttrib0):
+        * platform/graphics/GraphicsContext3D.cpp:
+        (WebCore::GraphicsContext3D::extractTextureData):
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/chromium/GLES2Canvas.cpp:
+        (WebCore::GLES2Canvas::getQuadVertices):
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+        (WebCore::GraphicsContext3D::bufferData):
+        (WebCore::GraphicsContext3D::bufferSubData):
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3D::bufferData):
+        (WebCore::GraphicsContext3D::bufferSubData):
+
 2010-08-20  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by Kenneth Russell.

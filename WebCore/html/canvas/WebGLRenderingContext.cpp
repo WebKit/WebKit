@@ -395,7 +395,7 @@ void WebGLRenderingContext::bufferData(unsigned long target, ArrayBuffer* data, 
         return;
     }
 
-    m_context->bufferData(target, data, usage);
+    m_context->bufferData(target, data->byteLength(), data->data(), usage);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -410,7 +410,7 @@ void WebGLRenderingContext::bufferData(unsigned long target, ArrayBufferView* da
         return;
     }
 
-    m_context->bufferData(target, data, usage);
+    m_context->bufferData(target, data->byteLength(), data->baseAddress(), usage);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -425,7 +425,7 @@ void WebGLRenderingContext::bufferSubData(unsigned long target, long offset, Arr
         return;
     }
 
-    m_context->bufferSubData(target, offset, data);
+    m_context->bufferSubData(target, offset, data->byteLength(), data->data());
     cleanupAfterGraphicsCall(false);
 }
 
@@ -440,7 +440,7 @@ void WebGLRenderingContext::bufferSubData(unsigned long target, long offset, Arr
         return;
     }
 
-    m_context->bufferSubData(target, offset, data);
+    m_context->bufferSubData(target, offset, data->byteLength(), data->baseAddress());
     cleanupAfterGraphicsCall(false);
 }
 
@@ -2131,11 +2131,11 @@ void WebGLRenderingContext::texImage2D(unsigned target, unsigned level, unsigned
     void* data = pixels ? pixels->baseAddress() : 0;
     Vector<uint8_t> tempData;
     bool changeUnpackAlignment = false;
-    if (pixels && (m_unpackFlipY || m_unpackPremultiplyAlpha)) {
+    if (data && (m_unpackFlipY || m_unpackPremultiplyAlpha)) {
         if (!m_context->extractTextureData(width, height, format, type,
                                            m_unpackAlignment,
                                            m_unpackFlipY, m_unpackPremultiplyAlpha,
-                                           pixels,
+                                           data,
                                            tempData))
             return;
         data = tempData.data();
@@ -2300,11 +2300,11 @@ void WebGLRenderingContext::texSubImage2D(unsigned target, unsigned level, unsig
     void* data = pixels ? pixels->baseAddress() : 0;
     Vector<uint8_t> tempData;
     bool changeUnpackAlignment = false;
-    if (pixels && (m_unpackFlipY || m_unpackPremultiplyAlpha)) {
+    if (data && (m_unpackFlipY || m_unpackPremultiplyAlpha)) {
         if (!m_context->extractTextureData(width, height, format, type,
                                            m_unpackAlignment,
                                            m_unpackFlipY, m_unpackPremultiplyAlpha,
-                                           pixels,
+                                           data,
                                            tempData))
             return;
         data = tempData.data();
@@ -3547,14 +3547,14 @@ bool WebGLRenderingContext::simulateVertexAttrib0(long numVertex)
         || state.value[1] != m_vertexAttrib0BufferValue[1]
         || state.value[2] != m_vertexAttrib0BufferValue[2]
         || state.value[3] != m_vertexAttrib0BufferValue[3]) {
-        RefPtr<Float32Array> bufferData = Float32Array::create((numVertex + 1) * 4);
+        OwnArrayPtr<float> bufferData(new float[(numVertex + 1) * 4]);
         for (long ii = 0; ii < numVertex + 1; ++ii) {
-            bufferData->set(ii * 4, state.value[0]);
-            bufferData->set(ii * 4 + 1, state.value[1]);
-            bufferData->set(ii * 4 + 2, state.value[2]);
-            bufferData->set(ii * 4 + 3, state.value[3]);
+            bufferData[ii * 4] = state.value[0];
+            bufferData[ii * 4 + 1] = state.value[1];
+            bufferData[ii * 4 + 2] = state.value[2];
+            bufferData[ii * 4 + 3] = state.value[3];
         }
-        m_context->bufferData(GraphicsContext3D::ARRAY_BUFFER, bufferData.get(), GraphicsContext3D::DYNAMIC_DRAW);
+        m_context->bufferData(GraphicsContext3D::ARRAY_BUFFER, bufferDataSize, bufferData.get(), GraphicsContext3D::DYNAMIC_DRAW);
         m_vertexAttrib0BufferSize = bufferDataSize;
         m_vertexAttrib0BufferValue[0] = state.value[0];
         m_vertexAttrib0BufferValue[1] = state.value[1];

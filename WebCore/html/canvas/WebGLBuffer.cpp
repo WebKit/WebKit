@@ -29,6 +29,7 @@
 
 #include "WebGLBuffer.h"
 
+#include "ArrayBufferView.h"
 #include "CheckedInt.h"
 #include "WebGLRenderingContext.h"
 

@@ -557,40 +557,16 @@ void GraphicsContext3D::bufferData(unsigned long target, int size, unsigned long
     ::glBufferData(target, size, 0, usage);
 }
 
-void GraphicsContext3D::bufferData(unsigned long target, ArrayBuffer* array, unsigned long usage)
+void GraphicsContext3D::bufferData(unsigned long target, int size, const void* data, unsigned long usage)
 {
-    if (!array || !array->byteLength())
-        return;
-    
     ensureContext(m_contextObj);
-    ::glBufferData(target, array->byteLength(), array->data(), usage);
+    ::glBufferData(target, size, data, usage);
 }
 
-void GraphicsContext3D::bufferData(unsigned long target, ArrayBufferView* array, unsigned long usage)
+void GraphicsContext3D::bufferSubData(unsigned long target, long offset, int size, const void* data)
 {
-    if (!array || !array->length())
-        return;
-    
     ensureContext(m_contextObj);
-    ::glBufferData(target, array->byteLength(), array->baseAddress(), usage);
-}
-
-void GraphicsContext3D::bufferSubData(unsigned long target, long offset, ArrayBuffer* array)
-{
-    if (!array || !array->byteLength())
-        return;
-    
-    ensureContext(m_contextObj);
-    ::glBufferSubData(target, offset, array->byteLength(), array->data());
-}
-
-void GraphicsContext3D::bufferSubData(unsigned long target, long offset, ArrayBufferView* array)
-{
-    if (!array || !array->length())
-        return;
-    
-    ensureContext(m_contextObj);
-    ::glBufferSubData(target, offset, array->byteLength(), array->baseAddress());
+    ::glBufferSubData(target, offset, size, data);
 }
 
 unsigned long GraphicsContext3D::checkFramebufferStatus(unsigned long target)

@@ -39,14 +39,10 @@
 #include "CanvasRenderingContext.h"
 #include "Chrome.h"
 #include "ChromeClientImpl.h"
-#include "Float32Array.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
 #include "ImageBuffer.h"
 #include "ImageData.h"
-#include "Int32Array.h"
-#include "Int8Array.h"
-#include "Uint8Array.h"
 #include "WebGraphicsContext3D.h"
 #include "WebGraphicsContext3DDefaultImpl.h"
 #include "WebKit.h"
@@ -128,10 +124,8 @@ public:
     void blendFuncSeparate(unsigned long srcRGB, unsigned long dstRGB, unsigned long srcAlpha, unsigned long dstAlpha);
 
     void bufferData(unsigned long target, int size, unsigned long usage);
-    void bufferData(unsigned long target, ArrayBuffer* data, unsigned long usage);
-    void bufferData(unsigned long target, ArrayBufferView* data, unsigned long usage);
-    void bufferSubData(unsigned long target, long offset, ArrayBuffer* data);
-    void bufferSubData(unsigned long target, long offset, ArrayBufferView* data);
+    void bufferData(unsigned long target, int size, const void* data, unsigned long usage);
+    void bufferSubData(unsigned long target, long offset, int size, const void* data);
 
     unsigned long checkFramebufferStatus(unsigned long target);
     void clear(unsigned long mask);
@@ -610,24 +604,14 @@ void GraphicsContext3DInternal::bufferData(unsigned long target, int size, unsig
     m_impl->bufferData(target, size, 0, usage);
 }
 
-void GraphicsContext3DInternal::bufferData(unsigned long target, ArrayBuffer* array, unsigned long usage)
+void GraphicsContext3DInternal::bufferData(unsigned long target, int size, const void* data, unsigned long usage)
 {
-    m_impl->bufferData(target, array->byteLength(), array->data(), usage);
+    m_impl->bufferData(target, size, data, usage);
 }
 
-void GraphicsContext3DInternal::bufferData(unsigned long target, ArrayBufferView* array, unsigned long usage)
+void GraphicsContext3DInternal::bufferSubData(unsigned long target, long offset, int size, const void* data)
 {
-    m_impl->bufferData(target, array->byteLength(), array->baseAddress(), usage);
-}
-
-void GraphicsContext3DInternal::bufferSubData(unsigned long target, long offset, ArrayBuffer* array)
-{
-    m_impl->bufferSubData(target, offset, array->byteLength(), array->data());
-}
-
-void GraphicsContext3DInternal::bufferSubData(unsigned long target, long offset, ArrayBufferView* array)
-{
-    m_impl->bufferSubData(target, offset, array->byteLength(), array->baseAddress());
+    m_impl->bufferSubData(target, offset, size, data);
 }
 
 DELEGATE_TO_IMPL_1R(checkFramebufferStatus, unsigned long, unsigned long)
@@ -1068,10 +1052,8 @@ DELEGATE_TO_INTERNAL_2(blendFunc, unsigned long, unsigned long)
 DELEGATE_TO_INTERNAL_4(blendFuncSeparate, unsigned long, unsigned long, unsigned long, unsigned long)
 
 DELEGATE_TO_INTERNAL_3(bufferData, unsigned long, int, unsigned long)
-DELEGATE_TO_INTERNAL_3(bufferData, unsigned long, ArrayBuffer*, unsigned long)
-DELEGATE_TO_INTERNAL_3(bufferData, unsigned long, ArrayBufferView*, unsigned long)
-DELEGATE_TO_INTERNAL_3(bufferSubData, unsigned long, long, ArrayBuffer*)
-DELEGATE_TO_INTERNAL_3(bufferSubData, unsigned long, long, ArrayBufferView*)
+DELEGATE_TO_INTERNAL_4(bufferData, unsigned long, int, const void*, unsigned long)
+DELEGATE_TO_INTERNAL_4(bufferSubData, unsigned long, long, int, const void*)
 
 DELEGATE_TO_INTERNAL_1R(checkFramebufferStatus, unsigned long, unsigned long)
 DELEGATE_TO_INTERNAL_1(clear, unsigned long)

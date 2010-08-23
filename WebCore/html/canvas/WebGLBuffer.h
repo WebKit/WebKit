@@ -33,6 +33,7 @@
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
+class ArrayBufferView;
 
 class WebGLBuffer : public WebGLObject {
 public:

@@ -34,13 +34,11 @@
 
 #include "GLES2Canvas.h"
 
-#include "Float32Array.h"
 #include "FloatRect.h"
 #include "GLES2Texture.h"
 #include "GraphicsContext3D.h"
 #include "IntRect.h"
 #include "PlatformString.h"
-#include "Uint16Array.h"
 
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -350,9 +348,8 @@ unsigned GLES2Canvas::getQuadVertices()
                              0.0f, 1.0f, 1.0f,
                              1.0f, 1.0f, 1.0f };
         m_quadVertices = m_context->createBuffer();
-        RefPtr<Float32Array> vertexArray = Float32Array::create(vertices, sizeof(vertices) / sizeof(float));
         m_context->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, m_quadVertices);
-        m_context->bufferData(GraphicsContext3D::ARRAY_BUFFER, vertexArray.get(), GraphicsContext3D::STATIC_DRAW);
+        m_context->bufferData(GraphicsContext3D::ARRAY_BUFFER, sizeof(vertices), vertices, GraphicsContext3D::STATIC_DRAW);
     }
     return m_quadVertices;
 }

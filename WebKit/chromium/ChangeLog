@@ -1,3 +1,20 @@
+2010-08-23  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Remove references to ArrayBuffer and ArrayBufferView from GraphicsContext3D
+        https://bugs.webkit.org/show_bug.cgi?id=44455
+
+        Updated Safari, Qt and Chromium WebGL ports to avoid referencing
+        ArrayBuffer and ArrayBufferView types from GraphicsContext3D.
+
+        Ran all WebGL layout tests; no new regressions. Built and tested
+        WebKit on Mac OS X; built Chromium on Mac OS X and Linux.
+
+        * src/GraphicsContext3D.cpp:
+        (WebCore::GraphicsContext3DInternal::bufferData):
+        (WebCore::GraphicsContext3DInternal::bufferSubData):
+
 2010-08-23  Jian Li  <jianli@chromium.org>
 
         Reviewed by David Levin.
