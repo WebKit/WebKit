@@ -1,3 +1,20 @@
+2010-08-23  Zoltan Horvath  <zoltan@webkit.org>
+
+        [Qt] Build fix.
+
+        * DerivedSources.pro:
+        * WebKit2.pro:
+        * WebProcess/Plugins/Netscape/qt: Added.
+        * WebProcess/Plugins/Netscape/qt/NetscapePluginQt.cpp: Added.
+        (WebKit::NetscapePlugin::platformPostInitialize):
+        (WebKit::NetscapePlugin::platformPaint):
+        (WebKit::toNP):
+        (WebKit::NetscapePlugin::platformHandleMouseEvent):
+        (WebKit::NetscapePlugin::platformHandleWheelEvent):
+        (WebKit::NetscapePlugin::platformSetFocus):
+        (WebKit::NetscapePlugin::platformHandleMouseEnterEvent):
+        (WebKit::NetscapePlugin::platformHandleMouseLeaveEvent):
+
 2010-08-22  Juha Savolainen  <juha.savolainen@weego.fi>
 
         Reviewed by Kenneth Rohde Christiansen.

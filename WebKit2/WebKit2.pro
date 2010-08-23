@@ -181,6 +181,7 @@ HEADERS += \
     UIProcess/API/C/WKPagePrivate.h \
     UIProcess/API/C/WKPreferences.h \
     UIProcess/API/C/WKString.h \
+    UIProcess/API/C/WKType.h \
     UIProcess/API/C/WKURL.h \
     UIProcess/API/qt/qgraphicswkview.h \
     UIProcess/API/qt/qwkpage.h \
@@ -275,6 +276,7 @@ SOURCES += \
     UIProcess/API/C/WKPageNamespace.cpp \
     UIProcess/API/C/WKPreferences.cpp \
     UIProcess/API/C/WKString.cpp \
+    UIProcess/API/C/WKType.cpp \
     UIProcess/API/C/WKURL.cpp \
     UIProcess/API/qt/ClientImpl.cpp \
     UIProcess/API/qt/qgraphicswkview.cpp \
@@ -327,6 +329,7 @@ SOURCES += \
     WebProcess/Plugins/Netscape/NetscapePlugin.cpp \
     WebProcess/Plugins/Netscape/NetscapePluginModule.cpp \
     WebProcess/Plugins/Netscape/NetscapePluginStream.cpp \
+    WebProcess/Plugins/Netscape/qt/NetscapePluginQt.cpp \
     WebProcess/WebCoreSupport/WebChromeClient.cpp \
     WebProcess/WebCoreSupport/WebContextMenuClient.cpp \
     WebProcess/WebCoreSupport/WebDragClient.cpp \

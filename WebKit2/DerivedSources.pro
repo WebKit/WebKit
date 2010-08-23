@@ -16,6 +16,7 @@ WEBCORE_HEADERS_FOR_WEBKIT2 += \
     dom/KeyboardEvent.h \
     dom/Node.h \
     dom/Range.h \
+    dom/UIEventWithKeyState.h \
     dom/UserTypingGestureIndicator.h \
     editing/EditCommand.h \
     editing/EditorInsertAction.h \
@@ -140,6 +141,7 @@ WEBKIT2_API_HEADERS += \
     UIProcess/API/C/WKPagePrivate.h \
     UIProcess/API/C/WKPreferences.h \
     UIProcess/API/C/WKString.h \
+    UIProcess/API/C/WKType.h \
     UIProcess/API/C/WKURL.h \
     UIProcess/API/C/WebKit2.h \
     UIProcess/API/cpp/WKRetainPtr.h \
