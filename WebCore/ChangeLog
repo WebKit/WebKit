@@ -1,3 +1,24 @@
+2010-08-23  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GStreamer] don't expose the private player in GStreamerGWorld
+        https://bugs.webkit.org/show_bug.cgi?id=44332
+
+        Only a pointer to our playbin2 element instance is required
+        instead of the whole MediaPlayerPrivateGStreamer instance.
+
+        * platform/graphics/gstreamer/GStreamerGWorld.cpp:
+        (WebCore::GStreamerGWorld::createGWorld):
+        (WebCore::GStreamerGWorld::GStreamerGWorld):
+        (WebCore::GStreamerGWorld::~GStreamerGWorld):
+        (WebCore::GStreamerGWorld::enterFullscreen):
+        (WebCore::GStreamerGWorld::exitFullscreen):
+        * platform/graphics/gstreamer/GStreamerGWorld.h:
+        (WebCore::GStreamerGWorld::pipeline):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::createGSTPlayBin):
+
 2010-08-22  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

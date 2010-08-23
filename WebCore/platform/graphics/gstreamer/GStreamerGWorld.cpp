@@ -48,17 +48,17 @@ gboolean gstGWorldSyncMessageCallback(GstBus* bus, GstMessage* message, gpointer
     return TRUE;
 }
 
-PassRefPtr<GStreamerGWorld> GStreamerGWorld::createGWorld(MediaPlayerPrivateGStreamer* player)
+PassRefPtr<GStreamerGWorld> GStreamerGWorld::createGWorld(GstElement* pipeline)
 {
-    return adoptRef(new GStreamerGWorld(player));
+    return adoptRef(new GStreamerGWorld(pipeline));
 }
 
-GStreamerGWorld::GStreamerGWorld(MediaPlayerPrivateGStreamer* player)
-    : m_player(player)
+GStreamerGWorld::GStreamerGWorld(GstElement* pipeline)
+    : m_pipeline(pipeline)
     , m_dynamicPadName(0)
 {
     // XOverlay messages need to be handled synchronously.
-    GstBus* bus = gst_pipeline_get_bus(GST_PIPELINE(m_player->pipeline()));
+    GstBus* bus = gst_pipeline_get_bus(GST_PIPELINE(m_pipeline));
     gst_bus_set_sync_handler(bus, gst_bus_sync_signal_handler, this);
     g_signal_connect(bus, "sync-message::element", G_CALLBACK(gstGWorldSyncMessageCallback), this);
     gst_object_unref(bus);
@@ -67,6 +67,8 @@ GStreamerGWorld::GStreamerGWorld(MediaPlayerPrivateGStreamer* player)
 GStreamerGWorld::~GStreamerGWorld()
 {
     exitFullscreen();
+
+    m_pipeline = 0;
 }
 
 bool GStreamerGWorld::enterFullscreen()
@@ -77,7 +79,6 @@ bool GStreamerGWorld::enterFullscreen()
     if (!m_videoWindow)
         m_videoWindow = PlatformVideoWindow::createWindow();
 
-    GstElement* pipeline = m_player->pipeline();
     GstElement* platformVideoSink = gst_element_factory_make("autovideosink", "platformVideoSink");
     GstElement* colorspace = gst_element_factory_make("ffmpegcolorspace", "colorspace");
     GstElement* queue = gst_element_factory_make("queue", "queue");
@@ -85,7 +86,7 @@ bool GStreamerGWorld::enterFullscreen()
 
     // Get video sink bin and the tee inside.
     GOwnPtr<GstElement> videoSink;
-    g_object_get(pipeline, "video-sink", &videoSink.outPtr(), NULL);
+    g_object_get(m_pipeline, "video-sink", &videoSink.outPtr(), NULL);
     GstElement* tee = gst_bin_get_by_name(GST_BIN(videoSink.get()), "videoTee");
 
     // Add and link a queue, ffmpegcolorspace and sink in the bin.
@@ -112,7 +113,7 @@ bool GStreamerGWorld::enterFullscreen()
     // the new tee branch downstream.
 
     GstQuery* query = gst_query_new_segment(GST_FORMAT_TIME);
-    gboolean queryResult = gst_element_query(pipeline, query);
+    gboolean queryResult = gst_element_query(m_pipeline, query);
 
     // See https://bugzilla.gnome.org/show_bug.cgi?id=620490.
 #if GST_CHECK_VERSION(0, 10, 30)
@@ -125,7 +126,7 @@ bool GStreamerGWorld::enterFullscreen()
 
     GstFormat format;
     gint64 position;
-    if (!gst_element_query_position(pipeline, &format, &position))
+    if (!gst_element_query_position(m_pipeline, &format, &position))
         position = 0;
 
     gdouble rate;
@@ -145,11 +146,9 @@ void GStreamerGWorld::exitFullscreen()
     if (!m_dynamicPadName)
         return;
 
-    GstElement* pipeline = m_player->pipeline();
-
     // Get video sink bin and the elements to remove.
     GOwnPtr<GstElement> videoSink;
-    g_object_get(pipeline, "video-sink", &videoSink.outPtr(), NULL);
+    g_object_get(m_pipeline, "video-sink", &videoSink.outPtr(), NULL);
     GstElement* tee = gst_bin_get_by_name(GST_BIN(videoSink.get()), "videoTee");
     GstElement* platformVideoSink = gst_bin_get_by_name(GST_BIN(videoSink.get()), "platformVideoSink");
     GstElement* queue = gst_bin_get_by_name(GST_BIN(videoSink.get()), "queue");

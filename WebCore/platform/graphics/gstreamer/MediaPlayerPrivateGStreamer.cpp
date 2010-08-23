@@ -1384,7 +1384,7 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin()
     ASSERT(!m_playBin);
     m_playBin = gst_element_factory_make("playbin2", "play");
 
-    m_gstGWorld = GStreamerGWorld::createGWorld(this);
+    m_gstGWorld = GStreamerGWorld::createGWorld(m_playBin);
 
     GstBus* bus = gst_pipeline_get_bus(GST_PIPELINE(m_playBin));
     gst_bus_add_signal_watch(bus);
