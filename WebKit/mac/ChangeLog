@@ -1,3 +1,13 @@
+2010-08-23  Mike Thole  <mthole@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        WebPDFView should remove itself as the delegate of its PDFView before being dealloced
+        https://bugs.webkit.org/show_bug.cgi?id=44441
+
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView dealloc]): Set the PDFView's delegate to nil.
+
 2010-08-22  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Eric Seidel.

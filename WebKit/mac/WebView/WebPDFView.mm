@@ -193,6 +193,7 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
 {
     [dataSource release];
     [previewView release];
+    [PDFSubview setDelegate:nil];
     [PDFSubview release];
     [path release];
     [PDFSubviewProxy release];
