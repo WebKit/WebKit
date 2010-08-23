@@ -1,5 +1,11 @@
 2010-08-23  Simon Fraser  <simon.fraser@apple.com>
 
+        Add missing test result.
+
+        * platform/mac/fast/table/simple_paint-expected.txt: Copied from LayoutTests/platform/chromium-linux/fast/table/simple_paint-expected.txt.
+
+2010-08-23  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Alexey Proskuryakov.
 
         TreeWalker is not calling acceptNode function in filter object
