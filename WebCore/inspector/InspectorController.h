@@ -147,6 +147,7 @@ public:
 
     void setInspectorFrontendClient(PassOwnPtr<InspectorFrontendClient> client);
     bool hasInspectorFrontendClient() const { return m_inspectorFrontendClient; }
+    void setAttachedWindow(bool attached);
 
     void inspectedWindowScriptObjectCleared(Frame*);
 

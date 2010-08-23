@@ -57,6 +57,7 @@ module core {
         [notify] void resourceTrackingWasDisabled();
         [notify] void searchingForNodeWasEnabled();
         [notify] void searchingForNodeWasDisabled();
+        [notify] void setAttachedWindow(out boolean attached);
         [notify] void setChildNodes(out long parentId, out Array nodes);
         [notify] void setDetachedRoot(out Object root);
         [notify] void setDocument(out Value root);
