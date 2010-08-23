@@ -2792,8 +2792,6 @@
             'platform/network/BlobData.cpp',
             'platform/network/BlobData.h',
             'platform/network/BlobRegistry.h',
-            'platform/network/BlobRegistryImpl.cpp',
-            'platform/network/BlobRegistryImpl.h',
             'platform/network/BlobStorageData.h',
             'platform/network/Credential.cpp',
             'platform/network/Credential.h',

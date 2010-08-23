@@ -391,8 +391,6 @@
                 'src/WebAttribute.cpp',
                 'src/WebBindings.cpp',
                 'src/WebBlobData.cpp',
-                'src/WebBlobRegistryImpl.cpp',
-                'src/WebBlobRegistryImpl.h',
                 'src/WebBlobStorageData.cpp',
                 'src/WebCache.cpp',
                 'src/WebColor.cpp',
