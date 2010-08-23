@@ -1,3 +1,17 @@
+2010-08-23  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        JSON.stringify is much slower than Firefox on particular pathological input
+        https://bugs.webkit.org/show_bug.cgi?id=44456
+
+        Make StringBuilder::reserveCapacity reserve additional space so we don't end up
+        repeatedly copying the entire result string.
+
+        * runtime/StringBuilder.h:
+        (JSC::StringBuilder::append):
+        (JSC::StringBuilder::reserveCapacity):
+
 2010-08-23  Jian Li  <jianli@chromium.org>
 
         Reviewed by Darin Fisher.

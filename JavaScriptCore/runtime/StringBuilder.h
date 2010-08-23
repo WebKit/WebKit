@@ -44,7 +44,7 @@ public:
 
     void append(const char* str, size_t len)
     {
-        buffer.reserveCapacity(buffer.size() + len);
+        reserveCapacity(buffer.size() + len);
         for (size_t i = 0; i < len; i++)
             buffer.append(static_cast<unsigned char>(str[i]));
     }
@@ -60,7 +60,12 @@ public:
     }
 
     bool isEmpty() { return buffer.isEmpty(); }
-    void reserveCapacity(size_t newCapacity) { buffer.reserveCapacity(newCapacity); }
+    void reserveCapacity(size_t newCapacity)
+    {
+        if (newCapacity < buffer.capacity())
+            return;
+        buffer.reserveCapacity(std::max(newCapacity, buffer.capacity() + buffer.capacity() / 4 + 1));
+    }
     void resize(size_t size) { buffer.resize(size); }
     size_t size() const { return buffer.size(); }
 
