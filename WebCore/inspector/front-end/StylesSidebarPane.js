@@ -143,7 +143,7 @@ WebInspector.StylesSidebarPane.prototype = {
         {
             if (computedStyle)
                 this._refreshUpdate(node, computedStyle, editedSection);
-        };
+        }
 
         if (refresh)
             WebInspector.cssModel.getComputedStyleAsync(node.id, computedStyleCallback.bind(this));
@@ -166,11 +166,13 @@ WebInspector.StylesSidebarPane.prototype = {
     {
         this.bodyElement.removeChildren();
         this._computedStylePane.bodyElement.removeChildren();
+
         var styleRules = this._rebuildStyleRules(node, styles);
         var usedProperties = {};
         var disabledComputedProperties = {};
         this._markUsedProperties(styleRules, usedProperties, disabledComputedProperties);
         this.sections[0] = this._rebuildSectionsForStyleRules(styleRules, usedProperties, disabledComputedProperties, 0);
+        var anchorElement = this.sections[0].inheritedPropertiesSeparatorElement;
 
         for (var i = 0; i < styles.pseudoElements.length; ++i) {
             var pseudoElementCSSRules = styles.pseudoElements[i];
@@ -189,7 +191,7 @@ WebInspector.StylesSidebarPane.prototype = {
             usedProperties = {};
             disabledComputedProperties = {};
             this._markUsedProperties(styleRules, usedProperties, disabledComputedProperties);
-            this.sections[pseudoId] = this._rebuildSectionsForStyleRules(styleRules, usedProperties, disabledComputedProperties, pseudoId);
+            this.sections[pseudoId] = this._rebuildSectionsForStyleRules(styleRules, usedProperties, disabledComputedProperties, pseudoId, anchorElement);
         }
     },
 
@@ -242,17 +244,6 @@ WebInspector.StylesSidebarPane.prototype = {
         for (var i = styles.matchedCSSRules.length - 1; i >= 0; --i) {
             var rule = WebInspector.CSSStyleDeclaration.parseRule(styles.matchedCSSRules[i]);
             styleRules.push({ style: rule.style, selectorText: rule.selectorText, parentStyleSheet: rule.parentStyleSheet, rule: rule });
-        }
-
-        // Collect used properties first in order to identify inherited ones.
-        var userPropertyNames = {};
-        for (var i = 0; i < styleRules.length; ++i) {
-            var styleRule = styleRules[i];
-            if (styleRule.computedStyle || styleRule.isStyleSeparator)
-                continue;
-            var style = styleRule.style;
-            for (var j = 0; j < style.length; ++j)
-                userPropertyNames[style[j]] = true;
         }
 
         // Walk the node structure and identify styles with inherited properties.
@@ -402,7 +393,7 @@ WebInspector.StylesSidebarPane.prototype = {
         }
     },
 
-    _rebuildSectionsForStyleRules: function(styleRules, usedProperties, disabledComputedProperties, pseudoId)
+    _rebuildSectionsForStyleRules: function(styleRules, usedProperties, disabledComputedProperties, pseudoId, anchorElement)
     {
         // Make a property section for each style rule.
         var sections = [];
@@ -416,6 +407,8 @@ WebInspector.StylesSidebarPane.prototype = {
                     var link = WebInspector.panels.elements.linkifyNodeReference(styleRule.node);
                     separatorElement.appendChild(document.createTextNode(WebInspector.UIString("Inherited from") + " "));
                     separatorElement.appendChild(link);
+                    if (!sections.inheritedPropertiesSeparatorElement)
+                        sections.inheritedPropertiesSeparatorElement = separatorElement;
                 } else if ("pseudoId" in styleRule) {
                     var pseudoName = WebInspector.StylesSidebarPane.PseudoIdNames[styleRule.pseudoId];
                     if (pseudoName)
@@ -424,7 +417,7 @@ WebInspector.StylesSidebarPane.prototype = {
                         separatorElement.textContent = WebInspector.UIString("Pseudo element");
                 } else
                     separatorElement.textContent = styleRule.text;
-                this.bodyElement.appendChild(separatorElement);
+                this.bodyElement.insertBefore(separatorElement, anchorElement);
                 lastWasSeparator = true;
                 continue;
             }
@@ -445,7 +438,7 @@ WebInspector.StylesSidebarPane.prototype = {
                 this._computedStylePane.bodyElement.appendChild(section.element);
                 lastWasSeparator = true;
             } else {
-                this.bodyElement.appendChild(section.element);
+                this.bodyElement.insertBefore(section.element, anchorElement);
                 lastWasSeparator = false;
             }
             sections.push(section);
@@ -677,6 +670,9 @@ WebInspector.StylePropertiesSection = function(styleRule, subtitle, computedStyl
     this.identifier = styleRule.selectorText;
     if (this.subtitle)
         this.identifier += ":" + this.subtitle;
+
+    if (!this.editable)
+        this.element.addStyleClass("read-only");
 }
 
 WebInspector.StylePropertiesSection.prototype = {
