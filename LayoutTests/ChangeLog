@@ -1,3 +1,14 @@
+2010-08-23  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        setAttributeNS() should throw NAMESPACE_ERR for prefixed qualifiedName with null namespace
+        https://bugs.webkit.org/show_bug.cgi?id=44432
+
+        * fast/dom/script-tests/setAttributeNS-prefix-and-null-namespace.js: Added.
+        * fast/dom/setAttributeNS-prefix-and-null-namespace-expected.txt: Added.
+        * fast/dom/setAttributeNS-prefix-and-null-namespace.html: Added.
+
 2010-08-23  Hironori Bono  <hbono@chromium.org>
 
         Reviewed by Kent Tamura.
