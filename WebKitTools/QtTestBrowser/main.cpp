@@ -122,7 +122,8 @@ void LauncherApplication::handleUserOptions()
         appQuit(0);
     }
 
-    if (args.contains("-graphicsbased"))
+    const bool defaultForAnimations = args.contains("-default-animations");
+    if (args.contains("-graphicsbased") || defaultForAnimations)
         windowOptions.useGraphicsView = true;
 
     if (args.contains("-no-compositing")) {
@@ -135,7 +136,7 @@ void LauncherApplication::handleUserOptions()
         windowOptions.showFrameRate = true;
     }
 
-    if (args.contains("-cache-webview")) {
+    if (args.contains("-cache-webview") || defaultForAnimations) {
         requiresGraphicsView("-cache-webview");
         windowOptions.cacheWebView = true;
     }
@@ -149,6 +150,9 @@ void LauncherApplication::handleUserOptions()
         requiresGraphicsView("-resizes-to-contents");
         windowOptions.resizesToContents = true;
     }
+
+    if (defaultForAnimations)
+        windowOptions.viewportUpdateMode = QGraphicsView::BoundingRectViewportUpdate;
 
     QString arg1("-viewport-update-mode");
     int modeIndex = args.indexOf(arg1);
@@ -164,6 +168,12 @@ void LauncherApplication::handleUserOptions()
 
         windowOptions.viewportUpdateMode = static_cast<QGraphicsView::ViewportUpdateMode>(idx);
     }
+#ifdef QT_CONFIGURED_WITH_OPENGL
+    if (args.contains("-gl-viewport") || defaultForAnimations) {
+        requiresGraphicsView("-gl-viewport");
+        windowOptions.useQGLWidgetViewport = true;
+    }
+#endif
 
     QString inspectorUrlArg("-inspector-url");
     int inspectorUrlIndex = args.indexOf(inspectorUrlArg);

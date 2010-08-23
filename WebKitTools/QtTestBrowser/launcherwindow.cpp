@@ -617,6 +617,10 @@ void LauncherWindow::screenshot()
         pixmap.save(fileName, "png");
         label->setWindowTitle(QString("Screenshot - Saved at %1").arg(fileName));
     }
+
+#if defined(QT_CONFIGURED_WITH_OPENGL)
+    toggleQGLWidgetViewport(m_windowOptions.useQGLWidgetViewport);
+#endif
 }
 
 void LauncherWindow::setEditable(bool on)

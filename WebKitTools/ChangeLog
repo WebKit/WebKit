@@ -1,3 +1,15 @@
+2010-08-22  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Qt test browser: enable a QGLWidget viewport with a command line argument
+        https://bugs.webkit.org/show_bug.cgi?id=43010
+
+        * QtTestBrowser/launcherwindow.cpp:
+        (LauncherWindow::applyPrefs):
+        * QtTestBrowser/main.cpp:
+        (LauncherApplication::handleUserOptions):
+
 2010-08-21  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.
