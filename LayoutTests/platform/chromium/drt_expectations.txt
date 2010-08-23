@@ -215,6 +215,8 @@ BUG_DRT DEBUG : storage/indexeddb/database-basics.html = CRASH
 BUG_DRT DEBUG : storage/indexeddb/keyrange.html = CRASH
 BUG_DRT DEBUG : storage/indexeddb/objectstore-basics.html = CRASH
 BUG_DRT WIN MAC LINUX : storage/indexeddb/open-cursor.html = TIMEOUT
+BUG_DRT WIN MAC LINUX : storage/indexeddb/database-description.html = TIMEOUT
+BUG_DRT WIN MAC LINUX : storage/indexeddb/transaction-basics.html = TIMEOUT
 
 // Need to implement something?
 BUG_DRT WIN : inspector/console-assert.html = CRASH
@@ -382,6 +384,10 @@ BUG_DRT WIN : fast/compact/003.html = IMAGE+TEXT PASS
 BUG_DRT WIN : fast/dom/HTMLElement/bdo.html = IMAGE+TEXT PASS
 BUG_DRT WIN : http/tests/loading/preload-img-test.html = TEXT TIMEOUT PASS
 BUG_DRT MAC LINUX : http/tests/misc/slow-loading-image-in-pattern.html = IMAGE PASS
+BUG_DRT WIN MAC LINUX : fast/dom/DeviceMotion/create-event.html = TEXT
+BUG_DRT WIN MAC LINUX : fast/dom/DeviceMotion/optional-event-properties.html = TEXT
+BUG_DRT WIN MAC LINUX : fast/events/special-key-events-in-input-text.html = TEXT
+BUG_DRT WIN MAC : fast/dom/Geolocation/delayed-permission-allowed-for-multiple-requests.html = TIMEOUT
 
 // Windows failures from the new build slave (some may be Vista/XP diffs)
 BUG_DRT WIN : css2.1/t0805-c5519-brdr-r-01-e.html = IMAGE+TEXT
