@@ -23,6 +23,7 @@
 #include "JSNode.h"
 #include "JSNodeFilter.h"
 #include "NodeFilter.h"
+#include <runtime/Error.h>
 #include <runtime/JSLock.h>
 
 namespace WebCore {
@@ -45,9 +46,7 @@ short JSNodeFilterCondition::acceptNode(JSC::ExecState* exec, Node* filterNode) 
 {
     JSLock lock(SilenceAssertionsOnly);
 
-    CallData callData;
-    CallType callType = getCallData(m_filter, callData);
-    if (callType == CallTypeNone)
+    if (!m_filter.isObject())
         return NodeFilter::FILTER_ACCEPT;
 
    // The exec argument here should only be null if this was called from a
@@ -59,6 +58,18 @@ short JSNodeFilterCondition::acceptNode(JSC::ExecState* exec, Node* filterNode) 
     if (!exec)
         return NodeFilter::FILTER_REJECT;
 
+    JSValue function = m_filter;
+    CallData callData;
+    CallType callType = getCallData(function, callData);
+    if (callType == CallTypeNone) {
+        JSValue function = m_filter.get(exec, Identifier(exec, "acceptNode"));
+        callType = getCallData(function, callData);
+        if (callType == CallTypeNone) {
+            throwError(exec, createTypeError(exec, "NodeFilter object does not have an acceptNode function"));
+            return NodeFilter::FILTER_REJECT;
+        }
+    }
+
     MarkedArgumentBuffer args;
     // FIXME: The node should have the prototype chain that came from its document, not
     // whatever prototype chain might be on the window this filter came from. Bug 27662
@@ -66,7 +77,7 @@ short JSNodeFilterCondition::acceptNode(JSC::ExecState* exec, Node* filterNode) 
     if (exec->hadException())
         return NodeFilter::FILTER_REJECT;
 
-    JSValue result = JSC::call(exec, m_filter, callType, callData, m_filter, args);
+    JSValue result = JSC::call(exec, function, callType, callData, m_filter, args);
     if (exec->hadException())
         return NodeFilter::FILTER_REJECT;
 

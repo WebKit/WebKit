@@ -1,3 +1,19 @@
+2010-08-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        TreeWalker is not calling acceptNode function in filter object
+        https://bugs.webkit.org/show_bug.cgi?id=35296
+        
+        We only accepted raw functions as the NodeFilter on TreeWalker. Fix this to
+        look for an 'acceptNode' function on the filter object, and use that if present.
+        Also throw an exception if the filter object does not have an acceptNode function.
+
+        Test: fast/dom/TreeWalker/acceptNode-filter.html
+
+        * bindings/js/JSNodeFilterCondition.cpp:
+        (WebCore::JSNodeFilterCondition::acceptNode):
+
 2010-08-23  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r65814.
