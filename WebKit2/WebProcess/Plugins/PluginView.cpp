@@ -555,7 +555,7 @@ void PluginView::performJavaScriptURLRequest(URLRequest* request)
     if (!frame)
         return;
     
-    String jsString = decodeURLEscapeSequences(request->request().url().string().substring(11));
+    String jsString = decodeURLEscapeSequences(request->request().url().string().substring(sizeof("javascript:") - 1));
 
     if (!request->target().isNull()) {
         // For security reasons, only allow JS requests to be made on the frame that contains the plug-in.

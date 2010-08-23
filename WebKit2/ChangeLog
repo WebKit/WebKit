@@ -1,3 +1,15 @@
+2010-08-23  Daniel Bates  <dbates@rim.com>
+
+        Rubber-stamped by Adam Roben.
+
+        Substitute "sizeof("javascript:") - 1" for the hardcoded constant 11 when
+        extracting the JavaScript code portion of a JavaScript URL so as to make
+        it clearer that the 11 represents the length of the scheme portion of
+        a JavaScript URL.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::performJavaScriptURLRequest):
+
 2010-08-23  Balazs Kelemen  <kb@inf.u-szeged.hu>
 
         Reviewed by Ariya Hidayat.
