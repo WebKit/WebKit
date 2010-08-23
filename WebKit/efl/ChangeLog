@@ -1,3 +1,16 @@
+2010-08-22  Rafael Antognolli  <antognolli@profusion.mobi>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Remove duplicated include entry from default theme.
+        https://bugs.webkit.org/show_bug.cgi?id=44345
+
+        This used to create the group webkit/widget/entry twice in
+        the theme. It's leading to a bug with the newer versions of
+        EFL.
+
+        * DefaultTheme/default.edc:
+
 2010-08-22  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Eric Seidel.

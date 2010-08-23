@@ -63,7 +63,6 @@ collections {
    }
 
 #include "widget/button/button.edc"
-#include "widget/entry/entry.edc"
 #include "widget/scrollbar/scrollbar.edc"
 #include "widget/radio/radio.edc"
 #include "widget/check/check.edc"
