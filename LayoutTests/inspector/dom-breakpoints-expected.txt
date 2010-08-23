@@ -1,0 +1,8 @@
+Tests DOM breakpoints. Bug 42886
+
+Debugger was enabled.
+Found div element.
+Set DOM breakpoint.
+Paused at line 10 in appendElement
+Debugger was disabled.
+

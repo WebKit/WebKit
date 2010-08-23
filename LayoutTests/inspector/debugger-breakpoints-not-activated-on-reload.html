@@ -1,6 +1,7 @@
 <html>
 <head>
 <script src="../http/tests/inspector/inspector-test2.js"></script>
+<script src="../http/tests/inspector/debugger-test2.js"></script>
 <script>
 
 function testFunction()
@@ -14,11 +15,10 @@ var test = function()
     testName = testName.substring(testName.lastIndexOf('/') + 1);
 
     WebInspector.showPanel("scripts");
-    InspectorTest.ensureDebuggerEnabled(ensureDebuggerEnabledCallback);
+    InspectorTest.startDebuggerTest(startDebuggerTestCallback);
 
-    function ensureDebuggerEnabledCallback()
+    function startDebuggerTestCallback()
     {
-        InspectorTest.addResult("Debugger was enabled.");
         InspectorTest.showScriptSource(testName, showScriptSourceCallback);
     }
 
@@ -43,13 +43,7 @@ var test = function()
             InspectorTest.addResult("Breakpoints are deactivated.");
         else
             InspectorTest.addResult("Error: breakpoints are activated.");
-        InspectorTest.ensureDebuggerDisabled(ensureDebuggerDisabledCallback);
-    }
-
-    function ensureDebuggerDisabledCallback()
-    {
-        InspectorTest.addResult("Debugger was disabled.");
-        InspectorTest.completeTest();
+        InspectorTest.completeDebuggerTest();
     }
 };
 

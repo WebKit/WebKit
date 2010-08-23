@@ -105,6 +105,9 @@ fast/loader/subframe-navigate-during-main-frame-load.html
 fast/text/hyphenate-character.html
 fast/text/hyphens.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=43332
+inspector/dom-breakpoints.html
+
 # =========================================================================== #
 #       Passing HTTP tests - require confirmation on bot.                     #
 # =========================================================================== #

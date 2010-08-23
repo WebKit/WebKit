@@ -965,3 +965,6 @@ perf/
 # Application Cache Quotas
 # https://bugs.webkit.org/show_bug.cgi?id=43458
 http/tests/appcache/origin-quota.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=43332
+inspector/dom-breakpoints.html

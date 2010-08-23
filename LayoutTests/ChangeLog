@@ -1,3 +1,34 @@
+2010-08-23  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: add DOM breakpoints test
+        https://bugs.webkit.org/show_bug.cgi?id=44251
+
+        * http/tests/inspector/debugger-test2.js: Added.
+        (initialize_DebuggerTest.InspectorTest.startDebuggerTest.startTest):
+        (initialize_DebuggerTest.InspectorTest.startDebuggerTest):
+        (initialize_DebuggerTest.InspectorTest.completeDebuggerTest.completeTest):
+        (initialize_DebuggerTest.InspectorTest.completeDebuggerTest):
+        (initialize_DebuggerTest.InspectorTest.waitUntilPaused):
+        (initialize_DebuggerTest.InspectorTest.resumeExecution):
+        (initialize_DebuggerTest.InspectorTest.showScriptSource):
+        (initialize_DebuggerTest.InspectorTest._scriptsAreParsed):
+        (initialize_DebuggerTest.InspectorTest._showScriptSource):
+        (initialize_DebuggerTest):
+        * http/tests/inspector/inspector-test2.js:
+        (initialize_InspectorTest):
+        (initialize_InspectorTest.):
+        (runTest.runTestInFrontend):
+        (runTest):
+        * inspector/debugger-breakpoints-not-activated-on-reload.html:
+        * inspector/dom-breakpoints-expected.txt: Added.
+        * inspector/dom-breakpoints.html: Added.
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2010-08-23  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, skipping more media tests
