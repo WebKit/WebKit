@@ -1,3 +1,18 @@
+2010-08-23  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        editing/pasteboard/paste-visible-script.html is broken with --html5-treebuilder
+        https://bugs.webkit.org/show_bug.cgi?id=44457
+
+        Turns out there are two more checks we need for fragment scripting
+        permission.  Not the most beautiful design, but it seems work.
+
+        * html/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::insertScriptElement):
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processEndTag):
+
 2010-08-23  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

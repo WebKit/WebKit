@@ -2398,6 +2398,8 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
             m_scriptToProcess = m_tree.currentElement();
             m_scriptToProcessStartLine = m_lastScriptElementStartLine + 1;
             m_tree.openElements()->pop();
+            if (isParsingFragment() && m_fragmentContext.scriptingPermission() == FragmentScriptingNotAllowed)
+                m_scriptToProcess->removeAllChildren();
             setInsertionMode(m_originalInsertionMode);
             return;
         }
