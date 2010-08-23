@@ -1,3 +1,15 @@
+2010-08-23  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] run-launcher fails if WebKitGTK+ compiled with GTK+-3.0 support
+        https://bugs.webkit.org/show_bug.cgi?id=42026
+
+        If a GTK+ 3.x build is present return that as the library to use,
+        otherwise fallback to the GTK+ 2.x build.
+
+        * Scripts/webkitdirs.pm:
+
 2010-08-23  Balazs Kelemen  <kb@inf.u-szeged.hu>
 
         Reviewed by Ariya Hidayat.
