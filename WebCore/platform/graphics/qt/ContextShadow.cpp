@@ -28,7 +28,7 @@
 #include "config.h"
 #include "ContextShadow.h"
 
-#include "Timer.h"
+#include <QTimerEvent>
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
@@ -37,22 +37,25 @@ namespace WebCore {
 // Instead of creating and destroying the buffer for every operation,
 // we create a buffer which will be automatically purged via a timer.
 
-class ShadowBuffer: public Noncopyable {
+class ShadowBuffer: public QObject {
 public:
-    ShadowBuffer();
+    ShadowBuffer(QObject* parent = 0);
 
     QImage* scratchImage(const QSize& size);
 
     void schedulePurge();
 
+protected:
+    void timerEvent(QTimerEvent* event);
+
 private:
     QImage image;
-    void purgeBuffer(Timer<ShadowBuffer>*);
-    Timer<ShadowBuffer> purgeTimer;
+    int timerId;
 };
 
-ShadowBuffer::ShadowBuffer()
-    : purgeTimer(this, &ShadowBuffer::purgeBuffer)
+ShadowBuffer::ShadowBuffer(QObject* parent)
+    : QObject(parent)
+    , timerId(0)
 {
 }
 
@@ -84,12 +87,17 @@ QImage* ShadowBuffer::scratchImage(const QSize& size)
 void ShadowBuffer::schedulePurge()
 {
     static const double BufferPurgeDelay = 2; // seconds
-    purgeTimer.startOneShot(BufferPurgeDelay);
+    killTimer(timerId);
+    timerId = startTimer(BufferPurgeDelay * 1000);
 }
 
-void ShadowBuffer::purgeBuffer(Timer<ShadowBuffer>*)
+void ShadowBuffer::timerEvent(QTimerEvent* event)
 {
-    image = QImage();
+    if (event->timerId() == timerId) {
+        killTimer(timerId);
+        image = QImage();
+    }
+    QObject::timerEvent(event);
 }
 
 Q_GLOBAL_STATIC(ShadowBuffer, scratchShadowBuffer)
