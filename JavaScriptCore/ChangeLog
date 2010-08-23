@@ -1,3 +1,16 @@
+2010-08-23  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Fixed case where a single character search string in a string.replace()
+        did not properly handle back reference replacement.  The fix is to 
+        check for a '$' as part of the check to see if we can execute the
+        single character replace optimization.
+        https://bugs.webkit.org/show_bug.cgi?id=44067
+
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncReplace):
+
 2010-08-23  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

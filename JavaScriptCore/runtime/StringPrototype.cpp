@@ -425,9 +425,10 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncReplace(ExecState* exec)
     // Not a regular expression, so treat the pattern as a string.
 
     UString patternString = pattern.toString(exec);
-    if (patternString.length() == 1 && callType == CallTypeNone)
+    // Special case for single character patterns without back reference replacement
+    if (patternString.length() == 1 && callType == CallTypeNone && replacementString.find('$', 0) == notFound)
         return JSValue::encode(sourceVal->replaceCharacter(exec, patternString[0], replacementString));
-    
+
     const UString& source = sourceVal->value(exec);
     size_t matchPos = source.find(patternString);
 
