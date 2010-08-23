@@ -169,7 +169,7 @@ static void drawTextCommon(GraphicsContext* ctx, const TextRun& run, const Float
     int flags = run.rtl() ? Qt::TextForceRightToLeft : Qt::TextForceLeftToRight;
 #if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
     // See QWebPagePrivate::QWebPagePrivate() where the default path is set to Complex for Qt 4.6 and earlier.
-    if (!isComplexText)
+    if (!isComplexText && !(ctx->textDrawingMode() & cTextStroke))
         flags |= Qt::TextBypassShaping;
 #endif
     if (hasShadow) {
