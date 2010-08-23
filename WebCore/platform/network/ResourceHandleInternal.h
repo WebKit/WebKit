@@ -92,7 +92,6 @@ namespace WebCore {
             , m_connection(0)
 #endif
 #if USE(WININET)
-            , m_fileHandle(INVALID_HANDLE_VALUE)
             , m_fileLoadTimer(loader, &ResourceHandle::fileLoadTimer)
             , m_resourceHandle(0)
             , m_secondaryHandle(0)
@@ -170,7 +169,6 @@ namespace WebCore {
         bool m_needsSiteSpecificQuirks;
 #endif
 #if USE(WININET)
-        HANDLE m_fileHandle;
         Timer<ResourceHandle> m_fileLoadTimer;
         HINTERNET m_resourceHandle;
         HINTERNET m_secondaryHandle;
