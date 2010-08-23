@@ -1,3 +1,14 @@
+2010-08-23  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        WebInspector: Context menu in Scripts panel was broken.
+        https://bugs.webkit.org/show_bug.cgi?id=44431
+
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::FrontendMenuProvider::contextMenuItemSelected):
+        (WebCore::FrontendMenuProvider::contextMenuCleared):
+
 2010-08-23  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Tor Arne Vestbø.
