@@ -633,11 +633,6 @@ void FrameView::layout(bool allowSubtree)
     }
 
     ASSERT(m_frame->view() == this);
-    // This early return should be removed when rdar://5598072 is resolved. In the meantime, there is a
-    // gigantic CrashTracer because of this issue, and the early return will hopefully cause graceful 
-    // failure instead.  
-    if (m_frame->view() != this)
-        return;
 
     Document* document = m_frame->document();
 

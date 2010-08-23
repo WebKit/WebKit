@@ -1,3 +1,20 @@
+2010-08-23  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by David Hyatt.
+
+        Assertion failure in FrameView::layout when modifying the DOM during
+        pagehide with PageCache enabled
+        https://bugs.webkit.org/show_bug.cgi?id=43152
+
+        Always unschedule any pending relayouts when changing the view, not just
+        when we're not using the page cache. Otherwise touching the DOM during
+        the pagehide handler can lead to layouts that will be done by the time
+        the view has changed, which triggers an assert.
+
+        * fast/loader/resources/unschedule-relayout-after-unload-target.html: Added.
+        * fast/loader/unschedule-relayout-after-unload-expected.txt: Added.
+        * fast/loader/unschedule-relayout-after-unload.html: Added.
+
 2010-08-20  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Add more tests to the WebKit2 skipped lists.

@@ -237,9 +237,11 @@ void Frame::setView(PassRefPtr<FrameView> view)
     if (!view && m_doc && m_doc->attached() && !m_doc->inPageCache()) {
         // FIXME: We don't call willRemove here. Why is that OK?
         m_doc->detach();
-        if (m_view)
-            m_view->unscheduleRelayout();
     }
+    
+    if (m_view)
+        m_view->unscheduleRelayout();
+    
     eventHandler()->clear();
 
     m_view = view;
