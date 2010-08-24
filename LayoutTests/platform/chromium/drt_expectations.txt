@@ -206,18 +206,6 @@ BUG50197 WIN MAC LINUX : svg/dynamic-updates/SVGLinearGradientElement-svgdom-gra
 BUG50197 WIN MAC LINUX : svg/dynamic-updates/SVGPatternElement-svgdom-patternTransform-prop.html = IMAGE
 BUG50197 WIN MAC LINUX : svg/dynamic-updates/SVGRadialGradientElement-svgdom-gradientTransform-prop.html = IMAGE
 
-BUG_DRT RELEASE : storage/indexeddb/basics.html = TIMEOUT
-BUG_DRT RELEASE : storage/indexeddb/database-basics.html = TIMEOUT
-BUG_DRT RELEASE : storage/indexeddb/keyrange.html = TIMEOUT
-BUG_DRT RELEASE : storage/indexeddb/objectstore-basics.html = TIMEOUT
-BUG_DRT DEBUG : storage/indexeddb/basics.html = CRASH
-BUG_DRT DEBUG : storage/indexeddb/database-basics.html = CRASH
-BUG_DRT DEBUG : storage/indexeddb/keyrange.html = CRASH
-BUG_DRT DEBUG : storage/indexeddb/objectstore-basics.html = CRASH
-BUG_DRT WIN MAC LINUX : storage/indexeddb/open-cursor.html = TIMEOUT
-BUG_DRT WIN MAC LINUX : storage/indexeddb/database-description.html = TIMEOUT
-BUG_DRT WIN MAC LINUX : storage/indexeddb/transaction-basics.html = TIMEOUT
-
 // Need to implement something?
 BUG_DRT WIN : inspector/console-assert.html = CRASH
 BUG_DRT WIN : inspector/console-clear.html = CRASH

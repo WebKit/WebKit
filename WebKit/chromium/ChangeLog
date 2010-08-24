@@ -1,3 +1,12 @@
+2010-08-24  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        [DRT/Chromium] Support for IndexedDB tests
+        https://bugs.webkit.org/show_bug.cgi?id=44490
+
+        * DEPS: Roll Chromium to r57145 to have a webkit_support change.
+
 2010-08-24  Roland Steiner  <rolandsteiner@chromium.org>
 
         Unreviewed build fix.

@@ -86,6 +86,7 @@ TestShell::TestShell(bool testShellMode)
     , m_devTools(0)
 {
     WebRuntimeFeatures::enableGeolocation(true);
+    WebRuntimeFeatures::enableIndexedDatabase(true);
     m_accessibilityController.set(new AccessibilityController(this));
     m_layoutTestController.set(new LayoutTestController(this));
     m_eventSender.set(new EventSender(this));
