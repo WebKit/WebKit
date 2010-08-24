@@ -35,7 +35,7 @@ namespace WebCore {
 
 PassOwnPtr<LocalStorageThread> LocalStorageThread::create()
 {
-    return new LocalStorageThread;
+    return adoptPtr(new LocalStorageThread);
 }
 
 LocalStorageThread::LocalStorageThread()

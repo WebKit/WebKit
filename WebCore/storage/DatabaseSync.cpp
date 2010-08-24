@@ -161,7 +161,7 @@ class CloseSyncDatabaseOnContextThreadTask : public ScriptExecutionContext::Task
 public:
     static PassOwnPtr<CloseSyncDatabaseOnContextThreadTask> create(PassRefPtr<DatabaseSync> database)
     {
-        return new CloseSyncDatabaseOnContextThreadTask(database);
+        return adoptPtr(new CloseSyncDatabaseOnContextThreadTask(database));
     }
 
     virtual void performTask(ScriptExecutionContext*)

@@ -1,3 +1,48 @@
+2010-08-24  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Deploy adoptPtr in WebCore/storage
+        https://bugs.webkit.org/show_bug.cgi?id=44491
+
+        There are still some naked news for a future patch.  The next step is
+        to make create methods.
+
+        * storage/Database.cpp:
+        (WebCore::DatabaseCreationCallbackTask::create):
+        (WebCore::DerefContextTask::create):
+        (WebCore::DeliverPendingCallbackTask::create):
+        * storage/DatabaseSync.cpp:
+        (WebCore::CloseSyncDatabaseOnContextThreadTask::create):
+        * storage/DatabaseTask.h:
+        (WebCore::Database::DatabaseOpenTask::create):
+        (WebCore::Database::DatabaseCloseTask::create):
+        (WebCore::Database::DatabaseTransactionTask::create):
+        (WebCore::Database::DatabaseTableNamesTask::create):
+        * storage/DatabaseThread.cpp:
+        (WebCore::DatabaseThread::DatabaseThread):
+        * storage/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::populateOrigins):
+        (WebCore::DatabaseTracker::addOpenDatabase):
+        * storage/IDBKeyTree.h:
+        (WebCore::::put):
+        * storage/IDBPendingTransactionMonitor.cpp:
+        (WebCore::IDBPendingTransactionMonitor::addPendingTransaction):
+        * storage/LocalStorageTask.h:
+        (WebCore::LocalStorageTask::createImport):
+        (WebCore::LocalStorageTask::createSync):
+        (WebCore::LocalStorageTask::createDeleteEmptyDatabase):
+        (WebCore::LocalStorageTask::createTerminate):
+        * storage/LocalStorageThread.cpp:
+        (WebCore::LocalStorageThread::create):
+        * storage/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::openTransactionAndPreflight):
+        * storage/SQLTransactionSync.cpp:
+        (WebCore::SQLTransactionSync::SQLTransactionSync):
+        (WebCore::SQLTransactionSync::begin):
+        * storage/StorageNamespaceImpl.cpp:
+        (WebCore::StorageNamespaceImpl::copy):
+
 2010-08-24  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.

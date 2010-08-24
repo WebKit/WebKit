@@ -58,7 +58,7 @@ SQLTransactionSync::SQLTransactionSync(DatabaseSync* db, PassRefPtr<SQLTransacti
     , m_callback(callback)
     , m_readOnly(readOnly)
     , m_modifiedDatabase(false)
-    , m_transactionClient(new SQLTransactionClient())
+    , m_transactionClient(adoptPtr(new SQLTransactionClient()))
 {
     ASSERT(m_database->scriptExecutionContext()->isContextThread());
 }
@@ -130,7 +130,7 @@ ExceptionCode SQLTransactionSync::begin()
         m_database->sqliteDatabase().setMaximumSize(m_database->maximumSize());
 
     ASSERT(!m_sqliteTransaction);
-    m_sqliteTransaction.set(new SQLiteTransaction(m_database->sqliteDatabase(), m_readOnly));
+    m_sqliteTransaction = adoptPtr(new SQLiteTransaction(m_database->sqliteDatabase(), m_readOnly));
 
     m_database->resetDeletes();
     m_database->disableAuthorizer();

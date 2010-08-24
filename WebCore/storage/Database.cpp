@@ -65,7 +65,7 @@ class DatabaseCreationCallbackTask : public ScriptExecutionContext::Task {
 public:
     static PassOwnPtr<DatabaseCreationCallbackTask> create(PassRefPtr<Database> database, PassRefPtr<DatabaseCallback> creationCallback)
     {
-        return new DatabaseCreationCallbackTask(database, creationCallback);
+        return adoptPtr(new DatabaseCreationCallbackTask(database, creationCallback));
     }
 
     virtual void performTask(ScriptExecutionContext*)
@@ -142,7 +142,7 @@ class DerefContextTask : public ScriptExecutionContext::Task {
 public:
     static PassOwnPtr<DerefContextTask> create(PassRefPtr<ScriptExecutionContext> context)
     {
-        return new DerefContextTask(context);
+        return adoptPtr(new DerefContextTask(context));
     }
 
     virtual void performTask(ScriptExecutionContext* context)
@@ -329,7 +329,7 @@ class DeliverPendingCallbackTask : public ScriptExecutionContext::Task {
 public:
     static PassOwnPtr<DeliverPendingCallbackTask> create(PassRefPtr<SQLTransaction> transaction)
     {
-        return new DeliverPendingCallbackTask(transaction);
+        return adoptPtr(new DeliverPendingCallbackTask(transaction));
     }
 
     virtual void performTask(ScriptExecutionContext*)

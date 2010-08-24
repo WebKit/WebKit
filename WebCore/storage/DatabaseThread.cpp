@@ -43,8 +43,8 @@ namespace WebCore {
 
 DatabaseThread::DatabaseThread()
     : m_threadID(0)
-    , m_transactionClient(new SQLTransactionClient())
-    , m_transactionCoordinator(new SQLTransactionCoordinator())
+    , m_transactionClient(adoptPtr(new SQLTransactionClient()))
+    , m_transactionCoordinator(adoptPtr(new SQLTransactionCoordinator()))
     , m_cleanupSync(0)
 {
     m_selfRef = this;

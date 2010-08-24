@@ -93,12 +93,12 @@ PassRefPtr<StorageNamespace> StorageNamespaceImpl::copy()
     ASSERT(!m_isShutdown);
     ASSERT(m_storageType == SessionStorage);
 
-    StorageNamespaceImpl* newNamespace = new StorageNamespaceImpl(m_storageType, m_path, m_quota);
+    RefPtr<StorageNamespaceImpl> newNamespace = adoptRef(new StorageNamespaceImpl(m_storageType, m_path, m_quota));
 
     StorageAreaMap::iterator end = m_storageAreaMap.end();
     for (StorageAreaMap::iterator i = m_storageAreaMap.begin(); i != end; ++i)
         newNamespace->m_storageAreaMap.set(i->first, i->second->copy());
-    return adoptRef(newNamespace);
+    return newNamespace.release();
 }
 
 PassRefPtr<StorageArea> StorageNamespaceImpl::storageArea(PassRefPtr<SecurityOrigin> prpOrigin)
