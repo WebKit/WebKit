@@ -63,7 +63,7 @@ static int clickCount;
 GdkDragContext* currentDragSourceContext;
 
 struct DelayedMessage {
-    GdkEvent event;
+    GdkEvent* event;
     gulong delay;
 };
 
@@ -82,8 +82,8 @@ enum KeyLocationCode {
     DOM_KEY_LOCATION_NUMPAD        = 0x03
 };
 
-static void sendOrQueueEvent(GdkEvent, bool = true);
-static void dispatchEvent(GdkEvent event);
+static void sendOrQueueEvent(GdkEvent*, bool = true);
+static void dispatchEvent(GdkEvent* event);
 static guint getStateFlags();
 
 #if !GTK_CHECK_VERSION(2, 17, 3)
@@ -152,15 +152,15 @@ bool prepareMouseButtonEvent(GdkEvent* event, int eventSenderButtonNumber)
         gdkButtonNumber = eventSenderButtonNumber + 1;
 
     // fast/events/mouse-click-events expects the 4th button
-    // to be event.button = 1, so send a middle-button event.
+    // to be event->button = 1, so send a middle-button event.
     else if (eventSenderButtonNumber == 3)
         gdkButtonNumber = 2;
 
-    memset(event, 0, sizeof(event));
     event->button.button = gdkButtonNumber;
     event->button.x = lastMousePositionX;
     event->button.y = lastMousePositionY;
     event->button.window = gtk_widget_get_window(GTK_WIDGET(view));
+    g_object_ref(event->button.window);
     event->button.device = gdk_device_get_core_pointer();
     event->button.state = getStateFlags();
     event->button.time = GDK_CURRENT_TIME;
@@ -176,13 +176,12 @@ bool prepareMouseButtonEvent(GdkEvent* event, int eventSenderButtonNumber)
 
 static JSValueRef contextClickCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    GdkEvent event;
-    if (!prepareMouseButtonEvent(&event, 2))
+    GdkEvent* event = gdk_event_new(GDK_BUTTON_PRESS);
+    if (!prepareMouseButtonEvent(event, 2))
         return JSValueMakeUndefined(context);
 
-    event.type = GDK_BUTTON_PRESS;
     sendOrQueueEvent(event);
-    event.type = GDK_BUTTON_RELEASE;
+    event->type = GDK_BUTTON_RELEASE;
     sendOrQueueEvent(event);
 
     return JSValueMakeUndefined(context);
@@ -207,11 +206,11 @@ static JSValueRef mouseDownCallback(JSContextRef context, JSObjectRef function, 
         g_return_val_if_fail((!exception || !*exception), JSValueMakeUndefined(context));
     }
 
-    GdkEvent event;
-    if (!prepareMouseButtonEvent(&event, button))
+    GdkEvent* event = gdk_event_new(GDK_BUTTON_PRESS);
+    if (!prepareMouseButtonEvent(event, button))
         return JSValueMakeUndefined(context);
 
-    buttonCurrentlyDown = event.button.button;
+    buttonCurrentlyDown = event->button.button;
 
     // Normally GDK will send both GDK_BUTTON_PRESS and GDK_2BUTTON_PRESS for
     // the second button press during double-clicks. WebKit GTK+ selectively
@@ -221,13 +220,11 @@ static JSValueRef mouseDownCallback(JSContextRef context, JSObjectRef function, 
     // it here. Eventually this code should probably figure out a way to get all
     // appropriate events onto the event queue and this work-around should be
     // removed.
-    updateClickCount(event.button.button);
+    updateClickCount(event->button.button);
     if (clickCount == 2)
-        event.type = GDK_2BUTTON_PRESS;
+        event->type = GDK_2BUTTON_PRESS;
     else if (clickCount == 3)
-        event.type = GDK_3BUTTON_PRESS;
-    else
-        event.type = GDK_BUTTON_PRESS;
+        event->type = GDK_3BUTTON_PRESS;
 
     sendOrQueueEvent(event);
     return JSValueMakeUndefined(context);
@@ -252,8 +249,8 @@ static JSValueRef mouseUpCallback(JSContextRef context, JSObjectRef function, JS
         g_return_val_if_fail((!exception || !*exception), JSValueMakeUndefined(context));
     }
 
-    GdkEvent event;
-    if (!prepareMouseButtonEvent(&event, button))
+    GdkEvent* event = gdk_event_new(GDK_BUTTON_RELEASE);
+    if (!prepareMouseButtonEvent(event, button))
         return JSValueMakeUndefined(context);
 
     lastClickPositionX = lastMousePositionX;
@@ -262,7 +259,6 @@ static JSValueRef mouseUpCallback(JSContextRef context, JSObjectRef function, JS
     lastClickTimeOffset = timeOffset;
     buttonCurrentlyDown = 0;
 
-    event.type = GDK_BUTTON_RELEASE;
     sendOrQueueEvent(event);
     return JSValueMakeUndefined(context);
 }
@@ -281,22 +277,21 @@ static JSValueRef mouseMoveToCallback(JSContextRef context, JSObjectRef function
     lastMousePositionY = (int)JSValueToNumber(context, arguments[1], exception);
     g_return_val_if_fail((!exception || !*exception), JSValueMakeUndefined(context));
 
-    GdkEvent event;
-    memset(&event, 0, sizeof(event));
-    event.type = GDK_MOTION_NOTIFY;
-    event.motion.x = lastMousePositionX;
-    event.motion.y = lastMousePositionY;
+    GdkEvent* event = gdk_event_new(GDK_MOTION_NOTIFY);
+    event->motion.x = lastMousePositionX;
+    event->motion.y = lastMousePositionY;
 
-    event.motion.time = GDK_CURRENT_TIME;
-    event.motion.window = gtk_widget_get_window(GTK_WIDGET(view));
-    event.motion.device = gdk_device_get_core_pointer();
-    event.motion.state = getStateFlags();
-    event.motion.axes = 0;
+    event->motion.time = GDK_CURRENT_TIME;
+    event->motion.window = gtk_widget_get_window(GTK_WIDGET(view));
+    g_object_ref(event->motion.window);
+    event->motion.device = gdk_device_get_core_pointer();
+    event->motion.state = getStateFlags();
+    event->motion.axes = 0;
 
     int xRoot, yRoot;
     gdk_window_get_root_coords(gtk_widget_get_window(GTK_WIDGET(view)), lastMousePositionX, lastMousePositionY, &xRoot, &yRoot);
-    event.motion.x_root = xRoot;
-    event.motion.y_root = yRoot;
+    event->motion.x_root = xRoot;
+    event->motion.y_root = yRoot;
 
     sendOrQueueEvent(event, false);
     return JSValueMakeUndefined(context);
@@ -319,21 +314,21 @@ static JSValueRef mouseWheelToCallback(JSContextRef context, JSObjectRef functio
     // GTK+ doesn't support multiple direction scrolls in the same event!
     g_return_val_if_fail((!vertical || !horizontal), JSValueMakeUndefined(context));
 
-    GdkEvent event;
-    event.type = GDK_SCROLL;
-    event.scroll.x = lastMousePositionX;
-    event.scroll.y = lastMousePositionY;
-    event.scroll.time = GDK_CURRENT_TIME;
-    event.scroll.window = gtk_widget_get_window(GTK_WIDGET(view));
+    GdkEvent* event = gdk_event_new(GDK_SCROLL);
+    event->scroll.x = lastMousePositionX;
+    event->scroll.y = lastMousePositionY;
+    event->scroll.time = GDK_CURRENT_TIME;
+    event->scroll.window = gtk_widget_get_window(GTK_WIDGET(view));
+    g_object_ref(event->scroll.window);
 
     if (horizontal < 0)
-        event.scroll.direction = GDK_SCROLL_LEFT;
+        event->scroll.direction = GDK_SCROLL_LEFT;
     else if (horizontal > 0)
-        event.scroll.direction = GDK_SCROLL_RIGHT;
+        event->scroll.direction = GDK_SCROLL_RIGHT;
     else if (vertical < 0)
-        event.scroll.direction = GDK_SCROLL_UP;
+        event->scroll.direction = GDK_SCROLL_UP;
     else if (vertical > 0)
-        event.scroll.direction = GDK_SCROLL_DOWN;
+        event->scroll.direction = GDK_SCROLL_DOWN;
     else
         g_assert_not_reached();
 
@@ -350,7 +345,7 @@ static JSValueRef beginDragWithFilesCallback(JSContextRef context, JSObjectRef f
     return JSValueMakeUndefined(context);
 }
 
-static void sendOrQueueEvent(GdkEvent event, bool shouldReplaySavedEvents)
+static void sendOrQueueEvent(GdkEvent* event, bool shouldReplaySavedEvents)
 {
     // Mouse move events are queued if the previous event was queued or if a
     // delay was set up by leapForward().
@@ -366,19 +361,23 @@ static void sendOrQueueEvent(GdkEvent event, bool shouldReplaySavedEvents)
     dispatchEvent(event);
 }
 
-static void dispatchEvent(GdkEvent event)
+static void dispatchEvent(GdkEvent* event)
 {
     webkit_web_frame_layout(mainFrame);
     WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
-    if (!view)
+    if (!view) {
+        gdk_event_free(event);
         return;
+    }
 
-    gtk_main_do_event(&event);
+    gtk_main_do_event(event);
 
-    if (!currentDragSourceContext)
+    if (!currentDragSourceContext) {
+        gdk_event_free(event);
         return;
+    }
 
-    if (event.type == GDK_MOTION_NOTIFY) {
+    if (event->type == GDK_MOTION_NOTIFY) {
         // WebKit has called gtk_drag_start(), but because the main loop isn't
         // running GDK internals don't know that the drag has started yet. Pump
         // the main loop a little bit so that GDK is in the correct state.
@@ -389,12 +388,12 @@ static void dispatchEvent(GdkEvent event)
         GtkWidget* parentWidget = gtk_widget_get_parent(GTK_WIDGET(view));
         GdkWindow* parentWidgetWindow = gtk_widget_get_window(parentWidget);
         gdk_drag_motion(currentDragSourceContext, parentWidgetWindow, GDK_DRAG_PROTO_XDND,
-            event.motion.x_root, event.motion.y_root,
+            event->motion.x_root, event->motion.y_root,
             gdk_drag_context_get_selected_action(currentDragSourceContext),
             gdk_drag_context_get_actions(currentDragSourceContext),
             GDK_CURRENT_TIME);
 
-    } else if (currentDragSourceContext && event.type == GDK_BUTTON_RELEASE) {
+    } else if (currentDragSourceContext && event->type == GDK_BUTTON_RELEASE) {
         // We've released the mouse button, we should just be able to spin the
         // event loop here and have GTK+ send the appropriate notifications for
         // the end of the drag.
@@ -402,6 +401,7 @@ static void dispatchEvent(GdkEvent event)
             gtk_main_iteration();
     }
 
+    gdk_event_free(event);
 }
 
 void replaySavedEvents()
@@ -551,25 +551,24 @@ static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JS
         return JSValueMakeUndefined(context);
 
     // create and send the event
-    GdkEvent event;
-    memset(&event, 0, sizeof(event));
-    event.key.keyval = gdkKeySym;
-    event.key.state = state;
-    event.key.window = gtk_widget_get_window(GTK_WIDGET(view));
+    GdkEvent* event = gdk_event_new(GDK_KEY_PRESS);
+    event->key.keyval = gdkKeySym;
+    event->key.state = state;
+    event->key.window = gtk_widget_get_window(GTK_WIDGET(view));
+    g_object_ref(event->key.window);
 
     // When synthesizing an event, an invalid hardware_keycode value
     // can cause it to be badly processed by Gtk+.
     GdkKeymapKey* keys;
     gint n_keys;
     if (gdk_keymap_get_entries_for_keyval(gdk_keymap_get_default(), gdkKeySym, &keys, &n_keys)) {
-        event.key.hardware_keycode = keys[0].keycode;
+        event->key.hardware_keycode = keys[0].keycode;
         g_free(keys);
     }
 
-    event.key.type = GDK_KEY_PRESS;
     dispatchEvent(event);
 
-    event.key.type = GDK_KEY_RELEASE;
+    event->key.type = GDK_KEY_RELEASE;
     dispatchEvent(event);
 
     return JSValueMakeUndefined(context);

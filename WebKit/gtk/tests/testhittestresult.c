@@ -81,15 +81,15 @@ load_status_cb(WebKitWebView* webView,
     if (status == WEBKIT_LOAD_FINISHED) {
         WebKitHitTestResult* result;
         guint context;
-        GdkEventButton event;
+        GdkEvent* event = gdk_event_new(GDK_BUTTON_PRESS);
         WebKitDOMNode* node;
 
-        event.type = GDK_BUTTON_PRESS;
         /* Close enough to 0,0 */
-        event.x = 5;
-        event.y = 5;
+        event->button.x = 5;
+        event->button.y = 5;
 
-        result = webkit_web_view_get_hit_test_result(webView, &event);
+        result = webkit_web_view_get_hit_test_result(webView, (GdkEventButton*) event);
+        gdk_event_free(event);
         g_assert(result);
 
         g_object_get(result, "context", &context, NULL);

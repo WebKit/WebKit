@@ -128,21 +128,22 @@ static CopyAndPasteFixture* currentFixture;
 static JSValueRef runPasteTestCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     // Simulate a paste keyboard sequence.
-    GdkEvent event;
-    memset(&event, 0, sizeof(event));
-    event.key.keyval = gdk_unicode_to_keyval('v');
-    event.key.state = GDK_CONTROL_MASK;
-    event.key.window = gtk_widget_get_window(GTK_WIDGET(currentFixture->webView));
+    GdkEvent* event = gdk_event_new(GDK_KEY_PRESS);
+    event->key.keyval = gdk_unicode_to_keyval('v');
+    event->key.state = GDK_CONTROL_MASK;
+    event->key.window = gtk_widget_get_window(GTK_WIDGET(currentFixture->webView));
+    g_object_ref(event->key.window);
     GdkKeymapKey* keys;
     gint n_keys;
-    if (gdk_keymap_get_entries_for_keyval(gdk_keymap_get_default(), event.key.keyval, &keys, &n_keys)) {
-        event.key.hardware_keycode = keys[0].keycode;
+    if (gdk_keymap_get_entries_for_keyval(gdk_keymap_get_default(), event->key.keyval, &keys, &n_keys)) {
+        event->key.hardware_keycode = keys[0].keycode;
         g_free(keys);
     }
-    event.key.type = GDK_KEY_PRESS;
-    gtk_main_do_event(&event);
-    event.key.type = GDK_KEY_RELEASE;
-    gtk_main_do_event(&event);
+
+    gtk_main_do_event(event);
+    event->key.type = GDK_KEY_RELEASE;
+    gtk_main_do_event(event);
+    gdk_event_free(event);
 
     JSStringRef scriptString = JSStringCreateWithUTF8CString("document.body.innerHTML;");
     JSValueRef value = JSEvaluateScript(context, scriptString, 0, 0, 0, 0);
