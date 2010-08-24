@@ -1,3 +1,19 @@
+2010-08-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Tony Chang.
+
+        After r65681, caret no longer displays promptly while editing form fields
+        https://bugs.webkit.org/show_bug.cgi?id=44294
+        
+        The caret no longer eagerly updates its rect on every paint, so we have
+        to manually update it after scrolling the selection into view when
+        the selection changes.
+        
+        Tested by the pixel results of fast/forms/input-text-scroll-left-on-blur.html
+
+        * page/Frame.cpp:
+        (WebCore::Frame::revealSelection):
+
 2010-08-24  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

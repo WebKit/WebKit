@@ -1084,8 +1084,10 @@ void Frame::revealSelection(const ScrollAlignment& alignment, bool revealExtent)
         // FIXME: This code only handles scrolling the startContainer's layer, but
         // the selection rect could intersect more than just that.
         // See <rdar://problem/4799899>.
-        if (RenderLayer* layer = start.node()->renderer()->enclosingLayer())
+        if (RenderLayer* layer = start.node()->renderer()->enclosingLayer()) {
             layer->scrollRectToVisible(rect, false, alignment, alignment);
+            selection()->updateAppearance();
+        }
     }
 }
 
