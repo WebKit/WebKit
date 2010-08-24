@@ -299,7 +299,7 @@ public:
     void pasteAsFragment(PassRefPtr<DocumentFragment>, bool smartReplace, bool matchStyle);
     void pasteAsPlainText(const String&, bool smartReplace);
 
-    // This is only necessary while paste is primarily implemented in WebKit for the mac platform.
+    // This is only called on the mac where paste is implemented primarily at the WebKit level.
     void pasteAsPlainTextBypassingDHTML();
 
     Node* findEventTargetFrom(const VisibleSelection& selection) const;
