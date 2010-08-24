@@ -1,3 +1,16 @@
+2010-08-24  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Make overflow guards in UString::utf8 explicit
+        https://bugs.webkit.org/show_bug.cgi?id=44540
+
+        Add an explicit overflow check prior to allocating our buffer,
+        rather than implicitly relying on the guard in convertUTF16ToUTF8.
+
+        * runtime/UString.cpp:
+        (JSC::UString::utf8):
+
 2010-08-24  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Simon Hausmann.
