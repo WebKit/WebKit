@@ -2,6 +2,23 @@
 
         Reviewed by Gustavo Noronha Silva.
 
+        [GTK] The Mozilla theme drawing code incorrectly renders scrollbar backgrounds
+        https://bugs.webkit.org/show_bug.cgi?id=44388
+
+        No new tests as this functionality is currently unused. When the
+        the new scrollbar theme code lands for GTK+, this will be tested
+        by scrollbar pixel tests.
+
+        * platform/gtk/gtk2drawing.c: Expose a method to paint scrolled window
+        backgrounds and disable incorrect rendering of scrollbar trough backgrounds.
+        (moz_gtk_scrolled_window_paint): Added.
+        (moz_gtk_scrollbar_trough_paint): Disable incorrect background render.
+        * platform/gtk/gtkdrawing.h: Add scrolled window widget type in the enum.
+
+2010-08-23  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
         [GTK] The Mozilla theme drawing API should expose extra information about scrollbar geometry
         https://bugs.webkit.org/show_bug.cgi?id=44385
 

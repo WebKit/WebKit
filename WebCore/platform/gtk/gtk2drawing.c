@@ -1094,6 +1094,34 @@ calculate_arrow_rect(GtkWidget* arrow, GdkRectangle* rect,
 }
 
 static gint
+moz_gtk_scrolled_window_paint(GdkDrawable* drawable, GdkRectangle* rect,
+                              GdkRectangle* cliprect, GtkWidgetState* state)
+{
+    GtkStateType state_type = ConvertGtkState(state);
+    GtkShadowType shadow_type = (state->active) ?  GTK_SHADOW_IN : GTK_SHADOW_OUT;
+    GtkStyle* style;
+    GtkAllocation allocation;
+    GtkWidget* widget;
+
+    ensure_scrolled_window_widget();
+    widget = gParts->scrolledWindowWidget;
+
+    gtk_widget_get_allocation(widget, &allocation);
+    allocation.x = rect->x;
+    allocation.y = rect->y;
+    allocation.width = rect->width;
+    allocation.height = rect->height;
+    gtk_widget_set_allocation(widget, &allocation);
+
+    style = gtk_widget_get_style(widget);
+    TSOffsetStyleGCs(style, rect->x - 1, rect->y - 1);
+    gtk_paint_box(style, drawable, state_type, shadow_type, cliprect,
+                  widget, "scrolled_window", rect->x - 1, rect->y - 1,
+                  rect->width + 2, rect->height + 2);
+    return MOZ_GTK_SUCCESS;
+}
+
+static gint
 moz_gtk_scrollbar_button_paint(GdkDrawable* drawable, GdkRectangle* rect,
                                GdkRectangle* cliprect, GtkWidgetState* state,
                                GtkScrollbarButtonFlags flags,
@@ -1211,10 +1239,6 @@ moz_gtk_scrollbar_trough_paint(GtkThemeWidgetType widget,
     style = gtk_widget_get_style(GTK_WIDGET(scrollbar));
 
     TSOffsetStyleGCs(style, rect->x, rect->y);
-    gtk_style_apply_default_background(style, drawable, TRUE, GTK_STATE_ACTIVE,
-                                       cliprect, rect->x, rect->y,
-                                       rect->width, rect->height);
-
     gtk_paint_box(style, drawable, GTK_STATE_ACTIVE, GTK_SHADOW_IN, cliprect,
                   GTK_WIDGET(scrollbar), "trough", rect->x, rect->y,
                   rect->width, rect->height);
@@ -3106,6 +3130,9 @@ moz_gtk_widget_paint(GtkThemeWidgetType widget, GdkDrawable* drawable,
     case MOZ_GTK_SCROLLBAR_THUMB_VERTICAL:
         return moz_gtk_scrollbar_thumb_paint(widget, drawable, rect,
                                              cliprect, state, direction);
+        break;
+    case MOZ_GTK_SCROLLED_WINDOW:
+        return moz_gtk_scrolled_window_paint(drawable, rect, cliprect, state);
         break;
     case MOZ_GTK_SCALE_HORIZONTAL:
     case MOZ_GTK_SCALE_VERTICAL:

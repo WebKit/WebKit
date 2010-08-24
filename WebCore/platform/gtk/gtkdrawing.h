@@ -181,6 +181,8 @@ typedef enum {
   /* Paints the slider (thumb) of a GtkScrollbar. */
   MOZ_GTK_SCROLLBAR_THUMB_HORIZONTAL,
   MOZ_GTK_SCROLLBAR_THUMB_VERTICAL,
+  /* Paints the background of a scrolled window */
+  MOZ_GTK_SCROLLED_WINDOW,
   /* Paints a GtkScale. */
   MOZ_GTK_SCALE_HORIZONTAL,
   MOZ_GTK_SCALE_VERTICAL,
