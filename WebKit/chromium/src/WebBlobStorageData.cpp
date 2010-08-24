@@ -69,7 +69,7 @@ bool WebBlobStorageData::itemAt(size_t index, WebBlobData::Item& result) const
     } else {
         ASSERT(item.type == BlobDataItem::File);
         result.type = WebBlobData::Item::TypeFile;
-        result.pathOrURL = item.path;
+        result.filePath = item.path;
         return true;
     }
 }

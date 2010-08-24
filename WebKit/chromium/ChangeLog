@@ -1,3 +1,22 @@
+2010-08-24  Jian Li  <jianli@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] Update WebBlobData.
+        https://bugs.webkit.org/show_bug.cgi?id=44481
+
+        Some changes to WebBlobData to match with chromium implementation.
+        1) Change to use WebCString for data, instead of WebData.
+        2) Separate path from URL.
+
+        * public/WebBlobData.h:
+        * src/WebBlobData.cpp:
+        (WebKit::WebBlobData::itemAt):
+        (WebKit::WebBlobData::appendData):
+        (WebKit::WebBlobData::appendBlob):
+        * src/WebBlobStorageData.cpp:
+        (WebKit::WebBlobStorageData::itemAt):
+
 2010-08-24  Marcus Bulach  <bulach@chromium.org>
 
         Reviewed by Jeremy Orlow.

@@ -64,34 +64,35 @@ bool WebBlobData::itemAt(size_t index, Item& result) const
         return false;
 
     const BlobDataItem& item = m_private->items()[index];
+    result.data.reset();
+    result.filePath.reset();
+    result.blobURL = KURL();
     result.offset = item.offset;
     result.length = item.length;
     result.expectedModificationTime = item.expectedModificationTime;
+
     switch (item.type) {
     case BlobDataItem::Data:
         result.type = Item::TypeData;
-        result.data.assign(item.data.data(), static_cast<size_t>(item.data.length()));
-        result.pathOrURL.reset();
+        result.data = item.data;
         return true;
     case BlobDataItem::File:
         result.type = Item::TypeFile;
-        result.data.reset();
-        result.pathOrURL = item.path;
+        result.filePath = item.path;
         return true;
     case BlobDataItem::Blob:
         result.type = Item::TypeBlob;
-        result.data.reset();
-        result.pathOrURL = item.url;
+        result.blobURL = item.url;
         return true;
     }
     ASSERT_NOT_REACHED();
     return false;
 }
 
-void WebBlobData::appendData(const WebData& data)
+void WebBlobData::appendData(const WebCString& data)
 {
     ASSERT(!isNull());
-    m_private->appendData(CString(data.data(), data.size()));
+    m_private->appendData(data);
 }
 
 void WebBlobData::appendFile(const WebString& filePath)
@@ -106,10 +107,10 @@ void WebBlobData::appendFile(const WebString& filePath, long long offset, long l
     m_private->appendFile(filePath, offset, length, expectedModificationTime);
 }
 
-void WebBlobData::appendBlob(const WebString& blobURL, long long offset, long long length)
+void WebBlobData::appendBlob(const WebURL& blobURL, long long offset, long long length)
 {
     ASSERT(!isNull());
-    m_private->appendBlob(KURL(ParsedURLString, blobURL), offset, length);
+    m_private->appendBlob(blobURL, offset, length);
 }
 
 WebString WebBlobData::contentType() const
