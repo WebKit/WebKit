@@ -36,9 +36,10 @@ def GetGoogleChromePort(port_name, options):
             def baseline_search_path(self):
                 paths = chromium_linux.ChromiumLinuxPort.baseline_search_path(
                     self)
-                paths.insert(0, self._webkit_baseline_path(self._name))
+                paths.insert(0, self._webkit_baseline_path(
+                    'google-chrome-linux32'))
                 return paths
-        return GoogleChromeLinux32Port(port_name, options)
+        return GoogleChromeLinux32Port(None, options)
     elif port_name == 'google-chrome-linux64':
         import chromium_linux
 
@@ -46,9 +47,10 @@ def GetGoogleChromePort(port_name, options):
             def baseline_search_path(self):
                 paths = chromium_linux.ChromiumLinuxPort.baseline_search_path(
                     self)
-                paths.insert(0, self._webkit_baseline_path(self._name))
+                paths.insert(0, self._webkit_baseline_path(
+                    'google-chrome-linux64'))
                 return paths
-        return GoogleChromeLinux64Port(port_name, options)
+        return GoogleChromeLinux64Port(None, options)
     elif port_name.startswith('google-chrome-mac'):
         import chromium_mac
 
@@ -59,7 +61,7 @@ def GetGoogleChromePort(port_name, options):
                 paths.insert(0, self._webkit_baseline_path(
                     'google-chrome-mac'))
                 return paths
-        return GoogleChromeMacPort(port_name, options)
+        return GoogleChromeMacPort(None, options)
     elif port_name.startswith('google-chrome-win'):
         import chromium_win
 
@@ -70,5 +72,5 @@ def GetGoogleChromePort(port_name, options):
                 paths.insert(0, self._webkit_baseline_path(
                     'google-chrome-win'))
                 return paths
-        return GoogleChromeWinPort(port_name, options)
+        return GoogleChromeWinPort(None, options)
     raise NotImplementedError('unsupported port: %s' % port_name)
