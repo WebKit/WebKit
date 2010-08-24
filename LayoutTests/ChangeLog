@@ -2,6 +2,21 @@
 
         Reviewed by Sam Weinig.
 
+        Add test for a NodeFilter throwing
+        https://bugs.webkit.org/show_bug.cgi?id=44480
+        
+        The TreeWalker DOM spec says that an exception thrown inside the NodeFilter should
+        propagate out to the caller. This tests that.
+
+        * fast/dom/TreeWalker/filter-throw-expected.txt: Added.
+        * fast/dom/TreeWalker/filter-throw.html: Added.
+        * fast/dom/TreeWalker/script-tests/filter-throw.js: Added.
+        (walker.document.createTreeWalker):
+
+2010-08-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Sam Weinig.
+
         TreeWalker traversal order is wrong when skipping and rejecting
         https://bugs.webkit.org/show_bug.cgi?id=44377
         
