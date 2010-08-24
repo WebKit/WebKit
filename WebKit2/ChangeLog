@@ -1,3 +1,11 @@
+2010-08-24  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by John Sullivan.
+
+        Update profile.
+
+        * WebProcess/com.apple.WebProcess.sb:
+
 2010-08-23  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff Garen.
