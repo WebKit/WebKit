@@ -2,6 +2,18 @@
 
         Reviewed by Eric Seidel.
 
+        HTMLScriptRunner::create
+        https://bugs.webkit.org/show_bug.cgi?id=44474
+
+        * html/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::HTMLDocumentParser):
+        * html/HTMLScriptRunner.h:
+        (WebCore::HTMLScriptRunner::create):
+
+2010-08-23  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         HTMLTreeBuilder should use adoptPtr
         https://bugs.webkit.org/show_bug.cgi?id=44473
 
