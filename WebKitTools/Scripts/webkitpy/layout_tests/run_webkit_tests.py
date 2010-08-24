@@ -687,7 +687,7 @@ class TestRunner:
                 self.update_summary(result_summary)
 
                 if some_thread_is_alive:
-                    time.sleep(0.1)
+                    time.sleep(0.01)
 
         except KeyboardInterrupt:
             keyboard_interrupted = True
@@ -779,12 +779,13 @@ class TestRunner:
             self._expectations, result_summary, retry_summary)
         self._printer.print_unexpected_results(unexpected_results)
 
-        # Write the same data to log files.
-        self._write_json_files(unexpected_results, result_summary,
-                             individual_test_timings)
+        if self._options.record_results:
+            # Write the same data to log files.
+            self._write_json_files(unexpected_results, result_summary,
+                                   individual_test_timings)
 
-        # Upload generated JSON files to appengine server.
-        self._upload_json_files()
+            # Upload generated JSON files to appengine server.
+            self._upload_json_files()
 
         # Write the summary to disk (results.html) and display it if requested.
         wrote_results = self._write_results_html_file(result_summary)
@@ -1545,6 +1546,9 @@ def parse_args(args=None):
             default=False, help="Clobbers test results from previous runs."),
         optparse.make_option("--platform",
             help="Override the platform for expected results"),
+        optparse.make_option("--no-record-results", action="store_false",
+            default=True, dest="record_results",
+            help="Don't record the results."),
         # old-run-webkit-tests also has HTTP toggle options:
         # --[no-]http                     Run (or do not run) http tests
         #                                 (default: run)

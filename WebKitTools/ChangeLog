@@ -1,3 +1,24 @@
+2010-08-24  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        speed up new-run-webkit-tests unit tests
+
+        Add a --no-record-results flag that turns off generating the JSON
+        results file on every test run. Generating the file requires us to
+        fetch the old results down from the bots, which can be slow. This
+        flag is off by default.
+    
+        Reduce the sleep time in wait_for_threads_to_finish from 0.1s to 0.01s.
+    
+        These changes together shorten the test cycle from ~4.5s to ~1.5s
+        - a 3x speedup.
+
+        https://bugs.webkit.org/show_bug.cgi?id=44553
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+
 2010-08-24  Tony Chang  <tony@chromium.org>
 
         Reviewed by Eric Seidel.

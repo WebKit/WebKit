@@ -48,9 +48,10 @@ from webkitpy.layout_tests.layout_package import dump_render_tree_thread
 from webkitpy.thirdparty.mock import Mock
 
 
-def passing_run(args, port_obj=None, logging_included=False):
-    if not logging_included:
-        args.extend(['--print', 'nothing'])
+def passing_run(args, port_obj=None, record_results=False):
+    args.extend(['--print', 'nothing'])
+    if not record_results:
+        args.append('--no-record-results')
     options, args = run_webkit_tests.parse_args(args)
     if port_obj is None:
         port_obj = port.get(options.platform, options)
@@ -58,6 +59,7 @@ def passing_run(args, port_obj=None, logging_included=False):
     return res == 0
 
 def logging_run(args):
+    args.extend(['--no-record-results'])
     options, args = run_webkit_tests.parse_args(args)
     port_obj = port.get(options.platform, options)
     buildbot_output = array_stream.ArrayStream()
@@ -74,17 +76,15 @@ class MainTest(unittest.TestCase):
         self.assertTrue(passing_run(['--platform', 'test', '--run-singly']))
         self.assertTrue(passing_run(['--platform', 'test',
                                      'text/article-element.html']))
-        self.assertTrue(passing_run(['--platform', 'test',
-                                    '--child-processes', '1',
-                                     '--print', 'unexpected']))
 
-    def test_child_processes(self):
+    def test_one_child_process(self):
         (res, buildbot_output, regular_output) = logging_run(
              ['--platform', 'test', '--print', 'config', '--child-processes',
               '1'])
         self.assertTrue('Running one DumpRenderTree\n'
                         in regular_output.get())
 
+    def test_two_child_processes(self):
         (res, buildbot_output, regular_output) = logging_run(
              ['--platform', 'test', '--print', 'config', '--child-processes',
               '2'])
@@ -92,12 +92,11 @@ class MainTest(unittest.TestCase):
                         in regular_output.get())
 
     def test_last_results(self):
-        passing_run(['--platform', 'test'])
+        passing_run(['--platform', 'test'], record_results=True)
         (res, buildbot_output, regular_output) = logging_run(
             ['--platform', 'test', '--print-last-failures'])
         self.assertEqual(regular_output.get(), ['\n\n'])
         self.assertEqual(buildbot_output.get(), [])
-
 
 
 def _mocked_open(original_open, file_list):
