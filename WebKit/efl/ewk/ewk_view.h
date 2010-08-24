@@ -389,6 +389,9 @@ EAPI Eina_Bool    ewk_view_setting_enable_scripts_set(Evas_Object *o, Eina_Bool 
 EAPI Eina_Bool    ewk_view_setting_enable_plugins_get(const Evas_Object *o);
 EAPI Eina_Bool    ewk_view_setting_enable_plugins_set(Evas_Object *o, Eina_Bool enable);
 
+EAPI Eina_Bool    ewk_view_setting_enable_frame_flattening_get(const Evas_Object* o);
+EAPI Eina_Bool    ewk_view_setting_enable_frame_flattening_set(Evas_Object* o, Eina_Bool enable);
+
 EAPI Eina_Bool    ewk_view_setting_scripts_window_open_get(const Evas_Object *o);
 EAPI Eina_Bool    ewk_view_setting_scripts_window_open_set(Evas_Object *o, Eina_Bool allow);
 

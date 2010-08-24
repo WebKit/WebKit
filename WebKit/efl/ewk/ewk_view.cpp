@@ -102,6 +102,7 @@ struct _Ewk_View_Private_Data {
         Eina_Bool auto_shrink_images:1;
         Eina_Bool enable_scripts:1;
         Eina_Bool enable_plugins:1;
+        Eina_Bool enable_frame_flattening:1;
         Eina_Bool scripts_window_open:1;
         Eina_Bool resizable_textareas:1;
         Eina_Bool private_browsing:1;
@@ -589,6 +590,7 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* sd)
     priv->settings.auto_shrink_images = priv->page_settings->shrinksStandaloneImagesToFit();
     priv->settings.enable_scripts = priv->page_settings->isJavaScriptEnabled();
     priv->settings.enable_plugins = priv->page_settings->arePluginsEnabled();
+    priv->settings.enable_frame_flattening = priv->page_settings->frameFlatteningEnabled();
     priv->settings.scripts_window_open = priv->page_settings->allowScriptsToCloseWindows();
     priv->settings.resizable_textareas = priv->page_settings->textAreasAreResizable();
     priv->settings.private_browsing = priv->page_settings->privateBrowsingEnabled();
@@ -2287,6 +2289,41 @@ Eina_Bool ewk_view_setting_enable_plugins_set(Evas_Object* o, Eina_Bool enable)
     if (priv->settings.enable_plugins != enable) {
         priv->page_settings->setPluginsEnabled(enable);
         priv->settings.enable_plugins = enable;
+    }
+    return EINA_TRUE;
+}
+
+/**
+ * Get status of frame flattening.
+ *
+ * @param o view to check status
+ *
+ * @return EINA_TRUE if flattening is enabled, EINA_FALSE
+ *         otherwise (errors, flattening disabled).
+ */
+Eina_Bool ewk_view_setting_enable_frame_flattening_get(const Evas_Object* o)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
+    return priv->settings.enable_frame_flattening;
+}
+
+/**
+ * Set frame flattening.
+ *
+ * @param o view to set flattening
+ *
+ * @return EINA_TRUE if flattening status set, EINA_FALSE
+ *         otherwise (errors).
+ */
+Eina_Bool ewk_view_setting_enable_frame_flattening_set(Evas_Object* o, Eina_Bool enable)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
+    enable = !!enable;
+    if (priv->settings.enable_frame_flattening != enable) {
+        priv->page_settings->setFrameFlatteningEnabled(enable);
+        priv->settings.enable_frame_flattening = enable;
     }
     return EINA_TRUE;
 }

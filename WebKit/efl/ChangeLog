@@ -1,3 +1,15 @@
+2010-08-24  Lukasz Slachciak  <l.slachciak@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Extended EFL WebView API to allow enable/disable Frame Flattening
+        https://bugs.webkit.org/show_bug.cgi?id=44253
+
+        * ewk/ewk_view.cpp:
+        (ewk_view_setting_enable_frame_flattening_get):
+        (ewk_view_setting_enable_frame_flattening_set):
+        * ewk/ewk_view.h:
+
 2010-08-23  Leandro Pereira  <leandro@profusion.mobi>
 
         [EFL] Build fix for platforms that do not require linking with "dl".
