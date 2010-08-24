@@ -2,17 +2,26 @@ Tests that elements panel shows proper styles in the sidebar panel.
 
 [expanded]  ()
 color: blue;
+    .foo, .foo::before - blue resources/elements-panel-styles.css:15
+    /-- overloaded --/ .foo - black resources/elements-panel-styles.css:10
 display: none;
+    element.style - none 
+    /-- overloaded --/ div - block user agent stylesheet
 font-family: serif;
+    #container - serif resources/elements-panel-styles.css:5
 font-size: 14px;
-height: auto;
+    #container - 14px resources/elements-panel-styles.css:5
+    /-- overloaded --/ body - 12px resources/elements-panel-styles.css:1
 margin-bottom: 2px;
+    .foo - 2px resources/elements-panel-styles.css:10
 margin-left: 0px;
+    .foo - 0px resources/elements-panel-styles.css:10
 margin-right: 0px;
+    .foo - 0px resources/elements-panel-styles.css:10
 margin-top: 10px;
-width: auto;
+    .foo - 10px resources/elements-panel-styles.css:10
 
-[expanded] element.style { (element’s “style” attribute)
+[expanded] element.style { ()
 display: none;
 
 ======== Matched CSS Rules ========

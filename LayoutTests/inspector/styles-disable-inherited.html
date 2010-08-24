@@ -49,7 +49,7 @@ function frontend_dumpResults(testController)
     {
         testController.results.push("After disable:");
         testController.results = testController.results.concat(frontend_getSelectedElementStyles(true));
-        testController.notifyDone(window.__result);
+        testController.notifyDone(testController.results);
     }
     frontend_selectElementAndRun(testController, "nested", reportResults);
 }

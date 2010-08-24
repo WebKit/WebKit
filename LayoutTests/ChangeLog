@@ -1,3 +1,22 @@
+2010-08-24  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Trace to the style that contributes to
+        the computed styles panel.
+        https://bugs.webkit.org/show_bug.cgi?id=44448
+
+        * inspector/elements-panel-styles-expected.txt:
+        * inspector/elements-tests.js:
+        (frontend_getSelectedElementStyles):
+        (frontend_dumpStyleTreeItem):
+        * inspector/styles-computed-trace-expected.txt: Added.
+        * inspector/styles-computed-trace.html: Added.
+        * inspector/styles-disable-inherited-expected.txt:
+        * inspector/styles-disable-inherited.html:
+        * inspector/styles-disable-then-delete-expected.txt:
+        * inspector/styles-source-lines-inline-expected.txt:
+
 2010-08-24  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed trivial fix.

@@ -714,13 +714,13 @@ WebInspector.documentClick = function(event)
     function followLink()
     {
         // FIXME: support webkit-html-external-link links here.
-        if (WebInspector.canShowSourceLine(anchor.href, anchor.lineNumber, anchor.preferredPanel)) {
+        if (WebInspector.canShowSourceLine(anchor.href, anchor.getAttribute("line_number"), anchor.getAttribute("preferred_panel"))) {
             if (anchor.hasStyleClass("webkit-html-external-link")) {
                 anchor.removeStyleClass("webkit-html-external-link");
                 anchor.addStyleClass("webkit-html-resource-link");
             }
 
-            WebInspector.showSourceLine(anchor.href, anchor.lineNumber, anchor.preferredPanel);
+            WebInspector.showSourceLine(anchor.href, anchor.getAttribute("line_number"), anchor.getAttribute("preferred_panel"));
             return;
         }
 
@@ -1800,8 +1800,8 @@ WebInspector.linkifyResourceAsNode = function(url, preferredPanel, lineNumber, c
     if (lineNumber)
         linkText += ":" + lineNumber;
     var node = WebInspector.linkifyURLAsNode(url, linkText, classes, false, tooltipText);
-    node.lineNumber = lineNumber;
-    node.preferredPanel = preferredPanel;
+    node.setAttribute("line_number", lineNumber);
+    node.setAttribute("preferred_panel", preferredPanel);
     return node;
 }
 

@@ -1,19 +1,19 @@
 Tests that disabling inherited style property does not break further style inspection.
 
 Before disable
-[expanded] element.style { (element’s “style” attribute)
+[expanded] element.style { ()
 
 ======== Matched CSS Rules ========
 [expanded] div { (user agent stylesheet)
 display: block;
 
 ======== Inherited from div#container ========
-[expanded] Style Attribute { (element’s “style” attribute)
+[expanded] Style Attribute { ()
 font-weight: bold;
 
 
 After disable:
-[expanded] element.style { (element’s “style” attribute)
+[expanded] element.style { ()
 
 ======== Matched CSS Rules ========
 [expanded] div { (user agent stylesheet)

@@ -1,0 +1,84 @@
+<html>
+<head>
+<style>
+body {
+    background-color: rgb(100, 0, 0);
+    font-family: Arial;
+}
+
+#id1 {
+    background-color: green;
+    font-family: Times;
+}
+
+#id1 {
+    background-color: black;
+    font-family: Courier;
+}
+
+#id1 {
+    background: gray;
+}
+
+#id2 {
+    background-color: blue;
+    font-family: Courier;
+}
+
+</style>
+<script src="../http/tests/inspector/inspector-test.js"></script>
+<script src="elements-tests.js"></script>
+<script>
+
+function doit()
+{
+    function callback(result)
+    {
+        dumpArray(result);
+        notifyDone();
+    }
+    evaluateInWebInspector("frontend_runTest", callback);
+}
+
+// Frontend functions.
+
+function frontend_runTest(testController)
+{
+    testController.waitUntilDone();
+    frontend_expandDOMSubtreeAndRun(testController, null, frontend_selectNestedElement);
+}
+
+function frontend_selectNestedElement(testController)
+{
+    frontend_selectElementAndRun(testController, "id1", frontend_dumpID1Style);
+}
+
+function frontend_dumpID1Style(testController)
+{
+    testController.results.push("==== Computed style for ID1 ====");
+    testController.results = testController.results.concat(frontend_getSelectedElementStyles(false, true));
+    frontend_selectElementAndRun(testController, "id2", frontend_dumpID2Style);
+}
+
+function frontend_dumpID2Style(testController)
+{
+    testController.results.push("==== Computed style for ID2 ====");
+    testController.results = testController.results.concat(frontend_getSelectedElementStyles(false, true));
+    testController.notifyDone();
+}
+
+</script>
+</head>
+
+<body onload="onload()">
+<p>
+Tests that computed styles expand and allow tracing to style rules.
+</p>
+
+<div id="id1">
+<div id="id2">
+</div>
+</div>
+
+</body>
+</html>

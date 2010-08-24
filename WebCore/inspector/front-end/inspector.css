@@ -4107,7 +4107,7 @@ a.worker-item {
     color: inherit;
 }
 
-.styles-section .subtitle::before, .styles-section .subtitle a::before {
+.styles-section a::before {
     content: attr(data-uncopyable);
 }
 

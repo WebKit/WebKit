@@ -1,7 +1,7 @@
 Tests that elements panel shows proper inline style locations in the sidebar panel.
 
 
-[expanded] element.style { (element’s “style” attribute)
+[expanded] element.style { ()
 display: none;
 
 ======== Matched CSS Rules ========
@@ -12,7 +12,7 @@ color: blue;
 /-- overloaded --/ display: block;
 
 
-[expanded] element.style { (element’s “style” attribute)
+[expanded] element.style { ()
 
 ======== Matched CSS Rules ========
 [expanded] .bar { (resources/styles-source-lines-inline-iframe.html:4)

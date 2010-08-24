@@ -1,3 +1,44 @@
+2010-08-24  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Trace to the style that contributes to
+        the computed styles panel.
+        https://bugs.webkit.org/show_bug.cgi?id=44448
+
+        Test: inspector/styles-computed-trace.html
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/Section.js:
+        (WebInspector.Section.prototype.set subtitle):
+        (WebInspector.Section.prototype.get subtitleAsTextForTest):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.prototype._refreshUpdate):
+        (WebInspector.StylesSidebarPane.prototype._rebuildUpdate):
+        (WebInspector.StylesSidebarPane.prototype._rebuildStyleRules):
+        (WebInspector.StylesSidebarPane.prototype._refreshSectionsForStyleRules):
+        (WebInspector.StylesSidebarPane.prototype._rebuildSectionsForStyleRules):
+        (WebInspector.StylePropertiesSection.linkifyUncopyable):
+        (WebInspector.StylePropertiesSection):
+        (WebInspector.StylePropertiesSection.prototype.isPropertyInherited):
+        (WebInspector.StylePropertiesSection.prototype.isPropertyOverloaded):
+        (WebInspector.StylePropertiesSection.prototype.isPropertyDisabled):
+        (WebInspector.StylePropertiesSection.prototype.update):
+        (WebInspector.StylePropertiesSection.prototype.onpopulate):
+        (WebInspector.ComputedStylePropertiesSection):
+        (WebInspector.ComputedStylePropertiesSection.prototype.collapse):
+        (WebInspector.ComputedStylePropertiesSection.prototype._isPropertyInherited):
+        (WebInspector.ComputedStylePropertiesSection.prototype.update):
+        (WebInspector.ComputedStylePropertiesSection.prototype.onpopulate):
+        (WebInspector.ComputedStylePropertiesSection.prototype.rebuildComputedTrace):
+        (WebInspector.BlankStylePropertiesSection):
+        * inspector/front-end/inspector.css:
+        (.styles-section a::before):
+        * inspector/front-end/inspector.js:
+        (WebInspector.documentClick.followLink):
+        (WebInspector.documentClick):
+        (WebInspector.linkifyResourceAsNode):
+
 2010-08-24  Daniel Cheng  <dcheng@chromium.org>
 
         Reviewed by Eric Seidel.
