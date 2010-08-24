@@ -128,6 +128,7 @@ namespace WebCore {
         void toggleStyleEnabled(long styleId, const String& propertyName, bool disabled, RefPtr<InspectorValue>* styleObject);
         void setRuleSelector(long ruleId, const String& selector, long selectedNodeId, RefPtr<InspectorValue>* ruleObject, bool* selectorAffectsNode);
         void addRule(const String& selector, long selectedNodeId, RefPtr<InspectorValue>* ruleObject, bool* selectorAffectsNode);
+        void getSupportedCSSProperties(RefPtr<InspectorArray>* cssProperties);
 
         // Methods called from the InspectorController.
         void setDocument(Document* document);

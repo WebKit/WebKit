@@ -95,6 +95,12 @@ print HEADER "const int firstCSSProperty = $first;\n";
 print HEADER "const int numCSSProperties = $num;\n";
 print HEADER "const size_t maxCSSPropertyNameLength = $maxLen;\n";
 
+print HEADER "const char* const propertyNameStrings[$num] = {\n";
+foreach my $name (@names) {
+  print HEADER "\"$name\",\n";
+}
+print HEADER "};\n";
+
 print HEADER << "EOF";
 
 const char* getPropertyName(CSSPropertyID);
@@ -108,14 +114,8 @@ close HEADER;
 system("gperf --key-positions=\"*\" -D -n -s 2 CSSPropertyNames.gperf > CSSPropertyNames.cpp") == 0 || die "calling gperf failed: $?";
 
 open C, ">>CSSPropertyNames.cpp" || die "Could not open CSSPropertyNames.cpp for writing";
-print C "static const char * const propertyNameStrings[$num] = {\n";
-
-foreach my $name (@names) {
-  print C "\"$name\",\n";
-}
-
 print C << "EOF";
-};
+
 const char* getPropertyName(CSSPropertyID id)
 {
     if (id < firstCSSProperty)

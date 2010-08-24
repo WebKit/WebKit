@@ -1,3 +1,28 @@
+2010-08-20  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Backend Should Provide Full Supported CSS Properties List
+        https://bugs.webkit.org/show_bug.cgi?id=40886
+
+        This allows the backend to send the front-end its complete list of
+        supported CSS Properties. This is used in CSS Autocompletion and
+        CSS Syntax Highlighting to show which styles are supported.
+
+        * css/makeprop.pl: moved CSS properties to the header file.
+        * inspector/Inspector.idl: expose getSupportedCSSProperties.
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::getSupportedCSSProperties):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/front-end/CSSCompletions.js:
+        (WebInspector.CSSCompletions._firstIndexOfPrefix): handle a possible error case before properties have loaded.
+        (WebInspector.CSSCompletions._load): fill up the special array with the received properties.
+        * inspector/front-end/SourceCSSTokenizer.js:
+        (WebInspector.SourceCSSTokenizer): use the list of support properties from the backend.
+        * inspector/front-end/SourceCSSTokenizer.re2js:
+        * inspector/front-end/inspector.js: request the list of supported CSS properties on load.
+        (WebInspector.doLoadedDone):
+
 2010-08-24  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

@@ -580,6 +580,9 @@ WebInspector.doLoadedDone = function()
     this.extensionServer.initExtensions();
 
     InspectorFrontendHost.loaded();
+
+    // As a DOMAgent method, this needs to happen after the frontend has loaded and the agent is available.
+    InspectorBackend.getSupportedCSSProperties(WebInspector.Callback.wrap(WebInspector.CSSCompletions._load));
 }
 
 WebInspector.addPanelToolbarIcon = function(toolbarElement, panel, previousToolbarItem)

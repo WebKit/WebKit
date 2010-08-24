@@ -196,6 +196,7 @@ module core {
         [handler=DOM] void toggleStyleEnabled(in long callId, in long styleId, in String propertyName, in boolean disabled, out Value style);
         [handler=DOM] void setRuleSelector(in long callId, in long ruleId, in String selector, in long selectedNodeId, out Value rule, out boolean selectorAffectsNode);
         [handler=DOM] void addRule(in long callId, in String selector, in long selectedNodeId, out Value rule, out boolean selectorAffectsNode);
+        [handler=DOM] void getSupportedCSSProperties(in long callId, out Array cssProperties);
 
         [handler=Controller] void getCookies(in long callId, out Array cookies, out String cookiesString);
         [handler=Controller] void deleteCookie(in String cookieName, in String domain);
