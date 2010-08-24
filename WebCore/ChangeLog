@@ -1,5 +1,13 @@
 2010-08-24  Nate Chapin  <japhet@chromium.org>
 
+        Unreviewed.
+
+        Chromium build fix (add a #include missing in PingLoader.cpp)
+
+        * loader/PingLoader.cpp:
+
+2010-08-24  Nate Chapin  <japhet@chromium.org>
+
         Reviewed by David Levin.
 
         Allow image loads triggered from unload handlers to run entirely

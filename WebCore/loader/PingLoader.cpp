@@ -36,6 +36,7 @@
 #include "ResourceHandle.h"
 #include "SecurityOrigin.h"
 #include <wtf/OwnPtr.h>
+#include <wtf/UnusedParam.h>
 
 namespace WebCore {
 
