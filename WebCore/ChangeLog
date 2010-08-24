@@ -1,3 +1,17 @@
+2010-08-23  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] The Mozilla theme drawing API should expose extra information about scrollbar geometry
+        https://bugs.webkit.org/show_bug.cgi?id=44385
+
+        Expose the trough_under_steppers property in MozGtkScrollbarMetrics.
+
+        No new tests as this does not change functionality.
+
+        * platform/gtk/gtk2drawing.c: Set the trough_under_steppers member when accessing theme data.
+        * platform/gtk/gtkdrawing.h: Add the trough_under_steppers member.
+
 2010-08-23  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff Garen.

@@ -3044,6 +3044,7 @@ moz_gtk_get_scrollbar_metrics(MozGtkScrollbarMetrics *metrics)
                           "trough_border", &metrics->trough_border,
                           "stepper_size", &metrics->stepper_size,
                           "stepper_spacing", &metrics->stepper_spacing,
+                          "trough_under_steppers", &metrics->trough_under_steppers,
                           NULL);
 
     metrics->min_slider_size = gtk_range_get_min_slider_size(GTK_RANGE(gParts->horizScrollbarWidget));

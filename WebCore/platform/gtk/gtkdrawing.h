@@ -75,6 +75,7 @@ typedef struct {
   gint stepper_size;
   gint stepper_spacing;
   gint min_slider_size;
+  gboolean trough_under_steppers;
 } MozGtkScrollbarMetrics;
 
 typedef struct _GtkThemeParts {
