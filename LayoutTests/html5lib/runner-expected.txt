@@ -15,88 +15,14 @@ resources/tests2.dat: PASS
 
 resources/tests3.dat: PASS
 
-resources/tests4.dat:
-6
-7
+resources/tests4.dat: PASS
 
-Test 6 of 7 in resources/tests4.dat failed. Input:
-setting html's innerHTML
-Got:
-| "setting html's innerHTML"
-Expected:
-| <head>
-| <body>
-|   "setting html's innerHTML"
-
-Test 7 of 7 in resources/tests4.dat failed. Input:
-<title>setting head's innerHTML</title>
-Got:
-| 
-Expected:
-| <title>
-|   "setting head's innerHTML"
 resources/tests5.dat: PASS
 
-resources/tests6.dat:
-27
-30
-37
-44
-45
+resources/tests6.dat: PASS
 
-Test 27 of 51 in resources/tests6.dat failed. Input:
-foo<col>
-Got:
-| 
-Expected:
-| <col>
-
-Test 30 of 51 in resources/tests6.dat failed. Input:
-</frameset><frame>
-Got:
-| 
-Expected:
-| <frame>
-
-Test 37 of 51 in resources/tests6.dat failed. Input:
-<caption><col><colgroup><tbody><tfoot><thead><tr>
-Got:
-| <caption>
-| <colgroup>
-| <tbody>
-| <tfoot>
-| <thead>
-|   <tr>
-Expected:
-| <tr>
-
-Test 44 of 51 in resources/tests6.dat failed. Input:
-</table><tr>
-Got:
-| <tr>
-Expected:
-| <tbody>
-|   <tr>
-
-Test 45 of 51 in resources/tests6.dat failed. Input:
-<body></body></html>
-Got:
-| 
-Expected:
-| <head>
-| <body>
 resources/tests7.dat:
-24
 30
-
-Test 24 of 30 in resources/tests7.dat failed. Input:
-<body>X</body></body>
-Got:
-| "X"
-Expected:
-| <head>
-| <body>
-|   "X"
 
 Test 30 of 30 in resources/tests7.dat failed. Input:
 <select><keygen>

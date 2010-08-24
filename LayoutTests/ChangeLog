@@ -1,3 +1,30 @@
+2010-08-23  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Use new HTML5 TreeBuilder for fragment parsing
+        https://bugs.webkit.org/show_bug.cgi?id=44475
+
+        The HTML5 TreeBuilder is ready to be used for all parsing
+        including fragments!  This is the last change to move trunk
+        off of the LegacyHTMLTreeBuilder.  We'll go through and
+        delete the thousands of lines of code supporting the old
+        parser in a separate patch.
+
+        As far as we can tell, all of these are test progressions, see below.
+
+        * editing/pasteboard/paste-noscript-svg-expected.txt: progression.
+        * fast/forms/state-restore-to-non-edited-controls-expected.txt: matches minefield.
+        * fast/innerHTML/innerHTML-changing-document-properties-expected.txt: new HTML5 exception code, progression.
+        * fast/parser/fragment-parser-expected.txt: matches minefield.
+        * fast/parser/p-in-scope-expected.txt: matches minefield.
+        * fast/parser/p-in-scope-strict-expected.txt: matches minefield.
+        * fast/parser/residual-style-close-across-n-blocks-expected.txt: matches minefield.
+        * fast/table/incomplete-table-in-fragment-2-expected.txt: matches minefield.
+        * fast/table/incomplete-table-in-fragment-hang-expected.txt: matches minefield.
+        * html5lib/runner-expected.txt: progression!
+        * http/tests/security/xssAuditor/dom-write-innerHTML-expected.txt: Adam will fix this separately.
+
 2010-08-23  Hironori Bono  <hbono@chromium.org>
 
         Reviewed by Kent Tamura.

@@ -1,16 +1,16 @@
 Test error handling for incomplete tables inside a document fragment. These should not crash or hang. 
 
-<tbody></tbody><table></table>
-<thead></thead><table></table>
-<tfoot></tfoot><table></table>
-<tr></tr><table></table>
-<td><table></table></td>
-<th><table></table></th>
-<tbody><tr></tr></tbody><table></table>
-<tbody><tr><th><table></table></th></tr></tbody>
-<tbody><tr><td><table></table></td></tr></tbody>
-<tr><td><table></table></td></tr>
-<th><table></table></th>
-<td><table></table></td>
-<tbody><tr><td><table></table></td></tr></tbody>
-<option></option><table><tbody></tbody></table><table></table>
+<table></table>
+<table></table>
+<table></table>
+<table></table>
+<table></table>
+<table></table>
+<table></table>
+<table></table>
+<table></table>
+<table></table>
+<table></table>
+<table></table>
+<option><table></table></option>
+<option></option><table></table><table></table>

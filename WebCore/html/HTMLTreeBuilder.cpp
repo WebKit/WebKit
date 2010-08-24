@@ -98,9 +98,11 @@ inline bool isAllWhitespaceOrReplacementCharacters(const String& string)
     return isAllSpecialCharacters<isTreeBuilderWhitepaceOrReplacementCharacter>(string);
 }
 
-bool shouldUseLegacyTreeBuilder(Document* document)
+bool shouldUseLegacyTreeBuilder(Document*)
 {
-    return !document->settings() || !document->settings()->html5TreeBuilderEnabled();
+    // Never use the LegacyHTMLTreeBuilder.  We'll remove the 10k+ lines of
+    // code supporting this bool in later commits.
+    return false;
 }
 
 bool isNumberedHeaderTag(const AtomicString& tagName)

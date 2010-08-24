@@ -1,3 +1,20 @@
+2010-08-23  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Use new HTML5 TreeBuilder for fragment parsing
+        https://bugs.webkit.org/show_bug.cgi?id=44475
+
+        The HTML5 TreeBuilder is ready to be used for all parsing
+        including fragments!  This is the last change to move trunk
+        off of the LegacyHTMLTreeBuilder.  We'll go through and
+        delete the thousands of lines of code supporting the old
+        parser in a separate patch.
+
+        This is covered by many layout tests.
+
+        * html/HTMLTreeBuilder.cpp:
+
 2010-08-23  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
