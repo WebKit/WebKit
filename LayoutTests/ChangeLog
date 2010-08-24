@@ -1,3 +1,15 @@
+2010-08-24  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Unreviewed, updating Chromium-specific expectations.
+
+        * platform/chromium-linux/svg/W3C-SVG-1.1/text-text-01-b-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/text-text-01-b-expected.png:
+        * platform/chromium-win/svg/css/shadow-changes-expected.checksum: Added.
+        * platform/chromium-win/svg/css/shadow-changes-expected.png: Added.
+        * platform/chromium-win/svg/css/shadow-changes-expected.txt: Added.
+        * platform/chromium-win/svg/custom/non-scaling-stroke-markers-expected.checksum: Added.
+        * platform/chromium-win/svg/custom/non-scaling-stroke-markers-expected.png: Added.
+
 2010-08-24  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Tony Chang.
