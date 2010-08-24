@@ -35,19 +35,30 @@
 namespace WebCore {
 
 struct BitmapInfo : public BITMAPINFO {
+    enum BitCount {
+        BitCount1 = 1,
+        BitCount4 = 4,
+        BitCount8 = 8,
+        BitCount16 = 16,
+        BitCount24 = 24,
+        BitCount32 = 32
+    };
+
     BitmapInfo();
-    static BitmapInfo create(const IntSize&, WORD bitCount = 32);
-    static BitmapInfo createBottomUp(const IntSize&, WORD bitCount = 32);
+    static BitmapInfo create(const IntSize&, BitCount bitCount = BitCount32);
+    static BitmapInfo createBottomUp(const IntSize&, BitCount bitCount = BitCount32);
 
     bool is16bit() const { return bmiHeader.biBitCount == 16; }
     bool is32bit() const { return bmiHeader.biBitCount == 32; }
     unsigned width() const { return abs(bmiHeader.biWidth); }
     unsigned height() const { return abs(bmiHeader.biHeight); }
     IntSize size() const { return IntSize(width(), height()); }
-    unsigned paddedWidth() const { return is16bit() ? (width() + 1) & ~0x1 : width(); }
+    unsigned bytesPerLine() const { return (width() * bmiHeader.biBitCount + 7) / 8; }
+    unsigned paddedBytesPerLine() const { return (bytesPerLine() + 3) & ~0x3; }
+    unsigned paddedWidth() const { return paddedBytesPerLine() * 8 / bmiHeader.biBitCount; }
     unsigned numPixels() const { return paddedWidth() * height(); }
-    unsigned paddedBytesPerLine() const { return is16bit() ? paddedWidth() * 2 : width() * 4; }
-    unsigned bytesPerLine() const { return width() * bmiHeader.biBitCount / 8; }};
+};
+
 } // namespace WebCore
 
 #endif // BitmapInfo_h
