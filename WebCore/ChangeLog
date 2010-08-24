@@ -1,3 +1,16 @@
+2010-08-24  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Remove wrong code from Qt that's dumping extra markup into the clipboard
+        https://bugs.webkit.org/show_bug.cgi?id=44506
+
+        I have no way of testing this patch, but hopefully it should fix a
+        bunch of newly failing tests.  This code seems very confused.
+
+        * platform/qt/PasteboardQt.cpp:
+        (WebCore::Pasteboard::writeSelection):
+
 2010-08-24  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
