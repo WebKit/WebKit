@@ -82,7 +82,7 @@ static void key_event_fixture_teardown(KeyEventFixture* fixture, gconstpointer d
 static gboolean key_press_event_cb(WebKitWebView* webView, GdkEvent* event, gpointer data)
 {
     KeyEventFixture* fixture = (KeyEventFixture*)data;
-    gboolean handled = GTK_WIDGET_GET_CLASS(fixture->webView)->key_press_event(GTK_WIDGET(fixture->webView), event->key);
+    gboolean handled = GTK_WIDGET_GET_CLASS(fixture->webView)->key_press_event(GTK_WIDGET(fixture->webView), &event->key);
     g_assert_cmpint(handled, ==, fixture->info->shouldBeHandled);
 
     return FALSE;
@@ -92,7 +92,7 @@ static gboolean key_release_event_cb(WebKitWebView* webView, GdkEvent* event, gp
 {
     // WebCore never seems to mark keyup events as handled.
     KeyEventFixture* fixture = (KeyEventFixture*)data;
-    gboolean handled = GTK_WIDGET_GET_CLASS(fixture->webView)->key_press_event(GTK_WIDGET(fixture->webView), event->key);
+    gboolean handled = GTK_WIDGET_GET_CLASS(fixture->webView)->key_press_event(GTK_WIDGET(fixture->webView), &event->key);
     g_assert(!handled);
 
     g_main_loop_quit(fixture->loop);

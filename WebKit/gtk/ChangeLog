@@ -1,5 +1,13 @@
 2010-08-24  Martin Robinson  <mrobinson@igalia.com>
 
+        Build fix for GTK+.
+
+        * tests/testkeyevents.c:
+        (key_press_event_cb):
+        (key_release_event_cb):
+
+2010-08-24  Martin Robinson  <mrobinson@igalia.com>
+
         Reviewed by Xan Lopez.
 
         [GTK] GTK3: EventSender and API tests should use gdk_event_new when synthesizing events
