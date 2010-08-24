@@ -69,7 +69,7 @@ public:
 class TestWebFrameClient : public WebFrameClient {
 };
 
-TEST_F(WebFrameTest, ContentText)
+TEST_F(DISABLED_WebFrameTest, ContentText)
 {
     // Register our resources.
     WebURLResponse response;

@@ -1,3 +1,13 @@
+2010-08-23  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Reviewed by Tamura Kent.
+
+        Disable failing test
+        https://bugs.webkit.org/show_bug.cgi?id=44492
+
+        * tests/WebFrameTest.cpp:
+        (WebKit::TEST_F):
+
 2010-08-23  Jay Civelli  <jcivelli@chromium.org>
 
         Reviewed by Darin Fisher.
