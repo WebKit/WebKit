@@ -123,8 +123,13 @@ private:
     bool shouldAddNamespaceElement(const Element*);
     bool shouldAddNamespaceAttribute(const Attribute*, Namespaces&);
     void appendNamespace(Vector<UChar>& result, const AtomicString& prefix, const AtomicString& namespaceURI, Namespaces&);
+    void appendText(Vector<UChar>& out, Text*);
+    void appendComment(Vector<UChar>& out, const String& comment);
     void appendDocumentType(Vector<UChar>& result, const DocumentType*);
+    void appendProcessingInstruction(Vector<UChar>& out, const String& target, const String& data);
     void removeExteriorStyles(CSSMutableStyleDeclaration*);
+    void appendElement(Vector<UChar>& out, Element* element, bool addDisplayInline, Namespaces*, RangeFullySelectsNode);
+    void appendCDATASection(Vector<UChar>& out, const String& section);
     void appendStartMarkup(Vector<UChar>& result, const Node*, bool convertBlocksToInlines, Namespaces*, RangeFullySelectsNode);
     bool shouldSelfClose(const Node*);
     void appendEndMarkup(Vector<UChar>& result, const Node*);
@@ -480,6 +485,36 @@ void MarkupAccumulator::appendNamespace(Vector<UChar>& result, const AtomicStrin
     }
 }
 
+void MarkupAccumulator::appendText(Vector<UChar>& out, Text* text)
+{
+    const QualifiedName* parentName = 0;
+    if (text->parentElement())
+        parentName = &static_cast<Element*>(text->parentElement())->tagQName();
+
+    if (parentName && (*parentName == scriptTag || *parentName == styleTag || *parentName == xmpTag)) {
+        appendUCharRange(out, ucharRange(text, m_range));
+        return;
+    }
+
+    if (!shouldAnnotate() || (parentName && *parentName == textareaTag)) {
+        appendEscapedContent(out, ucharRange(text, m_range), text->document()->isHTMLDocument());
+        return;
+    }
+
+    bool useRenderedText = !enclosingNodeWithTag(Position(text, 0), selectTag);
+    String markup = escapeContentText(useRenderedText ? renderedText(text, m_range) : stringValueForRange(text, m_range), false);
+    markup = convertHTMLTextToInterchangeFormat(markup, text);
+    append(out, markup);
+}
+
+void MarkupAccumulator::appendComment(Vector<UChar>& out, const String& comment)
+{
+    // FIXME: Comment content is not escaped, but XMLSerializer (and possibly other callers) should raise an exception if it includes "-->".
+    append(out, "<!--");
+    append(out, comment);
+    append(out, "-->");
+}
+
 void MarkupAccumulator::appendDocumentType(Vector<UChar>& result, const DocumentType* n)
 {
     if (n->name().isEmpty())
@@ -509,9 +544,118 @@ void MarkupAccumulator::appendDocumentType(Vector<UChar>& result, const Document
     append(result, ">");
 }
 
+void MarkupAccumulator::appendProcessingInstruction(Vector<UChar>& out, const String& target, const String& data)
+{
+    // FIXME: PI data is not escaped, but XMLSerializer (and possibly other callers) this should raise an exception if it includes "?>".
+    append(out, "<?");
+    append(out, target);
+    append(out, " ");
+    append(out, data);
+    append(out, "?>");
+}
+
 void MarkupAccumulator::removeExteriorStyles(CSSMutableStyleDeclaration* style)
 {
     style->removeProperty(CSSPropertyFloat);
+}
+
+void MarkupAccumulator::appendElement(Vector<UChar>& out, Element* element, bool addDisplayInline, Namespaces* namespaces, RangeFullySelectsNode rangeFullySelectsNode)
+{
+    bool documentIsHTML = element->document()->isHTMLDocument();
+    out.append('<');
+    append(out, element->nodeNamePreservingCase());
+    if (!documentIsHTML && namespaces && shouldAddNamespaceElement(element))
+        appendNamespace(out, element->prefix(), element->namespaceURI(), *namespaces);
+
+    NamedNodeMap* attributes = element->attributes();
+    unsigned length = attributes->length();
+    for (unsigned int i = 0; i < length; i++) {
+        Attribute* attribute = attributes->attributeItem(i);
+        // We'll handle the style attribute separately, below.
+        if (attribute->name() == styleAttr && element->isHTMLElement() && (shouldAnnotate() || addDisplayInline))
+            continue;
+        out.append(' ');
+        
+        if (documentIsHTML)
+            append(out, attribute->name().localName());
+        else
+            append(out, attribute->name().toString());
+
+        out.append('=');
+
+        if (element->isURLAttribute(attribute)) {
+            // We don't want to complete file:/// URLs because it may contain sensitive information
+            // about the user's system.
+            if (shouldResolveURLs() && !element->document()->url().isLocalFile())
+                appendQuotedURLAttributeValue(out, element->document()->completeURL(attribute->value()).string());
+            else
+                appendQuotedURLAttributeValue(out, attribute->value().string());
+        } else {
+            out.append('\"');
+            appendAttributeValue(out, attribute->value(), documentIsHTML);
+            out.append('\"');
+        }
+
+        if (!documentIsHTML && namespaces && shouldAddNamespaceAttribute(attribute, *namespaces))
+            appendNamespace(out, attribute->prefix(), attribute->namespaceURI(), *namespaces);
+    }
+
+    if (element->isHTMLElement() && (shouldAnnotate() || addDisplayInline)) {
+        RefPtr<CSSMutableStyleDeclaration> style = static_cast<HTMLElement*>(element)->getInlineStyleDecl()->copy();
+        if (shouldAnnotate()) {
+            RefPtr<CSSMutableStyleDeclaration> styleFromMatchedRules = styleFromMatchedRulesForElement(const_cast<Element*>(element));
+            // Styles from the inline style declaration, held in the variable "style", take precedence 
+            // over those from matched rules.
+            styleFromMatchedRules->merge(style.get());
+            style = styleFromMatchedRules;
+
+            RefPtr<CSSComputedStyleDeclaration> computedStyleForElement = computedStyle(element);
+            RefPtr<CSSMutableStyleDeclaration> fromComputedStyle = CSSMutableStyleDeclaration::create();
+
+            {
+                CSSMutableStyleDeclaration::const_iterator end = style->end();
+                for (CSSMutableStyleDeclaration::const_iterator it = style->begin(); it != end; ++it) {
+                    const CSSProperty& property = *it;
+                    CSSValue* value = property.value();
+                    // The property value, if it's a percentage, may not reflect the actual computed value.  
+                    // For example: style="height: 1%; overflow: visible;" in quirksmode
+                    // FIXME: There are others like this, see <rdar://problem/5195123> Slashdot copy/paste fidelity problem
+                    if (value->cssValueType() == CSSValue::CSS_PRIMITIVE_VALUE)
+                        if (static_cast<CSSPrimitiveValue*>(value)->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
+                            if (RefPtr<CSSValue> computedPropertyValue = computedStyleForElement->getPropertyCSSValue(property.id()))
+                                fromComputedStyle->addParsedProperty(CSSProperty(property.id(), computedPropertyValue));
+                }
+            }
+            style->merge(fromComputedStyle.get());
+        }
+        if (addDisplayInline)
+            style->setProperty(CSSPropertyDisplay, CSSValueInline, true);
+        // If the node is not fully selected by the range, then we don't want to keep styles that affect its relationship to the nodes around it
+        // only the ones that affect it and the nodes within it.
+        if (rangeFullySelectsNode == DoesNotFullySelectNode)
+            removeExteriorStyles(style.get());
+        if (style->length() > 0) {
+            DEFINE_STATIC_LOCAL(const String, stylePrefix, (" style=\""));
+            append(out, stylePrefix);
+            appendAttributeValue(out, style->cssText(), documentIsHTML);
+            out.append('\"');
+        }
+    }
+
+    if (shouldSelfClose(element)) {
+        if (element->isHTMLElement())
+            out.append(' '); // XHTML 1.0 <-> HTML compatibility.
+        out.append('/');
+    }
+    out.append('>');
+}
+
+void MarkupAccumulator::appendCDATASection(Vector<UChar>& out, const String& section)
+{
+    // FIXME: CDATA content is not escaped, but XMLSerializer (and possibly other callers) should raise an exception if it includes "]]>".
+    append(out, "<![CDATA[");
+    append(out, section);
+    append(out, "]]>");
 }
 
 void MarkupAccumulator::appendStartMarkup(Vector<UChar>& result, const Node* node, bool convertBlocksToInlines, Namespaces* namespaces, RangeFullySelectsNode rangeFullySelectsNode)
@@ -519,36 +663,12 @@ void MarkupAccumulator::appendStartMarkup(Vector<UChar>& result, const Node* nod
     if (namespaces)
         namespaces->checkConsistency();
 
-    bool documentIsHTML = node->document()->isHTMLDocument();
     switch (node->nodeType()) {
-    case Node::TEXT_NODE: {
-        if (Node* parent = node->parentNode()) {
-            if (parent->hasTagName(scriptTag)
-                || parent->hasTagName(styleTag)
-                || parent->hasTagName(xmpTag)) {
-                appendUCharRange(result, ucharRange(node, m_range));
-                break;
-            }
-            if (parent->hasTagName(textareaTag)) {
-                appendEscapedContent(result, ucharRange(node, m_range), documentIsHTML);
-                break;
-            }
-        }
-        if (shouldAnnotate()) {
-            bool useRenderedText = !enclosingNodeWithTag(Position(const_cast<Node*>(node), 0), selectTag);
-            String markup = escapeContentText(useRenderedText ? renderedText(node, m_range) : stringValueForRange(node, m_range), false);
-            markup = convertHTMLTextToInterchangeFormat(markup, static_cast<const Text*>(node));
-            append(result, markup);
-            break;
-        }
-        appendEscapedContent(result, ucharRange(node, m_range), documentIsHTML);
+    case Node::TEXT_NODE:
+        appendText(result, static_cast<Text*>(const_cast<Node*>(node)));
         break;
-    }
     case Node::COMMENT_NODE:
-        // FIXME: Comment content is not escaped, but XMLSerializer (and possibly other callers) should raise an exception if it includes "-->".
-        append(result, "<!--");
-        append(result, static_cast<const Comment*>(node)->data());
-        append(result, "-->");
+        appendComment(result, static_cast<const Comment*>(node)->data());
         break;
     case Node::DOCUMENT_NODE:
     case Node::DOCUMENT_FRAGMENT_NODE:
@@ -556,115 +676,15 @@ void MarkupAccumulator::appendStartMarkup(Vector<UChar>& result, const Node* nod
     case Node::DOCUMENT_TYPE_NODE:
         appendDocumentType(result, static_cast<const DocumentType*>(node));
         break;
-    case Node::PROCESSING_INSTRUCTION_NODE: {
-        // FIXME: PI data is not escaped, but XMLSerializer (and possibly other callers) this should raise an exception if it includes "?>".
-        const ProcessingInstruction* n = static_cast<const ProcessingInstruction*>(node);
-        append(result, "<?");
-        append(result, n->target());
-        append(result, " ");
-        append(result, n->data());
-        append(result, "?>");
+    case Node::PROCESSING_INSTRUCTION_NODE:
+        appendProcessingInstruction(result, static_cast<const ProcessingInstruction*>(node)->target(), static_cast<const ProcessingInstruction*>(node)->data());
         break;
-    }
-    case Node::ELEMENT_NODE: {
-        result.append('<');
-        Element* element = const_cast<Element*>(static_cast<const Element*>(node));
-        bool convert = convertBlocksToInlines && isBlock(const_cast<Node*>(node));
-        append(result, element->nodeNamePreservingCase());
-        if (!documentIsHTML && namespaces && shouldAddNamespaceElement(element))
-            appendNamespace(result, element->prefix(), element->namespaceURI(), *namespaces);
-
-        NamedNodeMap* attributes = element->attributes();
-        unsigned length = attributes->length();
-        for (unsigned int i = 0; i < length; i++) {
-            Attribute* attribute = attributes->attributeItem(i);
-            // We'll handle the style attribute separately, below.
-            if (attribute->name() == styleAttr && element->isHTMLElement() && (shouldAnnotate() || convert))
-                continue;
-            result.append(' ');
-
-            if (documentIsHTML)
-                append(result, attribute->name().localName());
-            else
-                append(result, attribute->name().toString());
-
-            result.append('=');
-
-            if (element->isURLAttribute(attribute)) {
-                // We don't want to complete file:/// URLs because it may contain sensitive information
-                // about the user's system.
-                if (shouldResolveURLs() && !node->document()->url().isLocalFile())
-                    appendQuotedURLAttributeValue(result, node->document()->completeURL(attribute->value()).string());
-                else
-                    appendQuotedURLAttributeValue(result, attribute->value().string());
-            } else {
-                result.append('\"');
-                appendAttributeValue(result, attribute->value(), documentIsHTML);
-                result.append('\"');
-            }
-
-            if (!documentIsHTML && namespaces && shouldAddNamespaceAttribute(attribute, *namespaces))
-                appendNamespace(result, attribute->prefix(), attribute->namespaceURI(), *namespaces);
-        }
-
-        if (element->isHTMLElement() && (shouldAnnotate() || convert)) {
-            RefPtr<CSSMutableStyleDeclaration> style = static_cast<HTMLElement*>(element)->getInlineStyleDecl()->copy();
-            if (shouldAnnotate()) {
-                RefPtr<CSSMutableStyleDeclaration> styleFromMatchedRules = styleFromMatchedRulesForElement(const_cast<Element*>(element));
-                // Styles from the inline style declaration, held in the variable "style", take precedence 
-                // over those from matched rules.
-                styleFromMatchedRules->merge(style.get());
-                style = styleFromMatchedRules;
-
-                RefPtr<CSSComputedStyleDeclaration> computedStyleForElement = computedStyle(element);
-                RefPtr<CSSMutableStyleDeclaration> fromComputedStyle = CSSMutableStyleDeclaration::create();
-
-                {
-                    CSSMutableStyleDeclaration::const_iterator end = style->end();
-                    for (CSSMutableStyleDeclaration::const_iterator it = style->begin(); it != end; ++it) {
-                        const CSSProperty& property = *it;
-                        CSSValue* value = property.value();
-                        // The property value, if it's a percentage, may not reflect the actual computed value.  
-                        // For example: style="height: 1%; overflow: visible;" in quirksmode
-                        // FIXME: There are others like this, see <rdar://problem/5195123> Slashdot copy/paste fidelity problem
-                        if (value->cssValueType() == CSSValue::CSS_PRIMITIVE_VALUE)
-                            if (static_cast<CSSPrimitiveValue*>(value)->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
-                                if (RefPtr<CSSValue> computedPropertyValue = computedStyleForElement->getPropertyCSSValue(property.id()))
-                                    fromComputedStyle->addParsedProperty(CSSProperty(property.id(), computedPropertyValue));
-                    }
-                }
-                style->merge(fromComputedStyle.get());
-            }
-            if (convert)
-                style->setProperty(CSSPropertyDisplay, CSSValueInline, true);
-            // If the node is not fully selected by the range, then we don't want to keep styles that affect its relationship to the nodes around it
-            // only the ones that affect it and the nodes within it.
-            if (rangeFullySelectsNode == DoesNotFullySelectNode)
-                removeExteriorStyles(style.get());
-            if (style->length() > 0) {
-                DEFINE_STATIC_LOCAL(const String, stylePrefix, (" style=\""));
-                append(result, stylePrefix);
-                appendAttributeValue(result, style->cssText(), documentIsHTML);
-                result.append('\"');
-            }
-        }
-
-        if (shouldSelfClose(element)) {
-            if (element->isHTMLElement())
-                result.append(' '); // XHTML 1.0 <-> HTML compatibility.
-            result.append('/');
-        }
-        result.append('>');
+    case Node::ELEMENT_NODE:
+        appendElement(result, static_cast<Element*>(const_cast<Node*>(node)), convertBlocksToInlines && isBlock(const_cast<Node*>(node)), namespaces, rangeFullySelectsNode);
         break;
-    }
-    case Node::CDATA_SECTION_NODE: {
-        // FIXME: CDATA content is not escaped, but XMLSerializer (and possibly other callers) should raise an exception if it includes "]]>".
-        const CDATASection* n = static_cast<const CDATASection*>(node);
-        append(result, "<![CDATA[");
-        append(result, n->data());
-        append(result, "]]>");
+    case Node::CDATA_SECTION_NODE:
+        appendCDATASection(result, static_cast<const CDATASection*>(node)->data());
         break;
-    }
     case Node::ATTRIBUTE_NODE:
     case Node::ENTITY_NODE:
     case Node::ENTITY_REFERENCE_NODE:

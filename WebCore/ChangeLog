@@ -1,3 +1,23 @@
+2010-08-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        MarkupAccumulator::appendStartMarkup should be broken down into pieces
+        https://bugs.webkit.org/show_bug.cgi?id=44288
+
+        Extracted appendText, appendComment, appendProcessingInstruction, appendElement and appendCDATASection.
+        Also simplified the conditionals in appendText.
+
+        No new tests are added since this is a cleanup.
+
+        * editing/markup.cpp:
+        (WebCore::MarkupAccumulator::appendText):
+        (WebCore::MarkupAccumulator::appendComment):
+        (WebCore::MarkupAccumulator::appendProcessingInstruction):
+        (WebCore::MarkupAccumulator::appendElement):
+        (WebCore::MarkupAccumulator::appendCDATASection):
+        (WebCore::MarkupAccumulator::appendStartMarkup):
+
 2010-08-23  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Alexey Proskuryakov.
