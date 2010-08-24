@@ -1,3 +1,10 @@
+2010-08-24  Andras Becsi  <abecsi@webkit.org>
+
+        [Qt] WebKit2 build fix.
+
+        * Scripts/enumerate-included-framework-headers:
+        Remove stray global option form sed.
+
 2010-08-24  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Jeremy Orlow.

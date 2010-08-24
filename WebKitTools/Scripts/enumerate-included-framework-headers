@@ -36,7 +36,7 @@ for framework in $*; do
 
     for header in $headers
     do
-        header_paths=`find ../$framework -name $header | sed "s/..\/$framework\///g"`
+        header_paths=`find ../$framework -name $header | sed "s/..\/$framework\///"`
 
         if test `echo $header_paths | wc -w` -eq 1
         then
