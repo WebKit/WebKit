@@ -5,6 +5,19 @@
         [GTK] GTK3: EventSender and API tests should use gdk_event_new when synthesizing events
         https://bugs.webkit.org/show_bug.cgi?id=44534
 
+        Fix two double-frees introduced in my previous commit.
+
+        * DumpRenderTree/gtk/EventSender.cpp:
+        (contextClickCallback): Copy the event before using it again.
+        (keyDownCallback): Ditto.
+
+2010-08-24  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] GTK3: EventSender and API tests should use gdk_event_new when synthesizing events
+        https://bugs.webkit.org/show_bug.cgi?id=44534
+
         * DumpRenderTree/gtk/EventSender.cpp:
         (prepareMouseButtonEvent): Use gdk_event_new and reference the reference the GdkWindow
         when setting it on the event. It is dereferenced by gdk_event_free(...).

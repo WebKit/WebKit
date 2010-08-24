@@ -5,6 +5,19 @@
         [GTK] GTK3: EventSender and API tests should use gdk_event_new when synthesizing events
         https://bugs.webkit.org/show_bug.cgi?id=44534
 
+        Fix an issue where a GdkEvent* is treated like a GdkEvent.
+
+        * tests/testkeyevents.c:
+        (key_press_event_cb):
+        (key_release_event_cb):
+
+2010-08-24  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] GTK3: EventSender and API tests should use gdk_event_new when synthesizing events
+        https://bugs.webkit.org/show_bug.cgi?id=44534
+
         * tests/testcopyandpaste.c:
         (runPasteTestCallback): Switch to using gdk_event_new and also reference the GdkWindow.
         when setting it on the event. It is dereferenced by gdk_event_free(...).
