@@ -1,5 +1,13 @@
 2010-08-24  Xan Lopez  <xlopez@igalia.com>
 
+        Build fix, strike 2.
+
+        The unit tests are C files, so put the flag in global_cflags.
+
+        * GNUmakefile.am:
+
+2010-08-24  Xan Lopez  <xlopez@igalia.com>
+
         Try to fix GTK+ build.
 
         Move GTK_API_VERSION_2 define to here, since we want to use it
