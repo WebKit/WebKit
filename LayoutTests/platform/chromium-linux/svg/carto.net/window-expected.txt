@@ -1,0 +1,278 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderPath {rect} at (0,0) size 800x600 [fill={[type=SOLID] [color=#D3D3D3]}] [data="M-5000.00,-5000.00 L10000.00,-5000.00 L10000.00,10000.00 L-5000.00,10000.00 Z"]
+    RenderPath {rect} at (0,26) size 800x64 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M-5000.00,0.00 L10000.00,0.00 L10000.00,80.00 L-5000.00,80.00 Z"]
+    RenderPath {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M-5000.00,-5000.00 L0.00,-5000.00 L0.00,10000.00 L-5000.00,10000.00 Z"]
+    RenderPath {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M1024.00,-5000.00 L6024.00,-5000.00 L6024.00,10000.00 L1024.00,10000.00 Z"]
+    RenderPath {rect} at (0,573) size 800x27 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M-5000.00,700.00 L10000.00,700.00 L10000.00,5700.00 L-5000.00,5700.00 Z"]
+    RenderSVGText {text} at (10,11) size 318x23 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 318x23
+        chunk 1 text run 1 at (10.00,30.00) startOffset 0 endOffset 34 width 318.00: "Demonstration of the Window object"
+    RenderSVGText {text} at (10,37) size 62x16 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 62x16
+        chunk 1 text run 1 at (10.00,50.00) startOffset 0 endOffset 10 width 62.00: "Statustext"
+    RenderSVGContainer {use} at (319,33) size 112x18
+      RenderSVGContainer {g} at (319,33) size 112x18 [transform={m=((1.00,0.00)(0.00,1.00)) t=(480.00,20.00)}]
+        RenderSVGViewportContainer {svg} at (319,33) size 112x18
+          RenderPath {rect} at (319,33) size 112x18 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#DCDCDC]}] [data="M-70.00,-10.00 L70.00,-10.00 L70.00,10.00 L-70.00,10.00 Z"]
+    RenderSVGText {text} at (418,14) size 124x14 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 124x14
+        chunk 1 (middle anchor) text run 1 at (418.50,25.00) startOffset 0 endOffset 23 width 123.00: "Close Navigation Window"
+    RenderSVGContainer {use} at (436,33) size 112x18
+      RenderSVGContainer {g} at (436,33) size 112x18 [transform={m=((1.00,0.00)(0.00,1.00)) t=(630.00,20.00)}]
+        RenderSVGViewportContainer {svg} at (436,33) size 112x18
+          RenderPath {rect} at (436,33) size 112x18 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#DCDCDC]}] [data="M-70.00,-10.00 L70.00,-10.00 L70.00,10.00 L-70.00,10.00 Z"]
+    RenderSVGText {text} at (586,14) size 88x14 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 88x14
+        chunk 1 (middle anchor) text run 1 at (586.00,25.00) startOffset 0 endOffset 16 width 88.00: "Close Big Window"
+    RenderSVGContainer {use} at (553,33) size 112x18
+      RenderSVGContainer {g} at (553,33) size 112x18 [transform={m=((1.00,0.00)(0.00,1.00)) t=(780.00,20.00)}]
+        RenderSVGViewportContainer {svg} at (553,33) size 112x18
+          RenderPath {rect} at (553,33) size 112x18 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#DCDCDC]}] [data="M-70.00,-10.00 L70.00,-10.00 L70.00,10.00 L-70.00,10.00 Z"]
+    RenderSVGText {text} at (718,14) size 124x14 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 124x14
+        chunk 1 (middle anchor) text run 1 at (718.50,25.00) startOffset 0 endOffset 23 width 123.00: "Close Middlesize Window"
+    RenderSVGContainer {use} at (671,33) size 112x18
+      RenderSVGContainer {g} at (671,33) size 112x18 [transform={m=((1.00,0.00)(0.00,1.00)) t=(930.00,20.00)}]
+        RenderSVGViewportContainer {svg} at (671,33) size 112x18
+          RenderPath {rect} at (671,33) size 112x18 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#DCDCDC]}] [data="M-70.00,-10.00 L70.00,-10.00 L70.00,10.00 L-70.00,10.00 Z"]
+    RenderSVGText {text} at (883,14) size 94x14 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 94x14
+        chunk 1 (middle anchor) text run 1 at (883.50,25.00) startOffset 0 endOffset 19 width 93.00: "Close Colour Picker"
+    RenderSVGContainer {use} at (671,57) size 112x18
+      RenderSVGContainer {g} at (671,57) size 112x18 [transform={m=((1.00,0.00)(0.00,1.00)) t=(930.00,50.00)}]
+        RenderSVGViewportContainer {svg} at (671,57) size 112x18
+          RenderPath {rect} at (671,57) size 112x18 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#DCDCDC]}] [data="M-70.00,-10.00 L70.00,-10.00 L70.00,10.00 L-70.00,10.00 Z"]
+    RenderSVGText {text} at (881,44) size 98x14 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 98x14
+        chunk 1 (middle anchor) text run 1 at (881.00,55.00) startOffset 0 endOffset 18 width 98.00: "Close Small Window"
+    RenderSVGContainer {use} at (319,57) size 112x18
+      RenderSVGContainer {g} at (319,57) size 112x18 [transform={m=((1.00,0.00)(0.00,1.00)) t=(480.00,50.00)}]
+        RenderSVGViewportContainer {svg} at (319,57) size 112x18
+          RenderPath {rect} at (319,57) size 112x18 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#DCDCDC]}] [data="M-70.00,-10.00 L70.00,-10.00 L70.00,10.00 L-70.00,10.00 Z"]
+    RenderSVGText {text} at (415,44) size 130x14 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 130x14
+        chunk 1 (middle anchor) text run 1 at (415.50,55.00) startOffset 0 endOffset 24 width 129.00: "Resize Navigation Window"
+    RenderSVGContainer {g} at (38,81) size 760x455
+      RenderSVGContainer {g} at (613,81) size 185x169 [transform={m=((1.00,0.00)(0.00,1.00)) t=(800.00,85.00)}]
+        RenderSVGContainer {g} at (624,92) size 174x158
+          RenderPath {rect} at (624,92) size 174x158 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F0F8FF]}] [data="M0.00,0.00 L220.00,0.00 L220.00,200.00 L0.00,200.00 Z"]
+          RenderSVGContainer {g} at (632,102) size 161x98
+            RenderSVGText {text} at (10,12) size 204x124 contains 7 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 122x16
+                chunk 1 text run 1 at (10.00,25.00) startOffset 0 endOffset 18 width 122.00: "This window should"
+              RenderSVGTSpan {tspan} at (0,0) size 149x16
+                RenderSVGInlineText {#text} at (0,16) size 149x16
+                  chunk 2 text run 1 at (10.00,41.00) startOffset 0 endOffset 24 width 149.00: "contain navigation tools"
+              RenderSVGTSpan {tspan} at (0,0) size 94x16
+                RenderSVGInlineText {#text} at (0,38) size 94x16
+                  chunk 3 text run 1 at (10.00,63.00) startOffset 0 endOffset 15 width 94.00: "Click on button"
+              RenderSVGTSpan {tspan} at (0,0) size 204x16
+                RenderSVGInlineText {#text} at (0,54) size 204x16
+                  chunk 4 text run 1 at (10.00,79.00) startOffset 0 endOffset 32 width 204.00: "'Resize Navigation Window' for a"
+              RenderSVGTSpan {tspan} at (0,0) size 184x16
+                RenderSVGInlineText {#text} at (0,70) size 184x16
+                  chunk 5 text run 1 at (10.00,95.00) startOffset 0 endOffset 28 width 184.00: "random resize of this Window"
+              RenderSVGTSpan {tspan} at (0,0) size 162x16
+                RenderSVGInlineText {#text} at (0,92) size 162x16
+                  chunk 6 text run 1 at (10.00,117.00) startOffset 0 endOffset 26 width 162.00: "Note that this window also"
+              RenderSVGTSpan {tspan} at (0,0) size 184x16
+                RenderSVGInlineText {#text} at (0,108) size 184x16
+                  chunk 7 text run 1 at (10.00,133.00) startOffset 0 endOffset 28 width 184.00: "features a window decoration"
+          RenderPath {rect} at (624,238) size 174x12 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F0F8FF]}] [data="M0.00,187.00 L220.00,187.00 L220.00,200.00 L0.00,200.00 Z"]
+          RenderSVGText {text} at (3,187) size 44x13 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 44x13
+              chunk 1 text run 1 at (3.00,197.00) startOffset 0 endOffset 9 width 44.00: "Statusbar"
+        RenderSVGContainer {g} at (613,81) size 185x159
+          RenderSVGContainer {g} at (613,81) size 185x159
+            RenderPath {rect} at (613,81) size 16x159 [fill={[type=SOLID] [color=#B0C4DE]}] [data="M-15.00,-15.00 L5.00,-15.00 L5.00,187.00 L-15.00,187.00 Z"]
+            RenderPath {rect} at (613,81) size 185x16 [fill={[type=SOLID] [color=#B0C4DE]}] [data="M-15.00,-15.00 L221.00,-15.00 L221.00,5.00 L-15.00,5.00 Z"]
+            RenderSVGText {text} at (0,168) size 105x15 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 105x15
+                chunk 1 text run 1 at (0.00,180.00) startOffset 0 endOffset 17 width 105.00: "Navigation Window"
+          RenderSVGContainer {use} at (616,84) size 10x10
+            RenderSVGContainer {g} at (616,84) size 10x10 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-5.00,-5.00)}]
+              RenderSVGViewportContainer {svg} at (616,84) size 10x10
+                RenderPath {rect} at (616,84) size 10x10 [data="M-5.50,-5.50 L5.50,-5.50 L5.50,5.50 L-5.50,5.50 Z"]
+                RenderPath {line} at (616,84) size 10x10 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#000000]}] [data="M-5.50,-5.50 L5.50,5.50"]
+                RenderPath {line} at (616,84) size 10x10 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#000000]}] [data="M5.50,-5.50 L-5.50,5.50"]
+          RenderSVGContainer {use} at (616,100) size 10x10
+            RenderSVGContainer {g} at (616,100) size 10x10 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-5.00,15.00)}]
+              RenderSVGViewportContainer {svg} at (616,100) size 10x10
+                RenderPath {rect} at (616,100) size 10x10 [stroke={[type=SOLID] [color=#696969]}] [data="M-5.50,-5.50 L5.50,-5.50 L5.50,5.50 L-5.50,5.50 Z"]
+          RenderSVGContainer {use} at (616,115) size 10x10
+            RenderSVGContainer {g} at (616,115) size 10x10 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-5.00,35.00)}]
+              RenderSVGViewportContainer {svg} at (616,115) size 10x10
+                RenderPath {rect} at (616,115) size 10x10 [data="M-5.50,-5.50 L5.50,-5.50 L5.50,5.50 L-5.50,5.50 Z"]
+                RenderPath {line} at (616,124) size 10x1 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#000000]}] [data="M5.50,5.50 L-5.50,5.50"]
+      RenderSVGContainer {g} at (38,142) size 549x394 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,150.00)}]
+        RenderSVGContainer {g} at (38,142) size 549x394
+          RenderPath {rect} at (38,142) size 549x394 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F0F8FF]}] [data="M0.00,0.00 L700.00,0.00 L700.00,500.00 L0.00,500.00 Z"]
+          RenderSVGContainer {g} at (39,143) size 1x1
+          RenderPath {rect} at (38,523) size 549x13 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F0F8FF]}] [data="M0.00,487.00 L700.00,487.00 L700.00,500.00 L0.00,500.00 Z"]
+          RenderSVGText {text} at (3,487) size 139x13 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 139x13
+              chunk 1 text run 1 at (3.00,497.00) startOffset 0 endOffset 28 width 139.00: "This is a big movable window"
+          RenderSVGContainer {g} at (77,182) size 315x236 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,50.00)}]
+            RenderSVGContainer {g} at (77,182) size 315x236
+              RenderPath {rect} at (77,182) size 315x236 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F0F8FF]}] [data="M0.00,0.00 L400.00,0.00 L400.00,300.00 L0.00,300.00 Z"]
+              RenderSVGContainer {g} at (78,182) size 1x1
+              RenderPath {rect} at (77,406) size 315x12 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F0F8FF]}] [data="M0.00,287.00 L400.00,287.00 L400.00,300.00 L0.00,300.00 Z"]
+              RenderSVGText {text} at (3,287) size 170x13 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 170x13
+                  chunk 1 text run 1 at (3.00,297.00) startOffset 0 endOffset 34 width 170.00: "This window contains other windows"
+              RenderSVGContainer {g} at (77,195) size 174x143 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,17.00)}]
+                RenderSVGContainer {g} at (77,195) size 174x143
+                  RenderPath {rect} at (77,195) size 174x143 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F0F8FF]}] [data="M0.00,0.00 L220.00,0.00 L220.00,180.00 L0.00,180.00 Z"]
+                  RenderSVGContainer {g} at (78,196) size 1x1
+                  RenderPath {rect} at (77,325) size 174x13 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F0F8FF]}] [data="M0.00,167.00 L220.00,167.00 L220.00,180.00 L0.00,180.00 Z"]
+                  RenderSVGText {text} at (3,167) size 189x13 contains 1 chunk(s)
+                    RenderSVGInlineText {#text} at (0,0) size 189x13
+                      chunk 1 text run 1 at (3.00,177.00) startOffset 0 endOffset 36 width 189.00: "Changing a colour changes background"
+                RenderSVGContainer {g} at (77,195) size 174x16
+                  RenderPath {rect} at (77,195) size 174x16 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#DCDCDC]}] [data="M0.00,0.00 L220.00,0.00 L220.00,17.00 L0.00,17.00 Z"]
+                  RenderSVGText {text} at (3,1) size 85x16 contains 1 chunk(s)
+                    RenderSVGInlineText {#text} at (0,0) size 85x16
+                      chunk 1 text run 1 at (3.00,14.00) startOffset 0 endOffset 13 width 85.00: "Colour Picker"
+                  RenderSVGContainer {use} at (235,197) size 12x11
+                    RenderSVGContainer {g} at (235,197) size 12x11 [transform={m=((1.00,0.00)(0.00,1.00)) t=(208.50,8.50)}]
+                      RenderSVGViewportContainer {svg} at (235,197) size 12x11
+                        RenderPath {rect} at (235,197) size 12x11 [data="M-5.50,-5.50 L5.50,-5.50 L5.50,5.50 L-5.50,5.50 Z"]
+                        RenderPath {line} at (235,197) size 12x11 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#000000]}] [data="M-5.50,-5.50 L5.50,5.50"]
+                        RenderPath {line} at (235,197) size 12x11 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#000000]}] [data="M5.50,-5.50 L-5.50,5.50"]
+                  RenderSVGContainer {use} at (222,197) size 11x11
+                    RenderSVGContainer {g} at (222,197) size 11x11 [transform={m=((1.00,0.00)(0.00,1.00)) t=(191.50,8.50)}]
+                      RenderSVGViewportContainer {svg} at (222,197) size 11x11
+                        RenderPath {rect} at (222,197) size 11x11 [stroke={[type=SOLID] [color=#696969]}] [data="M-5.50,-5.50 L5.50,-5.50 L5.50,5.50 L-5.50,5.50 Z"]
+                  RenderSVGContainer {use} at (210,198) size 9x10
+                    RenderSVGContainer {g} at (209,197) size 11x11 [transform={m=((1.00,0.00)(0.00,1.00)) t=(174.50,8.50)}]
+                      RenderSVGViewportContainer {svg} at (209,197) size 11x11
+                        RenderPath {rect} at (209,197) size 11x11 [data="M-5.50,-5.50 L5.50,-5.50 L5.50,5.50 L-5.50,5.50 Z"]
+                        RenderPath {line} at (209,206) size 11x2 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#000000]}] [data="M5.50,5.50 L-5.50,5.50"]
+              RenderSVGContainer {g} at (249,343) size 143x65 [transform={m=((1.00,0.00)(0.00,1.00)) t=(220.00,207.00)}]
+                RenderSVGContainer {g} at (249,343) size 143x65
+                  RenderPath {rect} at (249,343) size 143x65 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F0F8FF]}] [data="M0.00,0.00 L180.00,0.00 L180.00,80.00 L0.00,80.00 Z"]
+                  RenderSVGContainer {g} at (257,365) size 122x39
+                    RenderSVGText {text} at (10,27) size 155x48 contains 3 chunk(s)
+                      RenderSVGInlineText {#text} at (0,0) size 155x16
+                        chunk 1 text run 1 at (10.00,40.00) startOffset 0 endOffset 23 width 155.00: "This is a none-moveable"
+                      RenderSVGTSpan {tspan} at (0,0) size 139x16
+                        RenderSVGInlineText {#text} at (0,16) size 139x16
+                          chunk 2 text run 1 at (10.00,56.00) startOffset 0 endOffset 21 width 139.00: "none-closeable status"
+                      RenderSVGTSpan {tspan} at (0,0) size 45x16
+                        RenderSVGInlineText {#text} at (0,32) size 45x16
+                          chunk 3 text run 1 at (10.00,72.00) startOffset 0 endOffset 6 width 45.00: "window"
+                RenderSVGContainer {g} at (249,343) size 143x16
+                  RenderPath {rect} at (249,343) size 143x16 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#DCDCDC]}] [data="M0.00,0.00 L180.00,0.00 L180.00,17.00 L0.00,17.00 Z"]
+                  RenderSVGText {text} at (3,1) size 93x16 contains 1 chunk(s)
+                    RenderSVGInlineText {#text} at (0,0) size 93x16
+                      chunk 1 text run 1 at (3.00,14.00) startOffset 0 endOffset 13 width 93.00: "Status Window"
+                  RenderSVGContainer {use} at (376,346) size 11x11
+                    RenderSVGContainer {g} at (376,346) size 11x11 [transform={m=((1.00,0.00)(0.00,1.00)) t=(168.50,8.50)}]
+                      RenderSVGViewportContainer {svg} at (376,346) size 11x11
+                        RenderPath {rect} at (376,346) size 11x11 [stroke={[type=SOLID] [color=#696969]}] [data="M-5.50,-5.50 L5.50,-5.50 L5.50,5.50 L-5.50,5.50 Z"]
+                  RenderSVGContainer {use} at (364,346) size 9x11
+                    RenderSVGContainer {g} at (363,346) size 11x11 [transform={m=((1.00,0.00)(0.00,1.00)) t=(151.50,8.50)}]
+                      RenderSVGViewportContainer {svg} at (363,346) size 11x11
+                        RenderPath {rect} at (363,346) size 11x11 [data="M-5.50,-5.50 L5.50,-5.50 L5.50,5.50 L-5.50,5.50 Z"]
+                        RenderPath {line} at (363,354) size 11x3 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#000000]}] [data="M5.50,5.50 L-5.50,5.50"]
+            RenderSVGContainer {g} at (77,182) size 315x15
+              RenderPath {rect} at (77,182) size 315x15 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#DCDCDC]}] [data="M0.00,0.00 L400.00,0.00 L400.00,17.00 L0.00,17.00 Z"]
+              RenderSVGText {text} at (3,1) size 166x16 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 166x16
+                  chunk 1 text run 1 at (3.00,14.00) startOffset 0 endOffset 24 width 166.00: "Nested middlesize Window"
+              RenderSVGContainer {use} at (376,184) size 11x11
+                RenderSVGContainer {g} at (376,184) size 11x11 [transform={m=((1.00,0.00)(0.00,1.00)) t=(388.50,8.50)}]
+                  RenderSVGViewportContainer {svg} at (376,184) size 11x11
+                    RenderPath {rect} at (376,184) size 11x11 [data="M-5.50,-5.50 L5.50,-5.50 L5.50,5.50 L-5.50,5.50 Z"]
+                    RenderPath {line} at (376,184) size 11x11 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#000000]}] [data="M-5.50,-5.50 L5.50,5.50"]
+                    RenderPath {line} at (376,184) size 11x11 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#000000]}] [data="M5.50,-5.50 L-5.50,5.50"]
+              RenderSVGContainer {use} at (363,184) size 11x11
+                RenderSVGContainer {g} at (363,184) size 11x11 [transform={m=((1.00,0.00)(0.00,1.00)) t=(371.50,8.50)}]
+                  RenderSVGViewportContainer {svg} at (363,184) size 11x11
+                    RenderPath {rect} at (363,184) size 11x11 [stroke={[type=SOLID] [color=#696969]}] [data="M-5.50,-5.50 L5.50,-5.50 L5.50,5.50 L-5.50,5.50 Z"]
+              RenderSVGContainer {use} at (350,185) size 10x10
+                RenderSVGContainer {g} at (350,184) size 11x11 [transform={m=((1.00,0.00)(0.00,1.00)) t=(354.50,8.50)}]
+                  RenderSVGViewportContainer {svg} at (350,184) size 11x11
+                    RenderPath {rect} at (350,184) size 11x11 [data="M-5.50,-5.50 L5.50,-5.50 L5.50,5.50 L-5.50,5.50 Z"]
+                    RenderPath {line} at (350,192) size 11x3 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#000000]}] [data="M5.50,5.50 L-5.50,5.50"]
+          RenderSVGContainer {g} at (311,377) size 159x143 [transform={m=((1.00,0.00)(0.00,1.00)) t=(350.00,300.00)}]
+            RenderSVGContainer {g} at (311,377) size 159x143
+              RenderPath {rect} at (311,377) size 159x143 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F0F8FF]}] [data="M0.00,0.00 L200.00,0.00 L200.00,180.00 L0.00,180.00 Z"]
+              RenderSVGContainer {g} at (320,399) size 137x63
+                RenderSVGText {text} at (10,27) size 174x80 contains 5 chunk(s)
+                  RenderSVGInlineText {#text} at (0,0) size 170x16
+                    chunk 1 text run 1 at (10.00,40.00) startOffset 0 endOffset 26 width 170.00: "This window has a callback"
+                  RenderSVGTSpan {tspan} at (0,0) size 160x16
+                    RenderSVGInlineText {#text} at (0,16) size 160x16
+                      chunk 2 text run 1 at (10.00,56.00) startOffset 0 endOffset 25 width 160.00: "function indicating mouse"
+                  RenderSVGTSpan {tspan} at (0,0) size 174x16
+                    RenderSVGInlineText {#text} at (0,32) size 174x16
+                      chunk 3 text run 1 at (10.00,72.00) startOffset 0 endOffset 26 width 174.00: "movements in the statusbar"
+                  RenderSVGTSpan {tspan} at (0,0) size 124x16
+                    RenderSVGInlineText {#text} at (0,48) size 124x16
+                      chunk 4 text run 1 at (10.00,88.00) startOffset 0 endOffset 19 width 124.00: "and alerting window"
+                  RenderSVGTSpan {tspan} at (0,0) size 42x16
+                    RenderSVGInlineText {#text} at (0,64) size 42x16
+                      chunk 5 text run 1 at (10.00,104.00) startOffset 0 endOffset 6 width 42.00: "events"
+              RenderPath {rect} at (311,507) size 159x13 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F0F8FF]}] [data="M0.00,167.00 L200.00,167.00 L200.00,180.00 L0.00,180.00 Z"]
+              RenderSVGText {text} at (3,167) size 125x13 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 125x13
+                  chunk 1 text run 1 at (3.00,177.00) startOffset 0 endOffset 27 width 125.00: "Callback function is active"
+            RenderSVGContainer {g} at (311,377) size 159x16
+              RenderPath {rect} at (311,377) size 159x16 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#DCDCDC]}] [data="M0.00,0.00 L200.00,0.00 L200.00,17.00 L0.00,17.00 Z"]
+              RenderSVGText {text} at (3,1) size 87x16 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 87x16
+                  chunk 1 text run 1 at (3.00,14.00) startOffset 0 endOffset 12 width 87.00: "Small Window"
+              RenderSVGContainer {use} at (454,379) size 11x11
+                RenderSVGContainer {g} at (454,379) size 11x11 [transform={m=((1.00,0.00)(0.00,1.00)) t=(188.50,8.50)}]
+                  RenderSVGViewportContainer {svg} at (454,379) size 11x11
+                    RenderPath {rect} at (454,379) size 11x11 [data="M-5.50,-5.50 L5.50,-5.50 L5.50,5.50 L-5.50,5.50 Z"]
+                    RenderPath {line} at (454,379) size 11x11 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#000000]}] [data="M-5.50,-5.50 L5.50,5.50"]
+                    RenderPath {line} at (454,379) size 11x11 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#000000]}] [data="M5.50,-5.50 L-5.50,5.50"]
+              RenderSVGContainer {use} at (441,379) size 11x11
+                RenderSVGContainer {g} at (441,379) size 11x11 [transform={m=((1.00,0.00)(0.00,1.00)) t=(171.50,8.50)}]
+                  RenderSVGViewportContainer {svg} at (441,379) size 11x11
+                    RenderPath {rect} at (441,379) size 11x11 [stroke={[type=SOLID] [color=#696969]}] [data="M-5.50,-5.50 L5.50,-5.50 L5.50,5.50 L-5.50,5.50 Z"]
+              RenderSVGContainer {use} at (428,380) size 10x10
+                RenderSVGContainer {g} at (428,379) size 11x11 [transform={m=((1.00,0.00)(0.00,1.00)) t=(154.50,8.50)}]
+                  RenderSVGViewportContainer {svg} at (428,379) size 11x11
+                    RenderPath {rect} at (428,379) size 11x11 [data="M-5.50,-5.50 L5.50,-5.50 L5.50,5.50 L-5.50,5.50 Z"]
+                    RenderPath {line} at (428,388) size 11x2 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#000000]}] [data="M5.50,5.50 L-5.50,5.50"]
+          RenderSVGContainer {g} at (39,475) size 119x50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(1.00,426.00)}]
+            RenderSVGContainer {g} at (39,475) size 119x50
+              RenderPath {rect} at (39,475) size 119x50 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F0F8FF]}] [data="M0.00,0.00 L150.00,0.00 L150.00,60.00 L0.00,60.00 Z"]
+              RenderSVGContainer {g} at (43,479) size 115x38
+                RenderSVGText {text} at (5,4) size 146x47 contains 3 chunk(s)
+                  RenderSVGInlineText {#text} at (0,0) size 140x15
+                    chunk 1 text run 1 at (5.00,16.00) startOffset 0 endOffset 24 width 140.00: "This is a minimal window"
+                  RenderSVGTSpan {tspan} at (0,0) size 146x15
+                    RenderSVGInlineText {#text} at (0,16) size 146x15
+                      chunk 2 text run 1 at (5.00,32.00) startOffset 0 endOffset 29 width 146.00: "without title and status bar."
+                  RenderSVGTSpan {tspan} at (0,0) size 123x15
+                    RenderSVGInlineText {#text} at (0,32) size 123x15
+                      chunk 3 text run 1 at (5.00,48.00) startOffset 0 endOffset 23 width 123.00: "it is also not moveable"
+            RenderSVGContainer {g} at (39,476) size 1x1
+        RenderSVGContainer {g} at (38,142) size 549x16
+          RenderPath {rect} at (38,142) size 549x16 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#DCDCDC]}] [data="M0.00,0.00 L700.00,0.00 L700.00,17.00 L0.00,17.00 Z"]
+          RenderSVGText {text} at (3,1) size 73x16 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 73x16
+              chunk 1 text run 1 at (3.00,14.00) startOffset 0 endOffset 10 width 73.00: "Big Window"
+          RenderSVGContainer {use} at (571,145) size 12x11
+            RenderSVGContainer {g} at (571,145) size 12x11 [transform={m=((1.00,0.00)(0.00,1.00)) t=(688.50,8.50)}]
+              RenderSVGViewportContainer {svg} at (571,145) size 12x11
+                RenderPath {rect} at (571,145) size 12x11 [data="M-5.50,-5.50 L5.50,-5.50 L5.50,5.50 L-5.50,5.50 Z"]
+                RenderPath {line} at (571,145) size 12x11 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#000000]}] [data="M-5.50,-5.50 L5.50,5.50"]
+                RenderPath {line} at (571,145) size 12x11 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#000000]}] [data="M5.50,-5.50 L-5.50,5.50"]
+          RenderSVGContainer {use} at (558,145) size 11x11
+            RenderSVGContainer {g} at (558,145) size 11x11 [transform={m=((1.00,0.00)(0.00,1.00)) t=(671.50,8.50)}]
+              RenderSVGViewportContainer {svg} at (558,145) size 11x11
+                RenderPath {rect} at (558,145) size 11x11 [stroke={[type=SOLID] [color=#696969]}] [data="M-5.50,-5.50 L5.50,-5.50 L5.50,5.50 L-5.50,5.50 Z"]
+          RenderSVGContainer {use} at (546,146) size 9x10
+            RenderSVGContainer {g} at (545,145) size 11x11 [transform={m=((1.00,0.00)(0.00,1.00)) t=(654.50,8.50)}]
+              RenderSVGViewportContainer {svg} at (545,145) size 11x11
+                RenderPath {rect} at (545,145) size 11x11 [data="M-5.50,-5.50 L5.50,-5.50 L5.50,5.50 L-5.50,5.50 Z"]
+                RenderPath {line} at (545,153) size 11x3 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#000000]}] [data="M5.50,5.50 L-5.50,5.50"]

@@ -1,0 +1,28 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGContainer {g} at (18,0) size 414x306
+      RenderSVGContainer {g} at (18,0) size 414x306
+        RenderSVGText {text} at (3,0) size 53x10 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 53x10
+            chunk 1 text run 1 at (3.00,8.00) startOffset 0 endOffset 16 width 53.00: "letter-spacing:0"
+        RenderSVGText {text} at (3,8) size 40x10 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 40x10
+            chunk 1 text run 1 at (3.00,16.00) startOffset 0 endOffset 17 width 56.00: "letter-spacing:-1"
+        RenderSVGText {text} at (3,16) size 55x10 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 55x10
+            chunk 1 text run 1 at (3.00,24.00) startOffset 0 endOffset 17 width 55.00: "letter-spacing:.3"
+        RenderSVGText {text} at (3,25) size 60x10 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 60x10
+            chunk 1 text run 1 at (3.00,33.00) startOffset 0 endOffset 16 width 60.00: "ws:0 - Two Words"
+        RenderSVGText {text} at (3,33) size 54x10 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 54x10
+            chunk 1 text run 1 at (3.00,41.00) startOffset 0 endOffset 17 width 63.00: "ws:-3 - Two Words"
+        RenderSVGText {text} at (3,41) size 69x10 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 69x10
+            chunk 1 text run 1 at (3.00,49.00) startOffset 0 endOffset 16 width 60.00: "ws:3 - Two Words"
+    RenderSVGText {text} at (5,52) size 42x7 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 42x7
+        chunk 1 text run 1 at (5.00,57.00) startOffset 0 endOffset 16 width 42.00: "$Revision: 1.6 $"
+    RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L79.00,1.00 L79.00,59.00 L1.00,59.00 Z"]

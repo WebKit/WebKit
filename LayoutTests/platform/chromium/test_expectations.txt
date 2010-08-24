@@ -922,34 +922,6 @@ BUG3244 WIN LINUX : fast/backgrounds/repeat/mask-negative-offset-repeat.html = F
 // The mask part of this test is totally wrong.
 BUG3244 WIN LINUX : fast/backgrounds/svg-as-background-6.html = FAIL
 
-// I find it hard to care too much about SVG failures.
-BUG10304 LINUX : svg/W3C-SVG-1.1/animate-elem-04-t.svg = FAIL
-BUG10304 LINUX : svg/W3C-SVG-1.1/animate-elem-05-t.svg = FAIL
-BUG10304 LINUX : svg/W3C-SVG-1.1/animate-elem-06-t.svg = FAIL
-BUG10304 LINUX : svg/W3C-SVG-1.1/animate-elem-07-t.svg = FAIL
-BUG10304 LINUX : svg/W3C-SVG-1.1/fonts-desc-02-t.svg = FAIL
-BUG10304 LINUX : svg/W3C-SVG-1.1/interact-zoom-01-t.svg = FAIL
-BUG10304 LINUX : svg/W3C-SVG-1.1/text-spacing-01-b.svg = FAIL
-BUG10304 LINUX : svg/W3C-SVG-1.1/text-text-01-b.svg = FAIL
-BUG10304 LINUX : svg/carto.net/slider.svg = FAIL
-BUG10304 LINUX : svg/carto.net/textbox.svg = FAIL
-BUG10304 LINUX : svg/carto.net/window.svg = FAIL
-BUG10304 LINUX : svg/custom/coords-relative-units-transforms.svg = FAIL
-BUG10304 LINUX : svg/custom/use-referencing-nonexisting-symbol.svg = FAIL
-BUG10304 LINUX RELEASE : svg/hixie/perf/003.xml = FAIL
-BUG10304 LINUX DEBUG : svg/hixie/perf/003.xml = FAIL
-BUG10304 LINUX : svg/hixie/perf/004.xml = FAIL
-BUG10304 LINUX : svg/hixie/perf/005.xml = FAIL
-BUG10304 LINUX RELEASE : svg/hixie/perf/006.xml = FAIL
-BUG10304 LINUX DEBUG : svg/hixie/perf/006.xml = FAIL
-BUG10304 LINUX : svg/hixie/text/003b.xml = FAIL
-BUG10304 LINUX : svg/W3C-SVG-1.1/fonts-elem-01-t.svg = FAIL
-BUG10304 LINUX : svg/W3C-SVG-1.1/fonts-elem-02-t.svg = FAIL
-BUG10304 LINUX : svg/W3C-SVG-1.1/fonts-elem-03-b.svg = FAIL
-BUG10304 LINUX : svg/W3C-SVG-1.1/fonts-elem-04-b.svg = FAIL
-BUG10304 LINUX : svg/W3C-SVG-1.1/fonts-elem-05-t.svg = FAIL
-BUG10304 LINUX : svg/W3C-SVG-1.1/fonts-elem-06-t.svg = FAIL
-BUG10304 LINUX : svg/W3C-SVG-1.1/fonts-elem-07-b.svg = FAIL
 // Our gradients are wrong here.
 BUG19559 WIN LINUX : svg/W3C-SVG-1.1/pservers-grad-08-b.svg = FAIL
 BUG10304 LINUX : svg/carto.net/button.svg = FAIL

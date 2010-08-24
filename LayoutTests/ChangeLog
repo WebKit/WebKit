@@ -2,6 +2,54 @@
 
         Reviewed by Ojan Vafai.
 
+        [chromium] linux layout test results for svg tests
+        https://bugs.webkit.org/show_bug.cgi?id=44303
+
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-04-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-05-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-06-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-07-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/fonts-desc-02-t-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/fonts-desc-02-t-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/fonts-elem-01-t-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/fonts-elem-01-t-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/fonts-elem-02-t-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/fonts-elem-02-t-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/fonts-elem-03-b-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/fonts-elem-03-b-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/fonts-elem-04-b-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/fonts-elem-04-b-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/fonts-elem-05-t-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/fonts-elem-05-t-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/fonts-elem-06-t-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/fonts-elem-06-t-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/fonts-elem-07-b-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/fonts-elem-07-b-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/interact-zoom-01-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/text-spacing-01-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/text-text-01-b-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/text-text-01-b-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/text-text-01-b-expected.txt: Added.
+        * platform/chromium-linux/svg/carto.net/slider-expected.checksum:
+        * platform/chromium-linux/svg/carto.net/slider-expected.png:
+        * platform/chromium-linux/svg/carto.net/textbox-expected.checksum:
+        * platform/chromium-linux/svg/carto.net/textbox-expected.png:
+        * platform/chromium-linux/svg/carto.net/window-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/coords-relative-units-transforms-expected.checksum:
+        * platform/chromium-linux/svg/custom/coords-relative-units-transforms-expected.png: Added.
+        * platform/chromium-linux/svg/custom/use-referencing-nonexisting-symbol-expected.checksum:
+        * platform/chromium-linux/svg/custom/use-referencing-nonexisting-symbol-expected.png:
+        * platform/chromium-linux/svg/hixie/perf/003-expected.txt: Added.
+        * platform/chromium-linux/svg/hixie/perf/004-expected.txt: Added.
+        * platform/chromium-linux/svg/hixie/perf/005-expected.txt: Added.
+        * platform/chromium-linux/svg/hixie/perf/006-expected.txt: Added.
+        * platform/chromium-linux/svg/hixie/text/003b-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
+2010-08-24  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
         [chromium] linux baselines for a few svg tests
         https://bugs.webkit.org/show_bug.cgi?id=44286
 
