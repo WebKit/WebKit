@@ -1,3 +1,11 @@
+2010-08-24  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed trivial fix.
+
+        After r65845 we don't need Qt specific expected result.
+
+        * platform/qt/editing/execCommand/insert-list-xml-expected.txt: Removed.
+
 2010-08-24  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Steve Block.
