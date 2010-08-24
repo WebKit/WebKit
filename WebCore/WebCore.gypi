@@ -1675,8 +1675,6 @@
             'html/HTMLParagraphElement.h',
             'html/HTMLParamElement.cpp',
             'html/HTMLParamElement.h',
-            'html/LegacyHTMLTreeBuilder.cpp',
-            'html/LegacyHTMLTreeBuilder.h',
             'html/HTMLParserErrorCodes.cpp',
             'html/HTMLParserErrorCodes.h',
             'html/HTMLParserScheduler.cpp',

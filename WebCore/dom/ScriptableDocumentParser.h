@@ -52,9 +52,6 @@ public:
     XSSAuditor* xssAuditor() const { return m_xssAuditor; }
     void setXSSAuditor(XSSAuditor* auditor) { m_xssAuditor = auditor; }
 
-    // Exposed for LegacyHTMLTreeBuilder::reportErrorToConsole
-    virtual bool processingContentWrittenByScript() const { return false; }
-
 protected:
     ScriptableDocumentParser(Document*, bool viewSourceMode = false);
 

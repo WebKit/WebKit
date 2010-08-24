@@ -49,6 +49,9 @@
 #include "XLinkNames.h"
 #include "XMLNSNames.h"
 #include "XMLNames.h"
+// FIXME: Remove this include once we find a home for the free functions that
+// are using it.
+#include <wtf/dtoa.h>
 #include <wtf/UnusedParam.h>
 
 namespace WebCore {
@@ -2840,6 +2843,44 @@ bool HTMLTreeBuilder::pluginsEnabled(Frame* frame)
     if (!frame)
         return false;
     return frame->loader()->subframeLoader()->allowPlugins(NotAboutToInstantiatePlugin);
+}
+
+// FIXME: Move this function to a more appropriate place.
+String serializeForNumberType(double number)
+{
+    // According to HTML5, "the best representation of the number n as a floating
+    // point number" is a string produced by applying ToString() to n.
+    DtoaBuffer buffer;
+    unsigned length;
+    doubleToStringInJavaScriptFormat(number, buffer, &length);
+    return String(buffer, length);
+}
+
+// FIXME: Move this function to a more appropriate place.
+bool parseToDoubleForNumberType(const String& src, double* out)
+{
+    // See HTML5 2.4.4.3 `Real numbers.'
+
+    if (src.isEmpty())
+        return false;
+    // String::toDouble() accepts leading + \t \n \v \f \r and SPACE, which are invalid in HTML5.
+    // So, check the first character.
+    if (src[0] != '-' && (src[0] < '0' || src[0] > '9'))
+        return false;
+
+    bool valid = false;
+    double value = src.toDouble(&valid);
+    if (!valid)
+        return false;
+    // NaN and Infinity are not valid numbers according to the standard.
+    if (!isfinite(value))
+        return false;
+    // -0 -> 0
+    if (!value)
+        value = 0;
+    if (out)
+        *out = value;
+    return true;
 }
 
 }

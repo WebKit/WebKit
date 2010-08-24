@@ -30,7 +30,6 @@ namespace WebCore {
 
 class Document;
 class DocumentWriter;
-class LegacyHTMLTreeBuilder;
 class SegmentedString;
 class ScriptableDocumentParser;
 
@@ -60,10 +59,6 @@ public:
     // and is very unclear as to what it actually means.  The LegacyHTMLDocumentParser
     // used to implements it.
     virtual bool processingData() const { return false; }
-
-    // FIXME: Exposed for HTMLFormControlElement::removedFromTree.  HTML DOM
-    // code should not need to reach into implementation details of the parser.
-    virtual LegacyHTMLTreeBuilder* htmlTreeBuilder() const { return 0; }
 
     Document* document() const { return m_document; }
 

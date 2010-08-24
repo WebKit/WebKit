@@ -89,7 +89,6 @@
 #include "InspectorController.h"
 #include "InspectorTimelineAgent.h"
 #include "KeyboardEvent.h"
-#include "LegacyHTMLTreeBuilder.h"
 #include "Logging.h"
 #include "MessageEvent.h"
 #include "MouseEvent.h"
@@ -1922,6 +1921,26 @@ void Document::close()
         implicitClose();
     }
 }
+
+// FIXME: These settings probably don't work anymore.  We should either remove
+// them or make them work properly.
+#ifdef BUILDING_ON_LEOPARD
+static bool shouldCreateImplicitHead(Document* document)
+{
+    ASSERT(document);
+    Settings* settings = document->page() ? document->page()->settings() : 0;
+    return settings ? !settings->needsLeopardMailQuirks() : true;
+}
+#elif defined(BUILDING_ON_TIGER)
+static bool shouldCreateImplicitHead(Document* document)
+{
+    ASSERT(document);
+    Settings* settings = document->page() ? document->page()->settings() : 0;
+    return settings ? !settings->needsTigerMailQuirks() : true;
+}
+#else
+inline bool shouldCreateImplicitHead(Document*) { return true; }
+#endif
 
 void Document::implicitClose()
 {

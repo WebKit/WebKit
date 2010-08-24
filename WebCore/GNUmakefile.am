@@ -1509,8 +1509,6 @@ webcore_sources += \
 	WebCore/html/HTMLParagraphElement.h \
 	WebCore/html/HTMLParamElement.cpp \
 	WebCore/html/HTMLParamElement.h \
-	WebCore/html/LegacyHTMLTreeBuilder.cpp \
-	WebCore/html/LegacyHTMLTreeBuilder.h \
 	WebCore/html/HTMLParserErrorCodes.cpp \
 	WebCore/html/HTMLParserErrorCodes.h \
 	WebCore/html/HTMLParserQuirks.h \

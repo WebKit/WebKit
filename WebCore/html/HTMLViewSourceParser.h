@@ -39,7 +39,6 @@ class HTMLTokenizer;
 class HTMLScriptRunner;
 class HTMLTreeBuilder;
 class HTMLPreloadScanner;
-class LegacyHTMLTreeBuilder;
 class ScriptController;
 class ScriptSourceCode;
 

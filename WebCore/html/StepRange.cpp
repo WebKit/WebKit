@@ -23,7 +23,7 @@
 
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
-#include "LegacyHTMLTreeBuilder.h"
+#include "HTMLTreeBuilder.h"
 #include "PlatformString.h"
 #include <wtf/MathExtras.h>
 

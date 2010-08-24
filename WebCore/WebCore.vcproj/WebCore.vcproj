@@ -41721,14 +41721,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\html\LegacyHTMLTreeBuilder.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\LegacyHTMLTreeBuilder.h"
-				>
-			</File>
-			<File
 				RelativePath="..\html\MediaError.h"
 				>
 			</File>

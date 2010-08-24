@@ -1,3 +1,42 @@
+2010-08-24  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Delete LegacyHTMLTreeBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=44554
+
+        There were some free functions in LegacyHTMLTreeBuilder that needed a
+        new home.  I've put them in HTMLTreeBuilder, but they'll probably need
+        a better home eventually.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::shouldCreateImplicitHead):
+        * dom/DocumentParser.h:
+        * dom/ScriptableDocumentParser.h:
+        * html/HTMLConstructionSite.cpp:
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::removedFromTree):
+        * html/HTMLInputElement.cpp:
+        * html/HTMLMeterElement.cpp:
+        * html/HTMLProgressElement.cpp:
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::serializeForNumberType):
+        (WebCore::parseToDoubleForNumberType):
+        * html/HTMLTreeBuilder.h:
+        * html/HTMLViewSourceParser.h:
+        * html/LegacyHTMLTreeBuilder.cpp: Removed.
+        * html/LegacyHTMLTreeBuilder.h: Removed.
+        * html/StepRange.cpp:
+        * html/ValidityState.cpp:
+        * rendering/RenderSlider.cpp:
+
 2010-08-24  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
