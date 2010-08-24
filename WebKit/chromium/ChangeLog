@@ -1,3 +1,25 @@
+2010-08-23  Jay Civelli  <jcivelli@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Made WebFrame not report the text from hidden frames.
+        (some pages contain hidden frames with garbage text that
+        should not be indexed or used to detect the page's language).
+        https://bugs.webkit.org/show_bug.cgi?id=39456
+
+        * WebKit.gyp:
+        * public/WebCString.h:
+        (WebKit::operator<):
+        * public/WebURL.h:
+        (WebKit::operator<):
+        * src/WebCString.cpp:
+        (WebKit::WebCString::compare):
+        * src/WebFrameImpl.cpp:
+        (WebKit::frameContentAsPlainText):
+        * tests/RunAllTests.cpp:
+        (main):
+        * tests/WebFrameTest.cpp: Added.
+
 2010-08-23  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, build fix for r65852.
