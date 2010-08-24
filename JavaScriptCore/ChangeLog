@@ -1,5 +1,26 @@
 2010-08-24  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by Geoff Garen.
+
+        Don't seed the JS random number generator from time()
+        https://bugs.webkit.org/show_bug.cgi?id=41868
+        <rdar://problem/8171025>
+
+        Switch to using the secure random number generator to
+        seed the fast random generator, and make the generator
+        be per global object.
+
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSGlobalData.h:
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::JSGlobalObjectData::JSGlobalObjectData):
+        (JSC::JSGlobalObject::weakRandomNumber):
+        * runtime/MathObject.cpp:
+        (JSC::mathProtoFuncRandom):
+
+2010-08-24  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Beth Dakin.
 
         Make overflow guards in UString::utf8 explicit

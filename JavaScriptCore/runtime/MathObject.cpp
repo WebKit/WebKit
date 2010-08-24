@@ -211,7 +211,7 @@ EncodedJSValue JSC_HOST_CALL mathProtoFuncPow(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL mathProtoFuncRandom(ExecState* exec)
 {
-    return JSValue::encode(jsDoubleNumber(exec, exec->globalData().weakRandom.get()));
+    return JSValue::encode(jsDoubleNumber(exec, exec->lexicalGlobalObject()->weakRandomNumber()));
 }
 
 EncodedJSValue JSC_HOST_CALL mathProtoFuncRound(ExecState* exec)
