@@ -5,6 +5,21 @@
         TreeWalker traversal order is wrong when skipping and rejecting
         https://bugs.webkit.org/show_bug.cgi?id=44377
         
+        TreeWalker test where skipping nodes requires the walker to back up
+        the hierarchy.
+
+        * fast/dom/TreeWalker/script-tests/traversal-skip-most.js: Added.
+        (filter.acceptNode):
+        * fast/dom/TreeWalker/traversal-skip-most-expected.txt: Added.
+        * fast/dom/TreeWalker/traversal-skip-most.html: Added.
+
+2010-08-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        TreeWalker traversal order is wrong when skipping and rejecting
+        https://bugs.webkit.org/show_bug.cgi?id=44377
+        
         Add some tests for TreeWalker with node filters that skip and reject.
 
         * fast/dom/TreeWalker/script-tests/traversal-reject.js: Added.
