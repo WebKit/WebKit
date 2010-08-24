@@ -23,6 +23,7 @@
 #include "Font.h"
 
 #include "AffineTransform.h"
+#include "ContextShadow.h"
 #include "FontDescription.h"
 #include "FontFallbackList.h"
 #include "FontSelector.h"
@@ -108,12 +109,6 @@ static void drawTextCommon(GraphicsContext* ctx, const TextRun& run, const Float
     QString string = fromRawDataWithoutRef(sanitized);
     QPointF pt(point.x(), point.y());
 
-    // text shadow
-    FloatSize shadowSize;
-    float shadowBlur;
-    Color shadowColor;
-    bool hasShadow = ctx->textDrawingMode() == cTextFill && ctx->getShadow(shadowSize, shadowBlur, shadowColor);
-
     if (from > 0 || to < run.length()) {
         if (isComplexText) {
             QTextLayout layout(string, font);
@@ -125,32 +120,46 @@ static void drawTextCommon(GraphicsContext* ctx, const TextRun& run, const Float
 
             QFontMetrics fm(font);
             int ascent = fm.ascent();
-            QRectF clip(point.x() + x1, point.y() - ascent, x2 - x1, fm.height());
+            QRectF boundingRect(point.x() + x1, point.y() - ascent, x2 - x1, fm.height());
+            QRectF clip = boundingRect;
 
-            if (hasShadow) {
-                // TODO: when blur support is added, the clip will need to account
-                // for the blur radius
+            ContextShadow* ctxShadow = ctx->contextShadow();
+
+            if (ctxShadow->type != ContextShadow::NoShadow) {
                 qreal dx1 = 0, dx2 = 0, dy1 = 0, dy2 = 0;
-                if (shadowSize.width() > 0)
-                    dx2 = shadowSize.width();
+                if (ctxShadow->offset.x() > 0)
+                    dx2 = ctxShadow->offset.x();
                 else
-                    dx1 = -shadowSize.width();
-                if (shadowSize.height() > 0)
-                    dy2 = shadowSize.height();
+                    dx1 = -ctxShadow->offset.x();
+                if (ctxShadow->offset.y() > 0)
+                    dy2 = ctxShadow->offset.y();
                 else
-                    dy1 = -shadowSize.height();
+                    dy1 = -ctxShadow->offset.y();
                 // expand the clip rect to include the text shadow as well
                 clip.adjust(dx1, dx2, dy1, dy2);
+                clip.adjust(-ctxShadow->blurRadius, -ctxShadow->blurRadius, ctxShadow->blurRadius, ctxShadow->blurRadius);
             }
             p->save();
             p->setClipRect(clip.toRect(), Qt::IntersectClip);
             pt.setY(pt.y() - ascent);
-            if (hasShadow) {
-                p->save();
-                p->setPen(QColor(shadowColor));
-                p->translate(shadowSize.width(), shadowSize.height());
-                line.draw(p, pt);
-                p->restore();
+
+            if (ctxShadow->type != ContextShadow::NoShadow) {
+                ContextShadow* ctxShadow = ctx->contextShadow();
+                if (ctxShadow->type != ContextShadow::BlurShadow) {
+                    p->save();
+                    p->setPen(ctxShadow->color);
+                    p->translate(ctxShadow->offset);
+                    line.draw(p, pt);
+                    p->restore();
+                } else {
+                    QPainter* shadowPainter = ctxShadow->beginShadowLayer(p, boundingRect);
+                    if (shadowPainter) {
+                        // Since it will be blurred anyway, we don't care about render hints.
+                        shadowPainter->setPen(ctxShadow->color);
+                        line.draw(shadowPainter, pt);
+                        ctxShadow->endShadowLayer(p);
+                    }
+                }
             }
             p->setPen(textFillPen);
             line.draw(p, pt);
@@ -172,13 +181,26 @@ static void drawTextCommon(GraphicsContext* ctx, const TextRun& run, const Float
     if (!isComplexText && !(ctx->textDrawingMode() & cTextStroke))
         flags |= Qt::TextBypassShaping;
 #endif
-    if (hasShadow) {
-        // TODO: text shadow blur support
-        p->save();
-        p->setPen(QColor(shadowColor));
-        p->translate(shadowSize.width(), shadowSize.height());
-        p->drawText(pt, string, flags, run.padding());
-        p->restore();
+    if (ctx->contextShadow()->type != ContextShadow::NoShadow) {
+        ContextShadow* ctxShadow = ctx->contextShadow();
+        if (ctxShadow->type != ContextShadow::BlurShadow) {
+            p->save();
+            p->setPen(ctxShadow->color);
+            p->translate(ctxShadow->offset);
+            p->drawText(pt, string, flags, run.padding());
+            p->restore();
+        } else {
+            QFontMetrics fm(font);
+            QRectF boundingRect(point.x(), point.y() - fm.ascent(), fm.width(string), fm.height());
+            QPainter* shadowPainter = ctxShadow->beginShadowLayer(p, boundingRect);
+            if (shadowPainter) {
+                // Since it will be blurred anyway, we don't care about render hints.
+                shadowPainter->setFont(p->font());
+                shadowPainter->setPen(ctxShadow->color);
+                shadowPainter->drawText(pt, string, flags, run.padding());
+                ctxShadow->endShadowLayer(p);
+            }
+        }
     }
     if (ctx->textDrawingMode() & cTextStroke) {
         QPainterPath path;

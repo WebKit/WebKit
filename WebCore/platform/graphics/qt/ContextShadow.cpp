@@ -314,6 +314,7 @@ QPainter* ContextShadow::beginShadowLayer(QPainter* p, const QRectF &rect)
 
     m_layerPainter = new QPainter;
     m_layerPainter->begin(&m_layerImage);
+    m_layerPainter->setFont(p->font());
     m_layerPainter->translate(offset);
 
     // The origin is now the top left corner of the scratch image.
