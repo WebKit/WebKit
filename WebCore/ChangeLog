@@ -1,3 +1,52 @@
+2010-08-24  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze
+
+        clip-path does not work inside mask element
+        https://bugs.webkit.org/show_bug.cgi?id=41428
+
+        Add new tests covering nesting of clippers and maskers, with different unitTypes for the content coordinate system.
+        Scale all ImageBuffer content to take into account that ImageBuffers use integer based sizes, where the content
+        is floating-point sized. This compensates rounded errors, when scaling the document.
+
+        Tests: svg/clip-path/clip-in-mask-objectBoundingBox.svg
+               svg/clip-path/clip-in-mask-userSpaceOnUse.svg
+               svg/clip-path/clip-in-mask.svg
+               svg/clip-path/deep-nested-clip-in-mask-different-unitTypes.svg
+               svg/clip-path/deep-nested-clip-in-mask-panning.svg
+               svg/clip-path/deep-nested-clip-in-mask.svg
+               svg/clip-path/nested-clip-in-mask-image-based-clipping.svg
+               svg/clip-path/nested-clip-in-mask-path-and-image-based-clipping.svg
+               svg/clip-path/nested-clip-in-mask-path-based-clipping.svg
+
+        * rendering/RenderSVGResourceClipper.cpp:
+        (WebCore::RenderSVGResourceClipper::applyResource): Return the value of applyClippingToContext, instead of always true.
+        (WebCore::RenderSVGResourceClipper::applyClippingToContext): Moved some code from createClipData, to avoid having to pass 5 arguments to createClipData.
+        (WebCore::RenderSVGResourceClipper::drawContentIntoMaskImage): Renamed from createClipData.
+        * rendering/RenderSVGResourceClipper.h:
+        * rendering/RenderSVGResourceGradient.cpp:
+        (WebCore::createMaskAndSwapContextForTextGradient): Pass absoluteTargetRect to createImageBuffer.
+        (WebCore::clipToTextMask): Ditto.
+        * rendering/RenderSVGResourceMasker.cpp:
+        (WebCore::RenderSVGResourceMasker::applyResource): Ditto.
+        (WebCore::RenderSVGResourceMasker::drawContentIntoMaskImage): Pass content transformation to renderSubtreeToImageBuffer, to support nesting objectBoundingBox resources.
+        * rendering/RenderSVGResourcePattern.cpp:
+        (WebCore::RenderSVGResourcePattern::applyResource): Adapt to calculateTransformationToOutermostSVGCoordinateSystem changes. AffineTransform is now passed as reference.
+        (WebCore::RenderSVGResourcePattern::createTileImage): ImageBuffer content scaling is now handled by createImageBuffer.
+        * rendering/SVGImageBufferTools.cpp:
+        (WebCore::SVGImageBufferTools::calculateTransformationToOutermostSVGCoordinateSystem): Renamed. Don't return an AffineTransform copy, but instead pass it as reference.
+        (WebCore::SVGImageBufferTools::createImageBuffer): Always scale the ImageBuffer content, to compensate rounding effects (code was only present in patterns so far).
+                                                           Now also needs the 'absoluteTargetRect' parameter, not only 'clampedAbsoluteTargetRect'.
+        (WebCore::SVGImageBufferTools::renderSubtreeToImageBuffer): Moved from SVGRenderSupport.
+        (WebCore::SVGImageBufferTools::clipToImageBuffer): Pass ImageBuffer as OwnPtr reference, to allow to clear it under certain circumstances (see comment).
+        (WebCore::SVGImageBufferTools::clampedAbsoluteTargetRectForRenderer): Remove AffineTransform parameter, absoluteTargetRect is calculated before passing into this function.
+        * rendering/SVGImageBufferTools.h:
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::prepareToRenderSVGContent): Important change, respect the RenderSVGResourceClipper::applyResource() return value!
+        * rendering/SVGRenderSupport.h:
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::build): renderSubtreeToImage now lives in SVGImageBufferTools, adapt code.
+
 2010-08-24  Andrei Popescu  <andreip@dhcp-172-16-14-12.lon.corp.google.com>
 
         Reviewed by Jeremy Orlow.

@@ -33,7 +33,6 @@
 #include "NodeRenderStyle.h"
 #include "RenderLayer.h"
 #include "RenderPath.h"
-#include "RenderSVGContainer.h"
 #include "RenderSVGResource.h"
 #include "RenderSVGResourceClipper.h"
 #include "RenderSVGResourceFilter.h"
@@ -116,8 +115,10 @@ bool SVGRenderSupport::prepareToRenderSVGContent(RenderObject* object, PaintInfo
             return false;
     }
 
-    if (RenderSVGResourceClipper* clipper = resources->clipper())
-        clipper->applyResource(object, style, paintInfo.context, ApplyToDefaultMode);
+    if (RenderSVGResourceClipper* clipper = resources->clipper()) {
+        if (!clipper->applyResource(object, style, paintInfo.context, ApplyToDefaultMode))
+            return false;
+    }
 
 #if ENABLE(FILTERS)
     if (RenderSVGResourceFilter* filter = resources->filter()) {
@@ -161,31 +162,6 @@ void SVGRenderSupport::finishRenderSVGContent(RenderObject* object, PaintInfo& p
     // then the transparency layers are nested. 
     if (svgStyle->shadow())
         paintInfo.context->endTransparencyLayer();
-}
-
-void SVGRenderSupport::renderSubtreeToImage(ImageBuffer* image, RenderObject* item)
-{
-    ASSERT(item);
-    ASSERT(image);
-    ASSERT(image->context());
-
-    PaintInfo info(image->context(), PaintInfo::infiniteRect(), PaintPhaseForeground, 0, 0, 0);
-
-    // FIXME: isSVGContainer returns true for RenderSVGViewportContainer, so if this is ever
-    // called with one of those, we will read from the wrong offset in an object due to a bad cast.
-    RenderSVGContainer* svgContainer = 0;
-    if (item && item->isSVGContainer())
-        svgContainer = toRenderSVGContainer(item);
-
-    bool drawsContents = svgContainer ? svgContainer->drawsContents() : false;
-    if (svgContainer && !drawsContents)
-        svgContainer->setDrawsContents(true);
-
-    item->layoutIfNeeded();
-    item->paint(info, 0, 0);
-
-    if (svgContainer && !drawsContents)
-        svgContainer->setDrawsContents(false);
 }
 
 FloatRect SVGRenderSupport::computeContainerBoundingBox(const RenderObject* container, ContainerBoundingBoxMode mode)

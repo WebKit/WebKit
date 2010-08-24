@@ -34,11 +34,12 @@ class RenderObject;
 
 class SVGImageBufferTools : public Noncopyable {
 public:
-    static bool createImageBuffer(const FloatRect& clampedAbsoluteTargetRect, OwnPtr<ImageBuffer>&, ImageColorSpace);
-    static void clipToImageBuffer(GraphicsContext*, const AffineTransform& absoluteTransform, const FloatRect& clampedAbsoluteTargetRect, ImageBuffer*);
+    static bool createImageBuffer(const FloatRect& absoluteTargetRect, const FloatRect& clampedAbsoluteTargetRect, OwnPtr<ImageBuffer>&, ImageColorSpace);
+    static void renderSubtreeToImageBuffer(ImageBuffer*, RenderObject*, const AffineTransform&);
+    static void clipToImageBuffer(GraphicsContext*, const AffineTransform& absoluteTransform, const FloatRect& clampedAbsoluteTargetRect, OwnPtr<ImageBuffer>&);
 
-    static AffineTransform transformationToOutermostSVGCoordinateSystem(const RenderObject*);
-    static FloatRect clampedAbsoluteTargetRectForRenderer(const RenderObject*, const AffineTransform& absouteTransform, const FloatRect& targetRect);
+    static void calculateTransformationToOutermostSVGCoordinateSystem(const RenderObject*, AffineTransform& absoluteTransform);
+    static FloatRect clampedAbsoluteTargetRectForRenderer(const RenderObject*, const FloatRect& absoluteTargetRect);
     static IntSize roundedImageBufferSize(const FloatSize&);
 
 private:

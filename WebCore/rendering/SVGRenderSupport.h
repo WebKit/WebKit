@@ -73,9 +73,6 @@ public:
     static void computeRectForRepaint(RenderObject*, RenderBoxModelObject* repaintContainer, IntRect&, bool fixed);
     static void mapLocalToContainer(const RenderObject*, RenderBoxModelObject* repaintContainer, bool useTransforms, bool fixed, TransformState&);
 
-    // This offers a way to render parts of a WebKit rendering tree into a ImageBuffer.
-    static void renderSubtreeToImage(ImageBuffer*, RenderObject*);
-
     // Shared between SVG renderers and resources.
     static void applyStrokeStyleToContext(GraphicsContext*, const RenderStyle*, const RenderObject*);
 

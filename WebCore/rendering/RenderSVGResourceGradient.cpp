@@ -80,13 +80,16 @@ static inline bool createMaskAndSwapContextForTextGradient(GraphicsContext*& con
     const RenderObject* textRootBlock = SVGRenderSupport::findTextRootObject(object);
     ASSERT(textRootBlock);
 
-    AffineTransform absoluteTransform(SVGImageBufferTools::transformationToOutermostSVGCoordinateSystem(textRootBlock));
-    FloatRect clampedAbsoluteTargetRect = SVGImageBufferTools::clampedAbsoluteTargetRectForRenderer(textRootBlock, absoluteTransform, textRootBlock->repaintRectInLocalCoordinates());
+    AffineTransform absoluteTransform;
+    SVGImageBufferTools::calculateTransformationToOutermostSVGCoordinateSystem(textRootBlock, absoluteTransform);
+
+    FloatRect absoluteTargetRect = absoluteTransform.mapRect(textRootBlock->repaintRectInLocalCoordinates());
+    FloatRect clampedAbsoluteTargetRect = SVGImageBufferTools::clampedAbsoluteTargetRectForRenderer(textRootBlock, absoluteTargetRect);
     if (clampedAbsoluteTargetRect.isEmpty())
         return false;
 
     OwnPtr<ImageBuffer> maskImage;
-    if (!SVGImageBufferTools::createImageBuffer(clampedAbsoluteTargetRect, maskImage, DeviceRGB))
+    if (!SVGImageBufferTools::createImageBuffer(absoluteTargetRect, clampedAbsoluteTargetRect, maskImage, DeviceRGB))
         return false;
 
     GraphicsContext* maskImageContext = maskImage->context();
@@ -113,10 +116,13 @@ static inline AffineTransform clipToTextMask(GraphicsContext* context,
 
     targetRect = textRootBlock->repaintRectInLocalCoordinates();
 
-    AffineTransform absoluteTransform(SVGImageBufferTools::transformationToOutermostSVGCoordinateSystem(textRootBlock));
-    FloatRect clampedAbsoluteTargetRect = SVGImageBufferTools::clampedAbsoluteTargetRectForRenderer(textRootBlock, absoluteTransform, targetRect);
+    AffineTransform absoluteTransform;
+    SVGImageBufferTools::calculateTransformationToOutermostSVGCoordinateSystem(textRootBlock, absoluteTransform);
 
-    SVGImageBufferTools::clipToImageBuffer(context, absoluteTransform, clampedAbsoluteTargetRect, imageBuffer.get());
+    FloatRect absoluteTargetRect = absoluteTransform.mapRect(targetRect);
+    FloatRect clampedAbsoluteTargetRect = SVGImageBufferTools::clampedAbsoluteTargetRectForRenderer(textRootBlock, absoluteTargetRect);
+
+    SVGImageBufferTools::clipToImageBuffer(context, absoluteTransform, clampedAbsoluteTargetRect, imageBuffer);
 
     AffineTransform matrix;
     if (gradientData->boundingBoxMode) {

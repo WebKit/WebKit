@@ -1,3 +1,64 @@
+2010-08-24  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        clip-path does not work inside mask element
+        https://bugs.webkit.org/show_bug.cgi?id=41428
+
+        Update results of all tests containing <mask> / <pattern> and/or gradient on text (using CG).
+        The ImageBuffer content is now scaled to account for rounding differences, when zooming.
+
+        * platform/mac/svg/W3C-SVG-1.1/masking-intro-01-f-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/masking-intro-01-f-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-08-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-08-b-expected.png:
+        * platform/mac/svg/clip-path/clip-in-mask-expected.checksum: Added.
+        * platform/mac/svg/clip-path/clip-in-mask-expected.png: Added.
+        * platform/mac/svg/clip-path/clip-in-mask-expected.txt: Added.
+        * platform/mac/svg/clip-path/clip-in-mask-objectBoundingBox-expected.checksum: Added.
+        * platform/mac/svg/clip-path/clip-in-mask-objectBoundingBox-expected.png: Added.
+        * platform/mac/svg/clip-path/clip-in-mask-objectBoundingBox-expected.txt: Added.
+        * platform/mac/svg/clip-path/clip-in-mask-userSpaceOnUse-expected.checksum: Added.
+        * platform/mac/svg/clip-path/clip-in-mask-userSpaceOnUse-expected.png: Added.
+        * platform/mac/svg/clip-path/clip-in-mask-userSpaceOnUse-expected.txt: Added.
+        * platform/mac/svg/clip-path/deep-nested-clip-in-mask-different-unitTypes-expected.checksum: Added.
+        * platform/mac/svg/clip-path/deep-nested-clip-in-mask-different-unitTypes-expected.png: Added.
+        * platform/mac/svg/clip-path/deep-nested-clip-in-mask-different-unitTypes-expected.txt: Added.
+        * platform/mac/svg/clip-path/deep-nested-clip-in-mask-expected.checksum: Added.
+        * platform/mac/svg/clip-path/deep-nested-clip-in-mask-expected.png: Added.
+        * platform/mac/svg/clip-path/deep-nested-clip-in-mask-expected.txt: Added.
+        * platform/mac/svg/clip-path/nested-clip-in-mask-image-based-clipping-expected.checksum: Added.
+        * platform/mac/svg/clip-path/nested-clip-in-mask-image-based-clipping-expected.png: Added.
+        * platform/mac/svg/clip-path/nested-clip-in-mask-image-based-clipping-expected.txt: Added.
+        * platform/mac/svg/clip-path/nested-clip-in-mask-path-and-image-based-clipping-expected.checksum: Added.
+        * platform/mac/svg/clip-path/nested-clip-in-mask-path-and-image-based-clipping-expected.png: Added.
+        * platform/mac/svg/clip-path/nested-clip-in-mask-path-and-image-based-clipping-expected.txt: Added.
+        * platform/mac/svg/clip-path/nested-clip-in-mask-path-based-clipping-expected.checksum: Added.
+        * platform/mac/svg/clip-path/nested-clip-in-mask-path-based-clipping-expected.png: Added.
+        * platform/mac/svg/clip-path/nested-clip-in-mask-path-based-clipping-expected.txt: Added.
+        * platform/mac/svg/custom/absolute-sized-content-with-resources-expected.checksum:
+        * platform/mac/svg/custom/absolute-sized-content-with-resources-expected.png:
+        * platform/mac/svg/custom/grayscale-gradient-mask-expected.checksum:
+        * platform/mac/svg/custom/grayscale-gradient-mask-expected.png:
+        * platform/mac/svg/custom/js-late-gradient-and-object-creation-expected.checksum:
+        * platform/mac/svg/custom/js-late-gradient-and-object-creation-expected.png:
+        * platform/mac/svg/custom/text-rotated-gradient-expected.checksum:
+        * platform/mac/svg/custom/text-rotated-gradient-expected.png:
+        * platform/mac/svg/text/selection-background-color-expected.checksum:
+        * platform/mac/svg/text/selection-background-color-expected.png:
+        * platform/mac/svg/transforms/text-with-mask-with-svg-transform-expected.checksum:
+        * platform/mac/svg/transforms/text-with-mask-with-svg-transform-expected.png:
+        * platform/mac/svg/zoom/page/zoom-mask-with-percentages-expected.checksum:
+        * platform/mac/svg/zoom/page/zoom-mask-with-percentages-expected.png:
+        * svg/clip-path/clip-in-mask-objectBoundingBox.svg: Added.
+        * svg/clip-path/clip-in-mask-userSpaceOnUse.svg: Added.
+        * svg/clip-path/clip-in-mask.svg: Added.
+        * svg/clip-path/deep-nested-clip-in-mask-different-unitTypes.svg: Added.
+        * svg/clip-path/deep-nested-clip-in-mask.svg: Added.
+        * svg/clip-path/nested-clip-in-mask-image-based-clipping.svg: Added.
+        * svg/clip-path/nested-clip-in-mask-path-and-image-based-clipping.svg: Added.
+        * svg/clip-path/nested-clip-in-mask-path-based-clipping.svg: Added.
+
 2010-08-24  Andrei Popescu  <andreip@dhcp-172-16-14-12.lon.corp.google.com>
 
         Reviewed by Jeremy Orlow.
