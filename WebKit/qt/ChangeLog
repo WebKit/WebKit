@@ -1,3 +1,11 @@
+2010-08-24  Andras Becsi  <abecsi@inf.u-szeged.hu>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Fix predeclared variables for Symbian to be able to build QtWebKit for Symbian on Linux.
+
+        * Api/DerivedSources.pro:
+
 2010-08-20  Girish Ramakrishnan  <girish@forwardbias.in>
 
         Reviewed by Ariya Hidayat.

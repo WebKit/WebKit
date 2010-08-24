@@ -10,15 +10,14 @@ DESTDIR = ../../../include/QtWebKit
 QUOTE = ""
 DOUBLE_ESCAPED_QUOTE = ""
 ESCAPE = ""
-win32-msvc*|symbian {
-    ESCAPE = "^"
-} else:win32-g++*:isEmpty(QMAKE_SH) {
+contains(QMAKE_HOST.os, "Windows"):isEmpty(QMAKE_SH) {
     # MinGW's make will run makefile commands using sh, even if make
     #  was run from the Windows shell, if it finds sh in the path.
     ESCAPE = "^"
 } else {
     QUOTE = "\'"
     DOUBLE_ESCAPED_QUOTE = "\\\'"
+    ESCAPE = "\\"
 }
 
 qtheader_module.target = $${DESTDIR}/QtWebKit
