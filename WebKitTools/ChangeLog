@@ -1,3 +1,13 @@
+2010-08-24  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        Set a device to the event struct when building with GTK+ 3.x, it's
+        mandatory.
+
+        * DumpRenderTree/gtk/EventSender.cpp:
+        (keyDownCallback):
+
 2010-08-24  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

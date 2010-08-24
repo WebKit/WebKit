@@ -557,7 +557,9 @@ static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JS
     pressEvent->key.state = state;
     pressEvent->key.window = gtk_widget_get_window(GTK_WIDGET(view));
     g_object_ref(pressEvent->key.window);
-
+#ifndef GTK_API_VERSION_2
+    gdk_event_set_device(pressEvent, gdk_device_get_associated_device(gdk_display_get_core_pointer(gdk_drawable_get_display(pressEvent->key.window))));
+#endif
     // When synthesizing an event, an invalid hardware_keycode value
     // can cause it to be badly processed by Gtk+.
     GdkKeymapKey* keys;

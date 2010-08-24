@@ -133,6 +133,9 @@ static JSValueRef runPasteTestCallback(JSContextRef context, JSObjectRef functio
     event->key.state = GDK_CONTROL_MASK;
     event->key.window = gtk_widget_get_window(GTK_WIDGET(currentFixture->webView));
     g_object_ref(event->key.window);
+#ifndef GTK_API_VERSION_2
+    gdk_event_set_device(event, gdk_device_get_associated_device(gdk_display_get_core_pointer(gdk_drawable_get_display(event->key.window))));
+#endif
     GdkKeymapKey* keys;
     gint n_keys;
     if (gdk_keymap_get_entries_for_keyval(gdk_keymap_get_default(), event->key.keyval, &keys, &n_keys)) {
