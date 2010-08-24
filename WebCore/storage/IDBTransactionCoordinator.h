@@ -36,6 +36,7 @@
 namespace WebCore {
 
 class IDBTransactionCallbacks;
+class IDBDatabaseBackendImpl;
 
 // This class manages transactions as follows. Requests for new transactions are
 // always satisfied and the new transaction is placed in a queue.
@@ -47,12 +48,13 @@ class IDBTransactionCallbacks;
 // The Coordinator maintains a pool of threads. If there are no threads available
 // the next transaction in the queue will have to wait until a thread becomes
 // available.
+// Transactions are executed in the order the were created.
 class IDBTransactionCoordinator : public RefCounted<IDBTransactionCoordinator> {
 public:
     static PassRefPtr<IDBTransactionCoordinator> create() { return adoptRef(new IDBTransactionCoordinator()); }
     virtual ~IDBTransactionCoordinator();
 
-    PassRefPtr<IDBTransactionBackendInterface> createTransaction(DOMStringList* objectStores, unsigned short mode, unsigned long timeout);
+    PassRefPtr<IDBTransactionBackendInterface> createTransaction(DOMStringList* objectStores, unsigned short mode, unsigned long timeout, IDBDatabaseBackendImpl*);
     void abort(int transactionId);
 
 private:

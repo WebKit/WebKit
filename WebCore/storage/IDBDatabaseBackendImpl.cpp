@@ -174,7 +174,7 @@ void IDBDatabaseBackendImpl::removeObjectStore(const String& name, PassRefPtr<ID
 
 PassRefPtr<IDBTransactionBackendInterface> IDBDatabaseBackendImpl::transaction(DOMStringList* objectStores, unsigned short mode, unsigned long timeout)
 {
-    return m_transactionCoordinator->createTransaction(objectStores, mode, timeout);
+    return m_transactionCoordinator->createTransaction(objectStores, mode, timeout, this);
 }
 
 void IDBDatabaseBackendImpl::loadObjectStores()

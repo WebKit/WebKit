@@ -35,9 +35,11 @@
 
 namespace WebCore {
 
+class IDBDatabaseBackendImpl;
+
 class IDBTransactionBackendImpl : public IDBTransactionBackendInterface {
 public:
-    static PassRefPtr<IDBTransactionBackendInterface> create(DOMStringList* objectStores, unsigned short mode, unsigned long timeout, int id);
+    static PassRefPtr<IDBTransactionBackendInterface> create(DOMStringList* objectStores, unsigned short mode, unsigned long timeout, int id, IDBDatabaseBackendImpl*);
     virtual ~IDBTransactionBackendImpl() { }
 
     virtual PassRefPtr<IDBObjectStoreBackendInterface> objectStore(const String& name);
@@ -48,7 +50,7 @@ public:
     virtual void setCallbacks(IDBTransactionCallbacks* callbacks) { m_callbacks = callbacks; }
 
 private:
-    IDBTransactionBackendImpl(DOMStringList* objectStores, unsigned short mode, unsigned long timeout, int id);
+    IDBTransactionBackendImpl(DOMStringList* objectStores, unsigned short mode, unsigned long timeout, int id, IDBDatabaseBackendImpl*);
 
     RefPtr<DOMStringList> m_objectStoreNames;
     unsigned short m_mode;
@@ -56,6 +58,7 @@ private:
     int m_id;
     bool m_aborted;
     RefPtr<IDBTransactionCallbacks> m_callbacks;
+    RefPtr<IDBDatabaseBackendImpl> m_database;
 };
 
 } // namespace WebCore
