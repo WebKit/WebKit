@@ -1,5 +1,16 @@
 2010-08-24  Dumitru Daniliuc  <dumi@chromium.org>
 
+        Unreviewed, more Chromium-specific expectations.
+
+        * platform/chromium-mac/fast/repaint/multicol-repaint-expected.checksum: Added.
+        * platform/chromium-mac/fast/repaint/multicol-repaint-expected.png: Added.
+        * platform/chromium-win/fast/repaint/multicol-repaint-expected.checksum: Added.
+        * platform/chromium-win/fast/repaint/multicol-repaint-expected.png: Added.
+        * platform/chromium-win/fast/repaint/multicol-repaint-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
+2010-08-24  Dumitru Daniliuc  <dumi@chromium.org>
+
         Unreviewed, updating Chromium-specific expectations.
 
         * platform/chromium-linux/svg/W3C-SVG-1.1/text-text-01-b-expected.checksum:
