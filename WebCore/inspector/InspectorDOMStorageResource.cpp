@@ -37,8 +37,8 @@
 #include "DOMWindow.h"
 #include "EventNames.h"
 #include "Frame.h"
+#include "InspectorFrontend.h"
 #include "InspectorValues.h"
-#include "RemoteInspectorFrontend.h"
 #include "Storage.h"
 #include "StorageEvent.h"
 
@@ -64,7 +64,7 @@ bool InspectorDOMStorageResource::isSameHostAndType(Frame* frame, bool isLocalSt
     return equalIgnoringCase(m_frame->document()->securityOrigin()->host(), frame->document()->securityOrigin()->host()) && m_isLocalStorage == isLocalStorage;
 }
 
-void InspectorDOMStorageResource::bind(RemoteInspectorFrontend* frontend)
+void InspectorDOMStorageResource::bind(InspectorFrontend* frontend)
 {
     ASSERT(!m_frontend);
     m_frontend = frontend;

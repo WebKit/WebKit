@@ -42,7 +42,7 @@
 
 namespace WebCore {
 class Event;
-class RemoteInspectorFrontend;
+class InspectorFrontend;
 class IntRect;
 class ResourceRequest;
 class ResourceResponse;
@@ -74,11 +74,11 @@ enum TimelineRecordType {
 
 class InspectorTimelineAgent : ScriptGCEventListener, public Noncopyable {
 public:
-    InspectorTimelineAgent(RemoteInspectorFrontend* frontend);
+    InspectorTimelineAgent(InspectorFrontend* frontend);
     ~InspectorTimelineAgent();
 
     void reset();
-    void resetFrontendProxyObject(RemoteInspectorFrontend*);
+    void resetFrontendProxyObject(InspectorFrontend*);
 
     // Methods called from WebCore.
     void willCallFunction(const String& scriptName, int scriptLine);
@@ -152,7 +152,7 @@ private:
 
     void pushGCEventRecords();
 
-    RemoteInspectorFrontend* m_frontend;
+    InspectorFrontend* m_frontend;
 
     Vector<TimelineRecordEntry> m_recordStack;
     static int s_instanceCount;

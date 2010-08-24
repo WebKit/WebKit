@@ -57,7 +57,7 @@ namespace WebCore {
     class Element;
     class Event;
     class InspectorDOMAgent;
-    class RemoteInspectorFrontend;
+    class InspectorFrontend;
     class MatchJob;
     class NameNodeMap;
     class Node;
@@ -80,7 +80,7 @@ namespace WebCore {
 
     class InspectorDOMAgent : public EventListener {
     public:
-        static PassRefPtr<InspectorDOMAgent> create(InspectorCSSStore* cssStore, RemoteInspectorFrontend* frontend)
+        static PassRefPtr<InspectorDOMAgent> create(InspectorCSSStore* cssStore, InspectorFrontend* frontend)
         {
             return adoptRef(new InspectorDOMAgent(cssStore, frontend));
         }
@@ -92,7 +92,7 @@ namespace WebCore {
                 : 0;
         }
 
-        InspectorDOMAgent(InspectorCSSStore* cssStore, RemoteInspectorFrontend* frontend);
+        InspectorDOMAgent(InspectorCSSStore* cssStore, InspectorFrontend* frontend);
         ~InspectorDOMAgent();
 
         void reset();
@@ -202,7 +202,7 @@ namespace WebCore {
         void discardBindings();
 
         InspectorCSSStore* m_cssStore;
-        RemoteInspectorFrontend* m_frontend;
+        InspectorFrontend* m_frontend;
         NodeToIdMap m_documentNodeToIdMap;
         // Owns node mappings for dangling nodes.
         Vector<NodeToIdMap*> m_danglingNodeToIdMaps;

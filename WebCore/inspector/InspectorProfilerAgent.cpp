@@ -34,10 +34,10 @@
 
 #include "Console.h"
 #include "InspectorController.h"
+#include "InspectorFrontend.h"
 #include "InspectorValues.h"
 #include "KURL.h"
 #include "Page.h"
-#include "RemoteInspectorFrontend.h"
 #include "ScriptDebugServer.h"
 #include "ScriptProfile.h"
 #include "ScriptProfiler.h"
@@ -60,7 +60,7 @@ PassOwnPtr<InspectorProfilerAgent> InspectorProfilerAgent::create(InspectorContr
 
 InspectorProfilerAgent::InspectorProfilerAgent(InspectorController* inspectorController)
     : m_inspectorController(inspectorController)
-    , m_remoteFrontend(0)
+    , m_frontend(0)
     , m_enabled(ScriptProfiler::isProfilerAlwaysEnabled())
     , m_recordingUserInitiatedProfile(false)
     , m_currentUserInitiatedProfileNumber(-1)
@@ -76,8 +76,8 @@ void InspectorProfilerAgent::addProfile(PassRefPtr<ScriptProfile> prpProfile, un
 {
     RefPtr<ScriptProfile> profile = prpProfile;
     m_profiles.add(profile->uid(), profile);
-    if (m_remoteFrontend)
-        m_remoteFrontend->addProfileHeader(createProfileHeader(*profile));
+    if (m_frontend)
+        m_frontend->addProfileHeader(createProfileHeader(*profile));
     addProfileFinishedMessageToConsole(profile, lineNumber, sourceURL);
 }
 
@@ -110,8 +110,8 @@ void InspectorProfilerAgent::disable()
         return;
     m_enabled = false;
     ScriptDebugServer::shared().recompileAllJSFunctionsSoon();
-    if (m_remoteFrontend)
-        m_remoteFrontend->profilerWasDisabled();
+    if (m_frontend)
+        m_frontend->profilerWasDisabled();
 }
 
 void InspectorProfilerAgent::enable(bool skipRecompile)
@@ -121,8 +121,8 @@ void InspectorProfilerAgent::enable(bool skipRecompile)
     m_enabled = true;
     if (!skipRecompile)
         ScriptDebugServer::shared().recompileAllJSFunctionsSoon();
-    if (m_remoteFrontend)
-        m_remoteFrontend->profilerWasEnabled();
+    if (m_frontend)
+        m_frontend->profilerWasEnabled();
 }
 
 String InspectorProfilerAgent::getCurrentUserInitiatedProfileName(bool incrementProfileNumber)
@@ -160,8 +160,8 @@ void InspectorProfilerAgent::resetState()
     m_profiles.clear();
     m_currentUserInitiatedProfileNumber = 1;
     m_nextUserInitiatedProfileNumber = 1;
-    if (m_remoteFrontend)
-        m_remoteFrontend->resetProfilesPanel();
+    if (m_frontend)
+        m_frontend->resetProfilesPanel();
 }
 
 void InspectorProfilerAgent::startUserInitiatedProfiling()
@@ -201,8 +201,8 @@ void InspectorProfilerAgent::stopUserInitiatedProfiling()
 
 void InspectorProfilerAgent::toggleRecordButton(bool isProfiling)
 {
-    if (m_remoteFrontend)
-        m_remoteFrontend->setRecordingProfile(isProfiling);
+    if (m_frontend)
+        m_frontend->setRecordingProfile(isProfiling);
 }
 
 } // namespace WebCore

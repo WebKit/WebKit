@@ -39,13 +39,13 @@
 
 namespace WebCore {
 class Database;
-class RemoteInspectorFrontend;
+class InspectorFrontend;
 
 class InspectorDatabaseResource : public RefCounted<InspectorDatabaseResource> {
 public:
     static PassRefPtr<InspectorDatabaseResource> create(PassRefPtr<Database> database, const String& domain, const String& name, const String& version);
 
-    void bind(RemoteInspectorFrontend* frontend);
+    void bind(InspectorFrontend* frontend);
     void unbind();
     Database* database() { return m_database.get(); }
     long id() const { return m_id; }

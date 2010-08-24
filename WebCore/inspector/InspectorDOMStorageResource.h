@@ -43,7 +43,7 @@ namespace WebCore {
 
     class Storage;
     class Frame;
-    class RemoteInspectorFrontend;
+    class InspectorFrontend;
 
     class InspectorDOMStorageResource : public EventListener {
     public:
@@ -56,7 +56,7 @@ namespace WebCore {
             return listener->type() == InspectorDOMStorageResourceType ? static_cast<const InspectorDOMStorageResource*>(listener) : 0;
         }
 
-        void bind(RemoteInspectorFrontend* frontend);
+        void bind(InspectorFrontend* frontend);
         void unbind();
         void startReportingChangesToFrontend();
 
@@ -74,7 +74,7 @@ namespace WebCore {
         RefPtr<Storage> m_domStorage;
         bool m_isLocalStorage;
         RefPtr<Frame> m_frame;
-        RemoteInspectorFrontend* m_frontend;
+        InspectorFrontend* m_frontend;
         int m_id;
         bool m_reportingChangesToFrontend;
 

@@ -35,11 +35,11 @@
 namespace WebCore {
 
 class Database;
-class RemoteInspectorFrontend;
+class InspectorFrontend;
 
 class InspectorStorageAgent : public RefCounted<InspectorStorageAgent> {
 public:
-    static PassRefPtr<InspectorStorageAgent> create(RemoteInspectorFrontend* frontend)
+    static PassRefPtr<InspectorStorageAgent> create(InspectorFrontend* frontend)
     {
         return adoptRef(new InspectorStorageAgent(frontend));
     }
@@ -48,13 +48,13 @@ public:
 
     long executeSQL(Database*, const String& query);
 
-    RemoteInspectorFrontend* frontend() { return m_frontend; }
+    InspectorFrontend* frontend() { return m_frontend; }
     void clearFrontend();
 
 private:
-    InspectorStorageAgent(RemoteInspectorFrontend*);
+    InspectorStorageAgent(InspectorFrontend*);
 
-    RemoteInspectorFrontend* m_frontend;
+    InspectorFrontend* m_frontend;
 };
 
 } // namespace WebCore

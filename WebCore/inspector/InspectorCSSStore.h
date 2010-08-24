@@ -38,7 +38,6 @@ namespace WebCore {
 
 class Document;
 class InspectorController;
-class InspectorFrontend;
 class CSSMutableStyleDeclaration;
 class CSSStyleDeclaration;
 class CSSRuleList;

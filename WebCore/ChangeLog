@@ -1,3 +1,124 @@
+2010-08-24  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        WebInspector: RemoteInspectorFrontend can be renamed to InspectorFrontend.
+        The old version of InspectorFrontend was removed some time ago and now
+        it is possible to rename the new version of inspector frontend class to its
+        original name.
+        https://bugs.webkit.org/show_bug.cgi?id=44499
+
+        * GNUmakefile.am:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.pri:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/CodeGeneratorInspector.pm:
+        * inspector/ConsoleMessage.cpp:
+        (WebCore::ConsoleMessage::addToFrontend):
+        (WebCore::ConsoleMessage::updateRepeatCountInConsole):
+        * inspector/ConsoleMessage.h:
+        * inspector/InjectedScriptHost.cpp:
+        (WebCore::InjectedScriptHost::pushNodePathToFrontend):
+        (WebCore::InjectedScriptHost::frontend):
+        * inspector/InjectedScriptHost.h:
+        * inspector/InspectorApplicationCacheAgent.cpp:
+        (WebCore::InspectorApplicationCacheAgent::InspectorApplicationCacheAgent):
+        * inspector/InspectorApplicationCacheAgent.h:
+        * inspector/InspectorBackend.cpp:
+        (WebCore::InspectorBackend::dispatchOnInjectedScript):
+        (WebCore::InspectorBackend::frontend):
+        * inspector/InspectorBackend.h:
+        * inspector/InspectorCSSStore.cpp:
+        * inspector/InspectorCSSStore.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::inspectedPageDestroyed):
+        (WebCore::InspectorController::inspect):
+        (WebCore::InspectorController::focusNode):
+        (WebCore::InspectorController::windowVisible):
+        (WebCore::InspectorController::addConsoleMessage):
+        (WebCore::InspectorController::clearConsoleMessages):
+        (WebCore::InspectorController::inspectedWindowScriptObjectCleared):
+        (WebCore::InspectorController::setSearchingForNode):
+        (WebCore::InspectorController::setMonitoringXHR):
+        (WebCore::InspectorController::connectFrontend):
+        (WebCore::InspectorController::show):
+        (WebCore::InspectorController::showPanel):
+        (WebCore::InspectorController::close):
+        (WebCore::InspectorController::disconnectFrontend):
+        (WebCore::InspectorController::populateScriptObjects):
+        (WebCore::InspectorController::pruneResources):
+        (WebCore::InspectorController::didCommitLoad):
+        (WebCore::InspectorController::didLoadResourceFromMemoryCache):
+        (WebCore::InspectorController::identifierForInitialRequest):
+        (WebCore::InspectorController::mainResourceFiredDOMContentEvent):
+        (WebCore::InspectorController::mainResourceFiredLoadEvent):
+        (WebCore::InspectorController::willSendRequest):
+        (WebCore::InspectorController::didReceiveResponse):
+        (WebCore::InspectorController::didReceiveContentLength):
+        (WebCore::InspectorController::didFinishLoading):
+        (WebCore::InspectorController::didFailLoading):
+        (WebCore::InspectorController::resourceRetrievedByXMLHttpRequest):
+        (WebCore::InspectorController::scriptImported):
+        (WebCore::InspectorController::enableResourceTracking):
+        (WebCore::InspectorController::disableResourceTracking):
+        (WebCore::InspectorController::startTimelineProfiler):
+        (WebCore::InspectorController::stopTimelineProfiler):
+        (WebCore::InspectorController::postWorkerNotificationToFrontend):
+        (WebCore::InspectorController::didCreateWorker):
+        (WebCore::InspectorController::didDestroyWorker):
+        (WebCore::InspectorController::selectDatabase):
+        (WebCore::InspectorController::didOpenDatabase):
+        (WebCore::InspectorController::didUseDOMStorage):
+        (WebCore::InspectorController::selectDOMStorage):
+        (WebCore::InspectorController::enableDebuggerFromFrontend):
+        (WebCore::InspectorController::enableDebugger):
+        (WebCore::InspectorController::disableDebugger):
+        (WebCore::InspectorController::evaluateForTestInFrontend):
+        * inspector/InspectorController.h:
+        (WebCore::InspectorController::hasFrontend):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::InspectorDOMAgent):
+        * inspector/InspectorDOMAgent.h:
+        (WebCore::InspectorDOMAgent::create):
+        * inspector/InspectorDOMStorageResource.cpp:
+        (WebCore::InspectorDOMStorageResource::bind):
+        * inspector/InspectorDOMStorageResource.h:
+        * inspector/InspectorDatabaseResource.cpp:
+        (WebCore::InspectorDatabaseResource::bind):
+        * inspector/InspectorDatabaseResource.h:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::create):
+        (WebCore::InspectorDebuggerAgent::InspectorDebuggerAgent):
+        (WebCore::InspectorDebuggerAgent::setPauseOnExceptionsState):
+        (WebCore::InspectorDebuggerAgent::didParseSource):
+        (WebCore::InspectorDebuggerAgent::failedToParseSource):
+        (WebCore::InspectorDebuggerAgent::didPause):
+        (WebCore::InspectorDebuggerAgent::didContinue):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/InspectorProfilerAgent.cpp:
+        (WebCore::InspectorProfilerAgent::InspectorProfilerAgent):
+        (WebCore::InspectorProfilerAgent::addProfile):
+        (WebCore::InspectorProfilerAgent::disable):
+        (WebCore::InspectorProfilerAgent::enable):
+        (WebCore::InspectorProfilerAgent::resetState):
+        (WebCore::InspectorProfilerAgent::toggleRecordButton):
+        * inspector/InspectorProfilerAgent.h:
+        (WebCore::InspectorProfilerAgent::setFrontend):
+        * inspector/InspectorResource.cpp:
+        (WebCore::InspectorResource::updateScriptObject):
+        (WebCore::InspectorResource::releaseScriptObject):
+        * inspector/InspectorResource.h:
+        * inspector/InspectorStorageAgent.cpp:
+        (WebCore::InspectorStorageAgent::InspectorStorageAgent):
+        * inspector/InspectorStorageAgent.h:
+        (WebCore::InspectorStorageAgent::create):
+        (WebCore::InspectorStorageAgent::frontend):
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::InspectorTimelineAgent):
+        (WebCore::InspectorTimelineAgent::resetFrontendProxyObject):
+        * inspector/InspectorTimelineAgent.h:
+
 2010-08-24  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.

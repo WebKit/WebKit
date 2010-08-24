@@ -35,14 +35,14 @@ namespace WebCore {
 
 class InspectorArray;
 class InspectorController;
+class InspectorFrontend;
 class InspectorObject;
 class InspectorValue;
-class RemoteInspectorFrontend;
 class ResourceResponse;
 
 class InspectorApplicationCacheAgent : public Noncopyable {
 public:
-    InspectorApplicationCacheAgent(InspectorController* inspectorController, RemoteInspectorFrontend* frontend);
+    InspectorApplicationCacheAgent(InspectorController* inspectorController, InspectorFrontend* frontend);
     ~InspectorApplicationCacheAgent() { }
 
     // Backend to Frontend
@@ -59,7 +59,7 @@ private:
     PassRefPtr<InspectorObject> buildObjectForApplicationCacheResource(const ApplicationCacheHost::ResourceInfo&);
 
     InspectorController* m_inspectorController;
-    RemoteInspectorFrontend* m_frontend;
+    InspectorFrontend* m_frontend;
 };
 
 } // namespace WebCore

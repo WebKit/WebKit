@@ -44,8 +44,8 @@ $typeTransform{"Profiler"} = {
     "domainAccessor" => "m_inspectorController->profilerAgent()",
 };
 $typeTransform{"Frontend"} = {
-    "forward" => "RemoteInspectorFrontend",
-    "header" => "RemoteInspectorFrontend.h",
+    "forward" => "InspectorFrontend",
+    "header" => "InspectorFrontend.h",
 };
 $typeTransform{"PassRefPtr"} = {
     "forwardHeader" => "wtf/PassRefPtr.h",
@@ -200,7 +200,7 @@ sub GenerateInterface
 
     my $className = $interface->name;
 
-    $frontendClassName = "Remote" . $className . "Frontend";
+    $frontendClassName = $className . "Frontend";
     $frontendConstructor = "    ${frontendClassName}(InspectorClient* inspectorClient) : m_inspectorClient(inspectorClient) { }";
     $frontendFooter = "    InspectorClient* m_inspectorClient;";
     $frontendTypes{"String"} = 1;

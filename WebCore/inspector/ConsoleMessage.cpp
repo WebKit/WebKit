@@ -38,7 +38,7 @@
 #include "ScriptValue.h"
 
 #if ENABLE(INSPECTOR)
-#include "RemoteInspectorFrontend.h"
+#include "InspectorFrontend.h"
 #endif
 
 namespace WebCore {
@@ -114,7 +114,7 @@ ConsoleMessage::ConsoleMessage(MessageSource s, MessageType t, MessageLevel l, c
 }
 
 #if ENABLE(INSPECTOR)
-void ConsoleMessage::addToFrontend(RemoteInspectorFrontend* frontend, InjectedScriptHost* injectedScriptHost)
+void ConsoleMessage::addToFrontend(InspectorFrontend* frontend, InjectedScriptHost* injectedScriptHost)
 {
     RefPtr<InspectorObject> jsonObj = InspectorObject::create();
     jsonObj->setNumber("source", static_cast<int>(m_source));
@@ -149,7 +149,7 @@ void ConsoleMessage::addToFrontend(RemoteInspectorFrontend* frontend, InjectedSc
     frontend->addConsoleMessage(jsonObj);
 }
 
-void ConsoleMessage::updateRepeatCountInConsole(RemoteInspectorFrontend* frontend)
+void ConsoleMessage::updateRepeatCountInConsole(InspectorFrontend* frontend)
 {
     frontend->updateConsoleMessageRepeatCount(m_repeatCount);
 }

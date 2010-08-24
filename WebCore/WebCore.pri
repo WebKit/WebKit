@@ -555,7 +555,7 @@ idl.depends = $$PWD/bindings/scripts/CodeGenerator.pm \
 addExtraCompiler(idl)
 
 # GENERATOR 2: inspector idl compiler
-inspectorIDL.output = $${WC_GENERATED_SOURCES_DIR}/Remote${QMAKE_FILE_BASE}Frontend.cpp $${WC_GENERATED_SOURCES_DIR}/${QMAKE_FILE_BASE}BackendDispatcher.cpp
+inspectorIDL.output = $${WC_GENERATED_SOURCES_DIR}/${QMAKE_FILE_BASE}Frontend.cpp $${WC_GENERATED_SOURCES_DIR}/${QMAKE_FILE_BASE}BackendDispatcher.cpp
 inspectorIDL.input = INSPECTOR_INTERFACES
 inspectorIDL.wkScript = $$PWD/bindings/scripts/generate-bindings.pl
 inspectorIDL.commands = perl -I$$PWD/bindings/scripts -I$$PWD/inspector $$inspectorIDL.wkScript --defines \"$${FEATURE_DEFINES_JAVASCRIPT}\" --generator Inspector --outputDir $$WC_GENERATED_SOURCES_DIR --preprocessor \"$${QMAKE_MOC} -E\" ${QMAKE_FILE_NAME}

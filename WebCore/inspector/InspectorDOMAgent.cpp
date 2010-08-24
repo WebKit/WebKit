@@ -54,12 +54,12 @@
 #include "FrameTree.h"
 #include "HTMLElement.h"
 #include "HTMLFrameOwnerElement.h"
+#include "InspectorFrontend.h"
 #include "MutationEvent.h"
 #include "Node.h"
 #include "NodeList.h"
 #include "Pasteboard.h"
 #include "PlatformString.h"
-#include "RemoteInspectorFrontend.h"
 #include "RenderStyle.h"
 #include "RenderStyleConstants.h"
 #include "ScriptDebugServer.h"
@@ -207,7 +207,7 @@ const int domBreakpointDerivedTypeShift = 16;
 
 InspectorDOMAgent* InspectorDOMAgent::s_domAgentOnBreakpoint = 0;
 
-InspectorDOMAgent::InspectorDOMAgent(InspectorCSSStore* cssStore, RemoteInspectorFrontend* frontend)
+InspectorDOMAgent::InspectorDOMAgent(InspectorCSSStore* cssStore, InspectorFrontend* frontend)
     : EventListener(InspectorDOMAgentType)
     , m_cssStore(cssStore)
     , m_frontend(frontend)

@@ -41,7 +41,6 @@
 #include "InspectorController.h"
 #include "InspectorResource.h"
 #include "PlatformString.h"
-#include "RemoteInspectorFrontend.h"
 #include "StyleSheetList.h"
 
 namespace WebCore {

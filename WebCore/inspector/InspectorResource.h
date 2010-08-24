@@ -46,7 +46,7 @@ namespace WebCore {
     class CachedResource;
     class DocumentLoader;
     class Frame;
-    class RemoteInspectorFrontend;
+    class InspectorFrontend;
     class ResourceLoadTiming;
     class ResourceRequest;
     class ResourceResponse;
@@ -76,8 +76,8 @@ namespace WebCore {
         ~InspectorResource();
 
         PassRefPtr<InspectorResource> appendRedirect(unsigned long identifier, const KURL& redirectURL);
-        void updateScriptObject(RemoteInspectorFrontend* frontend);
-        void releaseScriptObject(RemoteInspectorFrontend* frontend);
+        void updateScriptObject(InspectorFrontend* frontend);
+        void releaseScriptObject(InspectorFrontend* frontend);
 
         void updateRequest(const ResourceRequest&);
         void updateResponse(const ResourceResponse&);

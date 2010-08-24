@@ -40,8 +40,8 @@
 #include "InjectedScriptHost.h"
 #include "InspectorController.h"
 #include "InspectorDOMAgent.h"
+#include "InspectorFrontend.h"
 #include "InspectorStorageAgent.h"
-#include "RemoteInspectorFrontend.h"
 #include "ScriptBreakpoint.h"
 #include "ScriptProfiler.h"
 #include "SerializedScriptValue.h"
@@ -88,7 +88,7 @@ void InspectorBackend::setInjectedScriptSource(const String& source)
 
 void InspectorBackend::dispatchOnInjectedScript(long injectedScriptId, const String& methodName, const String& arguments, RefPtr<InspectorValue>* result, bool* hadException)
 {
-    if (!remoteFrontend())
+    if (!frontend())
         return;
 
     // FIXME: explicitly pass injectedScriptId along with node id to the frontend.
@@ -137,9 +137,9 @@ void InspectorBackend::executeSQL(long databaseId, const String& query, bool* su
 
 #endif
 
-RemoteInspectorFrontend* InspectorBackend::remoteFrontend()
+InspectorFrontend* InspectorBackend::frontend()
 {
-    return m_inspectorController->m_remoteFrontend.get();
+    return m_inspectorController->m_frontend.get();
 }
 
 } // namespace WebCore

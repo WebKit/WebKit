@@ -33,8 +33,8 @@
 
 #if ENABLE(DATABASE) && ENABLE(INSPECTOR)
 #include "Database.h"
+#include "InspectorFrontend.h"
 #include "InspectorValues.h"
-#include "RemoteInspectorFrontend.h"
 
 namespace WebCore {
 
@@ -55,7 +55,7 @@ InspectorDatabaseResource::InspectorDatabaseResource(PassRefPtr<Database> databa
 {
 }
 
-void InspectorDatabaseResource::bind(RemoteInspectorFrontend* frontend)
+void InspectorDatabaseResource::bind(InspectorFrontend* frontend)
 {
     if (m_scriptObjectCreated)
         return;

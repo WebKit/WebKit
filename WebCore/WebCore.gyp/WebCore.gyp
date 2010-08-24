@@ -287,8 +287,8 @@
             '<(SHARED_INTERMEDIATE_DIR)/webcore/InspectorBackendDispatcher.cpp',
             '<(SHARED_INTERMEDIATE_DIR)/webcore/InspectorBackendStub.js',
             '<(SHARED_INTERMEDIATE_DIR)/webkit/InspectorBackendDispatcher.h',
-            '<(SHARED_INTERMEDIATE_DIR)/webcore/RemoteInspectorFrontend.cpp',
-            '<(SHARED_INTERMEDIATE_DIR)/webkit/RemoteInspectorFrontend.h',
+            '<(SHARED_INTERMEDIATE_DIR)/webcore/InspectorFrontend.cpp',
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/InspectorFrontend.h',
           ],
           'variables': {
             'generator_include_dirs': [
@@ -757,7 +757,7 @@
         '<(SHARED_INTERMEDIATE_DIR)/webkit/XPathGrammar.cpp',
 
         # Additional .cpp files from the webcore_inspector_sources list.
-        '<(SHARED_INTERMEDIATE_DIR)/webcore/RemoteInspectorFrontend.cpp',
+        '<(SHARED_INTERMEDIATE_DIR)/webcore/InspectorFrontend.cpp',
         '<(SHARED_INTERMEDIATE_DIR)/webcore/InspectorBackendDispatcher.cpp',
       ],
       'conditions': [

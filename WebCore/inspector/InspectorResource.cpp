@@ -38,8 +38,8 @@
 #include "DocLoader.h"
 #include "DocumentLoader.h"
 #include "Frame.h"
+#include "InspectorFrontend.h"
 #include "InspectorValues.h"
-#include "RemoteInspectorFrontend.h"
 #include "ResourceLoadTiming.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
@@ -175,7 +175,7 @@ static PassRefPtr<InspectorObject> buildObjectForTiming(ResourceLoadTiming* timi
 }
 
 
-void InspectorResource::updateScriptObject(RemoteInspectorFrontend* frontend)
+void InspectorResource::updateScriptObject(InspectorFrontend* frontend)
 {
     if (m_changes.hasChange(NoChange))
         return;
@@ -251,7 +251,7 @@ void InspectorResource::updateScriptObject(RemoteInspectorFrontend* frontend)
     m_changes.clearAll();
 }
 
-void InspectorResource::releaseScriptObject(RemoteInspectorFrontend* frontend)
+void InspectorResource::releaseScriptObject(InspectorFrontend* frontend)
 {
     m_changes.setAll();
 
