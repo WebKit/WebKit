@@ -1261,6 +1261,7 @@ http/tests/xmlhttprequest/web-apps/010.html
 svg/css/composite-shadow-example.html
 svg/css/composite-shadow-with-opacity.html
 svg/custom/getPresentationAttribute-modify.svg
+svg/custom/js-update-stop-linked-gradient.svg
 
 # Possible bug in eventSender.zoomPageOut() ? https://bugs.webkit.org/show_bug.cgi?id=30575
 fast/dom/elementFromPoint-relative-to-viewport.html
@@ -5729,6 +5730,14 @@ svg/custom/mask-on-multiple-objects.svg
 svg/filters/filter-clip.svg
 fast/backgrounds/animated-svg-as-mask.html
 fast/backgrounds/svg-as-mask.html
+svg/W3C-SVG-1.1/filters-turb-02-f.svg
+svg/custom/absolute-sized-content-with-resources.xhtml
+svg/custom/marker-child-changes-css.svg
+svg/custom/mask-colorspace.svg
+svg/custom/recursive-mask.svg
+svg/filters/feGaussianBlur.svg
+svg/transforms/text-with-mask-with-svg-transform.svg
+svg/zoom/page/zoom-mask-with-percentages.svg
 
 # Setting CSS properties such as padding and margin does not work properly
 # on form elements: https://bugs.webkit.org/show_bug.cgi?id=40855
@@ -5924,3 +5933,8 @@ inspector/dom-breakpoints.html
 # https://bugs.webkit.org/show_bug.cgi?id=44316
 platform/gtk/accessibility/object-attributes.html
 platform/gtk/accessibility/title-and-alt.html
+
+# [GTK] GTK+ does not support hyphenation
+# https://bugs.webkit.org/show_bug.cgi?id=44478
+fast/text/hyphenate-first-word.html
+fast/text/hyphenate-locale.html

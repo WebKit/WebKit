@@ -1,0 +1,33 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x108
+  RenderBlock {html} at (0,0) size 800x108
+    RenderBody {body} at (8,16) size 784x76
+      RenderBlock {p} at (0,0) size 784x30
+        RenderText {#text} at (0,2) size 44x20
+          text run at (0,2) width 44: "under: "
+        RenderBlock {math} at (44,0) size 14x30
+          RenderBlock {munder} at (1,0) size 12x30
+            RenderBlock {munder} at (0,0) size 12x17
+              RenderInline {mi} at (0,0) size 12x21
+                RenderText {#text} at (0,-2) size 12x21
+                  text run at (0,-2) width 12: "B"
+            RenderBlock {munder} at (0,14) size 12x16
+              RenderInline {mi} at (0,0) size 6x16
+                RenderText {#text} at (3,1) size 6x16
+                  text run at (3,1) width 6: "x"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {p} at (0,46) size 784x30
+        RenderText {#text} at (0,2) size 44x20
+          text run at (0,2) width 44: "under: "
+        RenderBlock {math} at (44,0) size 14x30
+          RenderBlock {munder} at (1,0) size 12x30
+            RenderBlock {munder} at (0,0) size 12x17
+              RenderInline {mi} at (0,0) size 12x21
+                RenderText {#text} at (0,-2) size 12x21
+                  text run at (0,-2) width 12: "B"
+            RenderBlock {munder} at (0,14) size 12x16
+              RenderInline {mi} at (0,0) size 8x16
+                RenderText {#text} at (2,1) size 8x16
+                  text run at (2,1) width 8: "X"
+        RenderText {#text} at (0,0) size 0x0

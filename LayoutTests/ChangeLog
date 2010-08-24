@@ -1,3 +1,43 @@
+2010-08-23  Martin Robinson  <mrobinson@igalia.com>
+
+        Rebaseline new tests and skip tests which produce incorrect output.
+
+        * platform/gtk/Skipped:
+        * platform/gtk/fast/canvas/setWidthResetAfterForcedRender-expected.txt: Added.
+        * platform/gtk/fast/repaint/multicol-repaint-expected.txt: Added.
+        * platform/gtk/fast/repaint/view-background-from-body-1-expected.txt: Copied from LayoutTests/platform/mac/fast/repaint/view-background-from-body-1-expected.txt.
+        * platform/gtk/fast/repaint/view-background-from-body-2-expected.txt: Copied from LayoutTests/platform/mac/fast/repaint/view-background-from-body-2-expected.txt.
+        * platform/gtk/http/tests/misc/slow-loading-image-in-pattern-expected.txt: Added.
+        * platform/gtk/mathml/presentation/attributes-expected.txt: Added.
+        * platform/gtk/mathml/presentation/fenced-expected.txt: Added.
+        * platform/gtk/mathml/presentation/fractions-expected.txt: Added.
+        * platform/gtk/mathml/presentation/fractions-vertical-alignment-expected.txt: Added.
+        * platform/gtk/mathml/presentation/mo-expected.txt: Added.
+        * platform/gtk/mathml/presentation/over-expected.txt: Added.
+        * platform/gtk/mathml/presentation/roots-expected.txt: Added.
+        * platform/gtk/mathml/presentation/row-alignment-expected.txt: Added.
+        * platform/gtk/mathml/presentation/row-expected.txt: Added.
+        * platform/gtk/mathml/presentation/style-expected.txt: Added.
+        * platform/gtk/mathml/presentation/subsup-expected.txt: Added.
+        * platform/gtk/mathml/presentation/tokenElements-expected.txt: Added.
+        * platform/gtk/mathml/presentation/under-expected.txt: Added.
+        * platform/gtk/mathml/presentation/underover-expected.txt: Added.
+        * platform/gtk/svg/batik/paints/patternRegions-positioned-objects-expected.txt: Added.
+        * platform/gtk/svg/custom/convolution-crash-expected.txt: Copied from LayoutTests/platform/mac/svg/custom/convolution-crash-expected.txt.
+        * platform/gtk/svg/custom/marker-empty-path-expected.txt: Copied from LayoutTests/platform/mac/svg/custom/marker-empty-path-expected.txt.
+        * platform/gtk/svg/custom/path-zero-strokewidth-expected.txt: Added.
+        * platform/gtk/svg/custom/pattern-incorrect-tiling-expected.txt: Added.
+        * platform/gtk/svg/custom/pattern-no-pixelation-expected.txt: Copied from LayoutTests/platform/mac/svg/custom/pattern-no-pixelation-expected.txt.
+        * platform/gtk/svg/custom/recursive-filter-expected.txt: Added.
+        * platform/gtk/svg/custom/recursive-gradient-expected.txt: Added.
+        * platform/gtk/svg/custom/recursive-mask-expected.txt: Added.
+        * platform/gtk/svg/custom/recursive-pattern-expected.txt: Added.
+        * platform/gtk/svg/custom/relative-sized-content-with-resources-expected.txt: Added.
+        * platform/gtk/svg/custom/svg-fonts-without-missing-glyph-expected.txt: Added.
+        * platform/gtk/svg/filters/filter-empty-g-expected.txt: Copied from LayoutTests/platform/mac/svg/filters/filter-empty-g-expected.txt.
+        * platform/gtk/svg/in-html/circle-expected.txt: Added.
+        * platform/gtk/svg/zoom/page/zoom-mask-with-percentages-expected.txt: Added.
+
 2010-08-23  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Alexey Proskuryakov.
