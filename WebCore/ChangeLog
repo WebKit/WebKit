@@ -1,3 +1,11 @@
+2010-08-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed.
+
+        Replaced soft tab indentation by hard tab indentation for LegacyWebArchive.h.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2010-08-24  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Mark Rowe.
