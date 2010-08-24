@@ -326,6 +326,8 @@ gtk_xtbin_new (GdkWindow *parent_window, String * f)
 {
   GtkXtBin *xtbin;
   gpointer user_data;
+  GdkVisual* visual;
+  GdkColormap* colormap;
 
   assert(parent_window != NULL);
   xtbin = g_object_new (GTK_TYPE_XTBIN, NULL);
@@ -339,10 +341,13 @@ gtk_xtbin_new (GdkWindow *parent_window, String * f)
   /* Initialize the Xt toolkit */
   xtbin->parent_window = parent_window;
 
+  visual = gtk_widget_get_default_visual();
+  colormap = gtk_widget_get_default_colormap();
+
   xt_client_init(&(xtbin->xtclient), 
-      GDK_VISUAL_XVISUAL(gdk_rgb_get_visual()),
-      GDK_COLORMAP_XCOLORMAP(gdk_rgb_get_colormap()),
-      gdk_visual_get_depth(gdk_rgb_get_visual()));
+                 GDK_VISUAL_XVISUAL(visual),
+                 GDK_COLORMAP_XCOLORMAP(colormap),
+                 gdk_visual_get_depth(visual));
 
   if (!xtbin->xtclient.xtdisplay) {
     /* If XtOpenDisplay failed, we can't go any further.

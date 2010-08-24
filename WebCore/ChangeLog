@@ -1,3 +1,15 @@
+2010-08-24  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Update code to compile with latest GTK+ 3.x.
+
+        * platform/gtk/gtk2drawing.c:
+        (TSOffsetStyleGCs):
+        (moz_gtk_entry_paint):
+        * plugins/gtk/gtk2xtbin.c:
+        (gtk_xtbin_new):
+
 2010-08-24  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.

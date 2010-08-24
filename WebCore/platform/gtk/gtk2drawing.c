@@ -732,6 +732,7 @@ ConvertGtkState(GtkWidgetState* state)
         return GTK_STATE_NORMAL;
 }
 
+#ifdef GTK_API_VERSION_2
 static gint
 TSOffsetStyleGCArray(GdkGC** gcs, gint xorigin, gint yorigin)
 {
@@ -741,10 +742,12 @@ TSOffsetStyleGCArray(GdkGC** gcs, gint xorigin, gint yorigin)
         gdk_gc_set_ts_origin(gcs[i], xorigin, yorigin);
     return MOZ_GTK_SUCCESS;
 }
+#endif
 
 static gint
 TSOffsetStyleGCs(GtkStyle* style, gint xorigin, gint yorigin)
 {
+#ifdef GTK_API_VERSION_2
     TSOffsetStyleGCArray(style->fg_gc, xorigin, yorigin);
     TSOffsetStyleGCArray(style->bg_gc, xorigin, yorigin);
     TSOffsetStyleGCArray(style->light_gc, xorigin, yorigin);
@@ -754,6 +757,7 @@ TSOffsetStyleGCs(GtkStyle* style, gint xorigin, gint yorigin)
     TSOffsetStyleGCArray(style->base_gc, xorigin, yorigin);
     gdk_gc_set_ts_origin(style->black_gc, xorigin, yorigin);
     gdk_gc_set_ts_origin(style->white_gc, xorigin, yorigin);
+#endif
     return MOZ_GTK_SUCCESS;
 }
 
@@ -1578,8 +1582,17 @@ moz_gtk_entry_paint(GdkDrawable* drawable, GdkRectangle* rect,
     if (theme_honors_transparency) {
         g_object_set_data(G_OBJECT(widget), "transparent-bg-hint", GINT_TO_POINTER(TRUE));
     } else {
+#ifndef GTK_API_VERSION_2
+        cairo_t* cr = gdk_cairo_create(drawable);
+        gdk_cairo_set_source_color(cr, (const GdkColor*)&style->base[bg_state]);
+        cairo_pattern_set_extend (cairo_get_source(cr), CAIRO_EXTEND_REPEAT);
+        gdk_cairo_rectangle(cr, cliprect);
+        cairo_fill(cr);
+        cairo_destroy(cr);
+#else
         gdk_draw_rectangle(drawable, style->base_gc[bg_state], TRUE,
                            cliprect->x, cliprect->y, cliprect->width, cliprect->height);
+#endif
         g_object_set_data(G_OBJECT(widget), "transparent-bg-hint", GINT_TO_POINTER(FALSE));
     }
 
