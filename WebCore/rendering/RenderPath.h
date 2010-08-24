@@ -70,6 +70,7 @@ private:
 
 private:
     virtual AffineTransform localTransform() const { return m_localTransform; }
+    void fillAndStrokePath(GraphicsContext*);
 
     bool m_needsBoundariesUpdate : 1;
     bool m_needsPathUpdate : 1;

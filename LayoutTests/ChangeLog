@@ -1,3 +1,17 @@
+2010-08-24  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Markers don't render, when applied to a target using vector-effect="non-scaling-stroke"
+        https://bugs.webkit.org/show_bug.cgi?id=44511
+
+        Add new test verifying that markers can be appplied to objects using vector-effect="non-scaling-stroke".
+
+        * platform/mac/svg/custom/non-scaling-stroke-markers-expected.checksum: Added.
+        * platform/mac/svg/custom/non-scaling-stroke-markers-expected.png: Added.
+        * platform/mac/svg/custom/non-scaling-stroke-markers-expected.txt: Added.
+        * svg/custom/non-scaling-stroke-markers.svg: Added.
+
 2010-08-24  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Tor Arne Vestbø.

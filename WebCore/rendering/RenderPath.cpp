@@ -127,33 +127,43 @@ void RenderPath::layout()
     setNeedsLayout(false);
 }
 
-static inline void fillAndStrokePath(const Path& path, GraphicsContext* context, RenderPath* object)
+void RenderPath::fillAndStrokePath(GraphicsContext* context)
 {
     context->beginPath();
-    RenderStyle* style = object->style();
+    RenderStyle* style = this->style();
 
-    if (RenderSVGResource* fillPaintingResource = RenderSVGResource::fillPaintingResource(object, style)) {
-        context->addPath(path);
-        if (fillPaintingResource->applyResource(object, style, context, ApplyToFillMode))
-            fillPaintingResource->postApplyResource(object, context, ApplyToFillMode);
+    if (RenderSVGResource* fillPaintingResource = RenderSVGResource::fillPaintingResource(this, style)) {
+        context->addPath(m_path);
+        if (fillPaintingResource->applyResource(this, style, context, ApplyToFillMode))
+            fillPaintingResource->postApplyResource(this, context, ApplyToFillMode);
     }
 
-    if (RenderSVGResource* strokePaintingResource = RenderSVGResource::strokePaintingResource(object, style)) {
-        if (style->svgStyle()->vectorEffect() == VE_NON_SCALING_STROKE) {
-            SVGStyledTransformableElement* element = static_cast<SVGStyledTransformableElement*>(object->node());
-            AffineTransform transform = element->getScreenCTM(SVGLocatable::DisallowStyleUpdate);
-            if (!transform.isInvertible())
-                return;
+    RenderSVGResource* strokePaintingResource = RenderSVGResource::strokePaintingResource(this, style);
+    if (!strokePaintingResource)
+        return;
 
-            Path transformedPath = path;
-            context->concatCTM(transform.inverse());
-            transformedPath.transform(transform);
-            context->addPath(transformedPath);
-        } else
-            context->addPath(path);
-        if (strokePaintingResource->applyResource(object, style, context, ApplyToStrokeMode))
-            strokePaintingResource->postApplyResource(object, context, ApplyToStrokeMode);
-    }
+    bool restoreContext = false;
+    if (style->svgStyle()->vectorEffect() == VE_NON_SCALING_STROKE) {
+        SVGStyledTransformableElement* element = static_cast<SVGStyledTransformableElement*>(node());
+        AffineTransform nonScalingStrokeTransform = element->getScreenCTM(SVGLocatable::DisallowStyleUpdate);
+        if (!nonScalingStrokeTransform.isInvertible())
+            return;
+
+        Path transformedPath = m_path;
+        transformedPath.transform(nonScalingStrokeTransform);
+
+        context->save();
+        context->concatCTM(nonScalingStrokeTransform.inverse());
+        context->addPath(transformedPath);
+        restoreContext = true;
+    } else
+        context->addPath(m_path);
+
+    if (strokePaintingResource->applyResource(this, style, context, ApplyToStrokeMode))
+        strokePaintingResource->postApplyResource(this, context, ApplyToStrokeMode);
+
+    if (restoreContext)
+        context->restore();
 }
 
 void RenderPath::paint(PaintInfo& paintInfo, int, int)
@@ -180,7 +190,7 @@ void RenderPath::paint(PaintInfo& paintInfo, int, int)
                 if (svgStyle->shapeRendering() == SR_CRISPEDGES)
                     childPaintInfo.context->setShouldAntialias(false);
 
-                fillAndStrokePath(m_path, childPaintInfo.context, this);
+                fillAndStrokePath(childPaintInfo.context);
 
                 if (svgStyle->hasMarkers())
                     m_markerLayoutInfo.drawMarkers(childPaintInfo);

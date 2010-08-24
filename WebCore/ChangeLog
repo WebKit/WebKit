@@ -1,3 +1,21 @@
+2010-08-24  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Markers don't render, when applied to a target using vector-effect="non-scaling-stroke"
+        https://bugs.webkit.org/show_bug.cgi?id=44511
+
+        Make fillAndStrokePath a member function of RenderPath, to avoid having to pass the const Path& and this paramters.
+        Don't leave the GraphicsContext mutated after applying non-scaling-stroke transformation, otherwhise markers will be renderer
+        in the wrong coordinate space, and thus don't show up anymore.
+
+        Test: svg/custom/non-scaling-stroke-markers.svg
+
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::fillAndStrokePath):
+        (WebCore::RenderPath::paint):
+        * rendering/RenderPath.h:
+
 2010-08-24  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
