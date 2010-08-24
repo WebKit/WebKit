@@ -1,3 +1,14 @@
+2010-08-24  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: fix gcc warnings introduced in 65731
+        https://bugs.webkit.org/show_bug.cgi?id=44468
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::didInsertDOMNode):
+        (WebCore::InspectorDOMAgent::pauseOnBreakpoint):
+
 2010-08-24  Ariya Hidayat  <ariya@sencha.com>
 
         Reviewed by Simon Hausmann.
