@@ -1,3 +1,15 @@
+2010-08-24  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by Dumitru Daniliuc.
+
+        Speculative fix for layout test failures on Chrome/Linux.
+        https://bugs.webkit.org/show_bug.cgi?id=44550
+
+        Tests fast/canvas/arc-crash.html, fast/canvas/canvas-state-intact-after-putImageData.html, and fast/canvas/toDataURL-supportedTypes.html are failing on Chrome/Linux.  Can't repro the failure locally, but this fix can't hurt.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::paintRenderingResultsToCanvas):
+
 2010-08-24  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Dimitri Glazkov.
