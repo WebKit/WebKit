@@ -1,3 +1,13 @@
+2010-08-24  Adam Barth  <abarth@webkit.org>
+
+        Update baselines for Tiger bot.  I'm not sure why these didn't turn up
+        when running the tests locally.  The limits are slightly different in
+        the new parser, so we'll need to adjust these tests.
+
+        * fast/parser/block-nesting-cap-expected.txt:
+        * fast/parser/block-nesting-cap-table-expected.txt:
+        * fast/parser/element-nesting-cap-expected.txt:
+
 2010-08-24  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Tor Arne Vestbø and Nikolas Zimmermann.

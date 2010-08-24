@@ -3,9 +3,9 @@ Test that the HTML parser does not allow the nesting depth of any elements to ex
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS s3.parentNode === s1 is true
+FAIL s3.parentNode === s1 should be true. Was false.
 PASS s2.parentNode === s1 is true
-PASS s3.previousSibling === s2 is true
+FAIL s3.previousSibling === s2 should be true. Was false.
 PASS successfullyParsed is true
 
 TEST COMPLETE

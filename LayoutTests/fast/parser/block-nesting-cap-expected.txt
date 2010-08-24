@@ -3,9 +3,9 @@ Test that the HTML parser does not allow the nesting depth of "block-level" elem
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS d4096.parentNode === d4094 is true
+FAIL d4096.parentNode === d4094 should be true. Was false.
 PASS d4095.parentNode === d4094 is true
-PASS d4096.previousSibling === d4095 is true
+FAIL d4096.previousSibling === d4095 should be true. Was false.
 PASS successfullyParsed is true
 
 TEST COMPLETE
