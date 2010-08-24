@@ -1,3 +1,19 @@
+2010-08-24  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        perf tests are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=44199
+
+        Speculative fix for perf test flakiness. Use chromium.Interval
+        to get a microsecond granularity timer. If this does end up
+        reducing flakiness, then we can expose something similar for
+        JSC and/or layoutTestController.
+
+        * resources/magnitude-perf.js:
+        (Magnitude._runIteration):
+        (Magnitude):
+
 2010-08-24  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

@@ -203,14 +203,30 @@ Magnitude._runIteration = function(setup, test, magnitude, milliseconds, runsPer
     Magnitude._debug('run iteration. magnitude ' + magnitude + " milliseconds " + milliseconds + " runsPerIteration " + runsPerIteration);
     setup(magnitude);
 
-    var start = Date.now();
     var iterations = 0;
-    while (Date.now() - start < milliseconds) {
-        // Loop runsPerIteration times to reduce errors due to the overhead and granularity of the Date object.
-        for (var i = 0; i < runsPerIteration; i++) {
-            test(magnitude);
-        }
-        iterations++;
+    if (window.chromium) {
+      // FIXME: If using microseconds turns out to be less flaky, expose microseconds
+      // from JSC or layoutTestController and use them. Otherwise, get rid of this block.
+      var microseconds = milliseconds * 1000;
+      var interval = new chromium.Interval();
+      interval.start();
+      while (interval.microseconds() < microseconds) {
+          // Loop runsPerIteration times to reduce errors due to the overhead and granularity of the Date object.
+          for (var i = 0; i < runsPerIteration; i++) {
+              test(magnitude);
+          }
+          iterations++;
+      }
+      interval.stop();
+    } else {
+      var start = Date.now();
+      while (Date.now() - start < milliseconds) {
+          // Loop runsPerIteration times to reduce errors due to the overhead and granularity of the Date object.
+          for (var i = 0; i < runsPerIteration; i++) {
+              test(magnitude);
+          }
+          iterations++;
+      }
     }
     return iterations;
 }
