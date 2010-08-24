@@ -864,12 +864,6 @@ BUG23463 WIN LINUX : svg/W3C-SVG-1.1/struct-image-02-b.svg = IMAGE+TEXT
 // Merge 39744:39829 - regression
 BUG10284 MAC : svg/custom/path-bad-data.svg = FAIL
 
-// Merge 39744:39913? - regressions
-BUG10286 LINUX : svg/W3C-SVG-1.1/animate-elem-02-t.svg = FAIL
-
-
-// Bug in Skia, see https://bugs.webkit.org/show_bug.cgi?id=24534 .
-
 // -----------------------------------------------------------------
 // End SVG Regressions
 // -----------------------------------------------------------------
@@ -927,8 +921,6 @@ BUG3244 WIN LINUX : fast/backgrounds/repeat/mask-negative-offset-repeat.html = F
 // or change the test upstream to specify explicitly what font to use.
 // The mask part of this test is totally wrong.
 BUG3244 WIN LINUX : fast/backgrounds/svg-as-background-6.html = FAIL
-
-BUG10302 LINUX : svg/W3C-SVG-1.1/pservers-grad-10-b.svg = FAIL
 
 // I find it hard to care too much about SVG failures.
 BUG10304 LINUX : svg/W3C-SVG-1.1/animate-elem-04-t.svg = FAIL

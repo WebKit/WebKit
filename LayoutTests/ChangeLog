@@ -1,3 +1,22 @@
+2010-08-24  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        [chromium] linux baselines for a few svg tests
+        https://bugs.webkit.org/show_bug.cgi?id=44286
+
+        These are all font differences from the windows and mac results.  On
+        Linux, we have stronger anti-aliasing of fonts than windows although
+        we match the windows font metrics (which is why these are only pixel
+        results).
+
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-02-t-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-02-t-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/pservers-grad-10-b-expected.checksum: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/pservers-grad-10-b-expected.png: Added.
+        * platform/chromium/drt_expectations.txt:
+        * platform/chromium/test_expectations.txt:
+
 2010-08-24  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Sam Weinig.

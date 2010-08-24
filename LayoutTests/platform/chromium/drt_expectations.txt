@@ -22,7 +22,7 @@ BUG_DRT LINUX : fast/speech/input-appearance-speechbutton.html = MISSING
 BUG48431 WIN MAC LINUX : plugins/geturlnotify-during-document-teardown.html = TEXT
 BUG48431 WIN MAC LINUX : plugins/open-and-close-window-with-plugin.html = TEXT
 
-// Just need rebaseline.
+// Needs investigation, these should match test_shell.
 // Note: We can't use the rebaseline tool for these tests at this moment.
 BUG50197 WIN LINUX : svg/dynamic-updates/SVGCircleElement-dom-cx-attr.html = IMAGE
 BUG50197 WIN LINUX : svg/dynamic-updates/SVGCircleElement-dom-cy-attr.html = IMAGE
