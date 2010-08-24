@@ -67,4 +67,15 @@ walker = document.createTreeWalker(testElement, NodeFilter.SHOW_ELEMENT, filter,
 shouldBe("walker.firstChild(); walker.currentNode.id", "'A1'");
 shouldBe("walker.nextNode(); walker.currentNode.id", "'B1'");
 
+debug("<br>Testing acceptNode callee");
+var filter = {
+  acceptNode: function(node) {
+    debug('Callee: ' + arguments.callee);
+    return NodeFilter.FILTER_ACCEPT;
+  }
+};
+walker = document.createTreeWalker(testElement, NodeFilter.SHOW_ELEMENT, filter, false);
+
+shouldBe("walker.firstChild(); walker.currentNode.id", "'A1'");
+
 var successfullyParsed = true;

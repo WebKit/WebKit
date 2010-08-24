@@ -1,3 +1,16 @@
+2010-08-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        TreeWalker is not calling acceptNode function in filter object
+        https://bugs.webkit.org/show_bug.cgi?id=35296
+        
+        Add a test for arguments.callee inside the acceptNode function.
+
+        * fast/dom/TreeWalker/acceptNode-filter-expected.txt:
+        * fast/dom/TreeWalker/script-tests/acceptNode-filter.js:
+        (filter.acceptNode):
+
 2010-08-23  Adam Barth  <abarth@webkit.org>
 
         Update the expected results for this test.  I think the new expected
