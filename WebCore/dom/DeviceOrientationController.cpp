@@ -44,9 +44,9 @@ DeviceOrientationController::DeviceOrientationController(Page* page, DeviceOrien
 void DeviceOrientationController::timerFired(Timer<DeviceOrientationController>* timer)
 {
     ASSERT_UNUSED(timer, timer == &m_timer);
-    ASSERT(!m_client || m_client->lastOrientation());
+    ASSERT(m_client->lastOrientation());
 
-    RefPtr<DeviceOrientation> orientation = m_client ?  m_client->lastOrientation() : DeviceOrientation::create();
+    RefPtr<DeviceOrientation> orientation = m_client->lastOrientation();
     RefPtr<DeviceOrientationEvent> event = DeviceOrientationEvent::create(eventNames().deviceorientationEvent, orientation.get());
 
     Vector<DOMWindow*> listenersVector;
@@ -58,11 +58,10 @@ void DeviceOrientationController::timerFired(Timer<DeviceOrientationController>*
 
 void DeviceOrientationController::addListener(DOMWindow* window)
 {
-    // If no client is present, we should fire an event with all parameters null. If
-    // the client already has an orientation, we should fire an event with that
-    // orientation. In both cases, the event is fired asynchronously, but without
+    // If the client already has an orientation, we should fire an event with that
+    // orientation. The event is fired asynchronously, but without
     // waiting for the client to get a new orientation.
-    if (!m_client || m_client->lastOrientation()) {
+    if (m_client->lastOrientation()) {
         m_newListeners.add(window);
         if (!m_timer.isActive())
             m_timer.startOneShot(0);
@@ -71,7 +70,7 @@ void DeviceOrientationController::addListener(DOMWindow* window)
     // The client must not call back synchronously.
     bool wasEmpty = m_listeners.isEmpty();
     m_listeners.add(window);
-    if (wasEmpty && m_client)
+    if (wasEmpty)
         m_client->startUpdating();
 }
 
@@ -79,7 +78,7 @@ void DeviceOrientationController::removeListener(DOMWindow* window)
 {
     m_listeners.remove(window);
     m_newListeners.remove(window);
-    if (m_listeners.isEmpty() && m_client)
+    if (m_listeners.isEmpty())
         m_client->stopUpdating();
 }
 
@@ -91,7 +90,7 @@ void DeviceOrientationController::removeAllListeners(DOMWindow* window)
 
     m_listeners.removeAll(window);
     m_newListeners.remove(window);
-    if (m_listeners.isEmpty() && m_client)
+    if (m_listeners.isEmpty())
         m_client->stopUpdating();
 }
 

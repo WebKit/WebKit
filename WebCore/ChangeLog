@@ -1,3 +1,21 @@
+2010-08-24  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Remove null-checks from DeviceOrientationController
+        https://bugs.webkit.org/show_bug.cgi?id=44504
+
+        Remove checks for m_client being NULL from DeviceOrientationController.
+        It will never be NULL, and this is checked by an ASSERT on construction.
+
+        Will be covered by layout tests for device orientation.
+
+        * dom/DeviceOrientationController.cpp:
+        (WebCore::DeviceOrientationController::timerFired):
+        (WebCore::DeviceOrientationController::addListener):
+        (WebCore::DeviceOrientationController::removeListener):
+        (WebCore::DeviceOrientationController::removeAllListeners):
+
 2010-08-24  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by Kenneth Russell.
