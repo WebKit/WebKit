@@ -1,5 +1,11 @@
 2010-08-24  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Landed wrong results in my last commit.
+
+        * platform/mac/svg/css/shadow-changes-expected.txt:
+
+2010-08-24  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Reviewed by Dirk Schulze.
 
         -webkit-svg-shadow doesn't repaint on changes
