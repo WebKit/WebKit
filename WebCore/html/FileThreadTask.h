@@ -47,7 +47,7 @@ public:
 
     static PassOwnPtr<FileThreadTaskImpl> create(T* instance, Method method)
     {
-        return new FileThreadTaskImpl(instance, method);
+        return adoptPtr(new FileThreadTaskImpl(instance, method));
     }
 
 private:
@@ -75,7 +75,7 @@ public:
 
     static PassOwnPtr<FileThreadTaskImpl> create(T* instance, Method method, Param1 parameter1)
     {
-        return new FileThreadTaskImpl(instance, method, parameter1);
+        return adoptPtr(new FileThreadTaskImpl(instance, method, parameter1));
     }
 
 private:
@@ -106,7 +106,7 @@ public:
 
     static PassOwnPtr<FileThreadTaskImpl> create(T* instance, Method method, Param1 parameter1, Param2 parameter2)
     {
-        return new FileThreadTaskImpl(instance, method, parameter1, parameter2);
+        return adoptPtr(new FileThreadTaskImpl(instance, method, parameter1, parameter2));
     }
 
 private:
@@ -140,7 +140,7 @@ public:
 
     static PassOwnPtr<FileThreadTaskImpl> create(T* instance, Method method, Param1 parameter1, Param2 parameter2, Param3 parameter3)
     {
-        return new FileThreadTaskImpl(instance, method, parameter1, parameter2, parameter3);
+        return adoptPtr(new FileThreadTaskImpl(instance, method, parameter1, parameter2, parameter3));
     }
 
 private:

@@ -72,7 +72,7 @@ void HTMLAreaElement::parseMappedAttribute(Attribute* attr)
 bool HTMLAreaElement::mapMouseEvent(int x, int y, const IntSize& size, HitTestResult& result)
 {
     if (m_lastSize != size) {
-        m_region.set(new Path(getRegion(size)));
+        m_region = adoptPtr(new Path(getRegion(size)));
         m_lastSize = size;
     }
 

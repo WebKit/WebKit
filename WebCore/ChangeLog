@@ -1,3 +1,29 @@
+2010-08-24  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Partial deployment of adoptPtr to WebCore/html
+        https://bugs.webkit.org/show_bug.cgi?id=44507
+
+        There's a lot of places that need adoptPtr in WebCore/html.  This patch
+        does some of them.  More will follow.
+
+        * html/FileThreadTask.h:
+        (WebCore::FileThreadTask0::create):
+        (WebCore::FileThreadTask1::create):
+        (WebCore::FileThreadTask2::create):
+        (WebCore::FileThreadTask3::create):
+        * html/HTMLAreaElement.cpp:
+        (WebCore::HTMLAreaElement::mapMouseEvent):
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::getContext):
+        * html/HTMLElementStack.cpp:
+        (WebCore::HTMLElementStack::insertAbove):
+        (WebCore::HTMLElementStack::pushCommon):
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::parseMappedAttribute):
+        (WebCore::HTMLEmbedElement::attach):
+
 2010-08-24  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Simon Fraser.

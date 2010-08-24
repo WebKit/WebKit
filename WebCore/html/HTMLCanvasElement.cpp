@@ -168,7 +168,7 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type, Canvas
             if (Settings* settings = document()->settings())
                 usesDashbardCompatibilityMode = settings->usesDashboardBackwardCompatibilityMode();
 #endif
-            m_context = new CanvasRenderingContext2D(this, document()->inCompatMode(), usesDashbardCompatibilityMode);
+            m_context = adoptPtr(new CanvasRenderingContext2D(this, document()->inCompatMode(), usesDashbardCompatibilityMode));
 #if ENABLE(ACCELERATED_2D_CANVAS) && USE(ACCELERATED_COMPOSITING)
             if (m_context) {
                 // Need to make sure a RenderLayer and compositing layer get created for the Canvas
