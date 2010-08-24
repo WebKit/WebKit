@@ -1,3 +1,24 @@
+2010-08-24  Marcus Bulach  <bulach@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Hooks IDBKeyPath with IDBObjectStorage::put.
+        https://bugs.webkit.org/show_bug.cgi?id=44275
+
+        Adds a mechanism to extract an IDBKey from SerializedScriptValue using IDBKeyPath
+        during IDBObjectStorage::put.
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * platform/chromium/ChromiumBridge.h:
+        * storage/IDBKeyPathBackendImpl.cpp: Added.
+        (IDBKeyPathBackendImpl::createIDBKeysFromSerializedValuesAndKeyPath):
+        * storage/IDBKeyPathBackendImpl.h: Added.
+        * storage/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::put):
+        * storage/chromium/IDBKeyPathBackendImpl.cpp: Added.
+        (WebCore::IDBKeyPathBackendImpl::createIDBKeysFromSerializedValuesAndKeyPath):
+
 2010-08-24  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.

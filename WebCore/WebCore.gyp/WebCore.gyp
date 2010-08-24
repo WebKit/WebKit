@@ -885,6 +885,9 @@
         # Don't build IDBFactoryBackendInterface.  We have our own implementation.
         '../storage/IDBFactoryBackendInterface.cpp',
 
+        # Don't build IDBKeyPathBackendImpl.  We have our own implementation.
+        '../storage/IDBKeyPathBackendImpl.cpp',
+
         # Use history/BackForwardListChromium.cpp instead.
         '../history/BackForwardListImpl.cpp',
 

@@ -44,6 +44,7 @@
 #include "WebFileUtilities.h"
 #include "WebFrameClient.h"
 #include "WebFrameImpl.h"
+#include "WebIDBKey.h"
 #include "WebImage.h"
 #include "WebKit.h"
 #include "WebKitClient.h"
@@ -51,6 +52,7 @@
 #include "WebPluginContainerImpl.h"
 #include "WebPluginListBuilderImpl.h"
 #include "WebSandboxSupport.h"
+#include "WebSerializedScriptValue.h"
 #include "WebScreenInfo.h"
 #include "WebString.h"
 #include "WebURL.h"
@@ -498,6 +500,18 @@ PassRefPtr<IDBFactoryBackendInterface> ChromiumBridge::idbFactory()
     // There's no reason why we need to allocate a new proxy each time, but
     // there's also no strong reason not to.
     return IDBFactoryBackendProxy::create();
+}
+
+void ChromiumBridge::createIDBKeysFromSerializedValuesAndKeyPath(const Vector<RefPtr<SerializedScriptValue> >& values, const String& keyPath, Vector<RefPtr<IDBKey> >& keys)
+{
+    WebVector<WebSerializedScriptValue> webValues = values;
+    WebVector<WebIDBKey> webKeys;
+    webKitClient()->createIDBKeysFromSerializedValuesAndKeyPath(webValues, WebString(keyPath), webKeys);
+
+    size_t webKeysSize = webKeys.size();
+    keys.reserveCapacity(webKeysSize);
+    for (size_t i = 0; i < webKeysSize; ++i)
+        keys.append(PassRefPtr<IDBKey>(webKeys[i]));
 }
 
 // Keygen ---------------------------------------------------------------------

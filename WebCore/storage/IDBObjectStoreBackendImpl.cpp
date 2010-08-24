@@ -33,6 +33,8 @@
 #include "IDBDatabaseBackendImpl.h"
 #include "IDBDatabaseException.h"
 #include "IDBIndexBackendImpl.h"
+#include "IDBKeyPath.h"
+#include "IDBKeyPathBackendImpl.h"
 #include "IDBKeyRange.h"
 #include "SQLiteDatabase.h"
 #include "SQLiteStatement.h"
@@ -124,18 +126,25 @@ void IDBObjectStoreBackendImpl::get(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallba
     ASSERT(query.step() != SQLResultRow);
 }
 
-void IDBObjectStoreBackendImpl::put(PassRefPtr<SerializedScriptValue> value, PassRefPtr<IDBKey> prpKey, bool addOnly, PassRefPtr<IDBCallbacks> callbacks)
+void IDBObjectStoreBackendImpl::put(PassRefPtr<SerializedScriptValue> prpValue, PassRefPtr<IDBKey> prpKey, bool addOnly, PassRefPtr<IDBCallbacks> callbacks)
 {
+    RefPtr<SerializedScriptValue> value = prpValue;
     RefPtr<IDBKey> key = prpKey;
 
     if (!m_keyPath.isNull()) {
         if (key) {
-            callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "A key was supplied for an objectStore that has a keyPath.")); 
+            callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "A key was supplied for an objectStore that has a keyPath."));
             return;
         }
-        ASSERT_NOT_REACHED();
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "FIXME: keyPath not yet supported."));
-        return;
+        Vector<RefPtr<SerializedScriptValue> > values;
+        values.append(value);
+        Vector<RefPtr<IDBKey> > idbKeys;
+        IDBKeyPathBackendImpl::createIDBKeysFromSerializedValuesAndKeyPath(values, m_keyPath, idbKeys);
+        if (idbKeys.isEmpty()) {
+            callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "An invalid keyPath was supplied for an objectStore."));
+            return;
+        }
+        key = idbKeys[0];
     }
 
     if (!key) {
