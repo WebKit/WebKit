@@ -1,3 +1,11 @@
+2010-08-24  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Unreviewed: upstreaming chromium test suppressions.
+
+        Moving entries to LayoutTests/platform/chromium/test_expectations.txt
+
+        * platform/chromium/test_expectations.txt:
+
 2010-08-23  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

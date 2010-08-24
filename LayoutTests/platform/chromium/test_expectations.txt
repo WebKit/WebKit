@@ -3242,3 +3242,11 @@ BUG53131 LINUX : fast/js/array-iterate-backwards.html = CRASH PASS
 
 // http://trac.webkit.org/changeset/65824 didn't add V8 bindings for this test
 BUG53144 : fast/dom/TreeWalker/acceptNode-filter.html = TEXT
+
+// new or failing since WebKit rev. 65740:65800
+BUG21852 MAC : fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html = TEXT
+BUG10296 LINUX DEBUG : svg/batik/paints/patternPreserveAspectRatioA.svg = IMAGE IMAGE+TEXT TIMEOUT
+BUG53073 WIN : fast/repaint/multicol-repaint.html = IMAGE+TEXT
+BUG53073 DEBUG : storage/change-version.html = CRASH PASS
+BUG53073 LINUX : svg/custom/clip-path-units-changes.svg = TEXT
+
