@@ -645,55 +645,50 @@ void GraphicsContext::fillRect(const FloatRect& rect)
         return;
 
     QPainter* p = m_data->p();
-    FloatRect normalizedRect = rect.normalized();
-
-    QRectF shadowDestRect;
-    QImage* shadowImage = 0;
-    QPainter* pShadow = 0;
-
-    if (m_data->hasShadow()) {
-        shadowImage = new QImage(roundedIntSize(normalizedRect.size()), QImage::Format_ARGB32_Premultiplied);
-        pShadow = new QPainter(shadowImage);
-        shadowDestRect = normalizedRect;
-        shadowDestRect.translate(m_data->shadow.offset);
-
-        pShadow->setCompositionMode(QPainter::CompositionMode_Source);
-        pShadow->fillRect(shadowImage->rect(), m_data->shadow.color);
-        pShadow->setCompositionMode(QPainter::CompositionMode_DestinationIn);
-    }
+    QRectF normalizedRect = rect.normalized();
+    ContextShadow* shadow = contextShadow();
 
     if (m_common->state.fillPattern) {
         AffineTransform affine;
         QBrush brush(m_common->state.fillPattern->createPlatformPattern(affine));
         QPixmap* image = m_common->state.fillPattern->tileImage()->nativeImageForCurrentFrame();
-
-        if (m_data->hasShadow()) {
-            drawRepeatPattern(pShadow, image, FloatRect(static_cast<QRectF>(shadowImage->rect())), m_common->state.fillPattern->repeatX(), m_common->state.fillPattern->repeatY());
-            pShadow->end();
-            p->drawImage(shadowDestRect, *shadowImage, shadowImage->rect());
+        QPainter* shadowPainter = m_data->hasShadow() ? shadow->beginShadowLayer(p, normalizedRect) : 0;
+        if (shadowPainter) {
+            drawRepeatPattern(shadowPainter, image, normalizedRect, m_common->state.fillPattern->repeatX(), m_common->state.fillPattern->repeatY());
+            shadowPainter->setCompositionMode(QPainter::CompositionMode_SourceIn);
+            shadowPainter->fillRect(normalizedRect, shadow->color);
+            shadow->endShadowLayer(p);
         }
         drawRepeatPattern(p, image, normalizedRect, m_common->state.fillPattern->repeatX(), m_common->state.fillPattern->repeatY());
     } else if (m_common->state.fillGradient) {
         QBrush brush(*m_common->state.fillGradient->platformGradient());
         brush.setTransform(m_common->state.fillGradient->gradientSpaceTransform());
-
-        if (m_data->hasShadow()) {
-            pShadow->fillRect(shadowImage->rect(), brush);
-            pShadow->end();
-            p->drawImage(shadowDestRect, *shadowImage, shadowImage->rect());
+        QPainter* shadowPainter = m_data->hasShadow() ? shadow->beginShadowLayer(p, normalizedRect) : 0;
+        if (shadowPainter) {
+            shadowPainter->fillRect(normalizedRect, brush);
+            shadowPainter->setCompositionMode(QPainter::CompositionMode_SourceIn);
+            shadowPainter->fillRect(normalizedRect, shadow->color);
+            shadow->endShadowLayer(p);
         }
         p->fillRect(normalizedRect, brush);
     } else {
         if (m_data->hasShadow()) {
-            pShadow->fillRect(shadowImage->rect(), p->brush());
-            pShadow->end();
-            p->drawImage(shadowDestRect, *shadowImage, shadowImage->rect());
+            if (shadow->type == ContextShadow::BlurShadow) {
+                QPainter* shadowPainter = shadow->beginShadowLayer(p, normalizedRect);
+                if (shadowPainter) {
+                    shadowPainter->fillRect(normalizedRect, p->brush());
+                    shadow->endShadowLayer(p);
+                }
+            } else {
+                // Solid rectangle fill with no blur shadow can be done faster
+                // without using the shadow layer at all.
+                QColor shadowColor = shadow->color;
+                shadowColor.setAlphaF(shadowColor.alphaF() * p->brush().color().alphaF());
+                p->fillRect(normalizedRect.translated(shadow->offset), shadowColor);
+            }
         }
         p->fillRect(normalizedRect, p->brush());
     }
-
-    delete shadowImage;
-    delete pShadow;
 }
 
 
