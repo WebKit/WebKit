@@ -178,6 +178,10 @@ StyleDifference SVGRenderStyle::diff(const SVGRenderStyle* other) const
 
     // NOTE: All comparisions below may only return StyleDifferenceRepaint
 
+    // Shadow changes need to cause repaints.
+    if (shadowSVG != other->shadowSVG)
+        return StyleDifferenceRepaint;
+
     // Painting related properties only need repaints. 
     if (miscNotEqual) {
         if (misc->floodColor != other->misc->floodColor

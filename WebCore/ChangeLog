@@ -1,3 +1,17 @@
+2010-08-24  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        -webkit-svg-shadow doesn't repaint on changes
+        https://bugs.webkit.org/show_bug.cgi?id=44521
+
+        Trivial fix, to make -webkit-svg-shadow react on changes.
+
+        Test: svg/css/shadow-changes.svg
+
+        * rendering/style/SVGRenderStyle.cpp:
+        (WebCore::SVGRenderStyle::diff): If 'svgShadow' is not equal, cause a repaint.
+
 2010-08-24  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.
