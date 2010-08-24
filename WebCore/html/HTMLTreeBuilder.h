@@ -47,7 +47,6 @@ class DocumentFragment;
 class Frame;
 class HTMLToken;
 class HTMLDocument;
-class LegacyHTMLTreeBuilder;
 class Node;
 
 class HTMLTreeBuilder : public Noncopyable {
@@ -76,10 +75,6 @@ public:
     void finished();
 
     static HTMLTokenizer::State adjustedLexerState(HTMLTokenizer::State, const AtomicString& tagName, Frame*);
-
-    // FIXME: This is a dirty, rotten hack to keep HTMLFormControlElement happy
-    // until we stop using the legacy parser. DO NOT CALL THIS METHOD.
-    LegacyHTMLTreeBuilder* legacyTreeBuilder() const { return m_legacyTreeBuilder.get(); }
 
     static bool scriptEnabled(Frame*);
     static bool pluginsEnabled(Frame*);
@@ -119,8 +114,6 @@ private:
     HTMLTreeBuilder(HTMLTokenizer*, DocumentFragment*, Element* contextElement, FragmentScriptingPermission);
 
     bool isParsingFragment() const { return !!m_fragmentContext.fragment(); }
-
-    void passTokenToLegacyParser(HTMLToken&);
 
     void processToken(AtomicHTMLToken&);
 
@@ -210,12 +203,12 @@ private:
     class FragmentParsingContext : public Noncopyable {
     public:
         FragmentParsingContext();
-        FragmentParsingContext(DocumentFragment*, Element* contextElement, FragmentScriptingPermission, bool usingLegacyTreeBuilder);
+        FragmentParsingContext(DocumentFragment*, Element* contextElement, FragmentScriptingPermission);
         ~FragmentParsingContext();
 
         Document* document() const;
         DocumentFragment* fragment() const { return m_fragment; }
-        Element* contextElement() const { ASSERT(m_fragment); ASSERT(!m_usingLegacyTreeBuilder); return m_contextElement; }
+        Element* contextElement() const { ASSERT(m_fragment); return m_contextElement; }
         FragmentScriptingPermission scriptingPermission() const { ASSERT(m_fragment); return m_scriptingPermission; }
 
         void finished();
@@ -224,7 +217,6 @@ private:
         RefPtr<Document> m_dummyDocumentForFragmentParsing;
         DocumentFragment* m_fragment;
         Element* m_contextElement;
-        bool m_usingLegacyTreeBuilder;
 
         // FragmentScriptingNotAllowed causes the Parser to remove children
         // from <script> tags (so javascript doesn't show up in pastes).
@@ -254,16 +246,13 @@ private:
     // from within parser actions.
     HTMLTokenizer* m_tokenizer;
 
-    // We're re-using logic from the old LegacyHTMLTreeBuilder while this class is being written.
-    OwnPtr<LegacyHTMLTreeBuilder> m_legacyTreeBuilder;
-
-    // These members are intentionally duplicated as the first set is a hack
-    // on top of the legacy parser which will eventually be removed.
-    RefPtr<Element> m_lastScriptElement; // FIXME: Hack for <script> support on top of the old parser.
-    int m_lastScriptElementStartLine; // FIXME: Hack for <script> support on top of the old parser.
-
     RefPtr<Element> m_scriptToProcess; // <script> tag which needs processing before resuming the parser.
     int m_scriptToProcessStartLine; // Starting line number of the script tag needing processing.
+
+    // FIXME: We probably want to remove this member.  Originally, it was
+    // created to service the legacy tree builder, but it seems to be used for
+    // some other things now.
+    int m_lastScriptElementStartLine;
 };
 
 }

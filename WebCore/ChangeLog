@@ -1,3 +1,21 @@
+2010-08-24  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Remove references to LegacyHTMLTreebuilder from HTMLTreeBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=44544
+
+        * html/HTMLDocumentParser.cpp:
+        * html/HTMLDocumentParser.h:
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::HTMLTreeBuilder):
+        (WebCore::HTMLTreeBuilder::FragmentParsingContext::FragmentParsingContext):
+        (WebCore::HTMLTreeBuilder::FragmentParsingContext::document):
+        (WebCore::HTMLTreeBuilder::constructTreeFromToken):
+        (WebCore::HTMLTreeBuilder::finished):
+        * html/HTMLTreeBuilder.h:
+        (WebCore::HTMLTreeBuilder::FragmentParsingContext::contextElement):
+
 2010-08-24  Xan Lopez  <xlopez@igalia.com>
 
         Try to fix GTK+ build.

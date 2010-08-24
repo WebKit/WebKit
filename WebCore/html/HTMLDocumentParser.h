@@ -46,7 +46,6 @@ class HTMLTokenizer;
 class HTMLScriptRunner;
 class HTMLTreeBuilder;
 class HTMLPreloadScanner;
-class LegacyHTMLTreeBuilder;
 class ScriptController;
 class ScriptSourceCode;
 
@@ -88,9 +87,6 @@ private:
     virtual void executeScriptsWaitingForStylesheets();
     virtual int lineNumber() const;
     virtual int columnNumber() const;
-    // FIXME: HTMLFormControlElement accesses the LegacyHTMLTreeBuilder via this method.
-    // Remove this when the LegacyHTMLTreeBuilder is no longer used.
-    virtual LegacyHTMLTreeBuilder* htmlTreeBuilder() const;
 
     // HTMLScriptRunnerHost
     virtual void watchForLoad(CachedResource*);

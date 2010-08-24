@@ -409,11 +409,6 @@ int HTMLDocumentParser::columnNumber() const
     return m_tokenizer->columnNumber();
 }
 
-LegacyHTMLTreeBuilder* HTMLDocumentParser::htmlTreeBuilder() const
-{
-    return m_treeBuilder->legacyTreeBuilder();
-}
-
 bool HTMLDocumentParser::isWaitingForScripts() const
 {
     return m_treeBuilder->isPaused();
