@@ -1,3 +1,32 @@
+2010-08-24  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        Fix accelerated 2d canvas with accelerated compositing off.
+        https://bugs.webkit.org/show_bug.cgi?id=44525
+
+        Tested by running with --enable-accelerated-2d-canvas with
+        --enable-accelerated-compositing off.
+        ImageBuffer::copyImage changes covered by
+        LayoutTests/fast/canvas/canvas-pattern-*.html.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::paint):
+        Extend the accelerated compositing check and the readback for
+        non-accelerated compositing to accelerated 2D canvas also.
+        * html/canvas/CanvasRenderingContext.cpp:
+        * html/canvas/CanvasRenderingContext.h:
+        (WebCore::CanvasRenderingContext::paintsIntoCanvasBuffer):
+        Move this logic from WebGL to common canvas context code.
+        * html/canvas/WebGLRenderingContext.h:
+        Remove implementation of paintsIntoCanvasBuffer.
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::ImageBuffer::copyImage):
+        When copying the image for patterns, sync the software canvas.
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::prepareForSoftwareDraw):
+        Use SkDevice::eraseColor() to clear the canvas for mixed mode rendering.
+
 2010-08-24  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

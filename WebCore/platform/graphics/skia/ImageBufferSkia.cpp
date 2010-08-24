@@ -94,6 +94,7 @@ bool ImageBuffer::drawsUsingCopy() const
 
 PassRefPtr<Image> ImageBuffer::copyImage() const
 {
+    m_context->platformContext()->syncSoftwareCanvas();
     return BitmapImageSingleFrameSkia::create(*m_data.m_platformContext.bitmap(), true);
 }
 
