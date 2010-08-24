@@ -488,11 +488,9 @@ DOM_CLASSES = \
     XSLTProcessor \
 #
 
-INSPECTOR_CLASSES = Inspector
-
 .PHONY : all
 
-JS_DOM_HEADERS=$(filter-out JSEventListener.h JSEventTarget.h,$(DOM_CLASSES:%=JS%.h) $(INSPECTOR_CLASSES:%=Remote%Frontend.h))
+JS_DOM_HEADERS=$(filter-out JSEventListener.h JSEventTarget.h,$(DOM_CLASSES:%=JS%.h))
 
 WEB_DOM_HEADERS :=
 ifeq ($(findstring BUILDING_WX,$(FEATURE_DEFINES)), BUILDING_WX)
@@ -821,10 +819,12 @@ JS%.h : %.idl $(JS_BINDINGS_SCRIPTS)
 
 # Inspector interfaces generator
 
+all : InspectorFrontend.h
+
 INSPECTOR_GENERATOR_SCRIPTS = $(GENERATE_SCRIPTS) inspector/CodeGeneratorInspector.pm
 
-Remote%Frontend.h : %.idl $(INSPECTOR_GENERATOR_SCRIPTS)
-	$(call generator_script, $(INSPECTOR_GENERATOR_SCRIPTS)) --outputDir .  --defines "$(FEATURE_DEFINES) LANGUAGE_JAVASCRIPT" --generator Inspector $<
+InspectorFrontend.h : Inspector.idl $(INSPECTOR_GENERATOR_SCRIPTS)
+	$(call generator_script, $(INSPECTOR_GENERATOR_SCRIPTS)) --outputDir . --defines "$(FEATURE_DEFINES) LANGUAGE_JAVASCRIPT" --generator Inspector $<
 
 -include $(JS_DOM_HEADERS:.h=.dep)
 

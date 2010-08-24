@@ -1,3 +1,15 @@
+2010-08-24  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Web Inspector: RemoteInspectorFrontend can be renamed to InspectorFrontend
+        https://bugs.webkit.org/show_bug.cgi?id=44499
+
+        Follow-up. No longer generate the RemoteInspectorFrontend files, just
+        generate the required InspectorFrontend files.
+
+        * DerivedSources.make:
+
 2010-08-20  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Pavel Feldman.
