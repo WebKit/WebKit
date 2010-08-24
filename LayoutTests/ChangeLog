@@ -1,3 +1,23 @@
+2010-08-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        TreeWalker traversal order is wrong when skipping and rejecting
+        https://bugs.webkit.org/show_bug.cgi?id=44377
+        
+        Add some tests for TreeWalker with node filters that skip and reject.
+
+        * fast/dom/TreeWalker/script-tests/traversal-reject.js: Added.
+        (rejectB1Filter.acceptNode):
+        (rejectB2Filter.acceptNode):
+        * fast/dom/TreeWalker/script-tests/traversal-skip.js: Added.
+        (skipB1Filter.acceptNode):
+        (skipB2Filter.acceptNode):
+        * fast/dom/TreeWalker/traversal-reject-expected.txt: Added.
+        * fast/dom/TreeWalker/traversal-reject.html: Added.
+        * fast/dom/TreeWalker/traversal-skip-expected.txt: Added.
+        * fast/dom/TreeWalker/traversal-skip.html: Added.
+
 2010-08-24  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver Hunt.
