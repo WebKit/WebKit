@@ -150,7 +150,7 @@ inline HistoryItem::HistoryItem(const HistoryItem& item)
         m_children.uncheckedAppend(item.m_children[i]->copy());
 
     if (item.m_redirectURLs)
-        m_redirectURLs.set(new Vector<String>(*item.m_redirectURLs));
+        m_redirectURLs = adoptPtr(new Vector<String>(*item.m_redirectURLs));
 }
 
 PassRefPtr<HistoryItem> HistoryItem::copy() const
@@ -553,7 +553,7 @@ void HistoryItem::mergeAutoCompleteHints(HistoryItem* otherItem)
 void HistoryItem::addRedirectURL(const String& url)
 {
     if (!m_redirectURLs)
-        m_redirectURLs.set(new Vector<String>);
+        m_redirectURLs = adoptPtr(new Vector<String>);
 
     // Our API allows us to store all the URLs in the redirect chain, but for
     // now we only have a use for the final URL.
