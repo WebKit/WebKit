@@ -1,3 +1,11 @@
+2010-08-23  Adam Barth  <abarth@webkit.org>
+
+        Update the expected results for this test.  I think the new expected
+        results are better than the old ones, but we'll check with some editing
+        folks to be sure.
+
+        * editing/execCommand/insert-list-xml-expected.txt:
+
 2010-08-23  Dumitru Daniliuc  <dumi@chromium.org>
 
         Unreviewed, updating Chromium expectations.
