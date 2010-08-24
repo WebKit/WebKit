@@ -1,3 +1,26 @@
+2010-08-24  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Paste event fires twice for mac WebKit
+        <rdar://problem/8094611>
+        https://bugs.webkit.org/show_bug.cgi?id=44535
+
+        The mac implementation of paste in WebKit was accidentally calling 
+        Editor::tryDHTMLPaste twice, once in -[WebHTMLView paste:] and once
+        in Editor::pasteAsPlainText (which is called -[WebHTMLView paste:]).
+        Use the new pasteAsPlainTextBypassingDHTML function to bypass the
+        second call.
+
+        Test: editing/pasteboard/paste-event-only-once.html
+
+        * WebCore.exp.in:
+        * editing/Editor.cpp:
+        (WebCore::Editor::pasteAsPlainTextBypassingDHTML): 
+        * editing/Editor.h:
+        Expose a function which just pastes using from the general pasteboard,
+        bypassing all the checking and DHTML pasting.
+
 2010-08-24  Nate Chapin  <japhet@chromium.org>
 
         Unreviewed.

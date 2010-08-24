@@ -1,3 +1,14 @@
+2010-08-24  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Paste event fires twice for mac WebKit
+        <rdar://problem/8094611>
+        https://bugs.webkit.org/show_bug.cgi?id=44535
+
+        * editing/pasteboard/paste-event-only-once-expected.txt: Added.
+        * editing/pasteboard/paste-event-only-once.html: Added.
+
 2010-08-24  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by David Levin.

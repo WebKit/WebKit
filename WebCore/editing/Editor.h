@@ -299,6 +299,9 @@ public:
     void pasteAsFragment(PassRefPtr<DocumentFragment>, bool smartReplace, bool matchStyle);
     void pasteAsPlainText(const String&, bool smartReplace);
 
+    // This is only necessary while paste is primarily implemented in WebKit for the mac platform.
+    void pasteAsPlainTextBypassingDHTML();
+
     Node* findEventTargetFrom(const VisibleSelection& selection) const;
 private:
     Frame* m_frame;

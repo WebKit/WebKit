@@ -5176,7 +5176,7 @@ static BOOL writingDirectionKeyBindingsEnabled()
     if (coreFrame->selection()->isContentRichlyEditable())
         [self _pasteWithPasteboard:[NSPasteboard generalPasteboard] allowPlainText:YES];
     else
-        coreFrame->editor()->pasteAsPlainText();
+        coreFrame->editor()->pasteAsPlainTextBypassingDHTML();
 }
 
 - (void)closeIfNotCurrentView
