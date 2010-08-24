@@ -37,30 +37,30 @@ class SpeechInput;
 
 class TextControlInnerElement : public HTMLDivElement {
 public:
-    static PassRefPtr<TextControlInnerElement> create(Node* shadowParent);
+    static PassRefPtr<TextControlInnerElement> create(HTMLElement* shadowParent);
 
     void attachInnerElement(Node*, PassRefPtr<RenderStyle>, RenderArena*);
 
 protected:
-    TextControlInnerElement(Document*, Node* shadowParent = 0);
+    TextControlInnerElement(Document*, HTMLElement* shadowParent = 0);
 
 private:
     virtual bool isMouseFocusable() const { return false; } 
     virtual bool isShadowNode() const { return m_shadowParent; }
-    virtual Node* shadowParentNode() { return m_shadowParent; }
-    void setShadowParentNode(Node* node) { m_shadowParent = node; }
+    virtual ContainerNode* shadowParentNode() { return m_shadowParent; }
+    void setShadowParentNode(HTMLElement* shadowParent) { m_shadowParent = shadowParent; }
 
-    Node* m_shadowParent;
+    HTMLElement* m_shadowParent;
 };
 
 class TextControlInnerTextElement : public TextControlInnerElement {
 public:
-    static PassRefPtr<TextControlInnerTextElement> create(Document*, Node* shadowParent);
+    static PassRefPtr<TextControlInnerTextElement> create(Document*, HTMLElement* shadowParent);
 
     virtual void defaultEventHandler(Event*);
 
 private:
-    TextControlInnerTextElement(Document*, Node* shadowParent);
+    TextControlInnerTextElement(Document*, HTMLElement* shadowParent);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);  
 };
 
@@ -96,11 +96,11 @@ public:
         Up,
     };
 
-    static PassRefPtr<SpinButtonElement> create(Node*);
+    static PassRefPtr<SpinButtonElement> create(HTMLElement*);
     UpDownState upDownState() const { return m_upDownState; }
 
 private:
-    SpinButtonElement(Node*);
+    SpinButtonElement(HTMLElement*);
 
     virtual bool isSpinButtonElement() const { return true; }
     // FIXME: shadowAncestorNode() should be const.

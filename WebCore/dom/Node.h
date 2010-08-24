@@ -86,8 +86,7 @@ enum StyleChangeType {
     SyntheticStyleChange = 3 << nodeStyleChangeShift
 };
 
-// this class implements nodes, which can have a parent but no children:
-class Node : public EventTarget, public TreeShared<Node>, public ScriptWrappable {
+class Node : public EventTarget, public TreeShared<ContainerNode>, public ScriptWrappable {
     friend class Document;
 public:
     enum NodeType {
@@ -134,7 +133,7 @@ public:
     virtual String nodeValue() const;
     virtual void setNodeValue(const String&, ExceptionCode&);
     virtual NodeType nodeType() const = 0;
-    Node* parentNode() const { return parent(); }
+    ContainerNode* parentNode() const { return parent(); }
     Element* parentElement() const;
     Node* previousSibling() const { return m_previous; }
     Node* nextSibling() const { return m_next; }
@@ -209,7 +208,7 @@ public:
     virtual bool isCharacterDataNode() const { return false; }
     bool isDocumentNode() const;
     virtual bool isShadowNode() const { return false; }
-    virtual Node* shadowParentNode() { return 0; }
+    virtual ContainerNode* shadowParentNode() { return 0; }
     Node* shadowAncestorNode();
     Node* shadowTreeRootNode();
     bool isInShadowTree();
@@ -591,8 +590,8 @@ public:
      */
     virtual bool disabled() const;
 
-    using TreeShared<Node>::ref;
-    using TreeShared<Node>::deref;
+    using TreeShared<ContainerNode>::ref;
+    using TreeShared<ContainerNode>::deref;
 
     virtual EventTargetData* eventTargetData();
     virtual EventTargetData* ensureEventTargetData();

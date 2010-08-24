@@ -109,7 +109,7 @@ void RenderProgress::updatePartsState()
 {
     if (shouldHaveParts() && !m_valuePart) {
         style()->setAppearance(NoControlPart);
-        m_valuePart = ShadowBlockElement::createForPart(this->node(), PROGRESS_BAR_VALUE);
+        m_valuePart = ShadowBlockElement::createForPart(static_cast<HTMLElement*>(node()), PROGRESS_BAR_VALUE);
         addChild(m_valuePart->renderer());
     } else if (!shouldHaveParts() && m_valuePart) {
         m_valuePart->detach();

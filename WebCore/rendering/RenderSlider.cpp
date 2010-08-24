@@ -54,7 +54,7 @@ static double sliderPosition(HTMLInputElement* element)
 
 class SliderThumbElement : public ShadowBlockElement {
 public:
-    static PassRefPtr<SliderThumbElement> create(Node* shadowParent);
+    static PassRefPtr<SliderThumbElement> create(HTMLElement* shadowParent);
 
     bool inDragMode() const { return m_inDragMode; }
 
@@ -62,19 +62,19 @@ public:
     virtual void detach();
 
 private:        
-    SliderThumbElement(Node* shadowParent);
+    SliderThumbElement(HTMLElement* shadowParent);
 
     FloatPoint m_offsetToThumb;
     bool m_inDragMode;
 };
 
-inline SliderThumbElement::SliderThumbElement(Node* shadowParent)
+inline SliderThumbElement::SliderThumbElement(HTMLElement* shadowParent)
     : ShadowBlockElement(shadowParent)
     , m_inDragMode(false)
 {
 }
 
-inline PassRefPtr<SliderThumbElement> SliderThumbElement::create(Node* shadowParent)
+inline PassRefPtr<SliderThumbElement> SliderThumbElement::create(HTMLElement* shadowParent)
 {
     return adoptRef(new SliderThumbElement(shadowParent));
 }
@@ -305,7 +305,7 @@ void RenderSlider::updateFromElement()
 {
     // Layout will take care of the thumb's size and position.
     if (!m_thumb) {
-        m_thumb = SliderThumbElement::create(node());
+        m_thumb = SliderThumbElement::create(static_cast<HTMLElement*>(node()));
         RefPtr<RenderStyle> thumbStyle = createThumbStyle(style());
         m_thumb->setRenderer(m_thumb->createRenderer(renderArena(), thumbStyle.get()));
         m_thumb->renderer()->setStyle(thumbStyle.release());

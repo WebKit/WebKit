@@ -1,3 +1,75 @@
+2010-08-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Changed type of Node::parentNode to ContainerNode so we don't have to cast,
+        since parent are all containers.
+
+        * css/CSSStyleSelector.h: Changed m_parentNode to ContainerNode*.
+
+        * dom/Document.h: Fixed the type of TreeShared in the Node constructor.
+        Yes, it's here.
+
+        * dom/Node.cpp:
+        (WebCore::Node::eventParentNode): Removed now-unneeded typecast dance.
+        (WebCore::eventTargetAsSVGElementInstance):Changed type to ContainerNode*.
+
+        * dom/Node.h: Made Node inherit from TreeShared<ContainerNode> instead of
+        from TreeShared<Node>. Removed bogus comment. Changed return type of parentNode
+        and shadowParentNode functions to ContainerNode*. Fixed using to use
+        TreeShared<ContainerNode>.
+
+        * dom/Position.h: Include ContainerNode.h instead of Node.h.
+
+        * html/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::findFosterSite): Removed now-unneeded typecast.
+
+        * rendering/MediaControlElements.h:
+        * rendering/SVGShadowTreeElements.h:
+        * rendering/TextControlInnerElements.h:
+        Changed return type of shadowParentNode functions to ContainerNode.
+
+        * rendering/RenderMeter.cpp:
+        (WebCore::RenderMeter::updatePartsState): Cast the node to HTMLElement* before
+        passing it to the function that creates the shadow element. We know the node is
+        a HTMLMeterElement, but the node function doesn't know that.
+        * rendering/RenderProgress.cpp:
+        (WebCore::RenderProgress::updatePartsState): Ditto.
+        * rendering/RenderSlider.cpp:
+        (WebCore::SliderThumbElement::SliderThumbElement): More of the same.
+        (WebCore::SliderThumbElement::create): Ditto.
+        (WebCore::RenderSlider::updateFromElement): Ditto.
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::createSubtreeIfNeeded): Ditto.
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::createSubtreeIfNeeded): Ditto.
+        * rendering/SVGShadowTreeElements.cpp:
+        (WebCore::SVGShadowTreeRootElement::SVGShadowTreeRootElement): Ditto.
+        (WebCore::SVGShadowTreeRootElement::shadowParentNode): Ditto.
+        * rendering/ShadowElement.cpp:
+        (WebCore::ShadowBlockElement::create): Ditto.
+        (WebCore::ShadowBlockElement::ShadowBlockElement): Ditto.
+        (WebCore::ShadowBlockElement::createForPart): Ditto.
+        (WebCore::ShadowInputElement::create): Ditto.
+        (WebCore::ShadowInputElement::ShadowInputElement): Ditto.
+        * rendering/ShadowElement.h:
+        (WebCore::ShadowElement::ShadowElement): Ditto.
+        (WebCore::ShadowElement::shadowParent): Ditto.
+        (WebCore::ShadowElement::shadowParentNode): Ditto.
+        * rendering/TextControlInnerElements.cpp:
+        (WebCore::TextControlInnerElement::TextControlInnerElement): Ditto.
+        (WebCore::TextControlInnerElement::create): Ditto.
+        (WebCore::TextControlInnerTextElement::TextControlInnerTextElement): Ditto.
+        (WebCore::TextControlInnerTextElement::create): Ditto.
+        (WebCore::SpinButtonElement::SpinButtonElement): Ditto.
+        (WebCore::SpinButtonElement::create): Ditto.
+
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::eventParentNode): Removed now-unneeded typecast.
+
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::title): Changed type to ContainerNode*.
+
 2010-08-23  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.

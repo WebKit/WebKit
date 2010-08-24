@@ -28,7 +28,7 @@
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
 #include "WKBundleNode.h"
-#include <WebCore/Node.h>
+#include <WebCore/ContainerNode.h>
 
 using namespace WebCore;
 using namespace WebKit;
@@ -40,5 +40,6 @@ WKStringRef WKBundleNodeCopyNodeName(WKBundleNodeRef node)
 
 WKBundleNodeRef WKBundleNodeGetParent(WKBundleNodeRef node)
 {
-    return toRef(toWK(node)->parent());
+    Node* parent = toWK(node)->parent();
+    return toRef(parent);
 }

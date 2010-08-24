@@ -26,9 +26,9 @@
 #ifndef Position_h
 #define Position_h
 
+#include "ContainerNode.h"
 #include "TextAffinity.h"
 #include "TextDirection.h"
-#include "Node.h" // for position creation functions
 #include <wtf/Assertions.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>

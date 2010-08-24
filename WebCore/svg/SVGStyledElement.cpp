@@ -80,7 +80,7 @@ String SVGStyledElement::title() const
         }
         
         // Get the <use> element.
-        Node* shadowParent = parent->shadowParentNode();
+        ContainerNode* shadowParent = parent->shadowParentNode();
         if (shadowParent && shadowParent->isSVGElement() && shadowParent->hasTagName(SVGNames::useTag)) {
             SVGUseElement* useElement = static_cast<SVGUseElement*>(shadowParent);
             // If the <use> title is not empty we found the title to use.

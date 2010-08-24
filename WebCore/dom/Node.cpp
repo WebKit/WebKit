@@ -2331,9 +2331,7 @@ void Node::getSubresourceURLs(ListHashSet<KURL>& urls) const
 
 ContainerNode* Node::eventParentNode()
 {
-    Node* parent = parentNode();
-    ASSERT(!parent || parent->isContainerNode());
-    return static_cast<ContainerNode*>(parent);
+    return parentNode();
 }
 
 Node* Node::enclosingLinkEventParentOrSelf()
@@ -2589,7 +2587,7 @@ static inline SVGElementInstance* eventTargetAsSVGElementInstance(Node* referenc
         if (!n->isShadowNode() || !n->isSVGElement())
             continue;
 
-        Node* shadowTreeParentElement = n->shadowParentNode();
+        ContainerNode* shadowTreeParentElement = n->shadowParentNode();
         ASSERT(shadowTreeParentElement->hasTagName(SVGNames::useTag));
 
         if (SVGElementInstance* instance = static_cast<SVGUseElement*>(shadowTreeParentElement)->instanceForShadowTreeElement(referenceNode))

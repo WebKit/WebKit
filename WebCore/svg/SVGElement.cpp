@@ -334,10 +334,8 @@ void SVGElement::updateAnimatedSVGAttribute(const QualifiedName& name) const
 
 ContainerNode* SVGElement::eventParentNode()
 {
-    if (Node* shadowParent = shadowParentNode()) {
-        ASSERT(shadowParent->isContainerNode());
-        return static_cast<ContainerNode*>(shadowParent);
-    }
+    if (ContainerNode* shadowParent = shadowParentNode())
+        return shadowParent;
     return StyledElement::eventParentNode();
 }
 

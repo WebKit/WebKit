@@ -612,11 +612,11 @@ void RenderTextControlSingleLine::createSubtreeIfNeeded()
 #endif
         bool hasSpinButton = inputElement()->hasSpinButton();
         if (hasSpinButton && !m_innerSpinButton) {
-            m_innerSpinButton = SpinButtonElement::create(node());
+            m_innerSpinButton = SpinButtonElement::create(static_cast<HTMLElement*>(node()));
             m_innerSpinButton->attachInnerElement(node(), createInnerSpinButtonStyle(), renderArena());
         }
         if (hasSpinButton && !m_outerSpinButton) {
-            m_outerSpinButton = SpinButtonElement::create(node());
+            m_outerSpinButton = SpinButtonElement::create(static_cast<HTMLElement*>(node()));
             m_outerSpinButton->attachInnerElement(node(), createOuterSpinButtonStyle(), renderArena());
         }
         return;
@@ -624,7 +624,7 @@ void RenderTextControlSingleLine::createSubtreeIfNeeded()
 
     if (!m_innerBlock) {
         // Create the inner block element
-        m_innerBlock = TextControlInnerElement::create(node());
+        m_innerBlock = TextControlInnerElement::create(static_cast<HTMLElement*>(node()));
         m_innerBlock->attachInnerElement(node(), createInnerBlockStyle(style()), renderArena());
     }
 #if ENABLE(INPUT_SPEECH)
@@ -635,7 +635,7 @@ void RenderTextControlSingleLine::createSubtreeIfNeeded()
     }
 #endif
     if (inputElement()->hasSpinButton() && !m_outerSpinButton) {
-        m_outerSpinButton = SpinButtonElement::create(node());
+        m_outerSpinButton = SpinButtonElement::create(static_cast<HTMLElement*>(node()));
         m_outerSpinButton->attachInnerElement(node(), createOuterSpinButtonStyle(), renderArena());
     }
 

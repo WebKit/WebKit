@@ -45,7 +45,7 @@ FloatSize SVGShadowTreeContainerElement::containerTranslation() const
 }
 
 // SVGShadowTreeRootElement
-SVGShadowTreeRootElement::SVGShadowTreeRootElement(Document* document, Node* shadowParent)
+SVGShadowTreeRootElement::SVGShadowTreeRootElement(Document* document, Element* shadowParent)
     : SVGShadowTreeContainerElement(document)
     , m_shadowParent(shadowParent)
 {

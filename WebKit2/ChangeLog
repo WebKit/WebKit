@@ -1,3 +1,12 @@
+2010-08-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        * WebProcess/InjectedBundle/API/c/WKBundleNode.cpp:
+        (WKBundleNodeGetParent): Update since parent now returns a
+        ContainerNode*. The toRef function is a bit too picky to convert
+        it without a bit of help.
+
 2010-08-23  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r65703.

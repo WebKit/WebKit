@@ -49,16 +49,16 @@ private:
 
 class SVGShadowTreeRootElement : public SVGShadowTreeContainerElement {
 public:
-    SVGShadowTreeRootElement(Document*, Node* shadowParent);
+    SVGShadowTreeRootElement(Document*, Element* shadowParent);
     virtual ~SVGShadowTreeRootElement();
 
     virtual bool isShadowNode() const { return m_shadowParent; }
-    virtual Node* shadowParentNode() { return m_shadowParent; }
+    virtual ContainerNode* shadowParentNode() { return m_shadowParent; }
 
     void attachElement(PassRefPtr<RenderStyle>, RenderArena*);
 
 private:
-    Node* m_shadowParent;
+    ContainerNode* m_shadowParent;
 };
 
 }

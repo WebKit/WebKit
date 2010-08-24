@@ -50,6 +50,7 @@ class CSSStyleSheet;
 class CSSValue;
 class CSSVariableDependentValue;
 class CSSVariablesRule;
+class ContainerNode;
 class DataGridColumn;
 class Document;
 class Element;
@@ -298,7 +299,7 @@ public:
         Element* m_element;
         StyledElement* m_styledElement;
         EInsideLink m_elementLinkState;
-        Node* m_parentNode;
+        ContainerNode* m_parentNode;
         CSSValue* m_lineHeightValue;
         bool m_fontDirty;
         bool m_matchAuthorAndUserStyles;

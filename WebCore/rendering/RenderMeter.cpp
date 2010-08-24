@@ -162,9 +162,9 @@ void RenderMeter::updatePartsState()
 {
     if (shouldHaveParts() && !m_barPart) {
         ASSERT(!m_valuePart);
-        m_barPart = ShadowBlockElement::createForPart(this->node(), barPseudoId());
+        m_barPart = ShadowBlockElement::createForPart(static_cast<HTMLElement*>(node()), barPseudoId());
         addChild(m_barPart->renderer());
-        m_valuePart = ShadowBlockElement::createForPart(this->node(), valuePseudoId());
+        m_valuePart = ShadowBlockElement::createForPart(static_cast<HTMLElement*>(node()), valuePseudoId());
         addChild(m_valuePart->renderer());
     } else if (!shouldHaveParts() && m_barPart) {
         ASSERT(m_valuePart);

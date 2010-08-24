@@ -433,7 +433,7 @@ void HTMLConstructionSite::findFosterSite(AttachmentSite& site)
     HTMLElementStack::ElementRecord* lastTableElementRecord = m_openElements.topmost(tableTag.localName());
     if (lastTableElementRecord) {
         Element* lastTableElement = lastTableElementRecord->element();
-        if (ContainerNode* parent = static_cast<ContainerNode*>(lastTableElement->parent())) {
+        if (ContainerNode* parent = lastTableElement->parent()) {
             site.parent = parent;
             site.nextChild = lastTableElement;
             return;
