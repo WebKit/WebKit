@@ -5,6 +5,38 @@
         Partial deployment of adoptPtr to WebCore/html
         https://bugs.webkit.org/show_bug.cgi?id=44507
 
+        Deploy adoptPtr to some more places in WebCore/html.  The big chunk
+        that I haven't done yet is createRenderer, but that's going to be a big
+        patch unto itself.
+
+        * html/HTMLFormCollection.cpp:
+        (WebCore::HTMLFormCollection::formCollectionInfo):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::addElementAlias):
+        * html/HTMLInputElement.cpp:
+        (WebCore::createTypeMap):
+        (WebCore::HTMLInputElement::setInputType):
+        (WebCore::HTMLInputElement::parseMappedAttribute):
+        (WebCore::HTMLInputElement::attach):
+        (WebCore::HTMLInputElement::preDispatchEventHandler):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::parseMappedAttribute):
+        (WebCore::HTMLObjectElement::attach):
+        * html/HTMLToken.h:
+        (WebCore::HTMLToken::beginDOCTYPE):
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::attach):
+        (WebCore::HTMLVideoElement::parseMappedAttribute):
+        * html/ValidityState.h:
+        (WebCore::ValidityState::create):
+
+2010-08-24  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Partial deployment of adoptPtr to WebCore/html
+        https://bugs.webkit.org/show_bug.cgi?id=44507
+
         There's a lot of places that need adoptPtr in WebCore/html.  This patch
         does some of them.  More will follow.
 

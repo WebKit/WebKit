@@ -76,7 +76,7 @@ void HTMLVideoElement::attach()
     updateDisplayState();
     if (shouldDisplayPosterImage()) {
         if (!m_imageLoader)
-            m_imageLoader.set(new HTMLImageLoader(this));
+            m_imageLoader = adoptPtr(new HTMLImageLoader(this));
         m_imageLoader->updateFromElement();
         if (renderer()) {
             RenderImage* imageRenderer = toRenderImage(renderer());
@@ -105,7 +105,7 @@ void HTMLVideoElement::parseMappedAttribute(Attribute* attr)
 #if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
         if (shouldDisplayPosterImage()) {
             if (!m_imageLoader)
-                m_imageLoader.set(new HTMLImageLoader(this));
+                m_imageLoader = adoptPtr(new HTMLImageLoader(this));
             m_imageLoader->updateFromElementIgnoringPreviousError();
         } else {
             if (m_imageLoader)

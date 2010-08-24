@@ -39,7 +39,7 @@ using namespace HTMLNames;
 inline CollectionCache* HTMLFormCollection::formCollectionInfo(HTMLFormElement* form)
 {
     if (!form->m_collectionCache)
-        form->m_collectionCache.set(new CollectionCache);
+        form->m_collectionCache = adoptPtr(new CollectionCache);
     return form->m_collectionCache.get();
 }
 

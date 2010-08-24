@@ -128,7 +128,7 @@ public:
     {
         ASSERT(m_type == Uninitialized);
         m_type = DOCTYPE;
-        m_doctypeData.set(new DoctypeData());
+        m_doctypeData = adoptPtr(new DoctypeData());
     }
 
     void beginDOCTYPE(UChar character)
