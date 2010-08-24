@@ -1,4 +1,4 @@
-Tests that disabling inherited style property does not break further style inspection.
+Tests that computed styles expand and allow tracing to style rules.
 
 ==== Computed style for ID1 ====
 [expanded]  ()
@@ -37,5 +37,6 @@ font-family: Courier;
     /-- overloaded --/ body - Arial styles-computed-trace.html:4
 
 [expanded] element.style { ()
+
 
 

@@ -1,5 +1,11 @@
 2010-08-24  Pavel Feldman  <pfeldman@chromium.org>
 
+        Not reviewed: fix new inspector test expectation.
+
+        * inspector/styles-computed-trace-expected.txt:
+
+2010-08-24  Pavel Feldman  <pfeldman@chromium.org>
+
         Reviewed by Yury Semikhatsky.
 
         Web Inspector: Trace to the style that contributes to
