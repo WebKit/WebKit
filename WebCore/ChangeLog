@@ -1,3 +1,16 @@
+2010-08-24  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        WebInspector: setAttachedWindow was modified at r65809 but it should be implemented another way.
+        https://bugs.webkit.org/show_bug.cgi?id=44493
+
+        * inspector/Inspector.idl:
+        * inspector/InspectorController.cpp:
+        * inspector/InspectorController.h:
+        * inspector/InspectorFrontendClientLocal.cpp:
+        (WebCore::InspectorFrontendClientLocal::setAttachedWindow):
+
 2010-08-23  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
