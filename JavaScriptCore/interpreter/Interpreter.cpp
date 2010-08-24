@@ -2952,7 +2952,7 @@ skip_id_custom_self:
                 JSObject* baseObject = asObject(baseCell);
                 int direct = vPC[8].u.operand;
                 
-                if (direct) {
+                if (!direct) {
                     RefPtr<Structure>* it = vPC[6].u.structureChain->head();
 
                     JSValue proto = baseObject->structure()->prototypeForLookup(callFrame);
