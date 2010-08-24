@@ -1,3 +1,16 @@
+2010-08-24  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Symbian] Fix commit/decommit of system memory using RChunk
+
+        Swap accidentially reversed start and m_base values for determining the
+        offset within the RChunk.
+
+        * wtf/PageReservation.h:
+        (WTF::PageReservation::systemCommit):
+        (WTF::PageReservation::systemDecommit):
+
 2010-08-23  Patrick Gansterer  <paroga@paroga.com>
 
         Rubber-stamped by Gabor Loki.
