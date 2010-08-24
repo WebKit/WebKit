@@ -1,3 +1,9 @@
+2010-08-23  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Unreviewed, removing a Chromium-specific expectation.
+
+        * platform/chromium-win/editing/execCommand/insert-list-xml-expected.txt: Removed.
+
 2010-08-23  Martin Robinson  <mrobinson@igalia.com>
 
         Rebaseline new tests and skip tests which produce incorrect output.
