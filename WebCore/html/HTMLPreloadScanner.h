@@ -52,9 +52,9 @@ private:
 
     Document* m_document;
     SegmentedString m_source;
-    HTMLTokenizer m_tokenizer;
-    HTMLToken m_token;
     CSSPreloadScanner m_cssScanner;
+    OwnPtr<HTMLTokenizer> m_tokenizer;
+    HTMLToken m_token;
     bool m_bodySeen;
     bool m_inStyle;
 };

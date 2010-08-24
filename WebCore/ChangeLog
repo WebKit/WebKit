@@ -1,5 +1,27 @@
 2010-08-24  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        HTMLTokenizer::create
+        https://bugs.webkit.org/show_bug.cgi?id=44477
+
+        * html/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::HTMLDocumentParser):
+        * html/HTMLPreloadScanner.cpp:
+        (WebCore::HTMLPreloadScanner::HTMLPreloadScanner):
+        (WebCore::HTMLPreloadScanner::scan):
+        (WebCore::HTMLPreloadScanner::processToken):
+        * html/HTMLPreloadScanner.h:
+        * html/HTMLTokenizer.h:
+        (WebCore::HTMLTokenizer::create):
+        * html/HTMLViewSourceParser.cpp:
+        (WebCore::HTMLViewSourceParser::HTMLViewSourceParser):
+        (WebCore::HTMLViewSourceParser::pumpTokenizer):
+        (WebCore::HTMLViewSourceParser::updateTokenizerState):
+        * html/HTMLViewSourceParser.h:
+
+2010-08-24  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Darin Adler.
 
         Remove references to LegacyHTMLTreebuilder from HTMLTreeBuilder

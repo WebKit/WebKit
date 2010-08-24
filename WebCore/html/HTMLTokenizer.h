@@ -29,6 +29,7 @@
 
 #include "SegmentedString.h"
 #include <wtf/Noncopyable.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomicString.h>
 
@@ -115,7 +116,7 @@ public:
         CDATASectionState,
     };
 
-    HTMLTokenizer();
+    static PassOwnPtr<HTMLTokenizer> create() { return adoptPtr(new HTMLTokenizer); }
     ~HTMLTokenizer();
 
     void reset();
@@ -230,6 +231,8 @@ private:
         UChar m_nextInputCharacter;
         bool m_skipNextNewLine;
     };
+
+    HTMLTokenizer();
 
     inline bool processEntity(SegmentedString&);
 

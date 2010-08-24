@@ -34,6 +34,7 @@ namespace WebCore {
 
 HTMLViewSourceParser::HTMLViewSourceParser(HTMLViewSourceDocument* document)
     : DecodedDataDocumentParser(document)
+    , m_tokenizer(HTMLTokenizer::create())
 {
 }
 
@@ -48,7 +49,7 @@ void HTMLViewSourceParser::insert(const SegmentedString&)
 
 void HTMLViewSourceParser::pumpTokenizer()
 {
-    while (m_tokenizer.nextToken(m_input.current(), m_token)) {
+    while (m_tokenizer->nextToken(m_input.current(), m_token)) {
         m_token.end(m_input.current().numberOfCharactersConsumed());
         document()->addSource(sourceForToken(), m_token);
         updateTokenizerState();
@@ -86,12 +87,12 @@ void HTMLViewSourceParser::updateTokenizerState()
         return;
 
     AtomicString tagName(m_token.name().data(), m_token.name().size());
-    m_tokenizer.setState(HTMLTreeBuilder::adjustedLexerState(m_tokenizer.state(), tagName, m_document->frame()));
+    m_tokenizer->setState(HTMLTreeBuilder::adjustedLexerState(m_tokenizer->state(), tagName, m_document->frame()));
     if (tagName == HTMLNames::scriptTag) {
         // The tree builder handles scriptTag separately from the other tokenizer
         // state adjustments, so we need to handle it separately too.
-        ASSERT(m_tokenizer.state() == HTMLTokenizer::DataState);
-        m_tokenizer.setState(HTMLTokenizer::ScriptDataState);
+        ASSERT(m_tokenizer->state() == HTMLTokenizer::DataState);
+        m_tokenizer->setState(HTMLTokenizer::ScriptDataState);
     }
 }
 
