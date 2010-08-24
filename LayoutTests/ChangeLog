@@ -1,3 +1,9 @@
+2010-08-24  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Unreviewed: trim duplicated entry from Chromium test_expectations.txt
+
+        * platform/chromium/test_expectations.txt:
+
 2010-08-24  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Jeremy Orlow.
