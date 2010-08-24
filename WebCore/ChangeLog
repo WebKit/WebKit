@@ -1,3 +1,22 @@
+2010-08-24  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Disallow setting Document.xmlVersion to unsupported versions
+        https://bugs.webkit.org/show_bug.cgi?id=44494
+
+        Added XMLDocumentParser::supportsXMLVersion() - only returns true for "1.0"
+        in both implementations.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setXMLVersion): Throw NOT_SUPPORTED_ERR
+        if XMLDocumentParser::supportsXMLVersion() returns false for the version.
+        * dom/XMLDocumentParser.h:
+        * dom/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::supportsXMLVersion):
+        * dom/XMLDocumentParserQt.cpp:
+        (WebCore::XMLDocumentParser::supportsXMLVersion):
+
 2010-08-24  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Simon Hausmann.

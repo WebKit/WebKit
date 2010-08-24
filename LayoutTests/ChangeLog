@@ -1,3 +1,24 @@
+2010-08-24  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Disallow setting Document.xmlVersion to unsupported versions
+        https://bugs.webkit.org/show_bug.cgi?id=44494
+
+        Rebaselined tests (to expect success in 9/10 cases)
+        documentsetxmlversion03.xhtml fails now (but legitimately.)
+
+        * dom/xhtml/level3/core/canonicalform06-expected.txt:
+        * dom/xhtml/level3/core/documentsetxmlversion01-expected.txt:
+        * dom/xhtml/level3/core/documentsetxmlversion03-expected.txt:
+        * dom/xhtml/level3/core/documentsetxmlversion05-expected.txt:
+        * dom/xhtml/level3/core/infoset06-expected.txt:
+        * dom/xhtml/level3/core/infoset07-expected.txt:
+        * dom/xhtml/level3/core/wellformed01-expected.txt:
+        * dom/xhtml/level3/core/wellformed02-expected.txt:
+        * dom/xhtml/level3/core/wellformed03-expected.txt:
+        * dom/xhtml/level3/core/wellformed04-expected.txt:
+
 2010-08-24  Adam Barth  <abarth@webkit.org>
 
         Update baselines for Tiger bot.  I'm not sure why these didn't turn up

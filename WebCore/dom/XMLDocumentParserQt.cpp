@@ -78,6 +78,11 @@ QString EntityResolver::resolveUndeclaredEntity(const QString &name)
 
 // --------------------------------
 
+bool XMLDocumentParser::supportsXMLVersion(const String& version)
+{
+    return version == "1.0";
+}
+
 XMLDocumentParser::XMLDocumentParser(Document* document, FrameView* frameView)
     : ScriptableDocumentParser(document)
     , m_view(frameView)

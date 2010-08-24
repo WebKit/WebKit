@@ -984,8 +984,11 @@ void Document::setXMLVersion(const String& version, ExceptionCode& ec)
         ec = NOT_SUPPORTED_ERR;
         return;
     }
-   
-    // FIXME: Also raise NOT_SUPPORTED_ERR if the version is set to a value that is not supported by this Document.
+
+    if (!XMLDocumentParser::supportsXMLVersion(version)) {
+        ec = NOT_SUPPORTED_ERR;
+        return;
+    }
 
     m_xmlVersion = version;
 }
