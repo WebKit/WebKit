@@ -1,3 +1,14 @@
+2010-08-24  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed trivial fix.
+
+        Remove wrong code from Qt that's dumping extra markup into the clipboard
+        https://bugs.webkit.org/show_bug.cgi?id=44506
+
+        After r65888 we don't need Qt specific expected result.
+
+        * platform/qt/editing/pasteboard/onpaste-text-html-expected.txt: Removed.
+
 2010-08-24  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.
