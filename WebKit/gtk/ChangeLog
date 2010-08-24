@@ -1,3 +1,14 @@
+2010-08-24  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Rubber-stamped by Xan Lopez.
+
+        Do not initialize the GSettings object in webkit_init - the other
+        call sites are always called in the main thread so this is
+        unnecessary.
+
+        * webkit/webkitprivate.cpp:
+        (webkit_init):
+
 2010-08-20  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Pavel Feldman.

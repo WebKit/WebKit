@@ -284,12 +284,6 @@ void webkit_init()
     // FIXME: Expose this with an API and/or calculate based on available resources
     webkit_set_cache_model(WEBKIT_CACHE_MODEL_WEB_BROWSER);
 
-#ifdef HAVE_GSETTINGS
-    // Initialize settings variables here to make sure this happens in
-    // the main thread.
-    inspectorGSettings();
-#endif
-
 #if ENABLE(DATABASE)
     gchar* databaseDirectory = g_build_filename(g_get_user_data_dir(), "webkit", "databases", NULL);
     webkit_set_web_database_directory_path(databaseDirectory);
