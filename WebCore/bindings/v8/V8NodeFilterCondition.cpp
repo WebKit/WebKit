@@ -62,13 +62,24 @@ short V8NodeFilterCondition::acceptNode(ScriptState* state, Node* node) const
 {
     ASSERT(v8::Context::InContext());
 
-    if (!m_filter->IsFunction())
+    if (!m_filter->IsObject())
         return NodeFilter::FILTER_ACCEPT;
 
     v8::TryCatch exceptionCatcher;
 
+    v8::Handle<v8::Function> callback;
+    if (m_filter->IsFunction())
+        callback = v8::Handle<v8::Function>::Cast(m_filter);
+    else {
+        v8::Local<v8::Value> value = m_filter->ToObject()->Get(v8::String::New("acceptNode"));
+        if (!value->IsFunction()) {
+            V8Proxy::throwError(V8Proxy::TypeError, "NodeFilter object does not have an acceptNode function");
+            return NodeFilter::FILTER_REJECT;
+        }
+        callback = v8::Handle<v8::Function>::Cast(value);
+    }
+
     v8::Handle<v8::Object> object = v8::Context::GetCurrent()->Global();
-    v8::Handle<v8::Function> callback = v8::Handle<v8::Function>::Cast(m_filter);
     OwnArrayPtr<v8::Handle<v8::Value> > args(new v8::Handle<v8::Value>[1]);
     args[0] = toV8(node);
 

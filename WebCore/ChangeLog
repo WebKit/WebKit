@@ -1,3 +1,19 @@
+2010-08-24  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Fix the NodeFilter wrapper and the binding for acceptNode.
+        https://bugs.webkit.org/show_bug.cgi?id=44542
+
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::wrapNativeNodeFilter): This function
+        should always create a filter. V8NodeFilterCondition::acceptNode()
+        will check if the given object can be used as a filter, and throw
+        an exception if it can't.
+        * bindings/v8/V8NodeFilterCondition.cpp:
+        (WebCore::V8NodeFilterCondition::acceptNode): Update this binding
+        to do the same thing that the JS binding does.
+
 2010-08-24  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Tony Chang.

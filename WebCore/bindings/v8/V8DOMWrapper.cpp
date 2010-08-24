@@ -222,9 +222,6 @@ PassRefPtr<NodeFilter> V8DOMWrapper::wrapNativeNodeFilter(v8::Handle<v8::Value> 
     // to NodeFilter. NodeFilter has a ref counted pointer to NodeFilterCondition.
     // In NodeFilterCondition, filter object is persisted in its constructor,
     // and disposed in its destructor.
-    if (!filter->IsFunction())
-        return 0;
-
     return NodeFilter::create(V8NodeFilterCondition::create(filter));
 }
 
