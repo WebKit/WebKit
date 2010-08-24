@@ -1,3 +1,28 @@
+2010-08-24  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Steve Block.
+
+        IndexedDB needs to manually delete all objectStore data and indexes
+        https://bugs.webkit.org/show_bug.cgi?id=44522
+
+        Apparently it's only newer versions of SQLite that handle cascade
+        delete.  The rest silently fail.  So do it manually.
+
+        Test: storage/indexeddb/objectstore-removeobjectstore.html
+
+        * storage/IDBDatabaseBackendImpl.cpp:
+        (WebCore::IDBDatabaseBackendImpl::createObjectStore):
+        (WebCore::doDelete):
+        (WebCore::IDBDatabaseBackendImpl::removeObjectStore):
+        * storage/IDBDatabaseBackendImpl.h:
+        * storage/IDBFactoryBackendImpl.cpp:
+        (WebCore::createTables):
+        * storage/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::removeIndex):
+        * storage/IDBObjectStoreBackendImpl.h:
+        (WebCore::IDBObjectStoreBackendImpl::create):
+        (WebCore::IDBObjectStoreBackendImpl::id):
+
 2010-08-23  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Barth.

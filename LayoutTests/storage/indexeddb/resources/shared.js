@@ -51,6 +51,14 @@ function verifyResult(result)
     debug("");
 }
 
+function unexpectedSuccessCallback()
+{
+    testFailed("Success function called unexpectedly.");
+    debug("");
+    verifySuccessEvent(event);
+    done();
+}
+
 function unexpectedErrorCallback()
 {
     testFailed("Error function called unexpectedly: (" + event.code + ") " + event.message);

@@ -39,12 +39,13 @@ class SQLiteDatabase;
 
 class IDBObjectStoreBackendImpl : public IDBObjectStoreBackendInterface {
 public:
-    static PassRefPtr<IDBObjectStoreBackendInterface> create(IDBDatabaseBackendImpl* database, int64_t id, const String& name, const String& keyPath, bool autoIncrement)
+    static PassRefPtr<IDBObjectStoreBackendImpl> create(IDBDatabaseBackendImpl* database, int64_t id, const String& name, const String& keyPath, bool autoIncrement)
     {
         return adoptRef(new IDBObjectStoreBackendImpl(database, id, name, keyPath, autoIncrement));
     }
     ~IDBObjectStoreBackendImpl();
 
+    int64_t id() const { return m_id; }
     String name() const { return m_name; }
     String keyPath() const { return m_keyPath; }
     PassRefPtr<DOMStringList> indexNames() const;

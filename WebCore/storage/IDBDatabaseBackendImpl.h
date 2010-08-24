@@ -35,6 +35,7 @@
 
 namespace WebCore {
 
+class IDBObjectStoreBackendImpl;
 class IDBTransactionCoordinator;
 class SQLiteDatabase;
 
@@ -69,7 +70,7 @@ private:
     String m_description;
     String m_version;
 
-    typedef HashMap<String, RefPtr<IDBObjectStoreBackendInterface> > ObjectStoreMap;
+    typedef HashMap<String, RefPtr<IDBObjectStoreBackendImpl> > ObjectStoreMap;
     ObjectStoreMap m_objectStores;
 
     RefPtr<IDBTransactionCoordinator> m_transactionCoordinator;

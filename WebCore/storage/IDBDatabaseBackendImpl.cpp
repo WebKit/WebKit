@@ -32,6 +32,7 @@
 #include "IDBTransactionCoordinator.h"
 #include "SQLiteDatabase.h"
 #include "SQLiteStatement.h"
+#include "SQLiteTransaction.h"
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -141,10 +142,10 @@ void IDBDatabaseBackendImpl::createObjectStore(const String& name, const String&
     ASSERT_UNUSED(ok, ok); // FIXME: Better error handling.
     int64_t id = sqliteDatabase().lastInsertRowID();
 
-    RefPtr<IDBObjectStoreBackendInterface> objectStore = IDBObjectStoreBackendImpl::create(this, id, name, keyPath, autoIncrement);
+    RefPtr<IDBObjectStoreBackendImpl> objectStore = IDBObjectStoreBackendImpl::create(this, id, name, keyPath, autoIncrement);
     ASSERT(objectStore->name() == name);
     m_objectStores.set(name, objectStore);
-    callbacks->onSuccess(objectStore.release());
+    callbacks->onSuccess(objectStore.get());
 }
 
 PassRefPtr<IDBObjectStoreBackendInterface> IDBDatabaseBackendImpl::objectStore(const String& name, unsigned short mode)
@@ -154,19 +155,31 @@ PassRefPtr<IDBObjectStoreBackendInterface> IDBDatabaseBackendImpl::objectStore(c
     return m_objectStores.get(name);
 }
 
+static void doDelete(SQLiteDatabase& db, const char* sql, int64_t id)
+{
+    SQLiteStatement deleteQuery(db, sql);
+    bool ok = deleteQuery.prepare() == SQLResultOk;
+    ASSERT_UNUSED(ok, ok); // FIXME: Better error handling.
+    deleteQuery.bindInt64(1, id);
+    ok = deleteQuery.step() == SQLResultDone;
+    ASSERT_UNUSED(ok, ok); // FIXME: Better error handling.
+}
+
 void IDBDatabaseBackendImpl::removeObjectStore(const String& name, PassRefPtr<IDBCallbacks> callbacks)
 {
-    if (!m_objectStores.contains(name)) {
+    RefPtr<IDBObjectStoreBackendImpl> objectStore = m_objectStores.get(name);
+    if (!objectStore) {
         callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::NOT_FOUND_ERR, "No objectStore with that name exists."));
         return;
     }
 
-    SQLiteStatement deleteQuery(sqliteDatabase(), "DELETE FROM ObjectStores WHERE name = ?");
-    bool ok = deleteQuery.prepare() == SQLResultOk;
-    ASSERT_UNUSED(ok, ok); // FIXME: Better error handling.
-    deleteQuery.bindText(1, name);
-    ok = deleteQuery.step() == SQLResultDone;
-    ASSERT_UNUSED(ok, ok); // FIXME: Better error handling.
+    SQLiteTransaction transaction(sqliteDatabase());
+    transaction.begin();
+    doDelete(sqliteDatabase(), "DELETE FROM ObjectStores WHERE id = ?", objectStore->id());
+    doDelete(sqliteDatabase(), "DELETE FROM ObjectStoreData WHERE objectStoreId = ?", objectStore->id());
+    doDelete(sqliteDatabase(), "DELETE FROM Indexes WHERE objectStoreId = ?", objectStore->id());
+    // FIXME: Delete index data as well.
+    transaction.commit();
 
     m_objectStores.remove(name);
     callbacks->onSuccess();

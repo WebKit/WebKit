@@ -1,0 +1,115 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../fast/js/resources/js-test-post-function.js"></script>
+<script src="resources/shared.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("Test IndexedDB's IDBObjectStore.removeObjectStore().");
+if (window.layoutTestController) 
+    layoutTestController.waitUntilDone();
+
+function test()
+{
+    result = evalAndLog("indexedDB.open('name', 'description')");
+    verifyResult(result);
+    result.onsuccess = createObjectStore;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function createObjectStore()
+{
+    verifySuccessEvent(event);
+    db = evalAndLog("db = event.result");
+
+    deleteAllObjectStores(db);
+
+    result = evalAndLog("db.createObjectStore('storeName', null)");
+    verifyResult(result);
+    result.onsuccess = addValue;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function addValue()
+{
+    verifySuccessEvent(event);
+
+    result = evalAndLog("event.result.add('value', 'key')");
+    verifyResult(result);
+    result.onsuccess = getValue;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function getValue()
+{
+    verifySuccessEvent(event);
+
+    result = evalAndLog("event.source.get('key')");
+    verifyResult(result);
+    result.onsuccess = addIndex;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function addIndex()
+{
+    verifySuccessEvent(event);
+    shouldBeEqualToString("event.result", "value");
+
+    result = evalAndLog("event.source.createIndex('indexName', '')");
+    verifyResult(result);
+    result.onsuccess = removeObjectStore;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function removeObjectStore()
+{
+    verifySuccessEvent(event);
+    shouldBeTrue("event.source.indexNames.contains('indexName')");
+
+    result = evalAndLog("db.removeObjectStore('storeName')");
+    verifyResult(result);
+    result.onsuccess = createObjectStoreAgain;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function createObjectStoreAgain()
+{
+    verifySuccessEvent(event);
+
+    result = evalAndLog("db.createObjectStore('storeName', null)");
+    verifyResult(result);
+    result.onsuccess = getValueAgain;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function getValueAgain()
+{
+    verifySuccessEvent(event);
+
+    result = evalAndLog("event.result.get('key')");
+    verifyResult(result);
+    result.onsuccess = unexpectedSuccessCallback;
+    result.onerror = verifyError;
+}
+
+function verifyError()
+{
+    verifyErrorEvent(event);
+    // FIXME: Should just be IDBDatabaseException.NOT_FOUND_ERR but that doesn't work yet.
+    shouldBe("event.code", "2");
+    shouldBeFalse("event.source.indexNames.contains('indexName')");
+
+    done();
+}
+
+test();
+
+var successfullyParsed = true;
+</script>
+</body>
+</html>
