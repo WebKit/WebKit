@@ -2580,15 +2580,6 @@ webcore_sources += \
 endif
 
 # ----
-# GTK+ 2.x/3.x support
-# ----
-
-if GTK_API_VERSION_2
-webcore_cppflags += \
-	-DGTK_API_VERSION_2=1
-endif
-
-# ----
 # icu unicode backend
 # ----
 if USE_ICU_UNICODE

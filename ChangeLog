@@ -1,3 +1,12 @@
+2010-08-24  Xan Lopez  <xlopez@igalia.com>
+
+        Try to fix GTK+ build.
+
+        Move GTK_API_VERSION_2 define to here, since we want to use it
+        outside of WebCore/WebKit.
+
+        * GNUmakefile.am:
+
 2010-08-24  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
         [EFL] Unreviewed build fix after r65891.

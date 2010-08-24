@@ -275,6 +275,14 @@ global_cppflags += \
 	-DBUILDING_GTK__=1 \
 	-DWTF_CHANGES
 
+# ----
+# GTK+ 2.x/3.x support
+# ----
+if GTK_API_VERSION_2
+global_cppflags += \
+	-DGTK_API_VERSION_2=1
+endif
+
 if USE_ICU_UNICODE
 global_cppflags += \
 	-DWTF_USE_ICU_UNICODE=1

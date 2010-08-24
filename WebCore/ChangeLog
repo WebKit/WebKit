@@ -1,3 +1,11 @@
+2010-08-24  Xan Lopez  <xlopez@igalia.com>
+
+        Try to fix GTK+ build.
+
+        Move GTK_API_VERSION_2 define out.
+
+        * GNUmakefile.am:
+
 2010-08-24  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Sam Weinig.
