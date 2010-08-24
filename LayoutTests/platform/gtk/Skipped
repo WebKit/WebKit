@@ -5657,6 +5657,7 @@ svg/overflow/overflow-on-inner-svg-element.svg
 mathml/presentation/sub.xhtml
 mathml/presentation/sup.xhtml
 mathml/presentation/tables.xhtml
+svg/custom/recursive-filter.svg
 
 # New test needs enhanced frameloader delegate logging in DRT
 # Discussed in https://bugs.webkit.org/show_bug.cgi?id=38928

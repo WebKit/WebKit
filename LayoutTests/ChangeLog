@@ -1,3 +1,10 @@
+2010-08-23  Martin Robinson  <mrobinson@igalia.com>
+
+        Skip another test which shows one pixel differences between the 32-bit and 64-bit bot.
+
+        * platform/gtk/Skipped: Skip newly failing test.
+        * platform/gtk/svg/custom/recursive-filter-expected.txt: Removed.
+
 2010-08-23  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Add tests to the Skipped list.
