@@ -1,3 +1,15 @@
+2010-08-23  Hironori Bono  <hbono@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Removes the rebaselined results for special-key-events-in-input-text.html
+        because my test_shell change fixes it and produces the expected output.
+        https://bugs.webkit.org/show_bug.cgi?id=44156
+
+        * platform/chromium-mac/fast/events/special-key-events-in-input-text-expected.txt: Removed.
+        * platform/chromium-win/fast/events/special-key-events-in-input-text-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+
 2010-08-23  Martin Robinson  <mrobinson@igalia.com>
 
         Skip another test which shows one pixel differences between the 32-bit and 64-bit bot.

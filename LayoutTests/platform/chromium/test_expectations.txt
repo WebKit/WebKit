@@ -3116,7 +3116,8 @@ BUG50969 : fast/events/keydown-numpad-keys.html = TEXT
 // See crbug.com/50637.
 BUG50637 : fast/dom/prototype-inheritance.html = FAIL
 
-BUG51036 DEBUG : fast/events/special-key-events-in-input-text.html = FAIL
+// This test needs a test_shell change.
+BUG51036 : fast/events/special-key-events-in-input-text.html = FAIL
 
 // Application Cache Quotas
 BUGWK43459 : http/tests/appcache/origin-quota.html = TEXT MISSING
