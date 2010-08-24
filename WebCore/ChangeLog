@@ -1,5 +1,14 @@
 2010-08-24  Adam Barth  <abarth@webkit.org>
 
+        Build fix.  leakPtr doesn't exist, contrary to my dreams.
+
+        * storage/IDBKeyTree.h:
+        (WebCore::::put):
+        * storage/IDBPendingTransactionMonitor.cpp:
+        (WebCore::IDBPendingTransactionMonitor::addPendingTransaction):
+
+2010-08-24  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         Deploy adoptPtr in WebCore/storage

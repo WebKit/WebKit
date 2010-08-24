@@ -40,7 +40,7 @@ bool IDBPendingTransactionMonitor::hasPendingTransactions()
 void IDBPendingTransactionMonitor::addPendingTransaction(int id)
 {
     if (!m_ids)
-        m_ids = leakPtr(new Vector<int>());
+        m_ids = new Vector<int>();
     m_ids->append(id);
 }
 
