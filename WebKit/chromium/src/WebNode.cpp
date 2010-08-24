@@ -79,7 +79,7 @@ WebNode::NodeType WebNode::nodeType() const
 
 WebNode WebNode::parentNode() const
 {
-    return WebNode(const_cast<Node*>(m_private->parentNode()));
+    return WebNode(const_cast<ContainerNode*>(m_private->parentNode()));
 }
 
 WebString WebNode::nodeName() const

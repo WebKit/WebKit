@@ -606,7 +606,7 @@ void RenderTextControlSingleLine::createSubtreeIfNeeded()
 #if ENABLE(INPUT_SPEECH)
         if (inputElement()->isSpeechEnabled() && !m_speechButton) {
             // Create the speech button element.
-            m_speechButton = InputFieldSpeechButtonElement::create(node());
+            m_speechButton = InputFieldSpeechButtonElement::create(static_cast<HTMLElement*>(node()));
             m_speechButton->attachInnerElement(node(), createSpeechButtonStyle(), renderArena());
         }
 #endif
@@ -630,7 +630,7 @@ void RenderTextControlSingleLine::createSubtreeIfNeeded()
 #if ENABLE(INPUT_SPEECH)
     if (inputElement()->isSpeechEnabled() && !m_speechButton) {
         // Create the speech button element.
-        m_speechButton = InputFieldSpeechButtonElement::create(node());
+        m_speechButton = InputFieldSpeechButtonElement::create(static_cast<HTMLElement*>(node()));
         m_speechButton->attachInnerElement(node(), createSpeechButtonStyle(), renderArena());
     }
 #endif
