@@ -24,15 +24,24 @@
             return "the string '" + result + "'";
         }
 
-        function nullTestDocumentAttribute(documentType, doc, attr, expected)
+        function nullTestDocumentAttribute(documentType, doc, attr, expected, expectedExceptionCode)
         {
-            doc[attr] = null;
-
             var result;
-            if (doc[attr] === expected)
-                result = "<span class='pass'>TEST SUCCEEDED:</span> The value was " + resultStringifier(expected) + ".";
-            else
-                result = "<span class='fail'>TEST FAILED:</span> The value should have been " + resultStringifier(expected) + " but was " + resultStringifier(doc[attr]) + ".";
+            try {
+                doc[attr] = null;
+                if (expectedExceptionCode != undefined)
+                    result = "<span class='fail'>TEST FAILED:</span> Should've thrown " + expectedExceptionCode + " but threw nothing.";
+                else if (doc[attr] === expected)
+                    result = "<span class='pass'>TEST SUCCEEDED:</span> The value was " + resultStringifier(expected) + ".";
+                else
+                    result = "<span class='fail'>TEST FAILED:</span> The value should have been " + resultStringifier(expected) + " but was " + resultStringifier(doc[attr]) + ".";
+
+            } catch (ex) {
+                if (ex.code == expectedExceptionCode)
+                    result = "<span class='pass'>TEST SUCCEEDED:</span> Got the expected exception (" + ex.code + ").";
+                else
+                    result = "<span class='fail'>TEST FAILED:</span> Should've thrown " + expectedExceptionCode + " but threw " + ex.code + ".";
+            }
 
             result += " [tested " + documentType + "." + attr + "]";
             printOut(result);
@@ -55,7 +64,7 @@
                     typeName: 'Document',
                     docToUse: xmlDoc,
                     attributes: [
-                        {name: 'xmlVersion', expectedNull: null},
+                        {name: 'xmlVersion', expectedExceptionCode: 9},
                         {name: 'documentURI', expectedNull: null},
                         {name: 'charset', expectedNull: undefined},
                         {name: 'selectedStylesheetSet', expectedNull: null}
@@ -83,7 +92,7 @@
                 var docToUse = listing[doc].docToUse;
                 var attrs = listing[doc].attributes;
                 for (attr in attrs) {
-                    nullTestDocumentAttribute(typeName, docToUse, attrs[attr].name, attrs[attr].expectedNull);
+                    nullTestDocumentAttribute(typeName, docToUse, attrs[attr].name, attrs[attr].expectedNull, attrs[attr].expectedExceptionCode);
                 }
                 printOut('');
             }
