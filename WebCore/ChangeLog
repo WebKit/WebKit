@@ -1,3 +1,27 @@
+2010-08-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Parser DOM tree manipulation functions do not need to be virtual.
+
+        * dom/ContainerNode.h: Made parserAddChild, parserRemoveChild, and
+        parserInsertBefore non-virtual.
+
+        * dom/Node.cpp: Removed the parserAddChild, parserRemoveChild, and
+        parserInsertBefore functions, which should never have been in the Node class.
+        * dom/Node.h: Ditto.
+
+        * html/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::attach): Changed argument type to ContainerNode*
+        because we never need to attach a child to a non-container node.
+        (WebCore::HTMLConstructionSite::findFosterSite): Cast the result of the parent
+        function to ContainerNode*. A parent is always guaranteed to be a container, but
+        the parent function returns a Node* so that callers can use it without including
+        ContainerNode's header. That seems like something we can easily fix later.
+
+        * html/HTMLConstructionSite.h: Changed AttachmentSite::parent and the
+        attach function to ContainerNode* instead of Node*.
+
 2010-08-23  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

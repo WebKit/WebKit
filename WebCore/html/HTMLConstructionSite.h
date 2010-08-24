@@ -111,12 +111,12 @@ public:
 
 private:
     struct AttachmentSite {
-        Node* parent;
+        ContainerNode* parent;
         Node* nextChild;
     };
 
     template<typename ChildType>
-    PassRefPtr<ChildType> attach(Node* parent, PassRefPtr<ChildType> child);
+    PassRefPtr<ChildType> attach(ContainerNode* parent, PassRefPtr<ChildType> child);
     PassRefPtr<Element> attachToCurrent(PassRefPtr<Element>);
 
     void attachAtSite(const AttachmentSite&, PassRefPtr<Node> child);

@@ -646,21 +646,6 @@ ContainerNode* Node::legacyParserAddChild(PassRefPtr<Node>)
     return 0;
 }
 
-void Node::parserAddChild(PassRefPtr<Node>)
-{
-    ASSERT_NOT_REACHED();
-}
-
-void Node::parserRemoveChild(PassRefPtr<Node>)
-{
-    ASSERT_NOT_REACHED();
-}
-
-void Node::parserInsertBefore(PassRefPtr<Node>, Node*)
-{
-    ASSERT_NOT_REACHED();
-}
-
 bool Node::isContentEditable() const
 {
     return parent() && parent()->isContentEditable();

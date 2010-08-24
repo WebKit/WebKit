@@ -52,9 +52,9 @@ public:
     // They don't send DOM mutation events or handle reparenting.
     // However, arbitrary code may be run by beforeload handlers.
     virtual ContainerNode* legacyParserAddChild(PassRefPtr<Node>);
-    virtual void parserAddChild(PassRefPtr<Node>);
-    virtual void parserRemoveChild(Node*);
-    virtual void parserInsertBefore(PassRefPtr<Node> newChild, Node* refChild);
+    void parserAddChild(PassRefPtr<Node>);
+    void parserRemoveChild(Node*);
+    void parserInsertBefore(PassRefPtr<Node> newChild, Node* refChild);
 
     bool hasChildNodes() const { return m_firstChild; }
     virtual void attach();
