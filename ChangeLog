@@ -1,3 +1,12 @@
+2010-08-24  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        [EFL] Unreviewed build fix after r65891.
+
+        r65891 renamed RemoteInspectorFrontend to InspectorFrontend. Rename
+        accordingly in CMake build system.
+
+        * cmake/WebKitGenerators.cmake:
+
 2010-08-20  Leandro Pereira  <leandro@profusion.mobi>
 
         [EFL] Unreviewed. Fix build when using GNU gold.

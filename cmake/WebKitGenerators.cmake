@@ -55,11 +55,11 @@ MACRO(GENERATE_INSPECTOR_FROM_IDL _source)
 
   GET_FILENAME_COMPONENT(_name ${_source} NAME_WE)
   ADD_CUSTOM_COMMAND(
-    OUTPUT  ${DERIVED_SOURCES_DIR}/Remote${_name}Frontend.cpp ${DERIVED_SOURCES_DIR}/Remote${_name}Frontend.h ${DERIVED_SOURCES_DIR}/${_name}BackendDispatcher.cpp ${DERIVED_SOURCES_DIR}/${_name}BackendDispatcher.h 
+    OUTPUT  ${DERIVED_SOURCES_DIR}/${_name}Frontend.cpp ${DERIVED_SOURCES_DIR}/Remote${_name}Frontend.h ${DERIVED_SOURCES_DIR}/${_name}BackendDispatcher.cpp ${DERIVED_SOURCES_DIR}/${_name}BackendDispatcher.h
     DEPENDS ${BINDING_CODE_GENERATOR} ${SCRIPTS_BINDINGS} ${WEBCORE_DIR}/${_source}
     COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts -I${WEBCORE_DIR}/inspector ${BINDING_CODE_GENERATOR} ${IDL_INCLUDES} --outputDir "${DERIVED_SOURCES_DIR}" --defines "LANGUAGE_JAVASCRIPT=1 ${FEATURE_DEFINES_STR}" --generator Inspector ${WEBCORE_DIR}/${_source}
     VERBATIM)
-  LIST(APPEND Inspector_IDL_FILES ${DERIVED_SOURCES_DIR}/Remote${_name}Frontend.cpp)
+  LIST(APPEND Inspector_IDL_FILES ${DERIVED_SOURCES_DIR}/${_name}Frontend.cpp)
   UNSET(_name)
   UNSET(_defines)
 ENDMACRO()
