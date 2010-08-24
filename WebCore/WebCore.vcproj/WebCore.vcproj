@@ -23653,6 +23653,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\loader\PingLoader.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\loader\PingLoader.h"
+				>
+			</File>
+			<File
 				RelativePath="..\loader\PlaceholderDocument.cpp"
 				>
 			</File>

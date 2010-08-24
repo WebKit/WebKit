@@ -1895,6 +1895,8 @@
             'loader/NavigationAction.h',
             'loader/NetscapePlugInStreamLoader.cpp',
             'loader/NetscapePlugInStreamLoader.h',
+            'loader/PingLoader.cpp',
+            'loader/PingLoader.h',
             'loader/PlaceholderDocument.cpp',
             'loader/PlaceholderDocument.h',
             'loader/PluginDocument.cpp',

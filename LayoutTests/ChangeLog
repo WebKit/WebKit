@@ -1,3 +1,15 @@
+2010-08-24  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by David Levin.
+
+        Test for https://bugs.webkit.org/show_bug.cgi?id=30457.
+
+        * http/tests/navigation/image-load-in-unload-handler-expected.txt: Added.
+        * http/tests/navigation/image-load-in-unload-handler.html: Added.
+        * http/tests/navigation/resources/check-ping.php: Added.
+        * http/tests/navigation/resources/delete-ping.php: Added.
+        * http/tests/navigation/resources/save-ping.php: Added.
+
 2010-08-24  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: fix new inspector test expectation.

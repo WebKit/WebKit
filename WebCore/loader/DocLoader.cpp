@@ -27,6 +27,7 @@
 #include "config.h"
 #include "DocLoader.h"
 
+#include "loader.h"
 #include "Cache.h"
 #include "CachedCSSStyleSheet.h"
 #include "CachedFont.h"
@@ -40,7 +41,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
-#include "loader.h"
+#include "PingLoader.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include <wtf/text/CString.h>
@@ -125,6 +126,13 @@ CachedImage* DocLoader::requestImage(const String& url)
         Settings* settings = f->settings();
         if (!f->loader()->client()->allowImages(!settings || settings->areImagesEnabled()))
             return 0;
+
+        if (f->loader()->pageDismissalEventBeingDispatched()) {
+            KURL completeURL = m_doc->completeURL(url);
+            if (completeURL.isValid() && canRequest(CachedResource::ImageResource, completeURL))
+                PingLoader::loadImage(f, completeURL);
+            return 0;
+        }
     }
     CachedImage* resource = static_cast<CachedImage*>(requestResource(CachedResource::ImageResource, url, String()));
     if (autoLoadImages() && resource && resource->stillNeedsLoad()) {

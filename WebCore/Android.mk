@@ -326,6 +326,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	loader/MediaDocument.cpp \
 	loader/NavigationAction.cpp \
 	loader/NetscapePlugInStreamLoader.cpp \
+	loader/PingLoader.cpp \
 	loader/PlaceholderDocument.cpp \
 	loader/PluginDocument.cpp \
 	loader/PolicyCallback.cpp \
