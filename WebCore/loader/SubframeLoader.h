@@ -74,6 +74,7 @@ public:
     bool containsPlugins() const { return m_containsPlugins; }
 
 private:
+    Frame* loadOrRedirectSubframe(HTMLFrameOwnerElement*, const KURL&, const AtomicString& frameName, bool lockHistory, bool lockBackForwardList);
     Frame* loadSubframe(HTMLFrameOwnerElement*, const KURL&, const String& name, const String& referrer);
     bool loadPlugin(RenderEmbeddedObject*, const KURL&, const String& mimeType,
         const Vector<String>& paramNames, const Vector<String>& paramValues, bool useFallback);
