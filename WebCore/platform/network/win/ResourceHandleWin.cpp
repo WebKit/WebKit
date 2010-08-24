@@ -64,6 +64,20 @@ static const ResourceHandleEventHandler messageHandlers[] = {
     &ResourceHandle::onRequestComplete
 };
 
+static String queryHTTPHeader(HINTERNET requestHandle, DWORD infoLevel)
+{
+    DWORD bufferSize = 0;
+    HttpQueryInfoW(requestHandle, infoLevel, 0, &bufferSize, 0);
+
+    Vector<UChar> characters(bufferSize / sizeof(UChar));
+
+    if (!HttpQueryInfoW(requestHandle, infoLevel, characters.data(), &bufferSize, 0))
+        return String();
+
+    characters.removeLast(); // Remove NullTermination.
+    return String::adopt(characters);
+}
+
 static int addToOutstandingJobs(ResourceHandle* job)
 {
     if (!jobIdMap)
@@ -226,7 +240,6 @@ void ResourceHandle::onRequestComplete(LPARAM lParam)
     }
 
     HINTERNET handle = (request().httpMethod() == "POST") ? d->m_secondaryHandle : d->m_resourceHandle;
-    BOOL ok = FALSE;
 
     static const int bufferSize = 32768;
     char buffer[bufferSize];
@@ -235,11 +248,31 @@ void ResourceHandle::onRequestComplete(LPARAM lParam)
     buffers.lpvBuffer = buffer;
     buffers.dwBufferLength = bufferSize;
 
-    bool receivedAnyData = false;
+    BOOL ok = FALSE;
     while ((ok = InternetReadFileExA(handle, &buffers, IRF_NO_WAIT, (DWORD_PTR)this)) && buffers.dwBufferLength) {
         if (!hasReceivedResponse()) {
             setHasReceivedResponse();
             ResourceResponse response;
+            response.setURL(firstRequest().url());
+
+            String httpStatusText = queryHTTPHeader(d->m_requestHandle, HTTP_QUERY_STATUS_TEXT);
+            if (!httpStatusText.isNull())
+                response.setHTTPStatusText(httpStatusText);
+
+            String httpStatusCode = queryHTTPHeader(d->m_requestHandle, HTTP_QUERY_STATUS_CODE);
+            if (!httpStatusCode.isNull())
+                response.setHTTPStatusCode(httpStatusCode.toInt());
+
+            String httpContentLength = queryHTTPHeader(d->m_requestHandle, HTTP_QUERY_CONTENT_LENGTH);
+            if (!httpContentLength.isNull())
+                response.setExpectedContentLength(httpContentLength.toInt());
+
+            String httpContentType = queryHTTPHeader(d->m_requestHandle, HTTP_QUERY_CONTENT_TYPE);
+            if (!httpContentType.isNull()) {
+                response.setMimeType(extractMIMETypeFromMediaType(httpContentType));
+                response.setTextEncodingName(extractCharsetFromMediaType(httpContentType));
+            }
+
             client()->didReceiveResponse(this, response);
         }
         client()->didReceiveData(this, buffer, buffers.dwBufferLength, 0);
