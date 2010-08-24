@@ -1,3 +1,16 @@
+2010-08-23  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        setAttributeNS() should throw NAMESPACE_ERR for prefixed qualifiedName with null namespace
+        https://bugs.webkit.org/show_bug.cgi?id=44432
+
+        Test: fast/dom/setAttributeNS-prefix-and-null-namespace.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::setAttributeNS): Throw NAMESPACE_ERR if namespace is null
+        and the qualifiedName has a prefix.
+
 2010-08-24  Adam Barth  <abarth@webkit.org>
 
         Build fix.  leakPtr doesn't exist, contrary to my dreams.
