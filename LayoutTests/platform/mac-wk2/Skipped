@@ -289,6 +289,7 @@ fast/events/event-input-contentEditable.html
 fast/events/event-sender-mouse-moved.html
 fast/events/event-view-toString.html
 fast/events/focus-change-crash.html
+fast/events/focus-change-crash2.html
 fast/events/focusingUnloadedFrame.html
 fast/events/frame-click-focus.html
 fast/events/frame-detached-in-mousedown.html
@@ -2051,6 +2052,11 @@ plugins/iframe-shims.html
 # This test checks that NPN_GetURL with a blank target will return an error if the window isn't opened. This behavior doesn't
 # match Firefox or Chrome. We should either fix the test, or get rid of it.
 plugins/get-url-with-blank-target.html
+
+# These tests crash when run under WebKitTestRunner.
+# <https://bugs.webkit.org/show_bug.cgi?id=44479>
+fast/parser/remove-misnested-iframe-in-beforeload.html
+fast/parser/remove-misnested-iframe-parent-in-beforeload.html
 
 # Unexplained failures that were formerly in the WebKitTestRunner needs to print onunload handler list.
 fast/events/onunload-clears-onbeforeunload.html

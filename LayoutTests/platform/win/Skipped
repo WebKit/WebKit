@@ -968,3 +968,6 @@ http/tests/appcache/origin-quota.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=43332
 inspector/dom-breakpoints.html
+
+# <https://bugs.webkit.org/show_bug.cgi?id=44484>
+svg/batik/paints/patternRegions-positioned-objects.svg
