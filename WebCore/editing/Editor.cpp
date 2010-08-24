@@ -997,12 +997,12 @@ void Editor::reappliedEditing(PassRefPtr<EditCommand> cmd)
 
 Editor::Editor(Frame* frame)
     : m_frame(frame)
-    , m_deleteButtonController(new DeleteButtonController(frame))
+    , m_deleteButtonController(adoptPtr(new DeleteButtonController(frame)))
     , m_ignoreCompositionSelectionChange(false)
     , m_shouldStartNewKillRingSequence(false)
     // This is off by default, since most editors want this behavior (this matches IE but not FF).
     , m_shouldStyleWithCSS(false)
-    , m_killRing(new KillRing)
+    , m_killRing(adoptPtr(new KillRing))
 { 
 }
 
