@@ -40,7 +40,7 @@ HBITMAP imageFromSelection(Frame* frame, bool forceBlackText)
     return 0;
 }
 
-HBITMAP Frame::nodeImage(Node*) const
+DragImageRef Frame::nodeImage(Node*)
 {
     notImplemented();
     return 0;

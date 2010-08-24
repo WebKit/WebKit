@@ -377,7 +377,7 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
     WebCore::Frame* frame = node->document()->frame();
     if (!frame)
         return nil;
-    return frame->nodeImage(node);
+    return frame->nodeImage(node).get();
 }
 
 - (NSArray *)textRects

@@ -35,6 +35,7 @@
 #include "HTMLNames.h"
 #include "HTMLTableCellElement.h"
 #include "KeyboardEvent.h"
+#include "NotImplemented.h"
 #include "Page.h"
 #include "RenderFrame.h"
 #include "RenderLayer.h"
@@ -145,6 +146,12 @@ HBITMAP imageFromSelection(Frame* frame, bool forceBlackText)
     frame->view()->setPaintRestriction(PaintRestrictionNone);
 
     return hBmp;
+}
+
+DragImageRef Frame::nodeImage(Node*)
+{
+    notImplemented();
+    return 0;
 }
 
 DragImageRef Frame::dragImageForSelection()

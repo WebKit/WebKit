@@ -1,3 +1,51 @@
+2010-08-24  Daniel Cheng  <dcheng@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [chromium] Generate drag images for HTML elements and selections.
+        https://bugs.webkit.org/show_bug.cgi?id=43449
+
+        We weren't properly generating drag images if an HTML element was set
+        as the drag feedback image. I also implemented dragImageForSelection
+        while I was working on this part of the code.
+
+        No new tests.
+
+        * WebCore.exp.in:
+        * bindings/objc/DOM.mm:
+        (-[DOMNode renderedImage]):
+        * page/Frame.h:
+        * page/brew/FrameBrew.cpp:
+        (WebCore::Frame::nodeImage):
+        * page/chromium/FrameChromium.cpp:
+        (WebCore::):
+        (WebCore::Frame::nodeImage):
+        (WebCore::Frame::dragImageForSelection):
+        * page/efl/FrameEfl.cpp:
+        (WebCore::Frame::nodeImage):
+        * page/gtk/FrameGtk.cpp:
+        (WebCore::Frame::nodeImage):
+        * page/haiku/FrameHaiku.cpp:
+        (WebCore::Frame::nodeImage):
+        * page/mac/FrameMac.mm:
+        (WebCore::Frame::nodeImage):
+        (WebCore::Frame::dragImageForSelection):
+        * page/qt/FrameQt.cpp:
+        (WebCore::Frame::nodeImage):
+        (WebCore::Frame::dragImageForSelection):
+        * page/win/FrameCGWin.cpp:
+        (WebCore::Frame::nodeImage):
+        * page/win/FrameCairoWin.cpp:
+        (WebCore::Frame::nodeImage):
+        * page/wince/FrameWince.cpp:
+        (WebCore::Frame::nodeImage):
+        * page/wx/FrameWx.cpp:
+        (WebCore::Frame::nodeImage):
+        * platform/chromium/ClipboardChromium.cpp:
+        (WebCore::ClipboardChromium::createDragImage):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::selectionForegroundColor):
+
 2010-08-24  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Steve Block.

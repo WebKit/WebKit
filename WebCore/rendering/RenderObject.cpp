@@ -1591,7 +1591,10 @@ Color RenderObject::selectionBackgroundColor() const
 Color RenderObject::selectionForegroundColor() const
 {
     Color color;
-    if (style()->userSelect() == SELECT_NONE)
+    // If the element is unselectable, or we are only painting the selection,
+    // don't override the foreground color with the selection foreground color.
+    if (style()->userSelect() == SELECT_NONE
+        || (frame()->view()->paintBehavior() & PaintBehaviorSelectionOnly))
         return color;
 
     if (RefPtr<RenderStyle> pseudoStyle = getUncachedPseudoStyle(SELECTION)) {

@@ -380,7 +380,7 @@ NSImage* Frame::snapshotDragImage(Node* node, NSRect* imageRect, NSRect* element
     return result;
 }
 
-NSImage* Frame::nodeImage(Node* node) const
+DragImageRef Frame::nodeImage(Node* node)
 {
     RenderObject* renderer = node->renderer();
     if (!renderer)
@@ -535,7 +535,7 @@ NSMutableDictionary* Frame::dashboardRegionsDictionary()
 }
 #endif
 
-DragImageRef Frame::dragImageForSelection() 
+DragImageRef Frame::dragImageForSelection()
 {
     if (!selection()->isRange())
         return nil;

@@ -510,9 +510,9 @@ String WebHaltablePlugin::pluginName() const
     ASSERT(_isStarted);
     Element *element = [self element];
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
-    CGImageRef cgImage = CGImageRetain([core([self webFrame])->nodeImage(element) CGImageForProposedRect:nil context:nil hints:nil]);
+    CGImageRef cgImage = CGImageRetain([core([self webFrame])->nodeImage(element).get() CGImageForProposedRect:nil context:nil hints:nil]);
 #else
-    RetainPtr<CGImageSourceRef> imageRef(AdoptCF, CGImageSourceCreateWithData((CFDataRef)[core([self webFrame])->nodeImage(element) TIFFRepresentation], 0));
+    RetainPtr<CGImageSourceRef> imageRef(AdoptCF, CGImageSourceCreateWithData((CFDataRef)[core([self webFrame])->nodeImage(element).get() TIFFRepresentation], 0));
     CGImageRef cgImage = CGImageSourceCreateImageAtIndex(imageRef.get(), 0, 0);
 #endif
     ASSERT(cgImage);

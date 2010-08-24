@@ -24,10 +24,19 @@
 #include "config.h"
 #include "Frame.h"
 
+#include "NotImplemented.h"
+
 namespace WebCore {
 
-DragImageRef Frame::dragImageForSelection() 
+DragImageRef Frame::nodeImage(Node*)
 {
+    notImplemented();
+    return 0;
+}
+
+DragImageRef Frame::dragImageForSelection()
+{
+    notImplemented();
     return 0;
 }
 

@@ -1,3 +1,15 @@
+2010-08-24  Daniel Cheng  <dcheng@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [chromium] Generate drag images for HTML elements and selections.
+        https://bugs.webkit.org/show_bug.cgi?id=43449
+
+        Fix up calls to Frame::nodeImage, which has a new signature.
+
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView halt]):
+
 2010-08-23  Mike Thole  <mthole@apple.com>
 
         Reviewed by Dan Bernstein.

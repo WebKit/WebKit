@@ -32,6 +32,12 @@
 
 namespace WebCore {
 
+DragImageRef Frame::nodeImage(Node* node)
+{
+    notImplemented();
+    return 0;
+}
+
 DragImageRef Frame::dragImageForSelection()
 {
     notImplemented();

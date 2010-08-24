@@ -400,7 +400,12 @@ void ClipboardChromium::setDragImageElement(Node* node, const IntPoint& loc)
 DragImageRef ClipboardChromium::createDragImage(IntPoint& loc) const
 {
     DragImageRef result = 0;
-    if (m_dragImage) {
+    if (m_dragImageElement) {
+        if (m_frame) {
+            result = m_frame->nodeImage(m_dragImageElement.get());
+            loc = m_dragLoc;
+        }
+    } else if (m_dragImage) {
         result = createDragImageFromImage(m_dragImage->image());
         loc = m_dragLoc;
     }

@@ -221,6 +221,7 @@ namespace WebCore {
         void textWillBeDeletedInTextField(Element* input);
         void textDidChangeInTextArea(Element*);
 
+        DragImageRef nodeImage(Node*);
         DragImageRef dragImageForSelection();
 
     // === to be moved into SelectionController
@@ -285,7 +286,6 @@ namespace WebCore {
 
         NSImage* selectionImage(bool forceBlackText = false) const;
         NSImage* snapshotDragImage(Node*, NSRect* imageRect, NSRect* elementRect) const;
-        NSImage* nodeImage(Node*) const;
 
     private:
         NSImage* imageFromRect(NSRect) const;
@@ -295,14 +295,6 @@ namespace WebCore {
     public:
         NSDictionary* fontAttributesForSelectionStart() const;
         NSWritingDirection baseWritingDirectionForSelectionStart() const;
-
-#endif
-
-#if PLATFORM(WIN)
-
-    public:
-        // FIXME - We should have a single version of nodeImage instead of using platform types.
-        HBITMAP nodeImage(Node*) const;
 
 #endif
 

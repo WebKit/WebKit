@@ -95,7 +95,7 @@ HBITMAP imageFromSelection(Frame* frame, bool forceBlackText)
     return image;
 }
 
-HBITMAP Frame::nodeImage(Node* node) const
+DragImageRef Frame::nodeImage(Node* node)
 {
     RenderObject* renderer = node->renderer();
     if (!renderer)
