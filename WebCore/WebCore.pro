@@ -46,11 +46,6 @@ symbian: {
 
     DEPLOYMENT += webkitlibs webkitbackup
 
-    # Need to guarantee that these come before system includes of /epoc32/include
-    MMP_RULES += "USERINCLUDE bridge"
-    MMP_RULES += "USERINCLUDE platform/animation"
-    MMP_RULES += "USERINCLUDE platform/text"
-    MMP_RULES += "USERINCLUDE rendering"
     symbian-abld|symbian-sbsv2 {
         # RO text (code) section in qtwebkit.dll exceeds allocated space for gcce udeb target.
         # Move RW-section base address to start from 0xE00000 instead of the toolchain default 0x400000.
@@ -183,7 +178,7 @@ defineTest(addExtraCompiler) {
 }
 include(WebCore.pri)
 
-INCLUDEPATH = \
+WEBCORE_INCLUDEPATH = \
     $$PWD \
     $$PWD/accessibility \
     $$PWD/bindings \
@@ -231,10 +226,9 @@ INCLUDEPATH = \
     $$PWD/wml \
     $$PWD/workers \
     $$PWD/xml \
-    $$WC_GENERATED_SOURCES_DIR \
-    $$INCLUDEPATH
+    $$WC_GENERATED_SOURCES_DIR
 
-INCLUDEPATH = \
+WEBCORE_INCLUDEPATH = \
     $$PWD/bridge/qt \
     $$PWD/page/qt \
     $$PWD/platform/graphics/qt \
@@ -242,7 +236,13 @@ INCLUDEPATH = \
     $$PWD/platform/qt \
     $$PWD/../WebKit/qt/Api \
     $$PWD/../WebKit/qt/WebCoreSupport \
-    $$INCLUDEPATH
+    $$WEBCORE_INCLUDEPATH
+
+symbian {
+    PREPEND_INCLUDEPATH = $$WEBCORE_INCLUDEPATH $$PREPEND_INCLUDEPATH
+} else {
+    INCLUDEPATH = $$WEBCORE_INCLUDEPATH $$INCLUDEPATH
+}
 
 QT += network
 
