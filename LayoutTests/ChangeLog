@@ -1,5 +1,11 @@
 2010-08-24  Sam Weinig  <sam@webkit.org>
 
+        Update skipped list for WebKit2.
+
+        * platform/mac-wk2/Skipped:
+
+2010-08-24  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Adam Barth.
 
         Fix for <rdar://problem/8153271> and <rdar://problem/8153288> 

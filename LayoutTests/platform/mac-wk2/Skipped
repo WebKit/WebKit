@@ -985,6 +985,7 @@ fast/canvas/webgl/renderbuffer-initialization.html
 fast/canvas/webgl/tex-image-and-sub-image-2d-with-array-buffer-view.html
 fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data.html
 fast/canvas/webgl/tex-image-and-sub-image-2d-with-image.html
+fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html
 fast/canvas/webgl/tex-image-and-uniform-binding-bugs.html
 fast/canvas/webgl/tex-image-with-format-and-type.html
 fast/canvas/webgl/tex-input-validation.html
@@ -1013,6 +1014,7 @@ fast/harness/use-page-cache.html
 fast/history/timed-refresh-in-cached-frame.html
 fast/loader/frames-with-unload-handlers-in-page-cache.html
 fast/loader/input-element-page-cache-crash.html
+fast/loader/unschedule-relayout-after-unload.html
 fast/parser/noscript-with-javascript-disabled.html
 fast/parser/noscript-with-javascript-enabled.html
 fast/repaint/no-caret-repaint-in-non-content-editable-element.html
