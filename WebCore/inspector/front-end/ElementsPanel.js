@@ -74,6 +74,8 @@ WebInspector.ElementsPanel = function()
     this.sidebarPanes.styles = new WebInspector.StylesSidebarPane(this.sidebarPanes.computedStyle);
     this.sidebarPanes.metrics = new WebInspector.MetricsSidebarPane();
     this.sidebarPanes.properties = new WebInspector.PropertiesSidebarPane();
+    if (Preferences.domBreakpointsEnabled)
+        this.sidebarPanes.domBreakpoints = WebInspector.createDOMBreakpointsSidebarPane();
     this.sidebarPanes.eventListeners = new WebInspector.EventListenersSidebarPane();
 
     this.sidebarPanes.styles.onexpand = this.updateStyles.bind(this);
@@ -90,11 +92,8 @@ WebInspector.ElementsPanel = function()
     this.sidebarElement = document.createElement("div");
     this.sidebarElement.id = "elements-sidebar";
 
-    this.sidebarElement.appendChild(this.sidebarPanes.computedStyle.element);
-    this.sidebarElement.appendChild(this.sidebarPanes.styles.element);
-    this.sidebarElement.appendChild(this.sidebarPanes.metrics.element);
-    this.sidebarElement.appendChild(this.sidebarPanes.properties.element);
-    this.sidebarElement.appendChild(this.sidebarPanes.eventListeners.element);
+    for (var pane in this.sidebarPanes)
+        this.sidebarElement.appendChild(this.sidebarPanes[pane].element);
 
     this.sidebarResizeElement = document.createElement("div");
     this.sidebarResizeElement.className = "sidebar-resizer-vertical";
@@ -179,6 +178,9 @@ WebInspector.ElementsPanel.prototype = {
         this.recentlyModifiedNodes = [];
 
         delete this.currentQuery;
+
+        if (Preferences.domBreakpointsEnabled)
+            this.sidebarPanes.domBreakpoints.reset();
     },
 
     setDocument: function(inspectedRootDocument)

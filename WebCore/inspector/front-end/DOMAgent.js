@@ -677,3 +677,90 @@ WebInspector.childNodeRemoved = function()
     this.domAgent._childNodeRemoved.apply(this.domAgent, arguments);
 }
 
+WebInspector.DOMBreakpointManager = function()
+{
+    this._breakpoints = {};
+}
+
+WebInspector.DOMBreakpointManager.prototype = {
+    setBreakpoint: function(node, type)
+    {
+        if (!(node.id in this._breakpoints))
+            this._breakpoints[node.id] = {};
+        else if (type in this._breakpoints[node.id])
+            return;
+
+        var breakpoint = new WebInspector.DOMBreakpoint(node, type);
+        this._breakpoints[node.id][type] = breakpoint;
+        breakpoint.addEventListener("removed", this._breakpointRemoved, this);
+
+        this.dispatchEventToListeners("dom-breakpoint-added", breakpoint);
+    },
+
+    removeBreakpointsForNode: function(node)
+    {
+        var nodeBreakpoints = this._breakpoints[node.id];
+        for (var type in nodeBreakpoints)
+            nodeBreakpoints[type].remove();
+    },
+
+    _breakpointRemoved: function(event)
+    {
+        var breakpoint = event.target;
+
+        var nodeBreakpoints = this._breakpoints[breakpoint.node.id];
+        delete nodeBreakpoints[breakpoint.type];
+        for (var type in nodeBreakpoints)
+            return;
+        delete this._breakpoints[breakpoint.node.id];
+    }
+}
+
+WebInspector.DOMBreakpointManager.prototype.__proto__ = WebInspector.Object.prototype;
+
+WebInspector.DOMBreakpoint = function(node, type)
+{
+    this.node = node;
+    this.type = type;
+    this._enabled = true;
+
+    InspectorBackend.setDOMBreakpoint(this.node.id, this.type);
+}
+
+WebInspector.DOMBreakpoint.Types = {
+    SubtreeModified: 0
+};
+
+WebInspector.DOMBreakpoint.Labels = {};
+WebInspector.DOMBreakpoint.Labels[WebInspector.DOMBreakpoint.Types.SubtreeModified] = WebInspector.UIString("Subtree Modified");
+
+WebInspector.DOMBreakpoint.prototype = {
+    get enabled()
+    {
+        return this._enabled;
+    },
+
+    set enabled(enabled)
+    {
+        if (this._enabled === enabled)
+            return;
+
+        this._enabled = enabled;
+        if (this._enabled)
+            InspectorBackend.setDOMBreakpoint(this.node.id, this.type);
+        else
+            InspectorBackend.removeDOMBreakpoint(this.node.id, this.type);
+
+        this.dispatchEventToListeners("enable-changed");
+    },
+
+    remove: function()
+    {
+        if (this._enabled)
+            InspectorBackend.removeDOMBreakpoint(this.node.id, this.type);
+        this.dispatchEventToListeners("removed");
+    }
+}
+
+WebInspector.DOMBreakpoint.prototype.__proto__ = WebInspector.Object.prototype;
+

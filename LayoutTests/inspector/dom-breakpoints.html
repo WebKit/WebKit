@@ -24,7 +24,7 @@ var test = function()
     function findDOMNodeCallback(node)
     {
         InspectorTest.addResult("Found div element.");
-        InspectorBackend.setDOMBreakpoint(node.id, WebInspector.ElementsTreeElement.DOMBreakpointTypeSubtreeModified);
+        WebInspector.domBreakpointManager.setBreakpoint(node, WebInspector.DOMBreakpoint.Types.SubtreeModified);
         InspectorTest.addResult("Set DOM breakpoint.");
         InspectorTest.evaluateInConsole("appendElement()");
         InspectorTest.waitUntilPaused(waitUntilPausedCallback);

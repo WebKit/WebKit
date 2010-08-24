@@ -62,12 +62,6 @@ WebInspector.BreakpointManager.prototype = {
         this._setBreakpoint(sourceID, url, line, enabled, condition);
     },
 
-    removeBreakpoint: function(breakpoint)
-    {
-        if (this._removeBreakpoint(breakpoint))
-            InspectorBackend.removeBreakpoint(breakpoint.sourceID, breakpoint.line);
-    },
-
     breakpointsForSourceID: function(sourceID)
     {
         var breakpoints = [];
@@ -102,19 +96,14 @@ WebInspector.BreakpointManager.prototype = {
         if (this._oneTimeBreakpoint && (this._oneTimeBreakpoint.id == breakpoint.id))
             delete this._oneTimeBreakpoint;
         this._breakpoints[breakpoint.id] = breakpoint;
+        breakpoint.addEventListener("removed", this._breakpointRemoved, this);
         this.dispatchEventToListeners("breakpoint-added", breakpoint);
         return breakpoint;
     },
 
-    _removeBreakpoint: function(breakpoint)
+    _breakpointRemoved: function(event)
     {
-        if (!(breakpoint.id in this._breakpoints))
-            return false;
-        breakpoint.dispatchEventToListeners("removed");
-        breakpoint.removeAllListeners();
-        delete breakpoint._breakpointManager;
-        delete this._breakpoints[breakpoint.id];
-        return true;
+        delete this._breakpoints[event.target.id];
     },
 
     _setBreakpointOnBackend: function(breakpoint, isOneTime)
@@ -129,7 +118,7 @@ WebInspector.BreakpointManager.prototype = {
                 else
                     delete this._oneTimeBreakpoint;
             } else {
-                this._removeBreakpoint(breakpoint);
+                breakpoint.remove();
                 if (success)
                     this._setBreakpoint(breakpoint.sourceID, breakpoint.url, line, breakpoint.enabled, breakpoint.condition);
             }
@@ -165,10 +154,7 @@ WebInspector.Breakpoint.prototype = {
 
         this._enabled = x;
         this._breakpointManager._setBreakpointOnBackend(this);
-        if (this._enabled)
-            this.dispatchEventToListeners("enabled");
-        else
-            this.dispatchEventToListeners("disabled");
+        this.dispatchEventToListeners("enable-changed");
     },
 
     get sourceText()
@@ -202,6 +188,14 @@ WebInspector.Breakpoint.prototype = {
         if (this.enabled)
             this._breakpointManager._setBreakpointOnBackend(this);
         this.dispatchEventToListeners("condition-changed");
+    },
+
+    remove: function()
+    {
+        InspectorBackend.removeBreakpoint(this.sourceID, this.line);
+        this.dispatchEventToListeners("removed");
+        this.removeAllListeners();
+        delete this._breakpointManager;
     }
 }
 

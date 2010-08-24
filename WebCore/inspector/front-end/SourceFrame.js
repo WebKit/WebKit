@@ -28,7 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.SourceFrame = function(parentElement, addBreakpointDelegate, removeBreakpointDelegate, editDelegate, continueToHereDelegate)
+WebInspector.SourceFrame = function(parentElement, addBreakpointDelegate, editDelegate, continueToHereDelegate)
 {
     this._parentElement = parentElement;
 
@@ -44,7 +44,6 @@ WebInspector.SourceFrame = function(parentElement, addBreakpointDelegate, remove
 
     this._continueToHereDelegate = continueToHereDelegate;
     this._addBreakpointDelegate = addBreakpointDelegate;
-    this._removeBreakpointDelegate = removeBreakpointDelegate;
     this._editDelegate = editDelegate;
     this._popoverObjectGroup = "popover";
 }
@@ -55,7 +54,7 @@ WebInspector.SourceFrame.prototype = {
     {
         this._visible = visible;
         this._createViewerIfNeeded();
-        
+
         if (visible) {
             if (this._textViewer && this._scrollTop)
                 this._textViewer.element.scrollTop = this._scrollTop;
@@ -99,16 +98,16 @@ WebInspector.SourceFrame.prototype = {
     addBreakpoint: function(breakpoint)
     {
         this.breakpoints.push(breakpoint);
+        breakpoint.addEventListener("removed", this._breakpointRemoved, this);
         if (this._textViewer)
             this._addBreakpointToSource(breakpoint);
     },
 
-    removeBreakpoint: function(breakpoint)
+    _breakpointRemoved: function(event)
     {
+        var breakpoint = event.target;
+
         this.breakpoints.remove(breakpoint);
-        breakpoint.removeEventListener("enabled", null, this);
-        breakpoint.removeEventListener("disabled", null, this);
-        breakpoint.removeEventListener("condition-changed", null, this);
         if (this._textViewer)
             this._removeBreakpointFromSource(breakpoint);
     },
@@ -381,8 +380,7 @@ WebInspector.SourceFrame.prototype = {
 
     _addBreakpointToSource: function(breakpoint)
     {
-        breakpoint.addEventListener("enabled", this._breakpointChanged, this);
-        breakpoint.addEventListener("disabled", this._breakpointChanged, this);
+        breakpoint.addEventListener("enable-changed", this._breakpointChanged, this);
         breakpoint.addEventListener("condition-changed", this._breakpointChanged, this);
 
         var lineNumber = breakpoint.line - 1;
@@ -403,6 +401,9 @@ WebInspector.SourceFrame.prototype = {
 
     _removeBreakpointFromSource: function(breakpoint)
     {
+        breakpoint.removeEventListener("enable-changed", null, this);
+        breakpoint.removeEventListener("condition-changed", null, this);
+
         var lineNumber = breakpoint.line - 1;
         this._textViewer.beginUpdates();
         this._textModel.removeAttribute(lineNumber, "breakpoint");
@@ -432,7 +433,7 @@ WebInspector.SourceFrame.prototype = {
             // This row doesn't have a breakpoint: We want to show Add Breakpoint and Add and Edit Breakpoint.
             contextMenu.appendItem(WebInspector.UIString("Add Breakpoint"), this._addBreakpointDelegate.bind(this, lineNumber + 1));
 
-            function addConditionalBreakpoint() 
+            function addConditionalBreakpoint()
             {
                 this._addBreakpointDelegate(lineNumber + 1);
                 var breakpoint = this._textModel.getAttribute(lineNumber, "breakpoint");
@@ -443,7 +444,7 @@ WebInspector.SourceFrame.prototype = {
             contextMenu.appendItem(WebInspector.UIString("Add Conditional Breakpoint…"), addConditionalBreakpoint.bind(this));
         } else {
             // This row has a breakpoint, we want to show edit and remove breakpoint, and either disable or enable.
-            contextMenu.appendItem(WebInspector.UIString("Remove Breakpoint"), this._removeBreakpointDelegate.bind(this, breakpoint));
+            contextMenu.appendItem(WebInspector.UIString("Remove Breakpoint"), breakpoint.remove.bind(breakpoint));
             contextMenu.appendItem(WebInspector.UIString("Edit Breakpoint…"), this._editBreakpointCondition.bind(this, breakpoint));
             if (breakpoint.enabled)
                 contextMenu.appendItem(WebInspector.UIString("Disable Breakpoint"), function() { breakpoint.enabled = false; });
@@ -476,7 +477,7 @@ WebInspector.SourceFrame.prototype = {
             if (event.shiftKey)
                 breakpoint.enabled = !breakpoint.enabled;
             else
-                this._removeBreakpointDelegate(breakpoint);
+                breakpoint.remove();
         } else
             this._addBreakpointDelegate(lineNumber + 1);
         event.preventDefault();

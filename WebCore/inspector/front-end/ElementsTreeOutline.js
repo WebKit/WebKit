@@ -326,8 +326,6 @@ WebInspector.ElementsTreeElement.EditTagBlacklist = [
     "html", "head", "body"
 ].keySet();
 
-WebInspector.ElementsTreeElement.DOMBreakpointTypeSubtreeModified = 0;
-
 WebInspector.ElementsTreeElement.prototype = {
     highlightSearchResults: function(searchQuery)
     {
@@ -767,10 +765,12 @@ WebInspector.ElementsTreeElement.prototype = {
         if (Preferences.domBreakpointsEnabled) {
             // Add debbuging-related actions
             contextMenu.appendSeparator();
+
             contextMenu.appendItem(WebInspector.UIString("Stop on subtree modifications"),
-                InspectorBackend.setDOMBreakpoint.bind(InspectorBackend, this.representedObject.id, WebInspector.ElementsTreeElement.DOMBreakpointTypeSubtreeModified));
+                WebInspector.domBreakpointManager.setBreakpoint.bind(WebInspector.domBreakpointManager, this.representedObject, WebInspector.DOMBreakpoint.Types.SubtreeModified));
+
             contextMenu.appendItem(WebInspector.UIString("Remove Breakpoints"),
-                InspectorBackend.removeDOMBreakpoint.bind(InspectorBackend, this.representedObject.id, WebInspector.ElementsTreeElement.DOMBreakpointTypeSubtreeModified));
+                WebInspector.domBreakpointManager.removeBreakpointsForNode.bind(WebInspector.domBreakpointManager, this.representedObject));
         }
     },
 

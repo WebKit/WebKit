@@ -1,3 +1,12 @@
+2010-08-24  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: show DOM breakpoints in sidebar pane
+        https://bugs.webkit.org/show_bug.cgi?id=44424
+
+        * inspector/dom-breakpoints.html:
+
 2010-08-24  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Dimitri Glazkov.

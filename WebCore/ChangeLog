@@ -1,3 +1,72 @@
+2010-08-24  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: show DOM breakpoints in sidebar pane
+        https://bugs.webkit.org/show_bug.cgi?id=44424
+
+        * inspector/front-end/BreakpointManager.js:
+        (WebInspector.BreakpointManager.prototype._setBreakpoint):
+        (WebInspector.BreakpointManager.prototype._breakpointRemoved):
+        (WebInspector.BreakpointManager.prototype._setBreakpointOnBackend):
+        (WebInspector.Breakpoint.prototype.set enabled):
+        (WebInspector.Breakpoint.prototype.set condition):
+        (WebInspector.Breakpoint.prototype.remove):
+        * inspector/front-end/BreakpointsSidebarPane.js:
+        (WebInspector.BreakpointsSidebarPane):
+        (WebInspector.BreakpointsSidebarPane.prototype.addBreakpoint):
+        (WebInspector.BreakpointsSidebarPane.prototype._breakpointRemoved):
+        (WebInspector.BreakpointsSidebarPane.prototype._contextMenuEventFired):
+        (WebInspector.BreakpointItem):
+        (WebInspector.BreakpointItem.prototype.element):
+        (WebInspector.BreakpointItem.prototype.remove):
+        (WebInspector.BreakpointItem.prototype._checkboxClicked):
+        (WebInspector.BreakpointItem.prototype._enableChanged):
+        (WebInspector.BreakpointItem.prototype._removed):
+        (WebInspector.JSBreakpointItem):
+        (WebInspector.JSBreakpointItem.prototype._textChanged):
+        (WebInspector.DOMBreakpointItem):
+        (WebInspector.DOMBreakpointItem.prototype.compareTo):
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMBreakpointManager):
+        (WebInspector.DOMBreakpointManager.prototype.setBreakpoint):
+        (WebInspector.DOMBreakpointManager.prototype.removeBreakpointsForNode):
+        (WebInspector.DOMBreakpointManager.prototype._breakpointRemoved):
+        (WebInspector.DOMBreakpoint):
+        (WebInspector.DOMBreakpoint.prototype.get enabled):
+        (WebInspector.DOMBreakpoint.prototype.set enabled):
+        (WebInspector.DOMBreakpoint.prototype.remove):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel):
+        (WebInspector.ElementsPanel.prototype.reset):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype._populateTagContextMenu):
+        * inspector/front-end/ScriptView.js:
+        (WebInspector.ScriptView):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel):
+        (WebInspector.ScriptsPanel.prototype._breakpointAdded):
+        (WebInspector.ScriptsPanel.prototype.reset):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame):
+        (WebInspector.SourceFrame.prototype.set visible):
+        (WebInspector.SourceFrame.prototype.addBreakpoint):
+        (WebInspector.SourceFrame.prototype._breakpointRemoved):
+        (WebInspector.SourceFrame.prototype._addBreakpointToSource):
+        (WebInspector.SourceFrame.prototype._removeBreakpointFromSource):
+        (WebInspector.SourceFrame.prototype._contextMenu.addConditionalBreakpoint):
+        (WebInspector.SourceFrame.prototype._contextMenu):
+        (WebInspector.SourceFrame.prototype._mouseDown):
+        * inspector/front-end/SourceView.js:
+        (WebInspector.SourceView):
+        (WebInspector.SourceView.prototype.updateLocalContent):
+        * inspector/front-end/inspector.js:
+        (WebInspector.createJSBreakpointsSidebarPane.breakpointAdded):
+        (WebInspector.createJSBreakpointsSidebarPane):
+        (WebInspector.createDOMBreakpointsSidebarPane.breakpointAdded):
+        (WebInspector.createDOMBreakpointsSidebarPane):
+        (WebInspector.doLoadedDone):
+
 2010-08-24  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by Dumitru Daniliuc.

@@ -197,6 +197,28 @@ var WebInspector = {
         }
     },
 
+    createJSBreakpointsSidebarPane: function()
+    {
+        var pane = new WebInspector.BreakpointsSidebarPane(WebInspector.UIString("Breakpoints"));
+        function breakpointAdded(event)
+        {
+            pane.addBreakpoint(new WebInspector.JSBreakpointItem(event.data));
+        }
+        WebInspector.breakpointManager.addEventListener("breakpoint-added", breakpointAdded);
+        return pane;
+    },
+
+    createDOMBreakpointsSidebarPane: function()
+    {
+        var pane = new WebInspector.BreakpointsSidebarPane(WebInspector.UIString("DOM Breakpoints"));
+        function breakpointAdded(event)
+        {
+            pane.addBreakpoint(new WebInspector.DOMBreakpointItem(event.data));
+        }
+        WebInspector.domBreakpointManager.addEventListener("dom-breakpoint-added", breakpointAdded);
+        return pane;
+    },
+
     _createPanels: function()
     {
         var hiddenPanels = (InspectorFrontendHost.hiddenPanels() || "").split(',');
@@ -496,6 +518,7 @@ WebInspector.doLoadedDone = function()
     };
 
     this.breakpointManager = new WebInspector.BreakpointManager();
+    this.domBreakpointManager = new WebInspector.DOMBreakpointManager();
     this.cssModel = new WebInspector.CSSStyleModel();
 
     this.panels = {};

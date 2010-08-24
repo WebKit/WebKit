@@ -132,7 +132,9 @@ WebInspector.ScriptsPanel = function()
     this.sidebarPanes.watchExpressions = new WebInspector.WatchExpressionsSidebarPane();
     this.sidebarPanes.callstack = new WebInspector.CallStackSidebarPane();
     this.sidebarPanes.scopechain = new WebInspector.ScopeChainSidebarPane();
-    this.sidebarPanes.breakpoints = new WebInspector.BreakpointsSidebarPane();
+    this.sidebarPanes.jsBreakpoints = WebInspector.createJSBreakpointsSidebarPane();
+    if (Preferences.domBreakpointsEnabled)
+        this.sidebarPanes.domBreakpoints = WebInspector.createDOMBreakpointsSidebarPane();
     this.sidebarPanes.workers = new WebInspector.WorkersSidebarPane();
 
     for (var pane in this.sidebarPanes)
@@ -142,7 +144,9 @@ WebInspector.ScriptsPanel = function()
     this.sidebarPanes.callstack.addEventListener("call frame selected", this._callFrameSelected, this);
 
     this.sidebarPanes.scopechain.expanded = true;
-    this.sidebarPanes.breakpoints.expanded = true;
+    this.sidebarPanes.jsBreakpoints.expanded = true;
+    if (Preferences.domBreakpointsEnabled)
+        this.sidebarPanes.domBreakpoints.expanded = true;
 
     var panelEnablerHeading = WebInspector.UIString("You need to enable debugging before you can use the Scripts panel.");
     var panelEnablerDisclaimer = WebInspector.UIString("Enabling debugging will make scripts run slower.");
@@ -295,9 +299,6 @@ WebInspector.ScriptsPanel.prototype = {
     {
         var breakpoint = event.data;
 
-        breakpoint.addEventListener("removed", this._breakpointRemoved, this);
-        this.sidebarPanes.breakpoints.addBreakpoint(new WebInspector.JSBreakpointItem(event.data));
-
         var sourceFrame;
         if (breakpoint.url) {
             var resource = WebInspector.resourceURLMap[breakpoint.url];
@@ -314,26 +315,6 @@ WebInspector.ScriptsPanel.prototype = {
             sourceFrame.addBreakpoint(breakpoint);
     },
 
-    _breakpointRemoved: function(event)
-    {
-        var breakpoint = event.target;
-
-        var sourceFrame;
-        if (breakpoint.url) {
-            var resource = WebInspector.resourceURLMap[breakpoint.url];
-            if (resource && resource.finished)
-                sourceFrame = this._sourceFrameForScriptOrResource(resource);
-        }
-
-        if (breakpoint.sourceID && !sourceFrame) {
-            var object = this._sourceIDMap[breakpoint.sourceID]
-            sourceFrame = this._sourceFrameForScriptOrResource(object);
-        }
-
-        if (sourceFrame)
-            sourceFrame.removeBreakpoint(breakpoint);
-    },
-
     canEditScripts: function()
     {
         return Preferences.canEditScriptSource;
@@ -347,7 +328,7 @@ WebInspector.ScriptsPanel.prototype = {
         // Need to clear breakpoints and re-create them later when editing source.
         var breakpoints = WebInspector.breakpointManager.breakpointsForSourceID(sourceID);
         for (var i = 0; i < breakpoints.length; ++i)
-            WebInspector.breakpointManager.removeBreakpoint(breakpoints[i]);
+            breakpoints[i].remove();
 
         function mycallback(success, newBodyOrErrorMessage, callFrames)
         {
@@ -496,7 +477,9 @@ WebInspector.ScriptsPanel.prototype = {
 
         this.sidebarPanes.watchExpressions.refreshExpressions();
         if (!preserveItems) {
-            this.sidebarPanes.breakpoints.reset();
+            this.sidebarPanes.jsBreakpoints.reset();
+            if (Preferences.domBreakpointsEnabled)
+                this.sidebarPanes.domBreakpoints.reset();
             this.sidebarPanes.workers.reset();
         }
     },
