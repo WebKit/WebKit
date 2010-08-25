@@ -18,10 +18,10 @@
             testExpected("video.canPlayType()", "");
             testExpected("video.canPlayType('video/')", "");
             testExpected("video.canPlayType('video/blahblah')", "");
-            testExpected("video.canPlayType('video/mpeg; codecs=&quot;avc1.4D400C&quot;')", "probably");
-            testExpected("video.canPlayType('        video/mp4  ; video/mp4; codecs=&quot;mp4v.20.8, mp4a.40.2&quot;')", "probably");
+            testExpected("video.canPlayType('video/mpeg; Codecs=&quot;avc1.4D400C&quot;')", "probably");
+            testExpected("video.canPlayType('        Video/MP4 ; CODECS=&quot;mp4v.20.8, mp4a.40.2&quot;')", "probably");
             testExpected("video.canPlayType('audio/mpeg')", "maybe");
-            testExpected("video.canPlayType('audio/wav')", "maybe");
+            testExpected("video.canPlayType('audio/Wav')", "maybe");
 
             endTest();
         </script>

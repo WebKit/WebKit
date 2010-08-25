@@ -273,7 +273,7 @@ MediaPlayer::~MediaPlayer()
 
 void MediaPlayer::load(const String& url, const ContentType& contentType)
 {
-    String type = contentType.type();
+    String type = contentType.type().lower();
     String typeCodecs = contentType.parameter(codecs());
 
     // If the MIME type is unhelpful, see if the type registry has a match for the file extension.
@@ -556,7 +556,7 @@ void MediaPlayer::paintCurrentFrameInContext(GraphicsContext* p, const IntRect& 
 
 MediaPlayer::SupportsType MediaPlayer::supportsType(ContentType contentType)
 {
-    String type = contentType.type();
+    String type = contentType.type().lower();
     String typeCodecs = contentType.parameter(codecs());
 
     // 4.8.10.3 MIME types - In the absence of a specification to the contrary, the MIME type "application/octet-stream" 
@@ -572,7 +572,6 @@ MediaPlayer::SupportsType MediaPlayer::supportsType(ContentType contentType)
     }
 
     MediaPlayerFactory* engine = chooseBestEngineForTypeAndCodecs(type, typeCodecs);
-
     if (!engine)
         return IsNotSupported;
 

@@ -1,3 +1,14 @@
+2010-08-25  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        HTMLMediaElement.canPlayType must be case insensitive for MIME type.
+        https://bugs.webkit.org/show_bug.cgi?id=44577
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::load):
+        (WebCore::MediaPlayer::supportsType):
+
 2010-08-25  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Martin Robinson.

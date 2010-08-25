@@ -1,6 +1,6 @@
 Test HTMLMediaElement canPlayType() method for ogg media containers.
 
-EXPECTED (video.canPlayType('audio/ogg') == 'maybe') OK
-EXPECTED (video.canPlayType('video/ogg') == 'maybe') OK
+EXPECTED (video.canPlayType('Audio/ogg') == 'maybe') OK
+EXPECTED (video.canPlayType('Video/ogg') == 'maybe') OK
 END OF TEST
 
