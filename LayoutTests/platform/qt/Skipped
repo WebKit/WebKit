@@ -5356,6 +5356,7 @@ fast/text/bidi-explicit-embedding-past-end.html
 # Need to implement inner-spin-button or outer-spin-button
 fast/forms/input-appearance-spinbutton-disabled-readonly.html
 fast/forms/input-number-events.html
+fast/forms/input-spinbutton-capturing.html
 
 # Speech input is not yet enabled.
 fast/speech

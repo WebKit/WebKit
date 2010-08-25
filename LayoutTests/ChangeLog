@@ -1,5 +1,16 @@
 2010-08-25  Kent Tamura  <tkent@chromium.org>
 
+        Unreviewed, skip list update.
+
+        input-spinbutton-capturing.html should be skipped in platforms
+        without spinbutton implementation.
+
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
+2010-08-25  Kent Tamura  <tkent@chromium.org>
+
         Reviewed by Shinichiro Hamaji
 
         Fix a bug that a spin-button doesn't release mouse capturing
