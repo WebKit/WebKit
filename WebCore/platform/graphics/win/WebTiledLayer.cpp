@@ -36,6 +36,26 @@ namespace WebCore {
 
 using namespace std;
 
+#ifndef NDEBUG
+void WebTiledLayer::internalCheckLayerConsistency()
+{
+    WKCACFLayer::internalCheckLayerConsistency();
+
+    // Additionally make sure the tiled parent is valid
+    CFArrayRef sublayers = CACFLayerGetSublayers(layer());
+
+    // Make sure there is a tile parent and it is the same as we remember
+    size_t n = CFArrayGetCount(sublayers);
+    ASSERT(n > 0);
+    const void* element = CFArrayGetValueAtIndex(sublayers, 0);
+    ASSERT(m_tileParent.get() == element);
+
+    // Make sure the tile parent doesn't have user data. If it does, it is probably
+    // a WKCACFLayer in the wrong place.
+    ASSERT(!layer(m_tileParent.get()));
+}
+#endif
+
 void WebTiledLayer::tileDisplayCallback(CACFLayerRef layer, CGContextRef context)
 {
     static_cast<WebTiledLayer*>(CACFLayerGetUserData(layer))->drawTile(layer, context);

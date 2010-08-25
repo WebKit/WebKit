@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Test that switching to tiled layers when the parent is a tiled layer does not crash</title>
+
+    <style type="text/css" media="screen">
+
+    #container {
+      width: 500px;
+      height: 5000px;
+      border: 1px solid black;
+      background-color: yellow;
+      -webkit-transform:translateZ(0);
+    }
+    
+    #box {
+        position: absolute;
+        left:50px;
+        width: 200px;
+        height: 200px;
+        -webkit-transform:translateZ(0);
+        top: 100px;
+        background-color: red;
+    }
+    </style>
+    <script type="text/javascript" charset="utf-8">
+        if (window.layoutTestController) {
+            layoutTestController.dumpAsText();
+            layoutTestController.waitUntilDone();
+        }
+        
+        result = "";
+
+        function testOnLoad()
+        {
+            window.setTimeout(function() {
+                document.getElementById('box').style.height = "4800px";
+                
+                // Let it render
+                window.setTimeout(function() {
+                    if (window.layoutTestController) {
+                        document.getElementById('layers').innerHTML = layoutTestController.layerTreeAsText();
+                        layoutTestController.notifyDone();
+                    }
+                }, 0);
+            }, 0);
+        }
+      
+        window.addEventListener('load', testOnLoad, false);
+    </script>
+  </head>
+  <body>
+      <p>
+        From https://bugs.webkit.org/show_bug.cgi?id=44629. The parent is a tiled layer.
+        When the child is a non-tiled layer and it is switched to a tiled layer, a crash
+        occurs. This test should not crash.
+      </p>
+        <div id="container">
+          <div id="box"></div>
+        </div>
+        <pre id="layers">Layer tree appears here in DRT.</pre>
+  </body>
+</html>

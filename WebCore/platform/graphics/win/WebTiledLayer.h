@@ -56,6 +56,10 @@ protected:
 
     virtual void internalSetNeedsDisplay(const CGRect* dirtyRect);
 
+#ifndef NDEBUG
+    virtual void internalCheckLayerConsistency();
+#endif
+
 private:
     static void tileDisplayCallback(CACFLayerRef, CGContextRef);
     void drawTile(CACFLayerRef, CGContextRef);

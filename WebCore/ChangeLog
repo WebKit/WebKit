@@ -1,3 +1,39 @@
+2010-08-25  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=44629
+        Add layer consistency checking and fix found crashing bug
+        
+        The crash was being caused by some of the calls which mutated
+        the sublayer list leaving the list in an inconsistent state.
+        This eventually lead to a crash. It would also lead to visual
+        artifacts if the crash didn't occur. Added consistency checking
+        to catch this and any other inconsistencies in the sublayer list.
+        
+        The particular bug in this case was caused by clamping an index
+        for insertion to the current size of the sublayer list. CACF uses
+        an index equal to the current length to indicate an append operation.
+        With tiled layers the apparent size of the list is one less than its
+        actual size (to accomodate the layer which holds the list of tiles)
+        so this clamping was causing the new layer to get inserted before the
+        tile parent. The tile parent was then mistaken for a WKCACFLayer and
+        it eventually tried to deref that layer, causing the crash.
+        
+        I also added some protection when destroying a WKCACFLayer. The user data
+        for the corresponding CACFLayer is now changed to 0xDeadBeef rather than 
+        null. This allows dangling layers to be more easily identified. This
+        value is checked and ASSERTed if seen. I also remove the sublayers
+        on destruction to make the consistency checks work properly while
+        a layer is being destroyed.
+
+        Test: compositing/tiling/crash-reparent-tiled-layer.html
+
+        * platform/graphics/win/WKCACFLayer.cpp:
+        * platform/graphics/win/WKCACFLayer.h:
+        * platform/graphics/win/WebTiledLayer.cpp:
+        * platform/graphics/win/WebTiledLayer.h:
+
 2010-08-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.

@@ -60,7 +60,11 @@ public:
                                BottomLeft, BottomRight, Resize, ResizeAspect, ResizeAspectFill };
 
     static PassRefPtr<WKCACFLayer> create(LayerType);
-    static WKCACFLayer* layer(CACFLayerRef layer) { return static_cast<WKCACFLayer*>(CACFLayerGetUserData(layer)); }
+    static WKCACFLayer* layer(CACFLayerRef layer)
+    {
+        ASSERT(CACFLayerGetUserData(layer) != reinterpret_cast<void*>(0xDEADBEEF));
+        return static_cast<WKCACFLayer*>(CACFLayerGetUserData(layer));
+    }
 
     virtual ~WKCACFLayer();
 
@@ -133,7 +137,11 @@ public:
     void adoptSublayers(WKCACFLayer* source);
 
     void removeAllSublayers() { internalRemoveAllSublayers(); }
-    void setSublayers(const Vector<RefPtr<WKCACFLayer> >& sublayers) { internalSetSublayers(sublayers); }
+    void setSublayers(const Vector<RefPtr<WKCACFLayer> >& sublayers)
+    {
+        internalSetSublayers(sublayers);
+        checkLayerConsistency();
+    }
 
     void insertSublayer(PassRefPtr<WKCACFLayer> layer, size_t index) { internalInsertSublayer(layer, index); }
 
@@ -244,6 +252,13 @@ protected:
     // This should only be called from removeFromSuperlayer.
     void removeSublayer(const WKCACFLayer*);
 
+    void checkLayerConsistency()
+    {
+#ifndef NDEBUG
+        internalCheckLayerConsistency();
+#endif
+    }
+
     // Methods to be overridden for sublayer and rendering management
     virtual WKCACFLayer* internalSublayerAtIndex(int) const;
 
@@ -257,6 +272,10 @@ protected:
     virtual void internalSetSublayers(const Vector<RefPtr<WKCACFLayer> >&);
 
     virtual void internalSetNeedsDisplay(const CGRect* dirtyRect);
+
+#ifndef NDEBUG
+    virtual void internalCheckLayerConsistency();
+#endif
 
 #ifndef NDEBUG
     // Print this layer and its children to the console
