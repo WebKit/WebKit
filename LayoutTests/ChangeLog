@@ -1,3 +1,9 @@
+2010-08-24  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Unreviewed, Chromium's LayoutTestController does not implement markerTextForListItem() yet.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-08-24  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
