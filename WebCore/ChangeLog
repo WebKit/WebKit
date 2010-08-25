@@ -1,3 +1,21 @@
+2010-08-25  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Shinichiro Hamaji
+
+        Fix a bug that a spin-button doesn't release mouse capturing
+        https://bugs.webkit.org/show_bug.cgi?id=44411
+
+        - LeftButton should be checked only for clickEvent.
+          Note that this change doesn't change the behavior because
+          button() value is initialized with LeftButton even for
+          mousemoveEvent.
+        - Should pass a SpinButtonElement node to setCapturingMouseEventsNode().
+
+        Test: fast/forms/input-spinbutton-capturing.html
+
+        * rendering/TextControlInnerElements.cpp:
+        (WebCore::SpinButtonElement::defaultEventHandler):
+
 2010-08-16  Gabor Loki  <loki@webkit.org>
 
         Reviewed by Gavin Barraclough.

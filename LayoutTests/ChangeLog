@@ -1,3 +1,14 @@
+2010-08-25  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Shinichiro Hamaji
+
+        Fix a bug that a spin-button doesn't release mouse capturing
+        https://bugs.webkit.org/show_bug.cgi?id=44411
+
+        * fast/forms/input-spinbutton-capturing-expected.txt: Added.
+        * fast/forms/input-spinbutton-capturing.html: Added.
+        * fast/forms/script-tests/input-spinbutton-capturing.js: Added.
+
 2010-08-25  Gavin Peters  <gavinp@chromium.org>
 
         Reviewed by Adam Barth.

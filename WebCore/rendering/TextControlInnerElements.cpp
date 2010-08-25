@@ -274,13 +274,6 @@ void SpinButtonElement::defaultEventHandler(Event* event)
         return;
     }
 
-    MouseEvent* mouseEvent = static_cast<MouseEvent*>(event);
-    if (mouseEvent->button() != LeftButton) {
-        if (!event->defaultHandled())
-            HTMLDivElement::defaultEventHandler(event);
-        return;
-    }
-
     RenderBox* box = renderBox();
     if (!box) {
         if (!event->defaultHandled())
@@ -288,6 +281,7 @@ void SpinButtonElement::defaultEventHandler(Event* event)
         return;        
     }
     
+    MouseEvent* mouseEvent = static_cast<MouseEvent*>(event);
     HTMLInputElement* input = static_cast<HTMLInputElement*>(shadowAncestorNode());
     if (input->disabled() || input->isReadOnlyFormControl()) {
         if (!event->defaultHandled())
@@ -296,7 +290,7 @@ void SpinButtonElement::defaultEventHandler(Event* event)
     }
 
     IntPoint local = roundedIntPoint(box->absoluteToLocal(mouseEvent->absoluteLocation(), false, true));
-    if (event->type() == eventNames().clickEvent) {
+    if (event->type() == eventNames().clickEvent && mouseEvent->button() == LeftButton) {
         if (box->borderBoxRect().contains(local)) {
             RefPtr<Node> protector(input);
             input->focus();
@@ -311,7 +305,7 @@ void SpinButtonElement::defaultEventHandler(Event* event)
         if (box->borderBoxRect().contains(local)) {
             if (!m_capturing) {
                 if (Frame* frame = document()->frame()) {
-                    frame->eventHandler()->setCapturingMouseEventsNode(input);
+                    frame->eventHandler()->setCapturingMouseEventsNode(this);
                     m_capturing = true;
                 }
             }
