@@ -48,8 +48,7 @@ static String toRoman(int number, bool upper)
     // FIXME: CSS3 describes how to make this work for much larger numbers,
     // using overbars and special characters. It also specifies the characters
     // in the range U+2160 to U+217F instead of standard ASCII ones.
-    if (number < 1 || number > 3999)
-        return String::number(number);
+    ASSERT(number >= 1 && number <= 3999);
 
     // Big enough to store largest roman number less than 3999 which
     // is 3888 (MMMDCCCLXXXVIII)
@@ -118,9 +117,6 @@ static inline String toAlphabeticOrNumeric(int number, const UChar* sequence, in
 
 static String toAlphabetic(int number, const UChar* alphabet, int alphabetSize)
 {
-    if (number < 1)
-        return String::number(number);
-
     return toAlphabeticOrNumeric(number, alphabet, alphabetSize, AlphabeticSequence);
 }
 
@@ -170,8 +166,7 @@ static int toHebrewUnder1000(int number, UChar letters[5])
 static String toHebrew(int number)
 {
     // FIXME: CSS3 mentions ways to make this work for much larger numbers.
-    if (number < 0 || number > 999999)
-        return String::number(number);
+    ASSERT(number >= 0 && number <= 999999);
 
     if (number == 0) {
         static const UChar hebrewZero[3] = { 0x05D0, 0x05E4, 0x05E1 };
@@ -238,8 +233,7 @@ static int toArmenianUnder10000(int number, bool upper, bool addCircumflex, UCha
 
 static String toArmenian(int number, bool upper)
 {
-    if (number < 1 || number > 99999999)
-        return String::number(number);
+    ASSERT(number >= 1 && number <= 99999999);
 
     const int lettersSize = 18; // twice what toArmenianUnder10000 needs
     UChar letters[lettersSize];
@@ -253,8 +247,7 @@ static String toArmenian(int number, bool upper)
 
 static String toGeorgian(int number)
 {
-    if (number < 1 || number > 19999)
-        return String::number(number);
+    ASSERT(number >= 1 && number <= 19999);
 
     const int lettersSize = 5;
     UChar letters[lettersSize];
@@ -300,8 +293,7 @@ static String toGeorgian(int number)
 // first 3 group markers, then 3 digit markers, then ten digits.
 static String toCJKIdeographic(int number, const UChar table[16])
 {
-    if (number < 0)
-        return String::number(number);
+    ASSERT(number >= 0);
 
     enum AbstractCJKChar {
         noChar,
@@ -379,11 +371,110 @@ static String toCJKIdeographic(int number, const UChar table[16])
     return String(characters, length);
 }
 
-static UChar listMarkerSuffix(EListStyleType type)
+static EListStyleType effectiveListMarkerType(EListStyleType type, int value)
 {
+    // Note, the following switch statement has been explicitly grouped
+    // by list-style-type ordinal range.
+    switch (type) {
+    case ArabicIndic:
+    case Bengali:
+    case BinaryListStyle:
+    case Cambodian:
+    case Circle:
+    case DecimalLeadingZero:
+    case DecimalListStyle:
+    case Devanagari:
+    case Disc:
+    case Gujarati:
+    case Gurmukhi:
+    case Kannada:
+    case Khmer:
+    case Lao:
+    case LowerHexadecimal:
+    case Malayalam:
+    case Mongolian:
+    case Myanmar:
+    case NoneListStyle:
+    case Octal:
+    case Oriya:
+    case Persian:
+    case Square:
+    case Telugu:
+    case Thai:
+    case Tibetan:
+    case UpperHexadecimal:
+    case Urdu:
+        return type; // Can represent all ordinals.
+    case Armenian:
+        return (value < 1 || value > 99999999) ? DecimalListStyle : type;
+    case CJKIdeographic:
+        return (value < 0) ? DecimalListStyle : type;
+    case Georgian:
+        return (value < 1 || value > 19999) ? DecimalListStyle : type;
+    case Hebrew:
+        return (value < 0 || value > 999999) ? DecimalListStyle : type;
+    case LowerRoman:
+    case UpperRoman:
+        return (value < 1 || value > 3999) ? DecimalListStyle : type;
+    case Afar:
+    case Amharic:
+    case AmharicAbegede:
+    case CjkEarthlyBranch:
+    case CjkHeavenlyStem:
+    case Ethiopic:
+    case EthiopicAbegede:
+    case EthiopicAbegedeAmEt:
+    case EthiopicAbegedeGez:
+    case EthiopicAbegedeTiEr:
+    case EthiopicAbegedeTiEt:
+    case EthiopicHalehameAaEr:
+    case EthiopicHalehameAaEt:
+    case EthiopicHalehameAmEt:
+    case EthiopicHalehameGez:
+    case EthiopicHalehameOmEt:
+    case EthiopicHalehameSidEt:
+    case EthiopicHalehameSoEt:
+    case EthiopicHalehameTiEr:
+    case EthiopicHalehameTiEt:
+    case EthiopicHalehameTig:
+    case Hangul:
+    case HangulConsonant:
+    case Hiragana:
+    case HiraganaIroha:
+    case Katakana:
+    case KatakanaIroha:
+    case LowerAlpha:
+    case LowerGreek:
+    case LowerLatin:
+    case LowerNorwegian:
+    case Oromo:
+    case Sidama:
+    case Somali:
+    case Tigre:
+    case TigrinyaEr:
+    case TigrinyaErAbegede:
+    case TigrinyaEt:
+    case TigrinyaEtAbegede:
+    case UpperAlpha:
+    case UpperGreek:
+    case UpperLatin:
+    case UpperNorwegian:
+        return (value < 1) ? DecimalListStyle : type;
+    }
+
+    ASSERT_NOT_REACHED();
+    return type;
+}
+
+static UChar listMarkerSuffix(EListStyleType type, int value)
+{
+    // If the list-style-type, say hebrew, cannot represent |value| because it's outside
+    // its ordinal range then we fallback to some list style that can represent |value|.
+    EListStyleType effectiveType = effectiveListMarkerType(type, value);
+
     // Note, the following switch statement has been explicitly
     // grouped by list-style-type suffix.
-    switch (type) {
+    switch (effectiveType) {
     case NoneListStyle:
     case Disc:
     case Circle:
@@ -473,7 +564,9 @@ static UChar listMarkerSuffix(EListStyleType type)
 
 String listMarkerText(EListStyleType type, int value)
 {
-    switch (type) {
+    // If the list-style-type, say hebrew, cannot represent |value| because it's outside
+    // its ordinal range then we fallback to some list style that can represent |value|.
+    switch (effectiveListMarkerType(type, value)) {
         case NoneListStyle:
             return "";
 
@@ -1122,7 +1215,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
     }
 
     const Font& font = style()->font();
-    const UChar suffix = listMarkerSuffix(type);
+    const UChar suffix = listMarkerSuffix(type, m_listItem->value());
     if (style()->direction() == LTR) {
         int width = font.width(textRun);
         context->drawText(style()->font(), textRun, marker.location());
@@ -1282,7 +1375,7 @@ void RenderListMarker::calcPrefWidths()
                 width = 0;
             else {
                 int itemWidth = font.width(m_text);
-                UChar suffixSpace[2] = { listMarkerSuffix(type), ' ' };
+                UChar suffixSpace[2] = { listMarkerSuffix(type, m_listItem->value()), ' ' };
                 int suffixSpaceWidth = font.width(TextRun(suffixSpace, 2));
                 width = itemWidth + suffixSpaceWidth;
             }
@@ -1484,7 +1577,7 @@ IntRect RenderListMarker::getRelativeMarkerRect()
                 return IntRect();
             const Font& font = style()->font();
             int itemWidth = font.width(m_text);
-            UChar suffixSpace[2] = { listMarkerSuffix(type), ' ' };
+            UChar suffixSpace[2] = { listMarkerSuffix(type, m_listItem->value()), ' ' };
             int suffixSpaceWidth = font.width(TextRun(suffixSpace, 2));
             return IntRect(x(), y() + font.ascent(), itemWidth + suffixSpaceWidth, font.height());
     }

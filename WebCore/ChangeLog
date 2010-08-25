@@ -1,3 +1,40 @@
+2010-08-23  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Darin Adler.
+
+        Suffix for CSS alphabetic list style types should fallback to
+        decimal for ordinals outside of their representable range
+        https://bugs.webkit.org/show_bug.cgi?id=44486
+
+        Test: fast/lists/w3-css3-list-styles-fallback-style.html
+
+        Fixes an issue where the decimal suffix is not used for
+        ordinals that cannot be represented by the alphabetic list
+        style type.
+
+        Currently, for ordinals that cannot be represented in the
+        alphabetic list style we use the suffix associated with the
+        list style. Instead, we should use the suffix for the decimal
+        list style ('.'). For instance, when the list style type is
+        Afar and the starting ordinal is 0, then we fallback to the
+        decimal list style suffix '.' because 0 cannot be represented
+        in Afar.
+
+        * rendering/RenderListMarker.cpp:
+        (WebCore::toRoman): Moved bounds check into WebCore::effectiveListMarkerType().
+        (WebCore::toAlphabetic): Ditto.
+        (WebCore::toHebrew): Ditto.
+        (WebCore::toArmenian): Ditto.
+        (WebCore::toGeorgian): Ditto.
+        (WebCore::toCJKIdeographic): Ditto.
+        (WebCore::effectiveListMarkerType): Added.
+        (WebCore::listMarkerSuffix): Added value parameter to prototype.
+        Modified to call WebCore::effectiveListMarkerType.
+        (WebCore::listMarkerText): Modified to call WebCore::effectiveListMarkerType().
+        (WebCore::RenderListMarker::paint): Modified to pass list item ordinal (i.e. m_listItem->value()) to WebCore::listMarkerSuffix().
+        (WebCore::RenderListMarker::calcPrefWidths): Ditto.
+        (WebCore::RenderListMarker::getRelativeMarkerRect): Ditto.
+
 2010-08-24  Gavin Barraclough  <barraclough@apple.com>
 
         Windows build fix.

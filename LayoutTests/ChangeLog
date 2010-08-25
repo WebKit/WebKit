@@ -1,3 +1,24 @@
+2010-08-23  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Darin Adler.
+
+        Suffix for CSS alphabetic list style types should fallback to
+        decimal for ordinals outside of their representable range
+        https://bugs.webkit.org/show_bug.cgi?id=44486
+
+        Tests that CSS list styles fallback to the decimal list style
+        for ordinals that cannot be represented. We need to implement
+        DRT support to test the actual suffix (see bug #44489).
+
+        Also, adds test for ordinal 0 for each numeric list style type.
+
+        * fast/lists/resources/w3-css3-list-styles-alphabetic.css: Added.
+        * fast/lists/w3-css3-list-styles-alphabetic.html: Moved CSS list styles to file w3-css3-list-styles-alphabetic.css,
+        * fast/lists/w3-css3-list-styles-fallback-style-expected.txt: Added.
+        * fast/lists/w3-css3-list-styles-fallback-style.html: Added.
+        * fast/lists/w3-css3-list-styles-numeric-expected.txt: Added test for ordinal 0 for each list style type.
+        * fast/lists/w3-css3-list-styles-numeric.html: Rebased result.
+
 2010-08-24  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.
