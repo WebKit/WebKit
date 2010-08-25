@@ -3,7 +3,7 @@ This tests switching an unordered list with a nested list to an ordered list.
 "
 | <ol>
 |   <li>
-|     "<#selection-caret>hello"
+|     "<#selection-anchor>hello"
 |   "
     "
 |   <ol>
@@ -16,6 +16,6 @@ This tests switching an unordered list with a nested list to an ordered list.
 |   "
     "
 |   <li>
-|     "webkit"
+|     "webkit<#selection-focus>"
 | "
 "

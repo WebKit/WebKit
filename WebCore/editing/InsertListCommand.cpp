@@ -37,6 +37,14 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+static Node* enclosingListChild(Node* node, Node* listNode)
+{
+    Node* listChild = enclosingListChild(node);
+    while (listChild && enclosingList(listChild) != listNode)
+        listChild = enclosingListChild(listChild->parentNode());
+    return listChild;
+}
+
 PassRefPtr<HTMLElement> InsertListCommand::insertList(Document* document, Type type)
 {
     RefPtr<InsertListCommand> insertCommand = create(document, type);
@@ -138,7 +146,19 @@ void InsertListCommand::doApply()
                 if (!startOfLastParagraph.deepEquivalent().node()->inDocument())
                     return;
                 setEndingSelection(startOfCurrentParagraph);
+
+                // Save and restore endOfSelection and startOfLastParagraph when necessary
+                // since moveParagraph and movePragraphWithClones can remove nodes.
+                // FIXME: This is an inefficient way to keep selection alive because indexForVisiblePosition walks from
+                // the beginning of the document to the endOfSelection everytime this code is executed.
+                // But not using index is hard because there are so many ways we can lose selection inside doApplyForSingleParagraph.
+                int indexForEndOfSelection = indexForVisiblePosition(endOfSelection);
                 doApplyForSingleParagraph(forceCreateList, listTag, currentSelection.get());
+                if (endOfSelection.isNull() || endOfSelection.isOrphan() || startOfLastParagraph.isNull() || startOfLastParagraph.isOrphan()) {
+                    RefPtr<Range> lastSelectionRange = TextIterator::rangeFromLocationAndLength(document()->documentElement(), indexForEndOfSelection, 0, true);
+                    endOfSelection = lastSelectionRange->startPosition();
+                    startOfLastParagraph = startOfParagraph(endOfSelection);
+                }
 
                 // Fetch the start of the selection after moving the first paragraph,
                 // because moving the paragraph will invalidate the original start.  
@@ -186,12 +206,35 @@ void InsertListCommand::doApplyForSingleParagraph(bool forceCreateList, const Qu
 
         // If the entire list is selected, then convert the whole list.
         if (switchListType && isNodeVisiblyContainedWithin(listNode.get(), currentSelection)) {
+            bool rangeStartIsInList = visiblePositionBeforeNode(listNode.get()) == currentSelection->startPosition();
+            bool rangeEndIsInList = visiblePositionAfterNode(listNode.get()) == currentSelection->endPosition();
+
             RefPtr<HTMLElement> newList = createHTMLElement(document(), listTag);
             insertNodeBefore(newList, listNode);
-            Node* outerBlock = listChildNode->isBlockFlow() ? listChildNode : listNode.get();
+
+            Node* firstChildInList = enclosingListChild(VisiblePosition(Position(listNode, 0)).deepEquivalent().node(), listNode.get());
+            Node* outerBlock = firstChildInList->isBlockFlow() ? firstChildInList : listNode.get();
+            
             moveParagraphWithClones(firstPositionInNode(listNode.get()), lastPositionInNode(listNode.get()), newList.get(), outerBlock);
+
+            // Manually remove listNode because moveParagraphWithClones sometimes leaves it behind in the document.
+            // See the bug 33668 and editing/execCommand/insert-list-orphaned-item-with-nested-lists.html.
+            // FIXME: This might be a bug in moveParagraphWithClones or deleteSelection.
+            if (listNode && listNode->inDocument())
+                removeNode(listNode);
+
             newList = mergeWithNeighboringLists(newList);
+
+            // Restore the start and the end of current selection if they started inside listNode
+            // because moveParagraphWithClones could have removed them.
+            ExceptionCode ec;
+            if (rangeStartIsInList && newList)
+                currentSelection->setStart(newList, 0, ec);
+            if (rangeEndIsInList && newList)
+                currentSelection->setEnd(newList, lastOffsetInNode(newList.get()), ec);
+
             setEndingSelection(VisiblePosition(firstPositionInNode(newList.get())));
+
             return;
         }
         
@@ -200,14 +243,6 @@ void InsertListCommand::doApplyForSingleParagraph(bool forceCreateList, const Qu
 
     if (!listChildNode || switchListType || forceCreateList)
         m_listElement = listifyParagraph(endingSelection().visibleStart(), listTag);
-}
-
-static Node* enclosingListChild(Node* node, Node* listNode)
-{
-    Node* listChild = enclosingListChild(node);
-    if (enclosingList(listChild) != listNode)
-        return 0;
-    return listChild;
 }
 
 void InsertListCommand::unlistifyParagraph(const VisiblePosition& originalStart, HTMLElement* listNode, Node* listChildNode)
@@ -278,7 +313,8 @@ static Element* adjacentEnclosingList(const VisiblePosition& pos, const VisibleP
 
     if (!listNode->hasTagName(listTag)
         || listNode->contains(pos.deepEquivalent().node())
-        || previousCell != currentCell)
+        || previousCell != currentCell
+        || enclosingList(listNode) != enclosingList(pos.deepEquivalent().node()))
         return 0;
 
     return listNode;
@@ -288,6 +324,9 @@ PassRefPtr<HTMLElement> InsertListCommand::listifyParagraph(const VisiblePositio
 {
     VisiblePosition start = startOfParagraph(originalStart);
     VisiblePosition end = endOfParagraph(start);
+    
+    if (start.isNull() || end.isNull())
+        return 0;
 
     // Check for adjoining lists.
     RefPtr<HTMLElement> listItemElement = createListItemElement(document());

@@ -1,3 +1,17 @@
+2010-08-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        WebCore::InsertListCommand::modifyRange infinite loop (100% CPU usage)
+        https://bugs.webkit.org/show_bug.cgi?id=33668
+
+        Added a test to convert nested lists with an orphaned list child to an ordered nested list.
+        Selection in switch-list-type-with-inner-list.html is restored correctly after inserting list.
+
+        * editing/execCommand/insert-list-orphaned-item-with-nested-lists-expected.txt: Added.
+        * editing/execCommand/insert-list-orphaned-item-with-nested-lists.html: Added.
+        * editing/execCommand/switch-list-type-with-inner-list-expected.txt: Selection is restored correctly.
+
 2010-08-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Tony Chang.

@@ -1,3 +1,31 @@
+2010-08-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        WebCore::InsertListCommand::modifyRange infinite loop (100% CPU usage)
+        https://bugs.webkit.org/show_bug.cgi?id=33668
+
+        The bug was caused by enclosingListChild returning a list child whose enclosing list is
+        a sibling of the current list child. Fixed enclosingListChild to traverse upwards
+        in the DOM to find the list child which is a sibling of the current list child.
+        Also fixed adjacentEnclosingList to only returns the list that belongs to the same outer list.
+
+        In doApplyForSingleParagraph, if the start or the end of currentSelection existed inside a list content
+        moved by moveParagraphWithClones, either end could point to a wrong position after the move.
+        Fixed this problem by checking this condition upfront and restoring later.
+
+        In doApply, if moveParagraph or moveParagraphWithClones, endOfSelection or startOfLastParagraph
+        could be null or orphaned, fixed this problem by indexForVisiblePosition.
+
+        Test: editing/execCommand/insert-list-orphaned-item-with-nested-lists.html
+
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::doApply):
+        (WebCore::enclosingListChild):
+        (WebCore::InsertListCommand::doApplyForSingleParagraph):
+        (WebCore::adjacentEnclosingList):
+        (WebCore::InsertListCommand::listifyParagraph):
+
 2010-08-25  Brent Fulgham  <bfulgham@webkit.org>
 
         Build corrections, no review.
