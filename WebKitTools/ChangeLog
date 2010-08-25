@@ -2,6 +2,15 @@
 
         Reviewed by Adam Barth.
 
+        unicode(Exception(\u"0x1234")) is busted in python 2.5, disable tests which hit this
+        https://bugs.webkit.org/show_bug.cgi?id=44584
+
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+
+2010-08-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
         commit-queue and EWS bots should report all failures
         https://bugs.webkit.org/show_bug.cgi?id=41820
 

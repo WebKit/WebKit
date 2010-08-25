@@ -105,6 +105,12 @@ class AbstractQueueTest(CommandsTest):
 
     def test_log_from_script_error_for_upload(self):
         self._assert_log_message(ScriptError("test"), "test")
+        # In python 2.5 unicode(Exception) is busted. See:
+        # http://bugs.python.org/issue2517
+        # With no good workaround, we just ignore these tests.
+        if not hasattr(Exception, "__unicode__"):
+            return
+
         unicode_tor = u"WebKit \u2661 Tor Arne Vestb\u00F8!"
         utf8_tor = unicode_tor.encode("utf-8")
         self._assert_log_message(ScriptError(unicode_tor), utf8_tor)
