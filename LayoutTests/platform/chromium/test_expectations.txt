@@ -1833,8 +1833,7 @@ BUG10473 LINUX : fast/forms/search-placeholder-value-changed.html = FAIL
 BUG10473 LINUX : fast/replaced/width100percent-searchfield.html = FAIL
 
 // This test isn't just slow -- sometimes it times out indefinitely.
-// r37311:r37313 started making the test fail with a text diff.
-BUG27569 BUG33316 LINUX MAC WIN : http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html = TIMEOUT FAIL PASS
+BUG27569 LINUX MAC WIN : http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html = TIMEOUT PASS
 
 BUG9613 WIN LINUX : fast/dom/clientWidthAfterDocumentIsRemoved.html = IMAGE+TEXT TEXT
 BUG9613 MAC : fast/dom/clientWidthAfterDocumentIsRemoved.html = TEXT
