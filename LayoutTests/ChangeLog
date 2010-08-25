@@ -1,3 +1,19 @@
+2010-08-25  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: add "Attribute Modified" and "Node Removed" DOM breakpoints
+        https://bugs.webkit.org/show_bug.cgi?id=44532
+
+        * http/tests/inspector/debugger-test2.js:
+        (initialize_DebuggerTest.InspectorTest.waitUntilPaused.pausedScript):
+        (initialize_DebuggerTest.InspectorTest.waitUntilPaused):
+        * http/tests/inspector/inspector-test2.js:
+        (initialize_InspectorTest.):
+        (initialize_InspectorTest):
+        * inspector/dom-breakpoints-expected.txt:
+        * inspector/dom-breakpoints.html:
+
 2010-08-25  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Shinichiro Hamaji

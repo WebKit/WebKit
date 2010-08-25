@@ -728,11 +728,15 @@ WebInspector.DOMBreakpoint = function(node, type)
 }
 
 WebInspector.DOMBreakpoint.Types = {
-    SubtreeModified: 0
+    SubtreeModified: 0,
+    AttributeModified: 1,
+    NodeRemoved: 2
 };
 
 WebInspector.DOMBreakpoint.Labels = {};
 WebInspector.DOMBreakpoint.Labels[WebInspector.DOMBreakpoint.Types.SubtreeModified] = WebInspector.UIString("Subtree Modified");
+WebInspector.DOMBreakpoint.Labels[WebInspector.DOMBreakpoint.Types.AttributeModified] = WebInspector.UIString("Attribute Modified");
+WebInspector.DOMBreakpoint.Labels[WebInspector.DOMBreakpoint.Types.NodeRemoved] = WebInspector.UIString("Node Removed");
 
 WebInspector.DOMBreakpoint.prototype = {
     get enabled()

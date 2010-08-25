@@ -35,6 +35,7 @@ InspectorTest.reloadPage = function(callback)
 InspectorTest.findDOMNode = function(root, filter, callback)
 {
     var found = false;
+    var pendingCalls = 0;
 
     if (root)
         findDOMNode(root);
@@ -55,14 +56,19 @@ InspectorTest.findDOMNode = function(root, filter, callback)
         if (filter(node)) {
             callback(node);
             found = true;
-        } else
+        } else {
+            pendingCalls += 1;
             WebInspector.domAgent.getChildNodesAsync(node, processChildren);
+        }
 
         function processChildren(children)
         {
+            pendingCalls -= 1;
+
             for (var i = 0; !found && children && i < children.length; ++i)
                 findDOMNode(children[i]);
-            if (!found && node === root)
+
+            if (!found && !pendingCalls && node == root)
                 callback(null);
         }
     }
@@ -73,6 +79,7 @@ InspectorTest._addSniffer = function(receiver, methodName, override, opt_sticky)
     var original = receiver[methodName];
     if (typeof original !== "function")
         throw ("Cannot find method to override: " + methodName);
+
     receiver[methodName] = function(var_args) {
         try {
             var result = original.apply(this, arguments);

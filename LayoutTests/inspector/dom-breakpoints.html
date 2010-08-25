@@ -4,36 +4,86 @@
 <script src="../http/tests/inspector/debugger-test2.js"></script>
 <script>
 
-function appendElement()
+function appendElement(parentId, childId)
 {
     var child = document.createElement("div");
-    document.getElementById("d0").appendChild(child);
+    child.id = childId;
+    document.getElementById(parentId).appendChild(child);
+}
+
+function modifyAttribute(elementId, name, value)
+{
+    var element = document.getElementById(elementId);
+    element.setAttribute(name, value);
+}
+
+function removeElement(elementId)
+{
+    var element = document.getElementById(elementId);
+    element.parentNode.removeChild(element);
 }
 
 var test = function()
 {
-    InspectorTest.startDebuggerTest(startDebuggerTestCallback);
+    InspectorTest.startDebuggerTest(step1);
 
-    function startDebuggerTestCallback()
+    function step1()
+    {
+        findDOMNodeById("d0", step2);
+    }
+
+    function step2(node)
+    {
+        InspectorTest.addResult("Found dom node d0.");
+        WebInspector.domBreakpointManager.setBreakpoint(node, WebInspector.DOMBreakpoint.Types.SubtreeModified);
+        InspectorTest.addResult("Set subtree modified DOM breakpoint on d0.");
+        InspectorTest.evaluateInConsole("appendElement('d0', 'd1')");
+        InspectorTest.waitUntilPaused(step3.bind(null, node));
+    }
+
+    function step3(node)
+    {
+        WebInspector.domBreakpointManager.removeBreakpointsForNode(node);
+        InspectorTest.resumeExecution();
+        findDOMNodeById("d1", step4);
+    }
+
+    function step4(node)
+    {
+        InspectorTest.addResult("Found dom node d1.");
+        WebInspector.domBreakpointManager.setBreakpoint(node, WebInspector.DOMBreakpoint.Types.AttributeModified);
+        InspectorTest.addResult("Set attribute modified DOM breakpoint on d1.");
+        InspectorTest.evaluateInConsole("modifyAttribute('d1', 'className', 'foo')");
+        InspectorTest.waitUntilPaused(step5.bind(null, node));
+    }
+
+    function step5(node)
+    {
+        WebInspector.domBreakpointManager.removeBreakpointsForNode(node);
+        InspectorTest.resumeExecution();
+        findDOMNodeById("d1", step6);
+    }
+
+    function step6(node)
+    {
+        InspectorTest.addResult("Found dom node d1.");
+        WebInspector.domBreakpointManager.setBreakpoint(node, WebInspector.DOMBreakpoint.Types.NodeRemoved);
+        InspectorTest.addResult("Set node removed DOM breakpoint on d1.");
+        InspectorTest.evaluateInConsole("removeElement('d1')");
+        InspectorTest.waitUntilPaused(step7.bind(null, node));
+    }
+
+    function step7(node)
+    {
+        WebInspector.domBreakpointManager.removeBreakpointsForNode(node);
+        InspectorTest.completeDebuggerTest();
+    }
+
+    function findDOMNodeById(id, callback)
     {
         InspectorTest.findDOMNode(null, function(node) {
-            return node.getAttribute("id") === "d0";
-        }, findDOMNodeCallback);
-    }
-
-    function findDOMNodeCallback(node)
-    {
-        InspectorTest.addResult("Found div element.");
-        WebInspector.domBreakpointManager.setBreakpoint(node, WebInspector.DOMBreakpoint.Types.SubtreeModified);
-        InspectorTest.addResult("Set DOM breakpoint.");
-        InspectorTest.evaluateInConsole("appendElement()");
-        InspectorTest.waitUntilPaused(waitUntilPausedCallback);
-    }
-
-    function waitUntilPausedCallback(callFrames)
-    {
-        InspectorTest.addResult("Paused at line " + callFrames[0].line + " in " + callFrames[0].functionName);
-        InspectorTest.completeDebuggerTest();
+            return node.getAttribute("id") === id;
+        }, callback);
     }
 };
 

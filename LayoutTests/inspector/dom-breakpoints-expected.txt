@@ -1,8 +1,14 @@
 Tests DOM breakpoints. Bug 42886
 
 Debugger was enabled.
-Found div element.
-Set DOM breakpoint.
-Paused at line 10 in appendElement
+Found dom node d0.
+Set subtree modified DOM breakpoint on d0.
+Paused at line 11 in appendElement
+Found dom node d1.
+Set attribute modified DOM breakpoint on d1.
+Paused at line 17 in modifyAttribute
+Found dom node d1.
+Set node removed DOM breakpoint on d1.
+Paused at line 23 in removeElement
 Debugger was disabled.
 

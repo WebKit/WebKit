@@ -41,7 +41,13 @@ InspectorTest.completeDebuggerTest = function()
 
 InspectorTest.waitUntilPaused = function(callback)
 {
-    InspectorTest._addSniffer(WebInspector, "pausedScript", callback);
+    InspectorTest._addSniffer(WebInspector, "pausedScript", pausedScript);
+
+    function pausedScript(callFrames)
+    {
+        InspectorTest.addResult("Paused at line " + callFrames[0].line + " in " + callFrames[0].functionName);
+        callback(callFrames);
+    }
 };
 
 InspectorTest.resumeExecution = function()

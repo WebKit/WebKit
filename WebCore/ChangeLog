@@ -1,3 +1,22 @@
+2010-08-24  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: add "Attribute Modified" and "Node Removed" DOM breakpoints
+        https://bugs.webkit.org/show_bug.cgi?id=44532
+
+        Test: inspector/dom-breakpoint.html
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::setDOMBreakpoint):
+        (WebCore::InspectorDOMAgent::removeDOMBreakpoint):
+        (WebCore::InspectorDOMAgent::didInsertDOMNode):
+        (WebCore::InspectorDOMAgent::didRemoveDOMNode):
+        (WebCore::InspectorDOMAgent::didModifyDOMAttr):
+        * inspector/front-end/DOMAgent.js:
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype._populateTagContextMenu):
+
 2010-08-25  Satish Sampath  <satish@chromium.org>
 
         Reviewed by Jeremy Orlow.
