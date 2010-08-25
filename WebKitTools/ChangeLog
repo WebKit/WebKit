@@ -1,3 +1,16 @@
+2010-08-25  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove WebKit2 from core builders
+        https://bugs.webkit.org/show_bug.cgi?id=44625
+
+        This builder was added to the core builders by accident.  It doesn't
+        appear to be green enough to be a core builder yet.
+
+        * Scripts/webkitpy/common/net/buildbot.py:
+        * Scripts/webkitpy/common/net/buildbot_unittest.py:
+
 2010-08-19  Adam Roben  <aroben@apple.com>
 
         Test that NP_Initialize and NP_GetEntryPoints are called in the

@@ -257,6 +257,7 @@ class BuildBotTest(unittest.TestCase):
             {'name': u'Leopard Intel Debug (Tests)', },
             {'name': u'SnowLeopard Intel Release (Build)', },
             {'name': u'SnowLeopard Intel Release (Tests)', },
+            {'name': u'SnowLeopard Intel Release (WebKit2 Tests)', },
             {'name': u'SnowLeopard Intel Leaks', },
             {'name': u'Windows Release (Build)', },
             {'name': u'Windows Release (Tests)', },
@@ -282,7 +283,7 @@ class BuildBotTest(unittest.TestCase):
         ]
         name_regexps = [
             "SnowLeopard.*Build",
-            "SnowLeopard.*Test",
+            "SnowLeopard.*\(Test",
             "Leopard",
             "Tiger",
             "Windows.*Build",
