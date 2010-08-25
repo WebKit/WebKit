@@ -1,3 +1,14 @@
+2010-08-25  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        REGRESSION: media/video-loop.html is timing out on the commit-queue Leopard Bot
+        https://bugs.webkit.org/show_bug.cgi?id=38912
+
+        I know of nothing else to do but skip all media tests for the cq.
+
+        * Scripts/webkitpy/tool/steps/runtests.py:
+
 2010-08-25  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Ojan Vafai.

@@ -62,7 +62,15 @@ class RunTests(AbstractStep):
             # when running the commit-queue on a mac leopard machine since compositing
             # does not work reliably on Leopard due to various graphics driver/system bugs.
             if self.port().name() == "Mac" and self.port().is_leopard():
-                args.extend(["--ignore-tests", "compositing"])
+                tests_to_ignore = []
+                tests_to_ignore.append("compositing")
+
+                # media tests are also broken on mac leopard due to
+                # a separate CoreVideo bug which causes random crashes/hangs
+                # https://bugs.webkit.org/show_bug.cgi?id=38912
+                tests_to_ignore.append("media")
+
+                args.extend(["--ignore-tests", ",".join(tests_to_ignore)])
 
         if self._options.quiet:
             args.append("--quiet")
