@@ -284,11 +284,6 @@ void WebSettingsImpl::setAccelerated2dCanvasEnabled(bool enabled)
     m_settings->setAccelerated2dCanvasEnabled(enabled);
 }
 
-void WebSettingsImpl::setHTML5ParserEnabled(bool enabled)
-{
-    m_settings->setHTML5ParserEnabled(enabled);
-}
-
 void WebSettingsImpl::setMemoryInfoEnabled(bool enabled)
 {
     m_settings->setMemoryInfoEnabled(enabled);

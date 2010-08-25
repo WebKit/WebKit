@@ -1,3 +1,13 @@
+2010-08-24  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Build fix: Remove setHTML5ParserEnabled(), it's no longer used.
+
+        * public/WebSettings.h:
+        * src/WebSettingsImpl.cpp:
+        * src/WebSettingsImpl.h:
+
 2010-08-24  Jian Li  <jianli@chromium.org>
 
         Reviewed by Darin Fisher.
