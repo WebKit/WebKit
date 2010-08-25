@@ -2285,35 +2285,4 @@ ret:
         *rve = s;
 }
 
-double intPow10(int e)
-{
-    // This function uses the "exponentiation by squaring" algorithm and
-    // long double to quickly and precisely calculate integer powers of 10.0.
-
-    // This is a handy workaround for <rdar://problem/4494756>
-
-    if (!e)
-        return 1.0;
-
-    bool negative = e < 0;
-    unsigned exp = negative ? -e : e;
-
-    long double result = 10.0;
-    bool foundOne = false;
-    for (int bit = 31; bit >= 0; bit--) {
-        if (!foundOne) {
-            if ((exp >> bit) & 1)
-                foundOne = true;
-        } else {
-            result = result * result;
-            if ((exp >> bit) & 1)
-                result = result * 10.0;
-        }
-    }
-
-    if (negative)
-        return static_cast<double>(1.0 / result);
-    return static_cast<double>(result);
-}
-
 } // namespace WTF

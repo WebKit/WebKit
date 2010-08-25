@@ -35,7 +35,6 @@ double strtod(const char* s00, char** se);
 
 typedef char DtoaBuffer[80];
 void dtoa(DtoaBuffer result, double d, int ndigits, int* decpt, int* sign, char** rve);
-double intPow10(int);
 
 } // namespace WTF
 
