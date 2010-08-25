@@ -1,3 +1,25 @@
+2010-08-25  Satish Sampath  <satish@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Pass the element's bounds to embedder during speech recognition.
+        https://bugs.webkit.org/show_bug.cgi?id=44427
+
+        The embedder would typically want to show a native UI with information, settings etc.
+        By passing the display bounds of the html element, the embedder can position the
+        native speech recognition UI appropriately.
+
+        * page/SpeechInput.cpp:
+        (WebCore::SpeechInput::startRecognition):
+        * page/SpeechInput.h:
+        * page/SpeechInputClient.h:
+        * platform/mock/SpeechInputClientMock.cpp:
+        (WebCore::SpeechInputClientMock::startRecognition):
+        * platform/mock/SpeechInputClientMock.h:
+        * rendering/TextControlInnerElements.cpp:
+        (WebCore::InputFieldSpeechButtonElement::defaultEventHandler):
+        (WebCore::InputFieldSpeechButtonElement::detach):
+
 2010-08-25  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         Reviewed by Alexey Proskuryakov.

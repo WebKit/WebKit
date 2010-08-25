@@ -1,3 +1,21 @@
+2010-08-25  Satish Sampath  <satish@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Pass the element's bounds to embedder during speech recognition.
+        https://bugs.webkit.org/show_bug.cgi?id=44427
+
+        * public/WebSpeechInputController.h:
+        (WebKit::WebSpeechInputController::startRecognition):
+        (WebKit::WebSpeechInputController::cancelRecognition):
+        (WebKit::WebSpeechInputController::stopRecording):
+        * src/SpeechInputClientImpl.cpp:
+        (WebKit::SpeechInputClientImpl::startRecognition):
+        * src/SpeechInputClientImpl.h:
+        * src/WebSpeechInputControllerMockImpl.cpp:
+        (WebKit::WebSpeechInputControllerMockImpl::startRecognition):
+        * src/WebSpeechInputControllerMockImpl.h:
+
 2010-08-25  Pawel Hajdan  <phajdan.jr@chromium.org>
 
         Reviewed by Darin Fisher.

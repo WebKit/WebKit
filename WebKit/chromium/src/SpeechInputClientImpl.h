@@ -54,7 +54,7 @@ public:
 
     // SpeechInputClient methods.
     void setListener(WebCore::SpeechInputListener*);
-    bool startRecognition(int);
+    bool startRecognition(int, const WebCore::IntRect&);
     void stopRecording(int);
     void cancelRecognition(int);
 

@@ -50,7 +50,7 @@ void SpeechInputClientMock::setListener(SpeechInputListener* listener)
     m_listener = listener;
 }
 
-bool SpeechInputClientMock::startRecognition(int requestId)
+bool SpeechInputClientMock::startRecognition(int requestId, const IntRect&)
 {
     if (m_timer.isActive())
         return false;

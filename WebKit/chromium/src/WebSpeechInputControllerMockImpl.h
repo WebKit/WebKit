@@ -43,6 +43,8 @@ class SpeechInputClientMock;
 
 namespace WebKit {
 
+struct WebRect;
+
 class WebSpeechInputControllerMockImpl : public WebCore::SpeechInputListener
                                        , public WebSpeechInputControllerMock {
 public:
@@ -55,7 +57,7 @@ public:
     void setRecognitionResult(int requestId, const WTF::String& result);
 
     // WebSpeechInputController methods.
-    bool startRecognition(int requestId);
+    bool startRecognition(int requestId, const WebRect& elementRect);
     void cancelRecognition(int requestId);
     void stopRecording(int requestId);
 

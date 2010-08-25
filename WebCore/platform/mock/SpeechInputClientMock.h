@@ -50,7 +50,7 @@ public:
 
     // SpeechInputClient methods.
     void setListener(SpeechInputListener*);
-    bool startRecognition(int);
+    bool startRecognition(int, const IntRect&);
     void stopRecording(int);
     void cancelRecognition(int);
 
