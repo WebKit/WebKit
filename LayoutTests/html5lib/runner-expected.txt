@@ -87,28 +87,8 @@ Expected:
 |   <head>
 |   <body>
 |     <keygen>
-resources/tests20.dat:
-16
+resources/tests20.dat: PASS
 
-Test 16 of 25 in resources/tests20.dat failed. Input:
-<!doctype html><p><button><table>
-Got:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <p>
-|       <button>
-|         <p>
-|         <table>
-Expected:
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <p>
-|       <button>
-|         <table>
 resources/webkit01.dat: PASS
 
 resources/webkit02.dat: PASS

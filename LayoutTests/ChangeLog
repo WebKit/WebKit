@@ -8,6 +8,15 @@
 
         Reviewed by Adam Barth.
 
+        Fix one more html5lib test case for button scoping
+        https://bugs.webkit.org/show_bug.cgi?id=44583
+
+        * html5lib/runner-expected.txt:
+
+2010-08-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
         Remove HTML5 parser testing infrastructure now that we don't need it
         https://bugs.webkit.org/show_bug.cgi?id=44581
 
