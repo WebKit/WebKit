@@ -1,3 +1,18 @@
+2010-08-25  Brent Fulgham  <bfulgham@webkit.org>
+
+        Build corrections, no review.
+
+        * platform/graphics/cairo/GraphicsContextPlatformPrivateCairo.h:
+          Add include for new (missing) "CairoPath.h" class.
+        * platform/graphics/cairo/PlatformRefPtrCairo.h: Correct
+          include and compilation guards to match coding conventions.
+        * platform/graphics/win/FontCustomPlatformDataCairo.cpp:
+          Change implementation to match CG version, using the
+          FontCustomPlatformData name, rather than the original
+          FontCustomPlatformDataCairo.
+        * platform/graphics/win/FontCustomPlatformDataCairo.h:
+          Same as for the .cpp file.
+
 2010-08-25  Krzysztof Czech  <k.czech@samsung.com>
 
         Reviewed by Kenneth Rohde Christiansen.

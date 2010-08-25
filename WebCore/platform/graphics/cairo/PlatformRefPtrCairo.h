@@ -17,10 +17,10 @@
  *  Boston, MA 02110-1301, USA.
  */
 
-#ifndef GRefPtrCairo_h
-#define GRefPtrCairo_h
+#ifndef PlatformRefPtrCairo_h
+#define PlatformRefPtrCairo_h
 
-#include "GRefPtr.h"
+#include "PlatformRefPtr.h"
 
 typedef struct _cairo cairo_t;
 typedef struct _cairo_surface cairo_surface_t;
