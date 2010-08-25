@@ -1,3 +1,16 @@
+2010-08-25  Zaheer Ahmad <zaheer.mot@gmail.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] GTK port doesnt compile with video turned off
+        https://bugs.webkit.org/show_bug.cgi?id=44236
+
+        Generate the audio GObject DOM bindings only if video enabled
+        * WebCore/GNUMakefile.am
+        * WebCore/bindings/gobject/WebKitHTMLElementWrapperFactory.cpp:
+        Make the audio code invocation conditional
+
+
 2010-08-24  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

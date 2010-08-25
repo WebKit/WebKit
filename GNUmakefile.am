@@ -385,7 +385,6 @@ webkitgtk_built_h_api += \
 	DerivedSources/webkit/WebKitDOMHTMLAnchorElement.h \
 	DerivedSources/webkit/WebKitDOMHTMLAppletElement.h \
 	DerivedSources/webkit/WebKitDOMHTMLAreaElement.h \
-	DerivedSources/webkit/WebKitDOMHTMLAudioElement.h \
 	DerivedSources/webkit/WebKitDOMHTMLBaseElement.h \
 	DerivedSources/webkit/WebKitDOMHTMLBaseFontElement.h \
 	DerivedSources/webkit/WebKitDOMHTMLBlockquoteElement.h \
@@ -549,8 +548,6 @@ webkitgtk_gdom_built_sources += \
 	DerivedSources/webkit/WebKitDOMHTMLAppletElementPrivate.h \
 	DerivedSources/webkit/WebKitDOMHTMLAreaElement.cpp \
 	DerivedSources/webkit/WebKitDOMHTMLAreaElementPrivate.h \
-	DerivedSources/webkit/WebKitDOMHTMLAudioElement.cpp \
-	DerivedSources/webkit/WebKitDOMHTMLAudioElementPrivate.h \
 	DerivedSources/webkit/WebKitDOMHTMLBaseElement.cpp \
 	DerivedSources/webkit/WebKitDOMHTMLBaseElementPrivate.h \
 	DerivedSources/webkit/WebKitDOMHTMLBaseFontElement.cpp \
@@ -731,6 +728,15 @@ webkitgtk_built_h_api += \
 webkitgtk_gdom_built_sources += \
 	DerivedSources/webkit/WebKitDOMGeolocation.cpp \
 	DerivedSources/webkit/WebKitDOMGeolocationPrivate.h
+endif
+
+if ENABLE_VIDEO
+webkitgtk_built_h_api += \
+	$(top_builddir)/DerivedSources/webkit/WebKitDOMHTMLAudioElement.h
+
+webkitgtk_gdom_built_sources += \
+	DerivedSources/webkit/WebKitDOMHTMLAudioElement.cpp \
+	DerivedSources/webkit/WebKitDOMHTMLAudioElementPrivate.h
 endif
 
 # webkitenumtypes.{h,cpp} cannot be in webkitgtk_built_h_api, because
