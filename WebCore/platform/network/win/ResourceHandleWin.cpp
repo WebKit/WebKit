@@ -549,4 +549,36 @@ bool ResourceHandle::hasReceivedResponse() const
     return d->m_hasReceivedResponse;
 }
 
+bool ResourceHandle::willLoadFromCache(ResourceRequest&, Frame*)
+{
+    notImplemented();
+    return false;
+}
+
+void prefetchDNS(const String&)
+{
+    notImplemented();
+}
+
+PassRefPtr<SharedBuffer> ResourceHandle::bufferedData()
+{
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+bool ResourceHandle::supportsBufferedData()
+{
+    return false;
+}
+
+bool ResourceHandle::loadsBlocked()
+{
+    return false;
+}
+
+void ResourceHandle::platformSetDefersLoading(bool)
+{
+    notImplemented();
+}
+
 } // namespace WebCore
