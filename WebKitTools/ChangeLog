@@ -1,3 +1,10 @@
+2010-08-25  Ojan Vafai  <ojan@chromium.org>
+
+        Fix order of Timothy's email address. The script, and
+        other tools all assume that the first email is the bugzilla address.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2010-08-24  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Pavel Feldman.

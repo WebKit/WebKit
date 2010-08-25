@@ -260,7 +260,7 @@ reviewers_list = [
     Reviewer("Steve Block", "steveblock@google.com", "steveblock"),
     Reviewer("Steve Falkenburg", "sfalken@apple.com", "sfalken"),
     Reviewer("Tim Omernick", "timo@apple.com"),
-    Reviewer("Timothy Hatcher", ["timothy@hatcher.name", "timothy@apple.com"], "xenon"),
+    Reviewer("Timothy Hatcher", ["timothy@apple.com", "timothy@hatcher.name"], "xenon"),
     Reviewer("Tony Chang", "tony@chromium.org", "tony^work"),
     Reviewer(u"Tor Arne Vestb\u00f8", ["vestbo@webkit.org", "tor.arne.vestbo@nokia.com"], "torarne"),
     Reviewer("Vicki Murley", "vicki@apple.com"),
