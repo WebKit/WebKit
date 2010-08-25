@@ -1,3 +1,25 @@
+2010-08-19  Gabor Loki  <loki@webkit.org>
+
+        Reviewed by Gavin Barraclough.
+
+        Enable truncated floating point feature on ARM
+        https://bugs.webkit.org/show_bug.cgi?id=44233
+
+        Enable truncated floating point feature with the help of VCVTR.S32.F64
+        instruction. If VCVTR.S32.F64 can't fit the result into a 32-bit
+        integer/register, it saturates at INT_MAX or INT_MIN. Testing this
+        looks quicker than testing FPSCR for exception.
+
+        Inspired by Jacob Bramley's patch from JaegerMonkey
+
+        * assembler/ARMAssembler.h:
+        (JSC::ARMAssembler::):
+        (JSC::ARMAssembler::cmn_r):
+        (JSC::ARMAssembler::vcvtr_s32_f64_r):
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::supportsFloatingPointTruncate):
+        (JSC::MacroAssemblerARM::branchTruncateDoubleToInt32):
+
 2010-08-24  Gavin Barraclough  <barraclough@apple.com>
 
         Windows build fix.
