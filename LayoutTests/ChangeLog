@@ -1,3 +1,17 @@
+2010-08-24  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Unreviewed, updating Chromium expectations.
+
+        * platform/chromium-mac/fast/js/kde/Number-expected.txt:
+        * platform/chromium-mac/fast/js/number-toExponential-expected.txt:
+        * platform/chromium-mac/fast/js/number-tofixed-expected.txt:
+        * platform/chromium-mac/fast/js/number-toprecision-expected.txt:
+        * platform/chromium-win/fast/js/kde/Number-expected.txt:
+        * platform/chromium-win/fast/js/number-toExponential-expected.txt:
+        * platform/chromium-win/fast/js/number-tofixed-expected.txt:
+        * platform/chromium-win/fast/js/number-toprecision-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2010-08-24  Adam Barth  <abarth@webkit.org>
 
         Add http/tests/security/xssAuditor/dom-write-location-inline-event.html
