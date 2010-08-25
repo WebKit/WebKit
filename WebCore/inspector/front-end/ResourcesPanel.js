@@ -769,11 +769,6 @@ WebInspector.ResourcesPanel.prototype = {
         return this.items;
     },
 
-    searchIteratesOverViews: function()
-    {
-        return true;
-    },
-
     elementsToRestoreScrollPositionsFor: function()
     {
         return [ this.containerElement ];

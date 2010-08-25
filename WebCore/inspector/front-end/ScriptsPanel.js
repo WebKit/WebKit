@@ -230,11 +230,6 @@ WebInspector.ScriptsPanel.prototype = {
         WebInspector.Panel.prototype.hide.call(this);
     },
 
-    get searchableViews()
-    {
-        return [ this.visibleView ];
-    },
-
     get breakpointsActivated()
     {
         return this.toggleBreakpointsButton.toggled;
@@ -1014,6 +1009,74 @@ WebInspector.ScriptsPanel.prototype = {
         section.addAlternateKeys([ shortcut1.name, shortcut2.name ], WebInspector.UIString("Step out"));
 
         this.sidebarPanes.callstack.registerShortcuts(section);
+    },
+
+    searchCanceled: function()
+    {
+        WebInspector.updateSearchMatchesCount(0, this);
+
+        if (this._searchView)
+            this._searchView.searchCanceled();
+
+        delete this._searchView;
+        delete this._searchQuery;
+    },
+
+    performSearch: function(query)
+    {
+        if (!this.visibleView)
+            return;
+
+        // Call searchCanceled since it will reset everything we need before doing a new search.
+        this.searchCanceled();
+
+        this._searchView = this.visibleView;
+        this._searchQuery = query;
+
+        function finishedCallback(view, searchMatches)
+        {
+            if (!searchMatches)
+                return;
+
+            WebInspector.updateSearchMatchesCount(searchMatches, this);
+            view.jumpToFirstSearchResult();
+        }
+
+        this._searchView.performSearch(query, finishedCallback.bind(this));
+    },
+
+    jumpToNextSearchResult: function()
+    {
+        if (!this._searchView)
+            return;
+
+        if (this._searchView !== this.visibleView) {
+            this.performSearch(this._searchQuery);
+            return;
+        }
+
+        if (this._searchView.showingLastSearchResult())
+            this._searchView.jumpToFirstSearchResult();
+        else
+            this._searchView.jumpToNextSearchResult();
+    },
+
+    jumpToPreviousSearchResult: function()
+    {
+        if (!this._searchView)
+            return;
+
+        if (this._searchView !== this.visibleView) {
+            this.performSearch(this._searchQuery);
+            if (this._searchView)
+                this._searchView.jumpToLastSearchResult();
+            return;
+        }
+
+        if (this._searchView.showingFirstSearchResult())
+            this._searchView.jumpToLastSearchResult();
+        else
+            this._searchView.jumpToPreviousSearchResult();
     }
 }
 
