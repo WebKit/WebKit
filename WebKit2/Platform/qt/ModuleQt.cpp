@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 University of Szeged.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,25 +26,23 @@
 
 #include "Module.h"
 
-#include "NotImplemented.h"
-
 namespace WebKit {
 
 bool Module::load()
 {
-    notImplemented();
-    return false;
+    m_lib.setFileName(static_cast<QString>(m_path));
+    return m_lib.load();
 }
 
 void Module::unload()
 {
-    notImplemented();
+    m_lib.unload();
 }
 
 void* Module::platformFunctionPointer(const char* functionName) const
 {
-    notImplemented();
-    return 0;
+    // Unfortunately QLibrary::resolve is not const.
+    return const_cast<QLibrary*>(&m_lib)->resolve(functionName);
 }
 
 }

@@ -33,6 +33,10 @@
 #include <wtf/RetainPtr.h>
 #endif
 
+#if PLATFORM(QT)
+#include <QLibrary>
+#endif
+
 namespace WebKit {
 
 class Module : public Noncopyable {
@@ -55,6 +59,8 @@ private:
     RetainPtr<CFBundleRef> m_bundle;
 #elif PLATFORM(WIN)
     HMODULE m_module;
+#elif PLATFORM(QT)
+    QLibrary m_lib;
 #endif
 };
 
