@@ -1,3 +1,10 @@
+2010-08-25  Adam Barth  <abarth@webkit.org>
+
+        Second attempt to fix Qt build
+
+        * dom/XMLDocumentParserQt.cpp:
+        (WebCore::XMLDocumentParser::parseDtd):
+
 2010-08-24  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
