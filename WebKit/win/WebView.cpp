@@ -2432,7 +2432,7 @@ HRESULT STDMETHODCALLTYPE WebView::canShowMIMEType(
 
     *canShow = MIMETypeRegistry::isSupportedImageMIMEType(mimeTypeStr) ||
         MIMETypeRegistry::isSupportedNonImageMIMEType(mimeTypeStr) ||
-        (m_page && m_page->pluginData()->supportsMimeType(mimeTypeStr)) ||
+        (m_page && m_page->pluginData() && m_page->pluginData()->supportsMimeType(mimeTypeStr)) ||
         shouldUseEmbeddedView(mimeTypeStr);
     
     return S_OK;

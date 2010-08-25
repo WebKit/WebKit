@@ -1,3 +1,14 @@
+2010-08-24  Ada Chan  <adachan@apple.com>
+
+        Reviewed by Steve Falkenburg.
+
+        <rdar://problem/8185379> Possible null dereference in WebView::canShowMIMEType.
+        https://bugs.webkit.org/show_bug.cgi?id=44564
+
+        * WebView.cpp:
+        (WebView::canShowMIMEType): Null check m_page->pluginData() since that can return NULL
+        if plugins are disabled.
+
 2010-08-22  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Eric Seidel.
