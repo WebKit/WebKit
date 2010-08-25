@@ -298,7 +298,20 @@ class Printer(object):
         self._write("")
 
     def print_test_result(self, result, expected, exp_str, got_str):
-        """Print the result of the test as determined by --print."""
+        """Print the result of the test as determined by --print.
+
+        This routine is used to print the details of each test as it completes.
+
+        Args:
+            result   - The actual TestResult object
+            expected - Whether the result we got was an expected result
+            exp_str  - What we expected to get (used for tracing)
+            got_str  - What we actually got (used for tracing)
+
+        Note that we need all of these arguments even though they seem
+        somewhat redundant, in order to keep this routine from having to
+        known anything about the set of expectations.
+        """
         if (self.enabled('trace-everything') or
             self.enabled('trace-unexpected') and not expected):
             self._print_test_trace(result, exp_str, got_str)

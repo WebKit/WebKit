@@ -1,3 +1,21 @@
+2010-08-25  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        new-run-webkit-tests: add more unit tests for layout_package/printing.py
+
+        This change adds more unit tests to get the test coverage to 100%
+        for the printing module. This code is actually pretty crufty and
+        has some layering violations that need to be cleaned up but I'll
+        save that for another CL after we get all the unit tests written and
+        we fix the multithreading issues. At least now we'll be able to tell
+        if we break things.
+
+        https://bugs.webkit.org/show_bug.cgi?id=44576
+
+        * Scripts/webkitpy/layout_tests/layout_package/printing.py:
+        * Scripts/webkitpy/layout_tests/layout_package/printing_unittest.py:
+
 2010-08-25  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Adam Barth.

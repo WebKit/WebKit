@@ -30,6 +30,8 @@
 """Abstract base class of Port-specific entrypoints for the layout tests
 test infrastructure (the Port and Driver classes)."""
 
+from __future__ import with_statement
+
 import cgi
 import codecs
 import difflib
