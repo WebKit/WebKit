@@ -161,7 +161,7 @@ static void webkit_network_response_init(WebKitNetworkResponse* response)
 // for internal use only
 WebKitNetworkResponse* webkit_network_response_new_with_core_response(const WebCore::ResourceResponse& resourceResponse)
 {
-    GRefPtr<SoupMessage> soupMessage(adoptGRef(resourceResponse.toSoupMessage()));
+    PlatformRefPtr<SoupMessage> soupMessage(adoptPlatformRef(resourceResponse.toSoupMessage()));
     if (soupMessage)
         return WEBKIT_NETWORK_RESPONSE(g_object_new(WEBKIT_TYPE_NETWORK_RESPONSE, "message", soupMessage.get(), NULL));
 

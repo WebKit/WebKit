@@ -103,7 +103,7 @@ void Pasteboard::writeImage(Node* node, const KURL&, const String&)
     Image* image = cachedImage->image();
     ASSERT(image);
 
-    GRefPtr<GdkPixbuf> pixbuf = adoptGRef(image->getGdkPixbuf());
+    PlatformRefPtr<GdkPixbuf> pixbuf = adoptPlatformRef(image->getGdkPixbuf());
     DataObjectGtk* dataObject = DataObjectGtk::forClipboard(clipboard);
     dataObject->setImage(pixbuf.get());
     m_helper->writeClipboardContents(clipboard);

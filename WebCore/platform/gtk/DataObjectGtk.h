@@ -73,8 +73,8 @@ private:
     String m_text;
     String m_markup;
     Vector<KURL> m_uriList;
-    GRefPtr<GdkPixbuf> m_image;
-    GRefPtr<GdkDragContext> m_dragContext;
+    PlatformRefPtr<GdkPixbuf> m_image;
+    PlatformRefPtr<GdkDragContext> m_dragContext;
     RefPtr<Range> m_range;
 };
 

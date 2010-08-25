@@ -394,7 +394,7 @@ bool AccessibilityUIElement::isSelected() const
     if (!ATK_IS_OBJECT(m_element))
         return false;
 
-    GRefPtr<AtkStateSet> stateSet = adoptGRef(atk_object_ref_state_set(ATK_OBJECT(m_element)));
+    PlatformRefPtr<AtkStateSet> stateSet = adoptPlatformRef(atk_object_ref_state_set(ATK_OBJECT(m_element)));
     gboolean isSelected = atk_state_set_contains_state(stateSet.get(), ATK_STATE_SELECTED);
 
     return isSelected;

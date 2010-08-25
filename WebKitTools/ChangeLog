@@ -1,3 +1,16 @@
+2010-08-25  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Cairo and EFL port shouldn't depend on glib.
+        https://bugs.webkit.org/show_bug.cgi?id=44354
+
+        Replace occurrences of GRefPtr and adoptGRef with PlatformRefPtr and
+        adoptPlatformRef.
+
+        * DumpRenderTree/gtk/AccessibilityUIElementGtk.cpp:
+        (AccessibilityUIElement::isSelected):
+
 2010-08-25  Ojan Vafai  <ojan@chromium.org>
 
         Fix order of Timothy's email address. The script, and

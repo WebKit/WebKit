@@ -1,3 +1,33 @@
+2010-08-25  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Cairo and EFL port shouldn't depend on glib.
+        https://bugs.webkit.org/show_bug.cgi?id=44354
+
+        Replace occurrences of GRefPtr and adoptGRef with PlatformRefPtr and
+        adoptPlatformRef.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::requestGeolocationPermissionForFrame):
+        * WebCoreSupport/DragClientGtk.cpp:
+        (WebKit::DragClient::startDrag):
+        * WebCoreSupport/EditorClientGtk.h:
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::dispatchWillSendRequest):
+        (WebKit::FrameLoaderClient::dispatchDecidePolicyForMIMEType):
+        (WebKit::FrameLoaderClient::createPlugin):
+        * WebCoreSupport/FullscreenVideoController.h:
+        * WebCoreSupport/InspectorClientGtk.cpp:
+        (WebKit::InspectorClient::populateSetting):
+        (WebKit::InspectorClient::storeSetting):
+        * webkit/webkitdownload.cpp:
+        (webkit_download_error):
+        * webkit/webkitnetworkrequest.cpp:
+        (webkit_network_request_new_with_core_request):
+        * webkit/webkitnetworkresponse.cpp:
+        (webkit_network_response_new_with_core_response):
+
 2010-08-24  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Martin Robinson.

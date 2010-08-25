@@ -1,3 +1,40 @@
+2010-08-25  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Cairo and EFL port shouldn't depend on glib.
+        https://bugs.webkit.org/show_bug.cgi?id=44354
+
+        Replace GRefPtr with PlatformRefPtr. Keep GLib specific bits in
+        GRefPtr.h.
+
+        * GNUmakefile.am: Add PlatformRefPtr.h to the source list.
+        * wtf/PlatformRefPtr.h: Migrated from GRefPtr.h.
+        (WTF::PlatformRefPtr::PlatformRefPtr): Ditto.
+        (WTF::PlatformRefPtr::~PlatformRefPtr): Ditto.
+        (WTF::PlatformRefPtr::clear): Ditto.
+        (WTF::PlatformRefPtr::get): Ditto.
+        (WTF::PlatformRefPtr::operator*): Ditto.
+        (WTF::PlatformRefPtr::operator->): Ditto.
+        (WTF::PlatformRefPtr::operator!): Ditto.
+        (WTF::PlatformRefPtr::operator UnspecifiedBoolType): Ditto.
+        (WTF::PlatformRefPtr::hashTableDeletedValue): Ditto.
+        (WTF::::operator): Ditto.
+        (WTF::::swap): Ditto.
+        (WTF::swap): Ditto.
+        (WTF::operator==): Ditto.
+        (WTF::operator!=): Ditto.
+        (WTF::static_pointer_cast): Ditto.
+        (WTF::const_pointer_cast): Ditto.
+        (WTF::getPtr): Ditto.
+        (WTF::adoptPlatformRef): Ditto.
+        * wtf/gobject/GRefPtr.cpp: Changes to reflect new names.
+        (WTF::refPlatformPtr):
+        (WTF::derefPlatformPtr):
+        * wtf/gobject/GRefPtr.h: Ditto.
+        (WTF::refPlatformPtr):
+        (WTF::derefPlatformPtr):
+
 2010-08-25  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Alexey Proskuryakov.

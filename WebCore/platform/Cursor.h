@@ -84,7 +84,7 @@ namespace WebCore {
 #elif PLATFORM(MAC)
     typedef NSCursor* PlatformCursor;
 #elif PLATFORM(GTK)
-    typedef GRefPtr<GdkCursor> PlatformCursor;
+    typedef PlatformRefPtr<GdkCursor> PlatformCursor;
 #elif PLATFORM(EFL)
     typedef const char* PlatformCursor;
 #elif PLATFORM(QT) && !defined(QT_NO_CURSOR)

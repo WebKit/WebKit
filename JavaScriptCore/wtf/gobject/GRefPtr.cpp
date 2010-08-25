@@ -23,30 +23,47 @@
 
 namespace WTF {
 
-template <> GHashTable* refGPtr(GHashTable* ptr)
+template <> GHashTable* refPlatformPtr(GHashTable* ptr)
 {
     if (ptr)
         g_hash_table_ref(ptr);
     return ptr;
 }
 
-template <> void derefGPtr(GHashTable* ptr)
+template <> void derefPlatformPtr(GHashTable* ptr)
 {
     g_hash_table_unref(ptr);
 }
 
 #if GLIB_CHECK_VERSION(2, 24, 0)
-template <> GVariant* refGPtr(GVariant* ptr)
+template <> GVariant* refPlatformPtr(GVariant* ptr)
 {
     if (ptr)
         g_variant_ref(ptr);
     return ptr;
 }
 
-template <> void derefGPtr(GVariant* ptr)
+template <> void derefPlatformPtr(GVariant* ptr)
 {
     g_variant_unref(ptr);
 }
+
+#else
+
+// We do this so that we can avoid including the glib.h header in GRefPtr.h.
+typedef struct _GVariant {
+    bool fake;
+} GVariant; 
+
+template <> GVariant* refPlatformPtr(GVariant* ptr)
+{
+    return ptr;
+}
+
+template <> void derefPlatformPtr(GVariant* ptr)
+{
+}
+
 #endif
 
 } // namespace WTF

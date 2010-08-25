@@ -164,7 +164,7 @@ static void webkit_network_request_init(WebKitNetworkRequest* request)
 // for internal use only
 WebKitNetworkRequest* webkit_network_request_new_with_core_request(const WebCore::ResourceRequest& resourceRequest)
 {
-    GRefPtr<SoupMessage> soupMessage(adoptGRef(resourceRequest.toSoupMessage()));
+    PlatformRefPtr<SoupMessage> soupMessage(adoptPlatformRef(resourceRequest.toSoupMessage()));
     if (soupMessage)
         return WEBKIT_NETWORK_REQUEST(g_object_new(WEBKIT_TYPE_NETWORK_REQUEST, "message", soupMessage.get(), NULL));
 

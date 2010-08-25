@@ -27,11 +27,11 @@ typedef struct _cairo_surface cairo_surface_t;
 
 namespace WTF {
 
-template <> cairo_t* refGPtr(cairo_t* ptr);
-template <> void derefGPtr(cairo_t* ptr);
+template <> cairo_t* refPlatformPtr(cairo_t* ptr);
+template <> void derefPlatformPtr(cairo_t* ptr);
 
-template <> cairo_surface_t* refGPtr(cairo_surface_t* ptr);
-template <> void derefGPtr(cairo_surface_t* ptr);
+template <> cairo_surface_t* refPlatformPtr(cairo_surface_t* ptr);
+template <> void derefPlatformPtr(cairo_surface_t* ptr);
 
 }
 

@@ -1,3 +1,48 @@
+2010-08-25  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Cairo and EFL port shouldn't depend on glib.
+        https://bugs.webkit.org/show_bug.cgi?id=44354
+
+        No new tests as functionality has not changed.
+
+        Replace occurrences of GRefPtr and adoptGRef with PlatformRefPtr and
+        adoptPlatformRef. Rename GRefPtrCairo to PlatformRefPtrCairo.
+
+        * GNUmakefile.am:
+        * platform/Cursor.h:
+        * platform/graphics/cairo/GRefPtrCairo.cpp: Removed.
+        * platform/graphics/cairo/GRefPtrCairo.h: Removed.
+        * platform/graphics/cairo/ImageCairo.cpp:
+        (WebCore::Image::drawPattern):
+        * platform/graphics/cairo/PlatformRefPtrCairo.cpp: Added.
+        (WTF::refPlatformPtr):
+        (WTF::derefPlatformPtr):
+        * platform/graphics/cairo/PlatformRefPtrCairo.h: Added.
+        * platform/graphics/gtk/ImageBufferGtk.cpp:
+        (WebCore::ImageBuffer::toDataURL):
+        * platform/gtk/ClipboardGtk.cpp:
+        (WebCore::ClipboardGtk::declareAndWriteDragImage):
+        * platform/gtk/CursorGtk.cpp:
+        (WebCore::createNamedCursor):
+        (WebCore::createCustomCursor):
+        (WebCore::Cursor::ensurePlatformCursor):
+        * platform/gtk/DataObjectGtk.h:
+        * platform/gtk/GRefPtrGtk.cpp:
+        (WTF::refPlatformPtr):
+        (WTF::derefPlatformPtr):
+        * platform/gtk/GRefPtrGtk.h:
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::Pasteboard::writeImage):
+        * platform/gtk/PasteboardHelper.cpp:
+        (WebCore::PasteboardHelper::dropAtomsForContext):
+        * platform/gtk/PopupMenuGtk.h:
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::RenderThemeGtk):
+        (WebCore::paintMozillaGtkWidget):
+        * platform/gtk/RenderThemeGtk.h:
+
 2010-08-25  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Alexey Proskuryakov.

@@ -175,7 +175,7 @@ void InspectorClient::populateSetting(const String& key, String* value)
     if (!settings)
         return;
 
-    GRefPtr<GVariant> variant = adoptGRef(g_settings_get_value(settings, toGSettingName(key).utf8().data()));
+    PlatformRefPtr<GVariant> variant = adoptPlatformRef(g_settings_get_value(settings, toGSettingName(key).utf8().data()));
 
     if (key == "resourceTrackingEnabled" || key == "xhrMonitor"
         || key == "debuggerEnabled" || key == "profilerEnabled")
@@ -193,15 +193,15 @@ void InspectorClient::storeSetting(const String& key, const String& value)
     if (!settings)
         return;
 
-    GRefPtr<GVariant> variant(0);
+    PlatformRefPtr<GVariant> variant(0);
 
     // Set the key with the appropriate type, and also avoid setting
     // unknown keys to avoid aborting the execution.
     if (key == "resourceTrackingEnabled" || key == "xhrMonitor"
         || key == "debuggerEnabled" || key == "profilerEnabled")
-        variant = adoptGRef(variantFromTruthString(value));
+        variant = adoptPlatformRef(variantFromTruthString(value));
     else if (key == "frontendSettings")
-        variant = adoptGRef(g_variant_new_string(value.utf8().data()));
+        variant = adoptPlatformRef(g_variant_new_string(value.utf8().data()));
 
     if (!variant)
         return;
