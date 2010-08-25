@@ -1,3 +1,23 @@
+2010-08-24  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [Chromium] Hulu popups are blocked
+        https://bugs.webkit.org/show_bug.cgi?id=44572
+
+        We were blocking popups created by Flash Player because we were never
+        setting the UserGestureIndicator for events.  Most WebKit ports handle
+        events through EventHandler, but Chromium is special (for some unknown
+        reason) and dispatches events directly.  That means Chromium misses out
+        on some of the work done by EventHandler, including setting the
+        UserGestureIndicator.
+
+        I suspect this is covered by an existing LayoutTest, but I don't have
+        the ability to run the Chromium LayoutTests on this machine.  :(
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::handleInputEvent):
+
 2010-08-24  Jian Li  <jianli@chromium.org>
 
         Reviewed by Darin Fisher.

@@ -88,6 +88,7 @@
 #include "Settings.h"
 #include "Timer.h"
 #include "TypingCommand.h"
+#include "UserGestureIndicator.h"
 #include "Vector.h"
 #include "WebAccessibilityObject.h"
 #include "WebDevToolsAgentPrivate.h"
@@ -980,6 +981,8 @@ const WebInputEvent* WebViewImpl::m_currentInputEvent = 0;
 
 bool WebViewImpl::handleInputEvent(const WebInputEvent& inputEvent)
 {
+    UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);
+
     // If we've started a drag and drop operation, ignore input events until
     // we're done.
     if (m_doingDragAndDrop)
