@@ -1,3 +1,25 @@
+2010-08-24  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        [chromium] rebaseline chromium linux svg tests
+        https://bugs.webkit.org/show_bug.cgi?id=44562
+
+        These are anti-aliasing (rounding) differences on Linux.
+
+        * platform/chromium-linux/svg/W3C-SVG-1.1/text-fonts-02-t-expected.checksum: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/text-fonts-02-t-expected.png: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/text-fonts-02-t-expected.txt: The number 600 has a few pixels of extra space between characters.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/text-path-01-b-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/text-path-01-b-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/types-basicDOM-01-b-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/types-basicDOM-01-b-expected.png:
+        * platform/chromium-linux/svg/custom/animate-path-morphing-expected.checksum:
+        * platform/chromium-linux/svg/custom/animate-path-morphing-expected.png:
+        * platform/chromium-linux/svg/custom/use-transform-expected.checksum:
+        * platform/chromium-linux/svg/custom/use-transform-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2010-08-23  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.

@@ -1756,34 +1756,17 @@ BUG20439 WIN LINUX : fast/forms/search-transformed.html = FAIL
 // Linux's rotated text output looks terrible.
 BUG10397 LINUX : fast/transforms/transformed-document-element.html = FAIL
 
-// Merge 39744:39913? - regressions
-BUG10403 LINUX : svg/custom/animate-path-morphing.svg = FAIL
-
 // might need to be rebaselined in win, 'DRAFT' rendering incorrect before
 BUG10405 WIN : svg/custom/struct-use-09-b.svg = FAIL
-
-// New tests added in http://trac.webkit.org/changeset/40424
-// Renders the width of "600" off by 3.  Looks OK but could still be a bug
-// that we shouldn't rebaseline.
-BUG10417 LINUX : svg/W3C-SVG-1.1/text-fonts-02-t.svg = FAIL
 
 // New test. We should fix it, but it doesn't need to block the current release
 BUG10418 SLOW MAC RELEASE : fast/events/click-count.html = PASS
 BUG10418 WIN DEBUG : animations/change-keyframes-name.html = FAIL PASS
 
-// TODO(dsh): These started to fail after r9202.
-BUG10419 LINUX : svg/W3C-SVG-1.1/text-path-01-b.svg = FAIL
-
 // We could fix this test for us and upstream it if the test shell user agent
 // would let us differentiate test_shell and WebKit DumpTreeNode.
 BUG7482 LINUX MAC : http/tests/misc/timer-vs-loading.html = TIMEOUT
 BUG7482 WIN : http/tests/misc/timer-vs-loading.html = PASS TIMEOUT
-
-// Regressions from WebKit merge 40722:40785
-// Misc failures:
-// New test. We should fix it, but it doesn't need to block the current release
-BUG10420 LINUX : svg/W3C-SVG-1.1/types-basicDOM-01-b.svg = FAIL
-BUG10420 LINUX : svg/custom/use-transform.svg = FAIL
 
 // Regressions from WebKit merge to 40864
 // Likely just needs a rebaseline.
