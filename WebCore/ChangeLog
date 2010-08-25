@@ -1,3 +1,14 @@
+2010-08-25  Rafael Antognolli  <antognolli@profusion.mobi>
+
+        Unreviewed build fix.
+
+        [EFL] Build fix for revision 66024
+        https://bugs.webkit.org/show_bug.cgi?id=44631
+
+        No new features added, so no new tests.
+
+        * CMakeListsEfl.txt: change GRefPtrCairo.cpp by PlatformRefPtrCairo.cpp.
+
 2010-08-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.

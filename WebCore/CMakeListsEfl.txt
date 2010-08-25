@@ -70,7 +70,7 @@ IF (WTF_PLATFORM_CAIRO)
     platform/graphics/cairo/FontCustomPlatformData.cpp
     platform/graphics/cairo/FontPlatformDataCairo.cpp
     platform/graphics/cairo/GOwnPtrCairo.cpp
-    platform/graphics/cairo/GRefPtrCairo.cpp
+    platform/graphics/cairo/PlatformRefPtrCairo.cpp
     platform/graphics/cairo/GlyphPageTreeNodeCairo.cpp
     platform/graphics/cairo/GradientCairo.cpp
     platform/graphics/cairo/GraphicsContextCairo.cpp
