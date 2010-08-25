@@ -79,8 +79,7 @@ class FunctionsTest(unittest.TestCase):
                           set([PASS, CRASH]))
 
 
-class TestExpectationsTest(unittest.TestCase):
-
+class Base(unittest.TestCase):
     def __init__(self, testFunc, setUp=None, tearDown=None, description=None):
         self._port = port.get('test', None)
         self._exp = None
@@ -104,30 +103,128 @@ BUG_TEST REBASELINE : failure/expected/missing_image.html = MISSING
 BUG_TEST : failures/expected/image_checksum.html = IMAGE
 """
 
-    def parse_exp(self, expectations, overrides=None):
+    def parse_exp(self, expectations, overrides=None, is_lint_mode=False,
+                  is_debug_mode=False, tests_are_present=True):
         self._exp = TestExpectations(self._port,
              tests=self.get_basic_tests(),
              expectations=expectations,
              test_platform_name=self._port.test_platform_name(),
-             is_debug_mode=False,
-             is_lint_mode=False,
-             tests_are_present=True,
+             is_debug_mode=is_debug_mode,
+             is_lint_mode=is_lint_mode,
+             tests_are_present=tests_are_present,
              overrides=overrides)
 
     def assert_exp(self, test, result):
         self.assertEquals(self._exp.get_expectations(self.get_test(test)),
                           set([result]))
 
+
+class TestExpectationsTest(Base):
     def test_basic(self):
         self.parse_exp(self.get_basic_expectations())
         self.assert_exp('failures/expected/text.html', TEXT)
         self.assert_exp('failures/expected/image_checksum.html', IMAGE)
         self.assert_exp('passes/text.html', PASS)
 
-    def test_duplicates(self):
+    def test_defer(self):
+        self.parse_exp('BUGX DEFER : failures/expected/text.html = TEXT')
+        self.assertEqual(self._exp.get_options(
+            self.get_test('failures/expected/text.html')), ['bugx', 'defer'])
+
+    def test_precedence(self):
+        # This tests handling precedence of specific lines over directories
+        # and tests expectations covering entire directories.
+        exp_str = """
+BUGX : failures/expected/text.html = TEXT
+BUGX DEFER : failures/expected = IMAGE
+"""
+        self.parse_exp(exp_str)
+        self.assert_exp('failures/expected/text.html', TEXT)
+        self.assert_exp('failures/expected/crash.html', IMAGE)
+
+        self.parse_exp(exp_str, tests_are_present=False)
+        self.assert_exp('failures/expected/text.html', TEXT)
+        self.assert_exp('failures/expected/crash.html', IMAGE)
+
+    def test_release_mode(self):
+        self.parse_exp('BUGX DEBUG : failures/expected/text.html = TEXT',
+                       is_debug_mode=True)
+        self.assert_exp('failures/expected/text.html', TEXT)
+        self.parse_exp('BUGX RELEASE : failures/expected/text.html = TEXT',
+                       is_debug_mode=True)
+        self.assert_exp('failures/expected/text.html', PASS)
+        self.parse_exp('BUGX DEBUG : failures/expected/text.html = TEXT',
+                       is_debug_mode=False)
+        self.assert_exp('failures/expected/text.html', PASS)
+        self.parse_exp('BUGX RELEASE : failures/expected/text.html = TEXT',
+                       is_debug_mode=False)
+        self.assert_exp('failures/expected/text.html', TEXT)
+
+    def test_get_options(self):
+        self.parse_exp(self.get_basic_expectations())
+        self.assertEqual(self._exp.get_options(
+                         self.get_test('passes/text.html')), [])
+
+    def test_expectations_json_for_all_platforms(self):
+        self.parse_exp(self.get_basic_expectations())
+        json_str = self._exp.get_expectations_json_for_all_platforms()
+        # FIXME: test actual content?
+        self.assertTrue(json_str)
+
+    def test_get_expectations_string(self):
+        self.parse_exp(self.get_basic_expectations())
+        self.assertEquals(self._exp.get_expectations_string(
+                          self.get_test('failures/expected/text.html')),
+                          'TEXT')
+
+    def test_expectation_to_string(self):
+        # Normal cases are handled by other tests.
+        self.parse_exp(self.get_basic_expectations())
+        self.assertRaises(ValueError, self._exp.expectation_to_string,
+                          -1)
+
+    def test_syntax_missing_expectation(self):
+        # This is missing the expectation.
+        self.assertRaises(SyntaxError, self.parse_exp,
+                          'BUG_TEST: failures/expected/text.html',
+                          is_debug_mode=True)
+
+    def test_syntax_invalid_option(self):
+        self.assertRaises(SyntaxError, self.parse_exp,
+                          'BUG_TEST FOO: failures/expected/text.html = PASS')
+
+    def test_syntax_invalid_expectation(self):
+        # This is missing the expectation.
+        self.assertRaises(SyntaxError, self.parse_exp,
+                          'BUG_TEST: failures/expected/text.html = FOO')
+
+    def test_syntax_missing_bugid(self):
+        # This should log a non-fatal error.
+        self.parse_exp('SLOW : failures/expected/text.html = TEXT')
+        self.assertEqual(
+            len(self._exp._expected_failures.get_non_fatal_errors()), 1)
+
+    def test_semantic_slow_and_timeout(self):
+        # A test cannot be SLOW and expected to TIMEOUT.
+        self.assertRaises(SyntaxError, self.parse_exp,
+            'BUG_TEST SLOW : failures/expected/timeout.html = TIMEOUT')
+
+    def test_semantic_wontfix_defer(self):
+        # A test cannot be WONTFIX and DEFER.
+        self.assertRaises(SyntaxError, self.parse_exp,
+            'BUG_TEST WONTFIX DEFER : failures/expected/text.html = TEXT')
+
+    def test_semantic_rebaseline(self):
+        # Can't lint a file w/ 'REBASELINE' in it.
+        self.assertRaises(SyntaxError, self.parse_exp,
+            'BUG_TEST REBASELINE : failures/expected/text.html = TEXT',
+            is_lint_mode=True)
+
+    def test_semantic_duplicates(self):
         self.assertRaises(SyntaxError, self.parse_exp, """
 BUG_TEST : failures/expected/text.html = TEXT
 BUG_TEST : failures/expected/text.html = IMAGE""")
+
         self.assertRaises(SyntaxError, self.parse_exp,
             self.get_basic_expectations(), """
 BUG_TEST : failures/expected/text.html = TEXT
@@ -149,10 +246,30 @@ BUG_OVERRIDE : failures/expected/text.html = IMAGE""")
         self.assertTrue(match('failures/expected/text.html', TEXT, False))
         self.assertFalse(match('failures/expected/text.html', CRASH, True))
         self.assertFalse(match('failures/expected/text.html', CRASH, False))
-        self.assertTrue(match('failures/expected/image_checksum.html', IMAGE, True))
-        self.assertTrue(match('failures/expected/image_checksum.html', PASS, False))
+        self.assertTrue(match('failures/expected/image_checksum.html', IMAGE,
+                              True))
+        self.assertTrue(match('failures/expected/image_checksum.html', PASS,
+                              False))
         self.assertTrue(match('failures/expected/crash.html', SKIP, False))
         self.assertTrue(match('passes/text.html', PASS, False))
+
+
+class RebaseliningTest(Base):
+    """Test rebaselining-specific functionality."""
+    def test_no_get_rebaselining_failures(self):
+        self.parse_exp(self.get_basic_expectations())
+        self.assertEqual(len(self._exp.get_rebaselining_failures()), 0)
+
+    def test_basic(self):
+        self.parse_exp("""
+BUG_TEST REBASELINE : failures/expected/text.html = TEXT
+""")
+        self.assertEqual(len(self._exp.get_rebaselining_failures()), 1)
+
+        new_exp_str = self._exp.remove_platform_from_expectations(
+            self.get_test('failures/expected/text.html'), 'TEST')
+        # FIXME: actually test rebaselining
+        # self.assertEqual(new_exp_str, '\n')
 
 if __name__ == '__main__':
     unittest.main()

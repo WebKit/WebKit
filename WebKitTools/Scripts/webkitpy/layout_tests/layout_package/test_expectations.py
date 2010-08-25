@@ -152,10 +152,7 @@ class TestExpectations:
         for item in TestExpectationsFile.EXPECTATIONS.items():
             if item[1] == expectation:
                 return item[0].upper()
-        return ""
-
-    def get_timeline_for_test(self, test):
-        return self._expected_failures.get_timeline_for_test(test)
+        raise ValueError(expectation)
 
     def get_tests_with_result_type(self, result_type):
         return self._expected_failures.get_tests_with_result_type(result_type)
@@ -208,15 +205,15 @@ class ModifiersAndExpectations:
 
 
 class ExpectationsJsonEncoder(simplejson.JSONEncoder):
-    """JSON encoder that can handle ModifiersAndExpectations objects.
-    """
-
+    """JSON encoder that can handle ModifiersAndExpectations objects."""
     def default(self, obj):
-        if isinstance(obj, ModifiersAndExpectations):
-            return {"modifiers": obj.modifiers,
-                    "expectations": obj.expectations}
-        else:
-            return JSONEncoder.default(self, obj)
+        # A ModifiersAndExpectations object has two fields, each of which
+        # is a dict. Since JSONEncoders handle all the builtin types directly,
+        # the only time this routine should be called is on the top level
+        # object (i.e., the encoder shouldn't recurse).
+        assert isinstance(obj, ModifiersAndExpectations)
+        return {"modifiers": obj.modifiers,
+                "expectations": obj.expectations}
 
 
 class TestExpectationsFile:
@@ -462,9 +459,6 @@ class TestExpectationsFile:
 
     def get_non_fatal_errors(self):
         return self._non_fatal_errors
-
-    def contains(self, test):
-        return test in self._test_to_expectations
 
     def remove_platform_from_expectations(self, tests, platform):
         """Returns a copy of the expectations with the tests matching the
