@@ -172,7 +172,6 @@ z-index
 # a single value: -webkit-background-size: l; is equivalent to background-size: l l;
 # whereas background-size: l; is equivalent to background-size: l auto;
 -webkit-background-size
--webkit-binding
 -webkit-border-end
 -webkit-border-end-color
 -webkit-border-end-style

@@ -4687,37 +4687,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         m_style->setAppearance(*primitiveValue);
         return;
     }
-    case CSSPropertyWebkitBinding: {
-#if ENABLE(XBL)
-        if (isInitial || (primitiveValue && primitiveValue->getIdent() == CSSValueNone)) {
-            m_style->deleteBindingURIs();
-            return;
-        }
-        else if (isInherit) {
-            if (m_parentStyle->bindingURIs())
-                m_style->inheritBindingURIs(m_parentStyle->bindingURIs());
-            else
-                m_style->deleteBindingURIs();
-            return;
-        }
-
-        if (!value->isValueList()) return;
-        CSSValueList* list = static_cast<CSSValueList*>(value);
-        bool firstBinding = true;
-        for (unsigned int i = 0; i < list->length(); i++) {
-            CSSValue *item = list->itemWithoutBoundsCheck(i);
-            CSSPrimitiveValue *val = static_cast<CSSPrimitiveValue*>(item);
-            if (val->primitiveType() == CSSPrimitiveValue::CSS_URI) {
-                if (firstBinding) {
-                    firstBinding = false;
-                    m_style->deleteBindingURIs();
-                }
-                m_style->addBindingURI(val->getStringValue());
-            }
-        }
-#endif
-        return;
-    }
 
     case CSSPropertyWebkitBorderImage:
     case CSSPropertyWebkitMaskBoxImage: {

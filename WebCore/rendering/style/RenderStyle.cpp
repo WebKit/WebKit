@@ -699,20 +699,6 @@ void RenderStyle::applyTransform(TransformationMatrix& transform, const IntSize&
     }
 }
 
-#if ENABLE(XBL)
-void RenderStyle::addBindingURI(StringImpl* uri)
-{
-    BindingURI* binding = new BindingURI(uri);
-    if (!bindingURIs())
-        SET_VAR(rareNonInheritedData, bindingURI, binding)
-    else
-        for (BindingURI* b = bindingURIs(); b; b = b->next()) {
-            if (!b->next())
-                b->setNext(binding);
-        }
-}
-#endif
-
 void RenderStyle::setTextShadow(ShadowData* val, bool add)
 {
     ASSERT(!val || (!val->spread() && val->style() == Normal));

@@ -87,10 +87,6 @@
 #include "SVGRenderStyle.h"
 #endif
 
-#if ENABLE(XBL)
-#include "BindingURI.h"
-#endif
-
 #if COMPILER(WINSCW)
 #define compareEqual(t, u)      ((t) == (u))
 #else
@@ -598,9 +594,6 @@ public:
     EPageBreak pageBreakAfter() const { return static_cast<EPageBreak>(noninherited_flags._page_break_after); }
 
     // CSS3 Getter Methods
-#if ENABLE(XBL)
-    BindingURI* bindingURIs() const { return rareNonInheritedData->bindingURI; }
-#endif
 
     int outlineOffset() const
     {
@@ -946,12 +939,6 @@ public:
     void setPageBreakAfter(EPageBreak b) { noninherited_flags._page_break_after = b; }
 
     // CSS3 Setters
-#if ENABLE(XBL)
-    void deleteBindingURIs() { SET_VAR(rareNonInheritedData, bindingURI, static_cast<BindingURI*>(0)); }
-    void inheritBindingURIs(BindingURI* other) { SET_VAR(rareNonInheritedData, bindingURI, other->copy()); }
-    void addBindingURI(StringImpl* uri);
-#endif
-
     void setOutlineOffset(int v) { SET_VAR(m_background, m_outline.m_offset, v) }
     void setTextShadow(ShadowData* val, bool add=false);
     void setTextStrokeColor(const Color& c) { SET_VAR(rareInheritedData, textStrokeColor, c) }

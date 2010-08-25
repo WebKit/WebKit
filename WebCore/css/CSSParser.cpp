@@ -1149,40 +1149,6 @@ bool CSSParser::parseValue(int propId, bool important)
             validPrimitive = true;
         break;
 
-    case CSSPropertyWebkitBinding:
-#if ENABLE(XBL)
-        if (id == CSSValueNone)
-            validPrimitive = true;
-        else {
-            RefPtr<CSSValueList> values = CSSValueList::createCommaSeparated();
-            CSSParserValue* val;
-            RefPtr<CSSValue> parsedValue;
-            while ((val = m_valueList->current())) {
-                if (val->unit == CSSPrimitiveValue::CSS_URI && m_styleSheet) {
-                    // FIXME: The completeURL call should be done when using the CSSPrimitiveValue,
-                    // not when creating it.
-                    parsedValue = CSSPrimitiveValue::create(m_styleSheet->completeURL(val->string), CSSPrimitiveValue::CSS_URI);
-                }
-                if (!parsedValue)
-                    break;
-
-                // FIXME: We can't use release() here since we might hit this path twice
-                // but that logic seems wrong to me to begin with, we convert all non-uri values
-                // into the last seen URI value!?
-                // -webkit-binding: url(foo.xml), 1, 2; (if that were valid) is treated as:
-                // -webkit-binding: url(foo.xml), url(foo.xml), url(foo.xml); !?
-                values->append(parsedValue.get());
-                m_valueList->next();
-            }
-            if (!values->length())
-                return false;
-
-            addProperty(propId, values.release(), important);
-            m_valueList->next();
-            return true;
-        }
-#endif
-        break;
     case CSSPropertyWebkitBorderImage:
     case CSSPropertyWebkitMaskBoxImage:
         if (id == CSSValueNone)

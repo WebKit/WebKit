@@ -719,7 +719,6 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	rendering/TransformState.cpp \
 	rendering/break_lines.cpp \
 	\
-	rendering/style/BindingURI.cpp \
 	rendering/style/ContentData.cpp \
 	rendering/style/CounterDirectives.cpp \
 	rendering/style/FillLayer.cpp \

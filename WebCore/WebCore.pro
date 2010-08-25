@@ -1061,7 +1061,6 @@ SOURCES += \
     rendering/ShadowElement.cpp \
     rendering/TextControlInnerElements.cpp \
     rendering/TransformState.cpp \
-    rendering/style/BindingURI.cpp \
     rendering/style/ContentData.cpp \
     rendering/style/CounterDirectives.cpp \
     rendering/style/FillLayer.cpp \
@@ -1917,7 +1916,6 @@ HEADERS += \
     rendering/RootInlineBox.h \
     rendering/ScrollBehavior.h \
     rendering/ShadowElement.h \
-    rendering/style/BindingURI.h \
     rendering/style/ContentData.h \
     rendering/style/CounterDirectives.h \
     rendering/style/CursorData.h \

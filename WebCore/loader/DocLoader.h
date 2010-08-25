@@ -64,9 +64,6 @@ public:
 #if ENABLE(XSLT)
     CachedXSLStyleSheet* requestXSLStyleSheet(const String& url);
 #endif
-#if ENABLE(XBL)
-    CachedXBLDocument* requestXBLDocument(const String &url);
-#endif
 #if ENABLE(LINK_PREFETCH)
     CachedResource* requestLinkPrefetch(const String &url);
 #endif

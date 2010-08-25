@@ -169,13 +169,6 @@ CachedXSLStyleSheet* DocLoader::requestXSLStyleSheet(const String& url)
 }
 #endif
 
-#if ENABLE(XBL)
-CachedXBLDocument* DocLoader::requestXBLDocument(const String& url)
-{
-    return static_cast<CachedXSLStyleSheet*>(requestResource(CachedResource::XBL, url, String()));
-}
-#endif
-
 #if ENABLE(LINK_PREFETCH)
 CachedResource* DocLoader::requestLinkPrefetch(const String& url)
 {
@@ -201,11 +194,6 @@ bool DocLoader::canRequest(CachedResource::Type type, const KURL& url)
         break;
 #if ENABLE(XSLT)
     case CachedResource::XSLStyleSheet:
-#endif
-#if ENABLE(XBL)
-    case CachedResource::XBL:
-#endif
-#if ENABLE(XSLT) || ENABLE(XBL)
         if (!m_doc->securityOrigin()->canRequest(url)) {
             printAccessDeniedMessage(url);
             return false;
@@ -228,9 +216,6 @@ bool DocLoader::canRequest(CachedResource::Type type, const KURL& url)
     case CachedResource::Script:
 #if ENABLE(XSLT)
     case CachedResource::XSLStyleSheet:
-#endif
-#if ENABLE(XBL)
-    case CachedResource::XBL:
 #endif
         // These resource can inject script into the current document.
         if (Frame* f = frame())

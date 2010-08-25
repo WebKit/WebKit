@@ -1427,7 +1427,6 @@ SET(WebCore_SOURCES
     rendering/TextControlInnerElements.cpp
     rendering/TransformState.cpp
     rendering/break_lines.cpp
-    rendering/style/BindingURI.cpp
     rendering/style/ContentData.cpp
     rendering/style/CounterDirectives.cpp
     rendering/style/FillLayer.cpp

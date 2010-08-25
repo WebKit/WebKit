@@ -82,10 +82,6 @@ static CachedResource* createResource(CachedResource::Type type, const KURL& url
     case CachedResource::XSLStyleSheet:
         return new CachedXSLStyleSheet(url.string());
 #endif
-#if ENABLE(XBL)
-    case CachedResource::XBLStyleSheet:
-        return new CachedXBLDocument(url.string());
-#endif
 #if ENABLE(LINK_PREFETCH)
     case CachedResource::LinkPrefetch:
         return new CachedResource(url.string(), CachedResource::LinkPrefetch);
@@ -691,11 +687,6 @@ Cache::Statistics Cache::getStatistics()
         case CachedResource::FontResource:
             stats.fonts.addResource(resource);
             break;
-#if ENABLE(XBL)
-        case CachedResource::XBL:
-            stats.xblDocs.addResource(resource)
-            break;
-#endif
         default:
             break;
         }

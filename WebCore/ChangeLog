@@ -1,3 +1,59 @@
+2010-08-25  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove XBL
+        https://bugs.webkit.org/show_bug.cgi?id=44621
+
+        This patch removes support for XBL.  XBL seems cool, but this code is
+        old and pretty bitrotten.  If we decide to support XBL in the future,
+        we can recover this code from this revision.  As it stands, it doesn't
+        seem worth half-maintaining this code.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/CSSPropertyNames.in:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::~Document):
+        * dom/Document.h:
+        * loader/Cache.cpp:
+        (WebCore::createResource):
+        (WebCore::Cache::getStatistics):
+        * loader/Cache.h:
+        * loader/CachedResource.h:
+        (WebCore::CachedResource::):
+        * loader/CachedResourceClient.h:
+        (WebCore::CachedResourceClient::setXSLStyleSheet):
+        (WebCore::CachedResourceClient::fontLoaded):
+        * loader/CachedXBLDocument.cpp: Removed.
+        * loader/CachedXBLDocument.h: Removed.
+        * loader/DocLoader.cpp:
+        (WebCore::DocLoader::canRequest):
+        * loader/DocLoader.h:
+        * loader/loader.cpp:
+        (WebCore::cachedResourceTypeToTargetType):
+        (WebCore::Loader::determinePriority):
+        * rendering/style/BindingURI.cpp: Removed.
+        * rendering/style/BindingURI.h: Removed.
+        * rendering/style/RenderStyle.cpp:
+        * rendering/style/RenderStyle.h:
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h:
+
 2010-08-25  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Ariya Hidayat.

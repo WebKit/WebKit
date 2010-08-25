@@ -125,10 +125,6 @@ class SVGDocumentExtensions;
 class TransformSource;
 #endif
 
-#if ENABLE(XBL)
-class XBLBindingManager;
-#endif
-
 #if ENABLE(XPATH)
 class XPathEvaluator;
 class XPathExpression;
@@ -842,11 +838,6 @@ public:
     TransformSource* transformSource() const { return m_transformSource.get(); }
 #endif
 
-#if ENABLE(XBL)
-    // XBL methods
-    XBLBindingManager* bindingManager() const { return m_bindingManager.get(); }
-#endif
-
     void incDOMTreeVersion() { ++m_domTreeVersion; }
     unsigned domTreeVersion() const { return m_domTreeVersion; }
 
@@ -1192,10 +1183,6 @@ private:
     RefPtr<Document> m_transformSourceDocument;
 #endif
 
-#if ENABLE(XBL)
-    OwnPtr<XBLBindingManager> m_bindingManager; // The access point through which documents and elements communicate with XBL.
-#endif
-    
     typedef HashMap<AtomicStringImpl*, HTMLMapElement*> ImageMapsByName;
     ImageMapsByName m_imageMapsByName;
 

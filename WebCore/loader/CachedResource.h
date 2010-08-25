@@ -61,9 +61,6 @@ public:
 #if ENABLE(XSLT)
         , XSLStyleSheet
 #endif
-#if ENABLE(XBL)
-        , XBL
-#endif
 #if ENABLE(LINK_PREFETCH)
         , LinkPrefetch
 #endif

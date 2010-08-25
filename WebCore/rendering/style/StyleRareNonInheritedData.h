@@ -54,10 +54,6 @@ struct LengthSize;
 struct StyleDashboardRegion;
 #endif
 
-#if ENABLE(XBL)
-class BindingURI;
-#endif
-
 // Page size type.
 // StyleRareNonInheritedData::m_pageSize is meaningful only when 
 // StyleRareNonInheritedData::m_pageSizeType is PAGE_SIZE_RESOLVED.
@@ -77,10 +73,6 @@ public:
     PassRefPtr<StyleRareNonInheritedData> copy() const { return adoptRef(new StyleRareNonInheritedData(*this)); }
     ~StyleRareNonInheritedData();
     
-#if ENABLE(XBL)
-    bool bindingsEquivalent(const StyleRareNonInheritedData&) const;
-#endif
-
     bool operator==(const StyleRareNonInheritedData&) const;
     bool operator!=(const StyleRareNonInheritedData& o) const { return !(*this == o); }
 
@@ -137,10 +129,6 @@ public:
     LengthSize m_pageSize;
     PageSizeType m_pageSizeType;
 
-#if ENABLE(XBL)
-    OwnPtr<BindingURI> bindingURI; // The XBL binding URI list.
-#endif
-    
 private:
     StyleRareNonInheritedData();
     StyleRareNonInheritedData(const StyleRareNonInheritedData&);

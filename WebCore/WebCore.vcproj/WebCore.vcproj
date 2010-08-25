@@ -23453,14 +23453,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\loader\CachedXBLDocument.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\loader\CachedXBLDocument.h"
-				>
-			</File>
-			<File
 				RelativePath="..\loader\CachedXSLStyleSheet.cpp"
 				>
 			</File>
@@ -32793,14 +32785,6 @@
 			<Filter
 				Name="style"
 				>
-				<File
-					RelativePath="..\rendering\style\BindingURI.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\rendering\style\BindingURI.h"
-					>
-				</File>
 				<File
 					RelativePath="..\rendering\style\BorderData.h"
 					>

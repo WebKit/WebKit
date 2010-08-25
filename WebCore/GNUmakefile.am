@@ -1661,7 +1661,6 @@ webcore_sources += \
 	WebCore/loader/CachedResourceHandle.h \
 	WebCore/loader/CachedScript.cpp \
 	WebCore/loader/CachedScript.h \
-	WebCore/loader/CachedXBLDocument.h \
 	WebCore/loader/CachedXSLStyleSheet.cpp \
 	WebCore/loader/CachedXSLStyleSheet.h \
 	WebCore/loader/CrossOriginAccessControl.cpp \
@@ -2372,8 +2371,6 @@ webcore_sources += \
 	WebCore/rendering/TransformState.h \
 	WebCore/rendering/break_lines.cpp \
 	WebCore/rendering/break_lines.h \
-	WebCore/rendering/style/BindingURI.cpp \
-	WebCore/rendering/style/BindingURI.h \
 	WebCore/rendering/style/BorderData.h \
 	WebCore/rendering/style/BorderValue.h \
 	WebCore/rendering/style/CollapsedBorderValue.h \

@@ -79,9 +79,6 @@ static ResourceRequest::TargetType cachedResourceTypeToTargetType(CachedResource
 #if ENABLE(XSLT)
     case CachedResource::XSLStyleSheet:
 #endif
-#if ENABLE(XBL)
-    case CachedResource::XBL:
-#endif
         return ResourceRequest::TargetIsStyleSheet;
     case CachedResource::Script: 
         return ResourceRequest::TargetIsScript;
@@ -105,9 +102,6 @@ Loader::Priority Loader::determinePriority(const CachedResource* resource) const
         case CachedResource::CSSStyleSheet:
 #if ENABLE(XSLT)
         case CachedResource::XSLStyleSheet:
-#endif
-#if ENABLE(XBL)
-        case CachedResource::XBL:
 #endif
             return High;
         case CachedResource::Script: 
