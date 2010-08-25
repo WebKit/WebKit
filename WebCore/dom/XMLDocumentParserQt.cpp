@@ -518,7 +518,7 @@ void XMLDocumentParser::parseStartElement()
     if (scriptElement)
         m_scriptStartLine = lineNumber();
 
-    m_currentNode->parserAddChild(newElement.get());
+    m_currentNode->deprecatedParserAddChild(newElement.get());
 
     pushCurrentNode(newElement.get());
     if (m_view && !newElement->attached())
@@ -616,7 +616,7 @@ void XMLDocumentParser::parseProcessingInstruction()
 
     pi->setCreatedByParser(true);
 
-    m_currentNode->parserAddChild(pi.get());
+    m_currentNode->deprecatedParserAddChild(pi.get());
     if (m_view && !pi->attached())
         pi->attach();
 
@@ -635,7 +635,7 @@ void XMLDocumentParser::parseCdata()
 
     RefPtr<Node> newNode = CDATASection::create(document(), m_stream.text());
 
-    m_currentNode->parserAddChild(newNode.get());
+    m_currentNode->deprecatedParserAddChild(newNode.get());
     if (m_view && !newNode->attached())
         newNode->attach();
 }
@@ -646,7 +646,7 @@ void XMLDocumentParser::parseComment()
 
     RefPtr<Node> newNode = Comment::create(document(), m_stream.text());
 
-    m_currentNode->parserAddChild(newNode.get());
+    m_currentNode->deprecatedParserAddChild(newNode.get());
     if (m_view && !newNode->attached())
         newNode->attach();
 }
@@ -705,7 +705,7 @@ void XMLDocumentParser::parseDtd()
         handleError(fatal, "Invalid DTD Public ID", lineNumber(), columnNumber());
 #endif
     if (!m_parsingFragment)
-        document()->parserAddChild(DocumentType::create(document(), name, publicId, systemId));
+        document()->deprecatedParserAddChild(DocumentType::create(document(), name, publicId, systemId));
 
 }
 }

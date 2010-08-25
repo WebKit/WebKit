@@ -1,5 +1,16 @@
 2010-08-24  Adam Barth  <abarth@webkit.org>
 
+        Qt build fix.
+
+        * dom/XMLDocumentParserQt.cpp:
+        (WebCore::XMLDocumentParser::parseStartElement):
+        (WebCore::XMLDocumentParser::parseProcessingInstruction):
+        (WebCore::XMLDocumentParser::parseCdata):
+        (WebCore::XMLDocumentParser::parseComment):
+        (WebCore::XMLDocumentParser::parseDtd):
+
+2010-08-24  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         Delete HTMLElement::checkDTD
