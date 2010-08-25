@@ -1,3 +1,22 @@
+2010-08-25  Gabor Loki  <loki@webkit.org>
+
+        Reviewed by Gavin Barraclough.
+
+        Avoid increasing required alignment of target type warning
+        https://bugs.webkit.org/show_bug.cgi?id=43963
+
+        Fix alignment warnings on Qt.
+
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::convertQVariantToValue):
+        * platform/graphics/qt/ImageBufferQt.cpp:
+        (WebCore::getImageData):
+        (WebCore::putImageData):
+        * platform/image-decoders/ImageDecoder.h:
+        (WebCore::RGBA32Buffer::getAddr):
+        * platform/text/qt/TextCodecQt.cpp:
+        (WebCore::TextCodecQt::decode):
+
 2010-08-25  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Shinichiro Hamaji
@@ -16,7 +35,7 @@
         * rendering/TextControlInnerElements.cpp:
         (WebCore::SpinButtonElement::defaultEventHandler):
 
-2010-08-16  Gabor Loki  <loki@webkit.org>
+2010-08-25  Gabor Loki  <loki@webkit.org>
 
         Reviewed by Gavin Barraclough.
 

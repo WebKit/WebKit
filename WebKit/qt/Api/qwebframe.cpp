@@ -496,7 +496,7 @@ void QWebFrame::addToJavaScriptWindowObject(const QString &name, QObject *object
             JSC::Bindings::QtInstance::getQtInstance(object, root, ownership)->createRuntimeObject(exec);
 
     JSC::PutPropertySlot slot;
-    window->put(exec, JSC::Identifier(exec, (const UChar *) name.constData(), name.length()), runtimeObject, slot);
+    window->put(exec, JSC::Identifier(exec, reinterpret_cast_ptr<const UChar*>(name.constData()), name.length()), runtimeObject, slot);
 }
 
 /*!
