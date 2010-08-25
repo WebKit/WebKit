@@ -141,7 +141,6 @@ void JSGlobalObject::init(JSObject* thisValue)
     } else
         headObject = d()->next = d()->prev = this;
 
-    d()->recursion = 0;
     d()->debugger = 0;
 
     d()->profileGroup = 0;
