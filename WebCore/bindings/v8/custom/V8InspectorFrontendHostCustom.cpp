@@ -33,6 +33,7 @@
 
 #include "InspectorController.h"
 #include "InspectorFrontendHost.h"
+#include "PlatformString.h"
 
 #include "V8Binding.h"
 #include "V8MouseEvent.h"
@@ -76,18 +77,26 @@ v8::Handle<v8::Value> V8InspectorFrontendHost::showContextMenuCallback(const v8:
 
     for (size_t i = 0; i < array->Length(); ++i) {
         v8::Local<v8::Object> item = v8::Local<v8::Object>::Cast(array->Get(v8::Integer::New(i)));
-        v8::Local<v8::Value> label = item->Get(v8::String::New("label"));
+        v8::Local<v8::Value> type = item->Get(v8::String::New("type"));
         v8::Local<v8::Value> id = item->Get(v8::String::New("id"));
-        if (label->IsUndefined() || id->IsUndefined()) {
-          items.append(new ContextMenuItem(SeparatorType,
-                                           ContextMenuItemCustomTagNoAction,
-                                           String()));
+        v8::Local<v8::Value> label = item->Get(v8::String::New("label"));
+        v8::Local<v8::Value> enabled = item->Get(v8::String::New("enabled"));
+        v8::Local<v8::Value> checked = item->Get(v8::String::New("checked"));
+        if (!type->IsString())
+            continue;
+        String typeString = toWebCoreStringWithNullCheck(type);
+        if (typeString == "separator") {
+            items.append(new ContextMenuItem(SeparatorType,
+                                             ContextMenuItemCustomTagNoAction,
+                                             String()));
         } else {
-          ContextMenuAction typedId = static_cast<ContextMenuAction>(
-              ContextMenuItemBaseCustomTag + id->ToInt32()->Value());
-          items.append(new ContextMenuItem(ActionType,
-                                           typedId,
-                                           toWebCoreStringWithNullCheck(label)));
+            ContextMenuAction typedId = static_cast<ContextMenuAction>(ContextMenuItemBaseCustomTag + id->ToInt32()->Value());
+            ContextMenuItem* menuItem = new ContextMenuItem((typeString == "checkbox" ? CheckableActionType : ActionType), typedId, toWebCoreStringWithNullCheck(label));
+            if (checked->IsBoolean())
+                menuItem->setChecked(checked->ToBoolean()->Value());
+            if (enabled->IsBoolean())
+                menuItem->setEnabled(enabled->ToBoolean()->Value());
+            items.append(menuItem);
         }
     }
 

@@ -1,3 +1,17 @@
+2010-08-25  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: support disabled and checked context menu items.
+        https://bugs.webkit.org/show_bug.cgi?id=44601
+
+        * bindings/js/JSInspectorFrontendHostCustom.cpp:
+        (WebCore::JSInspectorFrontendHost::showContextMenu):
+        * bindings/v8/custom/V8InspectorFrontendHostCustom.cpp:
+        (WebCore::V8InspectorFrontendHost::showContextMenuCallback):
+        * inspector/front-end/ContextMenu.js:
+        (WebInspector.ContextMenu.prototype.appendItem):
+
 2010-08-25  Zaheer Ahmad <zaheer.mot@gmail.com>
 
         Reviewed by Xan Lopez.

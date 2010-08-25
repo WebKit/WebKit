@@ -40,6 +40,7 @@
 #include "InspectorFrontendHost.h"
 #include "JSEvent.h"
 #include "MouseEvent.h"
+#include "PlatformString.h"
 #include <runtime/JSArray.h>
 #include <runtime/JSLock.h>
 #include <runtime/JSObject.h>
@@ -90,14 +91,26 @@ JSValue JSInspectorFrontendHost::showContextMenu(ExecState* exec)
     for (size_t i = 0; i < array->length(); ++i) {
         JSObject* item = asObject(array->getIndex(i));
         JSValue label = item->get(exec, Identifier(exec, "label"));
+        JSValue type = item->get(exec, Identifier(exec, "type"));
         JSValue id = item->get(exec, Identifier(exec, "id"));
-        if (label.isUndefined() || id.isUndefined())
+        JSValue enabled = item->get(exec, Identifier(exec, "enabled"));
+        JSValue checked = item->get(exec, Identifier(exec, "checked"));
+        if (!type.isString())
+            continue;
+
+        String typeString = ustringToString(type.toString(exec));
+        if (typeString == "separator") {
             items.append(new ContextMenuItem(SeparatorType,
                                              ContextMenuItemCustomTagNoAction,
                                              String()));
-        else {
+        } else {
             ContextMenuAction typedId = static_cast<ContextMenuAction>(ContextMenuItemBaseCustomTag + id.toInt32(exec));
-            items.append(new ContextMenuItem(ActionType, typedId, ustringToString(label.toString(exec))));
+            ContextMenuItem* menuItem = new ContextMenuItem((typeString == "checkbox" ? CheckableActionType : ActionType), typedId, ustringToString(label.toString(exec)));
+            if (!enabled.isUndefined())
+                menuItem->setEnabled(enabled.toBoolean(exec));
+            if (!checked.isUndefined())
+                menuItem->setChecked(checked.toBoolean(exec));
+            items.append(menuItem);
         }
     }
 
