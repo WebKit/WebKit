@@ -84,6 +84,7 @@ ScriptDebugServer::ScriptDebugServer()
     : m_pauseOnExceptionsState(DontPauseOnExceptions)
     , m_pausedPage(0)
     , m_enabled(true)
+    , m_breakpointsActivated(true)
 {
 }
 
@@ -186,7 +187,7 @@ void ScriptDebugServer::clearBreakpoints()
     v8::Debug::Call(clearBreakpoints);
 }
 
-void ScriptDebugServer::setBreakpointsActivated(bool enabled)
+void ScriptDebugServer::setBreakpointsActivated(bool activated)
 {
     ensureDebuggerScriptCompiled();
     v8::HandleScope scope;
@@ -194,9 +195,11 @@ void ScriptDebugServer::setBreakpointsActivated(bool enabled)
     v8::Context::Scope contextScope(debuggerContext);
 
     v8::Local<v8::Object> args = v8::Object::New();
-    args->Set(v8::String::New("enabled"), v8::Boolean::New(enabled));
+    args->Set(v8::String::New("enabled"), v8::Boolean::New(activated));
     v8::Handle<v8::Function> setBreakpointsActivated = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New("setBreakpointsActivated")));
     v8::Debug::Call(setBreakpointsActivated, args);
+
+    m_breakpointsActivated = activated;
 }
 
 ScriptDebugServer::PauseOnExceptionsState ScriptDebugServer::pauseOnExceptionsState()
@@ -231,6 +234,9 @@ void ScriptDebugServer::pause()
 void ScriptDebugServer::breakProgram()
 {
     DEFINE_STATIC_LOCAL(v8::Persistent<v8::FunctionTemplate>, callbackTemplate, ());
+
+    if (!m_breakpointsActivated)
+        return;
 
     if (!v8::Context::InContext())
         return;

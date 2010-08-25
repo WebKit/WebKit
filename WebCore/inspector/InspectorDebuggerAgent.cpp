@@ -50,6 +50,8 @@ PassOwnPtr<InspectorDebuggerAgent> InspectorDebuggerAgent::create(InspectorContr
 {
     OwnPtr<InspectorDebuggerAgent> agent = adoptPtr(new InspectorDebuggerAgent(inspectorController, frontend));
     ScriptDebugServer::shared().clearBreakpoints();
+    // FIXME(WK44513): breakpoints activated flag should be synchronized between all front-ends
+    ScriptDebugServer::shared().setBreakpointsActivated(true);
     ScriptDebugServer::shared().addListener(agent.get(), inspectorController->inspectedPage());
     return agent.release();
 }

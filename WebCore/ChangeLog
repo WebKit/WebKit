@@ -1,3 +1,18 @@
+2010-08-25  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: don't stop on DOM breakpoints when all breakpoints are deactivated
+        https://bugs.webkit.org/show_bug.cgi?id=44509
+
+        * bindings/v8/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::ScriptDebugServer):
+        (WebCore::ScriptDebugServer::setBreakpointsActivated):
+        (WebCore::ScriptDebugServer::breakProgram):
+        * bindings/v8/ScriptDebugServer.h:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::create):
+
 2010-08-25  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
