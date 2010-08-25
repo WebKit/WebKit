@@ -29,6 +29,7 @@
 #include "WebProcess.h"
 #include "WebSystemInterface.h"
 #include <crt_externs.h>
+#include <mach/machine.h>
 #include <runtime/InitializeThreading.h>
 #include <servers/bootstrap.h>
 #include <spawn.h>
@@ -66,9 +67,22 @@ void ProcessLauncher::launchProcess()
     kern_return_t kr = bootstrap_register2(bootstrap_port, const_cast<char*>(serviceName.data()), listeningPort, 0);
     if (kr)
         NSLog(@"bootstrap_register2 result: %x", kr);
-    
+
+    posix_spawnattr_t attr;
+    posix_spawnattr_init(&attr);
+
+#if CPU(X86)
+    // Ensure that the child process runs as the same architecture as the parent process. 
+    cpu_type_t cpuTypes[] = { CPU_TYPE_X86 };    
+    size_t outCount = 0;
+    posix_spawnattr_setbinpref_np(&attr, 1, cpuTypes, &outCount);
+#endif
+
     pid_t processIdentifier;
-    int result = posix_spawn(&processIdentifier, path, 0, 0, (char *const*)args, *_NSGetEnviron());
+    int result = posix_spawn(&processIdentifier, path, 0, &attr, (char *const*)args, *_NSGetEnviron());
+
+    posix_spawnattr_destroy(&attr);
+
     if (result)
         NSLog(@"posix_spawn result: %d", result);
 
@@ -87,7 +101,7 @@ void ProcessLauncher::terminateProcess()
 static void* webThreadBody(void* context)
 {
     mach_port_t serverPort = static_cast<mach_port_t>(reinterpret_cast<uintptr_t>(context));
-    
+
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
     InitWebCoreSystemInterface();
