@@ -54,6 +54,16 @@
 
         Reviewed by Yury Semikhatsky.
 
+        Web Inspector: support checked and disabled context menu items.
+        https://bugs.webkit.org/show_bug.cgi?id=44612
+
+        * platform/ContextMenu.cpp:
+        (WebCore::ContextMenu::checkOrEnableIfNeeded):
+
+2010-08-25  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
         Web Inspector: support disabled and checked context menu items.
         https://bugs.webkit.org/show_bug.cgi?id=44601
 

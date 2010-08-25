@@ -584,6 +584,10 @@ void ContextMenu::checkOrEnableIfNeeded(ContextMenuItem& item) const
     if (!frame)
         return;
 
+    // Custom items already have proper checked and enabled values.
+    if (ContextMenuItemBaseCustomTag <= item.action() && item.action() <= ContextMenuItemLastCustomTag)
+        return;
+
     bool shouldEnable = true;
     bool shouldCheck = false; 
 
