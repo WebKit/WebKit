@@ -1,3 +1,19 @@
+2010-08-25  Fady Samuel  <fsamuel@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Table Rendering Layout Test Expectations Updated
+        https://bugs.webkit.org/show_bug.cgi?id=44429
+
+        Simple Paint test appears to render the same on Mac, Windows, and Linux.
+
+        Updated test expectations to match this and moved the expectations into the test directory.
+
+        * fast/table/simple_paint-expected.checksum: Renamed from LayoutTests/platform/chromium-linux/fast/table/simple_paint-expected.checksum.
+        * fast/table/simple_paint-expected.png: Renamed from LayoutTests/platform/chromium-linux/fast/table/simple_paint-expected.png.
+        * fast/table/simple_paint-expected.txt: Renamed from LayoutTests/platform/chromium-linux/fast/table/simple_paint-expected.txt.
+        * platform/chromium/test_expectations.txt:
+
 2010-08-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.
