@@ -1,3 +1,15 @@
+2010-08-25  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] enable libsoup's content decode feature
+        https://bugs.webkit.org/show_bug.cgi?id=44147
+
+        libsoup's content decode feature is enabled during initializaton.
+
+        * ewk/ewk_main.cpp:
+        (ewk_init):
+
 2010-08-25  Rafael Antognolli  <antognolli@profusion.mobi>
 
         Unreviewed build fix.

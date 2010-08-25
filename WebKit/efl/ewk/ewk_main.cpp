@@ -125,6 +125,7 @@ int ewk_init(void)
     if (1) {
         SoupSession* session = WebCore::ResourceHandle::defaultSession();
         soup_session_add_feature_by_type(session, SOUP_TYPE_CONTENT_SNIFFER);
+        soup_session_add_feature_by_type(session, SOUP_TYPE_CONTENT_DECODER);
     }
 #endif
 
