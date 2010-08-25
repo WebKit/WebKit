@@ -1,9 +1,0 @@
-This tests that the chromium.Interval functionality works correctly.
-
-PASS - initial zero
-PASS - start
-PASS - restart
-PASS - initial stop
-PASS - stop
-PASS - stopped
-PASS - re-stopped

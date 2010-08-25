@@ -1,3 +1,16 @@
+2010-08-25  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        [chromium] remove chromium.Interval layout test
+        https://bugs.webkit.org/show_bug.cgi?id=44614
+
+        chromium.Interval is moving into the benchmarking namespace
+        and not being exposed by default.
+
+        * platform/chromium/fast/dom/interval-expected.txt: Removed.
+        * platform/chromium/fast/dom/interval.html: Removed.
+
 2010-08-25  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.
