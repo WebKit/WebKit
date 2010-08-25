@@ -5285,6 +5285,9 @@ canvas/philip/tests/2d.drawImage.broken.html
 # https://bugs.webkit.org/show_bug.cgi?id=40362
 canvas/philip/tests/2d.path.stroke.overlap.html
 
+# Originally worked because we didn't set the GC's join style properly.
+canvas/philip/tests/2d.path.rect.zero.1.html
+
 # ============================================================================= #
 # failing transforms tests
 # ============================================================================= #

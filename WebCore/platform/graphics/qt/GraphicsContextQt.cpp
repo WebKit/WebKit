@@ -256,6 +256,9 @@ GraphicsContext::GraphicsContext(PlatformGraphicsContext* context)
         // Make sure the context starts in sync with our state.
         setPlatformFillColor(fillColor(), DeviceColorSpace);
         setPlatformStrokeColor(strokeColor(), DeviceColorSpace);
+
+        // Make sure we start with the correct join mode.
+        setLineJoin(MiterJoin);
     }
 }
 

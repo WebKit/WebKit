@@ -1,3 +1,14 @@
+2010-08-25  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] GraphicsContext: Construct with the correct default LineJoin (MiterJoin)
+
+        Skip canvas/philip/tests/2d.path.rect.zero.1.html
+        It was working because we didn't properly initialize the GC's LineJoin mode.
+
+        * platform/qt/Skipped:
+
 2010-08-25  Fady Samuel  <fsamuel@chromium.org>
 
         Reviewed by Dimitri Glazkov.

@@ -1,3 +1,17 @@
+2010-08-25  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] GraphicsContext: Construct with the correct default LineJoin (MiterJoin)
+
+        We weren't setting it explicitly which caused us to use Qt::MiterJoin when
+        we actually want Qt::SvgMiterJoin.
+
+        Fixes display glitches on the "Monster" chrome experiment among other things.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::GraphicsContext):
+
 2010-08-25  Rafael Antognolli  <antognolli@profusion.mobi>
 
         Unreviewed build fix.
