@@ -126,6 +126,7 @@ EXPORTS
     ?detach@Debugger@JSC@@UAEXPAVJSGlobalObject@2@@Z
     ?detachThread@WTF@@YAXI@Z
     ?didTimeOut@TimeoutChecker@JSC@@QAE_NPAVExecState@2@@Z
+    ?dtoa@WTF@@YAXQADNHPAH1PAPAD@Z
     ?dumpSampleData@JSGlobalData@JSC@@QAEXPAVExecState@2@@Z
     ?empty@StringImpl@WTF@@SAPAV12@XZ
     ?enumerable@PropertyDescriptor@JSC@@QBE_NXZ

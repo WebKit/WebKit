@@ -3,6 +3,12 @@
         Windows build fix.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2010-08-24  Gavin Barraclough  <barraclough@apple.com>
+
+        Windows build fix.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
         * wtf/DecimalNumber.h:
         (WTF::DecimalNumber::intPow10):
         * wtf/dtoa.cpp:
