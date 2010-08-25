@@ -1,3 +1,15 @@
+2010-08-24  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        HTMLParserScheduler::create
+        https://bugs.webkit.org/show_bug.cgi?id=44551
+
+        * html/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::HTMLDocumentParser):
+        * html/HTMLParserScheduler.h:
+        (WebCore::HTMLParserScheduler::create):
+
 2010-08-24  Daniel Bates  <dbates@rim.com>
 
         Fix code comment as per Darin Adler's suggestion in <https://bugs.webkit.org/show_bug.cgi?id=44486#c2>.
