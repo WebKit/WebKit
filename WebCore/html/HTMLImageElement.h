@@ -81,7 +81,6 @@ protected:
 
 private:
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
-    virtual int tagPriority() const { return 0; }
 
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
     virtual void parseMappedAttribute(Attribute*);

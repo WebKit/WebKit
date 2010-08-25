@@ -123,7 +123,6 @@ protected:
 
 private:
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
-    virtual int tagPriority() const { return 1; }
 
     virtual const AtomicString& formControlName() const;
     virtual const AtomicString& formControlType() const = 0;

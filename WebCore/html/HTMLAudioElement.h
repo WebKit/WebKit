@@ -43,7 +43,6 @@ private:
     HTMLAudioElement(const QualifiedName&, Document*);
 
     virtual bool isVideo() const { return false; }
-    virtual int tagPriority() const { return 5; }
 };
 
 } //namespace

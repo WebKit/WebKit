@@ -108,15 +108,6 @@ HTMLTagStatus HTMLCanvasElement::endTagRequirement() const
     return HTMLElement::endTagRequirement();
 }
 
-int HTMLCanvasElement::tagPriority() const 
-{ 
-    Settings* settings = document()->settings();
-    if (settings && settings->usesDashboardBackwardCompatibilityMode())
-        return 0; 
-
-    return HTMLElement::tagPriority();
-}
-
 #endif
 
 void HTMLCanvasElement::parseMappedAttribute(Attribute* attr)

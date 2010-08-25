@@ -68,7 +68,6 @@ private:
     HTMLFrameSetElement(const QualifiedName&, Document*);
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
-    virtual int tagPriority() const { return 10; }
     virtual bool checkDTD(const Node* newChild);
 
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;

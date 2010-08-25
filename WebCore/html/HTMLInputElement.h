@@ -219,7 +219,6 @@ private:
     virtual void didMoveToNewOwnerDocument();
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
-    virtual int tagPriority() const { return 0; }
 
     virtual bool isKeyboardFocusable(KeyboardEvent*) const;
     virtual bool isMouseFocusable() const;

@@ -1,3 +1,77 @@
+2010-08-24  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove tagPriority
+        https://bugs.webkit.org/show_bug.cgi?id=44557
+
+        This code used to be used by the old parser.  Now it's unused.
+
+        * html/HTMLAnchorElement.h:
+        * html/HTMLAppletElement.h:
+        * html/HTMLAreaElement.h:
+        * html/HTMLAudioElement.h:
+        * html/HTMLBRElement.h:
+        * html/HTMLBaseElement.h:
+        * html/HTMLBaseFontElement.h:
+        * html/HTMLBlockquoteElement.h:
+        * html/HTMLBodyElement.h:
+        * html/HTMLCanvasElement.cpp:
+        * html/HTMLCanvasElement.h:
+        * html/HTMLDListElement.h:
+        * html/HTMLDataGridCellElement.h:
+        * html/HTMLDataGridColElement.h:
+        * html/HTMLDataGridElement.h:
+        * html/HTMLDataGridRowElement.h:
+        * html/HTMLDirectoryElement.h:
+        * html/HTMLDivElement.h:
+        * html/HTMLElement.cpp:
+        * html/HTMLElement.h:
+        * html/HTMLEmbedElement.h:
+        * html/HTMLFieldSetElement.h:
+        * html/HTMLFontElement.h:
+        * html/HTMLFormControlElement.h:
+        * html/HTMLFormElement.h:
+        * html/HTMLFrameElement.h:
+        * html/HTMLFrameSetElement.h:
+        * html/HTMLHRElement.h:
+        * html/HTMLHeadElement.h:
+        * html/HTMLHeadingElement.h:
+        * html/HTMLHtmlElement.h:
+        * html/HTMLIFrameElement.h:
+        * html/HTMLImageElement.h:
+        * html/HTMLInputElement.h:
+        * html/HTMLIsIndexElement.h:
+        * html/HTMLKeygenElement.h:
+        * html/HTMLLIElement.h:
+        * html/HTMLLabelElement.h:
+        * html/HTMLLinkElement.h:
+        * html/HTMLMapElement.h:
+        * html/HTMLMarqueeElement.h:
+        * html/HTMLMenuElement.h:
+        * html/HTMLMetaElement.h:
+        * html/HTMLModElement.h:
+        * html/HTMLOListElement.h:
+        * html/HTMLObjectElement.h:
+        * html/HTMLOptionElement.h:
+        * html/HTMLParagraphElement.h:
+        * html/HTMLParamElement.h:
+        * html/HTMLPreElement.h:
+        * html/HTMLQuoteElement.h:
+        * html/HTMLScriptElement.h:
+        * html/HTMLSelectElement.h:
+        * html/HTMLSourceElement.h:
+        * html/HTMLStyleElement.h:
+        * html/HTMLTableCaptionElement.h:
+        * html/HTMLTableCellElement.h:
+        * html/HTMLTableColElement.cpp:
+        * html/HTMLTableColElement.h:
+        * html/HTMLTableElement.h:
+        * html/HTMLTableRowElement.h:
+        * html/HTMLTableSectionElement.h:
+        * html/HTMLUListElement.h:
+        * html/HTMLVideoElement.h:
+
 2010-08-24  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

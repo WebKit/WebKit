@@ -44,8 +44,6 @@ public:
 private:
     HTMLObjectElement(const QualifiedName&, Document*, bool createdByParser);
 
-    virtual int tagPriority() const { return 5; }
-
     virtual void parseMappedAttribute(Attribute*);
 
     virtual void attach();

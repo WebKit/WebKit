@@ -80,51 +80,6 @@ HTMLTagStatus HTMLElement::endTagRequirement() const
     return TagStatusRequired;
 }
 
-struct Empty1IntHashTraits : HashTraits<int> {
-    static const bool emptyValueIsZero = false;
-    static int emptyValue() { return 1; }
-};
-typedef HashMap<AtomicStringImpl*, int, DefaultHash<AtomicStringImpl*>::Hash, HashTraits<AtomicStringImpl*>, Empty1IntHashTraits> TagPriorityMap;
-
-static const TagPriorityMap* createTagPriorityMap()
-{
-    TagPriorityMap* map = new TagPriorityMap;
-
-    map->add(wbrTag.localName().impl(), 0);
-
-    map->add(addressTag.localName().impl(), 3);
-    map->add(ddTag.localName().impl(), 3);
-    map->add(dtTag.localName().impl(), 3);
-    map->add(noscriptTag.localName().impl(), 3);
-    map->add(rpTag.localName().impl(), 3);
-    map->add(rtTag.localName().impl(), 3);
-
-    // 5 is same as <div>'s priority.
-    map->add(articleTag.localName().impl(), 5);
-    map->add(asideTag.localName().impl(), 5);
-    map->add(centerTag.localName().impl(), 5);
-    map->add(footerTag.localName().impl(), 5);
-    map->add(headerTag.localName().impl(), 5);
-    map->add(hgroupTag.localName().impl(), 5);
-    map->add(nobrTag.localName().impl(), 5);
-    map->add(rubyTag.localName().impl(), 5);
-    map->add(navTag.localName().impl(), 5);
-    map->add(sectionTag.localName().impl(), 5);
-
-    map->add(noembedTag.localName().impl(), 10);
-    map->add(noframesTag.localName().impl(), 10);
-
-    // TagPriorityMap returns 1 for unregistered tags. It's same as <span>.
-    // This way custom tag name elements will behave like inline spans.
-    return map;
-}
-
-int HTMLElement::tagPriority() const
-{
-    static const TagPriorityMap* tagPriorityMap = createTagPriorityMap();
-    return tagPriorityMap->get(localName().impl());
-}
-
 bool HTMLElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
 {
     if (attrName == alignAttr ||

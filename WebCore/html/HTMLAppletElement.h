@@ -34,8 +34,6 @@ public:
 private:
     HTMLAppletElement(const QualifiedName&, Document*);
 
-    virtual int tagPriority() const { return 1; }
-
     virtual void parseMappedAttribute(Attribute*);
     
     virtual bool rendererIsNeeded(RenderStyle*);

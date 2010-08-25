@@ -35,7 +35,6 @@ private:
     HTMLMenuElement(const QualifiedName&, Document*);
     
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
-    virtual int tagPriority() const { return 5; }
 };
 
 } //namespace

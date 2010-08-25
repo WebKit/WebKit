@@ -43,7 +43,6 @@ private:
     HTMLTableColElement(const QualifiedName& tagName, Document*);
 
     virtual HTMLTagStatus endTagRequirement() const;
-    virtual int tagPriority() const;
     virtual bool checkDTD(const Node*);
     virtual bool mapToEntry(const QualifiedName&, MappedAttributeEntry&) const;
     virtual void parseMappedAttribute(Attribute*);

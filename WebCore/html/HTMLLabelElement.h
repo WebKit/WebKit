@@ -38,8 +38,6 @@ public:
 private:
     HTMLLabelElement(const QualifiedName&, Document*);
 
-    virtual int tagPriority() const { return 5; }
-
     virtual bool isFocusable() const;
 
     virtual void accessKeyAction(bool sendToAnyElement);

@@ -52,11 +52,6 @@ HTMLTagStatus HTMLTableColElement::endTagRequirement() const
     return hasLocalName(colTag) ? TagStatusForbidden : TagStatusOptional;
 }
 
-int HTMLTableColElement::tagPriority() const
-{
-    return hasLocalName(colTag) ? 0 : 1;
-}
-
 bool HTMLTableColElement::checkDTD(const Node* newChild)
 {
     if (hasLocalName(colTag))

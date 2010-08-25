@@ -36,7 +36,6 @@ private:
     HTMLLIElement(const QualifiedName&, Document*);
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusOptional; }
-    virtual int tagPriority() const { return 3; }
 
     virtual bool mapToEntry(const QualifiedName&, MappedAttributeEntry&) const;
     virtual void parseMappedAttribute(Attribute*);

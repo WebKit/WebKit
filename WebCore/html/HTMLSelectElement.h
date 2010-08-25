@@ -86,7 +86,6 @@ protected:
     HTMLSelectElement(const QualifiedName&, Document*, HTMLFormElement*);
 
 private:
-    virtual int tagPriority() const { return 6; }
     virtual bool checkDTD(const Node* newChild);
 
     virtual const AtomicString& formControlType() const;

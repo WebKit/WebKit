@@ -35,7 +35,6 @@ private:
     HTMLParagraphElement(const QualifiedName&, Document*);
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
-    virtual int tagPriority() const { return 3; }
     virtual bool checkDTD(const Node* newChild);
 
     virtual bool mapToEntry(const QualifiedName&, MappedAttributeEntry&) const;

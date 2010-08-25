@@ -61,7 +61,6 @@ private:
     HTMLDataGridColElement(const QualifiedName&, Document*);
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
-    virtual int tagPriority() const { return 0; }
     virtual void insertedIntoTree(bool /*deep*/);
     virtual void removedFromTree(bool /*deep*/);
     virtual void parseMappedAttribute(Attribute*);

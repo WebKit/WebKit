@@ -33,8 +33,6 @@ public:
     static PassRefPtr<HTMLHeadElement> create(Document*);
     static PassRefPtr<HTMLHeadElement> create(const QualifiedName&, Document*);
 
-    virtual int tagPriority() const { return 10; }
-
 private:
     HTMLHeadElement(const QualifiedName&, Document*);
 

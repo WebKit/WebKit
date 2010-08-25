@@ -120,7 +120,6 @@ private:
 
 #if ENABLE(DASHBOARD_SUPPORT)
     virtual HTMLTagStatus endTagRequirement() const;
-    virtual int tagPriority() const;
 #endif
 
     virtual void parseMappedAttribute(Attribute*);

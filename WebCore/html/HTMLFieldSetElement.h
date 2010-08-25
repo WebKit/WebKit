@@ -35,7 +35,6 @@ public:
 private:
     HTMLFieldSetElement(const QualifiedName&, Document*, HTMLFormElement*);
 
-    virtual int tagPriority() const { return 3; }
     virtual bool checkDTD(const Node* newChild);
 
     virtual bool supportsFocus() const;

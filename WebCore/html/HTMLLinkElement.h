@@ -76,7 +76,6 @@ public:
 
 private:
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
-    virtual int tagPriority() const { return 0; }
 
     virtual void parseMappedAttribute(Attribute*);
 
