@@ -31,6 +31,14 @@
 
 using namespace std;
 
+#define CRASH() do { \
+    *(int *)(uintptr_t)0xbbadbeef = 0; \
+    ((void(*)())0)(); /* More reliable, but doesn't say BBADBEEF */ \
+} while(false)
+
+static bool getEntryPointsWasCalled;
+static bool initializeWasCalled;
+
 #if XP_WIN
 #define STDCALL __stdcall
 
@@ -47,6 +55,14 @@ static inline int strcasecmp(const char* s1, const char* s2)
 extern "C"
 NPError STDCALL NP_Initialize(NPNetscapeFuncs *browserFuncs)
 {
+    initializeWasCalled = true;
+
+#if XP_WIN
+    // Simulate Flash and QuickTime's behavior of crashing when NP_Initialize is called before NP_GetEntryPoints.
+    if (!getEntryPointsWasCalled)
+        CRASH();
+#endif
+
     browser = browserFuncs;
     return NPERR_NO_ERROR;
 }
@@ -54,6 +70,14 @@ NPError STDCALL NP_Initialize(NPNetscapeFuncs *browserFuncs)
 extern "C"
 NPError STDCALL NP_GetEntryPoints(NPPluginFuncs *pluginFuncs)
 {
+    getEntryPointsWasCalled = true;
+
+#if XP_MACOSX
+    // Simulate Silverlight's behavior of crashing when NP_GetEntryPoints is called before NP_Initialize.
+    if (!initializeWasCalled)
+        CRASH();
+#endif
+
     pluginFuncs->version = (NP_VERSION_MAJOR << 8) | NP_VERSION_MINOR;
     pluginFuncs->size = sizeof(pluginFuncs);
     pluginFuncs->newp = NPP_New;

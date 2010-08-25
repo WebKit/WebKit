@@ -1,3 +1,21 @@
+2010-08-19  Adam Roben  <aroben@apple.com>
+
+        Call NP_GetEntryPoints before NP_Initialize on Windows
+
+        Doing otherwise will cause Flash and QuickTime to crash inside
+        NP_Initialize.
+
+        Fixes <http://webkit.org/b/44270> <rdar://problem/8330393> Crash in
+        NP_Initialize when loading QuickTime when running
+        plugins/embed-attributes-setting.html in WebKit2 on Windows
+
+        Reviewed by John Sullivan.
+
+        * WebProcess/Plugins/Netscape/NetscapePluginModule.cpp:
+        (WebKit::NetscapePluginModule::tryLoad): On Windows, first call
+        NP_GetEntryPoints, then NP_Initialize. Do the reverse on Mac to
+        prevent Silverlight (e.g.) from crashing (see r38858).
+
 2010-08-25  Balazs Kelemen  <kb@inf.u-szeged.hu>
 
         Reviewed by Kenneth Rohde Christiansen.
