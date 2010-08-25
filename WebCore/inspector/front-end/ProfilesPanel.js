@@ -158,17 +158,8 @@ WebInspector.ProfilesPanel.prototype = {
     show: function()
     {
         WebInspector.Panel.prototype.show.call(this);
-        if (this._shouldPopulateProfiles)
+        if (!this._profilesWereRequested)
             this._populateProfiles();
-    },
-
-    populateInterface: function()
-    {
-        this._reset();
-        if (this.visible)
-            this._populateProfiles();
-        else
-            this._shouldPopulateProfiles = true;
     },
 
     profilerWasEnabled: function()
@@ -177,7 +168,10 @@ WebInspector.ProfilesPanel.prototype = {
             return;
 
         this._profilerEnabled = true;
-        this.populateInterface();
+
+        this._reset();
+        if (this.visible)
+            this._populateProfiles();
     },
 
     profilerWasDisabled: function()
@@ -207,6 +201,7 @@ WebInspector.ProfilesPanel.prototype = {
         this._profilesIdMap = {};
         this._profileGroups = {};
         this._profileGroupsForLinks = {}
+        this._profilesWereRequested = false;
 
         this.sidebarTreeElement.removeStyleClass("some-expandable");
 
@@ -532,7 +527,7 @@ WebInspector.ProfilesPanel.prototype = {
         var callId = WebInspector.Callback.wrap(populateCallback);
         InspectorBackend.getProfileHeaders(callId);
 
-        delete this._shouldPopulateProfiles;
+        this._profilesWereRequested = true;
     },
 
     updateMainViewWidth: function(width)

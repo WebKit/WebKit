@@ -118,7 +118,7 @@ public:
     void setSetting(const String& key, const String& value);
     void saveApplicationSettings(const String& settings);
     void saveSessionSettings(const String&);
-
+    void getSettings(RefPtr<InspectorObject>*);
 
     void inspect(Node*);
     void highlight(Node*);
@@ -149,8 +149,6 @@ public:
     bool hasInspectorFrontendClient() const { return m_inspectorFrontendClient; }
 
     void inspectedWindowScriptObjectCleared(Frame*);
-
-    bool windowVisible();
 
     void didCommitLoad(DocumentLoader*);
     void frameDetachedFromParent(Frame*);

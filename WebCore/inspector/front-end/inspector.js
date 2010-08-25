@@ -491,8 +491,9 @@ WebInspector.doLoadedDone = function()
     var port = WebInspector.port;
     document.body.addStyleClass("port-" + port);
 
-    this.applicationSettings = new WebInspector.Settings(false);
-    this.sessionSettings = new WebInspector.Settings(true);
+    InspectorFrontendHost.loaded();
+    WebInspector.Settings.initialize();
+    
     this._registerShortcuts();
 
     // set order of some sections explicitly
@@ -579,7 +580,7 @@ WebInspector.doLoadedDone = function()
 
     this.extensionServer.initExtensions();
 
-    InspectorFrontendHost.loaded();
+    InspectorBackend.populateScriptObjects();
 
     // As a DOMAgent method, this needs to happen after the frontend has loaded and the agent is available.
     InspectorBackend.getSupportedCSSProperties(WebInspector.Callback.wrap(WebInspector.CSSCompletions._load));
@@ -1448,15 +1449,6 @@ WebInspector.pausedScript = function(callFrames)
 WebInspector.resumedScript = function()
 {
     this.panels.scripts.debuggerResumed();
-}
-
-WebInspector.populateInterface = function()
-{
-    for (var panelName in this.panels) {
-        var panel = this.panels[panelName];
-        if ("populateInterface" in panel)
-            panel.populateInterface();
-    }
 }
 
 WebInspector.reset = function()

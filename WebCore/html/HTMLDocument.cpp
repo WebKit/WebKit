@@ -287,7 +287,7 @@ PassRefPtr<DocumentParser> HTMLDocument::createParser()
     bool reportErrors = false;
 #if ENABLE(INSPECTOR)
     if (Page* page = this->page())
-        reportErrors = page->inspectorController()->windowVisible();
+        reportErrors = page->inspectorController()->hasFrontend();
 #endif
     return HTMLDocumentParser::create(this, reportErrors);
 }

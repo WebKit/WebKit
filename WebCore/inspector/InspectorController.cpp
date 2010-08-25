@@ -247,6 +247,13 @@ void InspectorController::saveSessionSettings(const String& settingsJSON)
     m_sessionSettings = InspectorValue::parseJSON(settingsJSON);
 }
 
+void InspectorController::getSettings(RefPtr<InspectorObject>* settings)
+{
+    *settings = InspectorObject::create();
+    (*settings)->setString("application", setting(frontendSettingsSettingName()));
+    (*settings)->setString("session", m_sessionSettings->toJSONString());
+}
+
 void InspectorController::inspect(Node* node)
 {
     if (!enabled())
@@ -301,11 +308,6 @@ void InspectorController::hideHighlight()
         return;
     m_highlightedNode = 0;
     m_client->hideHighlight();
-}
-
-bool InspectorController::windowVisible()
-{
-    return m_frontend;
 }
 
 void InspectorController::addMessageToConsole(MessageSource source, MessageType type, MessageLevel level, ScriptCallStack* callStack, const String& message)
@@ -488,8 +490,6 @@ void InspectorController::connectFrontend()
     // Initialize Web Inspector title.
     m_frontend->inspectedURLChanged(m_inspectedPage->mainFrame()->loader()->url().string());
 
-    populateScriptObjects();
-
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     if (InspectorDebuggerAgent::isDebuggerAlwaysEnabled()) {
         // FIXME (40364): This will force pushing script sources to frontend even if script
@@ -507,13 +507,6 @@ void InspectorController::connectFrontend()
             enableProfiler();
     }
 #endif
-
-    if (m_showAfterVisible == lastActivePanel)
-        m_showAfterVisible = setting(lastActivePanel);
-
-    if (m_nodeToFocus)
-        focusNode();
-    showPanel(m_showAfterVisible);
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     m_applicationCacheAgent = new InspectorApplicationCacheAgent(this, m_frontend.get());
@@ -625,7 +618,11 @@ void InspectorController::populateScriptObjects()
     if (!m_frontend)
         return;
 
-    m_frontend->populateApplicationSettings(setting(frontendSettingsSettingName()));
+    if (m_showAfterVisible == lastActivePanel)
+        m_showAfterVisible = setting(lastActivePanel);
+    if (m_nodeToFocus)
+        focusNode();
+    showPanel(m_showAfterVisible);
 
     if (m_resourceTrackingEnabled)
         m_frontend->resourceTrackingWasEnabled();
@@ -674,9 +671,6 @@ void InspectorController::populateScriptObjects()
         m_frontend->didCreateWorker(worker->id(), worker->url(), worker->isSharedWorker());
     }
 #endif
-
-    m_frontend->populateSessionSettings(m_sessionSettings->toJSONString());
-    m_frontend->populateInterface();
 
     // Dispatch pending frontend commands
     for (Vector<pair<long, String> >::iterator it = m_pendingEvaluateTestCommands.begin(); it != m_pendingEvaluateTestCommands.end(); ++it)

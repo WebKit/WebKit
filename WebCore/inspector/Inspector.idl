@@ -47,9 +47,6 @@ module core {
         [notify] void inspectedURLChanged(out String url);
         [notify] void monitoringXHRWasEnabled();
         [notify] void monitoringXHRWasDisabled();
-        [notify] void populateApplicationSettings(out String settings);
-        [notify] void populateInterface();
-        [notify] void populateSessionSettings(out String settings);
         [notify] void removeResource(out unsigned long identifier);
         [notify] void reset();
         [notify] void resetProfilesPanel();
@@ -102,6 +99,10 @@ module core {
         [notify] void didDestroyWorker(out long id);
 #endif
 
+        // This method is going to be broken down into smaller parts.
+        [handler=Controller] void populateScriptObjects();
+
+        [handler=Controller] void getSettings(in long callId, out Object settings);
         [handler=Controller] void storeLastActivePanel(in String panelName);
 
         [handler=Controller] void saveApplicationSettings(in String settings);

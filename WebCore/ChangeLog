@@ -1,3 +1,31 @@
+2010-08-25  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: lazily request frontend settings instead of pushing them on connect
+        https://bugs.webkit.org/show_bug.cgi?id=44607
+
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::createParser):
+        * inspector/Inspector.idl:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::getSettings):
+        (WebCore::InspectorController::connectFrontend):
+        (WebCore::InspectorController::populateScriptObjects): this method is now called explicitely from the frontend,
+        it should be gone eventually once all panels request initial data lazily.
+        * inspector/InspectorController.h:
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype.show):
+        (WebInspector.ProfilesPanel.prototype.profilerWasEnabled):
+        (WebInspector.ProfilesPanel.prototype._reset):
+        * inspector/front-end/Settings.js:
+        (WebInspector.Settings):
+        (WebInspector.Settings.initialize.populateApplicationSettings):
+        (WebInspector.Settings.initialize.populateSessionSettings):
+        (WebInspector.Settings.initialize):
+        * inspector/front-end/inspector.js:
+        (WebInspector.doLoadedDone):
+
 2010-08-25  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.
