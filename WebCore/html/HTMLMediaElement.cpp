@@ -162,12 +162,6 @@ void HTMLMediaElement::didMoveToNewOwnerDocument()
     HTMLElement::didMoveToNewOwnerDocument();
 }
 
-
-bool HTMLMediaElement::checkDTD(const Node* newChild)
-{
-    return newChild->hasTagName(sourceTag) || HTMLElement::checkDTD(newChild);
-}
-
 void HTMLMediaElement::attributeChanged(Attribute* attr, bool preserveDecls)
 {
     HTMLElement::attributeChanged(attr, preserveDecls);

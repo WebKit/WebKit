@@ -296,11 +296,6 @@ PassRefPtr<DocumentParser> HTMLDocument::createParser()
 // not part of the DOM
 // --------------------------------------------------------------------------
 
-bool HTMLDocument::childAllowed(Node *newChild)
-{
-    return newChild->hasTagName(htmlTag) || newChild->isCommentNode() || (newChild->nodeType() == DOCUMENT_TYPE_NODE && !doctype());
-}
-
 PassRefPtr<Element> HTMLDocument::createElement(const AtomicString& name, ExceptionCode& ec)
 {
     if (!isValidName(name)) {

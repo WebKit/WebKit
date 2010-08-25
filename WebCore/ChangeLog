@@ -2,6 +2,101 @@
 
         Reviewed by Eric Seidel.
 
+        Delete HTMLElement::checkDTD
+        https://bugs.webkit.org/show_bug.cgi?id=44563
+
+        This function existed to service the LegacyHTMLTreeBuilder.  The new
+        HTMLTreeBuilder has this logic internalized.  Pulling on this thread
+        caused me to remove a legacyParserAddChild and to discover some code
+        that shouldn't be calling these parser-specific APIs.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::parserAddChild):
+        (WebCore::ContainerNode::deprecatedParserAddChild):
+        * dom/ContainerNode.h:
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocument):
+        * dom/Node.cpp:
+        (WebCore::Node::deprecatedParserAddChild):
+        * dom/Node.h:
+        * dom/XMLDocumentParser.cpp:
+        (WebCore::XMLDocumentParser::enterText):
+        * dom/XMLDocumentParser.h:
+        * dom/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::startElementNs):
+        (WebCore::XMLDocumentParser::characters):
+        (WebCore::XMLDocumentParser::processingInstruction):
+        (WebCore::XMLDocumentParser::cdataBlock):
+        (WebCore::XMLDocumentParser::comment):
+        (WebCore::XMLDocumentParser::internalSubset):
+        * dom/XMLDocumentParserQt.cpp:
+        (WebCore::XMLDocumentParser::parse):
+        (WebCore::XMLDocumentParser::parseStartElement):
+        (WebCore::XMLDocumentParser::parseCharacters):
+        (WebCore::XMLDocumentParser::parseProcessingInstruction):
+        (WebCore::XMLDocumentParser::parseCdata):
+        (WebCore::XMLDocumentParser::parseComment):
+        (WebCore::XMLDocumentParser::parseDtd):
+        * html/HTMLDataGridElement.cpp:
+        * html/HTMLDataGridElement.h:
+        * html/HTMLDataGridRowElement.cpp:
+        * html/HTMLDataGridRowElement.h:
+        * html/HTMLDataListElement.cpp:
+        * html/HTMLDataListElement.h:
+        * html/HTMLDocument.cpp:
+        * html/HTMLDocument.h:
+        * html/HTMLElement.cpp:
+        * html/HTMLElement.h:
+        * html/HTMLFieldSetElement.cpp:
+        * html/HTMLFieldSetElement.h:
+        * html/HTMLFrameSetElement.cpp:
+        * html/HTMLFrameSetElement.h:
+        * html/HTMLHeadElement.cpp:
+        * html/HTMLHeadElement.h:
+        * html/HTMLHeadingElement.cpp:
+        * html/HTMLHeadingElement.h:
+        * html/HTMLHtmlElement.cpp:
+        * html/HTMLHtmlElement.h:
+        * html/HTMLKeygenElement.cpp:
+        (WebCore::HTMLKeygenElement::HTMLKeygenElement):
+        * html/HTMLMapElement.cpp:
+        * html/HTMLMapElement.h:
+        * html/HTMLMediaElement.cpp:
+        * html/HTMLMediaElement.h:
+        * html/HTMLNoScriptElement.cpp:
+        * html/HTMLNoScriptElement.h:
+        * html/HTMLOptGroupElement.cpp:
+        * html/HTMLOptGroupElement.h:
+        * html/HTMLOptionElement.cpp:
+        * html/HTMLOptionElement.h:
+        * html/HTMLParagraphElement.cpp:
+        * html/HTMLParagraphElement.h:
+        * html/HTMLPlugInElement.cpp:
+        * html/HTMLPlugInElement.h:
+        * html/HTMLScriptElement.h:
+        * html/HTMLSelectElement.cpp:
+        * html/HTMLSelectElement.h:
+        * html/HTMLStyleElement.h:
+        * html/HTMLTableColElement.cpp:
+        * html/HTMLTableColElement.h:
+        * html/HTMLTableElement.cpp:
+        * html/HTMLTableElement.h:
+        * html/HTMLTableRowElement.cpp:
+        * html/HTMLTableRowElement.h:
+        * html/HTMLTableSectionElement.cpp:
+        * html/HTMLTableSectionElement.h:
+        * html/HTMLTextAreaElement.h:
+        * html/HTMLTitleElement.h:
+        * rendering/MediaControlElements.cpp:
+        (WebCore::MediaControlElement::attachToParent):
+        (WebCore::MediaControlInputElement::attachToParent):
+        * rendering/TextControlInnerElements.cpp:
+        (WebCore::TextControlInnerElement::attachInnerElement):
+
+2010-08-24  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Remove tagPriority
         https://bugs.webkit.org/show_bug.cgi?id=44557
 

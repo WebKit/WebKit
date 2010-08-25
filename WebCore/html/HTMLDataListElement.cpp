@@ -47,11 +47,6 @@ PassRefPtr<HTMLDataListElement> HTMLDataListElement::create(const QualifiedName&
     return adoptRef(new HTMLDataListElement(tagName, document));
 }
 
-bool HTMLDataListElement::checkDTD(const Node* newChild)
-{
-    return newChild->hasTagName(HTMLNames::optionTag) || HTMLElement::inInlineTagList(newChild);
-}
-
 PassRefPtr<HTMLCollection> HTMLDataListElement::options()
 {
     return HTMLCollection::create(this, DataListOptions);

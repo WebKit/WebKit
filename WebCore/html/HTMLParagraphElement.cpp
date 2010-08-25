@@ -44,11 +44,6 @@ PassRefPtr<HTMLParagraphElement> HTMLParagraphElement::create(const QualifiedNam
     return adoptRef(new HTMLParagraphElement(tagName, document));
 }
 
-bool HTMLParagraphElement::checkDTD(const Node* newChild)
-{
-    return inInlineTagList(newChild) || (document()->inCompatMode() && newChild->hasTagName(tableTag));
-}
-
 bool HTMLParagraphElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
 {
     if (attrName == alignAttr) {

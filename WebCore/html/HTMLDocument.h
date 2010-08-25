@@ -83,8 +83,6 @@ protected:
     HTMLDocument(Frame*, const KURL&);
 
 private:
-    virtual bool childAllowed(Node*);
-
     virtual PassRefPtr<Element> createElement(const AtomicString& tagName, ExceptionCode&);
 
     virtual bool isFrameSet() const;

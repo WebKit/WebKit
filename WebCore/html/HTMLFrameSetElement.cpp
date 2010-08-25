@@ -59,15 +59,6 @@ PassRefPtr<HTMLFrameSetElement> HTMLFrameSetElement::create(const QualifiedName&
     return adoptRef(new HTMLFrameSetElement(tagName, document));
 }
 
-bool HTMLFrameSetElement::checkDTD(const Node* newChild)
-{
-    // FIXME: Old code had adjacent double returns and seemed to want to do something with NOFRAMES (but didn't).
-    // What is the correct behavior?
-    if (newChild->isTextNode())
-        return static_cast<const Text*>(newChild)->containsOnlyWhitespace();
-    return newChild->hasTagName(framesetTag) || newChild->hasTagName(frameTag);
-}
-
 bool HTMLFrameSetElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
 {
     if (attrName == bordercolorAttr) {

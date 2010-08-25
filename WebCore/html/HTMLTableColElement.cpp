@@ -52,16 +52,6 @@ HTMLTagStatus HTMLTableColElement::endTagRequirement() const
     return hasLocalName(colTag) ? TagStatusForbidden : TagStatusOptional;
 }
 
-bool HTMLTableColElement::checkDTD(const Node* newChild)
-{
-    if (hasLocalName(colTag))
-        return false;
-    
-    if (newChild->isTextNode())
-        return static_cast<const Text*>(newChild)->containsOnlyWhitespace();
-    return newChild->hasTagName(colTag);
-}
-
 bool HTMLTableColElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
 {
     if (attrName == widthAttr) {

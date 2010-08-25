@@ -56,8 +56,6 @@ public:
 private:
     HTMLDataGridElement(const QualifiedName&, Document*);
 
-    virtual bool checkDTD(const Node*);
-
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
     RefPtr<DataGridDataSource> m_dataSource;

@@ -135,7 +135,9 @@ PassRefPtr<MediaControlElement> MediaControlElement::create(HTMLMediaElement* me
 
 void MediaControlElement::attachToParent(Element* parent)
 {
-    parent->legacyParserAddChild(this);
+    // FIXME: This code seems very wrong.  Why are we magically adding |this| to the DOM here?
+    //        We shouldn't be calling parser API methods outside of the parser!
+    parent->parserAddChild(this);
 }
 
 void MediaControlElement::update()
@@ -392,7 +394,9 @@ MediaControlInputElement::MediaControlInputElement(HTMLMediaElement* mediaElemen
 
 void MediaControlInputElement::attachToParent(Element* parent)
 {
-    parent->legacyParserAddChild(this);
+    // FIXME: This code seems very wrong.  Why are we magically adding |this| to the DOM here?
+    //        We shouldn't be calling parser API methods outside of the parser!
+    parent->parserAddChild(this);
 }
 
 void MediaControlInputElement::update()

@@ -45,13 +45,14 @@ inline HTMLKeygenElement::HTMLKeygenElement(const QualifiedName& tagName, Docume
 {
     ASSERT(hasTagName(keygenTag));
 
+    // FIXME: This markup should go in the shadow tree.
     // Add one option element for each key size.
     Vector<String> keys;
     getSupportedKeySizes(keys);
     for (size_t i = 0; i < keys.size(); ++i) {
         RefPtr<HTMLOptionElement> option = HTMLOptionElement::create(document, this->form());
-        legacyParserAddChild(option);
-        option->legacyParserAddChild(Text::create(document, keys[i]));
+        parserAddChild(option);
+        option->parserAddChild(Text::create(document, keys[i]));
     }
 }
 

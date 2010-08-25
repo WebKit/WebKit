@@ -753,34 +753,9 @@ PassRefPtr<HTMLCollection> HTMLElement::children()
     return HTMLCollection::create(this, NodeChildren);
 }
 
-// DOM Section 1.1.1
-bool HTMLElement::childAllowed(Node *newChild)
-{
-    if (!Element::childAllowed(newChild))
-        return false;
-
-    // For XML documents, we are non-validating and do not check against a DTD, even for HTML elements.
-    if (!document()->isHTMLDocument())
-        return true;
-
-    // Future-proof for XML content inside HTML documents (we may allow this some day).
-    if (newChild->isElementNode() && !newChild->isHTMLElement())
-        return true;
-
-    // Elements with forbidden tag status can never have children
-    if (endTagRequirement() == TagStatusForbidden)
-        return false;
-
-    // Comment nodes are always allowed.
-    if (newChild->isCommentNode())
-        return true;
-
-    // Now call checkDTD.
-    return checkDTD(newChild);
-}
-
 // DTD Stuff
 // This unfortunate function is only needed when checking against the DTD.  Other languages (like SVG) won't need this.
+// FIXME: Remove if only used by LegacyHTMLTreeBuilder.
 bool HTMLElement::isRecognizedTagName(const QualifiedName& tagName)
 {
     DEFINE_STATIC_LOCAL(HashSet<AtomicStringImpl*>, tagList, ());
@@ -977,13 +952,6 @@ bool HTMLElement::inBlockTagList(const Node* newChild)
     }
 
     return false;
-}
-
-bool HTMLElement::checkDTD(const Node* newChild)
-{
-    if (hasLocalName(addressTag) && newChild->hasTagName(pTag))
-        return true;
-    return inEitherTagList(newChild);
 }
 
 bool HTMLElement::rendererIsNeeded(RenderStyle *style)

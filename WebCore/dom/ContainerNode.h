@@ -51,7 +51,6 @@ public:
     // These methods are only used during parsing.
     // They don't send DOM mutation events or handle reparenting.
     // However, arbitrary code may be run by beforeload handlers.
-    virtual ContainerNode* legacyParserAddChild(PassRefPtr<Node>);
     void parserAddChild(PassRefPtr<Node>);
     void parserRemoveChild(Node*);
     void parserInsertBefore(PassRefPtr<Node> newChild, Node* refChild);
@@ -100,8 +99,12 @@ protected:
     void setLastChild(Node* child) { m_lastChild = child; }
 
 private:
-    // FIXME: This should take a PassRefPtr.
-    void addChildCommon(Node*);
+    // Never call this function directly.  If you're trying to call this
+    // function, your code is either wrong or you're supposed to call
+    // parserAddChild.  Please do not call parserAddChild unless you are the
+    // parser!
+    virtual void deprecatedParserAddChild(PassRefPtr<Node>);
+
     void removeBetween(Node* previousChild, Node* nextChild, Node* oldChild);
     void insertBeforeCommon(Node* nextChild, Node* oldChild);
 

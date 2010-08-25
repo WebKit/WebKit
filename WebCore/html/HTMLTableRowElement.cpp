@@ -54,28 +54,6 @@ PassRefPtr<HTMLTableRowElement> HTMLTableRowElement::create(const QualifiedName&
     return adoptRef(new HTMLTableRowElement(tagName, document));
 }
 
-bool HTMLTableRowElement::checkDTD(const Node* newChild)
-{
-    if (newChild->isTextNode())
-        return static_cast<const Text*>(newChild)->containsOnlyWhitespace();
-    return newChild->hasTagName(tdTag) || newChild->hasTagName(thTag) ||
-           newChild->hasTagName(formTag) || newChild->hasTagName(scriptTag);
-}
-
-ContainerNode* HTMLTableRowElement::legacyParserAddChild(PassRefPtr<Node> child)
-{
-    if (child->hasTagName(formTag)) {
-        // First add the child.
-        HTMLTablePartElement::legacyParserAddChild(child);
-
-        // Now simply return ourselves as the container to insert into.
-        // This has the effect of demoting the form to a leaf and moving it safely out of the way.
-        return this;
-    }
-
-    return HTMLTablePartElement::legacyParserAddChild(child);
-}
-
 int HTMLTableRowElement::rowIndex() const
 {
     Node *table = parentNode();

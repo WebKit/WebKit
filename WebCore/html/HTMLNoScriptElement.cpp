@@ -42,11 +42,6 @@ PassRefPtr<HTMLNoScriptElement> HTMLNoScriptElement::create(const QualifiedName&
     return adoptRef(new HTMLNoScriptElement(tagName, document));
 }
 
-bool HTMLNoScriptElement::checkDTD(const Node* newChild)
-{
-    return newChild->isTextNode() || inBlockTagList(newChild); 
-}
-
 void HTMLNoScriptElement::attach()
 {
     HTMLElement::attach();

@@ -55,13 +55,6 @@ HTMLDataGridElement::~HTMLDataGridElement()
     m_columns->clearDataGrid();
 }
 
-bool HTMLDataGridElement::checkDTD(const Node* newChild)
-{
-    if (newChild->isTextNode())
-        return static_cast<const Text*>(newChild)->containsOnlyWhitespace();
-    return newChild->hasTagName(dcolTag) || newChild->hasTagName(drowTag);
-}
-
 RenderObject* HTMLDataGridElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
     return new (arena) RenderDataGrid(this);

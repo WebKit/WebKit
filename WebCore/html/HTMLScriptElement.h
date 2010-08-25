@@ -50,7 +50,6 @@ private:
     virtual String scriptContent() const;
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
-    virtual bool checkDTD(const Node* newChild) { return newChild->isTextNode(); }
 
     virtual void parseMappedAttribute(Attribute*);
     virtual void insertedIntoDocument();

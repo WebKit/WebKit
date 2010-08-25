@@ -45,13 +45,6 @@ PassRefPtr<HTMLDataGridRowElement> HTMLDataGridRowElement::create(const Qualifie
     return adoptRef(new HTMLDataGridRowElement(name, document));
 }
 
-bool HTMLDataGridRowElement::checkDTD(const Node* newChild)
-{
-    if (newChild->isTextNode())
-        return static_cast<const Text*>(newChild)->containsOnlyWhitespace();
-    return newChild->hasTagName(drowTag) || newChild->hasTagName(dcellTag);
-}
-
 bool HTMLDataGridRowElement::selected() const
 {
     return hasAttribute(selectedAttr);

@@ -42,7 +42,6 @@ private:
     HTMLStyleElement(const QualifiedName&, Document*, bool createdByParser);
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
-    virtual bool checkDTD(const Node* newChild) { return newChild->isTextNode(); }
 
     // overload from HTMLElement
     virtual void parseMappedAttribute(Attribute*);

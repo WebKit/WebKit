@@ -808,10 +808,7 @@ void XMLDocumentParser::startElementNs(const xmlChar* xmlLocalName, const xmlCha
     if (scriptElement)
         m_scriptStartLine = lineNumber();
 
-    if (!m_currentNode->legacyParserAddChild(newElement.get())) {
-        stopParsing();
-        return;
-    }
+    m_currentNode->deprecatedParserAddChild(newElement.get());
 
     pushCurrentNode(newElement.get());
     if (m_view && !newElement->attached())
@@ -915,8 +912,9 @@ void XMLDocumentParser::characters(const xmlChar* s, int len)
         return;
     }
 
-    if (m_currentNode->isTextNode() || enterText())
-        m_bufferedText.append(s, len);
+    if (!m_currentNode->isTextNode())
+        enterText();
+    m_bufferedText.append(s, len);
 }
 
 void XMLDocumentParser::error(ErrorType type, const char* message, va_list args)
@@ -964,8 +962,7 @@ void XMLDocumentParser::processingInstruction(const xmlChar* target, const xmlCh
 
     pi->setCreatedByParser(true);
 
-    if (!m_currentNode->legacyParserAddChild(pi.get()))
-        return;
+    m_currentNode->deprecatedParserAddChild(pi.get());
     if (m_view && !pi->attached())
         pi->attach();
 
@@ -991,8 +988,7 @@ void XMLDocumentParser::cdataBlock(const xmlChar* s, int len)
     exitText();
 
     RefPtr<Node> newNode = CDATASection::create(document(), toString(s, len));
-    if (!m_currentNode->legacyParserAddChild(newNode.get()))
-        return;
+    m_currentNode->deprecatedParserAddChild(newNode.get());
     if (m_view && !newNode->attached())
         newNode->attach();
 }
@@ -1010,7 +1006,7 @@ void XMLDocumentParser::comment(const xmlChar* s)
     exitText();
 
     RefPtr<Node> newNode = Comment::create(document(), toString(s));
-    m_currentNode->legacyParserAddChild(newNode.get());
+    m_currentNode->deprecatedParserAddChild(newNode.get());
     if (m_view && !newNode->attached())
         newNode->attach();
 }
@@ -1074,7 +1070,7 @@ void XMLDocumentParser::internalSubset(const xmlChar* name, const xmlChar* exter
         }
 #endif
 
-        document()->legacyParserAddChild(DocumentType::create(document(), toString(name), toString(externalID), toString(systemID)));
+        document()->parserAddChild(DocumentType::create(document(), toString(name), toString(externalID), toString(systemID)));
     }
 }
 

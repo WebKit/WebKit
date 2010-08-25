@@ -258,11 +258,9 @@ public:
     Element* rootEditableElement() const;
     
     bool inSameContainingBlockFlowElement(Node*);
-    
-    // Used by the parser. Checks against the DTD, unlike DOM operations like appendChild().
-    // Also does not dispatch DOM mutation events.
-    // Returns the appropriate container node for future insertions as you parse, or 0 for failure.
-    virtual ContainerNode* legacyParserAddChild(PassRefPtr<Node>);
+
+    // FIXME: All callers of this function are almost certainly wrong!
+    virtual void deprecatedParserAddChild(PassRefPtr<Node>);
 
     // Called by the parser when this element's close tag is reached,
     // signaling that all child tags have been parsed and added.
@@ -423,11 +421,9 @@ public:
     bool isDescendantOf(const Node*) const;
     bool contains(const Node*) const;
 
-    // These two methods are mutually exclusive.  The former is used to do strict error-checking
-    // when adding children via the public DOM API (e.g., appendChild()).  The latter is called only when parsing, 
-    // to sanity-check against the DTD for error recovery.
+    // This method is used to do strict error-checking when adding children via
+    // the public DOM API (e.g., appendChild()).
     void checkAddChild(Node* newChild, ExceptionCode&); // Error-checking when adding via the DOM API
-    virtual bool childAllowed(Node* newChild);          // Error-checking during parsing that checks the DTD
 
     void checkReplaceChild(Node* newChild, Node* oldChild, ExceptionCode&);
     virtual bool canReplaceChild(Node* newChild, Node* oldChild);

@@ -47,8 +47,6 @@ public:
 
 private:
     HTMLDataGridRowElement(const QualifiedName&, Document*);
-
-    virtual bool checkDTD(const Node*);
 };
 
 } // namespace WebCore

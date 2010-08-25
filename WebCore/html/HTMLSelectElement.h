@@ -86,8 +86,6 @@ protected:
     HTMLSelectElement(const QualifiedName&, Document*, HTMLFormElement*);
 
 private:
-    virtual bool checkDTD(const Node* newChild);
-
     virtual const AtomicString& formControlType() const;
     
     virtual bool isKeyboardFocusable(KeyboardEvent*) const;

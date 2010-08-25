@@ -63,17 +63,6 @@ PassRefPtr<HTMLTableElement> HTMLTableElement::create(const QualifiedName& tagNa
     return adoptRef(new HTMLTableElement(tagName, document));
 }
 
-bool HTMLTableElement::checkDTD(const Node* newChild)
-{
-    if (newChild->isTextNode())
-        return static_cast<const Text*>(newChild)->containsOnlyWhitespace();
-    return newChild->hasTagName(captionTag) ||
-           newChild->hasTagName(colTag) || newChild->hasTagName(colgroupTag) ||
-           newChild->hasTagName(theadTag) || newChild->hasTagName(tfootTag) ||
-           newChild->hasTagName(tbodyTag) || newChild->hasTagName(formTag) ||
-           newChild->hasTagName(scriptTag);
-}
-
 HTMLTableCaptionElement* HTMLTableElement::caption() const
 {
     for (Node* child = firstChild(); child; child = child->nextSibling()) {
@@ -249,20 +238,6 @@ void HTMLTableElement::deleteRow(int index, ExceptionCode& ec)
         return;
     }
     row->remove(ec);
-}
-
-ContainerNode* HTMLTableElement::legacyParserAddChild(PassRefPtr<Node> child)
-{
-    if (child->hasTagName(formTag)) {
-        // First add the child.
-        HTMLElement::legacyParserAddChild(child);
-
-        // Now simply return ourselves as the container to insert into.
-        // This has the effect of demoting the form to a leaf and moving it safely out of the way.
-        return this;
-    }
-
-    return HTMLElement::legacyParserAddChild(child.get());
 }
 
 bool HTMLTableElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const

@@ -50,12 +50,6 @@ PassRefPtr<HTMLHtmlElement> HTMLHtmlElement::create(const QualifiedName& tagName
     return adoptRef(new HTMLHtmlElement(tagName, document));
 }
 
-bool HTMLHtmlElement::checkDTD(const Node* newChild)
-{
-    return newChild->hasTagName(headTag) || newChild->hasTagName(bodyTag) ||
-           newChild->hasTagName(framesetTag) || newChild->hasTagName(noframesTag);
-}
-
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
 void HTMLHtmlElement::insertedIntoDocument()
 {

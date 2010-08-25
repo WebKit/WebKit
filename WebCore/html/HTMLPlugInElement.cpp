@@ -143,11 +143,6 @@ void HTMLPlugInElement::parseMappedAttribute(Attribute* attr)
         HTMLFrameOwnerElement::parseMappedAttribute(attr);
 }
 
-bool HTMLPlugInElement::checkDTD(const Node* newChild)
-{
-    return newChild->hasTagName(paramTag) || HTMLFrameOwnerElement::checkDTD(newChild);
-}
-
 void HTMLPlugInElement::defaultEventHandler(Event* event)
 {
     // Firefox seems to use a fake event listener to dispatch events to plug-in (tested with mouse events only).

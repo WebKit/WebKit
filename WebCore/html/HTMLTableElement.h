@@ -63,8 +63,6 @@ public:
     String rules() const;
     String summary() const;
 
-    virtual ContainerNode* legacyParserAddChild(PassRefPtr<Node>);
-
     virtual void attach();
 
     void addSharedCellDecls(Vector<CSSMutableStyleDeclaration*>&);
@@ -74,7 +72,6 @@ private:
     HTMLTableElement(const QualifiedName&, Document*);
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
-    virtual bool checkDTD(const Node*);
 
     virtual bool mapToEntry(const QualifiedName&, MappedAttributeEntry&) const;
     virtual void parseMappedAttribute(Attribute*);

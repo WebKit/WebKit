@@ -66,7 +66,6 @@ private:
     virtual RenderWidget* renderWidgetForJSBindings() const = 0;
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
-    virtual bool checkDTD(const Node* newChild);
 
     virtual void updateWidget() { }
 

@@ -58,13 +58,6 @@ PassRefPtr<HTMLSelectElement> HTMLSelectElement::create(const QualifiedName& tag
     return adoptRef(new HTMLSelectElement(tagName, document, form));
 }
 
-bool HTMLSelectElement::checkDTD(const Node* newChild)
-{
-    // Make sure to keep <optgroup> in sync with this.
-    return newChild->isTextNode() || newChild->hasTagName(optionTag) || newChild->hasTagName(optgroupTag) || newChild->hasTagName(hrTag) ||
-           newChild->hasTagName(scriptTag);
-}
-
 void HTMLSelectElement::recalcStyle(StyleChange change)
 {
     HTMLFormControlElementWithState::recalcStyle(change);

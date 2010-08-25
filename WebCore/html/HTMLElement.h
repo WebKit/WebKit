@@ -89,11 +89,6 @@ protected:
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
     virtual void parseMappedAttribute(Attribute*);
 
-    virtual bool childAllowed(Node* newChild); // Error-checking during parsing that checks the DTD
-
-    // Helper function to check the DTD for a given child node.
-    virtual bool checkDTD(const Node*);
-
     static bool inEitherTagList(const Node*);
     static bool inInlineTagList(const Node*);
     static bool inBlockTagList(const Node*);

@@ -112,9 +112,12 @@ void TextControlInnerElement::attachInnerElement(Node* parent, PassRefPtr<Render
     setInDocument();
     
     // For elements without a shadow parent, add the node to the DOM normally.
-    if (!m_shadowParent)
-        parent->legacyParserAddChild(this);
-    
+    if (!m_shadowParent) {
+        // FIXME: This code seems very wrong.  Why are we magically adding |this| to the DOM here?
+        //        We shouldn't be calling parser API methods outside of the parser!
+        parent->deprecatedParserAddChild(this);
+    }
+ 
     // Add the renderer to the render tree
     if (renderer)
         parent->renderer()->addChild(renderer);

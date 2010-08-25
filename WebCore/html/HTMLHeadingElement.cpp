@@ -23,11 +23,7 @@
 #include "config.h"
 #include "HTMLHeadingElement.h"
 
-#include "HTMLNames.h"
-
 namespace WebCore {
-
-using namespace HTMLNames;
 
 inline HTMLHeadingElement::HTMLHeadingElement(const QualifiedName& tagName, Document* document)
     : HTMLElement(tagName, document)
@@ -37,16 +33,6 @@ inline HTMLHeadingElement::HTMLHeadingElement(const QualifiedName& tagName, Docu
 PassRefPtr<HTMLHeadingElement> HTMLHeadingElement::create(const QualifiedName& tagName, Document* document)
 {
     return adoptRef(new HTMLHeadingElement(tagName, document));
-}
-
-bool HTMLHeadingElement::checkDTD(const Node* newChild)
-{
-    if (newChild->hasTagName(h1Tag) || newChild->hasTagName(h2Tag) ||
-        newChild->hasTagName(h3Tag) || newChild->hasTagName(h4Tag) ||
-        newChild->hasTagName(h5Tag) || newChild->hasTagName(h6Tag))
-        return false;
-
-    return inEitherTagList(newChild);
 }
 
 }

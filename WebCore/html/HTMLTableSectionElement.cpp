@@ -47,28 +47,6 @@ PassRefPtr<HTMLTableSectionElement> HTMLTableSectionElement::create(const Qualif
     return adoptRef(new HTMLTableSectionElement(tagName, document));
 }
 
-bool HTMLTableSectionElement::checkDTD(const Node* newChild)
-{
-    if (newChild->isTextNode())
-        return static_cast<const Text*>(newChild)->containsOnlyWhitespace();
-    return newChild->hasTagName(trTag) || newChild->hasTagName(formTag) ||
-           newChild->hasTagName(scriptTag);
-}
-
-ContainerNode* HTMLTableSectionElement::legacyParserAddChild(PassRefPtr<Node> child)
-{
-    if (child->hasTagName(formTag)) {
-        // First add the child.
-        HTMLTablePartElement::legacyParserAddChild(child);
-
-        // Now simply return ourselves as the container to insert into.
-        // This has the effect of demoting the form to a leaf and moving it safely out of the way.
-        return this;
-    }
-
-    return HTMLTablePartElement::legacyParserAddChild(child);
-}
-
 // used by table row groups to share style decls created by the enclosing table.
 void HTMLTableSectionElement::additionalAttributeStyleDecls(Vector<CSSMutableStyleDeclaration*>& results)
 {

@@ -86,12 +86,6 @@ void HTMLOptGroupElement::recalcSelectOptions()
         static_cast<HTMLSelectElement*>(select)->setRecalcListItems();
 }
 
-bool HTMLOptGroupElement::checkDTD(const Node* newChild)
-{
-    // Make sure to keep this in sync with <select> (other than not allowing an optgroup).
-    return newChild->isTextNode() || newChild->hasTagName(HTMLNames::optionTag) || newChild->hasTagName(HTMLNames::hrTag) || newChild->hasTagName(HTMLNames::scriptTag);
-}
-
 void HTMLOptGroupElement::attach()
 {
     if (parentNode()->renderStyle())

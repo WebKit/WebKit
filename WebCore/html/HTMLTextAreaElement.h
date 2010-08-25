@@ -76,8 +76,6 @@ private:
 
     virtual void defaultEventHandler(Event*);
 
-    virtual bool checkDTD(const Node* newChild) { return newChild->isTextNode(); }
-
     virtual bool isEnumeratable() const { return true; }
 
     virtual const AtomicString& formControlType() const;

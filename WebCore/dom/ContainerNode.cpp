@@ -588,7 +588,7 @@ bool ContainerNode::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec, bo
     return true;
 }
 
-void ContainerNode::addChildCommon(Node* newChild)
+void ContainerNode::parserAddChild(PassRefPtr<Node> newChild)
 {
     ASSERT(newChild);
     ASSERT(!newChild->parent()); // Use appendChild if you need to handle reparenting (and want DOM mutation events).
@@ -596,7 +596,7 @@ void ContainerNode::addChildCommon(Node* newChild)
     forbidEventDispatch();
     Node* last = m_lastChild;
     // FIXME: This method should take a PassRefPtr.
-    appendChildToContainer<Node, ContainerNode>(newChild, this);
+    appendChildToContainer<Node, ContainerNode>(newChild.get(), this);
     allowEventDispatch();
 
     // FIXME: Why doesn't this use notifyChildInserted(newChild) instead?
@@ -606,25 +606,9 @@ void ContainerNode::addChildCommon(Node* newChild)
     childrenChanged(true, last, 0, 1);
 }
 
-void ContainerNode::parserAddChild(PassRefPtr<Node> newChild)
+void ContainerNode::deprecatedParserAddChild(PassRefPtr<Node> node)
 {
-    ASSERT(newChild);
-    addChildCommon(newChild.get());
-}
-
-ContainerNode* ContainerNode::legacyParserAddChild(PassRefPtr<Node> newChild)
-{
-    ASSERT(newChild);
-
-    // Check for consistency with DTD, but only when parsing HTML.
-    if (document()->isHTMLDocument() && !childAllowed(newChild.get()))
-        return 0;
-
-    addChildCommon(newChild.get());
-
-    if (newChild->isElementNode())
-        return static_cast<ContainerNode*>(newChild.get());
-    return this;
+    parserAddChild(node);
 }
 
 void ContainerNode::suspendPostAttachCallbacks()
