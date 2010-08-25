@@ -1,3 +1,12 @@
+2010-08-25  Brent Fulgham  <bfulgham@webkit.org>
+
+        Build fix, no review.
+
+        Add conditional guards around Safari-specific
+        include files.
+
+        * WebProcess/WebPage/win/WebPageWin.cpp:
+
 2010-08-25  Adam Roben  <aroben@apple.com>
 
         Clean up Connection::open on Windows

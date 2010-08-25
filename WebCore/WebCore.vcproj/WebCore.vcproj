@@ -4989,62 +4989,6 @@
 				>
 			</File>
 			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSFileWriter.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Internal|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Cairo|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_Cairo|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_All|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSFileWriter.h"
-				>
-			</File>
-			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSFileSystemCallback.cpp"
 				>
 				<FileConfiguration
@@ -5098,6 +5042,62 @@
 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSFileSystemCallback.h"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSFileWriter.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Internal|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Cairo|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_Cairo|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_All|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSFileWriter.h"
 				>
 			</File>
 			<File
@@ -26627,6 +26627,42 @@
 						</FileConfiguration>
 					</File>
 					<File
+						RelativePath="..\platform\graphics\cairo\PlatformRefPtrCairo.cpp"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug_Internal|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug_All|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
 						RelativePath="..\platform\graphics\cairo\TransformationMatrixCairo.cpp"
 						>
 						<FileConfiguration
@@ -26932,15 +26968,15 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\network\NetworkingContext.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\network\NetworkStateNotifier.cpp"
 					>
 				</File>
 				<File
 					RelativePath="..\platform\network\NetworkStateNotifier.h"
-					>
-				</File>
-				<File
-					RelativePath="..\platform\network\NetworkingContext.h"
 					>
 				</File>
 				<File
@@ -33305,15 +33341,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\dom\AtomicStringList.h"
-				>
-			</File>
-			<File
 				RelativePath="..\dom\AsyncScriptRunner.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\dom\AsyncScriptRunner.h"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\AtomicStringList.h"
 				>
 			</File>
 			<File
@@ -33877,19 +33913,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\dom\PendingScript.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\dom\PendingScript.h"
-				>
-			</File>
-			<File
 				RelativePath="..\dom\PageTransitionEvent.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\dom\PageTransitionEvent.h"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\PendingScript.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\PendingScript.h"
 				>
 			</File>
 			<File
@@ -38405,14 +38441,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\html\HTMLEntitySearch.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\HTMLEntitySearch.h"
-				>
-			</File>
-			<File
 				RelativePath="..\html\HTMLEmbedElement.cpp"
 				>
 				<FileConfiguration
@@ -38474,6 +38502,14 @@
 			</File>
 			<File
 				RelativePath="..\html\HTMLEntityParser.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\HTMLEntitySearch.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\HTMLEntitySearch.h"
 				>
 			</File>
 			<File
@@ -45152,110 +45188,6 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSIDBCursor.cpp"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug_Internal|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug_Cairo|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release_Cairo|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug_All|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSIDBCursor.h"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug_Internal|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug_Cairo|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release_Cairo|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug_All|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
 					RelativePath="..\bindings\js\JSHTMLOptionsCollectionCustom.cpp"
 					>
 					<FileConfiguration
@@ -45421,6 +45353,110 @@
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSIDBAnyCustom.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_Internal|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_Cairo|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release_Cairo|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_All|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSIDBCursor.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_Internal|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_Cairo|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release_Cairo|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_All|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSIDBCursor.h"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -51405,19 +51441,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\storage\Metadata.h"
-				>
-			</File>
-			<File
-				RelativePath="..\storage\MetadataCallback.h"
-				>
-			</File>
-			<File
 				RelativePath="..\storage\LocalStorageThread.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\storage\LocalStorageThread.h"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\Metadata.h"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\MetadataCallback.h"
 				>
 			</File>
 			<File

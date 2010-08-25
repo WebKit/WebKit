@@ -1,3 +1,10 @@
+2010-08-25  Brent Fulgham  <bfulgham@webkit.org>
+
+        Build correction, no review.
+
+        * WebCore.vcproj/WebCore.vcproj: Add missing implementation
+          for PlatformRefPtrCairo.
+
 2010-08-25  Cris Neckar  <cdn@chromium.org>
 
         Reviewed by Darin Adler.

@@ -35,7 +35,9 @@
 #include <WebCore/Page.h>
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/Settings.h>
+#if PLATFORM(CG)
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
+#endif
 #include <WinUser.h>
 
 using namespace WebCore;
