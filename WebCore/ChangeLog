@@ -6,7 +6,7 @@
         * rendering/RenderListMarker.cpp:
         (WebCore::listMarkerSuffix):
 
-2010-08-23  Daniel Bates  <dbates@rim.com>
+2010-08-24  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Darin Adler.
 
