@@ -52,7 +52,8 @@ def passing_run(args, port_obj=None, record_results=False,
                 tests_included=False):
     args.extend(['--print', 'nothing'])
     if not tests_included:
-        args.extend(['passes', 'failures/expected'])
+        # We use the glob to test that globbing works.
+        args.extend(['passes', 'failures/expected/*'])
     if not record_results:
         args.append('--no-record-results')
     options, args = run_webkit_tests.parse_args(args)
@@ -61,8 +62,11 @@ def passing_run(args, port_obj=None, record_results=False,
     res = run_webkit_tests.run(port_obj, options, args)
     return res == 0
 
-def logging_run(args):
+
+def logging_run(args, tests_included=False):
     args.extend(['--no-record-results'])
+    if not tests_included:
+        args.extend(['passes', 'failures/expected/*'])
     options, args = run_webkit_tests.parse_args(args)
     port_obj = port.get(options.platform, options)
     buildbot_output = array_stream.ArrayStream()
@@ -79,6 +83,11 @@ class MainTest(unittest.TestCase):
         self.assertTrue(passing_run(['--platform', 'test', '--run-singly']))
         self.assertTrue(passing_run(['--platform', 'test',
                                      'passes/text.html'], tests_included=True))
+
+    def test_unexpected_failures(self):
+        # Run tests including the unexpected failures.
+        self.assertFalse(passing_run(['--platform', 'test'],
+                         tests_included=True))
 
     def test_one_child_process(self):
         (res, buildbot_output, regular_output) = logging_run(
@@ -101,6 +110,13 @@ class MainTest(unittest.TestCase):
         self.assertEqual(regular_output.get(), ['\n\n'])
         self.assertEqual(buildbot_output.get(), [])
 
+    def test_no_tests_found(self):
+        self.assertRaises(SystemExit, logging_run,
+                          ['--platform', 'test', 'resources'],
+                          tests_included=True)
+        self.assertRaises(SystemExit, logging_run,
+                          ['--platform', 'test', 'foo'],
+                          tests_included=True)
 
 def _mocked_open(original_open, file_list):
     def _wrapper(name, mode, encoding):
@@ -184,13 +200,14 @@ class TestRunnerTest(unittest.TestCase):
 
 
 class DryrunTest(unittest.TestCase):
-    def test_basics(self):
-        # FIXME: it's hard to know which platforms are safe to test; the
-        # chromium platforms require a chromium checkout, and the mac platform
-        # requires fcntl, so it can't be tested on win32, etc. There is
-        # probably a better way of handling this.
-        if sys.platform != "mac":
+    # FIXME: it's hard to know which platforms are safe to test; the
+    # chromium platforms require a chromium checkout, and the mac platform
+    # requires fcntl, so it can't be tested on win32, etc. There is
+    # probably a better way of handling this.
+    def test_darwin(self):
+        if sys.platform != "darwin":
             return
+
         self.assertTrue(passing_run(['--platform', 'dryrun',
                                      'fast/html']))
         self.assertTrue(passing_run(['--platform', 'dryrun-mac',

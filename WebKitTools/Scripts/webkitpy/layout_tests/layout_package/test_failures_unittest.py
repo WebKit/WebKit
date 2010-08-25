@@ -31,7 +31,6 @@
 from webkitpy.layout_tests.layout_package.test_failures import *
 import unittest
 
-
 class Test(unittest.TestCase):
     def assertResultHtml(self, failure_obj):
         self.assertNotEqual(failure_obj.result_html_output('foo'), None)

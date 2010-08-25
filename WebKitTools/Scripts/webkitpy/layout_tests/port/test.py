@@ -43,9 +43,6 @@ class TestPort(base.Port):
     def __init__(self, port_name=None, options=None):
         base.Port.__init__(self, port_name, options)
 
-    def base_platforms(self):
-        return ('test',)
-
     def baseline_path(self):
         return os.path.join(self.layout_tests_dir(), 'platform',
                             self.name() + self.version())

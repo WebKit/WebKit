@@ -1,5 +1,10 @@
-WONTFIX : failures/expected/text.html = TEXT
-WONTFIX SKIP : failures/expected/crash.html = CRASH
+WONTFIX : failures/expected/checksum.html = IMAGE
+WONTFIX : failures/expected/crash.html = CRASH
+// This one actually passes because the checksums will match.
+WONTFIX : failures/expected/image.html = PASS
 WONTFIX : failures/expected/image_checksum.html = IMAGE
-WONTFIX : failures/expected/missing_text.html = MISSING PASS
+WONTFIX : failures/expected/missing_check.html = MISSING PASS
 WONTFIX : failures/expected/missing_image.html = MISSING PASS
+WONTFIX : failures/expected/missing_text.html = MISSING PASS
+WONTFIX : failures/expected/text.html = TEXT
+WONTFIX : failures/expected/timeout.html = TIMEOUT
