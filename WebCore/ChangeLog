@@ -1,3 +1,52 @@
+2010-08-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Various designmode=&quot;on&quot;/&quot;off&quot; &amp; execCommand(&quot;Undo&quot;) NULL pointer crashes
+        https://bugs.webkit.org/show_bug.cgi?id=32823
+
+        The bug was caused by changeSelectionAfterCommand which updates the selection
+        without checking the whether new selection is valid or not.
+
+        Fixed changeSelectionAfterCommand so that it won't update the selection
+        when either end of the new selection is orphaned. Also fixed various editing commands
+        to exit early if either end of the selection is orphaned.
+
+        Tests: editing/undo/orphaned-selection-crash-bug32823-1.html
+               editing/undo/orphaned-selection-crash-bug32823-2.html
+               editing/undo/orphaned-selection-crash-bug32823-3.html
+               editing/undo/orphaned-selection-crash-bug32823-4.html
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::changeSelectionAfterCommand): No longer sets orphaned selection.
+        * editing/VisibleSelection.h:
+        (WebCore::VisibleSelection::isNonOrphanedRange): Added.
+        (WebCore::VisibleSelection::isNonOrphanedCaretOrRange): Added.
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::doApply): Added an early exist. See above.
+        * editing/FormatBlockCommand.cpp:
+        (WebCore::FormatBlockCommand::doApply): Ditto.
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::IndentOutdentCommand::doApply): Ditto.
+        * editing/InsertLineBreakCommand.cpp:
+        (WebCore::InsertLineBreakCommand::doApply): Ditto.
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::doApply): Ditto.
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply): Ditto.
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::input): Ditto.
+        * editing/MoveSelectionCommand.cpp:
+        (WebCore::MoveSelectionCommand::doApply): Ditto.
+        * editing/RemoveFormatCommand.cpp:
+        (WebCore::RemoveFormatCommand::doApply): Ditto.
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply): Ditto.
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::doApply): Ditto.
+        * editing/UnlinkCommand.cpp:
+        (WebCore::UnlinkCommand::doApply): Ditto.
+
 2010-08-25  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

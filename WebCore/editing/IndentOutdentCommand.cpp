@@ -329,7 +329,7 @@ void IndentOutdentCommand::outdentRegion(const VisiblePosition& startOfSelection
 
 void IndentOutdentCommand::doApply()
 {
-    if (endingSelection().isNone())
+    if (!endingSelection().isNonOrphanedCaretOrRange())
         return;
 
     if (!endingSelection().rootEditableElement())

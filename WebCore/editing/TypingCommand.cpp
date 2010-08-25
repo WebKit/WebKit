@@ -244,7 +244,7 @@ void TypingCommand::closeTyping(EditCommand* cmd)
 
 void TypingCommand::doApply()
 {
-    if (endingSelection().isNone())
+    if (!endingSelection().isNonOrphanedCaretOrRange())
         return;
         
     if (m_commandType == DeleteKey)

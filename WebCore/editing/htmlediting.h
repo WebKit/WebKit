@@ -218,9 +218,8 @@ bool canMergeLists(Element* firstList, Element* secondList);
 // -------------------------------------------------------------------------
 // VisibleSelection
 // -------------------------------------------------------------------------
-    
-// Functions returning VisibleSelection
 
+// Functions returning VisibleSelection
 VisibleSelection avoidIntersectionWithNode(const VisibleSelection&, Node*);
 VisibleSelection selectionForParagraphIteration(const VisibleSelection&);
     

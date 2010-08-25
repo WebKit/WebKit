@@ -97,9 +97,9 @@ InsertListCommand::InsertListCommand(Document* document, Type type)
 
 void InsertListCommand::doApply()
 {
-    if (endingSelection().isNone())
+    if (!endingSelection().isNonOrphanedCaretOrRange())
         return;
-    
+
     if (!endingSelection().rootEditableElement())
         return;
     

@@ -735,8 +735,8 @@ void DeleteSelectionCommand::doApply()
     // use the current ending selection.
     if (!m_hasSelectionToDelete)
         m_selectionToDelete = endingSelection();
-    
-    if (!m_selectionToDelete.isRange())
+
+    if (!m_selectionToDelete.isNonOrphanedRange())
         return;
 
     // If the deletion is occurring in a text field, and we're not deleting to replace the selection, then let the frame call across the bridge to notify the form delegate. 

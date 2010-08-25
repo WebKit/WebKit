@@ -73,6 +73,8 @@ public:
     bool isCaret() const { return selectionType() == CaretSelection; }
     bool isRange() const { return selectionType() == RangeSelection; }
     bool isCaretOrRange() const { return selectionType() != NoSelection; }
+    bool isNonOrphanedRange() const { return isRange() && !start().isOrphan() && !end().isOrphan(); }
+    bool isNonOrphanedCaretOrRange() const { return isCaretOrRange() && !start().isOrphan() && !end().isOrphan(); }
 
     bool isBaseFirst() const { return m_baseIsFirst; }
 

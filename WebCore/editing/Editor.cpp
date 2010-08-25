@@ -2942,6 +2942,10 @@ PassRefPtr<Range> Editor::nextVisibleRange(Range* currentRange, const String& ta
 
 void Editor::changeSelectionAfterCommand(const VisibleSelection& newSelection, bool closeTyping, bool clearTypingStyle)
 {
+    // If the new selection is orphaned, then don't update the selection.
+    if (newSelection.start().isOrphan() || newSelection.end().isOrphan())
+        return;
+
     // If there is no selection change, don't bother sending shouldChangeSelection, but still call setSelection,
     // because there is work that it must do in this situation.
     // The old selection can be invalid here and calling shouldChangeSelection can produce some strange calls.

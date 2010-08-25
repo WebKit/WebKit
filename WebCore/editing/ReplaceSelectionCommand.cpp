@@ -782,7 +782,7 @@ void ReplaceSelectionCommand::doApply()
     VisibleSelection selection = endingSelection();
     ASSERT(selection.isCaretOrRange());
     ASSERT(selection.start().node());
-    if (selection.isNone() || !selection.start().node())
+    if (!selection.isNonOrphanedCaretOrRange() || !selection.start().node())
         return;
     
     bool selectionIsPlainText = !selection.isContentRichlyEditable();

@@ -40,7 +40,7 @@ MoveSelectionCommand::MoveSelectionCommand(PassRefPtr<DocumentFragment> fragment
 void MoveSelectionCommand::doApply()
 {
     VisibleSelection selection = endingSelection();
-    ASSERT(selection.isRange());
+    ASSERT(selection.isNonOrphanedRange());
 
     Position pos = m_position;
     if (pos.isNull())

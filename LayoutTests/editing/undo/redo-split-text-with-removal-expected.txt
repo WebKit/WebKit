@@ -15,4 +15,4 @@ after node removal:
 
 after redo:
 | <div>
-|   "hello"
+|   "<#selection-caret>hello"

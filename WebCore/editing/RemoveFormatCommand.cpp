@@ -49,7 +49,10 @@ RemoveFormatCommand::RemoveFormatCommand(Document* document)
 void RemoveFormatCommand::doApply()
 {
     Frame* frame = document()->frame();
-    
+
+    if (!frame->selection()->selection().isNonOrphanedCaretOrRange())
+        return;
+
     // Make a plain text string from the selection to remove formatting like tables and lists.
     String string = plainText(frame->selection()->selection().toNormalizedRange().get());
 
