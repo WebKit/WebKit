@@ -424,6 +424,7 @@ void packRGBA8ToRGBA8Premultiply(const uint8_t* source, uint8_t* destination)
     destination[0] = sourceR;
     destination[1] = sourceG;
     destination[2] = sourceB;
+    destination[3] = source[3];
 }
 
 // FIXME: this routine is lossy and must be removed.

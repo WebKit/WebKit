@@ -37,17 +37,18 @@
 
 namespace WebCore {
 
-ImageDecoder* ImageDecoder::create(const SharedBuffer& data)
+ImageDecoder* ImageDecoder::create(const SharedBuffer& data, bool premultiplyAlpha)
 {
     // We need at least 4 bytes to figure out what kind of image we're dealing with.
     if (data.size() < 4)
         return 0;
 
-    return new ImageDecoderQt;
+    return new ImageDecoderQt(premultiplyAlpha);
 }
 
-ImageDecoderQt::ImageDecoderQt()
-    : m_repetitionCount(cAnimationNone)
+ImageDecoderQt::ImageDecoderQt(bool premultiplyAlpha)
+    : ImageDecoder(premultiplyAlpha)
+    , m_repetitionCount(cAnimationNone)
 {
 }
 
@@ -104,10 +105,15 @@ size_t ImageDecoderQt::frameCount()
             // we will have to parse everything...
             if (!imageCount)
                 forceLoadEverything();
-            else
+            else {
                 m_frameBufferCache.resize(imageCount);
-        } else
+                for (size_t i = 0; i < m_frameBufferCache.size(); ++i)
+                    m_frameBufferCache[i].setPremultiplyAlpha(m_premultiplyAlpha);
+            }
+        } else {
             m_frameBufferCache.resize(1);
+            m_frameBufferCache[0].setPremultiplyAlpha(m_premultiplyAlpha);
+        }
     }
 
     return m_frameBufferCache.size();
@@ -236,6 +242,8 @@ void ImageDecoderQt::forceLoadEverything()
     // Otherwise, we want to forget about
     // the last attempt to decode a image.
     m_frameBufferCache.resize(imageCount - 1);
+    for (size_t i = 0; i < m_frameBufferCache.size(); ++i)
+        m_frameBufferCache[i].setPremultiplyAlpha(m_premultiplyAlpha);
     if (imageCount == 1)
       setFailed();
 }

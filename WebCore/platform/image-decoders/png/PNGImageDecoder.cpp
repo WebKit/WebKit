@@ -169,8 +169,9 @@ private:
     unsigned m_currentBufferSize;
 };
 
-PNGImageDecoder::PNGImageDecoder()
-    : m_doNothingOnFailure(false)
+PNGImageDecoder::PNGImageDecoder(bool premultiplyAlpha)
+    : ImageDecoder(premultiplyAlpha)
+    , m_doNothingOnFailure(false)
 {
 }
 
@@ -200,8 +201,10 @@ RGBA32Buffer* PNGImageDecoder::frameBufferAtIndex(size_t index)
     if (index)
         return 0;
 
-    if (m_frameBufferCache.isEmpty())
+    if (m_frameBufferCache.isEmpty()) {
         m_frameBufferCache.resize(1);
+        m_frameBufferCache[0].setPremultiplyAlpha(m_premultiplyAlpha);
+    }
 
     RGBA32Buffer& frame = m_frameBufferCache[0];
     if (frame.status() != RGBA32Buffer::FrameComplete)

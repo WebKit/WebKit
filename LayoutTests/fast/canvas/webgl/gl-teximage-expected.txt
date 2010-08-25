@@ -1,0 +1,61 @@
+Test texImage2D conversions.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS getError was expected value: NO_ERROR : Should be no errors from setup.
+
+check pixels are NOT pre-multiplied
+PASS getError was expected value: NO_ERROR : Should be no errors from setup
+PASS pixel 0, 15 should be 0, 0, 0, 255 was 0, 0, 0, 255
+PASS pixel 128, 15 should be 255, 0, 255, 255 was 255, 0, 0, 255
+PASS pixel 255, 15 should be 0, 0, 255, 255 was 0, 0, 255, 255
+PASS pixel 0, 8 should be 128, 128, 128, 255 was 128, 128, 128, 255
+PASS pixel 128, 8 should be 255, 255, 255, 255 was 255, 255, 255, 255
+PASS pixel 255, 8 should be 0, 255, 255, 255 was 0, 255, 255, 255
+PASS pixel 0, 0 should be 255, 0, 0, 255 was 255, 0, 0, 255
+PASS pixel 128, 0 should be 255, 255, 0, 255 was 255, 255, 0, 255
+PASS pixel 255, 0 should be 0, 255, 0, 255 was 0, 255, 0, 255
+
+check quantization
+PASS getError was expected value: NO_ERROR : Should be no errors from setup.
+PASS There should be 256 unique values in channel 0. Found 256
+PASS There should be 256 unique values in channel 1. Found 256
+PASS There should be 256 unique values in channel 2. Found 256
+PASS There should be 256 unique values in channel 3. Found 256
+PASS getError was expected value: NO_ERROR : Should be no errors from setup.
+PASS There should be 16 unique values in channel 0. Found 16
+PASS There should be 16 unique values in channel 1. Found 16
+PASS There should be 16 unique values in channel 2. Found 16
+PASS There should be 16 unique values in channel 3. Found 16
+PASS getError was expected value: NO_ERROR : Should be no errors from setup.
+PASS There should be 32 unique values in channel 0. Found 32
+PASS There should be 64 unique values in channel 1. Found 64
+PASS There should be 32 unique values in channel 2. Found 32
+PASS There should be 1 unique values in channel 3. Found 1
+PASS getError was expected value: NO_ERROR : Should be no errors from setup.
+PASS There should be 32 unique values in channel 0. Found 32
+PASS There should be 32 unique values in channel 1. Found 32
+PASS There should be 32 unique values in channel 2. Found 32
+PASS There should be 2 unique values in channel 3. Found 2
+
+check pixels are pre-multiplied
+PASS getError was expected value: NO_ERROR : Should be no errors from setup
+PASS pixels should all be 0.
+
+check pixels are flipped
+PASS getError was expected value: NO_ERROR : Should be no errors from setup
+PASS pixel 0, 15 should be 255, 0, 0, 255 was 255, 0, 0, 255
+PASS pixel 128, 15 should be 255, 255, 0, 255 was 255, 255, 0, 255
+PASS pixel 255, 15 should be 255, 0, 0, 255 was 255, 0, 0, 255
+PASS pixel 0, 8 should be 255, 0, 255, 255 was 255, 0, 255, 255
+PASS pixel 128, 8 should be 255, 0, 0, 255 was 255, 0, 0, 255
+PASS pixel 255, 8 should be 0, 255, 0, 255 was 0, 255, 0, 255
+PASS pixel 0, 0 should be 0, 0, 0, 255 was 0, 0, 0, 255
+PASS pixel 128, 0 should be 0, 0, 255, 255 was 0, 0, 255, 255
+PASS pixel 255, 0 should be 255, 0, 0, 255 was 255, 0, 0, 255
+PASS getError was expected value: NO_ERROR : Should be no errors
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

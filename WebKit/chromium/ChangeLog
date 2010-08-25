@@ -1,3 +1,13 @@
+2010-08-24  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Passing premultiplyAlpha=false to tex{Sub}Image2D loses information (skia)
+        https://bugs.webkit.org/show_bug.cgi?id=38282
+
+        * src/WebImageDecoder.cpp:
+        (WebKit::WebImageDecoder::init): Add premultiplyAlpha flag.
+
 2010-08-25  Satish Sampath  <satish@chromium.org>
 
         Reviewed by Jeremy Orlow.

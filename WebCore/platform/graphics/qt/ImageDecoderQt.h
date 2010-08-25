@@ -41,7 +41,7 @@ namespace WebCore {
 class ImageDecoderQt : public ImageDecoder
 {
 public:
-    ImageDecoderQt();
+    ImageDecoderQt(bool premultiplyAlpha);
     ~ImageDecoderQt();
 
     virtual void setData(SharedBuffer* data, bool allDataReceived);

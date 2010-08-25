@@ -31,6 +31,7 @@
 #include "GraphicsContext3D.h"
 
 #include "Image.h"
+#include "ImageSource.h"
 #include "NativeImageSkia.h"
 
 #include <algorithm>
@@ -43,27 +44,28 @@ bool GraphicsContext3D::getImageData(Image* image,
                                      bool premultiplyAlpha,
                                      Vector<uint8_t>& outputVector)
 {
-    if (!image)
+    if (!image || !image->data())
         return false;
-    NativeImageSkia* skiaImage = image->nativeImageForCurrentFrame();
-    if (!skiaImage)
+    ImageSource decoder(false);
+    decoder.setData(image->data(), true);
+    if (!decoder.frameCount() || !decoder.frameIsCompleteAtIndex(0))
         return false;
-    SkBitmap::Config skiaConfig = skiaImage->config();
-    // FIXME: must support more image configurations.
+    bool hasAlpha = decoder.frameHasAlphaAtIndex(0);
+    OwnPtr<NativeImageSkia> pixels(decoder.createFrameAtIndex(0));
+    if (!pixels.get() || !pixels->isDataComplete() || !pixels->width() || !pixels->height())
+        return false;
+    SkBitmap::Config skiaConfig = pixels->config();
     if (skiaConfig != SkBitmap::kARGB_8888_Config)
         return false;
-    SkBitmap& skiaImageRef = *skiaImage;
+    SkBitmap& skiaImageRef = *pixels;
     SkAutoLockPixels lock(skiaImageRef);
-    int height = skiaImage->height();
-    int rowBytes = skiaImage->rowBytes();
-    ASSERT(rowBytes == skiaImage->width() * 4);
-    uint8_t* pixels = reinterpret_cast<uint8_t*>(skiaImage->getPixels());
-    outputVector.resize(rowBytes * height);
+    ASSERT(pixels->rowBytes() == pixels->width() * 4);
+    outputVector.resize(pixels->rowBytes() * pixels->height());
     AlphaOp neededAlphaOp = kAlphaDoNothing;
-    if (!premultiplyAlpha)
-        // FIXME: must fetch the image data before the premultiplication step
-        neededAlphaOp = kAlphaDoUnmultiply;
-    return packPixels(pixels, kSourceFormatBGRA8, skiaImage->width(), height, 0,
+    if (hasAlpha && premultiplyAlpha)
+        neededAlphaOp = kAlphaDoPremultiply;
+    return packPixels(reinterpret_cast<const uint8_t*>(pixels->getPixels()),
+                      kSourceFormatBGRA8, pixels->width(), pixels->height(), 0,
                       format, type, neededAlphaOp, outputVector.data());
 }
 

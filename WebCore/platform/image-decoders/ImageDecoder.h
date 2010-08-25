@@ -118,12 +118,14 @@ namespace WebCore {
         FrameStatus status() const { return m_status; }
         unsigned duration() const { return m_duration; }
         FrameDisposalMethod disposalMethod() const { return m_disposalMethod; }
+        bool premultiplyAlpha() const { return m_premultiplyAlpha; }
 
         void setHasAlpha(bool alpha);
         void setRect(const IntRect& r) { m_rect = r; }
         void setStatus(FrameStatus status);
         void setDuration(unsigned duration) { m_duration = duration; }
         void setDisposalMethod(FrameDisposalMethod method) { m_disposalMethod = method; }
+        void setPremultiplyAlpha(bool premultiplyAlpha) { m_premultiplyAlpha = premultiplyAlpha; }
 
         inline void setRGBA(int x, int y, unsigned r, unsigned g, unsigned b, unsigned a)
         {
@@ -153,11 +155,10 @@ namespace WebCore {
 
         inline void setRGBA(PixelData* dest, unsigned r, unsigned g, unsigned b, unsigned a)
         {
-            // We store this data pre-multiplied.
-            if (a == 0)
+            if (m_premultiplyAlpha && !a)
                 *dest = 0;
             else {
-                if (a < 255) {
+                if (m_premultiplyAlpha && a < 255) {
                     float alphaPercent = a / 255.0f;
                     r = static_cast<unsigned>(r * alphaPercent);
                     g = static_cast<unsigned>(g * alphaPercent);
@@ -192,6 +193,9 @@ namespace WebCore {
         FrameDisposalMethod m_disposalMethod;
                               // What to do with this frame's data when
                               // initializing the next frame.
+        bool m_premultiplyAlpha;
+                              // Whether to premultiply alpha into R, G, B
+                              // channels; by default it's true.
     };
 
     // The ImageDecoder class represents a base class for specific image format
@@ -205,8 +209,9 @@ namespace WebCore {
     // m_maxNumPixels. (Not supported by all image decoders yet)
     class ImageDecoder : public Noncopyable {
     public:
-        ImageDecoder()
+        ImageDecoder(bool premultiplyAlpha)
             : m_scaled(false)
+            , m_premultiplyAlpha(premultiplyAlpha)
             , m_sizeAvailable(false)
             , m_maxNumPixels(-1)
             , m_isAllDataReceived(false)
@@ -219,7 +224,7 @@ namespace WebCore {
         // Factory function to create an ImageDecoder.  Ports that subclass
         // ImageDecoder can provide their own implementation of this to avoid
         // needing to write a dedicated setData() implementation.
-        static ImageDecoder* create(const SharedBuffer& data);
+        static ImageDecoder* create(const SharedBuffer& data, bool premultiplyAlpha);
 
         // The the filename extension usually associated with an undecoded image
         // of this type.
@@ -333,6 +338,7 @@ namespace WebCore {
         bool m_scaled;
         Vector<int> m_scaledColumns;
         Vector<int> m_scaledRows;
+        bool m_premultiplyAlpha;
 
     private:
         // Some code paths compute the size of the image as "width * height * 4"

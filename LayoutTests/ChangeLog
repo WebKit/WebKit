@@ -1,3 +1,28 @@
+2010-08-24  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Passing premultiplyAlpha=false to tex{Sub}Image2D loses information (skia)
+        https://bugs.webkit.org/show_bug.cgi?id=38282
+
+        * fast/canvas/webgl/gl-teximage-expected.txt: Added.
+        * fast/canvas/webgl/gl-teximage.html: Added.
+        * fast/canvas/webgl/resources/3x3.png: Added.
+        * fast/canvas/webgl/resources/gray-ramp-256-with-128-alpha.png: Added.
+        * fast/canvas/webgl/resources/gray-ramp-256.png: Added.
+        * fast/canvas/webgl/resources/gray-ramp-default-gamma.png: Added.
+        * fast/canvas/webgl/resources/gray-ramp-gamma0.1.png: Added.
+        * fast/canvas/webgl/resources/gray-ramp-gamma1.0.png: Added.
+        * fast/canvas/webgl/resources/gray-ramp-gamma2.0.png: Added.
+        * fast/canvas/webgl/resources/gray-ramp-gamma4.0.png: Added.
+        * fast/canvas/webgl/resources/gray-ramp-gamma9.0.png: Added.
+        * fast/canvas/webgl/resources/gray-ramp.png: Added.
+        * fast/canvas/webgl/resources/webgl-test-utils.js: Sync with khronos.
+        (WebGLTestUtils):
+        * fast/canvas/webgl/resources/zero-alpha.png: Added.
+        * platform/chromium/test_expectations.txt: Don't run gl-teximage.html for mac.
+        * platform/mac/Skipped: Don't run gl-teximage.html for mac.
+
 2010-08-25  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Ariya Hidayat.

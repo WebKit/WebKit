@@ -29,8 +29,9 @@
 
 namespace WebCore {
 
-GIFImageDecoder::GIFImageDecoder()
-    : m_alreadyScannedThisDataForFrameCount(true)
+GIFImageDecoder::GIFImageDecoder(bool premultiplyAlpha)
+    : ImageDecoder(premultiplyAlpha)
+    , m_alreadyScannedThisDataForFrameCount(true)
     , m_repetitionCount(cAnimationLoopOnce)
     , m_readOffset(0)
 {
@@ -83,6 +84,8 @@ size_t GIFImageDecoder::frameCount()
         reader.read((const unsigned char*)m_data->data(), m_data->size(), GIFFrameCountQuery, static_cast<unsigned>(-1));
         m_alreadyScannedThisDataForFrameCount = true;
         m_frameBufferCache.resize(reader.images_count);
+        for (int i = 0; i < reader.images_count; ++i)
+            m_frameBufferCache[i].setPremultiplyAlpha(m_premultiplyAlpha);
     }
 
     return m_frameBufferCache.size();

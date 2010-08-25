@@ -1,3 +1,61 @@
+2010-08-24  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Passing premultiplyAlpha=false to tex{Sub}Image2D loses information (skia)
+        https://bugs.webkit.org/show_bug.cgi?id=38282
+
+        Test: fast/canvas/webgl/gl-teximage.html
+
+        * platform/graphics/GraphicsContext3D.cpp: Fix a bug where alpha channel is ignored.
+        * platform/graphics/ImageSource.cpp: Add premultiplyAlpha flag.
+        (WebCore::ImageSource::ImageSource):
+        (WebCore::ImageSource::setData):
+        * platform/graphics/ImageSource.h: Ditto.
+        * platform/graphics/cg/ImageSourceCG.cpp: Ditto.
+        (WebCore::ImageSource::ImageSource):
+        * platform/graphics/qt/ImageDecoderQt.cpp: Ditto.
+        (WebCore::ImageDecoder::create):
+        (WebCore::ImageDecoderQt::ImageDecoderQt):
+        (WebCore::ImageDecoderQt::frameCount):
+        (WebCore::ImageDecoderQt::forceLoadEverything):
+        * platform/graphics/qt/ImageDecoderQt.h: Ditto.
+        * platform/graphics/skia/GraphicsContext3DSkia.cpp: Fix the premultiplyAlpha data loss issue in skia.
+        (WebCore::GraphicsContext3D::getImageData):
+        * platform/image-decoders/ImageDecoder.cpp: Add premultiplyAlpha flag.
+        (WebCore::ImageDecoder::create):
+        (WebCore::RGBA32Buffer::RGBA32Buffer):
+        (WebCore::RGBA32Buffer::operator=):
+        * platform/image-decoders/ImageDecoder.h: Ditto.
+        (WebCore::RGBA32Buffer::premultiplyAlpha):
+        (WebCore::RGBA32Buffer::setPremultiplyAlpha):
+        (WebCore::RGBA32Buffer::setRGBA):
+        (WebCore::ImageDecoder::ImageDecoder):
+        * platform/image-decoders/bmp/BMPImageDecoder.cpp: Ditto.
+        (WebCore::BMPImageDecoder::BMPImageDecoder):
+        (WebCore::BMPImageDecoder::frameBufferAtIndex):
+        * platform/image-decoders/bmp/BMPImageDecoder.h: Ditto.
+        * platform/image-decoders/gif/GIFImageDecoder.cpp: Ditto.
+        (WebCore::GIFImageDecoder::GIFImageDecoder):
+        (WebCore::GIFImageDecoder::frameCount):
+        * platform/image-decoders/gif/GIFImageDecoder.h: Ditto.
+        * platform/image-decoders/ico/ICOImageDecoder.cpp: Ditto.
+        (WebCore::ICOImageDecoder::ICOImageDecoder):
+        (WebCore::ICOImageDecoder::frameCount):
+        (WebCore::ICOImageDecoder::decodeAtIndex):
+        * platform/image-decoders/ico/ICOImageDecoder.h: Ditto.
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp: Ditto.
+        (WebCore::JPEGImageDecoder::JPEGImageDecoder):
+        (WebCore::JPEGImageDecoder::frameBufferAtIndex):
+        * platform/image-decoders/jpeg/JPEGImageDecoder.h: Ditto.
+        * platform/image-decoders/png/PNGImageDecoder.cpp: Ditto.
+        (WebCore::PNGImageDecoder::PNGImageDecoder):
+        (WebCore::PNGImageDecoder::frameBufferAtIndex):
+        * platform/image-decoders/png/PNGImageDecoder.h: Ditto.
+        * platform/image-decoders/skia/ImageDecoderSkia.cpp: Ditto.
+        (WebCore::RGBA32Buffer::RGBA32Buffer):
+        (WebCore::RGBA32Buffer::operator=):
+
 2010-08-25  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
