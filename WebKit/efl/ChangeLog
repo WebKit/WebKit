@@ -1,3 +1,15 @@
+2010-08-25  Rafael Antognolli  <antognolli@profusion.mobi>
+
+        Unreviewed build fix.
+
+        [EFL] Build fix for revision 65332
+        https://bugs.webkit.org/show_bug.cgi?id=44543
+
+        Use Gthread_LIBRARIES instead of GTHREAD_LIBRARIES. This fix
+        the build when using ENABLE_GLIB_SUPPORT=ON and NETWORK_BACKEND=curl.
+
+        * CMakeListsEfl.txt:
+
 2010-08-24  Lukasz Slachciak  <l.slachciak@samsung.com>
 
         Reviewed by Antonio Gomes.

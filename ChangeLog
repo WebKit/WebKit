@@ -1,3 +1,15 @@
+2010-08-25  Rafael Antognolli  <antognolli@profusion.mobi>
+
+        Unreviewed build fix.
+
+        [EFL] Build fix for revision 65332
+        https://bugs.webkit.org/show_bug.cgi?id=44543
+
+        Generated variables are now returned from FindPkgConfig, so no need
+        to document the custom ones.
+
+        * cmake/FindGthread.cmake:
+
 2010-08-24  Xan Lopez  <xlopez@igalia.com>
 
         Build fix, strike 2.
