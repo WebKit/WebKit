@@ -200,8 +200,17 @@ Magnitude._bigOGuess = function(milliseconds)
 
 Magnitude._runIteration = function(setup, test, magnitude, milliseconds, runsPerIteration)
 {
-    Magnitude._debug('run iteration. magnitude ' + magnitude + " milliseconds " + milliseconds + " runsPerIteration " + runsPerIteration);
     setup(magnitude);
+
+    var jsObjectCountBefore = jsObjectCountAfter = 0;
+    if (window.GCController) {
+        jsObjectCountBefore = GCController.getJSObjectCount();
+        GCController.collect();
+        jsObjectCountAfter = GCController.getJSObjectCount();
+    }
+
+    Magnitude._debug('run iteration. magnitude ' + magnitude + " milliseconds " + milliseconds + " runsPerIteration " + runsPerIteration +
+        " jsObjectCountBefore " + jsObjectCountBefore + " jsObjectCountAfter " + jsObjectCountAfter);
 
     var iterations = 0;
     if (window.chromium) {
