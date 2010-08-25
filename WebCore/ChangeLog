@@ -1,3 +1,41 @@
+2010-08-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Tony Chang.
+
+        Creating a link when selecting multiple nodes creates multiple links
+        https://bugs.webkit.org/show_bug.cgi?id=30836
+
+        The bug was caused by applyInlineStyleToRange calling addInlineStyleIfNeeded
+        on each inline element. Modified applyInlineStyleToRange to call addInlineStyleIfNeeded
+        once for all inline elements with the same style difference.
+
+        Because this implies that anchor element may wrap other inline elements when added,
+        modified pushDownInlineStyleAroundNode to push down styled elements.
+
+        Removed pushPartiallySelectedAnchorElementsDown from CompositeEditCommand since
+        ApplyStyleCommand now correctly pushes down anchors at the start and the end of the selection.
+
+        Test: editing/execCommand/toggle-link.html
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::StyleChange::operator==): Added.
+        (WebCore::StyleChange::operator!=): Added.
+        (WebCore::ApplyStyleCommand::applyInlineStyleToRange): Wraps inline elements with
+        the same style difference by one element instead of wrapping each element separately.
+        (WebCore::ApplyStyleCommand::extractInlineStyleToPushDown): Extracts styled element.
+        (WebCore::ApplyStyleCommand::applyInlineStyleToPushDown): Avoids adding styled element.
+        (WebCore::ApplyStyleCommand::pushDownInlineStyleAroundNode): Pushes down styled element.
+        (WebCore::ApplyStyleCommand::surroundNodeRangeWithElement): No longer checks inline-ness.
+        (WebCore::ApplyStyleCommand::addInlineStyleIfNeeded): Adds style even when m_removeOnly.
+        Callers should set addStyledElement = DoNotAddStyledElement to avoid adding styled element.
+        * editing/ApplyStyleCommand.h:
+        * editing/CompositeEditCommand.cpp: Removed pushPartiallySelectedAnchorElementsDown.
+        * editing/CompositeEditCommand.h: Removed pushPartiallySelectedAnchorElementsDown.
+        * editing/CreateLinkCommand.cpp:
+        (WebCore::CreateLinkCommand::doApply): used to call pushPartiallySelectedAnchorElementsDown.
+        * editing/UnlinkCommand.cpp:
+        (WebCore::UnlinkCommand::doApply): Used to call pushPartiallySelectedAnchorElementsDown.
+
 2010-08-24  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.

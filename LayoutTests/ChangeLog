@@ -1,3 +1,25 @@
+2010-08-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Tony Chang.
+
+        Creating a link when selecting multiple nodes creates multiple links
+        https://bugs.webkit.org/show_bug.cgi?id=30836
+
+        Added a test to ensure WebKit creates single anchor element on execCommand('createLink') if possible.
+        Also rebaselined several tests to match new behavior.
+
+        * editing/execCommand/createLink-expected.txt: Merged some anchor elements.
+        * editing/execCommand/script-tests/toggle-link.js: Added.
+        (testSingleToggle):
+        (selectAll):
+        (selectFirstTwoWords):
+        (selectLastWord):
+        * editing/execCommand/script-tests/toggle-style-3.js: i elements are merged.
+        * editing/execCommand/toggle-style-3-expected.txt: Ditto.
+        * editing/execCommand/toggle-link-expected.txt: Added.
+        * editing/execCommand/toggle-link.html: Added.
+        * editing/execCommand/unlink-expected.txt: Merged some anchor elements.
+
 2010-08-24  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.

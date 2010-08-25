@@ -43,6 +43,7 @@ class ApplyStyleCommand : public CompositeEditCommand {
 public:
     enum EPropertyLevel { PropertyDefault, ForceBlockProperties };
     enum InlineStyleRemovalMode { RemoveAttributesAndElements, RemoveNone };
+    enum EAddStyledElement { AddStyledElement, DoNotAddStyledElement };
 
     static PassRefPtr<ApplyStyleCommand> create(Document* document, CSSStyleDeclaration* style, EditAction action = EditActionChangeAttributes, EPropertyLevel level = PropertyDefault)
     {
@@ -79,7 +80,7 @@ private:
     bool removeHTMLBidiEmbeddingStyle(CSSMutableStyleDeclaration*, HTMLElement*, InlineStyleRemovalMode = RemoveAttributesAndElements);
     bool removeCSSStyle(CSSMutableStyleDeclaration*, HTMLElement*, InlineStyleRemovalMode = RemoveAttributesAndElements);
     HTMLElement* highestAncestorWithConflictingInlineStyle(CSSMutableStyleDeclaration*, Node*);
-    PassRefPtr<CSSMutableStyleDeclaration> extractInlineStyleToPushDown(Node*, const Vector<int>&);
+    PassRefPtr<CSSMutableStyleDeclaration> extractInlineStyleToPushDown(Node*, bool isStyledElement, const Vector<int>&);
     void applyInlineStyleToPushDown(Node*, CSSMutableStyleDeclaration *style);
     void pushDownInlineStyleAroundNode(CSSMutableStyleDeclaration*, Node*);
     void removeInlineStyle(PassRefPtr<CSSMutableStyleDeclaration>, const Position& start, const Position& end);
@@ -92,7 +93,7 @@ private:
     void applyInlineStyle(CSSMutableStyleDeclaration*);
     void applyInlineStyleToRange(CSSMutableStyleDeclaration*, const Position& start, const Position& end);
     void addBlockStyle(const StyleChange&, HTMLElement*);
-    void addInlineStyleIfNeeded(CSSMutableStyleDeclaration*, Node* start, Node* end);
+    void addInlineStyleIfNeeded(CSSMutableStyleDeclaration*, Node* start, Node* end, EAddStyledElement addStyledElement = AddStyledElement);
     void splitTextAtStart(const Position& start, const Position& end);
     void splitTextAtEnd(const Position& start, const Position& end);
     void splitTextElementAtStart(const Position& start, const Position& end);

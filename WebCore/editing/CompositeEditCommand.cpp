@@ -730,30 +730,6 @@ void CompositeEditCommand::pushAnchorElementDown(Node* anchorNode)
         removeNodePreservingChildren(anchorNode);
 }
 
-// We must push partially selected anchors down before creating or removing
-// links from a selection to create fully selected chunks that can be removed.
-// ApplyStyleCommand doesn't do this for us because styles can be nested.
-// Anchors cannot be nested.
-void CompositeEditCommand::pushPartiallySelectedAnchorElementsDown()
-{
-    VisibleSelection originalSelection = endingSelection();
-    VisiblePosition visibleStart(originalSelection.start());
-    VisiblePosition visibleEnd(originalSelection.end());
-    
-    Node* startAnchor = enclosingAnchorElement(originalSelection.start());
-    VisiblePosition startOfStartAnchor(Position(startAnchor, 0));
-    if (startAnchor && startOfStartAnchor != visibleStart)
-        pushAnchorElementDown(startAnchor);
-
-    Node* endAnchor = enclosingAnchorElement(originalSelection.end());
-    VisiblePosition endOfEndAnchor(Position(endAnchor, 0));
-    if (endAnchor && endOfEndAnchor != visibleEnd)
-        pushAnchorElementDown(endAnchor);
-
-    ASSERT(originalSelection.start().node()->inDocument() && originalSelection.end().node()->inDocument());
-    setEndingSelection(originalSelection);
-}
-
 // Clone the paragraph between start and end under blockElement,
 // preserving the hierarchy up to outerNode. 
 
