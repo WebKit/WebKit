@@ -312,6 +312,16 @@ bool GraphicsContext3D::isGLES2Compliant() const
     return false;
 }
 
+bool GraphicsContext3D::isGLES2NPOTStrict() const
+{
+    return false;
+}
+
+bool GraphicsContext3D::isErrorGeneratedOnOutOfBoundsAccesses() const
+{
+    return false;
+}
+
 void GraphicsContext3D::reshape(int width, int height)
 {
     if (width == m_currentWidth && height == m_currentHeight || !m_contextObj)

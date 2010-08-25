@@ -60,7 +60,7 @@ public:
     // Generate all level information.
     void generateMipmapLevelInfo();
 
-    unsigned long getInternalFormat() const;
+    unsigned long getInternalFormat(int level) const;
 
     // Whether width/height is NotPowerOfTwo.
     static bool isNPOT(unsigned, unsigned);

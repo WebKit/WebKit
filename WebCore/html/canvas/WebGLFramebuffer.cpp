@@ -101,7 +101,7 @@ unsigned long WebGLFramebuffer::getColorBufferFormat()
                 return GraphicsContext3D::RGB;
             }
         } else if (m_colorAttachment->isTexture())
-            return (reinterpret_cast<WebGLTexture*>(m_colorAttachment))->getInternalFormat();
+            return (reinterpret_cast<WebGLTexture*>(m_colorAttachment))->getInternalFormat(0);
     }
     return 0;
 }

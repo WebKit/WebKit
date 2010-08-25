@@ -1,3 +1,46 @@
+2010-08-20  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        WebGL must enforce restrictions even if running on OpenGL ES 2.0
+        https://bugs.webkit.org/show_bug.cgi?id=42908
+
+        * html/canvas/WebGLFramebuffer.cpp:
+        (WebCore::WebGLFramebuffer::getColorBufferFormat): Get format at given level instead of 0.
+        * html/canvas/WebGLRenderingContext.cpp: Add two new flags and use them to replace the original isGLES2Compliant().
+        (WebCore::WebGLRenderingContext::WebGLRenderingContext):
+        (WebCore::WebGLRenderingContext::bindTexture):
+        (WebCore::WebGLRenderingContext::blendEquation):
+        (WebCore::WebGLRenderingContext::blendEquationSeparate):
+        (WebCore::WebGLRenderingContext::bufferData):
+        (WebCore::WebGLRenderingContext::bufferSubData):
+        (WebCore::WebGLRenderingContext::checkFramebufferStatus):
+        (WebCore::WebGLRenderingContext::clear):
+        (WebCore::WebGLRenderingContext::copyTexImage2D):
+        (WebCore::WebGLRenderingContext::copyTexSubImage2D):
+        (WebCore::WebGLRenderingContext::disable):
+        (WebCore::WebGLRenderingContext::drawArrays):
+        (WebCore::WebGLRenderingContext::drawElements):
+        (WebCore::WebGLRenderingContext::enable):
+        (WebCore::WebGLRenderingContext::generateMipmap):
+        (WebCore::WebGLRenderingContext::hint):
+        (WebCore::WebGLRenderingContext::isEnabled):
+        (WebCore::WebGLRenderingContext::texImage2DBase):
+        (WebCore::WebGLRenderingContext::texParameter):
+        (WebCore::WebGLRenderingContext::isGLES2NPOTStrict):
+        (WebCore::WebGLRenderingContext::isErrorGeneratedOnOutOfBoundsAccesses):
+        * html/canvas/WebGLRenderingContext.h: Declare two new flags.
+        * html/canvas/WebGLTexture.cpp: Get format at given level instead of 0.
+        (WebCore::WebGLTexture::getInternalFormat):
+        * html/canvas/WebGLTexture.h: Ditto.
+        * platform/graphics/GraphicsContext3D.h: Add three new flags.
+        * platform/graphics/mac/GraphicsContext3DMac.mm: Ditto.
+        (WebCore::GraphicsContext3D::isGLES2NPOTStrict):
+        (WebCore::GraphicsContext3D::isErrorGeneratedOnOutOfBoundsAccesses):
+        * platform/graphics/qt/GraphicsContext3DQt.cpp: Ditto.
+        (WebCore::GraphicsContext3D::isGLES2NPOTStrict):
+        (WebCore::GraphicsContext3D::isErrorGeneratedOnOutOfBoundsAccesses):
+
 2010-08-25  Brent Fulgham  <bfulgham@webkit.org>
 
         Build correction, no review.

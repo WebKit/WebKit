@@ -169,11 +169,12 @@ void WebGLTexture::generateMipmapLevelInfo()
     m_needToUseBlackTexture = false;
 }
 
-unsigned long WebGLTexture::getInternalFormat() const
+unsigned long WebGLTexture::getInternalFormat(int level) const
 {
     if (!object() || !m_target)
         return 0;
-    return m_info[0][0].internalFormat;
+    // We assume level has been validated already.
+    return m_info[0][level].internalFormat;
 }
 
 bool WebGLTexture::isNPOT(unsigned width, unsigned height)

@@ -274,6 +274,18 @@ bool GraphicsContext3D::isGLES2Compliant() const
 #endif
 }
 
+// Even with underlying GLES2 driver, the below flags should still be set to
+// false if extentions exist (and they almost always do).
+bool GraphicsContext3D::isGLES2NPOTStrict() const
+{
+    return false;
+}
+
+bool GraphicsContext3D::isErrorGeneratedOnOutOfBoundsAccesses() const
+{
+    return false;
+}
+
  
 GraphicsContext3DInternal::GraphicsContext3DInternal(GraphicsContext3D::Attributes attrs, HostWindow* hostWindow)
     : m_attrs(attrs)

@@ -305,6 +305,8 @@ public:
     }
 
     bool isGLES2Compliant();
+    bool isGLES2NPOTStrict();
+    bool isErrorGeneratedOnOutOfBoundsAccesses();
 
     // Helper to return the size in bytes of OpenGL data types
     // like GL_FLOAT, GL_INT, etc.
