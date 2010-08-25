@@ -29,6 +29,7 @@
 
 #include "HTMLDivElement.h"
 #include "SpeechInputListener.h"
+#include "Timer.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -107,10 +108,15 @@ private:
     virtual bool isEnabledFormControl() const { return static_cast<Element*>(const_cast<SpinButtonElement*>(this)->shadowAncestorNode())->isEnabledFormControl(); }
     virtual bool isReadOnlyFormControl() const { return static_cast<Element*>(const_cast<SpinButtonElement*>(this)->shadowAncestorNode())->isReadOnlyFormControl(); }
     virtual void defaultEventHandler(Event*);
+    void startRepeatingTimer();
+    void stopRepeatingTimer();
+    void repeatingTimerFired(Timer<SpinButtonElement>*);
     virtual void setHovered(bool = true);
 
     bool m_capturing;
     UpDownState m_upDownState;
+    UpDownState m_pressStartingState;
+    Timer<SpinButtonElement> m_repeatingTimer;
 };
 
 #if ENABLE(INPUT_SPEECH)

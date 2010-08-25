@@ -14,6 +14,7 @@ if (window.eventSender) {
     // There was a bug that a capturing flag of the first input field was not
     // clear and this click didn't work.
     eventSender.mouseMoveTo(anotherInput.offsetLeft + anotherInput.offsetWidth - 10, anotherInput.offsetTop + anotherInput.offsetHeight / 4);
+    eventSender.mouseMoveTo(anotherInput.offsetLeft + anotherInput.offsetWidth - 10, anotherInput.offsetTop + anotherInput.offsetHeight / 4 - 1);
     eventSender.mouseDown();
     eventSender.mouseUp();
     shouldBe('anotherInput.value', '"2"');

@@ -1,5 +1,19 @@
 2010-08-25  Kent Tamura  <tkent@chromium.org>
 
+        Reviewed by Shinichiro Hamaji
+
+        <input type=number>: Support auto-repeat by mouse press
+        https://bugs.webkit.org/show_bug.cgi?id=44476
+
+        Update existing tests.
+
+        * fast/forms/script-tests/input-spinbutton-capturing.js:
+        * platform/mac/fast/forms/input-appearance-spinbutton-up-expected.checksum:
+        * platform/mac/fast/forms/input-appearance-spinbutton-up-expected.png:
+        * platform/mac/fast/forms/input-appearance-spinbutton-up-expected.txt:
+
+2010-08-25  Kent Tamura  <tkent@chromium.org>
+
         Unreviewed, skip list update.
 
         input-spinbutton-capturing.html should be skipped in platforms
