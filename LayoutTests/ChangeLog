@@ -1,3 +1,16 @@
+2010-08-25  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        make perf tests work with V8
+        https://bugs.webkit.org/show_bug.cgi?id=44623
+
+        V8 doesn't support getJSObjectCount.
+
+        * resources/magnitude-perf.js:
+        (Magnitude._runIteration):
+        (Magnitude):
+
 2010-08-25  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

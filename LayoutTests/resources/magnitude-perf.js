@@ -202,15 +202,19 @@ Magnitude._runIteration = function(setup, test, magnitude, milliseconds, runsPer
 {
     setup(magnitude);
 
-    var jsObjectCountBefore = jsObjectCountAfter = 0;
+    var debugStr = 'run iteration. magnitude ' + magnitude + " milliseconds " + milliseconds + " runsPerIteration " + runsPerIteration;
     if (window.GCController) {
-        jsObjectCountBefore = GCController.getJSObjectCount();
+        if (GCController.getJSObjectCount)
+            debugStr += " jsObjectCountBefore " + GCController.getJSObjectCount();
+
+        // Do a gc to reduce likelihood of gc during the test run.
         GCController.collect();
-        jsObjectCountAfter = GCController.getJSObjectCount();
+
+        if (GCController.getJSObjectCount)
+            debugStr += " jsObjectCountAfter " + GCController.getJSObjectCount();
     }
 
-    Magnitude._debug('run iteration. magnitude ' + magnitude + " milliseconds " + milliseconds + " runsPerIteration " + runsPerIteration +
-        " jsObjectCountBefore " + jsObjectCountBefore + " jsObjectCountAfter " + jsObjectCountAfter);
+    Magnitude._debug(debugStr);
 
     var iterations = 0;
     if (window.chromium) {
