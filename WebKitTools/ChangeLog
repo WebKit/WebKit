@@ -1,3 +1,21 @@
+2010-08-24  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        [DRT/Chromium] Fix 26 inspector test crashes
+        https://bugs.webkit.org/show_bug.cgi?id=44580
+
+        - DRTDevToolsAgent has a reference to the main WebView. So we
+          should not clear it in closeDevTools() and should clear it in
+          ~TestShell().
+        - DRTDevToolsClient has a reference to a DevTools WebView and no
+          way to update it. So we should delete DRTDevToolsClient instances
+          in closeDevTools().
+
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::~TestShell):
+        (TestShell::closeDevTools):
+
 2010-08-24  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

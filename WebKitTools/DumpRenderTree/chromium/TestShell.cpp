@@ -118,6 +118,7 @@ TestShell::~TestShell()
     callJSGC();
 
     // Destroy the WebView before its WebViewHost.
+    m_drtDevToolsAgent->setWebView(0);
     m_webView->close();
 }
 
@@ -145,9 +146,7 @@ void TestShell::closeDevTools()
 {
     if (m_devTools) {
         m_drtDevToolsAgent->reset();
-        if (m_drtDevToolsClient)
-            m_drtDevToolsClient->reset();
-        m_drtDevToolsAgent->setWebView(0);
+        m_drtDevToolsClient.clear();
         closeWindow(m_devTools);
         m_devTools = 0;
     }

@@ -208,17 +208,7 @@ BUG50197 WIN MAC LINUX : svg/dynamic-updates/SVGRadialGradientElement-svgdom-gra
 
 // Need to implement something?
 BUG_DRT WIN : http/tests/inspector-enabled/console-log-before-frame-navigation.html = CRASH
-BUG_DRT WIN : http/tests/inspector/console-resource-errors.html = CRASH
-BUG_DRT WIN : http/tests/inspector/inspect-iframe-from-different-domain.html = CRASH
-BUG_DRT WIN : http/tests/inspector/resource-parameters.html = CRASH
-BUG_DRT WIN : inspector/console-assert.html = CRASH
-BUG_DRT WIN : inspector/console-command-clear.html = CRASH
-BUG_DRT WIN : inspector/console-dir.html = CRASH
-BUG_DRT WIN : inspector/console-eval-global.html = CRASH
-BUG_DRT WIN : inspector/console-format-collections.html = CRASH
-BUG_DRT WIN : inspector/console-log-before-inspector-open.html = CRASH
-BUG_DRT WIN : inspector/console-tests.html = CRASH
-BUG_DRT WIN : inspector/cookie-resource-match.html = CRASH
+BUG_DRT WIN : http/tests/inspector/resource-parameters.html = TEXT CRASH PASS
 BUG_DRT WIN : inspector/debugger-eval-while-paused.html = CRASH
 BUG_DRT WIN : inspector/debugger-no-nested-pause.html = CRASH
 BUG_DRT WIN : inspector/debugger-pause-in-eval-script.html = CRASH
@@ -228,22 +218,6 @@ BUG_DRT WIN : inspector/debugger-step-in.html = CRASH
 BUG_DRT WIN : inspector/debugger-step-out.html = CRASH
 BUG_DRT WIN : inspector/debugger-step-over.html = CRASH
 BUG_DRT WIN : inspector/dom-breakpoints.html = CRASH
-BUG_DRT WIN : inspector/elements-panel-limited-children.html = CRASH
-BUG_DRT WIN : inspector/elements-panel-search.html = CRASH
-BUG_DRT WIN : inspector/elements-panel-structure.html = CRASH
-BUG_DRT WIN : inspector/elements-panel-xhtml-structure.xhtml = CRASH
-BUG_DRT WIN : inspector/inspected-objects-not-overriden.html = CRASH
-BUG_DRT WIN : inspector/styles-disable-inherited.html = CRASH
-BUG_DRT WIN : inspector/styles-disable-then-enable.html = CRASH
-BUG_DRT WIN : inspector/styles-source-lines-inline.html = CRASH
-BUG_DRT WIN : inspector/styles-source-offsets.html = CRASH
-BUG_DRT WIN : inspector/syntax-highlight-html.html = CRASH
-BUG_DRT WIN : inspector/timeline-enum-stability.html = CRASH
-BUG_DRT WIN : inspector/timeline-layout.html = CRASH
-BUG_DRT WIN : inspector/timeline-network-resource.html = CRASH
-BUG_DRT WIN : inspector/timeline-parse-html.html = CRASH
-BUG_DRT WIN : inspector/timeline-script-tag-1.html = CRASH
-BUG_DRT WIN : inspector/timeline-trivial.html = CRASH
 
 
 // WebGL tests sometimes fail only on the buildbot.

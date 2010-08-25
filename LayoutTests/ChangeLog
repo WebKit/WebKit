@@ -1,3 +1,12 @@
+2010-08-24  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        [DRT/Chromium] Fix 26 inspector test crashes
+        https://bugs.webkit.org/show_bug.cgi?id=44580
+
+        * platform/chromium/drt_expectations.txt:
+
 2010-08-24  Adam Barth  <abarth@webkit.org>
 
         Unskip XSSAuditor test and fix the source of flakiness.  I'll make the
