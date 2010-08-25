@@ -1,3 +1,17 @@
+2010-08-25  Pawel Hajdan  <phajdan.jr@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Add an assertion to prevent re-initializing WebKit.
+        https://bugs.webkit.org/show_bug.cgi?id=44545
+        
+        This will help prevent crashes like:
+        - http://code.google.com/p/chromium/issues/detail?id=52731
+        - http://code.google.com/p/chromium/issues/detail?id=52643
+
+        * src/WebKit.cpp:
+        (WebKit::initialize):
+
 2010-08-25  Jay Civelli  <jcivelli@chromium.org>
 
         Reviewed by Dimitri Glazkov.

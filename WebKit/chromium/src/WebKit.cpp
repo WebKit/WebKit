@@ -46,11 +46,18 @@
 
 namespace WebKit {
 
+// Make sure we are not re-initialized in the same address space.
+// Doing so may cause hard to reproduce crashes.
+static bool s_webKitInitialized = false;
+
 static WebKitClient* s_webKitClient = 0;
 static bool s_layoutTestMode = false;
 
 void initialize(WebKitClient* webKitClient)
 {
+    ASSERT(!s_webKitInitialized);
+    s_webKitInitialized = true;
+
     ASSERT(webKitClient);
     ASSERT(!s_webKitClient);
     s_webKitClient = webKitClient;
