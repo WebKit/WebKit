@@ -1,3 +1,24 @@
+2010-08-25  Adam Roben  <aroben@apple.com>
+
+        Clean up Connection::open on Windows
+
+        Fixes <http://webkit.org/b/44185>.
+
+        Reviewed by Steve Falkenburg.
+
+        * Platform/CoreIPC/win/ConnectionWin.cpp:
+        (CoreIPC::Connection::platformInitialize): Set m_isConnected to true
+        since the pipe got connected before it was even given to us.
+        (CoreIPC::Connection::readEventHandler): Removed code that will never
+        run now that m_isConnected is always true when this function is
+        called. Since no outgoing messages will have been queued before
+        m_isConnected is set to true, there's no need to send them explicitly
+        here; they'll get sent as they're queued.
+        (CoreIPC::Connection::open): Removed the call to ::ConnectNamedPipe,
+        since the pipe is already connected by this point. Changed to schedule
+        a read in the server and client the same way (rather than using
+        ::SetEvent in the server).
+
 2010-08-19  Adam Roben  <aroben@apple.com>
 
         Call NP_GetEntryPoints before NP_Initialize on Windows

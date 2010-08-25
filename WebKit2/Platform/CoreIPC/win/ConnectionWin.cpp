@@ -88,6 +88,9 @@ void Connection::platformInitialize(Identifier identifier)
     m_writeState.hEvent = ::CreateEventW(0, FALSE, FALSE, 0);
 
     m_connectionPipe = identifier;
+
+    // We connected the two ends of the pipe in createServerAndClientIdentifiers.
+    m_isConnected = true;
 }
 
 void Connection::platformInvalidate()
@@ -109,14 +112,6 @@ void Connection::platformInvalidate()
 
 void Connection::readEventHandler()
 {
-    bool wasConnected = m_isConnected;
-    if (!m_isConnected) {
-        m_isConnected = true;
-
-        // We're now connected, send any outgoing messages we might have.
-        sendOutgoingMessages();
-    }
-
     while (true) {
         // Check if we got some data.
         DWORD numberOfBytesRead = 0;
@@ -255,31 +250,8 @@ bool Connection::open()
     m_connectionQueue.registerHandle(m_readState.hEvent, WorkItem::create(this, &Connection::readEventHandler));
     m_connectionQueue.registerHandle(m_writeState.hEvent, WorkItem::create(this, &Connection::writeEventHandler));
 
-    if (m_isServer) {
-        // Wait for a connection.
-        if (::ConnectNamedPipe(m_connectionPipe, &m_readState))
-            m_isConnected = true;
-        else {
-            // Even though the call to ConnectNamedPipe failed, we might still have a valid connection.
-            DWORD error = ::GetLastError();
-            if (error == ERROR_PIPE_CONNECTED) {
-                // The client connected to the named pipe before we opened the connection.
-                m_isConnected = true;
-            } else if (error != ERROR_IO_PENDING) {
-                // Something went wrong.
-                // FIXME: Close the pipe here.
-                return false;
-            }
-        }
-
-        if (m_isConnected) {
-            // Signal the read event handle.
-            ::SetEvent(m_readState.hEvent);
-        }
-    } else {
-        // Schedule a read.
-        m_connectionQueue.scheduleWork(WorkItem::create(this, &Connection::readEventHandler));
-    }
+    // Schedule a read.
+    m_connectionQueue.scheduleWork(WorkItem::create(this, &Connection::readEventHandler));
 
     return true;
 }
