@@ -84,7 +84,7 @@ private:
     {
         if (m_serializedData.size() < position + sizeof(unsigned))
             return 0;
-        return *reinterpret_cast<unsigned*>(const_cast<char*>(m_serializedData.data() + position));
+        return *reinterpret_cast_ptr<unsigned*>(const_cast<char*>(m_serializedData.data() + position));
     }
 
     // Appends an unsigned value to the end of the serialized data.
