@@ -29,8 +29,8 @@ shouldBeEqualToString("(123.456).toExponential(6)", "1.234560e+2");
 shouldBeEqualToString("(123.456).toExponential(20)", "1.23456000000000003070e+2");
 
 // SpiderMonkey allows precision values 0 to 100, we only allow 0 to 20 currently
-shouldBeEqualToString("(123.456).toExponential(21)", "1.234560000000000030695e+2");
-shouldBeEqualToString("(123.456).toExponential(100)", "1.2345600000000000306954461848363280296325683593750000000000000000000000000000000000000000000000000000e+2");
+shouldThrow("(123.456).toExponential(21)");
+shouldThrow("(123.456).toExponential(100)");
 shouldThrow("(123.456).toExponential(101)");
 shouldThrow("(123.456).toExponential(-1)");
 

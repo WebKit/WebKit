@@ -61,14 +61,14 @@ shouldBeEqualToString("(1234.567).toFixed(2.9)", "1234.57");
 shouldBeEqualToString("(1234.567).toFixed(5)", "1234.56700");
 shouldBeEqualToString("(1234.567).toFixed(20)", "1234.56700000000000727596");
 
-// SpiderMonkey allows precision values -20 to 100, we only allow 0 to 20 currently
-shouldBeEqualToString("(1234.567).toFixed(21)", "1234.567000000000007275958");
-shouldBeEqualToString("(1234.567).toFixed(100)", "1234.5670000000000072759576141834259033203125000000000000000000000000000000000000000000000000000000000000");
+// SpiderMonkey allows precision values -20 to 100, the spec only allows 0 to 20
+shouldThrow("(1234.567).toFixed(21)");
+shouldThrow("(1234.567).toFixed(100)");
 shouldThrow("(1234.567).toFixed(101)");
-shouldBeEqualToString("(1234.567).toFixed(-1)", "1230");
-shouldBeEqualToString("(1234.567).toFixed(-4)", "0");
-shouldBeEqualToString("(1234.567).toFixed(-5)", "0");
-shouldBeEqualToString("(1234.567).toFixed(-20)", "0");
+shouldThrow("(1234.567).toFixed(-1)");
+shouldThrow("(1234.567).toFixed(-4)");
+shouldThrow("(1234.567).toFixed(-5)");
+shouldThrow("(1234.567).toFixed(-20)");
 shouldThrow("(1234.567).toFixed(-21)");
 
 shouldThrow("(1234.567).toFixed(posInf)");

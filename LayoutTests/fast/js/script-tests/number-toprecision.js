@@ -28,9 +28,9 @@ shouldBeEqualToString("(1234.567).toPrecision(2)", "1.2e+3");
 shouldBeEqualToString("(1234.567).toPrecision(2.9)", "1.2e+3");
 shouldBeEqualToString("(1234.567).toPrecision(5)", "1234.6");
 shouldBeEqualToString("(1234.567).toPrecision(21)", "1234.56700000000000728");
-// SpiderMonkey allows precision values 1 to 100, we only allow 1 to 21 currently
-shouldBeEqualToString("(1234.567).toPrecision(22)", "1234.567000000000007276");
-shouldBeEqualToString("(1234.567).toPrecision(100)", "1234.567000000000007275957614183425903320312500000000000000000000000000000000000000000000000000000000");
+// SpiderMonkey allows precision values 1 to 100, we implement the spec and only allow 1 to 21.
+shouldThrow("(1234.567).toPrecision(22)");
+shouldThrow("(1234.567).toPrecision(100)");
 shouldThrow("(1234.567).toPrecision(101)");
 
 shouldThrow("(1234.567).toPrecision(posInf)");

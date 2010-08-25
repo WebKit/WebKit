@@ -1,3 +1,26 @@
+2010-08-23  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 44487 - Clean up NumberPrototype.cpp
+
+        This patch changes some layout test results - in all these cases we were
+        not previously accurate to spec defined behaviour, and we are still not
+        - but overall this changes reduces the overall magnitude of error due to
+        rounding differences. The underlying problem is that we should be using
+        dtoa to generate results to a specified accuracy, rather than relying on
+        pre-rounding the input values. We should look at reenabling our dtoa
+        implementation to work in this fashion as a separate change.
+
+        * fast/js/kde/Number-expected.txt:
+        * fast/js/kde/script-tests/Number.js:
+        * fast/js/number-toExponential-expected.txt:
+        * fast/js/number-tofixed-expected.txt:
+        * fast/js/number-toprecision-expected.txt:
+        * fast/js/script-tests/number-toExponential.js:
+        * fast/js/script-tests/number-tofixed.js:
+        * fast/js/script-tests/number-toprecision.js:
+
 2010-08-24  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

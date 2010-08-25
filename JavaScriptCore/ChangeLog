@@ -1,3 +1,69 @@
+2010-08-23  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=44487
+
+        Number.toExponential/toFixed/toPrecision all contain a spaghetti of duplicated
+        code & unnecessary complexity. Add a new DecimalNumber class to encapsulate
+        double to string conversion, share the implementations of rounding &
+        decimal-fraction/exponential formatting.
+
+        * JavaScriptCore.exp:
+            Update exports.
+
+        * runtime/NumberPrototype.cpp:
+        (JSC::toThisNumber):
+        (JSC::getIntegerArgumentInRange):
+            Helper methods used in implementing toExponential/toFixed/toString.
+        (JSC::numberProtoFuncToExponential):
+        (JSC::numberProtoFuncToFixed):
+        (JSC::numberProtoFuncToPrecision):
+            Reimplemented using new DecimalNumber class.
+            
+        * runtime/UString.cpp:
+        (JSC::UString::number):
+            Updated to call numberToString.
+
+        * wtf/DecimalNumber.h: Added.
+        (WTF::):
+        (WTF::DecimalNumber::DecimalNumber):
+        (WTF::DecimalNumber::toStringDecimal):
+        (WTF::DecimalNumber::toStringExponential):
+        (WTF::DecimalNumber::sign):
+        (WTF::DecimalNumber::exponent):
+        (WTF::DecimalNumber::significand):
+        (WTF::DecimalNumber::precision):
+        (WTF::DecimalNumber::init):
+        (WTF::DecimalNumber::isZero):
+        (WTF::DecimalNumber::roundToPrecision):
+            New class to perform double to string conversion.
+            Has three constructors, which allow conversion with no rounding,
+            rounding to significant-figures, or rounding to decimal-places,
+            and two methods for formatting strings, either using decimal
+            fraction or exponential encoding. Internal implementation uses
+            pre-rounding of the values before calling dtoa rather than
+            relying on dtoa to correctly round, which does not produce
+            fully accurate results. Hopefully we can address this in the
+            near future.
+
+        * wtf/dtoa.cpp:
+        (WTF::intPow10):
+        * wtf/dtoa.h:
+            intPow10 is used internally by DecimalNumber.
+            
+        * wtf/text/WTFString.cpp:
+        (WTF::copyToString):
+        (WTF::nanOrInfToString):
+            Used internally in numberToString for NaN/Infinity handling.
+        (WTF::numberToString):
+            Added new method to convert doubles to strings.
+
+        * wtf/text/WTFString.h:
+            Added declaration for numberToString. This is here because
+            we should switch over to using this for all double to string
+            conversion in WebCore (see section 2.4.4.3 of the HTML5 spec).
+
 2010-08-24  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoff Garen.

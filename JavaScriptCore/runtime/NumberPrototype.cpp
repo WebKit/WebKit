@@ -29,8 +29,8 @@
 #include "Operations.h"
 #include "PrototypeFunction.h"
 #include "StringBuilder.h"
-#include "dtoa.h"
 #include <wtf/Assertions.h>
+#include <wtf/DecimalNumber.h>
 #include <wtf/MathExtras.h>
 #include <wtf/Vector.h>
 
@@ -66,75 +66,140 @@ NumberPrototype::NumberPrototype(ExecState* exec, JSGlobalObject* globalObject, 
 
 // ECMA 15.7.4.2 - 15.7.4.7
 
-static UString integerPartNoExp(double d)
+static ALWAYS_INLINE bool toThisNumber(JSValue thisValue, double &x)
 {
-    int decimalPoint;
-    int sign;
-    char result[80];
-    WTF::dtoa(result, d, 0, &decimalPoint, &sign, NULL);
-    bool resultIsInfOrNan = (decimalPoint == 9999);
-    size_t length = strlen(result);
-
-    StringBuilder builder;
-    builder.append(sign ? "-" : "");
-    if (resultIsInfOrNan)
-        builder.append((const char*)result);
-    else if (decimalPoint <= 0)
-        builder.append("0");
-    else {
-        Vector<char, 1024> buf(decimalPoint + 1);
-
-        if (static_cast<int>(length) <= decimalPoint) {
-            ASSERT(decimalPoint < 1024);
-            memcpy(buf.data(), result, length);
-            memset(buf.data() + length, '0', decimalPoint - length);
-        } else
-            strncpy(buf.data(), result, decimalPoint);
-        buf[decimalPoint] = '\0';
-
-        builder.append((const char*)(buf.data()));
-    }
-
-    return builder.build();
+    JSValue v = thisValue.getJSNumber();
+    if (UNLIKELY(!v))
+        return false;
+    x = v.uncheckedGetNumber();
+    return true;
 }
 
-static UString charSequence(char c, int count)
+static ALWAYS_INLINE bool getIntegerArgumentInRange(ExecState* exec, int low, int high, int& result, bool& isUndefined)
 {
-    Vector<char, 2048> buf(count + 1, c);
-    buf[count] = '\0';
+    result = 0;
+    isUndefined = false;
 
-    return UString(buf.data());
-}
-
-static double intPow10(int e)
-{
-    // This function uses the "exponentiation by squaring" algorithm and
-    // long double to quickly and precisely calculate integer powers of 10.0.
-
-    // This is a handy workaround for <rdar://problem/4494756>
-
-    if (e == 0)
-        return 1.0;
-
-    bool negative = e < 0;
-    unsigned exp = negative ? -e : e;
-
-    long double result = 10.0;
-    bool foundOne = false;
-    for (int bit = 31; bit >= 0; bit--) {
-        if (!foundOne) {
-            if ((exp >> bit) & 1)
-                foundOne = true;
-        } else {
-            result = result * result;
-            if ((exp >> bit) & 1)
-                result = result * 10.0;
-        }
+    JSValue argument0 = exec->argument(0);
+    if (argument0.isUndefined()) {
+        isUndefined = true;
+        return true;
     }
 
-    if (negative)
-        return static_cast<double>(1.0 / result);
-    return static_cast<double>(result);
+    double asDouble = argument0.toInteger(exec);
+    if (asDouble < low || asDouble > high)
+        return false;
+
+    result = static_cast<int>(asDouble);
+    return true;
+}
+
+// toExponential converts a number to a string, always formatting as an expoential.
+// This method takes an optional argument specifying a number of *decimal places*
+// to round the significand to (or, put another way, this method optionally rounds
+// to argument-plus-one significant figures).
+EncodedJSValue JSC_HOST_CALL numberProtoFuncToExponential(ExecState* exec)
+{
+    // Get x (the double value of this, which should be a Number).
+    double x;
+    if (!toThisNumber(exec->hostThisValue(), x))
+        return throwVMTypeError(exec);
+
+    // Get the argument. 
+    int decimalPlacesInExponent;
+    bool isUndefined;
+    if (!getIntegerArgumentInRange(exec, 0, 20, decimalPlacesInExponent, isUndefined))
+        return throwVMError(exec, createRangeError(exec, "toExponential() argument must be between 0 and 20"));
+
+    // Handle NaN and Infinity.
+    if (isnan(x) || isinf(x))
+        return JSValue::encode(jsString(exec, UString::number(x)));
+
+    // Round if the argument is not undefined, always format as exponential.
+    NumberToStringBuffer buffer;
+    unsigned length = isUndefined
+        ? DecimalNumber(x).toStringExponential(buffer)
+        : DecimalNumber(x, RoundingSignificantFigures, decimalPlacesInExponent + 1).toStringExponential(buffer);
+
+    return JSValue::encode(jsString(exec, UString(buffer, length)));
+}
+
+// toFixed converts a number to a string, always formatting as an a decimal fraction.
+// This method takes an argument specifying a number of decimal places to round the
+// significand to. However when converting large values (1e+21 and above) this
+// method will instead fallback to calling ToString. 
+EncodedJSValue JSC_HOST_CALL numberProtoFuncToFixed(ExecState* exec)
+{
+    // Get x (the double value of this, which should be a Number).
+    JSValue thisValue = exec->hostThisValue();
+    JSValue v = thisValue.getJSNumber();
+    if (!v)
+        return throwVMTypeError(exec);
+    double x = v.uncheckedGetNumber();
+
+    // Get the argument. 
+    int decimalPlaces;
+    bool isUndefined; // This is ignored; undefined treated as 0.
+    if (!getIntegerArgumentInRange(exec, 0, 20, decimalPlaces, isUndefined))
+        return throwVMError(exec, createRangeError(exec, "toFixed() argument must be between 0 and 20"));
+
+    // 15.7.4.5.7 states "If x >= 10^21, then let m = ToString(x)"
+    // This also covers Ininity, and structure the check so that NaN
+    // values are also handled by numberToString
+    if (!(fabs(x) < 1e+21))
+        return JSValue::encode(jsString(exec, UString::number(x)));
+
+    // The check above will return false for NaN or Infinity, these will be
+    // handled by numberToString.
+    ASSERT(!isnan(x) && !isinf(x));
+
+    // Convert to decimal with rounding, and format as decimal.
+    NumberToStringBuffer buffer;
+    unsigned length = DecimalNumber(x, RoundingDecimalPlaces, decimalPlaces).toStringDecimal(buffer);
+    return JSValue::encode(jsString(exec, UString(buffer, length)));
+}
+
+// toPrecision converts a number to a string, takeing an argument specifying a
+// number of significant figures to round the significand to. For positive
+// exponent, all values that can be represented using a decimal fraction will
+// be, e.g. when rounding to 3 s.f. any value up to 999 will be formated as a
+// decimal, whilst 1000 is converted to the exponential representation 1.00e+3.
+// For negative exponents values >= 1e-6 are formated as decimal fractions,
+// with smaller values converted to exponential representation.
+EncodedJSValue JSC_HOST_CALL numberProtoFuncToPrecision(ExecState* exec)
+{
+    // Get x (the double value of this, which should be a Number).
+    JSValue thisValue = exec->hostThisValue();
+    JSValue v = thisValue.getJSNumber();
+    if (!v)
+        return throwVMTypeError(exec);
+    double x = v.uncheckedGetNumber();
+
+    // Get the argument. 
+    int significantFigures;
+    bool isUndefined;
+    if (!getIntegerArgumentInRange(exec, 1, 21, significantFigures, isUndefined))
+        return throwVMError(exec, createRangeError(exec, "toPrecision() argument must be between 1 and 21"));
+
+    // To precision called with no argument is treated as ToString.
+    if (isUndefined)
+        return JSValue::encode(jsString(exec, UString::number(x)));
+
+    // Handle NaN and Infinity.
+    if (isnan(x) || isinf(x))
+        return JSValue::encode(jsString(exec, UString::number(x)));
+
+    // Convert to decimal with rounding.
+    DecimalNumber number(x, RoundingSignificantFigures, significantFigures);
+    // If number is in the range 1e-6 <= x < pow(10, significantFigures) then format
+    // as decimal. Otherwise, format the number as an exponential.  Decimal format
+    // demands a minimum of (exponent + 1) digits to represent a number, for example
+    // 1234 (1.234e+3) requires 4 digits. (See ECMA-262 15.7.4.7.10.c)
+    NumberToStringBuffer buffer;
+    unsigned length = number.exponent() >= -6 && number.exponent() < significantFigures
+        ? number.toStringDecimal(buffer)
+        : number.toStringExponential(buffer);
+    return JSValue::encode(jsString(exec, UString(buffer, length)));
 }
 
 EncodedJSValue JSC_HOST_CALL numberProtoFuncToString(ExecState* exec)
@@ -241,239 +306,6 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncValueOf(ExecState* exec)
         return throwVMTypeError(exec);
 
     return JSValue::encode(v);
-}
-
-EncodedJSValue JSC_HOST_CALL numberProtoFuncToFixed(ExecState* exec)
-{
-    JSValue thisValue = exec->hostThisValue();
-    JSValue v = thisValue.getJSNumber();
-    if (!v)
-        return throwVMTypeError(exec);
-
-    JSValue fractionDigits = exec->argument(0);
-    double df = fractionDigits.toInteger(exec);
-    if (!(df >= 0 && df <= 20))
-        return throwVMError(exec, createRangeError(exec, "toFixed() digits argument must be between 0 and 20"));
-    int f = static_cast<int>(df);
-
-    double x = v.uncheckedGetNumber();
-    if (isnan(x))
-        return JSValue::encode(jsNontrivialString(exec, "NaN"));
-
-    UString s;
-    if (x < 0) {
-        s = "-";
-        x = -x;
-    } else {
-        s = "";
-        if (x == -0.0)
-            x = 0;
-    }
-
-    if (x >= pow(10.0, 21.0))
-        return JSValue::encode(jsString(exec, makeString(s, UString::number(x))));
-
-    const double tenToTheF = pow(10.0, f);
-    double n = floor(x * tenToTheF);
-    if (fabs(n / tenToTheF - x) >= fabs((n + 1) / tenToTheF - x))
-        n++;
-
-    UString m = integerPartNoExp(n);
-
-    int k = m.length();
-    if (k <= f) {
-        StringBuilder z;
-        for (int i = 0; i < f + 1 - k; i++)
-            z.append('0');
-        z.append(m);
-        m = z.build();
-        k = f + 1;
-        ASSERT(k == static_cast<int>(m.length()));
-    }
-    int kMinusf = k - f;
-
-    if (kMinusf < static_cast<int>(m.length()))
-        return JSValue::encode(jsString(exec, makeString(s, m.substringSharingImpl(0, kMinusf), ".", m.substringSharingImpl(kMinusf))));
-    return JSValue::encode(jsString(exec, makeString(s, m.substringSharingImpl(0, kMinusf))));
-}
-
-static void fractionalPartToString(char* buf, int& i, const char* result, int resultLength, int fractionalDigits)
-{
-    if (fractionalDigits <= 0)
-        return;
-
-    int fDigitsInResult = static_cast<int>(resultLength) - 1;
-    buf[i++] = '.';
-    if (fDigitsInResult > 0) {
-        if (fractionalDigits < fDigitsInResult) {
-            strncpy(buf + i, result + 1, fractionalDigits);
-            i += fractionalDigits;
-        } else {
-            ASSERT(i + resultLength - 1 < 80);
-            memcpy(buf + i, result + 1, resultLength - 1);
-            i += static_cast<int>(resultLength) - 1;
-        }
-    }
-
-    for (int j = 0; j < fractionalDigits - fDigitsInResult; j++)
-        buf[i++] = '0';
-}
-
-static void exponentialPartToString(char* buf, int& i, int decimalPoint)
-{
-    buf[i++] = 'e';
-    // decimalPoint can't be more than 3 digits decimal given the
-    // nature of float representation
-    int exponential = decimalPoint - 1;
-    buf[i++] = (exponential >= 0) ? '+' : '-';
-    if (exponential < 0)
-        exponential *= -1;
-    if (exponential >= 100)
-        buf[i++] = static_cast<char>('0' + exponential / 100);
-    if (exponential >= 10)
-        buf[i++] = static_cast<char>('0' + (exponential % 100) / 10);
-    buf[i++] = static_cast<char>('0' + exponential % 10);
-}
-
-EncodedJSValue JSC_HOST_CALL numberProtoFuncToExponential(ExecState* exec)
-{
-    JSValue thisValue = exec->hostThisValue();
-    JSValue v = thisValue.getJSNumber();
-    if (!v)
-        return throwVMTypeError(exec);
-
-    double x = v.uncheckedGetNumber();
-
-    if (isnan(x) || isinf(x))
-        return JSValue::encode(jsString(exec, UString::number(x)));
-
-    JSValue fractionalDigitsValue = exec->argument(0);
-    double df = fractionalDigitsValue.toInteger(exec);
-    if (!(df >= 0 && df <= 20))
-        return throwVMError(exec, createRangeError(exec, "toExponential() argument must between 0 and 20"));
-    int fractionalDigits = static_cast<int>(df);
-    bool includeAllDigits = fractionalDigitsValue.isUndefined();
-
-    int decimalAdjust = 0;
-    if (x && !includeAllDigits) {
-        double logx = floor(log10(fabs(x)));
-        x /= pow(10.0, logx);
-        const double tenToTheF = pow(10.0, fractionalDigits);
-        double fx = floor(x * tenToTheF) / tenToTheF;
-        double cx = ceil(x * tenToTheF) / tenToTheF;
-
-        if (fabs(fx - x) < fabs(cx - x))
-            x = fx;
-        else
-            x = cx;
-
-        decimalAdjust = static_cast<int>(logx);
-    }
-
-    if (isnan(x))
-        return JSValue::encode(jsNontrivialString(exec, "NaN"));
-
-    if (x == -0.0) // (-0.0).toExponential() should print as 0 instead of -0
-        x = 0;
-
-    int decimalPoint;
-    int sign;
-    char result[80];
-    WTF::dtoa(result, x, 0, &decimalPoint, &sign, NULL);
-    size_t resultLength = strlen(result);
-    decimalPoint += decimalAdjust;
-
-    int i = 0;
-    char buf[80]; // digit + '.' + fractionDigits (max 20) + 'e' + sign + exponent (max?)
-    if (sign)
-        buf[i++] = '-';
-
-    // ? 9999 is the magical "result is Inf or NaN" value.  what's 999??
-    if (decimalPoint == 999) {
-        ASSERT(i + resultLength < 80);
-        memcpy(buf + i, result, resultLength);
-        buf[i + resultLength] = '\0';
-    } else {
-        buf[i++] = result[0];
-
-        if (includeAllDigits)
-            fractionalDigits = static_cast<int>(resultLength) - 1;
-
-        fractionalPartToString(buf, i, result, resultLength, fractionalDigits);
-        exponentialPartToString(buf, i, decimalPoint);
-        buf[i++] = '\0';
-    }
-    ASSERT(i <= 80);
-
-    return JSValue::encode(jsString(exec, buf));
-}
-
-EncodedJSValue JSC_HOST_CALL numberProtoFuncToPrecision(ExecState* exec)
-{
-    JSValue thisValue = exec->hostThisValue();
-    JSValue v = thisValue.getJSNumber();
-    if (!v)
-        return throwVMTypeError(exec);
-
-    double doublePrecision = exec->argument(0).toIntegerPreserveNaN(exec);
-    double x = v.uncheckedGetNumber();
-    if (exec->argument(0).isUndefined() || isnan(x) || isinf(x))
-        return JSValue::encode(jsString(exec, v.toString(exec)));
-
-    UString s;
-    if (x < 0) {
-        s = "-";
-        x = -x;
-    } else
-        s = "";
-
-    if (!(doublePrecision >= 1 && doublePrecision <= 21)) // true for NaN
-        return throwVMError(exec, createRangeError(exec, "toPrecision() argument must be between 1 and 21"));
-    int precision = static_cast<int>(doublePrecision);
-
-    int e = 0;
-    UString m;
-    if (x) {
-        e = static_cast<int>(log10(x));
-        double tens = intPow10(e - precision + 1);
-        double n = floor(x / tens);
-        if (n < intPow10(precision - 1)) {
-            e = e - 1;
-            tens = intPow10(e - precision + 1);
-            n = floor(x / tens);
-        }
-
-        if (fabs((n + 1.0) * tens - x) <= fabs(n * tens - x))
-            ++n;
-        // maintain n < 10^(precision)
-        if (n >= intPow10(precision)) {
-            n /= 10.0;
-            e += 1;
-        }
-        ASSERT(intPow10(precision - 1) <= n);
-        ASSERT(n < intPow10(precision));
-
-        m = integerPartNoExp(n);
-        if (e < -6 || e >= precision) {
-            if (m.length() > 1)
-                m = makeString(m.substringSharingImpl(0, 1), ".", m.substringSharingImpl(1));
-            if (e >= 0)
-                return JSValue::encode(jsMakeNontrivialString(exec, s, m, "e+", UString::number(e)));
-            return JSValue::encode(jsMakeNontrivialString(exec, s, m, "e-", UString::number(-e)));
-        }
-    } else {
-        m = charSequence('0', precision);
-        e = 0;
-    }
-
-    if (e == precision - 1)
-        return JSValue::encode(jsString(exec, makeString(s, m)));
-    if (e >= 0) {
-        if (e + 1 < static_cast<int>(m.length()))
-            return JSValue::encode(jsString(exec, makeString(s, m.substringSharingImpl(0, e + 1), ".", m.substringSharingImpl(e + 1))));
-        return JSValue::encode(jsString(exec, makeString(s, m)));
-    }
-    return JSValue::encode(jsMakeNontrivialString(exec, s, "0.", charSequence('0', -(e + 1)), m));
 }
 
 } // namespace JSC

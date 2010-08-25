@@ -25,10 +25,10 @@
 #include <limits>
 #include <stdarg.h>
 #include <wtf/ASCIICType.h>
-#include <wtf/text/CString.h>
+#include <wtf/DecimalNumber.h>
 #include <wtf/StringExtras.h>
 #include <wtf/Vector.h>
-#include <wtf/dtoa.h>
+#include <wtf/text/CString.h>
 #include <wtf/unicode/UTF8.h>
 #include <wtf/unicode/Unicode.h>
 
@@ -945,6 +945,41 @@ float charactersToFloat(const UChar* data, size_t length, bool* ok)
 {
     // FIXME: This will return ok even when the string fits into a double but not a float.
     return static_cast<float>(charactersToDouble(data, length, ok));
+}
+
+static unsigned copyToString(const char* string, unsigned length, NumberToStringBuffer& buffer)
+{
+    for (unsigned i = 0; i < length; ++i)
+        buffer[i] = string[i];
+    return length;
+}
+
+static NEVER_INLINE unsigned nanOrInfToString(double x, NumberToStringBuffer& buffer)
+{
+    ASSERT(isnan(x) || isinf(x));
+    if (isnan(x))
+        return copyToString("NaN", 3, buffer);
+    if (x < 0)
+        return copyToString("-Infinity", 9, buffer);
+    return copyToString("Infinity", 8, buffer);
+}
+
+// toString converts a number to a string without rounding. For values in the range
+// 1e-6 <= x < 1e+21 the result is formatted as a decimal, with values outside of
+// this range being formatted as an exponential.
+unsigned numberToString(double x, NumberToStringBuffer& buffer)
+{
+    // Handle NaN and Infinity.
+    if (UNLIKELY(isnan(x) || isinf(x)))
+        return nanOrInfToString(x, buffer);
+
+    // Convert to decimal, no rounding.
+    DecimalNumber number(x);
+
+    // Format as decimal or exponential, depending on the exponent.
+    return number.exponent() >= -6 && number.exponent() < 21
+        ? number.toStringDecimal(buffer)
+        : number.toStringExponential(buffer);
 }
 
 } // namespace WTF

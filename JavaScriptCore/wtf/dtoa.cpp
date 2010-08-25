@@ -2285,83 +2285,35 @@ ret:
         *rve = s;
 }
 
-static ALWAYS_INLINE void append(char*& next, const char* src, unsigned size)
+double intPow10(int e)
 {
-    for (unsigned i = 0; i < size; ++i)
-        *next++ = *src++;
-}
+    // This function uses the "exponentiation by squaring" algorithm and
+    // long double to quickly and precisely calculate integer powers of 10.0.
 
-void doubleToStringInJavaScriptFormat(double d, DtoaBuffer buffer, unsigned* resultLength)
-{
-    ASSERT(buffer);
+    // This is a handy workaround for <rdar://problem/4494756>
 
-    // avoid ever printing -NaN, in JS conceptually there is only one NaN value
-    if (isnan(d)) {
-        append(buffer, "NaN", 3);
-        if (resultLength)
-            *resultLength = 3;
-        return;
-    }
-    // -0 -> "0"
-    if (!d) {
-        buffer[0] = '0';
-        if (resultLength)
-            *resultLength = 1;
-        return;
-    }
+    if (!e)
+        return 1.0;
 
-    int decimalPoint;
-    int sign;
+    bool negative = e < 0;
+    unsigned exp = negative ? -e : e;
 
-    DtoaBuffer result;
-    char* resultEnd = 0;
-    WTF::dtoa(result, d, 0, &decimalPoint, &sign, &resultEnd);
-    int length = resultEnd - result;
-
-    char* next = buffer;
-    if (sign)
-        *next++ = '-';
-
-    if (decimalPoint <= 0 && decimalPoint > -6) {
-        *next++ = '0';
-        *next++ = '.';
-        for (int j = decimalPoint; j < 0; j++)
-            *next++ = '0';
-        append(next, result, length);
-    } else if (decimalPoint <= 21 && decimalPoint > 0) {
-        if (length <= decimalPoint) {
-            append(next, result, length);
-            for (int j = 0; j < decimalPoint - length; j++)
-                *next++ = '0';
+    long double result = 10.0;
+    bool foundOne = false;
+    for (int bit = 31; bit >= 0; bit--) {
+        if (!foundOne) {
+            if ((exp >> bit) & 1)
+                foundOne = true;
         } else {
-            append(next, result, decimalPoint);
-            *next++ = '.';
-            append(next, result + decimalPoint, length - decimalPoint);
+            result = result * result;
+            if ((exp >> bit) & 1)
+                result = result * 10.0;
         }
-    } else if (result[0] < '0' || result[0] > '9')
-        append(next, result, length);
-    else {
-        *next++ = result[0];
-        if (length > 1) {
-            *next++ = '.';
-            append(next, result + 1, length - 1);
-        }
-
-        *next++ = 'e';
-        *next++ = (decimalPoint >= 0) ? '+' : '-';
-        // decimalPoint can't be more than 3 digits decimal given the
-        // nature of float representation
-        int exponential = decimalPoint - 1;
-        if (exponential < 0)
-            exponential = -exponential;
-        if (exponential >= 100)
-            *next++ = static_cast<char>('0' + exponential / 100);
-        if (exponential >= 10)
-            *next++ = static_cast<char>('0' + (exponential % 100) / 10);
-        *next++ = static_cast<char>('0' + exponential % 10);
     }
-    if (resultLength)
-        *resultLength = next - buffer;
+
+    if (negative)
+        return static_cast<double>(1.0 / result);
+    return static_cast<double>(result);
 }
 
 } // namespace WTF
