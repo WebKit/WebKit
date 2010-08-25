@@ -43,7 +43,8 @@ PopupMenuEfl::~PopupMenuEfl()
 {
     // Tell client to destroy data related to this popup since this object is
     // going away.
-    hide();
+    if (m_view)
+        hide();
 }
 
 void PopupMenuEfl::show(const IntRect& rect, FrameView* view, int index)

@@ -1,3 +1,16 @@
+2010-08-25  Krzysztof Czech  <k.czech@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Crash while calling PopupMenuEfl destructor
+        https://bugs.webkit.org/show_bug.cgi?id=44497
+
+        Condition checks if m_view is defined
+        before popup is hide
+
+        * platform/efl/PopupMenuEfl.cpp:
+        (WebCore::PopupMenuEfl::~PopupMenuEfl):
+
 2010-08-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Tony Chang.
