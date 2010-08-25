@@ -48,7 +48,7 @@ class TestPort(base.Port):
 
     def baseline_path(self):
         return os.path.join(self.layout_tests_dir(), 'platform',
-                            self.name())
+                            self.name() + self.version())
 
     def baseline_search_path(self):
         return [self.baseline_path()]
@@ -56,16 +56,18 @@ class TestPort(base.Port):
     def check_build(self, needs_http):
         return True
 
-    def compare_text(self, expected_text, actual_text):
-        return False
-
     def diff_image(self, expected_filename, actual_filename,
                    diff_filename=None, tolerance=0):
-        return False
-
-    def diff_text(self, expected_text, actual_text,
-                  expected_filename, actual_filename):
-        return ''
+        with codecs.open(actual_filename, "r", "utf-8") as actual_fh:
+            actual_contents = actual_fh.read()
+        with codecs.open(expected_filename, "r", "utf-8") as expected_fh:
+            expected_contents = expected_fh.read()
+        diffed = actual_contents != expected_contents
+        if diffed and diff_filename:
+            with codecs.open(diff_filename, "w", "utf-8") as diff_fh:
+                diff_fh.write("< %s\n---\n> %s\n" %
+                              (expected_contents, actual_contents))
+        return diffed
 
     def layout_tests_dir(self):
         return self.path_from_webkit_base('WebKitTools', 'Scripts',
@@ -81,6 +83,9 @@ class TestPort(base.Port):
         return self.path_from_webkit_base('WebKitTools', 'Scripts',
             'webkitpy', 'layout_tests', 'data', 'platform', 'test',
             'test_expectations.txt')
+
+    def _path_to_wdiff(self):
+        return None
 
     def results_directory(self):
         return '/tmp/' + self._options.results_directory
@@ -127,10 +132,7 @@ class TestPort(base.Port):
     def test_platform_name_to_name(self, test_platform_name):
         return test_platform_name
 
-    def version():
-        return ''
-
-    def wdiff_text(self, expected_filename, actual_filename):
+    def version(self):
         return ''
 
 
@@ -150,16 +152,58 @@ class TestDriver(base.Driver):
         return 0
 
     def run_test(self, uri, timeoutms, image_hash):
-        if not self._image_written and self._port._options.pixel_tests:
-            with open(self._image_path, "w") as f:
-                f.write("bad png file from TestDriver")
-                self._image_written = True
+        basename = uri[(uri.rfind("/") + 1):uri.rfind(".html")]
 
-        # We special-case this because we can't fake an image hash for a
-        # missing expectation.
-        if uri.find('misc/missing-expectation') != -1:
-            return (False, False, 'deadbeefdeadbeefdeadbeefdeadbeef', '', None)
-        return (False, False, image_hash, '', None)
+        error = ''
+        checksum = None
+        # There are four currently supported types of tests: text, image,
+        # image hash (checksum), and stderr output. The fake output
+        # is the basename of the file + "-" plus the type of test output
+        # (or a blank string for stderr).
+        #
+        # If 'image' or 'check' appears in the basename, we assume this is
+        # simulating a pixel test.
+        #
+        # If 'failures' appears in the URI, then we assume this test should
+        # fail. Which type of failures are determined by which strings appear
+        # in the basename of the test. For failures that produce outputs,
+        # we change the fake output to basename + "_failed-".
+        #
+        # The fact that each test produces (more or less) unique output data
+        # will allow us to see if any results get crossed by the rest of the
+        # program.
+        if 'failures' in uri:
+            crash = 'crash' in basename
+            timeout = 'timeout' in basename
+            if 'error' in basename:
+                error = basename + "_error\n"
+            if 'text' in basename:
+                output = basename + '_failed-txt\n'
+            else:
+                output = basename + '-txt\n'
+            if self._port.options().pixel_tests:
+                if ('image' in basename or 'check' in basename):
+                    checksum = basename + "-checksum\n"
+
+                if 'image' in basename:
+                    with open(self._image_path, "w") as f:
+                        f.write(basename + "_failed-png\n")
+                elif 'check' in basename:
+                    with open(self._image_path, "w") as f:
+                        f.write(basename + "-png\n")
+                if 'checksum' in basename:
+                    checksum = basename + "_failed-checksum\n"
+        else:
+            crash = False
+            timeout = False
+            output = basename + '-txt\n'
+            if self._port.options().pixel_tests and (
+                'image' in basename or 'check' in basename):
+                checksum = basename + '-checksum\n'
+                with open(self._image_path, "w") as f:
+                    f.write(basename + "-png")
+
+        return (crash, timeout, checksum, output, error)
 
     def start(self):
         pass

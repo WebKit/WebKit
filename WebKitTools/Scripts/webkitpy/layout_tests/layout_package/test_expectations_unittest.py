@@ -33,16 +33,8 @@ import os
 import sys
 import unittest
 
-try:
-   d = os.path.dirname(__file__)
-except NameError:
-   d = os.path.dirname(sys.argv[0])
-
-sys.path.append(os.path.abspath(os.path.join(d, '..')))
-sys.path.append(os.path.abspath(os.path.join(d, '../../thirdparty')))
-
-import port
-from test_expectations import *
+from webkitpy.layout_tests import port
+from webkitpy.layout_tests.layout_package.test_expectations import *
 
 class FunctionsTest(unittest.TestCase):
     def test_result_was_expected(self):
@@ -98,18 +90,18 @@ class TestExpectationsTest(unittest.TestCase):
         return os.path.join(self._port.layout_tests_dir(), test_name)
 
     def get_basic_tests(self):
-        return [self.get_test('text/article-element.html'),
-                self.get_test('image/canvas-bg.html'),
-                self.get_test('image/canvas-zoom.html'),
-                self.get_test('misc/crash.html'),
-                self.get_test('misc/passing.html')]
+        return [self.get_test('failures/expected/text.html'),
+                self.get_test('failures/expected/image_checksum.html'),
+                self.get_test('failures/expected/crash.html'),
+                self.get_test('failures/expected/missing_text.html'),
+                self.get_test('passes/text.html')]
 
     def get_basic_expectations(self):
         return """
-BUG_TEST : text/article-element.html = TEXT
-BUG_TEST SKIP : misc/crash.html = CRASH
-BUG_TEST REBASELINE : misc/missing-expectation.html = MISSING
-BUG_TEST : image = IMAGE
+BUG_TEST : failures/expected/text.html = TEXT
+BUG_TEST SKIP : failures/expected/crash.html = CRASH
+BUG_TEST REBASELINE : failure/expected/missing_image.html = MISSING
+BUG_TEST : failures/expected/image_checksum.html = IMAGE
 """
 
     def parse_exp(self, expectations, overrides=None):
@@ -128,23 +120,23 @@ BUG_TEST : image = IMAGE
 
     def test_basic(self):
         self.parse_exp(self.get_basic_expectations())
-        self.assert_exp('text/article-element.html', TEXT)
-        self.assert_exp('image/canvas-zoom.html', IMAGE)
-        self.assert_exp('misc/passing.html', PASS)
+        self.assert_exp('failures/expected/text.html', TEXT)
+        self.assert_exp('failures/expected/image_checksum.html', IMAGE)
+        self.assert_exp('passes/text.html', PASS)
 
     def test_duplicates(self):
         self.assertRaises(SyntaxError, self.parse_exp, """
-BUG_TEST : text/article-element.html = TEXT
-BUG_TEST : text/article-element.html = IMAGE""")
+BUG_TEST : failures/expected/text.html = TEXT
+BUG_TEST : failures/expected/text.html = IMAGE""")
         self.assertRaises(SyntaxError, self.parse_exp,
             self.get_basic_expectations(), """
-BUG_TEST : text/article-element.html = TEXT
-BUG_TEST : text/article-element.html = IMAGE""")
+BUG_TEST : failures/expected/text.html = TEXT
+BUG_TEST : failures/expected/text.html = IMAGE""")
 
     def test_overrides(self):
         self.parse_exp(self.get_basic_expectations(), """
-BUG_OVERRIDE : text/article-element.html = IMAGE""")
-        self.assert_exp('text/article-element.html', IMAGE)
+BUG_OVERRIDE : failures/expected/text.html = IMAGE""")
+        self.assert_exp('failures/expected/text.html', IMAGE)
 
     def test_matches_an_expected_result(self):
 
@@ -153,16 +145,14 @@ BUG_OVERRIDE : text/article-element.html = IMAGE""")
                 self.get_test(test), result, pixel_tests_enabled)
 
         self.parse_exp(self.get_basic_expectations())
-        self.assertTrue(match('text/article-element.html', TEXT, True))
-        self.assertTrue(match('text/article-element.html', TEXT, False))
-        self.assertFalse(match('text/article-element.html', CRASH, True))
-        self.assertFalse(match('text/article-element.html', CRASH, False))
-
-        self.assertTrue(match('image/canvas-bg.html', IMAGE, True))
-        self.assertTrue(match('image/canvas-bg.html', PASS, False))
-
-        self.assertTrue(match('misc/crash.html', SKIP, False))
-        self.assertTrue(match('misc/passing.html', PASS, False))
+        self.assertTrue(match('failures/expected/text.html', TEXT, True))
+        self.assertTrue(match('failures/expected/text.html', TEXT, False))
+        self.assertFalse(match('failures/expected/text.html', CRASH, True))
+        self.assertFalse(match('failures/expected/text.html', CRASH, False))
+        self.assertTrue(match('failures/expected/image_checksum.html', IMAGE, True))
+        self.assertTrue(match('failures/expected/image_checksum.html', PASS, False))
+        self.assertTrue(match('failures/expected/crash.html', SKIP, False))
+        self.assertTrue(match('passes/text.html', PASS, False))
 
 if __name__ == '__main__':
     unittest.main()

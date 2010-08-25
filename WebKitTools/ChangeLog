@@ -2,6 +2,71 @@
 
         Reviewed by Eric Seidel.
 
+        new-run-webkit-tests: revise unit testing strategy for test failures
+    
+        This change revamps the way we store test data for new-run-webkit-tests.
+        Previously we had a few copies of test files from the main test tree.
+        Now we have a bunch of completely fake test data and use the test
+        data to generate different kinds of test failures, getting
+        much better coverage.
+
+        https://bugs.webkit.org/show_bug.cgi?id=44556
+
+        * Scripts/webkitpy/layout_tests/data/failures/expected/crash.html: Added.
+        * Scripts/webkitpy/layout_tests/data/failures/expected/image-expected.checksum: Added.
+        * Scripts/webkitpy/layout_tests/data/failures/expected/image-expected.png: Added.
+        * Scripts/webkitpy/layout_tests/data/failures/expected/image-expected.txt: Added.
+        * Scripts/webkitpy/layout_tests/data/failures/expected/image.html: Added.
+        * Scripts/webkitpy/layout_tests/data/failures/expected/image_checksum-expected.checksum: Added.
+        * Scripts/webkitpy/layout_tests/data/failures/expected/image_checksum-expected.png: Added.
+        * Scripts/webkitpy/layout_tests/data/failures/expected/image_checksum-expected.txt: Added.
+        * Scripts/webkitpy/layout_tests/data/failures/expected/image_checksum.html: Added.
+        * Scripts/webkitpy/layout_tests/data/failures/expected/missing_image.html: Added.
+        * Scripts/webkitpy/layout_tests/data/failures/expected/missing_text.html: Added.
+        * Scripts/webkitpy/layout_tests/data/failures/expected/text-expected.txt: Added.
+        * Scripts/webkitpy/layout_tests/data/failures/expected/text.html: Added.
+        * Scripts/webkitpy/layout_tests/data/failures/unexpected/text-image-checksum-expected.checksum: Added.
+        * Scripts/webkitpy/layout_tests/data/failures/unexpected/text-image-checksum-expected.png: Added.
+        * Scripts/webkitpy/layout_tests/data/failures/unexpected/text-image-checksum-expected.txt: Added.
+        * Scripts/webkitpy/layout_tests/data/failures/unexpected/text-image-checksum.html: Added.
+        * Scripts/webkitpy/layout_tests/data/image/canvas-bg.html: Removed.
+        * Scripts/webkitpy/layout_tests/data/image/canvas-zoom-expected.checksum: Removed.
+        * Scripts/webkitpy/layout_tests/data/image/canvas-zoom-expected.png: Removed.
+        * Scripts/webkitpy/layout_tests/data/image/canvas-zoom-expected.txt: Removed.
+        * Scripts/webkitpy/layout_tests/data/image/canvas-zoom.html: Removed.
+        * Scripts/webkitpy/layout_tests/data/misc/crash-expected.txt: Removed.
+        * Scripts/webkitpy/layout_tests/data/misc/crash.html: Removed.
+        * Scripts/webkitpy/layout_tests/data/misc/missing-expectation.html: Removed.
+        * Scripts/webkitpy/layout_tests/data/misc/passing-expected.txt: Removed.
+        * Scripts/webkitpy/layout_tests/data/misc/passing.html: Removed.
+        * Scripts/webkitpy/layout_tests/data/passes/image-expected.checksum: Added.
+        * Scripts/webkitpy/layout_tests/data/passes/image-expected.png: Added.
+        * Scripts/webkitpy/layout_tests/data/passes/image-expected.txt: Added.
+        * Scripts/webkitpy/layout_tests/data/passes/image.html: Added.
+        * Scripts/webkitpy/layout_tests/data/passes/platform_image-expected.checksum: Added.
+        * Scripts/webkitpy/layout_tests/data/passes/platform_image-expected.png: Added.
+        * Scripts/webkitpy/layout_tests/data/passes/platform_image-expected.txt: Added.
+        * Scripts/webkitpy/layout_tests/data/passes/platform_image.html: Added.
+        * Scripts/webkitpy/layout_tests/data/passes/text-expected.txt: Added.
+        * Scripts/webkitpy/layout_tests/data/passes/text.html: Added.
+        * Scripts/webkitpy/layout_tests/data/platform/test/image/canvas-bg-expected.checksum: Removed.
+        * Scripts/webkitpy/layout_tests/data/platform/test/image/canvas-bg-expected.png: Removed.
+        * Scripts/webkitpy/layout_tests/data/platform/test/image/canvas-bg-expected.txt: Removed.
+        * Scripts/webkitpy/layout_tests/data/platform/test/passes/platform_image-expected.checksum: Added.
+        * Scripts/webkitpy/layout_tests/data/platform/test/passes/platform_image-expected.png: Added.
+        * Scripts/webkitpy/layout_tests/data/platform/test/passes/platform_image-expected.txt: Added.
+        * Scripts/webkitpy/layout_tests/data/platform/test/test_expectations.txt:
+        * Scripts/webkitpy/layout_tests/data/text/article-element-expected.txt: Removed.
+        * Scripts/webkitpy/layout_tests/data/text/article-element.html: Removed.
+        * Scripts/webkitpy/layout_tests/layout_package/test_expectations_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+        * Scripts/webkitpy/style/checkers/test_expectations_unittest.py:
+
+2010-08-24  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Eric Seidel.
+
         speed up new-run-webkit-tests unit tests
 
         Add a --no-record-results flag that turns off generating the JSON

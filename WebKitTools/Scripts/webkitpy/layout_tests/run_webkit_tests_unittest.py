@@ -48,8 +48,11 @@ from webkitpy.layout_tests.layout_package import dump_render_tree_thread
 from webkitpy.thirdparty.mock import Mock
 
 
-def passing_run(args, port_obj=None, record_results=False):
+def passing_run(args, port_obj=None, record_results=False,
+                tests_included=False):
     args.extend(['--print', 'nothing'])
+    if not tests_included:
+        args.extend(['passes', 'failures/expected'])
     if not record_results:
         args.append('--no-record-results')
     options, args = run_webkit_tests.parse_args(args)
@@ -75,7 +78,7 @@ class MainTest(unittest.TestCase):
         self.assertTrue(passing_run(['--platform', 'test']))
         self.assertTrue(passing_run(['--platform', 'test', '--run-singly']))
         self.assertTrue(passing_run(['--platform', 'test',
-                                     'text/article-element.html']))
+                                     'passes/text.html'], tests_included=True))
 
     def test_one_child_process(self):
         (res, buildbot_output, regular_output) = logging_run(
@@ -122,21 +125,19 @@ class RebaselineTest(unittest.TestCase):
         original_open = codecs.open
         try:
             # Test that we update expectations in place. If the expectation
-            # is mssing, update the expected generic location.
+            # is missing, update the expected generic location.
             file_list = []
             codecs.open = _mocked_open(original_open, file_list)
             passing_run(['--platform', 'test', '--pixel-tests',
                          '--reset-results',
-                         'image/canvas-bg.html',
-                         'image/canvas-zoom.html',
-                         'misc/missing-expectation.html'])
-            self.assertEqual(len(file_list), 9)
+                         'passes/image.html',
+                         'failures/expected/missing_image.html'],
+                         tests_included=True)
+            self.assertEqual(len(file_list), 6)
             self.assertBaselines(file_list,
-                "data/image/canvas-zoom")
+                "data/passes/image")
             self.assertBaselines(file_list,
-                "data/platform/test/image/canvas-bg")
-            self.assertBaselines(file_list,
-                "data/misc/missing-expectation")
+                "data/failures/expected/missing_image")
         finally:
             codecs.open = original_open
 
@@ -150,16 +151,14 @@ class RebaselineTest(unittest.TestCase):
             codecs.open = _mocked_open(original_open, file_list)
             passing_run(['--platform', 'test', '--pixel-tests',
                          '--new-baseline',
-                         'image/canvas-zoom.html',
-                         'image/canvas-bg.html',
-                         'misc/missing-expectation.html'])
-            self.assertEqual(len(file_list), 9)
+                         'passes/image.html',
+                         'failures/expected/missing_image.html'],
+                        tests_included=True)
+            self.assertEqual(len(file_list), 6)
             self.assertBaselines(file_list,
-                "data/platform/test/image/canvas-zoom")
+                "data/platform/test/passes/image")
             self.assertBaselines(file_list,
-                "data/platform/test/image/canvas-bg")
-            self.assertBaselines(file_list,
-                "data/platform/test/misc/missing-expectation")
+                "data/platform/test/failures/expected/missing_image")
         finally:
             codecs.open = original_open
 
