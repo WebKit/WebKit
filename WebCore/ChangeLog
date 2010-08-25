@@ -1,3 +1,11 @@
+2010-08-24  Daniel Bates  <dbates@rim.com>
+
+        Fix code comment as per Darin Adler's suggestion in <https://bugs.webkit.org/show_bug.cgi?id=44486#c2>.
+        I inadvertently did not update this comment when I landed changeset 65967 <http://trac.webkit.org/changeset/65967>.
+
+        * rendering/RenderListMarker.cpp:
+        (WebCore::listMarkerSuffix):
+
 2010-08-23  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Darin Adler.

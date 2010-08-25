@@ -468,8 +468,8 @@ static EListStyleType effectiveListMarkerType(EListStyleType type, int value)
 
 static UChar listMarkerSuffix(EListStyleType type, int value)
 {
-    // If the list-style-type, say hebrew, cannot represent |value| because it's outside
-    // its ordinal range then we fallback to some list style that can represent |value|.
+    // If the list-style-type cannot represent |value| because it's outside its
+    // ordinal range then we fall back to some list style that can represent |value|.
     EListStyleType effectiveType = effectiveListMarkerType(type, value);
 
     // Note, the following switch statement has been explicitly
