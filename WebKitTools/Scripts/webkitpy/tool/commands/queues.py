@@ -120,15 +120,24 @@ class AbstractQueue(Command, QueueEngineDelegate):
         return engine(self.name, self, self.tool.wakeup_event).run()
 
     @classmethod
+    def _log_from_script_error_for_upload(cls, script_error, output_limit=None):
+        # We have seen request timeouts with app engine due to large
+        # log uploads.  Trying only the last 512k.
+        if not output_limit:
+            output_limit = 512 * 1024  # 512k
+        output = script_error.message_with_output(output_limit=output_limit)
+        # We pre-encode the string to a byte array before passing it
+        # to status_server, because ClientForm (part of mechanize)
+        # wants a file-like object with pre-encoded data.
+        return StringIO(output.encode("utf-8"))
+
+    @classmethod
     def _update_status_for_script_error(cls, tool, state, script_error, is_error=False):
         message = str(script_error)
         if is_error:
             message = "Error: %s" % message
-        output = script_error.message_with_output(output_limit=1024*1024) # 1MB
-        # We pre-encode the string to a byte array before passing it
-        # to status_server, because ClientForm (part of mechanize)
-        # wants a file-like object with pre-encoded data.
-        return tool.status_server.update_status(cls.name, message, state["patch"], StringIO(output.encode("utf-8")))
+        failure_log = cls._log_from_script_error_for_upload(script_error)
+        return tool.status_server.update_status(cls.name, message, state["patch"], failure_log)
 
 
 class AbstractPatchQueue(AbstractQueue):
@@ -203,7 +212,8 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler):
                 "--build-style=both",
                 "--quiet"])
         except ScriptError, e:
-            self._update_status("Unable to successfully build and test", None)
+            failure_log = self._log_from_script_error_for_upload(e)
+            self._update_status("Unable to successfully build and test", results_file=failure_log)
             return False
         return True
 

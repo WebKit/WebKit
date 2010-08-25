@@ -55,7 +55,8 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue):
                 "--quiet"])
             return True
         except ScriptError, e:
-            self._update_status("Unable to perform a build")
+            failure_log = self._log_from_script_error_for_upload(e)
+            self._update_status("Unable to perform a build", results_file=failure_log)
             return False
 
     def _build(self, patch, first_run=False):

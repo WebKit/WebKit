@@ -73,10 +73,10 @@ class ScriptError(Exception):
     def message_with_output(self, output_limit=500):
         if self.output:
             if output_limit and len(self.output) > output_limit:
-                return "%s\nLast %s characters of output:\n%s" % \
+                return u"%s\nLast %s characters of output:\n%s" % \
                     (self, output_limit, self.output[-output_limit:])
-            return "%s\n%s" % (self, self.output)
-        return str(self)
+            return u"%s\n%s" % (self, self.output)
+        return unicode(self)
 
     def command_name(self):
         command_path = self.script_args

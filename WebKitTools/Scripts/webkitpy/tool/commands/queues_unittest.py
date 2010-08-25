@@ -99,6 +99,19 @@ class AbstractQueueTest(CommandsTest):
         self.assertTrue(queue.should_continue_work_queue())
         self.assertTrue(queue.should_continue_work_queue())
 
+    def _assert_log_message(self, script_error, log_message):
+        failure_log = AbstractQueue._log_from_script_error_for_upload(script_error, output_limit=10)
+        self.assertTrue(failure_log.read(), log_message)
+
+    def test_log_from_script_error_for_upload(self):
+        self._assert_log_message(ScriptError("test"), "test")
+        unicode_tor = u"WebKit \u2661 Tor Arne Vestb\u00F8!"
+        utf8_tor = unicode_tor.encode("utf-8")
+        self._assert_log_message(ScriptError(unicode_tor), utf8_tor)
+        script_error = ScriptError(unicode_tor, output=unicode_tor)
+        expected_output = "%s\nLast %s characters of output:\n%s" % (utf8_tor, 10, utf8_tor[-10:])
+        self._assert_log_message(script_error, expected_output)
+
 
 class AbstractReviewQueueTest(CommandsTest):
     def test_patch_collection_delegate_methods(self):

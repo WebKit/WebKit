@@ -2,6 +2,26 @@
 
         Reviewed by Adam Barth.
 
+        commit-queue and EWS bots should report all failures
+        https://bugs.webkit.org/show_bug.cgi?id=41820
+
+        Right now commit-queue/EWS only report failures when the
+        patch under testing fails.  We should report all failures
+        to the status server so that we can diagnose when the bots
+        are wedged w/o needing to log into the machines.
+
+        I also reduced the amount of data we upload since we've seen
+        timeouts during status upload.
+
+        * Scripts/webkitpy/common/system/executive.py:
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        * Scripts/webkitpy/tool/commands/queues.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+
+2010-08-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
         Remove HTML5 parser testing infrastructure now that we don't need it
         https://bugs.webkit.org/show_bug.cgi?id=44581
 
