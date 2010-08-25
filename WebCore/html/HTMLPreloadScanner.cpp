@@ -31,6 +31,7 @@
 #include "CSSHelper.h"
 #include "DocLoader.h"
 #include "Document.h"
+#include "HTMLTokenizer.h"
 #include "HTMLTreeBuilder.h"
 #include "HTMLLinkElement.h"
 #include "HTMLNames.h"

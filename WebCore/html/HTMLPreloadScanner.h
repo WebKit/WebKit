@@ -28,7 +28,6 @@
 #define HTMLPreloadScanner_h
 
 #include "CSSPreloadScanner.h"
-#include "HTMLTokenizer.h"
 #include "HTMLToken.h"
 #include "SegmentedString.h"
 #include <wtf/Noncopyable.h>
@@ -37,6 +36,7 @@ namespace WebCore {
 
 class Document;
 class HTMLToken;
+class HTMLTokenizer;
 class SegmentedString;
 
 class HTMLPreloadScanner : public Noncopyable {

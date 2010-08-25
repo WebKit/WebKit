@@ -1,3 +1,15 @@
+2010-08-24  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove unneeded include in HTMLPreloadScanner
+        https://bugs.webkit.org/show_bug.cgi?id=44552
+
+        Slowly but steadily sweeping up the dust in the HTML parser.
+
+        * html/HTMLPreloadScanner.cpp:
+        * html/HTMLPreloadScanner.h:
+
 2010-08-24  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by Dumitru Daniliuc.
