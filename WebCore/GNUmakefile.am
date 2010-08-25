@@ -2994,12 +2994,12 @@ webcore_sources += \
 endif # END ENABLE_DOM_STORAGE
 
 # ----
-# HTML5 FileSystem API support
+# FileSystem API support
 # ----
 if ENABLE_FILE_SYSTEM
+
 FEATURE_DEFINES += ENABLE_FILE_SYSTEM=1
 webcore_cppflags += -DENABLE_FILE_SYSTEM=1
-endif # END ENABLE_FILE_SYSTEM
 
 webcore_built_sources += \
        DerivedSources/WebCore/JSDirectoryEntry.cpp \
@@ -3034,6 +3034,8 @@ webcore_sources += \
        WebCore/storage/DirectoryEntry.h \
        WebCore/storage/DirectoryReader.cpp \
        WebCore/storage/DirectoryReader.h \
+       WebCore/storage/DOMFilePath.cpp \
+       WebCore/storage/DOMFilePath.h \
        WebCore/storage/DOMFileSystem.cpp \
        WebCore/storage/DOMFileSystem.h \
        WebCore/storage/EntriesCallback.h \
@@ -3051,6 +3053,8 @@ webcore_sources += \
        WebCore/storage/Flags.h \
        WebCore/storage/Metadata.h \
        WebCore/storage/MetadataCallback.h
+
+endif # END ENABLE_FILE_SYSTEM
 
 # ----
 # Speech Input API support

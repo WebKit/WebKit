@@ -2382,11 +2382,19 @@
 		85FF315A0AAFBFCB00374F38 /* DOMKeyboardEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 85FF31580AAFBFCB00374F38 /* DOMKeyboardEvent.h */; };
 		85FF315B0AAFBFCB00374F38 /* DOMKeyboardEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = 85FF31590AAFBFCB00374F38 /* DOMKeyboardEvent.mm */; };
 		86243D0111BC31F700CC006A /* JSArrayBufferViewHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 86243D0011BC31F700CC006A /* JSArrayBufferViewHelper.h */; };
+		8947A82912222C4700D95F2D /* JSMetadata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8947A82512222C4700D95F2D /* JSMetadata.cpp */; };
+		8947A82A12222C4700D95F2D /* JSMetadata.h in Headers */ = {isa = PBXBuildFile; fileRef = 8947A82612222C4700D95F2D /* JSMetadata.h */; };
+		8947A82B12222C4700D95F2D /* JSMetadataCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8947A82712222C4700D95F2D /* JSMetadataCallback.cpp */; };
+		8947A82C12222C4700D95F2D /* JSMetadataCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 8947A82812222C4700D95F2D /* JSMetadataCallback.h */; };
+		8947A83C122234F400D95F2D /* Metadata.h in Headers */ = {isa = PBXBuildFile; fileRef = 897A2D73120001440082740C /* Metadata.h */; };
+		8947A83D122234F900D95F2D /* MetadataCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 897A2D75120001440082740C /* MetadataCallback.h */; };
 		8952535211641B3400CABF00 /* FileThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8952535011641B3400CABF00 /* FileThread.cpp */; };
 		8952535311641B3400CABF00 /* FileThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 8952535111641B3400CABF00 /* FileThread.h */; };
 		895253DC116C4EF500CABF00 /* FileStreamProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 895253DA116C4EF500CABF00 /* FileStreamProxy.cpp */; };
 		895253DD116C4EF500CABF00 /* FileStreamProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 895253DB116C4EF500CABF00 /* FileStreamProxy.h */; };
 		895253DF116C4F0600CABF00 /* FileThreadTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 895253DE116C4F0600CABF00 /* FileThreadTask.h */; };
+		89686C9F122244A00076EAA4 /* DOMFilePath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 89686C9D122244A00076EAA4 /* DOMFilePath.cpp */; };
+		89686CA0122244A00076EAA4 /* DOMFilePath.h in Headers */ = {isa = PBXBuildFile; fileRef = 89686C9E122244A00076EAA4 /* DOMFilePath.h */; };
 		8988E10E11A3508B00DB732E /* BlobItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8988E10C11A3508B00DB732E /* BlobItem.cpp */; };
 		8988E10F11A3508B00DB732E /* BlobItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 8988E10D11A3508B00DB732E /* BlobItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		899ABC261215E4A300F9F219 /* DirectoryEntry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 899ABC201215E4A300F9F219 /* DirectoryEntry.cpp */; };
@@ -8242,11 +8250,17 @@
 		85FF31580AAFBFCB00374F38 /* DOMKeyboardEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMKeyboardEvent.h; sourceTree = "<group>"; };
 		85FF31590AAFBFCB00374F38 /* DOMKeyboardEvent.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMKeyboardEvent.mm; sourceTree = "<group>"; };
 		86243D0011BC31F700CC006A /* JSArrayBufferViewHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSArrayBufferViewHelper.h; sourceTree = "<group>"; };
+		8947A82512222C4700D95F2D /* JSMetadata.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMetadata.cpp; sourceTree = "<group>"; };
+		8947A82612222C4700D95F2D /* JSMetadata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMetadata.h; sourceTree = "<group>"; };
+		8947A82712222C4700D95F2D /* JSMetadataCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMetadataCallback.cpp; sourceTree = "<group>"; };
+		8947A82812222C4700D95F2D /* JSMetadataCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMetadataCallback.h; sourceTree = "<group>"; };
 		8952535011641B3400CABF00 /* FileThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileThread.cpp; sourceTree = "<group>"; };
 		8952535111641B3400CABF00 /* FileThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileThread.h; sourceTree = "<group>"; };
 		895253DA116C4EF500CABF00 /* FileStreamProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileStreamProxy.cpp; sourceTree = "<group>"; };
 		895253DB116C4EF500CABF00 /* FileStreamProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileStreamProxy.h; sourceTree = "<group>"; };
 		895253DE116C4F0600CABF00 /* FileThreadTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileThreadTask.h; sourceTree = "<group>"; };
+		89686C9D122244A00076EAA4 /* DOMFilePath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMFilePath.cpp; sourceTree = "<group>"; };
+		89686C9E122244A00076EAA4 /* DOMFilePath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMFilePath.h; sourceTree = "<group>"; };
 		897A2D1911FF58A50082740C /* DOMFileSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMFileSystem.cpp; sourceTree = "<group>"; };
 		897A2D1A11FF58A50082740C /* DOMFileSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMFileSystem.h; sourceTree = "<group>"; };
 		897A2D1B11FF58A50082740C /* DOMFileSystem.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMFileSystem.idl; sourceTree = "<group>"; };
@@ -11592,6 +11606,8 @@
 				899ABC231215E4A300F9F219 /* DirectoryReader.cpp */,
 				899ABC241215E4A300F9F219 /* DirectoryReader.h */,
 				899ABC251215E4A300F9F219 /* DirectoryReader.idl */,
+				89686C9D122244A00076EAA4 /* DOMFilePath.cpp */,
+				89686C9E122244A00076EAA4 /* DOMFilePath.h */,
 				897A2D1911FF58A50082740C /* DOMFileSystem.cpp */,
 				897A2D1A11FF58A50082740C /* DOMFileSystem.h */,
 				897A2D1B11FF58A50082740C /* DOMFileSystem.idl */,
@@ -15150,6 +15166,10 @@
 				C585A67B11D4FB07004C3E4B /* JSIDBSuccessEvent.h */,
 				B656626F120B1227006EA85C /* JSIDBTransaction.cpp */,
 				B656626E120B1227006EA85C /* JSIDBTransaction.h */,
+				8947A82512222C4700D95F2D /* JSMetadata.cpp */,
+				8947A82612222C4700D95F2D /* JSMetadata.h */,
+				8947A82712222C4700D95F2D /* JSMetadataCallback.cpp */,
+				8947A82812222C4700D95F2D /* JSMetadataCallback.h */,
 				514C76350CE9225E007EF3CD /* JSSQLError.cpp */,
 				BC8243250D0CE8A200460C8F /* JSSQLError.h */,
 				B525A96411CA2340003A23A8 /* JSSQLException.cpp */,
@@ -20361,6 +20381,11 @@
 				CE057FA61220731100A476D5 /* DocumentMarkerController.h in Headers */,
 				9F0D6B2F121BFEBA006C0288 /* InspectorProfilerAgent.h in Headers */,
 				2EB4BCD3121F03E300EC4885 /* BlobResourceHandle.h in Headers */,
+				89686CA0122244A00076EAA4 /* DOMFilePath.h in Headers */,
+				8947A82A12222C4700D95F2D /* JSMetadata.h in Headers */,
+				8947A82C12222C4700D95F2D /* JSMetadataCallback.h in Headers */,
+				8947A83C122234F400D95F2D /* Metadata.h in Headers */,
+				8947A83D122234F900D95F2D /* MetadataCallback.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -22816,6 +22841,9 @@
 				CE057FA51220731100A476D5 /* DocumentMarkerController.cpp in Sources */,
 				9F0D6B2E121BFEBA006C0288 /* InspectorProfilerAgent.cpp in Sources */,
 				2EB4BCD2121F03E300EC4885 /* BlobResourceHandle.cpp in Sources */,
+				89686C9F122244A00076EAA4 /* DOMFilePath.cpp in Sources */,
+				8947A82912222C4700D95F2D /* JSMetadata.cpp in Sources */,
+				8947A82B12222C4700D95F2D /* JSMetadataCallback.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

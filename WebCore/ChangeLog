@@ -1,3 +1,21 @@
+2010-08-24  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by Dumitru Daniliuc.
+
+        Implement virtual path utilities for FileSystem API
+        https://bugs.webkit.org/show_bug.cgi?id=44132
+
+        No new tests; tests will be added later. (Each DOMFilePath's method is briefly tested locally.)
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * storage/DOMFilePath.cpp: Added.
+        * storage/DOMFilePath.h: Added.
+
 2010-08-24  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
@@ -1199,7 +1217,6 @@
 
         * html/HTMLTreeBuilder.cpp:
 
->>>>>>> .r65945
 2010-08-23  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

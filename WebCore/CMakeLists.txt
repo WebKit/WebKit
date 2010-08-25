@@ -1459,6 +1459,7 @@ SET(WebCore_SOURCES
     storage/DatabaseTracker.cpp
     storage/DirectoryEntry.cpp
     storage/DirectoryReader.cpp
+    storage/DOMFilePath.cpp
     storage/DOMFileSystem.cpp
     storage/Entry.cpp
     storage/EntryArray.cpp

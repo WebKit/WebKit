@@ -2585,6 +2585,7 @@ contains(DEFINES, ENABLE_FILE_SYSTEM=1) {
     HEADERS += \
         storage/DirectoryEntry.h \
         storage/DirectoryReader.h \
+        storage/DOMFilePath.h \
         storage/DOMFileSystem.h \
         storage/EntriesCallback.h \
         storage/Entry.h \
@@ -2601,6 +2602,7 @@ contains(DEFINES, ENABLE_FILE_SYSTEM=1) {
     SOURCES += \
         storage/DirectoryEntry.cpp \
         storage/DirectoryReader.cpp \
+        storage/DOMFilePath.cpp \
         storage/DOMFileSystem.cpp \
         storage/Entry.cpp \
         storage/EntryArray.cpp \

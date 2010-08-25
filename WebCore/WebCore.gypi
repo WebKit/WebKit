@@ -3558,6 +3558,8 @@
             'storage/DirectoryEntry.h',
             'storage/DirectoryReader.cpp',
             'storage/DirectoryReader.h',
+            'storage/DOMFilePath.cpp',
+            'storage/DOMFilePath.h',
             'storage/DOMFileSystem.cpp',
             'storage/DOMFileSystem.h',
             'storage/EntriesCallback.h',

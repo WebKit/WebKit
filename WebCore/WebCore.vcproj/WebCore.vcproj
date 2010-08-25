@@ -51165,6 +51165,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\storage\DOMFilePath.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\DOMFilePath.h"
+				>
+			</File>
+			<File
 				RelativePath="..\storage\DOMFileSystem.cpp"
 				>
 			</File>
