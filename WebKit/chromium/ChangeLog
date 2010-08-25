@@ -1,3 +1,18 @@
+2010-08-24  Jian Li  <jianli@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] WebBlobRegistry cleanup.
+        https://bugs.webkit.org/show_bug.cgi?id=44571
+
+        Remove unneeded method from WebBlobRegistry interface.
+        Also remove unneeded WebBlobRegistryImpl.* files. They're already
+        excluded from gyp files.
+
+        * public/WebBlobRegistry.h:
+        * src/WebBlobRegistryImpl.cpp: Removed.
+        * src/WebBlobRegistryImpl.h: Removed.
+
 2010-08-24  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Dimitri Glazkov.

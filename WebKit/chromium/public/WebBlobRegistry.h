@@ -51,7 +51,6 @@ public:
     virtual void registerBlobURL(const WebURL&, const WebURL& srcURL) = 0;
 
     virtual void unregisterBlobURL(const WebURL&) = 0;
-    virtual WebBlobStorageData getBlobDataFromURL(const WebURL&) = 0;
 };
 
 } // namespace WebKit
