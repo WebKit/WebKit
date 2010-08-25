@@ -2656,7 +2656,6 @@ BUGWK38705 : http/tests/security/sandbox-inherit-to-initial-document-2.html = TE
 // WebKit roll 58791:58807
 BUG43319 MAC : transforms/2d/zoom-menulist.html = IMAGE PASS
 BUG43319 MAC : fast/forms/select-empty-option-height.html = TIMEOUT IMAGE PASS
-BUG43319 WIN LINUX : http/tests/loading/307-after-303-after-post.html = TEXT PASS
 BUG43319 WIN LINUX : http/tests/loading/bad-server-subframe.html = TEXT PASS
 
 BUG43496 LINUX : svg/custom/repaint-stroke-width-changes.svg = IMAGE PASS
