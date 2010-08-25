@@ -1,3 +1,40 @@
+2010-08-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Flash content draws in front of site's drop down menu at http://www.monster.com/
+        https://bugs.webkit.org/show_bug.cgi?id=41330
+        
+        If an iframe with composited content became overlapped, we failed to
+        consider that iframe for compositing if it had no RenderLayer, so the layering
+        would be incorrect.
+        
+        Overlap is detected at painting time, but it's bad for FrameView::setIsOverlapped()
+        to call setNeedsStyleRecalc(), because this would cause subsequent calls to
+        FrameView::paintContents() in the same painting batch to bail with needsLayout().
+        
+        Instead, we do the setNeedsStyleRecalc() from RenderLayerCompositor::notifyIFramesOfCompositingChange(),
+        so that the parent document has a chance to update style, and give the iframe a RenderLayer.
+        Then setIsOverlapped() simply needs to schedule a layer update, which we do on a timer.
+        
+        When dumping layers via Frame::layerTreeAsText(), if a layer update is pending, then
+        update the layers.
+        
+        Test: compositing/iframes/become-overlapped-iframe.html
+
+        * page/Frame.cpp:
+        (WebCore::Frame::layerTreeAsText):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setIsOverlapped):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::RenderLayerCompositor):
+        (WebCore::RenderLayerCompositor::scheduleCompositingLayerUpdate):
+        (WebCore::RenderLayerCompositor::compositingLayerUpdatePending):
+        (WebCore::RenderLayerCompositor::updateCompositingLayersTimerFired):
+        (WebCore::RenderLayerCompositor::updateCompositingLayers):
+        (WebCore::RenderLayerCompositor::notifyIFramesOfCompositingChange):
+        * rendering/RenderLayerCompositor.h:
+
 2010-08-25  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.

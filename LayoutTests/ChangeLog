@@ -1,3 +1,15 @@
+2010-08-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Flash content draws in front of site's drop down menu at http://www.monster.com/
+        https://bugs.webkit.org/show_bug.cgi?id=41330
+        
+        Testcase with a non-layered iframe that gets overlapped dynamically.
+
+        * compositing/iframes/become-overlapped-iframe-expected.txt: Added.
+        * compositing/iframes/become-overlapped-iframe.html: Added.
+
 2010-08-24  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Alexey Proskuryakov.

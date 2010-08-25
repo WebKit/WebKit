@@ -991,6 +991,7 @@ bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect
     return false;
 }
 
+// Note that this gets called at painting time.
 void FrameView::setIsOverlapped(bool isOverlapped)
 {
     if (isOverlapped == m_isOverlapped)
@@ -1001,10 +1002,15 @@ void FrameView::setIsOverlapped(bool isOverlapped)
     
 #if USE(ACCELERATED_COMPOSITING)
     // Overlap can affect compositing tests, so if it changes, we need to trigger
-    // a recalcStyle in the parent document.
+    // a layer update in the parent document.
     if (hasCompositedContent()) {
-        if (Element* ownerElement = m_frame->document()->ownerElement())
-            ownerElement->setNeedsStyleRecalc(SyntheticStyleChange);
+        if (Frame* parentFrame = m_frame->tree()->parent()) {
+            if (RenderView* parentView = parentFrame->contentRenderer()) {
+                RenderLayerCompositor* compositor = parentView->compositor();
+                compositor->setCompositingLayersNeedRebuild();
+                compositor->scheduleCompositingLayerUpdate();
+            }
+        }
     }
 #endif    
 }
