@@ -1,5 +1,25 @@
 2010-08-24  Dirk Pranke  <dpranke@chromium.org>
 
+        Reviewed by Ojan Vafai.
+
+        new-run-webkit-tests: clean up code for test_types, test_failures
+
+        Add a bunch of unit tests for webkitpy.layout_tests.test_types and
+        webkitpy.layout_tests.layout_package.test_failures, and remove
+        some dead code and otherwise clean up things.
+
+        https://bugs.webkit.org/show_bug.cgi?id=44559
+
+        * Scripts/webkitpy/layout_tests/layout_package/test_failures.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_failures_unittest.py: Added.
+        * Scripts/webkitpy/layout_tests/rebaseline_chromium_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/test_types/image_diff.py:
+        * Scripts/webkitpy/layout_tests/test_types/test_type_base.py:
+        * Scripts/webkitpy/layout_tests/test_types/test_type_base_unittest.py: Added.
+        * Scripts/webkitpy/layout_tests/test_types/text_diff.py:
+
+2010-08-24  Dirk Pranke  <dpranke@chromium.org>
+
         Reviewed by Eric Seidel.
 
         new-run-webkit-tests: revise unit testing strategy for test failures

@@ -66,12 +66,8 @@ class ImageDiff(test_type_base.TestTypeBase):
         self._make_output_directory(test_filename)
         dest_image = self.output_filename(test_filename, extension)
 
-        try:
+        if os.path.exists(source_image):
             shutil.copyfile(source_image, dest_image)
-        except IOError, e:
-            # A missing expected PNG has already been recorded as an error.
-            if errno.ENOENT != e.errno:
-                raise
 
     def _save_baseline_files(self, filename, png_path, checksum,
                              generate_new_baseline):
@@ -107,20 +103,8 @@ class ImageDiff(test_type_base.TestTypeBase):
         expected_filename = self.output_filename(filename,
           self.FILENAME_SUFFIX_EXPECTED + '.png')
 
-        result = True
-        try:
-            _compare_available = True
-            result = port.diff_image(expected_filename, actual_filename,
-                                     diff_filename)
-        except ValueError:
-            _compare_available = False
-
-        global _compare_msg_printed
-        if not _compare_available and not _compare_msg_printed:
-            _compare_msg_printed = True
-            print('image_diff not found. Make sure you have a ' +
-                  configuration + ' build of the image_diff executable.')
-
+        result = port.diff_image(expected_filename, actual_filename,
+                                 diff_filename)
         return result
 
     def compare_output(self, port, filename, output, test_args, configuration):
@@ -145,14 +129,10 @@ class ImageDiff(test_type_base.TestTypeBase):
         expected_png_file = self._port.expected_filename(filename, '.png')
 
         # FIXME: We repeat this pattern often, we should share code.
-        try:
+        expected_hash = ''
+        if os.path.exists(expected_hash_file):
             with codecs.open(expected_hash_file, "r", "ascii") as file:
                 expected_hash = file.read()
-        except IOError, e:
-            if errno.ENOENT != e.errno:
-                raise
-            expected_hash = ''
-
 
         if not os.path.isfile(expected_png_file):
             # Report a missing expected PNG file.
@@ -161,7 +141,7 @@ class ImageDiff(test_type_base.TestTypeBase):
                                     encoding="ascii",
                                     print_text_diffs=False)
             self._copy_output_png(filename, test_args.png_path, '-actual.png')
-            failures.append(test_failures.FailureMissingImage(self))
+            failures.append(test_failures.FailureMissingImage())
             return failures
         elif test_args.hash == expected_hash:
             # Hash matched (no diff needed, okay to return).
@@ -178,26 +158,11 @@ class ImageDiff(test_type_base.TestTypeBase):
         # still need to call CreateImageDiff for other codepaths.
         images_are_different = self._create_image_diff(port, filename, configuration)
         if expected_hash == '':
-            failures.append(test_failures.FailureMissingImageHash(self))
+            failures.append(test_failures.FailureMissingImageHash())
         elif test_args.hash != expected_hash:
             if images_are_different:
-                failures.append(test_failures.FailureImageHashMismatch(self))
+                failures.append(test_failures.FailureImageHashMismatch())
             else:
-                failures.append(test_failures.FailureImageHashIncorrect(self))
+                failures.append(test_failures.FailureImageHashIncorrect())
 
         return failures
-
-    def diff_files(self, port, file1, file2):
-        """Diff two image files exactly.
-
-        Args:
-          file1, file2: full paths of the files to compare.
-
-        Returns:
-          True if two files are different.
-          False otherwise.
-        """
-        try:
-            return port.diff_image(file1, file2, None, 0)
-        except ValueError, e:
-            return True

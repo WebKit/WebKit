@@ -63,8 +63,6 @@ import webkitpy.common.checkout.scm as scm
 
 import port
 from layout_package import test_expectations
-from test_types import image_diff
-from test_types import text_diff
 
 _log = logging.getLogger("webkitpy.layout_tests."
                          "rebaseline_chromium_webkit_tests")
@@ -549,11 +547,13 @@ class Rebaseliner(object):
             return True
 
         if ext1 == '.PNG':
-            return image_diff.ImageDiff(self._port,
-               '').diff_files(self._port, file1, file2)
+            return self._port.diff_image(file1, file2)
         else:
-            return text_diff.TestTextDiff(self._port,
-                '').diff_files(self._port, file1, file2)
+            with codecs.open(file1, "r", "utf8") as file_handle1:
+                output1 = file_handle1.read()
+            with codecs.open(file2, "r", "utf8") as file_handle2:
+                output2 = file_handle2.read()
+            return self._port.compare_text(output1, output2)
 
     def _delete_baseline(self, filename):
         """Remove the file from repository and delete it from disk.

@@ -65,17 +65,15 @@ class TestTextDiff(test_type_base.TestTypeBase):
 
     def _get_normalized_text(self, filename):
         # FIXME: We repeat this pattern often, we should share code.
-        try:
-            # NOTE: -expected.txt files are ALWAYS utf-8.  However,
-            # we do not decode the output from DRT, so we should not
-            # decode the -expected.txt values either to allow comparisons.
-            with codecs.open(filename, "r", encoding=None) as file:
-                text = file.read()
-                # We could assert that the text is valid utf-8.
-        except IOError, e:
-            if errno.ENOENT != e.errno:
-                raise
+        if not os.path.exists(filename):
             return ''
+
+        # NOTE: -expected.txt files are ALWAYS utf-8.  However,
+        # we do not decode the output from DRT, so we should not
+        # decode the -expected.txt values either to allow comparisons.
+        with codecs.open(filename, "r", encoding=None) as file:
+            text = file.read()
+            # We could assert that the text is valid utf-8.
 
         # Normalize line endings
         return text.strip("\r\n").replace("\r\n", "\n") + "\n"
@@ -106,22 +104,8 @@ class TestTextDiff(test_type_base.TestTypeBase):
                                     print_text_diffs=True)
 
             if expected == '':
-                failures.append(test_failures.FailureMissingResult(self))
+                failures.append(test_failures.FailureMissingResult())
             else:
-                failures.append(test_failures.FailureTextMismatch(self, True))
+                failures.append(test_failures.FailureTextMismatch(True))
 
         return failures
-
-    def diff_files(self, port, file1, file2):
-        """Diff two text files.
-
-        Args:
-          file1, file2: full paths of the files to compare.
-
-        Returns:
-          True if two files are different.
-          False otherwise.
-        """
-
-        return port.compare_text(self._get_normalized_text(file1),
-                                 self._get_normalized_text(file2))
