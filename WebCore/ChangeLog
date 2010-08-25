@@ -1,3 +1,14 @@
+2010-08-25  Dawit Alemayehu  <adawit@kde.org>
+
+        Reviewed by Ariya Hidayat.
+
+        Proper workaround for missing Gtk initialization in Adobe's flash plugins.
+        https://bugs.webkit.org/show_bug.cgi?id=44405
+
+        * plugins/qt/PluginPackageQt.cpp:
+        (WebCore::initializeGtk):
+        (WebCore::PluginPackage::load):
+
 2010-08-25  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.
