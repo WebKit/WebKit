@@ -79,7 +79,6 @@ static String protectionSpaceMapKeyFromURL(const KURL& url)
         ASSERT(index != notFound);
         directoryURL = directoryURL.substring(0, (index != directoryURLPathStart) ? index : directoryURLPathStart + 1);
     }
-    ASSERT(directoryURL.length() == directoryURLPathStart + 1 || directoryURL[directoryURL.length() - 1] != '/');
 
     return directoryURL;
 }

@@ -1,3 +1,18 @@
+2010-08-25  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=44461
+        Assertion failure at WebCore/platform/network/CredentialStorage.cpp:85.
+
+        Remove the assertion at CredentialStorage.cpp:85 since it is legal to have
+        multiple forward slashes after the path component.
+
+        No test needed.
+
+        * platform/network/CredentialStorage.cpp:
+        (WebCore::protectionSpaceMapKeyFromURL):
+
 2010-08-25  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.
