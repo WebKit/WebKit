@@ -87,7 +87,7 @@ void HTMLViewSourceParser::updateTokenizerState()
         return;
 
     AtomicString tagName(m_token.name().data(), m_token.name().size());
-    m_tokenizer->setState(HTMLTreeBuilder::adjustedLexerState(m_tokenizer->state(), tagName, m_document->frame()));
+    m_tokenizer->setState(HTMLTreeBuilder::adjustedLexerState(m_tokenizer->state(), tagName, document()->frame()));
     if (tagName == HTMLNames::scriptTag) {
         // The tree builder handles scriptTag separately from the other tokenizer
         // state adjustments, so we need to handle it separately too.

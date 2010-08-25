@@ -1,3 +1,19 @@
+2010-08-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        XMLDocumentParser needs to implement DocumentParser::detach()
+        https://bugs.webkit.org/show_bug.cgi?id=44533
+
+        Added a test which uses an image as an SVG font (decoding errors galore).
+
+        XML versions of one of the tests from
+        http://trac.webkit.org/changeset/65692
+
+        * fast/css/font-face-svg-decoding-error.html: Added.
+        * fast/frames/resources/set-src-to-javascript-url.xhtml: Added.
+        * fast/frames/set-parent-src-synchronously.xhtml: Added.
+
 2010-08-24  Dumitru Daniliuc  <dumi@chromium.org>
 
         Unreviewed, updating a chromium-linux expectation.

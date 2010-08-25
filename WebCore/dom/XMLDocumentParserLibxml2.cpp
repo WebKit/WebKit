@@ -621,13 +621,18 @@ XMLParserContext::~XMLParserContext()
 
 XMLDocumentParser::~XMLDocumentParser()
 {
-    clearCurrentNodeStack();
+    // The XMLDocumentParser will always be detached before being destroyed.
+    ASSERT(m_currentNodeStack.isEmpty());
+    ASSERT(!m_currentNode);
+
+    // FIXME: m_pendingScript handling should be moved into XMLDocumentParser.cpp!
     if (m_pendingScript)
         m_pendingScript->removeClient(this);
 }
 
 void XMLDocumentParser::doWrite(const String& parseString)
 {
+    ASSERT(!isDetached());
     if (!m_context)
         initializeParserContext();
 
@@ -636,6 +641,10 @@ void XMLDocumentParser::doWrite(const String& parseString)
 
     // libXML throws an error if you try to switch the encoding for an empty string.
     if (parseString.length()) {
+        // JavaScript may cause the parser to detach during xmlParseChunk
+        // keep this alive until this function is done.
+        RefPtr<XMLDocumentParser> protect(this);
+
         // Hack around libxml2's lack of encoding overide support by manually
         // resetting the encoding to UTF-16 before every chunk.  Otherwise libxml
         // will detect <?xml version="1.0" encoding="<encoding name>"?> blocks
@@ -646,14 +655,18 @@ void XMLDocumentParser::doWrite(const String& parseString)
 
         XMLDocumentParserScope scope(document()->docLoader());
         xmlParseChunk(context->context(), reinterpret_cast<const char*>(parseString.characters()), sizeof(UChar) * parseString.length(), 0);
+
+        // JavaScript (which may be run under the xmlParseChunk callstack) may
+        // cause the parser to be stopped or detached.
+        if (isDetached() || m_parserStopped)
+            return;
     }
 
+    // FIXME: Why is this here?  And why is it after we process the passed source?
     if (document()->decoder() && document()->decoder()->sawError()) {
         // If the decoder saw an error, report it as fatal (stops parsing)
         handleError(fatal, "Encoding error", context->context()->input->line, context->context()->input->col);
     }
-
-    return;
 }
 
 static inline String toString(const xmlChar* str, unsigned len)
@@ -860,6 +873,13 @@ void XMLDocumentParser::endElementNs()
     else
 #endif
     {
+        // FIXME: Script execution should be shared should be shared between
+        // the libxml2 and Qt XMLDocumentParser implementations.
+
+        // JavaScript can detach the parser.  Make sure this is not released
+        // before the end of this method.
+        RefPtr<XMLDocumentParser> protect(this);
+
         String scriptHref = scriptElement->sourceAttributeValue();
         if (!scriptHref.isEmpty()) {
             // we have a src attribute
@@ -876,6 +896,10 @@ void XMLDocumentParser::endElementNs()
                 m_scriptElement = 0;
         } else
             m_view->frame()->script()->executeScript(ScriptSourceCode(scriptElement->scriptContent(), document()->url(), m_scriptStartLine));
+
+        // JavaScript may have detached the parser
+        if (isDetached())
+            return;
     }
     m_requestingScript = false;
     popCurrentNode();
@@ -1354,6 +1378,7 @@ void XMLDocumentParser::stopParsing()
 
 void XMLDocumentParser::resumeParsing()
 {
+    ASSERT(!isDetached());
     ASSERT(m_parserPaused);
 
     m_parserPaused = false;

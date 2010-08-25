@@ -132,7 +132,7 @@ void XMLDocumentParser::append(const SegmentedString& s)
     if (m_sawXSLTransform || !m_sawFirstElement)
         m_originalSourceForTransform += parseString;
 
-    if (m_parserStopped || m_sawXSLTransform)
+    if (isDetached() || m_parserStopped || m_sawXSLTransform)
         return;
 
     if (m_parserPaused) {
@@ -209,6 +209,12 @@ void XMLDocumentParser::exitText()
         m_currentNode->attach();
 
     popCurrentNode();
+}
+
+void XMLDocumentParser::detach()
+{
+    clearCurrentNodeStack();
+    ScriptableDocumentParser::detach();
 }
 
 void XMLDocumentParser::end()
@@ -346,6 +352,9 @@ void XMLDocumentParser::notifyFinished(CachedResource* unusedResource)
     ScriptElement* scriptElement = toScriptElement(e.get());
     ASSERT(scriptElement);
 
+    // JavaScript can detach this parser, make sure it's kept alive even if detached.
+    RefPtr<XMLDocumentParser> protect(this);
+    
     if (errorOccurred)
         scriptElement->dispatchErrorEvent();
     else {
@@ -355,7 +364,7 @@ void XMLDocumentParser::notifyFinished(CachedResource* unusedResource)
 
     m_scriptElement = 0;
 
-    if (!m_requestingScript)
+    if (!isDetached() && !m_requestingScript)
         resumeParsing();
 }
 

@@ -193,7 +193,7 @@ bool HTMLDocumentParser::runScriptsForPausedTreeBuilder()
 
 void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
 {
-    ASSERT(m_document);
+    ASSERT(!isDetached());
     ASSERT(!m_parserStopped);
     ASSERT(!m_treeBuilder->isPaused());
     ASSERT(!isScheduledForResume());
@@ -214,7 +214,7 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
         m_token.clear();
 
         // JavaScript may have stopped or detached the parser.
-        if (!m_document || m_parserStopped)
+        if (isDetached() || m_parserStopped)
             return;
 
         // The parser will pause itself when waiting on a script to load or run.
@@ -226,7 +226,7 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
         m_treeBuilder->setPaused(!shouldContinueParsing);
 
         // JavaScript may have stopped or detached the parser.
-        if (!m_document || m_parserStopped)
+        if (isDetached() || m_parserStopped)
             return;
 
         if (!shouldContinueParsing)
@@ -240,7 +240,7 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
     if (isWaitingForScripts()) {
         ASSERT(m_tokenizer->state() == HTMLTokenizer::DataState);
         if (!m_preloadScanner) {
-            m_preloadScanner.set(new HTMLPreloadScanner(m_document));
+            m_preloadScanner.set(new HTMLPreloadScanner(document()));
             m_preloadScanner->appendToEnd(m_input.current());
         }
         m_preloadScanner->scan();
@@ -255,7 +255,7 @@ void HTMLDocumentParser::willPumpLexer()
     // FIXME: m_input.current().length() is only accurate if we
     // end up parsing the whole buffer in this pump.  We should pass how
     // much we parsed as part of didWriteHTML instead of willWriteHTML.
-    if (InspectorTimelineAgent* timelineAgent = m_document->inspectorTimelineAgent())
+    if (InspectorTimelineAgent* timelineAgent = document()->inspectorTimelineAgent())
         timelineAgent->willWriteHTML(m_input.current().length(), m_tokenizer->lineNumber());
 #endif
 }
@@ -263,7 +263,7 @@ void HTMLDocumentParser::willPumpLexer()
 void HTMLDocumentParser::didPumpLexer()
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorTimelineAgent* timelineAgent = m_document->inspectorTimelineAgent())
+    if (InspectorTimelineAgent* timelineAgent = document()->inspectorTimelineAgent())
         timelineAgent->didWriteHTML(m_tokenizer->lineNumber());
 #endif
 }
@@ -325,7 +325,7 @@ void HTMLDocumentParser::append(const SegmentedString& source)
 
 void HTMLDocumentParser::end()
 {
-    ASSERT(m_document);
+    ASSERT(!isDetached());
     ASSERT(!isScheduledForResume());
 
     // pumpTokenizer can cause this parser to be detached from the Document,
@@ -355,7 +355,7 @@ void HTMLDocumentParser::attemptToEnd()
 void HTMLDocumentParser::endIfDelayed()
 {
     // If we've already been detached, don't bother ending.
-    if (!m_document)
+    if (isDetached())
         return;
 
     if (!m_endWasDelayed || shouldDelayEnd())
@@ -491,7 +491,7 @@ void HTMLDocumentParser::executeScriptsWaitingForStylesheets()
 
 ScriptController* HTMLDocumentParser::script() const
 {
-    return m_document->frame() ? m_document->frame()->script() : 0;
+    return document()->frame() ? document()->frame()->script() : 0;
 }
 
 void HTMLDocumentParser::parseDocumentFragment(const String& source, DocumentFragment* fragment, Element* contextElement, FragmentScriptingPermission scriptingPermission)

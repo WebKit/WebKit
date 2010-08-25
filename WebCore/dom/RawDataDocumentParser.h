@@ -39,8 +39,8 @@ protected:
 
     virtual void finish()
     {
-        if (!m_parserStopped)
-            m_document->finishedParsing();
+        if (!m_parserStopped && !isDetached())
+            document()->finishedParsing();
     }
 
 private:

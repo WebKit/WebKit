@@ -59,7 +59,7 @@ private:
     virtual void finish();
     virtual bool finishWasCalled();
 
-    HTMLViewSourceDocument* document() const { return static_cast<HTMLViewSourceDocument*>(m_document); }
+    HTMLViewSourceDocument* document() const { return static_cast<HTMLViewSourceDocument*>(DecodedDataDocumentParser::document()); }
 
     void pumpTokenizer();
     String sourceForToken();

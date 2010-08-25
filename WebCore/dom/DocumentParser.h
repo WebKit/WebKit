@@ -60,7 +60,9 @@ public:
     // used to implements it.
     virtual bool processingData() const { return false; }
 
-    Document* document() const { return m_document; }
+    // document() will return 0 after detach() is called.
+    Document* document() const { ASSERT(m_document); return m_document; }
+    bool isDetached() const { return !m_document; }
 
     // Document is expected to detach the parser before releasing its ref.
     // After detach, m_document is cleared.  The parser will unwind its
@@ -84,6 +86,7 @@ protected:
     // FIXME: m_document = 0 could be changed to mean "parser stopped".
     bool m_parserStopped;
 
+private:
     // Every DocumentParser needs a pointer back to the document.
     // m_document will be 0 after the parser is stopped.
     Document* m_document;

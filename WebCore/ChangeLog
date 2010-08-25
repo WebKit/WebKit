@@ -1,3 +1,56 @@
+2010-08-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        XMLDocumentParser needs to implement DocumentParser::detach()
+        https://bugs.webkit.org/show_bug.cgi?id=44533
+
+        Test: fast/frames/set-parent-src-synchronously.xhtml
+
+        In the example from the page we were accessing document()
+        after DocumentParser::detach() was called.  To prevent this
+        I added an ASSERT(m_document) to document(), causing many
+        test cases to cover the bug shown in bug 44533.
+
+        To fix the bug, I implemented XMLDocumentParser::detach()
+        and had it call clearCurrentNodeStack(), thus making
+        it impossible for XMLDocumentParser to still have the Document
+        on the node stack after detach (which was what was causing this bug).
+
+        While fixing this, I noticed that XMLDocumentParser may have the
+        same trouble crashing that the HTMLDocumentParser did when
+        synchronously deleted from JS (for example by an iframe navigation).
+        I added a test case to cover this and protected the parser after
+        the two places it executes scripts.
+
+        * dom/DocumentParser.h:
+        (WebCore::DocumentParser::document):
+        (WebCore::DocumentParser::isDetached):
+        * dom/RawDataDocumentParser.h:
+        (WebCore::RawDataDocumentParser::finish):
+        * dom/XMLDocumentParser.cpp:
+        (WebCore::XMLDocumentParser::append):
+        (WebCore::XMLDocumentParser::detach):
+        (WebCore::XMLDocumentParser::notifyFinished):
+        * dom/XMLDocumentParser.h:
+        * dom/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::doWrite):
+        (WebCore::XMLDocumentParser::endElementNs):
+        (WebCore::XMLDocumentParser::resumeParsing):
+        * html/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::pumpTokenizer):
+        (WebCore::HTMLDocumentParser::willPumpLexer):
+        (WebCore::HTMLDocumentParser::didPumpLexer):
+        (WebCore::HTMLDocumentParser::end):
+        (WebCore::HTMLDocumentParser::endIfDelayed):
+        (WebCore::HTMLDocumentParser::script):
+        * html/HTMLViewSourceParser.cpp:
+        (WebCore::HTMLViewSourceParser::updateTokenizerState):
+        * html/HTMLViewSourceParser.h:
+        (WebCore::HTMLViewSourceParser::document):
+        * loader/ImageDocument.cpp:
+        (WebCore::ImageDocumentParser::document):
+
 2010-08-24  Patrick Gansterer  <paroga@paroga.com>
 
         Reviewed by Adam Roben.
