@@ -1,3 +1,16 @@
+2010-08-24  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [DRT/Chromium] Fix 28 inspector test crashes
+        https://bugs.webkit.org/show_bug.cgi?id=44574
+
+        Reset DevToolsClient and DevToolsAgent before closing a DevTools
+        WebView in order to avoid accessing to a deleted WebView instance.
+
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::closeDevTools):
+
 2010-08-24  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Ojan Vafai.
