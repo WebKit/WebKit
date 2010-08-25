@@ -1,3 +1,13 @@
+2010-08-24  Adam Barth  <abarth@webkit.org>
+
+        Add http/tests/security/xssAuditor/dom-write-location-inline-event.html
+        to the Skipped list.  It's flaky after enabling the HTML5 fragment
+        parser.  I need to investigate.  However, I'm planning to redesign the
+        XSSAuditor to make use of the new parser, so it seems to make sense to
+        wait a bit.
+
+        * platform/mac/Skipped:
+
 2010-08-24  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Darin Adler.
