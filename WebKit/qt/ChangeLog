@@ -1,3 +1,14 @@
+2010-08-25  Leo Yang  <leo.yang@torchmobile.com.cn>
+
+        Reviewed by Simon Hausmann.
+
+        In FrameLoaderClientQt::createFrame we should call loadURLIntoChildFrame
+        with parent frame's loader instead of child frame's loader.
+        https://bugs.webkit.org/show_bug.cgi?id=43930
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::createFrame):
+
 2010-08-25  Gabor Loki  <loki@webkit.org>
 
         Reviewed by Gavin Barraclough.
