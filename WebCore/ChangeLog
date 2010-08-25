@@ -1,3 +1,9 @@
+2010-08-24  Gavin Barraclough  <barraclough@apple.com>
+
+        Windows build fix.
+
+        * ForwardingHeaders/wtf/DecimalNumber.h: Added.
+
 2010-08-23  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
