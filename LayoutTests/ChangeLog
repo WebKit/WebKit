@@ -1,3 +1,14 @@
+2010-08-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        HTML5 spec changed to coalesce text nodes even when they were not created by the parser
+        https://bugs.webkit.org/show_bug.cgi?id=44586
+
+        See http://www.w3.org/Bugs/Public/show_bug.cgi?id=10221 for more info.
+
+        * html5lib/resources/adoption01.dat:
+
 2010-08-24  Dumitru Daniliuc  <dumi@chromium.org>
 
         Unreviewed, Chromium's LayoutTestController does not implement markerTextForListItem() yet.

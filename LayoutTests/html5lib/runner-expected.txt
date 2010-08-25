@@ -105,32 +105,8 @@ resources/entities02.dat: PASS
 
 resources/comments01.dat: PASS
 
-resources/adoption01.dat:
-12
+resources/adoption01.dat: PASS
 
-Test 12 of 13 in resources/adoption01.dat failed. Input:
-<table>A<td>B</td>C</table>
-Got:
-| <html>
-|   <head>
-|   <body>
-|     "AC"
-|     <table>
-|       <tbody>
-|         <tr>
-|           <td>
-|             "B"
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     "A"
-|     "C"
-|     <table>
-|       <tbody>
-|         <tr>
-|           <td>
-|             "B"
 resources/adoption02.dat:
 2
 
