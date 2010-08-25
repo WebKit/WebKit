@@ -136,6 +136,11 @@ static bool findPlaceForCounter(RenderObject* counterOwner, const AtomicString& 
     RenderObject* currentRenderer = counterOwner->previousInPreOrder();
     previousSibling = 0;
     while (currentRenderer) {
+        // A sibling without a parent means that the counter node tree was not constructed correctly so we stop
+        // traversing. In the future RenderCounter should handle RenderObjects that are not connected to the
+        // render tree at counter node creation. See bug 43812.
+        if (previousSibling && !previousSibling->parent())
+            return false;
         CounterNode* currentCounter = makeCounterNode(currentRenderer, identifier, false);
         if (searchEndRenderer == currentRenderer) {
             // We may be at the end of our search.
