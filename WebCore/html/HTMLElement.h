@@ -89,11 +89,6 @@ protected:
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
     virtual void parseMappedAttribute(Attribute*);
 
-    static bool inEitherTagList(const Node*);
-    static bool inInlineTagList(const Node*);
-    static bool inBlockTagList(const Node*);
-    static bool isRecognizedTagName(const QualifiedName&);
-
     HTMLFormElement* findFormAncestor() const;
 
 private:

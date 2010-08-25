@@ -262,6 +262,32 @@ void HTMLObjectElement::renderFallbackContent()
     attach();
 }
 
+// FIXME: This should be removed, all callers are almost certainly wrong.
+static bool isRecognizedTagName(const QualifiedName& tagName)
+{
+    DEFINE_STATIC_LOCAL(HashSet<AtomicStringImpl*>, tagList, ());
+    if (tagList.isEmpty()) {
+        size_t tagCount = 0;
+        QualifiedName** tags = HTMLNames::getHTMLTags(&tagCount);
+        for (size_t i = 0; i < tagCount; i++) {
+            if (*tags[i] == bgsoundTag
+                || *tags[i] == commandTag
+                || *tags[i] == detailsTag
+                || *tags[i] == figcaptionTag
+                || *tags[i] == figureTag
+                || *tags[i] == summaryTag
+                || *tags[i] == trackTag) {
+                // Even though we have atoms for these tags, we don't want to
+                // treat them as "recognized tags" for the purpose of parsing
+                // because that changes how we parse documents.
+                continue;
+            }
+            tagList.add(tags[i]->localName().impl());
+        }
+    }
+    return tagList.contains(tagName.localName().impl());
+}
+
 void HTMLObjectElement::updateDocNamedItem()
 {
     // The rule is "<object> elements with no children other than
@@ -273,7 +299,8 @@ void HTMLObjectElement::updateDocNamedItem()
     while (child && isNamedItem) {
         if (child->isElementNode()) {
             Element* element = static_cast<Element*>(child);
-            if (HTMLElement::isRecognizedTagName(element->tagQName()) && !element->hasTagName(paramTag))
+            // FIXME: Use of isRecognizedTagName is almost certainly wrong here.
+            if (isRecognizedTagName(element->tagQName()) && !element->hasTagName(paramTag))
                 isNamedItem = false;
         } else if (child->isTextNode()) {
             if (!static_cast<Text*>(child)->containsOnlyWhitespace())

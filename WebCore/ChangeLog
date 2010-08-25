@@ -1,3 +1,16 @@
+2010-08-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Remove more DTD junk now that the LegacyHTMLDocumentParser is gone
+        https://bugs.webkit.org/show_bug.cgi?id=44588
+
+        Just removing dead code, thus no tests.
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::nodeName):
+        * html/HTMLElement.h:
+
 2010-08-24  Adam Barth  <abarth@webkit.org>
 
         Qt build fix.
