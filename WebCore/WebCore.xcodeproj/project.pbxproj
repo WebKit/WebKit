@@ -20538,6 +20538,7 @@
 			);
 			inputPaths = (
 				"$(SRCROOT)/inspector/front-end",
+				"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore/InspectorBackendStub.js",
 			);
 			name = "Copy Inspector Resources";
 			outputPaths = (
