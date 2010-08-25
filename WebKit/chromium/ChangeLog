@@ -1,3 +1,9 @@
+2010-08-25  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, build fix.
+
+        * DEPS: Roll Chromium revision to 57298 to fix upstream build.
+
 2010-08-24  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Adam Barth.
