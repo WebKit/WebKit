@@ -292,8 +292,3 @@ animations/play-state.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=43332
 inspector/dom-breakpoints.html
-
-# This test has become flaky after turning on the HTML5 fragment parser.  I'll
-# investigate.  --abarth (2010/8/24)
-http/tests/security/xssAuditor/dom-write-location-inline-event.html
-

@@ -5,6 +5,12 @@
 if (window.layoutTestController) {
     layoutTestController.dumpAsText();
     layoutTestController.setXSSAuditorEnabled(true);
+    layoutTestController.waitUntilDone();
+}
+
+window.onload = function() {
+    // Give the img onerror handler a chance to fire.
+    setTimeout("layoutTestController.notifyDone()", 100);
 }
 </script>
 </head>

@@ -1,3 +1,12 @@
+2010-08-24  Adam Barth  <abarth@webkit.org>
+
+        Unskip XSSAuditor test and fix the source of flakiness.  I'll make the
+        test pass again in the XSSAuditor redesign.
+
+        * http/tests/security/xssAuditor/dom-write-innerHTML-expected.txt:
+        * http/tests/security/xssAuditor/dom-write-innerHTML.html:
+        * platform/mac/Skipped:
+
 2010-08-24  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
