@@ -1,3 +1,15 @@
+2010-08-25  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] CodeGeneratorGObject not picking up FEATURE_DEFINES
+        https://bugs.webkit.org/show_bug.cgi?id=44608
+
+        Move FEATURE_DEFINES declaration to the toplevel GNUmakefile.am,
+        since it's used there now too.
+
+        * GNUmakefile.am:
+
 2010-08-25  Dawit Alemayehu  <adawit@kde.org>
 
         Reviewed by Ariya Hidayat.

@@ -1,3 +1,16 @@
+2010-08-25  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] CodeGeneratorGObject not picking up FEATURE_DEFINES
+        https://bugs.webkit.org/show_bug.cgi?id=44608
+
+        Move FEATURE_DEFINES declaration here, since it's used by the
+        bindings code generator. Also, fix typo in the variable holding
+        the defines.
+
+        * GNUmakefile.am:
+
 2010-08-25  Rafael Antognolli  <antognolli@profusion.mobi>
 
         Unreviewed build fix.
