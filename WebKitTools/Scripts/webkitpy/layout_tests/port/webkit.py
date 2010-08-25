@@ -295,39 +295,6 @@ class WebKitPort(base.Port):
         return self.test_base_platform_names() + (
             'mac-tiger', 'mac-leopard', 'mac-snowleopard')
 
-    def _configuration_file_path(self):
-        build_root = self._webkit_build_directory(["--top-level"])
-        return os.path.join(build_root, "Configuration")
-
-    # Easy override for unit tests
-    def _open_configuration_file(self):
-        configuration_path = self._configuration_file_path()
-        return codecs.open(configuration_path, "r", "utf-8")
-
-    def _read_configuration(self):
-        try:
-            with self._open_configuration_file() as file:
-                return file.readline().rstrip()
-        except IOError, e:
-            return None
-
-    # FIXME: This list may be incomplete as Apple has some sekret configs.
-    _RECOGNIZED_CONFIGURATIONS = ("Debug", "Release")
-
-    def default_configuration(self):
-        # FIXME: Unify this with webkitdir.pm configuration reading code.
-        configuration = self._read_configuration()
-        if not configuration:
-            configuration = "Release"
-        if configuration not in self._RECOGNIZED_CONFIGURATIONS:
-            _log.warn("Configuration \"%s\" found in %s is not a recognized value.\n" % (configuration, self._configuration_file_path()))
-            _log.warn("Scripts may fail.  See 'set-webkit-configuration --help'.")
-        return configuration
-
-    def _webkit_build_directory(self, args):
-        args = [self.script_path("webkit-build-directory")] + args
-        return self._executive.run_command(args).rstrip()
-
     def _build_path(self, *comps):
         if not self._cached_build_root:
             self._cached_build_root = self._webkit_build_directory([

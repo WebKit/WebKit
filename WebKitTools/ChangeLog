@@ -1,3 +1,17 @@
+2010-08-25  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        new-run-webkit-tests should respect set-webkit-configuration
+        https://bugs.webkit.org/show_bug.cgi?id=44633
+
+        Moves the getting of the configuration into the base Port so that
+        chromium ports use it as well. In the downstream chromium port,
+        this should still just return Release.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+
 2010-08-25  Tony Chang  <tony@chromium.org>
 
         Not reviewed, changing svn props for a script.
