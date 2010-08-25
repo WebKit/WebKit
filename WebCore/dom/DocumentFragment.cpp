@@ -75,12 +75,6 @@ PassRefPtr<Node> DocumentFragment::cloneNode(bool deep)
     return clone.release();
 }
 
-bool DocumentFragment::shouldUseLegacyHTMLParser() const
-{
-    return document()->page() && document()->page()->settings()
-        && !document()->page()->settings()->html5ParserEnabled();
-}
-
 void DocumentFragment::parseHTML(const String& source, Element* contextElement, FragmentScriptingPermission scriptingPermission)
 {
     HTMLDocumentParser::parseDocumentFragment(source, this, contextElement, scriptingPermission);

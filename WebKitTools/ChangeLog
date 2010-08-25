@@ -1,3 +1,16 @@
+2010-08-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Remove HTML5 parser testing infrastructure now that we don't need it
+        https://bugs.webkit.org/show_bug.cgi?id=44581
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetDefaultsToConsistentValues):
+        (initializeGlobalsFromCommandLineOptions):
+        * Scripts/old-run-webkit-tests:
+        * Scripts/test-html5-parser: Removed.
+
 2010-08-24  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.

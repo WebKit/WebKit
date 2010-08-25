@@ -1,4 +1,0 @@
-CONSOLE MESSAGE: line 36: TypeError: Result of expression 'iframe.contentWindow.document.lastChild' [null] is not an object.
-Content-Type: text/plain
-
-#EOF

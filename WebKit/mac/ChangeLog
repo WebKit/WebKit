@@ -1,3 +1,17 @@
+2010-08-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Remove HTML5 parser testing infrastructure now that we don't need it
+        https://bugs.webkit.org/show_bug.cgi?id=44581
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChangedNotification:]):
+
 2010-08-24  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver Hunt.

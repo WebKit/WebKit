@@ -364,8 +364,6 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithBool:NO],   WebKitUsesProxiedOpenPanelPreferenceKey,
         [NSNumber numberWithUnsignedInt:4], WebKitPluginAllowedRunTimePreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitFrameFlatteningEnabledPreferenceKey,
-        [NSNumber numberWithBool:YES],  WebKitHTML5ParserEnabledPreferenceKey,
-        [NSNumber numberWithBool:NO],   WebKitHTML5TreeBuilderEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitDNSPrefetchingEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitMemoryInfoEnabledPreferenceKey,
         [NSNumber numberWithLongLong:WebCore::ApplicationCacheStorage::noQuota()], WebKitApplicationCacheTotalQuota,
@@ -1296,26 +1294,6 @@ static NSString *classIBCreatorID = nil;
 - (void)setFrameFlatteningEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitFrameFlatteningEnabledPreferenceKey];
-}
-
-- (BOOL)html5ParserEnabled
-{
-    return [self _boolValueForKey:WebKitHTML5ParserEnabledPreferenceKey];
-}
-
-- (void)setHTML5ParserEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitHTML5ParserEnabledPreferenceKey];
-}
-
-- (BOOL)html5TreeBuilderEnabled
-{
-    return [self _boolValueForKey:WebKitHTML5TreeBuilderEnabledPreferenceKey];
-}
-
-- (void)setHTML5TreeBuilderEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitHTML5TreeBuilderEnabledPreferenceKey];
 }
 
 - (BOOL)paginateDuringLayoutEnabled

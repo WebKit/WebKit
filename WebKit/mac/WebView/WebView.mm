@@ -1437,7 +1437,6 @@ static bool fastDocumentTeardownEnabled()
     settings->setWebGLEnabled([preferences webGLEnabled]);
     settings->setLoadDeferringEnabled(shouldEnableLoadDeferring());
     settings->setFrameFlatteningEnabled([preferences isFrameFlatteningEnabled]);
-    settings->setHTML5ParserEnabled([preferences html5ParserEnabled]);
     settings->setPaginateDuringLayoutEnabled([preferences paginateDuringLayoutEnabled]);
     settings->setMemoryInfoEnabled([preferences memoryInfoEnabled]);
 

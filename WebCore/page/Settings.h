@@ -308,9 +308,6 @@ namespace WebCore {
         void setTiledBackingStoreEnabled(bool);
         bool tiledBackingStoreEnabled() const { return m_tiledBackingStoreEnabled; }
 
-        void setHTML5ParserEnabled(bool flag) { m_html5ParserEnabled = flag; }
-        bool html5ParserEnabled() const { return m_html5ParserEnabled; }
-
         void setPaginateDuringLayoutEnabled(bool flag) { m_paginateDuringLayoutEnabled = flag; }
         bool paginateDuringLayoutEnabled() const { return m_paginateDuringLayoutEnabled; }
 
@@ -403,7 +400,6 @@ namespace WebCore {
         bool m_acceleratedCanvas2dEnabled : 1;
         bool m_loadDeferringEnabled : 1;
         bool m_tiledBackingStoreEnabled : 1;
-        bool m_html5ParserEnabled: 1;
         bool m_paginateDuringLayoutEnabled : 1;
         bool m_dnsPrefetchingEnabled : 1;
         bool m_memoryInfoEnabled: 1;

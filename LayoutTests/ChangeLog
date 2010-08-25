@@ -1,5 +1,15 @@
 2010-08-24  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Adam Barth.
+
+        Remove HTML5 parser testing infrastructure now that we don't need it
+        https://bugs.webkit.org/show_bug.cgi?id=44581
+
+        * html5lib/runner-expected-html5.txt: Removed.
+        * html5lib/webkit-resumer-expected-html5.txt: Removed.
+
+2010-08-24  Eric Seidel  <eric@webkit.org>
+
         Unreviewed.  Just adding test results.
 
         XMLDocumentParser needs to implement DocumentParser::detach()

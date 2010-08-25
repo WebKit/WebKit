@@ -184,13 +184,6 @@ extern NSString *WebPreferencesRemovedNotification;
 - (BOOL)webGLEnabled;
 - (void)setWebGLEnabled:(BOOL)enabled;
 
-- (BOOL)html5ParserEnabled;
-- (void)setHTML5ParserEnabled:(BOOL)flag;
-
-// Will be deleted soon, do not use.
-- (BOOL)html5TreeBuilderEnabled;
-- (void)setHTML5TreeBuilderEnabled:(BOOL)flag;
-
 - (BOOL)paginateDuringLayoutEnabled;
 - (void)setPaginateDuringLayoutEnabled:(BOOL)flag;
 

@@ -160,7 +160,6 @@ my $tmpDir = "/tmp";
 my $testResultsDirectory = File::Spec->catfile($tmpDir, "layout-test-results");
 my $testsPerDumpTool = 1000;
 my $threaded = 0;
-my $html5treebuilder = 0;
 # DumpRenderTree has an internal timeout of 30 seconds, so this must be > 30.
 my $timeoutSeconds = 35;
 my $tolerance = 0;
@@ -301,7 +300,6 @@ Usage: $programName [options] [testdir|testpath ...]
   --ignore-metrics                Ignore metrics in tests
   --[no-]strip-editing-callbacks  Remove editing callbacks from expected results
   -t|--threaded                   Run a concurrent JavaScript thead with each test
-  --html5-treebuilder             Run the tests using the HTML5 tree builder
   --timeout t                     Sets the number of seconds before a test times out (default: $timeoutSeconds)
   --valgrind                      Run DumpRenderTree inside valgrind (Qt/Linux only)
   -v|--verbose                    More verbose output (overrides --quiet)
@@ -345,7 +343,6 @@ my $getOptionsResult = GetOptions(
     'slowest' => \$report10Slowest,
     'strip-editing-callbacks!' => \$stripEditingCallbacks,
     'threaded|t' => \$threaded,
-    'html5-treebuilder' => \$html5treebuilder,
     'timeout=i' => \$timeoutSeconds,
     'tolerance=f' => \$tolerance,
     'use-remote-links-to-tests' => \$useRemoteLinksToTests,
@@ -578,7 +575,6 @@ my $totalLeaks = 0;
 my @toolArgs = ();
 push @toolArgs, "--pixel-tests" if $pixelTests;
 push @toolArgs, "--threaded" if $threaded;
-push @toolArgs, "--html5-treebuilder" if $html5treebuilder;
 push @toolArgs, "--complex-text" if $complexText;
 push @toolArgs, "-";
 
