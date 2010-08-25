@@ -50,25 +50,23 @@ EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of #text > SPAN > SPAN > I > B > DIV > BODY > HTML > #document to 2 of #text > SPAN > SPAN > I > B > DIV > BODY > HTML > #document toDOMRange:range from 3 of #text > SPAN > SPAN > I > B > DIV > BODY > HTML > #document to 3 of #text > SPAN > SPAN > I > B > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x56 [border: (2px solid #FF0000)]
-        RenderText {#text} at (14,14) size 36x28
-          text run at (14,14) width 36: "xxx"
-        RenderInline {B} at (0,0) size 141x28
-          RenderText {#text} at (50,14) size 36x28
-            text run at (50,14) width 36: "xxx"
-          RenderInline {I} at (0,0) size 105x28
-            RenderText {#text} at (86,14) size 36x28
-              text run at (86,14) width 36: "xxx"
-            RenderInline {SPAN} at (0,0) size 69x28
-              RenderText {#text} at (122,14) size 33x28
-                text run at (122,14) width 33: "xxx"
-              RenderInline {SPAN} at (0,0) size 36x28
-                RenderText {#text} at (155,14) size 36x28
-                  text run at (155,14) width 36: "xxx"
-        RenderInline {SPAN} at (0,0) size 0x28
-caret: position 3 of child 0 {#text} of child 1 {SPAN} of child 1 {SPAN} of child 1 {I} of child 1 {B} of child 1 {DIV} of body
+xxxxxxxxxxxxxxx
+execTypeCharacterCommand: x <span id="test"></span>
+execTypeCharacterCommand: xx<span id="test"></span>
+execTypeCharacterCommand: xxx<span id="test"></span>
+execBoldCommand: xxx<span id="test"></span>
+execTypeCharacterCommand: xxx<b>x</b><span id="test"></span>
+execTypeCharacterCommand: xxx<b>xx</b><span id="test"></span>
+execTypeCharacterCommand: xxx<b>xxx</b><span id="test"></span>
+execItalicCommand: xxx<b>xxx</b><span id="test"></span>
+execTypeCharacterCommand: xxx<b>xxx<i>x</i></b><span id="test"></span>
+execTypeCharacterCommand: xxx<b>xxx<i>xx</i></b><span id="test"></span>
+execTypeCharacterCommand: xxx<b>xxx<i>xxx</i></b><span id="test"></span>
+execBoldCommand: xxx<b>xxx<i>xxx</i></b><span id="test"></span>
+execTypeCharacterCommand: xxx<b>xxx<i>xxx<span class="Apple-style-span" style="font-weight: normal;">x</span></i></b><span id="test"></span>
+execTypeCharacterCommand: xxx<b>xxx<i>xxx<span class="Apple-style-span" style="font-weight: normal;">xx</span></i></b><span id="test"></span>
+execTypeCharacterCommand: xxx<b>xxx<i>xxx<span class="Apple-style-span" style="font-weight: normal;">xxx</span></i></b><span id="test"></span>
+execItalicCommand: xxx<b>xxx<i>xxx<span class="Apple-style-span" style="font-weight: normal;">xxx</span></i></b><span id="test"></span>
+execTypeCharacterCommand: xxx<b>xxx<i>xxx<span class="Apple-style-span" style="font-weight: normal;">xxx<span class="Apple-style-span" style="font-style: normal;">x</span></span></i></b><span id="test"></span>
+execTypeCharacterCommand: xxx<b>xxx<i>xxx<span class="Apple-style-span" style="font-weight: normal;">xxx<span class="Apple-style-span" style="font-style: normal;">xx</span></span></i></b><span id="test"></span>
+execTypeCharacterCommand: xxx<b>xxx<i>xxx<span class="Apple-style-span" style="font-weight: normal;">xxx<span class="Apple-style-span" style="font-style: normal;">xxx</span></span></i></b><span id="test"></span>
