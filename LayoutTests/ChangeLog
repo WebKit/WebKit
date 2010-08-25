@@ -1,3 +1,10 @@
+2010-08-24  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Unreviewed, updating a chromium-linux expectation.
+
+        * platform/chromium-linux/svg/css/shadow-changes-expected.checksum: Added.
+        * platform/chromium-linux/svg/css/shadow-changes-expected.png: Added.
+
 2010-08-24  Kenneth Russell  <kbr@google.com>
 
         Unreviewed, test expectations update. Skip
