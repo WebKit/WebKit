@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-PassRefPtr<CSSValue> StyleCachedImage::cssValue()
+PassRefPtr<CSSValue> StyleCachedImage::cssValue() const
 {
     return CSSPrimitiveValue::create(m_image->url(), CSSPrimitiveValue::CSS_URI);
 }

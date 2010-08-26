@@ -42,7 +42,7 @@ public:
 
     virtual bool isGeneratedImage() const { return true; }
     
-    virtual PassRefPtr<CSSValue> cssValue();
+    virtual PassRefPtr<CSSValue> cssValue() const;
 
     virtual IntSize imageSize(const RenderObject*, float multiplier) const;
     virtual bool imageHasRelativeWidth() const { return !m_fixedSize; }

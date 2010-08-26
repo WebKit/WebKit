@@ -1,3 +1,20 @@
+2010-08-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        CSS downloads all background images related to element, instead of just final rule
+        https://bugs.webkit.org/show_bug.cgi?id=24223
+        
+        New tests that log which image requests are made by CSS.
+
+        * http/tests/css/border-image-loading-expected.txt: Added.
+        * http/tests/css/border-image-loading.html: Added.
+        * http/tests/css/css-image-loading-expected.txt:
+        * http/tests/css/mask-image-loading-expected.txt: Added.
+        * http/tests/css/mask-image-loading.html: Added.
+        * http/tests/css/reflection-mask-image-loading-expected.txt: Added.
+        * http/tests/css/reflection-mask-image-loading.html: Added.
+
 2010-08-26  Andy Estes  <aestes@apple.com>
 
         Reviewed by Eric Carlson.

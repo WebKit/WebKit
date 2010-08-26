@@ -32982,6 +32982,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\rendering\style\StylePendingImage.h"
+					>
+				</File>
+				<File
 					RelativePath="..\rendering\style\StyleRareInheritedData.cpp"
 					>
 				</File>

@@ -38,7 +38,7 @@ public:
 
     virtual bool isCachedImage() const { return true; }
     
-    virtual PassRefPtr<CSSValue> cssValue();
+    virtual PassRefPtr<CSSValue> cssValue() const;
     
     CachedImage* cachedImage() const { return m_image.get(); }
 

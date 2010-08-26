@@ -40,6 +40,7 @@ class CSSPrimitiveValue;
 class CSSProperty;
 class CSSFontFace;
 class CSSFontFaceRule;
+class CSSImageValue;
 class CSSRuleData;
 class CSSRuleDataList;
 class CSSRuleList;
@@ -240,16 +241,16 @@ public:
         void updateFont();
         void cacheBorderAndBackground();
 
-        void mapFillAttachment(FillLayer*, CSSValue*);
-        void mapFillClip(FillLayer*, CSSValue*);
-        void mapFillComposite(FillLayer*, CSSValue*);
-        void mapFillOrigin(FillLayer*, CSSValue*);
-        void mapFillImage(FillLayer*, CSSValue*);
-        void mapFillRepeatX(FillLayer*, CSSValue*);
-        void mapFillRepeatY(FillLayer*, CSSValue*);
-        void mapFillSize(FillLayer*, CSSValue*);
-        void mapFillXPosition(FillLayer*, CSSValue*);
-        void mapFillYPosition(FillLayer*, CSSValue*);
+        void mapFillAttachment(CSSPropertyID, FillLayer*, CSSValue*);
+        void mapFillClip(CSSPropertyID, FillLayer*, CSSValue*);
+        void mapFillComposite(CSSPropertyID, FillLayer*, CSSValue*);
+        void mapFillOrigin(CSSPropertyID, FillLayer*, CSSValue*);
+        void mapFillImage(CSSPropertyID, FillLayer*, CSSValue*);
+        void mapFillRepeatX(CSSPropertyID, FillLayer*, CSSValue*);
+        void mapFillRepeatY(CSSPropertyID, FillLayer*, CSSValue*);
+        void mapFillSize(CSSPropertyID, FillLayer*, CSSValue*);
+        void mapFillXPosition(CSSPropertyID, FillLayer*, CSSValue*);
+        void mapFillYPosition(CSSPropertyID, FillLayer*, CSSValue*);
 
         void mapAnimationDelay(Animation*, CSSValue*);
         void mapAnimationDirection(Animation*, CSSValue*);
@@ -261,7 +262,7 @@ public:
         void mapAnimationProperty(Animation*, CSSValue*);
         void mapAnimationTimingFunction(Animation*, CSSValue*);
 
-        void mapNinePieceImage(CSSValue*, NinePieceImage&);
+        void mapNinePieceImage(CSSPropertyID, CSSValue*, NinePieceImage&);
 
         void applyProperty(int id, CSSValue*);
         void applyPageSizeProperty(CSSValue*);
@@ -272,7 +273,10 @@ public:
         void applySVGProperty(int id, CSSValue*);
 #endif
 
-        StyleImage* styleImage(CSSValue* value);
+        void loadPendingImages();
+        
+        StyleImage* styleImage(CSSPropertyID, CSSValue* value);
+        StyleImage* cachedOrPendingFromValue(CSSPropertyID property, CSSImageValue* value);
 
         // We collect the set of decls that match in |m_matchedDecls|.  We then walk the
         // set of matched decls four times, once for those properties that others depend on (like font-size),
@@ -285,6 +289,8 @@ public:
         Vector<CSSRuleData*, 32> m_matchedRules;
 
         RefPtr<CSSRuleList> m_ruleList;
+        
+        HashSet<int> m_pendingImageProperties; // Hash of CSSPropertyIDs
 
         MediaQueryEvaluator* m_medium;
         RefPtr<RenderStyle> m_rootDefaultStyle;

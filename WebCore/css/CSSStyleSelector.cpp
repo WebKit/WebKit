@@ -83,6 +83,7 @@
 #include "ShadowValue.h"
 #include "SkewTransformOperation.h"
 #include "StyleCachedImage.h"
+#include "StylePendingImage.h"
 #include "StyleGeneratedImage.h"
 #include "StyleSheetList.h"
 #include "Text.h"
@@ -199,12 +200,12 @@ if (value->isValueList()) { \
             currChild = new FillLayer(LayerType##FillLayer); \
             prevChild->setNext(currChild); \
         } \
-        mapFill##Prop(currChild, valueList->itemWithoutBoundsCheck(i)); \
+        mapFill##Prop(property, currChild, valueList->itemWithoutBoundsCheck(i)); \
         prevChild = currChild; \
         currChild = currChild->next(); \
     } \
 } else { \
-    mapFill##Prop(currChild, value); \
+    mapFill##Prop(property, currChild, value); \
     currChild = currChild->next(); \
 } \
 while (currChild) { \
@@ -855,6 +856,8 @@ inline void CSSStyleSelector::initForStyleResolve(Element* e, RenderStyle* paren
 
     m_matchedDecls.clear();
 
+    m_pendingImageProperties.clear();
+
     m_ruleList = 0;
 
     m_fontDirty = false;
@@ -1357,6 +1360,9 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
     // Clean up our style object's display and text decorations (among other fixups).
     adjustRenderStyle(style(), e);
 
+    // Start loading images referenced by this style.
+    loadPendingImages();
+
     // If we have first-letter pseudo style, do not share this style
     if (m_style->hasPseudoStyle(FIRST_LETTER))
         m_style->setUnique();
@@ -1414,6 +1420,9 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForKeyframe(const RenderStyle* el
     // go ahead and update it a second time.
     if (m_fontDirty)
         updateFont();
+
+    // Start loading images referenced by this style.
+    loadPendingImages();
 
     // Add all the animating properties to the list
     if (keyframeRule->style()) {
@@ -1570,6 +1579,9 @@ PassRefPtr<RenderStyle> CSSStyleSelector::pseudoStyleForElement(PseudoId pseudo,
     // Clean up our style object's display and text decorations (among other fixups).
     adjustRenderStyle(style(), 0);
 
+    // Start loading images referenced by this style.
+    loadPendingImages();
+
     // Hang our visited style off m_style.
     if (visitedStyle)
         m_style->addCachedPseudoStyle(visitedStyle.release());
@@ -1603,6 +1615,9 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForPage(int pageIndex)
         applyProperty(CSSPropertyLineHeight, m_lineHeightValue);
 
     applyDeclarations<false>(false, 0, m_matchedDecls.size() - 1);
+
+    // Start loading images referenced by this style.
+    loadPendingImages();
 
     // Now return the style.
     return m_style.release();
@@ -3121,7 +3136,8 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     // What follows is a list that maps the CSS properties into their corresponding front-end
     // RenderStyle values.  Shorthands (e.g. border, background) occur in this list as well and
     // are only hit when mapping "inherit" or "initial" into front-end values.
-    switch (static_cast<CSSPropertyID>(id)) {
+    CSSPropertyID property = static_cast<CSSPropertyID>(id);
+    switch (property) {
 // ident only properties
     case CSSPropertyBackgroundAttachment:
         HANDLE_BACKGROUND_VALUE(attachment, Attachment, value)
@@ -3512,7 +3528,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                     if (image->updateIfSVGCursorIsUsed(m_element)) // Elements with SVG cursors are not allowed to share style.
                         m_style->setUnique();
                     // FIXME: Temporary clumsiness to pass off a CachedImage to an API that will eventually convert to using
-                    // StyleImage.
+                    // StyleImage. Should also be fixed to use StylePendingImage at the same time.
                     RefPtr<StyleCachedImage> styleCachedImage(image->cachedImage(m_element->document()->docLoader()));
                     if (styleCachedImage)
                         m_style->addCursor(styleCachedImage->cachedImage(), image->hotSpot());
@@ -3612,7 +3628,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyListStyleImage:
     {
         HANDLE_INHERIT_AND_INITIAL(listStyleImage, ListStyleImage)
-        m_style->setListStyleImage(styleImage(value));
+        m_style->setListStyleImage(styleImage(CSSPropertyListStyleImage, value));
         return;
     }
 
@@ -4274,8 +4290,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                     break;
                 }
                 case CSSPrimitiveValue::CSS_URI: {
-                    CSSImageValue* image = static_cast<CSSImageValue*>(val);
-                    m_style->setContent(image->cachedImage(m_element->document()->docLoader()), didSet);
+                    m_style->setContent(cachedOrPendingFromValue(CSSPropertyContent, static_cast<CSSImageValue*>(val)), didSet);
                     didSet = true;
                     break;
                 }
@@ -4702,7 +4717,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         }
 
         NinePieceImage image;
-        mapNinePieceImage(value, image);
+        mapNinePieceImage(property, value, image);
         
         if (id == CSSPropertyWebkitBorderImage)
             m_style->setBorderImage(image);
@@ -4852,7 +4867,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                 reflection->setOffset(Length(reflectValue->offset()->computeLengthIntForLength(style(), m_rootElementStyle, zoomFactor), Fixed));
         }
         NinePieceImage mask;
-        mapNinePieceImage(reflectValue->mask(), mask);
+        mapNinePieceImage(property, reflectValue->mask(), mask);
         reflection->setMask(mask);
         
         m_style->setBoxReflect(reflection.release());
@@ -5677,7 +5692,7 @@ Length CSSStyleSelector::inchLength(double inch)
     return Length(CSSPrimitiveValue::create(inch, CSSPrimitiveValue::CSS_IN)->computeLengthIntForLength(style(), m_rootElementStyle), Fixed);
 }
 
-void CSSStyleSelector::mapFillAttachment(FillLayer* layer, CSSValue* value)
+void CSSStyleSelector::mapFillAttachment(CSSPropertyID, FillLayer* layer, CSSValue* value)
 {
     if (value->cssValueType() == CSSValue::CSS_INITIAL) {
         layer->setAttachment(FillLayer::initialFillAttachment(layer->type()));
@@ -5703,7 +5718,7 @@ void CSSStyleSelector::mapFillAttachment(FillLayer* layer, CSSValue* value)
     }
 }
 
-void CSSStyleSelector::mapFillClip(FillLayer* layer, CSSValue* value)
+void CSSStyleSelector::mapFillClip(CSSPropertyID, FillLayer* layer, CSSValue* value)
 {
     if (value->cssValueType() == CSSValue::CSS_INITIAL) {
         layer->setClip(FillLayer::initialFillClip(layer->type()));
@@ -5717,7 +5732,7 @@ void CSSStyleSelector::mapFillClip(FillLayer* layer, CSSValue* value)
     layer->setClip(*primitiveValue);
 }
 
-void CSSStyleSelector::mapFillComposite(FillLayer* layer, CSSValue* value)
+void CSSStyleSelector::mapFillComposite(CSSPropertyID, FillLayer* layer, CSSValue* value)
 {
     if (value->cssValueType() == CSSValue::CSS_INITIAL) {
         layer->setComposite(FillLayer::initialFillComposite(layer->type()));
@@ -5731,7 +5746,7 @@ void CSSStyleSelector::mapFillComposite(FillLayer* layer, CSSValue* value)
     layer->setComposite(*primitiveValue);
 }
 
-void CSSStyleSelector::mapFillOrigin(FillLayer* layer, CSSValue* value)
+void CSSStyleSelector::mapFillOrigin(CSSPropertyID, FillLayer* layer, CSSValue* value)
 {
     if (value->cssValueType() == CSSValue::CSS_INITIAL) {
         layer->setOrigin(FillLayer::initialFillOrigin(layer->type()));
@@ -5745,26 +5760,36 @@ void CSSStyleSelector::mapFillOrigin(FillLayer* layer, CSSValue* value)
     layer->setOrigin(*primitiveValue);
 }
 
-StyleImage* CSSStyleSelector::styleImage(CSSValue* value)
+StyleImage* CSSStyleSelector::styleImage(CSSPropertyID property, CSSValue* value)
 {
     if (value->isImageValue())
-        return static_cast<CSSImageValue*>(value)->cachedImage(m_element->document()->docLoader());
+        return cachedOrPendingFromValue(property, static_cast<CSSImageValue*>(value));
+
     if (value->isImageGeneratorValue())
         return static_cast<CSSImageGeneratorValue*>(value)->generatedImage();
+
     return 0;
 }
 
-void CSSStyleSelector::mapFillImage(FillLayer* layer, CSSValue* value)
+StyleImage* CSSStyleSelector::cachedOrPendingFromValue(CSSPropertyID property, CSSImageValue* value)
+{
+    StyleImage* image = value->cachedOrPendingImage();
+    if (image->isPendingImage())
+        m_pendingImageProperties.add(property);
+    return image;
+}
+
+void CSSStyleSelector::mapFillImage(CSSPropertyID property, FillLayer* layer, CSSValue* value)
 {
     if (value->cssValueType() == CSSValue::CSS_INITIAL) {
         layer->setImage(FillLayer::initialFillImage(layer->type()));
         return;
     }
 
-    layer->setImage(styleImage(value));
+    layer->setImage(styleImage(property, value));
 }
 
-void CSSStyleSelector::mapFillRepeatX(FillLayer* layer, CSSValue* value)
+void CSSStyleSelector::mapFillRepeatX(CSSPropertyID, FillLayer* layer, CSSValue* value)
 {
     if (value->cssValueType() == CSSValue::CSS_INITIAL) {
         layer->setRepeatX(FillLayer::initialFillRepeatX(layer->type()));
@@ -5778,7 +5803,7 @@ void CSSStyleSelector::mapFillRepeatX(FillLayer* layer, CSSValue* value)
     layer->setRepeatX(*primitiveValue);
 }
 
-void CSSStyleSelector::mapFillRepeatY(FillLayer* layer, CSSValue* value)
+void CSSStyleSelector::mapFillRepeatY(CSSPropertyID, FillLayer* layer, CSSValue* value)
 {
     if (value->cssValueType() == CSSValue::CSS_INITIAL) {
         layer->setRepeatY(FillLayer::initialFillRepeatY(layer->type()));
@@ -5792,7 +5817,7 @@ void CSSStyleSelector::mapFillRepeatY(FillLayer* layer, CSSValue* value)
     layer->setRepeatY(*primitiveValue);
 }
 
-void CSSStyleSelector::mapFillSize(FillLayer* layer, CSSValue* value)
+void CSSStyleSelector::mapFillSize(CSSPropertyID, FillLayer* layer, CSSValue* value)
 {
     if (!value->isPrimitiveValue()) {
         layer->setSizeType(SizeNone);
@@ -5854,7 +5879,7 @@ void CSSStyleSelector::mapFillSize(FillLayer* layer, CSSValue* value)
     layer->setSizeLength(b);
 }
 
-void CSSStyleSelector::mapFillXPosition(FillLayer* layer, CSSValue* value)
+void CSSStyleSelector::mapFillXPosition(CSSPropertyID, FillLayer* layer, CSSValue* value)
 {
     if (value->cssValueType() == CSSValue::CSS_INITIAL) {
         layer->setXPosition(FillLayer::initialFillXPosition(layer->type()));
@@ -5878,7 +5903,7 @@ void CSSStyleSelector::mapFillXPosition(FillLayer* layer, CSSValue* value)
     layer->setXPosition(l);
 }
 
-void CSSStyleSelector::mapFillYPosition(FillLayer* layer, CSSValue* value)
+void CSSStyleSelector::mapFillYPosition(CSSPropertyID, FillLayer* layer, CSSValue* value)
 {
     if (value->cssValueType() == CSSValue::CSS_INITIAL) {
         layer->setYPosition(FillLayer::initialFillYPosition(layer->type()));
@@ -6066,7 +6091,7 @@ void CSSStyleSelector::mapAnimationTimingFunction(Animation* animation, CSSValue
     }
 }
 
-void CSSStyleSelector::mapNinePieceImage(CSSValue* value, NinePieceImage& image)
+void CSSStyleSelector::mapNinePieceImage(CSSPropertyID property, CSSValue* value, NinePieceImage& image)
 {
     // If we're a primitive value, then we are "none" and don't need to alter the empty image at all.
     if (!value || value->isPrimitiveValue())
@@ -6076,7 +6101,7 @@ void CSSStyleSelector::mapNinePieceImage(CSSValue* value, NinePieceImage& image)
     CSSBorderImageValue* borderImage = static_cast<CSSBorderImageValue*>(value);
     
     // Set the image (this kicks off the load).
-    image.setImage(styleImage(borderImage->imageValue()));
+    image.setImage(styleImage(property, borderImage->imageValue()));
 
     // Set up a length box to represent our image slices.
     LengthBox l;
@@ -6683,6 +6708,92 @@ bool CSSStyleSelector::createTransformOperations(CSSValue* inValue, RenderStyle*
     }
     outOperations = operations;
     return true;
+}
+
+void CSSStyleSelector::loadPendingImages()
+{
+    if (m_pendingImageProperties.isEmpty())
+        return;
+        
+    HashSet<int>::const_iterator end = m_pendingImageProperties.end();
+    for (HashSet<int>::const_iterator it = m_pendingImageProperties.begin(); it != end; ++it) {
+        CSSPropertyID currentProperty = static_cast<CSSPropertyID>(*it);
+
+        DocLoader* docLoader = m_element->document()->docLoader();
+        
+        switch (currentProperty) {
+            case CSSPropertyBackgroundImage: {
+                for (FillLayer* backgroundLayer = m_style->accessBackgroundLayers(); backgroundLayer; backgroundLayer = backgroundLayer->next()) {
+                    if (backgroundLayer->image() && backgroundLayer->image()->isPendingImage()) {
+                        CSSImageValue* imageValue = static_cast<StylePendingImage*>(backgroundLayer->image())->cssImageValue();
+                        backgroundLayer->setImage(imageValue->cachedImage(docLoader));
+                    }
+                }
+                break;
+            }
+            case CSSPropertyContent: {
+                for (ContentData* contentData = const_cast<ContentData*>(m_style->contentData()); contentData; contentData = contentData->next()) {
+                    if (contentData->isImage() && contentData->image()->isPendingImage()) {
+                        CSSImageValue* imageValue = static_cast<StylePendingImage*>(contentData->image())->cssImageValue();
+                        contentData->setImage(imageValue->cachedImage(docLoader));
+                    }
+                }
+                break;
+            }
+            case CSSPropertyCursor:
+                // Cursor doesn't use StylePendingImage yet.
+                break;
+
+            case CSSPropertyListStyleImage: {
+                if (m_style->listStyleImage()->isPendingImage()) {
+                    CSSImageValue* imageValue = static_cast<StylePendingImage*>(m_style->listStyleImage())->cssImageValue();
+                    m_style->setListStyleImage(imageValue->cachedImage(docLoader));
+                }
+                break;
+            }
+
+            case CSSPropertyWebkitBorderImage: {
+                const NinePieceImage& borderImage = m_style->borderImage();
+                if (borderImage.image()->isPendingImage()) {
+                    CSSImageValue* imageValue = static_cast<StylePendingImage*>(borderImage.image())->cssImageValue();
+                    m_style->setBorderImage(NinePieceImage(imageValue->cachedImage(docLoader), borderImage.slices(), borderImage.horizontalRule(), borderImage.verticalRule()));
+                }
+                break;
+            }
+            
+            case CSSPropertyWebkitBoxReflect: {
+                const NinePieceImage& maskImage = m_style->boxReflect()->mask();
+                if (maskImage.image()->isPendingImage()) {
+                    CSSImageValue* imageValue = static_cast<StylePendingImage*>(maskImage.image())->cssImageValue();
+                    m_style->boxReflect()->setMask(NinePieceImage(imageValue->cachedImage(docLoader), maskImage.slices(), maskImage.horizontalRule(), maskImage.verticalRule()));
+                }
+                break;
+            }
+
+            case CSSPropertyWebkitMaskBoxImage: {
+                const NinePieceImage& maskBoxImage = m_style->maskBoxImage();
+                if (maskBoxImage.image()->isPendingImage()) {
+                    CSSImageValue* imageValue = static_cast<StylePendingImage*>(maskBoxImage.image())->cssImageValue();
+                    m_style->setMaskBoxImage(NinePieceImage(imageValue->cachedImage(docLoader), maskBoxImage.slices(), maskBoxImage.horizontalRule(), maskBoxImage.verticalRule()));
+                }
+                break;
+            }
+            
+            case CSSPropertyWebkitMaskImage: {
+                for (FillLayer* maskLayer = m_style->accessMaskLayers(); maskLayer; maskLayer = maskLayer->next()) {
+                    if (maskLayer->image() && maskLayer->image()->isPendingImage()) {
+                        CSSImageValue* imageValue = static_cast<StylePendingImage*>(maskLayer->image())->cssImageValue();
+                        maskLayer->setImage(imageValue->cachedImage(docLoader));
+                    }
+                }
+                break;
+            }
+            default:
+                ASSERT_NOT_REACHED();
+        }
+    }
+
+    m_pendingImageProperties.clear();
 }
 
 } // namespace WebCore

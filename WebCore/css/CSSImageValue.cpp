@@ -26,6 +26,7 @@
 #include "CachedImage.h"
 #include "DocLoader.h"
 #include "StyleCachedImage.h"
+#include "StylePendingImage.h"
 
 namespace WebCore {
 
@@ -43,8 +44,16 @@ CSSImageValue::CSSImageValue()
 
 CSSImageValue::~CSSImageValue()
 {
-    if (m_image)
-        m_image->cachedImage()->removeClient(this);
+    if (m_image && m_image->isCachedImage())
+        static_cast<StyleCachedImage*>(m_image.get())->cachedImage()->removeClient(this);
+}
+
+StyleImage* CSSImageValue::cachedOrPendingImage()
+{
+    if (!m_image)
+        m_image = StylePendingImage::create(this);
+
+    return m_image.get();
 }
 
 StyleCachedImage* CSSImageValue::cachedImage(DocLoader* loader)
@@ -71,20 +80,20 @@ StyleCachedImage* CSSImageValue::cachedImage(DocLoader* loader, const String& ur
         }
     }
     
-    return m_image.get();
+    return m_image->isCachedImage() ? static_cast<StyleCachedImage*>(m_image.get()) : 0;
 }
 
 String CSSImageValue::cachedImageURL()
 {
-    if (!m_image)
+    if (!m_image || !m_image->isCachedImage())
         return String();
-    return m_image->cachedImage()->url();
+    return static_cast<StyleCachedImage*>(m_image.get())->cachedImage()->url();
 }
 
 void CSSImageValue::clearCachedImage()
 {
-    if (m_image)
-        m_image->cachedImage()->removeClient(this);
+    if (m_image && m_image->isCachedImage())
+        static_cast<StyleCachedImage*>(m_image.get())->cachedImage()->removeClient(this);
     m_image = 0;
     m_accessedImage = false;
 }

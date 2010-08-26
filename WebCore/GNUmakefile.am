@@ -2411,6 +2411,7 @@ webcore_sources += \
 	WebCore/rendering/style/StyleMarqueeData.h \
 	WebCore/rendering/style/StyleMultiColData.cpp \
 	WebCore/rendering/style/StyleMultiColData.h \
+	WebCore/rendering/style/StylePendingImage.h \
 	WebCore/rendering/style/StyleRareInheritedData.cpp \
 	WebCore/rendering/style/StyleRareInheritedData.h \
 	WebCore/rendering/style/StyleRareNonInheritedData.cpp \

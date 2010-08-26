@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-PassRefPtr<CSSValue> StyleGeneratedImage::cssValue()
+PassRefPtr<CSSValue> StyleGeneratedImage::cssValue() const
 {
     return m_generator;
 }

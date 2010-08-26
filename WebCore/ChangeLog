@@ -1,3 +1,83 @@
+2010-08-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        CSS downloads all background images related to element, instead of just final rule
+        https://bugs.webkit.org/show_bug.cgi?id=24223
+        
+        We used to kick off image loads at the point where the style selector
+        applies a CSS rule to an element, even if that rule was overridden
+        by a rule in a later block of rules. This caused loads of images that
+        weren't actually used.
+        
+        Fix this by delaying image loads until the style has been fully
+        resolved. This is achieved by inserting a StylePendingImage into
+        the RenderStyle for duration of the style resolution, and keeping
+        an entry in a hash for the relevant CSS property.
+        
+        At the end of style resolution, we iterate through the hash, and
+        replace the StylePendingImage with StyleCachedImages, which
+        causes the loads to happen only for images that are in the final style.        
+
+        Tests: http/tests/css/border-image-loading.html
+               http/tests/css/mask-image-loading.html
+               http/tests/css/reflection-mask-image-loading.html
+
+        * GNUmakefile.am: Add StylePendingImage.h
+        * WebCore.gypi: Ditto
+        * WebCore.vcproj/WebCore.vcproj: Ditto
+
+        * css/CSSImageValue.h: Change m_image to a RefPtr<StyleImage>,
+        since it may be a StylePendingImage or StyleCachedImage.
+        * css/CSSImageValue.cpp:
+        (WebCore::CSSImageValue::~CSSImageValue): Only call removeClient if it's a cachedImage.
+        (WebCore::CSSImageValue::cachedOrPendingImage): If we have an image (pending or cached),
+        return it. Otherwise make a pending image and return it.
+        (WebCore::CSSImageValue::cachedImage): Only return the image if it's a cached image.
+        (WebCore::CSSImageValue::cachedImageURL):
+        (WebCore::CSSImageValue::clearCachedImage):
+
+        * css/CSSStyleSelector.h:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::initForStyleResolve): Clear m_pendingImageProperties.
+        (WebCore::CSSStyleSelector::styleForElement): Load pending images.
+        (WebCore::CSSStyleSelector::styleForKeyframe): Ditto.
+        (WebCore::CSSStyleSelector::pseudoStyleForElement): Ditto.
+        (WebCore::CSSStyleSelector::styleForPage): Ditto.
+        (WebCore::CSSStyleSelector::applyProperty): Pull property into a local variable
+        so we can use it in macros.
+        (WebCore::CSSStyleSelector::mapFillAttachment): Pass the property down (needed to avoid
+        additional macro complexity).
+        (WebCore::CSSStyleSelector::mapFillClip): Ditto
+        (WebCore::CSSStyleSelector::mapFillComposite): Ditto
+        (WebCore::CSSStyleSelector::mapFillOrigin): Ditto
+        (WebCore::CSSStyleSelector::styleImage): Call cachedOrPendingFromValue()
+        (WebCore::CSSStyleSelector::cachedOrPendingFromValue): Get the cachedOrPendingImage()
+        from the CSSValue, and if it's a pending image, record the property.
+        (WebCore::CSSStyleSelector::mapFillImage): Pass the property down (needed to avoid
+        additional macro complexity).
+        (WebCore::CSSStyleSelector::mapFillRepeatX): Ditto
+        (WebCore::CSSStyleSelector::mapFillRepeatY): Ditto
+        (WebCore::CSSStyleSelector::mapFillSize): Ditto
+        (WebCore::CSSStyleSelector::mapFillXPosition): Ditto
+        (WebCore::CSSStyleSelector::mapFillYPosition): Ditto
+        (WebCore::CSSStyleSelector::mapNinePieceImage): Ditto
+        (WebCore::CSSStyleSelector::loadPendingImages): Iterate through the m_pendingImageProperties
+        hash, and replace the pending images with cached images.
+
+        * rendering/style/StyleCachedImage.h: Make cssValue() const.
+        * rendering/style/StyleCachedImage.cpp:
+        (WebCore::StyleCachedImage::cssValue):
+
+        * rendering/style/StyleGeneratedImage.h:  Make cssValue() const.
+        * rendering/style/StyleGeneratedImage.cpp:
+        (WebCore::StyleGeneratedImage::cssValue):
+
+        * rendering/style/StyleImage.h:
+        (WebCore::StyleImage::operator==): Make const.
+        (WebCore::StyleImage::isPendingImage):
+        * rendering/style/StylePendingImage.h: Added.
+
 2010-08-26  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.

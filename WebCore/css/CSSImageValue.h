@@ -29,6 +29,7 @@ namespace WebCore {
 
 class DocLoader;
 class StyleCachedImage;
+class StyleImage;
 
 class CSSImageValue : public CSSPrimitiveValue, private CachedResourceClient {
 public:
@@ -37,6 +38,8 @@ public:
     virtual ~CSSImageValue();
 
     virtual StyleCachedImage* cachedImage(DocLoader*);
+    // Returns a StyleCachedImage if the image is cached already, otherwise a StylePendingImage.
+    StyleImage* cachedOrPendingImage();
     
     virtual bool isImageValue() const { return true; }
 
@@ -50,7 +53,7 @@ protected:
 private:
     CSSImageValue();
 
-    RefPtr<StyleCachedImage> m_image;
+    RefPtr<StyleImage> m_image;
     bool m_accessedImage;
 };
 

@@ -3240,6 +3240,7 @@
             'rendering/style/StyleMarqueeData.h',
             'rendering/style/StyleMultiColData.cpp',
             'rendering/style/StyleMultiColData.h',
+            'rendering/style/StylePendingImage.h',
             'rendering/style/StyleRareInheritedData.cpp',
             'rendering/style/StyleRareInheritedData.h',
             'rendering/style/StyleRareNonInheritedData.cpp',

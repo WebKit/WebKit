@@ -2,10 +2,7 @@ item
 Resource requests:
 
 
-background1.jpg
 background2.jpg
-content-image1.jpg
 content-image2.jpg
 content-image3.jpg
-list-image1.jpg
 list-image2.jpg
