@@ -5,8 +5,8 @@ layer at (0,0) size 784x1530
     RenderBody {BODY} at (8,16) size 768x1498
 layer at (8,16) size 760x478
   RenderBlock {DIV} at (0,0) size 760x478 [border: (5px solid #800000)]
-    RenderBlock (anonymous multi-column span) at (5,24) size 750x31 [color=#FFFFFF]
-      RenderBlock {H2} at (0,0) size 750x31 [color=#000000] [bgcolor=#EEEEEE]
+    RenderBlock (anonymous multi-column span) at (5,24) size 750x31
+      RenderBlock {H2} at (0,0) size 750x31 [bgcolor=#EEEEEE]
         RenderText {#text} at (0,0) size 664x32
           text run at (0,0) width 664: "This is a spanning element at the beginning of the columns block."
 layer at (13,90) size 750x399
@@ -55,8 +55,8 @@ layer at (13,90) size 750x399
         text run at (0,504) width 192: "elit. Nulla varius enim ac mi."
 layer at (8,510) size 760x478
   RenderBlock {DIV} at (0,494) size 760x478 [border: (5px solid #800000)]
-    RenderBlock (anonymous multi-column span) at (5,423) size 750x31 [color=#FFFFFF]
-      RenderBlock {H2} at (0,0) size 750x31 [color=#000000] [bgcolor=#EEEEEE]
+    RenderBlock (anonymous multi-column span) at (5,423) size 750x31
+      RenderBlock {H2} at (0,0) size 750x31 [bgcolor=#EEEEEE]
         RenderText {#text} at (0,0) size 600x32
           text run at (0,0) width 600: "This is a spanning element at the end of the columns block."
 layer at (13,515) size 750x399
@@ -106,8 +106,8 @@ layer at (13,515) size 750x399
         text run at (0,273) width 40: "ac mi."
 layer at (8,1004) size 760x510
   RenderBlock {DIV} at (0,988) size 760x510 [border: (5px solid #800000)]
-    RenderBlock (anonymous multi-column span) at (5,187) size 750x31 [color=#FFFFFF]
-      RenderBlock {H2} at (0,0) size 750x31 [color=#000000] [bgcolor=#EEEEEE]
+    RenderBlock (anonymous multi-column span) at (5,187) size 750x31
+      RenderBlock {H2} at (0,0) size 750x31 [bgcolor=#EEEEEE]
         RenderText {#text} at (0,0) size 634x32
           text run at (0,0) width 634: "This is a spanning element in the middle of the columns block."
 layer at (13,1009) size 750x163

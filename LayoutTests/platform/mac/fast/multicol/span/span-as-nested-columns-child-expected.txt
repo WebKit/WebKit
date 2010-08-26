@@ -5,8 +5,8 @@ layer at (0,0) size 785x1278
     RenderBody {BODY} at (8,16) size 769x1246
 layer at (8,16) size 760x398
   RenderBlock {DIV} at (0,0) size 760x398 [border: (5px solid #800000)]
-    RenderBlock (anonymous multi-column span) at (5,24) size 750x28 [color=#FFFFFF]
-      RenderBlock {H2} at (0,0) size 750x28 [color=#000000] [bgcolor=#EEEEEE]
+    RenderBlock (anonymous multi-column span) at (5,24) size 750x28
+      RenderBlock {H2} at (0,0) size 750x28 [bgcolor=#EEEEEE]
         RenderText {#text} at (0,0) size 664x28
           text run at (0,0) width 664: "This is a spanning element at the beginning of the columns block."
 layer at (13,87) size 750x322
@@ -53,8 +53,8 @@ layer at (13,87) size 750x322
         text run at (0,396) width 249: "adipiscing elit. Nulla varius enim ac mi."
 layer at (8,430) size 760x400
   RenderBlock {DIV} at (0,414) size 760x400 [border: (5px solid #800000)]
-    RenderBlock (anonymous multi-column span) at (5,348) size 750x28 [color=#FFFFFF]
-      RenderBlock {H2} at (0,0) size 750x28 [color=#000000] [bgcolor=#EEEEEE]
+    RenderBlock (anonymous multi-column span) at (5,348) size 750x28
+      RenderBlock {H2} at (0,0) size 750x28 [bgcolor=#EEEEEE]
         RenderText {#text} at (0,0) size 600x28
           text run at (0,0) width 600: "This is a spanning element at the end of the columns block."
 layer at (13,435) size 750x324
@@ -102,8 +102,8 @@ layer at (13,435) size 750x324
         text run at (0,216) width 20: "mi."
 layer at (8,846) size 760x416
   RenderBlock {DIV} at (0,830) size 760x416 [border: (5px solid #800000)]
-    RenderBlock (anonymous multi-column span) at (5,150) size 750x28 [color=#FFFFFF]
-      RenderBlock {H2} at (0,0) size 750x28 [color=#000000] [bgcolor=#EEEEEE]
+    RenderBlock (anonymous multi-column span) at (5,150) size 750x28
+      RenderBlock {H2} at (0,0) size 750x28 [bgcolor=#EEEEEE]
         RenderText {#text} at (0,0) size 634x28
           text run at (0,0) width 634: "This is a spanning element in the middle of the columns block."
 layer at (13,851) size 750x126

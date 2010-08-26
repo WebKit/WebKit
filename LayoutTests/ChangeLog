@@ -1,3 +1,10 @@
+2010-08-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed; rebaseline for r66122.
+
+        * platform/mac/fast/multicol/span/span-as-nested-columns-child-expected.txt:
+        * platform/qt/fast/multicol/span/span-as-nested-columns-child-expected.txt:
+
 2010-08-26  Martin Robinson  <mrobinson@igalia.com>
 
         Updating expected results after r66115.
