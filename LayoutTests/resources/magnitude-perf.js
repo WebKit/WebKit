@@ -208,6 +208,9 @@ Magnitude._runIteration = function(setup, test, magnitude, milliseconds, runsPer
             debugStr += " jsObjectCountBefore " + GCController.getJSObjectCount();
 
         // Do a gc to reduce likelihood of gc during the test run.
+        // Do multiple gc's for V8 to clear DOM wrappers.
+        GCController.collect();
+        GCController.collect();
         GCController.collect();
 
         if (GCController.getJSObjectCount)

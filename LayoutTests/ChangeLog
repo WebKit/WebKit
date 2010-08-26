@@ -1,3 +1,16 @@
+2010-08-26  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        increase number of gc's in perf tests
+        https://bugs.webkit.org/show_bug.cgi?id=44710
+
+        Extending the speculative attempt to make the perf tests less flaky.
+
+        * resources/magnitude-perf.js:
+        (Magnitude._runIteration):
+        (Magnitude):
+
 2010-08-26  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Alexey Proskuryakov.
