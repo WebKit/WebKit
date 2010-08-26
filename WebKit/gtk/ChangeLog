@@ -1,3 +1,15 @@
+2010-08-26  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] WebKitGTK+ needs proper introspection annotation for most types and methods
+        https://bugs.webkit.org/show_bug.cgi?id=44565
+
+        Add documentation and introspection specific information to a few
+        getter and setter methods.
+
+        * webkit/webkitwebview.cpp:
+
 2010-08-25  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.
