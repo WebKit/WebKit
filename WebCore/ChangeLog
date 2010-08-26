@@ -1,3 +1,13 @@
+2010-08-26  Girish Ramakrishnan  <girish@forwardbias.in>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Replace QLibrary("libgdk-x11-2.0.so.0") with QLibrary("libgdk-x11-2.0", 0)
+        https://bugs.webkit.org/show_bug.cgi?id=44618
+
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::getPluginDisplay):
+
 2010-08-26  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Sam Weinig.
