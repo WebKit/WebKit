@@ -1,3 +1,23 @@
+2010-08-25  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/8205479> WebCore's icon database often prevents Safari from being killable via sudden termination
+
+        We need to ensure that each call to disableSuddenTermination is balanced by a corresponding call to enableSuddenTermination.
+        It's possbile for several calls to IconDatabase::wakeSyncThread to correspond to only a single iteration of the loop within
+        IconDatabase::syncThreadMainLoop. This results in the sudden termination disable count growing without bound rather than
+        being balanced when the work completes. We can prevent this by ensuring that we only disable sudden termination once for each
+        corresponding iteration of the sync thread's main loop.
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::IconDatabase):
+        (WebCore::IconDatabase::wakeSyncThread): Only disable sudden termination if it has not yet been disabled for this iteration of
+        the sync thread's main loop.
+        (WebCore::IconDatabase::syncThreadMainLoop): Clear the flag indicating that sudden termination has been disabled after reenabling it
+        so that future calls to wakeSyncThread disable sudden termination once more.
+        * loader/icon/IconDatabase.h:
+
 2010-08-25  Michael Nordman  <michaeln@google.com>
 
         Reviewed by David Levin.

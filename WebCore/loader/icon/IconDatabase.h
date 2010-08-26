@@ -144,11 +144,12 @@ private:
     String m_databaseDirectory;
     // Holding m_syncLock is required when accessing m_completeDatabasePath
     String m_completeDatabasePath;
-    
+
     bool m_threadTerminationRequested;
     bool m_removeIconsRequested;
     bool m_iconURLImportComplete;
-    
+    bool m_disabledSuddenTerminationForSyncThread;
+
     Mutex m_urlAndIconLock;
     // Holding m_urlAndIconLock is required when accessing any of the following data structures or the objects they contain
     HashMap<String, IconRecord*> m_iconURLToRecordMap;
