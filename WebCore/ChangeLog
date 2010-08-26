@@ -1,3 +1,15 @@
+2010-08-25  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by David Kilzer.
+
+        AX: CSS first letter text transform causes crash
+        https://bugs.webkit.org/show_bug.cgi?id=44352
+
+        Test: accessibility/first-letter-text-transform-causes-crash.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::nextContinuation):
+
 2010-08-25  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

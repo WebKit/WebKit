@@ -370,9 +370,12 @@ AccessibilityObject* AccessibilityRenderObject::nextSibling() const
 
 static RenderBoxModelObject* nextContinuation(RenderObject* renderer)
 {
-    if (renderer->isInline() && !renderer->isReplaced())
+    ASSERT(renderer);
+    if (renderer->isRenderInline() && !renderer->isReplaced())
         return toRenderInline(renderer)->continuation();
-    return toRenderBlock(renderer)->inlineElementContinuation();
+    if (renderer->isRenderBlock())
+        return toRenderBlock(renderer)->inlineElementContinuation();
+    return 0;
 }
     
 RenderObject* AccessibilityRenderObject::renderParentObject() const
