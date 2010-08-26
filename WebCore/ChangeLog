@@ -1,3 +1,19 @@
+2010-08-26  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        User scripts injected at start are not run for plugin and media documents
+        <https://bugs.webkit.org/show_bug.cgi?id=44711>
+        <rdar://problem/8359288>
+        
+        http://trac.webkit.org/changeset/61271 made scripts injected at start run on ImageDocuments,
+        but didn't implement this behavior for MediaDocuments and PluginDocuments.
+
+        * loader/MediaDocument.cpp:
+        (WebCore::MediaDocumentParser::createDocumentStructure): Make sure we fire dispatchDocumentElementAvailable.
+        * loader/PluginDocument.cpp:
+        (WebCore::PluginDocumentParser::createDocumentStructure): Ditto.
+
 2010-08-26  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Dimitri Glazkov.

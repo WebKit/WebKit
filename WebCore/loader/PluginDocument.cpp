@@ -84,6 +84,9 @@ void PluginDocumentParser::createDocumentStructure()
     RefPtr<Element> rootElement = document()->createElement(htmlTag, false);
     document()->appendChild(rootElement, ec);
 
+    if (document()->frame() && document()->frame()->loader())
+        document()->frame()->loader()->dispatchDocumentElementAvailable();
+
     RefPtr<Element> body = document()->createElement(bodyTag, false);
     body->setAttribute(marginwidthAttr, "0");
     body->setAttribute(marginheightAttr, "0");
