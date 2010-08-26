@@ -1,3 +1,11 @@
+2010-08-26  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed; build fix.
+
+        Fix for Chromium/Mac.
+
+        * platform/graphics/chromium/Shader.cpp:
+
 2010-08-26  Tony Chang  <tony@chromium.org>
 
         Reviewed by David Hyatt.
