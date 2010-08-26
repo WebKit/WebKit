@@ -425,6 +425,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\OwnArrayPtrCommon.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\OwnPtrCommon.h"
 			>
 		</File>
@@ -438,6 +442,10 @@
 		</File>
 		<File
 			RelativePath="..\..\wtf\PageReservation.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\wtf\PassOwnArrayPtr.h"
 			>
 		</File>
 		<File

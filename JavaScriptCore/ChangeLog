@@ -1,3 +1,29 @@
+2010-08-26  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Add PassOwnArrayPtr
+        https://bugs.webkit.org/show_bug.cgi?id=44627
+
+        * GNUmakefile.am:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        Add the new files.
+
+        * wtf/Forward.h:
+        Forward declare PassOwnArrayPtr.
+        
+        * wtf/OwnArrayPtr.h:
+        Mimic the OwnPtr interface.
+
+        * wtf/OwnArrayPtrCommon.h: Added.
+        (WTF::deleteOwnedArrayPtr):
+        Move delete function here so it can be shared by OwnArrayPtr and
+        PassOwnArrayPtr.
+
+        * wtf/PassOwnArrayPtr.h: Added.
+        Mimic the PassOwnPtr interface.
+
 2010-08-26  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

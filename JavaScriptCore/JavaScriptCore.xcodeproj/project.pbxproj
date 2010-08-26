@@ -509,6 +509,8 @@
 		BCDE3AB80E6C82F5001453A7 /* Structure.h in Headers */ = {isa = PBXBuildFile; fileRef = BCDE3AB10E6C82CF001453A7 /* Structure.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCDE3B430E6C832D001453A7 /* Structure.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCDE3AB00E6C82CF001453A7 /* Structure.cpp */; };
 		BCF605140E203EF800B9A64D /* ArgList.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF605120E203EF800B9A64D /* ArgList.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BCFBE696122560E800309E9D /* PassOwnArrayPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = BCFBE695122560E800309E9D /* PassOwnArrayPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BCFBE698122561D200309E9D /* OwnArrayPtrCommon.h in Headers */ = {isa = PBXBuildFile; fileRef = BCFBE697122561D200309E9D /* OwnArrayPtrCommon.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCFD8C920EEB2EE700283848 /* JumpTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCFD8C900EEB2EE700283848 /* JumpTable.cpp */; };
 		BCFD8C930EEB2EE700283848 /* JumpTable.h in Headers */ = {isa = PBXBuildFile; fileRef = BCFD8C910EEB2EE700283848 /* JumpTable.h */; };
 		C0A272630E50A06300E96E15 /* NotFound.h in Headers */ = {isa = PBXBuildFile; fileRef = C0A2723F0E509F1E00E96E15 /* NotFound.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1063,6 +1065,8 @@
 		BCF605110E203EF800B9A64D /* ArgList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ArgList.cpp; sourceTree = "<group>"; };
 		BCF605120E203EF800B9A64D /* ArgList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArgList.h; sourceTree = "<group>"; };
 		BCF6553B0A2048DE0038A194 /* MathExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MathExtras.h; sourceTree = "<group>"; };
+		BCFBE695122560E800309E9D /* PassOwnArrayPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PassOwnArrayPtr.h; sourceTree = "<group>"; };
+		BCFBE697122561D200309E9D /* OwnArrayPtrCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OwnArrayPtrCommon.h; sourceTree = "<group>"; };
 		BCFD8C900EEB2EE700283848 /* JumpTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JumpTable.cpp; sourceTree = "<group>"; };
 		BCFD8C910EEB2EE700283848 /* JumpTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JumpTable.h; sourceTree = "<group>"; };
 		C0A2723F0E509F1E00E96E15 /* NotFound.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotFound.h; sourceTree = "<group>"; };
@@ -1472,12 +1476,14 @@
 				9303F5690991190000AD71B8 /* Noncopyable.h */,
 				C0A2723F0E509F1E00E96E15 /* NotFound.h */,
 				9303F5A409911A5800AD71B8 /* OwnArrayPtr.h */,
+				BCFBE697122561D200309E9D /* OwnArrayPtrCommon.h */,
 				0BDFFAD10FC616EC00D69EF4 /* OwnFastMallocPtr.h */,
 				9303F567099118FA00AD71B8 /* OwnPtr.h */,
 				440B7AED0FAF7FCB0073323E /* OwnPtrCommon.h */,
 				8627E5E911F1281900A313B5 /* PageAllocation.cpp */,
 				8627E5EA11F1281900A313B5 /* PageAllocation.h */,
 				8690231412092D5C00630AF9 /* PageReservation.h */,
+				BCFBE695122560E800309E9D /* PassOwnArrayPtr.h */,
 				44DD48520FAEA85000D6B4EB /* PassOwnPtr.h */,
 				6580F795094070560082C219 /* PassRefPtr.h */,
 				65D6D87E09B5A32E0002E4D7 /* Platform.h */,
@@ -2237,6 +2243,8 @@
 				86F38859121130CA007A7CE3 /* AtomicStringHash.h in Headers */,
 				86B6DA0212132B9A000D316F /* StringConcatenate.h in Headers */,
 				862AF4B612239C7B0024E5B8 /* DecimalNumber.h in Headers */,
+				BCFBE696122560E800309E9D /* PassOwnArrayPtr.h in Headers */,
+				BCFBE698122561D200309E9D /* OwnArrayPtrCommon.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2330,7 +2338,6 @@
 			isa = PBXProject;
 			buildConfigurationList = 149C277108902AFE008A9EFC /* Build configuration list for PBXProject "JavaScriptCore" */;
 			compatibilityVersion = "Xcode 2.4";
-			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,

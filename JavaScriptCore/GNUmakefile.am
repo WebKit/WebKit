@@ -465,11 +465,13 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/NotFound.h \
 	JavaScriptCore/wtf/OwnArrayPtr.h \
 	JavaScriptCore/wtf/OwnFastMallocPtr.h \
+	JavaScriptCore/wtf/OwnArrayPtrCommon.h \
 	JavaScriptCore/wtf/OwnPtrCommon.h \
 	JavaScriptCore/wtf/OwnPtr.h \
 	JavaScriptCore/wtf/PageAllocation.cpp \
 	JavaScriptCore/wtf/PageAllocation.h \
 	JavaScriptCore/wtf/PageReservation.h \
+	JavaScriptCore/wtf/PassOwnArrayPtr.h \
 	JavaScriptCore/wtf/PassOwnPtr.h \
 	JavaScriptCore/wtf/PassRefPtr.h \
 	JavaScriptCore/wtf/Platform.h \

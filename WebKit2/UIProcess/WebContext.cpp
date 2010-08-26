@@ -36,6 +36,7 @@
 #include "WebProcessMessageKinds.h"
 #include "WebProcessProxy.h"
 #include <wtf/OwnArrayPtr.h>
+#include <wtf/PassOwnArrayPtr.h>
 
 #include "WKContextPrivate.h"
 
@@ -137,7 +138,7 @@ public:
                 array[i] = element;
             }
 
-            *(coder.m_root) = ImmutableArray::create(array.release(), size).leakRef();
+            *(coder.m_root) = ImmutableArray::create(array.release().leakPtr(), size).leakRef();
             break;
         }
         case APIObject::TypeString: {

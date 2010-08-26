@@ -27,6 +27,7 @@ namespace WTF {
     template<typename T> class ListRefPtr;
     template<typename T> class OwnArrayPtr;
     template<typename T> class OwnPtr;
+    template<typename T> class PassOwnArrayPtr;
     template<typename T> class PassOwnPtr;
     template<typename T> class PassRefPtr;
     template<typename T> class RefPtr;
@@ -43,6 +44,7 @@ namespace WTF {
 using WTF::ListRefPtr;
 using WTF::OwnArrayPtr;
 using WTF::OwnPtr;
+using WTF::PassOwnArrayPtr;
 using WTF::PassOwnPtr;
 using WTF::PassRefPtr;
 using WTF::RefPtr;

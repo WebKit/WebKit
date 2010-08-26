@@ -1,3 +1,14 @@
+2010-08-26  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Add PassOwnArrayPtr
+        https://bugs.webkit.org/show_bug.cgi?id=44627
+
+        Add new forwarding header.
+
+        * ForwardingHeaders/wtf/OwnArrayPtrCommon.h: Added.
+
 2010-08-23  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
