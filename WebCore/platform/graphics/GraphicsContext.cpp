@@ -130,29 +130,29 @@ void GraphicsContext::setStrokeColor(const Color& color, ColorSpace colorSpace)
     setPlatformStrokeColor(color, colorSpace);
 }
 
-void GraphicsContext::setShadow(const FloatSize& size, float blur, const Color& color, ColorSpace colorSpace)
+void GraphicsContext::setShadow(const FloatSize& offset, float blur, const Color& color, ColorSpace colorSpace)
 {
-    m_common->state.shadowSize = size;
+    m_common->state.shadowOffset = offset;
     m_common->state.shadowBlur = blur;
     m_common->state.shadowColor = color;
-    setPlatformShadow(size, blur, color, colorSpace);
+    setPlatformShadow(offset, blur, color, colorSpace);
 }
 
 void GraphicsContext::clearShadow()
 {
-    m_common->state.shadowSize = IntSize();
+    m_common->state.shadowOffset = FloatSize();
     m_common->state.shadowBlur = 0;
     m_common->state.shadowColor = Color();
     clearPlatformShadow();
 }
 
-bool GraphicsContext::getShadow(FloatSize& size, float& blur, Color& color) const
+bool GraphicsContext::getShadow(FloatSize& offset, float& blur, Color& color) const
 {
-    size = m_common->state.shadowSize;
+    offset = m_common->state.shadowOffset;
     blur = m_common->state.shadowBlur;
     color = m_common->state.shadowColor;
 
-    return color.isValid() && color.alpha() && (blur || size.width() || size.height());
+    return color.isValid() && color.alpha() && (blur || offset.width() || offset.height());
 }
 
 float GraphicsContext::strokeThickness() const

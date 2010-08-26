@@ -76,12 +76,12 @@ void StillImage::draw(GraphicsContext* ctxt, const FloatRect& dst,
 
     ctxt->setCompositeOperation(op);
 
-    FloatSize shadowSize;
+    FloatSize shadowOffset;
     float shadowBlur;
     Color shadowColor;
-    if (ctxt->getShadow(shadowSize, shadowBlur, shadowColor)) {
+    if (ctxt->getShadow(shadowOffset, shadowBlur, shadowColor)) {
         FloatRect shadowImageRect(normalizedDst);
-        shadowImageRect.move(shadowSize.width(), shadowSize.height());
+        shadowImageRect.move(shadowOffset.width(), shadowOffset.height());
 
         QImage shadowImage(QSize(static_cast<int>(normalizedSrc.width()), static_cast<int>(normalizedSrc.height())), QImage::Format_ARGB32_Premultiplied);
         QPainter p(&shadowImage);

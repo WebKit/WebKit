@@ -72,7 +72,7 @@ namespace WebCore {
 
         bool paintingDisabled;
         
-        FloatSize shadowSize;
+        FloatSize shadowOffset;
         float shadowBlur;
         Color shadowColor;
 

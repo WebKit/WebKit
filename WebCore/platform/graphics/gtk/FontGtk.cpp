@@ -241,11 +241,11 @@ void Font::drawComplexText(GraphicsContext* context, const TextRun& run, const F
     float red, green, blue, alpha;
 
     // Text shadow, inspired by FontMac
-    FloatSize shadowSize;
+    FloatSize shadowOffset;
     float shadowBlur = 0;
     Color shadowColor;
     bool hasShadow = context->textDrawingMode() == cTextFill &&
-        context->getShadow(shadowSize, shadowBlur, shadowColor);
+        context->getShadow(shadowOffset, shadowBlur, shadowColor);
 
     // TODO: Blur support
     if (hasShadow) {
@@ -257,7 +257,7 @@ void Font::drawComplexText(GraphicsContext* context, const TextRun& run, const F
         shadowFillColor.getRGBA(red, green, blue, alpha);
         cairo_set_source_rgba(cr, red, green, blue, alpha);
 
-        cairo_translate(cr, shadowSize.width(), shadowSize.height());
+        cairo_translate(cr, shadowOffset.width(), shadowOffset.height());
 
         if (partialRegion) {
             gdk_cairo_region(cr, partialRegion);
@@ -290,7 +290,7 @@ void Font::drawComplexText(GraphicsContext* context, const TextRun& run, const F
 
     // Re-enable the platform shadow we disabled earlier
     if (hasShadow)
-        context->setShadow(shadowSize, shadowBlur, shadowColor, DeviceColorSpace);
+        context->setShadow(shadowOffset, shadowBlur, shadowColor, DeviceColorSpace);
 
     // Pango sometimes leaves behind paths we don't want
     cairo_new_path(cr);

@@ -889,7 +889,7 @@ void GraphicsContext::setPlatformShadow(const FloatSize& size, float blur, const
     if (m_common->state.shadowsIgnoreTransforms) {
         // Meaning that this graphics context is associated with a CanvasRenderingContext
         // We flip the height since CG and HTML5 Canvas have opposite Y axis
-        m_common->state.shadowSize = FloatSize(size.width(), -size.height());
+        m_common->state.shadowOffset = FloatSize(size.width(), -size.height());
         m_data->shadow = ContextShadow(color, blur, size.width(), -size.height());
     } else {
         m_data->shadow = ContextShadow(color, blur, size.width(), size.height());

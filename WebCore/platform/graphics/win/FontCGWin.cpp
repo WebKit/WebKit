@@ -140,11 +140,11 @@ static void drawGDIGlyphs(GraphicsContext* graphicsContext, const SimpleFontData
 
         drawIntoBitmap = fillColor.alpha() != 255 || graphicsContext->inTransparencyLayer();
         if (!drawIntoBitmap) {
-            FloatSize size;
+            FloatSize offset;
             float blur;
             Color color;
-            graphicsContext->getShadow(size, blur, color);
-            drawIntoBitmap = !size.isEmpty() || blur;
+            graphicsContext->getShadow(offset, blur, color);
+            drawIntoBitmap = !offset.isEmpty() || blur;
         }
     }
 
@@ -349,10 +349,10 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext, const SimpleFontData* fo
     CGContextSetFontSize(cgContext, platformData.size());
     wkSetCGContextFontRenderingStyle(cgContext, font->isSystemFont(), false, font->platformData().useGDI());
 
-    FloatSize shadowSize;
+    FloatSize shadowOffset;
     float shadowBlur;
     Color shadowColor;
-    graphicsContext->getShadow(shadowSize, shadowBlur, shadowColor);
+    graphicsContext->getShadow(shadowOffset, shadowBlur, shadowColor);
 
     bool hasSimpleShadow = graphicsContext->textDrawingMode() == cTextFill && shadowColor.isValid() && !shadowBlur;
     if (hasSimpleShadow) {
@@ -361,10 +361,10 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext, const SimpleFontData* fo
         Color fillColor = graphicsContext->fillColor();
         Color shadowFillColor(shadowColor.red(), shadowColor.green(), shadowColor.blue(), shadowColor.alpha() * fillColor.alpha() / 255);
         graphicsContext->setFillColor(shadowFillColor, DeviceColorSpace);
-        CGContextSetTextPosition(cgContext, point.x() + translation.width() + shadowSize.width(), point.y() + translation.height() + shadowSize.height());
+        CGContextSetTextPosition(cgContext, point.x() + translation.width() + shadowOffset.width(), point.y() + translation.height() + shadowOffset.height());
         CGContextShowGlyphsWithAdvances(cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);
         if (font->syntheticBoldOffset()) {
-            CGContextSetTextPosition(cgContext, point.x() + translation.width() + shadowSize.width() + font->syntheticBoldOffset(), point.y() + translation.height() + shadowSize.height());
+            CGContextSetTextPosition(cgContext, point.x() + translation.width() + shadowOffset.width() + font->syntheticBoldOffset(), point.y() + translation.height() + shadowOffset.height());
             CGContextShowGlyphsWithAdvances(cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);
         }
         graphicsContext->setFillColor(fillColor, DeviceColorSpace);
@@ -378,7 +378,7 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext, const SimpleFontData* fo
     }
 
     if (hasSimpleShadow)
-        graphicsContext->setShadow(shadowSize, shadowBlur, shadowColor, DeviceColorSpace);
+        graphicsContext->setShadow(shadowOffset, shadowBlur, shadowColor, DeviceColorSpace);
 
     wkRestoreFontSmoothingStyle(cgContext, oldFontSmoothingStyle);
 }

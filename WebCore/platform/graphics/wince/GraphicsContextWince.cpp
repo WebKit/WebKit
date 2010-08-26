@@ -1260,15 +1260,15 @@ void GraphicsContext::fillRoundedRect(const IntRect& fillRect, const IntSize& to
     if (!m_data->m_dc)
         return;
 
-    FloatSize shadowSize;
+    FloatSize shadowOffset;
     float shadowBlur = 0;
     Color shadowColor;
         
-    getShadow(shadowSize, shadowBlur, shadowColor);
+    getShadow(shadowOffset, shadowBlur, shadowColor);
     
     IntRect dstRect = fillRect;
     
-    dstRect.move(stableRound(shadowSize.width()), stableRound(shadowSize.height()));
+    dstRect.move(stableRound(shadowOffset.width()), stableRound(shadowOffset.height()));
     dstRect.inflate(stableRound(shadowBlur));
     dstRect = m_data->mapRect(dstRect);
   
@@ -1687,17 +1687,17 @@ void GraphicsContext::drawText(const SimpleFontData* fontData, const GlyphBuffer
         return;
     }
 
-    FloatSize shadowSize;
+    FloatSize shadowOffset;
     float shadowBlur = 0;
     Color shadowColor;
     bool hasShadow = textDrawingMode() == cTextFill
-        && getShadow(shadowSize, shadowBlur, shadowColor)
+        && getShadow(shadowOffset, shadowBlur, shadowColor)
         && shadowColor.alpha();
     COLORREF shadowRGBColor;
     FloatPoint trShadowPoint;
     if (hasShadow) {
         shadowRGBColor = RGB(shadowColor.red(), shadowColor.green(), shadowColor.blue());
-        trShadowPoint = m_data->mapPoint(startPoint + shadowSize);
+        trShadowPoint = m_data->mapPoint(startPoint + shadowOffset);
     }
 
     HGDIOBJ hOldFont = SelectObject(m_data->m_dc, hFont);

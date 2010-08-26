@@ -222,11 +222,11 @@ void SkiaWinOutlineCache::removePathsForFont(HFONT hfont)
 
 bool windowsCanHandleDrawTextShadow(GraphicsContext *context)
 {
-    FloatSize shadowSize;
+    FloatSize shadowOffset;
     float shadowBlur;
     Color shadowColor;
 
-    bool hasShadow = context->getShadow(shadowSize, shadowBlur, shadowColor);
+    bool hasShadow = context->getShadow(shadowOffset, shadowBlur, shadowColor);
     return (hasShadow && (shadowBlur == 0) && (shadowColor.alpha() == 255) && (context->fillColor().alpha() == 255));
 }
 

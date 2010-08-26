@@ -1,3 +1,52 @@
+2010-08-26  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Dan Bernstein.
+
+        shadowSize parameter is used to pass shadow offset in the
+        GraphicsContext::setShadow and getShadow functions
+        https://bugs.webkit.org/show_bug.cgi?id=44603
+
+        Change the shadowSize parameter ot the functions getShadow and
+        setShadow in GraphicsContext to shadowOffset which is the current
+        use of that parameter in the code.
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::setShadow):
+        (WebCore::GraphicsContext::clearShadow):
+        (WebCore::GraphicsContext::getShadow):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/GraphicsContextPrivate.h:
+        * platform/graphics/cairo/FontCairo.cpp:
+        (WebCore::Font::drawGlyphs):
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::calculateShadowBufferDimensions):
+        (WebCore::drawPathShadow):
+        (WebCore::drawBorderlessRectShadow):
+        (WebCore::GraphicsContext::setPlatformShadow):
+        * platform/graphics/cairo/ImageCairo.cpp:
+        (WebCore::BitmapImage::draw):
+        * platform/graphics/chromium/FontChromiumWin.cpp:
+        (WebCore::TransparencyAwareFontPainter::TransparencyAwareGlyphPainter::drawGlyphs):
+        (WebCore::Font::drawComplexText):
+        * platform/graphics/gtk/FontGtk.cpp:
+        (WebCore::Font::drawComplexText):
+        * platform/graphics/mac/FontMac.mm:
+        (WebCore::Font::drawGlyphs):
+        * platform/graphics/qt/ImageQt.cpp:
+        (WebCore::BitmapImage::draw):
+        * platform/graphics/qt/StillImageQt.cpp:
+        (WebCore::StillImage::draw):
+        * platform/graphics/qt/GraphicsContextQt:
+        (WebCore::GraphicsContext::setPlatformShadow):
+        * platform/graphics/skia/SkiaFontWin.cpp:
+        (WebCore::windowsCanHandleDrawTextShadow):
+        * platform/graphics/win/FontCGWin.cpp:
+        (WebCore::drawGDIGlyphs):
+        (WebCore::Font::drawGlyphs):
+        * platform/graphics/wince/GraphicsContextWince.cpp:
+        (WebCore::GraphicsContext::fillRoundedRect):
+        (WebCore::GraphicsContext::drawText):
+
 2010-08-25  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r66074.

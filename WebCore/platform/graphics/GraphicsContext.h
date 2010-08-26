@@ -298,7 +298,7 @@ namespace WebCore {
 #if PLATFORM(CAIRO)
         float getAlpha();
         void createPlatformShadow(PassOwnPtr<ImageBuffer> buffer, const Color& shadowColor, const FloatRect& shadowRect, float radius);
-        static void calculateShadowBufferDimensions(IntSize& shadowBufferSize, FloatRect& shadowRect, float& radius, const FloatRect& sourceRect, const FloatSize& shadowSize, float shadowBlur);
+        static void calculateShadowBufferDimensions(IntSize& shadowBufferSize, FloatRect& shadowRect, float& radius, const FloatRect& sourceRect, const FloatSize& shadowOffset, float shadowBlur);
 #endif
 
         void setCompositeOperation(CompositeOperator);
