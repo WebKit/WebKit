@@ -36,12 +36,13 @@ sources = []
 
 jscore_excludes.extend(get_excludes(jscore_dir, ['*None.cpp']))
 
-if building_on_win32:
-    jscore_excludes += ['MarkStackPosix.cpp', 'ThreadingPthreads.cpp']
-    sources += ['runtime/MarkStackWin.cpp']
-else:
-    jscore_excludes.append('JSStringRefBSTR.cpp')
-    jscore_excludes.extend(get_excludes(jscore_dir, ['*Win.cpp']))
+if build_port == "wx":
+    if building_on_win32:
+        jscore_excludes += ['MarkStackPosix.cpp', 'ThreadingPthreads.cpp']
+        sources += ['runtime/MarkStackWin.cpp']
+    else:
+        jscore_excludes.append('JSStringRefBSTR.cpp')
+        jscore_excludes.extend(get_excludes(jscore_dir, ['*Win.cpp']))
     
 def build(bld):
     import Options

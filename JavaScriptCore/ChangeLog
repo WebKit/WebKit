@@ -1,3 +1,14 @@
+2010-08-25  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Kevin Ollivier.
+
+        [BREWMP] Add build system
+        https://bugs.webkit.org/show_bug.cgi?id=44645
+
+        Make waf script portable so that we can add more ports.
+
+        * wscript:
+
 2010-08-25  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Sam Weinig.
