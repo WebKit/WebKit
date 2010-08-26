@@ -33,7 +33,6 @@
 
 #include <string.h>
 
-#include "HTMLEntityTable.h"
 #include "PlatformString.h"
 #include "StringBuilder.h"
 #include <wtf/HashMap.h>
@@ -44,49 +43,17 @@ using namespace WebCore;
 
 namespace WebKit {
 
-namespace {
-
-void populateMapFromXMLEntities(WTF::HashMap<int, WTF::String>& map)
-{
-    ASSERT(map.isEmpty());
-    map.set(0x003c, "lt");
-    map.set(0x003e, "gt");
-    map.set(0x0026, "amp");
-    map.set(0x0027, "apos");
-    map.set(0x0022, "quot");
-}
-
-void populateMapFromHTMLEntityTable(WTF::HashMap<int, WTF::String>& map)
-{
-    ASSERT(map.isEmpty());
-    const HTMLEntityTableEntry* entry = HTMLEntityTable::firstEntry();
-    const HTMLEntityTableEntry* end = HTMLEntityTable::lastEntry() + 1;
-    for (; entry != end; ++entry) {
-        String entity = entry->entity;
-        int value = entry->value;
-        ASSERT(value && !entity.isEmpty());
-        if (entity[entity.length() - 1] != ';')
-            continue; // We want the canonical version that ends in ;
-        // For consistency, use the lower case for entities that have both.
-        if (map.contains(value) && map.get(value) == entity.lower())
-            continue;
-        // Don't register &percnt;, &nsup; and &supl; for some unknown reason.
-        if (value == '%' || value == 0x2285 || value == 0x00b9)
-            continue;
-        map.set(value, entity);
-    }
-    // We add #39 for some unknown reason.
-    map.set(0x0027, String("#39"));
-}
-
-}
-
 WebEntities::WebEntities(bool xmlEntities)
 {
-    if (xmlEntities)
-        populateMapFromXMLEntities(m_entitiesMap);
-    else
-        populateMapFromHTMLEntityTable(m_entitiesMap);
+    ASSERT(m_entitiesMap.isEmpty());
+    m_entitiesMap.set(0x003c, "lt");
+    m_entitiesMap.set(0x003e, "gt");
+    m_entitiesMap.set(0x0026, "amp");
+    m_entitiesMap.set(0x0027, "apos");
+    m_entitiesMap.set(0x0022, "quot");
+    // We add #39 for test-compatibility reason.
+    if (!xmlEntities)
+        m_entitiesMap.set(0x0027, String("#39"));
 }
 
 String WebEntities::entityNameByCode(int code) const
