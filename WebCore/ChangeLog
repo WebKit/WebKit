@@ -1,3 +1,16 @@
+2010-08-26   Stanislav Brabec  <sbrabec@suse.cz>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] [PATCH] plugin loading invalid symlink evaluation deadlock
+        https://bugs.webkit.org/show_bug.cgi?id=44683
+
+        Fix symlink resolution in PluginPackageGtk.
+
+        * plugins/gtk/PluginPackageGtk.cpp:
+        (WebCore::PluginPackage::load): g_file_resolve_relative_path must be called with a
+        a directory, not a file.
+
 2010-08-26  Andy Estes  <aestes@apple.com>
 
         Reviewed by Eric Carlson.
