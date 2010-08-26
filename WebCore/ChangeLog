@@ -1,3 +1,25 @@
+2010-08-24  Victoria Kirst  <vrk@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Adding a means of communication between WebKit/WebCore and
+        chromium in order to share video frames. This adds the necessary
+        WebKit-side classes and methods, but does not actually use them
+        yet - that will be committed in a separate patch after the
+        corresponding Chromium side is committed.
+
+        https://bugs.webkit.org/show_bug.cgi?id=44539
+
+        No new tests, as these new classes/APIs are not yet used.
+
+        * platform/graphics/chromium/VideoFrameChromium.h: Added.
+        (WebCore::VideoFrameChromium::):
+        * platform/graphics/chromium/VideoFrameProvider.h: Added.
+        * platform/graphics/chromium/VideoLayerChromium.cpp:
+        (WebCore::VideoLayerChromium::create):
+        (WebCore::VideoLayerChromium::VideoLayerChromium):
+        * platform/graphics/chromium/VideoLayerChromium.h:
+
 2010-08-25  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Simon Fraser.

@@ -28,40 +28,46 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef WebVideoFrame_h
+#define WebVideoFrame_h
 
-#ifndef VideoLayerChromium_h
-#define VideoLayerChromium_h
+namespace WebKit {
 
-#if USE(ACCELERATED_COMPOSITING)
-
-#include "ContentLayerChromium.h"
-#include "VideoFrameProvider.h"
-
-namespace WebCore {
-
-// A Layer that contains a Video element.
-class VideoLayerChromium : public ContentLayerChromium {
+// A proxy video frame interface to communicate frame data between chromium
+// and WebKit.
+class WebVideoFrame {
 public:
-    static PassRefPtr<VideoLayerChromium> create(GraphicsLayerChromium* owner = 0,
-                                                 VideoFrameProvider* = 0);
-    virtual bool drawsContent() { return true; }
-    virtual void updateContents();
+    enum Format {
+        FormatInvalid,
+        FormatRGB555,
+        FormatRGB565,
+        FormatRGB24,
+        FormatRGB32,
+        FormatRGBA,
+        FormatYV12,
+        FormatYV16,
+        FormatNV12,
+        FormatEmpty,
+        FormatASCII,
+    };
 
-private:
-    VideoLayerChromium(GraphicsLayerChromium* owner, VideoFrameProvider*);
-    void createTextureRect(const IntSize& requiredTextureSize, const IntRect& updateRect, unsigned textureId);
-    void updateTextureRect(const IntRect& updateRect, unsigned textureId);
-    void updateCompleted();
+    enum SurfaceType {
+        SurfaceTypeSystemMemory,
+        SurfaceTypeOMXBufferHead,
+        SurfaceTypeEGLImage,
+        SurfaceTypeMFBuffer,
+        SurfaceTypeDirect3DSurface
+    };
 
-#if PLATFORM(SKIA)
-    OwnPtr<skia::PlatformCanvas> m_canvas;
-    OwnPtr<PlatformContextSkia> m_skiaContext;
-#endif
-    OwnPtr<GraphicsContext> m_graphicsContext;
-    OwnPtr<VideoFrameProvider> m_provider;
+    virtual SurfaceType surfaceType() const = 0;
+    virtual Format format() const = 0;
+    virtual unsigned width() const = 0;
+    virtual unsigned height() const = 0;
+    virtual unsigned planes() const = 0;
+    virtual int stride(unsigned plane) const = 0;
+    virtual const void* data(unsigned plane) const = 0;
 };
 
-}
-#endif // USE(ACCELERATED_COMPOSITING)
+} // namespace WebKit
 
 #endif

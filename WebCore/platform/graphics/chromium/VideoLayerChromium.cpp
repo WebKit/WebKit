@@ -48,18 +48,20 @@
 
 namespace WebCore {
 
-PassRefPtr<VideoLayerChromium> VideoLayerChromium::create(GraphicsLayerChromium* owner)
+PassRefPtr<VideoLayerChromium> VideoLayerChromium::create(GraphicsLayerChromium* owner,
+                                                          VideoFrameProvider* provider)
 {
-    return adoptRef(new VideoLayerChromium(owner));
+    return adoptRef(new VideoLayerChromium(owner, provider));
 }
 
-VideoLayerChromium::VideoLayerChromium(GraphicsLayerChromium* owner)
+VideoLayerChromium::VideoLayerChromium(GraphicsLayerChromium* owner, VideoFrameProvider* provider)
     : ContentLayerChromium(owner)
 #if PLATFORM(SKIA)
     , m_canvas(0)
     , m_skiaContext(0)
 #endif
     , m_graphicsContext(0)
+    , m_provider(provider)
 {
 }
 

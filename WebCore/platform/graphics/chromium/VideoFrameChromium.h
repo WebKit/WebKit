@@ -28,40 +28,54 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
-#ifndef VideoLayerChromium_h
-#define VideoLayerChromium_h
-
-#if USE(ACCELERATED_COMPOSITING)
-
-#include "ContentLayerChromium.h"
-#include "VideoFrameProvider.h"
+#ifndef VideoFrameChromium_h
+#define VideoFrameChromium_h
 
 namespace WebCore {
 
-// A Layer that contains a Video element.
-class VideoLayerChromium : public ContentLayerChromium {
+// A class that represents a video frame in chromium.
+class VideoFrameChromium {
 public:
-    static PassRefPtr<VideoLayerChromium> create(GraphicsLayerChromium* owner = 0,
-                                                 VideoFrameProvider* = 0);
-    virtual bool drawsContent() { return true; }
-    virtual void updateContents();
+    static const unsigned cMaxPlanes;
+    static const unsigned cNumRGBPlanes;
+    static const unsigned cRGBPlane;
+    static const unsigned cNumYUVPlanes;
+    static const unsigned cYPlane;
+    static const unsigned cUPlane;
+    static const unsigned cVPlane;
 
-private:
-    VideoLayerChromium(GraphicsLayerChromium* owner, VideoFrameProvider*);
-    void createTextureRect(const IntSize& requiredTextureSize, const IntRect& updateRect, unsigned textureId);
-    void updateTextureRect(const IntRect& updateRect, unsigned textureId);
-    void updateCompleted();
+    // These enums must be kept in sync with WebKit::WebVideoFrame.
+    enum Format {
+        Invalid,
+        RGB555,
+        RGB565,
+        RGB24,
+        RGB32,
+        RGBA,
+        YV12,
+        YV16,
+        NV12,
+        Empty,
+        ASCII,
+    };
 
-#if PLATFORM(SKIA)
-    OwnPtr<skia::PlatformCanvas> m_canvas;
-    OwnPtr<PlatformContextSkia> m_skiaContext;
-#endif
-    OwnPtr<GraphicsContext> m_graphicsContext;
-    OwnPtr<VideoFrameProvider> m_provider;
+    enum SurfaceType {
+        TypeSystemMemory,
+        TypeOMXBufferHead,
+        TypeEGLImage,
+        TypeMFBuffer,
+        TypeDirect3DSurface
+    };
+
+    virtual SurfaceType surfaceType() const = 0;
+    virtual Format format() const = 0;
+    virtual unsigned width() const = 0;
+    virtual unsigned height() const = 0;
+    virtual unsigned planes() const = 0;
+    virtual int stride(unsigned plane) const = 0;
+    virtual const void* data(unsigned plane) const = 0;
 };
 
-}
-#endif // USE(ACCELERATED_COMPOSITING)
+} // namespace WebCore
 
 #endif

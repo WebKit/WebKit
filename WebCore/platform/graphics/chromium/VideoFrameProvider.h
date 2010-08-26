@@ -28,40 +28,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef VideoFrameProvider_h
+#define VideoFrameProvider_h
 
-#ifndef VideoLayerChromium_h
-#define VideoLayerChromium_h
-
-#if USE(ACCELERATED_COMPOSITING)
-
-#include "ContentLayerChromium.h"
-#include "VideoFrameProvider.h"
+#include "VideoFrameChromium.h"
 
 namespace WebCore {
 
-// A Layer that contains a Video element.
-class VideoLayerChromium : public ContentLayerChromium {
+class VideoFrameProvider {
 public:
-    static PassRefPtr<VideoLayerChromium> create(GraphicsLayerChromium* owner = 0,
-                                                 VideoFrameProvider* = 0);
-    virtual bool drawsContent() { return true; }
-    virtual void updateContents();
-
-private:
-    VideoLayerChromium(GraphicsLayerChromium* owner, VideoFrameProvider*);
-    void createTextureRect(const IntSize& requiredTextureSize, const IntRect& updateRect, unsigned textureId);
-    void updateTextureRect(const IntRect& updateRect, unsigned textureId);
-    void updateCompleted();
-
-#if PLATFORM(SKIA)
-    OwnPtr<skia::PlatformCanvas> m_canvas;
-    OwnPtr<PlatformContextSkia> m_skiaContext;
-#endif
-    OwnPtr<GraphicsContext> m_graphicsContext;
-    OwnPtr<VideoFrameProvider> m_provider;
+    // This function returns a pointer to a VideoFrameChromium, which is
+    // the WebCore wrapper for a video frame in Chromium. getCurrentFrame()
+    // places a lock on the frame in Chromium. Calls to this method should
+    // always be followed with a call to putCurrentFrame().
+    // The ownership of the object is not transferred to the caller and
+    // the caller should not free the returned object.
+    virtual VideoFrameChromium* getCurrentFrame() = 0;
+    // This function releases the lock on the video frame in chromium. It should
+    // always be called after getCurrentFrame(). Frames passed into this method
+    // should no longer be referenced after the call is made.
+    virtual void putCurrentFrame(VideoFrameChromium*) = 0;
 };
 
-}
-#endif // USE(ACCELERATED_COMPOSITING)
+} // namespace WebCore
 
 #endif

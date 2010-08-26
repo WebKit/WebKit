@@ -33,6 +33,7 @@
 
 #include "WebCanvas.h"
 #include "WebVector.h"
+#include "WebVideoFrame.h"
 
 namespace WebKit {
 
@@ -127,6 +128,18 @@ public:
 
     virtual bool hasSingleSecurityOrigin() const = 0;
     virtual MovieLoadType movieLoadType() const = 0;
+
+    // This function returns a pointer to a WebVideoFrame, which is
+    // a WebKit wrapper for a video frame in chromium. This places a lock
+    // on the frame in chromium, and calls to this method should always be
+    // followed with a call to putCurrentFrame(). The ownership of this object
+    // is not transferred to the caller, and the caller should not free the
+    // returned object.
+    virtual WebVideoFrame* getCurrentFrame() { return 0; }
+    // This function releases the lock on the current video frame in Chromium.
+    // It should always be called after getCurrentFrame(). Frame passed to this
+    // method should no longer be referenced after the call is made.
+    virtual void putCurrentFrame(WebVideoFrame*) { }
 };
 
 } // namespace WebKit

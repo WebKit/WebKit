@@ -1,3 +1,38 @@
+2010-08-24  Victoria Kirst  <vrk@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Adding a way to communicate video frames between Chromium and WebKit.
+        The WebKit side acts as a middleman between Chromium and WebCore.
+        The VideoFrameChromiumImpl is not being used by WebCore yet, as there
+        still needs to be an implementation of WebVideoFrame in Chromium
+        -- coming soon in a subsequent patch.
+
+        API changes for Video Frame sharing between WebKit and Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=44539
+
+        * WebKit.gyp:
+        * public/WebMediaPlayer.h:
+        (WebKit::WebMediaPlayer::getCurrentFrame):
+        (WebKit::WebMediaPlayer::putCurrentFrame):
+        * public/WebVideoFrame.h: Added.
+        * src/VideoFrameChromiumImpl.cpp: Added.
+        (WebKit::VideoFrameChromiumImpl::toWebVideoFrame):
+        (WebKit::VideoFrameChromiumImpl::VideoFrameChromiumImpl):
+        (WebKit::VideoFrameChromiumImpl::type):
+        (WebKit::VideoFrameChromiumImpl::format):
+        (WebKit::VideoFrameChromiumImpl::width):
+        (WebKit::VideoFrameChromiumImpl::height):
+        (WebKit::VideoFrameChromiumImpl::planes):
+        (WebKit::VideoFrameChromiumImpl::stride):
+        (WebKit::VideoFrameChromiumImpl::data):
+        * src/VideoFrameChromiumImpl.h: Added.
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit::WebMediaPlayerClientImpl::getCurrentFrame):
+        (WebKit::WebMediaPlayerClientImpl::putCurrentFrame):
+        (WebKit::WebMediaPlayerClientImpl::create):
+        * src/WebMediaPlayerClientImpl.h:
+
 2010-08-25  Eric Seidel  <eric@webkit.org>
 
         Unreviewed.  Build fix.

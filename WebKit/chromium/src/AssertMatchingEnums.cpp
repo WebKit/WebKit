@@ -48,6 +48,7 @@
 #include "TextAffinity.h"
 #include "UserContentTypes.h"
 #include "UserScriptTypes.h"
+#include "VideoFrameChromium.h"
 #include "WebAccessibilityObject.h"
 #include "WebApplicationCacheHost.h"
 #include "WebClipboard.h"
@@ -62,6 +63,7 @@
 #include "WebSettings.h"
 #include "WebTextAffinity.h"
 #include "WebTextCaseSensitivity.h"
+#include "WebVideoFrame.h"
 #include "WebView.h"
 #include <wtf/Assertions.h>
 #include <wtf/text/StringImpl.h>
@@ -327,6 +329,24 @@ COMPILE_ASSERT_MATCHING_ENUM(WebMediaPlayer::Unknown, MediaPlayer::Unknown);
 COMPILE_ASSERT_MATCHING_ENUM(WebMediaPlayer::Download, MediaPlayer::Download);
 COMPILE_ASSERT_MATCHING_ENUM(WebMediaPlayer::StoredStream, MediaPlayer::StoredStream);
 COMPILE_ASSERT_MATCHING_ENUM(WebMediaPlayer::LiveStream, MediaPlayer::LiveStream);
+
+COMPILE_ASSERT_MATCHING_ENUM(WebVideoFrame::FormatInvalid, VideoFrameChromium::Invalid);
+COMPILE_ASSERT_MATCHING_ENUM(WebVideoFrame::FormatRGB555, VideoFrameChromium::RGB555);
+COMPILE_ASSERT_MATCHING_ENUM(WebVideoFrame::FormatRGB565, VideoFrameChromium::RGB565);
+COMPILE_ASSERT_MATCHING_ENUM(WebVideoFrame::FormatRGB24, VideoFrameChromium::RGB24);
+COMPILE_ASSERT_MATCHING_ENUM(WebVideoFrame::FormatRGB32, VideoFrameChromium::RGB32);
+COMPILE_ASSERT_MATCHING_ENUM(WebVideoFrame::FormatRGBA, VideoFrameChromium::RGBA);
+COMPILE_ASSERT_MATCHING_ENUM(WebVideoFrame::FormatYV12, VideoFrameChromium::YV12);
+COMPILE_ASSERT_MATCHING_ENUM(WebVideoFrame::FormatYV16, VideoFrameChromium::YV16);
+COMPILE_ASSERT_MATCHING_ENUM(WebVideoFrame::FormatNV12, VideoFrameChromium::NV12);
+COMPILE_ASSERT_MATCHING_ENUM(WebVideoFrame::FormatEmpty, VideoFrameChromium::Empty);
+COMPILE_ASSERT_MATCHING_ENUM(WebVideoFrame::FormatASCII, VideoFrameChromium::ASCII);
+
+COMPILE_ASSERT_MATCHING_ENUM(WebVideoFrame::SurfaceTypeSystemMemory, VideoFrameChromium::TypeSystemMemory);
+COMPILE_ASSERT_MATCHING_ENUM(WebVideoFrame::SurfaceTypeOMXBufferHead, VideoFrameChromium::TypeOMXBufferHead);
+COMPILE_ASSERT_MATCHING_ENUM(WebVideoFrame::SurfaceTypeEGLImage, VideoFrameChromium::TypeEGLImage);
+COMPILE_ASSERT_MATCHING_ENUM(WebVideoFrame::SurfaceTypeMFBuffer, VideoFrameChromium::TypeMFBuffer);
+COMPILE_ASSERT_MATCHING_ENUM(WebVideoFrame::SurfaceTypeDirect3DSurface, VideoFrameChromium::TypeDirect3DSurface);
 #endif
 
 #if ENABLE(NOTIFICATIONS)
@@ -360,5 +380,3 @@ COMPILE_ASSERT_MATCHING_ENUM(WebView::UserContentInjectInTopFrameOnly, InjectInT
 COMPILE_ASSERT_MATCHING_ENUM(WebIDBKey::NullType, IDBKey::NullType);
 COMPILE_ASSERT_MATCHING_ENUM(WebIDBKey::StringType, IDBKey::StringType);
 COMPILE_ASSERT_MATCHING_ENUM(WebIDBKey::NumberType, IDBKey::NumberType);
-
-

@@ -382,6 +382,8 @@
                 'src/StorageNamespaceProxy.cpp',
                 'src/StorageNamespaceProxy.h',
                 'src/TemporaryGlue.h',
+                'src/VideoFrameChromiumImpl.cpp',
+                'src/VideoFrameChromiumImpl.h',
                 'src/WebAccessibilityCache.cpp',
                 'src/WebAccessibilityCacheImpl.cpp',
                 'src/WebAccessibilityCacheImpl.h',

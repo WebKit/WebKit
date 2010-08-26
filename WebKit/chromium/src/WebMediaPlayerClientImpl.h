@@ -34,6 +34,8 @@
 #if ENABLE(VIDEO)
 
 #include "MediaPlayerPrivate.h"
+#include "VideoFrameChromium.h"
+#include "VideoFrameProvider.h"
 #include "WebMediaPlayerClient.h"
 #include <wtf/OwnPtr.h>
 
@@ -44,8 +46,10 @@ class WebMediaPlayer;
 
 // This class serves as a bridge between WebCore::MediaPlayer and
 // WebKit::WebMediaPlayer.
-class WebMediaPlayerClientImpl : public WebMediaPlayerClient
-                               , public WebCore::MediaPlayerPrivateInterface {
+class WebMediaPlayerClientImpl : public WebCore::MediaPlayerPrivateInterface
+                               , public WebCore::VideoFrameProvider
+                               , public WebMediaPlayerClient {
+
 public:
     static bool isEnabled();
     static void setIsEnabled(bool);
@@ -109,6 +113,10 @@ public:
 #endif
 
     virtual WebCore::MediaPlayer::MovieLoadType movieLoadType() const;
+
+    // VideoFrameProvider methods:
+    virtual WebCore::VideoFrameChromium* getCurrentFrame();
+    virtual void putCurrentFrame(WebCore::VideoFrameChromium*);
 
 private:
     WebMediaPlayerClientImpl();

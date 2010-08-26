@@ -28,40 +28,39 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef VideoFrameChromiumImpl_h
+#define VideoFrameChromiumImpl_h
 
-#ifndef VideoLayerChromium_h
-#define VideoLayerChromium_h
+#include "VideoFrameChromium.h"
+#include "WebVideoFrame.h"
 
-#if USE(ACCELERATED_COMPOSITING)
+using namespace WebCore;
 
-#include "ContentLayerChromium.h"
-#include "VideoFrameProvider.h"
+namespace WebKit {
 
-namespace WebCore {
-
-// A Layer that contains a Video element.
-class VideoLayerChromium : public ContentLayerChromium {
+// A wrapper class for WebKit::WebVideoFrame. Objects can be created in WebKit
+// and used in WebCore because of the VideoFrameChromium interface.
+class VideoFrameChromiumImpl : public VideoFrameChromium {
 public:
-    static PassRefPtr<VideoLayerChromium> create(GraphicsLayerChromium* owner = 0,
-                                                 VideoFrameProvider* = 0);
-    virtual bool drawsContent() { return true; }
-    virtual void updateContents();
+    // Converts a WebCore::VideoFrameChromium to a WebKit::WebVideoFrame.
+    static WebVideoFrame* toWebVideoFrame(VideoFrameChromium*);
+
+    // Creates a VideoFrameChromiumImpl object to wrap the given WebVideoFrame.
+    // The VideoFrameChromiumImpl does not take ownership of the WebVideoFrame
+    // and should not free the frame's memory.
+    VideoFrameChromiumImpl(WebVideoFrame*);
+    virtual SurfaceType surfaceType() const;
+    virtual Format format() const;
+    virtual unsigned width() const;
+    virtual unsigned height() const;
+    virtual unsigned planes() const;
+    virtual int stride(unsigned plane) const;
+    virtual const void* data(unsigned plane) const;
 
 private:
-    VideoLayerChromium(GraphicsLayerChromium* owner, VideoFrameProvider*);
-    void createTextureRect(const IntSize& requiredTextureSize, const IntRect& updateRect, unsigned textureId);
-    void updateTextureRect(const IntRect& updateRect, unsigned textureId);
-    void updateCompleted();
-
-#if PLATFORM(SKIA)
-    OwnPtr<skia::PlatformCanvas> m_canvas;
-    OwnPtr<PlatformContextSkia> m_skiaContext;
-#endif
-    OwnPtr<GraphicsContext> m_graphicsContext;
-    OwnPtr<VideoFrameProvider> m_provider;
+    WebVideoFrame* m_webVideoFrame;
 };
 
-}
-#endif // USE(ACCELERATED_COMPOSITING)
+} // namespace WebKit
 
 #endif

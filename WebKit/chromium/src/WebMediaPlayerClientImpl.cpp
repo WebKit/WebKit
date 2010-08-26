@@ -22,6 +22,8 @@
 #include "RenderLayerCompositor.h"
 #endif
 
+#include "VideoFrameChromium.h"
+#include "VideoFrameChromiumImpl.h"
 #include "WebCanvas.h"
 #include "WebCString.h"
 #include "WebFrameClient.h"
@@ -416,6 +418,28 @@ MediaPlayer::MovieLoadType WebMediaPlayerClientImpl::movieLoadType() const
     return MediaPlayer::Unknown;
 }
 
+VideoFrameChromium* WebMediaPlayerClientImpl::getCurrentFrame()
+{
+    VideoFrameChromium* videoFrame = 0;
+    if (m_webMediaPlayer.get()) {
+        WebVideoFrame* webkitVideoFrame = m_webMediaPlayer->getCurrentFrame();
+        if (webkitVideoFrame)
+            videoFrame = new VideoFrameChromiumImpl(webkitVideoFrame);
+    }
+    return videoFrame;
+}
+
+void WebMediaPlayerClientImpl::putCurrentFrame(VideoFrameChromium* videoFrame)
+{
+    if (videoFrame) {
+        if (m_webMediaPlayer.get()) {
+            m_webMediaPlayer->putCurrentFrame(
+                VideoFrameChromiumImpl::toWebVideoFrame(videoFrame));
+        }
+        delete videoFrame;
+    }
+}
+
 MediaPlayerPrivateInterface* WebMediaPlayerClientImpl::create(MediaPlayer* player)
 {
     WebMediaPlayerClientImpl* client = new WebMediaPlayerClientImpl();
@@ -433,7 +457,7 @@ MediaPlayerPrivateInterface* WebMediaPlayerClientImpl::create(MediaPlayer* playe
         frame->contentRenderer()->compositor()->hasAcceleratedCompositing();
 
     if (client->m_supportsAcceleratedCompositing)
-        client->m_videoLayer = VideoLayerChromium::create(0);
+        client->m_videoLayer = VideoLayerChromium::create(0, client);
 #endif
 
     return client;
