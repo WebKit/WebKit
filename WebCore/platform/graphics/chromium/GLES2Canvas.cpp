@@ -39,6 +39,7 @@
 #include "GraphicsContext3D.h"
 #include "IntRect.h"
 #include "PlatformString.h"
+#include "Shader.h"
 
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -47,19 +48,6 @@
 #include <wtf/text/CString.h>
 
 namespace WebCore {
-
-static inline void affineTo3x3(const AffineTransform& transform, float mat[9])
-{
-    mat[0] = transform.a();
-    mat[1] = transform.b();
-    mat[2] = 0.0f;
-    mat[3] = transform.c();
-    mat[4] = transform.d();
-    mat[5] = 0.0f;
-    mat[6] = transform.e();
-    mat[7] = transform.f();
-    mat[8] = 1.0f;
-}
 
 struct GLES2Canvas::State {
     State()
@@ -77,16 +65,8 @@ struct GLES2Canvas::State {
 GLES2Canvas::GLES2Canvas(GraphicsContext3D* context, const IntSize& size)
     : m_context(context)
     , m_quadVertices(0)
-    , m_simpleProgram(0)
-    , m_texProgram(0)
-    , m_simpleMatrixLocation(-1)
-    , m_simpleColorLocation(-1)
-    , m_simplePositionLocation(-1)
-    , m_texMatrixLocation(-1)
-    , m_texTexMatrixLocation(-1)
-    , m_texSamplerLocation(-1)
-    , m_texAlphaLocation(-1)
-    , m_texPositionLocation(-1)
+    , m_solidFillShader(SolidFillShader::create(context))
+    , m_texShader(TexShader::create(context))
     , m_state(0)
 {
     m_flipMatrix.translate(-1.0f, 1.0f);
@@ -105,8 +85,6 @@ GLES2Canvas::GLES2Canvas(GraphicsContext3D* context, const IntSize& size)
 
 GLES2Canvas::~GLES2Canvas()
 {
-    m_context->deleteProgram(m_simpleProgram);
-    m_context->deleteProgram(m_texProgram);
     m_context->deleteBuffer(m_quadVertices);
 }
 
@@ -131,23 +109,11 @@ void GLES2Canvas::fillRect(const FloatRect& rect, const Color& color, ColorSpace
 
     m_context->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, getQuadVertices());
 
-    m_context->useProgram(getSimpleProgram());
-
-    float rgba[4];
-    color.getRGBA(rgba[0], rgba[1], rgba[2], rgba[3]);
-    m_context->uniform4f(m_simpleColorLocation, rgba[0] * rgba[3], rgba[1] * rgba[3], rgba[2] * rgba[3], rgba[3]);
-
     AffineTransform matrix(m_flipMatrix);
     matrix.multLeft(m_state->m_ctm);
     matrix.translate(rect.x(), rect.y());
     matrix.scale(rect.width(), rect.height());
-    float mat[9];
-    affineTo3x3(matrix, mat);
-    m_context->uniformMatrix3fv(m_simpleMatrixLocation, false /*transpose*/, mat, 1 /*count*/);
-
-    m_context->vertexAttribPointer(m_simplePositionLocation, 3, GraphicsContext3D::FLOAT, false, 0, 0);
-
-    m_context->enableVertexAttribArray(m_simplePositionLocation);
+    m_solidFillShader->use(matrix, color);
 
     m_context->drawArrays(GraphicsContext3D::TRIANGLE_STRIP, 0, 4);
 }
@@ -212,37 +178,23 @@ void GLES2Canvas::drawTexturedRect(GLES2Texture* texture, const FloatRect& srcRe
     m_context->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, getQuadVertices());
     checkGLError("glBindBuffer");
 
-    m_context->useProgram(getTexProgram());
-    checkGLError("glUseProgram");
-
-    m_context->activeTexture(GraphicsContext3D::TEXTURE0);
-
-    m_context->uniform1i(m_texSamplerLocation, 0);
-    checkGLError("glUniform1i");
-
-    m_context->uniform1f(m_texAlphaLocation, alpha);
-    checkGLError("glUniform1f for alpha");
-
-    m_context->vertexAttribPointer(m_texPositionLocation, 3, GraphicsContext3D::FLOAT, false, 0, 0);
-
-    m_context->enableVertexAttribArray(m_texPositionLocation);
-
     const TilingData& tiles = texture->tiles();
     IntRect tileIdxRect = tiles.overlappedTileIndices(srcRect);
 
     for (int y = tileIdxRect.y(); y <= tileIdxRect.bottom(); y++) {
         for (int x = tileIdxRect.x(); x <= tileIdxRect.right(); x++)
-            drawTexturedRectTile(texture, tiles.tileIndex(x, y), srcRect, dstRect, transform);
+            drawTexturedRectTile(texture, tiles.tileIndex(x, y), srcRect, dstRect, transform, alpha);
     }
 }
 
-void GLES2Canvas::drawTexturedRectTile(GLES2Texture* texture, int tile, const FloatRect& srcRect, const FloatRect& dstRect, const AffineTransform& transform)
+void GLES2Canvas::drawTexturedRectTile(GLES2Texture* texture, int tile, const FloatRect& srcRect, const FloatRect& dstRect, const AffineTransform& transform, float alpha)
 {
     if (dstRect.isEmpty())
         return;
 
     const TilingData& tiles = texture->tiles();
 
+    m_context->activeTexture(GraphicsContext3D::TEXTURE0);
     texture->bindTile(tile);
 
     FloatRect srcRectClippedInTileSpace;
@@ -255,19 +207,13 @@ void GLES2Canvas::drawTexturedRectTile(GLES2Texture* texture, int tile, const Fl
     matrix.multLeft(transform);
     matrix.translate(dstRectIntersected.x(), dstRectIntersected.y());
     matrix.scale(dstRectIntersected.width(), dstRectIntersected.height());
-    float mat[9];
-    affineTo3x3(matrix, mat);
-    m_context->uniformMatrix3fv(m_texMatrixLocation, false /*transpose*/, mat, 1 /*count*/);
-    checkGLError("glUniformMatrix3fv");
 
     AffineTransform texMatrix;
     texMatrix.scale(1.0f / tileBoundsWithBorder.width(), 1.0f / tileBoundsWithBorder.height());
     texMatrix.translate(srcRectClippedInTileSpace.x(), srcRectClippedInTileSpace.y());
     texMatrix.scale(srcRectClippedInTileSpace.width(), srcRectClippedInTileSpace.height());
-    float texMat[9];
-    affineTo3x3(texMatrix, texMat);
-    m_context->uniformMatrix3fv(m_texTexMatrixLocation, false /*transpose*/, texMat, 1 /*count*/);
-    checkGLError("glUniformMatrix3fv");
+
+    m_texShader->use(matrix, texMatrix, 0, alpha);
 
     m_context->drawArrays(GraphicsContext3D::TRIANGLE_STRIP, 0, 4);
     checkGLError("glDrawArrays");
@@ -373,95 +319,6 @@ static unsigned loadShader(GraphicsContext3D* context, unsigned type, const char
         return 0;
     }
     return shader;
-}
-
-unsigned GLES2Canvas::getSimpleProgram()
-{
-    if (!m_simpleProgram) {
-        unsigned vertexShader = loadShader(m_context, GraphicsContext3D::VERTEX_SHADER,
-            "uniform mat3 matrix;\n"
-            "uniform vec4 color;\n"
-            "attribute vec3 position;\n"
-            "void main() {\n"
-            "    gl_Position = vec4(matrix * position, 1.0);\n"
-            "}\n");
-        if (!vertexShader)
-            return 0;
-        unsigned fragmentShader = loadShader(m_context, GraphicsContext3D::FRAGMENT_SHADER,
-            "precision mediump float;\n"
-            "uniform mat3 matrix;\n"
-            "uniform vec4 color;\n"
-            "void main() {\n"
-            "    gl_FragColor = color;\n"
-            "}\n");
-        if (!fragmentShader)
-            return 0;
-        m_simpleProgram = m_context->createProgram();
-        if (!m_simpleProgram)
-            return 0;
-        m_context->attachShader(m_simpleProgram, vertexShader);
-        m_context->attachShader(m_simpleProgram, fragmentShader);
-        m_context->linkProgram(m_simpleProgram);
-        int linkStatus;
-        m_context->getProgramiv(m_simpleProgram, GraphicsContext3D::LINK_STATUS, &linkStatus);
-        if (!linkStatus) {
-            m_context->deleteProgram(m_simpleProgram);
-            m_simpleProgram = 0;
-        }
-        m_context->deleteShader(vertexShader);
-        m_context->deleteShader(fragmentShader);
-        m_simplePositionLocation = m_context->getAttribLocation(m_simpleProgram, "position");
-        m_simpleMatrixLocation = m_context->getUniformLocation(m_simpleProgram, "matrix");
-        m_simpleColorLocation = m_context->getUniformLocation(m_simpleProgram, "color");
-    }
-    return m_simpleProgram;
-}
-
-unsigned GLES2Canvas::getTexProgram()
-{
-    if (!m_texProgram) {
-        unsigned vertexShader = loadShader(m_context, GraphicsContext3D::VERTEX_SHADER,
-            "uniform mat3 matrix;\n"
-            "uniform mat3 texMatrix;\n"
-            "attribute vec3 position;\n"
-            "varying vec3 texCoord;\n"
-            "void main() {\n"
-            "    texCoord = texMatrix * position;\n"
-            "    gl_Position = vec4(matrix * position, 1.0);\n"
-            "}\n");
-        if (!vertexShader)
-            return 0;
-        unsigned fragmentShader = loadShader(m_context, GraphicsContext3D::FRAGMENT_SHADER,
-            "precision mediump float;\n"
-            "uniform sampler2D sampler;\n"
-            "uniform float alpha;\n"
-            "varying vec3 texCoord;\n"
-            "void main() {\n"
-            "    gl_FragColor = texture2D(sampler, texCoord.xy)* vec4(alpha);\n"
-            "}\n");
-        if (!fragmentShader)
-            return 0;
-        m_texProgram = m_context->createProgram();
-        if (!m_texProgram)
-            return 0;
-        m_context->attachShader(m_texProgram, vertexShader);
-        m_context->attachShader(m_texProgram, fragmentShader);
-        m_context->linkProgram(m_texProgram);
-        int linkStatus;
-        m_context->getProgramiv(m_texProgram, GraphicsContext3D::LINK_STATUS, &linkStatus);
-        if (!linkStatus) {
-            m_context->deleteProgram(m_texProgram);
-            m_texProgram = 0;
-        }
-        m_context->deleteShader(vertexShader);
-        m_context->deleteShader(fragmentShader);
-        m_texMatrixLocation = m_context->getUniformLocation(m_texProgram, "matrix");
-        m_texSamplerLocation = m_context->getUniformLocation(m_texProgram, "sampler");
-        m_texTexMatrixLocation = m_context->getUniformLocation(m_texProgram, "texMatrix");
-        m_texPositionLocation = m_context->getAttribLocation(m_texProgram, "position");
-        m_texAlphaLocation = m_context->getUniformLocation(m_texProgram, "alpha");
-    }
-    return m_texProgram;
 }
 
 GLES2Texture* GLES2Canvas::createTexture(NativeImagePtr ptr, GLES2Texture::Format format, int width, int height)

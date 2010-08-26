@@ -1,3 +1,39 @@
+2010-08-26  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [CHROMIUM] Give <canvas> 2D shaders their own class hierarchy.
+        https://bugs.webkit.org/show_bug.cgi?id=44682
+
+        Covered by fast/canvas layout tests.
+
+        * WebCore.gypi:
+        Add Shader.cpp, Shader.h to chromium build.
+        * platform/graphics/chromium/GLES2Canvas.cpp:
+        (WebCore::GLES2Canvas::GLES2Canvas):
+        (WebCore::GLES2Canvas::~GLES2Canvas):
+        (WebCore::GLES2Canvas::fillRect):
+        (WebCore::GLES2Canvas::drawTexturedRect):
+        (WebCore::GLES2Canvas::drawTexturedRectTile):
+        Rip out all shader initialization and compilation code.
+        Instantiate specialized shaders instead.
+        * platform/graphics/chromium/GLES2Canvas.h:
+        * platform/graphics/chromium/Shader.cpp: Added.
+        (WebCore::affineTo3x3):
+        (WebCore::Shader::Shader):
+        (WebCore::Shader::~Shader):
+        Implement Shader base class.
+        (WebCore::loadShader):
+        (WebCore::loadProgram):
+        Utility functions refactored from GLES2Canvas.
+        (WebCore::SolidFillShader::SolidFillShader):
+        (WebCore::TexShader::TexShader):
+        (WebCore::SolidFillShader::create):
+        (WebCore::SolidFillShader::use):
+        (WebCore::TexShader::create):
+        (WebCore::TexShader::use):
+        * platform/graphics/chromium/Shader.h: Added.
+
 2010-08-26  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben.

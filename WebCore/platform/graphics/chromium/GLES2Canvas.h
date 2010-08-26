@@ -49,6 +49,8 @@ namespace WebCore {
 class Color;
 class FloatRect;
 class GraphicsContext3D;
+class SolidFillShader;
+class TexShader;
 
 typedef HashMap<NativeImagePtr, RefPtr<GLES2Texture> > TextureHashMap;
 
@@ -81,28 +83,18 @@ public:
     GLES2Texture* getTexture(NativeImagePtr);
 
 private:
-    void drawTexturedRectTile(GLES2Texture* texture, int tile, const FloatRect& srcRect, const FloatRect& dstRect, const AffineTransform&);
+    void drawTexturedRectTile(GLES2Texture* texture, int tile, const FloatRect& srcRect, const FloatRect& dstRect, const AffineTransform&, float alpha);
     void applyCompositeOperator(CompositeOperator);
     void checkGLError(const char* header);
     unsigned getQuadVertices();
-    unsigned getSimpleProgram();
-    unsigned getTexProgram();
 
     GraphicsContext3D* m_context;
     struct State;
     WTF::Vector<State> m_stateStack;
     State* m_state;
     unsigned m_quadVertices;
-    unsigned m_simpleProgram;
-    unsigned m_texProgram;
-    int m_simpleMatrixLocation;
-    int m_simpleColorLocation;
-    int m_simplePositionLocation;
-    int m_texMatrixLocation;
-    int m_texTexMatrixLocation;
-    int m_texSamplerLocation;
-    int m_texAlphaLocation;
-    int m_texPositionLocation;
+    OwnPtr<SolidFillShader> m_solidFillShader;
+    OwnPtr<TexShader> m_texShader;
     AffineTransform m_flipMatrix;
     TextureHashMap m_textures;
     CompositeOperator m_lastCompositeOp; // This is the one last set, not necessarily the one in the state stack.
