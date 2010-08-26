@@ -2678,7 +2678,8 @@ void tst_QWebFrame::popupFocus()
     QTRY_VERIFY(view.hasFocus());
 
     // open the popup by clicking. check if focus is on the popup
-    QTest::mouseClick(&view, Qt::LeftButton, 0, QPoint(25, 25));
+    const QWebElement webCombo = view.page()->mainFrame()->documentElement().findFirst(QLatin1String("select[name=select]"));
+    QTest::mouseClick(&view, Qt::LeftButton, 0, webCombo.geometry().center());
     QObject* webpopup = firstChildByClassName(&view, "QComboBox");
     QComboBox* combo = qobject_cast<QComboBox*>(webpopup);
     QVERIFY(combo != 0);
