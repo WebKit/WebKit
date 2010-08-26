@@ -280,7 +280,11 @@ FloatRect RenderSVGRoot::strokeBoundingBox() const
 FloatRect RenderSVGRoot::repaintRectInLocalCoordinates() const
 {
     FloatRect repaintRect = SVGRenderSupport::computeContainerBoundingBox(this, SVGRenderSupport::RepaintBoundingBox);
-    style()->svgStyle()->inflateForShadow(repaintRect);
+
+    const SVGRenderStyle* svgStyle = style()->svgStyle();
+    if (const ShadowData* shadow = svgStyle->shadow())
+        shadow->adjustRectForShadow(repaintRect);
+
     repaintRect.inflate(borderAndPaddingWidth());
     return repaintRect;
 }
@@ -299,7 +303,10 @@ void RenderSVGRoot::computeRectForRepaint(RenderBoxModelObject* repaintContainer
     // Apply initial viewport clip - not affected by overflow settings    
     repaintRect.intersect(enclosingIntRect(FloatRect(FloatPoint(), m_viewportSize)));
 
-    style()->svgStyle()->inflateForShadow(repaintRect);
+    const SVGRenderStyle* svgStyle = style()->svgStyle();
+    if (const ShadowData* shadow = svgStyle->shadow())
+        shadow->adjustRectForShadow(repaintRect);
+
     RenderBox::computeRectForRepaint(repaintContainer, repaintRect, fixed);
 }
 

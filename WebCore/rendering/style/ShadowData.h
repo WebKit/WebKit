@@ -30,6 +30,9 @@
 
 namespace WebCore {
 
+class FloatRect;
+class IntRect;
+
 enum ShadowStyle { Normal, Inset };
 
 // This struct holds information about shadows for the text-shadow and box-shadow properties.
@@ -75,6 +78,9 @@ public:
     
     const ShadowData* next() const { return m_next; }
     void setNext(ShadowData* shadow) { m_next = shadow; }
+
+    void adjustRectForShadow(IntRect&, int additionalOutlineSize = 0) const;
+    void adjustRectForShadow(FloatRect&, int additionalOutlineSize = 0) const;
 
 private:
     int m_x;

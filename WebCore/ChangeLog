@@ -1,3 +1,35 @@
+2010-08-26  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        text-shadow is not respected in RenderSVGText::repaintRectInLocalCoordinates()
+        https://bugs.webkit.org/show_bug.cgi?id=44616
+
+        Centralize code to calculate the shadow extents in ShadowData.
+        Respect textShadow() when calculating the repaint rect of RenderSVGText.
+
+        Tests: svg/css/composite-shadow-text.svg
+               transitions/svg-text-shadow-transition.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::adjustRectForOutlineAndShadow):
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::repaintRectInLocalCoordinates):
+        (WebCore::RenderSVGRoot::computeRectForRepaint):
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::repaintRectInLocalCoordinates):
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::computeRectForRepaint):
+        (WebCore::SVGRenderSupport::prepareToRenderSVGContent):
+        (WebCore::SVGRenderSupport::finishRenderSVGContent):
+        (WebCore::SVGRenderSupport::intersectRepaintRectWithResources):
+        * rendering/style/SVGRenderStyle.cpp:
+        * rendering/style/SVGRenderStyle.h:
+        * rendering/style/ShadowData.cpp:
+        (WebCore::calculateShadowExtent):
+        (WebCore::ShadowData::adjustRectForShadow):
+        * rendering/style/ShadowData.h:
+
 2010-08-25  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Martin Robinson.

@@ -41,11 +41,9 @@ function getShadowXY(cssValue)
 {
     var text = cssValue.cssText;
     // Shadow cssText looks like "rgb(0, 0, 255) 0px -3px 10px 0px"
-    var shadowPositionRegExp = /\)\s*(\d+)px\s*(-?\d+)px/;
-    var result = shadowPositionRegExp.exec(cssValue.cssText);
-
-    var result = [parseInt(result[1]), parseInt(result[2])];
-    return result;
+    var shadowPositionRegExp = /\)\s*(-?\d+)px\s*(-?\d+)px/;
+    var result = shadowPositionRegExp.exec(text);
+    return [parseInt(result[1]), parseInt(result[2])];
 }
 
 function checkExpectedValue(expected, index)

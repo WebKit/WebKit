@@ -30,7 +30,7 @@ layer at (0,0) size 800x408
         RenderText {#text} at (0,0) size 556x18
           text run at (0,0) width 556: "The next two texts have subtle differences, as the stroke/fill is painted seperated in SVG."
       RenderBlock (anonymous) at (0,238) size 800x154
-        RenderSVGRoot {svg} at (20,324) size 720x56
+        RenderSVGRoot {svg} at (0,307) size 747x89
           RenderSVGText {text} at (20,20) size 720x56 contains 1 chunk(s)
             RenderSVGTSpan {tspan} at (0,0) size 95x56
               RenderSVGInlineText {#text} at (0,0) size 95x56

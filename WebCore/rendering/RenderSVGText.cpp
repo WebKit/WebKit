@@ -178,6 +178,9 @@ FloatRect RenderSVGText::repaintRectInLocalCoordinates() const
     FloatRect repaintRect = strokeBoundingBox();
     SVGRenderSupport::intersectRepaintRectWithResources(this, repaintRect);
 
+    if (const ShadowData* textShadow = style()->textShadow())
+        textShadow->adjustRectForShadow(repaintRect);
+
     return repaintRect;
 }
 
