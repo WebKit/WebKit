@@ -477,6 +477,7 @@ class TestExpectationsFile:
           the updated string.
         """
 
+        assert(platform)
         f_orig = self._get_iterable_expectations(self._expectations)
         f_new = []
 
@@ -487,6 +488,8 @@ class TestExpectationsFile:
             lineno += 1
             action = self._get_platform_update_action(line, lineno, tests,
                                                       platform)
+            assert(action in (NO_CHANGE, REMOVE_TEST, REMOVE_PLATFORM,
+                              ADD_PLATFORMS_EXCEPT_THIS))
             if action == NO_CHANGE:
                 # Save the original line back to the file
                 _log.debug('No change to test: %s', line)
@@ -522,9 +525,6 @@ class TestExpectationsFile:
                 _log.info('Test updated: ')
                 _log.info('  old: %s', line)
                 _log.info('  new: %s', new_line)
-            else:
-                _log.error('Unknown update action: %d; line: %s',
-                           action, line)
 
         _log.info('Total tests removed: %d', tests_removed)
         _log.info('Total tests updated: %d', tests_updated)

@@ -93,7 +93,7 @@ class TestExpectationsTestCase(unittest.TestCase):
             ["passes/text.html = CRASH TIMEOUT FAIL PASS"],
             "")
         self.assert_lines_lint(
-            ["BUG1234 TEST : passes/text.html = PASS FAIL"],
+            ["BUG1234 MAC : passes/text.html = PASS FAIL"],
             "")
         self.assert_lines_lint(
             ["SKIP BUG1234 : passes/text.html = TIMEOUT PASS"],
@@ -105,10 +105,10 @@ class TestExpectationsTestCase(unittest.TestCase):
             ["BUG1234 DEBUG SKIP : passes/text.html = TIMEOUT PASS"],
             "")
         self.assert_lines_lint(
-            ["BUG1234 TEST DEBUG SKIP : passes/text.html = TIMEOUT PASS"],
+            ["BUG1234 MAC DEBUG SKIP : passes/text.html = TIMEOUT PASS"],
             "")
         self.assert_lines_lint(
-            ["BUG1234 DEBUG TEST : passes/text.html = TIMEOUT PASS"],
+            ["BUG1234 DEBUG MAC : passes/text.html = TIMEOUT PASS"],
             "")
         self.assert_lines_lint(
             ["SLOW DEFER BUG1234 : passes/text.html = PASS"],

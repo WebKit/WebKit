@@ -118,10 +118,10 @@ class TestPort(base.Port):
             return file.read()
 
     def test_base_platform_names(self):
-        return ('test',)
+        return ('mac', 'win')
 
     def test_platform_name(self):
-        return 'test'
+        return 'mac'
 
     def test_platform_names(self):
         return self.test_base_platform_names()

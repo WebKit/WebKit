@@ -93,14 +93,16 @@ class Base(unittest.TestCase):
                 self.get_test('failures/expected/image_checksum.html'),
                 self.get_test('failures/expected/crash.html'),
                 self.get_test('failures/expected/missing_text.html'),
+                self.get_test('failures/expected/image.html'),
                 self.get_test('passes/text.html')]
 
     def get_basic_expectations(self):
         return """
 BUG_TEST : failures/expected/text.html = TEXT
-BUG_TEST SKIP : failures/expected/crash.html = CRASH
+BUG_TEST WONTFIX SKIP : failures/expected/crash.html = CRASH
 BUG_TEST REBASELINE : failure/expected/missing_image.html = MISSING
-BUG_TEST : failures/expected/image_checksum.html = IMAGE
+BUG_TEST WONTFIX : failures/expected/image_checksum.html = IMAGE
+BUG_TEST WONTFIX WIN : failures/expected/image.html = IMAGE
 """
 
     def parse_exp(self, expectations, overrides=None, is_lint_mode=False,
@@ -125,6 +127,13 @@ class TestExpectationsTest(Base):
         self.assert_exp('failures/expected/text.html', TEXT)
         self.assert_exp('failures/expected/image_checksum.html', IMAGE)
         self.assert_exp('passes/text.html', PASS)
+        self.assert_exp('failures/expected/image.html', PASS)
+
+    def test_multiple_results(self):
+        self.parse_exp('BUGX : failures/expected/text.html = TEXT CRASH')
+        self.assertEqual(self._exp.get_expectations(
+            self.get_test('failures/expected/text.html')),
+            set([TEXT, CRASH]))
 
     def test_defer(self):
         self.parse_exp('BUGX DEFER : failures/expected/text.html = TEXT')
@@ -182,6 +191,20 @@ BUGX DEFER : failures/expected = IMAGE
         self.parse_exp(self.get_basic_expectations())
         self.assertRaises(ValueError, self._exp.expectation_to_string,
                           -1)
+
+    def test_get_test_set(self):
+        # Handle some corner cases for this routine not covered by other tests.
+        self.parse_exp(self.get_basic_expectations())
+        s = self._exp._expected_failures.get_test_set(WONTFIX)
+        self.assertEqual(s,
+            set([self.get_test('failures/expected/crash.html'),
+                 self.get_test('failures/expected/image_checksum.html')]))
+        s = self._exp._expected_failures.get_test_set(WONTFIX, CRASH)
+        self.assertEqual(s,
+            set([self.get_test('failures/expected/crash.html')]))
+        s = self._exp._expected_failures.get_test_set(WONTFIX, CRASH,
+                                                      include_skips=False)
+        self.assertEqual(s, set([]))
 
     def test_syntax_missing_expectation(self):
         # This is missing the expectation.
@@ -256,20 +279,43 @@ BUG_OVERRIDE : failures/expected/text.html = IMAGE""")
 
 class RebaseliningTest(Base):
     """Test rebaselining-specific functionality."""
+    def assertRemove(self, platform, input_expectations, expected_expectations):
+        self.parse_exp(input_expectations)
+        test = self.get_test('failures/expected/text.html')
+        actual_expectations = self._exp.remove_platform_from_expectations(
+            test, platform)
+        self.assertEqual(expected_expectations, actual_expectations)
+
     def test_no_get_rebaselining_failures(self):
         self.parse_exp(self.get_basic_expectations())
         self.assertEqual(len(self._exp.get_rebaselining_failures()), 0)
 
-    def test_basic(self):
+    def test_get_rebaselining_failures_expand(self):
         self.parse_exp("""
 BUG_TEST REBASELINE : failures/expected/text.html = TEXT
 """)
         self.assertEqual(len(self._exp.get_rebaselining_failures()), 1)
 
-        new_exp_str = self._exp.remove_platform_from_expectations(
-            self.get_test('failures/expected/text.html'), 'TEST')
-        # FIXME: actually test rebaselining
-        # self.assertEqual(new_exp_str, '\n')
+    def test_remove_expand(self):
+        self.assertRemove('mac',
+            'BUGX REBASELINE : failures/expected/text.html = TEXT\n',
+            'BUGX REBASELINE WIN : failures/expected/text.html = TEXT\n')
+
+    def test_remove_mac_win(self):
+        self.assertRemove('mac',
+            'BUGX REBASELINE MAC WIN : failures/expected/text.html = TEXT\n',
+            'BUGX REBASELINE WIN : failures/expected/text.html = TEXT\n')
+
+    def test_remove_mac_mac(self):
+        self.assertRemove('mac',
+            'BUGX REBASELINE MAC : failures/expected/text.html = TEXT\n',
+            '')
+
+    def test_remove_nothing(self):
+        self.assertRemove('mac',
+            '\n\n',
+            '\n\n')
+
 
 if __name__ == '__main__':
     unittest.main()
