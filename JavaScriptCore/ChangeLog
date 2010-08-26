@@ -1,3 +1,17 @@
+2010-08-25  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Improve overflow handling in StringImpl::Replace
+        https://bugs.webkit.org/show_bug.cgi?id=42502
+        <rdar://problem/8203794>
+
+        Harden StringImpl::replace against overflow -- I can't see how this
+        could be abused, but it's better to be safe than sorry.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::replace):
+
 2010-08-26  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
