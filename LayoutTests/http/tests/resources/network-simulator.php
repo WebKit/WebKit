@@ -120,6 +120,38 @@ function handleGetResourceCountCommand($path)
     }
 }
 
+function handleStartResourceRequestsLog()
+{
+    $resourceLogFile = sys_get_temp_dir() . "/resource-log";
+    file_put_contents($resourceLogFile,  "");
+}
+
+function handleClearResourceRequestsLog()
+{
+    $resourceLogFile = sys_get_temp_dir() . "/resource-log";
+    file_put_contents($resourceLogFile, "");
+}
+
+function handleGetResourceRequestsLog()
+{
+    $resourceLogFile = sys_get_temp_dir() . "/resource-log";
+
+    generateNoCacheHTTPHeader();
+    header("Content-Type: text/plain");
+
+    print file_get_contents($resourceLogFile);
+}
+
+function handleLogResourceRequest($path)
+{
+    $resourceLogFile = sys_get_temp_dir() . "/resource-log";
+    
+    $newData = "\n".$path;
+    // Documentation says that appends are atomic.
+    file_put_contents($resourceLogFile, $newData, FILE_APPEND);
+    generateResponse($path);
+}
+
 $stateFile = sys_get_temp_dir() . "/network-simulator-state";
 $command = $_GET['command'];
 if ($command) {
@@ -133,6 +165,14 @@ if ($command) {
         handleResetResourceCountCommand();
     else if ($command == "get-resource-count")
         handleGetResourceCountCommand($_GET['path']);
+    else if ($command == "start-resource-request-log")
+        handleStartResourceRequestsLog();
+    else if ($command == "clear-resource-request-log")
+        handleClearResourceRequestsLog();
+    else if ($command == "get-resource-request-log")
+        handleGetResourceRequestsLog();
+    else if ($command == "log-resource-request")
+        handleLogResourceRequest($_GET['path']);
     else
         echo "Unknown command: " . $command . "\n";
     exit();

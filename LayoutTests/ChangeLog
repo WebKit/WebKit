@@ -1,3 +1,24 @@
+2010-08-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Make it possible for http tests to log resource requests
+        https://bugs.webkit.org/show_bug.cgi?id=44702
+        
+        Enhance network-simulator.php to be able to log resource
+        requests to a file, and then return the list of requests.
+        
+        Test with a new loading test that logs CSS-related image requests.
+        
+        * http/tests/css/css-image-loading-expected.txt: Added.
+        * http/tests/css/css-image-loading.html: Added.
+        * http/tests/css/resources/request-logging.js: Added.
+        (CallCommand):
+        (startTest):
+        (endTest):
+        (getResourceLog):
+        * http/tests/resources/network-simulator.php:
+
 2010-08-26  Tony Chang  <tony@chromium.org>
 
         Not reviewed.  Removing chromium-mac and chromium test results that deduplicate-tests says are not necessary.
