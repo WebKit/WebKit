@@ -1,3 +1,9 @@
+2010-08-25  Martin Robinson  <mrobinson@igalia.com>
+
+        Skip a test that requires editing delegate dumps.
+
+        * platform/gtk/Skipped:
+
 2010-08-25  Chris Marrin  <cmarrin@apple.com>
 
         Unreviewed.
