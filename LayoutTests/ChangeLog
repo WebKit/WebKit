@@ -1,3 +1,9 @@
+2010-08-26  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Update gtk specific result after r66093.
+
+        * platform/gtk/svg/css/text-shadow-multiple-expected.txt:
+
 2010-08-26  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Unreviewed.
