@@ -350,8 +350,6 @@ BUG_DRT WIN : fast/compact/003.html = IMAGE+TEXT PASS
 BUG_DRT WIN : fast/dom/HTMLElement/bdo.html = IMAGE+TEXT PASS
 BUG_DRT WIN : http/tests/loading/preload-img-test.html = TEXT TIMEOUT PASS
 BUG_DRT MAC LINUX : http/tests/misc/slow-loading-image-in-pattern.html = IMAGE PASS
-BUG_DRT WIN MAC LINUX : fast/dom/DeviceMotion/create-event.html = TEXT
-BUG_DRT WIN MAC LINUX : fast/dom/DeviceMotion/optional-event-properties.html = TEXT
 BUG_DRT WIN MAC LINUX : fast/events/special-key-events-in-input-text.html = TEXT
 BUG_DRT WIN MAC : fast/dom/Geolocation/delayed-permission-allowed-for-multiple-requests.html = TIMEOUT
 

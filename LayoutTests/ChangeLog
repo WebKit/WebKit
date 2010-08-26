@@ -1,3 +1,12 @@
+2010-08-26  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [DRT/Chromium] Enable DEVICE_ORIENTATION
+        https://bugs.webkit.org/show_bug.cgi?id=44587
+
+        * platform/chromium/drt_expectations.txt:
+
 2010-08-26  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Update gtk specific result after r66093.
