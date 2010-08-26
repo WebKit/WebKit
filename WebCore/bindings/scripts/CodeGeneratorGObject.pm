@@ -479,23 +479,11 @@ sub EventSignalName {
 }
 
 sub GenerateEventListener {
-    my $attribute = shift;
+    my $name = shift;
     my $object = shift;
     my $interfaceName = shift;
 
-    # This marks event listeners in some subclasses of Element. We
-    # cannot add them, otherwise we'll get runtime errors because of
-    # duplicated signal definitions between a class and some ancestor.
-
-    # FIXME: it would be very good to be a lot more precise in how we
-    # do this...
-    if ($attribute->signature->extendedAttributes->{"WindowEventListener"}) {
-        return;
-    }
-
-    my $name = $attribute->signature->name;
-    my $domSignalName = substr($name, 2);
-    my $gobjectSignalName = EventSignalName($domSignalName);
+    my $gobjectSignalName = EventSignalName($name);
 
     my $txtInstallSignal = << "EOF";
     g_signal_new("${gobjectSignalName}",
@@ -510,17 +498,45 @@ sub GenerateEventListener {
 EOF
     push(@txtInstallSignals, $txtInstallSignal);
 
-    my ${listenerName} = $domSignalName . "Listener";
+    my ${listenerName} = $name . "Listener";
 
     my $txtInstallEventListener = << "EOF";
     RefPtr<WebCore::GObjectEventListener> ${listenerName} = WebCore::GObjectEventListener::create(reinterpret_cast<GObject*>(object), "${gobjectSignalName}");
-    coreObject->addEventListener("${domSignalName}", ${listenerName}, false);
+    coreObject->addEventListener("${name}", ${listenerName}, false);
 EOF
     push(@txtInstallEventListeners, $txtInstallEventListener);
 
     $implIncludes{"webkit/WebKitDOMEvent.h"} = 1;
     $implIncludes{"GObjectEventListener.h"} = 1;
 }
+
+my @eventSignalNames = (
+    # User Interface Event types
+    "focus", "blur",
+    # Basic Event types
+    "load", "unload", "abort", "error", "select", "change", "submit", "reset",
+    "resize", "scroll",
+    # Mouse Event types
+    "click", "dblclick", "mousedown", "mouseup",
+    "mousemove", "mouseover", "mouseout",
+    # Mouse Wheel Event types
+    "mousewheel",
+    # Keyboard Event types
+    "keydown", "keypress", "keyup",
+    # -- Events not in the spec but defined in WebKit
+    # Media Event types,
+    "loadstart", "progress", "suspend", "emptied", "stalled", "play",
+    "loadedmetadata", "loadeddata", "waiting", "playing", "canplay",
+    "canplaythrough", "seeking", "seeked", "timeupdate", "ended",
+    "ratechange", "durationchange", "volumechange",
+    # Drag and Drop Event types
+    "drag", "dragend", "dragenter", "dragleave", "dragover", "dragstart", "drop",
+    # Cut and Paste Event types
+    "beforecut", "cut", "beforecopy", "copy", "beforepaste", "paste",
+    # Animations
+    "webkitanimationend", "webkitanimationstart", "webkitanimationiteration",
+    # Other
+    "contextmenu", "input", "invalid", "search", "selectstart");
 
 sub GenerateProperties {
     my ($object, $interfaceName, $dataNode) = @_;
@@ -584,10 +600,17 @@ EOF
     push(@txtSetProps, $txtSetProps);
 
     foreach my $attribute (@readableProperties) {
-        if ($attribute->signature->type eq "EventListener") {
-            GenerateEventListener($attribute, $object, $interfaceName);
-        } else {
+        if ($attribute->signature->type ne "EventListener") {
             GenerateProperty($attribute, $interfaceName, \@writeableProperties);
+        }
+    }
+
+    # We need to define all the events there are in all base classes
+    # that implement EventTarget. For now we only care about these
+    # two.
+    if ($interfaceName eq "Node" || $interfaceName eq "DOMWindow") {
+        foreach my $signalName (@eventSignalNames) {
+            GenerateEventListener($signalName, $object, $interfaceName);
         }
     }
 

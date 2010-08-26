@@ -1,3 +1,19 @@
+2010-08-25  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Rework event definition in the DOM bindings
+        https://bugs.webkit.org/show_bug.cgi?id=44597
+
+        Define DOM events in the base classes that implement EventTarget,
+        since theoretically you can dispatch any event to any of those
+        classes whether it makes sense semantically or not.
+
+        All the existing events in WebKit are not listed anywhere in the
+        IDL files, so we need to have the list in the generator script.
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+
 2010-08-25  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.
