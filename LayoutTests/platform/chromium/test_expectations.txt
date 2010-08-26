@@ -3190,3 +3190,6 @@ BUG53073 LINUX : svg/custom/clip-path-units-changes.svg = TEXT
 
 // Need to implement LayoutTestController::markerTextForListItem()
 BUG53289 WIN MAC LINUX : fast/lists/w3-css3-list-styles-fallback-style.html = TEXT
+
+// This test started timing out on Windows around 65992:66033
+BUG53406 WIN : inspector/debugger-breakpoints-not-activated-on-reload.html = PASS TIMEOUT

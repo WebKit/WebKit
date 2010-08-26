@@ -1,3 +1,9 @@
+2010-08-26  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Unreviewed, updating Chromium's expectations for a flaky test.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-08-25  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.
@@ -12,7 +18,6 @@
         * inspector/styles-source-lines.html:
         * inspector/styles-source-offsets.html:
         * http/tests/inspector/inspect-iframe-from-different-domain.html
-
 
 2010-08-26  Philippe Normand  <pnormand@igalia.com>
 
