@@ -43,7 +43,7 @@ class Commit(AbstractStep):
     def _commit_warning(self, error):
         working_directory_message = "" if error.working_directory_is_clean else " and working copy changes"
         return ('There are %s local commits%s. Everything will be committed as a single commit. '
-                'To avoid this prompt, set "git config webkit-patch.squash true".' % (
+                'To avoid this prompt, set "git config webkit-patch.commit-should-always-squash true".' % (
                 error.num_local_commits, working_directory_message))
 
     def run(self, state):

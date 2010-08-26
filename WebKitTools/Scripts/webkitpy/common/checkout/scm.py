@@ -719,7 +719,7 @@ class Git(SCM):
         self.run(['git', 'checkout', 'HEAD'] + file_paths)
 
     def _assert_can_squash(self, working_directory_is_clean):
-        squash = Git.read_git_config('webkit-patch.commit_should_always_squash')
+        squash = Git.read_git_config('webkit-patch.commit-should-always-squash')
         should_squash = squash and squash.lower() == "true"
 
         if not should_squash:
