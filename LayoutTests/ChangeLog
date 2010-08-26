@@ -1,3 +1,19 @@
+2010-08-25  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        WebInspector: as far as we have 'seq' property in the each inspector message
+        it would be better to remove explicit callId argument from Inspector.idl functions
+        declarations.
+        https://bugs.webkit.org/show_bug.cgi?id=44617
+
+        * inspector/elements-panel-search.html:
+        * inspector/styles-iframe.html:
+        * inspector/styles-source-lines.html:
+        * inspector/styles-source-offsets.html:
+        * http/tests/inspector/inspect-iframe-from-different-domain.html
+
+
 2010-08-26  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, skipping a flakey test.

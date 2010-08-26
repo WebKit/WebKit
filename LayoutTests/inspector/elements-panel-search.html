@@ -35,10 +35,8 @@ function frontend_performSearch(testController)
             var node = WebInspector.domAgent.nodeForId(nodeIds[i]);
             if (node.nodeType === Node.TEXT_NODE)
                 searchResults.push(node.nodeValue);
-            else {
-                var callId = WebInspector.Callback.wrap(addSearchResult);
-                InspectorBackend.getOuterHTML(callId, node.id);
-            }
+            else
+                InspectorBackend.getOuterHTML(node.id, addSearchResult);
         }
     }
     // Plain text.

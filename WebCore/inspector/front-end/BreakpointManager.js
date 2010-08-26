@@ -123,8 +123,7 @@ WebInspector.BreakpointManager.prototype = {
                     this._setBreakpoint(breakpoint.sourceID, breakpoint.url, line, breakpoint.enabled, breakpoint.condition);
             }
         }
-        var callbackId = WebInspector.Callback.wrap(didSetBreakpoint.bind(this));
-        InspectorBackend.setBreakpoint(callbackId, breakpoint.sourceID, breakpoint.line, breakpoint.enabled, breakpoint.condition);
+        InspectorBackend.setBreakpoint(breakpoint.sourceID, breakpoint.line, breakpoint.enabled, breakpoint.condition, didSetBreakpoint.bind(this));
     }
 }
 

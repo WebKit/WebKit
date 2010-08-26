@@ -351,12 +351,9 @@ sub generateBackendFunction
     push(@function, "");
 
     push(@function, "    // use InspectorFrontend as a marker of WebInspector availability");
-    push(@function, "    if (callId && m_inspectorController->hasFrontend()) {");
+    push(@function, "    if ((callId || protocolErrors->length()) && m_inspectorController->hasFrontend()) {");
     push(@function, "        RefPtr<InspectorObject> responseMessage = InspectorObject::create();");
     push(@function, "        responseMessage->setNumber(\"seq\", callId);");
-    push(@function, "        responseMessage->setString(\"type\", \"response\");");
-    push(@function, "        responseMessage->setString(\"domain\", \"$domain\");");
-    push(@function, "        responseMessage->setString(\"command\", \"$functionName\");");
     push(@function, "        responseMessage->setBool(\"success\", !protocolErrors->length());");
     push(@function, "");
     push(@function, "        if (protocolErrors->length())");
@@ -432,19 +429,6 @@ $mapEntries
         return;
     }
 
-    RefPtr<InspectorValue> callIdValue = messageObject->get("seq");
-    if (!callIdValue) {
-        ASSERT_NOT_REACHED();
-        reportProtocolError(callId, "dispatch", "Error: Invalid message format. 'seq' property was not found in the request.");
-        return;
-    }
-
-    if (!callIdValue->asNumber(&callId)) {
-        ASSERT_NOT_REACHED();
-        reportProtocolError(callId, "dispatch", "Error: Invalid message format. the type of 'seq' property should be number.");
-        return;
-    }
-
     RefPtr<InspectorValue> commandValue = messageObject->get("command");
     if (!commandValue) {
         ASSERT_NOT_REACHED();
@@ -456,6 +440,19 @@ $mapEntries
     if (!commandValue->asString(&command)) {
         ASSERT_NOT_REACHED();
         reportProtocolError(callId, "dispatch", "Error: Invalid message format. The type of 'command' property should be string.");
+        return;
+    }
+
+    RefPtr<InspectorValue> callIdValue = messageObject->get("seq");
+    if (!callIdValue) {
+        ASSERT_NOT_REACHED();
+        reportProtocolError(callId, command.utf8().data(), "Error: Invalid message format. 'seq' property was not found in the request.");
+        return;
+    }
+
+    if (!callIdValue->asNumber(&callId)) {
+        ASSERT_NOT_REACHED();
+        reportProtocolError(callId, command.utf8().data(), "Error: Invalid message format. the type of 'seq' property should be number.");
         return;
     }
 
@@ -508,7 +505,6 @@ sub generateBackendStubJS
         my $argumentNames = join(",", map("\"" . $_->name . "\": null", grep($_->direction eq "in", @{$function->parameters})));
         push(@JSStubs, "    this._registerDelegate('{" .
             "\"seq\": 0, " .
-            "\"type\": \"request\", " .
             "\"domain\": \"$domain\", " .
             "\"command\": \"$name\", " .
             "\"arguments\": {$argumentNames}" .
@@ -535,12 +531,10 @@ WebInspector.InspectorBackendStub.prototype = {
     {
         var args = Array.prototype.slice.call(arguments);
         var request = JSON.parse(args.shift());
-        for (var key in request.arguments) {
-            if (key === "callId")
-                request.seq = args.shift();
-            else
-                request.arguments[key] = args.shift();
-        }
+
+        for (var key in request.arguments)
+            request.arguments[key] = args.shift();
+
         if (args.length === 1 && typeof args[0] === "function")
             request.seq = WebInspector.Callback.wrap(args[0]);
 

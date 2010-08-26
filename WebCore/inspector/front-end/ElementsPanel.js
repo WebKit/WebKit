@@ -224,10 +224,9 @@ WebInspector.ElementsPanel.prototype = {
             selectNode.call(this, node);
         }
 
-        if (this._selectedPathOnReset) {
-            var callId = WebInspector.Callback.wrap(selectLastSelectedNode.bind(this));
-            InspectorBackend.pushNodeByPathToFrontend(callId, this._selectedPathOnReset.join(","));
-        } else
+        if (this._selectedPathOnReset)
+            InspectorBackend.pushNodeByPathToFrontend(this._selectedPathOnReset.join(","), selectLastSelectedNode.bind(this));
+        else
             selectNode.call(this);
         delete this._selectedPathOnReset;
     },

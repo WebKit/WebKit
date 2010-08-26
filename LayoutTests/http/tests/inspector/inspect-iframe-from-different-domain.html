@@ -90,7 +90,7 @@ function frontend_dumpIFrameBackground(testController)
                 testController.notifyDone("Background property not found");
             }
 
-            InspectorBackend.getStyles(WebInspector.Callback.wrap(callback), domNode.id, true);
+            InspectorBackend.getStyles(domNode.id, true, callback);
         });
     });
 }

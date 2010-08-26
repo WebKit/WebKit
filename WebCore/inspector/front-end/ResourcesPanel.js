@@ -883,7 +883,7 @@ WebInspector.ResourcesPanel.prototype.__proto__ = WebInspector.AbstractTimelineP
 
 WebInspector.getResourceContent = function(identifier, callback)
 {
-    InspectorBackend.getResourceContent(WebInspector.Callback.wrap(callback), identifier);
+    InspectorBackend.getResourceContent(identifier, callback);
 }
 
 WebInspector.ResourceTimeCalculator = function(startAtZero)

@@ -524,8 +524,7 @@ WebInspector.ProfilesPanel.prototype = {
                 WebInspector.addProfileHeader(profileHeaders[i]);
         }
 
-        var callId = WebInspector.Callback.wrap(populateCallback);
-        InspectorBackend.getProfileHeaders(callId);
+        InspectorBackend.getProfileHeaders(populateCallback);
 
         this._profilesWereRequested = true;
     },

@@ -41,9 +41,9 @@ function frontend_runTest(testController)
                 testController.notifyDone(testController.results);
                 return;
             }
-            InspectorBackend.getRuleRanges(WebInspector.Callback.wrap(frontend_ruleRangesReceived.bind(null, testController, parentStyleSheetId, matchedCSSRules)), parentStyleSheetId);
+            InspectorBackend.getRuleRanges(parentStyleSheetId, frontend_ruleRangesReceived.bind(null, testController, parentStyleSheetId, matchedCSSRules));
         }
-        InspectorBackend.getStyles(WebInspector.Callback.wrap(stylesCallback.bind(null, testController)), WebInspector.domAgent.document.body.id, true);
+        InspectorBackend.getStyles(WebInspector.domAgent.document.body.id, true, stylesCallback.bind(null, testController));
     });
 }
 
@@ -53,7 +53,7 @@ function frontend_ruleRangesReceived(testController, styleSheetId, matchedCSSRul
         var rule = matchedCSSRules[i];
         testController.results.push(rule.selectorText + ": [" + ruleRanges[rule.style.id].bodyRange.start + "-" + ruleRanges[rule.style.id].bodyRange.end + "]");
     }
-    InspectorBackend.getStyleSheet(WebInspector.Callback.wrap(frontend_handleStyleSheet.bind(null, testController)), styleSheetId);
+    InspectorBackend.getStyleSheet(styleSheetId, frontend_handleStyleSheet.bind(null, testController));
 }
 
 function frontend_handleStyleSheet(testController, styleSheet)

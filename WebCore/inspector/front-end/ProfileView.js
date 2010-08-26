@@ -94,8 +94,7 @@ WebInspector.CPUProfileView = function(profile)
         self._updatePercentButton();
     }
 
-    var callId = WebInspector.Callback.wrap(profileCallback);
-    InspectorBackend.getProfile(callId, this.profile.uid);
+    InspectorBackend.getProfile(this.profile.uid, profileCallback);
 }
 
 WebInspector.CPUProfileView.prototype = {

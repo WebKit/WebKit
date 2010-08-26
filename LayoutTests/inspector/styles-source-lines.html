@@ -85,7 +85,7 @@ function frontend_getRawStyles(testController)
     {
         testController.notifyDone(styles);
     }
-    InspectorBackend.getStyles(WebInspector.Callback.wrap(callback), WebInspector.domAgent.document.body.id, true);
+    InspectorBackend.getStyles(WebInspector.domAgent.document.body.id, true, callback);
 }
 
 </script>

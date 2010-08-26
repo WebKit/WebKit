@@ -81,10 +81,10 @@ WebInspector.Settings.initialize = function()
         WebInspector.sessionSettings.dispatchEventToListeners("loaded");
     }
 
-    InspectorBackend.getSettings(WebInspector.Callback.wrap(function(settings) {
+    InspectorBackend.getSettings(function(settings) {
         populateApplicationSettings(settings.application);
         populateSessionSettings(settings.session);
-    }));
+    });
 }
 
 WebInspector.Settings.prototype = {

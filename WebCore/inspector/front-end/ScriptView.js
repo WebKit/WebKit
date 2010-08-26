@@ -56,10 +56,8 @@ WebInspector.ScriptView.prototype = {
 
         if (this.script.source)
             this._sourceFrameSetupFinished();
-        else {
-            var callbackId = WebInspector.Callback.wrap(this._didGetScriptSource.bind(this))
-            InspectorBackend.getScriptSource(callbackId, this.script.sourceID);
-        }
+        else
+            InspectorBackend.getScriptSource(this.script.sourceID, this._didGetScriptSource.bind(this));
     },
 
     _didGetScriptSource: function(source)

@@ -343,8 +343,7 @@ WebInspector.ScriptsPanel.prototype = {
                 WebInspector.breakpointManager.setBreakpoint(sourceID, breakpoint.url, newLine, breakpoint.enabled, breakpoint.condition);
             }
         };
-        var callbackId = WebInspector.Callback.wrap(mycallback.bind(this))
-        InspectorBackend.editScriptSource(callbackId, sourceID, newContent);
+        InspectorBackend.editScriptSource(sourceID, newContent, mycallback.bind(this));
     },
 
     selectedCallFrameId: function()

@@ -91,13 +91,12 @@ devtools.ProfilerAgent.prototype._getNextLogLines = function(immediately)
         return;
     var pos = this._lastRequestedLogPosition = this._logPosition;
 
-    var callId = WebInspector.Callback.wrap(this._didGetProfilerLogLines.bind(this));
     if (immediately)
-        InspectorBackend.getProfilerLogLines(callId, pos);
+        InspectorBackend.getProfilerLogLines(pos, this._didGetProfilerLogLines.bind(this));
     else {
         function delayedRequest()
         {
-            InspectorBackend.getProfilerLogLines(callId, pos);
+            InspectorBackend.getProfilerLogLines(pos, this._didGetProfilerLogLines.bind(this));
         }
         setTimeout(delayedRequest, 500);
     }

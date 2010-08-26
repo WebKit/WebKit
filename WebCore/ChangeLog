@@ -1,3 +1,66 @@
+2010-08-25  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        WebInspector: as far as we have 'seq' property in the each inspector message
+        it would be better to remove explicit callId argument from Inspector.idl functions
+        declarations.
+        https://bugs.webkit.org/show_bug.cgi?id=44617
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/CodeGeneratorInspector.pm:
+        * inspector/Inspector.idl:
+        * inspector/front-end/AuditRules.js:
+        (WebInspector.AuditRules.UnusedCssRule.prototype.doRun):
+        (WebInspector.AuditRules.ImageDimensionsRule.prototype.doRun.receivedImages):
+        * inspector/front-end/BreakpointManager.js:
+        (WebInspector.BreakpointManager.prototype._setBreakpointOnBackend):
+        * inspector/front-end/CSSStyleModel.js:
+        (WebInspector.CSSStyleModel.prototype.getStylesAsync):
+        (WebInspector.CSSStyleModel.prototype.getComputedStyleAsync):
+        (WebInspector.CSSStyleModel.prototype.setRuleSelector):
+        (WebInspector.CSSStyleModel.prototype.addRule):
+        (WebInspector.CSSStyleModel.prototype.toggleStyleEnabled):
+        (WebInspector.CSSStyleModel.prototype.setCSSText):
+        (WebInspector.CSSStyleModel.prototype.applyStyleText):
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMAgent.prototype.getChildNodesAsync):
+        (WebInspector.DOMAgent.prototype.setAttributeAsync):
+        (WebInspector.DOMAgent.prototype.removeAttributeAsync):
+        (WebInspector.DOMAgent.prototype.setTextNodeValueAsync):
+        (WebInspector.ApplicationCache.getApplicationCachesAsync):
+        (WebInspector.Cookies.getCookiesAsync):
+        (WebInspector.EventListeners.getEventListenersForNodeAsync):
+        * inspector/front-end/DOMStorage.js:
+        (WebInspector.DOMStorage.prototype.getEntries):
+        (WebInspector.DOMStorage.prototype.setItem):
+        (WebInspector.DOMStorage.prototype.removeItem):
+        * inspector/front-end/Database.js:
+        (WebInspector.Database.prototype.getTableNames):
+        (WebInspector.Database.prototype.executeSql):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.setDocument):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype._tagNameEditingCommitted):
+        ():
+        * inspector/front-end/InjectedScriptAccess.js:
+        (InjectedScriptAccess._installHandler.InjectedScriptAccess.prototype.methodName):
+        (InjectedScriptAccess._installHandler):
+        * inspector/front-end/MetricsSidebarPane.js:
+        (WebInspector.MetricsSidebarPane.prototype.update):
+        (WebInspector.MetricsSidebarPane.prototype.editingCommitted):
+        * inspector/front-end/ProfileView.js:
+        (WebInspector.CPUProfileView):
+        * inspector/front-end/ProfilesPanel.js:
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.getResourceContent):
+        * inspector/front-end/ScriptView.js:
+        (WebInspector.ScriptView.prototype.setupSourceFrameIfNeeded):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.editScriptSource):
+        * inspector/front-end/inspector.js:
+        (WebInspector.doLoadedDone):
+
 2010-08-26  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Kent Tamura.

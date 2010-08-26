@@ -583,7 +583,7 @@ WebInspector.doLoadedDone = function()
     InspectorBackend.populateScriptObjects();
 
     // As a DOMAgent method, this needs to happen after the frontend has loaded and the agent is available.
-    InspectorBackend.getSupportedCSSProperties(WebInspector.Callback.wrap(WebInspector.CSSCompletions._load));
+    InspectorBackend.getSupportedCSSProperties(WebInspector.CSSCompletions._load);
 }
 
 WebInspector.addPanelToolbarIcon = function(toolbarElement, panel, previousToolbarItem)
@@ -632,16 +632,21 @@ WebInspector.dispatch = function(message) {
 WebInspector_syncDispatch = function(message)
 {
     var messageObject = (typeof message === "string") ? JSON.parse(message) : message;
-    if (messageObject.type === "response" && !messageObject.success) {
-        WebInspector.removeResponseCallbackEntry(messageObject.seq)
-        WebInspector.reportProtocolError(messageObject);
-        return;
-    }
 
     var arguments = [];
     if (messageObject.data)
         for (var key in messageObject.data)
             arguments.push(messageObject.data[key]);
+
+    if ("seq" in messageObject) { // just a response for some request
+        if (messageObject.success)
+            WebInspector.processResponse(messageObject.seq, arguments);
+        else {
+            WebInspector.removeResponseCallbackEntry(messageObject.seq)
+            WebInspector.reportProtocolError(messageObject);
+        }
+        return;
+    }
 
     if (messageObject.type === "event") {
         if (!messageObject.event in WebInspector) {
@@ -650,9 +655,6 @@ WebInspector_syncDispatch = function(message)
         }
         WebInspector[messageObject.event].apply(WebInspector, arguments);
     }
-
-    if (messageObject.type === "response")
-        WebInspector.processResponse(messageObject.seq, arguments);
 }
 
 WebInspector.dispatchMessageFromBackend = function(messageObject)
@@ -662,7 +664,7 @@ WebInspector.dispatchMessageFromBackend = function(messageObject)
 
 WebInspector.reportProtocolError = function(messageObject)
 {
-    console.error("Error: InspectorBackend." + messageObject.command + " failed.");
+    console.error("Error: InspectorBackend request with seq = " + messageObject.seq + " failed.");
     for (var error in messageObject.errors)
         console.error("    " + error);
     WebInspector.removeResponseCallbackEntry(messageObject.seq);
