@@ -1,3 +1,10 @@
+2010-08-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        * Scripts/commit-log-editor: Fix perl warning for people who have no
+        value for SVN_LOG_EDITOR or CVS_LOG_EDITOR.
+
 2010-08-25  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Eric Seidel.

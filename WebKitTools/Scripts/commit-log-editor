@@ -63,7 +63,7 @@ my $baseDir = baseProductDir();
 
 my $editor = $ENV{SVN_LOG_EDITOR};
 $editor = $ENV{CVS_LOG_EDITOR} if !$editor;
-$editor = "" if isCommitLogEditor($editor);
+$editor = "" if $editor && isCommitLogEditor($editor);
 
 my $splitEditor = 1;
 if (!$editor) {
