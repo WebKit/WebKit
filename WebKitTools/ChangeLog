@@ -1,3 +1,9 @@
+2010-08-25  Martin Robinson  <mrobinson@igalia.com>
+
+        Updating webkitpy test expectations.
+
+        * Scripts/webkitpy/tool/steps/steps_unittest.py:
+
 2010-08-25  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Eric Seidel.
