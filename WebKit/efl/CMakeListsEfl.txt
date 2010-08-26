@@ -21,12 +21,23 @@ LIST(APPEND WebKit_INCLUDE_DIRECTORIES
     ${SQLITE_INCLUDE_DIRS}
 )
 
+IF (ENABLE_VIDEO)
+LIST(APPEND WebKit_INCLUDE_DIRECTORIES
+    "${WEBCORE_DIR}/platform/graphics/gstreamer"
+    ${Gstreamer-App_INCLUDE_DIRS}
+    ${Gstreamer-Interfaces_INCLUDE_DIRS}
+    ${Gstreamer-Pbutils_INCLUDE_DIRS}
+    ${Gstreamer-Video_INCLUDE_DIRS}
+)
+ENDIF()
+
 LIST(APPEND WebKit_SOURCES
     efl/WebCoreSupport/ChromeClientEfl.cpp
     efl/WebCoreSupport/ContextMenuClientEfl.cpp
     efl/WebCoreSupport/DragClientEfl.cpp
     efl/WebCoreSupport/EditorClientEfl.cpp
     efl/WebCoreSupport/FrameLoaderClientEfl.cpp
+    efl/WebCoreSupport/FullscreenVideoControllerEfl.cpp
     efl/WebCoreSupport/InspectorClientEfl.cpp
 
     efl/ewk/ewk_contextmenu.cpp

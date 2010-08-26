@@ -2,6 +2,50 @@
 
         Reviewed by Antonio Gomes.
 
+        [EFL] Add dummy FullScreenVideoControllerEfl to WebKit EFL
+        https://bugs.webkit.org/show_bug.cgi?id=44590
+
+        Add FullScreenVideoControllerEfl to WebCoreSupport. However,
+        this is not implemented yet.
+
+        * CMakeListsEfl.txt:
+        * WebCoreSupport/FullscreenVideoControllerEfl.cpp: Added.
+        (FullscreenVideoController::FullscreenVideoController):
+        (FullscreenVideoController::~FullscreenVideoController):
+        (FullscreenVideoController::setMediaElement):
+        (FullscreenVideoController::showHud):
+        (FullscreenVideoController::hideHud):
+        (FullscreenVideoController::enterFullscreen):
+        (FullscreenVideoController::updateHudPosition):
+        (FullscreenVideoController::exitOnUserRequest):
+        (FullscreenVideoController::exitFullscreen):
+        (FullscreenVideoController::canPlay):
+        (FullscreenVideoController::play):
+        (FullscreenVideoController::pause):
+        (FullscreenVideoController::playStateChanged):
+        (FullscreenVideoController::togglePlay):
+        (FullscreenVideoController::volume):
+        (FullscreenVideoController::muted):
+        (FullscreenVideoController::setVolume):
+        (FullscreenVideoController::volumeChanged):
+        (FullscreenVideoController::muteChanged):
+        (FullscreenVideoController::currentTime):
+        (FullscreenVideoController::setCurrentTime):
+        (FullscreenVideoController::duration):
+        (FullscreenVideoController::percentLoaded):
+        (FullscreenVideoController::beginSeek):
+        (FullscreenVideoController::doSeek):
+        (FullscreenVideoController::endSeek):
+        (timeToString):
+        (FullscreenVideoController::updateHudProgressBar):
+        (FullscreenVideoController::createHud):
+        * WebCoreSupport/FullscreenVideoControllerEfl.h: Added.
+        (FullscreenVideoController::mediaElement):
+
+2010-08-25  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
         [EFL] Add setting API for enabling local storage.
         https://bugs.webkit.org/show_bug.cgi?id=44319
 
