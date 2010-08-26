@@ -1,3 +1,15 @@
+2010-08-26  Tony Chang  <tony@chromium.org>
+
+        Reviewed by David Hyatt.
+
+        crash when rendering scrollbar gradient
+        https://bugs.webkit.org/show_bug.cgi?id=44549
+
+        Test: scrollbars/scrollbar-gradient-crash.html
+
+        * css/CSSImageGeneratorValue.cpp:
+        (WebCore::CSSImageGeneratorValue::getImage): Keep this alive.
+
 2010-08-26  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by Kenneth Russell.

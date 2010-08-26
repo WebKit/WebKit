@@ -86,6 +86,8 @@ Image* CSSImageGeneratorValue::getImage(RenderObject* renderer, const IntSize& s
     SizeCountPair& sizeCount = it->second;
     IntSize oldSize = sizeCount.first;
     if (oldSize != size) {
+        // If renderer is the only client, make sure we don't delete this.
+        RefPtr<CSSImageGeneratorValue> protect(this);
         removeClient(renderer);
         addClient(renderer, size);
     }
