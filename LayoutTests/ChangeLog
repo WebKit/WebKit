@@ -1,3 +1,25 @@
+2010-08-26  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Unreviewed, updating Chromium expectations.
+
+        * platform/chromium-mac/fast/doctypes/003-expected.checksum: Removed.
+        * platform/chromium-mac/fast/doctypes/003-expected.png: Removed.
+        * platform/chromium-mac/fast/multicol/span/span-as-nested-columns-child-expected.txt: Added.
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug56024-expected.txt: Added.
+        * platform/chromium-win/fast/doctypes/003-expected.checksum: Removed.
+        * platform/chromium-win/fast/doctypes/003-expected.png: Removed.
+        * platform/chromium-win/fast/doctypes/003-expected.txt: Removed.
+        * platform/chromium-win/fast/multicol/span/span-as-nested-columns-child-expected.txt: Removed.
+        * platform/chromium-win/svg/css/composite-shadow-text-expected.checksum: Added.
+        * platform/chromium-win/svg/css/composite-shadow-text-expected.png: Added.
+        * platform/chromium-win/svg/css/composite-shadow-text-expected.txt: Added.
+        * platform/chromium-win/svg/css/text-shadow-multiple-expected.txt:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug56024-expected.txt: Removed.
+        * platform/chromium-win/transitions/svg-text-shadow-transition-expected.checksum: Added.
+        * platform/chromium-win/transitions/svg-text-shadow-transition-expected.png: Added.
+        * platform/chromium-win/transitions/svg-text-shadow-transition-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-08-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed; rebaseline for r66122.
