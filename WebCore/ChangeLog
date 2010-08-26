@@ -1,3 +1,53 @@
+2010-08-23  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] ScrollbarThemeGtk is incomplete
+        https://bugs.webkit.org/show_bug.cgi?id=44471
+
+        Add theme drawing code for GTK+ scrollbars. Turn RenderThemeGtk::paintMozillaWidget
+        into a public method so that ScrollbarThemeGtk can access Mozilla theme API properly.
+
+        Tests for this issue will be activated in the form of pixel tests, but
+        only after fully-fake scrollbars are activated.
+
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::paintMozillaGtkWidget): Added this public method which takes
+        the proper widget state, widget type, graphics context and rectangle and renders a
+        widget using the Mozilla theming API.
+        (WebCore::RenderThemeGtk::paintRenderObject): Added this method which first calculates
+        the widget state before passing the information on to paintMozillaGtkWidget.
+        (WebCore::RenderThemeGtk::paintCheckbox): Switch to use paintRenderObject.
+        (WebCore::RenderThemeGtk::paintRadio): Switch to use paintRenderObject.
+        (WebCore::RenderThemeGtk::paintButton): Switch to use paintRenderObject.
+        (WebCore::RenderThemeGtk::paintMenuList): Switch to use paintRenderObject.
+        (WebCore::RenderThemeGtk::paintTextField): Switch to use paintRenderObject.
+        (WebCore::RenderThemeGtk::paintSliderTrack): Switch to use paintRenderObject.
+        (WebCore::RenderThemeGtk::paintSliderThumb): Switch to use paintRenderObject.
+        (WebCore::RenderThemeGtk::paintProgressBar): Switch to use paintRenderObject.
+        * platform/gtk/RenderThemeGtk.h: Added new method declarations.
+        * platform/gtk/ScrollbarThemeGtk.cpp: Added code which can render GTK+ scrollbars.
+        (WebCore::ScrollbarThemeGtk::hasThumb): Added.
+        (WebCore::ScrollbarThemeGtk::backButtonRect): Added.
+        (WebCore::ScrollbarThemeGtk::forwardButtonRect): Added.
+        (WebCore::ScrollbarThemeGtk::trackRect): Added.
+        (WebCore::ScrollbarThemeGtk::paintTrackBackground): Added.
+        (WebCore::ScrollbarThemeGtk::paintScrollbarBackground): Added.
+        (WebCore::ScrollbarThemeGtk::paintThumb): Added.
+        (WebCore::ScrollbarThemeGtk::thumbRect): Added.
+        (WebCore::ScrollbarThemeGtk::paint): Added.
+        (WebCore::ScrollbarThemeGtk::paintButton): Added.
+        (WebCore::ScrollbarThemeGtk::paintScrollCorner): Added.
+        (WebCore::ScrollbarThemeGtk::shouldCenterOnThumb): Added.
+        (WebCore::ScrollbarThemeGtk::scrollbarThickness): Always get the metrics from the
+        theme drawing API so that it stays up to date with theme changes.
+        (WebCore::ScrollbarThemeGtk::buttonSize): Added.
+        (WebCore::ScrollbarThemeGtk::minimumThumbLength): Added.
+        * platform/gtk/ScrollbarThemeGtk.h:
+        (WebCore::ScrollbarThemeGtk::hasButtons): Added.
+        (WebCore::ScrollbarThemeGtk::initialAutoscrollTimerDelay): Added.
+        (WebCore::ScrollbarThemeGtk::autoscrollTimerDelay): Added.
+
 2010-08-26  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Sam Weinig.

@@ -34,8 +34,10 @@
 #include "HTMLNames.h"
 #include "MediaControlElements.h"
 #include "NotImplemented.h"
+#include "PlatformMouseEvent.h"
 #include "RenderBox.h"
 #include "RenderObject.h"
+#include "Scrollbar.h"
 #include "UserAgentStyleSheets.h"
 #include "gtkdrawing.h"
 #include <gdk/gdk.h>
@@ -281,30 +283,10 @@ static void adjustMozillaStyle(const RenderThemeGtk* theme, RenderStyle* style, 
     style->setPaddingBottom(Length(ypadding + bottom, Fixed));
 }
 
-static void setMozillaState(const RenderTheme* theme, GtkThemeWidgetType type, RenderObject* o, GtkWidgetState* state)
-{
-    state->active = theme->isPressed(o);
-    state->focused = theme->isFocused(o);
-    state->inHover = theme->isHovered(o);
-    // FIXME: Disabled does not always give the correct appearance for ReadOnly
-    state->disabled = !theme->isEnabled(o) || theme->isReadOnlyControl(o);
-    state->isDefault = false;
-    state->canDefault = false;
-
-
-    // FIXME: The depressed value should probably apply for other theme parts too.
-    // It must be used for range thumbs, because otherwise when the thumb is pressed,
-    // the rendering is incorrect.
-    if (type == MOZ_GTK_SCALE_THUMB_HORIZONTAL || type == MOZ_GTK_SCALE_THUMB_VERTICAL)
-        state->depressed = theme->isPressed(o);
-    else
-        state->depressed = false;
-}
-
-static bool paintMozillaGtkWidget(const RenderThemeGtk* theme, GtkThemeWidgetType type, RenderObject* o, const PaintInfo& i, const IntRect& rect)
+bool RenderThemeGtk::paintMozillaGtkWidget(GtkThemeWidgetType type, GraphicsContext* context, const IntRect& rect, GtkWidgetState* widgetState, int flags, GtkTextDirection textDirection)
 {
     // Painting is disabled so just claim to have succeeded
-    if (i.context->paintingDisabled())
+    if (context->paintingDisabled())
         return false;
 
     GtkWidgetState widgetState;
@@ -320,16 +302,15 @@ static bool paintMozillaGtkWidget(const RenderThemeGtk* theme, GtkThemeWidgetTyp
     PlatformRefPtr<GdkDrawable> drawable(i.context->gdkDrawable());
     GdkRectangle paintRect, clipRect;
     if (drawable) {
-        AffineTransform ctm = i.context->getCTM();
+        AffineTransform ctm = context->getCTM();
         IntPoint pos = ctm.mapPoint(rect.location());
         paintRect = IntRect(pos.x(), pos.y(), rect.width(), rect.height());
 
         // Intersect the cairo rectangle with the target widget region. This  will
         // prevent the theme drawing code from drawing into regions that cairo will
         // clip anyway.
-        cairo_t* cr = i.context->platformContext();
         double clipX1, clipX2, clipY1, clipY2;
-        cairo_clip_extents(cr, &clipX1, &clipY1, &clipX2, &clipY2);
+        cairo_clip_extents(context->platformContext(), &clipX1, &clipY1, &clipX2, &clipY2);
         IntPoint clipPos = ctm.mapPoint(IntPoint(clipX1, clipY1));
 
         clipRect.width = clipX2 - clipX1;
@@ -346,13 +327,13 @@ static bool paintMozillaGtkWidget(const RenderThemeGtk* theme, GtkThemeWidgetTyp
         paintRect = clipRect = IntRect(0, 0, rect.width(), rect.height());
     }
 
-    moz_gtk_use_theme_parts(theme->partsForDrawable(drawable.get()));
-    bool success = moz_gtk_widget_paint(type, drawable.get(), &paintRect, &clipRect, &widgetState, flags, gtkTextDirection(o->style()->direction())) == MOZ_GTK_SUCCESS;
+    moz_gtk_use_theme_parts(partsForDrawable(drawable.get()));
+    bool success = moz_gtk_widget_paint(type, drawable.get(), &paintRect, &clipRect, widgetState, flags, textDirection) == MOZ_GTK_SUCCESS;
 
     // If the drawing was successful and we rendered onto a pixmap, copy the
     // results back to the original GraphicsContext.
-    if (success && !i.context->gdkDrawable()) {
-        cairo_t* cairoContext = i.context->platformContext();
+    if (success && !context->gdkDrawable()) {
+        cairo_t* cairoContext = context->platformContext();
         cairo_save(cairoContext);
         gdk_cairo_set_source_pixmap(cairoContext, drawable.get(), rect.x(), rect.y());
         cairo_paint(cairoContext);
@@ -360,6 +341,34 @@ static bool paintMozillaGtkWidget(const RenderThemeGtk* theme, GtkThemeWidgetTyp
     }
 
     return !success;
+}
+
+bool RenderThemeGtk::paintRenderObject(GtkThemeWidgetType type, RenderObject* renderObject, GraphicsContext* context, const IntRect& rect, int flags)
+{
+    // Painting is disabled so just claim to have succeeded
+    if (context->paintingDisabled())
+        return false;
+
+    GtkWidgetState widgetState;
+    widgetState.active = isPressed(renderObject);
+    widgetState.focused = isFocused(renderObject);
+    widgetState.inHover = isHovered(renderObject);
+
+    // FIXME: Disabled does not always give the correct appearance for ReadOnly
+    widgetState.disabled = !isEnabled(renderObject) || isReadOnlyControl(renderObject);
+    widgetState.isDefault = false;
+    widgetState.canDefault = false;
+
+    // FIXME: The depressed value should probably apply for other theme parts too.
+    // It must be used for range thumbs, because otherwise when the thumb is pressed,
+    // the rendering is incorrect.
+    if (type == MOZ_GTK_SCALE_THUMB_HORIZONTAL || type == MOZ_GTK_SCALE_THUMB_VERTICAL)
+        widgetState.depressed = isPressed(renderObject);
+    else
+        widgetState.depressed = false;
+
+    GtkTextDirection textDirection = gtkTextDirection(renderObject->style()->direction());
+    return paintMozillaGtkWidget(type, context, rect, &widgetState, flags, textDirection);
 }
 
 static void setButtonPadding(RenderStyle* style)
@@ -411,7 +420,7 @@ void RenderThemeGtk::setCheckboxSize(RenderStyle* style) const
 
 bool RenderThemeGtk::paintCheckbox(RenderObject* o, const PaintInfo& i, const IntRect& rect)
 {
-    return paintMozillaGtkWidget(this, MOZ_GTK_CHECKBUTTON, o, i, rect);
+    return paintRenderObject(MOZ_GTK_CHECKBUTTON, o, i.context, rect, isChecked(o));
 }
 
 void RenderThemeGtk::setRadioSize(RenderStyle* style) const
@@ -421,7 +430,7 @@ void RenderThemeGtk::setRadioSize(RenderStyle* style) const
 
 bool RenderThemeGtk::paintRadio(RenderObject* o, const PaintInfo& i, const IntRect& rect)
 {
-    return paintMozillaGtkWidget(this, MOZ_GTK_RADIOBUTTON, o, i, rect);
+    return paintRenderObject(MOZ_GTK_RADIOBUTTON, o, i.context, rect, isChecked(o));
 }
 
 void RenderThemeGtk::adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* style, WebCore::Element* e) const
@@ -442,7 +451,7 @@ void RenderThemeGtk::adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* 
 
 bool RenderThemeGtk::paintButton(RenderObject* o, const PaintInfo& i, const IntRect& rect)
 {
-    return paintMozillaGtkWidget(this, MOZ_GTK_BUTTON, o, i, rect);
+    return paintRenderObject(MOZ_GTK_BUTTON, o, i.context, rect, GTK_RELIEF_NORMAL);
 }
 
 void RenderThemeGtk::adjustMenuListStyle(CSSStyleSelector* selector, RenderStyle* style, WebCore::Element* e) const
@@ -456,7 +465,7 @@ void RenderThemeGtk::adjustMenuListStyle(CSSStyleSelector* selector, RenderStyle
 
 bool RenderThemeGtk::paintMenuList(RenderObject* o, const PaintInfo& i, const IntRect& rect)
 {
-    return paintMozillaGtkWidget(this, MOZ_GTK_DROPDOWN, o, i, rect);
+    return paintRenderObject(MOZ_GTK_DROPDOWN, o, i.context, rect);
 }
 
 void RenderThemeGtk::adjustTextFieldStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
@@ -470,7 +479,7 @@ void RenderThemeGtk::adjustTextFieldStyle(CSSStyleSelector* selector, RenderStyl
 
 bool RenderThemeGtk::paintTextField(RenderObject* o, const PaintInfo& i, const IntRect& rect)
 {
-    return paintMozillaGtkWidget(this, MOZ_GTK_ENTRY, o, i, rect);
+    return paintRenderObject(MOZ_GTK_ENTRY, o, i.context, rect);
 }
 
 bool RenderThemeGtk::paintTextArea(RenderObject* o, const PaintInfo& i, const IntRect& r)
@@ -550,7 +559,7 @@ bool RenderThemeGtk::paintSliderTrack(RenderObject* object, const PaintInfo& inf
     if (part == SliderVerticalPart)
         gtkPart = MOZ_GTK_SCALE_VERTICAL;
 
-    return paintMozillaGtkWidget(this, gtkPart, object, info, rect);
+    return paintRenderObject(gtkPart, object, info.context, rect);
 }
 
 void RenderThemeGtk::adjustSliderTrackStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
@@ -567,7 +576,7 @@ bool RenderThemeGtk::paintSliderThumb(RenderObject* object, const PaintInfo& inf
     if (part == SliderThumbVerticalPart)
         gtkPart = MOZ_GTK_SCALE_THUMB_VERTICAL;
 
-    return paintMozillaGtkWidget(this, gtkPart, object, info, rect);
+    return paintRenderObject(gtkPart, object, info.context, rect);
 }
 
 void RenderThemeGtk::adjustSliderThumbStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
@@ -873,7 +882,7 @@ bool RenderThemeGtk::paintProgressBar(RenderObject* renderObject, const PaintInf
     if (!progressBarWidget)
         return true;
 
-    if (paintMozillaGtkWidget(this, MOZ_GTK_PROGRESSBAR, renderObject, paintInfo, rect))
+    if (paintRenderObject(MOZ_GTK_PROGRESSBAR, renderObject, paintInfo.context, rect))
         return true;
 
     IntRect chunkRect(rect);
@@ -888,7 +897,7 @@ bool RenderThemeGtk::paintProgressBar(RenderObject* renderObject, const PaintInf
     else
         chunkRect.setX(chunkRect.x() + style->xthickness);
 
-    return paintMozillaGtkWidget(this, MOZ_GTK_PROGRESS_CHUNK, renderObject, paintInfo, chunkRect);
+    return paintRenderObject(MOZ_GTK_PROGRESS_CHUNK, renderObject, paintInfo.context, chunkRect);
 }
 #endif
 

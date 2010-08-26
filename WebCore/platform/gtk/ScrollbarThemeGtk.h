@@ -26,20 +26,37 @@
 #ifndef ScrollbarThemeGtk_h
 #define ScrollbarThemeGtk_h
 
-#include "ScrollbarTheme.h"
-
-typedef struct _GtkWidget GtkWidget;
-typedef struct _GtkStyle GtkStyle;
-typedef struct _GtkContainer GtkContainer;
-typedef struct _GtkBorder GtkBorder;
+#include "ScrollbarThemeComposite.h"
 
 namespace WebCore {
 
-class ScrollbarThemeGtk : public ScrollbarTheme {
+class Scrollbar;
+
+class ScrollbarThemeGtk : public ScrollbarThemeComposite {
 public:
     virtual ~ScrollbarThemeGtk();
 
-    virtual int scrollbarThickness(ScrollbarControlSize = RegularScrollbar);
+    virtual bool hasButtons(Scrollbar*) { return true; }
+    virtual bool hasThumb(Scrollbar*);
+    virtual IntRect backButtonRect(Scrollbar*, ScrollbarPart, bool);
+    virtual IntRect forwardButtonRect(Scrollbar*, ScrollbarPart, bool);
+    virtual IntRect trackRect(Scrollbar*, bool);
+    IntRect thumbRect(Scrollbar*, const IntRect& unconstrainedTrackRect);
+    bool paint(Scrollbar*, GraphicsContext*, const IntRect& damageRect);
+    void paintScrollbarBackground(GraphicsContext*, Scrollbar*);
+    void paintTrackBackground(GraphicsContext*, Scrollbar*, const IntRect&);
+    void paintThumb(GraphicsContext*, Scrollbar*, const IntRect&);
+    virtual void paintButton(GraphicsContext*, Scrollbar*, const IntRect&, ScrollbarPart);
+    virtual void paintScrollCorner(ScrollView*, GraphicsContext*, const IntRect&);
+    virtual bool shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent&);
+    virtual int scrollbarThickness(ScrollbarControlSize);
+    virtual IntSize buttonSize(Scrollbar*);
+    virtual int minimumThumbLength(Scrollbar*);
+
+    // TODO: These are the default GTK+ values. At some point we should pull these from the theme itself.
+    virtual double initialAutoscrollTimerDelay() { return 0.20; }
+    virtual double autoscrollTimerDelay() { return 0.02; }
+
 };
 
 }
