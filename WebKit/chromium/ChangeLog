@@ -1,3 +1,16 @@
+2010-08-25  Michael Nordman  <michaeln@google.com>
+
+        Reviewed by David Levin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=44133
+        WebKitAPI to allow runtime enablement of XmlHttpRequest.responseBlob.
+
+        * features.gypi: Define ENABLE_XHR_RESPONSE_BLOB.
+        * public/WebRuntimeFeatures.h:
+        * src/WebRuntimeFeatures.cpp:
+        (WebKit::WebRuntimeFeatures::enableXHRResponseBlob):
+        (WebKit::WebRuntimeFeatures::isXHRResponseBlobEnabled):
+
 2010-08-24  Victoria Kirst  <vrk@google.com>
 
         Reviewed by Darin Fisher.

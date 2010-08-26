@@ -128,6 +128,13 @@ public:
     static bool speechInputEnabled() { return isSpeechInputEnabled; }
     static bool speechEnabled() { return isSpeechInputEnabled; }
 
+#if ENABLE(XHR_RESPONSE_BLOB)
+    static bool xhrResponseBlobEnabled() { return isXHRResponseBlobEnabled; }
+    static void setXHRResponseBlobEnabled(bool isEnabled) { isXHRResponseBlobEnabled = isEnabled; }
+    static bool responseBlobEnabled() { return isXHRResponseBlobEnabled; }
+    static bool asBlobEnabled()  { return isXHRResponseBlobEnabled; }
+#endif
+
 private:
     // Never instantiate.
     RuntimeEnabledFeatures() { }
@@ -144,6 +151,7 @@ private:
     static bool isDeviceMotionEnabled;
     static bool isDeviceOrientationEnabled;
     static bool isSpeechInputEnabled;
+    static bool isXHRResponseBlobEnabled;
 };
 
 } // namespace WebCore

@@ -70,6 +70,10 @@ public:
     State readyState() const;
     bool withCredentials() const { return m_includeCredentials; }
     void setWithCredentials(bool, ExceptionCode&);
+#if ENABLE(XHR_RESPONSE_BLOB)
+    bool asBlob() const { return m_asBlob; }
+    void setAsBlob(bool, ExceptionCode&);
+#endif
     void open(const String& method, const KURL&, ExceptionCode&);
     void open(const String& method, const KURL&, bool async, ExceptionCode&);
     void open(const String& method, const KURL&, bool async, const String& user, ExceptionCode&);
@@ -84,8 +88,11 @@ public:
     void overrideMimeType(const String& override);
     String getAllResponseHeaders(ExceptionCode&) const;
     String getResponseHeader(const AtomicString& name, ExceptionCode&) const;
-    const ScriptString& responseText() const;
-    Document* responseXML() const;
+    const ScriptString& responseText(ExceptionCode&) const;
+    Document* responseXML(ExceptionCode&) const;
+#if ENABLE(XHR_RESPONSE_BLOB)
+    Blob* responseBlob(ExceptionCode&) const;
+#endif
     void setLastSendLineNumber(unsigned lineNumber) { m_lastSendLineNumber = lineNumber; }
     void setLastSendURL(const String& url) { m_lastSendURL = url; }
 
@@ -155,6 +162,10 @@ private:
     String m_mimeTypeOverride;
     bool m_async;
     bool m_includeCredentials;
+#if ENABLE(XHR_RESPONSE_BLOB)
+    bool m_asBlob;
+    RefPtr<Blob> m_responseBlob;
+#endif
 
     RefPtr<ThreadableLoader> m_loader;
     State m_state;

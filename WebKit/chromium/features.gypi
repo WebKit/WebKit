@@ -81,6 +81,7 @@
         'ENABLE_WEB_SOCKETS=1',
         'ENABLE_WEB_TIMING=1',
         'ENABLE_WORKERS=1',
+        'ENABLE_XHR_RESPONSE_BLOB=1',
         'ENABLE_XPATH=1',
         'ENABLE_XSLT=1',
       ],
