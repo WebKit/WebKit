@@ -1,3 +1,13 @@
+2010-08-26  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        Fix double free (we were passing const memory to a GOwnPtr) by
+        getting rid of unneeded temp variable.
+
+        * platform/gtk/FileSystemGtk.cpp:
+        (WebCore::directoryName):
+
 2010-08-26  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.

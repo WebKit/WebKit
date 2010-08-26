@@ -187,8 +187,7 @@ String pathGetFileName(const String& pathName)
 String directoryName(const String& path)
 {
     /* No null checking needed */
-    GOwnPtr<char> tmpFilename(const_cast<char*>(fileSystemRepresentation(path).data()));
-    GOwnPtr<char> dirname(g_path_get_dirname(tmpFilename.get()));
+    GOwnPtr<char> dirname(g_path_get_dirname(fileSystemRepresentation(path).data()));
     return String::fromUTF8(dirname.get());
 }
 
