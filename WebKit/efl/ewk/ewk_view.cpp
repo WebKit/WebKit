@@ -108,6 +108,7 @@ struct _Ewk_View_Private_Data {
         Eina_Bool private_browsing:1;
         Eina_Bool caret_browsing:1;
         Eina_Bool spatial_navigation:1;
+        Eina_Bool local_storage:1;
         struct {
             float w;
             float h;
@@ -595,6 +596,7 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* sd)
     priv->settings.resizable_textareas = priv->page_settings->textAreasAreResizable();
     priv->settings.private_browsing = priv->page_settings->privateBrowsingEnabled();
     priv->settings.caret_browsing = priv->page_settings->caretBrowsingEnabled();
+    priv->settings.local_storage = priv->page_settings->localStorageEnabled();
 
     // Since there's no scale separated from zooming in webkit-efl, this functionality of
     // viewport meta tag is implemented using zoom. When scale zoom is supported by webkit-efl,
@@ -2660,6 +2662,37 @@ Eina_Bool ewk_view_setting_spatial_navigation_set(Evas_Object* o, Eina_Bool enab
     if (priv->settings.spatial_navigation != enable) {
         priv->page_settings->setSpatialNavigationEnabled(enable);
         priv->settings.spatial_navigation = enable;
+    }
+    return EINA_TRUE;
+}
+
+/**
+ * Gets if the local storage is enabled.
+ *
+ * @param o view object to set if local storage is enabled.
+ * @return @c EINA_TRUE if local storage is enabled, @c EINA_FALSE if not.
+ */
+Eina_Bool ewk_view_setting_local_storage_get(Evas_Object* o)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
+    return priv->settings.local_storage;
+}
+
+/**
+ * Sets the local storage of HTML5.
+ *
+ * @param o view object to set if local storage is enabled.
+ * @return @c EINA_TRUE on success and @c EINA_FALSE on failure
+ */
+Eina_Bool ewk_view_setting_local_storage_set(Evas_Object* o, Eina_Bool enable)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
+    enable = !!enable;
+    if (priv->settings.local_storage != enable) {
+        priv->page_settings->setLocalStorageEnabled(enable);
+        priv->settings.local_storage = enable;
     }
     return EINA_TRUE;
 }

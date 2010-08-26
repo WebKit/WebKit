@@ -1,3 +1,18 @@
+2010-08-25  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Add setting API for enabling local storage.
+        https://bugs.webkit.org/show_bug.cgi?id=44319
+
+        Add API for enabling/disabling local storage.
+
+        * ewk/ewk_view.cpp:
+        (_ewk_view_priv_new):
+        (ewk_view_setting_local_storage_get): Added
+        (ewk_view_setting_local_storage_set): Added
+        * ewk/ewk_view.h:
+
 2010-08-25  Jaehun Lim  <ljaehun.lim@samsung.com>
 
         Reviewed by Antonio Gomes.
