@@ -289,17 +289,7 @@ bool RenderThemeGtk::paintMozillaGtkWidget(GtkThemeWidgetType type, GraphicsCont
     if (context->paintingDisabled())
         return false;
 
-    GtkWidgetState widgetState;
-    setMozillaState(theme, type, o, &widgetState);
-
-    // We might want to make setting flags the caller's job at some point rather than doing it here.
-    int flags = 0;
-    if (type == MOZ_GTK_BUTTON)
-        flags = GTK_RELIEF_NORMAL;
-    else if (type == MOZ_GTK_CHECKBUTTON || type == MOZ_GTK_RADIOBUTTON)
-        flags = theme->isChecked(o);
-
-    PlatformRefPtr<GdkDrawable> drawable(i.context->gdkDrawable());
+    PlatformRefPtr<GdkDrawable> drawable(context->gdkDrawable());
     GdkRectangle paintRect, clipRect;
     if (drawable) {
         AffineTransform ctm = context->getCTM();
