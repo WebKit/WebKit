@@ -1,0 +1,14 @@
+<html>
+<head>
+<script>
+if (window.layoutTestController) {
+    window.layoutTestController.dumpAsText();
+    window.layoutTestController.addUserScript("console.log('Start Script')", true, true);
+    window.layoutTestController.addUserScript("console.log('End Script')", false, true);
+}
+</script>
+</head>
+<body>
+<iframe src="data:application/x-webkit-test-netscape,"></iframe>
+</body>
+</html>

@@ -1,3 +1,29 @@
+2010-08-26  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Userscripts on special documents should be tested
+        <https://bugs.webkit.org/show_bug.cgi?id=44725>
+        
+        Add tests of user script injection in audio, image, plugin, and video documents.
+        
+        * userscripts/user-script-audio-document.html: Added. Test injection of user scripts
+            in an audio document.
+        * userscripts/user-script-audio-document-expected.txt: Added.
+        * userscripts/user-script-image-document.html: Added. Test injection of user scripts
+            in an image document.
+        * userscripts/user-script-image-document-expected.txt: Added.
+        * userscripts/user-script-plugin-document.html: Added. Test injection of user scripts
+            in a plugin document.
+        * userscripts/user-script-plugin-document-expected.txt: Added.
+        * userscripts/user-script-video-document.html: Added. Test injection of user scripts
+            in a video document.
+        * userscripts/user-script-video-document-expected.txt: Added.
+        
+        * userscripts/resources/abe.png: Copied from media/content/abe.png.
+        * userscripts/resources/counting.mp4: Copied from media/content/counting.mp4.
+        * userscripts/resources/test.wav: Copied from media/content/test.wav.
+
 2010-08-26  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt.
