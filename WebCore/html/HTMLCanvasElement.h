@@ -118,10 +118,6 @@ public:
 private:
     HTMLCanvasElement(const QualifiedName&, Document*);
 
-#if ENABLE(DASHBOARD_SUPPORT)
-    virtual HTMLTagStatus endTagRequirement() const;
-#endif
-
     virtual void parseMappedAttribute(Attribute*);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 

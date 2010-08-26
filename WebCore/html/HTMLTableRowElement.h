@@ -49,8 +49,6 @@ public:
 
 private:
     HTMLTableRowElement(const QualifiedName&, Document*);
-
-    virtual HTMLTagStatus endTagRequirement() const { return TagStatusOptional; }
 };
 
 } // namespace

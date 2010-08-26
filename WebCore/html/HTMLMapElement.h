@@ -47,8 +47,6 @@ public:
 private:
     HTMLMapElement(const QualifiedName&, Document*);
 
-    virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
-
     virtual void parseMappedAttribute(Attribute*);
 
     virtual void insertedIntoDocument();

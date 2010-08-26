@@ -114,8 +114,6 @@ public:
 private:
     HTMLFormElement(const QualifiedName&, Document*);
 
-    virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
-
     virtual bool rendererIsNeeded(RenderStyle*);
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();

@@ -33,8 +33,6 @@ public:
 
 private:
     HTMLBaseFontElement(const QualifiedName&, Document*);
-
-    virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
 };
 
 } // namespace

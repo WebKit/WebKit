@@ -50,7 +50,6 @@ public:
 private:
     HTMLAreaElement(const QualifiedName&, Document*);
 
-    virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
     virtual void parseMappedAttribute(Attribute*);
     virtual bool supportsFocus() const;
     virtual String target() const;

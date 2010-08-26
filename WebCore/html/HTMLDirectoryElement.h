@@ -33,8 +33,6 @@ public:
 
 private:
     HTMLDirectoryElement(const QualifiedName&, Document*);
-
-    virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
 };
 
 } //namespace

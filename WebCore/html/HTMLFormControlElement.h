@@ -122,8 +122,6 @@ protected:
     virtual bool recalcWillValidate() const;
 
 private:
-    virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
-
     virtual const AtomicString& formControlName() const;
     virtual const AtomicString& formControlType() const = 0;
 

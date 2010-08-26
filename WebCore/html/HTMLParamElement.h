@@ -37,19 +37,18 @@ public:
 private:
     HTMLParamElement(const QualifiedName&, Document*);
 
-    virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
-
     virtual void parseMappedAttribute(Attribute*);
 
     virtual bool isURLAttribute(Attribute*) const;
 
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 
+    // FIXME: These don't need to be stored as members and instead
+    // name() value() could use getAttribute(nameAttr/valueAttr).
     AtomicString m_name;
     AtomicString m_value;
 };
 
-
-}
+} // namespace WebCore
 
 #endif

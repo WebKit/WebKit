@@ -34,8 +34,6 @@ public:
 
 private:
     HTMLBlockquoteElement(const QualifiedName&, Document*);
-
-    virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
 };
 
 } // namespace WebCore

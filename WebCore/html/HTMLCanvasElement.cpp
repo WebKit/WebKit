@@ -97,19 +97,6 @@ HTMLCanvasElement::~HTMLCanvasElement()
         m_observer->canvasDestroyed(this);
 }
 
-#if ENABLE(DASHBOARD_SUPPORT)
-
-HTMLTagStatus HTMLCanvasElement::endTagRequirement() const 
-{
-    Settings* settings = document()->settings();
-    if (settings && settings->usesDashboardBackwardCompatibilityMode())
-        return TagStatusForbidden; 
-
-    return HTMLElement::endTagRequirement();
-}
-
-#endif
-
 void HTMLCanvasElement::parseMappedAttribute(Attribute* attr)
 {
     const QualifiedName& attrName = attr->name();

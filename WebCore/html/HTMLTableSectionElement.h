@@ -56,7 +56,6 @@ public:
 private:
     HTMLTableSectionElement(const QualifiedName& tagName, Document*);
 
-    virtual HTMLTagStatus endTagRequirement() const { return TagStatusOptional; }
     virtual bool canHaveAdditionalAttributeStyleDecls() const { return true; }
     virtual void additionalAttributeStyleDecls(Vector<CSSMutableStyleDeclaration*>&);
 };

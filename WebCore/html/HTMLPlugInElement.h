@@ -65,8 +65,6 @@ private:
 
     virtual RenderWidget* renderWidgetForJSBindings() const = 0;
 
-    virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
-
     virtual void updateWidget() { }
 
 protected:

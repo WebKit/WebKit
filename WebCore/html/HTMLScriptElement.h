@@ -49,8 +49,6 @@ private:
 
     virtual String scriptContent() const;
 
-    virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
-
     virtual void parseMappedAttribute(Attribute*);
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();

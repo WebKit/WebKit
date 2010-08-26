@@ -1,3 +1,79 @@
+2010-08-25  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Remove endTagRequirement now that the LegacyHTMLDocumentParser is dead
+        https://bugs.webkit.org/show_bug.cgi?id=44626
+
+        Serialization is covered by a bunch of tests.  innerHTML behavior is sadly not.
+        In either case, this is just moving code and should have no functional change.
+
+        * editing/markup.cpp:
+        (WebCore::elementCannotHaveEndTag):
+        (WebCore::MarkupAccumulator::shouldSelfClose):
+        (WebCore::MarkupAccumulator::appendEndMarkup):
+        (WebCore::serializeNodesWithNamespaces):
+        * html/HTMLAnchorElement.h:
+        * html/HTMLAreaElement.h:
+        * html/HTMLBRElement.h:
+        * html/HTMLBaseElement.h:
+        * html/HTMLBaseFontElement.h:
+        * html/HTMLBlockquoteElement.h:
+        * html/HTMLBodyElement.h:
+        * html/HTMLCanvasElement.cpp:
+        * html/HTMLCanvasElement.h:
+        * html/HTMLDListElement.h:
+        * html/HTMLDataGridCellElement.h:
+        * html/HTMLDataGridColElement.h:
+        * html/HTMLDirectoryElement.h:
+        * html/HTMLDivElement.h:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::nodeName):
+        (WebCore::HTMLElement::ieForbidsInsertHTML):
+        (WebCore::HTMLElement::deprecatedCreateContextualFragment):
+        (WebCore::HTMLElement::setInnerText):
+        (WebCore::HTMLElement::setOuterText):
+        * html/HTMLElement.h:
+        * html/HTMLEmbedElement.h:
+        * html/HTMLFontElement.h:
+        * html/HTMLFormControlElement.h:
+        * html/HTMLFormElement.h:
+        * html/HTMLFrameElement.h:
+        * html/HTMLFrameSetElement.h:
+        * html/HTMLHRElement.h:
+        * html/HTMLHeadElement.h:
+        * html/HTMLHeadingElement.h:
+        * html/HTMLHtmlElement.h:
+        * html/HTMLIFrameElement.h:
+        * html/HTMLImageElement.h:
+        * html/HTMLInputElement.h:
+        * html/HTMLIsIndexElement.h:
+        * html/HTMLLIElement.h:
+        * html/HTMLLinkElement.h:
+        * html/HTMLMapElement.h:
+        * html/HTMLMarqueeElement.h:
+        * html/HTMLMenuElement.h:
+        * html/HTMLMetaElement.h:
+        * html/HTMLModElement.h:
+        * html/HTMLOListElement.h:
+        * html/HTMLOptionElement.h:
+        * html/HTMLParagraphElement.h:
+        * html/HTMLParamElement.h:
+        * html/HTMLPlugInElement.h:
+        * html/HTMLPreElement.h:
+        * html/HTMLQuoteElement.h:
+        * html/HTMLScriptElement.h:
+        * html/HTMLSourceElement.h:
+        * html/HTMLStyleElement.h:
+        * html/HTMLTableCaptionElement.h:
+        * html/HTMLTableCellElement.h:
+        * html/HTMLTableColElement.cpp:
+        * html/HTMLTableColElement.h:
+        * html/HTMLTableElement.h:
+        * html/HTMLTableRowElement.h:
+        * html/HTMLTableSectionElement.h:
+        * html/HTMLUListElement.h:
+
 2010-08-20  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.
