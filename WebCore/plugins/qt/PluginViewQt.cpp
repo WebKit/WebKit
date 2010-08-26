@@ -578,19 +578,24 @@ void PluginView::setNPWindowIfNeeded()
 
         m_npWindow.x = m_windowRect.x();
         m_npWindow.y = m_windowRect.y();
-
-        m_npWindow.clipRect.left = max(0, m_clipRect.x());
-        m_npWindow.clipRect.top = max(0, m_clipRect.y());
-        m_npWindow.clipRect.right = m_clipRect.x() + m_clipRect.width();
-        m_npWindow.clipRect.bottom = m_clipRect.y() + m_clipRect.height();
     } else {
         m_npWindow.x = 0;
         m_npWindow.y = 0;
+    }
 
+    // If the width or height are null, set the clipRect to null, indicating that
+    // the plugin is not visible/scrolled out.
+    if (!m_clipRect.width() || !m_clipRect.height()) {
         m_npWindow.clipRect.left = 0;
-        m_npWindow.clipRect.top = 0;
         m_npWindow.clipRect.right = 0;
+        m_npWindow.clipRect.top = 0;
         m_npWindow.clipRect.bottom = 0;
+    } else {
+        // Clipping rectangle of the plug-in; the origin is the top left corner of the drawable or window. 
+        m_npWindow.clipRect.left = m_npWindow.x + m_clipRect.x();
+        m_npWindow.clipRect.top = m_npWindow.y + m_clipRect.y();
+        m_npWindow.clipRect.right = m_npWindow.x + m_clipRect.x() + m_clipRect.width();
+        m_npWindow.clipRect.bottom = m_npWindow.y + m_clipRect.y() + m_clipRect.height();
     }
 
     if (m_plugin->quirks().contains(PluginQuirkDontCallSetWindowMoreThanOnce)) {

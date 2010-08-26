@@ -1,3 +1,18 @@
+2010-08-26  Girish Ramakrishnan  <girish@forwardbias.in>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Set the clipRect correctly in windowed and windowless mode.
+        In Windowed mode, the values are in page coordinates. In Windowless
+        mode the values are in drawable coordinates. Setting these values is
+        purely academic since they are not used by Flash. However, there is a
+        possibility that plugins might infer a 'null' clipRect to mean 'invisible'.
+
+        https://bugs.webkit.org/show_bug.cgi?id=44594
+
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::setNPWindowIfNeeded):
+
 2010-08-26  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.
