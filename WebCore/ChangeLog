@@ -1,3 +1,30 @@
+2010-08-24  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Implementing clipping for composited layers. Two
+        types of clipping are added: Scissoring for layers that don't
+        contain any rotations and stencil-buffer based clipping for
+        all other layers.
+        https://bugs.webkit.org/show_bug.cgi?id=44573
+
+        Tests: Compositor layout tests that test clipping such as
+        compositing/geometry/{clip.html, clipping-foreground.html} now
+        work properly.
+
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::SharedValues::SharedValues):
+        (WebCore::LayerChromium::getDrawRect):
+        (WebCore::LayerChromium::drawAsMask):
+        * platform/graphics/chromium/LayerChromium.h:
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::drawLayers):
+        (WebCore::LayerRendererChromium::drawLayerIntoStencilBuffer):
+        (WebCore::LayerRendererChromium::drawLayersRecursive):
+        (WebCore::LayerRendererChromium::scissorToRect):
+        (WebCore::LayerRendererChromium::initializeSharedObjects):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+
 2010-08-25  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Dimitri Glazkov.

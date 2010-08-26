@@ -109,7 +109,7 @@ LayerChromium::SharedValues::SharedValues()
         "uniform vec4 color;                                 \n"
         "void main()                                         \n"
         "{                                                   \n"
-        "  gl_FragColor = color;                             \n"
+        "  gl_FragColor = vec4(color.xyz * color.w, color.w);\n"
         "}                                                   \n";
 
     m_borderShaderProgram = createShaderProgram(borderVertexShaderString, borderFragmentShaderString);
@@ -429,6 +429,37 @@ void LayerChromium::drawDebugBorder()
 
     // The indices for the line are stored in the same array as the triangle indices.
     GLC(glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_SHORT, (void*)(6 * sizeof(unsigned short))));
+}
+
+const FloatRect LayerChromium::getDrawRect() const
+{
+    // Form the matrix used by the shader to map the corners of the layer's
+    // bounds into the view space.
+    TransformationMatrix renderMatrix = drawTransform();
+    renderMatrix.scale3d(bounds().width(), bounds().height(), 1);
+
+    FloatRect layerRect(-0.5, -0.5, 1, 1);
+    FloatRect mappedRect = renderMatrix.mapRect(layerRect);
+    return mappedRect;
+}
+
+// Draws the layer with a single colored shader. This method is used to do
+// quick draws into the stencil buffer.
+void LayerChromium::drawAsMask()
+{
+    ASSERT(layerRenderer());
+    const SharedValues* sv = layerRenderer()->layerSharedValues();
+    ASSERT(sv && sv->initialized());
+    layerRenderer()->useShader(sv->borderShaderProgram());
+
+    // We reuse the border shader here as all we need a single colored shader pass.
+    // The color specified here is only for debug puproses as typically when we call this
+    // method, writes to the color channels are disabled.
+    GLC(glUniform4f(sv->borderShaderColorLocation(), 0, 1 , 0, 0.7));
+
+    drawTexturedQuad(layerRenderer()->projectionMatrix(), drawTransform(),
+        bounds().width(), bounds().height(), drawOpacity(),
+        sv->borderShaderMatrixLocation(), -1);
 }
 
 // static

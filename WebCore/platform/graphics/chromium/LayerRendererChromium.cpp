@@ -183,9 +183,11 @@ void LayerRendererChromium::drawLayers(const IntRect& updateRect, const IntRect&
     // Bind the common vertex attributes used for drawing all the layers.
     LayerChromium::prepareForDraw(layerSharedValues());
 
+    // FIXME: These calls can be made once, when the compositor context is initialized.
     GLC(glDisable(GL_DEPTH_TEST));
     GLC(glDisable(GL_CULL_FACE));
     GLC(glDepthFunc(GL_LEQUAL));
+    GLC(glClearStencil(0));
 
     if (m_scrollPosition == IntPoint(-1, -1))
         m_scrollPosition = scrollPosition;
@@ -299,14 +301,23 @@ void LayerRendererChromium::drawLayers(const IntRect& updateRect, const IntRect&
     for (i = 0; i < sublayers.size(); i++)
         updateLayersRecursive(sublayers[i].get(), matrix, opacity);
 
+    m_rootVisibleRect = visibleRect;
+
     // Enable scissoring to avoid rendering composited layers over the scrollbars.
     GLC(glEnable(GL_SCISSOR_TEST));
-    GLC(glScissor(0, visibleRect.height() - contentRect.height(), contentRect.width(), contentRect.height()));
+    FloatRect scissorRect(contentRect);
+    // The scissorRect should not include the scroll offset.
+    scissorRect.move(-m_scrollPosition.x(), -m_scrollPosition.y());
+    scissorToRect(scissorRect);
+
+    // Clear the stencil buffer to 0.
+    GLC(glClear(GL_STENCIL_BUFFER_BIT));
+    // Disable writes to the stencil buffer.
+    GLC(glStencilMask(0));
 
     // Traverse the layer tree one more time to draw the layers.
-    m_visibleRect = visibleRect;
     for (i = 0; i < sublayers.size(); i++)
-        drawLayersRecursive(sublayers[i].get());
+        drawLayersRecursive(sublayers[i].get(), scissorRect);
 
     GLC(glDisable(GL_SCISSOR_TEST));
 
@@ -419,13 +430,37 @@ void LayerRendererChromium::updateLayersRecursive(LayerChromium* layer, const Tr
     layer->setLayerRenderer(this);
 }
 
+// Does a quick draw of the given layer into the stencil buffer. If decrement
+// is true then it decrements the current stencil values otherwise it increments them.
+void LayerRendererChromium::drawLayerIntoStencilBuffer(LayerChromium* layer, bool decrement)
+{
+    // Enable writes to the stencil buffer and increment the stencil values
+    // by one for every pixel under the current layer.
+    GLC(glStencilMask(0xff));
+    GLC(glStencilFunc(GL_ALWAYS, 1, 0xff));
+    if (decrement)
+        GLC(glStencilOp(GL_DECR, GL_DECR, GL_DECR));
+    else
+        GLC(glStencilOp(GL_INCR, GL_INCR, GL_INCR));
+
+    GLC(glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE));
+
+    layer->drawAsMask();
+
+    // Disable writes to the stencil buffer.
+    GLC(glStencilMask(0));
+    GLC(glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE));
+}
+
 // Recursively walk the layer tree and draw the layers.
-void LayerRendererChromium::drawLayersRecursive(LayerChromium* layer)
+void LayerRendererChromium::drawLayersRecursive(LayerChromium* layer, const FloatRect& scissorRect)
 {
     static bool depthTestEnabledForSubtree = false;
+    static int currentStencilValue = 0;
 
     // Check if the layer falls within the visible bounds of the page.
-    bool layerVisible = isLayerVisible(layer, layer->drawTransform(), m_visibleRect);
+    FloatRect layerRect = layer->getDrawRect();
+    bool isLayerVisible = scissorRect.intersects(layerRect);
 
     // Enable depth testing for this layer and all its descendants if preserves3D is set.
     bool mustClearDepth = false;
@@ -439,8 +474,49 @@ void LayerRendererChromium::drawLayersRecursive(LayerChromium* layer)
         }
     }
 
-    if (layerVisible)
+    if (isLayerVisible)
         drawLayer(layer);
+
+    // FIXME: We should check here if the layer has descendants that draw content
+    // before we setup for clipping.
+    FloatRect currentScissorRect = scissorRect;
+    bool mustResetScissorRect = false;
+    bool didStencilDraw = false;
+    if (layer->masksToBounds()) {
+        // If the layer isn't rotated then we can use scissoring otherwise we need
+        // to clip using the stencil buffer.
+        if (layer->drawTransform().isIdentityOrTranslation()) {
+            currentScissorRect.intersect(layerRect);
+            if (currentScissorRect != scissorRect) {
+                scissorToRect(currentScissorRect);
+                mustResetScissorRect = true;
+            }
+        } else if (currentStencilValue < ((1 << m_numStencilBits) - 1)) {
+            // Clipping using the stencil buffer works as follows: When we encounter
+            // a clipping layer we increment the stencil buffer values for all the pixels
+            // the layer touches. As a result 1's will be stored in the stencil buffer for pixels under
+            // the first clipping layer found in a traversal, 2's for pixels in the intersection
+            // of two nested clipping layers, etc. When the sublayers of a clipping layer are drawn
+            // we turn on stencil testing to render only pixels that have the correct stencil
+            // value (one that matches the value of currentStencilValue). As the recursion unravels,
+            // we decrement the stencil buffer values for each clipping layer. When the entire layer tree
+            // is rendered, the stencil values should be all back to zero. An 8 bit stencil buffer
+            // will allow us up to 255 nested clipping layers which is hopefully enough.
+            if (!currentStencilValue)
+                GLC(glEnable(GL_STENCIL_TEST));
+
+            drawLayerIntoStencilBuffer(layer, false);
+
+            currentStencilValue++;
+            didStencilDraw = true;
+        }
+    }
+    // Sublayers will render only if the value in the stencil buffer is equal to
+    // currentStencilValue.
+    if (didStencilDraw) {
+        // The sublayers will render only if the stencil test passes.
+        GLC(glStencilFunc(GL_EQUAL, currentStencilValue, 0xff));
+    }
 
     // If we're using depth testing then we need to sort the children in Z to
     // get the transparency to work properly.
@@ -456,11 +532,27 @@ void LayerRendererChromium::drawLayersRecursive(LayerChromium* layer)
         std::stable_sort(sublayerList.begin(), sublayerList.end(), compareLayerZ);
 
         for (i = 0; i < sublayerList.size(); i++)
-            drawLayersRecursive(sublayerList[i]);
+            drawLayersRecursive(sublayerList[i], currentScissorRect);
     } else {
         const Vector<RefPtr<LayerChromium> >& sublayers = layer->getSublayers();
         for (size_t i = 0; i < sublayers.size(); i++)
-            drawLayersRecursive(sublayers[i].get());
+            drawLayersRecursive(sublayers[i].get(), currentScissorRect);
+    }
+
+    if (didStencilDraw) {
+        // Draw into the stencil buffer subtracting 1 for every pixel hit
+        // effectively removing this mask
+        drawLayerIntoStencilBuffer(layer, true);
+        currentStencilValue--;
+        if (!currentStencilValue) {
+            // Disable stencil testing.
+            GLC(glDisable(GL_STENCIL_TEST));
+            GLC(glStencilFunc(GL_ALWAYS, 0, 0xff));
+        }
+    }
+
+    if (mustResetScissorRect) {
+        scissorToRect(scissorRect);
     }
 
     if (mustClearDepth) {
@@ -492,6 +584,15 @@ void LayerRendererChromium::drawLayer(LayerChromium* layer)
 
     // Draw the debug border if there is one.
     layer->drawDebugBorder();
+}
+
+// Sets the scissor region to the given rectangle. The coordinate system for the
+// scissorRect has its origin at the top left corner of the current visible rect.
+void LayerRendererChromium::scissorToRect(const FloatRect& scissorRect)
+{
+    // Compute the lower left corner of the scissor rect.
+    float bottom = std::max((float)m_rootVisibleRect.height() - scissorRect.bottom(), 0.f);
+    GLC(glScissor(scissorRect.x(), bottom, scissorRect.width(), scissorRect.height()));
 }
 
 bool LayerRendererChromium::makeContextCurrent()
@@ -564,6 +665,9 @@ bool LayerRendererChromium::initializeSharedObjects()
 
     // Get the max texture size supported by the system.
     GLC(glGetIntegerv(GL_MAX_TEXTURE_SIZE, &m_maxTextureSize));
+
+    // Get the number of bits available in the stencil buffer.
+    GLC(glGetIntegerv(GL_STENCIL_BITS, &m_numStencilBits));
 
     m_layerSharedValues = adoptPtr(new LayerChromium::SharedValues());
     m_contentLayerSharedValues = adoptPtr(new ContentLayerChromium::SharedValues());
