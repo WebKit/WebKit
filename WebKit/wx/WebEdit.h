@@ -41,6 +41,7 @@ namespace WebCore {
 }
 
 class WebDOMElement;
+class WebCoreEditCommandPrivate;
 class wxWebFrame;
 
 class WXDLLIMPEXP_WEBKIT wxWebEditCommand
@@ -56,7 +57,7 @@ public:
     void Apply();
     
 private:
-    WebCore::WebCoreEditCommand* m_impl;
+    WebCoreEditCommandPrivate* m_impl;
 };
 
 #endif

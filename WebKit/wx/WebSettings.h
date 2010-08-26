@@ -66,6 +66,8 @@ public:
     {}
     
     wxWebSettings() : wxObject() {}
+    
+    virtual ~wxWebSettings() { }
 
     /**
         Sets the default font size for fixed fonts.

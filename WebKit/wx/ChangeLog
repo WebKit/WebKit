@@ -1,3 +1,38 @@
+2010-08-26  Robin Dunn  <robin@alldunn.com>
+
+        Reviewed by Kevin Ollivier.
+
+        A few tweaks to the wxWebView editing APIs after addition of DOM bindings.
+        https://bugs.webkit.org/show_bug.cgi?id=44656
+        
+        1. adoptRef fix for WebCore::EditCommand wrapper API.
+        2. Add the mimetype as an argument to SetPageSource to allow XHTML documents to be loaded.
+        3. Add notification events for contents / selection changed editing events.
+        4. Improved wxPython binding typemaps support for DOM APIs.
+        
+        * WebEdit.cpp:
+        (WebCoreEditCommandPrivate::WebCoreEditCommandPrivate):
+        (WebCoreEditCommandPrivate::~WebCoreEditCommandPrivate):
+        (WebCoreEditCommandPrivate::command):
+        (wxWebEditCommand::wxWebEditCommand):
+        (wxWebEditCommand::~wxWebEditCommand):
+        (wxWebEditCommand::SetNodeAttribute):
+        (wxWebEditCommand::Apply):
+        * WebEdit.h:
+        * WebFrame.cpp:
+        (wxWebFrame::SetPageSource):
+        * WebFrame.h:
+        * WebKitSupport/EditorClientWx.cpp:
+        (WebCore::EditorClientWx::respondToChangedContents):
+        (WebCore::EditorClientWx::respondToChangedSelection):
+        * WebSettings.h:
+        * WebView.cpp:
+        (wxWebViewContentsChangedEvent::wxWebViewContentsChangedEvent):
+        (wxWebViewSelectionChangedEvent::wxWebViewSelectionChangedEvent):
+        (wxWebView::SetPageSource):
+        * WebView.h:
+        * bindings/python/webview.i:
+
 2010-08-16  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix, do not build WebCore as a convenience library as this leads to

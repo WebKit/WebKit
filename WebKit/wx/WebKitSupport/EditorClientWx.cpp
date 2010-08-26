@@ -262,7 +262,15 @@ void EditorClientWx::didBeginEditing()
 
 void EditorClientWx::respondToChangedContents()
 {
-    notImplemented();
+    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    
+    if (frame) {
+        wxWebView* webKitWin = dynamic_cast<wxWebView*>(frame->view()->hostWindow()->platformPageClient());
+        if (webKitWin) {
+            wxWebViewContentsChangedEvent wkEvent(webKitWin);
+            webKitWin->GetEventHandler()->ProcessEvent(wkEvent);
+        }
+    }
 }
 
 void EditorClientWx::didEndEditing()
@@ -483,7 +491,14 @@ void EditorClientWx::textDidChangeInTextArea(Element*)
 
 void EditorClientWx::respondToChangedSelection()
 {
-    notImplemented();
+    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    if (frame) {
+        wxWebView* webKitWin = dynamic_cast<wxWebView*>(frame->view()->hostWindow()->platformPageClient());
+        if (webKitWin) {
+            wxWebViewSelectionChangedEvent wkEvent(webKitWin);
+            webKitWin->GetEventHandler()->ProcessEvent(wkEvent);
+        }
+    }
 }
 
 void EditorClientWx::ignoreWordInSpellDocument(const String&) 

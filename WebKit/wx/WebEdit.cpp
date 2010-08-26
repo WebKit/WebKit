@@ -34,32 +34,47 @@ public:
 
 }
 
+class WebCoreEditCommandPrivate {
+public:
+    WebCoreEditCommandPrivate()
+        : m_ptr(0)
+    { }
+    
+    WebCoreEditCommandPrivate(WebCore::WebCoreEditCommand* ptr)
+        : m_ptr(adoptRef(ptr))
+    { }
+    
+    ~WebCoreEditCommandPrivate() { }
+    
+    WebCore::WebCoreEditCommand* command() { return m_ptr.get(); }
+        
+    RefPtr<WebCore::WebCoreEditCommand> m_ptr;
+};
+
 wxWebEditCommand::wxWebEditCommand(wxWebFrame* webframe)
 {
     if (webframe) {
         WebCore::Frame* frame = webframe->GetFrame();
         if (frame && frame->document())
-            m_impl = new WebCore::WebCoreEditCommand(frame->document());
-            m_impl->ref();
+            m_impl = new WebCoreEditCommandPrivate(new WebCore::WebCoreEditCommand(frame->document()));
     }
 }
 
 wxWebEditCommand::~wxWebEditCommand()
 {
     // the impl. is ref-counted, so don't delete it as it may be in an undo/redo stack
-    if (m_impl)
-        m_impl->deref();
+    delete m_impl;
     m_impl = 0;
 }
 
 void wxWebEditCommand::SetNodeAttribute(WebDOMElement* element, const wxString& name, const wxString& value)
 {
-    if (m_impl)
-        m_impl->setElementAttribute(element->impl(), WebCore::QualifiedName(WTF::nullAtom, WTF::String(name), WTF::nullAtom), WTF::String(value));
+    if (m_impl && m_impl->command())
+        m_impl->command()->setElementAttribute(element->impl(), WebCore::QualifiedName(WTF::nullAtom, WTF::String(name), WTF::nullAtom), WTF::String(value));
 }
 
 void wxWebEditCommand::Apply()
 {
-    if (m_impl)
-        m_impl->apply();
+    if (m_impl && m_impl->command())
+        m_impl->command()->apply();
 }

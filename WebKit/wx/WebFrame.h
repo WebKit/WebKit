@@ -134,7 +134,7 @@ public:
     void Redo();
     
     wxString GetPageSource();
-    void SetPageSource(const wxString& source, const wxString& baseUrl = wxEmptyString);
+    void SetPageSource(const wxString& source, const wxString& baseUrl = wxEmptyString, const wxString& mimetype = wxT("text/html"));
     
     wxString GetInnerText();
     wxString GetAsMarkup();

@@ -51,7 +51,7 @@
 #include "WebDOMRange.h"
 
 #ifndef __WXMSW__
-PyObject* createDOMNodeSubtype(WebDOMNode* ptr, bool setThisOwn)
+PyObject* createDOMNodeSubtype(WebDOMNode* ptr, bool setThisOwn, bool isValueObject)
 {
     //static wxPyTypeInfoHashMap* typeInfoCache = NULL;
 
@@ -73,9 +73,13 @@ PyObject* createDOMNodeSubtype(WebDOMNode* ptr, bool setThisOwn)
                 name = "WebDOMNode*";
         }
         swigType = SWIG_TypeQuery(name);
-        if (swigType)
+        if (swigType) {
+            if (isValueObject) {
+                return SWIG_Python_NewPointerObj(new WebDOMNode(*ptr), swigType, setThisOwn);
+            }
+            
             return SWIG_Python_NewPointerObj(ptr, swigType, setThisOwn);
-        
+        }
         // if it still wasn't found, try looking for a mapped name
         //if (swigType) {
             // and add it to the map if found
@@ -87,7 +91,33 @@ PyObject* createDOMNodeSubtype(WebDOMNode* ptr, bool setThisOwn)
     
     return Py_None;
 }
+
+WebDOMString* createWebDOMString(PyObject* source)
+{
+    if (!PyString_Check(source) && !PyUnicode_Check(source)) {
+        PyErr_SetString(PyExc_TypeError, "String or Unicode type required");
+        return new WebDOMString();
+    }
+    
+    char* tmpPtr;
+    Py_ssize_t tmpSize;
+    
+    if (PyString_Check(source))
+        PyString_AsStringAndSize(source, &tmpPtr, &tmpSize);
+    else {
+        PyObject* str = PyUnicode_AsUTF8String(source);
+        PyString_AsStringAndSize(str, &tmpPtr, &tmpSize);
+        Py_DECREF(str);
+    }
+    
+    WebDOMString temp = WebDOMString::fromUTF8(tmpPtr);
+    
+    return new WebDOMString(temp);
+}
+
 #endif
+
+
 
 %}
 //---------------------------------------------------------------------------
@@ -96,10 +126,13 @@ PyObject* createDOMNodeSubtype(WebDOMNode* ptr, bool setThisOwn)
 %import windows.i
 
 #ifndef __WXMSW__
-%typemap(out) WebDOMNode*             { $result = createDOMNodeSubtype($1, (bool)$owner); }
-%typemap(out) WebDOMElement*             { $result = createDOMNodeSubtype($1, (bool)$owner); }
-%typemap(out) WebDOMNode             { $result = createDOMNodeSubtype(&$1, (bool)$owner); }
-%typemap(out) WebDOMElement             { $result = createDOMNodeSubtype(&$1, (bool)$owner); }
+%typemap(out) WebDOMNode*             { $result = createDOMNodeSubtype($1, (bool)$owner, 0); }
+%typemap(out) WebDOMElement*             { $result = createDOMNodeSubtype($1, (bool)$owner, 0); }
+%typemap(out) WebDOMNode             { $result = createDOMNodeSubtype(&$1, (bool)$owner, 1); }
+%typemap(out) WebDOMElement             { $result = createDOMNodeSubtype(&$1, (bool)$owner, 1); }
+%typemap(in) WebDOMString&            { $1 = createWebDOMString($input); }
+%typemap(out) WebDOMString           { $result = PyUnicode_DecodeUTF8($1.utf8().data(), $1.utf8().length(), NULL); }
+%typemap(out) WebDOMString&           { $result = PyUnicode_DecodeUTF8($1.utf8().data(), $1.utf8().length(), NULL); }
 #endif
 
 MAKE_CONST_WXSTRING(WebViewNameStr);
@@ -134,6 +167,8 @@ MustHaveApp(wxWebView);
 %constant wxEventType wxEVT_WEBVIEW_RIGHT_CLICK;
 %constant wxEventType wxEVT_WEBVIEW_CONSOLE_MESSAGE;
 %constant wxEventType wxEVT_WEBVIEW_RECEIVED_TITLE;
+%constant wxEventType wxEVT_WEBVIEW_CONTENTS_CHANGED;
+%constant wxEventType wxEVT_WEBVIEW_SELECTION_CHANGED;
 
 %pythoncode {
 EVT_WEBVIEW_BEFORE_LOAD = wx.PyEventBinder( wxEVT_WEBVIEW_BEFORE_LOAD, 1 )
@@ -141,5 +176,7 @@ EVT_WEBVIEW_LOAD = wx.PyEventBinder( wxEVT_WEBVIEW_LOAD, 1 )
 EVT_WEBVIEW_NEW_WINDOW = wx.PyEventBinder( wxEVT_WEBVIEW_NEW_WINDOW, 1 )
 EVT_WEBVIEW_RIGHT_CLICK = wx.PyEventBinder( wxEVT_WEBVIEW_RIGHT_CLICK, 1 )
 EVT_WEBVIEW_CONSOLE_MESSAGE = wx.PyEventBinder( wxEVT_WEBVIEW_CONSOLE_MESSAGE, 1 )
-EVT_WEBVIEW_RECEIVED_TITLE = wx.PyEventBinder( wxEVT_WEBVIEW_RECEIVED_TITLE, 1 )    
+EVT_WEBVIEW_RECEIVED_TITLE = wx.PyEventBinder( wxEVT_WEBVIEW_RECEIVED_TITLE, 1 )
+EVT_WEBVIEW_CONTENTS_CHANGED = wx.PyEventBinder( wxEVT_WEBVIEW_CONTENTS_CHANGED, 1 )
+EVT_WEBVIEW_SELECTION_CHANGED = wx.PyEventBinder( wxEVT_WEBVIEW_SELECTION_CHANGED, 1 )
 }
