@@ -30,8 +30,6 @@ namespace WebCore {
 class DocumentFragment;
 class HTMLCollection;
 class HTMLFormElement;
-
-enum HTMLTagStatus { TagStatusOptional, TagStatusRequired, TagStatusForbidden };
                        
 class HTMLElement : public StyledElement {
 public:

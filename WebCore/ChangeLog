@@ -1,3 +1,14 @@
+2010-08-25  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed, just removing a dead enum.
+
+        Remove endTagRequirement now that the LegacyHTMLDocumentParser is dead
+        https://bugs.webkit.org/show_bug.cgi?id=44626
+
+        Remove HTMLTagStatus since it's not used anymore.
+
+        * html/HTMLElement.h:
+
 2010-08-25  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by David Kilzer.
