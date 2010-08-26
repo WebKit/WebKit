@@ -72,6 +72,7 @@ compositing/geometry/limit-layer-bounds-positioned.html
 compositing/geometry/limit-layer-bounds-transformed-overflow.html
 compositing/geometry/limit-layer-bounds-transformed.html
 compositing/geometry/preserve-3d-switching.html
+compositing/iframes/become-overlapped-iframe.html
 compositing/iframes/composited-parent-iframe.html
 compositing/iframes/connect-compositing-iframe-delayed.html
 compositing/iframes/connect-compositing-iframe.html
@@ -93,6 +94,7 @@ compositing/plugins/1x1-composited-plugin.html
 compositing/plugins/composited-plugin.html
 compositing/plugins/large-to-small-composited-plugin.html
 compositing/plugins/small-to-large-composited-plugin.html
+compositing/tiling/compositing/iframes/become-overlapped-iframe.html
 compositing/tiling/huge-layer-add-remove-child.html
 compositing/tiling/huge-layer-resize.html
 compositing/tiling/huge-layer-with-layer-children-resize.html

@@ -1,3 +1,11 @@
+2010-08-25  Chris Marrin  <cmarrin@apple.com>
+
+        Unreviewed.
+
+        Skipping a couple of compositing tests because layerTreeAsText() is not implemented on Wk2 yet.
+
+        * platform/mac-wk2/Skipped:
+
 2010-08-25  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by David Kilzer.
