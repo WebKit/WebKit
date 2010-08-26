@@ -1,3 +1,15 @@
+2010-08-25  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed.  Build fix.
+
+        Make Chromiums Broken WebPageSerializerImpl compile again
+        https://bugs.webkit.org/show_bug.cgi?id=44652
+
+        Make it compile again.  This code is still horribly wrong.
+
+        * src/WebPageSerializerImpl.cpp:
+        (WebKit::WebPageSerializerImpl::endTagToString):
+
 2010-08-20  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.

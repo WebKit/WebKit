@@ -380,9 +380,8 @@ void WebPageSerializerImpl::endTagToString(const Element* element,
         // Check whether we have to write end tag for empty element.
         if (param->isHTMLDocument) {
             result += ">";
-            const HTMLElement* htmlElement =
-            static_cast<const HTMLElement*>(element);
-            if (htmlElement->endTagRequirement() == TagStatusRequired) {
+            // FIXME: This code is horribly wrong.  WebPageSerializerImpl must die.
+            if (!static_cast<const HTMLElement*>(element)->ieForbidsInsertHTML()) {
                 // We need to write end tag when it is required.
                 result += "</";
                 result += element->nodeName().lower();
