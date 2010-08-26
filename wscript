@@ -29,19 +29,22 @@ import Options
 
 from settings import *
 
-webcore_dirs.extend(['WebKit/wx', 'WebKit/wx/WebKitSupport'])
+if build_port == "wx":
+    webcore_dirs.extend(['WebKit/wx', 'WebKit/wx/WebKitSupport'])
 
 wk_includes = ['.', 'WebCore', 'WebCore/DerivedSources',
                 os.path.join(wk_root, 'JavaScriptCore'),
                 os.path.join(wk_root, 'JavaScriptCore', 'wtf', 'text'),
                 os.path.join(wk_root, 'WebCore'),
-                os.path.join(wk_root, 'WebKit/wx'),
                 os.path.join(output_dir),
                 'WebCore/platform/image-decoders',
                 'WebCore/platform/win',
-                'WebCore/platform/wx/wxcode',
                 'WebCore/workers',
         ]
+
+if build_port == "wx":
+    wk_includes.append(os.path.join(wk_root, 'WebKit/wx'))
+    wk_includes.append('WebCore/platform/wx/wxcode')
 
 if sys.platform.startswith("win"):
     wk_includes.append(os.path.join(wk_root, 'WebCore','platform','win'))
@@ -160,7 +163,7 @@ def configure(conf):
     common_configure(conf)
     generate_jscore_derived_sources()
     generate_webcore_derived_sources()
-    if sys.platform.startswith('win'):
+    if build_port == "wx" and sys.platform.startswith('win'):
         graphics_dir = os.path.join(wk_root, 'WebCore', 'platform', 'graphics')
         # HACK ALERT: MSVC automatically adds the source file's directory as the first entry in the
         # path. Unfortunately, that means when compiling these files we will end up including
@@ -309,4 +312,5 @@ def build(bld):
 
     bld.add_group()
     
-    bld.add_subdirs(['WebKitTools/DumpRenderTree', 'WebKitTools/wx/browser', 'WebKit/wx/bindings/python'])
+    if build_port == "wx":
+        bld.add_subdirs(['WebKitTools/DumpRenderTree', 'WebKitTools/wx/browser', 'WebKit/wx/bindings/python'])
