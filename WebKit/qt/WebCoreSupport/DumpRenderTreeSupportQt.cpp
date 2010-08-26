@@ -388,7 +388,7 @@ void DumpRenderTreeSupportQt::setMediaType(QWebFrame* frame, const QString& type
     WebCore::Frame* coreFrame = QWebFramePrivate::core(frame);
     WebCore::FrameView* view = coreFrame->view();
     view->setMediaType(type);
-    coreFrame->document()->updateStyleSelector();
+    coreFrame->document()->styleSelectorChanged(RecalcStyleImmediately);
     view->layout();
 }
 
