@@ -880,8 +880,8 @@ PassRefPtr<InspectorObject> InspectorDOMAgent::buildObjectForEventListener(const
     RefPtr<EventListener> eventListener = registeredEventListener.listener;
     RefPtr<InspectorObject> value = InspectorObject::create();
     value->setString("type", eventType);
-    value->setBool("useCapture", registeredEventListener.useCapture);
-    value->setBool("isAttribute", eventListener->isAttribute());
+    value->setBoolean("useCapture", registeredEventListener.useCapture);
+    value->setBoolean("isAttribute", eventListener->isAttribute());
     value->setNumber("nodeId", pushNodePathToFrontend(node));
     value->setString("listenerBody", eventListenerHandlerBody(node->document(), eventListener.get()));
     String sourceName;
@@ -1460,7 +1460,7 @@ void InspectorDOMAgent::populateObjectWithStyleProperties(CSSStyleDeclaration* s
         String name = style->item(i);
         property->setString("name", name);
         property->setString("priority", style->getPropertyPriority(name));
-        property->setBool("implicit", style->isPropertyImplicit(name));
+        property->setBoolean("implicit", style->isPropertyImplicit(name));
         String shorthand = style->getPropertyShorthand(name);
         property->setString("shorthand", shorthand);
         if (!shorthand.isEmpty() && !foundShorthands.contains(shorthand)) {
@@ -1492,7 +1492,7 @@ PassRefPtr<InspectorObject> InspectorDOMAgent::buildObjectForStyleSheet(Document
     RefPtr<InspectorObject> result = InspectorObject::create();
     long id = cssStore()->bindStyleSheet(styleSheet);
     result->setNumber("id", id);
-    result->setBool("disabled", styleSheet->disabled());
+    result->setBoolean("disabled", styleSheet->disabled());
     result->setString("href", styleSheet->href());
     result->setString("title", styleSheet->title());
     result->setNumber("documentElementId", m_documentNodeToIdMap.get(styleSheet->doc()));
@@ -1526,9 +1526,9 @@ PassRefPtr<InspectorObject> InspectorDOMAgent::buildObjectForRule(Document* owne
     }
     bool isUserAgent = parentStyleSheet && !parentStyleSheet->ownerNode() && parentStyleSheet->href().isEmpty();
     bool isUser = parentStyleSheet && parentStyleSheet->ownerNode() && parentStyleSheet->ownerNode()->nodeName() == "#document";
-    result->setBool("isUserAgent", isUserAgent);
-    result->setBool("isUser", isUser);
-    result->setBool("isViaInspector", rule->parentStyleSheet() == cssStore()->inspectorStyleSheet(ownerDocument, false));
+    result->setBoolean("isUserAgent", isUserAgent);
+    result->setBoolean("isUser", isUser);
+    result->setBoolean("isViaInspector", rule->parentStyleSheet() == cssStore()->inspectorStyleSheet(ownerDocument, false));
 
     // Bind editable scripts only.
     bool bind = !isUserAgent && !isUser;

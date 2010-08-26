@@ -87,7 +87,7 @@ PassRefPtr<InspectorObject> TimelineRecordFactory::createTimerInstallData(int ti
     RefPtr<InspectorObject> data = InspectorObject::create();
     data->setNumber("timerId", timerId);
     data->setNumber("timeout", timeout);
-    data->setBool("singleShot", singleShot);
+    data->setBoolean("singleShot", singleShot);
     return data.release();
 }
 
@@ -134,7 +134,7 @@ PassRefPtr<InspectorObject> TimelineRecordFactory::createResourceSendRequestData
     data->setNumber("identifier", identifier);
     data->setString("url", request.url().string());
     data->setString("requestMethod", request.httpMethod());
-    data->setBool("isMainResource", isMainResource);
+    data->setBoolean("isMainResource", isMainResource);
     return data.release();
 }
 
@@ -152,7 +152,7 @@ PassRefPtr<InspectorObject> TimelineRecordFactory::createResourceFinishData(unsi
 {
     RefPtr<InspectorObject> data = InspectorObject::create();
     data->setNumber("identifier", identifier);
-    data->setBool("didFail", didFail);
+    data->setBoolean("didFail", didFail);
     return data.release();
 }
 

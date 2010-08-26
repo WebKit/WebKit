@@ -65,7 +65,7 @@ static PassRefPtr<InspectorObject> buildInspectorObjectFor(const v8::CpuProfileN
     result->setNumber("totalTime", node->GetTotalTime());
     result->setNumber("selfTime", node->GetSelfTime());
     result->setNumber("numberOfCalls", 0);
-    result->setBool("visible", true);
+    result->setBoolean("visible", true);
     result->setNumber("callUID", node->GetCallUid());
 
     RefPtr<InspectorArray> children = InspectorArray::create();

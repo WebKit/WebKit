@@ -1,3 +1,47 @@
+2010-08-26  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        WebInspector: It would be better to rename setBool, pushBool and asBool accessors
+        to setBoolean, pushBoolean and asBoolean for better matching with the results of
+        JS typeof operator.
+        https://bugs.webkit.org/show_bug.cgi?id=44680
+
+        * bindings/js/ScriptProfile.cpp:
+        (WebCore::buildInspectorObjectFor):
+        * bindings/v8/ScriptProfile.cpp:
+        (WebCore::buildInspectorObjectFor):
+        * inspector/CodeGeneratorInspector.pm:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::buildObjectForCookie):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::buildObjectForEventListener):
+        (WebCore::InspectorDOMAgent::populateObjectWithStyleProperties):
+        (WebCore::InspectorDOMAgent::buildObjectForStyleSheet):
+        (WebCore::InspectorDOMAgent::buildObjectForRule):
+        * inspector/InspectorDOMStorageResource.cpp:
+        (WebCore::InspectorDOMStorageResource::bind):
+        * inspector/InspectorResource.cpp:
+        (WebCore::InspectorResource::updateScriptObject):
+        * inspector/InspectorValues.cpp:
+        (WebCore::InspectorValue::asBoolean):
+        (WebCore::InspectorBasicValue::asBoolean):
+        (WebCore::InspectorBasicValue::asNumber):
+        (WebCore::InspectorBasicValue::writeJSON):
+        (WebCore::InspectorObject::getBoolean):
+        * inspector/InspectorValues.h:
+        (WebCore::InspectorValue::):
+        (WebCore::InspectorBasicValue::InspectorBasicValue):
+        (WebCore::InspectorObject::setBoolean):
+        (WebCore::InspectorArray::pushBoolean):
+        * inspector/ScriptBreakpoint.cpp:
+        (WebCore::ScriptBreakpoint::sourceBreakpointsFromInspectorObject):
+        (WebCore::ScriptBreakpoint::inspectorObjectFromSourceBreakpoints):
+        * inspector/TimelineRecordFactory.cpp:
+        (WebCore::TimelineRecordFactory::createTimerInstallData):
+        (WebCore::TimelineRecordFactory::createResourceSendRequestData):
+        (WebCore::TimelineRecordFactory::createResourceFinishData):
+
 2010-08-26  Girish Ramakrishnan  <girish@forwardbias.in>
 
         Reviewed by Simon Hausmann.

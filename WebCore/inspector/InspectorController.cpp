@@ -1337,9 +1337,9 @@ PassRefPtr<InspectorObject> InspectorController::buildObjectForCookie(const Cook
     value->setString("path", cookie.path);
     value->setNumber("expires", cookie.expires);
     value->setNumber("size", (cookie.name.length() + cookie.value.length()));
-    value->setBool("httpOnly", cookie.httpOnly);
-    value->setBool("secure", cookie.secure);
-    value->setBool("session", cookie.session);
+    value->setBoolean("httpOnly", cookie.httpOnly);
+    value->setBoolean("secure", cookie.secure);
+    value->setBoolean("session", cookie.session);
     return value;
 }
 

@@ -190,10 +190,10 @@ void InspectorResource::updateScriptObject(InspectorFrontend* frontend)
         jsonObject->setString("lastPathComponent", m_requestURL.lastPathComponent());
         RefPtr<InspectorObject> requestHeaders = buildHeadersObject(m_requestHeaderFields);
         jsonObject->setObject("requestHeaders", requestHeaders);
-        jsonObject->setBool("mainResource", m_isMainResource);
+        jsonObject->setBoolean("mainResource", m_isMainResource);
         jsonObject->setString("requestMethod", m_requestMethod);
         jsonObject->setString("requestFormData", m_requestFormData);
-        jsonObject->setBool("didRequestChange", true);
+        jsonObject->setBoolean("didRequestChange", true);
     }
 
     if (m_changes.hasChange(ResponseChange)) {
@@ -205,27 +205,27 @@ void InspectorResource::updateScriptObject(InspectorFrontend* frontend)
         RefPtr<InspectorObject> responseHeaders = buildHeadersObject(m_responseHeaderFields);
         jsonObject->setObject("responseHeaders", responseHeaders);
         jsonObject->setNumber("connectionID", m_connectionID);
-        jsonObject->setBool("connectionReused", m_connectionReused);
-        jsonObject->setBool("cached", m_cached);
+        jsonObject->setBoolean("connectionReused", m_connectionReused);
+        jsonObject->setBoolean("cached", m_cached);
         if (m_loadTiming && !m_cached)
             jsonObject->setObject("timing", buildObjectForTiming(m_loadTiming.get()));
-        jsonObject->setBool("didResponseChange", true);
+        jsonObject->setBoolean("didResponseChange", true);
     }
 
     if (m_changes.hasChange(TypeChange)) {
         jsonObject->setNumber("type", static_cast<int>(type()));
-        jsonObject->setBool("didTypeChange", true);
+        jsonObject->setBoolean("didTypeChange", true);
     }
 
     if (m_changes.hasChange(LengthChange)) {
         jsonObject->setNumber("resourceSize", m_length);
-        jsonObject->setBool("didLengthChange", true);
+        jsonObject->setBoolean("didLengthChange", true);
     }
 
     if (m_changes.hasChange(CompletionChange)) {
-        jsonObject->setBool("failed", m_failed);
-        jsonObject->setBool("finished", m_finished);
-        jsonObject->setBool("didCompletionChange", true);
+        jsonObject->setBoolean("failed", m_failed);
+        jsonObject->setBoolean("finished", m_finished);
+        jsonObject->setBoolean("didCompletionChange", true);
     }
 
     if (m_changes.hasChange(TimingChange)) {
@@ -239,7 +239,7 @@ void InspectorResource::updateScriptObject(InspectorFrontend* frontend)
             jsonObject->setNumber("loadEventTime", m_loadEventTime);
         if (m_domContentEventTime > 0)
             jsonObject->setNumber("domContentEventTime", m_domContentEventTime);
-        jsonObject->setBool("didTimingChange", true);
+        jsonObject->setBoolean("didTimingChange", true);
     }
 
     if (m_changes.hasChange(RedirectsChange)) {

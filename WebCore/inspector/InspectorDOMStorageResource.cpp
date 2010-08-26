@@ -71,7 +71,7 @@ void InspectorDOMStorageResource::bind(InspectorFrontend* frontend)
 
     RefPtr<InspectorObject> jsonObject = InspectorObject::create();
     jsonObject->setString("host", m_frame->document()->securityOrigin()->host());
-    jsonObject->setBool("isLocalStorage", m_isLocalStorage);
+    jsonObject->setBoolean("isLocalStorage", m_isLocalStorage);
     jsonObject->setNumber("id", m_id);
     frontend->addDOMStorage(jsonObject);
 }

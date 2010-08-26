@@ -47,7 +47,7 @@ void ScriptBreakpoint::sourceBreakpointsFromInspectorObject(PassRefPtr<Inspector
             continue;
         bool enabled;
         RefPtr<InspectorValue> enabledValue = breakpoint->get("enabled");
-        if (!enabledValue || !enabledValue->asBool(&enabled))
+        if (!enabledValue || !enabledValue->asBoolean(&enabled))
             continue;
         String condition;
         RefPtr<InspectorValue> conditionValue = breakpoint->get("condition");
@@ -62,7 +62,7 @@ PassRefPtr<InspectorObject> ScriptBreakpoint::inspectorObjectFromSourceBreakpoin
     RefPtr<InspectorObject> breakpoints = InspectorObject::create();
     for (SourceBreakpoints::const_iterator it = sourceBreakpoints.begin(); it != sourceBreakpoints.end(); ++it) {
         RefPtr<InspectorObject> breakpoint = InspectorObject::create();
-        breakpoint->setBool("enabled", it->second.enabled);
+        breakpoint->setBoolean("enabled", it->second.enabled);
         breakpoint->setString("condition", it->second.condition);
         breakpoints->setObject(String::number(it->first), breakpoint);
     }

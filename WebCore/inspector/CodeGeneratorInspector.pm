@@ -120,7 +120,7 @@ $typeTransform{"boolean"} = {
     "defaultValue" => "false",
     "forward" => "",
     "header" => "",
-    "JSONType" => "Bool"
+    "JSONType" => "Boolean"
 };
 $typeTransform{"void"} = {
     "forward" => "",
@@ -354,7 +354,7 @@ sub generateBackendFunction
     push(@function, "    if ((callId || protocolErrors->length()) && m_inspectorController->hasFrontend()) {");
     push(@function, "        RefPtr<InspectorObject> responseMessage = InspectorObject::create();");
     push(@function, "        responseMessage->setNumber(\"seq\", callId);");
-    push(@function, "        responseMessage->setBool(\"success\", !protocolErrors->length());");
+    push(@function, "        responseMessage->setBoolean(\"success\", !protocolErrors->length());");
     push(@function, "");
     push(@function, "        if (protocolErrors->length())");
     push(@function, "            responseMessage->setArray(\"errors\", protocolErrors);");
@@ -385,7 +385,7 @@ void ${backendClassName}::reportProtocolError(const long callId, const String& m
     message->setString("type", "error");
     message->setString("domain", "inspectorProtocol");
     message->setString("command", method);
-    message->setBool("success", false);
+    message->setBoolean("success", false);
     RefPtr<InspectorArray> errors = InspectorArray::create();
     errors->pushString(errorText);
     message->setArray("errors", errors);

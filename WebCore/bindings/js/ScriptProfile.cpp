@@ -76,7 +76,7 @@ static PassRefPtr<InspectorObject> buildInspectorObjectFor(const JSC::ProfileNod
     result->setNumber("totalTime", node->totalTime());
     result->setNumber("selfTime", node->selfTime());
     result->setNumber("numberOfCalls", node->numberOfCalls());
-    result->setBool("visible", node->visible());
+    result->setBoolean("visible", node->visible());
     result->setNumber("callUID", node->callIdentifier().hash());
 
     RefPtr<InspectorArray> childrenArray = InspectorArray::create();
