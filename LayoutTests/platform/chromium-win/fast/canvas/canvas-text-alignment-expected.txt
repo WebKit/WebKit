@@ -1,6 +1,0 @@
-layer at (0,0) size 785x626
-  RenderView at (0,0) size 785x600
-layer at (0,0) size 785x626
-  RenderBlock {HTML} at (0,0) size 785x626
-    RenderBody {BODY} at (8,8) size 769x610
-      RenderHTMLCanvas {CANVAS} at (0,0) size 610x610 [border: (5px solid #000000)]
