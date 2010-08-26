@@ -995,6 +995,11 @@ public:
     bool writeDisabled() const { return m_writeDisabled; }
     void setWriteDisabled(bool flag) { m_writeDisabled = flag; }
 
+    // Used to allow element that loads data without going through a FrameLoader to delay the 'load' event.
+    void incrementLoadEventDelayCount() { ++m_loadEventDelayCount; }
+    void decrementLoadEventDelayCount();
+    bool isDelayingLoadEvent() const { return m_loadEventDelayCount; }
+
 protected:
     Document(Frame*, const KURL&, bool isXHTML, bool isHTML);
 
@@ -1270,6 +1275,8 @@ private:
     HashSet<MediaCanStartListener*> m_mediaCanStartListeners;
 
     QualifiedName m_idAttributeName;
+
+    int m_loadEventDelayCount;
 };
 
 inline bool Document::hasElementWithId(AtomicStringImpl* id) const

@@ -37,7 +37,6 @@
 #include "ClientRect.h"
 #include "ClientRectList.h"
 #include "ContentType.h"
-#include "DocLoader.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
@@ -112,7 +111,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* doc)
     , m_processingMediaPlayerCallback(0)
     , m_playing(false)
     , m_isWaitingUntilMediaCanStart(false)
-    , m_delayingTheLoadEvent(false)
+    , m_shouldDelayLoadEvent(false)
     , m_haveFiredLoadedData(false)
     , m_inActiveDocument(true)
     , m_autoplaying(true)
@@ -140,6 +139,7 @@ HTMLMediaElement::~HTMLMediaElement()
 {
     if (m_isWaitingUntilMediaCanStart)
         document()->removeMediaCanStartListener(this);
+    setShouldDelayLoadEvent(false);
     document()->unregisterForDocumentActivationCallbacks(this);
     document()->unregisterForMediaVolumeCallbacks(this);
 }
@@ -148,6 +148,7 @@ void HTMLMediaElement::willMoveToNewOwnerDocument()
 {
     if (m_isWaitingUntilMediaCanStart)
         document()->removeMediaCanStartListener(this);
+    setShouldDelayLoadEvent(false);
     document()->unregisterForDocumentActivationCallbacks(this);
     document()->unregisterForMediaVolumeCallbacks(this);
     HTMLElement::willMoveToNewOwnerDocument();
@@ -157,6 +158,8 @@ void HTMLMediaElement::didMoveToNewOwnerDocument()
 {
     if (m_isWaitingUntilMediaCanStart)
         document()->addMediaCanStartListener(this);
+    if (m_readyState < HAVE_CURRENT_DATA)
+        setShouldDelayLoadEvent(true);
     document()->registerForDocumentActivationCallbacks(this);
     document()->registerForMediaVolumeCallbacks(this);
     HTMLElement::didMoveToNewOwnerDocument();
@@ -541,6 +544,11 @@ void HTMLMediaElement::prepareForLoad()
     m_playedTimeRanges = TimeRanges::create();
     m_lastSeekTime = 0;
     m_closedCaptionsVisible = false;
+
+    // The spec doesn't say to block the load event until we actually run the asynchronous section
+    // algorithm, but do it now because we won't start that until after the timer fires and the 
+    // event may have already fired by then.
+    setShouldDelayLoadEvent(true);
 }
 
 void HTMLMediaElement::loadInternal()
@@ -574,18 +582,19 @@ void HTMLMediaElement::selectMediaResource()
 
         if (!node) {
             m_loadState = WaitingForSource;
+            setShouldDelayLoadEvent(false);
 
             // ... set the networkState to NETWORK_EMPTY, and abort these steps
             m_networkState = NETWORK_EMPTY;
-            ASSERT(!m_delayingTheLoadEvent);
             return;
         }
 
         mode = children;
     }
 
-    // 4
-    m_delayingTheLoadEvent = true;
+    // 4 - Set the media element's delaying-the-load-event flag to true (this delays the load event), 
+    // and set its networkState to NETWORK_LOADING.
+    setShouldDelayLoadEvent(true);
     m_networkState = NETWORK_LOADING;
 
     // 5
@@ -709,7 +718,7 @@ void HTMLMediaElement::waitForSourceChange()
     m_networkState = NETWORK_NO_SOURCE;
 
     // 6.18 - Set the element's delaying-the-load-event flag to false. This stops delaying the load event.
-    m_delayingTheLoadEvent = false;
+    setShouldDelayLoadEvent(false);
 }
 
 void HTMLMediaElement::noneSupported()
@@ -732,7 +741,7 @@ void HTMLMediaElement::noneSupported()
     scheduleEvent(eventNames().errorEvent);
 
     // 8 - Set the element's delaying-the-load-event flag to false. This stops delaying the load event.
-    m_delayingTheLoadEvent = false;
+    setShouldDelayLoadEvent(false);
 
     // 9 -Abort these steps. Until the load() method is invoked, the element won't attempt to load another resource.
 
@@ -752,8 +761,7 @@ void HTMLMediaElement::mediaEngineError(PassRefPtr<MediaError> err)
     // set to MEDIA_ERR_NETWORK/MEDIA_ERR_DECODE.
     m_error = err;
 
-    // 3 - Queue a task to fire a progress event called error at the media element, in
-    // the context of the fetching process started by this instance of this algorithm.
+    // 3 - Queue a task to fire a simple event named error at the media element.
     scheduleEvent(eventNames().errorEvent);
 
     // 4 - Set the element's networkState attribute to the NETWORK_EMPTY value and queue a
@@ -762,7 +770,7 @@ void HTMLMediaElement::mediaEngineError(PassRefPtr<MediaError> err)
     scheduleEvent(eventNames().emptiedEvent);
 
     // 5 - Set the element's delaying-the-load-event flag to false. This stops delaying the load event.
-    m_delayingTheLoadEvent = false;
+    setShouldDelayLoadEvent(false);
 
     // 6 - Abort the overall resource selection algorithm.
     m_currentSourceNode = 0;
@@ -909,21 +917,16 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
         scheduleEvent(eventNames().loadedmetadataEvent);
         if (renderer())
             renderer()->updateFromElement();
-        m_delayingTheLoadEvent = false;
         m_player->seek(0);
     }
 
     bool shouldUpdateDisplayState = false;
 
-    // 4.8.10.7 says loadeddata is sent only when the new state *is* HAVE_CURRENT_DATA: "If the
-    // previous ready state was HAVE_METADATA and the new ready state is HAVE_CURRENT_DATA", 
-    // but the event table at the end of the spec says it is sent when: "readyState newly 
-    // increased to HAVE_CURRENT_DATA  or greater for the first time"
-    // We go with the later because it seems useful to count on getting this event
     if (m_readyState >= HAVE_CURRENT_DATA && oldState < HAVE_CURRENT_DATA && !m_haveFiredLoadedData) {
         m_haveFiredLoadedData = true;
         shouldUpdateDisplayState = true;
         scheduleEvent(eventNames().loadeddataEvent);
+        setShouldDelayLoadEvent(false);
     }
 
     bool isPotentiallyPlaying = potentiallyPlaying();
@@ -1812,13 +1815,12 @@ void HTMLMediaElement::userCancelledLoad()
     // 2 - Set the error attribute to a new MediaError object whose code attribute is set to MEDIA_ERR_ABORTED.
     m_error = MediaError::create(MediaError::MEDIA_ERR_ABORTED);
 
-    // 3 - Queue a task to fire a progress event called abort at the media element, in the context
-    // of the fetching process started by this instance of this algorithm.
+    // 3 - Queue a task to fire a simple event named error at the media element.
     scheduleEvent(eventNames().abortEvent);
 
-    // 5 - If the media element's readyState attribute has a value equal to HAVE_NOTHING, set the
-    // element's networkState attribute to the NETWORK_EMPTY value and queue a task to fire a
-    // simple event called emptied at the element. Otherwise, set set the element's networkState
+    // 4 - If the media element's readyState attribute has a value equal to HAVE_NOTHING, set the 
+    // element's networkState attribute to the NETWORK_EMPTY value and queue a task to fire a 
+    // simple event named emptied at the element. Otherwise, set the element's networkState 
     // attribute to the NETWORK_IDLE value.
     if (m_readyState == HAVE_NOTHING) {
         m_networkState = NETWORK_EMPTY;
@@ -1827,10 +1829,10 @@ void HTMLMediaElement::userCancelledLoad()
     else
         m_networkState = NETWORK_IDLE;
 
-    // 6 - Set the element's delaying-the-load-event flag to false. This stops delaying the load event.
-    m_delayingTheLoadEvent = false;
+    // 5 - Set the element's delaying-the-load-event flag to false. This stops delaying the load event.
+    setShouldDelayLoadEvent(false);
 
-    // 7 - Abort the overall resource selection algorithm.
+    // 6 - Abort the overall resource selection algorithm.
     m_currentSourceNode = 0;
 
     // Reset m_readyState since m_player is gone.
@@ -2081,6 +2083,18 @@ bool HTMLMediaElement::isURLAttribute(Attribute* attribute) const
     return attribute->name() == srcAttr;
 }
 
+void HTMLMediaElement::setShouldDelayLoadEvent(bool delay)
+{
+    if (m_shouldDelayLoadEvent == delay)
+        return;
+
+    m_shouldDelayLoadEvent = delay;
+    if (delay)
+        document()->incrementLoadEventDelayCount();
+    else
+        document()->decrementLoadEventDelayCount();
+}
+    
 }
 
 #endif

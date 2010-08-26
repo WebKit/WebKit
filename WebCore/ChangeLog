@@ -1,3 +1,44 @@
+2010-08-26  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Darin Adler and Maciej Stachowiak.
+
+        https://bugs.webkit.org/show_bug.cgi?id=44013
+        HTMLMediaElement should delay document load event
+
+        Test: media/video-delay-load-event.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document): Initialize incrementLoadEventDelayCount.
+        (WebCore::Document::decrementLoadEventDelayCount): New, decrement incrementLoadEventDelayCount 
+        and call loader->checkCompleted() when it reaches zero.
+        * dom/Document.h:
+        (WebCore::Document::incrementLoadEventDelayCount): New.
+        (WebCore::Document::isDelayingLoadEvent): New.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::~HTMLMediaElement): Stop delaying the load event if necessary.
+        (WebCore::HTMLMediaElement::willMoveToNewOwnerDocument): Ditto.
+        (WebCore::HTMLMediaElement::didMoveToNewOwnerDocument): Delay the load event if we don't the
+        meta data for the movie yet.
+        (WebCore::HTMLMediaElement::prepareForLoad): Delay the load event.
+        (WebCore::HTMLMediaElement::selectMediaResource): Don't delay the load event when there are 
+        no more sources to consider. Don't change m_delayingTheLoadEvent directly, call 
+        setShouldDelayLoadEvent() instead.
+        (WebCore::HTMLMediaElement::waitForSourceChange): Stop delaying the load event.
+        (WebCore::HTMLMediaElement::noneSupported): Ditto.
+        (WebCore::HTMLMediaElement::mediaEngineError): Ditto.
+        (WebCore::HTMLMediaElement::setReadyState): Ditto.
+        (WebCore::HTMLMediaElement::userCancelledLoad): Ditto.
+        (WebCore::HTMLMediaElement::setShouldDelayLoadEvent): New, increment/decrement the document's
+        load event delay count.
+        * html/HTMLMediaElement.h:
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::checkCompleted): See if the document wants to delay completion for 
+        elements that don't go through a FrameLoader.
+        (WebCore::FrameLoader::checkCallImplicitClose): Ditto
+        * page/Frame.cpp:
+
 2010-08-26  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.

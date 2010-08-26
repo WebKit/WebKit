@@ -831,6 +831,10 @@ void FrameLoader::checkCompleted()
     if (numRequests(m_frame->document()))
         return;
 
+    // Still waiting for elements that don't go through a FrameLoader?
+    if (m_frame->document()->isDelayingLoadEvent())
+        return;
+
     // OK, completed.
     m_isComplete = true;
 
@@ -879,7 +883,7 @@ void FrameLoader::scheduleCheckLoadComplete()
 
 void FrameLoader::checkCallImplicitClose()
 {
-    if (m_didCallImplicitClose || m_frame->document()->parsing())
+    if (m_didCallImplicitClose || m_frame->document()->parsing() || m_frame->document()->isDelayingLoadEvent())
         return;
 
     if (!allChildrenAreComplete())

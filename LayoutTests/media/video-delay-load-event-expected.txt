@@ -1,0 +1,32 @@
+ 
+Test the document's load event is delayed until a movie's meta data is available.
+
+
+inline script
+no 'src'.
+EXPECTED (video.networkState == '0') OK
+EXPECTED (video.readyState == '0') OK
+
+with 'src' attribute.
+EXPECTED (video.networkState == '3') OK
+EXPECTED (video.readyState == '0') OK
+
+with <source> element.
+EXPECTED (video.networkState == '3') OK
+EXPECTED (video.readyState == '0') OK
+
+document 'load' event handler
+no 'src'.
+EXPECTED (video.networkState == '0') OK
+EXPECTED (video.readyState == '0') OK
+
+with 'src' attribute.
+EXPECTED (video.networkState != '3') OK
+EXPECTED (video.networkState >= '1') OK
+EXPECTED (video.readyState >= '2') OK
+
+with <source> element.
+EXPECTED (video.networkState != '3') OK
+EXPECTED (video.networkState >= '1') OK
+EXPECTED (video.readyState >= '2') OK
+
