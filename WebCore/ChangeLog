@@ -1,3 +1,14 @@
+2010-08-26  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: fix CPU profile header entries doubling on Inspector re-opening.
+
+        https://bugs.webkit.org/show_bug.cgi?id=44685
+
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype.show):
+
 2010-08-26  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Darin Adler and Maciej Stachowiak.

@@ -158,8 +158,7 @@ WebInspector.ProfilesPanel.prototype = {
     show: function()
     {
         WebInspector.Panel.prototype.show.call(this);
-        if (!this._profilesWereRequested)
-            this._populateProfiles();
+        this._populateProfiles();
     },
 
     profilerWasEnabled: function()
@@ -510,12 +509,8 @@ WebInspector.ProfilesPanel.prototype = {
 
     _populateProfiles: function()
     {
-        var sidebarTreeChildrenCount = this.sidebarTree.children.length;
-        for (var i = 0; i < sidebarTreeChildrenCount; ++i) {
-            var treeElement = this.sidebarTree.children[i];
-            if (treeElement.children.length)
-                return;
-        }
+        if (!this._profilerEnabled || this._profilesWereRequested)
+            return;
 
         function populateCallback(profileHeaders) {
             profileHeaders.sort(function(a, b) { return a.uid - b.uid; });
