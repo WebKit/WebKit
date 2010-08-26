@@ -49236,6 +49236,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\ScriptHeapSnapshot.h"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\ScriptInstance.h"
 					>
 				</File>
@@ -52165,6 +52169,10 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\inspectorSyntaxHighlight.css"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\HeapSnapshotView.js"
 					>
 				</File>
 				<File

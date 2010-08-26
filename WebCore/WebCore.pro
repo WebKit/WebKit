@@ -1156,6 +1156,7 @@ HEADERS += \
     bindings/js/ScriptEventListener.h \
     bindings/js/ScriptFunctionCall.h \
     bindings/js/ScriptGCEvent.h \
+    bindings/js/ScriptHeapSnapshot.h \
     bindings/js/ScriptObject.h \
     bindings/js/ScriptProfile.h \
     bindings/js/ScriptProfileNode.h \

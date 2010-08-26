@@ -773,6 +773,7 @@ webcore_sources += \
 	WebCore/bindings/js/ScriptFunctionCall.h \
 	WebCore/bindings/js/ScriptGCEvent.cpp \
 	WebCore/bindings/js/ScriptGCEvent.h \
+	WebCore/bindings/js/ScriptHeapSnapshot.h \
 	WebCore/bindings/js/ScriptInstance.h \
 	WebCore/bindings/js/ScriptObject.cpp \
 	WebCore/bindings/js/ScriptObject.h \

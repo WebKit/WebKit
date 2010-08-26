@@ -34,39 +34,10 @@
  * DevTools frontend together. It is also responsible for overriding existing
  * WebInspector functionality while it is getting upstreamed into WebCore.
  */
-devtools.ToolsAgent = function()
-{
-    this.profilerAgent_ = new devtools.ProfilerAgent();
-};
-
-
-/**
- * @return {devtools.ProfilerAgent} Profiler agent instance.
- */
-devtools.ToolsAgent.prototype.getProfilerAgent = function()
-{
-    return this.profilerAgent_;
-};
-
-
-
-/**
- * Global instance of the tools agent.
- * @type {devtools.ToolsAgent}
- */
-devtools.tools = null;
-
 
 var context = {};  // Used by WebCore's inspector routines.
 
-///////////////////////////////////////////////////////////////////////////////
-// Here and below are overrides to existing WebInspector methods only.
-// TODO(pfeldman): Patch WebCore and upstream changes.
-var oldLoaded = WebInspector.loaded;
-WebInspector.loaded = function()
-{
-    devtools.tools = new devtools.ToolsAgent();
-
+(function () {
     Preferences.ignoreWhitespace = false;
     Preferences.samplingCPUProfiler = true;
     Preferences.heapProfilerPresent = true;
@@ -75,9 +46,7 @@ WebInspector.loaded = function()
     Preferences.canEditScriptSource = true;
     Preferences.onlineDetectionEnabled = false;
     Preferences.domBreakpointsEnabled = true;
-
-    oldLoaded.call(WebInspector);
-}
+})();
 
 devtools.domContentLoaded = function()
 {
@@ -88,12 +57,12 @@ devtools.domContentLoaded = function()
 document.addEventListener("DOMContentLoaded", devtools.domContentLoaded, false);
 
 
+// FIXME: This needs to be upstreamed.
 (function InterceptProfilesPanelEvents()
 {
     var oldShow = WebInspector.ProfilesPanel.prototype.show;
     WebInspector.ProfilesPanel.prototype.show = function()
     {
-        devtools.tools.getProfilerAgent().initializeProfiling();
         this.enableToggleButton.visible = false;
         oldShow.call(this);
         // Show is called on every show event of a panel, so

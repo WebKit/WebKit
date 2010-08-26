@@ -1,3 +1,172 @@
+2010-08-26  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Store heap snapshots in InspectorProfilerAgent.
+
+        Change the way heap snapshots are transported to Inspector
+        to be aligned with CPU profiles. As a result, the Heap snapshots
+        view of Profiles panel was upstreamed into WebCore.
+
+        https://bugs.webkit.org/show_bug.cgi?id=44531
+
+        * English.lproj/localizedStrings.js:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/ScriptHeapSnapshot.h: Added.
+        (WebCore::ScriptHeapSnapshot::~ScriptHeapSnapshot):
+        (WebCore::ScriptHeapSnapshot::title):
+        (WebCore::ScriptHeapSnapshot::uid):
+        (WebCore::ScriptHeapSnapshot::buildInspectorObjectForHead):
+        (WebCore::ScriptHeapSnapshot::ScriptHeapSnapshot):
+        * bindings/js/ScriptProfiler.h:
+        (WebCore::ScriptProfiler::takeHeapSnapshot):
+        * bindings/v8/ScriptHeapSnapshot.cpp: Added.
+        (WebCore::ScriptHeapSnapshot::title):
+        (WebCore::ScriptHeapSnapshot::uid):
+        (WebCore::buildInspectorObjectFor):
+        (WebCore::ScriptHeapSnapshot::buildInspectorObjectForHead):
+        * bindings/v8/ScriptHeapSnapshot.h: Added.
+        (WebCore::ScriptHeapSnapshot::create):
+        (WebCore::ScriptHeapSnapshot::~ScriptHeapSnapshot):
+        (WebCore::ScriptHeapSnapshot::ScriptHeapSnapshot):
+        * bindings/v8/ScriptProfile.cpp:
+        (WebCore::buildInspectorObjectFor):
+        * bindings/v8/ScriptProfiler.cpp:
+        (WebCore::ScriptProfiler::takeHeapSnapshot):
+        * bindings/v8/ScriptProfiler.h:
+        * inspector/Inspector.idl:
+        * inspector/InspectorBackend.cpp:
+        * inspector/InspectorBackend.h:
+        * inspector/InspectorProfilerAgent.cpp:
+        (WebCore::InspectorProfilerAgent::InspectorProfilerAgent):
+        (WebCore::InspectorProfilerAgent::createSnapshotHeader):
+        (WebCore::InspectorProfilerAgent::getProfileHeaders):
+        (WebCore::InspectorProfilerAgent::getProfile):
+        (WebCore::InspectorProfilerAgent::removeProfile):
+        (WebCore::InspectorProfilerAgent::resetState):
+        (WebCore::InspectorProfilerAgent::takeHeapSnapshot):
+        * inspector/InspectorProfilerAgent.h:
+        * inspector/front-end/HeapSnapshotView.js: Added.
+        (WebInspector.HeapSnapshotView.profileCallback):
+        (WebInspector.HeapSnapshotView.resetCompleted):
+        (WebInspector.HeapSnapshotView):
+        (WebInspector.HeapSnapshotView.prototype.get statusBarItems):
+        (WebInspector.HeapSnapshotView.prototype.get profile):
+        (WebInspector.HeapSnapshotView.prototype.set profile):
+        (WebInspector.HeapSnapshotView.prototype.show):
+        (WebInspector.HeapSnapshotView.prototype.hide):
+        (WebInspector.HeapSnapshotView.prototype.resize):
+        (WebInspector.HeapSnapshotView.prototype.refresh):
+        (WebInspector.HeapSnapshotView.prototype.refreshShowAsPercents):
+        (WebInspector.HeapSnapshotView.prototype._deleteSearchMatchedFlags):
+        (WebInspector.HeapSnapshotView.prototype.searchCanceled):
+        (WebInspector.HeapSnapshotView.prototype.performSearch):
+        (WebInspector.HeapSnapshotView.prototype.jumpToFirstSearchResult.WebInspector.CPUProfileView.prototype.jumpToFirstSearchResult.jumpToLastSearchResult.WebInspector.CPUProfileView.prototype.jumpToLastSearchResult.jumpToNextSearchResult.WebInspector.CPUProfileView.prototype.jumpToNextSearchResult.jumpToPreviousSearchResult.WebInspector.CPUProfileView.prototype.jumpToPreviousSearchResult.showingFirstSearchResult.WebInspector.CPUProfileView.prototype.showingFirstSearchResult.showingLastSearchResult.WebInspector.CPUProfileView.prototype.showingLastSearchResult._jumpToSearchResult.WebInspector.CPUProfileView.prototype._jumpToSearchResult.refreshVisibleData):
+        (WebInspector.HeapSnapshotView.prototype._changeBase.resetCompleted):
+        (WebInspector.HeapSnapshotView.prototype._changeBase):
+        (WebInspector.HeapSnapshotView.prototype._createSnapshotDataGridList):
+        (WebInspector.HeapSnapshotView.prototype._getProfiles):
+        (WebInspector.HeapSnapshotView.prototype._loadProfile.loadedCallback):
+        (WebInspector.HeapSnapshotView.prototype._loadProfile):
+        (WebInspector.HeapSnapshotView.prototype._mouseDownInDataGrid):
+        (WebInspector.HeapSnapshotView.prototype.get _isShowingAsPercent):
+        (WebInspector.HeapSnapshotView.prototype._percentClicked):
+        (WebInspector.HeapSnapshotView.prototype._prepareProfile.mergeRetainers):
+        (WebInspector.HeapSnapshotView.prototype._prepareProfile):
+        (WebInspector.HeapSnapshotView.prototype._resetDataGridList.profileLoaded):
+        (WebInspector.HeapSnapshotView.prototype._resetDataGridList):
+        (WebInspector.HeapSnapshotView.prototype._sortData):
+        (WebInspector.HeapSnapshotView.prototype._updateBaseOptions):
+        (WebInspector.HeapSnapshotView.prototype._updatePercentButton):
+        (WebInspector.HeapSnapshotView.prototype._updateSummaryGraph):
+        (WebInspector.HeapSnapshotView.SearchHelper.operations.LESS):
+        (WebInspector.HeapSnapshotView.SearchHelper.operations.LESS_OR_EQUAL):
+        (WebInspector.HeapSnapshotView.SearchHelper.operations.EQUAL):
+        (WebInspector.HeapSnapshotView.SearchHelper.operations.GREATER_OR_EQUAL):
+        (WebInspector.HeapSnapshotView.SearchHelper.operations.GREATER):
+        (WebInspector.HeapSnapshotView.SearchHelper.parseOperationAndNumber):
+        (WebInspector.HeapSummaryCalculator):
+        (WebInspector.HeapSummaryCalculator.prototype.computeSummaryValues):
+        (WebInspector.HeapSummaryCalculator.prototype.formatValue):
+        (WebInspector.HeapSummaryCalculator.prototype.get showAsPercent):
+        (WebInspector.HeapSummaryCalculator.prototype.set showAsPercent):
+        (WebInspector.HeapSummaryCountCalculator):
+        (WebInspector.HeapSummaryCountCalculator.prototype._highFromLow):
+        (WebInspector.HeapSummaryCountCalculator.prototype._valueToString):
+        (WebInspector.HeapSummarySizeCalculator):
+        (WebInspector.HeapSummarySizeCalculator.prototype._highFromLow):
+        (WebInspector.HeapSnapshotDataGridNodeWithRetainers):
+        (WebInspector.HeapSnapshotDataGridNodeWithRetainers.prototype.get _hasRetainers):
+        (WebInspector.HeapSnapshotDataGridNodeWithRetainers.prototype.get _parent):
+        (WebInspector.HeapSnapshotDataGridNodeWithRetainers.prototype._populate):
+        (WebInspector.HeapSnapshotDataGridNodeWithRetainers.prototype.produceDiff):
+        (WebInspector.HeapSnapshotDataGridNodeWithRetainers.prototype.sort):
+        (WebInspector.HeapSnapshotDataGridNodeWithRetainers.prototype.signForDelta):
+        (WebInspector.HeapSnapshotDataGridNodeWithRetainers.prototype.showDeltaAsPercent):
+        (WebInspector.HeapSnapshotDataGridNodeWithRetainers.prototype.getTotalCount):
+        (WebInspector.HeapSnapshotDataGridNodeWithRetainers.prototype.getTotalSize):
+        (WebInspector.HeapSnapshotDataGridNodeWithRetainers.prototype.get countPercent):
+        (WebInspector.HeapSnapshotDataGridNodeWithRetainers.prototype.get sizePercent):
+        (WebInspector.HeapSnapshotDataGridNodeWithRetainers.prototype.get countDeltaPercent):
+        (WebInspector.HeapSnapshotDataGridNodeWithRetainers.prototype.get sizeDeltaPercent):
+        (WebInspector.HeapSnapshotDataGridNodeWithRetainers.prototype.get data):
+        (WebInspector.HeapSnapshotDataGridNodeWithRetainers.prototype.createCell):
+        (WebInspector.HeapSnapshotDataGridNode):
+        (WebInspector.HeapSnapshotDataGridList):
+        (WebInspector.HeapSnapshotDataGridList.prototype.appendChild):
+        (WebInspector.HeapSnapshotDataGridList.prototype.insertChild):
+        (WebInspector.HeapSnapshotDataGridList.prototype.removeChildren):
+        (WebInspector.HeapSnapshotDataGridList.prototype.populateChildren):
+        (WebInspector.HeapSnapshotDataGridList.propertyComparator.comparator):
+        (WebInspector.HeapSnapshotDataGridList.propertyComparator):
+        (WebInspector.HeapSnapshotDataGridRetainerNode):
+        (WebInspector.HeapSnapshotDataGridRetainerNode.prototype.get sizePercent):
+        (WebInspector.HeapSnapshotDataGridRetainerNode.prototype.get sizeDeltaPercent):
+        (WebInspector.HeapSnapshotDataGridRetainerNode.prototype._calculateRetainers):
+        (WebInspector.HeapSnapshotProfileType):
+        (WebInspector.HeapSnapshotProfileType.prototype.get buttonTooltip):
+        (WebInspector.HeapSnapshotProfileType.prototype.get buttonStyle):
+        (WebInspector.HeapSnapshotProfileType.prototype.buttonClicked):
+        (WebInspector.HeapSnapshotProfileType.prototype.get welcomeMessage):
+        (WebInspector.HeapSnapshotProfileType.prototype.createSidebarTreeElementForProfile):
+        (WebInspector.HeapSnapshotProfileType.prototype.createView):
+        * inspector/front-end/ProfileView.js:
+        (WebInspector.CPUProfileView):
+        (WebInspector.CPUProfileType.prototype.createSidebarTreeElementForProfile):
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype.addProfileHeader):
+        (WebInspector.ProfilesPanel.prototype.removeProfileHeader):
+        (WebInspector.ProfilesPanel.prototype.getProfiles):
+        (WebInspector.ProfilesPanel.prototype.updateProfile):
+        (WebInspector.ProfileSidebarTreeElement):
+        (WebInspector.ProfileSidebarTreeElement.prototype.get mainTitle):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.css:
+        (.heap-snapshot-sidebar-tree-item .icon):
+        (.heap-snapshot-sidebar-tree-item.small .icon):
+        (.heap-snapshot-view):
+        (.heap-snapshot-view.visible):
+        (.heap-snapshot-view .data-grid):
+        (.heap-snapshot-view .data-grid th.count-column):
+        (.heap-snapshot-view .data-grid td.count-column):
+        (.heap-snapshot-view .data-grid th.size-column):
+        (.heap-snapshot-view .data-grid td.size-column):
+        (.heap-snapshot-view .data-grid th.countDelta-column):
+        (.heap-snapshot-view .data-grid td.countDelta-column):
+        (.heap-snapshot-view .data-grid th.sizeDelta-column):
+        (.heap-snapshot-view .data-grid td.sizeDelta-column):
+        (#heap-snapshot-summary-container):
+        (.heap-snapshot-summary):
+        (.heap-snapshot-summary canvas.summary-graph):
+        (.heap-snapshot-summary-label):
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+        (WebInspector._createPanels):
+
 2010-08-25  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Simon Fraser.

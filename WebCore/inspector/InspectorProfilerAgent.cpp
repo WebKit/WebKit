@@ -39,6 +39,7 @@
 #include "KURL.h"
 #include "Page.h"
 #include "ScriptDebugServer.h"
+#include "ScriptHeapSnapshot.h"
 #include "ScriptProfile.h"
 #include "ScriptProfiler.h"
 #include <wtf/OwnPtr.h>
@@ -51,6 +52,7 @@ namespace WebCore {
 
 static const char* const UserInitiatedProfileName = "org.webkit.profiles.user-initiated";
 static const char* const CPUProfileType = "CPU";
+static const char* const HeapProfileType = "HEAP";
 
 PassOwnPtr<InspectorProfilerAgent> InspectorProfilerAgent::create(InspectorController* inspectorController)
 {
@@ -65,6 +67,7 @@ InspectorProfilerAgent::InspectorProfilerAgent(InspectorController* inspectorCon
     , m_recordingUserInitiatedProfile(false)
     , m_currentUserInitiatedProfileNumber(-1)
     , m_nextUserInitiatedProfileNumber(1)
+    , m_nextUserInitiatedHeapSnapshotNumber(1)
 {
 }
 
@@ -104,6 +107,15 @@ PassRefPtr<InspectorObject> InspectorProfilerAgent::createProfileHeader(const Sc
     return header;
 }
 
+PassRefPtr<InspectorObject> InspectorProfilerAgent::createSnapshotHeader(const ScriptHeapSnapshot& snapshot)
+{
+    RefPtr<InspectorObject> header = InspectorObject::create();
+    header->setString("title", snapshot.title());
+    header->setNumber("uid", snapshot.uid());
+    header->setString("typeId", String(HeapProfileType));
+    return header;
+}
+
 void InspectorProfilerAgent::disable()
 {
     if (!m_enabled)
@@ -138,28 +150,46 @@ void InspectorProfilerAgent::getProfileHeaders(RefPtr<InspectorArray>* headers)
     ProfilesMap::iterator profilesEnd = m_profiles.end();
     for (ProfilesMap::iterator it = m_profiles.begin(); it != profilesEnd; ++it)
         (*headers)->pushObject(createProfileHeader(*it->second));
+    HeapSnapshotsMap::iterator snapshotsEnd = m_snapshots.end();
+    for (HeapSnapshotsMap::iterator it = m_snapshots.begin(); it != snapshotsEnd; ++it)
+        (*headers)->pushObject(createSnapshotHeader(*it->second));
 }
 
-void InspectorProfilerAgent::getProfile(unsigned uid, RefPtr<InspectorObject>* profileObject)
+void InspectorProfilerAgent::getProfile(const String& type, unsigned uid, RefPtr<InspectorObject>* profileObject)
 {
-    ProfilesMap::iterator it = m_profiles.find(uid);
-    if (it != m_profiles.end()) {
-        *profileObject = createProfileHeader(*it->second);
-        (*profileObject)->setObject("head", it->second->buildInspectorObjectForHead());
+    if (type == CPUProfileType) {
+        ProfilesMap::iterator it = m_profiles.find(uid);
+        if (it != m_profiles.end()) {
+            *profileObject = createProfileHeader(*it->second);
+            (*profileObject)->setObject("head", it->second->buildInspectorObjectForHead());
+        }
+    } else if (type == HeapProfileType) {
+        HeapSnapshotsMap::iterator it = m_snapshots.find(uid);
+        if (it != m_snapshots.end()) {
+            *profileObject = createSnapshotHeader(*it->second);
+            (*profileObject)->setObject("head", it->second->buildInspectorObjectForHead());
+        }
     }
 }
 
-void InspectorProfilerAgent::removeProfile(unsigned uid)
+void InspectorProfilerAgent::removeProfile(const String& type, unsigned uid)
 {
-    if (m_profiles.contains(uid))
-        m_profiles.remove(uid);
+    if (type == CPUProfileType) {
+        if (m_profiles.contains(uid))
+            m_profiles.remove(uid);
+    } else if (type == HeapProfileType) {
+        if (m_snapshots.contains(uid))
+            m_snapshots.remove(uid);
+    }
 }
 
 void InspectorProfilerAgent::resetState()
 {
     m_profiles.clear();
+    m_snapshots.clear();
     m_currentUserInitiatedProfileNumber = 1;
     m_nextUserInitiatedProfileNumber = 1;
+    m_nextUserInitiatedHeapSnapshotNumber = 1;
     if (m_frontend)
         m_frontend->resetProfilesPanel();
 }
@@ -197,6 +227,17 @@ void InspectorProfilerAgent::stopUserInitiatedProfiling()
     if (profile)
         addProfile(profile, 0, String());
     toggleRecordButton(false);
+}
+
+void InspectorProfilerAgent::takeHeapSnapshot()
+{
+    String title = String::format("%s.%d", UserInitiatedProfileName, m_nextUserInitiatedHeapSnapshotNumber++);
+    RefPtr<ScriptHeapSnapshot> snapshot = ScriptProfiler::takeHeapSnapshot(title);
+    if (snapshot) {
+        m_snapshots.add(snapshot->uid(), snapshot);
+        if (m_frontend)
+            m_frontend->addProfileHeader(createSnapshotHeader(*snapshot));
+    }
 }
 
 void InspectorProfilerAgent::toggleRecordButton(bool isProfiling)

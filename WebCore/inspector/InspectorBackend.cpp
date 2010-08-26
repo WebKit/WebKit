@@ -68,17 +68,6 @@ void InspectorBackend::enableDebugger(bool always)
         m_inspectorController->enableDebuggerFromFrontend(always);
 }
 
-void InspectorBackend::takeHeapSnapshot()
-{
-    ScriptProfiler::takeHeapSnapshot();
-}
-
-void InspectorBackend::getProfilerLogLines(long position, long* outPosition, String* data)
-{
-    // FIXME: we should make inspector dispatcher pluggable, so that embedders could contribute APIs instead of polluting the core one
-    // https://bugs.webkit.org/show_bug.cgi?id=43357
-    *outPosition = ScriptProfiler::getProfilerLogLines(position, data);
-}
 #endif
 
 void InspectorBackend::setInjectedScriptSource(const String& source)

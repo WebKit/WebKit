@@ -75,7 +75,7 @@ static PassRefPtr<InspectorObject> buildInspectorObjectFor(const v8::CpuProfileN
         children->pushObject(buildInspectorObjectFor(child));
     }
     result->setArray("children", children);
-    return result;
+    return result.release();
 }
 
 PassRefPtr<InspectorObject> ScriptProfile::buildInspectorObjectForHead() const

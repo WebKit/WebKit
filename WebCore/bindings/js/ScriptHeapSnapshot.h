@@ -28,41 +28,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ScriptProfiler.h"
+#ifndef ScriptHeapSnapshot_h
+#define ScriptHeapSnapshot_h
 
 #include "InspectorValues.h"
-#include "ScriptString.h"
-
-#include <v8-profiler.h>
+#include "PlatformString.h"
 
 namespace WebCore {
 
-void ScriptProfiler::start(ScriptState* state, const String& title)
-{
-    v8::HandleScope hs;
-    v8::CpuProfiler::StartProfiling(v8String(title));
-}
+class ScriptHeapSnapshot : public RefCounted<ScriptHeapSnapshot> {
+public:
+    virtual ~ScriptHeapSnapshot() {}
 
-PassRefPtr<ScriptProfile> ScriptProfiler::stop(ScriptState* state, const String& title)
-{
-    v8::HandleScope hs;
-    const v8::CpuProfile* profile = state ?
-        v8::CpuProfiler::StopProfiling(v8String(title), state->context()->GetSecurityToken()) :
-        v8::CpuProfiler::StopProfiling(v8String(title));
-    return profile ? ScriptProfile::create(profile) : 0;
-}
+    String title() const { return ""; }
+    unsigned int uid() const { return 0; }
 
-PassRefPtr<ScriptHeapSnapshot> ScriptProfiler::takeHeapSnapshot(const String& title)
-{
-    v8::HandleScope hs;
-    const v8::HeapSnapshot* snapshot = v8::HeapProfiler::TakeSnapshot(v8String(title), v8::HeapSnapshot::kAggregated);
-    return snapshot ? ScriptHeapSnapshot::create(snapshot) : 0;
-}
+    PassRefPtr<InspectorObject> buildInspectorObjectForHead() const { return InspectorObject::create(); }
 
-bool ScriptProfiler::isProfilerAlwaysEnabled()
-{
-    return true;
-}
+private:
+    ScriptHeapSnapshot() {}
+};
 
 } // namespace WebCore
+
+#endif // ScriptHeapSnapshot_h

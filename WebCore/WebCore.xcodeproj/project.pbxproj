@@ -2755,6 +2755,7 @@
 		97EF7DFE107E55B700D7C49C /* ScriptControllerBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97EF7DFD107E55B700D7C49C /* ScriptControllerBase.cpp */; };
 		9F0D6B2E121BFEBA006C0288 /* InspectorProfilerAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F0D6B2C121BFEBA006C0288 /* InspectorProfilerAgent.cpp */; };
 		9F0D6B2F121BFEBA006C0288 /* InspectorProfilerAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F0D6B2D121BFEBA006C0288 /* InspectorProfilerAgent.h */; };
+		9F3B947E12241758005304E7 /* ScriptHeapSnapshot.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F3B947D12241758005304E7 /* ScriptHeapSnapshot.h */; };
 		9F6FC1961122E82A00E80196 /* ScriptDebugServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F6FC1941122E82A00E80196 /* ScriptDebugServer.cpp */; };
 		9F6FC1971122E82A00E80196 /* ScriptDebugServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F6FC1951122E82A00E80196 /* ScriptDebugServer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9F72304F11184B4100AD0126 /* ScriptProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F72304C11184B4100AD0126 /* ScriptProfile.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8623,6 +8624,7 @@
 		97EF7DFD107E55B700D7C49C /* ScriptControllerBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptControllerBase.cpp; sourceTree = "<group>"; };
 		9F0D6B2C121BFEBA006C0288 /* InspectorProfilerAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorProfilerAgent.cpp; sourceTree = "<group>"; };
 		9F0D6B2D121BFEBA006C0288 /* InspectorProfilerAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorProfilerAgent.h; sourceTree = "<group>"; };
+		9F3B947D12241758005304E7 /* ScriptHeapSnapshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptHeapSnapshot.h; sourceTree = "<group>"; };
 		9F6FC1941122E82A00E80196 /* ScriptDebugServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptDebugServer.cpp; sourceTree = "<group>"; };
 		9F6FC1951122E82A00E80196 /* ScriptDebugServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptDebugServer.h; sourceTree = "<group>"; };
 		9F72304C11184B4100AD0126 /* ScriptProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptProfile.h; sourceTree = "<group>"; };
@@ -16123,6 +16125,7 @@
 				41002CCB0F66EDEF009E660D /* ScriptFunctionCall.h */,
 				4FD8D0F0119C718B002FA825 /* ScriptGCEvent.cpp */,
 				4FD8D0F1119C718B002FA825 /* ScriptGCEvent.h */,
+				9F3B947D12241758005304E7 /* ScriptHeapSnapshot.h */,
 				934CC1160EDCAC7300A658F2 /* ScriptInstance.h */,
 				41F066E30F64BCF600A07EAC /* ScriptObject.cpp */,
 				41F066E20F64BCF600A07EAC /* ScriptObject.h */,
@@ -20372,6 +20375,7 @@
 				8947A82C12222C4700D95F2D /* JSMetadataCallback.h in Headers */,
 				8947A83C122234F400D95F2D /* Metadata.h in Headers */,
 				8947A83D122234F900D95F2D /* MetadataCallback.h in Headers */,
+				9F3B947E12241758005304E7 /* ScriptHeapSnapshot.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

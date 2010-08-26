@@ -1,3 +1,24 @@
+2010-08-26  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Store heap snapshots in InspectorProfilerAgent.
+
+        Change the way heap snapshots are transported to Inspector
+        to be aligned with CPU profiles. As a result, the Heap snapshots
+        view of Profiles panel was upstreamed into WebCore.
+
+        https://bugs.webkit.org/show_bug.cgi?id=44531
+
+        * DEPS:
+        * WebKit.gypi:
+        * src/js/DevTools.js:
+        ():
+        * src/js/HeapProfilerPanel.js: Removed.
+        * src/js/ProfilerAgent.js: Removed.
+        * src/js/ProfilerProcessor.js: Removed.
+        * src/js/devTools.css:
+
 2010-08-26  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Revert r66103 since Qt tests are failing.

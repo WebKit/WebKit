@@ -60,8 +60,6 @@ public:
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     void enableDebugger(bool always);
-    void takeHeapSnapshot();
-    void getProfilerLogLines(long position, long* outPosition, String* data);
 #endif
 
     void setInjectedScriptSource(const String& source);

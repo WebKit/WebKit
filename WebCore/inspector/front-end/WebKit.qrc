@@ -40,6 +40,7 @@
     <file>ExtensionServer.js</file>
     <file>FontView.js</file>
     <file>HAREntry.js</file>
+    <file>HeapSnapshotView.js</file>
     <file>HelpScreen.js</file>
     <file>ImageView.js</file>
     <file>InjectedFakeWorker.js</file>

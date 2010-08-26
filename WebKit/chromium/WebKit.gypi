@@ -33,9 +33,6 @@
         # List of DevTools source files, ordered by dependencies. It is used both
         # for copying them to resource dir, and for generating 'devtools.html' file.
         'devtools_js_files': [
-            'src/js/ProfilerAgent.js',
-            'src/js/ProfilerProcessor.js',
-            'src/js/HeapProfilerPanel.js',
             'src/js/DevTools.js',
             'src/js/DevToolsHostStub.js',
             'src/js/Tests.js',

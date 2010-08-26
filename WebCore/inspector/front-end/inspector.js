@@ -233,6 +233,8 @@ var WebInspector = {
         if (hiddenPanels.indexOf("profiles") === -1) {
             this.panels.profiles = new WebInspector.ProfilesPanel();
             this.panels.profiles.registerProfileType(new WebInspector.CPUProfileType());
+            if (Preferences.heapProfilerPresent)
+                this.panels.profiles.registerProfileType(new WebInspector.HeapSnapshotProfileType());
         }
         if (hiddenPanels.indexOf("storage") === -1 && hiddenPanels.indexOf("databases") === -1)
             this.panels.storage = new WebInspector.StoragePanel();

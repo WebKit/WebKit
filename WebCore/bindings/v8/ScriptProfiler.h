@@ -32,6 +32,7 @@
 #define ScriptProfiler_h
 
 #include "PlatformString.h"
+#include "ScriptHeapSnapshot.h"
 #include "ScriptProfile.h"
 #include "ScriptState.h"
 
@@ -39,12 +40,13 @@
 
 namespace WebCore {
 
+class InspectorObject;
+
 class ScriptProfiler : public Noncopyable {
 public:
     static void start(ScriptState* state, const String& title);
     static PassRefPtr<ScriptProfile> stop(ScriptState* state, const String& title);
-    static void takeHeapSnapshot();
-    static long getProfilerLogLines(long position, String* data);
+    static PassRefPtr<ScriptHeapSnapshot> takeHeapSnapshot(const String& title);
     static bool isProfilerAlwaysEnabled();
 };
 

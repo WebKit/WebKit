@@ -44,6 +44,7 @@ class InspectorArray;
 class InspectorController;
 class InspectorFrontend;
 class InspectorObject;
+class ScriptHeapSnapshot;
 class ScriptProfile;
 
 class InspectorProfilerAgent : public Noncopyable {
@@ -60,22 +61,25 @@ public:
     bool enabled() { return m_enabled; }
     String getCurrentUserInitiatedProfileName(bool incrementProfileNumber = false);
     void getProfileHeaders(RefPtr<InspectorArray>* headers);
-    void getProfile(unsigned uid, RefPtr<InspectorObject>* profileObject);
+    void getProfile(const String& type, unsigned uid, RefPtr<InspectorObject>* profileObject);
     bool isRecordingUserInitiatedProfile() { return m_recordingUserInitiatedProfile; }
-    void removeProfile(unsigned uid);
+    void removeProfile(const String& type, unsigned uid);
     void resetState();
     void setFrontend(InspectorFrontend* frontend) { m_frontend = frontend; }
     void startProfiling() { startUserInitiatedProfiling(); }
     void startUserInitiatedProfiling();
     void stopProfiling() { stopUserInitiatedProfiling(); }
     void stopUserInitiatedProfiling();
+    void takeHeapSnapshot();
     void toggleRecordButton(bool isProfiling);
 
 private:
     typedef HashMap<unsigned int, RefPtr<ScriptProfile> > ProfilesMap;
+    typedef HashMap<unsigned int, RefPtr<ScriptHeapSnapshot> > HeapSnapshotsMap;
 
     InspectorProfilerAgent(InspectorController*);
     PassRefPtr<InspectorObject> createProfileHeader(const ScriptProfile& profile);
+    PassRefPtr<InspectorObject> createSnapshotHeader(const ScriptHeapSnapshot& snapshot);
 
     InspectorController* m_inspectorController;
     InspectorFrontend* m_frontend;
@@ -83,7 +87,9 @@ private:
     bool m_recordingUserInitiatedProfile;
     int m_currentUserInitiatedProfileNumber;
     unsigned m_nextUserInitiatedProfileNumber;
+    unsigned m_nextUserInitiatedHeapSnapshotNumber;
     ProfilesMap m_profiles;
+    HeapSnapshotsMap m_snapshots;
 };
 
 } // namespace WebCore
