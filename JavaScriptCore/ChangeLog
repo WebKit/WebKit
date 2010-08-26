@@ -1,5 +1,91 @@
 2010-08-26  Gavin Barraclough  <barraclough@apple.com>
 
+        Rolling out r64608, this regressed performance.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/ARMAssembler.cpp:
+        (JSC::ARMAssembler::executableCopy):
+        * assembler/LinkBuffer.h:
+        (JSC::LinkBuffer::LinkBuffer):
+        (JSC::LinkBuffer::~LinkBuffer):
+        (JSC::LinkBuffer::performFinalization):
+        * assembler/MIPSAssembler.h:
+        (JSC::MIPSAssembler::executableCopy):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::executableCopy):
+        * bytecode/StructureStubInfo.h:
+        (JSC::StructureStubInfo::initGetByIdProto):
+        (JSC::StructureStubInfo::initGetByIdChain):
+        (JSC::StructureStubInfo::initGetByIdSelfList):
+        (JSC::StructureStubInfo::initGetByIdProtoList):
+        (JSC::StructureStubInfo::initPutByIdTransition):
+        * jit/ExecutableAllocator.cpp:
+        (JSC::ExecutablePool::systemAlloc):
+        * jit/ExecutableAllocator.h:
+        (JSC::ExecutablePool::create):
+        (JSC::ExecutableAllocator::ExecutableAllocator):
+        (JSC::ExecutableAllocator::poolForSize):
+        (JSC::ExecutablePool::ExecutablePool):
+        (JSC::ExecutablePool::poolAllocate):
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+        (JSC::FixedVMPoolAllocator::allocInternal):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        * jit/JIT.h:
+        (JSC::JIT::compileGetByIdProto):
+        (JSC::JIT::compileGetByIdSelfList):
+        (JSC::JIT::compileGetByIdProtoList):
+        (JSC::JIT::compileGetByIdChainList):
+        (JSC::JIT::compileGetByIdChain):
+        (JSC::JIT::compilePutByIdTransition):
+        (JSC::JIT::compilePatchGetArrayLength):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        (JSC::JIT::privateCompileCTINativeCall):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::stringGetByValStubGenerator):
+        (JSC::JIT::privateCompilePutByIdTransition):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdSelfList):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::stringGetByValStubGenerator):
+        (JSC::JIT::privateCompilePutByIdTransition):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdSelfList):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::tryCachePutByID):
+        (JSC::JITThunks::tryCacheGetByID):
+        (JSC::DEFINE_STUB_FUNCTION):
+        (JSC::getPolymorphicAccessStructureListSlot):
+        * jit/JITStubs.h:
+        * jit/SpecializedThunkJIT.h:
+        (JSC::SpecializedThunkJIT::finalize):
+        * runtime/ExceptionHelpers.cpp:
+        * runtime/ExceptionHelpers.h:
+        * runtime/Executable.cpp:
+        (JSC::EvalExecutable::compileInternal):
+        (JSC::ProgramExecutable::compileInternal):
+        (JSC::FunctionExecutable::compileForCallInternal):
+        (JSC::FunctionExecutable::compileForConstructInternal):
+        (JSC::FunctionExecutable::reparseExceptionInfo):
+        (JSC::EvalExecutable::reparseExceptionInfo):
+        * yarr/RegexJIT.cpp:
+        (JSC::Yarr::RegexGenerator::compile):
+
+<<<<<<< .mine
+=======
+2010-08-26  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Brady Eidson.
 
         Bug 44655 - Add debug only convenience methods to obtain a Vector<char> from a String/StringImpl.
@@ -2964,6 +3050,7 @@
         * yarr/RegexJIT.cpp:
         (JSC::Yarr::RegexGenerator::compile):
 
+>>>>>>> .r66148
 2010-08-03  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

@@ -351,8 +351,6 @@ void* ARMAssembler::executableCopy(ExecutablePool* allocator)
         bkpt(0);
 
     char* data = reinterpret_cast<char*>(m_buffer.executableCopy(allocator));
-    if (!data)
-        return 0;
 
     for (Jumps::Iterator iter = m_jumps.begin(); iter != m_jumps.end(); ++iter) {
         // The last bit is set if the constant must be placed on constant pool.

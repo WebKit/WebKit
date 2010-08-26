@@ -360,14 +360,15 @@ private:
             // Search m_freeList for a suitable sized chunk to allocate memory from.
             FreeListEntry* entry = m_freeList.search(size, m_freeList.GREATER_EQUAL);
 
-            // This is bad news.
+            // This would be bad news.
             if (!entry) {
                 // Errk!  Lets take a last-ditch desperation attempt at defragmentation...
                 coalesceFreeSpace();
                 // Did that free up a large enough chunk?
                 entry = m_freeList.search(size, m_freeList.GREATER_EQUAL);
+                // No?...  *BOOM!*
                 if (!entry)
-                    return 0;
+                    CRASH();
             }
             ASSERT(entry->size != m_commonSize);
 

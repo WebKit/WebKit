@@ -161,14 +161,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
 #endif
 
     // All trampolines constructed! copy the code, link up calls, and set the pointers on the Machine object.
-    *executablePool = m_globalData->executableAllocator.poolForSize(m_assembler.size());
-    // We can't run without the JIT trampolines!
-    if (!*executablePool)
-        CRASH();
-    LinkBuffer patchBuffer(this, *executablePool, 0);
-    // We can't run without the JIT trampolines!
-    if (!patchBuffer.allocationSuccessful())
-        CRASH();
+    LinkBuffer patchBuffer(this, m_globalData->executableAllocator.poolForSize(m_assembler.size()), 0);
 
 #if ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
     patchBuffer.link(string_failureCases1Call, FunctionPtr(cti_op_get_by_id_string_fail));
@@ -183,6 +176,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     patchBuffer.link(callCompileConstruct, FunctionPtr(cti_op_construct_jitCompile));
 
     CodeRef finalCode = patchBuffer.finalizeCode();
+    *executablePool = finalCode.m_executablePool;
 
     trampolines->ctiVirtualCallLink = patchBuffer.trampolineAt(virtualCallLinkBegin);
     trampolines->ctiVirtualConstructLink = patchBuffer.trampolineAt(virtualConstructLinkBegin);

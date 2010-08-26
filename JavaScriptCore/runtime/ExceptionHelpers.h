@@ -53,7 +53,6 @@ namespace JSC {
     JSObject* createNotAConstructorError(ExecState*, JSValue, unsigned bytecodeOffset, CodeBlock*);
     JSValue createNotAFunctionError(ExecState*, JSValue, unsigned bytecodeOffset, CodeBlock*);
     JSObject* createNotAnObjectError(ExecState*, JSNotAnObjectErrorStub*, unsigned bytecodeOffset, CodeBlock*);
-    JSObject* createOutOfMemoryError(JSGlobalObject*);
     JSValue throwOutOfMemoryError(ExecState*);
 
 } // namespace JSC
