@@ -1,3 +1,31 @@
+2010-08-26  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Misc. cleanup split off from bug 32356.
+        https://bugs.webkit.org/show_bug.cgi?id=44696
+
+        * WebCore.gyp/WebCore.gyp:
+        * dom/Element.cpp:
+        (WebCore::localZoomForRenderer):
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::wheelEvent):
+        * platform/ScrollView.h:
+        * platform/Scrollbar.cpp:
+        (WebCore::Scrollbar::scroll):
+        * platform/Scrollbar.h:
+        (WebCore::Scrollbar::isScrollbar):
+        * platform/ScrollbarClient.h:
+        (WebCore::ScrollbarClient::~ScrollbarClient):
+        * platform/qt/ScrollbarQt.cpp:
+        (WebCore::Scrollbar::contextMenu):
+        * rendering/RenderBox.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scroll):
+        * rendering/RenderLayer.h:
+        * rendering/RenderListBox.h:
+        * rendering/RenderTextControlSingleLine.h:
+
 2010-08-26  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Simon Fraser.

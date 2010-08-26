@@ -34,7 +34,7 @@ namespace WebCore {
 
 class ScrollbarClient {
 public:
-    virtual ~ScrollbarClient() {}
+    virtual ~ScrollbarClient() { }
     virtual void valueChanged(Scrollbar*) = 0;
 
     virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&) = 0;

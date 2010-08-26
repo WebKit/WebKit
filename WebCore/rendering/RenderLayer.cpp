@@ -2235,12 +2235,10 @@ bool RenderLayer::scroll(ScrollDirection direction, ScrollGranularity granularit
     bool didVerticalScroll = false;
     
     if (m_hBar) {
-        if (granularity == ScrollByDocument) {
-            // Special-case for the ScrollByDocument granularity. A document scroll can only be up 
-            // or down and in both cases the horizontal bar goes all the way to the left.
-            didHorizontalScroll = m_hBar->scroll(ScrollLeft, ScrollByDocument, multiplier);
-        } else
-            didHorizontalScroll = m_hBar->scroll(direction, granularity, multiplier);
+        // Special-case for the ScrollByDocument granularity. A document scroll
+        // can only be up or down and in both cases the horizontal bar goes all
+        // the way to the left.
+        didHorizontalScroll = m_hBar->scroll((granularity == ScrollByDocument) ? ScrollLeft : direction, granularity, multiplier);
     }
 
     if (m_vBar)

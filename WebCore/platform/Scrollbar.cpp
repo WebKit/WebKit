@@ -142,24 +142,20 @@ bool Scrollbar::scroll(ScrollDirection direction, ScrollGranularity granularity,
     }
 #endif
 
+    // Ignore perpendicular scrolls.
+    if ((m_orientation == HorizontalScrollbar) ? (direction == ScrollUp || direction == ScrollDown) : (direction == ScrollLeft || direction == ScrollRight))
+        return false;
     float step = 0;
-    if ((direction == ScrollUp && m_orientation == VerticalScrollbar) || (direction == ScrollLeft && m_orientation == HorizontalScrollbar))
-        step = -1;
-    else if ((direction == ScrollDown && m_orientation == VerticalScrollbar) || (direction == ScrollRight && m_orientation == HorizontalScrollbar))
-        step = 1;
+    switch (granularity) {
+    case ScrollByLine:     step = m_lineStep;  break;
+    case ScrollByPage:     step = m_pageStep;  break;
+    case ScrollByDocument: step = m_totalSize; break;
+    case ScrollByPixel:    step = m_pixelStep; break;
+    }
+    if (direction == ScrollUp || direction == ScrollLeft)
+        multiplier = -multiplier;
 
-    if (granularity == ScrollByLine)
-        step *= m_lineStep;
-    else if (granularity == ScrollByPage)
-        step *= m_pageStep;
-    else if (granularity == ScrollByDocument)
-        step *= m_totalSize;
-    else if (granularity == ScrollByPixel)
-        step *= m_pixelStep;
-
-    float newPos = m_currentPos + step * multiplier;
-    float maxPos = m_totalSize - m_visibleSize;
-    return setCurrentPos(max(min(newPos, maxPos), 0.0f));
+    return setCurrentPos(max(min(m_currentPos + (step * multiplier), static_cast<float>(m_totalSize - m_visibleSize)), 0.0f));
 }
 
 void Scrollbar::updateThumb()

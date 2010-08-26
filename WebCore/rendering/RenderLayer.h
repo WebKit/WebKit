@@ -274,7 +274,7 @@ public:
 
     void updateScrollInfoAfterLayout();
 
-    bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1.0f);
+    bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1);
     void autoscroll();
 
     void resize(const PlatformMouseEvent&, const IntSize&);

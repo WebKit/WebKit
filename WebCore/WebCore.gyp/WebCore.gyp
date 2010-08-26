@@ -1222,8 +1222,8 @@
           'sources/': [
             ['exclude', 'Posix\\.cpp$'],
             ['include', '/opentype/'],
-            ['include', '/TransparencyWin\\.cpp$'],
             ['include', '/SkiaFontWin\\.cpp$'],
+            ['include', '/TransparencyWin\\.cpp$'],
           ],
           'defines': [
             # Match Safari and Mozilla on Windows.

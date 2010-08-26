@@ -1,3 +1,18 @@
+2010-08-26  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Misc. cleanup split off from bug 32356.
+        https://bugs.webkit.org/show_bug.cgi?id=44696
+
+        * src/WebScrollbarImpl.cpp:
+        (WebKit::WebScrollbarImpl::setLocation):
+        (WebKit::WebScrollbarImpl::onMouseWheel):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::propagateScroll):
+        * src/win/WebInputEventFactory.cpp:
+        (WebKit::WebInputEventFactory::mouseWheelEvent):
+
 2010-08-26  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.

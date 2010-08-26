@@ -226,10 +226,7 @@ bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent& keyboard
             m_page->goBack();
         break;
     case VK_SPACE:
-        if (keyboardEvent.shiftKey())
-            scroll(m_page, ScrollUp, ScrollByPage);
-        else
-            scroll(m_page, ScrollDown, ScrollByPage);
+        scroll(m_page, keyboardEvent.shiftKey() ? ScrollUp : ScrollDown, ScrollByPage);
         break;
     case VK_LEFT:
         scroll(m_page, ScrollLeft, ScrollByLine);

@@ -1,3 +1,13 @@
+2010-08-26  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Misc. cleanup split off from bug 32356.
+        https://bugs.webkit.org/show_bug.cgi?id=44696
+
+        * WebProcess/WebPage/qt/WebPageQt.cpp:
+        (WebKit::WebPage::performDefaultBehaviorForKeyEvent):
+
 2010-08-25  Brent Fulgham  <bfulgham@webkit.org>
 
         Build fix, no review.

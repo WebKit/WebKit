@@ -81,7 +81,7 @@ void WebScrollbarImpl::setLocation(const WebRect& rect)
       m_scrollbar->invalidate();
 
     int length = m_scrollbar->orientation() == HorizontalScrollbar ? m_scrollbar->width() : m_scrollbar->height();
-    int pageStep = max(max<int>(length * Scrollbar::minFractionToStepWhenPaging(), length - Scrollbar::maxOverlapBetweenPages()), 1);
+    int pageStep = max(max(static_cast<int>(static_cast<float>(length) * Scrollbar::minFractionToStepWhenPaging()), length - Scrollbar::maxOverlapBetweenPages()), 1);
     m_scrollbar->setSteps(Scrollbar::pixelsPerLineStep(), pageStep);
     m_scrollbar->setEnabled(m_scrollbar->totalSize() > length);
     m_scrollbar->setProportion(length, m_scrollbar->totalSize());
@@ -214,7 +214,7 @@ bool WebScrollbarImpl::onMouseWheel(const WebInputEvent& event)
             if (mousewheel.scrollByPage) {
                 ASSERT(m_scrollbar->orientation() == VerticalScrollbar);
                 bool negative = delta < 0;
-                delta = max(max<int>(m_scrollbar->visibleSize() * Scrollbar::minFractionToStepWhenPaging(), m_scrollbar->visibleSize() - Scrollbar::maxOverlapBetweenPages()), 1);
+                delta = max(max(static_cast<float>(m_scrollbar->visibleSize()) * Scrollbar::minFractionToStepWhenPaging(), static_cast<float>(m_scrollbar->visibleSize() - Scrollbar::maxOverlapBetweenPages())), 1.0f);
                 if (negative)
                     delta *= -1;
             }

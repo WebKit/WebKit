@@ -669,7 +669,7 @@ void ScrollView::wheelEvent(PlatformWheelEvent& e)
         if (e.granularity() == ScrollByPageWheelEvent) {
             ASSERT(deltaX == 0);
             bool negative = deltaY < 0;
-            deltaY = max(max<int>(visibleHeight() * Scrollbar::minFractionToStepWhenPaging(), visibleHeight() - Scrollbar::maxOverlapBetweenPages()), 1);
+            deltaY = max(max(static_cast<float>(visibleHeight()) * Scrollbar::minFractionToStepWhenPaging(), static_cast<float>(visibleHeight() - Scrollbar::maxOverlapBetweenPages())), 1.0f);
             if (negative)
                 deltaY = -deltaY;
         }

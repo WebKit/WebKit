@@ -823,13 +823,10 @@ bool WebViewImpl::propagateScroll(ScrollDirection scrollDirection,
     if (!frame)
         return false;
 
-    bool scrollHandled =
-        frame->eventHandler()->scrollOverflow(scrollDirection,
-                                              scrollGranularity);
+    bool scrollHandled = frame->eventHandler()->scrollOverflow(scrollDirection, scrollGranularity);
     Frame* currentFrame = frame;
     while (!scrollHandled && currentFrame) {
-        scrollHandled = currentFrame->view()->scroll(scrollDirection,
-                                                     scrollGranularity);
+        scrollHandled = currentFrame->view()->scroll(scrollDirection, scrollGranularity);
         currentFrame = currentFrame->tree()->parent();
     }
     return scrollHandled;

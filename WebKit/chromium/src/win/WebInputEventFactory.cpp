@@ -398,11 +398,11 @@ WebMouseWheelEvent WebInputEventFactory::mouseWheelEvent(HWND hwnd, UINT message
     //
     // How many pixels should we scroll per line?  Gecko uses the height of the
     // current line, which means scroll distance changes as you go through the
-    // page or go to different pages.  IE 7 is ~50 px/line, although the value
-    // seems to vary slightly by page and zoom level.  Since IE 7 has a smoothing
-    // algorithm on scrolling, it can get away with slightly larger scroll values
-    // without feeling jerky.  Here we use 100 px per three lines (the default
-    // scroll amount is three lines per wheel tick).
+    // page or go to different pages.  IE 8 is ~60 px/line, although the value
+    // seems to vary slightly by page and zoom level.  Also, IE defaults to
+    // smooth scrolling while Firefox doesn't, so it can get away with somewhat
+    // larger scroll values without feeling as jerky.  Here we use 100 px per
+    // three lines (the default scroll amount is three lines per wheel tick).
     static const float scrollbarPixelsPerLine = 100.0f / 3.0f;
     wheelDelta /= WHEEL_DELTA;
     float scrollDelta = wheelDelta;

@@ -57,7 +57,7 @@ class ScrollView : public Widget, public ScrollbarClient {
 public:
     ~ScrollView();
 
-    // ScrollbarClient function. FrameView overrides the other two.
+    // ScrollbarClient function. FrameView overrides the others.
     virtual void valueChanged(Scrollbar*);
     
     // The window thats hosts the ScrollView. The ScrollView will communicate scrolls and repaints to the
