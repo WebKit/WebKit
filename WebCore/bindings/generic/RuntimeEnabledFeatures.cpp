@@ -51,10 +51,6 @@ bool RuntimeEnabledFeatures::isDeviceMotionEnabled = true;
 bool RuntimeEnabledFeatures::isDeviceOrientationEnabled = true;
 bool RuntimeEnabledFeatures::isSpeechInputEnabled = true;
 
-#if ENABLE(XHR_RESPONSE_BLOB)
-bool RuntimeEnabledFeatures::isXHRResponseBlobEnabled = false;
-#endif
-
 #if ENABLE(VIDEO)
 
 bool RuntimeEnabledFeatures::audioEnabled()

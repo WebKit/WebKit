@@ -124,13 +124,7 @@ JSValue JSXMLHttpRequest::send(ExecState* exec)
 
 JSValue JSXMLHttpRequest::responseText(ExecState* exec) const
 {
-    ExceptionCode ec = 0;
-    const ScriptString& text = impl()->responseText(ec);
-    if (ec) {
-        setDOMException(exec, ec);
-        return jsUndefined();
-    }
-    return jsOwnedStringOrNull(exec, text);
+    return jsOwnedStringOrNull(exec, impl()->responseText());
 }
 
 EncodedJSValue JSC_HOST_CALL JSXMLHttpRequestConstructor::constructJSXMLHttpRequest(ExecState* exec)

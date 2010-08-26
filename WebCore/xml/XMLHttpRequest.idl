@@ -57,11 +57,6 @@ module xml {
         readonly attribute unsigned short readyState;
 
         // request
-#if defined(ENABLE_XHR_RESPONSE_BLOB) && ENABLE_XHR_RESPONSE_BLOB
-        attribute [EnabledAtRuntime] boolean asBlob
-            setter raises(DOMException);
-#endif
-
         attribute boolean withCredentials
             setter raises(DOMException);
         // void open(in DOMString method, in DOMString url);
@@ -87,14 +82,8 @@ module xml {
             raises(DOMException);
         [RequiresAllArguments=Raise, ConvertNullStringTo=Null] DOMString getResponseHeader(in DOMString header)
             raises(DOMException);
-        readonly attribute [CustomGetter] DOMString responseText // The custom getter implements ConvertNullStringTo=Null
-            getter raises(DOMException);
-        readonly attribute Document responseXML
-            getter raises(DOMException);
-#if defined(ENABLE_XHR_RESPONSE_BLOB) && ENABLE_XHR_RESPONSE_BLOB
-        readonly attribute [EnabledAtRuntime] Blob responseBlob
-            getter raises(DOMException);
-#endif
+        readonly attribute [CustomGetter] DOMString responseText; // The custom getter implements ConvertNullStringTo=Null
+        readonly attribute Document responseXML;
         readonly attribute unsigned short status
             getter raises(DOMException);
         readonly attribute DOMString statusText
