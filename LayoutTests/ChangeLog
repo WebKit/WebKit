@@ -1,3 +1,12 @@
+2010-08-26  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Extended this test to cover all properties that dirty the font and therefore
+        need to have high priority.
+
+        * fast/css/text-rendering-priority.html:
+
 2010-08-26  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Tony Chang.

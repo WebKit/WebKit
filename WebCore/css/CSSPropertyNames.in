@@ -20,6 +20,7 @@ font-style
 font-variant
 font-weight
 text-rendering
+-webkit-font-smoothing
 -webkit-text-size-adjust
 zoom
 
@@ -213,7 +214,6 @@ z-index
 -webkit-column-width
 -webkit-columns
 -webkit-font-size-delta
--webkit-font-smoothing
 -webkit-highlight
 -webkit-hyphenate-character
 -webkit-hyphenate-locale

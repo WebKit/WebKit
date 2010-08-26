@@ -1,3 +1,20 @@
+2010-08-26  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Fix the same issue as https://bugs.webkit.org/show_bug.cgi?id=41585
+        but this time for the -webkit-font-smoothing property.
+
+        Updated fast/css/text-rendering-priority.html to cover all properties that
+        affect the font.
+
+        * css/CSSPropertyNames.in: Moved text-rendering to the â€œhigh priorityâ€ section at the top.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::styleForElement): Assert that the font is not dirtied by
+        applying any of the â€œlow priorityâ€ properties, but still handle the case that the assertion
+        is false.
+        (WebCore::CSSStyleSelector::applyDeclarations): Updated compile-time assertion.
+
 2010-08-26  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
