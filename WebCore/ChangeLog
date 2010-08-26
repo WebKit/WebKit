@@ -1,3 +1,37 @@
+2010-08-25  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Expose Vector3 and associated operations
+        https://bugs.webkit.org/show_bug.cgi?id=44666
+
+        No new tests; ran several 3D CSS demos and did full layout test
+        run. New code paths have also been tested by new calling code
+        which will be checked in soon.
+
+        * platform/graphics/transforms/TransformationMatrix.cpp:
+        (WebCore::decompose):
+        * platform/graphics/transforms/TransformationMatrix.h:
+        (WebCore::Vector3::Vector3):
+        (WebCore::Vector3::x):
+        (WebCore::Vector3::y):
+        (WebCore::Vector3::z):
+        (WebCore::Vector3::setX):
+        (WebCore::Vector3::setY):
+        (WebCore::Vector3::setZ):
+        (WebCore::Vector3::set):
+        (WebCore::Vector3::operator =):
+        (WebCore::Vector3::operator +):
+        (WebCore::Vector3::operator -):
+        (WebCore::Vector3::operator[]):
+        (WebCore::Vector3::length):
+        (WebCore::Vector3::lengthSquared):
+        (WebCore::Vector3::scaleTo):
+        (WebCore::Vector3::normalize):
+        (WebCore::Vector3::dot):
+        (WebCore::Vector3::combine):
+        (WebCore::Vector3::cross):
+
 2010-08-26  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.
