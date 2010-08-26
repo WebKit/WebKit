@@ -1,3 +1,13 @@
+2010-08-26  Miroslaw Szymanski  <miroslaw.s@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Added new callback when view's size is changed to fix issue with changing layout size
+        https://bugs.webkit.org/show_bug.cgi?id=44337
+
+        * ewk/ewk_view.cpp:
+        (_ewk_view_smart_calculate):
+
 2010-08-25  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Reviewed by Antonio Gomes.
