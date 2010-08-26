@@ -1,24 +1,28 @@
 javascriptcore_cppflags += \
 	-I$(srcdir)/JavaScriptCore \
 	-I$(srcdir)/JavaScriptCore/API \
-	-I$(srcdir)/JavaScriptCore/ForwardingHeaders \
-	-I$(srcdir)/JavaScriptCore/interpreter \
+	-I$(srcdir)/JavaScriptCore/assembler \
 	-I$(srcdir)/JavaScriptCore/bytecode \
 	-I$(srcdir)/JavaScriptCore/bytecompiler \
 	-I$(srcdir)/JavaScriptCore/debugger \
+	-I$(srcdir)/JavaScriptCore/ForwardingHeaders \
+	-I$(srcdir)/JavaScriptCore/interpreter \
 	-I$(srcdir)/JavaScriptCore/jit \
+	-I$(srcdir)/JavaScriptCore/jit \
+	-I$(srcdir)/JavaScriptCore/parser \
 	-I$(srcdir)/JavaScriptCore/pcre \
 	-I$(srcdir)/JavaScriptCore/profiler \
 	-I$(srcdir)/JavaScriptCore/runtime \
-	-I$(srcdir)/JavaScriptCore/jit \
-	-I$(srcdir)/JavaScriptCore/assembler \
 	-I$(srcdir)/JavaScriptCore/wtf \
+	-I$(srcdir)/JavaScriptCore/wtf \
+	-I$(srcdir)/JavaScriptCore/wtf/gobject \
+	-I$(srcdir)/JavaScriptCore/wtf/gtk \
 	-I$(srcdir)/JavaScriptCore/wtf/text \
 	-I$(srcdir)/JavaScriptCore/wtf/unicode \
 	-I$(srcdir)/JavaScriptCore/yarr \
 	-I$(top_builddir)/JavaScriptCore \
-	-I$(top_builddir)/JavaScriptCore/pcre \
 	-I$(top_builddir)/JavaScriptCore/parser \
+	-I$(top_builddir)/JavaScriptCore/pcre \
 	-I$(top_builddir)/JavaScriptCore/runtime
 
 javascriptcore_h_api += \

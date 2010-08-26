@@ -5,9 +5,6 @@ WEBCORE_CSS_PROPERTY_NAMES := $(WebCore)/css/CSSPropertyNames.in
 WEBCORE_CSS_VALUE_KEYWORDS := $(WebCore)/css/CSSValueKeywords.in
 
 webcore_cppflags += \
-	-I$(srcdir)/WebKit/gtk \
-	-I$(srcdir)/WebKit/gtk/WebCoreSupport \
-	-I$(srcdir)/WebKit/gtk/webkit \
 	-I$(srcdir)/WebCore \
 	-I$(srcdir)/WebCore/accessibility \
 	-I$(srcdir)/WebCore/bindings/generic \

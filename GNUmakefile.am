@@ -16,15 +16,11 @@
 # webcore_sources, gtk port API and WebCoreSupport parts to webkitgtk_sources,
 # etc... The only exceptions are the global variables. See Global Variables
 # below.
-#
-# Global Variables
-#
-# global_cppflags   = CPPFLAGS that apply to JSC, WebCore, and to any
-#                     specific port
-# global_cflags     = CFLAGS that apply to JSC, WebCore, and to
-#                     any specific port
-# global_cxxflags   = CXXFLAGS that apply to JSC, WebCore, and to any
-#                     specific port
+
+# Global Variables Reference
+# global_cppflags   = CPPFLAGS that apply to all C/C++ files that are built for any project.
+# global_cflags     = CFLAGS that apply to all C files that are built for any project.
+# global_cxxflags   = CXXFLAGS that apply to all C++ files that are bult for any project.
 
 srcdir = @srcdir@
 VPATH = @srcdir@
@@ -66,8 +62,8 @@ webcore_sources :=
 webcore_libadd :=
 webcore_built_sources :=
 webcore_built_nosources :=
-webcoregtk_cppflags :=
 webcoregtk_sources :=
+webcoregtk_cppflags :=
 webkitgtk_built_h_api :=
 webkitgtk_static_h_api :=
 webkitgtk_h_api :=
@@ -79,8 +75,6 @@ webkitgtk_built_nosources :=
 global_cppflags :=
 global_cflags :=
 global_cxxflags :=
-corekit_cflags :=
-corekit_cppflags :=
 JSCORE_GIRSOURCES :=
 WEBKIT_GIRSOURCES :=
 typelibsdir :=
@@ -91,49 +85,7 @@ CLEANFILES :=
 DISTCLEANFILES :=
 MAINTAINERCLEANFILES :=
 
-webcoregtk_cppflags += \
-	-I$(top_builddir)/DerivedSources/webkit \
-	-I$(srcdir)/WebCore/bindings \
-	-I$(srcdir)/WebCore/bindings/gobject
-
-# CFLAGS/CXXFLAGS used by WebCore and WebKit
-#
-# gtk+.pc already include glib, cairo, freetype and pango CFLAGS
-# Don't include them for now to reduce the noise when compiling
-# $(GLIB_CFLAGS) $(CAIRO_CFLAGS) $(PANGO_CFLAGS)  $(FREETYPE_CFLAGS)
-corekit_cflags += \
-	-fno-strict-aliasing \
-	$(COVERAGE_CFLAGS) \
-	$(ENCHANT_CFLAGS) \
-	$(GAIL_CFLAGS) \
-	$(GEOCLUE_CFLAGS) \
-	$(GLIB_CFLAGS) \
-	$(GSTREAMER_CFLAGS) \
-	$(GTK_CFLAGS) \
-	$(HILDON_CFLAGS) \
-	$(LIBSOUP_CFLAGS) \
-	$(LIBXML_CFLAGS) \
-	$(LIBXSLT_CFLAGS) \
-	$(SQLITE3_CFLAGS) \
-	$(UNICODE_CFLAGS) \
-	$(XT_CFLAGS)
-
-# When building webcore/webkit, we want WebCore/config.h and NOT
-# JavaScriptCore/config.h, hence, it's important that WebCore/ should come first
-# before JavaScriptCore in the include path.
-corekit_cppflags += \
-	$(global_cppflags) \
-	$(webcore_cppflags) \
-	$(webcoregtk_cppflags) \
-	$(javascriptcore_cppflags)
-
-# For the Gtk port we want to use XP_UNIX both in X11 and Mac
-if !TARGET_WIN32
-corekit_cppflags += -DXP_UNIX
-endif
-
-# Default compiler flags
-global_cflags += \
+global_cppflags += \
 	-Wall -W -Wcast-align -Wchar-subscripts -Wreturn-type \
 	-Wformat -Wformat-security -Wno-format-y2k -Wundef \
 	-Wmissing-format-attribute -Wpointer-arith -Wwrite-strings \
@@ -141,7 +93,6 @@ global_cflags += \
 	-fno-exceptions
 
 global_cxxflags += \
-	$(global_cflags) \
 	$(SYMBOL_VISIBILITY_INLINES) \
 	-fno-rtti
 
@@ -163,15 +114,6 @@ lib_LTLIBRARIES += \
 # Convenience libraries
 noinst_LTLIBRARIES += \
 	libJavaScriptCore.la
-
-# JavaScriptCore
-javascriptcore_cppflags += \
-	-I$(srcdir)/JavaScriptCore/ForwardingHeaders \
-	-I$(srcdir)/JavaScriptCore/parser \
-	-I$(srcdir)/JavaScriptCore/wtf \
-	-I$(srcdir)/JavaScriptCore/wtf/gtk \
-	-I$(srcdir)/JavaScriptCore/wtf/gobject \
-	-I$(top_builddir)/DerivedSources/JavaScriptCore
 
 nodist_EXTRA_libJavaScriptCore_la_SOURCES = \
 	$(javascriptcore_built_nosources)
@@ -227,17 +169,53 @@ libwebkitgtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOUR
 	$(webkitgtk_sources)
 
 libwebkitgtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CXXFLAGS = \
-	$(global_cxxflags) \
-	$(corekit_cflags)
+	$(global_cxxflags)
 
 libwebkitgtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CFLAGS = \
-	$(global_cflags) \
-	$(corekit_cflags)
+	$(global_cflags)
 
+# When building WebCore/WebKit, we want WebCore/config.h and NOT JavaScriptCore/config.h,
+# hence, it's important that WebCore/ should come first before JavaScriptCore in the
+# include path.
 libwebkitgtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CPPFLAGS = \
-	$(corekit_cppflags) \
-	$(webkitgtk_cppflags) \
-	$(HILDON_CPPFLAGS)
+	-DBUILDING_WEBKIT \
+	-DPACKAGE_LOCALE_DIR=\"$(localedir)\" \
+	-DDATA_DIR=\"${datadir}\" \
+	-I$(top_builddir)/DerivedSources/webkit \
+	-I$(srcdir)/WebCore/bindings \
+	-I$(srcdir)/WebCore/bindings/gobject \
+	-I$(srcdir)/WebKit/gtk \
+	-I$(srcdir)/WebKit/gtk/WebCoreSupport \
+	-I$(srcdir)/WebKit/gtk/webkit \
+	-I$(top_builddir)/WebKit/gtk \
+	-I$(top_builddir)/WebKit/gtk/webkit \
+	-I$(GENSOURCES_WEBKIT) \
+	$(global_cppflags) \
+	$(webcore_cppflags) \
+	$(webcoregtk_cppflags) \
+	$(javascriptcore_cppflags) \
+	-fno-strict-aliasing \
+	$(HILDON_CPPFLAGS) \
+	$(COVERAGE_CFLAGS) \
+	$(ENCHANT_CFLAGS) \
+	$(GAIL_CFLAGS) \
+	$(GEOCLUE_CFLAGS) \
+	$(GLIB_CFLAGS) \
+	$(GSTREAMER_CFLAGS) \
+	$(GTK_CFLAGS) \
+	$(HILDON_CFLAGS) \
+	$(LIBSOUP_CFLAGS) \
+	$(LIBXML_CFLAGS) \
+	$(LIBXSLT_CFLAGS) \
+	$(SQLITE3_CFLAGS) \
+	$(UNICODE_CFLAGS) \
+	$(XT_CFLAGS)
+
+# For the Gtk port we want to use XP_UNIX both in X11 and Mac
+if !TARGET_WIN32
+libwebkitgtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CPPFLAGS += \
+	-DXP_UNIX
+endif
 
 libwebkitgtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_LDFLAGS = \
 	-version-info @LIBWEBKITGTK_VERSION@ \
@@ -294,7 +272,7 @@ endif
 # GTK+ 2.x/3.x support
 # ----
 if GTK_API_VERSION_2
-global_cflags += \
+global_cppflags += \
 	-DGTK_API_VERSION_2=1
 endif
 
@@ -302,13 +280,12 @@ if !ENABLE_DEBUG
 global_cppflags += -DNDEBUG
 global_cflags += $(SYMBOL_VISIBILITY)
 else
-webcoregtk_cppflags += \
+global_cppflags += \
 	-DG_DISABLE_DEPRECATED \
 	-DGDK_PIXBUF_DISABLE_DEPRECATED \
 	-DGDK_DISABLE_DEPRECATED \
 	-DGTK_DISABLE_DEPRECATED \
 	-DPANGO_DISABLE_DEPRECATED
-
 # Might be useful in the future
 #	-DGDK_MULTIHEAD_SAFE \
 #	-DGTK_MULTIHEAD_SAFE
@@ -823,17 +800,6 @@ gdom_feature_defines := $(filter-out ENABLE-SVG%, $(FEATURE_DEFINES))
 DerivedSources/webkit/WebKitDOM%.cpp DerivedSources/webkit/WebKitDOM%.h DerivedSources/webkit/WebKitDOM%Private.h:: %.idl $(SCRIPTS_BINDINGS) $(WebCore)/bindings/scripts/CodeGeneratorGObject.pm
 	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/generate-bindings.pl --include $(WebCore)/dom --include $(WebCore)/html --include $(WebCore)/css --include $(WebCore)/page --include $(WebCore)/xml --include $(WebCore)/svg --outputDir "$(GENSOURCES_WEBKIT)" --defines "LANGUAGE_GOBJECT=1 $(gdom_feature_defines)" --generator GObject $<
 
-webkitgtk_cppflags += \
-	-DBUILDING_WEBKIT \
-	-DPACKAGE_LOCALE_DIR=\"$(localedir)\" \
-	-DDATA_DIR=\"${datadir}\" \
-	-I$(srcdir)/WebKit/gtk \
-	-I$(srcdir)/WebKit/gtk/WebCoreSupport \
-	-I$(srcdir)/WebKit/gtk/webkit \
-	-I$(top_builddir)/WebKit/gtk \
-	-I$(top_builddir)/WebKit/gtk/webkit \
-	-I$(GENSOURCES_WEBKIT)
-
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = WebKit/gtk/@WEBKITGTK_PC_NAME@-@WEBKITGTK_API_VERSION@.pc
 
@@ -994,6 +960,7 @@ webkit_tests_cflags = \
 	-I$(top_builddir)/DerivedSources \
 	-I$(top_srcdir)/WebCore/bindings \
 	-I$(top_srcdir)/WebCore/bindings/gobject \
+	$(global_cppflags) \
 	$(global_cflags) \
 	$(GLIB_CFLAGS) \
 	$(GTK_CFLAGS) \
@@ -1001,7 +968,7 @@ webkit_tests_cflags = \
 
 webkit_tests_ldadd = \
 	libwebkitgtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
-	$(GTK_LIBS)	\
+	$(GTK_LIBS) \
 	$(GLIB_LIBS) \
 	$(LIBSOUP_LIBS)
 

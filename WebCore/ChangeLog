@@ -1,3 +1,16 @@
+2010-08-26  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] The GNUmakefile.am files contain a myriad of confusing preprocessor and compiler flag definitions
+        https://bugs.webkit.org/show_bug.cgi?id=44624
+
+        Clean up GNUmakefile.am.
+
+        * GNUmakefile.am: Remove some WebKit includes from webcore_cppflags. These
+        includes are added to the build line by the top-level GNUmakefile.am, since
+        WebCore isn't build as an intermediate library.
+
 2010-08-26  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Revert r66103 since Qt tests are failing.

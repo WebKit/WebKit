@@ -1,3 +1,19 @@
+2010-08-26  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] The GNUmakefile.am files contain a myriad of confusing preprocessor and compiler flag definitions
+        https://bugs.webkit.org/show_bug.cgi?id=44624
+
+        Clean up GNUmakefile.am.
+
+        * GNUmakefile.am: Make the comments describing the global_* variables more readable and
+        correct. Move WebKit-specific include lines and definitions out of webkitgtk_cppflags,
+        corekit_cppflags and webcoregtk_cppflags and straight to the appropriate CPPFLAGS definition.
+        Use global_cppflags for compiler flags that apply to both C++ and C code. Move some JavaScriptCore
+        specific includes to the appropriate sub-directory GNUmakefile.am. Make sure the tests build
+        with the global CPP flags as well.
+
 2010-08-25  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Kevin Ollivier.
