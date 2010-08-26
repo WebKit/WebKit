@@ -1,3 +1,14 @@
+2010-08-26  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        A URL in a <param> should be parsed the same as if it were specified as
+        the data attribute of an <object>.
+        https://bugs.webkit.org/show_bug.cgi?id=44671
+
+        * fast/replaced/object-param-url-control-char-expected.txt: Added.
+        * fast/replaced/object-param-url-control-char.html: Added.
+
 2010-08-26  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

@@ -1,3 +1,18 @@
+2010-08-26  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        A URL in a <param> should be parsed the same as if it were specified as
+        the data attribute of an <object>.
+        https://bugs.webkit.org/show_bug.cgi?id=44671
+
+        Test: fast/replaced/object-param-url-control-char.html
+
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::updateWidget): Call deprecatedParseURL()
+        on <param> values of names that we treat as URLs ("src", "movie", "code"
+        and "url").
+
 2010-08-26  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed; build fix.

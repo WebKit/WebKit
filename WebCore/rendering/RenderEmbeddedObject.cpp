@@ -228,7 +228,7 @@ void RenderEmbeddedObject::updateWidget(bool onlyCreateNonNetscapePlugins)
                 HTMLParamElement* p = static_cast<HTMLParamElement*>(child);
                 String name = p->name();
                 if (url.isEmpty() && (equalIgnoringCase(name, "src") || equalIgnoringCase(name, "movie") || equalIgnoringCase(name, "code") || equalIgnoringCase(name, "url")))
-                    url = p->value();
+                    url = deprecatedParseURL(p->value());
                 if (serviceType.isEmpty() && equalIgnoringCase(name, "type")) {
                     serviceType = p->value();
                     size_t pos = serviceType.find(";");
