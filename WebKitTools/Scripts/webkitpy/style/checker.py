@@ -212,6 +212,10 @@ _SKIPPED_FILES_WITH_WARNING = [
     "WebKit/qt/Api/",
     "WebKit/qt/tests/",
     "WebKit/qt/examples/",
+    # Soup API that is still being cooked, will be removed from WebKit
+    # in a few months when it is merged into soup proper. The style
+    # follows the libsoup style completely.
+    "WebCore/platform/network/soup/cache/",
     ]
 
 
