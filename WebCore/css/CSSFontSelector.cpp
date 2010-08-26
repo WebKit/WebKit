@@ -356,16 +356,14 @@ void CSSFontSelector::fontLoaded()
 {
     if (!m_document || m_document->inPageCache() || !m_document->renderer())
         return;
-    m_document->recalcStyle(Document::Force);
-    m_document->renderer()->setNeedsLayoutAndPrefWidthsRecalc();
+    m_document->scheduleForcedStyleRecalc();
 }
 
 void CSSFontSelector::fontCacheInvalidated()
 {
     if (!m_document || m_document->inPageCache() || !m_document->renderer())
         return;
-    m_document->recalcStyle(Document::Force);
-    m_document->renderer()->setNeedsLayoutAndPrefWidthsRecalc();
+    m_document->scheduleForcedStyleRecalc();
 }
 
 static FontData* fontDataForGenericFamily(Document* document, const FontDescription& fontDescription, const AtomicString& familyName)

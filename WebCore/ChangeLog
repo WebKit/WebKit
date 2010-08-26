@@ -1,3 +1,18 @@
+2010-08-26  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39647, font face loads do a synchronous recalcStyle(Force)
+        on the whole document.  Change these calls to do async recalcStyles instead.
+
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::fontLoaded):
+        (WebCore::CSSFontSelector::fontCacheInvalidated):
+        * dom/Document.cpp:
+        (WebCore::Document::scheduleForcedStyleRecalc):
+        (WebCore::Document::styleSelectorChanged):
+        * dom/Document.h:
+
 2010-08-26  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Martin Robinson.
