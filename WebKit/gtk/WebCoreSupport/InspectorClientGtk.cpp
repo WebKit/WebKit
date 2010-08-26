@@ -36,7 +36,7 @@ namespace WebKit {
 
 static void notifyWebViewDestroyed(WebKitWebView* webView, InspectorFrontendClient* inspectorFrontendClient)
 {
-    inspectorFrontendClient->destroyInspectorWindow(true);
+    inspectorFrontendClient->destroyInspectorWindow();
 }
 
 InspectorClient::InspectorClient(WebKitWebView* webView)
@@ -274,7 +274,7 @@ InspectorFrontendClient::~InspectorFrontendClient()
     ASSERT(!m_webInspector);
 }
 
-void InspectorFrontendClient::destroyInspectorWindow(bool notifyInspectorController)
+void InspectorFrontendClient::destroyInspectorWindow()
 {
     if (!m_webInspector)
         return;
@@ -284,8 +284,7 @@ void InspectorFrontendClient::destroyInspectorWindow(bool notifyInspectorControl
     g_signal_handlers_disconnect_by_func(m_inspectorWebView, (gpointer)notifyWebViewDestroyed, (gpointer)this);
     m_inspectorWebView = 0;
 
-    if (notifyInspectorController)
-        core(m_inspectedWebView)->inspectorController()->disconnectFrontend();
+    core(m_inspectedWebView)->inspectorController()->disconnectFrontend();
 
     if (m_inspectorClient)
         m_inspectorClient->releaseFrontendPage();
@@ -327,12 +326,7 @@ void InspectorFrontendClient::bringToFront()
 
 void InspectorFrontendClient::closeWindow()
 {
-    destroyInspectorWindow(true);
-}
-
-void InspectorFrontendClient::disconnectFromBackend()
-{
-    destroyInspectorWindow(false);
+    destroyInspectorWindow();
 }
 
 void InspectorFrontendClient::attachWindow()

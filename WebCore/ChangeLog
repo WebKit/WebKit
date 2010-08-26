@@ -1,5 +1,21 @@
 2010-08-26  Yury Semikhatsky  <yurys@chromium.org>
 
+        Unreviewed. Revert r66103 since Qt tests are failing.
+
+        * inspector/Inspector.idl:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::inspectedPageDestroyed):
+        (WebCore::InspectorController::close):
+        * inspector/InspectorFrontendClient.h:
+        * inspector/InspectorFrontendHost.cpp:
+        * inspector/InspectorFrontendHost.h:
+        * inspector/InspectorFrontendHost.idl:
+        * inspector/front-end/InspectorFrontendHostStub.js:
+        * inspector/front-end/inspector.js:
+        (WebInspector.inspectedPageDestroyed):
+
+2010-08-26  Yury Semikhatsky  <yurys@chromium.org>
+
         Reviewed by Pavel Feldman.
 
         REGRESSION: Crash occurs at objc_msgSend when closing a window that is displaying the web inspector
