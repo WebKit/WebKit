@@ -271,8 +271,6 @@ static ALWAYS_INLINE uint32_t* storeInc(uint32_t* p, uint16_t high, uint16_t low
 #endif
 #endif
 
-#define Kmax 15
-
 struct BigInt {
     BigInt() : sign(0) { }
     int sign;
@@ -349,11 +347,6 @@ static void multadd(BigInt& b, int m, int a)    /* multiply by m and add a */
 
 static void s2b(BigInt& b, const char* s, int nd0, int nd, uint32_t y9)
 {
-    int k;
-    int32_t y;
-    int32_t x = (nd + 8) / 9;
-
-    for (k = 0, y = 1; x > y; y <<= 1, k++) { }
 #ifdef Pack_32
     b.sign = 0;
     b.resize(1);

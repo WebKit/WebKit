@@ -1,3 +1,15 @@
+2010-08-25  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Kent Tamura.
+
+        Local variables 'k' and 'y' in s2b() in dtoa.cpp are computed but not used
+        https://bugs.webkit.org/show_bug.cgi?id=29259
+
+        Remove unused code in dtoa.cpp, spotted by Wan-Teh Chang.
+
+        * wtf/dtoa.cpp:
+        (WTF::s2b):
+
 2010-08-25  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Kevin Ollivier.
