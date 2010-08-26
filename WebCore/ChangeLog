@@ -1,3 +1,11 @@
+2010-08-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed; build fix.
+
+        Speculative chromium mac fix by including "Color.h".
+
+        * platform/graphics/chromium/Shader.cpp:
+
 2010-08-26  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt.

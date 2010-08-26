@@ -32,6 +32,7 @@
 #include "Shader.h"
 
 #include "AffineTransform.h"
+#include "Color.h"
 #include "GraphicsContext3D.h"
 
 #include <wtf/text/CString.h>
