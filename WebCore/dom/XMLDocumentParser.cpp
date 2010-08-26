@@ -231,7 +231,7 @@ void XMLDocumentParser::end()
         insertErrorMessageBlock();
     else {
         exitText();
-        document()->updateStyleSelector();
+        document()->styleSelectorChanged(RecalcStyleImmediately);
     }
 
     clearCurrentNodeStack();

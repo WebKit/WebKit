@@ -1,3 +1,61 @@
+2010-08-25  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/8302217> recalcStyles called immediately on each change when updating document-level stylesheets
+        https://bugs.webkit.org/show_bug.cgi?id=36303
+
+        Parameterize updateStyleSelector to optionally defer the forced style recalc following the rebuilding of the
+        sheets used by the CSSStyleSelector.  Rename the method to styleSelectorChanged().  Add the capability to do 
+        a forced style recalc to the style recalc timer.
+
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::setNeedsStyleRecalc):
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::styleSheetChanged):
+        * css/CSSVariablesDeclaration.cpp:
+        (WebCore::CSSVariablesDeclaration::setNeedsStyleRecalc):
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::scheduleStyleRecalc):
+        (WebCore::Document::updateStyleIfNeeded):
+        (WebCore::Document::updateLayoutIgnorePendingStylesheets):
+        (WebCore::Document::clearPageUserSheet):
+        (WebCore::Document::clearPageGroupUserSheets):
+        (WebCore::Document::processHttpEquiv):
+        (WebCore::Document::setSelectedStylesheetSet):
+        (WebCore::Document::removePendingSheet):
+        (WebCore::Document::styleSelectorChanged):
+        (WebCore::Document::setInPageCache):
+        * dom/Document.h:
+        (WebCore::):
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::removedFromDocument):
+        * dom/StyleElement.cpp:
+        (WebCore::StyleElement::removedFromDocument):
+        * dom/XMLDocumentParser.cpp:
+        (WebCore::XMLDocumentParser::end):
+        * dom/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::doEnd):
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::determineParseMode):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::setDisabledState):
+        (WebCore::HTMLLinkElement::process):
+        (WebCore::HTMLLinkElement::removedFromDocument):
+        * page/Frame.cpp:
+        (WebCore::Frame::setPrinting):
+        (WebCore::Frame::reapplyStyles):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        * page/Page.cpp:
+        (WebCore::Page::setViewMode):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::setDesiredColumnCountAndWidth):
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::SVGFontFaceElement::rebuildFontFace):
+        (WebCore::SVGFontFaceElement::removeFromMappedElementSheet):
+
 2010-08-24  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Reviewed by Kenneth Russell.

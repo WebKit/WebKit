@@ -623,7 +623,7 @@ void Frame::setPrinting(bool printing, const FloatSize& pageSize, float maximumS
     m_doc->setPrinting(printing);
     view()->adjustMediaTypeForPrinting(printing);
 
-    m_doc->updateStyleSelector();
+    m_doc->styleSelectorChanged(RecalcStyleImmediately);
     view()->forceLayoutForPagination(pageSize, maximumShrinkRatio, shouldAdjustViewSize);
 
     for (Frame* child = tree()->firstChild(); child; child = child->tree()->nextSibling())
@@ -661,7 +661,7 @@ void Frame::reapplyStyles()
     // The document automatically does this as required when you set the style sheet.
     // But we had problems when this code was removed. Details are in
     // <http://bugs.webkit.org/show_bug.cgi?id=8079>.
-    m_doc->updateStyleSelector();
+    m_doc->styleSelectorChanged(RecalcStyleImmediately);
 }
 
 void Frame::injectUserScripts(UserScriptInjectionTime injectionTime)

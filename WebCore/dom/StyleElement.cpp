@@ -67,9 +67,8 @@ void StyleElement::removedFromDocument(Document* document, Element* element)
     if (!document->renderer())
         return;
 
-    // FIXME: It's terrible to do a synchronous update of the style selector just because a <style> or <link> element got removed.
     if (m_sheet)
-        document->updateStyleSelector();
+        document->styleSelectorChanged(DeferRecalcStyle);
 }
 
 void StyleElement::childrenChanged(Element* element)

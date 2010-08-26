@@ -103,7 +103,7 @@ void HTMLLinkElement::setDisabledState(bool _disabled)
         if (!m_sheet && m_disabledState == EnabledViaScript)
             process();
         else
-            document()->updateStyleSelector(); // Update the style selector.
+            document()->styleSelectorChanged(DeferRecalcStyle); // Update the style selector.
     }
 }
 
@@ -238,7 +238,7 @@ void HTMLLinkElement::process()
     } else if (m_sheet) {
         // we no longer contain a stylesheet, e.g. perhaps rel or type was changed
         m_sheet = 0;
-        document()->updateStyleSelector();
+        document()->styleSelectorChanged(DeferRecalcStyle);
     }
 }
 
@@ -256,9 +256,8 @@ void HTMLLinkElement::removedFromDocument()
 
     document()->removeStyleSheetCandidateNode(this);
 
-    // FIXME: It's terrible to do a synchronous update of the style selector just because a <style> or <link> element got removed.
     if (document()->renderer())
-        document()->updateStyleSelector();
+        document()->styleSelectorChanged(DeferRecalcStyle);
 }
 
 void HTMLLinkElement::finishParsingChildren()

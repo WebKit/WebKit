@@ -648,14 +648,14 @@ void FrameView::layout(bool allowSubtree)
     // Viewport-dependent media queries may cause us to need completely different style information.
     // Check that here.
     if (document->styleSelector()->affectedByViewportChange())
-        document->updateStyleSelector();
+        document->styleSelectorChanged(RecalcStyleImmediately);
 
     // Always ensure our style info is up-to-date.  This can happen in situations where
     // the layout beats any sort of style recalc update that needs to occur.
     if (m_frame->needsReapplyStyles())
         m_frame->reapplyStyles();
-    else if (document->childNeedsStyleRecalc())
-        document->recalcStyle();
+    else
+        document->updateStyleIfNeeded();
     
     bool subtree = m_layoutRoot;
 

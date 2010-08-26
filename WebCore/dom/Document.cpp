@@ -356,6 +356,7 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     , m_domTreeVersion(0)
     , m_styleSheets(StyleSheetList::create(this))
     , m_styleRecalcTimer(this, &Document::styleRecalcTimerFired)
+    , m_pendingStyleRecalcShouldForce(false)
     , m_frameElementsShouldIgnoreScrolling(false)
     , m_containsValidityStyleRules(false)
     , m_updateFocusAppearanceRestoresSelection(false)
@@ -1364,7 +1365,7 @@ void Document::scheduleStyleRecalc()
     if (m_styleRecalcTimer.isActive() || inPageCache())
         return;
 
-    ASSERT(childNeedsStyleRecalc());
+    ASSERT(childNeedsStyleRecalc() || m_pendingStyleRecalcShouldForce);
 
     if (!documentsThatNeedStyleRecalc)
         documentsThatNeedStyleRecalc = new HashSet<Document*>;
@@ -1475,14 +1476,16 @@ void Document::updateStyleIfNeeded()
 {
     ASSERT(!view() || (!view()->isInLayout() && !view()->isPainting()));
     
-    if (!childNeedsStyleRecalc() || inPageCache())
+    if ((!m_pendingStyleRecalcShouldForce && !childNeedsStyleRecalc()) || inPageCache())
         return;
-        
+
     if (m_frame)
         m_frame->animation()->beginAnimationUpdate();
         
-    recalcStyle(NoChange);
+    recalcStyle(m_pendingStyleRecalcShouldForce ? Force : NoChange);
     
+    m_pendingStyleRecalcShouldForce = false;
+
     // Tell the animation controller that updateStyleIfNeeded is finished and it can do any post-processing
     if (m_frame)
         m_frame->animation()->endAnimationUpdate();
@@ -1497,7 +1500,6 @@ void Document::updateStyleForAllDocuments()
         HashSet<Document*>::iterator it = documentsThatNeedStyleRecalc->begin();
         Document* doc = *it;
         documentsThatNeedStyleRecalc->remove(doc);
-        ASSERT(doc->childNeedsStyleRecalc() && !doc->inPageCache());
         doc->updateStyleIfNeeded();
     }
 }
@@ -1535,7 +1537,7 @@ void Document::updateLayoutIgnorePendingStylesheets()
         // suspend JS instead of doing a layout with inaccurate information.
         if (body() && !body()->renderer() && m_pendingSheetLayout == NoLayoutWithPendingSheets) {
             m_pendingSheetLayout = DidLayoutWithPendingSheets;
-            updateStyleSelector();
+            styleSelectorChanged(RecalcStyleImmediately);
         } else if (m_hasNodesWithPlaceholderStyle)
             // If new nodes have been added or style recalc has been done with style sheets still pending, some nodes 
             // may not have had their real style calculated yet. Normally this gets cleaned when style sheets arrive 
@@ -2221,7 +2223,7 @@ CSSStyleSheet* Document::pageUserSheet()
 void Document::clearPageUserSheet()
 {
     m_pageUserSheet = 0;
-    updateStyleSelector();
+    styleSelectorChanged(DeferRecalcStyle);
 }
 
 const Vector<RefPtr<CSSStyleSheet> >* Document::pageGroupUserSheets() const
@@ -2265,7 +2267,7 @@ void Document::clearPageGroupUserSheets()
 {
     m_pageGroupUserSheets.clear();
     m_pageGroupUserSheetCacheValid = false;
-    updateStyleSelector();
+    styleSelectorChanged(DeferRecalcStyle);
 }
 
 CSSStyleSheet* Document::elementSheet()
@@ -2427,7 +2429,7 @@ void Document::processHttpEquiv(const String& equiv, const String& content)
         // -dwh
         m_selectedStylesheetSet = content;
         m_preferredStylesheetSet = content;
-        updateStyleSelector();
+        styleSelectorChanged(DeferRecalcStyle);
     } else if (equalIgnoringCase(equiv, "refresh")) {
         double delay;
         String url;
@@ -2688,9 +2690,7 @@ String Document::selectedStylesheetSet() const
 void Document::setSelectedStylesheetSet(const String& aString)
 {
     m_selectedStylesheetSet = aString;
-    updateStyleSelector();
-    if (renderer())
-        renderer()->repaint();
+    styleSelectorChanged(DeferRecalcStyle);
 }
 
 // This method is called whenever a top-level stylesheet has finished loading.
@@ -2706,28 +2706,25 @@ void Document::removePendingSheet()
         printf("Stylesheet loaded at time %d. %d stylesheets still remain.\n", elapsedTime(), m_pendingStylesheets);
 #endif
 
-    updateStyleSelector();
+    styleSelectorChanged(RecalcStyleImmediately);
+
+    if (m_pendingStylesheets)
+        return;
 
     ScriptableDocumentParser* parser = scriptableDocumentParser();
-    if (!m_pendingStylesheets && parser)
+    if (parser)
         parser->executeScriptsWaitingForStylesheets();
 
-    if (!m_pendingStylesheets && m_gotoAnchorNeededAfterStylesheetsLoad && view())
+    if (m_gotoAnchorNeededAfterStylesheetsLoad && view())
         view()->scrollToFragment(m_frame->loader()->url());
 }
 
-void Document::updateStyleSelector()
+void Document::styleSelectorChanged(StyleSelectorUpdateFlag updateFlag)
 {
     // Don't bother updating, since we haven't loaded all our style info yet
     // and haven't calculated the style selector for the first time.
-    if (!m_didCalculateStyleSelector && !haveStylesheetsLoaded())
+    if (!attached() || (!m_didCalculateStyleSelector && !haveStylesheetsLoaded()))
         return;
-
-    if (didLayoutWithPendingStylesheets() && m_pendingStylesheets <= 0) {
-        m_pendingSheetLayout = IgnoreLayoutWithPendingSheets;
-        if (renderer())
-            renderer()->repaint();
-    }
 
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
     if (!ownerElement())
@@ -2735,6 +2732,19 @@ void Document::updateStyleSelector()
 #endif
 
     recalcStyleSelector();
+    
+    if (updateFlag == DeferRecalcStyle) {
+        m_pendingStyleRecalcShouldForce = true;
+        scheduleStyleRecalc();
+        return;
+    }
+    
+    if (didLayoutWithPendingStylesheets() && m_pendingStylesheets <= 0) {
+        m_pendingSheetLayout = IgnoreLayoutWithPendingSheets;
+        if (renderer())
+            renderer()->repaint();
+    }
+
     // This recalcStyle initiates a new recalc cycle. We need to bracket it to
     // make sure animations get the correct update time
     if (m_frame)
@@ -3709,7 +3719,7 @@ void Document::setInPageCache(bool flag)
         m_savedRenderer = renderer();
         if (FrameView* v = view())
             v->resetScrollbars();
-        unscheduleStyleRecalc();
+        m_styleRecalcTimer.stop();
     } else {
         ASSERT(!renderer() || renderer() == m_savedRenderer);
         ASSERT(m_renderArena);

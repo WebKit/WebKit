@@ -259,7 +259,7 @@ void Page::setViewMode(ViewMode viewMode)
         m_mainFrame->view()->forceLayout();
 
     if (m_mainFrame->document())
-        m_mainFrame->document()->updateStyleSelector();
+        m_mainFrame->document()->styleSelectorChanged(RecalcStyleImmediately);
 }
 
 void Page::setMainFrame(PassRefPtr<Frame> mainFrame)

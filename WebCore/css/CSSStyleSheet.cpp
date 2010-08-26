@@ -231,7 +231,7 @@ void CSSStyleSheet::styleSheetChanged()
      * already existing style sheets.
      */
     if (documentToUpdate)
-        documentToUpdate->updateStyleSelector();
+        documentToUpdate->styleSelectorChanged(DeferRecalcStyle);
 }
 
 KURL CSSStyleSheet::completeURL(const String& url) const
