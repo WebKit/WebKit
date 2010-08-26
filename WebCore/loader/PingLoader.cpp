@@ -53,7 +53,7 @@ void PingLoader::loadImage(Frame* frame, const KURL& url)
     if (!SecurityOrigin::shouldHideReferrer(request.url(), frame->loader()->outgoingReferrer()))
         request.setHTTPReferrer(frame->loader()->outgoingReferrer());
     frame->loader()->addExtraFieldsToSubresourceRequest(request);
-    OwnPtr<PingLoader> pingLoader(new PingLoader(frame, request));
+    OwnPtr<PingLoader> pingLoader = adoptPtr(new PingLoader(frame, request));
     
     // Leak the ping loader, since it will kill itself as soon as it receives a response.
     PingLoader* leakedPingLoader = pingLoader.leakPtr();

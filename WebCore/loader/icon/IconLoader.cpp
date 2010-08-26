@@ -51,7 +51,7 @@ IconLoader::IconLoader(Frame* frame)
 
 PassOwnPtr<IconLoader> IconLoader::create(Frame* frame)
 {
-    return new IconLoader(frame);
+    return adoptPtr(new IconLoader(frame));
 }
 
 IconLoader::~IconLoader()

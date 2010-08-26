@@ -1,3 +1,44 @@
+2010-08-26  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        Deploy adoptPtr to WebCore/loader
+        https://bugs.webkit.org/show_bug.cgi?id=44591
+
+        This patch covers the easy cases.  There are a handful of tougher cases
+        that I'm leaving to a future patch.  I filed one bug about a possible
+        memory leak and I emailed webkit-dev about some infrastructure we'll
+        need to tackle some of the harder cases.
+
+        * loader/CrossOriginAccessControl.cpp:
+        (WebCore::createAllowedCrossOriginResponseHeadersSet):
+        (WebCore::isOnAccessControlResponseHeaderWhitelist):
+        * loader/DocLoader.cpp:
+        (WebCore::DocLoader::requestPreload):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::DocumentLoader):
+        (WebCore::DocumentLoader::addAllArchiveResources):
+        (WebCore::DocumentLoader::addArchiveResource):
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::DocumentThreadableLoader):
+        (WebCore::DocumentThreadableLoader::didReceiveResponse):
+        * loader/PingLoader.cpp:
+        (WebCore::PingLoader::loadImage):
+        * loader/ProgressTracker.cpp:
+        (WebCore::ProgressTracker::incrementProgress):
+        * loader/RedirectScheduler.cpp:
+        (WebCore::RedirectScheduler::scheduleRedirect):
+        (WebCore::RedirectScheduler::scheduleLocationChange):
+        (WebCore::RedirectScheduler::scheduleFormSubmission):
+        (WebCore::RedirectScheduler::scheduleRefresh):
+        (WebCore::RedirectScheduler::scheduleHistoryNavigation):
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didReceiveData):
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::readySQLiteStatement):
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::create):
+
 2010-08-26  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Dan Bernstein.

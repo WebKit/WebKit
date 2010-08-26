@@ -71,9 +71,9 @@ bool isSimpleCrossOriginAccessRequest(const String& method, const HTTPHeaderMap&
 }
 
 typedef HashSet<String, CaseFoldingHash> HTTPHeaderSet;
-static HTTPHeaderSet* createAllowedCrossOriginResponseHeadersSet()
+static PassOwnPtr<HTTPHeaderSet> createAllowedCrossOriginResponseHeadersSet()
 {
-    HTTPHeaderSet* headerSet = new HashSet<String, CaseFoldingHash>;
+    OwnPtr<HTTPHeaderSet> headerSet = adoptPtr(new HashSet<String, CaseFoldingHash>);
     
     headerSet->add("cache-control");
     headerSet->add("content-language");
@@ -82,12 +82,12 @@ static HTTPHeaderSet* createAllowedCrossOriginResponseHeadersSet()
     headerSet->add("last-modified");
     headerSet->add("pragma");
 
-    return headerSet;
+    return headerSet.release();
 }
 
 bool isOnAccessControlResponseHeaderWhitelist(const String& name)
 {
-    AtomicallyInitializedStatic(HTTPHeaderSet*, allowedCrossOriginResponseHeaders = createAllowedCrossOriginResponseHeadersSet());
+    AtomicallyInitializedStatic(HTTPHeaderSet*, allowedCrossOriginResponseHeaders = createAllowedCrossOriginResponseHeadersSet().leakPtr());
 
     return allowedCrossOriginResponseHeaders->contains(name);
 }
