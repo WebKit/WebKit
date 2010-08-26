@@ -1,3 +1,18 @@
+2010-08-25  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Simon Fraser.
+
+        Source data passed to TypedArray creators should be const
+        https://bugs.webkit.org/show_bug.cgi?id=44649
+
+        Compiled and ran existing WebGL tests to verify.
+
+        * html/canvas/Float32Array.cpp:
+        (WebCore::Float32Array::create):
+        * html/canvas/Float32Array.h:
+        * html/canvas/TypedArrayBase.h:
+        (WebCore::TypedArrayBase::create):
+
 2010-08-25  Eric Seidel  <eric@webkit.org>
 
         Unreviewed, just removing a dead enum.

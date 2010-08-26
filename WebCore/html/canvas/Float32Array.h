@@ -35,7 +35,7 @@ namespace WebCore {
 class Float32Array : public TypedArrayBase<float> {
   public:
     static PassRefPtr<Float32Array> create(unsigned length);
-    static PassRefPtr<Float32Array> create(float* array, unsigned length);
+    static PassRefPtr<Float32Array> create(const float* array, unsigned length);
     static PassRefPtr<Float32Array> create(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length);
 
     using TypedArrayBase<float>::set;

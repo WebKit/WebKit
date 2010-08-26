@@ -37,7 +37,7 @@ PassRefPtr<Float32Array> Float32Array::create(unsigned length)
     return TypedArrayBase<float>::create<Float32Array>(length);
 }
 
-PassRefPtr<Float32Array> Float32Array::create(float* array, unsigned length)
+PassRefPtr<Float32Array> Float32Array::create(const float* array, unsigned length)
 {
     return TypedArrayBase<float>::create<Float32Array>(array, length);
 }
