@@ -81,10 +81,6 @@ public:
     WebCore::Page* corePage() const { return m_page; }
     uint64_t pageID() const { return m_pageID; }
 
-    WebFrame* webFrame(uint64_t) const;
-    void addWebFrame(uint64_t, WebFrame*);
-    void removeWebFrame(uint64_t);
-
     void setSize(const WebCore::IntSize&);
     const WebCore::IntSize& size() const { return m_viewSize; }
 
@@ -170,7 +166,6 @@ private:
 
     WebCore::Page* m_page;
     RefPtr<WebFrame> m_mainFrame;
-    HashMap<uint64_t, WebFrame*> m_frameMap;
 
     String m_customUserAgent;
 

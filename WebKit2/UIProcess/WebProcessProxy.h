@@ -87,6 +87,12 @@ public:
     bool isValid() const { return m_connection; }
     bool isLaunching() const { return m_processLauncher && m_processLauncher->isLaunching(); }
 
+    WebFrameProxy* webFrame(uint64_t) const;
+    void frameCreated(uint64_t, WebFrameProxy*);
+    void frameDestroyed(uint64_t);
+    void disconnectFramesFromPage(WebPageProxy*); // Including main frame.
+    size_t frameCountInPage(WebPageProxy*) const; // Including main frame.
+
 private:
     explicit WebProcessProxy(WebContext*);
 
@@ -129,6 +135,8 @@ private:
 
     // NOTE: This map is for WebBackForwardListItems in all WebPageNamespaces and WebPageProxies that use this process.
     WebBackForwardListItemMap m_backForwardListItemMap;
+
+    HashMap<uint64_t, RefPtr<WebFrameProxy> > m_frameMap;
 };
 
 template<typename E, typename T>

@@ -29,6 +29,7 @@
 #include "InjectedBundleScriptWorld.h"
 #include "WebChromeClient.h"
 #include "WebPage.h"
+#include "WebProcess.h"
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/JSLock.h>
 #include <WebCore/AnimationController.h>
@@ -94,7 +95,7 @@ WebFrame::WebFrame(WebPage* page, const String& frameName, HTMLFrameOwnerElement
     , m_loadListener(0)
     , m_frameID(generateFrameID())
 {
-    page->addWebFrame(m_frameID, this);
+    WebProcess::shared().addWebFrame(m_frameID, this);
 
     RefPtr<Frame> frame = Frame::create(page->corePage(), ownerElement, &m_frameLoaderClient);
     m_coreFrame = frame.get();
@@ -135,8 +136,7 @@ WebPage* WebFrame::page() const
 
 void WebFrame::invalidate()
 {
-    if (WebPage* p = page())
-        p->removeWebFrame(m_frameID);
+    WebProcess::shared().removeWebFrame(m_frameID);
     m_coreFrame = 0;
 }
 

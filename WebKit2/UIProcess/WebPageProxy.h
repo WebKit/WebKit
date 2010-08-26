@@ -84,7 +84,6 @@ public:
 
     uint64_t pageID() const { return m_pageID; }
 
-    WebFrameProxy* webFrame(uint64_t) const;
     WebFrameProxy* mainFrame() const { return m_mainFrame.get(); }
 
     DrawingAreaProxy* drawingArea() { return m_drawingArea.get(); }
@@ -231,7 +230,6 @@ private:
     OwnPtr<DrawingAreaProxy> m_drawingArea;
     RefPtr<WebPageNamespace> m_pageNamespace;
     RefPtr<WebFrameProxy> m_mainFrame;
-    HashMap<uint64_t, RefPtr<WebFrameProxy> > m_frameMap;
     WTF::String m_pageTitle;
 
     HashMap<uint64_t, RefPtr<ScriptReturnValueCallback> > m_scriptReturnValueCallbacks;

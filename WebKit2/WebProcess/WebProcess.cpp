@@ -350,4 +350,20 @@ void WebProcess::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::Message
     // we'll let it slide.
 }
 
+WebFrame* WebProcess::webFrame(uint64_t frameID) const
+{
+    return m_frameMap.get(frameID);
+}
+
+void WebProcess::addWebFrame(uint64_t frameID, WebFrame* frame)
+{
+    m_frameMap.set(frameID, frame);
+}
+
+void WebProcess::removeWebFrame(uint64_t frameID)
+{
+    m_frameMap.remove(frameID);
+    m_connection->send(WebProcessProxyMessage::DidDestroyFrame, 0, CoreIPC::In(frameID));
+}
+
 } // namespace WebKit

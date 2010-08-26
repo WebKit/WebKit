@@ -253,11 +253,7 @@ void WebProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC
                 if (!arguments->decode(CoreIPC::Out(pageID, store, frameID)))
                     return;
 
-                WebPageProxy* page = webPage(pageID);
-                if (!page)
-                    return;
-                
-                m_context->didNavigateWithNavigationData(page->webFrame(frameID), store);
+                m_context->didNavigateWithNavigationData(webFrame(frameID), store);
                 break;
             }
             case WebProcessProxyMessage::DidPerformClientRedirect: {
@@ -268,11 +264,7 @@ void WebProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC
                 if (!arguments->decode(CoreIPC::Out(pageID, sourceURLString, destinationURLString, frameID)))
                     return;
 
-                WebPageProxy* page = webPage(pageID);
-                if (!page)
-                    return;
-
-                m_context->didPerformClientRedirect(page->webFrame(frameID), sourceURLString, destinationURLString);
+                m_context->didPerformClientRedirect(webFrame(frameID), sourceURLString, destinationURLString);
                 break;
             }
             case WebProcessProxyMessage::DidPerformServerRedirect: {
@@ -283,11 +275,7 @@ void WebProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC
                 if (!arguments->decode(CoreIPC::Out(pageID, sourceURLString, destinationURLString, frameID)))
                     return;
 
-                WebPageProxy* page = webPage(pageID);
-                if (!page)
-                    return;
-
-                m_context->didPerformServerRedirect(page->webFrame(frameID), sourceURLString, destinationURLString);
+                m_context->didPerformServerRedirect(webFrame(frameID), sourceURLString, destinationURLString);
                 break;
             }
             case WebProcessProxyMessage::DidUpdateHistoryTitle: {
@@ -298,11 +286,15 @@ void WebProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC
                 if (!arguments->decode(CoreIPC::Out(pageID, title, url, frameID)))
                     return;
 
-                WebPageProxy* page = webPage(pageID);
-                if (!page)
+                m_context->didUpdateHistoryTitle(webFrame(frameID), title, url);
+                break;
+            }
+            case WebProcessProxyMessage::DidDestroyFrame: {
+                uint64_t frameID;
+                if (!arguments->decode(CoreIPC::Out(frameID)))
                     return;
 
-                m_context->didUpdateHistoryTitle(page->webFrame(frameID), title, url);
+                frameDestroyed(frameID);
                 break;
             }
 
@@ -367,6 +359,7 @@ void WebProcessProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, Cor
             case WebProcessProxyMessage::DidUpdateHistoryTitle:
             case WebProcessProxyMessage::AddBackForwardItem:
             case WebProcessProxyMessage::AddVisitedLink:
+            case WebProcessProxyMessage::DidDestroyFrame:
                 ASSERT_NOT_REACHED();
                 break;
         }
@@ -387,6 +380,13 @@ void WebProcessProxy::didClose(CoreIPC::Connection*)
 {
     m_connection = 0;
     m_responsivenessTimer.stop();
+
+    Vector<RefPtr<WebFrameProxy> > frames;
+    copyValuesToVector(m_frameMap, frames);
+
+    for (size_t i = 0, size = frames.size(); i < size; ++i)
+        frames[i]->disconnect();
+    m_frameMap.clear();
 
     Vector<RefPtr<WebPageProxy> > pages;
     copyValuesToVector(m_pageMap, pages);
@@ -438,6 +438,43 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher*, const CoreIPC::Connec
 
     // Tell the context that we finished launching.
     m_context->processDidFinishLaunching(this);
+}
+
+WebFrameProxy* WebProcessProxy::webFrame(uint64_t frameID) const
+{
+    return m_frameMap.get(frameID).get();
+}
+
+void WebProcessProxy::frameCreated(uint64_t frameID, WebFrameProxy* frameProxy)
+{
+    ASSERT(!m_frameMap.contains(frameID));
+    m_frameMap.set(frameID, frameProxy);
+}
+
+void WebProcessProxy::frameDestroyed(uint64_t frameID)
+{
+    ASSERT(m_frameMap.contains(frameID));
+    m_frameMap.remove(frameID);
+}
+
+void WebProcessProxy::disconnectFramesFromPage(WebPageProxy* page)
+{
+    Vector<RefPtr<WebFrameProxy> > frames;
+    copyValuesToVector(m_frameMap, frames);
+    for (size_t i = 0, size = frames.size(); i < size; ++i) {
+        if (frames[i]->page() == page)
+            frames[i]->disconnect();
+    }
+}
+
+size_t WebProcessProxy::frameCountInPage(WebPageProxy* page) const
+{
+    size_t result = 0;
+    for (HashMap<uint64_t, RefPtr<WebFrameProxy> >::const_iterator iter = m_frameMap.begin(); iter != m_frameMap.end(); ++iter) {
+        if (iter->second->page() == page)
+            ++result;
+    }
+    return result;
 }
 
 } // namespace WebKit

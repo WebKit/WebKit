@@ -208,21 +208,6 @@ void WebPage::exitAcceleratedCompositingMode()
 }
 #endif
 
-WebFrame* WebPage::webFrame(uint64_t frameID) const
-{
-    return m_frameMap.get(frameID);
-}
-
-void WebPage::addWebFrame(uint64_t frameID, WebFrame* frame)
-{
-    m_frameMap.set(frameID, frame);
-}
-
-void WebPage::removeWebFrame(uint64_t frameID)
-{
-    m_frameMap.remove(frameID);
-}
-
 void WebPage::close()
 {
     if (WebProcess::shared().injectedBundle())
@@ -656,7 +641,7 @@ void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Messag
             uint32_t policyAction;
             if (!arguments->decode(CoreIPC::Out(frameID, listenerID, policyAction)))
                 return;
-            didReceivePolicyDecision(webFrame(frameID), listenerID, (WebCore::PolicyAction)policyAction);
+            didReceivePolicyDecision(WebProcess::shared().webFrame(frameID), listenerID, (WebCore::PolicyAction)policyAction);
             return;
         }
         case WebPageMessage::RunJavaScriptInMainFrame: {

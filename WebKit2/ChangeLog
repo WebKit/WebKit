@@ -1,3 +1,46 @@
+2010-08-26  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=44726
+        <rdar://problem/7935518> WebFrameProxies aren't destroyed until a page is destroyed
+
+        Since frames can be moved across documents, they are not really a Page level concept.
+        Moved frame tracking to WebProcess/WebProcessProxy.
+
+        * Shared/CoreIPCSupport/WebProcessProxyMessageKinds.h:
+        (WebProcessProxyMessage::):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::close):
+        (WebKit::WebPageProxy::getStatistics):
+        (WebKit::WebPageProxy::didReceiveMessage):
+        (WebKit::WebPageProxy::didReceiveSyncMessage):
+        (WebKit::WebPageProxy::didCreateMainFrame):
+        (WebKit::WebPageProxy::didCreateSubFrame):
+        (WebKit::WebPageProxy::processDidExit):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didReceiveMessage):
+        (WebKit::WebProcessProxy::didReceiveSyncMessage):
+        (WebKit::WebProcessProxy::didClose):
+        (WebKit::WebProcessProxy::webFrame):
+        (WebKit::WebProcessProxy::frameCreated):
+        (WebKit::WebProcessProxy::frameDestroyed):
+        (WebKit::WebProcessProxy::disconnectFramesFromPage):
+        (WebKit::WebProcessProxy::frameCountInPage):
+        * UIProcess/WebProcessProxy.h:
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::WebFrame):
+        (WebKit::WebFrame::invalidate):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didReceiveMessage):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::webFrame):
+        (WebKit::WebProcess::addWebFrame):
+        (WebKit::WebProcess::removeWebFrame):
+        * WebProcess/WebProcess.h:
+
 2010-08-26  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.
