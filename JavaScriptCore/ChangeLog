@@ -1,3 +1,13 @@
+2010-08-26  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        Bug 44655 - Add debug only convenience methods to obtain a Vector<char> from a String/StringImpl.
+
+        * wtf/text/WTFString.cpp:
+        (asciiDebug):
+            Return a Vector<char> containing the contents of a string as ASCII.
+
 2010-08-26  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.

@@ -985,11 +985,38 @@ unsigned numberToString(double x, NumberToStringBuffer& buffer)
 } // namespace WTF
 
 #ifndef NDEBUG
-// For use in the debugger - leaks memory
+// For use in the debugger
 String* string(const char*);
+Vector<char> asciiDebug(StringImpl* impl);
+Vector<char> asciiDebug(String& string);
 
 String* string(const char* s)
 {
+    // leaks memory!
     return new String(s);
 }
+
+Vector<char> asciiDebug(StringImpl* impl)
+{
+    if (!impl)
+        return asciiDebug(String("[null]").impl());
+
+    Vector<char> buffer;
+    unsigned length = impl->length();
+    const UChar* characters = impl->characters();
+
+    buffer.resize(length);
+    for (unsigned i = 0; i < length; ++i) {
+        UChar ch = characters[i];
+        buffer[i] = ch && (ch < 0x20 || ch > 0x7f) ? '?' : ch;
+    }
+
+    return buffer;
+}
+
+Vector<char> asciiDebug(String& string)
+{
+    return asciiDebug(string.impl());
+}
+
 #endif
