@@ -2,6 +2,16 @@
 
         Reviewed by Yury Semikhatsky.
 
+        WebInspector: It would be better to have an explicit type check for the all
+        arguments of InspectorBackend functions on front-end side.
+        https://bugs.webkit.org/show_bug.cgi?id=44684
+
+        * inspector/CodeGeneratorInspector.pm:
+
+2010-08-26  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
         WebInspector: It would be better to rename setBool, pushBool and asBool accessors
         to setBoolean, pushBoolean and asBoolean for better matching with the results of
         JS typeof operator.

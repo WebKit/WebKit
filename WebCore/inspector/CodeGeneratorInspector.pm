@@ -502,7 +502,7 @@ sub generateBackendStubJS
     foreach my $function (@backendFunctions) {
         my $name = $function->signature->name;
         my $domain = $function->signature->extendedAttributes->{"handler"};
-        my $argumentNames = join(",", map("\"" . $_->name . "\": null", grep($_->direction eq "in", @{$function->parameters})));
+        my $argumentNames = join(",", map("\"" . $_->name . "\": \"" . lc($typeTransform{$_->type}->{"JSONType"}) . "\"", grep($_->direction eq "in", @{$function->parameters})));
         push(@JSStubs, "    this._registerDelegate('{" .
             "\"seq\": 0, " .
             "\"domain\": \"$domain\", " .
@@ -532,8 +532,12 @@ WebInspector.InspectorBackendStub.prototype = {
         var args = Array.prototype.slice.call(arguments);
         var request = JSON.parse(args.shift());
 
-        for (var key in request.arguments)
-            request.arguments[key] = args.shift();
+        for (var key in request.arguments) {
+            var value = args.shift();
+            if (typeof value !== request.arguments[key])
+                throw("Invalid type of property " + key + ". It should be '" + request.arguments[key] + "' but it is '" + typeof value + "'." );
+            request.arguments[key] = value;
+        }
 
         if (args.length === 1 && typeof args[0] === "function")
             request.seq = WebInspector.Callback.wrap(args[0]);
