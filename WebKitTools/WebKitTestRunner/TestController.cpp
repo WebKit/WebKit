@@ -95,6 +95,8 @@ void TestController::initialize(int argc, const char* argv[])
 {
     platformInitialize();
 
+    bool printSupportedFeatures = false;
+
     for (int i = 1; i < argc; ++i) {
         std::string argument(argv[i]);
 
@@ -106,12 +108,23 @@ void TestController::initialize(int argc, const char* argv[])
             m_verbose = true;
             continue;
         }
-        
+        if (argument == "--print-supported-features") {
+            printSupportedFeatures = true;
+            break;
+        }
+
         // Skip any other arguments that begin with '--'.
         if (argument.length() >= 2 && argument[0] == '-' && argument[1] == '-')
             continue;
 
         m_paths.push_back(argument);
+    }
+
+    if (printSupportedFeatures) {
+        // FIXME: On Windows, DumpRenderTree uses this to expose whether it supports 3d
+        // transforms and accelerated compositing. When we support those features, we
+        // should match DRT's behavior.
+        exit(0);
     }
 
     m_usingServerMode = (m_paths.size() == 1 && m_paths[0] == "-");

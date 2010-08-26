@@ -1,3 +1,17 @@
+2010-08-25  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        <rdar://problem/8334338> run-webkit-tests sometimes hangs when using
+        WebKitTestRunner (44331)
+
+        Reviewed by Darin Adler.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize):
+        The hang occurs when WebKitTestRunner begins launching the WebKit2
+        web process then exits before it finishes launching. Work around this by
+        looking for the --print-supported-features argument and exiting without
+        creating the web process.
+
 2010-08-26  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Tony Chang.
