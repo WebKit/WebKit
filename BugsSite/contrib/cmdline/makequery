@@ -21,7 +21,7 @@
 
 conf="`dirname $0`/query.conf"
 
-query="https://bugzilla.mozilla.org/buglist.cgi?ctype=csv"
+query="https://bugs.webkit.org/buglist.cgi?ctype=csv"
 
 chart=0
 and=0

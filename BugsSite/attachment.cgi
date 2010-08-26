@@ -392,7 +392,10 @@ sub prettyPatch
     print $cgi->header(-type => 'text/html',
                        -expires => '+3M');
 
+    my $orig_path = $ENV{'PATH'};
+    $ENV{'PATH'} = "/opt/local/bin:" . $ENV{'PATH'};
     open2(\*OUT, \*IN, "/usr/bin/ruby", "-I", "PrettyPatch", "PrettyPatch/prettify.rb", "--html-exceptions");
+    $ENV{'PATH'} = $orig_path;
     print IN $attachment->data . "\n";
     close(IN);
     while (<OUT>) {
