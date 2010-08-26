@@ -1,0 +1,2 @@
+ This tests that we won't crash when a plugin tries to open an URL in a new window when the application does not create the window. If this test is successful, the word SUCCESS should be seen below.
+SUCCESS

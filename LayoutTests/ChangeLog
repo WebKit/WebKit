@@ -1,5 +1,16 @@
 2010-08-26  Tony Chang  <tony@chromium.org>
 
+        Reviewed by Ojan Vafai.
+
+        Rename platform/chromium/plugins/get-url-with-blank-target.html to
+        platform/chromium/plugins/get-url-with-blank-target2.html so it
+        doesn't confuse the deduplicate tests script.
+
+        * platform/chromium/plugins/get-url-with-blank-target2-expected.txt: Copied from LayoutTests/plugins/get-url-with-blank-target-expected.txt.
+        * platform/chromium/plugins/get-url-with-blank-target2.html: Renamed from LayoutTests/platform/chromium/plugins/get-url-with-blank-target.html.
+
+2010-08-26  Tony Chang  <tony@chromium.org>
+
         Reviewed by David Hyatt.
 
         crash when rendering scrollbar gradient
