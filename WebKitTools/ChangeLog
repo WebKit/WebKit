@@ -1,3 +1,25 @@
+2010-08-26  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] DumpRenderTree runs only one test from command mode
+        https://bugs.webkit.org/show_bug.cgi?id=44012
+
+        Enables support to run multiple test files and single
+        folder containing html files in stand alone mode
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::DumpRenderTree::DumpRenderTree):
+        (WebCore::DumpRenderTree::processArgsLine):
+        (WebCore::DumpRenderTree::loadNextTestInStandAloneMode):
+        (WebCore::DumpRenderTree::processLine):
+        (WebCore::DumpRenderTree::dump):
+        * DumpRenderTree/qt/DumpRenderTreeQt.h:
+        (WebCore::DumpRenderTree::setStandAloneMode):
+        (WebCore::DumpRenderTree::isStandAloneMode):
+        * DumpRenderTree/qt/main.cpp:
+        (main):
+
 2010-08-25  Martin Robinson  <mrobinson@igalia.com>
 
         Updating webkitpy test expectations.

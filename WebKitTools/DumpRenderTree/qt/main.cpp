@@ -143,7 +143,8 @@ int main(int argc, char* argv[])
 
     QStringList args = app.arguments();
     if (args.count() < 2) {
-        qDebug() << "Usage: DumpRenderTree [-v|--pixel-tests] filename";
+        qDebug() << "Usage: DumpRenderTree [-v|--pixel-tests] filename [filename2..n]";
+        qDebug() << "Or folder containing test files: DumpRenderTree [-v|--pixel-tests] dirpath";
         exit(0);
     }
 
@@ -161,15 +162,8 @@ int main(int argc, char* argv[])
     if (args.contains(QLatin1String("-"))) {
         QObject::connect(&dumper, SIGNAL(ready()), &dumper, SLOT(readLine()), Qt::QueuedConnection);
         QTimer::singleShot(0, &dumper, SLOT(readLine()));
-    } else {
-        dumper.setSingleFileMode(true);
-        for (int i = 1; i < args.size(); ++i) {
-            if (!args.at(i).startsWith('-')) {
-                dumper.processLine(args.at(i));
-                break;
-            }
-        }
-    }
+    } else
+        dumper.processArgsLine(args);
 
     return app.exec();
 
