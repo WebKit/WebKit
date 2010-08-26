@@ -1,3 +1,9 @@
+2010-08-26  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, skip a flakey test.
+
+        * platform/gtk/Skipped: Skip media/video-buffered.html
+
 2010-08-26  Dumitru Daniliuc  <dumi@chromium.org>
 
         Unreviewed, updating Chromium's expectations for a flaky test.

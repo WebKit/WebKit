@@ -5942,3 +5942,7 @@ platform/gtk/accessibility/title-and-alt.html
 # https://bugs.webkit.org/show_bug.cgi?id=44478
 fast/text/hyphenate-first-word.html
 fast/text/hyphenate-locale.html
+
+# fails on and off on the 64-bits debug bot
+# see also: https://bugzilla.gnome.org/show_bug.cgi?id=628020
+media/video-buffered.html
