@@ -1,3 +1,14 @@
+2010-08-26  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Kent Tamura.
+
+        Add ENABLE(INDEXED_DATABASE) guard
+        https://bugs.webkit.org/show_bug.cgi?id=44659
+
+        Build fix for ports with index database disabled.
+
+        * storage/IDBKeyPathBackendImpl.cpp:
+
 2010-08-26  Girish Ramakrishnan  <girish@forwardbias.in>
 
         Reviewed by Ariya Hidayat.
