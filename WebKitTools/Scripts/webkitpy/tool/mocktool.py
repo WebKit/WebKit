@@ -341,6 +341,7 @@ class MockBuilder(object):
 
 
 class MockBuildBot(object):
+    buildbot_host = "dummy_buildbot_host"
     def __init__(self):
         self._mock_builder1_status = {
             "name": "Builder1",

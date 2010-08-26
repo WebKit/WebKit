@@ -1,3 +1,18 @@
+2010-08-25  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        stop blocking commits when the bots are red
+        https://bugs.webkit.org/show_bug.cgi?id=44644
+
+        This check currently is just annoying. It doesn't actually
+        help keep the tree green. We can always add it back later
+        if we decide the tree is generally more green.
+
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+        * Scripts/webkitpy/tool/steps/ensurebuildersaregreen.py:
+
 2010-08-25  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Simon Fraser.
