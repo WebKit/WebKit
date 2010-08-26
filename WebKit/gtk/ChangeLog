@@ -2,6 +2,19 @@
 
         Reviewed by Gustavo Noronha Silva.
 
+        confirm dialog should show OK/Cancel instead of Yes/No for consistency
+        https://bugs.webkit.org/show_bug.cgi?id=32877
+
+        Change the button labels for the fallback confirmation dialog to be
+        OK and Cancel.
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_script_dialog):
+
+2010-08-25  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
         Cairo and EFL port shouldn't depend on glib.
         https://bugs.webkit.org/show_bug.cgi?id=44354
 

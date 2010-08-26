@@ -992,8 +992,8 @@ static gboolean webkit_web_view_script_dialog(WebKitWebView* webView, WebKitWebF
         break;
     case WEBKIT_SCRIPT_DIALOG_CONFIRM:
         messageType = GTK_MESSAGE_QUESTION;
-        buttons = GTK_BUTTONS_YES_NO;
-        defaultResponse = GTK_RESPONSE_YES;
+        buttons = GTK_BUTTONS_OK_CANCEL;
+        defaultResponse = GTK_RESPONSE_OK;
         break;
     case WEBKIT_SCRIPT_DIALOG_PROMPT:
         messageType = GTK_MESSAGE_QUESTION;
@@ -1023,17 +1023,11 @@ static gboolean webkit_web_view_script_dialog(WebKitWebView* webView, WebKitWebF
     gint response = gtk_dialog_run(GTK_DIALOG(dialog));
 
     switch (response) {
-    case GTK_RESPONSE_YES:
-        didConfirm = TRUE;
-        break;
     case GTK_RESPONSE_OK:
         didConfirm = TRUE;
         if (entry)
             *value = g_strdup(gtk_entry_get_text(GTK_ENTRY(entry)));
-        else
-            *value = 0;
         break;
-    case GTK_RESPONSE_NO:
     case GTK_RESPONSE_CANCEL:
         didConfirm = FALSE;
         break;
