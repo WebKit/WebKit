@@ -1,3 +1,30 @@
+2010-08-26  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        [JSC] JavaScript parsing error when loading Equifax web page
+        https://bugs.webkit.org/show_bug.cgi?id=42900
+
+        '-->' is ostensibly only meant to occur when there is only
+        whitespace preceeding it on the line.  However firefox treats
+        multiline comments as a space character, so they are allowed.
+        One side effect of the firefox model is that any line terminators
+        inside the multiline comment are ignored, so
+
+            foo/*
+            */-->
+
+        is treated as
+
+            foo -->
+
+        and so '-->' will not be a comment in this case.  Happily this simply
+        means that to fix this issue all we need to do is stop updating
+        m_atLineStart when handling multiline comments.
+
+        * parser/Lexer.cpp:
+        (JSC::Lexer::lex):
+
 2010-08-25  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.

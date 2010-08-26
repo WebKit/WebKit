@@ -1,3 +1,17 @@
+2010-08-26  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        [JSC] JavaScript parsing error when loading Equifax web page
+        https://bugs.webkit.org/show_bug.cgi?id=42900
+
+        Add tests for the many idiosyncrasies of --> comments
+
+        * fast/js/parser-xml-close-comment-expected.txt: Added.
+        * fast/js/parser-xml-close-comment.html: Added.
+        * fast/js/script-tests/parser-high-byte-character.js:
+        * fast/js/script-tests/parser-xml-close-comment.js: Added.
+
 2010-08-26  Tony Chang  <tony@chromium.org>
 
         Reviewed by Ojan Vafai.
