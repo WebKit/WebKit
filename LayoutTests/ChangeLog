@@ -1,3 +1,46 @@
+2010-08-26  Tony Chang  <tony@chromium.org>
+
+        Not reviewed.  Removing chromium-linux test results that deduplicate-tests says are not necessary.
+
+        * platform/chromium-linux/fast/block/basic/min-pref-width-nowrap-floats-expected.txt: Removed.
+        * platform/chromium-linux/fast/block/positioning/complex-percentage-height-expected.txt: Removed.
+        * platform/chromium-linux/fast/frames/invalid-expected.txt: Removed.
+        * platform/chromium-linux/fast/frames/valid-expected.txt: Removed.
+        * platform/chromium-linux/fast/lists/item-not-in-list-line-wrapping-expected.txt: Removed.
+        * platform/chromium-linux/fast/repaint/multicol-repaint-expected.png: Removed.
+        * platform/chromium-linux/fast/ruby/ruby-inline-table-expected.txt: Removed.
+        * platform/chromium-linux/fast/runin/generated2-expected.txt: Removed.
+        * platform/chromium-linux/fast/runin/generated3-expected.txt: Removed.
+        * platform/chromium-linux/fast/runin/generated4-expected.txt: Removed.
+        * platform/chromium-linux/fast/text/stripNullFromText-expected.checksum: Removed.
+        * platform/chromium-linux/fast/text/stripNullFromText-expected.png: Removed.
+        * platform/chromium-linux/fast/url/host-expected.txt: Removed.
+        * platform/chromium-linux/fast/url/mailto-expected.txt: Removed.
+        * platform/chromium-linux/fast/url/path-expected.txt: Removed.
+        * platform/chromium-linux/fast/url/scheme-expected.txt: Removed.
+        * platform/chromium-linux/fast/url/standard-url-expected.txt: Removed.
+        * platform/chromium-linux/media/video-zoom-expected.txt: Removed.
+        * platform/chromium-linux/svg/css/svg-ellipse-render-crash-expected.txt: Removed.
+        * platform/chromium-linux/svg/custom/fill-opacity-hsl-expected.png: Removed.
+        * platform/chromium-linux/svg/custom/fill-opacity-rgba-expected.png: Removed.
+        * platform/chromium-linux/svg/custom/mask-changes-expected.checksum: Removed.
+        * platform/chromium-linux/svg/custom/visibility-override-filter-expected.checksum: Removed.
+        * platform/chromium-linux/svg/filters/big-sized-filter-2-expected.checksum: Removed.
+        * platform/chromium-linux/svg/filters/big-sized-filter-2-expected.png: Removed.
+        * platform/chromium-linux/svg/filters/big-sized-filter-expected.checksum: Removed.
+        * platform/chromium-linux/svg/filters/big-sized-filter-expected.png: Removed.
+        * platform/chromium-linux/svg/filters/feColorMatrix-values-expected.checksum: Removed.
+        * platform/chromium-linux/svg/filters/feColorMatrix-values-expected.png: Removed.
+        * platform/chromium-linux/svg/filters/feMerge-expected.checksum: Removed.
+        * platform/chromium-linux/svg/filters/feMerge-expected.png: Removed.
+        * platform/chromium-linux/svg/filters/feOffset-expected.checksum: Removed.
+        * platform/chromium-linux/svg/filters/feTile-expected.checksum: Removed.
+        * platform/chromium-linux/svg/filters/feTile-expected.png: Removed.
+        * platform/chromium-linux/svg/filters/parent-children-with-same-filter-expected.checksum: Removed.
+        * platform/chromium-linux/svg/filters/parent-children-with-same-filter-expected.png: Removed.
+        * platform/chromium-linux/svg/filters/subRegion-in-userSpace-expected.checksum: Removed.
+        * platform/chromium-linux/svg/filters/subRegion-in-userSpace-expected.png: Removed.
+
 2010-08-26  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Darin Adler and Maciej Stachowiak.
