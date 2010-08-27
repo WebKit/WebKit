@@ -472,6 +472,12 @@ AffineTransform SVGSVGElement::localCoordinateSpaceTransform(SVGLocatable::CTMSc
             // RenderSVGRoot::localToBorderBoxTransform() (called through mapLocalToContainer(), called from localToAbsolute())
             // also takes the viewBoxToViewTransform() into account, so we have to subtract it here (original cause of bug #27183)
             transform.translate(location.x() - viewBoxTransform.e(), location.y() - viewBoxTransform.f());
+
+            // Respect scroll offset.
+            if (FrameView* view = document()->view()) {
+                IntSize scrollOffset = view->scrollOffset();
+                transform.translate(-scrollOffset.width(), -scrollOffset.height());
+            }
         }
     }
 

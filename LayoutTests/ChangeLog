@@ -1,3 +1,23 @@
+2010-08-27  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        SVGLocatable.getScreenCTM ignores scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=44083
+
+        * platform/mac/svg/custom/getscreenctm-in-scrollable-div-area-expected.checksum: Added.
+        * platform/mac/svg/custom/getscreenctm-in-scrollable-div-area-expected.png: Added.
+        * platform/mac/svg/custom/getscreenctm-in-scrollable-div-area-expected.txt: Added.
+        * platform/mac/svg/custom/getscreenctm-in-scrollable-div-area-nested-expected.checksum: Added.
+        * platform/mac/svg/custom/getscreenctm-in-scrollable-div-area-nested-expected.png: Added.
+        * platform/mac/svg/custom/getscreenctm-in-scrollable-div-area-nested-expected.txt: Added.
+        * platform/mac/svg/custom/getscreenctm-in-scrollable-svg-area-expected.checksum: Added.
+        * platform/mac/svg/custom/getscreenctm-in-scrollable-svg-area-expected.png: Added.
+        * platform/mac/svg/custom/getscreenctm-in-scrollable-svg-area-expected.txt: Added.
+        * svg/custom/getscreenctm-in-scrollable-div-area-nested.xhtml: Added.
+        * svg/custom/getscreenctm-in-scrollable-div-area.xhtml: Added.
+        * svg/custom/getscreenctm-in-scrollable-svg-area.xhtml: Added.
+
 2010-08-26  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Martin Robinson.

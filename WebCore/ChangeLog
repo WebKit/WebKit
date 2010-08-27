@@ -1,3 +1,20 @@
+2010-08-27  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        SVGLocatable.getScreenCTM ignores scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=44083
+
+        getScreenCTM needs to include the FrameViews scrollOffset in the e/f parameters of the AffineTransform.
+        Adding three new tests, which cover scrolling & getScreenCTM in large svgs with scrollbars, and with (nested) divs in overflow="scroll" mode.
+
+        Tests: svg/custom/getscreenctm-in-scrollable-div-area-nested.xhtml
+               svg/custom/getscreenctm-in-scrollable-div-area.xhtml
+               svg/custom/getscreenctm-in-scrollable-svg-area.xhtml
+
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::localCoordinateSpaceTransform):
+
 2010-08-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.
