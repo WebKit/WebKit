@@ -1,5 +1,15 @@
 2010-08-27  Tony Chang  <tony@chromium.org>
 
+        Unreviewed.  Add chromium-mac results for svg/custom/getscreenctm-in-scrollable-div-area.xhtml.
+
+        The image results are the same except for the scrollbars.  I'm not
+        sure why this wasn't landed with the win/linux results in r66193.
+
+        * platform/chromium-mac/svg/custom/getscreenctm-in-scrollable-svg-area-expected.checksum: Added.
+        * platform/chromium-mac/svg/custom/getscreenctm-in-scrollable-svg-area-expected.png: Added.
+
+2010-08-27  Tony Chang  <tony@chromium.org>
+
         Unreviewed.  Reverting r66177, which were chromium expectations for
         fast/forms/select-style.  It seems like this was a regression fixed in r66195.
 
