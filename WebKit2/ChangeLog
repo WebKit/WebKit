@@ -1,3 +1,11 @@
+2010-08-26  Daniel Bates  <dbates@rim.com>
+
+        Attempt to fix the Qt WebKit2 build.
+
+        * WebProcess/WebPage/qt/WebPageQt.cpp:
+        (WebKit::WebPage::performDefaultBehaviorForKeyEvent): Pass m_page.get() to WebKit::scroll()
+        instead of m_page since it expects a raw pointer.
+
 2010-08-26  Gavin Barraclough  <barraclough@apple.com>
 
         Speculative windows build fix.
