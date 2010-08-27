@@ -26,7 +26,11 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
 
+#ifdef __OBJC__
+@class NSPopUpButtonCell;
+#else
 class NSPopUpButtonCell;
+#endif
 
 namespace WebCore {
 

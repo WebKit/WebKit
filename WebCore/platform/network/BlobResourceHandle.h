@@ -42,11 +42,11 @@
 namespace WebCore {
 
 class AsyncFileStream;
-class BlobDataItem;
 class BlobStorageData;
 class FileStream;
 class ResourceHandleClient;
 class ResourceRequest;
+struct BlobDataItem;
 
 class BlobResourceHandle : public FileStreamClient, public ResourceHandle  {
 public:
