@@ -2,6 +2,22 @@
 
         Reviewed by Kenneth Rohde Christiansen.
 
+        [Qt] tst_QWebFrame::inputFieldFocus() fails on MeeGo Handset with QtWebKit 2.1
+        https://bugs.webkit.org/show_bug.cgi?id=44703
+
+        Make the test more robust to changes in the execution environment.
+        The position where the mouse events are sent is now computed from the element geometry,
+        this make the test less dependent on the fonts.
+
+        The test now also make sure the window manager mapped the window on screen
+        before attempting to send the events.
+
+        * tests/qwebframe/tst_qwebframe.cpp:
+
+2010-08-27  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
         [Qt] tst_QWebFrame::hitTestContent() fails on Meego Handset
         https://bugs.webkit.org/show_bug.cgi?id=44701
 

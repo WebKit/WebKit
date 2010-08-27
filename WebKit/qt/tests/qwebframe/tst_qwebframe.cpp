@@ -2697,6 +2697,7 @@ void tst_QWebFrame::inputFieldFocus()
     view.setHtml("<html><body><input type=\"text\"></input></body></html>");
     view.resize(400, 100);
     view.show();
+    QTest::qWaitForWindowShown(&view);
     view.setFocus();
     QTRY_VERIFY(view.hasFocus());
 
@@ -2704,7 +2705,8 @@ void tst_QWebFrame::inputFieldFocus()
     int delay = qApp->cursorFlashTime() * 2;
 
     // focus the lineedit and check if it blinks
-    QTest::mouseClick(&view, Qt::LeftButton, 0, QPoint(25, 25));
+    const QWebElement inputElement = view.page()->mainFrame()->documentElement().findFirst(QLatin1String("input[type=text]"));
+    QTest::mouseClick(&view, Qt::LeftButton, 0, inputElement.geometry().center());
     m_inputFieldsTestView = &view;
     view.installEventFilter( this );
     QTest::qWait(delay);
