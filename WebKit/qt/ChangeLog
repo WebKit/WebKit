@@ -1,3 +1,12 @@
+2010-08-26  Girish Ramakrishnan  <girish@forwardbias.in>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] Remove dead code.
+
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::statusbarVisible):
+
 2010-08-26  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Revert r66103 since Qt tests are failing.
