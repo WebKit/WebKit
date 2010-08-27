@@ -1,5 +1,11 @@
 2010-08-26  Dumitru Daniliuc  <dumi@chromium.org>
 
+        Unreviewed, Chromium expectations update.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-08-26  Dumitru Daniliuc  <dumi@chromium.org>
+
         Unreviewed, updating Chromium expectations.
 
         * platform/chromium-mac/fast/css/percent-top-relative-container-height-unspecified-expected.checksum: Added.

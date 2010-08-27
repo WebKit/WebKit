@@ -3208,5 +3208,6 @@ BUG53547 MAC WIN LINUX : fast/events/tabindex-focus-chain.html = CRASH
 // Added in r66135, failing since then.
 BUG53548 MAC WIN LINUX : fast/js/parser-xml-close-comment.html = TEXT
 
-// svg/W3C-SVG-1.1/fonts-elem-07-b.svg is flaky
+// These tests are flaky on Mac and Linux.
 BUG53554 MAC LINUX : svg/W3C-SVG-1.1/fonts-elem-07-b.svg = PASS IMAGE
+BUG53554 MAC LINUX : svg/custom/svg-fonts-without-missing-glyph.xhtml = PASS IMAGE
