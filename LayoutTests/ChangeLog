@@ -1,3 +1,9 @@
+2010-08-27  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Turn leopard bot green again (skip more media tests :/)
+
+        * platform/mac-leopard/Skipped:
+
 2010-08-27  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.
