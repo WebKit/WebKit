@@ -5,8 +5,8 @@ layer at (0,0) size 785x1345
     RenderBody {BODY} at (8,16) size 769x1313
 layer at (8,16) size 760x415
   RenderBlock {DIV} at (0,0) size 760x415 [border: (5px solid #800000)]
-    RenderBlock (anonymous multi-column span) at (5,24) size 750x27
-      RenderBlock {H2} at (0,0) size 750x27 [bgcolor=#EEEEEE]
+    RenderBlock (anonymous multi-column span) at (5,24) size 750x27 [color=#FFFFFF]
+      RenderBlock {H2} at (0,0) size 750x27 [color=#000000] [bgcolor=#EEEEEE]
         RenderText {#text} at (0,0) size 660x26
           text run at (0,0) width 660: "This is a spanning element at the beginning of the columns block."
 layer at (13,86) size 750x340
@@ -52,8 +52,8 @@ layer at (13,86) size 750x340
         text run at (0,420) width 143: "Nulla varius enim ac mi."
 layer at (8,447) size 760x415
   RenderBlock {DIV} at (0,431) size 760x415 [border: (5px solid #800000)]
-    RenderBlock (anonymous multi-column span) at (5,364) size 750x27
-      RenderBlock {H2} at (0,0) size 750x27 [bgcolor=#EEEEEE]
+    RenderBlock (anonymous multi-column span) at (5,364) size 750x27 [color=#FFFFFF]
+      RenderBlock {H2} at (0,0) size 750x27 [color=#000000] [bgcolor=#EEEEEE]
         RenderText {#text} at (0,0) size 596x26
           text run at (0,0) width 596: "This is a spanning element at the end of the columns block."
 layer at (13,452) size 750x340
@@ -99,8 +99,8 @@ layer at (13,452) size 750x340
         text run at (0,220) width 143: "Nulla varius enim ac mi."
 layer at (8,878) size 760x451
   RenderBlock {DIV} at (0,862) size 760x451 [border: (5px solid #800000)]
-    RenderBlock (anonymous multi-column span) at (5,164) size 750x27
-      RenderBlock {H2} at (0,0) size 750x27 [bgcolor=#EEEEEE]
+    RenderBlock (anonymous multi-column span) at (5,164) size 750x27 [color=#FFFFFF]
+      RenderBlock {H2} at (0,0) size 750x27 [color=#000000] [bgcolor=#EEEEEE]
         RenderText {#text} at (0,0) size 629x26
           text run at (0,0) width 629: "This is a spanning element in the middle of the columns block."
 layer at (13,883) size 750x140

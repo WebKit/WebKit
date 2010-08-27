@@ -1,3 +1,12 @@
+2010-08-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed; chromium rebaseline for r66247.
+
+        * platform/chromium-mac/fast/multicol/span/span-as-nested-columns-child-expected.txt:
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug56024-expected.txt:
+        * platform/chromium-win/fast/multicol/span/span-as-nested-columns-child-expected.txt:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug56024-expected.txt:
+
 2010-08-27  Tony Chang  <tony@chromium.org>
 
         Unreviewed, updating chromium test expectations.
