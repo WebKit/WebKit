@@ -1,3 +1,26 @@
+2010-08-27  Yuzo Fujishima  <yuzo@google.com>
+
+        Unreviewed Chromium test expectation change.
+
+        * platform/chromium-linux/svg/custom/getscreenctm-in-scrollable-div-area-expected.checksum: Added.
+        * platform/chromium-linux/svg/custom/getscreenctm-in-scrollable-div-area-expected.png: Added.
+        * platform/chromium-linux/svg/custom/getscreenctm-in-scrollable-div-area-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/getscreenctm-in-scrollable-div-area-nested-expected.checksum: Added.
+        * platform/chromium-linux/svg/custom/getscreenctm-in-scrollable-div-area-nested-expected.png: Added.
+        * platform/chromium-linux/svg/custom/getscreenctm-in-scrollable-div-area-nested-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/getscreenctm-in-scrollable-svg-area-expected.checksum: Added.
+        * platform/chromium-linux/svg/custom/getscreenctm-in-scrollable-svg-area-expected.png: Added.
+        * platform/chromium-linux/svg/custom/getscreenctm-in-scrollable-svg-area-expected.txt: Added.
+        * platform/chromium-win/svg/custom/getscreenctm-in-scrollable-div-area-expected.checksum: Added.
+        * platform/chromium-win/svg/custom/getscreenctm-in-scrollable-div-area-expected.png: Added.
+        * platform/chromium-win/svg/custom/getscreenctm-in-scrollable-div-area-expected.txt: Added.
+        * platform/chromium-win/svg/custom/getscreenctm-in-scrollable-div-area-nested-expected.checksum: Added.
+        * platform/chromium-win/svg/custom/getscreenctm-in-scrollable-div-area-nested-expected.png: Added.
+        * platform/chromium-win/svg/custom/getscreenctm-in-scrollable-div-area-nested-expected.txt: Added.
+        * platform/chromium-win/svg/custom/getscreenctm-in-scrollable-svg-area-expected.checksum: Added.
+        * platform/chromium-win/svg/custom/getscreenctm-in-scrollable-svg-area-expected.png: Added.
+        * platform/chromium-win/svg/custom/getscreenctm-in-scrollable-svg-area-expected.txt: Added.
+
 2010-08-27  Alejandro G. Castro  <alex@igalia.com>
 
         Unreviewed.
