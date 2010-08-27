@@ -1,3 +1,17 @@
+2010-08-27  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        getPointAtLength returns incorrect values for paths closed with the closepath command
+        https://bugs.webkit.org/show_bug.cgi?id=44197
+        
+        Test that path gives back the correct point on a given length for the closepath segment.
+
+        * svg/dom/path-pointAtLength-expected.txt: Added.
+        * svg/dom/path-pointAtLength.html: Added.
+        * svg/dom/script-tests/path-pointAtLength.js: Added.
+        (pointAtLengthOfPath):
+
 2010-08-27  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.
