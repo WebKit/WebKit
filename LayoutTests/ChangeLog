@@ -1,3 +1,15 @@
+2010-08-27  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r66196.
+        http://trac.webkit.org/changeset/66196
+        https://bugs.webkit.org/show_bug.cgi?id=44758
+
+        Corresponding test has been rolled back (Requested by yuzo on
+        #webkit).
+
+        * platform/chromium-linux/svg/dom/path-pointAtLength-expected.txt: Removed.
+        * platform/chromium-win/svg/dom/path-pointAtLength-expected.txt: Removed.
+
 2010-08-27  Steve Block  <steveblock@google.com>
 
         Reviewed by Darin Adler.
