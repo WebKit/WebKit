@@ -185,6 +185,13 @@ void IDBDatabaseBackendImpl::removeObjectStore(const String& name, PassRefPtr<ID
     callbacks->onSuccess();
 }
 
+void IDBDatabaseBackendImpl::setVersion(const String& version, PassRefPtr<IDBCallbacks> callbacks)
+{
+    m_version = version;
+    setMetaData(m_sqliteDatabase.get(), m_name, m_description, m_version);
+    callbacks->onSuccess();
+}
+
 PassRefPtr<IDBTransactionBackendInterface> IDBDatabaseBackendImpl::transaction(DOMStringList* objectStores, unsigned short mode, unsigned long timeout)
 {
     return m_transactionCoordinator->createTransaction(objectStores, mode, timeout, this);

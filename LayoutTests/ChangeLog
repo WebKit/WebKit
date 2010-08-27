@@ -1,3 +1,19 @@
+2010-08-25  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Add setVersion to IndexedDB
+        https://bugs.webkit.org/show_bug.cgi?id=44630
+
+        * storage/indexeddb/database-basics-expected.txt:
+        * storage/indexeddb/script-tests/database-basics.js:
+        (openSuccess):
+        (setVersionAgain):
+        (checkVersion):
+        * storage/indexeddb/script-tests/open-cursor.js:
+        (openEmptyCursor):
+        (openCursor):
+
 2010-08-27  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

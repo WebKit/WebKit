@@ -58,8 +58,10 @@ public:
     PassRefPtr<IDBRequest> createObjectStore(ScriptExecutionContext*, const String& name, const String& keyPath = String(), bool autoIncrement = false);
     PassRefPtr<IDBObjectStore> objectStore(const String& name, unsigned short mode = IDBTransaction::READ_ONLY);
     PassRefPtr<IDBRequest> removeObjectStore(ScriptExecutionContext*, const String& name);
+    PassRefPtr<IDBRequest> setVersion(ScriptExecutionContext*, const String& version);
     PassRefPtr<IDBTransaction> transaction(ScriptExecutionContext*, DOMStringList* storeNames = 0, unsigned short mode = IDBTransaction::READ_ONLY,
                                            unsigned long timeout = 0); // FIXME: what should the default timeout be?
+
 private:
     IDBDatabase(PassRefPtr<IDBDatabaseBackendInterface>);
 

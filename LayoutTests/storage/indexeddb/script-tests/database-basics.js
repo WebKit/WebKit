@@ -8,13 +8,32 @@ function openSuccess()
 
     var db = evalAndLog("db = event.result");
     shouldBeEqualToString("db.name", "name");
-    shouldBeEqualToString("db.version", "");
     shouldBe("db.objectStores", "[]");
     shouldBe("db.objectStores.length", "0");
     shouldBe("db.objectStores.contains('')", "false");
     // FIXME: Test .item() once it's possible to get back a non-empty list.
 
     // FIXME: Test the other properties of IDBDatabase as they're written.
+
+    debug("");
+    debug("Testing setVersion.");
+    result = evalAndLog('db.setVersion("version a")');
+    verifyResult(result);
+    result.onsuccess = setVersionAgain;
+    result.onError = unexpectedErrorCallback;
+}
+
+function setVersionAgain()
+{
+    result = evalAndLog('db.setVersion("version b")');
+    verifyResult(result);
+    result.onsuccess = checkVersion;
+    result.onError = unexpectedErrorCallback;
+}
+
+function checkVersion()
+{
+    shouldBeEqualToString("db.version", "version b");
 
     done();
 }

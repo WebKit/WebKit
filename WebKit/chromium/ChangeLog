@@ -1,3 +1,21 @@
+2010-08-25  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Add setVersion to IndexedDB
+        https://bugs.webkit.org/show_bug.cgi?id=44630
+
+        * public/WebIDBDatabase.h:
+        (WebKit::WebIDBDatabase::createObjectStore):
+        (WebKit::WebIDBDatabase::removeObjectStore):
+        (WebKit::WebIDBDatabase::setVersion):
+        * src/IDBDatabaseProxy.cpp:
+        (WebCore::IDBDatabaseProxy::setVersion):
+        * src/IDBDatabaseProxy.h:
+        * src/WebIDBDatabaseImpl.cpp:
+        (WebKit::WebIDBDatabaseImpl::setVersion):
+        * src/WebIDBDatabaseImpl.h:
+
 2010-08-27  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

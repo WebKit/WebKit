@@ -94,6 +94,11 @@ void IDBDatabaseProxy::removeObjectStore(const String& name, PassRefPtr<IDBCallb
     m_webIDBDatabase->removeObjectStore(name, new WebIDBCallbacksImpl(callbacks));
 }
 
+void IDBDatabaseProxy::setVersion(const String& version, PassRefPtr<IDBCallbacks> callbacks)
+{
+    m_webIDBDatabase->setVersion(version, new WebIDBCallbacksImpl(callbacks));
+}
+
 PassRefPtr<IDBTransactionBackendInterface> IDBDatabaseProxy::transaction(DOMStringList* storeNames, unsigned short mode, unsigned long timeout)
 {
     WebKit::WebDOMStringList names(storeNames);

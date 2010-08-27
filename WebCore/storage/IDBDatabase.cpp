@@ -69,6 +69,13 @@ PassRefPtr<IDBRequest> IDBDatabase::removeObjectStore(ScriptExecutionContext* co
     return request;
 }
 
+PassRefPtr<IDBRequest> IDBDatabase::setVersion(ScriptExecutionContext* context, const String& version)
+{
+    RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this));
+    m_backend->setVersion(version, request);
+    return request;
+}
+
 PassRefPtr<IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext* context, DOMStringList* storeNames, unsigned short mode, unsigned long timeout)
 {
     // We need to create a new transaction synchronously. Locks are acquired asynchronously. Operations
