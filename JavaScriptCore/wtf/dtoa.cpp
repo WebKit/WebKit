@@ -75,6 +75,7 @@
 #include <string.h>
 #include <wtf/AlwaysInline.h>
 #include <wtf/Assertions.h>
+#include <wtf/DecimalNumber.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/MathExtras.h>
 #include <wtf/Threading.h>
@@ -1302,21 +1303,21 @@ static ALWAYS_INLINE int quorem(BigInt& b, BigInt& S)
  *       "uniformly" distributed input, the probability is
  *       something like 10^(k-15) that we must resort to the int32_t
  *       calculation.
+ *
+ * Note: 'leftright' translates to 'generate shortest possible string'.
  */
-void dtoa(DtoaBuffer result, double dd, int ndigits, int* decpt, int* sign, char** rve)
+template<bool roundingNone, bool roundingSignificantFigures, bool roundingDecimalPlaces, bool leftright>
+void dtoa(DtoaBuffer result, double dd, int ndigits, bool& signOut, int& exponentOut, unsigned& precisionOut)
 {
+    // Exactly one rounding mode must be specified.
+    ASSERT(roundingNone + roundingSignificantFigures + roundingDecimalPlaces == 1);
+    // roundingNone only allowed (only sensible?) with leftright set.
+    ASSERT(!roundingNone || leftright);
+
     ASSERT(!isnan(dd) && !isinf(dd));
 
-    /*
-        Arguments ndigits, decpt, sign are similar to those
-        of ecvt and fcvt; trailing zeros are suppressed from
-        the returned string.  If not null, *rve is set to point
-        to the end of the return value.  If d is +-Infinity or NaN,
-        then *decpt is set to 9999.
-    */
-
     int bbits, b2, b5, be, dig, i, ieps, ilim = 0, ilim0, ilim1 = 0,
-        j, j1, k, k0, k_check, leftright, m2, m5, s2, s5,
+        j, j1, k, k0, k_check, m2, m5, s2, s5,
         spec_case;
     int32_t L;
     int denorm;
@@ -1328,24 +1329,25 @@ void dtoa(DtoaBuffer result, double dd, int ndigits, int* decpt, int* sign, char
     char* s0;
 
     u.d = dd;
-    if (word0(&u) & Sign_bit) {
-        /* set sign for everything, including 0's and NaNs */
-        *sign = 1;
-        word0(&u) &= ~Sign_bit;    /* clear sign bit */
-    } else
-        *sign = 0;
 
     /* Infinity or NaN */
     ASSERT((word0(&u) & Exp_mask) != Exp_mask);
 
+    // JavaScript toString conversion treats -0 as 0.
     if (!dval(&u)) {
-        *decpt = 1;
+        signOut = false;
+        exponentOut = 0;
+        precisionOut = 1;
         result[0] = '0';
         result[1] = '\0';
-        if (rve)
-            *rve = result + 1;
         return;
     }
+
+    if (word0(&u) & Sign_bit) {
+        signOut = true;
+        word0(&u) &= ~Sign_bit; // clear sign bit
+    } else
+        signOut = false;
 
     d2b(b, &u, &be, &bbits);
     if ((i = (int)(word0(&u) >> Exp_shift1 & (Exp_mask >> Exp_shift1)))) {
@@ -1416,10 +1418,24 @@ void dtoa(DtoaBuffer result, double dd, int ndigits, int* decpt, int* sign, char
         s5 = 0;
     }
 
-    leftright = 1;
-    ilim = ilim1 = -1;
-    i = 18;
-    ndigits = 0;
+    if (roundingNone) {
+        ilim = ilim1 = -1;
+        i = 18;
+        ndigits = 0;
+    }
+    if (roundingSignificantFigures) {
+        if (ndigits <= 0)
+            ndigits = 1;
+        ilim = ilim1 = i = ndigits;
+    }
+    if (roundingDecimalPlaces) {
+        i = ndigits + k + 1;
+        ilim = i;
+        ilim1 = i - 1;
+        if (i <= 0)
+            i = 1;
+    }
+
     s = s0 = result;
 
     if (ilim >= 0 && ilim <= Quick_max) {
@@ -1591,7 +1607,7 @@ bumpUp:
     /* Check for special case that d is a normalized power of 2. */
 
     spec_case = 0;
-    if (!word1(&u) && !(word0(&u) & Bndry_mask) && word0(&u) & (Exp_mask & ~Exp_msk1)) {
+    if ((roundingNone || leftright) && (!word1(&u) && !(word0(&u) & Bndry_mask) && word0(&u) & (Exp_mask & ~Exp_msk1))) {
         /* The special case */
         b2 += Log2P;
         s2 += Log2P;
@@ -1631,7 +1647,15 @@ bumpUp:
             ilim = ilim1;
         }
     }
-
+    if (ilim <= 0 && roundingDecimalPlaces) {
+        if (ilim < 0)
+            goto noDigits;
+        multadd(S, 5, 0);
+        // For IEEE-754 unbiased rounding this check should be <=, such that 0.5 would flush to zero.
+        if (cmp(b, S) < 0)
+            goto noDigits;
+        goto oneDigit;
+    }
     if (leftright) {
         if (m2 > 0)
             lshift(mhi, m2);
@@ -1652,6 +1676,21 @@ bumpUp:
             j = cmp(b, mlo);
             diff(delta, S, mhi);
             j1 = delta.sign ? 1 : cmp(b, delta);
+#ifdef DTOA_ROUND_BIASED
+            if (j < 0 || !j) {
+#else
+            // FIXME: ECMA-262 specifies that equidistant results round away from
+            // zero, which probably means we shouldn't be on the unbiased code path
+            // (the (word1(&u) & 1) clause is looking highly suspicious). I haven't
+            // yet understood this code well enough to make the call, but we should
+            // probably be enabling DTOA_ROUND_BIASED. I think the interesting corner
+            // case to understand is probably "Math.pow(0.5, 24).toString()".
+            // I believe this value is interesting because I think it is precisely
+            // representable in binary floating point, and its decimal representation
+            // has a single digit that Steele & White reduction can remove, with the
+            // value 5 (thus equidistant from the next numbers above and below).
+            // We produce the correct answer using either codepath, and I don't as
+            // yet understand why. :-)
             if (!j1 && !(word1(&u) & 1)) {
                 if (dig == '9')
                     goto round9up;
@@ -1661,10 +1700,14 @@ bumpUp:
                 goto ret;
             }
             if (j < 0 || (!j && !(word1(&u) & 1))) {
+#endif
                 if ((b.words()[0] || b.size() > 1) && (j1 > 0)) {
                     lshift(b, 1);
                     j1 = cmp(b, S);
-                    if (j1 > 0 || (!j1 && (dig & 1))) {
+                    // For IEEE-754 round-to-even, this check should be (j1 > 0 || (!j1 && (dig & 1))),
+                    // but ECMA-262 specifies that equidistant values (e.g. (.5).toFixed()) should
+                    // be rounded away from zero.
+                    if (j1 >= 0) {
                         if (dig == '9')
                             goto round9up;
                         dig++;
@@ -1689,22 +1732,25 @@ round9up:
             multadd(mlo, 10, 0);
             multadd(mhi, 10, 0);
         }
-    } else
+    } else {
         for (i = 1;; i++) {
             *s++ = dig = quorem(b, S) + '0';
-            if (!b.words()[0] && b.size() <= 1) {
+            if (!b.words()[0] && b.size() <= 1)
                 goto ret;
-            }
             if (i >= ilim)
                 break;
             multadd(b, 10, 0);
         }
+    }
 
     /* Round off last digit */
 
     lshift(b, 1);
     j = cmp(b, S);
-    if (j > 0 || (!j && (dig & 1))) {
+    // For IEEE-754 round-to-even, this check should be (j > 0 || (!j && (dig & 1))),
+    // but ECMA-262 specifies that equidistant values (e.g. (.5).toFixed()) should
+    // be rounded away from zero.
+    if (j >= 0) {
 roundoff:
         while (*--s == '9')
             if (s == s0) {
@@ -1719,107 +1765,67 @@ roundoff:
     }
     goto ret;
 noDigits:
-    k = -1 - ndigits;
-    goto ret;
+    exponentOut = 0;
+    precisionOut = 1;
+    result[0] = '0';
+    result[1] = '\0';
+    return;
 oneDigit:
     *s++ = '1';
     k++;
     goto ret;
 ret:
+    ASSERT(s > result);
     *s = 0;
-    *decpt = k + 1;
-    if (rve)
-        *rve = s;
+    exponentOut = k;
+    precisionOut = s - result;
 }
 
-static ALWAYS_INLINE void append(char*& next, const char* src, unsigned size)
+void dtoa(DtoaBuffer result, double dd, bool& sign, int& exponent, unsigned& precision)
+{
+    // flags are roundingNone, leftright.
+    dtoa<true, false, false, true>(result, dd, 0, sign, exponent, precision);
+}
+
+void dtoaRoundSF(DtoaBuffer result, double dd, int ndigits, bool& sign, int& exponent, unsigned& precision)
+{
+    // flag is roundingSignificantFigures.
+    dtoa<false, true, false, false>(result, dd, ndigits, sign, exponent, precision);
+}
+
+void dtoaRoundDP(DtoaBuffer result, double dd, int ndigits, bool& sign, int& exponent, unsigned& precision)
+{
+    // flag is roundingDecimalPlaces.
+    dtoa<false, false, true, false>(result, dd, ndigits, sign, exponent, precision);
+}
+
+static ALWAYS_INLINE void copyAsciiToUTF16(UChar* next, const char* src, unsigned size)
 {
     for (unsigned i = 0; i < size; ++i)
         *next++ = *src++;
 }
 
-void doubleToStringInJavaScriptFormat(double d, DtoaBuffer buffer, unsigned* resultLength)
+unsigned numberToString(double d, NumberToStringBuffer buffer)
 {
-    ASSERT(buffer);
-
     // Handle NaN and Infinity.
     if (isnan(d) || isinf(d)) {
         if (isnan(d)) {
-            append(buffer, "NaN", 3);
-            if (resultLength)
-                *resultLength = 3;
-        } else if (d > 0) {
-            append(buffer, "Infinity", 8);
-            if (resultLength)
-                *resultLength = 8;
-        } else {
-            append(buffer, "-Infinity", 9);
-            if (resultLength)
-                *resultLength = 9;
+            copyAsciiToUTF16(buffer, "NaN", 3);
+            return 3;
         }
-        return;
+        if (d > 0) {
+            copyAsciiToUTF16(buffer, "Infinity", 8);
+            return 8;
+        }
+        copyAsciiToUTF16(buffer, "-Infinity", 9);
+        return 9;
     }
 
-    // -0 -> "0"
-    if (!d) {
-        buffer[0] = '0';
-        if (resultLength)
-            *resultLength = 1;
-        return;
-    }
-
-    int decimalPoint;
-    int sign;
-
-    DtoaBuffer result;
-    char* resultEnd = 0;
-    WTF::dtoa(result, d, 0, &decimalPoint, &sign, &resultEnd);
-    int length = resultEnd - result;
-
-    char* next = buffer;
-    if (sign)
-        *next++ = '-';
-
-    if (decimalPoint <= 0 && decimalPoint > -6) {
-        *next++ = '0';
-        *next++ = '.';
-        for (int j = decimalPoint; j < 0; j++)
-            *next++ = '0';
-        append(next, result, length);
-    } else if (decimalPoint <= 21 && decimalPoint > 0) {
-        if (length <= decimalPoint) {
-            append(next, result, length);
-            for (int j = 0; j < decimalPoint - length; j++)
-                *next++ = '0';
-        } else {
-            append(next, result, decimalPoint);
-            *next++ = '.';
-            append(next, result + decimalPoint, length - decimalPoint);
-        }
-    } else if (result[0] < '0' || result[0] > '9')
-        append(next, result, length);
-    else {
-        *next++ = result[0];
-        if (length > 1) {
-            *next++ = '.';
-            append(next, result + 1, length - 1);
-        }
-
-        *next++ = 'e';
-        *next++ = (decimalPoint >= 0) ? '+' : '-';
-        // decimalPoint can't be more than 3 digits decimal given the
-        // nature of float representation
-        int exponential = decimalPoint - 1;
-        if (exponential < 0)
-            exponential = -exponential;
-        if (exponential >= 100)
-            *next++ = static_cast<char>('0' + exponential / 100);
-        if (exponential >= 10)
-            *next++ = static_cast<char>('0' + (exponential % 100) / 10);
-        *next++ = static_cast<char>('0' + exponential % 10);
-    }
-    if (resultLength)
-        *resultLength = next - buffer;
+    // Convert to decimal with rounding.
+    DecimalNumber number(d);
+    return number.exponent() >= -6 && number.exponent() < 21
+        ? number.toStringDecimal(buffer)
+        : number.toStringExponential(buffer);
 }
 
 } // namespace WTF

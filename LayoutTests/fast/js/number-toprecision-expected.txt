@@ -22,7 +22,7 @@ PASS (1234.567).toPrecision('1') is "1e+3"
 PASS (1234.567).toPrecision(2) is "1.2e+3"
 PASS (1234.567).toPrecision(2.9) is "1.2e+3"
 PASS (1234.567).toPrecision(5) is "1234.6"
-FAIL (1234.567).toPrecision(21) should be 1234.56700000000000728. Was 1234.56700000000000000.
+PASS (1234.567).toPrecision(21) is "1234.56700000000000728"
 PASS (1234.567).toPrecision(22) threw exception RangeError: toPrecision() argument must be between 1 and 21.
 PASS (1234.567).toPrecision(100) threw exception RangeError: toPrecision() argument must be between 1 and 21.
 PASS (1234.567).toPrecision(101) threw exception RangeError: toPrecision() argument must be between 1 and 21.

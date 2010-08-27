@@ -1,3 +1,18 @@
+2010-08-27  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 44745 - Number.toFixed/toExponential/toPrecision are inaccurate.
+
+        These methods should be using a version of dtoa that can generate results accurate
+        to the requested precision, whereas our version of dtoa is only currently able to
+        support producing results sufficiently accurate to distinguish the value from any
+        other IEEE-754 double precision number.
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::serializeForNumberType):
+            doubleToStringInJavaScriptFormat renamed to numberToString.
+
 2010-08-27  Michael Nordman  <michaeln@google.com>
 
         Reviewed by David Levin.

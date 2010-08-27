@@ -16,7 +16,7 @@ PASS (123.456).toExponential(2.9) is "1.23e+2"
 PASS (123.456).toExponential(3) is "1.235e+2"
 PASS (123.456).toExponential(5) is "1.23456e+2"
 PASS (123.456).toExponential(6) is "1.234560e+2"
-FAIL (123.456).toExponential(20) should be 1.23456000000000003070e+2. Was 1.23456000000000000000e+2.
+PASS (123.456).toExponential(20) is "1.23456000000000003070e+2"
 PASS (123.456).toExponential(21) threw exception RangeError: toExponential() argument must be between 0 and 20.
 PASS (123.456).toExponential(100) threw exception RangeError: toExponential() argument must be between 0 and 20.
 PASS (123.456).toExponential(101) threw exception RangeError: toExponential() argument must be between 0 and 20.

@@ -1,3 +1,23 @@
+2010-08-27  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 44745 - Number.toFixed/toExponential/toPrecision are inaccurate.
+
+        These methods should be using a version of dtoa that can generate results accurate
+        to the requested precision, whereas our version of dtoa is only currently able to
+        support producing results sufficiently accurate to distinguish the value from any
+        other IEEE-754 double precision number.
+
+        Updating expected results, corrected errors in fast/js/kde/script-tests/Number.js
+        (corrected results confirmed with FireFox).
+
+        * fast/js/kde/Number-expected.txt:
+        * fast/js/kde/script-tests/Number.js:
+        * fast/js/number-toExponential-expected.txt:
+        * fast/js/number-tofixed-expected.txt:
+        * fast/js/number-toprecision-expected.txt:
+
 2010-08-27  Tony Chang  <tony@chromium.org>
 
         Unreviewed.  Add google-chrome linux ia32 results.  These are slightly

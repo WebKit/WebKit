@@ -126,7 +126,6 @@ EXPORTS
     ?detach@Debugger@JSC@@UAEXPAVJSGlobalObject@2@@Z
     ?detachThread@WTF@@YAXI@Z
     ?didTimeOut@TimeoutChecker@JSC@@QAE_NPAVExecState@2@@Z
-    ?doubleToStringInJavaScriptFormat@WTF@@YAXNQADPAI@Z
     ?dumpSampleData@JSGlobalData@JSC@@QAEXPAVExecState@2@@Z
     ?empty@StringImpl@WTF@@SAPAV12@XZ
     ?enumerable@PropertyDescriptor@JSC@@QBE_NXZ
@@ -149,6 +148,7 @@ EXPORTS
     ?number@UString@JSC@@SA?AV12@H@Z
     ?number@UString@JSC@@SA?AV12@I@Z
     ?number@UString@JSC@@SA?AV12@N@Z
+    ?numberToString@WTF@@YAINAAY0GA@_W@Z
     ?functionGetter@PropertySlot@JSC@@ABE?AVJSValue@2@PAVExecState@2@@Z
     ?functionName@DebuggerCallFrame@JSC@@QBEPBVUString@2@XZ
     ?get@Structure@JSC@@QAEIPBVStringImpl@WTF@@AAIAAPAVJSCell@2@@Z

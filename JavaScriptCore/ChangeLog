@@ -1,3 +1,46 @@
+2010-08-27  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 44745 - Number.toFixed/toExponential/toPrecision are inaccurate.
+
+        These methods should be using a version of dtoa that can generate results accurate
+        to the requested precision, whereas our version of dtoa is only currently able to
+        support producing results sufficiently accurate to distinguish the value from any
+        other IEEE-754 double precision number.
+
+        This change has no impact on benchmarks we track.
+
+        On microbenchmarks for these functions, this is a slight regression where a high
+        precision is requested (dtoa now need to iterate further to generate a a greater
+        number of digits), but with smaller precision values (hopefully more common) this
+        improves performance, since it reduced the accurate of result dtoa is required,
+        to produce, and removes the need to pre-round values before calling dtoa. 
+
+        * JavaScriptCore.exp:
+            doubleToStringInJavaScriptFormat renamed to numberToString
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+            doubleToStringInJavaScriptFormat renamed to numberToString
+
+        * runtime/UString.cpp:
+        (JSC::UString::number):
+            doubleToStringInJavaScriptFormat renamed to numberToString
+
+        * wtf/DecimalNumber.h:
+        (WTF::DecimalNumber::DecimalNumber):
+        (WTF::DecimalNumber::toStringDecimal):
+        (WTF::DecimalNumber::toStringExponential):
+            Remove all pre-rounding of values, instead call dtoa correctly.
+
+        * wtf/dtoa.cpp:
+        (WTF::dtoa):
+        * wtf/dtoa.h:
+            Reenable support for rounding to specific-figures/decimal-places in dtoa.
+            Modify to remove unbiased rounding, provide ECMA required away-from-zero.
+            Rewrite doubleToStringInJavaScriptFormat to use DecimalNumber, rename to
+            numberToString.
+
 2010-08-27  Chao-ying Fu  <fu@mips.com>
 
         Reviewed by Oliver Hunt.

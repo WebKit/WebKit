@@ -21,11 +21,10 @@
 #ifndef WTF_dtoa_h
 #define WTF_dtoa_h
 
-namespace WTF {
-class Mutex;
-}
+#include <wtf/unicode/Unicode.h>
 
 namespace WTF {
+class Mutex;
 
 extern WTF::Mutex* s_dtoaP5Mutex;
 
@@ -34,16 +33,18 @@ extern WTF::Mutex* s_dtoaP5Mutex;
 double strtod(const char* s00, char** se);
 
 typedef char DtoaBuffer[80];
-void dtoa(DtoaBuffer result, double d, int ndigits, int* decpt, int* sign, char** rve);
 
-// dtoa() for ECMA-262 'ToString Applied to the Number Type.'
-// The *resultLength will have the length of the resultant string in bufer.
-// The resultant string isn't terminated by 0.
-void doubleToStringInJavaScriptFormat(double, DtoaBuffer, unsigned* resultLength);
+void dtoa(DtoaBuffer result, double dd, bool& sign, int& exponent, unsigned& precision);
+void dtoaRoundSF(DtoaBuffer result, double dd, int ndigits, bool& sign, int& exponent, unsigned& precision);
+void dtoaRoundDP(DtoaBuffer result, double dd, int ndigits, bool& sign, int& exponent, unsigned& precision);
+
+// Size = 80 for sizeof(DtoaBuffer) + some sign bits, decimal point, 'e', exponent digits.
+typedef UChar NumberToStringBuffer[96];
+unsigned numberToString(double, NumberToStringBuffer);
 
 } // namespace WTF
 
-using WTF::DtoaBuffer;
-using WTF::doubleToStringInJavaScriptFormat;
+using WTF::NumberToStringBuffer;
+using WTF::numberToString;
 
 #endif // WTF_dtoa_h

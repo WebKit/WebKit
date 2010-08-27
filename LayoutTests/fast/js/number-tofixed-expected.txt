@@ -41,7 +41,7 @@ PASS (1234.567).toFixed('1') is "1234.6"
 PASS (1234.567).toFixed(2) is "1234.57"
 PASS (1234.567).toFixed(2.9) is "1234.57"
 PASS (1234.567).toFixed(5) is "1234.56700"
-FAIL (1234.567).toFixed(20) should be 1234.56700000000000727596. Was 1234.56700000000000000000.
+PASS (1234.567).toFixed(20) is "1234.56700000000000727596"
 PASS (1234.567).toFixed(21) threw exception RangeError: toFixed() argument must be between 0 and 20.
 PASS (1234.567).toFixed(100) threw exception RangeError: toFixed() argument must be between 0 and 20.
 PASS (1234.567).toFixed(101) threw exception RangeError: toFixed() argument must be between 0 and 20.

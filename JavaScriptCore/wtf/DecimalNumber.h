@@ -33,9 +33,6 @@
 
 namespace WTF {
 
-// Size = 80 for sizeof(DtoaBuffer) + some sign bits, decimal point, 'e', exponent digits.
-typedef UChar NumberToStringBuffer[96];
-
 enum RoundingSignificantFiguresType { RoundingSignificantFigures };
 enum RoundingDecimalPlacesType { RoundingDecimalPlaces };
 
@@ -43,111 +40,48 @@ class DecimalNumber {
 public:
     DecimalNumber(double d)
     {
-        bool sign = d < 0; // This (correctly) ignores the sign on -0.0.
-        init(sign, d);
+        ASSERT(!isnan(d) && !isinf(d));
+        dtoa(m_significand, d, m_sign, m_exponent, m_precision);
+
+        ASSERT(m_precision);
+        // Zero should always have exponent 0.
+        ASSERT(m_significand[0] != '0' || !m_exponent);
+        // No values other than zero should have a leading zero.
+        ASSERT(m_significand[0] != '0' || m_precision == 1);
+        // No values other than zero should have trailing zeros.
+        ASSERT(m_significand[0] == '0' || m_significand[m_precision - 1] != '0');
     }
 
-    // If our version of dtoa could round to a given number of significant figures then
-    // we could remove the pre-rounding code from here.  We could also do so just by
-    // calling dtoa and post-rounding, however currently this is slower, since it forces
-    // dtoa to generate a higher presision result.
     DecimalNumber(double d, RoundingSignificantFiguresType, unsigned significantFigures)
     {
         ASSERT(!isnan(d) && !isinf(d));
-        ASSERT(significantFigures && significantFigures <= 21);
+        dtoaRoundSF(m_significand, d, significantFigures, m_sign, m_exponent, m_precision);
 
-        bool sign = d < 0; // This (correctly) ignores the sign on -0.0.
-        d = fabs(d); // make d positive before going any further.
+        ASSERT(significantFigures && significantFigures <= sizeof(DtoaBuffer));
+        while (m_precision < significantFigures)
+            m_significand[m_precision++] = '0';
 
-        int adjust = 0;
-        if (d) {
-            // To round a number we align it such that the correct number of digits are
-            // to the left of the decimal point, then floor/ceil.  For example, to round
-            // 13579 to 3 s.f. we first adjust it to 135.79, use floor/ceil to obtain the
-            // values 135/136, and then select 136 (since this is closest to 135.79).
-            // There are currently (exp + 1) digits to the left of the decimal point,
-            // and we want thsi to be significantFigures, so we're going to adjust the
-            // exponent by ((exp + 1) - significantFigures).  Adjust is effectively
-            // a count of how many decimal digits to right-shift the number by.
-            int exp = static_cast<int>(floor(log10(d)));
-            adjust = (exp + 1) - significantFigures;
-
-            // If the adjust value might be positive or negative - or zero.  If zero, then
-            // nothing to do! - the number is already appropriately aligned.  If adjust
-            // is positive then divide d by 10^adjust.  If adjust is negative multiply d
-            // by 10^-adjust. This is mathematically the same, but avoids two fp divides
-            // (one inside intPow10, where the power is negative).
-            if (adjust > 0)
-                d /= intPow10(adjust);
-            else if (adjust < 0)
-                d *= intPow10(-adjust);
-
-            // Try rounding up & rounding down, select whichever is closest (rounding up if equal distance).
-            double floorOfD = floor(d);
-            double ceilOfD = floorOfD + 1;
-            d = (fabs(ceilOfD - d) <= fabs(floorOfD - d)) ? ceilOfD : floorOfD;
-
-            // The number's exponent has been altered - but don't change it back!  We can
-            // just run dtoa on the modified value, and adjust the exponent afterward to
-            // account for this.
-        }
-
-        init(sign, d);
-
-        // We alterered the value when rounding it - modify the exponent to adjust for this,
-        // but don't mess with the exponent of zero.
-        if (!isZero())
-            m_exponent += adjust;
-
-        // Make sure the significand does not contain more digits than requested.
-        roundToPrecision(significantFigures);
+        ASSERT(m_precision);
+        // Zero should always have exponent 0.
+        ASSERT(m_significand[0] != '0' || !m_exponent);
     }
 
-    // If our version of dtoa could round to a given number of decimal places then we
-    // could remove the pre-rounding code from here.  We could also do so just by calling
-    // dtoa and post-rounding, however currently this is slower, since it forces dtoa to
-    // generate a higher presision result.
     DecimalNumber(double d, RoundingDecimalPlacesType, unsigned decimalPlaces)
     {
         ASSERT(!isnan(d) && !isinf(d));
-        ASSERT(decimalPlaces <= 20);
-
-        bool sign = d < 0; // This (correctly) ignores the sign on -0.0.
-        d = fabs(d); // Make d positive before going any further.
-
-        ASSERT(d < 1e+21); // We don't currently support rounding to decimal places for values >= 1e+21.
-
-        // Adjust the number by increasing the exponent by decimalPlaces, such
-        // that we can round to this number of decimal places jsing floor.
-        if (decimalPlaces)
-            d *= intPow10(decimalPlaces);
-        // Try rounding up & rounding down, select whichever is closest (rounding up if equal distance).
-        double floorOfD = floor(d);
-        double ceilOfD = floorOfD + 1;
-        d = (fabs(ceilOfD - d) <= fabs(floorOfD - d)) ? ceilOfD : floorOfD;
-        // The number's exponent has been altered - but don't change it back!  We can
-        // just run dtoa on the modified value, and adjust the exponent afterward to
-        // account for this.
-
-        init(sign, d);
-
-        // We rouned the value before calling dtoa, so the result should not be fractional.
-        ASSERT(m_exponent >= 0);
-
-        // We alterered the value when rounding it - modify the exponent to adjust for this,
-        // but don't mess with the exponent of zero.
-        if (!isZero())
-            m_exponent -= decimalPlaces;
-
-        // The value was < 1e+21 before we started, should still be.
-        ASSERT(m_exponent < 21);
+        dtoaRoundDP(m_significand, d, decimalPlaces, m_sign, m_exponent, m_precision);
 
         unsigned significantFigures = 1 + m_exponent + decimalPlaces;
-        ASSERT(significantFigures && significantFigures <= 41);
-        roundToPrecision(significantFigures);
+        ASSERT(significantFigures && significantFigures <= sizeof(DtoaBuffer));
+        while (m_precision < significantFigures)
+            m_significand[m_precision++] = '0';
+
+        ASSERT(m_precision);
+        // Zero should always have exponent 0.
+        ASSERT(m_significand[0] != '0' || !m_exponent);
     }
 
-    unsigned toStringDecimal(NumberToStringBuffer& buffer)
+    unsigned toStringDecimal(NumberToStringBuffer buffer)
     {
         // Should always be at least one digit to add to the string!
         ASSERT(m_precision);
@@ -201,7 +135,7 @@ public:
         return next - buffer;
     }
 
-    unsigned toStringExponential(NumberToStringBuffer &buffer)
+    unsigned toStringExponential(NumberToStringBuffer buffer)
     {
         // Should always be at least one digit to add to the string!
         ASSERT(m_precision);
@@ -247,75 +181,6 @@ public:
     unsigned precision() { return m_precision; }
 
 private:
-    void init(bool sign, double d)
-    {
-        ASSERT(!isnan(d) && !isinf(d));
-
-        int decimalPoint;
-        int signUnused;
-        char* resultEnd = 0;
-        WTF::dtoa(m_significand, d, 0, &decimalPoint, &signUnused, &resultEnd);
-
-        m_sign = sign;
-        m_precision = resultEnd - m_significand;
-        m_exponent = decimalPoint - 1;
-
-        // No values other than zero should have a leading zero.
-        ASSERT(m_significand[0] != '0' || m_precision == 1);
-        // Zero should always have exponent 0.
-        ASSERT(m_significand[0] != '0' || !m_exponent);
-    }
-
-    bool isZero()
-    {
-        return m_significand[0] == '0';
-    }
-
-    // We pre-round the values to dtoa - which leads to it generating faster results.
-    // But dtoa won't have zero padded the significand to the precision we require,
-    // and also might have produced too many digits if rounding went wrong somehow.
-    // Adjust for this.
-    void roundToPrecision(unsigned significantFigures)
-    {
-        ASSERT(significantFigures && significantFigures <= sizeof(DtoaBuffer));
-
-        // If there are too few of too many digits in the significand then add more, or remove some!
-        for (unsigned i = m_precision; i < significantFigures; ++i)
-            m_significand[i] = '0';
-        m_precision = significantFigures;
-    }
-
-    double intPow10(int e)
-    {
-        // This function uses the "exponentiation by squaring" algorithm and
-        // long double to quickly and precisely calculate integer powers of 10.0.
-
-        // This is a handy workaround for <rdar://problem/4494756>
-
-        if (!e)
-            return 1.0;
-
-        bool negative = e < 0;
-        unsigned exp = negative ? -e : e;
-
-        long double result = 10.0;
-        bool foundOne = false;
-        for (int bit = 31; bit >= 0; bit--) {
-            if (!foundOne) {
-                if ((exp >> bit) & 1)
-                    foundOne = true;
-            } else {
-                result = result * result;
-                if ((exp >> bit) & 1)
-                    result = result * 10.0;
-            }
-        }
-
-        if (negative)
-            return static_cast<double>(1.0 / result);
-        return static_cast<double>(result);
-    }
-
     bool m_sign;
     int m_exponent;
     DtoaBuffer m_significand;
@@ -324,7 +189,6 @@ private:
 
 } // namespace WTF
 
-using WTF::NumberToStringBuffer;
 using WTF::DecimalNumber;
 using WTF::RoundingSignificantFigures;
 using WTF::RoundingDecimalPlaces;
