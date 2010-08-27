@@ -1168,8 +1168,11 @@ RenderObject* HTMLInputElement::createRenderer(RenderArena *arena, RenderStyle *
         return new (arena) RenderFileUploadControl(this);
     case HIDDEN:
         break;
-    case IMAGE:
-        return new (arena) RenderImage(this);
+    case IMAGE: {
+        RenderImage* image = new (arena) RenderImage(this);
+        image->setImageResource(RenderImageResource::create());
+        return image;
+    }
     case RANGE:
         return new (arena) RenderSlider(this);
     case COLOR:
@@ -1208,13 +1211,14 @@ void HTMLInputElement::attach()
             m_imageLoader = adoptPtr(new HTMLImageLoader(this));
         m_imageLoader->updateFromElement();
         if (renderer() && m_imageLoader->haveFiredBeforeLoadEvent()) {
-            RenderImage* imageObj = toRenderImage(renderer());
-            imageObj->setCachedImage(m_imageLoader->image()); 
-            
+            RenderImage* renderImage = toRenderImage(renderer());
+            RenderImageResource* renderImageResource = renderImage->imageResource();
+            renderImageResource->setCachedImage(m_imageLoader->image()); 
+
             // If we have no image at all because we have no src attribute, set
             // image height and width for the alt text instead.
-            if (!m_imageLoader->image() && !imageObj->cachedImage())
-                imageObj->setImageSizeForAltText();
+            if (!m_imageLoader->image() && !renderImageResource->cachedImage())
+                renderImage->setImageSizeForAltText();
         }
     }
 

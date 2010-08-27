@@ -154,8 +154,11 @@ bool HTMLEmbedElement::rendererIsNeeded(RenderStyle* style)
 
 RenderObject* HTMLEmbedElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
-    if (isImageType())
-        return new (arena) RenderImage(this);
+    if (isImageType()) {
+        RenderImage* image = new (arena) RenderImage(this);
+        image->setImageResource(RenderImageResource::create());
+        return image;
+    }
     return new (arena) RenderEmbeddedObject(this);
 }
 
@@ -176,7 +179,7 @@ void HTMLEmbedElement::attach()
         m_imageLoader->updateFromElement();
 
         if (renderer())
-            toRenderImage(renderer())->setCachedImage(m_imageLoader->image());
+            toRenderImage(renderer())->imageResource()->setCachedImage(m_imageLoader->image());
     }
 }
 

@@ -136,8 +136,11 @@ RenderObject *HTMLObjectElement::createRenderer(RenderArena* arena, RenderStyle*
 {
     if (m_useFallbackContent)
         return RenderObject::createObject(this, style);
-    if (isImageType())
-        return new (arena) RenderImage(this);
+    if (isImageType()) {
+        RenderImage* image = new (arena) RenderImage(this);
+        image->setImageResource(RenderImageResource::create());
+        return image;
+    }
     return new (arena) RenderEmbeddedObject(this);
 }
 

@@ -29977,11 +29977,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\rendering\RenderImageGeneratedContent.cpp"
+				RelativePath="..\rendering\RenderImageResource.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\rendering\RenderImageGeneratedContent.h"
+				RelativePath="..\rendering\RenderImageResource.h"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderImageResourceStyleImage.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderImageResourceStyleImage.h"
 				>
 			</File>
 			<File

@@ -1,3 +1,116 @@
+2010-08-27  Patrick Gansterer  <paroga@paroga.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        RenderImage::imageChanged invalidates wrong area
+        https://bugs.webkit.org/show_bug.cgi?id=43779
+
+        At the moment RenderSVGImage inherits from RenderImage, which makes non-SVG compatible
+        assumptions about repainting, and thus has to be fixed to inherit from RenderSVGModelObject.
+
+        This patch moves the CachedImage from RenderImage into a separate class.
+        The new class contains the common behavior of RenderImage and RenderSVGImage.
+        An additional patch will remove the inheritance of RenderImage at RenderSVGImage.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::createRenderer):
+        (WebCore::HTMLEmbedElement::attach):
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::createRenderer):
+        (WebCore::HTMLImageElement::attach):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::createRenderer):
+        (WebCore::HTMLInputElement::attach):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::createRenderer):
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::attach):
+        (WebCore::HTMLVideoElement::parseMappedAttribute):
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::setImage):
+        (WebCore::ImageLoader::updateFromElement):
+        (WebCore::ImageLoader::renderImageResource):
+        (WebCore::ImageLoader::updateRenderer):
+        * loader/ImageLoader.h:
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::RenderImage):
+        (WebCore::RenderImage::~RenderImage):
+        (WebCore::RenderImage::setImageResource):
+        (WebCore::RenderImage::imageChanged):
+        (WebCore::RenderImage::notifyFinished):
+        (WebCore::RenderImage::paintReplaced):
+        (WebCore::RenderImage::paintIntoRect):
+        (WebCore::RenderImage::minimumReplacedHeight):
+        (WebCore::RenderImage::calcReplacedWidth):
+        (WebCore::RenderImage::calcReplacedHeight):
+        (WebCore::RenderImage::calcAspectRatioWidth):
+        (WebCore::RenderImage::calcAspectRatioHeight):
+        * rendering/RenderImage.h:
+        (WebCore::RenderImage::imageResource):
+        (WebCore::RenderImage::cachedImage):
+        (WebCore::RenderImage::intrinsicSizeChanged):
+        (WebCore::toRenderImage):
+        * rendering/RenderImageGeneratedContent.cpp: Removed.
+        * rendering/RenderImageGeneratedContent.h: Removed.
+        * rendering/RenderImageResource.cpp: Added.
+        (WebCore::RenderImageResource::RenderImageResource):
+        (WebCore::RenderImageResource::~RenderImageResource):
+        (WebCore::RenderImageResource::initialize):
+        (WebCore::RenderImageResource::shutdown):
+        (WebCore::RenderImageResource::setCachedImage):
+        (WebCore::RenderImageResource::resetAnimation):
+        (WebCore::RenderImageResource::setImageContainerSize):
+        (WebCore::RenderImageResource::nullImage):
+        * rendering/RenderImageResource.h: Added.
+        (WebCore::RenderImageResource::create):
+        (WebCore::RenderImageResource::cachedImage):
+        (WebCore::RenderImageResource::hasImage):
+        (WebCore::RenderImageResource::image):
+        (WebCore::RenderImageResource::errorOccurred):
+        (WebCore::RenderImageResource::usesImageContainerSize):
+        (WebCore::RenderImageResource::imageHasRelativeWidth):
+        (WebCore::RenderImageResource::imageHasRelativeHeight):
+        (WebCore::RenderImageResource::imageSize):
+        (WebCore::RenderImageResource::imagePtr):
+        * rendering/RenderImageResourceStyleImage.cpp: Added.
+        (WebCore::RenderImageResourceStyleImage::RenderImageResourceStyleImage):
+        (WebCore::RenderImageResourceStyleImage::~RenderImageResourceStyleImage):
+        (WebCore::RenderImageResourceStyleImage::initialize):
+        (WebCore::RenderImageResourceStyleImage::shutdown):
+        * rendering/RenderImageResourceStyleImage.h: Added.
+        (WebCore::RenderImageResourceStyleImage::create):
+        (WebCore::RenderImageResourceStyleImage::image):
+        (WebCore::RenderImageResourceStyleImage::errorOccurred):
+        (WebCore::RenderImageResourceStyleImage::setImageContainerSize):
+        (WebCore::RenderImageResourceStyleImage::usesImageContainerSize):
+        (WebCore::RenderImageResourceStyleImage::imageHasRelativeWidth):
+        (WebCore::RenderImageResourceStyleImage::imageHasRelativeHeight):
+        (WebCore::RenderImageResourceStyleImage::imageSize):
+        (WebCore::RenderImageResourceStyleImage::imagePtr):
+        * rendering/RenderMedia.cpp:
+        (WebCore::RenderMedia::RenderMedia):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::createObject):
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::updateBeforeAfterContent):
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::RenderSVGImage):
+        (WebCore::RenderSVGImage::layout):
+        (WebCore::RenderSVGImage::paint):
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::calculateIntrinsicSize):
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::attach):
+        * wml/WMLImageElement.cpp:
+        (WebCore::WMLImageElement::createRenderer):
+
 2010-08-27  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Pavel Feldman.

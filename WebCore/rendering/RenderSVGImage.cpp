@@ -47,6 +47,7 @@ RenderSVGImage::RenderSVGImage(SVGImageElement* impl)
     : RenderImage(impl)
     , m_needsTransformUpdate(true)
 {
+    setImageResource(RenderImageResource::create());
 }
 
 void RenderSVGImage::layout()
@@ -62,7 +63,7 @@ void RenderSVGImage::layout()
     }
 
     // minimum height
-    setHeight(errorOccurred() ? intrinsicSize().height() : 0);
+    setHeight(imageResource()->errorOccurred() ? intrinsicSize().height() : 0);
 
     calcWidth();
     calcHeight();
@@ -91,14 +92,15 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int, int)
         PaintInfo savedInfo(paintInfo);
 
         if (SVGRenderSupport::prepareToRenderSVGContent(this, paintInfo)) {
+            Image* image = imageResource()->image();
             FloatRect destRect = m_localBounds;
-            FloatRect srcRect(0, 0, image()->width(), image()->height());
+            FloatRect srcRect(0, 0, image->width(), image->height());
 
             SVGImageElement* imageElt = static_cast<SVGImageElement*>(node());
             if (imageElt->preserveAspectRatio().align() != SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_NONE)
                 imageElt->preserveAspectRatio().transformRect(destRect, srcRect);
 
-            paintInfo.context->drawImage(image(), DeviceColorSpace, destRect, srcRect);
+            paintInfo.context->drawImage(image, DeviceColorSpace, destRect, srcRect);
         }
         SVGRenderSupport::finishRenderSVGContent(this, paintInfo, savedInfo.context);
     }

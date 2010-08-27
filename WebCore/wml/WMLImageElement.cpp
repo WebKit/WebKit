@@ -109,7 +109,9 @@ void WMLImageElement::attach()
 
 RenderObject* WMLImageElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
-    return new (arena) RenderImage(this);
+    RenderImage* image = new (arena) RenderImage(this);
+    image->setImageResource(RenderImageResource::create());
+    return image;
 }
 
 void WMLImageElement::insertedIntoDocument()

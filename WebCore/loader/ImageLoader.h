@@ -31,6 +31,7 @@ namespace WebCore {
 
 class Element;
 class ImageLoadEventSender;
+class RenderImageResource;
 
 class ImageLoader : public CachedResourceClient {
 public:
@@ -72,6 +73,7 @@ private:
     void dispatchPendingBeforeLoadEvent();
     void dispatchPendingLoadEvent();
 
+    RenderImageResource* renderImageResource();
     void updateRenderer();
 
     Element* m_element;

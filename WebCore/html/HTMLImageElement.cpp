@@ -183,7 +183,9 @@ RenderObject* HTMLImageElement::createRenderer(RenderArena* arena, RenderStyle* 
      if (style->contentData())
         return RenderObject::createObject(this, style);
 
-     return new (arena) RenderImage(this);
+    RenderImage* image = new (arena) RenderImage(this);
+    image->setImageResource(RenderImageResource::create());
+    return image;
 }
 
 void HTMLImageElement::attach()
@@ -191,15 +193,16 @@ void HTMLImageElement::attach()
     HTMLElement::attach();
 
     if (renderer() && renderer()->isImage() && m_imageLoader.haveFiredBeforeLoadEvent()) {
-        RenderImage* imageObj = toRenderImage(renderer());
-        if (imageObj->hasImage())
+        RenderImage* renderImage = toRenderImage(renderer());
+        RenderImageResource* renderImageResource = renderImage->imageResource();
+        if (renderImageResource->hasImage())
             return;
-        imageObj->setCachedImage(m_imageLoader.image());
+        renderImageResource->setCachedImage(m_imageLoader.image());
 
         // If we have no image at all because we have no src attribute, set
         // image height and width for the alt text instead.
-        if (!m_imageLoader.image() && !imageObj->cachedImage())
-            imageObj->setImageSizeForAltText();
+        if (!m_imageLoader.image() && !renderImageResource->cachedImage())
+            renderImage->setImageSizeForAltText();
     }
 }
 

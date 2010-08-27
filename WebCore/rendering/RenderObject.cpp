@@ -41,7 +41,8 @@
 #include "RenderArena.h"
 #include "RenderCounter.h"
 #include "RenderFlexibleBox.h"
-#include "RenderImageGeneratedContent.h"
+#include "RenderImage.h"
+#include "RenderImageResourceStyleImage.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
 #include "RenderListItem.h"
@@ -107,10 +108,12 @@ RenderObject* RenderObject::createObject(Node* node, RenderStyle* style)
     // Otherwise acts as if we didn't support this feature.
     const ContentData* contentData = style->contentData();
     if (contentData && !contentData->next() && contentData->isImage() && doc != node) {
-        RenderImageGeneratedContent* image = new (arena) RenderImageGeneratedContent(node);
+        RenderImage* image = new (arena) RenderImage(node);
         image->setStyle(style);
         if (StyleImage* styleImage = contentData->image())
-            image->setStyleImage(styleImage);
+            image->setImageResource(RenderImageResourceStyleImage::create(styleImage));
+        else
+            image->setImageResource(RenderImageResource::create());
         return image;
     }
 

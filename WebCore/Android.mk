@@ -621,7 +621,8 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	rendering/RenderHTMLCanvas.cpp \
 	rendering/RenderIFrame.cpp \
 	rendering/RenderImage.cpp \
-	rendering/RenderImageGeneratedContent.cpp \
+	rendering/RenderImageResource.cpp \
+	rendering/RenderImageResourceStyleImage.cpp \
 	rendering/RenderInline.cpp \
 	rendering/RenderLayer.cpp \
 	rendering/RenderLayerBacking.cpp \

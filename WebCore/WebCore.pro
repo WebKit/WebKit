@@ -1013,7 +1013,8 @@ SOURCES += \
     rendering/RenderHTMLCanvas.cpp \
     rendering/RenderIFrame.cpp \
     rendering/RenderImage.cpp \
-    rendering/RenderImageGeneratedContent.cpp \
+    rendering/RenderImageResource.cpp \
+    rendering/RenderImageResourceStyleImage.cpp \
     rendering/RenderIndicator.cpp \
     rendering/RenderInline.cpp \
     rendering/RenderLayer.cpp \
@@ -1841,7 +1842,8 @@ HEADERS += \
     rendering/RenderFrameSet.h \
     rendering/RenderHTMLCanvas.h \
     rendering/RenderIFrame.h \
-    rendering/RenderImageGeneratedContent.h \
+    rendering/RenderImageResource.h \
+    rendering/RenderImageResourceStyleImage.h \
     rendering/RenderImage.h \
     rendering/RenderIndicator.h \
     rendering/RenderInline.h \

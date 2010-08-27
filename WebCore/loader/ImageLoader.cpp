@@ -31,6 +31,13 @@
 #include "HTMLObjectElement.h"
 #include "RenderImage.h"
 
+#if ENABLE(SVG)
+#include "RenderSVGImage.h"
+#endif
+#if ENABLE(VIDEO)
+#include "RenderVideo.h"
+#endif
+
 #if !ASSERT_DISABLED
 // ImageLoader objects are allocated as members of other objects, so generic pointer check would always fail.
 namespace WTF {
@@ -130,11 +137,8 @@ void ImageLoader::setImage(CachedImage* newImage)
             oldImage->removeClient(this);
     }
 
-    if (RenderObject* renderer = m_element->renderer()) {
-        if (!renderer->isImage())
-            return;
-        toRenderImage(renderer)->resetAnimation();
-    }
+    if (RenderImageResource* imageResource = renderImageResource())
+        imageResource->resetAnimation();
 }
 
 void ImageLoader::updateFromElement()
@@ -195,11 +199,8 @@ void ImageLoader::updateFromElement()
             oldImage->removeClient(this);
     }
 
-    if (RenderObject* renderer = m_element->renderer()) {
-        if (!renderer->isImage())
-            return;
-        toRenderImage(renderer)->resetAnimation();
-    }
+    if (RenderImageResource* imageResource = renderImageResource())
+        imageResource->resetAnimation();
 }
 
 void ImageLoader::updateFromElementIgnoringPreviousError()
@@ -223,20 +224,42 @@ void ImageLoader::notifyFinished(CachedResource*)
     loadEventSender().dispatchEventSoon(this);
 }
 
+RenderImageResource* ImageLoader::renderImageResource()
+{
+    RenderObject* renderer = m_element->renderer();
+
+    if (!renderer)
+        return 0;
+
+    if (renderer->isImage())
+        return toRenderImage(renderer)->imageResource();
+
+#if ENABLE(SVG)
+    if (renderer->isSVGImage())
+        return toRenderSVGImage(renderer)->imageResource();
+#endif
+
+#if ENABLE(VIDEO)
+    if (renderer->isVideo())
+        return toRenderVideo(renderer)->imageResource();
+#endif
+
+    return 0;
+}
+
 void ImageLoader::updateRenderer()
 {
-    if (RenderObject* renderer = m_element->renderer()) {
-        if (!renderer->isImage() && !renderer->isVideo())
-            return;
-        RenderImage* imageRenderer = toRenderImage(renderer);
-        
-        // Only update the renderer if it doesn't have an image or if what we have
-        // is a complete image.  This prevents flickering in the case where a dynamic
-        // change is happening between two images.
-        CachedImage* cachedImage = imageRenderer->cachedImage();
-        if (m_image != cachedImage && (m_imageComplete || !cachedImage))
-            imageRenderer->setCachedImage(m_image.get());
-    }
+    RenderImageResource* imageResource = renderImageResource();
+
+    if (!imageResource)
+        return;
+
+    // Only update the renderer if it doesn't have an image or if what we have
+    // is a complete image.  This prevents flickering in the case where a dynamic
+    // change is happening between two images.
+    CachedImage* cachedImage = imageResource->cachedImage();
+    if (m_image != cachedImage && (m_imageComplete || !cachedImage))
+        imageResource->setCachedImage(m_image.get());
 }
 
 void ImageLoader::dispatchPendingBeforeLoadEvent()

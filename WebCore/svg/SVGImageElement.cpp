@@ -172,10 +172,10 @@ void SVGImageElement::attach()
     SVGStyledTransformableElement::attach();
 
     if (RenderSVGImage* imageObj = toRenderSVGImage(renderer())) {
-        if (imageObj->hasImage())
+        if (imageObj->imageResource()->hasImage())
             return;
 
-        imageObj->setCachedImage(m_imageLoader.image());
+        imageObj->imageResource()->setCachedImage(m_imageLoader.image());
     }
 }
 

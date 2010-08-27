@@ -1381,7 +1381,8 @@ SET(WebCore_SOURCES
     rendering/RenderHTMLCanvas.cpp
     rendering/RenderIFrame.cpp
     rendering/RenderImage.cpp
-    rendering/RenderImageGeneratedContent.cpp
+    rendering/RenderImageResource.cpp
+    rendering/RenderImageResourceStyleImage.cpp
     rendering/RenderIndicator.cpp
     rendering/RenderInline.cpp
     rendering/RenderLayer.cpp

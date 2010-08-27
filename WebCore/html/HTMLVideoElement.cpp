@@ -78,10 +78,8 @@ void HTMLVideoElement::attach()
         if (!m_imageLoader)
             m_imageLoader = adoptPtr(new HTMLImageLoader(this));
         m_imageLoader->updateFromElement();
-        if (renderer()) {
-            RenderImage* imageRenderer = toRenderImage(renderer());
-            imageRenderer->setCachedImage(m_imageLoader->image()); 
-        }
+        if (renderer())
+            toRenderImage(renderer())->imageResource()->setCachedImage(m_imageLoader->image()); 
     }
 #endif
 }
@@ -111,7 +109,7 @@ void HTMLVideoElement::parseMappedAttribute(Attribute* attr)
             if (m_imageLoader)
                 m_imageLoader.clear();
             if (renderer())
-                toRenderImage(renderer())->setCachedImage(0); 
+                toRenderImage(renderer())->imageResource()->setCachedImage(0); 
         }
 #endif
     } else if (attrName == widthAttr)

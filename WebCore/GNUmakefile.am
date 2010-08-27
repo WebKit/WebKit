@@ -2269,8 +2269,10 @@ webcore_sources += \
 	WebCore/rendering/RenderIFrame.h \
 	WebCore/rendering/RenderImage.cpp \
 	WebCore/rendering/RenderImage.h \
-	WebCore/rendering/RenderImageGeneratedContent.cpp \
-	WebCore/rendering/RenderImageGeneratedContent.h \
+	WebCore/rendering/RenderImageResource.cpp \
+	WebCore/rendering/RenderImageResource.h \
+	WebCore/rendering/RenderImageResourceStyleImage.cpp \
+	WebCore/rendering/RenderImageResourceStyleImage.h \
 	WebCore/rendering/RenderIndicator.cpp \
 	WebCore/rendering/RenderIndicator.h \
 	WebCore/rendering/RenderInline.cpp \

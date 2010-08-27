@@ -57,7 +57,6 @@ using namespace HTMLNames;
 
 RenderImage::RenderImage(Node* node)
     : RenderReplaced(node, IntSize(0, 0))
-    , m_cachedImage(0)
 {
     updateAltText();
 
@@ -66,22 +65,15 @@ RenderImage::RenderImage(Node* node)
 
 RenderImage::~RenderImage()
 {
-    if (m_cachedImage)
-        m_cachedImage->removeClient(this);
+    ASSERT(m_imageResource);
+    m_imageResource->shutdown();
 }
 
-void RenderImage::setCachedImage(CachedImage* newImage)
+void RenderImage::setImageResource(PassOwnPtr<RenderImageResource> imageResource)
 {
-    if (m_cachedImage == newImage)
-        return;
-    if (m_cachedImage)
-        m_cachedImage->removeClient(this);
-    m_cachedImage = newImage;
-    if (m_cachedImage) {
-        m_cachedImage->addClient(this);
-        if (m_cachedImage->errorOccurred())
-            imageChanged(m_cachedImage.get());
-    }
+    ASSERT(!m_imageResource);
+    m_imageResource = imageResource;
+    m_imageResource->initialize(this);
 }
 
 // If we'll be displaying either alt text or an image, add some padding.
@@ -135,22 +127,22 @@ void RenderImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
 
     if (hasBoxDecorations() || hasMask())
         RenderReplaced::imageChanged(newImage, rect);
-    
-    if (newImage != imagePtr() || !newImage)
+
+    if (newImage != m_imageResource->imagePtr() || !newImage)
         return;
 
     bool imageSizeChanged = false;
 
     // Set image dimensions, taking into account the size of the alt text.
-    if (errorOccurred())
-        imageSizeChanged = setImageSizeForAltText(m_cachedImage.get());
-    
+    if (m_imageResource->errorOccurred())
+        imageSizeChanged = setImageSizeForAltText(m_imageResource->cachedImage());
+
     bool shouldRepaint = true;
 
     // Image dimensions have been changed, see what needs to be done
-    if (imageSize(style()->effectiveZoom()) != intrinsicSize() || imageSizeChanged) {
-        if (!errorOccurred())
-            setIntrinsicSize(imageSize(style()->effectiveZoom()));
+    if (m_imageResource->imageSize(style()->effectiveZoom()) != intrinsicSize() || imageSizeChanged) {
+        if (!m_imageResource->errorOccurred())
+            setIntrinsicSize(m_imageResource->imageSize(style()->effectiveZoom()));
 
         // In the case of generated image content using :before/:after, we might not be in the
         // render tree yet.  In that case, we don't need to worry about check for layout, since we'll get a
@@ -180,7 +172,7 @@ void RenderImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
         if (rect) {
             // The image changed rect is in source image coordinates (pre-zooming),
             // so map from the bounds of the image to the contentsBox.
-            repaintRect = enclosingIntRect(mapRect(*rect, FloatRect(FloatPoint(), imageSize(1.0f)), contentBoxRect()));
+            repaintRect = enclosingIntRect(mapRect(*rect, FloatRect(FloatPoint(), m_imageResource->imageSize(1.0f)), contentBoxRect()));
             // Guard against too-large changed rects.
             repaintRect.intersect(contentBoxRect());
         } else
@@ -203,7 +195,7 @@ void RenderImage::notifyFinished(CachedResource* newImage)
         return;
 
 #if USE(ACCELERATED_COMPOSITING)
-    if ((newImage == m_cachedImage) && hasLayer()) {
+    if (newImage == m_imageResource->cachedImage() && hasLayer()) {
         // tell any potential compositing layers
         // that the image is done and they can reference it directly.
         layer()->rendererContentChanged();
@@ -211,15 +203,6 @@ void RenderImage::notifyFinished(CachedResource* newImage)
 #else
     UNUSED_PARAM(newImage);
 #endif
-}
-    
-void RenderImage::resetAnimation()
-{
-    if (m_cachedImage) {
-        image()->resetAnimation();
-        if (!needsLayout())
-            repaint();
-    }
 }
 
 void RenderImage::paintReplaced(PaintInfo& paintInfo, int tx, int ty)
@@ -236,7 +219,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, int tx, int ty)
 
     GraphicsContext* context = paintInfo.context;
 
-    if (!hasImage() || errorOccurred()) {
+    if (!m_imageResource->hasImage() || m_imageResource->errorOccurred()) {
         if (paintInfo.phase == PaintPhaseSelection)
             return;
 
@@ -255,17 +238,19 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, int tx, int ty)
             int usableWidth = cWidth - 2;
             int usableHeight = cHeight - 2;
 
-            if (errorOccurred() && !image()->isNull() && (usableWidth >= image()->width()) && (usableHeight >= image()->height())) {
+            Image* image = m_imageResource->image();
+
+            if (m_imageResource->errorOccurred() && !image->isNull() && usableWidth >= image->width() && usableHeight >= image->height()) {
                 // Center the error image, accounting for border and padding.
-                int centerX = (usableWidth - image()->width()) / 2;
+                int centerX = (usableWidth - image->width()) / 2;
                 if (centerX < 0)
                     centerX = 0;
-                int centerY = (usableHeight - image()->height()) / 2;
+                int centerY = (usableHeight - image->height()) / 2;
                 if (centerY < 0)
                     centerY = 0;
                 imageX = leftBorder + leftPad + centerX + 1;
                 imageY = topBorder + topPad + centerY + 1;
-                context->drawImage(image(), style()->colorSpace(), IntPoint(tx + imageX, ty + imageY));
+                context->drawImage(image, style()->colorSpace(), IntPoint(tx + imageX, ty + imageY));
                 errorPictureDrawn = true;
             }
 
@@ -288,8 +273,8 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, int tx, int ty)
                     context->drawText(style()->font(), textRun, IntPoint(ax, ay + ascent));
             }
         }
-    } else if (hasImage() && cWidth > 0 && cHeight > 0) {
-        Image* img = image(cWidth, cHeight);
+    } else if (m_imageResource->hasImage() && cWidth > 0 && cHeight > 0) {
+        Image* img = m_imageResource->image(cWidth, cHeight);
         if (!img || img->isNull())
             return;
 
@@ -351,22 +336,22 @@ void RenderImage::paintFocusRings(PaintInfo& paintInfo, const RenderStyle* style
     
 void RenderImage::paintIntoRect(GraphicsContext* context, const IntRect& rect)
 {
-    if (!hasImage() || errorOccurred() || rect.width() <= 0 || rect.height() <= 0)
+    if (!m_imageResource->hasImage() || m_imageResource->errorOccurred() || rect.width() <= 0 || rect.height() <= 0)
         return;
 
-    Image* img = image(rect.width(), rect.height());
+    Image* img = m_imageResource->image(rect.width(), rect.height());
     if (!img || img->isNull())
         return;
 
     HTMLImageElement* imageElt = (node() && node()->hasTagName(imgTag)) ? static_cast<HTMLImageElement*>(node()) : 0;
     CompositeOperator compositeOperator = imageElt ? imageElt->compositeOperator() : CompositeSourceOver;
-    bool useLowQualityScaling = shouldPaintAtLowQuality(context, this->image(), rect.size());
-    context->drawImage(image(rect.width(), rect.height()), style()->colorSpace(), rect, compositeOperator, useLowQualityScaling);
+    bool useLowQualityScaling = shouldPaintAtLowQuality(context, m_imageResource->image(), rect.size());
+    context->drawImage(m_imageResource->image(rect.width(), rect.height()), style()->colorSpace(), rect, compositeOperator, useLowQualityScaling);
 }
 
 int RenderImage::minimumReplacedHeight() const
 {
-    return errorOccurred() ? intrinsicSize().height() : 0;
+    return m_imageResource->errorOccurred() ? intrinsicSize().height() : 0;
 }
 
 HTMLMapElement* RenderImage::imageMap() const
@@ -449,18 +434,18 @@ bool RenderImage::isHeightSpecified() const
 
 int RenderImage::calcReplacedWidth(bool includeMaxWidth) const
 {
-    if (imageHasRelativeWidth())
+    if (m_imageResource->imageHasRelativeWidth())
         if (RenderObject* cb = isPositioned() ? container() : containingBlock()) {
             if (cb->isBox())
-                setImageContainerSize(IntSize(toRenderBox(cb)->availableWidth(), toRenderBox(cb)->availableHeight()));
+                m_imageResource->setImageContainerSize(IntSize(toRenderBox(cb)->availableWidth(), toRenderBox(cb)->availableHeight()));
         }
 
     int width;
     if (isWidthSpecified())
         width = calcReplacedWidthUsing(style()->width());
-    else if (usesImageContainerSize())
-        width = imageSize(style()->effectiveZoom()).width();
-    else if (imageHasRelativeWidth())
+    else if (m_imageResource->usesImageContainerSize())
+        width = m_imageResource->imageSize(style()->effectiveZoom()).width();
+    else if (m_imageResource->imageHasRelativeWidth())
         width = 0; // If the image is relatively-sized, set the width to 0 until there is a set container size.
     else
         width = calcAspectRatioWidth();
@@ -476,9 +461,9 @@ int RenderImage::calcReplacedHeight() const
     int height;
     if (isHeightSpecified())
         height = calcReplacedHeightUsing(style()->height());
-    else if (usesImageContainerSize())
-        height = imageSize(style()->effectiveZoom()).height();
-    else if (imageHasRelativeHeight())
+    else if (m_imageResource->usesImageContainerSize())
+        height = m_imageResource->imageSize(style()->effectiveZoom()).height();
+    else if (m_imageResource->imageHasRelativeHeight())
         height = 0; // If the image is relatively-sized, set the height to 0 until there is a set container size.
     else
         height = calcAspectRatioHeight();
@@ -494,7 +479,7 @@ int RenderImage::calcAspectRatioWidth() const
     IntSize size = intrinsicSize();
     if (!size.height())
         return 0;
-    if (!hasImage() || errorOccurred())
+    if (!m_imageResource->hasImage() || m_imageResource->errorOccurred())
         return size.width(); // Don't bother scaling.
     return RenderReplaced::calcReplacedHeight() * size.width() / size.height();
 }
@@ -504,7 +489,7 @@ int RenderImage::calcAspectRatioHeight() const
     IntSize size = intrinsicSize();
     if (!size.width())
         return 0;
-    if (!hasImage() || errorOccurred())
+    if (!m_imageResource->hasImage() || m_imageResource->errorOccurred())
         return size.height(); // Don't bother scaling.
     return RenderReplaced::calcReplacedWidth() * size.height() / size.width();
 }
@@ -527,11 +512,6 @@ void RenderImage::calcPrefWidths()
         m_minPrefWidth = m_maxPrefWidth;
 
     setPrefWidthsDirty(false);
-}
-
-Image* RenderImage::nullImage()
-{
-    return Image::nullImage();
 }
 
 } // namespace WebCore
