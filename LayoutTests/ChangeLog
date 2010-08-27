@@ -1,5 +1,11 @@
 2010-08-27  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Skip two flakey xssAuditor tests that are being worked on. Hopefully we finally have somewhat green tree again.
+
+        * platform/mac/Skipped:
+
+2010-08-27  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Not reviewed. Skip another test that is problematic, on leopard & sl bots.
 
         * platform/mac/Skipped:
