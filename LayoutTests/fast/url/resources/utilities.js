@@ -12,10 +12,18 @@ function canonicalize(url)
 
 function setBaseURL(url)
 {
-  // According to the HTML5 spec, we're only supposed to honor <base> elements
-  // in the <head>, but we use document.write() here to make the test run in
-  // Firefox.
-  document.write('<base href="' + url + '">');
+    // It would be more elegant to use the DOM here, but we chose document.write()
+    // so the tests ran correctly in Firefox at the time we originally wrote them.
+
+    // Remove any existing base elements.
+    var existingBase = document.getElementsByTagName('base');
+    while (existingBase.length) {
+        var element = existingBase[0];
+        element.parentNode.removeChild(element);
+    }
+
+    // Add a new base element.
+    document.write('<base href="' + url + '">');
 }
 
 function segments(url)

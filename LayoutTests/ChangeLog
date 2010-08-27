@@ -1,3 +1,14 @@
+2010-08-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix tests that rely on incorrect implementation of HTMLBaseElement
+        to work even if it's implemented as described in HTML5.
+
+        * fast/url/resources/utilities.js:
+        (setBaseURL): Remove existing base elements as well as adding a new
+        base element.
+
 2010-08-26  Dumitru Daniliuc  <dumi@chromium.org>
 
         Unreviewed, updating Chromium expectations.
