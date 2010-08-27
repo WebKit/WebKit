@@ -1548,11 +1548,6 @@ AffineTransform GraphicsContext::getCTM() const
     return m_data->m_transform;
 }
 
-void GraphicsContext::clipToImageBuffer(const FloatRect&, const ImageBuffer*)
-{
-    notImplemented();
-}
-
 void GraphicsContext::fillRect(const FloatRect& rect)
 {
     savePlatformState();
