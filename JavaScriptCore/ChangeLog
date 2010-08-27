@@ -1,3 +1,18 @@
+2010-08-27  Chao-ying Fu  <fu@mips.com>
+
+        Reviewed by Oliver Hunt.
+
+        Byte alignment issue on MIPS
+        https://bugs.webkit.org/show_bug.cgi?id=29415
+
+        MIPS accesses one byte at a time for now to avoid the help from the
+        kernel to fix unaligned accesses.
+
+        * wtf/text/AtomicString.cpp:
+        (WebCore::equal):
+        * wtf/text/StringHash.h:
+        (WebCore::StringHash::equal):
+
 2010-08-27  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Tor Arne Vestbø.
