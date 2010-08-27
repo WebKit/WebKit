@@ -2,6 +2,12 @@
 
         Unreviewed, Chromium expectations update.
 
+        * platform/chromium/test_expectations.txt:
+
+2010-08-26  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Unreviewed, Chromium expectations update.
+
         * platform/chromium-mac/fast/forms/select-style-expected.checksum: Added.
         * platform/chromium-mac/fast/forms/select-style-expected.png: Added.
         * platform/chromium-mac/fast/forms/select-style-expected.txt: Added.
