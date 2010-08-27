@@ -1,3 +1,9 @@
+2010-08-27  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Unreviewed. Add myself to the committers list.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2010-08-27  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Pavel Feldman.
