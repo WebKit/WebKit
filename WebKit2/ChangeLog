@@ -1,3 +1,20 @@
+2010-08-27  Adam Roben  <aroben@apple.com>
+
+        Make the web process pause on launch when the
+        WEBKIT2_PAUSE_WEB_PROCESS_ON_LAUNCH environment variable is set
+
+        This is a bit easier to use than holding Ctrl-Alt-Shift during launch,
+        since the process can sometimes take a long time to launch under the
+        debugger. Ctrl-Alt-Shift still works, however.
+
+        Fixes <http://webkit.org/b/44774> Would like an easier way to pause
+        the web process on launch
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/WebKitMain.cpp:
+        (WebKitMain):
+
 2010-08-27  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Adam Roben.
