@@ -848,10 +848,6 @@ BUG20507 : http/tests/uri/resolve-encoding-relative.html = FAIL
 // Flaky: fails about 5% of the time.
 BUG31342 WIN RELEASE : security/block-test-no-port.html = TEXT PASS
 
-// Fails in debug. Windows used to be only flaky, but now fails consistently
-// starting with the 52554->52633 merge.
-BUG31363 DEBUG WIN LINUX : platform/chromium/fast/dom/interval.html = TEXT PASS
-
 // -----------------------------------------------------------------
 // SVG TESTS
 // -----------------------------------------------------------------
@@ -3215,5 +3211,5 @@ BUGWK44770 WIN LINUX : svg/repaint/filter-repaint.svg = IMAGE+TEXT
 
 // Regressed in r66223
 BUGWK44773 : fast/canvas/canvas-as-image.html = IMAGE
-BUGWK44773 : fast/canvas/canvas-as-image-incremental-repaint.html = IMAGE
+BUGWK44773 WIN LINUX : fast/canvas/canvas-as-image-incremental-repaint.html = IMAGE
 BUGWK44773 : fast/gradients/generated-gradients.html = IMAGE

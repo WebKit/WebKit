@@ -1,3 +1,9 @@
+2010-08-27  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, remove duplicate test expectation.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-08-27  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed.
