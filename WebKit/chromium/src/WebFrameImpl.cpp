@@ -1690,6 +1690,11 @@ WebString WebFrameImpl::counterValueForElementById(const WebString& id) const
     return counterValueForElement(element);
 }
 
+WebString WebFrameImpl::markerTextForListItem(const WebElement& webElement) const
+{
+    return WebCore::markerTextForListItem(webElement.unwrap<Element>());
+}
+
 int WebFrameImpl::pageNumberForElementById(const WebString& id,
                                            float pageWidthInPixels,
                                            float pageHeightInPixels) const

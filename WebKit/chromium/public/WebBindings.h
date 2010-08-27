@@ -37,6 +37,7 @@
 namespace WebKit {
 
 class WebDragData;
+class WebElement;
 class WebRange;
 
 // A haphazard collection of functions for dealing with plugins.
@@ -138,6 +139,10 @@ public:
     // Return true (success) if the given npobj is a range object.
     // If so, return that range as a WebRange object.
     WEBKIT_API static bool getRange(NPObject* range, WebRange*);
+
+    // Return true (success) if the given npobj is an element.
+    // If so, return that element as a WebElement object.
+    WEBKIT_API static bool getElement(NPObject* element, WebElement*);
 
     // Exceptions -------------------------------------------------------------
 

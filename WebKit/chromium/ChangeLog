@@ -1,3 +1,19 @@
+2010-08-26  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Add support for markerTextForListItem() to Chromium's LayoutTestController.
+        https://bugs.webkit.org/show_bug.cgi?id=44724
+
+        * public/WebBindings.h:
+        * public/WebFrame.h:
+        * src/WebBindings.cpp:
+        (WebKit::getElementImpl):
+        (WebKit::WebBindings::getElement):
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::markerTextForListItem):
+        * src/WebFrameImpl.h:
+
 2010-08-26  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Darin Fisher.

@@ -43,6 +43,7 @@
 #include "Range.h"
 #include "V8BindingState.h"
 #include "V8DOMWrapper.h"
+#include "V8Element.h"
 #include "V8Event.h"
 #include "V8Helpers.h"
 #include "V8HiddenPropertyName.h"
@@ -53,6 +54,7 @@
 #include "bridge/c/c_utility.h"
 #endif
 #include "WebDragData.h"
+#include "WebElement.h"
 #include "WebRange.h"
 
 #if USE(JAVASCRIPTCORE_BINDINGS)
@@ -295,6 +297,21 @@ static bool getRangeImpl(NPObject* npobj, WebRange* range)
     return true;
 }
 
+static bool getElementImpl(NPObject* npObj, WebElement* webElement)
+{
+    if (!npObj || (npObj->_class != npScriptObjectClass))
+        return false;
+
+    V8NPObject* v8NPObject = reinterpret_cast<V8NPObject*>(npObj);
+    v8::Handle<v8::Object> v8Object(v8NPObject->v8Object);
+    Element* native = V8Element::toNative(v8Object);
+    if (!native)
+        return false;
+
+    *webElement = WebElement(native);
+    return true;
+}
+
 #endif
 
 bool WebBindings::getDragData(NPObject* event, int* eventId, WebDragData* data)
@@ -319,6 +336,16 @@ bool WebBindings::getRange(NPObject* range, WebRange* webrange)
     return getRangeImpl(range, webrange);
 #else
     // Not supported on other ports (JSC, etc).
+    return false;
+#endif
+}
+
+bool WebBindings::getElement(NPObject* element, WebElement* webElement)
+{
+#if USE(V8)
+    return getElementImpl(element, webElement);
+#else
+    // Not supported on other ports (JSC, etc.).
     return false;
 #endif
 }

@@ -176,6 +176,7 @@ public:
     virtual WebString contentAsMarkup() const;
     virtual WebString renderTreeAsText() const;
     virtual WebString counterValueForElementById(const WebString& id) const;
+    virtual WebString markerTextForListItem(const WebElement&) const;
     virtual int pageNumberForElementById(const WebString& id,
                                          float pageWidthInPixels,
                                          float pageHeightInPixels) const;
