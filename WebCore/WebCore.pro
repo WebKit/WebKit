@@ -655,7 +655,6 @@ SOURCES += \
     html/HTMLDocumentParser.cpp \
     html/HTMLPreloadScanner.cpp \
     html/HTMLScriptRunner.cpp \
-    html/HTMLTreeBuilder.cpp \
     html/HTMLAllCollection.cpp \
     html/HTMLAnchorElement.cpp \
     html/HTMLAppletElement.cpp \
@@ -679,7 +678,6 @@ SOURCES += \
     html/HTMLDListElement.cpp \
     html/HTMLDocument.cpp \
     html/HTMLElement.cpp \
-    html/HTMLElementStack.cpp \
     html/HTMLEntitySearch.cpp \
     html/HTMLEmbedElement.cpp \
     html/HTMLFieldSetElement.cpp \
@@ -1521,6 +1519,8 @@ HEADERS += \
     html/ImageData.h \
     html/ImageResizerThread.h \
     html/LabelsNodeList.h \
+    html/parser/HTMLElementStack.cpp \
+    html/parser/HTMLTreeBuilder.cpp \
     html/StepRange.h \
     html/TimeRanges.h \
     html/ValidityState.h \

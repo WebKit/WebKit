@@ -268,14 +268,12 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	html/HTMLDocumentParser.cpp \
 	html/HTMLPreloadScanner.cpp \
 	html/HTMLScriptRunner.cpp \
-	html/HTMLTreeBuilder.cpp \
 	html/HTMLAllCollection.cpp \
 	html/HTMLCollection.cpp \
 	html/HTMLConstructionSite.cpp \
 	html/HTMLDataListElement.cpp \
 	html/HTMLDocument.cpp \
 	html/HTMLElementsAllInOne.cpp \
-	html/HTMLElementStack.cpp \
 	html/HTMLFormattingElementList.cpp \
 	html/HTMLFormCollection.cpp \
 	html/HTMLImageLoader.cpp \
@@ -299,6 +297,9 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	html/canvas/CanvasRenderingContext.cpp \
 	html/canvas/CanvasRenderingContext2D.cpp \
 	html/canvas/CanvasStyle.cpp \
+	\
+	html/parser/HTMLElementStack.cpp \
+	html/parser/HTMLTreeBuilder.cpp \
 	\
 	loader/Cache.cpp \
 	loader/CachedCSSStyleSheet.cpp \

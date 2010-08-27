@@ -1,5 +1,27 @@
 2010-08-27  Adam Barth  <abarth@webkit.org>
 
+        Rubber-stamped by Eric Seidel.
+
+        Move HTMLTreeBuilder and HTMLElementStack to WebCore/html/parser.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLElementStack.cpp: Removed.
+        * html/HTMLElementStack.h: Removed.
+        * html/HTMLTreeBuilder.cpp: Removed.
+        * html/HTMLTreeBuilder.h: Removed.
+        * html/parser/HTMLElementStack.cpp: Copied from WebCore/html/HTMLElementStack.cpp.
+        * html/parser/HTMLElementStack.h: Copied from WebCore/html/HTMLElementStack.h.
+        * html/parser/HTMLTreeBuilder.cpp: Copied from WebCore/html/HTMLTreeBuilder.cpp.
+        * html/parser/HTMLTreeBuilder.h: Copied from WebCore/html/HTMLTreeBuilder.h.
+
+2010-08-27  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Darin Adler.
 
         Create WebCore/html/parser

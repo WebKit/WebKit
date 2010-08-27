@@ -961,7 +961,6 @@ SET(WebCore_SOURCES
     html/HTMLDocumentParser.cpp
     html/HTMLPreloadScanner.cpp
     html/HTMLScriptRunner.cpp
-    html/HTMLTreeBuilder.cpp
     html/HTMLAllCollection.cpp
     html/HTMLAnchorElement.cpp
     html/HTMLAppletElement.cpp
@@ -985,7 +984,6 @@ SET(WebCore_SOURCES
     html/HTMLDivElement.cpp
     html/HTMLDocument.cpp
     html/HTMLElement.cpp
-    html/HTMLElementStack.cpp
     html/HTMLEntitySearch.cpp
     html/HTMLEmbedElement.cpp
     html/HTMLFieldSetElement.cpp
@@ -1061,6 +1059,8 @@ SET(WebCore_SOURCES
     html/canvas/CanvasRenderingContext.cpp
     html/canvas/CanvasRenderingContext2D.cpp
     html/canvas/CanvasStyle.cpp
+    html/parser/HTMLElementStack.cpp
+    html/parser/HTMLTreeBuilder.cpp
 
     inspector/ConsoleMessage.cpp
     inspector/InjectedScript.cpp

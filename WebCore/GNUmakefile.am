@@ -1375,8 +1375,6 @@ webcore_sources += \
 	WebCore/html/HTMLScriptRunner.cpp \
 	WebCore/html/HTMLScriptRunner.h \
 	WebCore/html/HTMLScriptRunnerHost.h \
-	WebCore/html/HTMLTreeBuilder.cpp \
-	WebCore/html/HTMLTreeBuilder.h \
 	WebCore/html/HTMLAllCollection.cpp \
 	WebCore/html/HTMLAllCollection.h \
 	WebCore/html/HTMLAnchorElement.cpp \
@@ -1423,8 +1421,6 @@ webcore_sources += \
 	WebCore/html/HTMLConstructionSite.h \
 	WebCore/html/HTMLElement.cpp \
 	WebCore/html/HTMLElement.h \
-	WebCore/html/HTMLElementStack.cpp \
-	WebCore/html/HTMLElementStack.h \
 	WebCore/html/HTMLEntitySearch.cpp \
 	WebCore/html/HTMLEntitySearch.h \
 	WebCore/html/HTMLEmbedElement.cpp \
@@ -1560,7 +1556,11 @@ webcore_sources += \
 	WebCore/html/LabelsNodeList.cpp \
 	WebCore/html/LabelsNodeList.h \
 	WebCore/html/MediaError.h \
+	WebCore/html/parser/HTMLElementStack.cpp \
+	WebCore/html/parser/HTMLElementStack.h \
 	WebCore/html/parser/HTMLToken.h \
+	WebCore/html/parser/HTMLTreeBuilder.cpp \
+	WebCore/html/parser/HTMLTreeBuilder.h \
 	WebCore/html/StepRange.cpp \
 	WebCore/html/StepRange.h \
 	WebCore/html/TextMetrics.h \

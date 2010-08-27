@@ -38457,14 +38457,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\html\HTMLElementStack.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\HTMLElementStack.h"
-				>
-			</File>
-			<File
 				RelativePath="..\html\HTMLEmbedElement.cpp"
 				>
 				<FileConfiguration
@@ -41605,14 +41597,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\html\HTMLTreeBuilder.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\HTMLTreeBuilder.h"
-				>
-			</File>
-			<File
 				RelativePath="..\html\HTMLUListElement.cpp"
 				>
 				<FileConfiguration
@@ -41769,7 +41753,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\parser\HTMLElementStack.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\parser\HTMLElementStack.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\parser\HTMLToken.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\parser\HTMLTreeBuilder.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\parser\HTMLTreeBuilder.h"
 				>
 			</File>
 			<File
