@@ -1,3 +1,14 @@
+2010-08-27  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin Barraclough.
+
+        Move WKBundle didCreatePage callback to outside the WebPage
+        constructor to avoid adoptRef errors.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::create):
+        (WebKit::WebPage::WebPage):
+
 2010-08-27  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.
