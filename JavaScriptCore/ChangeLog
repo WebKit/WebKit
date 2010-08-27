@@ -82,8 +82,6 @@
         * yarr/RegexJIT.cpp:
         (JSC::Yarr::RegexGenerator::compile):
 
-<<<<<<< .mine
-=======
 2010-08-26  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Brady Eidson.
@@ -3050,7 +3048,6 @@
         * yarr/RegexJIT.cpp:
         (JSC::Yarr::RegexGenerator::compile):
 
->>>>>>> .r66148
 2010-08-03  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.
