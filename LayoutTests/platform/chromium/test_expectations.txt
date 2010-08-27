@@ -3198,7 +3198,12 @@ BUG53289 WIN MAC LINUX : fast/lists/w3-css3-list-styles-fallback-style.html = TE
 BUG53406 WIN : inspector/debugger-breakpoints-not-activated-on-reload.html = PASS TIMEOUT
 BUG53406 WIN : http/tests/inspector/resource-parameters.html = PASS TEXT
 
-// JavaScriptCore/V8 parser behavior inconsistency in handling "-->".
-// Started at WK r66135
-BUG53544 : fast/js/parser-xml-close-comment.html = TEXT
+// Failing after r66144
+BUG53546 LINUX : userscripts/user-script-audio-document.html = TEXT
+BUG53546 LINUX : userscripts/user-script-video-document.html = TEXT
 
+// Crashing after r66111.
+BUG53547 MAC WIN LINUX : fast/events/tabindex-focus-chain.html = CRASH
+
+// Added in r66135, failing since then.
+BUG53548 MAC WIN LINUX : fast/js/parser-xml-close-comment.html = TEXT

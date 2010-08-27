@@ -1,3 +1,9 @@
+2010-08-26  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Unreviewed, updating Chromium expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-08-26  Yuzo Fujishima  <yuzo@google.com>
 
         Unreviewed Chromium test expectation change.
