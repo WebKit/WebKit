@@ -1,3 +1,19 @@
+2010-08-27  Steve Block  <steveblock@google.com>
+
+        Reviewed by Darin Adler.
+
+        js-test-post.js is not robust for asynchronous tests
+        https://bugs.webkit.org/show_bug.cgi?id=44642
+
+        This patch moves finishJSTest() to js-test-pre.js to make it available for when an
+        asynchronous test completes before js-test-post.js has been parsed, and updates
+        js-test-post.js to handle this case.
+
+        * fast/dom/Window/window-property-descriptors-expected.txt:
+        * fast/js/resources/js-test-post.js:
+        * fast/js/resources/js-test-pre.js:
+        (finishJSTest):
+
 2010-08-27  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Remove trailing whitespace after test name, no need to duplicate the same test in mac/Skipped and mac-leopard/Skipped, oops.

@@ -1,13 +1,9 @@
-function finishJSTest()
-{
-    shouldBeTrue("successfullyParsed");
-    debug('<br /><span class="pass">TEST COMPLETE</span>');
-    if (window.jsTestIsAsync && window.layoutTestController)
-        layoutTestController.notifyDone();
-}
+wasPostTestScriptParsed = true;
 
 if (window.jsTestIsAsync) {
     if (window.layoutTestController)
         layoutTestController.waitUntilDone();
+    if (window.wasFinishJSTestCalled)
+        finishJSTest();
 } else
     finishJSTest();
