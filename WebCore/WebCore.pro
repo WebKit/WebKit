@@ -194,6 +194,7 @@ WEBCORE_INCLUDEPATH = \
     $$PWD/history \
     $$PWD/html \
     $$PWD/html/canvas \
+    $$PWD/html/parser \
     $$PWD/inspector \
     $$PWD/loader \
     $$PWD/loader/appcache \

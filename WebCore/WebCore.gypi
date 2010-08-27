@@ -1734,6 +1734,7 @@
             'html/LabelsNodeList.cpp',
             'html/LabelsNodeList.h',
             'html/MediaError.h',
+            'html/parser/HTMLToken.h',
             'html/StepRange.cpp',
             'html/StepRange.h',
             'html/TextMetrics.h',

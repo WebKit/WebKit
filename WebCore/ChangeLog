@@ -1,3 +1,24 @@
+2010-08-27  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Create WebCore/html/parser
+        https://bugs.webkit.org/show_bug.cgi?id=44792
+
+        This patch begins the process of moving the HTML parser code to the
+        WebCore/html/parser directory.  This patch moves a single header file.
+        More files will follow in future patches.
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.vcproj/WebCoreCommon.vsprops:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/parser/HTMLToken.h: Renamed from WebCore/html/HTMLToken.h.
+
 2010-08-27  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.

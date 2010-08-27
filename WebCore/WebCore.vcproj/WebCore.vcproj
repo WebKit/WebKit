@@ -41769,6 +41769,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\parser\HTMLToken.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\StepRange.cpp"
 				>
 			</File>

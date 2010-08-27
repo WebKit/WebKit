@@ -21,6 +21,7 @@ webcore_cppflags += \
 	-I$(srcdir)/WebCore/history \
 	-I$(srcdir)/WebCore/html \
 	-I$(srcdir)/WebCore/html/canvas \
+	-I$(srcdir)/WebCore/html/parser \
 	-I$(srcdir)/WebCore/inspector \
 	-I$(srcdir)/WebCore/loader \
 	-I$(srcdir)/WebCore/loader/appcache \
@@ -1367,7 +1368,6 @@ webcore_sources += \
 	WebCore/html/HTMLEntityParser.h \
 	WebCore/html/HTMLTokenizer.cpp \
 	WebCore/html/HTMLTokenizer.h \
-	WebCore/html/HTMLToken.h \
 	WebCore/html/HTMLDocumentParser.cpp \
 	WebCore/html/HTMLDocumentParser.h \
 	WebCore/html/HTMLPreloadScanner.cpp \
@@ -1560,6 +1560,7 @@ webcore_sources += \
 	WebCore/html/LabelsNodeList.cpp \
 	WebCore/html/LabelsNodeList.h \
 	WebCore/html/MediaError.h \
+	WebCore/html/parser/HTMLToken.h \
 	WebCore/html/StepRange.cpp \
 	WebCore/html/StepRange.h \
 	WebCore/html/TextMetrics.h \

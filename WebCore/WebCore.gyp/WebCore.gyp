@@ -122,6 +122,7 @@
       '../history',
       '../html',
       '../html/canvas',
+      '../html/parser',
       '../inspector',
       '../loader',
       '../loader/appcache',
