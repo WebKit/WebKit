@@ -2133,7 +2133,7 @@ void QWebPage::setUserPermission(QWebFrame* frame, PermissionDomain domain, Perm
 
     \note In the cases when the window creation is being triggered by JavaScript, apart from
     reimplementing this method application must also set the JavaScriptCanOpenWindows attribute
-    of QWebSettings to true in order to get it called.
+    of QWebSettings to true in order for it to get called.
 
     \sa acceptNavigationRequest(), QWebView::createWindow()
 */
