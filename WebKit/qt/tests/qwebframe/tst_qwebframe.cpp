@@ -2714,13 +2714,14 @@ void tst_QWebFrame::inputFieldFocus()
 
 void tst_QWebFrame::hitTestContent()
 {
-    QString html("<html><body><p>A paragraph</p><br/><br/><br/><a href=\"about:blank\" target=\"_foo\">link text</a></body></html>");
+    QString html("<html><body><p>A paragraph</p><br/><br/><br/><a href=\"about:blank\" target=\"_foo\" id=\"link\">link text</a></body></html>");
 
     QWebPage page;
     QWebFrame* frame = page.mainFrame();
     frame->setHtml(html);
     page.setViewportSize(QSize(200, 0)); //no height so link is not visible
-    QWebHitTestResult result = frame->hitTestContent(QPoint(10, 100));
+    const QWebElement linkElement = frame->documentElement().findFirst(QLatin1String("a#link"));
+    QWebHitTestResult result = frame->hitTestContent(linkElement.geometry().center());
     QCOMPARE(result.linkText(), QString("link text"));
     QWebElement link = result.linkElement();
     QCOMPARE(link.attribute("target"), QString("_foo"));
