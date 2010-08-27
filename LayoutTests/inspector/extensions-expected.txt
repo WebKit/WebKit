@@ -31,7 +31,7 @@ resource: .../tests/inspector/inspector-test.js
 resource: .../LayoutTests/inspector/extensions-test.js
 resource: .../LayoutTests/inspector/extensions.html
 RUNNING TEST: extension_testGetInvalidResource
-Attempted to retrieve invalid resource: {"code":"E_NOTFOUND","description":"Object not found: %s","details":[2128506],"isError":true}
+Attempted to retrieve invalid resource: {"code":"E_NOTFOUND","description":"Object not found (%s)","details":[2128506],"isError":true}
 RUNNING TEST: extension_testResourceNotification
 Resource finished: .../inspector/resources/extension-main.html
 All tests done.

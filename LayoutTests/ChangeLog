@@ -1,3 +1,20 @@
+2010-08-27  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed. Revert r66218 & r66220 due to GTK test failures.
+
+        * inspector/audits-panel-functional.html:
+        * inspector/audits-tests.js: Removed.
+        * inspector/extensions-api-expected.txt:
+        * inspector/extensions-audits-api-expected.txt: Removed.
+        * inspector/extensions-audits-api.html: Removed.
+        * inspector/extensions-audits-expected.txt: Removed.
+        * inspector/extensions-audits-tests.js: Removed.
+        * inspector/extensions-audits.html: Removed.
+        * inspector/extensions-expected.txt:
+        * inspector/resources/audits-script3.js: Added.
+        (foo3):
+        * platform/chromium/test_expectations.txt:
+
 2010-08-27  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Darin Fisher.
@@ -53,30 +70,6 @@
 
         Unreviewed, updating chromium test expectations.
 
-        * platform/chromium/test_expectations.txt:
-
-2010-08-26  Andrey Kosyakov  <caseq@chromium.org>
-
-        Reviewed by Pavel Feldman.
-
-        Web Inspector: add audits support to extension API
-        https://bugs.webkit.org/show_bug.cgi?id=44518
-
-        * inspector/audits-panel-functional.html:
-        * inspector/audits-tests.js: Added.
-        (frontend_collectAuditResults):
-        (frontend_collectTextContent):
-        * inspector/extensions-api-expected.txt:
-        * inspector/extensions-audits-api-expected.txt: Added.
-        * inspector/extensions-audits-api.html: Added.
-        * inspector/extensions-audits-expected.txt: Added.
-        * inspector/extensions-audits-tests.js: Added.
-        (extension_runAudits.onMessage):
-        (extension_runAudits):
-        (frontend_runExtensionAudits.onAuditsDone):
-        * inspector/extensions-audits.html: Added.
-        * inspector/extensions-expected.txt:
-        * inspector/resources/audits-script3.js: Removed.
         * platform/chromium/test_expectations.txt:
 
 2010-08-25  Jeremy Orlow  <jorlow@chromium.org>

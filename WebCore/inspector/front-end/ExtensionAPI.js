@@ -28,7 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.injectedExtensionAPI = function(InjectedScriptHost, inspectedWindow, injectedScriptId)
+var injectedExtensionAPI = function(InjectedScriptHost, inspectedWindow, injectedScriptId)
 {
 
 // Here and below, all constructors are private to API implementation.
@@ -37,22 +37,19 @@ WebInspector.injectedExtensionAPI = function(InjectedScriptHost, inspectedWindow
 // by Foo consutrctor to re-bind publicly exported members to an instance
 // of Foo.
 
-function EventSinkImpl(type, customDispatch)
+function EventSinkImpl(type)
 {
     this._type = type;
     this._listeners = [];
-    this._customDispatch = customDispatch;
 }
 
 EventSinkImpl.prototype = {
     addListener: function(callback)
     {
-        if (typeof callback != "function")
-            throw new "addListener: callback is not a function";
         if (this._listeners.length === 0)
             extensionServer.sendRequest({ command: "subscribe", type: this._type });
         this._listeners.push(callback);
-        extensionServer.registerHandler("notify-" + this._type, bind(this._dispatch, this));
+        extensionServer.registerHandler("notify-" + this._type, bind(this._fire, this));
     },
 
     removeListener: function(callback)
@@ -69,36 +66,26 @@ EventSinkImpl.prototype = {
             extensionServer.sendRequest({ command: "unsubscribe", type: this._type });
     },
 
-    _fire: function()
+    _fire: function(request)
     {
         var listeners = this._listeners.slice();
         for (var i = 0; i < listeners.length; ++i)
-            listeners[i].apply(null, arguments);
-    },
-
-    _dispatch: function(request)
-    {
-         if (this._customDispatch)
-             this._customDispatch.call(this, request);
-         else
-             this._fire.apply(this, request.arguments);
+            listeners[i].apply(null, request.arguments);
     }
 }
 
-function EventSink(type, customDispatch)
+function EventSink(type)
 {
-    var impl = new EventSinkImpl(type, customDispatch);
+    var impl = new EventSinkImpl(type);
     this.addListener = bind(impl.addListener, impl);
     this.removeListener = bind(impl.removeListener, impl);
 }
 
 function InspectorExtensionAPI()
 {
-    this.audits = new Audits();
     this.inspectedWindow = new InspectedWindow();
     this.panels = new Panels();
     this.resources = new Resources();
-
     this.onReset = new EventSink("reset");
 }
 
@@ -138,7 +125,7 @@ function Panels()
     {
         return panels[name];
     }
-
+    
     for (var i = 0; i < wellKnownPanelNames.length; ++i) {
         var name = wellKnownPanelNames[i];
         panels[name] = new Panel(name);
@@ -164,7 +151,7 @@ Panels.prototype = {
             id: id,
             label: label,
             url: expandURL(pageURL),
-            icon: expandURL(iconURL)
+            icon: expandURL(iconURL) 
         };
         extensionServer.sendRequest(request, callback && bind(callbackWrapper, this));
     }
@@ -231,124 +218,6 @@ function ExtensionSidebarPane(id)
     this.setHeight = bind(impl.setHeight, impl);
     this.setExpanded = bind(impl.setExpanded, impl);
 }
-
-function Audits()
-{
-}
-
-Audits.prototype = {
-    addCategory: function(displayName, ruleCount)
-    {
-        var id = "extension-audit-category-" + extensionServer.nextObjectId();
-        extensionServer.sendRequest({ command: "addAuditCategory", id: id, displayName: displayName, ruleCount: ruleCount });
-        return new AuditCategory(id);
-    }
-}
-
-function AuditCategory(id)
-{
-    function customDispatch(request)
-    {
-        var auditResult = new AuditResult(request.arguments[0]);
-        try {
-            this._fire(auditResult);
-        } catch (e) {
-            console.error("Uncaught exception in extension audit event handler: " + e);
-            auditResult.done();
-        }
-    }
-    var impl = new AuditCategoryImpl(id);
-    this.onAuditStarted = new EventSink("audit-started-" + id, customDispatch);
-}
-
-function AuditCategoryImpl(id)
-{
-    this._id = id;
-}
-
-function AuditResult(id)
-{
-    var impl = new AuditResultImpl(id);
-
-    this.addResult = bind(impl.addResult, impl);
-    this.createResult = bind(impl.createResult, impl);
-    this.done = bind(impl.done, impl);
-
-    var formatterTypes = [
-        "url",
-        "snippet",
-        "text"
-    ];
-    for (var i = 0; i < formatterTypes.length; ++i)
-        this[formatterTypes[i]] = bind(impl._nodeFactory, null, formatterTypes[i]);
-}
-
-AuditResult.prototype = {
-    get Severity()
-    {
-        return private.audits.Severity;
-    }
-}
-
-function AuditResultImpl(id)
-{
-    this._id = id;
-}
-
-AuditResultImpl.prototype = {
-    addResult: function(displayName, description, severity, details)
-    {
-        // shorthand for specifying details directly in addResult().
-        if (details && !(details instanceof AuditResultNode))
-            details = details instanceof Array ? this.createNode.apply(this, details) : this.createNode(details);
-
-        var request = {
-            command: "addAuditResult",
-            resultId: this._id,
-            displayName: displayName,
-            description: description,
-            severity: severity,
-            details: details
-        };
-        extensionServer.sendRequest(request);
-    },
-
-    createResult: function()
-    {
-        var node = new AuditResultNode();
-        node.contents = Array.prototype.slice.call(arguments);
-        return node;
-    },
-
-    done: function()
-    {
-        extensionServer.sendRequest({ command: "stopAuditCategoryRun", resultId: this._id });
-    },
-
-    _nodeFactory: function(type)
-    {
-        return {
-            type: type,
-            arguments: Array.prototype.slice.call(arguments, 1)
-        };
-    }
-}
-
-function AuditResultNode(contents)
-{
-    this.contents = contents;
-    this.children = [];
-    this.expanded = false;
-}
-
-AuditResultNode.prototype = {
-    addChild: function()
-    {
-        var node = AuditResultImpl.prototype.createResult.apply(null, arguments);
-        this.children.push(node);
-        return node;
-    }
-};
 
 function InspectedWindow()
 {

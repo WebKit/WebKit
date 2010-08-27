@@ -52004,10 +52004,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\AuditFormatters.js"
-					>
-				</File>
-				<File
 					RelativePath="..\inspector\front-end\AuditLauncherView.js"
 					>
 				</File>
@@ -52125,14 +52121,6 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\ExtensionAPI.js"
-					>
-				</File>
-				<File
-					RelativePath="..\inspector\front-end\ExtensionAuditCategory.js"
-					>
-				</File>
-				<File
-					RelativePath="..\inspector\front-end\ExtensionCommon.js"
 					>
 				</File>
 				<File

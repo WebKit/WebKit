@@ -7,12 +7,12 @@
 }
 </style>
 <script src="../http/tests/inspector/inspector-test.js"></script>
-<script src="audits-tests.js"></script>
 
 <!-- These scripts are needed to result in a violation of the max JS resource count from the same domain -->
 <script src="resources/audits-script1.js"></script>
 <link rel="stylesheet" href="resources/audits-style1.css" type="text/css">
 <script src="resources/audits-script2.js"></script>
+<script src="resources/audits-script3.js"></script>
 <script>
 
 function doit()
@@ -50,7 +50,14 @@ function frontend_runAudits(testController)
 
         testController.runAfterPendingDispatches(function() {
             // Audits are done, check results.
-            var output = frontend_collectAuditResults();
+            WebInspector.panels.audits.showResults(WebInspector.panels.audits.auditResultsTreeElement.children[0].results);
+            var liElements = WebInspector.panels.audits.visibleView.element.getElementsByTagName("li");
+            for (var j = 0; j < liElements.length; ++j) {
+                if (liElements[j].treeElement)
+                    liElements[j].treeElement.expand();
+            }
+            var output = [];
+            frontend_collectTextContent(WebInspector.panels.audits.visibleView.element, 0, output);
             // Avoid influencing tests that require resource tracking to be disabled.
             InspectorBackend.disableResourceTracking(false);
             testController.runAfterPendingDispatches(function() {
@@ -60,6 +67,29 @@ function frontend_runAudits(testController)
     } catch(e) {
         testController.notifyDone("Exception: " + e.toString());
     }
+}
+
+function frontend_collectTextContent(element, level, output)
+{
+    var nodeOutput = "";
+    var child = element.firstChild;
+    while (child) {
+        if (child.nodeType === Node.TEXT_NODE) {
+            for (var i = 0; i < level; ++i)
+                nodeOutput += " ";
+            nodeOutput += child.nodeValue;
+        } else if (child.nodeType === Node.ELEMENT_NODE) {
+            if (nodeOutput !== "") {
+                output.push(nodeOutput);
+                nodeOutput = "";
+            }
+            frontend_collectTextContent(child, level + 1, output);
+        }
+        child = child.nextSibling;
+    }
+    if (nodeOutput !== "")
+        output.push(nodeOutput);
+    return;
 }
 
 </script>

@@ -732,6 +732,12 @@ Array.convert = function(list)
 
 function insertionIndexForObjectInListSortedByFunction(anObject, aList, aFunction)
 {
+    // indexOf returns (-lowerBound - 1). Taking (-result - 1) works out to lowerBound.
+    return (-indexOfObjectInListSortedByFunction(anObject, aList, aFunction) - 1);
+}
+
+function indexOfObjectInListSortedByFunction(anObject, aList, aFunction)
+{
     var first = 0;
     var last = aList.length - 1;
     var floor = Math.floor;
@@ -754,7 +760,9 @@ function insertionIndexForObjectInListSortedByFunction(anObject, aList, aFunctio
         }
     }
 
-    return first;
+    // By returning 1 less than the negative lower search bound, we can reuse this function
+    // for both indexOf and insertionIndexFor, with some simple arithmetic.
+    return (-first - 1);
 }
 
 String.sprintf = function(format)
