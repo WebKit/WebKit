@@ -2131,7 +2131,11 @@ void QWebPage::setUserPermission(QWebFrame* frame, PermissionDomain domain, Perm
 
     If \a type is WebModalDialog, the application must call setWindowModality(Qt::ApplicationModal) on the new window.
 
-    \sa acceptNavigationRequest()
+    \note In the cases when the window creation is being triggered by JavaScript, apart from
+    reimplementing this method application must also set the JavaScriptCanOpenWindows attribute
+    of QWebSettings to true in order to get it called.
+
+    \sa acceptNavigationRequest(), QWebView::createWindow()
 */
 QWebPage *QWebPage::createWindow(WebWindowType type)
 {
