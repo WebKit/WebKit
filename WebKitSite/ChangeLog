@@ -1,3 +1,17 @@
+2010-08-26  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Dumitru Daniliuc.
+
+        Fix misspelled words on WebKit.org contact.html,
+        demos/index.html, and quality/leakhunting.html
+        https://bugs.webkit.org/show_bug.cgi?id=44747
+
+        Fix some misspelled words on the WebKit.org site.
+
+        * contact.html: Change "bugreports" [sic] to "bug reports".
+        * demos/index.html: Change "testcase" [sic] to "test case".
+        * quality/leakhunting.html: Change "formating" [sic] to "formatting".
+
 2010-08-23  David Kilzer  <ddkilzer@apple.com>
 
         Clean up some HTML typos in crashlogs.html
