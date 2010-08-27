@@ -76,7 +76,7 @@ static unsigned loadShader(GraphicsContext3D* context, unsigned type, const char
     context->getShaderiv(shader, GraphicsContext3D::COMPILE_STATUS, &compileStatus);
     if (!compileStatus) {
         String infoLog = context->getShaderInfoLog(shader);
-        LOG_ERROR(infoLog.utf8().data());
+        LOG_ERROR("%s", infoLog.utf8().data());
         context->deleteShader(shader);
         return 0;
     }
