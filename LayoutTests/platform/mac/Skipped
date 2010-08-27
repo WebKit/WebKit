@@ -70,6 +70,7 @@ fast/layers/video-layer.html
 media/audio-delete-while-step-button-clicked.html
 media/video-controls-transformed.html
 media/video-controls-zoomed.html
+media/video-source-error.html	
 
 # This test requires media controls has a volume slider.
 media/video-volume-slider.html
