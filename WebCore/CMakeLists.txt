@@ -1211,6 +1211,7 @@ SET(WebCore_SOURCES
     page/animation/KeyframeAnimation.cpp
 
     platform/Arena.cpp
+    platform/AsyncFileSystem.cpp
     platform/BlobItem.cpp
     platform/ContentType.cpp
     platform/ContextMenu.cpp
@@ -1483,6 +1484,7 @@ SET(WebCore_SOURCES
     storage/IDBFactory.cpp
     storage/IDBFactoryBackendInterface.cpp
     storage/IDBFactoryBackendImpl.cpp
+    storage/LocalFileSystem.cpp
     storage/LocalStorageTask.cpp
     storage/LocalStorageThread.cpp
     storage/OriginQuotaManager.cpp

@@ -28,40 +28,42 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Flags_h
-#define Flags_h
+#ifndef AsyncFileSystemCallbacks_h
+#define AsyncFileSystemCallbacks_h
 
 #if ENABLE(FILE_SYSTEM)
 
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
+#include "PlatformString.h"
 
 namespace WebCore {
 
-class Flags : public RefCounted<Flags> {
+class AsyncFileSystem;
+
+class AsyncFileSystemCallbacks : public Noncopyable {
 public:
-    static PassRefPtr<Flags> create(bool create = false, bool exclusive = false)
-    {
-        return adoptRef(new Flags(create, exclusive));
-    }
+    // Called when a requested operation is completed successfully.
+    virtual void didSucceed() = 0;
 
-    bool isCreate() const { return m_create; }
-    void setCreate(bool create) { m_create = create; }
-    bool isExclusive() const { return m_exclusive; }
-    void setExclusive(bool exclusive) { m_exclusive = exclusive; }
+    // Called when a requested file system is opened.
+    virtual void didOpenFileSystem(const String& name, PassOwnPtr<AsyncFileSystem>) = 0;
 
-private:
-    Flags(bool create, bool exclusive)
-        : m_create(create)
-        , m_exclusive(exclusive)
-    {
-    }
-    bool m_create;
-    bool m_exclusive;
+    // Called when a file metadata is read successfully.
+    virtual void didReadMetadata(double modificationTime) = 0;
+
+    // Called when a directory entry is read.
+    virtual void didReadDirectoryEntry(const String& name, bool isDirectory) = 0;
+
+    // Called after a chunk of directory entries have been read (i.e. indicates it's good time to call back to the application).  If hasMore is true there can be more chunks.
+    virtual void didReadDirectoryEntries(bool hasMore) = 0;
+
+    // Called when there was an error.
+    virtual void didFail(int code) = 0;
+
+    virtual ~AsyncFileSystemCallbacks() { }
 };
 
 } // namespace
 
 #endif // ENABLE(FILE_SYSTEM)
 
-#endif // Flags_h
+#endif // AsyncFileSystemCallbacks_h

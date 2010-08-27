@@ -138,6 +138,12 @@ enum FileSeekOrigin {
     SeekFromEnd
 };
 
+#if OS(WINDOWS)
+static const char PlatformFilePathSeparator = '\\';
+#else
+static const char PlatformFilePathSeparator = '/';
+#endif
+
 bool fileExists(const String&);
 bool deleteFile(const String&);
 bool deleteEmptyDirectory(const String&);

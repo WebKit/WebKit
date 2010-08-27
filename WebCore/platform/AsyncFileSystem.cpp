@@ -28,40 +28,49 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Flags_h
-#define Flags_h
+#include "config.h"
+#include "AsyncFileSystem.h"
 
 #if ENABLE(FILE_SYSTEM)
 
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
+#include "AsyncFileSystemCallbacks.h"
+#include "FileSystem.h"
 
 namespace WebCore {
 
-class Flags : public RefCounted<Flags> {
-public:
-    static PassRefPtr<Flags> create(bool create = false, bool exclusive = false)
-    {
-        return adoptRef(new Flags(create, exclusive));
-    }
+PassOwnPtr<AsyncFileSystem> AsyncFileSystem::create(const String&)
+{
+    // FIXME: return default AsyncFileSystem implementation.
+    return 0;
+}
 
-    bool isCreate() const { return m_create; }
-    void setCreate(bool create) { m_create = create; }
-    bool isExclusive() const { return m_exclusive; }
-    void setExclusive(bool exclusive) { m_exclusive = exclusive; }
+// Default implementation.
+void AsyncFileSystem::openFileSystem(const String& basePath, const String& storageIdentifier, Type type, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
+{
+    String typeString = (type == Persistent) ? "Persistent" : "Temporary";
 
-private:
-    Flags(bool create, bool exclusive)
-        : m_create(create)
-        , m_exclusive(exclusive)
-    {
-    }
-    bool m_create;
-    bool m_exclusive;
-};
+    String name = storageIdentifier;
+    name += ":";
+    name += typeString;
+
+    String rootPath = basePath;
+    rootPath.append(PlatformFilePathSeparator);
+    rootPath += storageIdentifier;
+    rootPath.append(PlatformFilePathSeparator);
+    rootPath += typeString;
+    rootPath.append(PlatformFilePathSeparator);
+
+    callbacks->didOpenFileSystem(name, AsyncFileSystem::create(rootPath));
+}
+
+// Default implementation.
+String AsyncFileSystem::virtualToPlatformPath(const String& path) const
+{
+    ASSERT(!m_platformRootPath.isEmpty());
+    String virtualPath = path;
+    return m_platformRootPath + virtualPath.replace('/', PlatformFilePathSeparator);
+}
 
 } // namespace
 
 #endif // ENABLE(FILE_SYSTEM)
-
-#endif // Flags_h

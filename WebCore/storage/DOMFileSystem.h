@@ -33,6 +33,9 @@
 
 #if ENABLE(FILE_SYSTEM)
 
+#include "ActiveDOMObject.h"
+#include "AsyncFileSystem.h"
+#include "Flags.h"
 #include "PlatformString.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -40,22 +43,30 @@
 namespace WebCore {
 
 class DirectoryEntry;
+class ScriptExecutionContext;
 
-class DOMFileSystem : public RefCounted<DOMFileSystem> {
+class DOMFileSystem : public RefCounted<DOMFileSystem>, public ActiveDOMObject {
 public:
-    static PassRefPtr<DOMFileSystem> create(const String& name, const String& rootPath)
+    static PassRefPtr<DOMFileSystem> create(ScriptExecutionContext* context, const String& name, PassOwnPtr<AsyncFileSystem> asyncFileSystem)
     {
-        return adoptRef(new DOMFileSystem(name, rootPath));
+        return adoptRef(new DOMFileSystem(context, name, asyncFileSystem));
     }
+
+    virtual ~DOMFileSystem();
 
     const String& name() const { return m_name; }
     PassRefPtr<DirectoryEntry> root();
 
-private:
-    DOMFileSystem(const String& name, const String& rootPath);
+    // ActiveDOMObject methods.
+    virtual void stop();
+    virtual bool hasPendingActivity() const;
+    virtual void contextDestroyed();
 
-    String m_rootPath;
+private:
+    DOMFileSystem(ScriptExecutionContext*, const String& name, PassOwnPtr<AsyncFileSystem>);
+
     String m_name;
+    mutable OwnPtr<AsyncFileSystem> m_asyncFileSystem;
 };
 
 } // namespace

@@ -874,6 +874,7 @@ SOURCES += \
     platform/animation/Animation.cpp \
     platform/animation/AnimationList.cpp \
     platform/Arena.cpp \
+    platform/AsyncFileSystem.cpp \
     platform/BlobItem.cpp \
     platform/text/Base64.cpp \
     platform/text/BidiContext.cpp \
@@ -1660,6 +1661,8 @@ HEADERS += \
     platform/animation/AnimationList.h \
     platform/Arena.h \
     platform/AsyncFileStream.h \
+    platform/AsyncFileSystem.h \
+    platform/AsyncFileSystemCallbacks.h \
     platform/BlobItem.h \
     platform/ContentType.h \
     platform/ContextMenu.h \
@@ -2597,6 +2600,7 @@ contains(DEFINES, ENABLE_FILE_SYSTEM=1) {
         storage/FileSystemCallback.h \
         storage/FileSystemCallbacks.h \
         storage/Flags.h \
+        storage/LocalFileSystem.h \
         storage/Metadata.h \
         storage/MetadataCallback.h
 
@@ -2608,7 +2612,8 @@ contains(DEFINES, ENABLE_FILE_SYSTEM=1) {
         storage/Entry.cpp \
         storage/EntryArray.cpp \
         storage/FileEntry.cpp \
-        storage/FileSystemCallbacks.cpp
+        storage/FileSystemCallbacks.cpp \
+        storage/LocalFileSystem.cpp
 }
 
 contains(DEFINES, ENABLE_ICONDATABASE=1) {

@@ -1,3 +1,38 @@
+2010-08-27  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Add AsyncFileSystem interface for platform-dependent FileSystem API implementation
+        https://bugs.webkit.org/show_bug.cgi?id=44433
+
+        No new tests; tests will be added later.
+
+        * CMakeLists.txt:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/AsyncFileSystem.cpp: Added.
+        * platform/AsyncFileSystem.h: Added.
+        * platform/AsyncFileSystemCallbacks.h: Added.
+        * storage/DOMFileSystem.cpp:
+        (WebCore::DOMFileSystem::DOMFileSystem):
+        (WebCore::DOMFileSystem::~DOMFileSystem):
+        (WebCore::DOMFileSystem::stop):
+        (WebCore::DOMFileSystem::hasPendingActivity):
+        (WebCore::DOMFileSystem::contextDestroyed):
+        * storage/DOMFileSystem.h:
+        (WebCore::DOMFileSystem::create):
+        * storage/FileSystemCallbacks.cpp:
+        (WebCore::FileSystemCallbacksBase::didFail):
+        (WebCore::FileSystemCallbacks::FileSystemCallbacks):
+        (WebCore::FileSystemCallbacks::didOpenFileSystem):
+        * storage/FileSystemCallbacks.h:
+        * storage/LocalFileSystem.cpp: Added.
+        * storage/LocalFileSystem.h: Added.
+
+        * storage/Flags.h: Nits fix.
+
 2010-07-27  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Eric Carlson.

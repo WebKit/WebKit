@@ -28,40 +28,42 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Flags_h
-#define Flags_h
+#include "config.h"
+#include "LocalFileSystem.h"
+
+#if PLATFORM(CHROMIUM)
+#error "Chromium should not compile this file and instead define its own version of these factories."
+#endif
 
 #if ENABLE(FILE_SYSTEM)
 
+#include "DOMWindow.h"
+#include "ErrorCallback.h"
+#include "ExceptionCode.h"
+#include "FileError.h"
+#include "FileSystemCallback.h"
+#include "FileSystemCallbacks.h"
+#include "ScriptExecutionContext.h"
+#include "SecurityOrigin.h"
 #include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class Flags : public RefCounted<Flags> {
-public:
-    static PassRefPtr<Flags> create(bool create = false, bool exclusive = false)
-    {
-        return adoptRef(new Flags(create, exclusive));
+PassRefPtr<LocalFileSystem> LocalFileSystem::create(const String& basePath)
+{
+    return adoptRef(new LocalFileSystem(basePath));
+}
+
+void LocalFileSystem::requestFileSystem(ScriptExecutionContext* context, AsyncFileSystem::Type type, long long, PassRefPtr<FileSystemCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
+{
+    if (type != AsyncFileSystem::Temporary && type != AsyncFileSystem::Persistent) {
+        errorCallback->handleEvent(FileError::create(INVALID_MODIFICATION_ERR).get());
+        return;
     }
 
-    bool isCreate() const { return m_create; }
-    void setCreate(bool create) { m_create = create; }
-    bool isExclusive() const { return m_exclusive; }
-    void setExclusive(bool exclusive) { m_exclusive = exclusive; }
-
-private:
-    Flags(bool create, bool exclusive)
-        : m_create(create)
-        , m_exclusive(exclusive)
-    {
-    }
-    bool m_create;
-    bool m_exclusive;
-};
+    AsyncFileSystem::openFileSystem(m_basePath, context->securityOrigin()->databaseIdentifier(), type, new FileSystemCallbacks(successCallback, errorCallback, context));
+}
 
 } // namespace
 
 #endif // ENABLE(FILE_SYSTEM)
-
-#endif // Flags_h

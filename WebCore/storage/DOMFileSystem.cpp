@@ -33,19 +33,41 @@
 
 #if ENABLE(FILE_SYSTEM)
 
+#include "AsyncFileSystem.h"
 #include "DirectoryEntry.h"
+#include "ScriptExecutionContext.h"
 
 namespace WebCore {
 
-DOMFileSystem::DOMFileSystem(const String& name, const String& rootPath)
-    : m_rootPath(rootPath)
+DOMFileSystem::DOMFileSystem(ScriptExecutionContext* context, const String& name, PassOwnPtr<AsyncFileSystem> asyncFileSystem)
+    : ActiveDOMObject(context, this)
     , m_name(name)
+    , m_asyncFileSystem(asyncFileSystem)
+{
+}
+
+DOMFileSystem::~DOMFileSystem()
 {
 }
 
 PassRefPtr<DirectoryEntry> DOMFileSystem::root()
 {
     return DirectoryEntry::create(this, "/");
+}
+
+void DOMFileSystem::stop()
+{
+    m_asyncFileSystem->stop();
+}
+
+bool DOMFileSystem::hasPendingActivity() const
+{
+    return m_asyncFileSystem->hasPendingActivity();
+}
+
+void DOMFileSystem::contextDestroyed()
+{
+    m_asyncFileSystem->stop();
 }
 
 } // namespace

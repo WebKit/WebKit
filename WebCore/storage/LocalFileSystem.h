@@ -28,40 +28,40 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Flags_h
-#define Flags_h
+#ifndef LocalFileSystem_h
+#define LocalFileSystem_h
 
 #if ENABLE(FILE_SYSTEM)
 
+#include "AsyncFileSystem.h"
+#include "PlatformString.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class Flags : public RefCounted<Flags> {
+class ErrorCallback;
+class FileSystemCallback;
+class ScriptExecutionContext;
+
+class LocalFileSystem : public RefCounted<LocalFileSystem> {
 public:
-    static PassRefPtr<Flags> create(bool create = false, bool exclusive = false)
-    {
-        return adoptRef(new Flags(create, exclusive));
-    }
+    static PassRefPtr<LocalFileSystem> create(const String& basePath);
+    virtual ~LocalFileSystem() { }
 
-    bool isCreate() const { return m_create; }
-    void setCreate(bool create) { m_create = create; }
-    bool isExclusive() const { return m_exclusive; }
-    void setExclusive(bool exclusive) { m_exclusive = exclusive; }
+    void requestFileSystem(ScriptExecutionContext*, AsyncFileSystem::Type, long long size, PassRefPtr<FileSystemCallback>, PassRefPtr<ErrorCallback>);
 
-private:
-    Flags(bool create, bool exclusive)
-        : m_create(create)
-        , m_exclusive(exclusive)
+protected:
+    LocalFileSystem(const String& basePath)
+        : m_basePath(basePath)
     {
     }
-    bool m_create;
-    bool m_exclusive;
+
+    String m_basePath;
 };
 
 } // namespace
 
 #endif // ENABLE(FILE_SYSTEM)
 
-#endif // Flags_h
+#endif // LocalFileSystem_h

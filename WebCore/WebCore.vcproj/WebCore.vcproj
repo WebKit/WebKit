@@ -23981,6 +23981,18 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\AsyncFileSystem.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\AsyncFileSystem.h"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\AsyncFileSystemCallbacks.h"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\AutodrainedPool.h"
 				>
 			</File>
@@ -51446,6 +51458,14 @@
 			</File>
 			<File
 				RelativePath="..\storage\IDBTransaction.h"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\LocalFileSystem.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\LocalFileSystem.h"
 				>
 			</File>
 			<File

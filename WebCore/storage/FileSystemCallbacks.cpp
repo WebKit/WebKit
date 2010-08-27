@@ -33,6 +33,7 @@
 
 #if ENABLE(FILE_SYSTEM)
 
+#include "AsyncFileSystem.h"
 #include "DOMFileSystem.h"
 #include "DirectoryEntry.h"
 #include "EntriesCallback.h"
@@ -65,7 +66,7 @@ void FileSystemCallbacksBase::didSucceed()
     ASSERT_NOT_REACHED();
 }
 
-void FileSystemCallbacksBase::didOpenFileSystem(const String&, const String&)
+void FileSystemCallbacksBase::didOpenFileSystem(const String&, PassOwnPtr<AsyncFileSystem>)
 {
     // Each subclass must implement an appropriate one.
     ASSERT_NOT_REACHED();
@@ -77,7 +78,7 @@ void FileSystemCallbacksBase::didReadMetadata(double)
     ASSERT_NOT_REACHED();
 }
 
-void FileSystemCallbacksBase::didReadDirectoryChunkDone(bool)
+void FileSystemCallbacksBase::didReadDirectoryEntries(bool)
 {
     // Each subclass must implement an appropriate one.
     ASSERT_NOT_REACHED();
@@ -89,7 +90,7 @@ void FileSystemCallbacksBase::didReadDirectoryEntry(const String&, bool)
     ASSERT_NOT_REACHED();
 }
 
-void FileSystemCallbacksBase::didFail(ExceptionCode code)
+void FileSystemCallbacksBase::didFail(int code)
 {
     if (m_errorCallback) {
         m_errorCallback->handleEvent(FileError::create(code).get());
@@ -137,7 +138,7 @@ void EntriesCallbacks::didReadDirectoryEntry(const String& name, bool isDirector
         m_entries->append(FileEntry::create(m_fileSystem, m_basePath + "/" + name));
 }
 
-void EntriesCallbacks::didReadDirectoryChunkDone(bool hasMore)
+void EntriesCallbacks::didReadDirectoryEntries(bool hasMore)
 {
     if (m_successCallback) {
         m_successCallback->handleEvent(m_entries.get());
@@ -152,16 +153,20 @@ void EntriesCallbacks::didReadDirectoryChunkDone(bool hasMore)
 
 // FileSystemCallbacks --------------------------------------------------------
 
-FileSystemCallbacks::FileSystemCallbacks(PassRefPtr<FileSystemCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
+FileSystemCallbacks::FileSystemCallbacks(PassRefPtr<FileSystemCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback, ScriptExecutionContext* context)
     : FileSystemCallbacksBase(errorCallback)
     , m_successCallback(successCallback)
+    , m_scriptExecutionContext(context)
 {
 }
 
-void FileSystemCallbacks::didOpenFileSystem(const String& name, const String& rootPath)
+void FileSystemCallbacks::didOpenFileSystem(const String& name, PassOwnPtr<AsyncFileSystem> asyncFileSystem)
 {
-    if (m_successCallback)
-        m_successCallback->handleEvent(DOMFileSystem::create(name, rootPath).get());
+    if (m_successCallback) {
+        ASSERT(asyncFileSystem);
+        m_successCallback->handleEvent(DOMFileSystem::create(m_scriptExecutionContext.get(), name, asyncFileSystem.leakPtr()).get());
+        m_scriptExecutionContext.clear();
+    }
     m_successCallback.clear();
 }
 
