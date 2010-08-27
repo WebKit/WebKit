@@ -558,9 +558,10 @@ void HistoryController::recursiveGoToItem(HistoryItem* item, HistoryItem* fromIt
     // to match.
     // Note: If item and fromItem are the same, then we need to create a new
     // document.
-    if (item != fromItem && item->itemSequenceNumber() == fromItem->itemSequenceNumber()
-        && ((m_frame->tree()->name().isEmpty() && item->target().isEmpty()) || m_frame->tree()->name() == item->target())
-        && childFramesMatchItem(item))
+    if (item != fromItem 
+        && item->itemSequenceNumber() == fromItem->itemSequenceNumber()
+        && currentFramesMatchItem(item)
+        && fromItem->hasSameFrames(item))
     {
         // This content is good, so leave it alone and look for children that need reloading
         // Save form state (works from currentItem, since prevItem is nil)
@@ -585,7 +586,7 @@ void HistoryController::recursiveGoToItem(HistoryItem* item, HistoryItem* fromIt
         for (int i = 0; i < size; ++i) {
             String childFrameName = childItems[i]->target();
             HistoryItem* fromChildItem = fromItem->childItemWithTarget(childFrameName);
-            ASSERT(fromChildItem || fromItem->isTargetItem());
+            ASSERT(fromChildItem);
             Frame* childFrame = m_frame->tree()->child(childFrameName);
             ASSERT(childFrame);
             childFrame->loader()->history()->recursiveGoToItem(childItems[i].get(), fromChildItem, type);
@@ -595,10 +596,12 @@ void HistoryController::recursiveGoToItem(HistoryItem* item, HistoryItem* fromIt
     }
 }
 
-// helper method that determines whether the subframes described by the item's subitems
-// match our own current frameset
-bool HistoryController::childFramesMatchItem(HistoryItem* item) const
+// Helper method that determines whether the current frame tree matches given history item's.
+bool HistoryController::currentFramesMatchItem(HistoryItem* item) const
 {
+    if ((!m_frame->tree()->name().isEmpty() || !item->target().isEmpty()) && m_frame->tree()->name() != item->target())
+        return false;
+        
     const HistoryItemVector& childItems = item->children();
     if (childItems.size() != m_frame->tree()->childCount())
         return false;
@@ -609,7 +612,6 @@ bool HistoryController::childFramesMatchItem(HistoryItem* item) const
             return false;
     }
     
-    // Found matches for all item targets
     return true;
 }
 

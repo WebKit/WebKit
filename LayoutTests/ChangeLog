@@ -1,3 +1,20 @@
+2010-08-27  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Crash in HistoryController::recursiveGoToItem when navigating in a frame
+        while another frame has a custom window name
+        https://bugs.webkit.org/show_bug.cgi?id=44183
+        
+        Add a test to check that we can handle navigation from a top-level frame
+        when one of the child frames sets window.name after load.
+
+        * fast/history/history-subframe-with-name-expected.txt: Added.
+        * fast/history/history-subframe-with-name.html: Added.
+        * fast/history/resources/history-subframe-with-name-2.html: Added.
+        * fast/history/resources/history-subframe-with-name-3.html: Added.
+        * fast/history/resources/history-subframe-with-name-container.html: Added.
+
 2010-08-27  Tony Chang  <tony@chromium.org>
 
         Unreviewed, remove duplicate test expectation.

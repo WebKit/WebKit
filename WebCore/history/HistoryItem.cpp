@@ -446,6 +446,16 @@ HistoryItem* HistoryItem::childItemWithTarget(const String& target) const
     return 0;
 }
 
+HistoryItem* HistoryItem::childItemWithDocumentSequenceNumber(long long number) const
+{
+    unsigned size = m_children.size();
+    for (unsigned i = 0; i < size; ++i) {
+        if (m_children[i]->documentSequenceNumber() == number)
+            return m_children[i].get();
+    }
+    return 0;
+}
+
 // <rdar://problem/4895849> HistoryItem::findTargetItem() should be replaced with a non-recursive method.
 HistoryItem* HistoryItem::findTargetItem()
 {
@@ -480,6 +490,8 @@ void HistoryItem::clearChildren()
     m_children.clear();
 }
 
+// Does a recursive check that this item and its descendants have the same
+// document sequence numbers as the other item.
 bool HistoryItem::hasSameDocuments(HistoryItem* otherItem)
 {
     if (documentSequenceNumber() != otherItem->documentSequenceNumber())
@@ -487,12 +499,32 @@ bool HistoryItem::hasSameDocuments(HistoryItem* otherItem)
         
     if (children().size() != otherItem->children().size())
         return false;
-    
+
     for (size_t i = 0; i < children().size(); i++) {
-        if (!children()[i]->hasSameDocuments(otherItem->children()[i].get()))
+        HistoryItem* child = children()[i].get();
+        HistoryItem* otherChild = otherItem->childItemWithDocumentSequenceNumber(child->documentSequenceNumber());
+        if (!otherChild || !child->hasSameDocuments(otherChild))
             return false;
     }
-    
+
+    return true;
+}
+
+// Does a non-recursive check that this item and its immediate children have the
+// same frames as the other item.
+bool HistoryItem::hasSameFrames(HistoryItem* otherItem)
+{
+    if (target() != otherItem->target())
+        return false;
+        
+    if (children().size() != otherItem->children().size())
+        return false;
+
+    for (size_t i = 0; i < children().size(); i++) {
+        if (!otherItem->childItemWithTarget(children()[i]->target()))
+            return false;
+    }
+
     return true;
 }
 

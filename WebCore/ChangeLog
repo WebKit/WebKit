@@ -1,3 +1,39 @@
+2010-08-27  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Crash in HistoryController::recursiveGoToItem when navigating in a frame
+        while another frame has a custom window name
+        https://bugs.webkit.org/show_bug.cgi?id=44183
+        
+        Fix up HistoryController::recursiveGoToItem to better check whether the
+        current document frames, the curent history item frames, and the
+        destination history frames match up.
+        
+        Test: fast/history/history-subframe-with-name.html
+
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::childItemWithDocumentSequenceNumber): Add linear
+        lookup of child by document sequence number
+        (WebCore::HistoryItem::hasSameDocuments): Remove assumption that the
+        other item has the children in the same order (it doesn't seem to be
+        true)
+        (WebCore::HistoryItem::hasSameFrames): Add recursive comparison of child
+        frames.
+        * history/HistoryItem.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadItem): Compare full set of documents in 
+        history items, not just the topmost ones. Otherwise when going between
+        framesets where only one of the subframes changed we wouldn't trigger a
+        load.
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::recursiveGoToItem): Also check that the
+        two history items have the same frames
+        (WebCore::HistoryController::currentFramesMatchItem): Refactor 
+        childFramesMatchItem to also check the top-most frame, to make 
+        recursiveGoToItem easier to read.
+        * loader/HistoryController.h:
+
 2010-08-27  Patrick Gansterer  <paroga@paroga.com>
 
         Reviewed by Nikolas Zimmermann.
