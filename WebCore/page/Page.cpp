@@ -639,7 +639,7 @@ void Page::userStyleSheetLocationChanged()
     
     for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext()) {
         if (frame->document())
-            frame->document()->clearPageUserSheet();
+            frame->document()->updatePageUserSheet();
     }
 }
 

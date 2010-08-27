@@ -215,14 +215,10 @@ int RootInlineBox::verticallyAlignBoxes(int heightOfBlock, GlyphOverflowAndFallb
     int maxAscent = 0;
     int maxDescent = 0;
 
-    // Figure out if we're in strict mode.  Note that we can't simply use !style()->htmlHacks(),
-    // because that would match almost strict mode as well.
-    RenderObject* curr = renderer();
-    while (curr && !curr->node())
-        curr = curr->container();
-    bool strictMode = (curr && curr->document()->inStrictMode());
+    // Figure out if we're in no-quirks mode.
+    bool noQuirksMode = renderer()->document()->inNoQuirksMode();
 
-    computeLogicalBoxHeights(maxPositionTop, maxPositionBottom, maxAscent, maxDescent, strictMode, textBoxDataMap);
+    computeLogicalBoxHeights(maxPositionTop, maxPositionBottom, maxAscent, maxDescent, noQuirksMode, textBoxDataMap);
 
     if (maxAscent + maxDescent < max(maxPositionTop, maxPositionBottom))
         adjustMaxAscentAndDescent(maxAscent, maxDescent, maxPositionTop, maxPositionBottom);
@@ -230,8 +226,8 @@ int RootInlineBox::verticallyAlignBoxes(int heightOfBlock, GlyphOverflowAndFallb
     int maxHeight = maxAscent + maxDescent;
     int lineTop = heightOfBlock;
     int lineBottom = heightOfBlock;
-    placeBoxesVertically(heightOfBlock, maxHeight, maxAscent, strictMode, lineTop, lineBottom);
-    computeVerticalOverflow(lineTop, lineBottom, strictMode, textBoxDataMap);
+    placeBoxesVertically(heightOfBlock, maxHeight, maxAscent, noQuirksMode, lineTop, lineBottom);
+    computeVerticalOverflow(lineTop, lineBottom, noQuirksMode, textBoxDataMap);
     setLineTopBottomPositions(lineTop, lineBottom);
     
     heightOfBlock += maxHeight;

@@ -113,7 +113,8 @@ MediaDocument::MediaDocument(Frame* frame, const KURL& url)
     : HTMLDocument(frame, url)
     , m_replaceMediaElementTimer(this, &MediaDocument::replaceMediaElementTimerFired)
 {
-    setParseMode(Compat);
+    setCompatibilityMode(QuirksMode);
+    lockCompatibilityMode();
 }
 
 MediaDocument::~MediaDocument()

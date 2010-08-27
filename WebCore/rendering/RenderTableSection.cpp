@@ -349,7 +349,7 @@ int RenderTableSection::calcRowHeight()
             // Explicit heights use the border box in quirks mode.  In strict mode do the right
             // thing and actually add in the border and padding.
             ch = cell->style()->height().calcValue(0) + 
-                (cell->style()->htmlHacks() ? 0 : (adjustedPaddingTop + adjustedPaddingBottom +
+                (document()->inQuirksMode() ? 0 : (adjustedPaddingTop + adjustedPaddingBottom +
                                                    cell->borderTop() + cell->borderBottom()));
             ch = max(ch, adjustedHeight);
 

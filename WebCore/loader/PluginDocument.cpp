@@ -135,7 +135,8 @@ void PluginDocumentParser::appendBytes(DocumentWriter*, const char*, int, bool)
 PluginDocument::PluginDocument(Frame* frame, const KURL& url)
     : HTMLDocument(frame, url)
 {
-    setParseMode(Compat);
+    setCompatibilityMode(QuirksMode);
+    lockCompatibilityMode();
 }
     
 PassRefPtr<DocumentParser> PluginDocument::createParser()

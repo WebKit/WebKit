@@ -50,7 +50,7 @@ void DecodedDataDocumentParser::appendBytes(DocumentWriter* writer , const char*
     if (decoded.isEmpty())
         return;
 
-    writer->reportDataRecieved();
+    writer->reportDataReceived();
 
     append(decoded);
 }

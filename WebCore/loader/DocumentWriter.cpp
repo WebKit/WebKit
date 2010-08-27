@@ -72,7 +72,7 @@ void DocumentWriter::replaceDocument(const String& source)
     if (!source.isNull()) {
         if (!m_receivedData) {
             m_receivedData = true;
-            m_frame->document()->setParseMode(Document::Strict);
+            m_frame->document()->setCompatibilityMode(Document::NoQuirksMode);
         }
 
         // FIXME: This should call DocumentParser::appendBytes instead of append
@@ -179,7 +179,7 @@ TextResourceDecoder* DocumentWriter::createDecoderIfNeeded()
     return m_decoder.get();
 }
 
-void DocumentWriter::reportDataRecieved()
+void DocumentWriter::reportDataReceived()
 {
     ASSERT(m_decoder);
     if (!m_receivedData) {

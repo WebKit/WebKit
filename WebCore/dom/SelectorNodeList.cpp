@@ -46,7 +46,7 @@ PassRefPtr<StaticNodeList> createSelectorNodeList(Node* rootNode, const CSSSelec
     Vector<RefPtr<Node> > nodes;
     Document* document = rootNode->document();
     CSSSelector* onlySelector = querySelectorList.hasOneSelector() ? querySelectorList.first() : 0;
-    bool strictParsing = !document->inCompatMode();
+    bool strictParsing = !document->inQuirksMode();
 
     CSSStyleSelector::SelectorChecker selectorChecker(document, strictParsing);
 

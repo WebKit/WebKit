@@ -15,9 +15,9 @@ ensure that document.open clears the document but does not change the document p
 PASS iframeDocument is iframe.contentWindow.document
 document.open should also clear the document and reset the doctype)
 PASS treeAsString(iframeDocument) is "#document"
-PASS iframeDocument.compatMode is "BackCompat"
-document.write of "" should leave the document in quirksmode and add no content to the document
-PASS iframeDocument.compatMode is "BackCompat"
+PASS iframeDocument.compatMode is "CSS1Compat"
+document.write of "" should leave the document in no-quirks mode and add no content to the document
+PASS iframeDocument.compatMode is "CSS1Compat"
 PASS treeAsString(iframeDocument) is "#document"
 document.write calls can change the doctype until an <html> is created
 PASS iframeDocument.compatMode is "CSS1Compat"

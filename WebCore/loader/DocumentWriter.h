@@ -69,7 +69,7 @@ public:
 
     // Exposed for DoucmentParser::appendBytes
     TextResourceDecoder* createDecoderIfNeeded();
-    void reportDataRecieved();
+    void reportDataReceived();
 
 private:
     PassRefPtr<Document> createDocument(const KURL&);

@@ -84,7 +84,6 @@ HTMLDocument::HTMLDocument(Frame* frame, const KURL& url)
     : Document(frame, url, false, true)
 {
     clearXMLVersion();
-    setParseMode(Compat);
 }
 
 HTMLDocument::~HTMLDocument()
@@ -139,7 +138,7 @@ void HTMLDocument::setDesignMode(const String& value)
 
 String HTMLDocument::compatMode() const
 {
-    return inCompatMode() ? "BackCompat" : "CSS1Compat";
+    return inQuirksMode() ? "BackCompat" : "CSS1Compat";
 }
 
 Element* HTMLDocument::activeElement()
@@ -343,65 +342,97 @@ void HTMLDocument::removeExtraNamedItem(const AtomicString& name)
     removeItemFromMap(m_extraNamedItemCounts, name);
 }
 
-void HTMLDocument::determineParseMode()
+void HTMLDocument::setCompatibilityModeFromDoctype()
 {
-    // FIXME: It's terrible that this code runs separately and isn't just built in to the
-    // HTML tokenizer/parser.
-
-    // This code more or less mimics Mozilla's implementation (specifically the
-    // doctype parsing implemented by David Baron in Mozilla's nsParser.cpp).
-    //
-    // There are three possible parse modes:
-    // COMPAT - quirks mode emulates WinIE and NS4.  CSS parsing is also relaxed in this mode, e.g., unit types can
+    // There are three possible compatibility modes:
+    // Quirks - quirks mode emulates WinIE and NS4.  CSS parsing is also relaxed in this mode, e.g., unit types can
     // be omitted from numbers.
-    // ALMOST STRICT - This mode is identical to strict mode except for its treatment of line-height in the inline box model.  For
-    // now (until the inline box model is re-written), this mode is identical to STANDARDS mode.
-    // STRICT - no quirks apply.  Web pages will obey the specifications to the letter.
-    bool wasInCompatMode = inCompatMode();
+    // Limited Quirks - This mode is identical to no-quirks mode except for its treatment of line-height in the inline box model.  
+    // No Quirks - no quirks apply.  Web pages will obey the specifications to the letter.
     DocumentType* docType = doctype();
-    if (!docType || !equalIgnoringCase(docType->name(), "html"))
-        // No doctype found at all or the doctype is not HTML.  Default to quirks mode and Html4.
-        setParseMode(Compat);
-    else if (!doctype()->systemId().isEmpty() && equalIgnoringCase(docType->systemId(), "http://www.ibm.com/data/dtd/v11/ibmxhtml1-transitional.dtd"))
-        // Assume quirks mode for this particular system ID.  In the HTML5 spec, this is the only
-        // system identifier that is examined.
-        setParseMode(Compat);
-    else if (docType->publicId().isEmpty())
-        // A doctype without a public ID means use strict mode.
-        setParseMode(Strict);
-    else {
-        // We have to check a list of public IDs to see what we
-        // should do.
-        String lowerPubID = docType->publicId().lower();
-        CString pubIDStr = lowerPubID.latin1();
-       
-        // Look up the entry in our gperf-generated table.
-        const PubIDInfo* doctypeEntry = findDoctypeEntry(pubIDStr.data(), pubIDStr.length());
-        if (!doctypeEntry)
-            // The DOCTYPE is not in the list.  Assume strict mode.
-            setParseMode(Strict);
-        else {
-            switch (docType->systemId().isEmpty() ?
-                    doctypeEntry->mode_if_no_sysid :
-                    doctypeEntry->mode_if_sysid) {
-                case PubIDInfo::eQuirks3:
-                case PubIDInfo::eQuirks:
-                    setParseMode(Compat);
-                    break;
-                case PubIDInfo::eAlmostStandards:
-                    setParseMode(AlmostStrict);
-                    break;
-                 default:
-                    ASSERT(false);
-            }
-        }
+    if (!docType)
+        return;
+
+    // Check for Quirks Mode.
+    const String& publicId = docType->publicId();
+    if (docType->name() != "html"
+        || publicId.startsWith("+//Silmaril//dtd html Pro v0r11 19970101//", false)
+        || publicId.startsWith("-//AdvaSoft Ltd//DTD HTML 3.0 asWedit + extensions//", false)
+        || publicId.startsWith("-//AS//DTD HTML 3.0 asWedit + extensions//", false)
+        || publicId.startsWith("-//IETF//DTD HTML 2.0 Level 1//", false)
+        || publicId.startsWith("-//IETF//DTD HTML 2.0 Level 2//", false)
+        || publicId.startsWith("-//IETF//DTD HTML 2.0 Strict Level 1//", false)
+        || publicId.startsWith("-//IETF//DTD HTML 2.0 Strict Level 2//", false)
+        || publicId.startsWith("-//IETF//DTD HTML 2.0 Strict//", false)
+        || publicId.startsWith("-//IETF//DTD HTML 2.0//", false)
+        || publicId.startsWith("-//IETF//DTD HTML 2.1E//", false)
+        || publicId.startsWith("-//IETF//DTD HTML 3.0//", false)
+        || publicId.startsWith("-//IETF//DTD HTML 3.2 Final//", false)
+        || publicId.startsWith("-//IETF//DTD HTML 3.2//", false)
+        || publicId.startsWith("-//IETF//DTD HTML 3//", false)
+        || publicId.startsWith("-//IETF//DTD HTML Level 0//", false)
+        || publicId.startsWith("-//IETF//DTD HTML Level 1//", false)
+        || publicId.startsWith("-//IETF//DTD HTML Level 2//", false)
+        || publicId.startsWith("-//IETF//DTD HTML Level 3//", false)
+        || publicId.startsWith("-//IETF//DTD HTML Strict Level 0//", false)
+        || publicId.startsWith("-//IETF//DTD HTML Strict Level 1//", false)
+        || publicId.startsWith("-//IETF//DTD HTML Strict Level 2//", false)
+        || publicId.startsWith("-//IETF//DTD HTML Strict Level 3//", false)
+        || publicId.startsWith("-//IETF//DTD HTML Strict//", false)
+        || publicId.startsWith("-//IETF//DTD HTML//", false)
+        || publicId.startsWith("-//Metrius//DTD Metrius Presentational//", false)
+        || publicId.startsWith("-//Microsoft//DTD Internet Explorer 2.0 HTML Strict//", false)
+        || publicId.startsWith("-//Microsoft//DTD Internet Explorer 2.0 HTML//", false)
+        || publicId.startsWith("-//Microsoft//DTD Internet Explorer 2.0 Tables//", false)
+        || publicId.startsWith("-//Microsoft//DTD Internet Explorer 3.0 HTML Strict//", false)
+        || publicId.startsWith("-//Microsoft//DTD Internet Explorer 3.0 HTML//", false)
+        || publicId.startsWith("-//Microsoft//DTD Internet Explorer 3.0 Tables//", false)
+        || publicId.startsWith("-//Netscape Comm. Corp.//DTD HTML//", false)
+        || publicId.startsWith("-//Netscape Comm. Corp.//DTD Strict HTML//", false)
+        || publicId.startsWith("-//O'Reilly and Associates//DTD HTML 2.0//", false)
+        || publicId.startsWith("-//O'Reilly and Associates//DTD HTML Extended 1.0//", false)
+        || publicId.startsWith("-//O'Reilly and Associates//DTD HTML Extended Relaxed 1.0//", false)
+        || publicId.startsWith("-//SoftQuad Software//DTD HoTMetaL PRO 6.0::19990601::extensions to HTML 4.0//", false)
+        || publicId.startsWith("-//SoftQuad//DTD HoTMetaL PRO 4.0::19971010::extensions to HTML 4.0//", false)
+        || publicId.startsWith("-//Spyglass//DTD HTML 2.0 Extended//", false)
+        || publicId.startsWith("-//SQ//DTD HTML 2.0 HoTMetaL + extensions//", false)
+        || publicId.startsWith("-//Sun Microsystems Corp.//DTD HotJava HTML//", false)
+        || publicId.startsWith("-//Sun Microsystems Corp.//DTD HotJava Strict HTML//", false)
+        || publicId.startsWith("-//W3C//DTD HTML 3 1995-03-24//", false)
+        || publicId.startsWith("-//W3C//DTD HTML 3.2 Draft//", false)
+        || publicId.startsWith("-//W3C//DTD HTML 3.2 Final//", false)
+        || publicId.startsWith("-//W3C//DTD HTML 3.2//", false)
+        || publicId.startsWith("-//W3C//DTD HTML 3.2S Draft//", false)
+        || publicId.startsWith("-//W3C//DTD HTML 4.0 Frameset//", false)
+        || publicId.startsWith("-//W3C//DTD HTML 4.0 Transitional//", false)
+        || publicId.startsWith("-//W3C//DTD HTML Experimental 19960712//", false)
+        || publicId.startsWith("-//W3C//DTD HTML Experimental 970421//", false)
+        || publicId.startsWith("-//W3C//DTD W3 HTML//", false)
+        || publicId.startsWith("-//W3O//DTD W3 HTML 3.0//", false)
+        || equalIgnoringCase(publicId, "-//W3O//DTD W3 HTML Strict 3.0//EN//")
+        || publicId.startsWith("-//WebTechs//DTD Mozilla HTML 2.0//", false)
+        || publicId.startsWith("-//WebTechs//DTD Mozilla HTML//", false)
+        || equalIgnoringCase(publicId, "-/W3C/DTD HTML 4.0 Transitional/EN")
+        || equalIgnoringCase(publicId, "HTML")
+        || equalIgnoringCase(docType->systemId(), "http://www.ibm.com/data/dtd/v11/ibmxhtml1-transitional.dtd")
+        || (docType->systemId().isEmpty() && publicId.startsWith("-//W3C//DTD HTML 4.01 Frameset//", false))
+        || (docType->systemId().isEmpty() && publicId.startsWith("-//W3C//DTD HTML 4.01 Transitional//", false))) {
+        setCompatibilityMode(QuirksMode);
+        return;
     }
-    
-    if (inCompatMode() != wasInCompatMode) {
-        clearPageUserSheet();
-        clearPageGroupUserSheets();
-        styleSelectorChanged(RecalcStyleImmediately);
+
+    // Check for Limited Quirks Mode.
+    if (publicId.startsWith("-//W3C//DTD XHTML 1.0 Frameset//", false)
+        || publicId.startsWith("-//W3C//DTD XHTML 1.0 Transitional//", false)
+        || (!docType->systemId().isEmpty() && publicId.startsWith("-//W3C//DTD HTML 4.01 Frameset//", false))
+        || (!docType->systemId().isEmpty() && publicId.startsWith("-//W3C//DTD HTML 4.01 Transitional//", false))) {
+        setCompatibilityMode(LimitedQuirksMode);
+        return;
     }
+
+    // Otherwise we are No Quirks Mode.
+    setCompatibilityMode(NoQuirksMode);
+    return;
 }
 
 void HTMLDocument::clear()

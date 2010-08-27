@@ -270,7 +270,7 @@ void HTMLLinkElement::setCSSStyleSheet(const String& href, const KURL& baseURL, 
 {
     m_sheet = CSSStyleSheet::create(this, href, baseURL, charset);
 
-    bool strictParsing = !document()->inCompatMode();
+    bool strictParsing = !document()->inQuirksMode();
     bool enforceMIMEType = strictParsing;
     bool crossOriginCSS = false;
     bool validMIMEType = false;
@@ -278,7 +278,7 @@ void HTMLLinkElement::setCSSStyleSheet(const String& href, const KURL& baseURL, 
 
     // Check to see if we should enforce the MIME type of the CSS resource in strict mode.
     // Running in iWeb 2 is one example of where we don't want to - <rdar://problem/6099748>
-    if (enforceMIMEType && document()->page() && !document()->page()->settings()->enforceCSSMIMETypeInStrictMode())
+    if (enforceMIMEType && document()->page() && !document()->page()->settings()->enforceCSSMIMETypeInNoQuirksMode())
         enforceMIMEType = false;
 
 #if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)

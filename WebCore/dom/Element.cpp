@@ -367,9 +367,9 @@ int Element::clientWidth()
 
     // When in strict mode, clientWidth for the document element should return the width of the containing frame.
     // When in quirks mode, clientWidth for the body element should return the width of the containing frame.
-    bool inCompatMode = document()->inCompatMode();
-    if ((!inCompatMode && document()->documentElement() == this) ||
-        (inCompatMode && isHTMLElement() && document()->body() == this)) {
+    bool inQuirksMode = document()->inQuirksMode();
+    if ((!inQuirksMode && document()->documentElement() == this) ||
+        (inQuirksMode && isHTMLElement() && document()->body() == this)) {
         if (FrameView* view = document()->view()) {
             if (RenderView* renderView = document()->renderView())
                 return adjustForAbsoluteZoom(view->layoutWidth(), renderView);
@@ -387,10 +387,10 @@ int Element::clientHeight()
 
     // When in strict mode, clientHeight for the document element should return the height of the containing frame.
     // When in quirks mode, clientHeight for the body element should return the height of the containing frame.
-    bool inCompatMode = document()->inCompatMode();     
+    bool inQuirksMode = document()->inQuirksMode();     
 
-    if ((!inCompatMode && document()->documentElement() == this) ||
-        (inCompatMode && isHTMLElement() && document()->body() == this)) {
+    if ((!inQuirksMode && document()->documentElement() == this) ||
+        (inQuirksMode && isHTMLElement() && document()->body() == this)) {
         if (FrameView* view = document()->view()) {
             if (RenderView* renderView = document()->renderView())
                 return adjustForAbsoluteZoom(view->layoutHeight(), renderView);
@@ -1498,7 +1498,7 @@ bool Element::webkitMatchesSelector(const String& selector, ExceptionCode& ec)
         return false;
     }
 
-    bool strictParsing = !document()->inCompatMode();
+    bool strictParsing = !document()->inQuirksMode();
     CSSParser p(strictParsing);
 
     CSSSelectorList selectorList;

@@ -252,8 +252,8 @@ namespace WebCore {
         void setZoomMode(ZoomMode);
         ZoomMode zoomMode() const { return m_zoomMode; }
         
-        void setEnforceCSSMIMETypeInStrictMode(bool);
-        bool enforceCSSMIMETypeInStrictMode() { return m_enforceCSSMIMETypeInStrictMode; }
+        void setEnforceCSSMIMETypeInNoQuirksMode(bool);
+        bool enforceCSSMIMETypeInNoQuirksMode() { return m_enforceCSSMIMETypeInNoQuirksMode; }
 
         void setMaximumDecodedImageSize(size_t size) { m_maximumDecodedImageSize = size; }
         size_t maximumDecodedImageSize() const { return m_maximumDecodedImageSize; }
@@ -386,7 +386,7 @@ namespace WebCore {
         bool m_inApplicationChromeMode : 1;
         bool m_offlineWebApplicationCacheEnabled : 1;
         bool m_shouldPaintCustomScrollbars : 1;
-        bool m_enforceCSSMIMETypeInStrictMode : 1;
+        bool m_enforceCSSMIMETypeInNoQuirksMode : 1;
         bool m_usesEncodingDetector : 1;
         bool m_allowScriptsToCloseWindows : 1;
         unsigned m_editingBehaviorType : 1;

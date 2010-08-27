@@ -1641,7 +1641,7 @@ PassRefPtr<Element> Node::querySelector(const String& selectors, ExceptionCode& 
         ec = SYNTAX_ERR;
         return 0;
     }
-    bool strictParsing = !document()->inCompatMode();
+    bool strictParsing = !document()->inQuirksMode();
     CSSParser p(strictParsing);
 
     CSSSelectorList querySelectorList;
@@ -1688,7 +1688,7 @@ PassRefPtr<NodeList> Node::querySelectorAll(const String& selectors, ExceptionCo
         ec = SYNTAX_ERR;
         return 0;
     }
-    bool strictParsing = !document()->inCompatMode();
+    bool strictParsing = !document()->inQuirksMode();
     CSSParser p(strictParsing);
 
     CSSSelectorList querySelectorList;

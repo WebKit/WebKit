@@ -363,7 +363,7 @@ void PageGroup::resetUserStyleCacheInAllFrames()
     HashSet<Page*>::const_iterator end = m_pages.end();
     for (HashSet<Page*>::const_iterator it = m_pages.begin(); it != end; ++it) {
         for (Frame* frame = (*it)->mainFrame(); frame; frame = frame->tree()->traverseNext())
-            frame->document()->clearPageGroupUserSheets();
+            frame->document()->updatePageGroupUserSheets();
     }
 #endif
 }

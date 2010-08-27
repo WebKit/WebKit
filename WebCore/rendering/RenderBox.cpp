@@ -1550,7 +1550,7 @@ int RenderBox::calcPercentageHeight(const Length& height)
     int result = -1;
     bool skippedAutoHeightContainingBlock = false;
     RenderBlock* cb = containingBlock();
-    if (style()->htmlHacks()) {
+    if (document()->inQuirksMode()) {
         // In quirks mode, blocks with auto height are skipped, and we keep looking for an enclosing
         // block that may have a specified height and then use it.  In strict mode, this violates the
         // specification, which states that percentage heights just revert to auto if the containing
@@ -1599,7 +1599,7 @@ int RenderBox::calcPercentageHeight(const Length& height)
         result = cb->calcPercentageHeight(cb->style()->height());
         if (result != -1)
             result = cb->calcContentBoxHeight(result);
-    } else if (cb->isRenderView() || (cb->isBody() && style()->htmlHacks()) || isPositionedWithSpecifiedHeight) {
+    } else if (cb->isRenderView() || (cb->isBody() && document()->inQuirksMode()) || isPositionedWithSpecifiedHeight) {
         // Don't allow this to affect the block' height() member variable, since this
         // can get called while the block is still laying out its kids.
         int oldHeight = cb->height();
@@ -1832,7 +1832,7 @@ void RenderBox::calcAbsoluteHorizontal()
 
     // To match WinIE, in quirks mode use the parent's 'direction' property
     // instead of the the container block's.
-    TextDirection containerDirection = (style()->htmlHacks()) ? parent()->style()->direction() : containerBlock->style()->direction();
+    TextDirection containerDirection = (document()->inQuirksMode()) ? parent()->style()->direction() : containerBlock->style()->direction();
 
     const int bordersPlusPadding = borderAndPaddingWidth();
     const Length marginLeft = style()->marginLeft();
@@ -2368,7 +2368,7 @@ void RenderBox::calcAbsoluteHorizontalReplaced()
 
     // To match WinIE, in quirks mode use the parent's 'direction' property
     // instead of the the container block's.
-    TextDirection containerDirection = (style()->htmlHacks()) ? parent()->style()->direction() : containerBlock->style()->direction();
+    TextDirection containerDirection = (document()->inQuirksMode()) ? parent()->style()->direction() : containerBlock->style()->direction();
 
     // Variables to solve.
     Length left = style()->left();

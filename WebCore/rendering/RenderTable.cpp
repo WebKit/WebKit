@@ -333,7 +333,7 @@ void RenderTable::layout()
             toRenderTableSection(child)->layoutRows(child == m_firstBody ? max(0, th - calculatedHeight) : 0);
     }
 
-    if (!m_firstBody && th > calculatedHeight && !style()->htmlHacks()) {
+    if (!m_firstBody && th > calculatedHeight && !document()->inQuirksMode()) {
         // Completely empty tables (with no sections or anything) should at least honor specified height
         // in strict mode.
         setHeight(height() + th);

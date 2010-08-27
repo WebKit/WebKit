@@ -1425,7 +1425,7 @@ static bool fastDocumentTeardownEnabled()
     settings->setZoomMode([preferences zoomsTextOnly] ? ZoomTextOnly : ZoomPage);
     settings->setJavaScriptCanAccessClipboard([preferences javaScriptCanAccessClipboard]);
     settings->setXSSAuditorEnabled([preferences isXSSAuditorEnabled]);
-    settings->setEnforceCSSMIMETypeInStrictMode(!WKAppVersionCheckLessThan(@"com.apple.iWeb", -1, 2.1));
+    settings->setEnforceCSSMIMETypeInNoQuirksMode(!WKAppVersionCheckLessThan(@"com.apple.iWeb", -1, 2.1));
     settings->setDNSPrefetchingEnabled([preferences isDNSPrefetchingEnabled]);
     
     // FIXME: Enabling accelerated compositing when WebGL is enabled causes tests to fail on Leopard which expect HW compositing to be disabled.

@@ -1,3 +1,31 @@
+2010-08-27  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=44788, implement HTML5-compliant doctype switching.
+
+        Rename the various modes to match the HTML5 specification:
+            ParseMode -> CompatibilityMode
+            CompatMode -> QuirksMode
+            AlmostStrictMode -> LimitedQuirksMode
+            StrictMode -> NoQuirksMode
+            
+        Remove the htmlHacks() accessor from RenderStyle and make rendering code just go to the document
+        instead.  This makes switching modes avoid forcing all RenderStyles to detect as changed.
+        
+        Clean up user stylesheets to minimize style recalculation when the mode is switched.
+        
+        Fix bugs with the propagation of correct modes in the HTML5 parser.  Make sure the
+        dummy document created for fragment parsing properly inherits the real document's CompatibilityMode.
+        Make sure the tree builder properly changes the insertion mode to "BeforeHTML" after handling
+        a doctype token.
+        
+        determineParseMode -> setCompatibilityModeFromDoctype, and it now implements the HTML5 algorithm
+        precisely.
+
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChangedNotification:]):
+
 2010-08-27  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

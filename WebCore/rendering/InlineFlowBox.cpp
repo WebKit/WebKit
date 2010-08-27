@@ -761,8 +761,8 @@ void InlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
     int h = height();
 
     // Constrain our background/border painting to the line top and bottom if necessary.
-    bool strictMode = renderer()->document()->inStrictMode();
-    if (!hasTextChildren() && !strictMode) {
+    bool noQuirksMode = renderer()->document()->inNoQuirksMode();
+    if (!hasTextChildren() && !noQuirksMode) {
         RootInlineBox* rootBox = root();
         int bottom = min(rootBox->lineBottom(), y + h);
         y = max(rootBox->lineTop(), y);
@@ -837,8 +837,8 @@ void InlineFlowBox::paintMask(PaintInfo& paintInfo, int tx, int ty)
     int h = height();
 
     // Constrain our background/border painting to the line top and bottom if necessary.
-    bool strictMode = renderer()->document()->inStrictMode();
-    if (!hasTextChildren() && !strictMode) {
+    bool noQuirksMode = renderer()->document()->inNoQuirksMode();
+    if (!hasTextChildren() && !noQuirksMode) {
         RootInlineBox* rootBox = root();
         int bottom = min(rootBox->lineBottom(), y + h);
         y = max(rootBox->lineTop(), y);
@@ -922,7 +922,7 @@ void InlineFlowBox::paintTextDecorations(PaintInfo& paintInfo, int tx, int ty, b
 {
     // Paint text decorations like underlines/overlines. We only do this if we aren't in quirks mode (i.e., in
     // almost-strict mode or strict mode).
-    if (renderer()->style()->htmlHacks() || !paintInfo.shouldPaintWithinRoot(renderer()) ||
+    if (renderer()->document()->inQuirksMode() || !paintInfo.shouldPaintWithinRoot(renderer()) ||
         renderer()->style()->visibility() != VISIBLE)
         return;
     

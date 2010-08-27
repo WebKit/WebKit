@@ -51,6 +51,8 @@ HTMLViewSourceDocument::HTMLViewSourceDocument(Frame* frame, const KURL& url, co
     , m_type(mimeType)
 {
     setUsesBeforeAfterRules(true);
+    setCompatibilityMode(QuirksMode);
+    lockCompatibilityMode();
 }
 
 PassRefPtr<DocumentParser> HTMLViewSourceDocument::createParser()

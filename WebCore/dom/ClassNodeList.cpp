@@ -37,7 +37,7 @@ namespace WebCore {
 
 ClassNodeList::ClassNodeList(PassRefPtr<Node> rootNode, const String& classNames)
     : DynamicNodeList(rootNode)
-    , m_classNames(classNames, m_rootNode->document()->inCompatMode())
+    , m_classNames(classNames, m_rootNode->document()->inQuirksMode())
     , m_originalClassNames(classNames)
 {
 }

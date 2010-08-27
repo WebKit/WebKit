@@ -309,7 +309,7 @@ void NamedNodeMap::setClass(const String& classStr)
         return;
     }
 
-    m_classNames.set(classStr, element()->document()->inCompatMode()); 
+    m_classNames.set(classStr, element()->document()->inQuirksMode()); 
 }
 
 int NamedNodeMap::declCount() const

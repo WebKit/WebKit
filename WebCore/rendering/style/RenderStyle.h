@@ -178,7 +178,6 @@ protected:
                    (_white_space == other._white_space) &&
                    (_box_direction == other._box_direction) &&
                    (_visuallyOrdered == other._visuallyOrdered) &&
-                   (_htmlHacks == other._htmlHacks) &&
                    (_force_backgrounds_to_white == other._force_backgrounds_to_white) &&
                    (_pointerEvents == other._pointerEvents) &&
                    (_insideLink == other._insideLink);
@@ -203,7 +202,6 @@ protected:
         
         // non CSS2 inherited
         bool _visuallyOrdered : 1;
-        bool _htmlHacks : 1;
         bool _force_backgrounds_to_white : 1;
         unsigned _pointerEvents : 4; // EPointerEvents
         unsigned _insideLink : 2; // EInsideLink
@@ -279,7 +277,6 @@ protected:
         inherited_flags._border_collapse = initialBorderCollapse();
         inherited_flags._white_space = initialWhiteSpace();
         inherited_flags._visuallyOrdered = initialVisuallyOrdered();
-        inherited_flags._htmlHacks=false;
         inherited_flags._box_direction = initialBoxDirection();
         inherited_flags._force_backgrounds_to_white = false;
         inherited_flags._pointerEvents = initialPointerEvents();
@@ -923,9 +920,6 @@ public:
 
     bool forceBackgroundsToWhite() const { return inherited_flags._force_backgrounds_to_white; }
     void setForceBackgroundsToWhite(bool b=true) { inherited_flags._force_backgrounds_to_white = b; }
-
-    bool htmlHacks() const { return inherited_flags._htmlHacks; }
-    void setHtmlHacks(bool b=true) { inherited_flags._htmlHacks = b; }
 
     bool hasAutoZIndex() const { return m_box->hasAutoZIndex(); }
     void setHasAutoZIndex() { SET_VAR(m_box, m_hasAutoZIndex, true); SET_VAR(m_box, m_zIndex, 0) }

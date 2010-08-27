@@ -1,3 +1,164 @@
+2010-08-27  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=44788, implement HTML5-compliant doctype switching.
+
+        Rename the various modes to match the HTML5 specification:
+            ParseMode -> CompatibilityMode
+            CompatMode -> QuirksMode
+            AlmostStrictMode -> LimitedQuirksMode
+            StrictMode -> NoQuirksMode
+            
+        Remove the htmlHacks() accessor from RenderStyle and make rendering code just go to the document
+        instead.  This makes switching modes avoid forcing all RenderStyles to detect as changed.
+        
+        Clean up user stylesheets to minimize style recalculation when the mode is switched.
+        
+        Fix bugs with the propagation of correct modes in the HTML5 parser.  Make sure the
+        dummy document created for fragment parsing properly inherits the real document's CompatibilityMode.
+        Make sure the tree builder properly changes the insertion mode to "BeforeHTML" after handling
+        a doctype token.
+        
+        determineParseMode -> setCompatibilityModeFromDoctype, and it now implements the HTML5 algorithm
+        precisely.
+        
+        * WebCore.exp.in:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::styleForDocument):
+        (WebCore::CSSStyleSelector::applyProperty):
+        (WebCore::CSSStyleSelector::fontSizeForKeyword):
+        * dom/ClassNodeList.cpp:
+        (WebCore::ClassNodeList::ClassNodeList):
+        * dom/DecodedDataDocumentParser.cpp:
+        (WebCore::DecodedDataDocumentParser::appendBytes):
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::setCompatibilityMode):
+        (WebCore::Document::setDocType):
+        (WebCore::Document::unscheduleStyleRecalc):
+        (WebCore::Document::recalcStyle):
+        (WebCore::Document::updateStyleIfNeeded):
+        (WebCore::Document::createStyleSelector):
+        (WebCore::Document::implicitOpen):
+        (WebCore::Document::pageUserSheet):
+        (WebCore::Document::clearPageUserSheet):
+        (WebCore::Document::updatePageUserSheet):
+        (WebCore::Document::pageGroupUserSheets):
+        (WebCore::Document::clearPageGroupUserSheets):
+        (WebCore::Document::updatePageGroupUserSheets):
+        (WebCore::Document::findAnchor):
+        * dom/Document.h:
+        (WebCore::Document::):
+        (WebCore::Document::setCompatibilityModeFromDoctype):
+        (WebCore::Document::lockCompatibilityMode):
+        (WebCore::Document::compatibilityMode):
+        (WebCore::Document::inQuirksMode):
+        (WebCore::Document::inLimitedQuirksMode):
+        (WebCore::Document::inNoQuirksMode):
+        * dom/Element.cpp:
+        (WebCore::Element::clientWidth):
+        (WebCore::Element::clientHeight):
+        (WebCore::Element::webkitMatchesSelector):
+        * dom/NamedNodeMap.cpp:
+        (WebCore::NamedNodeMap::setClass):
+        * dom/Node.cpp:
+        (WebCore::Node::querySelector):
+        (WebCore::Node::querySelectorAll):
+        * dom/OptionElement.cpp:
+        (WebCore::OptionElement::collectOptionLabelOrText):
+        * dom/SelectorNodeList.cpp:
+        (WebCore::createSelectorNodeList):
+        * dom/StyleElement.cpp:
+        (WebCore::StyleElement::createSheet):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::createInlineStyleDecl):
+        (WebCore::StyledElement::parseMappedAttribute):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::shouldRemoveEndBR):
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::createLinkDecl):
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::getContext):
+        * html/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::insertDoctype):
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::HTMLDocument):
+        (WebCore::HTMLDocument::compatMode):
+        (WebCore::HTMLDocument::setCompatibilityModeFromDoctype):
+        * html/HTMLDocument.h:
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::setCSSStyleSheet):
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::HTMLTreeBuilder):
+        (WebCore::HTMLTreeBuilder::FragmentParsingContext::FragmentParsingContext):
+        (WebCore::HTMLTreeBuilder::processDoctypeToken):
+        (WebCore::HTMLTreeBuilder::processStartTagForInBody):
+        (WebCore::HTMLTreeBuilder::defaultForInitial):
+        * html/HTMLViewSourceDocument.cpp:
+        (WebCore::HTMLViewSourceDocument::HTMLViewSourceDocument):
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::replaceDocument):
+        (WebCore::DocumentWriter::reportDataReceived):
+        * loader/DocumentWriter.h:
+        * loader/ImageDocument.cpp:
+        (WebCore::ImageDocument::ImageDocument):
+        * loader/MediaDocument.cpp:
+        (WebCore::MediaDocument::MediaDocument):
+        * loader/PluginDocument.cpp:
+        (WebCore::PluginDocument::PluginDocument):
+        * loader/SinkDocument.cpp:
+        (WebCore::SinkDocument::SinkDocument):
+        * loader/TextDocument.cpp:
+        (WebCore::TextDocument::TextDocument):
+        * page/Page.cpp:
+        (WebCore::Page::userStyleSheetLocationChanged):
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::resetUserStyleCacheInAllFrames):
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::setEnforceCSSMIMETypeInNoQuirksMode):
+        * page/Settings.h:
+        (WebCore::Settings::enforceCSSMIMETypeInNoQuirksMode):
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::AutoTableLayout::recalcColumn):
+        * rendering/FixedTableLayout.cpp:
+        (WebCore::FixedTableLayout::calcPrefWidths):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paintBoxDecorations):
+        (WebCore::InlineFlowBox::paintMask):
+        (WebCore::InlineFlowBox::paintTextDecorations):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::isSelfCollapsingBlock):
+        (WebCore::RenderBlock::collapseMargins):
+        (WebCore::RenderBlock::handleBottomOfBlock):
+        (WebCore::RenderBlock::calcInlinePrefWidths):
+        (WebCore::RenderBlock::calcBlockPrefWidths):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::createInlineBoxForRenderer):
+        (WebCore::RenderBlock::findNextLineBreak):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::calcPercentageHeight):
+        (WebCore::RenderBox::calcAbsoluteHorizontal):
+        (WebCore::RenderBox::calcAbsoluteHorizontalReplaced):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::stretchesToViewHeight):
+        * rendering/RenderListItem.cpp:
+        (WebCore::getParentOfFirstLineBox):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::layout):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::calcRowHeight):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::verticallyAlignBoxes):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::diff):
+        * rendering/style/RenderStyle.h:
+        (WebCore::):
+        (WebCore::InheritedFlags::setBitDefaults):
+
 2010-08-27  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.

@@ -49,11 +49,11 @@ debug("ensure that document.open clears the document but does not change the doc
 shouldBe("iframeDocument", "iframe.contentWindow.document");
 debug("document.open should also clear the document and reset the doctype)")
 shouldBeEqualToString("treeAsString(iframeDocument)", "#document");
-shouldBeEqualToString("iframeDocument.compatMode", "BackCompat");
+shouldBeEqualToString("iframeDocument.compatMode", "CSS1Compat");
 
-debug("document.write of \"\" should leave the document in quirksmode and add no content to the document")
+debug("document.write of \"\" should leave the document in no-quirks mode and add no content to the document")
 iframeDocument.write("");
-shouldBeEqualToString("iframeDocument.compatMode", "BackCompat");
+shouldBeEqualToString("iframeDocument.compatMode", "CSS1Compat");
 shouldBeEqualToString("treeAsString(iframeDocument)", "#document");
 
 debug("document.write calls can change the doctype until an &lt;html> is created")

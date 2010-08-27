@@ -203,10 +203,11 @@ void HTMLConstructionSite::insertDoctype(AtomicHTMLToken& token)
 {
     ASSERT(token.type() == HTMLToken::DOCTYPE);
     attach(m_document, DocumentType::create(m_document, token.name(), String::adopt(token.publicIdentifier()), String::adopt(token.systemIdentifier())));
-    // FIXME: Move quirks mode detection from DocumentType element to here.
-    notImplemented();
+    
     if (token.forceQuirks())
-        m_document->setParseMode(Document::Compat);
+        m_document->setCompatibilityMode(Document::QuirksMode);
+    else
+        m_document->setCompatibilityModeFromDoctype();
 }
 
 void HTMLConstructionSite::insertComment(AtomicHTMLToken& token)

@@ -353,6 +353,8 @@ private:
 
 Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     : ContainerNode(0)
+    , m_compatibilityMode(NoQuirksMode)
+    , m_compatibilityModeLocked(false)
     , m_domTreeVersion(0)
     , m_styleSheets(StyleSheetList::create(this))
     , m_styleRecalcTimer(this, &Document::styleRecalcTimerFired)
@@ -423,8 +425,6 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     m_visuallyOrdered = false;
     m_bParsing = false;
     m_wellFormed = false;
-
-    setParseMode(Strict);
 
     m_textColor = Color::black;
     m_listenerTypes = 0;
@@ -581,6 +581,20 @@ void Document::destroyAllWrapperCaches()
 }
 #endif
 
+void Document::setCompatibilityMode(CompatibilityMode mode)
+{
+    if (m_compatibilityModeLocked || mode == m_compatibilityMode)
+        return;
+    ASSERT(!documentElement() && !m_styleSheets->length());
+    bool wasInQuirksMode = inQuirksMode();
+    m_compatibilityMode = mode;
+    if (inQuirksMode() != wasInQuirksMode) {
+        // All user stylesheets have to reparse using the different mode.
+        clearPageUserSheet();
+        clearPageGroupUserSheets();
+    }
+}
+
 void Document::resetLinkColor()
 {
     m_linkColor = Color(0, 0, 238);
@@ -599,14 +613,10 @@ void Document::resetActiveLinkColor()
 void Document::setDocType(PassRefPtr<DocumentType> docType)
 {
     // This should never be called more than once.
-    // Note: This is not a public DOM method and can only be called by the parser.
     ASSERT(!m_docType || !docType);
-    if (m_docType && docType)
-        return;
     m_docType = docType;
     if (m_docType)
         m_docType->setDocument(this);
-    determineParseMode();
 }
 
 DOMImplementation* Document::implementation() const
@@ -1394,6 +1404,7 @@ void Document::unscheduleStyleRecalc()
         documentsThatNeedStyleRecalc->remove(this);
 
     m_styleRecalcTimer.stop();
+    m_pendingStyleRecalcShouldForce = false;
 }
 
 void Document::styleRecalcTimerFired(Timer<Document>*)
@@ -1431,6 +1442,9 @@ void Document::recalcStyle(StyleChange change)
     ASSERT(!renderer() || renderArena());
     if (!renderer() || !renderArena())
         goto bail_out;
+    
+    if (m_pendingStyleRecalcShouldForce)
+        change = Force;
 
     if (change == Force) {
         // style selector may set this again during recalc
@@ -1488,9 +1502,7 @@ void Document::updateStyleIfNeeded()
     if (m_frame)
         m_frame->animation()->beginAnimationUpdate();
         
-    recalcStyle(m_pendingStyleRecalcShouldForce ? Force : NoChange);
-    
-    m_pendingStyleRecalcShouldForce = false;
+    recalcStyle(NoChange);
 
     // Tell the animation controller that updateStyleIfNeeded is finished and it can do any post-processing
     if (m_frame)
@@ -1623,7 +1635,7 @@ void Document::createStyleSelector()
     if (Settings* docSettings = settings())
         matchAuthorAndUserStyles = docSettings->authorAndUserStylesEnabled();
     m_styleSelector.set(new CSSStyleSelector(this, m_styleSheets.get(), m_mappedElementSheet.get(), pageUserSheet(), pageGroupUserSheets(), 
-                                             !inCompatMode(), matchAuthorAndUserStyles));
+                                             !inQuirksMode(), matchAuthorAndUserStyles));
 }
 
 void Document::attach()
@@ -1845,6 +1857,8 @@ void Document::implicitOpen()
     cancelParsing();
 
     removeChildren();
+
+    setCompatibilityMode(NoQuirksMode);
 
     m_parser = createParser();
     setParsing(true);
@@ -2222,14 +2236,23 @@ CSSStyleSheet* Document::pageUserSheet()
     // Parse the sheet and cache it.
     m_pageUserSheet = CSSStyleSheet::createInline(this, settings()->userStyleSheetLocation());
     m_pageUserSheet->setIsUserStyleSheet(true);
-    m_pageUserSheet->parseString(userSheetText, !inCompatMode());
+    m_pageUserSheet->parseString(userSheetText, !inQuirksMode());
     return m_pageUserSheet.get();
 }
 
 void Document::clearPageUserSheet()
 {
-    m_pageUserSheet = 0;
-    styleSelectorChanged(DeferRecalcStyle);
+    if (m_pageUserSheet) {
+        m_pageUserSheet = 0;
+        styleSelectorChanged(DeferRecalcStyle);
+    }
+}
+
+void Document::updatePageUserSheet()
+{
+    clearPageUserSheet();
+    if (pageUserSheet())
+        styleSelectorChanged(RecalcStyleImmediately);
 }
 
 const Vector<RefPtr<CSSStyleSheet> >* Document::pageGroupUserSheets() const
@@ -2259,7 +2282,7 @@ const Vector<RefPtr<CSSStyleSheet> >* Document::pageGroupUserSheets() const
                 continue;
             RefPtr<CSSStyleSheet> parsedSheet = CSSStyleSheet::createInline(const_cast<Document*>(this), sheet->url());
             parsedSheet->setIsUserStyleSheet(sheet->level() == UserStyleSheet::UserLevel);
-            parsedSheet->parseString(sheet->source(), !inCompatMode());
+            parsedSheet->parseString(sheet->source(), !inQuirksMode());
             if (!m_pageGroupUserSheets)
                 m_pageGroupUserSheets.set(new Vector<RefPtr<CSSStyleSheet> >);
             m_pageGroupUserSheets->append(parsedSheet.release());
@@ -2271,9 +2294,18 @@ const Vector<RefPtr<CSSStyleSheet> >* Document::pageGroupUserSheets() const
 
 void Document::clearPageGroupUserSheets()
 {
-    m_pageGroupUserSheets.clear();
     m_pageGroupUserSheetCacheValid = false;
-    styleSelectorChanged(DeferRecalcStyle);
+    if (m_pageGroupUserSheets && m_pageGroupUserSheets->size()) {
+        m_pageGroupUserSheets->clear();
+        styleSelectorChanged(DeferRecalcStyle);
+    }
+}
+
+void Document::updatePageGroupUserSheets()
+{
+    clearPageGroupUserSheets();
+    if (pageGroupUserSheets() && pageGroupUserSheets()->size())
+        styleSelectorChanged(RecalcStyleImmediately);
 }
 
 CSSStyleSheet* Document::elementSheet()
@@ -4517,7 +4549,7 @@ Element* Document::findAnchor(const String& name)
     for (Node* node = this; node; node = node->traverseNextNode()) {
         if (node->hasTagName(aTag)) {
             HTMLAnchorElement* anchor = static_cast<HTMLAnchorElement*>(node);
-            if (inCompatMode()) {
+            if (inQuirksMode()) {
                 // Quirks mode, case insensitive comparison of names.
                 if (equalIgnoringCase(anchor->name(), name))
                     return anchor;

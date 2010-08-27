@@ -187,7 +187,7 @@ static inline InlineBox* createInlineBoxForRenderer(RenderObject* obj, bool isRo
         // We only treat a box as text for a <br> if we are on a line by ourself or in strict mode
         // (Note the use of strict mode.  In "almost strict" mode, we don't treat the box for <br> as text.)
         if (obj->isBR())
-            textBox->setIsText(isOnlyRun || obj->document()->inStrictMode());
+            textBox->setIsText(isOnlyRun || obj->document()->inNoQuirksMode());
         return textBox;
     }
     
@@ -1395,7 +1395,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
     // Firefox and Opera will allow a table cell to grow to fit an image inside it under
     // very specific circumstances (in order to match common WinIE renderings). 
     // Not supporting the quirk has caused us to mis-render some real sites. (See Bugzilla 10517.) 
-    bool allowImagesToBreak = !style()->htmlHacks() || !isTableCell() || !style()->width().isIntrinsicOrAuto();
+    bool allowImagesToBreak = !document()->inQuirksMode() || !isTableCell() || !style()->width().isIntrinsicOrAuto();
 
     EWhiteSpace currWS = style()->whiteSpace();
     EWhiteSpace lastWS = currWS;

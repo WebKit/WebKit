@@ -223,7 +223,7 @@ void FixedTableLayout::calcPrefWidths(int& minWidth, int& maxWidth)
     // In this example, the two inner tables should be as large as the outer table. 
     // We can achieve this effect by making the maxwidth of fixed tables with percentage
     // widths be infinite.
-    if (m_table->style()->htmlHacks() && m_table->style()->width().isPercent() 
+    if (m_table->document()->inQuirksMode() && m_table->style()->width().isPercent() 
         && maxWidth < TABLE_MAX_WIDTH)
         maxWidth = TABLE_MAX_WIDTH;
 }

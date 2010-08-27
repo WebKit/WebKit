@@ -68,7 +68,7 @@ void HTMLBodyElement::createLinkDecl()
     m_linkDecl = CSSMutableStyleDeclaration::create();
     m_linkDecl->setParent(document()->elementSheet());
     m_linkDecl->setNode(this);
-    m_linkDecl->setStrictParsing(!document()->inCompatMode());
+    m_linkDecl->setStrictParsing(!document()->inQuirksMode());
 }
 
 bool HTMLBodyElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const

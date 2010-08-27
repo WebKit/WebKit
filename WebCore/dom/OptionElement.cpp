@@ -73,7 +73,7 @@ String OptionElement::collectOptionLabelOrText(const OptionElementData& data, co
     String text;
 
     // WinIE does not use the label attribute, so as a quirk, we ignore it.
-    if (!document->inCompatMode())
+    if (!document->inQuirksMode())
         text = data.label();
     if (text.isEmpty())
         text = collectOptionInnerText(element);

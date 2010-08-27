@@ -109,7 +109,7 @@ Settings::Settings(Page* page)
     , m_inApplicationChromeMode(false)
     , m_offlineWebApplicationCacheEnabled(false)
     , m_shouldPaintCustomScrollbars(false)
-    , m_enforceCSSMIMETypeInStrictMode(true)
+    , m_enforceCSSMIMETypeInNoQuirksMode(true)
     , m_usesEncodingDetector(false)
     , m_allowScriptsToCloseWindows(false)
     , m_editingBehaviorType(
@@ -504,9 +504,9 @@ void Settings::setZoomMode(ZoomMode mode)
     setNeedsReapplyStylesInAllFrames(m_page);
 }
 
-void Settings::setEnforceCSSMIMETypeInStrictMode(bool enforceCSSMIMETypeInStrictMode)
+void Settings::setEnforceCSSMIMETypeInNoQuirksMode(bool enforceCSSMIMETypeInNoQuirksMode)
 {
-    m_enforceCSSMIMETypeInStrictMode = enforceCSSMIMETypeInStrictMode;
+    m_enforceCSSMIMETypeInNoQuirksMode = enforceCSSMIMETypeInNoQuirksMode;
 }
 
 #if USE(SAFARI_THEME)

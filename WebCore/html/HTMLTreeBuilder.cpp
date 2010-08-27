@@ -397,7 +397,7 @@ HTMLTreeBuilder::HTMLTreeBuilder(HTMLTokenizer* tokenizer, DocumentFragment* fra
     if (contextElement) {
         // Steps 4.2-4.6 of the HTML5 Fragment Case parsing algorithm:
         // http://www.whatwg.org/specs/web-apps/current-work/multipage/the-end.html#fragment-case
-        m_document->setParseMode(contextElement->document()->parseMode());
+        m_document->setCompatibilityMode(contextElement->document()->compatibilityMode());
         processFakeStartTag(htmlTag);
         resetInsertionModeAppropriately();
         m_tree.setForm(closestFormAncestor(contextElement));
@@ -431,6 +431,7 @@ HTMLTreeBuilder::FragmentParsingContext::FragmentParsingContext(DocumentFragment
     , m_contextElement(contextElement)
     , m_scriptingPermission(scriptingPermission)
 {
+    m_dummyDocumentForFragmentParsing->setCompatibilityMode(fragment->document()->compatibilityMode());
 }
 
 Document* HTMLTreeBuilder::FragmentParsingContext::document() const
@@ -534,6 +535,7 @@ void HTMLTreeBuilder::processDoctypeToken(AtomicHTMLToken& token)
     ASSERT(token.type() == HTMLToken::DOCTYPE);
     if (m_insertionMode == InitialMode) {
         m_tree.insertDoctype(token);
+        setInsertionMode(BeforeHTMLMode);
         return;
     }
     if (m_insertionMode == InTableTextMode) {
@@ -923,7 +925,7 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken& token)
         return;
     }
     if (token.name() == tableTag) {
-        if (m_document->parseMode() != Document::Compat && m_tree.openElements()->inButtonScope(pTag))
+        if (!m_document->inQuirksMode() && m_tree.openElements()->inButtonScope(pTag))
             processFakeEndTag(pTag);
         m_tree.insertHTMLElement(token);
         m_framesetOk = false;
@@ -2692,6 +2694,8 @@ void HTMLTreeBuilder::processEndOfFile(AtomicHTMLToken& token)
 void HTMLTreeBuilder::defaultForInitial()
 {
     notImplemented();
+    if (!m_fragmentContext.fragment())
+        m_document->setCompatibilityMode(Document::QuirksMode);
     // FIXME: parse error
     setInsertionMode(BeforeHTMLMode);
 }

@@ -1115,7 +1115,7 @@ bool ReplaceSelectionCommand::shouldRemoveEndBR(Node* endBR, const VisiblePositi
         return false;
     
     // Remove the br if it is collapsed away and so is unnecessary.
-    if (!document()->inStrictMode() && isEndOfBlock(visiblePos) && !isStartOfParagraph(visiblePos))
+    if (!document()->inNoQuirksMode() && isEndOfBlock(visiblePos) && !isStartOfParagraph(visiblePos))
         return true;
         
     // A br that was originally holding a line open should be displaced by inserted content or turned into a line break.

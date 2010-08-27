@@ -217,7 +217,7 @@ public:
 
     bool stretchesToViewHeight() const
     {
-        return style()->htmlHacks() && style()->height().isAuto() && !isFloatingOrPositioned() && (isRoot() || isBody());
+        return document()->inQuirksMode() && style()->height().isAuto() && !isFloatingOrPositioned() && (isRoot() || isBody());
     }
 
     virtual IntSize intrinsicSize() const { return IntSize(); }
