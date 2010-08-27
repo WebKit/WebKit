@@ -1,3 +1,23 @@
+2010-08-26  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Unreviewed, more Chromium expectations updates.
+
+        * platform/chromium-linux/fast/doctypes/003-expected.checksum:
+        * platform/chromium-linux/fast/doctypes/003-expected.png: Added.
+        * platform/chromium-linux/fast/doctypes/003-expected.txt: Added.
+        * platform/chromium-linux/svg/css/composite-shadow-text-expected.checksum: Added.
+        * platform/chromium-linux/svg/css/composite-shadow-text-expected.png: Added.
+        * platform/chromium-linux/transitions/svg-text-shadow-transition-expected.checksum: Added.
+        * platform/chromium-linux/transitions/svg-text-shadow-transition-expected.png: Added.
+        * platform/chromium-mac/fast/doctypes/003-expected.checksum: Added.
+        * platform/chromium-mac/fast/doctypes/003-expected.png: Added.
+        * platform/chromium-win/fast/doctypes/003-expected.checksum: Added.
+        * platform/chromium-win/fast/doctypes/003-expected.png: Added.
+        * platform/chromium-win/fast/doctypes/003-expected.txt: Added.
+        * platform/chromium-win/fast/multicol/span/span-as-nested-columns-child-expected.txt: Added.
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug56024-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-08-26  Andy Estes  <aestes@apple.com>
 
         Reviewed by Darin Adler.
