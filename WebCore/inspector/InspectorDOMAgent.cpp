@@ -538,6 +538,8 @@ void InspectorDOMAgent::setOuterHTML(long nodeId, const String& outerHTML, long*
     if (!node || !node->isHTMLElement())
         return;
 
+    bool requiresTotalUpdate = node->nodeName() == "HTML" || node->nodeName() == "BODY" || node->nodeName() == "HEAD";
+
     bool childrenRequested = m_childrenRequested.contains(nodeId);
     Node* previousSibling = node->previousSibling();
     Node* parentNode = node->parentNode();
@@ -548,8 +550,15 @@ void InspectorDOMAgent::setOuterHTML(long nodeId, const String& outerHTML, long*
     if (ec)
         return;
 
-    Node* newNode = previousSibling ? previousSibling->nextSibling() : parentNode->firstChild();
+    if (requiresTotalUpdate) {
+        Document* document = mainFrameDocument();
+        reset();
+        setDocument(document);
+        *newId = 0;
+        return;
+    }
 
+    Node* newNode = previousSibling ? previousSibling->nextSibling() : parentNode->firstChild();
     *newId = pushNodePathToFrontend(newNode);
     if (childrenRequested)
         pushChildNodesToFrontend(*newId);

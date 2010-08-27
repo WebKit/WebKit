@@ -183,7 +183,7 @@ WebInspector.EventListenerBar = function(eventListener, nodeId)
     this._setFunctionSubtitle();
     this.editable = false;
     this.element.className = "event-bar"; /* Changed from "section" */
-    this.propertiesElement.className = "event-properties"; /* Changed from "properties" */
+    this.propertiesElement.className = "event-properties source-code"; /* Changed from "properties" */
 }
 
 WebInspector.EventListenerBar.prototype = {
