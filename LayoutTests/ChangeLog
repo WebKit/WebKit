@@ -1,3 +1,11 @@
+2010-08-26  Andy Estes  <aestes@apple.com>
+
+        Rubber-stamped by Jon Honeycutt.
+
+        Fix a flakey test.
+
+        * fast/replaced/object-with-embed-url-param.html:
+
 2010-08-26  Dumitru Daniliuc  <dumi@chromium.org>
 
         Unreviewed, updating Chromium expectations.

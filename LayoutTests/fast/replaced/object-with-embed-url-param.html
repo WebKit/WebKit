@@ -6,25 +6,30 @@
                 layoutTestController.waitUntilDone();
             }
 
-            var handledObject1 = false;
-            var handledObject2 = false;
-            var handledEmbed3 = false;
+            var object1Result = "";
+            var object2Result = "";
+            var embed3Result = "";
 
             document.addEventListener("beforeload", function(event) {
+
+                if (event.url == "")
+                    return;
+ 
                 if (event.target.id == "object1") {
-                    debug("An &lt;object&gt; with a 'data' @attr and a 'src' &lt;param&gt; should load the URL from the 'data' @attr and does" + (event.url == "object-attr" ? "." : " not."));
-                    handledObject1 = true;
+                    object1Result = (event.url == "object-attr" ? "does" : "does not");
                 } else if (event.target.id == "object2") {
-                    debug("An &lt;object&gt; with a 'src' &lt;param&gt; should load the URL from the 'src' &lt;param&gt; and does" + (event.url == "object-param" ? "." : " not."));
-                    handledObject2 = true;
+                    object2Result = (event.url == "object-param" ? "does" : "does not");
                 } else if (event.target.id == "embed3") {
-                    debug("An &lt;object&gt; with no URL specified and a nested &lt;embed&gt; should load the URL from the 'src' @attr of the &lt;embed&gt; and does" + (event.url == "embed-attr" ? "." : " not."));
-                    handledEmbed3 = true;
+                    embed3Result = (event.url == "embed-attr" ? "does" : "does not");
                 }
 
-                if (window.layoutTestController && handledObject1 && handledObject2 && handledEmbed3)
-                    layoutTestController.notifyDone();
-
+                if (object1Result != "" && object2Result != "" && embed3Result != "") {
+                    debug("An &lt;object&gt; with a 'data' @attr and a 'src' &lt;param&gt; should load the URL from the 'data' @attr and " + object1Result + ".");
+                    debug("An &lt;object&gt; with a 'src' &lt;param&gt; should load the URL from the 'src' &lt;param&gt; and " + object2Result + ".");
+                    debug("An &lt;object&gt; with no URL specified and a nested &lt;embed&gt; should load the URL from the 'src' @attr of the &lt;embed&gt; and " + embed3Result + ".");
+                    if (window.layoutTestController)
+                        layoutTestController.notifyDone();
+                }
             }, true);
 
             function debug(str) {
