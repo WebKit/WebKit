@@ -1,3 +1,16 @@
+2010-08-27  Steve Block  <steveblock@google.com>
+
+        Not reviewed
+
+        Fix GTK, Qt and Win expected results after modifying js-test-pre.js and js-test-post.js
+        https://bugs.webkit.org/show_bug.cgi?id=44642
+
+        These platform-specific expected results were missed in the original patch.
+
+        * platform/gtk/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/qt/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/win/fast/dom/Window/window-property-descriptors-expected.txt:
+
 2010-08-27  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Skip two flakey xssAuditor tests that are being worked on. Hopefully we finally have somewhat green tree again.
