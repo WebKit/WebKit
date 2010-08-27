@@ -37,7 +37,7 @@
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
-class FileSystemCallbacksBase;
+class AsyncFileSystemCallbacks;
 }
 
 namespace WebKit {
@@ -48,7 +48,7 @@ class WebString;
 
 class WebFileSystemCallbacksImpl : public WebFileSystemCallbacks {
 public:
-    WebFileSystemCallbacksImpl(PassOwnPtr<WebCore::FileSystemCallbacksBase>);
+    WebFileSystemCallbacksImpl(PassOwnPtr<WebCore::AsyncFileSystemCallbacks>);
     virtual ~WebFileSystemCallbacksImpl();
 
     virtual void didSucceed();
@@ -58,7 +58,7 @@ public:
     virtual void didFail(WebFileError error);
 
 private:
-    OwnPtr<WebCore::FileSystemCallbacksBase> m_callbacks;
+    OwnPtr<WebCore::AsyncFileSystemCallbacks> m_callbacks;
 };
 
 } // namespace WebKit

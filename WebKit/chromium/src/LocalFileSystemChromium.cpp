@@ -27,69 +27,43 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #include "config.h"
-#include "WebFileSystemCallbacksImpl.h"
+#include "LocalFileSystem.h"
 
 #if ENABLE(FILE_SYSTEM)
 
-#include "AsyncFileSystemCallbacks.h"
-#include "AsyncFileSystemChromium.h"
-#include "ExceptionCode.h"
-#include "WebFileSystemEntry.h"
-#include "WebFileInfo.h"
-#include "WebString.h"
-#include <wtf/Vector.h>
+#include "AsyncFileSystem.h"
+#include "ErrorCallback.h"
+#include "FileSystemCallback.h"
+#include "FileSystemCallbacks.h"
+#include "PlatformString.h"
+#include "WebFileSystem.h"
+#include "WebFileSystemCallbacksImpl.h"
+#include "WebFrameClient.h"
+#include "WebFrameImpl.h"
 
-using namespace WebCore;
+using namespace WebKit;
 
-namespace WebKit {
+namespace WebCore {
 
-WebFileSystemCallbacksImpl::WebFileSystemCallbacksImpl(PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
-    : m_callbacks(callbacks)
+PassRefPtr<LocalFileSystem> LocalFileSystem::create(const String& path)
 {
+    return adoptRef(new LocalFileSystem(path));
 }
 
-WebFileSystemCallbacksImpl::~WebFileSystemCallbacksImpl()
+void LocalFileSystem::requestFileSystem(ScriptExecutionContext* context, AsyncFileSystem::Type type, long long size, PassRefPtr<FileSystemCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
 {
+    ASSERT(context);
+    if (context->isDocument()) {
+        Document* document = static_cast<Document*>(context);
+        WebFrameImpl* webFrame = WebFrameImpl::fromFrame(document->frame());
+        webFrame->client()->openFileSystem(webFrame, static_cast<WebFileSystem::Type>(type), size, new WebFileSystemCallbacksImpl(new FileSystemCallbacks(successCallback, errorCallback, context)));
+    } else {
+        // FIXME: Add implementation for workers.
+    }
 }
 
-void WebFileSystemCallbacksImpl::didSucceed()
-{
-    ASSERT(m_callbacks);
-    m_callbacks->didSucceed();
-    delete this;
-}
-
-void WebFileSystemCallbacksImpl::didReadMetadata(const WebFileInfo& info)
-{
-    ASSERT(m_callbacks);
-    m_callbacks->didReadMetadata(info.modificationTime);
-    delete this;
-}
-
-void WebFileSystemCallbacksImpl::didReadDirectory(const WebVector<WebFileSystemEntry>& entries, bool hasMore)
-{
-    ASSERT(m_callbacks);
-    for (size_t i = 0; i < entries.size(); ++i)
-        m_callbacks->didReadDirectoryEntry(entries[i].name, entries[i].isDirectory);
-    m_callbacks->didReadDirectoryEntries(hasMore);
-    if (!hasMore)
-        delete this;
-}
-
-void WebFileSystemCallbacksImpl::didOpenFileSystem(const WebString& name, const WebString& path)
-{
-    m_callbacks->didOpenFileSystem(name, new AsyncFileSystemChromium(path));
-    delete this;
-}
-
-void WebFileSystemCallbacksImpl::didFail(WebFileError error)
-{
-    ASSERT(m_callbacks);
-    m_callbacks->didFail(error);
-    delete this;
-}
-
-} // namespace WebKit
+} // namespace WebCore
 
 #endif // ENABLE(FILE_SYSTEM)

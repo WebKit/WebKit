@@ -35,6 +35,7 @@
 
 #include "AccessibilityObject.h"
 #include "ApplicationCacheHost.h"
+#include "AsyncFileSystem.h"
 #include "EditorInsertAction.h"
 #include "FontDescription.h"
 #include "FontSmoothingMode.h"
@@ -54,6 +55,7 @@
 #include "WebClipboard.h"
 #include "WebCursorInfo.h"
 #include "WebEditingAction.h"
+#include "WebFileSystem.h"
 #include "WebFontDescription.h"
 #include "WebIDBKey.h"
 #include "WebInputElement.h"
@@ -380,3 +382,8 @@ COMPILE_ASSERT_MATCHING_ENUM(WebView::UserContentInjectInTopFrameOnly, InjectInT
 COMPILE_ASSERT_MATCHING_ENUM(WebIDBKey::NullType, IDBKey::NullType);
 COMPILE_ASSERT_MATCHING_ENUM(WebIDBKey::StringType, IDBKey::StringType);
 COMPILE_ASSERT_MATCHING_ENUM(WebIDBKey::NumberType, IDBKey::NumberType);
+
+#if ENABLE(FILE_SYSTEM)
+COMPILE_ASSERT_MATCHING_ENUM(WebFileSystem::TypeTemporary, AsyncFileSystem::Temporary);
+COMPILE_ASSERT_MATCHING_ENUM(WebFileSystem::TypePersistent, AsyncFileSystem::Persistent);
+#endif
