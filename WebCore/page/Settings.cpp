@@ -134,6 +134,9 @@ Settings::Settings(Page* page)
     , m_tiledBackingStoreEnabled(false)
     , m_paginateDuringLayoutEnabled(false)
     , m_dnsPrefetchingEnabled(true)
+#if ENABLE(FULLSCREEN_API)
+    , m_fullScreenAPIEnabled(false)
+#endif
     , m_memoryInfoEnabled(false)
     , m_interactiveFormValidation(false)
 {

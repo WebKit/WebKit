@@ -5447,3 +5447,5 @@ perf/
 # BlodBuilder is not enabled
 http/tests/local/blob/send-data-blob.html
 
+# Full Screen support is not yet enabled.
+fullscreen/

@@ -133,6 +133,11 @@ module core {
         readonly attribute DOMString innerText;
 #endif
 
+#if defined(ENABLE_FULLSCREEN_API) && ENABLE_FULLSCREEN_API
+        const unsigned short ALLOW_KEYBOARD_INPUT = 1;
+        void webkitRequestFullScreen(in unsigned short flags);
+#endif
+
 #if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
         // Event handler DOM attributes
         attribute [DontEnum] EventListener onabort;
@@ -205,6 +210,7 @@ module core {
         attribute [DontEnum,Conditional=TOUCH_EVENTS,EnabledAtRuntime] EventListener ontouchmove;
         attribute [DontEnum,Conditional=TOUCH_EVENTS,EnabledAtRuntime] EventListener ontouchend;
         attribute [DontEnum,Conditional=TOUCH_EVENTS,EnabledAtRuntime] EventListener ontouchcancel;
+        attribute [DontEnum, Conditional=FULLSCREEN_API] EventListener onwebkitfullscreenchange;
 #endif
     };
 

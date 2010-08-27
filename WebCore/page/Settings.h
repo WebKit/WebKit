@@ -311,6 +311,11 @@ namespace WebCore {
         void setPaginateDuringLayoutEnabled(bool flag) { m_paginateDuringLayoutEnabled = flag; }
         bool paginateDuringLayoutEnabled() const { return m_paginateDuringLayoutEnabled; }
 
+#if ENABLE(FULLSCREEN_API)
+        void setFullScreenEnabled(bool flag) { m_fullScreenAPIEnabled = flag; }
+        bool fullScreenEnabled() const  { return m_fullScreenAPIEnabled; }
+#endif
+
         void setMemoryInfoEnabled(bool flag) { m_memoryInfoEnabled = flag; }
         bool memoryInfoEnabled() const { return m_memoryInfoEnabled; }
 
@@ -402,6 +407,9 @@ namespace WebCore {
         bool m_tiledBackingStoreEnabled : 1;
         bool m_paginateDuringLayoutEnabled : 1;
         bool m_dnsPrefetchingEnabled : 1;
+#if ENABLE(FULLSCREEN_API)
+        bool m_fullScreenAPIEnabled : 1;
+#endif
         bool m_memoryInfoEnabled: 1;
         bool m_interactiveFormValidation: 1;
     

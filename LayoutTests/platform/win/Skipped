@@ -972,3 +972,6 @@ inspector/dom-breakpoints.html
 
 # <https://bugs.webkit.org/show_bug.cgi?id=44484>
 svg/batik/paints/patternRegions-positioned-objects.svg
+
+# Full Screen support is not yet enabled.
+fullscreen/

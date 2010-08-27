@@ -1,3 +1,57 @@
+2010-08-09  Jer Noble  <jer.noble@apple.com>
+
+        Add JavaScript API to allow a page to go fullscreen.
+        rdar://problem/6867795
+        https://bugs.webkit.org/show_bug.cgi?id=43099
+
+        New tests for the new full screen API:
+
+        full-screen-api.html: tests for the presence of the new full screen 
+            apis.
+        full-screen-request.html: tests that clients can request the browser 
+            enter full screen mode successfully.
+        full-screen-css.html: tests that the new full screen pseudo classes are 
+            applied once full screen mode is entered.
+        full-screen-remove.html: tests that the document's current full screen 
+            element is changed when that element is removed from the DOM tree.
+        full-screen-remove-ancestor.html: tests that the document's current full 
+            screen element is changed an ancestor of that element is removed 
+            from the DOM tree.
+        full-screen-twice.html: tests that entering full screen mode on two     
+            different elements in a row does not fail.
+        
+        Tests that were changed:
+        
+        domListEnumeration.html: This test returns a specific count of 
+            properties on HTML elements; after consultation with Sam Weinig (the 
+            original test author), it was decided that this part of the test 
+            would be very difficult to make platform specific, and that nothing 
+            significant would be lost if the property count sections were 
+            removed.
+        
+        platform/*/Skipped: Added the fullscreen/ directory to the Skipped list 
+            for every platform save mac.
+
+        * fast/dom/Window/window-properties-expected.txt: Added the new 
+            properties exposed on Document and Element.
+        * fast/dom/domListEnumeration-expected.txt: Removed the iteration count 
+            part of this test.
+        * fast/dom/script-tests/domListEnumeration.js: ""
+        * fullscreen: Added.
+        * platform/mac/fullscreen: Added.
+        * platform/mac/fullscreen/full-screen-api-expected.txt: Added.
+        * platform/mac/fullscreen/full-screen-api.html: Added.
+        * platform/mac/fullscreen/full-screen-css-expected.txt: Added.
+        * platform/mac/fullscreen/full-screen-css.html: Added.
+        * platform/mac/fullscreen/full-screen-remove-ancestor-expected.txt: Added.
+        * platform/mac/fullscreen/full-screen-remove-ancestor.html: Added.
+        * platform/mac/fullscreen/full-screen-remove-expected.txt: Added.
+        * platform/mac/fullscreen/full-screen-remove.html: Added.
+        * platform/mac/fullscreen/full-screen-request-expected.txt: Added.
+        * platform/mac/fullscreen/full-screen-request.html: Added.
+        * platform/mac/fullscreen/full-screen-twice-expected.txt: Added.
+        * platform/mac/fullscreen/full-screen-twice.html: Added.
+
 2010-08-27  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Dimitri Glazkov.

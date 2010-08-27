@@ -110,6 +110,16 @@ using namespace WebCore;
 - (id)initWithGeolocation:(Geolocation*)geolocation;
 @end
 
+#if ENABLE(FULLSCREEN_API)
+@interface WebKitFullScreenListener : NSObject <WebKitFullScreenListener>
+{
+    RefPtr<Element> _element;
+}
+
+- (id)initWithElement:(Element*)element;
+@end
+#endif
+
 WebChromeClient::WebChromeClient(WebView *webView) 
     : m_webView(webView)
 {
@@ -815,6 +825,29 @@ void WebChromeClient::exitFullscreenForNode(Node*)
 
 #endif
 
+#if ENABLE(FULLSCREEN_API)
+
+bool WebChromeClient::supportsFullScreenForElement(const Element* element)
+{
+    return CallUIDelegateReturningBoolean(false, m_webView, @selector(webView:supportsFullScreenForElement:), kit(const_cast<WebCore::Element*>(element)));
+}
+
+void WebChromeClient::enterFullScreenForElement(Element* element)
+{
+    WebKitFullScreenListener* listener = [[WebKitFullScreenListener alloc] initWithElement:element];
+    CallUIDelegate(m_webView, @selector(webView:enterFullScreenForElement:listener:), kit(element), listener);
+    [listener release];
+}
+
+void WebChromeClient::exitFullScreenForElement(Element* element)
+{
+    WebKitFullScreenListener* listener = [[WebKitFullScreenListener alloc] initWithElement:element];
+    CallUIDelegate(m_webView, @selector(webView:exitFullScreenForElement:listener:), kit(element), listener);
+    [listener release];
+}
+
+#endif
+
 void WebChromeClient::requestGeolocationPermissionForFrame(Frame* frame, Geolocation* geolocation)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
@@ -919,3 +952,41 @@ void WebChromeClient::requestGeolocationPermissionForFrame(Frame* frame, Geoloca
 }
 
 @end
+
+#if ENABLE(FULLSCREEN_API)
+@implementation WebKitFullScreenListener
+- (id)initWithElement:(Element*)element
+{
+    if (!(self = [super init]))
+        return nil;
+    
+    _element = element;
+    return self;
+}
+
+- (void)webkitWillEnterFullScreen
+{
+    if (_element)
+        _element->document()->webkitWillEnterFullScreenForElement(_element.get());
+}
+
+- (void)webkitDidEnterFullScreen
+{
+    if (_element)
+        _element->document()->webkitDidEnterFullScreenForElement(_element.get());
+}
+
+- (void)webkitWillExitFullScreen
+{
+    if (_element)
+        _element->document()->webkitWillExitFullScreenForElement(_element.get());
+}
+
+- (void)webkitDidExitFullScreen
+{
+    if (_element)
+        _element->document()->webkitDidExitFullScreenForElement(_element.get());
+}
+
+@end
+#endif

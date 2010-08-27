@@ -1,3 +1,100 @@
+2010-07-27  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        Add JavaScript API to allow a page to go fullscreen.
+        rdar://problem/6867795
+        https://bugs.webkit.org/show_bug.cgi?id=43099
+        
+        Mozilla has proposed a new set of JavaScript APIs which allow any element in
+        a document to go full-screen.  The current revision of their proposal can be 
+        found here:
+        <https://wiki.mozilla.org/index.php?title=Gecko:FullScreenAPI&oldid=243429>
+        
+        The proposed specification includes the following:
+        
+        Document:
+        - Three new methods on Document:
+            + void requestFullScreen()
+            + void requestFullScreenWithKeys()
+            + void cancelFullScreen()
+        - Three new attributes of Document:
+            + readonly attribute boolean fullScreen
+            + readonly attribute boolean fullScreenWithKeys
+            + (optional) readonly attribute Element currentFullScreenElement
+            
+        Element:
+        - Two new methods on Element:
+            + void requestFullScreen()
+            + void requestFullScreenWithKeys()
+        
+        Events:
+        - One new event:
+            + fullScreenChange
+        
+        CSS Pseudo-classes:
+        - Three new Pseudo-classes:
+            + :full-screen
+            + :full-screen-doc
+            + :full-screen-root-with-target
+        
+        For WebKit's initial implementation, all the above new APIs will be prefixed with 
+        "webkit" or "-webkit" where appropriate.
+        
+        New tests:
+        LayoutTests/fullscreen/full-screen-api.html
+        LayoutTests/fullscreen/full-screen-css.html
+        LayoutTests/fullscreen/full-screen-request.html
+
+        Project file changes:
+        * Configurations/FeatureDefines.xcconfig: Added an ENABLE_FULLSCREEN_API entry.
+        * DerivedSources.make: Added rules for fullscreen.css and WebCore.FullScreen.exp.
+        * WebCore.FullScreen.exp: Added export symbols for Document and Element functions.
+        * WebCore.xcodeproj/project.pbxproj: New source files added to the project.
+
+        IDL changes:
+        * dom/Document.idl: Added the new full-screen API to the Document's javascript interface.
+        * dom/Element.idl: Added the new full-screen API to the Element's javascript interface.
+
+        Source changes:
+        * bindings/objc/PublicDOMInterfaces.h: Exposed Document and Element fullscreen functions in the DOM classes.
+        * css/CSSSelector.cpp: Added new FullScreen pseudo-classes.
+        * css/CSSSelector.h: Added new full-screen pseudo classes to the PseudoType enum.
+        * css/CSSStyleSelector.cpp: 
+        (WebCore::loadFullDefaultStyle): Pull the fullscreen.css sheet into the defaultStyle and the defaultQuirksStyle sheets.
+        (WebCore::loadSimpleDefaultStyle): Pull the fullscreen.css sheet into the defaultStyle sheet.
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector): Check for the new FullScreen pseudo classes.
+        * dom/Document.cpp:
+        (WebCore::Document::createEvent): Support creating a "WebKitFullScreenChange" event.
+        (WebCore::Document::addListenerTypeIfNeeded): Support listening for a "webKitFullScreenChangeEvent"
+        (WebCore::Document::webkitRequestFullScreenForElement): Passes request to the chrome client to enter full screen mode.
+        (WebCore::Document::webkitCancelFullScreen): Passes request to the chrome client to exit full screen mode.
+        (WebCore::Document::webkitWillEnterFullScreenForElement): Sets the FullScreen pseudo-classes on the full-screen element and its document.
+        (WebCore::Document::webkitDidEnterFullScreenForElement): Currently a no-op.
+        (WebCore::Document::webkitWillExitFullScreenForElement): Currently a no-op.
+        (WebCore::Document::webkitDidExitFullScreenForElement): Clears the FullScreen pseudo-classes on the full-screen element and its document.
+        * dom/Document.h: Added const accessors for new full-screen instance variables.
+        (WebCore::Document::):
+        (WebCore::Document::webkitIsFullScreen): Accessor for m_isFullScreen.
+        (WebCore::Document::webkitIsFullScreenWithKeysEnabled): Accessor for m_isFullScren and m_areKeysEnabled.
+        (WebCore::Document::webkitCurrentFullScreenElement): Accessor for m_fullScreenElement.
+        * dom/Element.cpp:
+        (WebCore::Element::webkitRequestFullScreen): Calls Document::webkitRequestFullScreenForElement. 
+        * dom/Element.h:
+        * dom/EventNames.h: Add a webkitfullscreenchange event name.
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::parseMappedAttribute): Parse the new "onwebkitfullscreenchange" attribute and register a listener.
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::supportsFullscreenForElement): Pass through to the current UI delegate.
+        (WebCore::ChromeClient::enterFullscreenForElement): Create a WebKitFullScreenListener and pass through to the current UI delegate.
+        (WebCore::ChromeClient::exitFullscreenForElement): Create a WebKitFullScreenListener and pass through to the current UI delegate.
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h: Add a new setting to control runtime support for full screen mode (defaults to off)
+        * rendering/MediaControlElements.cpp:
+        (WebCore::MediaControlFullscreenButtonElement::defaultEventHandler): The full screen button now toggles full screen mode (previously, it only entered).
+        * rendering/style/RenderStyleConstants.h: Added new style constants.
+
 2010-08-27  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Darin Fisher.

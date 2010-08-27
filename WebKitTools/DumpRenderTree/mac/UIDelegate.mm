@@ -227,6 +227,23 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
     return NO;
 }
 
+- (BOOL)webView:(WebView *)webView supportsFullScreenForElement:(DOMElement*)element
+{
+    return YES;
+}
+
+- (void)webView:(WebView *)webView enterFullScreenForElement:(DOMElement*)element listener:(NSObject<WebKitFullScreenListener>*)listener
+{
+    [listener webkitWillEnterFullScreen];
+    [listener webkitDidEnterFullScreen];
+}
+
+- (void)webView:(WebView *)webView exitFullScreenForElement:(DOMElement*)element listener:(NSObject<WebKitFullScreenListener>*)listener
+{
+    [listener webkitWillExitFullScreen];
+    [listener webkitDidExitFullScreen];
+}
+
 - (BOOL)webView:(WebView *)webView didPressMissingPluginButton:(DOMElement *)element
 {
     printf("MISSING PLUGIN BUTTON PRESSED\n");

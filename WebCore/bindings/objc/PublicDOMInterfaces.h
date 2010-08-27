@@ -156,6 +156,9 @@
 - (DOMNodeList *)getElementsByClassName:(NSString *)tagname AVAILABLE_IN_WEBKIT_VERSION_4_0;
 - (DOMElement *)querySelector:(NSString *)selectors AVAILABLE_IN_WEBKIT_VERSION_4_0;
 - (DOMNodeList *)querySelectorAll:(NSString *)selectors AVAILABLE_IN_WEBKIT_VERSION_4_0;
+#if defined(ENABLE_FULLSCREEN_API) && ENABLE_FULLSCREEN_API
+- (void)webkitCancelFullScreen AVAILABLE_IN_WEBKIT_VERSION_4_0;
+#endif
 @end
 
 @interface DOMDocumentFragment : DOMNode WEBKIT_VERSION_1_3
@@ -224,6 +227,9 @@
 - (DOMNodeList *)getElementsByClassName:(NSString *)name AVAILABLE_IN_WEBKIT_VERSION_4_0;
 - (DOMElement *)querySelector:(NSString *)selectors AVAILABLE_IN_WEBKIT_VERSION_4_0;
 - (DOMNodeList *)querySelectorAll:(NSString *)selectors AVAILABLE_IN_WEBKIT_VERSION_4_0;
+#if defined(ENABLE_FULLSCREEN_API) && ENABLE_FULLSCREEN_API
+- (void)webkitRequestFullScreen:(unsigned short)flags AVAILABLE_IN_WEBKIT_VERSION_4_0;
+#endif
 @end
 
 @interface DOMEntity : DOMNode WEBKIT_VERSION_1_3

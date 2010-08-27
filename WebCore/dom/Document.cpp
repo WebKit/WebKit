@@ -400,6 +400,10 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
 #endif
     , m_weakReference(DocumentWeakReference::create(this))
     , m_idAttributeName(idAttr)
+#if ENABLE(FULLSCREEN_API)
+    , m_isFullScreen(0)
+    , m_areKeysEnabledInFullScreen(0)
+#endif
     , m_loadEventDelayCount(0)
 {
     m_document = this;
@@ -484,6 +488,9 @@ void Document::removedLastRef()
         m_activeNode = 0;
         m_titleElement = 0;
         m_documentElement = 0;
+#if ENABLE(FULLSCREEN_API)
+        m_fullScreenElement = 0;
+#endif
 
         // removeAllChildren() doesn't always unregister IDs, do it upfront to avoid having stale references in the map.
         m_elementsById.clear();
@@ -3235,6 +3242,19 @@ void Document::nodeWillBeRemoved(Node* n)
         frame->selection()->nodeWillBeRemoved(n);
         frame->dragCaretController()->nodeWillBeRemoved(n);
     }
+    
+#if ENABLE(FULLSCREEN_API)
+    // If the current full screen element or any of its ancestors is removed, set the current
+    // full screen element to the document root, and fire a fullscreenchange event to inform 
+    // clients of the DOM.
+    ASSERT(n);
+    if (n->contains(m_fullScreenElement.get())) {
+        ASSERT(n != documentElement());
+        m_fullScreenElement = documentElement();
+        m_fullScreenElement->setNeedsStyleRecalc();
+        m_fullScreenElement->dispatchEvent(Event::create(eventNames().webkitfullscreenchangeEvent, true, false));
+    }
+#endif
 }
 
 void Document::textInserted(Node* text, unsigned offset, unsigned length)
@@ -4647,6 +4667,70 @@ InspectorController* Document::inspectorController() const
 {
     return page() ? page()->inspectorController() : 0;
 }
+#endif
+    
+#if ENABLE(FULLSCREEN_API)
+void Document::webkitRequestFullScreenForElement(Element* element, unsigned short flags)
+{
+    if (!page() || !page()->settings()->fullScreenEnabled())
+        return;
+
+    if (!element)
+        element = documentElement();
+    
+    if (!page()->chrome()->client()->supportsFullScreenForElement(element))
+        return;
+    
+    m_areKeysEnabledInFullScreen = flags & Element::ALLOW_KEYBOARD_INPUT;
+    page()->chrome()->client()->enterFullScreenForElement(element);
+}
+
+void Document::webkitCancelFullScreen()
+{
+    if (!page() || !m_fullScreenElement)
+        return;
+    
+    page()->chrome()->client()->exitFullScreenForElement(m_fullScreenElement.get());
+}
+    
+void Document::webkitWillEnterFullScreenForElement(Element* element)
+{
+    ASSERT(element);
+    ASSERT(page() && page()->settings()->fullScreenEnabled());
+
+    m_fullScreenElement = element;
+    m_isFullScreen = true;
+    documentElement()->setNeedsStyleRecalc(FullStyleChange);
+    m_fullScreenElement->setNeedsStyleRecalc(FullStyleChange);
+    updateStyleIfNeeded();
+    
+    m_fullScreenElement->dispatchEvent(Event::create(eventNames().webkitfullscreenchangeEvent, true, false));
+}
+    
+void Document::webkitDidEnterFullScreenForElement(Element*)
+{
+}
+
+void Document::webkitWillExitFullScreenForElement(Element*)
+{
+}
+
+void Document::webkitDidExitFullScreenForElement(Element* element)
+{
+    ASSERT(element);
+    m_isFullScreen = false;
+    m_areKeysEnabledInFullScreen = false;
+
+    // m_fullScreenElement has already been cleared; recalc the style of 
+    // the passed in element instead.
+    element->setNeedsStyleRecalc(FullStyleChange);
+    if (element != documentElement())
+        documentElement()->setNeedsStyleRecalc(FullStyleChange);
+    updateStyleIfNeeded();
+    
+    element->dispatchEvent(Event::create(eventNames().webkitfullscreenchangeEvent, true, false));
+}
+    
 #endif
 
 void Document::decrementLoadEventDelayCount()

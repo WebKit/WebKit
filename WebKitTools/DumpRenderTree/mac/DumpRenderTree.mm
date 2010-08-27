@@ -389,6 +389,7 @@ static void resetDefaultsToConsistentValues()
     [defaults setObject:@"0.500000 0.500000 0.500000" forKey:@"AppleOtherHighlightColor"];
     [defaults setObject:[NSArray arrayWithObject:@"en"] forKey:@"AppleLanguages"];
     [defaults setBool:YES forKey:WebKitEnableFullDocumentTeardownPreferenceKey];
+    [defaults setBool:YES forKey:WebKitFullScreenEnabledPreferenceKey];
 
     // Scrollbars are drawn either using AppKit (which uses NSUserDefaults) or using HIToolbox (which uses CFPreferences / kCFPreferencesAnyApplication / kCFPreferencesCurrentUser / kCFPreferencesAnyHost)
     [defaults setObject:@"DoubleMax" forKey:@"AppleScrollBarVariant"];

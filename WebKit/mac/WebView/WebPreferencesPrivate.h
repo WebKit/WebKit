@@ -206,4 +206,10 @@ extern NSString *WebPreferencesRemovedNotification;
 // For WebView's use only.
 - (void)willAddToWebView;
 - (void)didRemoveFromWebView;
+
+// Full screen support is dependent on WebCore/WebKit being
+// compiled with ENABLE_FULLSCREEN_API. 
+- (void)setFullScreenEnabled:(BOOL)flag;
+- (BOOL)fullScreenEnabled;
+
 @end

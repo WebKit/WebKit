@@ -1,3 +1,22 @@
+2010-07-27  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        Add JavaScript API to allow a page to go fullscreen.
+        rdar://problem/6867795
+        
+        Added basic full screen support to DumpRenderTree: when a webView requests
+        that DumpRenderTree go "full screen", just call the provided callback listener object's
+        will/did Enter/Exit full screen methods.  Also, register a new user default which 
+        enables full screen support.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetDefaultsToConsistentValues):
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate webView:supportsFullscreenForElement:]):
+        (-[UIDelegate webView:enterFullscreenForElement:listener:]):
+        (-[UIDelegate webView:exitFullscreenForElement:listener:]):
+
 2010-08-27  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Unreviewed. Add myself to the committers list.

@@ -273,6 +273,9 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(touchend);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(touchcancel);
 #endif
+#if ENABLE(FULLSCREEN_API)
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitfullscreenchange);
+#endif
 
     DocumentType* doctype() const { return m_docType.get(); }
 
@@ -997,6 +1000,19 @@ public:
     MediaCanStartListener* takeAnyMediaCanStartListener();
 
     const QualifiedName& idAttributeName() const { return m_idAttributeName; }
+    
+#if ENABLE(FULLSCREEN_API)
+    bool webkitFullScreen() const { return m_isFullScreen; }
+    bool webkitFullScreenKeyboardInputAllowed() const { return m_isFullScreen && m_areKeysEnabledInFullScreen; }
+    Element* webkitCurrentFullScreenElement() const { return m_fullScreenElement.get(); }
+    void webkitRequestFullScreenForElement(Element*, unsigned short flags);
+    void webkitCancelFullScreen();
+    
+    void webkitWillEnterFullScreenForElement(Element*);
+    void webkitDidEnterFullScreenForElement(Element*);
+    void webkitWillExitFullScreenForElement(Element*);
+    void webkitDidExitFullScreenForElement(Element*);
+#endif
 
     bool writeDisabled() const { return m_writeDisabled; }
     void setWriteDisabled(bool flag) { m_writeDisabled = flag; }
@@ -1284,6 +1300,12 @@ private:
     HashSet<MediaCanStartListener*> m_mediaCanStartListeners;
 
     QualifiedName m_idAttributeName;
+    
+#if ENABLE(FULLSCREEN_API)
+    bool m_isFullScreen;
+    bool m_areKeysEnabledInFullScreen;
+    RefPtr<Element> m_fullScreenElement;
+#endif
 
     int m_loadEventDelayCount;
 };

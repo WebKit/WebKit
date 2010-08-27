@@ -1,0 +1,27 @@
+:-webkit-full-screen {
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+}
+
+:root:full-screen-document:not(:full-screen) {
+    overflow:hidden;
+}
+
+video:-webkit-full-screen {
+    width: 100%;
+    height: 100%
+    image-fit: fill;
+}
+
+img:-webkit-full-screen {
+    width: 100%;
+    height: 100%;
+    image-fit: fill;
+}
+
+video:-webkit-full-page-media:-webkit-full-screen::-webkit-media-controls-panel {
+    bottom: 0px;
+}

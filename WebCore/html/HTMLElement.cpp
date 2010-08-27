@@ -249,6 +249,10 @@ void HTMLElement::parseMappedAttribute(Attribute* attr)
         setAttributeEventListener(eventNames().touchendEvent, createAttributeEventListener(this, attr));
     } else if (attr->name() == ontouchcancelAttr) {
         setAttributeEventListener(eventNames().touchcancelEvent, createAttributeEventListener(this, attr));
+#if ENABLE(FULLSCREEN_API)
+    } else if (attr->name() == onwebkitfullscreenchangeAttr) {
+        setAttributeEventListener(eventNames().webkitfullscreenchangeEvent, createAttributeEventListener(this, attr));
+#endif
     }
 }
 

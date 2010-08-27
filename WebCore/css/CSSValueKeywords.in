@@ -585,6 +585,7 @@ media-volume-slider
 media-volume-sliderthumb
 media-volume-slider-mute-button
 media-controls-background
+media-controls-fullscreen-background
 media-current-time-display
 media-time-remaining-display
 menulist

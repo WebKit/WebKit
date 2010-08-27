@@ -1438,6 +1438,9 @@ static bool fastDocumentTeardownEnabled()
     settings->setLoadDeferringEnabled(shouldEnableLoadDeferring());
     settings->setFrameFlatteningEnabled([preferences isFrameFlatteningEnabled]);
     settings->setPaginateDuringLayoutEnabled([preferences paginateDuringLayoutEnabled]);
+#if ENABLE(FULLSCREEN_API)
+    settings->setFullScreenEnabled([preferences fullScreenEnabled]);
+#endif
     settings->setMemoryInfoEnabled([preferences memoryInfoEnabled]);
 
     // Application Cache Preferences are stored on the global cache storage manager, not in Settings.

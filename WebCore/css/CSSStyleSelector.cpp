@@ -557,6 +557,14 @@ static void loadFullDefaultStyle()
     String quirksRules = String(quirksUserAgentStyleSheet, sizeof(quirksUserAgentStyleSheet)) + RenderTheme::defaultTheme()->extraQuirksStyleSheet();
     CSSStyleSheet* quirksSheet = parseUASheet(quirksRules);
     defaultQuirksStyle->addRulesFromSheet(quirksSheet, screenEval());
+    
+#if ENABLE(FULLSCREEN_API)
+    // Full-screen rules.
+    String fullscreenRules = String(fullscreenUserAgentStyleSheet, sizeof(fullscreenUserAgentStyleSheet)) + RenderTheme::defaultTheme()->extraDefaultStyleSheet();
+    CSSStyleSheet* fullscreenSheet = parseUASheet(fullscreenRules);
+    defaultStyle->addRulesFromSheet(fullscreenSheet, screenEval());
+    defaultQuirksStyle->addRulesFromSheet(fullscreenSheet, screenEval());
+#endif
 }
 
 static void loadSimpleDefaultStyle()
@@ -2635,6 +2643,26 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
                     break;
                 return true;
             }
+#if ENABLE(FULLSCREEN_API)
+            case CSSSelector::PseudoFullScreen:
+                // While a Document is in the fullscreen state, and the document's current fullscreen 
+                // element is an element in the document, the 'full-screen' pseudoclass applies to 
+                // that element. Also, an <iframe>, <object> or <embed> element whose child browsing 
+                // context's Document is in the fullscreen state has the 'full-screen' pseudoclass applied.
+                if (!e->document()->webkitFullScreen())
+                    return false;
+                if (e != e->document()->webkitCurrentFullScreenElement())
+                    return false;
+                return true;
+            case CSSSelector::PseudoFullScreenDocument:
+                // While a Document is in the fullscreen state, the 'full-screen-document' pseudoclass applies 
+                // to the root element of that Document.
+                if (!e->document()->webkitFullScreen())
+                    return false;
+                if (e != e->document()->documentElement())
+                    return false;
+                return true;
+#endif
             case CSSSelector::PseudoUnknown:
             case CSSSelector::PseudoNotParsed:
             default:

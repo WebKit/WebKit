@@ -365,6 +365,7 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithUnsignedInt:4], WebKitPluginAllowedRunTimePreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitFrameFlatteningEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitDNSPrefetchingEnabledPreferenceKey,
+        [NSNumber numberWithBool:NO],   WebKitFullScreenEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitMemoryInfoEnabledPreferenceKey,
         [NSNumber numberWithLongLong:WebCore::ApplicationCacheStorage::noQuota()], WebKitApplicationCacheTotalQuota,
         [NSNumber numberWithLongLong:WebCore::ApplicationCacheStorage::noQuota()], WebKitApplicationCacheDefaultOriginQuota,
@@ -1344,6 +1345,16 @@ static NSString *classIBCreatorID = nil;
 - (void)_setPreferenceForTestWithValue:(NSString *)value forKey:(NSString *)key
 {
     [self _setStringValue:value forKey:key];
+}
+
+- (void)setFullScreenEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitFullScreenEnabledPreferenceKey];
+}
+
+- (BOOL)fullScreenEnabled
+{
+    return [self _boolValueForKey:WebKitFullScreenEnabledPreferenceKey];
 }
 
 @end

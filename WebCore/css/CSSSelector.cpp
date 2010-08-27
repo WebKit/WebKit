@@ -248,6 +248,13 @@ PseudoId CSSSelector::pseudoId(PseudoType type)
         return NOPSEUDO;
 #endif
 
+#if ENABLE(FULLSCREEN_API)
+    case PseudoFullScreen:
+        return FULL_SCREEN;
+    case PseudoFullScreenDocument:
+        return FULL_SCREEN_DOCUMENT;
+#endif
+            
     case PseudoInputListButton:
 #if ENABLE(DATALIST)
         return INPUT_LIST_BUTTON;
@@ -426,6 +433,10 @@ static HashMap<AtomicStringImpl*, CSSSelector::PseudoType>* nameToPseudoTypeMap(
     DEFINE_STATIC_LOCAL(AtomicString, firstPage, ("first"));
     DEFINE_STATIC_LOCAL(AtomicString, leftPage, ("left"));
     DEFINE_STATIC_LOCAL(AtomicString, rightPage, ("right"));
+#if ENABLE(FULLSCREEN_API)
+    DEFINE_STATIC_LOCAL(AtomicString, fullScreen, ("-webkit-full-screen"));
+    DEFINE_STATIC_LOCAL(AtomicString, fullScreenDocument, ("-webkit-full-screen-document"));
+#endif
 
     static HashMap<AtomicStringImpl*, CSSSelector::PseudoType>* nameToPseudoType = 0;
     if (!nameToPseudoType) {
@@ -537,6 +548,10 @@ static HashMap<AtomicStringImpl*, CSSSelector::PseudoType>* nameToPseudoTypeMap(
         nameToPseudoType->set(firstPage.impl(), CSSSelector::PseudoFirstPage);
         nameToPseudoType->set(leftPage.impl(), CSSSelector::PseudoLeftPage);
         nameToPseudoType->set(rightPage.impl(), CSSSelector::PseudoRightPage);
+#if ENABLE(FULLSCREEN_API)
+        nameToPseudoType->set(fullScreen.impl(), CSSSelector::PseudoFullScreen);
+        nameToPseudoType->set(fullScreenDocument.impl(), CSSSelector::PseudoFullScreenDocument);
+#endif
     }
     return nameToPseudoType;
 }
@@ -666,6 +681,10 @@ void CSSSelector::extractPseudoType() const
     case PseudoSingleButton:
     case PseudoNoButton:
     case PseudoNotParsed:
+#if ENABLE(FULLSCREEN_API)
+    case PseudoFullScreen:
+    case PseudoFullScreenDocument:
+#endif
         break;
     case PseudoFirstPage:
     case PseudoLeftPage:

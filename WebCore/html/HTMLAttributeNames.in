@@ -223,6 +223,7 @@ onwebkitanimationiteration
 onwebkitanimationend
 onwebkitbeginfullscreen
 onwebkitendfullscreen
+onwebkitfullscreenchange
 onwebkittransitionend
 optimum
 pattern

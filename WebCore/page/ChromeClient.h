@@ -234,6 +234,12 @@ namespace WebCore {
         virtual void enterFullscreenForNode(Node*) { }
         virtual void exitFullscreenForNode(Node*) { }
 
+#if ENABLE(FULLSCREEN_API)
+        virtual bool supportsFullScreenForElement(const Element*) { return false; }
+        virtual void enterFullScreenForElement(Element*) { }
+        virtual void exitFullScreenForElement(Element*) { }
+#endif
+        
 #if ENABLE(TILED_BACKING_STORE)
         virtual IntRect visibleRectForTiledBackingStore() const { return IntRect(); }
 #endif

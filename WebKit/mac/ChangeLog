@@ -1,3 +1,36 @@
+2010-07-27  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        Add JavaScript API to allow a page to go fullscreen.
+        rdar://problem/6867795
+
+        Added chrome client overrides which support entering and exiting full screen.  A new preference has
+        been added (setFullScreenEnabled:) to control at runtime whether full screen support is enabled 
+        (defaults to disabled).  Added a new WebKitFullScreenListener callback object which notifies WebCore
+        when the chrome has started/finished its full screen animation.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::supportsFullscreenForElement):
+        (WebChromeClient::enterFullscreenForElement):
+        (WebChromeClient::exitFullscreenForElement):
+        (-[WebKitFullScreenListener initWithElement:]):
+        (-[WebKitFullScreenListener webkitWillEnterFullScreen]):
+        (-[WebKitFullScreenListener webkitDidEnterFullScreen]):
+        (-[WebKitFullScreenListener webkitWillExitFullScreen]):
+        (-[WebKitFullScreenListener webkitDidExitFullScreen]):
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences setFullScreenEnabled:]):
+        (-[WebPreferences fullScreenEnabled]):
+        * WebView/WebUIDelegatePrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChangedNotification:]):
+
 2010-08-27  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Simon Fraser.

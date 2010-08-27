@@ -1,0 +1,3 @@
+EVENT(webkitfullscreenchange) TEST(document.webkitFullScreen==true) OK
+END OF TEST
+

@@ -94,6 +94,9 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(touchend);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(touchcancel);
 #endif
+#if ENABLE(FULLSCREEN_API)
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitfullscreenchange);
+#endif
 
     virtual PassRefPtr<DocumentFragment> deprecatedCreateContextualFragment(const String&, FragmentScriptingPermission = FragmentScriptingAllowed);
 
@@ -291,6 +294,14 @@ public:
 
 #if ENABLE(SVG)
     virtual bool childShouldCreateRenderer(Node*) const; 
+#endif
+    
+#if ENABLE(FULLSCREEN_API)
+    enum {
+        ALLOW_KEYBOARD_INPUT = 1
+    };
+    
+    void webkitRequestFullScreen(unsigned short flags);
 #endif
 
 protected:

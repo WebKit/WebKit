@@ -166,6 +166,8 @@ namespace WebCore {
     \
     macro(loadend) \
     \
+    macro(webkitfullscreenchange)
+    \
 // end of DOM_EVENT_NAMES_FOR_EACH
 
     class EventNames : public Noncopyable {
