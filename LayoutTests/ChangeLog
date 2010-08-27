@@ -1,3 +1,12 @@
+2010-08-27  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, updating chromium test expectations.
+
+        Aaron said it's ok to add userscripts/mixed-case-stylesheet.html to
+        the expected failure list because we test these in chromium anyway.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-08-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed; rebaseline for r66247.

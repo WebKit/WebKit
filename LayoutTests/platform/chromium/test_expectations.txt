@@ -763,7 +763,9 @@ BUG13907 LINUX MAC : media/video-layer-crash.html = IMAGE PASS
 
 // These two tests started timing out after r66110.
 BUG13907 : media/video-controls-rendering.html = PASS FAIL TIMEOUT
-BUG13907 : media/video-transformed.html = IMAGE PASS TIMEOUT
+BUG13907 RELEASE : media/video-transformed.html = IMAGE PASS TIMEOUT
+// Started failing in roll 66079:66240.
+BUG53660 DEBUG : media/video-transformed.html = IMAGE+TEXT TIMEOUT
 
 // This is flaky with a subtle pixel difference in the bottom right corner,
 // which I believe is due to new video scaling algorithm.
@@ -2881,6 +2883,7 @@ BUGWK38016 WIN : svg/custom/foreign-object-skew.svg = FAIL
 
 BUG49031 WIN LINUX MAC : http/tests/mime/uppercase-mime-type.html = MISSING
 
+BUG49021 : userscripts/mixed-case-stylesheet.html = TEXT
 BUG49021 : userscripts/simple-stylesheet.html = TEXT
 BUG49021 : userscripts/user-style-all-frames.html = TEXT
 BUG49021 : userscripts/user-style-top-frame-only.html = TEXT
