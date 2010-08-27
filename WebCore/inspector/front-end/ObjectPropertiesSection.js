@@ -184,6 +184,8 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
             this.valueElement.addStyleClass("dimmed");
         if (this.property.value.isError())
             this.valueElement.addStyleClass("error");
+        if (this.property.value.type)
+            this.valueElement.addStyleClass("console-formatted-" + this.property.value.type);
 
         this.listItemElement.removeChildren();
 
