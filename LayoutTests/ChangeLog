@@ -1,5 +1,12 @@
 2010-08-27  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Remove trailing whitespace after test name, no need to duplicate the same test in mac/Skipped and mac-leopard/Skipped, oops.
+
+        * platform/mac-leopard/Skipped:
+        * platform/mac/Skipped:
+
+2010-08-27  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Not reviewed. Also skip media/video-source-error.html on Leopard, and media/video-zoom-controls.html on SnowLeopard.
         It's a pity that numerous of the media tests are skipped since a longer time on these platforms.
 

@@ -51,7 +51,6 @@ media/audio-delete-while-slider-thumb-clicked.html
 media/audio-delete-while-step-button-clicked.html
 media/video-controls-visible-audio-only.html
 media/video-controls-zoomed.html
-media/video-source-error.html
 
 # Disable flakey webgl test to make the bots green again.
 # https://bugs.webkit.org/show_bug.cgi?id=33924
