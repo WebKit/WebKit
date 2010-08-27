@@ -1,3 +1,9 @@
+2010-08-26  Yuzo Fujishima  <yuzo@google.com>
+
+        Unreviewed Chromium test expectation change.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-08-26  Andy Estes  <aestes@apple.com>
 
         Reviewed by Darin Adler.

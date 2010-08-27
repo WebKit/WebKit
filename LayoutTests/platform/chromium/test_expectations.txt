@@ -3197,3 +3197,8 @@ BUG53289 WIN MAC LINUX : fast/lists/w3-css3-list-styles-fallback-style.html = TE
 // Inspector related tests that started failing around r65992:r66155
 BUG53406 WIN : inspector/debugger-breakpoints-not-activated-on-reload.html = PASS TIMEOUT
 BUG53406 WIN : http/tests/inspector/resource-parameters.html = PASS TEXT
+
+// JavaScriptCore/V8 parser behavior inconsistency in handling "-->".
+// Started at WK r66135
+BUG53544 : fast/js/parser-xml-close-comment.html = TEXT
+
