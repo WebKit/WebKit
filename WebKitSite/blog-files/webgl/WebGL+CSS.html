@@ -2,26 +2,26 @@
 <html>
   <head>
     <title>WebGL + CSS Effects</title>
-    <script src="resources/CanvasMatrix.js"> </script>
-    <script src="resources/utils3d.js"> </script>
+    <script src="resources/J3DI.js"> </script>
+    <script src="resources/J3DIMath.js" type="text/javascript"> </script>
     <script id="vshader" type="x-shader/x-vertex">
         /*
           Copyright (c) 2008 Seneca College
           Licenced under the MIT License (http://www.c3dl.org/index.php/mit-license/)
         */
-        
-        // We need to create our own light structure since we can't access 
+
+        // We need to create our own light structure since we can't access
         // the light() function in the 2.0 context.
-        struct Light 
-        { 
+        struct Light
+        {
             vec4 ambient;
             vec4 diffuse;
             vec4 specular;
             vec4 position;
-            
+
             vec3 halfVector;
         };
-        
+
         struct Material
         {
             vec4 emission;
@@ -34,9 +34,9 @@
         //
         // vertex attributes
         //
-        attribute vec4 a_vertex; 
-        attribute vec3 a_normal; 
-        attribute vec4 a_texCoord; 
+        attribute vec4 a_vertex;
+        attribute vec3 a_normal;
+        attribute vec4 a_texCoord;
 
         // for every model we multiply the projection, view and model matrices
         // once to prevent having to do it for every vertex, however we still need
@@ -49,15 +49,15 @@
         // matrix to transform the vertex normals
         uniform mat4 u_normalMatrix;
 
-         // custom light structures need to be used since we don't have access to 
+         // custom light structures need to be used since we don't have access to
         // light states.
         uniform Light u_light;
-        
+
         // material
         uniform vec4 u_globalAmbientColor;
         uniform Material u_frontMaterial;
         uniform Material u_backMaterial;
-        
+
         // passed to fragment shader
         varying vec4 v_diffuse, v_ambient;
         varying vec3 v_normal, v_lightDir;
@@ -68,9 +68,9 @@
             this function will calculate how much each component contributes to the scene.
 
             Light light - the light in view space
-            vec3 normal - 
-            vec4 ambient - 
-            vec4 diffuse - 
+            vec3 normal -
+            vec4 ambient -
+            vec4 diffuse -
         */
         vec3 directionalLight(inout vec4 ambient, inout vec4 diffuse)
         {
@@ -80,12 +80,12 @@
         }
 
         void main()
-        { 
-            v_normal = normalize(u_normalMatrix * vec4(a_normal, 1)).xyz; 
+        {
+            v_normal = normalize(u_normalMatrix * vec4(a_normal, 1)).xyz;
 
-            vec4 ambient = vec4(0.0, 0.0, 0.0, 1.0); 
-            vec4 diffuse = vec4(0.0, 0.0, 0.0, 1.0); 
-            vec4 specular = vec4(0.0, 0.0, 0.0, 1.0); 
+            vec4 ambient = vec4(0.0, 0.0, 0.0, 1.0);
+            vec4 diffuse = vec4(0.0, 0.0, 0.0, 1.0);
+            vec4 specular = vec4(0.0, 0.0, 0.0, 1.0);
 
             // place the current vertex into view space
             // ecPos = eye coordinate position.
@@ -94,27 +94,31 @@
             // the current vertex in eye coordinate space
             vec3 ecPos = ecPos4.xyz/ecPos4.w;
             v_lightDir = directionalLight(ambient, diffuse);
-            
+
             v_ambient = u_frontMaterial.ambient * ambient;
             v_ambient += u_globalAmbientColor * u_frontMaterial.ambient;
             v_diffuse = u_frontMaterial.diffuse * diffuse;
 
             gl_Position =  u_modelViewProjMatrix * a_vertex;
-            v_texCoord = a_texCoord.st; 
+            v_texCoord = a_texCoord.st;
         }
     </script>
 
     <script id="fshader" type="x-shader/x-fragment">
-        struct Light 
-        { 
+#ifdef GL_ES
+    precision mediump float;
+#endif
+
+        struct Light
+        {
             vec4 ambient;
             vec4 diffuse;
             vec4 specular;
             vec4 position;
-        
+
             vec3 halfVector;
         };
-    
+
         struct Material
         {
             vec4 emission;
@@ -123,12 +127,12 @@
             vec4 specular;
             float shininess;
         };
-        
+
         uniform sampler2D u_sampler2d;
         uniform Light u_light;
         uniform Material u_frontMaterial;
         uniform Material u_backMaterial;
-        
+
         varying vec4 v_diffuse, v_ambient;
         varying vec3 v_normal, v_lightDir;
         varying vec2 v_texCoord;
@@ -136,7 +140,7 @@
         void main()
         {
             vec4 color = v_diffuse;
-                
+
             vec3 n = normalize(v_normal);
 
             Light light = u_light;
@@ -148,30 +152,29 @@
                 vec4 specular = u_frontMaterial.specular * light.specular;
                 color += vec4(specular.rgb * pow(nDotHV, u_frontMaterial.shininess), specular.a);
             }
-            
+
             gl_FragColor = color + v_ambient;
         }
     </script>
 
     <script>
-    console.log("Hello");
     function setDirectionalLight(ctx, program, eyeVector, direction, ambient, diffuse, specular)
     {
         var lightString = "u_light.";
-        
-        ctx.uniform4f(ctx.getUniformLocation(program, lightString+"ambient"), 
+
+        ctx.uniform4f(ctx.getUniformLocation(program, lightString+"ambient"),
                                                 ambient[0], ambient[1], ambient[2], ambient[3]);
-        ctx.uniform4f(ctx.getUniformLocation(program, lightString+"diffuse"), 
+        ctx.uniform4f(ctx.getUniformLocation(program, lightString+"diffuse"),
                                                 diffuse[0], diffuse[1], diffuse[2], diffuse[3]);
-        ctx.uniform4f(ctx.getUniformLocation(program, lightString+"specular"), 
+        ctx.uniform4f(ctx.getUniformLocation(program, lightString+"specular"),
                                                 specular[0], specular[1], specular[2], specular[3]);
-        ctx.uniform4f(ctx.getUniformLocation(program, lightString+"position"), 
+        ctx.uniform4f(ctx.getUniformLocation(program, lightString+"position"),
                                                 direction[0], direction[1], direction[2], direction[3]);
-                                                
+
         // compute the half vector
         var halfVector = [ eyeVector[0] + direction[0], eyeVector[1] + direction[1], eyeVector[2] + direction[2] ];
-        var length = Math.sqrt(halfVector[0] * halfVector[0] + 
-                               halfVector[1] * halfVector[1] + 
+        var length = Math.sqrt(halfVector[0] * halfVector[0] +
+                               halfVector[1] * halfVector[1] +
                                halfVector[2] * halfVector[2]);
         if (length == 0)
             halfVector = [ 0, 0, 1 ];
@@ -181,59 +184,59 @@
             halfVector[2] /= length;
         }
 
-        ctx.uniform3f(ctx.getUniformLocation(program, lightString+"halfVector"), 
+        ctx.uniform3f(ctx.getUniformLocation(program, lightString+"halfVector"),
                                                 halfVector[0], halfVector[1], halfVector[2]);
     }
-        
+
         function setMaterial(ctx, program, emission, ambient, diffuse, specular, shininess)
         {
             var matString = "u_frontMaterial.";
-            ctx.uniform4f(ctx.getUniformLocation(program, matString+"emission"), 
+            ctx.uniform4f(ctx.getUniformLocation(program, matString+"emission"),
                                                     emission[0], emission[1], emission[2], emission[3]);
-            ctx.uniform4f(ctx.getUniformLocation(program, matString+"ambient"), 
+            ctx.uniform4f(ctx.getUniformLocation(program, matString+"ambient"),
                                                     ambient[0], ambient[1], ambient[2], ambient[3]);
-            ctx.uniform4f(ctx.getUniformLocation(program, matString+"diffuse"), 
+            ctx.uniform4f(ctx.getUniformLocation(program, matString+"diffuse"),
                                                     diffuse[0], diffuse[1], diffuse[2], diffuse[3]);
-            ctx.uniform4f(ctx.getUniformLocation(program, matString+"specular"), 
+            ctx.uniform4f(ctx.getUniformLocation(program, matString+"specular"),
                                                     specular[0], specular[1], specular[2], specular[3]);
             ctx.uniform1f(ctx.getUniformLocation(program, matString+"shininess"), shininess);
         }
 
         function init()
         {
-           var gl = initWebGL("example", "vshader", "fshader", 
+           var gl = initWebGL("example", "vshader", "fshader",
                                 [ "a_normal", "a_texCoord", "a_vertex"],
                                 [ 0, 0, 0, 0 ], 10000);
 
             gl.uniform1i(gl.getUniformLocation(gl.program, "u_sampler2d"), 0);
             gl.uniform4f(gl.getUniformLocation(gl.program, "u_globalAmbientColor"), 0.2, 0.2, 0.2, 1);
 
-            setDirectionalLight(gl, gl.program, 
+            setDirectionalLight(gl, gl.program,
                                 [ 0, 0, 1 ],            // eyeVector
                                 [0, 0, 1, 1],           // position
                                 [0.1, 0.1, 0.1, 1],     // ambient
                                 [1, 1, 1, 1],           // diffuse
                                 [1, 1, 1, 1]);          // specular
 
-            setMaterial(gl, gl.program, 
+            setMaterial(gl, gl.program,
                 [ 0, 0, 0, 0 ],         // emission
                 [ 0.1, 0.1, 0.1, 1 ],   // ambient
                 [ 0.8, 0.2, 0, 1 ], // diffuse
                 [ 0, 0, 1, 1 ],     // specular
                 32);                    // shininess
-            
+
             obj = loadObj(gl, "resources/teapot.obj");
 
-            mvMatrix = new CanvasMatrix4();
-            normalMatrix = new CanvasMatrix4();
-            
+            mvMatrix = new J3DIMatrix4();
+            normalMatrix = new J3DIMatrix4();
+
             return gl;
         }
-                
+
         width = -1;
         height = -1;
         loaded = false;
-        
+
         function reshape(ctx)
         {
             var canvas = document.getElementById('example');
@@ -242,18 +245,18 @@
 
             width = canvas.clientWidth;
             height = canvas.clientHeight;
-            
+
             ctx.viewport(0, 0, width, height);
-    
-            ctx.perspectiveMatrix = new CanvasMatrix4();
-            ctx.perspectiveMatrix.lookat(0,0,50, 0, 0, 0, 0, 1, 0);
+
+            ctx.perspectiveMatrix = new J3DIMatrix4();
             ctx.perspectiveMatrix.perspective(30, width/height, 1, 10000);
+            ctx.perspectiveMatrix.lookat(0,0,50, 0, 0, 0, 0, 1, 0);
         }
-        
+
         function drawPicture(ctx)
         {
             var startRenderTime = new Date().getTime();
-            
+
             reshape(ctx);
             ctx.clear(ctx.COLOR_BUFFER_BIT | ctx.DEPTH_BUFFER_BIT);
 
@@ -275,36 +278,39 @@
 
                 ctx.bindBuffer(ctx.ELEMENT_ARRAY_BUFFER, obj.indexObject);
             }
-            
+
             if (!loaded)
                 return;
-            
+
             // generate the model-view matrix
             mvMatrix.makeIdentity();
-            mvMatrix.rotate(currentAngle, 0, 1, 0);
             mvMatrix.rotate(10, 1,0,0);
-            ctx.uniformMatrix4fv(ctx.getUniformLocation(ctx.program, "u_modelViewMatrix"), false, mvMatrix.getAsWebGLFloatArray());
+            mvMatrix.rotate(currentAngle, 0, 1, 0);
+            mvMatrix.setUniform(ctx, ctx.getUniformLocation(ctx.program, "u_modelViewMatrix"), false);
 
             // construct the normal matrix from the model-view matrix
             normalMatrix.load(mvMatrix);
             normalMatrix.invert();
             normalMatrix.transpose();
-            ctx.uniformMatrix4fv(ctx.getUniformLocation(ctx.program, "u_normalMatrix"), false, normalMatrix.getAsWebGLFloatArray());
-            
-            mvMatrix.multRight(ctx.perspectiveMatrix);
-            ctx.uniformMatrix4fv(ctx.getUniformLocation(ctx.program, "u_modelViewProjMatrix"), false, mvMatrix.getAsWebGLFloatArray());
+            normalMatrix.setUniform(ctx, ctx.getUniformLocation(ctx.program, "u_normalMatrix"), false);
+
+            // Construct the model-view * projection matrix and pass it in
+            var mvpMatrix = new J3DIMatrix4();
+            mvpMatrix.load(ctx.perspectiveMatrix);
+            mvpMatrix.multiply(mvMatrix);
+            mvpMatrix.setUniform(ctx, ctx.getUniformLocation(ctx.program, "u_modelViewProjMatrix"), false);
 
             ctx.drawElements(ctx.TRIANGLES, obj.numIndices, ctx.UNSIGNED_SHORT, 0);
-            
+
             ctx.flush();
-            
+
             framerate.snapshot();
-            
+
             currentAngle += incAngle;
             if (currentAngle > 360)
                 currentAngle -= 360;
         }
-        
+
         function start()
         {
             // set up event listener on the canvas
@@ -314,7 +320,12 @@
                 isTilted = !isTilted;
                 container.className = isTilted ? 'tilted' : '';
             }, false);
-            
+
+            body.addEventListener('touchstart', function () {
+                isTilted = !isTilted;
+                container.className = isTilted ? 'tilted' : '';
+            }, false);
+
             var ctx = init();
             currentAngle = 0;
             incAngle = 0.2;
@@ -322,9 +333,9 @@
             var f = function() { drawPicture(ctx) };
             setInterval(f, 10);
         }
-        
+
         var isTilted = false;
-        
+
     </script>
     <style type="text/css">
         body {
@@ -356,7 +367,7 @@
             text-shadow: white 2px 2px 4px;
             -webkit-animation:5s rock infinite alternate ease-in-out;
         }
-        
+
         @-webkit-keyframes rock {
             0% { -webkit-transform: translateX(-250px) rotate3d(0,0,1, -30deg) }
             25% { -webkit-transform: translateX(-150px) rotate3d(0,0,1, 30deg) }
@@ -364,7 +375,7 @@
             75% { -webkit-transform: translateX(50px) rotate3d(0,0,1, 30deg) }
             100% { -webkit-transform: translateX(150px) rotate3d(0,0,1, -30deg) }
         }
-        
+
         #framerate {
             position:absolute;
             top:10px;
