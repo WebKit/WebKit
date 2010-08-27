@@ -1,3 +1,15 @@
+2010-08-27  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        Calls to IndexedDB methods from V8Proxy::didLeaveScriptContext() are missing enable guards
+        https://bugs.webkit.org/show_bug.cgi?id=44760
+
+        No new tests, build fix only.
+
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::didLeaveScriptContext):
+
 2010-08-27  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.
