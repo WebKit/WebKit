@@ -86,7 +86,7 @@
       ],
 
       'conditions': [
-        ['OS=="win" or OS=="linux"', {
+        ['OS=="win" or OS=="linux" or OS=="mac"', {
           'feature_defines': [
            'WTF_USE_ACCELERATED_COMPOSITING=1',
            'ENABLE_3D_RENDERING=1',

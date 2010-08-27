@@ -45,12 +45,10 @@
 
 namespace WebCore {
 
-#if USE(GLES2_RENDERING)
 enum CompositeOperator;
 class GLES2Canvas;
 class GLES2Texture;
 class GraphicsContext3D;
-#endif
 
 // This class holds the platform-specific state for GraphicsContext. We put
 // most of our Skia wrappers on this class. In theory, a lot of this stuff could
@@ -182,24 +180,16 @@ public:
     void setImageResamplingHint(const IntSize& srcSize, const FloatSize& dstSize);
     void clearImageResamplingHint();
     bool hasImageResamplingHint() const;
-#if USE(GLES2_RENDERING)
     bool useGPU() { return m_useGPU; }
     void setGraphicsContext3D(GraphicsContext3D*, const IntSize&);
     GLES2Canvas* gpuCanvas() const { return m_gpuCanvas.get(); }
-#endif
 
-#if USE(GLES2_RENDERING)
     // Call these before making a call that manipulates the underlying
     // skia::PlatformCanvas or WebCore::GLES2Canvas
     void prepareForSoftwareDraw() const;
     void prepareForHardwareDraw() const;
     // Call to force the skia::PlatformCanvas to contain all rendering results.
     void syncSoftwareCanvas() const;
-#else
-    void prepareForSoftwareDraw() const {}
-    void prepareForHardwareDraw() const {}
-    void syncSoftwareCanvas() const {}
-#endif
 
 private:
 #if OS(LINUX) || OS(WINDOWS)
@@ -209,10 +199,8 @@ private:
 #endif
     void applyAntiAliasedClipPaths(WTF::Vector<SkPath>& paths);
 
-#if USE(GLES2_RENDERING)
     void uploadSoftwareToHardware(CompositeOperator) const;
     void readbackHardwareToSoftware() const;
-#endif
 
     // Defines drawing style.
     struct State;
@@ -237,12 +225,10 @@ private:
 #if OS(WINDOWS)
     bool m_drawingToImageBuffer;
 #endif
-#if USE(GLES2_RENDERING)
     bool m_useGPU;
     OwnPtr<GLES2Canvas> m_gpuCanvas;
     mutable enum { None, Software, Mixed, Hardware } m_backingStoreState;
     mutable RefPtr<GLES2Texture> m_uploadTexture;
-#endif
 };
 
 }

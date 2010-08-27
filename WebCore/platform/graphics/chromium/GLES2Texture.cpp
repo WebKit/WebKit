@@ -30,8 +30,6 @@
 
 #include "config.h"
 
-#if USE(GLES2_RENDERING)
-
 #include "GLES2Texture.h"
 
 #include "GraphicsContext3D.h"
@@ -178,5 +176,3 @@ void GLES2Texture::bindTile(int tile)
 }
 
 }
-
-#endif

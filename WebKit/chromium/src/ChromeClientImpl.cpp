@@ -744,18 +744,6 @@ void ChromeClientImpl::scheduleCompositingLayerSync()
 }
 #endif
 
-#if USE(GLES2_RENDERING)
-PassOwnPtr<GLES2Context> ChromeClientImpl::getOnscreenGLES2Context()
-{
-    return m_webView->getOnscreenGLES2Context();
-}
-
-PassOwnPtr<GLES2Context> ChromeClientImpl::getOffscreenGLES2Context()
-{
-    return m_webView->getOffscreenGLES2Context();
-}
-#endif
-
 bool ChromeClientImpl::supportsFullscreenForNode(const WebCore::Node* node)
 {
     if (m_webView->client() && node->hasTagName(WebCore::HTMLNames::videoTag))

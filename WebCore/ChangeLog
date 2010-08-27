@@ -1,3 +1,45 @@
+2010-08-26  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] Remove the USE(GLES2_RENDERING) define and associated code
+        https://bugs.webkit.org/show_bug.cgi?id=43761
+
+        USE(GLES2_RENDERING) will not be useful since we'll be coding to GraphicsContext3D
+        instead of OpenGL and can use ENABLE(ACCELERATED_2D_CANVAS) for canvas 2d specific
+        changes.  This deletes the macro and deletes the ChromeClient API to query
+        GLES2Contexts since we'll never need one of these outside of the compositor, which
+        is created in platform-specific code.
+
+        * loader/EmptyClients.h:
+        * page/ChromeClient.h:
+        * platform/graphics/chromium/GLES2Canvas.cpp:
+        * platform/graphics/chromium/GLES2Canvas.h:
+        * platform/graphics/chromium/GLES2Texture.cpp:
+        * platform/graphics/chromium/GLES2Texture.h:
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::savePlatformState):
+        (WebCore::GraphicsContext::restorePlatformState):
+        (WebCore::GraphicsContext::clearRect):
+        (WebCore::GraphicsContext::concatCTM):
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::scale):
+        (WebCore::GraphicsContext::setAlpha):
+        (WebCore::GraphicsContext::setCompositeOperation):
+        (WebCore::GraphicsContext::setPlatformFillColor):
+        (WebCore::GraphicsContext::rotate):
+        (WebCore::GraphicsContext::translate):
+        (WebCore::GraphicsContext::setGraphicsContext3D):
+        (WebCore::GraphicsContext::syncSoftwareCanvas):
+        * platform/graphics/skia/ImageSkia.cpp:
+        (WebCore::drawBitmapGLES2):
+        (WebCore::BitmapImage::draw):
+        (WebCore::BitmapImageSingleFrameSkia::draw):
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::PlatformContextSkia):
+        (WebCore::PlatformContextSkia::~PlatformContextSkia):
+        * platform/graphics/skia/PlatformContextSkia.h:
+
 2010-08-26  Martin Robinson  <mrobinson@igalia.com>
 
         Build fix for GTK+, after a bad merge.

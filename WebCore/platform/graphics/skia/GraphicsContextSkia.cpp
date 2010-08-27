@@ -34,6 +34,7 @@
 #include "AffineTransform.h"
 #include "Color.h"
 #include "FloatRect.h"
+#include "GLES2Canvas.h"
 #include "Gradient.h"
 #include "GraphicsContextPlatformPrivate.h"
 #include "GraphicsContextPrivate.h"
@@ -54,10 +55,6 @@
 #include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>
 #include <wtf/UnusedParam.h>
-
-#if USE(GLES2_RENDERING)
-#include "GLES2Canvas.h"
-#endif
 
 using namespace std;
 
@@ -248,10 +245,8 @@ void GraphicsContext::savePlatformState()
     if (paintingDisabled())
         return;
 
-#if USE(GLES2_RENDERING)
     if (platformContext()->useGPU())
         platformContext()->gpuCanvas()->save();
-#endif
 
     // Save our private State.
     platformContext()->save();
@@ -262,10 +257,8 @@ void GraphicsContext::restorePlatformState()
     if (paintingDisabled())
         return;
 
-#if USE(GLES2_RENDERING)
     if (platformContext()->useGPU())
         platformContext()->gpuCanvas()->restore();
-#endif
 
     // Restore our private State.
     platformContext()->restore();
@@ -345,13 +338,11 @@ void GraphicsContext::clearRect(const FloatRect& rect)
     if (paintingDisabled())
         return;
 
-#if USE(GLES2_RENDERING)
     if (platformContext()->useGPU()) {
         platformContext()->prepareForHardwareDraw();
         platformContext()->gpuCanvas()->clearRect(rect);
         return;
     }
-#endif
 
     platformContext()->prepareForSoftwareDraw();
 
@@ -459,10 +450,8 @@ void GraphicsContext::concatCTM(const AffineTransform& affine)
     if (paintingDisabled())
         return;
 
-#if USE(GLES2_RENDERING)
     if (platformContext()->useGPU())
         platformContext()->gpuCanvas()->concatCTM(affine);
-#endif
 
     platformContext()->canvas()->concat(affine);
 }
@@ -780,13 +769,11 @@ void GraphicsContext::fillRect(const FloatRect& rect)
         ClipRectToCanvas(*platformContext()->canvas(), r, &r);
     }
 
-#if USE(GLES2_RENDERING)
     if (platformContext()->useGPU() && !m_common->state.fillPattern && !m_common->state.fillGradient && !platformContext()->getDrawLooper()) {
         platformContext()->prepareForHardwareDraw();
         platformContext()->gpuCanvas()->fillRect(rect);
         return;
     }
-#endif
 
     platformContext()->save();
 
@@ -804,13 +791,11 @@ void GraphicsContext::fillRect(const FloatRect& rect, const Color& color, ColorS
     if (paintingDisabled())
         return;
 
-#if USE(GLES2_RENDERING)
     if (platformContext()->useGPU() && !m_common->state.fillPattern && !m_common->state.fillGradient) {
         platformContext()->prepareForHardwareDraw();
         platformContext()->gpuCanvas()->fillRect(rect, color, colorSpace);
         return;
     }
-#endif
 
     platformContext()->prepareForSoftwareDraw();
 
@@ -932,10 +917,8 @@ void GraphicsContext::scale(const FloatSize& size)
     if (paintingDisabled())
         return;
 
-#if USE(GLES2_RENDERING)
     if (platformContext()->useGPU())
         platformContext()->gpuCanvas()->scale(size);
-#endif
 
     platformContext()->canvas()->scale(WebCoreFloatToSkScalar(size.width()),
         WebCoreFloatToSkScalar(size.height()));
@@ -945,10 +928,10 @@ void GraphicsContext::setAlpha(float alpha)
 {
     if (paintingDisabled())
         return;
-#if USE(GLES2_RENDERING)
+
     if (platformContext()->useGPU())
         platformContext()->gpuCanvas()->setAlpha(alpha);
-#endif
+
     platformContext()->setAlpha(alpha);
 }
 
@@ -956,10 +939,10 @@ void GraphicsContext::setCompositeOperation(CompositeOperator op)
 {
     if (paintingDisabled())
         return;
-#if USE(GLES2_RENDERING)
+
     if (platformContext()->useGPU())
         platformContext()->gpuCanvas()->setCompositeOperation(op);
-#endif
+
     platformContext()->setXfermodeMode(WebCoreCompositeToSkiaComposite(op));
 }
 
@@ -1046,10 +1029,9 @@ void GraphicsContext::setPlatformFillColor(const Color& color, ColorSpace colorS
 {
     if (paintingDisabled())
         return;
-#if USE(GLES2_RENDERING)
+
     if (platformContext()->useGPU())
         platformContext()->gpuCanvas()->setFillColor(color, colorSpace);
-#endif
 
     platformContext()->setFillColor(color.rgb());
 }
@@ -1241,10 +1223,8 @@ void GraphicsContext::rotate(float angleInRadians)
     if (paintingDisabled())
         return;
 
-#if USE(GLES2_RENDERING)
     if (platformContext()->useGPU())
         platformContext()->gpuCanvas()->rotate(angleInRadians);
-#endif
 
     platformContext()->canvas()->rotate(WebCoreFloatToSkScalar(
         angleInRadians * (180.0f / 3.14159265f)));
@@ -1255,10 +1235,8 @@ void GraphicsContext::translate(float w, float h)
     if (paintingDisabled())
         return;
 
-#if USE(GLES2_RENDERING)
     if (platformContext()->useGPU())
         platformContext()->gpuCanvas()->translate(w, h);
-#endif
 
     platformContext()->canvas()->translate(WebCoreFloatToSkScalar(w),
                                            WebCoreFloatToSkScalar(h));
@@ -1266,19 +1244,12 @@ void GraphicsContext::translate(float w, float h)
 
 void GraphicsContext::setGraphicsContext3D(GraphicsContext3D* context3D, const IntSize& size)
 {
-#if USE(GLES2_RENDERING)
     platformContext()->setGraphicsContext3D(context3D, size);
-#else
-    UNUSED_PARAM(context3D);
-    UNUSED_PARAM(size);
-#endif
 }
 
 void GraphicsContext::syncSoftwareCanvas()
 {
-#if USE(GLES2_RENDERING)
     platformContext()->syncSoftwareCanvas();
-#endif
 }
 
 }  // namespace WebCore

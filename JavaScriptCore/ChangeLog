@@ -1,3 +1,14 @@
+2010-08-26  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] Remove the USE(GLES2_RENDERING) define and associated code
+        https://bugs.webkit.org/show_bug.cgi?id=43761
+
+        Remove WTF_USE_GLES2_RENDERING from the list of defines in chromium, it's unused.
+
+        * wtf/Platform.h:
+
 2010-08-26  Gavin Barraclough  <barraclough@apple.com>
 
         Rolling out r64608, this regressed performance.

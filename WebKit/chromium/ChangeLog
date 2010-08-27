@@ -1,3 +1,18 @@
+2010-08-26  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] Remove the USE(GLES2_RENDERING) define and associated code
+        https://bugs.webkit.org/show_bug.cgi?id=43761
+
+        Removes API support to grab a GLES2Context from within WebCore.  The compositor
+        has a special codepath to grab its GLES2Context and no other codepaths
+        need access to a raw context.  Accelerated drawing elsewhere will go through
+        GraphicsContext3D.
+
+        * src/ChromeClientImpl.cpp:
+        * src/ChromeClientImpl.h:
+
 2010-08-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.

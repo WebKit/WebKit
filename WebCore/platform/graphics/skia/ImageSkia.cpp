@@ -36,22 +36,20 @@
 #include "ChromiumBridge.h"
 #include "FloatConversion.h"
 #include "FloatRect.h"
+#include "GLES2Canvas.h"
+#include "GLES2Context.h"
 #include "GraphicsContext.h"
 #include "Logging.h"
 #include "NativeImageSkia.h"
 #include "PlatformContextSkia.h"
 #include "PlatformString.h"
-#include "SkiaUtils.h"
+#include "SkPixelRef.h"
 #include "SkRect.h"
 #include "SkShader.h"
+#include "SkiaUtils.h"
 
 #include "skia/ext/image_operations.h"
 #include "skia/ext/platform_canvas.h"
-#if USE(GLES2_RENDERING)
-#include "GLES2Canvas.h"
-#include "GLES2Context.h"
-#include "SkPixelRef.h"
-#endif
 
 namespace WebCore {
 
@@ -409,7 +407,6 @@ void Image::drawPattern(GraphicsContext* context,
     context->platformContext()->paintSkPaint(destRect, paint);
 }
 
-#if USE(GLES2_RENDERING)
 static void drawBitmapGLES2(GraphicsContext* ctxt, NativeImageSkia* bitmap, const FloatRect& srcRect, const FloatRect& dstRect, ColorSpace styleColorSpace, CompositeOperator compositeOp)
 {
     ctxt->platformContext()->prepareForHardwareDraw();
@@ -425,7 +422,6 @@ static void drawBitmapGLES2(GraphicsContext* ctxt, NativeImageSkia* bitmap, cons
     }
     gpuCanvas->drawTexturedRect(texture, srcRect, dstRect, styleColorSpace, compositeOp);
 }
-#endif
 
 // ================================================
 // BitmapImage Class
@@ -472,12 +468,11 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dstRect,
     if (normSrcRect.isEmpty() || normDstRect.isEmpty())
         return;  // Nothing to draw.
 
-#if  USE(GLES2_RENDERING)
     if (ctxt->platformContext()->useGPU()) {
         drawBitmapGLES2(ctxt, bm, normSrcRect, normDstRect, colorSpace, compositeOp);
         return;
     }
-#endif
+
     ctxt->platformContext()->prepareForSoftwareDraw();
 
     paintSkBitmap(ctxt->platformContext(),
@@ -501,12 +496,10 @@ void BitmapImageSingleFrameSkia::draw(GraphicsContext* ctxt,
     if (normSrcRect.isEmpty() || normDstRect.isEmpty())
         return;  // Nothing to draw.
 
-#if  USE(GLES2_RENDERING)
     if (ctxt->platformContext()->useGPU()) {
         drawBitmapGLES2(ctxt, &m_nativeImage, srcRect, dstRect, styleColorSpace, compositeOp);
         return;
     }
-#endif
 
     ctxt->platformContext()->prepareForSoftwareDraw();
 

@@ -30,8 +30,6 @@
 
 #include "config.h"
 
-#if USE(GLES2_RENDERING)
-
 #include "GLES2Canvas.h"
 
 #include "FloatRect.h"
@@ -372,4 +370,3 @@ void GLES2Canvas::checkGLError(const char* header)
 
 }
 
-#endif
