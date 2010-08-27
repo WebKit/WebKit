@@ -1,3 +1,11 @@
+2010-08-27  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Landed wrong results, as I still had another local patch in my tree. Fixing.
+
+        * platform/mac/svg/custom/getscreenctm-in-scrollable-div-area-expected.txt:
+        * platform/mac/svg/custom/getscreenctm-in-scrollable-div-area-nested-expected.txt:
+        * platform/mac/svg/custom/getscreenctm-in-scrollable-svg-area-expected.txt:
+
 2010-08-27  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.
