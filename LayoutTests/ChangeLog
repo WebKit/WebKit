@@ -1,3 +1,15 @@
+2010-08-27  Jer Noble  <jer.noble@apple.com>
+
+        Build fix only, not reviewed.
+
+        In review for https://bugs.webkit.org/show_bug.cgi?id=43099, a few
+        necessary testing functions were removed.
+
+        * fullscreen/full-screen-test.js:
+        (waitForEventAndTest._eventCallback):
+        (waitForEventAndTest):
+        (waitForEventTestAndEnd):
+
 2010-08-27  Tony Chang  <tony@chromium.org>
 
         Not reviewed, updating chromium test expectations after r66251.

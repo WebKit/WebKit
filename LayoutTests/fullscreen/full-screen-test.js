@@ -93,6 +93,23 @@ function waitForEvent(element, eventName, func, endit)
     element.addEventListener(eventName, _eventCallback);
 }
 
+function waitForEventAndTest(element, eventName, testFuncString, endit)
+{
+    function _eventCallback(event)
+    {
+        logResult(eval(testFuncString), "EVENT(" + eventName + ") TEST(" + testFuncString + ")");
+        if (endit)
+            endTest();    
+    }
+
+    element.addEventListener(eventName, _eventCallback);
+}
+
+function waitForEventTestAndEnd(element, eventName, testFuncString)
+{
+    waitForEventAndTest(element, eventName, testFuncString, true);
+}
+  
 var testEnded = false;
 
 function endTest()
