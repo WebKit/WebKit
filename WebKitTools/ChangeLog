@@ -1,3 +1,14 @@
+2010-08-26  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Needs DRT queueLoadHTMLString and setDeferMainResourceLoad-implementations
+        https://bugs.webkit.org/show_bug.cgi?id=42152
+
+        * DumpRenderTree/gtk/WorkQueueItemGtk.cpp:
+        (LoadHTMLStringItem::invoke): Implementation using
+        webkit_web_frame_load_string().
+
 2010-08-25  Jon Honeycutt  <jhoneycutt@apple.com>
 
         <rdar://problem/8334338> run-webkit-tests sometimes hangs when using

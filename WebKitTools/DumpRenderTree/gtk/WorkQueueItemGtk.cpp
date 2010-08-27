@@ -22,6 +22,7 @@
 
 #include "DumpRenderTree.h"
 
+#include <GOwnPtr.h>
 #include <JavaScriptCore/JSStringRef.h>
 #include <webkit/webkit.h>
 #include <string.h>
@@ -58,7 +59,10 @@ bool LoadItem::invoke() const
 
 bool LoadHTMLStringItem::invoke() const
 {
-    return false;
+    GOwnPtr<gchar> content(JSStringCopyUTF8CString(m_content.get()));
+    GOwnPtr<gchar> baseURL(JSStringCopyUTF8CString(m_baseURL.get()));
+    webkit_web_frame_load_string(mainFrame, content.get(), 0, 0, baseURL.get());
+    return true;
 }
 
 bool ReloadItem::invoke() const

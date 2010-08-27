@@ -5205,10 +5205,6 @@ fast/forms/textarea-appearance-wrap.html
 # https://bugs.webkit.org/show_bug.cgi?id=30584
 svg/custom/font-face-not-in-document.svg
 
-# Needs DRT queueLoadHTMLString and setDeferMainResourceLoad-implementations
-# https://bugs.webkit.org/show_bug.cgi?id=42152
-fast/loader/non-deferred-substitute-load.html
-
 # Probably related to https://bugs.webkit.org/show_bug.cgi?id=27637
 http/tests/security/mixedContent/insecure-plugin-in-iframe.html
 http/tests/loading/basic-auth-resend-wrong-credentials.html 
