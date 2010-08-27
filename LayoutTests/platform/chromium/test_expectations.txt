@@ -735,7 +735,7 @@ BUG13907 SLOW WIN DEBUG : media/video-played-collapse.html = PASS FAIL
 BUG13907 SLOW WIN DEBUG : media/video-seek-past-end-playing.html = PASS FAIL
 
 // We sometimes emit an error from the same source element twice.
-BUG13907 : media/video-source-error.html = PASS FAIL
+BUG13907 : media/video-source-error.html = PASS FAIL TIMEOUT
 
 // Failing because we sometimes emit additional timeupdate events.
 // Test may need to be rewritten or only log the first timeupdate event.
@@ -3211,3 +3211,6 @@ BUGWK44770 WIN LINUX : svg/repaint/filter-repaint.svg = IMAGE+TEXT
 BUGWK44773 : fast/canvas/canvas-as-image.html = IMAGE
 BUGWK44773 WIN LINUX : fast/canvas/canvas-as-image-incremental-repaint.html = IMAGE
 BUGWK44773 : fast/gradients/generated-gradients.html = IMAGE
+
+// Full Screen JS API is not yet enabled.
+BUGWK44797 : fullscreen = FAIL

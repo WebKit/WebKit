@@ -1,3 +1,11 @@
+2010-08-27  Tony Chang  <tony@chromium.org>
+
+        Not reviewed, updating chromium test expectations after r66251.
+
+        * platform/chromium/Skipped: Removed.
+        * platform/chromium/fast/dom/domListEnumeration-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2010-08-27  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.
