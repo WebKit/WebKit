@@ -1,3 +1,18 @@
+2010-08-27  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        REGRESSION: Crash occurs at objc_msgSend when closing a window that is displaying the web inspector
+        https://bugs.webkit.org/show_bug.cgi?id=44230
+
+        * WebCoreSupport/WebInspectorClient.cpp:
+        (WebInspectorFrontendClient::~WebInspectorFrontendClient):
+        (WebInspectorFrontendClient::closeWindow):
+        (WebInspectorFrontendClient::disconnectFromBackend):
+        (WebInspectorFrontendClient::closeWindowWithoutNotifications):
+        (WebInspectorFrontendClient::destroyInspectorView):
+        * WebCoreSupport/WebInspectorClient.h:
+
 2010-08-26  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Revert r66103 since Qt tests are failing.

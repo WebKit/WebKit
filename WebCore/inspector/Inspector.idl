@@ -40,10 +40,9 @@ module core {
         [notify] void childNodeCountUpdated(out long id, out int newValue);
         [notify] void childNodeInserted(out long parentId, out long prevId, out Object node);
         [notify] void childNodeRemoved(out long parentId, out long id);
-        [notify] void close();
         [notify] void didCommitLoad();
         [notify] void evaluateForTestInFrontend(out long testCallId, out String script);
-        [notify] void inspectedPageDestroyed();
+        [notify] void disconnectFromBackend();
         [notify] void inspectedURLChanged(out String url);
         [notify] void monitoringXHRWasEnabled();
         [notify] void monitoringXHRWasDisabled();

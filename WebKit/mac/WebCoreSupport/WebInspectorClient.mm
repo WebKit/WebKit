@@ -66,7 +66,7 @@ using namespace WebCore;
 - (void)setFrontendClient:(WebInspectorFrontendClient*)frontendClient;
 - (void)setInspectorClient:(WebInspectorClient*)inspectorClient;
 - (void)setAttachedWindowHeight:(unsigned)height;
-- (void)destroyInspectorView;
+- (void)destroyInspectorView:(bool)notifyInspectorController;
 @end
 
 #pragma mark -
@@ -169,7 +169,12 @@ void WebInspectorFrontendClient::bringToFront()
 
 void WebInspectorFrontendClient::closeWindow()
 {
-    [m_windowController.get() destroyInspectorView];
+    [m_windowController.get() destroyInspectorView:true];
+}
+
+void WebInspectorFrontendClient::disconnectFromBackend()
+{
+    [m_windowController.get() destroyInspectorView:false];
 }
 
 void WebInspectorFrontendClient::attachWindow()
@@ -308,7 +313,7 @@ void WebInspectorFrontendClient::updateWindowTitle() const
 
 - (BOOL)windowShouldClose:(id)sender
 {
-    [self destroyInspectorView];
+    [self destroyInspectorView:true];
 
     return YES;
 }
@@ -439,7 +444,7 @@ void WebInspectorFrontendClient::updateWindowTitle() const
     [frameView setFrame:frameViewRect];
 }
 
-- (void)destroyInspectorView
+- (void)destroyInspectorView:(bool)notifyInspectorController
 {
     if (_destroyingInspectorView)
         return;
@@ -450,10 +455,12 @@ void WebInspectorFrontendClient::updateWindowTitle() const
 
     _visible = NO;
 
-    if (Page* inspectedPage = [_inspectedWebView page])
-        inspectedPage->inspectorController()->disconnectFrontend();
+    if (notifyInspectorController) {
+        if (Page* inspectedPage = [_inspectedWebView page])
+            inspectedPage->inspectorController()->disconnectFrontend();
 
-    _inspectorClient->releaseFrontendPage();
+        _inspectorClient->releaseFrontendPage();
+    }
 
     [_webView close];
 }

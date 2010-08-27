@@ -84,6 +84,7 @@ public:
 
     virtual void bringToFront();
     virtual void closeWindow();
+    virtual void disconnectFromBackend();
 
     virtual void attachWindow();
     virtual void detachWindow();
