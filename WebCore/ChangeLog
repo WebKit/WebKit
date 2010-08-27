@@ -2,6 +2,15 @@
 
         Reviewed by Nikolas Zimmermann.
 
+        [WINCE] Buildfix for FontPlatformData after r65021
+        https://bugs.webkit.org/show_bug.cgi?id=44467
+
+        * platform/graphics/wince/FontPlatformData.h:
+
+2010-08-27  Patrick Gansterer  <paroga@paroga.com>
+
+        Reviewed by Nikolas Zimmermann.
+
         RenderImage::imageChanged invalidates wrong area
         https://bugs.webkit.org/show_bug.cgi?id=43779
 
