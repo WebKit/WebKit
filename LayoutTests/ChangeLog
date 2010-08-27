@@ -1,3 +1,11 @@
+2010-08-27  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Also skip media/video-source-error.html on Leopard, and media/video-zoom-controls.html on SnowLeopard.
+        It's a pity that numerous of the media tests are skipped since a longer time on these platforms.
+
+        * platform/mac-leopard/Skipped:
+        * platform/mac-snowleopard/Skipped:
+
 2010-08-27  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r66188.

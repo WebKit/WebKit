@@ -58,6 +58,7 @@ media/video-controls-rendering.html
 media/video-controls-transformed.html
 media/video-controls-visible-audio-only.html
 media/video-controls-zoomed.html
+media/video-zoom-controls.html
 media/video-display-toggle.html
 
 #<rdar://problem/7135864> - Intermittent failure
