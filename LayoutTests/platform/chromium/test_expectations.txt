@@ -3209,3 +3209,11 @@ BUG53548 MAC WIN LINUX : fast/js/parser-xml-close-comment.html = TEXT
 // These tests are flaky on Mac and Linux.
 BUG53554 MAC LINUX : svg/W3C-SVG-1.1/fonts-elem-07-b.svg = PASS IMAGE
 BUG53554 MAC LINUX : svg/custom/svg-fonts-without-missing-glyph.xhtml = PASS IMAGE
+
+// New test, need to verify if it's safe to rebaseline.
+BUGWK44770 WIN LINUX : svg/repaint/filter-repaint.svg = IMAGE+TEXT
+
+// Regressed in r66223
+BUGWK44773 : fast/canvas/canvas-as-image.html = IMAGE
+BUGWK44773 : fast/canvas/canvas-as-image-incremental-repaint.html = IMAGE
+BUGWK44773 : fast/gradients/generated-gradients.html = IMAGE
