@@ -1,3 +1,9 @@
+2010-08-26  Gavin Barraclough  <barraclough@apple.com>
+
+        Windows build fix.
+
+        * wtf/dtoa.cpp:
+
 2010-08-26  Gavin Barraclough  <baraclough@apple.com>
 
         Reviewed by Sam Weinig.
