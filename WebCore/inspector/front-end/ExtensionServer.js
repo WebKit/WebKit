@@ -40,10 +40,14 @@ WebInspector.ExtensionServer = function()
     this._registerHandler("getResources", this._onGetResources.bind(this));
     this._registerHandler("createPanel", this._onCreatePanel.bind(this));
     this._registerHandler("createSidebarPane", this._onCreateSidebar.bind(this));
-    this._registerHandler("log", this._onLog.bind(this)); 
+    this._registerHandler("log", this._onLog.bind(this));
     this._registerHandler("evaluateOnInspectedPage", this._onEvaluateOnInspectedPage.bind(this));
     this._registerHandler("setSidebarHeight", this._onSetSidebarHeight.bind(this));
     this._registerHandler("setSidebarExpanded", this._onSetSidebarExpansion.bind(this));
+
+    this._registerHandler("addAuditCategory", this._onAddAuditCategory.bind(this));
+    this._registerHandler("addAuditResult", this._onAddAuditResult.bind(this));
+    this._registerHandler("stopAuditCategoryRun", this._onStopAuditCategoryRun.bind(this));
 
     window.addEventListener("message", this._onWindowMessage.bind(this), false);
 }
@@ -84,6 +88,17 @@ WebInspector.ExtensionServer.prototype = {
         this._postNotification("reset");
     },
 
+    startAuditRun: function(category, auditRun)
+    {
+        this._clientObjects[auditRun.id] = auditRun;
+        this._postNotification("audit-started-" + category.id, auditRun.id);
+    },
+
+    stopAuditRun: function(auditRun)
+    {
+        delete this._clientObjects[auditRun.id];
+    },
+
     _convertResource: function(resource)
     {
         return {
@@ -100,7 +115,7 @@ WebInspector.ExtensionServer.prototype = {
             return;
         var message = {
             command: "notify-" + type,
-            arguments: Array.prototype.slice.call(arguments, 1) 
+            arguments: Array.prototype.slice.call(arguments, 1)
         };
         for (var i = 0; i < subscribers.length; ++i)
             subscribers[i].postMessage(message);
@@ -248,6 +263,36 @@ WebInspector.ExtensionServer.prototype = {
         return response;
     },
 
+    _onAddAuditCategory: function(request)
+    {
+        var category = new WebInspector.ExtensionAuditCategory(request.id, request.displayName, request.ruleCount);
+        if (WebInspector.panels.audits.getCategory(category.id))
+            return this._status.E_EXISTS(category.id);
+        this._clientObjects[request.id] = category;
+        WebInspector.panels.audits.addCategory(category);
+    },
+
+    _onAddAuditResult: function(request)
+    {
+        var auditResult = this._clientObjects[request.resultId];
+        if (!auditResult)
+            return this._status.E_NOTFOUND(request.resultId);
+        try {
+            auditResult.addResult(request.displayName, request.description, request.severity, request.details);
+        } catch (e) {
+            return e;
+        }
+        return this._status.OK();
+    },
+
+    _onStopAuditCategoryRun: function(request)
+    {
+        var auditRun = this._clientObjects[request.resultId];
+        if (!auditRun)
+            return this._status.E_NOTFOUND(request.resultId);
+        auditRun.cancel();
+    },
+
     initExtensions: function()
     {
         InspectorExtensionRegistry.getExtensionsAsync();
@@ -255,7 +300,8 @@ WebInspector.ExtensionServer.prototype = {
 
     _addExtensions: function(extensions)
     {
-        InspectorFrontendHost.setExtensionAPI("(" + injectedExtensionAPI.toString() + ")"); // See ExtensionAPI.js for details.
+        // See ExtensionAPI.js and ExtensionCommon.js for details.
+        InspectorFrontendHost.setExtensionAPI(this._buildExtensionAPIInjectedScript());
         for (var i = 0; i < extensions.length; ++i) {
             var extension = extensions[i];
             try {
@@ -269,6 +315,15 @@ WebInspector.ExtensionServer.prototype = {
                 console.error("Failed to initialize extension " + extension.startPage + ":" + e);
             }
         }
+    },
+
+    _buildExtensionAPIInjectedScript: function()
+    {
+        return "(function(){ " +
+            "var private = {};" +
+            "(" + WebInspector.commonExtensionSymbols.toString() + ")(private);" +
+            "(" + WebInspector.injectedExtensionAPI.toString() + ").apply(this, arguments);" +
+            "})";
     },
 
     _onWindowMessage: function(event)
@@ -300,12 +355,14 @@ WebInspector.ExtensionServer.prototype = {
     }
 }
 
-WebInspector.ExtensionServer._statuses = 
+WebInspector.ExtensionServer._statuses =
 {
     OK: "",
-    E_NOTFOUND: "Object not found (%s)",
-    E_NOTSUPPORTED: "Object does not support requested operation (%s)",
-    E_EXISTS: "Object already exists (%s)"
+    E_EXISTS: "Object already exists: %s",
+    E_BADARG: "Invalid argument %s: %s",
+    E_BADARGTYPE: "Invalid type for argument %s: got %s, expected %s",
+    E_NOTFOUND: "Object not found: %s",
+    E_NOTSUPPORTED: "Object does not support requested operation: %s",
 }
 
 WebInspector.ExtensionStatus = function()
@@ -319,7 +376,7 @@ WebInspector.ExtensionStatus = function()
             status.isError = true;
             console.log("Extension server error: " + String.vsprintf(description, details));
         }
-        return status; 
+        return status;
     }
     for (status in WebInspector.ExtensionServer._statuses)
         this[status] = makeStatus.bind(null, status);

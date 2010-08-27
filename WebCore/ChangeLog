@@ -1,3 +1,94 @@
+2010-08-26  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: add audits support to extension API
+        Exposed (late) adding of categories from AuditPanel.
+        Removed indexOfObjectInListSortedByFunction in favor of
+        insertionIndexForObjectInListSortedByFunction (the former had
+        weird interface always returning negative numbers and was only used in
+        the latter).
+        https://bugs.webkit.org/show_bug.cgi?id=44518
+
+        Tests: inspector/extensions-audits-api.html
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/AuditFormatters.js: Added.
+        (WebInspector.applyFormatters):
+        (WebInspector.AuditFormatters.text):
+        (WebInspector.AuditFormatters.snippet):
+        (WebInspector.AuditFormatters.concat):
+        (WebInspector.AuditFormatters.url):
+        * inspector/front-end/AuditLauncherView.js:
+        (WebInspector.AuditLauncherView):
+        (WebInspector.AuditLauncherView.prototype.addCategory.compareCategories):
+        (WebInspector.AuditLauncherView.prototype.addCategory):
+        (WebInspector.AuditLauncherView.prototype._launchButtonClicked):
+        (WebInspector.AuditLauncherView.prototype._selectAllClicked):
+        (WebInspector.AuditLauncherView.prototype._categoryClicked):
+        (WebInspector.AuditLauncherView.prototype._createCategoryElement):
+        (WebInspector.AuditLauncherView.prototype._createLauncherUI):
+        * inspector/front-end/AuditResultView.js:
+        (WebInspector.AuditCategoryResultPane.prototype._appendResult):
+        * inspector/front-end/AuditsPanel.js:
+        (WebInspector.AuditsPanel):
+        (WebInspector.AuditsPanel.prototype.addCategory):
+        (WebInspector.AuditsPanel.prototype.getCategory):
+        (WebInspector.AuditsPanel.prototype._executeAudit):
+        (WebInspector.AuditCategory.prototype.run):
+        * inspector/front-end/ExtensionAPI.js:
+        (WebInspector.injectedExtensionAPI):
+        (WebInspector.injectedExtensionAPI.EventSinkImpl.prototype.addListener):
+        (WebInspector.injectedExtensionAPI.EventSinkImpl.prototype._fire):
+        (WebInspector.injectedExtensionAPI.EventSinkImpl.prototype._dispatch):
+        (WebInspector.injectedExtensionAPI.EventSink):
+        (WebInspector.injectedExtensionAPI.InspectorExtensionAPI):
+        (WebInspector.injectedExtensionAPI.Panels.prototype.create):
+        (WebInspector.injectedExtensionAPI.Audits):
+        (WebInspector.injectedExtensionAPI.Audits.prototype.addCategory):
+        (WebInspector.injectedExtensionAPI.AuditCategory.customDispatch):
+        (WebInspector.injectedExtensionAPI.AuditCategory):
+        (WebInspector.injectedExtensionAPI.AuditCategoryImpl):
+        (WebInspector.injectedExtensionAPI.AuditResult):
+        (WebInspector.injectedExtensionAPI.AuditResult.prototype.get Severity):
+        (WebInspector.injectedExtensionAPI.AuditResultImpl):
+        (WebInspector.injectedExtensionAPI.AuditResultImpl.prototype.addResult):
+        (WebInspector.injectedExtensionAPI.AuditResultImpl.prototype.createResult):
+        (WebInspector.injectedExtensionAPI.AuditResultImpl.prototype.done):
+        (WebInspector.injectedExtensionAPI.AuditResultImpl.prototype._nodeFactory):
+        (WebInspector.injectedExtensionAPI.AuditResultNode):
+        (WebInspector.injectedExtensionAPI.AuditResultNode.prototype.addChild):
+        * inspector/front-end/ExtensionAuditCategory.js: Added.
+        (WebInspector.ExtensionAuditCategory):
+        (WebInspector.ExtensionAuditCategory.prototype.get id):
+        (WebInspector.ExtensionAuditCategory.prototype.get displayName):
+        (WebInspector.ExtensionAuditCategory.prototype.get ruleCount):
+        (WebInspector.ExtensionAuditCategory.prototype.run):
+        (WebInspector.ExtensionAuditCategoryResults):
+        (WebInspector.ExtensionAuditCategoryResults.prototype.get complete):
+        (WebInspector.ExtensionAuditCategoryResults.prototype.cancel):
+        (WebInspector.ExtensionAuditCategoryResults.prototype.addResult):
+        (WebInspector.ExtensionAuditCategoryResults.prototype._addNode):
+        (WebInspector.ExtensionAuditCategoryResults.prototype._addResult):
+        * inspector/front-end/ExtensionCommon.js: Added.
+        (WebInspector.commonExtensionSymbols):
+        * inspector/front-end/ExtensionServer.js:
+        (WebInspector.ExtensionServer):
+        (WebInspector.ExtensionServer.prototype.startAuditRun):
+        (WebInspector.ExtensionServer.prototype.stopAuditRun):
+        (WebInspector.ExtensionServer.prototype._postNotification):
+        (WebInspector.ExtensionServer.prototype._onAddAuditCategory):
+        (WebInspector.ExtensionServer.prototype._onAddAuditResult):
+        (WebInspector.ExtensionServer.prototype._onStopAuditCategoryRun):
+        (WebInspector.ExtensionServer.prototype._addExtensions):
+        (WebInspector.ExtensionServer.prototype._buildExtensionAPIInjectedScript):
+        (WebInspector.ExtensionStatus):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/utilities.js:
+        ():
+
 2010-08-25  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Steve Block.

@@ -4,6 +4,9 @@ Started extension.
 Running tests...
 RUNNING TEST: extension_testAPI
 {
+    audits : {
+        addCategory : <function>
+    }
     inspectedWindow : {
         onLoaded : {
             addListener : <function>
