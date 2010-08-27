@@ -1,3 +1,12 @@
+2010-08-27  Tony Chang  <tony@chromium.org>
+
+        Not reviewed, cleaning up chromium test results.
+
+        After r66245, JSC and V8 produce the same results for fast/js/kde/Number.html.
+
+        * platform/chromium-mac/fast/js/kde/Number-expected.txt: Removed.
+        * platform/chromium-win/fast/js/kde/Number-expected.txt: Removed.
+
 2010-08-27  Andy Estes  <aestes@apple.com>
 
         Reviewed by Simon Fraser.
