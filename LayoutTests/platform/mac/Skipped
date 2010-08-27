@@ -301,7 +301,3 @@ fast/canvas/webgl/gl-teximage.html
 # Test always crashes on snowleopard, crashes on reload on leopard
 fast/events/tabindex-focus-blur-all.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=44749
-# Skipping flakey xssAuditor tests, until the bug is resolved.
-http/tests/security/xssAuditor/object-embed-tag-null-char.html
-http/tests/security/xssAuditor/object-src-inject.html

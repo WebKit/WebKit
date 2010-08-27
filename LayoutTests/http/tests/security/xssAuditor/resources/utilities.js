@@ -35,3 +35,19 @@ function sendRequestFromIFrame(url, params, HTTPMethod, callbackWhenDone)
         iFrameObj.onload = callbackWhenDone;
     frameContent.getElementById('form').submit();
 }
+
+
+function notifyDoneAfterReceivingBeforeloadFromIds(ids)
+{
+    var loadAttempted = 0;
+    window.addEventListener("message", function(event) {
+        var index = ids.indexOf(event.data);
+        if (index == -1)
+            return;
+
+        loadAttempted = loadAttempted | (1 << index);
+        if (loadAttempted == (1 << ids.length) - 1)
+            layoutTestController.notifyDone();
+    }, false);
+}
+

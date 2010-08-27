@@ -1,3 +1,32 @@
+2010-08-27  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Try to make some xssAuditor tests less flakey.
+        https://bugs.webkit.org/show_bug.cgi?id=44749
+        
+        Use postMessage() to communicate to the top window each time a
+        beforeload event fires in the iframe. When the top window has seen a
+        beforeload event from each widget in the iframe, it calls notifyDone().
+        This prevents the test from exiting before all the widgets have had a
+        chance to load, therefore ensuring that all relevant XSS Auditor
+        messages have been emitted.
+
+        * http/tests/security/xssAuditor/object-embed-tag-control-char-expected.txt:
+        * http/tests/security/xssAuditor/object-embed-tag-control-char.html:
+        * http/tests/security/xssAuditor/object-embed-tag-expected.txt:
+        * http/tests/security/xssAuditor/object-embed-tag-null-char-expected.txt:
+        * http/tests/security/xssAuditor/object-embed-tag-null-char.html:
+        * http/tests/security/xssAuditor/object-embed-tag.html:
+        * http/tests/security/xssAuditor/object-src-inject.html:
+        * http/tests/security/xssAuditor/object-tag-javascript-url.html:
+        * http/tests/security/xssAuditor/object-tag.html:
+        * http/tests/security/xssAuditor/resources/echo-intertag.pl:
+        * http/tests/security/xssAuditor/resources/echo-object-src.pl:
+        * http/tests/security/xssAuditor/resources/utilities.js:
+        (notifyDoneAfterReceivingBeforeloadFromIds):
+        * platform/mac/Skipped:
+
 2010-08-09  Jer Noble  <jer.noble@apple.com>
 
         Add JavaScript API to allow a page to go fullscreen.
