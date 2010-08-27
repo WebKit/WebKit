@@ -153,6 +153,13 @@ enum {
 };
 #endif
 
+@interface FakeQTMovieView : NSObject
+{
+}
+
+- (WebCoreMovieObserver *)delegate;
+@end
+
 using namespace WebCore;
 using namespace std;
 
@@ -315,11 +322,12 @@ void MediaPlayerPrivate::createQTMovie(NSURL *url, NSDictionary *movieAttributes
 
 static void mainThreadSetNeedsDisplay(id self, SEL)
 {
-    id movieView = [self superview];
-    ASSERT(!movieView || [movieView isKindOfClass:[QTMovieView class]]);
-    if (!movieView || ![movieView isKindOfClass:[QTMovieView class]])
+    id view = [self superview];
+    ASSERT(!view || [view isKindOfClass:[QTMovieView class]]);
+    if (!view || ![view isKindOfClass:[QTMovieView class]])
         return;
 
+    FakeQTMovieView *movieView = static_cast<FakeQTMovieView *>(view);
     WebCoreMovieObserver* delegate = [movieView delegate];
     ASSERT(!delegate || [delegate isKindOfClass:[WebCoreMovieObserver class]]);
     if (!delegate || ![delegate isKindOfClass:[WebCoreMovieObserver class]])

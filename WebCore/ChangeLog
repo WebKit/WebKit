@@ -1,3 +1,17 @@
+2010-08-26  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/8339008> WebCore's MediaPlayerPrivateQTKit.mm fails to build with clang.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::mainThreadSetNeedsDisplay): Remove some ambiguity in the return type of -delegate.
+        Since the message was being sent to a receiver of type id the compiler cannot accurately
+        determine the return type. Typically this would be resolved by using a more specific type
+        for the receiver. However, due to lazy loading shenanigans that we play with QTKit we're
+        unable to directly cast to the relevant type (QTMovieView*). Instead we fake up an interface
+        with the correct type of the method we care about (-delegate) and cast to that type instead.
+
 2010-08-26  Andy Estes  <aestes@apple.com>
 
         Reviewed by Darin Adler.
