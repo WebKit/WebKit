@@ -3194,10 +3194,6 @@ BUG53073 LINUX : svg/custom/clip-path-units-changes.svg = TEXT
 // Need to implement LayoutTestController::markerTextForListItem()
 BUG53289 WIN MAC LINUX : fast/lists/w3-css3-list-styles-fallback-style.html = TEXT
 
-// Inspector related tests that started failing around r65992:r66155
-BUG53406 WIN : inspector/debugger-breakpoints-not-activated-on-reload.html = PASS TIMEOUT
-BUG53406 WIN : http/tests/inspector/resource-parameters.html = PASS TEXT
-
 // Failing after r66144
 BUG53546 LINUX : userscripts/user-script-audio-document.html = TEXT
 BUG53546 LINUX : userscripts/user-script-video-document.html = TEXT
