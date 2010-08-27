@@ -1,3 +1,15 @@
+2010-08-27  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [GTK] fast/history/history-subframe-with-name.html fails with GTK DRT
+        https://bugs.webkit.org/show_bug.cgi?id=44784
+
+        Skip fast/history/history-subframe-with-name.html for GTK while we figure out
+        why it fails there.
+
+        * platform/gtk/Skipped:
+
 2010-08-27  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
