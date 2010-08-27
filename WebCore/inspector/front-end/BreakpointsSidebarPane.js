@@ -191,7 +191,7 @@ WebInspector.DOMBreakpointItem = function(breakpoint)
     var link = WebInspector.panels.elements.linkifyNodeReference(this._breakpoint.node);
     this._element.appendChild(link);
 
-    var type = WebInspector.DOMBreakpoint.Labels[this._breakpoint.type];
+    var type = WebInspector.DOMBreakpoint.labelForType(this._breakpoint.type);
     var typeElement = document.createTextNode(" - " + type);
     this._element.appendChild(typeElement);
 }

@@ -1448,6 +1448,7 @@ WebInspector.failedToParseScriptSource = function(sourceURL, source, startingLin
 WebInspector.pausedScript = function(callFrames)
 {
     this.panels.scripts.debuggerPaused(callFrames);
+    InspectorFrontendHost.bringToFront();
 }
 
 WebInspector.resumedScript = function()

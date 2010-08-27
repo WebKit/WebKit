@@ -1,3 +1,22 @@
+2010-08-26  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: use context menu items with checkbox for setting and removing DOM breakpoints
+        https://bugs.webkit.org/show_bug.cgi?id=44687
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/BreakpointsSidebarPane.js:
+        (WebInspector.DOMBreakpointItem):
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMBreakpointManager.prototype.findBreakpoint):
+        (WebInspector.DOMBreakpoint.labelForType):
+        (WebInspector.DOMBreakpoint.contextMenuLabelForType):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype._populateTagContextMenu):
+        * inspector/front-end/inspector.js:
+        (WebInspector.pausedScript):
+
 2010-08-27  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.

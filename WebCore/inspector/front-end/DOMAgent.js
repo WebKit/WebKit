@@ -692,6 +692,13 @@ WebInspector.DOMBreakpointManager.prototype = {
         this.dispatchEventToListeners("dom-breakpoint-added", breakpoint);
     },
 
+    findBreakpoint: function(nodeId, type)
+    {
+        var nodeBreakpoints = this._breakpoints[nodeId];
+        if (nodeBreakpoints && type in nodeBreakpoints)
+            return nodeBreakpoints[type];
+    },
+
     removeBreakpointsForNode: function(node)
     {
         var nodeBreakpoints = this._breakpoints[node.id];
@@ -728,10 +735,27 @@ WebInspector.DOMBreakpoint.Types = {
     NodeRemoved: 2
 };
 
-WebInspector.DOMBreakpoint.Labels = {};
-WebInspector.DOMBreakpoint.Labels[WebInspector.DOMBreakpoint.Types.SubtreeModified] = WebInspector.UIString("Subtree Modified");
-WebInspector.DOMBreakpoint.Labels[WebInspector.DOMBreakpoint.Types.AttributeModified] = WebInspector.UIString("Attribute Modified");
-WebInspector.DOMBreakpoint.Labels[WebInspector.DOMBreakpoint.Types.NodeRemoved] = WebInspector.UIString("Node Removed");
+WebInspector.DOMBreakpoint.labelForType = function(type)
+{
+    if (!WebInspector.DOMBreakpoint._labels) {
+        WebInspector.DOMBreakpoint._labels = {};
+        WebInspector.DOMBreakpoint._labels[WebInspector.DOMBreakpoint.Types.SubtreeModified] = WebInspector.UIString("Subtree Modified");
+        WebInspector.DOMBreakpoint._labels[WebInspector.DOMBreakpoint.Types.AttributeModified] = WebInspector.UIString("Attribute Modified");
+        WebInspector.DOMBreakpoint._labels[WebInspector.DOMBreakpoint.Types.NodeRemoved] = WebInspector.UIString("Node Removed");
+    }
+    return WebInspector.DOMBreakpoint._labels[type];
+}
+
+WebInspector.DOMBreakpoint.contextMenuLabelForType = function(type)
+{
+    if (!WebInspector.DOMBreakpoint._contextMenuLabels) {
+        WebInspector.DOMBreakpoint._contextMenuLabels = {};
+        WebInspector.DOMBreakpoint._contextMenuLabels[WebInspector.DOMBreakpoint.Types.SubtreeModified] = WebInspector.UIString("Break on Subtree Modifications");
+        WebInspector.DOMBreakpoint._contextMenuLabels[WebInspector.DOMBreakpoint.Types.AttributeModified] = WebInspector.UIString("Break on Attributes Modifications");
+        WebInspector.DOMBreakpoint._contextMenuLabels[WebInspector.DOMBreakpoint.Types.NodeRemoved] = WebInspector.UIString("Break on Node Removal");
+    }
+    return WebInspector.DOMBreakpoint._contextMenuLabels[type];
+}
 
 WebInspector.DOMBreakpoint.prototype = {
     get enabled()

@@ -765,16 +765,16 @@ WebInspector.ElementsTreeElement.prototype = {
         if (Preferences.domBreakpointsEnabled) {
             // Add debbuging-related actions
             contextMenu.appendSeparator();
-
-            contextMenu.appendItem(WebInspector.UIString("Stop on Subtree Modifications"),
-                WebInspector.domBreakpointManager.setBreakpoint.bind(WebInspector.domBreakpointManager, this.representedObject, WebInspector.DOMBreakpoint.Types.SubtreeModified));
-            contextMenu.appendItem(WebInspector.UIString("Stop on Attributes Modifications"),
-                WebInspector.domBreakpointManager.setBreakpoint.bind(WebInspector.domBreakpointManager, this.representedObject, WebInspector.DOMBreakpoint.Types.AttributeModified));
-            contextMenu.appendItem(WebInspector.UIString("Stop on Node Removal"),
-                WebInspector.domBreakpointManager.setBreakpoint.bind(WebInspector.domBreakpointManager, this.representedObject, WebInspector.DOMBreakpoint.Types.NodeRemoved));
-
-            contextMenu.appendItem(WebInspector.UIString("Remove Breakpoints"),
-                WebInspector.domBreakpointManager.removeBreakpointsForNode.bind(WebInspector.domBreakpointManager, this.representedObject));
+            for (var type in WebInspector.DOMBreakpoint.Types) {
+                var typeId = WebInspector.DOMBreakpoint.Types[type];
+                var label = WebInspector.DOMBreakpoint.contextMenuLabelForType(typeId);
+                var breakpoint = WebInspector.domBreakpointManager.findBreakpoint(this.representedObject.id, typeId);
+                if (!breakpoint)
+                    var handler = WebInspector.domBreakpointManager.setBreakpoint.bind(WebInspector.domBreakpointManager, this.representedObject, typeId);
+                else
+                    var handler = breakpoint.remove.bind(breakpoint);
+                contextMenu.appendCheckboxItem(label, handler, !!breakpoint);
+            }
         }
     },
 
