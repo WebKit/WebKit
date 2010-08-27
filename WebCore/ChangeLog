@@ -1,3 +1,18 @@
+2010-08-27  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG Filter with wrong results on repaint for non-CG platforms
+        https://bugs.webkit.org/show_bug.cgi?id=44706
+        
+        The result of SVG Filter is transformed to linearRGB on every repaint. 
+        Transform the result just once, right after creating it.
+
+        Test: svg/repaint/filter-repaint.svg
+
+        * rendering/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::postApplyResource):
+
 2010-08-27  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

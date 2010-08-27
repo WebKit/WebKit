@@ -262,16 +262,17 @@ void RenderSVGResourceFilter::postApplyResource(RenderObject* object, GraphicsCo
         if (!filterData->builded) {
             filterData->filter->setSourceImage(filterData->sourceGraphicBuffer.release());
             lastEffect->apply(filterData->filter.get());
+#if !PLATFORM(CG)
+            ImageBuffer* resultImage = lastEffect->resultImage();
+            if (resultImage)
+                resultImage->transformColorSpace(LinearRGB, DeviceRGB);
+#endif
             filterData->builded = true;
         }
 
         ImageBuffer* resultImage = lastEffect->resultImage();
-        if (resultImage) {
-#if !PLATFORM(CG)
-            resultImage->transformColorSpace(LinearRGB, DeviceRGB);
-#endif
+        if (resultImage)
             context->drawImageBuffer(resultImage, object->style()->colorSpace(), lastEffect->subRegion());
-        }
     }
 
     filterData->sourceGraphicBuffer.clear();
