@@ -432,6 +432,13 @@ static uint32_t modifiersForNavigationAction(const NavigationAction& navigationA
 
 void WebFrameLoaderClient::dispatchDecidePolicyForMIMEType(FramePolicyFunction function, const String& MIMEType, const ResourceRequest& request)
 {
+    if (m_frame->coreFrame()->loader()->documentLoader()->url().isEmpty() && request.url() == blankURL()) {
+        // WebKit2 loads initial about:blank documents synchronously, without consulting the policy delegate
+        ASSERT(m_frame->coreFrame()->loader()->stateMachine()->committingFirstRealLoad());
+        (m_frame->coreFrame()->loader()->policyChecker()->*function)(PolicyUse);
+        return;
+    }
+    
     WebPage* webPage = m_frame->page();
     if (!webPage)
         return;
@@ -463,6 +470,13 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(FramePolicyFun
 
 void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(FramePolicyFunction function, const NavigationAction& navigationAction, const ResourceRequest& request, PassRefPtr<FormState>)
 {
+    if (m_frame->coreFrame()->loader()->documentLoader()->url().isEmpty() && request.url() == blankURL()) {
+        // WebKit2 loads initial about:blank documents synchronously, without consulting the policy delegate
+        ASSERT(m_frame->coreFrame()->loader()->stateMachine()->committingFirstRealLoad());
+        (m_frame->coreFrame()->loader()->policyChecker()->*function)(PolicyUse);
+        return;
+    }
+
     WebPage* webPage = m_frame->page();
     if (!webPage)
         return;

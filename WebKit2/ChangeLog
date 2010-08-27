@@ -1,3 +1,14 @@
+2010-08-27  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/8147879> - Null URL passed to WebKit2 HistoryDelegate
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForMIMEType): WK2 now loads initial about:blank document's synchronously,
+          without consulting the policy delegate.
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction): Ditto.
+
 2010-08-27  Adam Roben  <aroben@apple.com>
 
         Handle ERROR_IO_INCOMPLETE more correctly in Connection
