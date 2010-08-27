@@ -1,3 +1,36 @@
+2010-08-27  Michael Nordman  <michaeln@google.com>
+
+        Reviewed by David Levin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=44133
+        IDL bindings for XmlHttpRequest.responseBlob support, doesn't do anything yet.
+        Adds two new attributes, asBlob and responseBlob.
+        Runtime disabled by default, also behind a new ENABLE_XHR_RESPONSE_BLOB compile time guard.
+        
+        No new tests, just adding some stubs.
+
+        * bindings/generic/RuntimeEnabledFeatures.cpp:
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setResponseBlobEnabled):
+        (WebCore::RuntimeEnabledFeatures::responseBlobEnabled):
+        (WebCore::RuntimeEnabledFeatures::asBlobEnabled):
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::responseText): Changed to allow an exceptional return path.
+        * bindings/v8/custom/V8XMLHttpRequestCustom.cpp:
+        (WebCore::V8XMLHttpRequest::responseTextAccessorGetter): Changed to allow an exceptional return path.
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::responseText): Changed to raise an exception when accessed with asBlob set to true.
+        (WebCore::XMLHttpRequest::responseXML): Changed to raise an exception when accessed with asBlob set to true.
+        (WebCore::XMLHttpRequest::responseBlob): Added stub method, returns 0 for now.
+        (WebCore::XMLHttpRequest::setAsBlob): Sets the asBlob attribute, raises exception if called at an inappropriate time.
+        (WebCore::XMLHttpRequest::open): Resets asBlob to false, the default value.
+        (WebCore::XMLHttpRequest::abort): Clears m_responseBlob.
+        (WebCore::XMLHttpRequest::clearResponse): Clears m_responseBlob.
+        (WebCore::XMLHttpRequest::didFinishLoading): Added a FIXME to populate m_responseBlob.
+        * xml/XMLHttpRequest.h:
+        (WebCore::XMLHttpRequest::asBlob):
+        * xml/XMLHttpRequest.idl:
+
 2010-08-27  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Tony Chang.

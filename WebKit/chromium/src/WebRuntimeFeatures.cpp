@@ -256,4 +256,20 @@ bool WebRuntimeFeatures::isSpeechInputEnabled()
     return RuntimeEnabledFeatures::speechInputEnabled();
 }
 
+void WebRuntimeFeatures::enableXHRResponseBlob(bool enable)
+{
+#if ENABLE(XHR_RESPONSE_BLOB)
+    RuntimeEnabledFeatures::setXHRResponseBlobEnabled(enable);
+#endif
+}
+
+bool WebRuntimeFeatures::isXHRResponseBlobEnabled()
+{
+#if ENABLE(XHR_RESPONSE_BLOB)
+    return RuntimeEnabledFeatures::xhrResponseBlobEnabled();
+#else
+    return false;
+#endif
+}
+
 } // namespace WebKit

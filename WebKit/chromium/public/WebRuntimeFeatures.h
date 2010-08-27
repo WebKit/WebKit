@@ -86,6 +86,9 @@ public:
     WEBKIT_API static void enableSpeechInput(bool);
     WEBKIT_API static bool isSpeechInputEnabled();
 
+    WEBKIT_API static void enableXHRResponseBlob(bool);
+    WEBKIT_API static bool isXHRResponseBlobEnabled();
+
 private:
     WebRuntimeFeatures();
 };
