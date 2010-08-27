@@ -1752,6 +1752,10 @@ userscripts/script-run-at-end.html
 userscripts/script-run-at-start.html
 userscripts/user-script-all-frames.html
 userscripts/user-script-top-frame-only.html
+userscripts/user-script-audio-document.html
+userscripts/user-script-image-document.html
+userscripts/user-script-plugin-document.html
+userscripts/user-script-video-document.html
 
 # WebKitTestRunner needs layoutTestController.setPOSIXLocale
 # <https://bugs.webkit.org/show_bug.cgi?id=42682>

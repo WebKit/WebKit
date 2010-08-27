@@ -1,3 +1,12 @@
+2010-08-26  Brian Weinstein  <bweinstein@apple.com>
+
+        Rubber-stamped by Mark Rowe.
+        
+        Skip tests that were added in r66144, because WebKit2 doesn't support
+        layoutTestController.addUserScript yet.
+
+        * platform/mac-wk2/Skipped:
+
 2010-08-26  Dumitru Daniliuc  <dumi@chromium.org>
 
         Unreviewed, more Chromium expectations updates.
