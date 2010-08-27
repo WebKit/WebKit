@@ -1,5 +1,15 @@
 2010-08-26  Dumitru Daniliuc  <dumi@chromium.org>
 
+        Unreviewed, Chromium expectations update.
+
+        * platform/chromium-mac/fast/forms/select-style-expected.checksum: Added.
+        * platform/chromium-mac/fast/forms/select-style-expected.png: Added.
+        * platform/chromium-mac/fast/forms/select-style-expected.txt: Added.
+        * platform/chromium-win/fast/forms/select-style-expected.checksum:
+        * platform/chromium-win/fast/forms/select-style-expected.png:
+
+2010-08-26  Dumitru Daniliuc  <dumi@chromium.org>
+
         Unreviewed, updating Chromium expectations.
 
         * platform/chromium-linux/fast/css/percent-top-relative-container-height-unspecified-expected.checksum: Added.
