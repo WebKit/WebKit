@@ -33,6 +33,9 @@
 
 namespace WTF {
 
+// Size = 80 for sizeof(DtoaBuffer) + some sign bits, decimal point, 'e', exponent digits.
+typedef UChar NumberToStringBuffer[96];
+
 enum RoundingSignificantFiguresType { RoundingSignificantFigures };
 enum RoundingDecimalPlacesType { RoundingDecimalPlaces };
 
@@ -321,6 +324,7 @@ private:
 
 } // namespace WTF
 
+using WTF::NumberToStringBuffer;
 using WTF::DecimalNumber;
 using WTF::RoundingSignificantFigures;
 using WTF::RoundingDecimalPlaces;

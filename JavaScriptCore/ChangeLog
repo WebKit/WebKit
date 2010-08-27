@@ -1,3 +1,23 @@
+2010-08-26  Gavin Barraclough  <barraclough@apple.com>
+
+        Rubber Stamped by Oliver Hunt.
+
+        Partially revert r65959. The toString changes regressed the v8 tests,
+        but keep the toFixed/toExponential/toPrecision changes.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * runtime/NumberPrototype.cpp:
+        * runtime/UString.cpp:
+        (JSC::UString::number):
+        * wtf/DecimalNumber.h:
+        * wtf/dtoa.cpp:
+        (WTF::append):
+        (WTF::doubleToStringInJavaScriptFormat):
+        * wtf/dtoa.h:
+        * wtf/text/WTFString.cpp:
+        * wtf/text/WTFString.h:
+
 2010-08-26  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Darin Fisher.

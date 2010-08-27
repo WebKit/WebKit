@@ -29,6 +29,7 @@
 #include "Operations.h"
 #include "PrototypeFunction.h"
 #include "StringBuilder.h"
+#include "dtoa.h"
 #include <wtf/Assertions.h>
 #include <wtf/DecimalNumber.h>
 #include <wtf/MathExtras.h>

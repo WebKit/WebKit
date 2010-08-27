@@ -1,3 +1,13 @@
+2010-08-26  Gavin Barraclough  <barraclough@apple.com>
+
+        Rubber Stamped by Oliver Hunt.
+
+        Partially revert r65959. The toString changes regressed the v8 tests,
+        but keep the toFixed/toExponential/toPrecision changes.
+
+        * html/HTMLTreeBuilder.cpp:
+        (WebCore::serializeForNumberType):
+
 2010-08-26  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Adam Roben.
