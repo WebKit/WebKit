@@ -37,6 +37,11 @@ using namespace WebCore;
 
 namespace WebKit {
 
+PassOwnPtr<ChunkedUpdateDrawingAreaProxy> ChunkedUpdateDrawingAreaProxy::create(PlatformWebView* webView)
+{
+    return adoptPtr(new ChunkedUpdateDrawingAreaProxy(webView));
+}
+
 ChunkedUpdateDrawingAreaProxy::ChunkedUpdateDrawingAreaProxy(PlatformWebView* webView)
     : DrawingAreaProxy(ChunkedUpdateDrawingAreaType)
     , m_isWaitingForDidSetFrameNotification(false)

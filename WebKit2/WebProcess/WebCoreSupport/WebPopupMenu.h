@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,6 +23,7 @@
 #define WebPopupMenu_h
 
 #include <WebCore/PopupMenu.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 class PopupMenuClient;
@@ -31,7 +33,7 @@ namespace WebKit {
 
 class WebPopupMenu : public WebCore::PopupMenu {
 public:
-    WebPopupMenu(WebCore::PopupMenuClient*);
+    static PassRefPtr<WebPopupMenu> create(WebCore::PopupMenuClient*);
     ~WebPopupMenu();
 
     virtual void show(const WebCore::IntRect&, WebCore::FrameView*, int index);
@@ -40,9 +42,11 @@ public:
     virtual void disconnectClient();
 
 private:
+    WebPopupMenu(WebCore::PopupMenuClient*);
+
     WebCore::PopupMenuClient* m_popupClient;
 };
 
-}
+} // namespace WebKit
 
 #endif // WebPopupMenu_h

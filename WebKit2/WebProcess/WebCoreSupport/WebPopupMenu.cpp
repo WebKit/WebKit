@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -17,12 +18,18 @@
  * Boston, MA 02110-1301, USA.
  *
  */
+
 #include "WebPopupMenu.h"
 
 #include <WebCore/FrameView.h>
 #include <WebCore/PopupMenuClient.h>
 
 namespace WebKit {
+
+PassRefPtr<WebPopupMenu> WebPopupMenu::create(WebCore::PopupMenuClient* client)
+{
+    return adoptRef(new WebPopupMenu(client));
+}
 
 WebPopupMenu::WebPopupMenu(WebCore::PopupMenuClient* client)
     : m_popupClient(client)
@@ -52,4 +59,4 @@ void WebPopupMenu::updateFromElement()
 {
 }
 
-}
+} // namespace WebKit

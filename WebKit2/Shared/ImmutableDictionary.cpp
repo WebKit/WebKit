@@ -49,14 +49,14 @@ PassRefPtr<ImmutableArray> ImmutableDictionary::keys() const
         return ImmutableArray::create();
 
     size_t size = m_map.size();
-    APIObject** array = new APIObject*[size];
+    OwnArrayPtr<APIObject*> array = adoptArrayPtr(new APIObject*[size]);
 
     MapType::const_iterator::Keys it = m_map.begin().keys();
     MapType::const_iterator::Keys end = m_map.end().keys();
     for (unsigned i = 0; it != end; ++it, ++i)
         array[i] = WebString::create(*it).releaseRef();
 
-    return ImmutableArray::adopt(array, size);
+    return ImmutableArray::adopt(array.release(), size);
 }
 
 } // namespace WebKit

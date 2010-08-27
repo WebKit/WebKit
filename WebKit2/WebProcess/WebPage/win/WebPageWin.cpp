@@ -200,33 +200,33 @@ bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent& keyboard
         break;
     case VK_SPACE:
         if (keyboardEvent.shiftKey())
-            scroll(m_page, ScrollUp, ScrollByPage);
+            scroll(m_page.get(), ScrollUp, ScrollByPage);
         else
-            scroll(m_page, ScrollDown, ScrollByPage);
+            scroll(m_page.get(), ScrollDown, ScrollByPage);
         break;
     case VK_LEFT:
-        scroll(m_page, ScrollLeft, ScrollByLine);
+        scroll(m_page.get(), ScrollLeft, ScrollByLine);
         break;
     case VK_RIGHT:
-        scroll(m_page, ScrollRight, ScrollByLine);
+        scroll(m_page.get(), ScrollRight, ScrollByLine);
         break;
     case VK_UP:
-        scroll(m_page, ScrollUp, ScrollByLine);
+        scroll(m_page.get(), ScrollUp, ScrollByLine);
         break;
     case VK_DOWN:
-        scroll(m_page, ScrollDown, ScrollByLine);
+        scroll(m_page.get(), ScrollDown, ScrollByLine);
         break;
     case VK_HOME:
-        scroll(m_page, ScrollUp, ScrollByDocument);
+        scroll(m_page.get(), ScrollUp, ScrollByDocument);
         break;
     case VK_END:
-        scroll(m_page, ScrollDown, ScrollByDocument);
+        scroll(m_page.get(), ScrollDown, ScrollByDocument);
         break;
     case VK_PRIOR:
-        scroll(m_page, ScrollUp, ScrollByPage);
+        scroll(m_page.get(), ScrollUp, ScrollByPage);
         break;
     case VK_NEXT:
-        scroll(m_page, ScrollDown, ScrollByPage);
+        scroll(m_page.get(), ScrollDown, ScrollByPage);
         break;
     default:
         return false;

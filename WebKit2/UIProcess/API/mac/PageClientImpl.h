@@ -38,10 +38,12 @@ NSString* nsStringFromWebCoreString(const WTF::String&);
 
 class PageClientImpl : public PageClient {
 public:
-    PageClientImpl(WKView*);
+    static PassOwnPtr<PageClientImpl> create(WKView*);
     virtual ~PageClientImpl();
 
 private:
+    PageClientImpl(WKView*);
+
     virtual void processDidExit();
     virtual void processDidRevive();
     virtual void takeFocus(bool direction);

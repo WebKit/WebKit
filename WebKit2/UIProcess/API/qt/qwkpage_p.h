@@ -26,8 +26,9 @@
 #include "qwkpage.h"
 #include "WebPageNamespace.h"
 #include "WebPageProxy.h"
-#include <QBasicTimer>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
+#include <QBasicTimer>
 #include <QGraphicsView>
 #include <QKeyEvent>
 
@@ -38,7 +39,7 @@ public:
 
     static QWKPagePrivate* get(QWKPage* page) { return page->d; }
 
-    void init(const QSize& viewportSize, WebKit::DrawingAreaProxy*);
+    void init(const QSize& viewportSize, WTF::PassOwnPtr<WebKit::DrawingAreaProxy>);
 
     // PageClient
 #if USE(ACCELERATED_COMPOSITING)

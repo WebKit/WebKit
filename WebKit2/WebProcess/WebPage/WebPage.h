@@ -40,6 +40,7 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
+
 #if ENABLE(TOUCH_EVENTS)
 #include <WebCore/PlatformTouchEvent.h>
 #endif
@@ -78,7 +79,7 @@ public:
 
     void close();
 
-    WebCore::Page* corePage() const { return m_page; }
+    WebCore::Page* corePage() const { return m_page.get(); }
     uint64_t pageID() const { return m_pageID; }
 
     void setSize(const WebCore::IntSize&);
@@ -164,7 +165,7 @@ private:
     void didReceivePolicyDecision(WebFrame*, uint64_t listenerID, WebCore::PolicyAction policyAction);
     void setCustomUserAgent(const WTF::String&);
 
-    WebCore::Page* m_page;
+    OwnPtr<WebCore::Page> m_page;
     RefPtr<WebFrame> m_mainFrame;
 
     String m_customUserAgent;

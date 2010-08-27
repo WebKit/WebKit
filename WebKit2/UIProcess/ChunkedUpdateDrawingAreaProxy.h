@@ -57,7 +57,8 @@ typedef QGraphicsWKView PlatformWebView;
 
 class ChunkedUpdateDrawingAreaProxy : public DrawingAreaProxy {
 public:
-    ChunkedUpdateDrawingAreaProxy(PlatformWebView*);
+    static PassOwnPtr<ChunkedUpdateDrawingAreaProxy> create(PlatformWebView*);
+
     virtual ~ChunkedUpdateDrawingAreaProxy();
 
     // The DrawingAreaProxy should never be decoded itself. Instead, the DrawingArea should be decoded.
@@ -67,6 +68,8 @@ public:
     }
 
 private:
+    ChunkedUpdateDrawingAreaProxy(PlatformWebView*);
+
     WebPageProxy* page();
 
     // DrawingAreaProxy

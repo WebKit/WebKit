@@ -30,6 +30,7 @@
 #import "WKViewInternal.h"
 #import <WebCore/Cursor.h>
 #import <WebCore/FoundationExtras.h>
+#import <wtf/PassOwnPtr.h>
 #import <wtf/text/WTFString.h>
 
 using namespace WebCore;
@@ -39,6 +40,11 @@ namespace WebKit {
 NSString* nsStringFromWebCoreString(const WTF::String& string)
 {
     return string.impl() ? HardAutorelease(WKStringCopyCFString(0, toRef(string.impl()))) : @"";
+}
+
+PassOwnPtr<PageClientImpl> PageClientImpl::create(WKView* wkView)
+{
+    return adoptPtr(new PageClientImpl(wkView));
 }
 
 PageClientImpl::PageClientImpl(WKView* wkView)

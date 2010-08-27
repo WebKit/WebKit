@@ -501,12 +501,12 @@ bool WebChromeClient::selectItemWritingDirectionIsNatural()
 
 PassRefPtr<WebCore::PopupMenu> WebChromeClient::createPopupMenu(WebCore::PopupMenuClient* client) const
 {
-    return adoptRef(new WebPopupMenu(client));
+    return WebPopupMenu::create(client);
 }
 
 PassRefPtr<WebCore::SearchPopupMenu> WebChromeClient::createSearchPopupMenu(WebCore::PopupMenuClient* client) const
 {
-    return adoptRef(new WebSearchPopupMenu(client));
+    return WebSearchPopupMenu::create(client);
 }
 
 PassOwnPtr<HTMLParserQuirks> WebChromeClient::createHTMLParserQuirks()

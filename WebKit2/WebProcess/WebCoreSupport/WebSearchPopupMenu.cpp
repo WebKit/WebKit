@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,8 +24,13 @@
 
 namespace WebKit {
 
+PassRefPtr<WebSearchPopupMenu> WebSearchPopupMenu::create(WebCore::PopupMenuClient* client)
+{
+    return adoptRef(new WebSearchPopupMenu(client));
+}
+
 WebSearchPopupMenu::WebSearchPopupMenu(WebCore::PopupMenuClient* client)
-    : m_popup(adoptRef(new WebPopupMenu(client)))
+    : m_popup(WebPopupMenu::create(client))
 {
 }
 
@@ -46,4 +52,4 @@ bool WebSearchPopupMenu::enabled()
     return false;
 }
 
-}
+} // namespace WebKit

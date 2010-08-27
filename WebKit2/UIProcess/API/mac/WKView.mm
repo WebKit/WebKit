@@ -85,10 +85,10 @@ using namespace WebCore;
 
     _data = [[WKViewData alloc] init];
 
-    _data->_pageClient.set(new PageClientImpl(self));
+    _data->_pageClient = PageClientImpl::create(self);
     _data->_page = toWK(pageNamespaceRef)->createWebPage();
     _data->_page->setPageClient(_data->_pageClient.get());
-    _data->_page->initializeWebPage(IntSize(frame.size), new ChunkedUpdateDrawingAreaProxy(self));
+    _data->_page->initializeWebPage(IntSize(frame.size), ChunkedUpdateDrawingAreaProxy::create(self));
     _data->_page->setIsInWindow([self window]);
 
     return self;
@@ -531,11 +531,11 @@ static bool isViewVisible(NSView *view)
         case DrawingAreaProxy::None:
             break;
         case DrawingAreaProxy::ChunkedUpdateDrawingAreaType: {
-            newDrawingArea = new ChunkedUpdateDrawingAreaProxy(self);
+            newDrawingArea = ChunkedUpdateDrawingAreaProxy::create(self);
             break;
         }
         case DrawingAreaProxy::LayerBackedDrawingAreaType: {
-            newDrawingArea = new LayerBackedDrawingAreaProxy(self);
+            newDrawingArea = LayerBackedDrawingAreaProxy::create(self);
             break;
         }
     }

@@ -91,7 +91,7 @@ WebPage::WebPage(uint64_t pageID, const IntSize& viewSize, const WebPreferencesS
     pageClients.dragClient = new WebDragClient(this);
     pageClients.inspectorClient = new WebInspectorClient(this);
     pageClients.backForwardControllerClient = new WebBackForwardControllerClient(this);
-    m_page = new Page(pageClients);
+    m_page = adoptPtr(new Page(pageClients));
 
     m_page->settings()->setJavaScriptEnabled(store.javaScriptEnabled);
     m_page->settings()->setLoadsImagesAutomatically(store.loadsImagesAutomatically);
@@ -215,8 +215,7 @@ void WebPage::close()
 
     m_mainFrame->coreFrame()->loader()->detachFromParent();
 
-    delete m_page;
-    m_page = 0;
+    m_page.clear();
 
     WebProcess::shared().removeWebPage(m_pageID);
 }

@@ -202,45 +202,45 @@ bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent& keyboard
         break;
     case VK_SPACE:
         if (keyboardEvent.shiftKey())
-            scroll(m_page, ScrollUp, ScrollByPage);
+            scroll(m_page.get(), ScrollUp, ScrollByPage);
         else
-            scroll(m_page, ScrollDown, ScrollByPage);
+            scroll(m_page.get(), ScrollDown, ScrollByPage);
         break;
     case VK_PRIOR:
-        scroll(m_page, ScrollUp, ScrollByPage);
+        scroll(m_page.get(), ScrollUp, ScrollByPage);
         break;
     case VK_NEXT:
-        scroll(m_page, ScrollDown, ScrollByPage);
+        scroll(m_page.get(), ScrollDown, ScrollByPage);
         break;
     case VK_HOME:
-        scroll(m_page, ScrollUp, ScrollByDocument);
-        scroll(m_page, ScrollLeft, ScrollByDocument);
+        scroll(m_page.get(), ScrollUp, ScrollByDocument);
+        scroll(m_page.get(), ScrollLeft, ScrollByDocument);
         break;
     case VK_END:
-        scroll(m_page, ScrollDown, ScrollByDocument);
-        scroll(m_page, ScrollLeft, ScrollByDocument);
+        scroll(m_page.get(), ScrollDown, ScrollByDocument);
+        scroll(m_page.get(), ScrollLeft, ScrollByDocument);
         break;
     case VK_UP:
         if (keyboardEvent.shiftKey())
             return false;
         if (keyboardEvent.metaKey()) {
-            scroll(m_page, ScrollUp, ScrollByDocument);
-            scroll(m_page, ScrollLeft, ScrollByDocument);
+            scroll(m_page.get(), ScrollUp, ScrollByDocument);
+            scroll(m_page.get(), ScrollLeft, ScrollByDocument);
         } else if (keyboardEvent.altKey() || keyboardEvent.controlKey())
-            scroll(m_page, ScrollUp, ScrollByPage);
+            scroll(m_page.get(), ScrollUp, ScrollByPage);
         else
-            scroll(m_page, ScrollUp, ScrollByLine);
+            scroll(m_page.get(), ScrollUp, ScrollByLine);
         break;
     case VK_DOWN:
         if (keyboardEvent.shiftKey())
             return false;
         if (keyboardEvent.metaKey()) {
-            scroll(m_page, ScrollDown, ScrollByDocument);
-            scroll(m_page, ScrollLeft, ScrollByDocument);
+            scroll(m_page.get(), ScrollDown, ScrollByDocument);
+            scroll(m_page.get(), ScrollLeft, ScrollByDocument);
         } else if (keyboardEvent.altKey() || keyboardEvent.controlKey())
-            scroll(m_page, ScrollDown, ScrollByPage);
+            scroll(m_page.get(), ScrollDown, ScrollByPage);
         else
-            scroll(m_page, ScrollDown, ScrollByLine);
+            scroll(m_page.get(), ScrollDown, ScrollByLine);
         break;
     case VK_LEFT:
         if (keyboardEvent.shiftKey())
@@ -249,9 +249,9 @@ bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent& keyboard
             m_page->goBack();
         else {
             if (keyboardEvent.altKey()  | keyboardEvent.controlKey())
-                scroll(m_page, ScrollLeft, ScrollByPage);
+                scroll(m_page.get(), ScrollLeft, ScrollByPage);
             else
-                scroll(m_page, ScrollLeft, ScrollByLine);
+                scroll(m_page.get(), ScrollLeft, ScrollByLine);
         }
         break;
     case VK_RIGHT:
@@ -261,9 +261,9 @@ bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent& keyboard
             m_page->goForward();
         else {
             if (keyboardEvent.altKey() || keyboardEvent.controlKey())
-                scroll(m_page, ScrollRight, ScrollByPage);
+                scroll(m_page.get(), ScrollRight, ScrollByPage);
             else
-                scroll(m_page, ScrollRight, ScrollByLine);
+                scroll(m_page.get(), ScrollRight, ScrollByLine);
         }
         break;
     default:

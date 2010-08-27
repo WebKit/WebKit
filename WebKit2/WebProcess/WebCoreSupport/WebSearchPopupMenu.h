@@ -21,14 +21,14 @@
 #ifndef WebSearchPopupMenu_h
 #define WebSearchPopupMenu_h
 
-#include <WebCore/SearchPopupMenu.h>
 #include "WebPopupMenu.h"
+#include <WebCore/SearchPopupMenu.h>
 
 namespace WebKit {
 
 class WebSearchPopupMenu : public WebCore::SearchPopupMenu {
 public:
-    WebSearchPopupMenu(WebCore::PopupMenuClient*);
+    static PassRefPtr<WebSearchPopupMenu> create(WebCore::PopupMenuClient*);
 
     virtual WebCore::PopupMenu* popupMenu();
     virtual void saveRecentSearches(const WTF::AtomicString& name, const Vector<WTF::String>& searchItems);
@@ -36,6 +36,8 @@ public:
     virtual bool enabled();
 
 private:
+    WebSearchPopupMenu(WebCore::PopupMenuClient*);
+
     RefPtr<WebPopupMenu> m_popup;
 };
 

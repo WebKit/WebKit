@@ -224,7 +224,7 @@ PassRefPtr<ImmutableArray> WebFrame::childFrames()
     if (!size)
         return ImmutableArray::create();
 
-    APIObject** array = new APIObject*[size];
+    OwnArrayPtr<APIObject*> array = adoptArrayPtr(new APIObject*[size]);
     unsigned i = 0;
     for (Frame* child = m_coreFrame->tree()->firstChild(); child; child = child->tree()->nextSibling(), ++i) {
         WebFrame* webFrame = static_cast<WebFrameLoaderClient*>(child->loader()->client())->webFrame();
@@ -232,7 +232,7 @@ PassRefPtr<ImmutableArray> WebFrame::childFrames()
         array[i] = webFrame;
     }
 
-    return ImmutableArray::adopt(array, size);
+    return ImmutableArray::adopt(array.release(), size);
 }
 
 unsigned WebFrame::numberOfActiveAnimations()

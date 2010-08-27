@@ -122,10 +122,8 @@ public:
             uint64_t size;
             if (!decoder->decode(size))
                 return false;
-            
-            OwnArrayPtr<APIObject*> array;
-            array.set(new APIObject*[size]);
-            
+
+            OwnArrayPtr<APIObject*> array = adoptArrayPtr(new APIObject*[size]);
             for (size_t i = 0; i < size; ++i) {
                 APIObject* element;
                 PostMessageDecoder messageCoder(&element);
@@ -134,7 +132,7 @@ public:
                 array[i] = element;
             }
 
-            *(coder.m_root) = ImmutableArray::create(array.release().leakPtr(), size).leakRef();
+            *(coder.m_root) = ImmutableArray::adopt(array.release(), size).leakRef();
             break;
         }
         case APIObject::TypeString: {

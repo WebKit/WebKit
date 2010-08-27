@@ -1,3 +1,68 @@
+2010-08-26  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Adopt more uses OwnPtr/OwnArray in WebKit2.
+        https://bugs.webkit.org/show_bug.cgi?id=44728
+
+        Also clears up weird create vs. adoption semantics. Now both create
+        and adopt both don't ref their pointers, adoption is just about the
+        buffer.
+
+        * Shared/ImmutableArray.cpp:
+        (WebKit::ImmutableArray::ImmutableArray):
+        (WebKit::ImmutableArray::~ImmutableArray):
+        * Shared/ImmutableArray.h:
+        (WebKit::ImmutableArray::adopt):
+        * Shared/ImmutableDictionary.cpp:
+        (WebKit::ImmutableDictionary::keys):
+        * Shared/WebData.h:
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::create):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView initWithFrame:pageNamespaceRef:]):
+        (-[WKView _switchToDrawingAreaTypeIfNecessary:DrawingAreaProxy::]):
+        * UIProcess/API/qt/qgraphicswkview.cpp:
+        (QGraphicsWKView::QGraphicsWKView):
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPagePrivate::init):
+        * UIProcess/API/qt/qwkpage_p.h:
+        * UIProcess/ChunkedUpdateDrawingAreaProxy.cpp:
+        (WebKit::ChunkedUpdateDrawingAreaProxy::create):
+        * UIProcess/ChunkedUpdateDrawingAreaProxy.h:
+        * UIProcess/LayerBackedDrawingAreaProxy.cpp:
+        (WebKit::LayerBackedDrawingAreaProxy::create):
+        * UIProcess/LayerBackedDrawingAreaProxy.h:
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::backListAsImmutableArrayWithLimit):
+        (WebKit::WebBackForwardList::forwardListAsImmutableArrayWithLimit):
+        * UIProcess/WebContext.cpp:
+        (WebKit::PostMessageEncoder::PostMessageDecoder::decode):
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::PostMessageEncoder::PostMessageDecoder::decode):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::createPopupMenu):
+        (WebKit::WebChromeClient::createSearchPopupMenu):
+        * WebProcess/WebCoreSupport/WebPopupMenu.cpp:
+        (WebKit::WebPopupMenu::create):
+        * WebProcess/WebCoreSupport/WebPopupMenu.h:
+        * WebProcess/WebCoreSupport/WebSearchPopupMenu.cpp:
+        (WebKit::WebSearchPopupMenu::create):
+        (WebKit::WebSearchPopupMenu::WebSearchPopupMenu):
+        * WebProcess/WebCoreSupport/WebSearchPopupMenu.h:
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::childFrames):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::close):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::corePage):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::performDefaultBehaviorForKeyEvent):
+        * WebProcess/WebPage/win/WebPageWin.cpp:
+        (WebKit::WebPage::performDefaultBehaviorForKeyEvent):
+
 2010-08-26  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Sam Weinig.

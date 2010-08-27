@@ -55,7 +55,7 @@ QWKPagePrivate::~QWKPagePrivate()
     page->close();
 }
 
-void QWKPagePrivate::init(const QSize& viewportSize, DrawingAreaProxy* proxy)
+void QWKPagePrivate::init(const QSize& viewportSize, PassOwnPtr<DrawingAreaProxy> proxy)
 {
     page->initializeWebPage(IntSize(viewportSize), proxy);
 }

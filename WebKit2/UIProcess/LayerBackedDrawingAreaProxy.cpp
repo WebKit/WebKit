@@ -37,6 +37,11 @@ using namespace WebCore;
 
 namespace WebKit {
 
+PassOwnPtr<LayerBackedDrawingAreaProxy> LayerBackedDrawingAreaProxy::create(PlatformWebView* webView)
+{
+    return adoptPtr(new LayerBackedDrawingAreaProxy(webView));
+}
+
 LayerBackedDrawingAreaProxy::LayerBackedDrawingAreaProxy(PlatformWebView* webView)
     : DrawingAreaProxy(LayerBackedDrawingAreaType)
     , m_isWaitingForDidSetFrameNotification(false)

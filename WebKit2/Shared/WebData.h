@@ -27,7 +27,7 @@
 #define WebData_h
 
 #include "APIObject.h"
-#include <wtf/PassRefPtr.h>
+#include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
 namespace WebKit {
