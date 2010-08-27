@@ -86,7 +86,8 @@ private:
 PassOwnPtr<WebGLRenderingContext> WebGLRenderingContext::create(HTMLCanvasElement* canvas, WebGLContextAttributes* attrs)
 {
     HostWindow* hostWindow = canvas->document()->view()->root()->hostWindow();
-    OwnPtr<GraphicsContext3D> context(GraphicsContext3D::create(attrs->attributes(), hostWindow));
+    GraphicsContext3D::Attributes emptyAttributes;
+    OwnPtr<GraphicsContext3D> context(GraphicsContext3D::create(attrs ? attrs->attributes() : emptyAttributes, hostWindow));
 
     if (!context)
         return 0;

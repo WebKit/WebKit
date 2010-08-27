@@ -1,3 +1,24 @@
+2010-08-27  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=42862
+        WebGL in CSS Canvas crashes
+
+        One test does a simple triangle render and uses it as a CSS background.
+        The other renders the triangle twice with 2 different background colors
+        to test that the background can be dynamically changed.
+
+        * fast/canvas/webgl/css-webkit-canvas-repaint.html: Added.
+        * fast/canvas/webgl/css-webkit-canvas.html: Added.
+        * platform/mac/fast/canvas/webgl: Added.
+        * platform/mac/fast/canvas/webgl/css-webkit-canvas-expected.checksum: Added.
+        * platform/mac/fast/canvas/webgl/css-webkit-canvas-expected.png: Added.
+        * platform/mac/fast/canvas/webgl/css-webkit-canvas-expected.txt: Added.
+        * platform/mac/fast/canvas/webgl/css-webkit-canvas-repaint-expected.checksum: Added.
+        * platform/mac/fast/canvas/webgl/css-webkit-canvas-repaint-expected.png: Added.
+        * platform/mac/fast/canvas/webgl/css-webkit-canvas-repaint-expected.txt: Added.
+
 2010-08-27  Tony Chang  <tony@chromium.org>
 
         Not reviewed, cleaning up chromium test results.

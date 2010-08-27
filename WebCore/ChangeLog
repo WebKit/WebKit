@@ -1,3 +1,27 @@
+2010-08-27  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=42862
+        WebGL in CSS Canvas crashes
+
+        This fixes the crash, which was a simple null pointer deref. But this
+        revealed that -webkit-canvas no longer works for WebGL. I believe this
+        is due to the recent ImageBuffer optimizations done by Dave Hyatt
+        (https://bugs.webkit.org/show_bug.cgi?id=43507). This changed ImageBuffer
+        from always keeping a copy of the pixels to doing a copy to get them
+        when needed. Since We need to get pixels out of the WebGL drawing buffer
+        to use them as a CSS background, I had to change when I return those
+        pixels to the ImageBuffer.
+
+        Tests: fast/canvas/webgl/css-webkit-canvas-repaint.html
+               fast/canvas/webgl/css-webkit-canvas.html
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::copiedImage): Add logic to get image from WebGL so it works with new ImageBuffer logic (see above)
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::create): Fixed null pointer deref
+
 2010-08-27  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Dimitri Glazkov.
