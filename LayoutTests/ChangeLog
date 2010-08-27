@@ -1,3 +1,18 @@
+2010-08-26  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        Based on a patch by Mihnea Ovidenie <mihnea@adobe.com>.
+
+        Percentage top value on position:relative descendant not resolved
+        correctly if containing block height is not specified explicitly.
+        https://bugs.webkit.org/show_bug.cgi?id=26396
+
+        * fast/css/percent-top-relative-container-height-unspecified.html: Added.
+        * platform/mac/fast/css/percent-top-relative-container-height-unspecified-expected.checksum: Added.
+        * platform/mac/fast/css/percent-top-relative-container-height-unspecified-expected.png: Added.
+        * platform/mac/fast/css/percent-top-relative-container-height-unspecified-expected.txt: Added.
+
 2010-08-26  Brian Weinstein  <bweinstein@apple.com>
 
         Rubber-stamped by Mark Rowe.

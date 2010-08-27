@@ -337,10 +337,25 @@ int RenderBoxModelObject::relativePositionOffsetX() const
 
 int RenderBoxModelObject::relativePositionOffsetY() const
 {
-    if (!style()->top().isAuto())
-        return style()->top().calcValue(containingBlock()->availableHeight());
-    else if (!style()->bottom().isAuto())
-        return -style()->bottom().calcValue(containingBlock()->availableHeight());
+    RenderBlock* containingBlock = this->containingBlock();
+
+    // If the containing block of a relatively positioned element does not
+    // specify a height, a percentage top or bottom offset should be resolved as
+    // auto. An exception to this is if the containing block has the WinIE quirk
+    // where <html> and <body> assume the size of the viewport. In this case,
+    // calculate the percent offset based on this height.
+    // See <https://bugs.webkit.org/show_bug.cgi?id=26396>.
+    if (!style()->top().isAuto()
+        && (!containingBlock->style()->height().isAuto()
+            || !style()->top().isPercent()
+            || containingBlock->stretchesToViewHeight()))
+        return style()->top().calcValue(containingBlock->availableHeight());
+
+    if (!style()->bottom().isAuto()
+        && (!containingBlock->style()->height().isAuto()
+            || !style()->bottom().isPercent()
+            || containingBlock->stretchesToViewHeight()))
+        return -style()->bottom().calcValue(containingBlock->availableHeight());
 
     return 0;
 }

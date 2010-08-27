@@ -1,3 +1,22 @@
+2010-08-26  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        Based on a patch by Mihnea Ovidenie <mihnea@adobe.com>.
+
+        Percentage top value on position:relative descendant not resolved
+        correctly if containing block height is not specified explicitly.
+        https://bugs.webkit.org/show_bug.cgi?id=26396
+
+        If the containing block height is auto and the element is positioned
+        relatively, and if the element's top/bottom is percent, then resolve the
+        top/bottom as auto.
+
+        Test: fast/css/percent-top-relative-container-height-unspecified.html
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::relativePositionOffsetY):
+
 2010-08-26  James Robinson  <jamesr@chromium.org>
 
         Another chromium mac build fix. What a dumb version of GCC.
