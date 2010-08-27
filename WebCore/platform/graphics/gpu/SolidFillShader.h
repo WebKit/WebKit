@@ -28,26 +28,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Shader_h
-#define Shader_h
+#ifndef SolidFillShader_h
+#define SolidFillShader_h
 
-#include <wtf/Noncopyable.h>
-#include <wtf/PassOwnPtr.h>
+#include "Shader.h"
 
 namespace WebCore {
-
-class AffineTransform;
-class GraphicsContext3D;
-class Color;
-
-class Shader : public Noncopyable {
-protected:
-    Shader(GraphicsContext3D*, unsigned program);
-    ~Shader();
-
-    GraphicsContext3D* m_context;
-    unsigned m_program;
-};
 
 class SolidFillShader : public Shader {
 public:
@@ -62,21 +48,6 @@ private:
     int m_positionLocation;
 };
 
-class TexShader : public Shader {
-public:
-    static PassOwnPtr<TexShader> create(GraphicsContext3D* context);
-    void use(const AffineTransform& transform, const AffineTransform& texTransform, int sampler, float alpha);
-
-private:
-    TexShader(GraphicsContext3D* context, unsigned program);
-
-    int m_matrixLocation;
-    int m_texMatrixLocation;
-    int m_samplerLocation;
-    int m_alphaLocation;
-    int m_positionLocation;
-};
-
 }
 
-#endif // Shader_h
+#endif // SolidFillShader_h

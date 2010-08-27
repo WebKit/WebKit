@@ -36,7 +36,8 @@
 #include "GraphicsContext3D.h"
 #include "IntRect.h"
 #include "PlatformString.h"
-#include "Shader.h"
+#include "SolidFillShader.h"
+#include "TexShader.h"
 #include "Texture.h"
 
 #define _USE_MATH_DEFINES

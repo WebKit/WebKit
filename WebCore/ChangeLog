@@ -1,3 +1,38 @@
+2010-08-27  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Move Shader class from platform/graphics/chromium to platform/graphics/gpu
+        https://bugs.webkit.org/show_bug.cgi?id=44793
+
+        The Shader class and its subclasses are not chromium-specific.  This moves
+        them to a common location so they can be re-used on all platforms.  Also
+        moves the Shader subclasses into their own .h/.cpp files.
+
+        Refactor, no new tests.
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/GLES2Canvas.cpp:
+        * platform/graphics/chromium/Shader.cpp: Removed.
+        * platform/graphics/chromium/Shader.h: Removed.
+        * platform/graphics/gpu/Shader.cpp: Added.
+        (WebCore::Shader::affineTo3x3):
+        (WebCore::Shader::loadShader):
+        (WebCore::Shader::loadProgram):
+        (WebCore::Shader::Shader):
+        (WebCore::Shader::~Shader):
+        * platform/graphics/gpu/Shader.h: Added.
+        * platform/graphics/gpu/SolidFillShader.cpp: Added.
+        (WebCore::SolidFillShader::SolidFillShader):
+        (WebCore::SolidFillShader::create):
+        (WebCore::SolidFillShader::use):
+        * platform/graphics/gpu/SolidFillShader.h: Added.
+        * platform/graphics/gpu/TexShader.cpp: Added.
+        (WebCore::TexShader::TexShader):
+        (WebCore::TexShader::create):
+        (WebCore::TexShader::use):
+        * platform/graphics/gpu/TexShader.h: Added.
+
 2010-08-27  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by Darin Fisher.
