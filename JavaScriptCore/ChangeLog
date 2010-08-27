@@ -1,3 +1,29 @@
+2010-08-26  Gavin Barraclough  <baraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 44735 - Clean up dtoa.cpp
+        Remove unused & unmaintained code paths, reformat code to match
+        coding standard & use platform #defines from Platform.h directly.
+
+        * wtf/dtoa.cpp:
+        (WTF::storeInc):
+        (WTF::multadd):
+        (WTF::s2b):
+        (WTF::lo0bits):
+        (WTF::mult):
+        (WTF::pow5mult):
+        (WTF::lshift):
+        (WTF::diff):
+        (WTF::ulp):
+        (WTF::b2d):
+        (WTF::d2b):
+        (WTF::ratio):
+        (WTF::):
+        (WTF::strtod):
+        (WTF::quorem):
+        (WTF::dtoa):
+
 2010-08-26  Gavin Barraclough  <barraclough@apple.com>
 
         Rubber Stamped by Oliver Hunt.
