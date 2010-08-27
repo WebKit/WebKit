@@ -1,3 +1,18 @@
+2010-08-27  Alejandro G. Castro  <alex@igalia.com>
+
+        Unreviewed.
+
+        Updated test resuls for gtk.
+
+        * platform/gtk/editing/selection/iframe-expected.txt:
+        * platform/gtk/fast/css/nested-rounded-corners-expected.txt:
+        * platform/gtk/fast/events/standalone-image-drag-to-editable-expected.txt:
+        * platform/gtk/fast/forms/placeholder-stripped-expected.txt:
+        * platform/gtk/fast/frames/take-focus-from-iframe-expected.txt:
+        * platform/gtk/fast/repaint/fixed-move-after-keyboard-scroll-expected.txt:
+        * platform/gtk/fast/repaint/selection-gap-overflow-scroll-2-expected.txt:
+        * platform/gtk/mathml/presentation/style-expected.txt:
+
 2010-08-27  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Skip a media test that fails on all mac test bots. Already notified Eric.
