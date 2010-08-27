@@ -1,3 +1,32 @@
+2010-08-27  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed build fix.
+
+        Web Inspector: add audits support to extension API
+        Byuild fix: added missing files.
+        https://bugs.webkit.org/show_bug.cgi?id=44518
+
+        * inspector/front-end/AuditFormatters.js: Added.
+        (WebInspector.applyFormatters):
+        (WebInspector.AuditFormatters.text):
+        (WebInspector.AuditFormatters.snippet):
+        (WebInspector.AuditFormatters.concat):
+        (WebInspector.AuditFormatters.url):
+        * inspector/front-end/ExtensionAuditCategory.js: Added.
+        (WebInspector.ExtensionAuditCategory):
+        (WebInspector.ExtensionAuditCategory.prototype.get id):
+        (WebInspector.ExtensionAuditCategory.prototype.get displayName):
+        (WebInspector.ExtensionAuditCategory.prototype.get ruleCount):
+        (WebInspector.ExtensionAuditCategory.prototype.run):
+        (WebInspector.ExtensionAuditCategoryResults):
+        (WebInspector.ExtensionAuditCategoryResults.prototype.get complete):
+        (WebInspector.ExtensionAuditCategoryResults.prototype.cancel):
+        (WebInspector.ExtensionAuditCategoryResults.prototype.addResult):
+        (WebInspector.ExtensionAuditCategoryResults.prototype._addNode):
+        (WebInspector.ExtensionAuditCategoryResults.prototype._addResult):
+        * inspector/front-end/ExtensionCommon.js: Added.
+        (WebInspector.commonExtensionSymbols):
+
 2010-08-26  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.
