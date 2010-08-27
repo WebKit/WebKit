@@ -1,5 +1,16 @@
 2010-08-27  Tony Chang  <tony@chromium.org>
 
+        Unreviewed.  Reverting r66177, which were chromium expectations for
+        fast/forms/select-style.  It seems like this was a regression fixed in r66195.
+
+        * platform/chromium-mac/fast/forms/select-style-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/select-style-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/select-style-expected.txt: Removed.
+        * platform/chromium-win/fast/forms/select-style-expected.checksum:
+        * platform/chromium-win/fast/forms/select-style-expected.png:
+
+2010-08-27  Tony Chang  <tony@chromium.org>
+
         Unreviewed, updating chromium test expectations.
 
         * platform/chromium/test_expectations.txt:
