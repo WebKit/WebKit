@@ -1,5 +1,29 @@
 2010-08-27  Adam Roben  <aroben@apple.com>
 
+        Handle ERROR_IO_INCOMPLETE more correctly in Connection
+
+        We still don't know exactly why we're getting this error, but at least
+        we can do something sensible when we do.
+
+        Fixes <http://webkit.org/b/44776> Occasional crash in
+        Connection::readEventHandler or assertion failure in
+        Connection::writeEventHandler due to ERROR_IO_INCOMPLETE
+
+        Reviewed by Sam Weinig.
+
+        * Platform/CoreIPC/win/ConnectionWin.cpp:
+        (CoreIPC::Connection::readEventHandler): Bail out of this function
+        entirely when we get ERROR_IO_INCOMPLETE. We'll get called back later
+        when the read completes. Continuing in the function at this point
+        would cause us to treat an incomplete read as a complete one, leading
+        to a crash. Added an assertion to make the crash more understandable
+        in the future.
+        (CoreIPC::Connection::writeEventHandler): Bail out when we get
+        ERROR_IO_INCOMPLETE. We'll get called back later when the write
+        completes.
+
+2010-08-27  Adam Roben  <aroben@apple.com>
+
         Make the web process pause on launch when the
         WEBKIT2_PAUSE_WEB_PROCESS_ON_LAUNCH environment variable is set
 
