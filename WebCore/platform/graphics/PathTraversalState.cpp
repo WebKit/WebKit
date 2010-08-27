@@ -160,7 +160,7 @@ PathTraversalState::PathTraversalState(PathTraversalAction action)
 float PathTraversalState::closeSubpath()
 {
     float distance = distanceLine(m_current, m_start);
-    m_start = m_control1 = m_control2 = m_current;
+    m_current = m_control1 = m_control2 = m_start;
     return distance;
 }
 
