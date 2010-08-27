@@ -1,3 +1,9 @@
+2010-08-27  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Adam Roben.
+
+        * WebKit2.xcodeproj/project.pbxproj: Make WKBundleScriptWorld.h public.
+
 2010-08-26  Daniel Bates  <dbates@rim.com>
 
         Attempt to fix the Qt WebKit2 build.

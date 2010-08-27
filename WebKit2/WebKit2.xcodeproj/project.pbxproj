@@ -158,7 +158,7 @@
 		BC14DF77120B5B7900826C0C /* InjectedBundleScriptWorld.h in Headers */ = {isa = PBXBuildFile; fileRef = BC14DF75120B5B7900826C0C /* InjectedBundleScriptWorld.h */; };
 		BC14DF78120B5B7900826C0C /* InjectedBundleScriptWorld.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC14DF76120B5B7900826C0C /* InjectedBundleScriptWorld.cpp */; };
 		BC14DF9E120B635F00826C0C /* WKBundleScriptWorld.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC14DF9C120B635F00826C0C /* WKBundleScriptWorld.cpp */; };
-		BC14DF9F120B635F00826C0C /* WKBundleScriptWorld.h in Headers */ = {isa = PBXBuildFile; fileRef = BC14DF9D120B635F00826C0C /* WKBundleScriptWorld.h */; };
+		BC14DF9F120B635F00826C0C /* WKBundleScriptWorld.h in Headers */ = {isa = PBXBuildFile; fileRef = BC14DF9D120B635F00826C0C /* WKBundleScriptWorld.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BC14E109120B905E00826C0C /* InjectedBundlePageFormClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC14E107120B905E00826C0C /* InjectedBundlePageFormClient.cpp */; };
 		BC14E10A120B905E00826C0C /* InjectedBundlePageFormClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BC14E108120B905E00826C0C /* InjectedBundlePageFormClient.h */; };
 		BC177465118B9FF4007D9E9A /* WKPagePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BC177464118B9FF4007D9E9A /* WKPagePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
