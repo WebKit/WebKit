@@ -1135,94 +1135,104 @@ void ApplyStyleCommand::applyInlineStyleToRange(CSSMutableStyleDeclaration* styl
     }
 }
 
-bool ApplyStyleCommand::shouldRemoveTextDecorationTag(CSSStyleDeclaration* styleToApply, int textDecorationAddedByTag) const
-{
-    // Honor text-decorations-in-effect
-    RefPtr<CSSValue> textDecorationsToApply = styleToApply->getPropertyCSSValue(CSSPropertyWebkitTextDecorationsInEffect);
-    if (!textDecorationsToApply || !textDecorationsToApply->isValueList())
-        textDecorationsToApply = styleToApply->getPropertyCSSValue(CSSPropertyTextDecoration);
-
-    // When there is no text decorations to apply, remove any one of u, s, & strike
-    if (!textDecorationsToApply || !textDecorationsToApply->isValueList())
-        return true;
-
-    // Remove node if it implicitly adds style not present in styleToApply
-    CSSValueList* valueList = static_cast<CSSValueList*>(textDecorationsToApply.get());
-    RefPtr<CSSPrimitiveValue> value = CSSPrimitiveValue::createIdentifier(textDecorationAddedByTag);
-    return !valueList->hasValue(value.get());
-}
-
-// This function maps from styling tags to CSS styles.  Used for knowing which
-// styling tags should be removed when toggling styles.
-bool ApplyStyleCommand::implicitlyStyledElementShouldBeRemovedWhenApplyingStyle(HTMLElement* elem, CSSMutableStyleDeclaration* style)
-{
-    CSSMutableStyleDeclaration::const_iterator end = style->end();
-    for (CSSMutableStyleDeclaration::const_iterator it = style->begin(); it != end; ++it) {
-        const CSSProperty& property = *it;
-        // FIXME: This should probably be re-written to lookup the tagname in a
-        // hash and match against an expected property/value pair.
-        switch (property.id()) {
-        case CSSPropertyFontWeight:
-            // IE inserts "strong" tags for execCommand("bold"), so we remove them, even though they're not strictly presentational
-            if (elem->hasLocalName(bTag) || elem->hasLocalName(strongTag))
-                return !equalIgnoringCase(property.value()->cssText(), "bold") || !elem->hasChildNodes();
-            break;
-        case CSSPropertyVerticalAlign:
-            if (elem->hasLocalName(subTag))
-                return !equalIgnoringCase(property.value()->cssText(), "sub") || !elem->hasChildNodes();
-            if (elem->hasLocalName(supTag))
-                return !equalIgnoringCase(property.value()->cssText(), "sup") || !elem->hasChildNodes();
-            break;
-        case CSSPropertyFontStyle:
-            // IE inserts "em" tags for execCommand("italic"), so we remove them, even though they're not strictly presentational
-            if (elem->hasLocalName(iTag) || elem->hasLocalName(emTag))
-                return !equalIgnoringCase(property.value()->cssText(), "italic") || !elem->hasChildNodes();
-            break;
-        case CSSPropertyTextDecoration:
-        case CSSPropertyWebkitTextDecorationsInEffect:
-                if (elem->hasLocalName(uTag))
-                    return shouldRemoveTextDecorationTag(style, CSSValueUnderline) || !elem->hasChildNodes();
-                else if (elem->hasLocalName(sTag) || elem->hasTagName(strikeTag))
-                    return shouldRemoveTextDecorationTag(style,CSSValueLineThrough) || !elem->hasChildNodes();
-        }
-    }
-    return false;
-}
-
 bool ApplyStyleCommand::removeInlineStyleFromElement(CSSMutableStyleDeclaration* style, HTMLElement* element, InlineStyleRemovalMode mode)
 {
     ASSERT(style);
     ASSERT(element);
 
-    bool removed = false;
-
     if (m_styledInlineElement && element->hasTagName(m_styledInlineElement->tagQName())) {
-        removed = true;
         if (mode == RemoveAttributesAndElements)
             removeNodePreservingChildren(element);
+        return true;
     }
 
-    if (implicitlyStyledElementShouldBeRemovedWhenApplyingStyle(element, style)) {
+    bool removed = false;
+    if (removeImplicitlyStyledElement(style, element, mode))
         removed = true;
-        if (mode == RemoveAttributesAndElements)
-            replaceWithSpanOrRemoveIfWithoutAttributes(element);
-    }
 
     if (!element->inDocument())
         return removed;
 
     // If the node was converted to a span, the span may still contain relevant
     // styles which must be removed (e.g. <b style='font-weight: bold'>)
-    if (removeHTMLFontStyle(style, element, mode))
-        removed = true;
-    if (removeHTMLBidiEmbeddingStyle(style, element, mode))
-        removed = true;
     if (removeCSSStyle(style, element, mode))
         removed = true;
 
     return removed;
 }
+    
+enum EPushDownType { ShouldBePushedDown, ShouldNotBePushedDown };
+struct HTMLEquivalent {
+    int propertyID;
+    bool isValueList;
+    int primitiveId;
+    const QualifiedName* element;
+    const QualifiedName* attribute;
+    EPushDownType pushDownType;
+};
 
+static const HTMLEquivalent HTMLEquivalents[] = {
+    { CSSPropertyFontWeight, false, CSSValueBold, &bTag, 0, ShouldBePushedDown },
+    { CSSPropertyFontWeight, false, CSSValueBold, &strongTag, 0, ShouldBePushedDown },
+    { CSSPropertyVerticalAlign, false, CSSValueSub, &subTag, 0, ShouldBePushedDown },
+    { CSSPropertyVerticalAlign, false, CSSValueSuper, &supTag, 0, ShouldBePushedDown },
+    { CSSPropertyFontStyle, false, CSSValueItalic, &iTag, 0, ShouldBePushedDown },
+    { CSSPropertyFontStyle, false, CSSValueItalic, &emTag, 0, ShouldBePushedDown },
+
+    // text-decorations should be CSSValueList
+    { CSSPropertyTextDecoration, true, CSSValueUnderline, &uTag, 0, ShouldBePushedDown },
+    { CSSPropertyTextDecoration, true, CSSValueLineThrough, &sTag, 0, ShouldBePushedDown },
+    { CSSPropertyTextDecoration, true, CSSValueLineThrough, &strikeTag, 0, ShouldBePushedDown },
+    { CSSPropertyWebkitTextDecorationsInEffect, true, CSSValueUnderline, &uTag, 0, ShouldBePushedDown },
+    { CSSPropertyWebkitTextDecorationsInEffect, true, CSSValueLineThrough, &sTag, 0, ShouldBePushedDown },
+    { CSSPropertyWebkitTextDecorationsInEffect, true, CSSValueLineThrough, &strikeTag, 0, ShouldBePushedDown },
+
+    // FIXME: font attributes should only be removed if values were different
+    { CSSPropertyColor, false, CSSValueInvalid, &fontTag, &colorAttr, ShouldBePushedDown },
+    { CSSPropertyFontFamily, false, CSSValueInvalid, &fontTag, &faceAttr, ShouldBePushedDown },
+    { CSSPropertyFontSize, false, CSSValueInvalid, &fontTag, &sizeAttr, ShouldBePushedDown },
+
+    // unicode-bidi and direction are pushed down separately so don't push down with other styles.
+    { CSSPropertyUnicodeBidi, false, CSSValueInvalid, 0, &dirAttr, ShouldNotBePushedDown },
+    { CSSPropertyDirection, false, CSSValueInvalid, 0, &dirAttr, ShouldNotBePushedDown },
+};
+
+bool ApplyStyleCommand::removeImplicitlyStyledElement(CSSMutableStyleDeclaration* style, HTMLElement* element, InlineStyleRemovalMode mode)
+{
+    bool removed = false;
+    for (size_t i = 0; i < sizeof(HTMLEquivalents) / sizeof(HTMLEquivalent); i++) {
+        const HTMLEquivalent& equivalent = HTMLEquivalents[i];
+        ASSERT(equivalent.element || equivalent.attribute);
+        if (equivalent.element && !element->hasTagName(*equivalent.element))
+            continue;
+        if (equivalent.attribute && !element->hasAttribute(*equivalent.attribute))
+            continue;
+
+        RefPtr<CSSValue> styleValue = style->getPropertyCSSValue(equivalent.propertyID);
+        if (!styleValue)
+            continue;
+        RefPtr<CSSPrimitiveValue> mapValue = CSSPrimitiveValue::createIdentifier(equivalent.primitiveId);
+
+        if (equivalent.isValueList && styleValue->isValueList() && static_cast<CSSValueList*>(styleValue.get())->hasValue(mapValue.get()))
+            continue; // If CSS value assumes CSSValueList, then only skip if the value was present in style to apply.
+        else if (styleValue->cssText() == mapValue->cssText())
+            continue; // If CSS value is primitive, then skip if they are equal.
+
+        if (mode == RemoveNone)
+            return true;
+
+        removed = true;
+        if (!equivalent.attribute) {
+            replaceWithSpanOrRemoveIfWithoutAttributes(element);
+            break;
+        }
+        removeNodeAttribute(element, *equivalent.attribute);
+        if (isEmptyFontTag(element) || isSpanWithoutAttributesOrUnstyleStyleSpan(element))
+            removeNodePreservingChildren(element);
+    }
+    return removed;
+}
+    
 void ApplyStyleCommand::replaceWithSpanOrRemoveIfWithoutAttributes(HTMLElement*& elem)
 {
     bool removeNode = false;
@@ -1245,66 +1255,6 @@ void ApplyStyleCommand::replaceWithSpanOrRemoveIfWithoutAttributes(HTMLElement*&
         ASSERT(newSpanElement && newSpanElement->inDocument());
         elem = newSpanElement;
     }
-}
-
-bool ApplyStyleCommand::removeHTMLFontStyle(CSSMutableStyleDeclaration* style, HTMLElement* elem, InlineStyleRemovalMode mode)
-{
-    ASSERT(style);
-    ASSERT(elem);
-
-    if (!elem->hasLocalName(fontTag))
-        return false;
-
-    bool removed = false;
-    CSSMutableStyleDeclaration::const_iterator end = style->end();
-    for (CSSMutableStyleDeclaration::const_iterator it = style->begin(); it != end; ++it) {
-        const QualifiedName* attrToRemove = 0;
-        switch ((*it).id()) {
-        case CSSPropertyColor:
-            attrToRemove = &colorAttr;
-            break;
-        case CSSPropertyFontFamily:
-            attrToRemove = &faceAttr;
-            break;
-        case CSSPropertyFontSize:
-            attrToRemove = &sizeAttr;
-            break;
-        }
-
-        if (attrToRemove) {
-            removed = true;
-            if (mode == RemoveAttributesAndElements)
-                removeNodeAttribute(elem, *attrToRemove);
-        }
-    }
-
-    if (isEmptyFontTag(elem) && mode == RemoveAttributesAndElements)
-        removeNodePreservingChildren(elem);
-
-    return removed;
-}
-
-bool ApplyStyleCommand::removeHTMLBidiEmbeddingStyle(CSSMutableStyleDeclaration* style, HTMLElement* elem, InlineStyleRemovalMode mode)
-{
-    ASSERT(style);
-    ASSERT(elem);
-
-    if (!elem->hasAttribute(dirAttr))
-        return false;
-
-    if (!style->getPropertyCSSValue(CSSPropertyUnicodeBidi) && !style->getPropertyCSSValue(CSSPropertyDirection))
-        return false;
-
-    if (mode == RemoveNone)
-        return true;
-
-    removeNodeAttribute(elem, dirAttr);
-
-    // FIXME: should this be isSpanWithoutAttributesOrUnstyleStyleSpan?  Need a test.
-    if (isUnstyledStyleSpan(elem))
-        removeNodePreservingChildren(elem);
-
-    return true;
 }
 
 bool ApplyStyleCommand::removeCSSStyle(CSSMutableStyleDeclaration* style, HTMLElement* elem, InlineStyleRemovalMode mode)

@@ -1,3 +1,22 @@
+2010-08-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        implicitlyStyledElementShouldBeRemovedWhenApplyingStyle, removeHTMLFontStyle, and removeHTMLBidiEmbeddingStyle should be merged
+        https://bugs.webkit.org/show_bug.cgi?id=44622
+
+        Merged shouldRemoveTextDecorationTag, implicitlyStyledElementShouldBeRemovedWhenApplyingStyle, removeHTMLFontStyle,
+        and removeHTMLBidiEmbeddingStyle into removeImplicitlyStyledElement.  New function uses CSSPropertyElementMapping to
+        support all different cases dealt separately in each function.
+
+        No new tests are added since this is a cleanup.
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::removeInlineStyleFromElement): Calls removeImplicitlyStyledElement.
+        (WebCore::):
+        (WebCore::ApplyStyleCommand::removeImplicitlyStyledElement): Added.
+        * editing/ApplyStyleCommand.h:
+
 2010-08-26  Andy Estes  <aestes@apple.com>
 
         Reviewed by Darin Adler.
