@@ -1,3 +1,10 @@
+2010-08-27  Yuzo Fujishima  <yuzo@google.com>
+
+        Unreviewed Chromium test expectation change.
+
+        * platform/chromium-linux/svg/dom/path-pointAtLength-expected.txt: Added.
+        * platform/chromium-win/svg/dom/path-pointAtLength-expected.txt: Added.
+
 2010-08-27  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Pavel Feldman.
