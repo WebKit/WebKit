@@ -208,16 +208,9 @@ BUG50197 WIN MAC LINUX : svg/dynamic-updates/SVGRadialGradientElement-svgdom-gra
 
 // Need to implement something?
 BUG_DRT WIN : http/tests/inspector-enabled/console-log-before-frame-navigation.html = CRASH
-BUG_DRT WIN : http/tests/inspector/resource-parameters.html = TEXT CRASH PASS
-BUG_DRT WIN : inspector/debugger-eval-while-paused.html = CRASH
-BUG_DRT WIN : inspector/debugger-no-nested-pause.html = CRASH
-BUG_DRT WIN : inspector/debugger-pause-in-eval-script.html = CRASH
-BUG_DRT WIN : inspector/debugger-pause-on-debugger-statement.html = CRASH
-BUG_DRT WIN : inspector/debugger-proto-property.html = CRASH
-BUG_DRT WIN : inspector/debugger-step-in.html = CRASH
-BUG_DRT WIN : inspector/debugger-step-out.html = CRASH
-BUG_DRT WIN : inspector/debugger-step-over.html = CRASH
-BUG_DRT WIN : inspector/dom-breakpoints.html = CRASH
+// Inspector tests in Debug build are very slow.  If we remove SLOW, we'll see
+// random TIMEOUTs.  Is this issue DRT-specific?
+BUG_DRT WIN DEBUG SLOW : inspector = PASS
 
 
 // WebGL tests sometimes fail only on the buildbot.
@@ -422,7 +415,6 @@ BUG_DRT WIN : fast/text/international/plane2.html = IMAGE+TEXT
 BUG_DRT WIN : http/tests/loading/bad-scheme-subframe.html = TEXT
 BUG_DRT WIN : http/tests/local/send-sliced-dragged-file.html = TEXT
 BUG_DRT WIN : http/tests/security/xssAuditor/link-opens-new-window.html = TEXT
-BUG_DRT WIN : inspector/debugger-cyclic-ref.html = CRASH
 BUG_DRT WIN : svg/batik/text/textFeatures.svg = IMAGE+TEXT
 BUG_DRT WIN : svg/batik/text/verticalText.svg = IMAGE
 BUG_DRT WIN : svg/custom/text-linking.svg = IMAGE

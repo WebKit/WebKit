@@ -64,6 +64,7 @@ public:
     virtual void forceRepaint();
     virtual void runtimePropertyChanged(const WebKit::WebString& name, const WebKit::WebString& value);
     virtual WebKit::WebCString debuggerScriptSource();
+    virtual WebKitClientMessageLoop* createClientMessageLoop();
 
     void asyncCall(const DRTDevToolsCallArgs&);
 
