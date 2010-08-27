@@ -154,9 +154,6 @@ enum {
 #endif
 
 @interface FakeQTMovieView : NSObject
-{
-}
-
 - (WebCoreMovieObserver *)delegate;
 @end
 

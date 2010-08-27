@@ -1,3 +1,10 @@
+2010-08-26  Mark Rowe  <mrowe@apple.com>
+
+        Darin pointed out that the braces are unnecessary in an Objective-C interface
+        declaration when there are no data members.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm: Begone, evil braces!
+
 2010-08-26  Gavin Barraclough  <barraclough@apple.com>
 
         Rubber Stamped by Oliver Hunt.
