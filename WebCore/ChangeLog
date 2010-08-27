@@ -1,5 +1,11 @@
 2010-08-27  Adam Barth  <abarth@webkit.org>
 
+        Attempt to fix the Qt build.
+
+        * WebCore.pro:
+
+2010-08-27  Adam Barth  <abarth@webkit.org>
+
         Rubber-stamped by Eric Seidel.
 
         Move HTMLTreeBuilder and HTMLElementStack to WebCore/html/parser.

@@ -744,6 +744,8 @@ SOURCES += \
     html/ImageData.cpp \
     html/ImageResizerThread.cpp \
     html/LabelsNodeList.cpp \
+    html/parser/HTMLElementStack.cpp \
+    html/parser/HTMLTreeBuilder.cpp \
     html/ThreadableBlobRegistry.cpp \
     html/StepRange.cpp \
     html/ValidityState.cpp \
@@ -1519,8 +1521,6 @@ HEADERS += \
     html/ImageData.h \
     html/ImageResizerThread.h \
     html/LabelsNodeList.h \
-    html/parser/HTMLElementStack.cpp \
-    html/parser/HTMLTreeBuilder.cpp \
     html/StepRange.h \
     html/TimeRanges.h \
     html/ValidityState.h \
