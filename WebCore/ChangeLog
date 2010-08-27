@@ -1,3 +1,17 @@
+2010-08-27  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Dan Bernstein.
+
+        drawGDIGlyphs checks if the offset is empty incorrectly causing
+        problems with the shadow
+        https://bugs.webkit.org/show_bug.cgi?id=44619
+
+        Removed the offset empty condition, now we just check if we have
+        offset or blur.
+
+        * platform/graphics/win/FontCGWin.cpp:
+        (WebCore::drawGDIGlyphs):
+
 2010-08-27  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

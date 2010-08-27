@@ -144,7 +144,7 @@ static void drawGDIGlyphs(GraphicsContext* graphicsContext, const SimpleFontData
             float blur;
             Color color;
             graphicsContext->getShadow(offset, blur, color);
-            drawIntoBitmap = !offset.isEmpty() || blur;
+            drawIntoBitmap = offset.width() || offset.height() || blur;
         }
     }
 
