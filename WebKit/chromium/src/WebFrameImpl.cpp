@@ -1692,7 +1692,7 @@ WebString WebFrameImpl::counterValueForElementById(const WebString& id) const
 
 WebString WebFrameImpl::markerTextForListItem(const WebElement& webElement) const
 {
-    return WebCore::markerTextForListItem(webElement.unwrap<Element>());
+    return WebCore::markerTextForListItem(const_cast<Element*>(webElement.constUnwrap<Element>()));
 }
 
 int WebFrameImpl::pageNumberForElementById(const WebString& id,

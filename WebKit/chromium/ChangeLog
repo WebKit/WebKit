@@ -1,5 +1,12 @@
 2010-08-26  Dumitru Daniliuc  <dumi@chromium.org>
 
+        Unreviewed, Chromium build fix.
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::markerTextForListItem):
+
+2010-08-26  Dumitru Daniliuc  <dumi@chromium.org>
+
         Reviewed by Darin Fisher.
 
         Add support for markerTextForListItem() to Chromium's LayoutTestController.
