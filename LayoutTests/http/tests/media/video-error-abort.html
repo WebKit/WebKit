@@ -49,7 +49,7 @@
                 consoleWrite("<br><b>Test before movie is open</b>");
                 testExpected("video.error", null);
 
-                var movie = findMediaFile("video", "resources/test");
+                var movie = findMediaFile("video", "../resources/test");
                 video.src = "http://127.0.0.1:8000/media/video-throttled-load.cgi?name=" + movie + "&throttle=256";
             }
         </script>

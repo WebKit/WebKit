@@ -1,5 +1,31 @@
 2010-08-27  Eric Carlson  <eric.carlson@apple.com>
 
+        Reviewed by Simon Fraser.
+
+        Allow ports to use different test movies.
+        https://bugs.webkit.org/show_bug.cgi?id=44799
+
+        Move test movies from http/tests/media/resources to http/tests/resources. Change 
+        local-video-source-from-remote to load a movie supported by the platform and to
+        not log movie name.
+
+        * http/tests/media/resources/test.mp4: Removed.
+        * http/tests/media/resources/test.ogv: Removed.
+        * http/tests/media/video-cancel-load.html:
+        * http/tests/media/video-cookie.html:
+        * http/tests/media/video-error-abort.html:
+        * http/tests/media/video-load-twice.html:
+        * http/tests/media/video-play-suspend.html:
+        * http/tests/media/video-referer.html:
+        * http/tests/resources/silence.mpg: Removed.
+        * http/tests/resources/test.mp4: Copied from LayoutTests/http/tests/media/resources/test.mp4.
+        * http/tests/resources/test.ogv: Copied from LayoutTests/http/tests/media/resources/test.ogv.
+        * http/tests/security/local-video-source-from-remote-expected.txt:
+        * http/tests/security/local-video-source-from-remote.html:
+        * media/video-source-error.html:
+
+2010-08-27  Eric Carlson  <eric.carlson@apple.com>
+
         Rubber-stamped Simon Fraser.
 
         Set svn mime-type on two test movies.

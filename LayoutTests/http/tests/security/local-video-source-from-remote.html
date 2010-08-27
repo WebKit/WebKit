@@ -61,7 +61,7 @@
             }
 
             var localMovie = "file:///tmp/LayoutTests/media/content/scaled-matrix.mov";
-            var remoteUrl = "http://localhost:8000/resources/silence.mpg";
+            var remoteUrl = "http://localhost:8000/resources/test";
 
             function loadedmetadata(evt) 
             { 
@@ -70,7 +70,6 @@
                 var remoteFile = remoteUrl.substring(remoteUrl.lastIndexOf("/")+1, remoteUrl.length)
 
                 logEvent(evt);
-                consoleWrite("url " + src + " loaded.<br>");
                 if (src.indexOf(localFile) > 0)
                     logResult("local movie loaded", false);
                 else if (src.indexOf(remoteFile) > 0)
@@ -97,6 +96,15 @@
                 // with a remote url. The element should load the second.
                 var src1 = document.createElement("source");
                 src1.setAttribute("src", localMovie);
+
+                if (video.canPlayType("video/mp4"))
+                    remoteUrl += ".mp4";
+                else if (video.canPlayType("video/ogg"))
+                    remoteUrl += ".ogv";
+                else {
+                    logResult("Missing test movie for this platform???", false);
+                    endTest();
+                }
 
                 var src2 = document.createElement("source");
                 src2.setAttribute("src", remoteUrl);
