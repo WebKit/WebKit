@@ -62,10 +62,10 @@ struct GLES2Canvas::State {
 
 GLES2Canvas::GLES2Canvas(GraphicsContext3D* context, const IntSize& size)
     : m_context(context)
+    , m_state(0)
     , m_quadVertices(0)
     , m_solidFillShader(SolidFillShader::create(context))
     , m_texShader(TexShader::create(context))
-    , m_state(0)
 {
     m_flipMatrix.translate(-1.0f, 1.0f);
     m_flipMatrix.scale(2.0f / size.width(), -2.0f / size.height());
@@ -296,27 +296,6 @@ unsigned GLES2Canvas::getQuadVertices()
         m_context->bufferData(GraphicsContext3D::ARRAY_BUFFER, sizeof(vertices), vertices, GraphicsContext3D::STATIC_DRAW);
     }
     return m_quadVertices;
-}
-
-
-static unsigned loadShader(GraphicsContext3D* context, unsigned type, const char* shaderSource)
-{
-    unsigned shader = context->createShader(type);
-    if (!shader)
-        return 0;
-
-    String shaderSourceStr(shaderSource);
-    context->shaderSource(shader, shaderSourceStr);
-    context->compileShader(shader);
-    int compileStatus;
-    context->getShaderiv(shader, GraphicsContext3D::COMPILE_STATUS, &compileStatus);
-    if (!compileStatus) {
-        String infoLog = context->getShaderInfoLog(shader);
-        LOG_ERROR(infoLog.utf8().data());
-        context->deleteShader(shader);
-        return 0;
-    }
-    return shader;
 }
 
 GLES2Texture* GLES2Canvas::createTexture(NativeImagePtr ptr, GLES2Texture::Format format, int width, int height)

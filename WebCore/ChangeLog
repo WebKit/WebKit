@@ -1,3 +1,12 @@
+2010-08-26  James Robinson  <jamesr@chromium.org>
+
+        Fix chromium mac build. Unreviewed.
+
+        * platform/graphics/chromium/GLES2Canvas.cpp:
+        (WebCore::GLES2Canvas::GLES2Canvas):
+        * platform/graphics/chromium/GLES2Texture.cpp:
+        (WebCore::GLES2Texture::load):
+
 2010-08-26  Mark Rowe  <mrowe@apple.com>
 
         Darin pointed out that the braces are unnecessary in an Objective-C interface

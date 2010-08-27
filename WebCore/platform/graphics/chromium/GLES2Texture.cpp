@@ -136,7 +136,8 @@ static uint32_t* copySubRect(uint32_t* src, int srcX, int srcY, uint32_t* dst, i
 void GLES2Texture::load(void* pixels)
 {
     uint32_t* pixels32 = static_cast<uint32_t*>(pixels);
-    unsigned int glFormat, glType;
+    unsigned int glFormat = 0;
+    unsigned int glType = 0;
     bool swizzle;
     convertFormat(m_context, m_format, &glFormat, &glType, &swizzle);
     if (swizzle) {
