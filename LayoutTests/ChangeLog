@@ -1,3 +1,15 @@
+2010-08-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        REGRESSION: rebaseline needed for tables/mozilla_expected_failures/bugs/bug56024.html
+        https://bugs.webkit.org/show_bug.cgi?id=44733
+
+        The failure was caused by color property moving from anonymous block to the form element inside
+        the anonymous block. Rebaselined /tables/mozilla_expected_failures/bugs/bug56024.html for mac.
+
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug56024-expected.txt:
+
 2010-08-26  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.
