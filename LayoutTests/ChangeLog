@@ -1,3 +1,10 @@
+2010-08-27  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed.
+        Attempt to fix flakiness of inspector extension audit tests.
+
+        * inspector/extensions-audits-tests.js:
+
 2010-08-27  Tony Chang  <tony@chromium.org>
 
         Unreviewed.  Add chromium-mac results for svg/custom/getscreenctm-in-scrollable-div-area.xhtml.

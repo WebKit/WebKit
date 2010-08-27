@@ -15,6 +15,7 @@ function frontend_runExtensionAudits(testController)
     launcherView._selectAllClicked(false);
     launcherView._auditPresentStateElement.checked = true;
 
+    testController.waitUntilDone();
     var extensionCategories = document.evaluate("label[starts-with(.,'Extension ')]/input[@type='checkbox']",
         WebInspector.panels.audits._launcherView._categoriesElement, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
 
