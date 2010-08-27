@@ -1,3 +1,8 @@
+2010-08-27  Darin Adler  <darin@apple.com>
+
+        * coding/RefPtr.html: Minor revision, improve clarity and mention some
+        recent developments.
+
 2010-08-26  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Dumitru Daniliuc.
