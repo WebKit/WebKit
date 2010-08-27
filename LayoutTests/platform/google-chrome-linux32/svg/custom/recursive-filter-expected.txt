@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 110x210
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGResourceFilter {filter} [id="filter1"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        [feGaussianBlur stdDeviation="4.00, 4.00"]
+          [SourceGraphic]
+      RenderSVGResourceFilter {filter} [id="filter2"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+    RenderPath {rect} at (0,0) size 110x110 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
+      [filter="filter1"] RenderSVGResourceFilter {filter} at (-10,-10) size 120x120
+    RenderPath {rect} at (0,90) size 110x120 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,100.00 L100.00,100.00 L100.00,200.00 L0.00,200.00 Z"]
+      [filter="filter2"] RenderSVGResourceFilter {filter} at (-10,90) size 120x120
