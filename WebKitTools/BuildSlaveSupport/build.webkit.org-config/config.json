@@ -23,6 +23,7 @@
                     { "name": "apple-windows-4", "platform": "win"},
                     { "name": "apple-windows-5", "platform": "win"},
                     { "name": "apple-windows-6", "platform": "win"},
+                    { "name": "apple-windows-7", "platform": "win"},
 
                     { "name": "gtk-linux-slave-1", "platform": "gtk"},
                     { "name": "gtk-linux-slave-2", "platform": "gtk"},
@@ -96,13 +97,17 @@
                     {
                       "name": "Windows Debug (Build)", "type": "Build", "builddir": "win-debug",
                       "platform": "win", "configuration": "debug", "architectures": ["i386"],
-                      "triggers": ["win-debug-tests"],
+                      "triggers": ["win-debug-tests", "win-debug-tests-wk2"],
                       "slavenames": ["apple-windows-1", "test-slave"]
                     },
                     {
                       "name": "Windows Debug (Tests)", "type": "Test", "builddir": "win-debug-tests",
                       "platform": "win", "configuration": "debug", "architectures": ["i386"],
                       "slavenames": ["apple-windows-4", "apple-windows-3", "apple-windows-5", "apple-windows-6", "test-slave"]
+                    },
+                    { "name": "Windows Debug (WebKit2 Tests)", "type": "TestWebKit2", "builddir": "win-debug-tests-wk2",
+                      "platform": "win", "configuration": "debug", "architectures": ["i386"],
+                      "slavenames": ["apple-windows-7", "test-slave"]
                     },
                     {
                       "name": "GTK Linux 32-bit Release", "type": "BuildAndTest", "builddir": "gtk-linux-32-release",
@@ -218,6 +223,9 @@
                     },
                     { "type": "Triggerable", "name": "win-debug-tests",
                       "builderNames": ["Windows Debug (Tests)"]
+                    },
+                    { "type": "Triggerable", "name": "win-debug-tests-wk2",
+                      "builderNames": ["Windows Debug (WebKit2 Tests)"]
                     }
                   ]
 }

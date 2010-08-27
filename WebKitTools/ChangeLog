@@ -1,3 +1,12 @@
+2010-08-26  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Add Windows WebKit2 Tester to buildbot
+        <rdar://problem/7887703>
+
+        Reviewed by Dan Bernstein.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2010-08-26  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Martin Robinson.
