@@ -1,3 +1,10 @@
+2010-08-26  James Robinson  <jamesr@chromium.org>
+
+        Another chromium mac build fix. What a dumb version of GCC.
+
+        * platform/graphics/chromium/GLES2Texture.cpp:
+        (WebCore::GLES2Texture::create):
+
 2010-08-26  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, build fix for Chromium-mac.

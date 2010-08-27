@@ -99,7 +99,8 @@ PassRefPtr<GLES2Texture> GLES2Texture::create(GraphicsContext3D* context, Format
 
         IntRect tileBoundsWithBorder = tiling.tileBoundsWithBorder(i);
 
-    unsigned int glFormat, glType;
+    unsigned int glFormat = 0;
+    unsigned int glType = 0;
     bool swizzle;
     convertFormat(context, format, &glFormat, &glType, &swizzle);
     context->bindTexture(GraphicsContext3D::TEXTURE_2D, textureId);
