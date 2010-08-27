@@ -1,3 +1,12 @@
+2010-08-27  Eric Carlson  <eric.carlson@apple.com>
+
+        Rubber-stamped Simon Fraser.
+
+        Set svn mime-type on two test movies.
+
+        * http/tests/media/resources/test.mp4: Added property svn:mime-type.
+        * http/tests/media/resources/test.ogv: Added property svn:mime-type.
+
 2010-08-27  Jer Noble  <jer.noble@apple.com>
 
         Build fix only, not reviewed.
