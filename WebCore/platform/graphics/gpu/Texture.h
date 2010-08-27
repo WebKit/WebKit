@@ -28,8 +28,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GLES2Texture_h
-#define GLES2Texture_h
+#ifndef Texture_h
+#define Texture_h
 
 #include "RefCounted.h"
 #include "RefPtr.h"
@@ -41,17 +41,17 @@
 namespace WebCore {
 class GraphicsContext3D;
 
-class GLES2Texture : public RefCounted<GLES2Texture> {
+class Texture : public RefCounted<Texture> {
 public:
-    ~GLES2Texture();
+    ~Texture();
     enum Format { RGBA8, BGRA8 };
-    static PassRefPtr<GLES2Texture> create(GraphicsContext3D*, Format, int width, int height);
+    static PassRefPtr<Texture> create(GraphicsContext3D*, Format, int width, int height);
     void bindTile(int tile);
     void load(void* pixels);
     Format format() const { return m_format; }
     const TilingData& tiles() const { return m_tiles; }
 private:
-    GLES2Texture(GraphicsContext3D*, PassOwnPtr<Vector<unsigned int> > tileTextureIds, Format format, int width, int height, int maxTextureSize);
+    Texture(GraphicsContext3D*, PassOwnPtr<Vector<unsigned int> > tileTextureIds, Format format, int width, int height, int maxTextureSize);
     GraphicsContext3D* m_context;
     Format m_format;
     TilingData m_tiles;
@@ -60,4 +60,4 @@ private:
 
 }
 
-#endif // GLES2Texture_h
+#endif // Texture_h

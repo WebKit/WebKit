@@ -1,3 +1,69 @@
+2010-08-27  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Move Texture class from p/g/chromium to p/g/gpu
+        https://bugs.webkit.org/show_bug.cgi?id=44783
+
+        This class and its support were developed in platform/graphics/chromium but are not chromium-specific
+        in any way.  This patch moves them to a common location so they can be shared by all platforms.
+
+        Pure refactor, so no new tests.
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * platform/graphics/chromium/GLES2Canvas.cpp:
+        (WebCore::GLES2Canvas::drawTexturedRect):
+        (WebCore::GLES2Canvas::drawTexturedRectTile):
+        (WebCore::GLES2Canvas::createTexture):
+        (WebCore::GLES2Canvas::getTexture):
+        * platform/graphics/chromium/GLES2Canvas.h:
+        * platform/graphics/chromium/GLES2Texture.cpp: Removed.
+        * platform/graphics/chromium/GLES2Texture.h: Removed.
+        * platform/graphics/gpu/Texture.cpp: Added.
+        (WebCore::Texture::Texture):
+        (WebCore::Texture::~Texture):
+        (WebCore::convertFormat):
+        (WebCore::Texture::create):
+        (WebCore::copySubRect):
+        (WebCore::Texture::load):
+        (WebCore::Texture::bindTile):
+        * platform/graphics/gpu/Texture.h: Added.
+        (WebCore::Texture::):
+        (WebCore::Texture::format):
+        (WebCore::Texture::tiles):
+        * platform/graphics/gpu/TilingData.cpp: Renamed from WebCore/platform/graphics/chromium/TilingData.cpp.
+        (WebCore::computeNumTiles):
+        (WebCore::TilingData::TilingData):
+        (WebCore::TilingData::tileXIndexFromSrcCoord):
+        (WebCore::TilingData::tileYIndexFromSrcCoord):
+        (WebCore::TilingData::tileBounds):
+        (WebCore::TilingData::tileBoundsWithBorder):
+        (WebCore::TilingData::tileBoundsNormalized):
+        (WebCore::TilingData::tilePositionX):
+        (WebCore::TilingData::tilePositionY):
+        (WebCore::TilingData::tileSizeX):
+        (WebCore::TilingData::tileSizeY):
+        (WebCore::TilingData::overlappedTileIndices):
+        (WebCore::TilingData::intersectDrawQuad):
+        * platform/graphics/gpu/TilingData.h: Renamed from WebCore/platform/graphics/chromium/TilingData.h.
+        (WebCore::TilingData::maxTextureSize):
+        (WebCore::TilingData::totalSizeX):
+        (WebCore::TilingData::totalSizeY):
+        (WebCore::TilingData::numTiles):
+        (WebCore::TilingData::numTilesX):
+        (WebCore::TilingData::numTilesY):
+        (WebCore::TilingData::tileIndex):
+        (WebCore::TilingData::tileXIndex):
+        (WebCore::TilingData::tileYIndex):
+        (WebCore::TilingData::TilingData):
+        (WebCore::TilingData::assertTile):
+        * platform/graphics/skia/ImageSkia.cpp:
+        (WebCore::drawBitmapGLES2):
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::uploadSoftwareToHardware):
+        * platform/graphics/skia/PlatformContextSkia.h:
+
 2010-08-27  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Simon Fraser.

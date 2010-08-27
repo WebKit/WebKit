@@ -138,6 +138,7 @@
       '../platform/graphics',
       '../platform/graphics/chromium',
       '../platform/graphics/filters',
+      '../platform/graphics/gpu',
       '../platform/graphics/opentype',
       '../platform/graphics/skia',
       '../platform/graphics/transforms',

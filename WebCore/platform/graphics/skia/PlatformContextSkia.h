@@ -35,11 +35,11 @@
 #include "Noncopyable.h"
 
 #include "SkDashPathEffect.h"
-#include "SkDrawLooper.h"
 #include "SkDeque.h"
-#include "skia/ext/platform_canvas.h"
+#include "SkDrawLooper.h"
 #include "SkPaint.h"
 #include "SkPath.h"
+#include "skia/ext/platform_canvas.h"
 
 #include <wtf/Vector.h>
 
@@ -47,7 +47,7 @@ namespace WebCore {
 
 enum CompositeOperator;
 class GLES2Canvas;
-class GLES2Texture;
+class Texture;
 class GraphicsContext3D;
 
 // This class holds the platform-specific state for GraphicsContext. We put
@@ -228,7 +228,7 @@ private:
     bool m_useGPU;
     OwnPtr<GLES2Canvas> m_gpuCanvas;
     mutable enum { None, Software, Mixed, Hardware } m_backingStoreState;
-    mutable RefPtr<GLES2Texture> m_uploadTexture;
+    mutable RefPtr<Texture> m_uploadTexture;
 };
 
 }

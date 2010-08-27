@@ -411,11 +411,11 @@ static void drawBitmapGLES2(GraphicsContext* ctxt, NativeImageSkia* bitmap, cons
 {
     ctxt->platformContext()->prepareForHardwareDraw();
     GLES2Canvas* gpuCanvas = ctxt->platformContext()->gpuCanvas();
-    GLES2Texture* texture = gpuCanvas->getTexture(bitmap);
+    Texture* texture = gpuCanvas->getTexture(bitmap);
     if (!texture) {
         ASSERT(bitmap->config() == SkBitmap::kARGB_8888_Config);
         ASSERT(bitmap->rowBytes() == bitmap->width() * 4);
-        texture = gpuCanvas->createTexture(bitmap, GLES2Texture::BGRA8, bitmap->width(), bitmap->height());
+        texture = gpuCanvas->createTexture(bitmap, Texture::BGRA8, bitmap->width(), bitmap->height());
         SkAutoLockPixels lock(*bitmap);
         ASSERT(bitmap->getPixels());
         texture->load(bitmap->getPixels());

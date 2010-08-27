@@ -30,7 +30,7 @@
 
 #include "config.h"
 
-#include "GLES2Texture.h"
+#include "Texture.h"
 
 #include "GraphicsContext3D.h"
 #include "IntRect.h"
@@ -39,7 +39,7 @@
 namespace WebCore {
 
 
-GLES2Texture::GLES2Texture(GraphicsContext3D* context, PassOwnPtr<Vector<unsigned int> > tileTextureIds, Format format, int width, int height, int maxTextureSize)
+Texture::Texture(GraphicsContext3D* context, PassOwnPtr<Vector<unsigned int> > tileTextureIds, Format format, int width, int height, int maxTextureSize)
     : m_context(context)
     , m_format(format)
     , m_tiles(maxTextureSize, width, height, true)
@@ -47,21 +47,21 @@ GLES2Texture::GLES2Texture(GraphicsContext3D* context, PassOwnPtr<Vector<unsigne
 {
 }
 
-GLES2Texture::~GLES2Texture()
+Texture::~Texture()
 {
     for (unsigned int i = 0; i < m_tileTextureIds->size(); i++)
         m_context->deleteTexture(m_tileTextureIds->at(i));
 }
 
-static void convertFormat(GraphicsContext3D* context, GLES2Texture::Format format, unsigned int* glFormat, unsigned int* glType, bool* swizzle)
+static void convertFormat(GraphicsContext3D* context, Texture::Format format, unsigned int* glFormat, unsigned int* glType, bool* swizzle)
 {
     *swizzle = false;
     switch (format) {
-    case GLES2Texture::RGBA8:
+    case Texture::RGBA8:
         *glFormat = GraphicsContext3D::RGBA;
         *glType = GraphicsContext3D::UNSIGNED_BYTE;
         break;
-    case GLES2Texture::BGRA8:
+    case Texture::BGRA8:
         if (context->supportsBGRA()) {
             *glFormat = GraphicsContext3D::BGRA_EXT;
             *glType = GraphicsContext3D::UNSIGNED_BYTE;
@@ -77,7 +77,7 @@ static void convertFormat(GraphicsContext3D* context, GLES2Texture::Format forma
     }
 }
 
-PassRefPtr<GLES2Texture> GLES2Texture::create(GraphicsContext3D* context, Format format, int width, int height)
+PassRefPtr<Texture> Texture::create(GraphicsContext3D* context, Format format, int width, int height)
 {
     int maxTextureSize = 0;
     context->getIntegerv(GraphicsContext3D::MAX_TEXTURE_SIZE, &maxTextureSize);
@@ -109,7 +109,7 @@ PassRefPtr<GLES2Texture> GLES2Texture::create(GraphicsContext3D* context, Format
             tileBoundsWithBorder.height(),
             0, glFormat, glType, 0);
     }
-    return adoptRef(new GLES2Texture(context, textureIds.leakPtr(), format, width, height, maxTextureSize));
+    return adoptRef(new Texture(context, textureIds.leakPtr(), format, width, height, maxTextureSize));
 }
 
 template <bool swizzle>
@@ -134,7 +134,7 @@ static uint32_t* copySubRect(uint32_t* src, int srcX, int srcY, uint32_t* dst, i
     return dst;
 }
 
-void GLES2Texture::load(void* pixels)
+void Texture::load(void* pixels)
 {
     uint32_t* pixels32 = static_cast<uint32_t*>(pixels);
     unsigned int glFormat = 0;
@@ -168,7 +168,7 @@ void GLES2Texture::load(void* pixels)
     }
 }
 
-void GLES2Texture::bindTile(int tile)
+void Texture::bindTile(int tile)
 {
     m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_tileTextureIds->at(tile));
     m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, GraphicsContext3D::LINEAR);

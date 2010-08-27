@@ -35,13 +35,12 @@
 #include "AffineTransform.h"
 #include "CanvasLayerChromium.h"
 #include "GLES2Canvas.h"
-#include "GLES2Texture.h"
 #include "GraphicsContext.h"
 #include "GraphicsContext3D.h"
 #include "ImageBuffer.h"
 #include "NativeImageSkia.h"
-#include "PlatformContextSkia.h"
 #include "SkiaUtils.h"
+#include "Texture.h"
 #include "TilingData.h"
 
 #include "skia/ext/image_operations.h"
@@ -49,8 +48,8 @@
 
 #include "SkBitmap.h"
 #include "SkColorPriv.h"
-#include "SkShader.h"
 #include "SkDashPathEffect.h"
+#include "SkShader.h"
 
 #include <wtf/MathExtras.h>
 #include <wtf/OwnArrayPtr.h>
@@ -787,7 +786,7 @@ void PlatformContextSkia::uploadSoftwareToHardware(CompositeOperator op) const
     SkAutoLockPixels lock(bitmap);
     GraphicsContext3D* context = m_gpuCanvas->context();
     if (!m_uploadTexture || m_uploadTexture->tiles().totalSizeX() < bitmap.width() || m_uploadTexture->tiles().totalSizeY() < bitmap.height())
-        m_uploadTexture = GLES2Texture::create(context, GLES2Texture::BGRA8, bitmap.width(), bitmap.height());
+        m_uploadTexture = Texture::create(context, Texture::BGRA8, bitmap.width(), bitmap.height());
     m_uploadTexture->load(bitmap.getPixels());
     IntRect rect(0, 0, bitmap.width(), bitmap.height());
     AffineTransform identity;
