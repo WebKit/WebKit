@@ -1,3 +1,18 @@
+2010-08-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        r66141 caused fast/forms/select-style.html to fail on mac:
+        https://bugs.webkit.org/show_bug.cgi?id=44737
+
+        Handle the fact that a CSSImageValue may have a value of CSSValueNone,
+        in which case we should not return a pending image.
+
+        * css/CSSImageValue.cpp:
+        (WebCore::CSSImageValue::cachedOrPendingImage):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::cachedOrPendingFromValue):
+
 2010-08-27  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Dan Bernstein.

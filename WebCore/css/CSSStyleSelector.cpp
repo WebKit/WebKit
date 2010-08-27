@@ -5774,7 +5774,7 @@ StyleImage* CSSStyleSelector::styleImage(CSSPropertyID property, CSSValue* value
 StyleImage* CSSStyleSelector::cachedOrPendingFromValue(CSSPropertyID property, CSSImageValue* value)
 {
     StyleImage* image = value->cachedOrPendingImage();
-    if (image->isPendingImage())
+    if (image && image->isPendingImage())
         m_pendingImageProperties.add(property);
     return image;
 }
