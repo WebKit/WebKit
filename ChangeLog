@@ -1,3 +1,11 @@
+2010-08-27  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Unreviewed. Fix compiling dependencies on EFL port due to r65891.
+
+        No new functionality so no new tests.
+
+        * cmake/WebKitGenerators.cmake:
+
 2010-08-26  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
