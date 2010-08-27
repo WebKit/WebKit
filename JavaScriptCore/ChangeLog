@@ -1,3 +1,11 @@
+2010-08-27  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Fix a couple of typos in comment.
+
+        * bytecode/CodeBlock.h:
+
 2010-08-26  Gavin Barraclough  <barraclough@apple.com>
 
         Windows build fix.
