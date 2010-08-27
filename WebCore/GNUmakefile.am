@@ -1335,8 +1335,6 @@ webcore_sources += \
 	WebCore/html/CollectionCache.cpp \
 	WebCore/html/CollectionCache.h \
 	WebCore/html/CollectionType.h \
-	WebCore/html/CSSPreloadScanner.cpp \
-	WebCore/html/CSSPreloadScanner.h \
 	WebCore/html/DataGridColumn.cpp \
 	WebCore/html/DataGridColumn.h \
 	WebCore/html/DataGridColumnList.cpp \
@@ -1364,17 +1362,6 @@ webcore_sources += \
 	WebCore/html/FileThreadTask.h \
 	WebCore/html/FormDataList.cpp \
 	WebCore/html/FormDataList.h \
-	WebCore/html/HTMLEntityParser.cpp \
-	WebCore/html/HTMLEntityParser.h \
-	WebCore/html/HTMLTokenizer.cpp \
-	WebCore/html/HTMLTokenizer.h \
-	WebCore/html/HTMLDocumentParser.cpp \
-	WebCore/html/HTMLDocumentParser.h \
-	WebCore/html/HTMLPreloadScanner.cpp \
-	WebCore/html/HTMLPreloadScanner.h \
-	WebCore/html/HTMLScriptRunner.cpp \
-	WebCore/html/HTMLScriptRunner.h \
-	WebCore/html/HTMLScriptRunnerHost.h \
 	WebCore/html/HTMLAllCollection.cpp \
 	WebCore/html/HTMLAllCollection.h \
 	WebCore/html/HTMLAnchorElement.cpp \
@@ -1417,20 +1404,14 @@ webcore_sources += \
 	WebCore/html/HTMLDivElement.h \
 	WebCore/html/HTMLDocument.cpp \
 	WebCore/html/HTMLDocument.h \
-	WebCore/html/HTMLConstructionSite.cpp \
-	WebCore/html/HTMLConstructionSite.h \
 	WebCore/html/HTMLElement.cpp \
 	WebCore/html/HTMLElement.h \
-	WebCore/html/HTMLEntitySearch.cpp \
-	WebCore/html/HTMLEntitySearch.h \
 	WebCore/html/HTMLEmbedElement.cpp \
 	WebCore/html/HTMLEmbedElement.h \
 	WebCore/html/HTMLFieldSetElement.cpp \
 	WebCore/html/HTMLFieldSetElement.h \
 	WebCore/html/HTMLFontElement.cpp \
 	WebCore/html/HTMLFontElement.h \
-	WebCore/html/HTMLFormattingElementList.cpp \
-	WebCore/html/HTMLFormattingElementList.h \
 	WebCore/html/HTMLFormCollection.cpp \
 	WebCore/html/HTMLFormCollection.h \
 	WebCore/html/HTMLFormControlElement.cpp \
@@ -1505,8 +1486,6 @@ webcore_sources += \
 	WebCore/html/HTMLParserErrorCodes.cpp \
 	WebCore/html/HTMLParserErrorCodes.h \
 	WebCore/html/HTMLParserQuirks.h \
-	WebCore/html/HTMLParserScheduler.cpp \
-	WebCore/html/HTMLParserScheduler.h \
 	WebCore/html/HTMLPlugInElement.cpp \
 	WebCore/html/HTMLPlugInElement.h \
 	WebCore/html/HTMLPlugInImageElement.cpp \
@@ -1547,8 +1526,6 @@ webcore_sources += \
 	WebCore/html/HTMLUListElement.h \
 	WebCore/html/HTMLViewSourceDocument.cpp \
 	WebCore/html/HTMLViewSourceDocument.h \
-	WebCore/html/HTMLViewSourceParser.cpp \
-	WebCore/html/HTMLViewSourceParser.h \
 	WebCore/html/ImageData.cpp \
 	WebCore/html/ImageData.h \
 	WebCore/html/ImageResizerThread.cpp \
@@ -1556,11 +1533,34 @@ webcore_sources += \
 	WebCore/html/LabelsNodeList.cpp \
 	WebCore/html/LabelsNodeList.h \
 	WebCore/html/MediaError.h \
+	WebCore/html/parser/CSSPreloadScanner.cpp \
+	WebCore/html/parser/CSSPreloadScanner.h \
+	WebCore/html/parser/HTMLConstructionSite.cpp \
+	WebCore/html/parser/HTMLConstructionSite.h \
+	WebCore/html/parser/HTMLDocumentParser.cpp \
+	WebCore/html/parser/HTMLDocumentParser.h \
 	WebCore/html/parser/HTMLElementStack.cpp \
 	WebCore/html/parser/HTMLElementStack.h \
+	WebCore/html/parser/HTMLEntityParser.cpp \
+	WebCore/html/parser/HTMLEntityParser.h \
+	WebCore/html/parser/HTMLEntitySearch.cpp \
+	WebCore/html/parser/HTMLEntitySearch.h \
+	WebCore/html/parser/HTMLFormattingElementList.cpp \
+	WebCore/html/parser/HTMLFormattingElementList.h \
+	WebCore/html/parser/HTMLParserScheduler.cpp \
+	WebCore/html/parser/HTMLParserScheduler.h \
+	WebCore/html/parser/HTMLPreloadScanner.cpp \
+	WebCore/html/parser/HTMLPreloadScanner.h \
+	WebCore/html/parser/HTMLScriptRunner.cpp \
+	WebCore/html/parser/HTMLScriptRunner.h \
+	WebCore/html/parser/HTMLScriptRunnerHost.h \
 	WebCore/html/parser/HTMLToken.h \
+	WebCore/html/parser/HTMLTokenizer.cpp \
+	WebCore/html/parser/HTMLTokenizer.h \
 	WebCore/html/parser/HTMLTreeBuilder.cpp \
 	WebCore/html/parser/HTMLTreeBuilder.h \
+	WebCore/html/parser/HTMLViewSourceParser.cpp \
+	WebCore/html/parser/HTMLViewSourceParser.h \
 	WebCore/html/StepRange.cpp \
 	WebCore/html/StepRange.h \
 	WebCore/html/TextMetrics.h \
@@ -4463,8 +4463,8 @@ DerivedSources/WebCore/DocTypeStrings.cpp : $(WebCore)/html/DocTypeStrings.gperf
 	$(PERL) $(WebCore)/make-hash-tools.pl $(GENSOURCES_WEBCORE) $(WebCore)/html/DocTypeStrings.gperf
 
 # HTML entity names
-DerivedSources/WebCore/HTMLEntityTable.cpp : $(WebCore)/html/HTMLEntityNames.json $(WebCore)/../WebKitTools/Scripts/create-html-entity-table
-	$(PYTHON) $(WebCore)/../WebKitTools/Scripts/create-html-entity-table -o $(GENSOURCES_WEBCORE)/HTMLEntityTable.cpp $(WebCore)/html/HTMLEntityNames.json
+DerivedSources/WebCore/HTMLEntityTable.cpp : $(WebCore)/html/parser/HTMLEntityNames.json $(WebCore)/../WebKitTools/Scripts/create-html-entity-table
+	$(PYTHON) $(WebCore)/../WebKitTools/Scripts/create-html-entity-table -o $(GENSOURCES_WEBCORE)/HTMLEntityTable.cpp $(WebCore)/html/parser/HTMLEntityNames.json
 
 # color names
 DerivedSources/WebCore/ColorData.cpp: $(WebCore)/platform/ColorData.gperf $(WebCore)/make-hash-tools.pl
@@ -4605,7 +4605,6 @@ EXTRA_DIST += \
 	WebCore/dom/make_names.pl \
 	WebCore/html/DocTypeStrings.gperf \
 	WebCore/html/HTMLAttributeNames.in \
-	WebCore/html/HTMLEntityNames.gperf \
 	WebCore/html/HTMLTagNames.in \
 	WebCore/icu/LICENSE \
 	WebCore/inspector/CodeGeneratorInspector.pm \

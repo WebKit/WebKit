@@ -63,15 +63,6 @@ $(GEN): $(LOCAL_PATH)/html/DocTypeStrings.gperf
 $(intermediates)/html/HTMLDocument.o : $(GEN)
 
 
-# HTML entity names
-
-GEN := $(intermediates)/html/HTMLEntityNames.c
-$(GEN): PRIVATE_CUSTOM_TOOL = gperf -a -L ANSI-C -C -G -c -o -t -k '*' -N findEntity -D -s 2 $< > $@
-$(GEN): $(LOCAL_PATH)/html/HTMLEntityNames.gperf
-	$(transform-generated-source)
-LOCAL_GENERATED_SOURCES += $(GEN)
-
-
 # color names
 
 GEN := $(intermediates)/platform/ColorData.c

@@ -1,3 +1,71 @@
+2010-08-27  Adam Barth  <abarth@webkit.org>
+
+        Rubber-stamped by Eric Seidel.
+
+        Finshing moving the HTML parser into WebCore/html/parser.
+
+        * Android.derived.mk:
+        * Android.mk:
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/CSSPreloadScanner.cpp: Removed.
+        * html/CSSPreloadScanner.h: Removed.
+        * html/HTMLConstructionSite.cpp: Removed.
+        * html/HTMLConstructionSite.h: Removed.
+        * html/HTMLDocumentParser.cpp: Removed.
+        * html/HTMLDocumentParser.h: Removed.
+        * html/HTMLEntityNames.json: Removed.
+        * html/HTMLEntityParser.cpp: Removed.
+        * html/HTMLEntityParser.h: Removed.
+        * html/HTMLEntitySearch.cpp: Removed.
+        * html/HTMLEntitySearch.h: Removed.
+        * html/HTMLEntityTable.h: Removed.
+        * html/HTMLFormattingElementList.cpp: Removed.
+        * html/HTMLFormattingElementList.h: Removed.
+        * html/HTMLParserScheduler.cpp: Removed.
+        * html/HTMLParserScheduler.h: Removed.
+        * html/HTMLPreloadScanner.cpp: Removed.
+        * html/HTMLPreloadScanner.h: Removed.
+        * html/HTMLScriptRunner.cpp: Removed.
+        * html/HTMLScriptRunner.h: Removed.
+        * html/HTMLScriptRunnerHost.h: Removed.
+        * html/HTMLTokenizer.cpp: Removed.
+        * html/HTMLTokenizer.h: Removed.
+        * html/HTMLViewSourceParser.cpp: Removed.
+        * html/HTMLViewSourceParser.h: Removed.
+        * html/parser/CSSPreloadScanner.cpp: Copied from WebCore/html/CSSPreloadScanner.cpp.
+        * html/parser/CSSPreloadScanner.h: Copied from WebCore/html/CSSPreloadScanner.h.
+        * html/parser/HTMLConstructionSite.cpp: Copied from WebCore/html/HTMLConstructionSite.cpp.
+        * html/parser/HTMLConstructionSite.h: Copied from WebCore/html/HTMLConstructionSite.h.
+        * html/parser/HTMLDocumentParser.cpp: Copied from WebCore/html/HTMLDocumentParser.cpp.
+        * html/parser/HTMLDocumentParser.h: Copied from WebCore/html/HTMLDocumentParser.h.
+        * html/parser/HTMLEntityNames.json: Copied from WebCore/html/HTMLEntityNames.json.
+        * html/parser/HTMLEntityParser.cpp: Copied from WebCore/html/HTMLEntityParser.cpp.
+        * html/parser/HTMLEntityParser.h: Copied from WebCore/html/HTMLEntityParser.h.
+        * html/parser/HTMLEntitySearch.cpp: Copied from WebCore/html/HTMLEntitySearch.cpp.
+        * html/parser/HTMLEntitySearch.h: Copied from WebCore/html/HTMLEntitySearch.h.
+        * html/parser/HTMLEntityTable.h: Copied from WebCore/html/HTMLEntityTable.h.
+        * html/parser/HTMLFormattingElementList.cpp: Copied from WebCore/html/HTMLFormattingElementList.cpp.
+        * html/parser/HTMLFormattingElementList.h: Copied from WebCore/html/HTMLFormattingElementList.h.
+        * html/parser/HTMLParserScheduler.cpp: Copied from WebCore/html/HTMLParserScheduler.cpp.
+        * html/parser/HTMLParserScheduler.h: Copied from WebCore/html/HTMLParserScheduler.h.
+        * html/parser/HTMLPreloadScanner.cpp: Copied from WebCore/html/HTMLPreloadScanner.cpp.
+        * html/parser/HTMLPreloadScanner.h: Copied from WebCore/html/HTMLPreloadScanner.h.
+        * html/parser/HTMLScriptRunner.cpp: Copied from WebCore/html/HTMLScriptRunner.cpp.
+        * html/parser/HTMLScriptRunner.h: Copied from WebCore/html/HTMLScriptRunner.h.
+        * html/parser/HTMLScriptRunnerHost.h: Copied from WebCore/html/HTMLScriptRunnerHost.h.
+        * html/parser/HTMLTokenizer.cpp: Copied from WebCore/html/HTMLTokenizer.cpp.
+        * html/parser/HTMLTokenizer.h: Copied from WebCore/html/HTMLTokenizer.h.
+        * html/parser/HTMLViewSourceParser.cpp: Copied from WebCore/html/HTMLViewSourceParser.cpp.
+        * html/parser/HTMLViewSourceParser.h: Copied from WebCore/html/HTMLViewSourceParser.h.
+
 2010-08-27  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Tony Chang.

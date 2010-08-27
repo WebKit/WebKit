@@ -327,7 +327,7 @@
         '../platform/ColorData.gperf',
 
         # json rule
-        '../html/HTMLEntityNames.json',
+        '../html/parser/HTMLEntityNames.json',
 
         # idl rules
         '<@(bindings_idl_files)',

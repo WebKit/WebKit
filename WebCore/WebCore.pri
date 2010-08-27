@@ -29,7 +29,7 @@ XML_NAMES = $$PWD/xml/xmlattrs.in
 
 XMLNS_NAMES = $$PWD/xml/xmlnsattrs.in
 
-HTML_ENTITIES = $$PWD/html/HTMLEntityNames.json
+HTML_ENTITIES = $$PWD/html/parser/HTMLEntityNames.json
 
 COLORDATA_GPERF = $$PWD/platform/ColorData.gperf
 

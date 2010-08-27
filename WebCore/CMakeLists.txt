@@ -947,7 +947,6 @@ SET(WebCore_SOURCES
     html/BlobBuilder.cpp
     html/BlobURL.cpp
     html/CollectionCache.cpp
-    html/CSSPreloadScanner.cpp
     html/DOMDataGridDataSource.cpp
     html/DOMFormData.cpp
     html/DataGridColumn.cpp
@@ -956,11 +955,6 @@ SET(WebCore_SOURCES
     html/File.cpp
     html/FileList.cpp
     html/FormDataList.cpp
-    html/HTMLEntityParser.cpp
-    html/HTMLTokenizer.cpp
-    html/HTMLDocumentParser.cpp
-    html/HTMLPreloadScanner.cpp
-    html/HTMLScriptRunner.cpp
     html/HTMLAllCollection.cpp
     html/HTMLAnchorElement.cpp
     html/HTMLAppletElement.cpp
@@ -973,7 +967,6 @@ SET(WebCore_SOURCES
     html/HTMLButtonElement.cpp
     html/HTMLCanvasElement.cpp
     html/HTMLCollection.cpp
-    html/HTMLConstructionSite.cpp
     html/HTMLDListElement.cpp
     html/HTMLDataGridCellElement.cpp
     html/HTMLDataGridColElement.cpp
@@ -984,10 +977,8 @@ SET(WebCore_SOURCES
     html/HTMLDivElement.cpp
     html/HTMLDocument.cpp
     html/HTMLElement.cpp
-    html/HTMLEntitySearch.cpp
     html/HTMLEmbedElement.cpp
     html/HTMLFieldSetElement.cpp
-    html/HTMLFormattingElementList.cpp
     html/HTMLFontElement.cpp
     html/HTMLFormCollection.cpp
     html/HTMLFormControlElement.cpp
@@ -1025,7 +1016,6 @@ SET(WebCore_SOURCES
     html/HTMLParagraphElement.cpp
     html/HTMLParamElement.cpp
     html/HTMLParserErrorCodes.cpp
-    html/HTMLParserScheduler.cpp
     html/HTMLPlugInElement.cpp
     html/HTMLPlugInImageElement.cpp
     html/HTMLPreElement.cpp
@@ -1046,7 +1036,6 @@ SET(WebCore_SOURCES
     html/HTMLTitleElement.cpp
     html/HTMLUListElement.cpp
     html/HTMLViewSourceDocument.cpp
-    html/HTMLViewSourceParser.cpp
     html/ImageData.cpp
     html/ImageResizerThread.cpp
     html/LabelsNodeList.cpp
@@ -1059,8 +1048,19 @@ SET(WebCore_SOURCES
     html/canvas/CanvasRenderingContext.cpp
     html/canvas/CanvasRenderingContext2D.cpp
     html/canvas/CanvasStyle.cpp
+    html/parser/CSSPreloadScanner.cpp
+    html/parser/HTMLConstructionSite.cpp
+    html/parser/HTMLDocumentParser.cpp
     html/parser/HTMLElementStack.cpp
+    html/parser/HTMLEntityParser.cpp
+    html/parser/HTMLEntitySearch.cpp
+    html/parser/HTMLParserScheduler.cpp
+    html/parser/HTMLFormattingElementList.cpp
+    html/parser/HTMLPreloadScanner.cpp
+    html/parser/HTMLScriptRunner.cpp
+    html/parser/HTMLTokenizer.cpp
     html/parser/HTMLTreeBuilder.cpp
+    html/parser/HTMLViewSourceParser.cpp
 
     inspector/ConsoleMessage.cpp
     inspector/InjectedScript.cpp
@@ -1876,7 +1876,7 @@ GENERATE_INSPECTOR_FROM_IDL(inspector/Inspector.idl)
 LIST(APPEND WebCore_SOURCES ${JS_IDL_FILES} ${Inspector_IDL_FILES})
 
 
-GENERATE_JSON(${WEBCORE_DIR}/html/HTMLEntityNames.json ${DERIVED_SOURCES_DIR}/HTMLEntityTable.cpp ${WEBCORE_DIR}/../WebKitTools/Scripts/create-html-entity-table)
+GENERATE_JSON(${WEBCORE_DIR}/html/parser/HTMLEntityNames.json ${DERIVED_SOURCES_DIR}/HTMLEntityTable.cpp ${WEBCORE_DIR}/../WebKitTools/Scripts/create-html-entity-table)
 
 
 GENERATE_GPERF(${WEBCORE_DIR}/platform/ColorData.gperf ${DERIVED_SOURCES_DIR}/ColorData.cpp findColor "")

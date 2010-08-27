@@ -37177,14 +37177,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\html\CSSPreloadScanner.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\CSSPreloadScanner.h"
-				>
-			</File>
-			<File
 				RelativePath="..\html\DataGridColumn.cpp"
 				>
 			</File>
@@ -37925,14 +37917,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\html\HTMLConstructionSite.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\HTMLConstructionSite.h"
-				>
-			</File>
-			<File
 				RelativePath="..\html\HTMLDataGridCellElement.cpp"
 				>
 				<FileConfiguration
@@ -38389,14 +38373,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\html\HTMLDocumentParser.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\HTMLDocumentParser.h"
-				>
-			</File>
-			<File
 				RelativePath="..\html\HTMLElement.cpp"
 				>
 				<FileConfiguration
@@ -38513,22 +38489,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\html\HTMLEntityParser.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\HTMLEntityParser.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\HTMLEntitySearch.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\HTMLEntitySearch.h"
-				>
-			</File>
-			<File
 				RelativePath="..\html\HTMLFieldSetElement.cpp"
 				>
 				<FileConfiguration
@@ -38638,14 +38598,6 @@
 			</File>
 			<File
 				RelativePath="..\html\HTMLFontElement.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\HTMLFormattingElementList.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\HTMLFormattingElementList.h"
 				>
 			</File>
 			<File
@@ -40549,14 +40501,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\html\HTMLParserScheduler.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\HTMLParserScheduler.h"
-				>
-			</File>
-			<File
 				RelativePath="..\html\HTMLPlugInElement.cpp"
 				>
 				<FileConfiguration
@@ -40725,14 +40669,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\html\HTMLPreloadScanner.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\HTMLPreloadScanner.h"
-				>
-			</File>
-			<File
 				RelativePath="..\html\HTMLProgressElement.cpp"
 				>
 				<FileConfiguration
@@ -40898,14 +40834,6 @@
 			</File>
 			<File
 				RelativePath="..\html\HTMLScriptElement.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\HTMLScriptRunner.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\HTMLScriptRunner.h"
 				>
 			</File>
 			<File
@@ -41589,14 +41517,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\html\HTMLTokenizer.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\HTMLTokenizer.h"
-				>
-			</File>
-			<File
 				RelativePath="..\html\HTMLUListElement.cpp"
 				>
 				<FileConfiguration
@@ -41717,14 +41637,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\html\HTMLViewSourceParser.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\HTMLViewSourceParser.h"
-				>
-			</File>
-			<File
 				RelativePath="..\html\ImageData.cpp"
 				>
 			</File>
@@ -41752,26 +41664,122 @@
 				RelativePath="..\html\MediaError.h"
 				>
 			</File>
-			<File
-				RelativePath="..\html\parser\HTMLElementStack.cpp"
+			<Filter
+				Name="parser"
 				>
-			</File>
-			<File
-				RelativePath="..\html\parser\HTMLElementStack.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\parser\HTMLToken.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\parser\HTMLTreeBuilder.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\parser\HTMLTreeBuilder.h"
-				>
-			</File>
+                <File
+                    RelativePath="..\html\parser\CSSPreloadScanner.cpp"
+                    >
+                </File>
+                <File
+                    RelativePath="..\html\parser\CSSPreloadScanner.h"
+                    >
+                </File>
+                <File
+                    RelativePath="..\html\parser\HTMLConstructionSite.cpp"
+                    >
+                </File>
+                <File
+                    RelativePath="..\html\parser\HTMLConstructionSite.h"
+                    >
+                </File>
+                <File
+                    RelativePath="..\html\parser\HTMLDocumentParser.cpp"
+                    >
+                </File>
+                <File
+                    RelativePath="..\html\parser\HTMLDocumentParser.h"
+                    >
+                </File>
+                <File
+                    RelativePath="..\html\parser\HTMLEntityParser.cpp"
+                    >
+                </File>
+                <File
+                    RelativePath="..\html\parser\HTMLEntityParser.h"
+                    >
+                </File>
+                <File
+                    RelativePath="..\html\parser\HTMLElementStack.cpp"
+                    >
+                </File>
+                <File
+                    RelativePath="..\html\parser\HTMLElementStack.h"
+                    >
+                </File>
+                <File
+                    RelativePath="..\html\parser\HTMLEntitySearch.cpp"
+                    >
+                </File>
+                <File
+                    RelativePath="..\html\parser\HTMLEntitySearch.h"
+                    >
+                </File>
+                <File
+                    RelativePath="..\html\parser\HTMLFormattingElementList.cpp"
+                    >
+                </File>
+                <File
+                    RelativePath="..\html\parser\HTMLFormattingElementList.h"
+                    >
+                </File>
+                <File
+                    RelativePath="..\html\parser\HTMLParserScheduler.cpp"
+                    >
+                </File>
+                <File
+                    RelativePath="..\html\parser\HTMLParserScheduler.h"
+                    >
+                </File>
+                <File
+                    RelativePath="..\html\parser\HTMLPreloadScanner.cpp"
+                    >
+                </File>
+                <File
+                    RelativePath="..\html\parser\HTMLPreloadScanner.h"
+                    >
+                </File>
+                <File
+                    RelativePath="..\html\parser\HTMLScriptRunner.cpp"
+                    >
+                </File>
+                <File
+                    RelativePath="..\html\parser\HTMLScriptRunner.h"
+                    >
+                </File>
+                <File
+                    RelativePath="..\html\parser\HTMLScriptRunnerHost.h"
+                    >
+                </File>
+                <File
+                    RelativePath="..\html\parser\HTMLToken.h"
+                    >
+                </File>
+                <File
+                    RelativePath="..\html\parser\HTMLTokenizer.cpp"
+                    >
+                </File>
+                <File
+                    RelativePath="..\html\parser\HTMLTokenizer.h"
+                    >
+                </File>
+                <File
+                    RelativePath="..\html\parser\HTMLTreeBuilder.cpp"
+                    >
+                </File>
+                <File
+                    RelativePath="..\html\parser\HTMLTreeBuilder.h"
+                    >
+                </File>
+                <File
+                    RelativePath="..\html\parser\HTMLViewSourceParser.cpp"
+                    >
+                </File>
+                <File
+                    RelativePath="..\html\parser\HTMLViewSourceParser.h"
+                    >
+                </File>
+            </Filter>
 			<File
 				RelativePath="..\html\StepRange.cpp"
 				>

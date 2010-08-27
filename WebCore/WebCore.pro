@@ -637,7 +637,6 @@ SOURCES += \
     html/canvas/CanvasRenderingContext2D.cpp \
     html/canvas/CanvasStyle.cpp \
     html/CollectionCache.cpp \
-    html/CSSPreloadScanner.cpp \
     html/DataGridColumn.cpp \
     html/DataGridColumnList.cpp \
     html/DateComponents.cpp \
@@ -650,11 +649,6 @@ SOURCES += \
     html/FileThread.cpp \
     html/FileWriter.cpp \
     html/FormDataList.cpp \
-    html/HTMLEntityParser.cpp \
-    html/HTMLTokenizer.cpp \
-    html/HTMLDocumentParser.cpp \
-    html/HTMLPreloadScanner.cpp \
-    html/HTMLScriptRunner.cpp \
     html/HTMLAllCollection.cpp \
     html/HTMLAnchorElement.cpp \
     html/HTMLAppletElement.cpp \
@@ -667,7 +661,6 @@ SOURCES += \
     html/HTMLButtonElement.cpp \
     html/HTMLCanvasElement.cpp \
     html/HTMLCollection.cpp \
-    html/HTMLConstructionSite.cpp \
     html/HTMLDataGridElement.cpp \
     html/HTMLDataGridCellElement.cpp \
     html/HTMLDataGridColElement.cpp \
@@ -678,11 +671,9 @@ SOURCES += \
     html/HTMLDListElement.cpp \
     html/HTMLDocument.cpp \
     html/HTMLElement.cpp \
-    html/HTMLEntitySearch.cpp \
     html/HTMLEmbedElement.cpp \
     html/HTMLFieldSetElement.cpp \
     html/HTMLFontElement.cpp \
-    html/HTMLFormattingElementList.cpp \
     html/HTMLFormCollection.cpp \
     html/HTMLFormElement.cpp \
     html/HTMLFrameElementBase.cpp \
@@ -719,7 +710,6 @@ SOURCES += \
     html/HTMLParagraphElement.cpp \
     html/HTMLParamElement.cpp \
     html/HTMLParserErrorCodes.cpp \
-    html/HTMLParserScheduler.cpp \
     html/HTMLPlugInElement.cpp \
     html/HTMLPlugInImageElement.cpp \
     html/HTMLPreElement.cpp \
@@ -740,12 +730,22 @@ SOURCES += \
     html/HTMLTitleElement.cpp \
     html/HTMLUListElement.cpp \
     html/HTMLViewSourceDocument.cpp \
-    html/HTMLViewSourceParser.cpp \
     html/ImageData.cpp \
     html/ImageResizerThread.cpp \
     html/LabelsNodeList.cpp \
+    html/parser/CSSPreloadScanner.cpp \
+    html/parser/HTMLConstructionSite.cpp \
+    html/parser/HTMLDocumentParser.cpp \
     html/parser/HTMLElementStack.cpp \
+    html/parser/HTMLEntityParser.cpp \
+    html/parser/HTMLEntitySearch.cpp \
+    html/parser/HTMLFormattingElementList.cpp \
+    html/parser/HTMLParserScheduler.cpp \
+    html/parser/HTMLPreloadScanner.cpp \
+    html/parser/HTMLScriptRunner.cpp \
+    html/parser/HTMLTokenizer.cpp \
     html/parser/HTMLTreeBuilder.cpp \
+    html/parser/HTMLViewSourceParser.cpp \
     html/ThreadableBlobRegistry.cpp \
     html/StepRange.cpp \
     html/ValidityState.cpp \

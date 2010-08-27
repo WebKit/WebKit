@@ -258,32 +258,23 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	html/Blob.cpp \
 	html/BlobURL.cpp \
 	html/CollectionCache.cpp \
-	html/CSSPreloadScanner.cpp \
+	html/parser/CSSPreloadScanner.cpp \
 	html/DOMFormData.cpp \
 	html/File.cpp \
 	html/FileList.cpp \
 	html/FormDataList.cpp \
-	html/HTMLEntityParser.cpp \
-	html/HTMLTokenizer.cpp \
-	html/HTMLDocumentParser.cpp \
-	html/HTMLPreloadScanner.cpp \
-	html/HTMLScriptRunner.cpp \
 	html/HTMLAllCollection.cpp \
 	html/HTMLCollection.cpp \
-	html/HTMLConstructionSite.cpp \
 	html/HTMLDataListElement.cpp \
 	html/HTMLDocument.cpp \
 	html/HTMLElementsAllInOne.cpp \
-	html/HTMLFormattingElementList.cpp \
 	html/HTMLFormCollection.cpp \
 	html/HTMLImageLoader.cpp \
 	html/HTMLNameCollection.cpp \
 	html/HTMLOptionsCollection.cpp \
 	html/HTMLParserErrorCodes.cpp \
-	html/HTMLParserScheduler.cpp \
 	html/HTMLTableRowsCollection.cpp \
 	html/HTMLViewSourceDocument.cpp \
-	html/HTMLViewSourceParser.cpp \
 	html/ImageData.cpp \
 	html/ImageResizerThread.cpp \
 	html/ThreadableBlobRegistry.cpp \
@@ -298,8 +289,17 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	html/canvas/CanvasRenderingContext2D.cpp \
 	html/canvas/CanvasStyle.cpp \
 	\
+	html/parser/HTMLConstructionSite.cpp \
+	html/parser/HTMLDocumentParser.cpp \
 	html/parser/HTMLElementStack.cpp \
+	html/parser/HTMLEntityParser.cpp \
+	html/parser/HTMLFormattingElementList.cpp \
+	html/parser/HTMLParserScheduler.cpp \
+	html/parser/HTMLPreloadScanner.cpp \
+	html/parser/HTMLScriptRunner.cpp \
+	html/parser/HTMLTokenizer.cpp \
 	html/parser/HTMLTreeBuilder.cpp \
+	html/parser/HTMLViewSourceParser.cpp \
 	\
 	loader/Cache.cpp \
 	loader/CachedCSSStyleSheet.cpp \
