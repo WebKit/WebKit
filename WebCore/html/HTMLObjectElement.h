@@ -41,6 +41,8 @@ public:
 
     bool containsJavaApplet() const;
 
+    bool useFallbackContent() const { return m_useFallbackContent; }
+
 private:
     HTMLObjectElement(const QualifiedName&, Document*, bool createdByParser);
 

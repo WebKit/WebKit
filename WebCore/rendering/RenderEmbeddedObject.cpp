@@ -186,44 +186,17 @@ void RenderEmbeddedObject::updateWidget(bool onlyCreateNonNetscapePlugins)
 
         objectElement->setNeedWidgetUpdate(false);
         if (!objectElement->isFinishedParsingChildren())
-          return;
-
-        // Check for a child EMBED tag.
-        HTMLEmbedElement* embed = 0;
-        for (Node* child = objectElement->firstChild(); child; ) {
-            if (child->hasTagName(embedTag)) {
-                embed = static_cast<HTMLEmbedElement*>(child);
-                break;
-            }
+            return;
             
-            if (child->hasTagName(objectTag))
-                child = child->nextSibling(); // Don't descend into nested OBJECT tags
-            else
-                child = child->traverseNextNode(objectElement); // Otherwise descend (EMBEDs may be inside COMMENT tags)
-        }
-
-        // Use the attributes from the EMBED tag instead of the OBJECT tag including WIDTH and HEIGHT.
-        HTMLElement* embedOrObject;
-        if (embed) {
-            embedOrObject = embed;
-            url = embed->url();
-            serviceType = embed->serviceType();
-        } else
-            embedOrObject = objectElement;
-
-        // If there was no URL or type defined in EMBED, try the OBJECT tag.
-        if (url.isEmpty())
-            url = objectElement->url();
-        if (serviceType.isEmpty())
-            serviceType = objectElement->serviceType();
+        url = objectElement->url();
+        serviceType = objectElement->serviceType();
 
         HashSet<StringImpl*, CaseFoldingHash> uniqueParamNames;
 
-        // Scan the PARAM children.
+        // Scan the PARAM children and store their name/value pairs.
         // Get the URL and type from the params if we don't already have them.
-        // Get the attributes from the params if there is no EMBED tag.
         Node* child = objectElement->firstChild();
-        while (child && (url.isEmpty() || serviceType.isEmpty() || !embed)) {
+        while (child) {
             if (child->hasTagName(paramTag)) {
                 HTMLParamElement* p = static_cast<HTMLParamElement*>(child);
                 String name = p->name();
@@ -235,7 +208,7 @@ void RenderEmbeddedObject::updateWidget(bool onlyCreateNonNetscapePlugins)
                     if (pos != notFound)
                         serviceType = serviceType.left(pos);
                 }
-                if (!embed && !name.isEmpty()) {
+                if (!name.isEmpty()) {
                     uniqueParamNames.add(name.impl());
                     paramNames.append(p->name());
                     paramValues.append(p->value());
@@ -250,18 +223,18 @@ void RenderEmbeddedObject::updateWidget(bool onlyCreateNonNetscapePlugins)
         // we have to explicitly suppress the tag's CODEBASE attribute if there is none in a PARAM,
         // else our Java plugin will misinterpret it. [4004531]
         String codebase;
-        if (!embed && MIMETypeRegistry::isJavaAppletMIMEType(serviceType)) {
+        if (MIMETypeRegistry::isJavaAppletMIMEType(serviceType)) {
             codebase = "codebase";
             uniqueParamNames.add(codebase.impl()); // pretend we found it in a PARAM already
         }
         
-        // Turn the attributes of either the EMBED tag or OBJECT tag into arrays, but don't override PARAM values.
-        NamedNodeMap* attributes = embedOrObject->attributes();
+        // Turn the attributes of the <object> element into arrays, but don't override <param> values.
+        NamedNodeMap* attributes = objectElement->attributes();
         if (attributes) {
             for (unsigned i = 0; i < attributes->length(); ++i) {
                 Attribute* it = attributes->attributeItem(i);
                 const AtomicString& name = it->name().localName();
-                if (embed || !uniqueParamNames.contains(name.impl())) {
+                if (!uniqueParamNames.contains(name.impl())) {
                     paramNames.append(name.string());
                     paramValues.append(it->value().string());
                 }
@@ -280,7 +253,7 @@ void RenderEmbeddedObject::updateWidget(bool onlyCreateNonNetscapePlugins)
         // Find out if we support fallback content.
         m_hasFallbackContent = false;
         for (Node* child = objectElement->firstChild(); child && !m_hasFallbackContent; child = child->nextSibling()) {
-            if ((!child->isTextNode() && !child->hasTagName(embedTag) && !child->hasTagName(paramTag))  // Discount <embed> and <param>
+            if ((!child->isTextNode() && !child->hasTagName(paramTag)) // Discount <param>
                 || (child->isTextNode() && !static_cast<Text*>(child)->containsOnlyWhitespace()))
                 m_hasFallbackContent = true;
         }

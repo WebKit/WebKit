@@ -8,4 +8,4 @@ FAIL TEST_CLASS.ambiguous( new AnotherObject("12345") ) +'' should be SHORT. Was
 PASS successfullyParsed is true
 
 TEST COMPLETE
-
+ 

@@ -30,4 +30,4 @@ PASS jsoc.getJSObject().constructor is Function
 PASS successfullyParsed is true
 
 TEST COMPLETE
-
+ 

@@ -8,4 +8,4 @@ PASS TEST_CLASS.ambiguous( new AnotherObject("123") ) +'' is 'BYTE'
 PASS successfullyParsed is true
 
 TEST COMPLETE
-
+ 

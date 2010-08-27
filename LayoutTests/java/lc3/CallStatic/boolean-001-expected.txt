@@ -9,4 +9,4 @@ PASS typeof dt.staticGetBoolean() is "boolean"
 PASS successfullyParsed is true
 
 TEST COMPLETE
-
+ 

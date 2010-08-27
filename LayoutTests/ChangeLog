@@ -1,3 +1,214 @@
+2010-08-26  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Darin Adler.
+
+        If an <embed> is part of an <object> element's fallback content, WebKit
+        should only render it if the <object> fails to load.
+        https://bugs.webkit.org/show_bug.cgi?id=44567
+        <rdar://problem/7699852>
+        
+        Add tests for the updated <object>/<embed> behavior.  
+
+        * fast/dom/object-embed-plugin-scripting-expected.txt: Updated expected
+        results.
+        * fast/dom/object-embed-plugin-scripting.html: Added additional test
+        coverage.
+        * fast/replaced/invalid-object-with-fallback-expected.txt: Added.
+        * fast/replaced/invalid-object-with-fallback.html: Added.
+        * fast/replaced/object-with-embed-url-param-expected.txt: Added.
+        * fast/replaced/object-with-embed-url-param.html: Added.
+        
+        The following tests needed to be rebaselined due to WebKit's change in
+        behavior. There is now an extra space in the output due to WebKit
+        rendering the fallback content of the <object>'s that fail to load.
+        
+        * java/lc3/ArrayMethods/byte-001-expected.txt:
+        * java/lc3/ArrayMethods/byte-001.html:
+        * java/lc3/ArrayMethods/byte-002-expected.txt:
+        * java/lc3/CallStatic/boolean-001-expected.txt:
+        * java/lc3/CallStatic/number-001-expected.txt:
+        * java/lc3/CallStatic/object-001-expected.txt:
+        * java/lc3/Constructors/construct-001-expected.txt:
+        * java/lc3/ConvertBoolean/boolean-001-expected.txt:
+        * java/lc3/ConvertBoolean/boolean-002-expected.txt:
+        * java/lc3/ConvertBoolean/boolean-003-expected.txt:
+        * java/lc3/ConvertBoolean/boolean-004-expected.txt:
+        * java/lc3/ConvertBoolean/boolean-005-n-expected.txt:
+        * java/lc3/ConvertBoolean/boolean-006-n-expected.txt:
+        * java/lc3/ConvertBoolean/boolean-007-n-expected.txt:
+        * java/lc3/ConvertBoolean/boolean-008-n-expected.txt:
+        * java/lc3/ConvertBoolean/boolean-009-n-expected.txt:
+        * java/lc3/ConvertBoolean/boolean-010-n-expected.txt:
+        * java/lc3/ConvertBoolean/boolean-011-n-expected.txt:
+        * java/lc3/ConvertBoolean/boolean-012-n-expected.txt:
+        * java/lc3/ConvertBoolean/boolean-013-n-expected.txt:
+        * java/lc3/ConvertBoolean/boolean-014-expected.txt:
+        * java/lc3/ConvertJSObject/ToBoolean-001-expected.txt:
+        * java/lc3/ConvertJSObject/ToByte-001-expected.txt:
+        * java/lc3/ConvertJSObject/ToByte-002-expected.txt:
+        * java/lc3/ConvertJSObject/ToChar-001-expected.txt:
+        * java/lc3/ConvertJSObject/ToChar-002-expected.txt:
+        * java/lc3/ConvertJSObject/ToDouble-001-expected.txt:
+        * java/lc3/ConvertJSObject/ToFloat-001-expected.txt:
+        * java/lc3/ConvertJSObject/ToInt-001-expected.txt:
+        * java/lc3/ConvertJSObject/ToInt-002-expected.txt:
+        * java/lc3/ConvertJSObject/ToJSObject-001-expected.txt:
+        * java/lc3/ConvertJSObject/ToLong-001-expected.txt:
+        * java/lc3/ConvertJSObject/ToLong-002-expected.txt:
+        * java/lc3/ConvertJSObject/ToObject-001-expected.txt:
+        * java/lc3/ConvertJSObject/ToShort-001-expected.txt:
+        * java/lc3/ConvertJSObject/ToShort-002-expected.txt:
+        * java/lc3/ConvertJSObject/ToString-001-expected.txt:
+        * java/lc3/ConvertNull/null-001-expected.txt:
+        * java/lc3/ConvertNull/null-002-expected.txt:
+        * java/lc3/ConvertNull/null-003-n-expected.txt:
+        * java/lc3/ConvertNull/null-004-n-expected.txt:
+        * java/lc3/ConvertNull/null-005-expected.txt:
+        * java/lc3/ConvertNull/null-006-n-expected.txt:
+        * java/lc3/ConvertNumber/number-001-expected.txt:
+        * java/lc3/ConvertNumber/number-002-expected.txt:
+        * java/lc3/ConvertNumber/number-003-expected.txt:
+        * java/lc3/ConvertNumber/number-004-expected.txt:
+        * java/lc3/ConvertNumber/number-005-expected.txt:
+        * java/lc3/ConvertNumber/number-006-expected.txt:
+        * java/lc3/ConvertNumber/number-007-expected.txt:
+        * java/lc3/ConvertNumber/number-008-expected.txt:
+        * java/lc3/ConvertNumber/number-009-expected.txt:
+        * java/lc3/ConvertNumber/number-010-expected.txt:
+        * java/lc3/ConvertNumber/number-011-expected.txt:
+        * java/lc3/ConvertString/string-001-expected.txt:
+        * java/lc3/ConvertString/string-002-expected.txt:
+        * java/lc3/ConvertString/string-003-expected.txt:
+        * java/lc3/ConvertString/string-004-n-expected.txt:
+        * java/lc3/ConvertString/string-005-n-expected.txt:
+        * java/lc3/ConvertString/string-006-expected.txt:
+        * java/lc3/ConvertString/string-007-n-expected.txt:
+        * java/lc3/ConvertUndefined/undefined-001-n-expected.txt:
+        * java/lc3/ConvertUndefined/undefined-002-expected.txt:
+        * java/lc3/ConvertUndefined/undefined-003-expected.txt:
+        * java/lc3/Exceptions/throw_js_types-expected.txt:
+        * java/lc3/JSBoolean/boolean-001-expected.txt:
+        * java/lc3/JSBoolean/boolean-002-n-expected.txt:
+        * java/lc3/JSBoolean/boolean-003-n-expected.txt:
+        * java/lc3/JSBoolean/boolean-004-n-expected.txt:
+        * java/lc3/JSBoolean/boolean-005-n-expected.txt:
+        * java/lc3/JSBoolean/boolean-006-n-expected.txt:
+        * java/lc3/JSBoolean/boolean-007-n-expected.txt:
+        * java/lc3/JSBoolean/boolean-008-n-expected.txt:
+        * java/lc3/JSNull/ToBoolean-001-n-expected.txt:
+        * java/lc3/JSNull/ToFloat-001-n-expected.txt:
+        * java/lc3/JSNull/ToLong-001-n-expected.txt:
+        * java/lc3/JSNull/ToNumber-001-n-expected.txt:
+        * java/lc3/JSNull/ToObject-001-expected.txt:
+        * java/lc3/JSNumber/ToByte-001-expected.txt:
+        * java/lc3/JSNumber/ToByte-002-n-expected.txt:
+        * java/lc3/JSNumber/ToByte-003-n-expected.txt:
+        * java/lc3/JSNumber/ToByte-004-expected.txt:
+        * java/lc3/JSNumber/ToByte-005-n-expected.txt:
+        * java/lc3/JSNumber/ToChar-001-expected.txt:
+        * java/lc3/JSNumber/ToChar-002-n-expected.txt:
+        * java/lc3/JSNumber/ToChar-003-n-expected.txt:
+        * java/lc3/JSNumber/ToChar-004-expected.txt:
+        * java/lc3/JSNumber/ToChar-005-n-expected.txt:
+        * java/lc3/JSNumber/ToChar-006-n-expected.txt:
+        * java/lc3/JSNumber/ToDouble-001-expected.txt:
+        * java/lc3/JSNumber/ToDouble-002-expected.txt:
+        * java/lc3/JSNumber/ToDouble-003-expected.txt:
+        * java/lc3/JSNumber/ToInt-001-expected.txt:
+        * java/lc3/JSNumber/ToInt-002-n-expected.txt:
+        * java/lc3/JSNumber/ToInt-003-n-expected.txt:
+        * java/lc3/JSNumber/ToInt-004-expected.txt:
+        * java/lc3/JSNumber/ToInt-005-n-expected.txt:
+        * java/lc3/JSNumber/ToLong-001-expected.txt:
+        * java/lc3/JSNumber/ToLong-002-n-expected.txt:
+        * java/lc3/JSNumber/ToLong-003-n-expected.txt:
+        * java/lc3/JSNumber/ToLong-004-n-expected.txt:
+        * java/lc3/JSNumber/ToLong-005-n-expected.txt:
+        * java/lc3/JSNumber/ToLong-006-n-expected.txt:
+        * java/lc3/JSNumber/ToLong-007-n-expected.txt:
+        * java/lc3/JSNumber/ToLong-008-n-expected.txt:
+        * java/lc3/JSNumber/ToLong-009-n-expected.txt:
+        * java/lc3/JSNumber/ToLong-010-n-expected.txt:
+        * java/lc3/JSNumber/ToLong-011-n-expected.txt:
+        * java/lc3/JSNumber/ToShort-001-expected.txt:
+        * java/lc3/JSNumber/ToShort-002-n-expected.txt:
+        * java/lc3/JSNumber/ToShort-003-n-expected.txt:
+        * java/lc3/JSNumber/ToShort-004-expected.txt:
+        * java/lc3/JSNumber/ToShort-005-n-expected.txt:
+        * java/lc3/JSObject/ToByte-001-expected.txt:
+        * java/lc3/JSObject/ToChar-001-expected.txt:
+        * java/lc3/JSObject/ToDouble-001-expected.txt:
+        * java/lc3/JSObject/ToDouble-002-n-expected.txt:
+        * java/lc3/JSObject/ToDouble-003-n-expected.txt:
+        * java/lc3/JSObject/ToFloat-001-expected.txt:
+        * java/lc3/JSObject/ToFloat-002-n-expected.txt:
+        * java/lc3/JSObject/ToFloat-003-n-expected.txt:
+        * java/lc3/JSObject/ToInt-001-expected.txt:
+        * java/lc3/JSObject/ToInt-002-expected.txt:
+        * java/lc3/JSObject/ToJSObject-001-expected.txt:
+        * java/lc3/JSObject/ToLong-001-expected.txt:
+        * java/lc3/JSObject/ToObject-001-expected.txt:
+        * java/lc3/JSObject/ToShort-001-expected.txt:
+        * java/lc3/JSObject/ToString-001-expected.txt:
+        * java/lc3/JSUndefined/undefined-001-expected.txt:
+        * java/lc3/JSUndefined/undefined-002-n-expected.txt:
+        * java/lc3/JSUndefined/undefined-003-n-expected.txt:
+        * java/lc3/JSUndefined/undefined-004-n-expected.txt:
+        * java/lc3/JSUndefined/undefined-005-n-expected.txt:
+        * java/lc3/JSUndefined/undefined-006-n-expected.txt:
+        * java/lc3/JSUndefined/undefined-007-n-expected.txt:
+        * java/lc3/JSUndefined/undefined-008-n-expected.txt:
+        * java/lc3/JSUndefined/undefined-009-n-expected.txt:
+        * java/lc3/JSUndefined/undefined-010-n-expected.txt:
+        * java/lc3/JavaArray/ToArray-001-expected.txt:
+        * java/lc3/JavaArray/ToArray-002-n-expected.txt:
+        * java/lc3/JavaArray/ToBoolean-001-n-expected.txt:
+        * java/lc3/JavaArray/ToString-001-expected.txt:
+        * java/lc3/JavaClass/ToClass-001-expected.txt:
+        * java/lc3/JavaClass/ToJSObject-001-expected.txt:
+        * java/lc3/JavaClass/ToObject-001-expected.txt:
+        * java/lc3/JavaClass/ToString-001-expected.txt:
+        * java/lc3/JavaObject/JavaObjectBeanProps-001-expected.txt:
+        * java/lc3/JavaObject/JavaObjectFieldOrMethod-001-expected.txt:
+        * java/lc3/JavaObject/JavaObjectToBoolean-001-n-expected.txt:
+        * java/lc3/JavaObject/JavaObjectToBoolean-002-n-expected.txt:
+        * java/lc3/JavaObject/JavaObjectToByte-001-expected.txt:
+        * java/lc3/JavaObject/JavaObjectToByte-002-n-expected.txt:
+        * java/lc3/JavaObject/JavaObjectToByte-003-n-expected.txt:
+        * java/lc3/JavaObject/JavaObjectToByte-004-n-expected.txt:
+        * java/lc3/JavaObject/JavaObjectToByte-005-expected.txt:
+        * java/lc3/JavaObject/JavaObjectToByte-006-expected.txt:
+        * java/lc3/JavaObject/JavaObjectToByte-007-n-expected.txt:
+        * java/lc3/JavaObject/JavaObjectToByte-008-n-expected.txt:
+        * java/lc3/JavaObject/JavaObjectToChar-001-expected.txt:
+        * java/lc3/JavaObject/JavaObjectToChar-002-expected.txt:
+        * java/lc3/JavaObject/JavaObjectToChar-003-n-expected.txt:
+        * java/lc3/JavaObject/JavaObjectToChar-004-expected.txt:
+        * java/lc3/JavaObject/JavaObjectToChar-005-n-expected.txt:
+        * java/lc3/JavaObject/JavaObjectToChar-006-n-expected.txt:
+        * java/lc3/JavaObject/JavaObjectToDouble-001-expected.txt:
+        * java/lc3/JavaObject/JavaObjectToFloat-001-expected.txt:
+        * java/lc3/JavaObject/JavaObjectToInt-001-expected.txt:
+        * java/lc3/JavaObject/JavaObjectToInt-002-n-expected.txt:
+        * java/lc3/JavaObject/JavaObjectToInt-003-n-expected.txt:
+        * java/lc3/JavaObject/JavaObjectToInt-004-n-expected.txt:
+        * java/lc3/JavaObject/JavaObjectToLong-001-expected.txt:
+        * java/lc3/JavaObject/JavaObjectToLong-002-n-expected.txt:
+        * java/lc3/JavaObject/JavaObjectToLong-003-n-expected.txt:
+        * java/lc3/JavaObject/JavaObjectToLong-004-n-expected.txt:
+        * java/lc3/JavaObject/JavaObjectToLong-005-expected.txt:
+        * java/lc3/JavaObject/JavaObjectToLong-006-n-expected.txt:
+        * java/lc3/JavaObject/JavaObjectToShort-001-expected.txt:
+        * java/lc3/JavaObject/JavaObjectToShort-002-n-expected.txt:
+        * java/lc3/JavaObject/JavaObjectToShort-003-n-expected.txt:
+        * java/lc3/JavaObject/JavaObjectToShort-004-n-expected.txt:
+        * java/lc3/JavaObject/JavaObjectToShort-005-expected.txt:
+        * java/lc3/JavaObject/JavaObjectToShort-006-expected.txt:
+        * java/lc3/JavaObject/JavaObjectToString-001-expected.txt:
+        * java/lc3/StringMethods/string-001-expected.txt:
+        * java/lc3/forin/object-001-expected.txt:
+        * java/lc3/instanceof/instanceof-001-expected.txt:
+
 2010-08-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Dan Bernstein.

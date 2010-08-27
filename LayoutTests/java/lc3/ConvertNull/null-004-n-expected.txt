@@ -4,4 +4,4 @@ PASS Packages.com.netscape.javascript.qa.lc3.jsnull.Null_001.staticAmbiguous(nul
 PASS successfullyParsed is true
 
 TEST COMPLETE
-
+ 

@@ -1,0 +1,50 @@
+<html>
+    <head>
+        <script>
+            if (window.layoutTestController) {
+                layoutTestController.dumpAsText();
+                layoutTestController.waitUntilDone();
+            }
+
+            var handledObject1 = false;
+            var handledObject2 = false;
+            var handledEmbed3 = false;
+
+            document.addEventListener("beforeload", function(event) {
+                if (event.target.id == "object1") {
+                    debug("An &lt;object&gt; with a 'data' @attr and a 'src' &lt;param&gt; should load the URL from the 'data' @attr and does" + (event.url == "object-attr" ? "." : " not."));
+                    handledObject1 = true;
+                } else if (event.target.id == "object2") {
+                    debug("An &lt;object&gt; with a 'src' &lt;param&gt; should load the URL from the 'src' &lt;param&gt; and does" + (event.url == "object-param" ? "." : " not."));
+                    handledObject2 = true;
+                } else if (event.target.id == "embed3") {
+                    debug("An &lt;object&gt; with no URL specified and a nested &lt;embed&gt; should load the URL from the 'src' @attr of the &lt;embed&gt; and does" + (event.url == "embed-attr" ? "." : " not."));
+                    handledEmbed3 = true;
+                }
+
+                if (window.layoutTestController && handledObject1 && handledObject2 && handledEmbed3)
+                    layoutTestController.notifyDone();
+
+            }, true);
+
+            function debug(str) {
+                document.getElementById('console').innerHTML += str + "<br>";
+            }
+        </script>
+    </head>
+    <body>
+        <object id="object1" type="application/x-webkit-test-netscape" data="object-attr">
+            <param id="param1" name="src" value="object-param"></param>
+            <embed id="embed1" type="application/x-webkit-test-netscape" src="embed-attr">
+        </object>
+        <object id="object2" type="application/x-webkit-test-netscape">
+            <param id="param2" name="movie" value="object-param"></param>
+            <embed id="embed2" type="application/x-webkit-test-netscape" src="embed-attr">
+        </object>
+        <object id="object3">
+            <embed id="embed3" type="application/x-webkit-test-netscape" src="embed-attr">
+        </object>
+        <p>This test verifies that the right URL is loaded when there is an &lt;object&gt; with a 'src' &lt;param&gt; and a fallback &lt;embed&gt;.</p>
+        <div id="console"></div>
+    </body>
+</html>

@@ -9,4 +9,4 @@ FAIL TEST_CLASS.ambiguous( MyFunction ) +'' should be LONG. Was BYTE.
 PASS successfullyParsed is true
 
 TEST COMPLETE
-
+ 

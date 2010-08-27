@@ -126,4 +126,4 @@ FAIL typeof dt.getCharArray()[17] should be number. Was undefined.
 PASS successfullyParsed is true
 
 TEST COMPLETE
-
+ 

@@ -130,10 +130,15 @@ bool HTMLEmbedElement::rendererIsNeeded(RenderStyle* style)
     if (!frame)
         return false;
 
+    // If my parent is an <object> and is not set to use fallback content, I
+    // should be ignored and not get a renderer.
     Node* p = parentNode();
     if (p && p->hasTagName(objectTag)) {
         ASSERT(p->renderer());
-        return false;
+        if (!static_cast<HTMLObjectElement*>(p)->useFallbackContent()) {
+            ASSERT(!p->renderer()->isEmbeddedObject());
+            return false;
+        }
     }
 
 #if ENABLE(DASHBOARD_SUPPORT)

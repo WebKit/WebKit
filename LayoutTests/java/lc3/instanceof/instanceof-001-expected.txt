@@ -11,4 +11,4 @@ FAIL new java.lang.Double(5.0) instanceof java.lang.Double should be true. Threw
 PASS successfullyParsed is true
 
 TEST COMPLETE
-
+ 

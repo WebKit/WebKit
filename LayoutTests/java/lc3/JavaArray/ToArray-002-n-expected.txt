@@ -6,4 +6,4 @@ FAIL typeof DT.staticGetObjectArray()[0] should throw an exception. Was object.
 PASS successfullyParsed is true
 
 TEST COMPLETE
-
+ 

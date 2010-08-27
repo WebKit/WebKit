@@ -4,4 +4,4 @@ FAIL TEST_CLASS.ambiguous(1) should be CHAR. Was BYTE.
 PASS successfullyParsed is true
 
 TEST COMPLETE
-
+ 

@@ -1,3 +1,27 @@
+2010-08-26  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Darin Adler.
+
+        If an <embed> is part of an <object> element's fallback content, WebKit
+        should only render the <embed> if the <object> fails to load.
+        https://bugs.webkit.org/show_bug.cgi?id=44567
+        <rdar://problem/7699852>
+        
+        Tests: fast/replaced/invalid-object-with-fallback.html
+               fast/replaced/object-with-embed-url-param.html
+
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::rendererIsNeeded): An <embed> now needs a
+        renderer if its parent is an <object> but the <object> is using fallback
+        content.
+        * html/HTMLObjectElement.h:
+        (WebCore::HTMLObjectElement::useFallbackContent): Add a public getter
+        for m_useFallbackContent for use in HTMLEmbedElement::rendererIsNeeded.
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::updateWidget): Change the logic that
+        determines the plug-in parameters to pass to the loader. Do not override
+        parameters from <object> with those from a child <embed>.
+
 2010-08-26  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Darin Fisher.

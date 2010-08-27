@@ -30,4 +30,4 @@ PASS typeof dt.getChar() is 'number'
 PASS successfullyParsed is true
 
 TEST COMPLETE
-
+ 
