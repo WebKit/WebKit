@@ -1,3 +1,20 @@
+2010-08-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Tony Chang.
+
+        Crash in CSSStyleSelector.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=44780
+        
+        Need to null-check the images when replacing pending images, because a later
+        rule may have replaced an image with 'none'.
+
+        Test: fast/css/pending-images-crash.html
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::loadPendingImages):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::paintContents): Fix unrelated log message.
+
 2010-08-27  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed. Revert r66218 & r66220 due to GTK test failures.

@@ -6745,7 +6745,7 @@ void CSSStyleSelector::loadPendingImages()
                 break;
 
             case CSSPropertyListStyleImage: {
-                if (m_style->listStyleImage()->isPendingImage()) {
+                if (m_style->listStyleImage() && m_style->listStyleImage()->isPendingImage()) {
                     CSSImageValue* imageValue = static_cast<StylePendingImage*>(m_style->listStyleImage())->cssImageValue();
                     m_style->setListStyleImage(imageValue->cachedImage(docLoader));
                 }
@@ -6754,7 +6754,7 @@ void CSSStyleSelector::loadPendingImages()
 
             case CSSPropertyWebkitBorderImage: {
                 const NinePieceImage& borderImage = m_style->borderImage();
-                if (borderImage.image()->isPendingImage()) {
+                if (borderImage.image() && borderImage.image()->isPendingImage()) {
                     CSSImageValue* imageValue = static_cast<StylePendingImage*>(borderImage.image())->cssImageValue();
                     m_style->setBorderImage(NinePieceImage(imageValue->cachedImage(docLoader), borderImage.slices(), borderImage.horizontalRule(), borderImage.verticalRule()));
                 }
@@ -6763,7 +6763,7 @@ void CSSStyleSelector::loadPendingImages()
             
             case CSSPropertyWebkitBoxReflect: {
                 const NinePieceImage& maskImage = m_style->boxReflect()->mask();
-                if (maskImage.image()->isPendingImage()) {
+                if (maskImage.image() && maskImage.image()->isPendingImage()) {
                     CSSImageValue* imageValue = static_cast<StylePendingImage*>(maskImage.image())->cssImageValue();
                     m_style->boxReflect()->setMask(NinePieceImage(imageValue->cachedImage(docLoader), maskImage.slices(), maskImage.horizontalRule(), maskImage.verticalRule()));
                 }
@@ -6772,7 +6772,7 @@ void CSSStyleSelector::loadPendingImages()
 
             case CSSPropertyWebkitMaskBoxImage: {
                 const NinePieceImage& maskBoxImage = m_style->maskBoxImage();
-                if (maskBoxImage.image()->isPendingImage()) {
+                if (maskBoxImage.image() && maskBoxImage.image()->isPendingImage()) {
                     CSSImageValue* imageValue = static_cast<StylePendingImage*>(maskBoxImage.image())->cssImageValue();
                     m_style->setMaskBoxImage(NinePieceImage(imageValue->cachedImage(docLoader), maskBoxImage.slices(), maskBoxImage.horizontalRule(), maskBoxImage.verticalRule()));
                 }

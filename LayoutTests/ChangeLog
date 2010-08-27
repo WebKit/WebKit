@@ -1,3 +1,15 @@
+2010-08-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Tony Chang.
+
+        Crash in CSSStyleSelector.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=44780
+        
+        Test that replaces an actual image with 'none', and should not crash.
+
+        * fast/css/pending-images-crash-expected.txt: Added.
+        * fast/css/pending-images-crash.html: Added.
+
 2010-08-27  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed. Revert r66218 & r66220 due to GTK test failures.
