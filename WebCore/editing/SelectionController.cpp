@@ -118,6 +118,7 @@ void SelectionController::setSelection(const VisibleSelection& s, bool closeTypi
         m_selection = s;
         m_caretRectNeedsUpdate = true;
         invalidateCaretRect();
+        updateCaretRect();
         return;
     }
     if (!m_frame) {

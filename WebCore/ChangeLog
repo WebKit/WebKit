@@ -1,3 +1,24 @@
+2010-08-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Tony Chang.
+
+        Insertion point does not show when dragging text into an editable area
+        https://bugs.webkit.org/show_bug.cgi?id=44295
+        
+        r65681 caused the caret to use the last-computed caret rect when
+        painting, rather than forcing a style update. Because of this,
+        we now need to eagerly update the caret rect when changing
+        the drag selection.
+        
+        Not testable in DRT because the drag selection is always cleared
+        before EventSender returns, so the drag caret can never show in
+        the pixel results.
+
+        Tested by running editing/selection/drag-in-iframe.html manually.
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::setSelection):
+
 2010-08-27  Adam Barth  <abarth@webkit.org>
 
         Attempt to fix the Windows build.
