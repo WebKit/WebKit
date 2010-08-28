@@ -181,7 +181,7 @@ def configure(conf):
     for api_file in glob.glob(os.path.join(jscore_dir, 'API/*.h')):
         shutil.copy(api_file, os.path.join(jscore_out_dir, os.path.basename(api_file)))
 
-    if Options.options.wxpython:
+    if build_port == "wx" and Options.options.wxpython:
         common_configure(conf)
         conf.check_tool('swig', tooldir='WebKit/wx/bindings/python')
         conf.check_swig_version('1.3.29')

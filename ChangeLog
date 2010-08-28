@@ -1,3 +1,14 @@
+2010-08-27  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Kevin Ollivier.
+
+        [BREWMP] Add build system
+        https://bugs.webkit.org/show_bug.cgi?id=44645
+
+        Check wxpython option only when build_port is wx.
+
+        * wscript:
+
 2010-08-27  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
         Unreviewed. Fix compiling dependencies on EFL port due to r65891.
