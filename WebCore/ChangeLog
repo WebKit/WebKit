@@ -1,3 +1,25 @@
+2010-08-28  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        When properties are missing from animation keyframes, interpolate between those keyframes that specify them
+        https://bugs.webkit.org/show_bug.cgi?id=40794
+
+        Some preliminary cleanup; for vectors, prefer indexed access rather than using iterators.
+        
+        No behavior changes.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::keyframeStylesForAnimation):
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::getKeyframeAnimationInterval):
+        (WebCore::KeyframeAnimation::validateTransformFunctionList):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::startAnimation):
+        * rendering/style/KeyframeList.h:
+        (WebCore::KeyframeList::at):
+        (WebCore::KeyframeList::keyframes):
+
 2010-08-28  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.

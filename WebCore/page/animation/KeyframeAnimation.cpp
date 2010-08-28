@@ -80,19 +80,20 @@ void KeyframeAnimation::getKeyframeAnimationInterval(const RenderStyle*& fromSty
 
     double scale = 1;
     double offset = 0;
-    Vector<KeyframeValue>::const_iterator endKeyframes = m_keyframes.endKeyframes();
-    for (Vector<KeyframeValue>::const_iterator it = m_keyframes.beginKeyframes(); it != endKeyframes; ++it) {
-        if (t < it->key()) {
+    size_t numKeyframes = m_keyframes.size();
+    for (size_t i = 0; i < numKeyframes; ++i) {
+        const KeyframeValue& currentKeyframe = m_keyframes[i];
+        if (t < currentKeyframe.key()) {
             // The first key should always be 0, so we should never succeed on the first key
             if (!fromStyle)
                 break;
-            scale = 1.0 / (it->key() - offset);
-            toStyle = it->style();
+            scale = 1.0 / (currentKeyframe.key() - offset);
+            toStyle = currentKeyframe.style();
             break;
         }
 
-        offset = it->key();
-        fromStyle = it->style();
+        offset = currentKeyframe.key();
+        fromStyle = currentKeyframe.style();
     }
 
     if (!fromStyle || !toStyle)
@@ -346,27 +347,27 @@ void KeyframeAnimation::validateTransformFunctionList()
     if (m_keyframes.size() < 2 || !m_keyframes.containsProperty(CSSPropertyWebkitTransform))
         return;
 
-    Vector<KeyframeValue>::const_iterator end = m_keyframes.endKeyframes();
-
     // Empty transforms match anything, so find the first non-empty entry as the reference
-    size_t firstIndex = 0;
-    Vector<KeyframeValue>::const_iterator firstIt = end;
-    
-    for (Vector<KeyframeValue>::const_iterator it = m_keyframes.beginKeyframes(); it != end; ++it, ++firstIndex) {
-        if (it->style()->transform().operations().size() > 0) {
-            firstIt = it;
+    size_t numKeyframes = m_keyframes.size();
+    size_t firstNonEmptyTransformKeyframeIndex = numKeyframes;
+
+    for (size_t i = 0; i < numKeyframes; ++i) {
+        const KeyframeValue& currentKeyframe = m_keyframes[i];
+        if (currentKeyframe.style()->transform().operations().size()) {
+            firstNonEmptyTransformKeyframeIndex = i;
             break;
         }
     }
     
-    if (firstIt == end)
+    if (firstNonEmptyTransformKeyframeIndex == numKeyframes)
         return;
         
-    const TransformOperations* firstVal = &firstIt->style()->transform();
+    const TransformOperations* firstVal = &m_keyframes[firstNonEmptyTransformKeyframeIndex].style()->transform();
     
     // See if the keyframes are valid
-    for (Vector<KeyframeValue>::const_iterator it = firstIt+1; it != end; ++it) {
-        const TransformOperations* val = &it->style()->transform();
+    for (size_t i = firstNonEmptyTransformKeyframeIndex + 1; i < numKeyframes; ++i) {
+        const KeyframeValue& currentKeyframe = m_keyframes[i];
+        const TransformOperations* val = &currentKeyframe.style()->transform();
         
         // A null transform matches anything
         if (val->operations().isEmpty())

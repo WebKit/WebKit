@@ -75,8 +75,7 @@ public:
     void clear();
     bool isEmpty() const { return m_keyframes.isEmpty(); }
     size_t size() const { return m_keyframes.size(); }
-    Vector<KeyframeValue>::const_iterator beginKeyframes() const { return m_keyframes.begin(); }
-    Vector<KeyframeValue>::const_iterator endKeyframes() const { return m_keyframes.end(); }
+    const KeyframeValue& operator[](size_t index) const { return m_keyframes[index]; }
 
 private:
     AtomicString m_animationName;
