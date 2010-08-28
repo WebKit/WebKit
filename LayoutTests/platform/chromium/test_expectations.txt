@@ -179,7 +179,6 @@ WONTFIX SKIP BUG19635 : fast/events/pageshow-pagehide-on-back-cached-with-frames
 WONTFIX SKIP BUG19635 : media/restore-from-page-cache.html = TIMEOUT
 WONTFIX SKIP BUG19635 : loader/go-back-to-different-window-size.html = TIMEOUT TEXT
 WONTFIX SKIP BUG19635 : fast/loader/crash-copying-backforwardlist.html = TEXT
-WONTFIX SKIP BUG19635 : fast/frames/frame-crash-with-page-cache.html = TEXT
 WONTFIX SKIP BUG19635 : fast/harness/page-cache-crash-on-data-urls.html = TEXT
 
 // Tests that rely on cross-process MessagePorts.  No point in running them in

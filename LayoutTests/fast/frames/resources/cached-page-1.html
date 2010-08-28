@@ -1,8 +1,6 @@
 <html>
 <head>
 <script>
-var intervalId;
-
 function endTest() {
     window.opener.log("PASS.");
     window.opener.finish();
@@ -13,8 +11,6 @@ function loadNext() {
         endTest();
         return;
     }
-
-    intervalId = setInterval(endTest, 100);
 
     window.opener.log("page-1, about to navigate to page-2.")
     // Location changes need to happen outside the onload handler to generate history entries.

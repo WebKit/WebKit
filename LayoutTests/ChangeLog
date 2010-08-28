@@ -1,3 +1,18 @@
+2010-08-28  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        fast/frames/frame-crash-with-page-cache.html does not pass on Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=44813
+
+        Update test to not rely on intervals resuming when going back to a page
+        in the page cache. Based on the original bug for which this test was
+        added (34773), intervals were not part of the triggering condition.
+
+        * fast/frames/resources/cached-page-1.html:
+        * fast/frames/resources/cached-page-2.html:
+        * platform/chromium/test_expectations.txt:
+
 2010-08-28  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Simon Fraser.
