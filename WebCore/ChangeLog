@@ -1,3 +1,18 @@
+2010-08-27  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Extra Events triggered by <input> on focus
+        https://bugs.webkit.org/show_bug.cgi?id=44731
+
+        Tests: fast/events/input-focus-no-duplicate-events.html
+               fast/events/input-tab-focus-no-duplicate-events.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::focus): do not continue and update the appearance of the element if it was not focused.
+        * page/FocusController.cpp:
+        (WebCore::FocusController::setFocusedNode): respect the return value of Document::setFocusedNode.
+
 2010-08-26  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Pavel Feldman.

@@ -1313,8 +1313,11 @@ void Element::focus(bool restorePreviousSelection)
     RefPtr<Node> protect;
     if (Page* page = doc->page()) {
         // Focus and change event handlers can cause us to lose our last ref.
+        // If a focus event handler changes the focus to a different node it
+        // does not make sense to continue and update appearence.
         protect = this;
-        page->focusController()->setFocusedNode(this, doc->frame());
+        if (!page->focusController()->setFocusedNode(this, doc->frame()))
+            return;
     }
 
     // Setting the focused node above might have invalidated the layout due to scripts.

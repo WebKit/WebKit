@@ -623,8 +623,11 @@ bool FocusController::setFocusedNode(Node* node, PassRefPtr<Frame> newFocusedFra
 
     // Setting the focused node can result in losing our last reft to node when JS event handlers fire.
     RefPtr<Node> protect = node;
-    if (newDocument)
-        newDocument->setFocusedNode(node);
+    if (newDocument) {
+        bool successfullyFocused = newDocument->setFocusedNode(node);
+        if (!successfullyFocused)
+            return false;
+    }
 
     if (newDocument->focusedNode() == node)
         m_page->editorClient()->setInputMethodState(node->shouldUseInputMethod());

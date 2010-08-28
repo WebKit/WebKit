@@ -1,3 +1,15 @@
+2010-08-27  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Extra Events triggered by <input> on focus
+        https://bugs.webkit.org/show_bug.cgi?id=44731
+
+        * fast/events/input-focus-no-duplicate-events-expected.txt: Added.
+        * fast/events/input-focus-no-duplicate-events.html: Added.
+        * fast/events/input-tab-focus-no-duplicate-events-expected.txt: Added.
+        * fast/events/input-tab-focus-no-duplicate-events.html: Added.
+
 2010-08-27  Eric Carlson  <eric.carlson@apple.com>
 
         Unreviewed, build fix.
