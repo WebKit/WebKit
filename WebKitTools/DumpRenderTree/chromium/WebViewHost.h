@@ -126,6 +126,7 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual int historyBackListCount();
     virtual int historyForwardListCount();
     virtual void focusAccessibilityObject(const WebKit::WebAccessibilityObject&);
+    virtual void didChangeAccessibilityObjectChildren(const WebKit::WebAccessibilityObject&);
     virtual WebKit::WebNotificationPresenter* notificationPresenter();
     virtual WebKit::WebGeolocationService* geolocationService();
     virtual WebKit::WebSpeechInputController* speechInputController(WebKit::WebSpeechInputListener*);

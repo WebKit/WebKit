@@ -44,15 +44,12 @@ AccessibilityController::AccessibilityController(TestShell* shell)
     : m_shell(shell)
 {
 
-    bindMethod("logFocusEvents",
-        &AccessibilityController::logFocusEventsCallback);
-    bindMethod("logScrollingStartEvents",
-        &AccessibilityController::logScrollingStartEventsCallback);
+    bindMethod("dumpAccessibilityNotifications", &AccessibilityController::dumpAccessibilityNotifications);
+    bindMethod("logFocusEvents", &AccessibilityController::logFocusEventsCallback);
+    bindMethod("logScrollingStartEvents", &AccessibilityController::logScrollingStartEventsCallback);
 
-    bindProperty("focusedElement",
-        &AccessibilityController::focusedElementGetterCallback);
-    bindProperty("rootElement",
-        &AccessibilityController::rootElementGetterCallback);
+    bindProperty("focusedElement", &AccessibilityController::focusedElementGetterCallback);
+    bindProperty("rootElement", &AccessibilityController::rootElementGetterCallback);
 
     bindFallbackMethod(&AccessibilityController::fallbackCallback);
 }
@@ -68,6 +65,8 @@ void AccessibilityController::reset()
     m_rootElement = WebAccessibilityObject();
     m_focusedElement = WebAccessibilityObject();
     m_elements.clear();
+    
+    m_dumpAccessibilityNotifications = false;
 }
 
 void AccessibilityController::setFocusedElement(const WebAccessibilityObject& focusedElement)
@@ -87,6 +86,12 @@ AccessibilityUIElement* AccessibilityController::getRootElement()
     if (m_rootElement.isNull())
         m_rootElement = m_shell->webView()->accessibilityObject();
     return m_elements.createRoot(m_rootElement);
+}
+
+void AccessibilityController::dumpAccessibilityNotifications(const CppArgumentList&, CppVariant* result)
+{
+    m_dumpAccessibilityNotifications = true;
+    result->setNull();
 }
 
 void AccessibilityController::logFocusEventsCallback(const CppArgumentList&, CppVariant* result)

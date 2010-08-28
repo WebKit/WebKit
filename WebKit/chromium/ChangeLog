@@ -1,3 +1,16 @@
+2010-08-28  Chris Guillory   <chris.guillory@google.com>
+
+        Reviewed by Chris Fleizach.
+
+        Add AX notification for childrenChanged
+        https://bugs.webkit.org/show_bug.cgi?id=44472
+
+        * public/WebViewClient.h:
+        (WebKit::WebViewClient::didChangeAccessibilityObjectChildren):
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::didChangeAccessibilityObjectChildren):
+        * src/ChromeClientImpl.h:
+
 2010-08-27  Daniel Cheng  <dcheng@chromium.org>
 
         Reviewed by Tony Chang.

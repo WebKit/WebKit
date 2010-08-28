@@ -52,8 +52,19 @@ public:
     void setFocusedElement(const WebKit::WebAccessibilityObject&);
     AccessibilityUIElement* getFocusedElement();
     AccessibilityUIElement* getRootElement();
+    
+    // This function sets a flag that tells the test_shell to dump all 
+    // accessibility notifications.
+    void dumpAccessibilityNotifications(const CppArgumentList&, CppVariant*);
+
+public:
+    // The following methods are not exposed to JavaScript.
+    bool shouldDumpAccessibilityNotifications() { return m_dumpAccessibilityNotifications; }
 
 private:
+    // If true, the test_shell will dump all accessibility notifications.
+    bool m_dumpAccessibilityNotifications;
+
     // Bound methods and properties
     void logFocusEventsCallback(const CppArgumentList&, CppVariant*);
     void logScrollingStartEventsCallback(const CppArgumentList&, CppVariant*);

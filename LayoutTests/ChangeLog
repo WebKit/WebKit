@@ -1,3 +1,18 @@
+2010-08-28  Chris Guillory   <chris.guillory@google.com>
+
+        Reviewed by Chris Fleizach.
+
+        Add AX notification for childrenChanged
+        https://bugs.webkit.org/show_bug.cgi?id=44472
+
+        Test by running platform/chromium/accessibility/children-changed-notification.html within chromium's DRT
+
+        * platform/chromium/accessibility: Added.
+        * platform/chromium/accessibility/children-changed-notification-expected.txt: Added.
+        * platform/chromium/accessibility/children-changed-notification.html: Added.
+        * platform/chromium/drt_expectations.txt:
+        * platform/chromium/test_expectations.txt:
+
 2010-08-27  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Darin Adler.

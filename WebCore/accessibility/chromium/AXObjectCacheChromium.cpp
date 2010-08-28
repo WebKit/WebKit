@@ -56,15 +56,20 @@ void AXObjectCache::attachWrapper(AccessibilityObject*)
 
 void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotification notification)
 {
-    if (notification != AXCheckedStateChanged)
-        return;
-
     if (!obj || !obj->document() || !obj->documentFrameView())
         return;
 
     ChromeClientChromium* client = toChromeClientChromium(obj->documentFrameView());
-    if (client)
-        client->didChangeAccessibilityObjectState(obj);
+    if (client) {
+        switch (notification) {
+        case AXCheckedStateChanged:
+            client->didChangeAccessibilityObjectState(obj);
+            break;
+        case AXChildrenChanged:
+            client->didChangeAccessibilityObjectChildren(obj);
+            break;
+        }
+    }
 }
 
 void AXObjectCache::handleFocusedUIElementChanged(RenderObject*, RenderObject*)

@@ -489,6 +489,12 @@ void WebViewHost::focusAccessibilityObject(const WebAccessibilityObject& object)
     m_shell->accessibilityController()->setFocusedElement(object);
 }
 
+void WebViewHost::didChangeAccessibilityObjectChildren(const WebAccessibilityObject& object)
+{
+    if (m_shell->accessibilityController()->shouldDumpAccessibilityNotifications())
+        printf("didChangeAccessibilityObjectChildren - new count: %d\n", object.childCount());
+}
+
 WebNotificationPresenter* WebViewHost::notificationPresenter()
 {
     return m_shell->notificationPresenter();

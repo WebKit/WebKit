@@ -55,6 +55,9 @@ public:
 
     // Notifies embedder that the state of an accessibility object has changed.
     virtual void didChangeAccessibilityObjectState(AccessibilityObject*) = 0;
+    
+    // Notified embedder that the children of an accessibility object has changed.
+    virtual void didChangeAccessibilityObjectChildren(AccessibilityObject*) = 0;
 };
 
 } // namespace WebCore

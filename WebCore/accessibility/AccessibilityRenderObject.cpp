@@ -3239,6 +3239,8 @@ void AccessibilityRenderObject::childrenChanged()
     if (!m_renderer)
         return;
     
+    bool sentChildrenChanged = false;
+    
     // Go up the accessibility parent chain, but only if the element already exists. This method is
     // called during render layouts, minimal work should be done. 
     // If AX elements are created now, they could interrogate the render tree while it's in a funky state.
@@ -3248,6 +3250,13 @@ void AccessibilityRenderObject::childrenChanged()
             continue;
         
         AccessibilityRenderObject* axParent = static_cast<AccessibilityRenderObject*>(parent);
+        
+        // Send the children changed notification on the first accessibility render object ancestor.
+        if (!sentChildrenChanged) {
+            axObjectCache()->postNotification(axParent->renderer(), AXObjectCache::AXChildrenChanged, true);
+            sentChildrenChanged = true;
+        }
+        
         // Only do work if the children haven't been marked dirty. This has the effect of blocking
         // future live region change notifications until the AX tree has been accessed again. This
         // is a good performance win for all parties.

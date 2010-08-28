@@ -162,6 +162,7 @@ public:
                              bool handleExternally);
     virtual void popupClosed(WebCore::PopupContainer* popupContainer);
     virtual void didChangeAccessibilityObjectState(WebCore::AccessibilityObject*);
+    virtual void didChangeAccessibilityObjectChildren(WebCore::AccessibilityObject*);
 
     // ChromeClientImpl:
     void setCursor(const WebCursorInfo& cursor);

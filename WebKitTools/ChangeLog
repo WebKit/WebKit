@@ -1,3 +1,21 @@
+2010-08-28  Chris Guillory   <chris.guillory@google.com>
+
+        Reviewed by Chris Fleizach.
+
+        Add AX notification for childrenChanged
+        https://bugs.webkit.org/show_bug.cgi?id=44472
+
+        * DumpRenderTree/chromium/AccessibilityController.cpp:
+        (AccessibilityController::AccessibilityController):
+        (AccessibilityController::reset):
+        (AccessibilityController::getRootElement):
+        (AccessibilityController::dumpAccessibilityNotifications):
+        * DumpRenderTree/chromium/AccessibilityController.h:
+        (AccessibilityController::shouldDumpAccessibilityNotifications):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::didChangeAccessibilityObjectChildren):
+        * DumpRenderTree/chromium/WebViewHost.h:
+
 2010-08-28  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

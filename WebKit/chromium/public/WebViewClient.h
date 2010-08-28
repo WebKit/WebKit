@@ -277,6 +277,9 @@ public:
 
     // Notifies embedder that the state of an accessibility object has changed.
     virtual void didChangeAccessibilityObjectState(const WebAccessibilityObject&) { }
+    
+    // Notifies embedder that the children of an accessibility object has changed.
+    virtual void didChangeAccessibilityObjectChildren(const WebAccessibilityObject&) { }
 
 
     // Developer tools -----------------------------------------------------
