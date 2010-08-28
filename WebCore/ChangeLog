@@ -1,3 +1,22 @@
+2010-08-28  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Speculative fix for <rdar://problem/7275077> Crash in InlineBox::root() under RenderTextControl::textWithHardLineBreaks()
+        https://bugs.webkit.org/show_bug.cgi?id=44816
+
+        No test because I could not reproduce the crash.
+
+        In a common variant of the crash, InlineBox::root() is called with this == 12. This suggests that
+        a RenderInline* was cast into a RenderBox*, so RenderBox::inlineBoxWrapper() interpreted the
+        m_lineHeight and m_verticalPosition members of a RenderInline as a pointer to an InlineBox.
+
+        The cast into RenderBox* in textWithHardLineBreaks() was introduced in r40881 with no exaplanation.
+
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::textWithHardLineBreaks): Fetch the first line directly from the inner
+        text block instead of relying on the first child being a text node.
+
 2010-08-28  Moritz Lipp  <mlq@pwmt.org>
 
         Reviewed by Xan Lopez.

@@ -355,26 +355,22 @@ String RenderTextControl::textWithHardLineBreaks()
 {
     if (!m_innerText)
         return "";
-    Node* firstChild = m_innerText->firstChild();
-    if (!firstChild)
-        return "";
 
-    RenderObject* renderer = firstChild->renderer();
+    RenderBlock* renderer = toRenderBlock(m_innerText->renderer());
     if (!renderer)
-        return "";
-
-    InlineBox* box = renderer->isText() ? toRenderText(renderer)->firstTextBox() : toRenderBox(renderer)->inlineBoxWrapper();
-    if (!box)
         return "";
 
     Node* breakNode;
     unsigned breakOffset;
-    RootInlineBox* line = box->root();
+    RootInlineBox* line = renderer->firstRootBox();
+    if (!line)
+        return "";
+
     getNextSoftBreak(line, breakNode, breakOffset);
 
     Vector<UChar> result;
 
-    for (Node* n = firstChild; n; n = n->traverseNextNode(m_innerText.get())) {
+    for (Node* n = m_innerText->firstChild(); n; n = n->traverseNextNode(m_innerText.get())) {
         if (n->hasTagName(brTag))
             result.append(&newlineCharacter, 1);
         else if (n->isTextNode()) {
