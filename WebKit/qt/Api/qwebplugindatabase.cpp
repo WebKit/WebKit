@@ -284,8 +284,11 @@ QList<QWebPluginInfo> QWebPluginDatabase::plugins() const
 
     for (unsigned int i = 0; i < plugins.size(); ++i) {
         PluginPackage* plugin = plugins[i];
-        if (plugin->ensurePluginLoaded())
-            qwebplugins.append(QWebPluginInfo(plugin));
+#if ENABLE(NETSCAPE_PLUGIN_METADATA_CACHE) 
+        if (!plugin->ensurePluginLoaded())
+            continue;
+#endif
+        qwebplugins.append(QWebPluginInfo(plugin));
     }
 
     return qwebplugins;

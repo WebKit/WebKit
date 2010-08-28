@@ -1,3 +1,12 @@
+2010-08-28  Daniel Bates  <dbates@rim.com>
+
+        Attempt to fix the Qt Windows and Qt Linux Release minimal builds
+        after changeset 66297 <http://trac.webkit.org/changeset/66297>.
+
+        * Api/qwebplugindatabase.cpp:
+        (QWebPluginDatabase::plugins): Wrap the call to PluginPackage::ensurePluginLoaded
+        in #if ENABLE(NETSCAPE_PLUGIN_METADATA_CACHE).
+
 2010-08-27  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Antonio Gomes.
