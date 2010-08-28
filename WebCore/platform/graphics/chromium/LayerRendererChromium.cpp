@@ -438,10 +438,8 @@ void LayerRendererChromium::drawLayerIntoStencilBuffer(LayerChromium* layer, boo
     // by one for every pixel under the current layer.
     GLC(glStencilMask(0xff));
     GLC(glStencilFunc(GL_ALWAYS, 1, 0xff));
-    if (decrement)
-        GLC(glStencilOp(GL_DECR, GL_DECR, GL_DECR));
-    else
-        GLC(glStencilOp(GL_INCR, GL_INCR, GL_INCR));
+    GLenum stencilOp = (decrement ? GL_DECR : GL_INCR);
+    GLC(glStencilOp(stencilOp, stencilOp, stencilOp));
 
     GLC(glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE));
 
