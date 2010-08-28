@@ -39,6 +39,12 @@
         return library; \
     }
 
+#if OS(WINCE)
+#define SOFT_LINK_GETPROCADDRESS GetProcAddressA
+#else
+#define SOFT_LINK_GETPROCADDRESS GetProcAddress
+#endif
+
 #define SOFT_LINK_LIBRARY(lib) SOFT_LINK_LIBRARY_HELPER(lib, L".dll")
 #define SOFT_LINK_DEBUG_LIBRARY(lib) SOFT_LINK_LIBRARY_HELPER(lib, L"_debug.dll")
 
@@ -48,7 +54,7 @@
     \
     static resultType callingConvention init##functionName parameterDeclarations \
     { \
-        softLink##functionName = reinterpret_cast<resultType (callingConvention*) parameterDeclarations>(GetProcAddress(library##Library(), #functionName)); \
+        softLink##functionName = reinterpret_cast<resultType (callingConvention*) parameterDeclarations>(SOFT_LINK_GETPROCADDRESS(library##Library(), #functionName)); \
         ASSERT(softLink##functionName); \
         return softLink##functionName parameterNames; \
     }\
@@ -69,7 +75,7 @@
             return ptr; \
         initialized = true; \
         \
-        ptr = reinterpret_cast<functionName##PtrType>(GetProcAddress(library##Library(), #functionName)); \
+        ptr = reinterpret_cast<functionName##PtrType>(SOFT_LINK_GETPROCADDRESS(library##Library(), #functionName)); \
         return ptr; \
     }\
 
