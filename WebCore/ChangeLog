@@ -1,3 +1,14 @@
+2010-08-28  Marc-Antoine Ruel  <maruel@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Preparatory patch to split libwebcore in multiple libraries.
+
+        Start with a webcore_prerequisites pseudo-target what will be the common
+        target for all the other ones.
+
+        * WebCore.gyp/WebCore.gyp:
+
 2010-08-28  Pratik Solanki  <psolanki@apple.com>
 
         Reviewed by Dan Bernstein.

@@ -811,9 +811,10 @@
       ],
     },
     {
-      'target_name': 'webcore',
-      'type': '<(library)',
-      'msvs_guid': '1C16337B-ACF3-4D03-AA90-851C5B5EADA6',
+      # We'll soon split libwebcore in multiple smaller libraries.
+      # webcore_prerequisites will be the 'base' target of every sub-target.
+      'target_name': 'webcore_prerequisites',
+      'type': 'none',
       'dependencies': [
         'webcore_bindings',
         '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:pcre',
@@ -829,14 +830,45 @@
         '<(chromium_src_dir)/third_party/sqlite/sqlite.gyp:sqlite',
         '<(chromium_src_dir)/third_party/angle/src/build_angle.gyp:translator_common',
       ],
-      'defines': [
-        'WEBCORE_NAVIGATOR_VENDOR="Google Inc."',
+      'export_dependent_settings': [
+        'webcore_bindings',
+        '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:pcre',
+        '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
+        '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
+        '<(chromium_src_dir)/skia/skia.gyp:skia',
+        '<(chromium_src_dir)/third_party/libjpeg/libjpeg.gyp:libjpeg',
+        '<(chromium_src_dir)/third_party/libpng/libpng.gyp:libpng',
+        '<(chromium_src_dir)/third_party/libxml/libxml.gyp:libxml',
+        '<(chromium_src_dir)/third_party/libxslt/libxslt.gyp:libxslt',
+        '<(chromium_src_dir)/third_party/npapi/npapi.gyp:npapi',
+        '<(chromium_src_dir)/third_party/ots/ots.gyp:ots',
+        '<(chromium_src_dir)/third_party/sqlite/sqlite.gyp:sqlite',
+        '<(chromium_src_dir)/third_party/angle/src/build_angle.gyp:translator_common',
       ],
-      'include_dirs': [
-        '<(INTERMEDIATE_DIR)',
-        '<@(webcore_include_dirs)',
-        '<(chromium_src_dir)/gpu',
-        '<(chromium_src_dir)/third_party/angle/include/GLSLANG',
+      'direct_dependent_settings': {
+        'defines': [
+          'WEBCORE_NAVIGATOR_VENDOR="Google Inc."',
+        ],
+        'include_dirs': [
+          '<(INTERMEDIATE_DIR)',
+          '<@(webcore_include_dirs)',
+          '<(chromium_src_dir)/gpu',
+          '<(chromium_src_dir)/third_party/angle/include/GLSLANG',
+        ],
+      },
+    },
+    {
+      'target_name': 'webcore',
+      'type': '<(library)',
+      'msvs_guid': '1C16337B-ACF3-4D03-AA90-851C5B5EADA6',
+      'dependencies': [
+        'webcore_prerequisites',
+        # Exported.
+        'webcore_bindings',
+        '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
+        '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
+        '<(chromium_src_dir)/skia/skia.gyp:skia',
+        '<(chromium_src_dir)/third_party/npapi/npapi.gyp:npapi',
       ],
       'sources': [
         '<@(webcore_files)',
