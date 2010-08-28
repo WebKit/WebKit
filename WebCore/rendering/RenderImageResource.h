@@ -49,7 +49,7 @@ public:
 
     void setCachedImage(CachedImage*);
     CachedImage* cachedImage() const { return m_cachedImage.get(); }
-    bool hasImage() const { return m_cachedImage; }
+    virtual bool hasImage() const { return m_cachedImage; }
 
     void resetAnimation();
 

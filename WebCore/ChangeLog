@@ -1,3 +1,18 @@
+2010-08-27  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        REGRESSION: some tests no longer painting
+        https://bugs.webkit.org/show_bug.cgi?id=44773
+
+        Fix regression from the RenderImageResource introduction, fast/canvas/canvas-as-image.html
+        and fast/canvas/canvas-as-image-incremental-repaint.html pixel tests did not work anymore.
+
+        * rendering/RenderImageResource.h:
+        (WebCore::RenderImageResource::hasImage): Make hasImage virtual.
+        * rendering/RenderImageResourceStyleImage.h:
+        (WebCore::RenderImageResourceStyleImage::hasImage): Always return true, just like RenderImageGeneratedContent did.
+
 2010-08-27  Kimmo Kinnunen  <kimmo.t.kinnunen@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

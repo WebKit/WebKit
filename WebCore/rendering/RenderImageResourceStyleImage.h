@@ -45,6 +45,7 @@ public:
     virtual void initialize(RenderObject*);
     virtual void shutdown();
 
+    virtual bool hasImage() const { return true; }
     virtual Image* image(int width = 0, int height = 0) { return m_styleImage->image(m_renderer, IntSize(width, height)); }
     virtual bool errorOccurred() const { return m_styleImage->errorOccurred(); }
 
