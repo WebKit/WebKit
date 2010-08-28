@@ -1,3 +1,9 @@
+2010-08-27  Tony Chang  <tony@chromium.org>
+
+        Not reviewed, adding two more files to chromium's test_expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-08-27  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Add tests to the WebKit2 skipped list.

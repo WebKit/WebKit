@@ -3214,6 +3214,8 @@ BUGWK44770 WIN LINUX : svg/repaint/filter-repaint.svg = IMAGE+TEXT
 BUGWK44773 : fast/canvas/canvas-as-image.html = IMAGE
 BUGWK44773 WIN LINUX : fast/canvas/canvas-as-image-incremental-repaint.html = IMAGE
 BUGWK44773 : fast/gradients/generated-gradients.html = IMAGE
+BUGWK44773 MAC : fast/canvas/webgl/css-webkit-canvas-repaint.html = IMAGE
+BUGWK44773 MAC : fast/canvas/webgl/css-webkit-canvas.html = IMAGE
 
 // Full Screen JS API is not yet enabled.
 BUGWK44797 : fullscreen = FAIL
