@@ -1264,6 +1264,11 @@ WebInspector.ElementsTreeElement.prototype = {
                 info.title = "Document Fragment";
                 break;
 
+            case Node.ATTRIBUTE_NODE:
+                var value = node.value || "\u200B"; // Zero width space to force showing an empty value.
+                info.title = this._attributeHTML(node.name, value);
+                break;
+
             case Node.ELEMENT_NODE:
                 var tagName = this.treeOutline.nodeNameToCorrectCase(node.nodeName).escapeHTML();
                 if (this._elementCloseTag) {

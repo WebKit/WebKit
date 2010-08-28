@@ -35,7 +35,15 @@ function doit()
     var num = 1.2e-1;
     var linkify = "http://webkit.org/";
 
-    globals = [regex1, regex2, str, str2, error, node, func, multilinefunc, num, linkify, null, undefined];
+    var valuelessAttribute = document.createAttribute("attr");
+    var valuedAttribute = document.createAttribute("attr");
+    valuedAttribute.value = "value";
+    var existingAttribute = document.getElementById("x").attributes[0];
+
+    globals = [
+        regex1, regex2, str, str2, error, node, func, multilinefunc, num, linkify,
+        null, undefined, valuelessAttribute, valuedAttribute, existingAttribute
+    ];
     loopOverGlobals(0);
 }
 
@@ -79,6 +87,7 @@ function frontend_evalExpression(expression)
 </head>
 
 <body onload="onload()">
+<div id="x"></div>
 <p>
 Tests that console logging dumps proper messages.
 </p>

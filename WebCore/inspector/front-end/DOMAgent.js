@@ -72,8 +72,12 @@ WebInspector.DOMNode = function(doc, payload) {
         this.publicId = payload.publicId;
         this.systemId = payload.systemId;
         this.internalSubset = payload.internalSubset;
-    } else if (this.nodeType === Node.DOCUMENT_NODE)
+    } else if (this.nodeType === Node.DOCUMENT_NODE) {
         this.documentURL = payload.documentURL;
+    } else if (this.nodeType === Node.ATTRIBUTE_NODE) {
+        this.name = payload.name;
+        this.value = payload.value;
+    }
 }
 
 WebInspector.DOMNode.prototype = {
