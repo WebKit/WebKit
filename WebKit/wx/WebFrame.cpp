@@ -476,12 +476,12 @@ bool wxWebFrame::ShouldClose() const
     return true;
 }
 
-wxWebKitParseMode wxWebFrame::GetParseMode() const
+wxWebKitCompatibilityMode wxWebFrame::GetCompatibilityMode() const
 {
     if (m_impl->frame && m_impl->frame->document())
-        return (wxWebKitParseMode)m_impl->frame->document()->parseMode();
+        return (wxWebKitCompatibilityMode)m_impl->frame->document()->compatibilityMode();
 
-    return NoDocument;
+    return QuirksMode;
 }
 
 void wxWebFrame::GrantUniversalAccess()

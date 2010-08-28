@@ -113,6 +113,7 @@ webcore_dirs = [
     'WebCore/history', 
     'WebCore/html',
     'WebCore/html/canvas',
+    'WebCore/html/parser',
     'WebCore/inspector', 
     'WebCore/loader', 
     'WebCore/loader/appcache', 

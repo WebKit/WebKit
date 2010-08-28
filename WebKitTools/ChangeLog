@@ -1,3 +1,9 @@
+2010-08-28  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fix after directory addition.
+
+        * wx/build/settings.py:
+
 2010-08-28  Chris Guillory   <chris.guillory@google.com>
 
         Reviewed by Chris Fleizach.

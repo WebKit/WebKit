@@ -93,7 +93,7 @@ private:
 };
 
 // based on enums in WebCore/dom/Document.h
-enum wxWebKitParseMode { Compat, AlmostStrict, Strict, NoDocument };
+enum wxWebKitCompatibilityMode { QuirksMode, LimitedQuirksMode, NoQuirksMode };
 
 class WXDLLIMPEXP_WEBKIT wxWebFrame
 {
@@ -167,7 +167,7 @@ public:
     
     bool ShouldClose() const;
     
-    wxWebKitParseMode GetParseMode() const;
+    wxWebKitCompatibilityMode GetCompatibilityMode() const;
     
     void GrantUniversalAccess();
     
