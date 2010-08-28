@@ -1,3 +1,19 @@
+2010-08-27  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] tst_QWebView::focusInputTypes() fails on MeeGo Handset with WebKit 2.1
+        https://bugs.webkit.org/show_bug.cgi?id=44761
+
+        Make the test more robust to changes in the execution environment. The click
+        are now correctly simulated, and the position are determined from the content.
+
+        The test also create the view and page on the stack to avoid the leak when the
+        test is failing.
+
+        * tests/qwebview/tst_qwebview.cpp:
+        (tst_QWebView::focusInputTypes):
+
 2010-08-27  Kimmo Kinnunen  <kimmo.t.kinnunen@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
