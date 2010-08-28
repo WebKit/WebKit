@@ -44,6 +44,26 @@ WK_EXPORT void WKBundleGarbageCollectJavaScriptObjects(WKBundleRef bundle);
 WK_EXPORT void WKBundleGarbageCollectJavaScriptObjectsOnAlternateThreadForDebugging(WKBundleRef bundle, bool waitUntilDone);
 WK_EXPORT size_t WKBundleGetJavaScriptObjectsCount(WKBundleRef bundle);
 
+enum WKUserScriptInjectionTime {
+    kWKInjectAtDocumentStart,
+    kWKInjectAtDocumentEnd
+};
+typedef enum WKUserScriptInjectionTime WKUserScriptInjectionTime;
+
+enum WKUserContentInjectedFrames {
+    kWKInjectInAllFrames,
+    kWKInjectInTopFrameOnly
+};
+typedef enum WKUserContentInjectedFrames WKUserContentInjectedFrames;
+
+WK_EXPORT void WKBundleAddUserScript(WKBundleRef bundle, WKBundleScriptWorldRef scriptWorld, WKStringRef source, WKURLRef url, WKArrayRef whitelist, WKArrayRef blacklist, WKUserScriptInjectionTime injectionTime, WKUserContentInjectedFrames injectedFrames);
+WK_EXPORT void WKBundleAddUserStyleSheet(WKBundleRef bundle, WKBundleScriptWorldRef scriptWorld, WKStringRef source, WKURLRef url, WKArrayRef whitelist, WKArrayRef blacklist, WKUserContentInjectedFrames injectedFrames);
+WK_EXPORT void WKBundleRemoveUserScript(WKBundleRef bundle, WKBundleScriptWorldRef scriptWorld, WKURLRef url);
+WK_EXPORT void WKBundleRemoveUserStyleSheet(WKBundleRef bundle, WKBundleScriptWorldRef scriptWorld, WKURLRef url);
+WK_EXPORT void WKBundleRemoveUserScripts(WKBundleRef bundle, WKBundleScriptWorldRef scriptWorld);
+WK_EXPORT void WKBundleRemoveUserStyleSheets(WKBundleRef bundle, WKBundleScriptWorldRef scriptWorld);
+WK_EXPORT void WKBundleRemoveAllUserContent(WKBundleRef bundle);
+
 #ifdef __cplusplus
 }
 #endif

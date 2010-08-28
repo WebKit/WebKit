@@ -36,6 +36,7 @@
 
 namespace WebCore {
     class IntSize;
+    class PageGroup;
 }
 
 namespace WebKit {
@@ -72,6 +73,8 @@ public:
     WebFrame* webFrame(uint64_t) const;
     void addWebFrame(uint64_t, WebFrame*);
     void removeWebFrame(uint64_t);
+
+    static WebCore::PageGroup* sharedPageGroup();
 
 private:
     WebProcess();

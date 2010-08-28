@@ -77,3 +77,38 @@ size_t WKBundleGetJavaScriptObjectsCount(WKBundleRef bundleRef)
 {
     return toWK(bundleRef)->javaScriptObjectsCount();
 }
+
+void WKBundleAddUserScript(WKBundleRef bundleRef, WKBundleScriptWorldRef scriptWorldRef, WKStringRef sourceRef, WKURLRef urlRef, WKArrayRef whitelistRef, WKArrayRef blacklistRef, WKUserScriptInjectionTime injectionTimeRef, WKUserContentInjectedFrames injectedFramesRef)
+{
+    toWK(bundleRef)->addUserScript(toWK(scriptWorldRef), toWK(sourceRef)->string(), toWK(urlRef)->string(), toWK(whitelistRef), toWK(blacklistRef), toUserScriptInjectionTime(injectionTimeRef), toUserContentInjectedFrames(injectedFramesRef));
+}
+
+void WKBundleAddUserStyleSheet(WKBundleRef bundleRef, WKBundleScriptWorldRef scriptWorldRef, WKStringRef sourceRef, WKURLRef urlRef, WKArrayRef whitelistRef, WKArrayRef blacklistRef, WKUserContentInjectedFrames injectedFramesRef)
+{
+    toWK(bundleRef)->addUserStyleSheet(toWK(scriptWorldRef), toWK(sourceRef)->string(), toWK(urlRef)->string(), toWK(whitelistRef), toWK(blacklistRef), toUserContentInjectedFrames(injectedFramesRef));
+}
+
+void WKBundleRemoveUserScript(WKBundleRef bundleRef, WKBundleScriptWorldRef scriptWorldRef, WKURLRef urlRef)
+{
+    toWK(bundleRef)->removeUserScript(toWK(scriptWorldRef), toWK(urlRef)->string());
+}
+
+void WKBundleRemoveUserStyleSheet(WKBundleRef bundleRef, WKBundleScriptWorldRef scriptWorldRef, WKURLRef urlRef)
+{
+    toWK(bundleRef)->removeUserStyleSheet(toWK(scriptWorldRef), toWK(urlRef)->string());
+}
+
+void WKBundleRemoveUserScripts(WKBundleRef bundleRef, WKBundleScriptWorldRef scriptWorldRef)
+{
+    toWK(bundleRef)->removeUserScripts(toWK(scriptWorldRef));
+}
+
+void WKBundleRemoveUserStyleSheets(WKBundleRef bundleRef, WKBundleScriptWorldRef scriptWorldRef)
+{
+    toWK(bundleRef)->removeUserStyleSheets(toWK(scriptWorldRef));
+}
+
+void WKBundleRemoveAllUserContent(WKBundleRef bundleRef)
+{
+    toWK(bundleRef)->removeAllUserContent();
+}

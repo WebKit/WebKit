@@ -122,7 +122,7 @@ void WebProcess::setVisitedLinkTable(const SharedMemory::Handle& handle)
     m_visitedLinkTable.setSharedMemory(sharedMemory.release());
 }
 
-static PageGroup* webKit2PageGroup()
+PageGroup* WebProcess::sharedPageGroup()
 {
     return PageGroup::pageGroup("WebKit2Group");
 }
@@ -130,12 +130,12 @@ static PageGroup* webKit2PageGroup()
 void WebProcess::visitedLinkStateChanged(const Vector<WebCore::LinkHash>& linkHashes)
 {
     for (size_t i = 0; i < linkHashes.size(); ++i)
-        Page::visitedStateChanged(webKit2PageGroup(), linkHashes[i]);
+        Page::visitedStateChanged(sharedPageGroup(), linkHashes[i]);
 }
 
 void WebProcess::allVisitedLinkStateChanged()
 {
-    Page::allVisitedStateChanged(webKit2PageGroup());
+    Page::allVisitedStateChanged(sharedPageGroup());
 }
 
 bool WebProcess::isLinkVisited(LinkHash linkHash) const

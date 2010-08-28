@@ -29,8 +29,11 @@
 #include "WKBundleBase.h"
 #include "WKBundlePage.h"
 #include "WKBundlePagePrivate.h"
+#include "WKBundlePrivate.h"
 #include <WebCore/EditorInsertAction.h>
 #include <WebCore/TextAffinity.h>
+#include <WebCore/UserContentTypes.h>
+#include <WebCore/UserScriptTypes.h>
 #include <WebCore/ZoomMode.h>
 
 namespace WebCore {
@@ -125,6 +128,32 @@ inline WebCore::ZoomMode toZoomMode(WKBundlePageZoomMode wkZoomMode)
 
     ASSERT_NOT_REACHED();
     return WebCore::ZoomTextOnly;
+}
+
+inline WebCore::UserScriptInjectionTime toUserScriptInjectionTime(WKUserScriptInjectionTime wkInjectedTime)
+{
+    switch (wkInjectedTime) {
+    case kWKInjectAtDocumentStart:
+        return WebCore::InjectAtDocumentStart;
+    case kWKInjectAtDocumentEnd:
+        return WebCore::InjectAtDocumentEnd;
+    }
+
+    ASSERT_NOT_REACHED();
+    return WebCore::InjectAtDocumentStart;
+}
+
+inline WebCore::UserContentInjectedFrames toUserContentInjectedFrames(WKUserContentInjectedFrames wkInjectedFrames)
+{
+    switch (wkInjectedFrames) {
+    case kWKInjectInAllFrames:
+        return WebCore::InjectInAllFrames;
+    case kWKInjectInTopFrameOnly:
+        return WebCore::InjectInTopFrameOnly;
+    }
+
+    ASSERT_NOT_REACHED();
+    return WebCore::InjectInAllFrames;
 }
 
 #endif // WKBundleAPICast_h

@@ -1,5 +1,49 @@
 2010-08-27  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Dan Bernstein.
+
+        Add UserContent API to WebKit2 InjectedBundle
+        <rdar://problem/8367587>
+        https://bugs.webkit.org/show_bug.cgi?id=44810
+
+        The new API differs from the version in WebKit1 in that the function do not take
+        a group name since we currently do not expose a way to make multiple PageGroups in
+        the API.
+
+        * WebProcess/InjectedBundle/API/c/WKBundleAPICast.h:
+        (toUserScriptInjectionTime):
+        (toUserContentInjectedFrames):
+        Add conversion functions for enums.
+
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleAddUserScript):
+        (WKBundleAddUserStyleSheet):
+        (WKBundleRemoveUserScript):
+        (WKBundleRemoveUserStyleSheet):
+        (WKBundleRemoveUserScripts):
+        (WKBundleRemoveUserStyleSheets):
+        (WKBundleRemoveAllUserContent):
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::toStringVector):
+        (WebKit::InjectedBundle::addUserScript):
+        (WebKit::InjectedBundle::addUserStyleSheet):
+        (WebKit::InjectedBundle::removeUserScript):
+        (WebKit::InjectedBundle::removeUserStyleSheet):
+        (WebKit::InjectedBundle::removeUserScripts):
+        (WebKit::InjectedBundle::removeUserStyleSheets):
+        (WebKit::InjectedBundle::removeAllUserContent):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        Forward API to PageGroup.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::sharedPageGroup):
+        (WebKit::WebProcess::visitedLinkStateChanged):
+        (WebKit::WebProcess::allVisitedLinkStateChanged):
+        * WebProcess/WebProcess.h: Ad accessor for global PageGroup.
+
+2010-08-27  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Gavin Barraclough.
 
         Move WKBundle didCreatePage callback to outside the WebPage

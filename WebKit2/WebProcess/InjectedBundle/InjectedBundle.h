@@ -28,6 +28,8 @@
 
 #include "APIObject.h"
 #include "WKBundle.h"
+#include <WebCore/UserContentTypes.h>
+#include <WebCore/UserScriptTypes.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -47,6 +49,8 @@ typedef HMODULE PlatformBundle;
 typedef void* PlatformBundle;
 #endif
 
+class ImmutableArray;
+class InjectedBundleScriptWorld;
 class WebPage;
 
 class InjectedBundle : public APIObject {
@@ -71,6 +75,15 @@ public:
     void setShouldTrackVisitedLinks(bool);
     void removeAllVisitedLinks();
     void activateMacFontAscentHack();
+
+    // UserContent API
+    void addUserScript(InjectedBundleScriptWorld*, const String& source, const String& url, ImmutableArray* whitelist, ImmutableArray* blacklist, WebCore::UserScriptInjectionTime, WebCore::UserContentInjectedFrames);
+    void addUserStyleSheet(InjectedBundleScriptWorld*, const String& source, const String& url, ImmutableArray* whitelist, ImmutableArray* blacklist, WebCore::UserContentInjectedFrames);
+    void removeUserScript(InjectedBundleScriptWorld*, const String& url);
+    void removeUserStyleSheet(InjectedBundleScriptWorld*, const String& url);
+    void removeUserScripts(InjectedBundleScriptWorld*);
+    void removeUserStyleSheets(InjectedBundleScriptWorld*);
+    void removeAllUserContent();
 
     // Garbage collection API
     void garbageCollectJavaScriptObjects();
