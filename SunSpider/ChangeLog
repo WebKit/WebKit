@@ -1,3 +1,32 @@
+2010-08-27  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Stephanie Lewis.
+
+        Added version 5 and version 6 of V8 tests with modifications similar
+        to the version 4 tests so they'll work with the SunSpider test harness.
+        Note that these files are external source and therefore don't conform 
+        to WebKit coding standards.
+        https://bugs.webkit.org/show_bug.cgi?id=44638
+
+        * tests/v8-v5: Added.
+        * tests/v8-v5/LIST: Added.
+        * tests/v8-v5/v8-crypto.js: Added.
+        * tests/v8-v5/v8-deltablue.js: Added.
+        * tests/v8-v5/v8-earley-boyer.js: Added.
+        * tests/v8-v5/v8-raytrace.js: Added.
+        * tests/v8-v5/v8-regexp.js: Added.
+        * tests/v8-v5/v8-richards.js: Added.
+        * tests/v8-v5/v8-splay.js: Added.
+        * tests/v8-v6: Added.
+        * tests/v8-v6/LIST: Added.
+        * tests/v8-v6/v8-crypto.js: Added.
+        * tests/v8-v6/v8-deltablue.js: Added.
+        * tests/v8-v6/v8-earley-boyer.js: Added.
+        * tests/v8-v6/v8-raytrace.js: Added.
+        * tests/v8-v6/v8-regexp.js: Added.
+        * tests/v8-v6/v8-richards.js: Added.
+        * tests/v8-v6/v8-splay.js: Added.
+
 2010-07-15  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Geoff Garen.
