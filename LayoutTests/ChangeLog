@@ -1,3 +1,11 @@
+2010-08-27  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Add tests to the WebKit2 skipped list.
+
+        Rubber-stamped by Brady Eidson.
+
+        * platform/mac-wk2/Skipped:
+
 2010-08-26  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.
