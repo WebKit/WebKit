@@ -1,3 +1,15 @@
+2010-08-27  Eric Carlson  <eric.carlson@apple.com>
+
+        Unreviewed, build fix.
+
+        Copy video files back into http/tests/media/resources/ since some tests apparently 
+        can't load from test/resources/. Sigh.
+
+        * http/tests/media/resources/test.mp4: Copied from LayoutTests/http/tests/resources/test.mp4.
+        * http/tests/media/resources/test.ogv: Copied from LayoutTests/http/tests/resources/test.ogv.
+        * http/tests/media/video-cookie.html:
+        * http/tests/media/video-referer.html:
+
 2010-08-26  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Pavel Feldman.
