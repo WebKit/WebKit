@@ -230,14 +230,7 @@ void Pasteboard::writeImage(Node* node, const KURL&, const String&)
     HGDIOBJ oldSource = SelectObject(sourceDC, coreBitmap);
     image->getHBITMAP(coreBitmap);
 
-#if !defined(NO_ALPHABLEND)
-    BLENDFUNCTION bf = {AC_SRC_OVER, 0, 255, AC_SRC_ALPHA};
-    AlphaBlend(compatibleDC, 0, 0, image->width(), image->height(),
-        sourceDC, 0, 0, image->width(), image->height(), bf);
-#else
-    StretchBlt(compatibleDC, 0, 0, image->width(), image->height(),
-        sourceDC, 0, 0, image->width(), image->height(), SRCCOPY);
-#endif
+    BitBlt(compatibleDC, 0, 0, image->width(), image->height(), sourceDC, 0, 0, SRCCOPY);
 
     SelectObject(sourceDC, oldSource);
     DeleteObject(coreBitmap);
