@@ -185,7 +185,7 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type, Canvas
     return 0;
 }
 
-void HTMLCanvasElement::willDraw(const FloatRect& rect)
+void HTMLCanvasElement::didDraw(const FloatRect& rect)
 {
     m_copiedImage.clear(); // Clear our image snapshot if we have one.
 

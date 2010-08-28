@@ -153,7 +153,7 @@ void WebGLRenderingContext::markContextChanged()
     else {
 #endif
         if (!m_markedCanvasDirty)
-            canvas()->willDraw(FloatRect(0, 0, canvas()->width(), canvas()->height()));
+            canvas()->didDraw(FloatRect(0, 0, canvas()->width(), canvas()->height()));
 #if USE(ACCELERATED_COMPOSITING)
     }
 #endif

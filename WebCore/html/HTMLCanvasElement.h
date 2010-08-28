@@ -85,7 +85,7 @@ public:
     String toDataURL(const String& mimeType, ExceptionCode& ec) { return toDataURL(mimeType, 0, ec); }
 
     // Used for rendering
-    void willDraw(const FloatRect&);
+    void didDraw(const FloatRect&);
 
     void paint(GraphicsContext*, const IntRect&);
 

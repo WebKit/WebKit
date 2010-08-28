@@ -1,3 +1,33 @@
+2010-08-27  Vincent Scheib  <scheib@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        CanvasRenderingContext2D::willDraw changed to didDraw
+
+        Solves issue with canvas to canvas draw calls, and simplifies
+        mixed software and GPU acceleration of GraphicsContext implementations
+        which must track dirty rects for backing stores.
+
+        https://bugs.webkit.org/show_bug.cgi?id=44741
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::didDraw):
+        * html/HTMLCanvasElement.h:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::fill):
+        (WebCore::CanvasRenderingContext2D::stroke):
+        (WebCore::CanvasRenderingContext2D::clearRect):
+        (WebCore::CanvasRenderingContext2D::fillRect):
+        (WebCore::CanvasRenderingContext2D::strokeRect):
+        (WebCore::CanvasRenderingContext2D::drawImage):
+        (WebCore::CanvasRenderingContext2D::drawImageFromRect):
+        (WebCore::CanvasRenderingContext2D::didDraw):
+        (WebCore::CanvasRenderingContext2D::putImageData):
+        (WebCore::CanvasRenderingContext2D::drawTextInternal):
+        * html/canvas/CanvasRenderingContext2D.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::markContextChanged):
+
 2010-08-27  Daniel Cheng  <dcheng@chromium.org>
 
         Reviewed by Tony Chang.
