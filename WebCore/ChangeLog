@@ -1,3 +1,12 @@
+2010-08-26  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Add explicit destructor for C++ DOM bindings to avoid memory leaks when using SWIG.
+        https://bugs.webkit.org/attachment.cgi?bugid=44738
+
+        * bindings/scripts/CodeGeneratorCPP.pm:
+
 2010-08-28  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Dan Bernstein.

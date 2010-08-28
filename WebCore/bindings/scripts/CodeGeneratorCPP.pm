@@ -393,7 +393,9 @@ sub GenerateHeader
 
     # Destructor
     if ($parentName eq "WebDOMObject") {
-        push(@headerContent, "    ~$className();\n");
+        push(@headerContent, "    virtual ~$className();\n");
+    } else {
+        push(@headerContent, "    virtual ~$className() { }\n");
     }
 
     push(@headerContent, "\n");
