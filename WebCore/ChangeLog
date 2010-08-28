@@ -1,3 +1,19 @@
+2010-08-28  Moritz Lipp  <mlq@pwmt.org>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Improper webkit_dom_document_evaluate implementation.
+        https://bugs.webkit.org/show_bug.cgi?id=42115
+
+        The generated webkit_dom_document_evaluate() function does not meet the
+        evaluate interface described in the W3 Documentation
+        http://www.w3.org/TR/DOM-Level-3-XPath/xpath.html#XPathEvaluator-evaluate
+        "If this is specified as nullor the implementation does not reuse the
+        specified result,...". The current implementation did not accept the
+        result parameter to be NULL.
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+
 2010-08-28  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

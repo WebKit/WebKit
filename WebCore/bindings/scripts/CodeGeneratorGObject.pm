@@ -911,7 +911,11 @@ sub GenerateFunction {
         if (!$paramTypeIsPrimitive) {
             if ($returnType ne "void") {
                 # TODO: return proper default result
-                push(@cBody, "    g_return_val_if_fail($paramName, 0);\n");
+                # FIXME: Temporary hack for generating a proper implementation
+                #        of the webkit_dom_document_evaluate function (Bug-ID: 42115)
+                if (!(($functionName eq "webkit_dom_document_evaluate") && ($paramIDLType eq "XPathResult"))) {
+                    push(@cBody, "    g_return_val_if_fail($paramName, 0);\n");
+                }
             } else {
                 push(@cBody, "    g_return_if_fail($paramName);\n");
             }
@@ -929,13 +933,18 @@ sub GenerateFunction {
         } elsif ($paramIDLType eq "CompareHow") {
             push(@cBody, "    WebCore::Range::CompareHow converted_${paramName} = static_cast<WebCore::Range::CompareHow>($paramName);\n");
         } elsif ($paramIsGDOMType) {
-            push(@cBody, "    WebCore::${paramIDLType} * converted_${paramName} = WebKit::core($paramName);\n");
+            push(@cBody, "    WebCore::${paramIDLType} * converted_${paramName} = NULL;\n");
+            push(@cBody, "    if (${paramName} != NULL) {\n");
+            push(@cBody, "        converted_${paramName} = WebKit::core($paramName);\n");
+
             if ($returnType ne "void") {
                 # TODO: return proper default result
-                push(@cBody, "    g_return_val_if_fail(converted_${paramName}, 0);\n");
+                push(@cBody, "        g_return_val_if_fail(converted_${paramName}, 0);\n");
             } else {
-                push(@cBody, "    g_return_if_fail(converted_${paramName});\n");
+                push(@cBody, "        g_return_if_fail(converted_${paramName});\n");
             }
+
+            push(@cBody, "    }\n");
         }
         $returnParamName = "converted_".$paramName if $param->extendedAttributes->{"Return"};
     }
