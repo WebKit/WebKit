@@ -1,3 +1,47 @@
+2010-08-28  Eric Uhrhane  <ericu@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Implement the DOM FileWriter class
+        https://bugs.webkit.org/show_bug.cgi?id=44362
+
+        No new tests until the delegate class has an implementation; bug logged.
+
+        Build file additions.
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        The AsyncFileWriter is an abstract interface to which FileWriter delegates all the hard work.
+        * html/AsyncFileWriter.h: Added.
+
+        The FileWriterClient is the interface for communications back from the AsyncFileWriter [success/failure, progress events].
+        * html/FileWriterClient.h: Added.
+        (WebCore::FileWriterClient::~FileWriterClient):
+
+        Added all delegation, state tracking, and progress event processing.
+        * html/FileWriter.cpp:
+        (WebCore::FileWriter::FileWriter):
+        (WebCore::FileWriter::initialize):
+        (WebCore::FileWriter::~FileWriter):
+        ActiveDomObject stuff
+        (WebCore::FileWriter::hasPendingActivity):
+        (WebCore::FileWriter::stop):
+        (WebCore::FileWriter::write):
+        FileWriter public interface
+        (WebCore::FileWriter::seek):
+        (WebCore::FileWriter::truncate):
+        (WebCore::FileWriter::abort):
+        FileWriterClient interface
+        (WebCore::FileWriter::didWrite):
+        (WebCore::FileWriter::didTruncate):
+        (WebCore::FileWriter::didFail):
+        Progress events
+        (WebCore::FileWriter::fireEvent):
+        * html/FileWriter.h:
+
 2010-08-28  Marc-Antoine Ruel  <maruel@chromium.org>
 
         Reviewed by Dimitri Glazkov.

@@ -37077,6 +37077,10 @@
 			Name="html"
 			>
 			<File
+				RelativePath="..\html\AsyncFileWriter.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\AsyncImageResizer.cpp"
 				>
 			</File>
@@ -37274,6 +37278,10 @@
 			</File>
 			<File
 				RelativePath="..\html\FileWriter.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\FileWriterClient.h"
 				>
 			</File>
 			<File

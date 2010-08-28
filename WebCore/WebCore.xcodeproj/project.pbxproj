@@ -902,14 +902,18 @@
 		448AD27C0A48137A0023D179 /* JSHTMLOptionsCollectionCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 448AD27A0A4813790023D179 /* JSHTMLOptionsCollectionCustom.cpp */; };
 		449B19F50FA72ECE0015CA4A /* HTMLParserQuirks.h in Headers */ = {isa = PBXBuildFile; fileRef = 449B19F30FA72ECE0015CA4A /* HTMLParserQuirks.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4614A1FE0B23A8D600446E1C /* copyCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 4614A1FD0B23A8D600446E1C /* copyCursor.png */; };
+		4617E7B1121E078F005EC8A8 /* AsyncFileWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 4617E7B0121E078F005EC8A8 /* AsyncFileWriter.h */; };
 		464EA2730B8A350B00A8E6E3 /* crossHairCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 464EA2710B8A350B00A8E6E3 /* crossHairCursor.png */; };
 		464EA2740B8A350B00A8E6E3 /* notAllowedCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 464EA2720B8A350B00A8E6E3 /* notAllowedCursor.png */; };
+		468F5AA4121F1D7400B5C498 /* FileWriterClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 468F5AA3121F1D7400B5C498 /* FileWriterClient.h */; };
 		46A26905121B6B4300C41F3A /* FileWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46A26902121B6B4300C41F3A /* FileWriter.cpp */; };
 		46A26906121B6B4300C41F3A /* FileWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 46A26903121B6B4300C41F3A /* FileWriter.h */; };
 		46BD16E30B279473001F0839 /* noneCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 46BD16E20B279473001F0839 /* noneCursor.png */; };
 		46D4F2490AF97E810035385A /* cellCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 46D4F2460AF97E810035385A /* cellCursor.png */; };
 		46D4F24A0AF97E810035385A /* contextMenuCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 46D4F2470AF97E810035385A /* contextMenuCursor.png */; };
 		46D4F24B0AF97E810035385A /* verticalTextCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 46D4F2480AF97E810035385A /* verticalTextCursor.png */; };
+		46DA844D1224A0710060D006 /* JSFileWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46DA844B1224A0710060D006 /* JSFileWriter.cpp */; };
+		46DA844E1224A0710060D006 /* JSFileWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 46DA844C1224A0710060D006 /* JSFileWriter.h */; };
 		46F9D5DD0B0D60170028EE36 /* aliasCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 46F9D5DA0B0D60170028EE36 /* aliasCursor.png */; };
 		46F9D5DE0B0D60170028EE36 /* noDropCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 46F9D5DB0B0D60170028EE36 /* noDropCursor.png */; };
 		46F9D5DF0B0D60170028EE36 /* progressCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 46F9D5DC0B0D60170028EE36 /* progressCursor.png */; };
@@ -6755,8 +6759,10 @@
 		449098B10F8F82520076A327 /* FeatureDefines.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = FeatureDefines.xcconfig; sourceTree = "<group>"; };
 		449B19F30FA72ECE0015CA4A /* HTMLParserQuirks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLParserQuirks.h; sourceTree = "<group>"; };
 		4614A1FD0B23A8D600446E1C /* copyCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = copyCursor.png; sourceTree = "<group>"; };
+		4617E7B0121E078F005EC8A8 /* AsyncFileWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncFileWriter.h; sourceTree = "<group>"; };
 		464EA2710B8A350B00A8E6E3 /* crossHairCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = crossHairCursor.png; sourceTree = "<group>"; };
 		464EA2720B8A350B00A8E6E3 /* notAllowedCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = notAllowedCursor.png; sourceTree = "<group>"; };
+		468F5AA3121F1D7400B5C498 /* FileWriterClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileWriterClient.h; sourceTree = "<group>"; };
 		46A26902121B6B4300C41F3A /* FileWriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileWriter.cpp; sourceTree = "<group>"; };
 		46A26903121B6B4300C41F3A /* FileWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileWriter.h; sourceTree = "<group>"; };
 		46A26904121B6B4300C41F3A /* FileWriter.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FileWriter.idl; sourceTree = "<group>"; };
@@ -6764,6 +6770,8 @@
 		46D4F2460AF97E810035385A /* cellCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cellCursor.png; sourceTree = "<group>"; };
 		46D4F2470AF97E810035385A /* contextMenuCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = contextMenuCursor.png; sourceTree = "<group>"; };
 		46D4F2480AF97E810035385A /* verticalTextCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = verticalTextCursor.png; sourceTree = "<group>"; };
+		46DA844B1224A0710060D006 /* JSFileWriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFileWriter.cpp; sourceTree = "<group>"; };
+		46DA844C1224A0710060D006 /* JSFileWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSFileWriter.h; sourceTree = "<group>"; };
 		46F9D5DA0B0D60170028EE36 /* aliasCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = aliasCursor.png; sourceTree = "<group>"; };
 		46F9D5DB0B0D60170028EE36 /* noDropCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = noDropCursor.png; sourceTree = "<group>"; };
 		46F9D5DC0B0D60170028EE36 /* progressCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = progressCursor.png; sourceTree = "<group>"; };
@@ -12048,6 +12056,7 @@
 				49EECDC710503C2300099FAB /* ArrayBufferView.cpp */,
 				49EECDC810503C2300099FAB /* ArrayBufferView.h */,
 				49EECDC910503C2300099FAB /* ArrayBufferView.idl */,
+				4617E7B0121E078F005EC8A8 /* AsyncFileWriter.h */,
 				6E4E91A710F7FB3100A2779C /* CanvasContextAttributes.cpp */,
 				6E4E91A810F7FB3100A2779C /* CanvasContextAttributes.h */,
 				49484FB3102CF23C00187DD3 /* CanvasGradient.cpp */,
@@ -14072,6 +14081,7 @@
 				895253DE116C4F0600CABF00 /* FileThreadTask.h */,
 				46A26902121B6B4300C41F3A /* FileWriter.cpp */,
 				46A26903121B6B4300C41F3A /* FileWriter.h */,
+				468F5AA3121F1D7400B5C498 /* FileWriterClient.h */,
 				46A26904121B6B4300C41F3A /* FileWriter.idl */,
 				A8136D370973A8E700D74463 /* FormDataList.cpp */,
 				A8136D360973A8E700D74463 /* FormDataList.h */,
@@ -14464,6 +14474,8 @@
 				BC00F0130E0A189500FD04E3 /* JSFileList.h */,
 				2E94F439119207DA00B7F75D /* JSFileReader.cpp */,
 				2E94F43A119207DA00B7F75D /* JSFileReader.h */,
+				46DA844B1224A0710060D006 /* JSFileWriter.cpp */,
+				46DA844C1224A0710060D006 /* JSFileWriter.h */,
 				49EECEF4105070C400099FAB /* JSFloat32Array.cpp */,
 				49EECEF5105070C400099FAB /* JSFloat32Array.h */,
 				BC97E410109154FA0010D361 /* JSHTMLAllCollection.cpp */,
@@ -20384,10 +20396,13 @@
 				46A26906121B6B4300C41F3A /* FileWriter.h in Headers */,
 				2EF1BFF7121CB0BD00C27627 /* AsyncFileStream.h in Headers */,
 				2EF1BFF9121CB0CE00C27627 /* FileStreamClient.h in Headers */,
+				4617E7B1121E078F005EC8A8 /* AsyncFileWriter.h in Headers */,
+				468F5AA4121F1D7400B5C498 /* FileWriterClient.h in Headers */,
 				89C0DD7B121F0C69009E17CA /* FileSystemCallbacks.h in Headers */,
 				CE057FA61220731100A476D5 /* DocumentMarkerController.h in Headers */,
 				9F0D6B2F121BFEBA006C0288 /* InspectorProfilerAgent.h in Headers */,
 				2EB4BCD3121F03E300EC4885 /* BlobResourceHandle.h in Headers */,
+				46DA844E1224A0710060D006 /* JSFileWriter.h in Headers */,
 				89686CA0122244A00076EAA4 /* DOMFilePath.h in Headers */,
 				8947A82A12222C4700D95F2D /* JSMetadata.h in Headers */,
 				8947A82C12222C4700D95F2D /* JSMetadataCallback.h in Headers */,
@@ -22855,6 +22870,7 @@
 				CE057FA51220731100A476D5 /* DocumentMarkerController.cpp in Sources */,
 				9F0D6B2E121BFEBA006C0288 /* InspectorProfilerAgent.cpp in Sources */,
 				2EB4BCD2121F03E300EC4885 /* BlobResourceHandle.cpp in Sources */,
+				46DA844D1224A0710060D006 /* JSFileWriter.cpp in Sources */,
 				89686C9F122244A00076EAA4 /* DOMFilePath.cpp in Sources */,
 				8947A82912222C4700D95F2D /* JSMetadata.cpp in Sources */,
 				8947A82B12222C4700D95F2D /* JSMetadataCallback.cpp in Sources */,

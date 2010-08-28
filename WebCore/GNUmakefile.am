@@ -237,8 +237,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSFileList.h \
 	DerivedSources/WebCore/JSFileReader.cpp \
 	DerivedSources/WebCore/JSFileReader.h \
-	DerivedSources/WebCore/JSFileWriter.cpp \
-	DerivedSources/WebCore/JSFileWriter.h \
 	DerivedSources/WebCore/JSFloat32Array.cpp \
 	DerivedSources/WebCore/JSFloat32Array.h \
 	DerivedSources/WebCore/JSGeolocation.cpp \
@@ -1353,8 +1351,6 @@ webcore_sources += \
 	WebCore/html/FileList.h \
 	WebCore/html/FileReader.cpp \
 	WebCore/html/FileReader.h \
-	WebCore/html/FileWriter.cpp \
-	WebCore/html/FileWriter.h \
 	WebCore/html/FileStreamProxy.cpp \
 	WebCore/html/FileStreamProxy.h \
 	WebCore/html/FileThread.cpp \
@@ -4443,6 +4439,17 @@ endif  # END ENABLE_BLOB
 if ENABLE_FILE_WRITER
 FEATURE_DEFINES += ENABLE_FILE_WRITER=1
 webcore_cppflags += -DENABLE_FILE_WRITER=1
+
+webcore_built_sources += \
+	DerivedSources/WebCore/JSFileWriter.cpp \
+	DerivedSources/WebCore/JSFileWriter.h
+
+webcore_sources += \
+	WebCore/html/AsyncFileWriter.h \
+	WebCore/html/FileWriter.cpp \
+	WebCore/html/FileWriter.h \
+	WebCore/html/FileWriterClient.h
+
 endif  # END ENABLE_FILE_WRITER
 
 DerivedSources/WebCore/CSSPropertyNames.h: $(WEBCORE_CSS_PROPERTY_NAMES) $(WebCore)/css/makeprop.pl

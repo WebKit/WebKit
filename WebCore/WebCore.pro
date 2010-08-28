@@ -1407,6 +1407,7 @@ HEADERS += \
     history/CachedPage.h \
     history/HistoryItem.h \
     history/PageCache.h \
+    html/AsyncFileWriter.h \
     html/AsyncImageResizer.h \
     html/Blob.h \
     html/BlobBuilder.h \
@@ -1431,6 +1432,7 @@ HEADERS += \
     html/FileThread.h \
     html/FileThreadTask.h \
     html/FileWriter.h \
+    html/FileWriterClient.h \
     html/FormDataList.h \
     html/HTMLAllCollection.h \
     html/HTMLAnchorElement.h \
@@ -2601,6 +2603,7 @@ contains(DEFINES, ENABLE_FILE_SYSTEM=1) {
         storage/FileEntry.h \
         storage/FileSystemCallback.h \
         storage/FileSystemCallbacks.h \
+        storage/FileWriterCallback.h \
         storage/Flags.h \
         storage/LocalFileSystem.h \
         storage/Metadata.h \
