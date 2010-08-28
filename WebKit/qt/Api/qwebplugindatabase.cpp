@@ -284,7 +284,8 @@ QList<QWebPluginInfo> QWebPluginDatabase::plugins() const
 
     for (unsigned int i = 0; i < plugins.size(); ++i) {
         PluginPackage* plugin = plugins[i];
-        qwebplugins.append(QWebPluginInfo(plugin));
+        if (plugin->ensurePluginLoaded())
+            qwebplugins.append(QWebPluginInfo(plugin));
     }
 
     return qwebplugins;

@@ -2394,6 +2394,7 @@ contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
                 HEADERS += \
                     plugins/qt/PluginContainerQt.h
                 DEFINES += XP_UNIX
+                DEFINES += ENABLE_NETSCAPE_PLUGIN_METADATA_CACHE=1
             }
         }
     

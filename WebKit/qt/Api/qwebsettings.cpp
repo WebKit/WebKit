@@ -34,6 +34,7 @@
 #include "KURL.h"
 #include "PlatformString.h"
 #include "IconDatabase.h"
+#include "PluginDatabase.h"
 #include "Image.h"
 #include "IntSize.h"
 #include "ApplicationCacheStorage.h"
@@ -1093,6 +1094,14 @@ void QWebSettings::enablePersistentStorage(const QString& path)
     QWebSettings::globalSettings()->setAttribute(QWebSettings::LocalStorageEnabled, true);
     QWebSettings::globalSettings()->setAttribute(QWebSettings::OfflineStorageDatabaseEnabled, true);
     QWebSettings::globalSettings()->setAttribute(QWebSettings::OfflineWebApplicationCacheEnabled, true);
+
+#if ENABLE(NETSCAPE_PLUGIN_METADATA_CACHE)
+    QFileInfo info(storagePath);
+    if (info.isDir() && info.isWritable()) {
+        WebCore::PluginDatabase::setPersistentMetadataCacheEnabled(true);
+        WebCore::PluginDatabase::setPersistentMetadataCachePath(storagePath);
+    }
+#endif
 }
 
 /*!

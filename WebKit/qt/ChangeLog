@@ -1,3 +1,22 @@
+2010-08-27  Kimmo Kinnunen  <kimmo.t.kinnunen@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Cache plugin info to a persistent database
+
+        https://bugs.webkit.org/show_bug.cgi?id=43179
+
+        Implement a cache of NPAPI plugin metadata. Write the metadata to aa
+        file that gets rewritten if any plugin is added / removed.  Compilation
+        of the feature is controlled by #if ENABLE(NETSCAPE_PLUGIN_METADATA_CACHE)
+
+        Currently only enabled for Qt UNIX flavors.
+
+        * Api/qwebplugindatabase.cpp:
+        (QWebPluginDatabase::plugins):  Match previous behavior: ensure all returned plugins are loaded.
+        * Api/qwebsettings.cpp:
+        (QWebSettings::enablePersistentStorage): Set plugin cache path.
+
 2010-08-27  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

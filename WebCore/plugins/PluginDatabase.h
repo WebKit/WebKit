@@ -78,6 +78,12 @@ namespace WebCore {
         Vector<String> pluginDirectories() const { return m_pluginDirectories; }
 
         String MIMETypeForExtension(const String& extension) const;
+#if ENABLE(NETSCAPE_PLUGIN_METADATA_CACHE)
+        static bool isPersistentMetadataCacheEnabled();
+        static void setPersistentMetadataCacheEnabled(bool isEnabled);
+        static String persistentMetadataCachePath();
+        static void setPersistentMetadataCachePath(const String& persistentMetadataCachePath);
+#endif
 
     private:
         void getPluginPathsInDirectories(HashSet<String>&) const;
@@ -86,6 +92,10 @@ namespace WebCore {
         // Returns whether the plugin was actually added or not (it won't be added if it's a duplicate of an existing plugin).
         bool add(PassRefPtr<PluginPackage>);
         void remove(PluginPackage*);
+#if ENABLE(NETSCAPE_PLUGIN_METADATA_CACHE)
+        void loadPersistentMetadataCache();
+        void updatePersistentMetadataCache();
+#endif
 
         Vector<String> m_pluginDirectories;
         HashSet<String> m_registeredMIMETypes;
@@ -93,6 +103,9 @@ namespace WebCore {
         HashMap<String, RefPtr<PluginPackage> > m_pluginsByPath;
         HashMap<String, time_t> m_pluginPathsWithTimes;
         HashMap<String, RefPtr<PluginPackage> > m_preferredPlugins;
+#if ENABLE(NETSCAPE_PLUGIN_METADATA_CACHE)
+        bool m_persistentMetadataCacheIsLoaded;
+#endif
     };
 
 } // namespace WebCore

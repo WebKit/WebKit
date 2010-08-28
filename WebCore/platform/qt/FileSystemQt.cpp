@@ -128,6 +128,33 @@ CString openTemporaryFile(const char* prefix, PlatformFileHandle& handle)
     return CString();
 }
 
+#if ENABLE(NETSCAPE_PLUGIN_METADATA_CACHE)
+PlatformFileHandle openFile(const String& path, FileOpenMode mode)
+{
+    QIODevice::OpenMode platformMode;
+
+    if (mode == OpenForRead)
+        platformMode = QIODevice::ReadOnly;
+    else if (mode == OpenForWrite)
+        platformMode = (QIODevice::WriteOnly | QIODevice::Truncate);
+    else
+        return invalidPlatformFileHandle;
+
+    QFile* file = new QFile(path);
+    if (file->open(platformMode))
+        return file;
+
+    return invalidPlatformFileHandle;
+}
+
+int readFromFile(PlatformFileHandle handle, char* data, int length)
+{
+    if (handle && handle->exists() && handle->isReadable())
+        return handle->read(data, length);
+    return 0;
+}
+#endif
+
 void closeFile(PlatformFileHandle& handle)
 {
     if (handle) {

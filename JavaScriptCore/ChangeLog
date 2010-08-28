@@ -1,3 +1,15 @@
+2010-08-27  Kimmo Kinnunen  <kimmo.t.kinnunen@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] NPAPI Plugin metadata should be cached, and loading a plugin should not require loading every plugin
+        https://bugs.webkit.org/show_bug.cgi?id=43179
+
+        Add ENABLE_NETSCAPE_PLUGIN_METADATA_CACHE flag to enable persistent
+        NPAPI Plugin Cache. The flag is enabled by default.
+
+        * wtf/Platform.h: Add ENABLE_NETSCAPE_PLUGIN_METADATA_CACHE
+
 2010-07-27  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Eric Carlson.

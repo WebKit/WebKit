@@ -30,13 +30,31 @@
 #include "Frame.h"
 #include "KURL.h"
 #include "PluginPackage.h"
+#if ENABLE(NETSCAPE_PLUGIN_METADATA_CACHE)
+#include "FileSystem.h"
+#endif
 #include <stdlib.h>
 
 namespace WebCore {
 
 typedef HashMap<String, RefPtr<PluginPackage> > PluginPackageByNameMap;
 
+#if ENABLE(NETSCAPE_PLUGIN_METADATA_CACHE)
+static const size_t maximumPersistentPluginMetadataCacheSize = 32768;
+
+static bool gPersistentPluginMetadataCacheIsEnabled;
+
+String& persistentPluginMetadataCachePath()
+{
+    DEFINE_STATIC_LOCAL(String, cachePath, ());
+    return cachePath;
+}
+#endif
+
 PluginDatabase::PluginDatabase()
+#if ENABLE(NETSCAPE_PLUGIN_METADATA_CACHE)
+    : m_persistentMetadataCacheIsLoaded(false)
+#endif
 {
 }
 
@@ -74,6 +92,10 @@ void PluginDatabase::addExtraPluginDirectory(const String& directory)
 
 bool PluginDatabase::refresh()
 {
+#if ENABLE(NETSCAPE_PLUGIN_METADATA_CACHE)
+    if (!m_persistentMetadataCacheIsLoaded)
+        loadPersistentMetadataCache();
+#endif
     bool pluginSetChanged = false;
 
     if (!m_plugins.isEmpty()) {
@@ -125,6 +147,10 @@ bool PluginDatabase::refresh()
 
     if (!pluginSetChanged)
         return false;
+
+#if ENABLE(NETSCAPE_PLUGIN_METADATA_CACHE)
+    updatePersistentMetadataCache();
+#endif
 
     m_registeredMIMETypes.clear();
 
@@ -182,8 +208,13 @@ PluginPackage* PluginDatabase::pluginForMIMEType(const String& mimeType)
         if (!plugin->isEnabled())
             continue;
 
-        if (plugin->mimeToDescriptions().contains(key))
+        if (plugin->mimeToDescriptions().contains(key)) {
+#if ENABLE(NETSCAPE_PLUGIN_METADATA_CACHE)
+            if (!plugin->ensurePluginLoaded())
+                continue;
+#endif
             pluginChoices.append(plugin);
+        }
     }
 
     if (pluginChoices.isEmpty())
@@ -222,6 +253,10 @@ String PluginDatabase::MIMETypeForExtension(const String& extension) const
                     if (preferredPlugin && PluginPackage::equal(*plugin, *preferredPlugin))
                         return mimeType;
 
+#if ENABLE(NETSCAPE_PLUGIN_METADATA_CACHE)
+                    if (!plugin->ensurePluginLoaded())
+                        continue;
+#endif
                     pluginChoices.append(plugin);
                     mimeTypeForPlugin.add(plugin, mimeType);
                     foundMapping = true;
@@ -315,6 +350,9 @@ void PluginDatabase::clear()
     m_pluginPathsWithTimes.clear();
     m_registeredMIMETypes.clear();
     m_preferredPlugins.clear();
+#if ENABLE(NETSCAPE_PLUGIN_METADATA_CACHE)
+    m_persistentMetadataCacheIsLoaded = false;
+#endif
 }
 
 #if (!OS(WINCE)) && (!OS(SYMBIAN)) && (!OS(WINDOWS) || !ENABLE(NETSCAPE_PLUGIN_API))
@@ -427,4 +465,200 @@ void PluginDatabase::getPluginPathsInDirectories(HashSet<String>& paths) const
 
 #endif // !OS(SYMBIAN) && !OS(WINDOWS)
 
+#if ENABLE(NETSCAPE_PLUGIN_METADATA_CACHE)
+
+static void fillBufferWithContentsOfFile(PlatformFileHandle file, Vector<char>& buffer)
+{
+    size_t bufferSize = 0;
+    size_t bufferCapacity = 1024;
+    buffer.resize(bufferCapacity);
+
+    do {
+        bufferSize += readFromFile(file, buffer.data() + bufferSize, bufferCapacity - bufferSize);
+        if (bufferSize == bufferCapacity) {
+            if (bufferCapacity < maximumPersistentPluginMetadataCacheSize) {
+                bufferCapacity *= 2;
+                buffer.resize(bufferCapacity);
+            } else {
+                buffer.clear();
+                return;
+            }
+        } else
+            break;
+    } while (true);
+
+    buffer.shrink(bufferSize);
+}
+
+static bool readUTF8String(String& resultString, char*& start, const char* end)
+{
+    if (start >= end)
+        return false;
+
+    int len = strlen(start);
+    resultString = String::fromUTF8(start, len);
+    start += len + 1;
+
+    return true;
+}
+
+static bool readTime(time_t& resultTime, char*& start, const char* end)
+{
+    if (start + sizeof(time_t) >= end)
+        return false;
+
+    resultTime = *reinterpret_cast<time_t*>(start);
+    start += sizeof(time_t);
+
+    return true;
+}
+
+static const char schemaVersion = '1';
+static const char persistentPluginMetadataCacheFilename[] = "PluginMetadataCache.bin";
+
+void PluginDatabase::loadPersistentMetadataCache()
+{
+    if (!isPersistentMetadataCacheEnabled() || persistentMetadataCachePath().isEmpty())
+        return;
+
+    PlatformFileHandle file;
+    String absoluteCachePath = pathByAppendingComponent(persistentMetadataCachePath(), persistentPluginMetadataCacheFilename);
+    file = openFile(absoluteCachePath, OpenForRead);
+
+    if (!isHandleValid(file))
+        return;
+
+    // Mark cache as loaded regardless of success or failure. If
+    // there's error in the cache, we won't try to load it anymore.
+    m_persistentMetadataCacheIsLoaded = true;
+
+    Vector<char> fileContents;
+    fillBufferWithContentsOfFile(file, fileContents);
+    closeFile(file);
+
+    if (fileContents.size() < 2 || fileContents.first() != schemaVersion || fileContents.last() != '\0') {
+        LOG_ERROR("Unable to read plugin metadata cache: corrupt schema");
+        deleteFile(absoluteCachePath);
+        return;
+    }
+
+    char* bufferPos = fileContents.data() + 1;
+    char* end = fileContents.data() + fileContents.size();
+
+    PluginSet cachedPlugins;
+    HashMap<String, time_t> cachedPluginPathsWithTimes;
+    HashMap<String, RefPtr<PluginPackage> > cachedPluginsByPath;
+
+    while (bufferPos < end) {
+        String path;
+        time_t lastModified;
+        String name;
+        String desc;
+        String mimeDesc;
+        if (!(readUTF8String(path, bufferPos, end)
+              && readTime(lastModified, bufferPos, end)
+              && readUTF8String(name, bufferPos, end)
+              && readUTF8String(desc, bufferPos, end)
+              && readUTF8String(mimeDesc, bufferPos, end))) {
+            LOG_ERROR("Unable to read plugin metadata cache: corrupt data");
+            deleteFile(absoluteCachePath);
+            return;
+        }
+
+        // Skip metadata that points to plugins from directories that
+        // are not part of plugin directory list anymore.
+        String pluginDirectoryName = directoryName(path);
+        if (m_pluginDirectories.find(pluginDirectoryName) == WTF::notFound)
+            continue;
+
+        RefPtr<PluginPackage> package = PluginPackage::createPackageFromCache(path, lastModified, name, desc, mimeDesc);
+
+        if (package && cachedPlugins.add(package).second) {
+            cachedPluginPathsWithTimes.add(package->path(), package->lastModified());
+            cachedPluginsByPath.add(package->path(), package);
+        }
+    }
+
+    m_plugins.swap(cachedPlugins);
+    m_pluginsByPath.swap(cachedPluginsByPath);
+    m_pluginPathsWithTimes.swap(cachedPluginPathsWithTimes);
+}
+
+static bool writeUTF8String(PlatformFileHandle file, const String& string)
+{
+    CString utf8String = string.utf8();
+    int length = utf8String.length() + 1;
+    return writeToFile(file, utf8String.data(), length) == length;
+}
+
+static bool writeTime(PlatformFileHandle file, const time_t& time)
+{
+    return writeToFile(file, reinterpret_cast<const char*>(&time), sizeof(time_t)) == sizeof(time_t);
+}
+
+void PluginDatabase::updatePersistentMetadataCache()
+{
+    if (!isPersistentMetadataCacheEnabled() || persistentMetadataCachePath().isEmpty())
+        return;
+
+    makeAllDirectories(persistentMetadataCachePath());
+    String absoluteCachePath = pathByAppendingComponent(persistentMetadataCachePath(), persistentPluginMetadataCacheFilename);
+    deleteFile(absoluteCachePath);
+
+    if (m_plugins.isEmpty())
+        return;
+
+    PlatformFileHandle file;
+    file = openFile(absoluteCachePath, OpenForWrite);
+
+    if (!isHandleValid(file)) {
+        LOG_ERROR("Unable to open plugin metadata cache for saving");
+        return;
+    }
+
+    char localSchemaVersion = schemaVersion;
+    if (writeToFile(file, &localSchemaVersion, 1) != 1) {
+        LOG_ERROR("Unable to write plugin metadata cache schema");
+        closeFile(file);
+        deleteFile(absoluteCachePath);
+        return;
+    }
+
+    PluginSet::const_iterator end = m_plugins.end();
+    for (PluginSet::const_iterator it = m_plugins.begin(); it != end; ++it) {
+        if (!(writeUTF8String(file, (*it)->path())
+              && writeTime(file, (*it)->lastModified())
+              && writeUTF8String(file, (*it)->name())
+              && writeUTF8String(file, (*it)->description())
+              && writeUTF8String(file, (*it)->fullMIMEDescription()))) {
+            LOG_ERROR("Unable to write plugin metadata to cache");
+            closeFile(file);
+            deleteFile(absoluteCachePath);
+            return;
+        }
+    }
+
+    closeFile(file);
+}
+
+bool PluginDatabase::isPersistentMetadataCacheEnabled()
+{
+    return gPersistentPluginMetadataCacheIsEnabled;
+}
+
+void PluginDatabase::setPersistentMetadataCacheEnabled(bool isEnabled)
+{
+    gPersistentPluginMetadataCacheIsEnabled = isEnabled;
+}
+
+String PluginDatabase::persistentMetadataCachePath()
+{
+    return WebCore::persistentPluginMetadataCachePath();
+}
+
+void PluginDatabase::setPersistentMetadataCachePath(const String& persistentMetadataCachePath)
+{
+    WebCore::persistentPluginMetadataCachePath() = persistentMetadataCachePath;
+}
+#endif
 }
