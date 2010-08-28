@@ -122,7 +122,16 @@ void ScrollbarThemeGtk::paintTrackBackground(GraphicsContext* context, Scrollbar
     state.active = FALSE;
     state.inHover = FALSE;
 
-    IntRect fullScrollbarRect(scrollbar->x(), scrollbar->y(), scrollbar->width(), scrollbar->height());
+    // Paint the track background. If the trough-under-steppers property is true, this
+    // should be the full size of the scrollbar, but if is false, it should only be the
+    // track rect.
+    MozGtkScrollbarMetrics metrics;
+    moz_gtk_get_scrollbar_metrics(&metrics);
+
+    IntRect fullScrollbarRect = rect;
+    if (metrics.trough_under_steppers)
+        fullScrollbarRect = IntRect(scrollbar->x(), scrollbar->y(), scrollbar->width(), scrollbar->height());
+
     GtkThemeWidgetType type = scrollbar->orientation() == VerticalScrollbar ? MOZ_GTK_SCROLLBAR_TRACK_VERTICAL : MOZ_GTK_SCROLLBAR_TRACK_HORIZONTAL;
     static_cast<RenderThemeGtk*>(RenderTheme::defaultTheme().get())->paintMozillaGtkWidget(type, context, fullScrollbarRect, &state, 0);
 }
@@ -198,6 +207,15 @@ bool ScrollbarThemeGtk::paint(Scrollbar* scrollbar, GraphicsContext* graphicsCon
 
     IntRect trackPaintRect = trackRect(scrollbar, true);
     if (damageRect.intersects(trackPaintRect))
+        scrollMask |= TrackBGPart;
+
+    MozGtkScrollbarMetrics metrics;
+    moz_gtk_get_scrollbar_metrics(&metrics);
+    if (metrics.trough_under_steppers
+            && (scrollMask & BackButtonStartPart
+            || scrollMask & BackButtonEndPart
+            || scrollMask & ForwardButtonStartPart
+            || scrollMask & ForwardButtonEndPart))
         scrollMask |= TrackBGPart;
 
     bool thumbPresent = hasThumb(scrollbar);

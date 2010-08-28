@@ -1,3 +1,19 @@
+2010-08-27  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] ScrollbarThemeGtk should account for the trough_under_steppers property
+        https://bugs.webkit.org/show_bug.cgi?id=44742
+
+        No new tests until this code is activated, at which point pixel tests will
+        test the scrollbar rendering.
+
+        * platform/gtk/ScrollbarThemeGtk.cpp:
+        (WebCore::ScrollbarThemeGtk::paintTrackBackground): Only inflate the track background
+        if the style specifies trough_under_steppers.
+        (WebCore::ScrollbarThemeGtk::paint): If the theme specifies trough_under_steppers,
+        a dirty stepper also triggers a repaint of the trough region.
+
 2010-08-27  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Alexey Proskuryakov.
