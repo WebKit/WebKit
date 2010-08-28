@@ -253,9 +253,13 @@ void HTMLConstructionSite::insertHTMLBodyElement(AtomicHTMLToken& token)
     m_openElements.pushHTMLBodyElement(attachToCurrent(createHTMLElement(token)));
 }
 
-void HTMLConstructionSite::insertHTMLFormElement(AtomicHTMLToken& token)
+void HTMLConstructionSite::insertHTMLFormElement(AtomicHTMLToken& token, bool isDemoted)
 {
-    insertHTMLElement(token);
+    RefPtr<Element> element = createHTMLElement(token);
+    ASSERT(element->hasTagName(formTag));
+    RefPtr<HTMLFormElement> form = static_pointer_cast<HTMLFormElement>(element.release());
+    form->setDemoted(isDemoted);
+    m_openElements.push(attachToCurrent(form.release()));
     ASSERT(currentElement()->isHTMLElement());
     ASSERT(currentElement()->hasTagName(formTag));
     m_form = static_cast<HTMLFormElement*>(currentElement());

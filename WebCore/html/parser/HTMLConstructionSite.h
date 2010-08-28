@@ -57,7 +57,7 @@ public:
     void insertHTMLHtmlElement(AtomicHTMLToken&);
     void insertHTMLHeadElement(AtomicHTMLToken&);
     void insertHTMLBodyElement(AtomicHTMLToken&);
-    void insertHTMLFormElement(AtomicHTMLToken&);
+    void insertHTMLFormElement(AtomicHTMLToken&, bool isDemoted = false);
     void insertScriptElement(AtomicHTMLToken&);
     void insertTextNode(const String&);
     void insertForeignElement(AtomicHTMLToken&, const AtomicString& namespaceURI);

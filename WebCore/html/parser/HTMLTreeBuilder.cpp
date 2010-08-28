@@ -1154,7 +1154,7 @@ void HTMLTreeBuilder::processStartTagForInTable(AtomicHTMLToken& token)
             return;
         // FIXME: This deviates from the spec:
         //        http://www.w3.org/Bugs/Public/show_bug.cgi?id=10216
-        m_tree.insertHTMLFormElement(token);
+        m_tree.insertHTMLFormElement(token, true);
         m_tree.openElements()->pop();
         return;
     }

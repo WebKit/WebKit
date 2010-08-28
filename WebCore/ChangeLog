@@ -1,3 +1,23 @@
+2010-08-28  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        HTMLTreeBuilder needs to call HTMLFormElement::setDemoted
+        https://bugs.webkit.org/show_bug.cgi?id=44781
+
+        This patch teaches the HTMLTreeBuilder about demoted form elements.
+        Demoting a form element magically stops the form element from
+        rendering.  Demoted form elements are a concept from the
+        LegacyHTMLTreeBuilder, but they are somewhat of a hack because
+        rendering should be DOM-based.  We'll likely look for a better solution
+        in a future patch.
+
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::insertHTMLFormElement):
+        * html/parser/HTMLConstructionSite.h:
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processStartTagForInTable):
+
 2010-08-28  Chris Guillory   <chris.guillory@google.com>
 
         Reviewed by Chris Fleizach.

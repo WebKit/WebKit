@@ -1,3 +1,35 @@
+2010-08-28  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        HTMLTreeBuilder needs to call HTMLFormElement::setDemoted
+        https://bugs.webkit.org/show_bug.cgi?id=44781
+
+        Update test expectations to account for demoted form elements.  I spot
+        checked a bunch of these and this change is the reverse of the change
+        to these expectations in http://trac.webkit.org/changeset/64712.  At
+        the time, we thought these rendering changes were correct because the
+        DOM was correct.  However, demoted form elements have magical
+        non-DOM-based rendering.
+
+        * platform/mac/fast/forms/form-added-to-table-expected.txt:
+        * platform/mac/fast/forms/formmove3-expected.txt:
+        * platform/mac/fast/forms/preserveFormDuringResidualStyle-expected.txt:
+        * platform/mac/fast/table/fixed-table-non-cell-in-row-expected.txt:
+        * platform/mac/fast/table/inline-form-assert-expected.txt:
+        * platform/mac/fast/table/insert-cell-before-form-expected.txt:
+        * platform/mac/fast/table/insert-row-before-form-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug1318-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug2516-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug30559-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug32447-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug34538-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug4527-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug78162-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug96334-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug96343-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug1725-expected.txt:
+
 2010-08-28  Chris Guillory   <chris.guillory@google.com>
 
         Reviewed by Chris Fleizach.
