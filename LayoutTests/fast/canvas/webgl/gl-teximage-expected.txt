@@ -7,7 +7,7 @@ PASS getError was expected value: NO_ERROR : Should be no errors from setup.
 check pixels are NOT pre-multiplied
 PASS getError was expected value: NO_ERROR : Should be no errors from setup
 PASS pixel 0, 15 should be 0, 0, 0, 255 was 0, 0, 0, 255
-PASS pixel 128, 15 should be 255, 0, 255, 255 was 255, 0, 0, 255
+PASS pixel 128, 15 should be 255, 0, 255, 255 was 255, 0, 255, 255
 PASS pixel 255, 15 should be 0, 0, 255, 255 was 0, 0, 255, 255
 PASS pixel 0, 8 should be 128, 128, 128, 255 was 128, 128, 128, 255
 PASS pixel 128, 8 should be 255, 255, 255, 255 was 255, 255, 255, 255
@@ -37,6 +37,15 @@ PASS There should be 32 unique values in channel 0. Found 32
 PASS There should be 32 unique values in channel 1. Found 32
 PASS There should be 32 unique values in channel 2. Found 32
 PASS There should be 2 unique values in channel 3. Found 2
+
+check pixels are UN pre-multiplied
+PASS getError was expected value: NO_ERROR : Should be no errors from setup.
+PASS Half the pixels in channel 0 should be >= 128,128,128. found 50%
+PASS Half the pixels in channel 0 should be < 128,128,128. found 50%
+PASS Half the pixels in channel 1 should be >= 128,128,128. found 50%
+PASS Half the pixels in channel 1 should be < 128,128,128. found 50%
+PASS Half the pixels in channel 2 should be >= 128,128,128. found 50%
+PASS Half the pixels in channel 2 should be < 128,128,128. found 50%
 
 check pixels are pre-multiplied
 PASS getError was expected value: NO_ERROR : Should be no errors from setup

@@ -44,28 +44,40 @@ bool GraphicsContext3D::getImageData(Image* image,
                                      bool premultiplyAlpha,
                                      Vector<uint8_t>& outputVector)
 {
-    if (!image || !image->data())
+    if (!image)
         return false;
-    ImageSource decoder(false);
-    decoder.setData(image->data(), true);
-    if (!decoder.frameCount() || !decoder.frameIsCompleteAtIndex(0))
-        return false;
-    bool hasAlpha = decoder.frameHasAlphaAtIndex(0);
-    OwnPtr<NativeImageSkia> pixels(decoder.createFrameAtIndex(0));
-    if (!pixels.get() || !pixels->isDataComplete() || !pixels->width() || !pixels->height())
-        return false;
-    SkBitmap::Config skiaConfig = pixels->config();
-    if (skiaConfig != SkBitmap::kARGB_8888_Config)
-        return false;
-    SkBitmap& skiaImageRef = *pixels;
-    SkAutoLockPixels lock(skiaImageRef);
-    ASSERT(pixels->rowBytes() == pixels->width() * 4);
-    outputVector.resize(pixels->rowBytes() * pixels->height());
+    OwnPtr<NativeImageSkia> pixels;
+    NativeImageSkia* skiaImage = 0;
     AlphaOp neededAlphaOp = kAlphaDoNothing;
-    if (hasAlpha && premultiplyAlpha)
-        neededAlphaOp = kAlphaDoPremultiply;
-    return packPixels(reinterpret_cast<const uint8_t*>(pixels->getPixels()),
-                      kSourceFormatBGRA8, pixels->width(), pixels->height(), 0,
+    if (image->data()) {
+        ImageSource decoder(false);
+        decoder.setData(image->data(), true);
+        if (!decoder.frameCount() || !decoder.frameIsCompleteAtIndex(0))
+            return false;
+        bool hasAlpha = decoder.frameHasAlphaAtIndex(0);
+        pixels = decoder.createFrameAtIndex(0);
+        if (!pixels.get() || !pixels->isDataComplete() || !pixels->width() || !pixels->height())
+            return false;
+        SkBitmap::Config skiaConfig = pixels->config();
+        if (skiaConfig != SkBitmap::kARGB_8888_Config)
+            return false;
+        skiaImage = pixels.get();
+        if (hasAlpha && premultiplyAlpha)
+            neededAlphaOp = kAlphaDoPremultiply;
+    } else {
+        // This is a special case for texImage2D with HTMLCanvasElement input.
+        skiaImage = image->nativeImageForCurrentFrame();
+        if (!premultiplyAlpha)
+            neededAlphaOp = kAlphaDoUnmultiply;
+    }
+    if (!skiaImage)
+        return false;
+    SkBitmap& skiaImageRef = *skiaImage;
+    SkAutoLockPixels lock(skiaImageRef);
+    ASSERT(skiaImage->rowBytes() == skiaImage->width() * 4);
+    outputVector.resize(skiaImage->rowBytes() * skiaImage->height());
+    return packPixels(reinterpret_cast<const uint8_t*>(skiaImage->getPixels()),
+                      kSourceFormatBGRA8, skiaImage->width(), skiaImage->height(), 0,
                       format, type, neededAlphaOp, outputVector.data());
 }
 
