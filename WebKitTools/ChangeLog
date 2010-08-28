@@ -1,3 +1,17 @@
+2010-08-28  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Update commit-queue failure message
+        https://bugs.webkit.org/show_bug.cgi?id=44798
+
+        The commit-queue auto-restarts itself and has for a very long time.
+        No need for people to email me to request a restart anymore.
+
+        * Scripts/webkitpy/common/net/bugzilla.py:
+        * Scripts/webkitpy/common/net/bugzilla_unittest.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+
 2010-07-27  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Eric Carlson.

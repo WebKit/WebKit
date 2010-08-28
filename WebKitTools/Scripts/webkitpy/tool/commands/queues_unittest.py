@@ -141,7 +141,7 @@ class CommitQueueTest(QueuesTest):
             # FIXME: The commit-queue warns about bad committers twice.  This is due to the fact that we access Attachment.reviewer() twice and it logs each time.
             "next_work_item" : """Warning, attachment 128 on bug 42 has invalid committer (non-committer@example.com)
 Warning, attachment 128 on bug 42 has invalid committer (non-committer@example.com)
-MOCK setting flag 'commit-queue' to '-' on attachment '128' with comment 'Rejecting patch 128 from commit-queue.' and additional comment 'non-committer@example.com does not have committer permissions according to http://trac.webkit.org/browser/trunk/WebKitTools/Scripts/webkitpy/common/config/committers.py.\n\n- If you do not have committer rights please read http://webkit.org/coding/contributing.html for instructions on how to use bugzilla flags.\n\n- If you have committer rights please correct the error in WebKitTools/Scripts/webkitpy/common/config/committers.py by adding yourself to the file (no review needed).  Due to bug 30084 the commit-queue will require a restart after your change.  Please contact eseidel@chromium.org to request a commit-queue restart.  After restart the commit-queue will correctly respect your committer rights.'
+MOCK setting flag 'commit-queue' to '-' on attachment '128' with comment 'Rejecting patch 128 from commit-queue.' and additional comment 'non-committer@example.com does not have committer permissions according to http://trac.webkit.org/browser/trunk/WebKitTools/Scripts/webkitpy/common/config/committers.py.\n\n- If you do not have committer rights please read http://webkit.org/coding/contributing.html for instructions on how to use bugzilla flags.\n\n- If you have committer rights please correct the error in WebKitTools/Scripts/webkitpy/common/config/committers.py by adding yourself to the file (no review needed).  The commit-queue restarts itself every 2 hours.  After restart the commit-queue will correctly respect your committer rights.'
 MOCK: update_work_items: commit-queue [106, 197]
 2 patches in commit-queue [106, 197]
 """,
@@ -164,7 +164,7 @@ MOCK setting flag 'commit-queue' to '-' on attachment '128' with comment 'Reject
 
 - If you do not have committer rights please read http://webkit.org/coding/contributing.html for instructions on how to use bugzilla flags.
 
-- If you have committer rights please correct the error in WebKitTools/Scripts/webkitpy/common/config/committers.py by adding yourself to the file (no review needed).  Due to bug 30084 the commit-queue will require a restart after your change.  Please contact eseidel@chromium.org to request a commit-queue restart.  After restart the commit-queue will correctly respect your committer rights.'
+- If you have committer rights please correct the error in WebKitTools/Scripts/webkitpy/common/config/committers.py by adding yourself to the file (no review needed).  The commit-queue restarts itself every 2 hours.  After restart the commit-queue will correctly respect your committer rights.'
 MOCK: update_work_items: commit-queue [106, 197]
 2 patches in commit-queue [106, 197]
 """,
@@ -188,7 +188,7 @@ MOCK setting flag 'commit-queue' to '-' on attachment '128' with comment 'Reject
 
 - If you do not have committer rights please read http://webkit.org/coding/contributing.html for instructions on how to use bugzilla flags.
 
-- If you have committer rights please correct the error in WebKitTools/Scripts/webkitpy/common/config/committers.py by adding yourself to the file (no review needed).  Due to bug 30084 the commit-queue will require a restart after your change.  Please contact eseidel@chromium.org to request a commit-queue restart.  After restart the commit-queue will correctly respect your committer rights.'
+- If you have committer rights please correct the error in WebKitTools/Scripts/webkitpy/common/config/committers.py by adding yourself to the file (no review needed).  The commit-queue restarts itself every 2 hours.  After restart the commit-queue will correctly respect your committer rights.'
 MOCK: update_work_items: commit-queue [106, 197]
 2 patches in commit-queue [106, 197]
 """,

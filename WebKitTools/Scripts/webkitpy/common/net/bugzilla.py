@@ -341,11 +341,8 @@ class CommitterValidator(object):
                         flag_name, contribution_guidlines)
         message += "\n\n- If you have %s rights please correct the error in %s by adding yourself to the file (no review needed).  " % (
                         flag_name, committers_list)
-        message += "Due to bug 30084 the %s will require a restart after your change.  " % queue_name
-        message += "Please contact %s to request a %s restart.  " % (
-                        queue_administrator, queue_name)
-        message += "After restart the %s will correctly respect your %s rights." % (
-                        queue_name, flag_name)
+        message += "The %s restarts itself every 2 hours.  After restart the %s will correctly respect your %s rights." % (
+                        queue_name, queue_name, flag_name)
         return message
 
     def _validate_setter_email(self, patch, result_key, rejection_function):

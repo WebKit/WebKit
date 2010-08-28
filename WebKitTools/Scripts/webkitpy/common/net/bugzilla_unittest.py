@@ -68,7 +68,7 @@ class CommitterValidatorTest(unittest.TestCase):
 
 - If you do not have review rights please read http://webkit.org/coding/contributing.html for instructions on how to use bugzilla flags.
 
-- If you have review rights please correct the error in WebKitTools/Scripts/webkitpy/common/config/committers.py by adding yourself to the file (no review needed).  Due to bug 30084 the commit-queue will require a restart after your change.  Please contact eseidel@chromium.org to request a commit-queue restart.  After restart the commit-queue will correctly respect your review rights."""
+- If you have review rights please correct the error in WebKitTools/Scripts/webkitpy/common/config/committers.py by adding yourself to the file (no review needed).  The commit-queue restarts itself every 2 hours.  After restart the commit-queue will correctly respect your review rights."""
         self.assertEqual(validator._flag_permission_rejection_message("foo@foo.com", "review"), expected_messsage)
 
 
