@@ -63,7 +63,7 @@ namespace WebCore {
         mutable State m_state;
     };
 
-#if !OS(DARWIN) || defined(BUILDING_ON_TIGER) || PLATFORM(QT) || PLATFORM(GTK)
+#if !ENABLE(PURGEABLE_MEMORY)
     inline PassOwnPtr<PurgeableBuffer> PurgeableBuffer::create(const char*, size_t) { return PassOwnPtr<PurgeableBuffer>(); }
     inline PurgeableBuffer::~PurgeableBuffer() { }
     inline const char* PurgeableBuffer::data() const { return 0; }

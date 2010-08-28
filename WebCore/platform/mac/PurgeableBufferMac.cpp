@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#ifndef BUILDING_ON_TIGER
+#if ENABLE(PURGEABLE_MEMORY)
 
 #include "PurgeableBuffer.h"
 

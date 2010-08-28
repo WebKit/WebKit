@@ -1,3 +1,13 @@
+2010-08-28  Pratik Solanki  <psolanki@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Add an ENABLE define for purgeable memory support
+        https://bugs.webkit.org/show_bug.cgi?id=44777
+
+        * platform/PurgeableBuffer.h:
+        * platform/mac/PurgeableBufferMac.cpp:
+
 2010-08-28  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
         Reviewed by Kenneth Rohde Christiansen.
