@@ -162,6 +162,8 @@ scrollbars/scrollbar-click-does-not-blur-content.html
 
 # Failing canvas test cases from http://philip.html5.org/tests/canvas/suite/tests/
 canvas/philip/tests/2d.drawImage.broken.html
+#NOTE: 2d.composite.operation.clear is failing because we support the "clear" composite op
+#without our vendor prefix since it was around in canvas before the spec was written.
 canvas/philip/tests/2d.composite.operation.clear.html
 canvas/philip/tests/2d.composite.operation.darker.html
 canvas/philip/tests/2d.composite.operation.highlight.html

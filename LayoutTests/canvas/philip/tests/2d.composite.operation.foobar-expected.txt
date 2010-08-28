@@ -1,0 +1,5 @@
+< [index] >
+2d.composite.operation.foobar
+References: 2d.composite.operation.unrecognised
+Actual output:
+Passed
