@@ -1,3 +1,15 @@
+2010-08-27  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Darin Adler.
+
+        Implement symbolic CSS3 list-style-types
+        https://bugs.webkit.org/show_bug.cgi?id=36734
+
+        Tests that all of the symbolic CSS3 list-style-types are supported.
+
+        * fast/lists/w3-css3-list-styles-symbolic-expected.txt: Added.
+        * fast/lists/w3-css3-list-styles-symbolic.html: Added.
+
 2010-08-27  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by Oliver Hunt.

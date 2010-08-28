@@ -1,3 +1,33 @@
+2010-08-27  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Darin Adler.
+
+        Implement symbolic CSS3 list-style-types
+        https://bugs.webkit.org/show_bug.cgi?id=36734
+
+        Implements all of the symbolic CSS3 list-style-types as per
+        section 4.5 of the CSS3 Lists module <http://www.w3.org/TR/css3-lists/#symbolic>.
+
+        Test: fast/lists/w3-css3-list-styles-symbolic.html
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue): Added list style types Asterisks and Footnotes.
+        * css/CSSValueKeywords.in: Ditto.
+        * inspector/front-end/SourceCSSTokenizer.re2js: Ditto.
+        * rendering/RenderListMarker.cpp:
+        (WebCore::toAlphabeticOrNumeric): Changed type of parameter sequenceSize from int to unsigned.
+        (WebCore::toSymbolic): Added.
+        (WebCore::toAlphabetic): Changed type of parameter alphabetSize from int to unsigned.
+        (WebCore::toNumeric): Changed type of parameter numeralsSize from int to unsigned.
+        (WebCore::effectiveListMarkerType): Added.
+        (WebCore::listMarkerSuffix): Added list style types Asterisks and Footnotes.
+        (WebCore::listMarkerText): Ditto.
+        (WebCore::RenderListMarker::paint): Ditto.
+        (WebCore::RenderListMarker::calcPrefWidths): Ditto.
+        (WebCore::RenderListMarker::getRelativeMarkerRect): Ditto.
+        * rendering/style/RenderStyleConstants.h: Ditto.
+        (WebCore::):
+
 2010-08-27  Vincent Scheib  <scheib@chromium.org>
 
         Reviewed by Darin Fisher.

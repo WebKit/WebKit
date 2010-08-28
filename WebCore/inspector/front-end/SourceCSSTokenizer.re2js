@@ -48,7 +48,7 @@ WebInspector.SourceCSSTokenizer = function()
 
     this._valueKeywords = [
         "above", "absolute", "activeborder", "activecaption", "afar", "after-white-space", "ahead", "alias", "all", "all-scroll",
-        "alternate", "always","amharic", "amharic-abegede", "antialiased", "appworkspace", "aqua", "arabic-indic", "armenian",
+        "alternate", "always","amharic", "amharic-abegede", "antialiased", "appworkspace", "aqua", "arabic-indic", "armenian", "asterisks",
         "auto", "avoid", "background", "backwards", "baseline", "below", "bidi-override", "binary", "bengali", "black", "blink",
         "block", "block-axis", "blue", "bold", "bolder", "border", "border-box", "both", "bottom", "break-all", "break-word", "button",
         "button-bevel", "buttonface", "buttonhighlight", "buttonshadow", "buttontext", "cambodian", "capitalize", "caps-lock-indicator",
@@ -61,7 +61,7 @@ WebInspector.SourceCSSTokenizer = function()
         "ethiopic-abegede-ti-er", "ethiopic-abegede-ti-et", "ethiopic-halehame-aa-er", "ethiopic-halehame-aa-et",
         "ethiopic-halehame-am-et", "ethiopic-halehame-gez", "ethiopic-halehame-om-et", "ethiopic-halehame-sid-et",
         "ethiopic-halehame-so-et", "ethiopic-halehame-ti-er", "ethiopic-halehame-ti-et", "ethiopic-halehame-tig", "ew-resize", "expanded",
-        "extra-condensed", "extra-expanded", "fantasy", "fast", "fill", "fixed", "flat", "forwards", "from", "fuchsia", "geometricPrecision",
+        "extra-condensed", "extra-expanded", "fantasy", "fast", "fill", "fixed", "flat", "footnotes", "forwards", "from", "fuchsia", "geometricPrecision",
         "georgian", "gray", "graytext", "green", "grey", "groove", "gujarati", "gurmukhi", "hand", "hangul", "hangul-consonant", "hebrew", "help",
         "hidden", "hide", "higher", "highlight", "highlighttext", "hiragana", "hiragana-iroha", "horizontal", "hsl", "hsla", "icon", "ignore",
         "inactiveborder", "inactivecaption", "inactivecaptiontext", "infinite", "infobackground", "infotext", "inherit", "initial", "inline",

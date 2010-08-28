@@ -79,7 +79,7 @@ static String toRoman(int number, bool upper)
     return String(&letters[lettersSize - length], length);
 }
 
-static inline String toAlphabeticOrNumeric(int number, const UChar* sequence, int sequenceSize, SequenceType type)
+static inline String toAlphabeticOrNumeric(int number, const UChar* sequence, unsigned sequenceSize, SequenceType type)
 {
     ASSERT(sequenceSize >= 2);
 
@@ -115,12 +115,28 @@ static inline String toAlphabeticOrNumeric(int number, const UChar* sequence, in
     return String(&letters[lettersSize - length], length);
 }
 
-static String toAlphabetic(int number, const UChar* alphabet, int alphabetSize)
+static String toSymbolic(int number, const UChar* symbols, unsigned symbolsSize)
+{
+    ASSERT(number > 0);
+    ASSERT(symbolsSize >= 1);
+    unsigned numberShadow = number;
+    --numberShadow;
+
+    // The asterisks list-style-type is the worst case; we show |numberShadow| asterisks.
+    Vector<UChar> letters;
+    letters.append(symbols[numberShadow % symbolsSize]);
+    unsigned numSymbols = numberShadow / symbolsSize;
+    while (numSymbols--)
+        letters.append(symbols[numberShadow % symbolsSize]);
+    return String::adopt(letters);
+}
+
+static String toAlphabetic(int number, const UChar* alphabet, unsigned alphabetSize)
 {
     return toAlphabeticOrNumeric(number, alphabet, alphabetSize, AlphabeticSequence);
 }
 
-static String toNumeric(int number, const UChar* numerals, int numeralsSize)
+static String toNumeric(int number, const UChar* numerals, unsigned numeralsSize)
 {
     return toAlphabeticOrNumeric(number, numerals, numeralsSize, NumericSequence);
 }
@@ -133,6 +149,11 @@ template <size_t size> static inline String toAlphabetic(int number, const UChar
 template <size_t size> static inline String toNumeric(int number, const UChar(&alphabet)[size])
 {
     return toNumeric(number, alphabet, size);
+}
+
+template <size_t size> static inline String toSymbolic(int number, const UChar(&alphabet)[size])
+{    
+    return toSymbolic(number, alphabet, size);
 }
 
 static int toHebrewUnder1000(int number, UChar letters[5])
@@ -419,6 +440,7 @@ static EListStyleType effectiveListMarkerType(EListStyleType type, int value)
     case Afar:
     case Amharic:
     case AmharicAbegede:
+    case Asterisks:
     case CjkEarthlyBranch:
     case CjkHeavenlyStem:
     case Ethiopic:
@@ -437,6 +459,7 @@ static EListStyleType effectiveListMarkerType(EListStyleType type, int value)
     case EthiopicHalehameTiEr:
     case EthiopicHalehameTiEt:
     case EthiopicHalehameTig:
+    case Footnotes:
     case Hangul:
     case HangulConsonant:
     case Hiragana:
@@ -475,9 +498,11 @@ static UChar listMarkerSuffix(EListStyleType type, int value)
     // Note, the following switch statement has been explicitly
     // grouped by list-style-type suffix.
     switch (effectiveType) {
-    case NoneListStyle:
-    case Disc:
+    case Asterisks:
     case Circle:
+    case Disc:
+    case Footnotes:
+    case NoneListStyle:
     case Square:
         ASSERT_NOT_REACHED();
         return ' ';
@@ -570,12 +595,24 @@ String listMarkerText(EListStyleType type, int value)
         case NoneListStyle:
             return "";
 
+        case Asterisks: {
+            static const UChar asterisksSymbols[1] = {
+                0x002A
+            };
+            return toSymbolic(value, asterisksSymbols);
+        }
         // We use the same characters for text security.
         // See RenderText::setInternalString.
         case Circle:
             return String(&whiteBullet, 1);
         case Disc:
             return String(&bullet, 1);
+        case Footnotes: {
+            static const UChar footnotesSymbols[4] = {
+                0x002A, 0x2051, 0x2020, 0x2021
+            };
+            return toSymbolic(value, footnotesSymbols);
+        }
         case Square:
             // The CSS 2.1 test suite uses U+25EE BLACK MEDIUM SMALL SQUARE
             // instead, but I think this looks better.
@@ -1110,6 +1147,10 @@ void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
 
     EListStyleType type = style()->listStyleType();
     switch (type) {
+        case Asterisks:
+        case Footnotes:
+            context->drawText(style()->font(), TextRun(m_text), marker.location());
+            return;
         case Disc:
             context->drawEllipse(marker);
             return;
@@ -1290,6 +1331,11 @@ void RenderListMarker::calcPrefWidths()
     EListStyleType type = style()->listStyleType();
     switch (type) {
         case NoneListStyle:
+            break;
+        case Asterisks:
+        case Footnotes:
+            m_text = listMarkerText(type, m_listItem->value());
+            width = font.width(m_text); // no suffix for these types
             break;
         case Circle:
         case Disc:
@@ -1489,6 +1535,11 @@ IntRect RenderListMarker::getRelativeMarkerRect()
 
     EListStyleType type = style()->listStyleType();
     switch (type) {
+        case Asterisks:
+        case Footnotes: {
+            const Font& font = style()->font();
+            return IntRect(x(), y() + font.ascent(), font.width(m_text), font.height());
+        }
         case Disc:
         case Circle:
         case Square: {
