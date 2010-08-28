@@ -71,7 +71,10 @@ public:
         const WebURL&, const WebString& title) { }
     virtual void writeImage(
         const WebImage&, const WebURL&, const WebString& title) { }
-    virtual void writeData(const WebDragData&) { }
+    virtual void writeData(
+        const WebString& type,
+        const WebString& data,
+        const WebString& metadata) { }
 
     // The following functions are used for reading platform data for copy and
     // paste, drag and drop, and selection copy (on X).
@@ -81,7 +84,8 @@ public:
     virtual bool readData(
         Buffer, const WebString& type, WebString* data,
         WebString* metadata) { return false; }
-    virtual WebVector<WebString> readFilenames(Buffer) { return WebVector<WebString>(); }
+    virtual WebVector<WebString> readFilenames(
+        Buffer) { return WebVector<WebString>(); }
 
 protected:
     ~WebClipboard() {}

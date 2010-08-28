@@ -1,3 +1,16 @@
+2010-08-27  Daniel Cheng  <dcheng@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium] Add new WebClipboard method for setting generic data in copy/cut handlers.
+        https://bugs.webkit.org/show_bug.cgi?id=42121
+
+        * public/WebClipboard.h:
+        (WebKit::WebClipboard::writeData):
+        (WebKit::WebClipboard::readFilenames):
+        * src/ChromiumBridge.cpp:
+        (WebCore::ChromiumBridge::clipboardWriteData):
+
 2010-08-27  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by Dumitru Daniliuc.

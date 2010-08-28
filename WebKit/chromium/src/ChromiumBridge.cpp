@@ -200,11 +200,11 @@ void ChromiumBridge::clipboardWriteImage(NativeImagePtr image,
     webKitClient()->clipboard()->writeImage(webImage, sourceURL, title);
 }
 
-void ChromiumBridge::clipboardWriteData(ClipboardData* data)
+void ChromiumBridge::clipboardWriteData(const String& type,
+                                        const String& data,
+                                        const String& metadata)
 {
-    notImplemented();
-    WebDragData dragData; // FIXME: Define the conversion from ClipboardData to WebDragData.
-    webKitClient()->clipboard()->writeData(dragData);
+    webKitClient()->clipboard()->writeData(type, data, metadata);
 }
 
 HashSet<String> ChromiumBridge::clipboardReadAvailableTypes(
