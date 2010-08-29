@@ -2307,12 +2307,6 @@ BUG29737 MAC : svg/custom/use-elementInstance-event-target.svg = IMAGE
 BUG29737 MAC : svg/W3C-SVG-1.1/struct-image-02-b.svg = IMAGE
 BUG29737 MAC : svg/filters/sourceAlpha.svg = IMAGE
 
-// More Webkit Roll to r51875
-
-// WebKit Roll to r51915
-BUG29930 : fast/loader/input-element-page-cache-crash.html = TIMEOUT PASS TEXT
-
-
 // New tests courtesy of: http://trac.webkit.org/changeset/51936:
 BUG30048 : svg/css/composite-shadow-example.html = IMAGE
 BUG30048 : svg/css/composite-shadow-with-opacity.html = IMAGE

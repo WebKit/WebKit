@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: line 24: navigating away
+CONSOLE MESSAGE: line 35: navigated back
 This test has an input element that starts out with autocomplete=off.
 It then changes autocomplete to on.
 It then removes the element so it is destroyed.

@@ -1,3 +1,16 @@
+2010-08-29  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        fast/loader/input-element-page-cache-crash.html fails on Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=44811
+
+        Make test not rely on page cache behavior (window.finishTest being
+        persisted), instead use sessionStorage.
+
+        * fast/loader/input-element-page-cache-crash.html:
+        * platform/chromium/test_expectations.txt:
+
 2010-08-29  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler.
