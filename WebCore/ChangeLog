@@ -1,5 +1,15 @@
 2010-08-29  Darin Adler  <darin@apple.com>
 
+        Try to fix Windows build.
+
+        * rendering/style/ContentData.h: Added include of CounterContent.h.
+
+        * css/CSSStyleSelector.cpp: Removed include of CounterContent.h.
+        * rendering/style/ContentData.cpp: Ditto.
+        * rendering/style/RenderStyle.cpp: Ditto.
+
+2010-08-29  Darin Adler  <darin@apple.com>
+
         Reviewed by Sam Weinig.
 
         Deploy OwnPtr, PassOwnPtr, and adoptPtr in some CSS-related files

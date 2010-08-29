@@ -25,7 +25,6 @@
 #include "CSSPropertyNames.h"
 #include "CSSStyleSelector.h"
 #include "CachedImage.h"
-#include "CounterContent.h"
 #include "FontSelector.h"
 #include "RenderArena.h"
 #include "RenderObject.h"
