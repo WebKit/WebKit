@@ -288,7 +288,10 @@ void ScrollbarThemeWin::paintButton(GraphicsContext* context, Scrollbar* scrollb
                (scrollbar->hoveredPart() == ForwardButtonEndPart && !start)) {
         if (scrollbar->pressedPart() == scrollbar->hoveredPart()) {
             xpState += TS_ACTIVE;
-            classicState |= DFCS_PUSHED | DFCS_FLAT;
+            classicState |= DFCS_PUSHED;
+#if !OS(WINCE)
+            classicState |= DFCS_FLAT;
+#endif
         } else
             xpState += TS_HOVER;
     } else {
