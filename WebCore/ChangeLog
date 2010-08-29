@@ -1,3 +1,22 @@
+2010-08-29  Pawel Hajdan  <phajdan.jr@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Fix libxml workarounds to work with recent versions of libxml.
+        I was testing locally with libxml2-2.7.6.
+        https://bugs.webkit.org/show_bug.cgi?id=30508
+
+        Based on patch by Philippe Normand <pnormand@igalia.com>.
+
+        This also fixes a Chromium bug:
+        http://code.google.com/p/chromium/issues/detail?id=29333
+
+        * dom/XMLDocumentParserLibxml2.cpp:
+        (WebCore::switchToUTF16):
+        (WebCore::XMLParserContext::createStringParser):
+        (WebCore::XMLDocumentParser::doWrite):
+        (WebCore::startDocumentHandler):
+
 2010-08-29  Darin Adler  <darin@apple.com>
 
         Try to fix Windows build.
