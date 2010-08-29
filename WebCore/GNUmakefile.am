@@ -4470,8 +4470,8 @@ DerivedSources/WebCore/DocTypeStrings.cpp : $(WebCore)/html/DocTypeStrings.gperf
 	$(PERL) $(WebCore)/make-hash-tools.pl $(GENSOURCES_WEBCORE) $(WebCore)/html/DocTypeStrings.gperf
 
 # HTML entity names
-DerivedSources/WebCore/HTMLEntityTable.cpp : $(WebCore)/html/parser/HTMLEntityNames.json $(WebCore)/../WebKitTools/Scripts/create-html-entity-table
-	$(PYTHON) $(WebCore)/../WebKitTools/Scripts/create-html-entity-table -o $(GENSOURCES_WEBCORE)/HTMLEntityTable.cpp $(WebCore)/html/parser/HTMLEntityNames.json
+DerivedSources/WebCore/HTMLEntityTable.cpp : $(WebCore)/html/parser/HTMLEntityNames.in $(WebCore)/html/parser/create-html-entity-table
+	$(PYTHON) $(WebCore)/html/parser/create-html-entity-table -o $(GENSOURCES_WEBCORE)/HTMLEntityTable.cpp $(WebCore)/html/parser/HTMLEntityNames.in
 
 # color names
 DerivedSources/WebCore/ColorData.cpp: $(WebCore)/platform/ColorData.gperf $(WebCore)/make-hash-tools.pl

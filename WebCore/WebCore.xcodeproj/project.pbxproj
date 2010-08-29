@@ -2755,7 +2755,6 @@
 		977B3865122883E900B81FF8 /* HTMLConstructionSite.h in Headers */ = {isa = PBXBuildFile; fileRef = 977B384C122883E900B81FF8 /* HTMLConstructionSite.h */; };
 		977B3866122883E900B81FF8 /* HTMLDocumentParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 977B384D122883E900B81FF8 /* HTMLDocumentParser.cpp */; };
 		977B3867122883E900B81FF8 /* HTMLDocumentParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 977B384E122883E900B81FF8 /* HTMLDocumentParser.h */; };
-		977B3868122883E900B81FF8 /* HTMLEntityNames.json in Resources */ = {isa = PBXBuildFile; fileRef = 977B384F122883E900B81FF8 /* HTMLEntityNames.json */; };
 		977B3869122883E900B81FF8 /* HTMLEntityParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 977B3850122883E900B81FF8 /* HTMLEntityParser.cpp */; };
 		977B386A122883E900B81FF8 /* HTMLEntityParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 977B3851122883E900B81FF8 /* HTMLEntityParser.h */; };
 		977B386B122883E900B81FF8 /* HTMLEntitySearch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 977B3852122883E900B81FF8 /* HTMLEntitySearch.cpp */; };
@@ -8632,7 +8631,7 @@
 		977B384C122883E900B81FF8 /* HTMLConstructionSite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HTMLConstructionSite.h; path = parser/HTMLConstructionSite.h; sourceTree = "<group>"; };
 		977B384D122883E900B81FF8 /* HTMLDocumentParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HTMLDocumentParser.cpp; path = parser/HTMLDocumentParser.cpp; sourceTree = "<group>"; };
 		977B384E122883E900B81FF8 /* HTMLDocumentParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HTMLDocumentParser.h; path = parser/HTMLDocumentParser.h; sourceTree = "<group>"; };
-		977B384F122883E900B81FF8 /* HTMLEntityNames.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = HTMLEntityNames.json; path = parser/HTMLEntityNames.json; sourceTree = "<group>"; };
+		977B384F122883E900B81FF8 /* HTMLEntityNames.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = HTMLEntityNames.in; path = parser/HTMLEntityNames.in; sourceTree = "<group>"; };
 		977B3850122883E900B81FF8 /* HTMLEntityParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HTMLEntityParser.cpp; path = parser/HTMLEntityParser.cpp; sourceTree = "<group>"; };
 		977B3851122883E900B81FF8 /* HTMLEntityParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HTMLEntityParser.h; path = parser/HTMLEntityParser.h; sourceTree = "<group>"; };
 		977B3852122883E900B81FF8 /* HTMLEntitySearch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HTMLEntitySearch.cpp; path = parser/HTMLEntitySearch.cpp; sourceTree = "<group>"; };
@@ -14371,7 +14370,7 @@
 				977B384C122883E900B81FF8 /* HTMLConstructionSite.h */,
 				977B384D122883E900B81FF8 /* HTMLDocumentParser.cpp */,
 				977B384E122883E900B81FF8 /* HTMLDocumentParser.h */,
-				977B384F122883E900B81FF8 /* HTMLEntityNames.json */,
+				977B384F122883E900B81FF8 /* HTMLEntityNames.in */,
 				977B371F1228721700B81FF8 /* HTMLElementStack.cpp */,
 				977B37201228721700B81FF8 /* HTMLElementStack.h */,
 				977B3850122883E900B81FF8 /* HTMLEntityParser.cpp */,
@@ -20548,7 +20547,6 @@
 				85136CA80AED665900F90A3D /* westResizeCursor.png in Resources */,
 				1AB1AE7A0C051FDE00139F4F /* zoomInCursor.png in Resources */,
 				1AB1AE7B0C051FDE00139F4F /* zoomOutCursor.png in Resources */,
-				977B3868122883E900B81FF8 /* HTMLEntityNames.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

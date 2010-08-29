@@ -1876,7 +1876,7 @@ GENERATE_INSPECTOR_FROM_IDL(inspector/Inspector.idl)
 LIST(APPEND WebCore_SOURCES ${JS_IDL_FILES} ${Inspector_IDL_FILES})
 
 
-GENERATE_JSON(${WEBCORE_DIR}/html/parser/HTMLEntityNames.json ${DERIVED_SOURCES_DIR}/HTMLEntityTable.cpp ${WEBCORE_DIR}/../WebKitTools/Scripts/create-html-entity-table)
+GENERATE_ENTITIES(${WEBCORE_DIR}/html/parser/HTMLEntityNames.in ${DERIVED_SOURCES_DIR}/HTMLEntityTable.cpp ${WEBCORE_DIR}/html/parser/create-html-entity-table)
 
 
 GENERATE_GPERF(${WEBCORE_DIR}/platform/ColorData.gperf ${DERIVED_SOURCES_DIR}/ColorData.cpp findColor "")

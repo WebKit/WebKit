@@ -1,3 +1,23 @@
+2010-08-27  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Adam Barth.
+
+        <http://webkit.org/b/44802> REGRESSION (r65351): WebCore build fails due to attempting to directly access WebKitTools/Scripts
+
+        Move create-html-entity-table in to WebCore so that the build is again self-contained.
+        The script is also updated to take input as a CSV file rather than JSON as the former
+        can be parsed without requiring a third-party Python module be installed.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.pri:
+        * WebCore.xcodeproj/project.pbxproj: Stop copying the input file in to the WebCore framework wrapper.
+        * html/parser/HTMLEntityNames.in: Added.
+        * html/parser/HTMLEntityNames.json: Removed.
+        * html/parser/create-html-entity-table: Renamed from WebKitTools/Scripts/create-html-entity-table.
+
 2010-08-28  Daniel Bates  <dbates@rim.com>
 
         Attempt to fix Chromium Mac Release bot after changeset 66305 <http://trac.webkit.org/changeset/66305>.

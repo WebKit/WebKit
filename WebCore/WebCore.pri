@@ -29,7 +29,7 @@ XML_NAMES = $$PWD/xml/xmlattrs.in
 
 XMLNS_NAMES = $$PWD/xml/xmlnsattrs.in
 
-HTML_ENTITIES = $$PWD/html/parser/HTMLEntityNames.json
+HTML_ENTITIES = $$PWD/html/parser/HTMLEntityNames.in
 
 COLORDATA_GPERF = $$PWD/platform/ColorData.gperf
 
@@ -614,10 +614,10 @@ addExtraCompiler(xmlnames)
 # GENERATOR 8-A:
 entities.output = $${WC_GENERATED_SOURCES_DIR}/HTMLEntityTable.cpp
 entities.input = HTML_ENTITIES
-entities.wkScript = $$PWD/../WebKitTools/Scripts/create-html-entity-table
+entities.wkScript = $$PWD/html/parser/create-html-entity-table
 entities.commands = python $$entities.wkScript -o $${WC_GENERATED_SOURCES_DIR}/HTMLEntityTable.cpp $$HTML_ENTITIES
 entities.clean = ${QMAKE_FILE_OUT}
-entities.depends = $$PWD/../WebKitTools/Scripts/create-html-entity-table
+entities.depends = $$PWD/html/parser/create-html-entity-table
 addExtraCompiler(entities)
 
 # GENERATOR 8-B:

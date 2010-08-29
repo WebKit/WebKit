@@ -604,8 +604,8 @@ DocTypeStrings.cpp : html/DocTypeStrings.gperf $(WebCore)/make-hash-tools.pl
 
 # HTML entity names
 
-HTMLEntityTable.cpp : html/parser/HTMLEntityNames.json $(WebCore)/../WebKitTools/Scripts/create-html-entity-table
-	python $(WebCore)/../WebKitTools/Scripts/create-html-entity-table -o HTMLEntityTable.cpp $(WebCore)/html/parser/HTMLEntityNames.json
+HTMLEntityTable.cpp : html/parser/HTMLEntityNames.in $(WebCore)/html/parser/create-html-entity-table
+	python $(WebCore)/html/parser/create-html-entity-table -o HTMLEntityTable.cpp $(WebCore)/html/parser/HTMLEntityNames.in
 
 # --------
 
