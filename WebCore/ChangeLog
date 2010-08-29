@@ -1,3 +1,103 @@
+2010-08-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Some IDL attributes don't reflect URL content attributes properly
+        https://bugs.webkit.org/show_bug.cgi?id=43650
+
+        * dom/Document.cpp:
+        (WebCore::Document::processBaseElement): Added. Implements the rules for base elements
+        from the HTML5 specification. Handles multiple base elements in the same document.
+
+        * dom/Document.h: Removed setBaseElementURL and setBaseElementTarget, replacing them
+        with processBaseElement.
+
+        * html/HTMLBaseElement.cpp:
+        (WebCore::HTMLBaseElement::parseMappedAttribute): Call the new processBaseElement
+        function.
+        (WebCore::HTMLBaseElement::insertedIntoDocument): Ditto.
+        (WebCore::HTMLBaseElement::removedFromDocument): Ditto.
+        (WebCore::HTMLBaseElement::isURLAttribute): Added.
+        (WebCore::HTMLBaseElement::target): Moved here from the .h file and changed to not
+        realy on an m_target local variable.
+
+        * html/HTMLBaseElement.h: Added an override of the isURLAttribute function. Removed
+        unneeded process function. Removed declaration of nonexistent setHref and setTarget
+        functions. Removed unneeded m_hrefAttrValue, m_href, and m_target. Moved
+        implementation of target function into the .cpp file.
+
+        * html/HTMLBaseElement.idl: Marked the href attribute as URL.
+
+        * html/HTMLBlockquoteElement.cpp:
+        (WebCore::HTMLBlockquoteElement::isURLAttribute): Added.
+        * html/HTMLBlockquoteElement.h: Added isURLAttribute.
+        * html/HTMLBlockquoteElement.idl: Marked the cite attribute as URL.
+
+        * html/HTMLEmbedElement.idl: Marked the src attribute as URL.
+
+        * html/HTMLFormElement.cpp: Added a comment about the action function, which should
+        be removed.
+
+        * html/HTMLFormElement.idl: Marked the action attribute as URL.
+
+        * html/HTMLHtmlElement.cpp:
+        (WebCore::HTMLHtmlElement::isURLAttribute): Added.
+        (WebCore::HTMLHtmlElement::insertedIntoDocument): Tweaked a bit.
+        * html/HTMLHtmlElement.h: Added isURLAttribute.
+        * html/HTMLHtmlElement.idl: Marked the manifest attribute as URL.
+
+        * html/HTMLIFrameElement.idl: Marked the src attribute a URL.
+
+        * html/HTMLModElement.cpp:
+        (WebCore::HTMLModElement::isURLAttribute): Added.
+        * html/HTMLModElement.h: Added isURLAttribute.
+        * html/HTMLModElement.idl: Marked the cite attribute as URL.
+
+        * html/HTMLQuoteElement.cpp:
+        (WebCore::HTMLQuoteElement::isURLAttribute): Added.
+        * html/HTMLQuoteElement.h: Added isURLAttribute.
+        * html/HTMLQuoteElement.idl: Marked the cite attribute as URL.
+
+        * html/HTMLViewSourceDocument.cpp:
+        (WebCore::HTMLViewSourceDocument::processTagToken): Changed code to create a base
+        element instead of calling setBaseElementURL directly.
+        (WebCore::HTMLViewSourceDocument::addSpanWithClassName): Use AtomicString instead of String.
+        (WebCore::HTMLViewSourceDocument::addLine): Ditto.
+        (WebCore::HTMLViewSourceDocument::addText): Ditto.
+        (WebCore::HTMLViewSourceDocument::addBase): Added. Creates a base element and inserts it.
+        (WebCore::HTMLViewSourceDocument::addLink): Use AtomicString instead of String.
+ 
+        * html/HTMLViewSourceDocument.h: Updated function declarations as above.
+
+        * bindings/scripts/test/CPP/WebDOMTestCallback.h:
+        * bindings/scripts/test/CPP/WebDOMTestInterface.h:
+        * bindings/scripts/test/CPP/WebDOMTestObj.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestCallback.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        Updated results, which changed due to the fixes for at
+        least these bugs, and perhaps a few more:
+        https://bugs.webkit.org/show_bug.cgi?id=42115
+        https://bugs.webkit.org/show_bug.cgi?id=44597
+        https://bugs.webkit.org/show_bug.cgi?id=44738
+
+        * bindings/scripts/test/TestObj.idl:
+        * html/HTMLAnchorElement.idl:
+        * html/HTMLAreaElement.idl:
+        * html/HTMLEmbedElement.idl:
+        * html/HTMLFormElement.cpp:
+        * html/HTMLFormElement.idl:
+        * html/HTMLFrameElement.idl:
+        * html/HTMLIFrameElement.idl:
+        * html/HTMLImageElement.idl:
+        * html/HTMLInputElement.idl:
+        * html/HTMLLinkElement.idl:
+        * html/HTMLMediaElement.idl:
+        * html/HTMLObjectElement.idl:
+        * html/HTMLScriptElement.idl:
+        * html/HTMLSourceElement.idl:
+        * html/HTMLVideoElement.idl:
+        Tweaked formatting.
+
 2010-08-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.

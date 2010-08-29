@@ -45,4 +45,9 @@ PassRefPtr<HTMLBlockquoteElement> HTMLBlockquoteElement::create(const QualifiedN
     return adoptRef(new HTMLBlockquoteElement(tagName, document));
 }
 
+bool HTMLBlockquoteElement::isURLAttribute(Attribute* attribute) const
+{
+    return attribute->name() == citeAttr;
+}
+
 }

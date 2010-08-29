@@ -32,7 +32,7 @@ module html {
         attribute [Reflect] DOMString border;
         attribute [Reflect] DOMString codeBase;
         attribute [Reflect] DOMString codeType;
-        attribute [Reflect,URL] DOMString data;
+        attribute [Reflect, URL] DOMString data;
         attribute [Reflect] boolean declare;
         attribute [Reflect] DOMString height;
         attribute [Reflect] long hspace;

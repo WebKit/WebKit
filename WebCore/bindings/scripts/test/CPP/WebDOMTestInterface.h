@@ -39,7 +39,7 @@ public:
     explicit WebDOMTestInterface(WebCore::TestInterface*);
     WebDOMTestInterface(const WebDOMTestInterface&);
     WebDOMTestInterface& operator=(const WebDOMTestInterface&);
-    ~WebDOMTestInterface();
+    virtual ~WebDOMTestInterface();
 
 
     WebCore::TestInterface* impl() const;

@@ -26,7 +26,7 @@ module html {
         attribute [Reflect] DOMString charset;
         attribute [Reflect] boolean async;
         attribute [Reflect] boolean defer;
-        attribute [Reflect,URL] DOMString src;
+        attribute [Reflect, URL] DOMString src;
         attribute [Reflect] DOMString type;
     };
 }

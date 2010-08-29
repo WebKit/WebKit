@@ -36,6 +36,8 @@ public:
 private:
     HTMLHtmlElement(const QualifiedName&, Document*);
 
+    virtual bool isURLAttribute(Attribute*) const;
+
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     virtual void insertedIntoDocument();
 #endif

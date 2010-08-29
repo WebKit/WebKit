@@ -5,24 +5,24 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS testURLReflection('attribute', 'element') is 'none'
 PASS testURLReflection('id', 'element') is 'non-URL'
-FAIL testURLReflection('action', 'form') should be URL. Was non-URL.
-FAIL testURLReflection('cite', 'blockquote') should be URL. Was non-URL.
-FAIL testURLReflection('cite', 'del') should be URL. Was non-URL.
-FAIL testURLReflection('cite', 'ins') should be URL. Was non-URL.
-FAIL testURLReflection('cite', 'q') should be URL. Was non-URL.
+PASS testURLReflection('action', 'form') is 'URL'
+PASS testURLReflection('cite', 'blockquote') is 'URL'
+PASS testURLReflection('cite', 'del') is 'URL'
+PASS testURLReflection('cite', 'ins') is 'URL'
+PASS testURLReflection('cite', 'q') is 'URL'
 PASS testURLReflection('data', 'object') is 'URL'
 FAIL testURLReflection('formaction', 'button') should be URL. Was none.
 FAIL testURLReflection('formaction', 'input') should be URL. Was none.
 PASS testURLReflection('href', 'a') is 'URL'
 PASS testURLReflection('href', 'area') is 'URL'
 PASS testURLReflection('href', 'link') is 'URL'
-FAIL testURLReflection('href', 'base') should be URL. Was non-URL.
+PASS testURLReflection('href', 'base') is 'URL'
 FAIL testURLReflection('icon', 'command') should be URL. Was none.
-FAIL testURLReflection('manifest', 'html') should be URL. Was none.
+PASS testURLReflection('manifest', 'html') is 'URL'
 PASS testURLReflection('poster', 'video') is 'URL'
 PASS testURLReflection('src', 'audio') is 'URL'
-FAIL testURLReflection('src', 'embed') should be URL. Was non-URL.
-FAIL testURLReflection('src', 'iframe') should be URL. Was non-URL.
+PASS testURLReflection('src', 'embed') is 'URL'
+PASS testURLReflection('src', 'iframe') is 'URL'
 PASS testURLReflection('src', 'img') is 'URL'
 PASS testURLReflection('src', 'input') is 'URL'
 PASS testURLReflection('src', 'script') is 'URL'

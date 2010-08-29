@@ -34,20 +34,11 @@ public:
 private:
     HTMLBaseElement(const QualifiedName&, Document*);
 
-    virtual String target() const { return m_target; }
-
+    virtual String target() const;
+    virtual bool isURLAttribute(Attribute*) const;
     virtual void parseMappedAttribute(Attribute*);
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
-
-    void process();
-    
-    void setHref(const String&);
-    void setTarget(const String&);
-
-    String m_hrefAttrValue;
-    String m_href;
-    String m_target;
 };
 
 } // namespace

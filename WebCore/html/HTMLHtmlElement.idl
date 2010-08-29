@@ -21,6 +21,7 @@ module html {
 
     interface HTMLHtmlElement : HTMLElement {
         attribute [Reflect] DOMString version;
+        attribute [Reflect, URL] DOMString manifest;
     };
 
 }

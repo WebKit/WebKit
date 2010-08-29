@@ -62,8 +62,11 @@ webkit_dom_test_callback_callback_with_class1param(WebKitDOMTestCallback* self, 
     g_return_val_if_fail(self, 0);
     WebCore::TestCallback * item = WebKit::core(self);
     g_return_val_if_fail(class1param, 0);
-    WebCore::Class1 * converted_class1param = WebKit::core(class1param);
-    g_return_val_if_fail(converted_class1param, 0);
+    WebCore::Class1 * converted_class1param = NULL;
+    if (class1param != NULL) {
+        converted_class1param = WebKit::core(class1param);
+        g_return_val_if_fail(converted_class1param, 0);
+    }
     gboolean res = item->callbackWithClass1Param(converted_class1param);
     return res;
 }
@@ -76,8 +79,11 @@ webkit_dom_test_callback_callback_with_class2param(WebKitDOMTestCallback* self, 
     WebCore::TestCallback * item = WebKit::core(self);
     g_return_val_if_fail(class2param, 0);
     g_return_val_if_fail(str_arg, 0);
-    WebCore::Class2 * converted_class2param = WebKit::core(class2param);
-    g_return_val_if_fail(converted_class2param, 0);
+    WebCore::Class2 * converted_class2param = NULL;
+    if (class2param != NULL) {
+        converted_class2param = WebKit::core(class2param);
+        g_return_val_if_fail(converted_class2param, 0);
+    }
     WTF::String converted_str_arg = WTF::String::fromUTF8(str_arg);
     gboolean res = item->callbackWithClass2Param(converted_class2param, converted_str_arg);
     return res;
@@ -90,8 +96,11 @@ webkit_dom_test_callback_callback_with_non_bool_return_type(WebKitDOMTestCallbac
     g_return_val_if_fail(self, 0);
     WebCore::TestCallback * item = WebKit::core(self);
     g_return_val_if_fail(class3param, 0);
-    WebCore::Class3 * converted_class3param = WebKit::core(class3param);
-    g_return_val_if_fail(converted_class3param, 0);
+    WebCore::Class3 * converted_class3param = NULL;
+    if (class3param != NULL) {
+        converted_class3param = WebKit::core(class3param);
+        g_return_val_if_fail(converted_class3param, 0);
+    }
     glong res = item->callbackWithNonBoolReturnType(converted_class3param);
     return res;
 }

@@ -136,6 +136,7 @@
 #include "XMLHttpRequest.h"
 #include "XMLNSNames.h"
 #include "XMLNames.h"
+#include "XSSAuditor.h"
 #include "htmlediting.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/HashFunctions.h>
@@ -2196,12 +2197,6 @@ void Document::setURL(const KURL& url)
     updateBaseURL();
 }
 
-void Document::setBaseElementURL(const KURL& baseElementURL)
-{ 
-    m_baseElementURL = baseElementURL;
-    updateBaseURL();
-}
-
 void Document::updateBaseURL()
 {
     // DOM 3 Core: When the Document supports the feature "HTML" [DOM Level 2 HTML], the base URI is computed using
@@ -2220,6 +2215,41 @@ void Document::updateBaseURL()
         m_elemSheet->setFinalURL(m_baseURL);
     if (m_mappedElementSheet)
         m_mappedElementSheet->setFinalURL(m_baseURL);
+}
+
+void Document::processBaseElement()
+{
+    // Find the first href attribute in a base element and the first target attribute in a base element.
+    const AtomicString* href = 0;
+    const AtomicString* target = 0;
+    for (Node* node = document()->firstChild(); node && (!href || !target); node = node->traverseNextNode()) {
+        if (node->hasTagName(baseTag)) {
+            if (!href) {
+                const AtomicString& value = static_cast<Element*>(node)->fastGetAttribute(hrefAttr);
+                if (!value.isNull())
+                    href = &value;
+            }
+            if (!target) {
+                const AtomicString& value = static_cast<Element*>(node)->fastGetAttribute(targetAttr);
+                if (!value.isNull())
+                    target = &value;
+            }
+        }
+    }
+
+    // FIXME: Since this doesn't share code with completeURL it may not handle encodings correctly.
+    KURL baseElementURL;
+    if (href) {
+        String strippedHref = deprecatedParseURL(*href);
+        if (!strippedHref.isEmpty() && (!frame() || frame()->script()->xssAuditor()->canSetBaseElementURL(*href)))
+            baseElementURL = KURL(url(), strippedHref);
+    }
+    if (m_baseElementURL != baseElementURL) {
+        m_baseElementURL = baseElementURL;
+        updateBaseURL();
+    }
+
+    m_baseTarget = target ? *target : nullAtom;
 }
 
 String Document::userAgent(const KURL& url) const

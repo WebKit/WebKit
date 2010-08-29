@@ -449,6 +449,9 @@ bool HTMLFormElement::noValidate() const
     return !getAttribute(novalidateAttr).isNull();
 }
 
+// FIXME: This function should be removed because it does not do the same thing as the
+// JavaScript binding for action, which treats action as a URL attribute. Last time I
+// (Darin Adler) removed this, someone added it back, so I am leaving it in for now.
 String HTMLFormElement::action() const
 {
     return getAttribute(actionAttr);

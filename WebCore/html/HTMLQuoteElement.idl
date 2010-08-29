@@ -20,6 +20,6 @@
 module html {
 
     interface HTMLQuoteElement : HTMLElement {
-        attribute [Reflect] DOMString cite;
+        attribute [Reflect, URL] DOMString cite;
     };
 }

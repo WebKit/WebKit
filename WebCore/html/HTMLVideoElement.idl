@@ -32,7 +32,7 @@ module html {
         attribute [Reflect] unsigned long height;
         readonly attribute unsigned long videoWidth;
         readonly attribute unsigned long videoHeight;
-        attribute [Reflect,URL] DOMString poster;
+        attribute [Reflect, URL] DOMString poster;
 
         readonly attribute boolean webkitSupportsFullscreen;
         readonly attribute boolean webkitDisplayingFullscreen;

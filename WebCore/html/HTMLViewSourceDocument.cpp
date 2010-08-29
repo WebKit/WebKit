@@ -28,6 +28,7 @@
 #include "Attribute.h"
 #include "DOMImplementation.h"
 #include "HTMLAnchorElement.h"
+#include "HTMLBaseElement.h"
 #include "HTMLBodyElement.h"
 #include "HTMLDivElement.h"
 #include "HTMLHtmlElement.h"
@@ -140,8 +141,7 @@ void HTMLViewSourceDocument::processDoctypeToken(const String& source, HTMLToken
 
 void HTMLViewSourceDocument::processTagToken(const String& source, HTMLToken& token)
 {
-    String classNameStr = "webkit-html-tag";
-    m_current = addSpanWithClassName(classNameStr);
+    m_current = addSpanWithClassName("webkit-html-tag");
 
     AtomicString tagName(token.name().data(), token.name().size());
 
@@ -161,11 +161,8 @@ void HTMLViewSourceDocument::processTagToken(const String& source, HTMLToken& to
         index = addRange(source, index, iter->m_nameRange.m_start - token.startIndex(), "");
         index = addRange(source, index, iter->m_nameRange.m_end - token.startIndex(), "webkit-html-attribute-name");
 
-        if (tagName == baseTag && name == hrefAttr) {
-            // Catch the href attribute in the base element. It will be used
-            // for rendering anchors created by addLink() below.
-            setBaseElementURL(KURL(url(), value));
-        }
+        if (tagName == baseTag && name == hrefAttr)
+            m_current = addBase(value);
 
         index = addRange(source, index, iter->m_valueRange.m_start - token.startIndex(), "");
 
@@ -189,7 +186,7 @@ void HTMLViewSourceDocument::processCharacterToken(const String& source, HTMLTok
     addText(source, "");
 }
 
-PassRefPtr<Element> HTMLViewSourceDocument::addSpanWithClassName(const String& className)
+PassRefPtr<Element> HTMLViewSourceDocument::addSpanWithClassName(const AtomicString& className)
 {
     if (m_current == m_tbody) {
         addLine(className);
@@ -205,7 +202,7 @@ PassRefPtr<Element> HTMLViewSourceDocument::addSpanWithClassName(const String& c
     return span.release();
 }
 
-void HTMLViewSourceDocument::addLine(const String& className)
+void HTMLViewSourceDocument::addLine(const AtomicString& className)
 {
     // Create a table row.
     RefPtr<HTMLTableRowElement> trow = HTMLTableRowElement::create(this);
@@ -243,7 +240,7 @@ void HTMLViewSourceDocument::addLine(const String& className)
     }
 }
 
-void HTMLViewSourceDocument::addText(const String& text, const String& className)
+void HTMLViewSourceDocument::addText(const String& text, const AtomicString& className)
 {
     if (text.isEmpty())
         return;
@@ -292,7 +289,18 @@ int HTMLViewSourceDocument::addRange(const String& source, int start, int end, c
     return end;
 }
 
-PassRefPtr<Element> HTMLViewSourceDocument::addLink(const String& url, bool isAnchor)
+PassRefPtr<Element> HTMLViewSourceDocument::addBase(const AtomicString& href)
+{
+    RefPtr<HTMLBaseElement> base = HTMLBaseElement::create(baseTag, this);
+    RefPtr<NamedNodeMap> attributeMap = NamedNodeMap::create();
+    attributeMap->addAttribute(Attribute::createMapped(hrefAttr, href));
+    base->setAttributeMap(attributeMap.release());
+    m_current->parserAddChild(base);
+    base->attach();
+    return base.release();
+}
+
+PassRefPtr<Element> HTMLViewSourceDocument::addLink(const AtomicString& url, bool isAnchor)
 {
     if (m_current == m_tbody)
         addLine("webkit-html-tag");

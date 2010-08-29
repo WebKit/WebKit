@@ -50,13 +50,13 @@ module test {
         attribute [Reflect] DOMString reflectedStringAttr;
         attribute [Reflect] long reflectedIntegralAttr;
         attribute [Reflect] boolean reflectedBooleanAttr;
-        attribute [Reflect,URL] DOMString reflectedURLAttr;
-        attribute [Reflect,NonEmpty,URL] DOMString reflectedNonEmptyURLAttr;
+        attribute [Reflect, URL] DOMString reflectedURLAttr;
+        attribute [Reflect, NonEmpty, URL] DOMString reflectedNonEmptyURLAttr;
         attribute [Reflect=customContentStringAttr] DOMString reflectedStringAttr;
         attribute [Reflect=customContentIntegralAttr] long reflectedCustomIntegralAttr;
         attribute [Reflect=customContentBooleanAttr] boolean reflectedCustomBooleanAttr;
-        attribute [Reflect=customContentURLAttr,URL] DOMString reflectedCustomURLAttr;
-        attribute [Reflect=customContentNonEmptyURLAttr,NonEmpty,URL] DOMString reflectedCustomNonEmptyURLAttr;
+        attribute [Reflect=customContentURLAttr, URL] DOMString reflectedCustomURLAttr;
+        attribute [Reflect=customContentNonEmptyURLAttr, NonEmpty, URL] DOMString reflectedCustomNonEmptyURLAttr;
 
         // Methods
         void    voidMethod();

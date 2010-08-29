@@ -1,3 +1,32 @@
+2010-08-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Some IDL attributes don't reflect URL content attributes properly
+        https://bugs.webkit.org/show_bug.cgi?id=43650
+
+        * dom/html/level2/html/button03.js: Added a "WebKit modification" section so this
+        correctly expects the action attribute to return a completed URL.
+        * dom/xhtml/level2/html/button03.js: Ditto.
+
+        * fast/dom/URL-attribute-reflection-expected.txt: Updaed expected results to expecte
+        more successes.
+
+        * fast/dom/script-tests/URL-attribute-reflection.js:
+        (testURLReflection): Fixed wrong variable name in the test script.
+
+        * http/tests/security/xssAuditor/full-block-iframe-no-inherit.php: Removed a call
+        to encodeURI that was needed to work around our incorrect implementation of
+        HTMLIFrameElement's src attribute.
+
+        * fast/dom/HTMLBaseElement: Added.
+        * fast/dom/HTMLBaseElement/multiple-base-elements-expected.txt: Added.
+        * fast/dom/HTMLBaseElement/multiple-base-elements.html: Added.
+        * fast/dom/HTMLBaseElement/script-tests: Added.
+        * fast/dom/HTMLBaseElement/script-tests/TEMPLATE.html:
+        Copied from fast/dom/HTMLAnchorElement/script-tests/TEMPLATE.html.
+        * fast/dom/HTMLBaseElement/script-tests/multiple-base-elements.js: Added.
+
 2010-08-28  Sam Weinig  <sam@webkit.org>
 
         Update WebKit2 skipped list.
@@ -47752,3 +47781,4 @@
         * platform/mac/editing/pasteboard/styled-element-markup-expected.checksum: Replaced.
         * platform/mac/editing/pasteboard/styled-element-markup-expected.png: Replaced.
         * platform/mac/editing/pasteboard/subframe-dragndrop-1-expected.che
+svn

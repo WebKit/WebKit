@@ -54,7 +54,7 @@ module html {
         // FIXME: The spec says this should be a long, not an unsigned long.
         attribute unsigned long size; // Changed string -> long as part of DOM level 2
 #endif
-        attribute [Reflect,URL] DOMString src;
+        attribute [Reflect, URL] DOMString src;
         attribute [Reflect] DOMString step;
         attribute [ConvertNullToNullString, JSCCustomGetter] DOMString type; // readonly dropped as part of DOM level 2
         attribute [Reflect] DOMString useMap;

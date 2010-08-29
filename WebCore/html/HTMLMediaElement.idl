@@ -30,7 +30,7 @@ interface [Conditional=VIDEO] HTMLMediaElement : HTMLElement {
     readonly attribute MediaError error;
 
     // network state
-    attribute [Reflect,URL] DOMString src;
+    attribute [Reflect, URL] DOMString src;
     readonly attribute DOMString currentSrc;
     
     const unsigned short NETWORK_EMPTY = 0;

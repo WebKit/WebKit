@@ -32,7 +32,7 @@ module html {
     attribute [Reflect] long height;
 #endif
     attribute [Reflect] DOMString name;
-    attribute [Reflect] DOMString src;
+    attribute [Reflect, URL] DOMString src;
     attribute [Reflect] DOMString type;
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
     attribute [Reflect] DOMString width;

@@ -24,12 +24,12 @@ function testURLReflection(attributeName, tag, scriptAttributeName)
     if (xValue === "x")
         return "non-URL";
     if (xValue !== document.baseURI.replace(/[^\/]+$/, "x"))
-        return "error: " + xValue;
+        return "error (x): " + xValue;
     if (emptyValue === "")
         return "non-empty URL";
     if (emptyValue === document.baseURI)
         return "URL";
-    return "error: " + value;
+    return "error (empty): " + emptyValue;
 }
 
 shouldBe("testURLReflection('attribute', 'element')", "'none'");

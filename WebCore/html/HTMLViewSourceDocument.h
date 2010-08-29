@@ -57,11 +57,12 @@ private:
     void processCharacterToken(const String& source, HTMLToken&);
 
     void createContainingTable();
-    PassRefPtr<Element> addSpanWithClassName(const String&);
-    void addLine(const String& className);
-    void addText(const String& text, const String& className);
+    PassRefPtr<Element> addSpanWithClassName(const AtomicString&);
+    void addLine(const AtomicString& className);
+    void addText(const String& text, const AtomicString& className);
     int addRange(const String& source, int start, int end, const String& className, bool isLink = false, bool isAnchor = false);
-    PassRefPtr<Element> addLink(const String& url, bool isAnchor);
+    PassRefPtr<Element> addLink(const AtomicString& url, bool isAnchor);
+    PassRefPtr<Element> addBase(const AtomicString& href);
 
     String m_type;
     RefPtr<Element> m_current;

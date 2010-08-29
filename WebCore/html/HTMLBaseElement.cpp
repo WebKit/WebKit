@@ -24,11 +24,8 @@
 #include "HTMLBaseElement.h"
 
 #include "Attribute.h"
-#include "CSSHelper.h"
 #include "Document.h"
-#include "Frame.h"
 #include "HTMLNames.h"
-#include "XSSAuditor.h"
 
 namespace WebCore {
 
@@ -45,47 +42,34 @@ PassRefPtr<HTMLBaseElement> HTMLBaseElement::create(const QualifiedName& tagName
     return adoptRef(new HTMLBaseElement(tagName, document));
 }
 
-void HTMLBaseElement::parseMappedAttribute(Attribute* attr)
+void HTMLBaseElement::parseMappedAttribute(Attribute* attribute)
 {
-    if (attr->name() == hrefAttr) {
-        m_hrefAttrValue = attr->value();
-        m_href = deprecatedParseURL(attr->value());
-        process();
-    } else if (attr->name() == targetAttr) {
-        m_target = attr->value();
-        process();
-    } else
-        HTMLElement::parseMappedAttribute(attr);
+    if (attribute->name() == hrefAttr || attribute->name() == targetAttr)
+        document()->processBaseElement();
+    else
+        HTMLElement::parseMappedAttribute(attribute);
 }
 
 void HTMLBaseElement::insertedIntoDocument()
 {
     HTMLElement::insertedIntoDocument();
-    process();
+    document()->processBaseElement();
 }
 
 void HTMLBaseElement::removedFromDocument()
 {
     HTMLElement::removedFromDocument();
-
-    // Since the document doesn't have a base element, clear the base URL and target.
-    // FIXME: This does not handle the case of multiple base elements correctly.
-    document()->setBaseElementURL(KURL());
-    document()->setBaseElementTarget(String());
+    document()->processBaseElement();
 }
 
-void HTMLBaseElement::process()
+bool HTMLBaseElement::isURLAttribute(Attribute* attribute) const
 {
-    if (!inDocument())
-        return;
+    return attribute->name() == hrefAttr;
+}
 
-    if (!m_href.isEmpty() && (!document()->frame() || document()->frame()->script()->xssAuditor()->canSetBaseElementURL(m_hrefAttrValue)))
-        document()->setBaseElementURL(KURL(document()->url(), m_href));
-
-    if (!m_target.isEmpty())
-        document()->setBaseElementTarget(m_target);
-
-    // FIXME: Changing a document's base URL should probably automatically update the resolved relative URLs of all images, stylesheets, etc.
+String HTMLBaseElement::target() const
+{
+    return fastGetAttribute(targetAttr);
 }
 
 }

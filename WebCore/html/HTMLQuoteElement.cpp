@@ -48,4 +48,9 @@ void HTMLQuoteElement::insertedIntoDocument()
     HTMLElement::insertedIntoDocument();
 }
 
+bool HTMLQuoteElement::isURLAttribute(Attribute* attribute) const
+{
+    return attribute->name() == citeAttr;
+}
+
 }

@@ -24,7 +24,7 @@ module html {
         attribute [Reflect] DOMString accessKey;
         attribute [Reflect] DOMString alt;
         attribute [Reflect] DOMString coords;
-        attribute [Reflect,URL] DOMString href;
+        attribute [Reflect, URL] DOMString href;
         attribute [Reflect] boolean noHref;
         attribute [Reflect] DOMString shape;
         attribute [Reflect] DOMString target;

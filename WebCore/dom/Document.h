@@ -543,12 +543,8 @@ public:
     void setURL(const KURL&);
 
     const KURL& baseURL() const { return m_baseURL; }
-    // Setting the BaseElementURL will change the baseURL.
-    void setBaseElementURL(const KURL&);
-
     const String& baseTarget() const { return m_baseTarget; }
-    // Setting the BaseElementTarget will change the baseTarget.
-    void setBaseElementTarget(const String& baseTarget) { m_baseTarget = baseTarget; }
+    void processBaseElement();
 
     KURL completeURL(const String&) const;
 

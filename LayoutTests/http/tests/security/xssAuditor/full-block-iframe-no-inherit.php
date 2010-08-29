@@ -14,7 +14,7 @@ if (window.layoutTestController) {
 }
 function checkIfDone()
 {
-    checkIfFrameLocationMatchesURLAndCallDone('frame', encodeURI(document.getElementById('frame').src));
+    checkIfFrameLocationMatchesURLAndCallDone('frame', document.getElementById('frame').src);
 }
 </script>
 </head>

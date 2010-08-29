@@ -70,8 +70,11 @@ webkit_dom_test_obj_void_method_with_args(WebKitDOMTestObj* self, glong int_arg,
     g_return_if_fail(str_arg);
     g_return_if_fail(obj_arg);
     WTF::String converted_str_arg = WTF::String::fromUTF8(str_arg);
-    WebCore::TestObj * converted_obj_arg = WebKit::core(obj_arg);
-    g_return_if_fail(converted_obj_arg);
+    WebCore::TestObj * converted_obj_arg = NULL;
+    if (obj_arg != NULL) {
+        converted_obj_arg = WebKit::core(obj_arg);
+        g_return_if_fail(converted_obj_arg);
+    }
     item->voidMethodWithArgs(int_arg, converted_str_arg, converted_obj_arg);
 }
 
@@ -94,8 +97,11 @@ webkit_dom_test_obj_int_method_with_args(WebKitDOMTestObj* self, glong int_arg, 
     g_return_val_if_fail(str_arg, 0);
     g_return_val_if_fail(obj_arg, 0);
     WTF::String converted_str_arg = WTF::String::fromUTF8(str_arg);
-    WebCore::TestObj * converted_obj_arg = WebKit::core(obj_arg);
-    g_return_val_if_fail(converted_obj_arg, 0);
+    WebCore::TestObj * converted_obj_arg = NULL;
+    if (obj_arg != NULL) {
+        converted_obj_arg = WebKit::core(obj_arg);
+        g_return_val_if_fail(converted_obj_arg, 0);
+    }
     glong res = item->intMethodWithArgs(int_arg, converted_str_arg, converted_obj_arg);
     return res;
 }
@@ -120,8 +126,11 @@ webkit_dom_test_obj_obj_method_with_args(WebKitDOMTestObj* self, glong int_arg, 
     g_return_val_if_fail(str_arg, 0);
     g_return_val_if_fail(obj_arg, 0);
     WTF::String converted_str_arg = WTF::String::fromUTF8(str_arg);
-    WebCore::TestObj * converted_obj_arg = WebKit::core(obj_arg);
-    g_return_val_if_fail(converted_obj_arg, 0);
+    WebCore::TestObj * converted_obj_arg = NULL;
+    if (obj_arg != NULL) {
+        converted_obj_arg = WebKit::core(obj_arg);
+        g_return_val_if_fail(converted_obj_arg, 0);
+    }
     PassRefPtr<WebCore::TestObj> g_res = WTF::getPtr(item->objMethodWithArgs(int_arg, converted_str_arg, converted_obj_arg));
     WebKitDOMTestObj* res = static_cast<WebKitDOMTestObj*>(WebKit::kit(g_res.get()));
     return res;
@@ -136,8 +145,11 @@ webkit_dom_test_obj_method_that_requires_all_args(WebKitDOMTestObj* self, const 
     g_return_val_if_fail(str_arg, 0);
     g_return_val_if_fail(obj_arg, 0);
     WTF::String converted_str_arg = WTF::String::fromUTF8(str_arg);
-    WebCore::TestObj * converted_obj_arg = WebKit::core(obj_arg);
-    g_return_val_if_fail(converted_obj_arg, 0);
+    WebCore::TestObj * converted_obj_arg = NULL;
+    if (obj_arg != NULL) {
+        converted_obj_arg = WebKit::core(obj_arg);
+        g_return_val_if_fail(converted_obj_arg, 0);
+    }
     PassRefPtr<WebCore::TestObj> g_res = WTF::getPtr(item->methodThatRequiresAllArgs(converted_str_arg, converted_obj_arg));
     WebKitDOMTestObj* res = static_cast<WebKitDOMTestObj*>(WebKit::kit(g_res.get()));
     return res;
@@ -152,8 +164,11 @@ webkit_dom_test_obj_method_that_requires_all_args_and_throws(WebKitDOMTestObj* s
     g_return_val_if_fail(str_arg, 0);
     g_return_val_if_fail(obj_arg, 0);
     WTF::String converted_str_arg = WTF::String::fromUTF8(str_arg);
-    WebCore::TestObj * converted_obj_arg = WebKit::core(obj_arg);
-    g_return_val_if_fail(converted_obj_arg, 0);
+    WebCore::TestObj * converted_obj_arg = NULL;
+    if (obj_arg != NULL) {
+        converted_obj_arg = WebKit::core(obj_arg);
+        g_return_val_if_fail(converted_obj_arg, 0);
+    }
     WebCore::ExceptionCode ec = 0;
     PassRefPtr<WebCore::TestObj> g_res = WTF::getPtr(item->methodThatRequiresAllArgsAndThrows(converted_str_arg, converted_obj_arg, ec));
     if (ec) {
@@ -172,8 +187,11 @@ webkit_dom_test_obj_serialized_value(WebKitDOMTestObj* self, WebKitDOMSerialized
     g_return_if_fail(self);
     WebCore::TestObj * item = WebKit::core(self);
     g_return_if_fail(serialized_arg);
-    WebCore::SerializedScriptValue * converted_serialized_arg = WebKit::core(serialized_arg);
-    g_return_if_fail(converted_serialized_arg);
+    WebCore::SerializedScriptValue * converted_serialized_arg = NULL;
+    if (serialized_arg != NULL) {
+        converted_serialized_arg = WebKit::core(serialized_arg);
+        g_return_if_fail(converted_serialized_arg);
+    }
     item->serializedValue(converted_serialized_arg);
 }
 
@@ -184,8 +202,11 @@ webkit_dom_test_obj_idb_key(WebKitDOMTestObj* self, WebKitDOMIDBKey* key)
     g_return_if_fail(self);
     WebCore::TestObj * item = WebKit::core(self);
     g_return_if_fail(key);
-    WebCore::IDBKey * converted_key = WebKit::core(key);
-    g_return_if_fail(converted_key);
+    WebCore::IDBKey * converted_key = NULL;
+    if (key != NULL) {
+        converted_key = WebKit::core(key);
+        g_return_if_fail(converted_key);
+    }
     item->idbKey(converted_key);
 }
 
@@ -470,8 +491,11 @@ webkit_dom_test_obj_set_test_obj_attr(WebKitDOMTestObj* self, WebKitDOMTestObj* 
     g_return_if_fail(self);
     WebCore::TestObj * item = WebKit::core(self);
     g_return_if_fail(value);
-    WebCore::TestObj * converted_value = WebKit::core(value);
-    g_return_if_fail(converted_value);
+    WebCore::TestObj * converted_value = NULL;
+    if (value != NULL) {
+        converted_value = WebKit::core(value);
+        g_return_if_fail(converted_value);
+    }
     item->setTestObjAttr(converted_value);
 }
 
@@ -493,8 +517,11 @@ webkit_dom_test_obj_set_xml_obj_attr(WebKitDOMTestObj* self, WebKitDOMTestObj* v
     g_return_if_fail(self);
     WebCore::TestObj * item = WebKit::core(self);
     g_return_if_fail(value);
-    WebCore::TestObj * converted_value = WebKit::core(value);
-    g_return_if_fail(converted_value);
+    WebCore::TestObj * converted_value = NULL;
+    if (value != NULL) {
+        converted_value = WebKit::core(value);
+        g_return_if_fail(converted_value);
+    }
     item->setXMLObjAttr(converted_value);
 }
 

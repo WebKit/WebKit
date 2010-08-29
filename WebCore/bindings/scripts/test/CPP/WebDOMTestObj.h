@@ -41,7 +41,7 @@ public:
     explicit WebDOMTestObj(WebCore::TestObj*);
     WebDOMTestObj(const WebDOMTestObj&);
     WebDOMTestObj& operator=(const WebDOMTestObj&);
-    ~WebDOMTestObj();
+    virtual ~WebDOMTestObj();
 
     enum {
         WEBDOM_CONST_VALUE_0 = 0,
