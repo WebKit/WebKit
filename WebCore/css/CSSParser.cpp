@@ -134,7 +134,6 @@ CSSParser::CSSParser(bool strictParsing)
     , m_important(false)
     , m_id(0)
     , m_styleSheet(0)
-    , m_mediaQuery(0)
     , m_valueList(0)
     , m_parsedProperties(static_cast<CSSProperty**>(fastMalloc(32 * sizeof(CSSProperty*))))
     , m_numParsedProperties(0)
@@ -156,9 +155,6 @@ CSSParser::CSSParser(bool strictParsing)
     , m_allowImportRules(true)
     , m_allowVariablesRules(true)
     , m_allowNamespaceDeclarations(true)
-    , m_floatingMediaQuery(0)
-    , m_floatingMediaQueryExp(0)
-    , m_floatingMediaQueryExpList(0)
 {
 #if YYDEBUG > 0
     cssyydebug = 1;
@@ -176,12 +172,8 @@ CSSParser::~CSSParser()
 
     fastFree(m_data);
 
-    if (m_floatingMediaQueryExpList) {
+    if (m_floatingMediaQueryExpList)
         deleteAllValues(*m_floatingMediaQueryExpList);
-        delete m_floatingMediaQueryExpList;
-    }
-    delete m_floatingMediaQueryExp;
-    delete m_floatingMediaQuery;
     fastDeleteAllValues(m_floatingSelectors);
     deleteAllValues(m_floatingValueLists);
     deleteAllValues(m_floatingFunctions);
@@ -363,7 +355,8 @@ bool CSSParser::parseMediaQuery(MediaList* queries, const String& string)
     if (string.isEmpty())
         return true;
 
-    m_mediaQuery = 0;
+    ASSERT(!m_mediaQuery);
+
     // can't use { because tokenizer state switches from mediaquery to initial state when it sees { token.
     // instead insert one " " (which is WHITESPACE in CSSGrammar.y)
     setupParser("@-webkit-mediaquery ", string, "} ");
@@ -372,8 +365,7 @@ bool CSSParser::parseMediaQuery(MediaList* queries, const String& string)
     bool ok = false;
     if (m_mediaQuery) {
         ok = true;
-        queries->appendMediaQuery(m_mediaQuery);
-        m_mediaQuery = 0;
+        queries->appendMediaQuery(m_mediaQuery.release());
     }
 
     return ok;
@@ -414,12 +406,13 @@ void CSSParser::clearProperties()
 Document* CSSParser::document() const
 {
     StyleBase* root = m_styleSheet;
-    Document* doc = 0;
     while (root && root->parent())
         root = root->parent();
-    if (root && root->isCSSStyleSheet())
-        doc = static_cast<CSSStyleSheet*>(root)->doc();
-    return doc;
+    if (!root)
+        return 0;
+    if (!root->isCSSStyleSheet())
+        return 0;
+    return static_cast<CSSStyleSheet*>(root)->document();
 }
 
 bool CSSParser::validUnit(CSSParserValue* value, Units unitflags, bool strict)
@@ -2272,7 +2265,7 @@ bool CSSParser::parseContent(int propId, bool important)
             parsedValue = CSSImageValue::create(m_styleSheet->completeURL(val->string));
         } else if (val->unit == CSSParserValue::Function) {
             // attr(X) | counter(X [,Y]) | counters(X, Y, [,Z]) | -webkit-gradient(...)
-            CSSParserValueList* args = val->function->args;
+            CSSParserValueList* args = val->function->args.get();
             if (!args)
                 return false;
             if (equalIgnoringCase(val->function->name, "attr(")) {
@@ -2822,7 +2815,7 @@ PassRefPtr<CSSValue> CSSParser::parseAnimationTimingFunction()
         return 0;
 
     // The only timing function we accept for now is a cubic bezier function.  4 points must be specified.
-    CSSParserValueList* args = value->function->args;
+    CSSParserValueList* args = value->function->args.get();
     if (!equalIgnoringCase(value->function->name, "cubic-bezier(") || !args || args->size() != 7)
         return 0;
 
@@ -2997,7 +2990,7 @@ bool CSSParser::parseDashboardRegions(int propId, bool important)
         // also allow
         // dashboard-region(label, type) or dashboard-region(label type)
         // dashboard-region(label, type) or dashboard-region(label type)
-        CSSParserValueList* args = value->function->args;
+        CSSParserValueList* args = value->function->args.get();
         if (!equalIgnoringCase(value->function->name, "dashboard-region(") || !args) {
             valid = false;
             break;
@@ -3143,7 +3136,7 @@ PassRefPtr<CSSValue> CSSParser::parseCounterContent(CSSParserValueList* args, bo
 bool CSSParser::parseShape(int propId, bool important)
 {
     CSSParserValue* value = m_valueList->current();
-    CSSParserValueList* args = value->function->args;
+    CSSParserValueList* args = value->function->args.get();
 
     if (!equalIgnoringCase(value->function->name, "rect(") || !args)
         return false;
@@ -3507,7 +3500,7 @@ bool CSSParser::parseFontWeight(bool important)
 
 static bool isValidFormatFunction(CSSParserValue* val)
 {
-    CSSParserValueList* args = val->function->args;
+    CSSParserValueList* args = val->function->args.get();
     return equalIgnoringCase(val->function->name, "format(") && (args->current()->unit == CSSPrimitiveValue::CSS_STRING || args->current()->unit == CSSPrimitiveValue::CSS_IDENT);
 }
 
@@ -3530,7 +3523,7 @@ bool CSSParser::parseFontFaceSrc()
             expectComma = true;
         } else if (val->unit == CSSParserValue::Function) {
             // There are two allowed functions: local() and format().
-            CSSParserValueList* args = val->function->args;
+            CSSParserValueList* args = val->function->args.get();
             if (args && args->size() == 1) {
                 if (equalIgnoringCase(val->function->name, "local(") && !expectComma) {
                     expectComma = true;
@@ -3868,7 +3861,7 @@ static inline int colorIntFromValue(CSSParserValue* v)
 
 bool CSSParser::parseColorParameters(CSSParserValue* value, int* colorArray, bool parseAlpha)
 {
-    CSSParserValueList* args = value->function->args;
+    CSSParserValueList* args = value->function->args.get();
     CSSParserValue* v = args->current();
     Units unitType = FUnknown;
     // Get the first value and its type
@@ -3909,7 +3902,7 @@ bool CSSParser::parseColorParameters(CSSParserValue* value, int* colorArray, boo
 // The first value, HUE, is in an angle with a value between 0 and 360
 bool CSSParser::parseHSLParameters(CSSParserValue* value, double* colorArray, bool parseAlpha)
 {
-    CSSParserValueList* args = value->function->args;
+    CSSParserValueList* args = value->function->args.get();
     CSSParserValue* v = args->current();
     // Get the first value
     if (!validUnit(v, FNumber, true))
@@ -4558,7 +4551,7 @@ static bool parseGradientColorStop(CSSParser* p, CSSParserValue* a, CSSGradientC
         !equalIgnoringCase(a->function->name, "color-stop("))
         return false;
 
-    CSSParserValueList* args = a->function->args;
+    CSSParserValueList* args = a->function->args.get();
     if (!args)
         return false;
 
@@ -4617,7 +4610,7 @@ bool CSSParser::parseGradient(RefPtr<CSSValue>& gradient)
     RefPtr<CSSGradientValue> result = CSSGradientValue::create();
 
     // Walk the arguments.
-    CSSParserValueList* args = m_valueList->current()->function->args;
+    CSSParserValueList* args = m_valueList->current()->function->args.get();
     if (!args || args->size() == 0)
         return false;
 
@@ -4738,7 +4731,7 @@ bool CSSParser::parseCanvas(RefPtr<CSSValue>& canvas)
     RefPtr<CSSCanvasValue> result = CSSCanvasValue::create();
 
     // Walk the arguments.
-    CSSParserValueList* args = m_valueList->current()->function->args;
+    CSSParserValueList* args = m_valueList->current()->function->args.get();
     if (!args || args->size() != 1)
         return false;
 
@@ -4858,7 +4851,7 @@ PassRefPtr<CSSValueList> CSSParser::parseTransform()
             return 0;
 
         // Every primitive requires at least one argument.
-        CSSParserValueList* args = value->function->args;
+        CSSParserValueList* args = value->function->args.get();
         if (!args)
             return 0;
 
@@ -5280,52 +5273,45 @@ CSSParserValue& CSSParser::sinkFloatingValue(CSSParserValue& value)
 
 MediaQueryExp* CSSParser::createFloatingMediaQueryExp(const AtomicString& mediaFeature, CSSParserValueList* values)
 {
-    delete m_floatingMediaQueryExp;
-    m_floatingMediaQueryExp = new MediaQueryExp(mediaFeature, values);
-    return m_floatingMediaQueryExp;
+    m_floatingMediaQueryExp = adoptPtr(new MediaQueryExp(mediaFeature, values));
+    return m_floatingMediaQueryExp.get();
 }
 
-MediaQueryExp* CSSParser::sinkFloatingMediaQueryExp(MediaQueryExp* e)
+PassOwnPtr<MediaQueryExp> CSSParser::sinkFloatingMediaQueryExp(MediaQueryExp* expression)
 {
-    ASSERT(e == m_floatingMediaQueryExp);
-    m_floatingMediaQueryExp = 0;
-    return e;
+    ASSERT_UNUSED(expression, expression == m_floatingMediaQueryExp);
+    return m_floatingMediaQueryExp.release();
 }
 
 Vector<MediaQueryExp*>* CSSParser::createFloatingMediaQueryExpList()
 {
-    if (m_floatingMediaQueryExpList) {
+    if (m_floatingMediaQueryExpList)
         deleteAllValues(*m_floatingMediaQueryExpList);
-        delete m_floatingMediaQueryExpList;
-    }
-    m_floatingMediaQueryExpList = new Vector<MediaQueryExp*>;
-    return m_floatingMediaQueryExpList;
+    m_floatingMediaQueryExpList = adoptPtr(new Vector<MediaQueryExp*>);
+    return m_floatingMediaQueryExpList.get();
 }
 
-Vector<MediaQueryExp*>* CSSParser::sinkFloatingMediaQueryExpList(Vector<MediaQueryExp*>* l)
+PassOwnPtr<Vector<MediaQueryExp*> > CSSParser::sinkFloatingMediaQueryExpList(Vector<MediaQueryExp*>* list)
 {
-    ASSERT(l == m_floatingMediaQueryExpList);
-    m_floatingMediaQueryExpList = 0;
-    return l;
+    ASSERT_UNUSED(list, list == m_floatingMediaQueryExpList);
+    return m_floatingMediaQueryExpList.release();
 }
 
-MediaQuery* CSSParser::createFloatingMediaQuery(MediaQuery::Restrictor r, const String& mediaType, Vector<MediaQueryExp*>* exprs)
+MediaQuery* CSSParser::createFloatingMediaQuery(MediaQuery::Restrictor restrictor, const String& mediaType, PassOwnPtr<Vector<MediaQueryExp*> > expressions)
 {
-    delete m_floatingMediaQuery;
-    m_floatingMediaQuery = new MediaQuery(r, mediaType, exprs);
-    return m_floatingMediaQuery;
+    m_floatingMediaQuery = adoptPtr(new MediaQuery(restrictor, mediaType, expressions));
+    return m_floatingMediaQuery.get();
 }
 
-MediaQuery* CSSParser::createFloatingMediaQuery(Vector<MediaQueryExp*>* exprs)
+MediaQuery* CSSParser::createFloatingMediaQuery(PassOwnPtr<Vector<MediaQueryExp*> > expressions)
 {
-    return createFloatingMediaQuery(MediaQuery::None, "all", exprs);
+    return createFloatingMediaQuery(MediaQuery::None, "all", expressions);
 }
 
-MediaQuery* CSSParser::sinkFloatingMediaQuery(MediaQuery* mq)
+PassOwnPtr<MediaQuery> CSSParser::sinkFloatingMediaQuery(MediaQuery* query)
 {
-    ASSERT(mq == m_floatingMediaQuery);
-    m_floatingMediaQuery = 0;
-    return mq;
+    ASSERT_UNUSED(query, query == m_floatingMediaQuery);
+    return m_floatingMediaQuery.release();
 }
 
 MediaList* CSSParser::createMediaList()
@@ -5581,7 +5567,7 @@ bool CSSParser::checkForVariables(CSSParserValueList* valueList)
             break;
         }
 
-        if (valueList->valueAt(i)->unit == CSSParserValue::Function && checkForVariables(valueList->valueAt(i)->function->args)) {
+        if (valueList->valueAt(i)->unit == CSSParserValue::Function && checkForVariables(valueList->valueAt(i)->function->args.get())) {
             hasVariables = true;
             break;
         }

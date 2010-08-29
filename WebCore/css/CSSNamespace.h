@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999-2003 Lars Knoll (knoll@kde.org)
  *               1999 Waldo Bastian (bastian@kde.org)
- * Copyright (C) 2004, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2006, 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,27 +27,23 @@
 namespace WebCore {
 
     struct CSSNamespace : Noncopyable {
-        AtomicString m_prefix;
-        AtomicString m_uri;
-        CSSNamespace* m_parent;
+        AtomicString prefix;
+        AtomicString uri;
+        OwnPtr<CSSNamespace> parent;
 
-        CSSNamespace(const AtomicString& prefix, const AtomicString& uri, CSSNamespace* parent)
-            : m_prefix(prefix)
-            , m_uri(uri)
-            , m_parent(parent)
+        CSSNamespace(const AtomicString& prefix, const AtomicString& uri, PassOwnPtr<CSSNamespace> parent)
+            : prefix(prefix)
+            , uri(uri)
+            , parent(parent)
         {
         }
-        ~CSSNamespace() { delete m_parent; }
-
-        const AtomicString& uri() { return m_uri; }
-        const AtomicString& prefix() { return m_prefix; }
 
         CSSNamespace* namespaceForPrefix(const AtomicString& prefix)
         {
-            if (prefix == m_prefix)
-                return this;
-            if (m_parent)
-                return m_parent->namespaceForPrefix(prefix);
+            for (CSSNamespace* candidate = this; candidate; candidate = candidate->parent.get()) {
+                if (candidate->prefix == prefix)
+                    return candidate;
+            }
             return 0;
         }
     };

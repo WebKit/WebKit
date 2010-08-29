@@ -1,6 +1,6 @@
-/**
+/*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -17,11 +17,13 @@
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  */
+
 #include "config.h"
 #include "CSSValueList.h"
 
 #include "CSSParserValues.h"
 #include "PlatformString.h"
+#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
@@ -34,11 +36,9 @@ CSSValueList::CSSValueList(CSSParserValueList* list)
     : m_isSpaceSeparated(true)
 {
     if (list) {
-        unsigned s = list->size();
-        for (unsigned i = 0; i < s; ++i) {
-            CSSParserValue* v = list->valueAt(i);
-            append(v->createCSSValue());
-        }
+        size_t size = list->size();
+        for (unsigned i = 0; i < size; ++i)
+            append(list->valueAt(i)->createCSSValue());
     }
 }
 
@@ -120,15 +120,15 @@ String CSSValueList::cssText() const
     return result;
 }
 
-CSSParserValueList* CSSValueList::createParserValueList() const
+PassOwnPtr<CSSParserValueList> CSSValueList::createParserValueList() const
 {
-    unsigned s = m_values.size();
-    if (!s)
+    size_t size = m_values.size();
+    if (!size)
         return 0;
-    CSSParserValueList* result = new CSSParserValueList;
-    for (unsigned i = 0; i < s; ++i)
+    OwnPtr<CSSParserValueList> result = adoptPtr(new CSSParserValueList);
+    for (size_t i = 0; i < size; ++i)
         result->addValue(m_values[i]->parserValue());
-    return result;
+    return result.release();
 }
 
 void CSSValueList::addSubresourceStyleURLs(ListHashSet<KURL>& urls, const CSSStyleSheet* styleSheet)

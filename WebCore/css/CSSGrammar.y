@@ -2,7 +2,7 @@
 
 /*
  *  Copyright (C) 2002-2003 Lars Knoll (knoll@kde.org)
- *  Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
  *  Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *  Copyright (C) 2008 Eric Seidel <eric@webkit.org>
  *
@@ -34,6 +34,7 @@
 #include "Document.h"
 #include "HTMLNames.h"
 #include "MediaList.h"
+#include "MediaQueryExp.h"
 #include "WebKitCSSKeyframeRule.h"
 #include "WebKitCSSKeyframesRule.h"
 #include <wtf/FastMalloc.h>
@@ -617,11 +618,11 @@ media_query_exp_list:
     media_query_exp {
         CSSParser* p = static_cast<CSSParser*>(parser);
         $$ = p->createFloatingMediaQueryExpList();
-        $$->append(p->sinkFloatingMediaQueryExp($1));
+        $$->append(p->sinkFloatingMediaQueryExp($1).leakPtr());
     }
     | media_query_exp_list maybe_space MEDIA_AND maybe_space media_query_exp {
         $$ = $1;
-        $$->append(static_cast<CSSParser*>(parser)->sinkFloatingMediaQueryExp($5));
+        $$->append(static_cast<CSSParser*>(parser)->sinkFloatingMediaQueryExp($5).leakPtr());
     }
     ;
 

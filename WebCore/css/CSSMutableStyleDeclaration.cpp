@@ -1,6 +1,6 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -488,9 +488,10 @@ void CSSMutableStyleDeclaration::setNeedsStyleRecalc()
     StyleBase* root = this;
     while (StyleBase* parent = root->parent())
         root = parent;
-    if (root->isCSSStyleSheet())
-        if (Document* doc = static_cast<CSSStyleSheet*>(root)->doc())
-            doc->styleSelectorChanged(DeferRecalcStyle);
+    if (root->isCSSStyleSheet()) {
+        if (Document* document = static_cast<CSSStyleSheet*>(root)->document())
+            document->styleSelectorChanged(DeferRecalcStyle);
+    }
 }
 
 bool CSSMutableStyleDeclaration::getPropertyPriority(int propertyID) const

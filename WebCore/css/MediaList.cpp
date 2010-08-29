@@ -1,6 +1,6 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2006, 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -122,7 +122,7 @@ void MediaList::deleteMedium(const String& oldMedium, ExceptionCode& ec)
     CSSParser p(true);
 
     MediaQuery* oldQuery = 0;
-    bool deleteOldQuery = false;
+    OwnPtr<MediaQuery> createdQuery;
 
     if (p.parseMediaQuery(tempMediaList.get(), oldMedium)) {
         if (tempMediaList->m_queries.size() > 0)
@@ -130,8 +130,8 @@ void MediaList::deleteMedium(const String& oldMedium, ExceptionCode& ec)
     } else if (m_fallback) {
         String medium = parseMediaDescriptor(oldMedium);
         if (!medium.isNull()) {
-            oldQuery = new MediaQuery(MediaQuery::None, medium, 0);
-            deleteOldQuery = true;
+            createdQuery = adoptPtr(new MediaQuery(MediaQuery::None, medium, 0));
+            oldQuery = createdQuery.get();
         }
     }
 
@@ -148,8 +148,6 @@ void MediaList::deleteMedium(const String& oldMedium, ExceptionCode& ec)
                 break;
             }
         }
-        if (deleteOldQuery)
-            delete oldQuery;
     }
     
     if (!ec)
@@ -242,9 +240,9 @@ void MediaList::appendMedium(const String& newMedium, ExceptionCode& ec)
         notifyChanged();
 }
 
-void MediaList::appendMediaQuery(MediaQuery* mediaQuery)
+void MediaList::appendMediaQuery(PassOwnPtr<MediaQuery> mediaQuery)
 {
-    m_queries.append(mediaQuery);
+    m_queries.append(mediaQuery.leakPtr());
 }
 
 void MediaList::notifyChanged()

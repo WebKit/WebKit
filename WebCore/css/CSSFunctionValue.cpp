@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2010 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,15 +25,17 @@
 
 #include "config.h"
 #include "CSSFunctionValue.h"
+
 #include "CSSValueList.h"
+#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
 CSSFunctionValue::CSSFunctionValue(CSSParserFunction* function)
+    : m_name(function->name)
 {
-    m_name = function->name;
     if (function->args)
-        m_args = CSSValueList::createFromParserValueList(function->args);
+        m_args = CSSValueList::createFromParserValueList(function->args.get());
 }
 
 CSSFunctionValue::~CSSFunctionValue()
@@ -58,7 +60,8 @@ CSSParserValue CSSFunctionValue::parserValue() const
     val.function = new CSSParserFunction;
     val.function->name.characters = const_cast<UChar*>(m_name.characters());
     val.function->name.length = m_name.length();
-    val.function->args = m_args ? m_args->createParserValueList() : 0;
+    if (m_args)
+        val.function->args = m_args->createParserValueList();
     return val;
 }
 

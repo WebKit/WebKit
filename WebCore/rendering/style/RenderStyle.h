@@ -1049,7 +1049,7 @@ public:
     void clearContent();
     void setContent(PassRefPtr<StringImpl>, bool add = false);
     void setContent(PassRefPtr<StyleImage>, bool add = false);
-    void setContent(CounterContent*, bool add = false);
+    void setContent(PassOwnPtr<CounterContent>, bool add = false);
 
     const CounterDirectiveMap* counterDirectives() const;
     CounterDirectiveMap& accessCounterDirectives();
@@ -1224,6 +1224,8 @@ private:
     const Color& textStrokeColor() const { return rareInheritedData->textStrokeColor; }
     
     const Color colorIncludingFallback(int colorProperty, EBorderStyle borderStyle) const;
+
+    ContentData* prepareToSetContent(StringImpl*, bool add);
 };
 
 } // namespace WebCore

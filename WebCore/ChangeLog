@@ -1,3 +1,151 @@
+2010-08-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Deploy OwnPtr, PassOwnPtr, and adoptPtr in some CSS-related files
+        https://bugs.webkit.org/show_bug.cgi?id=44834
+
+        * css/CSSFunctionValue.cpp:
+        (WebCore::CSSFunctionValue::CSSFunctionValue): Updated since
+        CSSParserFunction::args is an OwnPtr.
+        (WebCore::CSSFunctionValue::parserValue): Ditto.
+
+        * css/CSSGrammar.y: Added leakPtr calls for putting MediaQueryExp*
+        into the media query expression list, which is a vector of raw pointers
+        that are deleted explicitly.
+
+        * css/CSSImportRule.cpp:
+        (WebCore::CSSImportRule::setCSSStyleSheet): Updated to use document instead of doc.
+        (WebCore::CSSImportRule::insertedIntoParent): Ditto.
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::setNeedsStyleRecalc): Ditto.
+
+        * css/CSSNamespace.h: Took the "m_" off the names of the data members of
+        this structure. Used OwnPtr for the parent data member. Rewrote the
+        namespaceForPrefix function so it's iterative instead of recursive.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::CSSParser): Update since m_mediaQuery, m_floatingMediaQuery,
+        m_floatingMediaQueryExp, and m_floatingMediaQueryExpList are now all OwnPtr and
+        thus don't need to be initialized.
+        (WebCore::CSSParser::~CSSParser): Update to not delete the above OwnPtr.
+        (WebCore::CSSParser::parseMediaQuery): Replaced the code that sets m_mediaQuery
+        to 0 with an assertion. Also use release when passing the media query to
+        appendMediaQuery.
+        (WebCore::CSSParser::document): Updated to use document instead of doc and to
+        use early return instead of a nested if.
+        (WebCore::CSSParser::parseContent): Added a get() call needed since
+        CSSParserFunction::args is an OwnPtr.
+        (WebCore::CSSParser::parseAnimationTimingFunction): Ditto.
+        (WebCore::CSSParser::parseDashboardRegions): Ditto.
+        (WebCore::CSSParser::parseShape): Ditto.
+        (WebCore::isValidFormatFunction): Ditto.
+        (WebCore::CSSParser::parseFontFaceSrc): Ditto.
+        (WebCore::CSSParser::parseColorParameters): Ditto.
+        (WebCore::CSSParser::parseHSLParameters): Ditto.
+        (WebCore::parseGradientColorStop): Ditto.
+        (WebCore::CSSParser::parseGradient): Ditto.
+        (WebCore::CSSParser::parseCanvas): Ditto.
+        (WebCore::CSSParser::parseTransform): Ditto.
+        (WebCore::CSSParser::createFloatingMediaQueryExp): Updated to use adoptPtr and
+        remove the explicit deletion.
+        (WebCore::CSSParser::sinkFloatingMediaQueryExp): Updated to use release.
+        (WebCore::CSSParser::createFloatingMediaQueryExpList): Ditto.
+        (WebCore::CSSParser::sinkFloatingMediaQueryExpList): Ditto.
+        (WebCore::CSSParser::createFloatingMediaQuery): Ditto.
+        (WebCore::CSSParser::sinkFloatingMediaQuery): Ditto.
+        (WebCore::CSSParser::checkForVariables): Use get for CSSParserFunction::args.
+
+        * css/CSSParser.h: Made return values for sinkFloatingMediaQueryExp,
+        sinkFloatingMediaQueryExpList, and sinkFloatingMediaQuery be PassOwnPtr.
+        Made createFloatingMediaQuery take a PassOwnPtr. Made m_mediaQuery,
+        m_floatingMediaQuery, m_floatingMediaQueryExp, and m_floatingMediaQueryExpList
+        be OwnPtr.
+
+        * css/CSSParserValues.h: Made args be an OwnPtr.
+
+        * css/CSSStyleSelector.cpp: Made CSSRuleSet m_universalRules and m_pageRules
+        be OwnPtr.
+        (WebCore::CSSStyleSelector::CSSStyleSelector): Use document instead of doc.
+        Got rid of the init function, only called here, because it did nothing that
+        wasn't already done. Eliminated unneeded code to set m_userStyle to 0, since
+        it's now an OwnPtr and will be 0 automatically. Use adoptPtr when initializing
+        m_medium, m_authorStyle, and m_useStyle.
+        (WebCore::CSSStyleSelector::~CSSStyleSelector): Got rid of unneeded delete of
+        m_medium, m_authorStyle, and m_userStyle, and unneded clear of m_keyframesRuleMap.
+        (WebCore::CSSStyleSelector::styleForElement): Use get with m_userStyle and
+        m_authorStyle.
+        (WebCore::CSSStyleSelector::pseudoStyleForElement): Ditto.
+        (WebCore::CSSStyleSelector::styleForPage): Ditto.
+        (WebCore::CSSStyleSelector::pseudoStyleRulesForElement): Ditto.
+        (WebCore::CSSRuleSet::CSSRuleSet): Got rid of unneeded initialization of
+        m_universalRules and m_pageRules.
+        (WebCore::CSSRuleSet::~CSSRuleSet): Got rid of unneeed deletion of same.
+        (WebCore::CSSRuleSet::addRule): Use adoptPtr to initialize m_universalRules.
+        (WebCore::CSSRuleSet::addPageRule): Use adoptPtr to initialize m_pageRules.
+        (WebCore::CSSStyleSelector::applyProperty): Use adopPtr to create counter
+        context object.
+
+        * css/CSSStyleSelector.h: Made m_authorStyle, m_userStyle, and m_medium use
+        OwnPtr. Got rid of init function.
+
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::CSSStyleSheet): Updatd for name change from m_doc
+        and doc to m_document and document. Eliminated unneeded initialization of
+        m_namespaces now that it is an OwnPtr.
+        (WebCore::CSSStyleSheet::~CSSStyleSheet): Got rid of unneeded deletion of same.
+        (WebCore::CSSStyleSheet::cssRules): Updated doc to document.
+        (WebCore::CSSStyleSheet::addNamespace): Added adopPtr when setting m_namespaces.
+        (WebCore::CSSStyleSheet::determineNamespace): Updated for changes to the
+        CSSNamespace class, using uri data member instead of function.
+        (WebCore::CSSStyleSheet::styleSheetChanged): Use document instead of doc.
+
+        * css/CSSStyleSheet.h: Renamed doc and m_doc to document and m_document.
+        Made m_namespaces an OwnPtr.
+
+        * css/CSSValueList.cpp:
+        (WebCore::CSSValueList::CSSValueList): Clean up logic a bit.
+        (WebCore::CSSValueList::createParserValueList): Clean up logic a bit and
+        return a PassOwnPtr.
+
+        * css/CSSValueList.h: Changed createParserValueList to return a PassOwnPtr.
+
+        * css/CSSVariablesDeclaration.cpp:
+        (WebCore::CSSVariablesDeclaration::setNeedsStyleRecalc): Updated to use
+        document instead of doc.
+
+        * css/MediaList.cpp:
+        (WebCore::MediaList::deleteMedium): Use OwnPtr instead of a boolean to
+        make sure the newly-created query here is deleted.
+        (WebCore::MediaList::appendMediaQuery): Updated to take PassOwnPtr.
+
+        * css/MediaList.h: Changed appendMediaQuery to take a PassOwnPtr.
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::getStyleSheet): Use document instead of doc.
+        (WebCore::InspectorDOMAgent::getRuleRanges): Ditto.
+        (WebCore::InspectorDOMAgent::buildObjectForStyleSheet): Ditto.
+
+        * rendering/style/ContentData.cpp:
+        (WebCore::ContentData::clear): Update since data members are OwnPtr.
+        Also, fixed iterative deletion algorithm to be much simpler.
+        (WebCore::ContentData::dataEquivalent): Added FIXMEs and tweaked formatting.
+        (WebCore::ContentData::deleteContent): Tweaked formatting.
+
+        * rendering/style/ContentData.h: Changed m_next to an OwnPtr.
+        Added assertions to getters to check that we get the correct type.
+        Use leakRef instead of releaseRef. Changed setCounter and setNext functions
+        to take PassOwnPtr arguments.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::prepareToSetContent): Refactored common part of the
+        into a shared function so the three setContent functions don't have to repeat
+        the logic. Used an OwnPtr to avoid confusing logic and leakPtr.
+        (WebCore::RenderStyle::setContent): Changed argument to PassOwnPtr.
+
+        * rendering/style/RenderStyle.h: Changed setContent argument to a PassOwnPtr.
+        Added declaration of prepareToSetContent helper function.
+
 2010-08-29  Patrick Gansterer  <paroga@paroga.com>
 
         Reviewed by Adam Roben.

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -195,8 +195,8 @@ public:
         bool isFirstPage(int pageIndex) const;
         String pageName(int pageIndex) const;
         
-        CSSRuleSet* m_authorStyle;
-        CSSRuleSet* m_userStyle;
+        OwnPtr<CSSRuleSet> m_authorStyle;
+        OwnPtr<CSSRuleSet> m_userStyle;
 
         bool m_hasUAAppearance;
         BorderData m_borderData;
@@ -234,8 +234,6 @@ public:
 
     private:
         static RenderStyle* s_styleNotYetAvailable;
-
-        void init();
 
         void matchUARules(int& firstUARule, int& lastUARule);
         void updateFont();
@@ -292,7 +290,7 @@ public:
         
         HashSet<int> m_pendingImageProperties; // Hash of CSSPropertyIDs
 
-        MediaQueryEvaluator* m_medium;
+        OwnPtr<MediaQueryEvaluator> m_medium;
         RefPtr<RenderStyle> m_rootDefaultStyle;
 
         PseudoId m_dynamicPseudo;

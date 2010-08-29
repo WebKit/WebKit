@@ -371,15 +371,15 @@ public:
     CSSRuleDataList* getIDRules(AtomicStringImpl* key) { return m_idRules.get(key); }
     CSSRuleDataList* getClassRules(AtomicStringImpl* key) { return m_classRules.get(key); }
     CSSRuleDataList* getTagRules(AtomicStringImpl* key) { return m_tagRules.get(key); }
-    CSSRuleDataList* getUniversalRules() { return m_universalRules; }
-    CSSRuleDataList* getPageRules() { return m_pageRules; }
+    CSSRuleDataList* getUniversalRules() { return m_universalRules.get(); }
+    CSSRuleDataList* getPageRules() { return m_pageRules.get(); }
     
 public:
     AtomRuleMap m_idRules;
     AtomRuleMap m_classRules;
     AtomRuleMap m_tagRules;
-    CSSRuleDataList* m_universalRules;
-    CSSRuleDataList* m_pageRules;
+    OwnPtr<CSSRuleDataList> m_universalRules;
+    OwnPtr<CSSRuleDataList> m_pageRules;
     unsigned m_ruleCount;
     unsigned m_pageRuleCount;
 };
@@ -414,21 +414,19 @@ static const MediaQueryEvaluator& printEval()
     return staticPrintEval;
 }
 
-CSSStyleSelector::CSSStyleSelector(Document* doc, StyleSheetList* styleSheets, CSSStyleSheet* mappedElementSheet,
+CSSStyleSelector::CSSStyleSelector(Document* document, StyleSheetList* styleSheets, CSSStyleSheet* mappedElementSheet,
                                    CSSStyleSheet* pageUserSheet, const Vector<RefPtr<CSSStyleSheet> >* pageGroupUserSheets,
                                    bool strictParsing, bool matchAuthorAndUserStyles)
     : m_backgroundData(BackgroundFillLayer)
-    , m_checker(doc, strictParsing)
+    , m_checker(document, strictParsing)
     , m_element(0)
     , m_styledElement(0)
     , m_elementLinkState(NotInsideLink)
-    , m_fontSelector(CSSFontSelector::create(doc))
+    , m_fontSelector(CSSFontSelector::create(document))
 {
-    init();
-        
     m_matchAuthorAndUserStyles = matchAuthorAndUserStyles;
     
-    Element* root = doc->documentElement();
+    Element* root = document->documentElement();
 
     if (!defaultStyle) {
         if (!root || elementCanUseSimpleDefaultStyle(root))
@@ -437,32 +435,28 @@ CSSStyleSelector::CSSStyleSelector(Document* doc, StyleSheetList* styleSheets, C
             loadFullDefaultStyle();
     }
 
-    m_userStyle = 0;
-
     // construct document root element default style. this is needed
     // to evaluate media queries that contain relative constraints, like "screen and (max-width: 10em)"
     // This is here instead of constructor, because when constructor is run,
     // document doesn't have documentElement
     // NOTE: this assumes that element that gets passed to styleForElement -call
     // is always from the document that owns the style selector
-    FrameView* view = doc->view();
+    FrameView* view = document->view();
     if (view)
-        m_medium = new MediaQueryEvaluator(view->mediaType());
+        m_medium = adoptPtr(new MediaQueryEvaluator(view->mediaType()));
     else
-        m_medium = new MediaQueryEvaluator("all");
+        m_medium = adoptPtr(new MediaQueryEvaluator("all"));
 
     if (root)
         m_rootDefaultStyle = styleForElement(root, 0, false, true); // don't ref, because the RenderStyle is allocated from global heap
 
-    if (m_rootDefaultStyle && view) {
-        delete m_medium;
-        m_medium = new MediaQueryEvaluator(view->mediaType(), view->frame(), m_rootDefaultStyle.get());
-    }
+    if (m_rootDefaultStyle && view)
+        m_medium = adoptPtr(new MediaQueryEvaluator(view->mediaType(), view->frame(), m_rootDefaultStyle.get()));
 
-    m_authorStyle = new CSSRuleSet();
+    m_authorStyle = adoptPtr(new CSSRuleSet);
 
     // FIXME: This sucks! The user sheet is reparsed every time!
-    OwnPtr<CSSRuleSet> tempUserStyle(new CSSRuleSet);
+    OwnPtr<CSSRuleSet> tempUserStyle = adoptPtr(new CSSRuleSet);
     if (pageUserSheet)
         tempUserStyle->addRulesFromSheet(pageUserSheet, *m_medium, this);
     if (pageGroupUserSheets) {
@@ -476,7 +470,7 @@ CSSStyleSelector::CSSStyleSelector(Document* doc, StyleSheetList* styleSheets, C
     }
 
     if (tempUserStyle->m_ruleCount > 0 || tempUserStyle->m_pageRuleCount > 0)
-        m_userStyle = tempUserStyle.leakPtr();
+        m_userStyle = tempUserStyle.release();
 
     // Add rules from elements like SVG's <font-face>
     if (mappedElementSheet)
@@ -490,8 +484,8 @@ CSSStyleSelector::CSSStyleSelector(Document* doc, StyleSheetList* styleSheets, C
             m_authorStyle->addRulesFromSheet(static_cast<CSSStyleSheet*>(sheet), *m_medium, this);
     }
 
-    if (doc->renderer() && doc->renderer()->style())
-        doc->renderer()->style()->font().update(fontSelector());
+    if (document->renderer() && document->renderer()->style())
+        document->renderer()->style()->font().update(fontSelector());
 }
 
 // This is a simplified style setting function for keyframe styles
@@ -501,23 +495,10 @@ void CSSStyleSelector::addKeyframeStyle(PassRefPtr<WebKitCSSKeyframesRule> rule)
     m_keyframesRuleMap.add(s.impl(), rule);
 }
 
-void CSSStyleSelector::init()
-{
-    initElement(0);
-    m_matchedDecls.clear();
-    m_ruleList = 0;
-    m_rootDefaultStyle = 0;
-    m_medium = 0;
-}
-
 CSSStyleSelector::~CSSStyleSelector()
 {
     m_fontSelector->clearDocument();
-    delete m_medium;
-    delete m_authorStyle;
-    delete m_userStyle;
     deleteAllValues(m_viewportDependentMediaQueryResults);
-    m_keyframesRuleMap.clear();
 }
 
 static CSSStyleSheet* parseUASheet(const String& str)
@@ -1267,7 +1248,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
     if (!resolveForRootDefault) {
         // 4. Now we check user sheet rules.
         if (m_matchAuthorAndUserStyles)
-            matchRules(m_userStyle, firstUserRule, lastUserRule);
+            matchRules(m_userStyle.get(), firstUserRule, lastUserRule);
 
         // 5. Now check author rules, beginning first with presentational attributes
         // mapped from HTML.
@@ -1306,7 +1287,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
     
         // 6. Check the rules in author sheets next.
         if (m_matchAuthorAndUserStyles)
-            matchRules(m_authorStyle, firstAuthorRule, lastAuthorRule);
+            matchRules(m_authorStyle.get(), firstAuthorRule, lastAuthorRule);
 
         // 7. Now check our inline style attribute.
         if (m_matchAuthorAndUserStyles && m_styledElement) {
@@ -1534,8 +1515,8 @@ PassRefPtr<RenderStyle> CSSStyleSelector::pseudoStyleForElement(PseudoId pseudo,
     matchUARules(firstUARule, lastUARule);
 
     if (m_matchAuthorAndUserStyles) {
-        matchRules(m_userStyle, firstUserRule, lastUserRule);
-        matchRules(m_authorStyle, firstAuthorRule, lastAuthorRule);
+        matchRules(m_userStyle.get(), firstUserRule, lastUserRule);
+        matchRules(m_authorStyle.get(), firstAuthorRule, lastAuthorRule);
     }
 
     if (m_matchedDecls.isEmpty() && !visitedStyle)
@@ -1607,8 +1588,8 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForPage(int pageIndex)
     const bool isFirst = isFirstPage(pageIndex);
     const String page = pageName(pageIndex);
     matchPageRules(defaultPrintStyle, isLeft, isFirst, page);
-    matchPageRules(m_userStyle, isLeft, isFirst, page);
-    matchPageRules(m_authorStyle, isLeft, isFirst, page);
+    matchPageRules(m_userStyle.get(), isLeft, isFirst, page);
+    matchPageRules(m_authorStyle.get(), isLeft, isFirst, page);
     m_lineHeightValue = 0;
     applyDeclarations<true>(false, 0, m_matchedDecls.size() - 1);
 
@@ -1887,14 +1868,14 @@ PassRefPtr<CSSRuleList> CSSStyleSelector::pseudoStyleRulesForElement(Element* e,
         // Now we check user sheet rules.
         if (m_matchAuthorAndUserStyles) {
             int firstUserRule = -1, lastUserRule = -1;
-            matchRules(m_userStyle, firstUserRule, lastUserRule);
+            matchRules(m_userStyle.get(), firstUserRule, lastUserRule);
         }
     }
 
     if (m_matchAuthorAndUserStyles) {
         // Check the rules in author sheets.
         int firstAuthorRule = -1, lastAuthorRule = -1;
-        matchRules(m_authorStyle, firstAuthorRule, lastAuthorRule);
+        matchRules(m_authorStyle.get(), firstAuthorRule, lastAuthorRule);
     }
 
     m_checker.m_collectRulesOnly = false;
@@ -2787,11 +2768,9 @@ CSSValue* CSSStyleSelector::resolveVariableDependentValue(CSSVariableDependentVa
 // -----------------------------------------------------------------
 
 CSSRuleSet::CSSRuleSet()
+    : m_ruleCount(0)
+    , m_pageRuleCount(0)
 {
-    m_universalRules = 0;
-    m_pageRules = 0;
-    m_ruleCount = 0;
-    m_pageRuleCount = 0;
 }
 
 CSSRuleSet::~CSSRuleSet()
@@ -2799,9 +2778,6 @@ CSSRuleSet::~CSSRuleSet()
     deleteAllValues(m_idRules);
     deleteAllValues(m_classRules);
     deleteAllValues(m_tagRules);
-
-    delete m_universalRules; 
-    delete m_pageRules;
 }
 
 
@@ -2836,7 +2812,7 @@ void CSSRuleSet::addRule(CSSStyleRule* rule, CSSSelector* sel)
     
     // Just put it in the universal rule set.
     if (!m_universalRules)
-        m_universalRules = new CSSRuleDataList(m_ruleCount++, rule, sel);
+        m_universalRules = adoptPtr(new CSSRuleDataList(m_ruleCount++, rule, sel));
     else
         m_universalRules->append(m_ruleCount++, rule, sel);
 }
@@ -2844,7 +2820,7 @@ void CSSRuleSet::addRule(CSSStyleRule* rule, CSSSelector* sel)
 void CSSRuleSet::addPageRule(CSSStyleRule* rule, CSSSelector* sel)
 {
     if (!m_pageRules)
-        m_pageRules = new CSSRuleDataList(m_pageRuleCount++, rule, sel);
+        m_pageRules = adoptPtr(new CSSRuleDataList(m_pageRuleCount++, rule, sel));
     else
         m_pageRules->append(m_pageRuleCount++, rule, sel);
 }
@@ -4322,9 +4298,9 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                 }
                 case CSSPrimitiveValue::CSS_COUNTER: {
                     Counter* counterValue = val->getCounterValue();
-                    CounterContent* counter = new CounterContent(counterValue->identifier(),
-                        (EListStyleType)counterValue->listStyleNumber(), counterValue->separator());
-                    m_style->setContent(counter, didSet);
+                    OwnPtr<CounterContent> counter = adoptPtr(new CounterContent(counterValue->identifier(),
+                        (EListStyleType)counterValue->listStyleNumber(), counterValue->separator()));
+                    m_style->setContent(counter.release(), didSet);
                     didSet = true;
                 }
             }

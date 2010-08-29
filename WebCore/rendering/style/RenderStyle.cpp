@@ -575,92 +575,59 @@ void RenderStyle::clearContent()
         rareNonInheritedData->m_content->clear();
 }
 
+ContentData* RenderStyle::prepareToSetContent(StringImpl* string, bool add)
+{
+    OwnPtr<ContentData>& content = rareNonInheritedData.access()->m_content;
+    ContentData* lastContent = content.get();
+    while (lastContent && lastContent->next())
+        lastContent = lastContent->next();
+
+    if (string && add && lastContent && lastContent->isText()) {
+        // Augment the existing string and share the existing ContentData node.
+        String newText = lastContent->text();
+        newText.append(string);
+        lastContent->setText(newText.impl());
+        return 0;
+    }
+
+    bool reuseContent = !add;
+    OwnPtr<ContentData> newContentData;
+    if (reuseContent && content) {
+        content->clear();
+        newContentData = content.release();
+    } else
+        newContentData = adoptPtr(new ContentData);
+
+    ContentData* result = newContentData.get();
+
+    if (lastContent && !reuseContent)
+        lastContent->setNext(newContentData.release());
+    else
+        content = newContentData.release();
+
+    return result;
+}
+
 void RenderStyle::setContent(PassRefPtr<StyleImage> image, bool add)
 {
     if (!image)
-        return; // The object is null. Nothing to do. Just bail.
-
-    OwnPtr<ContentData>& content = rareNonInheritedData.access()->m_content;
-    ContentData* lastContent = content.get();
-    while (lastContent && lastContent->next())
-        lastContent = lastContent->next();
-
-    bool reuseContent = !add;
-    ContentData* newContentData;
-    if (reuseContent && content) {
-        content->clear();
-        newContentData = content.leakPtr();
-    } else
-        newContentData = new ContentData;
-
-    if (lastContent && !reuseContent)
-        lastContent->setNext(newContentData);
-    else
-        content.set(newContentData);
-
-    newContentData->setImage(image);
-}
-
-void RenderStyle::setContent(PassRefPtr<StringImpl> s, bool add)
-{
-    if (!s)
-        return; // The string is null. Nothing to do. Just bail.
-
-    OwnPtr<ContentData>& content = rareNonInheritedData.access()->m_content;
-    ContentData* lastContent = content.get();
-    while (lastContent && lastContent->next())
-        lastContent = lastContent->next();
-
-    bool reuseContent = !add;
-    if (add && lastContent) {
-        if (lastContent->isText()) {
-            // We can augment the existing string and share this ContentData node.
-            String newStr = lastContent->text();
-            newStr.append(s.get());
-            lastContent->setText(newStr.impl());
-            return;
-        }
-    }
-
-    ContentData* newContentData = 0;
-    if (reuseContent && content) {
-        content->clear();
-        newContentData = content.leakPtr();
-    } else
-        newContentData = new ContentData;
-
-    if (lastContent && !reuseContent)
-        lastContent->setNext(newContentData);
-    else
-        content.set(newContentData);
-
-    newContentData->setText(s);
-}
-
-void RenderStyle::setContent(CounterContent* c, bool add)
-{
-    if (!c)
         return;
+    prepareToSetContent(0, add)->setImage(image);
+}
 
-    OwnPtr<ContentData>& content = rareNonInheritedData.access()->m_content;
-    ContentData* lastContent = content.get();
-    while (lastContent && lastContent->next())
-        lastContent = lastContent->next();
+void RenderStyle::setContent(PassRefPtr<StringImpl> string, bool add)
+{
+    if (!string)
+        return;
+    if (ContentData* data = prepareToSetContent(string.get(), add))
+        data->setText(string);
+}
 
-    bool reuseContent = !add;
-    ContentData* newContentData = 0;
-    if (reuseContent && content) {
-        content->clear();
-        newContentData = content.leakPtr();
-    } else
-        newContentData = new ContentData;
-
-    if (lastContent && !reuseContent)
-        lastContent->setNext(newContentData);
-    else
-        content.set(newContentData);
-
-    newContentData->setCounter(c);
+void RenderStyle::setContent(PassOwnPtr<CounterContent> counter, bool add)
+{
+    if (!counter)
+        return;
+    prepareToSetContent(0, add)->setCounter(counter);
 }
 
 void RenderStyle::applyTransform(TransformationMatrix& transform, const IntSize& borderBoxSize, ApplyTransformOrigin applyOrigin) const

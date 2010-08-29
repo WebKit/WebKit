@@ -36,8 +36,7 @@ namespace WebCore {
 
 CSSStyleSheet::CSSStyleSheet(CSSStyleSheet* parentSheet, const String& href, const KURL& baseURL, const String& charset)
     : StyleSheet(parentSheet, href, baseURL)
-    , m_doc(parentSheet ? parentSheet->doc() : 0)
-    , m_namespaces(0)
+    , m_document(parentSheet ? parentSheet->document() : 0)
     , m_charset(charset)
     , m_loadCompleted(false)
     , m_strictParsing(!parentSheet || parentSheet->useStrictParsing())
@@ -48,8 +47,7 @@ CSSStyleSheet::CSSStyleSheet(CSSStyleSheet* parentSheet, const String& href, con
 
 CSSStyleSheet::CSSStyleSheet(Node* parentNode, const String& href, const KURL& baseURL, const String& charset)
     : StyleSheet(parentNode, href, baseURL)
-    , m_doc(parentNode->document())
-    , m_namespaces(0)
+    , m_document(parentNode->document())
     , m_charset(charset)
     , m_loadCompleted(false)
     , m_strictParsing(false)
@@ -60,20 +58,18 @@ CSSStyleSheet::CSSStyleSheet(Node* parentNode, const String& href, const KURL& b
 
 CSSStyleSheet::CSSStyleSheet(CSSRule* ownerRule, const String& href, const KURL& baseURL, const String& charset)
     : StyleSheet(ownerRule, href, baseURL)
-    , m_namespaces(0)
     , m_charset(charset)
     , m_loadCompleted(false)
     , m_strictParsing(!ownerRule || ownerRule->useStrictParsing())
     , m_hasSyntacticallyValidCSSHeader(true)
 {
     CSSStyleSheet* parentSheet = ownerRule ? ownerRule->parentStyleSheet() : 0;
-    m_doc = parentSheet ? parentSheet->doc() : 0;
+    m_document = parentSheet ? parentSheet->document() : 0;
     m_isUserStyleSheet = parentSheet ? parentSheet->isUserStyleSheet() : false;
 }
 
 CSSStyleSheet::~CSSStyleSheet()
 {
-    delete m_namespaces;
 }
 
 CSSRule *CSSStyleSheet::ownerRule() const
@@ -137,7 +133,7 @@ int CSSStyleSheet::addRule(const String& selector, const String& style, Exceptio
 PassRefPtr<CSSRuleList> CSSStyleSheet::cssRules(bool omitCharsetRules)
 {
     KURL url = finalURL();
-    if (!url.isEmpty() && doc() && !doc()->securityOrigin()->canRequest(url))
+    if (!url.isEmpty() && document() && !document()->securityOrigin()->canRequest(url))
         return 0;
     return CSSRuleList::create(this, omitCharsetRules);
 }
@@ -159,7 +155,7 @@ void CSSStyleSheet::addNamespace(CSSParser* p, const AtomicString& prefix, const
     if (uri.isNull())
         return;
 
-    m_namespaces = new CSSNamespace(prefix, uri, m_namespaces);
+    m_namespaces = adoptPtr(new CSSNamespace(prefix, uri, m_namespaces.release()));
     
     if (prefix.isEmpty())
         // Set the default namespace on the parser so that selectors that omit namespace info will
@@ -174,11 +170,10 @@ const AtomicString& CSSStyleSheet::determineNamespace(const AtomicString& prefix
     if (prefix == starAtom)
         return starAtom; // We'll match any namespace.
     if (m_namespaces) {
-        CSSNamespace* ns = m_namespaces->namespaceForPrefix(prefix);
-        if (ns)
-            return ns->uri();
+        if (CSSNamespace* namespaceForPrefix = m_namespaces->namespaceForPrefix(prefix))
+            return namespaceForPrefix->uri;
     }
-    return nullAtom; // Assume we wont match any namespaces.
+    return nullAtom; // Assume we won't match any namespaces.
 }
 
 bool CSSStyleSheet::parseString(const String &string, bool strict)
@@ -224,7 +219,7 @@ void CSSStyleSheet::styleSheetChanged()
     StyleBase* root = this;
     while (StyleBase* parent = root->parent())
         root = parent;
-    Document* documentToUpdate = root->isCSSStyleSheet() ? static_cast<CSSStyleSheet*>(root)->doc() : 0;
+    Document* documentToUpdate = root->isCSSStyleSheet() ? static_cast<CSSStyleSheet*>(root)->document() : 0;
     
     /* FIXME: We don't need to do everything updateStyleSelector does,
      * basically we just need to recreate the document's selector with the

@@ -1167,14 +1167,14 @@ void InspectorDOMAgent::getAllStyles(RefPtr<InspectorArray>* styles)
 void InspectorDOMAgent::getStyleSheet(long styleSheetId, RefPtr<InspectorObject>* styleSheetObject)
 {
     CSSStyleSheet* styleSheet = cssStore()->styleSheetForId(styleSheetId);
-    if (styleSheet && styleSheet->doc())
-        *styleSheetObject = buildObjectForStyleSheet(styleSheet->doc(), styleSheet);
+    if (styleSheet && styleSheet->document())
+        *styleSheetObject = buildObjectForStyleSheet(styleSheet->document(), styleSheet);
 }
 
 void InspectorDOMAgent::getRuleRanges(long styleSheetId, RefPtr<InspectorValue>* ruleRange)
 {
     CSSStyleSheet* styleSheet = cssStore()->styleSheetForId(styleSheetId);
-    if (styleSheet && styleSheet->doc()) {
+    if (styleSheet && styleSheet->document()) {
         HashMap<long, SourceRange> ruleRanges = cssStore()->getRuleRanges(styleSheet);
         if (!ruleRanges.size())
             return;
@@ -1509,7 +1509,7 @@ PassRefPtr<InspectorObject> InspectorDOMAgent::buildObjectForStyleSheet(Document
     result->setBoolean("disabled", styleSheet->disabled());
     result->setString("href", styleSheet->href());
     result->setString("title", styleSheet->title());
-    result->setNumber("documentElementId", m_documentNodeToIdMap.get(styleSheet->doc()));
+    result->setNumber("documentElementId", m_documentNodeToIdMap.get(styleSheet->document()));
     RefPtr<InspectorArray> cssRules = InspectorArray::create();
     PassRefPtr<CSSRuleList> cssRuleList = CSSRuleList::create(styleSheet, true);
     if (cssRuleList) {

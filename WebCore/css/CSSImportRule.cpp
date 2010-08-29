@@ -1,7 +1,7 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
  * (C) 2002-2003 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2002, 2005, 2006, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2002, 2005, 2006, 2008, 2009, 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -65,7 +65,7 @@ void CSSImportRule::setCSSStyleSheet(const String& href, const KURL& baseURL, co
     CSSStyleSheet* parent = parentStyleSheet();
     bool strict = !parent || parent->useStrictParsing();
     bool enforceMIMEType = strict;
-    bool needsSiteSpecificQuirks = parent && parent->doc() && parent->doc()->settings() && parent->doc()->settings()->needsSiteSpecificQuirks();
+    bool needsSiteSpecificQuirks = parent && parent->document() && parent->document()->settings() && parent->document()->settings()->needsSiteSpecificQuirks();
 
 #if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
     if (enforceMIMEType && needsSiteSpecificQuirks) {
@@ -78,7 +78,7 @@ void CSSImportRule::setCSSStyleSheet(const String& href, const KURL& baseURL, co
     String sheetText = sheet->sheetText(enforceMIMEType, &validMIMEType);
     m_styleSheet->parseString(sheetText, strict);
 
-    if (!parent || !parent->doc() || !parent->doc()->securityOrigin()->canRequest(baseURL))
+    if (!parent || !parent->document() || !parent->document()->securityOrigin()->canRequest(baseURL))
         crossOriginCSS = true;
 
     if (crossOriginCSS && !validMIMEType && !m_styleSheet->hasSyntacticallyValidCSSHeader())
@@ -115,7 +115,7 @@ void CSSImportRule::insertedIntoParent()
     if (!parentSheet)
         return;
 
-    DocLoader* docLoader = parentSheet->doc()->docLoader();
+    DocLoader* docLoader = parentSheet->document()->docLoader();
     if (!docLoader)
         return;
 
@@ -143,7 +143,7 @@ void CSSImportRule::insertedIntoParent()
         // removed from the pending sheet count, so let the doc know
         // the sheet being imported is pending.
         if (parentSheet && parentSheet->loadCompleted() && root == parentSheet)
-            parentSheet->doc()->addPendingSheet();
+            parentSheet->document()->addPendingSheet();
         m_loading = true;
         m_cachedSheet->addClient(this);
     }
