@@ -4126,8 +4126,6 @@
 		B2AFFC7E0D00A5C10030074D /* FontCustomPlatformData.h in Headers */ = {isa = PBXBuildFile; fileRef = B2AFFC760D00A5C10030074D /* FontCustomPlatformData.h */; };
 		B2AFFC7F0D00A5C10030074D /* SimpleFontDataMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = B2AFFC770D00A5C10030074D /* SimpleFontDataMac.mm */; };
 		B2AFFC800D00A5C10030074D /* FontMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = B2AFFC780D00A5C10030074D /* FontMac.mm */; };
-		B2AFFC810D00A5C10030074D /* FontPlatformData.h in Headers */ = {isa = PBXBuildFile; fileRef = B2AFFC790D00A5C10030074D /* FontPlatformData.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		B2AFFC820D00A5C10030074D /* FontPlatformDataMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = B2AFFC7A0D00A5C10030074D /* FontPlatformDataMac.mm */; };
 		B2AFFC830D00A5C10030074D /* GlyphPageTreeNodeMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2AFFC7B0D00A5C10030074D /* GlyphPageTreeNodeMac.cpp */; };
 		B2AFFC930D00A5DF0030074D /* ShapeArabic.c in Sources */ = {isa = PBXBuildFile; fileRef = B2AFFC880D00A5DF0030074D /* ShapeArabic.c */; };
 		B2AFFC940D00A5DF0030074D /* ShapeArabic.h in Headers */ = {isa = PBXBuildFile; fileRef = B2AFFC890D00A5DF0030074D /* ShapeArabic.h */; };
@@ -4448,6 +4446,8 @@
 		B523CF0B1182675400EBB29C /* DatabaseSync.h in Headers */ = {isa = PBXBuildFile; fileRef = B523CF041182675400EBB29C /* DatabaseSync.h */; };
 		B525A96511CA2340003A23A8 /* JSSQLException.h in Headers */ = {isa = PBXBuildFile; fileRef = B525A96311CA2340003A23A8 /* JSSQLException.h */; };
 		B525A96611CA2340003A23A8 /* JSSQLException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B525A96411CA2340003A23A8 /* JSSQLException.cpp */; };
+		B5320D6B122A24E9002D1440 /* FontPlatformData.h in Headers */ = {isa = PBXBuildFile; fileRef = B5320D69122A24E9002D1440 /* FontPlatformData.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		B5320D6C122A24E9002D1440 /* FontPlatformDataCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = B5320D6A122A24E9002D1440 /* FontPlatformDataCocoa.mm */; };
 		B550B52511DC68A800923885 /* SQLStatementSync.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B550B52111DC68A800923885 /* SQLStatementSync.cpp */; };
 		B550B52611DC68A800923885 /* SQLStatementSync.h in Headers */ = {isa = PBXBuildFile; fileRef = B550B52211DC68A800923885 /* SQLStatementSync.h */; };
 		B55D5AA4119131FC00BCC315 /* JSSQLTransactionSyncCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = B55D5AA2119131FC00BCC315 /* JSSQLTransactionSyncCallback.h */; };
@@ -9899,8 +9899,6 @@
 		B2AFFC760D00A5C10030074D /* FontCustomPlatformData.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FontCustomPlatformData.h; sourceTree = "<group>"; };
 		B2AFFC770D00A5C10030074D /* SimpleFontDataMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = SimpleFontDataMac.mm; sourceTree = "<group>"; };
 		B2AFFC780D00A5C10030074D /* FontMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = FontMac.mm; sourceTree = "<group>"; };
-		B2AFFC790D00A5C10030074D /* FontPlatformData.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FontPlatformData.h; sourceTree = "<group>"; };
-		B2AFFC7A0D00A5C10030074D /* FontPlatformDataMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = FontPlatformDataMac.mm; sourceTree = "<group>"; };
 		B2AFFC7B0D00A5C10030074D /* GlyphPageTreeNodeMac.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = GlyphPageTreeNodeMac.cpp; sourceTree = "<group>"; };
 		B2AFFC850D00A5DF0030074D /* character-sets.txt */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = "character-sets.txt"; sourceTree = "<group>"; };
 		B2AFFC860D00A5DF0030074D /* mac-encodings.txt */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = "mac-encodings.txt"; sourceTree = "<group>"; };
@@ -10225,6 +10223,8 @@
 		B523CF041182675400EBB29C /* DatabaseSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseSync.h; sourceTree = "<group>"; };
 		B525A96311CA2340003A23A8 /* JSSQLException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSQLException.h; sourceTree = "<group>"; };
 		B525A96411CA2340003A23A8 /* JSSQLException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSQLException.cpp; sourceTree = "<group>"; };
+		B5320D69122A24E9002D1440 /* FontPlatformData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontPlatformData.h; sourceTree = "<group>"; };
+		B5320D6A122A24E9002D1440 /* FontPlatformDataCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FontPlatformDataCocoa.mm; sourceTree = "<group>"; };
 		B550B52111DC68A800923885 /* SQLStatementSync.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLStatementSync.cpp; sourceTree = "<group>"; };
 		B550B52211DC68A800923885 /* SQLStatementSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLStatementSync.h; sourceTree = "<group>"; };
 		B55D5AA2119131FC00BCC315 /* JSSQLTransactionSyncCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSQLTransactionSyncCallback.h; sourceTree = "<group>"; };
@@ -15832,8 +15832,6 @@
 				B2AFFC750D00A5C10030074D /* FontCustomPlatformData.cpp */,
 				B2AFFC760D00A5C10030074D /* FontCustomPlatformData.h */,
 				B2AFFC780D00A5C10030074D /* FontMac.mm */,
-				B2AFFC790D00A5C10030074D /* FontPlatformData.h */,
-				B2AFFC7A0D00A5C10030074D /* FontPlatformDataMac.mm */,
 				B2AFFC7B0D00A5C10030074D /* GlyphPageTreeNodeMac.cpp */,
 				49FFBF1C11C8550E006A7118 /* GraphicsContext3DMac.mm */,
 				B277B4030B22F37C0004BEC6 /* GraphicsContextMac.mm */,
@@ -15864,6 +15862,7 @@
 			isa = PBXGroup;
 			children = (
 				B27535290B053814002CE64F /* cg */,
+				B5320D68122A24E9002D1440 /* cocoa */,
 				A75E8B7F0E1DE2B0007F2481 /* filters */,
 				B27535490B053814002CE64F /* mac */,
 				F4EAF4AB10C74268009100D3 /* opentype */,
@@ -16058,6 +16057,15 @@
 				51ABAE1D103C1913008C5260 /* SocketStreamHandleCFNet.cpp */,
 			);
 			name = cf;
+			sourceTree = "<group>";
+		};
+		B5320D68122A24E9002D1440 /* cocoa */ = {
+			isa = PBXGroup;
+			children = (
+				B5320D69122A24E9002D1440 /* FontPlatformData.h */,
+				B5320D6A122A24E9002D1440 /* FontPlatformDataCocoa.mm */,
+			);
+			path = cocoa;
 			sourceTree = "<group>";
 		};
 		B5D31DF711CF60E5009F22B4 /* generic */ = {
@@ -17693,6 +17701,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B5320D6B122A24E9002D1440 /* FontPlatformData.h in Headers */,
 				B5B5DC6A119BB3D5002A8790 /* AbstractDatabase.h in Headers */,
 				41E1B1D10FF5986900576B3B /* AbstractWorker.h in Headers */,
 				29A8122E0FBB9C1D00510293 /* AccessibilityARIAGridCell.h in Headers */,
@@ -18784,7 +18793,6 @@
 				B2C3DA680D006CD600EF6F26 /* FontFallbackList.h in Headers */,
 				B2C3DA6A0D006CD600EF6F26 /* FontFamily.h in Headers */,
 				A80E6CF30A1989CA007FB8C5 /* FontFamilyValue.h in Headers */,
-				B2AFFC810D00A5C10030074D /* FontPlatformData.h in Headers */,
 				37ACCE420DA2980F0089E602 /* FontRenderingMode.h in Headers */,
 				B2C3DA6B0D006CD600EF6F26 /* FontSelector.h in Headers */,
 				37202199106213C600F25C4B /* FontSmoothingMode.h in Headers */,
@@ -21311,7 +21319,6 @@
 				A80E6CEC0A1989CA007FB8C5 /* FontFamilyValue.cpp in Sources */,
 				72626E020EF022FE00A07E20 /* FontFastPath.cpp in Sources */,
 				B2AFFC800D00A5C10030074D /* FontMac.mm in Sources */,
-				B2AFFC820D00A5C10030074D /* FontPlatformDataMac.mm in Sources */,
 				B734B181119B9911006587BD /* FontTranscoder.cpp in Sources */,
 				A80E6CF10A1989CA007FB8C5 /* FontValue.cpp in Sources */,
 				D05CED290A40BB2C00C5AF38 /* FormatBlockCommand.cpp in Sources */,
@@ -22887,6 +22894,7 @@
 				977B3874122883E900B81FF8 /* HTMLScriptRunner.cpp in Sources */,
 				977B3877122883E900B81FF8 /* HTMLTokenizer.cpp in Sources */,
 				977B3879122883E900B81FF8 /* HTMLViewSourceParser.cpp in Sources */,
+				B5320D6C122A24E9002D1440 /* FontPlatformDataCocoa.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

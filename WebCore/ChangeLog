@@ -1,3 +1,22 @@
+2010-08-28  Jeremy Moskovich  <jeremy@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        First step in unforking Chrome's FontPlatformDataMac.mm.
+        Move files from platform/graphics/mac to platform/graphics/cocoa
+
+        https://bugs.webkit.org/show_bug.cgi?id=41398
+
+        Just moving files around so no new tests.
+
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/cocoa: Added.
+        * platform/graphics/cocoa/FontPlatformData.h: Copied from WebCore/platform/graphics/mac/FontPlatformData.h.
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm: Copied from WebCore/platform/graphics/mac/FontPlatformDataMac.mm.
+        * platform/graphics/mac/FontPlatformData.h: Removed.
+        * platform/graphics/mac/FontPlatformDataMac.mm: Removed.
+
 2010-08-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.
