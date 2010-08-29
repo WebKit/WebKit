@@ -1206,8 +1206,8 @@ bool ApplyStyleCommand::removeImplicitlyStyledElement(CSSMutableStyleDeclaration
         const HTMLEquivalent& equivalent = HTMLEquivalents[i];
         ASSERT(equivalent.element || equivalent.attribute);
         if (extractedStyle && equivalent.pushDownType == ShouldNotBePushedDown
-            || equivalent.element && !element->hasTagName(*equivalent.element)
-            || equivalent.attribute && !element->hasAttribute(*equivalent.attribute))
+            || (equivalent.element && !element->hasTagName(*equivalent.element))
+            || (equivalent.attribute && !element->hasAttribute(*equivalent.attribute)))
             continue;
 
         RefPtr<CSSValue> styleValue = style->getPropertyCSSValue(equivalent.propertyID);
