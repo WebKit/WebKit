@@ -91,6 +91,57 @@ private:
     QualifiedName m_name;
     String m_value;
 };
+    
+enum EntityMask {
+    EntityNone = 0x0000,
+    EntityAmp = 0x0001,
+    EntityLt = 0x0002,
+    EntityGt = 0x0004,
+    EntityQuot = 0x0008,
+    EntityNbsp = 0x0010,
+
+    EntityMaskInCDATA = EntityNone,
+    EntityMaskInPCDATA = EntityAmp | EntityLt | EntityGt,
+    EntityMaskInHTMLPCDATA = EntityMaskInPCDATA | EntityNbsp,
+    EntityMaskInAttributeValue = EntityAmp | EntityLt | EntityGt | EntityQuot,
+    EntityMaskInHTMLAttributeValue = EntityMaskInAttributeValue | EntityNbsp,
+};
+
+struct EntityDescription {
+    UChar entity;
+    const String& reference;
+    EntityMask mask;
+};
+
+static void appendCharactersReplacingEntities(Vector<UChar>& out, const UChar* content, size_t length, EntityMask entityMask)
+{
+    DEFINE_STATIC_LOCAL(const String, ampReference, ("&amp;"));
+    DEFINE_STATIC_LOCAL(const String, ltReference, ("&lt;"));
+    DEFINE_STATIC_LOCAL(const String, gtReference, ("&gt;"));
+    DEFINE_STATIC_LOCAL(const String, quotReference, ("&quot;"));
+    DEFINE_STATIC_LOCAL(const String, nbspReference, ("&nbsp;"));
+
+    static const EntityDescription entityMaps[] = {
+        { '&', ampReference, EntityAmp },
+        { '<', ltReference, EntityLt },
+        { '>', gtReference, EntityGt },
+        { '"', quotReference, EntityQuot },
+        { noBreakSpace, nbspReference, EntityNbsp },
+    };
+
+    size_t positionAfterLastEntity = 0;
+    for (size_t i = 0; i < length; i++) {
+        for (size_t m = 0; m < sizeof(entityMaps) / sizeof(EntityDescription); m++) {
+            if (content[i] == entityMaps[m].entity && entityMaps[m].mask & entityMask) {
+                out.append(content + positionAfterLastEntity, i - positionAfterLastEntity);
+                append(out, entityMaps[m].reference);
+                positionAfterLastEntity = i + 1;
+                break;
+            }
+        }
+    }
+    out.append(content + positionAfterLastEntity, length - positionAfterLastEntity);
+}
 
 typedef HashMap<AtomicStringImpl*, AtomicStringImpl*> Namespaces;
 
@@ -113,12 +164,10 @@ public:
     String takeResults();
 
 private:
-    void appendAttributeValue(Vector<UChar>& result, const String& attribute, bool escapeNBSP);
-    String escapeContentText(const String&, bool escapeNBSP);
+    void appendAttributeValue(Vector<UChar>& result, const String& attribute, bool documentIsHTML);
     void appendQuotedURLAttributeValue(Vector<UChar>& result, const String& urlString);
     String stringValueForRange(const Node*, const Range*);
-    pair<const UChar*, size_t> ucharRange(const Node*, const Range *);
-    void appendUCharRange(Vector<UChar>& result, const pair<const UChar*, size_t>& range);
+    void appendNodeValue(Vector<UChar>& out, const Node*, const Range*, EntityMask);
     String renderedText(const Node*, const Range*);
     bool shouldAddNamespaceElement(const Element*);
     bool shouldAddNamespaceAttribute(const Attribute*, Namespaces&);
@@ -221,100 +270,10 @@ String MarkupAccumulator::takeResults()
     return String::adopt(result);
 }
 
-void MarkupAccumulator::appendAttributeValue(Vector<UChar>& result, const String& attribute, bool escapeNBSP)
+void MarkupAccumulator::appendAttributeValue(Vector<UChar>& result, const String& attribute, bool documentIsHTML)
 {
-    const UChar* uchars = attribute.characters();
-    unsigned len = attribute.length();
-    unsigned lastCopiedFrom = 0;
-
-    DEFINE_STATIC_LOCAL(const String, ampEntity, ("&amp;"));
-    DEFINE_STATIC_LOCAL(const String, gtEntity, ("&gt;"));
-    DEFINE_STATIC_LOCAL(const String, ltEntity, ("&lt;"));
-    DEFINE_STATIC_LOCAL(const String, quotEntity, ("&quot;"));
-    DEFINE_STATIC_LOCAL(const String, nbspEntity, ("&nbsp;"));
-    
-    for (unsigned i = 0; i < len; ++i) {
-        UChar c = uchars[i];
-        switch (c) {
-        case '&':
-            result.append(uchars + lastCopiedFrom, i - lastCopiedFrom);
-            append(result, ampEntity);
-            lastCopiedFrom = i + 1;
-            break;
-        case '<':
-            result.append(uchars + lastCopiedFrom, i - lastCopiedFrom);
-            append(result, ltEntity);
-            lastCopiedFrom = i + 1;
-            break;
-        case '>':
-            result.append(uchars + lastCopiedFrom, i - lastCopiedFrom);
-            append(result, gtEntity);
-            lastCopiedFrom = i + 1;
-            break;
-        case '"':
-            result.append(uchars + lastCopiedFrom, i - lastCopiedFrom);
-            append(result, quotEntity);
-            lastCopiedFrom = i + 1;
-            break;
-        case noBreakSpace:
-            if (!escapeNBSP)
-                break;
-            result.append(uchars + lastCopiedFrom, i - lastCopiedFrom);
-            append(result, nbspEntity);
-            lastCopiedFrom = i + 1;
-        }
-    }
-    
-    result.append(uchars + lastCopiedFrom, len - lastCopiedFrom);
-}
-
-static void appendEscapedContent(Vector<UChar>& result, pair<const UChar*, size_t> range, bool escapeNBSP)
-{
-    const UChar* uchars = range.first;
-    unsigned len = range.second;
-    unsigned lastCopiedFrom = 0;
-    
-    DEFINE_STATIC_LOCAL(const String, ampEntity, ("&amp;"));
-    DEFINE_STATIC_LOCAL(const String, gtEntity, ("&gt;"));
-    DEFINE_STATIC_LOCAL(const String, ltEntity, ("&lt;"));
-    DEFINE_STATIC_LOCAL(const String, nbspEntity, ("&nbsp;"));
-
-    for (unsigned i = 0; i < len; ++i) {
-        UChar c = uchars[i];
-        switch (c) {
-        case '&':
-            result.append(uchars + lastCopiedFrom, i - lastCopiedFrom);
-            append(result, ampEntity);
-            lastCopiedFrom = i + 1;
-            break;
-        case '<':
-            result.append(uchars + lastCopiedFrom, i - lastCopiedFrom);
-            append(result, ltEntity);
-            lastCopiedFrom = i + 1;
-            break;
-        case '>':
-            result.append(uchars + lastCopiedFrom, i - lastCopiedFrom);
-            append(result, gtEntity);
-            lastCopiedFrom = i + 1;
-            break;
-        case noBreakSpace:
-            if (!escapeNBSP)
-                break;
-            result.append(uchars + lastCopiedFrom, i - lastCopiedFrom);
-            append(result, nbspEntity);
-            lastCopiedFrom = i + 1;
-            break;
-        }
-    }
-    
-    result.append(uchars + lastCopiedFrom, len - lastCopiedFrom);
-}    
-
-String MarkupAccumulator::escapeContentText(const String& in, bool escapeNBSP)
-{
-    Vector<UChar> buffer;
-    appendEscapedContent(buffer, make_pair(in.characters(), in.length()), escapeNBSP);
-    return String::adopt(buffer);
+    appendCharactersReplacingEntities(result, attribute.characters(), attribute.length(),
+        documentIsHTML ? EntityMaskInHTMLAttributeValue : EntityMaskInAttributeValue);
 }
 
 void MarkupAccumulator::appendQuotedURLAttributeValue(Vector<UChar>& result, const String& urlString)
@@ -355,7 +314,7 @@ String MarkupAccumulator::stringValueForRange(const Node* node, const Range* ran
     return str;
 }
 
-pair<const UChar*, size_t> MarkupAccumulator::ucharRange(const Node* node, const Range* range)
+void MarkupAccumulator::appendNodeValue(Vector<UChar>& out, const Node* node, const Range* range, EntityMask entityMask)
 {
     String str = node->nodeValue();
     const UChar* characters = str.characters();
@@ -372,12 +331,7 @@ pair<const UChar*, size_t> MarkupAccumulator::ucharRange(const Node* node, const
         }
     }
     
-    return make_pair(characters, length);
-}
-
-void MarkupAccumulator::appendUCharRange(Vector<UChar>& result, const pair<const UChar*, size_t>& range)
-{
-    result.append(range.first, range.second);
+    appendCharactersReplacingEntities(out, characters, length, entityMask);
 }
 
 String MarkupAccumulator::renderedText(const Node* node, const Range* range)
@@ -492,19 +446,20 @@ void MarkupAccumulator::appendText(Vector<UChar>& out, Text* text)
         parentName = &static_cast<Element*>(text->parentElement())->tagQName();
 
     if (parentName && (*parentName == scriptTag || *parentName == styleTag || *parentName == xmpTag)) {
-        appendUCharRange(out, ucharRange(text, m_range));
+        appendNodeValue(out, text, m_range, EntityMaskInCDATA);
         return;
     }
 
     if (!shouldAnnotate() || (parentName && *parentName == textareaTag)) {
-        appendEscapedContent(out, ucharRange(text, m_range), text->document()->isHTMLDocument());
+        appendNodeValue(out, text, m_range, text->document()->isHTMLDocument() ? EntityMaskInHTMLPCDATA : EntityMaskInPCDATA);
         return;
     }
 
     bool useRenderedText = !enclosingNodeWithTag(Position(text, 0), selectTag);
-    String markup = escapeContentText(useRenderedText ? renderedText(text, m_range) : stringValueForRange(text, m_range), false);
-    markup = convertHTMLTextToInterchangeFormat(markup, text);
-    append(out, markup);
+    String content = useRenderedText ? renderedText(text, m_range) : stringValueForRange(text, m_range);
+    Vector<UChar> buffer;
+    appendCharactersReplacingEntities(buffer, content.characters(), content.length(), EntityMaskInPCDATA);
+    append(out, convertHTMLTextToInterchangeFormat(String::adopt(buffer), text));
 }
 
 void MarkupAccumulator::appendComment(Vector<UChar>& out, const String& comment)
@@ -1355,7 +1310,7 @@ String urlToMarkup(const KURL& url, const String& title)
     append(markup, "<a href=\"");
     append(markup, url.string());
     append(markup, "\">");
-    appendEscapedContent(markup, make_pair(title.characters(), title.length()), false);
+    appendCharactersReplacingEntities(markup, title.characters(), title.length(), EntityMaskInPCDATA);
     append(markup, "</a>");
     return String::adopt(markup);
 }

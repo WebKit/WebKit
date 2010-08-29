@@ -1,3 +1,25 @@
+2010-08-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        The logic to escape entities in appendEscapedContent and appendAttributeValue should be merged
+        https://bugs.webkit.org/show_bug.cgi?id=44831
+
+        Added appendCharactersReplacingEntities to escape &, <, >, ", and nbsp based on the mask.
+        Removed escapeContentText because it was only used in appendText, which now directly calls
+        appendCharactersReplacingEntities. Replaced appendEscapedContent, ucharRange, and appendUCharRange
+        by appendNodeValue.
+
+        No new tests are added since this is a cleanup.
+
+        * editing/markup.cpp:
+        (WebCore::):
+        (WebCore::appendCharactersReplacingEntities): Added.
+        (WebCore::MarkupAccumulator::appendAttributeValue): Calls appendCharactersReplacingEntities.
+        (WebCore::MarkupAccumulator::appendNodeValue): Added.
+        (WebCore::MarkupAccumulator::appendText): Calls appendNodeValue and appendCharactersReplacingEntities.
+        (WebCore::urlToMarkup): Calls escapeEntities.
+
 2010-08-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.
