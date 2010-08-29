@@ -73,11 +73,11 @@ private:
     // style-removal helpers
     bool removeInlineStyleFromElement(CSSMutableStyleDeclaration*, HTMLElement*, InlineStyleRemovalMode = RemoveAttributesAndElements);
     inline bool shouldRemoveInlineStyleFromElement(CSSMutableStyleDeclaration* style, HTMLElement* element) {return removeInlineStyleFromElement(style, element, RemoveNone);}
-    bool removeImplicitlyStyledElement(CSSMutableStyleDeclaration*, HTMLElement*, InlineStyleRemovalMode);
+    bool removeImplicitlyStyledElement(CSSMutableStyleDeclaration*, HTMLElement*, InlineStyleRemovalMode, CSSMutableStyleDeclaration* extractedStyle = 0);
     void replaceWithSpanOrRemoveIfWithoutAttributes(HTMLElement*&);
     bool removeCSSStyle(CSSMutableStyleDeclaration*, HTMLElement*, InlineStyleRemovalMode = RemoveAttributesAndElements);
     HTMLElement* highestAncestorWithConflictingInlineStyle(CSSMutableStyleDeclaration*, Node*);
-    PassRefPtr<CSSMutableStyleDeclaration> extractInlineStyleToPushDown(Node*, bool isStyledElement, const Vector<int>&);
+    PassRefPtr<CSSMutableStyleDeclaration> extractInlineStyleToPushDown(CSSMutableStyleDeclaration*, Node*, bool isStyledElement);
     void applyInlineStyleToPushDown(Node*, CSSMutableStyleDeclaration *style);
     void pushDownInlineStyleAroundNode(CSSMutableStyleDeclaration*, Node*);
     void removeInlineStyle(PassRefPtr<CSSMutableStyleDeclaration>, const Position& start, const Position& end);

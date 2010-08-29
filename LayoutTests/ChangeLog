@@ -1,3 +1,25 @@
+2010-08-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        cannot remove text-decoration when style is added by u or s
+        https://bugs.webkit.org/show_bug.cgi?id=44560
+
+        Added a test to ensure WebKit removes text-decorations added by u or s
+        and pushes down implicit styles properly into descendent nodes.
+
+        * editing/style/push-down-implicit-styles-expected.txt: Added.
+        * editing/style/push-down-implicit-styles.html: Added.
+        * editing/style/script-tests/push-down-implicit-styles.js: Added.
+        (testSingleToggle):
+        (selectAll):
+        (selectTest):
+        (selectSecondWord):
+        (selectLastTwoWords):
+        * editing/style/typing-style-003-expected.txt: Negation of inline
+        styles are now done by pushing down implicitly styled elements rather than
+        canceling them by inline style declarations.
+
 2010-08-28  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.

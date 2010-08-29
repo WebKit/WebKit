@@ -31,23 +31,23 @@ EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of #text > I > B > D
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 1 of #text > SPAN > I > B > DIV > BODY > HTML > #document to 1 of #text > SPAN > I > B > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 1 of #text > I > DIV > BODY > HTML > #document to 1 of #text > I > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > SPAN > I > B > DIV > BODY > HTML > #document to 1 of #text > SPAN > I > B > DIV > BODY > HTML > #document toDOMRange:range from 2 of #text > SPAN > I > B > DIV > BODY > HTML > #document to 2 of #text > SPAN > I > B > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > I > DIV > BODY > HTML > #document to 1 of #text > I > DIV > BODY > HTML > #document toDOMRange:range from 2 of #text > I > DIV > BODY > HTML > #document to 2 of #text > I > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of #text > SPAN > I > B > DIV > BODY > HTML > #document to 2 of #text > SPAN > I > B > DIV > BODY > HTML > #document toDOMRange:range from 3 of #text > SPAN > I > B > DIV > BODY > HTML > #document to 3 of #text > SPAN > I > B > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of #text > I > DIV > BODY > HTML > #document to 2 of #text > I > DIV > BODY > HTML > #document toDOMRange:range from 3 of #text > I > DIV > BODY > HTML > #document to 3 of #text > I > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 1 of #text > SPAN > SPAN > I > B > DIV > BODY > HTML > #document to 1 of #text > SPAN > SPAN > I > B > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 1 of #text > DIV > BODY > HTML > #document to 1 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > SPAN > SPAN > I > B > DIV > BODY > HTML > #document to 1 of #text > SPAN > SPAN > I > B > DIV > BODY > HTML > #document toDOMRange:range from 2 of #text > SPAN > SPAN > I > B > DIV > BODY > HTML > #document to 2 of #text > SPAN > SPAN > I > B > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > DIV > BODY > HTML > #document to 1 of #text > DIV > BODY > HTML > #document toDOMRange:range from 2 of #text > DIV > BODY > HTML > #document to 2 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of #text > SPAN > SPAN > I > B > DIV > BODY > HTML > #document to 2 of #text > SPAN > SPAN > I > B > DIV > BODY > HTML > #document toDOMRange:range from 3 of #text > SPAN > SPAN > I > B > DIV > BODY > HTML > #document to 3 of #text > SPAN > SPAN > I > B > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of #text > DIV > BODY > HTML > #document to 2 of #text > DIV > BODY > HTML > #document toDOMRange:range from 3 of #text > DIV > BODY > HTML > #document to 3 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 xxxxxxxxxxxxxxx
@@ -63,10 +63,10 @@ execTypeCharacterCommand: xxx<b>xxx<i>x</i></b><span id="test"></span>
 execTypeCharacterCommand: xxx<b>xxx<i>xx</i></b><span id="test"></span>
 execTypeCharacterCommand: xxx<b>xxx<i>xxx</i></b><span id="test"></span>
 execBoldCommand: xxx<b>xxx<i>xxx</i></b><span id="test"></span>
-execTypeCharacterCommand: xxx<b>xxx<i>xxx<span class="Apple-style-span" style="font-weight: normal;">x</span></i></b><span id="test"></span>
-execTypeCharacterCommand: xxx<b>xxx<i>xxx<span class="Apple-style-span" style="font-weight: normal;">xx</span></i></b><span id="test"></span>
-execTypeCharacterCommand: xxx<b>xxx<i>xxx<span class="Apple-style-span" style="font-weight: normal;">xxx</span></i></b><span id="test"></span>
-execItalicCommand: xxx<b>xxx<i>xxx<span class="Apple-style-span" style="font-weight: normal;">xxx</span></i></b><span id="test"></span>
-execTypeCharacterCommand: xxx<b>xxx<i>xxx<span class="Apple-style-span" style="font-weight: normal;">xxx<span class="Apple-style-span" style="font-style: normal;">x</span></span></i></b><span id="test"></span>
-execTypeCharacterCommand: xxx<b>xxx<i>xxx<span class="Apple-style-span" style="font-weight: normal;">xxx<span class="Apple-style-span" style="font-style: normal;">xx</span></span></i></b><span id="test"></span>
-execTypeCharacterCommand: xxx<b>xxx<i>xxx<span class="Apple-style-span" style="font-weight: normal;">xxx<span class="Apple-style-span" style="font-style: normal;">xxx</span></span></i></b><span id="test"></span>
+execTypeCharacterCommand: xxx<b>xxx</b><i><b>xxx</b>x</i><span id="test"></span>
+execTypeCharacterCommand: xxx<b>xxx</b><i><b>xxx</b>xx</i><span id="test"></span>
+execTypeCharacterCommand: xxx<b>xxx</b><i><b>xxx</b>xxx</i><span id="test"></span>
+execItalicCommand: xxx<b>xxx</b><i><b>xxx</b>xxx</i><span id="test"></span>
+execTypeCharacterCommand: xxx<b>xxx</b><i><b>xxx</b>xxx</i>x<span id="test"></span>
+execTypeCharacterCommand: xxx<b>xxx</b><i><b>xxx</b>xxx</i>xx<span id="test"></span>
+execTypeCharacterCommand: xxx<b>xxx</b><i><b>xxx</b>xxx</i>xxx<span id="test"></span>

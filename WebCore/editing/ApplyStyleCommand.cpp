@@ -1197,15 +1197,17 @@ static const HTMLEquivalent HTMLEquivalents[] = {
     { CSSPropertyDirection, false, CSSValueInvalid, 0, &dirAttr, ShouldNotBePushedDown },
 };
 
-bool ApplyStyleCommand::removeImplicitlyStyledElement(CSSMutableStyleDeclaration* style, HTMLElement* element, InlineStyleRemovalMode mode)
+bool ApplyStyleCommand::removeImplicitlyStyledElement(CSSMutableStyleDeclaration* style, HTMLElement* element, InlineStyleRemovalMode mode, CSSMutableStyleDeclaration* extractedStyle)
 {
+    // Current implementation does not support stylePushedDown when mode == RemoveNone because of early exit.
+    ASSERT(!extractedStyle || mode != RemoveNone);
     bool removed = false;
     for (size_t i = 0; i < sizeof(HTMLEquivalents) / sizeof(HTMLEquivalent); i++) {
         const HTMLEquivalent& equivalent = HTMLEquivalents[i];
         ASSERT(equivalent.element || equivalent.attribute);
-        if (equivalent.element && !element->hasTagName(*equivalent.element))
-            continue;
-        if (equivalent.attribute && !element->hasAttribute(*equivalent.attribute))
+        if (extractedStyle && equivalent.pushDownType == ShouldNotBePushedDown
+            || equivalent.element && !element->hasTagName(*equivalent.element)
+            || equivalent.attribute && !element->hasAttribute(*equivalent.attribute))
             continue;
 
         RefPtr<CSSValue> styleValue = style->getPropertyCSSValue(equivalent.propertyID);
@@ -1217,6 +1219,13 @@ bool ApplyStyleCommand::removeImplicitlyStyledElement(CSSMutableStyleDeclaration
             continue; // If CSS value assumes CSSValueList, then only skip if the value was present in style to apply.
         else if (styleValue->cssText() == mapValue->cssText())
             continue; // If CSS value is primitive, then skip if they are equal.
+
+        if (extractedStyle) {
+            if (equivalent.primitiveId == CSSValueInvalid)
+                extractedStyle->setProperty(equivalent.propertyID, element->getAttribute(*equivalent.attribute));
+            else
+                extractedStyle->setProperty(equivalent.propertyID, mapValue->cssText());
+        }
 
         if (mode == RemoveNone)
             return true;
@@ -1314,7 +1323,7 @@ HTMLElement* ApplyStyleCommand::highestAncestorWithConflictingInlineStyle(CSSMut
     return result;
 }
 
-PassRefPtr<CSSMutableStyleDeclaration> ApplyStyleCommand::extractInlineStyleToPushDown(Node* node, bool isStyledElement, const Vector<int>& properties)
+PassRefPtr<CSSMutableStyleDeclaration> ApplyStyleCommand::extractInlineStyleToPushDown(CSSMutableStyleDeclaration* styleToApply, Node* node, bool isStyledElement)
 {
     ASSERT(node);
     ASSERT(node->isElementNode());
@@ -1330,8 +1339,16 @@ PassRefPtr<CSSMutableStyleDeclaration> ApplyStyleCommand::extractInlineStyleToPu
         return style.release();
     }
 
-    if (!style)
-        return 0;
+    if (!style) {
+        style = CSSMutableStyleDeclaration::create();
+        removeImplicitlyStyledElement(styleToApply, element, RemoveAttributesAndElements, style.get());
+        return style.release();
+    }
+
+    Vector<int> properties;
+    CSSMutableStyleDeclaration::const_iterator end = styleToApply->end();
+    for (CSSMutableStyleDeclaration::const_iterator it = styleToApply->begin(); it != end; ++it)
+        properties.append(it->id());
 
     style = style->copyPropertiesInSet(properties.data(), properties.size());
     for (size_t i = 0; i < properties.size(); i++) {
@@ -1346,6 +1363,8 @@ PassRefPtr<CSSMutableStyleDeclaration> ApplyStyleCommand::extractInlineStyleToPu
     if (isSpanWithoutAttributesOrUnstyleStyleSpan(element))
         removeNodePreservingChildren(element);
 
+    removeImplicitlyStyledElement(styleToApply, element, RemoveAttributesAndElements, style.get());
+
     return style.release();
 }
 
@@ -1356,15 +1375,14 @@ void ApplyStyleCommand::applyInlineStyleToPushDown(Node* node, CSSMutableStyleDe
     if (!style || !style->length() || !node->renderer())
         return;
 
-    // Since addInlineStyleIfNeeded can't add styles to block-flow render objects, add style attribute instead.
-    // FIXME: applyInlineStyleToRange should be used here instead.
-    if ((node->renderer()->isBlockFlow() || node->childNodeCount()) && node->isHTMLElement()) {
+    RefPtr<CSSMutableStyleDeclaration> newInlineStyle = style;
+    if (node->isHTMLElement()) {
         HTMLElement* element = static_cast<HTMLElement*>(node);
         CSSMutableStyleDeclaration* existingInlineStyle = element->inlineStyleDecl();
 
         // Avoid overriding existing styles of node
         if (existingInlineStyle) {
-            RefPtr<CSSMutableStyleDeclaration> newInlineStyle = existingInlineStyle->copy();
+            newInlineStyle = existingInlineStyle->copy();
             CSSMutableStyleDeclaration::const_iterator end = style->end();
             for (CSSMutableStyleDeclaration::const_iterator it = style->begin(); it != end; ++it) {
                 ExceptionCode ec;
@@ -1391,22 +1409,23 @@ void ApplyStyleCommand::applyInlineStyleToPushDown(Node* node, CSSMutableStyleDe
                     }
                 }
             }
+        }
+    }
 
-            setNodeAttribute(element, styleAttr, newInlineStyle->cssText());
-        } else
-            setNodeAttribute(element, styleAttr, style->cssText());
-
+    // Since addInlineStyleIfNeeded can't add styles to block-flow render objects, add style attribute instead.
+    // FIXME: applyInlineStyleToRange should be used here instead.
+    if ((node->renderer()->isBlockFlow() || node->childNodeCount()) && node->isHTMLElement()) {
+        setNodeAttribute(static_cast<HTMLElement*>(node), styleAttr, newInlineStyle->cssText());
         return;
     }
 
     if (node->renderer()->isText() && static_cast<RenderText*>(node->renderer())->isAllCollapsibleWhitespace())
         return;
 
-    // FIXME: addInlineStyleIfNeeded may override the style of node
     // We can't wrap node with the styled element here because new styled element will never be removed if we did.
     // If we modified the child pointer in pushDownInlineStyleAroundNode to point to new style element
     // then we fall into an infinite loop where we keep removing and adding styled element wrapping node.
-    addInlineStyleIfNeeded(style, node, node, DoNotAddStyledElement);
+    addInlineStyleIfNeeded(newInlineStyle.get(), node, node, DoNotAddStyledElement);
 }
 
 void ApplyStyleCommand::pushDownInlineStyleAroundNode(CSSMutableStyleDeclaration* style, Node* targetNode)
@@ -1414,11 +1433,6 @@ void ApplyStyleCommand::pushDownInlineStyleAroundNode(CSSMutableStyleDeclaration
     HTMLElement* highestAncestor = highestAncestorWithConflictingInlineStyle(style, targetNode);
     if (!highestAncestor)
         return;
-
-    Vector<int> properties;
-    CSSMutableStyleDeclaration::const_iterator end = style->end();
-    for (CSSMutableStyleDeclaration::const_iterator it = style->begin(); it != end; ++it)
-        properties.append(it->id());
 
     // The outer loop is traversing the tree vertically from highestAncestor to targetNode
     Node* current = highestAncestor;
@@ -1431,7 +1445,7 @@ void ApplyStyleCommand::pushDownInlineStyleAroundNode(CSSMutableStyleDeclaration
         RefPtr<StyledElement> styledElement;
         if (current->isStyledElement() && m_styledInlineElement && current->hasTagName(m_styledInlineElement->tagQName()))
             styledElement = static_cast<StyledElement*>(current);
-        RefPtr<CSSMutableStyleDeclaration> styleToPushDown = extractInlineStyleToPushDown(current, styledElement, properties);
+        RefPtr<CSSMutableStyleDeclaration> styleToPushDown = extractInlineStyleToPushDown(style, current, styledElement);
 
         // The inner loop will go through children on each level
         // FIXME: we should aggregate inline child elements together so that we don't wrap each child separately.
@@ -1483,6 +1497,13 @@ void ApplyStyleCommand::removeInlineStyle(PassRefPtr<CSSMutableStyleDeclaration>
     }
 
     Position pushDownStart = start.downstream();
+    // If the pushDownStart is at the end of a text node, then this node is not fully selected.
+    // Move it to the next deep quivalent position to avoid removing the style from this node.
+    // e.g. if pushDownStart was at Position("hello", 5) in <b>hello<div>world</div></b>, we want Position("world", 0) instead.
+    Node* pushDownStartContainer = pushDownStart.containerNode();
+    if (pushDownStartContainer && pushDownStartContainer->isTextNode()
+        && pushDownStart.computeOffsetInContainerNode() == pushDownStartContainer->maxCharacterOffset())
+        pushDownStart = nextVisuallyDistinctCandidate(pushDownStart);
     Position pushDownEnd = end.upstream();
     pushDownInlineStyleAroundNode(style.get(), pushDownStart.node());
     pushDownInlineStyleAroundNode(style.get(), pushDownEnd.node());

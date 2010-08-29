@@ -1,3 +1,37 @@
+2010-08-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        cannot remove text-decoration when style is added by u or s
+        https://bugs.webkit.org/show_bug.cgi?id=44560
+
+        The bug was caused by WebKit not pushing down implicitly added styles to descendent nodes.
+        Fixed the bug by pushing down all elements that implicitly add style.
+
+        extractInlineStyleToPushDown now calls removeImplicitlyStyledElement, which was modified to extract
+        the style implicitly added by the element to extractStyle.
+
+        This revealed a bug in applyInlineStyleToPushDown where applyInlineStyleIfNeeded could add
+        an implicitly styled element inside an element with a conflicting style, thereby overriding the style of the element.
+        Fixed this by extending the logic to honor the existing inline style declaration used in
+        the case of rewriting inline style declaration to all cases including the one calling addInlineStyleIfNeeded.
+
+        Also fixed a bug in removeInlineStyle where pushDownInlineStyleAroundNode was called on a text node
+        outside of selection if start was at the end of the text node.
+
+        Test: editing/style/push-down-implicit-styles.html
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::removeImplicitlyStyledElement): Added extractedStyle, which receives
+        the style implicitly added by the element being removed.
+        (WebCore::ApplyStyleCommand::extractInlineStyleToPushDown): Calls removeImplicitlyStyledElement
+        to remove the implicitly styled element and extract the inline style added by the element.
+        (WebCore::ApplyStyleCommand::applyInlineStyleToPushDown): Fixed a bug that addInlineStyleIfNeeded
+        could override the inline style declaration style of the node.
+        (WebCore::ApplyStyleCommand::pushDownInlineStyleAroundNode): Uses extractInlineStyleToPushDown
+        (WebCore::ApplyStyleCommand::removeInlineStyle): See above.
+        * editing/ApplyStyleCommand.h: Prototype changes.
+
 2010-08-27  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Adam Barth.
