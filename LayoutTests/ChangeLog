@@ -1,3 +1,9 @@
+2010-08-28  Sam Weinig  <sam@webkit.org>
+
+        Update WebKit2 skipped list.
+
+        * platform/mac-wk2/Skipped:
+
 2010-08-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.

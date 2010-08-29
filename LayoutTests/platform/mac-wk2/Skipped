@@ -61,7 +61,6 @@ fast/loader/null-request-after-willSendRequest.html
 
 # Support layoutTestController.layerTreeAsText in WebKitTestRunner
 # <https://bugs.webkit.org/show_bug.cgi?id=42145>
-compositing/video/video-poster.html
 compositing/animation/animation-compositing.html
 compositing/geometry/clip.html
 compositing/geometry/limit-layer-bounds-clipping-ancestor.html
@@ -95,11 +94,13 @@ compositing/plugins/composited-plugin.html
 compositing/plugins/large-to-small-composited-plugin.html
 compositing/plugins/small-to-large-composited-plugin.html
 compositing/tiling/compositing/iframes/become-overlapped-iframe.html
+compositing/tiling/crash-reparent-tiled-layer.html
 compositing/tiling/huge-layer-add-remove-child.html
 compositing/tiling/huge-layer-resize.html
 compositing/tiling/huge-layer-with-layer-children-resize.html
 compositing/tiling/huge-layer-with-layer-children.html
 compositing/tiling/huge-layer.html
+compositing/video/video-poster.html
 
 # Uncategorized editing failures
 editing/deleting/delete-by-word-001.html
@@ -120,8 +121,6 @@ editing/style/style-boundary-005.html
 
 # WebKitTestRunner needs an implementation of eventSender
 # <https://bugs.webkit.org/show_bug.cgi?id=42194>
-svg/custom/absolute-sized-content-with-resources.xhtml
-fast/events/inputText-never-fired-on-keydown-cancel.html
 compositing/iframes/layout-on-compositing-change.html
 editing/deleting/5390681-2.html
 editing/deleting/5729680.html
@@ -297,6 +296,8 @@ fast/events/frame-click-focus.html
 fast/events/frame-detached-in-mousedown.html
 fast/events/imagemap-norender-crash.html
 fast/events/input-image-scrolled-x-y.html
+fast/events/input-tab-focus-no-duplicate-events.html
+fast/events/inputText-never-fired-on-keydown-cancel.html
 fast/events/js-keyboard-event-creation.html
 fast/events/key-events-in-input-button.html
 fast/events/key-events-in-input-text.html
@@ -387,6 +388,7 @@ fast/forms/input-number-keyoperation.html
 fast/forms/input-radio-checked-tab.html
 fast/forms/input-readonly-autoscroll.html
 fast/forms/input-select-on-click.html
+fast/forms/input-spinbutton-capturing.html
 fast/forms/input-text-click-inside.html
 fast/forms/input-text-click-outside.html
 fast/forms/input-text-double-click.html
@@ -534,6 +536,7 @@ svg/animations/animate-gradient-transform.html
 svg/animations/animate-keySplines.html
 svg/animations/animate-points.html
 svg/animations/animVal-basics.html
+svg/custom/absolute-sized-content-with-resources.xhtml
 svg/custom/circle-move-invalidation.svg
 svg/custom/clip-path-child-changes.svg
 svg/custom/clip-path-href-changes.svg
@@ -541,10 +544,10 @@ svg/custom/clip-path-id-changes.svg
 svg/custom/clip-path-units-changes.svg
 svg/custom/deep-dynamic-updates.svg
 svg/custom/foreignObject-crash-on-hover.xml
-svg/custom/gradient-attr-update.svg
 svg/custom/getscreenctm-in-scrollable-div-area-nested.xhtml
 svg/custom/getscreenctm-in-scrollable-div-area.xhtml
 svg/custom/getscreenctm-in-scrollable-svg-area.xhtml
+svg/custom/gradient-attr-update.svg
 svg/custom/hit-test-path-stroke.svg
 svg/custom/hit-test-path.svg
 svg/custom/hit-test-unclosed-subpaths.svg
@@ -960,6 +963,8 @@ fast/canvas/webgl/canvas-test.html
 fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias.html
 fast/canvas/webgl/context-attributes.html
 fast/canvas/webgl/copy-tex-image-and-sub-image-2d.html
+fast/canvas/webgl/css-webkit-canvas-repaint.html
+fast/canvas/webgl/css-webkit-canvas.html
 fast/canvas/webgl/draw-arrays-out-of-bounds.html
 fast/canvas/webgl/draw-elements-out-of-bounds.html
 fast/canvas/webgl/error-reporting.html
@@ -1089,6 +1094,7 @@ editing/pasteboard/paste-4038267-fix.html
 editing/pasteboard/paste-4039777-fix.html
 editing/pasteboard/paste-blockquote-before-blockquote.html
 editing/pasteboard/paste-double-nested-blockquote-before-blockquote.html
+editing/pasteboard/paste-event-only-once.html
 editing/pasteboard/paste-line-endings-001.html
 editing/pasteboard/paste-line-endings-002.html
 editing/pasteboard/paste-line-endings-003.html
@@ -2021,6 +2027,13 @@ http/tests/xmlhttprequest/re-login.html
 
 # WebKit2 needs showModalDialog
 fast/harness/show-modal-dialog.html
+
+# WebKit2 needs fullscreen support
+fullscreen/full-screen-css.html
+fullscreen/full-screen-remove-ancestor.html
+fullscreen/full-screen-remove.html
+fullscreen/full-screen-request.html
+fullscreen/full-screen-twice.html
 
 # WebKit2 needs to support synchronous creation of about:blank/data:url frames
 editing/selection/DOMSelection-crossing-document.html
