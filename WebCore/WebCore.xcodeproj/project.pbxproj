@@ -4677,7 +4677,7 @@
 		BC5EB8C40E82031B00B25965 /* ShadowData.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB8C20E82031B00B25965 /* ShadowData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC5EB9500E82056B00B25965 /* CounterDirectives.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC5EB94E0E82056B00B25965 /* CounterDirectives.cpp */; };
 		BC5EB9510E82056B00B25965 /* CounterDirectives.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB94F0E82056B00B25965 /* CounterDirectives.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BC5EB9790E82069200B25965 /* CounterContent.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB9780E82069200B25965 /* CounterContent.h */; };
+		BC5EB9790E82069200B25965 /* CounterContent.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB9780E82069200B25965 /* CounterContent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC5EB9800E82072500B25965 /* ContentData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC5EB97E0E82072500B25965 /* ContentData.cpp */; };
 		BC5EB9810E82072500B25965 /* ContentData.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB97F0E82072500B25965 /* ContentData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC5EBA100E823E4700B25965 /* KeyframeList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC5EBA0E0E823E4700B25965 /* KeyframeList.cpp */; };

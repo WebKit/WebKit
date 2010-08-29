@@ -1,3 +1,9 @@
+2010-08-29  Darin Adler  <darin@apple.com>
+
+        Try to fix Mac build.
+
+        * WebCore.xcodeproj/project.pbxproj: Mark CounterContent.h Private instead of Project.
+
 2010-08-29  Pawel Hajdan  <phajdan.jr@chromium.org>
 
         Reviewed by Darin Adler.
