@@ -1,3 +1,57 @@
+2010-08-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+
+        When properties are missing from animation keyframes, interpolate between those keyframes that specify them
+        https://bugs.webkit.org/show_bug.cgi?id=40794
+        
+        When a property does not appear in all keyframes of a keyframe animation, we currently use the
+        value of that property from the unanimated style. That forces the author to use additional
+        keyframes for properties that need to "skip a keyframe", which is laborious.
+        
+        With this change, properties are interpolated between the keyframes in which they appear.
+        This is equivalent to splitting each property out into its own set of keyframes.
+
+        Tests: animations/missing-keyframe-properties-repeating.html
+               animations/missing-keyframe-properties-timing-function.html
+               animations/missing-keyframe-properties.html
+
+        * css/CSSStyleSelector.h:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::styleForKeyframe): Pass a KeyframeValue in so that we can
+        collect which properties are represented per keyframe.
+        (WebCore::CSSStyleSelector::keyframeStylesForAnimation): Keyframes are inserted into a
+        KeyframeList by object now, rather than by key and style.
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::progress): Use AnimationDirectionAlternate for readability.
+
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::fetchIntervalEndpointsForProperty): Renamed from getKeyframeAnimationInterval.
+        Use fractionalTime etc to match AnimationBase::progress(), and do lookups per-property.
+        Simplify the code that finds the relevant keyframe to do less work.
+        (WebCore::KeyframeAnimation::animate): Call fetchIntervalEndpointsForProperty() for each property, rather than just once for the
+        entire keyframe.
+        (WebCore::KeyframeAnimation::getAnimatedStyle): Ditto.
+        (WebCore::KeyframeAnimation::hasAnimationForProperty): FIXME comment.
+
+        * page/animation/KeyframeAnimation.h: Rename getKeyframeAnimationInterval() to fetchIntervalEndpointsForProperty().
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::startAnimation): For hardware animations, only insert values
+        for keyframes which contain the property.
+
+        (WebCore::KeyframeList::KeyframeList): insert() takes a KeyframeValue now.
+        * rendering/style/KeyframeList.cpp:
+        (WebCore::KeyframeList::operator==):
+        (WebCore::KeyframeList::insert): Fix insert/replace logic, and ensure we maintain the
+        m_properties hash.
+
+        * rendering/style/KeyframeList.h:
+        (WebCore::KeyframeValue::KeyframeValue): Make members private, with accessors.
+        Add a m_properties HashSet for the properties animated in this keyframe.
+
+
 2010-08-29  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Darin Adler.

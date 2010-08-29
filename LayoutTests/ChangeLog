@@ -1,3 +1,21 @@
+2010-08-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+
+        When properties are missing from animation keyframes, interpolate between those keyframes that specify them
+        https://bugs.webkit.org/show_bug.cgi?id=40794
+
+        Testcases for keyframes with missing properties; repeating and non-repeating.
+
+        * animations/missing-from-to-transforms.html:
+        * animations/missing-from-to.html:
+        * animations/missing-keyframe-properties-expected.txt: Added.
+        * animations/missing-keyframe-properties-repeating-expected.txt: Added.
+        * animations/missing-keyframe-properties-repeating.html: Added.
+        * animations/missing-keyframe-properties-timing-function-expected.txt: Added.
+        * animations/missing-keyframe-properties-timing-function.html: Added.
+        * animations/missing-keyframe-properties.html: Added.
+
 2010-08-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

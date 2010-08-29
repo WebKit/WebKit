@@ -89,7 +89,7 @@
     ];
 
     runAnimationTest(expectedValues, function() {
-      if (layoutTestController) {
+      if (window.layoutTestController) {
           if (layoutTestController.pauseAnimationAtTimeOnElementWithId("anim5", 0.1, "box5"))
               result += "FAIL - box5 animation was running<br>";
           else 

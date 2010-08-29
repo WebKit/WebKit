@@ -43,10 +43,10 @@ bool KeyframeList::operator==(const KeyframeList& o) const
 
     Vector<KeyframeValue>::const_iterator it2 = o.m_keyframes.begin();
     for (Vector<KeyframeValue>::const_iterator it1 = m_keyframes.begin(); it1 != m_keyframes.end(); ++it1) {
-        if (it1->m_key != it2->m_key)
+        if (it1->key() != it2->key())
             return false;
-        const RenderStyle& style1 = *it1->m_style;
-        const RenderStyle& style2 = *it2->m_style;
+        const RenderStyle& style1 = *it1->style();
+        const RenderStyle& style2 = *it2->style();
         if (style1 != style2)
             return false;
         ++it2;
@@ -55,34 +55,43 @@ bool KeyframeList::operator==(const KeyframeList& o) const
     return true;
 }
 
-void KeyframeList::insert(float key, PassRefPtr<RenderStyle> style)
+void KeyframeList::insert(const KeyframeValue& keyframe)
 {
-    if (key < 0 || key > 1)
+    if (keyframe.key() < 0 || keyframe.key() > 1)
         return;
 
-    int index = -1;
-    
+    bool inserted = false;
+    bool replaced = false;
     for (size_t i = 0; i < m_keyframes.size(); ++i) {
-        if (m_keyframes[i].m_key == key) {
-            index = (int) i;
+        if (m_keyframes[i].key() == keyframe.key()) {
+            m_keyframes[i] = keyframe;
+            replaced = true;
             break;
         }
-        if (m_keyframes[i].m_key > key) {
+
+        if (m_keyframes[i].key() > keyframe.key()) {
             // insert before
-            m_keyframes.insert(i, KeyframeValue());
-            index = (int) i;
+            m_keyframes.insert(i, keyframe);
+            inserted = true;
             break;
         }
     }
     
-    if (index < 0) {
-        // append
-        index = (int) m_keyframes.size();
-        m_keyframes.append(KeyframeValue());
+    if (!replaced && !inserted)
+        m_keyframes.append(keyframe);
+
+    if (replaced) {
+        // We have to rebuild the properties list from scratch.
+        m_properties.clear();
+        for (Vector<KeyframeValue>::const_iterator it = m_keyframes.begin(); it != m_keyframes.end(); ++it) {
+            const KeyframeValue& currKeyframe = *it;
+            for (HashSet<int>::const_iterator it = currKeyframe.properties().begin(); it != currKeyframe.properties().end(); ++it)
+                m_properties.add(*it);
+        }
+    } else {
+        for (HashSet<int>::const_iterator it = keyframe.properties().begin(); it != keyframe.properties().end(); ++it)
+            m_properties.add(*it);
     }
-    
-    m_keyframes[index].m_key = key;
-    m_keyframes[index].m_style = style;
 }
 
 } // namespace WebCore

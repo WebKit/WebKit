@@ -59,6 +59,7 @@ class Frame;
 class FrameView;
 class KURL;
 class KeyframeList;
+class KeyframeValue;
 class MediaQueryEvaluator;
 class Node;
 class Settings;
@@ -114,7 +115,7 @@ public:
 
         RenderStyle* style() const { return m_style.get(); }
 
-        PassRefPtr<RenderStyle> styleForKeyframe(const RenderStyle*, const WebKitCSSKeyframeRule*, KeyframeList&);
+        PassRefPtr<RenderStyle> styleForKeyframe(const RenderStyle*, const WebKitCSSKeyframeRule*, KeyframeValue&);
 
     public:
         // These methods will give back the set of rules that matched for a given element (or a pseudo-element).

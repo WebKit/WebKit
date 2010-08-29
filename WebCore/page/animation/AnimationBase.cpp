@@ -1242,7 +1242,7 @@ double AnimationBase::progress(double scale, double offset, const TimingFunction
     int integralTime = static_cast<int>(fractionalTime);
     fractionalTime -= integralTime;
 
-    if (m_animation->direction() && (integralTime & 1))
+    if ((m_animation->direction() == Animation::AnimationDirectionAlternate) && (integralTime & 1))
         fractionalTime = 1 - fractionalTime;
 
     if (scale != 1 || offset)
