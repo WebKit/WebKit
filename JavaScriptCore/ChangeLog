@@ -1,3 +1,41 @@
+2010-08-28  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 44830 - In Array's prototype functyions we're incorrectly handing large index values
+
+        We are in places casting doubles to unsigneds, and unsigneds to ints, without always check
+        that the result is within bounds. This is problematic in the case of double-to-unsigned
+        conversion because we should be saturating to array length.
+
+        Also, the error return value from Array.splice should be [], not undefined.
+
+        I don't see any security concerns here. These methods are spec'ed in such a way that they
+        can be applied to non Array objects, so in all cases the (potentially bogus) indices are
+        being passed to functions that will safely check accesses are within bounds.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::argumentClampedIndexFromStartOrEnd):
+        (JSC::arrayProtoFuncJoin):
+        (JSC::arrayProtoFuncConcat):
+        (JSC::arrayProtoFuncReverse):
+        (JSC::arrayProtoFuncShift):
+        (JSC::arrayProtoFuncSlice):
+        (JSC::arrayProtoFuncSort):
+        (JSC::arrayProtoFuncSplice):
+        (JSC::arrayProtoFuncUnShift):
+        (JSC::arrayProtoFuncFilter):
+        (JSC::arrayProtoFuncMap):
+        (JSC::arrayProtoFuncEvery):
+        (JSC::arrayProtoFuncForEach):
+        (JSC::arrayProtoFuncSome):
+        (JSC::arrayProtoFuncReduce):
+        (JSC::arrayProtoFuncReduceRight):
+        (JSC::arrayProtoFuncIndexOf):
+        (JSC::arrayProtoFuncLastIndexOf):
+        * runtime/JSValue.h:
+        (JSC::JSValue::toUInt32):
+
 2010-08-28  Pratik Solanki  <psolanki@apple.com>
 
         Reviewed by Dan Bernstein.

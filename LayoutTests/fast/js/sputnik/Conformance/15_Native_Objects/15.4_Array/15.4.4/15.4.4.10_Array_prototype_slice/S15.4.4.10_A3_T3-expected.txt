@@ -1,6 +1,6 @@
 S15.4.4.10_A3_T3
 
-FAIL SputnikError: #1: var obj = {}; obj.slice = Array.prototype.slice; obj[4294967294] = "x"; obj.length = 4294967295; var arr = obj.slice(4294967294,4294967295); arr.length === 1. Actual: 0
+PASS 
 
 TEST COMPLETE
 

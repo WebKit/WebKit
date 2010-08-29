@@ -10,7 +10,7 @@ shouldBe("arr.splice(0)", "['a','b']");
 shouldBe("arr", "[]")
 
 arr = ['a','b','c','d'];
-shouldBe("arr.splice()", "undefined")
+shouldBe("arr.splice()", "[]")
 shouldBe("arr", "['a','b','c','d']");
 shouldBe("arr.splice(undefined)", "['a','b','c','d']")
 shouldBe("arr", "[]");

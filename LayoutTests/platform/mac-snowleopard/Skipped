@@ -130,11 +130,6 @@ fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html
 # This test asserts: https://bugs.webkit.org/show_bug.cgi?id=37932
 transitions/transition-end-event-destroy-iframe.html
 
-# These tests fail in 64 bit
-# https://bugs.webkit.org/show_bug.cgi?id=38356
-fast/js/sputnik/Conformance/11_Expressions/11.5_Multiplicative_Operators/11.5.3_Percent/S11.5.3_A4_T2.html
-fast/js/sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.12_Array_prototype_splice/S15.4.4.12_A2.1_T3.html
-
 # Test fails on Snow Leopard in DRT but passes when run manually and passes on Leopard. The test itself might need
 # tweaking to deal with scrolling differences between Leopard and SL. https://bugs.webkit.org/show_bug.cgi?id=38416
 fast/repaint/fixed-move-after-keyboard-scroll.html

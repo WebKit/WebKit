@@ -8,7 +8,7 @@ PASS arr.splice(2) is ['c','d']
 PASS arr is ['a','b']
 PASS arr.splice(0) is ['a','b']
 PASS arr is []
-PASS arr.splice() is undefined
+PASS arr.splice() is []
 PASS arr is ['a','b','c','d']
 PASS arr.splice(undefined) is ['a','b','c','d']
 PASS arr is []

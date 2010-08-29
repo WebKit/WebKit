@@ -1,3 +1,33 @@
+2010-08-28  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 44830 - In Array's prototype functyions we're incorrectly handing large index values
+
+        We are in places casting doubles to unsigneds, and unsigneds to ints, without always check
+        that the result is within bounds. This is problematic in the case of double-to-unsigned
+        conversion because we should be saturating to array length.
+
+        Also, the error return value from Array.splice should be [], not undefined.
+
+        I don't see any security concerns here. These methods are spec'ed in such a way that they
+        can be applied to non Array objects, so in all cases the (potentially bogus) indices are
+        being passed to functions that will safely check accesses are within bounds.
+
+        * fast/js/array-splice-expected.txt:
+        * fast/js/script-tests/array-splice.js:
+        * fast/js/sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.10_Array_prototype_slice/S15.4.4.10_A3_T3-expected.txt:
+        * fast/js/sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.12_Array_prototype_splice/S15.4.4.12_A2.2_T3-expected.txt:
+        * fast/js/sputnik/Implementation_Diagnostics/S15.4.4.12_D1.5_T1-expected.txt:
+        * ietestcenter/Javascript/15.4.4.15-3-26-expected.txt:
+        * ietestcenter/Javascript/15.4.4.15-3-27-expected.txt:
+        * ietestcenter/Javascript/15.4.4.15-5-1-expected.txt:
+        * ietestcenter/Javascript/15.4.4.15-5-12-expected.txt:
+        * ietestcenter/Javascript/15.4.4.15-5-14-expected.txt:
+        * ietestcenter/Javascript/15.4.4.15-5-16-expected.txt:
+        * ietestcenter/Javascript/15.4.4.15-8-9-expected.txt:
+        * platform/mac-snowleopard/Skipped:
+
 2010-08-28  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Tony Chang.
