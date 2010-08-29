@@ -739,6 +739,7 @@
                         '<(chromium_src_dir)/base/base.gyp:base_i18n',
                         '<(chromium_src_dir)/base/base.gyp:test_support_base',
                         '<(chromium_src_dir)/gpu/gpu.gyp:gles2_c_lib',
+                        '<(chromium_src_dir)/webkit/support/webkit_support.gyp:blob',
                         '<(chromium_src_dir)/webkit/support/webkit_support.gyp:webkit_support',
                     ],
                     'include_dirs': [
@@ -808,6 +809,7 @@
                 'webkit',
                 '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf_config',
                 '<(chromium_src_dir)/third_party/icu/icu.gyp:icuuc',
+                '<(chromium_src_dir)/webkit/support/webkit_support.gyp:blob',
                 '<(chromium_src_dir)/webkit/support/webkit_support.gyp:copy_npapi_layout_test_plugin',
                 '<(chromium_src_dir)/webkit/support/webkit_support.gyp:webkit_support',
                 '<(chromium_src_dir)/gpu/gpu.gyp:gles2_c_lib'
