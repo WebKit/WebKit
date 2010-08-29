@@ -145,6 +145,6 @@
     $('#comment_form').removeClass('inactive');
     var comment = comments_in_context.join('\n\n');
     console.log(comment);
-    $('#comment_form').children('iframe').contents().find('#comment').val(comment);
+    $('#comment_form').find('iframe').contents().find('#comment').val(comment);
   });
 })();

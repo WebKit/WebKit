@@ -1,5 +1,11 @@
 2010-08-29  Adam Barth  <abarth@webkit.org>
 
+        Turns out we're supposed to use find instead of children here.
+
+        * code-review.js:
+
+2010-08-29  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         Awesomify pretty-diff based review tool
