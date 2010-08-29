@@ -32,6 +32,9 @@ namespace WebCore {
 
 bool isRunningOnVistaOrLater()
 {
+#if OS(WINCE)
+    return false;
+#else
     static bool isVistaOrLater;
     static bool initialized;
 
@@ -47,6 +50,7 @@ bool isRunningOnVistaOrLater()
     isVistaOrLater = vi.dwMajorVersion >= 6;
 
     return isVistaOrLater;
+#endif
 }
 
 } // namespace WebCore
