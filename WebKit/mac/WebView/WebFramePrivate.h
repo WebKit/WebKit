@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010 Apple Computer, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,6 +37,7 @@
 
 @class DOMDocumentFragment;
 @class DOMNode;
+@class DOMRange;
 @class WebIconFetcher;
 @class WebScriptObject;
 @class WebScriptWorld;
@@ -84,7 +85,7 @@ typedef enum {
 
 - (BOOL)_isDisplayingStandaloneImage;
 
-- (unsigned) _pendingFrameUnloadEventCount;
+- (unsigned)_pendingFrameUnloadEventCount;
 
 - (WebIconFetcher *)fetchApplicationIcon:(id)target
                                 selector:(SEL)selector;
@@ -111,15 +112,17 @@ typedef enum {
 - (BOOL)_pauseSVGAnimation:(NSString*)elementId onSMILNode:(DOMNode *)node atTime:(NSTimeInterval)time;
 
 // Returns the total number of currently running animations (includes both CSS transitions and CSS animations).
-- (unsigned) _numberOfActiveAnimations;
+- (unsigned)_numberOfActiveAnimations;
 
 // Suspend and resume animations (includes both CSS transitions and CSS animations).
-- (void) _suspendAnimations;
-- (void) _resumeAnimations;
+- (void)_suspendAnimations;
+- (void)_resumeAnimations;
 
 - (void)_replaceSelectionWithFragment:(DOMDocumentFragment *)fragment selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace matchStyle:(BOOL)matchStyle;
 - (void)_replaceSelectionWithText:(NSString *)text selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace;
 - (void)_replaceSelectionWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace;
+
+- (void)_smartInsertForString:(NSString *)pasteString replacingRange:(DOMRange *)rangeToReplace beforeString:(NSString **)beforeString afterString:(NSString **)afterString;
 
 - (NSMutableDictionary *)_cacheabilityDictionary;
 

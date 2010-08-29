@@ -824,64 +824,6 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     return kit(range.get());
 }
 
-// Determines whether whitespace needs to be added around aString to preserve proper spacing and
-// punctuation when it‚Äôs inserted into the receiver‚Äôs text over charRange. Returns by reference
-// in beforeString and afterString any whitespace that should be added, unless either or both are
-// nil. Both are returned as nil if aString is nil or if smart insertion and deletion are disabled.
-- (void)_smartInsertForString:(NSString *)pasteString replacingRange:(DOMRange *)rangeToReplace beforeString:(NSString **)beforeString afterString:(NSString **)afterString
-{
-    // give back nil pointers in case of early returns
-    if (beforeString)
-        *beforeString = nil;
-    if (afterString)
-        *afterString = nil;
-        
-    // inspect destination
-    Node *startContainer = core([rangeToReplace startContainer]);
-    Node *endContainer = core([rangeToReplace endContainer]);
-
-    Position startPos(startContainer, [rangeToReplace startOffset]);
-    Position endPos(endContainer, [rangeToReplace endOffset]);
-
-    VisiblePosition startVisiblePos = VisiblePosition(startPos, VP_DEFAULT_AFFINITY);
-    VisiblePosition endVisiblePos = VisiblePosition(endPos, VP_DEFAULT_AFFINITY);
-    
-    // this check also ensures startContainer, startPos, endContainer, and endPos are non-null
-    if (startVisiblePos.isNull() || endVisiblePos.isNull())
-        return;
-
-    bool addLeadingSpace = startPos.leadingWhitespacePosition(VP_DEFAULT_AFFINITY, true).isNull() && !isStartOfParagraph(startVisiblePos);
-    if (addLeadingSpace)
-        if (UChar previousChar = startVisiblePos.previous().characterAfter())
-            addLeadingSpace = !isCharacterSmartReplaceExempt(previousChar, true);
-    
-    bool addTrailingSpace = endPos.trailingWhitespacePosition(VP_DEFAULT_AFFINITY, true).isNull() && !isEndOfParagraph(endVisiblePos);
-    if (addTrailingSpace)
-        if (UChar thisChar = endVisiblePos.characterAfter())
-            addTrailingSpace = !isCharacterSmartReplaceExempt(thisChar, false);
-    
-    // inspect source
-    bool hasWhitespaceAtStart = false;
-    bool hasWhitespaceAtEnd = false;
-    unsigned pasteLength = [pasteString length];
-    if (pasteLength > 0) {
-        NSCharacterSet *whiteSet = [NSCharacterSet whitespaceAndNewlineCharacterSet];
-        
-        if ([whiteSet characterIsMember:[pasteString characterAtIndex:0]]) {
-            hasWhitespaceAtStart = YES;
-        }
-        if ([whiteSet characterIsMember:[pasteString characterAtIndex:(pasteLength - 1)]]) {
-            hasWhitespaceAtEnd = YES;
-        }
-    }
-    
-    // issue the verdict
-    if (beforeString && addLeadingSpace && !hasWhitespaceAtStart)
-        *beforeString = @" ";
-    if (afterString && addTrailingSpace && !hasWhitespaceAtEnd)
-        *afterString = @" ";
-}
-
 - (DOMDocumentFragment *)_documentFragmentWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString 
 {
     if (!_private->coreFrame || !_private->coreFrame->document())
@@ -1238,6 +1180,64 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 {
     DOMDocumentFragment *fragment = [self _documentFragmentWithMarkupString:markupString baseURLString:baseURLString];
     [self _replaceSelectionWithFragment:fragment selectReplacement:selectReplacement smartReplace:smartReplace matchStyle:NO];
+}
+
+// Determines whether whitespace needs to be added around aString to preserve proper spacing and
+// punctuation when it's inserted into the receiver's text over charRange. Returns by reference
+// in beforeString and afterString any whitespace that should be added, unless either or both are
+// nil. Both are returned as nil if aString is nil or if smart insertion and deletion are disabled.
+- (void)_smartInsertForString:(NSString *)pasteString replacingRange:(DOMRange *)rangeToReplace beforeString:(NSString **)beforeString afterString:(NSString **)afterString
+{
+    // give back nil pointers in case of early returns
+    if (beforeString)
+        *beforeString = nil;
+    if (afterString)
+        *afterString = nil;
+        
+    // inspect destination
+    Node *startContainer = core([rangeToReplace startContainer]);
+    Node *endContainer = core([rangeToReplace endContainer]);
+
+    Position startPos(startContainer, [rangeToReplace startOffset]);
+    Position endPos(endContainer, [rangeToReplace endOffset]);
+
+    VisiblePosition startVisiblePos = VisiblePosition(startPos, VP_DEFAULT_AFFINITY);
+    VisiblePosition endVisiblePos = VisiblePosition(endPos, VP_DEFAULT_AFFINITY);
+    
+    // this check also ensures startContainer, startPos, endContainer, and endPos are non-null
+    if (startVisiblePos.isNull() || endVisiblePos.isNull())
+        return;
+
+    bool addLeadingSpace = startPos.leadingWhitespacePosition(VP_DEFAULT_AFFINITY, true).isNull() && !isStartOfParagraph(startVisiblePos);
+    if (addLeadingSpace)
+        if (UChar previousChar = startVisiblePos.previous().characterAfter())
+            addLeadingSpace = !isCharacterSmartReplaceExempt(previousChar, true);
+    
+    bool addTrailingSpace = endPos.trailingWhitespacePosition(VP_DEFAULT_AFFINITY, true).isNull() && !isEndOfParagraph(endVisiblePos);
+    if (addTrailingSpace)
+        if (UChar thisChar = endVisiblePos.characterAfter())
+            addTrailingSpace = !isCharacterSmartReplaceExempt(thisChar, false);
+    
+    // inspect source
+    bool hasWhitespaceAtStart = false;
+    bool hasWhitespaceAtEnd = false;
+    unsigned pasteLength = [pasteString length];
+    if (pasteLength > 0) {
+        NSCharacterSet *whiteSet = [NSCharacterSet whitespaceAndNewlineCharacterSet];
+        
+        if ([whiteSet characterIsMember:[pasteString characterAtIndex:0]]) {
+            hasWhitespaceAtStart = YES;
+        }
+        if ([whiteSet characterIsMember:[pasteString characterAtIndex:(pasteLength - 1)]]) {
+            hasWhitespaceAtEnd = YES;
+        }
+    }
+    
+    // issue the verdict
+    if (beforeString && addLeadingSpace && !hasWhitespaceAtStart)
+        *beforeString = @" ";
+    if (afterString && addTrailingSpace && !hasWhitespaceAtEnd)
+        *afterString = @" ";
 }
 
 - (NSMutableDictionary *)_cacheabilityDictionary
