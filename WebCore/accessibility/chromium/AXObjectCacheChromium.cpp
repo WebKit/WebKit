@@ -68,6 +68,20 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotific
         case AXChildrenChanged:
             client->didChangeAccessibilityObjectChildren(obj);
             break;
+        case AXActiveDescendantChanged:
+        case AXFocusedUIElementChanged:
+        case AXLayoutComplete:
+        case AXLiveRegionChanged:
+        case AXLoadComplete:
+        case AXMenuListValueChanged:
+        case AXRowCollapsed:
+        case AXRowCountChanged:
+        case AXRowExpanded:
+        case AXScrolledToAnchor:
+        case AXSelectedChildrenChanged:
+        case AXSelectedTextChanged:
+        case AXValueChanged:
+            break;
         }
     }
 }

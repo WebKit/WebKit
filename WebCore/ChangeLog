@@ -1,3 +1,11 @@
+2010-08-28  Daniel Bates  <dbates@rim.com>
+
+        Attempt to fix Chromium Mac Release bot after changeset 66305 <http://trac.webkit.org/changeset/66305>.
+
+        * accessibility/chromium/AXObjectCacheChromium.cpp:
+        (WebCore::AXObjectCache::postPlatformNotification): Added case statements for missing enum values.
+        These case statements simply fall through to a "break" statement.
+
 2010-08-26  Kevin Ollivier  <kevino@theolliviers.com>
 
         Reviewed by Nikolas Zimmermann.
