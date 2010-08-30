@@ -1,3 +1,21 @@
+2010-08-26  Holger Hans Peter Freyther  <holger@moiji-mobile.com>
+
+        Reviewed by Darin Adler.
+
+        Fix Coverage build after the addition of ANGLE
+        https://bugs.webkit.org/show_bug.cgi?id=44744
+
+        ANGLE is using libtool to build a static library and the version of
+        libtool on Leopard refuses to handle the -fprofile-arcs and -ftest-coverage
+        parameters. The easiest way to handle this is to not build ANGLE with
+        coverage information.
+
+        This is achieved by applying the XCode options for each project
+        separately and exclude ANGLE.
+
+        * Scripts/build-webkit: Remove -framework AppKit due link errors.
+        * Scripts/webkitdirs.pm: Do not apply the XCode options for ANGLE.
+
 2010-08-28  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix after directory addition.
