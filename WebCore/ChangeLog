@@ -1,3 +1,12 @@
+2010-08-30  Leandro Pereira  <leandro@profusion.mobi>
+
+        [EFL] Unreviewed. Build fix when ENABLE_WEB_SOCKETS=ON.
+
+        EFL port does not yet support automated tests.
+
+        * CMakeLists.txt: Add missing files.
+        * CMakeListsEfl.txt: Ditto.
+
 2010-08-30  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Chris Marrin.

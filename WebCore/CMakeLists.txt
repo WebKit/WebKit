@@ -556,6 +556,7 @@ SET(WebCore_SOURCES
     ${DERIVED_SOURCES_DIR}/XMLNames.cpp
     ${DERIVED_SOURCES_DIR}/XMLNSNames.cpp
     ${DERIVED_SOURCES_DIR}/InspectorBackendDispatcher.cpp
+    ${DERIVED_SOURCES_DIR}/JSWebSocket.cpp
 
     accessibility/AXObjectCache.cpp
     accessibility/AccessibilityARIAGrid.cpp
@@ -683,6 +684,7 @@ SET(WebCore_SOURCES
     bindings/js/JSTreeWalkerCustom.cpp
     bindings/js/JSWebKitCSSMatrixCustom.cpp
     bindings/js/JSWebKitPointCustom.cpp
+    bindings/js/JSWebSocketCustom.cpp
     bindings/js/JSWorkerContextBase.cpp
     bindings/js/JSWorkerContextCustom.cpp
     bindings/js/JSWorkerContextErrorHandler.cpp
@@ -1317,8 +1319,8 @@ SET(WebCore_SOURCES
     platform/network/BlobRegistryImpl.cpp
     platform/network/BlobResourceHandle.cpp
     platform/network/Credential.cpp
-    platform/network/FormData.cpp
     platform/network/FormDataBuilder.cpp
+    platform/network/FormData.cpp
     platform/network/HTTPHeaderMap.cpp
     platform/network/HTTPParsers.cpp
     platform/network/NetworkStateNotifier.cpp
@@ -1327,6 +1329,7 @@ SET(WebCore_SOURCES
     platform/network/ResourceHandle.cpp
     platform/network/ResourceRequestBase.cpp
     platform/network/ResourceResponseBase.cpp
+    platform/network/SocketStreamHandleBase.cpp
 
     platform/text/Base64.cpp
     platform/text/BidiContext.cpp
@@ -1517,6 +1520,7 @@ SET(WebCore_SOURCES
     websockets/WebSocketChannel.cpp
     websockets/WebSocketHandshake.cpp
     websockets/WebSocketHandshakeRequest.cpp
+    websockets/WebSocketHandshakeResponse.cpp
     websockets/WorkerThreadableWebSocketChannel.cpp
 
     workers/AbstractWorker.cpp
