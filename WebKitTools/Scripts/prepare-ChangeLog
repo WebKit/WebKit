@@ -715,7 +715,7 @@ sub get_function_line_ranges_for_c($$)
                 if (!$in_braces and $potential_start) {
                     $start = $potential_start;
                     $name = $potential_name;
-                    if (@namespaces && (length($name) < 2 || substr($name,1,1) ne "[")) {
+                    if (@namespaces && $name && (length($name) < 2 || substr($name,1,1) ne "[")) {
                         $name = join ('::', @namespaces, $name);
                     }
                 }

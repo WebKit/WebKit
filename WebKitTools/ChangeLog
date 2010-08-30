@@ -1,3 +1,10 @@
+2010-08-29  Darin Adler  <darin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=40589
+
+        * Scripts/prepare-ChangeLog: Only prepend namespaces to non-empty
+        function names.
+
 2010-08-26  Holger Hans Peter Freyther  <holger@moiji-mobile.com>
 
         Reviewed by Darin Adler.
