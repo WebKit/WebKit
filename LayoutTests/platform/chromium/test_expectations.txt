@@ -554,6 +554,7 @@ BUG30536 WIN SLOW : http/tests/xmlhttprequest/access-control-basic-allow-preflig
 // LightTPD doesn't accept unknown HTTP methods and passes CGIs a Content-Type
 // even when a request didn't send the header.
 BUG30536 WIN SLOW : http/tests/xmlhttprequest/methods.html = FAIL
+BUG30536 MAC LINUX : http/tests/xmlhttprequest/methods.html = FAIL
 // Webkit 50667:50696 (Lighttpd related?)
 BUG30536 WIN : http/tests/xmlhttprequest/xmlhttprequest-setrequestheader-no-value.html = TEXT
 
