@@ -1,3 +1,11 @@
+2010-08-30  Yuzo Fujishima  <yuzo@google.com>
+
+        Unreviewed Chromium test expectation change for r66359.
+
+        * platform/chromium-linux/http/tests/security/xssAuditor/javascript-link-HTML-entities-null-char-expected.txt: Added.
+        * platform/chromium-mac/http/tests/security/xssAuditor/javascript-link-HTML-entities-null-char-expected.txt:
+        * platform/chromium-win/http/tests/security/xssAuditor/javascript-link-HTML-entities-null-char-expected.txt:
+
 2010-08-13  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Kent Tamura.
