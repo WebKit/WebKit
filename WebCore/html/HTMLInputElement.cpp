@@ -1498,11 +1498,16 @@ void HTMLInputElement::copyNonAttributeProperties(const Element* source)
 
 String HTMLInputElement::value() const
 {
-    // The HTML5 spec (as of the 10/24/08 working draft) says that the value attribute isn't applicable to the file upload control
-    // but we don't want to break existing websites, who may be relying on being able to get the file name as a value.
     if (inputType() == FILE) {
-        if (!m_fileList->isEmpty())
-            return m_fileList->item(0)->fileName();
+        if (!m_fileList->isEmpty()) {
+            // HTML5 tells us that we're supposed to use this goofy value for
+            // file input controls.  Historically, browsers reveals the real
+            // file path, but that's a privacy problem.  Code on the web
+            // decided to try to parse the value by looking for backslashes
+            // (because that's what Windows file paths use).  To be compatible
+            // with that code, we make up a fake path for the file.
+            return "C:\\fakepath\\" + m_fileList->item(0)->fileName();
+        }
         return String();
     }
 

@@ -1,3 +1,15 @@
+2010-08-29  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Implement HTML5's fakepath
+        https://bugs.webkit.org/show_bug.cgi?id=29000
+
+        Update expectations for this pasteboard test to include our new friend
+        fakepath.
+
+        * editing/pasteboard/file-input-files-access-expected.txt:
+
 2010-08-29  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Tony Chang.
