@@ -1,3 +1,12 @@
+2010-08-30  Marc-Antoine Ruel  <maruel@chromium.org>
+
+        Reviewed by Kent Tamura
+
+        Move most dependencies to webcore_prerequisites
+        https://bugs.webkit.org/show_bug.cgi?id=44814
+
+        * WebCore.gyp/WebCore.gyp:
+
 2010-08-30  Adam Barth  <abarth@webkit.org>
 
         Move AsyncImageResizer back to html to fix Chromium build.

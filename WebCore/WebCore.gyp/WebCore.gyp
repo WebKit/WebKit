@@ -870,6 +870,12 @@
       },
       'conditions': [
         ['javascript_engine=="v8"', {
+          'dependencies': [
+            '<(chromium_src_dir)/v8/tools/gyp/v8.gyp:v8',
+          ],
+          'export_dependent_settings': [
+            '<(chromium_src_dir)/v8/tools/gyp/v8.gyp:v8',
+          ],
           'conditions': [
             ['inside_chromium_build==1 and OS=="win" and component=="shared_library"', {
               'defines': [
@@ -878,7 +884,23 @@
             }],
           ],
         }],
+        ['use_accelerated_compositing==1', {
+          'dependencies': [
+            '<(chromium_src_dir)/gpu/gpu.gyp:gles2_c_lib',
+          ],
+          'export_dependent_settings': [
+            '<(chromium_src_dir)/gpu/gpu.gyp:gles2_c_lib',
+          ],
+        }],
         ['OS=="linux" or OS=="freebsd"', {
+          'dependencies': [
+            '<(chromium_src_dir)/build/linux/system.gyp:fontconfig',
+            '<(chromium_src_dir)/build/linux/system.gyp:gtk',
+          ],
+          'export_dependent_settings': [
+            '<(chromium_src_dir)/build/linux/system.gyp:fontconfig',
+            '<(chromium_src_dir)/build/linux/system.gyp:gtk',
+          ],
           'cflags': [
             # WebCore does not work with strict aliasing enabled.
             # https://bugs.webkit.org/show_bug.cgi?id=25864
@@ -895,6 +917,12 @@
           ],
         }],
         ['OS=="mac"', {
+          'dependencies': [
+            'webkit_system_interface',
+          ],
+          'export_dependent_settings': [
+            'webkit_system_interface',
+          ],
           'defines': [
             # Match Safari and Mozilla on Mac x86.
             'WEBCORE_NAVIGATOR_PLATFORM="MacIntel"',
@@ -925,6 +953,12 @@
           ],
         }],
         ['OS=="win"', {
+          'dependencies': [
+            '<(chromium_src_dir)/build/win/system.gyp:cygwin'
+          ],
+          'export_dependent_settings': [
+            '<(chromium_src_dir)/build/win/system.gyp:cygwin'
+          ],
           'defines': [
             # Match Safari and Mozilla on Windows.
             'WEBCORE_NAVIGATOR_PLATFORM="Win32"',
@@ -1074,11 +1108,6 @@
         ],
       },
       'conditions': [
-        ['javascript_engine=="v8"', {
-          'dependencies': [
-            '<(chromium_src_dir)/v8/tools/gyp/v8.gyp:v8',
-          ],
-        }],
         ['enable_svg!=0', {
           'sources/': [
             ['exclude', 'svg/[^/]+\\.cpp$'],
@@ -1093,16 +1122,7 @@
             ['exclude', 'rendering/SVG'],
           ],
         }],
-        ['use_accelerated_compositing==1', {
-          'dependencies': [
-            '<(chromium_src_dir)/gpu/gpu.gyp:gles2_c_lib',
-          ],
-        }],
         ['OS=="linux" or OS=="freebsd"', {
-          'dependencies': [
-            '<(chromium_src_dir)/build/linux/system.gyp:fontconfig',
-            '<(chromium_src_dir)/build/linux/system.gyp:gtk',
-          ],
           'sources': [
             '../platform/graphics/chromium/VDMXParser.cpp',
             '../platform/graphics/chromium/HarfbuzzSkia.cpp',
@@ -1245,9 +1265,6 @@
           ],
         }],
         ['OS=="win"', {
-          'dependencies': [
-            '<(chromium_src_dir)/build/win/system.gyp:cygwin'
-          ],
           'sources/': [
             ['exclude', 'Posix\\.cpp$'],
             ['include', '/opentype/'],
