@@ -1,3 +1,9 @@
+2010-08-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Disable http/tests/css/css-image-loading.html on Windows.
+
+        * platform/win/Skipped:
+
 2010-08-30  Dumitru Daniliuc  <dumi@chromium.org>
 
         Unreviewed, updating Chromium expectations.
