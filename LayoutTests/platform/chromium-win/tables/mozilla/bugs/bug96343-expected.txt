@@ -1,365 +1,194 @@
-layer at (0,0) size 785x2539
+layer at (0,0) size 785x1513
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x2539
-  RenderBlock {HTML} at (0,0) size 785x2539
-    RenderBody {BODY} at (8,8) size 769x2523
-      RenderTable {TABLE} at (0,0) size 213x841
-        RenderTableSection {TBODY} at (0,0) size 213x841
+layer at (0,0) size 785x1513
+  RenderBlock {HTML} at (0,0) size 785x1513
+    RenderBody {BODY} at (8,8) size 769x1497
+      RenderTable {TABLE} at (0,0) size 213x499
+        RenderTableSection {TBODY} at (0,0) size 213x499
           RenderTableRow {TR} at (0,2) size 213x22
             RenderTableCell {TD} at (2,2) size 209x22 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 207x19
                 text run at (1,1) width 207: "Occasional height/width on images"
-          RenderTableRow (anonymous) at (0,26) size 213x16
-            RenderTableCell (anonymous) at (2,26) size 209x16 [r=1 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 209x0
-          RenderTableRow {TR} at (0,44) size 213x34
-            RenderTableCell {TD} at (2,44) size 209x34 [r=2 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,26) size 213x34
+            RenderTableCell {TD} at (2,26) size 209x34 [r=1 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 75x32
-          RenderTableRow (anonymous) at (0,80) size 213x16
-            RenderTableCell (anonymous) at (2,80) size 209x16 [r=3 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 209x0
-          RenderTableRow {TR} at (0,98) size 213x24
-            RenderTableCell {TD} at (2,98) size 209x24 [r=4 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,62) size 213x24
+            RenderTableCell {TD} at (2,62) size 209x24 [r=2 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 44x22
-          RenderTableRow (anonymous) at (0,124) size 213x16
-            RenderTableCell (anonymous) at (2,124) size 209x16 [r=5 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 209x0
-          RenderTableRow {TR} at (0,142) size 213x15
-            RenderTableCell {TD} at (2,142) size 209x15 [r=6 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,88) size 213x15
+            RenderTableCell {TD} at (2,88) size 209x15 [r=3 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 89x13
-          RenderTableRow (anonymous) at (0,159) size 213x16
-            RenderTableCell (anonymous) at (2,159) size 209x16 [r=7 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 209x0
-          RenderTableRow {TR} at (0,177) size 213x15
-            RenderTableCell {TD} at (2,177) size 209x15 [r=8 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,105) size 213x15
+            RenderTableCell {TD} at (2,105) size 209x15 [r=4 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 89x13
-          RenderTableRow (anonymous) at (0,194) size 213x16
-            RenderTableCell (anonymous) at (2,194) size 209x16 [r=9 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 209x0
-          RenderTableRow {TR} at (0,212) size 213x31
-            RenderTableCell {TD} at (2,212) size 209x31 [r=10 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,122) size 213x31
+            RenderTableCell {TD} at (2,122) size 209x31 [r=5 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 31x29
-          RenderTableRow (anonymous) at (0,245) size 213x16
-            RenderTableCell (anonymous) at (2,245) size 209x16 [r=11 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 209x0
-          RenderTableRow {TR} at (0,263) size 213x23
-            RenderTableCell {TD} at (2,263) size 209x23 [r=12 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,155) size 213x23
+            RenderTableCell {TD} at (2,155) size 209x23 [r=6 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 62x21
-          RenderTableRow (anonymous) at (0,288) size 213x16
-            RenderTableCell (anonymous) at (2,288) size 209x16 [r=13 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 209x0
-          RenderTableRow {TR} at (0,306) size 213x17
-            RenderTableCell {TD} at (2,306) size 209x17 [r=14 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,180) size 213x17
+            RenderTableCell {TD} at (2,180) size 209x17 [r=7 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 70x15
-          RenderTableRow (anonymous) at (0,325) size 213x16
-            RenderTableCell (anonymous) at (2,325) size 209x16 [r=15 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 209x0
-          RenderTableRow {TR} at (0,343) size 213x28
-            RenderTableCell {TD} at (2,343) size 209x28 [r=16 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,199) size 213x28
+            RenderTableCell {TD} at (2,199) size 209x28 [r=8 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 42x26
-          RenderTableRow (anonymous) at (0,373) size 213x16
-            RenderTableCell (anonymous) at (2,373) size 209x16 [r=17 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 209x0
-          RenderTableRow {TR} at (0,391) size 213x17
-            RenderTableCell {TD} at (2,391) size 209x17 [r=18 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,229) size 213x17
+            RenderTableCell {TD} at (2,229) size 209x17 [r=9 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 84x15
-          RenderTableRow (anonymous) at (0,410) size 213x16
-            RenderTableCell (anonymous) at (2,410) size 209x16 [r=19 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 209x0
-          RenderTableRow {TR} at (0,428) size 213x17
-            RenderTableCell {TD} at (2,428) size 209x17 [r=20 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,248) size 213x17
+            RenderTableCell {TD} at (2,248) size 209x17 [r=10 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 90x15
-          RenderTableRow (anonymous) at (0,447) size 213x16
-            RenderTableCell (anonymous) at (2,447) size 209x16 [r=21 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 209x0
-          RenderTableRow {TR} at (0,465) size 213x34
-            RenderTableCell {TD} at (2,465) size 209x34 [r=22 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,267) size 213x34
+            RenderTableCell {TD} at (2,267) size 209x34 [r=11 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 59x32
-          RenderTableRow (anonymous) at (0,501) size 213x16
-            RenderTableCell (anonymous) at (2,501) size 209x16 [r=23 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 209x0
-          RenderTableRow {TR} at (0,519) size 213x17
-            RenderTableCell {TD} at (2,519) size 209x17 [r=24 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,303) size 213x17
+            RenderTableCell {TD} at (2,303) size 209x17 [r=12 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 90x15
-          RenderTableRow (anonymous) at (0,538) size 213x16
-            RenderTableCell (anonymous) at (2,538) size 209x16 [r=25 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 209x0
-          RenderTableRow {TR} at (0,556) size 213x17
-            RenderTableCell {TD} at (2,556) size 209x17 [r=26 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,322) size 213x17
+            RenderTableCell {TD} at (2,322) size 209x17 [r=13 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 90x15
-          RenderTableRow (anonymous) at (0,575) size 213x16
-            RenderTableCell (anonymous) at (2,575) size 209x16 [r=27 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 209x0
-          RenderTableRow {TR} at (0,593) size 213x21
-            RenderTableCell {TD} at (2,593) size 209x21 [r=28 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,341) size 213x21
+            RenderTableCell {TD} at (2,341) size 209x21 [r=14 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 83x19
-          RenderTableRow (anonymous) at (0,616) size 213x16
-            RenderTableCell (anonymous) at (2,616) size 209x16 [r=29 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 209x0
-          RenderTableRow {TR} at (0,634) size 213x33
-            RenderTableCell {TD} at (2,634) size 209x33 [r=30 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,364) size 213x33
+            RenderTableCell {TD} at (2,364) size 209x33 [r=15 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 54x31
-          RenderTableRow (anonymous) at (0,669) size 213x16
-            RenderTableCell (anonymous) at (2,669) size 209x16 [r=31 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 209x0
-          RenderTableRow {TR} at (0,687) size 213x27
-            RenderTableCell {TD} at (2,687) size 209x27 [r=32 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,399) size 213x27
+            RenderTableCell {TD} at (2,399) size 209x27 [r=16 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 56x25
-          RenderTableRow (anonymous) at (0,716) size 213x16
-            RenderTableCell (anonymous) at (2,716) size 209x16 [r=33 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 209x0
-          RenderTableRow {TR} at (0,734) size 213x17
-            RenderTableCell {TD} at (2,734) size 209x17 [r=34 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,428) size 213x17
+            RenderTableCell {TD} at (2,428) size 209x17 [r=17 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 53x15
-          RenderTableRow (anonymous) at (0,753) size 213x16
-            RenderTableCell (anonymous) at (2,753) size 209x16 [r=35 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 209x0
-          RenderTableRow {TR} at (0,771) size 213x31
-            RenderTableCell {TD} at (2,771) size 209x31 [r=36 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,447) size 213x31
+            RenderTableCell {TD} at (2,447) size 209x31 [r=18 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 31x29
-          RenderTableRow (anonymous) at (0,804) size 213x16
-            RenderTableCell (anonymous) at (2,804) size 209x16 [r=37 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 209x0
-          RenderTableRow {TR} at (0,822) size 213x17
-            RenderTableCell {TD} at (2,822) size 209x17 [r=38 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,480) size 213x17
+            RenderTableCell {TD} at (2,480) size 209x17 [r=19 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 53x15
-      RenderTable {TABLE} at (0,841) size 248x841
-        RenderTableSection {TBODY} at (0,0) size 248x841
+      RenderTable {TABLE} at (0,499) size 248x499
+        RenderTableSection {TBODY} at (0,0) size 248x499
           RenderTableRow {TR} at (0,2) size 248x22
             RenderTableCell {TD} at (2,2) size 244x22 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 242x19
                 text run at (1,1) width 242: "Images with height/width never specified"
-          RenderTableRow (anonymous) at (0,26) size 248x16
-            RenderTableCell (anonymous) at (2,26) size 244x16 [r=1 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 244x0
-          RenderTableRow {TR} at (0,44) size 248x34
-            RenderTableCell {TD} at (2,44) size 244x34 [r=2 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,26) size 248x34
+            RenderTableCell {TD} at (2,26) size 244x34 [r=1 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 75x32
-          RenderTableRow (anonymous) at (0,80) size 248x16
-            RenderTableCell (anonymous) at (2,80) size 244x16 [r=3 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 244x0
-          RenderTableRow {TR} at (0,98) size 248x24
-            RenderTableCell {TD} at (2,98) size 244x24 [r=4 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,62) size 248x24
+            RenderTableCell {TD} at (2,62) size 244x24 [r=2 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 44x22
-          RenderTableRow (anonymous) at (0,124) size 248x16
-            RenderTableCell (anonymous) at (2,124) size 244x16 [r=5 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 244x0
-          RenderTableRow {TR} at (0,142) size 248x15
-            RenderTableCell {TD} at (2,142) size 244x15 [r=6 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,88) size 248x15
+            RenderTableCell {TD} at (2,88) size 244x15 [r=3 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 89x13
-          RenderTableRow (anonymous) at (0,159) size 248x16
-            RenderTableCell (anonymous) at (2,159) size 244x16 [r=7 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 244x0
-          RenderTableRow {TR} at (0,177) size 248x15
-            RenderTableCell {TD} at (2,177) size 244x15 [r=8 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,105) size 248x15
+            RenderTableCell {TD} at (2,105) size 244x15 [r=4 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 89x13
-          RenderTableRow (anonymous) at (0,194) size 248x16
-            RenderTableCell (anonymous) at (2,194) size 244x16 [r=9 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 244x0
-          RenderTableRow {TR} at (0,212) size 248x31
-            RenderTableCell {TD} at (2,212) size 244x31 [r=10 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,122) size 248x31
+            RenderTableCell {TD} at (2,122) size 244x31 [r=5 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 31x29
-          RenderTableRow (anonymous) at (0,245) size 248x16
-            RenderTableCell (anonymous) at (2,245) size 244x16 [r=11 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 244x0
-          RenderTableRow {TR} at (0,263) size 248x23
-            RenderTableCell {TD} at (2,263) size 244x23 [r=12 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,155) size 248x23
+            RenderTableCell {TD} at (2,155) size 244x23 [r=6 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 62x21
-          RenderTableRow (anonymous) at (0,288) size 248x16
-            RenderTableCell (anonymous) at (2,288) size 244x16 [r=13 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 244x0
-          RenderTableRow {TR} at (0,306) size 248x17
-            RenderTableCell {TD} at (2,306) size 244x17 [r=14 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,180) size 248x17
+            RenderTableCell {TD} at (2,180) size 244x17 [r=7 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 70x15
-          RenderTableRow (anonymous) at (0,325) size 248x16
-            RenderTableCell (anonymous) at (2,325) size 244x16 [r=15 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 244x0
-          RenderTableRow {TR} at (0,343) size 248x28
-            RenderTableCell {TD} at (2,343) size 244x28 [r=16 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,199) size 248x28
+            RenderTableCell {TD} at (2,199) size 244x28 [r=8 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 42x26
-          RenderTableRow (anonymous) at (0,373) size 248x16
-            RenderTableCell (anonymous) at (2,373) size 244x16 [r=17 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 244x0
-          RenderTableRow {TR} at (0,391) size 248x17
-            RenderTableCell {TD} at (2,391) size 244x17 [r=18 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,229) size 248x17
+            RenderTableCell {TD} at (2,229) size 244x17 [r=9 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 84x15
-          RenderTableRow (anonymous) at (0,410) size 248x16
-            RenderTableCell (anonymous) at (2,410) size 244x16 [r=19 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 244x0
-          RenderTableRow {TR} at (0,428) size 248x17
-            RenderTableCell {TD} at (2,428) size 244x17 [r=20 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,248) size 248x17
+            RenderTableCell {TD} at (2,248) size 244x17 [r=10 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 90x15
-          RenderTableRow (anonymous) at (0,447) size 248x16
-            RenderTableCell (anonymous) at (2,447) size 244x16 [r=21 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 244x0
-          RenderTableRow {TR} at (0,465) size 248x34
-            RenderTableCell {TD} at (2,465) size 244x34 [r=22 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,267) size 248x34
+            RenderTableCell {TD} at (2,267) size 244x34 [r=11 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 59x32
-          RenderTableRow (anonymous) at (0,501) size 248x16
-            RenderTableCell (anonymous) at (2,501) size 244x16 [r=23 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 244x0
-          RenderTableRow {TR} at (0,519) size 248x17
-            RenderTableCell {TD} at (2,519) size 244x17 [r=24 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,303) size 248x17
+            RenderTableCell {TD} at (2,303) size 244x17 [r=12 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 90x15
-          RenderTableRow (anonymous) at (0,538) size 248x16
-            RenderTableCell (anonymous) at (2,538) size 244x16 [r=25 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 244x0
-          RenderTableRow {TR} at (0,556) size 248x17
-            RenderTableCell {TD} at (2,556) size 244x17 [r=26 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,322) size 248x17
+            RenderTableCell {TD} at (2,322) size 244x17 [r=13 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 90x15
-          RenderTableRow (anonymous) at (0,575) size 248x16
-            RenderTableCell (anonymous) at (2,575) size 244x16 [r=27 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 244x0
-          RenderTableRow {TR} at (0,593) size 248x21
-            RenderTableCell {TD} at (2,593) size 244x21 [r=28 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,341) size 248x21
+            RenderTableCell {TD} at (2,341) size 244x21 [r=14 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 83x19
-          RenderTableRow (anonymous) at (0,616) size 248x16
-            RenderTableCell (anonymous) at (2,616) size 244x16 [r=29 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 244x0
-          RenderTableRow {TR} at (0,634) size 248x33
-            RenderTableCell {TD} at (2,634) size 244x33 [r=30 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,364) size 248x33
+            RenderTableCell {TD} at (2,364) size 244x33 [r=15 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 54x31
-          RenderTableRow (anonymous) at (0,669) size 248x16
-            RenderTableCell (anonymous) at (2,669) size 244x16 [r=31 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 244x0
-          RenderTableRow {TR} at (0,687) size 248x27
-            RenderTableCell {TD} at (2,687) size 244x27 [r=32 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,399) size 248x27
+            RenderTableCell {TD} at (2,399) size 244x27 [r=16 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 56x25
-          RenderTableRow (anonymous) at (0,716) size 248x16
-            RenderTableCell (anonymous) at (2,716) size 244x16 [r=33 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 244x0
-          RenderTableRow {TR} at (0,734) size 248x17
-            RenderTableCell {TD} at (2,734) size 244x17 [r=34 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,428) size 248x17
+            RenderTableCell {TD} at (2,428) size 244x17 [r=17 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 53x15
-          RenderTableRow (anonymous) at (0,753) size 248x16
-            RenderTableCell (anonymous) at (2,753) size 244x16 [r=35 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 244x0
-          RenderTableRow {TR} at (0,771) size 248x31
-            RenderTableCell {TD} at (2,771) size 244x31 [r=36 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,447) size 248x31
+            RenderTableCell {TD} at (2,447) size 244x31 [r=18 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 31x29
-          RenderTableRow (anonymous) at (0,804) size 248x16
-            RenderTableCell (anonymous) at (2,804) size 244x16 [r=37 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 244x0
-          RenderTableRow {TR} at (0,822) size 248x17
-            RenderTableCell {TD} at (2,822) size 244x17 [r=38 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,480) size 248x17
+            RenderTableCell {TD} at (2,480) size 244x17 [r=19 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 53x15
-      RenderTable {TABLE} at (0,1682) size 256x841
-        RenderTableSection {TBODY} at (0,0) size 256x841
+      RenderTable {TABLE} at (0,998) size 256x499
+        RenderTableSection {TBODY} at (0,0) size 256x499
           RenderTableRow {TR} at (0,2) size 256x22
             RenderTableCell {TD} at (2,2) size 252x22 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 250x19
                 text run at (1,1) width 250: "Images with height/width always specified"
-          RenderTableRow (anonymous) at (0,26) size 256x16
-            RenderTableCell (anonymous) at (2,26) size 252x16 [r=1 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 252x0
-          RenderTableRow {TR} at (0,44) size 256x34
-            RenderTableCell {TD} at (2,44) size 252x34 [r=2 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,26) size 256x34
+            RenderTableCell {TD} at (2,26) size 252x34 [r=1 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 75x32
-          RenderTableRow (anonymous) at (0,80) size 256x16
-            RenderTableCell (anonymous) at (2,80) size 252x16 [r=3 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 252x0
-          RenderTableRow {TR} at (0,98) size 256x24
-            RenderTableCell {TD} at (2,98) size 252x24 [r=4 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,62) size 256x24
+            RenderTableCell {TD} at (2,62) size 252x24 [r=2 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 44x22
-          RenderTableRow (anonymous) at (0,124) size 256x16
-            RenderTableCell (anonymous) at (2,124) size 252x16 [r=5 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 252x0
-          RenderTableRow {TR} at (0,142) size 256x15
-            RenderTableCell {TD} at (2,142) size 252x15 [r=6 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,88) size 256x15
+            RenderTableCell {TD} at (2,88) size 252x15 [r=3 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 89x13
-          RenderTableRow (anonymous) at (0,159) size 256x16
-            RenderTableCell (anonymous) at (2,159) size 252x16 [r=7 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 252x0
-          RenderTableRow {TR} at (0,177) size 256x15
-            RenderTableCell {TD} at (2,177) size 252x15 [r=8 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,105) size 256x15
+            RenderTableCell {TD} at (2,105) size 252x15 [r=4 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 89x13
-          RenderTableRow (anonymous) at (0,194) size 256x16
-            RenderTableCell (anonymous) at (2,194) size 252x16 [r=9 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 252x0
-          RenderTableRow {TR} at (0,212) size 256x31
-            RenderTableCell {TD} at (2,212) size 252x31 [r=10 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,122) size 256x31
+            RenderTableCell {TD} at (2,122) size 252x31 [r=5 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 31x29
-          RenderTableRow (anonymous) at (0,245) size 256x16
-            RenderTableCell (anonymous) at (2,245) size 252x16 [r=11 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 252x0
-          RenderTableRow {TR} at (0,263) size 256x23
-            RenderTableCell {TD} at (2,263) size 252x23 [r=12 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,155) size 256x23
+            RenderTableCell {TD} at (2,155) size 252x23 [r=6 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 62x21
-          RenderTableRow (anonymous) at (0,288) size 256x16
-            RenderTableCell (anonymous) at (2,288) size 252x16 [r=13 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 252x0
-          RenderTableRow {TR} at (0,306) size 256x17
-            RenderTableCell {TD} at (2,306) size 252x17 [r=14 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,180) size 256x17
+            RenderTableCell {TD} at (2,180) size 252x17 [r=7 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 70x15
-          RenderTableRow (anonymous) at (0,325) size 256x16
-            RenderTableCell (anonymous) at (2,325) size 252x16 [r=15 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 252x0
-          RenderTableRow {TR} at (0,343) size 256x28
-            RenderTableCell {TD} at (2,343) size 252x28 [r=16 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,199) size 256x28
+            RenderTableCell {TD} at (2,199) size 252x28 [r=8 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 42x26
-          RenderTableRow (anonymous) at (0,373) size 256x16
-            RenderTableCell (anonymous) at (2,373) size 252x16 [r=17 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 252x0
-          RenderTableRow {TR} at (0,391) size 256x17
-            RenderTableCell {TD} at (2,391) size 252x17 [r=18 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,229) size 256x17
+            RenderTableCell {TD} at (2,229) size 252x17 [r=9 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 84x15
-          RenderTableRow (anonymous) at (0,410) size 256x16
-            RenderTableCell (anonymous) at (2,410) size 252x16 [r=19 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 252x0
-          RenderTableRow {TR} at (0,428) size 256x17
-            RenderTableCell {TD} at (2,428) size 252x17 [r=20 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,248) size 256x17
+            RenderTableCell {TD} at (2,248) size 252x17 [r=10 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 90x15
-          RenderTableRow (anonymous) at (0,447) size 256x16
-            RenderTableCell (anonymous) at (2,447) size 252x16 [r=21 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 252x0
-          RenderTableRow {TR} at (0,465) size 256x34
-            RenderTableCell {TD} at (2,465) size 252x34 [r=22 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,267) size 256x34
+            RenderTableCell {TD} at (2,267) size 252x34 [r=11 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 59x32
-          RenderTableRow (anonymous) at (0,501) size 256x16
-            RenderTableCell (anonymous) at (2,501) size 252x16 [r=23 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 252x0
-          RenderTableRow {TR} at (0,519) size 256x17
-            RenderTableCell {TD} at (2,519) size 252x17 [r=24 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,303) size 256x17
+            RenderTableCell {TD} at (2,303) size 252x17 [r=12 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 90x15
-          RenderTableRow (anonymous) at (0,538) size 256x16
-            RenderTableCell (anonymous) at (2,538) size 252x16 [r=25 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 252x0
-          RenderTableRow {TR} at (0,556) size 256x17
-            RenderTableCell {TD} at (2,556) size 252x17 [r=26 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,322) size 256x17
+            RenderTableCell {TD} at (2,322) size 252x17 [r=13 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 90x15
-          RenderTableRow (anonymous) at (0,575) size 256x16
-            RenderTableCell (anonymous) at (2,575) size 252x16 [r=27 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 252x0
-          RenderTableRow {TR} at (0,593) size 256x21
-            RenderTableCell {TD} at (2,593) size 252x21 [r=28 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,341) size 256x21
+            RenderTableCell {TD} at (2,341) size 252x21 [r=14 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 83x19
-          RenderTableRow (anonymous) at (0,616) size 256x16
-            RenderTableCell (anonymous) at (2,616) size 252x16 [r=29 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 252x0
-          RenderTableRow {TR} at (0,634) size 256x33
-            RenderTableCell {TD} at (2,634) size 252x33 [r=30 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,364) size 256x33
+            RenderTableCell {TD} at (2,364) size 252x33 [r=15 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 54x31
-          RenderTableRow (anonymous) at (0,669) size 256x16
-            RenderTableCell (anonymous) at (2,669) size 252x16 [r=31 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 252x0
-          RenderTableRow {TR} at (0,687) size 256x27
-            RenderTableCell {TD} at (2,687) size 252x27 [r=32 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,399) size 256x27
+            RenderTableCell {TD} at (2,399) size 252x27 [r=16 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 56x25
-          RenderTableRow (anonymous) at (0,716) size 256x16
-            RenderTableCell (anonymous) at (2,716) size 252x16 [r=33 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 252x0
-          RenderTableRow {TR} at (0,734) size 256x17
-            RenderTableCell {TD} at (2,734) size 252x17 [r=34 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,428) size 256x17
+            RenderTableCell {TD} at (2,428) size 252x17 [r=17 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 53x15
-          RenderTableRow (anonymous) at (0,753) size 256x16
-            RenderTableCell (anonymous) at (2,753) size 252x16 [r=35 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 252x0
-          RenderTableRow {TR} at (0,771) size 256x31
-            RenderTableCell {TD} at (2,771) size 252x31 [r=36 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,447) size 256x31
+            RenderTableCell {TD} at (2,447) size 252x31 [r=18 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 31x29
-          RenderTableRow (anonymous) at (0,804) size 256x16
-            RenderTableCell (anonymous) at (2,804) size 252x16 [r=37 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 252x0
-          RenderTableRow {TR} at (0,822) size 256x17
-            RenderTableCell {TD} at (2,822) size 252x17 [r=38 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,480) size 256x17
+            RenderTableCell {TD} at (2,480) size 252x17 [r=19 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 53x15

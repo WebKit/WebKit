@@ -1,3 +1,105 @@
+2010-08-29  Yuzo Fujishima  <yuzo@google.com>
+
+        Unreviewed Chromium test expectation change for r66306.
+
+        * platform/chromium-linux/fast/forms/form-added-to-table-expected.txt: Added.
+        * platform/chromium-linux/fast/forms/formmove3-expected.checksum:
+        * platform/chromium-linux/fast/forms/formmove3-expected.png:
+        * platform/chromium-linux/fast/forms/formmove3-expected.txt:
+        * platform/chromium-linux/fast/forms/preserveFormDuringResidualStyle-expected.checksum:
+        * platform/chromium-linux/fast/forms/preserveFormDuringResidualStyle-expected.png: Removed.
+        * platform/chromium-linux/fast/forms/preserveFormDuringResidualStyle-expected.txt: Added.
+        * platform/chromium-linux/fast/table/fixed-table-non-cell-in-row-expected.txt: Added.
+        * platform/chromium-linux/fast/table/inline-form-assert-expected.txt: Added.
+        * platform/chromium-linux/fast/table/insert-cell-before-form-expected.txt: Added.
+        * platform/chromium-linux/fast/table/insert-row-before-form-expected.txt: Added.
+        * platform/chromium-linux/tables/mozilla/bugs/bug1318-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/bugs/bug1318-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug1318-expected.txt:
+        * platform/chromium-linux/tables/mozilla/bugs/bug2516-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/bugs/bug2516-expected.png: Removed.
+        * platform/chromium-linux/tables/mozilla/bugs/bug2516-expected.txt: Added.
+        * platform/chromium-linux/tables/mozilla/bugs/bug30559-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/bugs/bug30559-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug30559-expected.txt: Added.
+        * platform/chromium-linux/tables/mozilla/bugs/bug32447-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/bugs/bug32447-expected.png: Removed.
+        * platform/chromium-linux/tables/mozilla/bugs/bug32447-expected.txt: Added.
+        * platform/chromium-linux/tables/mozilla/bugs/bug34538-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/bugs/bug34538-expected.png: Removed.
+        * platform/chromium-linux/tables/mozilla/bugs/bug34538-expected.txt: Added.
+        * platform/chromium-linux/tables/mozilla/bugs/bug4527-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/bugs/bug4527-expected.png: Removed.
+        * platform/chromium-linux/tables/mozilla/bugs/bug4527-expected.txt: Added.
+        * platform/chromium-linux/tables/mozilla/bugs/bug78162-expected.txt: Added.
+        * platform/chromium-linux/tables/mozilla/bugs/bug96334-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/bugs/bug96334-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug96334-expected.txt:
+        * platform/chromium-linux/tables/mozilla/bugs/bug96343-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/bugs/bug96343-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug96343-expected.txt: Added.
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug1725-expected.checksum:
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug1725-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug1725-expected.txt:
+        * platform/chromium-mac/fast/forms/formmove3-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/formmove3-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/preserveFormDuringResidualStyle-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/preserveFormDuringResidualStyle-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug1318-expected.checksum: Added.
+        * platform/chromium-mac/tables/mozilla/bugs/bug2516-expected.checksum: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug2516-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug30559-expected.checksum: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug30559-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug32447-expected.checksum: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug32447-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug34538-expected.checksum: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug34538-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug4527-expected.checksum: Added.
+        * platform/chromium-mac/tables/mozilla/bugs/bug96334-expected.checksum: Added.
+        * platform/chromium-mac/tables/mozilla/bugs/bug96343-expected.checksum: Added.
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug1725-expected.checksum: Removed.
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug1725-expected.png: Removed.
+        * platform/chromium-win/fast/forms/form-added-to-table-expected.txt:
+        * platform/chromium-win/fast/forms/formmove3-expected.checksum:
+        * platform/chromium-win/fast/forms/formmove3-expected.png:
+        * platform/chromium-win/fast/forms/formmove3-expected.txt:
+        * platform/chromium-win/fast/forms/preserveFormDuringResidualStyle-expected.checksum:
+        * platform/chromium-win/fast/forms/preserveFormDuringResidualStyle-expected.png:
+        * platform/chromium-win/fast/forms/preserveFormDuringResidualStyle-expected.txt:
+        * platform/chromium-win/fast/table/fixed-table-non-cell-in-row-expected.txt:
+        * platform/chromium-win/fast/table/inline-form-assert-expected.txt:
+        * platform/chromium-win/fast/table/insert-cell-before-form-expected.txt:
+        * platform/chromium-win/fast/table/insert-row-before-form-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug1318-expected.checksum:
+        * platform/chromium-win/tables/mozilla/bugs/bug1318-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug1318-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug2516-expected.checksum:
+        * platform/chromium-win/tables/mozilla/bugs/bug2516-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug2516-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug30559-expected.checksum:
+        * platform/chromium-win/tables/mozilla/bugs/bug30559-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug30559-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug32447-expected.checksum:
+        * platform/chromium-win/tables/mozilla/bugs/bug32447-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug32447-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug34538-expected.checksum:
+        * platform/chromium-win/tables/mozilla/bugs/bug34538-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug34538-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug4527-expected.checksum:
+        * platform/chromium-win/tables/mozilla/bugs/bug4527-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug4527-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug78162-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug96334-expected.checksum:
+        * platform/chromium-win/tables/mozilla/bugs/bug96334-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug96334-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug96343-expected.checksum:
+        * platform/chromium-win/tables/mozilla/bugs/bug96343-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug96343-expected.txt:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug1725-expected.checksum:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug1725-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug1725-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2010-08-29  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Adele Peterson.

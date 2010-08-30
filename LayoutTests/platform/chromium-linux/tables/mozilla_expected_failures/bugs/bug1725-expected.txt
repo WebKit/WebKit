@@ -3,8 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 600x308 [bgcolor=#FFC0CB]
-        RenderTableSection {TBODY} at (0,0) size 600x308
+      RenderTable {TABLE} at (0,0) size 600x292 [bgcolor=#FFC0CB]
+        RenderTableSection {TBODY} at (0,0) size 600x292
           RenderTableRow {TR} at (0,0) size 600x20
             RenderTableCell {TD} at (0,0) size 600x20 [bgcolor=#FFFF00] [r=0 c=0 rs=1 cs=3]
               RenderText {#text} at (0,0) size 8x19
@@ -17,11 +17,8 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (0,40) size 155x20 [bgcolor=#00FFFF] [r=2 c=0 rs=40 cs=1]
               RenderText {#text} at (0,0) size 8x19
                 text run at (0,0) width 8: "3"
-          RenderTableRow (anonymous) at (0,40) size 600x16
-            RenderTableCell (anonymous) at (155,40) size 445x16 [r=3 c=1 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 445x0
-          RenderTableRow {TR} at (0,56) size 600x32
-            RenderTableCell {TD} at (155,56) size 445x32 [bgcolor=#FFA500] [r=4 c=1 rs=1 cs=1]
+          RenderTableRow {TR} at (0,40) size 600x32
+            RenderTableCell {TD} at (155,40) size 445x32 [bgcolor=#FFA500] [r=3 c=1 rs=1 cs=1]
               RenderTable {TABLE} at (0,0) size 440x32
                 RenderTableSection {TBODY} at (0,0) size 440x32
                   RenderTableRow {TR} at (0,2) size 440x28
@@ -33,22 +30,22 @@ layer at (0,0) size 800x600
                     RenderTableCell {TD} at (221,5) size 217x22 [r=0 c=1 rs=1 cs=1]
                       RenderText {#text} at (1,1) size 8x19
                         text run at (1,1) width 8: "4"
-          RenderTableRow {TR} at (0,88) size 600x20
-            RenderTableCell {TD} at (155,88) size 445x20 [bgcolor=#FF0000] [r=5 c=1 rs=1 cs=1]
+          RenderTableRow {TR} at (0,72) size 600x20
+            RenderTableCell {TD} at (155,72) size 445x20 [bgcolor=#FF0000] [r=4 c=1 rs=1 cs=1]
               RenderText {#text} at (0,0) size 8x19
                 text run at (0,0) width 8: "5"
-          RenderTableRow {TR} at (0,108) size 600x40
-            RenderTableCell {TD} at (155,108) size 445x40 [bgcolor=#FFFF00] [r=6 c=1 rs=1 cs=1]
+          RenderTableRow {TR} at (0,92) size 600x40
+            RenderTableCell {TD} at (155,92) size 445x40 [bgcolor=#FFFF00] [r=5 c=1 rs=1 cs=1]
               RenderText {#text} at (0,0) size 404x39
                 text run at (0,0) width 245: "If you have entered your feature criteria, "
                 text run at (245,0) width 159: "press the \"Submit Criteria\""
                 text run at (0,20) width 83: "button above."
-          RenderTableRow {TR} at (0,148) size 600x20
-            RenderTableCell {TD} at (155,148) size 445x20 [bgcolor=#D3D3D3] [r=7 c=1 rs=1 cs=1]
+          RenderTableRow {TR} at (0,132) size 600x20
+            RenderTableCell {TD} at (155,132) size 445x20 [bgcolor=#D3D3D3] [r=6 c=1 rs=1 cs=1]
               RenderText {#text} at (0,0) size 8x19
                 text run at (0,0) width 8: "6"
-          RenderTableRow {TR} at (0,168) size 600x60
-            RenderTableCell {TD} at (155,168) size 445x60 [r=8 c=1 rs=1 cs=1]
+          RenderTableRow {TR} at (0,152) size 600x60
+            RenderTableCell {TD} at (155,152) size 445x60 [r=7 c=1 rs=1 cs=1]
               RenderText {#text} at (0,0) size 443x59
                 text run at (0,0) width 252: "If you want to do a radius search instead, "
                 text run at (252,0) width 155: "press the \"Radius Search\""
@@ -56,12 +53,12 @@ layer at (0,0) size 800x600
                 text run at (46,20) width 261: "This will allow you to select a starting point "
                 text run at (307,20) width 136: "and enter a radius with"
                 text run at (0,40) width 119: "new feature criteria."
-          RenderTableRow {TR} at (0,228) size 600x20
-            RenderTableCell {TD} at (155,228) size 445x20 [r=9 c=1 rs=1 cs=1]
+          RenderTableRow {TR} at (0,212) size 600x20
+            RenderTableCell {TD} at (155,212) size 445x20 [r=8 c=1 rs=1 cs=1]
               RenderText {#text} at (0,0) size 4x19
                 text run at (0,0) width 4: " "
-          RenderTableRow {TR} at (0,248) size 600x60
-            RenderTableCell {TD} at (155,248) size 445x60 [r=10 c=1 rs=1 cs=1]
+          RenderTableRow {TR} at (0,232) size 600x60
+            RenderTableCell {TD} at (155,232) size 445x60 [r=9 c=1 rs=1 cs=1]
               RenderText {#text} at (0,0) size 436x59
                 text run at (0,0) width 413: "All information provided is deemed reliable but is not guaranteed and"
                 text run at (0,20) width 62: "should be "

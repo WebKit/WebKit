@@ -3,16 +3,12 @@ layer at (0,0) size 991x585
 layer at (0,0) size 991x585
   RenderBlock {HTML} at (0,0) size 800x585
     RenderBody {BODY} at (8,8) size 784x569
-      RenderTable {TABLE} at (0,0) size 983x176 [border: (2px solid #0000FF)]
-        RenderTableSection {TBODY} at (2,2) size 979x172
-          RenderTableRow {TR} at (0,2) size 979x168
-            RenderTableCell {TD} at (2,2) size 239x168 [border: (1px solid #C0C0C0)] [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (2,2) size 235x164 [border: (2px solid #008000)]
-                RenderTableSection (anonymous) at (2,2) size 231x20
-                  RenderTableRow (anonymous) at (0,2) size 231x16
-                    RenderTableCell (anonymous) at (2,2) size 227x16 [r=0 c=0 rs=1 cs=1]
-                      RenderBlock {FORM} at (0,0) size 227x0
-                RenderTableSection {TBODY} at (2,22) size 231x140
+      RenderTable {TABLE} at (0,0) size 983x156 [border: (2px solid #0000FF)]
+        RenderTableSection {TBODY} at (2,2) size 979x152
+          RenderTableRow {TR} at (0,2) size 979x148
+            RenderTableCell {TD} at (2,2) size 239x148 [border: (1px solid #C0C0C0)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 235x144 [border: (2px solid #008000)]
+                RenderTableSection {TBODY} at (2,2) size 231x140
                   RenderTableRow {TR} at (0,2) size 231x94
                     RenderTableCell {TD} at (2,2) size 227x94 [border: (1px solid #C0C0C0)] [r=0 c=0 rs=1 cs=1]
                       RenderTable {TABLE} at (2,2) size 171x38 [border: (2px solid #FF0000)]
@@ -43,7 +39,7 @@ layer at (0,0) size 991x585
               RenderText {#text} at (2,2) size 730x39
                 text run at (2,2) width 730: "KEEPoTHEoTEXToHEREoASoLONGoASoPOSSIBLEooKEEPoTHEoTEXToHEREoASoLONGoASoPOSSIBLE"
                 text run at (2,22) width 586: "THIS SIMULATES THE PROBLEM ON THE WWW.MAPBLAST.COM/ \"CREATE MAP\""
-layer at (30,51) size 151x16 scrollWidth 158
+layer at (30,31) size 151x16 scrollWidth 158
   RenderBlock {DIV} at (2,3) size 151x16
     RenderText {#text} at (1,0) size 156x16
       text run at (1,0) width 156: "THIS NEEDS THIS VALUE"

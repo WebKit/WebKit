@@ -17,16 +17,13 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,36) size 784x20
         RenderText {#text} at (0,0) size 256x19
           text run at (0,0) width 256: "There should be a line of green text below."
-      RenderTable {TABLE} at (0,72) size 140x50 [color=#FF0000]
-        RenderTableSection {TBODY} at (0,0) size 140x50
-          RenderTableRow {TR} at (0,2) size 140x46
-            RenderTableCell {TD} at (2,2) size 136x46 [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (1,1) size 134x44 [color=#008000]
-                RenderTableSection {TBODY} at (0,0) size 134x44
+      RenderTable {TABLE} at (0,72) size 140x32 [color=#FF0000]
+        RenderTableSection {TBODY} at (0,0) size 140x32
+          RenderTableRow {TR} at (0,2) size 140x28
+            RenderTableCell {TD} at (2,2) size 136x28 [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (1,1) size 134x26 [color=#008000]
+                RenderTableSection {TBODY} at (0,0) size 134x26
                   RenderTableRow {TR} at (0,2) size 134x22
                     RenderTableCell {TD} at (2,2) size 130x22 [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (1,1) size 128x19
                         text run at (1,1) width 128: "This should be green."
-                  RenderTableRow (anonymous) at (0,26) size 134x16
-                    RenderTableCell (anonymous) at (2,26) size 130x16 [r=1 c=0 rs=1 cs=1]
-                      RenderBlock {FORM} at (0,0) size 130x0
