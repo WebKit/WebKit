@@ -191,6 +191,7 @@ WEBCORE_INCLUDEPATH = \
     $$PWD/dom \
     $$PWD/dom/default \
     $$PWD/editing \
+    $$PWD/filepai \
     $$PWD/history \
     $$PWD/html \
     $$PWD/html/canvas \
@@ -619,6 +620,16 @@ SOURCES += \
     editing/VisibleSelection.cpp \
     editing/visible_units.cpp \
     editing/WrapContentsInDummySpanCommand.cpp \
+    fileapi/Blob.cpp \
+    fileapi/BlobBuilder.cpp \
+    fileapi/BlobURL.cpp \
+    fileapi/File.cpp \
+    fileapi/FileList.cpp \
+    fileapi/FileReader.cpp \
+    fileapi/FileStreamProxy.cpp \
+    fileapi/FileThread.cpp \
+    fileapi/FileWriter.cpp \
+    fileapi/ThreadableBlobRegistry.cpp \
     history/BackForwardController.cpp \
     history/BackForwardListImpl.cpp \
     history/CachedFrame.cpp \
@@ -627,63 +638,48 @@ SOURCES += \
     history/qt/HistoryItemQt.cpp \
     history/PageCache.cpp \
     html/AsyncImageResizer.cpp \
-    html/Blob.cpp \
-    html/BlobBuilder.cpp \
-    html/BlobURL.cpp \
-    html/canvas/CanvasGradient.cpp \
-    html/canvas/CanvasPattern.cpp \
-    html/canvas/CanvasPixelArray.cpp \
-    html/canvas/CanvasRenderingContext.cpp \
-    html/canvas/CanvasRenderingContext2D.cpp \
-    html/canvas/CanvasStyle.cpp \
     html/CollectionCache.cpp \
+    html/DOMDataGridDataSource.cpp \
+    html/DOMFormData.cpp \
     html/DataGridColumn.cpp \
     html/DataGridColumnList.cpp \
     html/DateComponents.cpp \
-    html/DOMDataGridDataSource.cpp \
-    html/DOMFormData.cpp \
-    html/File.cpp \
-    html/FileList.cpp \
-    html/FileReader.cpp \
-    html/FileStreamProxy.cpp \
-    html/FileThread.cpp \
-    html/FileWriter.cpp \
     html/FormDataList.cpp \
     html/HTMLAllCollection.cpp \
     html/HTMLAnchorElement.cpp \
     html/HTMLAppletElement.cpp \
     html/HTMLAreaElement.cpp \
+    html/HTMLBRElement.cpp \
     html/HTMLBaseElement.cpp \
     html/HTMLBaseFontElement.cpp \
     html/HTMLBlockquoteElement.cpp \
     html/HTMLBodyElement.cpp \
-    html/HTMLBRElement.cpp \
     html/HTMLButtonElement.cpp \
     html/HTMLCanvasElement.cpp \
     html/HTMLCollection.cpp \
-    html/HTMLDataGridElement.cpp \
+    html/HTMLDListElement.cpp \
     html/HTMLDataGridCellElement.cpp \
     html/HTMLDataGridColElement.cpp \
+    html/HTMLDataGridElement.cpp \
     html/HTMLDataGridRowElement.cpp \
     html/HTMLDataListElement.cpp \
     html/HTMLDirectoryElement.cpp \
     html/HTMLDivElement.cpp \
-    html/HTMLDListElement.cpp \
     html/HTMLDocument.cpp \
     html/HTMLElement.cpp \
     html/HTMLEmbedElement.cpp \
     html/HTMLFieldSetElement.cpp \
     html/HTMLFontElement.cpp \
     html/HTMLFormCollection.cpp \
+    html/HTMLFormControlElement.cpp \
     html/HTMLFormElement.cpp \
-    html/HTMLFrameElementBase.cpp \
     html/HTMLFrameElement.cpp \
+    html/HTMLFrameElementBase.cpp \
     html/HTMLFrameOwnerElement.cpp \
     html/HTMLFrameSetElement.cpp \
-    html/HTMLFormControlElement.cpp \
+    html/HTMLHRElement.cpp \
     html/HTMLHeadElement.cpp \
     html/HTMLHeadingElement.cpp \
-    html/HTMLHRElement.cpp \
     html/HTMLHtmlElement.cpp \
     html/HTMLIFrameElement.cpp \
     html/HTMLImageElement.cpp \
@@ -691,9 +687,9 @@ SOURCES += \
     html/HTMLInputElement.cpp \
     html/HTMLIsIndexElement.cpp \
     html/HTMLKeygenElement.cpp \
+    html/HTMLLIElement.cpp \
     html/HTMLLabelElement.cpp \
     html/HTMLLegendElement.cpp \
-    html/HTMLLIElement.cpp \
     html/HTMLLinkElement.cpp \
     html/HTMLMapElement.cpp \
     html/HTMLMarqueeElement.cpp \
@@ -702,8 +698,8 @@ SOURCES += \
     html/HTMLMeterElement.cpp \
     html/HTMLModElement.cpp \
     html/HTMLNameCollection.cpp \
-    html/HTMLObjectElement.cpp \
     html/HTMLOListElement.cpp \
+    html/HTMLObjectElement.cpp \
     html/HTMLOptGroupElement.cpp \
     html/HTMLOptionElement.cpp \
     html/HTMLOptionsCollection.cpp \
@@ -733,6 +729,14 @@ SOURCES += \
     html/ImageData.cpp \
     html/ImageResizerThread.cpp \
     html/LabelsNodeList.cpp \
+    html/StepRange.cpp \
+    html/ValidityState.cpp \
+    html/canvas/CanvasGradient.cpp \
+    html/canvas/CanvasPattern.cpp \
+    html/canvas/CanvasPixelArray.cpp \
+    html/canvas/CanvasRenderingContext.cpp \
+    html/canvas/CanvasRenderingContext2D.cpp \
+    html/canvas/CanvasStyle.cpp \
     html/parser/CSSPreloadScanner.cpp \
     html/parser/HTMLConstructionSite.cpp \
     html/parser/HTMLDocumentParser.cpp \
@@ -746,9 +750,6 @@ SOURCES += \
     html/parser/HTMLTokenizer.cpp \
     html/parser/HTMLTreeBuilder.cpp \
     html/parser/HTMLViewSourceParser.cpp \
-    html/ThreadableBlobRegistry.cpp \
-    html/StepRange.cpp \
-    html/ValidityState.cpp \
     inspector/ConsoleMessage.cpp \
     inspector/InjectedScript.cpp \
     inspector/InjectedScriptHost.cpp \

@@ -12,6 +12,7 @@ SET(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/dom"
     "${WEBCORE_DIR}/dom/default"
     "${WEBCORE_DIR}/editing"
+    "${WEBCORE_DIR}/fileapi"
     "${WEBCORE_DIR}/history"
     "${WEBCORE_DIR}/html"
     "${WEBCORE_DIR}/html/canvas"
@@ -78,6 +79,7 @@ SET(WebCore_IDL_INCLUDES
     bindings/js
     css
     dom
+    fileapi
     html
     html/canvas
     inspector
@@ -190,16 +192,17 @@ SET(WebCore_IDL_FILES
     dom/WebKitTransitionEvent.idl
     dom/WheelEvent.idl
 
-    html/Blob.idl
-    html/BlobBuilder.idl
+    fileapi/Blob.idl
+    fileapi/BlobBuilder.idl
+    fileapi/FileError.idl
+    fileapi/File.idl
+    fileapi/FileList.idl
+    fileapi/FileReader.idl
+    fileapi/FileWriter.idl
+
     html/DataGridColumn.idl
     html/DataGridColumnList.idl
     html/DOMFormData.idl
-    html/FileError.idl
-    html/File.idl
-    html/FileList.idl
-    html/FileReader.idl
-    html/FileWriter.idl
     html/HTMLAllCollection.idl
     html/HTMLAnchorElement.idl
     html/HTMLAppletElement.idl
@@ -935,6 +938,13 @@ SET(WebCore_SOURCES
     editing/markup.cpp
     editing/visible_units.cpp
 
+    fileapi/Blob.cpp
+    fileapi/BlobBuilder.cpp
+    fileapi/BlobURL.cpp
+    fileapi/File.cpp
+    fileapi/FileList.cpp
+    fileapi/ThreadableBlobRegistry.cpp
+
     history/BackForwardController.cpp
     history/BackForwardListImpl.cpp
     history/CachedFrame.cpp
@@ -943,17 +953,12 @@ SET(WebCore_SOURCES
     history/PageCache.cpp
 
     html/AsyncImageResizer.cpp
-    html/Blob.cpp
-    html/BlobBuilder.cpp
-    html/BlobURL.cpp
     html/CollectionCache.cpp
     html/DOMDataGridDataSource.cpp
     html/DOMFormData.cpp
     html/DataGridColumn.cpp
     html/DataGridColumnList.cpp
     html/DateComponents.cpp
-    html/File.cpp
-    html/FileList.cpp
     html/FormDataList.cpp
     html/HTMLAllCollection.cpp
     html/HTMLAnchorElement.cpp
@@ -1040,7 +1045,6 @@ SET(WebCore_SOURCES
     html/ImageResizerThread.cpp
     html/LabelsNodeList.cpp
     html/StepRange.cpp
-    html/ThreadableBlobRegistry.cpp
     html/ValidityState.cpp
     html/canvas/CanvasGradient.cpp
     html/canvas/CanvasPattern.cpp

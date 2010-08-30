@@ -33,6 +33,7 @@ VPATH = \
     $(WebCore)/bindings/objc \
     $(WebCore)/css \
     $(WebCore)/dom \
+    $(WebCore)/fileapi \
     $(WebCore)/html \
     $(WebCore)/html/canvas \
     $(WebCore)/inspector \
@@ -813,7 +814,7 @@ generator_script = perl $(addprefix -I $(WebCore)/, $(sort $(dir $(1)))) $(WebCo
 
 # JS bindings generator
 
-IDL_INCLUDES = dom html css page notifications xml svg
+IDL_INCLUDES = dom fileapi html css page notifications xml svg
 IDL_COMMON_ARGS = $(IDL_INCLUDES:%=--include %) --write-dependencies --outputDir .
 
 JS_BINDINGS_SCRIPTS = $(GENERATE_SCRIPTS) bindings/scripts/CodeGeneratorJS.pm

@@ -18,6 +18,7 @@ webcore_cppflags += \
 	-I$(srcdir)/WebCore/dom \
 	-I$(srcdir)/WebCore/dom/default \
 	-I$(srcdir)/WebCore/editing \
+	-I$(srcdir)/WebCore/fileapi \
 	-I$(srcdir)/WebCore/history \
 	-I$(srcdir)/WebCore/html \
 	-I$(srcdir)/WebCore/html/canvas \
@@ -1294,6 +1295,24 @@ webcore_sources += \
 	WebCore/editing/visible_units.cpp \
 	WebCore/editing/visible_units.h \
 	WebCore/editing/gtk/SelectionControllerGtk.cpp \
+	WebCore/fileapi/Blob.cpp \
+	WebCore/fileapi/Blob.h \
+	WebCore/fileapi/BlobBuilder.cpp \
+	WebCore/fileapi/BlobBuilder.h \
+	WebCore/fileapi/BlobURL.cpp \
+	WebCore/fileapi/BlobURL.h \
+	WebCore/fileapi/File.cpp \
+	WebCore/fileapi/File.h \
+	WebCore/fileapi/FileError.h \
+	WebCore/fileapi/FileList.cpp \
+	WebCore/fileapi/FileList.h \
+	WebCore/fileapi/FileReader.cpp \
+	WebCore/fileapi/FileReader.h \
+	WebCore/fileapi/FileStreamProxy.cpp \
+	WebCore/fileapi/FileStreamProxy.h \
+	WebCore/fileapi/FileThread.cpp \
+	WebCore/fileapi/FileThread.h \
+	WebCore/fileapi/FileThreadTask.h \
 	WebCore/history/BackForwardController.cpp \
 	WebCore/history/BackForwardController.h \
 	WebCore/history/BackForwardControllerClient.h \
@@ -1311,28 +1330,13 @@ webcore_sources += \
 	WebCore/history/PageCache.h \
 	WebCore/html/AsyncImageResizer.cpp \
 	WebCore/html/AsyncImageResizer.h \
-	WebCore/html/Blob.cpp \
-	WebCore/html/Blob.h \
-	WebCore/html/BlobBuilder.cpp \
-	WebCore/html/BlobBuilder.h \
-	WebCore/html/BlobURL.cpp \
-	WebCore/html/BlobURL.h \
-	WebCore/html/canvas/CanvasContextAttributes.h \
-	WebCore/html/canvas/CanvasGradient.cpp \
-	WebCore/html/canvas/CanvasGradient.h \
-	WebCore/html/canvas/CanvasPattern.cpp \
-	WebCore/html/canvas/CanvasPattern.h \
-	WebCore/html/canvas/CanvasPixelArray.cpp \
-	WebCore/html/canvas/CanvasPixelArray.h \
-	WebCore/html/canvas/CanvasRenderingContext.cpp \
-	WebCore/html/canvas/CanvasRenderingContext.h \
-	WebCore/html/canvas/CanvasRenderingContext2D.cpp \
-	WebCore/html/canvas/CanvasRenderingContext2D.h \
-	WebCore/html/canvas/CanvasStyle.cpp \
-	WebCore/html/canvas/CanvasStyle.h \
 	WebCore/html/CollectionCache.cpp \
 	WebCore/html/CollectionCache.h \
 	WebCore/html/CollectionType.h \
+	WebCore/html/DOMDataGridDataSource.cpp \
+	WebCore/html/DOMDataGridDataSource.h \
+	WebCore/html/DOMFormData.cpp \
+	WebCore/html/DOMFormData.h \
 	WebCore/html/DataGridColumn.cpp \
 	WebCore/html/DataGridColumn.h \
 	WebCore/html/DataGridColumnList.cpp \
@@ -1340,22 +1344,6 @@ webcore_sources += \
 	WebCore/html/DataGridDataSource.h \
 	WebCore/html/DateComponents.cpp \
 	WebCore/html/DateComponents.h \
-	WebCore/html/DOMDataGridDataSource.cpp \
-	WebCore/html/DOMDataGridDataSource.h \
-	WebCore/html/DOMFormData.cpp \
-	WebCore/html/DOMFormData.h \
-	WebCore/html/File.cpp \
-	WebCore/html/File.h \
-	WebCore/html/FileError.h \
-	WebCore/html/FileList.cpp \
-	WebCore/html/FileList.h \
-	WebCore/html/FileReader.cpp \
-	WebCore/html/FileReader.h \
-	WebCore/html/FileStreamProxy.cpp \
-	WebCore/html/FileStreamProxy.h \
-	WebCore/html/FileThread.cpp \
-	WebCore/html/FileThread.h \
-	WebCore/html/FileThreadTask.h \
 	WebCore/html/FormDataList.cpp \
 	WebCore/html/FormDataList.h \
 	WebCore/html/HTMLAllCollection.cpp \
@@ -1382,18 +1370,18 @@ webcore_sources += \
 	WebCore/html/HTMLCanvasElement.h \
 	WebCore/html/HTMLCollection.cpp \
 	WebCore/html/HTMLCollection.h \
-	WebCore/html/HTMLDataGridElement.cpp \
-	WebCore/html/HTMLDataGridElement.h \
+	WebCore/html/HTMLDListElement.cpp \
+	WebCore/html/HTMLDListElement.h \
 	WebCore/html/HTMLDataGridCellElement.cpp \
 	WebCore/html/HTMLDataGridCellElement.h \
 	WebCore/html/HTMLDataGridColElement.cpp \
 	WebCore/html/HTMLDataGridColElement.h \
+	WebCore/html/HTMLDataGridElement.cpp \
+	WebCore/html/HTMLDataGridElement.h \
 	WebCore/html/HTMLDataGridRowElement.cpp \
 	WebCore/html/HTMLDataGridRowElement.h \
 	WebCore/html/HTMLDataListElement.cpp \
 	WebCore/html/HTMLDataListElement.h \
-	WebCore/html/HTMLDListElement.cpp \
-	WebCore/html/HTMLDListElement.h \
 	WebCore/html/HTMLDirectoryElement.cpp \
 	WebCore/html/HTMLDirectoryElement.h \
 	WebCore/html/HTMLDivElement.cpp \
@@ -1529,6 +1517,22 @@ webcore_sources += \
 	WebCore/html/LabelsNodeList.cpp \
 	WebCore/html/LabelsNodeList.h \
 	WebCore/html/MediaError.h \
+	WebCore/html/StepRange.cpp \
+	WebCore/html/StepRange.h \
+	WebCore/html/TextMetrics.h \
+	WebCore/html/canvas/CanvasContextAttributes.h \
+	WebCore/html/canvas/CanvasGradient.cpp \
+	WebCore/html/canvas/CanvasGradient.h \
+	WebCore/html/canvas/CanvasPattern.cpp \
+	WebCore/html/canvas/CanvasPattern.h \
+	WebCore/html/canvas/CanvasPixelArray.cpp \
+	WebCore/html/canvas/CanvasPixelArray.h \
+	WebCore/html/canvas/CanvasRenderingContext.cpp \
+	WebCore/html/canvas/CanvasRenderingContext.h \
+	WebCore/html/canvas/CanvasRenderingContext2D.cpp \
+	WebCore/html/canvas/CanvasRenderingContext2D.h \
+	WebCore/html/canvas/CanvasStyle.cpp \
+	WebCore/html/canvas/CanvasStyle.h \
 	WebCore/html/parser/CSSPreloadScanner.cpp \
 	WebCore/html/parser/CSSPreloadScanner.h \
 	WebCore/html/parser/HTMLConstructionSite.cpp \
@@ -1557,11 +1561,8 @@ webcore_sources += \
 	WebCore/html/parser/HTMLTreeBuilder.h \
 	WebCore/html/parser/HTMLViewSourceParser.cpp \
 	WebCore/html/parser/HTMLViewSourceParser.h \
-	WebCore/html/StepRange.cpp \
-	WebCore/html/StepRange.h \
-	WebCore/html/TextMetrics.h \
-	WebCore/html/ThreadableBlobRegistry.cpp \
-	WebCore/html/ThreadableBlobRegistry.h \
+	WebCore/fileapi/ThreadableBlobRegistry.cpp \
+	WebCore/fileapi/ThreadableBlobRegistry.h \
 	WebCore/html/ValidityState.cpp \
 	WebCore/html/ValidityState.h \
 	WebCore/html/VoidCallback.h \

@@ -1,3 +1,82 @@
+2010-08-29  Adam Barth  <abarth@webkit.org>
+
+        Rubber-stamped by Maciej Stachowiak.
+
+        Move File and Blob related files from WebCore/html to WebCore/fileapi.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.vcproj/WebCoreCommon.vsprops:
+        * WebCore.xcodeproj/project.pbxproj:
+        * fileapi: Added.
+        * fileapi/AsyncFileWriter.h: Copied from WebCore/html/AsyncFileWriter.h.
+        * fileapi/Blob.cpp: Copied from WebCore/html/Blob.cpp.
+        * fileapi/Blob.h: Copied from WebCore/html/Blob.h.
+        * fileapi/Blob.idl: Copied from WebCore/html/Blob.idl.
+        * fileapi/BlobBuilder.cpp: Copied from WebCore/html/BlobBuilder.cpp.
+        * fileapi/BlobBuilder.h: Copied from WebCore/html/BlobBuilder.h.
+        * fileapi/BlobBuilder.idl: Copied from WebCore/html/BlobBuilder.idl.
+        * fileapi/BlobURL.cpp: Copied from WebCore/html/BlobURL.cpp.
+        * fileapi/BlobURL.h: Copied from WebCore/html/BlobURL.h.
+        * fileapi/File.cpp: Copied from WebCore/html/File.cpp.
+        * fileapi/File.h: Copied from WebCore/html/File.h.
+        * fileapi/File.idl: Copied from WebCore/html/File.idl.
+        * fileapi/FileError.h: Copied from WebCore/html/FileError.h.
+        * fileapi/FileError.idl: Copied from WebCore/html/FileError.idl.
+        * fileapi/FileList.cpp: Copied from WebCore/html/FileList.cpp.
+        * fileapi/FileList.h: Copied from WebCore/html/FileList.h.
+        * fileapi/FileList.idl: Copied from WebCore/html/FileList.idl.
+        * fileapi/FileReader.cpp: Copied from WebCore/html/FileReader.cpp.
+        * fileapi/FileReader.h: Copied from WebCore/html/FileReader.h.
+        * fileapi/FileReader.idl: Copied from WebCore/html/FileReader.idl.
+        * fileapi/FileStreamProxy.cpp: Copied from WebCore/html/FileStreamProxy.cpp.
+        * fileapi/FileStreamProxy.h: Copied from WebCore/html/FileStreamProxy.h.
+        * fileapi/FileThread.cpp: Copied from WebCore/html/FileThread.cpp.
+        * fileapi/FileThread.h: Copied from WebCore/html/FileThread.h.
+        * fileapi/FileThreadTask.h: Copied from WebCore/html/FileThreadTask.h.
+        * fileapi/FileWriter.cpp: Copied from WebCore/html/FileWriter.cpp.
+        * fileapi/FileWriter.h: Copied from WebCore/html/FileWriter.h.
+        * fileapi/FileWriter.idl: Copied from WebCore/html/FileWriter.idl.
+        * fileapi/FileWriterClient.h: Copied from WebCore/html/FileWriterClient.h.
+        * fileapi/ThreadableBlobRegistry.cpp: Copied from WebCore/html/ThreadableBlobRegistry.cpp.
+        * fileapi/ThreadableBlobRegistry.h: Copied from WebCore/html/ThreadableBlobRegistry.h.
+        * html/AsyncFileWriter.h: Removed.
+        * html/Blob.cpp: Removed.
+        * html/Blob.h: Removed.
+        * html/Blob.idl: Removed.
+        * html/BlobBuilder.cpp: Removed.
+        * html/BlobBuilder.h: Removed.
+        * html/BlobBuilder.idl: Removed.
+        * html/BlobURL.cpp: Removed.
+        * html/BlobURL.h: Removed.
+        * html/File.cpp: Removed.
+        * html/File.h: Removed.
+        * html/File.idl: Removed.
+        * html/FileError.h: Removed.
+        * html/FileError.idl: Removed.
+        * html/FileList.cpp: Removed.
+        * html/FileList.h: Removed.
+        * html/FileList.idl: Removed.
+        * html/FileReader.cpp: Removed.
+        * html/FileReader.h: Removed.
+        * html/FileReader.idl: Removed.
+        * html/FileStreamProxy.cpp: Removed.
+        * html/FileStreamProxy.h: Removed.
+        * html/FileThread.cpp: Removed.
+        * html/FileThread.h: Removed.
+        * html/FileThreadTask.h: Removed.
+        * html/FileWriter.cpp: Removed.
+        * html/FileWriter.h: Removed.
+        * html/FileWriter.idl: Removed.
+        * html/FileWriterClient.h: Removed.
+        * html/ThreadableBlobRegistry.cpp: Removed.
+        * html/ThreadableBlobRegistry.h: Removed.
+
 2010-08-29  Marc-Antoine Ruel  <maruel@chromium.org>
 
         Reviewed by Kent Tamura.

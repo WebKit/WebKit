@@ -246,6 +246,12 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	editing/markup.cpp \
 	editing/visible_units.cpp \
 	\
+	fileapi/Blob.cpp \
+	fileapi/BlobURL.cpp \
+	fileapi/File.cpp \
+	fileapi/FileList.cpp \
+	fileapi/ThreadableBlobRegistry.cpp \
+    \
 	history/BackForwardList.cpp \
 	history/CachedFrame.cpp \
 	history/CachedPage.cpp \
@@ -255,13 +261,9 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	history/android/HistoryItemAndroid.cpp \
 	\
 	html/AsyncImageResizer.cpp \
-	html/Blob.cpp \
-	html/BlobURL.cpp \
 	html/CollectionCache.cpp \
 	html/parser/CSSPreloadScanner.cpp \
 	html/DOMFormData.cpp \
-	html/File.cpp \
-	html/FileList.cpp \
 	html/FormDataList.cpp \
 	html/HTMLAllCollection.cpp \
 	html/HTMLCollection.cpp \
@@ -277,7 +279,6 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	html/HTMLViewSourceDocument.cpp \
 	html/ImageData.cpp \
 	html/ImageResizerThread.cpp \
-	html/ThreadableBlobRegistry.cpp \
 	html/TimeRanges.cpp \
 	html/ValidityState.cpp \
 	\

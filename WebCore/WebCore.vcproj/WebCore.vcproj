@@ -37077,7 +37077,91 @@
 			Name="html"
 			>
 			<File
-				RelativePath="..\html\AsyncFileWriter.h"
+				RelativePath="..\fileapi\AsyncFileWriter.h"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\Blob.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\Blob.h"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\BlobBuilder.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\BlobBuilder.h"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\BlobURL.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\BlobURL.h"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\File.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\File.h"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\FileError.h"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\FileList.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\FileList.h"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\FileReader.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\FileReader.h"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\FileStreamProxy.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\FileStreamProxy.h"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\FileThread.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\FileThread.h"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\FileThreadTask.h"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\FileWriter.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\FileWriter.h"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\FileWriterClient.h"
 				>
 			</File>
 			<File
@@ -37086,30 +37170,6 @@
 			</File>
 			<File
 				RelativePath="..\html\AsyncImageResizer.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\Blob.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\Blob.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\BlobBuilder.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\BlobBuilder.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\BlobURL.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\BlobURL.h"
 				>
 			</File>
 			<File
@@ -37222,66 +37282,6 @@
 			</File>
 			<File
 				RelativePath="..\html\DOMFormData.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\File.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\File.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\FileError.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\FileList.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\FileList.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\FileReader.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\FileReader.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\FileStreamProxy.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\FileStreamProxy.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\FileThread.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\FileThread.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\FileThreadTask.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\FileWriter.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\FileWriter.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\FileWriterClient.h"
 				>
 			</File>
 			<File
@@ -41797,11 +41797,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\html\ThreadableBlobRegistry.cpp"
+				RelativePath="..\fileapi\ThreadableBlobRegistry.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\html\ThreadableBlobRegistry.h"
+				RelativePath="..\fileapi\ThreadableBlobRegistry.h"
 				>
 			</File>
 			<File
