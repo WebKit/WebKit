@@ -1,3 +1,48 @@
+2010-08-30  Chris Rogers  <crogers@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        audio engine: add ReverbConvolver class
+        https://bugs.webkit.org/show_bug.cgi?id=34912
+
+        No new tests since audio API is not yet implemented.
+
+        * platform/audio: Added.
+        * platform/audio/ReverbAccumulationBuffer.cpp: Added.
+        (WebCore::ReverbAccumulationBuffer::ReverbAccumulationBuffer):
+        (WebCore::ReverbAccumulationBuffer::readAndClear):
+        (WebCore::ReverbAccumulationBuffer::updateReadIndex):
+        (WebCore::ReverbAccumulationBuffer::accumulate):
+        (WebCore::ReverbAccumulationBuffer::reset):
+        * platform/audio/ReverbAccumulationBuffer.h: Added.
+        (WebCore::ReverbAccumulationBuffer::readIndex):
+        (WebCore::ReverbAccumulationBuffer::readTimeFrame):
+        * platform/audio/ReverbConvolver.cpp: Added.
+        (WebCore::backgroundThreadEntry):
+        (WebCore::ReverbConvolver::ReverbConvolver):
+        (WebCore::ReverbConvolver::~ReverbConvolver):
+        (WebCore::ReverbConvolver::backgroundThreadEntry):
+        (WebCore::ReverbConvolver::process):
+        (WebCore::ReverbConvolver::reset):
+        * platform/audio/ReverbConvolver.h: Added.
+        (WebCore::ReverbConvolver::impulseResponseLength):
+        (WebCore::ReverbConvolver::inputBuffer):
+        (WebCore::ReverbConvolver::useBackgroundThreads):
+        * platform/audio/ReverbConvolverStage.cpp: Added.
+        (WebCore::ReverbConvolverStage::ReverbConvolverStage):
+        (WebCore::ReverbConvolverStage::processInBackground):
+        (WebCore::ReverbConvolverStage::process):
+        (WebCore::ReverbConvolverStage::reset):
+        * platform/audio/ReverbConvolverStage.h: Added.
+        (WebCore::ReverbConvolverStage::inputReadIndex):
+        * platform/audio/ReverbInputBuffer.cpp: Added.
+        (WebCore::ReverbInputBuffer::ReverbInputBuffer):
+        (WebCore::ReverbInputBuffer::write):
+        (WebCore::ReverbInputBuffer::directReadFrom):
+        (WebCore::ReverbInputBuffer::reset):
+        * platform/audio/ReverbInputBuffer.h: Added.
+        (WebCore::ReverbInputBuffer::writeIndex):
+
 2010-08-30  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.
