@@ -1,3 +1,15 @@
+2010-08-29  Marc-Antoine Ruel  <maruel@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Rename webcore to 'webcore_remaining'.
+        Create a meta-target webcore that inherits from every webcore_XXX targets. (Currently 1)
+        Move direct_dependent_settings and export_dependent_settings from webcore_remaining to webcore
+
+        Obviously, there will be other webcore_XXX targets. Keeping the change as small as possible.
+
+        * WebCore.gyp/WebCore.gyp:
+
 2010-08-29  Jeremy Moskovich  <jeremy@chromium.org>
 
         Reviewed by Dimitri Glazkov.

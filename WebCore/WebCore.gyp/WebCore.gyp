@@ -852,17 +852,13 @@
       },
     },
     {
-      'target_name': 'webcore',
+      # TODO: To be the remaining, there must be other sibbling projects.
+      # Will be done in a separate change to keep the diff simpler.
+      'target_name': 'webcore_remaining',
       'type': '<(library)',
       'msvs_guid': '1C16337B-ACF3-4D03-AA90-851C5B5EADA6',
       'dependencies': [
         'webcore_prerequisites',
-        # Exported.
-        'webcore_bindings',
-        '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
-        '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
-        '<(chromium_src_dir)/skia/skia.gyp:skia',
-        '<(chromium_src_dir)/third_party/npapi/npapi.gyp:npapi',
       ],
       'sources': [
         '<@(webcore_files)',
@@ -956,21 +952,6 @@
         '../dom/default/PlatformMessagePortChannel.h',
 
       ],
-      'direct_dependent_settings': {
-        'include_dirs': [
-          '<@(webcore_include_dirs)',
-        ],
-        'mac_framework_dirs': [
-          '$(SDKROOT)/System/Library/Frameworks/ApplicationServices.framework/Frameworks',
-        ],
-      },
-      'export_dependent_settings': [
-        'webcore_bindings',
-        '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
-        '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
-        '<(chromium_src_dir)/skia/skia.gyp:skia',
-        '<(chromium_src_dir)/third_party/npapi/npapi.gyp:npapi',
-      ],
       'link_settings': {
         'mac_bundle_resources': [
           '../Resources/aliasCursor.png',
@@ -1021,9 +1002,6 @@
       'conditions': [
         ['javascript_engine=="v8"', {
           'dependencies': [
-            '<(chromium_src_dir)/v8/tools/gyp/v8.gyp:v8',
-          ],
-          'export_dependent_settings': [
             '<(chromium_src_dir)/v8/tools/gyp/v8.gyp:v8',
           ],
           'conditions': [
@@ -1236,12 +1214,6 @@
             # Again, Skia is not used on Mac.
             '../platform/chromium/DragImageChromiumSkia.cpp',
           ],
-          'direct_dependent_settings': {
-            'include_dirs': [
-              '../../WebKitLibraries',
-              '../../WebKit/mac/WebCoreSupport',
-            ],
-          },
         }],
         ['OS=="win"', {
           'dependencies': [
@@ -1261,9 +1233,6 @@
           # This is needed because Event.h in this directory is blocked
           # by a system header on windows.
           'include_dirs++': ['../dom'],
-          'direct_dependent_settings': {
-            'include_dirs+++': ['../dom'],
-          },
         }],
         ['OS!="linux" and OS!="freebsd"', {
           'sources/': [['exclude', '(Gtk|Linux)\\.cpp$']]
@@ -1282,6 +1251,57 @@
             'Debug': {
               'cflags!': ['-g'],
             }
+          },
+        }],
+      ],
+    },
+    {
+      'target_name': 'webcore',
+      'type': 'none',
+      'dependencies': [
+        'webcore_remaining',
+        # Exported.
+        'webcore_bindings',
+        '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
+        '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
+        '<(chromium_src_dir)/skia/skia.gyp:skia',
+        '<(chromium_src_dir)/third_party/npapi/npapi.gyp:npapi',
+      ],
+      'export_dependent_settings': [
+        'webcore_bindings',
+        '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
+        '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
+        '<(chromium_src_dir)/skia/skia.gyp:skia',
+        '<(chromium_src_dir)/third_party/npapi/npapi.gyp:npapi',
+      ],
+      'direct_dependent_settings': {
+        'include_dirs': [
+          '<@(webcore_include_dirs)',
+        ],
+        'mac_framework_dirs': [
+          '$(SDKROOT)/System/Library/Frameworks/ApplicationServices.framework/Frameworks',
+        ],
+      },
+      'conditions': [
+        ['javascript_engine=="v8"', {
+          'dependencies': [
+            '<(chromium_src_dir)/v8/tools/gyp/v8.gyp:v8',
+          ],
+          'export_dependent_settings': [
+            '<(chromium_src_dir)/v8/tools/gyp/v8.gyp:v8',
+          ],
+        }],
+        ['OS=="mac"', {
+          'direct_dependent_settings': {
+            'include_dirs': [
+              '../../WebKitLibraries',
+              '../../WebKit/mac/WebCoreSupport',
+            ],
+          },
+        }],
+        ['OS=="win"', {
+          'direct_dependent_settings': {
+            'include_dirs+++': ['../dom'],
           },
         }],
       ],
