@@ -44,7 +44,7 @@
 
 // Start Chromium Change
 #import "config.h"
-#import "../graphics/mac/FontPlatformData.h"
+#import "../graphics/cocoa/FontPlatformData.h"
 
 #import "ChromiumBridge.h"
 #import "PlatformString.h"

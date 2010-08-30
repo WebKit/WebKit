@@ -217,22 +217,23 @@
       }],
       ['OS=="mac"', {
         'webcore_include_dirs+': [
-          # platform/graphics/cg and mac needs to come before
+          # platform/graphics/cg and cocoa need to come before
           # platform/graphics/chromium so that the Mac build picks up the
           # version of ImageBufferData.h in the cg directory and
-          # FontPlatformData.h in the mac directory.  The + prepends this
+          # FontPlatformData.h in the cocoa directory.  The + prepends this
           # directory to the list.
           # FIXME: This shouldn't need to be prepended.
-          # FIXME: Eliminate dependency on platform/graphics/mac and
-          # related directories.
-          # platform/graphics/cg may need to stick around, though.
-          '../platform/graphics/mac',
+          '../platform/graphics/cocoa',
           '../platform/graphics/cg',
         ],
         'webcore_include_dirs': [
           # FIXME: Eliminate dependency on platform/mac and related
           # directories.
+          # FIXME: Eliminate dependency on platform/graphics/mac and
+          # related directories.
+          # platform/graphics/cg may need to stick around, though.
           '../loader/archive/cf',
+          '../platform/graphics/mac',
           '../platform/mac',
           '../platform/text/mac',
         ],
