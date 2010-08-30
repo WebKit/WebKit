@@ -1,3 +1,72 @@
+2010-08-30  Martin Robinson  <mrobinson@igalia.com>
+
+        Adding layout and pixel results in preparation for landing GTK+ shadow performance improvements.
+
+        * platform/gtk/Skipped: Unskip tests that now have results, skip tests that are definitely failing.
+        * platform/gtk/fast/box-shadow/basic-shadows-expected.checksum: Added.
+        * platform/gtk/fast/box-shadow/basic-shadows-expected.png: Added.
+        * platform/gtk/fast/box-shadow/basic-shadows-expected.txt: Added.
+        * platform/gtk/fast/box-shadow/border-radius-big-expected.checksum: Added.
+        * platform/gtk/fast/box-shadow/border-radius-big-expected.png: Added.
+        * platform/gtk/fast/box-shadow/border-radius-big-expected.txt: Added.
+        * platform/gtk/fast/box-shadow/inset-expected.checksum: Added.
+        * platform/gtk/fast/box-shadow/inset-expected.png: Added.
+        * platform/gtk/fast/box-shadow/inset-expected.txt: Added.
+        * platform/gtk/fast/box-shadow/spread-expected.checksum: Added.
+        * platform/gtk/fast/box-shadow/spread-expected.png: Added.
+        * platform/gtk/fast/box-shadow/spread-expected.txt: Copied from LayoutTests/platform/mac/fast/box-shadow/spread-expected.txt.
+        * platform/gtk/fast/box-shadow/transform-fringing-expected.checksum: Added.
+        * platform/gtk/fast/box-shadow/transform-fringing-expected.png: Added.
+        * platform/gtk/fast/box-shadow/transform-fringing-expected.txt: Added.
+        * platform/gtk/fast/canvas/shadow-offset-1-expected.checksum: Added.
+        * platform/gtk/fast/canvas/shadow-offset-1-expected.png: Added.
+        * platform/gtk/fast/canvas/shadow-offset-1-expected.txt: Added.
+        * platform/gtk/fast/canvas/shadow-offset-2-expected.checksum: Added.
+        * platform/gtk/fast/canvas/shadow-offset-2-expected.png: Added.
+        * platform/gtk/fast/canvas/shadow-offset-2-expected.txt: Added.
+        * platform/gtk/fast/canvas/shadow-offset-3-expected.checksum: Added.
+        * platform/gtk/fast/canvas/shadow-offset-3-expected.png: Added.
+        * platform/gtk/fast/canvas/shadow-offset-3-expected.txt: Added.
+        * platform/gtk/fast/canvas/shadow-offset-4-expected.checksum: Added.
+        * platform/gtk/fast/canvas/shadow-offset-4-expected.png: Added.
+        * platform/gtk/fast/canvas/shadow-offset-4-expected.txt: Added.
+        * platform/gtk/fast/canvas/shadow-offset-5-expected.checksum: Added.
+        * platform/gtk/fast/canvas/shadow-offset-5-expected.png: Added.
+        * platform/gtk/fast/canvas/shadow-offset-5-expected.txt: Added.
+        * platform/gtk/fast/canvas/shadow-offset-6-expected.checksum: Added.
+        * platform/gtk/fast/canvas/shadow-offset-6-expected.png: Added.
+        * platform/gtk/fast/canvas/shadow-offset-6-expected.txt: Added.
+        * platform/gtk/fast/canvas/shadow-offset-7-expected.checksum: Added.
+        * platform/gtk/fast/canvas/shadow-offset-7-expected.png: Added.
+        * platform/gtk/fast/canvas/shadow-offset-7-expected.txt: Added.
+        * platform/gtk/fast/css/shadow-multiple-expected.checksum: Added.
+        * platform/gtk/fast/css/shadow-multiple-expected.png: Added.
+        * platform/gtk/fast/css/shadow-multiple-expected.txt: Added.
+        * platform/gtk/fast/forms/box-shadow-override-expected.checksum: Added.
+        * platform/gtk/fast/forms/box-shadow-override-expected.png: Added.
+        * platform/gtk/fast/forms/box-shadow-override-expected.txt: Added.
+        * platform/gtk/fast/text/shadow-no-blur-expected.checksum: Added.
+        * platform/gtk/fast/text/shadow-no-blur-expected.png: Added.
+        * platform/gtk/fast/text/shadow-no-blur-expected.txt: Added.
+        * platform/gtk/fast/transforms/shadows-expected.checksum: Added.
+        * platform/gtk/fast/transforms/shadows-expected.png: Added.
+        * platform/gtk/fast/transforms/shadows-expected.txt: Copied from LayoutTests/platform/mac/fast/transforms/shadows-expected.txt.
+        * platform/gtk/svg/css/arrow-with-shadow-expected.checksum: Added.
+        * platform/gtk/svg/css/arrow-with-shadow-expected.png: Added.
+        * platform/gtk/svg/css/arrow-with-shadow-expected.txt: Copied from LayoutTests/platform/mac/svg/css/arrow-with-shadow-expected.txt.
+        * platform/gtk/svg/css/group-with-shadow-expected.checksum: Added.
+        * platform/gtk/svg/css/group-with-shadow-expected.png: Added.
+        * platform/gtk/svg/css/group-with-shadow-expected.txt: Added.
+        * platform/gtk/svg/css/mask-with-shadow-expected.checksum: Added.
+        * platform/gtk/svg/css/mask-with-shadow-expected.png: Added.
+        * platform/gtk/svg/css/mask-with-shadow-expected.txt: Added.
+        * platform/gtk/svg/css/path-with-shadow-expected.checksum: Added.
+        * platform/gtk/svg/css/path-with-shadow-expected.png: Added.
+        * platform/gtk/svg/css/path-with-shadow-expected.txt: Copied from LayoutTests/platform/mac/svg/css/path-with-shadow-expected.txt.
+        * platform/gtk/svg/css/stars-with-shadow-expected.checksum: Added.
+        * platform/gtk/svg/css/stars-with-shadow-expected.png: Added.
+        * platform/gtk/svg/css/stars-with-shadow-expected.txt: Added.
+
 2010-08-30  Simon Fraser  <simon.fraser@apple.com>
 
         Disable http/tests/css/css-image-loading.html on Windows.

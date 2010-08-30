@@ -1,0 +1,7 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (78,23) size 606x414
+    RenderSVGContainer {g} at (76,23) size 641x447 [transform={m=((2.00,0.00)(0.00,2.00)) t=(0.00,0.00)}]
+      RenderSVGContainer {a} at (76,23) size 608x414
+        RenderPath {path} at (76,23) size 608x414 [stroke={[type=SOLID] [color=#0000FF] [stroke width=20.00]}] [data="M185.00,40.00 L85.00,40.00 L85.00,28.00 L40.00,64.00 L85.00,100.00 L85.00,88.00 L185.00,88.00 Z"]

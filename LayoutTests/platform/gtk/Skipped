@@ -1621,8 +1621,6 @@ fast/borders/inline-mask-overlay-image.html
 fast/borders/outline-offset-min-assert.html
 fast/borders/svg-as-border-image-2.html
 fast/borders/svg-as-border-image.html
-fast/box-shadow/basic-shadows.html
-fast/box-shadow/border-radius-big.html
 fast/box-sizing/box-sizing.html
 fast/box-sizing/panels-one.html
 fast/box-sizing/panels-two.html
@@ -1650,13 +1648,6 @@ fast/canvas/gradient-add-second-start-end-stop.html
 fast/canvas/image-object-in-canvas.html
 fast/canvas/patternfill-repeat.html
 fast/canvas/quadraticCurveTo.xml
-fast/canvas/shadow-offset-1.html
-fast/canvas/shadow-offset-2.html
-fast/canvas/shadow-offset-3.html
-fast/canvas/shadow-offset-4.html
-fast/canvas/shadow-offset-5.html
-fast/canvas/shadow-offset-6.html
-fast/canvas/shadow-offset-7.html
 fast/canvas/zero-size-fill-rect.html
 fast/clip/001.html
 fast/clip/002.html
@@ -1828,7 +1819,6 @@ fast/css/resize-corner-tracking.html
 fast/css/rgb-float.html
 fast/css/rtl-ordering.html
 fast/css/selector-set-attribute.html
-fast/css/shadow-multiple.html
 fast/css/simple-selector-chain-parsing.html
 fast/css/style-outside-head.html
 fast/css/style-parsed-outside-head.html
@@ -2046,7 +2036,6 @@ fast/forms/HTMLOptionElement_label06.html
 fast/forms/HTMLOptionElement_label07.html
 fast/forms/basic-textareas.html
 fast/forms/blankbuttons.html
-fast/forms/box-shadow-override.html
 fast/forms/button-align.html
 fast/forms/button-cannot-be-nested.html
 fast/forms/button-default-title.html
@@ -2949,7 +2938,6 @@ fast/text/monospace-width-cache.html
 fast/text/reset-emptyRun.html
 fast/text/selection-hard-linebreak.html
 fast/text/selection-painted-separately.html
-fast/text/shadow-no-blur.html
 fast/text/should-use-atsui.html
 fast/text/soft-hyphen-2.html
 fast/text/soft-hyphen-3.html
@@ -3083,7 +3071,6 @@ fast/transforms/identity-matrix.html
 fast/transforms/matrix-01.html
 fast/transforms/matrix-02.html
 fast/transforms/overflow-with-transform.html
-fast/transforms/shadows.html
 fast/transforms/skew-with-unitless-zero.html
 fast/transforms/transform-on-inline.html
 fast/transforms/transform-overflow.html
@@ -4033,15 +4020,6 @@ svg/transforms/text-with-pattern-with-svg-transform.svg
 svg/webarchive/svg-cursor-subresources.svg
 svg/webarchive/svg-feimage-subresources.svg
 svg/webarchive/svg-script-subresouces.svg
-svg/css/arrow-with-shadow.svg
-svg/css/circle-in-mask-with-shadow.svg
-svg/css/clippath-with-shadow.svg
-svg/css/group-with-shadow.svg
-svg/css/mask-with-shadow.svg
-svg/css/path-with-shadow.svg
-svg/css/stars-with-shadow.html
-svg/filters/shadow-on-filter.svg
-svg/filters/shadow-on-rect-with-filter.svg
 svg/custom/resource-invalidate-on-target-update.svg
 svg/clip-path
 
@@ -5100,9 +5078,6 @@ editing/inserting/break-blockquote-after-delete.html
 fast/backgrounds/size/backgroundSize20.html
 fast/backgrounds/size/backgroundSize21.html
 fast/backgrounds/size/backgroundSize22.html
-fast/box-shadow/inset.html
-fast/box-shadow/spread.html
-fast/box-shadow/transform-fringing.html
 fast/canvas/image-pattern-rotate.html
 fast/css/attribute-selector-dynamic.xml
 fast/css/font-smoothing.html
@@ -5735,6 +5710,10 @@ svg/custom/recursive-mask.svg
 svg/filters/feGaussianBlur.svg
 svg/transforms/text-with-mask-with-svg-transform.svg
 svg/zoom/page/zoom-mask-with-percentages.svg
+svg/css/circle-in-mask-with-shadow.svg
+svg/filters/shadow-on-filter.svg
+svg/filters/shadow-on-rect-with-filter.svg
+svg/css/clippath-with-shadow.svg
 
 # Setting CSS properties such as padding and margin does not work properly
 # on form elements: https://bugs.webkit.org/show_bug.cgi?id=40855
