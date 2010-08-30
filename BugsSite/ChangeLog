@@ -1,5 +1,13 @@
 2010-08-29  Adam Barth  <abarth@webkit.org>
 
+        Attempt to make Sam's life easier by not opening a comment text field
+        if there's a selection.  This should make it easier to copy/paste text
+        out of the diff without accidentally opening comment boxes.
+
+        * code-review.js:
+
+2010-08-29  Adam Barth  <abarth@webkit.org>
+
         Turns out we're supposed to use find instead of children here.
 
         * code-review.js:

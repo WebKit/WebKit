@@ -72,6 +72,8 @@
     var line = $('#' + id);
     if (line.attr('data-has-comment'))
       return;
+    if (!window.getSelection().isCollapsed)
+      return; // If there's a selection, we assume the user wants to copy the text.
     line.attr('data-has-comment', 'true');
     var comment_block = $('<div class="comment"><div class="actions"><img class="delete" src="' + kDeleteImage + '"></div><textarea data-comment-for="' + id + '"></textarea></div>');
     insertCommentFor(line, comment_block);
