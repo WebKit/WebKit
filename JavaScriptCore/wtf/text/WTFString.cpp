@@ -970,11 +970,12 @@ Vector<char> asciiDebug(StringImpl* impl)
     unsigned length = impl->length();
     const UChar* characters = impl->characters();
 
-    buffer.resize(length);
+    buffer.resize(length + 1);
     for (unsigned i = 0; i < length; ++i) {
         UChar ch = characters[i];
         buffer[i] = ch && (ch < 0x20 || ch > 0x7f) ? '?' : ch;
     }
+    buffer[length] = '\0';
 
     return buffer;
 }
