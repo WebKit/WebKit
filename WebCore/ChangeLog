@@ -1,5 +1,25 @@
 2010-08-30  Chris Rogers  <crogers@google.com>
 
+        Reviewed by Chris Marrin.
+
+        audio engine: add Reverb class
+        https://bugs.webkit.org/show_bug.cgi?id=36466
+
+        No new tests since audio API is not yet implemented.
+
+        * platform/audio: Added.
+        * platform/audio/Reverb.cpp: Added.
+        (WebCore::calculateNormalizationScale):
+        (WebCore::Reverb::Reverb):
+        (WebCore::Reverb::initialize):
+        (WebCore::Reverb::process):
+        (WebCore::Reverb::reset):
+        * platform/audio/Reverb.h: Added.
+        (WebCore::Reverb::):
+        (WebCore::Reverb::impulseResponseLength):
+
+2010-08-30  Chris Rogers  <crogers@google.com>
+
         Unreviewed
 
         Add WebCore/platform/audio directory
