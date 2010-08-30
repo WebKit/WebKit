@@ -909,6 +909,16 @@ void ApplyStyleCommand::removeEmbeddingUpToEnclosingBlock(Node* node, Node* unsp
     }
 }
 
+static Node* highestEmbeddingAncestor(Node* startNode, Node* enclosingNode)
+{
+    for (Node* n = startNode; n && n != enclosingNode; n = n->parent()) {
+        if (n->isHTMLElement() && getIdentifierValue(computedStyle(n).get(), CSSPropertyUnicodeBidi) == CSSValueEmbed)
+            return n;
+    }
+
+    return 0;
+}
+
 void ApplyStyleCommand::applyInlineStyle(CSSMutableStyleDeclaration *style)
 {
     Node* startDummySpanAncestor = 0;
@@ -952,56 +962,51 @@ void ApplyStyleCommand::applyInlineStyle(CSSMutableStyleDeclaration *style)
         endDummySpanAncestor = dummySpanAncestorForNode(end.node());
     }
 
-    int unicodeBidi = getIdentifierValue(style, CSSPropertyUnicodeBidi);
-    int direction = 0;
-    HTMLElement* startUnsplitAncestor = 0;
-    HTMLElement* endUnsplitAncestor = 0;
-    if (unicodeBidi) {
-        // Leave alone an ancestor that provides the desired single level embedding, if there is one.
-        if (unicodeBidi == CSSValueEmbed)
-            direction = getIdentifierValue(style, CSSPropertyDirection);
-        startUnsplitAncestor = splitAncestorsWithUnicodeBidi(start.node(), true, direction);
-        endUnsplitAncestor = splitAncestorsWithUnicodeBidi(end.node(), false, direction);
-        removeEmbeddingUpToEnclosingBlock(start.node(), startUnsplitAncestor);
-        removeEmbeddingUpToEnclosingBlock(end.node(), endUnsplitAncestor);
-    }
-
     // Remove style from the selection.
     // Use the upstream position of the start for removing style.
     // This will ensure we remove all traces of the relevant styles from the selection
     // and prevent us from adding redundant ones, as described in:
     // <rdar://problem/3724344> Bolding and unbolding creates extraneous tags
     Position removeStart = start.upstream();
-    Position embeddingRemoveStart = removeStart;
-    Position embeddingRemoveEnd = end;
+    int unicodeBidi = getIdentifierValue(style, CSSPropertyUnicodeBidi);
+    int direction = 0;
+    RefPtr<CSSMutableStyleDeclaration> styleWithoutEmbedding;
     if (unicodeBidi) {
+        // Leave alone an ancestor that provides the desired single level embedding, if there is one.
+        if (unicodeBidi == CSSValueEmbed)
+            direction = getIdentifierValue(style, CSSPropertyDirection);
+        HTMLElement* startUnsplitAncestor = splitAncestorsWithUnicodeBidi(start.node(), true, direction);
+        HTMLElement* endUnsplitAncestor = splitAncestorsWithUnicodeBidi(end.node(), false, direction);
+        removeEmbeddingUpToEnclosingBlock(start.node(), startUnsplitAncestor);
+        removeEmbeddingUpToEnclosingBlock(end.node(), endUnsplitAncestor);
+
         // Avoid removing the dir attribute and the unicode-bidi and direction properties from the unsplit ancestors.
+        Position embeddingRemoveStart = removeStart;
         if (startUnsplitAncestor && nodeFullySelected(startUnsplitAncestor, removeStart, end))
             embeddingRemoveStart = positionInParentAfterNode(startUnsplitAncestor);
+
+        Position embeddingRemoveEnd = end;
         if (endUnsplitAncestor && nodeFullySelected(endUnsplitAncestor, removeStart, end))
             embeddingRemoveEnd = positionInParentBeforeNode(endUnsplitAncestor).downstream();
+
+        if (embeddingRemoveEnd != removeStart || embeddingRemoveEnd != end) {
+            RefPtr<CSSMutableStyleDeclaration> embeddingStyle = CSSMutableStyleDeclaration::create();
+            embeddingStyle->setProperty(CSSPropertyUnicodeBidi, CSSValueEmbed);
+            embeddingStyle->setProperty(CSSPropertyDirection, direction);
+            if (comparePositions(embeddingRemoveStart, embeddingRemoveEnd) <= 0)
+                removeInlineStyle(embeddingStyle, embeddingRemoveStart, embeddingRemoveEnd);
+            styleWithoutEmbedding = style->copy();
+            styleWithoutEmbedding->removeProperty(CSSPropertyUnicodeBidi);
+            styleWithoutEmbedding->removeProperty(CSSPropertyDirection);
+        }
     }
 
-    if (embeddingRemoveStart != removeStart || embeddingRemoveEnd != end) {
-        RefPtr<CSSMutableStyleDeclaration> embeddingStyle = CSSMutableStyleDeclaration::create();
-        embeddingStyle->setProperty(CSSPropertyUnicodeBidi, CSSValueEmbed);
-        embeddingStyle->setProperty(CSSPropertyDirection, direction);
-        if (comparePositions(embeddingRemoveStart, embeddingRemoveEnd) <= 0)
-            removeInlineStyle(embeddingStyle, embeddingRemoveStart, embeddingRemoveEnd);
-
-        RefPtr<CSSMutableStyleDeclaration> styleWithoutEmbedding = style->copy();
-        styleWithoutEmbedding->removeProperty(CSSPropertyUnicodeBidi);
-        styleWithoutEmbedding->removeProperty(CSSPropertyDirection);
-        removeInlineStyle(styleWithoutEmbedding, removeStart, end);
-    } else
-        removeInlineStyle(style, removeStart, end);
-
+    removeInlineStyle(styleWithoutEmbedding ? styleWithoutEmbedding.get() : style, removeStart, end);
     start = startPosition();
     end = endPosition();
 
     if (splitStart) {
-        bool mergedStart = mergeStartWithPreviousIfIdentical(start, end);
-        if (mergedStart) {
+        if (mergeStartWithPreviousIfIdentical(start, end)) {
             start = startPosition();
             end = endPosition();
         }
@@ -1018,41 +1023,33 @@ void ApplyStyleCommand::applyInlineStyle(CSSMutableStyleDeclaration *style)
     // to check a computed style
     updateLayout();
 
-    Position embeddingApplyStart = start;
-    Position embeddingApplyEnd = end;
+    RefPtr<CSSMutableStyleDeclaration> styleToApply = style;
     if (unicodeBidi) {
         // Avoid applying the unicode-bidi and direction properties beneath ancestors that already have them.
-        Node* startEnclosingBlock = enclosingBlock(start.node());
-        for (Node* n = start.node(); n != startEnclosingBlock; n = n->parent()) {
-            if (n->isHTMLElement() && getIdentifierValue(computedStyle(n).get(), CSSPropertyUnicodeBidi) == CSSValueEmbed) {
-                embeddingApplyStart = positionInParentAfterNode(n);
-                break;
-            }
-        }
+        Node* embeddingStartNode = highestEmbeddingAncestor(start.node(), enclosingBlock(start.node()));
+        Node* embeddingEndNode = highestEmbeddingAncestor(end.node(), enclosingBlock(end.node()));
 
-        Node* endEnclosingBlock = enclosingBlock(end.node());
-        for (Node* n = end.node(); n != endEnclosingBlock; n = n->parent()) {
-            if (n->isHTMLElement() && getIdentifierValue(computedStyle(n).get(), CSSPropertyUnicodeBidi) == CSSValueEmbed) {
-                embeddingApplyEnd = positionInParentBeforeNode(n);
-                break;
-            }
-        }
-    }
+        if (embeddingStartNode || embeddingEndNode) {
+            Position embeddingApplyStart = embeddingStartNode ? positionInParentAfterNode(embeddingStartNode) : start;
+            Position embeddingApplyEnd = embeddingEndNode ? positionInParentBeforeNode(embeddingEndNode) : end;
+            ASSERT(embeddingApplyStart.isNotNull() && embeddingApplyEnd.isNotNull());
 
-    if (embeddingApplyStart != start || embeddingApplyEnd != end) {
-        if (embeddingApplyStart.isNotNull() && embeddingApplyEnd.isNotNull()) {
             RefPtr<CSSMutableStyleDeclaration> embeddingStyle = CSSMutableStyleDeclaration::create();
             embeddingStyle->setProperty(CSSPropertyUnicodeBidi, CSSValueEmbed);
             embeddingStyle->setProperty(CSSPropertyDirection, direction);
             applyInlineStyleToRange(embeddingStyle.get(), embeddingApplyStart, embeddingApplyEnd);
-        }
 
-        RefPtr<CSSMutableStyleDeclaration> styleWithoutEmbedding = style->copy();
-        styleWithoutEmbedding->removeProperty(CSSPropertyUnicodeBidi);
-        styleWithoutEmbedding->removeProperty(CSSPropertyDirection);
-        applyInlineStyleToRange(styleWithoutEmbedding.get(), start, end);
-    } else
-        applyInlineStyleToRange(style, start, end);
+            if (styleWithoutEmbedding)
+                styleToApply = styleWithoutEmbedding;
+            else {
+                styleToApply = style->copy();
+                styleToApply->removeProperty(CSSPropertyUnicodeBidi);
+                styleToApply->removeProperty(CSSPropertyDirection);
+            }
+        }
+    }
+
+    applyInlineStyleToRange(styleToApply.get(), start, end);
 
     // Remove dummy style spans created by splitting text elements.
     cleanupUnstyledAppleStyleSpans(startDummySpanAncestor);

@@ -1,3 +1,23 @@
+2010-08-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        ApplyStyleCommand::applyInlineStyle needs cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=44458
+
+        Cleanup:
+        1. Isolated code to find the highest ancestor with embedding style, and deployed it in
+           ApplyStyleCommand::applyInlineStyle.
+        2. Combined the code to remove embedding style up to enclosing block and the code to
+           remove unicode-bidi and direction properties between start and end nodes.
+        3. Simplified the conditionals to apply embedding styles.
+
+        No new tests are added since this is a cleanup.
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::highestEmbeddingAncestor): Added.
+        (WebCore::ApplyStyleCommand::applyInlineStyle): See above.
+
 2010-08-30  Martin Robinson  <mrobinson@igalia.com>
 
         Build fix. Add the new fileapi directory to the IDL vpath.
