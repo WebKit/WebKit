@@ -48,10 +48,15 @@ void RenderSVGViewportContainer::calcViewport()
      SVGElement* element = static_cast<SVGElement*>(node());
      if (element->hasTagName(SVGNames::svgTag)) {
          SVGSVGElement* svg = static_cast<SVGSVGElement*>(element);
+
+         FloatRect oldViewport = m_viewport;
          m_viewport = FloatRect(svg->x().value(svg)
                                 , svg->y().value(svg)
                                 , svg->width().value(svg)
                                 , svg->height().value(svg));
+
+        if (oldViewport != m_viewport)
+            setNeedsBoundariesUpdate();
     }
 }
 

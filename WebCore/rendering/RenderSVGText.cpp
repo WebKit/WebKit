@@ -75,10 +75,12 @@ void RenderSVGText::layout()
     ASSERT(needsLayout());
     LayoutRepainter repainter(*this, m_everHadLayout && checkForRepaintDuringLayout());
 
+    bool updateCachedBoundariesInParents = false;
     if (m_needsTransformUpdate) {
         SVGTextElement* text = static_cast<SVGTextElement*>(node());
         m_localTransform = text->animatedLocalTransform();
         m_needsTransformUpdate = false;
+        updateCachedBoundariesInParents = true;
     }
 
     // Reduced version of RenderBlock::layoutBlock(), which only takes care of SVG text.
@@ -95,12 +97,21 @@ void RenderSVGText::layout()
     if (!firstChild())
         setChildrenInline(true);
 
+    // FIXME: We need to find a way to only layout the child boxes, if needed.
+    FloatRect oldBoundaries = objectBoundingBox();
     ASSERT(childrenInline());
     forceLayoutInlineChildren();
+
+    if (!updateCachedBoundariesInParents)
+        updateCachedBoundariesInParents = oldBoundaries != objectBoundingBox();
 
     // Invalidate all resources of this client if our layout changed.
     if (m_everHadLayout && selfNeedsLayout())
         SVGResourcesCache::clientLayoutChanged(this);
+
+    // If our bounds changed, notify the parents.
+    if (updateCachedBoundariesInParents)
+        RenderSVGBlock::setNeedsBoundariesUpdate();
 
     repainter.repaintAfterLayout();
     setNeedsLayout(false);

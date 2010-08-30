@@ -102,14 +102,20 @@ void RenderForeignObject::layout()
     LayoutRepainter repainter(*this, m_everHadLayout && checkForRepaintDuringLayout());
     SVGForeignObjectElement* foreign = static_cast<SVGForeignObjectElement*>(node());
 
+    bool updateCachedBoundariesInParents = false;
     if (m_needsTransformUpdate) {
         m_localTransform = foreign->animatedLocalTransform();
         m_needsTransformUpdate = false;
+        updateCachedBoundariesInParents = true;
     }
+
+    FloatRect oldViewport = m_viewport;
 
     // Cache viewport boundaries
     FloatPoint viewportLocation(foreign->x().value(foreign), foreign->y().value(foreign));
     m_viewport = FloatRect(viewportLocation, FloatSize(foreign->width().value(foreign), foreign->height().value(foreign)));
+    if (!updateCachedBoundariesInParents)
+        updateCachedBoundariesInParents = oldViewport != m_viewport;
 
     // Set box origin to the foreignObject x/y translation, so positioned objects in XHTML content get correct
     // positions. A regular RenderBoxModelObject would pull this information from RenderStyle - in SVG those
@@ -121,6 +127,10 @@ void RenderForeignObject::layout()
     bool layoutChanged = m_everHadLayout && selfNeedsLayout();
     RenderBlock::layout();
     ASSERT(!needsLayout());
+
+    // If our bounds changed, notify the parents.
+    if (updateCachedBoundariesInParents)
+        RenderSVGBlock::setNeedsBoundariesUpdate();
 
     // Invalidate all resources of this client if our layout changed.
     if (layoutChanged)

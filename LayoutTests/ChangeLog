@@ -1,3 +1,19 @@
+2010-08-30  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Add culling to RenderSVGContainer
+        https://bugs.webkit.org/show_bug.cgi?id=44896
+
+        Update some pixel test results, that show marginal changes.
+
+        * platform/mac-leopard/svg/css/composite-shadow-example-expected.checksum:
+        * platform/mac-leopard/svg/css/composite-shadow-example-expected.png:
+        * platform/mac-leopard/svg/css/composite-shadow-with-opacity-expected.checksum:
+        * platform/mac-leopard/svg/css/composite-shadow-with-opacity-expected.png:
+        * platform/mac/svg/css/composite-shadow-example-expected.txt:
+        * platform/mac/svg/css/composite-shadow-with-opacity-expected.txt:
+
 2010-08-27  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Eric Carlson.

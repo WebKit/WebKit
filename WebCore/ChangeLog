@@ -1,3 +1,83 @@
+2010-08-30  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Add culling to RenderSVGContainer
+        https://bugs.webkit.org/show_bug.cgi?id=44896
+
+        Cache object/strokeBoundingBox and repaintRectInLocalCoordinates() in RenderSVGContainer & RenderSVGRoot, just like it's done in RenderPath.
+        Propagate boundary changes up the render tree, in layout phase, in order to notify parents that they should update their cached boundaries.
+
+        This is a huge speed benefit when interacting with an already layouted document, as there's no need anymore to traverse all children
+        of any container or <svg> element, just to retrieve the repaint rect.
+
+        * rendering/RenderForeignObject.cpp:
+        (WebCore::RenderForeignObject::layout):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::setNeedsBoundariesUpdate):
+        * rendering/RenderObject.h:
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::removeChildNode):
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::layout):
+        (WebCore::RenderPath::paint):
+        * rendering/RenderPath.h:
+        (WebCore::RenderPath::path):
+        (WebCore::RenderPath::setNeedsBoundariesUpdate):
+        * rendering/RenderSVGBlock.cpp:
+        (WebCore::RenderSVGBlock::styleWillChange):
+        * rendering/RenderSVGBlock.h:
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::RenderSVGContainer):
+        (WebCore::RenderSVGContainer::layout):
+        (WebCore::RenderSVGContainer::paint):
+        (WebCore::RenderSVGContainer::updateCachedBoundaries):
+        * rendering/RenderSVGContainer.h:
+        (WebCore::RenderSVGContainer::setNeedsBoundariesUpdate):
+        (WebCore::RenderSVGContainer::objectBoundingBox):
+        (WebCore::RenderSVGContainer::strokeBoundingBox):
+        (WebCore::RenderSVGContainer::repaintRectInLocalCoordinates):
+        (WebCore::RenderSVGContainer::calculateLocalTransform):
+        * rendering/RenderSVGGradientStop.h:
+        (WebCore::RenderSVGGradientStop::strokeBoundingBox):
+        * rendering/RenderSVGHiddenContainer.cpp:
+        * rendering/RenderSVGHiddenContainer.h:
+        (WebCore::RenderSVGHiddenContainer::clippedOverflowRectForRepaint):
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::layout):
+        (WebCore::RenderSVGImage::styleWillChange):
+        * rendering/RenderSVGImage.h:
+        * rendering/RenderSVGInline.cpp:
+        (WebCore::RenderSVGInline::styleWillChange):
+        * rendering/RenderSVGInline.h:
+        * rendering/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::styleWillChange):
+        * rendering/RenderSVGModelObject.h:
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::RenderSVGRoot):
+        (WebCore::RenderSVGRoot::layout):
+        (WebCore::RenderSVGRoot::styleWillChange):
+        (WebCore::RenderSVGRoot::updateCachedBoundaries):
+        * rendering/RenderSVGRoot.h:
+        (WebCore::RenderSVGRoot::setNeedsBoundariesUpdate):
+        (WebCore::RenderSVGRoot::setNeedsTransformUpdate):
+        (WebCore::RenderSVGRoot::objectBoundingBox):
+        (WebCore::RenderSVGRoot::strokeBoundingBox):
+        (WebCore::RenderSVGRoot::repaintRectInLocalCoordinates):
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::layout):
+        * rendering/RenderSVGTransformableContainer.cpp:
+        (WebCore::RenderSVGTransformableContainer::calculateLocalTransform):
+        * rendering/RenderSVGTransformableContainer.h:
+        * rendering/RenderSVGViewportContainer.cpp:
+        (WebCore::RenderSVGViewportContainer::calcViewport):
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::computeContainerBoundingBoxes):
+        (WebCore::SVGRenderSupport::paintInfoIntersectsRepaintRect):
+        * rendering/SVGRenderSupport.h:
+        * rendering/style/SVGRenderStyle.cpp:
+        (WebCore::SVGRenderStyle::diff):
+
 2010-08-30  Leandro Pereira  <leandro@profusion.mobi>
 
         [EFL] Unreviewed. Build fix when ENABLE_WEB_SOCKETS=ON.

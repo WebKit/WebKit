@@ -65,6 +65,7 @@ private:
     virtual void paint(PaintInfo&, int parentX, int parentY);
 
     virtual void destroy();
+    virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle);
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
     virtual void updateFromElement();
 

@@ -28,11 +28,12 @@
 #if ENABLE(SVG)
 #include "PaintInfo.h"
 
+#include <wtf/Noncopyable.h>
+
 namespace WebCore {
 
 class FloatPoint;
 class FloatRect;
-class ImageBuffer;
 class RenderBoxModelObject;
 class RenderObject;
 class RenderStyle;
@@ -40,7 +41,7 @@ class RenderSVGRoot;
 class TransformState;
 
 // SVGRendererSupport is a helper class sharing code between all SVG renderers.
-class SVGRenderSupport {
+class SVGRenderSupport : public Noncopyable {
 public:
     // Used by all SVG renderers who apply clip/filter/etc. resources to the renderer content
     static bool prepareToRenderSVGContent(RenderObject*, PaintInfo&);
@@ -58,15 +59,11 @@ public:
     // Determines whether the passed point lies in a clipping area
     static bool pointInClippingArea(RenderObject*, const FloatPoint&);
 
-    enum ContainerBoundingBoxMode {
-        ObjectBoundingBox,
-        StrokeBoundingBox,
-        RepaintBoundingBox
-    };
+    // Traverses all children of given container and returns the union object/stroke/repaintBoundingBox.
+    static void computeContainerBoundingBoxes(const RenderObject* container, FloatRect& objectBoundingBox, FloatRect& strokeBoundingBox, FloatRect& repaintBoundingBox);
 
-    // Used to share the "walk all the children" logic between objectBoundingBox
-    // and repaintRectInLocalCoordinates in RenderSVGRoot and RenderSVGContainer
-    static FloatRect computeContainerBoundingBox(const RenderObject* container, ContainerBoundingBoxMode);
+    // Determines wheter the renderer needs to be painted.
+    static bool paintInfoIntersectsRepaintRect(const FloatRect& localRepaintRect, const AffineTransform& localTransform, const PaintInfo& paintInfo);
 
     // Important functions used by nearly all SVG renderers centralizing coordinate transformations / repaint rect calculations
     static IntRect clippedOverflowRectForRepaint(RenderObject*, RenderBoxModelObject* repaintContainer);
@@ -79,11 +76,6 @@ public:
     // FIXME: These methods do not belong here.
     static const RenderObject* findTextRootObject(const RenderObject* start);
     static const RenderSVGRoot* findTreeRootObject(const RenderObject* start);
-
-private:
-    // This class is not constructable.
-    SVGRenderSupport();
-    ~SVGRenderSupport();
 };
 
 } // namespace WebCore
