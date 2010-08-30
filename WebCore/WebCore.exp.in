@@ -1109,6 +1109,7 @@ _wkNoteOpenPanelFiles
 _wkPopupMenu
 _wkQTIncludeOnlyModernMediaFileTypes
 _wkQTMovieDataRate
+_wkQTMovieDisableComponent
 _wkQTMovieGetType
 _wkQTMovieHasClosedCaptions
 _wkQTMovieMaxTimeLoaded

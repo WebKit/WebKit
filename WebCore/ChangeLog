@@ -1,3 +1,11 @@
+2010-08-30  Jer Noble  <jer.noble@apple.com>
+
+        Build fix; Unreviewed.
+
+        Added a export symbol to the WebCore.exp.in list.
+
+        * WebCore.exp.in:
+
 2010-08-30  Chris Rogers  <crogers@google.com>
 
         Reviewed by Kenneth Russell.
