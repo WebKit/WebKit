@@ -1,3 +1,9 @@
+2010-08-30  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fix after addition of fileapi directory in WebCore.
+
+        * wx/build/settings.py:
+
 2010-08-30  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Xan Lopez.
