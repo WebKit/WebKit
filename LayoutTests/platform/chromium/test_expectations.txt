@@ -1175,8 +1175,10 @@ BUG10366 MAC : fast/events/option-tab.html = FAIL CRASH
 BUG10369 MAC : editing/selection/5109817.html = FAIL
 BUG10369 LINUX : editing/selection/5354455-2.html = FAIL
 
-// incorrect layout
-BUG10370 MAC : fast/css/font-weight-1.html = FAIL
+// The test says you should see numbers, but we display letters.
+// It looks like we are missing the WebKit "WeightWatcher" fonts,
+// checked in as part of http://trac.webkit.org/changeset/34771 .
+BUG10370 : fast/css/font-weight-1.html = FAIL
 
 // Not really sure why these are failing at the moment
 BUG10376 MAC : fast/dom/isindex-002.html = FAIL
