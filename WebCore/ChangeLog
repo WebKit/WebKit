@@ -1,5 +1,26 @@
 2010-08-30  Chris Rogers  <crogers@google.com>
 
+        Reviewed by Kenneth Russell.
+
+        Add audio cone effect files.  The cone effect operates as defined in the OpenAL specification.
+        https://bugs.webkit.org/show_bug.cgi?id=44712
+
+        No new tests since audio API not implemented yet.
+
+        * platform/audio: Added.
+        * platform/audio/Cone.cpp: Added.
+        (WebCore::ConeEffect::ConeEffect):
+        (WebCore::ConeEffect::gain):
+        * platform/audio/Cone.h: Added.
+        (WebCore::ConeEffect::setInnerAngle):
+        (WebCore::ConeEffect::innerAngle):
+        (WebCore::ConeEffect::setOuterAngle):
+        (WebCore::ConeEffect::outerAngle):
+        (WebCore::ConeEffect::setOuterGain):
+        (WebCore::ConeEffect::outerGain):
+
+2010-08-30  Chris Rogers  <crogers@google.com>
+
         Reviewed by Chris Marrin.
 
         audio engine: add Reverb class
