@@ -3169,12 +3169,9 @@ BUG53554 MAC LINUX : svg/custom/svg-fonts-without-missing-glyph.xhtml = PASS IMA
 // New test, need to verify if it's safe to rebaseline.
 BUGWK44770 WIN LINUX : svg/repaint/filter-repaint.svg = IMAGE+TEXT
 
-// Regressed in r66223
-BUGWK44773 : fast/canvas/canvas-as-image.html = IMAGE
-BUGWK44773 WIN LINUX : fast/canvas/canvas-as-image-incremental-repaint.html = IMAGE
-BUGWK44773 : fast/gradients/generated-gradients.html = IMAGE
-BUGWK44773 MAC : fast/canvas/webgl/css-webkit-canvas-repaint.html = IMAGE
-BUGWK44773 MAC : fast/canvas/webgl/css-webkit-canvas.html = IMAGE
+// New tests in r66258
+BUGWK44909 MAC : fast/canvas/webgl/css-webkit-canvas-repaint.html = IMAGE
+BUGWK44909 MAC : fast/canvas/webgl/css-webkit-canvas.html = IMAGE
 
 // Full Screen JS API is not yet enabled.
 BUGWK44797 : fullscreen = FAIL
