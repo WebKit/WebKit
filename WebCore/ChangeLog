@@ -1,5 +1,22 @@
 2010-08-30  Beth Dakin  <bdakin@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=44804 Crashes in 
+        RenderMathMLRoot::layout() and RenderMathMLRoot::paint()
+        -and corresponding-
+        <rdar://problem/8342055>
+
+        All of the calls to firstChild() and lastChild() in 
+        RenderMathMLRoot::layout() and RenderMathMLRoot::paint() need to be 
+        null checked.
+
+        * mathml/RenderMathMLRoot.cpp:
+        (WebCore::RenderMathMLRoot::paint):
+        (WebCore::RenderMathMLRoot::layout):
+
+2010-08-30  Beth Dakin  <bdakin@apple.com>
+
         Reviewed by Darin Adler.
 
         Fix for https://bugs.webkit.org/show_bug.cgi?id=44801 Crash in 

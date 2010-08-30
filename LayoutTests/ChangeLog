@@ -1,3 +1,18 @@
+2010-08-30  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Tests for https://bugs.webkit.org/show_bug.cgi?id=44804 Crashes in 
+        RenderMathMLRoot::layout() and RenderMathMLRoot::paint()
+        -and-
+        https://bugs.webkit.org/show_bug.cgi?id=44801 Crash in 
+        RenderMathMLSubSup::layout()
+
+        * mathml/empty-mroot-crash-expected.txt: Added.
+        * mathml/empty-mroot-crash.xhtml: Added.
+        * mathml/msubsup-no-grandchild-expected.txt: Added.
+        * mathml/msubsup-no-grandchild.xhtml: Added.
+
 2010-08-30  Martin Robinson  <mrobinson@igalia.com>
 
         Unskip passing philip canvas tests and unskip and add results for some more shadow tests.

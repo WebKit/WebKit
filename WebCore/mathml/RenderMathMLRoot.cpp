@@ -99,7 +99,10 @@ void RenderMathMLRoot::paint(PaintInfo& info, int tx, int ty)
     
     if (info.context->paintingDisabled())
         return;
-    
+
+    if (!firstChild() || !lastChild())
+        return;
+
     tx += x();
     ty += y();
     
@@ -203,11 +206,15 @@ void RenderMathMLRoot::paint(PaintInfo& info, int tx, int ty)
 void RenderMathMLRoot::layout()
 {
     RenderBlock::layout();
-    
+
+    if (!firstChild() || !lastChild())
+        return;
+
     int maxHeight = toRenderBoxModelObject(lastChild())->offsetHeight();
     
     RenderObject* current = lastChild()->firstChild();
-    current->style()->setVerticalAlign(BASELINE);
+    if (current)
+        current->style()->setVerticalAlign(BASELINE);
     
     if (!maxHeight)
         maxHeight = style()->fontSize();
@@ -228,6 +235,8 @@ void RenderMathMLRoot::layout()
     
     // Positioning of the index
     RenderBoxModelObject* indexBox = toRenderBoxModelObject(firstChild()->firstChild());
+    if (!indexBox)
+        return;
     
     int indexShift = indexBox->offsetWidth() + topStartShift;
     int radicalHeight = static_cast<int>((1 - gRadicalTopLeftPointYPos) * maxHeight);
