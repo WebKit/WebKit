@@ -1,3 +1,17 @@
+2010-08-29  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Crash when dragging text in Google Docs
+        https://bugs.webkit.org/show_bug.cgi?id=20471
+        <rdar://problem/7783629>
+
+        Added new test cases to an exisisting file and updated the result to reflect
+        the correct behavior.
+        
+        * editing/selection/replace-selection-crash-expected.txt:
+        * editing/selection/replace-selection-crash.html:
+
 2010-08-29  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

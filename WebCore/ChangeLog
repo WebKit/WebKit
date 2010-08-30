@@ -1,3 +1,24 @@
+2010-08-29  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Crash when dragging text in Google Docs
+        https://bugs.webkit.org/show_bug.cgi?id=20471
+        <rdar://problem/7783629>
+        
+        This fixes the crash but also fixes the generated markup when
+        performing a replacement at the border with an inline, to avoid the 
+        new content being merged into the inline.
+        The crash is happening when doApply detects the need of merging
+        the start and the end of the new paragraph and the destination position
+        is moved inside an inline.
+        
+        I've added new test cases to an existing layout test.
+        
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply): When the situation described above is detected,
+        we insert a placeholder to avoid merging into the inline.
+
 2010-08-29  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.
