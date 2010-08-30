@@ -119,13 +119,18 @@ void HTMLTokenizer::reset()
 inline bool HTMLTokenizer::processEntity(SegmentedString& source)
 {
     bool notEnoughCharacters = false;
-    unsigned value = consumeHTMLEntity(source, notEnoughCharacters);
+    Vector<UChar, 16> decodedEntity;
+    bool success = consumeHTMLEntity(source, decodedEntity, notEnoughCharacters);
     if (notEnoughCharacters)
         return false;
-    if (!value)
+    if (!success) {
+        ASSERT(decodedEntity.isEmpty());
         bufferCharacter('&');
-    else
-        bufferCodePoint(value);
+    } else {
+        Vector<UChar>::const_iterator iter = decodedEntity.begin();
+        for (; iter != decodedEntity.end(); ++iter)
+            bufferCharacter(*iter);
+    }
     return true;
 }
 
@@ -1027,16 +1032,17 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
 
     BEGIN_STATE(CharacterReferenceInAttributeValueState) {
         bool notEnoughCharacters = false;
-        unsigned value = consumeHTMLEntity(source, notEnoughCharacters, m_additionalAllowedCharacter);
+        Vector<UChar, 16> decodedEntity;
+        bool success = consumeHTMLEntity(source, decodedEntity, notEnoughCharacters, m_additionalAllowedCharacter);
         if (notEnoughCharacters)
             return haveBufferedCharacterToken();
-        if (!value)
+        if (!success) {
+            ASSERT(decodedEntity.isEmpty());
             m_token->appendToAttributeValue('&');
-        else if (value < 0xFFFF)
-            m_token->appendToAttributeValue(value);
-        else {
-            m_token->appendToAttributeValue(U16_LEAD(value));
-            m_token->appendToAttributeValue(U16_TRAIL(value));
+        } else {
+            Vector<UChar>::const_iterator iter = decodedEntity.begin();
+            for (; iter != decodedEntity.end(); ++iter)
+                m_token->appendToAttributeValue(*iter);
         }
         // We're supposed to switch back to the attribute value state that
         // we were in when we were switched into this state.  Rather than
@@ -1632,16 +1638,6 @@ inline void HTMLTokenizer::bufferCharacter(UChar character)
     ASSERT(character != InputStreamPreprocessor::endOfFileMarker);
     m_token->ensureIsCharacterToken();
     m_token->appendToCharacter(character);
-}
-
-inline void HTMLTokenizer::bufferCodePoint(unsigned value)
-{
-    if (value < 0xFFFF) {
-        bufferCharacter(value);
-        return;
-    }
-    bufferCharacter(U16_LEAD(value));
-    bufferCharacter(U16_TRAIL(value));
 }
 
 inline void HTMLTokenizer::parseError()

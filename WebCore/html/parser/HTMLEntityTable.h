@@ -35,7 +35,7 @@ struct HTMLEntityTableEntry {
 
     const UChar* entity;
     int length;
-    int value;
+    UChar32 value;
 };
 
 class HTMLEntityTable {

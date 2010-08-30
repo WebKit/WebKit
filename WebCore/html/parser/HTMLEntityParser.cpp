@@ -45,21 +45,34 @@ static const UChar windowsLatin1ExtensionArray[32] = {
     0x02DC, 0x2122, 0x0161, 0x203A, 0x0153, 0x009D, 0x017E, 0x0178, // 98-9F
 };
 
-inline UChar adjustEntity(unsigned value)
+inline UChar adjustEntity(UChar32 value)
 {
     if ((value & ~0x1F) != 0x0080)
         return value;
     return windowsLatin1ExtensionArray[value - 0x80];
 }
 
-inline unsigned legalEntityFor(unsigned value)
+inline UChar32 legalEntityFor(UChar32 value)
 {
     // FIXME: A number of specific entity values generate parse errors.
     if (value == 0 || value > 0x10FFFF || (value >= 0xD800 && value <= 0xDFFF))
         return 0xFFFD;
-    if (value < 0xFFFF)
+    if (U_IS_BMP(value))
         return adjustEntity(value);
     return value;
+}
+
+inline bool convertToUTF16(UChar32 value, Vector<UChar, 16>& decodedEntity)
+{
+    if (U_IS_BMP(value)) {
+        UChar character = static_cast<UChar>(value);
+        ASSERT(character == value);
+        decodedEntity.append(character);
+        return true;
+    }
+    decodedEntity.append(U16_LEAD(value));
+    decodedEntity.append(U16_TRAIL(value));
+    return true;
 }
 
 inline bool isHexDigit(UChar cc)
@@ -85,14 +98,15 @@ void unconsumeCharacters(SegmentedString& source, const Vector<UChar, 10>& consu
 
 }
 
-unsigned consumeHTMLEntity(SegmentedString& source, bool& notEnoughCharacters, UChar additionalAllowedCharacter)
+bool consumeHTMLEntity(SegmentedString& source, Vector<UChar, 16>& decodedEntity, bool& notEnoughCharacters, UChar additionalAllowedCharacter)
 {
     ASSERT(!additionalAllowedCharacter || additionalAllowedCharacter == '"' || additionalAllowedCharacter == '\'' || additionalAllowedCharacter == '>');
     ASSERT(!notEnoughCharacters);
+    ASSERT(decodedEntity.isEmpty());
 
     enum EntityState {
         Initial,
-        NumberType,
+        Number,
         MaybeHexLowerCaseX,
         MaybeHexUpperCaseX,
         Hex,
@@ -100,7 +114,7 @@ unsigned consumeHTMLEntity(SegmentedString& source, bool& notEnoughCharacters, U
         Named
     };
     EntityState entityState = Initial;
-    unsigned result = 0;
+    UChar32 result = 0;
     Vector<UChar, 10> consumedCharacters;
 
     while (!source.isEmpty()) {
@@ -108,20 +122,20 @@ unsigned consumeHTMLEntity(SegmentedString& source, bool& notEnoughCharacters, U
         switch (entityState) {
         case Initial: {
             if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ' || cc == '<' || cc == '&')
-                return 0;
+                return false;
             if (additionalAllowedCharacter && cc == additionalAllowedCharacter)
-                return 0;
+                return false;
             if (cc == '#') {
-                entityState = NumberType;
+                entityState = Number;
                 break;
             }
             if ((cc >= 'a' && cc <= 'z') || (cc >= 'A' && cc <= 'Z')) {
                 entityState = Named;
                 continue;
             }
-            return 0;
+            return false;
         }
-        case NumberType: {
+        case Number: {
             if (cc == 'x') {
                 entityState = MaybeHexLowerCaseX;
                 break;
@@ -135,7 +149,7 @@ unsigned consumeHTMLEntity(SegmentedString& source, bool& notEnoughCharacters, U
                 continue;
             }
             source.push('#');
-            return 0;
+            return false;
         }
         case MaybeHexLowerCaseX: {
             if (isHexDigit(cc)) {
@@ -144,7 +158,7 @@ unsigned consumeHTMLEntity(SegmentedString& source, bool& notEnoughCharacters, U
             }
             source.push('#');
             source.push('x');
-            return 0;
+            return false;
         }
         case MaybeHexUpperCaseX: {
             if (isHexDigit(cc)) {
@@ -153,7 +167,7 @@ unsigned consumeHTMLEntity(SegmentedString& source, bool& notEnoughCharacters, U
             }
             source.push('#');
             source.push('X');
-            return 0;
+            return false;
         }
         case Hex: {
             if (cc >= '0' && cc <= '9')
@@ -162,21 +176,21 @@ unsigned consumeHTMLEntity(SegmentedString& source, bool& notEnoughCharacters, U
                 result = result * 16 + 10 + cc - 'a';
             else if (cc >= 'A' && cc <= 'F')
                 result = result * 16 + 10 + cc - 'A';
-            else if (cc == ';') {
-                source.advancePastNonNewline();
-                return legalEntityFor(result);
-            } else
-                return legalEntityFor(result);
+            else {
+                if (cc == ';')
+                    source.advanceAndASSERT(cc);
+                return convertToUTF16(legalEntityFor(result), decodedEntity);
+            }
             break;
         }
         case Decimal: {
             if (cc >= '0' && cc <= '9')
                 result = result * 10 + cc - '0';
-            else if (cc == ';') {
-                source.advancePastNonNewline();
-                return legalEntityFor(result);
-            } else
-                return legalEntityFor(result);
+            else {
+                if (cc == ';')
+                    source.advanceAndASSERT(cc);
+                return convertToUTF16(legalEntityFor(result), decodedEntity);
+            }
             break;
         }
         case Named: {
@@ -194,12 +208,12 @@ unsigned consumeHTMLEntity(SegmentedString& source, bool& notEnoughCharacters, U
                 // We can't an entity because there might be a longer entity
                 // that we could match if we had more data.
                 unconsumeCharacters(source, consumedCharacters);
-                return 0;
+                return false;
             }
             if (!entitySearch.mostRecentMatch()) {
                 ASSERT(!entitySearch.currentValue());
                 unconsumeCharacters(source, consumedCharacters);
-                return 0;
+                return false;
             }
             if (entitySearch.mostRecentMatch()->length != entitySearch.currentLength()) {
                 // We've consumed too many characters.  We need to walk the
@@ -218,12 +232,13 @@ unsigned consumeHTMLEntity(SegmentedString& source, bool& notEnoughCharacters, U
                 }
                 cc = *source;
             }
-            if (entitySearch.mostRecentMatch()->lastCharacter() == ';')
-                return entitySearch.mostRecentMatch()->value;
-            if (!additionalAllowedCharacter || !(isAlphaNumeric(cc) || cc == '='))
-                return entitySearch.mostRecentMatch()->value;
+            if (entitySearch.mostRecentMatch()->lastCharacter() == ';'
+                || !additionalAllowedCharacter
+                || !(isAlphaNumeric(cc) || cc == '=')) {
+                return convertToUTF16(entitySearch.mostRecentMatch()->value, decodedEntity);
+            }
             unconsumeCharacters(source, consumedCharacters);
-            return 0;
+            return false;
         }
         }
         consumedCharacters.append(cc);
@@ -232,7 +247,7 @@ unsigned consumeHTMLEntity(SegmentedString& source, bool& notEnoughCharacters, U
     ASSERT(source.isEmpty());
     notEnoughCharacters = true;
     unconsumeCharacters(source, consumedCharacters);
-    return 0;
+    return false;
 }
 
 UChar decodeNamedEntity(const char* name)

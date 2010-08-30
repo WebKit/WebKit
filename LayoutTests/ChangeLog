@@ -1,3 +1,25 @@
+2010-08-29  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Move UTF16 LEAD/TRAIL logic into the HTMLEntityParser
+        https://bugs.webkit.org/show_bug.cgi?id=44790
+
+        We now block this attack.
+
+        * http/tests/security/xssAuditor/javascript-link-HTML-entities-null-char-expected.txt:
+
+2010-08-29  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Move UTF16 LEAD/TRAIL logic into the HTMLEntityParser
+        https://bugs.webkit.org/show_bug.cgi?id=44790
+
+        We now block this attack.
+
+        * http/tests/security/xssAuditor/javascript-link-HTML-entities-null-char-expected.txt:
+
 2010-08-29  Yuzo Fujishima  <yuzo@google.com>
 
         Unreviewed Chromium test expectation change for r66282.

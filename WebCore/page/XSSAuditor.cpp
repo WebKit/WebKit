@@ -277,19 +277,18 @@ String XSSAuditor::decodeHTMLEntities(const String& string, bool leaveUndecodabl
         if (leaveUndecodableEntitiesUntouched)
             sourceShadow = source;
         bool notEnoughCharacters = false;
-        unsigned entity = consumeHTMLEntity(source, notEnoughCharacters);
+        Vector<UChar, 16> decodedEntity;
+        bool success = consumeHTMLEntity(source, decodedEntity, notEnoughCharacters);
         // We ignore notEnoughCharacters because we might as well use this loop
         // to copy the remaining characters into |result|.
-
-        if (entity > 0xFFFF) {
-            result.append(U16_LEAD(entity));
-            result.append(U16_TRAIL(entity));
-        } else if (entity && (!leaveUndecodableEntitiesUntouched || entity != 0xFFFD)){
-            result.append(entity);
-        } else {
+        if (!success || (!leaveUndecodableEntitiesUntouched && decodedEntity.size() == 1 && decodedEntity[0] == 0xFFFD)) {
             result.append('&');
             if (leaveUndecodableEntitiesUntouched)
                 source = sourceShadow;
+        } else {
+            Vector<UChar>::const_iterator iter = decodedEntity.begin();
+            for (; iter != decodedEntity.end(); ++iter)
+                result.append(*iter);
         }
     }
     
