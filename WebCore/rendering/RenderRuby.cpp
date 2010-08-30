@@ -75,24 +75,19 @@ bool RenderRubyAsInline::isChildAllowed(RenderObject* child, RenderStyle*) const
 
 void RenderRubyAsInline::addChild(RenderObject* child, RenderObject* beforeChild)
 {
-    // Note: ':after' content is handled implicitely below
+    // Note: ':after' content is handled implicitly below
 
-    // if child is a ruby run, just add it normally
     if (child->isRubyRun()) {
         RenderInline::addChild(child, beforeChild);
         return;
     }
 
-    if (beforeChild && !isAfterContent(beforeChild)) {
-        // insert child into run
-        ASSERT(!beforeChild->isRubyRun());
-        RenderRubyRun* run = findRubyRunParent(beforeChild);
-        ASSERT(run); // beforeChild should always have a run as parent
-        if (run) {
+    if (beforeChild && !isAfterContent(beforeChild) && !beforeChild->isRubyRun()) {
+        if (RenderRubyRun* run = findRubyRunParent(beforeChild)) {
             run->addChild(child, beforeChild);
             return;
         }
-        ASSERT(false); // beforeChild should always have a run as parent!
+        ASSERT_NOT_REACHED(); // beforeChild should always have a run as parent!
         // Emergency fallback: fall through and just append.
     }
 

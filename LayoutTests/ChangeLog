@@ -1,3 +1,13 @@
+2010-08-30  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        WebCore::RenderBlock::addChild* NULL ptrs
+        https://bugs.webkit.org/show_bug.cgi?id=43722
+
+        * fast/ruby/before-doesnt-crash-expected.txt: Added.
+        * fast/ruby/before-doesnt-crash.html: Added.
+
 2010-08-29  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

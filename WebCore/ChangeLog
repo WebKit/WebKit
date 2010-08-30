@@ -1,3 +1,17 @@
+2010-08-30  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        WebCore::RenderBlock::addChild* NULL ptrs
+        https://bugs.webkit.org/show_bug.cgi?id=43722
+
+        Also includes some cleanup of comments and ASSERTs.
+
+        Test: fast/ruby/before-doesnt-crash.html
+
+        * rendering/RenderRuby.cpp:
+        (WebCore::RenderRubyAsInline::addChild):
+
 2010-08-30  Marc-Antoine Ruel  <maruel@chromium.org>
 
         Reviewed by Kent Tamura
