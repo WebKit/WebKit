@@ -1,3 +1,12 @@
+2010-08-30  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Unreviewed, updating Chromium expectations.
+
+        * platform/chromium-win/fast/lists/li-values-expected.checksum: Removed.
+        * platform/chromium-win/fast/lists/li-values-expected.png: Removed.
+        * platform/chromium-win/fast/lists/li-values-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+
 2010-08-30  Yuzo Fujishima  <yuzo@google.com>
 
         Unreviewed Chromium test expectation change.

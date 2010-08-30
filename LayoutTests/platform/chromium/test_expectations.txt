@@ -2586,14 +2586,6 @@ BUGJAMESR WIN LINUX : svg/filters/filter-clip.svg = IMAGE
 BUGJAMESR : svg/filters/filter-source-position.svg = IMAGE
 BUGJAMESR BUG30048 BUG29737 WIN LINUX : svg/filters/shadow-on-rect-with-filter.svg = IMAGE
 
-// New layoutTestController function added at r57986
-BUG42691 : fast/lists/ol-nested-items-dynamic-insert.html = TEXT
-BUG42691 : fast/lists/ol-nested-items-dynamic-remove.html = TEXT
-BUG42691 : fast/lists/ol-nested-items.html = TEXT
-BUG42691 : fast/lists/ol-nested-list-dynamic-insert.html = TEXT
-BUG42691 : fast/lists/ol-nested-list-dynamic-remove.html = TEXT
-BUG42691 : fast/lists/ol-nested-list.html = TEXT
-
 // New layoutTestController function added at r57993
 BUG42696 : http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.html = TIMEOUT
 
@@ -3025,16 +3017,6 @@ BUGWK42964 WIN LINUX : tables/mozilla_expected_failures/bugs/bug89315.html = PAS
 // Fails since WebKit r64156
 BUGWK43086 : fast/canvas/canvas-ImageData-behaviour.html = TEXT
 
-// Fails because of http://trac.webkit.org/changeset/64186/
-BUG42691 : fast/lists/alpha-boundary-values.html = TEXT
-BUG42691 : fast/lists/alpha-list-wrap.html = TEXT
-BUG42691 : fast/lists/decimal-leading-zero.html = TEXT
-BUG42691 : fast/lists/list-style-type-dynamic-change.html = TEXT
-BUG42691 : fast/lists/w3-css3-list-styles-alphabetic.html = TEXT
-BUG42691 : fast/lists/w3-css3-list-styles-numeric.html = TEXT
-BUG42691 : fast/lists/w3-list-styles.html = TEXT
-BUG42691 MAC : fast/lists/li-values.html = TIMEOUT
-
 // Webkit patch http://trac.webkit.org/changeset/64323 modify the test
 // Need to change chromium TestNetscape plugin.
 BUG50704 : plugins/document-open.html = TIMEOUT
@@ -3180,9 +3162,24 @@ BUG21852 MAC : fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html = TE
 BUG53073 DEBUG : storage/change-version.html = CRASH PASS
 BUG53073 LINUX : svg/custom/clip-path-units-changes.svg = TEXT
 
-// Need to implement LayoutTestController::markerTextForListItem()
-BUG53289 WIN MAC LINUX : fast/lists/w3-css3-list-styles-fallback-style.html = TEXT
+// Re-enable these tests once the patch that implements
+// LayoutTestController::markerTextForListItem() is submitted.
+BUG53289 : fast/lists/w3-css3-list-styles-fallback-style.html = TEXT
 BUG53289 : fast/lists/w3-css3-list-styles-symbolic.html = TEXT
+BUG42691 : fast/lists/ol-nested-items-dynamic-insert.html = TEXT
+BUG42691 : fast/lists/ol-nested-items-dynamic-remove.html = TEXT
+BUG42691 : fast/lists/ol-nested-items.html = TEXT
+BUG42691 : fast/lists/ol-nested-list-dynamic-insert.html = TEXT
+BUG42691 : fast/lists/ol-nested-list-dynamic-remove.html = TEXT
+BUG42691 : fast/lists/ol-nested-list.html = TEXT
+BUG42691 : fast/lists/alpha-boundary-values.html = TEXT
+BUG42691 : fast/lists/alpha-list-wrap.html = TEXT
+BUG42691 : fast/lists/decimal-leading-zero.html = TEXT
+BUG42691 : fast/lists/list-style-type-dynamic-change.html = TEXT
+BUG42691 : fast/lists/w3-css3-list-styles-alphabetic.html = TEXT
+BUG42691 : fast/lists/w3-css3-list-styles-numeric.html = TEXT
+BUG42691 : fast/lists/w3-list-styles.html = TEXT
+BUG42691 : fast/lists/li-values.html = TIMEOUT TEXT
 
 // Failing after r66144
 BUG53546 LINUX : userscripts/user-script-audio-document.html = TEXT
