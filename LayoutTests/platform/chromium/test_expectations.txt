@@ -2295,9 +2295,6 @@ BUG29737 MAC : svg/filters/sourceAlpha.svg = IMAGE
 BUG30048 : svg/css/composite-shadow-example.html = IMAGE
 BUG30048 : svg/css/composite-shadow-with-opacity.html = IMAGE
 
-// Broke with http://trac.webkit.org/changeset/51939
-BUG30049 : platform/win/editing/selection/doubleclick-should-not-expand-across-lines.html = TEXT MISSING
-
 // evan's fix rolled out in http://trac.webkit.org/changeset/52071 due to compat issues.
 BUG30343 LINUX : fast/css/large-number-round-trip.html = TEXT
 
