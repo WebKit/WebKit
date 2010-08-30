@@ -261,7 +261,7 @@ body {
   height: 100%;
 }
 
-help {
+.help {
  color: gray;
  font-style: italic;
 }
