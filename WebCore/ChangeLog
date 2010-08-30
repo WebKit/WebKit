@@ -1,3 +1,13 @@
+2010-08-30  Andras Becsi  <abecsi@webkit.org>
+
+        Unreviewed build fix.
+
+        [Qt] Fix fileapi header paths to fix warnings after r66365.
+
+        No new tests needed.
+
+        * WebCore.pro:
+
 2010-08-30  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Kent Tamura.

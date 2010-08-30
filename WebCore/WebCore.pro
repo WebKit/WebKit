@@ -1400,6 +1400,20 @@ HEADERS += \
     editing/VisibleSelection.h \
     editing/visible_units.h \
     editing/WrapContentsInDummySpanCommand.h \
+    fileapi/AsyncFileWriter.h \
+    fileapi/Blob.h \
+    fileapi/BlobBuilder.h \
+    fileapi/BlobURL.h \
+    fileapi/File.h \
+    fileapi/FileError.h \
+    fileapi/FileList.h \
+    fileapi/FileReader.h \
+    fileapi/FileStreamProxy.h \
+    fileapi/FileThread.h \
+    fileapi/FileThreadTask.h \
+    fileapi/FileWriter.h \
+    fileapi/FileWriterClient.h \
+    fileapi/HTMLViewSourceParser.h \
     history/BackForwardController.h \
     history/BackForwardControllerClient.h \
     history/BackForwardListImpl.h \
@@ -1408,11 +1422,7 @@ HEADERS += \
     history/CachedPage.h \
     history/HistoryItem.h \
     history/PageCache.h \
-    html/AsyncFileWriter.h \
     html/AsyncImageResizer.h \
-    html/Blob.h \
-    html/BlobBuilder.h \
-    html/BlobURL.h \
     html/canvas/CanvasGradient.h \
     html/canvas/CanvasPattern.h \
     html/canvas/CanvasPixelArray.h \
@@ -1425,15 +1435,6 @@ HEADERS += \
     html/DateComponents.h \
     html/DOMDataGridDataSource.h \
     html/DOMFormData.h \
-    html/File.h \
-    html/FileError.h \
-    html/FileList.h \
-    html/FileReader.h \
-    html/FileStreamProxy.h \
-    html/FileThread.h \
-    html/FileThreadTask.h \
-    html/FileWriter.h \
-    html/FileWriterClient.h \
     html/FormDataList.h \
     html/HTMLAllCollection.h \
     html/HTMLAnchorElement.h \
@@ -1520,7 +1521,6 @@ HEADERS += \
     html/HTMLUListElement.h \
     html/HTMLVideoElement.h \
     html/HTMLViewSourceDocument.h \
-    html/HTMLViewSourceParser.h \
     html/ImageData.h \
     html/ImageResizerThread.h \
     html/LabelsNodeList.h \
