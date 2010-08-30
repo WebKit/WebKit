@@ -36,6 +36,7 @@ dumprendertree_cppflags := \
 	-I$(srcdir)/WebKitTools/DumpRenderTree/cairo \
 	-I$(srcdir)/WebKitTools/DumpRenderTree/gtk \
 	-I$(srcdir)/WebKit/gtk \
+	-I$(srcdir)/WebCore/platform/gtk \
 	-I$(top_builddir)/WebKit/gtk \
 	-I$(top_builddir)/DerivedSources \
 	$(global_cppflags) \
@@ -72,7 +73,8 @@ Programs_DumpRenderTree_SOURCES = \
 	WebKitTools/DumpRenderTree/gtk/GCControllerGtk.cpp \
 	WebKitTools/DumpRenderTree/gtk/LayoutTestControllerGtk.cpp \
 	WebKitTools/DumpRenderTree/gtk/PixelDumpSupportGtk.cpp \
-	WebKitTools/DumpRenderTree/gtk/WorkQueueItemGtk.cpp
+	WebKitTools/DumpRenderTree/gtk/WorkQueueItemGtk.cpp \
+	WebCore/platform/gtk/GtkVersioning.c
 
 Programs_DumpRenderTree_CXXFLAGS = \
 	$(global_cxxflags) \

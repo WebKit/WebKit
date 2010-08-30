@@ -2495,7 +2495,7 @@ webcoregtk_sources += \
 	WebCore/platform/gtk/gtkdrawing.h \
 	WebCore/platform/gtk/GtkPluginWidget.cpp \
 	WebCore/platform/gtk/GtkPluginWidget.h \
-	WebCore/platform/gtk/GtkVersioning.cpp \
+	WebCore/platform/gtk/GtkVersioning.c \
 	WebCore/platform/gtk/GtkVersioning.h \
 	WebCore/platform/gtk/KeyEventGtk.cpp \
 	WebCore/platform/gtk/KURLGtk.cpp \

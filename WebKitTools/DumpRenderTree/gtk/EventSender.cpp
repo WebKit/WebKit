@@ -2,6 +2,7 @@
  * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Zan Dobersek <zandobersek@gmail.com>
  * Copyright (C) 2009 Holger Hans Peter Freyther
+ * Copyright (C) 2010 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +34,7 @@
 
 #include "DumpRenderTree.h"
 
+#include <GtkVersioning.h>
 #include <JavaScriptCore/JSObjectRef.h>
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JSStringRef.h>
@@ -161,7 +163,7 @@ bool prepareMouseButtonEvent(GdkEvent* event, int eventSenderButtonNumber)
     event->button.y = lastMousePositionY;
     event->button.window = gtk_widget_get_window(GTK_WIDGET(view));
     g_object_ref(event->button.window);
-    event->button.device = gdk_device_get_core_pointer();
+    event->button.device = getDefaultGDKPointerDevice(event->button.window);
     event->button.state = getStateFlags();
     event->button.time = GDK_CURRENT_TIME;
     event->button.axes = 0;
@@ -285,7 +287,7 @@ static JSValueRef mouseMoveToCallback(JSContextRef context, JSObjectRef function
     event->motion.time = GDK_CURRENT_TIME;
     event->motion.window = gtk_widget_get_window(GTK_WIDGET(view));
     g_object_ref(event->motion.window);
-    event->motion.device = gdk_device_get_core_pointer();
+    event->button.device = getDefaultGDKPointerDevice(event->motion.window);
     event->motion.state = getStateFlags();
     event->motion.axes = 0;
 
@@ -558,8 +560,9 @@ static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JS
     pressEvent->key.window = gtk_widget_get_window(GTK_WIDGET(view));
     g_object_ref(pressEvent->key.window);
 #ifndef GTK_API_VERSION_2
-    gdk_event_set_device(pressEvent, gdk_device_get_associated_device(gdk_display_get_core_pointer(gdk_drawable_get_display(pressEvent->key.window))));
+    gdk_event_set_device(pressEvent, getDefaultGDKPointerDevice(pressEvent->key.window));
 #endif
+
     // When synthesizing an event, an invalid hardware_keycode value
     // can cause it to be badly processed by Gtk+.
     GdkKeymapKey* keys;

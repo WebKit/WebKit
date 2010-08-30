@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Collabora Ltd.
+ * Copyright (C) 2010 Igalia, S.L.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -21,6 +22,8 @@
 #define GtkVersioning_h
 
 #include <gtk/gtk.h>
+
+G_BEGIN_DECLS
 
 // Macros to avoid deprecation checking churn
 #if !GTK_CHECK_VERSION(2, 21, 2)
@@ -66,5 +69,9 @@ void gtk_adjustment_configure(GtkAdjustment* adjustment, gdouble value, gdouble 
 
 void gtk_adjustment_set_value(GtkAdjustment* adjusment, gdouble value);
 #endif // GTK_CHECK_VERSION(2, 14, 0)
+
+GdkDevice* getDefaultGDKPointerDevice(GdkWindow* window);
+
+G_END_DECLS
 
 #endif // GtkVersioning_h

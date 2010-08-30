@@ -1,3 +1,22 @@
+2010-08-30  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [Gtk] gdk_display_get_core_pointer and gdk_device_get_core_pointer
+        are deprecated
+        https://bugs.webkit.org/show_bug.cgi?id=44787
+
+        We have replaced GtkVersioning.cpp with GtkVersioning.c and
+        created a function (getDefaultGDKPointerDevice) to get the pointer
+        of the window with the new APIs. We added that function to DRT and
+        copyandpaste unit test.
+
+        * DumpRenderTree/gtk/EventSender.cpp:
+        (prepareMouseButtonEvent):
+        (mouseMoveToCallback):
+        (keyDownCallback):
+        * GNUmakefile.am:
+
 2010-08-30  Zoltan Horvath  <zoltan@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

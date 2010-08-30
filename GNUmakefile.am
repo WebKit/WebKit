@@ -695,8 +695,11 @@ Programs_unittests_testkeyevents_CFLAGS = $(webkit_tests_cflags)
 Programs_unittests_testkeyevents_LDADD = $(webkit_tests_ldadd)
 Programs_unittests_testkeyevents_LDFLAGS = $(webkit_tests_ldflags)
 
-Programs_unittests_testcopyandpaste_SOURCES = WebKit/gtk/tests/testcopyandpaste.c
-Programs_unittests_testcopyandpaste_CFLAGS = $(webkit_tests_cflags)
+Programs_unittests_testcopyandpaste_SOURCES = WebKit/gtk/tests/testcopyandpaste.c \
+	WebCore/platform/gtk/GtkVersioning.c
+Programs_unittests_testcopyandpaste_CFLAGS = $(webkit_tests_cflags) \
+	-I$(srcdir)/WebCore/platform/gtk \
+	-I$(srcdir)/WebCore
 Programs_unittests_testcopyandpaste_LDADD = $(webkit_tests_ldadd)
 Programs_unittests_testcopyandpaste_LDFLAGS = $(webkit_tests_ldflags)
 

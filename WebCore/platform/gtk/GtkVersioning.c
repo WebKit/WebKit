@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Collabora Ltd.
+ * Copyright (C) 2010 Igalia, S.L.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -17,7 +18,6 @@
  *  Boston, MA 02110-1301, USA.
  */
 
-#include "config.h"
 #include "GtkVersioning.h"
 
 #include <gtk/gtk.h>
@@ -48,3 +48,14 @@ void gtk_adjustment_configure(GtkAdjustment* adjustment, gdouble value, gdouble 
     gtk_adjustment_value_changed(adjustment);
 }
 #endif
+
+GdkDevice *getDefaultGDKPointerDevice(GdkWindow* window)
+{
+#ifndef GTK_API_VERSION_2
+    GdkDeviceManager *manager =  gdk_display_get_device_manager(gdk_drawable_get_display(window));
+    return gdk_device_manager_get_client_pointer(manager);
+#else
+    return gdk_device_get_core_pointer();
+#endif // GTK_API_VERSION_2
+}
+
