@@ -1,5 +1,15 @@
 2010-08-30  Andras Becsi  <abecsi@webkit.org>
 
+        Unreviewed trivial fix.
+
+        [Qt] Let qmake know about HTML parser headers.
+
+        No new tests needed.
+
+        * WebCore.pro:
+
+2010-08-30  Andras Becsi  <abecsi@webkit.org>
+
         Unreviewed build fix.
 
         [Qt] Fix fileapi header paths to fix warnings after r66365.

@@ -1413,7 +1413,6 @@ HEADERS += \
     fileapi/FileThreadTask.h \
     fileapi/FileWriter.h \
     fileapi/FileWriterClient.h \
-    fileapi/HTMLViewSourceParser.h \
     history/BackForwardController.h \
     history/BackForwardControllerClient.h \
     history/BackForwardListImpl.h \
@@ -1527,6 +1526,22 @@ HEADERS += \
     html/StepRange.h \
     html/TimeRanges.h \
     html/ValidityState.h \
+    html/parser/CSSPreloadScanner.h \
+    html/parser/HTMLConstructionSite.h \
+    html/parser/HTMLDocumentParser.h \
+    html/parser/HTMLElementStack.h \
+    html/parser/HTMLEntityParser.h \
+    html/parser/HTMLEntitySearch.h \
+    html/parser/HTMLEntityTable.h \
+    html/parser/HTMLFormattingElementList.h \
+    html/parser/HTMLParserScheduler.h \
+    html/parser/HTMLPreloadScanner.h \
+    html/parser/HTMLScriptRunner.h \
+    html/parser/HTMLScriptRunnerHost.h \
+    html/parser/HTMLToken.h \
+    html/parser/HTMLTokenizer.h \
+    html/parser/HTMLTreeBuilder.h \
+    html/parser/HTMLViewSourceParser.h \
     inspector/ConsoleMessage.h \
     inspector/InjectedScript.h \
     inspector/InjectedScriptHost.h \
