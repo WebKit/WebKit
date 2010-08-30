@@ -1205,7 +1205,7 @@ bool ApplyStyleCommand::removeImplicitlyStyledElement(CSSMutableStyleDeclaration
     for (size_t i = 0; i < sizeof(HTMLEquivalents) / sizeof(HTMLEquivalent); i++) {
         const HTMLEquivalent& equivalent = HTMLEquivalents[i];
         ASSERT(equivalent.element || equivalent.attribute);
-        if (extractedStyle && equivalent.pushDownType == ShouldNotBePushedDown
+        if ((extractedStyle && equivalent.pushDownType == ShouldNotBePushedDown)
             || (equivalent.element && !element->hasTagName(*equivalent.element))
             || (equivalent.attribute && !element->hasAttribute(*equivalent.attribute)))
             continue;
