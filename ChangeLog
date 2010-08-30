@@ -1,3 +1,16 @@
+2010-08-30  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] WebKit DOM bindings build should not depend on output GNUMakefile
+        https://bugs.webkit.org/show_bug.cgi?id=44805
+
+        Move the DOM bindings source lists and generator rules to
+        WebCore/bindings/gobject/GNUmakefile.am. This will prevent a full WebKit API
+        rebuild whenever the automake files change, decreasing build times.
+
+        * GNUmakefile.am:
+
 2010-08-27  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Adam Barth.
