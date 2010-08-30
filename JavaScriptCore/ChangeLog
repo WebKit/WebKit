@@ -1,3 +1,14 @@
+2010-08-29  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Kent Tamura.
+
+        [BREWMP] Port vprintf_stderr_common
+        https://bugs.webkit.org/show_bug.cgi?id=33568
+
+        Use BREW's DBGPRINTF to output debug messages.
+
+        * wtf/Assertions.cpp:
+
 2010-08-28  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
