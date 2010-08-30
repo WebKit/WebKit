@@ -1,3 +1,42 @@
+2010-08-30  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Unreviewed, updating Chromium expectations.
+
+        * platform/chromium-linux/fast/lists/li-values-expected.checksum: Removed.
+        * platform/chromium-linux/fast/lists/li-values-expected.png: Removed.
+        * platform/chromium-linux/fast/lists/li-values-expected.txt: Removed.
+        * platform/chromium-linux/fast/lists/w3-css3-list-styles-alphabetic-expected.checksum: Removed.
+        * platform/chromium-linux/fast/lists/w3-css3-list-styles-alphabetic-expected.png: Removed.
+        * platform/chromium-linux/fast/lists/w3-css3-list-styles-alphabetic-expected.txt: Removed.
+        * platform/chromium-linux/fast/lists/w3-css3-list-styles-numeric-expected.checksum: Removed.
+        * platform/chromium-linux/fast/lists/w3-css3-list-styles-numeric-expected.png: Removed.
+        * platform/chromium-linux/fast/lists/w3-css3-list-styles-numeric-expected.txt: Removed.
+        * platform/chromium-linux/fast/lists/w3-list-styles-expected.checksum: Removed.
+        * platform/chromium-linux/fast/lists/w3-list-styles-expected.png: Removed.
+        * platform/chromium-linux/fast/lists/w3-list-styles-expected.txt: Removed.
+        * platform/chromium-win-xp/fast/lists/w3-css3-list-styles-alphabetic-expected.checksum: Removed.
+        * platform/chromium-win-xp/fast/lists/w3-css3-list-styles-alphabetic-expected.png: Removed.
+        * platform/chromium-win-xp/fast/lists/w3-css3-list-styles-alphabetic-expected.txt: Removed.
+        * platform/chromium-win/fast/lists/alpha-boundary-values-expected.checksum: Removed.
+        * platform/chromium-win/fast/lists/alpha-boundary-values-expected.png: Removed.
+        * platform/chromium-win/fast/lists/alpha-boundary-values-expected.txt: Removed.
+        * platform/chromium-win/fast/lists/alpha-list-wrap-expected.checksum: Removed.
+        * platform/chromium-win/fast/lists/alpha-list-wrap-expected.png: Removed.
+        * platform/chromium-win/fast/lists/alpha-list-wrap-expected.txt: Removed.
+        * platform/chromium-win/fast/lists/decimal-leading-zero-expected.checksum: Removed.
+        * platform/chromium-win/fast/lists/decimal-leading-zero-expected.png: Removed.
+        * platform/chromium-win/fast/lists/decimal-leading-zero-expected.txt: Removed.
+        * platform/chromium-win/fast/lists/list-style-type-dynamic-change-expected.checksum: Removed.
+        * platform/chromium-win/fast/lists/list-style-type-dynamic-change-expected.png: Removed.
+        * platform/chromium-win/fast/lists/list-style-type-dynamic-change-expected.txt: Removed.
+        * platform/chromium-win/fast/lists/w3-css3-list-styles-alphabetic-expected.checksum: Removed.
+        * platform/chromium-win/fast/lists/w3-css3-list-styles-alphabetic-expected.png: Removed.
+        * platform/chromium-win/fast/lists/w3-css3-list-styles-alphabetic-expected.txt: Removed.
+        * platform/chromium-win/fast/lists/w3-list-styles-expected.checksum: Removed.
+        * platform/chromium-win/fast/lists/w3-list-styles-expected.png: Removed.
+        * platform/chromium-win/fast/lists/w3-list-styles-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+
 2010-08-30  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.

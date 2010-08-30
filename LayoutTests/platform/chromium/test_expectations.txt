@@ -3150,25 +3150,6 @@ BUG21852 MAC : fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html = TE
 BUG53073 DEBUG : storage/change-version.html = CRASH PASS
 BUG53073 LINUX : svg/custom/clip-path-units-changes.svg = TEXT
 
-// Re-enable these tests once the patch that implements
-// LayoutTestController::markerTextForListItem() is submitted.
-BUG53289 : fast/lists/w3-css3-list-styles-fallback-style.html = TEXT
-BUG53289 : fast/lists/w3-css3-list-styles-symbolic.html = TEXT
-BUG42691 : fast/lists/ol-nested-items-dynamic-insert.html = TEXT
-BUG42691 : fast/lists/ol-nested-items-dynamic-remove.html = TEXT
-BUG42691 : fast/lists/ol-nested-items.html = TEXT
-BUG42691 : fast/lists/ol-nested-list-dynamic-insert.html = TEXT
-BUG42691 : fast/lists/ol-nested-list-dynamic-remove.html = TEXT
-BUG42691 : fast/lists/ol-nested-list.html = TEXT
-BUG42691 : fast/lists/alpha-boundary-values.html = TEXT
-BUG42691 : fast/lists/alpha-list-wrap.html = TEXT
-BUG42691 : fast/lists/decimal-leading-zero.html = TEXT
-BUG42691 : fast/lists/list-style-type-dynamic-change.html = TEXT
-BUG42691 : fast/lists/w3-css3-list-styles-alphabetic.html = TEXT
-BUG42691 : fast/lists/w3-css3-list-styles-numeric.html = TEXT
-BUG42691 : fast/lists/w3-list-styles.html = TEXT
-BUG42691 : fast/lists/li-values.html = TIMEOUT TEXT
-
 // Failing after r66144
 BUG53546 LINUX : userscripts/user-script-audio-document.html = TEXT
 BUG53546 LINUX : userscripts/user-script-video-document.html = TEXT
