@@ -1258,8 +1258,6 @@ editing/selection/inline-closest-leaf-child.html
 http/tests/security/cookies/xmlhttprequest.html
 http/tests/xmlhttprequest/broken-xml-encoding.html
 http/tests/xmlhttprequest/web-apps/010.html
-svg/css/composite-shadow-example.html
-svg/css/composite-shadow-with-opacity.html
 svg/custom/getPresentationAttribute-modify.svg
 svg/custom/js-update-stop-linked-gradient.svg
 
@@ -5638,10 +5636,6 @@ svg/custom/recursive-filter.svg
 fast/loader/recursive-before-unload-crash.html 
 fast/loader/null-request-after-willSendRequest.html
 
-# New canvas test suite from http://philip.html5.org/tests/canvas/suite/tests/
-canvas/philip
-http/tests/canvas/philip
-
 # Skip this, it's pending on one patch in the commit queue
 accessibility/aria-controls-with-tabs.html
 
@@ -5697,8 +5691,6 @@ fast/preloader
 http/tests/mime/uppercase-mime-type.html
 
 # SVG tests that seem to produce incorrect output
-svg/css/shadow-with-large-radius.svg
-svg/css/shadow-with-negative-offset.svg
 svg/custom/marker-strokeWidth-changes.svg
 svg/zoom/text/zoom-hixie-mixed-009.xml
 svg/custom/mask-on-multiple-objects.svg
@@ -5717,6 +5709,122 @@ svg/css/circle-in-mask-with-shadow.svg
 svg/filters/shadow-on-filter.svg
 svg/filters/shadow-on-rect-with-filter.svg
 svg/css/clippath-with-shadow.svg
+
+# The following  canvas test cases from http://philip.html5.org/tests/canvas/suite/tests/
+# fail for Mac and can likely be removed from this Skipped list when they are removed from
+# the Mac Skipped list.
+
+canvas/philip/tests/2d.drawImage.broken.html
+#NOTE: 2d.composite.operation.clear is failing because we support the "clear" composite op
+#without our vendor prefix since it was around in canvas before the spec was written.
+canvas/philip/tests/2d.composite.operation.clear.html
+canvas/philip/tests/2d.composite.operation.darker.html
+canvas/philip/tests/2d.composite.operation.highlight.html
+canvas/philip/tests/2d.composite.uncovered.fill.copy.html
+canvas/philip/tests/2d.composite.uncovered.fill.destination-atop.html
+canvas/philip/tests/2d.composite.uncovered.fill.destination-in.html
+canvas/philip/tests/2d.composite.uncovered.fill.source-in.html
+canvas/philip/tests/2d.composite.uncovered.fill.source-out.html
+canvas/philip/tests/2d.composite.uncovered.image.copy.html
+canvas/philip/tests/2d.composite.uncovered.image.destination-atop.html
+canvas/philip/tests/2d.composite.uncovered.image.destination-in.html
+canvas/philip/tests/2d.composite.uncovered.image.source-in.html
+canvas/philip/tests/2d.composite.uncovered.image.source-out.html
+canvas/philip/tests/2d.composite.uncovered.pattern.copy.html
+canvas/philip/tests/2d.composite.uncovered.pattern.destination-atop.html
+canvas/philip/tests/2d.composite.uncovered.pattern.destination-in.html
+canvas/philip/tests/2d.composite.uncovered.pattern.source-in.html
+canvas/philip/tests/2d.composite.uncovered.pattern.source-out.html
+canvas/philip/tests/2d.drawImage.broken.html
+canvas/philip/tests/2d.drawImage.incomplete.html
+canvas/philip/tests/2d.drawImage.null.html
+canvas/philip/tests/2d.fillStyle.parse.current.basic.html
+canvas/philip/tests/2d.fillStyle.parse.current.changed.html
+canvas/philip/tests/2d.fillStyle.parse.current.removed.html
+canvas/philip/tests/2d.fillStyle.parse.system.html
+canvas/philip/tests/2d.gradient.radial.cone.front.html
+canvas/philip/tests/2d.gradient.radial.cone.top.html
+canvas/philip/tests/2d.gradient.radial.inside2.html
+canvas/philip/tests/2d.gradient.radial.inside3.html
+canvas/philip/tests/2d.gradient.radial.negative.html
+canvas/philip/tests/2d.gradient.radial.outside1.html
+canvas/philip/tests/2d.imageData.create1.type.html
+canvas/philip/tests/2d.imageData.create2.type.html
+canvas/philip/tests/2d.imageData.get.source.negative.html
+canvas/philip/tests/2d.imageData.get.source.outside.html
+canvas/philip/tests/2d.imageData.get.type.html
+canvas/philip/tests/2d.line.cap.closed.html
+canvas/philip/tests/2d.line.join.parallel.html
+canvas/philip/tests/2d.line.miter.lineedge.html
+canvas/philip/tests/2d.missingargs.html
+canvas/philip/tests/2d.path.arcTo.ensuresubpath.2.html
+canvas/philip/tests/2d.path.clip.empty.html
+canvas/philip/tests/2d.path.rect.winding.html
+canvas/philip/tests/2d.pattern.image.broken.html
+canvas/philip/tests/2d.pattern.image.incomplete.html
+canvas/philip/tests/2d.pattern.image.null.html
+canvas/philip/tests/2d.pattern.image.undefined.html
+canvas/philip/tests/2d.shadow.enable.blur.html
+canvas/philip/tests/2d.shadow.enable.x.html
+canvas/philip/tests/2d.shadow.enable.y.html
+canvas/philip/tests/2d.shadow.gradient.alpha.html
+canvas/philip/tests/2d.shadow.gradient.basic.html
+canvas/philip/tests/2d.shadow.gradient.transparent.2.html
+canvas/philip/tests/2d.strokeRect.zero.4.html
+canvas/philip/tests/2d.text.draw.baseline.bottom.html
+canvas/philip/tests/2d.text.draw.baseline.hanging.html
+canvas/philip/tests/2d.text.draw.baseline.ideographic.html
+canvas/philip/tests/2d.text.draw.baseline.middle.html
+canvas/philip/tests/2d.text.draw.baseline.top.html
+canvas/philip/tests/2d.text.draw.fill.maxWidth.fontface.html
+canvas/philip/tests/2d.text.draw.space.collapse.end.html
+canvas/philip/tests/2d.text.draw.space.collapse.nonspace.html
+canvas/philip/tests/2d.text.draw.space.collapse.other.html
+canvas/philip/tests/2d.text.draw.space.collapse.space.html
+canvas/philip/tests/2d.text.draw.space.collapse.start.html
+canvas/philip/tests/2d.text.font.parse.basic.html
+canvas/philip/tests/2d.text.font.parse.complex.html
+canvas/philip/tests/2d.text.font.parse.invalid.html
+canvas/philip/tests/2d.text.font.parse.size.percentage.html
+canvas/philip/tests/2d.text.font.parse.size.percentage.default.html
+canvas/philip/tests/2d.text.font.parse.system.html
+canvas/philip/tests/2d.text.measure.width.space.html
+canvas/philip/tests/toDataURL.jpeg.alpha.html
+canvas/philip/tests/type.prototype.html
+
+# These tests are failing for us, but not for Mac. This likely
+# indicates platform specific problems.
+canvas/philip/tests/2d.shadow.canvas.alpha.html
+canvas/philip/tests/2d.shadow.canvas.basic.html
+canvas/philip/tests/2d.shadow.canvas.transparent.2.html
+canvas/philip/tests/2d.shadow.image.alpha.html
+canvas/philip/tests/2d.shadow.image.basic.html
+canvas/philip/tests/2d.shadow.image.scale.html
+canvas/philip/tests/2d.shadow.image.transparent.2.html
+canvas/philip/tests/2d.shadow.transform.2.html
+canvas/philip/tests/2d.drawImage.floatsource.html
+canvas/philip/tests/2d.drawImage.negativedir.html
+canvas/philip/tests/2d.drawImage.self.2.html
+canvas/philip/tests/2d.gradient.radial.cone.behind.html
+canvas/philip/tests/2d.gradient.radial.cone.beside.html
+canvas/philip/tests/2d.gradient.radial.cone.shape2.html
+canvas/philip/tests/2d.gradient.radial.touch1.html
+canvas/philip/tests/2d.gradient.radial.touch2.html
+canvas/philip/tests/2d.gradient.radial.touch3.html
+canvas/philip/tests/2d.path.arc.selfintersect.1.html
+canvas/philip/tests/2d.path.arc.shape.3.html
+canvas/philip/tests/2d.path.arc.zeroradius.html
+canvas/philip/tests/2d.path.arcTo.collinear.2.html
+canvas/philip/tests/2d.path.arcTo.collinear.3.html
+canvas/philip/tests/2d.path.closePath.nextpoint.html
+canvas/philip/tests/2d.path.isPointInPath.nonfinite.html
+canvas/philip/tests/2d.path.rect.selfintersect.html
+canvas/philip/tests/2d.path.rect.zero.6.html
+canvas/philip/tests/2d.pattern.paint.repeatx.coord1.html
+canvas/philip/tests/2d.pattern.paint.repeatx.outside.html
+canvas/philip/tests/2d.pattern.paint.repeaty.coord1.html
+canvas/philip/tests/2d.pattern.paint.repeaty.outside.html
+canvas/philip/tests/toDataURL.jpeg.quality.basic.html
 
 # Setting CSS properties such as padding and margin does not work properly
 # on form elements: https://bugs.webkit.org/show_bug.cgi?id=40855

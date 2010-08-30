@@ -1,3 +1,21 @@
+2010-08-30  Martin Robinson  <mrobinson@igalia.com>
+
+        Unskip passing philip canvas tests and unskip and add results for some more shadow tests.
+
+        * platform/gtk/Skipped:
+        * platform/gtk/svg/css/composite-shadow-example-expected.checksum: Added.
+        * platform/gtk/svg/css/composite-shadow-example-expected.png: Added.
+        * platform/gtk/svg/css/composite-shadow-example-expected.txt: Added.
+        * platform/gtk/svg/css/composite-shadow-text-expected.checksum: Added.
+        * platform/gtk/svg/css/composite-shadow-text-expected.png: Added.
+        * platform/gtk/svg/css/composite-shadow-text-expected.txt: Added.
+        * platform/gtk/svg/css/shadow-with-large-radius-expected.checksum: Added.
+        * platform/gtk/svg/css/shadow-with-large-radius-expected.png: Added.
+        * platform/gtk/svg/css/shadow-with-large-radius-expected.txt: Copied from LayoutTests/platform/mac/svg/css/shadow-with-large-radius-expected.txt.
+        * platform/gtk/svg/css/shadow-with-negative-offset-expected.checksum: Added.
+        * platform/gtk/svg/css/shadow-with-negative-offset-expected.png: Added.
+        * platform/gtk/svg/css/shadow-with-negative-offset-expected.txt: Copied from LayoutTests/platform/mac/svg/css/shadow-with-negative-offset-expected.txt.
+
 2010-08-30  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Dan Bernstein.
